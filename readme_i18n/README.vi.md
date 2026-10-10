@@ -15,13 +15,13 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
 
 <div align="center">
 
-| Nền tảng | Tải ở đâu | Trạng thái ngày 9 tháng 10 năm 2026 |
+| Nền tảng | Tải ở đâu | Trạng thái ngày 10 tháng 10 năm 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** điện thoại và máy tính bảng | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bản dựng 20 trên Google Play từ ngày 7 tháng 10 năm 2026, bản dựng 21 trên GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone và iPad** | App Store | phiên bản 3.3.0 đang chờ Apple xét duyệt; trong lúc chờ, hãy [tự dựng ứng dụng](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 và 3S | [APK](#meta-quest-3) · Horizon Store | trang ứng dụng đã duyệt, bản dựng 21 đang chờ Meta xét duyệt |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV và Google TV** | [APK](#install-it-on-the-tv) · Google Play | bản dựng 21 trên GitHub; trang Google Play cho TV đang được Google xét duyệt từ ngày 9 tháng 10 năm 2026 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP bản xem trước](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | bản dựng máy tính 2 trên Windows: ảnh và video phẳng, video 360° sắp có; macOS và Linux sau này, từ cùng mã nguồn |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP bản xem trước](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | bản dựng máy tính 3 trên Windows: ảnh, video phẳng và video 360°; macOS và Linux sau này |
 
 *Trạng thái được cập nhật ở mỗi bản phát hành; chi tiết xem ở [Tải ở đâu](#where-to-get-it).*
 
@@ -30,7 +30,7 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
 - 🌐 **360° tích hợp**<br>Ảnh và video dưới dạng hình cầu để bạn nhìn quanh, có con quay hồi chuyển, kể cả tệp thô của máy ảnh (Insta360 từ bản dựng 16, GoPro và DJI từ bản dựng 18). Kèm một trình phát video miễn phí: phẳng, 360°, 3D, VR180
 - 👓 **3D tích hợp**<br>360° và VR180 lập thể, trên/dưới hoặc cạnh nhau, và ảnh không gian của Apple (từ bản dựng 19): 3D thật trong kính, một mắt trên điện thoại
 - 🎥 **2.5D tích hợp**<br>Chiều sâu trên màn hình phẳng từ video lập thể, góc nhìn đi theo đầu bạn (thử nghiệm, điện thoại và máy tính bảng)
-- 📱 **Android, iOS, Quest, TV**<br>Một ứng dụng cho điện thoại, máy tính bảng và các kính Quest 2, Pro, 3 và 3S, 3D thật trong kính, từ bản dựng 20 trên Android TV với điều khiển từ xa, và một bản xem trước cho Windows với ảnh và video phẳng
+- 📱 **Android, iOS, Quest, TV**<br>Một ứng dụng cho điện thoại, máy tính bảng và các kính Quest 2, Pro, 3 và 3S, 3D thật trong kính, từ bản dựng 20 trên Android TV với điều khiển từ xa, và một bản xem trước cho Windows với ảnh, video phẳng và video 360°
 - 🔌 **Có hoặc không có máy chủ**<br>Máy chủ Immich của bạn, hoặc thư viện ảnh của chính điện thoại, không cần tài khoản
 - 🗄️ **Chia sẻ mạng**<br>Samba (SMB), WebDAV và, từ bản dựng 19, máy chủ đa phương tiện DLNA, được tìm thấy trên mạng và đọc trực tiếp, không tải gì về, và gửi lên Immich khi bạn chọn. Từ bản dựng 19, điện thoại còn chia sẻ thư viện ảnh của chính nó cho kính
 - 📺 **Trên TV**<br>Từ bản dựng 20, cùng một APK trên Android TV và Google TV: ảnh và video 360°, máy chủ và các chia sẻ của bạn, với điều khiển từ xa
@@ -84,7 +84,7 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
 - **"Tôi muốn xem ảnh và video 360° của mình, cùng video trên NAS hoặc máy chủ Plex, trên TV, bằng điều khiển từ xa."** Xem [Xem trên TV](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Tôi không tìm được ảnh 360° giữa mọi ảnh khác."** Xem [Danh sách 360°](#find-your-360-shots-the-360-list).
 - **"Video 360° của tôi bị giật, hoặc phát ra một bản mờ."** Xem [Chi tiết video và bộ giải mã](#video-details-decoders-and-why-a-video-stutters).
-- **"Tôi muốn có ảnh 360° và thư viện Immich trên máy tính Windows, cùng ảnh và video trong các thư mục của máy, NAS và máy chủ Plex của tôi, và chia sẻ máy tính với kính của tôi."** Xem [Trên máy tính Windows](#on-a-windows-computer-immuch360-desktop-preview) (bản xem trước: hiện có ảnh và video phẳng, video 360° sẽ có sau).
+- **"Tôi muốn có ảnh 360° và thư viện Immich trên máy tính Windows, cùng ảnh và video trong các thư mục của máy, NAS và máy chủ Plex của tôi, và chia sẻ máy tính với kính của tôi."** Xem [Trên máy tính Windows](#on-a-windows-computer-immuch360-desktop-preview) (bản xem trước: ảnh và video phẳng, và từ bản dựng máy tính 3 có video 360°, 3D, VR180, video 360° thô và xem trực tiếp Tapo).
 - **"Tôi có giữ được những gì ứng dụng Immich làm không?"** Có, với hai thay đổi nhỏ, xem [Mọi thứ khác là Immich](#everything-else-is-immich).
 
 Khi một tính năng còn mới, nội dung sẽ ghi rõ nó có từ bản dựng nào. Bản phát hành trên GitHub luôn có bản dựng mới nhất, các cửa hàng cập nhật sau: xem [Tải ở đâu](#where-to-get-it).
@@ -127,6 +127,7 @@ Tệp 360° đã ghép nối chạy ở mọi nơi: bản xuất từ ứng dụ
 
 Trình phát phát tệp lưu trên điện thoại, hoặc tệp của chia sẻ mạng, nếu có. Nếu không, nó phát trực tuyến từ máy chủ của bạn: mặc định là luồng đã chuyển mã, hoặc bản gốc nếu bạn chọn trong Cài đặt, Duyệt tài nguyên, Nguồn video (từ bản dựng 15; trước đó là công tắc "Ưu tiên chất lượng gốc"), xem [Chi tiết video và bộ giải mã](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### Tệp 360° hiện phẳng: Xem dạng 360°
 
 Một số tệp 360° không có thẻ phép chiếu, nên máy chủ không đánh dấu chúng là 360° và chúng hiện phẳng.
@@ -356,6 +357,7 @@ Từ bản dựng 20, Immuch360 thêm camera Tapo bên cạnh các chia sẻ m�
 8. Chạm "Kiểm tra camera". Ứng dụng hiển thị "Bản ghi: (mẫu), firmware (phiên bản)" cùng trạng thái thẻ nhớ, và "Hình ảnh trực tiếp: (video), âm thanh (audio)", hoặc phần nào bị lỗi cho từng mục.
 9. Chạm Lưu. Camera được liệt kê dưới "Camera", sau các chia sẻ, với mẫu camera khi đã biết và `tapo://` kèm địa chỉ của nó.
 
+<a id="watch-it-live"></a>
 ### Xem trực tiếp
 
 1. Chạm vào camera. Hình ảnh trực tiếp của nó ở đầu trang: "Đang kết nối với camera", rồi hình ảnh với huy hiệu Trực tiếp.
@@ -755,9 +757,9 @@ Bản dựng hiện tại, bản dựng 21 (phiên bản 3.3.0-rc.0, số bản 
 | Gửi tệp của chia sẻ lên Immich; tệp thiết bị gửi thủ công được tính là đã sao lưu | ❌ chỉ tệp thiết bị | ✅ từ bản dựng 15 |
 | Chia sẻ điện thoại này trên mạng, cho kính | ❌ | ✅ từ bản dựng 19, Android và iOS |
 | Thư viện Plex Media Server phát từ tệp gốc, ở nhà và khi đi xa, không cần plex.tv | ❌ | ✅ từ bản dựng 20, mọi trình xem, trên điện thoại, máy tính bảng, Quest và TV |
-| Camera Tapo: hình ảnh trực tiếp, và các bản ghi trên thẻ nhớ gửi lên Immich khi bạn chọn | ❌ | ✅ từ bản dựng 20: bản ghi ở mọi nơi, trực tiếp trên Android, Android TV và Quest |
+| Camera Tapo: hình ảnh trực tiếp, và các bản ghi trên thẻ nhớ gửi lên Immich khi bạn chọn | ❌ | ✅ từ bản dựng 20: bản ghi ở mọi nơi, trực tiếp trên Android, Android TV, Quest và, từ bản dựng máy tính 3, Windows |
 | Android TV và Google TV, điều khiển bằng điều khiển từ xa, trong cùng một APK | ❌ không phải ứng dụng TV | ✅ từ bản dựng 20 |
-| Cùng ứng dụng trên máy tính Windows | ❌ chỉ điện thoại và máy tính bảng | ✅ bản xem trước, ảnh và video phẳng |
+| Cùng ứng dụng trên máy tính Windows | ❌ chỉ điện thoại và máy tính bảng | ✅ bản xem trước: ảnh, video phẳng và video 360° (bản dựng máy tính 3) |
 | Ảnh thô Insta360 .insp và video .insv một luồng | ❌ phẳng | ✅ từ bản dựng 16 |
 | Video thô mỗi ống kính một luồng hoặc một tệp (Insta360 X4, X4 Air, X5, X6, cặp X3, GoPro .360, DJI .osv) | ❌ phẳng hoặc sai | ✅ từ bản dựng 18 |
 | .dng mắt cá kép | ❌ phẳng | ❌ chưa có |
@@ -787,7 +789,7 @@ Bản dựng hiện tại, bản dựng 21 (phiên bản 3.3.0-rc.0, số bản 
 - **Plex Media Server**: đã kiểm tra từ máy tính với một Plex Media Server 1.42.1 thật (ghép nối, thư mục, khoảng byte, ảnh thu nhỏ, địa chỉ bên ngoài nhà); chưa kiểm tra trên thiết bị.
 - **Camera Tapo**: đã kiểm tra với một camera mô phỏng; chưa kiểm tra với camera thật.
 - **Android TV và Google TV**: đã kiểm tra bằng các bài kiểm thử tự động; chưa kiểm tra trên TV.
-- **Cùng ứng dụng trên máy tính Windows**: 656 trong 663 bài kiểm thử tự động cho máy tính đạt trên Windows (7 bài được bỏ qua có chủ đích), và trên một PC Windows 11 ứng dụng khởi động, mở một phiên đã lưu trên máy chủ Immich, đồng bộ, phát một video và đóng gọn gàng; việc kiểm thử thủ công từng chức năng đang được tiến hành.
+- **Cùng ứng dụng trên máy tính Windows**: bản dựng máy tính 3 đạt 855 trong 863 bài kiểm thử tự động cho máy tính trên Windows (8 bài được bỏ qua có chủ đích) và toàn bộ bộ kiểm thử của ứng dụng; trên một PC Windows 11 ứng dụng khởi động, mở một phiên đã lưu trên máy chủ Immich, đồng bộ, phát một video và đóng gọn gàng, và trình phát 360° của nó đã được chạy với các đoạn video tổng hợp 4K, 5.7K và 8K trên cả hai chip đồ họa của một máy tính xách tay mà không bị sập lần nào. Việc kiểm thử thủ công từng chức năng, với các tệp 360° thật và một camera Tapo thật, đang được tiến hành.
 - **Ảnh thô Insta360 .insp và video .insv một luồng**: ảnh được so với bản xuất Insta360 Studio của tệp X3, video kiểm tra trên trình giả lập Android với tệp X3 độ phân giải thấp; chưa chạy trên iPhone.
 - **Video thô mỗi ống kính một luồng hoặc một tệp**: bộ phân tích và phần ghép nối đã kiểm tra trên tệp X4, cặp X3, GoPro MAX và Osmo 360 thật; việc phát là phần kiểm tra trên thiết bị của bản dựng 18 và 19.
 - **.dng mắt cá kép**: đã lên kế hoạch.
@@ -842,17 +844,19 @@ Immuch360 là một thư viện ảnh, và cũng là một trình phát đa phư
   - iPhone, iPad: trình phát SceneKit tích hợp trên hình cầu, con quay hồi chuyển, chọn bản âm thanh, chỉ báo bộ đệm; phát và tạm dừng, chưa có thanh thời gian.
   - Meta Quest: nhập vai, 3D thật cho tệp lập thể, thanh thời gian với bước tua 10 giây, nội dung trước và tiếp theo.
   - Android TV, Google TV: trình phát Media3 của điện thoại, xoay bằng phím mũi tên.
-  - Windows: chưa có, hiện hiển thị phẳng.
+  - Windows (từ bản dựng máy tính 3): trình phát 360° riêng của ứng dụng (libmpv), xoay bằng chuột hoặc phím mũi tên, thu phóng bằng con lăn, tua, chọn bản âm thanh, chỉ báo đang tải; mượt trên chip đồ họa rời, tối đa 2880 điểm ảnh chiều ngang và chậm hơn với 5.7K H.264 trên chip tích hợp.
 - **3D 360° (trên và dưới, cạnh nhau)**
   - Điện thoại Android: mắt trái, nút bố cục.
   - iPhone, iPad: tương tự.
   - Meta Quest: mỗi mắt nhận một nửa khung hình của riêng nó.
   - Android TV, Google TV: mắt trái, nút bố cục.
+  - Windows: ảnh như trên điện thoại; video từ bản dựng máy tính 3, mắt trái, nút bố cục, mượt trên chip đồ họa rời, có giới hạn trên chip tích hợp.
 - **Ảnh và video VR180 (nửa cầu)**
   - Điện thoại Android: nửa cầu, nút 360°/180°.
   - iPhone, iPad: tương tự.
   - Meta Quest: nửa cầu nhập vai.
   - Android TV, Google TV: nửa cầu, nút 360°/180°.
+  - Windows: ảnh như trên điện thoại; video từ bản dựng máy tính 3, nửa cầu, nút 360°/180°, mượt trên chip đồ họa rời, có giới hạn trên chip tích hợp.
 - **Spatial 2.5D (chiều sâu trên màn hình phẳng từ video lập thể)**
   - Điện thoại Android: trình phát tích hợp, theo dõi đầu bằng camera trước.
   - iPhone, iPad: tương tự.
@@ -878,16 +882,19 @@ Immuch360 là một thư viện ảnh, và cũng là một trình phát đa phư
   - iPhone, iPad: ghép nối bằng shader SceneKit.
   - Meta Quest: nhập vai, ghép nối bằng cùng hiệu ứng GPU.
   - Android TV, Google TV: như trên điện thoại.
+  - Windows (từ bản dựng máy tính 3): được ghép trên chip đồ họa trong trình phát 360° của ứng dụng, mượt trên chip rời, có giới hạn trên chip tích hợp.
 - **Video thô mỗi ống kính một luồng hoặc một tệp (từ bản dựng 18): Insta360 X4, X4 Air, X5, X6 .insv, cặp X3, GoPro .360, DJI .osv**
   - Điện thoại Android: hai bộ giải mã phần cứng cùng lúc, mỗi ống kính một bộ (từ bản dựng 19 là bộ giải mã phần mềm trên thiết bị không có bộ giải mã phần cứng, tối đa 2048x2048 mỗi ống kính), và một bộ tổng hợp GL ghép vào hình cầu; một ống kính, rồi luồng đã chuyển mã, rồi video chưa ghép, khi thiết bị không chạy được hai bộ.
   - iPhone, iPad: bộ tổng hợp AVFoundation tùy biến bằng Metal.
   - Meta Quest: nhập vai, cùng hai bộ giải mã và bộ tổng hợp (bảng 3840x1920).
   - Android TV, Google TV: như trên điện thoại, khi TV chạy được hai bộ giải mã cùng lúc.
+  - Windows (từ bản dựng máy tính 3): hai ống kính cạnh nhau trong một trình phát, rồi được ghép, khi máy tính theo kịp (đo trên chính lần phát của nó; trên máy tính xách tay thử nghiệm, một cặp X3 chỉ trên chip rời của máy); nếu không thì theo các bước của điện thoại: một ống kính, luồng đã chuyển mã, bản sao LRV độ phân giải thấp của máy ảnh, video chưa ghép.
 - **Hình ảnh trực tiếp của camera Tapo (từ bản dựng 20)**
   - Điện thoại Android: trình phát RTSP Media3: SD trên trang, HD khi toàn màn hình, nút âm thanh.
   - iPhone, iPad: chưa có: một thẻ cho biết tính năng sẽ có sau.
   - Meta Quest: trong cửa sổ, HD.
   - Android TV, Google TV: như trên điện thoại.
+  - Windows (từ bản dựng máy tính 3): trình phát libmpv, SD trên trang, HD khi toàn màn hình, nút âm thanh.
 - **Bản ghi của camera Tapo (từ bản dựng 20)**
   - Điện thoại Android: tải từ thẻ nhớ thành video H.264 có âm thanh, rồi phát và tua được.
   - iPhone, iPad: tương tự.
@@ -896,14 +903,14 @@ Immuch360 là một thư viện ảnh, và cũng là một trình phát đa phư
 
 Các mục Android TV và Google TV, từ bản dựng 20, chưa được kiểm tra trên TV, xem [Xem trên TV](#watch-on-your-tv-android-tv-and-google-tv); các mục về camera chưa được kiểm tra với camera thật.
 
-Trên Windows, bản xem trước Immuch360 Desktop hiển thị ảnh, phẳng và 360°, kể cả ảnh thô .insp của Insta360, bằng chuột và bàn phím, và từ bản dựng máy tính 2 nó phát video phẳng, từ máy chủ, các thư mục của máy tính, các chia sẻ, Plex và các bản ghi Tapo; video 360°, 3D, VR180 và video 360° thô hiện được hiển thị phẳng hoặc bằng một hình giữ chỗ (xem [Chưa có](#not-there-yet)).
+Trên Windows, bản xem trước Immuch360 Desktop hiển thị ảnh, phẳng và 360°, kể cả ảnh thô .insp của Insta360, bằng chuột và bàn phím. Từ bản dựng máy tính 2 nó phát video phẳng, từ máy chủ, các thư mục của máy tính, các chia sẻ, Plex và các bản ghi Tapo, và từ bản dựng máy tính 3 nó phát video 360°, 3D, VR180 và video 360° thô từ cùng các nguồn đó trong trình phát 360° riêng, cùng hình ảnh trực tiếp Tapo. Trình phát 360° mượt trên chip đồ họa rời và có giới hạn trên chip tích hợp (xem [Trên máy tính Windows](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Máy chủ Immich của bạn**: bản gốc hoặc luồng đã chuyển mã của máy chủ, theo Cài đặt, Duyệt tài nguyên, Nguồn video (xem [Chi tiết video và bộ giải mã](#video-details-decoders-and-why-a-video-stutters)). Cùng tài khoản với ứng dụng web.
 - **Chính điện thoại hoặc kính**: "Sử dụng không cần máy chủ" trên trang đăng nhập, hoặc mục Trên thiết bị này của thẻ Thư viện.
 - **NAS hoặc máy tính**: chia sẻ SMB và WebDAV, và từ bản dựng 19 là máy chủ đa phương tiện DLNA, được tìm thấy trên mạng, đọc trực tiếp (video SMB qua tối đa sáu kết nối), không sao chép gì; từ bản dựng 15, các tệp bạn chọn có thể gửi lên tài khoản Immich của bạn.
 - **Một điện thoại khác (từ bản dựng 19)**: "Chia sẻ điện thoại này trên mạng" trên điện thoại đó: kính, hoặc bất kỳ ứng dụng WebDAV nào trong mạng, đọc album, tháng và nội dung 360° của nó.
 - **Plex Media Server (từ bản dựng 20)**: các thư viện ảnh, phim và chương trình TV theo thư mục, các tệp gốc được đọc trực tiếp qua HTTPS và kiểm tra bằng chứng chỉ riêng của máy chủ, ở nhà hoặc qua địa chỉ bên ngoài nhà, trên mọi nền tảng; xem [Plex Media Server, không cần plex.tv](#plex-media-server-without-plextv).
-- **Camera Tapo (từ bản dựng 20)**: hình ảnh trực tiếp với tài khoản camera (Android, Android TV, Quest), và các bản ghi trên thẻ nhớ với mật khẩu tài khoản TP-Link (mọi nền tảng), chỉ trong mạng cục bộ; xem [Camera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Camera Tapo (từ bản dựng 20)**: hình ảnh trực tiếp với tài khoản camera (Android, Android TV, Quest, và Windows từ bản dựng máy tính 3), và các bản ghi trên thẻ nhớ với mật khẩu tài khoản TP-Link (mọi nền tảng), chỉ trong mạng cục bộ; xem [Camera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **Các thư mục của máy tính Windows (bản xem trước cho máy tính)**: các thư mục bạn chọn trong Immuch360 Desktop, được đọc thay cho thư viện ảnh của điện thoại; máy tính cũng có thể chia sẻ chúng với kính, xem [Trên máy tính Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Thư viện Immich của bạn nằm trên một máy chủ, những ảnh và v
 
 Trên máy tính, Immich cung cấp ứng dụng web chạy trong trình duyệt. **Những gì Immuch360 Desktop bổ sung**: các thư mục của PC mà không cần máy chủ hay tài khoản, các chia sẻ SMB, WebDAV, DLNA và Plex duyệt và phát ngay trong ứng dụng, ảnh thô .insp của Insta360 mở dưới dạng hình cầu, và PC được chia sẻ với Meta Quest trong nhà.
 
-Đây là bản xem trước: từ bản dựng máy tính 2, ảnh và video phẳng đã hoạt động; video 360°, 3D và VR180 sẽ có trong các bản dựng máy tính tiếp theo. Từ ngày 9 tháng 10 năm 2026, mã nguồn máy tính nằm trong nhánh chính của bản fork, `immuch360`, nên điện thoại, kính, TV và máy tính đều phát hành từ cùng mã nguồn. Các ứng dụng cho điện thoại, máy tính bảng, Quest và TV không thay đổi và vẫn mang tên Immuch360.
+Đây là bản xem trước: ảnh và video phẳng hoạt động từ bản dựng máy tính 2, và từ bản dựng máy tính 3 có trình phát video 360° (video 360°, 3D, VR180 và video 360° thô) cùng hình ảnh trực tiếp của camera Tapo; các bước bên dưới cần bản dựng 3 sẽ ghi rõ điều đó. Từ ngày 9 tháng 10 năm 2026, mã nguồn máy tính nằm trong nhánh chính của bản fork, `immuch360`, nên điện thoại, kính, TV và máy tính đều phát hành từ cùng mã nguồn. Các ứng dụng cho điện thoại, máy tính bảng, Quest và TV không thay đổi và vẫn mang tên Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Tải về và cài đặt trên Windows
 
-Bản dựng hiện tại là bản phát hành trước trên GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Tệp của nó là `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (khoảng 57 MB, 78 tệp sau khi giải nén, kể cả trình phát video và thư mục `licenses` của nó), kèm `SHA256SUMS.txt` để kiểm tra. Nó được dựng từ nhánh chính, `immuch360`, tại commit 5b723bd25: mã nguồn của bản dựng điện thoại 21 cộng với phiên bản máy tính. Cần Windows 10 hoặc 11, 64 bit.
+Bản dựng hiện tại là bản phát hành trước trên GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Tệp của nó là `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (khoảng 57 MB, 79 tệp sau khi giải nén, kể cả trình phát video và thư mục `licenses` của nó), kèm `SHA256SUMS.txt` để kiểm tra. Nó được dựng từ nhánh chính, `immuch360`, sau khi trình phát video 360° của máy tính được hợp nhất vào đó, tại commit mà ghi chú phát hành của nó nêu: mã nguồn của bản dựng điện thoại 21 cộng với phiên bản máy tính. Cần Windows 10 hoặc 11, 64 bit.
 
-1. Tải tệp ZIP về và giải nén ở bất kỳ đâu, ví dụ trong Documents.
-2. Chạy `immuch360.exe` từ thư mục đã giải nén. Giữ nguyên cả thư mục: chương trình cần các tệp nằm cạnh nó, kể cả trình phát video.
+1. Tải tệp ZIP về và giải nén ở bất kỳ đâu, ví dụ trong Documents. Để thay bản dựng máy tính 2, hãy xóa thư mục của nó hoặc giải nén vào một thư mục mới: thông tin đăng nhập, các thư mục và cài đặt của bạn nằm trong hồ sơ Windows của bạn, không nằm trong thư mục đó.
+2. Chạy `immuch360.exe` từ thư mục đã giải nén. Giữ nguyên cả thư mục: chương trình cần các tệp nằm cạnh nó, trong đó có `libmpv-2.dll`, trình phát video, và `immuch_desktop_video.dll`, tệp đọc các bộ giải mã của chip đồ họa.
 3. Các tệp chưa được ký, nên Windows SmartScreen có thể hiện "Windows protected your PC": chọn "More info", rồi "Run anyway". Nơi Smart App Control được bật, nó chặn các chương trình chưa ký.
 4. Chờ cửa sổ hiện ra. Lần khởi động đầu tiên của một bản dựng mới mất từ 10 giây đến khoảng một phút, nhiều khả năng do Microsoft Defender đang quét các tệp mới: đừng khởi động lại ứng dụng trong lúc đó. Các lần sau chỉ mất một hai giây.
 5. Trên trang đăng nhập, đăng nhập vào máy chủ Immich bằng địa chỉ, email và mật khẩu của bạn, hoặc nhấp "Sử dụng không cần máy chủ".
 
-Để kiểm tra tệp ZIP, chạy `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` trong cửa sổ dòng lệnh, tại thư mục chứa tệp tải về: kết quả trùng với giá trị ghi trong `SHA256SUMS.txt`. Chưa có trình cài đặt và chưa tự động cập nhật: hãy theo dõi trang [Releases](https://github.com/freeKC/Immuch360/releases), và giải nén bản dựng tiếp theo theo cùng cách.
+Để kiểm tra tệp ZIP, chạy `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` trong cửa sổ dòng lệnh, tại thư mục chứa tệp tải về: kết quả trùng với giá trị ghi trong `SHA256SUMS.txt`. Chưa có trình cài đặt và chưa tự động cập nhật: hãy theo dõi trang [Releases](https://github.com/freeKC/Immuch360/releases), và giải nén bản dựng tiếp theo theo cùng cách.
 
 ### Bản xem trước làm được gì
 
@@ -993,7 +1000,9 @@ Bản dựng hiện tại là bản phát hành trước trên GitHub [Immuch360
 - **Tải lên và sao lưu** từ các thư mục đó lên máy chủ Immich của bạn, trong khi ứng dụng đang mở.
 - **Ảnh 360° dưới dạng hình cầu**, bằng chuột và bàn phím; ảnh thô .insp của camera Insta360 mở được như trên điện thoại.
 - **Video phẳng** (từ bản dựng máy tính 2): video trong các thư mục của bạn, trên máy chủ Immich của bạn (bản gốc hoặc luồng đã chuyển mã, xem [Chi tiết video và bộ giải mã](#video-details-decoders-and-why-a-video-stutters)), trên các chia sẻ SMB, WebDAV và DLNA, trên máy chủ Plex và các bản ghi Tapo đều phát trong cửa sổ, với các nút điều khiển của điện thoại (phát, tạm dừng, thanh thời gian), một chỉ báo đang tải đệm, và một menu các bản âm thanh cho video có nhiều bản. Video trong các thư mục của bạn và trên các chia sẻ hiển thị một khung hình của video làm hình thu nhỏ, thay cho biểu tượng cuộn phim.
-- **Chia sẻ mạng**: Samba (SMB), WebDAV và máy chủ đa phương tiện DLNA, cùng máy chủ Plex không cần plex.tv, duyệt như trên điện thoại: ảnh của chúng mở được và video của chúng phát được. Với camera Tapo, các bản ghi trên thẻ nhớ: danh sách, tải một đoạn và phát nó.
+- **Video 360°, 3D và VR180** (từ bản dựng máy tính 3): nút 360° mở chúng trong trình phát 360° của ứng dụng, trong cửa sổ hoặc toàn màn hình, từ mọi nguồn của video phẳng, xoay bằng chuột và bàn phím, với các nút 3D và 360°/180° như trên điện thoại (một video 3D hiển thị mắt trái, như trên điện thoại), tua, menu bản âm thanh và chỉ báo đang tải.
+- **Video 360° thô** (từ bản dựng máy tính 3): các tệp Insta360 .insv, với hai ống kính trong một bản, trong hai bản (X4 trở về sau) hoặc trong hai tệp (cặp X3), các tệp GoPro .360 và DJI .osv, được ứng dụng ghép trên chip đồ họa trong khi phát, với thông số hiệu chỉnh của tệp, như trên điện thoại.
+- **Chia sẻ mạng**: Samba (SMB), WebDAV và máy chủ đa phương tiện DLNA, cùng máy chủ Plex không cần plex.tv, duyệt như trên điện thoại: ảnh của chúng mở được và video của chúng phát được. Với camera Tapo, các bản ghi trên thẻ nhớ: danh sách, tải một đoạn và phát nó; và từ bản dựng máy tính 3 là hình ảnh trực tiếp.
 - **Chia sẻ máy tính này trên mạng**: album, tháng và nội dung 360° trong các thư mục của bạn, chỉ đọc, cho Meta Quest hoặc thiết bị khác trong nhà, như một điện thoại tự chia sẻ.
 - **Tệp**: các tệp tải về từ máy chủ được lưu vào thư mục bạn chọn, "Lưu vào thư mục" giữ một bản sao các ảnh và video đã chọn, và trang Nhật ký có "Lưu nhật ký ra tệp".
 
@@ -1005,9 +1014,28 @@ Bản dựng hiện tại là bản phát hành trước trên GitHub [Immuch360
 4. **Chuyển từ ảnh này sang ảnh khác**: trong ảnh phẳng, mũi tên trái và phải, hoặc các dấu mũi tên hiện ở hai cạnh khi chuột di chuyển, đến ảnh trước và ảnh sau. Các chữ gõ trong ô mô tả vẫn nằm trong văn bản.
 5. **Phát một video**: mở nó từ dòng thời gian, một thư mục, một chia sẻ, Plex hoặc các bản ghi của camera Tapo; nó phát trong cửa sổ. Enter, hoặc phím phát và tạm dừng của bàn phím, tạm dừng và phát lại. Khi đang phát, mũi tên trái và phải, hoặc J và L, nhảy lùi hoặc tới 10 giây; khi tạm dừng, các mũi tên đến video trước và video sau. F hoặc F11 chuyển sang toàn màn hình, như với ảnh. Nút "Bản âm thanh" chọn giữa các bản âm thanh của video có nhiều bản.
 6. **Khi một video dừng**: video đang tạm dừng vẫn tạm dừng khi bạn quay lại cửa sổ. Một video bị ngắt trước khi hết, ví dụ khi chia sẻ hoặc máy chủ ngừng phản hồi, sẽ báo điều đó: mở lại và nó tiếp tục từ chỗ đã dừng, ở trạng thái tạm dừng. Tệp danh sách phát tìm thấy trong một thư mục hoặc một chia sẻ không được làm theo.
-7. **Chia sẻ máy tính với kính**: mở Thư viện, rồi Chia sẻ mạng; ô đầu tiên là "Chia sẻ máy tính này trên mạng", phía máy tính của [Chia sẻ điện thoại này trên mạng](#share-this-phone-on-the-network). Bật "Chia sẻ ảnh và video trên mạng", rồi thêm máy tính trong kính như phần đó hướng dẫn. Việc chia sẻ dừng khi ứng dụng bị đóng hoặc sau một giờ không sử dụng.
-8. **Cho phép mạng**: Windows có thể hỏi Immuch360 Desktop có được dùng mạng không. Hãy cho phép trên mạng riêng tư, nếu không kính sẽ không tìm thấy máy tính. Trên mạng Windows đánh dấu là công cộng (quán cà phê, khách sạn), hoặc mạng mà nó không xác định được loại, việc chia sẻ không bắt đầu trừ khi bạn chọn "Chia sẻ cho phiên này", và máy tính chỉ tự công bố trên mạng mà nó chia sẻ.
-9. **Cài đặt, "Máy tính này"**: các thư mục, thư mục tải về, bộ điều hợp mạng dùng để tìm chia sẻ và chia sẻ máy tính (khi máy có nhiều bộ, ví dụ Wi-Fi và Ethernet), và các chứng chỉ tin cậy: tổ chức cấp chứng chỉ của máy chủ riêng của bạn, dưới dạng tệp PEM, cho một địa chỉ HTTPS mà Windows không tự tin cậy. Chứng chỉ máy khách được nhập trong Cài đặt, Nâng cao, như trên điện thoại.
+7. **Phát một video 360°** (từ bản dựng máy tính 3): mở video và nhấp 360° trên thanh trên cùng, như trên điện thoại; với một tệp 360° mà máy chủ không đánh dấu, trước hết chọn "Xem dạng 360°" trong menu ⋮, xem [Tệp 360° hiện phẳng](#a-360-file-that-shows-flat-view-as-360). Trình phát 360° mở trong cửa sổ. Kéo chuột để nhìn xung quanh (khung nhìn tiếp tục xoay một chút sau một cú kéo nhanh), thu phóng bằng con lăn, + và - hoặc Page Up và Page Down, xoay bằng cách giữ các phím mũi tên. Space, hoặc phím phát và tạm dừng của bàn phím, tạm dừng và phát lại; J và L lùi hoặc tiến 10 giây; Home quay về đầu; M tắt và bật âm thanh. F, F11 hoặc nhấp đúp chuyển sang toàn màn hình; Escape thoát toàn màn hình, rồi đóng trình phát. Các nút điều khiển (đóng, tiêu đề, 360°/180°, 3D, bản âm thanh và toàn màn hình ở trên; phát, lùi và tiến 10 giây, thanh thời gian và âm thanh ở dưới) ẩn cùng con trỏ chuột sau 3 giây phát, và hiện lại khi chuột di chuyển hoặc khi nhấn một phím; Tab chuyển từ nút này sang nút tiếp theo.
+8. **3D và VR180**: trong trình phát 360°, nút 3D lần lượt chuyển "Mono (không phải 3D)", "3D, trên và dưới" và "3D, cạnh nhau", và nút 360°/180° chuyển giữa toàn bộ hình cầu và nửa cầu của VR180, như trong [3D và VR180](#3d-and-vr180-photos-and-videos). Một video 3D hiển thị mắt trái.
+9. **Video 360° thô** (từ bản dựng máy tính 3): mở tệp thô và nhấp 360°, như trên điện thoại, xem [Tệp thô của máy ảnh 360°](#raw-360-camera-files-without-the-cameras-app); giữ hai tệp của một cặp X3 cùng nhau. Một tệp có hai ống kính trong một bản được ghép trong khi phát. Một tệp có một ống kính cho mỗi bản hoặc mỗi tệp phát hai ống kính cạnh nhau trong một trình phát khi máy tính theo kịp: vài giây đầu của video như vậy được đo, và kết quả được giữ cho các video cùng loại tiếp theo (một cách bị thấy quá chậm sẽ được thử lại sau 14 ngày). Khi máy tính không theo kịp, trình phát đi qua các bước của điện thoại, với các thông báo của chúng: một ống kính, nửa hình cầu màu đen; luồng đã chuyển mã của máy chủ; bản sao LRV độ phân giải thấp mà máy ảnh ghi cạnh tệp, nếu có; video chưa ghép. Video thô không có nút 3D và nút 360°/180°.
+10. **Hình ảnh trực tiếp của camera Tapo** (từ bản dựng máy tính 3): mở camera như trên điện thoại, xem [Xem trực tiếp](#watch-it-live). Trang phát luồng SD và chế độ toàn màn hình phát luồng HD, với các nút của điện thoại trên hình: âm thanh, ban đầu tắt, SD hoặc HD, và "Toàn màn hình". Một luồng bị mất (camera khởi động lại, Wi-Fi rớt) tự quay lại, được thử lại trong khoảng một phút rưỡi trong khi hình cuối cùng vẫn ở trên màn hình. Một tài khoản camera bị camera từ chối sẽ được báo và không được thử lại, vì các lần đăng nhập thất bại được tính vào việc khóa camera.
+11. **Chia sẻ máy tính với kính**: mở Thư viện, rồi Chia sẻ mạng; ô đầu tiên là "Chia sẻ máy tính này trên mạng", phía máy tính của [Chia sẻ điện thoại này trên mạng](#share-this-phone-on-the-network). Bật "Chia sẻ ảnh và video trên mạng", rồi thêm máy tính trong kính như phần đó hướng dẫn. Việc chia sẻ dừng khi ứng dụng bị đóng hoặc sau một giờ không sử dụng.
+12. **Cho phép mạng**: Windows có thể hỏi Immuch360 Desktop có được dùng mạng không. Hãy cho phép trên mạng riêng tư, nếu không kính sẽ không tìm thấy máy tính. Trên mạng Windows đánh dấu là công cộng (quán cà phê, khách sạn), hoặc mạng mà nó không xác định được loại, việc chia sẻ không bắt đầu trừ khi bạn chọn "Chia sẻ cho phiên này", và máy tính chỉ tự công bố trên mạng mà nó chia sẻ.
+13. **Cài đặt, "Máy tính này"**: các thư mục, thư mục tải về, bộ điều hợp mạng dùng để tìm chia sẻ và chia sẻ máy tính (khi máy có nhiều bộ, ví dụ Wi-Fi và Ethernet), và các chứng chỉ tin cậy: tổ chức cấp chứng chỉ của máy chủ riêng của bạn, dưới dạng tệp PEM, cho một địa chỉ HTTPS mà Windows không tự tin cậy. Chứng chỉ máy khách được nhập trong Cài đặt, Nâng cao, như trên điện thoại.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### Video 360° và chip đồ họa
+
+Trong trình phát 360° (từ bản dựng máy tính 3), chip đồ họa vẽ khung nhìn bạn đang nhìn từ mỗi khung hình của video. Plugin video để libmpv vẽ mỗi khung hình vào một hình có kích thước đã chọn, rồi lượt vẽ riêng của ứng dụng vẽ từ đó phần hình cầu bạn đang nhìn. Xoay khung nhìn chỉ thay đổi một giá trị của lượt vẽ đó, không phải trình phát: kéo chuột không tốn bộ nhớ, và một video đang tạm dừng xoay mà không cần giải mã gì.
+
+Ứng dụng đo vài giây đầu của mỗi video 360° và chọn khung hình lớn đến đâu để chip xử lý: toàn bộ khung hình trên chip rời, tối đa 2880 điểm ảnh chiều ngang trên chip tích hợp trong bộ xử lý (Windows cho ứng dụng biết đó là loại nào, nên chip Intel Arc của máy tính xách tay Core Ultra được tính là tích hợp), nhỏ hơn một bậc khi chip không theo kịp. Những gì nó đo được giữ cho các video cùng loại tiếp theo (codec, kích thước, tốc độ khung hình và bộ giải mã), không phải cho mọi video.
+
+Khi ngay cả bậc nhỏ nhất cũng không mượt, trình phát báo "Card đồ họa này không thể hiển thị mượt khung nhìn 360° của video này"; khi còn xa mới mượt, hoặc khi chip hoàn toàn không vẽ được khung nhìn (không có OpenGL ES 3.0, trình điều khiển từ chối nó), video được phát phẳng và trình phát cho biết lý do. Một video đã phát phẳng sẽ không bị phát phẳng lần sau: video tiếp theo cùng loại được đo lại.
+
+Khi thứ không theo kịp là việc giải mã một video của máy chủ, không phải việc vẽ (một video do bộ xử lý giải mã, như 5.7K H.264), trình phát chuyển sang luồng đã chuyển mã của máy chủ từ đúng chỗ đang phát, với thông báo của điện thoại: "Đang phát luồng đã chuyển mã: bản gốc (codec và kích thước) vượt quá khả năng giải mã của thiết bị này".
+
+- **Dùng chip đồ họa rời của máy tính xách tay.** Windows chạy ứng dụng trên chip tích hợp trừ khi được chỉ định khác. Trong cài đặt Windows, Hệ thống, Màn hình, Đồ họa, thêm `immuch360.exe` và chọn "Hiệu suất cao", rồi khởi động lại ứng dụng. Trên máy tính xách tay thử nghiệm (một chip Intel UHD và một NVIDIA RTX 4060 Laptop), chip NVIDIA vẽ các video 360° 4K, 5.7K và 8K ở kích thước đầy đủ và 30 khung hình mỗi giây trong khi khung nhìn xoay. Chip Intel vẽ chúng tối đa 2880 điểm ảnh chiều ngang: một video 4K H.264 và một video 8K HEVC ở khoảng 30 khung hình mỗi giây với một bản dựng libmpv năm 2026, một video 4K ở 23 đến 27 với libmpv năm 2024 của media-kit (xem [Chưa có](#not-there-yet)), và một video 5.7K H.264, do bộ xử lý giải mã, ở khoảng 20: nếu từ máy chủ, trình phát khi đó chuyển sang luồng đã chuyển mã; một video không có luồng đã chuyển mã, ví dụ từ một thư mục, tiếp tục phát với thông báo "Card đồ họa này không thể hiển thị mượt khung nhìn 360° của video này".
+- **Tự chọn bộ kết xuất.** Trong Cài đặt, Nâng cao, bật "Xử lý sự cố": một mục "Bộ kết xuất video 360°" xuất hiện, mặc định là "Tự động". Nó cũng có "Plugin, kích thước đầy đủ", "Plugin, tối đa 4096 chiều ngang", "Plugin, tối đa 2880 chiều ngang" và "Phẳng, không có khung nhìn 360°", cho video 360° tiếp theo bạn mở. Bên dưới, "Lần đo gần nhất" nêu kích thước mà video 360° gần nhất được vẽ, số khung hình mỗi giây, chip đồ họa và bộ giải mã: hãy sao chép nó vào báo cáo lỗi. Chọn lại "Tự động", kể cả khi nó đang được chọn, sẽ xóa những gì đã đo, và các video 360° tiếp theo được đo lại.
+- **Chip giải mã được gì.** Cài đặt, Nâng cao, "Bộ giải mã video của thiết bị này" liệt kê những gì chip đồ họa đang dùng giải mã được, theo báo cáo của Direct3D 11, và ứng dụng hiệu chỉnh danh sách đó bằng những gì nó đo được khi phát: cài đặt "Nguồn video" và việc kiểm tra hai ống kính của video thô dựa theo nó. H.264 rộng hơn 4096 điểm ảnh (5.7K của máy ảnh 360°) được bộ xử lý giải mã, vì không chip nào của máy tính xách tay thử nghiệm nhận nó.
 
 ### So với các ứng dụng điện thoại
 
@@ -1017,12 +1045,16 @@ Bản dựng hiện tại là bản phát hành trước trên GitHub [Immuch360
 - **Không có gì bị xóa khỏi thư mục của bạn**: "Xóa khỏi thiết bị" bị ẩn, và Xóa chỉ gỡ bản trên máy chủ, cho đến khi ứng dụng có thể chuyển tệp vào thùng rác của Windows.
 - **Chuột và bàn phím** thay cho cảm ứng và con quay hồi chuyển.
 - **Một trình phát video cho mọi nguồn**: libmpv phát video của máy chủ, thư mục, chia sẻ và Plex như nhau, và trình phát phẳng của nó đã có menu bản âm thanh mà trình phát phẳng của điện thoại chưa có.
+- **Video 360° trong cửa sổ** (từ bản dựng máy tính 3): trình phát 360° là một trang của ứng dụng, không phải một trình phát gốc riêng, với thanh thời gian, nút nhảy 10 giây và nút âm thanh. Video thô có một ống kính cho mỗi bản hoặc mỗi tệp được xếp cạnh nhau trong một trình phát, nơi điện thoại chạy hai bộ giải mã; các bước dự phòng của điện thoại vẫn như vậy, với bản sao LRV của máy ảnh được thêm vào trước video chưa ghép.
+- **Xem trực tiếp Tapo** (từ bản dựng máy tính 3) phát trên máy tính như trên Android, trong khi iPhone và iPad chưa có.
 
 <a id="not-there-yet"></a>
 ### Chưa có
 
-- **Video 360°, 3D, VR180 và video 360° thô**: hiện được hiển thị phẳng, đúng như tệp chứa chúng (toàn bộ hình cầu trải phẳng, hai mắt cạnh nhau, hoặc các hình tròn của ống kính), hoặc bằng một hình giữ chỗ, và nút 360° vẫn chỉ dành cho ảnh. Trình phát của chúng sẽ có trong các bản dựng máy tính tiếp theo.
-- **Spatial 2.5D**, sau này với webcam; **xem trực tiếp Tapo**; **bản đồ** và chế độ xem Địa điểm; **đăng nhập bằng OAuth** (thay vào đó hãy đăng nhập bằng email và mật khẩu); **Google Cast**; **thông báo**.
+- **libmpv do chính bản fork dựng**: các tệp ZIP mang libmpv năm 2024 của media-kit cho đến khi bản dựng riêng của bản fork được bật, và `BUILD-INFO.txt` trong tệp ZIP cho biết nó mang bản nào. Với bản 2024, hai ống kính của một video thô có một ống kính cho mỗi bản hoặc mỗi tệp không bao giờ phát cùng lúc (nó thiếu bộ lọc xếp chúng cạnh nhau), nên các video đó hiển thị một ống kính, nửa hình cầu màu đen; và chip đồ họa sao chép từng khung hình ngược lại từ bộ giải mã của nó, làm chậm trình phát 360° trên chip tích hợp. libmpv từ quy trình riêng của bản fork, một phiên bản năm 2026, dự kiến thay thế nó trước bản phát hành công khai đầu tiên; một bản dựng libmpv năm 2026 đã thử trên máy tính xách tay thử nghiệm làm được cả hai việc.
+- **Video thô hai ống kính trên máy tính xách tay**: ngay cả với libmpv năm 2026, máy tính xách tay thử nghiệm chỉ xếp được một cặp X3 (hai tệp H.264 2880x2880) ở 30 khung hình mỗi giây trên chip NVIDIA; trên chip Intel, và với một tệp X4 (hai bản HEVC 3840x3840) trên cả hai chip, video phát một ống kính, nửa hình cầu màu đen, như trên một điện thoại không chạy được hai bộ giải mã.
+- **3D chỉ trên màn hình**: một video 3D hiển thị mắt trái, như trên điện thoại; trên máy tính không có con quay hồi chuyển và không có khung nhìn của kính. Để xem 3D thật, hãy chia sẻ máy tính với một Meta Quest.
+- **Spatial 2.5D**, sau này với webcam; **bản đồ** và chế độ xem Địa điểm; **đăng nhập bằng OAuth** (thay vào đó hãy đăng nhập bằng email và mật khẩu); **Google Cast**; **thông báo**.
 - **Trình cài đặt, bản dựng được ký và cập nhật tự động**: bản dựng này là một thư mục chứa `immuch360.exe`.
 - **Linux và macOS**: dự án của chúng có trong mã nguồn, nhưng chưa được dựng hay thử trên các hệ thống đó, và trình phát video của chúng chưa có trong đó; chúng sẽ đến sau Windows.
 - **Bản dịch**: các văn bản mới của phiên bản máy tính hiện chỉ có tiếng Anh.
@@ -1030,10 +1062,11 @@ Bản dựng hiện tại là bản phát hành trước trên GitHub [Immuch360
 ### Vấn đề đã biết
 
 - **Lần khởi động đầu tiên của một bản dựng mới chậm**: từ 10 giây đến khoảng một phút trước khi cửa sổ hiện ra, nhiều khả năng do Microsoft Defender đang quét các tệp mới, vốn chưa được ký. Hãy chờ cửa sổ thay vì khởi động lại ứng dụng; các lần sau chỉ mất một hai giây.
-- **Video 8K HEVC cần chip đồ họa rời**: trên máy tính xách tay thử nghiệm, chip tích hợp Intel UHD chỉ hiển thị khoảng một nửa số khung hình của một video 8K HEVC, trong khi chip rời NVIDIA phát 8K HEVC và 5.7K H.264 không rớt khung hình nào. Windows chạy ứng dụng trên chip tích hợp trừ khi được chỉ định khác: trong cài đặt Windows, Hệ thống, Màn hình, Đồ họa, thêm `immuch360.exe` và chọn "Hiệu suất cao". Trên chip tích hợp, một video 5.7K H.264, bị bộ giải mã của chip từ chối, được bộ xử lý giải mã mà không mất khung hình nào.
-- **Video được vẽ cao tối đa 1440 dòng**, rồi được co giãn theo cửa sổ: trên màn hình 4K ở chế độ toàn màn hình, một video 4K hoặc 8K hơi kém sắc nét hơn trong một trình phát video chuyên dụng. Điều này giữ video 8K trong khả năng đồ họa của một máy tính xách tay.
+- **Video 8K HEVC cần chip đồ họa rời, và video 360° chạy tốt hơn trên chip đó**: trên máy tính xách tay thử nghiệm, chip tích hợp Intel UHD chỉ hiển thị khoảng một nửa số khung hình của một video 8K HEVC, trong khi chip rời NVIDIA phát 8K HEVC và 5.7K H.264 không rớt khung hình nào; trình phát 360° mượt trên chip NVIDIA và chậm hơn trên chip Intel, xem [Video 360° và chip đồ họa](#360-videos-and-the-graphics-chip). Windows chạy ứng dụng trên chip tích hợp trừ khi được chỉ định khác: trong cài đặt Windows, Hệ thống, Màn hình, Đồ họa, thêm `immuch360.exe` và chọn "Hiệu suất cao", rồi khởi động lại ứng dụng. Trên chip tích hợp, một video phẳng 5.7K H.264, bị bộ giải mã của chip từ chối, được bộ xử lý giải mã mà không mất khung hình nào.
+- **Video phẳng được vẽ cao tối đa 1440 dòng**, rồi được co giãn theo cửa sổ: trên màn hình 4K ở chế độ toàn màn hình, một video 4K hoặc 8K hơi kém sắc nét hơn trong một trình phát video chuyên dụng. Điều này giữ video 8K trong khả năng đồ họa của một máy tính xách tay. Trình phát 360° thì làm việc trên toàn bộ khung hình, hoặc trên kích thước nhỏ hơn mà phép đo của nó đã chọn.
 - **Khi một video trong thư mục của bạn đang phát trong ứng dụng, hoặc khi kính đang đọc một tệp từ máy tính được chia sẻ** (một video nó đang phát, một ảnh nó đang tải về), Windows không thể đổi tên, di chuyển hay xóa tệp đó và báo rằng tệp đang mở trong Immuch360 Desktop: hãy đóng video, hoặc dừng phát trong kính, trước. Việc sao lưu không giữ tệp của bạn theo cách đó: một tệp vẫn có thể được đổi tên, di chuyển hoặc xóa trong khi đang tải lên.
-- **Những chỗ chưa trơn tru**: 656 trong 663 bài kiểm thử cho máy tính đạt trên Windows (7 bài được bỏ qua có chủ đích), 200 trình phát mở lần lượt không để lại rò rỉ nào, và trên một PC Windows 11 ứng dụng khởi động, mở một phiên đã lưu trên máy chủ Immich, đồng bộ, phát một video và đóng gọn gàng. Việc kiểm thử thủ công từng chức năng trên một PC thật vẫn đang được tiến hành.
+- **Những chỗ chưa trơn tru**: bản dựng máy tính 3 đạt 855 trong 863 bài kiểm thử cho máy tính trên Windows (8 bài được bỏ qua có chủ đích) và toàn bộ bộ kiểm thử của ứng dụng, 200 trình phát mở lần lượt không để lại rò rỉ nào, và tệp ZIP phát hành của nó khởi động, phát một đoạn video thử và đóng gọn gàng. Việc kiểm thử thủ công từng chức năng trên một PC thật vẫn đang được tiến hành.
+- **Trình phát 360° và hình ảnh trực tiếp đã được kiểm tra với gì**: trình phát 360° đã được chạy với các đoạn video 360° tổng hợp 4K, 5.7K và 8K trên cả hai chip đồ họa của một máy tính xách tay (mở, phát, xoay khi đang phát và khi tạm dừng, đóng) mà không bị sập và không làm trình điều khiển đồ họa khởi động lại lần nào. Video thô hai ống kính đã được phát từ các đoạn video tổng hợp và từ các tệp X3 và X4 thật. Hình ảnh trực tiếp Tapo đã được kiểm tra với một máy chủ RTSP thử nghiệm đăng nhập theo cách của camera (Digest), bị cắt và từ chối có chủ đích, không có mật khẩu trong bất kỳ dòng nhật ký nào, nhưng chưa với một camera thật. Việc kiểm thử thủ công, với các tệp 360° và 3D thật, cả hai màn hình của một máy tính xách tay, ngủ và thức dậy, và một camera thật, vẫn còn ở phía trước.
 
 Nếu có gì trục trặc, xin hãy mở một [issue](https://github.com/freeKC/Immuch360/issues) kèm nhật ký được lưu từ trang Nhật ký, xem [Nhật ký](#logs). Hãy kiểm tra nhật ký trước khi chia sẻ: nó có thể chứa địa chỉ máy chủ của bạn.
 
@@ -1052,7 +1085,7 @@ Bạn cần Windows 10 hoặc 11 trên x64, Flutter 3.47.2 cho Windows, Visual S
    mise run codegen
    ```
 
-2. Trên Windows, trong cùng thư mục `mobile`, dựng ứng dụng. Lần dựng đầu tiên tải các thư viện của trình phát video (libmpv và ANGLE) từ GitHub và kiểm tra từng tệp nén bằng SHA-256 của nó:
+2. Trên Windows, trong cùng thư mục `mobile`, dựng ứng dụng. Lần dựng đầu tiên tải các thư viện của trình phát video (libmpv và ANGLE) từ GitHub và kiểm tra từng tệp nén bằng SHA-256 của nó; nó cũng biên dịch plugin Direct3D 11 nhỏ đọc các bộ giải mã của chip đồ họa, `immuch_desktop_video`, với cùng workload C++:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Bạn cần Windows 10 hoặc 11 trên x64, Flutter 3.47.2 cho Windows, Visual S
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-CI của Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) chạy trên nhánh `desktop`, nhánh đi theo `immuch360`: các bước kiểm tra của điện thoại (không có gì thay đổi trong các bản dựng điện thoại) và toàn bộ bộ kiểm thử trên Linux, các bài kiểm thử máy tính trên Windows, và cùng tệp ZIP; các job Linux và macOS của nó (`flutter build linux` và `flutter build macos`, với cùng `-t lib/main_desktop.dart`) chưa chạy trên các hệ thống đó.
+CI của Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) chạy trên nhánh `desktop`, nhánh đi theo `immuch360`: các bước kiểm tra của điện thoại (không có gì thay đổi trong các bản dựng điện thoại) và toàn bộ bộ kiểm thử trên Linux, các bài kiểm thử máy tính trên Windows, và cùng tệp ZIP, rồi trên bản dựng đó là các bài kiểm thử cần libmpv và ANGLE của nó (đăng nhập của hình ảnh trực tiếp Tapo, những gì một tệp video không được mở, các shader 360°); job Linux của nó dựng ứng dụng trên Ubuntu và job macOS của nó biên dịch ứng dụng với Xcode 26.3 và macOS 26 SDK (cả hai với cùng `-t lib/main_desktop.dart`), chỉ để kiểm tra biên dịch: chưa cái nào được khởi chạy trên các hệ thống đó. Một quy trình thứ hai (`.github/workflows/immuch360-libmpv.yml`) dựng lại libmpv cho Windows x64 và arm64 từ mã nguồn được ghim phiên bản và công bố các tệp nén kèm SHA-256 của chúng; các tệp ZIP vẫn mang tệp nén của media-kit cho đến khi bản dựng đó được bật, nên các giới hạn của libmpv năm 2024 trong [Chưa có](#not-there-yet) cũng áp dụng cho bản dựng của riêng bạn.
 
 <a id="where-to-get-it"></a>
 ## Tải ở đâu
@@ -1088,8 +1121,8 @@ CI của Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) chạy tr
   - Hiện nay: bản phổ thông `Immuch360-v<version>-release.apk` trên trang [Releases](https://github.com/freeKC/Immuch360/releases), cài thủ công bằng adb, xem [Cài đặt trên TV](#install-it-on-the-tv). Đây là cùng một ứng dụng như trên điện thoại.
   - Sắp tới: Google Play trên TV, với trang cho TV đang được Google xét duyệt từ ngày 9 tháng 10 năm 2026.
 - **Windows 10 và 11, 64 bit (bản xem trước)**
-  - Hiện nay: Immuch360 Desktop, tệp ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` của [bản phát hành trước cho máy tính](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), giải nén và chạy như [Tải về và cài đặt trên Windows](#download-and-install-on-windows) hướng dẫn. Hiện có ảnh và video phẳng: video 360°, 3D và VR180 sẽ có trong các bản dựng máy tính tiếp theo.
-  - Sắp tới: video 360°, 3D, VR180 và video 360° thô; trình cài đặt, bản dựng được ký và cập nhật sẽ đến sau.
+  - Hiện nay: Immuch360 Desktop, bản dựng máy tính 3, tệp ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` của [bản phát hành trước cho máy tính](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), giải nén và chạy như [Tải về và cài đặt trên Windows](#download-and-install-on-windows) hướng dẫn. Ảnh, video phẳng, video 360°, 3D, VR180 và video 360° thô (mượt trên chip đồ họa rời, có giới hạn trên chip tích hợp) và xem trực tiếp Tapo.
+  - Sắp tới: Spatial 2.5D với webcam, rồi Linux và macOS; trình cài đặt, bản dựng được ký và cập nhật sẽ đến sau.
 
 Liên kết App Store và Meta Horizon Store sẽ được thêm vào đây ngay khi các trang được phát hành. Đăng nhập bằng URL máy chủ Immich và tài khoản quen thuộc của bạn, hoặc chạm "Sử dụng không cần máy chủ" trên trang đăng nhập để bắt đầu với ảnh và video của chính thiết bị. APK tải từ GitHub không tự cập nhật: hãy theo dõi trang Releases, và khi bạn đã cài ứng dụng từ một cửa hàng, hãy nhận cập nhật từ cửa hàng đó.
 
@@ -1126,7 +1159,7 @@ Không có bí mật nào nằm trong kho mã này: khóa ký Android được l
 
 - **`main`**: Immich `main` tại commit mà `immuch360` dựa trên (ngày 29 tháng 9 năm 2026 cho các bản dựng hiện tại), không bao giờ bị sửa đổi; nhánh này tiến lên khi bản fork được rebase lên Immich mới hơn.
 - **`immuch360`**: các thay đổi của bản fork này trên nền Immich, bao gồm Immuch360 Desktop từ ngày 9 tháng 10 năm 2026. Mỗi bản phát hành ghi rõ nó dựa trên phiên bản Immich nào.
-- **`desktop`**: nơi Immuch360 Desktop, phiên bản máy tính, được phát triển trên nền `immuch360`, cho đến khi được hợp nhất vào đó ngày 9 tháng 10 năm 2026 để điện thoại, kính, TV và máy tính đều phát hành từ cùng mã nguồn. Giờ nó đi theo `immuch360` và mang các thẻ của bản phát hành trước cho máy tính ([bản dựng máy tính 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) từ commit 21f285c34, [bản dựng máy tính 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) từ 5b723bd25). Phiên bản máy tính không thay đổi gì trong `mobile/android` và `mobile/ios`.
+- **`desktop`**: nơi Immuch360 Desktop, phiên bản máy tính, được phát triển trên nền `immuch360`, cho đến khi được hợp nhất vào đó ngày 9 tháng 10 năm 2026 để điện thoại, kính, TV và máy tính đều phát hành từ cùng mã nguồn. Giờ nó đi theo `immuch360` và mang các thẻ của bản phát hành trước cho máy tính ([bản dựng máy tính 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) từ commit 21f285c34, [bản dựng máy tính 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) từ 5b723bd25, [bản dựng máy tính 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) từ lần hợp nhất trình phát video 360° ngày 10 tháng 10 năm 2026). Công việc mới cho máy tính đến đó trước và nhập vào `immuch360` cùng với bản dựng máy tính phát hành nó. Phiên bản máy tính không thay đổi gì trong `mobile/android` và `mobile/ios`.
 
 <a id="logs"></a>
 ## Nhật ký
@@ -1145,7 +1178,7 @@ Từ bản dựng 19, ứng dụng DLNA, chia sẻ điện thoại và việc nh
 
 Trên máy tính (Immuch360 Desktop), trang Nhật ký còn có "Lưu nhật ký ra tệp": nhật ký, hoặc một tệp ZIP gồm nhật ký và các báo cáo về những lần sập gần nhất khi có (khi đó tên gợi ý kết thúc bằng "with-crash-reports"). Một báo cáo sập là một minidump nhỏ: các luồng, nơi chúng dừng lại và chỉ những gì cần để lần theo các lời gọi của chúng, với tên các tệp chương trình nhưng không có thư mục của chúng; không phải bộ nhớ của ứng dụng.
 
-Từ bản dựng máy tính 2, trình phát video của máy tính ghi vào đó dưới `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` và `VideoThumbnailGrabber`, kể cả các cảnh báo riêng của mpv, với token và mật khẩu đã được loại bỏ. Hãy kiểm tra nhật ký trước khi chia sẻ: nó có thể chứa địa chỉ máy chủ của bạn.
+Từ bản dựng máy tính 2, trình phát video của máy tính ghi vào đó dưới `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` và `VideoThumbnailGrabber`, kể cả các cảnh báo riêng của mpv, với token và mật khẩu đã được loại bỏ. Từ bản dựng máy tính 3, nó cũng ghi trình phát 360° dưới `SphericalPlayer`, `SphereRenderer` và `PluginRenderer` (kích thước đã chọn, số khung hình mỗi giây đo được, chip đồ họa), video thô hai ống kính dưới `RawTwoStreams`, các bộ giải mã của chip đồ họa dưới `DesktopGpuDecoders`, `DesktopVideoDecoderApi` và `DecoderMeasure`, và hình ảnh trực tiếp Tapo dưới `DesktopCameraLive`, các dòng của nó không bao giờ chứa tài khoản camera hay mật khẩu của tài khoản đó. Hãy kiểm tra nhật ký trước khi chia sẻ: nó có thể chứa địa chỉ máy chủ của bạn.
 
 <a id="privacy"></a>
 ## Quyền riêng tư
@@ -1159,7 +1192,7 @@ Từ bản dựng máy tính 2, trình phát video của máy tính ghi vào đ�
 - **Chia sẻ điện thoại**: chỉ mạng cục bộ, có tên người dùng và mật khẩu, qua HTTP thường (xem [Chia sẻ điện thoại này trên mạng](#share-this-phone-on-the-network)).
 - **Camera**: chỉ trình phát Spatial 2.5D dùng, trên thiết bị; hình ảnh không bao giờ được lưu và không gửi đi đâu.
 - **Trên máy tính** (Immuch360 Desktop, bản xem trước cho Windows): ứng dụng chỉ đọc các thư mục bạn chọn, giữ chỉ mục, hình thu nhỏ và bộ nhớ đệm trên máy tính, và lưu mật khẩu và token bằng cơ chế bảo vệ dữ liệu của Windows, chỉ dành cho tài khoản Windows của bạn. Việc chia sẻ máy tính tuân theo các quy tắc của việc chia sẻ điện thoại, và không bắt đầu trên mạng Windows đánh dấu là công cộng, hoặc mạng mà nó không xác định được loại, trừ khi bạn đồng ý.
-- **Trình phát video trên máy tính** (từ bản dựng máy tính 2): video trên máy chủ của bạn đến trình phát qua ứng dụng, nên trình phát không bao giờ giữ token phiên của bạn, và những gì nó đọc trước nằm trong bộ nhớ, không nằm trên ổ đĩa. Nó chỉ mở đúng tệp được giao: một tệp trong thư mục hoặc chia sẻ mà thực chất là danh sách phát hoặc mô tả luồng không khiến nó kết nối đến nơi nào khác.
+- **Trình phát video trên máy tính** (từ bản dựng máy tính 2): video trên máy chủ của bạn đến trình phát qua ứng dụng, nên trình phát không bao giờ giữ token phiên của bạn, và những gì nó đọc trước nằm trong bộ nhớ, không nằm trên ổ đĩa. Nó chỉ mở đúng tệp được giao: một tệp trong thư mục hoặc chia sẻ mà thực chất là danh sách phát hoặc mô tả luồng không khiến nó kết nối đến nơi nào khác. Từ bản dựng máy tính 3, địa chỉ của mỗi video chỉ được trao cho trình phát trong bộ nhớ, không bao giờ qua một tệp tạm (liên kết mà ứng dụng tạo cho một video của máy chủ hoặc của một chia sẻ chứa một khóa của phiên đó, khóa này từng nằm trên ổ đĩa vài giây mỗi lần mở trong bản dựng máy tính 2), và khóa đó không bao giờ xuất hiện trong nhật ký; hình ảnh trực tiếp của camera Tapo trao tài khoản camera cho trình phát theo cùng cách, không bao giờ trong một tệp hay một dòng nhật ký, và chỉ trao đổi với camera trong mạng cục bộ; các số đo của trình phát 360° và của các bộ giải mã (chip đồ họa, định dạng video, số khung hình mỗi giây, không bao giờ là tên tệp) nằm trong thư mục của ứng dụng trên máy tính.
 
 Chính sách đầy đủ có trong [PRIVACY.md](../PRIVACY.md).
 
@@ -1177,7 +1210,7 @@ Android, Android TV và Google TV là nhãn hiệu của Google LLC; Apple, iPho
 
 Những gì chưa làm, việc nhiều khả năng nhất đứng trước. Không có gì ở đây là lời hứa, và phản hồi trên [trình theo dõi vấn đề](https://github.com/freeKC/Immuch360/issues) giúp quyết định việc gì làm trước.
 
-- **Immuch360 Desktop, Windows trước**: bản dựng máy tính 2 đã ra mắt, với video phẳng, và mã nguồn máy tính nằm trong nhánh chính của bản fork, `immuch360`, từ ngày 9 tháng 10 năm 2026 (xem [Trên máy tính Windows](#on-a-windows-computer-immuch360-desktop-preview)). Tiếp theo là video 360°, 3D, VR180 và video 360° thô trên Windows, với hai ống kính của tệp thô và xem trực tiếp Tapo; rồi kiểm thử từng chức năng trên một PC Windows và các bản sửa lỗi; rồi Spatial 2.5D với webcam; rồi Linux và macOS, gói cài đặt, ký số và cập nhật.
+- **Immuch360 Desktop, Windows trước**: bản dựng máy tính 3 đã ra mắt, với trình phát video 360° (video 360°, 3D, VR180 và video 360° thô, hai ống kính của tệp thô, kích thước khung nhìn được đo trên từng máy tính) và xem trực tiếp Tapo, và mã nguồn máy tính nằm trong nhánh chính của bản fork, `immuch360`, từ ngày 9 tháng 10 năm 2026 (xem [Trên máy tính Windows](#on-a-windows-computer-immuch360-desktop-preview)). Tiếp theo là libmpv từ quy trình riêng của bản fork thay cho bản năm 2024, và kiểm thử thủ công từng chức năng trên một PC Windows với tệp thật, cả hai màn hình và một camera thật, cùng các bản sửa lỗi; rồi Spatial 2.5D với webcam; rồi Linux và macOS; rồi trình cài đặt, bản dựng được ký và cập nhật tự động.
 - **Google Play**: bản dựng 20 đã phát hành từ ngày 7 tháng 10 năm 2026, thay cho bản dựng 18; trang cho TV đang được Google xét duyệt từ ngày 9 tháng 10 năm 2026. Bản dựng 21 không thay đổi gì trên điện thoại và máy tính bảng.
 - **App Store**: phiên bản 3.3.0 đang chờ Apple xét duyệt; nó có các tính năng của bản dựng 11, nên tải lên Immich và kiểm tra bộ giải mã video (bản dựng 15) cùng tệp thô Insta360 (bản dựng 16) sẽ có trong bản cập nhật App Store tiếp theo. Liên kết sẽ được thêm vào đây khi phát hành.
 - **Meta Horizon Store**: Meta đã duyệt trang ngày 7 tháng 10 năm 2026 với bản dựng 14. Bản dựng 21 đã được gửi làm bản cập nhật đầu tiên: nó mang đến mọi thứ kể từ bản dựng 14 (tải lên Immich từ một chia sẻ, nguồn video chọn theo những gì kính giải mã được, tệp thô Insta360, GoPro và DJI, DLNA, chia sẻ từ điện thoại, ảnh không gian Apple, thư viện Plex Media Server, camera Tapo), và cửa hàng đăng ký nó cho Quest 2, Quest Pro, Quest 3 và 3S. Liên kết cửa hàng sẽ được thêm vào đây khi trang được công khai; bản cài thủ công phải được gỡ trước (xem [Cài đặt ứng dụng](#install)).

@@ -15,13 +15,13 @@ Je určena těm, kdo fotí 360° kamerou (Insta360, GoPro MAX, DJI Osmo 360, Ric
 
 <div align="center">
 
-| Platforma | Kde aplikaci získat | Stav k 9. říjnu 2026 |
+| Platforma | Kde aplikaci získat | Stav k 10. říjnu 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**, telefony a tablety | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 na Google Play od 7. října 2026, build 21 na GitHubu |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone a iPad** | App Store | verze 3.3.0 čeká na schválení společností Apple; mezitím [sestavení vlastními silami](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 a 3S | [APK](#meta-quest-3) · Horizon Store | záznam schválen, build 21 ve schvalování u společnosti Meta |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV a Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 na GitHubu; záznam na Google Play pro televize je ve schvalování u Googlu od 9. října 2026 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Předběžný ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | desktopový build 2 na Windows: fotky a plochá videa, 360° videa jako další; macOS a Linux později, ze stejných zdrojů |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Předběžný ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | desktopový build 3 na Windows: fotky, plochá a 360° videa; macOS a Linux později |
 
 *Stavy se aktualizují s každým vydáním; podrobnosti jsou v části [Kde aplikaci získat](#where-to-get-it).*
 
@@ -30,7 +30,7 @@ Je určena těm, kdo fotí 360° kamerou (Insta360, GoPro MAX, DJI Osmo 360, Ric
 - 🌐 **Nativní 360°**<br>Fotky a videa jako koule, ve které se rozhlížíte, s gyroskopem, včetně nezpracovaných souborů z kamery (Insta360 od buildu 16, GoPro a DJI od buildu 18). K tomu bezplatný přehrávač videa: ploché, 360°, 3D, VR180
 - 👓 **Nativní 3D**<br>Stereoskopické 360° a VR180, nahoře/dole nebo vedle sebe, a prostorové fotky Apple (od buildu 19): skutečné 3D v headsetu, jedno oko na telefonu
 - 🎥 **Nativní 2.5D**<br>Hloubka na plochém displeji ze stereoskopického videa, pohled sleduje vaši hlavu (experimentální, telefony a tablety)
-- 📱 **Android, iOS, Quest, TV**<br>Jedna aplikace na telefonech, tabletech a v headsetech Quest 2, Pro, 3 a 3S, skutečné 3D v headsetu, od buildu 20 na Android TV s dálkovým ovladačem a předběžná verze pro Windows s fotkami a plochými videi
+- 📱 **Android, iOS, Quest, TV**<br>Jedna aplikace na telefonech, tabletech a v headsetech Quest 2, Pro, 3 a 3S, skutečné 3D v headsetu, od buildu 20 na Android TV s dálkovým ovladačem a předběžná verze pro Windows s fotkami, plochými a 360° videi
 - 🔌 **Se serverem i bez něj**<br>Váš server Immich, nebo vlastní galerie telefonu, bez účtu
 - 🗄️ **Síťová úložiště**<br>Samba (SMB), WebDAV a od buildu 19 mediální servery DLNA, nalezené v síti a čtené živě, nic se nestahuje, a odeslané do Immich, kdy se rozhodnete. Od buildu 19 telefon také sdílí svou vlastní galerii s headsetem
 - 📺 **Na televizi**<br>Od buildu 20 stejné APK na Android TV a Google TV: 360° fotky a videa, váš server a vaše sdílení, s dálkovým ovladačem
@@ -84,7 +84,7 @@ Je určena těm, kdo fotí 360° kamerou (Insta360, GoPro MAX, DJI Osmo 360, Ric
 - **„Chci sledovat své 360° fotky a videa a videa ze svého NAS nebo serveru Plex na televizi, s dálkovým ovladačem.“** Viz [Sledování na televizi](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Nemohu najít své 360° záběry mezi všemi ostatními.“** Viz [Seznam 360°](#find-your-360-shots-the-360-list).
 - **„Moje 360° video se trhá nebo přehrává rozmazanou kopii.“** Viz [Podrobnosti o videu a dekodéry](#video-details-decoders-and-why-a-video-stutters).
-- **„Chci své 360° fotky a svou knihovnu Immich na svém počítači s Windows, s fotkami a videi z jeho složek, z mého NAS a z mého serveru Plex, a počítač sdílený s mým headsetem.“** Viz [Na počítači s Windows](#on-a-windows-computer-immuch360-desktop-preview) (předběžná verze: zatím fotky a plochá videa, 360° videa později).
+- **„Chci své 360° fotky a svou knihovnu Immich na svém počítači s Windows, s fotkami a videi z jeho složek, z mého NAS a z mého serveru Plex, a počítač sdílený s mým headsetem.“** Viz [Na počítači s Windows](#on-a-windows-computer-immuch360-desktop-preview) (předběžná verze: fotky a plochá videa a od desktopového buildu 3 také 360°, 3D, VR180 a surová 360° videa a živý náhled Tapo).
 - **„Zůstane mi vše, co umí aplikace Immich?“** Ano, se dvěma malými změnami, viz [Vše ostatní je Immich](#everything-else-is-immich).
 
 Když je funkce nová, text uvádí, od kterého buildu je k dispozici. Vydání na GitHubu má vždy nejnovější build, obchody s aplikacemi následují později: viz [Kde aplikaci získat](#where-to-get-it).
@@ -127,6 +127,7 @@ Spojené 360° soubory fungují všude: exporty z aplikace Insta360 nebo ze Stud
 
 Přehrávač přehrává soubor uložený v telefonu nebo soubor ze síťového úložiště, pokud existuje. Jinak streamuje z vašeho serveru: ve výchozím stavu překódovaný stream, nebo originál, pokud o něj požádáte v Nastavení, Prohlížeč, Zdroj videa (od buildu 15; dříve přepínačem „Vynutit původní video“), viz [Podrobnosti o videu a dekodéry](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### 360° soubor, který se zobrazuje plochý: Zobrazit jako 360°
 
 Některé 360° soubory nenesou značku projekce, takže je server neoznačí jako 360° a zobrazují se plochě.
@@ -356,6 +357,7 @@ Od buildu 20 přidává Immuch360 kameru Tapo vedle síťových úložišť. Zob
 8. Klepněte na „Otestovat kameru“. Ukáže „Záznamy: (model), firmware (verze)“ se stavem paměťové karty a „Živý obraz: (video), zvuk (audio)“, nebo co u kterého selhalo.
 9. Klepněte na Uložit. Kamera se zobrazí pod „Kamery“, za sdíleními, se svým modelem, jakmile je znám, a `tapo://` se svou adresou.
 
+<a id="watch-it-live"></a>
 ### Živé sledování
 
 1. Klepněte na kameru. Její živý obraz je nahoře na její stránce: „Připojování ke kameře“, pak obraz se štítkem Živě.
@@ -755,9 +757,9 @@ Aktuální build, build 21 (verze 3.3.0-rc.0, číslo buildu 3030019), vychází
 | Odeslání souborů ze sdílení do Immich; ručně odeslané soubory zařízení se počítají jako zálohované | ❌ jen soubory zařízení | ✅ od buildu 15 |
 | Sdílení tohoto telefonu v síti, pro headset | ❌ | ✅ od buildu 19, Android a iOS |
 | Knihovny Plex Media Serveru přehrávané z původních souborů, doma i mimo domov, bez plex.tv | ❌ | ✅ od buildu 20, všechny prohlížeče, na telefonech, tabletech, Questu a televizích |
-| Kamery Tapo: živý obraz a záznamy z paměťové karty odeslané do Immich, když se rozhodnete | ❌ | ✅ od buildu 20: záznamy všude, živě na Androidu, Android TV a Questu |
+| Kamery Tapo: živý obraz a záznamy z paměťové karty odeslané do Immich, když se rozhodnete | ❌ | ✅ od buildu 20: záznamy všude, živě na Androidu, Android TV, Questu a od desktopového buildu 3 ve Windows |
 | Android TV a Google TV, ovládané dálkovým ovladačem, ve stejném APK | ❌ není aplikace pro televizi | ✅ od buildu 20 |
-| Stejná aplikace na počítači s Windows | ❌ jen telefony a tablety | ✅ předběžná verze, fotky a plochá videa |
+| Stejná aplikace na počítači s Windows | ❌ jen telefony a tablety | ✅ předběžná verze: fotky, plochá a 360° videa (desktopový build 3) |
 | Nezpracované fotky Insta360 .insp a videa .insv s jednou stopou | ❌ ploché | ✅ od buildu 16 |
 | Nezpracovaná videa s jedním objektivem na stopu nebo na soubor (Insta360 X4, X4 Air, X5, X6, dvojice X3, GoPro .360, DJI .osv) | ❌ ploché nebo chybné | ✅ od buildu 18 |
 | Duální fisheye .dng | ❌ ploché | ❌ zatím ne |
@@ -787,7 +789,7 @@ Aktuální build, build 21 (verze 3.3.0-rc.0, číslo buildu 3030019), vychází
 - **Plex Media Server**: ověřeno z počítače proti skutečnému Plex Media Serveru 1.42.1 (párování, složky, rozsahy bajtů, náhledy, adresa mimo domov); zatím neověřeno v zařízení.
 - **Kamery Tapo**: ověřeno proti simulované kameře; zatím neověřeno se skutečnou kamerou.
 - **Android TV a Google TV**: ověřeno automatickými testy; zatím neověřeno na televizi.
-- **Stejná aplikace na počítači s Windows**: 656 z 663 automatických desktopových testů ve Windows prochází (7 záměrně přeskočeno) a na počítači s Windows 11 se aplikace spustí, otevře uloženou relaci na serveru Immich, synchronizuje, přehraje video a čistě se zavře; ruční test každé funkce probíhá.
+- **Stejná aplikace na počítači s Windows**: desktopový build 3 projde ve Windows 855 ze svých 863 automatických desktopových testů (8 záměrně přeskočeno) i celou sadou testů aplikace; na počítači s Windows 11 se aplikace spustí, otevře uloženou relaci na serveru Immich, synchronizuje, přehraje video a čistě se zavře a její 360° přehrávač běžel se syntetickými klipy 4K, 5,7K a 8K na obou grafických čipech notebooku bez pádu. Ruční test každé funkce se skutečnými 360° soubory a skutečnou kamerou Tapo probíhá.
 - **Nezpracované fotky Insta360 .insp a videa .insv s jednou stopou**: fotky ověřeny proti exportům souborů X3 z Insta360 Studia, videa na emulátoru Androidu se souborem X3 v nízkém rozlišení; na iPhonu zatím neběželo.
 - **Nezpracovaná videa s jedním objektivem na stopu nebo na soubor**: parsery a spojování ověřeny na skutečných souborech X4, dvojice X3, GoPro MAX a Osmo 360; přehrávání je testem na zařízeních pro buildy 18 a 19.
 - **Duální fisheye .dng**: plánováno.
@@ -842,17 +844,19 @@ Immuch360 je galerie a zároveň bezplatný přehrávač médií: přehraje to, 
   - iPhone, iPad: nativní přehrávač SceneKit na kouli, gyroskop, výběr zvukové stopy, ukazatel načítání; přehrát a pozastavit, zatím bez ukazatele průběhu.
   - Meta Quest: imerzivní, skutečné 3D u stereoskopických souborů, ukazatel průběhu se skoky o 10 sekund, předchozí a další médium.
   - Android TV, Google TV: přehrávač Media3 z telefonů, otáčený šipkami.
-  - Windows: zatím ne, prozatím zobrazeno plošně.
+  - Windows (od desktopového buildu 3): vlastní 360° přehrávač aplikace (libmpv), otáčení myší nebo šipkami, přibližování kolečkem, posun v čase, výběr zvukové stopy, ukazatel načítání; plynulé na samostatném grafickém čipu, na integrovaném nejvýše 2880 pixelů na šířku a pomalejší u 5,7K H.264.
 - **3D 360° (nahoře a dole, vedle sebe)**
   - Telefony s Androidem: levé oko, tlačítko rozložení.
   - iPhone, iPad: stejně.
   - Meta Quest: každé oko dostane svou vlastní polovinu snímku.
   - Android TV, Google TV: levé oko, tlačítko rozložení.
+  - Windows: fotky jako na telefonech; videa od desktopového buildu 3, levé oko, tlačítko rozložení, plynulá na samostatném grafickém čipu, s omezeními na integrovaném.
 - **VR180 (polokoule) fotky a videa**
   - Telefony s Androidem: polokoule, tlačítko 360°/180°.
   - iPhone, iPad: stejně.
   - Meta Quest: imerzivní polokoule.
   - Android TV, Google TV: polokoule, tlačítko 360°/180°.
+  - Windows: fotky jako na telefonech; videa od desktopového buildu 3, polokoule, tlačítko 360°/180°, plynulá na samostatném grafickém čipu, s omezeními na integrovaném.
 - **Spatial 2.5D (hloubka na plochém displeji ze stereoskopického videa)**
   - Telefony s Androidem: nativní přehrávač, sledování hlavy přední kamerou.
   - iPhone, iPad: stejně.
@@ -878,16 +882,19 @@ Immuch360 je galerie a zároveň bezplatný přehrávač médií: přehraje to, 
   - iPhone, iPad: spojeno shaderem SceneKit.
   - Meta Quest: imerzivní, spojeno stejným efektem GPU.
   - Android TV, Google TV: jako na telefonech.
+  - Windows (od desktopového buildu 3): spojeno na grafickém čipu v 360° přehrávači aplikace, plynulé na samostatném čipu, s omezeními na integrovaném.
 - **Nezpracovaná videa s jedním objektivem na stopu nebo na soubor (od buildu 18): Insta360 X4, X4 Air, X5, X6 .insv, dvojice X3, GoPro .360, DJI .osv**
   - Telefony s Androidem: dva hardwarové dekodéry současně, jeden na objektiv (od buildu 19 softwarové na zařízení bez hardwarového dekodéru, až 2048x2048 na objektiv), a kompozitor GL, který spojuje do koule; jeden objektiv, pak překódovaný stream, pak nespojené video, když zařízení dva nezvládne.
   - iPhone, iPad: vlastní kompozitor AVFoundation s Metalem.
   - Meta Quest: imerzivní, stejné dva dekodéry a kompozitor (panel 3840x1920).
   - Android TV, Google TV: jako na telefonech, pokud televize zvládne dva dekodéry najednou.
+  - Windows (od desktopového buildu 3): oba objektivy vedle sebe v jednom přehrávači, pak spojené, když počítač stačí (měřeno na jeho vlastním přehrávání; na testovacím notebooku pár X3 jen na jeho samostatném čipu); jinak kroky telefonů: jeden objektiv, překódovaný stream, kopie LRV kamery v nízkém rozlišení, nespojené video.
 - **Živý obraz kamery Tapo (od buildu 20)**
   - Telefony s Androidem: přehrávač Media3 RTSP: SD na stránce, HD na celé obrazovce, tlačítko zvuku.
   - iPhone, iPad: zatím ne: karta říká, že přijde později.
   - Meta Quest: v okně, v HD.
   - Android TV, Google TV: jako na telefonech.
+  - Windows (od desktopového buildu 3): přehrávač libmpv, SD na stránce, HD na celé obrazovce, tlačítko zvuku.
 - **Záznamy kamery Tapo (od buildu 20)**
   - Telefony s Androidem: stažené z paměťové karty do videa H.264 se zvukem, pak přehrávané s přetáčením.
   - iPhone, iPad: stejně.
@@ -896,14 +903,14 @@ Immuch360 je galerie a zároveň bezplatný přehrávač médií: přehraje to, 
 
 Položky pro Android TV a Google TV, od buildu 20, zatím nebyly ověřeny na televizi, viz [Sledování na televizi](#watch-on-your-tv-android-tv-and-google-tv); položky kamery zatím nebyly ověřeny se skutečnou kamerou.
 
-Ve Windows zobrazuje předběžná verze Immuch360 Desktop fotky, ploché i 360°, včetně surových fotek Insta360 .insp, s myší a klávesnicí, a od desktopového buildu 2 přehrává plochá videa, ze serveru, ze složek počítače, ze sdílení, z Plexu a ze záznamů Tapo; 360°, 3D, VR180 a surová 360° videa se zatím zobrazují plošně nebo jako zástupný obrázek (viz [Ještě není hotovo](#not-there-yet)).
+Ve Windows zobrazuje předběžná verze Immuch360 Desktop fotky, ploché i 360°, včetně surových fotek Insta360 .insp, s myší a klávesnicí. Od desktopového buildu 2 přehrává plochá videa, ze serveru, ze složek počítače, ze sdílení, z Plexu a ze záznamů Tapo, a od desktopového buildu 3 přehrává 360°, 3D, VR180 a surová 360° videa ze stejných zdrojů ve vlastním 360° přehrávači a také živý náhled Tapo. 360° přehrávač je plynulý na samostatném grafickém čipu a má omezení na integrovaném (viz [Na počítači s Windows](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Váš server Immich**: originál nebo překódovaný stream serveru, podle nastavení Nastavení, Prohlížeč, Zdroj videa (viz [Podrobnosti o videu a dekodéry](#video-details-decoders-and-why-a-video-stutters)). Stejný účet jako webová aplikace.
 - **Samotný telefon nebo headset**: „Použít bez serveru“ na přihlašovací stránce, nebo položka V tomto zařízení na kartě Knihovna.
 - **NAS nebo počítač**: sdílení SMB a WebDAV a od buildu 19 mediální servery DLNA, nalezené v síti, čtené živě (video přes SMB až přes šest připojení), nic se nekopíruje; od buildu 15 lze vybrané soubory odeslat do vašeho účtu Immich.
 - **Jiný telefon (od buildu 19)**: „Sdílet tento telefon v síti“ na tom telefonu: headset nebo jakýkoli klient WebDAV v síti čte jeho alba, měsíce a 360° média.
 - **Plex Media Server (od buildu 20)**: jeho knihovny fotek, filmů a seriálů podle složek, původní soubory čtené živě přes HTTPS ověřené proti vlastnímu certifikátu serveru, doma nebo přes adresu mimo domov, na všech platformách; viz [Plex Media Server bez plex.tv](#plex-media-server-without-plextv).
-- **Kamera Tapo (od buildu 20)**: živý obraz s účtem kamery (Android, Android TV, Quest) a záznamy z její paměťové karty s heslem účtu TP-Link (všechny platformy), jen v místní síti; viz [Kamery Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Kamera Tapo (od buildu 20)**: živý obraz s účtem kamery (Android, Android TV, Quest a od desktopového buildu 3 Windows) a záznamy z její paměťové karty s heslem účtu TP-Link (všechny platformy), jen v místní síti; viz [Kamery Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **Složky počítače s Windows (předběžná desktopová verze)**: složky, které zvolíte v Immuch360 Desktop, čtené místo galerie telefonu; počítač je také může sdílet s headsetem, viz [Na počítači s Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Vaše knihovna Immich je na serveru, další fotky a videa leží ve složkách 
 
 Na počítači nabízí Immich svou webovou aplikaci v prohlížeči. **Co Immuch360 Desktop přidává**: složky počítače bez serveru a bez účtu, sdílení SMB, WebDAV, DLNA a Plex procházená a přehrávaná z aplikace, surové fotky Insta360 .insp otevřené jako koule a počítač sdílený s Meta Quest doma.
 
-Jde o předběžnou verzi: od desktopového buildu 2 fungují fotky a plochá videa; 360°, 3D a VR180 videa přijdou s dalšími desktopovými buildy. Od 9. října 2026 jsou desktopové zdroje v hlavní větvi forku, `immuch360`, takže telefony, headsety, televize i počítače vycházejí ze stejných zdrojů. Aplikace pro telefon, tablet, Quest a televizi se tím nemění a zachovávají si název Immuch360.
+Jde o předběžnou verzi: fotky a plochá videa fungují od desktopového buildu 2 a od desktopového buildu 3 také 360° přehrávač videa (360°, 3D, VR180 a surová 360° videa) a živý náhled kamer Tapo; kroky níže, které build 3 potřebují, to uvádějí. Od 9. října 2026 jsou desktopové zdroje v hlavní větvi forku, `immuch360`, takže telefony, headsety, televize i počítače vycházejí ze stejných zdrojů. Aplikace pro telefon, tablet, Quest a televizi se tím nemění a zachovávají si název Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Stažení a instalace ve Windows
 
-Aktuální build je předběžné vydání na GitHubu [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Jeho soubor je `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (asi 57 MB, 78 souborů po rozbalení, včetně přehrávače videa a jeho složky `licenses`), s `SHA256SUMS.txt` pro kontrolu. Byl sestaven z hlavní větve, `immuch360`, v commitu 5b723bd25: zdroje telefonního buildu 21 plus verze pro počítač. Potřebuje Windows 10 nebo 11, 64 bitů.
+Aktuální build je předběžné vydání na GitHubu [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Jeho soubor je `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (asi 57 MB, 79 souborů po rozbalení, včetně přehrávače videa a jeho složky `licenses`), s `SHA256SUMS.txt` pro kontrolu. Byl sestaven z hlavní větve, `immuch360`, poté co do ní byl sloučen 360° přehrávač videa pro počítač, v commitu, který uvádějí jeho poznámky k vydání: zdroje telefonního buildu 21 plus verze pro počítač. Potřebuje Windows 10 nebo 11, 64 bitů.
 
-1. Stáhněte ZIP a rozbalte ho kamkoli, například do Dokumentů.
-2. Spusťte `immuch360.exe` z rozbalené složky. Ponechte složku celou: program potřebuje soubory vedle sebe, včetně přehrávače videa.
+1. Stáhněte ZIP a rozbalte ho kamkoli, například do Dokumentů. Chcete-li nahradit desktopový build 2, smažte jeho složku nebo rozbalte do nové: vaše přihlášení, vaše složky a vaše nastavení zůstávají ve vašem profilu Windows, ne v té složce.
+2. Spusťte `immuch360.exe` z rozbalené složky. Ponechte složku celou: program potřebuje soubory vedle sebe, mezi nimi `libmpv-2.dll`, přehrávač videa, a `immuch_desktop_video.dll`, který čte dekodéry grafického čipu.
 3. Soubory zatím nejsou podepsané, takže Windows SmartScreen může zobrazit „Systém Windows ochránil váš počítač“: zvolte „Další informace“, pak „Přesto spustit“. Kde je zapnuté Inteligentní řízení aplikací, blokuje nepodepsané programy.
 4. Počkejte na okno. První spuštění nového buildu trvá od 10 sekund do zhruba minuty, nejspíš během toho, co Microsoft Defender kontroluje nové soubory: mezitím aplikaci znovu nespouštějte. Další spuštění trvají sekundu nebo dvě.
 5. Na přihlašovací stránce se přihlaste ke svému serveru Immich jeho adresou, svým e-mailem a heslem, nebo klikněte na „Použít bez serveru“.
 
-Pro kontrolu ZIPu spusťte `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` v příkazovém řádku ve složce se staženým souborem: výsledek je ten, který je zapsán v `SHA256SUMS.txt`. Zatím není instalátor ani automatická aktualizace: sledujte stránku [Releases](https://github.com/freeKC/Immuch360/releases) a další build rozbalte stejným způsobem.
+Pro kontrolu ZIPu spusťte `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` v příkazovém řádku ve složce se staženým souborem: výsledek je ten, který je zapsán v `SHA256SUMS.txt`. Zatím není instalátor ani automatická aktualizace: sledujte stránku [Releases](https://github.com/freeKC/Immuch360/releases) a další build rozbalte stejným způsobem.
 
 ### Co předběžná verze umí
 
@@ -993,7 +1000,9 @@ Pro kontrolu ZIPu spusťte `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desk
 - **Nahrávání a zálohování** z těchto složek na váš server Immich, dokud je aplikace otevřená.
 - **360° fotky jako koule**, s myší a klávesnicí; surové fotky .insp z kamer Insta360 se otevírají jako na telefonech.
 - **Plochá videa** (od desktopového buildu 2): videa z vašich složek, z vašeho serveru Immich (originál nebo překódovaný stream, viz [Podrobnosti o videu a dekodéry](#video-details-decoders-and-why-a-video-stutters)), ze sdílení SMB, WebDAV a DLNA, ze serverů Plex a záznamy Tapo se přehrávají v okně, s ovládáním jako na telefonech (přehrát, pozastavit, časový pruh), indikátorem načítání a nabídkou zvukových stop u videa, které jich má více. Videa z vašich složek a ze sdílení mají jako náhled snímek z videa místo ikony filmu.
-- **Síťová úložiště**: mediální servery Samba (SMB), WebDAV a DLNA a servery Plex bez plex.tv, procházené jako na telefonech: jejich fotky se otevírají a jejich videa se přehrávají. U kamer Tapo záznamy z paměťové karty: seznam, stažení klipu a jeho přehrání.
+- **360°, 3D a VR180 videa** (od desktopového buildu 3): tlačítko 360° je otevře v 360° přehrávači aplikace, v okně nebo na celé obrazovce, ze všech zdrojů plochých videí, s otáčením myší a klávesnicí, s tlačítky 3D a 360°/180° jako na telefonech (3D video ukazuje levé oko, jako na telefonech), posunem v čase, nabídkou zvukových stop a ukazatelem načítání.
+- **Surová 360° videa** (od desktopového buildu 3): soubory Insta360 .insv, s oběma objektivy v jedné stopě, ve dvou stopách (X4 a novější) nebo ve dvou souborech (páry X3), soubory GoPro .360 a DJI .osv, spojované aplikací na grafickém čipu během přehrávání, s kalibrací souboru, jako na telefonech.
+- **Síťová úložiště**: mediální servery Samba (SMB), WebDAV a DLNA a servery Plex bez plex.tv, procházené jako na telefonech: jejich fotky se otevírají a jejich videa se přehrávají. U kamer Tapo záznamy z paměťové karty: seznam, stažení klipu a jeho přehrání; a od desktopového buildu 3 živý obraz.
 - **Sdílet tento počítač v síti**: alba, měsíce a 360° média z vašich složek, jen pro čtení, pro Meta Quest nebo jiné zařízení doma, tak jako se sdílí telefon.
 - **Soubory**: stažené soubory ze serveru jdou do složky, kterou zvolíte, „Uložit do složky“ uchová kopii vybraných fotek a videí a stránka Logy má „Uložit logy do souboru“.
 
@@ -1005,9 +1014,28 @@ Pro kontrolu ZIPu spusťte `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desk
 4. **Z fotky na fotku**: v ploché fotce přejdou šipky vlevo a vpravo, nebo šipky, které se objeví u okrajů při pohybu myši, na předchozí a další fotku. Písmena napsaná do pole popisu zůstanou v textu.
 5. **Přehrání videa**: otevřete ho z časové osy, ze složky, ze sdílení, z Plexu nebo ze záznamů kamery Tapo; přehraje se v okně. Enter nebo klávesa přehrát/pozastavit na klávesnici ho pozastaví a znovu spustí. Během přehrávání skočí šipky vlevo a vpravo, nebo J a L, o 10 sekund zpět nebo vpřed; při pozastavení přejdou šipky na předchozí a další položku. F nebo F11 přepne na celou obrazovku, jako u fotek. Tlačítko „Zvuková stopa“ vybírá mezi zvukovými stopami videa, které jich má více.
 6. **Když se video zastaví**: pozastavené video zůstane pozastavené, když se vrátíte do okna. Video přerušené před koncem, například když sdílení nebo server přestane odpovídat, to oznámí: otevřete ho znovu a pokračuje tam, kde se zastavilo, pozastavené. Soubor seznamu stop nalezený ve složce nebo ve sdílení se nenásleduje.
-7. **Sdílení počítače s headsetem**: otevřete Knihovnu, pak Síťová úložiště; první dlaždice je „Sdílet tento počítač v síti“, počítačová obdoba [Sdílet tento telefon v síti](#share-this-phone-on-the-network). Zapněte „Sdílet fotky a videa v síti“ a pak přidejte počítač v headsetu, jak popisuje tato sekce. Sdílení se zastaví, když se aplikace zavře, nebo po hodině bez použití.
-8. **Povolte síť**: Windows se může zeptat, zda smí Immuch360 Desktop používat síť. Povolte to v privátních sítích, jinak headset počítač nenajde. V síti, kterou Windows označí jako veřejnou (kavárna, hotel), nebo jejíž typ nedokáže určit, se sdílení nespustí, pokud nezvolíte „Sdílet pro tuto relaci“, a počítač se ohlašuje jen v síti, ve které sdílí.
-9. **Nastavení, „Tento počítač“**: složky, složka pro stahování, síťový adaptér používaný k hledání sdílení a ke sdílení počítače (když jich má více, například Wi-Fi a Ethernet), a důvěryhodné certifikáty: certifikační autorita vašeho vlastního serveru jako soubor PEM, pro adresu HTTPS, které Windows sám nedůvěřuje. Klientské certifikáty se importují v Nastavení, Pokročilé, jako na telefonech.
+7. **Přehrání 360° videa** (od desktopového buildu 3): otevřete video a klikněte na 360° v horní liště, jako na telefonu; u 360° souboru, který server neoznačí, nejdřív „Zobrazit jako 360°“ v nabídce ⋮, viz [360° soubor, který se zobrazuje plochý](#a-360-file-that-shows-flat-view-as-360). 360° přehrávač se otevře v okně. Táhněte myší pro rozhlížení (po rychlém tažení se pohled ještě chvíli otáčí), přibližujte kolečkem, + a - nebo Page Up a Page Down, otáčejte podržením šipek. Mezerník nebo klávesa přehrát/pozastavit na klávesnici video pozastaví a znovu spustí; J a L skočí o 10 sekund zpět nebo vpřed; Home se vrátí na začátek; M vypne a zapne zvuk. F, F11 nebo dvojklik přepne na celou obrazovku; Escape celou obrazovku opustí a pak přehrávač zavře. Ovládací prvky (zavřít, název, 360°/180°, 3D, zvuková stopa a celá obrazovka nahoře; přehrát, 10 sekund zpět a vpřed, časová osa a zvuk dole) se po 3 sekundách přehrávání skryjí spolu s kurzorem myši a vrátí se, když se myš pohne nebo se stiskne klávesa; Tab přechází z jednoho na další.
+8. **3D a VR180**: v 360° přehrávači tlačítko 3D přepíná mezi „Mono (ne 3D)“, „3D, nahoře a dole“ a „3D, vedle sebe“ a tlačítko 360°/180° přepíná mezi celou koulí a polokoulí VR180, jako v [3D a VR180](#3d-and-vr180-photos-and-videos). 3D video ukazuje levé oko.
+9. **Surová 360° videa** (od desktopového buildu 3): otevřete surový soubor a klikněte na 360°, jako na telefonu, viz [Nezpracované soubory 360° kamer](#raw-360-camera-files-without-the-cameras-app); oba soubory páru X3 mějte pohromadě. Soubor s oběma objektivy v jedné stopě se spojuje během přehrávání. Soubor s jedním objektivem na stopu nebo na soubor přehrává oba objektivy vedle sebe v jednom přehrávači, když počítač stačí: první sekundy takového videa se změří a výsledek se uchová pro další videa toho druhu (způsob, který se ukázal jako příliš pomalý, se zkusí znovu po 14 dnech). Když počítač nestačí, přehrávač projde kroky telefonů s jejich zprávami: jeden objektiv, polovina koule černá; překódovaný stream serveru; kopie LRV v nízkém rozlišení, kterou kamera nahrála vedle souboru, pokud existuje; nespojené video. Surové video nemá tlačítko 3D ani tlačítko 360°/180°.
+10. **Živý obraz kamery Tapo** (od desktopového buildu 3): otevřete kameru jako na telefonu, viz [Živé sledování](#watch-it-live). Stránka přehrává stream SD a celá obrazovka stream HD, s tlačítky telefonu na obrazu: zvuk, zpočátku vypnutý, SD nebo HD a „Celá obrazovka“. Ztracený stream (kamera se restartuje, Wi-Fi vypadne) se vrátí sám, s opakovanými pokusy asi minutu a půl, zatímco poslední obraz zůstává na obrazovce. Účet kamery, který kamera odmítne, se oznámí a znovu se nezkouší, protože neúspěšná přihlášení se počítají do zablokování kamery.
+11. **Sdílení počítače s headsetem**: otevřete Knihovnu, pak Síťová úložiště; první dlaždice je „Sdílet tento počítač v síti“, počítačová obdoba [Sdílet tento telefon v síti](#share-this-phone-on-the-network). Zapněte „Sdílet fotky a videa v síti“ a pak přidejte počítač v headsetu, jak popisuje tato sekce. Sdílení se zastaví, když se aplikace zavře, nebo po hodině bez použití.
+12. **Povolte síť**: Windows se může zeptat, zda smí Immuch360 Desktop používat síť. Povolte to v privátních sítích, jinak headset počítač nenajde. V síti, kterou Windows označí jako veřejnou (kavárna, hotel), nebo jejíž typ nedokáže určit, se sdílení nespustí, pokud nezvolíte „Sdílet pro tuto relaci“, a počítač se ohlašuje jen v síti, ve které sdílí.
+13. **Nastavení, „Tento počítač“**: složky, složka pro stahování, síťový adaptér používaný k hledání sdílení a ke sdílení počítače (když jich má více, například Wi-Fi a Ethernet), a důvěryhodné certifikáty: certifikační autorita vašeho vlastního serveru jako soubor PEM, pro adresu HTTPS, které Windows sám nedůvěřuje. Klientské certifikáty se importují v Nastavení, Pokročilé, jako na telefonech.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### 360° videa a grafický čip
+
+V 360° přehrávači (od desktopového buildu 3) kreslí grafický čip z každého snímku videa pohled, na který se díváte. Videoplugin nechá libmpv vykreslit každý snímek do obrazu zvolené velikosti a pak z něj vlastní vykreslovací průchod aplikace vykreslí část koule, na kterou se díváte. Otáčení pohledu mění hodnotu tohoto průchodu, ne přehrávač: tažení nestojí žádnou paměť a pozastavené video se otáčí, aniž by cokoli dekódovalo.
+
+Aplikace změří první sekundy každého 360° videa a zvolí, jak velký snímek čip zpracovává: celý snímek na samostatném čipu, nejvýše 2880 pixelů na šířku na čipu zabudovaném v procesoru (Windows aplikaci řekne, o jaký druh jde, takže čip Intel Arc notebooku s Core Ultra se počítá jako zabudovaný), o stupeň menší, když čip nestačí. Co změřila, se uchová pro další videa stejného druhu (kodek, velikost, snímková frekvence a dekodér), ne pro všechna videa.
+
+Když není plynulý ani nejmenší stupeň, přehrávač oznámí „Tato grafická karta nedokáže plynule zobrazit 360° pohled tohoto videa“; když je od toho daleko, nebo když čip pohled vůbec vykreslit nedokáže (bez OpenGL ES 3.0, ovladač, který ho odmítne), video se přehraje plošně a přehrávač řekne proč. Video, které se přehrálo plošně, se příště plošně nepřehraje: další video jeho druhu se změří znovu.
+
+Když nestačí dekódování videa ze serveru, ne vykreslování (video, které dekóduje procesor, jako 5,7K H.264), přehrávač přepne na překódovaný stream serveru od místa, kde byl, se zprávou telefonů: „Přehrává se překódovaný stream: originál (kodek a velikost) přesahuje možnosti dekódování tohoto zařízení“.
+
+- **Použijte samostatný grafický čip notebooku.** Windows spouští aplikaci na integrovaném čipu, pokud mu neřeknete jinak. V nastavení Windows, Systém, Obrazovka, Grafika, přidejte `immuch360.exe`, zvolte „Vysoký výkon“ a pak aplikaci spusťte znovu. Na testovacím notebooku (čip Intel UHD a NVIDIA RTX 4060 Laptop) vykresloval čip NVIDIA 360° videa 4K, 5,7K a 8K v plné velikosti a při 30 snímcích za sekundu, zatímco se pohled otáčel. Čip Intel je vykresloval nejvýše 2880 pixelů na šířku: video 4K H.264 a 8K HEVC asi při 30 snímcích za sekundu s buildem libmpv z roku 2026, video 4K při 23 až 27 s libmpv z media-kit z roku 2024 (viz [Ještě není hotovo](#not-there-yet)) a video 5,7K H.264, které dekóduje procesor, asi při 20: ze serveru pak přehrávač přepne na překódovaný stream; video bez překódovaného streamu, například ze složky, hraje dál se zprávou „Tato grafická karta nedokáže plynule zobrazit 360° pohled tohoto videa“.
+- **Zvolte vykreslovač sami.** V Nastavení, Pokročilé zapněte „Řešení problémů“: objeví se položka „Vykreslovač 360° videa“, ve výchozím stavu „Automaticky“. Nabízí také „Plugin, plná velikost“, „Plugin, nejvýše 4096 na šířku“, „Plugin, nejvýše 2880 na šířku“ a „Plošně, bez 360° pohledu“, pro další 360° video, které otevřete. Pod ní „Naposledy změřeno“ uvádí velikost, ve které bylo vykresleno poslední 360° video, jeho snímky za sekundu, grafický čip a dekodér: zkopírujte to do hlášení o chybě. Opětovné zvolení „Automaticky“, i když už je zvoleno, zapomene, co bylo změřeno, a další 360° videa se změří znovu.
+- **Co čip dekóduje.** Nastavení, Pokročilé, „Video dekodéry tohoto zařízení“ vypisuje, co dekóduje používaný grafický čip, jak to hlásí Direct3D 11, a aplikace tento seznam opravuje podle toho, co naměřila při přehrávání: řídí se jím nastavení „Zdroj videa“ i kontrola dvou objektivů u surových videí. H.264 širší než 4096 pixelů (5,7K u 360° kamer) dekóduje procesor, protože ho nepřijme ani jeden čip testovacího notebooku.
 
 ### Ve srovnání s aplikacemi pro telefony
 
@@ -1017,12 +1045,16 @@ Pro kontrolu ZIPu spusťte `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desk
 - **Z vašich složek se nic nemaže**: „Smazat ze zařízení“ je skryté a Smazat odstraní jen kopii na serveru, dokud aplikace neumí posílat soubory do koše Windows.
 - **Myš a klávesnice** místo dotyku a gyroskopu.
 - **Jeden přehrávač videa pro všechny zdroje**: libmpv přehrává stejně videa ze serveru, ze složek, ze sdílení i z Plexu a jeho plochý přehrávač už má nabídku zvukových stop, kterou plochý přehrávač telefonů zatím nemá.
+- **360° videa v okně** (od desktopového buildu 3): 360° přehrávač je stránka aplikace, ne samostatný nativní přehrávač, s časovou osou, skoky o 10 sekund a tlačítkem zvuku. Surová videa s jedním objektivem na stopu nebo na soubor se skládají vedle sebe v jednom přehrávači, kde telefony používají dva dekodéry; záložní kroky telefonů jsou stejné, s kopií LRV kamery přidanou před nespojené video.
+- **Živý náhled Tapo** (od desktopového buildu 3) běží na počítači jako na Androidu, zatímco iPhony a iPady ho zatím nemají.
 
 <a id="not-there-yet"></a>
 ### Ještě není hotovo
 
-- **360°, 3D, VR180 a surová 360° videa**: zatím se zobrazují plošně, tak jak je soubor obsahuje (celá rozvinutá koule, obě oči vedle sebe nebo kulaté obrazy objektivů), nebo jako zástupný obrázek, a tlačítko 360° zůstává u fotek. Jejich přehrávače přijdou s dalšími desktopovými buildy.
-- **Spatial 2.5D**, později s webkamerou; **živý náhled Tapo**; **mapa** a zobrazení Místa; **přihlášení přes OAuth** (místo toho se přihlaste e-mailem a heslem); **Google Cast**; **oznámení**.
+- **libmpv z vlastního buildu forku**: ZIPy obsahují libmpv z media-kit z roku 2024, dokud se nezapne vlastní build forku, a `BUILD-INFO.txt` v ZIPu uvádí, který obsahují. S tím z roku 2024 se oba objektivy surového videa s jedním objektivem na stopu nebo na soubor nikdy nepřehrávají současně (chybí mu filtr, který je skládá), takže tato videa ukazují jeden objektiv, polovinu koule černou; a grafický čip kopíruje každý snímek zpět ze svého dekodéru, což zpomaluje 360° přehrávač na integrovaném čipu. libmpv z vlastního workflow forku, verze z roku 2026, ho má nahradit před prvním veřejným vydáním; build libmpv z roku 2026 vyzkoušený na testovacím notebooku zvládá obojí.
+- **Surová videa se dvěma objektivy na notebooku**: i s libmpv z roku 2026 skládal testovací notebook pár X3 (dva soubory H.264 2880x2880) při 30 snímcích za sekundu jen na svém čipu NVIDIA; na jeho čipu Intel, a u souboru X4 (dvě stopy HEVC 3840x3840) na obou čipech, video přehrává jeden objektiv, polovinu koule černou, jako na telefonu, který nezvládne dva dekodéry.
+- **3D jen na obrazovce**: 3D video ukazuje levé oko, jako na telefonech; na počítači není gyroskop ani pohled headsetu. Pro sledování ve skutečném 3D sdílejte počítač s Meta Quest.
+- **Spatial 2.5D**, později s webkamerou; **mapa** a zobrazení Místa; **přihlášení přes OAuth** (místo toho se přihlaste e-mailem a heslem); **Google Cast**; **oznámení**.
 - **Instalátor, podepsaný build a automatické aktualizace**: tento build je složka s `immuch360.exe`.
 - **Linux a macOS**: jejich projekty jsou ve zdrojích, ale na těchto systémech zatím nebyly sestaveny ani vyzkoušeny a jejich přehrávač videa v nich zatím není; přijdou po Windows.
 - **Překlady**: nové texty verze pro počítač jsou zatím v angličtině.
@@ -1030,10 +1062,11 @@ Pro kontrolu ZIPu spusťte `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desk
 ### Známé problémy
 
 - **První spuštění nového buildu je pomalé**: od 10 sekund do zhruba minuty, než se okno zobrazí, nejspíš během toho, co Microsoft Defender kontroluje nové soubory, které zatím nejsou podepsané. Počkejte na okno a aplikaci znovu nespouštějte; další spuštění trvají sekundu nebo dvě.
-- **Videa 8K HEVC potřebují samostatný grafický čip**: na testovacím notebooku zobrazil integrovaný čip Intel UHD asi polovinu snímků videa 8K HEVC, zatímco samostatný čip NVIDIA přehrál 8K HEVC i 5,7K H.264 bez vynechaného snímku. Windows spouští aplikaci na integrovaném čipu, pokud mu neřeknete jinak: v nastavení Windows, Systém, Obrazovka, Grafika, přidejte `immuch360.exe` a zvolte „Vysoký výkon“. Na integrovaném čipu dekóduje video 5,7K H.264, které jeho dekodér odmítne, procesor bez ztraceného snímku.
-- **Videa se vykreslují nejvýše 1440 řádků vysoká** a pak se škálují na okno: na 4K obrazovce na celou obrazovku je video 4K nebo 8K o něco měkčí než v samostatném přehrávači videa. Tak video 8K zůstává v mezích grafického výkonu notebooku.
+- **Videa 8K HEVC potřebují samostatný grafický čip a 360° videa na něm běží lépe**: na testovacím notebooku zobrazil integrovaný čip Intel UHD asi polovinu snímků videa 8K HEVC, zatímco samostatný čip NVIDIA přehrál 8K HEVC i 5,7K H.264 bez vynechaného snímku; 360° přehrávač je plynulý na čipu NVIDIA a pomalejší na čipu Intel, viz [360° videa a grafický čip](#360-videos-and-the-graphics-chip). Windows spouští aplikaci na integrovaném čipu, pokud mu neřeknete jinak: v nastavení Windows, Systém, Obrazovka, Grafika, přidejte `immuch360.exe`, zvolte „Vysoký výkon“ a pak aplikaci spusťte znovu. Na integrovaném čipu dekóduje ploché video 5,7K H.264, které jeho dekodér odmítne, procesor bez ztraceného snímku.
+- **Plochá videa se vykreslují nejvýše 1440 řádků vysoká** a pak se škálují na okno: na 4K obrazovce na celou obrazovku je video 4K nebo 8K o něco měkčí než v samostatném přehrávači videa. Tak video 8K zůstává v mezích grafického výkonu notebooku. 360° přehrávač naopak pracuje s celým snímkem nebo s menší velikostí, kterou zvolilo jeho měření.
 - **Když se video z vašich složek přehrává v aplikaci, nebo když headset čte soubor ze sdíleného počítače** (video, které přehrává, fotku, kterou stahuje), Windows nemůže tento soubor přejmenovat, přesunout ani smazat a hlásí, že je otevřený v Immuch360 Desktop: nejdřív zavřete video nebo zastavte přehrávání v headsetu. Zálohy vaše soubory tímto způsobem nedrží: soubor lze přejmenovat, přesunout nebo smazat, i když se nahrává.
-- **Nedodělky**: 656 z 663 desktopových testů ve Windows prochází (7 je záměrně přeskočeno), 200 přehrávačů otevřených jeden po druhém nezanechá žádný únik a na počítači s Windows 11 se aplikace spustí, otevře uloženou relaci na serveru Immich, synchronizuje, přehraje video a čistě se zavře. Ruční test každé funkce na skutečném počítači stále probíhá.
+- **Nedodělky**: desktopový build 3 projde ve Windows 855 ze svých 863 desktopových testů (8 je záměrně přeskočeno) i celou sadou testů aplikace, 200 přehrávačů otevřených jeden po druhém nezanechá žádný únik a jeho ZIP pro vydání se spustí, přehraje testovací klip a čistě se zavře. Ruční test každé funkce na skutečném počítači stále probíhá.
+- **S čím byly 360° přehrávač a živý obraz ověřeny**: 360° přehrávač běžel se syntetickými 360° klipy 4K, 5,7K a 8K na obou grafických čipech notebooku (otevřen, přehráván, otáčen během přehrávání i při pozastavení, zavřen) bez pádu a bez resetu grafického ovladače. Surová videa se dvěma objektivy byla přehrána ze syntetických klipů a ze skutečných souborů X3 a X4. Živý obraz Tapo byl ověřen proti testovacímu serveru RTSP, který se přihlašuje stejně jako kamery (Digest), záměrně přerušovanému a odmítajícímu, bez hesla v jakémkoli řádku logu, ale zatím ne se skutečnou kamerou. Ruční test se skutečnými 360° a 3D soubory, oběma obrazovkami notebooku, uspáním a probuzením a skutečnou kamerou teprve přijde.
 
 Pokud se něco pokazí, otevřete prosím [issue](https://github.com/freeKC/Immuch360/issues) s logem uloženým ze stránky Logy, viz [Logy](#logs). Před sdílením log zkontrolujte: může obsahovat adresu vašeho serveru.
 
@@ -1052,7 +1085,7 @@ Potřebujete Windows 10 nebo 11 na x64, Flutter 3.47.2 pro Windows, Visual Studi
    mise run codegen
    ```
 
-2. Ve Windows ve stejné složce `mobile` sestavte aplikaci. První sestavení stáhne knihovny přehrávače videa (libmpv a ANGLE) z GitHubu a ověří každý archiv podle jeho SHA-256:
+2. Ve Windows ve stejné složce `mobile` sestavte aplikaci. První sestavení stáhne knihovny přehrávače videa (libmpv a ANGLE) z GitHubu a ověří každý archiv podle jeho SHA-256; také zkompiluje malý plugin Direct3D 11, který čte dekodéry grafického čipu, `immuch_desktop_video`, se stejnou sadou funkcí pro C++:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Potřebujete Windows 10 nebo 11 na x64, Flutter 3.47.2 pro Windows, Visual Studi
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-CI Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) běží na větvi `desktop`, která sleduje `immuch360`: kontroly telefonu (v telefonních buildech se nic nemění) a celá sada testů na Linuxu, desktopové testy ve Windows a stejný ZIP; její úlohy pro Linux a macOS (`flutter build linux` a `flutter build macos`, se stejným `-t lib/main_desktop.dart`) na těchto systémech zatím neběžely.
+CI Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) běží na větvi `desktop`, která sleduje `immuch360`: kontroly telefonu (v telefonních buildech se nic nemění) a celá sada testů na Linuxu, desktopové testy ve Windows a stejný ZIP, pak na tomto buildu testy, které potřebují jeho libmpv a ANGLE (přihlášení živého náhledu Tapo, co soubor videa nesmí otevřít, 360° shadery); její úloha pro Linux sestavuje aplikaci na Ubuntu a úloha pro macOS ji kompiluje s Xcode 26.3 a macOS 26 SDK (obě se stejným `-t lib/main_desktop.dart`), jen jako kontroly kompilace: ani jedna zatím na těchto systémech nebyla spuštěna. Druhý workflow (`.github/workflows/immuch360-libmpv.yml`) znovu sestavuje libmpv pro Windows x64 a arm64 z pevně daných zdrojů a zveřejňuje archivy s jejich SHA-256; ZIPy stále obsahují archiv media-kit, dokud se tento build nezapne, takže omezení libmpv z roku 2024 v [Ještě není hotovo](#not-there-yet) platí i pro váš vlastní build.
 
 <a id="where-to-get-it"></a>
 ## Kde aplikaci získat
@@ -1088,8 +1121,8 @@ Aplikace je na Google Play pro telefony a tablety; verze pro App Store čeká na
   - Dnes: univerzální `Immuch360-v<version>-release.apk` ze stránky [Releases](https://github.com/freeKC/Immuch360/releases), nahraný ručně přes adb, viz [Instalace na televizi](#install-it-on-the-tv). Je to stejná aplikace jako na telefonech.
   - Brzy: Google Play na televizích; záznam pro televize je ve schvalování u Googlu od 9. října 2026.
 - **Windows 10 a 11, 64 bitů (předběžná verze)**
-  - Dnes: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` z [předběžného desktopového vydání](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), rozbalený a spuštěný, jak popisuje [Stažení a instalace ve Windows](#download-and-install-on-windows). Zatím fotky a plochá videa: 360°, 3D a VR180 videa přijdou s dalšími desktopovými buildy.
-  - Brzy: 360°, 3D, VR180 a surová 360° videa; instalátor, podepsaný build a aktualizace později.
+  - Dnes: Immuch360 Desktop, desktopový build 3, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` z [předběžného desktopového vydání](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), rozbalený a spuštěný, jak popisuje [Stažení a instalace ve Windows](#download-and-install-on-windows). Fotky, plochá videa, 360°, 3D, VR180 a surová 360° videa (plynulá na samostatném grafickém čipu, s omezeními na integrovaném) a živý náhled Tapo.
+  - Brzy: Spatial 2.5D s webkamerou, pak Linux a macOS; instalátor, podepsaný build a aktualizace později.
 
 Odkazy na App Store a Meta Horizon Store sem budou doplněny, jakmile budou záznamy zveřejněny. Přihlaste se obvyklou adresou URL svého serveru Immich a svým účtem, nebo na přihlašovací stránce klepněte na „Použít bez serveru“ a začněte s vlastními fotkami a videi zařízení. APK z GitHubu se sám neaktualizuje: sledujte stránku Releases, a pokud jste aplikaci nainstalovali z obchodu, berte aktualizace z tohoto obchodu.
 
@@ -1126,7 +1159,7 @@ V tomto repozitáři není žádné tajemství: podpisový klíč pro Android je
 
 - **`main`**: Immich `main` v commitu, ze kterého `immuch360` vychází (29. září 2026 pro aktuální buildy), nikdy neupravovaný; posune se dopředu, když se fork přeskládá (rebase) na novější Immich.
 - **`immuch360`**: změny tohoto forku nad Immich, od 9. října 2026 včetně Immuch360 Desktop. Každé vydání uvádí, ze které verze Immich vychází.
-- **`desktop`**: zde se Immuch360 Desktop, verze pro počítač, stavěl nad `immuch360`, dokud do ní nebyl 9. října 2026 sloučen, aby telefony, headsety, televize i počítače vycházely ze stejných zdrojů. Nyní sleduje `immuch360` a nese značky předběžných desktopových vydání ([desktopový build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) z commitu 21f285c34, [desktopový build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) z 5b723bd25). Verze pro počítač nic nemění pod `mobile/android` a `mobile/ios`.
+- **`desktop`**: zde se Immuch360 Desktop, verze pro počítač, stavěl nad `immuch360`, dokud do ní nebyl 9. října 2026 sloučen, aby telefony, headsety, televize i počítače vycházely ze stejných zdrojů. Nyní sleduje `immuch360` a nese značky předběžných desktopových vydání ([desktopový build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) z commitu 21f285c34, [desktopový build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) z 5b723bd25, [desktopový build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) ze sloučení 360° přehrávače videa 10. října 2026). Nová desktopová práce přistává nejdřív tam a do `immuch360` se dostane s desktopovým buildem, který ji vydá. Verze pro počítač nic nemění pod `mobile/android` a `mobile/ios`.
 
 <a id="logs"></a>
 ## Logy
@@ -1145,7 +1178,7 @@ Od buildu 19 klient DLNA, sdílení telefonu a rozpoznávání prostorových mé
 
 Na počítači (Immuch360 Desktop) má stránka Logy navíc „Uložit logy do souboru“: log, nebo ZIP s logem a hlášeními o posledních pádech, pokud nějaké jsou (jeho navrhovaný název pak končí na „with-crash-reports“). Hlášení o pádu je malý minidump: vlákna, kde se zastavila, a jen to, co je potřeba ke sledování jejich volání, s názvy souborů programu, ale ne jejich složek; ne paměť aplikace.
 
-Od desktopového buildu 2 tam přehrávač videa na počítači zapisuje pod `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` a `VideoThumbnailGrabber`, včetně vlastních varování mpv, s odstraněnými tokeny a hesly. Před sdílením log zkontrolujte: může obsahovat adresu vašeho serveru.
+Od desktopového buildu 2 tam přehrávač videa na počítači zapisuje pod `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` a `VideoThumbnailGrabber`, včetně vlastních varování mpv, s odstraněnými tokeny a hesly. Od desktopového buildu 3 tam zapisuje také 360° přehrávač pod `SphericalPlayer`, `SphereRenderer` a `PluginRenderer` (zvolená velikost, naměřené snímky za sekundu, grafický čip), surová videa se dvěma objektivy pod `RawTwoStreams`, dekodéry grafického čipu pod `DesktopGpuDecoders`, `DesktopVideoDecoderApi` a `DecoderMeasure` a živý náhled Tapo pod `DesktopCameraLive`, jehož řádky nikdy neobsahují účet kamery ani jeho heslo. Před sdílením log zkontrolujte: může obsahovat adresu vašeho serveru.
 
 <a id="privacy"></a>
 ## Soukromí
@@ -1159,7 +1192,7 @@ Od desktopového buildu 2 tam přehrávač videa na počítači zapisuje pod `De
 - **Sdílení telefonu**: jen místní síť, s uživatelským jménem a heslem, přes prostý HTTP (viz [Sdílet tento telefon v síti](#share-this-phone-on-the-network)).
 - **Kamera**: používá ji jen přehrávač Spatial 2.5D, v zařízení; snímky se nikdy neukládají a nikam se neodesílají.
 - **Na počítači** (Immuch360 Desktop, předběžná verze pro Windows): aplikace čte jen složky, které zvolíte, uchovává svůj index, náhledy a mezipaměť na počítači a ukládá hesla a tokeny pomocí ochrany dat Windows, jen pro váš účet Windows. Sdílení počítače se řídí pravidly sdílení telefonu a nespustí se v síti, kterou Windows označí jako veřejnou nebo jejíž typ nedokáže určit, pokud to sami nezvolíte.
-- **Přehrávač videa na počítači** (od desktopového buildu 2): videa z vašeho serveru k němu přicházejí přes aplikaci, takže přehrávač nikdy nedrží váš token relace, a to, co načítá dopředu, zůstává v paměti, ne na disku. Otevírá jen soubor, který dostane: soubor ze složky nebo ze sdílení, který je ve skutečnosti seznamem stop nebo popisem streamu, ho nepřiměje připojit se jinam.
+- **Přehrávač videa na počítači** (od desktopového buildu 2): videa z vašeho serveru k němu přicházejí přes aplikaci, takže přehrávač nikdy nedrží váš token relace, a to, co načítá dopředu, zůstává v paměti, ne na disku. Otevírá jen soubor, který dostane: soubor ze složky nebo ze sdílení, který je ve skutečnosti seznamem stop nebo popisem streamu, ho nepřiměje připojit se jinam. Od desktopového buildu 3 se adresa každého videa předává přehrávači jen v paměti, nikdy přes dočasný soubor (odkaz, který aplikace vytvoří pro video ze serveru nebo ze sdílení, obsahuje klíč dané relace, který v desktopovém buildu 2 ležel při každém otevření několik sekund na disku), a tento klíč se nikdy neobjeví v logu; živý obraz kamery Tapo předává účet kamery přehrávači stejným způsobem, nikdy v souboru ani v řádku logu, a s kamerou komunikuje jen v místní síti; měření 360° přehrávače a dekodérů (grafický čip, formát videa, snímky za sekundu, nikdy název souboru) zůstávají ve složce aplikace na počítači.
 
 Úplné zásady jsou v [PRIVACY.md](../PRIVACY.md).
 
@@ -1177,7 +1210,7 @@ Android, Android TV a Google TV jsou ochranné známky společnosti Google LLC; 
 
 Co ještě není hotové, nejpravděpodobnější první. Nic zde není slib a zpětná vazba v [systému hlášení](https://github.com/freeKC/Immuch360/issues) pomáhá rozhodnout, co přijde dřív.
 
-- **Immuch360 Desktop, nejdřív Windows**: vyšel desktopový build 2 s plochými videi a desktopové zdroje jsou od 9. října 2026 v hlavní větvi forku, `immuch360` (viz [Na počítači s Windows](#on-a-windows-computer-immuch360-desktop-preview)). Dále 360°, 3D, VR180 a surová 360° videa ve Windows, s oběma objektivy surových souborů a živým náhledem Tapo; pak test každé funkce na počítači s Windows a jeho opravy; pak Spatial 2.5D s webkamerou; pak Linux a macOS, balíčky, podepisování a aktualizace.
+- **Immuch360 Desktop, nejdřív Windows**: vyšel desktopový build 3 s 360° přehrávačem videa (360°, 3D, VR180 a surová 360° videa, oba objektivy surových souborů, velikost pohledu měřená na každém počítači) a živým náhledem Tapo a desktopové zdroje jsou od 9. října 2026 v hlavní větvi forku, `immuch360` (viz [Na počítači s Windows](#on-a-windows-computer-immuch360-desktop-preview)). Dále libmpv z vlastního workflow forku místo toho z roku 2024 a ruční test každé funkce na počítači s Windows se skutečnými soubory, oběma obrazovkami a skutečnou kamerou, s jeho opravami; pak Spatial 2.5D s webkamerou; pak Linux a macOS; pak instalátor, podepsaný build a automatické aktualizace.
 - **Google Play**: build 20 je dostupný od 7. října 2026, místo buildu 18; záznam pro televize je ve schvalování u Googlu od 9. října 2026. Build 21 na telefonech a tabletech nic nemění.
 - **App Store**: verze 3.3.0 čeká na schválení společností Apple; obsahuje funkce buildu 11, takže nahrávání do Immich a kontrola video dekodérů (build 15) a nezpracované soubory Insta360 (build 16) přijdou s příští aktualizací v App Store. Odkaz sem bude doplněn, jakmile bude dostupná.
 - **Meta Horizon Store**: Meta schválila záznam 7. října 2026 s buildem 14. Build 21 je odeslán jako jeho první aktualizace: přináší vše od buildu 14 (nahrávání ze sdílení do Immich, zdroj videa vybraný podle toho, co headset dekóduje, nezpracované soubory Insta360, GoPro a DJI, DLNA, sdílení telefonu, prostorové fotky Apple, knihovny Plex Media Serveru, kamery Tapo) a obchod ho uvádí pro Quest 2, Quest Pro, Quest 3 a 3S. Odkaz na obchod sem bude doplněn, jakmile bude stránka veřejná; ručně nahranou kopii je nutné nejdřív odinstalovat (viz [Instalace](#install)).

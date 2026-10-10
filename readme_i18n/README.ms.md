@@ -15,13 +15,13 @@ Ia untuk mereka yang merakam dengan kamera 360° (Insta360, GoPro MAX, DJI Osmo 
 
 <div align="center">
 
-| Platform | Di mana untuk mendapatkannya | Status pada 9 Oktober 2026 |
+| Platform | Di mana untuk mendapatkannya | Status pada 10 Oktober 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | binaan 20 di Google Play sejak 7 Oktober 2026, binaan 21 di GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dan iPad** | App Store | versi 3.3.0 menunggu semakan Apple; sementara itu, [bina sendiri](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dan 3S | [APK](#meta-quest-3) · Horizon Store | penyenaraian diluluskan, binaan 21 dalam semakan Meta |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#install-it-on-the-tv) · Google Play | binaan 21 di GitHub; penyenaraian Google Play untuk TV dalam semakan Google sejak 9 Oktober 2026 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pratonton](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | binaan desktop 2 pada Windows: foto dan video rata, video 360° seterusnya; macOS dan Linux kemudian, daripada sumber yang sama |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pratonton](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | binaan desktop 3 pada Windows: foto, video rata dan video 360°; macOS dan Linux kemudian |
 
 *Status dikemas kini pada setiap keluaran; butirannya ada di [Di mana untuk mendapatkannya](#where-to-get-it).*
 
@@ -30,7 +30,7 @@ Ia untuk mereka yang merakam dengan kamera 360° (Insta360, GoPro MAX, DJI Osmo 
 - 🌐 **360° asli**<br>Foto dan video sebagai sfera yang boleh anda lihat sekeliling, dengan giroskop, termasuk fail kamera mentah (Insta360 dari binaan 16, GoPro dan DJI dari binaan 18). Juga pemain video percuma: rata, 360°, 3D, VR180
 - 👓 **3D asli**<br>360° stereoskopik dan VR180, atas dan bawah atau sebelah-menyebelah, serta foto ruang Apple (dari binaan 19): 3D sebenar dalam set kepala, satu mata pada telefon
 - 🎥 **2.5D asli**<br>Kedalaman pada skrin rata daripada video stereoskopik, paparan mengikut kepala anda (percubaan, telefon dan tablet)
-- 📱 **Android, iOS, Quest, TV**<br>Satu aplikasi pada telefon, tablet dan set kepala Quest 2, Pro, 3 dan 3S, 3D sebenar dalam set kepala, dari binaan 20 pada Android TV dengan alat kawalan jauh, dan pratonton Windows dengan foto dan video rata
+- 📱 **Android, iOS, Quest, TV**<br>Satu aplikasi pada telefon, tablet dan set kepala Quest 2, Pro, 3 dan 3S, 3D sebenar dalam set kepala, dari binaan 20 pada Android TV dengan alat kawalan jauh, dan pratonton Windows dengan foto, video rata dan video 360°
 - 🔌 **Dengan atau tanpa pelayan**<br>Pelayan Immich anda, atau galeri telefon itu sendiri, tanpa akaun
 - 🗄️ **Perkongsian rangkaian**<br>Samba (SMB), WebDAV dan, dari binaan 19, pelayan media DLNA, ditemui pada rangkaian dan dibaca secara langsung, tiada apa yang dimuat turun, dan dihantar ke Immich apabila anda memilih. Dari binaan 19 telefon juga berkongsi galerinya sendiri dengan set kepala
 - 📺 **Pada TV**<br>Dari binaan 20 APK yang sama pada Android TV dan Google TV: foto dan video 360°, pelayan anda dan perkongsian anda, dengan alat kawalan jauh
@@ -84,7 +84,7 @@ Ia untuk mereka yang merakam dengan kamera 360° (Insta360, GoPro MAX, DJI Osmo 
 - **"Saya mahu menonton foto dan video 360° saya, dan video dalam NAS atau pelayan Plex saya, pada TV, dengan alat kawalan jauh."** Lihat [Tonton pada TV anda](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Saya tidak dapat mencari rakaman 360° saya di antara semua yang lain."** Lihat [Senarai 360°](#find-your-360-shots-the-360-list).
 - **"Video 360° saya tersekat-sekat, atau memainkan salinan yang kabur."** Lihat [Butiran video dan penyahkod](#video-details-decoders-and-why-a-video-stutters).
-- **"Saya mahu foto 360° dan pustaka Immich saya pada PC Windows, bersama foto dan video dalam folder PC, NAS dan pelayan Plex saya, serta PC dikongsi dengan set kepala saya."** Lihat [Pada komputer Windows](#on-a-windows-computer-immuch360-desktop-preview) (pratonton: foto dan video rata buat masa ini, video 360° kemudian).
+- **"Saya mahu foto 360° dan pustaka Immich saya pada PC Windows, bersama foto dan video dalam folder PC, NAS dan pelayan Plex saya, serta PC dikongsi dengan set kepala saya."** Lihat [Pada komputer Windows](#on-a-windows-computer-immuch360-desktop-preview) (pratonton: foto dan video rata, dan dari binaan desktop 3 video 360°, 3D, VR180 dan video 360° mentah serta paparan langsung Tapo).
 - **"Adakah saya masih mendapat apa yang dibuat oleh aplikasi Immich?"** Ya, dengan dua perubahan kecil, lihat [Selebihnya ialah Immich](#everything-else-is-immich).
 
 Apabila sesuatu ciri itu baharu, teks menyatakan dari binaan mana ia tersedia. Keluaran GitHub sentiasa mempunyai binaan terbaharu, gedung aplikasi menyusul kemudian: lihat [Di mana untuk mendapatkannya](#where-to-get-it).
@@ -127,6 +127,7 @@ Fail 360° yang telah dicantumkan berfungsi di mana-mana: eksport daripada aplik
 
 Pemain memainkan fail yang disimpan pada telefon, atau fail perkongsian rangkaian, jika ada. Jika tidak, ia menstrim daripada pelayan anda: strim transkod secara lalai, atau fail asal jika anda memintanya dalam Settings (Tetapan), Asset Viewer (Pemapar Aset), Sumber video (dari binaan 15; sebelum itu suis "Force original video" (Paksa video asal)), lihat [Butiran video dan penyahkod](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### Fail 360° yang dipaparkan rata: Lihat sebagai 360°
 
 Sesetengah fail 360° tidak mempunyai tag unjuran, jadi pelayan tidak menandakannya sebagai 360° dan ia dipaparkan secara rata.
@@ -356,6 +357,7 @@ Dari binaan 20 Immuch360 menambah kamera Tapo di sebelah perkongsian rangkaian. 
 8. Ketik "Uji kamera". Ia menunjukkan "Rakaman: (model), perisian tegar (versi)" dengan keadaan kad memori, dan "Paparan langsung: (video), bunyi (audio)", atau apa yang gagal bagi setiap satu.
 9. Ketik Simpan. Kamera disenaraikan di bawah "Kamera", selepas perkongsian, dengan modelnya apabila diketahui dan `tapo://` dengan alamatnya.
 
+<a id="watch-it-live"></a>
 ### Tonton secara langsung
 
 1. Ketik kamera. Paparan langsungnya berada di bahagian atas halamannya: "Menyambung ke kamera", kemudian gambar dengan lencana Langsung.
@@ -755,9 +757,9 @@ Binaan semasa, binaan 21 (versi 3.3.0-rc.0, nombor binaan 3030019), berasaskan I
 | Hantar fail perkongsian ke Immich; fail peranti yang dihantar secara manual dikira sebagai sudah disandarkan | ❌ fail peranti sahaja | ✅ dari binaan 15 |
 | Kongsi telefon ini pada rangkaian, untuk set kepala | ❌ | ✅ dari binaan 19, Android dan iOS |
 | Pustaka Plex Media Server dimainkan daripada fail asal, di rumah dan di luar rumah, tanpa plex.tv | ❌ | ✅ dari binaan 20, setiap pemapar, pada telefon, tablet, Quest dan TV |
-| Kamera Tapo: paparan langsung, dan rakaman kad memori dihantar ke Immich apabila anda memilih | ❌ | ✅ dari binaan 20: rakaman di mana-mana, langsung pada Android, Android TV dan Quest |
+| Kamera Tapo: paparan langsung, dan rakaman kad memori dihantar ke Immich apabila anda memilih | ❌ | ✅ dari binaan 20: rakaman di mana-mana, langsung pada Android, Android TV, Quest dan, dari binaan desktop 3, Windows |
 | Android TV dan Google TV, dikawal dengan alat kawalan jauh, dalam APK yang sama | ❌ bukan aplikasi TV | ✅ dari binaan 20 |
-| Aplikasi yang sama pada komputer Windows | ❌ telefon dan tablet sahaja | ✅ pratonton, foto dan video rata |
+| Aplikasi yang sama pada komputer Windows | ❌ telefon dan tablet sahaja | ✅ pratonton: foto, video rata dan video 360° (binaan desktop 3) |
 | Foto Insta360 .insp mentah dan video .insv satu trek | ❌ rata | ✅ dari binaan 16 |
 | Video mentah dengan satu lensa bagi setiap trek atau setiap fail (Insta360 X4, X4 Air, X5, X6, pasangan X3, GoPro .360, DJI .osv) | ❌ rata atau salah | ✅ dari binaan 18 |
 | .dng fisheye berkembar | ❌ rata | ❌ belum lagi |
@@ -787,7 +789,7 @@ Binaan semasa, binaan 21 (versi 3.3.0-rc.0, nombor binaan 3030019), berasaskan I
 - **Plex Media Server**: disemak dari komputer terhadap Plex Media Server 1.42.1 sebenar (perpasangan, folder, julat bait, lakaran kecil, alamat di luar rumah); belum disemak pada peranti.
 - **Kamera Tapo**: disemak terhadap kamera simulasi; belum disemak dengan kamera sebenar.
 - **Android TV dan Google TV**: disemak oleh ujian automatik; belum disemak pada TV.
-- **Aplikasi yang sama pada komputer Windows**: 656 daripada 663 ujian desktop automatik lulus pada Windows (7 dilangkau dengan sengaja), dan pada PC Windows 11 aplikasi bermula, membuka sesi yang disimpan pada pelayan Immich, menyegerak, memainkan video dan ditutup dengan bersih; ujian setiap fungsi secara manual sedang dijalankan.
+- **Aplikasi yang sama pada komputer Windows**: binaan desktop 3 lulus 855 daripada 863 ujian desktop automatiknya pada Windows (8 dilangkau dengan sengaja) dan seluruh suite ujian aplikasi; pada PC Windows 11 aplikasi bermula, membuka sesi yang disimpan pada pelayan Immich, menyegerak, memainkan video dan ditutup dengan bersih, dan pemain 360°nya telah dijalankan dengan klip sintetik 4K, 5.7K dan 8K pada kedua-dua cip grafik sebuah komputer riba tanpa sebarang ranap. Ujian setiap fungsi secara manual, dengan fail 360° sebenar dan kamera Tapo sebenar, sedang dijalankan.
 - **Foto Insta360 .insp mentah dan video .insv satu trek**: foto disemak berbanding eksport Insta360 Studio bagi fail X3, video pada emulator Android dengan fail X3 resolusi rendah; belum dijalankan pada iPhone.
 - **Video mentah dengan satu lensa bagi setiap trek atau setiap fail**: penghurai dan pencantuman disemak pada fail X4, pasangan X3, GoPro MAX dan Osmo 360 sebenar; main balik ialah ujian peranti binaan 18 dan 19.
 - **.dng fisheye berkembar**: dirancang.
@@ -842,17 +844,19 @@ Immuch360 ialah galeri, dan juga pemain media percuma: ia memainkan apa yang tid
   - iPhone, iPad: pemain SceneKit asli pada sfera, giroskop, pilihan trek audio, penunjuk penimbalan; main dan jeda, belum ada bar masa.
   - Meta Quest: imersif, 3D sebenar untuk fail stereoskopik, bar masa dengan langkau 10 saat, media sebelumnya dan seterusnya.
   - Android TV, Google TV: pemain Media3 telefon, dipusingkan dengan anak panah.
-  - Windows: belum lagi, dipaparkan rata buat masa ini.
+  - Windows (dari binaan desktop 3): pemain 360° aplikasi itu sendiri (libmpv), diputar dengan tetikus atau anak panah, dizum dengan roda, carian kedudukan, pilihan trek audio, penunjuk penimbalan; lancar pada cip grafik khusus, paling lebar 2880 piksel dan lebih perlahan untuk 5.7K H.264 pada cip bersepadu.
 - **3D 360° (atas dan bawah, sebelah-menyebelah)**
   - Telefon Android: mata kiri, butang susun atur.
   - iPhone, iPad: sama.
   - Meta Quest: setiap mata mendapat separuh bingkainya sendiri.
   - Android TV, Google TV: mata kiri, butang susun atur.
+  - Windows: foto seperti pada telefon; video dari binaan desktop 3, mata kiri, butang susun atur, lancar pada cip grafik khusus, dengan had pada cip bersepadu.
 - **Foto dan video VR180 (separuh sfera)**
   - Telefon Android: separuh sfera, butang 360°/180°.
   - iPhone, iPad: sama.
   - Meta Quest: separuh sfera imersif.
   - Android TV, Google TV: separuh sfera, butang 360°/180°.
+  - Windows: foto seperti pada telefon; video dari binaan desktop 3, separuh sfera, butang 360°/180°, lancar pada cip grafik khusus, dengan had pada cip bersepadu.
 - **Spatial 2.5D (kedalaman pada skrin rata daripada video stereoskopik)**
   - Telefon Android: pemain asli, penjejakan kepala dengan kamera hadapan.
   - iPhone, iPad: sama.
@@ -878,16 +882,19 @@ Immuch360 ialah galeri, dan juga pemain media percuma: ia memainkan apa yang tid
   - iPhone, iPad: dicantumkan oleh shader SceneKit.
   - Meta Quest: imersif, dicantumkan oleh kesan GPU yang sama.
   - Android TV, Google TV: seperti pada telefon.
+  - Windows (dari binaan desktop 3): dicantumkan pada cip grafik dalam pemain 360° aplikasi, lancar pada cip khusus, dengan had pada cip bersepadu.
 - **Video mentah dengan satu lensa bagi setiap trek atau setiap fail (dari binaan 18): Insta360 X4, X4 Air, X5, X6 .insv, pasangan X3, GoPro .360, DJI .osv**
   - Telefon Android: dua penyahkod perkakasan serentak, satu bagi setiap lensa (dari binaan 19 penyahkod perisian pada peranti tanpa penyahkod perkakasan, sehingga 2048x2048 bagi setiap lensa), dan pengkompositan GL yang mencantumkannya menjadi sfera; satu lensa, kemudian strim transkod, kemudian video tanpa dicantumkan, apabila peranti tidak dapat menjalankan dua.
   - iPhone, iPad: pengkompositan AVFoundation tersuai dengan Metal.
   - Meta Quest: imersif, dua penyahkod dan pengkompositan yang sama (panel 3840x1920).
   - Android TV, Google TV: seperti pada telefon, apabila TV menjalankan dua penyahkod serentak.
+  - Windows (dari binaan desktop 3): kedua-dua lensa bersebelahan dalam satu pemain, kemudian dicantumkan, apabila komputer mampu mengikutinya (diukur pada main baliknya sendiri; pada komputer riba ujian, pasangan X3 pada cip khususnya sahaja); jika tidak, langkah-langkah telefon: satu lensa, strim transkod, salinan LRV resolusi rendah kamera, video tanpa dicantumkan.
 - **Paparan langsung kamera Tapo (dari binaan 20)**
   - Telefon Android: pemain RTSP Media3: SD pada halaman, HD dalam skrin penuh, butang bunyi.
   - iPhone, iPad: belum: kad menyatakan ia akan datang kemudian.
   - Meta Quest: dalam tetingkap, dalam HD.
   - Android TV, Google TV: seperti pada telefon.
+  - Windows (dari binaan desktop 3): pemain libmpv, SD pada halaman, HD dalam skrin penuh, butang bunyi.
 - **Rakaman kamera Tapo (dari binaan 20)**
   - Telefon Android: diambil daripada kad memori menjadi video H.264 dengan bunyinya, kemudian dimainkan dengan cari kedudukan.
   - iPhone, iPad: sama.
@@ -896,14 +903,14 @@ Immuch360 ialah galeri, dan juga pemain media percuma: ia memainkan apa yang tid
 
 Entri Android TV dan Google TV, dari binaan 20, belum disemak pada TV, lihat [Tonton pada TV anda](#watch-on-your-tv-android-tv-and-google-tv); entri kamera belum disemak dengan kamera sebenar.
 
-Pada Windows, pratonton Immuch360 Desktop memaparkan foto, rata dan 360°, termasuk foto mentah Insta360 .insp, dengan tetikus dan papan kekunci, dan dari binaan desktop 2 ia memainkan video rata, daripada pelayan, folder PC, perkongsian, Plex dan rakaman Tapo; video 360°, 3D, VR180 dan video 360° mentah dipaparkan rata atau sebagai pemegang tempat buat masa ini (lihat [Belum tersedia](#not-there-yet)).
+Pada Windows, pratonton Immuch360 Desktop memaparkan foto, rata dan 360°, termasuk foto mentah Insta360 .insp, dengan tetikus dan papan kekunci. Dari binaan desktop 2 ia memainkan video rata, daripada pelayan, folder PC, perkongsian, Plex dan rakaman Tapo, dan dari binaan desktop 3 ia memainkan video 360°, 3D, VR180 dan video 360° mentah daripada sumber yang sama dalam pemain 360°nya sendiri, serta paparan langsung Tapo. Pemain 360° lancar pada cip grafik khusus dan mempunyai had pada cip bersepadu (lihat [Pada komputer Windows](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Pelayan Immich anda**: fail asal atau strim transkod pelayan, seperti yang ditetapkan dalam Settings, Asset Viewer, Sumber video (lihat [Butiran video dan penyahkod](#video-details-decoders-and-why-a-video-stutters)). Akaun yang sama seperti aplikasi web.
 - **Telefon atau set kepala itu sendiri**: "Guna tanpa pelayan" pada halaman log masuk, atau entri On this device dalam tab Pustaka.
 - **NAS atau komputer**: perkongsian SMB dan WebDAV, dan dari binaan 19 pelayan media DLNA, ditemui pada rangkaian, dibaca secara langsung (video SMB melalui sehingga enam sambungan), tiada apa yang disalin; dari binaan 15 fail yang anda pilih boleh dihantar ke akaun Immich anda.
 - **Telefon lain (dari binaan 19)**: "Kongsi telefon ini pada rangkaian" pada telefon itu: set kepala, atau mana-mana klien WebDAV dalam rangkaian, membaca album, bulan dan media 360°nya.
 - **Plex Media Server (dari binaan 20)**: pustaka foto, filem dan rancangan TVnya mengikut folder, fail asal dibaca secara langsung melalui HTTPS yang disemak terhadap sijil pelayan itu sendiri, di rumah atau melalui alamat di luar rumah, pada setiap platform; lihat [Plex Media Server, tanpa plex.tv](#plex-media-server-without-plextv).
-- **Kamera Tapo (dari binaan 20)**: paparan langsung dengan akaun kamera (Android, Android TV, Quest), dan rakaman kad memorinya dengan kata laluan akaun TP-Link (setiap platform), hanya dalam rangkaian setempat; lihat [Kamera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Kamera Tapo (dari binaan 20)**: paparan langsung dengan akaun kamera (Android, Android TV, Quest, dan Windows dari binaan desktop 3), dan rakaman kad memorinya dengan kata laluan akaun TP-Link (setiap platform), hanya dalam rangkaian setempat; lihat [Kamera Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **Folder komputer Windows (pratonton desktop)**: folder yang anda pilih dalam Immuch360 Desktop, dibaca sebagai ganti galeri telefon; komputer juga boleh berkongsinya dengan set kepala, lihat [Pada komputer Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Pustaka Immich anda berada pada pelayan, foto dan video lain berada dalam folder
 
 Pada komputer, Immich menawarkan aplikasi webnya dalam pelayar. **Apa yang ditambah oleh Immuch360 Desktop**: folder PC tanpa sebarang pelayan atau akaun, perkongsian SMB, WebDAV, DLNA dan Plex yang dilayari dan dimainkan daripada aplikasi, foto mentah Insta360 .insp dibuka sebagai sfera, dan PC dikongsi dengan Meta Quest di rumah.
 
-Ini ialah pratonton: dari binaan desktop 2, foto dan video rata berfungsi; video 360°, 3D dan VR180 datang dengan binaan desktop seterusnya. Sejak 9 Oktober 2026 sumber desktop berada dalam cabang utama fork, `immuch360`, jadi telefon, set kepala, TV dan komputer dihantar daripada sumber yang sama. Aplikasi telefon, tablet, Quest dan TV tidak berubah kerananya dan kekal dengan nama Immuch360.
+Ini ialah pratonton: foto dan video rata berfungsi dari binaan desktop 2, dan dari binaan desktop 3 pemain video 360° (video 360°, 3D, VR180 dan video 360° mentah) serta paparan langsung kamera Tapo; langkah di bawah yang memerlukan binaan 3 menyatakannya. Sejak 9 Oktober 2026 sumber desktop berada dalam cabang utama fork, `immuch360`, jadi telefon, set kepala, TV dan komputer dihantar daripada sumber yang sama. Aplikasi telefon, tablet, Quest dan TV tidak berubah kerananya dan kekal dengan nama Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Muat turun dan pasang pada Windows
 
-Binaan semasa ialah pra-keluaran GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Failnya ialah `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (kira-kira 57 MB, 78 fail selepas dinyahzip, termasuk pemain video dan folder `licenses`nya), bersama `SHA256SUMS.txt` untuk menyemaknya. Ia dibina daripada cabang utama, `immuch360`, pada komit 5b723bd25: sumber binaan telefon 21 ditambah versi komputer. Ia memerlukan Windows 10 atau 11, 64 bit.
+Binaan semasa ialah pra-keluaran GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Failnya ialah `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (kira-kira 57 MB, 79 fail selepas dinyahzip, termasuk pemain video dan folder `licenses`nya), bersama `SHA256SUMS.txt` untuk menyemaknya. Ia dibina daripada cabang utama, `immuch360`, setelah pemain video 360° komputer digabungkan ke dalamnya, pada komit yang dinamakan dalam nota keluarannya: sumber binaan telefon 21 ditambah versi komputer. Ia memerlukan Windows 10 atau 11, 64 bit.
 
-1. Muat turun ZIP dan nyahzipnya di mana-mana, contohnya dalam Documents.
-2. Mulakan `immuch360.exe` daripada folder yang dinyahzip. Kekalkan folder itu lengkap: program memerlukan fail di sebelahnya, termasuk pemain video.
+1. Muat turun ZIP dan nyahzipnya di mana-mana, contohnya dalam Documents. Untuk menggantikan binaan desktop 2, padam foldernya atau nyahzip ke dalam folder baharu: log masuk, folder dan tetapan anda kekal dalam profil Windows anda, bukan dalam folder itu.
+2. Mulakan `immuch360.exe` daripada folder yang dinyahzip. Kekalkan folder itu lengkap: program memerlukan fail di sebelahnya, antaranya `libmpv-2.dll`, pemain video, dan `immuch_desktop_video.dll`, yang membaca penyahkod cip grafik.
 3. Fail-fail itu belum ditandatangani, jadi Windows SmartScreen mungkin memaparkan "Windows melindungi PC anda": pilih "Maklumat lanjut", kemudian "Jalankan juga". Jika Smart App Control dihidupkan, ia menyekat program yang tidak ditandatangani.
 4. Tunggu tetingkap muncul. Permulaan pertama binaan baharu mengambil masa dari 10 saat hingga kira-kira seminit, kemungkinan besar semasa Microsoft Defender mengimbas fail baharu: jangan mulakan aplikasi sekali lagi dalam tempoh itu. Permulaan seterusnya mengambil masa satu atau dua saat.
 5. Pada halaman log masuk, log masuk ke pelayan Immich anda dengan alamatnya, e-mel dan kata laluan anda, atau klik "Guna tanpa pelayan".
 
-Untuk menyemak ZIP, jalankan `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` dalam command prompt, dalam folder muat turun: hasilnya ialah yang tertulis dalam `SHA256SUMS.txt`. Belum ada pemasang dan belum ada kemas kini automatik: pantau halaman [Releases](https://github.com/freeKC/Immuch360/releases), dan nyahzip binaan seterusnya dengan cara yang sama.
+Untuk menyemak ZIP, jalankan `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` dalam command prompt, dalam folder muat turun: hasilnya ialah yang tertulis dalam `SHA256SUMS.txt`. Belum ada pemasang dan belum ada kemas kini automatik: pantau halaman [Releases](https://github.com/freeKC/Immuch360/releases), dan nyahzip binaan seterusnya dengan cara yang sama.
 
 ### Apa yang dilakukan oleh pratonton
 
@@ -993,7 +1000,9 @@ Untuk menyemak ZIP, jalankan `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-de
 - **Muat naik dan sandaran** daripada folder itu ke pelayan Immich anda, semasa aplikasi dibuka.
 - **Foto 360° sebagai sfera**, dengan tetikus dan papan kekunci; foto mentah .insp daripada kamera Insta360 dibuka seperti pada telefon.
 - **Video rata** (dari binaan desktop 2): video dalam folder anda, pelayan Immich anda (fail asal atau strim yang ditranskod, lihat [Butiran video dan penyahkod](#video-details-decoders-and-why-a-video-stutters)), perkongsian SMB, WebDAV dan DLNA, pelayan Plex dan rakaman Tapo dimainkan dalam tetingkap, dengan kawalan telefon (main, jeda, bar masa), penunjuk penimbalan, dan menu trek audio untuk video yang mempunyai beberapa trek. Video dalam folder anda dan perkongsian menunjukkan satu bingkai video sebagai lakaran kecilnya, dan bukannya ikon filem.
-- **Perkongsian rangkaian**: Samba (SMB), WebDAV dan pelayan media DLNA, serta pelayan Plex tanpa plex.tv, dilayari seperti pada telefon: fotonya dibuka dan videonya dimainkan. Untuk kamera Tapo, rakaman kad memori: senarai, pengambilan klip dan memainkannya.
+- **Video 360°, 3D dan VR180** (dari binaan desktop 3): butang 360° membukanya dalam pemain 360° aplikasi, dalam tetingkap atau dalam skrin penuh, daripada setiap sumber video rata, diputar dengan tetikus dan papan kekunci, dengan butang 3D dan 360°/180° telefon (video 3D memaparkan mata kirinya, seperti pada telefon), carian kedudukan, menu trek audio dan penunjuk penimbalan.
+- **Video 360° mentah** (dari binaan desktop 3): fail Insta360 .insv, dengan kedua-dua lensa dalam satu trek, dalam dua trek (X4 dan kemudian) atau dalam dua fail (pasangan X3), fail GoPro .360 dan DJI .osv, dicantumkan oleh aplikasi pada cip grafik semasa dimainkan, dengan kalibrasi fail, seperti pada telefon.
+- **Perkongsian rangkaian**: Samba (SMB), WebDAV dan pelayan media DLNA, serta pelayan Plex tanpa plex.tv, dilayari seperti pada telefon: fotonya dibuka dan videonya dimainkan. Untuk kamera Tapo, rakaman kad memori: senarai, pengambilan klip dan memainkannya; dan dari binaan desktop 3 paparan langsung.
 - **Kongsi komputer ini pada rangkaian**: album, bulan dan media 360° daripada folder anda, baca sahaja, untuk Meta Quest atau peranti lain di rumah, sama seperti telefon berkongsi dirinya.
 - **Fail**: muat turun daripada pelayan masuk ke folder yang anda pilih, "Simpan ke folder" menyimpan salinan foto dan video yang dipilih, dan halaman Logs (Log) mempunyai "Simpan log ke fail".
 
@@ -1005,9 +1014,28 @@ Untuk menyemak ZIP, jalankan `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-de
 4. **Pergi dari foto ke foto**: dalam foto rata, anak panah kiri dan kanan, atau chevron yang muncul di tepi semasa tetikus bergerak, pergi ke foto sebelumnya dan seterusnya. Huruf yang ditaip dalam medan keterangan kekal dalam teks.
 5. **Mainkan video**: bukanya daripada garis masa, folder, perkongsian, Plex atau rakaman kamera Tapo; ia dimainkan dalam tetingkap. Enter, atau kekunci main dan jeda papan kekunci, menjeda dan memainkannya semula. Semasa ia dimainkan, anak panah kiri dan kanan, atau J dan L, melompat 10 saat ke belakang atau ke hadapan; semasa dijeda, anak panah pergi ke video sebelumnya dan seterusnya. F atau F11 menukar ke skrin penuh, seperti untuk foto. Butang "Trek audio" memilih antara trek audio video yang mempunyai beberapa trek.
 6. **Apabila video berhenti**: video yang dijeda kekal dijeda apabila anda kembali ke tetingkap. Video yang terputus sebelum tamat, contohnya apabila perkongsian atau pelayan berhenti menjawab, menyatakannya: bukanya semula dan ia bersambung dari tempat ia berhenti, dalam keadaan dijeda. Fail senarai main yang ditemui dalam folder atau perkongsian tidak diikuti.
-7. **Kongsi komputer dengan set kepala**: buka Pustaka, kemudian Perkongsian rangkaian; jubin pertama ialah "Kongsi komputer ini pada rangkaian", bahagian komputer bagi [Kongsi telefon ini pada rangkaian](#share-this-phone-on-the-network). Hidupkan "Kongsi foto dan video pada rangkaian", kemudian tambah komputer dalam set kepala seperti yang diterangkan dalam bahagian itu. Perkongsian berhenti apabila aplikasi ditutup atau selepas sejam tanpa digunakan.
-8. **Benarkan rangkaian**: Windows mungkin bertanya sama ada Immuch360 Desktop boleh menggunakan rangkaian. Benarkannya pada rangkaian peribadi, jika tidak set kepala tidak dapat menemui komputer. Pada rangkaian yang ditandakan oleh Windows sebagai awam (kafe, hotel), atau yang jenisnya tidak dapat dikenal pasti, perkongsian tidak bermula melainkan anda memilih "Kongsi untuk sesi ini", dan komputer mengumumkan dirinya hanya pada rangkaian tempat ia berkongsi.
-9. **Settings, "Komputer ini"**: folder, folder muat turun, penyesuai rangkaian yang digunakan untuk mencari perkongsian dan untuk berkongsi komputer (apabila ada beberapa, contohnya Wi-Fi dan Ethernet), dan sijil dipercayai: pihak berkuasa sijil pelayan anda sendiri, sebagai fail PEM, untuk alamat HTTPS yang tidak dipercayai oleh Windows dengan sendirinya. Sijil klien diimport dalam Settings, Lanjutan, seperti pada telefon.
+7. **Mainkan video 360°** (dari binaan desktop 3): buka video dan klik 360° pada bar atas, seperti pada telefon; untuk fail 360° yang tidak ditandakan oleh pelayan, "Lihat sebagai 360°" dalam menu ⋮ dahulu, lihat [Fail 360° yang dipaparkan rata](#a-360-file-that-shows-flat-view-as-360). Pemain 360° dibuka dalam tetingkap. Seret dengan tetikus untuk melihat sekeliling (paparan terus berputar sedikit selepas seretan pantas), zum dengan roda, + dan - atau Page Up dan Page Down, putar dengan kekunci anak panah yang ditekan lama. Space, atau kekunci main dan jeda papan kekunci, menjeda dan memainkan semula; J dan L melompat 10 saat ke belakang atau ke hadapan; Home kembali ke permulaan; M mematikan dan menghidupkan bunyi. F, F11 atau klik dua kali menukar ke skrin penuh; Escape keluar daripada skrin penuh, kemudian menutup pemain. Kawalan (tutup, tajuk, 360°/180°, 3D, trek audio dan skrin penuh di atas; main, 10 saat ke belakang dan ke hadapan, bar masa dan bunyi di bawah) disembunyikan bersama kursor tetikus selepas 3 saat main balik, dan kembali apabila tetikus bergerak atau kekunci ditekan; Tab pergi dari satu ke yang seterusnya.
+8. **3D dan VR180**: dalam pemain 360°, butang 3D bertukar antara "Mono (bukan 3D)", "3D, atas dan bawah" dan "3D, sebelah-menyebelah", dan butang 360°/180° bertukar antara sfera penuh dan separuh sfera VR180, seperti dalam [3D dan VR180](#3d-and-vr180-photos-and-videos). Video 3D memaparkan mata kirinya.
+9. **Video 360° mentah** (dari binaan desktop 3): buka fail mentah dan klik 360°, seperti pada telefon, lihat [Fail mentah kamera 360°](#raw-360-camera-files-without-the-cameras-app); simpan dua fail pasangan X3 bersama-sama. Fail dengan kedua-dua lensa dalam satu trek dicantumkan semasa dimainkan. Fail dengan satu lensa bagi setiap trek atau setiap fail memainkan kedua-dua lensa bersebelahan dalam satu pemain apabila komputer mampu mengikutinya: beberapa saat pertama video sedemikian diukur, dan hasilnya disimpan untuk video jenis itu yang seterusnya (cara yang didapati terlalu perlahan dicuba semula selepas 14 hari). Apabila komputer tidak mampu mengikutinya, pemain melalui langkah-langkah telefon, dengan mesejnya: satu lensa, separuh sfera hitam; strim transkod pelayan; salinan LRV resolusi rendah yang dirakam kamera di sebelah fail, jika ada; video tanpa dicantumkan. Video mentah tidak mempunyai butang 3D dan butang 360°/180°.
+10. **Paparan langsung kamera Tapo** (dari binaan desktop 3): buka kamera seperti pada telefon, lihat [Tonton secara langsung](#watch-it-live). Halaman memainkan strim SD dan skrin penuh strim HD, dengan butang telefon pada gambar: bunyi, dimatikan pada mulanya, SD atau HD, dan "Skrin penuh". Strim yang terputus (kamera dimulakan semula, Wi-Fi terputus) kembali dengan sendirinya, dicuba semula selama kira-kira satu setengah minit sementara gambar terakhir kekal pada skrin. Akaun kamera yang ditolak oleh kamera dinyatakan dan tidak dicuba lagi, kerana log masuk yang gagal dikira ke arah penguncian kamera.
+11. **Kongsi komputer dengan set kepala**: buka Pustaka, kemudian Perkongsian rangkaian; jubin pertama ialah "Kongsi komputer ini pada rangkaian", bahagian komputer bagi [Kongsi telefon ini pada rangkaian](#share-this-phone-on-the-network). Hidupkan "Kongsi foto dan video pada rangkaian", kemudian tambah komputer dalam set kepala seperti yang diterangkan dalam bahagian itu. Perkongsian berhenti apabila aplikasi ditutup atau selepas sejam tanpa digunakan.
+12. **Benarkan rangkaian**: Windows mungkin bertanya sama ada Immuch360 Desktop boleh menggunakan rangkaian. Benarkannya pada rangkaian peribadi, jika tidak set kepala tidak dapat menemui komputer. Pada rangkaian yang ditandakan oleh Windows sebagai awam (kafe, hotel), atau yang jenisnya tidak dapat dikenal pasti, perkongsian tidak bermula melainkan anda memilih "Kongsi untuk sesi ini", dan komputer mengumumkan dirinya hanya pada rangkaian tempat ia berkongsi.
+13. **Settings, "Komputer ini"**: folder, folder muat turun, penyesuai rangkaian yang digunakan untuk mencari perkongsian dan untuk berkongsi komputer (apabila ada beberapa, contohnya Wi-Fi dan Ethernet), dan sijil dipercayai: pihak berkuasa sijil pelayan anda sendiri, sebagai fail PEM, untuk alamat HTTPS yang tidak dipercayai oleh Windows dengan sendirinya. Sijil klien diimport dalam Settings, Lanjutan, seperti pada telefon.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### Video 360° dan cip grafik
+
+Dalam pemain 360° (dari binaan desktop 3), cip grafik melukis paparan yang anda lihat daripada setiap bingkai video. Plugin video meminta libmpv melukis setiap bingkai ke dalam gambar bersaiz yang dipilih, kemudian laluan lukisan aplikasi itu sendiri melukis daripadanya bahagian sfera yang anda lihat. Memutar paparan mengubah satu nilai laluan itu, bukan pemain: menyeret tidak menggunakan memori, dan video yang dijeda boleh diputar tanpa menyahkod apa-apa.
+
+Aplikasi mengukur beberapa saat pertama setiap video 360° dan memilih saiz bingkai yang diproses oleh cip: seluruh bingkai pada cip khusus, paling lebar 2880 piksel pada cip yang terbina dalam pemproses (Windows memberitahu aplikasi jenisnya, jadi cip Intel Arc komputer riba Core Ultra dikira sebagai terbina dalam), satu langkah lebih kecil apabila cip tidak mampu mengikutinya. Apa yang diukurnya disimpan untuk video seterusnya daripada jenis yang sama (kodek, saiz, kadar bingkai dan penyahkod), bukan untuk setiap video.
+
+Apabila langkah terkecil pun tidak lancar, pemain menyatakan "Kad grafik ini tidak dapat memaparkan paparan 360° video ini dengan lancar"; apabila ia jauh daripada lancar, atau apabila cip langsung tidak dapat melukis paparan (tiada OpenGL ES 3.0, pemacu yang menolaknya), video dimainkan rata dan pemain menyatakan sebabnya. Video yang dimainkan rata tidak dimainkan rata pada kali seterusnya: video seterusnya daripada jenisnya diukur semula.
+
+Apabila penyahkodan video pelayan yang tidak mampu mengikuti, bukan lukisan (video yang dinyahkod oleh pemproses, seperti 5.7K H.264), pemain bertukar kepada strim transkod pelayan dari tempat ia berada, dengan mesej telefon: "Memainkan strim transkod: fail asal (kodek dan saiz) melebihi apa yang boleh dinyahkod oleh peranti ini".
+
+- **Gunakan cip grafik khusus komputer riba.** Windows menjalankan aplikasi pada cip bersepadu melainkan diarahkan sebaliknya. Dalam tetapan Windows, Sistem, Paparan, Grafik, tambah `immuch360.exe` dan pilih "Prestasi tinggi", kemudian mulakan aplikasi sekali lagi. Pada komputer riba ujian (cip Intel UHD dan NVIDIA RTX 4060 Laptop), cip NVIDIA melukis video 360° 4K, 5.7K dan 8K dalam saiz penuh dan 30 bingkai sesaat semasa paparan berputar. Cip Intel melukisnya paling lebar 2880 piksel: video 4K H.264 dan 8K HEVC pada kira-kira 30 bingkai sesaat dengan binaan libmpv 2026, video 4K pada 23 hingga 27 dengan libmpv 2024 media-kit (lihat [Belum tersedia](#not-there-yet)), dan video 5.7K H.264, yang dinyahkod oleh pemproses, pada kira-kira 20: daripada pelayan, pemain kemudian bertukar kepada strim transkod; video tanpa strim transkod, daripada folder contohnya, terus dimainkan dengan mesej "Kad grafik ini tidak dapat memaparkan paparan 360° video ini dengan lancar".
+- **Pilih pemapar sendiri.** Dalam Settings, Lanjutan, hidupkan "Menyelesaikan masalah": entri "Pemapar video 360°" muncul, Automatik secara lalai. Ia juga menawarkan "Plugin, saiz penuh", "Plugin, paling lebar 4096", "Plugin, paling lebar 2880" dan "Rata, tanpa paparan 360°", untuk video 360° seterusnya yang anda buka. Di bawahnya, "Ukuran terakhir" menamakan saiz video 360° terakhir dilukis, bingkai sesaatnya, cip grafik dan penyahkod: salinnya ke dalam laporan pepijat. Memilih "Automatik" sekali lagi, walaupun ia sudah pilihan semasa, melupakan apa yang telah diukur, dan video 360° seterusnya diukur semula.
+- **Apa yang dinyahkod oleh cip.** Settings, Lanjutan, "Penyahkod video peranti ini" menyenaraikan apa yang dinyahkod oleh cip grafik yang digunakan, seperti yang dilaporkan oleh Direct3D 11, dan aplikasi membetulkan senarai itu dengan apa yang diukurnya semasa main balik: tetapan Sumber video dan semakan dua lensa video mentah mengikutinya. H.264 yang lebih lebar daripada 4096 piksel (5.7K kamera 360°) dinyahkod oleh pemproses, kerana kedua-dua cip komputer riba ujian tidak menerimanya.
 
 ### Berbanding dengan aplikasi telefon
 
@@ -1017,12 +1045,16 @@ Untuk menyemak ZIP, jalankan `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-de
 - **Tiada apa-apa dipadam daripada folder anda**: "Padam daripada peranti" disembunyikan, dan Padam hanya membuang salinan pelayan, sehingga aplikasi boleh menghantar fail ke tong kitar semula Windows.
 - **Tetikus dan papan kekunci** sebagai ganti sentuhan dan giroskop.
 - **Satu pemain video untuk setiap sumber**: libmpv memainkan video pelayan, folder, perkongsian dan Plex dengan cara yang sama, dan pemain ratanya sudah mempunyai menu trek audio yang belum ada pada pemain rata telefon.
+- **Video 360° dalam tetingkap** (dari binaan desktop 3): pemain 360° ialah halaman aplikasi, bukan pemain asli yang berasingan, dengan bar masa, lompatan 10 saat dan butang bunyi. Video mentah dengan satu lensa bagi setiap trek atau setiap fail disusun bersebelahan dalam satu pemain, sedangkan telefon menjalankan dua penyahkod; langkah sandaran telefon adalah sama, dengan salinan LRV kamera ditambah sebelum video tanpa dicantumkan.
+- **Paparan langsung Tapo** (dari binaan desktop 3) dimainkan pada komputer seperti pada Android, manakala iPhone dan iPad belum mempunyainya.
 
 <a id="not-there-yet"></a>
 ### Belum tersedia
 
-- **Video 360°, 3D, VR180 dan video 360° mentah**: buat masa ini ia dipaparkan rata, seperti yang disimpan dalam fail (seluruh sfera dibentangkan, dua mata bersebelahan, atau gambar bulat kanta), atau sebagai pemegang tempat, dan butang 360° kekal pada foto. Pemainnya datang dengan binaan desktop seterusnya.
-- **Spatial 2.5D**, kemudian dengan kamera web; **paparan langsung Tapo**; **peta** dan paparan Tempat; **log masuk dengan OAuth** (log masuk dengan e-mel dan kata laluan sebagai gantinya); **Google Cast**; **pemberitahuan**.
+- **libmpv binaan fork sendiri**: ZIP membawa libmpv 2024 media-kit sehingga binaan fork sendiri dihidupkan, dan `BUILD-INFO.txt` dalam ZIP menyatakan yang mana satu dibawanya. Dengan versi 2024, dua lensa video mentah dengan satu lensa bagi setiap trek atau setiap fail tidak pernah dimainkan serentak (ia tidak mempunyai penapis yang menyusunnya), jadi video itu memaparkan satu lensa, separuh sfera hitam; dan cip grafik menyalin semula setiap bingkai daripada penyahkodnya, yang memperlahankan pemain 360° pada cip bersepadu. libmpv aliran kerja fork sendiri, versi 2026, bertujuan menggantikannya sebelum keluaran awam pertama; binaan libmpv 2026 yang dicuba pada komputer riba ujian melakukan kedua-duanya.
+- **Video mentah dua lensa pada komputer riba**: walaupun dengan libmpv 2026, komputer riba ujian menyusun pasangan X3 (dua fail H.264 2880x2880) pada 30 bingkai sesaat pada cip NVIDIAnya sahaja; pada cip Intelnya, dan untuk fail X4 (dua trek HEVC 3840x3840) pada kedua-dua cip, video memainkan satu lensa, separuh sfera hitam, seperti pada telefon yang tidak dapat menjalankan dua penyahkod.
+- **3D pada skrin sahaja**: video 3D memaparkan mata kirinya, seperti pada telefon; tiada giroskop dan tiada paparan set kepala pada komputer. Untuk menonton dalam 3D sebenar, kongsi komputer dengan Meta Quest.
+- **Spatial 2.5D**, kemudian dengan kamera web; **peta** dan paparan Tempat; **log masuk dengan OAuth** (log masuk dengan e-mel dan kata laluan sebagai gantinya); **Google Cast**; **pemberitahuan**.
 - **Pemasang, binaan bertandatangan dan kemas kini automatik**: binaan ini ialah folder dengan `immuch360.exe`.
 - **Linux dan macOS**: projeknya ada dalam sumber, tetapi belum dibina atau dicuba pada sistem tersebut, dan pemain videonya belum ada di dalamnya; ia datang selepas Windows.
 - **Terjemahan**: teks baharu versi komputer dalam bahasa Inggeris buat masa ini.
@@ -1030,10 +1062,11 @@ Untuk menyemak ZIP, jalankan `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-de
 ### Masalah yang diketahui
 
 - **Permulaan pertama binaan baharu adalah perlahan**: dari 10 saat hingga kira-kira seminit sebelum tetingkap muncul, kemungkinan besar semasa Microsoft Defender mengimbas fail baharu, yang belum ditandatangani. Tunggu tetingkap dan jangan mulakan aplikasi sekali lagi; permulaan seterusnya mengambil masa satu atau dua saat.
-- **Video 8K HEVC memerlukan cip grafik khusus**: pada komputer riba ujian, cip Intel UHD bersepadu memaparkan kira-kira separuh bingkai video 8K HEVC, manakala cip NVIDIA khusus memainkan 8K HEVC dan 5.7K H.264 tanpa sebarang bingkai tercicir. Windows menjalankan aplikasi pada cip bersepadu melainkan diarahkan sebaliknya: dalam tetapan Windows, Sistem, Paparan, Grafik, tambah `immuch360.exe` dan pilih "Prestasi tinggi". Pada cip bersepadu, video 5.7K H.264, yang ditolak oleh penyahkodnya, dinyahkod oleh pemproses tanpa kehilangan bingkai.
-- **Video dilukis paling tinggi 1440 baris**, kemudian diskalakan mengikut tetingkap: pada skrin 4K dalam skrin penuh, video 4K atau 8K kelihatan sedikit kurang tajam berbanding dalam pemain video khusus. Ini mengekalkan video 8K dalam had kuasa grafik komputer riba.
+- **Video 8K HEVC memerlukan cip grafik khusus, dan video 360° berjalan lebih baik padanya**: pada komputer riba ujian, cip Intel UHD bersepadu memaparkan kira-kira separuh bingkai video 8K HEVC, manakala cip NVIDIA khusus memainkan 8K HEVC dan 5.7K H.264 tanpa sebarang bingkai tercicir; pemain 360° lancar pada cip NVIDIA dan lebih perlahan pada cip Intel, lihat [Video 360° dan cip grafik](#360-videos-and-the-graphics-chip). Windows menjalankan aplikasi pada cip bersepadu melainkan diarahkan sebaliknya: dalam tetapan Windows, Sistem, Paparan, Grafik, tambah `immuch360.exe` dan pilih "Prestasi tinggi", kemudian mulakan aplikasi sekali lagi. Pada cip bersepadu, video rata 5.7K H.264, yang ditolak oleh penyahkodnya, dinyahkod oleh pemproses tanpa kehilangan bingkai.
+- **Video rata dilukis paling tinggi 1440 baris**, kemudian diskalakan mengikut tetingkap: pada skrin 4K dalam skrin penuh, video 4K atau 8K kelihatan sedikit kurang tajam berbanding dalam pemain video khusus. Ini mengekalkan video 8K dalam had kuasa grafik komputer riba. Pemain 360° pula memproses seluruh bingkai, atau saiz lebih kecil yang dipilih oleh ukurannya.
 - **Semasa video daripada folder anda dimainkan dalam aplikasi, atau semasa set kepala membaca fail daripada komputer yang dikongsi** (video yang dimainkannya, foto yang dimuat turunnya), Windows tidak boleh menamakan semula, mengalihkan atau memadam fail itu dan menyatakan bahawa ia dibuka dalam Immuch360 Desktop: tutup video itu, atau hentikan main balik dalam set kepala, dahulu. Sandaran tidak memegang fail anda dengan cara itu: fail boleh dinamakan semula, dialihkan atau dipadam semasa ia dimuat naik.
-- **Kekurangan kecil**: 656 daripada 663 ujian desktop lulus pada Windows (7 dilangkau dengan sengaja), 200 pemain yang dibuka satu demi satu tidak meninggalkan kebocoran, dan pada PC Windows 11 aplikasi bermula, membuka sesi yang disimpan pada pelayan Immich, menyegerak, memainkan video dan ditutup dengan bersih. Ujian setiap fungsi secara manual pada PC sebenar masih dijalankan.
+- **Kekurangan kecil**: binaan desktop 3 lulus 855 daripada 863 ujian desktopnya pada Windows (8 dilangkau dengan sengaja) dan seluruh suite ujian aplikasi, 200 pemain yang dibuka satu demi satu tidak meninggalkan kebocoran, dan ZIP keluarannya bermula, memainkan klip ujian dan ditutup dengan bersih. Ujian setiap fungsi secara manual pada PC sebenar masih dijalankan.
+- **Dengan apa pemain 360° dan paparan langsung telah disemak**: pemain 360° telah dijalankan dengan klip 360° sintetik 4K, 5.7K dan 8K pada kedua-dua cip grafik sebuah komputer riba (dibuka, dimainkan, diputar semasa dimainkan dan dijeda, ditutup) tanpa ranap dan tanpa tetapan semula pemacu grafik. Video mentah dua lensa telah dimainkan daripada klip sintetik dan daripada fail X3 dan X4 sebenar. Paparan langsung Tapo telah disemak dengan pelayan RTSP ujian yang log masuk seperti kamera (Digest), diputuskan dan ditolak dengan sengaja, tanpa kata laluan dalam mana-mana baris log, tetapi belum dengan kamera sebenar. Ujian secara manual, dengan fail 360° dan 3D sebenar, kedua-dua skrin komputer riba, tidur dan sambung semula, dan kamera sebenar, masih akan datang.
 
 Jika berlaku masalah, sila buka [isu](https://github.com/freeKC/Immuch360/issues) bersama log yang disimpan daripada halaman Logs (Log), lihat [Log](#logs). Semak log sebelum berkongsinya: ia mungkin mengandungi alamat pelayan anda.
 
@@ -1052,7 +1085,7 @@ Anda memerlukan Windows 10 atau 11 pada x64, Flutter 3.47.2 untuk Windows, Visua
    mise run codegen
    ```
 
-2. Pada Windows, dalam folder `mobile` yang sama, bina aplikasi. Binaan pertama memuat turun pustaka pemain video (libmpv dan ANGLE) daripada GitHub dan menyemak setiap arkib dengan SHA-256nya:
+2. Pada Windows, dalam folder `mobile` yang sama, bina aplikasi. Binaan pertama memuat turun pustaka pemain video (libmpv dan ANGLE) daripada GitHub dan menyemak setiap arkib dengan SHA-256nya; ia juga mengkompil plugin Direct3D 11 kecil yang membaca penyahkod cip grafik, `immuch_desktop_video`, dengan beban kerja C++ yang sama:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Anda memerlukan Windows 10 atau 11 pada x64, Flutter 3.47.2 untuk Windows, Visua
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-CI Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) berjalan pada cabang `desktop`, yang mengikuti `immuch360`: pemeriksaan telefon (tiada apa-apa berubah dalam binaan telefon) dan seluruh suite ujian pada Linux, ujian desktop pada Windows, dan ZIP yang sama; tugas Linux dan macOSnya (`flutter build linux` dan `flutter build macos`, dengan `-t lib/main_desktop.dart` yang sama) belum dijalankan pada sistem tersebut.
+CI Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) berjalan pada cabang `desktop`, yang mengikuti `immuch360`: pemeriksaan telefon (tiada apa-apa berubah dalam binaan telefon) dan seluruh suite ujian pada Linux, ujian desktop pada Windows, dan ZIP yang sama, kemudian pada binaan itu ujian yang memerlukan libmpv dan ANGLEnya (log masuk paparan langsung Tapo, apa yang tidak boleh dibuka oleh fail video, shader 360°); tugas Linuxnya membina aplikasi pada Ubuntu dan tugas macOSnya mengkompilnya dengan Xcode 26.3 dan SDK macOS 26 (kedua-duanya dengan `-t lib/main_desktop.dart` yang sama), sebagai semakan kompil sahaja: kedua-duanya belum dimulakan pada sistem tersebut. Aliran kerja kedua (`.github/workflows/immuch360-libmpv.yml`) membina semula libmpv untuk Windows x64 dan arm64 daripada sumber yang disematkan dan menerbitkan arkib bersama SHA-256nya; ZIP masih membawa arkib media-kit sehingga binaan itu dihidupkan, jadi had libmpv 2024 dalam [Belum tersedia](#not-there-yet) juga terpakai pada binaan anda sendiri.
 
 <a id="where-to-get-it"></a>
 ## Di mana untuk mendapatkannya
@@ -1088,8 +1121,8 @@ Aplikasi ini ada di Google Play untuk telefon dan tablet; versi App Store sedang
   - Hari ini: `Immuch360-v<version>-release.apk` universal daripada halaman [Releases](https://github.com/freeKC/Immuch360/releases), dipasang secara sideload dengan adb, lihat [Pasangnya pada TV](#install-it-on-the-tv). Ia aplikasi yang sama seperti pada telefon.
   - Tidak lama lagi: Google Play pada TV, yang penyenaraiannya dalam semakan Google sejak 9 Oktober 2026.
 - **Windows 10 dan 11, 64 bit (pratonton)**
-  - Hari ini: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` daripada [pra-keluaran desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), dinyahzip dan dimulakan seperti yang diterangkan dalam [Muat turun dan pasang pada Windows](#download-and-install-on-windows). Foto dan video rata buat masa ini: video 360°, 3D dan VR180 datang dengan binaan desktop seterusnya.
-  - Tidak lama lagi: video 360°, 3D, VR180 dan video 360° mentah; pemasang, binaan bertandatangan dan kemas kini kemudian.
+  - Hari ini: Immuch360 Desktop, binaan desktop 3, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` daripada [pra-keluaran desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), dinyahzip dan dimulakan seperti yang diterangkan dalam [Muat turun dan pasang pada Windows](#download-and-install-on-windows). Foto, video rata, video 360°, 3D, VR180 dan video 360° mentah (lancar pada cip grafik khusus, dengan had pada cip bersepadu) serta paparan langsung Tapo.
+  - Tidak lama lagi: Spatial 2.5D dengan kamera web, kemudian Linux dan macOS; pemasang, binaan bertandatangan dan kemas kini kemudian.
 
 Pautan App Store dan Meta Horizon Store akan ditambah di sini sebaik sahaja penyenaraian diterbitkan. Log masuk dengan URL pelayan Immich dan akaun anda yang biasa, atau ketik "Guna tanpa pelayan" pada halaman log masuk untuk bermula dengan foto dan video peranti itu sendiri. APK daripada GitHub tidak mengemas kini dirinya sendiri: pantau halaman Releases, dan setelah anda memasang aplikasi daripada gedung, dapatkan kemas kini daripada gedung itu.
 
@@ -1126,7 +1159,7 @@ Tiada rahsia disimpan dalam repositori ini: kunci penandatanganan Android disimp
 
 - **`main`**: Immich `main` pada komit yang menjadi asas `immuch360` (29 September 2026 untuk binaan semasa), tidak pernah diubah; ia bergerak ke hadapan apabila fork diasaskan semula (rebase) pada Immich yang lebih baharu.
 - **`immuch360`**: perubahan fork ini di atas Immich, termasuk Immuch360 Desktop sejak 9 Oktober 2026. Setiap keluaran menyatakan versi Immich yang menjadi asasnya.
-- **`desktop`**: tempat Immuch360 Desktop, versi komputer, dibina di atas `immuch360`, sehingga ia digabungkan ke dalamnya pada 9 Oktober 2026 supaya telefon, set kepala, TV dan komputer dihantar daripada sumber yang sama. Kini ia mengikuti `immuch360` dan membawa tag pra-keluaran desktop ([binaan desktop 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) daripada komit 21f285c34, [binaan desktop 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) daripada 5b723bd25). Versi komputer tidak mengubah apa-apa di bawah `mobile/android` dan `mobile/ios`.
+- **`desktop`**: tempat Immuch360 Desktop, versi komputer, dibina di atas `immuch360`, sehingga ia digabungkan ke dalamnya pada 9 Oktober 2026 supaya telefon, set kepala, TV dan komputer dihantar daripada sumber yang sama. Kini ia mengikuti `immuch360` dan membawa tag pra-keluaran desktop ([binaan desktop 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) daripada komit 21f285c34, [binaan desktop 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) daripada 5b723bd25, [binaan desktop 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) daripada penggabungan pemain video 360° pada 10 Oktober 2026). Kerja desktop baharu sampai di situ dahulu dan menyertai `immuch360` bersama binaan desktop yang menghantarnya. Versi komputer tidak mengubah apa-apa di bawah `mobile/android` dan `mobile/ios`.
 
 <a id="logs"></a>
 ## Log
@@ -1145,7 +1178,7 @@ Dari binaan 19 klien DLNA, perkongsian telefon dan pengesanan media ruang Apple 
 
 Pada komputer (Immuch360 Desktop), halaman Logs (Log) juga mempunyai "Simpan log ke fail": log, atau ZIP yang mengandungi log dan laporan ranap terakhir jika ada (nama cadangannya kemudian berakhir dengan "with-crash-reports"). Laporan ranap ialah minidump kecil: urutan (thread), tempat ia berhenti dan hanya apa yang diperlukan untuk menjejak panggilannya, dengan nama fail program tetapi bukan foldernya; bukan memori aplikasi.
 
-Dari binaan desktop 2 pemain video komputer menulis di situ di bawah `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` dan `VideoThumbnailGrabber`, termasuk amaran mpv sendiri, dengan token dan kata laluan dibuang. Semak log sebelum berkongsinya: ia mungkin mengandungi alamat pelayan anda.
+Dari binaan desktop 2 pemain video komputer menulis di situ di bawah `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` dan `VideoThumbnailGrabber`, termasuk amaran mpv sendiri, dengan token dan kata laluan dibuang. Dari binaan desktop 3 ia juga menulis pemain 360° di bawah `SphericalPlayer`, `SphereRenderer` dan `PluginRenderer` (saiz yang dipilih, bingkai sesaat yang diukur, cip grafik), video mentah dua lensa di bawah `RawTwoStreams`, penyahkod cip grafik di bawah `DesktopGpuDecoders`, `DesktopVideoDecoderApi` dan `DecoderMeasure`, dan paparan langsung Tapo di bawah `DesktopCameraLive`, yang barisnya tidak pernah memegang akaun kamera mahupun kata laluannya. Semak log sebelum berkongsinya: ia mungkin mengandungi alamat pelayan anda.
 
 <a id="privacy"></a>
 ## Privasi
@@ -1159,7 +1192,7 @@ Dari binaan desktop 2 pemain video komputer menulis di situ di bawah `DesktopVid
 - **Perkongsian telefon**: rangkaian setempat sahaja, dengan nama pengguna dan kata laluan, melalui HTTP biasa (lihat [Kongsi telefon ini pada rangkaian](#share-this-phone-on-the-network)).
 - **Kamera**: hanya digunakan oleh pemain Spatial 2.5D, pada peranti; imej tidak pernah disimpan dan tidak pernah dihantar ke mana-mana.
 - **Pada komputer** (Immuch360 Desktop, pratonton Windows): aplikasi hanya membaca folder yang anda pilih, menyimpan indeks, lakaran kecil dan cachenya pada komputer, dan menyimpan kata laluan serta token dengan perlindungan data Windows, untuk akaun Windows anda sahaja. Perkongsian komputer mengikut peraturan perkongsian telefon, dan tidak bermula pada rangkaian yang ditandakan oleh Windows sebagai awam, atau yang jenisnya tidak dapat dikenal pasti, melainkan anda membenarkannya.
-- **Pemain video pada komputer** (dari binaan desktop 2): video pelayan anda sampai kepadanya melalui aplikasi, jadi pemain tidak pernah memegang token sesi anda, dan apa yang dibacanya lebih awal kekal dalam memori, bukan pada cakera. Ia hanya membuka fail yang diberikan kepadanya: fail dalam folder atau perkongsian yang sebenarnya senarai main atau keterangan strim tidak membuatnya bersambung ke tempat lain.
+- **Pemain video pada komputer** (dari binaan desktop 2): video pelayan anda sampai kepadanya melalui aplikasi, jadi pemain tidak pernah memegang token sesi anda, dan apa yang dibacanya lebih awal kekal dalam memori, bukan pada cakera. Ia hanya membuka fail yang diberikan kepadanya: fail dalam folder atau perkongsian yang sebenarnya senarai main atau keterangan strim tidak membuatnya bersambung ke tempat lain. Dari binaan desktop 3, alamat setiap video diberikan kepada pemain dalam memori sahaja, tidak pernah melalui fail sementara (pautan yang dibuat oleh aplikasi untuk video pelayan atau perkongsian memegang kunci sesi itu, yang berada pada cakera selama beberapa saat pada setiap pembukaan dalam binaan desktop 2), dan kunci itu tidak pernah muncul dalam log; paparan langsung kamera Tapo memberikan akaun kamera kepada pemain dengan cara yang sama, tidak pernah dalam fail atau baris log, dan berhubung dengan kamera dalam rangkaian setempat sahaja; ukuran pemain 360° dan penyahkod (cip grafik, format video, bingkai sesaat, tidak pernah nama fail) kekal dalam folder aplikasi pada komputer.
 
 Dasar penuh ada dalam [PRIVACY.md](../PRIVACY.md).
 
@@ -1177,7 +1210,7 @@ Android, Android TV dan Google TV ialah tanda dagangan Google LLC; Apple, iPhone
 
 Apa yang belum siap, yang paling mungkin dahulu. Tiada apa di sini merupakan janji, dan maklum balas dalam [penjejak isu](https://github.com/freeKC/Immuch360/issues) membantu menentukan apa yang didahulukan.
 
-- **Immuch360 Desktop, Windows dahulu**: binaan desktop 2 sudah tersedia, dengan video rata, dan sumber desktop berada dalam cabang utama fork, `immuch360`, sejak 9 Oktober 2026 (lihat [Pada komputer Windows](#on-a-windows-computer-immuch360-desktop-preview)). Seterusnya, video 360°, 3D, VR180 dan video 360° mentah pada Windows, dengan dua kanta fail mentah dan paparan langsung Tapo; kemudian ujian setiap fungsi pada PC Windows dan pembetulannya; kemudian Spatial 2.5D dengan kamera web; kemudian Linux dan macOS, pakej, tandatangan dan kemas kini.
+- **Immuch360 Desktop, Windows dahulu**: binaan desktop 3 sudah tersedia, dengan pemain video 360° (video 360°, 3D, VR180 dan video 360° mentah, dua kanta fail mentah, saiz paparan diukur pada setiap komputer) dan paparan langsung Tapo, dan sumber desktop berada dalam cabang utama fork, `immuch360`, sejak 9 Oktober 2026 (lihat [Pada komputer Windows](#on-a-windows-computer-immuch360-desktop-preview)). Seterusnya, libmpv aliran kerja fork sendiri menggantikan versi 2024, dan ujian setiap fungsi secara manual pada PC Windows dengan fail sebenar, kedua-dua skrin dan kamera sebenar, bersama pembetulannya; kemudian Spatial 2.5D dengan kamera web; kemudian Linux dan macOS; kemudian pemasang, binaan bertandatangan dan kemas kini automatik.
 - **Google Play**: binaan 20 tersedia sejak 7 Oktober 2026, menggantikan binaan 18; penyenaraian untuk TV dalam semakan Google sejak 9 Oktober 2026. Binaan 21 tidak mengubah apa-apa pada telefon dan tablet.
 - **App Store**: versi 3.3.0 sedang menunggu semakan Apple; ia membawa ciri binaan 11, jadi muat naik ke Immich dan semakan penyahkod video (binaan 15) serta fail Insta360 mentah (binaan 16) akan datang bersama kemas kini App Store seterusnya. Pautan akan ditambah di sini apabila ia tersedia.
 - **Meta Horizon Store**: Meta meluluskan penyenaraian pada 7 Oktober 2026 bersama binaan 14. Binaan 21 telah dihantar sebagai kemas kini pertamanya: ia membawa semua yang ada sejak binaan 14 (muat naik daripada perkongsian ke Immich, sumber video dipilih mengikut apa yang dapat dinyahkod oleh set kepala, fail mentah Insta360, GoPro dan DJI, DLNA, perkongsian telefon, foto ruang Apple, pustaka Plex Media Server, kamera Tapo), dan gedung menyenaraikannya untuk Quest 2, Quest Pro, Quest 3 dan 3S. Pautan gedung akan ditambah di sini setelah halaman menjadi umum; salinan sideload perlu dinyahpasang dahulu (lihat [Pasang](#install)).

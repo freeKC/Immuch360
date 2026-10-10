@@ -15,13 +15,13 @@ Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sun
 
 <div align="center">
 
-| Platform | Nereden edinilir | 9 Ekim 2026 itibarıyla durum |
+| Platform | Nereden edinilir | 10 Ekim 2026 itibarıyla durum |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon ve tabletler | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play'de 7 Ekim 2026'dan beri derleme 20, GitHub'da derleme 21 |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ve iPad** | App Store | 3.3.0 sürümü Apple incelemesini bekliyor; bu arada [kendiniz derleyin](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ve 3S | [APK](#meta-quest-3) · Horizon Store | liste onaylandı, derleme 21 Meta incelemesinde |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ve Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub'da derleme 21; televizyonlar için Google Play kaydı 9 Ekim 2026'dan beri Google incelemesinde |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Önizleme ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | Windows'ta masaüstü derlemesi 2: fotoğraflar ve düz videolar, sırada 360° videolar; macOS ve Linux daha sonra, aynı kaynaklardan |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Önizleme ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Windows'ta masaüstü derlemesi 3: fotoğraflar, düz ve 360° videolar; macOS ve Linux daha sonra |
 
 *Durumlar her sürümde güncellenir; ayrıntılar [Nereden edinilir](#where-to-get-it) bölümünde.*
 
@@ -30,7 +30,7 @@ Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sun
 - 🌐 **Yerleşik 360°**<br>İçinde etrafınıza bakabileceğiniz bir küre olarak fotoğraf ve videolar, jiroskopla, ham kamera dosyaları dahil (Insta360 derleme 16'dan, GoPro ve DJI derleme 18'den itibaren). Ayrıca ücretsiz bir video oynatıcı: düz, 360°, 3D, VR180
 - 👓 **Yerleşik 3D**<br>Stereoskopik 360° ve VR180, üst/alt veya yan yana, ve Apple uzamsal fotoğrafları (derleme 19'dan itibaren): başlıkta gerçek 3D, telefonda tek göz
 - 🎥 **Yerleşik 2.5D**<br>Stereoskopik bir videodan düz ekranda derinlik, görüntü başınızı takip eder (deneysel, telefonlar ve tabletler)
-- 📱 **Android, iOS, Quest, TV**<br>Telefonlarda, tabletlerde ve Quest 2, Pro, 3 ve 3S başlıklarında tek uygulama, başlıkta gerçek 3D, derleme 20'den itibaren Android TV'de uzaktan kumandayla ve fotoğraflar ile düz videolarla bir Windows önizlemesi
+- 📱 **Android, iOS, Quest, TV**<br>Telefonlarda, tabletlerde ve Quest 2, Pro, 3 ve 3S başlıklarında tek uygulama, başlıkta gerçek 3D, derleme 20'den itibaren Android TV'de uzaktan kumandayla ve fotoğraflar, düz ve 360° videolarla bir Windows önizlemesi
 - 🔌 **Sunucuyla veya sunucusuz**<br>Immich sunucunuz ya da telefonun kendi galerisi, hesap gerekmez
 - 🗄️ **Ağ paylaşımları**<br>Samba (SMB), WebDAV ve derleme 19'dan itibaren DLNA medya sunucuları; ağda bulunur ve canlı okunur, hiçbir şey indirilmez, siz istediğinizde Immich'e gönderilir. Derleme 19'dan itibaren bir telefon kendi galerisini de başlıkla paylaşır
 - 📺 **Televizyonda**<br>Derleme 20'den itibaren aynı APK Android TV ve Google TV'de: 360° fotoğraf ve videolar, sunucunuz ve paylaşımlarınız, uzaktan kumandayla
@@ -84,7 +84,7 @@ Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sun
 - **"360° fotoğraf ve videolarımı, NAS'ımın veya Plex sunucumun videolarını televizyonda, uzaktan kumandayla izlemek istiyorum."** Bkz. [Televizyonunuzda izleyin](#watch-on-your-tv-android-tv-and-google-tv).
 - **"360° çekimlerimi diğerlerinin arasında bulamıyorum."** Bkz. [360° listesi](#find-your-360-shots-the-360-list).
 - **"360° videom takılıyor ya da bulanık bir kopyayı oynatıyor."** Bkz. [Video ayrıntıları ve kod çözücüler](#video-details-decoders-and-why-a-video-stutters).
-- **"360° fotoğraflarımı ve Immich kütüphanemi Windows bilgisayarımda istiyorum; klasörlerindeki fotoğraflar ve videolar, NAS'ım ve Plex sunucum da olsun, bilgisayar da başlığımla paylaşılsın."** Bkz. [Bir Windows bilgisayarda](#on-a-windows-computer-immuch360-desktop-preview) (bir önizleme: şimdilik fotoğraflar ve düz videolar, 360° videolar daha sonra).
+- **"360° fotoğraflarımı ve Immich kütüphanemi Windows bilgisayarımda istiyorum; klasörlerindeki fotoğraflar ve videolar, NAS'ım ve Plex sunucum da olsun, bilgisayar da başlığımla paylaşılsın."** Bkz. [Bir Windows bilgisayarda](#on-a-windows-computer-immuch360-desktop-preview) (bir önizleme: fotoğraflar ve düz videolar, masaüstü derlemesi 3'ten itibaren de 360°, 3D, VR180 ve ham 360° videolar ile Tapo canlı görüntüsü).
 - **"Immich uygulamasının yaptıklarını koruyor muyum?"** Evet, iki küçük değişiklikle, bkz. [Geri kalan her şey Immich](#everything-else-is-immich).
 
 Bir özellik yeniyse, metin hangi derlemeden itibaren bulunduğunu belirtir. En yeni derleme her zaman GitHub sürümündedir, mağazalar daha sonra gelir: bkz. [Nereden edinilir](#where-to-get-it).
@@ -127,6 +127,7 @@ Birleştirilmiş 360° dosyalar her yerde çalışır: Insta360 uygulamasından 
 
 Oynatıcı, varsa telefonda kayıtlı dosyayı ya da bir ağ paylaşımındaki dosyayı oynatır. Aksi halde sunucunuzdan akış yapar: varsayılan olarak dönüştürülmüş akışı, ya da Ayarlar, İçerik Görüntüleyici, Video kaynağı'nda isterseniz orijinali (derleme 15'ten itibaren; öncesinde "Orijinal videoyu zorla" anahtarı), bkz. [Video ayrıntıları ve kod çözücüler](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### Düz görünen bir 360° dosya: 360° olarak görüntüle
 
 Bazı 360° dosyalar projeksiyon etiketi taşımaz; bu yüzden sunucu onları 360° olarak işaretlemez ve düz görünürler.
@@ -356,6 +357,7 @@ Derleme 20'den itibaren Immuch360, ağ paylaşımlarının yanına bir Tapo kame
 8. "Kamerayı test et"e dokunun. Hafıza kartının durumuyla birlikte "Kayıtlar: (model), ürün yazılımı (sürüm)" ve "Canlı görüntü: (video), ses (audio)" ya da her biri için neyin başarısız olduğunu gösterir.
 9. Kaydet'e dokunun. Kamera, paylaşımlardan sonra "Kameralar" altında, bilindiğinde modeliyle ve adresiyle birlikte `tapo://` olarak listelenir.
 
+<a id="watch-it-live"></a>
 ### Canlı izleyin
 
 1. Kameraya dokunun. Canlı görüntüsü sayfasının en üstündedir: "Kameraya bağlanılıyor", ardından Canlı rozetli görüntü.
@@ -755,9 +757,9 @@ Güncel derleme, derleme 21 (sürüm 3.3.0-rc.0, derleme numarası 3030019), Imm
 | Bir paylaşımın dosyalarını Immich'e gönderme; elle gönderilen cihaz dosyaları yedeklenmiş sayılır | ❌ yalnızca cihaz dosyaları | ✅ derleme 15'ten itibaren |
 | Başlık için bu telefonu ağda paylaşma | ❌ | ✅ derleme 19'dan itibaren, Android ve iOS |
 | Orijinal dosyalardan oynatılan Plex Media Server kütüphaneleri, evde ve dışarıda, plex.tv olmadan | ❌ | ✅ derleme 20'den itibaren, her görüntüleyicide, telefonlarda, tabletlerde, Quest'te ve televizyonlarda |
-| Tapo kameralar: canlı görüntü ve istediğinizde Immich'e gönderilen hafıza kartı kayıtları | ❌ | ✅ derleme 20'den itibaren: kayıtlar her yerde, canlı görüntü Android, Android TV ve Quest'te |
+| Tapo kameralar: canlı görüntü ve istediğinizde Immich'e gönderilen hafıza kartı kayıtları | ❌ | ✅ derleme 20'den itibaren: kayıtlar her yerde, canlı görüntü Android, Android TV, Quest ve masaüstü derlemesi 3'ten itibaren Windows'ta |
 | Android TV ve Google TV, kumandayla, aynı APK'da | ❌ bir televizyon uygulaması değil | ✅ derleme 20'den itibaren |
-| Bir Windows bilgisayarda aynı uygulama | ❌ yalnızca telefon ve tablet | ✅ önizleme, fotoğraflar ve düz videolar |
+| Bir Windows bilgisayarda aynı uygulama | ❌ yalnızca telefon ve tablet | ✅ önizleme: fotoğraflar, düz ve 360° videolar (masaüstü derlemesi 3) |
 | Ham Insta360 .insp fotoğrafları ve tek parçalı .insv videoları | ❌ düz | ✅ derleme 16'dan itibaren |
 | Parça veya dosya başına bir mercekli ham videolar (Insta360 X4, X4 Air, X5, X6, X3 çiftleri, GoPro .360, DJI .osv) | ❌ düz veya hatalı | ✅ derleme 18'den itibaren |
 | Çift balıkgözü .dng | ❌ düz | ❌ henüz değil |
@@ -787,7 +789,7 @@ Güncel derleme, derleme 21 (sürüm 3.3.0-rc.0, derleme numarası 3030019), Imm
 - **Plex Media Server**: bir bilgisayardan gerçek bir Plex Media Server 1.42.1'e karşı doğrulandı (eşleştirme, klasörler, bayt aralıkları, küçük resimler, ev dışı adres); henüz bir cihazda doğrulanmadı.
 - **Tapo kameralar**: simüle edilmiş bir kameraya karşı doğrulandı; henüz gerçek bir kamerayla doğrulanmadı.
 - **Android TV ve Google TV**: otomatik testlerle doğrulandı; henüz bir televizyonda doğrulanmadı.
-- **Bir Windows bilgisayarda aynı uygulama**: Windows'ta 663 otomatik masaüstü testinden 656'sı geçiyor (7'si bilerek atlanıyor); bir Windows 11 bilgisayarda uygulama açılıyor, bir Immich sunucusundaki kayıtlı oturumu açıyor, eşitliyor, bir video oynatıyor ve sorunsuz kapanıyor; her işlevin elle testi sürüyor.
+- **Bir Windows bilgisayarda aynı uygulama**: masaüstü derlemesi 3, Windows'ta 863 otomatik masaüstü testinden 855'ini (8'i bilerek atlanıyor) ve uygulamanın tüm test paketini geçiyor; bir Windows 11 bilgisayarda uygulama açılıyor, bir Immich sunucusundaki kayıtlı oturumu açıyor, eşitliyor, bir video oynatıyor ve sorunsuz kapanıyor, 360° oynatıcısı da bir dizüstü bilgisayarın iki grafik yongasında yapay 4K, 5.7K ve 8K kliplerle hiç çökmeden çalıştırıldı. Her işlevin gerçek 360° dosyalarla ve gerçek bir Tapo kamerayla elle testi sürüyor.
 - **Ham Insta360 .insp fotoğrafları ve tek parçalı .insv videoları**: fotoğraflar X3 dosyalarının Insta360 Studio dışa aktarımlarıyla, videolar düşük çözünürlüklü bir X3 dosyasıyla bir Android emülatöründe doğrulandı; henüz bir iPhone'da çalıştırılmadı.
 - **Parça veya dosya başına bir mercekli ham videolar**: ayrıştırıcılar ve birleştirme gerçek X4, X3 çifti, GoPro MAX ve Osmo 360 dosyalarında doğrulandı; oynatma derleme 18 ve 19'un cihaz testidir.
 - **Çift balıkgözü .dng**: planlandı.
@@ -842,17 +844,19 @@ Immuch360 bir galeridir ve aynı zamanda ücretsiz bir medya oynatıcıdır: res
   - iPhone, iPad: küre üzerinde yerleşik SceneKit oynatıcı, jiroskop, ses parçası seçimi, arabellek göstergesi; oynat ve duraklat, henüz zaman çubuğu yok.
   - Meta Quest: sürükleyici, stereoskopik dosyalar için gerçek 3D, 10 saniyelik atlamalı zaman çubuğu, önceki ve sonraki medya.
   - Android TV, Google TV: telefonların Media3 oynatıcısı, oklarla döndürülür.
-  - Windows: henüz yok, şimdilik düz gösterilir.
+  - Windows (masaüstü derlemesi 3'ten itibaren): uygulamanın kendi 360° oynatıcısı (libmpv), fareyle veya oklarla döndürülür, tekerlekle yakınlaştırılır, ileri geri sarma, ses parçası seçimi, arabelleğe alma göstergesi; ayrı bir grafik yongasında akıcı, tümleşik bir yongada en fazla 2880 piksel genişliğinde ve 5.7K H.264 için daha yavaş.
 - **3D 360° (üst ve alt, yan yana)**
   - Android telefonlar: sol göz, düzen düğmesi.
   - iPhone, iPad: aynısı.
   - Meta Quest: her göz karenin kendi yarısını alır.
   - Android TV, Google TV: sol göz, düzen düğmesi.
+  - Windows: fotoğraflar telefonlardaki gibi; videolar masaüstü derlemesi 3'ten itibaren, sol göz, düzen düğmesi, ayrı bir grafik yongasında akıcı, tümleşik bir yongada sınırlı.
 - **VR180 (yarım küre) fotoğraf ve videolar**
   - Android telefonlar: yarım küre, 360°/180° düğmesi.
   - iPhone, iPad: aynısı.
   - Meta Quest: sürükleyici yarım küre.
   - Android TV, Google TV: yarım küre, 360°/180° düğmesi.
+  - Windows: fotoğraflar telefonlardaki gibi; videolar masaüstü derlemesi 3'ten itibaren, yarım küre, 360°/180° düğmesi, ayrı bir grafik yongasında akıcı, tümleşik bir yongada sınırlı.
 - **Spatial 2.5D (stereoskopik bir videodan düz ekranda derinlik)**
   - Android telefonlar: yerleşik oynatıcı, ön kamerayla baş izleme.
   - iPhone, iPad: aynısı.
@@ -878,16 +882,19 @@ Immuch360 bir galeridir ve aynı zamanda ücretsiz bir medya oynatıcıdır: res
   - iPhone, iPad: bir SceneKit shader ile birleştirilir.
   - Meta Quest: sürükleyici, aynı GPU efektiyle birleştirilir.
   - Android TV, Google TV: telefonlardaki gibi.
+  - Windows (masaüstü derlemesi 3'ten itibaren): uygulamanın 360° oynatıcısında grafik yongası üzerinde birleştirilir, ayrı bir yongada akıcı, tümleşik bir yongada sınırlı.
 - **Parça veya dosya başına bir mercekli ham videolar (derleme 18'den itibaren): Insta360 X4, X4 Air, X5, X6 .insv, X3 çiftleri, GoPro .360, DJI .osv**
   - Android telefonlar: aynı anda iki donanım kod çözücüsü, mercek başına bir tane (derleme 19'dan itibaren donanım kod çözücüsü olmayan bir cihazda yazılım kod çözücüleri, mercek başına en fazla 2048x2048), ve küreye birleştiren bir GL kompozitörü; cihaz ikisini çalıştıramadığında tek mercek, ardından dönüştürülmüş akış, ardından birleştirilmemiş video.
   - iPhone, iPad: Metal ile özel bir AVFoundation kompozitörü.
   - Meta Quest: sürükleyici, aynı iki kod çözücü ve kompozitör (3840x1920 panel).
   - Android TV, Google TV: televizyon aynı anda iki kod çözücü çalıştırabildiğinde telefonlardaki gibi.
+  - Windows (masaüstü derlemesi 3'ten itibaren): bilgisayar yetişebildiğinde iki lens tek oynatıcıda yan yana, sonra birleştirilir (kendi oynatması üzerinde ölçülür; test dizüstü bilgisayarında bir X3 çifti yalnızca ayrı yongasında); aksi halde telefonların adımları: tek lens, dönüştürülmüş akış, kameranın düşük çözünürlüklü LRV kopyası, birleştirilmemiş video.
 - **Tapo kamera canlı görüntüsü (derleme 20'den itibaren)**
   - Android telefonlar: Media3 RTSP oynatıcı: sayfada SD, tam ekranda HD, ses düğmesi.
   - iPhone, iPad: henüz yok: bir kart daha sonra geleceğini söyler.
   - Meta Quest: pencerede, HD.
   - Android TV, Google TV: telefonlardaki gibi.
+  - Windows (masaüstü derlemesi 3'ten itibaren): libmpv oynatıcısı, sayfada SD, tam ekranda HD, ses düğmesi.
 - **Tapo kamera kayıtları (derleme 20'den itibaren)**
   - Android telefonlar: hafıza kartından sesli bir H.264 videoya alınır, ardından ileri geri sarılarak oynatılır.
   - iPhone, iPad: aynı.
@@ -896,14 +903,14 @@ Immuch360 bir galeridir ve aynı zamanda ücretsiz bir medya oynatıcıdır: res
 
 Derleme 20'den itibaren gelen Android TV ve Google TV maddeleri henüz bir televizyonda doğrulanmadı, bkz. [Televizyonunuzda izleyin](#watch-on-your-tv-android-tv-and-google-tv); kamera maddeleri henüz gerçek bir kamerayla doğrulanmadı.
 
-Windows'ta Immuch360 Desktop önizlemesi düz ve 360° fotoğrafları, ham Insta360 .insp fotoğrafları dahil, fare ve klavyeyle gösterir; masaüstü derlemesi 2'den itibaren de düz videoları oynatır; sunucudan, bilgisayarın klasörlerinden, paylaşımlardan, Plex'ten ve Tapo kayıtlarından. 360°, 3D, VR180 ve ham 360° videolar şimdilik düz ya da bir yer tutucu olarak gösterilir (bkz. [Henüz yok](#not-there-yet)).
+Windows'ta Immuch360 Desktop önizlemesi düz ve 360° fotoğrafları, ham Insta360 .insp fotoğrafları dahil, fare ve klavyeyle gösterir. Masaüstü derlemesi 2'den itibaren düz videoları oynatır; sunucudan, bilgisayarın klasörlerinden, paylaşımlardan, Plex'ten ve Tapo kayıtlarından; masaüstü derlemesi 3'ten itibaren de aynı kaynaklardan 360°, 3D, VR180 ve ham 360° videoları kendi 360° oynatıcısında oynatır, Tapo canlı görüntüsünü de. 360° oynatıcı ayrı bir grafik yongasında akıcıdır, tümleşik bir yongada ise sınırları vardır (bkz. [Bir Windows bilgisayarda](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Immich sunucunuz**: Ayarlar, İçerik Görüntüleyici, Video kaynağı'nın söylediği gibi orijinal veya sunucunun dönüştürülmüş akışı (bkz. [Video ayrıntıları ve kod çözücüler](#video-details-decoders-and-why-a-video-stutters)). Web uygulamasıyla aynı hesap.
 - **Telefonun veya başlığın kendisi**: giriş sayfasında "Sunucu olmadan kullan" ya da Kütüphane sekmesindeki Bu cihazda öğesi.
 - **Bir NAS veya bir bilgisayar**: SMB ve WebDAV paylaşımları, derleme 19'dan itibaren de DLNA medya sunucuları; ağda bulunur, canlı okunur (bir SMB videosu en fazla altı bağlantı üzerinden), hiçbir şey kopyalanmaz; derleme 15'ten itibaren seçtiğiniz dosyalar Immich hesabınıza gönderilebilir.
 - **Başka bir telefon (derleme 19'dan itibaren)**: o telefonda "Bu telefonu ağda paylaş": başlık ya da ağdaki herhangi bir WebDAV istemcisi onun albümlerini, aylarını ve 360° medyasını okur.
 - **Bir Plex Media Server (derleme 20'den itibaren)**: klasöre göre fotoğraf, film ve dizi kütüphaneleri; orijinal dosyalar, sunucunun kendi sertifikasıyla doğrulanan HTTPS üzerinden canlı okunur, evde veya ev dışı adres üzerinden, her platformda; bkz. [Plex Media Server, plex.tv olmadan](#plex-media-server-without-plextv).
-- **Bir Tapo kamera (derleme 20'den itibaren)**: kamera hesabıyla canlı görüntü (Android, Android TV, Quest) ve TP-Link hesabı şifresiyle hafıza kartındaki kayıtlar (her platform), yalnızca yerel ağda; bkz. [Tapo kameralar](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Bir Tapo kamera (derleme 20'den itibaren)**: kamera hesabıyla canlı görüntü (Android, Android TV, Quest ve masaüstü derlemesi 3'ten itibaren Windows) ve TP-Link hesabı şifresiyle hafıza kartındaki kayıtlar (her platform), yalnızca yerel ağda; bkz. [Tapo kameralar](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **Bir Windows bilgisayarın klasörleri (masaüstü önizlemesi)**: Immuch360 Desktop'ta seçtiğiniz klasörler, bir telefonun galerisi yerine okunur; bilgisayar bunları başlıkla da paylaşabilir, bkz. [Bir Windows bilgisayarda](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Immich kütüphaneniz bir sunucuda, başka fotoğraflar ve videolar bilgisayarı
 
 Bir bilgisayarda Immich, tarayıcıda çalışan web uygulamasını sunar. **Immuch360 Desktop'ın kattıkları**: hiçbir sunucu veya hesap gerekmeden bilgisayarın klasörleri, uygulamadan gezilen ve oynatılan SMB, WebDAV, DLNA ve Plex paylaşımları, küre olarak açılan ham Insta360 .insp fotoğrafları ve evde bir Meta Quest ile paylaşılan bilgisayar.
 
-Bu bir önizlemedir: masaüstü derlemesi 2'den itibaren fotoğraflar ve düz videolar çalışır; 360°, 3D ve VR180 videolar sonraki masaüstü derlemeleriyle gelecek. 9 Ekim 2026'dan beri masaüstü kaynakları çatalın ana dalı `immuch360` içinde, böylece telefonlar, başlıklar, televizyonlar ve bilgisayarlar aynı kaynaklardan çıkar. Telefon, tablet, Quest ve televizyon uygulamaları bundan etkilenmez ve Immuch360 adını korur.
+Bu bir önizlemedir: masaüstü derlemesi 2'den itibaren fotoğraflar ve düz videolar çalışır, masaüstü derlemesi 3'ten itibaren de 360° video oynatıcısı (360°, 3D, VR180 ve ham 360° videolar) ile Tapo kameraların canlı görüntüsü; aşağıda derleme 3 gerektiren adımlar bunu belirtir. 9 Ekim 2026'dan beri masaüstü kaynakları çatalın ana dalı `immuch360` içinde, böylece telefonlar, başlıklar, televizyonlar ve bilgisayarlar aynı kaynaklardan çıkar. Telefon, tablet, Quest ve televizyon uygulamaları bundan etkilenmez ve Immuch360 adını korur.
 
 <a id="download-and-install-on-windows"></a>
 ### Windows'a indirin ve kurun
 
-Güncel derleme, GitHub ön sürümü [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Dosyası `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (yaklaşık 57 MB, açıldığında 78 dosya, video oynatıcısı ve `licenses` klasörü dahil), doğrulamak için de `SHA256SUMS.txt` var. Ana dal `immuch360`'tan, 5b723bd25 commit'inden derlendi: telefon derlemesi 21'in kaynakları artı bilgisayar sürümü. Windows 10 veya 11, 64 bit gerekir.
+Güncel derleme, GitHub ön sürümü [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Dosyası `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (yaklaşık 57 MB, açıldığında 79 dosya, video oynatıcısı ve `licenses` klasörü dahil), doğrulamak için de `SHA256SUMS.txt` var. Ana dal `immuch360`'tan, bilgisayarın 360° video oynatıcısı ona birleştirildikten sonra, sürüm notlarının belirttiği commit'ten derlendi: telefon derlemesi 21'in kaynakları artı bilgisayar sürümü. Windows 10 veya 11, 64 bit gerekir.
 
-1. ZIP'i indirin ve istediğiniz yere açın, örneğin Belgeler'e.
-2. Açılan klasördeki `immuch360.exe` dosyasını başlatın. Klasörü bütün olarak tutun: programın yanındaki dosyalara ihtiyacı var, video oynatıcısı dahil.
+1. ZIP'i indirin ve istediğiniz yere açın, örneğin Belgeler'e. Masaüstü derlemesi 2'nin yerine koymak için onun klasörünü silin ya da yeni bir klasöre açın: oturumunuz, klasörleriniz ve ayarlarınız o klasörde değil, Windows profilinizde kalır.
+2. Açılan klasördeki `immuch360.exe` dosyasını başlatın. Klasörü bütün olarak tutun: programın yanındaki dosyalara ihtiyacı var, aralarında video oynatıcısı `libmpv-2.dll` ve grafik yongasının kod çözücülerini okuyan `immuch_desktop_video.dll`.
 3. Dosyalar henüz imzalı değil, bu yüzden Windows SmartScreen "Windows protected your PC" gösterebilir: "More info", ardından "Run anyway" seçin. Akıllı Uygulama Denetimi açıksa imzasız programları engeller.
 4. Pencereyi bekleyin. Yeni bir derlemenin ilk açılışı 10 saniye ile yaklaşık bir dakika sürer, büyük olasılıkla Microsoft Defender yeni dosyaları tararken: bu sırada uygulamayı yeniden başlatmayın. Sonraki açılışlar bir iki saniye sürer.
 5. Giriş sayfasında Immich sunucunuza adresi, e-postanız ve şifrenizle oturum açın ya da "Sunucu olmadan kullan"a tıklayın.
 
-ZIP'i doğrulamak için indirmenin bulunduğu klasörde bir komut isteminde `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` çalıştırın: sonuç `SHA256SUMS.txt` içinde yazanla aynıdır. Henüz yükleyici ve otomatik güncelleme yok: [Releases](https://github.com/freeKC/Immuch360/releases) sayfasını takip edin ve sonraki derlemeyi aynı şekilde açın.
+ZIP'i doğrulamak için indirmenin bulunduğu klasörde bir komut isteminde `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` çalıştırın: sonuç `SHA256SUMS.txt` içinde yazanla aynıdır. Henüz yükleyici ve otomatik güncelleme yok: [Releases](https://github.com/freeKC/Immuch360/releases) sayfasını takip edin ve sonraki derlemeyi aynı şekilde açın.
 
 ### Önizlemenin yaptıkları
 
@@ -993,7 +1000,9 @@ ZIP'i doğrulamak için indirmenin bulunduğu klasörde bir komut isteminde `cer
 - **Yükleme ve yedekleme**, bu klasörlerden Immich sunucunuza, uygulama açıkken.
 - **Küre olarak 360° fotoğraflar**, fare ve klavyeyle; Insta360 kameraların ham .insp fotoğrafları telefonlardaki gibi açılır.
 - **Düz videolar** (masaüstü derlemesi 2'den itibaren): klasörlerinizin, Immich sunucunuzun (orijinal ya da dönüştürülmüş akış, bkz. [Video ayrıntıları ve kod çözücüler](#video-details-decoders-and-why-a-video-stutters)), SMB, WebDAV ve DLNA paylaşımlarının, Plex sunucularının videoları ve Tapo kayıtları pencerede oynar; telefonların denetimleriyle (oynat, duraklat, zaman çubuğu), bir arabelleğe alma göstergesiyle ve birden fazla ses parçası olan bir video için ses parçaları menüsüyle. Klasörlerinizin ve paylaşımların videoları küçük resim olarak bir film simgesi yerine videodan bir kare gösterir.
-- **Ağ paylaşımları**: Samba (SMB), WebDAV ve DLNA medya sunucuları ve plex.tv olmadan Plex sunucuları, telefonlardaki gibi gezilir: fotoğrafları açılır, videoları oynar. Tapo kameralar için hafıza kartındaki kayıtlar: liste, bir klibin indirilmesi ve oynatılması.
+- **360°, 3D ve VR180 videolar** (masaüstü derlemesi 3'ten itibaren): 360° düğmesi onları uygulamanın 360° oynatıcısında, pencerede veya tam ekranda, düz videoların her kaynağından açar; fare ve klavyeyle döndürülürler, telefonların 3D ve 360°/180° düğmeleri (3D bir video telefonlardaki gibi sol gözünü gösterir), ileri geri sarma, ses parçası menüsü ve bir arabelleğe alma göstergesiyle.
+- **Ham 360° videolar** (masaüstü derlemesi 3'ten itibaren): iki lensi tek parçada, iki parçada (X4 ve sonrası) veya iki dosyada (X3 çiftleri) olan Insta360 .insv dosyaları, GoPro .360 ve DJI .osv dosyaları, oynarken uygulama tarafından grafik yongasında, dosyanın kalibrasyonuyla, telefonlardaki gibi birleştirilir.
+- **Ağ paylaşımları**: Samba (SMB), WebDAV ve DLNA medya sunucuları ve plex.tv olmadan Plex sunucuları, telefonlardaki gibi gezilir: fotoğrafları açılır, videoları oynar. Tapo kameralar için hafıza kartındaki kayıtlar: liste, bir klibin indirilmesi ve oynatılması; masaüstü derlemesi 3'ten itibaren de canlı görüntü.
 - **Bu bilgisayarı ağda paylaşın**: klasörlerinizin albümleri, ayları ve 360° medyası, salt okunur, evdeki bir Meta Quest veya başka bir cihaz için, bir telefonun kendini paylaştığı gibi.
 - **Dosyalar**: sunucudan yapılan indirmeler seçtiğiniz bir klasöre gider, "Bir klasöre kaydet" seçili fotoğraf ve videoların bir kopyasını saklar, Günlükler sayfasında da "Günlükleri bir dosyaya kaydet" bulunur.
 
@@ -1005,9 +1014,28 @@ ZIP'i doğrulamak için indirmenin bulunduğu klasörde bir komut isteminde `cer
 4. **Fotoğraftan fotoğrafa geçin**: düz bir fotoğrafta sol ve sağ oklar ya da fare hareket ederken kenarlarda beliren oklar önceki ve sonrakine gider. Açıklama alanına yazılan harfler metinde kalır.
 5. **Bir video oynatın**: zaman çizelgesinden, bir klasörden, bir paylaşımdan, Plex'ten veya bir Tapo kameranın kayıtlarından açın; pencerede oynar. Enter ya da klavyenin oynat ve duraklat tuşu duraklatır ve yeniden oynatır. Oynarken sol ve sağ oklar ya da J ve L 10 saniye geri veya ileri atlar; duraklatılmışken oklar önceki ve sonrakine gider. F veya F11, fotoğraflardaki gibi tam ekrana geçer. "Ses parçası" düğmesi, birden fazla ses parçası olan bir videonun ses parçaları arasından seçim yapar.
 6. **Bir video durduğunda**: duraklatılmış bir video, pencereye döndüğünüzde duraklatılmış kalır. Sonundan önce kesilen bir video, örneğin paylaşım veya sunucu yanıt vermeyi bıraktığında, bunu söyler: yeniden açın, durduğu yerden duraklatılmış olarak devam eder. Bir klasörde veya paylaşımda bulunan bir oynatma listesi dosyası izlenmez.
-7. **Bilgisayarı başlıkla paylaşın**: Kütüphane'yi, ardından Ağ paylaşımları'nı açın; ilk kutucuk "Bu bilgisayarı ağda paylaş"tır, [Bu telefonu ağda paylaş](#share-this-phone-on-the-network) bölümünün bilgisayar tarafı. "Fotoğrafları ve videoları ağda paylaş"ı açın, ardından bilgisayarı başlıkta o bölümün anlattığı gibi ekleyin. Paylaşım, uygulama kapatıldığında veya bir saat kullanılmadığında durur.
-8. **Ağa izin verin**: Windows, Immuch360 Desktop'ın ağı kullanıp kullanamayacağını sorabilir. Özel ağlarda izin verin, yoksa başlık bilgisayarı bulamaz. Windows'un genel olarak işaretlediği bir ağda (bir kafe, bir otel) ya da türünü belirleyemediği bir ağda, "Bu oturum için paylaş"ı seçmedikçe paylaşım başlamaz; bilgisayar da kendini yalnızca paylaştığı ağda duyurur.
-9. **Ayarlar, "Bu bilgisayar"**: klasörler, indirme klasörü, paylaşımları bulmak ve bilgisayarı paylaşmak için kullanılan ağ bağdaştırıcısı (birden fazlası varsa, örneğin Wi-Fi ve Ethernet) ve güvenilen sertifikalar: Windows'un kendiliğinden güvenmediği bir HTTPS adresi için kendi sunucunuzun sertifika yetkilisi, bir PEM dosyası olarak. İstemci sertifikaları telefonlardaki gibi Ayarlar, Gelişmiş'te içe aktarılır.
+7. **Bir 360° video oynatın** (masaüstü derlemesi 3'ten itibaren): videoyu açın ve bir telefondaki gibi üst çubuktaki 360°'ye tıklayın; sunucunun işaretlemediği bir 360° dosya için önce ⋮ menüsünde "360° olarak görüntüle", bkz. [Düz görünen bir 360° dosya](#a-360-file-that-shows-flat-view-as-360). 360° oynatıcı pencerede açılır. Etrafınıza bakmak için fareyle sürükleyin (hızlı bir sürüklemeden sonra görüntü biraz dönmeye devam eder), tekerlekle, + ve - ile ya da Page Up ve Page Down ile yakınlaştırın, ok tuşlarını basılı tutarak döndürün. Space ya da klavyenin oynat ve duraklat tuşu duraklatır ve yeniden oynatır; J ve L 10 saniye geri veya ileri atlar; Home başa döner; M sesi kapatıp açar. F, F11 veya çift tıklama tam ekrana geçer; Escape tam ekrandan çıkar, sonra oynatıcıyı kapatır. Denetimler (üstte kapat, başlık, 360°/180°, 3D, ses parçası ve tam ekran; altta oynat, 10 saniye geri ve ileri, zaman çubuğu ve ses) 3 saniyelik oynatmadan sonra fare imleciyle birlikte gizlenir, fare hareket ettiğinde veya bir tuşa basıldığında geri gelir; Tab birinden diğerine geçer.
+8. **3D ve VR180**: 360° oynatıcıda 3D düğmesi "Mono (3D değil)", "3D, üst ve alt" ve "3D, yan yana" arasında geçiş yapar, 360°/180° düğmesi de [3D ve VR180](#3d-and-vr180-photos-and-videos) bölümündeki gibi tam küre ile VR180'in yarım küresi arasında geçiş yapar. 3D bir video sol gözünü gösterir.
+9. **Ham 360° videolar** (masaüstü derlemesi 3'ten itibaren): ham dosyayı açın ve bir telefondaki gibi 360°'ye tıklayın, bkz. [Ham 360° kamera dosyaları](#raw-360-camera-files-without-the-cameras-app); bir X3 çiftinin iki dosyasını birlikte tutun. İki lensi tek parçada olan bir dosya oynarken birleştirilir. Parça başına veya dosya başına bir lensi olan bir dosya, bilgisayar yetişebildiğinde iki lensi tek oynatıcıda yan yana oynatır: böyle bir videonun ilk saniyeleri ölçülür ve sonuç o türden sonraki videolar için saklanır (fazla yavaş bulunan bir yol 14 gün sonra yeniden denenir). Bilgisayar yetişemediğinde oynatıcı, mesajlarıyla birlikte telefonların adımlarından geçer: tek lens, kürenin yarısı siyah; sunucunun dönüştürülmüş akışı; varsa kameranın dosyanın yanına kaydettiği düşük çözünürlüklü LRV kopyası; birleştirilmemiş video. Ham bir videoda 3D ve 360°/180° düğmesi yoktur.
+10. **Bir Tapo kameranın canlı görüntüsü** (masaüstü derlemesi 3'ten itibaren): kamerayı bir telefondaki gibi açın, bkz. [Canlı izleyin](#watch-it-live). Sayfa SD akışını, tam ekran HD akışını oynatır, görüntünün üzerinde bir telefonun düğmeleriyle: başta kapalı olan ses, SD veya HD ve "Tam ekran". Kaybolan bir akış (kamera yeniden başlar, Wi-Fi kopar) kendiliğinden geri gelir, son görüntü ekranda kalırken yaklaşık bir buçuk dakika boyunca yeniden denenir. Kameranın reddettiği bir kamera hesabı bildirilir ve yeniden denenmez, çünkü başarısız oturum açmalar kameranın kilitlenmesine sayılır.
+11. **Bilgisayarı başlıkla paylaşın**: Kütüphane'yi, ardından Ağ paylaşımları'nı açın; ilk kutucuk "Bu bilgisayarı ağda paylaş"tır, [Bu telefonu ağda paylaş](#share-this-phone-on-the-network) bölümünün bilgisayar tarafı. "Fotoğrafları ve videoları ağda paylaş"ı açın, ardından bilgisayarı başlıkta o bölümün anlattığı gibi ekleyin. Paylaşım, uygulama kapatıldığında veya bir saat kullanılmadığında durur.
+12. **Ağa izin verin**: Windows, Immuch360 Desktop'ın ağı kullanıp kullanamayacağını sorabilir. Özel ağlarda izin verin, yoksa başlık bilgisayarı bulamaz. Windows'un genel olarak işaretlediği bir ağda (bir kafe, bir otel) ya da türünü belirleyemediği bir ağda, "Bu oturum için paylaş"ı seçmedikçe paylaşım başlamaz; bilgisayar da kendini yalnızca paylaştığı ağda duyurur.
+13. **Ayarlar, "Bu bilgisayar"**: klasörler, indirme klasörü, paylaşımları bulmak ve bilgisayarı paylaşmak için kullanılan ağ bağdaştırıcısı (birden fazlası varsa, örneğin Wi-Fi ve Ethernet) ve güvenilen sertifikalar: Windows'un kendiliğinden güvenmediği bir HTTPS adresi için kendi sunucunuzun sertifika yetkilisi, bir PEM dosyası olarak. İstemci sertifikaları telefonlardaki gibi Ayarlar, Gelişmiş'te içe aktarılır.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### 360° videolar ve grafik yongası
+
+360° oynatıcıda (masaüstü derlemesi 3'ten itibaren) baktığınız görüntüyü videonun her karesinden grafik yongası çizer. Video eklentisi libmpv'ye her kareyi seçilen boyutta bir resme çizdirir, ardından uygulamanın kendi çizim geçişi bu resimden kürenin baktığınız kısmını çizer. Görüntüyü döndürmek oynatıcıyı değil, bu geçişin bir değerini değiştirir: sürüklemek bellek harcamaz, duraklatılmış bir video da hiçbir şey çözmeden döner.
+
+Uygulama her 360° videonun ilk saniyelerini ölçer ve yonganın ne büyüklükte bir kare üzerinde çalışacağını seçer: ayrı bir yongada karenin tamamı, işlemciye tümleşik bir yongada en fazla 2880 piksel genişlik (yonganın türünü uygulamaya Windows söyler, bu yüzden bir Core Ultra dizüstü bilgisayarın Intel Arc yongası tümleşik sayılır), yonga yetişemediğinde bir kademe daha küçük. Ölçtüğü şey her video için değil, aynı türden (codec, boyut, kare hızı ve kod çözücü) sonraki videolar için saklanır.
+
+En küçük kademe bile akıcı olmadığında oynatıcı "Bu ekran kartı bu videonun 360° görüntüsünü akıcı gösteremiyor" der; akıcılıktan çok uzak olduğunda ya da yonga görüntüyü hiç çizemediğinde (OpenGL ES 3.0 yok, onu reddeden bir sürücü) video düz oynar ve oynatıcı nedenini söyler. Düz oynamış bir video bir sonraki sefer düz oynatılmaz: türünün bir sonraki videosu yeniden ölçülür.
+
+Yetişemeyen şey çizim değil de bir sunucu videosunun kod çözümü olduğunda (5.7K H.264 gibi işlemcinin çözdüğü bir video), oynatıcı kaldığı yerden sunucunun dönüştürülmüş akışına geçer, telefonların mesajıyla: "Dönüştürülmüş akış oynatılıyor: orijinal (codec ve boyut) bu cihazın çözebildiğini aşıyor".
+
+- **Bir dizüstü bilgisayarın ayrı grafik yongasını kullanın.** Aksi söylenmedikçe Windows uygulamayı tümleşik yongada çalıştırır. Windows ayarlarında Sistem, Ekran, Grafik altında `immuch360.exe` ekleyin ve "Yüksek performans" seçin, ardından uygulamayı yeniden başlatın. Test dizüstü bilgisayarında (bir Intel UHD yongası ve bir NVIDIA RTX 4060 Laptop), NVIDIA yongası görüntü dönerken 4K, 5.7K ve 8K 360° videoları tam boyutta ve saniyede 30 karede çizdi. Intel yongası onları en fazla 2880 piksel genişliğinde çizdi: 4K H.264 ve 8K HEVC bir videoyu libmpv'nin 2026 derlemesiyle saniyede yaklaşık 30 karede, 4K bir videoyu media-kit'in 2024 libmpv'siyle 23 ila 27 karede (bkz. [Henüz yok](#not-there-yet)) ve işlemcinin çözdüğü 5.7K H.264 bir videoyu yaklaşık 20 karede: sunucudan geliyorsa oynatıcı bu durumda dönüştürülmüş akışa geçer; dönüştürülmüş akışı olmayan bir video, örneğin bir klasörden, "Bu ekran kartı bu videonun 360° görüntüsünü akıcı gösteremiyor" mesajıyla oynamaya devam eder.
+- **Çiziciyi kendiniz seçin.** Ayarlar, Gelişmiş'te Sorun Giderme'yi açın: varsayılan olarak Otomatik olan bir "360° video çizicisi" girdisi belirir. Açacağınız bir sonraki 360° video için "Eklenti, tam boyut", "Eklenti, en fazla 4096 genişlik", "Eklenti, en fazla 2880 genişlik" ve "Düz, 360° görüntü olmadan" seçeneklerini de sunar. Altında "Son ölçülen" son 360° videonun çizildiği boyutu, saniyedeki kare sayısını, grafik yongasını ve kod çözücüyü belirtir: bunu bir hata raporuna kopyalayın. "Otomatik"i yeniden seçmek, zaten seçili olsa bile, ölçülenleri unutturur ve sonraki 360° videolar yeniden ölçülür.
+- **Yonganın çözdükleri.** Ayarlar, Gelişmiş, "Bu cihazın video kod çözücüleri" kullanılan grafik yongasının neyi çözdüğünü Direct3D 11'in bildirdiği gibi listeler, uygulama da bu listeyi oynatırken ölçtükleriyle düzeltir: Video kaynağı ayarı ve ham videoların iki lens denetimi ona uyar. 4096 pikselden geniş H.264 (360° kameraların 5.7K'sı) işlemci tarafından çözülür, çünkü test dizüstü bilgisayarının iki yongası da onu almaz.
 
 ### Telefon uygulamalarıyla karşılaştırma
 
@@ -1017,12 +1045,16 @@ ZIP'i doğrulamak için indirmenin bulunduğu klasörde bir komut isteminde `cer
 - **Klasörlerinizden hiçbir şey silinmez**: "Cihazdan sil" gizlidir ve Sil yalnızca sunucudaki kopyayı kaldırır, uygulama dosyaları Windows geri dönüşüm kutusuna gönderebilene kadar.
 - **Fare ve klavye**, dokunma ve jiroskop yerine.
 - **Her kaynak için tek video oynatıcı**: libmpv sunucunun, klasörlerin, paylaşımların ve Plex'in videolarını aynı şekilde oynatır, düz oynatıcısında da telefonların düz oynatıcısında henüz olmayan ses parçası menüsü zaten var.
+- **Pencerede 360° videolar** (masaüstü derlemesi 3'ten itibaren): 360° oynatıcı ayrı bir yerel oynatıcı değil, uygulamanın bir sayfasıdır; bir zaman çubuğu, 10 saniyelik atlamalar ve ses düğmesiyle. Parça başına veya dosya başına bir lensi olan ham videolar, telefonların iki kod çözücü çalıştırdığı yerde tek oynatıcıda yan yana dizilir; telefonların geri çekilme adımları aynıdır, birleştirilmemiş videodan önce kameranın LRV kopyası eklenmiştir.
+- **Tapo canlı görüntüsü** (masaüstü derlemesi 3'ten itibaren) bilgisayarda Android'deki gibi oynar, iPhone ve iPad'de ise henüz yoktur.
 
 <a id="not-there-yet"></a>
 ### Henüz yok
 
-- **360°, 3D, VR180 ve ham 360° videolar**: şimdilik dosyanın tuttuğu gibi düz gösterilirler (açılmış bütün küre, yan yana iki göz ya da lenslerin yuvarlak görüntüleri) ya da bir yer tutucu olarak; 360° düğmesi de fotoğraflarda kalır. Oynatıcıları sonraki masaüstü derlemeleriyle gelecek.
-- **Spatial 2.5D**, daha sonra web kamerasıyla; **Tapo canlı görüntüsü**; **harita** ve Yerler görünümü; **OAuth ile oturum açma** (onun yerine e-posta ve şifreyle oturum açın); **Google Cast**; **bildirimler**.
+- **Çatalın kendi derlemesi olan libmpv**: çatalın kendi derlemesi devreye alınana kadar ZIP'ler media-kit'in 2024 libmpv'sini taşır, ZIP'teki `BUILD-INFO.txt` de hangisini taşıdığını söyler. 2024 sürümüyle, parça başına veya dosya başına bir lensi olan ham bir videonun iki lensi asla aynı anda oynamaz (onları üst üste dizen filtre eksiktir), bu yüzden bu videolar tek lens gösterir, kürenin yarısı siyah; grafik yongası da her kareyi kod çözücüsünden geri kopyalar, bu da tümleşik bir yongada 360° oynatıcıyı yavaşlatır. Çatalın kendi iş akışının libmpv'si, bir 2026 sürümü, ilk genel sürümden önce onun yerini alacak; test dizüstü bilgisayarında denenen bir 2026 libmpv derlemesi ikisini de yapıyor.
+- **Bir dizüstü bilgisayarda iki lensli ham videolar**: 2026 libmpv ile bile test dizüstü bilgisayarı bir X3 çiftini (iki 2880x2880 H.264 dosya) yalnızca NVIDIA yongasında saniyede 30 karede dizdi; Intel yongasında ve bir X4 dosyası (iki 3840x3840 HEVC parça) için iki yongada da video, iki kod çözücü çalıştıramayan bir telefondaki gibi tek lens oynar, kürenin yarısı siyah.
+- **Yalnızca ekranda 3D**: 3D bir video telefonlardaki gibi sol gözünü gösterir; bilgisayarda jiroskop ve başlık görünümü yoktur. Gerçek 3D izlemek için bilgisayarı bir Meta Quest ile paylaşın.
+- **Spatial 2.5D**, daha sonra web kamerasıyla; **harita** ve Yerler görünümü; **OAuth ile oturum açma** (onun yerine e-posta ve şifreyle oturum açın); **Google Cast**; **bildirimler**.
 - **Bir yükleyici, imzalı bir derleme ve otomatik güncellemeler**: bu derleme `immuch360.exe` içeren bir klasördür.
 - **Linux ve macOS**: projeleri kaynaklarda var, ama henüz bu sistemlerde derlenmediler ve denenmediler, video oynatıcıları da henüz kaynaklarda değil; Windows'tan sonra gelecekler.
 - **Çeviriler**: bilgisayar sürümünün yeni metinleri şimdilik İngilizce.
@@ -1030,10 +1062,11 @@ ZIP'i doğrulamak için indirmenin bulunduğu klasörde bir komut isteminde `cer
 ### Bilinen sorunlar
 
 - **Yeni bir derlemenin ilk açılışı yavaştır**: pencere görünmeden önce 10 saniye ile yaklaşık bir dakika, büyük olasılıkla Microsoft Defender henüz imzalı olmayan yeni dosyaları tararken. Uygulamayı yeniden başlatmak yerine pencereyi bekleyin; sonraki açılışlar bir iki saniye sürer.
-- **8K HEVC videolar ayrı bir ekran kartı ister**: test dizüstü bilgisayarında tümleşik Intel UHD yongası bir 8K HEVC videonun karelerinin yaklaşık yarısını gösterdi, ayrı NVIDIA yongası ise 8K HEVC ve 5.7K H.264 videoları hiç kare kaybetmeden oynattı. Aksi söylenmedikçe Windows uygulamayı tümleşik yongada çalıştırır: Windows ayarlarında Sistem, Ekran, Grafik altında `immuch360.exe` ekleyin ve "Yüksek performans" seçin. Tümleşik yongada, kod çözücüsünün reddettiği 5.7K H.264 bir video, işlemci tarafından hiç kare kaybetmeden çözülür.
-- **Videolar en fazla 1440 satır yüksekliğinde çizilir**, sonra pencereye ölçeklenir: 4K bir ekranda tam ekranda 4K veya 8K bir video, ayrı bir video oynatıcısındakinden biraz daha yumuşaktır. Bu, 8K bir videoyu bir dizüstü bilgisayarın grafik gücü sınırları içinde tutar.
+- **8K HEVC videolar ayrı bir ekran kartı ister, 360° videolar da onda daha iyi çalışır**: test dizüstü bilgisayarında tümleşik Intel UHD yongası bir 8K HEVC videonun karelerinin yaklaşık yarısını gösterdi, ayrı NVIDIA yongası ise 8K HEVC ve 5.7K H.264 videoları hiç kare kaybetmeden oynattı; 360° oynatıcı NVIDIA yongasında akıcı, Intel yongasında daha yavaştır, bkz. [360° videolar ve grafik yongası](#360-videos-and-the-graphics-chip). Aksi söylenmedikçe Windows uygulamayı tümleşik yongada çalıştırır: Windows ayarlarında Sistem, Ekran, Grafik altında `immuch360.exe` ekleyin ve "Yüksek performans" seçin, ardından uygulamayı yeniden başlatın. Tümleşik yongada, kod çözücüsünün reddettiği düz 5.7K H.264 bir video, işlemci tarafından hiç kare kaybetmeden çözülür.
+- **Düz videolar en fazla 1440 satır yüksekliğinde çizilir**, sonra pencereye ölçeklenir: 4K bir ekranda tam ekranda 4K veya 8K bir video, ayrı bir video oynatıcısındakinden biraz daha yumuşaktır. Bu, 8K bir videoyu bir dizüstü bilgisayarın grafik gücü sınırları içinde tutar. 360° oynatıcı ise karenin tamamı üzerinde ya da ölçümünün seçtiği daha küçük boyut üzerinde çalışır.
 - **Klasörlerinizden bir video uygulamada oynarken ya da başlık paylaşılan bilgisayardan bir dosya okurken** (oynattığı bir video, indirdiği bir fotoğraf) Windows o dosyayı yeniden adlandıramaz, taşıyamaz veya silemez ve dosyanın Immuch360 Desktop'ta açık olduğunu söyler: önce videoyu kapatın ya da başlıktaki oynatmayı durdurun. Yedeklemeler dosyalarınızı bu şekilde tutmaz: bir dosya yüklenirken yeniden adlandırılabilir, taşınabilir veya silinebilir.
-- **Pürüzler**: Windows'ta 663 masaüstü testinden 656'sı geçiyor (7'si bilerek atlanıyor), art arda açılan 200 oynatıcı hiçbir sızıntı bırakmıyor, bir Windows 11 bilgisayarda da uygulama açılıyor, bir Immich sunucusundaki kayıtlı oturumu açıyor, eşitliyor, bir video oynatıyor ve sorunsuz kapanıyor. Her işlevin gerçek bir bilgisayarda elle testi hâlâ sürüyor.
+- **Pürüzler**: masaüstü derlemesi 3, Windows'ta 863 masaüstü testinden 855'ini (8'i bilerek atlanıyor) ve uygulamanın tüm test paketini geçiyor, art arda açılan 200 oynatıcı hiçbir sızıntı bırakmıyor, sürüm ZIP'i de açılıyor, bir test klibi oynatıyor ve sorunsuz kapanıyor. Her işlevin gerçek bir bilgisayarda elle testi hâlâ sürüyor.
+- **360° oynatıcının ve canlı görüntünün neyle denendiği**: 360° oynatıcı bir dizüstü bilgisayarın iki grafik yongasında yapay 4K, 5.7K ve 8K 360° kliplerle (açıldı, oynatıldı, oynarken ve duraklatılmışken döndürüldü, kapatıldı) hiç çökmeden ve grafik sürücüsü hiç sıfırlanmadan çalıştırıldı. İki lensli ham videolar yapay kliplerden ve gerçek X3 ve X4 dosyalarından oynatıldı. Tapo canlı görüntüsü, kameralar gibi oturum açan (Digest), bilerek kesilen ve reddeden bir test RTSP sunucusuna karşı denendi, hiçbir günlük satırında şifre olmadan, ama henüz gerçek bir kamerayla değil. Gerçek 360° ve 3D dosyalarla, bir dizüstü bilgisayarın iki ekranıyla, uyku ve uyanmayla ve gerçek bir kamerayla elle test henüz yapılacak.
 
 Bir şeyler ters giderse lütfen Günlükler sayfasından kaydedilen günlükle bir [sorun kaydı](https://github.com/freeKC/Immuch360/issues) açın, bkz. [Günlükler](#logs). Paylaşmadan önce günlüğü kontrol edin: sunucu adresinizi içerebilir.
 
@@ -1052,7 +1085,7 @@ x64 üzerinde Windows 10 veya 11, Windows için Flutter 3.47.2, "Desktop develop
    mise run codegen
    ```
 
-2. Windows'ta, aynı `mobile` klasöründe uygulamayı derleyin. İlk derleme video oynatıcısının kütüphanelerini (libmpv ve ANGLE) GitHub'dan indirir ve her arşivi SHA-256 değeriyle denetler:
+2. Windows'ta, aynı `mobile` klasöründe uygulamayı derleyin. İlk derleme video oynatıcısının kütüphanelerini (libmpv ve ANGLE) GitHub'dan indirir ve her arşivi SHA-256 değeriyle denetler; grafik yongasının kod çözücülerini okuyan küçük Direct3D 11 eklentisini, `immuch_desktop_video`, aynı C++ iş yüküyle derler:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ x64 üzerinde Windows 10 veya 11, Windows için Flutter 3.47.2, "Desktop develop
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-Immuch360 Desktop'ın CI'ı (`.github/workflows/immuch360-desktop.yml`) `immuch360`'ı izleyen `desktop` dalında çalışır: telefon kapıları (telefon derlemelerinde hiçbir şey değişmez) ve tüm test paketi Linux'ta, masaüstü testleri Windows'ta, bir de aynı ZIP; Linux ve macOS işleri (aynı `-t lib/main_desktop.dart` ile `flutter build linux` ve `flutter build macos`) henüz bu sistemlerde çalışmadı.
+Immuch360 Desktop'ın CI'ı (`.github/workflows/immuch360-desktop.yml`) `immuch360`'ı izleyen `desktop` dalında çalışır: telefon kapıları (telefon derlemelerinde hiçbir şey değişmez) ve tüm test paketi Linux'ta, masaüstü testleri Windows'ta, bir de aynı ZIP, ardından o derleme üzerinde onun libmpv ve ANGLE'ına ihtiyaç duyan testler (Tapo canlı görüntüsünün oturum açması, bir video dosyasının açamayacakları, 360° gölgelendiricileri); Linux işi uygulamayı Ubuntu'da derler, macOS işi de onu Xcode 26.3 ve macOS 26 SDK ile derler (ikisi de aynı `-t lib/main_desktop.dart` ile), yalnızca derleme denetimi olarak: ikisi de henüz bu sistemlerde çalıştırılmadı. İkinci bir iş akışı (`.github/workflows/immuch360-libmpv.yml`) Windows x64 ve arm64 için libmpv'yi sabitlenmiş kaynaklardan yeniden derler ve arşivleri SHA-256 değerleriyle yayımlar; o derleme devreye alınana kadar ZIP'ler media-kit arşivini taşımaya devam eder, bu yüzden [Henüz yok](#not-there-yet) bölümündeki 2024 libmpv sınırları sizin derlemeniz için de geçerlidir.
 
 <a id="where-to-get-it"></a>
 ## Nereden edinilir
@@ -1088,8 +1121,8 @@ Uygulama telefonlar ve tabletler için Google Play'de; App Store sürümü Apple
   - Bugün: [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki evrensel `Immuch360-v<version>-release.apk`, adb ile yandan yüklenir, bkz. [Televizyona kurun](#install-it-on-the-tv). Telefonlardaki uygulamanın aynısıdır.
   - Yakında: televizyonlarda Google Play; televizyonlar için kayıt 9 Ekim 2026'dan beri Google'ın incelemesinde.
 - **Windows 10 ve 11, 64 bit (önizleme)**
-  - Bugün: Immuch360 Desktop, [masaüstü ön sürümünün](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ZIP'i, [Windows'a indirin ve kurun](#download-and-install-on-windows) bölümünün anlattığı gibi açılıp başlatılır. Şimdilik fotoğraflar ve düz videolar: 360°, 3D ve VR180 videolar sonraki masaüstü derlemeleriyle gelecek.
-  - Yakında: 360°, 3D, VR180 ve ham 360° videolar; bir yükleyici, imzalı bir derleme ve güncellemeler daha sonra.
+  - Bugün: Immuch360 Desktop, masaüstü derlemesi 3, [masaüstü ön sürümünün](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` ZIP'i, [Windows'a indirin ve kurun](#download-and-install-on-windows) bölümünün anlattığı gibi açılıp başlatılır. Fotoğraflar, düz videolar, 360°, 3D, VR180 ve ham 360° videolar (ayrı bir grafik yongasında akıcı, tümleşik bir yongada sınırlı) ve Tapo canlı görüntüsü.
+  - Yakında: web kamerasıyla Spatial 2.5D, ardından Linux ve macOS; bir yükleyici, imzalı bir derleme ve güncellemeler daha sonra.
 
 App Store ve Meta Horizon Store bağlantıları, kayıtlar yayımlanır yayımlanmaz buraya eklenecek. Her zamanki Immich sunucu URL'niz ve hesabınızla oturum açın ya da cihazın kendi fotoğraf ve videolarıyla başlamak için giriş sayfasında "Sunucu olmadan kullan"a dokunun. GitHub'dan alınan APK kendini güncellemez: Releases sayfasını takip edin ve uygulamayı bir mağazadan kurduysanız güncellemeleri o mağazadan alın.
 
@@ -1126,7 +1159,7 @@ Bu depoda hiçbir gizli bilgi bulunmaz: Android imzalama anahtarı şifrelenmiş
 
 - **`main`**: `immuch360`'ın temel aldığı commit'teki Immich `main` (güncel derlemeler için 29 Eylül 2026), hiç değiştirilmez; çatal daha yeni bir Immich üzerine yeniden temellendirildiğinde ilerler.
 - **`immuch360`**: bu çatalın Immich üzerindeki değişiklikleri, 9 Ekim 2026'dan beri Immuch360 Desktop dahil. Her sürüm hangi Immich sürümünü temel aldığını belirtir.
-- **`desktop`**: bilgisayar sürümü Immuch360 Desktop'ın `immuch360` üzerinde geliştirildiği dal; 9 Ekim 2026'da telefonlar, başlıklar, televizyonlar ve bilgisayarlar aynı kaynaklardan çıksın diye ona birleştirildi. Artık `immuch360`'ı izler ve masaüstü ön sürüm etiketlerini taşır ([masaüstü derlemesi 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), 21f285c34 commit'inden, [masaüstü derlemesi 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), 5b723bd25'ten). Bilgisayar sürümü `mobile/android` ve `mobile/ios` altında hiçbir şeyi değiştirmez.
+- **`desktop`**: bilgisayar sürümü Immuch360 Desktop'ın `immuch360` üzerinde geliştirildiği dal; 9 Ekim 2026'da telefonlar, başlıklar, televizyonlar ve bilgisayarlar aynı kaynaklardan çıksın diye ona birleştirildi. Artık `immuch360`'ı izler ve masaüstü ön sürüm etiketlerini taşır ([masaüstü derlemesi 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1), 21f285c34 commit'inden, [masaüstü derlemesi 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), 5b723bd25'ten, [masaüstü derlemesi 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), 10 Ekim 2026'da 360° video oynatıcısının birleştirilmesinden). Yeni masaüstü çalışmaları önce oraya gelir ve onu yayımlayan masaüstü derlemesiyle `immuch360`'a katılır. Bilgisayar sürümü `mobile/android` ve `mobile/ios` altında hiçbir şeyi değiştirmez.
 
 <a id="logs"></a>
 ## Günlükler
@@ -1145,7 +1178,7 @@ Derleme 19'dan itibaren DLNA istemcisi, telefon paylaşımı ve Apple uzamsal me
 
 Bir bilgisayarda (Immuch360 Desktop) Günlükler sayfasında ayrıca "Günlükleri bir dosyaya kaydet" bulunur: günlük ya da, varsa, günlük ve son çökmelerin raporlarından oluşan bir ZIP (önerilen adı o zaman "with-crash-reports" ile biter). Bir çökme raporu küçük bir minidump'tır: iş parçacıkları, nerede durdukları ve yalnızca çağrılarını izlemek için gerekenler, program dosyalarının adlarıyla ama klasörleri olmadan; uygulamanın belleği değil.
 
-Masaüstü derlemesi 2'den itibaren bilgisayarın video oynatıcısı oraya `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` ve `VideoThumbnailGrabber` etiketleriyle yazar, mpv'nin kendi uyarıları dahil, belirteçler ve şifreler çıkarılmış olarak. Paylaşmadan önce günlüğü kontrol edin: sunucu adresinizi içerebilir.
+Masaüstü derlemesi 2'den itibaren bilgisayarın video oynatıcısı oraya `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` ve `VideoThumbnailGrabber` etiketleriyle yazar, mpv'nin kendi uyarıları dahil, belirteçler ve şifreler çıkarılmış olarak. Masaüstü derlemesi 3'ten itibaren 360° oynatıcıyı da `SphericalPlayer`, `SphereRenderer` ve `PluginRenderer` altında (seçilen boyut, ölçülen saniyedeki kare sayısı, grafik yongası), iki lensli ham videoları `RawTwoStreams` altında, grafik yongasının kod çözücülerini `DesktopGpuDecoders`, `DesktopVideoDecoderApi` ve `DecoderMeasure` altında, Tapo canlı görüntüsünü de satırları kamera hesabını ve şifresini asla içermeyen `DesktopCameraLive` altında yazar. Paylaşmadan önce günlüğü kontrol edin: sunucu adresinizi içerebilir.
 
 <a id="privacy"></a>
 ## Gizlilik
@@ -1159,7 +1192,7 @@ Masaüstü derlemesi 2'den itibaren bilgisayarın video oynatıcısı oraya `Des
 - **Telefon paylaşımı**: yalnızca yerel ağ, kullanıcı adı ve şifreyle, düz HTTP üzerinden (bkz. [Bu telefonu ağda paylaş](#share-this-phone-on-the-network)).
 - **Kamera**: yalnızca Spatial 2.5D oynatıcısı tarafından, cihazda kullanılır; görüntüler asla saklanmaz ve hiçbir yere gönderilmez.
 - **Bir bilgisayarda** (Immuch360 Desktop, Windows önizlemesi): uygulama yalnızca seçtiğiniz klasörleri okur, dizinini, küçük resimlerini ve önbelleğini bilgisayarda tutar, şifreleri ve belirteçleri Windows'un veri korumasıyla yalnızca sizin Windows hesabınız için saklar. Bilgisayar paylaşımı telefon paylaşımının kurallarına uyar ve siz istemedikçe Windows'un genel olarak işaretlediği ya da türünü belirleyemediği bir ağda başlamaz.
-- **Bir bilgisayardaki video oynatıcı** (masaüstü derlemesi 2'den itibaren): sunucunuzun videoları ona uygulama üzerinden ulaşır, böylece oynatıcı oturum belirtecinizi hiçbir zaman tutmaz, önceden okuduğu da diskte değil bellekte kalır. Yalnızca kendisine verilen dosyayı açar: bir klasördeki veya paylaşımdaki, aslında bir oynatma listesi ya da bir akış tanımı olan bir dosya onu başka bir yere bağlatmaz.
+- **Bir bilgisayardaki video oynatıcı** (masaüstü derlemesi 2'den itibaren): sunucunuzun videoları ona uygulama üzerinden ulaşır, böylece oynatıcı oturum belirtecinizi hiçbir zaman tutmaz, önceden okuduğu da diskte değil bellekte kalır. Yalnızca kendisine verilen dosyayı açar: bir klasördeki veya paylaşımdaki, aslında bir oynatma listesi ya da bir akış tanımı olan bir dosya onu başka bir yere bağlatmaz. Masaüstü derlemesi 3'ten itibaren her videonun adresi oynatıcıya yalnızca bellekte verilir, asla geçici bir dosya üzerinden değil (uygulamanın sunucunun veya bir paylaşımın videosu için oluşturduğu bağlantı o oturumun bir anahtarını içerir; masaüstü derlemesi 2'de bu anahtar her açılışta birkaç saniye diskte duruyordu), bu anahtar da günlükte asla görünmez; bir Tapo kameranın canlı görüntüsü kamera hesabını oynatıcıya aynı şekilde verir, asla bir dosyada veya bir günlük satırında değil, kamerayla da yalnızca yerel ağda konuşur; 360° oynatıcının ve kod çözücülerin ölçümleri (grafik yongası, videonun biçimi, saniyedeki kare sayısı, asla bir dosya adı değil) bilgisayardaki uygulama klasöründe kalır.
 
 Politikanın tamamı [PRIVACY.md](../PRIVACY.md) dosyasındadır.
 
@@ -1177,7 +1210,7 @@ Android, Android TV ve Google TV, Google LLC'nin ticari markalarıdır; Apple, i
 
 Henüz yapılmamış olanlar, en olası olanlar önce. Buradaki hiçbir şey bir söz değildir ve [sorun takipçisindeki](https://github.com/freeKC/Immuch360/issues) geri bildirimler neyin önce geleceğine karar vermeye yardımcı olur.
 
-- **Immuch360 Desktop, önce Windows**: masaüstü derlemesi 2 düz videolarla çıktı, masaüstü kaynakları da 9 Ekim 2026'dan beri çatalın ana dalı `immuch360` içinde (bkz. [Bir Windows bilgisayarda](#on-a-windows-computer-immuch360-desktop-preview)). Sırada Windows'ta 360°, 3D, VR180 ve ham 360° videolar, ham dosyaların iki lensi ve Tapo canlı görüntüsüyle; ardından her işlevin bir Windows bilgisayarda testi ve düzeltmeleri; ardından web kamerasıyla Spatial 2.5D; ardından Linux ve macOS, paketler, imzalama ve güncellemeler.
+- **Immuch360 Desktop, önce Windows**: masaüstü derlemesi 3, 360° video oynatıcısıyla (360°, 3D, VR180 ve ham 360° videolar, ham dosyaların iki lensi, her bilgisayarda ölçülen görüntü boyutu) ve Tapo canlı görüntüsüyle çıktı, masaüstü kaynakları da 9 Ekim 2026'dan beri çatalın ana dalı `immuch360` içinde (bkz. [Bir Windows bilgisayarda](#on-a-windows-computer-immuch360-desktop-preview)). Sırada 2024 sürümünün yerine çatalın kendi iş akışının libmpv'si ve her işlevin bir Windows bilgisayarda gerçek dosyalarla, iki ekranla ve gerçek bir kamerayla elle testi, düzeltmeleriyle birlikte; ardından web kamerasıyla Spatial 2.5D; ardından Linux ve macOS; ardından bir yükleyici, imzalı bir derleme ve otomatik güncellemeler.
 - **Google Play**: derleme 18'in yerine derleme 20, 7 Ekim 2026'dan beri yayında; televizyonlar için kayıt 9 Ekim 2026'dan beri Google'ın incelemesinde. Derleme 21 telefon ve tabletlerde hiçbir şeyi değiştirmez.
 - **App Store**: sürüm 3.3.0 Apple'ın incelemesini bekliyor; derleme 11'in özelliklerini taşıyor, bu yüzden Immich'e yükleme ve video kod çözücü denetimi (derleme 15) ile ham Insta360 dosyaları (derleme 16) bir sonraki App Store güncellemesiyle gelecek. Bağlantı yayına girdiğinde buraya eklenecek.
 - **Meta Horizon Store**: Meta, kaydı 7 Ekim 2026'da derleme 14 ile onayladı. Derleme 21 ilk güncellemesi olarak gönderildi: derleme 14'ten bu yana gelen her şeyi getirir (bir paylaşımdan Immich'e yüklemeler, başlığın çözebildiklerine göre seçilen video kaynağı, ham Insta360, GoPro ve DJI dosyaları, DLNA, telefon paylaşımı, Apple uzamsal fotoğrafları, Plex Media Server kütüphaneleri, Tapo kameralar) ve mağaza onu Quest 2, Quest Pro, Quest 3 ve 3S için listeler. Sayfa herkese açık olduğunda mağaza bağlantısı buraya eklenecek; yandan yüklenmiş bir kopyanın önce kaldırılması gerekir (bkz. [Kurulum](#install)).

@@ -15,13 +15,13 @@ Hem i blong ol man we oli tekem foto wetem wan 360° kamera (Insta360, GoPro MAX
 
 <div align="center">
 
-| Platfom | Wea blong kasem | Stejes long 9 Oktoba 2026 |
+| Platfom | Wea blong kasem | Stejes long 10 Oktoba 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Ol **Android** fon mo tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 long Google Play stat long 7 Oktoba 2026, build 21 long GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone mo iPad** | App Store | vesen 3.3.0 i stap wet blong Apple i jekem; naoia yu save [buildim yu wan](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 mo 3S | [APK](#meta-quest-3) · Horizon Store | Meta i talem oraet long pej, Meta i stap jekem build 21 |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV mo Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 long GitHub; Google i stap jekem Google Play pej blong ol TV stat long 9 Oktoba 2026 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Preview ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | desktop build 2 long Windows: ol foto mo ol flat video, ol 360° video bambae oli kam; macOS mo Linux biaen, long sem sos |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Preview ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | desktop build 3 long Windows: ol foto, ol flat video mo ol 360° video; macOS mo Linux biaen |
 
 *Mifala i apdetem ol stejes long evri release; ol ditel oli stap long [Wea blong kasem](#where-to-get-it).*
 
@@ -30,7 +30,7 @@ Hem i blong ol man we oli tekem foto wetem wan 360° kamera (Insta360, GoPro MAX
 - 🌐 **360° insaed long app**<br>Ol foto mo video olsem wan sfia we yu lukluk raon insaed long hem, wetem gyroscope, mo ol raw fael blong kamera tu (Insta360 stat long build 16, GoPro mo DJI stat long build 18). Mo wan fri video pleia tu: flat, 360°, 3D, VR180
 - 👓 **3D insaed long app**<br>Stereo 360° mo VR180, antap mo andanit o saed long saed, mo ol Apple spatial foto (stat long build 19): tru 3D long hedset, wan ae nomo long fon
 - 🎥 **2.5D insaed long app**<br>Dip long wan flat skrin we i kam long wan stereo video, pikja i folem hed blong yu (stil testem, ol fon mo tablet)
-- 📱 **Android, iOS, Quest, TV**<br>Wan app long ol fon, ol tablet mo ol Quest 2, Pro, 3 mo 3S hedset, tru 3D long hedset, stat long build 20 long Android TV wetem rimot, mo wan Windows preview wetem ol foto mo ol flat video
+- 📱 **Android, iOS, Quest, TV**<br>Wan app long ol fon, ol tablet mo ol Quest 2, Pro, 3 mo 3S hedset, tru 3D long hedset, stat long build 20 long Android TV wetem rimot, mo wan Windows preview wetem ol foto, ol flat video mo ol 360° video
 - 🔌 **Wetem wan seva o wetaot**<br>Immich seva blong yu, o galeri blong fon hem wan, i no nidim akaon
 - 🗄️ **Ol netwok sea**<br>Samba (SMB), WebDAV mo, stat long build 19, ol DLNA seva blong media we app i faenem long netwok mo i ridim stret, i no daonlodem wan samting, mo i sendem i go long Immich taem yu wantem. Stat long build 19, wan fon i save serem galeri blong hem wetem hedset tu
 - 📺 **Long TV**<br>Stat long build 20, sem APK long Android TV mo Google TV: ol 360° foto mo video, seva blong yu mo ol sea blong yu, wetem rimot
@@ -84,7 +84,7 @@ Hem i blong ol man we oli tekem foto wetem wan 360° kamera (Insta360, GoPro MAX
 - **"Mi wantem lukluk ol 360° foto mo video blong mi, mo ol video long NAS o Plex seva blong mi, long TV, wetem rimot."** Luk [Lukluk long TV blong yu](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Mi no save faenem ol 360° foto blong mi long medel blong olgeta narawan."** Luk [Lis blong 360°](#find-your-360-shots-the-360-list).
 - **"360° video blong mi i stap stop stop, o i plei wan kopi we i no klia."** Luk [Ol tekniko saed blong video mo ol decoder](#video-details-decoders-and-why-a-video-stutters).
-- **"Mi wantem ol 360° foto blong mi mo Immich laebri blong mi long Windows kompiuta blong mi, wetem ol foto mo video blong ol folda blong hem, NAS blong mi mo Plex seva blong mi, mo mi wantem serem kompiuta wetem hedset blong mi."** Luk [Long wan Windows kompiuta](#on-a-windows-computer-immuch360-desktop-preview) (wan preview: ol foto mo ol flat video naoia, ol 360° video afta).
+- **"Mi wantem ol 360° foto blong mi mo Immich laebri blong mi long Windows kompiuta blong mi, wetem ol foto mo video blong ol folda blong hem, NAS blong mi mo Plex seva blong mi, mo mi wantem serem kompiuta wetem hedset blong mi."** Luk [Long wan Windows kompiuta](#on-a-windows-computer-immuch360-desktop-preview) (wan preview: ol foto mo ol flat video, mo stat long desktop build 3 ol 360°, 3D, VR180 mo raw 360° video mo Tapo luk laef).
 - **"Bambae mi kipim evri samting we Immich app i mekem?"** Yes, wetem tu smol jenis nomo, luk [Evri narafala samting hem i Immich](#everything-else-is-immich).
 
 Taem wan samting i niu, tekst i talem stat long wanem build hem i stap. GitHub release i gat niufala build oltaem, ol stoa oli kam afta: luk [Wea blong kasem](#where-to-get-it).
@@ -127,6 +127,7 @@ Ol 360° fael we oli joinem finis oli wok long evri ples: ol fael we Insta360 ap
 
 Pleia i plei fael we i stap long fon, o fael blong wan netwok sea, sapos i gat. Sapos i no gat, hem i stream long seva blong yu: transcoded stream fastaem, o orijinal sapos yu askem long Settings (Ol seting), Asset Viewer (Lukluk long media), "Sos blong video" (stat long build 15; bifo i gat swij "Force original video" (Fosem orijinal video)), luk [Ol tekniko saed blong video mo ol decoder](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### Wan 360° fael we i soem flat: Lukum olsem 360°
 
 Sam 360° fael oli no gat wan projeksen tag, ale seva i no makem olgeta olsem 360° mo oli soem flat.
@@ -356,6 +357,7 @@ Stat long build 20, Immuch360 i ademap wan Tapo kamera klosap long ol netwok sea
 8. Tajem "Testem kamera". Hem i soem "Ol rekoding: (model), fomwea (vesen)" wetem olsem wanem memori kad i stap, mo "Luk laef: (video), saon (odio)", o wanem i no wok blong wanwan.
 9. Tajem "Seftem". Kamera i stap aninit long "Ol kamera", afta ol sea, wetem model blong hem taem app i save, mo `tapo://` wetem adres blong hem.
 
+<a id="watch-it-live"></a>
 ### Lukluk laef
 
 1. Tajem kamera. Luk laef blong hem i stap antap long pej blong hem: "I stap konek long kamera", afta pikja wetem Laef mak.
@@ -755,9 +757,9 @@ Build naoia, build 21 (vesen 3.3.0-rc.0, build namba 3030019), i stanap long Imm
 | Sendem ol fael blong wan sea i go long Immich; ol fael blong divaes we yu sendem wetem han, app i kaontem olsem oli gat kopi finis | ❌ ol fael blong divaes nomo | ✅ stat long build 15 |
 | Serem fon ia long netwok, blong hedset | ❌ | ✅ stat long build 19, Android mo iOS |
 | Ol Plex Media Server laebri we app i plei long ol orijinal fael, long haos mo aotsaed, wetaot plex.tv | ❌ | ✅ stat long build 20, evri vyua, long ol fon, ol tablet, Quest mo ol TV |
-| Ol Tapo kamera: luk laef, mo ol rekoding blong memori kad we oli go long Immich taem yu wantem | ❌ | ✅ stat long build 20: ol rekoding long evri ples, laef long Android, Android TV mo Quest |
+| Ol Tapo kamera: luk laef, mo ol rekoding blong memori kad we oli go long Immich taem yu wantem | ❌ | ✅ stat long build 20: ol rekoding long evri ples, laef long Android, Android TV, Quest mo, stat long desktop build 3, Windows |
 | Android TV mo Google TV, wetem rimot, long sem APK | ❌ i no wan TV app | ✅ stat long build 20 |
-| Sem app long wan Windows kompiuta | ❌ ol fon mo tablet nomo | ✅ preview, ol foto mo ol flat video |
+| Sem app long wan Windows kompiuta | ❌ ol fon mo tablet nomo | ✅ preview: ol foto, ol flat video mo ol 360° video (desktop build 3) |
 | Ol raw Insta360 .insp foto mo ol .insv video wetem wan trak | ❌ flat | ✅ stat long build 16 |
 | Ol raw video wetem wan lens long wan trak o long wan fael (Insta360 X4, X4 Air, X5, X6, X3 pea, GoPro .360, DJI .osv) | ❌ flat o rong | ✅ stat long build 18 |
 | Dual fisheye .dng | ❌ flat | ❌ i no yet |
@@ -787,7 +789,7 @@ Build naoia, build 21 (vesen 3.3.0-rc.0, build namba 3030019), i stanap long Imm
 - **Plex Media Server**: oli jekem long wan kompiuta wetem wan tru Plex Media Server 1.42.1 (joen, ol folda, ol byte range, ol smol pikja, adres aotsaed long haos); oli no jekem long wan divaes yet.
 - **Ol Tapo kamera**: oli jekem wetem wan kamera we i giaman; oli no jekem wetem wan tru kamera yet.
 - **Android TV mo Google TV**: oli jekem wetem otomatik test; oli no jekem long wan TV yet.
-- **Sem app long wan Windows kompiuta**: 656 long 663 otomatik test blong desktop oli pas long Windows (7 oli livim from plan), mo long wan Windows 11 PC app i stat, i openem wan sesen we i sevem finis long wan Immich seva, i sync, i pleiem wan video mo i klosap gud; oli stap jekem evri fanksen wetem han.
+- **Sem app long wan Windows kompiuta**: desktop build 3 i pas long 855 long 863 otomatik test blong desktop long Windows (8 oli livim from plan) mo long ful test suite blong app; long wan Windows 11 PC app i stat, i openem wan sesen we i sevem finis long wan Immich seva, i sync, i pleiem wan video mo i klosap gud, mo oli ronem 360° pleia blong hem wetem ol sintetik 4K, 5.7K mo 8K klip long tufala grafik jip blong wan laptop mo i no krash. Oli stap jekem evri fanksen wetem han, wetem ol tru 360° fael mo wan tru Tapo kamera.
 - **Ol raw Insta360 .insp foto mo ol .insv video wetem wan trak**: oli jekem ol foto wetem ol Insta360 Studio eksport blong ol X3 fael, ol video long wan Android emulator wetem wan smol X3 fael; i no ron long wan iPhone yet.
 - **Ol raw video wetem wan lens long wan trak o long wan fael**: oli jekem ol parser mo joinem long ol tru X4, X3 pea, GoPro MAX mo Osmo 360 fael; blong plei hem i divaes test blong build 18 mo 19.
 - **Dual fisheye .dng**: oli plan.
@@ -842,17 +844,19 @@ Immuch360 hem i wan galeri, mo hem i wan fri media pleia tu: hem i plei samting 
   - iPhone, iPad: SceneKit pleia insaed long app long wan sfia, gyroscope, jusum odio trak, saen blong lodem; plei mo stop smol, i no gat ba blong taem yet.
   - Meta Quest: immersive, tru 3D blong ol stereo fael, ba blong taem wetem jam blong 10 sekon, media bifo mo nekis.
   - Android TV, Google TV: Media3 pleia blong ol fon, we yu tanem wetem ol aro.
-  - Windows: i no yet, oli soem flat naoia.
+  - Windows (stat long desktop build 3): 360° pleia blong app hem wan (libmpv), yu tanem wetem maos o ol aro, yu zum wetem wil, yu jamp long video, yu jusum odio trak, i gat saen blong bafa; i smut long wan grafik jip blong hem wan, i kasem 2880 pixel waed nomo mo i slo moa blong 5.7K H.264 long wan jip we i stap insaed.
 - **3D 360° (antap mo andanit, saed long saed)**
   - Ol Android fon: lef ae, leaot baten.
   - iPhone, iPad: semak.
   - Meta Quest: evri ae i kasem haf blong pikja blong hem.
   - Android TV, Google TV: lef ae, leaot baten.
+  - Windows: ol foto olsem long ol fon; ol video stat long desktop build 3, lef ae, leaot baten, i smut long wan grafik jip blong hem wan, wetem sam limit long wan jip we i stap insaed.
 - **Ol VR180 (haf sfia) foto mo video**
   - Ol Android fon: haf sfia, 360°/180° baten.
   - iPhone, iPad: semak.
   - Meta Quest: immersive haf sfia.
   - Android TV, Google TV: haf sfia, 360°/180° baten.
+  - Windows: ol foto olsem long ol fon; ol video stat long desktop build 3, haf sfia, 360°/180° baten, i smut long wan grafik jip blong hem wan, wetem sam limit long wan jip we i stap insaed.
 - **Spatial 2.5D (dip long wan flat skrin long wan stereo video)**
   - Ol Android fon: pleia insaed long app, hed folem wetem fron kamera.
   - iPhone, iPad: semak.
@@ -878,16 +882,19 @@ Immuch360 hem i wan galeri, mo hem i wan fri media pleia tu: hem i plei samting 
   - iPhone, iPad: wan SceneKit shader i joinem.
   - Meta Quest: immersive, sem GPU efek i joinem.
   - Android TV, Google TV: olsem long ol fon.
+  - Windows (stat long desktop build 3): grafik jip i joinem long 360° pleia blong app, i smut long wan jip blong hem wan, wetem sam limit long wan jip we i stap insaed.
 - **Ol raw video wetem wan lens long wan trak o long wan fael (stat long build 18): Insta360 X4, X4 Air, X5, X6 .insv, X3 pea, GoPro .360, DJI .osv**
   - Ol Android fon: tu hardware decoder long sem taem, wan blong wan lens (stat long build 19, software decoder long wan divaes we i no gat hardware decoder, kasem 2048x2048 blong wan lens), mo wan GL compositor we i joinem long sfia; wan lens, afta transcoded stream, afta video we i no joinem, taem divaes i no save ronem tu.
   - iPhone, iPad: wan spesel AVFoundation compositor wetem Metal.
   - Meta Quest: immersive, sem tu decoder mo compositor (3840x1920 panel).
   - Android TV, Google TV: olsem long ol fon, taem TV i save ronem tu decoder long sem taem.
+  - Windows (stat long desktop build 3): tufala lens saed long saed long wan pleia, afta oli joinem, taem kompiuta i save folem (oli mesarem taem hem i pleiem; long test laptop, wan X3 pea long grafik jip blong hem wan nomo); sapos no, ol step blong ol fon: wan lens, transcoded stream, LRV kopi blong kamera we i gat smol rezolusen, video we i no joinem.
 - **Luk laef blong Tapo kamera (stat long build 20)**
   - Ol Android fon: Media3 RTSP pleia: SD long pej, HD long ful skrin, saon baten.
   - iPhone, iPad: i no yet: wan kad i talem se bambae i kam.
   - Meta Quest: long windo, long HD.
   - Android TV, Google TV: olsem long ol fon.
+  - Windows (stat long desktop build 3): libmpv pleia, SD long pej, HD long ful skrin, baten blong saon.
 - **Ol rekoding blong Tapo kamera (stat long build 20)**
   - Ol Android fon: app i tekem long memori kad i kam wan H.264 video wetem saon blong hem, afta i plei wetem jam.
   - iPhone, iPad: semak.
@@ -896,14 +903,14 @@ Immuch360 hem i wan galeri, mo hem i wan fri media pleia tu: hem i plei samting 
 
 Oli no jekem ol poen blong Android TV mo Google TV, stat long build 20, long wan TV yet, luk [Lukluk long TV blong yu](#watch-on-your-tv-android-tv-and-google-tv); oli no jekem ol poen blong kamera wetem wan tru kamera yet.
 
-Long Windows, Immuch360 Desktop preview i soem ol foto, flat mo 360°, wetem ol raw Insta360 .insp foto tu, wetem maos mo kibod, mo stat long desktop build 2 hem i pleiem ol flat video, long seva, ol folda blong kompiuta, ol sea, Plex mo ol Tapo rekoding; ol 360°, 3D, VR180 mo raw 360° video oli soem flat o wetem wan pikja blong putum ples nomo naoia (luk [I no stap yet](#not-there-yet)).
+Long Windows, Immuch360 Desktop preview i soem ol foto, flat mo 360°, wetem ol raw Insta360 .insp foto tu, wetem maos mo kibod. Stat long desktop build 2 hem i pleiem ol flat video, long seva, ol folda blong kompiuta, ol sea, Plex mo ol Tapo rekoding, mo stat long desktop build 3 hem i pleiem ol 360°, 3D, VR180 mo raw 360° video long sem ol sos long 360° pleia blong hem wan, mo Tapo luk laef. 360° pleia i smut long wan grafik jip blong hem wan mo i gat sam limit long wan jip we i stap insaed (luk [Long wan Windows kompiuta](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Immich seva blong yu**: orijinal o transcoded stream blong seva, folem wanem Settings, Asset Viewer, Sos blong video i talem (luk [Ol tekniko saed blong video mo ol decoder](#video-details-decoders-and-why-a-video-stutters)). Sem akaon olsem web app.
 - **Fon o hedset hem wan**: "Yusum wetaot wan server" long pej blong login, o On this device long Laebri tab.
 - **Wan NAS o wan kompiuta**: ol SMB mo WebDAV sea, mo stat long build 19 ol DLNA seva blong media, we app i faenem long netwok, i ridim stret (wan SMB video tru kasem sikis konekson), i no kopiem wan samting; stat long build 15, yu save sendem ol fael we yu jusum i go long Immich akaon blong yu.
 - **Wan narafala fon (stat long build 19)**: "Serem fon ia long netwok" long fon ia: hedset, o eni WebDAV klaen long netwok, i ridim ol album, manis mo 360° media blong hem.
 - **Wan Plex Media Server (stat long build 20)**: ol foto, muvi mo TV sho laebri blong hem folem folda, ol orijinal fael we app i ridim stret tru HTTPS we oli jekem wetem setifiket blong seva hem wan, long haos o tru adres aotsaed long haos, long evri platfom; luk [Plex Media Server, wetaot plex.tv](#plex-media-server-without-plextv).
-- **Wan Tapo kamera (stat long build 20)**: luk laef wetem akaon blong kamera (Android, Android TV, Quest), mo ol rekoding blong memori kad blong hem wetem pasword blong TP-Link akaon (evri platfom), long lokol netwok nomo; luk [Ol Tapo kamera](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Wan Tapo kamera (stat long build 20)**: luk laef wetem akaon blong kamera (Android, Android TV, Quest, mo Windows stat long desktop build 3), mo ol rekoding blong memori kad blong hem wetem pasword blong TP-Link akaon (evri platfom), long lokol netwok nomo; luk [Ol Tapo kamera](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **Ol folda blong wan Windows kompiuta (desktop preview)**: ol folda we yu jusum long Immuch360 Desktop, app i ridim olgeta long ples blong galeri blong wan fon; kompiuta i save serem olgeta wetem hedset tu, luk [Long wan Windows kompiuta](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Immich laebri blong yu i stap long wan seva, ol narafala foto mo video oli stap 
 
 Long wan kompiuta, Immich i givim web app blong hem long wan brausa. **Wanem we Immuch360 Desktop i ademap**: ol folda blong PC wetaot wan seva o akaon, ol SMB, WebDAV, DLNA mo Plex sea we yu lukluk mo pleiem long app, ol raw Insta360 .insp foto we oli open olsem wan sfia, mo PC we yu serem wetem wan Meta Quest long haos.
 
-Hemia i wan preview: stat long desktop build 2, ol foto mo ol flat video oli wok; ol 360°, 3D mo VR180 video bambae oli kam wetem ol nekis desktop build. Stat long 9 Oktoba 2026, sos blong desktop i stap long main branj blong fork, `immuch360`, ale ol fon, hedset, TV mo kompiuta oli kamaot long sem sos. Ol app blong fon, tablet, Quest mo TV oli no jenis from hem mo oli kipim nem Immuch360.
+Hemia i wan preview: ol foto mo ol flat video oli wok stat long desktop build 2, mo stat long desktop build 3 360° video pleia (ol 360°, 3D, VR180 mo raw 360° video) mo luk laef blong ol Tapo kamera; ol step daon ia we oli nidim build 3 oli talem. Stat long 9 Oktoba 2026, sos blong desktop i stap long main branj blong fork, `immuch360`, ale ol fon, hedset, TV mo kompiuta oli kamaot long sem sos. Ol app blong fon, tablet, Quest mo TV oli no jenis from hem mo oli kipim nem Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Daonlod mo instolem long Windows
 
-Build naoia hem i GitHub pre-release [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Fael blong hem i `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (klosap 57 MB, 78 fael afta yu unzipim, wetem video pleia mo `licenses` folda blong hem), wetem `SHA256SUMS.txt` blong jekem. Oli buildim long main branj, `immuch360`, long commit 5b723bd25: sos blong fon build 21 wetem kompiuta vesen. Hem i nidim Windows 10 o 11, 64 bit.
+Build naoia hem i GitHub pre-release [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Fael blong hem i `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (klosap 57 MB, 79 fael afta yu unzipim, wetem video pleia mo `licenses` folda blong hem), wetem `SHA256SUMS.txt` blong jekem. Oli buildim long main branj, `immuch360`, afta we oli joenem 360° video pleia blong kompiuta i go insaed long hem, long commit we ol release not blong hem oli talem: sos blong fon build 21 wetem kompiuta vesen. Hem i nidim Windows 10 o 11, 64 bit.
 
-1. Daonlodem ZIP mo unzipim long eni ples, olsem long Documents.
-2. Statem `immuch360.exe` long folda we yu unzipim. Kipim folda olgeta: program i nidim ol fael klosap long hem, wetem video pleia tu.
+1. Daonlodem ZIP mo unzipim long eni ples, olsem long Documents. Blong jenisim desktop build 2, digletem folda blong hem o unzipim long wan niu folda: login blong yu, ol folda blong yu mo ol seting blong yu oli stap long Windows profael blong yu, i no long folda ia.
+2. Statem `immuch360.exe` long folda we yu unzipim. Kipim folda olgeta: program i nidim ol fael klosap long hem, olsem `libmpv-2.dll`, video pleia, mo `immuch_desktop_video.dll`, we i ridim ol decoder blong grafik jip.
 3. Oli no saenem ol fael yet, ale Windows SmartScreen i save soem "Windows protected your PC": jusum "More info", afta "Run anyway". Sapos Smart App Control i on, hem i blokem ol program we oli no saen.
 4. Wet long windo. Fas stat blong wan niufala build i tekem 10 sekon kasem klosap wan minit, ating taem Microsoft Defender i skanem ol niufala fael: no statem app bakegen long taem ia. Ol nekis stat oli tekem wan o tu sekon.
 5. Long pej blong login, login long Immich seva blong yu wetem adres blong hem, imel blong yu mo pasword blong yu, o klikim "Yusum wetaot wan server".
 
-Blong jekem ZIP, ronem `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` long wan command prompt, long folda blong daonlod: ansa i mas sem olsem hemia we i raet long `SHA256SUMS.txt`. I no gat instola mo otomatik apdet yet: lukluk [Releases](https://github.com/freeKC/Immuch360/releases) pej, mo unzipim nekis build long sem fasin.
+Blong jekem ZIP, ronem `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` long wan command prompt, long folda blong daonlod: ansa i mas sem olsem hemia we i raet long `SHA256SUMS.txt`. I no gat instola mo otomatik apdet yet: lukluk [Releases](https://github.com/freeKC/Immuch360/releases) pej, mo unzipim nekis build long sem fasin.
 
 ### Wanem we preview i mekem
 
@@ -993,7 +1000,9 @@ Blong jekem ZIP, ronem `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.
 - **Aplod mo bakap** long ol folda ia i go long Immich seva blong yu, taem app i open.
 - **Ol 360° foto olsem wan sfia**, wetem maos mo kibod; ol raw .insp foto blong ol Insta360 kamera oli open olsem long ol fon.
 - **Ol flat video** (stat long desktop build 2): ol video blong ol folda blong yu, blong Immich seva blong yu (orijinal o transcoded strim, luk [Ol ditel blong video mo ol decoder](#video-details-decoders-and-why-a-video-stutters)), blong ol SMB, WebDAV mo DLNA sea, blong ol Plex seva mo ol Tapo rekoding oli plei long windo, wetem ol kontrol blong ol fon (plei, stop smol, taem ba), wan saen blong buffering, mo wan menu blong ol odio trak blong wan video we i gat plante. Ol video blong ol folda blong yu mo blong ol sea oli soem wan pikja blong video olsem smol pikja blong olgeta, long ples blong wan aekon blong film.
-- **Ol netwok sea**: Samba (SMB), WebDAV mo ol DLNA seva blong media, mo ol Plex seva wetaot plex.tv, yu lukluk olsem long ol fon: ol foto blong olgeta oli open mo ol video blong olgeta oli plei. Blong ol Tapo kamera, ol rekoding blong memori kad: lis, kasem wan klip mo pleiem.
+- **Ol 360°, 3D mo VR180 video** (stat long desktop build 3): 360° baten i openem olgeta long 360° pleia blong app, long windo o long ful skrin, long evri sos blong ol flat video, yu tanem wetem maos mo kibod, wetem 3D mo 360°/180° baten blong ol fon (wan 3D video i soem lef ae blong hem, olsem long ol fon), jamp long video, odio trak menu mo saen blong bafa.
+- **Ol raw 360° video** (stat long desktop build 3): ol Insta360 .insv fael, wetem tufala lens long wan trak, long tu trak (X4 mo afta) o long tu fael (ol X3 pea), ol GoPro .360 mo DJI .osv fael, we app i joinem long grafik jip taem oli plei, wetem kalibresen blong fael, olsem long ol fon.
+- **Ol netwok sea**: Samba (SMB), WebDAV mo ol DLNA seva blong media, mo ol Plex seva wetaot plex.tv, yu lukluk olsem long ol fon: ol foto blong olgeta oli open mo ol video blong olgeta oli plei. Blong ol Tapo kamera, ol rekoding blong memori kad: lis, kasem wan klip mo pleiem; mo stat long desktop build 3, luk laef.
 - **Serem kompiuta ia long netwok**: ol album, ol manis mo ol 360° media blong ol folda blong yu, blong ridim nomo, blong wan Meta Quest o wan narafala divaes long haos, olsem wan fon i serem hem wan.
 - **Ol fael**: ol daonlod long seva oli go long wan folda we yu jusum, "Save to a folder" (Sevem long wan folda) i kipim wan kopi blong ol foto mo video we yu jusum, mo Logs pej i gat "Save logs to a file" (Sevem ol log long wan fael).
 
@@ -1005,9 +1014,28 @@ Blong jekem ZIP, ronem `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.
 4. **Go long wan foto i go long narawan**: long wan flat foto, aro long lef mo raet, o ol saen we oli soem long saed taem maos i muv, i go long foto bifo mo foto afta. Ol leta we yu taepem long ples blong diskripsen oli stap long text.
 5. **Pleiem wan video**: openem long taemlaen, wan folda, wan sea, Plex o ol rekoding blong wan Tapo kamera; hem i plei long windo. Enter, o plei mo pos ki blong kibod, i stop smol mo i plei bakegen. Taem hem i plei, aro long lef mo raet, o J mo L, i jam 10 sekon i go bak o i go fored; taem i stop smol, ol aro i go long video bifo mo video afta. F o F11 i go long ful skrin, olsem blong ol foto. "Audio track" baten i jusum long ol odio trak blong wan video we i gat plante.
 6. **Taem wan video i stop**: wan video we i stop smol i stap stop taem yu kam bak long windo. Wan video we i katkat bifo en blong hem, olsem taem sea o seva i no ansa moa, i talem: openem bakegen mo hem i gohed long ples we i stop, i stop smol. Wan pleilis fael we yu faenem long wan folda o wan sea, app i no folem.
-7. **Serem kompiuta wetem hedset**: openem Laebri, afta Ol netwok sea; fas smol bokis i "Share this computer on the network", saed blong kompiuta blong [Serem fon ia long netwok](#share-this-phone-on-the-network). Tanem "Share photos and videos on the network" i on, afta ademap kompiuta long hedset olsem seksen ia i talem. Sea i stop taem app i klosap o afta wan aoa we i no gat man i yusum.
-8. **Letem netwok**: Windows i save askem sapos Immuch360 Desktop i save yusum netwok. Letem long ol praevet netwok, sapos no, hedset i no save faenem kompiuta. Long wan netwok we Windows i makem olsem pablik (wan kafe, wan hotel), o wan we Windows i no save wanem kaen, sea i no stat sapos yu no jusum "Share for this session", mo kompiuta i talemaot hem wan long wan netwok we i serem long hem nomo.
-9. **Settings, "This computer"**: ol folda, folda blong daonlod, netwok adapta we app i yusum blong faenem ol sea mo blong serem kompiuta (taem i gat plante, olsem Wi-Fi mo Ethernet), mo ol setifiket we yu trastem: setifiket otoriti blong seva blong yu, olsem wan PEM fael, blong wan HTTPS adres we Windows i no trastem hem wan. Ol klaen setifiket oli impot long Settings, Advanced (Moa seting), olsem long ol fon.
+7. **Pleiem wan 360° video** (stat long desktop build 3): openem video mo kliksem 360° long ba antap, olsem long wan fon; blong wan 360° fael we seva i no makem, fastaem "Lukum olsem 360°" long ⋮ menu, luk [Wan 360° fael we i soem flat](#a-360-file-that-shows-flat-view-as-360). 360° pleia i open long windo. Pulum wetem maos blong lukluk raon (vyu i tanem smol moa afta wan kwik pul), zum wetem wil, + mo - o Page Up mo Page Down, tanem taem yu holem ol aro ki. Space, o plei mo pos ki blong kibod, i stopem smol mo i pleiem bakegen; J mo L i jamp 10 seken i go bak o i go fored; Home i go bak long stat; M i tanem saon i of mo i on. F, F11 o wan dabol klik i go long ful skrin; Escape i aot long ful skrin, afta i klosap pleia. Ol kontrol (klosap, taetol, 360°/180°, 3D, odio trak mo ful skrin antap; plei, 10 seken bak mo fored, taem ba mo saon daon) oli haed wetem maos kesa afta 3 seken blong plei, mo oli kambak taem maos i muv o yu presem wan ki; Tab i go long wan i go long nekis.
+8. **3D mo VR180**: long 360° pleia, 3D baten i jenis bitwin "Mono (i no 3D)", "3D, antap mo andanit" mo "3D, saed long saed", mo 360°/180° baten i jenis bitwin ful sfia mo haf sfia blong VR180, olsem long [Ol foto mo video 3D mo VR180](#3d-and-vr180-photos-and-videos). Wan 3D video i soem lef ae blong hem.
+9. **Ol raw 360° video** (stat long desktop build 3): openem raw fael mo kliksem 360°, olsem long wan fon, luk [Ol raw fael blong 360° kamera](#raw-360-camera-files-without-the-cameras-app); kipim tu fael blong wan X3 pea tugeta. Wan fael wetem tufala lens long wan trak, app i joinem taem i plei. Wan fael wetem wan lens long wan trak o long wan fael i pleiem tufala lens saed long saed long wan pleia taem kompiuta i save folem: oli mesarem ol fas seken blong kaen video ia, mo oli kipim ansa blong ol nekis video blong sem kaen (wan fasin we i slo tumas, oli traem bakegen afta 14 dei). Taem kompiuta i no save folem, pleia i go tru long ol step blong ol fon, wetem ol mesej blong olgeta: wan lens, haf blong sfia i blak; transcoded stream blong seva; LRV kopi we i gat smol rezolusen we kamera i rekodem klosap long fael, sapos i gat; video we i no joinem. Wan raw video i no gat 3D baten mo 360°/180° baten.
+10. **Luk laef blong wan Tapo kamera** (stat long desktop build 3): openem kamera olsem long wan fon, luk [Lukluk laef](#watch-it-live). Pej i pleiem SD strim mo ful skrin i pleiem HD strim, wetem ol baten blong wan fon long pikja: saon, i of long stat, SD o HD, mo "Ful skrin". Wan strim we i lus (kamera i stat bakegen, Wi-Fi i lus) i kambak hem wan, oli traem bakegen klosap wan minit mo haf taem laswan pikja i stap long skrin. Sapos kamera i no akseptem akaon blong kamera, app i talem mo i no traem bakegen, from ol login we i no wok oli kaon blong lokem kamera.
+11. **Serem kompiuta wetem hedset**: openem Laebri, afta Ol netwok sea; fas smol bokis i "Share this computer on the network", saed blong kompiuta blong [Serem fon ia long netwok](#share-this-phone-on-the-network). Tanem "Share photos and videos on the network" i on, afta ademap kompiuta long hedset olsem seksen ia i talem. Sea i stop taem app i klosap o afta wan aoa we i no gat man i yusum.
+12. **Letem netwok**: Windows i save askem sapos Immuch360 Desktop i save yusum netwok. Letem long ol praevet netwok, sapos no, hedset i no save faenem kompiuta. Long wan netwok we Windows i makem olsem pablik (wan kafe, wan hotel), o wan we Windows i no save wanem kaen, sea i no stat sapos yu no jusum "Share for this session", mo kompiuta i talemaot hem wan long wan netwok we i serem long hem nomo.
+13. **Settings, "This computer"**: ol folda, folda blong daonlod, netwok adapta we app i yusum blong faenem ol sea mo blong serem kompiuta (taem i gat plante, olsem Wi-Fi mo Ethernet), mo ol setifiket we yu trastem: setifiket otoriti blong seva blong yu, olsem wan PEM fael, blong wan HTTPS adres we Windows i no trastem hem wan. Ol klaen setifiket oli impot long Settings, Advanced (Moa seting), olsem long ol fon.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### Ol 360° video mo grafik jip
+
+Long 360° pleia (stat long desktop build 3), grafik jip i droem vyu we yu stap lukluk long hem long evri frem blong video. Video plagin i mekem libmpv i droem evri frem long wan pikja blong saes we oli jusum, afta draw step blong app hem wan i droem long hem pat blong sfia we yu stap lukluk. Taem yu tanem vyu, i jenisim wan namba blong step ia nomo, i no pleia: pulum i no yusum memori, mo wan video we i stop smol i save tanem be i no decodem wan samting.
+
+App i mesarem ol fas seken blong evri 360° video mo i jusum hamas bigwan frem jip i wok long hem: ful frem long wan jip blong hem wan, 2880 pixel waed nomo long wan jip we i stap insaed long prosesa (Windows i talem long app wanem kaen jip, ale Intel Arc jip blong wan Core Ultra laptop i kaon olsem jip we i stap insaed), wan step i smol moa taem jip i no save folem. Samting we app i mesarem, i kipim blong ol nekis video blong sem kaen (codec, saes, frem reit mo decoder), i no blong evri video.
+
+Taem smolwan step tu i no smut, pleia i talem "Grafik kad ia i no save soem 360° vyu blong video ia long smut fasin"; taem i longwe tumas, o taem jip i no save droem vyu nating (i no gat OpenGL ES 3.0, wan draeva we i no akseptem), video i plei flat mo pleia i talem from wanem. Wan video we i plei flat, nekis taem i no plei flat bakegen: oli mesarem nekis video blong sem kaen bakegen.
+
+Taem i decoding blong wan seva video we i no save folem, i no drawing (wan video we prosesa i decodem, olsem 5.7K H.264), pleia i jenis i go long transcoded stream blong seva long ples we i stap, wetem mesej blong ol fon: "I stap pleiem transcoded stream: orijinal (codec mo saes) i bitim samting we divaes ia i save decodem".
+
+- **Yusum grafik jip blong hem wan blong wan laptop.** Windows i ronem app long jip we i stap insaed sapos yu no talem narafala samting. Long ol seting blong Windows, System, Display, Graphics, ademap `immuch360.exe` mo jusum "High performance", afta statem app bakegen. Long test laptop (wan Intel UHD jip mo wan NVIDIA RTX 4060 Laptop), NVIDIA jip i droem ol 4K, 5.7K mo 8K 360° video long ful saes mo 30 frem long wan seken taem vyu i tanem. Intel jip i droem olgeta 2880 pixel waed nomo: wan 4K H.264 mo wan 8K HEVC video klosap 30 frem long wan seken wetem wan 2026 build blong libmpv, wan 4K video long 23 kasem 27 wetem 2024 libmpv blong media-kit (luk [I no stap yet](#not-there-yet)), mo wan 5.7K H.264 video, we prosesa i decodem, klosap 20: long seva, pleia i jenis i go long transcoded stream; wan video we i no gat transcoded stream, olsem long wan folda, i gohed i plei wetem mesej "Grafik kad ia i no save soem 360° vyu blong video ia long smut fasin".
+- **Jusum renderer yu wan.** Long Settings, Advanced (Moa seting), tanem Troubleshooting (Stretem ol problem) i on: wan "360° video renderer" i kamaot, "Otomatik" fastaem. Hem i givim tu "Plagin, ful saes", "Plagin, 4096 waed nomo", "Plagin, 2880 waed nomo" mo "Flat, wetaot 360° vyu", blong nekis 360° video we yu openem. Aninit long hem, "Laswan mesa" i talem saes we laswan 360° video i dro long hem, ol frem long wan seken blong hem, grafik jip mo decoder: kopi i go long wan bag ripot. Sapos yu jusum "Otomatik" bakegen, nating sapos hem i jus finis, app i fogetem samting we i mesarem, mo oli mesarem ol nekis 360° video bakegen.
+- **Wanem jip i decodem.** Settings, Advanced, "Ol video decoder blong divaes ia" i lisim samting we grafik jip we app i yusum i decodem, olsem Direct3D 11 i talem, mo app i stretem lis ia wetem samting we i mesarem taem i plei: Video sos seting mo tu lens jek blong ol raw video oli folem. H.264 we i waed moa long 4096 pixel (5.7K blong ol 360° kamera), prosesa i decodem, from tufala jip blong test laptop oli no akseptem.
 
 ### Komperem wetem ol fon app
 
@@ -1017,12 +1045,16 @@ Blong jekem ZIP, ronem `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.
 - **I no gat wan samting i lus long ol folda blong yu**: "Delete from device" i haed, mo Delete i tekemaot kopi blong seva nomo, kasem taem app i save sendem ol fael i go long Windows recycle bin.
 - **Maos mo kibod** long ples blong taj mo gyroskop.
 - **Wan video pleia blong evri sos**: libmpv i pleiem ol video blong seva, ol folda, ol sea mo Plex long sem fasin, mo flat pleia blong hem i gat odio trak menu finis we flat pleia blong ol fon i no gat yet.
+- **Ol 360° video long windo** (stat long desktop build 3): 360° pleia hem i wan pej blong app, i no wan narafala nativ pleia, wetem taem ba, 10 seken jamp mo saon baten. Ol raw video wetem wan lens long wan trak o long wan fael oli stap saed long saed long wan pleia, be ol fon oli ronem tu decoder; ol step blong ol fon taem samting i no wok oli sem, wetem LRV kopi blong kamera i kam bifo video we i no joinem.
+- **Tapo luk laef** (stat long desktop build 3) i plei long kompiuta olsem long Android, be ol iPhone mo iPad oli no gat yet.
 
 <a id="not-there-yet"></a>
 ### I no stap yet
 
-- **Ol 360°, 3D, VR180 mo raw 360° video**: naoia oli soem flat, olsem fael i holem olgeta (ful sfia we i open flat, tu ae saed long saed, o ol raon pikja blong ol lens), o wetem wan pikja blong putum ples nomo, mo 360° baten i stap long ol foto nomo. Ol pleia blong olgeta bambae oli kam wetem ol nekis desktop build.
-- **Spatial 2.5D**, afta wetem webkam; **Tapo luk laef**; **map** mo Places viu; **login wetem OAuth** (login wetem wan imel mo wan pasword long ples blong hem); **Google Cast**; **ol notifikesen**.
+- **libmpv we fork i buildim hem wan**: ol ZIP oli karem 2024 libmpv blong media-kit kasem taem build blong fork hem wan i tanem on, mo `BUILD-INFO.txt` long ZIP i talem wanem wan hem i karem. Wetem 2024 wan, tufala lens blong wan raw video wetem wan lens long wan trak o long wan fael oli neva plei long sem taem (i no gat filta we i putum olgeta saed long saed), ale ol video ia oli soem wan lens, haf blong sfia i blak; mo grafik jip i kopi evri frem i kambak long decoder blong hem, we i mekem 360° pleia i slo long wan jip we i stap insaed. libmpv blong wokflo blong fork hem wan, wan 2026 vesen, bambae i tekem ples blong hem bifo fas pablik release; wan 2026 build blong libmpv we oli traem long test laptop i mekem tufala.
+- **Ol raw video wetem tu lens long wan laptop**: nating wetem wan 2026 libmpv, test laptop i putum wan X3 pea (tu 2880x2880 H.264 fael) saed long saed long 30 frem long wan seken long NVIDIA jip blong hem nomo; long Intel jip blong hem, mo blong wan X4 fael (tu 3840x3840 HEVC trak) long tufala jip, video i pleiem wan lens, haf blong sfia i blak, olsem long wan fon we i no save ronem tu decoder.
+- **3D long skrin nomo**: wan 3D video i soem lef ae blong hem, olsem long ol fon; i no gat gyroscope mo i no gat hedset vyu long kompiuta. Blong lukluk long tru 3D, serem kompiuta wetem wan Meta Quest.
+- **Spatial 2.5D**, afta wetem webkam; **map** mo Places viu; **login wetem OAuth** (login wetem wan imel mo wan pasword long ples blong hem); **Google Cast**; **ol notifikesen**.
 - **Wan instola, wan build we i saen mo otomatik apdet**: build ia hem i wan folda wetem `immuch360.exe`.
 - **Linux mo macOS**: ol projek blong olgeta oli stap long sos, be oli no buildim o traem long ol sistem ia yet, mo video pleia blong olgeta i no stap insaed yet; oli kam afta Windows.
 - **Ol transleisen**: ol niufala text blong kompiuta vesen oli long Inglis naoia.
@@ -1030,10 +1062,11 @@ Blong jekem ZIP, ronem `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.
 ### Ol problem we oli save
 
 - **Fas taem we yu statem wan niu build i slo**: 10 sekon kasem klosap wan minit bifo windo i soem, ating taem Microsoft Defender i skanem ol niu fael, we oli no saen yet. Wet long windo, yu no statem app bakegen; ol nekis stat oli tekem wan o tu sekon.
-- **Ol 8K HEVC video oli nidim wan grafik jip blong hem wan**: long test laptop, Intel UHD jip we i stap insaed i soem klosap haf blong ol frem blong wan 8K HEVC video, be NVIDIA jip blong hem wan i pleiem 8K HEVC mo 5.7K H.264 wetaot wan frem i lus. Windows i ronem app long jip we i stap insaed sapos yu no talem narafala samting: long ol seting blong Windows, System, Display, Graphics, ademap `immuch360.exe` mo jusum "High performance". Long jip we i stap insaed, wan 5.7K H.264 video, we decoder blong hem i no akseptem, prosesa i decodem wetaot wan frem i lus.
-- **Ol video oli dro 1440 laen antap nomo**, afta oli skelem i go long windo: long wan 4K skrin long ful skrin, wan 4K o 8K video i smol saf moa i bitim long wan video pleia blong hem wan. Hemia i kipim wan 8K video insaed long grafik paoa blong wan laptop.
+- **Ol 8K HEVC video oli nidim wan grafik jip blong hem wan, mo ol 360° video oli ron gud moa long hem**: long test laptop, Intel UHD jip we i stap insaed i soem klosap haf blong ol frem blong wan 8K HEVC video, be NVIDIA jip blong hem wan i pleiem 8K HEVC mo 5.7K H.264 wetaot wan frem i lus; 360° pleia i smut long NVIDIA jip mo i slo moa long Intel jip, luk [Ol 360° video mo grafik jip](#360-videos-and-the-graphics-chip). Windows i ronem app long jip we i stap insaed sapos yu no talem narafala samting: long ol seting blong Windows, System, Display, Graphics, ademap `immuch360.exe` mo jusum "High performance", afta statem app bakegen. Long jip we i stap insaed, wan flat 5.7K H.264 video, we decoder blong hem i no akseptem, prosesa i decodem wetaot wan frem i lus.
+- **Ol flat video oli dro 1440 laen antap nomo**, afta oli skelem i go long windo: long wan 4K skrin long ful skrin, wan 4K o 8K video i smol saf moa i bitim long wan video pleia blong hem wan. Hemia i kipim wan 8K video insaed long grafik paoa blong wan laptop. 360° pleia i wok long ful frem, o long smol saes we mesa blong hem i jusum.
 - **Taem wan video blong ol folda blong yu i plei long app, o taem hedset i ridim wan fael long kompiuta we i sea** (wan video we i pleiem, wan foto we i daonlodem), Windows i no save jenisim nem, muvum o tekemaot fael ia mo i talem se i open long Immuch360 Desktop: klosap video, o stopem plei long hedset, fastaem. Bakap i no holem ol fael blong yu olsem: yu save jenisim nem, muvum o tekemaot wan fael taem i stap aplod.
-- **Samting we i no smut yet**: 656 long 663 desktop test oli pas long Windows (7 oli livim from plan), 200 pleia we oli open wan afta narawan oli no livim wan lik, mo long wan Windows 11 PC app i stat, i openem wan sesen we i sevem finis long wan Immich seva, i sync, i pleiem wan video mo i klosap gud. Oli stap jekem evri fanksen wetem han long wan tru PC yet.
+- **Samting we i no smut yet**: desktop build 3 i pas long 855 long 863 desktop test blong hem long Windows (8 oli livim from plan) mo long ful test suite blong app, 200 pleia we oli open wan afta narawan oli no livim wan lik, mo release ZIP blong hem i stat, i pleiem wan test klip mo i klosap gud. Oli stap jekem evri fanksen wetem han long wan tru PC yet.
+- **Wanem oli yusum blong jekem 360° pleia mo luk laef**: oli ronem 360° pleia wetem ol sintetik 4K, 5.7K mo 8K 360° klip long tufala grafik jip blong wan laptop (open, plei, tanem taem i plei mo taem i stop smol, klosap) mo i no krash mo grafik draeva i no stat bakegen. Oli pleiem ol raw video wetem tu lens long ol sintetik klip mo long ol tru X3 mo X4 fael. Oli jekem Tapo luk laef wetem wan test RTSP seva we i login olsem ol kamera (Digest), oli katem mo oli blokem from plan, i no gat pasword long eni laen blong log, be i no wetem wan tru kamera yet. Test wetem han, wetem ol tru 360° mo 3D fael, tufala skrin blong wan laptop, slip mo wekap, mo wan tru kamera, i no kam yet.
 
 Sapos wan samting i no wok gud, plis openem wan [problem](https://github.com/freeKC/Immuch360/issues) wetem log we yu sevem long Logs pej, luk [Ol log](#logs). Jekem log fastaem bifo yu serem: i save gat adres blong seva blong yu.
 
@@ -1052,7 +1085,7 @@ Yu nidim Windows 10 o 11 long x64, Flutter 3.47.2 blong Windows, Visual Studio 2
    mise run codegen
    ```
 
-2. Long Windows, long sem `mobile` folda, buildim app. Fas build i daonlodem ol laebri blong video pleia (libmpv mo ANGLE) long GitHub mo i jekem evri akaev wetem SHA-256 blong hem:
+2. Long Windows, long sem `mobile` folda, buildim app. Fas build i daonlodem ol laebri blong video pleia (libmpv mo ANGLE) long GitHub mo i jekem evri akaev wetem SHA-256 blong hem; hem i kompaelem tu smol Direct3D 11 plagin we i ridim ol decoder blong grafik jip, `immuch_desktop_video`, wetem sem C++ wokloud:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Yu nidim Windows 10 o 11 long x64, Flutter 3.47.2 blong Windows, Visual Studio 2
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-CI blong Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) i ron long `desktop` branj, we i folem `immuch360`: ol fon jek (i no gat samting i jenis long ol fon build) mo ful test suite long Linux, ol desktop test long Windows, mo sem ZIP; ol Linux mo macOS job blong hem (`flutter build linux` mo `flutter build macos`, wetem sem `-t lib/main_desktop.dart`) oli no ron long ol sistem ia yet.
+CI blong Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) i ron long `desktop` branj, we i folem `immuch360`: ol fon jek (i no gat samting i jenis long ol fon build) mo ful test suite long Linux, ol desktop test long Windows, mo sem ZIP, afta long build ia ol test we oli nidim libmpv mo ANGLE blong hem (login blong Tapo luk laef, samting we wan video fael i no save openem, ol 360° shader); Linux job blong hem i buildim app long Ubuntu mo macOS job blong hem i kompaelem wetem Xcode 26.3 mo macOS 26 SDK (tufala wetem sem `-t lib/main_desktop.dart`), olsem kompael jek nomo: tufala i no stat long ol sistem ia yet. Wan seken wokflo (`.github/workflows/immuch360-libmpv.yml`) i buildim libmpv bakegen blong Windows x64 mo arm64 long ol sos we oli pinim mo i pablisim ol akaev wetem SHA-256 blong olgeta; ol ZIP oli karem media-kit akaev yet kasem taem build ia i tanem on, ale ol limit blong 2024 libmpv long [I no stap yet](#not-there-yet) oli stap tu long build blong yu wan.
 
 <a id="where-to-get-it"></a>
 ## Wea blong kasem
@@ -1088,8 +1121,8 @@ App i stap long Google Play blong ol fon mo tablet; App Store vesen i stap wet b
   - Tede: yunivesel `Immuch360-v<version>-release.apk` long [Releases](https://github.com/freeKC/Immuch360/releases) pej, we yu instolem wetem adb, luk [Instolem long TV](#install-it-on-the-tv). Hem i sem app olsem long ol fon.
   - I no longtaem: Google Play long ol TV, we Google i stap jekem pej blong hem stat long 9 Oktoba 2026.
 - **Windows 10 mo 11, 64 bit (preview)**
-  - Tede: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` blong [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), yu unzipim mo statem olsem [Daonlod mo instolem long Windows](#download-and-install-on-windows) i talem. Ol foto mo ol flat video naoia: ol 360°, 3D mo VR180 video bambae oli kam wetem ol nekis desktop build.
-  - I no longtaem: ol 360°, 3D, VR180 mo raw 360° video; afta, wan instola, wan build we i saen mo ol apdet.
+  - Tede: Immuch360 Desktop, desktop build 3, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` blong [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), yu unzipim mo statem olsem [Daonlod mo instolem long Windows](#download-and-install-on-windows) i talem. Ol foto, ol flat video, ol 360°, 3D, VR180 mo raw 360° video (i smut long wan grafik jip blong hem wan, wetem sam limit long wan jip we i stap insaed) mo Tapo luk laef.
+  - I no longtaem: Spatial 2.5D wetem webkam, afta Linux mo macOS; afta, wan instola, wan build we i saen mo ol apdet.
 
 Bambae mifala i ademap ol link blong App Store mo Meta Horizon Store long ples ia taem ol pej oli kamaot. Login wetem URL blong Immich seva mo akaon we yu yusum oltaem, o tajem "Yusum wetaot wan server" long pej blong login blong stat wetem ol foto mo video blong divaes hem wan. APK blong GitHub i no apdetem hem wan: lukluk Releases pej, mo taem yu instolem app long wan stoa, kasem ol apdet long stoa ia.
 
@@ -1126,7 +1159,7 @@ I no gat wan sikret long repositri ia: Android saening ki i stap olsem ol GitHub
 
 - **`main`**: Immich `main` long commit we `immuch360` i stanap long hem (29 Septemba 2026 blong ol build naoia), oli neva jenisim; hem i muv i go fored taem fork i rebase long wan niufala Immich.
 - **`immuch360`**: ol jenis blong fork ia antap long Immich, wetem Immuch360 Desktop stat long 9 Oktoba 2026. Evri release i talem wanem Immich vesen hem i stanap long hem.
-- **`desktop`**: ples we oli buildim Immuch360 Desktop, kompiuta vesen, antap long `immuch360`, kasem taem oli joenem i go insaed long hem long 9 Oktoba 2026 blong ol fon, hedset, TV mo kompiuta oli kamaot long sem sos. Naoia hem i folem `immuch360` mo i karem ol tag blong ol desktop pre-release ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) long commit 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) long 5b723bd25). Kompiuta vesen i no jenisim wan samting aninit long `mobile/android` mo `mobile/ios`.
+- **`desktop`**: ples we oli buildim Immuch360 Desktop, kompiuta vesen, antap long `immuch360`, kasem taem oli joenem i go insaed long hem long 9 Oktoba 2026 blong ol fon, hedset, TV mo kompiuta oli kamaot long sem sos. Naoia hem i folem `immuch360` mo i karem ol tag blong ol desktop pre-release ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) long commit 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) long 5b723bd25, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) long merge blong 360° video pleia long 10 Oktoba 2026). Niu wok blong desktop i kasem ples ia fastaem mo i joen long `immuch360` wetem desktop build we i karem i go aot. Kompiuta vesen i no jenisim wan samting aninit long `mobile/android` mo `mobile/ios`.
 
 <a id="logs"></a>
 ## Ol log
@@ -1145,7 +1178,7 @@ Stat long build 19, DLNA klaen, fon sea mo luksave blong ol Apple spatial media 
 
 Long wan kompiuta (Immuch360 Desktop), Logs pej i gat "Save logs to a file" (Sevem ol log long wan fael) tu: log, o wan ZIP blong log mo ol ripot blong ol las krash sapos i gat (ale nem we app i talem i finis wetem "with-crash-reports"). Wan krash ripot i wan smol minidump: ol thread, wea oli stop mo samting we i nid blong folem ol kol blong olgeta nomo, wetem nem blong ol fael blong program be i no ol folda blong olgeta; i no memori blong app.
 
-Stat long desktop build 2, video pleia blong kompiuta i raet long ples ia aninit long `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` mo `VideoThumbnailGrabber`, wetem ol woning blong mpv hem wan, mo ol token mo pasword oli tekemaot finis. Jekem log fastaem bifo yu serem: i save gat adres blong seva blong yu.
+Stat long desktop build 2, video pleia blong kompiuta i raet long ples ia aninit long `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` mo `VideoThumbnailGrabber`, wetem ol woning blong mpv hem wan, mo ol token mo pasword oli tekemaot finis. Stat long desktop build 3 hem i raet tu 360° pleia aninit long `SphericalPlayer`, `SphereRenderer` mo `PluginRenderer` (saes we i jusum, ol frem long wan seken we i mesarem, grafik jip), ol raw video wetem tu lens aninit long `RawTwoStreams`, ol decoder blong grafik jip aninit long `DesktopGpuDecoders`, `DesktopVideoDecoderApi` mo `DecoderMeasure`, mo Tapo luk laef aninit long `DesktopCameraLive`, we ol laen blong hem oli neva holem akaon blong kamera o pasword blong hem. Jekem log fastaem bifo yu serem: i save gat adres blong seva blong yu.
 
 <a id="privacy"></a>
 ## Praevesi
@@ -1159,7 +1192,7 @@ Stat long desktop build 2, video pleia blong kompiuta i raet long ples ia aninit
 - **Fon sea**: lokol netwok nomo, wetem wan nem blong yusa mo pasword, tru plen HTTP (luk [Serem fon ia long netwok](#share-this-phone-on-the-network)).
 - **Kamera**: Spatial 2.5D pleia nomo i yusum, long divaes; app i no sevem ol pikja nating mo i no sendem olgeta i go long eni ples.
 - **Long wan kompiuta** (Immuch360 Desktop, Windows preview): app i ridim ol folda we yu jusum nomo, i kipim indeks, ol smol pikja mo kas blong hem long kompiuta, mo i sevem ol pasword mo token wetem data protection blong Windows, blong Windows akaon blong yu nomo. Kompiuta sea i folem ol rul blong fon sea, mo i no stat long wan netwok we Windows i makem olsem pablik, o we Windows i no save wanem kaen, sapos yu no talem.
-- **Video pleia long wan kompiuta** (stat long desktop build 2): ol video blong seva blong yu oli kasem hem tru long app, ale pleia i neva holem sesen token blong yu, mo samting we i ridim fastaem i stap long memori, i no long disk. Hem i openem fael we oli givim long hem nomo: wan fael blong wan folda o wan sea we i wan pleilis o wan diskripsen blong strim i no mekem hem i konek long wan narafala ples.
+- **Video pleia long wan kompiuta** (stat long desktop build 2): ol video blong seva blong yu oli kasem hem tru long app, ale pleia i neva holem sesen token blong yu, mo samting we i ridim fastaem i stap long memori, i no long disk. Hem i openem fael we oli givim long hem nomo: wan fael blong wan folda o wan sea we i wan pleilis o wan diskripsen blong strim i no mekem hem i konek long wan narafala ples. Stat long desktop build 3, app i givim adres blong evri video long pleia long memori nomo, i neva tru long wan smol taem fael (link we app i mekem blong wan video blong seva o wan sea i holem wan ki blong sesen ia, we i stap long disk sam seken long evri taem yu openem long desktop build 2), mo ki ia i neva kamaot long log; Tapo luk laef i givim akaon blong kamera long pleia long sem fasin, i neva long wan fael o wan laen blong log, mo i toktok wetem kamera long lokol netwok nomo; ol mesa blong 360° pleia mo blong ol decoder (grafik jip, fomat blong video, ol frem long wan seken, i neva wan fael nem) oli stap long folda blong app long kompiuta.
 
 Ful polisi i stap long [PRIVACY.md](../PRIVACY.md).
 
@@ -1177,7 +1210,7 @@ Android, Android TV mo Google TV oli trademark blong Google LLC; Apple, iPhone, 
 
 Ol samting we oli no finis yet, olgeta we bambae i kam fastaem i stap antap. I no gat wan samting long ples ia we i wan promis, mo toktok long [lis blong ol problem](https://github.com/freeKC/Immuch360/issues) i halpem blong jusum wanem i kam fastaem.
 
-- **Immuch360 Desktop, Windows fastaem**: desktop build 2 i kamaot finis, wetem ol flat video, mo sos blong desktop i stap long main branj blong fork, `immuch360`, stat long 9 Oktoba 2026 (luk [Long wan Windows kompiuta](#on-a-windows-computer-immuch360-desktop-preview)). Nekis, ol 360°, 3D, VR180 mo raw 360° video long Windows, wetem tu lens blong ol raw fael mo Tapo laef vyu; afta, jekem evri fanksen long wan Windows PC mo stretem; afta Spatial 2.5D wetem webkam; afta Linux mo macOS, ol pakej, saening mo ol apdet.
+- **Immuch360 Desktop, Windows fastaem**: desktop build 3 i kamaot finis, wetem 360° video pleia (ol 360°, 3D, VR180 mo raw 360° video, tu lens blong ol raw fael, saes blong vyu we oli mesarem long evri kompiuta) mo Tapo luk laef, mo sos blong desktop i stap long main branj blong fork, `immuch360`, stat long 9 Oktoba 2026 (luk [Long wan Windows kompiuta](#on-a-windows-computer-immuch360-desktop-preview)). Nekis, libmpv blong wokflo blong fork hem wan long ples blong 2024 wan, mo jekem evri fanksen wetem han long wan Windows PC wetem ol tru fael, tufala skrin mo wan tru kamera, mo stretem; afta Spatial 2.5D wetem webkam; afta Linux mo macOS; afta wan instola, wan build we i saen mo ol otomatik apdet.
 - **Google Play**: build 20 i stap stat long 7 Oktoba 2026, long ples blong build 18; Google i stap jekem pej blong ol TV stat long 9 Oktoba 2026. Build 21 i no jenisim wan samting long ol fon mo tablet.
 - **App Store**: vesen 3.3.0 i stap wet blong Apple i jekem; hem i gat ol samting blong build 11, ale aplod i go long Immich mo jek blong video decoder (build 15) mo ol raw Insta360 fael (build 16) bambae oli kam wetem nekis App Store apdet. Bambae mifala i ademap link long ples ia taem hem i kamaot.
 - **Meta Horizon Store**: Meta i talem oraet long pej long 7 Oktoba 2026 wetem build 14. Oli sendem build 21 olsem fas apdet blong hem: hem i karem evri samting stat long build 14 (aplod long wan sea i go long Immich, video sos we app i jusum folem wanem hedset i save ridim, ol raw Insta360, GoPro mo DJI fael, DLNA, fon sea, ol Apple spatial foto, ol Plex Media Server laebri, ol Tapo kamera), mo stoa i putum blong Quest 2, Quest Pro, Quest 3 mo 3S. Bambae mifala i ademap stoa link long ples ia taem pej i open long evriwan; wan kopi we yu instolem wetem han i mas go aot fastaem (luk [Instolem](#install)).

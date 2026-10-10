@@ -15,13 +15,13 @@ Namenjena je tistim, ki snemajo s kamero 360° (Insta360, GoPro MAX, DJI Osmo 36
 
 <div align="center">
 
-| Platforma | Kje jo dobite | Stanje 9. oktobra 2026 |
+| Platforma | Kje jo dobite | Stanje 10. oktobra 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefoni in tablice **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | gradnja 20 na Google Play od 7. oktobra 2026, gradnja 21 na GitHubu |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone in iPad** | App Store | različica 3.3.0 čaka na Applov pregled; medtem jo [zgradite sami](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 in 3S | [APK](#meta-quest-3) · Horizon Store | vnos odobren, gradnja 21 v Metinem pregledu |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV in Google TV** | [APK](#install-it-on-the-tv) · Google Play | gradnja 21 na GitHubu; vnos v Google Play za televizorje je v Googlovem pregledu od 9. oktobra 2026 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP predogledne različice](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | namizna gradnja 2 za Windows: fotografije in ploski videoposnetki, nato videoposnetki 360°; macOS in Linux pozneje, iz iste izvorne kode |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP predogledne različice](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | namizna gradnja 3 za Windows: fotografije, ploski videoposnetki in videoposnetki 360°; macOS in Linux pozneje |
 
 *Stanja se posodobijo ob vsaki izdaji; podrobnosti so v razdelku [Kje jo dobite](#where-to-get-it).*
 
@@ -30,7 +30,7 @@ Namenjena je tistim, ki snemajo s kamero 360° (Insta360, GoPro MAX, DJI Osmo 36
 - 🌐 **Izvorni 360°**<br>Fotografije in videoposnetki kot krogla, v kateri se razgledujete, z žiroskopom, vključno z neobdelanimi datotekami kamer (Insta360 od gradnje 16, GoPro in DJI od gradnje 18). Poleg tega brezplačen predvajalnik videa: ploski, 360°, 3D, VR180
 - 👓 **Izvorni 3D**<br>Stereoskopski 360° in VR180, zgoraj in spodaj ali drug ob drugem, ter prostorske fotografije Apple (od gradnje 19): pravi 3D v očalih, eno oko na telefonu
 - 🎥 **Izvorni 2.5D**<br>Globina na ploskem zaslonu iz stereoskopskega videoposnetka, pogled sledi vaši glavi (preizkusno, telefoni in tablice)
-- 📱 **Android, iOS, Quest, TV**<br>Ena aplikacija na telefonih, tablicah in v očalih Quest 2, Pro, 3 in 3S, pravi 3D v očalih, od gradnje 20 na Android TV z daljinskim upravljalnikom, in predogledna različica za Windows s fotografijami in ploskimi videoposnetki
+- 📱 **Android, iOS, Quest, TV**<br>Ena aplikacija na telefonih, tablicah in v očalih Quest 2, Pro, 3 in 3S, pravi 3D v očalih, od gradnje 20 na Android TV z daljinskim upravljalnikom, in predogledna različica za Windows s fotografijami, ploskimi videoposnetki in videoposnetki 360°
 - 🔌 **S strežnikom ali brez njega**<br>Vaš strežnik Immich ali galerija samega telefona, račun ni potreben
 - 🗄️ **Omrežne skupne rabe**<br>Samba (SMB), WebDAV in od gradnje 19 predstavnostni strežniki DLNA, najdeni v omrežju in brani v živo, nič se ne prenese, ter poslani v Immich, ko se tako odločite. Od gradnje 19 telefon z očali deli tudi svojo galerijo
 - 📺 **Na televizorju**<br>Od gradnje 20 isti APK na Android TV in Google TV: fotografije in videoposnetki 360°, vaš strežnik in vaše skupne rabe, z daljinskim upravljalnikom
@@ -84,7 +84,7 @@ Namenjena je tistim, ki snemajo s kamero 360° (Insta360, GoPro MAX, DJI Osmo 36
 - **„Želim gledati svoje fotografije in videoposnetke 360° ter videoposnetke z mojega NAS-a ali strežnika Plex na televizorju, z daljinskim upravljalnikom.“** Glejte [Gledanje na televizorju](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Svojih posnetkov 360° ne najdem med vsemi drugimi.“** Glejte [Seznam 360°](#find-your-360-shots-the-360-list).
 - **„Moj videoposnetek 360° se zatika ali predvaja zamegljeno kopijo.“** Glejte [Podrobnosti videa in dekoderji](#video-details-decoders-and-why-a-video-stutters).
-- **„Svoje fotografije 360° in svojo knjižnico Immich želim imeti na svojem računalniku z Windows, s fotografijami in videoposnetki iz njegovih map, mojim NAS-om in mojim strežnikom Plex, računalnik pa deljen z mojimi očali.“** Glejte [Na računalniku z Windows](#on-a-windows-computer-immuch360-desktop-preview) (predogledna različica: zaenkrat fotografije in ploski videoposnetki, videoposnetki 360° pozneje).
+- **„Svoje fotografije 360° in svojo knjižnico Immich želim imeti na svojem računalniku z Windows, s fotografijami in videoposnetki iz njegovih map, mojim NAS-om in mojim strežnikom Plex, računalnik pa deljen z mojimi očali.“** Glejte [Na računalniku z Windows](#on-a-windows-computer-immuch360-desktop-preview) (predogledna različica: fotografije in ploski videoposnetki, od gradnje desktop build 3 pa videoposnetki 360°, 3D, VR180, surovi videoposnetki 360° in slika v živo Tapo).
 - **„Ali obdržim vse, kar zna aplikacija Immich?“** Da, z dvema manjšima spremembama, glejte [Vse drugo je Immich](#everything-else-is-immich).
 
 Ko je funkcija nova, besedilo navaja, od katere gradnje je na voljo. Izdaja na GitHubu ima vedno najnovejšo gradnjo, trgovine sledijo pozneje: glejte [Kje jo dobite](#where-to-get-it).
@@ -127,6 +127,7 @@ Fotografija se vrti, ko jo vlečete, povečuje se s ščipom ali dvojnim dotikom
 
 Predvajalnik predvaja datoteko, shranjeno v telefonu, ali datoteko omrežne skupne rabe, če obstaja. Sicer pretaka z vašega strežnika: privzeto prekodiran tok ali izvirnik, če ga izberete v Nastavitve, Pregledovalnik sredstev, Vir videa (od gradnje 15; prej stikalo „Vsili izvirni video“), glejte [Podrobnosti videa in dekoderji](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### Datoteka 360°, ki je prikazana ploska: Prikaži kot 360°
 
 Nekatere datoteke 360° nimajo oznake projekcije, zato jih strežnik ne označi kot 360° in so prikazane ploske.
@@ -356,6 +357,7 @@ Od gradnje 20 Immuch360 doda kamero Tapo poleg omrežnih skupnih rab. Kamero pri
 8. Dotaknite se „Preizkusi kamero“. Prikaže „Posnetki: (model), vdelana programska oprema (različica)“ s stanjem pomnilniške kartice in „Slika v živo: (video), zvok (zvok)“ ali kaj je pri vsakem spodletelo.
 9. Dotaknite se Shrani. Kamera je navedena pod „Kamere“, za skupnimi rabami, z modelom, ko je znan, in `tapo://` z njenim naslovom.
 
+<a id="watch-it-live"></a>
 ### Gledanje v živo
 
 1. Dotaknite se kamere. Njena slika v živo je na vrhu njene strani: „Povezovanje s kamero“, nato slika z značko V živo.
@@ -755,9 +757,9 @@ Trenutna gradnja, gradnja 21 (različica 3.3.0-rc.0, številka gradnje 3030019),
 | Pošiljanje datotek skupne rabe v Immich; ročno poslane datoteke naprave štejejo kot varnostno kopirane | ❌ samo datoteke naprave | ✅ od gradnje 15 |
 | Deli ta telefon v omrežju, za očala | ❌ | ✅ od gradnje 19, Android in iOS |
 | Knjižnice Plex Media Server, predvajane iz izvirnih datotek, doma in zunaj doma, brez plex.tv | ❌ | ✅ od gradnje 20, vsi pregledovalniki, na telefonih, tablicah, Questu in televizorjih |
-| Kamere Tapo: slika v živo in posnetki s pomnilniške kartice, poslani v Immich, ko se tako odločite | ❌ | ✅ od gradnje 20: posnetki povsod, v živo na Androidu, Android TV in Questu |
+| Kamere Tapo: slika v živo in posnetki s pomnilniške kartice, poslani v Immich, ko se tako odločite | ❌ | ✅ od gradnje 20: posnetki povsod, v živo na Androidu, Android TV, Questu in od gradnje desktop build 3 v Windows |
 | Android TV in Google TV, upravljano z daljinskim upravljalnikom, v istem APK | ❌ ni aplikacija za televizor | ✅ od gradnje 20 |
-| Ista aplikacija na računalniku z Windows | ❌ samo telefoni in tablice | ✅ predogled, fotografije in ploski videoposnetki |
+| Ista aplikacija na računalniku z Windows | ❌ samo telefoni in tablice | ✅ predogled: fotografije, ploski videoposnetki in videoposnetki 360° (desktop build 3) |
 | Neobdelane fotografije Insta360 .insp in videoposnetki .insv z eno sledjo | ❌ ploske | ✅ od gradnje 16 |
 | Neobdelani videoposnetki z enim objektivom na sled ali na datoteko (Insta360 X4, X4 Air, X5, X6, pari X3, GoPro .360, DJI .osv) | ❌ ploski ali napačni | ✅ od gradnje 18 |
 | .dng z dvojnim ribjim očesom | ❌ plosk | ❌ še ne |
@@ -787,7 +789,7 @@ Trenutna gradnja, gradnja 21 (različica 3.3.0-rc.0, številka gradnje 3030019),
 - **Plex Media Server**: preverjeno z računalnika na resničnem Plex Media Server 1.42.1 (povezovanje, mape, obsegi bajtov, sličice, naslov zunaj doma); še ni preverjeno na napravi.
 - **Kamere Tapo**: preverjeno na simulirani kameri; še ni preverjeno z resnično kamero.
 - **Android TV in Google TV**: preverjeno z avtomatiziranimi preizkusi; še ni preverjeno na televizorju.
-- **Ista aplikacija na računalniku z Windows**: 656 od 663 avtomatiziranih namiznih preizkusov uspe v Windows (7 namenoma preskočenih), na računalniku z Windows 11 pa se aplikacija zažene, odpre shranjeno sejo na strežniku Immich, sinhronizira, predvaja videoposnetek in se pravilno zapre; ročni preizkus vsake funkcije poteka.
+- **Ista aplikacija na računalniku z Windows**: gradnja desktop build 3 v Windows uspe pri 855 od svojih 863 avtomatiziranih namiznih preizkusov (8 namenoma preskočenih) in pri celotnem naboru preizkusov aplikacije; na računalniku z Windows 11 se aplikacija zažene, odpre shranjeno sejo na strežniku Immich, sinhronizira, predvaja videoposnetek in se pravilno zapre, njen predvajalnik 360° pa je tekel s sintetičnimi posnetki 4K, 5.7K in 8K na obeh grafičnih čipih prenosnika brez enega samega sesutja. Ročni preizkus vsake funkcije, s pravimi datotekami 360° in pravo kamero Tapo, poteka.
 - **Neobdelane fotografije Insta360 .insp in videoposnetki .insv z eno sledjo**: fotografije preverjene v primerjavi z izvozi Insta360 Studio iz datotek X3, videoposnetki na emulatorju Android z datoteko X3 nizke ločljivosti; na iPhonu še niso tekli.
 - **Neobdelani videoposnetki z enim objektivom na sled ali na datoteko**: razčlenjevalniki in sestavljanje preverjeni na resničnih datotekah X4, para X3, GoPro MAX in Osmo 360; predvajanje je preizkus gradenj 18 in 19 na napravah.
 - **.dng z dvojnim ribjim očesom**: načrtovano.
@@ -842,17 +844,19 @@ Immuch360 je galerija in hkrati brezplačen predstavnostni predvajalnik: predvaj
   - iPhone, iPad: izvorni predvajalnik SceneKit na krogli, žiroskop, izbira zvočne sledi, indikator medpomnjenja; predvajanje in premor, še brez časovnega traku.
   - Meta Quest: potopitveno, pravi 3D za stereoskopske datoteke, časovni trak s preskoki po 10 sekund, prejšnji in naslednji medij.
   - Android TV, Google TV: predvajalnik Media3 s telefonov, obračan s puščicami.
-  - Windows: še ne, zaenkrat prikazani ploski.
+  - Windows (od gradnje desktop build 3): lastni predvajalnik 360° aplikacije (libmpv), vrtenje z miško ali puščicami, povečava s kolescem, iskanje po času, izbira zvočne sledi, indikator nalaganja; tekoče na namenskem grafičnem čipu, na vgrajenem največ 2880 slikovnih pik v širino in počasneje pri 5.7K H.264.
 - **3D 360° (zgoraj in spodaj, drug ob drugem)**
   - Telefoni Android: levo oko, gumb postavitve.
   - iPhone, iPad: enako.
   - Meta Quest: vsako oko dobi svojo polovico sličice.
   - Android TV, Google TV: levo oko, gumb postavitve.
+  - Windows: fotografije kot na telefonih; videoposnetki od gradnje desktop build 3, levo oko, gumb postavitve, tekoče na namenskem grafičnem čipu, z omejitvami na vgrajenem.
 - **Fotografije in videoposnetki VR180 (polkrogla)**
   - Telefoni Android: polkrogla, gumb 360°/180°.
   - iPhone, iPad: enako.
   - Meta Quest: potopitvena polkrogla.
   - Android TV, Google TV: polkrogla, gumb 360°/180°.
+  - Windows: fotografije kot na telefonih; videoposnetki od gradnje desktop build 3, polkrogla, gumb 360°/180°, tekoče na namenskem grafičnem čipu, z omejitvami na vgrajenem.
 - **Spatial 2.5D (globina na ploskem zaslonu iz stereoskopskega videoposnetka)**
   - Telefoni Android: izvorni predvajalnik, sledenje glave s sprednjo kamero.
   - iPhone, iPad: enako.
@@ -878,16 +882,19 @@ Immuch360 je galerija in hkrati brezplačen predstavnostni predvajalnik: predvaj
   - iPhone, iPad: sestavljen s senčilnikom SceneKit.
   - Meta Quest: potopitveno, sestavljen z istim učinkom GPU.
   - Android TV, Google TV: kot na telefonih.
+  - Windows (od gradnje desktop build 3): sestavljeni na grafičnem čipu v predvajalniku 360° aplikacije, tekoče na namenskem čipu, z omejitvami na vgrajenem.
 - **Neobdelani videoposnetki z enim objektivom na sled ali na datoteko (od gradnje 18): Insta360 X4, X4 Air, X5, X6 .insv, pari X3, GoPro .360, DJI .osv**
   - Telefoni Android: dva strojna dekoderja hkrati, eden na objektiv (od gradnje 19 programska na napravi brez strojnega dekoderja, do 2048x2048 na objektiv), in sestavljalnik GL, ki sestavi v kroglo; en objektiv, nato prekodiran tok, nato nesestavljen videoposnetek, ko naprava ne zmore dveh.
   - iPhone, iPad: lasten sestavljalnik AVFoundation z Metalom.
   - Meta Quest: potopitveno, ista dva dekoderja in sestavljalnik (plošča 3840x1920).
   - Android TV, Google TV: kot na telefonih, ko televizor zmore dva dekoderja hkrati.
+  - Windows (od gradnje desktop build 3): oba objektiva drug ob drugem v enem predvajalniku, nato sestavljena, ko računalnik zmore (izmerjeno na samem predvajanju; na preizkusnem prenosniku par X3 samo na njegovem namenskem čipu); sicer koraki telefonov: en objektiv, prekodirani tok, kopija LRV kamere v nizki ločljivosti, nesestavljen videoposnetek.
 - **Slika v živo kamere Tapo (od gradnje 20)**
   - Telefoni Android: predvajalnik RTSP Media3: SD na strani, HD v celozaslonskem načinu, gumb za zvok.
   - iPhone, iPad: še ne: kartica pove, da pride pozneje.
   - Meta Quest: v oknu, v HD.
   - Android TV, Google TV: kot na telefonih.
+  - Windows (od gradnje desktop build 3): predvajalnik libmpv, SD na strani, HD v celozaslonskem načinu, gumb za zvok.
 - **Posnetki kamere Tapo (od gradnje 20)**
   - Telefoni Android: preneseni s pomnilniške kartice v videoposnetek H.264 z zvokom, nato predvajani s previjanjem.
   - iPhone, iPad: enako.
@@ -896,14 +903,14 @@ Immuch360 je galerija in hkrati brezplačen predstavnostni predvajalnik: predvaj
 
 Vnosi Android TV in Google TV, od gradnje 20, še niso bili preverjeni na televizorju, glejte [Gledanje na televizorju](#watch-on-your-tv-android-tv-and-google-tv); vnosi kamere še niso bili preverjeni z resnično kamero.
 
-V Windows predogledna različica Immuch360 Desktop prikazuje fotografije, ploske in 360°, vključno s surovimi fotografijami Insta360 .insp, z miško in tipkovnico, od gradnje desktop build 2 pa predvaja ploske videoposnetke, s strežnika, iz map računalnika, iz skupnih rab, iz Plexa in iz posnetkov Tapo; videoposnetki 360°, 3D, VR180 in surovi videoposnetki 360° so zaenkrat prikazani ploski ali kot nadomestna slika (glejte [Še ni na voljo](#not-there-yet)).
+V Windows predogledna različica Immuch360 Desktop prikazuje fotografije, ploske in 360°, vključno s surovimi fotografijami Insta360 .insp, z miško in tipkovnico. Od gradnje desktop build 2 predvaja ploske videoposnetke, s strežnika, iz map računalnika, iz skupnih rab, iz Plexa in iz posnetkov Tapo, od gradnje desktop build 3 pa predvaja videoposnetke 360°, 3D, VR180 in surove videoposnetke 360° iz istih virov v lastnem predvajalniku 360°, pa tudi sliko v živo Tapo. Predvajalnik 360° je tekoč na namenskem grafičnem čipu in ima omejitve na vgrajenem (glejte [Na računalniku z Windows](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Vaš strežnik Immich**: izvirnik ali prekodiran tok strežnika, kot določa Nastavitve, Pregledovalnik sredstev, Vir videa (glejte [Podrobnosti videa in dekoderji](#video-details-decoders-and-why-a-video-stutters)). Isti račun kot spletna aplikacija.
 - **Sam telefon ali očala**: „Uporabi brez strežnika“ na strani za prijavo ali vnos Na tej napravi v zavihku Knjižnica.
 - **NAS ali računalnik**: skupne rabe SMB in WebDAV ter od gradnje 19 predstavnostni strežniki DLNA, najdeni v omrežju, brani v živo (videoposnetek SMB prek do šestih povezav), nič se ne kopira; od gradnje 15 lahko izbrane datoteke pošljete v svoj račun Immich.
 - **Drug telefon (od gradnje 19)**: „Deli ta telefon v omrežju“ na tem telefonu: očala ali kateri koli odjemalec WebDAV v omrežju berejo njegove albume, mesece in predstavnost 360°.
 - **Plex Media Server (od gradnje 20)**: njegove knjižnice fotografij, filmov in TV-serij po mapah, izvirne datoteke, brane v živo prek HTTPS, preverjenega z lastnim potrdilom strežnika, doma ali prek naslova zunaj doma, na vseh platformah; glejte [Plex Media Server brez plex.tv](#plex-media-server-without-plextv).
-- **Kamera Tapo (od gradnje 20)**: slika v živo z računom kamere (Android, Android TV, Quest) in posnetki z njene pomnilniške kartice z geslom računa TP-Link (vse platforme), samo v lokalnem omrežju; glejte [Kamere Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Kamera Tapo (od gradnje 20)**: slika v živo z računom kamere (Android, Android TV, Quest in Windows od gradnje desktop build 3) in posnetki z njene pomnilniške kartice z geslom računa TP-Link (vse platforme), samo v lokalnem omrežju; glejte [Kamere Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **Mape računalnika z Windows (namizna predogledna različica)**: mape, ki jih izberete v Immuch360 Desktop, ki se berejo namesto galerije telefona; računalnik jih lahko tudi deli z očali, glejte [Na računalniku z Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Vaša knjižnica Immich je na strežniku, druge fotografije in videoposnetki so 
 
 Na računalniku Immich ponuja svojo spletno aplikacijo v brskalniku. **Kaj doda Immuch360 Desktop**: mape računalnika brez strežnika ali računa, skupne rabe SMB, WebDAV, DLNA in Plex, ki jih brskate in predvajate iz aplikacije, surove fotografije Insta360 .insp, odprte kot krogla, in računalnik, deljen z Meta Questom doma.
 
-To je predogledna različica: od gradnje desktop build 2 delujejo fotografije in ploski videoposnetki; videoposnetki 360°, 3D in VR180 pridejo z naslednjimi namiznimi gradnjami. Od 9. oktobra 2026 je namizna izvorna koda v glavni veji forka, `immuch360`, zato telefoni, očala, televizorji in računalniki izhajajo iz iste izvorne kode. Aplikacije za telefon, tablico, Quest in televizor se z njo ne spremenijo in ohranijo ime Immuch360.
+To je predogledna različica: fotografije in ploski videoposnetki delujejo od gradnje desktop build 2, od gradnje desktop build 3 pa predvajalnik videoposnetkov 360° (videoposnetki 360°, 3D, VR180 in surovi videoposnetki 360°) in slika v živo kamer Tapo; spodnji koraki, ki potrebujejo gradnjo 3, to povedo. Od 9. oktobra 2026 je namizna izvorna koda v glavni veji forka, `immuch360`, zato telefoni, očala, televizorji in računalniki izhajajo iz iste izvorne kode. Aplikacije za telefon, tablico, Quest in televizor se z njo ne spremenijo in ohranijo ime Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Prenos in namestitev v Windows
 
-Trenutna gradnja je predizdaja na GitHubu [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Njena datoteka je `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (približno 57 MB, 78 datotek po razširjanju, vključno s predvajalnikom videa in njegovo mapo `licenses`), z datoteko `SHA256SUMS.txt` za preverjanje. Zgrajena je bila iz glavne veje, `immuch360`, na commitu 5b723bd25: izvorna koda gradnje 21 za telefone in različica za računalnik. Potrebuje Windows 10 ali 11, 64-bitni.
+Trenutna gradnja je predizdaja na GitHubu [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Njena datoteka je `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (približno 57 MB, 79 datotek po razširjanju, vključno s predvajalnikom videa in njegovo mapo `licenses`), z datoteko `SHA256SUMS.txt` za preverjanje. Zgrajena je bila iz glavne veje, `immuch360`, potem ko je bil vanjo združen predvajalnik videoposnetkov 360° za računalnik, na commitu, ki ga navajajo opombe ob izdaji: izvorna koda gradnje 21 za telefone in različica za računalnik. Potrebuje Windows 10 ali 11, 64-bitni.
 
-1. Prenesite ZIP in ga razširite kamor koli, na primer v Dokumente.
-2. Zaženite `immuch360.exe` iz razširjene mape. Mapo ohranite celo: program potrebuje datoteke poleg sebe, vključno s predvajalnikom videa.
+1. Prenesite ZIP in ga razširite kamor koli, na primer v Dokumente. Če želite zamenjati gradnjo desktop build 2, izbrišite njeno mapo ali razširite v novo: vaša prijava, vaše mape in vaše nastavitve ostanejo v vašem profilu Windows, ne v tej mapi.
+2. Zaženite `immuch360.exe` iz razširjene mape. Mapo ohranite celo: program potrebuje datoteke poleg sebe, med njimi `libmpv-2.dll`, predvajalnik videa, in `immuch_desktop_video.dll`, ki bere dekoderje grafičnega čipa.
 3. Datoteke še niso podpisane, zato lahko Windows SmartScreen prikaže „Windows je zaščitil vaš računalnik“: izberite „Več informacij“, nato „Vseeno zaženi“. Kjer je vklopljen Pametni nadzor aplikacij, ta blokira nepodpisane programe.
 4. Počakajte na okno. Prvi zagon nove gradnje traja od 10 sekund do približno minute, najverjetneje medtem ko Microsoft Defender pregleduje nove datoteke: aplikacije medtem ne zaženite znova. Naslednji zagoni trajajo sekundo ali dve.
 5. Na strani za prijavo se prijavite v svoj strežnik Immich z njegovim naslovom, svojim e-poštnim naslovom in geslom ali kliknite „Uporabi brez strežnika“.
 
-Za preverjanje ZIP-a zaženite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` v ukaznem pozivu, v mapi s prenosom: rezultat je tisti, ki je zapisan v `SHA256SUMS.txt`. Namestitvenega programa in samodejne posodobitve še ni: spremljajte stran [Releases](https://github.com/freeKC/Immuch360/releases) in naslednjo gradnjo razširite na enak način.
+Za preverjanje ZIP-a zaženite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` v ukaznem pozivu, v mapi s prenosom: rezultat je tisti, ki je zapisan v `SHA256SUMS.txt`. Namestitvenega programa in samodejne posodobitve še ni: spremljajte stran [Releases](https://github.com/freeKC/Immuch360/releases) in naslednjo gradnjo razširite na enak način.
 
 ### Kaj zna predogledna različica
 
@@ -993,7 +1000,9 @@ Za preverjanje ZIP-a zaženite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-
 - **Nalaganje in varnostno kopiranje** iz teh map v vaš strežnik Immich, dokler je aplikacija odprta.
 - **Fotografije 360° kot krogla**, z miško in tipkovnico; surove fotografije .insp kamer Insta360 se odprejo kot na telefonih.
 - **Ploski videoposnetki** (od gradnje desktop build 2): videoposnetki iz vaših map, z vašega strežnika Immich (izvirnik ali pretvorjeni tok, glejte [Podrobnosti videa in dekoderji](#video-details-decoders-and-why-a-video-stutters)), iz skupnih rab SMB, WebDAV in DLNA, s strežnikov Plex in posnetki Tapo se predvajajo v oknu, s kontrolniki kot na telefonih (predvajaj, premor, časovna vrstica), kazalnikom nalaganja in menijem zvočnih sledi za videoposnetek, ki jih ima več. Videoposnetki iz vaših map in skupnih rab kot sličico prikažejo kader iz videoposnetka namesto ikone filma.
-- **Omrežne skupne rabe**: Samba (SMB), WebDAV in predstavnostni strežniki DLNA ter strežniki Plex brez plex.tv, brskani kot na telefonih: njihove fotografije se odprejo, njihovi videoposnetki pa se predvajajo. Za kamere Tapo posnetki pomnilniške kartice: seznam, prenos posnetka in njegovo predvajanje.
+- **Videoposnetki 360°, 3D in VR180** (od gradnje desktop build 3): gumb 360° jih odpre v predvajalniku 360° aplikacije, v oknu ali v celozaslonskem načinu, iz vseh virov ploskih videoposnetkov, vrtenje z miško in tipkovnico, z gumboma 3D in 360°/180° kot na telefonih (videoposnetek 3D prikaže levo oko, kot na telefonih), iskanje po času, meni zvočnih sledi in indikator nalaganja.
+- **Surovi videoposnetki 360°** (od gradnje desktop build 3): datoteke Insta360 .insv, z obema objektivoma v eni sledi, v dveh sledeh (X4 in novejši) ali v dveh datotekah (pari X3), datoteke GoPro .360 in DJI .osv, ki jih aplikacija med predvajanjem sestavi na grafičnem čipu, s kalibracijo datoteke, kot na telefonih.
+- **Omrežne skupne rabe**: Samba (SMB), WebDAV in predstavnostni strežniki DLNA ter strežniki Plex brez plex.tv, brskani kot na telefonih: njihove fotografije se odprejo, njihovi videoposnetki pa se predvajajo. Za kamere Tapo posnetki pomnilniške kartice: seznam, prenos posnetka in njegovo predvajanje; od gradnje desktop build 3 pa slika v živo.
 - **Deli ta računalnik v omrežju**: albumi, meseci in vsebine 360° iz vaših map, samo za branje, za Meta Quest ali drugo napravo doma, tako kot telefon deli samega sebe.
 - **Datoteke**: prenosi s strežnika gredo v mapo, ki jo izberete, „Shrani v mapo“ ohrani kopijo izbranih fotografij in videoposnetkov, stran Dnevniki pa ima „Shrani dnevnike v datoteko“.
 
@@ -1005,9 +1014,28 @@ Za preverjanje ZIP-a zaženite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-
 4. **Pojdite od fotografije do fotografije**: na ploski fotografiji puščici levo in desno ali puščice, ki se pokažejo ob robovih, ko premikate miško, odprejo prejšnjo in naslednjo. Črke, vtipkane v polje za opis, ostanejo v besedilu.
 5. **Predvajajte videoposnetek**: odprite ga iz časovnice, iz mape, iz skupne rabe, iz Plexa ali iz posnetkov kamere Tapo; predvaja se v oknu. Enter ali tipka za predvajanje in premor na tipkovnici ga ustavi in znova zažene. Med predvajanjem puščici levo in desno ali J in L skočijo 10 sekund nazaj ali naprej; med premorom puščici odpreta prejšnjega in naslednjega. F ali F11 preklopi na celozaslonski način, kot pri fotografijah. Gumb „Zvočna sled“ izbira med zvočnimi sledmi videoposnetka, ki jih ima več.
 6. **Ko se videoposnetek ustavi**: ustavljen videoposnetek ostane ustavljen, ko se vrnete v okno. Videoposnetek, prekinjen pred koncem, na primer ko skupna raba ali strežnik neha odgovarjati, to sporoči: odprite ga znova in nadaljuje tam, kjer se je ustavil, v premoru. Datoteka seznama predvajanja, najdena v mapi ali skupni rabi, se ne upošteva.
-7. **Delite računalnik z očali**: odprite Knjižnico, nato Omrežne skupne rabe; prva ploščica je „Deli ta računalnik v omrežju“, računalniška stran razdelka [Deli ta telefon v omrežju](#share-this-phone-on-the-network). Vklopite „Deli fotografije in videoposnetke v omrežju“, nato dodajte računalnik v očalih, kot pravi ta razdelek. Skupna raba se ustavi, ko je aplikacija zaprta, ali po eni uri brez uporabe.
-8. **Dovolite omrežje**: Windows lahko vpraša, ali sme Immuch360 Desktop uporabljati omrežje. Dovolite v zasebnih omrežjih, sicer očala računalnika ne najdejo. V omrežju, ki ga Windows označi kot javno (kavarna, hotel), ali katerega vrste ne more ugotoviti, se skupna raba ne zažene, razen če izberete „Deli za to sejo“, računalnik pa se oglaša samo v omrežju, v katerem deli.
-9. **Nastavitve, „Ta računalnik“**: mape, mapa za prenose, omrežni vmesnik, ki se uporablja za iskanje skupnih rab in deljenje računalnika (ko jih ima več, na primer Wi-Fi in Ethernet), in zaupanja vredna potrdila: overitelj potrdil vašega lastnega strežnika, kot datoteka PEM, za naslov HTTPS, ki mu Windows sam ne zaupa. Odjemalska potrdila se uvozijo v Nastavitve, Napredno, kot na telefonih.
+7. **Predvajajte videoposnetek 360°** (od gradnje desktop build 3): odprite videoposnetek in kliknite 360° v zgornji vrstici, kot na telefonu; za datoteko 360°, ki je strežnik ne označi, najprej „Prikaži kot 360°“ v meniju ⋮, glejte [Datoteka 360°, ki je prikazana ploska](#a-360-file-that-shows-flat-view-as-360). Predvajalnik 360° se odpre v oknu. Z vlečenjem miške se razgledujete (po hitrem potegu se pogled še malo vrti), povečujete s kolescem, + in - ali Page Up in Page Down, vrtite z držanjem puščičnih tipk. Space ali tipka za predvajanje in premor na tipkovnici ustavi in znova predvaja; J in L skočita 10 sekund nazaj ali naprej; Home se vrne na začetek; M izklopi in vklopi zvok. F, F11 ali dvojni klik preklopi v celozaslonski način; Escape zapusti celozaslonski način, nato zapre predvajalnik. Kontrolniki (zapri, naslov, 360°/180°, 3D, zvočna sled in celozaslonski način zgoraj; predvajanje, 10 sekund nazaj in naprej, časovna vrstica in zvok spodaj) se skrijejo skupaj s kazalcem miške po 3 sekundah predvajanja in se vrnejo, ko se miška premakne ali ko pritisnete tipko; Tab gre od enega do naslednjega.
+8. **3D in VR180**: v predvajalniku 360° gumb 3D kroži med „Mono (ni 3D)“, „3D, zgoraj in spodaj“ in „3D, drug ob drugem“, gumb 360°/180° pa preklaplja med celotno kroglo in polkroglo VR180, kot v razdelku [3D in VR180](#3d-and-vr180-photos-and-videos). Videoposnetek 3D prikaže levo oko.
+9. **Surovi videoposnetki 360°** (od gradnje desktop build 3): odprite surovo datoteko in kliknite 360°, kot na telefonu, glejte [Neobdelane datoteke kamer 360°](#raw-360-camera-files-without-the-cameras-app); obe datoteki para X3 hranite skupaj. Datoteka z obema objektivoma v eni sledi se sestavlja med predvajanjem. Datoteka z enim objektivom na sled ali na datoteko predvaja oba objektiva drug ob drugem v enem predvajalniku, ko računalnik zmore: prve sekunde takega videoposnetka se izmerijo, rezultat pa se ohrani za naslednje videoposnetke iste vrste (način, ki se je izkazal za prepočasnega, se znova preizkusi po 14 dneh). Ko računalnik ne zmore, gre predvajalnik skozi korake telefonov, z njihovimi sporočili: en objektiv, polovica krogle črna; prekodirani tok strežnika; kopija LRV v nizki ločljivosti, ki jo je kamera posnela poleg datoteke, če obstaja; nesestavljen videoposnetek. Surovi videoposnetek nima gumba 3D niti gumba 360°/180°.
+10. **Slika v živo kamere Tapo** (od gradnje desktop build 3): odprite kamero kot na telefonu, glejte [Gledanje v živo](#watch-it-live). Stran predvaja tok SD, celozaslonski način pa tok HD, z gumbi telefona na sliki: zvok, na začetku izklopljen, SD ali HD in „Celozaslonski način“. Izgubljen tok (kamera se znova zažene, Wi-Fi izpade) se vrne sam, s ponovnimi poskusi približno minuto in pol, medtem ko zadnja slika ostane na zaslonu. Račun kamere, ki ga kamera zavrne, je tako tudi sporočen in se ne poskusi znova, saj se neuspele prijave štejejo v zaklepanje kamere.
+11. **Delite računalnik z očali**: odprite Knjižnico, nato Omrežne skupne rabe; prva ploščica je „Deli ta računalnik v omrežju“, računalniška stran razdelka [Deli ta telefon v omrežju](#share-this-phone-on-the-network). Vklopite „Deli fotografije in videoposnetke v omrežju“, nato dodajte računalnik v očalih, kot pravi ta razdelek. Skupna raba se ustavi, ko je aplikacija zaprta, ali po eni uri brez uporabe.
+12. **Dovolite omrežje**: Windows lahko vpraša, ali sme Immuch360 Desktop uporabljati omrežje. Dovolite v zasebnih omrežjih, sicer očala računalnika ne najdejo. V omrežju, ki ga Windows označi kot javno (kavarna, hotel), ali katerega vrste ne more ugotoviti, se skupna raba ne zažene, razen če izberete „Deli za to sejo“, računalnik pa se oglaša samo v omrežju, v katerem deli.
+13. **Nastavitve, „Ta računalnik“**: mape, mapa za prenose, omrežni vmesnik, ki se uporablja za iskanje skupnih rab in deljenje računalnika (ko jih ima več, na primer Wi-Fi in Ethernet), in zaupanja vredna potrdila: overitelj potrdil vašega lastnega strežnika, kot datoteka PEM, za naslov HTTPS, ki mu Windows sam ne zaupa. Odjemalska potrdila se uvozijo v Nastavitve, Napredno, kot na telefonih.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### Videoposnetki 360° in grafični čip
+
+V predvajalniku 360° (od gradnje desktop build 3) grafični čip iz vsake sličice videoposnetka nariše pogled, v katerega gledate. Video vtičnik pusti libmpv, da vsako sličico nariše v sliko izbrane velikosti, nato pa lastni prehod risanja aplikacije iz nje nariše del krogle, v katerega gledate. Vrtenje pogleda spremeni vrednost tega prehoda, ne predvajalnika: vlečenje ne stane nič pomnilnika, ustavljen videoposnetek pa se vrti, ne da bi karkoli dekodiral.
+
+Aplikacija izmeri prve sekunde vsakega videoposnetka 360° in izbere, kako veliko sličico obdeluje čip: celotno sličico na namenskem čipu, največ 2880 slikovnih pik v širino na čipu, vgrajenem v procesor (Windows aplikaciji pove, katere vrste je, zato čip Intel Arc prenosnika Core Ultra šteje kot vgrajen), stopnjo manjšo, ko čip ne zmore. Kar je izmerila, se ohrani za naslednje videoposnetke iste vrste (kodek, velikost, hitrost sličic in dekoder), ne za vse videoposnetke.
+
+Ko niti najmanjša stopnja ni tekoča, predvajalnik sporoči „Ta grafična kartica ne more tekoče prikazati pogleda 360° tega videoposnetka“; ko je od tega daleč ali ko čip pogleda sploh ne more narisati (ni OpenGL ES 3.0, gonilnik ga zavrne), se videoposnetek predvaja plosko in predvajalnik pove, zakaj. Videoposnetek, ki se je predvajal plosko, se naslednjič ne predvaja plosko: naslednji videoposnetek njegove vrste se znova izmeri.
+
+Ko ne zmore dekodiranje videoposnetka s strežnika, ne risanje (videoposnetek, ki ga dekodira procesor, na primer 5.7K H.264), predvajalnik preklopi na prekodirani tok strežnika od mesta, kjer je bil, s sporočilom telefonov: „Predvajanje prekodiranega toka: izvirnik (kodek in velikost) presega zmožnosti dekodiranja te naprave“.
+
+- **Uporabite namenski grafični čip prenosnika.** Windows aplikacijo zažene na vgrajenem čipu, razen če mu naročite drugače. V nastavitvah Windows, Sistem, Zaslon, Grafika, dodajte `immuch360.exe` in izberite „Visoka zmogljivost“, nato aplikacijo znova zaženite. Na preizkusnem prenosniku (čip Intel UHD in NVIDIA RTX 4060 Laptop) je čip NVIDIA risal videoposnetke 360° 4K, 5.7K in 8K v polni velikosti in pri 30 sličicah na sekundo, medtem ko se je pogled vrtel. Čip Intel jih je risal največ 2880 slikovnih pik v širino: videoposnetek 4K H.264 in 8K HEVC pri približno 30 sličicah na sekundo z gradnjo libmpv iz leta 2026, videoposnetek 4K pri 23 do 27 z libmpv iz leta 2024 iz media-kit (glejte [Še ni na voljo](#not-there-yet)) in videoposnetek 5.7K H.264, ki ga dekodira procesor, pri približno 20: s strežnika predvajalnik takrat preklopi na prekodirani tok; videoposnetek brez prekodiranega toka, na primer iz mape, se predvaja naprej s sporočilom „Ta grafična kartica ne more tekoče prikazati pogleda 360° tega videoposnetka“.
+- **Izrisovalnik izberite sami.** V Nastavitve, Napredno vklopite „Odpravljanje težav“: pojavi se vnos „Izrisovalnik videoposnetkov 360°“, privzeto Samodejno. Ponuja tudi „Vtičnik, polna velikost“, „Vtičnik, največ 4096 v širino“, „Vtičnik, največ 2880 v širino“ in „Plosko, brez pogleda 360°“, za naslednji videoposnetek 360°, ki ga odprete. Pod njim „Nazadnje izmerjeno“ navede velikost, v kateri je bil narisan zadnji videoposnetek 360°, njegove sličice na sekundo, grafični čip in dekoder: kopirajte to v poročilo o napaki. Ponovna izbira „Samodejno“, tudi ko je že izbrana, pozabi, kar je bilo izmerjeno, in naslednji videoposnetki 360° se znova izmerijo.
+- **Kaj čip dekodira.** Nastavitve, Napredno, „Video dekoderji te naprave“ navaja, kaj dekodira uporabljeni grafični čip, kot poroča Direct3D 11, aplikacija pa ta seznam popravi s tem, kar je izmerila med predvajanjem: nastavitev Vir videa in preverjanje obeh objektivov surovih videoposnetkov mu sledita. H.264, širši od 4096 slikovnih pik (5.7K kamer 360°), dekodira procesor, saj ga ne sprejme noben čip preizkusnega prenosnika.
 
 ### V primerjavi z aplikacijami za telefone
 
@@ -1017,12 +1045,16 @@ Za preverjanje ZIP-a zaženite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-
 - **Iz vaših map se nič ne izbriše**: „Izbriši iz naprave“ je skrito, Izbriši pa odstrani samo kopijo na strežniku, dokler aplikacija ne bo znala pošiljati datotek v koš Windows.
 - **Miška in tipkovnica** namesto dotika in žiroskopa.
 - **En predvajalnik videa za vse vire**: libmpv enako predvaja videoposnetke s strežnika, iz map, iz skupnih rab in iz Plexa, njegov ploski predvajalnik pa že ima meni zvočnih sledi, ki ga ploski predvajalnik telefonov še nima.
+- **Videoposnetki 360° v oknu** (od gradnje desktop build 3): predvajalnik 360° je stran aplikacije, ne ločen domorodni predvajalnik, s časovno vrstico, skoki po 10 sekund in gumbom za zvok. Surovi videoposnetki z enim objektivom na sled ali na datoteko so zloženi drug ob drugem v enem predvajalniku, kjer telefoni poganjajo dva dekoderja; rezervni koraki telefonov so enaki, s kopijo LRV kamere, dodano pred nesestavljenim videoposnetkom.
+- **Slika v živo Tapo** (od gradnje desktop build 3) se na računalniku predvaja kot na Androidu, medtem ko je iPhoni in iPadi še nimajo.
 
 <a id="not-there-yet"></a>
 ### Še ni na voljo
 
-- **Videoposnetki 360°, 3D, VR180 in surovi videoposnetki 360°**: zaenkrat so prikazani ploski, kot jih hrani datoteka (celotna razgrnjena krogla, obe očesi drugo ob drugem ali okrogle slike objektivov), ali kot nadomestna slika, gumb 360° pa ostane samo pri fotografijah. Njihovi predvajalniki pridejo z naslednjimi namiznimi gradnjami.
-- **Spatial 2.5D**, pozneje s spletno kamero; **slika v živo Tapo**; **zemljevid** in pogled Kraji; **prijava z OAuth** (namesto tega se prijavite z e-poštnim naslovom in geslom); **Google Cast**; **obvestila**.
+- **libmpv iz lastne gradnje forka**: ZIP-i vsebujejo libmpv iz leta 2024 iz media-kit, dokler lastna gradnja forka ni vklopljena, `BUILD-INFO.txt` v ZIP-u pa pove, katerega vsebuje. S tistim iz leta 2024 se oba objektiva surovega videoposnetka z enim objektivom na sled ali na datoteko nikoli ne predvajata hkrati (manjka mu filter, ki ju zloži), zato ti videoposnetki prikažejo en objektiv, polovica krogle črna; grafični čip pa vsako sličico kopira nazaj iz svojega dekoderja, kar upočasni predvajalnik 360° na vgrajenem čipu. libmpv iz lastnega workflowa forka, različica iz leta 2026, naj bi ga zamenjal pred prvo javno izdajo; gradnja libmpv iz leta 2026, preizkušena na preizkusnem prenosniku, zmore oboje.
+- **Surovi videoposnetki z dvema objektivoma na prenosniku**: tudi z libmpv iz leta 2026 je preizkusni prenosnik par X3 (dve datoteki H.264 2880x2880) zložil pri 30 sličicah na sekundo samo na svojem čipu NVIDIA; na njegovem čipu Intel in pri datoteki X4 (dve sledi HEVC 3840x3840) na obeh čipih videoposnetek predvaja en objektiv, polovica krogle črna, kot na telefonu, ki ne zmore dveh dekoderjev.
+- **3D samo na zaslonu**: videoposnetek 3D prikaže levo oko, kot na telefonih; na računalniku ni žiroskopa niti pogleda očal. Za ogled v pravem 3D delite računalnik z Meta Quest.
+- **Spatial 2.5D**, pozneje s spletno kamero; **zemljevid** in pogled Kraji; **prijava z OAuth** (namesto tega se prijavite z e-poštnim naslovom in geslom); **Google Cast**; **obvestila**.
 - **Namestitveni program, podpisana gradnja in samodejne posodobitve**: ta gradnja je mapa z `immuch360.exe`.
 - **Linux in macOS**: njuna projekta sta v izvorni kodi, vendar še nista bila zgrajena ali preizkušena v teh sistemih, njun predvajalnik videa pa v njiju še ni; prideta za Windows.
 - **Prevodi**: nova besedila različice za računalnik so zaenkrat v angleščini.
@@ -1030,10 +1062,11 @@ Za preverjanje ZIP-a zaženite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-
 ### Znane težave
 
 - **Prvi zagon nove gradnje je počasen**: od 10 sekund do približno minute, preden se okno prikaže, najverjetneje medtem ko Microsoft Defender pregleduje nove datoteke, ki še niso podpisane. Počakajte na okno, namesto da aplikacijo zaženete znova; naslednji zagoni trajajo sekundo ali dve.
-- **Videoposnetki 8K HEVC potrebujejo namenski grafični čip**: na preizkusnem prenosniku je vgrajeni čip Intel UHD prikazal približno polovico sličic videoposnetka 8K HEVC, namenski čip NVIDIA pa je predvajal 8K HEVC in 5.7K H.264 brez ene same izpuščene sličice. Windows aplikacijo zažene na vgrajenem čipu, razen če mu naročite drugače: v nastavitvah Windows, Sistem, Zaslon, Grafika, dodajte `immuch360.exe` in izberite „Visoka zmogljivost“. Na vgrajenem čipu videoposnetek 5.7K H.264, ki ga njegov dekoder zavrne, dekodira procesor brez izgubljene sličice.
-- **Videoposnetki se izrisujejo z višino največ 1440 vrstic**, nato se prilagodijo oknu: na zaslonu 4K v celozaslonskem načinu je videoposnetek 4K ali 8K nekoliko manj oster kot v namenskem predvajalniku videa. Tako videoposnetek 8K ostane v mejah grafične zmogljivosti prenosnika.
+- **Videoposnetki 8K HEVC potrebujejo namenski grafični čip, videoposnetki 360° pa na njem tečejo bolje**: na preizkusnem prenosniku je vgrajeni čip Intel UHD prikazal približno polovico sličic videoposnetka 8K HEVC, namenski čip NVIDIA pa je predvajal 8K HEVC in 5.7K H.264 brez ene same izpuščene sličice; predvajalnik 360° je tekoč na čipu NVIDIA in počasnejši na čipu Intel, glejte [Videoposnetki 360° in grafični čip](#360-videos-and-the-graphics-chip). Windows aplikacijo zažene na vgrajenem čipu, razen če mu naročite drugače: v nastavitvah Windows, Sistem, Zaslon, Grafika, dodajte `immuch360.exe` in izberite „Visoka zmogljivost“, nato aplikacijo znova zaženite. Na vgrajenem čipu ploski videoposnetek 5.7K H.264, ki ga njegov dekoder zavrne, dekodira procesor brez izgubljene sličice.
+- **Ploski videoposnetki se izrisujejo z višino največ 1440 vrstic**, nato se prilagodijo oknu: na zaslonu 4K v celozaslonskem načinu je videoposnetek 4K ali 8K nekoliko manj oster kot v namenskem predvajalniku videa. Tako videoposnetek 8K ostane v mejah grafične zmogljivosti prenosnika. Predvajalnik 360° namesto tega dela s celotno sličico ali z manjšo velikostjo, ki jo je izbrala njegova meritev.
 - **Medtem ko se videoposnetek iz vaših map predvaja v aplikaciji ali medtem ko očala berejo datoteko z deljenega računalnika** (videoposnetek, ki ga predvajajo, fotografijo, ki jo prenašajo), Windows te datoteke ne more preimenovati, premakniti ali izbrisati in sporoči, da je odprta v Immuch360 Desktop: najprej zaprite videoposnetek ali ustavite predvajanje v očalih. Varnostno kopiranje vaših datotek ne zaklene na ta način: datoteko lahko preimenujete, premaknete ali izbrišete med nalaganjem.
-- **Nedodelanosti**: 656 od 663 namiznih preizkusov uspe v Windows (7 jih je namenoma preskočenih), 200 predvajalnikov, odprtih enega za drugim, ne pusti nobenega uhajanja, na računalniku z Windows 11 pa se aplikacija zažene, odpre shranjeno sejo na strežniku Immich, sinhronizira, predvaja videoposnetek in se pravilno zapre. Ročni preizkus vsake funkcije na pravem računalniku še poteka.
+- **Nedodelanosti**: gradnja desktop build 3 v Windows uspe pri 855 od svojih 863 namiznih preizkusov (8 jih je namenoma preskočenih) in pri celotnem naboru preizkusov aplikacije, 200 predvajalnikov, odprtih enega za drugim, ne pusti nobenega uhajanja, ZIP njene izdaje pa se zažene, predvaja preizkusni posnetek in se pravilno zapre. Ročni preizkus vsake funkcije na pravem računalniku še poteka.
+- **S čim sta bila preverjena predvajalnik 360° in slika v živo**: predvajalnik 360° je tekel s sintetičnimi posnetki 360° 4K, 5.7K in 8K na obeh grafičnih čipih prenosnika (odprt, predvajan, vrten med predvajanjem in med premorom, zaprt) brez enega samega sesutja in brez ponastavitve grafičnega gonilnika. Surovi videoposnetki z dvema objektivoma so bili predvajani iz sintetičnih posnetkov in iz pravih datotek X3 in X4. Slika v živo Tapo je bila preverjena s preizkusnim strežnikom RTSP, ki se prijavlja tako kot kamere (Digest), namenoma prekinjenim in zavrnjenim, brez gesla v kateri koli vrstici dnevnika, vendar še ne s pravo kamero. Ročni preizkus, s pravimi datotekami 360° in 3D, obema zaslonoma prenosnika, spanjem in nadaljevanjem ter pravo kamero, šele prihaja.
 
 Če gre kaj narobe, prosim odprite [issue](https://github.com/freeKC/Immuch360/issues) z dnevnikom, shranjenim na strani Dnevniki, glejte [Dnevniki](#logs). Preden dnevnik delite, ga preverite: lahko vsebuje naslov vašega strežnika.
 
@@ -1052,7 +1085,7 @@ Potrebujete Windows 10 ali 11 na x64, Flutter 3.47.2 za Windows, Visual Studio 2
    mise run codegen
    ```
 
-2. V Windows, v isti mapi `mobile`, zgradite aplikacijo. Prva gradnja prenese knjižnice predvajalnika videa (libmpv in ANGLE) z GitHuba in vsak arhiv preveri po njegovem SHA-256:
+2. V Windows, v isti mapi `mobile`, zgradite aplikacijo. Prva gradnja prenese knjižnice predvajalnika videa (libmpv in ANGLE) z GitHuba in vsak arhiv preveri po njegovem SHA-256; prevede tudi majhen vtičnik Direct3D 11, ki bere dekoderje grafičnega čipa, `immuch_desktop_video`, z isto delovno obremenitvijo C++:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Potrebujete Windows 10 ali 11 na x64, Flutter 3.47.2 za Windows, Visual Studio 2
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-CI za Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) teče na veji `desktop`, ki sledi `immuch360`: preverjanja za telefone (v gradnjah za telefone se nič ne spremeni) in celoten nabor preizkusov v Linuxu, namizni preizkusi v Windows ter isti ZIP; njegova opravila za Linux in macOS (`flutter build linux` in `flutter build macos`, z istim `-t lib/main_desktop.dart`) v teh sistemih še niso tekla.
+CI za Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) teče na veji `desktop`, ki sledi `immuch360`: preverjanja za telefone (v gradnjah za telefone se nič ne spremeni) in celoten nabor preizkusov v Linuxu, namizni preizkusi v Windows ter isti ZIP, nato na tej gradnji preizkusi, ki potrebujejo njen libmpv in ANGLE (prijava slike v živo Tapo, česa videodatoteka ne sme odpreti, senčilniki 360°); njegovo opravilo za Linux zgradi aplikacijo v Ubuntu, opravilo za macOS pa jo prevede z Xcode 26.3 in SDK macOS 26 (obe z istim `-t lib/main_desktop.dart`), samo kot preverjanji prevajanja: nobeno od njiju v teh sistemih še ni bilo zagnano. Drugi workflow (`.github/workflows/immuch360-libmpv.yml`) znova zgradi libmpv za Windows x64 in arm64 iz zaklenjene izvorne kode in objavi arhive z njihovim SHA-256; ZIP-i še vedno vsebujejo arhiv media-kit, dokler ta gradnja ni vklopljena, zato omejitve libmpv iz leta 2024 v razdelku [Še ni na voljo](#not-there-yet) veljajo tudi za vašo lastno gradnjo.
 
 <a id="where-to-get-it"></a>
 ## Kje jo dobite
@@ -1088,8 +1121,8 @@ Aplikacija je na Google Play za telefone in tablice; različica za App Store ča
   - Danes: univerzalni `Immuch360-v<version>-release.apk` s strani [Releases](https://github.com/freeKC/Immuch360/releases), nameščen s sideloadom prek adb, glejte [Namestitev na televizor](#install-it-on-the-tv). To je ista aplikacija kot na telefonih.
   - Kmalu: Google Play na televizorjih, katerega vnos je v Googlovem pregledu od 9. oktobra 2026.
 - **Windows 10 in 11, 64-bitni (predogledna različica)**
-  - Danes: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` iz [namizne predizdaje](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), razširjen in zagnan, kot pravi [Prenos in namestitev v Windows](#download-and-install-on-windows). Zaenkrat fotografije in ploski videoposnetki: videoposnetki 360°, 3D in VR180 pridejo z naslednjimi namiznimi gradnjami.
-  - Kmalu: videoposnetki 360°, 3D, VR180 in surovi videoposnetki 360°; namestitveni program, podpisana gradnja in posodobitve pozneje.
+  - Danes: Immuch360 Desktop, gradnja desktop build 3, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` iz [namizne predizdaje](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), razširjen in zagnan, kot pravi [Prenos in namestitev v Windows](#download-and-install-on-windows). Fotografije, ploski videoposnetki, videoposnetki 360°, 3D, VR180 in surovi videoposnetki 360° (tekoče na namenskem grafičnem čipu, z omejitvami na vgrajenem) in slika v živo Tapo.
+  - Kmalu: Spatial 2.5D s spletno kamero, nato Linux in macOS; namestitveni program, podpisana gradnja in posodobitve pozneje.
 
 Povezavi na App Store in Meta Horizon Store bosta dodani tukaj takoj, ko bosta vnosa objavljena. Prijavite se z običajnim naslovom URL strežnika Immich in računom ali se na strani za prijavo dotaknite „Uporabi brez strežnika“, da začnete s fotografijami in videoposnetki same naprave. APK z GitHuba se ne posodablja sam: spremljajte stran Releases, ko pa aplikacijo namestite iz trgovine, posodobitve prejemajte iz te trgovine.
 
@@ -1126,7 +1159,7 @@ V tem repozitoriju ni nobene skrivnosti: podpisni ključ za Android je shranjen 
 
 - **`main`**: Immich `main` na commitu, na katerem temelji `immuch360` (29. septembra 2026 za trenutne gradnje), nikoli spremenjen; premakne se naprej, ko je fork prenesen (rebase) na novejši Immich.
 - **`immuch360`**: spremembe tega forka nad Immichem, od 9. oktobra 2026 vključno z Immuch360 Desktop. Vsaka izdaja navaja, na kateri različici Immicha temelji.
-- **`desktop`**: tu je nastajal Immuch360 Desktop, različica za računalnik, nad `immuch360`, dokler ni bil 9. oktobra 2026 združen vanjo, da telefoni, očala, televizorji in računalniki izhajajo iz iste izvorne kode. Zdaj sledi `immuch360` in nosi oznake namiznih predizdaj ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) iz commita 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) iz 5b723bd25). Različica za računalnik ne spremeni ničesar pod `mobile/android` in `mobile/ios`.
+- **`desktop`**: tu je nastajal Immuch360 Desktop, različica za računalnik, nad `immuch360`, dokler ni bil 9. oktobra 2026 združen vanjo, da telefoni, očala, televizorji in računalniki izhajajo iz iste izvorne kode. Zdaj sledi `immuch360` in nosi oznake namiznih predizdaj ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) iz commita 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) iz 5b723bd25, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) iz združitve predvajalnika videoposnetkov 360° 10. oktobra 2026). Novo namizno delo najprej pristane tu in se pridruži `immuch360` z namizno gradnjo, ki ga prinese. Različica za računalnik ne spremeni ničesar pod `mobile/android` in `mobile/ios`.
 
 <a id="logs"></a>
 ## Dnevniki
@@ -1145,7 +1178,7 @@ Od gradnje 19 odjemalec DLNA, skupna raba telefona in zaznavanje prostorske pred
 
 Na računalniku (Immuch360 Desktop) ima stran Dnevniki tudi „Shrani dnevnike v datoteko“: dnevnik ali ZIP z dnevnikom in poročili o zadnjih sesutjih, če obstajajo (predlagano ime se potem konča s „with-crash-reports“). Poročilo o sesutju je majhen minidump: niti, kje so se ustavile, in samo to, kar je potrebno za sledenje njihovim klicem, z imeni datotek programa, a brez njihovih map; ne pomnilnik aplikacije.
 
-Od gradnje desktop build 2 vanj piše tudi predvajalnik videa na računalniku, pod `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` in `VideoThumbnailGrabber`, vključno z lastnimi opozorili mpv, z odstranjenimi žetoni in gesli. Preden dnevnik delite, ga preverite: lahko vsebuje naslov vašega strežnika.
+Od gradnje desktop build 2 vanj piše tudi predvajalnik videa na računalniku, pod `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` in `VideoThumbnailGrabber`, vključno z lastnimi opozorili mpv, z odstranjenimi žetoni in gesli. Od gradnje desktop build 3 piše tudi predvajalnik 360° pod `SphericalPlayer`, `SphereRenderer` in `PluginRenderer` (izbrana velikost, izmerjene sličice na sekundo, grafični čip), surove videoposnetke z dvema objektivoma pod `RawTwoStreams`, dekoderje grafičnega čipa pod `DesktopGpuDecoders`, `DesktopVideoDecoderApi` in `DecoderMeasure` ter sliko v živo Tapo pod `DesktopCameraLive`, katere vrstice nikoli ne vsebujejo računa kamere niti njegovega gesla. Preden dnevnik delite, ga preverite: lahko vsebuje naslov vašega strežnika.
 
 <a id="privacy"></a>
 ## Zasebnost
@@ -1159,7 +1192,7 @@ Od gradnje desktop build 2 vanj piše tudi predvajalnik videa na računalniku, p
 - **Skupna raba telefona**: samo lokalno omrežje, z uporabniškim imenom in geslom, prek navadnega HTTP (glejte [Deli ta telefon v omrežju](#share-this-phone-on-the-network)).
 - **Kamera**: uporablja jo samo predvajalnik Spatial 2.5D, v napravi; slike se nikoli ne shranijo in nikamor ne pošljejo.
 - **Na računalniku** (Immuch360 Desktop, predogledna različica za Windows): aplikacija bere samo mape, ki jih izberete, hrani kazalo, sličice in predpomnilnik na računalniku ter shranjuje gesla in žetone z zaščito podatkov Windows, samo za vaš račun Windows. Deljenje računalnika sledi pravilom deljenja telefona in se ne zažene v omrežju, ki ga Windows označi kot javno, ali katerega vrste ne more ugotoviti, razen če tako izberete.
-- **Predvajalnik videa na računalniku** (od gradnje desktop build 2): videoposnetki z vašega strežnika pridejo do njega prek aplikacije, zato predvajalnik nikoli nima vašega žetona seje, kar prebere vnaprej, pa ostane v pomnilniku, ne na disku. Odpre samo datoteko, ki jo dobi: datoteka iz mape ali skupne rabe, ki je v resnici seznam predvajanja ali opis toka, ga ne pripravi do povezave nikamor drugam.
+- **Predvajalnik videa na računalniku** (od gradnje desktop build 2): videoposnetki z vašega strežnika pridejo do njega prek aplikacije, zato predvajalnik nikoli nima vašega žetona seje, kar prebere vnaprej, pa ostane v pomnilniku, ne na disku. Odpre samo datoteko, ki jo dobi: datoteka iz mape ali skupne rabe, ki je v resnici seznam predvajanja ali opis toka, ga ne pripravi do povezave nikamor drugam. Od gradnje desktop build 3 se naslov vsakega videoposnetka preda predvajalniku samo v pomnilniku, nikoli prek začasne datoteke (povezava, ki jo aplikacija ustvari za videoposnetek s strežnika ali iz skupne rabe, vsebuje ključ te seje, ki je v gradnji desktop build 2 ob vsakem odpiranju nekaj sekund ležal na disku), ta ključ pa se nikoli ne pojavi v dnevniku; slika v živo kamere Tapo preda predvajalniku račun kamere na enak način, nikoli v datoteki ali vrstici dnevnika, in s kamero komunicira samo v lokalnem omrežju; meritve predvajalnika 360° in dekoderjev (grafični čip, oblika videoposnetka, sličice na sekundo, nikoli ime datoteke) ostanejo v mapi aplikacije na računalniku.
 
 Celoten pravilnik je v [PRIVACY.md](../PRIVACY.md).
 
@@ -1177,7 +1210,7 @@ Android, Android TV in Google TV so blagovne znamke družbe Google LLC; Apple, i
 
 Kar še ni narejeno, najprej najverjetnejše. Nič od tega ni obljuba, povratne informacije v [sledilniku težav](https://github.com/freeKC/Immuch360/issues) pa pomagajo odločiti, kaj pride najprej.
 
-- **Immuch360 Desktop, najprej Windows**: gradnja desktop build 2 je izšla, s ploskimi videoposnetki, namizna izvorna koda pa je od 9. oktobra 2026 v glavni veji forka, `immuch360` (glejte [Na računalniku z Windows](#on-a-windows-computer-immuch360-desktop-preview)). Naslednji so videoposnetki 360°, 3D, VR180 in surovi videoposnetki 360° v Windows, z obema objektivoma surovih datotek in sliko v živo Tapo; nato preizkus vsake funkcije na računalniku z Windows in njeni popravki; nato Spatial 2.5D s spletno kamero; nato Linux in macOS, paketi, podpisovanje in posodobitve.
+- **Immuch360 Desktop, najprej Windows**: gradnja desktop build 3 je izšla, s predvajalnikom videoposnetkov 360° (videoposnetki 360°, 3D, VR180 in surovi videoposnetki 360°, oba objektiva surovih datotek, velikost pogleda, izmerjena na vsakem računalniku) in sliko v živo Tapo, namizna izvorna koda pa je od 9. oktobra 2026 v glavni veji forka, `immuch360` (glejte [Na računalniku z Windows](#on-a-windows-computer-immuch360-desktop-preview)). Naslednji so libmpv iz lastnega workflowa forka namesto tistega iz leta 2024 ter ročni preizkus vsake funkcije na računalniku z Windows s pravimi datotekami, obema zaslonoma in pravo kamero, z njegovimi popravki; nato Spatial 2.5D s spletno kamero; nato Linux in macOS; nato namestitveni program, podpisana gradnja in samodejne posodobitve.
 - **Google Play**: gradnja 20 je objavljena od 7. oktobra 2026, namesto gradnje 18; vnos za televizorje je v Googlovem pregledu od 9. oktobra 2026. Gradnja 21 na telefonih in tablicah ne spremeni ničesar.
 - **App Store**: različica 3.3.0 čaka na Applov pregled; vsebuje funkcije gradnje 11, zato nalaganje v Immich in preverjanje video dekoderja (gradnja 15) ter neobdelane datoteke Insta360 (gradnja 16) pridejo z naslednjo posodobitvijo v App Store. Povezava bo dodana tukaj, ko bo objavljena.
 - **Meta Horizon Store**: Meta je vnos odobrila 7. oktobra 2026 z gradnjo 14. Gradnja 21 je oddana kot njegova prva posodobitev: prinaša vse od gradnje 14 (pošiljanje iz skupne rabe v Immich, vir videoposnetka, izbran glede na to, kar očala dekodirajo, neobdelane datoteke Insta360, GoPro in DJI, DLNA, skupno rabo telefona, prostorske fotografije Apple, knjižnice Plex Media Server, kamere Tapo), trgovina pa jo navaja za Quest 2, Quest Pro, Quest 3 in 3S. Povezava na trgovino bo dodana tukaj, ko bo stran javna; kopijo, nameščeno s sideloadom, je treba najprej odstraniti (glejte [Namestitev](#install)).

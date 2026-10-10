@@ -15,13 +15,13 @@ Namijenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 3
 
 <div align="center">
 
-| Platforma | Gdje je nabaviti | Stanje 9. listopada 2026. |
+| Platforma | Gdje je nabaviti | Stanje 10. listopada 2026. |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 na Google Playu od 7. listopada 2026., build 21 na GitHubu |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | verzija 3.3.0 čeka Appleov pregled; dotad [izgradite je sami](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | stranica odobrena, build 21 u Metinom pregledu |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 na GitHubu; stranica na Google Playu za televizore u Googleovu je pregledu od 9. listopada 2026. |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pretpregleda](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | desktop build 2 na Windowsu: fotografije i ravni videozapisi, 360° videozapisi zatim; macOS i Linux kasnije, iz istih izvora |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pretpregleda](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | desktop build 3 na Windowsu: fotografije, ravni i 360° videozapisi; macOS i Linux kasnije |
 
 *Stanja se ažuriraju sa svakim izdanjem; detalji su u [Gdje je nabaviti](#where-to-get-it).*
 
@@ -30,7 +30,7 @@ Namijenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 3
 - 🌐 **Izvorni 360°**<br>Fotografije i videozapisi kao sfera u kojoj se osvrćete, sa žiroskopom, uključujući neobrađene datoteke kamere (Insta360 od builda 16, GoPro i DJI od builda 18). I besplatni video reproduktor: ravni, 360°, 3D, VR180
 - 👓 **Izvorni 3D**<br>Stereoskopski 360° i VR180, gore i dolje ili jedno pored drugog, te Appleove prostorne fotografije (od builda 19): pravi 3D u naočalama, jedno oko na telefonu
 - 🎥 **Izvorni 2.5D**<br>Dubina na ravnom zaslonu iz stereoskopskog videozapisa, prikaz prati vašu glavu (eksperimentalno, telefoni i tableti)
-- 📱 **Android, iOS, Quest, TV**<br>Jedna aplikacija na telefonima, tabletima i naočalama Quest 2, Pro, 3 i 3S, pravi 3D u naočalama, od builda 20 i na Android TV-u s daljinskim upravljačem, te pretpregled za Windows s fotografijama i ravnim videozapisima
+- 📱 **Android, iOS, Quest, TV**<br>Jedna aplikacija na telefonima, tabletima i naočalama Quest 2, Pro, 3 i 3S, pravi 3D u naočalama, od builda 20 i na Android TV-u s daljinskim upravljačem, te pretpregled za Windows s fotografijama, ravnim i 360° videozapisima
 - 🔌 **S poslužiteljem ili bez njega**<br>Vaš Immich poslužitelj ili vlastita galerija telefona, bez potrebe za računom
 - 🗄️ **Mrežni dijeljeni resursi**<br>Samba (SMB), WebDAV i, od builda 19, DLNA medijski poslužitelji pronađeni na mreži i čitani uživo, ništa se ne preuzima, a na Immich se šalje kada vi odlučite. Od builda 19 telefon može i dijeliti vlastitu galeriju s naočalama
 - 📺 **Na televizoru**<br>Od builda 20 isti APK na Android TV-u i Google TV-u: 360° fotografije i videozapisi, vaš poslužitelj i vaši dijeljeni resursi, s daljinskim upravljačem
@@ -84,7 +84,7 @@ Namijenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 3
 - **„Želim gledati svoje 360° fotografije i videozapise, i videozapise sa svog NAS-a ili Plex poslužitelja, na televizoru, s daljinskim upravljačem.“** Pogledajte [Gledanje na televizoru](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Ne mogu pronaći svoje 360° snimke među svim ostalima.“** Pogledajte [Popis 360°](#find-your-360-shots-the-360-list).
 - **„Moj 360° videozapis zastajkuje ili reproducira mutnu kopiju.“** Pogledajte [Detalji videozapisa i dekoderi](#video-details-decoders-and-why-a-video-stutters).
-- **„Želim svoje 360° fotografije i svoju Immich biblioteku na svom Windows računalu, s fotografijama i videozapisima iz njegovih mapa, svojim NAS-om i svojim Plex poslužiteljem, a računalo dijeljeno sa svojim naočalama.“** Pogledajte [Na Windows računalu](#on-a-windows-computer-immuch360-desktop-preview) (pretpregled: zasad fotografije i ravni videozapisi, 360° videozapisi kasnije).
+- **„Želim svoje 360° fotografije i svoju Immich biblioteku na svom Windows računalu, s fotografijama i videozapisima iz njegovih mapa, svojim NAS-om i svojim Plex poslužiteljem, a računalo dijeljeno sa svojim naočalama.“** Pogledajte [Na Windows računalu](#on-a-windows-computer-immuch360-desktop-preview) (pretpregled: fotografije i ravni videozapisi, a od desktop builda 3 i 360°, 3D, VR180 i neobrađeni 360° videozapisi te prikaz uživo s kamera Tapo).
 - **„Zadržavam li sve što radi aplikacija Immich?“** Da, uz dvije male promjene, pogledajte [Sve ostalo je Immich](#everything-else-is-immich).
 
 Kada je neka značajka nova, tekst navodi od kojeg je builda dostupna. GitHub izdanje uvijek ima najnoviji build, trgovine dolaze kasnije: pogledajte [Gdje je nabaviti](#where-to-get-it).
@@ -127,6 +127,7 @@ Već spojene 360° datoteke rade posvuda: izvozi iz aplikacije ili Studija Insta
 
 Reproduktor reproducira datoteku spremljenu na telefonu ili datoteku mrežnog dijeljenog resursa, ako postoji. Inače je strujanjem dohvaća s vašeg poslužitelja: transkodirani stream prema zadanim postavkama, ili original ako ga zatražite u Postavke, Preglednik stavki, Izvor videozapisa (od builda 15; prije toga prekidač „Forsiraj originalni videozapis“), pogledajte [Detalji videozapisa i dekoderi](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### 360° datoteka koja se prikazuje ravno: Prikaži kao 360°
 
 Neke 360° datoteke nemaju oznaku projekcije, pa ih poslužitelj ne označava kao 360° i prikazuju se ravno.
@@ -356,6 +357,7 @@ Od builda 20 Immuch360 dodaje kameru Tapo pokraj mrežnih dijeljenih resursa. Pr
 8. Dodirnite „Testiraj kameru“. Prikazuje „Snimke: (model), firmver (verzija)“ sa stanjem memorijske kartice i „Prikaz uživo: (video), zvuk (audio)“, ili što nije uspjelo za svako.
 9. Dodirnite Spremi. Kamera se navodi pod „Kamere“, nakon dijeljenih resursa, sa svojim modelom kada je poznat i `tapo://` sa svojom adresom.
 
+<a id="watch-it-live"></a>
 ### Gledanje uživo
 
 1. Dodirnite kameru. Njezin prikaz uživo nalazi se na vrhu njezine stranice: „Povezivanje s kamerom“, zatim slika s oznakom Uživo.
@@ -755,9 +757,9 @@ Trenutačni build, build 21 (verzija 3.3.0-rc.0, broj builda 3030019), temelji s
 | Slanje datoteka s dijeljenog resursa na Immich; ručno poslane datoteke s uređaja broje se kao sigurnosno kopirane | ❌ samo datoteke s uređaja | ✅ od builda 15 |
 | Dijeli ovaj telefon na mreži, za naočale | ❌ | ✅ od builda 19, Android i iOS |
 | Knjižnice Plex Media Servera reproducirane iz originalnih datoteka, kod kuće i izvan nje, bez plex.tv | ❌ | ✅ od builda 20, svaki preglednik, na telefonima, tabletima, Questu i televizorima |
-| Kamere Tapo: prikaz uživo i snimke s memorijske kartice poslane na Immich kada vi odlučite | ❌ | ✅ od builda 20: snimke posvuda, uživo na Androidu, Android TV-u i Questu |
+| Kamere Tapo: prikaz uživo i snimke s memorijske kartice poslane na Immich kada vi odlučite | ❌ | ✅ od builda 20: snimke posvuda, uživo na Androidu, Android TV-u, Questu i, od desktop builda 3, Windowsu |
 | Android TV i Google TV, upravljani daljinskim upravljačem, u istom APK-u | ❌ nije TV aplikacija | ✅ od builda 20 |
-| Ista aplikacija na Windows računalu | ❌ samo telefoni i tableti | ✅ pretpregled, fotografije i ravni videozapisi |
+| Ista aplikacija na Windows računalu | ❌ samo telefoni i tableti | ✅ pretpregled: fotografije, ravni i 360° videozapisi (desktop build 3) |
 | Neobrađene Insta360 .insp fotografije i .insv videozapisi s jednim zapisom | ❌ ravno | ✅ od builda 16 |
 | Neobrađeni videozapisi s jednim objektivom po zapisu ili po datoteci (Insta360 X4, X4 Air, X5, X6, X3 parovi, GoPro .360, DJI .osv) | ❌ ravno ili pogrešno | ✅ od builda 18 |
 | Dvostruki fisheye .dng | ❌ ravno | ❌ još ne |
@@ -787,7 +789,7 @@ Trenutačni build, build 21 (verzija 3.3.0-rc.0, broj builda 3030019), temelji s
 - **Plex Media Server**: provjereno s računala na stvarnom Plex Media Serveru 1.42.1 (uparivanje, mape, rasponi bajtova, minijature, adresa izvan doma); još nije provjereno na uređaju.
 - **Kamere Tapo**: provjereno na simuliranoj kameri; još nije provjereno sa stvarnom kamerom.
 - **Android TV i Google TV**: provjereno automatiziranim testovima; još nije provjereno na televizoru.
-- **Ista aplikacija na Windows računalu**: 656 od 663 automatizirana desktop testa prolazi na Windowsu (7 namjerno preskočeno), a na računalu sa sustavom Windows 11 aplikacija se pokreće, otvara spremljenu sesiju na Immich poslužitelju, sinkronizira, reproducira videozapis i uredno se zatvara; ručno testiranje svake funkcije je u tijeku.
+- **Ista aplikacija na Windows računalu**: desktop build 3 prolazi 855 od svojih 863 automatizirana desktop testa na Windowsu (8 namjerno preskočeno) i cijeli skup testova aplikacije; na računalu sa sustavom Windows 11 aplikacija se pokreće, otvara spremljenu sesiju na Immich poslužitelju, sinkronizira, reproducira videozapis i uredno se zatvara, a njezin 360° reproduktor pokrenut je sa sintetičkim 4K, 5,7K i 8K isječcima na oba grafička čipa prijenosnog računala bez ijednog rušenja. Ručno testiranje svake funkcije, sa stvarnim 360° datotekama i stvarnom kamerom Tapo, je u tijeku.
 - **Neobrađene Insta360 .insp fotografije i .insv videozapisi s jednim zapisom**: fotografije provjerene u usporedbi s izvozima iz Insta360 Studija za X3 datoteke, videozapisi na Android emulatoru s X3 datotekom niske rezolucije; još nije pokretano na iPhoneu.
 - **Neobrađeni videozapisi s jednim objektivom po zapisu ili po datoteci**: parseri i spajanje provjereni na stvarnim datotekama X4, X3 para, GoPro MAX i Osmo 360; reprodukcija je test na uređajima za buildove 18 i 19.
 - **Dvostruki fisheye .dng**: planirano.
@@ -842,17 +844,19 @@ Immuch360 je galerija, a ujedno i besplatni medijski reproduktor: reproducira on
   - iPhone, iPad: izvorni SceneKit reproduktor na sferi, žiroskop, odabir audio zapisa, pokazatelj učitavanja; reprodukcija i pauza, još bez vremenske trake.
   - Meta Quest: imerzivno, pravi 3D za stereoskopske datoteke, vremenska traka s preskakanjem od 10 sekundi, prethodni i sljedeći medij.
   - Android TV, Google TV: Media3 reproduktor s telefona, okreće se strelicama.
-  - Windows: još ne, zasad prikazani ravno.
+  - Windows (od desktop builda 3): vlastiti 360° reproduktor aplikacije (libmpv), okreće se mišem ili strelicama, zumira kotačićem, s premotavanjem, odabirom audio zapisa i pokazateljem učitavanja; glatko na namjenskom grafičkom čipu, najviše 2880 piksela u širinu i sporije za 5,7K H.264 na integriranom.
 - **3D 360° (gore i dolje, jedno pored drugog)**
   - Android telefoni: lijevo oko, gumb za raspored.
   - iPhone, iPad: isto.
   - Meta Quest: svako oko dobiva svoju polovicu kadra.
   - Android TV, Google TV: lijevo oko, gumb za raspored.
+  - Windows: fotografije kao na telefonima; videozapisi od desktop builda 3, lijevo oko, gumb za raspored, glatko na namjenskom grafičkom čipu, s ograničenjima na integriranom.
 - **VR180 (polusfera) fotografije i videozapisi**
   - Android telefoni: polusfera, gumb 360°/180°.
   - iPhone, iPad: isto.
   - Meta Quest: imerzivna polusfera.
   - Android TV, Google TV: polusfera, gumb 360°/180°.
+  - Windows: fotografije kao na telefonima; videozapisi od desktop builda 3, polusfera, gumb 360°/180°, glatko na namjenskom grafičkom čipu, s ograničenjima na integriranom.
 - **Spatial 2.5D (dubina na ravnom zaslonu iz stereoskopskog videozapisa)**
   - Android telefoni: izvorni reproduktor, praćenje glave prednjom kamerom.
   - iPhone, iPad: isto.
@@ -878,16 +882,19 @@ Immuch360 je galerija, a ujedno i besplatni medijski reproduktor: reproducira on
   - iPhone, iPad: spojeni SceneKit shaderom.
   - Meta Quest: imerzivno, spojeni istim GPU efektom.
   - Android TV, Google TV: kao na telefonima.
+  - Windows (od desktop builda 3): spojeni na grafičkom čipu u 360° reproduktoru aplikacije, glatko na namjenskom čipu, s ograničenjima na integriranom.
 - **Neobrađeni videozapisi s jednim objektivom po zapisu ili po datoteci (od builda 18): Insta360 X4, X4 Air, X5, X6 .insv, X3 parovi, GoPro .360, DJI .osv**
   - Android telefoni: dva hardverska dekodera istodobno, jedan po objektivu (od builda 19 softverski na uređaju bez hardverskog dekodera, do 2048x2048 po objektivu), i GL kompozitor koji ih spaja u sferu; jedan objektiv, zatim transkodirani stream, zatim nespojeni videozapis, kada uređaj ne može pokrenuti dva.
   - iPhone, iPad: prilagođeni AVFoundation kompozitor s Metalom.
   - Meta Quest: imerzivno, ista dva dekodera i kompozitor (ploča 3840x1920).
   - Android TV, Google TV: kao na telefonima, kada televizor može pokretati dva dekodera istodobno.
+  - Windows (od desktop builda 3): oba objektiva jedan uz drugi u jednom reproduktoru, zatim spojeni, kada računalo stiže (izmjereno na njegovoj vlastitoj reprodukciji; na testnom prijenosnom računalu par X3 samo na njegovu namjenskom čipu); inače koraci telefona: jedan objektiv, transkodirani stream, LRV kopija kamere niske razlučivosti, nespojeni videozapis.
 - **Prikaz uživo s kamere Tapo (od builda 20)**
   - Android telefoni: Media3 RTSP reproduktor: SD na stranici, HD na cijelom zaslonu, gumb za zvuk.
   - iPhone, iPad: još ne: kartica kaže da stiže kasnije.
   - Meta Quest: u prozoru, u HD-u.
   - Android TV, Google TV: kao na telefonima.
+  - Windows (od desktop builda 3): reproduktor libmpv, SD na stranici, HD na cijelom zaslonu, gumb za zvuk.
 - **Snimke s kamere Tapo (od builda 20)**
   - Android telefoni: preuzete s memorijske kartice u H.264 videozapis sa zvukom, zatim reproducirane s premotavanjem.
   - iPhone, iPad: isto.
@@ -896,14 +903,14 @@ Immuch360 je galerija, a ujedno i besplatni medijski reproduktor: reproducira on
 
 Unosi za Android TV i Google TV, od builda 20, još nisu provjereni na televizoru, pogledajte [Gledanje na televizoru](#watch-on-your-tv-android-tv-and-google-tv); unosi za kamere još nisu provjereni sa stvarnom kamerom.
 
-Na Windowsu pretpregled Immuch360 Desktop prikazuje fotografije, ravne i 360°, uključujući neobrađene Insta360 .insp fotografije, mišem i tipkovnicom, a od desktop builda 2 reproducira ravne videozapise, s poslužitelja, iz mapa računala, s dijeljenih resursa, s Plexa i iz Tapo snimki; 360°, 3D, VR180 i neobrađeni 360° videozapisi zasad se prikazuju ravno ili kao rezervirano mjesto (pogledajte [Još nije tu](#not-there-yet)).
+Na Windowsu pretpregled Immuch360 Desktop prikazuje fotografije, ravne i 360°, uključujući neobrađene Insta360 .insp fotografije, mišem i tipkovnicom. Od desktop builda 2 reproducira ravne videozapise, s poslužitelja, iz mapa računala, s dijeljenih resursa, s Plexa i iz Tapo snimki, a od desktop builda 3 reproducira 360°, 3D, VR180 i neobrađene 360° videozapise iz istih izvora u svojem vlastitom 360° reproduktoru, kao i prikaz uživo s kamera Tapo. 360° reproduktor radi glatko na namjenskom grafičkom čipu i ima ograničenja na integriranom (pogledajte [Na Windows računalu](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Vaš Immich poslužitelj**: original ili transkodirani stream poslužitelja, prema postavci Postavke, Preglednik stavki, Izvor videozapisa (pogledajte [Detalji videozapisa i dekoderi](#video-details-decoders-and-why-a-video-stutters)). Isti račun kao web aplikacija.
 - **Sam telefon ili naočale**: „Koristi bez poslužitelja“ na stranici za prijavu, ili stavka Na ovom uređaju na kartici Biblioteka.
 - **NAS ili računalo**: SMB i WebDAV dijeljeni resursi, a od builda 19 i DLNA medijski poslužitelji, pronađeni na mreži, čitani uživo (SMB videozapis kroz do šest veza), ništa se ne kopira; od builda 15 odabrane datoteke mogu se poslati na vaš Immich račun.
 - **Drugi telefon (od builda 19)**: „Dijeli ovaj telefon na mreži“ na tom telefonu: naočale, ili bilo koji WebDAV klijent na mreži, čitaju njegove albume, mjesece i 360° medije.
 - **Plex Media Server (od builda 20)**: njegove knjižnice fotografija, filmova i TV serija po mapama, originalne datoteke čitane uživo putem HTTPS-a provjerenog vlastitim certifikatom poslužitelja, kod kuće ili preko adrese izvan doma, na svim platformama; pogledajte [Plex Media Server, bez plex.tv](#plex-media-server-without-plextv).
-- **Kamera Tapo (od builda 20)**: prikaz uživo s računom kamere (Android, Android TV, Quest) i snimke s njezine memorijske kartice sa zaporkom TP-Link računa (sve platforme), samo na lokalnoj mreži; pogledajte [Kamere Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Kamera Tapo (od builda 20)**: prikaz uživo s računom kamere (Android, Android TV, Quest i Windows od desktop builda 3) i snimke s njezine memorijske kartice sa zaporkom TP-Link računa (sve platforme), samo na lokalnoj mreži; pogledajte [Kamere Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **Mape Windows računala (desktop pretpregled)**: mape koje odaberete u Immuch360 Desktopu, čitane umjesto galerije telefona; računalo ih može i dijeliti s naočalama, pogledajte [Na Windows računalu](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Vaša Immich biblioteka je na poslužitelju, druge fotografije i videozapisi sto
 
 Na računalu Immich nudi svoju web aplikaciju u pregledniku. **Što Immuch360 Desktop dodaje**: mape računala bez ikakvog poslužitelja ili računa, SMB, WebDAV, DLNA i Plex dijeljene resurse pregledane i reproducirane iz aplikacije, neobrađene Insta360 .insp fotografije otvorene kao sfera, i računalo dijeljeno s naočalama Meta Quest kod kuće.
 
-Ovo je pretpregled: od desktop builda 2 rade fotografije i ravni videozapisi; 360°, 3D i VR180 videozapisi dolaze sa sljedećim desktop buildovima. Od 9. listopada 2026. desktop izvori su u glavnoj grani forka, `immuch360`, pa telefoni, naočale, televizori i računala izlaze iz istih izvora. Aplikacije za telefon, tablet, Quest i TV ne mijenjaju se s njim i zadržavaju ime Immuch360.
+Ovo je pretpregled: fotografije i ravni videozapisi rade od desktop builda 2, a od desktop builda 3 i reproduktor 360° videozapisa (360°, 3D, VR180 i neobrađeni 360° videozapisi) te prikaz uživo s kamera Tapo; koraci u nastavku kojima treba build 3 to navode. Od 9. listopada 2026. desktop izvori su u glavnoj grani forka, `immuch360`, pa telefoni, naočale, televizori i računala izlaze iz istih izvora. Aplikacije za telefon, tablet, Quest i TV ne mijenjaju se s njim i zadržavaju ime Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Preuzimanje i instalacija na Windowsu
 
-Trenutačni build je GitHub predizdanje [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Njegova datoteka je `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (oko 57 MB, 78 datoteka nakon raspakiravanja, uključujući videoreproduktor i njegovu mapu `licenses`), uz `SHA256SUMS.txt` za provjeru. Izgrađen je iz glavne grane, `immuch360`, na commitu 5b723bd25: izvori builda 21 za telefone plus verzija za računalo. Treba mu Windows 10 ili 11, 64-bitni.
+Trenutačni build je GitHub predizdanje [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Njegova datoteka je `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (oko 57 MB, 79 datoteka nakon raspakiravanja, uključujući videoreproduktor i njegovu mapu `licenses`), uz `SHA256SUMS.txt` za provjeru. Izgrađen je iz glavne grane, `immuch360`, nakon što je u nju spojen 360° videoreproduktor računala, na commitu koji navode njegove bilješke o izdanju: izvori builda 21 za telefone plus verzija za računalo. Treba mu Windows 10 ili 11, 64-bitni.
 
-1. Preuzmite ZIP i raspakirajte ga bilo gdje, na primjer u Dokumente.
-2. Pokrenite `immuch360.exe` iz raspakirane mape. Zadržite mapu cijelu: programu trebaju datoteke pokraj njega, uključujući videoreproduktor.
+1. Preuzmite ZIP i raspakirajte ga bilo gdje, na primjer u Dokumente. Da biste zamijenili desktop build 2, izbrišite njegovu mapu ili raspakirajte u novu: vaša prijava, vaše mape i vaše postavke ostaju u vašem Windows profilu, ne u toj mapi.
+2. Pokrenite `immuch360.exe` iz raspakirane mape. Zadržite mapu cijelu: programu trebaju datoteke pokraj njega, među njima `libmpv-2.dll`, videoreproduktor, i `immuch_desktop_video.dll`, koji čita dekodere grafičkog čipa.
 3. Datoteke još nisu potpisane, pa Windows SmartScreen može prikazati „Windows je zaštitio vaše računalo“: odaberite „Više informacija“, zatim „Svejedno pokreni“. Gdje je uključena Pametna kontrola aplikacija, ona blokira nepotpisane programe.
 4. Pričekajte prozor. Prvo pokretanje novog builda traje od 10 sekundi do otprilike minute, najvjerojatnije dok Microsoft Defender skenira nove datoteke: nemojte u međuvremenu ponovno pokretati aplikaciju. Sljedeća pokretanja traju sekundu ili dvije.
 5. Na stranici za prijavu prijavite se na svoj Immich poslužitelj s njegovom adresom, svojom e-poštom i zaporkom, ili kliknite „Koristi bez poslužitelja“.
 
-Za provjeru ZIP-a pokrenite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` u naredbenom retku, u mapi preuzimanja: rezultat je onaj zapisan u `SHA256SUMS.txt`. Još nema instalacijskog programa ni automatskog ažuriranja: pratite stranicu [Releases](https://github.com/freeKC/Immuch360/releases) i raspakirajte sljedeći build na isti način.
+Za provjeru ZIP-a pokrenite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` u naredbenom retku, u mapi preuzimanja: rezultat je onaj zapisan u `SHA256SUMS.txt`. Još nema instalacijskog programa ni automatskog ažuriranja: pratite stranicu [Releases](https://github.com/freeKC/Immuch360/releases) i raspakirajte sljedeći build na isti način.
 
 ### Što pretpregled radi
 
@@ -993,7 +1000,9 @@ Za provjeru ZIP-a pokrenite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-des
 - **Prijenos i sigurnosno kopiranje** iz tih mapa na vaš Immich poslužitelj, dok je aplikacija otvorena.
 - **360° fotografije kao sfera**, mišem i tipkovnicom; neobrađene .insp fotografije Insta360 kamera otvaraju se kao na telefonima.
 - **Ravni videozapisi** (od desktop builda 2): videozapisi iz vaših mapa, s vašeg Immich poslužitelja (izvornik ili transkodirani tok, pogledajte [Pojedinosti videozapisa i dekoderi](#video-details-decoders-and-why-a-video-stutters)), sa SMB, WebDAV i DLNA dijeljenih resursa, s Plex poslužitelja i Tapo snimke reproduciraju se u prozoru, s kontrolama s telefona (reprodukcija, pauza, vremenska traka), pokazateljem učitavanja i izbornikom audio zapisa za videozapis koji ih ima više. Videozapisi iz vaših mapa i s dijeljenih resursa prikazuju kadar iz videozapisa kao sličicu, umjesto ikone filma.
-- **Mrežni dijeljeni resursi**: Samba (SMB), WebDAV i DLNA medijski poslužitelji, te Plex poslužitelji bez plex.tv, pregledani kao na telefonima: njihove se fotografije otvaraju, a videozapisi reproduciraju. Za kamere Tapo, snimke s memorijske kartice: popis, dohvaćanje isječka i njegova reprodukcija.
+- **360°, 3D i VR180 videozapisi** (od desktop builda 3): gumb 360° otvara ih u 360° reproduktoru aplikacije, u prozoru ili na cijelom zaslonu, iz svakog izvora ravnih videozapisa, okreću se mišem i tipkovnicom, s gumbima 3D i 360°/180° kao na telefonima (3D videozapis prikazuje svoje lijevo oko, kao na telefonima), premotavanjem, izbornikom audio zapisa i pokazateljem učitavanja.
+- **Neobrađeni 360° videozapisi** (od desktop builda 3): Insta360 .insv datoteke, s oba objektiva u jednom zapisu, u dva zapisa (X4 i noviji) ili u dvije datoteke (parovi X3), GoPro .360 i DJI .osv datoteke, koje aplikacija spaja na grafičkom čipu tijekom reprodukcije, uz kalibraciju datoteke, kao na telefonima.
+- **Mrežni dijeljeni resursi**: Samba (SMB), WebDAV i DLNA medijski poslužitelji, te Plex poslužitelji bez plex.tv, pregledani kao na telefonima: njihove se fotografije otvaraju, a videozapisi reproduciraju. Za kamere Tapo, snimke s memorijske kartice: popis, dohvaćanje isječka i njegova reprodukcija; a od desktop builda 3 i prikaz uživo.
 - **Dijeli ovo računalo na mreži**: albumi, mjeseci i 360° mediji vaših mapa, samo za čitanje, za naočale Meta Quest ili drugi uređaj kod kuće, kao što telefon dijeli sam sebe.
 - **Datoteke**: preuzimanja s poslužitelja idu u mapu koju odaberete, „Spremi u mapu“ čuva kopiju odabranih fotografija i videozapisa, a stranica Zapisnici ima „Spremi zapisnike u datoteku“.
 
@@ -1005,9 +1014,28 @@ Za provjeru ZIP-a pokrenite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-des
 4. **Od fotografije do fotografije**: u ravnoj fotografiji strelice lijevo i desno, ili strelice koje se pojavljuju na rubovima dok se miš pomiče, idu na prethodnu i sljedeću. Slova upisana u polje opisa ostaju u tekstu.
 5. **Reprodukcija videozapisa**: otvorite ga s vremenske crte, iz mape, s dijeljenog resursa, s Plexa ili iz snimki kamere Tapo; reproducira se u prozoru. Enter, ili tipka za reprodukciju i pauzu na tipkovnici, pauzira i ponovno pokreće. Dok se reproducira, strelice lijevo i desno, ili J i L, skaču 10 sekundi unatrag ili naprijed; kad je pauziran, strelice idu na prethodni i sljedeći. F ili F11 prebacuje na cijeli zaslon, kao za fotografije. Gumb „Audio zapis“ bira među audio zapisima videozapisa koji ih ima više.
 6. **Kad se videozapis zaustavi**: pauzirani videozapis ostaje pauziran kad se vratite u prozor. Videozapis prekinut prije kraja, na primjer kad dijeljeni resurs ili poslužitelj prestane odgovarati, to javlja: otvorite ga ponovno i nastavlja ondje gdje je stao, pauziran. Datoteka popisa za reprodukciju pronađena u mapi ili dijeljenom resursu ne slijedi se.
-7. **Dijeljenje računala s naočalama**: otvorite Biblioteku, zatim Mrežni dijeljeni resursi; prva pločica je „Dijeli ovo računalo na mreži“, računalna strana od [Dijeli ovaj telefon na mreži](#share-this-phone-on-the-network). Uključite „Dijeli fotografije i videozapise na mreži“, zatim dodajte računalo u naočalama kako kaže taj odjeljak. Dijeljenje prestaje kada se aplikacija zatvori ili nakon sat vremena bez korištenja.
-8. **Dopuštanje mreže**: Windows može pitati smije li Immuch360 Desktop koristiti mrežu. Dopustite to na privatnim mrežama, inače naočale ne mogu pronaći računalo. Na mreži koju Windows označi kao javnu (kafić, hotel), ili čiju vrstu ne može odrediti, dijeljenje se ne pokreće osim ako odaberete „Dijeli za ovu sesiju“, a računalo se najavljuje samo na mreži na kojoj dijeli.
-9. **Postavke, „Ovo računalo“**: mape, mapa za preuzimanja, mrežni adapter koji se koristi za pronalaženje dijeljenih resursa i za dijeljenje računala (kada ih ima više, na primjer Wi-Fi i Ethernet), i pouzdani certifikati: tijelo za izdavanje certifikata vašeg vlastitog poslužitelja, kao PEM datoteka, za HTTPS adresu kojoj Windows sam ne vjeruje. Klijentski certifikati uvoze se u Postavke, Napredno, kao na telefonima.
+7. **Reprodukcija 360° videozapisa** (od desktop builda 3): otvorite videozapis i kliknite 360° na gornjoj traci, kao na telefonu; za 360° datoteku koju poslužitelj ne označava najprije „Prikaži kao 360°“ u izborniku ⋮, pogledajte [360° datoteka koja se prikazuje ravno](#a-360-file-that-shows-flat-view-as-360). 360° reproduktor otvara se u prozoru. Povlačite mišem da biste se osvrnuli (prikaz se nakon brzog povlačenja još malo okreće), zumirajte kotačićem, s + i - ili s Page Up i Page Down, okrećite držeći tipke sa strelicama. Space, ili tipka za reprodukciju i pauzu na tipkovnici, pauzira i ponovno reproducira; J i L skaču 10 sekundi unatrag ili naprijed; Home se vraća na početak; M isključuje i uključuje zvuk. F, F11 ili dvostruki klik prelazi na cijeli zaslon; Escape izlazi iz cijelog zaslona, a zatim zatvara reproduktor. Kontrole (zatvaranje, naslov, 360°/180°, 3D, audio zapis i cijeli zaslon gore; reprodukcija, 10 sekundi unatrag i naprijed, vremenska traka i zvuk dolje) skrivaju se zajedno s pokazivačem miša nakon 3 sekunde reprodukcije i vraćaju se kada se miš pomakne ili se pritisne tipka; Tab prelazi s jedne na sljedeću.
+8. **3D i VR180**: u 360° reproduktoru gumb 3D izmjenjuje „Mono (nije 3D)“, „3D, gore i dolje“ i „3D, jedno pored drugog“, a gumb 360°/180° prebacuje između cijele sfere i polusfere VR180, kao u [3D i VR180](#3d-and-vr180-photos-and-videos). 3D videozapis prikazuje svoje lijevo oko.
+9. **Neobrađeni 360° videozapisi** (od desktop builda 3): otvorite neobrađenu datoteku i kliknite 360°, kao na telefonu, pogledajte [Neobrađene datoteke 360° kamera](#raw-360-camera-files-without-the-cameras-app); dvije datoteke para X3 držite zajedno. Datoteka s oba objektiva u jednom zapisu spaja se tijekom reprodukcije. Datoteka s jednim objektivom po zapisu ili po datoteci reproducira oba objektiva jedan uz drugi u jednom reproduktoru kada računalo stiže: prve sekunde takvog videozapisa se mjere, a rezultat se pamti za sljedeće videozapise te vrste (način za koji se pokazalo da je prespor ponovno se isprobava nakon 14 dana). Kada računalo ne stiže, reproduktor prolazi kroz korake telefona, s njihovim porukama: jedan objektiv, polovica sfere crna; transkodirani stream poslužitelja; LRV kopija niske razlučivosti koju je kamera snimila pokraj datoteke, ako postoji; nespojeni videozapis. Neobrađeni videozapis nema gumb 3D ni gumb 360°/180°.
+10. **Prikaz uživo s kamere Tapo** (od desktop builda 3): otvorite kameru kao na telefonu, pogledajte [Gledanje uživo](#watch-it-live). Stranica reproducira SD stream, a cijeli zaslon HD stream, s gumbima telefona na slici: zvuk, na početku isključen, SD ili HD, i „Cijeli zaslon“. Izgubljeni stream (kamera se ponovno pokrene, Wi-Fi se prekine) vraća se sam, uz ponovne pokušaje oko minutu i pol dok zadnja slika ostaje na zaslonu. Za račun kamere koji kamera odbije to se i kaže i ne pokušava se ponovno, jer se neuspjele prijave ubrajaju u zaključavanje kamere.
+11. **Dijeljenje računala s naočalama**: otvorite Biblioteku, zatim Mrežni dijeljeni resursi; prva pločica je „Dijeli ovo računalo na mreži“, računalna strana od [Dijeli ovaj telefon na mreži](#share-this-phone-on-the-network). Uključite „Dijeli fotografije i videozapise na mreži“, zatim dodajte računalo u naočalama kako kaže taj odjeljak. Dijeljenje prestaje kada se aplikacija zatvori ili nakon sat vremena bez korištenja.
+12. **Dopuštanje mreže**: Windows može pitati smije li Immuch360 Desktop koristiti mrežu. Dopustite to na privatnim mrežama, inače naočale ne mogu pronaći računalo. Na mreži koju Windows označi kao javnu (kafić, hotel), ili čiju vrstu ne može odrediti, dijeljenje se ne pokreće osim ako odaberete „Dijeli za ovu sesiju“, a računalo se najavljuje samo na mreži na kojoj dijeli.
+13. **Postavke, „Ovo računalo“**: mape, mapa za preuzimanja, mrežni adapter koji se koristi za pronalaženje dijeljenih resursa i za dijeljenje računala (kada ih ima više, na primjer Wi-Fi i Ethernet), i pouzdani certifikati: tijelo za izdavanje certifikata vašeg vlastitog poslužitelja, kao PEM datoteka, za HTTPS adresu kojoj Windows sam ne vjeruje. Klijentski certifikati uvoze se u Postavke, Napredno, kao na telefonima.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### 360° videozapisi i grafički čip
+
+U 360° reproduktoru (od desktop builda 3) grafički čip iscrtava prikaz koji gledate iz svake sličice videozapisa. Video dodatak navodi libmpv da svaku sličicu iscrta u sliku odabrane veličine, a zatim vlastiti prolaz iscrtavanja aplikacije iz nje iscrtava dio sfere koji gledate. Okretanje prikaza mijenja jednu vrijednost tog prolaza, ne reproduktor: povlačenje ne troši memoriju, a pauzirani videozapis okreće se bez ikakvog dekodiranja.
+
+Aplikacija mjeri prve sekunde svakog 360° videozapisa i bira koliko veliku sličicu čip obrađuje: cijelu sličicu na namjenskom čipu, najviše 2880 piksela u širinu na čipu ugrađenom u procesor (Windows aplikaciji kaže o kojoj se vrsti radi, pa se čip Intel Arc prijenosnog računala Core Ultra računa kao ugrađeni), jedan stupanj manje kada čip ne stiže. Ono što je izmjerila pamti se za sljedeće videozapise iste vrste (kodek, veličina, broj sličica u sekundi i dekoder), ne za svaki videozapis.
+
+Kada ni najmanji stupanj nije gladak, reproduktor kaže „Ova grafička kartica ne može glatko prikazati 360° prikaz ovog videozapisa“; kada je daleko od toga, ili kada čip uopće ne može iscrtati prikaz (nema OpenGL ES 3.0, upravljački program to odbija), videozapis se reproducira ravno, a reproduktor kaže zašto. Videozapis koji se reproducirao ravno ne reproducira se ravno sljedeći put: sljedeći videozapis njegove vrste ponovno se mjeri.
+
+Kada ne stiže dekodiranje videozapisa s poslužitelja, a ne iscrtavanje (videozapis koji dekodira procesor, poput 5,7K H.264), reproduktor prelazi na transkodirani stream poslužitelja od mjesta na kojem je bio, s porukom telefona: „Reproducira se transkodirani stream: original (kodek i veličina) premašuje ono što ovaj uređaj dekodira“.
+
+- **Koristite namjenski grafički čip prijenosnog računala.** Windows pokreće aplikaciju na integriranom čipu osim ako mu se ne kaže drukčije. U postavkama sustava Windows, Sustav, Zaslon, Grafika, dodajte `immuch360.exe` i odaberite „Visoke performanse“, zatim ponovno pokrenite aplikaciju. Na testnom prijenosnom računalu (čip Intel UHD i NVIDIA RTX 4060 Laptop) čip NVIDIA iscrtavao je 4K, 5,7K i 8K 360° videozapise u punoj veličini i pri 30 sličica u sekundi dok se prikaz okretao. Čip Intel iscrtavao ih je najviše 2880 piksela u širinu: 4K H.264 i 8K HEVC videozapis pri otprilike 30 sličica u sekundi s buildom libmpv iz 2026., 4K videozapis pri 23 do 27 s libmpv-om iz 2024. iz media-kita (pogledajte [Još nije tu](#not-there-yet)), a 5,7K H.264 videozapis, koji dekodira procesor, pri otprilike 20: s poslužitelja reproduktor tada prelazi na transkodirani stream; videozapis bez transkodiranog streama, na primjer iz mape, nastavlja s porukom „Ova grafička kartica ne može glatko prikazati 360° prikaz ovog videozapisa“.
+- **Sami odaberite iscrtavač.** U Postavke, Napredno uključite „Rješavanje problema“: pojavljuje se stavka „Iscrtavač 360° videozapisa“, prema zadanim postavkama Automatski. Nudi i „Dodatak, puna veličina“, „Dodatak, najviše 4096 u širinu“, „Dodatak, najviše 2880 u širinu“ i „Ravno, bez 360° prikaza“, za sljedeći 360° videozapis koji otvorite. Ispod nje „Zadnje mjerenje“ navodi veličinu u kojoj je zadnji 360° videozapis iscrtan, njegov broj sličica u sekundi, grafički čip i dekoder: kopirajte to u prijavu greške. Ponovni odabir „Automatski“, čak i kada je to već odabrano, briše ono što je izmjereno, a sljedeći 360° videozapisi ponovno se mjere.
+- **Što čip dekodira.** Postavke, Napredno, „Video dekoderi ovog uređaja“ navodi što dekodira grafički čip u upotrebi, kako to javlja Direct3D 11, a aplikacija taj popis ispravlja onim što je izmjerila tijekom reprodukcije: postavka Izvor videozapisa i provjera dvaju objektiva neobrađenih videozapisa slijede ga. H.264 širi od 4096 piksela (5,7K 360° kamera) dekodira procesor, jer ga nijedan od dvaju čipova testnog prijenosnog računala ne prihvaća.
 
 ### Usporedba s aplikacijama za telefone
 
@@ -1017,12 +1045,16 @@ Za provjeru ZIP-a pokrenite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-des
 - **Ništa se ne briše iz vaših mapa**: „Izbriši s uređaja“ je skriveno, a Izbriši uklanja samo kopiju na poslužitelju, dok aplikacija ne bude mogla slati datoteke u koš za smeće sustava Windows.
 - **Miš i tipkovnica** umjesto dodira i žiroskopa.
 - **Jedan videoreproduktor za svaki izvor**: libmpv jednako reproducira videozapise s poslužitelja, iz mapa, s dijeljenih resursa i s Plexa, a njegov ravni reproduktor već ima izbornik audio zapisa koji ravni reproduktor na telefonima još nema.
+- **360° videozapisi u prozoru** (od desktop builda 3): 360° reproduktor je stranica aplikacije, a ne zaseban izvorni reproduktor, s vremenskom trakom, skokovima od 10 sekundi i gumbom za zvuk. Neobrađeni videozapisi s jednim objektivom po zapisu ili po datoteci slažu se jedan uz drugi u jednom reproduktoru, gdje telefoni pokreću dva dekodera; rezervni koraci telefona su isti, uz LRV kopiju kamere dodanu prije nespojenog videozapisa.
+- **Prikaz uživo s kamera Tapo** (od desktop builda 3) reproducira se na računalu kao na Androidu, dok ga iPhone i iPad još nemaju.
 
 <a id="not-there-yet"></a>
 ### Još nije tu
 
-- **360°, 3D, VR180 i neobrađeni 360° videozapisi**: zasad se prikazuju ravno, onako kako ih datoteka sadrži (cijela sfera razmotana, dva oka jedno uz drugo, ili okrugle slike objektiva), ili kao rezervirano mjesto, a gumb 360° ostaje na fotografijama. Njihovi reproduktori dolaze sa sljedećim desktop buildovima.
-- **Spatial 2.5D**, kasnije s web-kamerom; **prikaz uživo s kamera Tapo**; **karta** i prikaz Mjesta; **prijava putem OAuth-a** (umjesto toga prijavite se e-poštom i zaporkom); **Google Cast**; **obavijesti**.
+- **libmpv iz vlastitog builda forka**: ZIP-ovi nose libmpv iz 2024. iz media-kita dok se ne uključi vlastiti build forka, a `BUILD-INFO.txt` u ZIP-u kaže koji nosi. S onim iz 2024. dva objektiva neobrađenog videozapisa s jednim objektivom po zapisu ili po datoteci nikad se ne reproduciraju istodobno (nedostaje mu filtar koji ih slaže), pa ti videozapisi prikazuju jedan objektiv, polovicu sfere crnu; a grafički čip kopira svaku sličicu natrag iz svojeg dekodera, što usporava 360° reproduktor na integriranom čipu. libmpv iz vlastitog workflowa forka, verzija iz 2026., treba ga zamijeniti prije prvog javnog izdanja; build libmpv iz 2026. isproban na testnom prijenosnom računalu radi oboje.
+- **Neobrađeni videozapisi s dva objektiva na prijenosnom računalu**: čak i s libmpv-om iz 2026. testno prijenosno računalo složilo je par X3 (dvije H.264 datoteke 2880x2880) pri 30 sličica u sekundi samo na svojem čipu NVIDIA; na njegovu čipu Intel, i za datoteku X4 (dva HEVC zapisa 3840x3840) na oba čipa, videozapis reproducira jedan objektiv, polovicu sfere crnu, kao na telefonu koji ne može pokretati dva dekodera.
+- **3D samo na zaslonu**: 3D videozapis prikazuje svoje lijevo oko, kao na telefonima; na računalu nema žiroskopa ni prikaza za naočale. Za gledanje u pravom 3D-u podijelite računalo s Meta Questom.
+- **Spatial 2.5D**, kasnije s web-kamerom; **karta** i prikaz Mjesta; **prijava putem OAuth-a** (umjesto toga prijavite se e-poštom i zaporkom); **Google Cast**; **obavijesti**.
 - **Instalacijski program, potpisani build i automatska ažuriranja**: ovaj build je mapa s `immuch360.exe`.
 - **Linux i macOS**: njihovi projekti su u izvorima, ali na tim sustavima još nisu izgrađeni ni isprobani, a njihov videoreproduktor još nije u njima; dolaze nakon Windowsa.
 - **Prijevodi**: novi tekstovi verzije za računalo zasad su na engleskom.
@@ -1030,10 +1062,11 @@ Za provjeru ZIP-a pokrenite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-des
 ### Poznati problemi
 
 - **Prvo pokretanje novog builda je sporo**: od 10 sekundi do otprilike minute prije nego što se prozor prikaže, najvjerojatnije dok Microsoft Defender skenira nove datoteke, koje još nisu potpisane. Pričekajte prozor umjesto ponovnog pokretanja aplikacije; sljedeća pokretanja traju sekundu ili dvije.
-- **8K HEVC videozapisima treba namjenski grafički čip**: na testnom prijenosnom računalu integrirani čip Intel UHD prikazao je otprilike polovicu sličica 8K HEVC videozapisa, dok je namjenski čip NVIDIA reproducirao 8K HEVC i 5,7K H.264 bez ijedne izgubljene sličice. Windows pokreće aplikaciju na integriranom čipu osim ako mu se ne kaže drukčije: u postavkama sustava Windows, Sustav, Zaslon, Grafika, dodajte `immuch360.exe` i odaberite „Visoke performanse“. Na integriranom čipu 5,7K H.264 videozapis, koji njegov dekoder odbija, dekodira procesor bez ijedne izgubljene sličice.
-- **Videozapisi se iscrtavaju najviše 1440 redaka u visinu**, a zatim se skaliraju na prozor: na 4K zaslonu u cijelom zaslonu 4K ili 8K videozapis malo je mekši nego u namjenskom videoreproduktoru. Tako 8K videozapis ostaje unutar grafičke snage prijenosnog računala.
+- **8K HEVC videozapisima treba namjenski grafički čip, a 360° videozapisi na njemu rade bolje**: na testnom prijenosnom računalu integrirani čip Intel UHD prikazao je otprilike polovicu sličica 8K HEVC videozapisa, dok je namjenski čip NVIDIA reproducirao 8K HEVC i 5,7K H.264 bez ijedne izgubljene sličice; 360° reproduktor radi glatko na čipu NVIDIA i sporije na čipu Intel, pogledajte [360° videozapisi i grafički čip](#360-videos-and-the-graphics-chip). Windows pokreće aplikaciju na integriranom čipu osim ako mu se ne kaže drukčije: u postavkama sustava Windows, Sustav, Zaslon, Grafika, dodajte `immuch360.exe` i odaberite „Visoke performanse“, zatim ponovno pokrenite aplikaciju. Na integriranom čipu ravni 5,7K H.264 videozapis, koji njegov dekoder odbija, dekodira procesor bez ijedne izgubljene sličice.
+- **Ravni videozapisi iscrtavaju se najviše 1440 redaka u visinu**, a zatim se skaliraju na prozor: na 4K zaslonu u cijelom zaslonu 4K ili 8K videozapis malo je mekši nego u namjenskom videoreproduktoru. Tako 8K videozapis ostaje unutar grafičke snage prijenosnog računala. 360° reproduktor umjesto toga radi na cijeloj sličici, ili na manjoj veličini koju je odabralo njegovo mjerenje.
 - **Dok se videozapis iz vaših mapa reproducira u aplikaciji, ili dok naočale čitaju datoteku s dijeljenog računala** (videozapis koji reproduciraju, fotografiju koju preuzimaju), Windows ne može preimenovati, premjestiti ni izbrisati tu datoteku i javlja da je otvorena u Immuch360 Desktopu: najprije zatvorite videozapis ili zaustavite reprodukciju u naočalama. Sigurnosne kopije ne drže vaše datoteke na taj način: datoteka se može preimenovati, premjestiti ili izbrisati dok se prenosi.
-- **Neobrušeni rubovi**: 656 od 663 desktop testa prolazi na Windowsu (7 je namjerno preskočeno), 200 reproduktora otvorenih jedan za drugim ne ostavlja curenje, a na računalu sa sustavom Windows 11 aplikacija se pokreće, otvara spremljenu sesiju na Immich poslužitelju, sinkronizira, reproducira videozapis i uredno se zatvara. Ručno testiranje svake funkcije na stvarnom računalu još je u tijeku.
+- **Neobrušeni rubovi**: desktop build 3 prolazi 855 od svojih 863 desktop testa na Windowsu (8 je namjerno preskočeno) i cijeli skup testova aplikacije, 200 reproduktora otvorenih jedan za drugim ne ostavlja curenje, a njegov ZIP izdanja pokreće se, reproducira testni isječak i uredno se zatvara. Ručno testiranje svake funkcije na stvarnom računalu još je u tijeku.
+- **S čime su provjereni 360° reproduktor i prikaz uživo**: 360° reproduktor pokrenut je sa sintetičkim 4K, 5,7K i 8K 360° isječcima na oba grafička čipa prijenosnog računala (otvoren, reproduciran, okretan tijekom reprodukcije i u pauzi, zatvoren) bez ijednog rušenja i bez ponovnog pokretanja grafičkog upravljačkog programa. Neobrađeni videozapisi s dva objektiva reproducirani su iz sintetičkih isječaka i iz stvarnih datoteka X3 i X4. Prikaz uživo s kamera Tapo provjeren je s testnim RTSP poslužiteljem koji prijavu obavlja kao kamere (Digest), namjerno prekidanim i odbijanim, bez zaporke u ijednom retku zapisnika, ali još ne sa stvarnom kamerom. Ručno testiranje, sa stvarnim 360° i 3D datotekama, oba zaslona prijenosnog računala, stanjem mirovanja i nastavkom rada te stvarnom kamerom, tek predstoji.
 
 Ako nešto pođe po zlu, molimo otvorite [issue](https://github.com/freeKC/Immuch360/issues) sa zapisnikom spremljenim sa stranice Zapisnici, pogledajte [Zapisnici](#logs). Provjerite zapisnik prije dijeljenja: može sadržavati adresu vašeg poslužitelja.
 
@@ -1052,7 +1085,7 @@ Trebate Windows 10 ili 11 na x64, Flutter 3.47.2 za Windows, Visual Studio 2022 
    mise run codegen
    ```
 
-2. Na Windowsu, u istoj mapi `mobile`, izgradite aplikaciju. Prvi build preuzima biblioteke videoreproduktora (libmpv i ANGLE) s GitHuba i provjerava svaku arhivu prema njezinu SHA-256:
+2. Na Windowsu, u istoj mapi `mobile`, izgradite aplikaciju. Prvi build preuzima biblioteke videoreproduktora (libmpv i ANGLE) s GitHuba i provjerava svaku arhivu prema njezinu SHA-256; također prevodi mali Direct3D 11 dodatak koji čita dekodere grafičkog čipa, `immuch_desktop_video`, s istim C++ radnim opterećenjem:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Trebate Windows 10 ili 11 na x64, Flutter 3.47.2 za Windows, Visual Studio 2022 
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-CI za Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) radi na grani `desktop`, koja prati `immuch360`: provjere za telefone (u buildovima za telefone ništa se ne mijenja) i cijeli skup testova na Linuxu, desktop testove na Windowsu, i isti ZIP; njegovi Linux i macOS poslovi (`flutter build linux` i `flutter build macos`, s istim `-t lib/main_desktop.dart`) još se nisu izvršili na tim sustavima.
+CI za Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) radi na grani `desktop`, koja prati `immuch360`: provjere za telefone (u buildovima za telefone ništa se ne mijenja) i cijeli skup testova na Linuxu, desktop testove na Windowsu, i isti ZIP, zatim na tom buildu testove kojima trebaju njegovi libmpv i ANGLE (prijava prikaza uživo s kamera Tapo, ono što videodatoteka ne smije otvoriti, 360° shaderi); njegov Linux posao gradi aplikaciju na Ubuntuu, a njegov macOS posao prevodi je s Xcode 26.3 i macOS 26 SDK-om (oba s istim `-t lib/main_desktop.dart`), samo kao provjere prevođenja: nijedan još nije pokrenut na tim sustavima. Drugi workflow (`.github/workflows/immuch360-libmpv.yml`) ponovno gradi libmpv za Windows x64 i arm64 iz fiksiranih izvora i objavljuje arhive s njihovim SHA-256; ZIP-ovi još nose arhivu iz media-kita dok se taj build ne uključi, pa ograničenja libmpv-a iz 2024. iz [Još nije tu](#not-there-yet) vrijede i za vaš vlastiti build.
 
 <a id="where-to-get-it"></a>
 ## Gdje je nabaviti
@@ -1088,8 +1121,8 @@ Aplikacija je na Google Playu za telefone i tablete; verzija za App Store čeka 
   - Danas: univerzalni `Immuch360-v<version>-release.apk` sa stranice [Releases](https://github.com/freeKC/Immuch360/releases), ručno instaliran s adb-om, pogledajte [Instalacija na televizor](#install-it-on-the-tv). To je ista aplikacija kao na telefonima.
   - Uskoro: Google Play na televizorima, čija je stranica u Googleovu pregledu od 9. listopada 2026.
 - **Windows 10 i 11, 64-bitni (pretpregled)**
-  - Danas: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` iz [desktop predizdanja](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), raspakiran i pokrenut kako kaže [Preuzimanje i instalacija na Windowsu](#download-and-install-on-windows). Zasad fotografije i ravni videozapisi: 360°, 3D i VR180 videozapisi dolaze sa sljedećim desktop buildovima.
-  - Uskoro: 360°, 3D, VR180 i neobrađeni 360° videozapisi; instalacijski program, potpisani build i ažuriranja kasnije.
+  - Danas: Immuch360 Desktop, desktop build 3, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` iz [desktop predizdanja](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), raspakiran i pokrenut kako kaže [Preuzimanje i instalacija na Windowsu](#download-and-install-on-windows). Fotografije, ravni videozapisi, 360°, 3D, VR180 i neobrađeni 360° videozapisi (glatko na namjenskom grafičkom čipu, s ograničenjima na integriranom) te prikaz uživo s kamera Tapo.
+  - Uskoro: Spatial 2.5D s web-kamerom, zatim Linux i macOS; instalacijski program, potpisani build i ažuriranja kasnije.
 
 Poveznice na App Store i Meta Horizon Store bit će dodane ovdje čim stranice budu objavljene. Prijavite se URL-om i računom svog uobičajenog Immich poslužitelja ili dodirnite „Koristi bez poslužitelja“ na stranici za prijavu kako biste počeli s fotografijama i videozapisima samog uređaja. APK s GitHuba ne ažurira se sam: pratite stranicu Releases, a kada aplikaciju instalirate iz trgovine, ažuriranja preuzimajte iz te trgovine.
 
@@ -1126,7 +1159,7 @@ U ovom repozitoriju nema nikakvih tajni: ključ za potpisivanje Androida pohranj
 
 - **`main`**: Immich `main` na commitu na kojem se temelji `immuch360` (29. rujna 2026. za trenutačne buildove), nikad mijenjan; pomiče se naprijed kada se fork rebasira na noviji Immich.
 - **`immuch360`**: promjene ovog forka povrh Immicha, uključujući Immuch360 Desktop od 9. listopada 2026. Svako izdanje navodi na kojoj se verziji Immicha temelji.
-- **`desktop`**: grana u kojoj je Immuch360 Desktop, verzija za računalo, građen povrh `immuch360`, dok nije spojen u nju 9. listopada 2026. kako bi telefoni, naočale, televizori i računala izlazili iz istih izvora. Sada prati `immuch360` i nosi oznake desktop predizdanja ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) iz commita 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) iz 5b723bd25). Verzija za računalo ne mijenja ništa pod `mobile/android` i `mobile/ios`.
+- **`desktop`**: grana u kojoj je Immuch360 Desktop, verzija za računalo, građen povrh `immuch360`, dok nije spojen u nju 9. listopada 2026. kako bi telefoni, naočale, televizori i računala izlazili iz istih izvora. Sada prati `immuch360` i nosi oznake desktop predizdanja ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) iz commita 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) iz 5b723bd25, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) iz spajanja 360° videoreproduktora 10. listopada 2026.). Novi rad na verziji za računalo najprije stiže ovamo i ulazi u `immuch360` s desktop buildom koji ga isporučuje. Verzija za računalo ne mijenja ništa pod `mobile/android` i `mobile/ios`.
 
 <a id="logs"></a>
 ## Zapisnici
@@ -1145,7 +1178,7 @@ Od builda 19 DLNA klijent, dijeljeni resurs telefona i prepoznavanje Appleovih p
 
 Na računalu (Immuch360 Desktop) stranica Zapisnici ima i „Spremi zapisnike u datoteku“: zapisnik, ili ZIP zapisnika i izvješća o posljednjim rušenjima kada ih ima (predloženi naziv tada završava s „with-crash-reports“). Izvješće o rušenju je mali minidump: niti, gdje su stale i samo ono što je potrebno za praćenje njihovih poziva, s nazivima datoteka programa ali ne i njihovim mapama; ne memorija aplikacije.
 
-Od desktop builda 2 videoreproduktor računala ondje piše pod `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` i `VideoThumbnailGrabber`, uključujući mpv-ova vlastita upozorenja, s uklonjenim tokenima i zaporkama. Provjerite zapisnik prije dijeljenja: može sadržavati adresu vašeg poslužitelja.
+Od desktop builda 2 videoreproduktor računala ondje piše pod `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` i `VideoThumbnailGrabber`, uključujući mpv-ova vlastita upozorenja, s uklonjenim tokenima i zaporkama. Od desktop builda 3 ondje piše i 360° reproduktor pod `SphericalPlayer`, `SphereRenderer` i `PluginRenderer` (odabrana veličina, izmjereni broj sličica u sekundi, grafički čip), neobrađeni videozapisi s dva objektiva pod `RawTwoStreams`, dekoderi grafičkog čipa pod `DesktopGpuDecoders`, `DesktopVideoDecoderApi` i `DecoderMeasure`, te prikaz uživo s kamera Tapo pod `DesktopCameraLive`, čiji retci nikad ne sadrže račun kamere ni njegovu zaporku. Provjerite zapisnik prije dijeljenja: može sadržavati adresu vašeg poslužitelja.
 
 <a id="privacy"></a>
 ## Privatnost
@@ -1159,7 +1192,7 @@ Od desktop builda 2 videoreproduktor računala ondje piše pod `DesktopVideo`, `
 - **Dijeljeni resurs telefona**: samo lokalna mreža, s korisničkim imenom i zaporkom, putem običnog HTTP-a (pogledajte [Dijeli ovaj telefon na mreži](#share-this-phone-on-the-network)).
 - **Kamera**: koristi je samo Spatial 2.5D reproduktor, na uređaju; slike se nikad ne spremaju i nikamo ne šalju.
 - **Na računalu** (Immuch360 Desktop, pretpregled za Windows): aplikacija čita samo mape koje odaberete, čuva svoj indeks, sličice i predmemoriju na računalu, a zaporke i tokene sprema uz zaštitu podataka sustava Windows, samo za vaš Windows račun. Dijeljenje računala slijedi pravila dijeljenja telefona i ne pokreće se na mreži koju Windows označi kao javnu, ili čiju vrstu ne može odrediti, osim ako vi tako odlučite.
-- **Videoreproduktor na računalu** (od desktop builda 2): videozapisi s vašeg poslužitelja dolaze do njega kroz aplikaciju, pa reproduktor nikad ne drži vaš token sesije, a ono što unaprijed učita ostaje u memoriji, ne na disku. Otvara samo datoteku koju dobije: datoteka iz mape ili dijeljenog resursa koja je zapravo popis za reprodukciju ili opis toka ne navodi ga da se poveže bilo gdje drugdje.
+- **Videoreproduktor na računalu** (od desktop builda 2): videozapisi s vašeg poslužitelja dolaze do njega kroz aplikaciju, pa reproduktor nikad ne drži vaš token sesije, a ono što unaprijed učita ostaje u memoriji, ne na disku. Otvara samo datoteku koju dobije: datoteka iz mape ili dijeljenog resursa koja je zapravo popis za reprodukciju ili opis toka ne navodi ga da se poveže bilo gdje drugdje. Od desktop builda 3 adresa svakog videozapisa predaje se reproduktoru samo u memoriji, nikad kroz privremenu datoteku (poveznica koju aplikacija stvara za videozapis s poslužitelja ili dijeljenog resursa sadrži ključ te sesije, koji je u desktop buildu 2 pri svakom otvaranju nekoliko sekundi stajao na disku), a taj se ključ nikad ne pojavljuje u zapisniku; prikaz uživo s kamere Tapo predaje račun kamere reproduktoru na isti način, nikad u datoteci ili retku zapisnika, i s kamerom komunicira samo na lokalnoj mreži; mjerenja 360° reproduktora i dekodera (grafički čip, format videozapisa, broj sličica u sekundi, nikad naziv datoteke) ostaju u mapi aplikacije na računalu.
 
 Potpuna pravila nalaze se u [PRIVACY.md](../PRIVACY.md).
 
@@ -1177,7 +1210,7 @@ Android, Android TV i Google TV zaštitni su znakovi tvrtke Google LLC; Apple, i
 
 Ono što još nije gotovo, najvjerojatnije prvo. Ništa od ovoga nije obećanje, a povratne informacije na [praćenju problema](https://github.com/freeKC/Immuch360/issues) pomažu odlučiti što ide prvo.
 
-- **Immuch360 Desktop, najprije Windows**: desktop build 2 je izašao, s ravnim videozapisima, a desktop izvori su u glavnoj grani forka, `immuch360`, od 9. listopada 2026. (pogledajte [Na Windows računalu](#on-a-windows-computer-immuch360-desktop-preview)). Zatim 360°, 3D, VR180 i neobrađeni 360° videozapisi na Windowsu, s dva objektiva neobrađenih datoteka i prikazom uživo s kamera Tapo; zatim testiranje svake funkcije na Windows računalu i njegovi ispravci; zatim Spatial 2.5D s web-kamerom; zatim Linux i macOS, paketi, potpisivanje i ažuriranja.
+- **Immuch360 Desktop, najprije Windows**: desktop build 3 je izašao, s reproduktorom 360° videozapisa (360°, 3D, VR180 i neobrađeni 360° videozapisi, dva objektiva neobrađenih datoteka, veličina prikaza izmjerena na svakom računalu) i prikazom uživo s kamera Tapo, a desktop izvori su u glavnoj grani forka, `immuch360`, od 9. listopada 2026. (pogledajte [Na Windows računalu](#on-a-windows-computer-immuch360-desktop-preview)). Zatim libmpv iz vlastitog workflowa forka umjesto onog iz 2024., i ručno testiranje svake funkcije na Windows računalu sa stvarnim datotekama, oba zaslona i stvarnom kamerom, s njegovim ispravcima; zatim Spatial 2.5D s web-kamerom; zatim Linux i macOS; zatim instalacijski program, potpisani build i automatska ažuriranja.
 - **Google Play**: build 20 je objavljen od 7. listopada 2026., umjesto builda 18; stranica za televizore u Googleovu je pregledu od 9. listopada 2026. Build 21 ne mijenja ništa na telefonima i tabletima.
 - **App Store**: verzija 3.3.0 čeka Appleov pregled; ima značajke builda 11, pa prijenos na Immich i provjera video dekodera (build 15) te neobrađene Insta360 datoteke (build 16) stižu sa sljedećim ažuriranjem u App Storeu. Poveznica će biti dodana ovdje kada bude objavljena.
 - **Meta Horizon Store**: Meta je odobrila stranicu 7. listopada 2026. s buildom 14. Build 21 poslan je kao njezino prvo ažuriranje: donosi sve od builda 14 (prijenosi s dijeljenog resursa na Immich, izvor videozapisa odabran prema onome što naočale dekodiraju, neobrađene datoteke Insta360, GoPro i DJI, DLNA, dijeljenje telefona, Appleove prostorne fotografije, knjižnice Plex Media Servera, kamere Tapo), a trgovina ga nudi za Quest 2, Quest Pro, Quest 3 i 3S. Poveznica na trgovinu bit će dodana ovdje kada stranica postane javna; ručno instaliranu kopiju najprije treba deinstalirati (pogledajte [Instalacija](#install)).

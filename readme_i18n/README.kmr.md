@@ -15,13 +15,13 @@ Ew ji bo kesên ku bi kameraya 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh T
 
 <div align="center">
 
-| Platform | Ji ku derê bistînî | Rewş di 9ê Cotmeha 2026an de |
+| Platform | Ji ku derê bistînî | Rewş di 10ê Cotmeha 2026an de |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefon û tabletên **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 ji 7ê Cotmeha 2026an ve li ser Google Play, build 21 li ser GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone û iPad** | App Store | guhertoya 3.3.0 li benda nirxandina Apple ye; heta wê demê [bi xwe ava bike](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 û 3S | [APK](#meta-quest-3) · Horizon Store | tomar hat pejirandin, build 21 di nirxandina Meta de ye |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV û Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 li ser GitHub; tomara Google Play ji bo televizyonan ji 9ê Cotmeha 2026an ve di nirxandina Google de ye |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP a pêşdîtinê](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | build a desktop 2 li ser Windows: wêne û vîdyoyên dûz, vîdyoyên 360° paşê; macOS û Linux paşê, ji heman çavkaniyan |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP a pêşdîtinê](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | build a desktop 3 li ser Windows: wêne, vîdyoyên dûz û 360°; macOS û Linux paşê |
 
 *Rewş di her weşanê de tên nûkirin; hûrgilî di [Ji ku derê bistînî](#where-to-get-it) de ne.*
 
@@ -30,7 +30,7 @@ Ew ji bo kesên ku bi kameraya 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh T
 - 🌐 **360° ya xwecihî**<br>Wêne û vîdyo wekî gogekê ku tu bi jîroskopê li dora xwe lê dinêrî, pelên xav ên kamerayê jî tê de (Insta360 ji build 16, GoPro û DJI ji build 18). Lîstikvanekî vîdyoyê yê belaş jî: dûz, 360°, 3D, VR180
 - 👓 **3D ya xwecihî**<br>360° û VR180 ya stereoskopîk, jor û jêr an li kêleka hev, û wêneyên fezayî yên Apple (ji build 19): di kaskê de 3D ya rastîn, li ser telefonê yek çav
 - 🎥 **2.5D ya xwecihî**<br>Kûrahî li ser ekraneke dûz ji vîdyoyeke stereoskopîk, dîmen li pey serê te diçe (ceribandinî, telefon û tablet)
-- 📱 **Android, iOS, Quest, TV**<br>Yek sepan li ser telefon, tablet û kaskên Quest 2, Pro, 3 û 3S, di kaskê de 3D ya rastîn, ji build 20 li ser Android TV bi kontrola ji dûr ve, û pêşdîtineke Windows bi wêne û vîdyoyên dûz
+- 📱 **Android, iOS, Quest, TV**<br>Yek sepan li ser telefon, tablet û kaskên Quest 2, Pro, 3 û 3S, di kaskê de 3D ya rastîn, ji build 20 li ser Android TV bi kontrola ji dûr ve, û pêşdîtineke Windows bi wêne, vîdyoyên dûz û 360°
 - 🔌 **Bi server an bêyî server**<br>Servera te ya Immich, an galeriya telefonê bi xwe, hesab ne hewce ye
 - 🗄️ **Parvekirinên torê**<br>Samba (SMB), WebDAV û, ji build 19, serverên medyayê yên DLNA li ser torê tên dîtin û rasterast tên xwendin, tiştek nayê daxistin, û dema tu bixwazî ji Immich re tên şandin. Ji build 19 telefonek dikare galeriya xwe bi kaskê re jî parve bike
 - 📺 **Li ser televizyonê**<br>Ji build 20 heman APK li ser Android TV û Google TV: wêne û vîdyoyên 360°, servera te û parvekirinên te, bi kontrola ji dûr ve
@@ -84,7 +84,7 @@ Ew ji bo kesên ku bi kameraya 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh T
 - **"Ez dixwazim wêne û vîdyoyên xwe yên 360°, û vîdyoyên NAS an serverê xwe yê Plex, li ser televizyonê bi kontrola ji dûr ve temaşe bikim."** Binêre [Li ser televizyona xwe temaşe bike](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Ez wêneyên xwe yên 360° di nav hemû yên din de nabînim."** Binêre [Lîsteya 360°](#find-your-360-shots-the-360-list).
 - **"Vîdyoya min a 360° diqete, an kopiyeke tarî dilîze."** Binêre [Hûrguliyên vîdyoyê û dekoder](#video-details-decoders-and-why-a-video-stutters).
-- **"Ez dixwazim wêneyên xwe yên 360° û kitêbxaneya xwe ya Immich li ser PC ya xwe ya Windows bibînim, bi wêne û vîdyoyên peldankên wê, NAS a xwe û servera xwe ya Plex, û PC bi kaska min re parve bibe."** Binêre [Li ser komputereke Windows](#on-a-windows-computer-immuch360-desktop-preview) (pêşdîtinek: niha wêne û vîdyoyên dûz, vîdyoyên 360° paşê).
+- **"Ez dixwazim wêneyên xwe yên 360° û kitêbxaneya xwe ya Immich li ser PC ya xwe ya Windows bibînim, bi wêne û vîdyoyên peldankên wê, NAS a xwe û servera xwe ya Plex, û PC bi kaska min re parve bibe."** Binêre [Li ser komputereke Windows](#on-a-windows-computer-immuch360-desktop-preview) (pêşdîtinek: wêne û vîdyoyên dûz, û ji build a desktop 3 vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360° û dîtina zindî ya Tapo).
 - **"Ez tiştên ku sepana Immich dike diparêzim?"** Erê, bi du guhertinên biçûk, binêre [Her tiştê din Immich e](#everything-else-is-immich).
 
 Dema taybetmendiyek nû be, nivîs dibêje ji kîjan build ve heye. Weşana GitHub her tim build a herî nû heye, firoşgeh paşê tên: binêre [Ji ku derê bistînî](#where-to-get-it).
@@ -127,6 +127,7 @@ Pelên 360° yên dirûtî li her derê dixebitin: derxistinên ji sepana Insta3
 
 Lîstikvan pela ku li ser telefonê hatiye tomarkirin, an pela parvekirineke torê, heke hebe, dilîze. Wekî din ew ji servera te diherike: bi xwerû herika veguherandî, an orîjînal heke tu wê di Settings (Eyar), Asset Viewer (Dîtina medyayê), "Çavkaniya vîdyoyê" de bixwazî (ji build 15; berê bişkoka "Force original video" (Vîdyoya orîjînal ferz bike)), binêre [Hûrguliyên vîdyoyê û dekoder](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### Pelek 360° ku dûz xuya dibe: Wek 360° bibîne
 
 Hin pelên 360° etîketa projeksiyonê tune, ji ber vê yekê server wan wekî 360° nîşan nake û ew dûz xuya dibin.
@@ -356,6 +357,7 @@ Ji build 20 Immuch360 kameraya Tapo li kêleka parvekirinên torê zêde dike. E
 8. Li "Kamerayê biceribîne" bixe. Ew "Tomar: (model), firmware (guherto)" bi rewşa karta bîrê, û "Dîtina zindî: (vîdyo), deng (deng)" nîşan dide, an ji bo her yekê çi bi ser neket.
 9. Li Qeyd bike bixe. Kamera di bin "Kamera" de, piştî parvekirinan, bi modela xwe gava were zanîn û `tapo://` bi navnîşana xwe tê rêzkirin.
 
+<a id="watch-it-live"></a>
 ### Zindî temaşe bike
 
 1. Li kamerayê bixe. Dîtina wê ya zindî li jora rûpela wê ye: "Bi kamerayê ve tê girêdan", paşê wêne bi nîşana Zindî.
@@ -755,9 +757,9 @@ Build a niha, build 21 (guhertoya 3.3.0-rc.0, hejmara build 3030019), li ser Imm
 | Pelên parvekirinekê ji Immich re bişîne; pelên cîhazê yên bi destan şandî wekî paşekekirî tên hesibandin | ❌ tenê pelên cîhazê | ✅ ji build 15 |
 | Vê telefonê li ser torê parve bike, ji bo kaskê | ❌ | ✅ ji build 19, Android û iOS |
 | Kitêbxaneyên Plex Media Server ku ji pelên orîjînal tên lîstin, li malê û li derve, bêyî plex.tv | ❌ | ✅ ji build 20, her dîtinvan, li ser telefon, tablet, Quest û televizyonan |
-| Kamerayên Tapo: dîtina zindî, û tomarên karta bîrê ku dema tu bixwazî ji Immich re tên şandin | ❌ | ✅ ji build 20: tomar li her derê, zindî li ser Android, Android TV û Quest |
+| Kamerayên Tapo: dîtina zindî, û tomarên karta bîrê ku dema tu bixwazî ji Immich re tên şandin | ❌ | ✅ ji build 20: tomar li her derê, zindî li ser Android, Android TV, Quest û, ji build a desktop 3, Windows |
 | Android TV û Google TV, bi kontrola ji dûr ve tên ajotin, di heman APK de | ❌ ne sepana televizyonê ye | ✅ ji build 20 |
-| Heman sepan li ser komputereke Windows | ❌ tenê telefon û tablet | ✅ pêşdîtin, wêne û vîdyoyên dûz |
+| Heman sepan li ser komputereke Windows | ❌ tenê telefon û tablet | ✅ pêşdîtin: wêne, vîdyoyên dûz û 360° (build a desktop 3) |
 | Wêneyên xav ên Insta360 .insp û vîdyoyên .insv ên yek-şopî | ❌ dûz | ✅ ji build 16 |
 | Vîdyoyên xav bi lensek ji bo her şopê an her pelê (Insta360 X4, X4 Air, X5, X6, cotên X3, GoPro .360, DJI .osv) | ❌ dûz an şaş | ✅ ji build 18 |
 | Dual fisheye .dng | ❌ dûz | ❌ hîn ne |
@@ -787,7 +789,7 @@ Build a niha, build 21 (guhertoya 3.3.0-rc.0, hejmara build 3030019), li ser Imm
 - **Plex Media Server**: ji komputerekê li hember Plex Media Server 1.42.1 a rastîn hat kontrolkirin (cotkirin, peldank, rêzeyên baytan, wêneyên piçûk, navnîşana derveyî malê); hîn li ser cîhazê nehatiye kontrolkirin.
 - **Kamerayên Tapo**: li hember kameraya simulekirî hat kontrolkirin; hîn bi kameraya rastîn nehatiye kontrolkirin.
 - **Android TV û Google TV**: bi ceribandinên otomatîk hat kontrolkirin; hîn li ser televizyonê nehatiye kontrolkirin.
-- **Heman sepan li ser komputereke Windows**: 656 ji 663 ceribandinên otomatîk ên desktop li ser Windows derbas dibin (7 bi zanebûn tên derbaskirin), û li ser PC yeke Windows 11 sepan dest pê dike, danişîneke tomarkirî li ser servera Immich vedike, hevdem dike, vîdyoyekê lê dide û bi paqijî tê girtin; ceribandina her fonksiyonê bi destan berdewam e.
+- **Heman sepan li ser komputereke Windows**: build a desktop 3 li ser Windows 855 ji 863 ceribandinên xwe yên otomatîk ên desktop derbas dike (8 bi zanebûn tên derbaskirin) û hemû koma ceribandinan a sepanê; li ser PC yeke Windows 11 sepan dest pê dike, danişîneke tomarkirî li ser servera Immich vedike, hevdem dike, vîdyoyekê lê dide û bi paqijî tê girtin, û lîstikvanê wê yê 360° bi klîpên sentetîk ên 4K, 5.7K û 8K li ser her du çîpên grafîkê yên laptopekê bêyî têkçûn hat xebitandin. Ceribandina her fonksiyonê bi destan, bi pelên 360° yên rastîn û kameraya Tapo ya rastîn, berdewam e.
 - **Wêneyên xav ên Insta360 .insp û vîdyoyên .insv ên yek-şopî**: wêne li hember derxistinên Insta360 Studio yên pelên X3 hatine kontrolkirin, vîdyo li ser emulatorekî Android bi pelekî X3 yê çareseriya nizm; hîn li ser iPhone nemeşiyaye.
 - **Vîdyoyên xav bi lensek ji bo her şopê an her pelê**: parser û dirûtin li ser pelên rastîn ên X4, cotek X3, GoPro MAX û Osmo 360 hatine kontrolkirin; lîstin ceribandina cîhazê ya build 18 û 19 e.
 - **Dual fisheye .dng**: plankirî.
@@ -842,17 +844,19 @@ Immuch360 galeriyek e, û ew lîstikvanekî medyayê yê belaş e jî: ew tişt�
   - iPhone, iPad: lîstikvanê SceneKit yê xwecihî li ser gogê, jîroskop, bijartina şopa dengî, nîşaneya tamponê; lê bide û bisekinîne, hîn xeta demê tune.
   - Meta Quest: binavbûyî, 3D ya rastîn ji bo pelên stereoskopîk, xeta demê bi bazdanên 10 çirkeyî, medyaya berê û ya din.
   - Android TV, Google TV: lîstikvanê Media3 yê telefonan, bi tîran tê zivirandin.
-  - Windows: hîn na, niha dûz tê nîşandan.
+  - Windows (ji build a desktop 3): lîstikvanê 360° yê sepanê bi xwe (libmpv), bi mişkê an bi tîran tê zivirandin, bi tekerê tê nêzîkkirin, gerîn di demê de, hilbijartina şopa dengî, nîşaneya barkirinê; li ser çîpeke grafîkê ya veqetandî bi rehetî, li ser çîpeke yekgirtî herî zêde bi firehiya 2880 pîkselan û ji bo 5.7K H.264 hêdîtir.
 - **3D 360° (jor û jêr, li kêleka hev)**
   - Telefonên Android: çavê çepê, bişkoka rêzkirinê.
   - iPhone, iPad: heman.
   - Meta Quest: her çav nîvê xwe yê çarçoveyê digire.
   - Android TV, Google TV: çavê çepê, bişkoka rêzkirinê.
+  - Windows: wêne wek li ser telefonan; vîdyo ji build a desktop 3, çavê çepê, bişkoka rêzkirinê, li ser çîpeke grafîkê ya veqetandî bi rehetî, li ser çîpeke yekgirtî bi sînoran.
 - **Wêne û vîdyoyên VR180 (nîvgog)**
   - Telefonên Android: nîvgog, bişkoka 360°/180°.
   - iPhone, iPad: heman.
   - Meta Quest: nîvgoga binavbûyî.
   - Android TV, Google TV: nîvgog, bişkoka 360°/180°.
+  - Windows: wêne wek li ser telefonan; vîdyo ji build a desktop 3, nîvgog, bişkoka 360°/180°, li ser çîpeke grafîkê ya veqetandî bi rehetî, li ser çîpeke yekgirtî bi sînoran.
 - **Spatial 2.5D (kûrahiya ekrana dûz ji vîdyoyeke stereoskopîk)**
   - Telefonên Android: lîstikvanê xwecihî, şopandina serî bi kameraya pêşiyê.
   - iPhone, iPad: heman.
@@ -878,16 +882,19 @@ Immuch360 galeriyek e, û ew lîstikvanekî medyayê yê belaş e jî: ew tişt�
   - iPhone, iPad: bi shadereke SceneKit tê dirûtin.
   - Meta Quest: binavbûyî, bi heman bandora GPU tê dirûtin.
   - Android TV, Google TV: wek li ser telefonan.
+  - Windows (ji build a desktop 3): li ser çîpa grafîkê di lîstikvanê 360° yê sepanê de tê dirûtin, li ser çîpeke veqetandî bi rehetî, li ser çîpeke yekgirtî bi sînoran.
 - **Vîdyoyên xav bi lensek ji bo her şopê an her pelê (ji build 18): Insta360 X4, X4 Air, X5, X6 .insv, cotên X3, GoPro .360, DJI .osv**
   - Telefonên Android: du dekoderên hişkalav bi hev re, yek ji bo her lensê (ji build 19 dekoderên nermalav li ser cîhazeke bê dekoderê hişkalav, heta 2048x2048 ji bo her lensê), û pêkhênerekî GL ku di gogê de didirû; yek lens, paşê herika veguherandî, paşê vîdyoya nedirûtî, dema cîhaz nikare duyan bimeşîne.
   - iPhone, iPad: pêkhênerekî AVFoundation ê taybet bi Metal.
   - Meta Quest: binavbûyî, heman du dekoder û pêkhêner (panela 3840x1920).
   - Android TV, Google TV: wek li ser telefonan, dema televizyon dikare du dekoderan bi hev re bimeşîne.
+  - Windows (ji build a desktop 3): her du lens li kêleka hev di yek lîstikvanî de, paşê tên dirûtin, dema komputer digihîje (li ser lêdana wê bi xwe tê pîvandin; li ser laptopa ceribandinê, cotek X3 tenê li ser çîpa wê ya veqetandî); wekî din gavên telefonan: yek lens, herika veguherandî, kopiya LRV ya kamerayê bi çareseriya nizm, vîdyoya nedirûtî.
 - **Dîtina zindî ya kameraya Tapo (ji build 20)**
   - Telefonên Android: lîstikvanê RTSP yê Media3: SD li ser rûpelê, HD di dîmendera tije de, bişkoka dengî.
   - iPhone, iPad: hîn na: kartek dibêje ku paşê tê.
   - Meta Quest: di pencereyê de, bi HD.
   - Android TV, Google TV: wek li ser telefonan.
+  - Windows (ji build a desktop 3): lîstikvanê libmpv, SD li ser rûpelê, HD di ekrana tije de, bişkoka deng.
 - **Tomarên kameraya Tapo (ji build 20)**
   - Telefonên Android: ji karta bîrê di vîdyoyeke H.264 bi dengê xwe de tê anîn, paşê bi bazdanê tê lîstin.
   - iPhone, iPad: heman.
@@ -896,14 +903,14 @@ Immuch360 galeriyek e, û ew lîstikvanekî medyayê yê belaş e jî: ew tişt�
 
 Têketinên Android TV û Google TV, ji build 20, hîn li ser televizyonê nehatine kontrolkirin, binêre [Li ser televizyona xwe temaşe bike](#watch-on-your-tv-android-tv-and-google-tv); têketinên kamerayê hîn bi kameraya rastîn nehatine kontrolkirin.
 
-Li ser Windows, pêşdîtina Immuch360 Desktop wêneyan nîşan dide, dûz û 360°, wêneyên xav ên Insta360 .insp jî tê de, bi mişk û klavyeyê, û ji build a desktop 2 vîdyoyên dûz lê dide, ji serverê, peldankên PC, parvekirinan, Plex û tomarên Tapo; vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360° niha dûz an wekî cihgirek tên nîşandan (binêre [Hîn ne amade ye](#not-there-yet)).
+Li ser Windows, pêşdîtina Immuch360 Desktop wêneyan nîşan dide, dûz û 360°, wêneyên xav ên Insta360 .insp jî tê de, bi mişk û klavyeyê. Ji build a desktop 2 ew vîdyoyên dûz lê dide, ji serverê, peldankên PC, parvekirinan, Plex û tomarên Tapo, û ji build a desktop 3 ew vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360° ji heman çavkaniyan di lîstikvanê xwe yê 360° de lê dide, û dîtina zindî ya Tapo. Lîstikvanê 360° li ser çîpeke grafîkê ya veqetandî bi rehetî dixebite û li ser çîpeke yekgirtî sînorên wî hene (binêre [Li ser komputereke Windows](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Servera te ya Immich**: orîjînal an herika veguherandî ya serverê, wekî ku Settings, Asset Viewer, Çavkaniya vîdyoyê dibêje (binêre [Hûrguliyên vîdyoyê û dekoder](#video-details-decoders-and-why-a-video-stutters)). Heman hesab wek sepana webê.
 - **Telefon an kask bi xwe**: "Bêyî server bi kar bîne" li ser rûpela têketinê, an hêmana On this device a tabloya Kitêbxane.
 - **NAS an komputer**: parvekirinên SMB û WebDAV, û ji build 19 serverên medyayê yên DLNA, li ser torê tên dîtin, rasterast tên xwendin (vîdyoyeke SMB bi heta şeş girêdanan), tiştek nayê kopîkirin; ji build 15 pelên ku tu hildibijêrî dikarin ji hesabê te yê Immich re bên şandin.
 - **Telefoneke din (ji build 19)**: "Vê telefonê li ser torê parve bike" li ser wê telefonê: kask, an her muwekîlekî WebDAV ê torê, albûm, meh û medyaya 360° ya wê dixwîne.
 - **Plex Media Server (ji build 20)**: kitêbxaneyên wê yên wêne, fîlm û rêzefîlmên TV li gorî peldankê, pelên orîjînal rasterast bi HTTPS tên xwendin ku li hember sertîfîkaya serverê bi xwe tê kontrolkirin, li malê an bi navnîşana derveyî malê, li ser her platformê; binêre [Plex Media Server, bêyî plex.tv](#plex-media-server-without-plextv).
-- **Kameraya Tapo (ji build 20)**: dîtina zindî bi hesabê kamerayê (Android, Android TV, Quest), û tomarên karta wê ya bîrê bi şîfreya hesabê TP-Link (her platform), tenê li ser tora herêmî; binêre [Kamerayên Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Kameraya Tapo (ji build 20)**: dîtina zindî bi hesabê kamerayê (Android, Android TV, Quest, û Windows ji build a desktop 3), û tomarên karta wê ya bîrê bi şîfreya hesabê TP-Link (her platform), tenê li ser tora herêmî; binêre [Kamerayên Tapo](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **Peldankên komputereke Windows (pêşdîtina desktop)**: peldankên ku tu di Immuch360 Desktop de hilbijêrî, li şûna galeriya telefonê tên xwendin; komputer dikare wan bi kaskê re jî parve bike, binêre [Li ser komputereke Windows](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Kitêbxaneya te ya Immich li ser serverekê ye, wêne û vîdyoyên din di pelda
 
 Li ser komputerê, Immich sepana xwe ya webê di gerokekê de pêşkêş dike. **Tiştê ku Immuch360 Desktop lê zêde dike**: peldankên PC bêyî tu server an hesabî, parvekirinên SMB, WebDAV, DLNA û Plex ku ji sepanê tên gerandin û lêdan, wêneyên xav ên Insta360 .insp ku wekî gogekê vedibin, û PC ku li malê bi Meta Quest re tê parvekirin.
 
-Ev pêşdîtinek e: ji build a desktop 2, wêne û vîdyoyên dûz dixebitin; vîdyoyên 360°, 3D û VR180 bi buildên desktop ên din re tên. Ji 9ê Cotmeha 2026an ve çavkaniyên desktop di şaxa sereke ya forkê de ne, `immuch360`, ji ber vê yekê telefon, kask, televizyon û komputer ji heman çavkaniyan derdikevin. Sepanên telefon, tablet, Quest û televizyonê bi vê re naguherin û navê Immuch360 diparêzin.
+Ev pêşdîtinek e: wêne û vîdyoyên dûz ji build a desktop 2 dixebitin, û ji build a desktop 3 lîstikvanê vîdyoyên 360° (vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360°) û dîtina zindî ya kamerayên Tapo; gavên li jêr ên ku build 3 hewce dikin vê dibêjin. Ji 9ê Cotmeha 2026an ve çavkaniyên desktop di şaxa sereke ya forkê de ne, `immuch360`, ji ber vê yekê telefon, kask, televizyon û komputer ji heman çavkaniyan derdikevin. Sepanên telefon, tablet, Quest û televizyonê bi vê re naguherin û navê Immuch360 diparêzin.
 
 <a id="download-and-install-on-windows"></a>
 ### Li ser Windows daxistin û sazkirin
 
-Build a niha pêş-weşana GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) e. Pela wê `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` e (nêzî 57 MB, piştî vekirinê 78 pel, lîstikvanê vîdyoyê û peldanka wî ya `licenses` jî tê de), bi `SHA256SUMS.txt` ji bo kontrolkirinê. Ew ji şaxa sereke, `immuch360`, li commit 5b723bd25 hatiye avakirin: çavkaniyên build 21 a telefonê û guhertoya komputerê. Windows 10 an 11, 64 bit pêwîst e.
+Build a niha pêş-weşana GitHub [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) e. Pela wê `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` e (nêzî 57 MB, piştî vekirinê 79 pel, lîstikvanê vîdyoyê û peldanka wî ya `licenses` jî tê de), bi `SHA256SUMS.txt` ji bo kontrolkirinê. Ew ji şaxa sereke, `immuch360`, piştî ku lîstikvanê vîdyoyên 360° yê komputerê tê de hat yekkirin, li commita ku notên weşana wê navê wê dibêjin hatiye avakirin: çavkaniyên build 21 a telefonê û guhertoya komputerê. Windows 10 an 11, 64 bit pêwîst e.
 
-1. ZIP daxe û li her derê veke, bo nimûne di Documents de.
-2. `immuch360.exe` ji peldanka vekirî dest pê bike. Peldankê tevahî bihêle: bername pelên li kêleka xwe hewce dike, lîstikvanê vîdyoyê jî.
+1. ZIP daxe û li her derê veke, bo nimûne di Documents de. Ji bo şûna build a desktop 2 bigire, peldanka wê jê bibe an di peldankeke nû de veke: têketina te, peldankên te û mîhengên te di profîla te ya Windows de dimînin, ne di wê peldankê de.
+2. `immuch360.exe` ji peldanka vekirî dest pê bike. Peldankê tevahî bihêle: bername pelên li kêleka xwe hewce dike, di nav wan de `libmpv-2.dll`, lîstikvanê vîdyoyê, û `immuch_desktop_video.dll`, ku dekoderên çîpa grafîkê dixwîne.
 3. Pel hîn nehatine îmzekirin, ji ber vê yekê Windows SmartScreen dikare "Windows protected your PC" nîşan bide: "More info" hilbijêre, paşê "Run anyway". Li cihê ku Smart App Control vekirî be, ew bernameyên neîmzekirî asteng dike.
 4. Li benda pencereyê bimîne. Destpêka yekem a buildeke nû ji 10 saniyeyan heta nêzî deqeyekê dikişîne, bi îhtimaleke mezin dema ku Microsoft Defender pelên nû dişopîne: di vê navberê de sepanê dîsa dest pê neke. Destpêkên din saniyeyek an du digirin.
 5. Li ser rûpela têketinê, bi navnîşana servera xwe ya Immich, e-nameya xwe û şîfreya xwe têkeve, an li "Bêyî server bi kar bîne" bitikîne.
 
-Ji bo kontrolkirina ZIP, `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` di rêza fermanê de, di peldanka daxistinê de bixebitîne: encam ew e ku di `SHA256SUMS.txt` de hatiye nivîsandin. Hîn sazker û nûkirina otomatîk tune: rûpela [Releases](https://github.com/freeKC/Immuch360/releases) bişopîne, û build a din jî bi heman awayî veke.
+Ji bo kontrolkirina ZIP, `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` di rêza fermanê de, di peldanka daxistinê de bixebitîne: encam ew e ku di `SHA256SUMS.txt` de hatiye nivîsandin. Hîn sazker û nûkirina otomatîk tune: rûpela [Releases](https://github.com/freeKC/Immuch360/releases) bişopîne, û build a din jî bi heman awayî veke.
 
 ### Pêşdîtin çi dike
 
@@ -993,7 +1000,9 @@ Ji bo kontrolkirina ZIP, `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-deskto
 - **Barkirin û paşeke** ji wan peldankan ber bi servera te ya Immich ve, dema ku sepan vekirî be.
 - **Wêneyên 360° wekî gogekê**, bi mişk û klavyeyê; wêneyên xav ên .insp ên kamerayên Insta360 wekî li ser telefonan vedibin.
 - **Vîdyoyên dûz** (ji build a desktop 2): vîdyoyên peldankên te, yên servera te ya Immich (orîjînal an herikîna veguherandî, binêre [Hûrguliyên vîdyoyê û dekoder](#video-details-decoders-and-why-a-video-stutters)), yên parvekirinên SMB, WebDAV û DLNA, yên serverên Plex û tomarên Tapo di pencereyê de tên lêdan, bi kontrolên telefonan (lêdan, rawestandin, barê demê), nîşaneke barkirinê, û menuyeke şopên dengî ji bo vîdyoyeke ku çend şop hene. Vîdyoyên peldankên te û yên parvekirinan li şûna îkoneke fîlmê, wêneyekî ji vîdyoyê wekî wêneya biçûk nîşan didin.
-- **Parvekirinên torê**: Samba (SMB), WebDAV û serverên medyayê yên DLNA, û serverên Plex bêyî plex.tv, wekî li ser telefonan tên gerandin: wêneyên wan vedibin û vîdyoyên wan tên lêdan. Ji bo kamerayên Tapo, tomarên karta bîrê: lîste, anîna klîpekê û lêdana wê.
+- **Vîdyoyên 360°, 3D û VR180** (ji build a desktop 3): bişkoka 360° wan di lîstikvanê 360° yê sepanê de vedike, di pencereyê de an di ekrana tije de, ji her çavkaniyeke vîdyoyên dûz, bi mişk û klavyeyê tên zivirandin, bi bişkokên 3D û 360°/180° yên telefonan (vîdyoyeke 3D çavê xwe yê çepê nîşan dide, wek li ser telefonan), gerîn di demê de, menuya şopa dengî û nîşaneya barkirinê.
+- **Vîdyoyên xav ên 360°** (ji build a desktop 3): pelên Insta360 .insv, bi her du lensan di yek şopê de, di du şopan de (X4 û yên paşê) an di du pelan de (cotên X3), pelên GoPro .360 û DJI .osv, ku sepan wan dema lê tên dan li ser çîpa grafîkê bi kalibrasyona pelê didirû, wek li ser telefonan.
+- **Parvekirinên torê**: Samba (SMB), WebDAV û serverên medyayê yên DLNA, û serverên Plex bêyî plex.tv, wekî li ser telefonan tên gerandin: wêneyên wan vedibin û vîdyoyên wan tên lêdan. Ji bo kamerayên Tapo, tomarên karta bîrê: lîste, anîna klîpekê û lêdana wê; û ji build a desktop 3 dîtina zindî.
 - **Vê komputerê li ser torê parve bike**: albûm, meh û medyaya 360° ya peldankên te, tenê ji bo xwendinê, ji bo Meta Quest an cîhazeke din li malê, wekî ku telefonek xwe parve dike.
 - **Pel**: daxistinên ji serverê diçin peldankeke ku tu hilbijêrî, "Di peldankekê de tomar bike" kopiyek ji wêne û vîdyoyên hilbijartî diparêze, û rûpela Tomar "Tomaran di pelekê de tomar bike" heye.
 
@@ -1005,9 +1014,28 @@ Ji bo kontrolkirina ZIP, `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-deskto
 4. **Ji wêneyê ber bi wêneyê ve here**: di wêneyeke dûz de, tîrên çep û rast, an şevronên ku dema mişk dilive li keviyan xuya dikin, diçin ya berê û ya din. Tîpên ku di qada danasînê de tên nivîsandin di nivîsê de dimînin.
 5. **Vîdyoyekê lê bide**: wê ji demjimêrê, peldankekê, parvekirinekê, Plex an tomarên kamerayeke Tapo veke; ew di pencereyê de tê lêdan. Enter, an bişkoka lêdan û rawestandinê ya klavyeyê, radiwestîne û dîsa lê dide. Dema tê lêdan, tîrên çep û rast, an J û L, 10 saniyeyan paş an pêş ve bazdidin; dema rawestiyayî ye, tîr diçin ya berê û ya din. F an F11 derbasî ekrana tije dike, wekî ji bo wêneyan. Bişkoka "Şopa dengî" di nav şopên dengî yên vîdyoyeke ku çend hene de hildibijêre.
 6. **Dema vîdyoyek disekine**: vîdyoyeke rawestiyayî dema tu vedigerî pencereyê rawestiyayî dimîne. Vîdyoyeke ku berî dawiya xwe qut dibe, bo nimûne dema parvekirin an server bersivê nade, vê yekê dibêje: wê dîsa veke û ew ji cihê ku sekinî, rawestiyayî, didomîne. Pelê lîsteya lêdanê ku di peldankekê an parvekirinekê de tê dîtin nayê şopandin.
-7. **Komputerê bi kaskê re parve bike**: Kitêbxane veke, paşê Parvekirinên torê; kaşiya yekem "Vê komputerê li ser torê parve bike" ye, aliyê komputerê yê [Vê telefonê li ser torê parve bike](#share-this-phone-on-the-network). "Wêne û vîdyoyan li ser torê parve bike" veke, paşê komputerê di kaskê de lê zêde bike wekî ku ew beş dibêje. Parvekirin dema ku sepan tê girtin an piştî saetekê bêyî bikaranîn disekine.
-8. **Destûr bide torê**: Windows dikare bipirse ka Immuch360 Desktop dikare torê bi kar bîne. Li ser torên taybet destûrê bide, wekî din kask nikare komputerê bibîne. Li ser toreke ku Windows wekî giştî nîşan dike (kafe, otêl), an toreke ku nikare cureyê wê bizanibe, parvekirin dest pê nake heke tu "Ji bo vê danişînê parve bike" hilnebijêrî, û komputer xwe tenê li ser toreke ku lê parve dike dide nasîn.
-9. **Settings, "Ev komputer"**: peldank, peldanka daxistinê, adaptora torê ya ku ji bo dîtina parvekirinan û parvekirina komputerê tê bikaranîn (dema ku çend hebin, bo nimûne Wi-Fi û Ethernet), û sertîfîkayên pêbawer: desthilata sertîfîkayê ya servera te bi xwe, wekî pelekî PEM, ji bo navnîşaneke HTTPS ku Windows bi xwe bawerî pê nayîne. Sertîfîkayên muwekîl di Settings, Pêşketî de tên îthalkirin, wekî li ser telefonan.
+7. **Vîdyoyeke 360° lê bide** (ji build a desktop 3): vîdyoyê veke û di barika jorîn de li 360° bitikîne, wek li ser telefonekê; ji bo pelekî 360° ku server nîşan nake, pêşî "Wek 360° bibîne" di menuya ⋮ de, binêre [Pelek 360° ku dûz xuya dibe](#a-360-file-that-shows-flat-view-as-360). Lîstikvanê 360° di pencereyê de vedibe. Bi mişkê bikişîne da ku li dora xwe binêrî (piştî kişandineke bilez dîtin hinekî din dizivire), bi tekerê, + û - an Page Up û Page Down nêzîk bike, bi tîrên ku tu pêl wan digirî bizivirîne. Space, an bişkoka lêdan û rawestandinê ya klavyeyê, radiwestîne û dîsa lê dide; J û L 10 çirkeyan paş an pêş ve diçin; Home vedigere destpêkê; M deng digire û vedike. F, F11 an du-tikandin derbasî ekrana tije dibe; Escape ji ekrana tije derdikeve, paşê lîstikvan digire. Kontrol (girtin, sernav, 360°/180°, 3D, şopa dengî û ekrana tije li jor; lêdan, 10 çirke paş û pêş, barika demê û deng li jêr) piştî 3 çirkeyên lêdanê bi nîşanderê mişkê re vedişêrin, û dema mişk dilive an bişkokek tê pêlkirin vedigerin; Tab ji yekê diçe ya din.
+8. **3D û VR180**: di lîstikvanê 360° de, bişkoka 3D di navbera "Mono (ne 3D)", "3D, jor û jêr" û "3D, li kêleka hev" de dizivire, û bişkoka 360°/180° di navbera goga tevahî û nîvgoga VR180 de diguherîne, wek di [3D û VR180](#3d-and-vr180-photos-and-videos) de. Vîdyoyeke 3D çavê xwe yê çepê nîşan dide.
+9. **Vîdyoyên xav ên 360°** (ji build a desktop 3): pela xav veke û li 360° bitikîne, wek li ser telefonekê, binêre [Pelên xav ên kameraya 360°](#raw-360-camera-files-without-the-cameras-app); her du pelên cotek X3 bi hev re bihêle. Pelek bi her du lensan di yek şopê de dema lê tê dan tê dirûtin. Pelek bi yek lensê ji bo her şopê an her pelê her du lensan li kêleka hev di yek lîstikvanî de lê dide dema komputer digihîje: çirkeyên pêşîn ên vîdyoyeke wiha tên pîvandin, û encam ji bo vîdyoyên din ên wê cureyê tê parastin (rêyeke ku pir hêdî hatibe dîtin piştî 14 rojan dîsa tê ceribandin). Dema komputer nagihîje, lîstikvan di gavên telefonan re derbas dibe, bi peyamên wan: yek lens, nîvê gogê reş; herika veguherandî ya serverê; kopiya LRV bi çareseriya nizm ku kamerayê li kêleka pelê tomar kiriye, heke hebe; vîdyoya nedirûtî. Vîdyoyeke xav ne bişkoka 3D û ne jî bişkoka 360°/180° heye.
+10. **Dîtina zindî ya kameraya Tapo** (ji build a desktop 3): kamerayê wek li ser telefonekê veke, binêre [Zindî temaşe bike](#watch-it-live). Rûpel herika SD lê dide û ekrana tije ya HD, bi bişkokên telefonekê li ser wêneyê: deng, di destpêkê de girtî, SD an HD, û "Dîmendera tije". Herikeke ku winda dibe (kamera ji nû ve dest pê dike, Wi-Fi diqete) bi xwe vedigere, nêzî deqeyek û nîv dîsa tê ceribandin dema wêneyê dawî li ser ekranê dimîne. Hesabeke kamerayê ku kamera red dike tê gotin û dîsa nayê ceribandin, ji ber ku têketinên têkçûyî ber bi girtina kamerayê ve tên hejmartin.
+11. **Komputerê bi kaskê re parve bike**: Kitêbxane veke, paşê Parvekirinên torê; kaşiya yekem "Vê komputerê li ser torê parve bike" ye, aliyê komputerê yê [Vê telefonê li ser torê parve bike](#share-this-phone-on-the-network). "Wêne û vîdyoyan li ser torê parve bike" veke, paşê komputerê di kaskê de lê zêde bike wekî ku ew beş dibêje. Parvekirin dema ku sepan tê girtin an piştî saetekê bêyî bikaranîn disekine.
+12. **Destûr bide torê**: Windows dikare bipirse ka Immuch360 Desktop dikare torê bi kar bîne. Li ser torên taybet destûrê bide, wekî din kask nikare komputerê bibîne. Li ser toreke ku Windows wekî giştî nîşan dike (kafe, otêl), an toreke ku nikare cureyê wê bizanibe, parvekirin dest pê nake heke tu "Ji bo vê danişînê parve bike" hilnebijêrî, û komputer xwe tenê li ser toreke ku lê parve dike dide nasîn.
+13. **Settings, "Ev komputer"**: peldank, peldanka daxistinê, adaptora torê ya ku ji bo dîtina parvekirinan û parvekirina komputerê tê bikaranîn (dema ku çend hebin, bo nimûne Wi-Fi û Ethernet), û sertîfîkayên pêbawer: desthilata sertîfîkayê ya servera te bi xwe, wekî pelekî PEM, ji bo navnîşaneke HTTPS ku Windows bi xwe bawerî pê nayîne. Sertîfîkayên muwekîl di Settings, Pêşketî de tên îthalkirin, wekî li ser telefonan.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### Vîdyoyên 360° û çîpa grafîkê
+
+Di lîstikvanê 360° de (ji build a desktop 3), çîpa grafîkê ji her çarçoveya vîdyoyê dîtina ku tu lê dinêrî xêz dike. Pêveka vîdyoyê dihêle libmpv her çarçoveyê di wêneyekî bi mezinahiya hilbijartî de xêz bike, paşê derbasa xêzkirinê ya sepanê bi xwe ji wê beşa gogê ya ku tu lê dinêrî xêz dike. Zivirandina dîtinê nirxekî wê derbasê diguherîne, ne lîstikvan: kişandin bîrê naxwe, û vîdyoyeke rawestandî bêyî dekodkirina tiştekî dizivire.
+
+Sepan çirkeyên pêşîn ên her vîdyoyeke 360° dipîve û hildibijêre ku çîp li ser çarçoveyeke çiqas mezin bixebite: tevahiya çarçoveyê li ser çîpeke veqetandî, herî zêde bi firehiya 2880 pîkselan li ser çîpeke ku di pêvajoyê de hatiye avakirin (Windows ji sepanê re dibêje ew ji kîjan cureyê ye, ji ber vê yekê çîpa Intel Arc a laptopeke Core Ultra wekî yekgirtî tê hesibandin), gavekê piçûktir dema çîp nagihîje. Tiştê ku pîvandiye ji bo vîdyoyên din ên heman cureyê (kodek, mezinahî, rêjeya çarçoveyê û dekoder) tê parastin, ne ji bo her vîdyoyê.
+
+Dema ku gava herî piçûk jî ne rehet be, lîstikvan dibêje "Ev karta grafîkê nikare dîtina 360° ya vê vîdyoyê bi rehetî nîşan bide"; dema ku jê dûr be, an dema ku çîp qet nikare dîtinê xêz bike (OpenGL ES 3.0 tune, ajokarek ku wê red dike), vîdyo dûz tê lêdan û lîstikvan dibêje çima. Vîdyoyeke ku dûz hatiye lêdan cara din dûz nayê lêdan: vîdyoya din a cureyê wê dîsa tê pîvandin.
+
+Dema ku dekodkirina vîdyoyeke serverê nagihîje, ne xêzkirin (vîdyoyeke ku pêvajo dekod dike, wek 5.7K H.264), lîstikvan ji cihê ku lê bû derbasî herika veguherandî ya serverê dibe, bi peyama telefonan: "Herika veguherandî tê lîstin: orîjînal (kodek û mezinahî) ji tiştên ku ev cîhaz dekod dike derbas dibe".
+
+- **Çîpa grafîkê ya veqetandî ya laptopê bi kar bîne.** Windows sepanê li ser çîpa yekgirtî dixebitîne heke wekî din nehatibe gotin. Di mîhengên Windows de, System, Display, Graphics, `immuch360.exe` lê zêde bike û "High performance" hilbijêre, paşê sepanê ji nû ve dest pê bike. Li ser laptopa ceribandinê (çîpeke Intel UHD û NVIDIA RTX 4060 Laptop), çîpa NVIDIA vîdyoyên 360° yên 4K, 5.7K û 8K bi mezinahiya tevahî û 30 çarçoveyan di çirkeyê de xêz kirin dema dîtin dizivirî. Çîpa Intel ew herî zêde bi firehiya 2880 pîkselan xêz kirin: vîdyoyeke 4K H.264 û yeke 8K HEVC bi nêzî 30 çarçoveyan di çirkeyê de bi buildeke libmpv ya 2026an, vîdyoyeke 4K bi 23 heta 27 bi libmpv ya 2024an a media-kit (binêre [Hîn ne amade ye](#not-there-yet)), û vîdyoyeke 5.7K H.264, ku pêvajo dekod dike, bi nêzî 20: ji serverê, lîstikvan wê demê derbasî herika veguherandî dibe; vîdyoyeke bê herika veguherandî, bo nimûne ji peldankekê, bi peyama "Ev karta grafîkê nikare dîtina 360° ya vê vîdyoyê bi rehetî nîşan bide" berdewam dike.
+- **Renderer bi xwe hilbijêre.** Di Settings, Pêşketî de, Troubleshooting (Çareserkirina pirsgirêkan) veke: hêmaneke "360° video renderer" (Rendererê vîdyoyên 360°) xuya dibe, bi xwerû Automatic (Otomatîk). Ew her weha "Plugin, full size" (Pêvek, mezinahiya tevahî), "Plugin, at most 4096 wide" (Pêvek, herî zêde 4096 fireh), "Plugin, at most 2880 wide" (Pêvek, herî zêde 2880 fireh) û "Flat, without the 360° view" (Dûz, bêyî dîtina 360°) pêşkêş dike, ji bo vîdyoya 360° ya din a ku tu vedikî. Di bin wê de, "Measured last" (Pîvana dawî) mezinahiya ku vîdyoya 360° ya dawî pê hatiye xêzkirin, çarçoveyên wê di çirkeyê de, çîpa grafîkê û dekoderê dibêje: wê di raporeke çewtiyê de kopî bike. Dîsa hilbijartina "Automatic", heta dema ku ew jixwe hilbijartî be, tiştê hatiye pîvandin ji bîr dike, û vîdyoyên 360° yên din dîsa tên pîvandin.
+- **Çîp çi dekod dike.** Settings, Pêşketî, "Dekoderên vîdyoyê yên vê cîhazê" tiştê ku çîpa grafîkê ya di karanînê de dekod dike rêz dike, wek ku Direct3D 11 radigihîne, û sepan wê lîsteyê bi tiştê ku dema lêdanê pîvandiye rast dike: mîhenga Çavkaniya vîdyoyê û kontrola du-lensî ya vîdyoyên xav li pey wê diçin. H.264 ji 4096 pîkselan firehtir (5.7K a kamerayên 360°) ji aliyê pêvajoyê ve tê dekodkirin, ji ber ku tu çîpeke laptopa ceribandinê wê nagire.
 
 ### Li gorî sepanên telefonê
 
@@ -1017,12 +1045,16 @@ Ji bo kontrolkirina ZIP, `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-deskto
 - **Tiştek ji peldankên te nayê jêbirin**: "Ji cîhazê jê bibe" veşartî ye, û Jê bibe tenê kopiya serverê radike, heta ku sepan bikaribe pelan bişîne sindoqa çopê ya Windows.
 - **Mişk û klavye** li şûna destdan û jîroskopê.
 - **Yek lîstikvanê vîdyoyê ji bo her çavkaniyê**: libmpv vîdyoyên serverê, peldankan, parvekirinan û Plex bi heman awayî lê dide, û lîstikvanê wî yê dûz jixwe menuya şopa dengî heye ku lîstikvanê dûz ê telefonan hîn tune.
+- **Vîdyoyên 360° di pencereyê de** (ji build a desktop 3): lîstikvanê 360° rûpeleke sepanê ye, ne lîstikvanekî xwecihî yê cuda, bi barika demê, bazdanên 10 çirkeyan û bişkoka deng. Vîdyoyên xav bi yek lensê ji bo her şopê an her pelê li kêleka hev di yek lîstikvanî de tên danîn, li cihê ku telefon du dekoderan dimeşînin; gavên paşverû yên telefonan heman in, bi kopiya LRV ya kamerayê ku berî vîdyoya nedirûtî hatiye zêdekirin.
+- **Dîtina zindî ya Tapo** (ji build a desktop 3) li ser komputerê wek li ser Android tê lêdan, lê iPhone û iPad hîn wê tune ne.
 
 <a id="not-there-yet"></a>
 ### Hîn ne amade ye
 
-- **Vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360°**: niha dûz tên nîşandan, wekî ku pel wan digire (hemû gog vekirî, her du çav li kêleka hev, an wêneyên girover ên lensan), an wekî cihgirek, û bişkoka 360° li ser wêneyan dimîne. Lîstikvanên wan bi buildên desktop ên din re tên.
-- **Spatial 2.5D**, paşê bi webcamê; **dîtina zindî ya Tapo**; **nexşe** û dîtina Cihan; **têketin bi OAuth** (li şûna wê bi e-name û şîfreyê têkeve); **Google Cast**; **agahdarî**.
+- **libmpv a avakirina forkê bi xwe**: ZIP libmpv ya 2024an a media-kit hildigirin heta ku avakirina forkê bi xwe were vêxistin, û `BUILD-INFO.txt` di ZIP de dibêje kîjan hildigire. Bi ya 2024an, her du lensên vîdyoyeke xav bi yek lensê ji bo her şopê an her pelê qet bi hev re nayên lêdan (parzûna ku wan li kêleka hev datîne tune), ji ber vê yekê ew vîdyo yek lensê nîşan didin, nîvê gogê reş; û çîpa grafîkê her çarçoveyê ji dekodera xwe paş ve kopî dike, ku lîstikvanê 360° li ser çîpeke yekgirtî hêdî dike. libmpv a workflowa forkê bi xwe, guhertoyeke 2026an, tê plankirin ku berî weşana giştî ya yekem şûna wê bigire; buildeke libmpv ya 2026an ku li ser laptopa ceribandinê hat ceribandin herduyan jî dike.
+- **Vîdyoyên xav ên du-lensî li ser laptopekê**: heta bi libmpv ya 2026an jî, laptopa ceribandinê cotek X3 (du pelên H.264 yên 2880x2880) bi 30 çarçoveyan di çirkeyê de tenê li ser çîpa xwe ya NVIDIA li kêleka hev danî; li ser çîpa wê ya Intel, û ji bo pelekî X4 (du şopên HEVC yên 3840x3840) li ser her du çîpan, vîdyo yek lensê lê dide, nîvê gogê reş, wek li ser telefoneke ku nikare du dekoderan bimeşîne.
+- **3D tenê li ser ekranê**: vîdyoyeke 3D çavê xwe yê çepê nîşan dide, wek li ser telefonan; li ser komputerê ne jîroskop û ne jî dîtina kaskê heye. Ji bo temaşekirina bi 3D ya rastîn, komputerê bi Meta Questê re parve bike.
+- **Spatial 2.5D**, paşê bi webcamê; **nexşe** û dîtina Cihan; **têketin bi OAuth** (li şûna wê bi e-name û şîfreyê têkeve); **Google Cast**; **agahdarî**.
 - **Sazkerek, buildeke îmzekirî û nûkirinên otomatîk**: ev build peldankek e bi `immuch360.exe`.
 - **Linux û macOS**: projeyên wan di çavkaniyan de ne, lê hîn li ser wan pergalan nehatine avakirin an ceribandin, û lîstikvanê wan ê vîdyoyê hîn tê de tune; ew piştî Windows tên.
 - **Werger**: nivîsên nû yên guhertoya komputerê niha bi îngilîzî ne.
@@ -1030,10 +1062,11 @@ Ji bo kontrolkirina ZIP, `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-deskto
 ### Pirsgirêkên naskirî
 
 - **Destpêka yekem a buildeke nû hêdî ye**: ji 10 saniyeyan heta nêzî deqeyekê berî ku pencere xuya bibe, bi îhtimaleke mezin dema ku Microsoft Defender pelên nû, ku hîn nehatine îmzekirin, dişopîne. Li benda pencereyê bimîne li şûna ku sepanê dîsa dest pê bikî; destpêkên din saniyeyek an du digirin.
-- **Vîdyoyên 8K HEVC çîpeke grafîkê ya veqetandî hewce dikin**: li ser laptopa ceribandinê, çîpa yekgirtî ya Intel UHD nêzî nîvê çarçoveyên vîdyoyeke 8K HEVC nîşan da, lê çîpa veqetandî ya NVIDIA 8K HEVC û 5.7K H.264 bêyî çarçoveyeke winda lê da. Windows sepanê li ser çîpa yekgirtî dixebitîne heke wekî din nehatibe gotin: di mîhengên Windows de, System, Display, Graphics, `immuch360.exe` lê zêde bike û "High performance" hilbijêre. Li ser çîpa yekgirtî, vîdyoyeke 5.7K H.264, ku dekodera wê red dike, ji aliyê pêvajoyê ve bêyî çarçoveyeke winda tê dekodkirin.
-- **Vîdyo herî zêde bi bilindahiya 1440 rêzan tên xêzkirin**, paşê li gorî pencereyê tên mezinkirin: li ser ekraneke 4K di ekrana tije de, vîdyoyeke 4K an 8K hinekî ji lîstikvanekî vîdyoyê yê taybet nermtir e. Ev vîdyoyeke 8K di nav hêza grafîkê ya laptopekê de dihêle.
+- **Vîdyoyên 8K HEVC çîpeke grafîkê ya veqetandî hewce dikin, û vîdyoyên 360° li ser yekê çêtir dixebitin**: li ser laptopa ceribandinê, çîpa yekgirtî ya Intel UHD nêzî nîvê çarçoveyên vîdyoyeke 8K HEVC nîşan da, lê çîpa veqetandî ya NVIDIA 8K HEVC û 5.7K H.264 bêyî çarçoveyeke winda lê da; lîstikvanê 360° li ser çîpa NVIDIA bi rehetî û li ser ya Intel hêdîtir e, binêre [Vîdyoyên 360° û çîpa grafîkê](#360-videos-and-the-graphics-chip). Windows sepanê li ser çîpa yekgirtî dixebitîne heke wekî din nehatibe gotin: di mîhengên Windows de, System, Display, Graphics, `immuch360.exe` lê zêde bike û "High performance" hilbijêre, paşê sepanê ji nû ve dest pê bike. Li ser çîpa yekgirtî, vîdyoyeke dûz a 5.7K H.264, ku dekodera wê red dike, ji aliyê pêvajoyê ve bêyî çarçoveyeke winda tê dekodkirin.
+- **Vîdyoyên dûz herî zêde bi bilindahiya 1440 rêzan tên xêzkirin**, paşê li gorî pencereyê tên mezinkirin: li ser ekraneke 4K di ekrana tije de, vîdyoyeke 4K an 8K hinekî ji lîstikvanekî vîdyoyê yê taybet nermtir e. Ev vîdyoyeke 8K di nav hêza grafîkê ya laptopekê de dihêle. Lîstikvanê 360° li şûna wê li ser tevahiya çarçoveyê dixebite, an li ser mezinahiya piçûktir a ku pîvana wê hilbijartiye.
 - **Dema ku vîdyoyeke peldankên te di sepanê de tê lêdan, an dema ku kask pelekî ji komputera parvekirî dixwîne** (vîdyoyek ku lê dide, wêneyek ku dadixe), Windows nikare navê wî pelî biguherîne, wî bibe cihekî din an jê bibe û dibêje ku ew di Immuch360 Desktop de vekirî ye: pêşî vîdyoyê bigire, an lêdanê di kaskê de rawestîne. Paşeke pelên te bi vî awayî nagirin: pelek dikare dema tê barkirin were navguhertin, livandin an jêbirin.
-- **Kêmasî**: 656 ji 663 ceribandinên desktop li ser Windows derbas dibin (7 bi zanebûn tên derbaskirin), 200 lîstikvanên ku yek li pey yekê tên vekirin tu rijandinê nahêlin, û li ser PC yeke Windows 11 sepan dest pê dike, danişîneke tomarkirî li ser servera Immich vedike, hevdem dike, vîdyoyekê lê dide û bi paqijî tê girtin. Ceribandina her fonksiyonê bi destan li ser PC yeke rastîn hîn berdewam e.
+- **Kêmasî**: build a desktop 3 li ser Windows 855 ji 863 ceribandinên xwe yên desktop derbas dike (8 bi zanebûn tên derbaskirin) û hemû koma ceribandinan a sepanê, 200 lîstikvanên ku yek li pey yekê tên vekirin tu rijandinê nahêlin, û ZIP a wê ya weşanê dest pê dike, klîpeke ceribandinê lê dide û bi paqijî tê girtin. Ceribandina her fonksiyonê bi destan li ser PC yeke rastîn hîn berdewam e.
+- **Lîstikvanê 360° û dîtina zindî bi çi hatin kontrolkirin**: lîstikvanê 360° bi klîpên 360° yên sentetîk ên 4K, 5.7K û 8K li ser her du çîpên grafîkê yên laptopekê hat xebitandin (vekirin, lêdan, zivirandin di dema lêdan û rawestandinê de, girtin) bêyî têkçûn û bêyî ji nû ve destpêkirina ajokarê grafîkê. Vîdyoyên xav ên du-lensî ji klîpên sentetîk û ji pelên X3 û X4 yên rastîn hatin lêdan. Dîtina zindî ya Tapo li hember serverekî RTSP yê ceribandinê hat kontrolkirin ku bi heman awayî wek kameran têdikeve (Digest), bi zanebûn hat qutkirin û redkirin, bêyî şîfreyê di tu rêzeke tomarê de, lê hîn ne bi kameraya rastîn. Ceribandina bi destan, bi pelên 360° û 3D yên rastîn, her du ekranên laptopekê, xew û vegerandin, û kameraya rastîn, hîn tê.
 
 Heke tiştek xelet biçe, ji kerema xwe [issue](https://github.com/freeKC/Immuch360/issues) yekê veke bi tomara ku ji rûpela Tomar hatiye tomarkirin, binêre [Tomar](#logs). Berî parvekirinê tomarê kontrol bike: dikare navnîşana servera te tê de hebe.
 
@@ -1052,7 +1085,7 @@ Windows 10 an 11 li ser x64, Flutter 3.47.2 ji bo Windows, Visual Studio 2022 an
    mise run codegen
    ```
 
-2. Li ser Windows, di heman peldanka `mobile` de, sepanê ava bike. Avakirina yekem pirtûkxaneyên lîstikvanê vîdyoyê (libmpv û ANGLE) ji GitHub dadixe û her arşîvê bi SHA-256 ya wê kontrol dike:
+2. Li ser Windows, di heman peldanka `mobile` de, sepanê ava bike. Avakirina yekem pirtûkxaneyên lîstikvanê vîdyoyê (libmpv û ANGLE) ji GitHub dadixe û her arşîvê bi SHA-256 ya wê kontrol dike; ew her weha pêveka piçûk a Direct3D 11 ku dekoderên çîpa grafîkê dixwîne, `immuch_desktop_video`, bi heman barê karê C++ berhev dike:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Windows 10 an 11 li ser x64, Flutter 3.47.2 ji bo Windows, Visual Studio 2022 an
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-CI ya Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) li ser şaxa `desktop` dixebite, ku `immuch360` dişopîne: kontrolên telefonê (di buildên telefonê de tiştek naguhere) û hemû koma ceribandinan li ser Linux, ceribandinên desktop li ser Windows, û heman ZIP; karên wê yên Linux û macOS (`flutter build linux` û `flutter build macos`, bi heman `-t lib/main_desktop.dart`) hîn li ser wan pergalan nexebitîne.
+CI ya Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) li ser şaxa `desktop` dixebite, ku `immuch360` dişopîne: kontrolên telefonê (di buildên telefonê de tiştek naguhere) û hemû koma ceribandinan li ser Linux, ceribandinên desktop li ser Windows, û heman ZIP, paşê li ser wê buildê ceribandinên ku libmpv û ANGLE a wê hewce dikin (têketina dîtina zindî ya Tapo, tiştê ku pelekî vîdyoyê nikare veke, shaderên 360°); karê wê yê Linux sepanê li ser Ubuntu ava dike û karê wê yê macOS wê bi Xcode 26.3 û macOS 26 SDK berhev dike (herdu bi heman `-t lib/main_desktop.dart`), tenê wekî kontrolên berhevkirinê: yek ji wan hîn li ser wan pergalan dest pê nekiriye. Workflowek duyem (`.github/workflows/immuch360-libmpv.yml`) libmpv ji bo Windows x64 û arm64 ji çavkaniyên girêdayî ji nû ve ava dike û arşîvan bi SHA-256 a wan diweşîne; ZIP hîn arşîva media-kit hildigirin heta ku ew build were vêxistin, ji ber vê yekê sînorên libmpv ya 2024an di [Hîn ne amade ye](#not-there-yet) de li ser buildeke te bi xwe jî derbas dibin.
 
 <a id="where-to-get-it"></a>
 ## Ji ku derê bistînî
@@ -1088,8 +1121,8 @@ Sepan ji bo telefon û tabletan li ser Google Play ye; guhertoya App Store li be
   - Îro: `Immuch360-v<version>-release.apk` a gerdûnî ya rûpela [Releases](https://github.com/freeKC/Immuch360/releases), bi adb sideloadkirî, binêre [Wê li ser televizyonê saz bike](#install-it-on-the-tv). Ew heman sepan e wek li ser telefonan.
   - Di demeke nêzîk de: Google Play li ser televizyonan, ku tomara wê ji 9ê Cotmeha 2026an ve di nirxandina Google de ye.
 - **Windows 10 û 11, 64 bit (pêşdîtin)**
-  - Îro: Immuch360 Desktop, ZIP a `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` ya [pêş-weşana desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), vekirî û dest pê kirî wekî ku [Li ser Windows daxistin û sazkirin](#download-and-install-on-windows) dibêje. Niha wêne û vîdyoyên dûz: vîdyoyên 360°, 3D û VR180 bi buildên desktop ên din re tên.
-  - Di demeke nêzîk de: vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360°; sazkerek, buildeke îmzekirî û nûkirin paşê.
+  - Îro: Immuch360 Desktop, build a desktop 3, ZIP a `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` ya [pêş-weşana desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), vekirî û dest pê kirî wekî ku [Li ser Windows daxistin û sazkirin](#download-and-install-on-windows) dibêje. Wêne, vîdyoyên dûz, vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360° (li ser çîpeke grafîkê ya veqetandî bi rehetî, li ser çîpeke yekgirtî bi sînoran) û dîtina zindî ya Tapo.
+  - Di demeke nêzîk de: Spatial 2.5D bi webcamê, paşê Linux û macOS; sazkerek, buildeke îmzekirî û nûkirin paşê.
 
 Girêdanên App Store û Meta Horizon Store dê gava tomar hatin weşandin li vir bên zêdekirin. Bi URL û hesabê xwe yê asayî yê servera Immich têkeve, an li ser rûpela têketinê li "Bêyî server bi kar bîne" bixe da ku li ser wêne û vîdyoyên cîhazê bi xwe dest pê bikî. APK ya ji GitHub xwe bi xwe nû nake: li rûpela Releases binêre, û gava te sepan ji firoşgehekê saz kir, nûkirinan ji wê firoşgehê bistîne.
 
@@ -1126,7 +1159,7 @@ Tu veşartî di vê depoyê de tune: mifteya îmzekirina Android wekî veşartiy
 
 - **`main`**: Immich `main` li commita ku `immuch360` li ser hatiye avakirin (29ê Îlona 2026an ji bo build ên niha), qet nayê guhertin; ew pêş ve diçe dema fork li ser Immich a nûtir tê rebasekirin.
 - **`immuch360`**: guhertinên vê forkê li ser Immich, ji 9ê Cotmeha 2026an ve Immuch360 Desktop jî tê de. Her weşan dibêje li ser kîjan guhertoya Immich hatiye avakirin.
-- **`desktop`**: cihê ku Immuch360 Desktop, guhertoya komputerê, li ser `immuch360` hat avakirin, heta ku di 9ê Cotmeha 2026an de tê de hat yekkirin da ku telefon, kask, televizyon û komputer ji heman çavkaniyan derkevin. Niha ew `immuch360` dişopîne û etîketên pêş-weşanên desktop hildigire ([build a desktop 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) ji commit 21f285c34, [build a desktop 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) ji 5b723bd25). Guhertoya komputerê tiştek di bin `mobile/android` û `mobile/ios` de naguherîne.
+- **`desktop`**: cihê ku Immuch360 Desktop, guhertoya komputerê, li ser `immuch360` hat avakirin, heta ku di 9ê Cotmeha 2026an de tê de hat yekkirin da ku telefon, kask, televizyon û komputer ji heman çavkaniyan derkevin. Niha ew `immuch360` dişopîne û etîketên pêş-weşanên desktop hildigire ([build a desktop 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) ji commit 21f285c34, [build a desktop 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) ji 5b723bd25, [build a desktop 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) ji yekkirina lîstikvanê vîdyoyên 360° di 10ê Cotmeha 2026an de). Karê nû yê desktop pêşî li wir dadikeve û bi build a desktop a ku wê diweşîne tevlî `immuch360` dibe. Guhertoya komputerê tiştek di bin `mobile/android` û `mobile/ios` de naguherîne.
 
 <a id="logs"></a>
 ## Tomar
@@ -1145,7 +1178,7 @@ Ji build 19 muwekîlê DLNA, parvekirina telefonê û naskirina medyaya fezayî 
 
 Li ser komputerê (Immuch360 Desktop), rûpela Tomar "Tomaran di pelekê de tomar bike" jî heye: tomar, an ZIP a tomarê û raporên hilweşînên dawî dema ku hebin (wê demê navê wê yê pêşniyarkirî bi "with-crash-reports" diqede). Raporeke hilweşînê minidumpeke biçûk e: xêz, cihê ku lê sekinîn û tenê tiştê ku ji bo şopandina bangên wan hewce ye, bi navên pelên bernameyê lê ne peldankên wan; ne bîra sepanê.
 
-Ji build a desktop 2, lîstikvanê vîdyoyê yê komputerê li wir di bin `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` û `VideoThumbnailGrabber` de dinivîse, hişyariyên mpv bi xwe jî tê de, bi tokan û şîfreyên jêbirî. Berî parvekirinê tomarê kontrol bike: dikare navnîşana servera te tê de hebe.
+Ji build a desktop 2, lîstikvanê vîdyoyê yê komputerê li wir di bin `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` û `VideoThumbnailGrabber` de dinivîse, hişyariyên mpv bi xwe jî tê de, bi tokan û şîfreyên jêbirî. Ji build a desktop 3 ew her weha lîstikvanê 360° di bin `SphericalPlayer`, `SphereRenderer` û `PluginRenderer` de dinivîse (mezinahiya hilbijartî, çarçoveyên di çirkeyê de yên pîvandî, çîpa grafîkê), vîdyoyên xav ên du-lensî di bin `RawTwoStreams` de, dekoderên çîpa grafîkê di bin `DesktopGpuDecoders`, `DesktopVideoDecoderApi` û `DecoderMeasure` de, û dîtina zindî ya Tapo di bin `DesktopCameraLive` de, ku rêzên wê qet hesabê kamerayê û şîfreya wê nagirin. Berî parvekirinê tomarê kontrol bike: dikare navnîşana servera te tê de hebe.
 
 <a id="privacy"></a>
 ## Nepenî
@@ -1159,7 +1192,7 @@ Ji build a desktop 2, lîstikvanê vîdyoyê yê komputerê li wir di bin `Deskt
 - **Parvekirina telefonê**: tenê tora herêmî, bi navê bikarhêner û şîfre, bi HTTP ya sade (binêre [Vê telefonê li ser torê parve bike](#share-this-phone-on-the-network)).
 - **Kamera**: tenê ji aliyê lîstikvanê Spatial 2.5D ve, li ser cîhazê, tê bikaranîn; wêne qet nayên tomarkirin û qet ji tu derê re nayên şandin.
 - **Li ser komputerê** (Immuch360 Desktop, pêşdîtina Windows): sepan tenê peldankên ku tu hilbijêrî dixwîne, pêrist, wêneyên biçûk û cacheya xwe li ser komputerê digire, û şîfre û tokenan bi parastina daneyan a Windows tomar dike, tenê ji bo hesabê te yê Windows. Parvekirina komputerê qaîdeyên parvekirina telefonê dişopîne, û li ser toreke ku Windows wekî giştî nîşan dike, an ku nikare cureyê wê bizanibe, dest pê nake heke tu wisa nebêjî.
-- **Lîstikvanê vîdyoyê li ser komputerê** (ji build a desktop 2): vîdyoyên servera te bi rêya sepanê digihîjin wî, ji ber vê yekê lîstikvan qet tokena danişîna te nagire, û tiştê ku ew pêşwext dixwîne di bîrê de dimîne, ne li ser dîskê. Ew tenê pelê ku jê re tê dayîn vedike: pelekî peldankekê an parvekirinekê ku bi rastî lîsteyeke lêdanê an danasîneke herikînê ye nahêle ku ew bi cihekî din ve girê bibe.
+- **Lîstikvanê vîdyoyê li ser komputerê** (ji build a desktop 2): vîdyoyên servera te bi rêya sepanê digihîjin wî, ji ber vê yekê lîstikvan qet tokena danişîna te nagire, û tiştê ku ew pêşwext dixwîne di bîrê de dimîne, ne li ser dîskê. Ew tenê pelê ku jê re tê dayîn vedike: pelekî peldankekê an parvekirinekê ku bi rastî lîsteyeke lêdanê an danasîneke herikînê ye nahêle ku ew bi cihekî din ve girê bibe. Ji build a desktop 3, navnîşana her vîdyoyê tenê di bîrê de ji lîstikvan re tê dayîn, qet bi rêya pelekî demkî (girêdana ku sepan ji bo vîdyoyeke serverê an parvekirinekê çêdike mifteyeke wê danişînê digire, ku di build a desktop 2 de di her vekirinê de çend çirkeyan li ser dîskê dima), û ew mifte qet di tomarê de xuya nabe; dîtina zindî ya kameraya Tapo hesabê kamerayê bi heman awayî dide lîstikvan, qet di pelekî an rêzeke tomarê de, û tenê li ser tora herêmî bi kamerayê re diaxive; pîvanên lîstikvanê 360° û yên dekoderan (çîpa grafîkê, formata vîdyoyê, çarçoveyên di çirkeyê de, qet navê pelekî) di peldanka sepanê de li ser komputerê dimînin.
 
 Siyaseta tevahî di [PRIVACY.md](../PRIVACY.md) de ye.
 
@@ -1177,7 +1210,7 @@ Android, Android TV û Google TV markeyên Google LLC ne; Apple, iPhone, iPad û
 
 Tiştên ku hîn nehatine kirin, yên herî muhtemel pêşî. Tiştek li vir ne soz e, û nerînên li ser [issue tracker](https://github.com/freeKC/Immuch360/issues) alîkariyê dikin ku were biryardan ka çi pêşî tê.
 
-- **Immuch360 Desktop, pêşî Windows**: build a desktop 2 derketiye, bi vîdyoyên dûz, û çavkaniyên desktop ji 9ê Cotmeha 2026an ve di şaxa sereke ya forkê de ne, `immuch360` (binêre [Li ser komputereke Windows](#on-a-windows-computer-immuch360-desktop-preview)). Paşê, vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360° li ser Windows, bi her du lensên pelên xav û dîtina zindî ya Tapo; paşê ceribandina her fonksiyonê li ser PC yeke Windows û rastkirinên wê; paşê Spatial 2.5D bi webcamê; paşê Linux û macOS, pakêt, îmzekirin û nûkirin.
+- **Immuch360 Desktop, pêşî Windows**: build a desktop 3 derketiye, bi lîstikvanê vîdyoyên 360° (vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360°, her du lensên pelên xav, mezinahiya dîtinê ku li ser her komputerê tê pîvandin) û dîtina zindî ya Tapo, û çavkaniyên desktop ji 9ê Cotmeha 2026an ve di şaxa sereke ya forkê de ne, `immuch360` (binêre [Li ser komputereke Windows](#on-a-windows-computer-immuch360-desktop-preview)). Paşê, libmpv a workflowa forkê bi xwe li şûna ya 2024an, û ceribandina her fonksiyonê bi destan li ser PC yeke Windows bi pelên rastîn, her du ekranan û kameraya rastîn, bi rastkirinên wê; paşê Spatial 2.5D bi webcamê; paşê Linux û macOS; paşê sazkerek, buildeke îmzekirî û nûkirinên otomatîk.
 - **Google Play**: build 20 ji 7ê Cotmeha 2026an ve zindî ye, li şûna build 18; tomara ji bo televizyonan ji 9ê Cotmeha 2026an ve di nirxandina Google de ye. Build 21 li ser telefon û tabletan tiştekî naguherîne.
 - **App Store**: guhertoya 3.3.0 li benda nirxandina Apple ye; ew taybetmendiyên build 11 digire, ji ber vê yekê barkirina li Immich û kontrola dekodera vîdyoyê (build 15) û pelên xav ên Insta360 (build 16) bi nûkirina din a App Store tên. Girêdan dê gava zindî bibe li vir were zêdekirin.
 - **Meta Horizon Store**: Meta tomar di 7ê Cotmeha 2026an de bi build 14 pejirand. Build 21 wekî nûkirina wê ya yekem hatiye şandin: ew her tiştê ji build 14 û vir ve tîne (barkirin ji parvekirinekê bo Immich, çavkaniya vîdyoyê ku li gorî tiştê kask dikare dekod bike tê hilbijartin, pelên xav ên Insta360, GoPro û DJI, DLNA, parvekirina telefonê, wêneyên fezayî yên Apple, kitêbxaneyên Plex Media Server, kamerayên Tapo), û firoşgeh wê ji bo Quest 2, Quest Pro, Quest 3 û 3S tomar dike. Girêdana firoşgehê dê gava rûpel giştî bibe li vir were zêdekirin; kopiyeke sideloadkirî divê pêşî were rakirin (binêre [Sazkirin](#install)).

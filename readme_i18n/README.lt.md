@@ -15,13 +15,13 @@ Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 
 
 <div align="center">
 
-| Platforma | Kur gauti | Būsena 2026 m. spalio 9 d. |
+| Platforma | Kur gauti | Būsena 2026 m. spalio 10 d. |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 20 surinkimas Google Play nuo 2026 m. spalio 7 d., 21 surinkimas GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ir iPad** | App Store | 3.3.0 versija laukia Apple peržiūros; tuo metu [susikurkite patys](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ir 3S | [APK](#meta-quest-3) · Horizon Store | įrašas patvirtintas, 21 surinkimas Meta peržiūroje |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ir Google TV** | [APK](#install-it-on-the-tv) · Google Play | 21 surinkimas GitHub; Google Play įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d. |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Peržiūros ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | darbalaukio surinkimas 2 Windows sistemoje: nuotraukos ir plokšti vaizdo įrašai, 360° vaizdo įrašai netrukus; macOS ir Linux vėliau, iš tų pačių šaltinių |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Peržiūros ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | darbalaukio surinkimas 3 Windows sistemoje: nuotraukos, plokšti ir 360° vaizdo įrašai; macOS ir Linux vėliau |
 
 *Būsenos atnaujinamos su kiekvienu leidimu; išsami informacija skyriuje [Kur ją gauti](#where-to-get-it).*
 
@@ -30,7 +30,7 @@ Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 
 - 🌐 **Tikras 360°**<br>Nuotraukos ir vaizdo įrašai kaip sfera, kurioje apsidairote, su giroskopu, įskaitant neapdorotus kameros failus (Insta360 nuo 16 surinkimo, GoPro ir DJI nuo 18 surinkimo). Taip pat nemokamas vaizdo grotuvas: plokšti, 360°, 3D, VR180
 - 👓 **Tikras 3D**<br>Stereoskopiniai 360° ir VR180, viršuje ir apačioje arba vienas šalia kito, ir Apple erdvinės nuotraukos (nuo 19 surinkimo): tikras 3D akiniuose, viena akis telefone
 - 🎥 **Tikras 2.5D**<br>Gylis plokščiame ekrane iš stereoskopinio vaizdo įrašo, vaizdas seka jūsų galvą (eksperimentinis, telefonai ir planšetės)
-- 📱 **Android, iOS, Quest, TV**<br>Viena programa telefonuose, planšetėse ir Quest 2, Pro, 3 ir 3S akiniuose, tikras 3D akiniuose, nuo 20 surinkimo Android TV su nuotolinio valdymo pulteliu, ir Windows peržiūros versija su nuotraukomis ir plokščiais vaizdo įrašais
+- 📱 **Android, iOS, Quest, TV**<br>Viena programa telefonuose, planšetėse ir Quest 2, Pro, 3 ir 3S akiniuose, tikras 3D akiniuose, nuo 20 surinkimo Android TV su nuotolinio valdymo pulteliu, ir Windows peržiūros versija su nuotraukomis, plokščiais ir 360° vaizdo įrašais
 - 🔌 **Su serveriu arba be jo**<br>Jūsų Immich serveris arba paties telefono galerija, paskyros nereikia
 - 🗄️ **Tinklo bendrinimai**<br>Samba (SMB), WebDAV ir, nuo 19 surinkimo, DLNA medijos serveriai, randami tinkle ir skaitomi tiesiogiai, nieko neatsisiunčiant, o į Immich siunčiami, kai pasirenkate. Nuo 19 surinkimo telefonas taip pat bendrina savo galeriją su akiniais
 - 📺 **Televizoriuje**<br>Nuo 20 surinkimo tas pats APK Android TV ir Google TV: 360° nuotraukos ir vaizdo įrašai, jūsų serveris ir jūsų bendrinimai, valdomi pulteliu
@@ -84,7 +84,7 @@ Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 
 - **„Noriu žiūrėti savo 360° nuotraukas ir vaizdo įrašus, taip pat savo NAS ar Plex serverio vaizdo įrašus televizoriuje, valdydamas pulteliu.“** Žr. [Žiūrėti televizoriuje](#watch-on-your-tv-android-tv-and-google-tv).
 - **„Negaliu rasti savo 360° kadrų tarp visų kitų.“** Žr. [360° sąrašas](#find-your-360-shots-the-360-list).
 - **„Mano 360° vaizdo įrašas stringa arba rodoma neryški kopija.“** Žr. [Vaizdo įrašo informacija ir dekoderiai](#video-details-decoders-and-why-a-video-stutters).
-- **„Noriu savo 360° nuotraukų ir Immich bibliotekos Windows kompiuteryje, kartu su jo aplankų, mano NAS ir Plex serverio nuotraukomis ir vaizdo įrašais, o kompiuterį bendrinti su akiniais.“** Žr. [Windows kompiuteryje](#on-a-windows-computer-immuch360-desktop-preview) (peržiūros versija: kol kas nuotraukos ir plokšti vaizdo įrašai, 360° vaizdo įrašai vėliau).
+- **„Noriu savo 360° nuotraukų ir Immich bibliotekos Windows kompiuteryje, kartu su jo aplankų, mano NAS ir Plex serverio nuotraukomis ir vaizdo įrašais, o kompiuterį bendrinti su akiniais.“** Žr. [Windows kompiuteryje](#on-a-windows-computer-immuch360-desktop-preview) (peržiūros versija: nuotraukos ir plokšti vaizdo įrašai, o nuo darbalaukio surinkimo 3 ir 360°, 3D, VR180 bei neapdoroti 360° vaizdo įrašai ir Tapo tiesioginis vaizdas).
 - **„Ar išlieka tai, ką daro Immich programa?“** Taip, su dviem nedideliais pakeitimais, žr. [Visa kita yra Immich](#everything-else-is-immich).
 
 Kai funkcija nauja, tekste nurodoma, nuo kurio surinkimo (build) ji yra. GitHub leidime visada yra naujausias surinkimas, parduotuvės atsilieka: žr. [Kur ją gauti](#where-to-get-it).
@@ -127,6 +127,7 @@ Sujungti 360° failai veikia visur: eksportai iš Insta360 programos ar Studio, 
 
 Grotuvas leidžia telefone saugomą failą arba tinklo bendrinimo failą, kai toks yra. Kitu atveju srautas gaunamas iš jūsų serverio: numatytai perkoduotas srautas, arba originalas, jei to paprašote skiltyje „Nustatymai“, „Elementų peržiūra“, „Vaizdo įrašo šaltinis“ (nuo 15 surinkimo; anksčiau jungiklis „Priversti originalų vaizdo įrašą“), žr. [Vaizdo įrašo informacija ir dekoderiai](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### 360° failas, rodomas plokščias: „Žiūrėti kaip 360°“
 
 Kai kurie 360° failai neturi projekcijos žymos, todėl serveris jų nepažymi kaip 360°, ir jie rodomi plokšti.
@@ -356,6 +357,7 @@ Nuo 20 surinkimo Immuch360 prideda Tapo kamerą šalia tinklo bendrinimų. Ji ro
 8. Bakstelėkite „Išbandyti kamerą“. Rodoma „Įrašai: (modelis), programinė aparatinė įranga (versija)“ su atminties kortelės būsena ir „Tiesioginis vaizdas: (vaizdas), garsas (garsas)“ arba kas nepavyko kiekvienu atveju.
 9. Bakstelėkite „Išsaugoti“. Kamera rodoma skiltyje „Kameros“, po bendrinimų, su modeliu, kai jis žinomas, ir `tapo://` su jos adresu.
 
+<a id="watch-it-live"></a>
 ### Žiūrėti tiesiogiai
 
 1. Bakstelėkite kamerą. Jos tiesioginis vaizdas yra puslapio viršuje: „Jungiamasi prie kameros“, tada vaizdas su ženkleliu „Tiesiogiai“.
@@ -755,9 +757,9 @@ Dabartinis surinkimas, 21 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030
 | Bendrinimo failų siuntimas į Immich; rankiniu būdu išsiųsti įrenginio failai laikomi turinčiais atsarginę kopiją | ❌ tik įrenginio failai | ✅ nuo 15 surinkimo |
 | Bendrinti šį telefoną tinkle, akiniams | ❌ | ✅ nuo 19 surinkimo, Android ir iOS |
 | Plex Media Server bibliotekos, leidžiamos iš originalių failų, namuose ir ne namuose, be plex.tv | ❌ | ✅ nuo 20 surinkimo, kiekviena peržiūra, telefonuose, planšetėse, Quest ir televizoriuose |
-| Tapo kameros: tiesioginis vaizdas ir atminties kortelės įrašai, siunčiami į Immich, kai pasirenkate | ❌ | ✅ nuo 20 surinkimo: įrašai visur, tiesiogiai Android, Android TV ir Quest |
+| Tapo kameros: tiesioginis vaizdas ir atminties kortelės įrašai, siunčiami į Immich, kai pasirenkate | ❌ | ✅ nuo 20 surinkimo: įrašai visur, tiesiogiai Android, Android TV, Quest ir, nuo darbalaukio surinkimo 3, Windows |
 | Android TV ir Google TV, valdomi pulteliu, tame pačiame APK | ❌ ne televizoriaus programa | ✅ nuo 20 surinkimo |
-| Ta pati programa Windows kompiuteryje | ❌ tik telefonai ir planšetės | ✅ peržiūros versija, nuotraukos ir plokšti vaizdo įrašai |
+| Ta pati programa Windows kompiuteryje | ❌ tik telefonai ir planšetės | ✅ peržiūros versija: nuotraukos, plokšti ir 360° vaizdo įrašai (darbalaukio surinkimas 3) |
 | Neapdorotos Insta360 .insp nuotraukos ir vieno takelio .insv vaizdo įrašai | ❌ plokšti | ✅ nuo 16 surinkimo |
 | Neapdoroti vaizdo įrašai su vienu objektyvu kiekviename takelyje ar faile (Insta360 X4, X4 Air, X5, X6, X3 poros, GoPro .360, DJI .osv) | ❌ plokšti arba neteisingi | ✅ nuo 18 surinkimo |
 | Dvigubos „žuvies akies“ .dng | ❌ plokšti | ❌ dar ne |
@@ -787,7 +789,7 @@ Dabartinis surinkimas, 21 surinkimas (versija 3.3.0-rc.0, surinkimo numeris 3030
 - **Plex Media Server**: patikrinta iš kompiuterio su tikru Plex Media Server 1.42.1 (susiejimas, aplankai, baitų intervalai, miniatiūros, adresas už namų ribų); įrenginyje dar nepatikrinta.
 - **Tapo kameros**: patikrinta su imituota kamera; su tikra kamera dar nepatikrinta.
 - **Android TV ir Google TV**: patikrinta automatiniais testais; televizoriuje dar nepatikrinta.
-- **Ta pati programa Windows kompiuteryje**: 656 iš 663 automatinių darbalaukio testų praeina Windows sistemoje (7 praleidžiami sąmoningai), o Windows 11 kompiuteryje programa paleidžiama, atveria išsaugotą sesiją Immich serveryje, sinchronizuoja, paleidžia vaizdo įrašą ir tvarkingai užsidaro; kiekvienos funkcijos rankinis tikrinimas vyksta.
+- **Ta pati programa Windows kompiuteryje**: darbalaukio surinkimas 3 praeina 855 iš 863 savo automatinių darbalaukio testų Windows sistemoje (8 praleidžiami sąmoningai) ir visą programos testų rinkinį; Windows 11 kompiuteryje programa paleidžiama, atveria išsaugotą sesiją Immich serveryje, sinchronizuoja, paleidžia vaizdo įrašą ir tvarkingai užsidaro, o jos 360° grotuvas buvo paleistas su sintetiniais 4K, 5.7K ir 8K klipais abiejose nešiojamojo kompiuterio vaizdo plokštėse be jokio strigimo. Kiekvienos funkcijos rankinis tikrinimas, su tikrais 360° failais ir tikra Tapo kamera, vyksta.
 - **Neapdorotos Insta360 .insp nuotraukos ir vieno takelio .insv vaizdo įrašai**: nuotraukos palygintos su Insta360 Studio X3 failų eksportais, vaizdo įrašai Android emuliatoriuje su mažos raiškos X3 failu; iPhone telefone dar nepaleista.
 - **Neapdoroti vaizdo įrašai su vienu objektyvu kiekviename takelyje ar faile**: analizatoriai ir sujungimas patikrinti su tikrais X4, X3 poros, GoPro MAX ir Osmo 360 failais; atkūrimas yra 18 ir 19 surinkimų įrenginių bandymas.
 - **Dvigubos „žuvies akies“ .dng**: planuojama.
@@ -842,17 +844,19 @@ Immuch360 yra galerija, ir ji taip pat yra nemokamas medijos grotuvas: ji leidž
   - iPhone, iPad: savasis SceneKit grotuvas ant sferos, giroskopas, garso takelio pasirinkimas, buferio indikatorius; paleidimas ir pristabdymas, laiko juostos kol kas nėra.
   - Meta Quest: įtraukianti, tikras 3D stereoskopiniams failams, laiko juosta su 10 sekundžių peršokimais, ankstesnė ir kita medija.
   - Android TV, Google TV: telefonų Media3 grotuvas, sukamas rodyklėmis.
-  - Windows: dar ne, kol kas rodoma plokščiai.
+  - Windows (nuo darbalaukio surinkimo 3): paties programos 360° grotuvas (libmpv), sukamas pele arba rodyklėmis, artinamas ratuku, su peršokimu, garso takelio pasirinkimu ir buferizavimo indikatoriumi; sklandus su atskira vaizdo plokšte, o su integruota ne platesnis nei 2880 taškų ir lėtesnis 5.7K H.264 vaizdo įrašams.
 - **3D 360° (viršuje ir apačioje, vienas šalia kito)**
   - Android telefonai: kairioji akis, išdėstymo mygtukas.
   - iPhone, iPad: taip pat.
   - Meta Quest: kiekviena akis gauna savo kadro pusę.
   - Android TV, Google TV: kairioji akis, išdėstymo mygtukas.
+  - Windows: nuotraukos kaip telefonuose; vaizdo įrašai nuo darbalaukio surinkimo 3, kairioji akis, išdėstymo mygtukas, sklandžiai su atskira vaizdo plokšte, su apribojimais su integruota.
 - **VR180 (pusės sferos) nuotraukos ir vaizdo įrašai**
   - Android telefonai: pusė sferos, 360°/180° mygtukas.
   - iPhone, iPad: taip pat.
   - Meta Quest: įtraukianti pusė sferos.
   - Android TV, Google TV: pusė sferos, 360°/180° mygtukas.
+  - Windows: nuotraukos kaip telefonuose; vaizdo įrašai nuo darbalaukio surinkimo 3, pusė sferos, 360°/180° mygtukas, sklandžiai su atskira vaizdo plokšte, su apribojimais su integruota.
 - **Spatial 2.5D (gylis plokščiame ekrane iš stereoskopinio vaizdo įrašo)**
   - Android telefonai: savasis grotuvas, galvos sekimas priekine kamera.
   - iPhone, iPad: taip pat.
@@ -878,16 +882,19 @@ Immuch360 yra galerija, ir ji taip pat yra nemokamas medijos grotuvas: ji leidž
   - iPhone, iPad: sujungiami SceneKit šešėliuokle.
   - Meta Quest: įtraukianti, sujungiama tuo pačiu GPU efektu.
   - Android TV, Google TV: kaip telefonuose.
+  - Windows (nuo darbalaukio surinkimo 3): sujungiama vaizdo plokštėje programos 360° grotuve, sklandžiai su atskira plokšte, su apribojimais su integruota.
 - **Neapdoroti vaizdo įrašai su vienu objektyvu kiekviename takelyje ar faile (nuo 18 surinkimo): Insta360 X4, X4 Air, X5, X6 .insv, X3 poros, GoPro .360, DJI .osv**
   - Android telefonai: du aparatiniai dekoderiai vienu metu, po vieną kiekvienam objektyvui (nuo 19 surinkimo programiniai įrenginyje be aparatinio dekoderio, iki 2048x2048 kiekvienam objektyvui), ir GL kompozitorius, kuris sujungia į sferą; vienas objektyvas, tada perkoduotas srautas, tada nesujungtas vaizdo įrašas, kai įrenginys negali paleisti dviejų.
   - iPhone, iPad: pritaikytas AVFoundation kompozitorius su Metal.
   - Meta Quest: įtraukianti, tie patys du dekoderiai ir kompozitorius (3840x1920 skydelis).
   - Android TV, Google TV: kaip telefonuose, kai televizorius gali paleisti du dekoderius vienu metu.
+  - Windows (nuo darbalaukio surinkimo 3): abu objektyvai greta viename grotuve, tada sujungiami, kai kompiuteris spėja (matuojama pagal jo paties atkūrimą; bandomajame nešiojamajame kompiuteryje X3 pora tik jo atskiroje plokštėje); kitaip telefonų žingsniai: vienas objektyvas, perkoduotas srautas, kameros žemos raiškos LRV kopija, nesujungtas vaizdo įrašas.
 - **Tapo kameros tiesioginis vaizdas (nuo 20 surinkimo)**
   - Android telefonai: Media3 RTSP grotuvas: SD puslapyje, HD visame ekrane, garso mygtukas.
   - iPhone, iPad: dar ne: kortelė praneša, kad tai atsiras vėliau.
   - Meta Quest: lange, HD raiška.
   - Android TV, Google TV: kaip telefonuose.
+  - Windows (nuo darbalaukio surinkimo 3): libmpv grotuvas, SD puslapyje, HD viso ekrano režimu, garso mygtukas.
 - **Tapo kameros įrašai (nuo 20 surinkimo)**
   - Android telefonai: gaunami iš atminties kortelės į H.264 vaizdo įrašą su garsu, tada leidžiami su persukimu.
   - iPhone, iPad: taip pat.
@@ -896,14 +903,14 @@ Immuch360 yra galerija, ir ji taip pat yra nemokamas medijos grotuvas: ji leidž
 
 Android TV ir Google TV punktai, nuo 20 surinkimo, dar nepatikrinti televizoriuje, žr. [Žiūrėti televizoriuje](#watch-on-your-tv-android-tv-and-google-tv); kamerų punktai dar nepatikrinti su tikra kamera.
 
-Windows sistemoje Immuch360 Desktop peržiūros versija rodo nuotraukas, plokščias ir 360°, įskaitant neapdorotas Insta360 .insp nuotraukas, su pele ir klaviatūra, o nuo darbalaukio surinkimo 2 ji leidžia plokščius vaizdo įrašus iš serverio, kompiuterio aplankų, bendrinimų, Plex ir Tapo įrašų; 360°, 3D, VR180 ir neapdoroti 360° vaizdo įrašai kol kas rodomi plokščiai arba kaip pakaitalas (žr. [Dar nėra](#not-there-yet)).
+Windows sistemoje Immuch360 Desktop peržiūros versija rodo nuotraukas, plokščias ir 360°, įskaitant neapdorotas Insta360 .insp nuotraukas, su pele ir klaviatūra. Nuo darbalaukio surinkimo 2 ji leidžia plokščius vaizdo įrašus iš serverio, kompiuterio aplankų, bendrinimų, Plex ir Tapo įrašų, o nuo darbalaukio surinkimo 3 savo 360° grotuve leidžia 360°, 3D, VR180 ir neapdorotus 360° vaizdo įrašus iš tų pačių šaltinių bei Tapo tiesioginį vaizdą. 360° grotuvas sklandus su atskira vaizdo plokšte ir turi apribojimų su integruota (žr. [Windows kompiuteryje](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Jūsų Immich serveris**: originalas arba serverio perkoduotas srautas, kaip nurodo „Nustatymai“, „Elementų peržiūra“, „Vaizdo įrašo šaltinis“ (žr. [Vaizdo įrašo informacija ir dekoderiai](#video-details-decoders-and-why-a-video-stutters)). Ta pati paskyra kaip žiniatinklio programoje.
 - **Pats telefonas ar akiniai**: „Naudoti be serverio“ prisijungimo puslapyje arba skirtuko „Biblioteka“ punktas „Šiame įrenginyje“.
 - **NAS ar kompiuteris**: SMB ir WebDAV bendrinimai, o nuo 19 surinkimo DLNA medijos serveriai, randami tinkle, skaitomi tiesiogiai (SMB vaizdo įrašas iki šešiais ryšiais), nieko nekopijuojant; nuo 15 surinkimo pasirinktus failus galima nusiųsti į jūsų Immich paskyrą.
 - **Kitas telefonas (nuo 19 surinkimo)**: „Bendrinti šį telefoną tinkle“ tame telefone: akiniai arba bet kuris tinklo WebDAV klientas skaito jo albumus, mėnesius ir 360° mediją.
 - **Plex Media Server (nuo 20 surinkimo)**: jo nuotraukų, filmų ir TV laidų bibliotekos pagal aplankus, originalūs failai skaitomi tiesiogiai per HTTPS, patikrintą pagal paties serverio sertifikatą, namuose arba per adresą už namų ribų, visose platformose; žr. [Plex Media Server, be plex.tv](#plex-media-server-without-plextv).
-- **Tapo kamera (nuo 20 surinkimo)**: tiesioginis vaizdas su kameros paskyra (Android, Android TV, Quest akiniai) ir jos atminties kortelės įrašai su TP-Link paskyros slaptažodžiu (visos platformos), tik vietiniame tinkle; žr. [Tapo kameros](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Tapo kamera (nuo 20 surinkimo)**: tiesioginis vaizdas su kameros paskyra (Android, Android TV, Quest akiniai, o nuo darbalaukio surinkimo 3 ir Windows) ir jos atminties kortelės įrašai su TP-Link paskyros slaptažodžiu (visos platformos), tik vietiniame tinkle; žr. [Tapo kameros](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **Windows kompiuterio aplankai (darbalaukio peržiūros versija)**: aplankai, kuriuos pasirenkate Immuch360 Desktop, skaitomi vietoj telefono galerijos; kompiuteris taip pat gali juos bendrinti su akiniais, žr. [Windows kompiuteryje](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Jūsų Immich biblioteka yra serveryje, kitos nuotraukos ir vaizdo įrašai guli
 
 Kompiuteryje Immich siūlo savo žiniatinklio programą naršyklėje. **Ką prideda Immuch360 Desktop**: kompiuterio aplankus be jokio serverio ar paskyros, SMB, WebDAV, DLNA ir Plex bendrinimus, naršomus ir leidžiamus iš programos, neapdorotas Insta360 .insp nuotraukas, atveriamas kaip sfera, ir kompiuterį, bendrinamą su Meta Quest namuose.
 
-Tai peržiūros versija: nuo darbalaukio surinkimo 2 veikia nuotraukos ir plokšti vaizdo įrašai; 360°, 3D ir VR180 vaizdo įrašai ateis su kitais darbalaukio surinkimais. Nuo 2026 m. spalio 9 d. darbalaukio šaltiniai yra pagrindinėje atšakos šakoje `immuch360`, todėl telefonai, akiniai, televizoriai ir kompiuteriai leidžiami iš tų pačių šaltinių. Telefono, planšetės, Quest ir televizoriaus programos dėl to nesikeičia ir išlaiko pavadinimą Immuch360.
+Tai peržiūros versija: nuotraukos ir plokšti vaizdo įrašai veikia nuo darbalaukio surinkimo 2, o nuo darbalaukio surinkimo 3 ir 360° vaizdo grotuvas (360°, 3D, VR180 ir neapdoroti 360° vaizdo įrašai) bei Tapo kamerų tiesioginis vaizdas; toliau nurodyti žingsniai, kuriems reikia 3 surinkimo, tai pasako. Nuo 2026 m. spalio 9 d. darbalaukio šaltiniai yra pagrindinėje atšakos šakoje `immuch360`, todėl telefonai, akiniai, televizoriai ir kompiuteriai leidžiami iš tų pačių šaltinių. Telefono, planšetės, Quest ir televizoriaus programos dėl to nesikeičia ir išlaiko pavadinimą Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Atsisiuntimas ir įdiegimas Windows sistemoje
 
-Dabartinis surinkimas yra GitHub išankstinis leidimas [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Jo failas yra `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (apie 57 MB, 78 failai išskleidus, įskaitant vaizdo grotuvą ir jo aplanką `licenses`), su `SHA256SUMS.txt` jam patikrinti. Jis sukurtas iš pagrindinės šakos `immuch360` ties įsipareigojimu 5b723bd25: telefono 21 surinkimo šaltiniai plius kompiuterio versija. Reikia Windows 10 arba 11, 64 bitų.
+Dabartinis surinkimas yra GitHub išankstinis leidimas [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Jo failas yra `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (apie 57 MB, 79 failai išskleidus, įskaitant vaizdo grotuvą ir jo aplanką `licenses`), su `SHA256SUMS.txt` jam patikrinti. Jis sukurtas iš pagrindinės šakos `immuch360`, kai į ją buvo sulietas kompiuterio 360° vaizdo grotuvas, ties įsipareigojimu, nurodytu jo leidimo pastabose: telefono 21 surinkimo šaltiniai plius kompiuterio versija. Reikia Windows 10 arba 11, 64 bitų.
 
-1. Atsisiųskite ZIP ir išskleiskite jį bet kur, pavyzdžiui, į „Dokumentai“.
-2. Paleiskite `immuch360.exe` iš išskleisto aplanko. Laikykite aplanką visą: programai reikia šalia esančių failų, įskaitant vaizdo grotuvą.
+1. Atsisiųskite ZIP ir išskleiskite jį bet kur, pavyzdžiui, į „Dokumentai“. Norėdami pakeisti darbalaukio surinkimą 2, ištrinkite jo aplanką arba išskleiskite į naują: jūsų prisijungimas, aplankai ir nustatymai lieka jūsų Windows profilyje, ne tame aplanke.
+2. Paleiskite `immuch360.exe` iš išskleisto aplanko. Laikykite aplanką visą: programai reikia šalia esančių failų, tarp jų `libmpv-2.dll`, vaizdo grotuvo, ir `immuch_desktop_video.dll`, kuris nuskaito vaizdo plokštės dekoderius.
 3. Failai dar nepasirašyti, todėl Windows SmartScreen gali parodyti „Windows protected your PC“: pasirinkite „More info“, tada „Run anyway“. Kur įjungtas Smart App Control, jis blokuoja nepasirašytas programas.
 4. Palaukite lango. Pirmasis naujo surinkimo paleidimas trunka nuo 10 sekundžių iki maždaug minutės, greičiausiai kol Microsoft Defender tikrina naujus failus: tuo metu nepaleiskite programos dar kartą. Kiti paleidimai trunka sekundę ar dvi.
 5. Prisijungimo puslapyje prisijunkite prie savo Immich serverio su jo adresu, savo el. paštu ir slaptažodžiu arba spustelėkite „Naudoti be serverio“.
 
-Norėdami patikrinti ZIP, komandų eilutėje, atsisiuntimo aplanke, paleiskite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256`: rezultatas turi sutapti su įrašytu `SHA256SUMS.txt`. Diegimo programos ir automatinio atnaujinimo dar nėra: stebėkite puslapį [Releases](https://github.com/freeKC/Immuch360/releases) ir kitą surinkimą išskleiskite taip pat.
+Norėdami patikrinti ZIP, komandų eilutėje, atsisiuntimo aplanke, paleiskite `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256`: rezultatas turi sutapti su įrašytu `SHA256SUMS.txt`. Diegimo programos ir automatinio atnaujinimo dar nėra: stebėkite puslapį [Releases](https://github.com/freeKC/Immuch360/releases) ir kitą surinkimą išskleiskite taip pat.
 
 ### Ką daro peržiūros versija
 
@@ -993,7 +1000,9 @@ Norėdami patikrinti ZIP, komandų eilutėje, atsisiuntimo aplanke, paleiskite `
 - **Įkėlimas ir atsarginės kopijos** iš tų aplankų į jūsų Immich serverį, kol programa atidaryta.
 - **360° nuotraukos kaip sfera**, su pele ir klaviatūra; neapdorotos Insta360 kamerų .insp nuotraukos atsiveria kaip telefonuose.
 - **Plokšti vaizdo įrašai** (nuo darbalaukio surinkimo 2): jūsų aplankų, jūsų Immich serverio (originalas arba perkoduotas srautas, žr. [Vaizdo įrašo informacija ir dekoderiai](#video-details-decoders-and-why-a-video-stutters)), SMB, WebDAV ir DLNA bendrinimų, Plex serverių vaizdo įrašai ir Tapo įrašai leidžiami lange, su telefonų valdikliais (leisti, pristabdyti, laiko juosta), buferizavimo indikatoriumi ir garso takelių meniu vaizdo įrašui, kuris jų turi kelis. Jūsų aplankų ir bendrinimų vaizdo įrašų miniatiūra yra vaizdo įrašo kadras, o ne juostos piktograma.
-- **Tinklo bendrinimai**: Samba (SMB), WebDAV ir DLNA medijos serveriai bei Plex serveriai be plex.tv, naršomi kaip telefonuose: jų nuotraukos atsiveria, o vaizdo įrašai leidžiami. Tapo kameroms: atminties kortelės įrašai, jų sąrašas, klipo parsisiuntimas ir jo paleidimas.
+- **360°, 3D ir VR180 vaizdo įrašai** (nuo darbalaukio surinkimo 3): 360° mygtukas atveria juos programos 360° grotuve, lange arba viso ekrano režimu, iš visų plokščių vaizdo įrašų šaltinių, sukamus pele ir klaviatūra, su telefonų 3D ir 360°/180° mygtukais (3D vaizdo įrašas rodo kairiąją akį, kaip telefonuose), peršokimu, garso takelių meniu ir buferizavimo indikatoriumi.
+- **Neapdoroti 360° vaizdo įrašai** (nuo darbalaukio surinkimo 3): Insta360 .insv failai, su abiem objektyvais viename takelyje, dviejuose takeliuose (X4 ir vėlesnės) arba dviejuose failuose (X3 poros), GoPro .360 ir DJI .osv failai, programos sujungiami vaizdo plokštėje leidžiant, su failo kalibravimu, kaip telefonuose.
+- **Tinklo bendrinimai**: Samba (SMB), WebDAV ir DLNA medijos serveriai bei Plex serveriai be plex.tv, naršomi kaip telefonuose: jų nuotraukos atsiveria, o vaizdo įrašai leidžiami. Tapo kameroms: atminties kortelės įrašai, jų sąrašas, klipo parsisiuntimas ir jo paleidimas; o nuo darbalaukio surinkimo 3 ir tiesioginis vaizdas.
 - **Bendrinti šį kompiuterį tinkle**: jūsų aplankų albumai, mėnesiai ir 360° medija, tik skaitymui, Meta Quest akiniams ar kitam namų įrenginiui, kaip telefonas bendrina save.
 - **Failai**: atsisiuntimai iš serverio patenka į jūsų pasirinktą aplanką, „Save to a folder“ (Išsaugoti aplanke) išsaugo pasirinktų nuotraukų ir vaizdo įrašų kopiją, o puslapyje „Logai“ yra „Save logs to a file“ (Išsaugoti žurnalą faile).
 
@@ -1005,9 +1014,28 @@ Norėdami patikrinti ZIP, komandų eilutėje, atsisiuntimo aplanke, paleiskite `
 4. **Pereikite nuo nuotraukos prie nuotraukos**: plokščioje nuotraukoje kairė ir dešinė rodyklės arba kraštuose judant pelei pasirodantys rodyklių ženklai pereina prie ankstesnės ir kitos. Raidės, rašomos aprašymo lauke, lieka tekste.
 5. **Paleiskite vaizdo įrašą**: atverkite jį iš laiko skalės, aplanko, bendrinimo, Plex arba Tapo kameros įrašų; jis leidžiamas lange. Enter arba klaviatūros leidimo ir pristabdymo klavišas pristabdo ir vėl paleidžia. Kol jis leidžiamas, kairė ir dešinė rodyklės arba J ir L peršoka 10 sekundžių atgal arba pirmyn; pristabdžius rodyklės pereina prie ankstesnio ir kito. F arba F11 įjungia viso ekrano režimą, kaip ir nuotraukoms. Mygtukas „Audio track“ (Garso takelis) leidžia pasirinkti iš kelių vaizdo įrašo garso takelių.
 6. **Kai vaizdo įrašas sustoja**: pristabdytas vaizdo įrašas lieka pristabdytas, kai grįžtate į langą. Vaizdo įrašas, nutrūkęs prieš pabaigą, pavyzdžiui, kai bendrinimas ar serveris nustoja atsakinėti, tai praneša: atverkite jį dar kartą ir jis tęsis nuo ten, kur sustojo, pristabdytas. Aplanke ar bendrinime rastas grojaraščio failas nesekamas.
-7. **Bendrinkite kompiuterį su akiniais**: atverkite „Biblioteka“, tada „Tinklo bendrinimai“; pirmoji plytelė yra „Share this computer on the network“ (Bendrinti šį kompiuterį tinkle), kompiuterio atitikmuo [Bendrinti šį telefoną tinkle](#share-this-phone-on-the-network). Įjunkite „Share photos and videos on the network“ (Bendrinti nuotraukas ir vaizdo įrašus tinkle), tada pridėkite kompiuterį akiniuose, kaip nurodyta tame skyriuje. Bendrinimas sustoja, kai programa uždaroma arba po valandos nenaudojimo.
-8. **Leiskite tinklą**: Windows gali paklausti, ar Immuch360 Desktop gali naudoti tinklą. Leiskite privačiuose tinkluose, kitaip akiniai neras kompiuterio. Tinkle, kurį Windows pažymi kaip viešą (kavinė, viešbutis), arba tinkle, kurio tipo ji negali nustatyti, bendrinimas neprasideda, nebent pasirenkate „Share for this session“ (Bendrinti šiai sesijai), o kompiuteris skelbia save tik tinkle, kuriame bendrina.
-9. **„Nustatymai“, „This computer“ (Šis kompiuteris)**: aplankai, atsisiuntimų aplankas, tinklo adapteris, naudojamas bendrinimams rasti ir kompiuteriui bendrinti (kai jų yra keli, pavyzdžiui, Wi-Fi ir Ethernet), ir patikimi sertifikatai: jūsų paties serverio sertifikatų įstaiga, kaip PEM failas, HTTPS adresui, kuriuo Windows pati nepasitiki. Kliento sertifikatai importuojami „Nustatymai“, „Sudėtingesnis“, kaip telefonuose.
+7. **Paleiskite 360° vaizdo įrašą** (nuo darbalaukio surinkimo 3): atverkite vaizdo įrašą ir viršutinėje juostoje spustelėkite 360°, kaip telefone; 360° failui, kurio serveris nepažymi, pirmiausia meniu ⋮ pasirinkite „Žiūrėti kaip 360°“, žr. [360° failas, rodomas plokščias](#a-360-file-that-shows-flat-view-as-360). 360° grotuvas atsiveria lange. Vilkite pele, kad apsidairytumėte (po greito vilkimo vaizdas dar šiek tiek sukasi), artinkite ratuku, + ir - arba Page Up ir Page Down, sukite laikydami nuspaustus rodyklių klavišus. Space arba klaviatūros leidimo ir pristabdymo klavišas pristabdo ir vėl paleidžia; J ir L peršoka 10 sekundžių atgal arba pirmyn; Home grąžina į pradžią; M išjungia ir įjungia garsą. F, F11 arba dvigubas spustelėjimas įjungia viso ekrano režimą; Escape išeina iš viso ekrano režimo, tada uždaro grotuvą. Valdikliai (viršuje uždarymas, pavadinimas, 360°/180°, 3D, garso takelis ir viso ekrano režimas; apačioje leidimas, 10 sekundžių atgal ir pirmyn, laiko juosta ir garsas) pasislepia kartu su pelės žymekliu po 3 leidimo sekundžių ir grįžta, kai pajudinama pelė arba paspaudžiamas klavišas; Tab pereina nuo vieno prie kito.
+8. **3D ir VR180**: 360° grotuve 3D mygtukas perjungia „Mono (ne 3D)“, „3D, viršuje ir apačioje“ ir „3D, vienas šalia kito“, o 360°/180° mygtukas perjungia visą sferą ir VR180 pusę sferos, kaip skyriuje [3D ir VR180](#3d-and-vr180-photos-and-videos). 3D vaizdo įrašas rodo kairiąją akį.
+9. **Neapdoroti 360° vaizdo įrašai** (nuo darbalaukio surinkimo 3): atverkite neapdorotą failą ir spustelėkite 360°, kaip telefone, žr. [Neapdoroti 360° kameros failai](#raw-360-camera-files-without-the-cameras-app); X3 poros du failus laikykite kartu. Failas su abiem objektyvais viename takelyje sujungiamas leidžiant. Failas su vienu objektyvu kiekviename takelyje ar faile leidžia abu objektyvus greta viename grotuve, kai kompiuteris spėja: pirmosios tokio vaizdo įrašo sekundės išmatuojamos, o rezultatas išsaugomas kitiems tokios rūšies vaizdo įrašams (per lėtu pripažintas būdas vėl išbandomas po 14 dienų). Kai kompiuteris nespėja, grotuvas eina telefonų žingsniais, su jų pranešimais: vienas objektyvas, pusė sferos juoda; serverio perkoduotas srautas; žemos raiškos LRV kopija, kurią kamera įrašė šalia failo, jei ji yra; nesujungtas vaizdo įrašas. Neapdorotas vaizdo įrašas neturi 3D ir 360°/180° mygtukų.
+10. **Tapo kameros tiesioginis vaizdas** (nuo darbalaukio surinkimo 3): atverkite kamerą kaip telefone, žr. [Žiūrėti tiesiogiai](#watch-it-live). Puslapis leidžia SD srautą, o viso ekrano režimas HD, su telefono mygtukais ant vaizdo: garsas, iš pradžių išjungtas, SD arba HD ir „Visas ekranas“. Prarastas srautas (kamera persikrauna, nutrūksta Wi-Fi) grįžta pats, bandomas dar maždaug pusantros minutės, kol ekrane lieka paskutinis vaizdas. Apie kameros paskyrą, kurią kamera atmeta, pranešama ir ji daugiau nebandoma, nes nepavykę prisijungimai skaičiuojami kameros užrakinimui.
+11. **Bendrinkite kompiuterį su akiniais**: atverkite „Biblioteka“, tada „Tinklo bendrinimai“; pirmoji plytelė yra „Share this computer on the network“ (Bendrinti šį kompiuterį tinkle), kompiuterio atitikmuo [Bendrinti šį telefoną tinkle](#share-this-phone-on-the-network). Įjunkite „Share photos and videos on the network“ (Bendrinti nuotraukas ir vaizdo įrašus tinkle), tada pridėkite kompiuterį akiniuose, kaip nurodyta tame skyriuje. Bendrinimas sustoja, kai programa uždaroma arba po valandos nenaudojimo.
+12. **Leiskite tinklą**: Windows gali paklausti, ar Immuch360 Desktop gali naudoti tinklą. Leiskite privačiuose tinkluose, kitaip akiniai neras kompiuterio. Tinkle, kurį Windows pažymi kaip viešą (kavinė, viešbutis), arba tinkle, kurio tipo ji negali nustatyti, bendrinimas neprasideda, nebent pasirenkate „Share for this session“ (Bendrinti šiai sesijai), o kompiuteris skelbia save tik tinkle, kuriame bendrina.
+13. **„Nustatymai“, „This computer“ (Šis kompiuteris)**: aplankai, atsisiuntimų aplankas, tinklo adapteris, naudojamas bendrinimams rasti ir kompiuteriui bendrinti (kai jų yra keli, pavyzdžiui, Wi-Fi ir Ethernet), ir patikimi sertifikatai: jūsų paties serverio sertifikatų įstaiga, kaip PEM failas, HTTPS adresui, kuriuo Windows pati nepasitiki. Kliento sertifikatai importuojami „Nustatymai“, „Sudėtingesnis“, kaip telefonuose.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### 360° vaizdo įrašai ir vaizdo plokštė
+
+360° grotuve (nuo darbalaukio surinkimo 3) vaizdo plokštė iš kiekvieno vaizdo įrašo kadro nupiešia vaizdą, į kurį žiūrite. Vaizdo įskiepis leidžia libmpv nupiešti kiekvieną kadrą į pasirinkto dydžio paveikslėlį, tada paties programos piešimo etapas iš jo nupiešia sferos dalį, į kurią žiūrite. Pasukus vaizdą keičiasi to etapo reikšmė, o ne grotuvas: vilkimas nekainuoja atminties, o pristabdytas vaizdo įrašas sukasi nieko nedekoduodamas.
+
+Programa išmatuoja kiekvieno 360° vaizdo įrašo pirmąsias sekundes ir parenka, kokio dydžio kadru dirba plokštė: visas kadras atskiroje plokštėje, ne platesnis nei 2880 taškų į procesorių integruotoje plokštėje (Windows praneša programai, kokia ji, todėl Core Ultra nešiojamojo kompiuterio Intel Arc plokštė laikoma integruota), vienu žingsniu mažesnis, kai plokštė nespėja. Tai, ką ji išmatavo, išsaugoma kitiems tos pačios rūšies vaizdo įrašams (kodekas, dydis, kadrų dažnis ir dekoderis), o ne kiekvienam vaizdo įrašui.
+
+Kai net mažiausias žingsnis nėra sklandus, grotuvas sako „This graphics card cannot show the 360° view of this video smoothly“ (Ši vaizdo plokštė negali sklandžiai parodyti šio vaizdo įrašo 360° vaizdo); kai toli gražu ne, arba kai plokštė iš viso negali nupiešti vaizdo (nėra OpenGL ES 3.0, tvarkyklė jo atsisako), vaizdo įrašas leidžiamas plokščiai, o grotuvas paaiškina kodėl. Plokščiai leistas vaizdo įrašas kitą kartą plokščiai neleidžiamas: kitas tos rūšies vaizdo įrašas vėl išmatuojamas.
+
+Kai nespėja serverio vaizdo įrašo dekodavimas, o ne piešimas (vaizdo įrašas, kurį dekoduoja procesorius, kaip 5.7K H.264), grotuvas pereina prie serverio perkoduoto srauto nuo tos vietos, kur buvo, su telefonų pranešimu: „Leidžiamas perkoduotas srautas: originalas (kodekas ir dydis) viršija tai, ką šis įrenginys dekoduoja“.
+
+- **Naudokite atskirą nešiojamojo kompiuterio vaizdo plokštę.** Windows paleidžia programą integruotoje plokštėje, nebent nurodoma kitaip. Windows nustatymuose, „Sistema“, „Ekranas“, „Grafika“, pridėkite `immuch360.exe` ir pasirinkite „Didelis našumas“, tada paleiskite programą iš naujo. Bandomajame nešiojamajame kompiuteryje (Intel UHD plokštė ir NVIDIA RTX 4060 Laptop) NVIDIA plokštė piešė 4K, 5.7K ir 8K 360° vaizdo įrašus visu dydžiu ir 30 kadrų per sekundę, kol vaizdas sukosi. Intel plokštė juos piešė ne platesnius nei 2880 taškų: 4K H.264 ir 8K HEVC vaizdo įrašą maždaug 30 kadrų per sekundę su 2026 m. libmpv versija, 4K vaizdo įrašą 23 iki 27 kadrų su media-kit 2024 m. libmpv (žr. [Dar nėra](#not-there-yet)), o 5.7K H.264 vaizdo įrašą, kurį dekoduoja procesorius, maždaug 20 kadrų: iš serverio grotuvas tada pereina prie perkoduoto srauto; vaizdo įrašas be perkoduoto srauto, pavyzdžiui, iš aplanko, leidžiamas toliau su pranešimu „This graphics card cannot show the 360° view of this video smoothly“.
+- **Pasirinkite atvaizdavimo būdą patys.** „Nustatymai“, „Sudėtingesnis“ įjunkite „Trikčių šalinimas“: atsiranda įrašas „360° video renderer“ (360° vaizdo įrašų atvaizdavimas), pagal numatymą „Automatic“ (Automatinis). Jis taip pat siūlo „Plugin, full size“ (Įskiepis, visas dydis), „Plugin, at most 4096 wide“ (Įskiepis, ne platesnis nei 4096), „Plugin, at most 2880 wide“ (Įskiepis, ne platesnis nei 2880) ir „Flat, without the 360° view“ (Plokščiai, be 360° vaizdo) kitam atvertam 360° vaizdo įrašui. Po juo „Measured last“ (Paskutinis matavimas) nurodo dydį, kuriuo buvo nupieštas paskutinis 360° vaizdo įrašas, jo kadrus per sekundę, vaizdo plokštę ir dekoderį: nukopijuokite tai į klaidos pranešimą. Vėl pasirinkus „Automatic“, net kai jis jau pasirinktas, pamirštama, kas buvo išmatuota, ir kiti 360° vaizdo įrašai vėl matuojami.
+- **Ką dekoduoja plokštė.** „Nustatymai“, „Sudėtingesnis“, „Šio įrenginio vaizdo dekoderiai“ išvardija, ką dekoduoja naudojama vaizdo plokštė, kaip praneša Direct3D 11, o programa tą sąrašą pataiso pagal tai, ką išmatavo leisdama: nustatymas „Vaizdo įrašo šaltinis“ ir neapdorotų vaizdo įrašų dviejų objektyvų patikra jo laikosi. H.264, platesnį nei 4096 taškai (360° kamerų 5.7K), dekoduoja procesorius, nes jo nepriima nė viena bandomojo nešiojamojo kompiuterio plokštė.
 
 ### Palyginimas su telefonų programomis
 
@@ -1017,12 +1045,16 @@ Norėdami patikrinti ZIP, komandų eilutėje, atsisiuntimo aplanke, paleiskite `
 - **Iš jūsų aplankų niekas neištrinama**: „Ištrinti iš įrenginio“ paslėpta, o „Ištrinti“ pašalina tik serverio kopiją, kol programa negalės siųsti failų į Windows šiukšlinę.
 - **Pelė ir klaviatūra** vietoj lietimo ir giroskopo.
 - **Vienas vaizdo grotuvas visiems šaltiniams**: libmpv vienodai leidžia serverio, aplankų, bendrinimų ir Plex vaizdo įrašus, o jo plokščias grotuvas jau turi garso takelių meniu, kurio telefonų plokščias grotuvas dar neturi.
+- **360° vaizdo įrašai lange** (nuo darbalaukio surinkimo 3): 360° grotuvas yra programos puslapis, o ne atskiras sistemos grotuvas, su laiko juosta, 10 sekundžių šuoliais ir garso mygtuku. Neapdoroti vaizdo įrašai su vienu objektyvu kiekviename takelyje ar faile sudedami greta viename grotuve, kur telefonai paleidžia du dekoderius; telefonų atsarginiai žingsniai tie patys, prieš nesujungtą vaizdo įrašą pridėjus kameros LRV kopiją.
+- **Tapo tiesioginis vaizdas** (nuo darbalaukio surinkimo 3) leidžiamas kompiuteryje kaip Android, o iPhone ir iPad jo dar neturi.
 
 <a id="not-there-yet"></a>
 ### Dar nėra
 
-- **360°, 3D, VR180 ir neapdoroti 360° vaizdo įrašai**: kol kas jie rodomi plokščiai, taip, kaip juos laiko failas (visa išskleista sfera, dvi akys greta arba apvalūs objektyvų vaizdai), arba kaip pakaitalas, o 360° mygtukas lieka tik nuotraukoms. Jų grotuvai ateis su kitais darbalaukio surinkimais.
-- **Spatial 2.5D**, vėliau su internetine kamera; **Tapo tiesioginis vaizdas**; **žemėlapis** ir vietų rodinys; **prisijungimas su OAuth** (vietoj to prisijunkite el. paštu ir slaptažodžiu); **Google Cast**; **pranešimai**.
+- **Paties atšakos surinkimo libmpv**: ZIP failuose yra media-kit 2024 m. libmpv, kol neįjungtas paties atšakos surinkimas, o `BUILD-INFO.txt` ZIP faile nurodo, kuris įdėtas. Su 2024 m. versija neapdoroto vaizdo įrašo su vienu objektyvu kiekviename takelyje ar faile du objektyvai niekada neleidžiami vienu metu (trūksta juos sudedančio filtro), todėl tokie vaizdo įrašai rodo vieną objektyvą, pusė sferos juoda; be to, vaizdo plokštė kiekvieną kadrą kopijuoja atgal iš savo dekoderio, o tai lėtina 360° grotuvą integruotoje plokštėje. Paties atšakos darbo eigos libmpv, 2026 m. versija, turėtų ją pakeisti iki pirmojo viešo leidimo; bandomajame nešiojamajame kompiuteryje išbandyta 2026 m. libmpv versija daro abu dalykus.
+- **Dviejų objektyvų neapdoroti vaizdo įrašai nešiojamajame kompiuteryje**: net su 2026 m. libmpv bandomasis nešiojamasis kompiuteris sudėjo X3 porą (du 2880x2880 H.264 failai) 30 kadrų per sekundę tik savo NVIDIA plokštėje; jo Intel plokštėje, o X4 failą (du 3840x3840 HEVC takeliai) abiejose plokštėse, vaizdo įrašas leidžia vieną objektyvą, pusė sferos juoda, kaip telefone, kuris negali paleisti dviejų dekoderių.
+- **3D tik ekrane**: 3D vaizdo įrašas rodo kairiąją akį, kaip telefonuose; kompiuteryje nėra giroskopo ir akinių vaizdo. Norėdami žiūrėti tikru 3D, bendrinkite kompiuterį su Meta Quest.
+- **Spatial 2.5D**, vėliau su internetine kamera; **žemėlapis** ir vietų rodinys; **prisijungimas su OAuth** (vietoj to prisijunkite el. paštu ir slaptažodžiu); **Google Cast**; **pranešimai**.
 - **Diegimo programa, pasirašytas surinkimas ir automatiniai atnaujinimai**: šis surinkimas yra aplankas su `immuch360.exe`.
 - **Linux ir macOS**: jų projektai yra šaltiniuose, bet jie dar nebuvo sukurti ar išbandyti tose sistemose, o jų vaizdo grotuvo juose dar nėra; jie ateis po Windows.
 - **Vertimai**: nauji kompiuterio versijos tekstai kol kas yra anglų kalba.
@@ -1030,10 +1062,11 @@ Norėdami patikrinti ZIP, komandų eilutėje, atsisiuntimo aplanke, paleiskite `
 ### Žinomos problemos
 
 - **Pirmasis naujo surinkimo paleidimas lėtas**: nuo 10 sekundžių iki maždaug minutės, kol pasirodo langas, greičiausiai kol Microsoft Defender tikrina naujus failus, kurie dar nepasirašyti. Palaukite lango, užuot paleidę programą dar kartą; kiti paleidimai trunka sekundę ar dvi.
-- **8K HEVC vaizdo įrašams reikia atskiros vaizdo plokštės**: bandomajame nešiojamajame kompiuteryje integruota Intel UHD plokštė parodė maždaug pusę 8K HEVC vaizdo įrašo kadrų, o atskira NVIDIA plokštė leido 8K HEVC ir 5.7K H.264 neprarasdama nė vieno kadro. Windows paleidžia programą integruotoje plokštėje, nebent nurodoma kitaip: Windows nustatymuose, „Sistema“, „Ekranas“, „Grafika“, pridėkite `immuch360.exe` ir pasirinkite „Didelis našumas“. Integruotoje plokštėje 5.7K H.264 vaizdo įrašą, kurio jos dekoderis atsisako, iškoduoja procesorius, neprarasdamas nė vieno kadro.
-- **Vaizdo įrašai piešiami ne aukštesni nei 1440 eilučių**, tada pritaikomi prie lango: 4K ekrane viso ekrano režimu 4K ar 8K vaizdo įrašas yra šiek tiek mažiau ryškus nei atskirame vaizdo grotuve. Taip 8K vaizdo įrašas neviršija nešiojamojo kompiuterio grafinės galios.
+- **8K HEVC vaizdo įrašams reikia atskiros vaizdo plokštės, o 360° vaizdo įrašai su ja veikia geriau**: bandomajame nešiojamajame kompiuteryje integruota Intel UHD plokštė parodė maždaug pusę 8K HEVC vaizdo įrašo kadrų, o atskira NVIDIA plokštė leido 8K HEVC ir 5.7K H.264 neprarasdama nė vieno kadro; 360° grotuvas sklandus NVIDIA plokštėje ir lėtesnis Intel plokštėje, žr. [360° vaizdo įrašai ir vaizdo plokštė](#360-videos-and-the-graphics-chip). Windows paleidžia programą integruotoje plokštėje, nebent nurodoma kitaip: Windows nustatymuose, „Sistema“, „Ekranas“, „Grafika“, pridėkite `immuch360.exe` ir pasirinkite „Didelis našumas“, tada paleiskite programą iš naujo. Integruotoje plokštėje plokščią 5.7K H.264 vaizdo įrašą, kurio jos dekoderis atsisako, iškoduoja procesorius, neprarasdamas nė vieno kadro.
+- **Plokšti vaizdo įrašai piešiami ne aukštesni nei 1440 eilučių**, tada pritaikomi prie lango: 4K ekrane viso ekrano režimu 4K ar 8K vaizdo įrašas yra šiek tiek mažiau ryškus nei atskirame vaizdo grotuve. Taip 8K vaizdo įrašas neviršija nešiojamojo kompiuterio grafinės galios. 360° grotuvas vietoj to dirba su visu kadru arba su mažesniu dydžiu, kurį parinko jo matavimas.
 - **Kol jūsų aplankų vaizdo įrašas leidžiamas programoje arba kol akiniai skaito failą iš bendrinamo kompiuterio** (leidžiamą vaizdo įrašą, atsisiunčiamą nuotrauką), Windows negali to failo pervadinti, perkelti ar ištrinti ir sako, kad jis atidarytas Immuch360 Desktop: pirmiausia uždarykite vaizdo įrašą arba sustabdykite atkūrimą akiniuose. Atsarginės kopijos taip jūsų failų nelaiko: failą galima pervadinti, perkelti ar ištrinti, kol jis įkeliamas.
-- **Nebaigtos vietos**: 656 iš 663 darbalaukio testų praeina Windows sistemoje (7 praleidžiami sąmoningai), 200 vienas po kito atvertų grotuvų nepalieka jokio nutekėjimo, o Windows 11 kompiuteryje programa paleidžiama, atveria išsaugotą sesiją Immich serveryje, sinchronizuoja, paleidžia vaizdo įrašą ir tvarkingai užsidaro. Kiekvienos funkcijos rankinis tikrinimas tikrame kompiuteryje dar vyksta.
+- **Nebaigtos vietos**: darbalaukio surinkimas 3 praeina 855 iš 863 savo darbalaukio testų Windows sistemoje (8 praleidžiami sąmoningai) ir visą programos testų rinkinį, 200 vienas po kito atvertų grotuvų nepalieka jokio nutekėjimo, o jo leidimo ZIP paleidžiamas, paleidžia bandomąjį klipą ir tvarkingai užsidaro. Kiekvienos funkcijos rankinis tikrinimas tikrame kompiuteryje dar vyksta.
+- **Kuo buvo tikrinti 360° grotuvas ir tiesioginis vaizdas**: 360° grotuvas buvo paleistas su sintetiniais 4K, 5.7K ir 8K 360° klipais abiejose nešiojamojo kompiuterio vaizdo plokštėse (atvertas, leistas, suktas leidžiant ir pristabdžius, uždarytas) be jokio strigimo ir be vaizdo tvarkyklės atstatymo. Dviejų objektyvų neapdoroti vaizdo įrašai buvo leisti iš sintetinių klipų ir iš tikrų X3 ir X4 failų. Tapo tiesioginis vaizdas buvo tikrintas su bandomuoju RTSP serveriu, kuris prisijungia taip, kaip kameros (Digest), tyčia nutrauktas ir atmestas, be jokio slaptažodžio jokioje žurnalo eilutėje, bet dar ne su tikra kamera. Rankinis tikrinimas, su tikrais 360° ir 3D failais, abiem nešiojamojo kompiuterio ekranais, miegu ir pabudimu bei tikra kamera, dar laukia.
 
 Jei kas nors nepavyksta, prašome atidaryti [pranešimą apie problemą](https://github.com/freeKC/Immuch360/issues) su žurnalu, išsaugotu puslapyje „Logai“, žr. [Žurnalai](#logs). Prieš bendrindami patikrinkite žurnalą: jame gali būti jūsų serverio adresas.
 
@@ -1052,7 +1085,7 @@ Jums reikia Windows 10 arba 11 x64, Flutter 3.47.2 Windows sistemai, Visual Stud
    mise run codegen
    ```
 
-2. Windows sistemoje, tame pačiame aplanke `mobile`, sukurkite programą. Pirmasis surinkimas atsisiunčia vaizdo grotuvo bibliotekas (libmpv ir ANGLE) iš GitHub ir kiekvieną archyvą patikrina pagal jo SHA-256:
+2. Windows sistemoje, tame pačiame aplanke `mobile`, sukurkite programą. Pirmasis surinkimas atsisiunčia vaizdo grotuvo bibliotekas (libmpv ir ANGLE) iš GitHub ir kiekvieną archyvą patikrina pagal jo SHA-256; jis taip pat sukompiliuoja mažą Direct3D 11 įskiepį, kuris nuskaito vaizdo plokštės dekoderius, `immuch_desktop_video`, su tuo pačiu C++ darbo krūviu:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Jums reikia Windows 10 arba 11 x64, Flutter 3.47.2 Windows sistemai, Visual Stud
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-Immuch360 Desktop CI (`.github/workflows/immuch360-desktop.yml`) veikia šakoje `desktop`, kuri seka `immuch360`: telefono patikras (telefono surinkimuose niekas nesikeičia) ir visą testų rinkinį Linux sistemoje, darbalaukio testus Windows sistemoje ir tą patį ZIP; jo Linux ir macOS užduotys (`flutter build linux` ir `flutter build macos`, su tuo pačiu `-t lib/main_desktop.dart`) tose sistemose dar nebuvo paleistos.
+Immuch360 Desktop CI (`.github/workflows/immuch360-desktop.yml`) veikia šakoje `desktop`, kuri seka `immuch360`: telefono patikras (telefono surinkimuose niekas nesikeičia) ir visą testų rinkinį Linux sistemoje, darbalaukio testus Windows sistemoje ir tą patį ZIP, tada su tuo surinkimu testus, kuriems reikia jo libmpv ir ANGLE (Tapo tiesioginio vaizdo prisijungimas, ko vaizdo failas negali atverti, 360° šešėliuokliai); jo Linux užduotis sukuria programą Ubuntu sistemoje, o macOS užduotis ją sukompiliuoja su Xcode 26.3 ir macOS 26 SDK (abi su tuo pačiu `-t lib/main_desktop.dart`), tik kaip kompiliavimo patikras: nė viena dar nebuvo paleista tose sistemose. Antra darbo eiga (`.github/workflows/immuch360-libmpv.yml`) iš užfiksuotų šaltinių perkuria libmpv Windows x64 ir arm64 ir paskelbia archyvus su jų SHA-256; ZIP failuose vis dar yra media-kit archyvas, kol tas surinkimas neįjungtas, todėl 2024 m. libmpv apribojimai, aprašyti [Dar nėra](#not-there-yet), galioja ir jūsų paties surinkimui.
 
 <a id="where-to-get-it"></a>
 ## Kur ją gauti
@@ -1088,8 +1121,8 @@ Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Ap
   - Šiandien: universalus `Immuch360-v<version>-release.apk` iš puslapio [Releases](https://github.com/freeKC/Immuch360/releases), įdiegtas šoniniu būdu su adb, žr. [Įdiegti televizoriuje](#install-it-on-the-tv). Tai ta pati programa kaip telefonuose.
   - Netrukus: Google Play televizoriams; jo įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d.
 - **Windows 10 ir 11, 64 bitų (peržiūros versija)**
-  - Šiandien: Immuch360 Desktop, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` iš [darbalaukio išankstinio leidimo](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), išskleistas ir paleistas, kaip nurodyta [Atsisiuntimas ir įdiegimas Windows sistemoje](#download-and-install-on-windows). Kol kas nuotraukos ir plokšti vaizdo įrašai: 360°, 3D ir VR180 vaizdo įrašai ateis su kitais darbalaukio surinkimais.
-  - Netrukus: 360°, 3D, VR180 ir neapdoroti 360° vaizdo įrašai; vėliau diegimo programa, pasirašytas surinkimas ir atnaujinimai.
+  - Šiandien: Immuch360 Desktop, darbalaukio surinkimas 3, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` iš [darbalaukio išankstinio leidimo](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), išskleistas ir paleistas, kaip nurodyta [Atsisiuntimas ir įdiegimas Windows sistemoje](#download-and-install-on-windows). Nuotraukos, plokšti vaizdo įrašai, 360°, 3D, VR180 ir neapdoroti 360° vaizdo įrašai (sklandžiai su atskira vaizdo plokšte, su apribojimais su integruota) ir Tapo tiesioginis vaizdas.
+  - Netrukus: Spatial 2.5D su internetine kamera, tada Linux ir macOS; vėliau diegimo programa, pasirašytas surinkimas ir atnaujinimai.
 
 App Store ir Meta Horizon Store nuorodos bus pridėtos čia, kai tik įrašai bus paskelbti. Prisijunkite su savo įprastu Immich serverio URL ir paskyra arba prisijungimo puslapyje bakstelėkite „Naudoti be serverio“, kad pradėtumėte nuo paties įrenginio nuotraukų ir vaizdo įrašų. APK iš GitHub pats neatsinaujina: stebėkite puslapį Releases, o įdiegę programą iš parduotuvės, atnaujinimus imkite iš tos parduotuvės.
 
@@ -1126,7 +1159,7 @@ Immuch360 Desktop, Windows versija, kuriama iš tų pačių šaltinių, šakos `
 
 - **`main`**: Immich `main` ties įsipareigojimu, kuriuo paremta `immuch360` (dabartiniams surinkimams 2026 m. rugsėjo 29 d.), niekada nekeičiama; ji pajuda į priekį, kai atšaka perbazuojama ant naujesnio Immich.
 - **`immuch360`**: šios atšakos pakeitimai ant Immich, nuo 2026 m. spalio 9 d. įskaitant Immuch360 Desktop. Kiekviename leidime nurodoma, kokia Immich versija jis paremtas.
-- **`desktop`**: čia Immuch360 Desktop, kompiuterio versija, buvo kuriama ant `immuch360`, kol 2026 m. spalio 9 d. buvo į ją sulieta, kad telefonai, akiniai, televizoriai ir kompiuteriai būtų leidžiami iš tų pačių šaltinių. Dabar ji seka `immuch360` ir turi darbalaukio išankstinių leidimų žymes ([darbalaukio surinkimas 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) iš įsipareigojimo 21f285c34, [darbalaukio surinkimas 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) iš 5b723bd25). Kompiuterio versija nieko nekeičia po `mobile/android` ir `mobile/ios`.
+- **`desktop`**: čia Immuch360 Desktop, kompiuterio versija, buvo kuriama ant `immuch360`, kol 2026 m. spalio 9 d. buvo į ją sulieta, kad telefonai, akiniai, televizoriai ir kompiuteriai būtų leidžiami iš tų pačių šaltinių. Dabar ji seka `immuch360` ir turi darbalaukio išankstinių leidimų žymes ([darbalaukio surinkimas 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) iš įsipareigojimo 21f285c34, [darbalaukio surinkimas 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) iš 5b723bd25, [darbalaukio surinkimas 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) iš 360° vaizdo grotuvo suliejimo 2026 m. spalio 10 d.). Naujas darbalaukio darbas pirmiausia patenka čia ir prisijungia prie `immuch360` su jį pateikiančiu darbalaukio surinkimu. Kompiuterio versija nieko nekeičia po `mobile/android` ir `mobile/ios`.
 
 <a id="logs"></a>
 ## Žurnalai
@@ -1145,7 +1178,7 @@ Nuo 19 surinkimo DLNA klientas, telefono bendrinimas ir Apple erdvinės medijos 
 
 Kompiuteryje (Immuch360 Desktop) puslapyje „Logai“ taip pat yra „Save logs to a file“ (Išsaugoti žurnalą faile): žurnalas arba žurnalo ir paskutinių strigčių ataskaitų ZIP, kai jų yra (tada siūlomas pavadinimas baigiasi „with-crash-reports“). Strigties ataskaita yra mažas minidump: gijos, kur jos sustojo, ir tik tai, ko reikia jų iškvietimams sekti, su programos failų pavadinimais, bet be jų aplankų; ne programos atmintis.
 
-Nuo darbalaukio surinkimo 2 kompiuterio vaizdo grotuvas ten rašo su žymėmis `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` ir `VideoThumbnailGrabber`, įskaitant paties mpv įspėjimus, pašalinus prieigos raktus ir slaptažodžius. Prieš bendrindami patikrinkite žurnalą: jame gali būti jūsų serverio adresas.
+Nuo darbalaukio surinkimo 2 kompiuterio vaizdo grotuvas ten rašo su žymėmis `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` ir `VideoThumbnailGrabber`, įskaitant paties mpv įspėjimus, pašalinus prieigos raktus ir slaptažodžius. Nuo darbalaukio surinkimo 3 jis taip pat rašo 360° grotuvą su žymėmis `SphericalPlayer`, `SphereRenderer` ir `PluginRenderer` (pasirinktas dydis, išmatuoti kadrai per sekundę, vaizdo plokštė), neapdorotus dviejų objektyvų vaizdo įrašus su `RawTwoStreams`, vaizdo plokštės dekoderius su `DesktopGpuDecoders`, `DesktopVideoDecoderApi` ir `DecoderMeasure`, o Tapo tiesioginį vaizdą su `DesktopCameraLive`, kurio eilutėse niekada nėra nei kameros paskyros, nei jos slaptažodžio. Prieš bendrindami patikrinkite žurnalą: jame gali būti jūsų serverio adresas.
 
 <a id="privacy"></a>
 ## Privatumas
@@ -1159,7 +1192,7 @@ Nuo darbalaukio surinkimo 2 kompiuterio vaizdo grotuvas ten rašo su žymėmis `
 - **Telefono bendrinimas**: tik vietinis tinklas, su naudotojo vardu ir slaptažodžiu, per paprastą HTTP (žr. [Bendrinti šį telefoną tinkle](#share-this-phone-on-the-network)).
 - **Kamera**: naudojama tik Spatial 2.5D grotuvo, įrenginyje; vaizdai niekada nesaugomi ir niekur nesiunčiami.
 - **Kompiuteryje** (Immuch360 Desktop, Windows peržiūros versija): programa skaito tik jūsų pasirinktus aplankus, kompiuteryje laiko savo rodyklę, miniatiūras ir podėlį, o slaptažodžius ir prieigos raktus saugo su Windows duomenų apsauga, tik jūsų Windows paskyrai. Kompiuterio bendrinimas laikosi telefono bendrinimo taisyklių ir neprasideda tinkle, kurį Windows pažymi kaip viešą arba kurio tipo ji negali nustatyti, nebent jūs to norite.
-- **Vaizdo grotuvas kompiuteryje** (nuo darbalaukio surinkimo 2): jūsų serverio vaizdo įrašai jį pasiekia per programą, todėl grotuvas niekada neturi jūsų sesijos prieigos rakto, o tai, ką jis nuskaito iš anksto, lieka atmintyje, ne diske. Jis atveria tik jam perduotą failą: aplanko ar bendrinimo failas, kuris iš tikrųjų yra grojaraštis ar srauto aprašas, neverčia jo jungtis niekur kitur.
+- **Vaizdo grotuvas kompiuteryje** (nuo darbalaukio surinkimo 2): jūsų serverio vaizdo įrašai jį pasiekia per programą, todėl grotuvas niekada neturi jūsų sesijos prieigos rakto, o tai, ką jis nuskaito iš anksto, lieka atmintyje, ne diske. Jis atveria tik jam perduotą failą: aplanko ar bendrinimo failas, kuris iš tikrųjų yra grojaraštis ar srauto aprašas, neverčia jo jungtis niekur kitur. Nuo darbalaukio surinkimo 3 kiekvieno vaizdo įrašo adresas grotuvui perduodamas tik atmintyje, niekada per laikiną failą (nuoroda, kurią programa sukuria serverio ar bendrinimo vaizdo įrašui, turi tos sesijos raktą, kuris darbalaukio surinkime 2 kiekvieną kartą atveriant kelias sekundes gulėjo diske), ir tas raktas niekada nerodomas žurnale; Tapo kameros tiesioginis vaizdas tokiu pat būdu perduoda grotuvui kameros paskyrą, niekada ne faile ar žurnalo eilutėje, ir su kamera kalbasi tik vietiniame tinkle; 360° grotuvo ir dekoderių matavimai (vaizdo plokštė, vaizdo įrašo formatas, kadrai per sekundę, niekada ne failo pavadinimas) lieka programos aplanke kompiuteryje.
 
 Visa politika pateikta faile [PRIVACY.md](../PRIVACY.md).
 
@@ -1177,7 +1210,7 @@ Android, Android TV ir Google TV yra Google LLC prekės ženklai; Apple, iPhone,
 
 Kas dar nepadaryta, labiausiai tikėtina pirma. Niekas čia nėra pažadas, o atsiliepimai [pranešimų sekiklyje](https://github.com/freeKC/Immuch360/issues) padeda nuspręsti, kas bus pirma.
 
-- **Immuch360 Desktop, pirmiausia Windows**: išleistas darbalaukio surinkimas 2 su plokščiais vaizdo įrašais, o nuo 2026 m. spalio 9 d. darbalaukio šaltiniai yra pagrindinėje atšakos šakoje `immuch360` (žr. [Windows kompiuteryje](#on-a-windows-computer-immuch360-desktop-preview)). Toliau 360°, 3D, VR180 ir neapdoroti 360° vaizdo įrašai Windows sistemoje, su dviem neapdorotų failų objektyvais ir Tapo tiesioginiu vaizdu; tada kiekvienos funkcijos tikrinimas Windows kompiuteryje ir jos pataisymai; tada Spatial 2.5D su internetine kamera; tada Linux ir macOS, paketai, pasirašymas ir atnaujinimai.
+- **Immuch360 Desktop, pirmiausia Windows**: išleistas darbalaukio surinkimas 3 su 360° vaizdo grotuvu (360°, 3D, VR180 ir neapdoroti 360° vaizdo įrašai, du neapdorotų failų objektyvai, vaizdo dydis, išmatuotas kiekviename kompiuteryje) ir Tapo tiesioginiu vaizdu, o nuo 2026 m. spalio 9 d. darbalaukio šaltiniai yra pagrindinėje atšakos šakoje `immuch360` (žr. [Windows kompiuteryje](#on-a-windows-computer-immuch360-desktop-preview)). Toliau paties atšakos darbo eigos libmpv vietoj 2024 m. versijos ir kiekvienos funkcijos rankinis tikrinimas Windows kompiuteryje su tikrais failais, abiem ekranais ir tikra kamera, su jo pataisymais; tada Spatial 2.5D su internetine kamera; tada Linux ir macOS; tada diegimo programa, pasirašytas surinkimas ir automatiniai atnaujinimai.
 - **Google Play**: 20 surinkimas veikia nuo 2026 m. spalio 7 d., vietoj 18 surinkimo; įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d. 21 surinkimas telefonuose ir planšetėse nieko nekeičia.
 - **App Store**: versija 3.3.0 laukia Apple peržiūros; ji turi 11 surinkimo funkcijas, todėl įkėlimas į Immich ir vaizdo dekoderių patikra (15 surinkimas) bei neapdoroti Insta360 failai (16 surinkimas) ateis su kitu App Store atnaujinimu. Nuoroda bus pridėta čia, kai ji veiks.
 - **Meta Horizon Store**: Meta patvirtino įrašą 2026 m. spalio 7 d. su 14 surinkimu. 21 surinkimas pateiktas kaip pirmasis jo atnaujinimas: jis atneša viską nuo 14 surinkimo (įkėlimus iš bendrinimo į Immich, vaizdo įrašo šaltinį, parenkamą pagal tai, ką akiniai dekoduoja, neapdorotus Insta360, GoPro ir DJI failus, DLNA, telefono bendrinimą, Apple erdvines nuotraukas, Plex Media Server bibliotekas, Tapo kameras), o parduotuvė jį skelbia Quest 2, Quest Pro, Quest 3 ir 3S. Parduotuvės nuoroda bus pridėta čia, kai puslapis taps viešas; šoniniu būdu įdiegtą kopiją pirmiausia reikės pašalinti (žr. [Diegimas](#install)).

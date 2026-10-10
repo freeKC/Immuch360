@@ -15,13 +15,13 @@ Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ric
 
 <div align="center">
 
-| Platform | Waar om dit te kry | Status op 9 Oktober 2026 |
+| Platform | Waar om dit te kry | Status op 10 Oktober 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-fone en -tablette | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bou 20 sedert 7 Oktober 2026 op Google Play, bou 21 op GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone en iPad** | App Store | weergawe 3.3.0 wag vir Apple se nagaan; [bou dit self](#build-it-yourself) intussen |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 en 3S | [APK](#meta-quest-3) · Horizon Store | inskrywing goedgekeur, bou 21 word deur Meta nagegaan |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV en Google TV** | [APK](#install-it-on-the-tv) · Google Play | bou 21 op GitHub; die Google Play-inskrywing vir TV's word sedert 9 Oktober 2026 deur Google nagegaan |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Voorskou-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | rekenaarbou 2 op Windows: foto's en plat video's, 360°-video's volgende; macOS en Linux later, uit dieselfde bronne |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Voorskou-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | rekenaarbou 3 op Windows: foto's, plat en 360°-video's; macOS en Linux later |
 
 *Statusse word by elke vrystelling bygewerk; die besonderhede is in [Waar om dit te kry](#where-to-get-it).*
 
@@ -30,7 +30,7 @@ Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ric
 - 🌐 **Ingeboude 360°**<br>Foto's en video's as 'n sfeer waarin jy rondkyk, met die giroskoop, rou kameralêers ingesluit (Insta360 vanaf bou 16, GoPro en DJI vanaf bou 18). Ook 'n gratis videospeler: plat, 360°, 3D, VR180
 - 👓 **Ingeboude 3D**<br>Stereoskopiese 360° en VR180, bo/onder of langs mekaar, en Apple se ruimtelike foto's (vanaf bou 19): ware 3D in die kopstuk, een oog op 'n foon
 - 🎥 **Ingeboude 2.5D**<br>Diepte op 'n plat skerm uit 'n stereoskopiese video, die aansig volg jou kop (eksperimenteel, fone en tablette)
-- 📱 **Android, iOS, Quest, TV**<br>Een app op fone, tablette en die Quest 2-, Pro-, 3- en 3S-kopstukke, ware 3D in die kopstuk, vanaf bou 20 op Android TV met die afstandbeheer, en 'n Windows-voorskou met foto's en plat video's
+- 📱 **Android, iOS, Quest, TV**<br>Een app op fone, tablette en die Quest 2-, Pro-, 3- en 3S-kopstukke, ware 3D in die kopstuk, vanaf bou 20 op Android TV met die afstandbeheer, en 'n Windows-voorskou met foto's, plat en 360°-video's
 - 🔌 **Met of sonder 'n bediener**<br>Jou Immich-bediener, of die foon se eie galery, geen rekening nodig nie
 - 🗄️ **Netwerkdeelplekke**<br>Samba (SMB), WebDAV en, vanaf bou 19, DLNA-mediabedieners wat op die netwerk gevind en regstreeks gelees word, niks word afgelaai nie, en na Immich gestuur wanneer jy wil. Vanaf bou 19 deel 'n foon ook sy eie galery met die kopstuk
 - 📺 **Op die TV**<br>Vanaf bou 20 dieselfde APK op Android TV en Google TV: 360°-foto's en -video's, jou bediener en jou deelplekke, met die afstandbeheer
@@ -84,7 +84,7 @@ Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ric
 - **"Ek wil my 360°-foto's en -video's, en die video's van my NAS of my Plex-bediener, op die TV kyk, met die afstandbeheer."** Sien [Kyk op jou TV](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Ek kan nie my 360°-opnames tussen al die ander vind nie."** Sien [Die 360°-lys](#find-your-360-shots-the-360-list).
 - **"My 360°-video hakkel, of speel 'n wasige kopie."** Sien [Videobesonderhede en dekodeerders](#video-details-decoders-and-why-a-video-stutters).
-- **"Ek wil my 360°-foto's en my Immich-biblioteek op my Windows-rekenaar hê, met die foto's en video's van sy vouers, my NAS en my Plex-bediener, en die rekenaar met my kopstuk gedeel."** Sien [Op 'n Windows-rekenaar](#on-a-windows-computer-immuch360-desktop-preview) ('n voorskou: voorlopig foto's en plat video's, 360°-video's later).
+- **"Ek wil my 360°-foto's en my Immich-biblioteek op my Windows-rekenaar hê, met die foto's en video's van sy vouers, my NAS en my Plex-bediener, en die rekenaar met my kopstuk gedeel."** Sien [Op 'n Windows-rekenaar](#on-a-windows-computer-immuch360-desktop-preview) ('n voorskou: foto's en plat video's, en vanaf rekenaarbou 3 360°-, 3D-, VR180- en rou 360°-video's en die regstreekse beeld van Tapo).
 - **"Behou ek wat die Immich-app doen?"** Ja, met twee klein veranderinge, sien [Alles anders is Immich](#everything-else-is-immich).
 
 Wanneer 'n funksie nuut is, sê die teks vanaf watter bou dit daar is. Die GitHub-vrystelling het altyd die nuutste bou, die winkels volg later: sien [Waar om dit te kry](#where-to-get-it).
@@ -127,6 +127,7 @@ Aanmekaargewerkte 360°-lêers werk oral: uitvoere uit die Insta360-app of Studi
 
 Die speler speel die lêer wat op die foon gestoor is, of die lêer van 'n netwerkdeelplek, wanneer daar een is. Andersins stroom dit vanaf jou bediener: by verstek die getranskodeerde stroom, of die oorspronklike as jy daarvoor vra in Settings (Instellings), Asset Viewer (Mediakyker), Videobron (vanaf bou 15; voorheen die skakelaar "Force original video" (Dwing die oorspronklike video af)), sien [Videobesonderhede en dekodeerders](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### 'n 360°-lêer wat plat wys: Bekyk as 360°
 
 Sommige 360°-lêers dra geen projeksie-etiket nie, so die bediener merk hulle nie as 360° nie en hulle wys plat.
@@ -356,6 +357,7 @@ Vanaf bou 20 voeg Immuch360 'n Tapo-kamera langs die netwerkdeelplekke by. Dit w
 8. Tik op "Toets die kamera". Dit wys "Opnames: (model), fermware (weergawe)" met die toestand van die geheuekaart, en "Regstreekse beeld: (video), klank (oudio)", of wat vir elkeen misluk het.
 9. Tik op Stoor. Die kamera word onder "Kameras" gelys, na die deelplekke, met sy model sodra dit bekend is en `tapo://` met sy adres.
 
+<a id="watch-it-live"></a>
 ### Kyk dit regstreeks
 
 1. Tik op die kamera. Sy regstreekse beeld is bo-aan sy bladsy: "Koppel tans aan die kamera", dan die beeld met die Regstreeks-kenteken.
@@ -755,9 +757,9 @@ Die huidige bou, bou 21 (weergawe 3.3.0-rc.0, bounommer 3030019), is gebaseer op
 | Stuur die lêers van 'n deelplek na Immich; toestellêers wat met die hand gestuur is, tel as gerugsteun | ❌ slegs toestellêers | ✅ vanaf bou 15 |
 | Deel hierdie foon op die netwerk, vir die kopstuk | ❌ | ✅ vanaf bou 19, Android en iOS |
 | Plex Media Server-biblioteke gespeel vanaf die oorspronklike lêers, tuis en weg van die huis, sonder plex.tv | ❌ | ✅ vanaf bou 20, elke kyker, op fone, tablette, die Quest en TV's |
-| Tapo-kameras: die regstreekse beeld, en die opnames van die geheuekaart na Immich gestuur wanneer jy wil | ❌ | ✅ vanaf bou 20: opnames oral, regstreeks op Android, Android TV en die Quest |
+| Tapo-kameras: die regstreekse beeld, en die opnames van die geheuekaart na Immich gestuur wanneer jy wil | ❌ | ✅ vanaf bou 20: opnames oral, regstreeks op Android, Android TV, die Quest en, vanaf rekenaarbou 3, Windows |
 | Android TV en Google TV, met die afstandbeheer bestuur, in dieselfde APK | ❌ nie 'n TV-app nie | ✅ vanaf bou 20 |
-| Dieselfde app op 'n Windows-rekenaar | ❌ slegs fone en tablette | ✅ voorskou, foto's en plat video's |
+| Dieselfde app op 'n Windows-rekenaar | ❌ slegs fone en tablette | ✅ voorskou: foto's, plat en 360°-video's (rekenaarbou 3) |
 | Rou Insta360 .insp-foto's en eensnit-.insv-video's | ❌ plat | ✅ vanaf bou 16 |
 | Rou video's met een lens per snit of per lêer (Insta360 X4, X4 Air, X5, X6, X3-pare, GoPro .360, DJI .osv) | ❌ plat of verkeerd | ✅ vanaf bou 18 |
 | Dubbele-visoog-.dng | ❌ plat | ❌ nog nie |
@@ -787,7 +789,7 @@ Die huidige bou, bou 21 (weergawe 3.3.0-rc.0, bounommer 3030019), is gebaseer op
 - **Plex Media Server**: vanaf 'n rekenaar teen 'n regte Plex Media Server 1.42.1 nagegaan (koppeling, vouers, byte-reekse, duimnaelskets, die adres buite die huis); nog nie op 'n toestel nagegaan nie.
 - **Tapo-kameras**: teen 'n gesimuleerde kamera nagegaan; nog nie met 'n regte kamera nagegaan nie.
 - **Android TV en Google TV**: deur outomatiese toetse nagegaan; nog nie op 'n TV nagegaan nie.
-- **Dieselfde app op 'n Windows-rekenaar**: 656 van die 663 outomatiese rekenaartoetse slaag op Windows (7 doelbewus oorgeslaan), en op 'n Windows 11-rekenaar begin die app, maak 'n gestoorde sessie op 'n Immich-bediener oop, sinkroniseer, speel 'n video en sluit skoon af; die toets van elke funksie met die hand is aan die gang.
+- **Dieselfde app op 'n Windows-rekenaar**: rekenaarbou 3 slaag 855 van sy 863 outomatiese rekenaartoetse op Windows (8 doelbewus oorgeslaan) en die hele toetsreeks van die app; op 'n Windows 11-rekenaar begin die app, maak 'n gestoorde sessie op 'n Immich-bediener oop, sinkroniseer, speel 'n video en sluit skoon af, en sy 360°-speler is met sintetiese 4K-, 5.7K- en 8K-snitte op albei grafiese skyfies van 'n skootrekenaar laat loop sonder 'n ineenstorting. Die toets van elke funksie met die hand, met regte 360°-lêers en 'n regte Tapo-kamera, is aan die gang.
 - **Rou Insta360 .insp-foto's en eensnit-.insv-video's**: foto's nagegaan teen Insta360 Studio-uitvoere van X3-lêers, video's op 'n Android-emulator met 'n X3-lêer van lae resolusie; nog nie op 'n iPhone geloop nie.
 - **Rou video's met een lens per snit of per lêer**: ontleders en aanmekaarwerk nagegaan op regte X4-, X3-paar-, GoPro MAX- en Osmo 360-lêers; afspeel is die toesteltoets van bou 18 en 19.
 - **Dubbele-visoog-.dng**: beplan.
@@ -842,17 +844,19 @@ Immuch360 is 'n galery, en dit is ook 'n gratis mediaspeler: dit speel wat die a
   - iPhone, iPad: ingeboude SceneKit-speler op 'n sfeer, giroskoop, keuse van klanksnit, bufferaanwyser; speel en pouse, nog geen tydbalk nie.
   - Meta Quest: meevoerend, ware 3D vir stereoskopiese lêers, tydbalk met spronge van 10 sekondes, vorige en volgende media.
   - Android TV, Google TV: die Media3-speler van fone, met die pyltjies gedraai.
-  - Windows: nog nie, voorlopig plat gewys.
+  - Windows (vanaf rekenaarbou 3): die app se eie 360°-speler (libmpv), gedraai met die muis of die pyltjies, vergroot met die wiel, spoel, keuse van klanksnit, buffer-aanwyser; glad op 'n toegewyde grafiese skyfie, hoogstens 2880 pieksels breed en stadiger vir 5.7K H.264 op 'n geïntegreerde een.
 - **3D-360° (bo en onder, langs mekaar)**
   - Android-fone: linkeroog, uitlegknoppie.
   - iPhone, iPad: dieselfde.
   - Meta Quest: elke oog kry sy eie helfte van die raam.
   - Android TV, Google TV: linkeroog, uitlegknoppie.
+  - Windows: foto's soos op fone; video's vanaf rekenaarbou 3, linkeroog, uitlegknoppie, glad op 'n toegewyde grafiese skyfie, met beperkings op 'n geïntegreerde een.
 - **VR180- (halwe sfeer) foto's en video's**
   - Android-fone: halwe sfeer, 360°/180°-knoppie.
   - iPhone, iPad: dieselfde.
   - Meta Quest: meevoerende halwe sfeer.
   - Android TV, Google TV: halwe sfeer, 360°/180°-knoppie.
+  - Windows: foto's soos op fone; video's vanaf rekenaarbou 3, halwe sfeer, 360°/180°-knoppie, glad op 'n toegewyde grafiese skyfie, met beperkings op 'n geïntegreerde een.
 - **Spatial 2.5D (diepte op 'n plat skerm uit 'n stereoskopiese video)**
   - Android-fone: ingeboude speler, kopvolging met die voorkamera.
   - iPhone, iPad: dieselfde.
@@ -878,16 +882,19 @@ Immuch360 is 'n galery, en dit is ook 'n gratis mediaspeler: dit speel wat die a
   - iPhone, iPad: aanmekaargewerk deur 'n SceneKit-shader.
   - Meta Quest: meevoerend, aanmekaargewerk deur dieselfde GPU-effek.
   - Android TV, Google TV: soos op fone.
+  - Windows (vanaf rekenaarbou 3): op die grafiese skyfie aanmekaargewerk in die app se 360°-speler, glad op 'n toegewyde skyfie, met beperkings op 'n geïntegreerde een.
 - **Rou video's met een lens per snit of per lêer (vanaf bou 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-pare, GoPro .360, DJI .osv**
   - Android-fone: twee hardeware-dekodeerders tegelyk, een per lens (vanaf bou 19 sagteware-dekodeerders op 'n toestel sonder hardeware-dekodeerder, tot 2048x2048 per lens), en 'n GL-saamsteller wat in die sfeer aanmekaarwerk; een lens, dan die getranskodeerde stroom, dan die video sonder aanmekaarwerk, wanneer die toestel nie twee kan laat loop nie.
   - iPhone, iPad: 'n pasgemaakte AVFoundation-saamsteller met Metal.
   - Meta Quest: meevoerend, dieselfde twee dekodeerders en saamsteller (3840x1920-paneel).
   - Android TV, Google TV: soos op fone, wanneer die TV twee dekodeerders gelyktydig laat loop.
+  - Windows (vanaf rekenaarbou 3): albei lense langs mekaar in een speler, dan aanmekaargewerk, wanneer die rekenaar byhou (gemeet op sy eie afspeel; op die toetsskootrekenaar, 'n X3-paar slegs op sy toegewyde skyfie); andersins die stappe van die fone: een lens, die getranskodeerde stroom, die kamera se LRV-kopie met lae resolusie, die video sonder aanmekaarwerk.
 - **Tapo-kamera, regstreekse beeld (vanaf bou 20)**
   - Android-fone: Media3-RTSP-speler: SD op die bladsy, HD in volskerm, klankknoppie.
   - iPhone, iPad: nog nie: 'n kaart sê dit kom later.
   - Meta Quest: in die venster, in HD.
   - Android TV, Google TV: soos op fone.
+  - Windows (vanaf rekenaarbou 3): die libmpv-speler, SD op die bladsy, HD in volskerm, klankknoppie.
 - **Tapo-kamera, opnames (vanaf bou 20)**
   - Android-fone: van die geheuekaart gehaal in 'n H.264-video met sy klank, dan met spoel gespeel.
   - iPhone, iPad: dieselfde.
@@ -896,14 +903,14 @@ Immuch360 is 'n galery, en dit is ook 'n gratis mediaspeler: dit speel wat die a
 
 Die Android TV- en Google TV-inskrywings, vanaf bou 20, is nog nie op 'n TV nagegaan nie, sien [Kyk op jou TV](#watch-on-your-tv-android-tv-and-google-tv); die kamera-inskrywings is nog nie met 'n regte kamera nagegaan nie.
 
-Op Windows wys die Immuch360 Desktop-voorskou die foto's, plat en 360°, rou Insta360 .insp-foto's ingesluit, met die muis en die sleutelbord, en vanaf rekenaarbou 2 speel dit plat video's, van die bediener, die vouers van die rekenaar, die deelplekke, Plex en die Tapo-opnames; 360°-, 3D-, VR180- en rou 360°-video's word voorlopig plat of as 'n plekhouer gewys (sien [Nog nie daar nie](#not-there-yet)).
+Op Windows wys die Immuch360 Desktop-voorskou die foto's, plat en 360°, rou Insta360 .insp-foto's ingesluit, met die muis en die sleutelbord. Vanaf rekenaarbou 2 speel dit plat video's, van die bediener, die vouers van die rekenaar, die deelplekke, Plex en die Tapo-opnames, en vanaf rekenaarbou 3 speel dit 360°-, 3D-, VR180- en rou 360°-video's uit dieselfde bronne in sy eie 360°-speler, en die regstreekse beeld van Tapo. Die 360°-speler is glad op 'n toegewyde grafiese skyfie en het beperkings op 'n geïntegreerde een (sien [Op 'n Windows-rekenaar](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Jou Immich-bediener**: die oorspronklike of die bediener se getranskodeerde stroom, soos Settings, Asset Viewer, Videobron sê (sien [Videobesonderhede en dekodeerders](#video-details-decoders-and-why-a-video-stutters)). Dieselfde rekening as die webapp.
 - **Die foon of kopstuk self**: "Gebruik sonder ’n bediener" op die aanmeldbladsy, of die inskrywing On this device van die Biblioteek-oortjie.
 - **'n NAS of 'n rekenaar**: SMB- en WebDAV-deelplekke, en vanaf bou 19 DLNA-mediabedieners, op die netwerk gevind, regstreeks gelees ('n SMB-video oor tot ses verbindings), niks gekopieer nie; vanaf bou 15 kan die lêers wat jy kies na jou Immich-rekening gestuur word.
 - **'n Ander foon (vanaf bou 19)**: "Deel hierdie foon op die netwerk" op daardie foon: die kopstuk, of enige WebDAV-kliënt op die netwerk, lees sy albums, maande en 360°-media.
 - **'n Plex Media Server (vanaf bou 20)**: sy foto-, fliek- en TV-reeksbiblioteke per vouer, die oorspronklike lêers regstreeks oor HTTPS gelees, nagegaan teen die bediener se eie sertifikaat, tuis of deur die adres buite die huis, op elke platform; sien [Plex Media Server, sonder plex.tv](#plex-media-server-without-plextv).
-- **'n Tapo-kamera (vanaf bou 20)**: die regstreekse beeld met die kamerarekening (Android, Android TV, die Quest), en die opnames van sy geheuekaart met die TP-Link-rekening se wagwoord (elke platform), slegs op die plaaslike netwerk; sien [Tapo-kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **'n Tapo-kamera (vanaf bou 20)**: die regstreekse beeld met die kamerarekening (Android, Android TV, die Quest, en Windows vanaf rekenaarbou 3), en die opnames van sy geheuekaart met die TP-Link-rekening se wagwoord (elke platform), slegs op die plaaslike netwerk; sien [Tapo-kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **Die vouers van 'n Windows-rekenaar (rekenaarvoorskou)**: die vouers wat jy in Immuch360 Desktop kies, gelees in die plek van 'n foon se galery; die rekenaar kan hulle ook met die kopstuk deel, sien [Op 'n Windows-rekenaar](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Jou Immich-biblioteek is op 'n bediener, ander foto's en video's lê in die voue
 
 Op 'n rekenaar bied Immich sy webapp in 'n blaaier aan. **Wat Immuch360 Desktop byvoeg**: die vouers van die rekenaar sonder enige bediener of rekening, SMB-, WebDAV-, DLNA- en Plex-deelplekke wat vanuit die app deurblaai en gespeel word, rou Insta360 .insp-foto's wat as 'n sfeer oopgemaak word, en die rekenaar wat tuis met 'n Meta Quest gedeel word.
 
-Dit is 'n voorskou: vanaf rekenaarbou 2 werk foto's en plat video's; 360°-, 3D- en VR180-video's kom met die volgende rekenaarboue. Sedert 9 Oktober 2026 is die rekenaarbronne in die hooftak van die vurk, `immuch360`, sodat fone, kopstukke, TV's en rekenaars uit dieselfde bronne vrygestel word. Die foon-, tablet-, Quest- en TV-apps verander nie daarmee nie en behou die naam Immuch360.
+Dit is 'n voorskou: foto's en plat video's werk vanaf rekenaarbou 2, en vanaf rekenaarbou 3 die 360°-videospeler (360°-, 3D-, VR180- en rou 360°-video's) en die regstreekse beeld van Tapo-kameras; die stappe hieronder wat bou 3 benodig, sê so. Sedert 9 Oktober 2026 is die rekenaarbronne in die hooftak van die vurk, `immuch360`, sodat fone, kopstukke, TV's en rekenaars uit dieselfde bronne vrygestel word. Die foon-, tablet-, Quest- en TV-apps verander nie daarmee nie en behou die naam Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Laai af en installeer op Windows
 
-Die huidige bou is die GitHub-voorvrystelling [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Sy lêer is `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (omtrent 57 MB, 78 lêers sodra uitgepak, die videospeler en sy `licenses`-vouer ingesluit), met `SHA256SUMS.txt` om dit na te gaan. Dit is gebou vanaf die hooftak, `immuch360`, by commit 5b723bd25: die bronne van die foonbou 21 plus die rekenaarweergawe. Dit benodig Windows 10 of 11, 64 bis.
+Die huidige bou is die GitHub-voorvrystelling [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Sy lêer is `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (omtrent 57 MB, 79 lêers sodra uitgepak, die videospeler en sy `licenses`-vouer ingesluit), met `SHA256SUMS.txt` om dit na te gaan. Dit is gebou vanaf die hooftak, `immuch360`, nadat die 360°-videospeler van die rekenaar daarin saamgevoeg is, by die commit wat sy vrystellingsnotas noem: die bronne van die foonbou 21 plus die rekenaarweergawe. Dit benodig Windows 10 of 11, 64 bis.
 
-1. Laai die ZIP af en pak dit enige plek uit, byvoorbeeld in Documents.
-2. Begin `immuch360.exe` vanuit die uitgepakte vouer. Hou die vouer heel: die program benodig die lêers langsaan, die videospeler ingesluit.
+1. Laai die ZIP af en pak dit enige plek uit, byvoorbeeld in Documents. Om rekenaarbou 2 te vervang, skrap sy vouer of pak in 'n nuwe een uit: jou aanmelding, jou vouers en jou instellings bly in jou Windows-profiel, nie in daardie vouer nie.
+2. Begin `immuch360.exe` vanuit die uitgepakte vouer. Hou die vouer heel: die program benodig die lêers langsaan, onder hulle `libmpv-2.dll`, die videospeler, en `immuch_desktop_video.dll`, wat die dekodeerders van die grafiese skyfie lees.
 3. Die lêers is nog nie onderteken nie, so Windows SmartScreen kan "Windows protected your PC" wys: kies "More info", dan "Run anyway". Waar Smart App Control aan is, blokkeer dit ononderteken programme.
 4. Wag vir die venster. Die eerste begin van 'n nuwe bou neem van 10 sekondes tot omtrent 'n minuut, heel waarskynlik terwyl Microsoft Defender die nuwe lêers skandeer: begin nie die app intussen weer nie. Die volgende beginne neem 'n sekonde of twee.
 5. Op die aanmeldbladsy, meld aan by jou Immich-bediener met sy adres, jou e-pos en jou wagwoord, of klik op "Gebruik sonder ’n bediener".
 
-Om die ZIP na te gaan, voer `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` in 'n opdragprompt uit, in die vouer van die aflaai: die resultaat is die een wat in `SHA256SUMS.txt` geskryf is. Daar is nog geen installeerder en geen outomatiese opdatering nie: hou die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy dop, en pak die volgende bou op dieselfde manier uit.
+Om die ZIP na te gaan, voer `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` in 'n opdragprompt uit, in die vouer van die aflaai: die resultaat is die een wat in `SHA256SUMS.txt` geskryf is. Daar is nog geen installeerder en geen outomatiese opdatering nie: hou die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy dop, en pak die volgende bou op dieselfde manier uit.
 
 ### Wat die voorskou doen
 
@@ -993,7 +1000,9 @@ Om die ZIP na te gaan, voer `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-des
 - **Oplaai en rugsteun** vanuit daardie vouers na jou Immich-bediener, terwyl die app oop is.
 - **360°-foto's as 'n sfeer**, met die muis en die sleutelbord; die rou .insp-foto's van Insta360-kameras gaan oop soos op fone.
 - **Plat video's** (vanaf rekenaarbou 2): die video's van jou vouers, van jou Immich-bediener (die oorspronklike of die getranskodeerde stroom, sien [Video-besonderhede en dekodeerders](#video-details-decoders-and-why-a-video-stutters)), van SMB-, WebDAV- en DLNA-deelplekke, van Plex-bedieners en die Tapo-opnames speel in die venster, met die kontroles van die fone (speel, pouse, die tydbalk), 'n buffer-aanwyser, en 'n kieslys van die klanksnitte vir 'n video wat verskeie het. Die video's van jou vouers en van die deelplekke wys 'n raam van die video as hul duimnael, in plaas van 'n filmikoon.
-- **Netwerkdeelplekke**: Samba (SMB), WebDAV en DLNA-mediabedieners, en Plex-bedieners sonder plex.tv, deurblaai soos op fone: hul foto's gaan oop en hul video's speel. Vir Tapo-kameras, die opnames van die geheuekaart: die lys, die aflaai van 'n snit en die afspeel daarvan.
+- **360°-, 3D- en VR180-video's** (vanaf rekenaarbou 3): die 360°-knoppie maak hulle oop in die app se 360°-speler, in die venster of in volskerm, uit elke bron van plat video's, gedraai met die muis en die sleutelbord, met die 3D- en 360°/180°-knoppies van die fone ('n 3D-video wys sy linkeroog, soos op fone), spoel, die klanksnit-kieslys en 'n buffer-aanwyser.
+- **Rou 360°-video's** (vanaf rekenaarbou 3): Insta360 .insv-lêers, met albei lense in een snit, in twee snitte (X4 en later) of in twee lêers (X3-pare), GoPro .360- en DJI .osv-lêers, deur die app op die grafiese skyfie aanmekaargewerk terwyl hulle speel, met die kalibrasie van die lêer, soos op fone.
+- **Netwerkdeelplekke**: Samba (SMB), WebDAV en DLNA-mediabedieners, en Plex-bedieners sonder plex.tv, deurblaai soos op fone: hul foto's gaan oop en hul video's speel. Vir Tapo-kameras, die opnames van die geheuekaart: die lys, die aflaai van 'n snit en die afspeel daarvan; en vanaf rekenaarbou 3 die regstreekse beeld.
 - **Deel hierdie rekenaar op die netwerk**: die albums, maande en 360°-media van jou vouers, slegs lees, vir 'n Meta Quest of 'n ander toestel tuis, soos 'n foon homself deel.
 - **Lêers**: aflaaie van die bediener gaan in 'n vouer wat jy kies, "Save to a folder" (Stoor in 'n vouer) hou 'n kopie van die gekose foto's en video's, en die Logs-bladsy het "Save logs to a file" (Stoor logboeke in 'n lêer).
 
@@ -1005,9 +1014,28 @@ Om die ZIP na te gaan, voer `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-des
 4. **Gaan van foto na foto**: in 'n plat foto gaan die linker- en regterpyltjies, of die winkelhake wat by die rande wys terwyl die muis beweeg, na die vorige en die volgende een. Letters wat in die beskrywingsveld getik word, bly in die teks.
 5. **Speel 'n video**: maak dit oop vanaf die tydlyn, 'n vouer, 'n deelplek, Plex of die opnames van 'n Tapo-kamera; dit speel in die venster. Enter, of die speel-en-pouse-sleutel van die sleutelbord, pouseer en speel weer. Terwyl dit speel, spring die linker- en regterpyltjies, of J en L, 10 sekondes terug of vorentoe; gepouseer gaan die pyltjies na die vorige en die volgende een. F of F11 skakel oor na volskerm, soos vir foto's. Die "Audio track"-knoppie kies tussen die klanksnitte van 'n video wat verskeie het.
 6. **Wanneer 'n video stop**: 'n gepouseerde video bly gepouseer wanneer jy na die venster terugkeer. 'n Video wat voor sy einde afgesny word, byvoorbeeld wanneer die deelplek of die bediener ophou antwoord, sê so: maak dit weer oop en dit gaan voort waar dit gestop het, gepouseer. 'n Snitlys-lêer wat in 'n vouer of 'n deelplek gevind word, word nie gevolg nie.
-7. **Deel die rekenaar met die kopstuk**: maak die Biblioteek oop, dan Netwerkdeelplekke; die eerste teël is "Share this computer on the network", die rekenaarkant van [Deel hierdie foon op die netwerk](#share-this-phone-on-the-network). Skakel "Share photos and videos on the network" aan, en voeg dan die rekenaar in die kopstuk by soos daardie afdeling sê. Die deelplek stop wanneer die app gesluit word of na 'n uur sonder gebruik.
-8. **Laat die netwerk toe**: Windows kan vra of Immuch360 Desktop die netwerk mag gebruik. Laat dit op private netwerke toe, anders kan die kopstuk nie die rekenaar vind nie. Op 'n netwerk wat Windows as publiek merk ('n kafee, 'n hotel), of een waarvan dit die tipe nie kan bepaal nie, begin die deelplek nie tensy jy "Share for this session" kies nie, en die rekenaar kondig homself slegs aan op 'n netwerk waarop dit deel.
-9. **Settings, "This computer"**: die vouers, die aflaaivouer, die netwerkadapter wat gebruik word om deelplekke te vind en die rekenaar te deel (wanneer dit verskeie het, Wi-Fi en Ethernet byvoorbeeld), en vertroude sertifikate: die sertifikaatowerheid van jou eie bediener, as 'n PEM-lêer, vir 'n HTTPS-adres wat Windows nie vanself vertrou nie. Kliëntsertifikate word ingevoer in Settings, Gevorderd, soos op fone.
+7. **Speel 'n 360°-video** (vanaf rekenaarbou 3): maak die video oop en klik 360° in die boonste balk, soos op 'n foon; vir 'n 360°-lêer wat die bediener nie merk nie, eers "Bekyk as 360°" in die ⋮-kieslys, sien ['n 360°-lêer wat plat wys](#a-360-file-that-shows-flat-view-as-360). Die 360°-speler gaan in die venster oop. Sleep met die muis om rond te kyk (die aansig draai 'n bietjie verder na 'n vinnige sleep), zoem met die wiel, + en - of Page Up en Page Down, draai met die pyltjiesleutels ingedruk. Space, of die speel-en-pouse-sleutel van die sleutelbord, pouseer en speel weer; J en L spring 10 sekondes terug of vorentoe; Home gaan terug na die begin; M skakel die klank af en aan. F, F11 of 'n dubbelklik skakel na volskerm; Escape verlaat volskerm, en sluit dan die speler. Die kontroles (sluit, die titel, 360°/180°, 3D, die klanksnit en volskerm bo; speel, 10 sekondes terug en vorentoe, die tydbalk en die klank onder) verdwyn saam met die muiswyser na 3 sekondes van afspeel, en kom terug wanneer die muis beweeg of 'n sleutel gedruk word; Tab gaan van een na die volgende.
+8. **3D en VR180**: in die 360°-speler wissel die 3D-knoppie tussen "Mono (nie 3D nie)", "3D, bo en onder" en "3D, langs mekaar", en die 360°/180°-knoppie skakel tussen die volle sfeer en die halwe sfeer van VR180, soos in [3D- en VR180-foto's en -video's](#3d-and-vr180-photos-and-videos). 'n 3D-video wys sy linkeroog.
+9. **Rou 360°-video's** (vanaf rekenaarbou 3): maak die rou lêer oop en klik 360°, soos op 'n foon, sien [Rou 360°-kameralêers](#raw-360-camera-files-without-the-cameras-app); hou die twee lêers van 'n X3-paar saam. 'n Lêer met albei lense in een snit word aanmekaargewerk terwyl dit speel. 'n Lêer met een lens per snit of per lêer speel albei lense langs mekaar in een speler wanneer die rekenaar byhou: die eerste sekondes van so 'n video word gemeet, en die resultaat word gehou vir die volgende video's van daardie soort ('n manier wat te stadig bevind is, word na 14 dae weer probeer). Wanneer die rekenaar nie byhou nie, gaan die speler deur die stappe van die fone, met hul boodskappe: een lens, die helfte van die sfeer swart; die bediener se getranskodeerde stroom; die LRV-kopie met lae resolusie wat die kamera langs die lêer opgeneem het, as daar een is; die video sonder aanmekaarwerk. 'n Rou video het geen 3D- en geen 360°/180°-knoppie nie.
+10. **Die regstreekse beeld van 'n Tapo-kamera** (vanaf rekenaarbou 3): maak die kamera oop soos op 'n foon, sien [Kyk dit regstreeks](#watch-it-live). Die bladsy speel die SD-stroom en volskerm die HD-een, met die knoppies van 'n foon op die beeld: die klank, eers af, SD of HD, en "Volskerm". 'n Stroom wat verlore gaan (die kamera herbegin, die Wi-Fi val weg) kom vanself terug, en word vir omtrent 'n minuut en 'n half weer probeer terwyl die laaste beeld op die skerm bly. 'n Kamerarekening wat die kamera weier, word so gemeld en nie weer probeer nie, aangesien mislukte aanmeldings tel vir die kamera se uitsluiting.
+11. **Deel die rekenaar met die kopstuk**: maak die Biblioteek oop, dan Netwerkdeelplekke; die eerste teël is "Share this computer on the network", die rekenaarkant van [Deel hierdie foon op die netwerk](#share-this-phone-on-the-network). Skakel "Share photos and videos on the network" aan, en voeg dan die rekenaar in die kopstuk by soos daardie afdeling sê. Die deelplek stop wanneer die app gesluit word of na 'n uur sonder gebruik.
+12. **Laat die netwerk toe**: Windows kan vra of Immuch360 Desktop die netwerk mag gebruik. Laat dit op private netwerke toe, anders kan die kopstuk nie die rekenaar vind nie. Op 'n netwerk wat Windows as publiek merk ('n kafee, 'n hotel), of een waarvan dit die tipe nie kan bepaal nie, begin die deelplek nie tensy jy "Share for this session" kies nie, en die rekenaar kondig homself slegs aan op 'n netwerk waarop dit deel.
+13. **Settings, "This computer"**: die vouers, die aflaaivouer, die netwerkadapter wat gebruik word om deelplekke te vind en die rekenaar te deel (wanneer dit verskeie het, Wi-Fi en Ethernet byvoorbeeld), en vertroude sertifikate: die sertifikaatowerheid van jou eie bediener, as 'n PEM-lêer, vir 'n HTTPS-adres wat Windows nie vanself vertrou nie. Kliëntsertifikate word ingevoer in Settings, Gevorderd, soos op fone.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### 360°-video's en die grafiese skyfie
+
+In die 360°-speler (vanaf rekenaarbou 3) teken die grafiese skyfie die aansig waarna jy kyk uit elke raam van die video. Die videoprop-in laat libmpv elke raam in 'n beeld van die gekose grootte teken, dan teken die app se eie tekenstap daaruit die deel van die sfeer waarna jy kyk. Om die aansig te draai verander 'n waarde van daardie stap, nie die speler nie: sleep kos geen geheue nie, en 'n gepouseerde video draai sonder om iets te dekodeer.
+
+Die app meet die eerste sekondes van elke 360°-video en kies hoe groot 'n raam die skyfie bewerk: die hele raam op 'n toegewyde skyfie, hoogstens 2880 pieksels breed op een wat in die verwerker ingebou is (Windows sê vir die app watter soort dit is, dus tel die Intel Arc-skyfie van 'n Core Ultra-skootrekenaar as ingebou), een stap kleiner wanneer die skyfie nie byhou nie. Wat dit gemeet het, word gehou vir die volgende video's van dieselfde soort (kodek, grootte, raamtempo en dekodeerder), nie vir elke video nie.
+
+Wanneer selfs die kleinste stap nie glad is nie, sê die speler "Hierdie grafiese kaart kan nie die 360°-aansig van hierdie video glad wys nie"; wanneer dit ver daarvan is, of wanneer die skyfie die aansig glad nie kan teken nie (geen OpenGL ES 3.0 nie, 'n drywer wat dit weier), speel die video plat en sê die speler hoekom. 'n Video wat plat gespeel het, word nie die volgende keer plat gespeel nie: die volgende video van sy soort word weer gemeet.
+
+Wanneer dit die dekodering van 'n bedienervideo is wat nie byhou nie, nie die tekening nie ('n video wat die verwerker dekodeer, soos 5.7K H.264), skakel die speler oor na die bediener se getranskodeerde stroom van waar dit was, met die boodskap van die fone: "Speel die getranskodeerde stroom: die oorspronklike (kodek en grootte) oorskry wat hierdie toestel dekodeer".
+
+- **Gebruik die toegewyde grafiese skyfie van 'n skootrekenaar.** Windows laat die app op die geïntegreerde skyfie loop tensy anders gesê. In die Windows-instellings, System, Display, Graphics, voeg `immuch360.exe` by en kies "High performance", en begin dan die app weer. Op die toetsskootrekenaar ('n Intel UHD-skyfie en 'n NVIDIA RTX 4060 Laptop) het die NVIDIA-skyfie 4K-, 5.7K- en 8K-360°-video's op volle grootte en 30 rame per sekonde geteken terwyl die aansig gedraai het. Die Intel-skyfie het hulle hoogstens 2880 pieksels breed geteken: 'n 4K H.264- en 'n 8K HEVC-video teen omtrent 30 rame per sekonde met 'n 2026-bou van libmpv, 'n 4K-video teen 23 tot 27 met media-kit se 2024-libmpv (sien [Nog nie daar nie](#not-there-yet)), en 'n 5.7K H.264-video, wat die verwerker dekodeer, teen omtrent 20: van die bediener skakel die speler dan oor na die getranskodeerde stroom; 'n video sonder getranskodeerde stroom, uit 'n vouer byvoorbeeld, speel voort met die boodskap "Hierdie grafiese kaart kan nie die 360°-aansig van hierdie video glad wys nie".
+- **Kies self die weergawer.** In Settings, Gevorderd, skakel Troubleshooting (Probleemoplossing) aan: 'n inskrywing "360°-videoweergawer" verskyn, by verstek Outomaties. Dit bied ook "Prop-in, volle grootte", "Prop-in, hoogstens 4096 breed", "Prop-in, hoogstens 2880 breed" en "Plat, sonder die 360°-aansig", vir die volgende 360°-video wat jy oopmaak. Daaronder noem "Laaste gemeet" die grootte waarteen die laaste 360°-video geteken is, sy rame per sekonde, die grafiese skyfie en die dekodeerder: kopieer dit in 'n foutverslag. Om "Outomaties" weer te kies, selfs wanneer dit reeds die keuse is, vergeet wat gemeet is, en die volgende 360°-video's word weer gemeet.
+- **Wat die skyfie dekodeer.** Settings, Gevorderd, "Videodekodeerders van hierdie toestel" lys wat die grafiese skyfie in gebruik dekodeer, soos Direct3D 11 dit rapporteer, en die app korrigeer daardie lys met wat dit tydens afspeel gemeet het: die Videobron-instelling en die tweelenstoets van rou video's volg dit. H.264 wyer as 4096 pieksels (die 5.7K van 360°-kameras) word deur die verwerker gedekodeer, aangesien geen van die skyfies van die toetsskootrekenaar dit aanvaar nie.
 
 ### Vergeleke met die foonapps
 
@@ -1017,12 +1045,16 @@ Om die ZIP na te gaan, voer `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-des
 - **Niks word uit jou vouers geskrap nie**: "Delete from device" is versteek, en Delete verwyder slegs die bedienerkopie, totdat die app lêers na die Windows-asblik kan stuur.
 - **Muis en sleutelbord** in die plek van aanraking en die giroskoop.
 - **Een videospeler vir elke bron**: libmpv speel die video's van die bediener, die vouers, die deelplekke en Plex op dieselfde manier, en sy plat speler het reeds die klanksnit-kieslys wat die plat speler van fone nog nie het nie.
+- **360°-video's in die venster** (vanaf rekenaarbou 3): die 360°-speler is 'n bladsy van die app, nie 'n aparte inheemse speler nie, met 'n tydbalk, spronge van 10 sekondes en die klankknoppie. Rou video's met een lens per snit of per lêer word langs mekaar in een speler gestapel, waar fone twee dekodeerders laat loop; die terugvalstappe van die fone is dieselfde, met die kamera se LRV-kopie bygevoeg voor die video sonder aanmekaarwerk.
+- **Die regstreekse beeld van Tapo** (vanaf rekenaarbou 3) speel op die rekenaar soos op Android, terwyl iPhones en iPads dit nog nie het nie.
 
 <a id="not-there-yet"></a>
 ### Nog nie daar nie
 
-- **360°-, 3D-, VR180- en rou 360°-video's**: hulle word voorlopig plat gewys, soos die lêer hulle bevat (die hele sfeer oopgerol, die twee oë langs mekaar, of die ronde beelde van die lense), of as 'n plekhouer, en die 360°-knoppie bly op foto's. Hul spelers kom met die volgende rekenaarboue.
-- **Spatial 2.5D**, later met die webkamera; die **Tapo-regstreekse beeld**; die **kaart** en die Places-aansig; **aanmelding met OAuth** (meld eerder aan met 'n e-pos en 'n wagwoord); **Google Cast**; **kennisgewings**.
+- **Die libmpv van die vurk se eie bou**: die ZIP's dra media-kit se 2024-libmpv totdat die vurk se eie bou aangeskakel word, en `BUILD-INFO.txt` in die ZIP sê watter een dit dra. Met die 2024-een speel die twee lense van 'n rou video met een lens per snit of per lêer nooit gelyktydig nie (dit kort die filter wat hulle stapel), dus wys daardie video's een lens, die helfte van die sfeer swart; en die grafiese skyfie kopieer elke raam terug van sy dekodeerder, wat die 360°-speler op 'n geïntegreerde skyfie vertraag. Die libmpv van die vurk se eie werkvloei, 'n 2026-weergawe, is bedoel om dit voor die eerste publieke vrystelling te vervang; 'n 2026-bou van libmpv wat op die toetsskootrekenaar probeer is, doen albei.
+- **Tweelens rou video's op 'n skootrekenaar**: selfs met 'n 2026-libmpv het die toetsskootrekenaar 'n X3-paar (twee 2880x2880 H.264-lêers) teen 30 rame per sekonde slegs op sy NVIDIA-skyfie gestapel; op sy Intel-skyfie, en vir 'n X4-lêer (twee 3840x3840 HEVC-snitte) op albei skyfies, speel die video een lens, die helfte van die sfeer swart, soos op 'n foon wat nie twee dekodeerders kan laat loop nie.
+- **3D slegs op die skerm**: 'n 3D-video wys sy linkeroog, soos op fone; daar is geen giroskoop en geen kopstukaansig op die rekenaar nie. Om in ware 3D te kyk, deel die rekenaar met 'n Meta Quest.
+- **Spatial 2.5D**, later met die webkamera; die **kaart** en die Places-aansig; **aanmelding met OAuth** (meld eerder aan met 'n e-pos en 'n wagwoord); **Google Cast**; **kennisgewings**.
 - **'n Installeerder, 'n ondertekende bou en outomatiese opdaterings**: hierdie bou is 'n vouer met `immuch360.exe`.
 - **Linux en macOS**: hul projekte is in die bronne, maar hulle is nog nie op daardie stelsels gebou of probeer nie, en hul videospeler is nog nie daarin nie; hulle kom na Windows.
 - **Vertalings**: die nuwe tekste van die rekenaarweergawe is voorlopig in Engels.
@@ -1030,10 +1062,11 @@ Om die ZIP na te gaan, voer `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-des
 ### Bekende probleme
 
 - **Die eerste begin van 'n nuwe bou is stadig**: van 10 sekondes tot omtrent 'n minuut voordat die venster wys, heel waarskynlik terwyl Microsoft Defender die nuwe lêers skandeer, wat nog nie onderteken is nie. Wag vir die venster eerder as om die app weer te begin; die volgende beginne neem 'n sekonde of twee.
-- **8K HEVC-video's benodig 'n toegewyde grafiese skyfie**: op die toetsskootrekenaar het die geïntegreerde Intel UHD-skyfie omtrent die helfte van die rame van 'n 8K HEVC-video gewys, terwyl die toegewyde NVIDIA-skyfie 8K HEVC en 5.7K H.264 sonder 'n verlore raam gespeel het. Windows laat die app op die geïntegreerde skyfie loop tensy anders gesê: in die Windows-instellings, System, Display, Graphics, voeg `immuch360.exe` by en kies "High performance". Op die geïntegreerde skyfie word 'n 5.7K H.264-video, wat sy dekodeerder weier, deur die verwerker gedekodeer sonder 'n verlore raam.
-- **Video's word hoogstens 1440 lyne hoog geteken**, dan na die venster geskaal: op 'n 4K-skerm in volskerm is 'n 4K- of 8K-video 'n bietjie sagter as in 'n toegewyde videospeler. Dit hou 'n 8K-video binne die grafiese krag van 'n skootrekenaar.
+- **8K HEVC-video's benodig 'n toegewyde grafiese skyfie, en 360°-video's loop beter op een**: op die toetsskootrekenaar het die geïntegreerde Intel UHD-skyfie omtrent die helfte van die rame van 'n 8K HEVC-video gewys, terwyl die toegewyde NVIDIA-skyfie 8K HEVC en 5.7K H.264 sonder 'n verlore raam gespeel het; die 360°-speler is glad op die NVIDIA-skyfie en stadiger op die Intel-een, sien [360°-video's en die grafiese skyfie](#360-videos-and-the-graphics-chip). Windows laat die app op die geïntegreerde skyfie loop tensy anders gesê: in die Windows-instellings, System, Display, Graphics, voeg `immuch360.exe` by en kies "High performance", en begin dan die app weer. Op die geïntegreerde skyfie word 'n plat 5.7K H.264-video, wat sy dekodeerder weier, deur die verwerker gedekodeer sonder 'n verlore raam.
+- **Plat video's word hoogstens 1440 lyne hoog geteken**, dan na die venster geskaal: op 'n 4K-skerm in volskerm is 'n 4K- of 8K-video 'n bietjie sagter as in 'n toegewyde videospeler. Dit hou 'n 8K-video binne die grafiese krag van 'n skootrekenaar. Die 360°-speler werk eerder op die hele raam, of op die kleiner grootte wat sy meting gekies het.
 - **Terwyl 'n video van jou vouers in die app speel, of terwyl die kopstuk 'n lêer van die gedeelde rekenaar lees** ('n video wat dit speel, 'n foto wat dit aflaai), kan Windows daardie lêer nie hernoem, skuif of skrap nie en sê dit is oop in Immuch360 Desktop: maak eers die video toe, of stop die afspeel in die kopstuk. Rugsteun hou nie jou lêers so vas nie: 'n lêer kan hernoem, geskuif of geskrap word terwyl dit opgelaai word.
-- **Growwe kante**: 656 van die 663 rekenaartoetse slaag op Windows (7 word doelbewus oorgeslaan), 200 spelers wat een na die ander oopgemaak word, laat geen lek nie, en op 'n Windows 11-rekenaar begin die app, maak 'n gestoorde sessie op 'n Immich-bediener oop, sinkroniseer, speel 'n video en sluit skoon af. Die toets van elke funksie met die hand op 'n regte rekenaar is nog aan die gang.
+- **Growwe kante**: rekenaarbou 3 slaag 855 van sy 863 rekenaartoetse op Windows (8 word doelbewus oorgeslaan) en die hele toetsreeks van die app, 200 spelers wat een na die ander oopgemaak word, laat geen lek nie, en sy vrystellings-ZIP begin, speel 'n toetssnit en sluit skoon af. Die toets van elke funksie met die hand op 'n regte rekenaar is nog aan die gang.
+- **Waarmee die 360°-speler en die regstreekse beeld nagegaan is**: die 360°-speler is met sintetiese 4K-, 5.7K- en 8K-360°-snitte op albei grafiese skyfies van 'n skootrekenaar laat loop (oopgemaak, gespeel, gedraai terwyl dit speel en gepouseer is, gesluit) sonder 'n ineenstorting en sonder 'n herstel van die grafiese drywer. Tweelens rou video's is van sintetiese snitte en van regte X3- en X4-lêers gespeel. Die regstreekse beeld van Tapo is nagegaan teen 'n toets-RTSP-bediener wat aanmeld soos die kameras doen (Digest), doelbewus onderbreek en geweier, met geen wagwoord in enige logreël nie, maar nog nie met 'n regte kamera nie. Die toets met die hand, met regte 360°- en 3D-lêers, albei skerms van 'n skootrekenaar, slaap en hervat, en 'n regte kamera, moet nog kom.
 
 As iets verkeerd loop, maak asseblief 'n [probleem](https://github.com/freeKC/Immuch360/issues) oop met die log wat vanaf die Logs-bladsy gestoor is, sien [Logboeke](#logs). Gaan die log na voordat jy dit deel: dit kan jou bedieneradres bevat.
 
@@ -1052,7 +1085,7 @@ Jy benodig Windows 10 of 11 op x64, Flutter 3.47.2 vir Windows, Visual Studio 20
    mise run codegen
    ```
 
-2. Bou die app op Windows, in dieselfde `mobile`-vouer. Die eerste bou laai die biblioteke van die videospeler (libmpv en ANGLE) van GitHub af en gaan elke argief na volgens sy SHA-256:
+2. Bou die app op Windows, in dieselfde `mobile`-vouer. Die eerste bou laai die biblioteke van die videospeler (libmpv en ANGLE) van GitHub af en gaan elke argief na volgens sy SHA-256; dit kompileer ook die klein Direct3D 11-prop-in wat die dekodeerders van die grafiese skyfie lees, `immuch_desktop_video`, met dieselfde C++-werklading:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Jy benodig Windows 10 of 11 op x64, Flutter 3.47.2 vir Windows, Visual Studio 20
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-Die CI van Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) loop op die `desktop`-tak, wat `immuch360` volg: die foonhekke (niks verander in die foonboue nie) en die hele toetsreeks op Linux, die rekenaartoetse op Windows, en dieselfde ZIP; sy Linux- en macOS-take (`flutter build linux` en `flutter build macos`, met dieselfde `-t lib/main_desktop.dart`) het nog nie op daardie stelsels geloop nie.
+Die CI van Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) loop op die `desktop`-tak, wat `immuch360` volg: die foonhekke (niks verander in die foonboue nie) en die hele toetsreeks op Linux, die rekenaartoetse op Windows, en dieselfde ZIP, dan op daardie bou die toetse wat sy libmpv en ANGLE benodig (die aanmelding van die regstreekse beeld van Tapo, wat 'n videolêer nie mag oopmaak nie, die 360°-skakeerders); sy Linux-taak bou die app op Ubuntu en sy macOS-taak kompileer dit met Xcode 26.3 en die macOS 26 SDK (albei met dieselfde `-t lib/main_desktop.dart`), slegs as kompileerkontroles: nie een is nog op daardie stelsels begin nie. 'n Tweede werkvloei (`.github/workflows/immuch360-libmpv.yml`) herbou libmpv vir Windows x64 en arm64 uit vasgepende bronne en publiseer die argiewe met hul SHA-256; die ZIP's dra steeds die media-kit-argief totdat daardie bou aangeskakel word, dus geld die beperkings van die 2024-libmpv in [Nog nie daar nie](#not-there-yet) ook vir jou eie bou.
 
 <a id="where-to-get-it"></a>
 ## Waar om dit te kry
@@ -1088,8 +1121,8 @@ Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir A
   - Vandag: die universele `Immuch360-v<version>-release.apk` van die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy, met adb met die hand geïnstalleer, sien [Installeer dit op die TV](#install-it-on-the-tv). Dit is dieselfde app as op fone.
   - Binnekort: Google Play op TV's, waarvan die inskrywing sedert 9 Oktober 2026 deur Google nagegaan word.
 - **Windows 10 en 11, 64 bis (voorskou)**
-  - Vandag: Immuch360 Desktop, die ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` van die [rekenaar-voorvrystelling](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), uitgepak en begin soos [Laai af en installeer op Windows](#download-and-install-on-windows) sê. Voorlopig foto's en plat video's: 360°-, 3D- en VR180-video's kom met die volgende rekenaarboue.
-  - Binnekort: 360°-, 3D-, VR180- en rou 360°-video's; later 'n installeerder, 'n ondertekende bou en opdaterings.
+  - Vandag: Immuch360 Desktop, rekenaarbou 3, die ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` van die [rekenaar-voorvrystelling](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), uitgepak en begin soos [Laai af en installeer op Windows](#download-and-install-on-windows) sê. Foto's, plat video's, 360°-, 3D-, VR180- en rou 360°-video's (glad op 'n toegewyde grafiese skyfie, met beperkings op 'n geïntegreerde een) en die regstreekse beeld van Tapo.
+  - Binnekort: Spatial 2.5D met die webkamera, dan Linux en macOS; later 'n installeerder, 'n ondertekende bou en opdaterings.
 
 Die App Store- en Meta Horizon Store-skakels sal hier bygevoeg word sodra die inskrywings gepubliseer is. Meld aan met jou gewone Immich-bediener-URL en -rekening, of tik op "Gebruik sonder ’n bediener" op die aanmeldbladsy om op die toestel se eie foto's en video's te begin. Die APK van GitHub werk homself nie op nie: hou die Releases-bladsy dop, en sodra jy die app uit 'n winkel geïnstalleer het, kry die opdaterings uit daardie winkel.
 
@@ -1126,7 +1159,7 @@ Geen geheim woon in hierdie bewaarplek nie: die Android-ondertekeningsleutel wor
 
 - **`main`**: Immich `main` by die commit waarop `immuch360` gebaseer is (29 September 2026 vir die huidige boue), nooit verander nie; dit skuif vorentoe wanneer die vurk op 'n nuwer Immich herbaseer word.
 - **`immuch360`**: die veranderinge van hierdie vurk bo-op Immich, Immuch360 Desktop ingesluit sedert 9 Oktober 2026. Elke vrystelling sê op watter Immich-weergawe dit gebaseer is.
-- **`desktop`**: waar Immuch360 Desktop, die rekenaarweergawe, bo-op `immuch360` gebou is, totdat dit op 9 Oktober 2026 daarin saamgevoeg is sodat fone, kopstukke, TV's en rekenaars uit dieselfde bronne vrygestel word. Dit volg nou `immuch360` en dra die etikette van die rekenaar-voorvrystellings ([rekenaarbou 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) vanaf commit 21f285c34, [rekenaarbou 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) vanaf 5b723bd25). Die rekenaarweergawe verander niks onder `mobile/android` en `mobile/ios` nie.
+- **`desktop`**: waar Immuch360 Desktop, die rekenaarweergawe, bo-op `immuch360` gebou is, totdat dit op 9 Oktober 2026 daarin saamgevoeg is sodat fone, kopstukke, TV's en rekenaars uit dieselfde bronne vrygestel word. Dit volg nou `immuch360` en dra die etikette van die rekenaar-voorvrystellings ([rekenaarbou 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) vanaf commit 21f285c34, [rekenaarbou 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) vanaf 5b723bd25, [rekenaarbou 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) vanaf die samevoeging van die 360°-videospeler op 10 Oktober 2026). Nuwe rekenaarwerk land eers daar en sluit by `immuch360` aan met die rekenaarbou wat dit vrystel. Die rekenaarweergawe verander niks onder `mobile/android` en `mobile/ios` nie.
 
 <a id="logs"></a>
 ## Logboeke
@@ -1145,7 +1178,7 @@ Vanaf bou 19 skryf die DLNA-kliënt, die foondeelplek en die herkenning van Appl
 
 Op 'n rekenaar (Immuch360 Desktop) het die Logs-bladsy ook "Save logs to a file" (Stoor logboeke in 'n lêer): die log, of 'n ZIP van die log en die verslae van die laaste omvalle wanneer daar is (sy voorgestelde naam eindig dan op "with-crash-reports"). 'n Omvalverslag is 'n klein minidump: die drade, waar hulle gestop het en slegs wat nodig is om hul oproepe te volg, met die name van die programlêers maar nie hul vouers nie; nie die geheue van die app nie.
 
-Vanaf rekenaarbou 2 skryf die videospeler van die rekenaar daarin onder `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` en `VideoThumbnailGrabber`, mpv se eie waarskuwings ingesluit, met tokens en wagwoorde verwyder. Gaan die log na voordat jy dit deel: dit kan jou bedieneradres bevat.
+Vanaf rekenaarbou 2 skryf die videospeler van die rekenaar daarin onder `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` en `VideoThumbnailGrabber`, mpv se eie waarskuwings ingesluit, met tokens en wagwoorde verwyder. Vanaf rekenaarbou 3 skryf dit ook die 360°-speler onder `SphericalPlayer`, `SphereRenderer` en `PluginRenderer` (die gekose grootte, die gemete rame per sekonde, die grafiese skyfie), die rou tweelensvideo's onder `RawTwoStreams`, die dekodeerders van die grafiese skyfie onder `DesktopGpuDecoders`, `DesktopVideoDecoderApi` en `DecoderMeasure`, en die regstreekse beeld van Tapo onder `DesktopCameraLive`, waarvan die reëls nooit die kamerarekening of sy wagwoord bevat nie. Gaan die log na voordat jy dit deel: dit kan jou bedieneradres bevat.
 
 <a id="privacy"></a>
 ## Privaatheid
@@ -1159,7 +1192,7 @@ Vanaf rekenaarbou 2 skryf die videospeler van die rekenaar daarin onder `Desktop
 - **Foondeelplek**: slegs die plaaslike netwerk, met 'n gebruikersnaam en wagwoord, oor gewone HTTP (sien [Deel hierdie foon op die netwerk](#share-this-phone-on-the-network)).
 - **Kamera**: slegs deur die Spatial 2.5D-speler gebruik, op die toestel; die beelde word nooit gestoor nie en nooit êrens heen gestuur nie.
 - **Op 'n rekenaar** (Immuch360 Desktop, Windows-voorskou): die app lees slegs die vouers wat jy kies, hou sy indeks, duimnaels en kas op die rekenaar, en stoor wagwoorde en tokens met die databeskerming van Windows, slegs vir jou Windows-rekening. Die rekenaardeelplek volg die reëls van die foondeelplek, en begin nie op 'n netwerk wat Windows as publiek merk, of waarvan dit die tipe nie kan bepaal nie, tensy jy so sê.
-- **Die videospeler op 'n rekenaar** (vanaf rekenaarbou 2): die video's van jou bediener bereik dit deur die app, sodat die speler nooit jou sessietoken hou nie, en wat dit vooruit lees, bly in die geheue, nie op die skyf nie. Dit maak slegs die lêer oop wat dit gegee word: 'n lêer van 'n vouer of 'n deelplek wat eintlik 'n snitlys of 'n stroombeskrywing is, laat dit nêrens anders heen koppel nie.
+- **Die videospeler op 'n rekenaar** (vanaf rekenaarbou 2): die video's van jou bediener bereik dit deur die app, sodat die speler nooit jou sessietoken hou nie, en wat dit vooruit lees, bly in die geheue, nie op die skyf nie. Dit maak slegs die lêer oop wat dit gegee word: 'n lêer van 'n vouer of 'n deelplek wat eintlik 'n snitlys of 'n stroombeskrywing is, laat dit nêrens anders heen koppel nie. Vanaf rekenaarbou 3 word die adres van elke video slegs in die geheue aan die speler gegee, nooit deur 'n tydelike lêer nie (die skakel wat die app vir 'n video van die bediener of 'n deelplek maak, bevat 'n sleutel van daardie sessie, wat in rekenaarbou 2 by elke oopmaak vir 'n paar sekondes op die skyf gelê het), en daardie sleutel verskyn nooit in die log nie; die regstreekse beeld van 'n Tapo-kamera gee die kamerarekening op dieselfde manier aan die speler, nooit in 'n lêer of 'n logreël nie, en praat slegs op die plaaslike netwerk met die kamera; die metings van die 360°-speler en van die dekodeerders (die grafiese skyfie, die formaat van die video, die rame per sekonde, nooit 'n lêernaam nie) bly in die app se vouer op die rekenaar.
 
 Die volledige beleid staan in [PRIVACY.md](../PRIVACY.md).
 
@@ -1177,7 +1210,7 @@ Android, Android TV en Google TV is handelsmerke van Google LLC; Apple, iPhone, 
 
 Wat nog nie klaar is nie, die waarskynlikste eerste. Niks hier is 'n belofte nie, en terugvoer op die [probleemlys](https://github.com/freeKC/Immuch360/issues) help besluit wat eerste kom.
 
-- **Immuch360 Desktop, eers Windows**: rekenaarbou 2 is uit, met plat video's, en die rekenaarbronne is in die hooftak van die vurk, `immuch360`, sedert 9 Oktober 2026 (sien [Op 'n Windows-rekenaar](#on-a-windows-computer-immuch360-desktop-preview)). Volgende, 360°-, 3D-, VR180- en rou 360°-video's op Windows, met die twee lense van rou lêers en die regstreekse beeld van Tapo; dan die toets van elke funksie op 'n Windows-rekenaar en die regstellings daarvan; dan Spatial 2.5D met die webkamera; dan Linux en macOS, pakkette, ondertekening en opdaterings.
+- **Immuch360 Desktop, eers Windows**: rekenaarbou 3 is uit, met die 360°-videospeler (360°-, 3D-, VR180- en rou 360°-video's, die twee lense van rou lêers, die grootte van die aansig gemeet op elke rekenaar) en die regstreekse beeld van Tapo, en die rekenaarbronne is in die hooftak van die vurk, `immuch360`, sedert 9 Oktober 2026 (sien [Op 'n Windows-rekenaar](#on-a-windows-computer-immuch360-desktop-preview)). Volgende, die libmpv van die vurk se eie werkvloei in die plek van die 2024-een, en die toets van elke funksie met die hand op 'n Windows-rekenaar met regte lêers, albei skerms en 'n regte kamera, met die regstellings daarvan; dan Spatial 2.5D met die webkamera; dan Linux en macOS; dan 'n installeerder, 'n ondertekende bou en outomatiese opdaterings.
 - **Google Play**: bou 20 is sedert 7 Oktober 2026 regstreeks, in die plek van bou 18; die inskrywing vir TV's word sedert 9 Oktober 2026 deur Google nagegaan. Bou 21 verander niks op fone en tablette nie.
 - **App Store**: weergawe 3.3.0 wag vir Apple se nagaan; dit dra die funksies van bou 11, so die oplaai na Immich en die kontrole van videodekodeerders (bou 15) en die rou Insta360-lêers (bou 16) kom met die volgende App Store-opdatering. Die skakel sal hier bygevoeg word wanneer dit regstreeks is.
 - **Meta Horizon Store**: Meta het die inskrywing op 7 Oktober 2026 met bou 14 goedgekeur. Bou 21 is as sy eerste opdatering ingedien: dit bring alles sedert bou 14 (oplaaie vanaf 'n deelplek na Immich, die videobron gekies volgens wat die kopstuk dekodeer, rou Insta360-, GoPro- en DJI-lêers, DLNA, die foondeelplek, Apple-ruimtelike foto's, Plex Media Server-biblioteke, Tapo-kameras), en die winkel lys dit vir die Quest 2, Quest Pro, Quest 3 en 3S. Die winkelskakel sal hier bygevoeg word sodra die bladsy publiek is; 'n met die hand geïnstalleerde kopie moet eers gedeïnstalleer word (sien [Installeer](#install)).

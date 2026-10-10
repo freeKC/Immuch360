@@ -15,13 +15,13 @@ Si isch für Lüüt, wo mit ere 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360,
 
 <div align="center">
 
-| Plattform | Wo du si überchunsch | Stand am 9. Oktober 2026 |
+| Plattform | Wo du si überchunsch | Stand am 10. Oktober 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-Telefon und -Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Build 20 sit em 7. Oktober 2026 uf Google Play, Build 21 uf GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone und iPad** | App Store | Version 3.3.0 wartet uf d Prüefig vo Apple; bis dänn [sälber baue](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 und 3S | [APK](#meta-quest-3) · Horizon Store | Iitrag freigä, Build 21 i de Prüefig vo Meta |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV und Google TV** | [APK](#install-it-on-the-tv) · Google Play | Build 21 uf GitHub; de Google-Play-Iitrag für Fernseh isch sit em 9. Oktober 2026 i de Prüefig vo Google |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Vorschau-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | Desktop-Build 2 uf Windows: Fotos und flachi Videos, 360°-Videos als nächschts; macOS und Linux spöter, us de glyche Quälle |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Vorschau-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | Desktop-Build 3 uf Windows: Fotos, flachi und 360°-Videos; macOS und Linux spöter |
 
 *D Ständ wärded bi jedem Release aktualisiert; d Details sind under [Wo du si überchunsch](#where-to-get-it).*
 
@@ -30,7 +30,7 @@ Si isch für Lüüt, wo mit ere 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360,
 - 🌐 **Nativs 360°**<br>Fotos und Videos als Kugle, i dere du dich umeluegsch, mit em Gyroskop, Rohdateie vo de Kamera inbegriffe (Insta360 ab Build 16, GoPro und DJI ab Build 18). Derzue en gratis Videoplayer: flach, 360°, 3D, VR180
 - 👓 **Nativs 3D**<br>Stereoskopischs 360° und VR180, obe und unde oder nebedenand, und räumlichi Apple-Fotos (ab Build 19): echts 3D im Headset, eis Aug uf em Telefon
 - 🎥 **Nativs 2.5D**<br>Tüüfi uf emne flache Bildschirm us emne stereoskopische Video, d Aasicht folgt dim Chopf (experimentell, Telefon und Tablets)
-- 📱 **Android, iOS, Quest, TV**<br>Ei App uf Telefon, Tablets und de Headsets Quest 2, Pro, 3 und 3S, echts 3D im Headset, ab Build 20 uf Android TV mit de Fernbedienig, und e Windows-Vorschau mit Fotos und flache Videos
+- 📱 **Android, iOS, Quest, TV**<br>Ei App uf Telefon, Tablets und de Headsets Quest 2, Pro, 3 und 3S, echts 3D im Headset, ab Build 20 uf Android TV mit de Fernbedienig, und e Windows-Vorschau mit Fotos, flache und 360°-Videos
 - 🔌 **Mit oder ohni Server**<br>Din Immich-Server oder d eigeti Galerie vom Telefon, kei Konto nötig
 - 🗄️ **Netzwerkfreigabe**<br>Samba (SMB), WebDAV und, ab Build 19, DLNA-Medieserver, im Netzwerk gfunde und live gläse, nüt wird abeglade, und uf Immich gschickt, wänn du das wotsch. Ab Build 19 teilt es Telefon au sini eigeti Galerie mit em Headset
 - 📺 **Uf em Fernseh**<br>Ab Build 20 s glyche APK uf Android TV und Google TV: 360°-Fotos und -Videos, din Server und dini Freigabe, mit de Fernbedienig
@@ -84,7 +84,7 @@ Si isch für Lüüt, wo mit ere 360°-Kamera (Insta360, GoPro MAX, DJI Osmo 360,
 - **«Ich wott mini 360°-Fotos und -Videos, und d Videos vo mim NAS oder mim Plex-Server, uf em Fernseh aaluege, mit de Fernbedienig.»** Lueg [Uf dim Fernseh aaluege](#watch-on-your-tv-android-tv-and-google-tv).
 - **«Ich find mini 360°-Ufnahme nöd under all de andere.»** Lueg [D 360°-Lischte](#find-your-360-shots-the-360-list).
 - **«Mis 360°-Video ruckelt oder spilt e verschwummeni Kopie.»** Lueg [Videodetails und Decoder](#video-details-decoders-and-why-a-video-stutters).
-- **«Ich wott mini 360°-Fotos und mini Immich-Bibliothek uf mim Windows-PC, mit de Fotos und Videos vo sine Ordner, mim NAS und mim Plex-Server, und de PC mit mim Headset teilt.»** Lueg [Uf emne Windows-Computer](#on-a-windows-computer-immuch360-desktop-preview) (e Vorschau: vorlöifig Fotos und flachi Videos, 360°-Videos spöter).
+- **«Ich wott mini 360°-Fotos und mini Immich-Bibliothek uf mim Windows-PC, mit de Fotos und Videos vo sine Ordner, mim NAS und mim Plex-Server, und de PC mit mim Headset teilt.»** Lueg [Uf emne Windows-Computer](#on-a-windows-computer-immuch360-desktop-preview) (e Vorschau: Fotos und flachi Videos, und ab Desktop-Build 3 360°-, 3D-, VR180- und rohi 360°-Videos und d Tapo-Live-Aasicht).
 - **«Bhalt ich alles, was d Immich-App macht?»** Ja, mit zwei chliine Änderige, lueg [Alles anderi isch Immich](#everything-else-is-immich).
 
 Wänn e Funktion neu isch, staht im Text, ab welem Build si da isch. S GitHub-Release hät immer de neuschti Build, d Stores chömed spöter: lueg [Wo du si überchunsch](#where-to-get-it).
@@ -127,6 +127,7 @@ Scho zämegsetzti 360°-Dateie gönd überall: Exporte us de Insta360-App oder S
 
 De Player spilt d Datei, wo uf em Telefon gspeicheret isch, oder d Datei vo ere Netzwerkfreigab, wänn's eini git. Susch streamt er vo dim Server: standardmässig de transkodiert Stream, oder s Original, wänn du's in «Settings» (Iistellige), Foto-Aazeig, Videoquälle wählsch (ab Build 15; vorher de Schalter «Force original video» (Originalvideo erzwinge)), lueg [Videodetails und Decoder](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### E 360°-Datei, wo flach aazeigt wird: Als 360° aazeige
 
 Es paar 360°-Dateie händ kei Projektions-Tag, drum markiert de Server si nöd als 360° und si wärded flach aazeigt.
@@ -356,6 +357,7 @@ Ab Build 20 füegt Immuch360 e Tapo-Kamera näbed de Netzwerkfreigabe hinzue. Si
 8. Tipp uf «Kamera teste». Es zeigt «Ufnahme: (Modell), Firmware (Version)» mit em Zuestand vo de Speichercharte, und «Live-Aasicht: (Video), Ton (Audio)», oder was bi jedem nöd gange isch.
 9. Tipp uf «Save» (Spichere). D Kamera wird under «Kameras» ufglischtet, nach de Freigabe, mit ihrem Modell, sobald's bekannt isch, und `tapo://` mit ihrere Adrässe.
 
+<a id="watch-it-live"></a>
 ### Live aaluege
 
 1. Tipp uf d Kamera. Ihri Live-Aasicht isch zoberscht uf ihrere Siite: «Verbindig zur Kamera wird härgstellt», dänn s Bild mit em Live-Abzeiche.
@@ -755,9 +757,9 @@ De aktuell Build, Build 21 (Version 3.3.0-rc.0, Buildnummere 3030019), basiert u
 | D Dateie vo ere Freigab uf Immich schicke; vo Hand gschickti Dateie vom Grät gälted als gsicheret | ❌ nume Dateie vom Grät | ✅ ab Build 15 |
 | Das Telefon im Netzwerk freigä, für s Headset | ❌ | ✅ ab Build 19, Android und iOS |
 | Plex-Media-Server-Bibliotheke, abgspilt us de Originaldateie, dihei und unterwägs, ohni plex.tv | ❌ | ✅ ab Build 20, jede Viewer, uf Telefon, Tablets, de Quest und Fernseh |
-| Tapo-Kameras: d Live-Aasicht, und d Ufnahme vo de Speichercharte uf Immich gschickt, wänn du's wotsch | ❌ | ✅ ab Build 20: Ufnahme überall, live uf Android, Android TV und de Quest |
+| Tapo-Kameras: d Live-Aasicht, und d Ufnahme vo de Speichercharte uf Immich gschickt, wänn du's wotsch | ❌ | ✅ ab Build 20: Ufnahme überall, live uf Android, Android TV, de Quest und, ab Desktop-Build 3, Windows |
 | Android TV und Google TV, mit de Fernbedienig gstüüret, im glyche APK | ❌ kei TV-App | ✅ ab Build 20 |
-| Di glych App uf emne Windows-Computer | ❌ nume Telefon und Tablets | ✅ Vorschau, Fotos und flachi Videos |
+| Di glych App uf emne Windows-Computer | ❌ nume Telefon und Tablets | ✅ Vorschau: Fotos, flachi und 360°-Videos (Desktop-Build 3) |
 | Rohi Insta360-.insp-Fotos und .insv-Videos mit einere Spur | ❌ flach | ✅ ab Build 16 |
 | Rohi Videos mit eim Objektiv pro Spur oder pro Datei (Insta360 X4, X4 Air, X5, X6, X3-Paar, GoPro .360, DJI .osv) | ❌ flach oder falsch | ✅ ab Build 18 |
 | Dual-Fisheye-.dng | ❌ flach | ❌ no nöd |
@@ -787,7 +789,7 @@ De aktuell Build, Build 21 (Version 3.3.0-rc.0, Buildnummere 3030019), basiert u
 - **Plex Media Server**: vo emne Computer us gäge en echte Plex Media Server 1.42.1 prüeft (Verbinde, Ordner, Byte-Bereich, Vorschaubilder, d Adrässe usserhalb vo dihei); no nöd uf emne Grät prüeft.
 - **Tapo-Kameras**: gäge e simulierti Kamera prüeft; no nöd mit ere echte Kamera prüeft.
 - **Android TV und Google TV**: mit automatische Tests prüeft; no nöd uf emne Fernseh prüeft.
-- **Di glych App uf emne Windows-Computer**: 656 vo de 663 automatische Desktop-Tests bestönd uf Windows (7 mit Absicht übersprunge), und uf emne Windows-11-PC startet d App, macht e gspeichereti Sitzig uf emne Immich-Server uf, synchronisiert, spilt es Video ab und gaht suber zue; de Test vo jedere Funktion vo Hand isch im Gang.
+- **Di glych App uf emne Windows-Computer**: de Desktop-Build 3 bestaht 855 vo sine 863 automatische Desktop-Tests uf Windows (8 mit Absicht übersprunge) und di ganz Testsuite vo de App; uf emne Windows-11-PC startet d App, macht e gspeichereti Sitzig uf emne Immich-Server uf, synchronisiert, spilt es Video ab und gaht suber zue, und sin 360°-Player isch mit synthetische 4K-, 5,7K- und 8K-Clips uf beide Grafikchips vo emne Laptop ohni Absturz gloffe. De Test vo jedere Funktion vo Hand, mit echte 360°-Dateie und ere echte Tapo-Kamera, isch im Gang.
 - **Rohi Insta360-.insp-Fotos und .insv-Videos mit einere Spur**: Fotos prüeft gäge Insta360-Studio-Exporte vo X3-Dateie, Videos uf emne Android-Emulator mit ere X3-Datei mit tüüfer Uflösig; no nie uf emne iPhone gloffe.
 - **Rohi Videos mit eim Objektiv pro Spur oder pro Datei**: Parser und Zämesetze prüeft mit echte X4-, X3-Paar-, GoPro-MAX- und Osmo-360-Dateie; s Abspiele isch de Gerätetest vo de Builds 18 und 19.
 - **Dual-Fisheye-.dng**: plant.
@@ -842,17 +844,19 @@ Immuch360 isch e Galerie, und au en gratis Medieplayer: er spilt, was di offizie
   - iPhone, iPad: native SceneKit-Player uf ere Kugle, Gyroskop, Tonspur-Wahl, Puffer-Aazeig; Abspiele und Pause, no kei Ziitleischte.
   - Meta Quest: immersiv, echts 3D für stereoskopischi Dateie, Ziitleischte mit 10-Sekunde-Sprüng, vorhärigs und nächschts Medium.
   - Android TV, Google TV: de Media3-Player vo de Telefon, mit de Pfiil drüllt.
-  - Windows: no nöd, vorlöifig flach zeigt.
+  - Windows (ab Desktop-Build 3): de eiget 360°-Player vo de App (libmpv), mit de Muus oder de Pfiiltaste drääjt, mit em Rädli zoomt, mit Spuele, Tonspur-Uswahl und Ladeaazeig; flüssig uf emne eigete Grafikchip, höchstens 2880 Pixel breit und langsamer bi 5,7K H.264 uf emne integrierte.
 - **3D-360° (obe und unde, nebedenand)**
   - Android-Telefon: linggs Aug, Layout-Chnopf.
   - iPhone, iPad: glych.
   - Meta Quest: jedes Aug überchunt sini eigeti Hälfti vom Bild.
   - Android TV, Google TV: linggs Aug, Layout-Chnopf.
+  - Windows: Fotos wie uf Telefon; Videos ab Desktop-Build 3, linggs Aug, Layout-Chnopf, flüssig uf emne eigete Grafikchip, mit Gränze uf emne integrierte.
 - **VR180-(Halbkugle-)Fotos und -Videos**
   - Android-Telefon: Halbkugle, 360°/180°-Chnopf.
   - iPhone, iPad: glych.
   - Meta Quest: immersivi Halbkugle.
   - Android TV, Google TV: Halbkugle, 360°/180°-Chnopf.
+  - Windows: Fotos wie uf Telefon; Videos ab Desktop-Build 3, Halbkugle, 360°/180°-Chnopf, flüssig uf emne eigete Grafikchip, mit Gränze uf emne integrierte.
 - **Spatial 2.5D (Tüüfi uf emne flache Bildschirm us emne stereoskopische Video)**
   - Android-Telefon: native Player, Chopfverfolgig mit de Frontkamera.
   - iPhone, iPad: glych.
@@ -878,16 +882,19 @@ Immuch360 isch e Galerie, und au en gratis Medieplayer: er spilt, was di offizie
   - iPhone, iPad: mit emne SceneKit-Shader zämegsetzt.
   - Meta Quest: immersiv, mit em glyche GPU-Effekt zämegsetzt.
   - Android TV, Google TV: wie uf Telefon.
+  - Windows (ab Desktop-Build 3): uf em Grafikchip im 360°-Player vo de App zämegsetzt, flüssig uf emne eigete Chip, mit Gränze uf emne integrierte.
 - **Rohi Videos mit eim Objektiv pro Spur oder pro Datei (ab Build 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-Paar, GoPro .360, DJI .osv**
   - Android-Telefon: zwei Hardware-Decoder gliichziitig, eine pro Objektiv (ab Build 19 Software-Decoder uf emne Grät ohni Hardware-Decoder, bis 2048x2048 pro Objektiv), und en GL-Kompositor, wo i d Kugle zämesetzt; eis Objektiv, dänn de transkodiert Stream, dänn s Video nöd zämegsetzt, wänn s Grät kei zwei cha laufe lah.
   - iPhone, iPad: en eigete AVFoundation-Kompositor mit Metal.
   - Meta Quest: immersiv, di glyche zwei Decoder und de glych Kompositor (3840x1920-Panel).
   - Android TV, Google TV: wie uf Telefon, wänn de Fernseh zwei Decoder glychziitig cha laufe la.
+  - Windows (ab Desktop-Build 3): beidi Objektiv nebedenand i eim Player, dänn zämegsetzt, wänn de Computer mitchunnt (gmässe a sim eigete Abspile; uf em Test-Laptop es X3-Paar nume uf sim eigete Chip); susch d Schritt vo de Telefon: eis Objektiv, de transkodiert Stream, di LRV-Kopie mit nidriger Uflösig vo de Kamera, s nöd zämegsetzte Video.
 - **Live-Aasicht vo ere Tapo-Kamera (ab Build 20)**
   - Android-Telefon: Media3-RTSP-Player: SD uf de Siite, HD im Vollbild, Ton-Chnopf.
   - iPhone, iPad: no nöd: e Charte seit, dass si spöter chunnt.
   - Meta Quest: im Fänschter, in HD.
   - Android TV, Google TV: wie uf Telefon.
+  - Windows (ab Desktop-Build 3): de libmpv-Player, SD uf de Siite, HD im Vollbild, Ton-Chnopf.
 - **Ufnahme vo ere Tapo-Kamera (ab Build 20)**
   - Android-Telefon: vo de Speichercharte imne H.264-Video mit sim Ton gholt, dänn mit Spule abgspilt.
   - iPhone, iPad: glych.
@@ -896,14 +903,14 @@ Immuch360 isch e Galerie, und au en gratis Medieplayer: er spilt, was di offizie
 
 D Iiträg für Android TV und Google TV, ab Build 20, sind no nöd uf emne Fernseh prüeft, lueg [Uf dim Fernseh aaluege](#watch-on-your-tv-android-tv-and-google-tv); d Kamera-Iiträg sind no nöd mit ere echte Kamera prüeft.
 
-Uf Windows zeigt d Vorschau vo Immuch360 Desktop d Fotos, flach und 360°, inklusiv rohi Insta360-.insp-Fotos, mit de Muus und de Tastatur, und ab Desktop-Build 2 spilt si flachi Videos ab, vom Server, us de Ordner vom PC, us de Freigabe, vo Plex und us de Tapo-Ufnahme; 360°-, 3D-, VR180- und rohi 360°-Videos wärded vorlöifig flach oder als Platzhalter zeigt (lueg [No nöd da](#not-there-yet)).
+Uf Windows zeigt d Vorschau vo Immuch360 Desktop d Fotos, flach und 360°, inklusiv rohi Insta360-.insp-Fotos, mit de Muus und de Tastatur. Ab Desktop-Build 2 spilt si flachi Videos ab, vom Server, us de Ordner vom PC, us de Freigabe, vo Plex und us de Tapo-Ufnahme, und ab Desktop-Build 3 spilt si 360°-, 3D-, VR180- und rohi 360°-Videos us de glyche Quälle i ihrem eigete 360°-Player ab, und d Tapo-Live-Aasicht. De 360°-Player isch flüssig uf emne eigete Grafikchip und hät Gränze uf emne integrierte (lueg [Uf emne Windows-Computer](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Dim Immich-Server**: s Original oder de transkodiert Stream vom Server, so wie's Settings, Foto-Aazeig, Videoquälle seit (lueg [Videodetails und Decoder](#video-details-decoders-and-why-a-video-stutters)). Glychs Konto wie d Web-App.
 - **Em Telefon oder em Headset sälber**: «Ohni Server bruuche» uf de Login-Siite, oder de Iitrag Uf däm Grät im Tab Bibliothek.
 - **Emne NAS oder emne Computer**: SMB- und WebDAV-Freigabe, und ab Build 19 DLNA-Medieserver, im Netzwerk gfunde, live gläse (es SMB-Video über bis zu sechs Verbindige), nüt kopiert; ab Build 15 chönd d Dateie, wo du uswählsch, uf dis Immich-Konto gschickt wärde.
 - **Emne andere Telefon (ab Build 19)**: «Das Telefon im Netzwerk freigä» uf dem Telefon: s Headset, oder jede WebDAV-Client im Netzwerk, list sini Albene, Mönet und 360°-Medie.
 - **En Plex Media Server (ab Build 20)**: sini Foto-, Film- und TV-Serie-Bibliotheke nach Ordner, d Originaldateie live über HTTPS gläse, prüeft gäge s eigete Zertifikat vom Server, dihei oder über d Adrässe usserhalb vo dihei, uf jeder Plattform; lueg [Plex Media Server, ohni plex.tv](#plex-media-server-without-plextv).
-- **E Tapo-Kamera (ab Build 20)**: d Live-Aasicht mit em Kamerakonto (Android, Android TV, d Quest), und d Ufnahme vo ihrere Speichercharte mit em Passwort vom TP-Link-Konto (jedi Plattform), nume im lokale Netzwerk; lueg [Tapo-Kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **E Tapo-Kamera (ab Build 20)**: d Live-Aasicht mit em Kamerakonto (Android, Android TV, d Quest, und Windows ab Desktop-Build 3), und d Ufnahme vo ihrere Speichercharte mit em Passwort vom TP-Link-Konto (jedi Plattform), nume im lokale Netzwerk; lueg [Tapo-Kameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **D Ordner vo emne Windows-Computer (Desktop-Vorschau)**: d Ordner, wo du in Immuch360 Desktop uswählsch, gläse anstatt de Galerie vo emne Telefon; de Computer cha si au mit em Headset teile, lueg [Uf emne Windows-Computer](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Dini Immich-Bibliothek isch uf emne Server, anderi Fotos und Videos liged i de O
 
 Uf emne Computer bietet Immich sini Web-App im Browser aa. **Was Immuch360 Desktop dezue bringt**: d Ordner vom PC ohni Server und ohni Konto, SMB-, WebDAV-, DLNA- und Plex-Freigabe, us de App duregluegt und abgspilt, rohi Insta360-.insp-Fotos als Kugle ufgmacht, und de PC mit ere Meta Quest dihei teilt.
 
-Das isch e Vorschau: ab Desktop-Build 2 gönd Fotos und flachi Videos; 360°-, 3D- und VR180-Videos chömed mit de nächste Desktop-Builds. Sit em 9. Oktober 2026 sind d Desktop-Quälle im Hauptbranch vo de Fork, `immuch360`, drum chömed Telefon, Headsets, Fernseh und Computer us de glyche Quälle. D Apps für Telefon, Tablet, Quest und TV änderet sich dademit nöd und bhalted de Name Immuch360.
+Das isch e Vorschau: Fotos und flachi Videos gönd ab Desktop-Build 2, und ab Desktop-Build 3 de 360°-Videoplayer (360°-, 3D-, VR180- und rohi 360°-Videos) und d Live-Aasicht vo Tapo-Kameras; d Schritt unde, wo de Build 3 bruuched, säged's. Sit em 9. Oktober 2026 sind d Desktop-Quälle im Hauptbranch vo de Fork, `immuch360`, drum chömed Telefon, Headsets, Fernseh und Computer us de glyche Quälle. D Apps für Telefon, Tablet, Quest und TV änderet sich dademit nöd und bhalted de Name Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Abelade und installiere uf Windows
 
-De aktuell Build isch s GitHub-Pre-Release [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Sini Datei isch `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (öppe 57 MB, 78 Dateie, wänn's entpackt isch, inklusiv em Videoplayer und sim `licenses`-Ordner), mit `SHA256SUMS.txt` zum si prüefe. Er isch us em Hauptbranch, `immuch360`, bim Commit 5b723bd25 baut: d Quälle vom Telefon-Build 21 plus d Computer-Version. Er bruucht Windows 10 oder 11, 64 Bit.
+De aktuell Build isch s GitHub-Pre-Release [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Sini Datei isch `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (öppe 57 MB, 79 Dateie, wänn's entpackt isch, inklusiv em Videoplayer und sim `licenses`-Ordner), mit `SHA256SUMS.txt` zum si prüefe. Er isch us em Hauptbranch, `immuch360`, baut, nachdem de 360°-Videoplayer vom Computer drii gmerged worde isch, bim Commit, wo sini Release Notes nänned: d Quälle vom Telefon-Build 21 plus d Computer-Version. Er bruucht Windows 10 oder 11, 64 Bit.
 
-1. Lad s ZIP abe und pack's irgendwo us, zum Biispiil i Dokumänt.
-2. Start `immuch360.exe` us em entpackte Ordner. Bhalt de Ordner ganz: s Programm bruucht d Dateie dernäbe, inklusiv em Videoplayer.
+1. Lad s ZIP abe und pack's irgendwo us, zum Biispiil i Dokumänt. Zum de Desktop-Build 2 ersetze, lösch sin Ordner oder pack i en neue us: dis Login, dini Ordner und dini Iistellige bliibed i dim Windows-Profil, nöd i dem Ordner.
+2. Start `immuch360.exe` us em entpackte Ordner. Bhalt de Ordner ganz: s Programm bruucht d Dateie dernäbe, under anderem `libmpv-2.dll`, de Videoplayer, und `immuch_desktop_video.dll`, wo d Decoder vom Grafikchip uslist.
 3. D Dateie sind no nöd signiert, drum cha Windows SmartScreen «Der Computer wurde durch Windows geschützt» zeige: wähl «Weitere Informationen», dänn «Trotzdem ausführen». Wo d Intelligenti App-Steuerig aa isch, blockiert si unsignierti Programm.
 4. Wart uf s Fänschter. De erscht Start vo emne neue Build duuret vo 10 Sekunde bis öppe e Minute, am ehnschte, will Microsoft Defender d neue Dateie scannt: start d App i dere Ziit nöd nomal. D nächste Starts duured e Sekunde oder zwei.
 5. Uf de Login-Siite meldsch di bi dim Immich-Server mit sinere Adrässe, dinere E-Mail und dim Passwort aa, oder klicksch uf «Ohni Server bruuche».
 
-Zum s ZIP prüefe, laa `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` i de Iigabeufforderig laufe, im Ordner vom Download: s Resultat isch das, wo in `SHA256SUMS.txt` staht. Es git no kein Installer und kei automatischs Update: lueg uf d Siite [Releases](https://github.com/freeKC/Immuch360/releases), und pack de nächst Build glych us.
+Zum s ZIP prüefe, laa `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` i de Iigabeufforderig laufe, im Ordner vom Download: s Resultat isch das, wo in `SHA256SUMS.txt` staht. Es git no kein Installer und kei automatischs Update: lueg uf d Siite [Releases](https://github.com/freeKC/Immuch360/releases), und pack de nächst Build glych us.
 
 ### Was d Vorschau macht
 
@@ -993,7 +1000,9 @@ Zum s ZIP prüefe, laa `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.
 - **Upload und Sicherig** us dene Ordner uf din Immich-Server, solang d App offe isch.
 - **360°-Fotos als Kugle**, mit de Muus und de Tastatur; d rohe .insp-Fotos vo Insta360-Kameras gönd uf wie uf de Telefon.
 - **Flachi Videos** (ab Desktop-Build 2): d Videos vo dine Ordner, vo dim Immich-Server (s Original oder de transkodiert Stream, lueg [Video-Details und Decoder](#video-details-decoders-and-why-a-video-stutters)), vo SMB-, WebDAV- und DLNA-Freigabe, vo Plex-Server und d Tapo-Ufnahme laufed im Fänschter, mit de Steuerelement vo de Telefon (Abspile, Pause, d Ziitleischte), ere Ladeaazeig, und emne Menü vo de Tonspure für es Video, wo meh als eini hät. D Videos vo dine Ordner und vo de Freigabe zeiged es Bild us em Video als Miniatuur, statt emne Film-Symbol.
-- **Netzwerkfreigabe**: Samba (SMB), WebDAV und DLNA-Medieserver, und Plex-Server ohni plex.tv, duregluegt wie uf de Telefon: ihri Fotos gönd uf und ihri Videos laufed. Für Tapo-Kameras d Ufnahme vo de Speichercharte: d Lischte, en Clip abhole und abspile.
+- **360°-, 3D- und VR180-Videos** (ab Desktop-Build 3): de 360°-Chnopf macht si im 360°-Player vo de App uf, im Fänschter oder im Vollbild, us jedere Quälle vo flache Videos, mit de Muus und de Tastatur drääjt, mit de 3D- und 360°/180°-Chnöpf vo de Telefon (es 3D-Video zeigt sis linggi Aug, wie uf Telefon), Spuele, em Tonspur-Menü und ere Ladeaazeig.
+- **Rohi 360°-Videos** (ab Desktop-Build 3): Insta360-.insv-Dateie, mit beide Objektiv i eire Spur, i zwei Spure (X4 und neuer) oder i zwei Dateie (X3-Paar), GoPro-.360- und DJI-.osv-Dateie, vo de App uf em Grafikchip während em Abspile zämegsetzt, mit de Kalibrierig vo de Datei, wie uf Telefon.
+- **Netzwerkfreigabe**: Samba (SMB), WebDAV und DLNA-Medieserver, und Plex-Server ohni plex.tv, duregluegt wie uf de Telefon: ihri Fotos gönd uf und ihri Videos laufed. Für Tapo-Kameras d Ufnahme vo de Speichercharte: d Lischte, en Clip abhole und abspile; und ab Desktop-Build 3 d Live-Aasicht.
 - **De Computer im Netzwerk freigä**: d Albene, Mönet und 360°-Medie vo dine Ordner, nume zum Läse, für e Meta Quest oder es anders Grät dihei, so wie sich es Telefon sälber freigit.
 - **Dateie**: Downloads vom Server gönd in en Ordner, wo du uswählsch, «Save to a folder» (I en Ordner speichere) bhaltet e Kopie vo de usgwählte Fotos und Videos, und d «Logs»-Siite hät «Save logs to a file» (Protokoll i e Datei speichere).
 
@@ -1005,9 +1014,28 @@ Zum s ZIP prüefe, laa `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.
 4. **Vo Foto zu Foto**: i emne flache Foto gönd d Pfiil links und rächts, oder d Winkel, wo am Rand erschiined, wänn sich d Muus bewegt, zum vorherige und zum nächste. Buechstabe, wo du is Beschriibigsfäld tippsch, bliibed im Text.
 5. **Es Video abspile**: tue's us de Ziitleischte, emne Ordner, ere Freigab, Plex oder de Ufnahme vo ere Tapo-Kamera uf; es lauft im Fänschter. Enter, oder d Play-Pause-Taste vo de Tastatur, pausiert und spilt wiiter. Während's lauft, springed d Pfiil links und rächts, oder J und L, 10 Sekunde zrugg oder vorwärts; pausiert gönd d Pfiil zum vorherige und zum nächste. F oder F11 wächslet in Vollbild, wie bi Fotos. De Chnopf «Audio track» (Tonspur) wählt under de Tonspure vo emne Video, wo meh als eini hät.
 6. **Wänn es Video stoppt**: es pausierts Video bliibt pausiert, wänn du is Fänschter zrugg chunsch. Es Video, wo vor sim Änd abbroche wird, zum Biispil wänn d Freigab oder de Server nümme antwortet, seit das: tue's wider uf und es fahrt det wiiter, wo's ufghört hät, pausiert. E Playlist-Datei imne Ordner oder ere Freigab wird nöd verfolgt.
-7. **De Computer mit em Headset teile**: tue d Bibliothek uf, dänn Netzwerkfreigabe; di erscht Kachle isch «Share this computer on the network» (De Computer im Netzwerk freigä), d Computer-Siite vo [Das Telefon im Netzwerk freigä](#share-this-phone-on-the-network). Schalt «Share photos and videos on the network» (Fotos und Videos im Netzwerk freigä) ii, dänn füeg de Computer im Headset hinzue, wie's dä Abschnitt seit. D Freigab hört uf, wänn d App zue isch oder nach ere Stund ohni Bruuch.
-8. **S Netzwerk erlaube**: Windows cha froge, öb Immuch360 Desktop s Netzwerk dörf bruuche. Erlaub's i private Netzwerk, susch findet s Headset de Computer nöd. I emne Netzwerk, wo Windows als öffentlich markiert (es Café, es Hotel), oder wo's de Typ nöd weiss, startet d Freigab nöd, usser du wählsch «Share for this session» (Für die Sitzig freigä), und de Computer meldet sich nume i emne Netzwerk aa, wo-n-er freigit.
-9. **Settings, «This computer»**: d Ordner, de Download-Ordner, de Netzwerkadapter, wo bruucht wird zum Freigabe finde und zum de Computer freigä (wänn er meh als eine hät, zum Biispiil WLAN und Ethernet), und vertrauti Zertifikat: d Zertifizierigsstell vo dim eigete Server, als PEM-Datei, für e HTTPS-Adrässe, wo Windows nöd vo sälber vertraut. Client-Zertifikat wärded i Settings, Advanced, importiert, wie uf de Telefon.
+7. **Es 360°-Video abspile** (ab Desktop-Build 3): tue s Video uf und klick i de obere Leischte uf 360°, wie uf emne Telefon; für e 360°-Datei, wo de Server nöd markiert, zerscht «Als 360° aazeige» im ⋮-Menü, lueg [E 360°-Datei, wo flach aazeigt wird](#a-360-file-that-shows-flat-view-as-360). De 360°-Player gaht im Fänschter uf. Zieh mit de Muus zum Umeluege (d Aasicht drääjt nach emne schnelle Zieh no es bitzli wiiter), zoom mit em Rädli, + und - oder Page Up und Page Down, drääj mit de Pfiiltaste, wo du hebsch. Space, oder d Play-Pause-Taste vo de Tastatur, pausiert und spilt wiiter; J und L springed 10 Sekunde zrugg oder vüre; Home gaht zrugg zum Aafang; M schaltet de Ton us und ii. F, F11 oder en Doppelklick wächslet is Vollbild; Escape verlaat s Vollbild und schliesst dänn de Player. D Bedienelement (schliesse, de Titel, 360°/180°, 3D, d Tonspur und s Vollbild obe; abspile, 10 Sekunde zrugg und vüre, d Ziitleischte und de Ton unde) verschwinded mit em Muuszeiger nach 3 Sekunde Abspile und chömed zrugg, wänn sich d Muus bewegt oder e Taste druckt wird; Tab gaht vo eim zum nächschte.
+8. **3D und VR180**: im 360°-Player wächslet de 3D-Chnopf zwüsche «Mono (kei 3D)», «3D, obe und unde» und «3D, nebedenand», und de 360°/180°-Chnopf wächslet zwüsche de ganze Kugle und de Halbkugle vo VR180, wie in [3D und VR180](#3d-and-vr180-photos-and-videos). Es 3D-Video zeigt sis linggi Aug.
+9. **Rohi 360°-Videos** (ab Desktop-Build 3): tue d Rohdatei uf und klick uf 360°, wie uf emne Telefon, lueg [Rohdateie vo 360°-Kameras](#raw-360-camera-files-without-the-cameras-app); bhalt di zwei Dateie vo emne X3-Paar binenand. E Datei mit beide Objektiv i eire Spur wird während em Abspile zämegsetzt. E Datei mit eim Objektiv pro Spur oder pro Datei spilt beidi Objektiv nebedenand i eim Player ab, wänn de Computer mitchunnt: di erschte Sekunde vo so emne Video wärded gmässe, und s Resultat wird für di nächschte Videos vo dere Art bhalte (en Wäg, wo z langsam gsii isch, wird nach 14 Täg nomal probiert). Wänn de Computer nöd mitchunnt, gaht de Player dur d Schritt vo de Telefon, mit ihrne Mäldige: eis Objektiv, d Hälfti vo de Kugle schwarz; de transkodiert Stream vom Server; di LRV-Kopie mit nidriger Uflösig, wo d Kamera näbe de Datei ufgnoh hät, wänn's eini git; s nöd zämegsetzte Video. Es rohs Video hät kei 3D- und kei 360°/180°-Chnopf.
+10. **D Live-Aasicht vo ere Tapo-Kamera** (ab Desktop-Build 3): tue d Kamera uf wie uf emne Telefon, lueg [Live aaluege](#watch-it-live). D Siite spilt de SD-Stream und s Vollbild de HD-Stream ab, mit de Chnöpf vo emne Telefon uf em Bild: de Ton, am Aafang us, SD oder HD, und «Vollbild». En Stream, wo verlore gaht (d Kamera startet neu, s WLAN fallt us), chunnt vo sälber zrugg, er wird öppe anderthalb Minute lang nomal probiert, während s letscht Bild am Bildschirm bliibt. Es Kamerakonto, wo d Kamera ablehnt, wird als settigs gmäldet und nöd nomal probiert, will fählgschlageni Aamäldige zur Sperri vo de Kamera zälled.
+11. **De Computer mit em Headset teile**: tue d Bibliothek uf, dänn Netzwerkfreigabe; di erscht Kachle isch «Share this computer on the network» (De Computer im Netzwerk freigä), d Computer-Siite vo [Das Telefon im Netzwerk freigä](#share-this-phone-on-the-network). Schalt «Share photos and videos on the network» (Fotos und Videos im Netzwerk freigä) ii, dänn füeg de Computer im Headset hinzue, wie's dä Abschnitt seit. D Freigab hört uf, wänn d App zue isch oder nach ere Stund ohni Bruuch.
+12. **S Netzwerk erlaube**: Windows cha froge, öb Immuch360 Desktop s Netzwerk dörf bruuche. Erlaub's i private Netzwerk, susch findet s Headset de Computer nöd. I emne Netzwerk, wo Windows als öffentlich markiert (es Café, es Hotel), oder wo's de Typ nöd weiss, startet d Freigab nöd, usser du wählsch «Share for this session» (Für die Sitzig freigä), und de Computer meldet sich nume i emne Netzwerk aa, wo-n-er freigit.
+13. **Settings, «This computer»**: d Ordner, de Download-Ordner, de Netzwerkadapter, wo bruucht wird zum Freigabe finde und zum de Computer freigä (wänn er meh als eine hät, zum Biispiil WLAN und Ethernet), und vertrauti Zertifikat: d Zertifizierigsstell vo dim eigete Server, als PEM-Datei, für e HTTPS-Adrässe, wo Windows nöd vo sälber vertraut. Client-Zertifikat wärded i Settings, Advanced, importiert, wie uf de Telefon.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### 360°-Videos und de Grafikchip
+
+Im 360°-Player (ab Desktop-Build 3) zeichnet de Grafikchip d Aasicht, wo du aaluegsch, us jedem Bild vom Video. S Video-Plugin laat libmpv jedes Bild in es Bild vo de gwählte Grössi zeichne, dänn zeichnet de eiget Zeichnigsdurchgang vo de App drus de Teil vo de Kugle, wo du aaluegsch. D Aasicht drääje änderet en Wert vo dem Durchgang, nöd de Player: Zieh choschtet kei Speicher, und es pausierts Video drääjt sich, ohni öppis z dekodiere.
+
+D App misst di erschte Sekunde vo jedem 360°-Video und wählt, wie gross s Bild isch, wo de Chip dra schaffet: s ganz Bild uf emne eigete Chip, höchstens 2880 Pixel breit uf eim, wo im Prozessor iibaut isch (Windows seit de App, was für eine es isch, drum zällt de Intel-Arc-Chip vo emne Core-Ultra-Laptop als iibaut), e Stufe chliiner, wänn de Chip nöd mitchunnt. Was si gmässe hät, wird für di nächschte Videos vo de glyche Art (Codec, Grössi, Bildrate und Decoder) bhalte, nöd für jedes Video.
+
+Wänn sogar di chliinscht Stufe nöd flüssig isch, seit de Player «Die Grafikcharte cha d 360°-Aasicht vo dem Video nöd flüssig zeige»; wänn's wiit dervo ewägg isch, oder wänn de Chip d Aasicht überhaupt nöd cha zeichne (kei OpenGL ES 3.0, en Triiber, wo's ablehnt), lauft s Video flach und de Player seit werum. Es Video, wo flach gloffe isch, lauft s nächscht Mal nöd flach: s nächscht Video vo sinere Art wird nomal gmässe.
+
+Wänn's s Dekodiere vo emne Server-Video isch, wo nöd mitchunnt, und nöd s Zeichne (es Video, wo de Prozessor dekodiert, wie 5,7K H.264), wächslet de Player vo det, wo-n-er gsii isch, uf de transkodiert Stream vom Server, mit de Mäldig vo de Telefon: «Dr transkodiert Stream lauft: S’Original (Codec und Grössi) überstiigt, was das Grät dekodiert».
+
+- **Bruuch de eiget Grafikchip vo emne Laptop.** Windows laat d App uf em integrierte Chip laufe, wänn mer em nüt anders seit. I de Windows-Iistellige, System, Anzeige, Grafik, füeg `immuch360.exe` hinzue und wähl «Hohe Leistung», dänn start d App neu. Uf em Test-Laptop (en Intel-UHD-Chip und e NVIDIA RTX 4060 Laptop) hät de NVIDIA-Chip 4K-, 5,7K- und 8K-360°-Videos i voller Grössi und mit 30 Bilder pro Sekunde zeichnet, während sich d Aasicht drääjt hät. De Intel-Chip hät si höchstens 2880 Pixel breit zeichnet: es 4K-H.264- und es 8K-HEVC-Video mit öppe 30 Bilder pro Sekunde mit emne libmpv-Build vo 2026, es 4K-Video mit 23 bis 27 mit em libmpv vo 2024 vo media-kit (lueg [No nöd da](#not-there-yet)), und es 5,7K-H.264-Video, wo de Prozessor dekodiert, mit öppe 20: vom Server wächslet de Player dänn uf de transkodiert Stream; es Video ohni transkodierte Stream, zum Biispiil us emne Ordner, lauft wiiter mit de Mäldig «Die Grafikcharte cha d 360°-Aasicht vo dem Video nöd flüssig zeige».
+- **Wähl de Renderer sälber.** I Settings, Erwiitert, schalt «Fählersuechi» ii: en Iitrag «360°-Video-Renderer» chunnt, standardmässig uf Automatisch. Er biettet au «Plugin, volli Grössi», «Plugin, höchstens 4096 breit», «Plugin, höchstens 2880 breit» und «Flach, ohni 360°-Aasicht» aa, für s nächscht 360°-Video, wo du uftuesch. Drunder nennt «Zletscht gmässe» d Grössi, i dere s letscht 360°-Video zeichnet worde isch, sini Bilder pro Sekunde, de Grafikchip und de Decoder: kopier das in en Fählerbricht. Wänn du «Automatisch» nomal wählsch, au wänn's scho d Wahl isch, vergisst d App, was gmässe worde isch, und di nächschte 360°-Videos wärded nomal gmässe.
+- **Was de Chip dekodiert.** Settings, Erwiitert, «Videodecoder vo dem Grät» lischtet uf, was de bruucht Grafikchip dekodiert, so wie's Direct3D 11 meldet, und d App korrigiert die Lischte mit dem, was si bim Abspile gmässe hät: d Iistellig Videoquälle und d Zwei-Objektiv-Prüefig vo rohe Videos folged ihre. H.264, wo breiter als 4096 Pixel isch (s 5,7K vo 360°-Kameras), dekodiert de Prozessor, will kein vo de beide Chips vom Test-Laptop's nimmt.
 
 ### Im Vergliich mit de Telefon-Apps
 
@@ -1017,12 +1045,16 @@ Zum s ZIP prüefe, laa `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.
 - **Nüt wird us dine Ordner glöscht**: «Delete from device» (Vom Grät lösche) isch versteckt, und Delete (Lösche) nimmt nume d Server-Kopie weg, bis d App Dateie in Windows-Papierchorb cha schicke.
 - **Muus und Tastatur** anstatt Touch und Gyroskop.
 - **Ei Videoplayer für jedi Quälle**: libmpv spilt d Videos vom Server, vo de Ordner, vo de Freigabe und vo Plex glych ab, und sin flache Player hät scho s Tonspur-Menü, wo de flach Player vo de Telefon no nöd hät.
+- **360°-Videos im Fänschter** (ab Desktop-Build 3): de 360°-Player isch e Siite vo de App, kein separate native Player, mit ere Ziitleischte, 10-Sekunde-Sprüng und em Ton-Chnopf. Rohi Videos mit eim Objektiv pro Spur oder pro Datei wärded nebedenand i eim Player gstaplet, wo d Telefon zwei Decoder laufe lönd; d Ersatzschritt vo de Telefon sind di glyche, mit de LRV-Kopie vo de Kamera vor em nöd zämegsetzte Video dezue.
+- **D Tapo-Live-Aasicht** (ab Desktop-Build 3) lauft uf em Computer wie uf Android, während iPhones und iPads si no nöd händ.
 
 <a id="not-there-yet"></a>
 ### No nöd da
 
-- **360°-, 3D-, VR180- und rohi 360°-Videos**: si wärded vorlöifig flach zeigt, so wie d Datei si enthaltet (di ganz Kugle abgwicklet, di zwei Auge näbenand, oder di runde Bilder vo de Objektiv), oder als Platzhalter, und de 360°-Chnopf bliibt bi de Fotos. Ihri Player chömed mit de nächste Desktop-Builds.
-- **Spatial 2.5D**, spöter mit de Webcam; d **Tapo-Live-Aasicht**; d **Charte** und d Ort-Aasicht; **Aamälde mit OAuth** (mäld di stattdesse mit ere E-Mail und emne Passwort aa); **Google Cast**; **Benachrichtigunge**.
+- **De libmpv vom eigete Build vo de Fork**: d ZIPs händ de libmpv vo 2024 vo media-kit debii, bis de eiget Build vo de Fork iigschaltet isch, und `BUILD-INFO.txt` im ZIP seit, weles debii isch. Mit dem vo 2024 laufed di zwei Objektiv vo emne rohe Video mit eim Objektiv pro Spur oder pro Datei nie glychziitig (em fählt de Filter, wo si staplet), drum zeiged die Videos eis Objektiv, d Hälfti vo de Kugle schwarz; und de Grafikchip kopiert jedes Bild us sim Decoder zrugg, was de 360°-Player uf emne integrierte Chip bremst. De libmpv us em eigete Workflow vo de Fork, e Version vo 2026, söll en vor em erschte öffentliche Release ersetze; en libmpv-Build vo 2026, uf em Test-Laptop uusprobiert, macht beides.
+- **Rohi Videos mit zwei Objektiv uf emne Laptop**: sogar mit emne libmpv vo 2026 hät de Test-Laptop es X3-Paar (zwei H.264-Dateie vo 2880x2880) mit 30 Bilder pro Sekunde nume uf sim NVIDIA-Chip gstaplet; uf sim Intel-Chip, und für e X4-Datei (zwei HEVC-Spure vo 3840x3840) uf beide Chips, spilt s Video eis Objektiv ab, d Hälfti vo de Kugle schwarz, wie uf emne Telefon, wo nöd zwei Decoder cha laufe la.
+- **3D nume uf em Bildschirm**: es 3D-Video zeigt sis linggi Aug, wie uf Telefon; uf em Computer git's kei Gyroskop und kei Headset-Aasicht. Zum in echtem 3D luege, teil de Computer mit ere Meta Quest.
+- **Spatial 2.5D**, spöter mit de Webcam; d **Charte** und d Ort-Aasicht; **Aamälde mit OAuth** (mäld di stattdesse mit ere E-Mail und emne Passwort aa); **Google Cast**; **Benachrichtigunge**.
 - **En Installer, en signierte Build und automatischi Updates**: dä Build isch en Ordner mit `immuch360.exe`.
 - **Linux und macOS**: ihri Projekt sind i de Quälle, aber si sind uf dene Systeme no nöd baut oder prüeft worde, und ihre Videoplayer isch no nöd drin; si chömed nach Windows.
 - **Übersetzige**: d neue Texte vo de Computer-Version sind vorlöifig uf Änglisch.
@@ -1030,10 +1062,11 @@ Zum s ZIP prüefe, laa `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.
 ### Bekannti Problem
 
 - **De erscht Start vo emne neue Build isch langsam**: vo 10 Sekunde bis öppe e Minute, bis s Fänschter chunnt, wahrschinlich während Microsoft Defender di neue Dateie scannt, wo no nöd signiert sind. Wart uf s Fänschter, statt d App nomal z starte; di nächste Starts duured e Sekunde oder zwei.
-- **8K-HEVC-Videos bruuched en eigete Grafikchip**: uf em Test-Laptop hät de integriert Intel-UHD-Chip öppe d Hälfti vo de Bilder vo emne 8K-HEVC-Video zeigt, während de eiget NVIDIA-Chip 8K HEVC und 5,7K H.264 ohni verlorenigs Bild abgspilt hät. Windows laat d App uf em integrierte Chip laufe, wänn mer em nüt anders seit: i de Windows-Iistellige, System, Anzeige, Grafik, füeg `immuch360.exe` hinzue und wähl «Hohe Leistung». Uf em integrierte Chip wird es 5,7K-H.264-Video, wo sin Decoder ablehnt, vom Prozessor ohni verlorenigs Bild dekodiert.
-- **Videos wärded höchstens 1440 Ziile hoch zeichnet**, dänn uf s Fänschter skaliert: uf emne 4K-Bildschirm im Vollbild isch es 4K- oder 8K-Video es bitzli weicher als imne eigete Videoplayer. Das bhaltet es 8K-Video innerhalb vo de Grafikleistig vo emne Laptop.
+- **8K-HEVC-Videos bruuched en eigete Grafikchip, und 360°-Videos laufed uf eim besser**: uf em Test-Laptop hät de integriert Intel-UHD-Chip öppe d Hälfti vo de Bilder vo emne 8K-HEVC-Video zeigt, während de eiget NVIDIA-Chip 8K HEVC und 5,7K H.264 ohni verlorenigs Bild abgspilt hät; de 360°-Player isch uf em NVIDIA-Chip flüssig und uf em Intel-Chip langsamer, lueg [360°-Videos und de Grafikchip](#360-videos-and-the-graphics-chip). Windows laat d App uf em integrierte Chip laufe, wänn mer em nüt anders seit: i de Windows-Iistellige, System, Anzeige, Grafik, füeg `immuch360.exe` hinzue und wähl «Hohe Leistung», dänn start d App neu. Uf em integrierte Chip wird es flachs 5,7K-H.264-Video, wo sin Decoder ablehnt, vom Prozessor ohni verlorenigs Bild dekodiert.
+- **Flachi Videos wärded höchstens 1440 Ziile hoch zeichnet**, dänn uf s Fänschter skaliert: uf emne 4K-Bildschirm im Vollbild isch es 4K- oder 8K-Video es bitzli weicher als imne eigete Videoplayer. Das bhaltet es 8K-Video innerhalb vo de Grafikleistig vo emne Laptop. De 360°-Player schaffet stattdesse mit em ganze Bild, oder mit de chliinere Grössi, wo sini Messig gwählt hät.
 - **Während es Video us dine Ordner i de App lauft, oder während s Headset e Datei vom freigäne Computer liest** (es Video, wo's abspilt, es Foto, wo's abeladet), cha Windows die Datei nöd umbenänne, verschiebe oder lösche und seit, si sig in Immuch360 Desktop offe: mach zerscht s Video zue, oder stopp s Abspile im Headset. Sicherige bhebed dini Dateie nöd so: e Datei cha umbenännt, verschobe oder glöscht wärde, während si ufeglade wird.
-- **Rauchi Kante**: 656 vo de 663 Desktop-Tests bestönd uf Windows (7 wärded mit Absicht übersprunge), 200 Player, eine nach em andere ufgmacht, lönd kei Leck zrugg, und uf emne Windows-11-PC startet d App, macht e gspeichereti Sitzig uf emne Immich-Server uf, synchronisiert, spilt es Video ab und gaht suber zue. De Test vo jedere Funktion vo Hand uf emne echte PC isch no im Gang.
+- **Rauchi Kante**: de Desktop-Build 3 bestaht 855 vo sine 863 Desktop-Tests uf Windows (8 wärded mit Absicht übersprunge) und di ganz Testsuite vo de App, 200 Player, eine nach em andere ufgmacht, lönd kei Leck zrugg, und sis Release-ZIP startet, spilt en Test-Clip ab und gaht suber zue. De Test vo jedere Funktion vo Hand uf emne echte PC isch no im Gang.
+- **Mit was de 360°-Player und d Live-Aasicht prüeft worde sind**: de 360°-Player isch mit synthetische 4K-, 5,7K- und 8K-360°-Clips uf beide Grafikchips vo emne Laptop gloffe (ufgmacht, abgspilt, bim Abspile und pausiert drääjt, zuegmacht), ohni Absturz und ohni Reset vom Grafiktriiber. Rohi Videos mit zwei Objektiv sind us synthetische Clips und us echte X3- und X4-Dateie abgspilt worde. D Tapo-Live-Aasicht isch gäge en Test-RTSP-Server prüeft worde, wo sich aamäldet wie d Kameras (Digest), mit Absicht unterbroche und abglehnt, ohni Passwort i irgendere Protokollziile, aber no nöd mit ere echte Kamera. De Test vo Hand, mit echte 360°- und 3D-Dateie, beide Bildschirm vo emne Laptop, Ruezuestand und Wiiterlaufe, und ere echte Kamera, chunnt no.
 
 Wänn öppis schief gaht, mach bitte es [Issue](https://github.com/freeKC/Immuch360/issues) uf, mit em Protokoll, wo du vo de «Logs»-Siite gspeicheret häsch, lueg [Protokoll](#logs). Lueg s Protokoll aa, bevor du's teilsch: es cha dini Serveradrässe enthalte.
 
@@ -1052,7 +1085,7 @@ Du bruuchsch Windows 10 oder 11 uf x64, Flutter 3.47.2 für Windows, Visual Stud
    mise run codegen
    ```
 
-2. Uf Windows, im glyche `mobile`-Ordner, bau d App. De erscht Build ladet d Bibliotheke vom Videoplayer (libmpv und ANGLE) vo GitHub abe und prüeft jedes Archiv mit sim SHA-256:
+2. Uf Windows, im glyche `mobile`-Ordner, bau d App. De erscht Build ladet d Bibliotheke vom Videoplayer (libmpv und ANGLE) vo GitHub abe und prüeft jedes Archiv mit sim SHA-256; er kompiliert au s chliine Direct3D-11-Plugin, wo d Decoder vom Grafikchip uslist, `immuch_desktop_video`, mit de glyche C++-Workload:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Du bruuchsch Windows 10 oder 11 uf x64, Flutter 3.47.2 für Windows, Visual Stud
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-D CI vo Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) lauft uf em `desktop`-Branch, wo `immuch360` folgt: d Telefon-Prüefige (i de Telefon-Builds änderet nüt) und di ganz Testsuite uf Linux, d Desktop-Tests uf Windows, und s glych ZIP; ihri Linux- und macOS-Jobs (`flutter build linux` und `flutter build macos`, mit em glyche `-t lib/main_desktop.dart`) sind uf dene Systeme no nöd gloffe.
+D CI vo Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) lauft uf em `desktop`-Branch, wo `immuch360` folgt: d Telefon-Prüefige (i de Telefon-Builds änderet nüt) und di ganz Testsuite uf Linux, d Desktop-Tests uf Windows, und s glych ZIP, dänn uf dem Build d Tests, wo sin libmpv und ANGLE bruuched (s Aamälde vo de Tapo-Live-Aasicht, was e Videodatei nöd dörf uftue, d 360°-Shader); ihre Linux-Job baut d App uf Ubuntu und ihre macOS-Job kompiliert si mit Xcode 26.3 und em macOS-26-SDK (beidi mit em glyche `-t lib/main_desktop.dart`), nume als Kompilier-Prüefige: keine isch uf dene Systeme scho gstartet worde. En zweite Workflow (`.github/workflows/immuch360-libmpv.yml`) baut libmpv für Windows x64 und arm64 us feschtgleite Quälle neu und veröffentlicht d Archiv mit ihrem SHA-256; d ZIPs händ no s media-kit-Archiv debii, bis dä Build iigschaltet isch, drum gälted d Gränze vom libmpv vo 2024 in [No nöd da](#not-there-yet) au für din eigete Build.
 
 <a id="where-to-get-it"></a>
 ## Wo du si überchunsch
@@ -1088,8 +1121,8 @@ D App isch uf Google Play für Telefon und Tablets; d Version für de App Store 
   - Hüt: s universelle `Immuch360-v<version>-release.apk` vo de Siite [Releases](https://github.com/freeKC/Immuch360/releases), mit adb gsideloadet, lueg [Uf em Fernseh installiere](#install-it-on-the-tv). Es isch di glych App wie uf Telefon.
   - Bald: Google Play uf Fernseh, wo de Iitrag sit em 9. Oktober 2026 i de Prüefig vo Google isch.
 - **Windows 10 und 11, 64 Bit (Vorschau)**
-  - Hüt: Immuch360 Desktop, s ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` vom [Desktop-Pre-Release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), entpackt und gstartet, wie's [Abelade und installiere uf Windows](#download-and-install-on-windows) seit. Vorlöifig Fotos und flachi Videos: 360°-, 3D- und VR180-Videos chömed mit de nächste Desktop-Builds.
-  - Bald: 360°-, 3D-, VR180- und rohi 360°-Videos; en Installer, en signierte Build und Updates spöter.
+  - Hüt: Immuch360 Desktop, Desktop-Build 3, s ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` vom [Desktop-Pre-Release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), entpackt und gstartet, wie's [Abelade und installiere uf Windows](#download-and-install-on-windows) seit. Fotos, flachi Videos, 360°-, 3D-, VR180- und rohi 360°-Videos (flüssig uf emne eigete Grafikchip, mit Gränze uf emne integrierte) und d Tapo-Live-Aasicht.
+  - Bald: Spatial 2.5D mit de Webcam, dänn Linux und macOS; en Installer, en signierte Build und Updates spöter.
 
 D Links zum App Store und zum Meta Horizon Store chömed da ane, sobald d Iiträg veröffentlicht sind. Mäld dich mit de gwohnte URL vo dim Immich-Server und dim Konto aa, oder tipp uf de Login-Siite uf «Ohni Server bruuche», zum mit de eigete Fotos und Videos vom Grät aazfange. S APK vo GitHub aktualisiert sich nöd sälber: lueg uf de Siite Releases nache, und sobald du d App us emne Store installiert häsch, nimm d Updates us dem Store.
 
@@ -1126,7 +1159,7 @@ Kei Geheimnis liit i dem Repository: de Android-Signierschlüssel isch als versc
 
 - **`main`**: Immich `main` bim Commit, uf dem `immuch360` basiert (29. September 2026 für di aktuelle Builds), nie veränderet; er rückt vor, wänn d Fork uf es neuers Immich rebased wird.
 - **`immuch360`**: d Änderige vo dere Fork obe uf Immich, Immuch360 Desktop sit em 9. Oktober 2026 inklusiv. Jedes Release seit, uf welere Immich-Version es basiert.
-- **`desktop`**: det isch Immuch360 Desktop, d Computer-Version, obe uf `immuch360` baut worde, bis es am 9. Oktober 2026 drii gmerged worde isch, damit Telefon, Headsets, Fernseh und Computer us de glyche Quälle chömed. Jetz folgt er `immuch360` und treit d Tags vo de Desktop-Pre-Releases ([Desktop-Build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) us em Commit 21f285c34, [Desktop-Build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) us 5b723bd25). D Computer-Version änderet nüt under `mobile/android` und `mobile/ios`.
+- **`desktop`**: det isch Immuch360 Desktop, d Computer-Version, obe uf `immuch360` baut worde, bis es am 9. Oktober 2026 drii gmerged worde isch, damit Telefon, Headsets, Fernseh und Computer us de glyche Quälle chömed. Jetz folgt er `immuch360` und treit d Tags vo de Desktop-Pre-Releases ([Desktop-Build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) us em Commit 21f285c34, [Desktop-Build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) us 5b723bd25, [Desktop-Build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) us em Merge vom 360°-Videoplayer am 10. Oktober 2026). Neui Desktop-Arbet landet zerscht det und chunnt mit em Desktop-Build, wo si uslieferet, in `immuch360`. D Computer-Version änderet nüt under `mobile/android` und `mobile/ios`.
 
 <a id="logs"></a>
 ## Protokoll
@@ -1145,7 +1178,7 @@ Ab Build 19 schriibed de DLNA-Client, d Telefon-Freigab und d Erkännig vo räum
 
 Uf emne Computer (Immuch360 Desktop) hät d «Logs»-Siite au «Save logs to a file» (Protokoll i e Datei speichere): s Protokoll, oder es ZIP vom Protokoll und de Bricht vo de letschte Abstürz, wänn's söttigi git (de vorgschlageni Name hört dänn mit «with-crash-reports» uf). En Absturzbricht isch en chliine Minidump: d Threads, wo si aaghalte händ und nume das, wo's bruucht, zum ihri Ufrüef z verfolge, mit de Näme vo de Programmdateie, aber nöd ihrne Ordner; nöd de Speicher vo de App.
 
-Ab Desktop-Build 2 schriibt de Videoplayer vom Computer det under `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` und `VideoThumbnailGrabber`, inklusiv de eigete Warnige vo mpv, mit Tokens und Passwörter entfernt. Lueg s Protokoll aa, bevor du's teilsch: es cha dini Serveradrässe enthalte.
+Ab Desktop-Build 2 schriibt de Videoplayer vom Computer det under `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` und `VideoThumbnailGrabber`, inklusiv de eigete Warnige vo mpv, mit Tokens und Passwörter entfernt. Ab Desktop-Build 3 schriibt er au de 360°-Player under `SphericalPlayer`, `SphereRenderer` und `PluginRenderer` (di gwählt Grössi, di gmässne Bilder pro Sekunde, de Grafikchip), di rohe Videos mit zwei Objektiv under `RawTwoStreams`, d Decoder vom Grafikchip under `DesktopGpuDecoders`, `DesktopVideoDecoderApi` und `DecoderMeasure`, und d Tapo-Live-Aasicht under `DesktopCameraLive`, dere Ziile nie s Kamerakonto und au nöd sis Passwort enthalted. Lueg s Protokoll aa, bevor du's teilsch: es cha dini Serveradrässe enthalte.
 
 <a id="privacy"></a>
 ## Dateschutz
@@ -1159,7 +1192,7 @@ Ab Desktop-Build 2 schriibt de Videoplayer vom Computer det under `DesktopVideo`
 - **Telefon-Freigab**: nume lokals Netzwerk, mit Benutzername und Passwort, über eifachs HTTP (lueg [Das Telefon im Netzwerk freigä](#share-this-phone-on-the-network)).
 - **Kamera**: nume vom Spatial-2.5D-Player bruucht, uf em Grät; d Bilder wärded nie gspeicheret und nie niene anegschickt.
 - **Uf emne Computer** (Immuch360 Desktop, Windows-Vorschau): d App liest nume d Ordner, wo du uswählsch, bhaltet ihren Index, ihri Miniatuure und ihren Cache uf em Computer, und speicheret Passwörter und Tokens mit em Dateschutz vo Windows, nume für dis Windows-Konto. D Freigab vom Computer folgt de Regle vo de Telefon-Freigab, und startet nöd i emne Netzwerk, wo Windows als öffentlich markiert, oder wo's de Typ nöd weiss, usser du wotsch es.
-- **De Videoplayer uf emne Computer** (ab Desktop-Build 2): d Videos vo dim Server chömed dur d App zu ihm, drum hät de Player nie dis Sitzigs-Token, und was er voruus liest, bliibt im Speicher, nöd uf de Disk. Er macht nume d Datei uf, wo-n-er überchunnt: e Datei us emne Ordner oder ere Freigab, wo in Würklichkeit e Playlist oder e Stream-Beschriibig isch, bringt en nöd dezue, sich niene anders z verbinde.
+- **De Videoplayer uf emne Computer** (ab Desktop-Build 2): d Videos vo dim Server chömed dur d App zu ihm, drum hät de Player nie dis Sitzigs-Token, und was er voruus liest, bliibt im Speicher, nöd uf de Disk. Er macht nume d Datei uf, wo-n-er überchunnt: e Datei us emne Ordner oder ere Freigab, wo in Würklichkeit e Playlist oder e Stream-Beschriibig isch, bringt en nöd dezue, sich niene anders z verbinde. Ab Desktop-Build 3 wird d Adrässe vo jedem Video em Player nume im Speicher gä, nie über e temporäri Datei (de Link, wo d App für es Video vom Server oder vo ere Freigab macht, enthaltet en Schlüssel vo dere Sitzig, wo im Desktop-Build 2 bi jedem Uftue es paar Sekunde uf de Disk gsii isch), und dä Schlüssel chunnt nie im Protokoll vor; d Live-Aasicht vo ere Tapo-Kamera git s Kamerakonto em Player uf di glych Art, nie i ere Datei oder ere Protokollziile, und redt nume im lokale Netzwerk mit de Kamera; d Messige vom 360°-Player und vo de Decoder (de Grafikchip, s Format vom Video, d Bilder pro Sekunde, nie en Dateiname) bliibed im Ordner vo de App uf em Computer.
 
 Di ganz Dateschutzerklärig staht in [PRIVACY.md](../PRIVACY.md).
 
@@ -1177,7 +1210,7 @@ Android, Android TV und Google TV sind Marke vo de Google LLC; Apple, iPhone, iP
 
 Was no nöd gmacht isch, s Wahrschiinlichscht zerscht. Nüt devo isch es Verspreche, und Rückmäldige im [Issue-Tracker](https://github.com/freeKC/Immuch360/issues) hälfed z entscheide, was zerscht chunt.
 
-- **Immuch360 Desktop, zerscht Windows**: de Desktop-Build 2 isch usecho, mit flache Videos, und d Desktop-Quälle sind sit em 9. Oktober 2026 im Hauptbranch vo de Fork, `immuch360` (lueg [Uf emne Windows-Computer](#on-a-windows-computer-immuch360-desktop-preview)). Dänn 360°-, 3D-, VR180- und rohi 360°-Videos uf Windows, mit de zwei Objektiv vo de Rohdateie und de Tapo-Live-Aasicht; dänn de Test vo jedere Funktion uf emne Windows-PC und d Korrekture; dänn Spatial 2.5D mit de Webcam; dänn Linux und macOS, Pakete, Signatur und Updates.
+- **Immuch360 Desktop, zerscht Windows**: de Desktop-Build 3 isch usecho, mit em 360°-Videoplayer (360°-, 3D-, VR180- und rohi 360°-Videos, di zwei Objektiv vo de Rohdateie, d Grössi vo de Aasicht uf jedem Computer gmässe) und de Tapo-Live-Aasicht, und d Desktop-Quälle sind sit em 9. Oktober 2026 im Hauptbranch vo de Fork, `immuch360` (lueg [Uf emne Windows-Computer](#on-a-windows-computer-immuch360-desktop-preview)). Dänn de libmpv us em eigete Workflow vo de Fork anstatt vo dem vo 2024, und de Test vo jedere Funktion vo Hand uf emne Windows-PC mit echte Dateie, beide Bildschirm und ere echte Kamera, mit de Korrekture; dänn Spatial 2.5D mit de Webcam; dänn Linux und macOS; dänn en Installer, en signierte Build und automatischi Updates.
 - **Google Play**: Build 20 isch sit em 7. Oktober 2026 online, anstatt Build 18; de Iitrag für Fernseh isch sit em 9. Oktober 2026 i de Prüefig vo Google. Build 21 änderet nüt uf Telefon und Tablets.
 - **App Store**: d Version 3.3.0 wartet uf d Prüefig vo Apple; si hät d Funktione vo Build 11, drum chömed s Ufelade uf Immich und d Prüefig vo de Videodecoder (Build 15) und d rohe Insta360-Dateie (Build 16) mit em nächschte Update im App Store. De Link chunt da ane, sobald si online isch.
 - **Meta Horizon Store**: Meta hät de Iitrag am 7. Oktober 2026 mit Build 14 freigä. Build 21 isch als sis erschts Update iigreicht: er bringt alles sit Build 14 (Uploads vo ere Freigabe uf Immich, d Videoquelle nach dem gwählt, was s Headset decodiert, rohi Insta360-, GoPro- und DJI-Dateie, DLNA, d Telefon-Freigabe, räumlichi Apple-Fotos, Plex-Media-Server-Bibliotheke, Tapo-Kameras), und de Store listet en für d Quest 2, Quest Pro, Quest 3 und 3S. De Store-Link chunt da ane, sobald d Siite öffentlich isch; e sideloadeti Kopie muess zerscht deinstalliert wärde (lueg [Installiere](#install)).

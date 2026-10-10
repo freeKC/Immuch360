@@ -15,13 +15,13 @@ Se on tarkoitettu niille, jotka kuvaavat 360°-kameralla (Insta360, GoPro MAX, D
 
 <div align="center">
 
-| Alusta | Mistä sen saa | Tilanne 9. lokakuuta 2026 |
+| Alusta | Mistä sen saa | Tilanne 10. lokakuuta 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-puhelimet ja -tabletit | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | koontiversio 20 Google Playssa 7. lokakuuta 2026 lähtien, koontiversio 21 GitHubissa |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ja iPad** | App Store | versio 3.3.0 odottaa Applen tarkastusta; sillä välin [kokoa se itse](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [APK](#meta-quest-3) · Horizon Store | sivu hyväksytty, koontiversio 21 Metan tarkastettavana |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#install-it-on-the-tv) · Google Play | koontiversio 21 GitHubissa; Google Playn TV-sivu on Googlen tarkastettavana 9. lokakuuta 2026 lähtien |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Esiversion ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | työpöydän koontiversio 2 Windowsissa: kuvat ja tavalliset videot, 360°-videot seuraavaksi; macOS ja Linux myöhemmin, samoista lähteistä |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Esiversion ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | työpöydän koontiversio 3 Windowsissa: kuvat, tavalliset ja 360°-videot; macOS ja Linux myöhemmin |
 
 *Tilanteet päivitetään jokaisen julkaisun yhteydessä; tarkemmat tiedot ovat kohdassa [Mistä sen saa](#where-to-get-it).*
 
@@ -30,7 +30,7 @@ Se on tarkoitettu niille, jotka kuvaavat 360°-kameralla (Insta360, GoPro MAX, D
 - 🌐 **Natiivi 360°**<br>Kuvat ja videot pallona, jossa katselet ympärillesi gyroskoopilla, kameran käsittelemättömät tiedostot mukaan lukien (Insta360 koontiversiosta 16 alkaen, GoPro ja DJI koontiversiosta 18 alkaen). Myös ilmainen videosoitin: tavallinen, 360°, 3D, VR180
 - 👓 **Natiivi 3D**<br>Stereoskooppinen 360° ja VR180, ylä- ja alaosa tai rinnakkain, sekä Applen tilakuvat (koontiversiosta 19 alkaen): aito 3D laseissa, yksi silmä puhelimessa
 - 🎥 **Natiivi 2.5D**<br>Syvyyttä tasaiselle näytölle stereoskooppisesta videosta, näkymä seuraa päätäsi (kokeellinen, puhelimet ja tabletit)
-- 📱 **Android, iOS, Quest, TV**<br>Yksi sovellus puhelimissa, tableteissa sekä Quest 2-, Pro-, 3- ja 3S-laseissa, aito 3D laseissa, koontiversiosta 20 alkaen Android TV:ssä kaukosäätimellä sekä Windows-esiversio kuville ja tavallisille videoille
+- 📱 **Android, iOS, Quest, TV**<br>Yksi sovellus puhelimissa, tableteissa sekä Quest 2-, Pro-, 3- ja 3S-laseissa, aito 3D laseissa, koontiversiosta 20 alkaen Android TV:ssä kaukosäätimellä sekä Windows-esiversio kuville, tavallisille ja 360°-videoille
 - 🔌 **Palvelimen kanssa tai ilman**<br>Immich-palvelimesi tai puhelimen oma galleria, tiliä ei tarvita
 - 🗄️ **Verkkojaot**<br>Samba (SMB), WebDAV ja koontiversiosta 19 alkaen DLNA-mediapalvelimet, jotka löydetään verkosta ja luetaan suoraan, mitään lataamatta, ja lähetetään Immichiin, kun itse päätät. Koontiversiosta 19 alkaen puhelin jakaa myös oman galleriansa lasien kanssa
 - 📺 **Televisiossa**<br>Koontiversiosta 20 alkaen sama APK Android TV:ssä ja Google TV:ssä: 360°-kuvat ja -videot, palvelimesi ja jakosi, kaukosäätimellä
@@ -84,7 +84,7 @@ Se on tarkoitettu niille, jotka kuvaavat 360°-kameralla (Insta360, GoPro MAX, D
 - **"Haluan katsella 360°-kuviani ja -videoitani sekä NAS-laitteeni tai Plex-palvelimeni videoita televisiosta kaukosäätimellä."** Katso [Katsele televisiosta](#watch-on-your-tv-android-tv-and-google-tv).
 - **"En löydä 360°-kuviani kaikkien muiden joukosta."** Katso [360°-luettelo](#find-your-360-shots-the-360-list).
 - **"360°-videoni nykii tai toistaa sumean kopion."** Katso [Videon tiedot ja dekooderit](#video-details-decoders-and-why-a-video-stutters).
-- **"Haluan 360°-kuvani ja Immich-kirjastoni Windows-tietokoneelleni, sen kansioiden kuvien ja videoiden, NAS-laitteeni ja Plex-palvelimeni kanssa, ja tietokoneen jaettuna laseilleni."** Katso [Windows-tietokoneella](#on-a-windows-computer-immuch360-desktop-preview) (esiversio: toistaiseksi kuvat ja tavalliset videot, 360°-videot myöhemmin).
+- **"Haluan 360°-kuvani ja Immich-kirjastoni Windows-tietokoneelleni, sen kansioiden kuvien ja videoiden, NAS-laitteeni ja Plex-palvelimeni kanssa, ja tietokoneen jaettuna laseilleni."** Katso [Windows-tietokoneella](#on-a-windows-computer-immuch360-desktop-preview) (esiversio: kuvat ja tavalliset videot, ja työpöydän koontiversiosta 3 alkaen 360°-, 3D-, VR180- ja raa'at 360°-videot sekä Tapon suora kuva).
 - **"Säilyykö se, mitä Immich-sovellus tekee?"** Kyllä, kahdella pienellä muutoksella, katso [Kaikki muu on Immichiä](#everything-else-is-immich).
 
 Kun ominaisuus on uusi, teksti kertoo, mistä koontiversiosta alkaen se on mukana. GitHub-julkaisussa on aina uusin koontiversio, kaupat tulevat perässä: katso [Mistä sen saa](#where-to-get-it).
@@ -127,6 +127,7 @@ Valmiiksi yhdistetyt 360°-tiedostot toimivat kaikkialla: Insta360-sovelluksen t
 
 Soitin toistaa puhelimeen tallennetun tiedoston tai verkkojaon tiedoston, jos sellainen on. Muuten se striimaa palvelimeltasi: oletuksena transkoodatun striimin tai alkuperäisen, jos pyydät sitä kohdassa Asetukset, Katselin, "Videon lähde" (koontiversiosta 15 alkaen; aiemmin kytkin "Pakota alkuperäinen video"), katso [Videon tiedot ja dekooderit](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### Litteänä näkyvä 360°-tiedosto: Näytä 360°-näkymänä
 
 Joissakin 360°-tiedostoissa ei ole projektiotunnistetta, joten palvelin ei merkitse niitä 360°-tiedostoiksi ja ne näkyvät litteinä.
@@ -356,6 +357,7 @@ Koontiversiosta 20 alkaen Immuch360 lisää Tapo-kameran verkkojakojen viereen. 
 8. Napauta "Testaa kamera". Se näyttää "Tallenteet: (malli), laiteohjelmisto (versio)" muistikortin tilan kanssa ja "Suora kuva: (video), ääni (ääni)", tai sen, mikä kummassakin epäonnistui.
 9. Napauta "Tallenna". Kamera näkyy kohdassa "Kamerat" jakojen jälkeen, mallinsa kanssa, kun se tiedetään, ja `tapo://` osoitteineen.
 
+<a id="watch-it-live"></a>
 ### Suoran kuvan katsominen
 
 1. Napauta kameraa. Sen suora kuva on sivun yläosassa: "Yhdistetään kameraan", sitten kuva "Suora"-merkillä.
@@ -755,9 +757,9 @@ Nykyinen koontiversio, koontiversio 21 (versio 3.3.0-rc.0, koontinumero 3030019)
 | Jaon tiedostojen lähettäminen Immichiin; käsin lähetetyt laitteen tiedostot lasketaan varmuuskopioiduiksi | ❌ vain laitteen tiedostot | ✅ koontiversiosta 15 alkaen |
 | Tämän puhelimen jakaminen verkossa laseja varten | ❌ | ✅ koontiversiosta 19 alkaen, Android ja iOS |
 | Plex Media Server -kirjastot toistettuina alkuperäisistä tiedostoista, kotona ja kodin ulkopuolella, ilman plex.tv:tä | ❌ | ✅ koontiversiosta 20 alkaen, kaikki katselimet, puhelimissa, tableteissa, Questissa ja televisioissa |
-| Tapo-kamerat: suora kuva ja muistikortin tallenteet lähetettyinä Immichiin, kun itse päätät | ❌ | ✅ koontiversiosta 20 alkaen: tallenteet kaikkialla, suora kuva Androidissa, Android TV:ssä ja Questissa |
+| Tapo-kamerat: suora kuva ja muistikortin tallenteet lähetettyinä Immichiin, kun itse päätät | ❌ | ✅ koontiversiosta 20 alkaen: tallenteet kaikkialla, suora kuva Androidissa, Android TV:ssä, Questissa ja työpöydän koontiversiosta 3 alkaen Windowsissa |
 | Android TV ja Google TV kaukosäätimellä ohjattuna, samassa APK:ssa | ❌ ei TV-sovellus | ✅ koontiversiosta 20 alkaen |
-| Sama sovellus Windows-tietokoneella | ❌ vain puhelimet ja tabletit | ✅ esiversio, kuvat ja tavalliset videot |
+| Sama sovellus Windows-tietokoneella | ❌ vain puhelimet ja tabletit | ✅ esiversio: kuvat, tavalliset ja 360°-videot (työpöydän koontiversio 3) |
 | Käsittelemättömät Insta360 .insp -kuvat ja yhden raidan .insv -videot | ❌ litteitä | ✅ koontiversiosta 16 alkaen |
 | Käsittelemättömät videot, joissa yksi objektiivi raitaa tai tiedostoa kohden (Insta360 X4, X4 Air, X5, X6, X3-parit, GoPro .360, DJI .osv) | ❌ litteitä tai vääriä | ✅ koontiversiosta 18 alkaen |
 | Kaksoiskalansilmä-.dng | ❌ litteä | ❌ ei vielä |
@@ -787,7 +789,7 @@ Nykyinen koontiversio, koontiversio 21 (versio 3.3.0-rc.0, koontinumero 3030019)
 - **Plex Media Server**: tarkistettu tietokoneelta oikeaa Plex Media Server 1.42.1:tä vasten (parin muodostus, kansiot, tavualueet, pikkukuvat, kodin ulkopuolinen osoite); ei vielä tarkistettu laitteella.
 - **Tapo-kamerat**: tarkistettu simuloitua kameraa vasten; ei vielä tarkistettu oikealla kameralla.
 - **Android TV ja Google TV**: tarkistettu automaattisilla testeillä; ei vielä tarkistettu televisiossa.
-- **Sama sovellus Windows-tietokoneella**: 656 automaattista työpöytätestiä 663:sta menee läpi Windowsissa (7 ohitetaan tarkoituksella), ja Windows 11 -tietokoneella sovellus käynnistyy, avaa tallennetun istunnon Immich-palvelimella, synkronoi, toistaa videon ja sulkeutuu siististi; jokaisen toiminnon käsin testaus on käynnissä.
+- **Sama sovellus Windows-tietokoneella**: työpöydän koontiversio 3 läpäisee Windowsissa 855 sen 863 automaattisesta työpöytätestistä (8 ohitetaan tarkoituksella) ja sovelluksen koko testisarjan; Windows 11 -tietokoneella sovellus käynnistyy, avaa tallennetun istunnon Immich-palvelimella, synkronoi, toistaa videon ja sulkeutuu siististi, ja sen 360°-soitinta ajettiin synteettisillä 4K-, 5.7K- ja 8K-leikkeillä kannettavan molemmilla grafiikkapiireillä ilman kaatumista. Jokaisen toiminnon käsin testaus oikeilla 360°-tiedostoilla ja oikealla Tapo-kameralla on käynnissä.
 - **Käsittelemättömät Insta360 .insp -kuvat ja yhden raidan .insv -videot**: kuvat tarkistettu X3-tiedostojen Insta360 Studio -vientejä vasten, videot Android-emulaattorissa matalaresoluutioisella X3-tiedostolla; ei vielä ajettu iPhonessa.
 - **Käsittelemättömät videot, joissa yksi objektiivi raitaa tai tiedostoa kohden**: jäsentimet ja yhdistäminen tarkistettu todellisilla X4-, X3-pari-, GoPro MAX- ja Osmo 360 -tiedostoilla; toisto kuuluu koontiversioiden 18 ja 19 laitetestiin.
 - **Kaksoiskalansilmä-.dng**: suunnitteilla.
@@ -842,17 +844,19 @@ Immuch360 on galleria ja myös ilmainen mediasoitin: se toistaa sen, mihin viral
   - iPhone, iPad: natiivi SceneKit-soitin pallolla, gyroskooppi, ääniraidan valinta, puskurointi-ilmaisin; toisto ja tauko, ei vielä aikajanaa.
   - Meta Quest: immersiivisesti, aito 3D stereoskooppisille tiedostoille, aikajana 10 sekunnin hypyillä, edellinen ja seuraava media.
   - Android TV, Google TV: puhelinten Media3-soitin nuolilla käännettynä.
-  - Windows: ei vielä, näytetään toistaiseksi tasaisena.
+  - Windows (työpöydän koontiversiosta 3 alkaen): sovelluksen oma 360°-soitin (libmpv), käännettävissä hiirellä tai nuolinäppäimillä, zoomattavissa rullalla, kelaus, ääniraidan valinta, puskuroinnin ilmaisin; sujuva erillisellä grafiikkapiirillä, integroidulla enintään 2880 pikseliä leveä ja hitaampi 5.7K H.264:lle.
 - **3D 360° (ylä- ja alaosa, rinnakkain)**
   - Android-puhelimet: vasen silmä, asettelupainike.
   - iPhone, iPad: sama.
   - Meta Quest: kumpikin silmä saa oman puoliskonsa kuvaruudusta.
   - Android TV, Google TV: vasen silmä, asettelupainike.
+  - Windows: kuvat kuten puhelimissa; videot työpöydän koontiversiosta 3 alkaen, vasen silmä, asettelupainike, sujuvat erillisellä grafiikkapiirillä, rajoituksin integroidulla.
 - **VR180- (puolipallo) kuvat ja videot**
   - Android-puhelimet: puolipallo, 360°/180°-painike.
   - iPhone, iPad: sama.
   - Meta Quest: immersiivinen puolipallo.
   - Android TV, Google TV: puolipallo, 360°/180°-painike.
+  - Windows: kuvat kuten puhelimissa; videot työpöydän koontiversiosta 3 alkaen, puolipallo, 360°/180°-painike, sujuvat erillisellä grafiikkapiirillä, rajoituksin integroidulla.
 - **Spatial 2.5D (syvyyttä tasaiselle näytölle stereoskooppisesta videosta)**
   - Android-puhelimet: natiivi soitin, pään seuranta etukameralla.
   - iPhone, iPad: sama.
@@ -878,16 +882,19 @@ Immuch360 on galleria ja myös ilmainen mediasoitin: se toistaa sen, mihin viral
   - iPhone, iPad: yhdistetään SceneKit-shaderilla.
   - Meta Quest: immersiivisesti, yhdistetään samalla GPU-tehosteella.
   - Android TV, Google TV: kuten puhelimissa.
+  - Windows (työpöydän koontiversiosta 3 alkaen): yhdistetään grafiikkapiirillä sovelluksen 360°-soittimessa, sujuva erillisellä piirillä, rajoituksin integroidulla.
 - **Käsittelemättömät videot, joissa yksi objektiivi raitaa tai tiedostoa kohden (koontiversiosta 18 alkaen): Insta360 X4, X4 Air, X5, X6 .insv, X3-parit, GoPro .360, DJI .osv**
   - Android-puhelimet: kaksi laitteistodekooderia yhtä aikaa, yksi objektiivia kohden (koontiversiosta 19 alkaen ohjelmistodekooderit laitteessa, jossa ei ole laitteistodekooderia, enintään 2048x2048 objektiivia kohden), ja GL-kompositori, joka yhdistää palloksi; yksi objektiivi, sitten transkoodattu striimi, sitten yhdistämätön video, kun laite ei pysty ajamaan kahta.
   - iPhone, iPad: mukautettu AVFoundation-kompositori Metalilla.
   - Meta Quest: immersiivisesti, samat kaksi dekooderia ja kompositori (3840x1920-paneeli).
   - Android TV, Google TV: kuten puhelimissa, kun televisio pystyy ajamaan kahta dekooderia yhtä aikaa.
+  - Windows (työpöydän koontiversiosta 3 alkaen): molemmat objektiivit rinnakkain yhdessä soittimessa ja sitten yhdistettyinä, kun tietokone pysyy perässä (mitataan sen omasta toistosta; testikannettavassa X3-pari vain sen erillisellä piirillä); muuten puhelinten vaiheet: yksi objektiivi, transkoodattu striimi, kameran matalan resoluution LRV-kopio, yhdistämätön video.
 - **Tapo-kameran suora kuva (koontiversiosta 20 alkaen)**
   - Android-puhelimet: Media3-RTSP-soitin: SD sivulla, HD koko näytössä, äänipainike.
   - iPhone, iPad: ei vielä: kortti kertoo sen tulevan myöhemmin.
   - Meta Quest: ikkunassa, HD-laatuisena.
   - Android TV, Google TV: kuten puhelimissa.
+  - Windows (työpöydän koontiversiosta 3 alkaen): libmpv-soitin, sivulla SD, koko näytössä HD, äänipainike.
 - **Tapo-kameran tallenteet (koontiversiosta 20 alkaen)**
   - Android-puhelimet: haetaan muistikortilta H.264-videoksi äänineen ja toistetaan sitten kelauksen kera.
   - iPhone, iPad: sama.
@@ -896,14 +903,14 @@ Immuch360 on galleria ja myös ilmainen mediasoitin: se toistaa sen, mihin viral
 
 Android TV- ja Google TV -kohtia, koontiversiosta 20 alkaen, ei ole vielä tarkistettu televisiossa, katso [Katsele televisiosta](#watch-on-your-tv-android-tv-and-google-tv); kamerakohtia ei ole vielä tarkistettu oikealla kameralla.
 
-Windowsissa Immuch360 Desktopin esiversio näyttää kuvat, tavalliset ja 360°, myös Insta360:n raa'at .insp-kuvat, hiirellä ja näppäimistöllä, ja desktop build 2:sta alkaen se toistaa tavallisia videoita, palvelimelta, tietokoneen kansioista, jaoista, Plexistä ja Tapon tallenteista; 360°-, 3D-, VR180- ja raa'at 360°-videot näytetään toistaiseksi tasaisina tai paikkamerkkinä (katso [Ei vielä mukana](#not-there-yet)).
+Windowsissa Immuch360 Desktopin esiversio näyttää kuvat, tavalliset ja 360°, myös Insta360:n raa'at .insp-kuvat, hiirellä ja näppäimistöllä. Desktop build 2:sta alkaen se toistaa tavallisia videoita, palvelimelta, tietokoneen kansioista, jaoista, Plexistä ja Tapon tallenteista, ja desktop build 3:sta alkaen se toistaa 360°-, 3D-, VR180- ja raakoja 360°-videoita samoista lähteistä omassa 360°-soittimessaan sekä Tapon suoraa kuvaa. 360°-soitin on sujuva erillisellä grafiikkapiirillä, ja integroidulla sillä on rajoituksia (katso [Windows-tietokoneella](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Immich-palvelimesi**: alkuperäinen tai palvelimen transkoodattu striimi sen mukaan, mitä Asetukset, Katselin, "Videon lähde" sanoo (katso [Videon tiedot ja dekooderit](#video-details-decoders-and-why-a-video-stutters)). Sama tili kuin verkkosovelluksessa.
 - **Puhelin tai lasit itse**: "Käytä ilman palvelinta" kirjautumissivulla tai Kirjasto-välilehden Laitteella-kohta.
 - **NAS-laite tai tietokone**: SMB- ja WebDAV-jaot sekä koontiversiosta 19 alkaen DLNA-mediapalvelimet, jotka löydetään verkosta ja luetaan suoraan (SMB-video enintään kuuden yhteyden kautta), mitään kopioimatta; koontiversiosta 15 alkaen valitsemasi tiedostot voi lähettää Immich-tilillesi.
 - **Toinen puhelin (koontiversiosta 19 alkaen)**: "Jaa tämä puhelin verkossa" kyseisessä puhelimessa: lasit tai mikä tahansa verkon WebDAV-asiakas lukee sen albumit, kuukaudet ja 360°-median.
 - **Plex Media Server (koontiversiosta 20 alkaen)**: sen kuva-, elokuva- ja TV-sarjakirjastot kansioittain, alkuperäiset tiedostot luettuina suoraan HTTPS:n kautta, joka tarkistetaan palvelimen omaa varmennetta vasten, kotona tai kodin ulkopuolisen osoitteen kautta, kaikilla alustoilla; katso [Plex Media Server ilman plex.tv:tä](#plex-media-server-without-plextv).
-- **Tapo-kamera (koontiversiosta 20 alkaen)**: suora kuva kameratilillä (Android, Android TV, Quest) ja sen muistikortin tallenteet TP-Link-tilin salasanalla (kaikki alustat), vain lähiverkossa; katso [Tapo-kamerat](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Tapo-kamera (koontiversiosta 20 alkaen)**: suora kuva kameratilillä (Android, Android TV, Quest ja työpöydän koontiversiosta 3 alkaen Windows) ja sen muistikortin tallenteet TP-Link-tilin salasanalla (kaikki alustat), vain lähiverkossa; katso [Tapo-kamerat](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **Windows-tietokoneen kansiot (työpöydän esiversio)**: Immuch360 Desktopissa valitsemasi kansiot, luettuina puhelimen gallerian sijaan; tietokone voi myös jakaa ne laseille, katso [Windows-tietokoneella](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Immich-kirjastosi on palvelimella, muita kuvia ja videoita on tietokoneen kansio
 
 Tietokoneella Immich tarjoaa verkkosovelluksensa selaimessa. **Mitä Immuch360 Desktop lisää**: tietokoneen kansiot ilman palvelinta tai tiliä, SMB-, WebDAV-, DLNA- ja Plex-jaot selattavina ja toistettavina sovelluksesta, Insta360:n raa'at .insp-kuvat avattuina pallona sekä tietokoneen jaettuna Meta Questille kotona.
 
-Tämä on esiversio: desktop build 2:sta alkaen kuvat ja tavalliset videot toimivat; 360°-, 3D- ja VR180-videot tulevat seuraavissa työpöydän koontiversioissa. 9. lokakuuta 2026 alkaen työpöytäversion lähdekoodit ovat forkin päähaarassa `immuch360`, joten puhelimet, lasit, televisiot ja tietokoneet julkaistaan samoista lähdekoodeista. Puhelin-, tabletti-, Quest- ja TV-sovellukset eivät muutu sen myötä ja pitävät nimen Immuch360.
+Tämä on esiversio: kuvat ja tavalliset videot toimivat desktop build 2:sta alkaen, ja desktop build 3:sta alkaen 360°-videosoitin (360°-, 3D-, VR180- ja raa'at 360°-videot) sekä Tapo-kameroiden suora kuva; alla olevat vaiheet, jotka tarvitsevat koontiversion 3, kertovat sen. 9. lokakuuta 2026 alkaen työpöytäversion lähdekoodit ovat forkin päähaarassa `immuch360`, joten puhelimet, lasit, televisiot ja tietokoneet julkaistaan samoista lähdekoodeista. Puhelin-, tabletti-, Quest- ja TV-sovellukset eivät muutu sen myötä ja pitävät nimen Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Lataa ja asenna Windowsiin
 
-Nykyinen koontiversio on GitHubin esijulkaisu [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Sen tiedosto on `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (noin 57 Mt, purettuna 78 tiedostoa, mukana videosoitin ja sen `licenses`-kansio), ja tarkistusta varten `SHA256SUMS.txt`. Se koottiin päähaarasta `immuch360` commitissa 5b723bd25: puhelimen koontiversion 21 lähdekoodit sekä tietokoneversio. Se vaatii 64-bittisen Windows 10:n tai 11:n.
+Nykyinen koontiversio on GitHubin esijulkaisu [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Sen tiedosto on `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (noin 57 Mt, purettuna 79 tiedostoa, mukana videosoitin ja sen `licenses`-kansio), ja tarkistusta varten `SHA256SUMS.txt`. Se koottiin päähaarasta `immuch360` sen jälkeen, kun tietokoneen 360°-videosoitin oli yhdistetty siihen, commitissa, jonka sen julkaisutiedot nimeävät: puhelimen koontiversion 21 lähdekoodit sekä tietokoneversio. Se vaatii 64-bittisen Windows 10:n tai 11:n.
 
-1. Lataa ZIP ja pura se minne tahansa, esimerkiksi Tiedostot-kansioon.
-2. Käynnistä `immuch360.exe` puretusta kansiosta. Pidä kansio kokonaisena: ohjelma tarvitsee vieressään olevat tiedostot, myös videosoittimen.
+1. Lataa ZIP ja pura se minne tahansa, esimerkiksi Tiedostot-kansioon. Kun korvaat desktop build 2:n, poista sen kansio tai pura uuteen kansioon: kirjautumisesi, kansiosi ja asetuksesi pysyvät Windows-profiilissasi, eivät siinä kansiossa.
+2. Käynnistä `immuch360.exe` puretusta kansiosta. Pidä kansio kokonaisena: ohjelma tarvitsee vieressään olevat tiedostot, niiden joukossa `libmpv-2.dll`, videosoitin, ja `immuch_desktop_video.dll`, joka lukee grafiikkapiirin dekooderit.
 3. Tiedostoja ei ole vielä allekirjoitettu, joten Windows SmartScreen voi näyttää ilmoituksen "Windows suojasi tietokonettasi": valitse "Lisätietoja" ja sitten "Suorita silti". Jos Smart App Control on käytössä, se estää allekirjoittamattomat ohjelmat.
 4. Odota ikkunaa. Uuden koontiversion ensimmäinen käynnistys kestää 10 sekunnista noin minuuttiin, todennäköisimmin siksi, että Microsoft Defender tarkistaa uudet tiedostot: älä käynnistä sovellusta uudelleen sillä välin. Seuraavat käynnistykset kestävät sekunnin tai kaksi.
 5. Kirjaudu kirjautumissivulla Immich-palvelimellesi sen osoitteella, sähköpostillasi ja salasanallasi, tai napsauta "Käytä ilman palvelinta".
 
-Tarkista ZIP suorittamalla `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` komentokehotteessa latauksen kansiossa: tuloksen on oltava sama kuin `SHA256SUMS.txt`-tiedostossa. Asennusohjelmaa tai automaattista päivitystä ei vielä ole: seuraa [Releases](https://github.com/freeKC/Immuch360/releases)-sivua ja pura seuraava koontiversio samalla tavalla.
+Tarkista ZIP suorittamalla `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` komentokehotteessa latauksen kansiossa: tuloksen on oltava sama kuin `SHA256SUMS.txt`-tiedostossa. Asennusohjelmaa tai automaattista päivitystä ei vielä ole: seuraa [Releases](https://github.com/freeKC/Immuch360/releases)-sivua ja pura seuraava koontiversio samalla tavalla.
 
 ### Mitä esiversio tekee
 
@@ -993,7 +1000,9 @@ Tarkista ZIP suorittamalla `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desk
 - **Lataus palvelimelle ja varmuuskopiointi** näistä kansioista Immich-palvelimellesi, kun sovellus on auki.
 - **360°-kuvat pallona**, hiirellä ja näppäimistöllä; Insta360-kameroiden raa'at .insp-kuvat avautuvat kuten puhelimissa.
 - **Tavalliset videot** (desktop build 2:sta alkaen): kansioidesi videot, Immich-palvelimesi videot (alkuperäinen tai transkoodattu virta, katso [Videon tiedot ja dekooderit](#video-details-decoders-and-why-a-video-stutters)), SMB-, WebDAV- ja DLNA-jakojen, Plex-palvelinten ja Tapon tallenteiden videot toistuvat ikkunassa puhelinten säätimin (toisto, tauko, aikajana), puskurointi-ilmaisimella ja ääniraitojen valikolla videolle, jossa niitä on useita. Kansioidesi ja jakojen videot näyttävät pikkukuvanaan kuvan videosta filmikuvakkeen sijaan.
-- **Verkkojaot**: Samba (SMB), WebDAV ja DLNA-mediapalvelimet sekä Plex-palvelimet ilman plex.tv:tä, selattavina kuten puhelimissa: niiden kuvat avautuvat ja niiden videot toistuvat. Tapo-kameroista muistikortin tallenteet: luettelo, leikkeen nouto ja sen toisto.
+- **360°-, 3D- ja VR180-videot** (desktop build 3:sta alkaen): 360°-painike avaa ne sovelluksen 360°-soittimessa, ikkunassa tai koko näytössä, kaikista tavallisten videoiden lähteistä, käännettävinä hiirellä ja näppäimistöllä, puhelinten 3D- ja 360°/180°-painikkeilla (3D-video näyttää vasemman silmänsä, kuten puhelimissa), kelaus, ääniraitavalikko ja puskuroinnin ilmaisin.
+- **Raa'at 360°-videot** (desktop build 3:sta alkaen): Insta360:n .insv-tiedostot, joissa molemmat objektiivit yhdessä raidassa, kahdessa raidassa (X4 ja uudemmat) tai kahdessa tiedostossa (X3-parit), GoPron .360- ja DJI:n .osv-tiedostot, jotka sovellus yhdistää grafiikkapiirillä toiston aikana tiedoston kalibroinnilla, kuten puhelimissa.
+- **Verkkojaot**: Samba (SMB), WebDAV ja DLNA-mediapalvelimet sekä Plex-palvelimet ilman plex.tv:tä, selattavina kuten puhelimissa: niiden kuvat avautuvat ja niiden videot toistuvat. Tapo-kameroista muistikortin tallenteet: luettelo, leikkeen nouto ja sen toisto; ja desktop build 3:sta alkaen suora kuva.
 - **Jaa tämä tietokone verkossa**: kansioidesi albumit, kuukaudet ja 360°-media, vain luku, Meta Questille tai muulle kodin laitteelle, kuten puhelin jakaa itsensä.
 - **Tiedostot**: palvelimelta ladatut tiedostot menevät valitsemaasi kansioon, "Tallenna kansioon" säilyttää kopion valituista kuvista ja videoista, ja Lokit-sivulla on "Tallenna lokit tiedostoon".
 
@@ -1005,9 +1014,28 @@ Tarkista ZIP suorittamalla `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desk
 4. **Siirry kuvasta toiseen**: tavallisessa kuvassa vasen ja oikea nuoli, tai reunoille hiiren liikkuessa ilmestyvät nuolipainikkeet, siirtävät edelliseen ja seuraavaan. Kuvauskenttään kirjoitetut kirjaimet jäävät tekstiin.
 5. **Toista video**: avaa se aikajanalta, kansiosta, jaosta, Plexistä tai Tapo-kameran tallenteista; se toistuu ikkunassa. Enter tai näppäimistön toisto- ja taukonäppäin keskeyttää ja jatkaa toistoa. Toiston aikana vasen ja oikea nuoli tai J ja L hyppäävät 10 sekuntia taakse tai eteen; tauolla nuolet siirtävät edelliseen ja seuraavaan. F tai F11 vaihtaa koko näytön tilaan, kuten kuvissa. "Ääniraita"-painike valitsee ääniraitojen välillä videossa, jossa niitä on useita.
 6. **Kun video pysähtyy**: tauolla oleva video pysyy tauolla, kun palaat ikkunaan. Ennen loppuaan katkennut video, esimerkiksi kun jako tai palvelin lakkaa vastaamasta, kertoo siitä: avaa se uudelleen, niin se jatkaa siitä, mihin se jäi, tauolla. Kansiosta tai jaosta löytyvää soittolistatiedostoa ei seurata.
-7. **Jaa tietokone laseille**: avaa Kirjasto ja sitten Verkkojaot; ensimmäinen ruutu on "Jaa tämä tietokone verkossa", tietokoneen vastine kohdalle [Jaa tämä puhelin verkossa](#share-this-phone-on-the-network). Ota käyttöön "Jaa kuvia ja videoita verkossa" ja lisää sitten tietokone laseissa niin kuin kyseinen osio neuvoo. Jakaminen loppuu, kun sovellus suljetaan tai tunnin käyttämättömyyden jälkeen.
-8. **Salli verkko**: Windows voi kysyä, saako Immuch360 Desktop käyttää verkkoa. Salli se yksityisissä verkoissa, muuten lasit eivät löydä tietokonetta. Verkossa, jonka Windows merkitsee julkiseksi (kahvila, hotelli), tai jonka tyyppiä se ei tunnista, jakaminen ei käynnisty, ellet valitse "Jaa tämän istunnon ajan", ja tietokone ilmoittaa itsestään vain verkossa, jossa se jakaa.
-9. **Asetukset, "Tämä tietokone"**: kansiot, latauskansio, verkkosovitin, jolla etsitään jakoja ja jaetaan tietokone (kun niitä on useita, esimerkiksi Wi-Fi ja Ethernet), sekä luotetut varmenteet: oman palvelimesi varmentaja PEM-tiedostona HTTPS-osoitteelle, johon Windows ei itse luota. Asiakasvarmenteet tuodaan kohdassa Asetukset, Edistyneet, kuten puhelimissa.
+7. **Toista 360°-video** (desktop build 3:sta alkaen): avaa video ja napsauta yläpalkissa 360°, kuten puhelimessa; 360°-tiedostolle, jota palvelin ei merkitse, ensin "Näytä 360°-näkymänä" ⋮-valikosta, katso [Litteänä näkyvä 360°-tiedosto](#a-360-file-that-shows-flat-view-as-360). 360°-soitin avautuu ikkunaan. Vedä hiirellä katsoaksesi ympärillesi (näkymä kääntyy vielä hieman nopean vedon jälkeen), zoomaa rullalla, + ja - tai Page Up ja Page Down, käännä pitämällä nuolinäppäimiä painettuina. Space tai näppäimistön toisto- ja taukonäppäin pysäyttää ja toistaa uudelleen; J ja L hyppäävät 10 sekuntia taakse- tai eteenpäin; Home palaa alkuun; M kytkee äänen pois ja päälle. F, F11 tai kaksoisnapsautus siirtyy koko näyttöön; Escape poistuu koko näytöstä ja sulkee sitten soittimen. Säätimet (sulje, otsikko, 360°/180°, 3D, ääniraita ja koko näyttö ylhäällä; toisto, 10 sekuntia taakse ja eteen, aikapalkki ja ääni alhaalla) piiloutuvat hiiren osoittimen mukana 3 sekunnin toiston jälkeen ja palaavat, kun hiiri liikkuu tai näppäintä painetaan; Tab siirtyy yhdestä seuraavaan.
+8. **3D ja VR180**: 360°-soittimessa 3D-painike vaihtaa vuorotellen "Mono (ei 3D)", "3D, ylä- ja alaosa" ja "3D, rinnakkain", ja 360°/180°-painike vaihtaa koko pallon ja VR180:n puolipallon välillä, kuten kohdassa [3D ja VR180](#3d-and-vr180-photos-and-videos). 3D-video näyttää vasemman silmänsä.
+9. **Raa'at 360°-videot** (desktop build 3:sta alkaen): avaa raakatiedosto ja napsauta 360°, kuten puhelimessa, katso [360°-kameroiden käsittelemättömät tiedostot](#raw-360-camera-files-without-the-cameras-app); pidä X3-parin kaksi tiedostoa yhdessä. Tiedosto, jossa molemmat objektiivit ovat yhdessä raidassa, yhdistetään toiston aikana. Tiedosto, jossa on yksi objektiivi raitaa tai tiedostoa kohden, toistaa molemmat objektiivit rinnakkain yhdessä soittimessa, kun tietokone pysyy perässä: tällaisen videon ensimmäiset sekunnit mitataan, ja tulos säilytetään saman tyypin seuraavia videoita varten (liian hitaaksi todettua tapaa kokeillaan uudelleen 14 päivän kuluttua). Kun tietokone ei pysy perässä, soitin käy läpi puhelinten vaiheet niiden viesteineen: yksi objektiivi, puolet pallosta mustana; palvelimen transkoodattu striimi; matalan resoluution LRV-kopio, jonka kamera tallensi tiedoston viereen, jos sellainen on; yhdistämätön video. Raakavideossa ei ole 3D- eikä 360°/180°-painiketta.
+10. **Tapo-kameran suora kuva** (desktop build 3:sta alkaen): avaa kamera kuten puhelimessa, katso [Suoran kuvan katsominen](#watch-it-live). Sivu toistaa SD-striimiä ja koko näyttö HD-striimiä, kuvan päällä puhelimen painikkeet: ääni, aluksi pois päältä, SD tai HD ja "Koko näyttö". Katkennut striimi (kamera käynnistyy uudelleen, Wi-Fi katkeaa) palaa itsestään, ja sitä yritetään uudelleen noin puolentoista minuutin ajan, kun viimeinen kuva pysyy näytöllä. Kameratilistä, jonka kamera hylkää, kerrotaan, eikä sitä yritetä uudelleen, koska epäonnistuneet kirjautumiset lasketaan kameran lukitukseen.
+11. **Jaa tietokone laseille**: avaa Kirjasto ja sitten Verkkojaot; ensimmäinen ruutu on "Jaa tämä tietokone verkossa", tietokoneen vastine kohdalle [Jaa tämä puhelin verkossa](#share-this-phone-on-the-network). Ota käyttöön "Jaa kuvia ja videoita verkossa" ja lisää sitten tietokone laseissa niin kuin kyseinen osio neuvoo. Jakaminen loppuu, kun sovellus suljetaan tai tunnin käyttämättömyyden jälkeen.
+12. **Salli verkko**: Windows voi kysyä, saako Immuch360 Desktop käyttää verkkoa. Salli se yksityisissä verkoissa, muuten lasit eivät löydä tietokonetta. Verkossa, jonka Windows merkitsee julkiseksi (kahvila, hotelli), tai jonka tyyppiä se ei tunnista, jakaminen ei käynnisty, ellet valitse "Jaa tämän istunnon ajan", ja tietokone ilmoittaa itsestään vain verkossa, jossa se jakaa.
+13. **Asetukset, "Tämä tietokone"**: kansiot, latauskansio, verkkosovitin, jolla etsitään jakoja ja jaetaan tietokone (kun niitä on useita, esimerkiksi Wi-Fi ja Ethernet), sekä luotetut varmenteet: oman palvelimesi varmentaja PEM-tiedostona HTTPS-osoitteelle, johon Windows ei itse luota. Asiakasvarmenteet tuodaan kohdassa Asetukset, Edistyneet, kuten puhelimissa.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### 360°-videot ja grafiikkapiiri
+
+360°-soittimessa (desktop build 3:sta alkaen) grafiikkapiiri piirtää videon jokaisesta kuvasta näkymän, johon katsot. Videolaajennus antaa libmpv:n piirtää jokaisen kuvan valitun kokoiseksi kuvaksi, minkä jälkeen sovelluksen oma piirtovaihe piirtää siitä sen osan palloa, johon katsot. Näkymän kääntäminen muuttaa tuon vaiheen arvoa, ei soitinta: vetäminen ei vie muistia, ja pysäytetty video kääntyy dekoodaamatta mitään.
+
+Sovellus mittaa jokaisen 360°-videon ensimmäiset sekunnit ja valitsee, kuinka suuren kuvan kanssa piiri työskentelee: koko kuva erillisellä piirillä, enintään 2880 pikseliä leveä suorittimeen integroidulla piirillä (Windows kertoo sovellukselle, kumpaa tyyppiä se on, joten Core Ultra -kannettavan Intel Arc -piiri lasketaan integroiduksi), yhtä askelta pienempi, kun piiri ei pysy perässä. Mittaustulos säilytetään saman tyypin (koodekki, koko, kuvataajuus ja dekooderi) seuraavia videoita varten, ei jokaista videota varten.
+
+Kun pieninkään askel ei ole sujuva, soitin sanoo "Tämä näytönohjain ei pysty näyttämään tämän videon 360°-näkymää sujuvasti"; kun se on siitä kaukana tai kun piiri ei pysty piirtämään näkymää lainkaan (ei OpenGL ES 3.0:aa, ajuri hylkää sen), video toistetaan tasaisena ja soitin kertoo syyn. Tasaisena toistettua videota ei toisteta tasaisena seuraavalla kerralla: saman tyypin seuraava video mitataan uudelleen.
+
+Kun perässä ei pysy piirtäminen vaan palvelimen videon dekoodaus (video, jonka suoritin dekoodaa, kuten 5.7K H.264), soitin vaihtaa palvelimen transkoodattuun striimiin kohdasta, jossa se oli, puhelinten viestillä: "Toistetaan transkoodattua striimiä: alkuperäinen (koodekki ja koko) ylittää sen, mitä tämä laite pystyy dekoodaamaan".
+
+- **Käytä kannettavan erillistä grafiikkapiiriä.** Windows ajaa sovellusta integroidulla piirillä, ellei toisin määrätä. Lisää Windowsin asetuksissa kohdassa Järjestelmä, Näyttö, Grafiikka `immuch360.exe` ja valitse "Suuri suorituskyky", ja käynnistä sitten sovellus uudelleen. Testikannettavassa (Intel UHD -piiri ja NVIDIA RTX 4060 Laptop) NVIDIA-piiri piirsi 4K-, 5.7K- ja 8K-360°-videot täysikokoisina ja 30 kuvaa sekunnissa näkymän kääntyessä. Intel-piiri piirsi ne enintään 2880 pikseliä leveinä: 4K H.264- ja 8K HEVC -videon noin 30 kuvaa sekunnissa libmpv:n vuoden 2026 koontiversiolla, 4K-videon 23:sta 27:ään kuvaa sekunnissa media-kitin vuoden 2024 libmpv:llä (katso [Ei vielä mukana](#not-there-yet)) ja 5.7K H.264 -videon, jonka suoritin dekoodaa, noin 20 kuvaa: palvelimelta soitin vaihtaa silloin transkoodattuun striimiin; video, jolla ei ole transkoodattua striimiä, esimerkiksi kansiosta, toistuu edelleen viestillä "Tämä näytönohjain ei pysty näyttämään tämän videon 360°-näkymää sujuvasti".
+- **Valitse renderöijä itse.** Ota kohdassa Asetukset, Edistyneet käyttöön "Vianetsintä": näkyviin tulee kohta "360°-videon renderöijä", oletuksena "Automaattinen". Se tarjoaa myös vaihtoehdot "Laajennus, täysi koko", "Laajennus, enintään 4096 leveä", "Laajennus, enintään 2880 leveä" ja "Tasainen, ilman 360°-näkymää" seuraavalle avaamallesi 360°-videolle. Sen alla "Viimeksi mitattu" kertoo koon, jossa viimeisin 360°-video piirrettiin, sen kuvat sekunnissa, grafiikkapiirin ja dekooderin: kopioi se vikailmoitukseen. "Automaattinen"-vaihtoehdon valitseminen uudelleen, vaikka se olisi jo valittuna, unohtaa mittaustulokset, ja seuraavat 360°-videot mitataan uudelleen.
+- **Mitä piiri dekoodaa.** Asetukset, Edistyneet, "Tämän laitteen videodekooderit" luettelee, mitä käytössä oleva grafiikkapiiri dekoodaa sen mukaan, mitä Direct3D 11 ilmoittaa, ja sovellus korjaa luetteloa sillä, mitä se mittasi toiston aikana: "Videon lähde" -asetus ja raakavideoiden kahden objektiivin tarkistus noudattavat sitä. Yli 4096 pikseliä leveän H.264:n (360°-kameroiden 5.7K) dekoodaa suoritin, koska kumpikaan testikannettavan piiri ei ota sitä vastaan.
 
 ### Verrattuna puhelinsovelluksiin
 
@@ -1017,12 +1045,16 @@ Tarkista ZIP suorittamalla `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desk
 - **Kansioistasi ei poisteta mitään**: "Poista laitteelta" on piilotettu, ja Poista poistaa vain palvelimen kopion, kunnes sovellus osaa lähettää tiedostoja Windowsin roskakoriin.
 - **Hiiri ja näppäimistö** kosketuksen ja gyroskoopin sijaan.
 - **Yksi videosoitin kaikille lähteille**: libmpv toistaa samalla tavalla palvelimen, kansioiden, jakojen ja Plexin videot, ja sen tavallisessa soittimessa on jo ääniraitavalikko, jota puhelinten tavallisessa soittimessa ei vielä ole.
+- **360°-videot ikkunassa** (desktop build 3:sta alkaen): 360°-soitin on sovelluksen sivu, ei erillinen natiivisoitin, ja siinä on aikapalkki, 10 sekunnin hypyt ja äänipainike. Raakavideot, joissa on yksi objektiivi raitaa tai tiedostoa kohden, pinotaan rinnakkain yhteen soittimeen, kun puhelimet ajavat kahta dekooderia; puhelinten varavaiheet ovat samat, ja kameran LRV-kopio on lisätty ennen yhdistämätöntä videota.
+- **Tapon suora kuva** (desktop build 3:sta alkaen) toistuu tietokoneella kuten Androidissa, kun taas iPhoneissa ja iPadeissa sitä ei vielä ole.
 
 <a id="not-there-yet"></a>
 ### Ei vielä mukana
 
-- **360°-, 3D-, VR180- ja raa'at 360°-videot**: ne näytetään toistaiseksi tasaisina, sellaisina kuin tiedosto ne sisältää (koko pallo levitettynä, kaksi silmää rinnakkain tai objektiivien pyöreät kuvat), tai paikkamerkkinä, ja 360°-painike on vain kuvissa. Niiden soittimet tulevat seuraavissa työpöydän koontiversioissa.
-- **Spatial 2.5D**, myöhemmin verkkokameralla; **Tapon live-näkymä**; **kartta** ja Paikat-näkymä; **kirjautuminen OAuthilla** (kirjaudu sen sijaan sähköpostilla ja salasanalla); **Google Cast**; **ilmoitukset**.
+- **Forkin oman koontiversion libmpv**: ZIP-paketeissa on media-kitin vuoden 2024 libmpv, kunnes forkin oma koontiversio otetaan käyttöön, ja ZIP-paketin `BUILD-INFO.txt` kertoo, kumpi siinä on. Vuoden 2024 versiolla raakavideon, jossa on yksi objektiivi raitaa tai tiedostoa kohden, kaksi objektiivia eivät koskaan toistu yhtä aikaa (siitä puuttuu suodin, joka pinoaa ne), joten nämä videot näyttävät yhden objektiivin, puolet pallosta mustana; ja grafiikkapiiri kopioi jokaisen kuvan takaisin dekooderistaan, mikä hidastaa 360°-soitinta integroidulla piirillä. Forkin oman työnkulun libmpv, vuoden 2026 versio, on tarkoitus ottaa sen tilalle ennen ensimmäistä julkista julkaisua; testikannettavalla kokeiltu libmpv:n vuoden 2026 koontiversio tekee molemmat.
+- **Kahden objektiivin raakavideot kannettavalla**: vuoden 2026 libmpv:lläkin testikannettava pinosi X3-parin (kaksi 2880x2880 H.264 -tiedostoa) 30 kuvaa sekunnissa vain NVIDIA-piirillään; Intel-piirillään ja X4-tiedostolle (kaksi 3840x3840 HEVC -raitaa) molemmilla piireillä video toistaa yhden objektiivin, puolet pallosta mustana, kuten puhelimessa, joka ei pysty ajamaan kahta dekooderia.
+- **3D vain näytöllä**: 3D-video näyttää vasemman silmänsä, kuten puhelimissa; tietokoneella ei ole gyroskooppia eikä lasien näkymää. Katsoaksesi aidossa 3D:ssä jaa tietokone Meta Questille.
+- **Spatial 2.5D**, myöhemmin verkkokameralla; **kartta** ja Paikat-näkymä; **kirjautuminen OAuthilla** (kirjaudu sen sijaan sähköpostilla ja salasanalla); **Google Cast**; **ilmoitukset**.
 - **Asennusohjelma, allekirjoitettu koontiversio ja automaattiset päivitykset**: tämä koontiversio on kansio, jossa on `immuch360.exe`.
 - **Linux ja macOS**: niiden projektit ovat lähdekoodeissa, mutta niitä ei ole vielä koottu eikä kokeiltu noissa järjestelmissä, eikä niiden videosoitin ole vielä mukana; ne tulevat Windowsin jälkeen.
 - **Käännökset**: tietokoneversion uudet tekstit ovat toistaiseksi englanniksi.
@@ -1030,10 +1062,11 @@ Tarkista ZIP suorittamalla `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desk
 ### Tunnetut ongelmat
 
 - **Uuden koontiversion ensimmäinen käynnistys on hidas**: 10 sekunnista noin minuuttiin ennen kuin ikkuna näkyy, todennäköisimmin siksi, että Microsoft Defender tarkistaa uudet tiedostot, joita ei ole vielä allekirjoitettu. Odota ikkunaa äläkä käynnistä sovellusta uudelleen; seuraavat käynnistykset kestävät sekunnin tai kaksi.
-- **8K HEVC -videot tarvitsevat erillisen näytönohjaimen**: testikannettavassa integroitu Intel UHD -piiri näytti noin puolet 8K HEVC -videon kuvista, kun taas erillinen NVIDIA-piiri toisti 8K HEVC- ja 5.7K H.264 -videot ilman pudonneita kuvia. Windows ajaa sovellusta integroidulla piirillä, ellei toisin määrätä: lisää Windowsin asetuksissa kohdassa Järjestelmä, Näyttö, Grafiikka `immuch360.exe` ja valitse "Suuri suorituskyky". Integroidulla piirillä 5.7K H.264 -videon, jonka sen dekooderi hylkää, purkaa suoritin ilman menetettyjä kuvia.
-- **Videot piirretään enintään 1440 rivin korkuisina** ja skaalataan sitten ikkunaan: 4K-näytöllä koko näytön tilassa 4K- tai 8K-video on hieman pehmeämpi kuin erillisessä videosoittimessa. Näin 8K-video pysyy kannettavan tietokoneen grafiikkatehon rajoissa.
+- **8K HEVC -videot tarvitsevat erillisen näytönohjaimen, ja 360°-videot toimivat sellaisella paremmin**: testikannettavassa integroitu Intel UHD -piiri näytti noin puolet 8K HEVC -videon kuvista, kun taas erillinen NVIDIA-piiri toisti 8K HEVC- ja 5.7K H.264 -videot ilman pudonneita kuvia; 360°-soitin on sujuva NVIDIA-piirillä ja hitaampi Intel-piirillä, katso [360°-videot ja grafiikkapiiri](#360-videos-and-the-graphics-chip). Windows ajaa sovellusta integroidulla piirillä, ellei toisin määrätä: lisää Windowsin asetuksissa kohdassa Järjestelmä, Näyttö, Grafiikka `immuch360.exe` ja valitse "Suuri suorituskyky", ja käynnistä sitten sovellus uudelleen. Integroidulla piirillä tavallisen 5.7K H.264 -videon, jonka sen dekooderi hylkää, purkaa suoritin ilman menetettyjä kuvia.
+- **Tavalliset videot piirretään enintään 1440 rivin korkuisina** ja skaalataan sitten ikkunaan: 4K-näytöllä koko näytön tilassa 4K- tai 8K-video on hieman pehmeämpi kuin erillisessä videosoittimessa. Näin 8K-video pysyy kannettavan tietokoneen grafiikkatehon rajoissa. 360°-soitin sen sijaan työskentelee koko kuvan tai mittauksensa valitseman pienemmän koon kanssa.
 - **Kun kansioidesi video toistuu sovelluksessa tai kun lasit lukevat tiedostoa jaetulta tietokoneelta** (toistamaansa videota, lataamaansa kuvaa), Windows ei voi nimetä uudelleen, siirtää tai poistaa kyseistä tiedostoa ja sanoo sen olevan auki Immuch360 Desktopissa: sulje ensin video tai pysäytä toisto laseissa. Varmuuskopiot eivät lukitse tiedostojasi näin: tiedoston voi nimetä uudelleen, siirtää tai poistaa sen latautuessa palvelimelle.
-- **Keskeneräisyydet**: 656 työpöytätestiä 663:sta menee läpi Windowsissa (7 ohitetaan tarkoituksella), 200 peräkkäin avattua soitinta ei jätä vuotoja, ja Windows 11 -tietokoneella sovellus käynnistyy, avaa tallennetun istunnon Immich-palvelimella, synkronoi, toistaa videon ja sulkeutuu siististi. Jokaisen toiminnon käsin testaus oikealla tietokoneella on vielä kesken.
+- **Keskeneräisyydet**: työpöydän koontiversio 3 läpäisee Windowsissa 855 sen 863 työpöytätestistä (8 ohitetaan tarkoituksella) ja sovelluksen koko testisarjan, 200 peräkkäin avattua soitinta ei jätä vuotoja, ja sen julkaisu-ZIP käynnistyy, toistaa testileikkeen ja sulkeutuu siististi. Jokaisen toiminnon käsin testaus oikealla tietokoneella on vielä kesken.
+- **Millä 360°-soitin ja suora kuva tarkistettiin**: 360°-soitinta ajettiin synteettisillä 4K-, 5.7K- ja 8K-360°-leikkeillä kannettavan molemmilla grafiikkapiireillä (avattu, toistettu, käännetty toiston ja tauon aikana, suljettu) ilman kaatumista ja ilman näytönohjaimen ajurin nollautumista. Kahden objektiivin raakavideoita toistettiin synteettisistä leikkeistä sekä oikeista X3- ja X4-tiedostoista. Tapon suora kuva tarkistettiin testi-RTSP-palvelinta vastaan, joka kirjautuu kuten kamerat (Digest), tarkoituksella katkaistuna ja hylättynä, ilman salasanaa missään lokirivissä, mutta ei vielä oikealla kameralla. Käsin testaus oikeilla 360°- ja 3D-tiedostoilla, kannettavan molemmilla näytöillä, lepotilalla ja jatkamisella sekä oikealla kameralla on vielä tulossa.
 
 Jos jokin menee vikaan, avaa [vikailmoitus](https://github.com/freeKC/Immuch360/issues) ja liitä mukaan Lokit-sivulta tallennettu loki, katso [Lokit](#logs). Tarkista loki ennen sen jakamista: se voi sisältää palvelimesi osoitteen.
 
@@ -1052,7 +1085,7 @@ Tarvitset Windows 10:n tai 11:n x64:lle, Flutter 3.47.2:n Windowsille, Visual St
    mise run codegen
    ```
 
-2. Kokoa sovellus Windowsissa samassa `mobile`-kansiossa. Ensimmäinen koonti lataa videosoittimen kirjastot (libmpv ja ANGLE) GitHubista ja tarkistaa jokaisen arkiston sen SHA-256:n avulla:
+2. Kokoa sovellus Windowsissa samassa `mobile`-kansiossa. Ensimmäinen koonti lataa videosoittimen kirjastot (libmpv ja ANGLE) GitHubista ja tarkistaa jokaisen arkiston sen SHA-256:n avulla; se myös kääntää samalla C++-työkuormalla pienen Direct3D 11 -laajennuksen `immuch_desktop_video`, joka lukee grafiikkapiirin dekooderit:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Tarvitset Windows 10:n tai 11:n x64:lle, Flutter 3.47.2:n Windowsille, Visual St
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-Immuch360 Desktopin CI (`.github/workflows/immuch360-desktop.yml`) ajetaan `desktop`-haarassa, joka seuraa `immuch360`-haaraa: puhelimen tarkistukset (puhelinten koontiversioissa ei muutu mitään) ja koko testisarja Linuxissa, työpöytätestit Windowsissa sekä sama ZIP; sen Linux- ja macOS-työt (`flutter build linux` ja `flutter build macos`, samalla `-t lib/main_desktop.dart`) eivät ole vielä ajautuneet noissa järjestelmissä.
+Immuch360 Desktopin CI (`.github/workflows/immuch360-desktop.yml`) ajetaan `desktop`-haarassa, joka seuraa `immuch360`-haaraa: puhelimen tarkistukset (puhelinten koontiversioissa ei muutu mitään) ja koko testisarja Linuxissa, työpöytätestit Windowsissa sekä sama ZIP, sitten tuon koontiversion päällä testit, jotka tarvitsevat sen libmpv:n ja ANGLEn (Tapon suoran kuvan kirjautuminen, mitä videotiedosto ei saa avata, 360°-varjostimet); sen Linux-työ kokoaa sovelluksen Ubuntussa ja sen macOS-työ kääntää sen Xcode 26.3:lla ja macOS 26 SDK:lla (molemmat samalla `-t lib/main_desktop.dart`), pelkkinä käännöstarkistuksina: kumpaakaan ei ole vielä käynnistetty noissa järjestelmissä. Toinen työnkulku (`.github/workflows/immuch360-libmpv.yml`) kokoaa libmpv:n uudelleen Windows x64:lle ja arm64:lle kiinnitetyistä lähteistä ja julkaisee arkistot SHA-256-tiivisteineen; ZIP-paketeissa on yhä media-kitin arkisto, kunnes tuo koontiversio otetaan käyttöön, joten kohdan [Ei vielä mukana](#not-there-yet) vuoden 2024 libmpv:n rajoitukset koskevat myös omaa koontiversiotasi.
 
 <a id="where-to-get-it"></a>
 ## Mistä sen saa
@@ -1088,8 +1121,8 @@ Sovellus on Google Playssa puhelimille ja tableteille; App Store -versio odottaa
   - Nyt: yleinen `Immuch360-v<version>-release.apk` [Releases](https://github.com/freeKC/Immuch360/releases)-sivulta, sivuladattuna adb:llä, katso [Asentaminen televisioon](#install-it-on-the-tv). Se on sama sovellus kuin puhelimissa.
   - Pian: Google Play televisioissa; sen TV-sivu on ollut Googlen tarkastettavana 9. lokakuuta 2026 lähtien.
 - **Windows 10 ja 11, 64-bittinen (esiversio)**
-  - Nyt: Immuch360 Desktop, [työpöydän esijulkaisun](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip`, purettuna ja käynnistettynä niin kuin [Lataa ja asenna Windowsiin](#download-and-install-on-windows) neuvoo. Toistaiseksi kuvat ja tavalliset videot: 360°-, 3D- ja VR180-videot tulevat seuraavissa työpöydän koontiversioissa.
-  - Pian: 360°-, 3D-, VR180- ja raa'at 360°-videot; asennusohjelma, allekirjoitettu koontiversio ja päivitykset myöhemmin.
+  - Nyt: Immuch360 Desktop, työpöydän koontiversio 3, [työpöydän esijulkaisun](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip`, purettuna ja käynnistettynä niin kuin [Lataa ja asenna Windowsiin](#download-and-install-on-windows) neuvoo. Kuvat, tavalliset videot, 360°-, 3D-, VR180- ja raa'at 360°-videot (sujuvat erillisellä grafiikkapiirillä, rajoituksin integroidulla) sekä Tapon suora kuva.
+  - Pian: Spatial 2.5D verkkokameralla, sitten Linux ja macOS; asennusohjelma, allekirjoitettu koontiversio ja päivitykset myöhemmin.
 
 App Storen ja Meta Horizon Storen linkit lisätään tänne heti, kun sivut on julkaistu. Kirjaudu tavallisella Immich-palvelimesi URL-osoitteella ja tililläsi, tai napauta kirjautumissivulla "Käytä ilman palvelinta" aloittaaksesi laitteen omilla kuvilla ja videoilla. GitHubin APK ei päivity itsestään: seuraa Releases-sivua, ja kun olet asentanut sovelluksen kaupasta, hae päivitykset siitä kaupasta.
 
@@ -1126,7 +1159,7 @@ Tässä tietovarastossa ei ole salaisuuksia: Androidin allekirjoitusavain on tal
 
 - **`main`**: Immichin `main` siinä commitissa, johon `immuch360` perustuu (nykyisten koontiversioiden osalta 29. syyskuuta 2026), koskaan muuttamatta; se siirtyy eteenpäin, kun haara rebasetaan uudemman Immichin päälle.
 - **`immuch360`**: tämän haaran muutokset Immichin päällä, 9. lokakuuta 2026 alkaen myös Immuch360 Desktop. Jokainen julkaisu kertoo, mihin Immich-versioon se perustuu.
-- **`desktop`**: haara, jossa Immuch360 Desktop, tietokoneversio, rakennettiin `immuch360`-haaran päälle, kunnes se yhdistettiin siihen 9. lokakuuta 2026, jotta puhelimet, lasit, televisiot ja tietokoneet julkaistaan samoista lähdekoodeista. Nyt se seuraa `immuch360`-haaraa ja kantaa työpöydän esijulkaisujen tunnisteita ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) commitista 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) commitista 5b723bd25). Tietokoneversio ei muuta mitään `mobile/android`- ja `mobile/ios`-kansioissa.
+- **`desktop`**: haara, jossa Immuch360 Desktop, tietokoneversio, rakennettiin `immuch360`-haaran päälle, kunnes se yhdistettiin siihen 9. lokakuuta 2026, jotta puhelimet, lasit, televisiot ja tietokoneet julkaistaan samoista lähdekoodeista. Nyt se seuraa `immuch360`-haaraa ja kantaa työpöydän esijulkaisujen tunnisteita ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) commitista 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) commitista 5b723bd25, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 360°-videosoittimen yhdistämisestä 10. lokakuuta 2026). Uusi työpöytätyö tulee ensin sinne ja liittyy `immuch360`-haaraan sen työpöydän koontiversion mukana, joka sen julkaisee. Tietokoneversio ei muuta mitään `mobile/android`- ja `mobile/ios`-kansioissa.
 
 <a id="logs"></a>
 ## Lokit
@@ -1145,7 +1178,7 @@ Koontiversiosta 19 alkaen DLNA-asiakas, puhelinjako ja Applen tilamedian tunnist
 
 Tietokoneella (Immuch360 Desktop) Lokit-sivulla on myös "Tallenna lokit tiedostoon": loki tai ZIP, jossa on loki ja viimeisimpien kaatumisten raportit, jos niitä on (sen ehdotettu nimi päättyy silloin "with-crash-reports"). Kaatumisraportti on pieni minidump: säikeet, mihin ne pysähtyivät ja vain se, mitä tarvitaan niiden kutsujen seuraamiseen, ohjelmatiedostojen nimet mutta ei niiden kansioita; ei sovelluksen muistia.
 
-Desktop build 2:sta alkaen tietokoneen videosoitin kirjoittaa sinne tunnisteilla `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` ja `VideoThumbnailGrabber`, mukaan lukien mpv:n omat varoitukset, tunnukset ja salasanat poistettuina. Tarkista loki ennen sen jakamista: se voi sisältää palvelimesi osoitteen.
+Desktop build 2:sta alkaen tietokoneen videosoitin kirjoittaa sinne tunnisteilla `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` ja `VideoThumbnailGrabber`, mukaan lukien mpv:n omat varoitukset, tunnukset ja salasanat poistettuina. Desktop build 3:sta alkaen se kirjoittaa myös 360°-soittimen tunnisteilla `SphericalPlayer`, `SphereRenderer` ja `PluginRenderer` (valittu koko, mitatut kuvat sekunnissa, grafiikkapiiri), kahden objektiivin raakavideot tunnisteella `RawTwoStreams`, grafiikkapiirin dekooderit tunnisteilla `DesktopGpuDecoders`, `DesktopVideoDecoderApi` ja `DecoderMeasure` sekä Tapon suoran kuvan tunnisteella `DesktopCameraLive`, jonka riveillä ei koskaan ole kameratiliä eikä sen salasanaa. Tarkista loki ennen sen jakamista: se voi sisältää palvelimesi osoitteen.
 
 <a id="privacy"></a>
 ## Yksityisyys
@@ -1159,7 +1192,7 @@ Desktop build 2:sta alkaen tietokoneen videosoitin kirjoittaa sinne tunnisteilla
 - **Puhelinjako**: vain lähiverkko, käyttäjänimellä ja salasanalla, tavallisen HTTP:n kautta (katso [Jaa tämä puhelin verkossa](#share-this-phone-on-the-network)).
 - **Kamera**: vain Spatial 2.5D -soitin käyttää sitä, laitteella; kuvia ei koskaan tallenneta eikä lähetetä minnekään.
 - **Tietokoneella** (Immuch360 Desktop, Windows-esiversio): sovellus lukee vain valitsemasi kansiot, säilyttää hakemistonsa, pikkukuvansa ja välimuistinsa tietokoneella sekä tallentaa salasanat ja tunnukset Windowsin tietosuojauksella, vain Windows-tilillesi. Tietokoneen jakaminen noudattaa puhelinjaon sääntöjä, eikä se käynnisty verkossa, jonka Windows merkitsee julkiseksi tai jonka tyyppiä se ei tunnista, ellet itse niin päätä.
-- **Videosoitin tietokoneella** (desktop build 2:sta alkaen): palvelimesi videot tulevat sille sovelluksen kautta, joten soitin ei koskaan saa istuntotunnustasi, ja se, mitä se lukee etukäteen, pysyy muistissa eikä päädy levylle. Se avaa vain sille annetun tiedoston: kansion tai jaon tiedosto, joka on todellisuudessa soittolista tai virran kuvaus, ei saa sitä yhdistämään minnekään muualle.
+- **Videosoitin tietokoneella** (desktop build 2:sta alkaen): palvelimesi videot tulevat sille sovelluksen kautta, joten soitin ei koskaan saa istuntotunnustasi, ja se, mitä se lukee etukäteen, pysyy muistissa eikä päädy levylle. Se avaa vain sille annetun tiedoston: kansion tai jaon tiedosto, joka on todellisuudessa soittolista tai virran kuvaus, ei saa sitä yhdistämään minnekään muualle. Desktop build 3:sta alkaen jokaisen videon osoite annetaan soittimelle vain muistissa, ei koskaan väliaikaisen tiedoston kautta (linkki, jonka sovellus tekee palvelimen tai jaon videolle, sisältää tuon istunnon avaimen, joka oli desktop build 2:ssa levyllä muutaman sekunnin jokaisella avauskerralla), eikä tuo avain koskaan näy lokissa; Tapo-kameran suora kuva antaa kameratilin soittimelle samalla tavalla, ei koskaan tiedostossa tai lokirivillä, ja keskustelee kameran kanssa vain lähiverkossa; 360°-soittimen ja dekooderien mittaukset (grafiikkapiiri, videon muoto, kuvat sekunnissa, ei koskaan tiedostonimeä) pysyvät sovelluksen kansiossa tietokoneella.
 
 Koko käytäntö on tiedostossa [PRIVACY.md](../PRIVACY.md).
 
@@ -1177,7 +1210,7 @@ Android, Android TV ja Google TV ovat Google LLC:n tavaramerkkejä; Apple, iPhon
 
 Mitä ei ole vielä tehty, todennäköisimmät ensin. Mikään tässä ei ole lupaus, ja palaute [vikaseurannassa](https://github.com/freeKC/Immuch360/issues) auttaa päättämään, mikä tulee ensin.
 
-- **Immuch360 Desktop, ensin Windows**: desktop build 2 on julkaistu tavallisten videoiden kanssa, ja työpöytäversion lähdekoodit ovat 9. lokakuuta 2026 alkaen forkin päähaarassa `immuch360` (katso [Windows-tietokoneella](#on-a-windows-computer-immuch360-desktop-preview)). Seuraavaksi 360°-, 3D-, VR180- ja raa'at 360°-videot Windowsissa, raakatiedostojen kaksi objektiivia ja Tapon live-näkymä mukaan lukien; sitten jokaisen toiminnon testaus Windows-tietokoneella ja sen korjaukset; sitten Spatial 2.5D verkkokameralla; sitten Linux ja macOS, paketit, allekirjoitus ja päivitykset.
+- **Immuch360 Desktop, ensin Windows**: desktop build 3 on julkaistu 360°-videosoittimen (360°-, 3D-, VR180- ja raa'at 360°-videot, raakatiedostojen kaksi objektiivia, kullakin tietokoneella mitattu näkymän koko) ja Tapon suoran kuvan kanssa, ja työpöytäversion lähdekoodit ovat 9. lokakuuta 2026 alkaen forkin päähaarassa `immuch360` (katso [Windows-tietokoneella](#on-a-windows-computer-immuch360-desktop-preview)). Seuraavaksi forkin oman työnkulun libmpv vuoden 2024 version tilalle ja jokaisen toiminnon käsin testaus Windows-tietokoneella oikeilla tiedostoilla, molemmilla näytöillä ja oikealla kameralla korjauksineen; sitten Spatial 2.5D verkkokameralla; sitten Linux ja macOS; sitten asennusohjelma, allekirjoitettu koontiversio ja automaattiset päivitykset.
 - **Google Play**: koontiversio 20 on ollut julkaistuna 7. lokakuuta 2026 lähtien, koontiversion 18 sijaan; TV-sivu on ollut Googlen tarkastettavana 9. lokakuuta 2026 lähtien. Koontiversio 21 ei muuta mitään puhelimissa ja tableteissa.
 - **App Store**: versio 3.3.0 odottaa Applen tarkastusta; siinä on koontiversion 11 ominaisuudet, joten lähetys Immichiin ja videodekooderien tarkistus (koontiversio 15) sekä käsittelemättömät Insta360-tiedostot (koontiversio 16) tulevat seuraavassa App Store -päivityksessä. Linkki lisätään tänne, kun se on julkaistu.
 - **Meta Horizon Store**: Meta hyväksyi sivun 7. lokakuuta 2026 koontiversion 14 kanssa. Koontiversio 21 on lähetetty sen ensimmäisenä päivityksenä: se tuo kaiken koontiversion 14 jälkeen tulleen (lähetykset jaosta Immichiin, videolähde valittuna sen mukaan, mitä lasit pystyvät purkamaan, Insta360-, GoPro- ja DJI-raakatiedostot, DLNA, puhelimen jakaminen, Applen tilakuvat, Plex Media Server -kirjastot, Tapo-kamerat), ja kauppa listaa sen Quest 2:lle, Quest Prolle, Quest 3:lle ja 3S:lle. Kaupan linkki lisätään tänne, kun sivu on julkinen; sivuladattu kopio on ensin poistettava (katso [Asentaminen](#install)).

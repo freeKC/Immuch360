@@ -15,13 +15,13 @@ Han er laga for deg som fotograferer med eit 360°-kamera (Insta360, GoPro MAX, 
 
 <div align="center">
 
-| Plattform | Kvar du får han | Status 9. oktober 2026 |
+| Plattform | Kvar du får han | Status 10. oktober 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonar og nettbrett | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 20 på Google Play sidan 7. oktober 2026, build 21 på GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | versjon 3.3.0 ventar på gjennomgangen til Apple; [bygg han sjølv](#build-it-yourself) i mellomtida |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [APK](#meta-quest-3) · Horizon Store | oppføringa er godkjend, build 21 til gjennomgang hos Meta |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 21 på GitHub; Google Play-oppføringa for TV-ar har vore til gjennomgang hos Google sidan 9. oktober 2026 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Førehandsversjon som ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | skrivebordsbuild 2 på Windows: bilete og flate videoar, 360°-videoar kjem etterpå; macOS og Linux seinare, frå dei same kjeldene |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Førehandsversjon som ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | skrivebordsbuild 3 på Windows: bilete, flate videoar og 360°-videoar; macOS og Linux seinare |
 
 *Statusane blir oppdaterte ved kvar utgjeving; detaljane står i [Kvar du får han](#where-to-get-it).*
 
@@ -30,7 +30,7 @@ Han er laga for deg som fotograferer med eit 360°-kamera (Insta360, GoPro MAX, 
 - 🌐 **Innebygd 360°**<br>Bilete og videoar som ei kule du ser deg rundt i, med gyroskopet, rå kamerafiler inkludert (Insta360 frå build 16, GoPro og DJI frå build 18). Også ein gratis videoavspelar: flat, 360°, 3D, VR180
 - 👓 **Innebygd 3D**<br>Stereoskopisk 360° og VR180, topp og botn eller side om side, og romlege bilete frå Apple (frå build 19): ekte 3D i headsettet, eitt auge på ein telefon
 - 🎥 **Innebygd 2.5D**<br>Djupn på ein flat skjerm frå ein stereoskopisk video, biletet følgjer hovudet ditt (eksperimentelt, telefonar og nettbrett)
-- 📱 **Android, iOS, Quest, TV**<br>Éin app på telefonar, nettbrett og headsetta Quest 2, Pro, 3 og 3S, ekte 3D i headsettet, frå build 20 på Android TV med fjernkontrollen, og ein førehandsversjon for Windows med bilete og flate videoar
+- 📱 **Android, iOS, Quest, TV**<br>Éin app på telefonar, nettbrett og headsetta Quest 2, Pro, 3 og 3S, ekte 3D i headsettet, frå build 20 på Android TV med fjernkontrollen, og ein førehandsversjon for Windows med bilete, flate videoar og 360°-videoar
 - 🔌 **Med eller utan tenar**<br>Immich-tenaren din, eller telefonen sitt eige galleri, utan konto
 - 🗄️ **Nettverksdelingar**<br>Samba (SMB), WebDAV og, frå build 19, DLNA-medietenarar, funne på nettverket og lesne direkte, ingenting blir lasta ned, og sende til Immich når du vel det. Frå build 19 deler ein telefon også sitt eige galleri med headsettet
 - 📺 **På TV-en**<br>Frå build 20 den same APK-en på Android TV og Google TV: 360°-bilete og -videoar, tenaren din og delingane dine, med fjernkontrollen
@@ -84,7 +84,7 @@ Han er laga for deg som fotograferer med eit 360°-kamera (Insta360, GoPro MAX, 
 - **"Eg vil sjå 360°-bileta og -videoane mine, og videoane på NAS-en eller Plex-tenaren min, på TV-en, med fjernkontrollen."** Sjå [Sjå på TV-en](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Eg finn ikkje 360°-opptaka mine mellom alle dei andre."** Sjå [360°-lista](#find-your-360-shots-the-360-list).
 - **"360°-videoen min hakkar, eller spelar av ein uskarp kopi."** Sjå [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters).
-- **"Eg vil ha 360°-bileta mine og Immich-biblioteket mitt på Windows-PC-en, med bileta og videoane i mappene på PC-en, NAS-en og Plex-tenaren min, og PC-en delt med headsettet."** Sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview) (ein førehandsversjon: førebels bilete og flate videoar, 360°-videoar seinare).
+- **"Eg vil ha 360°-bileta mine og Immich-biblioteket mitt på Windows-PC-en, med bileta og videoane i mappene på PC-en, NAS-en og Plex-tenaren min, og PC-en delt med headsettet."** Sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview) (ein førehandsversjon: bilete og flate videoar, og frå skrivebordsbuild 3 360°-, 3D-, VR180- og rå 360°-videoar og Tapo-direktebiletet).
 - **"Held eg på det Immich-appen gjer?"** Ja, med to små endringar, sjå [Alt anna er Immich](#everything-else-is-immich).
 
 Når ein funksjon er ny, står det i teksten frå kva build han finst. GitHub-utgivinga har alltid den nyaste builden, butikkane kjem etter: sjå [Kvar du får han](#where-to-get-it).
@@ -127,6 +127,7 @@ Samansette 360°-filer fungerer overalt: eksportar frå Insta360-appen eller Stu
 
 Avspelaren spelar av fila som er lagra på telefonen, eller fila på ei nettverksdeling, når ho finst. Elles straumar han frå tenaren din: den omkoda straumen som standard, eller originalen om du ber om det i Innstillingar, Asset Viewer (Biletvisar), Videokjelde (frå build 15; før det brytaren "Force original video" (Tving original video)), sjå [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### Ei 360°-fil som blir vist flat: Vis som 360°
 
 Nokre 360°-filer har inga projeksjonsmerking, så tenaren markerer dei ikkje som 360°, og dei blir viste flate.
@@ -356,6 +357,7 @@ Frå build 20 legg Immuch360 til eit Tapo-kamera ved sida av nettverksdelingane.
 8. Trykk på "Test kameraet". Det viser "Opptak: (modell), fastvare (versjon)" med tilstanden til minnekortet, og "Direktebilete: (video), lyd (lyd)", eller kva som feila for kvar av dei.
 9. Trykk på Lagre. Kameraet blir vist under "Kamera", etter delingane, med modellen når han er kjend og `tapo://` med adressa.
 
+<a id="watch-it-live"></a>
 ### Sjå det direkte
 
 1. Trykk på kameraet. Direktebiletet er øvst på sida: "Koplar til kameraet", deretter biletet med Direkte-merket.
@@ -755,9 +757,9 @@ Den gjeldande builden, build 21 (versjon 3.3.0-rc.0, buildnummer 3030019), er ba
 | Send filene på ei deling til Immich; einingsfiler sende for hand blir rekna som sikkerheitskopierte | ❌ berre einingsfiler | ✅ frå build 15 |
 | Del denne telefonen på nettverket, for headsettet | ❌ | ✅ frå build 19, Android og iOS |
 | Plex Media Server-bibliotek spelte av frå originalfilene, heime og borte, utan plex.tv | ❌ | ✅ frå build 20, alle visingar, på telefonar, nettbrett, Quest og TV-ar |
-| Tapo-kamera: direktebiletet, og opptaka på minnekortet sende til Immich når du vel det | ❌ | ✅ frå build 20: opptak overalt, direkte på Android, Android TV og Quest |
+| Tapo-kamera: direktebiletet, og opptaka på minnekortet sende til Immich når du vel det | ❌ | ✅ frå build 20: opptak overalt, direkte på Android, Android TV, Quest og, frå skrivebordsbuild 3, Windows |
 | Android TV og Google TV, styrt med fjernkontrollen, i den same APK-en | ❌ ikkje ein TV-app | ✅ frå build 20 |
-| Den same appen på ei Windows-datamaskin | ❌ berre telefonar og nettbrett | ✅ førehandsversjon, bilete og flate videoar |
+| Den same appen på ei Windows-datamaskin | ❌ berre telefonar og nettbrett | ✅ førehandsversjon: bilete, flate videoar og 360°-videoar (skrivebordsbuild 3) |
 | Rå Insta360 .insp-bilete og .insv-videoar med eitt spor | ❌ flatt | ✅ frå build 16 |
 | Rå videoar med eitt objektiv per spor eller per fil (Insta360 X4, X4 Air, X5, X6, X3-par, GoPro .360, DJI .osv) | ❌ flatt eller feil | ✅ frå build 18 |
 | Dobbel fiskeauge-.dng | ❌ flatt | ❌ ikkje enno |
@@ -787,7 +789,7 @@ Den gjeldande builden, build 21 (versjon 3.3.0-rc.0, buildnummer 3030019), er ba
 - **Plex Media Server**: kontrollert frå ei datamaskin mot ein ekte Plex Media Server 1.42.1 (samankopling, mapper, byteområde, miniatyrbilete, adressa utanfor heimen); ikkje kontrollert på ei eining enno.
 - **Tapo-kamera**: kontrollert mot eit simulert kamera; ikkje kontrollert med eit ekte kamera enno.
 - **Android TV og Google TV**: kontrollert med automatiserte testar; ikkje kontrollert på ein TV enno.
-- **Den same appen på ei Windows-datamaskin**: 656 av dei 663 automatiserte skrivebordstestane består på Windows (7 blir hoppa over med vilje), og på ein Windows 11-PC startar appen, opnar ei lagra økt på ein Immich-tenar, synkroniserer, spelar av ein video og blir lukka ryddig; testen av kvar funksjon for hand pågår.
+- **Den same appen på ei Windows-datamaskin**: skrivebordsbuild 3 består 855 av dei 863 automatiserte skrivebordstestane sine på Windows (8 blir hoppa over med vilje) og heile testpakken til appen; på ein Windows 11-PC startar appen, opnar ei lagra økt på ein Immich-tenar, synkroniserer, spelar av ein video og blir lukka ryddig, og 360°-avspelaren er køyrd med syntetiske klipp i 4K, 5,7K og 8K på begge grafikkbrikkene i ein berbar PC utan krasj. Testen av kvar funksjon for hand, med ekte 360°-filer og eit ekte Tapo-kamera, pågår.
 - **Rå Insta360 .insp-bilete og .insv-videoar med eitt spor**: bilete kontrollerte mot Insta360 Studio-eksportar av X3-filer, videoar på ein Android-emulator med ei X3-fil i låg oppløysing; ikkje køyrt på ein iPhone enno.
 - **Rå videoar med eitt objektiv per spor eller per fil**: parsarar og samansetjing kontrollerte på ekte filer frå X4, X3-par, GoPro MAX og Osmo 360; avspeling er einingstesten for build 18 og 19.
 - **Dobbel fiskeauge-.dng**: planlagt.
@@ -842,17 +844,19 @@ Immuch360 er eit galleri, og også ein gratis mediespelar: han spelar av det den
   - iPhone, iPad: innebygd SceneKit-avspelar på ei kule, gyroskop, val av lydspor, bufferindikator; spel av og pause, inga tidslinje enno.
   - Meta Quest: oppslukande, ekte 3D for stereoskopiske filer, tidslinje med hopp på 10 sekund, førre og neste medium.
   - Android TV, Google TV: Media3-avspelaren frå telefonane, dreidd med piltastane.
-  - Windows: ikkje enno, vist flatt førebels.
+  - Windows (frå skrivebordsbuild 3): den eigne 360°-avspelaren til appen (libmpv), dreidd med musa eller piltastane, zooma med hjulet, spoling, val av lydspor, bufringsindikator; jamn på ei dedikert grafikkbrikke, høgst 2880 pikslar brei og tregare for 5,7K H.264 på ei integrert brikke.
 - **3D 360° (topp og botn, side om side)**
   - Android-telefonar: venstre auge, oppsettknapp.
   - iPhone, iPad: det same.
   - Meta Quest: kvart auge får sin eigen halvdel av biletet.
   - Android TV, Google TV: venstre auge, oppsettknapp.
+  - Windows: bilete som på telefonar; videoar frå skrivebordsbuild 3, venstre auge, oppsettknapp, jamt på ei dedikert grafikkbrikke, med avgrensingar på ei integrert brikke.
 - **VR180-bilete og -videoar (halvkule)**
   - Android-telefonar: halvkule, knappen 360°/180°.
   - iPhone, iPad: det same.
   - Meta Quest: oppslukande halvkule.
   - Android TV, Google TV: halvkule, knappen 360°/180°.
+  - Windows: bilete som på telefonar; videoar frå skrivebordsbuild 3, halvkule, knappen 360°/180°, jamt på ei dedikert grafikkbrikke, med avgrensingar på ei integrert brikke.
 - **Spatial 2.5D (djupn på flat skjerm frå ein stereoskopisk video)**
   - Android-telefonar: innebygd avspelar, hovudsporing med frontkameraet.
   - iPhone, iPad: det same.
@@ -878,16 +882,19 @@ Immuch360 er eit galleri, og også ein gratis mediespelar: han spelar av det den
   - iPhone, iPad: sett saman av ein SceneKit-shader.
   - Meta Quest: oppslukande, sett saman av den same GPU-effekten.
   - Android TV, Google TV: som på telefonar.
+  - Windows (frå skrivebordsbuild 3): sett saman på grafikkbrikka i 360°-avspelaren til appen, jamt på ei dedikert brikke, med avgrensingar på ei integrert brikke.
 - **Rå videoar med eitt objektiv per spor eller per fil (frå build 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-par, GoPro .360, DJI .osv**
   - Android-telefonar: to maskinvaredekodarar samtidig, éin per objektiv (frå build 19 programvaredekodarar på ei eining utan maskinvaredekodar, opptil 2048x2048 per objektiv), og ein GL-kompositør som set dei saman til kula; eitt objektiv, så den omkoda straumen, så videoen utan samansetjing, når eininga ikkje kan køyre to.
   - iPhone, iPad: ein eigen AVFoundation-kompositør med Metal.
   - Meta Quest: oppslukande, dei same to dekodarane og kompositøren (panel på 3840x1920).
   - Android TV, Google TV: som på telefonar, når TV-en køyrer to dekodarar samtidig.
+  - Windows (frå skrivebordsbuild 3): begge objektiva side om side i éin avspelar, deretter sette saman, når datamaskina heng med (målt på hennar eiga avspeling; på testmaskina eit X3-par berre på den dedikerte brikka); elles stega til telefonane: eitt objektiv, den omkoda straumen, LRV-kopien i låg oppløysing frå kameraet, videoen utan samansetjing.
 - **Direktebilete frå Tapo-kamera (frå build 20)**
   - Android-telefonar: Media3 RTSP-avspelar: SD på sida, HD i fullskjerm, lydknapp.
   - iPhone, iPad: ikkje enno: eit kort seier at det kjem seinare.
   - Meta Quest: i vindauget, i HD.
   - Android TV, Google TV: som på telefonar.
+  - Windows (frå skrivebordsbuild 3): libmpv-avspelaren, SD på sida, HD i fullskjerm, lydknapp.
 - **Opptak frå Tapo-kamera (frå build 20)**
   - Android-telefonar: henta frå minnekortet til ein H.264-video med lyd, deretter spelt av med spoling.
   - iPhone, iPad: det same.
@@ -896,14 +903,14 @@ Immuch360 er eit galleri, og også ein gratis mediespelar: han spelar av det den
 
 Oppføringane for Android TV og Google TV, frå build 20, er ikkje kontrollerte på ein TV enno, sjå [Sjå på TV-en](#watch-on-your-tv-android-tv-and-google-tv); kameraoppføringane er ikkje kontrollerte med eit ekte kamera enno.
 
-På Windows viser førehandsversjonen av Immuch360 Desktop bileta, flate og 360°, også rå .insp-bilete frå Insta360, med mus og tastatur, og frå skrivebordsbuild 2 spelar han av flate videoar, frå tenaren, mappene på PC-en, delingane, Plex og Tapo-opptaka; 360°-, 3D-, VR180- og rå 360°-videoar blir førebels viste flatt eller som ein plasshaldar (sjå [Ikkje på plass enno](#not-there-yet)).
+På Windows viser førehandsversjonen av Immuch360 Desktop bileta, flate og 360°, også rå .insp-bilete frå Insta360, med mus og tastatur. Frå skrivebordsbuild 2 spelar han av flate videoar, frå tenaren, mappene på PC-en, delingane, Plex og Tapo-opptaka, og frå skrivebordsbuild 3 spelar han av 360°-, 3D-, VR180- og rå 360°-videoar frå dei same kjeldene i sin eigen 360°-avspelar, og Tapo-direktebiletet. 360°-avspelaren går jamt på ei dedikert grafikkbrikke og har avgrensingar på ei integrert (sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Immich-tenaren din**: originalen eller den omkoda straumen frå tenaren, slik Innstillingar, Asset Viewer, Videokjelde seier (sjå [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters)). Same konto som nettappen.
 - **Sjølve telefonen eller headsettet**: "Bruk utan tenar" på innloggingssida, eller oppføringa On this device i Bibliotek-fana.
 - **Ein NAS eller ei datamaskin**: SMB- og WebDAV-delingar, og frå build 19 DLNA-medietenarar, funne på nettverket, lesne direkte (ein SMB-video over opptil seks tilkoplingar), ingenting kopiert; frå build 15 kan filene du vel bli sende til Immich-kontoen din.
 - **Ein annan telefon (frå build 19)**: "Del denne telefonen på nettverket" på den telefonen: headsettet, eller ein kvar WebDAV-klient på nettverket, les albuma, månadene og 360°-media.
 - **Ein Plex Media Server (frå build 20)**: bilet-, film- og TV-seriebiblioteka etter mappe, originalfilene lesne direkte over HTTPS kontrollert mot det eigne sertifikatet til tenaren, heime eller gjennom adressa utanfor heimen, på alle plattformer; sjå [Plex Media Server, utan plex.tv](#plex-media-server-without-plextv).
-- **Eit Tapo-kamera (frå build 20)**: direktebiletet med kamerakontoen (Android, Android TV, Quest), og opptaka på minnekortet med passordet til TP-Link-kontoen (alle plattformer), berre på det lokale nettverket; sjå [Tapo-kamera](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Eit Tapo-kamera (frå build 20)**: direktebiletet med kamerakontoen (Android, Android TV, Quest, og Windows frå skrivebordsbuild 3), og opptaka på minnekortet med passordet til TP-Link-kontoen (alle plattformer), berre på det lokale nettverket; sjå [Tapo-kamera](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **Mappene på ei Windows-datamaskin (førehandsversjon for skrivebord)**: mappene du vel i Immuch360 Desktop, lesne i staden for galleriet på ein telefon; datamaskina kan også dele dei med headsettet, sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Immich-biblioteket ditt ligg på ein tenar, andre bilete og videoar ligg i mappe
 
 På ei datamaskin tilbyr Immich nettappen sin i ein nettlesar. **Kva Immuch360 Desktop legg til**: mappene på PC-en utan tenar eller konto, SMB-, WebDAV-, DLNA- og Plex-delingar som ein blar i og spelar av frå appen, rå .insp-bilete frå Insta360 opna som ei kule, og PC-en delt med ein Meta Quest heime.
 
-Dette er ein førehandsversjon: frå skrivebordsbuild 2 fungerer bilete og flate videoar; 360°-, 3D- og VR180-videoar kjem med dei neste skrivebordsbuildane. Sidan 9. oktober 2026 ligg skrivebordskjeldene i hovudgreina til forken, `immuch360`, så telefonar, headsett, TV-ar og datamaskiner blir leverte frå dei same kjeldene. Appane for telefon, nettbrett, Quest og TV blir ikkje endra av han og held på namnet Immuch360.
+Dette er ein førehandsversjon: bilete og flate videoar fungerer frå skrivebordsbuild 2, og frå skrivebordsbuild 3 360°-videoavspelaren (360°-, 3D-, VR180- og rå 360°-videoar) og direktebiletet frå Tapo-kamera; stega nedanfor som krev build 3, seier frå om det. Sidan 9. oktober 2026 ligg skrivebordskjeldene i hovudgreina til forken, `immuch360`, så telefonar, headsett, TV-ar og datamaskiner blir leverte frå dei same kjeldene. Appane for telefon, nettbrett, Quest og TV blir ikkje endra av han og held på namnet Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Last ned og installer på Windows
 
-Den gjeldande builden er GitHub-førehandsutgivinga [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Fila er `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (om lag 57 MB, 78 filer når ho er pakka ut, med videoavspelaren og `licenses`-mappa hans), med `SHA256SUMS.txt` for å kontrollere ho. Han vart bygd frå hovudgreina, `immuch360`, ved commit 5b723bd25: kjeldene til telefonbuild 21 pluss datamaskinversjonen. Han krev Windows 10 eller 11, 64 bit.
+Den gjeldande builden er GitHub-førehandsutgivinga [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Fila er `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (om lag 57 MB, 79 filer når ho er pakka ut, med videoavspelaren og `licenses`-mappa hans), med `SHA256SUMS.txt` for å kontrollere ho. Han vart bygd frå hovudgreina, `immuch360`, etter at 360°-videoavspelaren for datamaskina vart fletta inn i ho, ved den commiten som utgivingsnotata nemner: kjeldene til telefonbuild 21 pluss datamaskinversjonen. Han krev Windows 10 eller 11, 64 bit.
 
-1. Last ned ZIP-fila og pakk ho ut kvar som helst, til dømes i Dokument.
-2. Start `immuch360.exe` frå den utpakka mappa. Hald mappa samla: programmet treng filene ved sida av seg, også videoavspelaren.
+1. Last ned ZIP-fila og pakk ho ut kvar som helst, til dømes i Dokument. For å byte ut skrivebordsbuild 2 slettar du mappa hans eller pakkar ut i ei ny: innlogginga, mappene og innstillingane dine ligg i Windows-profilen din, ikkje i den mappa.
+2. Start `immuch360.exe` frå den utpakka mappa. Hald mappa samla: programmet treng filene ved sida av seg, mellom dei `libmpv-2.dll`, videoavspelaren, og `immuch_desktop_video.dll`, som les dekodarane til grafikkbrikka.
 3. Filene er ikkje signerte enno, så Windows SmartScreen kan vise "Windows beskyttet PC-en din": vel "Mer informasjon", deretter "Kjør likevel". Der Smart App Control er slått på, blokkerer han usignerte program.
 4. Vent på vindauget. Den første oppstarten av ein ny build tek frå 10 sekund til om lag eitt minutt, truleg medan Microsoft Defender skannar dei nye filene: ikkje start appen på nytt i mellomtida. Dei neste oppstartane tek eit sekund eller to.
 5. På innloggingssida loggar du inn på Immich-tenaren din med adressa, e-postadressa og passordet ditt, eller klikkar på "Bruk utan tenar".
 
-For å kontrollere ZIP-fila køyrer du `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` i ein ledetekst, i mappa med nedlastinga: resultatet er det som står i `SHA256SUMS.txt`. Det finst enno ikkje noko installasjonsprogram og inga automatisk oppdatering: følg med på sida [Releases](https://github.com/freeKC/Immuch360/releases), og pakk ut neste build på same måten.
+For å kontrollere ZIP-fila køyrer du `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` i ein ledetekst, i mappa med nedlastinga: resultatet er det som står i `SHA256SUMS.txt`. Det finst enno ikkje noko installasjonsprogram og inga automatisk oppdatering: følg med på sida [Releases](https://github.com/freeKC/Immuch360/releases), og pakk ut neste build på same måten.
 
 ### Kva førehandsversjonen gjer
 
@@ -993,7 +1000,9 @@ For å kontrollere ZIP-fila køyrer du `certutil -hashfile Immuch360-Desktop-3.3
 - **Opplasting og sikkerheitskopi** frå desse mappene til Immich-tenaren din, medan appen er open.
 - **360°-bilete som ei kule**, med mus og tastatur; dei rå .insp-bileta frå Insta360-kamera blir opna som på telefonar.
 - **Flate videoar** (frå skrivebordsbuild 2): videoane i mappene dine, på Immich-tenaren din (originalen eller den omkoda straumen, sjå [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters)), på SMB-, WebDAV- og DLNA-delingar, på Plex-tenarar og Tapo-opptaka blir spela av i vindauget, med kontrollane frå telefonane (spel av, pause, tidslinja), ein bufringsindikator, og ein meny med lydspora for ein video som har fleire. Videoane i mappene dine og på delingane viser eit bilete frå videoen som miniatyrbilete, i staden for eit filmikon.
-- **Nettverksdelingar**: Samba (SMB), WebDAV og DLNA-medietenarar, og Plex-tenarar utan plex.tv, ein blar i dei som på telefonar: bileta blir opna og videoane blir spela av. For Tapo-kamera, opptaka på minnekortet: lista, henting av eit klipp og avspeling av det.
+- **360°-, 3D- og VR180-videoar** (frå skrivebordsbuild 3): 360°-knappen opnar dei i 360°-avspelaren til appen, i vindauget eller i fullskjerm, frå alle kjeldene for flate videoar, dreidde med mus og tastatur, med 3D- og 360°/180°-knappane frå telefonane (ein 3D-video viser venstre auge, som på telefonar), spoling, menyen for lydspor og ein bufringsindikator.
+- **Rå 360°-videoar** (frå skrivebordsbuild 3): Insta360 .insv-filer, med begge objektiva i eitt spor, i to spor (X4 og seinare) eller i to filer (X3-par), GoPro .360- og DJI .osv-filer, sette saman av appen på grafikkbrikka medan dei blir spela av, med kalibreringa i fila, som på telefonar.
+- **Nettverksdelingar**: Samba (SMB), WebDAV og DLNA-medietenarar, og Plex-tenarar utan plex.tv, ein blar i dei som på telefonar: bileta blir opna og videoane blir spela av. For Tapo-kamera, opptaka på minnekortet: lista, henting av eit klipp og avspeling av det; og frå skrivebordsbuild 3 direktebiletet.
 - **Del denne datamaskina på nettverket**: albuma, månadene og 360°-media i mappene dine, skriveverna, for ein Meta Quest eller ei anna eining heime, slik ein telefon deler seg sjølv.
 - **Filer**: nedlastingar frå tenaren hamnar i ei mappe du vel, "Lagre i ei mappe" held på ein kopi av dei valde bileta og videoane, og Logs-sida (Loggar) har "Lagre loggar i ei fil".
 
@@ -1005,9 +1014,28 @@ For å kontrollere ZIP-fila køyrer du `certutil -hashfile Immuch360-Desktop-3.3
 4. **Gå frå bilete til bilete**: i eit flatt bilete går venstre- og høgrepila, eller vinkelteikna som blir viste i kantane medan musa rører seg, til førre og neste bilete. Bokstavar som blir skrivne i skildringsfeltet, blir verande i teksten.
 5. **Spel av ein video**: opne han frå tidslinja, ei mappe, ei deling, Plex eller opptaka til eit Tapo-kamera; han blir spela av i vindauget. Enter, eller spel av/pause-tasten på tastaturet, set på pause og spelar av igjen. Medan han blir spela av, hoppar venstre- og høgrepila, eller J og L, 10 sekund bakover eller framover; på pause går pilene til førre og neste. F eller F11 byter til fullskjerm, som for bilete. Knappen "Lydspor" vel mellom lydspora til ein video som har fleire.
 6. **Når ein video stoppar**: ein video på pause held seg på pause når du kjem tilbake til vindauget. Ein video som blir avbroten før slutten, til dømes når delinga eller tenaren sluttar å svare, seier frå om det: opne han igjen, så held han fram der han stoppa, på pause. Ei spelelistefil som finst i ei mappe eller ei deling, blir ikkje følgd.
-7. **Del datamaskina med headsettet**: opne Bibliotek, deretter Nettverksdelingar; den første flisa er "Del denne datamaskina på nettverket", datamaskinsida av [Del denne telefonen på nettverket](#share-this-phone-on-the-network). Slå på "Del bilete og videoar på nettverket", og legg deretter til datamaskina i headsettet slik den delen skildrar. Delinga stoppar når appen blir lukka eller etter ein time utan bruk.
-8. **Tillat nettverket**: Windows kan spørje om Immuch360 Desktop kan bruke nettverket. Tillat det på private nettverk, elles finn ikkje headsettet datamaskina. På eit nettverk Windows merkjer som offentleg (ein kafé, eit hotell), eller eit nettverk Windows ikkje kan avgjere typen til, startar ikkje delinga med mindre du vel "Del for denne økta", og datamaskina kunngjer seg berre på eit nettverk ho deler på.
-9. **Innstillingar, "Denne datamaskina"**: mappene, nedlastingsmappa, nettverkskortet som blir brukt til å finne delingar og dele datamaskina (når ho har fleire, til dømes Wi-Fi og Ethernet), og klarerte sertifikat: sertifiseringsinstansen til din eigen tenar, som ei PEM-fil, for ei HTTPS-adresse Windows ikkje stolar på av seg sjølv. Klientsertifikat blir importerte i Innstillingar, Avansert, som på telefonar.
+7. **Spel av ein 360°-video** (frå skrivebordsbuild 3): opne videoen og klikk på 360° i den øvste lina, som på ein telefon; for ei 360°-fil som tenaren ikkje merkjer, først "Vis som 360°" i ⋮-menyen, sjå [Ei 360°-fil som blir vist flat](#a-360-file-that-shows-flat-view-as-360). 360°-avspelaren blir opna i vindauget. Dra med musa for å sjå deg rundt (visinga held fram med å dreie litt etter eit raskt drag), zoom med hjulet, + og - eller Page Up og Page Down, drei med piltastane haldne nede. Space, eller spel av/pause-tasten på tastaturet, set på pause og spelar av igjen; J og L hoppar 10 sekund bakover eller framover; Home går tilbake til starten; M slår lyden av og på. F, F11 eller eit dobbeltklikk byter til fullskjerm; Escape går ut av fullskjerm, og lukkar deretter avspelaren. Kontrollane (lukk, tittelen, 360°/180°, 3D, lydsporet og fullskjerm øvst; spel av, 10 sekund bakover og framover, tidslinja og lyden nedst) blir gøymde saman med musepeikaren etter 3 sekund med avspeling, og kjem tilbake når musa rører seg eller ein tast blir trykt; Tab går frå den eine til den neste.
+8. **3D og VR180**: i 360°-avspelaren byter 3D-knappen mellom "Mono (ikkje 3D)", "3D, topp og botn" og "3D, side om side", og 360°/180°-knappen byter mellom heil kule og halvkula i VR180, som i [3D og VR180](#3d-and-vr180-photos-and-videos). Ein 3D-video viser venstre auge.
+9. **Rå 360°-videoar** (frå skrivebordsbuild 3): opne råfila og klikk på 360°, som på ein telefon, sjå [Rå filer frå 360°-kamera](#raw-360-camera-files-without-the-cameras-app); hald dei to filene i eit X3-par saman. Ei fil med begge objektiva i eitt spor blir sett saman medan ho blir spela av. Ei fil med eitt objektiv per spor eller per fil spelar av begge objektiva side om side i éin avspelar når datamaskina heng med: dei første sekunda av ein slik video blir målte, og resultatet blir teke vare på for dei neste videoane av den typen (ein metode som viste seg for treig, blir prøvd igjen etter 14 dagar). Når datamaskina ikkje heng med, går avspelaren gjennom stega til telefonane, med meldingane deira: eitt objektiv, halve kula svart; den omkoda straumen frå tenaren; LRV-kopien i låg oppløysing som kameraet tok opp ved sida av fila, om han finst; videoen utan samansetjing. Ein rå video har ingen 3D-knapp og ingen 360°/180°-knapp.
+10. **Direktebiletet frå eit Tapo-kamera** (frå skrivebordsbuild 3): opne kameraet som på ein telefon, sjå [Sjå det direkte](#watch-it-live). Sida spelar av SD-straumen og fullskjerm HD-straumen, med knappane til telefonen på biletet: lyden, av til å byrje med, SD eller HD, og "Fullskjerm". Ein straum som fell ut (kameraet startar på nytt, Wi-Fi-en fell ut), kjem tilbake av seg sjølv, prøvd igjen i om lag halvanna minutt medan det siste biletet blir ståande på skjermen. Ein kamerakonto som kameraet avviser, blir meld og ikkje prøvd igjen, sidan mislukka innloggingar tel mot sperringa til kameraet.
+11. **Del datamaskina med headsettet**: opne Bibliotek, deretter Nettverksdelingar; den første flisa er "Del denne datamaskina på nettverket", datamaskinsida av [Del denne telefonen på nettverket](#share-this-phone-on-the-network). Slå på "Del bilete og videoar på nettverket", og legg deretter til datamaskina i headsettet slik den delen skildrar. Delinga stoppar når appen blir lukka eller etter ein time utan bruk.
+12. **Tillat nettverket**: Windows kan spørje om Immuch360 Desktop kan bruke nettverket. Tillat det på private nettverk, elles finn ikkje headsettet datamaskina. På eit nettverk Windows merkjer som offentleg (ein kafé, eit hotell), eller eit nettverk Windows ikkje kan avgjere typen til, startar ikkje delinga med mindre du vel "Del for denne økta", og datamaskina kunngjer seg berre på eit nettverk ho deler på.
+13. **Innstillingar, "Denne datamaskina"**: mappene, nedlastingsmappa, nettverkskortet som blir brukt til å finne delingar og dele datamaskina (når ho har fleire, til dømes Wi-Fi og Ethernet), og klarerte sertifikat: sertifiseringsinstansen til din eigen tenar, som ei PEM-fil, for ei HTTPS-adresse Windows ikkje stolar på av seg sjølv. Klientsertifikat blir importerte i Innstillingar, Avansert, som på telefonar.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### 360°-videoar og grafikkbrikka
+
+I 360°-avspelaren (frå skrivebordsbuild 3) teiknar grafikkbrikka visinga du ser på frå kvart bilete i videoen. Videotillegget lèt libmpv teikne kvart bilete inn i eit bilete av den valde storleiken, og deretter teiknar det eigne teiknepasset til appen ut frå det den delen av kula du ser på. Å dreie visinga endrar ein verdi i det passet, ikkje avspelaren: å dra kostar ikkje noko minne, og ein video på pause blir dreidd utan at noko blir dekoda.
+
+Appen måler dei første sekunda av kvar 360°-video og vel kor stort bilete brikka arbeider med: heile biletet på ei dedikert brikke, høgst 2880 pikslar breitt på ei brikke som er bygd inn i prosessoren (Windows fortel appen kva type det er, så Intel Arc-brikka i ein berbar PC med Core Ultra blir rekna som innebygd), eitt steg mindre når brikka ikkje heng med. Det appen målte, blir teke vare på for dei neste videoane av same type (kodek, storleik, biletfrekvens og dekodar), ikkje for kvar video.
+
+Når sjølv det minste steget ikkje er jamt, seier avspelaren "Dette grafikkortet kan ikkje vise 360°-visinga av denne videoen jamt"; når det er langt unna, eller når brikka ikkje kan teikne visinga i det heile (ingen OpenGL ES 3.0, ein drivar som avviser det), blir videoen spela av flatt og avspelaren seier kvifor. Ein video som vart spela av flatt, blir ikkje spela av flatt neste gong: den neste videoen av same type blir målt på nytt.
+
+Når det er dekodinga av ein tenarvideo som ikkje heng med, ikkje teikninga (ein video som prosessoren dekodar, som 5,7K H.264), byter avspelaren til den omkoda straumen frå tenaren frå der han var, med meldinga frå telefonane: "Spelar av den omkoda straumen: originalen (kodek og storleik) går over det denne eininga kan dekode".
+
+- **Bruk den dedikerte grafikkbrikka i ein berbar PC.** Windows køyrer appen på den integrerte brikka med mindre noko anna er sagt. I Windows-innstillingane, System, Skjerm, Grafikk, legg til `immuch360.exe` og vel "Høy ytelse", og start deretter appen på nytt. På testmaskina (ei Intel UHD-brikke og ein NVIDIA RTX 4060 Laptop) teikna NVIDIA-brikka 360°-videoar i 4K, 5,7K og 8K i full storleik og med 30 bilete i sekundet medan visinga vart dreidd. Intel-brikka teikna dei høgst 2880 pikslar breie: ein 4K H.264- og ein 8K HEVC-video med om lag 30 bilete i sekundet med ein libmpv-build frå 2026, ein 4K-video med 23 til 27 med libmpv frå 2024 i media-kit (sjå [Ikkje på plass enno](#not-there-yet)), og ein 5,7K H.264-video, som prosessoren dekodar, med om lag 20: frå tenaren byter avspelaren då til den omkoda straumen; ein video utan omkoda straum, frå ei mappe til dømes, blir spela vidare med meldinga "Dette grafikkortet kan ikkje vise 360°-visinga av denne videoen jamt".
+- **Vel gjengivinga sjølv.** I Innstillingar, Avansert, slå på "Troubleshooting (Feilsøking)": ei oppføring "Gjengiving av 360°-video" blir vist, Automatisk som standard. Ho tilbyr også "Tillegg, full storleik", "Tillegg, høgst 4096 brei", "Tillegg, høgst 2880 brei" og "Flat, utan 360°-visinga", for den neste 360°-videoen du opnar. Under henne viser "Sist målt" storleiken den siste 360°-videoen vart teikna i, bileta i sekundet, grafikkbrikka og dekodaren: kopier det inn i ein feilrapport. Å velje "Automatisk" igjen, sjølv når det alt er valt, gløymer det som vart målt, og dei neste 360°-videoane blir målte på nytt.
+- **Kva brikka dekodar.** Innstillingar, Avansert, "Videodekodarar på denne eininga" viser kva grafikkbrikka som er i bruk, dekodar, slik Direct3D 11 rapporterer det, og appen rettar den lista med det han målte under avspeling: innstillinga Videokjelde og kontrollen av to objektiv for rå videoar følgjer henne. H.264 som er breiare enn 4096 pikslar (5,7K frå 360°-kamera), blir dekoda av prosessoren, sidan ingen av brikkene i testmaskina tek det.
 
 ### Samanlikna med telefonappane
 
@@ -1017,12 +1045,16 @@ For å kontrollere ZIP-fila køyrer du `certutil -hashfile Immuch360-Desktop-3.3
 - **Ingenting blir sletta frå mappene dine**: "Slett frå eininga" er gøymd, og Slett fjernar berre tenarkopien, til appen kan sende filer til papirkorga i Windows.
 - **Mus og tastatur** i staden for berøring og gyroskopet.
 - **Éin videoavspelar for alle kjelder**: libmpv spelar av videoane frå tenaren, mappene, delingane og Plex på same måten, og den flate avspelaren hans har allereie menyen for lydspor som den flate avspelaren på telefonane enno ikkje har.
+- **360°-videoar i vindauget** (frå skrivebordsbuild 3): 360°-avspelaren er ei side i appen, ikkje ein eigen innebygd avspelar, med tidslinje, hopp på 10 sekund og lydknappen. Rå videoar med eitt objektiv per spor eller per fil blir lagde side om side i éin avspelar, der telefonane køyrer to dekodarar; reservestega til telefonane er dei same, med LRV-kopien frå kameraet lagd til før videoen utan samansetjing.
+- **Tapo-direktebiletet** (frå skrivebordsbuild 3) blir spela av på datamaskina som på Android, medan iPhone og iPad enno ikkje har det.
 
 <a id="not-there-yet"></a>
 ### Ikkje på plass enno
 
-- **360°-, 3D-, VR180- og rå 360°-videoar**: dei blir førebels viste flatt, slik fila lagrar dei (heile kula rulla ut, dei to auga side om side, eller dei runde bileta frå objektiva), eller som ein plasshaldar, og 360°-knappen gjeld framleis berre bilete. Avspelarane deira kjem med dei neste skrivebordsbuildane.
-- **Spatial 2.5D**, seinare med webkameraet; **Tapo-direktebiletet**; **kartet** og Stader-visinga; **innlogging med OAuth** (logg inn med e-post og passord i staden); **Google Cast**; **varsel**.
+- **libmpv frå den eigne builden til forken**: ZIP-filene har med libmpv frå 2024 i media-kit til den eigne builden til forken blir slått på, og `BUILD-INFO.txt` i ZIP-fila seier kva for ein ho har med. Med den frå 2024 blir dei to objektiva i ein rå video med eitt objektiv per spor eller per fil aldri spela av samtidig (han manglar filteret som legg dei saman), så desse videoane viser eitt objektiv, halve kula svart; og grafikkbrikka kopierer kvart bilete tilbake frå dekodaren sin, noko som gjer 360°-avspelaren tregare på ei integrert brikke. libmpv frå den eigne arbeidsflyten til forken, ein versjon frå 2026, skal byte ut han før den første offentlege utgivinga; ein libmpv-build frå 2026 som vart prøvd på testmaskina, gjer begge delar.
+- **Rå videoar med to objektiv på ein berbar PC**: sjølv med ein libmpv frå 2026 la testmaskina saman eit X3-par (to H.264-filer på 2880x2880) med 30 bilete i sekundet berre på NVIDIA-brikka si; på Intel-brikka, og for ei X4-fil (to HEVC-spor på 3840x3840) på begge brikkene, spelar videoen av eitt objektiv, halve kula svart, som på ein telefon som ikkje kan køyre to dekodarar.
+- **3D berre på skjermen**: ein 3D-video viser venstre auge, som på telefonar; det finst ikkje noko gyroskop og inga headsettvising på datamaskina. For å sjå i ekte 3D deler du datamaskina med ein Meta Quest.
+- **Spatial 2.5D**, seinare med webkameraet; **kartet** og Stader-visinga; **innlogging med OAuth** (logg inn med e-post og passord i staden); **Google Cast**; **varsel**.
 - **Eit installasjonsprogram, ein signert build og automatiske oppdateringar**: denne builden er ei mappe med `immuch360.exe`.
 - **Linux og macOS**: prosjekta deira ligg i kjeldene, men dei er ikkje bygde eller prøvde på desse systema enno, og videoavspelaren deira er ikkje med enno; dei kjem etter Windows.
 - **Omsetjingar**: dei nye tekstane i datamaskinversjonen er førebels på engelsk.
@@ -1030,10 +1062,11 @@ For å kontrollere ZIP-fila køyrer du `certutil -hashfile Immuch360-Desktop-3.3
 ### Kjende problem
 
 - **Den første oppstarten av ein ny build er treig**: frå 10 sekund til om lag eitt minutt før vindauget blir vist, truleg medan Microsoft Defender skannar dei nye filene, som ikkje er signerte enno. Vent på vindauget i staden for å starte appen på nytt; dei neste oppstartane tek eit sekund eller to.
-- **8K HEVC-videoar treng ein dedikert grafikkbrikke**: på testmaskina, ein berbar PC, viste den integrerte Intel UHD-brikka om lag halvparten av bileta i ein 8K HEVC-video, medan den dedikerte NVIDIA-brikka spelte av 8K HEVC og 5,7K H.264 utan eit einaste tapt bilete. Windows køyrer appen på den integrerte brikka med mindre noko anna er sagt: i Windows-innstillingane, System, Skjerm, Grafikk, legg til `immuch360.exe` og vel "Høy ytelse". På den integrerte brikka blir ein 5,7K H.264-video, som dekodaren hennar avviser, dekoda av prosessoren utan eit tapt bilete.
-- **Videoar blir teikna med høgst 1440 linjer i høgda**, og deretter skalerte til vindauget: på ein 4K-skjerm i fullskjerm er ein 4K- eller 8K-video litt mindre skarp enn i ein dedikert videoavspelar. Slik held ein 8K-video seg innanfor grafikkytinga til ein berbar PC.
+- **8K HEVC-videoar treng ein dedikert grafikkbrikke, og 360°-videoar går betre på ei slik**: på testmaskina, ein berbar PC, viste den integrerte Intel UHD-brikka om lag halvparten av bileta i ein 8K HEVC-video, medan den dedikerte NVIDIA-brikka spelte av 8K HEVC og 5,7K H.264 utan eit einaste tapt bilete; 360°-avspelaren går jamt på NVIDIA-brikka og tregare på Intel-brikka, sjå [360°-videoar og grafikkbrikka](#360-videos-and-the-graphics-chip). Windows køyrer appen på den integrerte brikka med mindre noko anna er sagt: i Windows-innstillingane, System, Skjerm, Grafikk, legg til `immuch360.exe` og vel "Høy ytelse", og start deretter appen på nytt. På den integrerte brikka blir ein flat 5,7K H.264-video, som dekodaren hennar avviser, dekoda av prosessoren utan eit tapt bilete.
+- **Flate videoar blir teikna med høgst 1440 linjer i høgda**, og deretter skalerte til vindauget: på ein 4K-skjerm i fullskjerm er ein 4K- eller 8K-video litt mindre skarp enn i ein dedikert videoavspelar. Slik held ein 8K-video seg innanfor grafikkytinga til ein berbar PC. 360°-avspelaren arbeider i staden med heile biletet, eller med den mindre storleiken som målinga valde.
 - **Medan ein video frå mappene dine blir spela av i appen, eller medan headsettet les ei fil frå den delte datamaskina** (ein video det spelar av, eit bilete det lastar ned), kan ikkje Windows gje nytt namn til, flytte eller slette den fila og seier at ho er open i Immuch360 Desktop: lukk videoen, eller stopp avspelinga i headsettet, først. Sikkerheitskopiar held ikkje filene dine på den måten: ei fil kan få nytt namn, flyttast eller slettast medan ho blir lasta opp.
-- **Ujamne kantar**: 656 av dei 663 skrivebordstestane består på Windows (7 blir hoppa over med vilje), 200 avspelarar opna etter kvarandre etterlèt ingen lekkasje, og på ein Windows 11-PC startar appen, opnar ei lagra økt på ein Immich-tenar, synkroniserer, spelar av ein video og blir lukka ryddig. Testen av kvar funksjon for hand på ein ekte PC pågår framleis.
+- **Ujamne kantar**: skrivebordsbuild 3 består 855 av dei 863 skrivebordstestane sine på Windows (8 blir hoppa over med vilje) og heile testpakken til appen, 200 avspelarar opna etter kvarandre etterlèt ingen lekkasje, og ZIP-fila i utgivinga startar, spelar av eit testklipp og blir lukka ryddig. Testen av kvar funksjon for hand på ein ekte PC pågår framleis.
+- **Kva 360°-avspelaren og direktebiletet vart kontrollerte med**: 360°-avspelaren vart køyrd med syntetiske 360°-klipp i 4K, 5,7K og 8K på begge grafikkbrikkene i ein berbar PC (opna, spela av, dreidd under avspeling og på pause, lukka) utan krasj og utan at grafikkdrivaren vart nullstilt. Rå videoar med to objektiv vart spela av frå syntetiske klipp og frå ekte X3- og X4-filer. Tapo-direktebiletet vart kontrollert mot ein RTSP-testtenar som loggar inn slik kameraa gjer (Digest), broten og avvist med vilje, utan passord i nokon logglinje, men enno ikkje med eit ekte kamera. Testen for hand, med ekte 360°- og 3D-filer, begge skjermane på ein berbar PC, dvale og gjenopptaking, og eit ekte kamera, står att.
 
 Om noko går gale, opne gjerne ei [sak](https://github.com/freeKC/Immuch360/issues) med loggen lagra frå Logs-sida (Loggar), sjå [Loggar](#logs). Sjekk loggen før du deler han: han kan innehalde tenaradressa di.
 
@@ -1052,7 +1085,7 @@ Du treng Windows 10 eller 11 på x64, Flutter 3.47.2 for Windows, Visual Studio 
    mise run codegen
    ```
 
-2. På Windows, i den same `mobile`-mappa, bygg appen. Den første builden lastar ned biblioteka til videoavspelaren (libmpv og ANGLE) frå GitHub og kontrollerer kvart arkiv med SHA-256-summen:
+2. På Windows, i den same `mobile`-mappa, bygg appen. Den første builden lastar ned biblioteka til videoavspelaren (libmpv og ANGLE) frå GitHub og kontrollerer kvart arkiv med SHA-256-summen; han kompilerer også det vesle Direct3D 11-tillegget som les dekodarane til grafikkbrikka, `immuch_desktop_video`, med den same C++-arbeidsmengda:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Du treng Windows 10 eller 11 på x64, Flutter 3.47.2 for Windows, Visual Studio 
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-CI-en for Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) køyrer på `desktop`-greina, som følgjer `immuch360`: telefonkontrollane (ingenting blir endra i telefonbuildane) og heile testpakken på Linux, skrivebordstestane på Windows, og den same ZIP-fila; Linux- og macOS-jobbane (`flutter build linux` og `flutter build macos`, med den same `-t lib/main_desktop.dart`) har ikkje køyrt på desse systema enno.
+CI-en for Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) køyrer på `desktop`-greina, som følgjer `immuch360`: telefonkontrollane (ingenting blir endra i telefonbuildane) og heile testpakken på Linux, skrivebordstestane på Windows, og den same ZIP-fila, deretter på den builden testane som treng libmpv og ANGLE frå han (innlogginga til Tapo-direktebiletet, kva ei videofil ikkje får opne, 360°-shaderane); Linux-jobben byggjer appen på Ubuntu og macOS-jobben kompilerer han med Xcode 26.3 og macOS 26 SDK (begge med den same `-t lib/main_desktop.dart`), berre som kompileringskontrollar: ingen av dei er starta på desse systema enno. Ein andre arbeidsflyt (`.github/workflows/immuch360-libmpv.yml`) byggjer libmpv på nytt for Windows x64 og arm64 frå låste kjelder og publiserer arkiva med SHA-256-summane; ZIP-filene har framleis med media-kit-arkivet til den builden blir slått på, så avgrensingane til libmpv frå 2024 i [Ikkje på plass enno](#not-there-yet) gjeld også din eigen build.
 
 <a id="where-to-get-it"></a>
 ## Kvar du får han
@@ -1088,8 +1121,8 @@ Appen finst på Google Play for telefonar og nettbrett; App Store-versjonen vent
   - I dag: den universelle `Immuch360-v<version>-release.apk` frå sida [Releases](https://github.com/freeKC/Immuch360/releases), sideloada med adb, sjå [Installer han på TV-en](#install-it-on-the-tv). Det er den same appen som på telefonar.
   - Snart: Google Play på TV-ar, der oppføringa har vore til gjennomgang hos Google sidan 9. oktober 2026.
 - **Windows 10 og 11, 64 bit (førehandsversjon)**
-  - I dag: Immuch360 Desktop, ZIP-fila `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` frå [førehandsutgivinga for skrivebord](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), pakka ut og starta slik [Last ned og installer på Windows](#download-and-install-on-windows) skildrar. Førebels bilete og flate videoar: 360°-, 3D- og VR180-videoar kjem med dei neste skrivebordsbuildane.
-  - Snart: 360°-, 3D-, VR180- og rå 360°-videoar; eit installasjonsprogram, ein signert build og oppdateringar seinare.
+  - I dag: Immuch360 Desktop, skrivebordsbuild 3, ZIP-fila `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` frå [førehandsutgivinga for skrivebord](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), pakka ut og starta slik [Last ned og installer på Windows](#download-and-install-on-windows) skildrar. Bilete, flate videoar, 360°-, 3D-, VR180- og rå 360°-videoar (jamt på ei dedikert grafikkbrikke, med avgrensingar på ei integrert) og Tapo-direktebiletet.
+  - Snart: Spatial 2.5D med webkameraet, deretter Linux og macOS; eit installasjonsprogram, ein signert build og oppdateringar seinare.
 
 Lenkjene til App Store og Meta Horizon Store blir lagde til her så snart oppføringane er publiserte. Logg inn med den vanlege URL-en til Immich-tenaren din og kontoen din, eller trykk på "Bruk utan tenar" på innloggingssida for å starte med eininga sine eigne bilete og videoar. APK-en frå GitHub oppdaterer seg ikkje sjølv: følg med på Releases-sida, og når du har installert appen frå ein butikk, hentar du oppdateringane frå den butikken.
 
@@ -1126,7 +1159,7 @@ Ingen løyndomar ligg i dette repositoriet: Android-signeringsnøkkelen er lagra
 
 - **`main`**: Immich `main` på commiten `immuch360` er basert på (29. september 2026 for dei gjeldande buildane), aldri endra; han blir flytta framover når forken blir rebasa på ein nyare Immich.
 - **`immuch360`**: endringane i denne forken oppå Immich, med Immuch360 Desktop sidan 9. oktober 2026. Kvar utgiving oppgjev kva Immich-versjon ho er basert på.
-- **`desktop`**: der Immuch360 Desktop, datamaskinversjonen, vart bygd oppå `immuch360`, til han vart fletta inn i ho 9. oktober 2026 slik at telefonar, headsett, TV-ar og datamaskiner blir leverte frå dei same kjeldene. Ho følgjer no `immuch360` og ber taggane for førehandsutgivingane for skrivebord ([skrivebordsbuild 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) frå commit 21f285c34, [skrivebordsbuild 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) frå 5b723bd25). Datamaskinversjonen endrar ingenting under `mobile/android` og `mobile/ios`.
+- **`desktop`**: der Immuch360 Desktop, datamaskinversjonen, vart bygd oppå `immuch360`, til han vart fletta inn i ho 9. oktober 2026 slik at telefonar, headsett, TV-ar og datamaskiner blir leverte frå dei same kjeldene. Ho følgjer no `immuch360` og ber taggane for førehandsutgivingane for skrivebord ([skrivebordsbuild 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) frå commit 21f285c34, [skrivebordsbuild 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) frå 5b723bd25, [skrivebordsbuild 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) frå flettinga av 360°-videoavspelaren 10. oktober 2026). Nytt skrivebordsarbeid hamnar der først og går inn i `immuch360` med skrivebordsbuilden som leverer det. Datamaskinversjonen endrar ingenting under `mobile/android` og `mobile/ios`.
 
 <a id="logs"></a>
 ## Loggar
@@ -1145,7 +1178,7 @@ Frå build 19 skriv DLNA-klienten, telefondelinga og attkjenninga av romlege med
 
 På ei datamaskin (Immuch360 Desktop) har Logs-sida (Loggar) også "Lagre loggar i ei fil": loggen, eller ein ZIP med loggen og rapportane frå dei siste krasja når det finst nokon (det føreslegne namnet sluttar då med "with-crash-reports"). Ein krasjrapport er ein liten minidump: trådane, kvar dei stoppa og berre det som trengst for å følgje kalla deira, med namna på programfilene men ikkje mappene deira; ikkje minnet til appen.
 
-Frå skrivebordsbuild 2 skriv videoavspelaren på datamaskina dit under `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` og `VideoThumbnailGrabber`, også dei eigne åtvaringane til mpv, med token og passord fjerna. Sjekk loggen før du deler han: han kan innehalde tenaradressa di.
+Frå skrivebordsbuild 2 skriv videoavspelaren på datamaskina dit under `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` og `VideoThumbnailGrabber`, også dei eigne åtvaringane til mpv, med token og passord fjerna. Frå skrivebordsbuild 3 skriv han også 360°-avspelaren under `SphericalPlayer`, `SphereRenderer` og `PluginRenderer` (storleiken som vart vald, bileta i sekundet som vart målte, grafikkbrikka), dei rå videoane med to objektiv under `RawTwoStreams`, dekodarane til grafikkbrikka under `DesktopGpuDecoders`, `DesktopVideoDecoderApi` og `DecoderMeasure`, og Tapo-direktebiletet under `DesktopCameraLive`, der linjene aldri inneheld kamerakontoen eller passordet til han. Sjekk loggen før du deler han: han kan innehalde tenaradressa di.
 
 <a id="privacy"></a>
 ## Personvern
@@ -1159,7 +1192,7 @@ Frå skrivebordsbuild 2 skriv videoavspelaren på datamaskina dit under `Desktop
 - **Telefondeling**: berre lokalt nettverk, med brukarnamn og passord, over vanleg HTTP (sjå [Del denne telefonen på nettverket](#share-this-phone-on-the-network)).
 - **Kamera**: blir berre brukt av Spatial 2.5D-avspelaren, på eininga; bileta blir aldri lagra og aldri sende nokon stad.
 - **På ei datamaskin** (Immuch360 Desktop, førehandsversjon for Windows): appen les berre mappene du vel, held indeksen, miniatyrbileta og hurtigbufferen på datamaskina, og lagrar passord og token med datavernet i Windows, berre for Windows-kontoen din. Delinga av datamaskina følgjer reglane for telefondelinga, og startar ikkje på eit nettverk Windows merkjer som offentleg, eller som Windows ikkje kan avgjere typen til, med mindre du seier det.
-- **Videoavspelaren på ei datamaskin** (frå skrivebordsbuild 2): videoane frå tenaren din når han gjennom appen, så avspelaren har aldri økttokenet ditt, og det han les på førehand, blir verande i minnet, ikkje på disken. Han opnar berre fila han får: ei fil i ei mappe eller ei deling som eigentleg er ei speleliste eller ei straumskildring, får han ikkje til å kople til nokon annan stad.
+- **Videoavspelaren på ei datamaskin** (frå skrivebordsbuild 2): videoane frå tenaren din når han gjennom appen, så avspelaren har aldri økttokenet ditt, og det han les på førehand, blir verande i minnet, ikkje på disken. Han opnar berre fila han får: ei fil i ei mappe eller ei deling som eigentleg er ei speleliste eller ei straumskildring, får han ikkje til å kople til nokon annan stad. Frå skrivebordsbuild 3 blir adressa til kvar video gitt til avspelaren berre i minnet, aldri gjennom ei mellombels fil (lenkja appen lagar for ein video frå tenaren eller ei deling, inneheld ein nøkkel for den økta, som låg på disken i nokre sekund ved kvar opning i skrivebordsbuild 2), og den nøkkelen blir aldri vist i loggen; direktebiletet frå eit Tapo-kamera gir kamerakontoen til avspelaren på same måten, aldri i ei fil eller ei logglinje, og snakkar med kameraet berre på det lokale nettverket; målingane til 360°-avspelaren og dekodarane (grafikkbrikka, videoformatet, bileta i sekundet, aldri eit filnamn) blir verande i mappa til appen på datamaskina.
 
 Heile personvernfråsegna står i [PRIVACY.md](../PRIVACY.md).
 
@@ -1177,7 +1210,7 @@ Android, Android TV og Google TV er varemerke for Google LLC; Apple, iPhone, iPa
 
 Det som ikkje er gjort enno, det mest sannsynlege først. Ingenting her er ein lovnad, og tilbakemeldingar i [saksoversikta](https://github.com/freeKC/Immuch360/issues) hjelper til med å avgjere kva som kjem først.
 
-- **Immuch360 Desktop, Windows først**: skrivebordsbuild 2 er ute, med flate videoar, og skrivebordskjeldene ligg i hovudgreina til forken, `immuch360`, sidan 9. oktober 2026 (sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview)). Deretter 360°-, 3D-, VR180- og rå 360°-videoar på Windows, med dei to objektiva i råfilene og Tapo-direktebiletet; så testen av kvar funksjon på ein Windows-PC og rettingane; så Spatial 2.5D med webkameraet; så Linux og macOS, pakkar, signering og oppdateringar.
+- **Immuch360 Desktop, Windows først**: skrivebordsbuild 3 er ute, med 360°-videoavspelaren (360°-, 3D-, VR180- og rå 360°-videoar, dei to objektiva i råfilene, storleiken på visinga målt på kvar datamaskin) og Tapo-direktebiletet, og skrivebordskjeldene ligg i hovudgreina til forken, `immuch360`, sidan 9. oktober 2026 (sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview)). Deretter libmpv frå den eigne arbeidsflyten til forken i staden for den frå 2024, og testen av kvar funksjon for hand på ein Windows-PC med ekte filer, begge skjermane og eit ekte kamera, med rettingane; så Spatial 2.5D med webkameraet; så Linux og macOS; så eit installasjonsprogram, ein signert build og automatiske oppdateringar.
 - **Google Play**: build 20 har vore publisert sidan 7. oktober 2026, i staden for build 18; oppføringa for TV-ar har vore til gjennomgang hos Google sidan 9. oktober 2026. Build 21 endrar ingenting på telefonar og nettbrett.
 - **App Store**: versjon 3.3.0 ventar på gjennomgang hos Apple; han har funksjonane frå build 11, så opplasting til Immich og kontrollen av videodekodarar (build 15) og dei rå Insta360-filene (build 16) kjem med neste App Store-oppdatering. Lenkja blir lagd til her når han er publisert.
 - **Meta Horizon Store**: Meta godkjende oppføringa 7. oktober 2026 med build 14. Build 21 er send inn som den første oppdateringa hennar: han har alt sidan build 14 (opplasting frå ei deling til Immich, videokjelda vald ut frå kva headsettet dekodar, rå filer frå Insta360, GoPro og DJI, DLNA, telefondelinga, romlege bilete frå Apple, Plex Media Server-bibliotek, Tapo-kamera), og butikken fører han opp for Quest 2, Quest Pro, Quest 3 og 3S. Butikklenkja blir lagd til her når sida er offentleg; ein sideloada kopi må avinstallerast først (sjå [Installer](#install)).

@@ -15,13 +15,13 @@ Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, 
 
 <div align="center">
 
-| Platformo | Kie akiri ĝin | Stato je la 9-a de oktobro 2026 |
+| Platformo | Kie akiri ĝin | Stato je la 10-a de oktobro 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonoj kaj tabulkomputiloj | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kompilaĵo 20 en Google Play ekde la 7-a de oktobro 2026, kompilaĵo 21 en GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone kaj iPad** | App Store | versio 3.3.0 atendas la kontrolon de Apple; intertempe [konstruu ĝin mem](#build-it-yourself) |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 kaj 3S | [APK](#meta-quest-3) · Horizon Store | listero aprobita, kompilaĵo 21 en la kontrolo de Meta |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV kaj Google TV** | [APK](#install-it-on-the-tv) · Google Play | kompilaĵo 21 en GitHub; la Google-Play-listero por televidiloj estas en la kontrolo de Google ekde la 9-a de oktobro 2026 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP de la antaŭversio](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) | labortabla kompilaĵo 2 en Windows: fotoj kaj ebenaj videoj, 360°-videoj poste; macOS kaj Linux pli malfrue, el la samaj fontoj |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP de la antaŭversio](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) | labortabla kompilaĵo 3 en Windows: fotoj, ebenaj kaj 360°-videoj; macOS kaj Linux pli malfrue |
 
 *La statoj estas ĝisdatigataj ĉe ĉiu eldono; la detaloj estas en [Kie akiri ĝin](#where-to-get-it).*
 
@@ -30,7 +30,7 @@ Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, 
 - 🌐 **Denaska 360°**<br>Fotoj kaj videoj kiel sfero, en kiu vi ĉirkaŭrigardas, per la giroskopo, krudaj dosieroj de la fotilo inkluzive (Insta360 ekde kompilaĵo 16, GoPro kaj DJI ekde kompilaĵo 18). Ankaŭ senpaga videoludilo: ebena, 360°, 3D, VR180
 - 👓 **Denaska 3D**<br>Stereoskopa 360° kaj VR180, supre kaj malsupre aŭ flank-al-flanke, kaj spacaj fotoj de Apple (ekde kompilaĵo 19): vera 3D en la kasko, unu okulo en telefono
 - 🎥 **Denaska 2.5D**<br>Profundo sur ebena ekrano el stereoskopa video, la vido sekvas vian kapon (eksperimenta, telefonoj kaj tabulkomputiloj)
-- 📱 **Android, iOS, Quest, TV**<br>Unu aplikaĵo en telefonoj, tabulkomputiloj kaj la kaskoj Quest 2, Pro, 3 kaj 3S, vera 3D en la kasko, ekde kompilaĵo 20 en Android TV per la teleregilo, kaj antaŭversio por Windows kun fotoj kaj ebenaj videoj
+- 📱 **Android, iOS, Quest, TV**<br>Unu aplikaĵo en telefonoj, tabulkomputiloj kaj la kaskoj Quest 2, Pro, 3 kaj 3S, vera 3D en la kasko, ekde kompilaĵo 20 en Android TV per la teleregilo, kaj antaŭversio por Windows kun fotoj, ebenaj kaj 360°-videoj
 - 🔌 **Kun aŭ sen servilo**<br>Via Immich-servilo, aŭ la propra galerio de la telefono, sen bezono de konto
 - 🗄️ **Retaj kunhavigoj**<br>Samba (SMB), WebDAV kaj, ekde kompilaĵo 19, DLNA-aŭdvidaj serviloj trovitaj en la reto kaj legataj rekte, nenio elŝutita, kaj senditaj al Immich kiam vi decidas. Ekde kompilaĵo 19 telefono ankaŭ kunhavigas sian propran galerion kun la kasko
 - 📺 **En la televidilo**<br>Ekde kompilaĵo 20 la sama APK en Android TV kaj Google TV: 360°-fotoj kaj -videoj, via servilo kaj viaj kunhavigoj, per la teleregilo
@@ -84,7 +84,7 @@ Immuch360 estas la poŝaparata aplikaĵo de Immich kun 360°-fotoj kaj -videoj, 
 - **"Mi volas spekti miajn 360°-fotojn kaj -videojn, kaj la videojn de mia NAS aŭ de mia Plex-servilo, en la televidilo, per la teleregilo."** Vidu [Spekti en via televidilo](#watch-on-your-tv-android-tv-and-google-tv).
 - **"Mi ne trovas miajn 360°-bildojn inter ĉiuj aliaj."** Vidu [La 360°-listo](#find-your-360-shots-the-360-list).
 - **"Mia 360°-video saltetas, aŭ ludas malklaran kopion."** Vidu [Detaloj de video kaj malkodiloj](#video-details-decoders-and-why-a-video-stutters).
-- **"Mi volas miajn 360°-fotojn kaj mian Immich-bibliotekon en mia Windows-komputilo, kun la fotoj kaj videoj de ĝiaj dosierujoj, mia NAS kaj mia Plex-servilo, kaj la komputilon kunhavigitan kun mia kasko."** Vidu [En Windows-komputilo](#on-a-windows-computer-immuch360-desktop-preview) (antaŭversio: fotoj kaj ebenaj videoj nuntempe, 360°-videoj poste).
+- **"Mi volas miajn 360°-fotojn kaj mian Immich-bibliotekon en mia Windows-komputilo, kun la fotoj kaj videoj de ĝiaj dosierujoj, mia NAS kaj mia Plex-servilo, kaj la komputilon kunhavigitan kun mia kasko."** Vidu [En Windows-komputilo](#on-a-windows-computer-immuch360-desktop-preview) (antaŭversio: fotoj kaj ebenaj videoj, kaj ekde labortabla kompilaĵo 3 360°-, 3D-, VR180- kaj krudaj 360°-videoj kaj la Tapo-rekta vido).
 - **"Ĉu mi konservas tion, kion faras la aplikaĵo de Immich?"** Jes, kun du malgrandaj ŝanĝoj, vidu [Ĉio alia estas Immich](#everything-else-is-immich).
 
 Kiam funkcio estas freŝa, la teksto diras, ekde kiu kompilaĵo ĝi ekzistas. La eldono en GitHub ĉiam havas la plej novan kompilaĵon, la vendejoj sekvas poste: vidu [Kie akiri ĝin](#where-to-get-it).
@@ -127,6 +127,7 @@ Jam kunkudritaj 360°-dosieroj funkcias ĉie: eksportaĵoj el la aplikaĵo aŭ S
 
 La ludilo ludas la dosieron konservitan en la telefono, aŭ la dosieron de reta kunhavigo, kiam ekzistas tia. Alie ĝi elsendfluas el via servilo: defaŭlte la transkodita fluo, aŭ la originalo se vi petas ĝin en Agordoj, Montrilo de elemento, "Videofonto" (ekde kompilaĵo 15; antaŭe la ŝaltilo "Force original video"), vidu [Detaloj de video kaj malkodiloj](#video-details-decoders-and-why-a-video-stutters).
 
+<a id="a-360-file-that-shows-flat-view-as-360"></a>
 ### 360°-dosiero, kiu aperas ebena: Vidi kiel 360°
 
 Iuj 360°-dosieroj portas nenian projekcian etikedon, do la servilo ne markas ilin kiel 360°, kaj ili aperas ebenaj.
@@ -356,6 +357,7 @@ Ekde kompilaĵo 20 Immuch360 aldonas Tapo-kameraon apud la retaj kunhavigoj. Ĝi
 8. Tuŝetu "Testi la kameraon". Ĝi montras "Registraĵoj: (modelo), mikroprogramo (versio)" kun la stato de la memorkarto, kaj "Rekta vido: (video), sono (sono)", aŭ kio malsukcesis por ĉiu.
 9. Tuŝetu "Konservi". La kamerao estas listigita sub "Kameraoj", post la kunhavigoj, kun sia modelo post kiam ĝi estas konata kaj `tapo://` kun sia adreso.
 
+<a id="watch-it-live"></a>
 ### Spekti ĝin rekte
 
 1. Tuŝetu la kameraon. Ĝia rekta vido estas supre de ĝia paĝo: "Konektante al la kamerao", poste la bildo kun la insigno "Rekte".
@@ -755,9 +757,9 @@ La nuna kompilaĵo, kompilaĵo 21 (versio 3.3.0-rc.0, kompilaĵa numero 3030019)
 | Sendi la dosierojn de kunhavigo al Immich; aparataj dosieroj senditaj permane kalkulataj kiel savkopiitaj | ❌ nur aparataj dosieroj | ✅ ekde kompilaĵo 15 |
 | Kunhavigi ĉi tiun telefonon en la reto, por la kasko | ❌ | ✅ ekde kompilaĵo 19, Android kaj iOS |
 | Bibliotekoj de Plex Media Server ludataj el la originalaj dosieroj, hejme kaj ekster la hejmo, sen plex.tv | ❌ | ✅ ekde kompilaĵo 20, ĉiu montrilo, en telefonoj, tabulkomputiloj, la Quest kaj televidiloj |
-| Tapo-kameraoj: la rekta vido, kaj la registraĵoj de la memorkarto senditaj al Immich kiam vi decidas | ❌ | ✅ ekde kompilaĵo 20: registraĵoj ĉie, rekte en Android, Android TV kaj la Quest |
+| Tapo-kameraoj: la rekta vido, kaj la registraĵoj de la memorkarto senditaj al Immich kiam vi decidas | ❌ | ✅ ekde kompilaĵo 20: registraĵoj ĉie, rekte en Android, Android TV, la Quest kaj, ekde labortabla kompilaĵo 3, Windows |
 | Android TV kaj Google TV, regataj per la teleregilo, en la sama APK | ❌ ne televida aplikaĵo | ✅ ekde kompilaĵo 20 |
-| La sama aplikaĵo en Windows-komputilo | ❌ nur telefonoj kaj tabulkomputiloj | ✅ antaŭversio, fotoj kaj ebenaj videoj |
+| La sama aplikaĵo en Windows-komputilo | ❌ nur telefonoj kaj tabulkomputiloj | ✅ antaŭversio: fotoj, ebenaj kaj 360°-videoj (labortabla kompilaĵo 3) |
 | Krudaj Insta360-fotoj .insp kaj unutrakaj videoj .insv | ❌ ebenaj | ✅ ekde kompilaĵo 16 |
 | Krudaj videoj kun unu objektivo po trako aŭ po dosiero (Insta360 X4, X4 Air, X5, X6, X3-paroj, GoPro .360, DJI .osv) | ❌ ebenaj aŭ malĝustaj | ✅ ekde kompilaĵo 18 |
 | Dufiŝokula .dng | ❌ ebena | ❌ ankoraŭ ne |
@@ -787,7 +789,7 @@ La nuna kompilaĵo, kompilaĵo 21 (versio 3.3.0-rc.0, kompilaĵa numero 3030019)
 - **Plex Media Server**: kontrolita el komputilo kontraŭ vera Plex Media Server 1.42.1 (parigo, dosierujoj, bajtintervaloj, miniaturoj, la adreso ekster la hejmo); ankoraŭ ne kontrolita en aparato.
 - **Tapo-kameraoj**: kontrolita kontraŭ simulita kamerao; ankoraŭ ne kontrolita kun vera kamerao.
 - **Android TV kaj Google TV**: kontrolita per aŭtomataj testoj; ankoraŭ ne kontrolita en televidilo.
-- **La sama aplikaĵo en Windows-komputilo**: 656 el la 663 aŭtomataj labortablaj testoj sukcesas en Windows (7 intence preterlasitaj), kaj en Windows-11-komputilo la aplikaĵo startas, malfermas konservitan seancon ĉe Immich-servilo, sinkronigas, ludas videon kaj fermiĝas ĝuste; la mana testado de ĉiu funkcio estas daŭranta.
+- **La sama aplikaĵo en Windows-komputilo**: labortabla kompilaĵo 3 sukcesas 855 el siaj 863 aŭtomataj labortablaj testoj en Windows (8 intence preterlasitaj) kaj la tutan testaron de la aplikaĵo; en Windows-11-komputilo la aplikaĵo startas, malfermas konservitan seancon ĉe Immich-servilo, sinkronigas, ludas videon kaj fermiĝas ĝuste, kaj ĝia 360°-ludilo estis rulita kun sintezaj klipoj 4K, 5.7K kaj 8K sur ambaŭ grafikaj ĉipoj de tekkomputilo sen kraŝo. La mana testado de ĉiu funkcio, kun veraj 360°-dosieroj kaj vera Tapo-kamerao, estas daŭranta.
 - **Krudaj Insta360-fotoj .insp kaj unutrakaj videoj .insv**: fotoj kontrolitaj kontraŭ Insta360-Studio-eksportaĵoj de X3-dosieroj, videoj en Android-emulilo kun malaltdistingiva X3-dosiero; ankoraŭ ne funkciigitaj en iPhone.
 - **Krudaj videoj kun unu objektivo po trako aŭ po dosiero**: analiziloj kaj kunkudrado kontrolitaj per veraj X4-, X3-paraj, GoPro-MAX- kaj Osmo-360-dosieroj; ludado estas la aparata testo de kompilaĵoj 18 kaj 19.
 - **Dufiŝokula .dng**: planita.
@@ -842,17 +844,19 @@ Immuch360 estas galerio, kaj ĝi ankaŭ estas senpaga aŭdvida ludilo: ĝi ludas
   - iPhone, iPad: denaska SceneKit-ludilo sur sfero, giroskopo, elekto de sontrako, bufra indikilo; ludi kaj paŭzi, ankoraŭ sen tempobreto.
   - Meta Quest: enmergiĝe, vera 3D por stereoskopaj dosieroj, tempobreto kun 10-sekundaj saltoj, antaŭa kaj sekva aŭdvidaĵo.
   - Android TV, Google TV: la Media3-ludilo de telefonoj, turnata per la sagoj.
-  - Windows: ankoraŭ ne, montrataj ebene nuntempe.
+  - Windows (ekde labortabla kompilaĵo 3): la propra 360°-ludilo de la aplikaĵo (libmpv), turnata per la muso aŭ la sagoklavoj, zomata per la rado, kun saltado en la video, elekto de sontrako, indikilo de bufrado; glata sur dediĉita grafika ĉipo, maksimume 2880 rastrumeroj larĝa kaj pli malrapida por 5.7K H.264 sur integrita.
 - **3D 360° (supre kaj malsupre, flank-al-flanke)**
   - Android-telefonoj: maldekstra okulo, aranĝa butono.
   - iPhone, iPad: same.
   - Meta Quest: ĉiu okulo ricevas sian propran duonon de la kadro.
   - Android TV, Google TV: maldekstra okulo, aranĝa butono.
+  - Windows: fotoj kiel en telefonoj; videoj ekde labortabla kompilaĵo 3, maldekstra okulo, aranĝa butono, glataj sur dediĉita grafika ĉipo, kun limoj sur integrita.
 - **VR180 (duonsferaj) fotoj kaj videoj**
   - Android-telefonoj: duonsfero, butono 360°/180°.
   - iPhone, iPad: same.
   - Meta Quest: enmergiĝa duonsfero.
   - Android TV, Google TV: duonsfero, butono 360°/180°.
+  - Windows: fotoj kiel en telefonoj; videoj ekde labortabla kompilaĵo 3, duonsfero, butono 360°/180°, glataj sur dediĉita grafika ĉipo, kun limoj sur integrita.
 - **Spatial 2.5D (profundo sur ebena ekrano el stereoskopa video)**
   - Android-telefonoj: denaska ludilo, kapspurado per la antaŭa fotilo.
   - iPhone, iPad: same.
@@ -878,16 +882,19 @@ Immuch360 estas galerio, kaj ĝi ankaŭ estas senpaga aŭdvida ludilo: ĝi ludas
   - iPhone, iPad: kunkudrita per SceneKit-ombrigilo.
   - Meta Quest: enmergiĝe, kunkudrita per la sama GPU-efiko.
   - Android TV, Google TV: kiel en telefonoj.
+  - Windows (ekde labortabla kompilaĵo 3): kunkudritaj sur la grafika ĉipo en la 360°-ludilo de la aplikaĵo, glataj sur dediĉita ĉipo, kun limoj sur integrita.
 - **Krudaj videoj kun unu objektivo po trako aŭ po dosiero (ekde kompilaĵo 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-paroj, GoPro .360, DJI .osv**
   - Android-telefonoj: du aparataraj malkodiloj samtempe, po unu por objektivo (ekde kompilaĵo 19 programaraj en aparato sen aparatara malkodilo, ĝis 2048x2048 po objektivo), kaj GL-kunmetilo, kiu kunkudras en la sferon; unu objektivo, poste la transkodita fluo, poste la video nekunkudrita, kiam la aparato ne povas funkciigi du.
   - iPhone, iPad: propra AVFoundation-kunmetilo kun Metal.
   - Meta Quest: enmergiĝe, samaj du malkodiloj kaj kunmetilo (panelo 3840x1920).
   - Android TV, Google TV: kiel en telefonoj, kiam la televidilo funkciigas du malkodilojn samtempe.
+  - Windows (ekde labortabla kompilaĵo 3): ambaŭ objektivoj flank-al-flanke en unu ludilo, poste kunkudritaj, kiam la komputilo sukcesas sekvi (mezurite dum ĝia propra ludado; en la testa tekkomputilo, X3-paro nur sur ĝia dediĉita ĉipo); alie la paŝoj de la telefonoj: unu objektivo, la transkodita fluo, la malaltdistingiva LRV-kopio de la fotilo, la video nekunkudrita.
 - **Rekta vido de Tapo-kamerao (ekde kompilaĵo 20)**
   - Android-telefonoj: Media3-RTSP-ludilo: SD en la paĝo, HD en plenekrano, sona butono.
   - iPhone, iPad: ankoraŭ ne: karto diras, ke ĝi venos poste.
   - Meta Quest: en la fenestro, en HD.
   - Android TV, Google TV: kiel en telefonoj.
+  - Windows (ekde labortabla kompilaĵo 3): la ludilo libmpv, SD en la paĝo, HD en plenekrano, sonbutono.
 - **Registraĵoj de Tapo-kamerao (ekde kompilaĵo 20)**
   - Android-telefonoj: prenitaj de la memorkarto en H.264-videon kun sia sono, poste ludataj kun saltado.
   - iPhone, iPad: same.
@@ -896,14 +903,14 @@ Immuch360 estas galerio, kaj ĝi ankaŭ estas senpaga aŭdvida ludilo: ĝi ludas
 
 La eroj de Android TV kaj Google TV, ekde kompilaĵo 20, ankoraŭ ne estis kontrolitaj en televidilo, vidu [Spekti en via televidilo](#watch-on-your-tv-android-tv-and-google-tv); la kameraaj eroj ankoraŭ ne estis kontrolitaj kun vera kamerao.
 
-En Windows, la antaŭversio de Immuch360 Desktop montras la fotojn, ebenajn kaj 360°, inkluzive de krudaj Insta360-fotoj .insp, per la muso kaj la klavaro, kaj ekde desktop build 2 ĝi ludas ebenajn videojn, el la servilo, la dosierujoj de la komputilo, la kunhavigoj, Plex kaj la Tapo-registraĵoj; 360°-, 3D-, VR180- kaj krudaj 360°-videoj estas montrataj ebene aŭ kiel lokokupilo nuntempe (vidu [Ankoraŭ ne](#not-there-yet)).
+En Windows, la antaŭversio de Immuch360 Desktop montras la fotojn, ebenajn kaj 360°, inkluzive de krudaj Insta360-fotoj .insp, per la muso kaj la klavaro. Ekde desktop build 2 ĝi ludas ebenajn videojn, el la servilo, la dosierujoj de la komputilo, la kunhavigoj, Plex kaj la Tapo-registraĵoj, kaj ekde desktop build 3 ĝi ludas 360°-, 3D-, VR180- kaj krudajn 360°-videojn el la samaj fontoj en sia propra 360°-ludilo, kaj la Tapo-rektan vidon. La 360°-ludilo estas glata sur dediĉita grafika ĉipo kaj havas limojn sur integrita (vidu [En Windows-komputilo](#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Via Immich-servilo**: la originalo aŭ la transkodita fluo de la servilo, laŭ Agordoj, Montrilo de elemento, "Videofonto" (vidu [Detaloj de video kaj malkodiloj](#video-details-decoders-and-why-a-video-stutters)). Sama konto kiel la TTT-aplikaĵo.
 - **La telefono aŭ kasko mem**: "Uzi sen servilo" en la ensaluta paĝo, aŭ la ero Ĉe tiu ĉi aparato de la langeto Bibliteko.
 - **NAS aŭ komputilo**: SMB- kaj WebDAV-kunhavigoj, kaj ekde kompilaĵo 19 DLNA-aŭdvidaj serviloj, trovitaj en la reto, legataj rekte (SMB-video per ĝis ses konektoj), nenio kopiita; ekde kompilaĵo 15 la dosieroj, kiujn vi elektas, povas esti senditaj al via Immich-konto.
 - **Alia telefono (ekde kompilaĵo 19)**: "Kunhavigi ĉi tiun telefonon en la reto" en tiu telefono: la kasko, aŭ iu ajn WebDAV-kliento de la reto, legas ĝiajn albumojn, monatojn kaj 360°-aŭdvidaĵojn.
 - **Plex Media Server (ekde kompilaĵo 20)**: ĝiaj bibliotekoj de fotoj, filmoj kaj televidaj serioj laŭ dosierujo, la originalaj dosieroj legataj rekte per HTTPS kontrolita kontraŭ la propra atestilo de la servilo, hejme aŭ per la adreso ekster la hejmo, en ĉiu platformo; vidu [Plex Media Server, sen plex.tv](#plex-media-server-without-plextv).
-- **Tapo-kamerao (ekde kompilaĵo 20)**: la rekta vido per la kamerao-konto (Android, Android TV, la Quest), kaj la registraĵoj de ĝia memorkarto per la pasvorto de la TP-Link-konto (ĉiu platformo), nur en la loka reto; vidu [Tapo-kameraoj](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **Tapo-kamerao (ekde kompilaĵo 20)**: la rekta vido per la kamerao-konto (Android, Android TV, la Quest, kaj Windows ekde labortabla kompilaĵo 3), kaj la registraĵoj de ĝia memorkarto per la pasvorto de la TP-Link-konto (ĉiu platformo), nur en la loka reto; vidu [Tapo-kameraoj](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **La dosierujoj de Windows-komputilo (labortabla antaŭversio)**: la dosierujoj, kiujn vi elektas en Immuch360 Desktop, legataj anstataŭ la galerio de telefono; la komputilo ankaŭ povas kunhavigi ilin kun la kasko, vidu [En Windows-komputilo](#on-a-windows-computer-immuch360-desktop-preview).
 
 <a id="meta-quest-3"></a>
@@ -971,20 +978,20 @@ Via Immich-biblioteko estas en servilo, aliaj fotoj kaj videoj troviĝas en la d
 
 En komputilo, Immich proponas sian retaplikaĵon en retumilo. **Kion aldonas Immuch360 Desktop**: la dosierujojn de la komputilo sen ajna servilo aŭ konto, SMB-, WebDAV-, DLNA- kaj Plex-kunhavigojn foliumatajn kaj ludatajn el la aplikaĵo, krudajn Insta360-fotojn .insp malfermatajn kiel sferon, kaj la komputilon kunhavigitan kun Meta Quest hejme.
 
-Ĉi tio estas antaŭversio: ekde desktop build 2, fotoj kaj ebenaj videoj funkcias; 360°-, 3D- kaj VR180-videoj venos kun la venontaj labortablaj kompilaĵoj. Ekde la 9-a de oktobro 2026 la labortabla fontkodo estas en la ĉefa branĉo de la forko, `immuch360`, do telefonoj, kaskoj, televidiloj kaj komputiloj eliras el la sama fontkodo. La telefonaj, tabulkomputilaj, Quest- kaj televidaj aplikaĵoj ne ŝanĝiĝas pro ĝi kaj gardas la nomon Immuch360.
+Ĉi tio estas antaŭversio: fotoj kaj ebenaj videoj funkcias ekde desktop build 2, kaj ekde desktop build 3 la 360°-videoludilo (360°-, 3D-, VR180- kaj krudaj 360°-videoj) kaj la rekta vido de Tapo-kameraoj; la subaj paŝoj, kiuj bezonas kompilaĵon 3, diras tion. Ekde la 9-a de oktobro 2026 la labortabla fontkodo estas en la ĉefa branĉo de la forko, `immuch360`, do telefonoj, kaskoj, televidiloj kaj komputiloj eliras el la sama fontkodo. La telefonaj, tabulkomputilaj, Quest- kaj televidaj aplikaĵoj ne ŝanĝiĝas pro ĝi kaj gardas la nomon Immuch360.
 
 <a id="download-and-install-on-windows"></a>
 ### Elŝuti kaj instali en Windows
 
-La nuna kompilaĵo estas la GitHub-antaŭeldono [Immuch360 Desktop 3.3.0-rc.0, desktop build 2 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2). Ĝia dosiero estas `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` (ĉirkaŭ 57 MB, 78 dosieroj post malpakado, inkluzive de la videoludilo kaj ĝia dosierujo `licenses`), kun `SHA256SUMS.txt` por kontroli ĝin. Ĝi estis konstruita el la ĉefa branĉo, `immuch360`, ĉe la enmeto 5b723bd25: la fontkodo de la telefona kompilaĵo 21 plus la komputila versio. Ĝi bezonas Windows 10 aŭ 11, 64-bitan.
+La nuna kompilaĵo estas la GitHub-antaŭeldono [Immuch360 Desktop 3.3.0-rc.0, desktop build 3 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3). Ĝia dosiero estas `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` (ĉirkaŭ 57 MB, 79 dosieroj post malpakado, inkluzive de la videoludilo kaj ĝia dosierujo `licenses`), kun `SHA256SUMS.txt` por kontroli ĝin. Ĝi estis konstruita el la ĉefa branĉo, `immuch360`, post kiam la 360°-videoludilo de la komputilo estis kunfandita en ĝin, ĉe la enmeto, kiun ĝiaj eldonnotoj nomas: la fontkodo de la telefona kompilaĵo 21 plus la komputila versio. Ĝi bezonas Windows 10 aŭ 11, 64-bitan.
 
-1. Elŝutu la ZIP-dosieron kaj malpaku ĝin ie ajn, ekzemple en Dokumentoj.
-2. Startigu `immuch360.exe` el la malpakita dosierujo. Gardu la dosierujon tuta: la programo bezonas la dosierojn apud si, inkluzive de la videoludilo.
+1. Elŝutu la ZIP-dosieron kaj malpaku ĝin ie ajn, ekzemple en Dokumentoj. Por anstataŭigi desktop build 2, forigu ĝian dosierujon aŭ malpaku en novan: via ensaluto, viaj dosierujoj kaj viaj agordoj restas en via Windows-profilo, ne en tiu dosierujo.
+2. Startigu `immuch360.exe` el la malpakita dosierujo. Gardu la dosierujon tuta: la programo bezonas la dosierojn apud si, inter ili `libmpv-2.dll`, la videoludilo, kaj `immuch_desktop_video.dll`, kiu legas la malkodilojn de la grafika ĉipo.
 3. La dosieroj ankoraŭ ne estas subskribitaj, do Windows SmartScreen eble montros "Windows protected your PC": elektu "More info", poste "Run anyway". Kie Smart App Control estas ŝaltita, ĝi blokas nesubskribitajn programojn.
 4. Atendu la fenestron. La unua starto de nova kompilaĵo daŭras de 10 sekundoj ĝis ĉirkaŭ unu minuto, plej verŝajne dum Microsoft Defender skanas la novajn dosierojn: ne startigu la aplikaĵon denove intertempe. La sekvaj startoj daŭras sekundon aŭ du.
 5. En la ensaluta paĝo, ensalutu al via Immich-servilo per ĝia adreso, via retpoŝtadreso kaj via pasvorto, aŭ alklaku "Uzi sen servilo".
 
-Por kontroli la ZIP-dosieron, rulu `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip SHA256` en komandinvito, en la dosierujo de la elŝuto: la rezulto estas tiu skribita en `SHA256SUMS.txt`. Ankoraŭ ne ekzistas instalilo nek aŭtomata ĝisdatigo: observu la paĝon [Eldonoj](https://github.com/freeKC/Immuch360/releases), kaj malpaku la sekvan kompilaĵon same.
+Por kontroli la ZIP-dosieron, rulu `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` en komandinvito, en la dosierujo de la elŝuto: la rezulto estas tiu skribita en `SHA256SUMS.txt`. Ankoraŭ ne ekzistas instalilo nek aŭtomata ĝisdatigo: observu la paĝon [Eldonoj](https://github.com/freeKC/Immuch360/releases), kaj malpaku la sekvan kompilaĵon same.
 
 ### Kion faras la antaŭversio
 
@@ -993,7 +1000,9 @@ Por kontroli la ZIP-dosieron, rulu `certutil -hashfile Immuch360-Desktop-3.3.0-r
 - **Alŝuto kaj savkopio** el tiuj dosierujoj al via Immich-servilo, dum la aplikaĵo estas malfermita.
 - **360°-fotoj kiel sfero**, per la muso kaj la klavaro; la krudaj fotoj .insp de Insta360-kameraoj malfermiĝas kiel en telefonoj.
 - **Ebenaj videoj** (ekde desktop build 2): la videoj de viaj dosierujoj, de via Immich-servilo (la originalo aŭ la transkodita fluo, vidu [Detaloj de video kaj malkodiloj](#video-details-decoders-and-why-a-video-stutters)), de SMB-, WebDAV- kaj DLNA-kunhavigoj, de Plex-serviloj kaj la Tapo-registraĵoj ludiĝas en la fenestro, kun la regiloj de la telefonoj (ludi, paŭzi, la tempobreto), bufra indikilo, kaj menuo de la sontrakoj por video, kiu havas plurajn. La videoj de viaj dosierujoj kaj de la kunhavigoj montras kadron de la video kiel bildeton, anstataŭ filman piktogramon.
-- **Retaj kunhavigoj**: Samba (SMB), WebDAV kaj DLNA-aŭdvidaj serviloj, kaj Plex-serviloj sen plex.tv, foliumataj kiel en telefonoj: iliaj fotoj malfermiĝas kaj iliaj videoj ludiĝas. Por Tapo-kameraoj, la registraĵoj de la memorkarto: la listo, la preno de klipo kaj ĝia ludado.
+- **360°-, 3D- kaj VR180-videoj** (ekde desktop build 3): la butono 360° malfermas ilin en la 360°-ludilo de la aplikaĵo, en la fenestro aŭ en plenekrano, el ĉiu fonto de ebenaj videoj, turnataj per la muso kaj la klavaro, kun la butonoj 3D kaj 360°/180° de la telefonoj (3D-video montras sian maldekstran okulon, kiel en telefonoj), saltado en la video, la menuo de sontrakoj kaj indikilo de bufrado.
+- **Krudaj 360°-videoj** (ekde desktop build 3): Insta360-dosieroj .insv, kun ambaŭ objektivoj en unu trako, en du trakoj (X4 kaj postaj) aŭ en du dosieroj (X3-paroj), GoPro-dosieroj .360 kaj DJI-dosieroj .osv, kunkudritaj de la aplikaĵo sur la grafika ĉipo dum ili ludiĝas, kun la kalibrado de la dosiero, kiel en telefonoj.
+- **Retaj kunhavigoj**: Samba (SMB), WebDAV kaj DLNA-aŭdvidaj serviloj, kaj Plex-serviloj sen plex.tv, foliumataj kiel en telefonoj: iliaj fotoj malfermiĝas kaj iliaj videoj ludiĝas. Por Tapo-kameraoj, la registraĵoj de la memorkarto: la listo, la preno de klipo kaj ĝia ludado; kaj ekde desktop build 3 la rekta vido.
 - **Kunhavigi ĉi tiun komputilon en la reto**: la albumoj, monatoj kaj 360°-aŭdvidaĵoj de viaj dosierujoj, nur legeblaj, por Meta Quest aŭ alia aparato hejme, kiel telefono kunhavigas sin mem.
 - **Dosieroj**: elŝutoj el la servilo iras en dosierujon, kiun vi elektas, "Konservi en dosierujon" gardas kopion de la elektitaj fotoj kaj videoj, kaj la paĝo Protokoloj havas "Konservi la protokolojn en dosieron".
 
@@ -1005,9 +1014,28 @@ Por kontroli la ZIP-dosieron, rulu `certutil -hashfile Immuch360-Desktop-3.3.0-r
 4. **Iri de foto al foto**: en ebena foto, la maldekstra kaj dekstra sagoj, aŭ la ĉevronoj, kiuj aperas ĉe la randoj dum la muso moviĝas, iras al la antaŭa kaj la sekva. Literoj tajpitaj en la priskriba kampo restas en la teksto.
 5. **Ludi videon**: malfermu ĝin el la templinio, dosierujo, kunhavigo, Plex aŭ la registraĵoj de Tapo-kamerao; ĝi ludiĝas en la fenestro. Enter, aŭ la klavo ludi kaj paŭzi de la klavaro, paŭzigas kaj denove ludas. Dum ĝi ludiĝas, la maldekstra kaj dekstra sagoj, aŭ J kaj L, saltas 10 sekundojn malantaŭen aŭ antaŭen; dum paŭzo, la sagoj iras al la antaŭa kaj la sekva. F aŭ F11 ŝaltas plenekranan reĝimon, kiel por fotoj. La butono "Sontrako" elektas inter la sontrakoj de video, kiu havas plurajn.
 6. **Kiam video haltas**: paŭzigita video restas paŭzigita, kiam vi revenas al la fenestro. Video interrompita antaŭ sia fino, ekzemple kiam la kunhavigo aŭ la servilo ĉesas respondi, diras tion: malfermu ĝin denove kaj ĝi daŭrigas de kie ĝi haltis, paŭzigita. Ludlista dosiero trovita en dosierujo aŭ kunhavigo ne estas sekvata.
-7. **Kunhavigi la komputilon kun la kasko**: malfermu la Bibliteko, poste Retaj kunhavigoj; la unua kahelo estas "Kunhavigi ĉi tiun komputilon en la reto", la komputila flanko de [Kunhavigi ĉi tiun telefonon en la reto](#share-this-phone-on-the-network). Ŝaltu "Kunhavigi fotojn kaj filmojn en la reto", poste aldonu la komputilon en la kasko kiel tiu sekcio diras. La kunhavigo ĉesas kiam la aplikaĵo estas fermita aŭ post unu horo sen uzo.
-8. **Permesi la reton**: Windows eble demandos, ĉu Immuch360 Desktop rajtas uzi la reton. Permesu ĝin en privataj retoj, alie la kasko ne povas trovi la komputilon. En reto, kiun Windows markas kiel publikan (kafejo, hotelo), aŭ kies tipon ĝi ne povas diri, la kunhavigo ne startas, krom se vi elektas "Kunhavigi por ĉi tiu seanco", kaj la komputilo anoncas sin nur en reto, en kiu ĝi kunhavigas.
-9. **Agordoj, "Ĉi tiu komputilo"**: la dosierujoj, la elŝuta dosierujo, la retadaptilo uzata por trovi kunhavigojn kaj por kunhavigi la komputilon (kiam ĝi havas plurajn, Wi-Fi kaj Ethernet ekzemple), kaj fidataj atestiloj: la atestila aŭtoritato de via propra servilo, kiel PEM-dosiero, por HTTPS-adreso, al kiu Windows ne fidas per si mem. Klientaj atestiloj estas importataj en Agordoj, Altnivelaj agordoj, kiel en telefonoj.
+7. **Ludi 360°-videon** (ekde desktop build 3): malfermu la videon kaj alklaku 360° en la supra breto, kiel en telefono; por 360°-dosiero, kiun la servilo ne markas, unue "Vidi kiel 360°" en la menuo ⋮, vidu [360°-dosiero, kiu aperas ebena](#a-360-file-that-shows-flat-view-as-360). La 360°-ludilo malfermiĝas en la fenestro. Trenu per la muso por ĉirkaŭrigardi (la vido daŭre iomete turniĝas post rapida treno), zomu per la rado, + kaj - aŭ Page Up kaj Page Down, turnu per la sagoklavoj tenataj premitaj. Space, aŭ la klavo de ludado kaj paŭzo de la klavaro, paŭzigas kaj denove ludas; J kaj L saltas 10 sekundojn malantaŭen aŭ antaŭen; Home reiras al la komenco; M malŝaltas kaj ŝaltas la sonon. F, F11 aŭ duobla klako ŝaltas plenekranon; Escape forlasas plenekranon, poste fermas la ludilon. La regiloj (fermi, la titolo, 360°/180°, 3D, la sontrako kaj plenekrano supre; ludi, 10 sekundoj malantaŭen kaj antaŭen, la tempobreto kaj la sono malsupre) kaŝiĝas kun la musmontrilo post 3 sekundoj da ludado, kaj revenas kiam la muso moviĝas aŭ klavo estas premita; Tab iras de unu al la sekva.
+8. **3D kaj VR180**: en la 360°-ludilo, la butono 3D ciklas inter "Mono (ne 3D)", "3D, supre kaj malsupre" kaj "3D, flank-al-flanke", kaj la butono 360°/180° ŝanĝas inter la tuta sfero kaj la duonsfero de VR180, kiel en [3D kaj VR180](#3d-and-vr180-photos-and-videos). 3D-video montras sian maldekstran okulon.
+9. **Krudaj 360°-videoj** (ekde desktop build 3): malfermu la krudan dosieron kaj alklaku 360°, kiel en telefono, vidu [Krudaj dosieroj de 360°-fotiloj](#raw-360-camera-files-without-the-cameras-app); tenu la du dosierojn de X3-paro kune. Dosiero kun ambaŭ objektivoj en unu trako estas kunkudrata dum ĝi ludiĝas. Dosiero kun unu objektivo po trako aŭ po dosiero ludas ambaŭ objektivojn flank-al-flanke en unu ludilo, kiam la komputilo sukcesas sekvi: la unuaj sekundoj de tia video estas mezurataj, kaj la rezulto estas konservata por la sekvaj videoj de tiu speco (maniero trovita tro malrapida estas reprovata post 14 tagoj). Kiam la komputilo ne sukcesas sekvi, la ludilo trairas la paŝojn de la telefonoj, kun iliaj mesaĝoj: unu objektivo, duono de la sfero nigra; la transkodita fluo de la servilo; la malaltdistingiva LRV-kopio, kiun la fotilo registris apud la dosiero, se ĝi ekzistas; la video nekunkudrita. Kruda video ne havas butonon 3D nek 360°/180°.
+10. **La rekta vido de Tapo-kamerao** (ekde desktop build 3): malfermu la kameraon kiel en telefono, vidu [Spekti ĝin rekte](#watch-it-live). La paĝo ludas la SD-fluon kaj la plenekrano la HD-fluon, kun la butonoj de telefono sur la bildo: la sono, malŝaltita komence, SD aŭ HD, kaj "Plenekrano". Perdita fluo (la kamerao restartas, la Wi-Fi falas) revenas per si mem, reprovata dum ĉirkaŭ unu minuto kaj duono, dum la lasta bildo restas sur la ekrano. Kamerao-konto, kiun la kamerao rifuzas, estas anoncata kaj ne reprovata, ĉar malsukcesaj ensalutoj kalkuliĝas por la ŝlosado de la kamerao.
+11. **Kunhavigi la komputilon kun la kasko**: malfermu la Bibliteko, poste Retaj kunhavigoj; la unua kahelo estas "Kunhavigi ĉi tiun komputilon en la reto", la komputila flanko de [Kunhavigi ĉi tiun telefonon en la reto](#share-this-phone-on-the-network). Ŝaltu "Kunhavigi fotojn kaj filmojn en la reto", poste aldonu la komputilon en la kasko kiel tiu sekcio diras. La kunhavigo ĉesas kiam la aplikaĵo estas fermita aŭ post unu horo sen uzo.
+12. **Permesi la reton**: Windows eble demandos, ĉu Immuch360 Desktop rajtas uzi la reton. Permesu ĝin en privataj retoj, alie la kasko ne povas trovi la komputilon. En reto, kiun Windows markas kiel publikan (kafejo, hotelo), aŭ kies tipon ĝi ne povas diri, la kunhavigo ne startas, krom se vi elektas "Kunhavigi por ĉi tiu seanco", kaj la komputilo anoncas sin nur en reto, en kiu ĝi kunhavigas.
+13. **Agordoj, "Ĉi tiu komputilo"**: la dosierujoj, la elŝuta dosierujo, la retadaptilo uzata por trovi kunhavigojn kaj por kunhavigi la komputilon (kiam ĝi havas plurajn, Wi-Fi kaj Ethernet ekzemple), kaj fidataj atestiloj: la atestila aŭtoritato de via propra servilo, kiel PEM-dosiero, por HTTPS-adreso, al kiu Windows ne fidas per si mem. Klientaj atestiloj estas importataj en Agordoj, Altnivelaj agordoj, kiel en telefonoj.
+
+<a id="360-videos-and-the-graphics-chip"></a>
+### 360°-videoj kaj la grafika ĉipo
+
+En la 360°-ludilo (ekde desktop build 3), la grafika ĉipo desegnas la vidon, al kiu vi rigardas, el ĉiu kadro de la video. La videa kromprogramo igas libmpv desegni ĉiun kadron en bildon de la elektita grandeco, poste la propra desegna paŝo de la aplikaĵo desegnas el ĝi la parton de la sfero, al kiu vi rigardas. Turni la vidon ŝanĝas valoron de tiu paŝo, ne la ludilon: treni kostas neniun memoron, kaj paŭzita video turniĝas sen malkodi ion ajn.
+
+La aplikaĵo mezuras la unuajn sekundojn de ĉiu 360°-video kaj elektas, kiom granda estu la kadro, pri kiu la ĉipo laboras: la tuta kadro sur dediĉita ĉipo, maksimume 2880 rastrumeroj larĝa sur ĉipo enkonstruita en la procesoron (Windows diras al la aplikaĵo, kiu speco ĝi estas, do la ĉipo Intel Arc de Core Ultra-tekkomputilo kalkuliĝas kiel enkonstruita), unu paŝo pli malgranda kiam la ĉipo ne sukcesas sekvi. Tio, kion ĝi mezuris, estas konservata por la sekvaj videoj de la sama speco (kodeko, grandeco, kadrorapido kaj malkodilo), ne por ĉiu video.
+
+Kiam eĉ la plej malgranda paŝo ne estas glata, la ludilo diras "Ĉi tiu grafika karto ne povas montri la 360°-vidon de ĉi tiu video glate"; kiam ĝi estas malproksima de tio, aŭ kiam la ĉipo tute ne povas desegni la vidon (neniu OpenGL ES 3.0, pelilo, kiu rifuzas ĝin), la video ludiĝas ebene kaj la ludilo diras kial. Video, kiu ludiĝis ebene, ne estas ludata ebene la sekvan fojon: la sekva video de ĝia speco estas mezurata denove.
+
+Kiam estas la malkodado de servila video, kiu ne sukcesas sekvi, ne la desegnado (video, kiun la procesoro malkodas, kiel 5.7K H.264), la ludilo ŝanĝas al la transkodita fluo de la servilo de tie, kie ĝi estis, kun la mesaĝo de la telefonoj: "Ludado de la transkodita fluo: la originalo (kodeko kaj grandeco) superas tion, kion ĉi tiu aparato malkodas".
+
+- **Uzu la dediĉitan grafikan ĉipon de tekkomputilo.** Windows rulas la aplikaĵon sur la integrita ĉipo, krom se oni diras alie. En la agordoj de Windows, System, Display, Graphics, aldonu `immuch360.exe` kaj elektu "High performance", poste startigu la aplikaĵon denove. En la testa tekkomputilo (ĉipo Intel UHD kaj NVIDIA RTX 4060 Laptop), la ĉipo NVIDIA desegnis 4K-, 5.7K- kaj 8K-360°-videojn en plena grandeco kaj je 30 kadroj sekunde dum la vido turniĝis. La ĉipo Intel desegnis ilin maksimume 2880 rastrumerojn larĝajn: 4K-H.264- kaj 8K-HEVC-videon je ĉirkaŭ 30 kadroj sekunde kun 2026-a kompilaĵo de libmpv, 4K-videon je 23 ĝis 27 kun la libmpv de 2024 de media-kit (vidu [Ankoraŭ ne](#not-there-yet)), kaj 5.7K-H.264-videon, kiun la procesoro malkodas, je ĉirkaŭ 20: el la servilo, la ludilo tiam ŝanĝas al la transkodita fluo; video sen transkodita fluo, el dosierujo ekzemple, plu ludiĝas kun la mesaĝo "Ĉi tiu grafika karto ne povas montri la 360°-vidon de ĉi tiu video glate".
+- **Elektu la bildigilon mem.** En Agordoj, Altnivelaj agordoj, ŝaltu "Problemsolvi": aperas ero "360°-videa bildigilo", defaŭlte "Aŭtomata". Ĝi ankaŭ proponas "Kromprogramo, plena grandeco", "Kromprogramo, maksimume 4096 larĝa", "Kromprogramo, maksimume 2880 larĝa" kaj "Ebena, sen la 360°-vido", por la sekva 360°-video, kiun vi malfermas. Sub ĝi, "Laste mezurita" nomas la grandecon, en kiu la lasta 360°-video estis desegnita, ĝiajn kadrojn sekunde, la grafikan ĉipon kaj la malkodilon: kopiu ĝin en cimraporton. Elekti "Aŭtomata" denove, eĉ kiam ĝi jam estas la elekto, forgesas tion, kio estis mezurita, kaj la sekvaj 360°-videoj estas mezurataj denove.
+- **Kion la ĉipo malkodas.** Agordoj, Altnivelaj agordoj, "Videomalkodiloj de ĉi tiu aparato" listigas, kion la uzata grafika ĉipo malkodas, kiel Direct3D 11 raportas ĝin, kaj la aplikaĵo korektas tiun liston per tio, kion ĝi mezuris dum ludado: la agordo "Videofonto" kaj la duobjektiva kontrolo de krudaj videoj sekvas ĝin. H.264 pli larĝa ol 4096 rastrumeroj (la 5.7K de 360°-fotiloj) estas malkodata de la procesoro, ĉar neniu ĉipo de la testa tekkomputilo akceptas ĝin.
 
 ### Kompare kun la telefonaj aplikaĵoj
 
@@ -1017,12 +1045,16 @@ Por kontroli la ZIP-dosieron, rulu `certutil -hashfile Immuch360-Desktop-3.3.0-r
 - **Nenio estas forigata el viaj dosierujoj**: "Forigi de la aparato" estas kaŝita, kaj Forigi forigas nur la servilan kopion, ĝis la aplikaĵo povos sendi dosierojn al la Windows-rubujo.
 - **Muso kaj klavaro** anstataŭ tuŝo kaj la giroskopo.
 - **Unu videoludilo por ĉiu fonto**: libmpv ludas same la videojn de la servilo, la dosierujoj, la kunhavigoj kaj Plex, kaj ĝia ebena ludilo jam havas la menuon de sontrakoj, kiun la ebena ludilo de telefonoj ankoraŭ ne havas.
+- **360°-videoj en la fenestro** (ekde desktop build 3): la 360°-ludilo estas paĝo de la aplikaĵo, ne aparta denaska ludilo, kun tempobreto, saltoj de 10 sekundoj kaj la sonbutono. Krudaj videoj kun unu objektivo po trako aŭ po dosiero estas metataj flank-al-flanke en unu ludilo, kie telefonoj funkciigas du malkodilojn; la rezervaj paŝoj de la telefonoj estas la samaj, kun la LRV-kopio de la fotilo aldonita antaŭ la nekunkudrita video.
+- **La Tapo-rekta vido** (ekde desktop build 3) ludiĝas en la komputilo kiel en Android, dum iPhone kaj iPad ankoraŭ ne havas ĝin.
 
 <a id="not-there-yet"></a>
 ### Ankoraŭ ne
 
-- **360°-, 3D-, VR180- kaj krudaj 360°-videoj**: ili estas montrataj ebene nuntempe, kiel la dosiero tenas ilin (la tuta sfero malvolvita, la du okuloj flank-al-flanke, aŭ la rondaj bildoj de la objektivoj), aŭ kiel lokokupilo, kaj la butono 360° restas ĉe fotoj. Iliaj ludiloj venos kun la venontaj labortablaj kompilaĵoj.
-- **Spatial 2.5D**, poste kun la retkamerao; la **Tapo-viva vido**; la **mapo** kaj la vido Lokoj; **ensaluto per OAuth** (ensalutu per retpoŝtadreso kaj pasvorto anstataŭe); **Google Cast**; **sciigoj**.
+- **La libmpv de la propra kompilaĵo de la forko**: la ZIP-dosieroj portas la libmpv de 2024 de media-kit ĝis la propra kompilaĵo de la forko estos ŝaltita, kaj `BUILD-INFO.txt` en la ZIP diras, kiun ĝi portas. Kun tiu de 2024, la du objektivoj de kruda video kun unu objektivo po trako aŭ po dosiero neniam ludiĝas samtempe (mankas al ĝi la filtrilo, kiu metas ilin flank-al-flanke), do tiuj videoj montras unu objektivon, duono de la sfero nigra; kaj la grafika ĉipo kopias ĉiun kadron reen el sia malkodilo, kio malrapidigas la 360°-ludilon sur integrita ĉipo. La libmpv de la propra laborfluo de la forko, versio de 2026, celas anstataŭi ĝin antaŭ la unua publika eldono; 2026-a kompilaĵo de libmpv provita en la testa tekkomputilo faras ambaŭ.
+- **Duobjektivaj krudaj videoj en tekkomputilo**: eĉ kun 2026-a libmpv, la testa tekkomputilo metis X3-paron (du H.264-dosieroj 2880x2880) flank-al-flanke je 30 kadroj sekunde nur sur sia ĉipo NVIDIA; sur sia ĉipo Intel, kaj por X4-dosiero (du HEVC-trakoj 3840x3840) sur ambaŭ ĉipoj, la video ludas unu objektivon, duono de la sfero nigra, kiel en telefono, kiu ne povas funkciigi du malkodilojn.
+- **3D nur sur la ekrano**: 3D-video montras sian maldekstran okulon, kiel en telefonoj; ne estas giroskopo nek kaska vido en la komputilo. Por spekti en vera 3D, kunhavigu la komputilon kun Meta Quest.
+- **Spatial 2.5D**, poste kun la retkamerao; la **mapo** kaj la vido Lokoj; **ensaluto per OAuth** (ensalutu per retpoŝtadreso kaj pasvorto anstataŭe); **Google Cast**; **sciigoj**.
 - **Instalilo, subskribita kompilaĵo kaj aŭtomataj ĝisdatigoj**: ĉi tiu kompilaĵo estas dosierujo kun `immuch360.exe`.
 - **Linux kaj macOS**: iliaj projektoj estas en la fontkodo, sed ili ankoraŭ ne estis konstruitaj aŭ provitaj en tiuj sistemoj, kaj ilia videoludilo ankoraŭ ne estas en ili; ili venos post Windows.
 - **Tradukoj**: la novaj tekstoj de la komputila versio estas en la angla nuntempe.
@@ -1030,10 +1062,11 @@ Por kontroli la ZIP-dosieron, rulu `certutil -hashfile Immuch360-Desktop-3.3.0-r
 ### Konataj problemoj
 
 - **La unua starto de nova kompilaĵo estas malrapida**: de 10 sekundoj ĝis ĉirkaŭ unu minuto antaŭ ol la fenestro aperas, plej verŝajne dum Microsoft Defender skanas la novajn dosierojn, kiuj ankoraŭ ne estas subskribitaj. Atendu la fenestron anstataŭ startigi la aplikaĵon denove; la sekvaj startoj daŭras sekundon aŭ du.
-- **8K-HEVC-videoj bezonas dediĉitan grafikan ĉipon**: en la testa tekkomputilo, la integrita ĉipo Intel UHD montris ĉirkaŭ duonon de la kadroj de 8K-HEVC-video, dum la dediĉita ĉipo NVIDIA ludis 8K HEVC kaj 5.7K H.264 sen perdita kadro. Windows rulas la aplikaĵon sur la integrita ĉipo, krom se oni diras alie: en la agordoj de Windows, System, Display, Graphics, aldonu `immuch360.exe` kaj elektu "High performance". Sur la integrita ĉipo, 5.7K-H.264-video, kiun ĝia malkodilo rifuzas, estas malkodata de la procesoro sen perdita kadro.
-- **Videoj estas desegnataj maksimume 1440 liniojn altaj**, poste skalataj al la fenestro: sur 4K-ekrano en plenekrana reĝimo, 4K- aŭ 8K-video estas iom malpli akra ol en dediĉita videoludilo. Tio tenas 8K-videon ene de la grafika povo de tekkomputilo.
+- **8K-HEVC-videoj bezonas dediĉitan grafikan ĉipon, kaj 360°-videoj funkcias pli bone sur tia**: en la testa tekkomputilo, la integrita ĉipo Intel UHD montris ĉirkaŭ duonon de la kadroj de 8K-HEVC-video, dum la dediĉita ĉipo NVIDIA ludis 8K HEVC kaj 5.7K H.264 sen perdita kadro; la 360°-ludilo estas glata sur la ĉipo NVIDIA kaj pli malrapida sur la Intel, vidu [360°-videoj kaj la grafika ĉipo](#360-videos-and-the-graphics-chip). Windows rulas la aplikaĵon sur la integrita ĉipo, krom se oni diras alie: en la agordoj de Windows, System, Display, Graphics, aldonu `immuch360.exe` kaj elektu "High performance", poste startigu la aplikaĵon denove. Sur la integrita ĉipo, ebena 5.7K-H.264-video, kiun ĝia malkodilo rifuzas, estas malkodata de la procesoro sen perdita kadro.
+- **Ebenaj videoj estas desegnataj maksimume 1440 liniojn altaj**, poste skalataj al la fenestro: sur 4K-ekrano en plenekrana reĝimo, 4K- aŭ 8K-video estas iom malpli akra ol en dediĉita videoludilo. Tio tenas 8K-videon ene de la grafika povo de tekkomputilo. La 360°-ludilo anstataŭe laboras pri la tuta kadro, aŭ pri la pli malgranda grandeco, kiun ĝia mezurado elektis.
 - **Dum video de viaj dosierujoj ludiĝas en la aplikaĵo, aŭ dum la kasko legas dosieron el la kunhavigita komputilo** (video, kiun ĝi ludas, foto, kiun ĝi elŝutas), Windows ne povas renomi, movi aŭ forigi tiun dosieron kaj diras, ke ĝi estas malfermita en Immuch360 Desktop: unue fermu la videon, aŭ haltigu la ludadon en la kasko. Savkopioj ne tenas viajn dosierojn tiel: dosiero povas esti renomita, movita aŭ forigita dum ĝi estas alŝutata.
-- **Malglataĵoj**: 656 el la 663 labortablaj testoj sukcesas en Windows (7 estas intence preterlasitaj), 200 ludiloj malfermitaj unu post la alia lasas neniun likon, kaj en Windows-11-komputilo la aplikaĵo startas, malfermas konservitan seancon ĉe Immich-servilo, sinkronigas, ludas videon kaj fermiĝas ĝuste. La mana testado de ĉiu funkcio en vera komputilo ankoraŭ daŭras.
+- **Malglataĵoj**: labortabla kompilaĵo 3 sukcesas 855 el siaj 863 labortablaj testoj en Windows (8 estas intence preterlasitaj) kaj la tutan testaron de la aplikaĵo, 200 ludiloj malfermitaj unu post la alia lasas neniun likon, kaj ĝia eldona ZIP startas, ludas testan klipon kaj fermiĝas ĝuste. La mana testado de ĉiu funkcio en vera komputilo ankoraŭ daŭras.
+- **Per kio la 360°-ludilo kaj la rekta vido estis kontrolitaj**: la 360°-ludilo estis rulita kun sintezaj 4K-, 5.7K- kaj 8K-360°-klipoj sur ambaŭ grafikaj ĉipoj de tekkomputilo (malfermita, ludita, turnita dum ludado kaj paŭzo, fermita) sen kraŝo kaj sen restarigo de la grafika pelilo. Krudaj duobjektivaj videoj estis luditaj el sintezaj klipoj kaj el veraj X3- kaj X4-dosieroj. La Tapo-rekta vido estis kontrolita kontraŭ testa RTSP-servilo, kiu ensalutigas kiel la kameraoj (Digest), intence tranĉita kaj rifuzita, sen pasvorto en iu ajn protokola linio, sed ankoraŭ ne kun vera kamerao. La mana testado, kun veraj 360°- kaj 3D-dosieroj, ambaŭ ekranoj de tekkomputilo, dormo kaj revekiĝo, kaj vera kamerao, ankoraŭ venos.
 
 Se io misfunkcias, bonvolu malfermi [raporton](https://github.com/freeKC/Immuch360/issues) kun la protokolo konservita el la paĝo Protokoloj, vidu [Protokoloj](#logs). Kontrolu la protokolon antaŭ ol kunhavigi ĝin: ĝi povas enhavi vian servilan adreson.
 
@@ -1052,7 +1085,7 @@ Vi bezonas Windows 10 aŭ 11 sur x64, Flutter 3.47.2 por Windows, Visual Studio 
    mise run codegen
    ```
 
-2. En Windows, en la sama dosierujo `mobile`, konstruu la aplikaĵon. La unua konstruado elŝutas la bibliotekojn de la videoludilo (libmpv kaj ANGLE) el GitHub kaj kontrolas ĉiun arkivon per ĝia SHA-256:
+2. En Windows, en la sama dosierujo `mobile`, konstruu la aplikaĵon. La unua konstruado elŝutas la bibliotekojn de la videoludilo (libmpv kaj ANGLE) el GitHub kaj kontrolas ĉiun arkivon per ĝia SHA-256; ĝi ankaŭ kompilas la malgrandan Direct3D 11-kromprogramon, kiu legas la malkodilojn de la grafika ĉipo, `immuch_desktop_video`, per la sama C++-laborŝarĝo:
 
    ```bat
    flutter pub get
@@ -1068,7 +1101,7 @@ Vi bezonas Windows 10 aŭ 11 sur x64, Flutter 3.47.2 por Windows, Visual Studio 
    python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
    ```
 
-La CI de Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) rulas sur la branĉo `desktop`, kiu sekvas `immuch360`: la telefonajn kontrolojn (nenio ŝanĝiĝas en la telefonaj kompilaĵoj) kaj la tutan testaron en Linux, la labortablajn testojn en Windows, kaj la saman ZIP-dosieron; ĝiaj Linux- kaj macOS-taskoj (`flutter build linux` kaj `flutter build macos`, kun la sama `-t lib/main_desktop.dart`) ankoraŭ ne funkciis en tiuj sistemoj.
+La CI de Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) rulas sur la branĉo `desktop`, kiu sekvas `immuch360`: la telefonajn kontrolojn (nenio ŝanĝiĝas en la telefonaj kompilaĵoj) kaj la tutan testaron en Linux, la labortablajn testojn en Windows, kaj la saman ZIP-dosieron, poste sur tiu kompilaĵo la testojn, kiuj bezonas ĝian libmpv kaj ANGLE (la ensaluto de la Tapo-rekta vido, kion videodosiero ne rajtas malfermi, la 360°-ombrigiloj); ĝia Linux-tasko konstruas la aplikaĵon en Ubuntu kaj ĝia macOS-tasko kompilas ĝin per Xcode 26.3 kaj la SDK de macOS 26 (ambaŭ kun la sama `-t lib/main_desktop.dart`), nur kiel kompilaj kontroloj: neniu el ili jam estis startigita en tiuj sistemoj. Dua laborfluo (`.github/workflows/immuch360-libmpv.yml`) rekonstruas libmpv por Windows x64 kaj arm64 el fiksitaj fontoj kaj publikigas la arkivojn kun ilia SHA-256; la ZIP-dosieroj ankoraŭ portas la arkivon de media-kit ĝis tiu kompilaĵo estos ŝaltita, do la limoj de la libmpv de 2024 en [Ankoraŭ ne](#not-there-yet) validas ankaŭ por via propra kompilaĵo.
 
 <a id="where-to-get-it"></a>
 ## Kie akiri ĝin
@@ -1088,8 +1121,8 @@ La aplikaĵo estas en Google Play por telefonoj kaj tabulkomputiloj; la App-Stor
   - Hodiaŭ: la universala `Immuch360-v<version>-release.apk` de la paĝo [Eldonoj](https://github.com/freeKC/Immuch360/releases), flankinstalita per adb, vidu [Instali ĝin en la televidilo](#install-it-on-the-tv). Ĝi estas la sama aplikaĵo kiel en telefonoj.
   - Baldaŭ: Google Play en televidiloj, kies listero estas en la kontrolo de Google ekde la 9-a de oktobro 2026.
 - **Windows 10 kaj 11, 64-bita (antaŭversio)**
-  - Hodiaŭ: Immuch360 Desktop, la ZIP-dosiero `Immuch360-Desktop-3.3.0-rc.0-desktop.2-windows-x64.zip` de la [labortabla antaŭeldono](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2), malpakita kaj startigita kiel diras [Elŝuti kaj instali en Windows](#download-and-install-on-windows). Fotoj kaj ebenaj videoj nuntempe: 360°-, 3D- kaj VR180-videoj venos kun la venontaj labortablaj kompilaĵoj.
-  - Baldaŭ: 360°-, 3D-, VR180- kaj krudaj 360°-videoj; instalilo, subskribita kompilaĵo kaj ĝisdatigoj poste.
+  - Hodiaŭ: Immuch360 Desktop, labortabla kompilaĵo 3, la ZIP-dosiero `Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip` de la [labortabla antaŭeldono](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3), malpakita kaj startigita kiel diras [Elŝuti kaj instali en Windows](#download-and-install-on-windows). Fotoj, ebenaj videoj, 360°-, 3D-, VR180- kaj krudaj 360°-videoj (glataj sur dediĉita grafika ĉipo, kun limoj sur integrita) kaj la Tapo-rekta vido.
+  - Baldaŭ: Spatial 2.5D kun la retkamerao, poste Linux kaj macOS; instalilo, subskribita kompilaĵo kaj ĝisdatigoj poste.
 
 La ligiloj al App Store kaj Meta Horizon Store estos aldonitaj ĉi tie tuj kiam la listeroj estos publikigitaj. Ensalutu per via kutima Immich-servila URL kaj konto, aŭ tuŝetu "Uzi sen servilo" en la ensaluta paĝo por komenci kun la propraj fotoj kaj videoj de la aparato. La APK el GitHub ne ĝisdatigas sin mem: observu la paĝon Eldonoj, kaj post kiam vi instalis la aplikaĵon el vendejo, prenu la ĝisdatigojn el tiu vendejo.
 
@@ -1126,7 +1159,7 @@ Neniu sekreto loĝas en ĉi tiu deponejo: la Android-subskriba ŝlosilo estas ko
 
 - **`main`**: Immich `main` ĉe la enmeto, sur kiu `immuch360` baziĝas (29-a de septembro 2026 por la nunaj kompilaĵoj), neniam modifita; ĝi antaŭeniras kiam la forko estas rebazita sur pli nova Immich.
 - **`immuch360`**: la ŝanĝoj de ĉi tiu forko super Immich, inkluzive de Immuch360 Desktop ekde la 9-a de oktobro 2026. Ĉiu eldono diras, sur kiu Immich-versio ĝi baziĝas.
-- **`desktop`**: kie Immuch360 Desktop, la komputila versio, estis konstruata super `immuch360`, ĝis ĝi estis kunfandita en ĝin la 9-an de oktobro 2026, por ke telefonoj, kaskoj, televidiloj kaj komputiloj eliru el la sama fontkodo. Nun ĝi sekvas `immuch360` kaj portas la etikedojn de la labortablaj antaŭeldonoj ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) el la enmeto 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) el 5b723bd25). La komputila versio ŝanĝas nenion sub `mobile/android` kaj `mobile/ios`.
+- **`desktop`**: kie Immuch360 Desktop, la komputila versio, estis konstruata super `immuch360`, ĝis ĝi estis kunfandita en ĝin la 9-an de oktobro 2026, por ke telefonoj, kaskoj, televidiloj kaj komputiloj eliru el la sama fontkodo. Nun ĝi sekvas `immuch360` kaj portas la etikedojn de la labortablaj antaŭeldonoj ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) el la enmeto 21f285c34, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) el 5b723bd25, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) el la kunfando de la 360°-videoludilo la 10-an de oktobro 2026). Nova labortabla laboro alvenas tie unue kaj aliĝas al `immuch360` kun la labortabla kompilaĵo, kiu liveras ĝin. La komputila versio ŝanĝas nenion sub `mobile/android` kaj `mobile/ios`.
 
 <a id="logs"></a>
 ## Protokoloj
@@ -1145,7 +1178,7 @@ Ekde kompilaĵo 19 la DLNA-kliento, la telefona kunhavigo kaj la detekto de spac
 
 En komputilo (Immuch360 Desktop), la paĝo Protokoloj ankaŭ havas "Konservi la protokolojn en dosieron": la protokolo, aŭ ZIP-dosiero kun la protokolo kaj la raportoj de la lastaj kraŝoj, kiam estas iuj (ĝia proponata nomo tiam finiĝas per "with-crash-reports"). Kraŝraporto estas malgranda minidump: la fadenoj, kie ili haltis kaj nur tio, kio necesas por sekvi iliajn vokojn, kun la nomoj de la programdosieroj sed ne iliaj dosierujoj; ne la memoro de la aplikaĵo.
 
-Ekde desktop build 2 la videoludilo de la komputilo skribas tien sub `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` kaj `VideoThumbnailGrabber`, inkluzive de la propraj avertoj de mpv, kun ĵetonoj kaj pasvortoj forigitaj. Kontrolu la protokolon antaŭ ol kunhavigi ĝin: ĝi povas enhavi vian servilan adreson.
+Ekde desktop build 2 la videoludilo de la komputilo skribas tien sub `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` kaj `VideoThumbnailGrabber`, inkluzive de la propraj avertoj de mpv, kun ĵetonoj kaj pasvortoj forigitaj. Ekde desktop build 3 ĝi ankaŭ skribas la 360°-ludilon sub `SphericalPlayer`, `SphereRenderer` kaj `PluginRenderer` (la elektita grandeco, la mezuritaj kadroj sekunde, la grafika ĉipo), la krudajn duobjektivajn videojn sub `RawTwoStreams`, la malkodilojn de la grafika ĉipo sub `DesktopGpuDecoders`, `DesktopVideoDecoderApi` kaj `DecoderMeasure`, kaj la Tapo-rektan vidon sub `DesktopCameraLive`, kies linioj neniam enhavas la kamerao-konton nek ĝian pasvorton. Kontrolu la protokolon antaŭ ol kunhavigi ĝin: ĝi povas enhavi vian servilan adreson.
 
 <a id="privacy"></a>
 ## Privateco
@@ -1159,7 +1192,7 @@ Ekde desktop build 2 la videoludilo de la komputilo skribas tien sub `DesktopVid
 - **Telefona kunhavigo**: nur loka reto, kun uzantnomo kaj pasvorto, per simpla HTTP (vidu [Kunhavigi ĉi tiun telefonon en la reto](#share-this-phone-on-the-network)).
 - **Fotilo**: uzata nur de la ludilo Spatial 2.5D, en la aparato; la bildoj neniam estas konservataj kaj neniam senditaj ien ajn.
 - **En komputilo** (Immuch360 Desktop, Windows-antaŭversio): la aplikaĵo legas nur la dosierujojn, kiujn vi elektas, gardas sian indekson, bildetojn kaj kaŝmemoron en la komputilo, kaj konservas pasvortojn kaj ĵetonojn per la datumprotekto de Windows, nur por via Windows-konto. La komputila kunhavigo sekvas la regulojn de la telefona kunhavigo, kaj ne startas en reto, kiun Windows markas kiel publikan, aŭ kies tipon ĝi ne povas diri, krom se vi tion decidas.
-- **La videoludilo en komputilo** (ekde desktop build 2): la videoj de via servilo atingas ĝin tra la aplikaĵo, do la ludilo neniam tenas vian seancan ĵetonon, kaj tio, kion ĝi antaŭlegas, restas en la memoro, ne sur la disko. Ĝi malfermas nur la dosieron, kiun oni donas al ĝi: dosiero de dosierujo aŭ kunhavigo, kiu fakte estas ludlisto aŭ fluopriskribo, ne igas ĝin konektiĝi aliloken.
+- **La videoludilo en komputilo** (ekde desktop build 2): la videoj de via servilo atingas ĝin tra la aplikaĵo, do la ludilo neniam tenas vian seancan ĵetonon, kaj tio, kion ĝi antaŭlegas, restas en la memoro, ne sur la disko. Ĝi malfermas nur la dosieron, kiun oni donas al ĝi: dosiero de dosierujo aŭ kunhavigo, kiu fakte estas ludlisto aŭ fluopriskribo, ne igas ĝin konektiĝi aliloken. Ekde desktop build 3, la adreso de ĉiu video estas donata al la ludilo nur en la memoro, neniam per provizora dosiero (la ligilo, kiun la aplikaĵo faras por video de la servilo aŭ de kunhavigo, enhavas ŝlosilon de tiu seanco, kiu restis sur la disko dum kelkaj sekundoj ĉe ĉiu malfermo en desktop build 2), kaj tiu ŝlosilo neniam aperas en la protokolo; la rekta vido de Tapo-kamerao donas la kamerao-konton al la ludilo same, neniam en dosiero aŭ protokola linio, kaj parolas kun la kamerao nur en la loka reto; la mezuroj de la 360°-ludilo kaj de la malkodiloj (la grafika ĉipo, la formato de la video, la kadroj sekunde, neniam dosiernomo) restas en la dosierujo de la aplikaĵo en la komputilo.
 
 La plena politiko estas en [PRIVACY.md](../PRIVACY.md).
 
@@ -1177,7 +1210,7 @@ Android, Android TV kaj Google TV estas varmarkoj de Google LLC; Apple, iPhone, 
 
 Kio ankoraŭ ne estas farita, la plej verŝajna unue. Nenio ĉi tie estas promeso, kaj komentoj en la [cimspurilo](https://github.com/freeKC/Immuch360/issues) helpas decidi, kio venos unue.
 
-- **Immuch360 Desktop, unue Windows**: desktop build 2 aperis, kun ebenaj videoj, kaj la labortabla fontkodo estas en la ĉefa branĉo de la forko, `immuch360`, ekde la 9-a de oktobro 2026 (vidu [En Windows-komputilo](#on-a-windows-computer-immuch360-desktop-preview)). Poste, 360°-, 3D-, VR180- kaj krudaj 360°-videoj en Windows, kun la du objektivoj de krudaj dosieroj kaj la Tapo-viva vido; poste la testado de ĉiu funkcio en Windows-komputilo kaj ĝiaj korektoj; poste Spatial 2.5D kun la retkamerao; poste Linux kaj macOS, pakaĵoj, subskribado kaj ĝisdatigoj.
+- **Immuch360 Desktop, unue Windows**: desktop build 3 aperis, kun la 360°-videoludilo (360°-, 3D-, VR180- kaj krudaj 360°-videoj, la du objektivoj de krudaj dosieroj, la grandeco de la vido mezurita en ĉiu komputilo) kaj la Tapo-rekta vido, kaj la labortabla fontkodo estas en la ĉefa branĉo de la forko, `immuch360`, ekde la 9-a de oktobro 2026 (vidu [En Windows-komputilo](#on-a-windows-computer-immuch360-desktop-preview)). Poste, la libmpv de la propra laborfluo de la forko anstataŭ tiu de 2024, kaj la mana testado de ĉiu funkcio en Windows-komputilo kun veraj dosieroj, ambaŭ ekranoj kaj vera kamerao, kun ĝiaj korektoj; poste Spatial 2.5D kun la retkamerao; poste Linux kaj macOS; poste instalilo, subskribita kompilaĵo kaj aŭtomataj ĝisdatigoj.
 - **Google Play**: kompilaĵo 20 estas publika ekde la 7-a de oktobro 2026, anstataŭ kompilaĵo 18; la listero por televidiloj estas en la kontrolo de Google ekde la 9-a de oktobro 2026. Kompilaĵo 21 ŝanĝas nenion en telefonoj kaj tabulkomputiloj.
 - **App Store**: versio 3.3.0 atendas la kontrolon de Apple; ĝi portas la funkciojn de kompilaĵo 11, do la alŝuto al Immich kaj la kontrolo de videomalkodiloj (kompilaĵo 15) kaj la krudaj Insta360-dosieroj (kompilaĵo 16) venos kun la sekva App-Store-ĝisdatigo. La ligilo estos aldonita ĉi tie kiam ĝi estos publika.
 - **Meta Horizon Store**: Meta aprobis la listeron la 7-an de oktobro 2026 kun kompilaĵo 14. Kompilaĵo 21 estas sendita kiel ĝia unua ĝisdatigo: ĝi alportas ĉion ekde kompilaĵo 14 (alŝutoj el kunhavigo al Immich, la video-fonto elektita laŭ tio, kion la kasko malkodas, krudaj dosieroj de Insta360, GoPro kaj DJI, DLNA, la telefona kunhavigo, spacaj fotoj de Apple, bibliotekoj de Plex Media Server, Tapo-kameraoj), kaj la vendejo listigas ĝin por la Quest 2, Quest Pro, Quest 3 kaj 3S. La vendeja ligilo estos aldonita ĉi tie, kiam la paĝo estos publika; flankinstalita kopio devas unue esti malinstalita (vidu [Instali](#install)).
