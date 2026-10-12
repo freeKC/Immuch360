@@ -16,11 +16,11 @@ It is for people who shoot with a 360° camera (Insta360, GoPro MAX, DJI Osmo 36
 
 <div align="center">
 
-| Platform | Where to get it | Status on 10 October 2026 |
+| Platform | Where to get it | Status on 12 October 2026 |
 |---|---|---|
 | <img src=".github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 on GitHub, sent to Google Play on 10 October 2026 (build 20 live there since 7 October) |
 | <img src=".github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.0 waiting for Apple's review; [build it yourself](#build-it-yourself) meanwhile |
-| <img src=".github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [APK](#meta-quest-3) · Horizon Store | listing approved, build 21 under Meta's review, build 23 on the Alpha channel |
+| <img src=".github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | on the Horizon Store since 7 October 2026 (build 14), build 21 under Meta's review, build 23 on the Alpha channel |
 | <img src=".github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 on GitHub; the Google Play listing for TVs is under Google's review since 9 October 2026 |
 | <img src=".github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src=".github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src=".github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Preview ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 on Windows: photos, flat and 360° videos; macOS and Linux later |
 
@@ -515,7 +515,7 @@ The media come from your Immich server, the headset itself, a NAS, a media serve
 
 ### Open the immersive view
 
-1. Install the app on the headset: until the Horizon Store listing is approved, sideload the APK, see [Install](#install).
+1. Install the app on the headset from the [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), or sideload the APK of a newer build, see [Install](#install).
 2. Log in with your Immich server, or tap "Use without a server" for the headset's own photos and videos.
 3. Open a 360° photo or video in the viewer, from the timeline, the 360° list, an album or a share folder.
 4. Press the 360° button, or "View as 360°" in the ⋮ menu. On the headset they open the immersive view directly, instead of the sphere viewer of phones.
@@ -907,7 +907,7 @@ WebDAV, DLNA and phone shares at a plain HTTP address of the local network are n
 
 ### Install
 
-Meta approved the Horizon Store listing on 7 October 2026 with build 14, and build 21 is submitted as its first update. Until the store page is public, or to get a build before the store has it, sideload the `-quest-release.apk` file of a release (built for the headset: 64 bit, target SDK 34, only the permissions the headset uses), or the universal `-release.apk`:
+Immuch360 has been on the [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) since 7 October 2026 with build 14, and build 21 is in Meta's review as its first update. To get a build before the store has it, sideload the `-quest-release.apk` file of a release (built for the headset: 64 bit, target SDK 34, only the permissions the headset uses), or the universal `-release.apk`:
 
 1. Enable developer mode once. In the Meta Horizon phone app, open Devices, select the headset, then Headset settings, then Developer mode. This needs a developer account, which is free at developers.meta.com. You also need adb (Android SDK Platform Tools) on the computer, or SideQuest.
 2. Connect the headset to a computer with a USB-C cable. In the headset, accept "Allow USB debugging".
@@ -1079,7 +1079,7 @@ The CI of Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) runs on 
 
 ## Where to get it
 
-The app is on Google Play for phones and tablets; the App Store version is waiting for Apple's review, the Meta Horizon Store listing is approved and its first update is in Meta's review, and the Google Play version for TVs is waiting for Google's review of the TV release. Immuch360 Desktop, for Windows, is a preview on GitHub. The GitHub release is always the newest build:
+The app is on Google Play for phones and tablets; the App Store version is waiting for Apple's review, the app is on the Meta Horizon Store and its first update is in Meta's review, and the Google Play version for TVs is waiting for Google's review of the TV release. Immuch360 Desktop, for Windows, is a preview on GitHub. The GitHub release is always the newest build:
 
 - **Android phones and tablets**
   - Today: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK on the [Releases](https://github.com/freeKC/Immuch360/releases) page: `Immuch360-v<version>-arm64-v8a-release.apk` for a phone (the universal `Immuch360-v<version>-release.apk` works everywhere, `-armeabi-v7a` is for older 32 bit phones, and the `.aab` file is for Google Play, not for sideloading). The GitHub build is usually ahead of the store. Either way it installs next to the official Immich app (package `com.aprogsys.immuch360`).
@@ -1089,7 +1089,7 @@ The app is on Google Play for phones and tablets; the App Store version is waiti
   - Soon: App Store, under review.
 - **Meta Quest 2, Quest Pro, Quest 3 and 3S (the Quest 2 and Quest Pro untested)**
   - Today: the `-quest-release.apk` file of the [Releases](https://github.com/freeKC/Immuch360/releases) page (the universal `-release.apk` works too), sideloaded in developer mode, see [Install](#install). The store build and the GitHub APK are signed with different keys: to switch from one to the other, uninstall the app first (its settings and saved shares go with it).
-  - Soon: on the Meta Horizon Store, the listing was approved on 7 October 2026 with build 14, and build 21, its first update, is in Meta's review; the store's alpha channel (testers only) gets each new build.
+  - Store: the [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) has had the app since 7 October 2026 with build 14, and build 21, its first update, is in Meta's review; the store's alpha channel (testers only) gets each new build.
 - **Android TV and Google TV (from build 20)**
   - Today: the universal `Immuch360-v<version>-release.apk` of the [Releases](https://github.com/freeKC/Immuch360/releases) page, sideloaded with adb, see [Install it on the TV](#install-it-on-the-tv). It is the same app as on phones.
   - Soon: Google Play on TVs, whose listing has been under Google's review since 9 October 2026.
@@ -1097,7 +1097,7 @@ The app is on Google Play for phones and tablets; the App Store version is waiti
   - Today: Immuch360 Desktop, desktop build 4, the ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` of the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), unzipped and started as [Download and install on Windows](#download-and-install-on-windows) says. Photos, flat videos, 360°, 3D, VR180 and raw 360° videos (smooth on a dedicated graphics chip, with limits on an integrated one) and the Tapo live view.
   - Soon: Spatial 2.5D with the webcam, then Linux and macOS; an installer, a signed build and updates later.
 
-The App Store and Meta Horizon Store links will be added here as soon as the listings are published. Log in with your usual Immich server URL and account, or tap "Use without a server" on the login page to start on the device's own photos and videos. The APK from GitHub does not update itself: watch the Releases page, and once you have installed the app from a store, take the updates from that store.
+The App Store link will be added here as soon as the listing is published; the app is already on the [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). Log in with your usual Immich server URL and account, or tap "Use without a server" on the login page to start on the device's own photos and videos. The APK from GitHub does not update itself: watch the Releases page, and once you have installed the app from a store, take the updates from that store.
 
 ## Build it yourself
 
@@ -1181,7 +1181,7 @@ What is not done yet, the most likely first. Nothing here is a promise, and feed
 - **Immuch360 Desktop, Windows first**: desktop build 3 is out, with the 360° video player (360°, 3D, VR180 and raw 360° videos, the two lenses of raw files, the size of the view measured on each computer) and the Tapo live view, and the desktop sources are in the main branch of the fork, `immuch360`, since 9 October 2026 (see [On a Windows computer](#on-a-windows-computer-immuch360-desktop-preview)). Next, the libmpv of the fork's own workflow in place of the 2024 one, and the test of each function by hand on a Windows PC with real files, both screens and a real camera, with its fixes; then Spatial 2.5D with the webcam; then Linux and macOS; then an installer, a signed build and automatic updates.
 - **Google Play**: build 20 has been live since 7 October 2026, in place of build 18; the listing for TVs has been under Google's review since 9 October 2026. Build 21 changes nothing on phones and tablets.
 - **App Store**: version 3.3.0 is waiting for Apple's review; it carries the features of build 11, so the upload to Immich and the video decoder check (build 15) and the raw Insta360 files (build 16) come with the next App Store update. The link will be added here when it is live.
-- **Meta Horizon Store**: Meta approved the listing on 7 October 2026 with build 14. Build 21 is submitted as its first update: it brings everything since build 14 (uploads from a share to Immich, the video source chosen from what the headset decodes, raw Insta360, GoPro and DJI files, DLNA, the phone share, Apple spatial photos, Plex Media Server libraries, Tapo cameras), and the store lists it for the Quest 2, Quest Pro, Quest 3 and 3S. The store link will be added here once the page is public; a sideloaded copy has to be uninstalled first (see [Install](#install)).
+- **Meta Horizon Store**: Meta approved the listing on 7 October 2026 with build 14, and the app has been public on the [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) since that day. Build 21 is submitted as its first update: it brings everything since build 14 (uploads from a share to Immich, the video source chosen from what the headset decodes, raw Insta360, GoPro and DJI files, DLNA, the phone share, Apple spatial photos, Plex Media Server libraries, Tapo cameras), and the store lists it for the Quest 2, Quest Pro, Quest 3 and 3S. To install the store version, a sideloaded copy has to be uninstalled first (see [Install](#install)).
 - **Store listings**: the Google Play listing was rewritten in October 2026 with new screenshots, and its TV screenshots and TV banner were added on 8 October 2026; the listing for TVs has been under Google's review since 9 October 2026. The App Store text still describes the first builds (360° photos and videos, raw files shown flat); it will present the 3D, VR180 and Spatial viewers, the mode without a server, network shares, the media player and the raw Insta360 files. The Meta Horizon Store text already presents the media player.
 - **Raw 360° camera files, next**: a progress indicator while a raw photo is prepared for the headset; levelling of GoPro and DJI videos from their own motion data; dual fisheye .dng; device reports on the two lens playback of build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) to confirm seams and decoder budgets.
 - **DLNA, phone share and Apple spatial, next**: the device reports of build 19 (Plex, Jellyfin, a NAS and the Freebox Server over DLNA; a phone serving a Quest, on its hotspot too; real iPhone spatial photos and videos in the headset); the multicast entitlement asked from Apple, so that iPhones find every DLNA server; previous and next between spatial photos in the headset; a spatial badge on server photos in the timeline; spatial videos in 3D on the Quest, if its decoders allow it.

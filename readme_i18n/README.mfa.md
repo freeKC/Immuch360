@@ -15,11 +15,11 @@ Dio untuk ore hok ambik gambo nga kamera 360° (Insta360, GoPro MAX, DJI Osmo 36
 
 <div align="center">
 
-| Platform | Mano nok dapat | Status pado 10 Oktober 2026 |
+| Platform | Mano nok dapat | Status pado 12 Oktober 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** fon nga tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | binaan 23 kat GitHub, doh hanta ko Google Play pado 10 Oktober 2026 (situ binaan 20 doh ado sejak 7 Oktober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone nga iPad** | App Store | versi 3.3.0 tengoh tunggu semakan Apple; sementaro tu, [bina sendiri](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 nga 3S | [APK](#meta-quest-3) · Horizon Store | senarai doh diluluske, binaan 21 dalam semakan Meta, binaan 23 kat saluran Alpha |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 nga 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | kat Horizon Store sejak 7 Oktober 2026 (binaan 14), binaan 21 dalam semakan Meta, binaan 23 kat saluran Alpha |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV nga Google TV** | [APK](#install-it-on-the-tv) · Google Play | binaan 23 kat GitHub; senarai Google Play untuk TV dale semaka Google sejak 9 Oktober 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pratonton](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | binaan desktop 4 kat Windows: gambo, video rata nga video 360°; macOS nga Linux kemudie |
 
@@ -529,7 +529,7 @@ Media datang dari server Immich demo, headset tu sendiri, NAS, server media, fon
 
 ### Bukak paparan imersif
 
-1. Pasang aplikasi kat headset: sampa senarai Horizon Store diluluske, pasang APK caro sideload, tengok [Pasang](#install).
+1. Pasang aplikasi kat headset dari [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), ke sideload APK binaan yang lagi baru, tengok [Pasang](#install).
 2. Log masuk nga server Immich demo, ke ketuk "Guno tanpo server" untuk gambo nga video headset tu sendiri.
 3. Bukak gambo ke video 360° dale pemapar, dari garis maso, senarai 360°, album ke folder kongsi.
 4. Tekan butang 360°, ke "Lihat sebagai 360°" dale menu ⋮. Kat headset dio bukak paparan imersif teruh, buke pemapar sfera fon.
@@ -930,7 +930,7 @@ Kongsi WebDAV, DLNA nga fon kat alamat HTTP biaso dale rangkaie tempate tok terk
 <a id="install"></a>
 ### Pasang
 
-Meta doh luluske senarai Horizon Store pado 7 Oktober 2026 nga binaan 14, nga binaan 21 doh dihanta sebagai kemas kini pertamo dio. Sampa muko kedai jadi awam, ke nok dapat binaan sebelum kedai ado, sideload fail `-quest-release.apk` dari satu keluare (dibina untuk headset: 64 bit, target SDK 34, kebenara hok headset guno jah), ke `-release.apk` universal:
+Immuch360 ado kat [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) sejak 7 Oktober 2026 nga binaan 14, nga binaan 21 dale semaka Meta sebagai kemas kini pertamo dio. Nok dapat binaan sebelum kedai ado, sideload fail `-quest-release.apk` dari satu keluare (dibina untuk headset: 64 bit, target SDK 34, kebenara hok headset guno jah), ke `-release.apk` universal:
 
 1. Buka mod pembangun sekali. Dale aplikasi fon Meta Horizon, bukak "Devices" (Peranti), pilih headset, lepah tu "Headset settings" (Tetapa headset), lepah tu "Developer mode" (Mod pembangun). Ni perlu akaun pembangun, hok percumo kat developers.meta.com. Demo pong perlu adb (Android SDK Platform Tools) kat komputer, ke SideQuest.
 2. Sambung headset ko komputer nga kabel USB-C. Dale headset, terimo "Allow USB debugging" (Bui nyahpepijat USB).
@@ -1108,7 +1108,7 @@ CI Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) jale kat cabang
 <a id="where-to-get-it"></a>
 ## Mano nok dapat
 
-Aplikasi ni ado kat Google Play untuk fon nga tablet; versi App Store tengoh tunggu semaka Apple, senarai Meta Horizon Store doh diluluske nga kemas kini pertamo dio dale semaka Meta, nga versi Google Play untuk TV tunggu semaka Google untuk keluare TV. Immuch360 Desktop, untuk Windows, tu pratonton kat GitHub. Keluare GitHub sokmo binaan paling baru:
+Aplikasi ni ado kat Google Play untuk fon nga tablet; versi App Store tengoh tunggu semaka Apple, aplikasi ni ado kat Meta Horizon Store nga kemas kini pertamo dio dale semaka Meta, nga versi Google Play untuk TV tunggu semaka Google untuk keluare TV. Immuch360 Desktop, untuk Windows, tu pratonton kat GitHub. Keluare GitHub sokmo binaan paling baru:
 
 - **Fon nga tablet Android**
   - Hari ni: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ke APK kat muko [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk fon (`Immuch360-v<version>-release.apk` universal jale kat mano-mano, `-armeabi-v7a` untuk fon 32 bit lamo, nga fail `.aab` untuk Google Play, buke untuk sideload). Binaan GitHub biasonyo lagi dulu dari kedai. Mano-mano pong, dio pasang sebeloh aplikasi Immich rasmi (pakej `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Aplikasi ni ado kat Google Play untuk fon nga tablet; versi App Store tengoh tun
   - Tak lamo lagi: App Store, tengoh disemak.
 - **Meta Quest 2, Quest Pro, Quest 3 nga 3S (Quest 2 nga Quest Pro belum diuji)**
   - Hari ni: fail `-quest-release.apk` dari muko [Releases](https://github.com/freeKC/Immuch360/releases) (`-release.apk` universal pong jadi), di-sideload dale mod pembangun, tengok [Pasang](#install). Binaan kedai nga APK GitHub ditandatange nga kunci lain: nok tukar dari satu ko lagi satu, nyahpasang aplikasi dulu (tetapa nga kongsi hok disimpang dio hilang samo).
-  - Tak lamo lagi: kat Meta Horizon Store, senarai doh diluluske pado 7 Oktober 2026 nga binaan 14, nga binaan 21, kemas kini pertamo dio, dale semaka Meta; saluran alpha kedai (penguji jah) dapat tiap binaan baru.
+  - Kedai: aplikasi ni ado kat [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) sejak 7 Oktober 2026 nga binaan 14, nga binaan 21, kemas kini pertamo dio, dale semaka Meta; saluran alpha kedai (penguji jah) dapat tiap binaan baru.
 - **Android TV nga Google TV (dari binaan 20)**
   - Hari ni: `Immuch360-v<version>-release.apk` universal dari muko [Releases](https://github.com/freeKC/Immuch360/releases), di-sideload nga adb, tengok [Pasang dio kat TV](#install-it-on-the-tv). Dio aplikasi samo macey kat fon.
   - Tak lamo lagi: Google Play kat TV, hok senarai dio dale semaka Google sejak 9 Oktober 2026.
@@ -1126,7 +1126,7 @@ Aplikasi ni ado kat Google Play untuk fon nga tablet; versi App Store tengoh tun
   - Hari ni: Immuch360 Desktop, binaan desktop 4, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` dari [pra-keluare desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), dinyahzip nga dimulo macey [Muat turun nga pasang kat Windows](#download-and-install-on-windows) kato. Gambo, video rata, video 360°, 3D, VR180 nga video mentah 360° (licin kat cip grafik khas, nga had kat cip bersepadu) nga paparan langsung Tapo.
   - Tak lamo lagi: Spatial 2.5D nga kamera web, lepah tu Linux nga macOS; pemasang, binaan bertandatange nga kemas kini kemudia.
 
-Pauta App Store nga Meta Horizon Store akan ditamboh sini bilo senarai doh diterbit. Log masuk nga URL server Immich nga akaun biaso demo, ke ketuk "Guno tanpo server" kat muko log masuk nok mulo nga gambo nga video peranti tu sendiri. APK dari GitHub tok kemas kini sendiri: perhati muko Releases, nga bilo demo doh pasang aplikasi dari kedai, ambik kemas kini dari kedai tu.
+Pauta App Store akan ditamboh sini bilo senarai doh diterbit; aplikasi ni doh ado kat [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). Log masuk nga URL server Immich nga akaun biaso demo, ke ketuk "Guno tanpo server" kat muko log masuk nok mulo nga gambo nga video peranti tu sendiri. APK dari GitHub tok kemas kini sendiri: perhati muko Releases, nga bilo demo doh pasang aplikasi dari kedai, ambik kemas kini dari kedai tu.
 
 <a id="build-it-yourself"></a>
 ## Bina sendiri
@@ -1215,7 +1215,7 @@ Gapo hok belum siap, hok paling mungki dulu. Takdok gapo sini janji, nga maklum 
 - **Immuch360 Desktop, Windows dulu**: binaan desktop 3 doh kelua, nga pemain video 360° (video 360°, 3D, VR180 nga video mentah 360°, duo kanta fail mentah, saiz paparan hok diukur kat tiap komputer) nga paparan langsung Tapo, nga sumber desktop ado dale cabang utamo fork ni, `immuch360`, sejak 9 Oktober 2026 (tengok [Kat komputer Windows](#on-a-windows-computer-immuch360-desktop-preview)). Lepah ni, libmpv aliran kijo fork sendiri ganti hok 2024, nga uji tiap fungsi nga tange kat PC Windows nga fail betul, keduo-duo skrin nga kamera betul, nga pembaika dio; lepah tu Spatial 2.5D nga kamera web; lepah tu Linux nga macOS; lepah tu pemasang, binaan bertandatange nga kemas kini automatik.
 - **Google Play**: binaan 20 doh ado sejak 7 Oktober 2026, ganti binaan 18; senarai untuk TV dale semaka Google sejak 9 Oktober 2026. Binaan 21 tok ubah gapo-gapo kat fon nga tablet.
 - **App Store**: versi 3.3.0 tengoh tunggu semaka Apple; dio ado ciri binaan 11, jadi muat naik ko Immich nga semaka penyahkod video (binaan 15) nga fail Insta360 mentoh (binaan 16) mari nga kemas kini App Store lepah. Pauta akan ditamboh sini bilo dio doh ado.
-- **Meta Horizon Store**: Meta doh luluske senarai pado 7 Oktober 2026 nga binaan 14. Binaan 21 doh dihanta sebagai kemas kini pertamo dio: dio bawok semuo sejak binaan 14 (muat naik dari kongsi ko Immich, sumber video hok dipilih ikut gapo hok headset buleh nyahkod, fail mentoh Insta360, GoPro nga DJI, DLNA, kongsi fon, gambo ruang Apple, pustako Plex Media Server, kamera Tapo), nga kedai senarai dio untuk Quest 2, Quest Pro, Quest 3 nga 3S. Pauta kedai akan ditamboh sini bilo muko tu jadi awam; salina hok di-sideload keno nyahpasang dulu (tengok [Pasang](#install)).
+- **Meta Horizon Store**: Meta doh luluske senarai pado 7 Oktober 2026 nga binaan 14, nga aplikasi ni doh terbuko untuk ore ramai kat [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) sejak hari tu. Binaan 21 doh dihanta sebagai kemas kini pertamo dio: dio bawok semuo sejak binaan 14 (muat naik dari kongsi ko Immich, sumber video hok dipilih ikut gapo hok headset buleh nyahkod, fail mentoh Insta360, GoPro nga DJI, DLNA, kongsi fon, gambo ruang Apple, pustako Plex Media Server, kamera Tapo), nga kedai senarai dio untuk Quest 2, Quest Pro, Quest 3 nga 3S. Nok pasang versi kedai, salina hok di-sideload keno nyahpasang dulu (tengok [Pasang](#install)).
 - **Senarai kedai**: senarai Google Play ditulis balik dale Oktober 2026 nga tangkapa skrin baru, nga tangkapa skrin TV nga sepanduk TV dio ditamboh pado 8 Oktober 2026; senarai untuk TV dale semaka Google sejak 9 Oktober 2026. Teks App Store masih terang binaan awal (gambo nga video 360°, fail mentoh tunjuk rata); dio akan perkenal pemapar 3D, VR180 nga Spatial, mod tanpo server, kongsi rangkaie, pemain media nga fail Insta360 mentoh. Teks Meta Horizon Store doh perkenal pemain media.
 - **Fail kamera 360° mentoh, lepah ni**: penunjuk kemajua maso gambo mentoh disedio untuk headset; ratake video GoPro nga DJI dari data gerak dio sendiri; .dng fisheye bergando; lapora peranti pasal main balik duo lensa binaan 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) nok sahke sambunge nga bajet penyahkod.
 - **DLNA, kongsi fon nga ruang Apple, lepah ni**: lapora peranti binaan 19 (Plex, Jellyfin, NAS nga Freebox Server melalui DLNA; fon hok layan Quest, kat hotspot dio pong; gambo nga video ruang iPhone betul dale headset); hak multicast hok dimintak dari Apple, supayo iPhone jumpo tiap server DLNA; sebelum nga lepah antaro gambo ruang dale headset; lencana ruang kat gambo server dale garis maso; video ruang dale 3D kat Quest, kalu penyahkod dio bui.

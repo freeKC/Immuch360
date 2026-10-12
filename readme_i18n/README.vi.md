@@ -15,11 +15,11 @@ Immuch360 là ứng dụng di động Immich với ảnh và video 360° mà b�
 
 <div align="center">
 
-| Nền tảng | Tải ở đâu | Trạng thái ngày 10 tháng 10 năm 2026 |
+| Nền tảng | Tải ở đâu | Trạng thái ngày 12 tháng 10 năm 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** điện thoại và máy tính bảng | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bản dựng 23 trên GitHub, đã gửi lên Google Play ngày 10 tháng 10 năm 2026 (bản dựng 20 phát hành trên đó từ ngày 7 tháng 10) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone và iPad** | App Store | phiên bản 3.3.0 đang chờ Apple xét duyệt; trong lúc chờ, hãy [tự dựng ứng dụng](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 và 3S | [APK](#meta-quest-3) · Horizon Store | trang ứng dụng đã duyệt, bản dựng 21 đang chờ Meta xét duyệt, bản dựng 23 trên kênh alpha |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 và 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | trên Horizon Store từ ngày 7 tháng 10 năm 2026 (bản dựng 14), bản dựng 21 đang chờ Meta xét duyệt, bản dựng 23 trên kênh alpha |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV và Google TV** | [APK](#install-it-on-the-tv) · Google Play | bản dựng 23 trên GitHub; trang Google Play cho TV đang được Google xét duyệt từ ngày 9 tháng 10 năm 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP bản xem trước](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | bản dựng máy tính 4 trên Windows: ảnh, video phẳng và video 360°; macOS và Linux sau này |
 
@@ -529,7 +529,7 @@ Nội dung đến từ máy chủ Immich, từ chính kính, từ NAS, máy ch�
 
 ### Mở chế độ xem nhập vai
 
-1. Cài ứng dụng lên kính: cho đến khi trang trên Horizon Store được duyệt, hãy cài APK thủ công (sideload), xem [Cài đặt ứng dụng](#install).
+1. Cài ứng dụng lên kính từ [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), hoặc cài thủ công (sideload) APK của một bản dựng mới hơn, xem [Cài đặt ứng dụng](#install).
 2. Đăng nhập bằng máy chủ Immich của bạn, hoặc chạm "Sử dụng không cần máy chủ" để dùng ảnh và video của chính kính.
 3. Mở một ảnh hoặc video 360° trong trình xem, từ dòng thời gian, danh sách 360°, một album hoặc một thư mục chia sẻ.
 4. Nhấn nút 360°, hoặc "Xem dạng 360°" trong menu ⋮. Trên kính, chúng mở thẳng chế độ xem nhập vai thay vì trình xem hình cầu như trên điện thoại.
@@ -930,7 +930,7 @@ Chia sẻ WebDAV, DLNA và chia sẻ điện thoại ở địa chỉ HTTP thư�
 <a id="install"></a>
 ### Cài đặt ứng dụng
 
-Meta đã duyệt trang trên Horizon Store ngày 7 tháng 10 năm 2026 với bản dựng 14, và bản dựng 21 đã được gửi làm bản cập nhật đầu tiên. Cho đến khi trang cửa hàng được công khai, hoặc để có một bản dựng trước khi cửa hàng có nó, hãy cài thủ công tệp `-quest-release.apk` của một bản phát hành (dựng cho kính: 64 bit, target SDK 34, chỉ các quyền mà kính dùng), hoặc bản `-release.apk` phổ thông:
+Immuch360 có trên [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) từ ngày 7 tháng 10 năm 2026 với bản dựng 14, và bản dựng 21 đang được Meta xét duyệt làm bản cập nhật đầu tiên. Để có một bản dựng trước khi cửa hàng có nó, hãy cài thủ công tệp `-quest-release.apk` của một bản phát hành (dựng cho kính: 64 bit, target SDK 34, chỉ các quyền mà kính dùng), hoặc bản `-release.apk` phổ thông:
 
 1. Bật chế độ nhà phát triển một lần. Trong ứng dụng Meta Horizon trên điện thoại, mở Devices (Thiết bị), chọn kính, rồi Headset settings (Cài đặt kính), rồi Developer mode (Chế độ nhà phát triển). Việc này cần một tài khoản nhà phát triển, miễn phí tại developers.meta.com. Bạn cũng cần adb (Android SDK Platform Tools) trên máy tính, hoặc SideQuest.
 2. Nối kính với máy tính bằng cáp USB-C. Trong kính, chấp nhận "Allow USB debugging" (Cho phép gỡ lỗi USB).
@@ -1108,7 +1108,7 @@ CI của Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) chạy tr
 <a id="where-to-get-it"></a>
 ## Tải ở đâu
 
-Ứng dụng có trên Google Play cho điện thoại và máy tính bảng; phiên bản App Store đang chờ Apple xét duyệt, trang trên Meta Horizon Store đã được duyệt và bản cập nhật đầu tiên đang được Meta xét duyệt, và phiên bản Google Play cho TV đang chờ Google xét duyệt bản phát hành cho TV. Immuch360 Desktop cho Windows là một bản xem trước trên GitHub. Bản phát hành trên GitHub luôn là bản dựng mới nhất:
+Ứng dụng có trên Google Play cho điện thoại và máy tính bảng; phiên bản App Store đang chờ Apple xét duyệt, ứng dụng có trên Meta Horizon Store và bản cập nhật đầu tiên đang được Meta xét duyệt, và phiên bản Google Play cho TV đang chờ Google xét duyệt bản phát hành cho TV. Immuch360 Desktop cho Windows là một bản xem trước trên GitHub. Bản phát hành trên GitHub luôn là bản dựng mới nhất:
 
 - **Điện thoại và máy tính bảng Android**
   - Hiện nay: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), hoặc APK trên trang [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` cho điện thoại (bản phổ thông `Immuch360-v<version>-release.apk` chạy ở mọi nơi, `-armeabi-v7a` dành cho điện thoại 32 bit đời cũ, và tệp `.aab` dành cho Google Play, không dùng để cài thủ công). Bản dựng trên GitHub thường đi trước cửa hàng. Dù cách nào, ứng dụng cũng cài song song với ứng dụng Immich chính thức (gói `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ CI của Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) chạy tr
   - Sắp tới: App Store, đang xét duyệt.
 - **Meta Quest 2, Quest Pro, Quest 3 và 3S (Quest 2 và Quest Pro chưa kiểm thử)**
   - Hiện nay: tệp `-quest-release.apk` trên trang [Releases](https://github.com/freeKC/Immuch360/releases) (bản `-release.apk` phổ thông cũng chạy), cài thủ công ở chế độ nhà phát triển, xem [Cài đặt ứng dụng](#install). Bản dựng trên cửa hàng và APK trên GitHub được ký bằng các khóa khác nhau: để chuyển từ bản này sang bản kia, hãy gỡ ứng dụng trước (cài đặt và các chia sẻ đã lưu cũng mất theo).
-  - Sắp tới: trên Meta Horizon Store, trang đã được duyệt ngày 7 tháng 10 năm 2026 với bản dựng 14, và bản dựng 21, bản cập nhật đầu tiên, đang được Meta xét duyệt; kênh alpha của cửa hàng (chỉ người thử nghiệm) nhận mọi bản dựng mới.
+  - Cửa hàng: ứng dụng có trên [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) từ ngày 7 tháng 10 năm 2026 với bản dựng 14, và bản dựng 21, bản cập nhật đầu tiên, đang được Meta xét duyệt; kênh alpha của cửa hàng (chỉ người thử nghiệm) nhận mọi bản dựng mới.
 - **Android TV và Google TV (từ bản dựng 20)**
   - Hiện nay: bản phổ thông `Immuch360-v<version>-release.apk` trên trang [Releases](https://github.com/freeKC/Immuch360/releases), cài thủ công bằng adb, xem [Cài đặt trên TV](#install-it-on-the-tv). Đây là cùng một ứng dụng như trên điện thoại.
   - Sắp tới: Google Play trên TV, với trang cho TV đang được Google xét duyệt từ ngày 9 tháng 10 năm 2026.
@@ -1126,7 +1126,7 @@ CI của Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) chạy tr
   - Hiện nay: Immuch360 Desktop, bản dựng máy tính 4, tệp ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` của [bản phát hành trước cho máy tính](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), giải nén và chạy như [Tải về và cài đặt trên Windows](#download-and-install-on-windows) hướng dẫn. Ảnh, video phẳng, video 360°, 3D, VR180 và video 360° thô (mượt trên chip đồ họa rời, có giới hạn trên chip tích hợp) và xem trực tiếp Tapo.
   - Sắp tới: Spatial 2.5D với webcam, rồi Linux và macOS; trình cài đặt, bản dựng được ký và cập nhật sẽ đến sau.
 
-Liên kết App Store và Meta Horizon Store sẽ được thêm vào đây ngay khi các trang được phát hành. Đăng nhập bằng URL máy chủ Immich và tài khoản quen thuộc của bạn, hoặc chạm "Sử dụng không cần máy chủ" trên trang đăng nhập để bắt đầu với ảnh và video của chính thiết bị. APK tải từ GitHub không tự cập nhật: hãy theo dõi trang Releases, và khi bạn đã cài ứng dụng từ một cửa hàng, hãy nhận cập nhật từ cửa hàng đó.
+Liên kết App Store sẽ được thêm vào đây ngay khi trang được phát hành; ứng dụng đã có trên [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). Đăng nhập bằng URL máy chủ Immich và tài khoản quen thuộc của bạn, hoặc chạm "Sử dụng không cần máy chủ" trên trang đăng nhập để bắt đầu với ảnh và video của chính thiết bị. APK tải từ GitHub không tự cập nhật: hãy theo dõi trang Releases, và khi bạn đã cài ứng dụng từ một cửa hàng, hãy nhận cập nhật từ cửa hàng đó.
 
 <a id="build-it-yourself"></a>
 ## Tự dựng ứng dụng
@@ -1215,7 +1215,7 @@ Những gì chưa làm, việc nhiều khả năng nhất đứng trước. Khô
 - **Immuch360 Desktop, Windows trước**: bản dựng máy tính 3 đã ra mắt, với trình phát video 360° (video 360°, 3D, VR180 và video 360° thô, hai ống kính của tệp thô, kích thước khung nhìn được đo trên từng máy tính) và xem trực tiếp Tapo, và mã nguồn máy tính nằm trong nhánh chính của bản fork, `immuch360`, từ ngày 9 tháng 10 năm 2026 (xem [Trên máy tính Windows](#on-a-windows-computer-immuch360-desktop-preview)). Tiếp theo là libmpv từ quy trình riêng của bản fork thay cho bản năm 2024, và kiểm thử thủ công từng chức năng trên một PC Windows với tệp thật, cả hai màn hình và một camera thật, cùng các bản sửa lỗi; rồi Spatial 2.5D với webcam; rồi Linux và macOS; rồi trình cài đặt, bản dựng được ký và cập nhật tự động.
 - **Google Play**: bản dựng 20 đã phát hành từ ngày 7 tháng 10 năm 2026, thay cho bản dựng 18; trang cho TV đang được Google xét duyệt từ ngày 9 tháng 10 năm 2026. Bản dựng 21 không thay đổi gì trên điện thoại và máy tính bảng.
 - **App Store**: phiên bản 3.3.0 đang chờ Apple xét duyệt; nó có các tính năng của bản dựng 11, nên tải lên Immich và kiểm tra bộ giải mã video (bản dựng 15) cùng tệp thô Insta360 (bản dựng 16) sẽ có trong bản cập nhật App Store tiếp theo. Liên kết sẽ được thêm vào đây khi phát hành.
-- **Meta Horizon Store**: Meta đã duyệt trang ngày 7 tháng 10 năm 2026 với bản dựng 14. Bản dựng 21 đã được gửi làm bản cập nhật đầu tiên: nó mang đến mọi thứ kể từ bản dựng 14 (tải lên Immich từ một chia sẻ, nguồn video chọn theo những gì kính giải mã được, tệp thô Insta360, GoPro và DJI, DLNA, chia sẻ từ điện thoại, ảnh không gian Apple, thư viện Plex Media Server, camera Tapo), và cửa hàng đăng ký nó cho Quest 2, Quest Pro, Quest 3 và 3S. Liên kết cửa hàng sẽ được thêm vào đây khi trang được công khai; bản cài thủ công phải được gỡ trước (xem [Cài đặt ứng dụng](#install)).
+- **Meta Horizon Store**: Meta đã duyệt trang ngày 7 tháng 10 năm 2026 với bản dựng 14, và ứng dụng đã công khai trên [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) từ ngày đó. Bản dựng 21 đã được gửi làm bản cập nhật đầu tiên: nó mang đến mọi thứ kể từ bản dựng 14 (tải lên Immich từ một chia sẻ, nguồn video chọn theo những gì kính giải mã được, tệp thô Insta360, GoPro và DJI, DLNA, chia sẻ từ điện thoại, ảnh không gian Apple, thư viện Plex Media Server, camera Tapo), và cửa hàng đăng ký nó cho Quest 2, Quest Pro, Quest 3 và 3S. Để cài phiên bản từ cửa hàng, bản cài thủ công phải được gỡ trước (xem [Cài đặt ứng dụng](#install)).
 - **Trang trên cửa hàng**: trang Google Play đã được viết lại vào tháng 10 năm 2026 với ảnh chụp màn hình mới, và ảnh chụp màn hình TV cùng biểu ngữ TV đã được thêm vào ngày 8 tháng 10 năm 2026; trang cho TV đang được Google xét duyệt từ ngày 9 tháng 10 năm 2026. Nội dung trên App Store vẫn mô tả các bản dựng đầu (ảnh và video 360°, tệp thô hiện phẳng); nó sẽ giới thiệu các trình xem 3D, VR180 và Spatial, chế độ không có máy chủ, chia sẻ mạng, trình phát đa phương tiện và tệp thô Insta360. Nội dung trên Meta Horizon Store đã giới thiệu trình phát đa phương tiện.
 - **Tệp thô của máy ảnh 360°, tiếp theo**: chỉ báo tiến trình khi đang chuẩn bị ảnh thô cho kính; cân bằng video GoPro và DJI từ dữ liệu chuyển động của chính chúng; .dng mắt cá kép; báo cáo từ thiết bị về việc phát hai ống kính của bản dựng 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) để xác nhận đường nối và ngân sách bộ giải mã.
 - **DLNA, chia sẻ điện thoại và nội dung không gian Apple, tiếp theo**: báo cáo từ thiết bị cho bản dựng 19 (Plex, Jellyfin, NAS và Freebox Server qua DLNA; điện thoại phục vụ cho Quest, cả qua điểm phát sóng của nó; ảnh và video không gian thật từ iPhone trong kính); quyền multicast đã xin Apple, để iPhone tìm được mọi máy chủ DLNA; trước và tiếp theo giữa các ảnh không gian trong kính; huy hiệu không gian cho ảnh trên máy chủ trong dòng thời gian; video không gian ở dạng 3D trên Quest, nếu bộ giải mã của nó cho phép.

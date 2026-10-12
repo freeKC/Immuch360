@@ -15,11 +15,11 @@ Namijenjena je onima koji snimaju 360° kamerom (Insta360, GoPro MAX, DJI Osmo 3
 
 <div align="center">
 
-| Platforma | Gdje je nabaviti | Stanje 10. listopada 2026. |
+| Platforma | Gdje je nabaviti | Stanje 12. listopada 2026. |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 na GitHubu, poslan na Google Play 10. listopada 2026. (ondje je build 20 objavljen od 7. listopada) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | verzija 3.3.0 čeka Appleov pregled; dotad [izgradite je sami](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [APK](#meta-quest-3) · Horizon Store | stranica odobrena, build 21 u Metinom pregledu, build 23 na kanalu Alpha |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | u Horizon Storeu od 7. listopada 2026. (build 14), build 21 u Metinom pregledu, build 23 na kanalu Alpha |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 na GitHubu; stranica na Google Playu za televizore u Googleovu je pregledu od 9. listopada 2026. |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pretpregleda](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 na Windowsu: fotografije, ravni i 360° videozapisi; macOS i Linux kasnije |
 
@@ -529,7 +529,7 @@ Mediji dolaze s vašeg Immich poslužitelja, samih naočala, NAS-a, medijskog po
 
 ### Otvaranje imerzivnog prikaza
 
-1. Instalirajte aplikaciju na naočale: dok stranica u Horizon Storeu ne bude odobrena, instalirajte APK ručno (sideload), pogledajte [Instalacija](#install).
+1. Instalirajte aplikaciju na naočale iz [Horizon Storea](https://www.meta.com/experiences/immuch360/1384208401440714/) ili ručno instalirajte (sideload) APK novijeg builda, pogledajte [Instalacija](#install).
 2. Prijavite se svojim Immich poslužiteljem ili dodirnite „Koristi bez poslužitelja“ za fotografije i videozapise samih naočala.
 3. Otvorite 360° fotografiju ili videozapis u pregledniku, s vremenske crte, popisa 360°, iz albuma ili iz mape dijeljenog resursa.
 4. Pritisnite gumb 360° ili „Prikaži kao 360°“ u izborniku ⋮. Na naočalama oni izravno otvaraju imerzivni prikaz, umjesto sfernog preglednika s telefona.
@@ -930,7 +930,7 @@ WebDAV, DLNA i telefonski dijeljeni resursi na običnoj HTTP adresi lokalne mre�
 <a id="install"></a>
 ### Instalacija
 
-Meta je odobrila stranicu u Horizon Storeu 7. listopada 2026. s buildom 14, a build 21 poslan je kao njezino prvo ažuriranje. Dok stranica trgovine ne postane javna, ili da biste dobili build prije trgovine, ručno instalirajte (sideload) datoteku `-quest-release.apk` iz izdanja (izrađena za naočale: 64-bitna, ciljni SDK 34, samo dopuštenja koja naočale koriste) ili univerzalni `-release.apk`:
+Immuch360 je u [Horizon Storeu](https://www.meta.com/experiences/immuch360/1384208401440714/) od 7. listopada 2026. s buildom 14, a build 21 je u Metinom pregledu kao njegovo prvo ažuriranje. Da biste dobili build prije trgovine, ručno instalirajte (sideload) datoteku `-quest-release.apk` iz izdanja (izrađena za naočale: 64-bitna, ciljni SDK 34, samo dopuštenja koja naočale koriste) ili univerzalni `-release.apk`:
 
 1. Jednom omogućite način za razvojne programere. U aplikaciji Meta Horizon na telefonu otvorite „Devices“ (Uređaji), odaberite naočale, zatim „Headset settings“ (Postavke naočala), pa „Developer mode“ (Način za razvojne programere). Za to je potreban račun razvojnog programera, besplatan na developers.meta.com. Na računalu vam treba i adb (Android SDK Platform Tools) ili SideQuest.
 2. Povežite naočale s računalom USB-C kabelom. U naočalama prihvatite „Allow USB debugging“ (Dopusti otklanjanje pogrešaka putem USB-a).
@@ -1108,7 +1108,7 @@ CI za Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) radi na gran
 <a id="where-to-get-it"></a>
 ## Gdje je nabaviti
 
-Aplikacija je na Google Playu za telefone i tablete; verzija za App Store čeka Appleov pregled, stranica u Meta Horizon Storeu je odobrena, a njezino prvo ažuriranje je u Metinom pregledu, a verzija za Google Play na televizorima čeka Googleov pregled TV izdanja. Immuch360 Desktop, za Windows, pretpregled je na GitHubu. GitHub izdanje uvijek je najnoviji build:
+Aplikacija je na Google Playu za telefone i tablete; verzija za App Store čeka Appleov pregled, aplikacija je u Meta Horizon Storeu, a njezino prvo ažuriranje je u Metinom pregledu, a verzija za Google Play na televizorima čeka Googleov pregled TV izdanja. Immuch360 Desktop, za Windows, pretpregled je na GitHubu. GitHub izdanje uvijek je najnoviji build:
 
 - **Android telefoni i tableti**
   - Danas: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) ili APK na stranici [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` za telefon (univerzalni `Immuch360-v<version>-release.apk` radi posvuda, `-armeabi-v7a` je za starije 32-bitne telefone, a datoteka `.aab` je za Google Play, ne za ručnu instalaciju). GitHub build obično je ispred trgovine. U svakom slučaju instalira se pokraj službene aplikacije Immich (paket `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Aplikacija je na Google Playu za telefone i tablete; verzija za App Store čeka 
   - Uskoro: App Store, u pregledu.
 - **Meta Quest 2, Quest Pro, Quest 3 i 3S (Quest 2 i Quest Pro neprovjereno)**
   - Danas: datoteka `-quest-release.apk` sa stranice [Releases](https://github.com/freeKC/Immuch360/releases) (radi i univerzalni `-release.apk`), ručno instalirana u načinu za razvojne programere, pogledajte [Instalacija](#install). Build iz trgovine i GitHub APK potpisani su različitim ključevima: za prelazak s jednog na drugi najprije deinstalirajte aplikaciju (njezine postavke i spremljeni dijeljeni resursi nestaju s njom).
-  - Uskoro: u trgovini Meta Horizon Store, stranica je odobrena 7. listopada 2026. s buildom 14, a build 21, njezino prvo ažuriranje, u Metinom je pregledu; alfa kanal trgovine (samo testeri) dobiva svaki novi build.
+  - Trgovina: [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) ima aplikaciju od 7. listopada 2026. s buildom 14, a build 21, njezino prvo ažuriranje, u Metinom je pregledu; alfa kanal trgovine (samo testeri) dobiva svaki novi build.
 - **Android TV i Google TV (od builda 20)**
   - Danas: univerzalni `Immuch360-v<version>-release.apk` sa stranice [Releases](https://github.com/freeKC/Immuch360/releases), ručno instaliran s adb-om, pogledajte [Instalacija na televizor](#install-it-on-the-tv). To je ista aplikacija kao na telefonima.
   - Uskoro: Google Play na televizorima, čija je stranica u Googleovu pregledu od 9. listopada 2026.
@@ -1126,7 +1126,7 @@ Aplikacija je na Google Playu za telefone i tablete; verzija za App Store čeka 
   - Danas: Immuch360 Desktop, desktop build 4, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` iz [desktop predizdanja](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), raspakiran i pokrenut kako kaže [Preuzimanje i instalacija na Windowsu](#download-and-install-on-windows). Fotografije, ravni videozapisi, 360°, 3D, VR180 i neobrađeni 360° videozapisi (glatko na namjenskom grafičkom čipu, s ograničenjima na integriranom) te prikaz uživo s kamera Tapo.
   - Uskoro: Spatial 2.5D s web-kamerom, zatim Linux i macOS; instalacijski program, potpisani build i ažuriranja kasnije.
 
-Poveznice na App Store i Meta Horizon Store bit će dodane ovdje čim stranice budu objavljene. Prijavite se URL-om i računom svog uobičajenog Immich poslužitelja ili dodirnite „Koristi bez poslužitelja“ na stranici za prijavu kako biste počeli s fotografijama i videozapisima samog uređaja. APK s GitHuba ne ažurira se sam: pratite stranicu Releases, a kada aplikaciju instalirate iz trgovine, ažuriranja preuzimajte iz te trgovine.
+Poveznica na App Store bit će dodana ovdje čim stranica bude objavljena; aplikacija je već u [Meta Horizon Storeu](https://www.meta.com/experiences/immuch360/1384208401440714/). Prijavite se URL-om i računom svog uobičajenog Immich poslužitelja ili dodirnite „Koristi bez poslužitelja“ na stranici za prijavu kako biste počeli s fotografijama i videozapisima samog uređaja. APK s GitHuba ne ažurira se sam: pratite stranicu Releases, a kada aplikaciju instalirate iz trgovine, ažuriranja preuzimajte iz te trgovine.
 
 <a id="build-it-yourself"></a>
 ## Izgradite je sami
@@ -1215,7 +1215,7 @@ Ono što još nije gotovo, najvjerojatnije prvo. Ništa od ovoga nije obećanje,
 - **Immuch360 Desktop, najprije Windows**: desktop build 3 je izašao, s reproduktorom 360° videozapisa (360°, 3D, VR180 i neobrađeni 360° videozapisi, dva objektiva neobrađenih datoteka, veličina prikaza izmjerena na svakom računalu) i prikazom uživo s kamera Tapo, a desktop izvori su u glavnoj grani forka, `immuch360`, od 9. listopada 2026. (pogledajte [Na Windows računalu](#on-a-windows-computer-immuch360-desktop-preview)). Zatim libmpv iz vlastitog workflowa forka umjesto onog iz 2024., i ručno testiranje svake funkcije na Windows računalu sa stvarnim datotekama, oba zaslona i stvarnom kamerom, s njegovim ispravcima; zatim Spatial 2.5D s web-kamerom; zatim Linux i macOS; zatim instalacijski program, potpisani build i automatska ažuriranja.
 - **Google Play**: build 20 je objavljen od 7. listopada 2026., umjesto builda 18; stranica za televizore u Googleovu je pregledu od 9. listopada 2026. Build 21 ne mijenja ništa na telefonima i tabletima.
 - **App Store**: verzija 3.3.0 čeka Appleov pregled; ima značajke builda 11, pa prijenos na Immich i provjera video dekodera (build 15) te neobrađene Insta360 datoteke (build 16) stižu sa sljedećim ažuriranjem u App Storeu. Poveznica će biti dodana ovdje kada bude objavljena.
-- **Meta Horizon Store**: Meta je odobrila stranicu 7. listopada 2026. s buildom 14. Build 21 poslan je kao njezino prvo ažuriranje: donosi sve od builda 14 (prijenosi s dijeljenog resursa na Immich, izvor videozapisa odabran prema onome što naočale dekodiraju, neobrađene datoteke Insta360, GoPro i DJI, DLNA, dijeljenje telefona, Appleove prostorne fotografije, knjižnice Plex Media Servera, kamere Tapo), a trgovina ga nudi za Quest 2, Quest Pro, Quest 3 i 3S. Poveznica na trgovinu bit će dodana ovdje kada stranica postane javna; ručno instaliranu kopiju najprije treba deinstalirati (pogledajte [Instalacija](#install)).
+- **Meta Horizon Store**: Meta je odobrila stranicu 7. listopada 2026. s buildom 14, a aplikacija je od tog dana javno dostupna u [Horizon Storeu](https://www.meta.com/experiences/immuch360/1384208401440714/). Build 21 poslan je kao njezino prvo ažuriranje: donosi sve od builda 14 (prijenosi s dijeljenog resursa na Immich, izvor videozapisa odabran prema onome što naočale dekodiraju, neobrađene datoteke Insta360, GoPro i DJI, DLNA, dijeljenje telefona, Appleove prostorne fotografije, knjižnice Plex Media Servera, kamere Tapo), a trgovina ga nudi za Quest 2, Quest Pro, Quest 3 i 3S. Da biste instalirali verziju iz trgovine, ručno instaliranu kopiju najprije treba deinstalirati (pogledajte [Instalacija](#install)).
 - **Stranice u trgovinama**: stranica na Google Playu prepisana je u listopadu 2026. s novim snimkama zaslona, a njezine TV snimke zaslona i TV natpis dodani su 8. listopada 2026.; stranica za televizore u Googleovu je pregledu od 9. listopada 2026. Tekst za App Store još opisuje prve buildove (360° fotografije i videozapisi, neobrađene datoteke prikazane ravno); predstavit će 3D, VR180 i Spatial preglednike, način bez poslužitelja, mrežne dijeljene resurse, medijski reproduktor i neobrađene Insta360 datoteke. Tekst za Meta Horizon Store već predstavlja medijski reproduktor.
 - **Neobrađene datoteke 360° kamera, sljedeće**: pokazatelj napretka dok se neobrađena fotografija priprema za naočale; izravnavanje GoPro i DJI videozapisa iz njihovih vlastitih podataka o kretanju; dvostruki fisheye .dng; izvješća s uređaja o reprodukciji s dva objektiva iz builda 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) radi potvrde spojeva i kapaciteta dekodera.
 - **DLNA, dijeljeni resurs telefona i Appleovi prostorni mediji, sljedeće**: izvješća s uređaja za build 19 (Plex, Jellyfin, NAS i Freebox Server putem DLNA-a; telefon koji poslužuje Quest, i na svom hotspotu; stvarne prostorne fotografije i videozapisi s iPhonea u naočalama); multicast ovlaštenje zatraženo od Applea, kako bi iPhonei pronašli svaki DLNA poslužitelj; prethodno i sljedeće između prostornih fotografija u naočalama; prostorna oznaka na fotografijama s poslužitelja na vremenskoj crti; prostorni videozapisi u 3D-u na Questu, ako to njegovi dekoderi dopuštaju.

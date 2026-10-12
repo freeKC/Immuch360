@@ -15,11 +15,11 @@ Immuch360 वह Immich मोबाइल ऐप है जिसमें 360�
 
 <div align="center">
 
-| प्लेटफ़ॉर्म | इसे कहाँ से पाएँ | 10 अक्टूबर 2026 को स्थिति |
+| प्लेटफ़ॉर्म | इसे कहाँ से पाएँ | 12 अक्टूबर 2026 को स्थिति |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** फ़ोन और टैबलेट | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub पर बिल्ड 23, 10 अक्टूबर 2026 को Google Play पर भेजा गया (वहाँ 7 अक्टूबर से बिल्ड 20 लाइव) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone और iPad** | App Store | संस्करण 3.3.0 Apple की समीक्षा के इंतज़ार में; तब तक [इसे ख़ुद बनाएँ](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 और 3S | [APK](#meta-quest-3) · Horizon Store | लिस्टिंग स्वीकृत, बिल्ड 21 Meta की समीक्षा में, बिल्ड 23 अल्फ़ा चैनल पर |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 और 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | 7 अक्टूबर 2026 से Horizon Store पर (बिल्ड 14), बिल्ड 21 Meta की समीक्षा में, बिल्ड 23 अल्फ़ा चैनल पर |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV और Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub पर बिल्ड 23; टीवी के लिए Google Play लिस्टिंग 9 अक्टूबर 2026 से Google की समीक्षा में है |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [प्रीव्यू ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows पर डेस्कटॉप बिल्ड 4: फ़ोटो, फ़्लैट और 360° वीडियो; macOS और Linux बाद में |
 
@@ -529,7 +529,7 @@ iPhone स्पेशियल फ़ोटो और वीडियो ले
 
 ### इमर्सिव व्यू खोलें
 
-1. हेडसेट पर ऐप इंस्टॉल करें: जब तक Horizon Store लिस्टिंग स्वीकृत नहीं होती, APK को साइडलोड करें, देखें [इंस्टॉल](#install)।
+1. हेडसेट पर ऐप [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) से इंस्टॉल करें, या किसी नए बिल्ड का APK साइडलोड करें, देखें [इंस्टॉल](#install)।
 2. अपने Immich सर्वर से लॉगिन करें, या हेडसेट की अपनी फ़ोटो और वीडियो के लिए “सर्वर के बिना उपयोग करें” पर टैप करें।
 3. टाइमलाइन, 360° सूची, किसी एलबम या शेयर फ़ोल्डर से कोई 360° फ़ोटो या वीडियो व्यूअर में खोलें।
 4. 360° बटन दबाएँ, या ⋮ मेनू में “360° के रूप में देखें”। हेडसेट पर ये फ़ोन के गोलाकार व्यूअर के बजाय सीधे इमर्सिव व्यू खोलते हैं।
@@ -930,7 +930,7 @@ Quest 3 और 3S परखे गए हैं। Quest 2 और Quest Pro अ�
 <a id="install"></a>
 ### इंस्टॉल
 
-Meta ने 7 अक्टूबर 2026 को बिल्ड 14 के साथ Horizon Store लिस्टिंग स्वीकृत की, और बिल्ड 21 उसके पहले अपडेट के रूप में भेजा गया है। जब तक स्टोर पेज सार्वजनिक नहीं होता, या स्टोर से पहले कोई बिल्ड पाने के लिए, किसी रिलीज़ की `-quest-release.apk` फ़ाइल साइडलोड करें (हेडसेट के लिए बनी: 64 बिट, टारगेट SDK 34, केवल वे अनुमतियाँ जो हेडसेट उपयोग करता है), या यूनिवर्सल `-release.apk`:
+Immuch360 7 अक्टूबर 2026 से बिल्ड 14 के साथ [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) पर है, और बिल्ड 21 उसके पहले अपडेट के रूप में Meta की समीक्षा में है। स्टोर से पहले कोई बिल्ड पाने के लिए, किसी रिलीज़ की `-quest-release.apk` फ़ाइल साइडलोड करें (हेडसेट के लिए बनी: 64 बिट, टारगेट SDK 34, केवल वे अनुमतियाँ जो हेडसेट उपयोग करता है), या यूनिवर्सल `-release.apk`:
 
 1. एक बार डेवलपर मोड चालू करें। Meta Horizon फ़ोन ऐप में “Devices” (डिवाइस) खोलें, हेडसेट चुनें, फिर “Headset settings” (हेडसेट सेटिंग्स), फिर “Developer mode” (डेवलपर मोड)। इसके लिए एक डेवलपर खाता चाहिए, जो developers.meta.com पर मुफ़्त है। कंप्यूटर पर adb (Android SDK Platform Tools) या SideQuest भी चाहिए।
 2. हेडसेट को USB-C केबल से कंप्यूटर से जोड़ें। हेडसेट में “Allow USB debugging” (USB डीबगिंग की अनुमति दें) स्वीकार करें।
@@ -1108,7 +1108,7 @@ Immuch360 Desktop का CI (`.github/workflows/immuch360-desktop.yml`) `desktop
 <a id="where-to-get-it"></a>
 ## इसे कहाँ से पाएँ
 
-ऐप फ़ोन और टैबलेट के लिए Google Play पर है; App Store संस्करण Apple की समीक्षा का इंतज़ार कर रहा है, Meta Horizon Store लिस्टिंग स्वीकृत है और उसका पहला अपडेट Meta की समीक्षा में है, और टीवी के लिए Google Play संस्करण टीवी रिलीज़ की Google समीक्षा का इंतज़ार कर रहा है। Immuch360 Desktop, Windows के लिए, GitHub पर एक प्रीव्यू है। GitHub रिलीज़ हमेशा सबसे नया बिल्ड है:
+ऐप फ़ोन और टैबलेट के लिए Google Play पर है; App Store संस्करण Apple की समीक्षा का इंतज़ार कर रहा है, ऐप Meta Horizon Store पर है और उसका पहला अपडेट Meta की समीक्षा में है, और टीवी के लिए Google Play संस्करण टीवी रिलीज़ की Google समीक्षा का इंतज़ार कर रहा है। Immuch360 Desktop, Windows के लिए, GitHub पर एक प्रीव्यू है। GitHub रिलीज़ हमेशा सबसे नया बिल्ड है:
 
 - **Android फ़ोन और टैबलेट**
   - आज: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), या [Releases](https://github.com/freeKC/Immuch360/releases) पेज पर APK: फ़ोन के लिए `Immuch360-v<version>-arm64-v8a-release.apk` (यूनिवर्सल `Immuch360-v<version>-release.apk` हर जगह चलता है, `-armeabi-v7a` पुराने 32 बिट फ़ोन के लिए है, और `.aab` फ़ाइल Google Play के लिए है, साइडलोड के लिए नहीं)। GitHub बिल्ड आम तौर पर स्टोर से आगे रहता है। दोनों ही स्थिति में यह आधिकारिक Immich ऐप के बगल में इंस्टॉल होता है (पैकेज `com.aprogsys.immuch360`)।
@@ -1118,7 +1118,7 @@ Immuch360 Desktop का CI (`.github/workflows/immuch360-desktop.yml`) `desktop
   - जल्द: App Store, समीक्षा में।
 - **Meta Quest 2, Quest Pro, Quest 3 और 3S (Quest 2 और Quest Pro परखे नहीं गए)**
   - आज: [Releases](https://github.com/freeKC/Immuch360/releases) पेज की `-quest-release.apk` फ़ाइल (यूनिवर्सल `-release.apk` भी चलता है), डेवलपर मोड में साइडलोड, देखें [इंस्टॉल](#install)। स्टोर बिल्ड और GitHub APK अलग-अलग कुंजियों से साइन होते हैं: एक से दूसरे पर जाने के लिए पहले ऐप अनइंस्टॉल करें (उसकी सेटिंग्स और सहेजे गए शेयर उसके साथ चले जाते हैं)।
-  - जल्द: Meta Horizon Store पर, लिस्टिंग 7 अक्टूबर 2026 को बिल्ड 14 के साथ स्वीकृत हुई, और बिल्ड 21, उसका पहला अपडेट, Meta की समीक्षा में है; स्टोर के अल्फ़ा चैनल (केवल टेस्टर) को हर नया बिल्ड मिलता है।
+  - स्टोर: [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) पर ऐप 7 अक्टूबर 2026 से बिल्ड 14 के साथ है, और बिल्ड 21, उसका पहला अपडेट, Meta की समीक्षा में है; स्टोर के अल्फ़ा चैनल (केवल टेस्टर) को हर नया बिल्ड मिलता है।
 - **Android TV और Google TV (बिल्ड 20 से)**
   - आज: [Releases](https://github.com/freeKC/Immuch360/releases) पेज की यूनिवर्सल `Immuch360-v<version>-release.apk`, adb से साइडलोड, देखें [इसे टीवी पर इंस्टॉल करें](#install-it-on-the-tv)। यह फ़ोन वाला ही ऐप है।
   - जल्द: टीवी पर Google Play, जिसकी लिस्टिंग 9 अक्टूबर 2026 से Google की समीक्षा में है।
@@ -1126,7 +1126,7 @@ Immuch360 Desktop का CI (`.github/workflows/immuch360-desktop.yml`) `desktop
   - आज: Immuch360 Desktop, डेस्कटॉप बिल्ड 4, [डेस्कटॉप प्री-रिलीज़](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) का ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`, अनज़िप करके वैसे शुरू किया गया जैसा [Windows पर डाउनलोड और इंस्टॉल करें](#download-and-install-on-windows) बताता है। फ़ोटो, फ़्लैट वीडियो, 360°, 3D, VR180 और रॉ 360° वीडियो (समर्पित ग्राफ़िक्स चिप पर सुचारु, एकीकृत चिप पर सीमाओं के साथ) और Tapo लाइव व्यू।
   - जल्द: वेबकैम के साथ Spatial 2.5D, फिर Linux और macOS; इंस्टॉलर, साइन किया गया बिल्ड और अपडेट बाद में।
 
-लिस्टिंग प्रकाशित होते ही App Store और Meta Horizon Store के लिंक यहाँ जोड़ दिए जाएँगे। अपने सामान्य Immich सर्वर URL और खाते से लॉगिन करें, या डिवाइस की अपनी फ़ोटो और वीडियो से शुरू करने के लिए लॉगिन पेज पर “सर्वर के बिना उपयोग करें” पर टैप करें। GitHub का APK अपने आप अपडेट नहीं होता: Releases पेज पर नज़र रखें, और एक बार ऐप किसी स्टोर से इंस्टॉल कर लें तो अपडेट उसी स्टोर से लें।
+लिस्टिंग प्रकाशित होते ही App Store का लिंक यहाँ जोड़ दिया जाएगा; ऐप पहले से [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) पर है। अपने सामान्य Immich सर्वर URL और खाते से लॉगिन करें, या डिवाइस की अपनी फ़ोटो और वीडियो से शुरू करने के लिए लॉगिन पेज पर “सर्वर के बिना उपयोग करें” पर टैप करें। GitHub का APK अपने आप अपडेट नहीं होता: Releases पेज पर नज़र रखें, और एक बार ऐप किसी स्टोर से इंस्टॉल कर लें तो अपडेट उसी स्टोर से लें।
 
 <a id="build-it-yourself"></a>
 ## इसे ख़ुद बनाएँ
@@ -1215,7 +1215,7 @@ Android, Android TV और Google TV, Google LLC के ट्रेडमार
 - **Immuch360 Desktop, पहले Windows**: डेस्कटॉप बिल्ड 3 आ गया है, 360° वीडियो प्लेयर (360°, 3D, VR180 और रॉ 360° वीडियो, रॉ फ़ाइलों के दोनों लेंस, हर कंप्यूटर पर मापा गया व्यू का आकार) और Tapo लाइव व्यू के साथ, और 9 अक्टूबर 2026 से डेस्कटॉप स्रोत फ़ोर्क की मुख्य ब्रांच, `immuch360`, में हैं (देखें [Windows कंप्यूटर पर](#on-a-windows-computer-immuch360-desktop-preview))। आगे, 2024 वाले की जगह फ़ोर्क के अपने वर्कफ़्लो का libmpv, और असली फ़ाइलों, दोनों स्क्रीन और एक असली कैमरे के साथ Windows PC पर हर फ़ंक्शन की हाथ से जाँच, उसके सुधारों के साथ; फिर वेबकैम के साथ Spatial 2.5D; फिर Linux और macOS; फिर इंस्टॉलर, साइन किया गया बिल्ड और स्वचालित अपडेट।
 - **Google Play**: बिल्ड 20, 7 अक्टूबर 2026 से लाइव है, बिल्ड 18 की जगह; टीवी के लिए लिस्टिंग 9 अक्टूबर 2026 से Google की समीक्षा में है। बिल्ड 21 फ़ोन और टैबलेट पर कुछ नहीं बदलता।
 - **App Store**: संस्करण 3.3.0 Apple की समीक्षा का इंतज़ार कर रहा है; इसमें बिल्ड 11 की सुविधाएँ हैं, इसलिए Immich पर अपलोड और वीडियो डिकोडर जाँच (बिल्ड 15) और रॉ Insta360 फ़ाइलें (बिल्ड 16) अगले App Store अपडेट के साथ आएँगी। लाइव होने पर लिंक यहाँ जोड़ा जाएगा।
-- **Meta Horizon Store**: Meta ने 7 अक्टूबर 2026 को बिल्ड 14 के साथ लिस्टिंग स्वीकृत की। बिल्ड 21 उसके पहले अपडेट के रूप में भेजा गया है: यह बिल्ड 14 के बाद का सब कुछ लाता है (शेयर से Immich पर अपलोड, हेडसेट जो डिकोड करता है उसके अनुसार चुना गया वीडियो स्रोत, रॉ Insta360, GoPro और DJI फ़ाइलें, DLNA, फ़ोन शेयर, Apple स्पेशियल फ़ोटो, Plex Media Server लाइब्रेरी, Tapo कैमरे), और स्टोर इसे Quest 2, Quest Pro, Quest 3 और 3S के लिए सूचीबद्ध करता है। पेज सार्वजनिक होने पर स्टोर लिंक यहाँ जोड़ा जाएगा; साइडलोड की गई कॉपी को पहले अनइंस्टॉल करना होगा (देखें [इंस्टॉल](#install))।
+- **Meta Horizon Store**: Meta ने 7 अक्टूबर 2026 को बिल्ड 14 के साथ लिस्टिंग स्वीकृत की, और उसी दिन से ऐप [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) पर सार्वजनिक है। बिल्ड 21 उसके पहले अपडेट के रूप में भेजा गया है: यह बिल्ड 14 के बाद का सब कुछ लाता है (शेयर से Immich पर अपलोड, हेडसेट जो डिकोड करता है उसके अनुसार चुना गया वीडियो स्रोत, रॉ Insta360, GoPro और DJI फ़ाइलें, DLNA, फ़ोन शेयर, Apple स्पेशियल फ़ोटो, Plex Media Server लाइब्रेरी, Tapo कैमरे), और स्टोर इसे Quest 2, Quest Pro, Quest 3 और 3S के लिए सूचीबद्ध करता है। स्टोर संस्करण इंस्टॉल करने के लिए, साइडलोड की गई कॉपी को पहले अनइंस्टॉल करना होगा (देखें [इंस्टॉल](#install))।
 - **स्टोर लिस्टिंग**: Google Play लिस्टिंग अक्टूबर 2026 में नए स्क्रीनशॉट के साथ फिर से लिखी गई, और 8 अक्टूबर 2026 को उसमें टीवी स्क्रीनशॉट और टीवी बैनर जोड़े गए; टीवी के लिए लिस्टिंग 9 अक्टूबर 2026 से Google की समीक्षा में है। App Store का टेक्स्ट अभी पहले बिल्ड का वर्णन करता है (360° फ़ोटो और वीडियो, रॉ फ़ाइलें सपाट दिखती हुई); वह 3D, VR180 और Spatial व्यूअर, बिना सर्वर वाला मोड, नेटवर्क शेयर, मीडिया प्लेयर और रॉ Insta360 फ़ाइलें प्रस्तुत करेगा। Meta Horizon Store का टेक्स्ट पहले से मीडिया प्लेयर प्रस्तुत करता है।
 - **360° कैमरों की रॉ फ़ाइलें, आगे**: हेडसेट के लिए रॉ फ़ोटो तैयार होते समय प्रगति संकेतक; GoPro और DJI वीडियो को उनके अपने मोशन डेटा से सीधा करना; ड्यूल फ़िशआई .dng; जोड़ों और डिकोडर बजट की पुष्टि के लिए बिल्ड 18 के दो लेंस वाले प्लेबैक पर डिवाइस रिपोर्ट (X4, X5, X6, GoPro MAX 2, Osmo 360)।
 - **DLNA, फ़ोन शेयर और Apple स्पेशियल, आगे**: बिल्ड 19 की डिवाइस रिपोर्ट (DLNA पर Plex, Jellyfin, कोई NAS और Freebox Server; Quest को फ़ाइलें देता फ़ोन, उसके हॉटस्पॉट पर भी; हेडसेट में असली iPhone स्पेशियल फ़ोटो और वीडियो); Apple से माँगा गया मल्टीकास्ट अधिकार, ताकि iPhone हर DLNA सर्वर ढूँढ सकें; हेडसेट में स्पेशियल फ़ोटो के बीच पिछला और अगला; टाइमलाइन में सर्वर फ़ोटो पर स्पेशियल बैज; Quest पर स्पेशियल वीडियो 3D में, अगर उसके डिकोडर अनुमति दें।

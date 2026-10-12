@@ -15,11 +15,11 @@ Immuch360, içinde etrafınıza bakabileceğiniz 360° fotoğraf ve videolar sun
 
 <div align="center">
 
-| Platform | Nereden edinilir | 10 Ekim 2026 itibarıyla durum |
+| Platform | Nereden edinilir | 12 Ekim 2026 itibarıyla durum |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon ve tabletler | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub'da derleme 23, 10 Ekim 2026'da Google Play'e gönderildi (orada 7 Ekim'den beri derleme 20 yayında) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ve iPad** | App Store | 3.3.0 sürümü Apple incelemesini bekliyor; bu arada [kendiniz derleyin](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ve 3S | [APK](#meta-quest-3) · Horizon Store | liste onaylandı, derleme 21 Meta incelemesinde, derleme 23 alfa kanalında |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ve 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | 7 Ekim 2026'dan beri Horizon Store'da (derleme 14), derleme 21 Meta incelemesinde, derleme 23 alfa kanalında |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ve Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub'da derleme 23; televizyonlar için Google Play kaydı 9 Ekim 2026'dan beri Google incelemesinde |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Önizleme ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows'ta masaüstü derlemesi 4: fotoğraflar, düz ve 360° videolar; macOS ve Linux daha sonra |
 
@@ -529,7 +529,7 @@ Medya Immich sunucunuzdan, başlığın kendisinden, bir NAS'tan, bir medya sunu
 
 ### Sürükleyici görünümü açın
 
-1. Uygulamayı başlığa kurun: Horizon Store kaydı onaylanana kadar APK'yı yandan yükleyin (sideload), bkz. [Kurulum](#install).
+1. Uygulamayı başlığa [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)'dan kurun ya da daha yeni bir derlemenin APK'sını yandan yükleyin (sideload), bkz. [Kurulum](#install).
 2. Immich sunucunuzla oturum açın ya da başlığın kendi fotoğraf ve videoları için "Sunucu olmadan kullan"a dokunun.
 3. Görüntüleyicide zaman çizelgesinden, 360° listesinden, bir albümden veya bir paylaşım klasöründen bir 360° fotoğraf veya video açın.
 4. 360° düğmesine ya da ⋮ menüsündeki "360° olarak görüntüle"ye basın. Başlıkta bunlar, telefonların küre görüntüleyicisi yerine doğrudan sürükleyici görünümü açar.
@@ -930,7 +930,7 @@ Yerel ağdaki düz HTTP adreslerinde bulunan WebDAV, DLNA ve telefon paylaşıml
 <a id="install"></a>
 ### Kurulum
 
-Meta, Horizon Store kaydını 7 Ekim 2026'da derleme 14 ile onayladı ve derleme 21 ilk güncellemesi olarak gönderildi. Mağaza sayfası herkese açık olana kadar ya da bir derlemeyi mağazadan önce almak için bir sürümün `-quest-release.apk` dosyasını (başlık için derlendi: 64 bit, hedef SDK 34, yalnızca başlığın kullandığı izinler) ya da evrensel `-release.apk` dosyasını yandan yükleyin:
+Immuch360, 7 Ekim 2026'dan beri derleme 14 ile [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)'da ve derleme 21 ilk güncellemesi olarak Meta'nın incelemesinde. Bir derlemeyi mağazadan önce almak için bir sürümün `-quest-release.apk` dosyasını (başlık için derlendi: 64 bit, hedef SDK 34, yalnızca başlığın kullandığı izinler) ya da evrensel `-release.apk` dosyasını yandan yükleyin:
 
 1. Geliştirici modunu bir kez etkinleştirin. Meta Horizon telefon uygulamasında Devices (Cihazlar) bölümünü açın, başlığı seçin, ardından Headset settings (Başlık ayarları), ardından Developer mode (Geliştirici modu). Bunun için developers.meta.com adresinde ücretsiz olan bir geliştirici hesabı gerekir. Bilgisayarda adb (Android SDK Platform Tools) ya da SideQuest da gerekir.
 2. Başlığı bir USB-C kablosuyla bilgisayara bağlayın. Başlıkta "Allow USB debugging" (USB hata ayıklamasına izin ver) isteğini kabul edin.
@@ -1108,7 +1108,7 @@ Immuch360 Desktop'ın CI'ı (`.github/workflows/immuch360-desktop.yml`) `immuch3
 <a id="where-to-get-it"></a>
 ## Nereden edinilir
 
-Uygulama telefonlar ve tabletler için Google Play'de; App Store sürümü Apple'ın incelemesini bekliyor, Meta Horizon Store kaydı onaylandı ve ilk güncellemesi Meta'nın incelemesinde, televizyonlar için Google Play sürümü de televizyon sürümünün Google tarafından incelenmesini bekliyor. Windows için Immuch360 Desktop, GitHub'da bir önizleme. En yeni derleme her zaman GitHub sürümündedir:
+Uygulama telefonlar ve tabletler için Google Play'de; App Store sürümü Apple'ın incelemesini bekliyor, uygulama Meta Horizon Store'da ve ilk güncellemesi Meta'nın incelemesinde, televizyonlar için Google Play sürümü de televizyon sürümünün Google tarafından incelenmesini bekliyor. Windows için Immuch360 Desktop, GitHub'da bir önizleme. En yeni derleme her zaman GitHub sürümündedir:
 
 - **Android telefon ve tabletler**
   - Bugün: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) ya da [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki APK: telefon için `Immuch360-v<version>-arm64-v8a-release.apk` (evrensel `Immuch360-v<version>-release.apk` her yerde çalışır, `-armeabi-v7a` eski 32 bit telefonlar içindir, `.aab` dosyası ise yandan yükleme için değil Google Play içindir). GitHub derlemesi genellikle mağazadakinden ileridedir. Her iki durumda da resmi Immich uygulamasının yanına kurulur (paket `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Uygulama telefonlar ve tabletler için Google Play'de; App Store sürümü Apple
   - Yakında: App Store, inceleniyor.
 - **Meta Quest 2, Quest Pro, Quest 3 ve 3S (Quest 2 ve Quest Pro test edilmedi)**
   - Bugün: [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki `-quest-release.apk` dosyası (evrensel `-release.apk` de çalışır), geliştirici modunda yandan yüklenir, bkz. [Kurulum](#install). Mağaza derlemesi ve GitHub APK'sı farklı anahtarlarla imzalanır: birinden diğerine geçmek için önce uygulamayı kaldırın (ayarları ve kayıtlı paylaşımları da gider).
-  - Yakında: Meta Horizon Store'da kayıt 7 Ekim 2026'da derleme 14 ile onaylandı ve ilk güncellemesi olan derleme 21 Meta'nın incelemesinde; mağazanın alfa kanalı (yalnızca test edenler) her yeni derlemeyi alır.
+  - Mağaza: uygulama 7 Ekim 2026'dan beri derleme 14 ile [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)'da ve ilk güncellemesi olan derleme 21 Meta'nın incelemesinde; mağazanın alfa kanalı (yalnızca test edenler) her yeni derlemeyi alır.
 - **Android TV ve Google TV (derleme 20'den itibaren)**
   - Bugün: [Releases](https://github.com/freeKC/Immuch360/releases) sayfasındaki evrensel `Immuch360-v<version>-release.apk`, adb ile yandan yüklenir, bkz. [Televizyona kurun](#install-it-on-the-tv). Telefonlardaki uygulamanın aynısıdır.
   - Yakında: televizyonlarda Google Play; televizyonlar için kayıt 9 Ekim 2026'dan beri Google'ın incelemesinde.
@@ -1126,7 +1126,7 @@ Uygulama telefonlar ve tabletler için Google Play'de; App Store sürümü Apple
   - Bugün: Immuch360 Desktop, masaüstü derlemesi 4, [masaüstü ön sürümünün](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` ZIP'i, [Windows'a indirin ve kurun](#download-and-install-on-windows) bölümünün anlattığı gibi açılıp başlatılır. Fotoğraflar, düz videolar, 360°, 3D, VR180 ve ham 360° videolar (ayrı bir grafik yongasında akıcı, tümleşik bir yongada sınırlı) ve Tapo canlı görüntüsü.
   - Yakında: web kamerasıyla Spatial 2.5D, ardından Linux ve macOS; bir yükleyici, imzalı bir derleme ve güncellemeler daha sonra.
 
-App Store ve Meta Horizon Store bağlantıları, kayıtlar yayımlanır yayımlanmaz buraya eklenecek. Her zamanki Immich sunucu URL'niz ve hesabınızla oturum açın ya da cihazın kendi fotoğraf ve videolarıyla başlamak için giriş sayfasında "Sunucu olmadan kullan"a dokunun. GitHub'dan alınan APK kendini güncellemez: Releases sayfasını takip edin ve uygulamayı bir mağazadan kurduysanız güncellemeleri o mağazadan alın.
+App Store bağlantısı, kayıt yayımlanır yayımlanmaz buraya eklenecek; uygulama zaten [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)'da. Her zamanki Immich sunucu URL'niz ve hesabınızla oturum açın ya da cihazın kendi fotoğraf ve videolarıyla başlamak için giriş sayfasında "Sunucu olmadan kullan"a dokunun. GitHub'dan alınan APK kendini güncellemez: Releases sayfasını takip edin ve uygulamayı bir mağazadan kurduysanız güncellemeleri o mağazadan alın.
 
 <a id="build-it-yourself"></a>
 ## Kendiniz derleyin
@@ -1215,7 +1215,7 @@ Henüz yapılmamış olanlar, en olası olanlar önce. Buradaki hiçbir şey bir
 - **Immuch360 Desktop, önce Windows**: masaüstü derlemesi 3, 360° video oynatıcısıyla (360°, 3D, VR180 ve ham 360° videolar, ham dosyaların iki lensi, her bilgisayarda ölçülen görüntü boyutu) ve Tapo canlı görüntüsüyle çıktı, masaüstü kaynakları da 9 Ekim 2026'dan beri çatalın ana dalı `immuch360` içinde (bkz. [Bir Windows bilgisayarda](#on-a-windows-computer-immuch360-desktop-preview)). Sırada 2024 sürümünün yerine çatalın kendi iş akışının libmpv'si ve her işlevin bir Windows bilgisayarda gerçek dosyalarla, iki ekranla ve gerçek bir kamerayla elle testi, düzeltmeleriyle birlikte; ardından web kamerasıyla Spatial 2.5D; ardından Linux ve macOS; ardından bir yükleyici, imzalı bir derleme ve otomatik güncellemeler.
 - **Google Play**: derleme 18'in yerine derleme 20, 7 Ekim 2026'dan beri yayında; televizyonlar için kayıt 9 Ekim 2026'dan beri Google'ın incelemesinde. Derleme 21 telefon ve tabletlerde hiçbir şeyi değiştirmez.
 - **App Store**: sürüm 3.3.0 Apple'ın incelemesini bekliyor; derleme 11'in özelliklerini taşıyor, bu yüzden Immich'e yükleme ve video kod çözücü denetimi (derleme 15) ile ham Insta360 dosyaları (derleme 16) bir sonraki App Store güncellemesiyle gelecek. Bağlantı yayına girdiğinde buraya eklenecek.
-- **Meta Horizon Store**: Meta, kaydı 7 Ekim 2026'da derleme 14 ile onayladı. Derleme 21 ilk güncellemesi olarak gönderildi: derleme 14'ten bu yana gelen her şeyi getirir (bir paylaşımdan Immich'e yüklemeler, başlığın çözebildiklerine göre seçilen video kaynağı, ham Insta360, GoPro ve DJI dosyaları, DLNA, telefon paylaşımı, Apple uzamsal fotoğrafları, Plex Media Server kütüphaneleri, Tapo kameralar) ve mağaza onu Quest 2, Quest Pro, Quest 3 ve 3S için listeler. Sayfa herkese açık olduğunda mağaza bağlantısı buraya eklenecek; yandan yüklenmiş bir kopyanın önce kaldırılması gerekir (bkz. [Kurulum](#install)).
+- **Meta Horizon Store**: Meta, kaydı 7 Ekim 2026'da derleme 14 ile onayladı ve uygulama o günden beri [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)'da herkese açık. Derleme 21 ilk güncellemesi olarak gönderildi: derleme 14'ten bu yana gelen her şeyi getirir (bir paylaşımdan Immich'e yüklemeler, başlığın çözebildiklerine göre seçilen video kaynağı, ham Insta360, GoPro ve DJI dosyaları, DLNA, telefon paylaşımı, Apple uzamsal fotoğrafları, Plex Media Server kütüphaneleri, Tapo kameralar) ve mağaza onu Quest 2, Quest Pro, Quest 3 ve 3S için listeler. Mağaza sürümünü kurmak için yandan yüklenmiş bir kopyanın önce kaldırılması gerekir (bkz. [Kurulum](#install)).
 - **Mağaza kayıtları**: Google Play kaydı Ekim 2026'da yeni ekran görüntüleriyle yeniden yazıldı, televizyon ekran görüntüleri ve televizyon bandı da 8 Ekim 2026'da eklendi; televizyonlar için kayıt 9 Ekim 2026'dan beri Google'ın incelemesinde. App Store metni hâlâ ilk derlemeleri anlatıyor (360° fotoğraf ve videolar, düz gösterilen ham dosyalar); 3D, VR180 ve Spatial görüntüleyicilerini, sunucusuz modu, ağ paylaşımlarını, medya oynatıcıyı ve ham Insta360 dosyalarını tanıtacak. Meta Horizon Store metni medya oynatıcıyı zaten tanıtıyor.
 - **Ham 360° kamera dosyaları, sırada**: ham bir fotoğraf başlık için hazırlanırken bir ilerleme göstergesi; GoPro ve DJI videolarının kendi hareket verileriyle düzeltilmesi; çift balıkgözü .dng; dikişleri ve kod çözücü bütçelerini doğrulamak için derleme 18'in iki mercekli oynatmasına dair cihaz raporları (X4, X5, X6, GoPro MAX 2, Osmo 360).
 - **DLNA, telefon paylaşımı ve Apple uzamsal, sırada**: derleme 19'un cihaz raporları (DLNA üzerinden Plex, Jellyfin, bir NAS ve Freebox Server; erişim noktası üzerinden de, bir Quest'e hizmet veren bir telefon; başlıkta gerçek iPhone uzamsal fotoğraf ve videoları); iPhone'ların her DLNA sunucusunu bulabilmesi için Apple'dan istenen çok noktaya yayın yetkisi; başlıkta uzamsal fotoğraflar arasında önceki ve sonraki; zaman çizelgesindeki sunucu fotoğraflarında bir uzamsal rozeti; kod çözücüleri izin verirse Quest'te uzamsal videoların 3D olarak gösterilmesi.

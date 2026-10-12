@@ -15,11 +15,11 @@ Immuch360 içində ətrafa baxa biləcəyiniz 360° foto və videoları olan Imm
 
 <div align="center">
 
-| Platforma | Haradan əldə etmək olar | 10 oktyabr 2026 tarixinə status |
+| Platforma | Haradan əldə etmək olar | 12 oktyabr 2026 tarixinə status |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon və planşetləri | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub-da 23-cü yığım, 10 oktyabr 2026-da Google Play-ə göndərilib (orada 7 oktyabrdan 20-ci yığım dərc olunub) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone və iPad** | App Store | 3.3.0 versiyası Apple-ın yoxlamasını gözləyir; hələlik [özünüz yığın](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 və 3S | [APK](#meta-quest-3) · Horizon Store | səhifə təsdiqlənib, 21-ci yığım Meta tərəfindən yoxlanılır, 23-cü yığım Alpha kanalındadır |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 və 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | 7 oktyabr 2026-dan Horizon Store-dadır (14-cü yığım), 21-ci yığım Meta tərəfindən yoxlanılır, 23-cü yığım Alpha kanalındadır |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV və Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub-da 23-cü yığım; televizorlar üçün Google Play səhifəsi 9 oktyabr 2026-dan Google tərəfindən yoxlanılır |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Sınaq ZIP-i](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows-da masaüstü yığımı 4: fotolar, düz və 360° videolar; macOS və Linux daha sonra |
 
@@ -529,7 +529,7 @@ Media Immich serverinizdən, VR eynəyinin özündən, NAS-dan, media serverdən
 
 ### İmmersiv görünüşü açın
 
-1. Tətbiqi VR eynəyinə quraşdırın: Horizon Store səhifəsi təsdiqlənənə qədər APK-nı əl ilə quraşdırın (sideload), baxın: [Quraşdırma](#install).
+1. Tətbiqi VR eynəyinə [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)-dan quraşdırın, və ya daha yeni yığımın APK-nı əl ilə quraşdırın (sideload), baxın: [Quraşdırma](#install).
 2. Immich serverinizlə daxil olun və ya VR eynəyinin öz foto və videoları üçün "Serversiz istifadə et"-ə toxunun.
 3. 360° foto və ya videonu görüntüləyicidə zaman xəttindən, 360° siyahısından, albomdan və ya paylaşım qovluğundan açın.
 4. 360° düyməsini və ya ⋮ menyusunda "360° kimi bax"-ı basın. VR eynəyində onlar telefonların sfera görüntüləyicisi əvəzinə birbaşa immersiv görünüşü açır.
@@ -930,7 +930,7 @@ Yerli şəbəkənin adi HTTP ünvanındakı WebDAV, DLNA və telefon paylaşıml
 <a id="install"></a>
 ### Quraşdırma
 
-Meta Horizon Store səhifəsini 7 oktyabr 2026-da 14-cü yığımla təsdiqləyib, 21-ci yığım isə onun ilk yeniləməsi kimi təqdim edilib. Mağaza səhifəsi ictimai olana qədər, və ya mağazada olmamışdan əvvəl yığımı almaq üçün buraxılışın `-quest-release.apk` faylını (VR eynəyi üçün yığılıb: 64 bit, hədəf SDK 34, yalnız VR eynəyinin istifadə etdiyi icazələr) və ya universal `-release.apk` faylını əl ilə quraşdırın:
+Immuch360 7 oktyabr 2026-dan 14-cü yığımla [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)-dadır, 21-ci yığım isə onun ilk yeniləməsi kimi Meta tərəfindən yoxlanılır. Mağazada olmamışdan əvvəl yığımı almaq üçün buraxılışın `-quest-release.apk` faylını (VR eynəyi üçün yığılıb: 64 bit, hədəf SDK 34, yalnız VR eynəyinin istifadə etdiyi icazələr) və ya universal `-release.apk` faylını əl ilə quraşdırın:
 
 1. Tərtibatçı rejimini bir dəfə aktivləşdirin. Meta Horizon telefon tətbiqində Devices (Cihazlar) açın, VR eynəyini seçin, sonra Headset settings (VR eynəyi ayarları), sonra Developer mode (Tərtibatçı rejimi). Bunun üçün developers.meta.com saytında pulsuz olan tərtibatçı hesabı lazımdır. Kompüterdə adb (Android SDK Platform Tools) və ya SideQuest də lazımdır.
 2. VR eynəyini USB-C kabeli ilə kompüterə qoşun. VR eynəyində "Allow USB debugging" (USB sazlamasına icazə ver) sorğusunu qəbul edin.
@@ -1108,7 +1108,7 @@ Immuch360 Desktop-ın CI-ı (`.github/workflows/immuch360-desktop.yml`) `immuch3
 <a id="where-to-get-it"></a>
 ## Haradan əldə etmək olar
 
-Tətbiq telefon və planşetlər üçün Google Play-dədir; App Store versiyası Apple-ın yoxlamasını gözləyir, Meta Horizon Store səhifəsi təsdiqlənib və onun ilk yeniləməsi Meta tərəfindən yoxlanılır, televizorlar üçün Google Play versiyası isə televizor buraxılışının Google tərəfindən yoxlanılmasını gözləyir. Windows üçün Immuch360 Desktop GitHub-da sınaq versiyasıdır. GitHub buraxılışı həmişə ən yeni yığımdır:
+Tətbiq telefon və planşetlər üçün Google Play-dədir; App Store versiyası Apple-ın yoxlamasını gözləyir, tətbiq Meta Horizon Store-dadır və onun ilk yeniləməsi Meta tərəfindən yoxlanılır, televizorlar üçün Google Play versiyası isə televizor buraxılışının Google tərəfindən yoxlanılmasını gözləyir. Windows üçün Immuch360 Desktop GitHub-da sınaq versiyasıdır. GitHub buraxılışı həmişə ən yeni yığımdır:
 
 - **Android telefon və planşetləri**
   - Bu gün: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) və ya [Releases](https://github.com/freeKC/Immuch360/releases) səhifəsindəki APK: telefon üçün `Immuch360-v<version>-arm64-v8a-release.apk` (universal `Immuch360-v<version>-release.apk` hər yerdə işləyir, `-armeabi-v7a` köhnə 32 bitlik telefonlar üçündür, `.aab` faylı isə əl ilə quraşdırma üçün yox, Google Play üçündür). GitHub yığımı adətən mağazadan qabaqdadır. Hər iki halda rəsmi Immich tətbiqinin yanında quraşdırılır (paket `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Tətbiq telefon və planşetlər üçün Google Play-dədir; App Store versiyas�
   - Tezliklə: App Store, yoxlanılır.
 - **Meta Quest 2, Quest Pro, Quest 3 və 3S (Quest 2 və Quest Pro sınaqdan keçirilməyib)**
   - Bu gün: [Releases](https://github.com/freeKC/Immuch360/releases) səhifəsinin `-quest-release.apk` faylı (universal `-release.apk` də işləyir), tərtibatçı rejimində əl ilə quraşdırılır, baxın: [Quraşdırma](#install). Mağaza yığımı və GitHub APK-sı fərqli açarlarla imzalanıb: birindən digərinə keçmək üçün əvvəlcə tətbiqi silin (ayarları və saxlanılmış paylaşımları da onunla gedir).
-  - Tezliklə: Meta Horizon Store-da səhifə 7 oktyabr 2026-da 14-cü yığımla təsdiqlənib, onun ilk yeniləməsi olan 21-ci yığım isə Meta tərəfindən yoxlanılır; mağazanın alfa kanalı (yalnız testerlər üçün) hər yeni yığımı alır.
+  - Mağaza: tətbiq 7 oktyabr 2026-dan 14-cü yığımla [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)-dadır, onun ilk yeniləməsi olan 21-ci yığım isə Meta tərəfindən yoxlanılır; mağazanın alfa kanalı (yalnız testerlər üçün) hər yeni yığımı alır.
 - **Android TV və Google TV (20-ci yığımdan)**
   - Bu gün: [Releases](https://github.com/freeKC/Immuch360/releases) səhifəsinin universal `Immuch360-v<version>-release.apk` faylı, adb ilə əl ilə quraşdırılır, baxın: [Televizorda quraşdırın](#install-it-on-the-tv). Telefonlardakı ilə eyni tətbiqdir.
   - Tezliklə: televizorlarda Google Play, onun televizorlar üçün səhifəsi 9 oktyabr 2026-dan Google tərəfindən yoxlanılır.
@@ -1126,7 +1126,7 @@ Tətbiq telefon və planşetlər üçün Google Play-dədir; App Store versiyas�
   - Bu gün: Immuch360 Desktop, masaüstü yığımı 4, [masaüstü ilkin buraxılışının](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` ZIP faylı, [Windows-da endirin və quraşdırın](#download-and-install-on-windows) bölməsində deyildiyi kimi açılır və işə salınır. Fotolar, düz videolar, 360°, 3D, VR180 və xam 360° videolar (ayrıca qrafik çipdə rəvan, daxili çipdə məhdudiyyətlərlə) və Tapo canlı görüntüsü.
   - Tezliklə: veb-kamera ilə Spatial 2.5D, sonra Linux və macOS; daha sonra quraşdırıcı, imzalanmış yığım və yeniləmələr.
 
-App Store və Meta Horizon Store linkləri səhifələr dərc edilən kimi bura əlavə olunacaq. Adi Immich server URL-iniz və hesabınızla daxil olun, ya da cihazın öz foto və videoları ilə başlamaq üçün giriş səhifəsində "Serversiz istifadə et"-ə toxunun. GitHub-dan olan APK özünü yeniləmir: Releases səhifəsini izləyin, tətbiqi mağazadan quraşdırdıqdan sonra isə yeniləmələri həmin mağazadan alın.
+App Store linki səhifə dərc edilən kimi bura əlavə olunacaq; tətbiq artıq [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)-dadır. Adi Immich server URL-iniz və hesabınızla daxil olun, ya da cihazın öz foto və videoları ilə başlamaq üçün giriş səhifəsində "Serversiz istifadə et"-ə toxunun. GitHub-dan olan APK özünü yeniləmir: Releases səhifəsini izləyin, tətbiqi mağazadan quraşdırdıqdan sonra isə yeniləmələri həmin mağazadan alın.
 
 <a id="build-it-yourself"></a>
 ## Özünüz yığın
@@ -1215,7 +1215,7 @@ Hələ hazır olmayanlar, ən ehtimallısı əvvəl. Burada heç nə vəd deyil,
 - **Immuch360 Desktop, əvvəlcə Windows**: masaüstü yığımı 3 çıxıb, 360° video pleyerlə (360°, 3D, VR180 və xam 360° videolar, xam faylların iki linzası, hər kompüterdə ölçülən görünüş ölçüsü) və Tapo canlı görüntüsü ilə, masaüstü mənbə kodu isə 9 oktyabr 2026-dan forkun əsas budağındadır, `immuch360` (baxın: [Windows kompüterində](#on-a-windows-computer-immuch360-desktop-preview)). Sonra 2024 versiyasının yerinə forkun öz iş axınının libmpv-si və hər funksiyanın Windows kompüterində real fayllar, hər iki ekran və real kamera ilə əl ilə yoxlanılması və düzəlişləri; sonra veb-kamera ilə Spatial 2.5D; sonra Linux və macOS; sonra quraşdırıcı, imzalanmış yığım və avtomatik yeniləmələr.
 - **Google Play**: 18-ci yığımın yerinə 20-ci yığım 7 oktyabr 2026-dan dərc olunub; televizorlar üçün səhifə 9 oktyabr 2026-dan Google tərəfindən yoxlanılır. 21-ci yığım telefon və planşetlərdə heç nəyi dəyişmir.
 - **App Store**: 3.3.0 versiyası Apple-ın yoxlamasını gözləyir; o, 11-ci yığımın funksiyalarını daşıyır, ona görə Immich-ə yükləmə və video dekoder yoxlaması (15-ci yığım), həmçinin xam Insta360 faylları (16-cı yığım) növbəti App Store yeniləməsi ilə gəlir. Link dərc ediləndə bura əlavə olunacaq.
-- **Meta Horizon Store**: Meta səhifəni 7 oktyabr 2026-da 14-cü yığımla təsdiqləyib. 21-ci yığım onun ilk yeniləməsi kimi təqdim edilib: 14-cü yığımdan bəri hər şeyi gətirir (paylaşımdan Immich-ə yükləmələr, VR eynəyinin dekod etdiyinə görə seçilən video mənbəyi, xam Insta360, GoPro və DJI faylları, DLNA, telefon paylaşımı, Apple məkan fotoları, Plex Media Server kitabxanaları, Tapo kameraları), mağaza isə onu Quest 2, Quest Pro, Quest 3 və 3S üçün siyahıya alır. Səhifə ictimai olduqdan sonra mağaza linki bura əlavə olunacaq; əl ilə quraşdırılmış nüsxə əvvəlcə silinməlidir (baxın: [Quraşdırma](#install)).
+- **Meta Horizon Store**: Meta səhifəni 7 oktyabr 2026-da 14-cü yığımla təsdiqləyib, tətbiq də həmin gündən [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)-da hamı üçün açıqdır. 21-ci yığım onun ilk yeniləməsi kimi təqdim edilib: 14-cü yığımdan bəri hər şeyi gətirir (paylaşımdan Immich-ə yükləmələr, VR eynəyinin dekod etdiyinə görə seçilən video mənbəyi, xam Insta360, GoPro və DJI faylları, DLNA, telefon paylaşımı, Apple məkan fotoları, Plex Media Server kitabxanaları, Tapo kameraları), mağaza isə onu Quest 2, Quest Pro, Quest 3 və 3S üçün siyahıya alır. Mağaza versiyasını quraşdırmaq üçün əl ilə quraşdırılmış nüsxə əvvəlcə silinməlidir (baxın: [Quraşdırma](#install)).
 - **Mağaza səhifələri**: Google Play səhifəsi 2026-cı ilin oktyabrında yeni ekran görüntüləri ilə yenidən yazılıb, televizor ekran görüntüləri və televizor banneri isə 8 oktyabr 2026-da əlavə olunub; televizorlar üçün səhifə 9 oktyabr 2026-dan Google tərəfindən yoxlanılır. App Store mətni hələ də ilk yığımları təsvir edir (360° foto və videolar, düz göstərilən xam fayllar); o, 3D, VR180 və Spatial görüntüləyicilərini, serversiz rejimi, şəbəkə paylaşımlarını, media pleyeri və xam Insta360 fayllarını təqdim edəcək. Meta Horizon Store mətni artıq media pleyeri təqdim edir.
 - **360° kameraların xam faylları, növbəti**: xam foto VR eynəyi üçün hazırlanarkən irəliləyiş göstəricisi; GoPro və DJI videolarının öz hərəkət məlumatlarından üfüqə görə düzəldilməsi; ikiqat fişeyli .dng; tikişləri və dekoder imkanlarını təsdiqləmək üçün 18-ci yığımın iki linzalı oynatması haqqında cihaz hesabatları (X4, X5, X6, GoPro MAX 2, Osmo 360).
 - **DLNA, telefon paylaşımı və Apple məkan mediası, növbəti**: 19-cu yığımın cihaz hesabatları (DLNA ilə Plex, Jellyfin, NAS və Freebox Server; Quest-ə, həm də öz hotspotunda xidmət edən telefon; VR eynəyində real iPhone məkan foto və videoları); iPhone-ların bütün DLNA serverlərini tapması üçün Apple-dan istənilən multicast icazəsi; VR eynəyində məkan fotoları arasında əvvəlki və növbəti; zaman xəttində server fotolarında məkan nişanı; dekoderləri imkan verərsə Quest-də 3D-də məkan videoları.

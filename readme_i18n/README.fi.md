@@ -15,11 +15,11 @@ Se on tarkoitettu niille, jotka kuvaavat 360°-kameralla (Insta360, GoPro MAX, D
 
 <div align="center">
 
-| Alusta | Mistä sen saa | Tilanne 10. lokakuuta 2026 |
+| Alusta | Mistä sen saa | Tilanne 12. lokakuuta 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-puhelimet ja -tabletit | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | koontiversio 23 GitHubissa, lähetetty Google Playhin 10. lokakuuta 2026 (siellä koontiversio 20 julkaistuna 7. lokakuuta lähtien) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ja iPad** | App Store | versio 3.3.0 odottaa Applen tarkastusta; sillä välin [kokoa se itse](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [APK](#meta-quest-3) · Horizon Store | sivu hyväksytty, koontiversio 21 Metan tarkastettavana, koontiversio 23 alfakanavalla |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | Horizon Storessa 7. lokakuuta 2026 alkaen (koontiversio 14), koontiversio 21 Metan tarkastettavana, koontiversio 23 alfakanavalla |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#install-it-on-the-tv) · Google Play | koontiversio 23 GitHubissa; Google Playn TV-sivu on Googlen tarkastettavana 9. lokakuuta 2026 lähtien |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Esiversion ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | työpöydän koontiversio 4 Windowsissa: kuvat, tavalliset ja 360°-videot; macOS ja Linux myöhemmin |
 
@@ -529,7 +529,7 @@ Media tulee Immich-palvelimeltasi, laseista itsestään, NAS-laitteelta, mediapa
 
 ### Immersiivisen näkymän avaaminen
 
-1. Asenna sovellus laseihin: kunnes Horizon Store -sivu hyväksytään, asenna APK sivulataamalla (sideload), katso [Asentaminen](#install).
+1. Asenna sovellus laseihin [Horizon Storesta](https://www.meta.com/experiences/immuch360/1384208401440714/), tai sivulataa (sideload) uudemman koontiversion APK, katso [Asentaminen](#install).
 2. Kirjaudu Immich-palvelimellesi tai napauta "Käytä ilman palvelinta" lasien omia kuvia ja videoita varten.
 3. Avaa 360°-kuva tai -video katselimessa aikajanalta, 360°-luettelosta, albumista tai jaon kansiosta.
 4. Paina 360°-painiketta tai ⋮-valikon "Näytä 360°-näkymänä". Laseissa ne avaavat immersiivisen näkymän suoraan puhelinten pallokatselimen sijaan.
@@ -930,7 +930,7 @@ Tämä ei koske lähiverkon tavallisessa HTTP-osoitteessa olevia WebDAV-, DLNA- 
 <a id="install"></a>
 ### Asentaminen
 
-Meta hyväksyi Horizon Store -sivun 7. lokakuuta 2026 koontiversion 14 kanssa, ja koontiversio 21 on lähetetty sen ensimmäisenä päivityksenä. Kunnes kaupan sivu on julkinen, tai saadaksesi koontiversion ennen kuin se on kaupassa, sivulataa (sideload) julkaisun `-quest-release.apk`-tiedosto (koottu laseja varten: 64-bittinen, kohde-SDK 34, vain lasien käyttämät luvat) tai yleinen `-release.apk`:
+Immuch360 on ollut [Horizon Storessa](https://www.meta.com/experiences/immuch360/1384208401440714/) 7. lokakuuta 2026 alkaen koontiversiolla 14, ja koontiversio 21 on Metan tarkastettavana sen ensimmäisenä päivityksenä. Saadaksesi koontiversion ennen kuin se on kaupassa, sivulataa (sideload) julkaisun `-quest-release.apk`-tiedosto (koottu laseja varten: 64-bittinen, kohde-SDK 34, vain lasien käyttämät luvat) tai yleinen `-release.apk`:
 
 1. Ota kehittäjätila käyttöön kerran. Avaa puhelimen Meta Horizon -sovelluksessa "Devices" (Laitteet), valitse lasit, sitten "Headset settings" (Lasien asetukset) ja sitten "Developer mode" (Kehittäjätila). Tähän tarvitaan kehittäjätili, joka on ilmainen osoitteessa developers.meta.com. Tarvitset tietokoneelle myös adb:n (Android SDK Platform Tools) tai SideQuestin.
 2. Liitä lasit tietokoneeseen USB-C-kaapelilla. Hyväksy laseissa "Allow USB debugging" (Salli USB-virheenkorjaus).
@@ -1108,7 +1108,7 @@ Immuch360 Desktopin CI (`.github/workflows/immuch360-desktop.yml`) ajetaan `desk
 <a id="where-to-get-it"></a>
 ## Mistä sen saa
 
-Sovellus on Google Playssa puhelimille ja tableteille; App Store -versio odottaa Applen tarkastusta, Meta Horizon Store -sivu on hyväksytty ja sen ensimmäinen päivitys on Metan tarkastettavana, ja televisioiden Google Play -versio odottaa Googlen tarkastusta TV-julkaisulle. Immuch360 Desktop Windowsille on esiversio GitHubissa. GitHub-julkaisu on aina uusin koontiversio:
+Sovellus on Google Playssa puhelimille ja tableteille; App Store -versio odottaa Applen tarkastusta, sovellus on Meta Horizon Storessa ja sen ensimmäinen päivitys on Metan tarkastettavana, ja televisioiden Google Play -versio odottaa Googlen tarkastusta TV-julkaisulle. Immuch360 Desktop Windowsille on esiversio GitHubissa. GitHub-julkaisu on aina uusin koontiversio:
 
 - **Android-puhelimet ja -tabletit**
   - Nyt: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) tai APK [Releases](https://github.com/freeKC/Immuch360/releases)-sivulta: puhelimelle `Immuch360-v<version>-arm64-v8a-release.apk` (yleinen `Immuch360-v<version>-release.apk` toimii kaikkialla, `-armeabi-v7a` on vanhemmille 32-bittisille puhelimille, ja `.aab`-tiedosto on Google Playta varten, ei sivulataamiseen). GitHubin koontiversio on yleensä kauppaa edellä. Kummassakin tapauksessa se asentuu virallisen Immich-sovelluksen rinnalle (paketti `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Sovellus on Google Playssa puhelimille ja tableteille; App Store -versio odottaa
   - Pian: App Store, tarkastettavana.
 - **Meta Quest 2, Quest Pro, Quest 3 ja 3S (Quest 2 ja Quest Pro testaamatta)**
   - Nyt: [Releases](https://github.com/freeKC/Immuch360/releases)-sivun `-quest-release.apk`-tiedosto (myös yleinen `-release.apk` toimii), sivuladattuna kehittäjätilassa, katso [Asentaminen](#install). Kaupan koontiversio ja GitHubin APK on allekirjoitettu eri avaimilla: vaihtaaksesi toisesta toiseen poista sovellus ensin (sen asetukset ja tallennetut jaot häviävät sen mukana).
-  - Pian: Meta Horizon Storessa sivu hyväksyttiin 7. lokakuuta 2026 koontiversion 14 kanssa, ja koontiversio 21, sen ensimmäinen päivitys, on Metan tarkastettavana; kaupan alfakanava (vain testaajille) saa jokaisen uuden koontiversion.
+  - Kauppa: [Meta Horizon Storessa](https://www.meta.com/experiences/immuch360/1384208401440714/) sovellus on ollut 7. lokakuuta 2026 alkaen koontiversiolla 14, ja koontiversio 21, sen ensimmäinen päivitys, on Metan tarkastettavana; kaupan alfakanava (vain testaajille) saa jokaisen uuden koontiversion.
 - **Android TV ja Google TV (koontiversiosta 20 alkaen)**
   - Nyt: yleinen `Immuch360-v<version>-release.apk` [Releases](https://github.com/freeKC/Immuch360/releases)-sivulta, sivuladattuna adb:llä, katso [Asentaminen televisioon](#install-it-on-the-tv). Se on sama sovellus kuin puhelimissa.
   - Pian: Google Play televisioissa; sen TV-sivu on ollut Googlen tarkastettavana 9. lokakuuta 2026 lähtien.
@@ -1126,7 +1126,7 @@ Sovellus on Google Playssa puhelimille ja tableteille; App Store -versio odottaa
   - Nyt: Immuch360 Desktop, työpöydän koontiversio 4, [työpöydän esijulkaisun](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`, purettuna ja käynnistettynä niin kuin [Lataa ja asenna Windowsiin](#download-and-install-on-windows) neuvoo. Kuvat, tavalliset videot, 360°-, 3D-, VR180- ja raa'at 360°-videot (sujuvat erillisellä grafiikkapiirillä, rajoituksin integroidulla) sekä Tapon suora kuva.
   - Pian: Spatial 2.5D verkkokameralla, sitten Linux ja macOS; asennusohjelma, allekirjoitettu koontiversio ja päivitykset myöhemmin.
 
-App Storen ja Meta Horizon Storen linkit lisätään tänne heti, kun sivut on julkaistu. Kirjaudu tavallisella Immich-palvelimesi URL-osoitteella ja tililläsi, tai napauta kirjautumissivulla "Käytä ilman palvelinta" aloittaaksesi laitteen omilla kuvilla ja videoilla. GitHubin APK ei päivity itsestään: seuraa Releases-sivua, ja kun olet asentanut sovelluksen kaupasta, hae päivitykset siitä kaupasta.
+App Storen linkki lisätään tänne heti, kun sivu on julkaistu; sovellus on jo [Meta Horizon Storessa](https://www.meta.com/experiences/immuch360/1384208401440714/). Kirjaudu tavallisella Immich-palvelimesi URL-osoitteella ja tililläsi, tai napauta kirjautumissivulla "Käytä ilman palvelinta" aloittaaksesi laitteen omilla kuvilla ja videoilla. GitHubin APK ei päivity itsestään: seuraa Releases-sivua, ja kun olet asentanut sovelluksen kaupasta, hae päivitykset siitä kaupasta.
 
 <a id="build-it-yourself"></a>
 ## Kokoa se itse
@@ -1215,7 +1215,7 @@ Mitä ei ole vielä tehty, todennäköisimmät ensin. Mikään tässä ei ole lu
 - **Immuch360 Desktop, ensin Windows**: desktop build 3 on julkaistu 360°-videosoittimen (360°-, 3D-, VR180- ja raa'at 360°-videot, raakatiedostojen kaksi objektiivia, kullakin tietokoneella mitattu näkymän koko) ja Tapon suoran kuvan kanssa, ja työpöytäversion lähdekoodit ovat 9. lokakuuta 2026 alkaen forkin päähaarassa `immuch360` (katso [Windows-tietokoneella](#on-a-windows-computer-immuch360-desktop-preview)). Seuraavaksi forkin oman työnkulun libmpv vuoden 2024 version tilalle ja jokaisen toiminnon käsin testaus Windows-tietokoneella oikeilla tiedostoilla, molemmilla näytöillä ja oikealla kameralla korjauksineen; sitten Spatial 2.5D verkkokameralla; sitten Linux ja macOS; sitten asennusohjelma, allekirjoitettu koontiversio ja automaattiset päivitykset.
 - **Google Play**: koontiversio 20 on ollut julkaistuna 7. lokakuuta 2026 lähtien, koontiversion 18 sijaan; TV-sivu on ollut Googlen tarkastettavana 9. lokakuuta 2026 lähtien. Koontiversio 21 ei muuta mitään puhelimissa ja tableteissa.
 - **App Store**: versio 3.3.0 odottaa Applen tarkastusta; siinä on koontiversion 11 ominaisuudet, joten lähetys Immichiin ja videodekooderien tarkistus (koontiversio 15) sekä käsittelemättömät Insta360-tiedostot (koontiversio 16) tulevat seuraavassa App Store -päivityksessä. Linkki lisätään tänne, kun se on julkaistu.
-- **Meta Horizon Store**: Meta hyväksyi sivun 7. lokakuuta 2026 koontiversion 14 kanssa. Koontiversio 21 on lähetetty sen ensimmäisenä päivityksenä: se tuo kaiken koontiversion 14 jälkeen tulleen (lähetykset jaosta Immichiin, videolähde valittuna sen mukaan, mitä lasit pystyvät purkamaan, Insta360-, GoPro- ja DJI-raakatiedostot, DLNA, puhelimen jakaminen, Applen tilakuvat, Plex Media Server -kirjastot, Tapo-kamerat), ja kauppa listaa sen Quest 2:lle, Quest Prolle, Quest 3:lle ja 3S:lle. Kaupan linkki lisätään tänne, kun sivu on julkinen; sivuladattu kopio on ensin poistettava (katso [Asentaminen](#install)).
+- **Meta Horizon Store**: Meta hyväksyi sivun 7. lokakuuta 2026 koontiversion 14 kanssa, ja sovellus on ollut julkisesti [Horizon Storessa](https://www.meta.com/experiences/immuch360/1384208401440714/) siitä päivästä alkaen. Koontiversio 21 on lähetetty sen ensimmäisenä päivityksenä: se tuo kaiken koontiversion 14 jälkeen tulleen (lähetykset jaosta Immichiin, videolähde valittuna sen mukaan, mitä lasit pystyvät purkamaan, Insta360-, GoPro- ja DJI-raakatiedostot, DLNA, puhelimen jakaminen, Applen tilakuvat, Plex Media Server -kirjastot, Tapo-kamerat), ja kauppa listaa sen Quest 2:lle, Quest Prolle, Quest 3:lle ja 3S:lle. Kauppaversion asentamiseksi sivuladattu kopio on ensin poistettava (katso [Asentaminen](#install)).
 - **Kauppasivut**: Google Playn sivu kirjoitettiin uudelleen lokakuussa 2026 uusin kuvakaappauksin, ja sen TV-kuvakaappaukset ja TV-banneri lisättiin 8. lokakuuta 2026; TV-sivu on ollut Googlen tarkastettavana 9. lokakuuta 2026 lähtien. App Storen teksti kuvaa yhä ensimmäisiä koontiversioita (360°-kuvat ja -videot, käsittelemättömät tiedostot litteinä); siinä esitellään jatkossa 3D-, VR180- ja Spatial-katselimet, ilman palvelinta -tila, verkkojaot, mediasoitin ja käsittelemättömät Insta360-tiedostot. Meta Horizon Storen teksti esittelee jo mediasoittimen.
 - **360°-kameroiden käsittelemättömät tiedostot, seuraavaksi**: edistymisilmaisin, kun käsittelemätöntä kuvaa valmistellaan laseja varten; GoPro- ja DJI-videoiden oikaisu niiden omista liiketiedoista; kaksoiskalansilmä-.dng; laiteraportit koontiversion 18 kahden objektiivin toistosta (X4, X5, X6, GoPro MAX 2, Osmo 360) saumojen ja dekooderien kapasiteetin vahvistamiseksi.
 - **DLNA, puhelinjako ja Applen tilamedia, seuraavaksi**: koontiversion 19 laiteraportit (Plex, Jellyfin, NAS-laite ja Freebox Server DLNA:n kautta; Questia palveleva puhelin, myös omassa yhteyspisteessään; todelliset iPhonen tilakuvat ja -videot laseissa); Applelta pyydetty multicast-oikeus, jotta iPhonet löytävät jokaisen DLNA-palvelimen; edellinen ja seuraava tilakuvien välillä laseissa; tilamerkki palvelimen kuviin aikajanalla; tilavideot 3D:nä Questissa, jos sen dekooderit sen sallivat.

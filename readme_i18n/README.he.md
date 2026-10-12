@@ -15,11 +15,11 @@ Immuch360 היא אפליקציית Immich לנייד עם תמונות וסרט
 
 <div align="center">
 
-| פלטפורמה | איפה להשיג | מצב ב-10 באוקטובר 2026 |
+| פלטפורמה | איפה להשיג | מצב ב-12 באוקטובר 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> טלפונים וטאבלטים עם **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | בילד 23 ב-GitHub, נשלח ל-Google Play ב-10 באוקטובר 2026 (בילד 20 פעיל שם מאז 7 באוקטובר) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ו-iPad** | App Store | גרסה 3.3.0 ממתינה לבדיקה של Apple; בינתיים [בנו אותה בעצמכם](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ו-3S | [APK](#meta-quest-3) · Horizon Store | הדף אושר, בילד 21 בבדיקה של Meta, בילד 23 בערוץ האלפא |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ו-3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | ב-Horizon Store מאז 7 באוקטובר 2026 (בילד 14), בילד 21 בבדיקה של Meta, בילד 23 בערוץ האלפא |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ו-Google TV** | [APK](#install-it-on-the-tv) · Google Play | בילד 23 ב-GitHub; הדף ב-Google Play לטלוויזיות בבדיקה של Google מאז 9 באוקטובר 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP של התצוגה המקדימה](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | בילד מחשב 4 ב-Windows: תמונות, סרטונים שטוחים וסרטוני 360°; macOS ו-Linux מאוחר יותר |
 
@@ -529,7 +529,7 @@ Immuch360 מזהה את פריסות ה-3D, למעלה ולמטה או זה לצ
 
 ### פתיחת התצוגה האימרסיבית
 
-1. התקינו את האפליקציה במשקפת: עד שדף ה-Horizon Store יאושר, התקינו את ה-APK ידנית (sideload), ראו [התקנה](#install).
+1. התקינו את האפליקציה במשקפת מה-[Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), או התקינו ידנית (sideload) את ה-APK של בילד חדש יותר, ראו [התקנה](#install).
 2. התחברו עם שרת ה-Immich שלכם, או הקישו על "שימוש ללא שרת" לתמונות ולסרטונים של המשקפת עצמה.
 3. פתחו תמונה או סרטון 360° במציג, מציר הזמן, מרשימת ה-360°, מאלבום או מתיקיית שיתוף.
 4. לחצו על כפתור ה-360°, או על "הצג כ-360°" בתפריט ⋮. במשקפת הם פותחים ישירות את התצוגה האימרסיבית, במקום המציג הכדורי של הטלפונים.
@@ -930,7 +930,7 @@ Immuch360 רצה גם במשקפות Meta Quest עם Horizon OS v69 ואילך. 
 <a id="install"></a>
 ### התקנה
 
-‏Meta אישרה את דף ה-Horizon Store ב-7 באוקטובר 2026 עם בילד 14, ובילד 21 הוגש כעדכון הראשון שלו. עד שדף החנות יהיה ציבורי, או כדי לקבל בילד לפני שהוא מגיע לחנות, התקינו ידנית (sideload) את קובץ ה-`-quest-release.apk` של גרסה (נבנה למשקפת: 64 ביט, SDK יעד 34, רק ההרשאות שהמשקפת משתמשת בהן), או את ה-`-release.apk` האוניברסלי:
+‏Immuch360 נמצאת ב-[Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) מאז 7 באוקטובר 2026 עם בילד 14, ובילד 21 בבדיקה של Meta כעדכון הראשון שלה. כדי לקבל בילד לפני שהוא מגיע לחנות, התקינו ידנית (sideload) את קובץ ה-`-quest-release.apk` של גרסה (נבנה למשקפת: 64 ביט, SDK יעד 34, רק ההרשאות שהמשקפת משתמשת בהן), או את ה-`-release.apk` האוניברסלי:
 
 1. הפעילו פעם אחת את מצב המפתחים. באפליקציית Meta Horizon בטלפון, פתחו "Devices" (מכשירים), בחרו את המשקפת, ואז "Headset settings" (הגדרות המשקפת), ואז "Developer mode" (מצב מפתחים). לשם כך צריך חשבון מפתח, שהוא חינמי ב-developers.meta.com. צריך גם adb ‏(Android SDK Platform Tools) במחשב, או SideQuest.
 2. חברו את המשקפת למחשב בכבל USB-C. במשקפת, אשרו "Allow USB debugging" (אפשר ניפוי באגים ב-USB).
@@ -1108,7 +1108,7 @@ Immuch360 רצה גם במשקפות Meta Quest עם Horizon OS v69 ואילך. 
 <a id="where-to-get-it"></a>
 ## איפה להשיג
 
-האפליקציה נמצאת ב-Google Play לטלפונים ולטאבלטים; הגרסה ל-App Store ממתינה לבדיקה של Apple, הדף ב-Meta Horizon Store אושר והעדכון הראשון שלו בבדיקה של Meta, והגרסה ב-Google Play לטלוויזיות ממתינה לבדיקה של Google לגרסת הטלוויזיה. ‏Immuch360 Desktop, ל-Windows, זמינה כתצוגה מקדימה ב-GitHub. הגרסה ב-GitHub היא תמיד הבילד החדש ביותר:
+האפליקציה נמצאת ב-Google Play לטלפונים ולטאבלטים; הגרסה ל-App Store ממתינה לבדיקה של Apple, האפליקציה נמצאת ב-Meta Horizon Store והעדכון הראשון שלה בבדיקה של Meta, והגרסה ב-Google Play לטלוויזיות ממתינה לבדיקה של Google לגרסת הטלוויזיה. ‏Immuch360 Desktop, ל-Windows, זמינה כתצוגה מקדימה ב-GitHub. הגרסה ב-GitHub היא תמיד הבילד החדש ביותר:
 
 - **טלפונים וטאבלטים עם Android**
   - היום: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), או ה-APK בדף [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` לטלפון (ה-`Immuch360-v<version>-release.apk` האוניברסלי עובד בכל מקום, `-armeabi-v7a` מיועד לטלפונים ישנים של 32 ביט, וקובץ ה-`.aab` מיועד ל-Google Play, לא להתקנה ידנית). הבילד ב-GitHub בדרך כלל מקדים את החנות. בכל מקרה הוא מותקן לצד אפליקציית Immich הרשמית (חבילה `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Immuch360 רצה גם במשקפות Meta Quest עם Horizon OS v69 ואילך. 
   - בקרוב: App Store, בבדיקה.
 - **Meta Quest 2, ‏Quest Pro, ‏Quest 3 ו-3S ‏(Quest 2 ו-Quest Pro לא נבדקו)**
   - היום: הקובץ `-quest-release.apk` מדף [Releases](https://github.com/freeKC/Immuch360/releases) (גם ה-`-release.apk` האוניברסלי עובד), מותקן ידנית במצב מפתחים, ראו [התקנה](#install). הבילד מהחנות וה-APK מ-GitHub חתומים במפתחות שונים: כדי לעבור מאחד לשני, הסירו קודם את האפליקציה (ההגדרות והשיתופים השמורים שלה הולכים איתה).
-  - בקרוב: ב-Meta Horizon Store, הדף אושר ב-7 באוקטובר 2026 עם בילד 14, ובילד 21, העדכון הראשון שלו, בבדיקה של Meta; ערוץ האלפא של החנות (בודקים בלבד) מקבל כל בילד חדש.
+  - חנות: האפליקציה נמצאת ב-[Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) מאז 7 באוקטובר 2026 עם בילד 14, ובילד 21, העדכון הראשון שלה, בבדיקה של Meta; ערוץ האלפא של החנות (בודקים בלבד) מקבל כל בילד חדש.
 - **‏Android TV ו-Google TV (מבילד 20)**
   - היום: ה-`Immuch360-v<version>-release.apk` האוניברסלי מדף [Releases](https://github.com/freeKC/Immuch360/releases), מותקן ידנית עם adb, ראו [התקנה בטלוויזיה](#install-it-on-the-tv). זו אותה אפליקציה כמו בטלפונים.
   - בקרוב: Google Play בטלוויזיות, שהדף שלו לטלוויזיות בבדיקה של Google מאז 9 באוקטובר 2026.
@@ -1126,7 +1126,7 @@ Immuch360 רצה גם במשקפות Meta Quest עם Horizon OS v69 ואילך. 
   - היום: Immuch360 Desktop, בילד מחשב 4, קובץ ה-ZIP ‏`Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` של [גרסת הקדם למחשב](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), מחולץ ומופעל כמו שמתואר ב[הורדה והתקנה ב-Windows](#download-and-install-on-windows). תמונות, סרטונים שטוחים, סרטוני 360°, ‏3D, ‏VR180 וסרטוני 360° גולמיים (חלקים על שבב גרפי ייעודי, עם מגבלות על שבב משולב) והתצוגה החיה של Tapo.
   - בקרוב: Spatial 2.5D עם מצלמת הרשת, ואז Linux ו-macOS; מתקין, בילד חתום ועדכונים בהמשך.
 
-הקישורים ל-App Store ול-Meta Horizon Store יתווספו כאן ברגע שהדפים יפורסמו. התחברו עם כתובת ה-URL והחשבון של שרת ה-Immich הרגיל שלכם, או הקישו על "שימוש ללא שרת" בדף ההתחברות כדי להתחיל עם התמונות והסרטונים של המכשיר עצמו. ה-APK מ-GitHub לא מתעדכן מעצמו: עקבו אחרי דף ה-Releases, ואחרי שהתקנתם את האפליקציה מחנות, קבלו את העדכונים מהחנות הזו.
+הקישור ל-App Store יתווסף כאן ברגע שהדף יפורסם; האפליקציה כבר נמצאת ב-[Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). התחברו עם כתובת ה-URL והחשבון של שרת ה-Immich הרגיל שלכם, או הקישו על "שימוש ללא שרת" בדף ההתחברות כדי להתחיל עם התמונות והסרטונים של המכשיר עצמו. ה-APK מ-GitHub לא מתעדכן מעצמו: עקבו אחרי דף ה-Releases, ואחרי שהתקנתם את האפליקציה מחנות, קבלו את העדכונים מהחנות הזו.
 
 <a id="build-it-yourself"></a>
 ## בנו אותה בעצמכם
@@ -1215,7 +1215,7 @@ adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that s
 - **Immuch360 Desktop, קודם Windows**: בילד מחשב 3 יצא, עם נגן סרטוני ה-360° (סרטוני 360°, ‏3D, ‏VR180 וסרטוני 360° גולמיים, שתי העדשות של הקבצים הגולמיים, גודל התצוגה שנמדד בכל מחשב) והתצוגה החיה של Tapo, והמקורות של גרסת המחשב נמצאים בענף הראשי של הפורק, `immuch360`, מאז 9 באוקטובר 2026 (ראו [במחשב Windows](#on-a-windows-computer-immuch360-desktop-preview)). אחר כך, ה-libmpv של ה-workflow של הפורק עצמו במקום זה של 2024, והבדיקה הידנית של כל פונקציה במחשב Windows עם קבצים אמיתיים, שני מסכים ומצלמה אמיתית, עם התיקונים שלה; ואז Spatial 2.5D עם מצלמת הרשת; ואז Linux ו-macOS; ואז מתקין, בילד חתום ועדכונים אוטומטיים.
 - **Google Play**: בילד 20 פעיל מאז 7 באוקטובר 2026, במקום בילד 18; הדף לטלוויזיות בבדיקה של Google מאז 9 באוקטובר 2026. בילד 21 לא משנה דבר בטלפונים ובטאבלטים.
 - **App Store**: גרסה 3.3.0 ממתינה לבדיקה של Apple; היא כוללת את התכונות של בילד 11, ולכן ההעלאה ל-Immich ובדיקת מפענחי הווידאו (בילד 15) והקבצים הגולמיים של Insta360 (בילד 16) יגיעו עם העדכון הבא ב-App Store. הקישור יתווסף כאן כשהיא תהיה זמינה.
-- **Meta Horizon Store**: ‏Meta אישרה את הדף ב-7 באוקטובר 2026 עם בילד 14. בילד 21 הוגש כעדכון הראשון שלו: הוא מביא את כל מה שנוסף מאז בילד 14 (העלאות משיתוף ל-Immich, מקור הווידאו שנבחר לפי מה שהמשקפת מפענחת, קבצים גולמיים של Insta360, ‏GoPro ו-DJI, ‏DLNA, שיתוף הטלפון, תמונות מרחביות של Apple, ספריות Plex Media Server, מצלמות Tapo), והחנות מציעה אותו ל-Quest 2, ‏Quest Pro, ‏Quest 3 ו-3S. הקישור לחנות יתווסף כאן כשהדף יהיה ציבורי; עותק שהותקן ידנית יצטרך להיות מוסר קודם (ראו [התקנה](#install)).
+- **Meta Horizon Store**: ‏Meta אישרה את הדף ב-7 באוקטובר 2026 עם בילד 14, ומאותו יום האפליקציה זמינה לציבור ב-[Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). בילד 21 הוגש כעדכון הראשון שלו: הוא מביא את כל מה שנוסף מאז בילד 14 (העלאות משיתוף ל-Immich, מקור הווידאו שנבחר לפי מה שהמשקפת מפענחת, קבצים גולמיים של Insta360, ‏GoPro ו-DJI, ‏DLNA, שיתוף הטלפון, תמונות מרחביות של Apple, ספריות Plex Media Server, מצלמות Tapo), והחנות מציעה אותו ל-Quest 2, ‏Quest Pro, ‏Quest 3 ו-3S. כדי להתקין את גרסת החנות, עותק שהותקן ידנית יצטרך להיות מוסר קודם (ראו [התקנה](#install)).
 - **דפי החנויות**: הדף ב-Google Play נכתב מחדש באוקטובר 2026 עם צילומי מסך חדשים, וצילומי המסך של הטלוויזיה ובאנר הטלוויזיה נוספו אליו ב-8 באוקטובר 2026; הדף לטלוויזיות בבדיקה של Google מאז 9 באוקטובר 2026. הטקסט ב-App Store עדיין מתאר את הבילדים הראשונים (תמונות וסרטונים ב-360°, קבצים גולמיים שמוצגים שטוחים); הוא יציג את מציגי ה-3D, ה-VR180 וה-Spatial, את המצב בלי שרת, את שיתופי הרשת, את נגן המדיה ואת הקבצים הגולמיים של Insta360. הטקסט ב-Meta Horizon Store כבר מציג את נגן המדיה.
 - **קבצים גולמיים של מצלמות 360°, הבא בתור**: מחוון התקדמות בזמן שתמונה גולמית מוכנה למשקפת; יישור של סרטוני GoPro ו-DJI מנתוני התנועה שלהם; ‏.dng עם עין דג כפולה; דיווחים ממכשירים על הניגון עם שתי עדשות של בילד 18 ‏(X4, ‏X5, ‏X6, ‏GoPro MAX 2, ‏Osmo 360) כדי לאשר את התפרים ואת תקציבי המפענחים.
 - **DLNA, שיתוף הטלפון ומדיה מרחבית של Apple, הבא בתור**: הדיווחים ממכשירים של בילד 19 ‏(Plex, ‏Jellyfin, ‏NAS וה-Freebox Server ב-DLNA; טלפון שמגיש ל-Quest, גם בנקודה החמה שלו; תמונות וסרטונים מרחביים אמיתיים מ-iPhone במשקפת); הרשאת ה-multicast שהתבקשה מ-Apple, כדי ש-iPhone ימצאו כל שרת DLNA; הקודם והבא בין תמונות מרחביות במשקפת; תג מרחבי על תמונות מהשרת בציר הזמן; סרטונים מרחביים ב-3D ב-Quest, אם המפענחים שלו יאפשרו זאת.

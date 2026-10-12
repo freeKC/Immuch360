@@ -15,11 +15,11 @@ Hem i blong ol man we oli tekem foto wetem wan 360° kamera (Insta360, GoPro MAX
 
 <div align="center">
 
-| Platfom | Wea blong kasem | Stejes long 10 Oktoba 2026 |
+| Platfom | Wea blong kasem | Stejes long 12 Oktoba 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Ol **Android** fon mo tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 long GitHub, oli sendem i go long Google Play long 10 Oktoba 2026 (build 20 i stap long ples ia stat long 7 Oktoba) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone mo iPad** | App Store | vesen 3.3.0 i stap wet blong Apple i jekem; naoia yu save [buildim yu wan](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 mo 3S | [APK](#meta-quest-3) · Horizon Store | Meta i talem oraet long pej, Meta i stap jekem build 21, build 23 i stap long Alpha janel |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 mo 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | i stap long Horizon Store stat long 7 Oktoba 2026 (build 14), Meta i stap jekem build 21, build 23 i stap long Alpha janel |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV mo Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 long GitHub; Google i stap jekem Google Play pej blong ol TV stat long 9 Oktoba 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Preview ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 long Windows: ol foto, ol flat video mo ol 360° video; macOS mo Linux biaen |
 
@@ -529,7 +529,7 @@ Ol media oli kam long Immich seva blong yu, hedset hem wan, wan NAS, wan seva bl
 
 ### Openem immersive vyu
 
-1. Instolem app long hedset: kasem taem Horizon Store pej i oraet, instolem APK wetem han (sideload), luk [Instolem](#install).
+1. Instolem app long hedset long [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), o instolem wetem han (sideload) APK blong wan niufala build, luk [Instolem](#install).
 2. Login wetem Immich seva blong yu, o tajem "Yusum wetaot wan server" blong ol foto mo video blong hedset hem wan.
 3. Openem wan 360° foto o video long vyua, long taemlaen, long lis blong 360°, long wan album o long wan sea folda.
 4. Presem 360° baten, o "Lukum olsem 360°" long menu ⋮. Long hedset, tufala i openem immersive vyu stret, i no sfia vyua blong ol fon.
@@ -930,7 +930,7 @@ Ol WebDAV, DLNA mo fon sea long wan plen HTTP adres blong lokol netwok oli oraet
 <a id="install"></a>
 ### Instolem
 
-Meta i talem oraet long Horizon Store pej long 7 Oktoba 2026 wetem build 14, mo oli sendem build 21 olsem fas apdet blong hem. Kasem taem stoa pej i open long evriwan, o blong kasem wan build bifo stoa i gat, instolem wetem han `-quest-release.apk` fael blong wan release (oli mekem blong hedset: 64 bit, target SDK 34, ol pemisen we hedset i yusum nomo), o yunivesel `-release.apk`:
+Immuch360 i stap long [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) stat long 7 Oktoba 2026 wetem build 14, mo Meta i stap jekem build 21 olsem fas apdet blong hem. Blong kasem wan build bifo stoa i gat, instolem wetem han `-quest-release.apk` fael blong wan release (oli mekem blong hedset: 64 bit, target SDK 34, ol pemisen we hedset i yusum nomo), o yunivesel `-release.apk`:
 
 1. Tanem on developer mod wan taem. Long Meta Horizon app long fon, openem Devices (Ol divaes), jusum hedset, afta Headset settings (Ol seting blong hedset), afta Developer mode (Developer mod). Yu nidim wan developer akaon, we i fri long developers.meta.com. Yu nidim adb tu (Android SDK Platform Tools) long kompiuta, o SideQuest.
 2. Konektem hedset long wan kompiuta wetem wan USB-C kebol. Long hedset, talem yes long "Allow USB debugging" (Letem USB debugging).
@@ -1108,7 +1108,7 @@ CI blong Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) i ron lon
 <a id="where-to-get-it"></a>
 ## Wea blong kasem
 
-App i stap long Google Play blong ol fon mo tablet; App Store vesen i stap wet blong Apple i jekem, Meta i talem oraet long Meta Horizon Store pej mo i stap jekem fas apdet blong hem, mo Google Play vesen blong ol TV i stap wet blong Google i jekem TV release. Immuch360 Desktop, blong Windows, i wan preview long GitHub. GitHub release i gat niufala build oltaem:
+App i stap long Google Play blong ol fon mo tablet; App Store vesen i stap wet blong Apple i jekem, app i stap long Meta Horizon Store mo Meta i stap jekem fas apdet blong hem, mo Google Play vesen blong ol TV i stap wet blong Google i jekem TV release. Immuch360 Desktop, blong Windows, i wan preview long GitHub. GitHub release i gat niufala build oltaem:
 
 - **Ol Android fon mo tablet**
   - Tede: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), o APK long [Releases](https://github.com/freeKC/Immuch360/releases) pej: `Immuch360-v<version>-arm64-v8a-release.apk` blong wan fon (yunivesel `Immuch360-v<version>-release.apk` i wok long evri ples, `-armeabi-v7a` i blong ol olfala 32 bit fon, mo `.aab` fael i blong Google Play, i no blong instolem wetem han). GitHub build i stap fored long stoa plante taem. Long tufala fasin, hem i instol klosap long ofisol Immich app (pakej `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ App i stap long Google Play blong ol fon mo tablet; App Store vesen i stap wet b
   - I no longtaem: App Store, oli stap jekem.
 - **Meta Quest 2, Quest Pro, Quest 3 mo 3S (oli no testem Quest 2 mo Quest Pro yet)**
   - Tede: `-quest-release.apk` fael long [Releases](https://github.com/freeKC/Immuch360/releases) pej (yunivesel `-release.apk` i wok tu), we yu instolem wetem han long developer mod, luk [Instolem](#install). Stoa build mo GitHub APK oli saenem wetem tu defren ki: blong jenis long wan i go long narawan, tekemaot app fastaem (ol seting mo ol sea we yu sevem oli lus wetem).
-  - I no longtaem: long Meta Horizon Store, Meta i talem oraet long pej long 7 Oktoba 2026 wetem build 14, mo Meta i stap jekem build 21, fas apdet blong hem; alpha janel blong stoa (blong ol tester nomo) i kasem evri niu build.
+  - Stoa: app i stap long [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) stat long 7 Oktoba 2026 wetem build 14, mo Meta i stap jekem build 21, fas apdet blong hem; alpha janel blong stoa (blong ol tester nomo) i kasem evri niu build.
 - **Android TV mo Google TV (stat long build 20)**
   - Tede: yunivesel `Immuch360-v<version>-release.apk` long [Releases](https://github.com/freeKC/Immuch360/releases) pej, we yu instolem wetem adb, luk [Instolem long TV](#install-it-on-the-tv). Hem i sem app olsem long ol fon.
   - I no longtaem: Google Play long ol TV, we Google i stap jekem pej blong hem stat long 9 Oktoba 2026.
@@ -1126,7 +1126,7 @@ App i stap long Google Play blong ol fon mo tablet; App Store vesen i stap wet b
   - Tede: Immuch360 Desktop, desktop build 4, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` blong [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), yu unzipim mo statem olsem [Daonlod mo instolem long Windows](#download-and-install-on-windows) i talem. Ol foto, ol flat video, ol 360°, 3D, VR180 mo raw 360° video (i smut long wan grafik jip blong hem wan, wetem sam limit long wan jip we i stap insaed) mo Tapo luk laef.
   - I no longtaem: Spatial 2.5D wetem webkam, afta Linux mo macOS; afta, wan instola, wan build we i saen mo ol apdet.
 
-Bambae mifala i ademap ol link blong App Store mo Meta Horizon Store long ples ia taem ol pej oli kamaot. Login wetem URL blong Immich seva mo akaon we yu yusum oltaem, o tajem "Yusum wetaot wan server" long pej blong login blong stat wetem ol foto mo video blong divaes hem wan. APK blong GitHub i no apdetem hem wan: lukluk Releases pej, mo taem yu instolem app long wan stoa, kasem ol apdet long stoa ia.
+Bambae mifala i ademap link blong App Store long ples ia taem pej i kamaot; app i stap finis long [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). Login wetem URL blong Immich seva mo akaon we yu yusum oltaem, o tajem "Yusum wetaot wan server" long pej blong login blong stat wetem ol foto mo video blong divaes hem wan. APK blong GitHub i no apdetem hem wan: lukluk Releases pej, mo taem yu instolem app long wan stoa, kasem ol apdet long stoa ia.
 
 <a id="build-it-yourself"></a>
 ## Buildim yu wan
@@ -1215,7 +1215,7 @@ Ol samting we oli no finis yet, olgeta we bambae i kam fastaem i stap antap. I n
 - **Immuch360 Desktop, Windows fastaem**: desktop build 3 i kamaot finis, wetem 360° video pleia (ol 360°, 3D, VR180 mo raw 360° video, tu lens blong ol raw fael, saes blong vyu we oli mesarem long evri kompiuta) mo Tapo luk laef, mo sos blong desktop i stap long main branj blong fork, `immuch360`, stat long 9 Oktoba 2026 (luk [Long wan Windows kompiuta](#on-a-windows-computer-immuch360-desktop-preview)). Nekis, libmpv blong wokflo blong fork hem wan long ples blong 2024 wan, mo jekem evri fanksen wetem han long wan Windows PC wetem ol tru fael, tufala skrin mo wan tru kamera, mo stretem; afta Spatial 2.5D wetem webkam; afta Linux mo macOS; afta wan instola, wan build we i saen mo ol otomatik apdet.
 - **Google Play**: build 20 i stap stat long 7 Oktoba 2026, long ples blong build 18; Google i stap jekem pej blong ol TV stat long 9 Oktoba 2026. Build 21 i no jenisim wan samting long ol fon mo tablet.
 - **App Store**: vesen 3.3.0 i stap wet blong Apple i jekem; hem i gat ol samting blong build 11, ale aplod i go long Immich mo jek blong video decoder (build 15) mo ol raw Insta360 fael (build 16) bambae oli kam wetem nekis App Store apdet. Bambae mifala i ademap link long ples ia taem hem i kamaot.
-- **Meta Horizon Store**: Meta i talem oraet long pej long 7 Oktoba 2026 wetem build 14. Oli sendem build 21 olsem fas apdet blong hem: hem i karem evri samting stat long build 14 (aplod long wan sea i go long Immich, video sos we app i jusum folem wanem hedset i save ridim, ol raw Insta360, GoPro mo DJI fael, DLNA, fon sea, ol Apple spatial foto, ol Plex Media Server laebri, ol Tapo kamera), mo stoa i putum blong Quest 2, Quest Pro, Quest 3 mo 3S. Bambae mifala i ademap stoa link long ples ia taem pej i open long evriwan; wan kopi we yu instolem wetem han i mas go aot fastaem (luk [Instolem](#install)).
+- **Meta Horizon Store**: Meta i talem oraet long pej long 7 Oktoba 2026 wetem build 14, mo app i open long evriwan long [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) stat long dei ia. Oli sendem build 21 olsem fas apdet blong hem: hem i karem evri samting stat long build 14 (aplod long wan sea i go long Immich, video sos we app i jusum folem wanem hedset i save ridim, ol raw Insta360, GoPro mo DJI fael, DLNA, fon sea, ol Apple spatial foto, ol Plex Media Server laebri, ol Tapo kamera), mo stoa i putum blong Quest 2, Quest Pro, Quest 3 mo 3S. Blong instolem stoa vesen, wan kopi we yu instolem wetem han i mas go aot fastaem (luk [Instolem](#install)).
 - **Ol pej long stoa**: oli raetem bakegen pej blong Google Play long Oktoba 2026 wetem ol niu pikja, mo oli ademap ol TV pikja mo TV banner blong hem long 8 Oktoba 2026; Google i stap jekem pej blong ol TV stat long 9 Oktoba 2026. Tekst blong App Store i stil talem ol fas build (ol 360° foto mo video, ol raw fael oli soem flat); bambae hem i soem ol 3D, VR180 mo Spatial vyua, mod wetaot seva, ol netwok sea, media pleia mo ol raw Insta360 fael. Tekst blong Meta Horizon Store i soem media pleia finis.
 - **Ol raw fael blong 360° kamera, nekis**: wan saen blong soem hamas i finis taem app i stap rerem wan raw foto blong hedset; stretem horaesen blong ol GoPro mo DJI video wetem muvmen data blong olgeta; dual fisheye .dng; ol divaes ripot long plei blong tu lens blong build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) blong jekem ol laen we i joinem mo hamas decoder i save mekem.
 - **DLNA, fon sea mo Apple spatial, nekis**: ol divaes ripot blong build 19 (Plex, Jellyfin, wan NAS mo Freebox Server tru DLNA; wan fon we i givimaot long wan Quest, long hotspot blong hem tu; ol tru iPhone spatial foto mo video long hedset); multicast pemisen we oli askem long Apple, blong ol iPhone oli faenem evri DLNA seva; bifo mo nekis bitwin ol spatial foto long hedset; wan spatial saen long ol foto blong seva long taemlaen; ol spatial video long 3D long Quest, sapos ol decoder blong hem oli letem.

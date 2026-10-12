@@ -15,11 +15,11 @@ Dit is vir mense wat met 'n 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ric
 
 <div align="center">
 
-| Platform | Waar om dit te kry | Status op 10 Oktober 2026 |
+| Platform | Waar om dit te kry | Status op 12 Oktober 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-fone en -tablette | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | bou 23 op GitHub, op 10 Oktober 2026 na Google Play gestuur (bou 20 is daar sedert 7 Oktober regstreeks) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone en iPad** | App Store | weergawe 3.3.0 wag vir Apple se nagaan; [bou dit self](#build-it-yourself) intussen |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 en 3S | [APK](#meta-quest-3) · Horizon Store | inskrywing goedgekeur, bou 21 word deur Meta nagegaan, bou 23 op die alfakanaal |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 en 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | op die Horizon Store sedert 7 Oktober 2026 (bou 14), bou 21 word deur Meta nagegaan, bou 23 op die alfakanaal |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV en Google TV** | [APK](#install-it-on-the-tv) · Google Play | bou 23 op GitHub; die Google Play-inskrywing vir TV's word sedert 9 Oktober 2026 deur Google nagegaan |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Voorskou-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | rekenaarbou 4 op Windows: foto's, plat en 360°-video's; macOS en Linux later |
 
@@ -529,7 +529,7 @@ Die media kom van jou Immich-bediener, die kopstuk self, 'n NAS, 'n mediabediene
 
 ### Maak die meevoerende aansig oop
 
-1. Installeer die app op die kopstuk: totdat die Horizon Store-inskrywing goedgekeur is, installeer die APK met die hand (sideload), sien [Installeer](#install).
+1. Installeer die app op die kopstuk vanaf die [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), of installeer die APK van 'n nuwer bou met die hand (sideload), sien [Installeer](#install).
 2. Meld aan met jou Immich-bediener, of tik op "Gebruik sonder ’n bediener" vir die kopstuk se eie foto's en video's.
 3. Maak 'n 360°-foto of -video in die kyker oop, vanaf die tydlyn, die 360°-lys, 'n album of 'n deelplekvouer.
 4. Druk die 360°-knoppie, of "Bekyk as 360°" in die ⋮-kieslys. Op die kopstuk maak hulle die meevoerende aansig direk oop, in plaas van die sfeerkyker van fone.
@@ -930,7 +930,7 @@ WebDAV-, DLNA- en foondeelplekke op 'n gewone HTTP-adres van die plaaslike netwe
 <a id="install"></a>
 ### Installeer
 
-Meta het die Horizon Store-inskrywing op 7 Oktober 2026 met bou 14 goedgekeur, en bou 21 is as sy eerste opdatering ingedien. Totdat die winkelbladsy publiek is, of om 'n bou te kry voordat die winkel dit het, installeer die `-quest-release.apk`-lêer van 'n vrystelling met die hand (gebou vir die kopstuk: 64-bis, teiken-SDK 34, slegs die toestemmings wat die kopstuk gebruik), of die universele `-release.apk`:
+Immuch360 is sedert 7 Oktober 2026 met bou 14 op die [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), en bou 21 word deur Meta nagegaan as sy eerste opdatering. Om 'n bou te kry voordat die winkel dit het, installeer die `-quest-release.apk`-lêer van 'n vrystelling met die hand (gebou vir die kopstuk: 64-bis, teiken-SDK 34, slegs die toestemmings wat die kopstuk gebruik), of die universele `-release.apk`:
 
 1. Aktiveer ontwikkelaarmodus een keer. Maak in die Meta Horizon-foonapp Devices (Toestelle) oop, kies die kopstuk, dan Headset settings (Kopstukinstellings), dan Developer mode (Ontwikkelaarmodus). Dit vereis 'n ontwikkelaarrekening, wat gratis is by developers.meta.com. Jy het ook adb (Android SDK Platform Tools) op die rekenaar nodig, of SideQuest.
 2. Koppel die kopstuk aan 'n rekenaar met 'n USB-C-kabel. Aanvaar in die kopstuk "Allow USB debugging" (Laat USB-ontfouting toe).
@@ -1108,7 +1108,7 @@ Die CI van Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) loop op
 <a id="where-to-get-it"></a>
 ## Waar om dit te kry
 
-Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir Apple se nagaan, die Meta Horizon Store-inskrywing is goedgekeur en sy eerste opdatering word deur Meta nagegaan, en die Google Play-weergawe vir TV's wag vir Google se nagaan van die TV-vrystelling. Immuch360 Desktop, vir Windows, is 'n voorskou op GitHub. Die GitHub-vrystelling is altyd die nuutste bou:
+Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir Apple se nagaan, die app is op die Meta Horizon Store en sy eerste opdatering word deur Meta nagegaan, en die Google Play-weergawe vir TV's wag vir Google se nagaan van die TV-vrystelling. Immuch360 Desktop, vir Windows, is 'n voorskou op GitHub. Die GitHub-vrystelling is altyd die nuutste bou:
 
 - **Android-fone en -tablette**
   - Vandag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), of die APK op die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy: `Immuch360-v<version>-arm64-v8a-release.apk` vir 'n foon (die universele `Immuch360-v<version>-release.apk` werk oral, `-armeabi-v7a` is vir ouer 32-bis-fone, en die `.aab`-lêer is vir Google Play, nie vir installering met die hand nie). Die GitHub-bou is gewoonlik voor die winkel. Hoe ook al, dit installeer langs die amptelike Immich-app (pakket `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir A
   - Binnekort: App Store, word nagegaan.
 - **Meta Quest 2, Quest Pro, Quest 3 en 3S (die Quest 2 en Quest Pro ongetoets)**
   - Vandag: die `-quest-release.apk`-lêer van die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy (die universele `-release.apk` werk ook), met die hand geïnstalleer in ontwikkelaarmodus, sien [Installeer](#install). Die winkelbou en die GitHub-APK is met verskillende sleutels onderteken: om van die een na die ander oor te skakel, deïnstalleer eers die app (sy instellings en gestoorde deelplekke gaan daarmee saam).
-  - Binnekort: op die Meta Horizon Store is die inskrywing op 7 Oktober 2026 met bou 14 goedgekeur, en bou 21, sy eerste opdatering, word deur Meta nagegaan; die winkel se alfakanaal (slegs toetsers) kry elke nuwe bou.
+  - Winkel: die [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) het die app sedert 7 Oktober 2026 met bou 14, en bou 21, sy eerste opdatering, word deur Meta nagegaan; die winkel se alfakanaal (slegs toetsers) kry elke nuwe bou.
 - **Android TV en Google TV (vanaf bou 20)**
   - Vandag: die universele `Immuch360-v<version>-release.apk` van die [Releases](https://github.com/freeKC/Immuch360/releases)-bladsy, met adb met die hand geïnstalleer, sien [Installeer dit op die TV](#install-it-on-the-tv). Dit is dieselfde app as op fone.
   - Binnekort: Google Play op TV's, waarvan die inskrywing sedert 9 Oktober 2026 deur Google nagegaan word.
@@ -1126,7 +1126,7 @@ Die app is op Google Play vir fone en tablette; die App Store-weergawe wag vir A
   - Vandag: Immuch360 Desktop, rekenaarbou 4, die ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` van die [rekenaar-voorvrystelling](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), uitgepak en begin soos [Laai af en installeer op Windows](#download-and-install-on-windows) sê. Foto's, plat video's, 360°-, 3D-, VR180- en rou 360°-video's (glad op 'n toegewyde grafiese skyfie, met beperkings op 'n geïntegreerde een) en die regstreekse beeld van Tapo.
   - Binnekort: Spatial 2.5D met die webkamera, dan Linux en macOS; later 'n installeerder, 'n ondertekende bou en opdaterings.
 
-Die App Store- en Meta Horizon Store-skakels sal hier bygevoeg word sodra die inskrywings gepubliseer is. Meld aan met jou gewone Immich-bediener-URL en -rekening, of tik op "Gebruik sonder ’n bediener" op die aanmeldbladsy om op die toestel se eie foto's en video's te begin. Die APK van GitHub werk homself nie op nie: hou die Releases-bladsy dop, en sodra jy die app uit 'n winkel geïnstalleer het, kry die opdaterings uit daardie winkel.
+Die App Store-skakel sal hier bygevoeg word sodra die inskrywing gepubliseer is; die app is reeds op die [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). Meld aan met jou gewone Immich-bediener-URL en -rekening, of tik op "Gebruik sonder ’n bediener" op die aanmeldbladsy om op die toestel se eie foto's en video's te begin. Die APK van GitHub werk homself nie op nie: hou die Releases-bladsy dop, en sodra jy die app uit 'n winkel geïnstalleer het, kry die opdaterings uit daardie winkel.
 
 <a id="build-it-yourself"></a>
 ## Bou dit self
@@ -1215,7 +1215,7 @@ Wat nog nie klaar is nie, die waarskynlikste eerste. Niks hier is 'n belofte nie
 - **Immuch360 Desktop, eers Windows**: rekenaarbou 3 is uit, met die 360°-videospeler (360°-, 3D-, VR180- en rou 360°-video's, die twee lense van rou lêers, die grootte van die aansig gemeet op elke rekenaar) en die regstreekse beeld van Tapo, en die rekenaarbronne is in die hooftak van die vurk, `immuch360`, sedert 9 Oktober 2026 (sien [Op 'n Windows-rekenaar](#on-a-windows-computer-immuch360-desktop-preview)). Volgende, die libmpv van die vurk se eie werkvloei in die plek van die 2024-een, en die toets van elke funksie met die hand op 'n Windows-rekenaar met regte lêers, albei skerms en 'n regte kamera, met die regstellings daarvan; dan Spatial 2.5D met die webkamera; dan Linux en macOS; dan 'n installeerder, 'n ondertekende bou en outomatiese opdaterings.
 - **Google Play**: bou 20 is sedert 7 Oktober 2026 regstreeks, in die plek van bou 18; die inskrywing vir TV's word sedert 9 Oktober 2026 deur Google nagegaan. Bou 21 verander niks op fone en tablette nie.
 - **App Store**: weergawe 3.3.0 wag vir Apple se nagaan; dit dra die funksies van bou 11, so die oplaai na Immich en die kontrole van videodekodeerders (bou 15) en die rou Insta360-lêers (bou 16) kom met die volgende App Store-opdatering. Die skakel sal hier bygevoeg word wanneer dit regstreeks is.
-- **Meta Horizon Store**: Meta het die inskrywing op 7 Oktober 2026 met bou 14 goedgekeur. Bou 21 is as sy eerste opdatering ingedien: dit bring alles sedert bou 14 (oplaaie vanaf 'n deelplek na Immich, die videobron gekies volgens wat die kopstuk dekodeer, rou Insta360-, GoPro- en DJI-lêers, DLNA, die foondeelplek, Apple-ruimtelike foto's, Plex Media Server-biblioteke, Tapo-kameras), en die winkel lys dit vir die Quest 2, Quest Pro, Quest 3 en 3S. Die winkelskakel sal hier bygevoeg word sodra die bladsy publiek is; 'n met die hand geïnstalleerde kopie moet eers gedeïnstalleer word (sien [Installeer](#install)).
+- **Meta Horizon Store**: Meta het die inskrywing op 7 Oktober 2026 met bou 14 goedgekeur, en die app is sedert daardie dag publiek op die [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). Bou 21 is as sy eerste opdatering ingedien: dit bring alles sedert bou 14 (oplaaie vanaf 'n deelplek na Immich, die videobron gekies volgens wat die kopstuk dekodeer, rou Insta360-, GoPro- en DJI-lêers, DLNA, die foondeelplek, Apple-ruimtelike foto's, Plex Media Server-biblioteke, Tapo-kameras), en die winkel lys dit vir die Quest 2, Quest Pro, Quest 3 en 3S. Om die winkelweergawe te installeer, moet 'n met die hand geïnstalleerde kopie eers gedeïnstalleer word (sien [Installeer](#install)).
 - **Winkelinskrywings**: die Google Play-inskrywing is in Oktober 2026 herskryf met nuwe skermskote, en sy TV-skermskote en TV-banier is op 8 Oktober 2026 bygevoeg; die inskrywing vir TV's word sedert 9 Oktober 2026 deur Google nagegaan. Die App Store-teks beskryf steeds die eerste boue (360°-foto's en -video's, rou lêers plat gewys); dit sal die 3D-, VR180- en Spatial-kykers, die modus sonder 'n bediener, netwerkdeelplekke, die mediaspeler en die rou Insta360-lêers voorstel. Die Meta Horizon Store-teks stel reeds die mediaspeler voor.
 - **Rou 360°-kameralêers, volgende**: 'n vorderingsaanwyser terwyl 'n rou foto vir die kopstuk voorberei word; gelykmaak van GoPro- en DJI-video's uit hul eie bewegingsdata; dubbele-visoog-.dng; toestelverslae oor die tweelens-afspeel van bou 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) om nate en dekodeerderbegrotings te bevestig.
 - **DLNA, foondeelplek en Apple-ruimtelik, volgende**: die toestelverslae van bou 19 (Plex, Jellyfin, 'n NAS en die Freebox Server oor DLNA; 'n foon wat 'n Quest bedien, ook op sy warmkol; regte iPhone-ruimtelike foto's en -video's in die kopstuk); die multisaaireg wat by Apple aangevra is, sodat iPhones elke DLNA-bediener vind; vorige en volgende tussen ruimtelike foto's in die kopstuk; 'n ruimtelike kenteken op bedienerfoto's in die tydlyn; ruimtelike video's in 3D op die Quest, as sy dekodeerders dit toelaat.

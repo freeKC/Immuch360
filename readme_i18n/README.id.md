@@ -15,11 +15,11 @@ Aplikasi ini untuk orang yang memotret dengan kamera 360° (Insta360, GoPro MAX,
 
 <div align="center">
 
-| Platform | Tempat mendapatkannya | Status per 10 Oktober 2026 |
+| Platform | Tempat mendapatkannya | Status per 12 Oktober 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ponsel dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 di GitHub, dikirim ke Google Play pada 10 Oktober 2026 (di sana build 20 tayang sejak 7 Oktober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dan iPad** | App Store | versi 3.3.0 menunggu peninjauan Apple; sementara itu [buat sendiri](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dan 3S | [APK](#meta-quest-3) · Horizon Store | listing disetujui, build 21 dalam peninjauan Meta, build 23 di kanal Alpha |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dan 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | di Horizon Store sejak 7 Oktober 2026 (build 14), build 21 dalam peninjauan Meta, build 23 di kanal Alpha |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 di GitHub; listing Google Play untuk TV dalam peninjauan Google sejak 9 Oktober 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP pratinjau](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 di Windows: foto, video datar dan 360°; macOS dan Linux nanti |
 
@@ -529,7 +529,7 @@ Media berasal dari server Immich Anda, headset itu sendiri, NAS, server media, p
 
 ### Membuka tampilan imersif
 
-1. Pasang aplikasi di headset: sampai listing di Horizon Store disetujui, lakukan sideload APK, lihat [Pemasangan](#install).
+1. Pasang aplikasi di headset dari [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), atau lakukan sideload APK dari build yang lebih baru, lihat [Pemasangan](#install).
 2. Masuk dengan server Immich Anda, atau ketuk "Gunakan tanpa server" untuk foto dan video headset itu sendiri.
 3. Buka foto atau video 360° di penampil, dari linimasa, daftar 360°, album, atau folder berbagi.
 4. Tekan tombol 360°, atau "Lihat sebagai 360°" di menu ⋮. Di headset keduanya langsung membuka tampilan imersif, alih-alih penampil bola seperti di ponsel.
@@ -930,7 +930,7 @@ Berbagi WebDAV, DLNA, dan ponsel di alamat HTTP biasa pada jaringan lokal tidak 
 <a id="install"></a>
 ### Pemasangan
 
-Meta menyetujui listing di Horizon Store pada 7 Oktober 2026 dengan build 14, dan build 21 diajukan sebagai pembaruan pertamanya. Sampai halaman toko bersifat publik, atau untuk mendapatkan build sebelum tersedia di toko, lakukan sideload file `-quest-release.apk` dari sebuah rilis (dibuat untuk headset: 64 bit, target SDK 34, hanya izin yang dipakai headset), atau `-release.apk` universal:
+Immuch360 ada di [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) sejak 7 Oktober 2026 dengan build 14, dan build 21 sedang ditinjau Meta sebagai pembaruan pertamanya. Untuk mendapatkan build sebelum tersedia di toko, lakukan sideload file `-quest-release.apk` dari sebuah rilis (dibuat untuk headset: 64 bit, target SDK 34, hanya izin yang dipakai headset), atau `-release.apk` universal:
 
 1. Aktifkan mode pengembang sekali saja. Di aplikasi ponsel Meta Horizon, buka Devices (Perangkat), pilih headset, lalu Headset settings (Pengaturan headset), lalu Developer mode (Mode pengembang). Ini memerlukan akun pengembang, yang gratis di developers.meta.com. Anda juga memerlukan adb (Android SDK Platform Tools) di komputer, atau SideQuest.
 2. Hubungkan headset ke komputer dengan kabel USB-C. Di headset, terima "Allow USB debugging" (Izinkan debugging USB).
@@ -1108,7 +1108,7 @@ CI Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) berjalan di cab
 <a id="where-to-get-it"></a>
 ## Tempat mendapatkannya
 
-Aplikasi ini ada di Google Play untuk ponsel dan tablet; versi App Store sedang menunggu tinjauan Apple, listing Meta Horizon Store sudah disetujui dan pembaruan pertamanya sedang ditinjau Meta, dan versi Google Play untuk TV menunggu tinjauan Google atas rilis TV. Immuch360 Desktop, untuk Windows, tersedia sebagai pratinjau di GitHub. Rilis GitHub selalu berisi build terbaru:
+Aplikasi ini ada di Google Play untuk ponsel dan tablet; versi App Store sedang menunggu tinjauan Apple, aplikasi ini ada di Meta Horizon Store dan pembaruan pertamanya sedang ditinjau Meta, dan versi Google Play untuk TV menunggu tinjauan Google atas rilis TV. Immuch360 Desktop, untuk Windows, tersedia sebagai pratinjau di GitHub. Rilis GitHub selalu berisi build terbaru:
 
 - **Ponsel dan tablet Android**
   - Saat ini: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), atau APK di halaman [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` untuk ponsel (`Immuch360-v<version>-release.apk` universal berjalan di mana saja, `-armeabi-v7a` untuk ponsel 32 bit yang lebih lama, dan file `.aab` untuk Google Play, bukan untuk sideload). Build GitHub biasanya lebih baru daripada di toko. Bagaimanapun juga, aplikasi ini terpasang berdampingan dengan aplikasi resmi Immich (paket `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Aplikasi ini ada di Google Play untuk ponsel dan tablet; versi App Store sedang 
   - Segera: App Store, sedang ditinjau.
 - **Meta Quest 2, Quest Pro, Quest 3, dan 3S (Quest 2 dan Quest Pro belum diuji)**
   - Saat ini: file `-quest-release.apk` dari halaman [Releases](https://github.com/freeKC/Immuch360/releases) (`-release.apk` universal juga berfungsi), dipasang lewat sideload dalam mode pengembang, lihat [Pemasangan](#install). Build toko dan APK GitHub ditandatangani dengan kunci yang berbeda: untuk beralih dari satu ke yang lain, copot pemasangan aplikasi terlebih dahulu (pengaturan dan berbagi yang tersimpan ikut terhapus).
-  - Segera: di Meta Horizon Store, listing disetujui pada 7 Oktober 2026 dengan build 14, dan build 21, pembaruan pertamanya, sedang ditinjau Meta; kanal alfa toko (khusus penguji) mendapat setiap build baru.
+  - Toko: [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) sudah memuat aplikasi ini sejak 7 Oktober 2026 dengan build 14, dan build 21, pembaruan pertamanya, sedang ditinjau Meta; kanal alfa toko (khusus penguji) mendapat setiap build baru.
 - **Android TV dan Google TV (sejak build 20)**
   - Saat ini: `Immuch360-v<version>-release.apk` universal dari halaman [Releases](https://github.com/freeKC/Immuch360/releases), dipasang lewat sideload dengan adb, lihat [Memasangnya di TV](#install-it-on-the-tv). Ini aplikasi yang sama seperti di ponsel.
   - Segera: Google Play di TV, yang listing-nya sedang ditinjau Google sejak 9 Oktober 2026.
@@ -1126,7 +1126,7 @@ Aplikasi ini ada di Google Play untuk ponsel dan tablet; versi App Store sedang 
   - Saat ini: Immuch360 Desktop, desktop build 4, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` dari [pra-rilis desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), diekstrak dan dijalankan seperti yang dijelaskan [Unduh dan pasang di Windows](#download-and-install-on-windows). Foto, video datar, video 360°, 3D, VR180, dan video 360° mentah (lancar di chip grafis khusus, dengan batasan di chip terintegrasi) serta tampilan langsung Tapo.
   - Segera: Spatial 2.5D dengan webcam, lalu Linux dan macOS; penginstal, build bertanda tangan, dan pembaruan menyusul kemudian.
 
-Tautan App Store dan Meta Horizon Store akan ditambahkan di sini segera setelah listing-nya terbit. Masuk dengan URL server Immich dan akun yang biasa Anda pakai, atau ketuk "Gunakan tanpa server" di halaman masuk untuk mulai dengan foto dan video perangkat itu sendiri. APK dari GitHub tidak memperbarui dirinya sendiri: pantau halaman Releases, dan setelah Anda memasang aplikasi dari toko, ambil pembaruan dari toko tersebut.
+Tautan App Store akan ditambahkan di sini segera setelah listing-nya terbit; aplikasi ini sudah ada di [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). Masuk dengan URL server Immich dan akun yang biasa Anda pakai, atau ketuk "Gunakan tanpa server" di halaman masuk untuk mulai dengan foto dan video perangkat itu sendiri. APK dari GitHub tidak memperbarui dirinya sendiri: pantau halaman Releases, dan setelah Anda memasang aplikasi dari toko, ambil pembaruan dari toko tersebut.
 
 <a id="build-it-yourself"></a>
 ## Membuatnya sendiri
@@ -1215,7 +1215,7 @@ Hal-hal yang belum selesai, dimulai dari yang paling mungkin. Tidak ada yang di 
 - **Immuch360 Desktop, Windows lebih dulu**: desktop build 3 sudah keluar, dengan pemutar video 360° (video 360°, 3D, VR180, dan video 360° mentah, dua lensa file mentah, ukuran tampilan yang diukur di setiap komputer) dan tampilan langsung Tapo, dan sumber desktop berada di cabang utama fork, `immuch360`, sejak 9 Oktober 2026 (lihat [Di komputer Windows](#on-a-windows-computer-immuch360-desktop-preview)). Berikutnya, libmpv dari workflow fork sendiri menggantikan versi 2024, dan pengujian manual setiap fungsi di PC Windows dengan file sungguhan, kedua layar, dan kamera sungguhan, beserta perbaikannya; lalu Spatial 2.5D dengan webcam; lalu Linux dan macOS; lalu penginstal, build bertanda tangan, dan pembaruan otomatis.
 - **Google Play**: build 20 sudah tayang sejak 7 Oktober 2026, menggantikan build 18; listing untuk TV sedang ditinjau Google sejak 9 Oktober 2026. Build 21 tidak mengubah apa pun di ponsel dan tablet.
 - **App Store**: versi 3.3.0 sedang menunggu tinjauan Apple; versi ini membawa fitur build 11, sehingga unggah ke Immich dan pemeriksaan dekoder video (build 15) serta file Insta360 mentah (build 16) hadir dengan pembaruan App Store berikutnya. Tautannya akan ditambahkan di sini setelah tayang.
-- **Meta Horizon Store**: Meta menyetujui listing pada 7 Oktober 2026 dengan build 14. Build 21 diajukan sebagai pembaruan pertamanya: build ini membawa semua yang ada sejak build 14 (unggahan dari berbagi ke Immich, sumber video yang dipilih sesuai apa yang bisa didekode headset, file mentah Insta360, GoPro, dan DJI, DLNA, berbagi ponsel, foto spasial Apple, pustaka Plex Media Server, kamera Tapo), dan toko mencantumkannya untuk Quest 2, Quest Pro, Quest 3, dan 3S. Tautan toko akan ditambahkan di sini setelah halamannya bersifat publik; salinan hasil sideload harus dicopot terlebih dahulu (lihat [Pemasangan](#install)).
+- **Meta Horizon Store**: Meta menyetujui listing pada 7 Oktober 2026 dengan build 14, dan aplikasi ini terbuka untuk umum di [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) sejak hari itu. Build 21 diajukan sebagai pembaruan pertamanya: build ini membawa semua yang ada sejak build 14 (unggahan dari berbagi ke Immich, sumber video yang dipilih sesuai apa yang bisa didekode headset, file mentah Insta360, GoPro, dan DJI, DLNA, berbagi ponsel, foto spasial Apple, pustaka Plex Media Server, kamera Tapo), dan toko mencantumkannya untuk Quest 2, Quest Pro, Quest 3, dan 3S. Untuk memasang versi toko, salinan hasil sideload harus dicopot terlebih dahulu (lihat [Pemasangan](#install)).
 - **Listing toko**: listing Google Play ditulis ulang pada Oktober 2026 dengan tangkapan layar baru, dan tangkapan layar TV serta banner TV-nya ditambahkan pada 8 Oktober 2026; listing untuk TV sedang ditinjau Google sejak 9 Oktober 2026. Teks App Store masih menjelaskan build awal (foto dan video 360°, file mentah tampil datar); teks itu akan memperkenalkan penampil 3D, VR180, dan Spatial, mode tanpa server, berbagi jaringan, pemutar media, dan file Insta360 mentah. Teks Meta Horizon Store sudah memperkenalkan pemutar media.
 - **File mentah kamera 360°, berikutnya**: indikator kemajuan saat foto mentah disiapkan untuk headset; perataan video GoPro dan DJI dari data gerak mereka sendiri; .dng fisheye ganda; laporan perangkat tentang pemutaran dua lensa build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) untuk memastikan sambungan dan kapasitas dekoder.
 - **DLNA, berbagi ponsel, dan spasial Apple, berikutnya**: laporan perangkat build 19 (Plex, Jellyfin, NAS, dan Freebox Server lewat DLNA; ponsel yang melayani Quest, juga lewat hotspot-nya; foto dan video spasial iPhone asli di headset); entitlement multicast yang diminta dari Apple, agar iPhone menemukan setiap server DLNA; sebelumnya dan berikutnya di antara foto spasial di headset; lencana spasial pada foto server di linimasa; video spasial dalam 3D di Quest, jika dekodernya memungkinkan.

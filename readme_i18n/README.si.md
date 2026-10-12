@@ -15,11 +15,11 @@ Immuch360 යනු ඔබට වටපිට බැලිය හැකි 360°
 
 <div align="center">
 
-| වේදිකාව | එය ලබා ගන්නේ කොහෙන්ද | 2026 ඔක්තෝබර් 10 දින තත්ත්වය |
+| වේදිකාව | එය ලබා ගන්නේ කොහෙන්ද | 2026 ඔක්තෝබර් 12 දින තත්ත්වය |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** දුරකථන සහ ටැබ්ලට් | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub හි බිල්ඩ් 23, 2026 ඔක්තෝබර් 10 දින Google Play වෙත යවන ලදී (එහි ඔක්තෝබර් 7 සිට බිල්ඩ් 20 සජීවීව ඇත) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone සහ iPad** | App Store | 3.3.0 අනුවාදය Apple හි සමාලෝචනය සඳහා රැඳී සිටී; ඒ අතරතුර [ඔබම එය ගොඩනඟන්න](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 සහ 3S | [APK](#meta-quest-3) · Horizon Store | ලැයිස්තුගත කිරීම අනුමතයි, බිල්ඩ් 21 Meta හි සමාලෝචනයේ, බිල්ඩ් 23 ඇල්ෆා නාලිකාවේ |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 සහ 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | 2026 ඔක්තෝබර් 7 සිට Horizon Store හි (බිල්ඩ් 14), බිල්ඩ් 21 Meta හි සමාලෝචනයේ, බිල්ඩ් 23 ඇල්ෆා නාලිකාවේ |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV සහ Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub හි බිල්ඩ් 23; රූපවාහිනී සඳහා Google Play ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් 9 සිට Google හි සමාලෝචනයේ ඇත |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [පෙරදසුන ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows මත desktop බිල්ඩ් 4: ඡායාරූප, පැතලි සහ 360° වීඩියෝ; macOS සහ Linux පසුව |
 
@@ -529,7 +529,7 @@ iPhone එකක් අවකාශීය ඡායාරූප සහ වීඩ
 
 ### ගිලී යන දර්ශනය විවෘත කරන්න
 
-1. හෙඩ්සෙට් එකේ යෙදුම ස්ථාපනය කරන්න: Horizon Store ලැයිස්තුගත කිරීම අනුමත වන තුරු, APK එක sideload කරන්න, බලන්න [ස්ථාපනය](#install).
+1. [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) වෙතින් හෙඩ්සෙට් එකේ යෙදුම ස්ථාපනය කරන්න, නැතහොත් නවතම බිල්ඩ් එකක APK එක sideload කරන්න, බලන්න [ස්ථාපනය](#install).
 2. ඔබේ Immich සේවාදායකය සමඟ පිවිසෙන්න, නැතහොත් හෙඩ්සෙට් එකේම ඡායාරූප සහ වීඩියෝ සඳහා "සේවාදායකයක් නොමැතිව භාවිතා කරන්න" තට්ටු කරන්න.
 3. කාලරේඛාවෙන්, 360° ලැයිස්තුවෙන්, ඇල්බමයකින් හෝ බෙදාගැනීම් ෆෝල්ඩරයකින් 360° ඡායාරූපයක් හෝ වීඩියෝවක් දර්ශකයේ විවෘත කරන්න.
 4. 360° බොත්තම, නැතහොත් ⋮ මෙනුවේ "360° ලෙස බලන්න" ඔබන්න. හෙඩ්සෙට් එකේ ඒවා දුරකථනවල ගෝල දර්ශකය වෙනුවට කෙළින්ම ගිලී යන දර්ශනය විවෘත කරයි.
@@ -930,7 +930,7 @@ Horizon Store ඉල්ලා සිටින පරිදි, හෙඩ්ස�
 <a id="install"></a>
 ### ස්ථාපනය
 
-Meta 2026 ඔක්තෝබර් 7 දින බිල්ඩ් 14 සමඟ Horizon Store ලැයිස්තුගත කිරීම අනුමත කළ අතර, බිල්ඩ් 21 එහි පළමු යාවත්කාලීනය ලෙස ඉදිරිපත් කර ඇත. ගබඩා පිටුව ප්‍රසිද්ධ වන තුරු, නැතහොත් ගබඩාවට පෙර බිල්ඩ් එකක් ලබා ගැනීමට, නිකුතුවක `-quest-release.apk` ගොනුව (හෙඩ්සෙට් එක සඳහා සාදන ලද: බිටු 64, target SDK 34, හෙඩ්සෙට් එක භාවිතා කරන අවසර පමණි), හෝ සාර්වත්‍ර `-release.apk` sideload කරන්න:
+Immuch360 2026 ඔක්තෝබර් 7 සිට බිල්ඩ් 14 සමඟ [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) හි ඇති අතර, බිල්ඩ් 21 එහි පළමු යාවත්කාලීනය ලෙස Meta හි සමාලෝචනයේ ඇත. ගබඩාවට පෙර බිල්ඩ් එකක් ලබා ගැනීමට, නිකුතුවක `-quest-release.apk` ගොනුව (හෙඩ්සෙට් එක සඳහා සාදන ලද: බිටු 64, target SDK 34, හෙඩ්සෙට් එක භාවිතා කරන අවසර පමණි), හෝ සාර්වත්‍ර `-release.apk` sideload කරන්න:
 
 1. එක් වරක් developer mode සක්‍රිය කරන්න. Meta Horizon දුරකථන යෙදුමේ, Devices (උපාංග) විවෘත කර, හෙඩ්සෙට් එක තෝරා, ඉන්පසු Headset settings (හෙඩ්සෙට් සැකසීම්), ඉන්පසු Developer mode (සංවර්ධක ප්‍රකාරය). මේ සඳහා developers.meta.com හි නොමිලේ ලැබෙන සංවර්ධක ගිණුමක් අවශ්‍යයි. පරිගණකයේ adb (Android SDK Platform Tools), හෝ SideQuest ද අවශ්‍යයි.
 2. USB-C කේබලයකින් හෙඩ්සෙට් එක පරිගණකයකට සම්බන්ධ කරන්න. හෙඩ්සෙට් එකේ "Allow USB debugging" (USB දෝෂහරණයට ඉඩ දෙන්න) පිළිගන්න.
@@ -1108,7 +1108,7 @@ Immuch360 Desktop හි CI (`.github/workflows/immuch360-desktop.yml`) `immuch3
 <a id="where-to-get-it"></a>
 ## එය ලබා ගන්නේ කොහෙන්ද
 
-යෙදුම දුරකථන සහ ටැබ්ලට් සඳහා Google Play හි ඇත; App Store අනුවාදය Apple හි සමාලෝචනය සඳහා ද, රූපවාහිනී සඳහා වන Google Play අනුවාදය රූපවාහිනී නිකුතුවේ Google හි සමාලෝචනය සඳහා ද රැඳී සිටී; Meta Horizon Store ලැයිස්තුගත කිරීම අනුමත කර ඇති අතර එහි පළමු යාවත්කාලීනය Meta හි සමාලෝචනයේ ඇත. Windows සඳහා Immuch360 Desktop, GitHub හි පෙරදසුනකි. GitHub නිකුතුව සැමවිටම නවතම බිල්ඩ් එකයි:
+යෙදුම දුරකථන සහ ටැබ්ලට් සඳහා Google Play හි ඇත; App Store අනුවාදය Apple හි සමාලෝචනය සඳහා ද, රූපවාහිනී සඳහා වන Google Play අනුවාදය රූපවාහිනී නිකුතුවේ Google හි සමාලෝචනය සඳහා ද රැඳී සිටී; යෙදුම Meta Horizon Store හි ඇති අතර එහි පළමු යාවත්කාලීනය Meta හි සමාලෝචනයේ ඇත. Windows සඳහා Immuch360 Desktop, GitHub හි පෙරදසුනකි. GitHub නිකුතුව සැමවිටම නවතම බිල්ඩ් එකයි:
 
 - **Android දුරකථන සහ ටැබ්ලට්**
   - අද: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), හෝ [Releases](https://github.com/freeKC/Immuch360/releases) පිටුවේ APK එක: දුරකථනයක් සඳහා `Immuch360-v<version>-arm64-v8a-release.apk` (සාර්වත්‍ර `Immuch360-v<version>-release.apk` සෑම තැනකම ක්‍රියා කරයි, `-armeabi-v7a` පැරණි බිටු 32 දුරකථන සඳහා ය, `.aab` ගොනුව Google Play සඳහා මිස sideload කිරීමට නොවේ). GitHub බිල්ඩ් එක සාමාන්‍යයෙන් ගබඩාවට වඩා ඉදිරියෙන් ඇත. කෙසේ වෙතත් එය නිල Immich යෙදුම අසල ස්ථාපනය වේ (පැකේජය `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Immuch360 Desktop හි CI (`.github/workflows/immuch360-desktop.yml`) `immuch3
   - ළඟදීම: App Store, සමාලෝචනය වෙමින්.
 - **Meta Quest 2, Quest Pro, Quest 3 සහ 3S (Quest 2 සහ Quest Pro පරීක්ෂා කර නැත)**
   - අද: [Releases](https://github.com/freeKC/Immuch360/releases) පිටුවේ `-quest-release.apk` ගොනුව (සාර්වත්‍ර `-release.apk` ද ක්‍රියා කරයි), developer mode හි sideload කර, බලන්න [ස්ථාපනය](#install). ගබඩා බිල්ඩ් එක සහ GitHub APK එක වෙනස් යතුරුවලින් අත්සන් කර ඇත: එකකින් අනෙකට මාරු වීමට, මුලින් යෙදුම අස්ථාපනය කරන්න (එහි සැකසුම් සහ සුරැකි බෙදාගැනීම් ද නැති වේ).
-  - ළඟදීම: Meta Horizon Store හි, ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් 7 දින බිල්ඩ් 14 සමඟ අනුමත කරන ලදී, එහි පළමු යාවත්කාලීනය වන බිල්ඩ් 21 Meta හි සමාලෝචනයේ ඇත; ගබඩාවේ ඇල්ෆා නාලිකාවට (පරීක්ෂකයින් සඳහා පමණි) සෑම නව බිල්ඩ් එකක්ම ලැබේ.
+  - ගබඩාව: යෙදුම 2026 ඔක්තෝබර් 7 සිට බිල්ඩ් 14 සමඟ [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) හි ඇත, එහි පළමු යාවත්කාලීනය වන බිල්ඩ් 21 Meta හි සමාලෝචනයේ ඇත; ගබඩාවේ ඇල්ෆා නාලිකාවට (පරීක්ෂකයින් සඳහා පමණි) සෑම නව බිල්ඩ් එකක්ම ලැබේ.
 - **Android TV සහ Google TV (බිල්ඩ් 20 සිට)**
   - අද: [Releases](https://github.com/freeKC/Immuch360/releases) පිටුවේ සාර්වත්‍ර `Immuch360-v<version>-release.apk`, adb සමඟ sideload කර, බලන්න [එය රූපවාහිනියේ ස්ථාපනය කරන්න](#install-it-on-the-tv). එය දුරකථනවල ඇති එම යෙදුමම වේ.
   - ළඟදීම: රූපවාහිනී මත Google Play, එහි රූපවාහිනී ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් 9 සිට Google හි සමාලෝචනයේ ඇත.
@@ -1126,7 +1126,7 @@ Immuch360 Desktop හි CI (`.github/workflows/immuch360-desktop.yml`) `immuch3
   - අද: Immuch360 Desktop, desktop build 4, [desktop පූර්ව නිකුතුවේ](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` ZIP එක, [Windows මත බාගත කර ස්ථාපනය කරන්න](#download-and-install-on-windows) පවසන පරිදි දිග හැර ආරම්භ කර ඇත. ඡායාරූප, පැතලි වීඩියෝ, 360°, 3D, VR180 සහ අමු 360° වීඩියෝ (කැපවූ ග්‍රැෆික් චිපයක සුමටයි, ඒකාබද්ධ එකක සීමා සහිතයි) සහ Tapo සජීවී දර්ශනය.
   - ළඟදීම: වෙබ්කැමය සමඟ Spatial 2.5D, ඉන්පසු Linux සහ macOS; ස්ථාපකයක්, අත්සන් කළ බිල්ඩ් එකක් සහ යාවත්කාලීන පසුව.
 
-ලැයිස්තුගත කිරීම් ප්‍රකාශයට පත් වූ වහාම App Store සහ Meta Horizon Store සබැඳි මෙහි එක් කෙරේ. ඔබේ සුපුරුදු Immich සේවාදායක URL සහ ගිණුමෙන් පිවිසෙන්න, නැතහොත් උපාංගයේම ඡායාරූප සහ වීඩියෝ මත ආරම්භ කිරීමට පිවිසුම් පිටුවේ "සේවාදායකයක් නොමැතිව භාවිතා කරන්න" තට්ටු කරන්න. GitHub වෙතින් ලැබෙන APK එක තනිවම යාවත්කාලීන නොවේ: Releases පිටුව නිරීක්ෂණය කරන්න, ඔබ ගබඩාවකින් යෙදුම ස්ථාපනය කළ පසු, යාවත්කාලීන එම ගබඩාවෙන් ලබා ගන්න.
+ලැයිස්තුගත කිරීම ප්‍රකාශයට පත් වූ වහාම App Store සබැඳිය මෙහි එක් කෙරේ; යෙදුම දැනටමත් [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) හි ඇත. ඔබේ සුපුරුදු Immich සේවාදායක URL සහ ගිණුමෙන් පිවිසෙන්න, නැතහොත් උපාංගයේම ඡායාරූප සහ වීඩියෝ මත ආරම්භ කිරීමට පිවිසුම් පිටුවේ "සේවාදායකයක් නොමැතිව භාවිතා කරන්න" තට්ටු කරන්න. GitHub වෙතින් ලැබෙන APK එක තනිවම යාවත්කාලීන නොවේ: Releases පිටුව නිරීක්ෂණය කරන්න, ඔබ ගබඩාවකින් යෙදුම ස්ථාපනය කළ පසු, යාවත්කාලීන එම ගබඩාවෙන් ලබා ගන්න.
 
 <a id="build-it-yourself"></a>
 ## ඔබම එය ගොඩනඟන්න
@@ -1215,7 +1215,7 @@ Android, Android TV සහ Google TV යනු Google LLC හි වෙළඳ �
 - **Immuch360 Desktop, පළමුව Windows**: 360° වීඩියෝ වාදකය (360°, 3D, VR180 සහ අමු 360° වීඩියෝ, අමු ගොනුවල කාච දෙක, එක් එක් පරිගණකයේ මැනූ දර්ශනයේ ප්‍රමාණය) සහ Tapo සජීවී දර්ශනය සමඟ desktop build 3 නිකුත් වී ඇත, සහ 2026 ඔක්තෝබර් 9 සිට desktop මූලාශ්‍ර fork එකේ ප්‍රධාන ශාඛාව වන `immuch360` හි ඇත (බලන්න [Windows පරිගණකයක](#on-a-windows-computer-immuch360-desktop-preview)). ඊළඟට, 2024 එක වෙනුවට fork එකේම workflow එකේ libmpv, සහ සැබෑ ගොනු, තිර දෙකම සහ සැබෑ කැමරාවක් සමඟ Windows පරිගණකයක එක් එක් කාර්යය අතින් පරීක්ෂා කිරීම, එහි නිවැරදි කිරීම් සමඟ; ඉන්පසු වෙබ්කැමය සමඟ Spatial 2.5D; ඉන්පසු Linux සහ macOS; ඉන්පසු ස්ථාපකයක්, අත්සන් කළ බිල්ඩ් එකක් සහ ස්වයංක්‍රීය යාවත්කාලීන.
 - **Google Play**: බිල්ඩ් 18 වෙනුවට බිල්ඩ් 20 2026 ඔක්තෝබර් 7 සිට සජීවීව ඇත; රූපවාහිනී සඳහා ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් 9 සිට Google හි සමාලෝචනයේ ඇත. බිල්ඩ් 21 දුරකථන සහ ටැබ්ලට් මත කිසිවක් වෙනස් නොකරයි.
 - **App Store**: අනුවාදය 3.3.0 Apple හි සමාලෝචනය සඳහා රැඳී සිටී; එහි බිල්ඩ් 11 හි විශේෂාංග ඇත, එබැවින් Immich වෙත උඩුගත කිරීම සහ වීඩියෝ විකේතක පරීක්ෂාව (බිල්ඩ් 15) සහ RAW Insta360 ගොනු (බිල්ඩ් 16) ඊළඟ App Store යාවත්කාලීනය සමඟ එයි. එය සජීවී වූ විට සබැඳිය මෙහි එක් කෙරේ.
-- **Meta Horizon Store**: Meta 2026 ඔක්තෝබර් 7 දින බිල්ඩ් 14 සමඟ ලැයිස්තුගත කිරීම අනුමත කළේය. බිල්ඩ් 21 එහි පළමු යාවත්කාලීනය ලෙස ඉදිරිපත් කර ඇත: එය බිල්ඩ් 14 සිට ආ සියල්ල ගෙන එයි (බෙදාගැනීමකින් Immich වෙත උඩුගත කිරීම්, හෙඩ්සෙට් එක විකේතනය කරන දෙයින් තෝරාගත් වීඩියෝ මූලාශ්‍රය, RAW Insta360, GoPro සහ DJI ගොනු, DLNA, දුරකථන බෙදාගැනීම, Apple අවකාශීය ඡායාරූප, Plex Media Server පුස්තකාල, Tapo කැමරා), ගබඩාව එය Quest 2, Quest Pro, Quest 3 සහ 3S සඳහා ලැයිස්තුගත කරයි. පිටුව ප්‍රසිද්ධ වූ පසු ගබඩා සබැඳිය මෙහි එක් කෙරේ; sideload කළ පිටපතක් මුලින් අස්ථාපනය කළ යුතුය (බලන්න [ස්ථාපනය](#install)).
+- **Meta Horizon Store**: Meta 2026 ඔක්තෝබර් 7 දින බිල්ඩ් 14 සමඟ ලැයිස්තුගත කිරීම අනුමත කළේය, එදින සිට යෙදුම [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) හි සැමට විවෘතව ඇත. බිල්ඩ් 21 එහි පළමු යාවත්කාලීනය ලෙස ඉදිරිපත් කර ඇත: එය බිල්ඩ් 14 සිට ආ සියල්ල ගෙන එයි (බෙදාගැනීමකින් Immich වෙත උඩුගත කිරීම්, හෙඩ්සෙට් එක විකේතනය කරන දෙයින් තෝරාගත් වීඩියෝ මූලාශ්‍රය, RAW Insta360, GoPro සහ DJI ගොනු, DLNA, දුරකථන බෙදාගැනීම, Apple අවකාශීය ඡායාරූප, Plex Media Server පුස්තකාල, Tapo කැමරා), ගබඩාව එය Quest 2, Quest Pro, Quest 3 සහ 3S සඳහා ලැයිස්තුගත කරයි. ගබඩා අනුවාදය ස්ථාපනය කිරීමට, sideload කළ පිටපතක් මුලින් අස්ථාපනය කළ යුතුය (බලන්න [ස්ථාපනය](#install)).
 - **ගබඩා ලැයිස්තුගත කිරීම්**: Google Play ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් මාසයේ නව තිර රූප සමඟ නැවත ලියන ලද අතර, එහි රූපවාහිනී තිර රූප සහ රූපවාහිනී බැනරය 2026 ඔක්තෝබර් 8 දින එක් කරන ලදී; රූපවාහිනී සඳහා ලැයිස්තුගත කිරීම 2026 ඔක්තෝබර් 9 සිට Google හි සමාලෝචනයේ ඇත. App Store පෙළ තවමත් පළමු බිල්ඩ් (360° ඡායාරූප සහ වීඩියෝ, පැතලිව පෙන්වන RAW ගොනු) විස්තර කරයි; එය 3D, VR180 සහ Spatial දර්ශක, සේවාදායකයක් නොමැති ප්‍රකාරය, ජාල බෙදාගැනීම්, මාධ්‍ය වාදකය සහ RAW Insta360 ගොනු ඉදිරිපත් කරනු ඇත. Meta Horizon Store පෙළ දැනටමත් මාධ්‍ය වාදකය ඉදිරිපත් කරයි.
 - **360° කැමරා RAW ගොනු, ඊළඟට**: RAW ඡායාරූපයක් හෙඩ්සෙට් එක සඳහා සූදානම් කරන අතරතුර ප්‍රගති දර්ශකයක්; GoPro සහ DJI වීඩියෝ ඒවායේම චලන දත්තවලින් සමතලා කිරීම; dual fisheye .dng; මැහුම් සහ විකේතක සීමා තහවුරු කිරීමට බිල්ඩ් 18 හි කාච දෙකේ වාදනය (X4, X5, X6, GoPro MAX 2, Osmo 360) පිළිබඳ උපාංග වාර්තා.
 - **DLNA, දුරකථන බෙදාගැනීම සහ Apple අවකාශීය, ඊළඟට**: බිල්ඩ් 19 හි උපාංග වාර්තා (DLNA හරහා Plex, Jellyfin, NAS එකක් සහ Freebox Server; Quest එකකට සපයන දුරකථනයක්, එහි හොට්ස්පොට් හරහා ද; හෙඩ්සෙට් එකේ සැබෑ iPhone අවකාශීය ඡායාරූප සහ වීඩියෝ); iPhone වලට සෑම DLNA සේවාදායකයක්ම සොයාගත හැකි වන පරිදි Apple වෙතින් ඉල්ලූ multicast අයිතිය (entitlement); හෙඩ්සෙට් එකේ අවකාශීය ඡායාරූප අතර පෙර සහ ඊළඟ; කාලරේඛාවේ සේවාදායක ඡායාරූප මත අවකාශීය ලාංඡනයක්; Quest හි විකේතක ඉඩ දෙන්නේ නම්, එහි අවකාශීය වීඩියෝ 3D ලෙස.

@@ -15,11 +15,11 @@ Immuch360 er Immich-farsímaforritið með 360° myndum og myndskeiðum sem hæg
 
 <div align="center">
 
-| Kerfi | Hvar á að sækja það | Staða 10. október 2026 |
+| Kerfi | Hvar á að sækja það | Staða 12. október 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** símar og spjaldtölvur | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | smíð 23 á GitHub, send til Google Play 10. október 2026 (smíð 20 í boði þar síðan 7. október) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | útgáfa 3.3.0 bíður yfirferðar Apple; á meðan er [eigin smíð](#build-it-yourself) möguleg |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [APK](#meta-quest-3) · Horizon Store | skráning samþykkt, smíð 21 í yfirferð hjá Meta, smíð 23 á alfa-rásinni |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | á Horizon Store frá 7. október 2026 (smíð 14), smíð 21 í yfirferð hjá Meta, smíð 23 á alfa-rásinni |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#install-it-on-the-tv) · Google Play | smíð 23 á GitHub; færslan á Google Play fyrir sjónvörp er í yfirferð hjá Google síðan 9. október 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP-forútgáfa](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 á Windows: myndir, flöt og 360° myndskeið; macOS og Linux síðar |
 
@@ -529,7 +529,7 @@ Efnið kemur af Immich-vélþjóninum, úr gleraugunum sjálfum, af NAS, miðla�
 
 ### Opna umlykjandi sýnina
 
-1. Settu forritið upp í gleraugunum: þar til færslan í Horizon Store er samþykkt skaltu hliðhlaða (sideload) APK-skránni, sjá [Uppsetning](#install).
+1. Settu forritið upp í gleraugunum úr [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), eða hliðhlaððu (sideload) APK-skrá nýrri smíðar, sjá [Uppsetning](#install).
 2. Skráðu þig inn með Immich-vélþjóninum, eða ýttu á „Nota án vélþjóns“ fyrir myndir og myndskeið gleraugnanna sjálfra.
 3. Opnaðu 360° mynd eða myndskeið í skoðaranum, úr tímalínunni, 360° listanum, myndasafni eða deilimöppu.
 4. Ýttu á 360° hnappinn, eða „Skoða sem 360°“ í ⋮ valmyndinni. Í gleraugunum opna þau umlykjandi sýnina beint, í stað kúluskoðara símanna.
@@ -930,7 +930,7 @@ WebDAV-, DLNA- og símadeilingar á venjulegu HTTP-vistfangi á staðarnetinu ei
 <a id="install"></a>
 ### Uppsetning
 
-Meta samþykkti færsluna í Horizon Store 7. október 2026 með smíð 14, og smíð 21 er send inn sem fyrsta uppfærsla hennar. Þar til síðan í versluninni er opinber, eða til að fá smíð áður en verslunin hefur hana, skaltu hliðhlaða `-quest-release.apk` skrá úr útgáfu (smíðuð fyrir gleraugun: 64 bita, mark-SDK 34, aðeins heimildirnar sem gleraugun nota), eða alhliða `-release.apk`:
+Immuch360 hefur verið á [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) frá 7. október 2026 með smíð 14, og smíð 21 er í yfirferð hjá Meta sem fyrsta uppfærsla þess. Til að fá smíð áður en verslunin hefur hana, skaltu hliðhlaða `-quest-release.apk` skrá úr útgáfu (smíðuð fyrir gleraugun: 64 bita, mark-SDK 34, aðeins heimildirnar sem gleraugun nota), eða alhliða `-release.apk`:
 
 1. Virkjaðu forritaramáta einu sinni. Í Meta Horizon símaforritinu, opnaðu Devices (Tæki), veldu gleraugun, síðan Headset settings (Stillingar gleraugna), síðan Developer mode (Forritaramáti). Þetta krefst forritaraaðgangs, sem er ókeypis á developers.meta.com. Þú þarft líka adb (Android SDK Platform Tools) á tölvunni, eða SideQuest.
 2. Tengdu gleraugun við tölvu með USB-C snúru. Í gleraugunum, samþykktu „Allow USB debugging“ (Leyfa USB-villuleit).
@@ -1108,7 +1108,7 @@ CI Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) keyrir á `desk
 <a id="where-to-get-it"></a>
 ## Hvar á að sækja það
 
-Forritið er á Google Play fyrir síma og spjaldtölvur; App Store útgáfan bíður yfirferðar Apple, færslan í Meta Horizon Store er samþykkt og fyrsta uppfærsla hennar er í yfirferð hjá Meta, og Google Play útgáfan fyrir sjónvörp bíður yfirferðar Google á sjónvarpsútgáfunni. Immuch360 Desktop, fyrir Windows, er forútgáfa á GitHub. Útgáfan á GitHub er alltaf nýjasta smíðin:
+Forritið er á Google Play fyrir síma og spjaldtölvur; App Store útgáfan bíður yfirferðar Apple, forritið er á Meta Horizon Store og fyrsta uppfærsla þess er í yfirferð hjá Meta, og Google Play útgáfan fyrir sjónvörp bíður yfirferðar Google á sjónvarpsútgáfunni. Immuch360 Desktop, fyrir Windows, er forútgáfa á GitHub. Útgáfan á GitHub er alltaf nýjasta smíðin:
 
 - **Android-símar og spjaldtölvur**
   - Í dag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), eða APK-skráin á síðunni [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` fyrir síma (alhliða `Immuch360-v<version>-release.apk` virkar alls staðar, `-armeabi-v7a` er fyrir eldri 32 bita síma, og `.aab` skráin er fyrir Google Play, ekki til hliðhleðslu). Smíðin á GitHub er yfirleitt á undan versluninni. Hvort heldur sem er sest hún upp við hlið opinbera Immich-forritsins (pakki `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Forritið er á Google Play fyrir síma og spjaldtölvur; App Store útgáfan b�
   - Bráðum: App Store, í yfirferð.
 - **Meta Quest 2, Quest Pro, Quest 3 og 3S (Quest 2 og Quest Pro óprófuð)**
   - Í dag: skráin `-quest-release.apk` á síðunni [Releases](https://github.com/freeKC/Immuch360/releases) (alhliða `-release.apk` virkar líka), hliðhlaðin í forritaramáta, sjá [Uppsetning](#install). Smíðin í versluninni og APK-skráin á GitHub eru undirritaðar með mismunandi lyklum: til að skipta frá annarri yfir í hina skaltu fyrst fjarlægja forritið (stillingar þess og vistaðar deilingar fara með).
-  - Bráðum: á Meta Horizon Store var færslan samþykkt 7. október 2026 með smíð 14, og smíð 21, fyrsta uppfærsla hennar, er í yfirferð hjá Meta; alfa-rás verslunarinnar (aðeins prófarar) fær hverja nýja smíð.
+  - Verslun: forritið hefur verið á [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) frá 7. október 2026 með smíð 14, og smíð 21, fyrsta uppfærsla þess, er í yfirferð hjá Meta; alfa-rás verslunarinnar (aðeins prófarar) fær hverja nýja smíð.
 - **Android TV og Google TV (frá smíð 20)**
   - Í dag: alhliða `Immuch360-v<version>-release.apk` á síðunni [Releases](https://github.com/freeKC/Immuch360/releases), hliðhlaðið með adb, sjá [Settu það upp í sjónvarpinu](#install-it-on-the-tv). Það er sama forritið og í símunum.
   - Bráðum: Google Play á sjónvörpum, en færslan fyrir sjónvörp hefur verið í yfirferð hjá Google síðan 9. október 2026.
@@ -1126,7 +1126,7 @@ Forritið er á Google Play fyrir síma og spjaldtölvur; App Store útgáfan b�
   - Í dag: Immuch360 Desktop, desktop build 4, ZIP-skráin `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` úr [forútgáfunni fyrir tölvu](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), afþjöppuð og ræst eins og [Sækja og setja upp á Windows](#download-and-install-on-windows) segir. Myndir, flöt myndskeið, 360°, 3D, VR180 og óunnin 360° myndskeið (mjúk á sérstökum skjákubbi, með takmörkunum á innbyggðum) og bein mynd Tapo.
   - Bráðum: Spatial 2.5D með vefmyndavélinni, síðan Linux og macOS; uppsetningarforrit, undirrituð smíð og uppfærslur síðar.
 
-Tenglum á App Store og Meta Horizon Store verður bætt hér við um leið og færslurnar eru birtar. Skráðu þig inn með venjulegri slóð Immich-vélþjónsins og aðganginum þínum, eða ýttu á „Nota án vélþjóns“ á innskráningarsíðunni til að byrja á myndum og myndskeiðum tækisins sjálfs. APK-skráin frá GitHub uppfærir sig ekki sjálf: fylgstu með síðunni Releases, og þegar þú hefur sett forritið upp úr verslun skaltu fá uppfærslurnar úr þeirri verslun.
+Tengli á App Store verður bætt hér við um leið og færslan er birt; forritið er nú þegar á [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). Skráðu þig inn með venjulegri slóð Immich-vélþjónsins og aðganginum þínum, eða ýttu á „Nota án vélþjóns“ á innskráningarsíðunni til að byrja á myndum og myndskeiðum tækisins sjálfs. APK-skráin frá GitHub uppfærir sig ekki sjálf: fylgstu með síðunni Releases, og þegar þú hefur sett forritið upp úr verslun skaltu fá uppfærslurnar úr þeirri verslun.
 
 <a id="build-it-yourself"></a>
 ## Smíðaðu það sjálf(ur)
@@ -1215,7 +1215,7 @@ Android, Android TV og Google TV eru vörumerki Google LLC; Apple, iPhone, iPad 
 - **Immuch360 Desktop, Windows fyrst**: desktop build 3 er komin út, með 360° myndskeiðsspilaranum (360°, 3D, VR180 og óunnin 360° myndskeið, linsurnar tvær í óunnum skrám, stærð sýnarinnar mæld á hverri tölvu) og beinni mynd Tapo, og frumkóði tölvuútgáfunnar er í aðalgrein afleiðunnar, `immuch360`, frá 9. október 2026 (sjá [Á Windows-tölvu](#on-a-windows-computer-immuch360-desktop-preview)). Næst, libmpv úr eigin vinnuflæði afleiðunnar í stað 2024 útgáfunnar, og handvirk prófun hverrar aðgerðar á Windows-tölvu með raunverulegum skrám, báðum skjám og raunverulegri myndavél, ásamt lagfæringum; síðan Spatial 2.5D með vefmyndavélinni; síðan Linux og macOS; síðan uppsetningarforrit, undirrituð smíð og sjálfvirkar uppfærslur.
 - **Google Play**: smíð 20 hefur verið í boði síðan 7. október 2026, í stað smíðar 18; færslan fyrir sjónvörp hefur verið í yfirferð hjá Google síðan 9. október 2026. Smíð 21 breytir engu í símum og spjaldtölvum.
 - **App Store**: útgáfa 3.3.0 bíður yfirferðar Apple; hún er með eiginleika smíðar 11, svo upphleðsla í Immich og prófun myndskeiðsafkóðara (smíð 15) og óunnar Insta360-skrár (smíð 16) koma með næstu uppfærslu í App Store. Tenglinum verður bætt hér við þegar hún er komin í loftið.
-- **Meta Horizon Store**: Meta samþykkti færsluna 7. október 2026 með smíð 14. Smíð 21 er send inn sem fyrsta uppfærsla hennar: hún færir allt frá smíð 14 (upphleðslur úr deilingu í Immich, myndskeiðsuppsprettan valin eftir því hvað gleraugun afkóða, óunnar Insta360, GoPro og DJI skrár, DLNA, símadeilinguna, rýmismyndir frá Apple, Plex Media Server söfn, Tapo-myndavélar), og verslunin skráir hana fyrir Quest 2, Quest Pro, Quest 3 og 3S. Tengli verslunarinnar verður bætt hér við þegar síðan er opinber; fyrst þarf að fjarlægja hliðhlaðið eintak (sjá [Uppsetning](#install)).
+- **Meta Horizon Store**: Meta samþykkti færsluna 7. október 2026 með smíð 14, og forritið hefur verið opinbert á [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) frá þeim degi. Smíð 21 er send inn sem fyrsta uppfærsla hennar: hún færir allt frá smíð 14 (upphleðslur úr deilingu í Immich, myndskeiðsuppsprettan valin eftir því hvað gleraugun afkóða, óunnar Insta360, GoPro og DJI skrár, DLNA, símadeilinguna, rýmismyndir frá Apple, Plex Media Server söfn, Tapo-myndavélar), og verslunin skráir hana fyrir Quest 2, Quest Pro, Quest 3 og 3S. Til að setja upp útgáfuna úr versluninni þarf fyrst að fjarlægja hliðhlaðið eintak (sjá [Uppsetning](#install)).
 - **Færslur í verslunum**: færslan á Google Play var endurskrifuð í október 2026 með nýjum skjámyndum, og sjónvarpsskjámyndum hennar og sjónvarpsborða var bætt við 8. október 2026; færslan fyrir sjónvörp hefur verið í yfirferð hjá Google síðan 9. október 2026. Textinn á App Store lýsir enn fyrstu smíðunum (360° myndir og myndskeið, óunnar skrár sýndar flatar); hann mun kynna 3D, VR180 og Spatial skoðarana, haminn án vélþjóns, netdeilingar, margmiðlunarspilarann og óunnar Insta360-skrár. Textinn í Meta Horizon Store kynnir þegar margmiðlunarspilarann.
 - **Óunnar 360° myndavélaskrár, næst**: framvinduvísir á meðan óunnin mynd er undirbúin fyrir gleraugun; rétting GoPro- og DJI-myndskeiða út frá þeirra eigin hreyfigögnum; tvöfalt fiskauga .dng; tækjaskýrslur um tveggja linsa spilun smíðar 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) til að staðfesta samskeyti og getu afkóðara.
 - **DLNA, símadeiling og rýmisefni frá Apple, næst**: tækjaskýrslur smíðar 19 (Plex, Jellyfin, NAS og Freebox Server yfir DLNA; sími sem þjónar Quest, líka á heitum reit sínum; raunverulegar rýmismyndir og rýmismyndskeið úr iPhone í gleraugunum); fjölvarpsheimildin sem beðið var um hjá Apple, svo að iPhone finni alla DLNA-vélþjóna; fyrra og næsta á milli rýmismynda í gleraugunum; rýmismerki á myndum vélþjónsins í tímalínunni; rýmismyndskeið í 3D á Quest, ef afkóðarar hans leyfa það.

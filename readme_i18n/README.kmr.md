@@ -15,11 +15,11 @@ Ew ji bo kesên ku bi kameraya 360° (Insta360, GoPro MAX, DJI Osmo 360, Ricoh T
 
 <div align="center">
 
-| Platform | Ji ku derê bistînî | Rewş di 10ê Cotmeha 2026an de |
+| Platform | Ji ku derê bistînî | Rewş di 12ê Cotmeha 2026an de |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> Telefon û tabletên **Android** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 li ser GitHub, di 10ê Cotmeha 2026an de ji Google Play re hatiye şandin (li wir build 20 ji 7ê Cotmehê ve zindî ye) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone û iPad** | App Store | guhertoya 3.3.0 li benda nirxandina Apple ye; heta wê demê [bi xwe ava bike](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 û 3S | [APK](#meta-quest-3) · Horizon Store | tomar hat pejirandin, build 21 di nirxandina Meta de ye, build 23 li ser kanala Alpha ye |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 û 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | ji 7ê Cotmeha 2026an ve li ser Horizon Store ye (build 14), build 21 di nirxandina Meta de ye, build 23 li ser kanala Alpha ye |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV û Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 li ser GitHub; tomara Google Play ji bo televizyonan ji 9ê Cotmeha 2026an ve di nirxandina Google de ye |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [ZIP a pêşdîtinê](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | build a desktop 4 li ser Windows: wêne, vîdyoyên dûz û 360°; macOS û Linux paşê |
 
@@ -529,7 +529,7 @@ Medya ji servera te ya Immich, ji kaskê bi xwe, ji NAS, ji serverekî medyayê,
 
 ### Dîmena binavbûyî veke
 
-1. Sepanê li ser kaskê saz bike: heta ku tomara Horizon Store were pejirandin, APK sideload bike, binêre [Sazkirin](#install).
+1. Sepanê ji [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) li ser kaskê saz bike, an APK a buildeke nûtir sideload bike, binêre [Sazkirin](#install).
 2. Bi servera xwe ya Immich têkeve, an ji bo wêne û vîdyoyên kaskê bi xwe li "Bêyî server bi kar bîne" bixe.
 3. Wêneyek an vîdyoyeke 360° di dîtinvan de veke, ji demjimêrê, lîsteya 360°, albûmekê an peldankeke parvekirinê.
 4. Li bişkoka 360°, an li "Wek 360° bibîne" di menûya ⋮ de bixe. Li ser kaskê ew yekser dîmena binavbûyî vedikin, li şûna dîtinvanê gogê yê telefonan.
@@ -930,7 +930,7 @@ Parvekirinên WebDAV, DLNA û telefonê li navnîşaneke HTTP ya sade ya tora he
 <a id="install"></a>
 ### Sazkirin
 
-Meta tomara Horizon Store di 7ê Cotmeha 2026an de bi build 14 pejirand, û build 21 wekî nûkirina wê ya yekem hatiye şandin. Heta ku rûpela firoşgehê giştî bibe, an ji bo ku tu buildekê berî firoşgehê bistînî, pela `-quest-release.apk` ya weşanekê (ji bo kaskê hatiye avakirin: 64 bit, SDK ya armanc 34, tenê destûrên ku kask bi kar tîne), an `-release.apk` a gerdûnî sideload bike:
+Immuch360 ji 7ê Cotmeha 2026an ve bi build 14 li ser [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) e, û build 21 wekî nûkirina wê ya yekem di nirxandina Meta de ye. Ji bo ku tu buildekê berî firoşgehê bistînî, pela `-quest-release.apk` ya weşanekê (ji bo kaskê hatiye avakirin: 64 bit, SDK ya armanc 34, tenê destûrên ku kask bi kar tîne), an `-release.apk` a gerdûnî sideload bike:
 
 1. Carekê moda pêşdebiran çalak bike. Di sepana telefonê ya Meta Horizon de, Devices (Cîhaz) veke, kaskê hilbijêre, paşê Headset settings (Eyarên kaskê), paşê Developer mode (Moda pêşdebiran). Ji bo vê hesabekî pêşdebiran hewce ye, ku li developers.meta.com belaş e. Li ser komputerê adb (Android SDK Platform Tools), an SideQuest jî hewce ye.
 2. Kaskê bi kabloyeke USB-C bi komputerekê ve girê bide. Di kaskê de, "Allow USB debugging" (Destûra debugkirina USB bide) qebûl bike.
@@ -1108,7 +1108,7 @@ CI ya Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) li ser şaxa
 <a id="where-to-get-it"></a>
 ## Ji ku derê bistînî
 
-Sepan ji bo telefon û tabletan li ser Google Play ye; guhertoya App Store li benda nirxandina Apple ye, tomara Meta Horizon Store hatiye pejirandin û nûkirina wê ya yekem di nirxandina Meta de ye, û guhertoya Google Play ji bo televizyonan li benda nirxandina Google ya weşana televizyonê ye. Immuch360 Desktop, ji bo Windows, pêşdîtinek e li ser GitHub. Weşana GitHub her tim build a herî nû ye:
+Sepan ji bo telefon û tabletan li ser Google Play ye; guhertoya App Store li benda nirxandina Apple ye, sepan li ser Meta Horizon Store ye û nûkirina wê ya yekem di nirxandina Meta de ye, û guhertoya Google Play ji bo televizyonan li benda nirxandina Google ya weşana televizyonê ye. Immuch360 Desktop, ji bo Windows, pêşdîtinek e li ser GitHub. Weşana GitHub her tim build a herî nû ye:
 
 - **Telefon û tabletên Android**
   - Îro: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), an APK li ser rûpela [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` ji bo telefonekê (`Immuch360-v<version>-release.apk` a gerdûnî li her derê dixebite, `-armeabi-v7a` ji bo telefonên kevin ên 32 bit e, û pela `.aab` ji bo Google Play ye, ne ji bo sideloadkirinê). Build a GitHub bi gelemperî li pêş firoşgehê ye. Bi her awayî ew li kêleka sepana fermî ya Immich tê sazkirin (pakêta `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Sepan ji bo telefon û tabletan li ser Google Play ye; guhertoya App Store li be
   - Di demeke nêzîk de: App Store, di nirxandinê de.
 - **Meta Quest 2, Quest Pro, Quest 3 û 3S (Quest 2 û Quest Pro nehatine ceribandin)**
   - Îro: pela `-quest-release.apk` ya rûpela [Releases](https://github.com/freeKC/Immuch360/releases) (`-release.apk` a gerdûnî jî dixebite), di moda pêşdebiran de sideloadkirî, binêre [Sazkirin](#install). Build a firoşgehê û APK ya GitHub bi mifteyên cuda hatine îmzekirin: ji bo derbasbûna ji yekê bo ya din, pêşî sepanê rake (eyar û parvekirinên wê yên qeydkirî bi wê re diçin).
-  - Di demeke nêzîk de: li ser Meta Horizon Store, tomar di 7ê Cotmeha 2026an de bi build 14 hat pejirandin, û build 21, nûkirina wê ya yekem, di nirxandina Meta de ye; kanala alpha ya firoşgehê (tenê ceribandvan) her build a nû digire.
+  - Firoşgeh: sepan ji 7ê Cotmeha 2026an ve bi build 14 li ser [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) e, û build 21, nûkirina wê ya yekem, di nirxandina Meta de ye; kanala alpha ya firoşgehê (tenê ceribandvan) her build a nû digire.
 - **Android TV û Google TV (ji build 20)**
   - Îro: `Immuch360-v<version>-release.apk` a gerdûnî ya rûpela [Releases](https://github.com/freeKC/Immuch360/releases), bi adb sideloadkirî, binêre [Wê li ser televizyonê saz bike](#install-it-on-the-tv). Ew heman sepan e wek li ser telefonan.
   - Di demeke nêzîk de: Google Play li ser televizyonan, ku tomara wê ji 9ê Cotmeha 2026an ve di nirxandina Google de ye.
@@ -1126,7 +1126,7 @@ Sepan ji bo telefon û tabletan li ser Google Play ye; guhertoya App Store li be
   - Îro: Immuch360 Desktop, build a desktop 4, ZIP a `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` ya [pêş-weşana desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), vekirî û dest pê kirî wekî ku [Li ser Windows daxistin û sazkirin](#download-and-install-on-windows) dibêje. Wêne, vîdyoyên dûz, vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360° (li ser çîpeke grafîkê ya veqetandî bi rehetî, li ser çîpeke yekgirtî bi sînoran) û dîtina zindî ya Tapo.
   - Di demeke nêzîk de: Spatial 2.5D bi webcamê, paşê Linux û macOS; sazkerek, buildeke îmzekirî û nûkirin paşê.
 
-Girêdanên App Store û Meta Horizon Store dê gava tomar hatin weşandin li vir bên zêdekirin. Bi URL û hesabê xwe yê asayî yê servera Immich têkeve, an li ser rûpela têketinê li "Bêyî server bi kar bîne" bixe da ku li ser wêne û vîdyoyên cîhazê bi xwe dest pê bikî. APK ya ji GitHub xwe bi xwe nû nake: li rûpela Releases binêre, û gava te sepan ji firoşgehekê saz kir, nûkirinan ji wê firoşgehê bistîne.
+Girêdana App Store dê gava tomar hat weşandin li vir bê zêdekirin; sepan jixwe li ser [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) e. Bi URL û hesabê xwe yê asayî yê servera Immich têkeve, an li ser rûpela têketinê li "Bêyî server bi kar bîne" bixe da ku li ser wêne û vîdyoyên cîhazê bi xwe dest pê bikî. APK ya ji GitHub xwe bi xwe nû nake: li rûpela Releases binêre, û gava te sepan ji firoşgehekê saz kir, nûkirinan ji wê firoşgehê bistîne.
 
 <a id="build-it-yourself"></a>
 ## Bi xwe ava bike
@@ -1215,7 +1215,7 @@ Tiştên ku hîn nehatine kirin, yên herî muhtemel pêşî. Tiştek li vir ne 
 - **Immuch360 Desktop, pêşî Windows**: build a desktop 3 derketiye, bi lîstikvanê vîdyoyên 360° (vîdyoyên 360°, 3D, VR180 û vîdyoyên xav ên 360°, her du lensên pelên xav, mezinahiya dîtinê ku li ser her komputerê tê pîvandin) û dîtina zindî ya Tapo, û çavkaniyên desktop ji 9ê Cotmeha 2026an ve di şaxa sereke ya forkê de ne, `immuch360` (binêre [Li ser komputereke Windows](#on-a-windows-computer-immuch360-desktop-preview)). Paşê, libmpv a workflowa forkê bi xwe li şûna ya 2024an, û ceribandina her fonksiyonê bi destan li ser PC yeke Windows bi pelên rastîn, her du ekranan û kameraya rastîn, bi rastkirinên wê; paşê Spatial 2.5D bi webcamê; paşê Linux û macOS; paşê sazkerek, buildeke îmzekirî û nûkirinên otomatîk.
 - **Google Play**: build 20 ji 7ê Cotmeha 2026an ve zindî ye, li şûna build 18; tomara ji bo televizyonan ji 9ê Cotmeha 2026an ve di nirxandina Google de ye. Build 21 li ser telefon û tabletan tiştekî naguherîne.
 - **App Store**: guhertoya 3.3.0 li benda nirxandina Apple ye; ew taybetmendiyên build 11 digire, ji ber vê yekê barkirina li Immich û kontrola dekodera vîdyoyê (build 15) û pelên xav ên Insta360 (build 16) bi nûkirina din a App Store tên. Girêdan dê gava zindî bibe li vir were zêdekirin.
-- **Meta Horizon Store**: Meta tomar di 7ê Cotmeha 2026an de bi build 14 pejirand. Build 21 wekî nûkirina wê ya yekem hatiye şandin: ew her tiştê ji build 14 û vir ve tîne (barkirin ji parvekirinekê bo Immich, çavkaniya vîdyoyê ku li gorî tiştê kask dikare dekod bike tê hilbijartin, pelên xav ên Insta360, GoPro û DJI, DLNA, parvekirina telefonê, wêneyên fezayî yên Apple, kitêbxaneyên Plex Media Server, kamerayên Tapo), û firoşgeh wê ji bo Quest 2, Quest Pro, Quest 3 û 3S tomar dike. Girêdana firoşgehê dê gava rûpel giştî bibe li vir were zêdekirin; kopiyeke sideloadkirî divê pêşî were rakirin (binêre [Sazkirin](#install)).
+- **Meta Horizon Store**: Meta tomar di 7ê Cotmeha 2026an de bi build 14 pejirand, û ji wê rojê ve sepan ji bo herkesî li ser [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) e. Build 21 wekî nûkirina wê ya yekem hatiye şandin: ew her tiştê ji build 14 û vir ve tîne (barkirin ji parvekirinekê bo Immich, çavkaniya vîdyoyê ku li gorî tiştê kask dikare dekod bike tê hilbijartin, pelên xav ên Insta360, GoPro û DJI, DLNA, parvekirina telefonê, wêneyên fezayî yên Apple, kitêbxaneyên Plex Media Server, kamerayên Tapo), û firoşgeh wê ji bo Quest 2, Quest Pro, Quest 3 û 3S tomar dike. Ji bo sazkirina guhertoya firoşgehê, kopiyeke sideloadkirî divê pêşî were rakirin (binêre [Sazkirin](#install)).
 - **Tomarên firoşgehan**: tomara Google Play di Cotmeha 2026an de bi wêneyên ekranê yên nû ji nû ve hat nivîsandin, û wêneyên ekranê yên televizyonê û banera televizyonê di 8ê Cotmeha 2026an de lê hatin zêdekirin; tomara ji bo televizyonan ji 9ê Cotmeha 2026an ve di nirxandina Google de ye. Nivîsa App Store hîn build ên yekem şirove dike (wêne û vîdyoyên 360°, pelên xav dûz tên nîşandan); ew ê dîtinvanên 3D, VR180 û Spatial, moda bêyî server, parvekirinên torê, lîstikvanê medyayê û pelên xav ên Insta360 bide nasîn. Nivîsa Meta Horizon Store berê lîstikvanê medyayê dide nasîn.
 - **Pelên xav ên kameraya 360°, ya din**: nîşaneyeke pêşveçûnê dema wêneyekî xav ji bo kaskê tê amadekirin; rastkirina vîdyoyên GoPro û DJI ji daneyên wan ên tevgerê; dual fisheye .dng; raporên cîhazan li ser lîstina du-lensî ya build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) ji bo piştrastkirina dirûn û budceyên dekoderan.
 - **DLNA, parvekirina telefonê û fezaya Apple, ya din**: raporên cîhazan ên build 19 (Plex, Jellyfin, NAS û Freebox Server bi DLNA; telefonek ku Quest xizmet dike, li ser hotspota xwe jî; wêne û vîdyoyên fezayî yên rastîn ên iPhone di kaskê de); mafê multicast ê ku ji Apple hatiye xwestin, da ku iPhone her serverekî DLNA bibînin; ya berê û ya din di navbera wêneyên fezayî de di kaskê de; nîşaneyeke fezayî li ser wêneyên serverê di demjimêrê de; vîdyoyên fezayî bi 3D li ser Quest, heke dekoderên wê destûrê bidin.

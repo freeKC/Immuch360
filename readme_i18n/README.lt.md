@@ -15,11 +15,11 @@ Ji skirta tiems, kurie fotografuoja 360° kamera (Insta360, GoPro MAX, DJI Osmo 
 
 <div align="center">
 
-| Platforma | Kur gauti | Būsena 2026 m. spalio 10 d. |
+| Platforma | Kur gauti | Būsena 2026 m. spalio 12 d. |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 23 surinkimas GitHub, 2026 m. spalio 10 d. išsiųstas į Google Play (ten 20 surinkimas veikia nuo spalio 7 d.) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ir iPad** | App Store | 3.3.0 versija laukia Apple peržiūros; tuo metu [susikurkite patys](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ir 3S | [APK](#meta-quest-3) · Horizon Store | įrašas patvirtintas, 21 surinkimas Meta peržiūroje, 23 surinkimas alfa kanale |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ir 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | Horizon Store nuo 2026 m. spalio 7 d. (14 surinkimas), 21 surinkimas Meta peržiūroje, 23 surinkimas alfa kanale |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ir Google TV** | [APK](#install-it-on-the-tv) · Google Play | 23 surinkimas GitHub; Google Play įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d. |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Peržiūros ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | darbalaukio surinkimas 4 Windows sistemoje: nuotraukos, plokšti ir 360° vaizdo įrašai; macOS ir Linux vėliau |
 
@@ -529,7 +529,7 @@ Medija ateina iš jūsų Immich serverio, pačių akinių, NAS, medijos serverio
 
 ### Atverti įtraukiančią peržiūrą
 
-1. Įdiekite programą akiniuose: kol Horizon Store įrašas nepatvirtintas, įdiekite APK šoniniu būdu, žr. [Diegimas](#install).
+1. Įdiekite programą akiniuose iš [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) arba šoniniu būdu įdiekite naujesnio surinkimo APK, žr. [Diegimas](#install).
 2. Prisijunkite prie savo Immich serverio arba bakstelėkite „Naudoti be serverio“, kad matytumėte pačių akinių nuotraukas ir vaizdo įrašus.
 3. Atverkite 360° nuotrauką ar vaizdo įrašą peržiūroje, iš laiko skalės, 360° sąrašo, albumo ar bendrinimo aplanko.
 4. Paspauskite 360° mygtuką arba „Žiūrėti kaip 360°“ meniu ⋮. Akiniuose jie tiesiai atveria įtraukiančią peržiūrą, o ne telefonų sferos peržiūrą.
@@ -930,7 +930,7 @@ WebDAV, DLNA ir telefono bendrinimams paprastu vietinio tinklo HTTP adresu tai n
 <a id="install"></a>
 ### Diegimas
 
-Meta patvirtino Horizon Store įrašą 2026 m. spalio 7 d. su 14 surinkimu, o 21 surinkimas pateiktas kaip pirmasis jo atnaujinimas. Kol parduotuvės puslapis nėra viešas arba norėdami gauti surinkimą anksčiau nei parduotuvė, šoniniu būdu įdiekite leidimo failą `-quest-release.apk` (sukurtas akiniams: 64 bitų, target SDK 34, tik akinių naudojami leidimai) arba universalų `-release.apk`:
+Immuch360 yra [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) nuo 2026 m. spalio 7 d. su 14 surinkimu, o 21 surinkimas yra Meta peržiūroje kaip pirmasis programos atnaujinimas. Norėdami gauti surinkimą anksčiau nei parduotuvė, šoniniu būdu įdiekite leidimo failą `-quest-release.apk` (sukurtas akiniams: 64 bitų, target SDK 34, tik akinių naudojami leidimai) arba universalų `-release.apk`:
 
 1. Vieną kartą įjunkite kūrėjo režimą. Meta Horizon telefono programoje atverkite „Devices“ (įrenginiai), pasirinkite akinius, tada „Headset settings“ (akinių nustatymai), tada „Developer mode“ (kūrėjo režimas). Tam reikia kūrėjo paskyros, kuri nemokama svetainėje developers.meta.com. Kompiuteryje taip pat reikia adb (Android SDK Platform Tools) arba SideQuest.
 2. Prijunkite akinius prie kompiuterio USB-C laidu. Akiniuose patvirtinkite „Allow USB debugging“ (leisti USB derinimą).
@@ -1108,7 +1108,7 @@ Immuch360 Desktop CI (`.github/workflows/immuch360-desktop.yml`) veikia šakoje 
 <a id="where-to-get-it"></a>
 ## Kur ją gauti
 
-Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Apple peržiūros, Meta Horizon Store įrašas patvirtintas ir jo pirmasis atnaujinimas yra Meta peržiūroje, o Google Play versija televizoriams laukia Google peržiūros televizoriaus leidimui. Immuch360 Desktop, skirta Windows, yra peržiūros versija GitHub. GitHub leidime visada naujausias surinkimas:
+Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Apple peržiūros, programa yra Meta Horizon Store ir jos pirmasis atnaujinimas yra Meta peržiūroje, o Google Play versija televizoriams laukia Google peržiūros televizoriaus leidimui. Immuch360 Desktop, skirta Windows, yra peržiūros versija GitHub. GitHub leidime visada naujausias surinkimas:
 
 - **Android telefonai ir planšetės**
   - Šiandien: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) arba APK puslapyje [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` telefonui (universalus `Immuch360-v<version>-release.apk` veikia visur, `-armeabi-v7a` skirtas senesniems 32 bitų telefonams, o `.aab` failas skirtas Google Play, ne šoniniam diegimui). GitHub surinkimas paprastai lenkia parduotuvę. Bet kuriuo atveju ji įdiegiama šalia oficialios Immich programos (paketas `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Ap
   - Netrukus: App Store, peržiūrima.
 - **Meta Quest 2, Quest Pro, Quest 3 ir 3S (Quest 2 ir Quest Pro neišbandyti)**
   - Šiandien: puslapio [Releases](https://github.com/freeKC/Immuch360/releases) failas `-quest-release.apk` (universalus `-release.apk` taip pat veikia), įdiegtas šoniniu būdu kūrėjo režimu, žr. [Diegimas](#install). Parduotuvės surinkimas ir GitHub APK pasirašyti skirtingais raktais: norėdami pereiti nuo vieno prie kito, pirmiausia pašalinkite programą (jos nustatymai ir išsaugoti bendrinimai dingsta kartu).
-  - Netrukus: Meta Horizon Store parduotuvėje įrašas patvirtintas 2026 m. spalio 7 d. su 14 surinkimu, o 21 surinkimas, pirmasis jo atnaujinimas, yra Meta peržiūroje; parduotuvės alfa kanalas (tik bandytojams) gauna kiekvieną naują surinkimą.
+  - Parduotuvė: programa yra [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) nuo 2026 m. spalio 7 d. su 14 surinkimu, o 21 surinkimas, pirmasis jos atnaujinimas, yra Meta peržiūroje; parduotuvės alfa kanalas (tik bandytojams) gauna kiekvieną naują surinkimą.
 - **Android TV ir Google TV (nuo 20 surinkimo)**
   - Šiandien: universalus `Immuch360-v<version>-release.apk` iš puslapio [Releases](https://github.com/freeKC/Immuch360/releases), įdiegtas šoniniu būdu su adb, žr. [Įdiegti televizoriuje](#install-it-on-the-tv). Tai ta pati programa kaip telefonuose.
   - Netrukus: Google Play televizoriams; jo įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d.
@@ -1126,7 +1126,7 @@ Programa yra Google Play telefonams ir planšetėms; App Store versija laukia Ap
   - Šiandien: Immuch360 Desktop, darbalaukio surinkimas 4, ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` iš [darbalaukio išankstinio leidimo](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), išskleistas ir paleistas, kaip nurodyta [Atsisiuntimas ir įdiegimas Windows sistemoje](#download-and-install-on-windows). Nuotraukos, plokšti vaizdo įrašai, 360°, 3D, VR180 ir neapdoroti 360° vaizdo įrašai (sklandžiai su atskira vaizdo plokšte, su apribojimais su integruota) ir Tapo tiesioginis vaizdas.
   - Netrukus: Spatial 2.5D su internetine kamera, tada Linux ir macOS; vėliau diegimo programa, pasirašytas surinkimas ir atnaujinimai.
 
-App Store ir Meta Horizon Store nuorodos bus pridėtos čia, kai tik įrašai bus paskelbti. Prisijunkite su savo įprastu Immich serverio URL ir paskyra arba prisijungimo puslapyje bakstelėkite „Naudoti be serverio“, kad pradėtumėte nuo paties įrenginio nuotraukų ir vaizdo įrašų. APK iš GitHub pats neatsinaujina: stebėkite puslapį Releases, o įdiegę programą iš parduotuvės, atnaujinimus imkite iš tos parduotuvės.
+App Store nuoroda bus pridėta čia, kai tik įrašas bus paskelbtas; programa jau yra [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). Prisijunkite su savo įprastu Immich serverio URL ir paskyra arba prisijungimo puslapyje bakstelėkite „Naudoti be serverio“, kad pradėtumėte nuo paties įrenginio nuotraukų ir vaizdo įrašų. APK iš GitHub pats neatsinaujina: stebėkite puslapį Releases, o įdiegę programą iš parduotuvės, atnaujinimus imkite iš tos parduotuvės.
 
 <a id="build-it-yourself"></a>
 ## Susikurkite patys
@@ -1215,7 +1215,7 @@ Kas dar nepadaryta, labiausiai tikėtina pirma. Niekas čia nėra pažadas, o at
 - **Immuch360 Desktop, pirmiausia Windows**: išleistas darbalaukio surinkimas 3 su 360° vaizdo grotuvu (360°, 3D, VR180 ir neapdoroti 360° vaizdo įrašai, du neapdorotų failų objektyvai, vaizdo dydis, išmatuotas kiekviename kompiuteryje) ir Tapo tiesioginiu vaizdu, o nuo 2026 m. spalio 9 d. darbalaukio šaltiniai yra pagrindinėje atšakos šakoje `immuch360` (žr. [Windows kompiuteryje](#on-a-windows-computer-immuch360-desktop-preview)). Toliau paties atšakos darbo eigos libmpv vietoj 2024 m. versijos ir kiekvienos funkcijos rankinis tikrinimas Windows kompiuteryje su tikrais failais, abiem ekranais ir tikra kamera, su jo pataisymais; tada Spatial 2.5D su internetine kamera; tada Linux ir macOS; tada diegimo programa, pasirašytas surinkimas ir automatiniai atnaujinimai.
 - **Google Play**: 20 surinkimas veikia nuo 2026 m. spalio 7 d., vietoj 18 surinkimo; įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d. 21 surinkimas telefonuose ir planšetėse nieko nekeičia.
 - **App Store**: versija 3.3.0 laukia Apple peržiūros; ji turi 11 surinkimo funkcijas, todėl įkėlimas į Immich ir vaizdo dekoderių patikra (15 surinkimas) bei neapdoroti Insta360 failai (16 surinkimas) ateis su kitu App Store atnaujinimu. Nuoroda bus pridėta čia, kai ji veiks.
-- **Meta Horizon Store**: Meta patvirtino įrašą 2026 m. spalio 7 d. su 14 surinkimu. 21 surinkimas pateiktas kaip pirmasis jo atnaujinimas: jis atneša viską nuo 14 surinkimo (įkėlimus iš bendrinimo į Immich, vaizdo įrašo šaltinį, parenkamą pagal tai, ką akiniai dekoduoja, neapdorotus Insta360, GoPro ir DJI failus, DLNA, telefono bendrinimą, Apple erdvines nuotraukas, Plex Media Server bibliotekas, Tapo kameras), o parduotuvė jį skelbia Quest 2, Quest Pro, Quest 3 ir 3S. Parduotuvės nuoroda bus pridėta čia, kai puslapis taps viešas; šoniniu būdu įdiegtą kopiją pirmiausia reikės pašalinti (žr. [Diegimas](#install)).
+- **Meta Horizon Store**: Meta patvirtino įrašą 2026 m. spalio 7 d. su 14 surinkimu, ir nuo tos dienos programa viešai prieinama [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). 21 surinkimas pateiktas kaip pirmasis jo atnaujinimas: jis atneša viską nuo 14 surinkimo (įkėlimus iš bendrinimo į Immich, vaizdo įrašo šaltinį, parenkamą pagal tai, ką akiniai dekoduoja, neapdorotus Insta360, GoPro ir DJI failus, DLNA, telefono bendrinimą, Apple erdvines nuotraukas, Plex Media Server bibliotekas, Tapo kameras), o parduotuvė jį skelbia Quest 2, Quest Pro, Quest 3 ir 3S. Norint įdiegti parduotuvės versiją, šoniniu būdu įdiegtą kopiją pirmiausia reikės pašalinti (žr. [Diegimas](#install)).
 - **Parduotuvių įrašai**: Google Play įrašas perrašytas 2026 m. spalį su naujomis ekrano nuotraukomis, o jo televizoriaus ekrano nuotraukos ir televizoriaus reklamjuostė pridėtos 2026 m. spalio 8 d.; įrašas televizoriams Google peržiūroje nuo 2026 m. spalio 9 d. App Store tekstas vis dar aprašo pirmuosius surinkimus (360° nuotraukos ir vaizdo įrašai, neapdoroti failai rodomi plokšti); jis pristatys 3D, VR180 ir Spatial peržiūras, režimą be serverio, tinklo bendrinimus, medijos grotuvą ir neapdorotus Insta360 failus. Meta Horizon Store tekstas jau pristato medijos grotuvą.
 - **Neapdoroti 360° kameros failai, toliau**: eigos indikatorius, kol neapdorota nuotrauka ruošiama akiniams; GoPro ir DJI vaizdo įrašų išlyginimas pagal jų pačių judesio duomenis; dvigubos „žuvies akies“ .dng; pranešimai iš įrenginių apie 18 surinkimo dviejų objektyvų atkūrimą (X4, X5, X6, GoPro MAX 2, Osmo 360), kad būtų patvirtintos siūlės ir dekoderių ištekliai.
 - **DLNA, telefono bendrinimas ir Apple erdvinė medija, toliau**: 19 surinkimo pranešimai iš įrenginių (Plex, Jellyfin, NAS ir Freebox Server per DLNA; telefonas, aptarnaujantis Quest, taip pat per savo prieigos tašką; tikros iPhone erdvinės nuotraukos ir vaizdo įrašai akiniuose); daugiaadresio ryšio teisė, kurios prašoma iš Apple, kad iPhone rastų kiekvieną DLNA serverį; ankstesnis ir kitas tarp erdvinių nuotraukų akiniuose; erdvinis ženklelis ant serverio nuotraukų laiko skalėje; erdviniai vaizdo įrašai 3D vaizdu Quest akiniuose, jei leis jų dekoderiai.

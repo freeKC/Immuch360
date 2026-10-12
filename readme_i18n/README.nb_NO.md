@@ -15,11 +15,11 @@ Den er laget for deg som fotograferer med et 360°-kamera (Insta360, GoPro MAX, 
 
 <div align="center">
 
-| Plattform | Hvor du får den | Status 10. oktober 2026 |
+| Plattform | Hvor du får den | Status 12. oktober 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoner og nettbrett | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 på GitHub, sendt til Google Play 10. oktober 2026 (build 20 publisert der siden 7. oktober) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | versjon 3.3.0 venter på Apples gjennomgang; [bygg den selv](#build-it-yourself) i mellomtiden |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [APK](#meta-quest-3) · Horizon Store | oppføringen er godkjent, build 21 til gjennomgang hos Meta, build 23 på alfakanalen |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | i Horizon Store siden 7. oktober 2026 (build 14), build 21 til gjennomgang hos Meta, build 23 på alfakanalen |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 på GitHub; Google Play-oppføringen for TV-er har vært til gjennomgang hos Google siden 9. oktober 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Forhåndsversjon som ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | skrivebordsbuild 4 på Windows: bilder, flate videoer og 360°-videoer; macOS og Linux senere |
 
@@ -529,7 +529,7 @@ Mediene kommer fra Immich-serveren din, selve headsettet, en NAS, en medieserver
 
 ### Åpne den oppslukende visningen
 
-1. Installer appen på headsettet: til oppføringen i Horizon Store er godkjent, sideloader du APK-en, se [Installer](#install).
+1. Installer appen på headsettet fra [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), eller sideload APK-en til en nyere build, se [Installer](#install).
 2. Logg inn med Immich-serveren din, eller trykk på "Bruk uten server" for headsettets egne bilder og videoer.
 3. Åpne et 360°-bilde eller en 360°-video i visningen, fra tidslinjen, 360°-listen, et album eller en delingsmappe.
 4. Trykk på 360°-knappen, eller "Vis som 360°" i menyen ⋮. I headsettet åpner de den oppslukende visningen direkte, i stedet for kulevisningen på telefoner.
@@ -930,7 +930,7 @@ WebDAV-, DLNA- og telefondelinger på en vanlig HTTP-adresse i det lokale nettve
 <a id="install"></a>
 ### Installer
 
-Meta godkjente oppføringen i Horizon Store 7. oktober 2026 med build 14, og build 21 er sendt inn som dens første oppdatering. Inntil butikksiden er offentlig, eller for å få en build før butikken har den, sideloader du `-quest-release.apk`-filen fra en utgivelse (bygget for headsettet: 64 bit, mål-SDK 34, bare tillatelsene headsettet bruker), eller den universelle `-release.apk`:
+Immuch360 har vært i [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) siden 7. oktober 2026 med build 14, og build 21 er under gjennomgang hos Meta som dens første oppdatering. For å få en build før butikken har den, sideloader du `-quest-release.apk`-filen fra en utgivelse (bygget for headsettet: 64 bit, mål-SDK 34, bare tillatelsene headsettet bruker), eller den universelle `-release.apk`:
 
 1. Slå på utviklermodus én gang. I Meta Horizon-appen på telefonen åpner du Devices (Enheter), velger headsettet, deretter Headset settings (Headsettinnstillinger), deretter Developer mode (Utviklermodus). Dette krever en utviklerkonto, som er gratis på developers.meta.com. Du trenger også adb (Android SDK Platform Tools) på datamaskinen, eller SideQuest.
 2. Koble headsettet til en datamaskin med en USB-C-kabel. I headsettet godtar du "Allow USB debugging" (Tillat USB-feilsøking).
@@ -1108,7 +1108,7 @@ CI-en for Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) kjører 
 <a id="where-to-get-it"></a>
 ## Hvor du får den
 
-Appen finnes på Google Play for telefoner og nettbrett; App Store-versjonen venter på gjennomgang hos Apple, Meta Horizon Store-oppføringen er godkjent og den første oppdateringen er under gjennomgang hos Meta, og Google Play-versjonen for TV-er venter på Googles gjennomgang av TV-utgivelsen. Immuch360 Desktop, for Windows, er en forhåndsversjon på GitHub. GitHub-utgivelsen er alltid den nyeste builden:
+Appen finnes på Google Play for telefoner og nettbrett; App Store-versjonen venter på gjennomgang hos Apple, appen finnes i Meta Horizon Store og den første oppdateringen er under gjennomgang hos Meta, og Google Play-versjonen for TV-er venter på Googles gjennomgang av TV-utgivelsen. Immuch360 Desktop, for Windows, er en forhåndsversjon på GitHub. GitHub-utgivelsen er alltid den nyeste builden:
 
 - **Android-telefoner og -nettbrett**
   - I dag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), eller APK-en på siden [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` for en telefon (den universelle `Immuch360-v<version>-release.apk` fungerer overalt, `-armeabi-v7a` er for eldre 32-bits telefoner, og `.aab`-filen er for Google Play, ikke for sideloading). GitHub-builden ligger vanligvis foran butikken. Uansett installeres den ved siden av den offisielle Immich-appen (pakke `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Appen finnes på Google Play for telefoner og nettbrett; App Store-versjonen ven
   - Snart: App Store, under gjennomgang.
 - **Meta Quest 2, Quest Pro, Quest 3 og 3S (Quest 2 og Quest Pro ikke testet)**
   - I dag: `-quest-release.apk`-filen fra siden [Releases](https://github.com/freeKC/Immuch360/releases) (den universelle `-release.apk` fungerer også), sideloadet i utviklermodus, se [Installer](#install). Butikkbuilden og APK-en fra GitHub er signert med forskjellige nøkler: for å bytte fra den ene til den andre avinstallerer du appen først (innstillingene og de lagrede delingene forsvinner med den).
-  - Snart: i Meta Horizon Store ble oppføringen godkjent 7. oktober 2026 med build 14, og build 21, den første oppdateringen, er under gjennomgang hos Meta; butikkens alfakanal (bare testere) får hver nye build.
+  - Butikk: [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) har hatt appen siden 7. oktober 2026 med build 14, og build 21, den første oppdateringen, er under gjennomgang hos Meta; butikkens alfakanal (bare testere) får hver nye build.
 - **Android TV og Google TV (fra build 20)**
   - I dag: den universelle `Immuch360-v<version>-release.apk` fra siden [Releases](https://github.com/freeKC/Immuch360/releases), sideloadet med adb, se [Installer den på TV-en](#install-it-on-the-tv). Det er den samme appen som på telefoner.
   - Snart: Google Play på TV-er, der oppføringen har vært til gjennomgang hos Google siden 9. oktober 2026.
@@ -1126,7 +1126,7 @@ Appen finnes på Google Play for telefoner og nettbrett; App Store-versjonen ven
   - I dag: Immuch360 Desktop, skrivebordsbuild 4, ZIP-filen `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` fra [forhåndsutgivelsen for skrivebord](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), pakket ut og startet slik [Last ned og installer på Windows](#download-and-install-on-windows) beskriver. Bilder, flate videoer, 360°-, 3D-, VR180- og rå 360°-videoer (jevnt på en dedikert grafikkbrikke, med begrensninger på en integrert) og Tapo-direktebildet.
   - Snart: Spatial 2.5D med webkameraet, deretter Linux og macOS; et installasjonsprogram, en signert build og oppdateringer senere.
 
-Lenkene til App Store og Meta Horizon Store legges til her så snart oppføringene er publisert. Logg inn med den vanlige URL-en til Immich-serveren din og kontoen din, eller trykk på "Bruk uten server" på innloggingssiden for å starte med enhetens egne bilder og videoer. APK-en fra GitHub oppdaterer seg ikke selv: følg med på Releases-siden, og når du har installert appen fra en butikk, henter du oppdateringene fra den butikken.
+Lenken til App Store legges til her så snart oppføringen er publisert; appen finnes allerede i [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). Logg inn med den vanlige URL-en til Immich-serveren din og kontoen din, eller trykk på "Bruk uten server" på innloggingssiden for å starte med enhetens egne bilder og videoer. APK-en fra GitHub oppdaterer seg ikke selv: følg med på Releases-siden, og når du har installert appen fra en butikk, henter du oppdateringene fra den butikken.
 
 <a id="build-it-yourself"></a>
 ## Bygg den selv
@@ -1215,7 +1215,7 @@ Det som ikke er gjort ennå, det mest sannsynlige først. Ingenting her er et l�
 - **Immuch360 Desktop, Windows først**: skrivebordsbuild 3 er ute, med 360°-videoavspilleren (360°-, 3D-, VR180- og rå 360°-videoer, de to objektivene i råfilene, størrelsen på visningen målt på hver datamaskin) og Tapo-direktebildet, og skrivebordskildene ligger i hovedgrenen til forken, `immuch360`, siden 9. oktober 2026 (se [På en Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview)). Deretter libmpv fra forkens egen arbeidsflyt i stedet for den fra 2024, og testen av hver funksjon for hånd på en Windows-PC med ekte filer, begge skjermene og et ekte kamera, med rettelsene; så Spatial 2.5D med webkameraet; så Linux og macOS; så et installasjonsprogram, en signert build og automatiske oppdateringer.
 - **Google Play**: build 20 har vært publisert siden 7. oktober 2026, i stedet for build 18; oppføringen for TV-er har vært til gjennomgang hos Google siden 9. oktober 2026. Build 21 endrer ingenting på telefoner og nettbrett.
 - **App Store**: versjon 3.3.0 venter på gjennomgang hos Apple; den har funksjonene fra build 11, så opplasting til Immich og kontrollen av videodekodere (build 15) og de rå Insta360-filene (build 16) kommer med neste App Store-oppdatering. Lenken legges til her når den er publisert.
-- **Meta Horizon Store**: Meta godkjente oppføringen 7. oktober 2026 med build 14. Build 21 er sendt inn som dens første oppdatering: den har alt siden build 14 (opplasting fra en deling til Immich, videokilden valgt ut fra hva headsettet dekoder, rå filer fra Insta360, GoPro og DJI, DLNA, telefondelingen, romlige bilder fra Apple, Plex Media Server-biblioteker, Tapo-kameraer), og butikken oppfører den for Quest 2, Quest Pro, Quest 3 og 3S. Butikklenken legges til her når siden er offentlig; en sideloadet kopi må avinstalleres først (se [Installer](#install)).
+- **Meta Horizon Store**: Meta godkjente oppføringen 7. oktober 2026 med build 14, og appen har vært offentlig i [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) siden den dagen. Build 21 er sendt inn som dens første oppdatering: den har alt siden build 14 (opplasting fra en deling til Immich, videokilden valgt ut fra hva headsettet dekoder, rå filer fra Insta360, GoPro og DJI, DLNA, telefondelingen, romlige bilder fra Apple, Plex Media Server-biblioteker, Tapo-kameraer), og butikken oppfører den for Quest 2, Quest Pro, Quest 3 og 3S. For å installere butikkversjonen må en sideloadet kopi avinstalleres først (se [Installer](#install)).
 - **Butikkoppføringer**: Google Play-oppføringen ble skrevet om i oktober 2026 med nye skjermbilder, og TV-skjermbildene og TV-banneret ble lagt til 8. oktober 2026; oppføringen for TV-er har vært til gjennomgang hos Google siden 9. oktober 2026. Teksten i App Store beskriver fortsatt de første buildene (360°-bilder og -videoer, rå filer vist flatt); den skal presentere 3D-, VR180- og Spatial-visningene, modusen uten server, nettverksdelinger, mediespilleren og de rå Insta360-filene. Teksten i Meta Horizon Store presenterer allerede mediespilleren.
 - **Rå filer fra 360°-kameraer, videre**: en fremdriftsindikator mens et rått bilde klargjøres for headsettet; oppretting av GoPro- og DJI-videoer fra deres egne bevegelsesdata; dobbel fiskeøye-.dng; enhetsrapporter om avspillingen med to objektiver i build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) for å bekrefte skjøter og dekoderbudsjetter.
 - **DLNA, telefondeling og romlige medier fra Apple, videre**: enhetsrapportene for build 19 (Plex, Jellyfin, en NAS og Freebox Server over DLNA; en telefon som leverer til en Quest, også på hotspotet sitt; ekte romlige bilder og videoer fra iPhone i headsettet); multicast-rettigheten som er søkt om hos Apple, slik at iPhoner finner alle DLNA-servere; forrige og neste mellom romlige bilder i headsettet; et romlig merke på serverbilder i tidslinjen; romlige videoer i 3D på Quest, hvis dekoderne tillater det.

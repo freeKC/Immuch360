@@ -15,11 +15,11 @@ Immuch360은 둘러볼 수 있는 360° 사진과 동영상을 갖춘 Immich 모
 
 <div align="center">
 
-| 플랫폼 | 받는 곳 | 2026년 10월 10일 기준 상태 |
+| 플랫폼 | 받는 곳 | 2026년 10월 12일 기준 상태 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 휴대폰과 태블릿 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub에 빌드 23, 2026년 10월 10일 Google Play에 제출(Google Play에는 10월 7일부터 빌드 20 공개 중) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone과 iPad** | App Store | 버전 3.3.0이 Apple의 심사를 기다리는 중; 그동안은 [직접 빌드하기](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3와 3S | [APK](#meta-quest-3) · Horizon Store | 등록 승인됨, 빌드 21은 Meta 심사 중, 빌드 23은 알파 채널에 있음 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3와 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | 2026년 10월 7일부터 Horizon Store에 공개(빌드 14), 빌드 21은 Meta 심사 중, 빌드 23은 알파 채널에 있음 |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub에 빌드 23; TV용 Google Play 등록 정보는 2026년 10월 9일부터 Google 심사 중 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [미리 보기 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows용 데스크톱 빌드 4: 사진, 평면 동영상과 360° 동영상; macOS와 Linux는 나중에 |
 
@@ -529,7 +529,7 @@ iPhone은 공간 사진과 동영상을 찍지만, Immich 서버는 이에 대�
 
 ### 몰입형 보기 열기
 
-1. 헤드셋에 앱을 설치합니다. Horizon Store 등록이 승인될 때까지는 APK를 사이드로드하세요. [설치](#install)를 보세요.
+1. [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)에서 헤드셋에 앱을 설치하거나, 더 새로운 빌드의 APK를 사이드로드하세요. [설치](#install)를 보세요.
 2. Immich 서버로 로그인하거나, 헤드셋 자체의 사진과 동영상을 보려면 "서버 없이 사용"을 탭합니다.
 3. 타임라인, 360° 목록, 앨범 또는 공유 폴더에서 360° 사진이나 동영상을 뷰어로 엽니다.
 4. 360° 버튼이나 ⋮ 메뉴의 "360°로 보기"를 누릅니다. 헤드셋에서는 휴대폰의 구 뷰어 대신 몰입형 보기가 바로 열립니다.
@@ -930,7 +930,7 @@ Quest 3와 3S는 테스트했습니다. Quest 2와 Quest Pro는 아직 테스트
 <a id="install"></a>
 ### 설치
 
-Meta는 2026년 10월 7일에 빌드 14로 Horizon Store 등록을 승인했고, 빌드 21이 첫 업데이트로 제출되었습니다. 스토어 페이지가 공개될 때까지, 또는 스토어보다 먼저 빌드를 받으려면 릴리스의 `-quest-release.apk` 파일(헤드셋용 빌드: 64비트, 타깃 SDK 34, 헤드셋이 쓰는 권한만 포함)이나 범용 `-release.apk`를 사이드로드하세요.
+Immuch360은 2026년 10월 7일부터 빌드 14로 [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)에 있으며, 빌드 21이 첫 업데이트로 Meta 심사 중입니다. 스토어보다 먼저 빌드를 받으려면 릴리스의 `-quest-release.apk` 파일(헤드셋용 빌드: 64비트, 타깃 SDK 34, 헤드셋이 쓰는 권한만 포함)이나 범용 `-release.apk`를 사이드로드하세요.
 
 1. 개발자 모드를 한 번 켭니다. Meta Horizon 휴대폰 앱에서 Devices(기기)를 열고 헤드셋을 고른 다음 Headset settings(헤드셋 설정), 그다음 Developer mode(개발자 모드)를 엽니다. 개발자 계정이 필요하며, developers.meta.com에서 무료로 만들 수 있습니다. 컴퓨터에는 adb(Android SDK Platform Tools)나 SideQuest도 필요합니다.
 2. USB-C 케이블로 헤드셋을 컴퓨터에 연결합니다. 헤드셋에서 "Allow USB debugging"(USB 디버깅 허용)을 수락합니다.
@@ -1108,7 +1108,7 @@ Immuch360 Desktop의 CI(`.github/workflows/immuch360-desktop.yml`)는 `immuch360
 <a id="where-to-get-it"></a>
 ## 받는 곳
 
-앱은 휴대폰과 태블릿용으로 Google Play에 있습니다. App Store 버전은 Apple의 심사를, Meta Horizon Store 등록은 승인되었고 첫 업데이트는 Meta의 심사 중이며, TV용 Google Play 버전은 TV 릴리스에 대한 Google의 심사를 기다리고 있습니다. Windows용 Immuch360 Desktop은 GitHub에서 미리 보기로 제공됩니다. GitHub 릴리스에는 언제나 최신 빌드가 있습니다.
+앱은 휴대폰과 태블릿용으로 Google Play에 있습니다. App Store 버전은 Apple의 심사를, Meta Horizon Store에는 앱이 공개되어 있고 첫 업데이트는 Meta의 심사 중이며, TV용 Google Play 버전은 TV 릴리스에 대한 Google의 심사를 기다리고 있습니다. Windows용 Immuch360 Desktop은 GitHub에서 미리 보기로 제공됩니다. GitHub 릴리스에는 언제나 최신 빌드가 있습니다.
 
 - **Android 휴대폰과 태블릿**
   - 지금: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), 또는 [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 APK: 휴대폰용은 `Immuch360-v<version>-arm64-v8a-release.apk`(범용 `Immuch360-v<version>-release.apk`는 어디서나 동작, `-armeabi-v7a`는 오래된 32비트 휴대폰용, `.aab` 파일은 Google Play용이며 사이드로드용이 아님). GitHub 빌드가 보통 스토어보다 앞서 있습니다. 어느 쪽이든 공식 Immich 앱 옆에 따로 설치됩니다(패키지 `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Immuch360 Desktop의 CI(`.github/workflows/immuch360-desktop.yml`)는 `immuch360
   - 곧: App Store, 심사 중.
 - **Meta Quest 2, Quest Pro, Quest 3와 3S(Quest 2와 Quest Pro는 테스트하지 않음)**
   - 지금: [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 `-quest-release.apk` 파일(범용 `-release.apk`도 동작)을 개발자 모드에서 사이드로드합니다. [설치](#install)를 보세요. 스토어 빌드와 GitHub APK는 서로 다른 키로 서명되어 있으므로, 한쪽에서 다른 쪽으로 바꾸려면 먼저 앱을 제거해야 합니다(설정과 저장한 공유도 함께 사라짐).
-  - 곧: Meta Horizon Store에서는 2026년 10월 7일에 빌드 14로 등록이 승인되었고, 첫 업데이트인 빌드 21이 Meta 심사 중. 스토어의 알파 채널(테스터 전용)은 새 빌드를 매번 받음.
+  - 스토어: [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)에 2026년 10월 7일부터 빌드 14로 앱이 공개되어 있고, 첫 업데이트인 빌드 21이 Meta 심사 중. 스토어의 알파 채널(테스터 전용)은 새 빌드를 매번 받음.
 - **Android TV와 Google TV(빌드 20부터)**
   - 지금: [Releases](https://github.com/freeKC/Immuch360/releases) 페이지의 범용 `Immuch360-v<version>-release.apk`를 adb로 사이드로드합니다. [TV에 설치하기](#install-it-on-the-tv)를 보세요. 휴대폰과 같은 앱입니다.
   - 곧: TV용 Google Play, TV용 등록 정보는 2026년 10월 9일부터 Google 심사 중.
@@ -1126,7 +1126,7 @@ Immuch360 Desktop의 CI(`.github/workflows/immuch360-desktop.yml`)는 `immuch360
   - 지금: Immuch360 Desktop 데스크톱 빌드 4, [데스크톱 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)의 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`을 [Windows에서 다운로드와 설치](#download-and-install-on-windows)의 설명대로 압축을 풀고 실행합니다. 사진, 평면 동영상, 360°, 3D, VR180, 원본 360° 동영상(별도 그래픽 칩에서는 부드럽고 내장 칩에서는 제한이 있음), Tapo 실시간 화면이 됩니다.
   - 곧: 웹캠을 쓰는 Spatial 2.5D, 그다음 Linux와 macOS. 설치 프로그램, 서명된 빌드, 업데이트는 그 뒤에.
 
-App Store와 Meta Horizon Store 링크는 등록이 공개되는 대로 여기에 추가하겠습니다. 평소의 Immich 서버 URL과 계정으로 로그인하거나, 로그인 화면에서 "서버 없이 사용"을 탭해 기기 자체의 사진과 동영상으로 시작하세요. GitHub에서 받은 APK는 스스로 업데이트되지 않으니 Releases 페이지를 확인하세요. 스토어에서 앱을 설치했다면 업데이트도 그 스토어에서 받으세요.
+App Store 링크는 등록이 공개되는 대로 여기에 추가하겠습니다. 앱은 이미 [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)에 있습니다. 평소의 Immich 서버 URL과 계정으로 로그인하거나, 로그인 화면에서 "서버 없이 사용"을 탭해 기기 자체의 사진과 동영상으로 시작하세요. GitHub에서 받은 APK는 스스로 업데이트되지 않으니 Releases 페이지를 확인하세요. 스토어에서 앱을 설치했다면 업데이트도 그 스토어에서 받으세요.
 
 <a id="build-it-yourself"></a>
 ## 직접 빌드하기
@@ -1215,7 +1215,7 @@ Android, Android TV, Google TV는 Google LLC의 상표이고, Apple, iPhone, iPa
 - **Immuch360 Desktop, Windows부터**: 360° 동영상 플레이어(360°, 3D, VR180, 원본 360° 동영상, 원본 파일의 두 렌즈, 컴퓨터마다 측정하는 화면 크기)와 Tapo 실시간 화면을 갖춘 데스크톱 빌드 3이 나왔고, 2026년 10월 9일부터 데스크톱 소스가 포크의 기본 브랜치인 `immuch360`에 있습니다([Windows 컴퓨터에서](#on-a-windows-computer-immuch360-desktop-preview) 참조). 다음은 2024년 버전을 대신할 포크 자체 워크플로의 libmpv, 그리고 실제 파일, 두 화면, 실제 카메라로 Windows PC에서 각 기능을 손으로 테스트하고 수정하는 것입니다. 그다음 웹캠을 쓰는 Spatial 2.5D, 그다음 Linux와 macOS, 그다음 설치 프로그램, 서명된 빌드, 자동 업데이트입니다.
 - **Google Play**: 빌드 20이 빌드 18 대신 2026년 10월 7일부터 공개되어 있고, TV용 등록 정보는 2026년 10월 9일부터 Google 심사 중입니다. 빌드 21은 휴대폰과 태블릿에서 아무것도 바꾸지 않습니다.
 - **App Store**: 버전 3.3.0이 Apple의 심사를 기다리고 있습니다. 빌드 11의 기능이 들어 있으므로, Immich로 업로드와 동영상 디코더 검사(빌드 15), Insta360 RAW 파일(빌드 16)은 다음 App Store 업데이트와 함께 옵니다. 공개되면 링크를 여기에 추가하겠습니다.
-- **Meta Horizon Store**: Meta는 2026년 10월 7일에 빌드 14로 등록을 승인했습니다. 빌드 21이 첫 업데이트로 제출되었습니다. 빌드 14 이후의 모든 것(공유에서 Immich로 업로드, 헤드셋이 디코딩하는 것에 따라 고르는 동영상 소스, Insta360, GoPro, DJI RAW 파일, DLNA, 휴대폰 공유, Apple 공간 사진, Plex Media Server 라이브러리, Tapo 카메라)을 담고 있으며, 스토어는 이를 Quest 2, Quest Pro, Quest 3, 3S용으로 등록합니다. 스토어 페이지가 공개되면 링크를 여기에 추가하겠습니다. 사이드로드한 사본은 먼저 제거해야 합니다([설치](#install) 참조).
+- **Meta Horizon Store**: Meta는 2026년 10월 7일에 빌드 14로 등록을 승인했고, 그날부터 앱이 [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)에 공개되어 있습니다. 빌드 21이 첫 업데이트로 제출되었습니다. 빌드 14 이후의 모든 것(공유에서 Immich로 업로드, 헤드셋이 디코딩하는 것에 따라 고르는 동영상 소스, Insta360, GoPro, DJI RAW 파일, DLNA, 휴대폰 공유, Apple 공간 사진, Plex Media Server 라이브러리, Tapo 카메라)을 담고 있으며, 스토어는 이를 Quest 2, Quest Pro, Quest 3, 3S용으로 등록합니다. 스토어 버전을 설치하려면 사이드로드한 사본은 먼저 제거해야 합니다([설치](#install) 참조).
 - **스토어 소개 문구**: Google Play 소개는 2026년 10월에 새 스크린샷과 함께 다시 썼고, TV 스크린샷과 TV 배너는 2026년 10월 8일에 추가했습니다. TV용 등록 정보는 2026년 10월 9일부터 Google 심사 중입니다. App Store 문구는 아직 초기 빌드(360° 사진과 동영상, 평면으로 보이는 RAW 파일)를 설명합니다. 앞으로 3D, VR180, Spatial 뷰어, 서버 없는 모드, 네트워크 공유, 미디어 플레이어, Insta360 RAW 파일을 소개할 예정입니다. Meta Horizon Store 문구는 이미 미디어 플레이어를 소개합니다.
 - **360° 카메라 RAW 파일, 다음 단계**: 헤드셋용으로 RAW 사진을 준비하는 동안의 진행 표시, GoPro와 DJI 동영상의 자체 움직임 데이터를 이용한 수평 맞추기, 듀얼 어안 .dng, 이음새와 디코더 여유를 확인하기 위한 빌드 18의 두 렌즈 재생에 대한 기기 보고(X4, X5, X6, GoPro MAX 2, Osmo 360).
 - **DLNA, 휴대폰 공유, Apple 공간 미디어, 다음 단계**: 빌드 19의 기기 보고(DLNA로 Plex, Jellyfin, NAS, Freebox Server. 핫스팟을 포함해 Quest에 제공하는 휴대폰. 헤드셋에서 실제 iPhone 공간 사진과 동영상), iPhone이 모든 DLNA 서버를 찾도록 Apple에 요청한 멀티캐스트 권한, 헤드셋에서 공간 사진 사이의 이전과 다음, 타임라인의 서버 사진에 공간 배지, 디코더가 허락한다면 Quest에서 공간 동영상을 3D로.

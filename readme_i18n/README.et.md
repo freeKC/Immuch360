@@ -15,11 +15,11 @@ See on mõeldud neile, kes pildistavad 360° kaameraga (Insta360, GoPro MAX, DJI
 
 <div align="center">
 
-| Platvorm | Kust seda saada | Olek 10. oktoobril 2026 |
+| Platvorm | Kust seda saada | Olek 12. oktoobril 2026 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonid ja tahvelarvutid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | järk 23 GitHubis, saadetud Google Playsse 10. oktoobril 2026 (seal on alates 7. oktoobrist avaldatud järk 20) |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ja iPad** | App Store | versioon 3.3.0 ootab Apple'i ülevaatust; seni [ehita see ise](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [APK](#meta-quest-3) · Horizon Store | kirje heaks kiidetud, järk 21 Meta ülevaatusel, järk 23 alfakanalis |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | Horizon Store'is alates 7. oktoobrist 2026 (järk 14), järk 21 Meta ülevaatusel, järk 23 alfakanalis |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#install-it-on-the-tv) · Google Play | järk 23 GitHubis; Google Play kirje teleritele on Google'i ülevaatusel alates 9. oktoobrist 2026 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Eelvaate ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | töölauajärk 4 Windowsis: fotod, tasapinnalised ja 360° videod; macOS ja Linux hiljem |
 
@@ -529,7 +529,7 @@ Meedia tuleb sinu Immichi serverist, peakomplektist endast, NAS-ist, meediaserve
 
 ### Kaasahaarava vaate avamine
 
-1. Installi rakendus peakomplekti: kuni Horizon Store'i kirje heaks kiidetakse, installi APK käsitsi (sideload), vaata [Installimine](#install).
+1. Installi rakendus peakomplekti [Horizon Store'ist](https://www.meta.com/experiences/immuch360/1384208401440714/) või installi uuema järgu APK käsitsi (sideload), vaata [Installimine](#install).
 2. Logi sisse oma Immichi serveriga või puuduta "Kasuta ilma serverita" peakomplekti enda fotode ja videote jaoks.
 3. Ava 360° foto või video vaaturis, ajajoonelt, 360° loendist, albumist või jao kaustast.
 4. Vajuta 360° nuppu või menüüs ⋮ "Vaata 360° vaatena". Peakomplektis avavad need otse kaasahaarava vaate, mitte telefonide sfäärivaaturi.
@@ -930,7 +930,7 @@ Kohtvõrgu lihtsal HTTP aadressil olevaid WebDAV, DLNA ja telefoni jagusid see e
 <a id="install"></a>
 ### Installimine
 
-Meta kiitis Horizon Store'i kirje heaks 7. oktoobril 2026 koos järguga 14 ja järk 21 on esitatud selle esimese uuendusena. Kuni poe leht pole avalik, või et saada järk enne, kui see poes on, installi väljalaske fail `-quest-release.apk` käsitsi (sideload) (ehitatud peakomplekti jaoks: 64-bitine, siht-SDK 34, ainult peakomplekti kasutatavad load) või universaalne `-release.apk`:
+Immuch360 on [Horizon Store'is](https://www.meta.com/experiences/immuch360/1384208401440714/) alates 7. oktoobrist 2026 koos järguga 14 ja järk 21 on Meta ülevaatusel selle esimese uuendusena. Et saada järk enne, kui see poes on, installi väljalaske fail `-quest-release.apk` käsitsi (sideload) (ehitatud peakomplekti jaoks: 64-bitine, siht-SDK 34, ainult peakomplekti kasutatavad load) või universaalne `-release.apk`:
 
 1. Lülita arendajarežiim üks kord sisse. Ava telefonis rakendus Meta Horizon, ava "Devices" (Seadmed), vali peakomplekt, seejärel "Headset settings" (Peakomplekti seaded), seejärel "Developer mode" (Arendajarežiim). Selleks on vaja arendajakontot, mis on tasuta aadressil developers.meta.com. Arvutis on vaja ka adb-d (Android SDK Platform Tools) või SideQuesti.
 2. Ühenda peakomplekt USB-C kaabliga arvutiga. Nõustu peakomplektis küsimusega "Allow USB debugging" (Luba USB-silumine).
@@ -1108,7 +1108,7 @@ Immuch360 Desktopi CI (`.github/workflows/immuch360-desktop.yml`) töötab harus
 <a id="where-to-get-it"></a>
 ## Kust seda saada
 
-Rakendus on telefonidele ja tahvelarvutitele Google Plays; App Store'i versioon ootab Apple'i ülevaatust, Meta Horizon Store'i kirje on heaks kiidetud ja selle esimene uuendus on Meta ülevaatusel ning teleritele mõeldud Google Play versioon ootab Google'i ülevaatust teleri väljalaske jaoks. Immuch360 Desktop Windowsile on GitHubis eelvaatena. GitHubi väljalase on alati uusim järk:
+Rakendus on telefonidele ja tahvelarvutitele Google Plays; App Store'i versioon ootab Apple'i ülevaatust, rakendus on Meta Horizon Store'is ja selle esimene uuendus on Meta ülevaatusel ning teleritele mõeldud Google Play versioon ootab Google'i ülevaatust teleri väljalaske jaoks. Immuch360 Desktop Windowsile on GitHubis eelvaatena. GitHubi väljalase on alati uusim järk:
 
 - **Android-telefonid ja -tahvelarvutid**
   - Täna: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) või APK lehelt [Releases](https://github.com/freeKC/Immuch360/releases): telefoni jaoks `Immuch360-v<version>-arm64-v8a-release.apk` (universaalne `Immuch360-v<version>-release.apk` töötab kõikjal, `-armeabi-v7a` on vanematele 32-bitistele telefonidele ja fail `.aab` on Google Play jaoks, mitte käsitsi installimiseks). GitHubi järk on tavaliselt poest ees. Mõlemal juhul installitakse see ametliku Immichi rakenduse kõrvale (pakett `com.aprogsys.immuch360`).
@@ -1118,7 +1118,7 @@ Rakendus on telefonidele ja tahvelarvutitele Google Plays; App Store'i versioon 
   - Varsti: App Store, ülevaatusel.
 - **Meta Quest 2, Quest Pro, Quest 3 ja 3S (Quest 2 ja Quest Pro testimata)**
   - Täna: lehe [Releases](https://github.com/freeKC/Immuch360/releases) fail `-quest-release.apk` (ka universaalne `-release.apk` töötab), käsitsi installitud arendajarežiimis, vaata [Installimine](#install). Poe järk ja GitHubi APK on allkirjastatud erinevate võtmetega: ühelt teisele üleminekuks desinstalli rakendus kõigepealt (selle seaded ja salvestatud jaod kaovad koos sellega).
-  - Varsti: Meta Horizon Store'is kiideti kirje heaks 7. oktoobril 2026 koos järguga 14 ja järk 21, selle esimene uuendus, on Meta ülevaatusel; poe alfakanal (ainult testijatele) saab iga uue järgu.
+  - Pood: [Meta Horizon Store'is](https://www.meta.com/experiences/immuch360/1384208401440714/) on rakendus alates 7. oktoobrist 2026 koos järguga 14 ja järk 21, selle esimene uuendus, on Meta ülevaatusel; poe alfakanal (ainult testijatele) saab iga uue järgu.
 - **Android TV ja Google TV (alates järgust 20)**
   - Täna: lehe [Releases](https://github.com/freeKC/Immuch360/releases) universaalne `Immuch360-v<version>-release.apk`, käsitsi installitud adb abil, vaata [Telerisse installimine](#install-it-on-the-tv). See on sama rakendus mis telefonides.
   - Varsti: Google Play teleritel, mille kirje on Google'i ülevaatusel alates 9. oktoobrist 2026.
@@ -1126,7 +1126,7 @@ Rakendus on telefonidele ja tahvelarvutitele Google Plays; App Store'i versioon 
   - Täna: Immuch360 Desktop, töölauajärk 4, [töölaua eelväljalaske](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`, lahti pakitud ja käivitatud nii, nagu ütleb [Laadi alla ja installi Windowsis](#download-and-install-on-windows). Fotod, tasapinnalised videod, 360°, 3D, VR180 ja töötlemata 360° videod (sujuvad eraldi graafikakiibil, integreeritud kiibil piirangutega) ning Tapo otsepilt.
   - Varsti: Spatial 2.5D veebikaameraga, seejärel Linux ja macOS; installer, allkirjastatud järk ja uuendused hiljem.
 
-App Store'i ja Meta Horizon Store'i lingid lisatakse siia kohe, kui kirjed on avaldatud. Logi sisse oma tavapärase Immichi serveri URL-i ja kontoga või puuduta sisselogimislehel "Kasuta ilma serverita", et alustada seadme enda fotode ja videotega. GitHubi APK ei uuenda end ise: jälgi lehte Releases ja kui oled rakenduse poest installinud, võta uuendused sellest poest.
+App Store'i link lisatakse siia kohe, kui kirje on avaldatud; rakendus on juba [Meta Horizon Store'is](https://www.meta.com/experiences/immuch360/1384208401440714/). Logi sisse oma tavapärase Immichi serveri URL-i ja kontoga või puuduta sisselogimislehel "Kasuta ilma serverita", et alustada seadme enda fotode ja videotega. GitHubi APK ei uuenda end ise: jälgi lehte Releases ja kui oled rakenduse poest installinud, võta uuendused sellest poest.
 
 <a id="build-it-yourself"></a>
 ## Ehita see ise
@@ -1215,7 +1215,7 @@ Mis on veel tegemata, kõige tõenäolisemad eespool. Miski siin pole lubadus ni
 - **Immuch360 Desktop, esmalt Windows**: desktop build 3 on ilmunud, 360° videomängija (360°, 3D, VR180 ja töötlemata 360° videod, töötlemata failide kaks objektiivi, igas arvutis mõõdetud vaate suurus) ja Tapo otsepildiga, ning töölauaversiooni lähtekood on alates 9. oktoobrist 2026 forki põhiharus `immuch360` (vaata [Windowsi arvutis](#on-a-windows-computer-immuch360-desktop-preview)). Järgmisena forki enda töövoo libmpv 2024. aasta oma asemel ning iga funktsiooni käsitsi testimine Windowsi arvutis päris failide, mõlema ekraani ja päris kaameraga, koos parandustega; siis Spatial 2.5D veebikaameraga; siis Linux ja macOS; siis installer, allkirjastatud järk ja automaatsed uuendused.
 - **Google Play**: järk 20 on avaldatud alates 7. oktoobrist 2026, järgu 18 asemel; telerite kirje on Google'i ülevaatusel alates 9. oktoobrist 2026. Järk 21 ei muuda telefonides ja tahvelarvutites midagi.
 - **App Store**: versioon 3.3.0 ootab Apple'i ülevaatust; see sisaldab järgu 11 funktsioone, seega üleslaadimine Immichisse ja videodekoodrite kontroll (järk 15) ning töötlemata Insta360 failid (järk 16) tulevad järgmise App Store'i uuendusega. Link lisatakse siia, kui see on avaldatud.
-- **Meta Horizon Store**: Meta kiitis kirje heaks 7. oktoobril 2026 koos järguga 14. Järk 21 on esitatud selle esimese uuendusena: see toob kõik alates järgust 14 (üleslaadimised jaost Immichisse, videoallikas valitud selle järgi, mida peakomplekt dekodeerib, Insta360, GoPro ja DJI töötlemata failid, DLNA, telefoni jagamine, Apple'i ruumilised fotod, Plex Media Serveri kogud, Tapo kaamerad) ja pood pakub seda Quest 2, Quest Pro, Quest 3 ja 3S jaoks. Poe link lisatakse siia, kui leht on avalik; käsitsi installitud koopia tuleb kõigepealt desinstallida (vaata [Installimine](#install)).
+- **Meta Horizon Store**: Meta kiitis kirje heaks 7. oktoobril 2026 koos järguga 14 ja rakendus on sellest päevast avalikult [Horizon Store'is](https://www.meta.com/experiences/immuch360/1384208401440714/). Järk 21 on esitatud selle esimese uuendusena: see toob kõik alates järgust 14 (üleslaadimised jaost Immichisse, videoallikas valitud selle järgi, mida peakomplekt dekodeerib, Insta360, GoPro ja DJI töötlemata failid, DLNA, telefoni jagamine, Apple'i ruumilised fotod, Plex Media Serveri kogud, Tapo kaamerad) ja pood pakub seda Quest 2, Quest Pro, Quest 3 ja 3S jaoks. Poe versiooni installimiseks tuleb käsitsi installitud koopia kõigepealt desinstallida (vaata [Installimine](#install)).
 - **Poekirjed**: Google Play kirje kirjutati 2026. aasta oktoobris uute ekraanipiltidega ümber ning selle teleri ekraanipildid ja teleri bänner lisati 8. oktoobril 2026; telerite kirje on Google'i ülevaatusel alates 9. oktoobrist 2026. App Store'i tekst kirjeldab endiselt esimesi järke (360° fotod ja videod, töötlemata failid tasapinnalisena); see tutvustab tulevikus 3D, VR180 ja Spatial vaatureid, serverita režiimi, võrgujagusid, meediamängijat ja töötlemata Insta360 faile. Meta Horizon Store'i tekst tutvustab juba meediamängijat.
 - **360° kaamerate töötlemata failid, edasi**: edenemisnäidik, kui töötlemata fotot peakomplekti jaoks ette valmistatakse; GoPro ja DJI videote loodimine nende enda liikumisandmete põhjal; kahe kalasilmaga .dng; seadmete teated järgu 18 kahe objektiiviga esituse kohta (X4, X5, X6, GoPro MAX 2, Osmo 360), et kinnitada õmblusi ja dekoodrite eelarvet.
 - **DLNA, telefoni jagu ja Apple'i ruumiline meedia, edasi**: järgu 19 seadmete teated (Plex, Jellyfin, NAS ja Freebox Server DLNA kaudu; Questi teenindav telefon, ka oma kuumkohas; päris iPhone'i ruumilised fotod ja videod peakomplektis); Apple'ilt küsitud multiedastuse õigus, et iPhone'id leiaksid iga DLNA serveri; eelmine ja järgmine ruumiliste fotode vahel peakomplektis; ruumilise märgi lisamine serveri fotodele ajajoonel; ruumilised videod 3D-s Questis, kui selle dekoodrid seda võimaldavad.

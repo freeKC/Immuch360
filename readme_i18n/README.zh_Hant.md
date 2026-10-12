@@ -15,11 +15,11 @@ Immuch360 是加入了可環顧四周的 360° 相片和影片的 Immich 行動�
 
 <div align="center">
 
-| 平台 | 取得方式 | 2026 年 10 月 10 日狀態 |
+| 平台 | 取得方式 | 2026 年 10 月 12 日狀態 |
 |---|---|---|
 | <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手機和平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub 上為建置 23，已於 2026 年 10 月 10 日送交 Google Play（自 10 月 7 日起該處上線的是建置 20） |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 和 iPad** | App Store | 版本 3.3.0 正在等待 Apple 審核；在此期間可[自行建置](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [APK](#meta-quest-3) · Horizon Store | 商店頁面已通過，建置 21 正在接受 Meta 審核，建置 23 在 Alpha 頻道上 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | 自 2026 年 10 月 7 日起已在 Horizon Store 上架（建置 14），建置 21 正在接受 Meta 審核，建置 23 在 Alpha 頻道上 |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 和 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub 上為建置 23；電視用的 Google Play 商店頁面自 2026 年 10 月 9 日起由 Google 審核中 |
 | <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [預覽版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows 上的桌面建置 4：相片、一般影片和 360° 影片；macOS 和 Linux 稍後推出 |
 
@@ -529,7 +529,7 @@ iPhone 可以拍攝空間相片和影片，而 Immich 伺服器對此一無所�
 
 ### 開啟沉浸式檢視
 
-1. 在頭戴裝置上安裝應用程式：在 Horizon Store 的上架申請通過之前，請側載 APK，請參閱[安裝](#install)。
+1. 從 [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 在頭戴裝置上安裝應用程式，或側載較新建置的 APK，請參閱[安裝](#install)。
 2. 用你的 Immich 伺服器登入，或點選「不連線伺服器使用」以使用頭戴裝置本身的相片和影片。
 3. 在檢視器中開啟一張 360° 相片或一段 360° 影片，來源可以是時間軸、360° 清單、相簿或共用資料夾。
 4. 按下 360° 按鈕，或 ⋮ 選單中的「以 360° 檢視」。在頭戴裝置上，它們會直接開啟沉浸式檢視，而不是手機上的球面檢視器。
@@ -930,7 +930,7 @@ Quest 3 和 3S 已經過測試。Quest 2 和 Quest Pro 尚未測試：它們的�
 <a id="install"></a>
 ### 安裝
 
-Meta 已於 2026 年 10 月 7 日核准隨建置 14 提交的 Horizon Store 上架申請，建置 21 已作為其首次更新提交。在商店頁面公開之前，或者想在商店上線之前取得新建置，請側載某個發布版本的 `-quest-release.apk` 檔案（為頭戴裝置建置：64 位元，目標 SDK 34，只包含頭戴裝置使用的權限），或通用的 `-release.apk`：
+Immuch360 自 2026 年 10 月 7 日起已隨建置 14 在 [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 上架，建置 21 作為其首次更新正在接受 Meta 審核。想在商店上線之前取得新建置，請側載某個發布版本的 `-quest-release.apk` 檔案（為頭戴裝置建置：64 位元，目標 SDK 34，只包含頭戴裝置使用的權限），或通用的 `-release.apk`：
 
 1. 先啟用一次開發人員模式。在手機上的 Meta Horizon 應用程式中，開啟 Devices（裝置），選擇頭戴裝置，然後依序開啟 Headset settings（頭戴裝置設定）、Developer mode（開發人員模式）。這需要一個開發人員帳號，可在 developers.meta.com 免費註冊。電腦上還需要 adb（Android SDK Platform Tools）或 SideQuest。
 2. 用 USB-C 傳輸線把頭戴裝置連接到電腦。在頭戴裝置中接受「Allow USB debugging」（允許 USB 偵錯）。
@@ -1108,7 +1108,7 @@ Immuch360 Desktop 的 CI（`.github/workflows/immuch360-desktop.yml`）在跟隨
 <a id="where-to-get-it"></a>
 ## 取得方式
 
-應用程式的手機和平板版本已在 Google Play 上架；App Store 版本正在等待 Apple 審核，Meta Horizon Store 上架申請已通過，其首次更新正在由 Meta 審核，電視用的 Google Play 版本正在等待 Google 審核電視版本。Windows 版 Immuch360 Desktop 在 GitHub 上提供預覽版。GitHub 發布頁一律是最新建置：
+應用程式的手機和平板版本已在 Google Play 上架；App Store 版本正在等待 Apple 審核，應用程式已在 Meta Horizon Store 上架，其首次更新正在由 Meta 審核，電視用的 Google Play 版本正在等待 Google 審核電視版本。Windows 版 Immuch360 Desktop 在 GitHub 上提供預覽版。GitHub 發布頁一律是最新建置：
 
 - **Android 手機和平板**
   - 目前：[Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)，或 [Releases](https://github.com/freeKC/Immuch360/releases) 頁面上的 APK：手機請用 `Immuch360-v<version>-arm64-v8a-release.apk`（通用的 `Immuch360-v<version>-release.apk` 到處都能用，`-armeabi-v7a` 適用於較舊的 32 位元手機，`.aab` 檔案用於 Google Play，不用於側載）。GitHub 建置通常領先商店。無論哪種方式，它都可與官方 Immich 應用程式並存安裝（套件名稱 `com.aprogsys.immuch360`）。
@@ -1118,7 +1118,7 @@ Immuch360 Desktop 的 CI（`.github/workflows/immuch360-desktop.yml`）在跟隨
   - 即將推出：App Store，審核中。
 - **Meta Quest 2、Quest Pro、Quest 3 和 3S（Quest 2 和 Quest Pro 未經測試）**
   - 目前：[Releases](https://github.com/freeKC/Immuch360/releases) 頁面上的 `-quest-release.apk` 檔案（通用的 `-release.apk` 也可以），在開發人員模式下側載，請參閱[安裝](#install)。商店建置和 GitHub APK 使用不同的金鑰簽署：若要從一個切換到另一個，請先解除安裝應用程式（其設定和已儲存的共用也會一併刪除）。
-  - 即將推出：在 Meta Horizon Store 上，上架申請已於 2026 年 10 月 7 日隨建置 14 通過，其首次更新建置 21 正在由 Meta 審核；商店的 alpha 頻道（僅限測試人員）會取得每個新建置。
+  - 商店：[Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 自 2026 年 10 月 7 日起已上架建置 14，其首次更新建置 21 正在由 Meta 審核；商店的 alpha 頻道（僅限測試人員）會取得每個新建置。
 - **Android TV 和 Google TV（從建置 20 起）**
   - 目前：[Releases](https://github.com/freeKC/Immuch360/releases) 頁面上的通用 `Immuch360-v<version>-release.apk`，用 adb 側載，請參閱[在電視上安裝](#install-it-on-the-tv)。它與手機上的應用程式是同一個應用程式。
   - 即將推出：電視用的 Google Play，其商店頁面自 2026 年 10 月 9 日起由 Google 審核中。
@@ -1126,7 +1126,7 @@ Immuch360 Desktop 的 CI（`.github/workflows/immuch360-desktop.yml`）在跟隨
   - 現在：Immuch360 Desktop 桌面建置 4，即[桌面預先發行版本](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)的 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`，依照[在 Windows 上下載和安裝](#download-and-install-on-windows)所述解壓縮並啟動。支援相片、一般影片，360°、3D、VR180 和原始 360° 影片（在獨立顯示晶片上流暢，在內建晶片上有限制）以及 Tapo 即時畫面。
   - 即將推出：搭配網路攝影機的 Spatial 2.5D，然後是 Linux 和 macOS；安裝程式、已簽署的建置和更新稍後推出。
 
-App Store 和 Meta Horizon Store 的連結會在上架後立即加到這裡。用你平常的 Immich 伺服器 URL 和帳號登入，或在登入頁面上點選「不連線伺服器使用」，從裝置本身的相片和影片開始。從 GitHub 下載的 APK 不會自動更新：請留意 Releases 頁面；如果你是從商店安裝應用程式，請從該商店取得更新。
+App Store 的連結會在上架後立即加到這裡；應用程式已在 [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 上架。用你平常的 Immich 伺服器 URL 和帳號登入，或在登入頁面上點選「不連線伺服器使用」，從裝置本身的相片和影片開始。從 GitHub 下載的 APK 不會自動更新：請留意 Releases 頁面；如果你是從商店安裝應用程式，請從該商店取得更新。
 
 <a id="build-it-yourself"></a>
 ## 自行建置
@@ -1215,7 +1215,7 @@ Android、Android TV 和 Google TV 是 Google LLC 的商標；Apple、iPhone、i
 - **Immuch360 Desktop，先做 Windows**：桌面建置 3 已推出，附有 360° 影片播放器（360°、3D、VR180 和原始 360° 影片，原始檔案的兩個鏡頭，在每台電腦上測量的視角尺寸）和 Tapo 即時畫面，桌面版原始碼自 2026 年 10 月 9 日起已併入本分支的主分支 `immuch360`（請參閱[在 Windows 電腦上](#on-a-windows-computer-immuch360-desktop-preview)）。接下來是用本分支自己工作流程建置的 libmpv 取代 2024 年的版本，並在 Windows 電腦上以真實檔案、兩個螢幕和真實攝影機逐項手動測試功能並修正；然後是搭配網路攝影機的 Spatial 2.5D；然後是 Linux 和 macOS；然後是安裝程式、已簽署的建置和自動更新。
 - **Google Play**：建置 20 自 2026 年 10 月 7 日起已上線，取代建置 18；電視用的商店頁面自 2026 年 10 月 9 日起由 Google 審核中。建置 21 在手機和平板上沒有任何變更。
 - **App Store**：版本 3.3.0 正在等待 Apple 審核；它包含建置 11 的功能，因此上傳至 Immich 和影片解碼器檢查（建置 15）以及 Insta360 RAW 檔案（建置 16）將隨下一次 App Store 更新提供。上線後會在這裡加上連結。
-- **Meta Horizon Store**：Meta 已於 2026 年 10 月 7 日核准隨建置 14 提交的上架申請。建置 21 已作為其首次更新提交：它帶來建置 14 之後的所有內容（從共用上傳到 Immich、依頭戴裝置可解碼的格式選擇影片來源、Insta360、GoPro 和 DJI 的 RAW 檔案、DLNA、手機共用、Apple 空間相片、Plex Media Server 媒體庫、Tapo 攝影機），商店將其上架於 Quest 2、Quest Pro、Quest 3 和 3S。商店頁面公開後，商店連結會加到這裡；側載的副本需要先解除安裝（請參閱[安裝](#install)）。
+- **Meta Horizon Store**：Meta 已於 2026 年 10 月 7 日核准隨建置 14 提交的上架申請，應用程式自當天起已在 [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 公開上架。建置 21 已作為其首次更新提交：它帶來建置 14 之後的所有內容（從共用上傳到 Immich、依頭戴裝置可解碼的格式選擇影片來源、Insta360、GoPro 和 DJI 的 RAW 檔案、DLNA、手機共用、Apple 空間相片、Plex Media Server 媒體庫、Tapo 攝影機），商店將其上架於 Quest 2、Quest Pro、Quest 3 和 3S。要安裝商店版本，側載的副本需要先解除安裝（請參閱[安裝](#install)）。
 - **商店介紹**：Google Play 的介紹已於 2026 年 10 月改寫並配上新截圖，電視截圖和電視橫幅已於 2026 年 10 月 8 日加上；電視用的介紹自 2026 年 10 月 9 日起由 Google 審核中。App Store 的介紹文字仍在描述最初的建置（360° 相片和影片，RAW 檔案以平面顯示）；之後會介紹 3D、VR180 和 Spatial 檢視器、沒有伺服器的模式、網路共用、媒體播放器以及 Insta360 RAW 檔案。Meta Horizon Store 的介紹已經包含媒體播放器。
 - **360° 相機 RAW 檔案，下一步**：為頭戴裝置準備 RAW 相片時顯示進度；利用 GoPro 和 DJI 影片本身的動作資料校正地平線；雙魚眼 .dng；收集建置 18 雙鏡頭播放的裝置回報（X4、X5、X6、GoPro MAX 2、Osmo 360），以確認接縫和解碼器負載。
 - **DLNA、手機共用和 Apple 空間媒體，下一步**：建置 19 的裝置回報（透過 DLNA 使用 Plex、Jellyfin、NAS 和 Freebox Server；手機為 Quest 提供服務，包括透過其熱點；在頭戴裝置中觀看真實的 iPhone 空間相片和影片）；向 Apple 申請多點傳送權限，讓 iPhone 能找到每台 DLNA 伺服器；在頭戴裝置中的空間相片之間切換上一個和下一個；在時間軸中為伺服器相片加上空間標記；若解碼器允許，在 Quest 上以 3D 播放空間影片。
