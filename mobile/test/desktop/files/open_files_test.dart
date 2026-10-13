@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -53,6 +54,11 @@ class _MockUserService extends Mock implements UserService {}
 class _MockSecureStorageService extends Mock implements SecureStorageService {}
 
 class _MockWidgetService extends Mock implements WidgetService {}
+
+/// Changes that tell whether anyone listens to them
+class _Changes extends ChangeNotifier {
+  bool get listened => hasListeners;
+}
 
 class _FakeTimelineService extends Fake implements TimelineService {}
 
@@ -133,7 +139,7 @@ OpenedFile _opened(String path, {bool is360 = false, bool raw = false}) {
 }
 
 final _handlerProvider = Provider<DesktopOpenFilesHandler>(
-  (ref) => DesktopOpenFilesHandler(ref, read: (paths) async => _reads(paths)),
+  (ref) => DesktopOpenFilesHandler(ref, read: (paths) async => _reads(paths), whenAppShown: (_) async {}),
 );
 
 // What the tests give the handler to read, by path; a path not listed holds no photo or video
@@ -195,6 +201,31 @@ void main() {
       expect(DesktopOpenRequests.take(), [r'C:\Users\me\Pictures\pano.jpg']);
       expect(DesktopOpenRequests.take(), [r'C:\Users\me\Pictures\a.jpg', r'C:\Users\me\Pictures\b.jpg']);
       expect(DesktopOpenRequests.take(), isNull);
+    });
+  });
+
+  group('waiting for the pages of the app', () {
+    test('goes on at once when they are there, and at the change that brings them', () async {
+      final shown = ValueNotifier(false);
+      addTearDown(shown.dispose);
+      var done = false;
+
+      unawaited(untilReady(shown, () => shown.value).then((_) => done = true));
+      await Future<void>.delayed(Duration.zero);
+      expect(done, isFalse);
+
+      shown.value = true;
+      await Future<void>.delayed(Duration.zero);
+      expect(done, isTrue);
+      await untilReady(shown, () => shown.value);
+    });
+
+    test('gives up waiting after a while, and stops listening', () async {
+      final changes = _Changes();
+      addTearDown(changes.dispose);
+
+      await untilReady(changes, () => false, timeout: const Duration(milliseconds: 20));
+      expect(changes.listened, isFalse);
     });
   });
 
@@ -396,6 +427,7 @@ void main() {
           }
           return _reads(paths);
         },
+        whenAppShown: (_) async {},
       )..init();
 
       DesktopOpenRequests.add([first]);
@@ -410,6 +442,26 @@ void main() {
       verify(() => router.replaceAll(any())).called(2);
       expect(container.read(assetViewerProvider).currentAsset?.id, 'f-IMG_2.jpg');
       expect(slowHandler, isNot(handler));
+    });
+
+    test('waits for the pages of the app before it shows the files, which the sign in would replace', () async {
+      final shown = Completer<void>();
+      final waitingHandler = DesktopOpenFilesHandler(
+        container.read(_refProvider),
+        read: (paths) async => _reads(paths),
+        whenAppShown: (_) => shown.future,
+      )..init();
+      await container.read(localSessionProvider.notifier).enter();
+
+      DesktopOpenRequests.add([file('IMG_1.jpg')]);
+      await settle();
+      verifyNever(() => router.replaceAll(any()));
+
+      shown.complete();
+      await settle();
+
+      verify(() => router.replaceAll(any())).called(1);
+      expect(waitingHandler, isNot(handler));
     });
 
     test('a view intent payload opens its path, as the phones hand one over', () async {

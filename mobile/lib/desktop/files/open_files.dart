@@ -99,6 +99,36 @@ final desktopOpenIn360Provider = NotifierProvider<DesktopOpenIn360, BaseAsset?>(
 /// Reads what the program was given at once, see [readOpenedPaths]
 typedef OpenedPathsReader = Future<OpenedBatch> Function(List<String> paths);
 
+/// Completes once [isReady] holds, checked now and at each change of [changes], and at the latest after [timeout]
+Future<void> untilReady(
+  Listenable changes,
+  bool Function() isReady, {
+  Duration timeout = const Duration(seconds: 15),
+}) async {
+  if (isReady()) {
+    return;
+  }
+  final ready = Completer<void>();
+  void check() {
+    if (!ready.isCompleted && isReady()) {
+      ready.complete();
+    }
+  }
+
+  changes.addListener(check);
+  try {
+    await ready.future.timeout(timeout, onTimeout: () {});
+  } finally {
+    changes.removeListener(check);
+  }
+}
+
+/// Waits until the pages of the app are on the stack of [router], the tab shell under them: once a session opens, the
+/// splash page, or the login page and its choice of no server, replace the whole stack with the tab shell, which would
+/// take away files opened before
+Future<void> untilTabShell(AppRouter router) =>
+    untilReady(router, () => router.stackData.any((route) => route.name == TabShellRoute.name));
+
 /// The ViewIntentHandler of the computers. The phones get one file per view intent, the computers a batch of paths:
 /// [handle] takes a payload too, for the code that calls it with one.
 ///
@@ -107,7 +137,9 @@ typedef OpenedPathsReader = Future<OpenedBatch> Function(List<String> paths);
 /// the viewer, and a 360° one in its 360° view at once, with the projection it declares; several, or a folder, open on
 /// the page of opened files ([OpenedFilesRoute]).
 class DesktopOpenFilesHandler implements ViewIntentHandler {
-  DesktopOpenFilesHandler(this._ref, {OpenedPathsReader? read}) : _read = read ?? readOpenedPaths {
+  DesktopOpenFilesHandler(this._ref, {OpenedPathsReader? read, Future<void> Function(AppRouter router)? whenAppShown})
+    : _read = read ?? readOpenedPaths,
+      _whenAppShown = whenAppShown ?? untilTabShell {
     // The session starts after the app: a server session once its token is checked, a session without a server at once
     _ref.listen(authProvider.select((state) => state.isAuthenticated), (_, isAuthenticated) {
       if (isAuthenticated) {
@@ -123,6 +155,7 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
 
   final Ref _ref;
   final OpenedPathsReader _read;
+  final Future<void> Function(AppRouter router) _whenAppShown;
 
   // The latest batch given before a session was open
   List<String>? _deferred;
@@ -189,6 +222,10 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
       _remember(batch);
       return batch;
     });
+    // Its error, if any, is seen where it is awaited below or on the page, not as an unhandled one meanwhile
+    opening.ignore();
+    // Read meanwhile; shown once the session has put the pages of the app in place
+    await _whenAppShown(router);
     if (paths.length > 1 || await isFolder(paths.single)) {
       _log.info('Opening ${paths.length} paths as a page of their own');
       await router.replaceAll([
