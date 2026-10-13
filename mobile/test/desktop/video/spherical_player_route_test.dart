@@ -547,6 +547,24 @@ void main() {
       }
     }
 
+    // What the plugin counted of two players over the measure
+    ProjectionStats pairedSecond() => const ProjectionStats(
+      enabled: true,
+      frames: 125,
+      redraws: 0,
+      failed: 0,
+      frameMs: [],
+      redrawMs: [],
+      lockedMs: [],
+      frameWidth: 3840,
+      frameHeight: 3840,
+      pairedFrames: 124,
+      aloneFrames: 1,
+      partnerFrames: 125,
+      partnerOffsetMs: 3.5,
+      partnerSpeed: 1.0035,
+    );
+
     testWidgets('stream 0 with the sound here, stream 1 in a second player, both drawn by renderer C', (tester) async {
       await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo), pairing: true);
       await settle(tester);
@@ -572,6 +590,7 @@ void main() {
       expect(second.calls, contains('seek 4000'));
 
       // Measured smooth: two players stay, both players' drops counted
+      channel.counts = pairedSecond;
       await measureStack(tester, first, dropped: 0);
       expect(page(tester).rawStep?.mode, RawMode.paired);
 
@@ -611,10 +630,23 @@ void main() {
       await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo), pairing: true);
       await settle(tester);
       final first = players.made.first;
+      channel.counts = pairedSecond;
       await measureStack(tester, first, dropped: 70);
       final step = page(tester).rawStep!;
       expect((step.mode, step.notice), (RawMode.oneLens, RawNotice.oneLensDecoder));
       expect(first.calls, contains('open $file at 5000'), reason: 'from where the video was');
+      await close(tester);
+    });
+
+    testWidgets('a second player that drew no frame: one lens, rather than half of the sphere black unsaid', (
+      tester,
+    ) async {
+      await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo), pairing: true);
+      await settle(tester);
+      await measureStack(tester, players.made.first, dropped: 0);
+      final step = page(tester).rawStep!;
+      expect((step.mode, step.notice), (RawMode.oneLens, RawNotice.oneLensDecoder));
+      expect(players.made[1].calls, contains('stop'));
       await close(tester);
     });
 

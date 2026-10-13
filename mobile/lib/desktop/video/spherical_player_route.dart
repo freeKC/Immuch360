@@ -779,6 +779,19 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   }
 
   Future<void> _onStackMeasure(RawStep step, DecodeMeasure measure) async {
+    if (step.mode == RawMode.paired) {
+      // How the plugin paired the frames since the two players started (the renderer probe reads the counts from
+      // here on). A second player that drew nothing would leave half of the sphere black without a word.
+      final pair = PairCounts.of(await _renderer?.stats());
+      _log.info('Two players over the measure: ${pair ?? 'no frame of the second player drawn'}');
+      if (!mounted || !identical(_step, step)) {
+        return;
+      }
+      if (pair == null || pair.partnerFrames == 0) {
+        await _onPairFailure(step, 'the second player drew no frame');
+        return;
+      }
+    }
     await _switch.record(measure);
     if (!mounted || !identical(_step, step)) {
       return;
