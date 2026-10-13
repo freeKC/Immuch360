@@ -241,6 +241,27 @@ void main() {
       expect(verdict.supported, isTrue);
       expect(verdict.reason, startsWith('desktop static answer'));
     });
+
+    test('a probe that failed at the start is asked once more at the next question, not at every one', () async {
+      DesktopGpuDecoders.prober = prober.call;
+      prober.failure = StateError('the driver is busy');
+      expect((await api().canDecode('hvc1', 'hvc1.2.4.L156', 3840, 3840, 25, 10, 1)).reason, startsWith('desktop'));
+      // The antivirus is done: the GPU answers the next question
+      prober.failure = null;
+      final osmo = await api().canDecode('hvc1', 'hvc1.2.4.L156', 3840, 3840, 25, 10, 1);
+      expect(osmo.hardware, isTrue);
+      expect(osmo.reason, contains('NVIDIA GeForce RTX 4060 Laptop GPU decodes'));
+      // The whole probe twice (the second asked again), then the size of the lens alone
+      expect(prober.calls.where((call) => !call.startsWith('1 profiles')), hasLength(2));
+      // A probe that fails twice is not asked again during the run
+      DesktopGpuDecoders.forget();
+      prober.calls.clear();
+      prober.failure = StateError('no driver');
+      for (var i = 0; i < 3; i++) {
+        await api().canDecode('hvc1', 'hvc1.2.4.L156', 3840, 3840, 25, 10, 1);
+      }
+      expect(prober.calls, hasLength(2));
+    });
   });
 
   group('Windows, from the Direct3D 11 profiles', () {
