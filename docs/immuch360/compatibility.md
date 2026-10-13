@@ -344,7 +344,7 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 
 ### Windows
 
-- Two lens raw videos play in two players from desktop build 5 (checked on a dedicated chip with an Osmo 360 file), and stacked in one player only when the computer keeps up: [Not there yet](user-guide.md#not-there-yet).
+- Two lens raw videos play in two players from desktop build 5 (checked on a dedicated chip with Osmo 360, X4 and X3 files), and stacked in one player only when the computer keeps up: [Not there yet](user-guide.md#not-there-yet).
 - 3D on the screen only, the left eye; no gyroscope and no headset view: [Not there yet](user-guide.md#not-there-yet).
 - No Spatial 2.5D, map, Places, OAuth sign in, Google Cast or notifications yet: [Not there yet](user-guide.md#not-there-yet).
 - No installer, no signed build and no automatic updates yet: [Not there yet](user-guide.md#not-there-yet).
