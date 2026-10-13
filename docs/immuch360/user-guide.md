@@ -46,6 +46,7 @@ When a feature is recent, the text says from which build it is there. The GitHub
 - [Video details, decoders and why a video stutters](#video-details-decoders-and-why-a-video-stutters)
 - [Everything else is Immich](#everything-else-is-immich)
 - [On a Windows computer: Immuch360 Desktop (preview)](#on-a-windows-computer-immuch360-desktop-preview)
+- [Install it on a computer: Windows, Linux and macOS](#install-it-on-a-computer-windows-linux-and-macos)
 - [Privacy](#privacy)
 
 </details>
@@ -718,7 +719,7 @@ On a computer, Immich offers its web app in a browser. **What Immuch360 Desktop 
 
 This is a preview: photos and flat videos work from desktop build 2, and from desktop build 3 the 360° video player (360°, 3D, VR180 and raw 360° videos) and the live view of Tapo cameras; the steps below that need build 3 say so. Since 9 October 2026 the desktop sources are in the main branch of the fork, `immuch360`, so phones, headsets, TVs and computers ship from the same sources. The phone, tablet, Quest and TV apps do not change with it and keep the name Immuch360.
 
-To download and install the preview, see [Download and install on Windows](platform-support.md#download-and-install-on-windows): the ZIP of desktop build 4, unzipped anywhere, and `immuch360.exe` started from its folder.
+To download and install the preview, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos): the ZIP of desktop build 4, unzipped anywhere, and from desktop build 5 an installer too, with packages for Linux and macOS.
 
 ### What the preview does
 
@@ -784,8 +785,8 @@ When it is the decoding of a server video that does not keep up, not the drawing
 - **Two lens raw videos on a laptop**: even with a 2026 libmpv, the test laptop stacked an X3 pair (two 2880x2880 H.264 files) at 30 frames a second on its NVIDIA chip only; on its Intel chip, and for an X4 file (two 3840x3840 HEVC tracks) on both chips, the video plays one lens, half of the sphere black, as on a phone that cannot run two decoders.
 - **3D on the screen only**: a 3D video shows its left eye, as on phones; there is no gyroscope and no headset view on the computer. To watch in true 3D, share the computer with a Meta Quest.
 - **Spatial 2.5D**, later with the webcam; the **map** and the Places view; **signing in with OAuth** (sign in with an email and a password instead); **Google Cast**; **notifications**.
-- **An installer, a signed build and automatic updates**: this build is a folder with `immuch360.exe`.
-- **Linux and macOS**: their projects are in the sources and the project's CI builds them on every change (the Linux app on Ubuntu, the macOS app compiled with Xcode 26.3), but the app has not been started on those systems yet, their video player library (libmpv) is not provided for them yet, and there is no download; they come after Windows.
+- **A signed build and automatic updates**: the installer (from desktop build 5) and the ZIP are not signed, and the next build is installed by hand.
+- **Linux and macOS**: from desktop build 5 they have packages, previews of a preview: on Linux the app starts and shows the photos of your folders and 360° photos, without videos yet, and the macOS app has only run on the project's CI, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos).
 - **Translations**: the new texts of the computer version are in English for now.
 
 ### Known problems
@@ -798,6 +799,62 @@ When it is the decoding of a server video that does not keep up, not the drawing
 - **What the 360° player and the live view were checked with**: the 360° player was run with synthetic 4K, 5.7K and 8K 360° clips on both graphics chips of a laptop (opened, played, turned while playing and paused, closed) with no crash and no reset of the graphics driver. Raw two lens videos were played from synthetic clips and from real X3 and X4 files. The Tapo live view was checked against a test RTSP server that signs in the way the cameras do (Digest), cut and refused on purpose, with no password in any log line, but not yet with a real camera. The test by hand, with real 360° and 3D files, both screens of a laptop, sleep and resume, and a real camera, is still to come.
 
 If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch360/issues) with the log saved from the Logs page, see [Logs](troubleshooting.md#logs). Check the log before sharing it: it can contain your server address.
+
+## Install it on a computer: Windows, Linux and macOS
+
+Immuch360 Desktop comes as desktop pre-releases on the [Releases](https://github.com/freeKC/Immuch360/releases) page of GitHub. Desktop build 4 is a ZIP for Windows. From desktop build 5, each desktop pre-release has six files, with `SHA256SUMS.txt` to check them:
+
+| Computer | File | What it is |
+|---|---|---|
+| Windows 10 and 11, 64 bit | `Immuch360-Desktop-<version>-windows-x64-setup.exe` | The installer |
+| Windows 10 and 11, 64 bit | `Immuch360-Desktop-<version>-windows-x64.zip` | The same program as a folder, to unzip anywhere |
+| Ubuntu 22.04 or later, Debian 12 or later, 64 bit | `Immuch360-Desktop-<version>-linux-amd64.deb` | The package for Debian and Ubuntu |
+| Fedora 40 or later, 64 bit | `Immuch360-Desktop-<version>-linux-x86_64.rpm` | The package for Fedora |
+| macOS 12 or later, Apple silicon or Intel | `Immuch360-Desktop-<version>-macos.dmg` | The app in a disk image |
+| macOS 12 or later, Apple silicon or Intel | `Immuch360-Desktop-<version>-macos.zip` | The same app, zipped |
+
+Your sign in, your folders and your settings stay in your profile on the computer, not with the program: installing the next build over it, or removing the program, keeps them.
+
+### Windows
+
+1. **Open the installer.** Its files are not signed yet, so Windows SmartScreen may say "Windows protected your PC": choose "More info", then "Run anyway". Where Smart App Control is on, it blocks unsigned programs.
+2. **For you, or for every user of the PC.** "Install for me only", the recommended choice, needs no administrator rights and installs the program in your profile; "Install for all users" installs it in Program Files and asks for an administrator. The installer then speaks the language of Windows, and its first dialog lists every language it has.
+3. **Start it** from the Start menu, "Immuch360 Desktop"; a desktop shortcut is made when you tick it.
+4. **Open with**: the installer offers the app for photos (JPEG, PNG, HEIC, HEIF, AVIF, WebP, TIFF, DNG, Insta360 .insp) and videos (MP4, MOV, M4V, MKV, WebM, Insta360 .insv, GoPro .360, DJI .osv). Right click a file, then Open with, Immuch360 Desktop. It never makes itself the default program of a type: to open a type with it on a double click, choose it in Open with, "Choose another app", with "Always", or in Settings, Apps, Default apps, Immuch360 Desktop. Windows itself decides two cases: a type that no other program opens (often .osv and .360) opens with Immuch360 Desktop on a double click, since it is the only program offered, and a type whose program you never chose as the default (Insta360 Studio for .insp and .insv, for example) makes Windows ask once which program to use.
+5. **The next build**: open its installer, which replaces the program. **Remove it** in Settings, Apps, Installed apps, Immuch360 Desktop, Uninstall; your data stays in `%APPDATA%\com.aprogsys\Immuch360 Desktop`, which you can delete too.
+
+The ZIP is the same program as a folder: unzip it anywhere and start `immuch360.exe` from it, keeping the folder whole, see [Download and install on Windows](platform-support.md#download-and-install-on-windows). For an installation without questions: `Immuch360-Desktop-<version>-windows-x64-setup.exe /VERYSILENT /CURRENTUSER`, or `/ALLUSERS` for every user, with `/DIR="<folder>"` and `/LANG=french` if needed; `unins000.exe`, in the folder of the program, uninstalls it with `/VERYSILENT`.
+
+### Linux
+
+The packages are for 64 bit PCs. In the folder of the download, on Ubuntu or Debian:
+
+```bash
+sudo apt install ./Immuch360-Desktop-<version>-linux-amd64.deb
+```
+
+On Fedora:
+
+```bash
+sudo dnf install ./Immuch360-Desktop-<version>-linux-x86_64.rpm
+```
+
+The package manager adds what the app needs (GTK 3, WebKitGTK, libsecret, libmpv). Start "Immuch360 Desktop" from your applications, or `immuch360` in a terminal (`immuch360 --version` gives its version); file managers offer it in "Open with" for the same photos and videos as on Windows. Remove it with `sudo apt remove immuch360` or `sudo dnf remove immuch360`; your data stays in `~/.local/share/immuch360` and `~/.cache/immuch360`.
+
+What it does on Linux so far, as seen in a test of the .deb on Ubuntu 24.04 under WSLg (the Linux of Windows 11): it starts on the login page; without a server it suggests your Pictures and Videos folders and shows their photos and videos by date; a 360° photo opens as a sphere and turns with the mouse. What it does not do yet:
+
+- **Videos**: the viewer says "Video playback comes to Immuch360 Desktop in a later version", and a video has a film icon instead of a frame. The package already brings libmpv, the video library the player will use.
+- **SMB shares on Ubuntu 22.04 and Debian 12**: the SMB library the app ships needs a newer system library (glibc 2.38, in Ubuntu 24.04, Debian 13 and Fedora 39 or later), so SMB shares do not open there.
+- **A photo or a video opened with the app** ("Open with", the command line) shows flat, as on Windows in desktop build 4.
+- **The keyring**: the app keeps its secrets in the keyring of your session (GNOME Keyring, KWallet), as desktop sessions have; the test container had none, and there the app could not keep them.
+
+### macOS
+
+1. **Open the DMG** and drag Immuch360 Desktop to Applications. The app runs on Apple silicon and Intel Macs, with macOS 12 or later.
+2. **The first start**: the app is not signed with an Apple Developer ID and not notarized yet, so macOS refuses to open it at first. On macOS 14 and earlier, Control click the app in Applications, choose Open, then Open again. On macOS 15 and later, open it once, then go to System Settings, Privacy & Security, choose "Open Anyway" next to the message about Immuch360 Desktop and confirm. In a terminal, `xattr -dr com.apple.quarantine "/Applications/Immuch360 Desktop.app"` does the same.
+3. Finder offers it in "Open with" for the same photos and videos.
+
+**Nobody working on the project has a Mac**: the app is built and checked on the Macs of the project's CI only. There, macOS offered it in "Open with" for the 19 file types, and it started and showed its login page, with its small texts drawn garbled in the screen capture of that virtual machine. It has not been used by hand on a Mac. It has no video player yet (libmpv is not in the macOS app), and its sandbox settings do not allow network connections yet, so it most likely cannot reach a server or a share. Reports from Mac users are welcome in [Issues](https://github.com/freeKC/Immuch360/issues).
 
 ## Privacy
 
@@ -814,4 +871,4 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 
 The full policy is in [PRIVACY.md](../../PRIVACY.md).
 
-Last updated: 12 October 2026 (build 23, desktop build 4)
+Last updated: 13 October 2026 (build 23, desktop build 4, the packages of desktop build 5)

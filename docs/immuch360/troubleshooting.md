@@ -103,7 +103,9 @@ Each wrong password counts, and after a few the camera locks for a while. The ap
 - **"The Plex server refused this token."**, or "Paste a new token" on the folder page: get a new token as [Add a Plex server](user-guide.md#add-a-plex-server) says.
 - **"Your Plex server cannot be reached from outside your home network."**: turn on Remote Access with a port forwarding in Plex, or type the public address of the server. See [Away from home](user-guide.md#away-from-home).
 - **"This address answers without a Plex certificate."**: claim the server in Plex, or add it as an SMB, WebDAV or DLNA share. See [Plex Media Server](user-guide.md#plex-media-server-without-plextv).
-- **"Windows protected your PC"**: the files are not signed yet; choose "More info", then "Run anyway". See [Download and install on Windows](platform-support.md#download-and-install-on-windows).
+- **"Windows protected your PC"**: the files and the installer are not signed yet; choose "More info", then "Run anyway". See [Install it on a computer](user-guide.md#windows).
+- **"Immuch360 Desktop" cannot be opened, or Apple cannot check it** (macOS): the app is not signed with an Apple Developer ID nor notarized yet; Control click it and choose Open (macOS 14 and earlier), or choose "Open Anyway" in System Settings, Privacy & Security (macOS 15 and later). See [macOS](user-guide.md#macos).
+- **SMB shares do not open on Ubuntu 22.04 or Debian 12** (Linux): the SMB library of the app needs glibc 2.38, which those systems do not have. See [Linux](user-guide.md#linux).
 - **The picture does not face you in the headset**: turn it with the right thumbstick or the Turn button, and post the angle shown in an issue with your camera model. See [If the picture does not face you](user-guide.md#if-the-picture-does-not-face-you).
 
-Last updated: 12 October 2026 (build 23, desktop build 4)
+Last updated: 13 October 2026 (build 23, desktop build 4, the packages of desktop build 5)

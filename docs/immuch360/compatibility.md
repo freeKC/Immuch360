@@ -346,7 +346,7 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 - Two lens raw videos are stacked in one player only when the computer keeps up; on the test laptop, an X3 pair on its NVIDIA chip only: [Not there yet](user-guide.md#not-there-yet).
 - 3D on the screen only, the left eye; no gyroscope and no headset view: [Not there yet](user-guide.md#not-there-yet).
 - No Spatial 2.5D, map, Places, OAuth sign in, Google Cast or notifications yet: [Not there yet](user-guide.md#not-there-yet).
-- No installer, no signed build and no automatic updates yet: [Not there yet](user-guide.md#not-there-yet).
+- No signed build and no automatic updates yet; the installer comes with desktop build 5: [Install it on a computer](user-guide.md#install-it-on-a-computer-windows-linux-and-macos).
 - The new texts of the computer version are in English for now: [Not there yet](user-guide.md#not-there-yet).
 - The first start of a new build is slow, 8K HEVC needs a dedicated graphics chip, videos are drawn at most 1440 lines high, flat or in the 360° player, and a file being played cannot be renamed, moved or deleted: [Known problems](user-guide.md#known-problems).
 - The libmpv workflow builds an arm64 archive too, but there is no Windows on ARM app yet: [Windows](platform-support.md#windows).
@@ -355,6 +355,6 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 
 ### macOS and Linux
 
-- Built by the project's CI, not started on those systems yet, with no video player library and no download: [macOS and Linux](platform-support.md#macos-and-linux).
+- Packages from desktop build 5 (a .deb, an .rpm, a macOS app), built by the project's CI: on Linux the app starts and shows photos and 360° photos, without videos yet; the macOS app has only run on the CI's Mac, without network access or videos: [macOS and Linux](platform-support.md#macos-and-linux).
 
-Last updated: 12 October 2026 (build 23, desktop build 4)
+Last updated: 13 October 2026 (build 23, desktop build 4, the packages of desktop build 5)
