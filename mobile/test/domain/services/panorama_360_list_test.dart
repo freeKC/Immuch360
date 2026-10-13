@@ -390,7 +390,7 @@ void main() {
       expect(panorama360CameraOf(fileName: 'VID_1.insv'), (key: 'insta360', label: 'Insta360'));
       expect(panorama360CameraOf(fileName: 'IMG_1.INSP'), (key: 'insta360', label: 'Insta360'));
       expect(panorama360CameraOf(fileName: 'GS010013.360'), (key: 'gopro', label: 'GoPro'));
-      expect(panorama360CameraOf(fileName: 'CAM_20250715191201_0003_D.OSV'), (key: 'dji', label: 'DJI'));
+      expect(panorama360CameraOf(fileName: 'CAM_20250101120000_0001_D.OSV'), (key: 'dji', label: 'DJI'));
       expect(panorama360CameraOf(fileName: 'a.mp4'), (key: '', label: ''));
       expect(panorama360CameraOf(make: '  ', model: '', fileName: 'a.mp4'), (key: '', label: ''));
       expect(panorama360CameraOf(make: ' ', model: ' Insta360 X4 ', fileName: 'a.mp4'), (

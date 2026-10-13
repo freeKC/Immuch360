@@ -11,7 +11,7 @@ Immuch360은 무료 오픈소스 앱으로 사진과 동영상을 찾고 둘러�
 
 - **무엇을 할 수 있나요?** 사진과 동영상을 갤러리로 보여주고, 각 파일에 맞는 뷰어로 재생합니다: 평면으로, 둘러볼 수 있는 구체로, 3D로, 헤드셋 안에서.
 - **어떤 미디어를 지원하나요?** 평면 사진과 동영상, 파노라마, 360° 사진과 동영상, VR180, 스테레오스코픽 3D, Apple 공간 사진, 그리고 앱이 직접 스티칭하는 360° 카메라의 원본 파일(Insta360, GoPro MAX, DJI Osmo 360)까지 지원합니다.
-- **어떤 기기에서 쓸 수 있나요?** Android 휴대폰과 태블릿, iPhone과 iPad, Android TV와 Google TV, Meta Quest 2, Pro, 3, 3S, Windows(프리뷰), 그리고 준비 중인 macOS와 Linux까지.
+- **어떤 기기에서 사용할 수 있나요?** Android 휴대폰과 태블릿, iPhone과 iPad, Android TV와 Google TV, Meta Quest 2, Pro, 3, 3S, Windows(미리보기), 그리고 초기 미리보기 단계인 Linux와 macOS.
 - **서버나 계정이 필요한가요?** 아닙니다. Immuch360은 기기의 미디어만으로도 단독으로 동작합니다. Immich 서버, NAS, 미디어 서버, Plex 서버는 원할 때 추가할 수 있는 선택 사항입니다.
 
 <p align="center">
@@ -26,8 +26,8 @@ Immuch360은 무료 오픈소스 앱으로 사진과 동영상을 찾고 둘러�
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone과 iPad** | App Store | 버전 3.3.0, Apple 심사 대기 중; 그동안은 [직접 빌드](../docs/immuch360/build.md) |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub에 build 23; TV 등록은 Google 심사 중 |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3, 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store(build 14; build 21 심사 중), GitHub에 build 23 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Preview ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | 데스크톱 build 4, 프리뷰: 사진, 평면 및 360° 동영상, 공유, Plex, 카메라 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS와 Linux** | 소스 코드 | 프로젝트 CI에서 빌드되지만, 아직 해당 시스템에서 실행해 본 적은 없으며 다운로드도 없음 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [설치 프로그램 또는 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, 미리보기: 사진, 평면 및 360° 동영상, 공유, Plex, 카메라, 프로그램으로 연 파일 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS와 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | 초기 미리보기: Linux에서는 사진과 360° 사진, 아직 동영상은 없음; macOS는 프로젝트의 CI에서만 실행 |
 
 *상태는 릴리스마다 갱신되며, build별 세부 사항은 [Release status](../docs/immuch360/release-status.md)에서 확인할 수 있습니다.*
 
@@ -97,11 +97,11 @@ Immuch360은 먼저 일반 사진과 동영상을 위한 갤러리이자 플레�
 <a id="use-your-own-files-without-an-account"></a>
 ### 계정 없이 내 파일 사용하기
 
-Immuch360은 계정도 서버도 필요하지 않습니다. 로그인 화면에서 "서버 없이 사용"을 선택하면 기기의 사진과 동영상을 모든 뷰어, 360° 목록, 네트워크 소스와 함께 바로 열어줍니다. 아무것도 기기 밖으로 나가지 않습니다. 서버는 설정에서 나중에 연결할 수 있으며, 그러면 서버 관련 기능이 나타납니다.
+Immuch360은 계정도 서버도 필요하지 않습니다. build 24부터 앱은 환영 페이지에서 시작하며, 여기서 "서버 없이 사용"이 맨 앞에 있습니다: 이를 선택하면 모든 뷰어, 360° 목록, 네트워크 소스와 함께 기기의 사진과 동영상으로 앱이 열립니다. 기기 밖으로는 아무것도 나가지 않습니다. 서버는 나중에 설정이나 라이브러리 탭에서 연결할 수 있으며, 그러면 서버 기능이 나타납니다.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="서버 없이 본 라이브러리 탭: 맨 위에 360° 항목, 그 아래 360° 사진 두 장이 있는 이 장치에서, 그리고 NAS라는 공유가 있는 네트워크 공유">
 
-1. 앱을 엽니다. 로그인 화면에서 서버 주소와 설정 아래에 있는 "서버 없이 사용"을 탭합니다.
+1. 앱을 엽니다. 환영 페이지에 "당신의 미디어. 모든 화면. 모든 시점."과 세 가지 옵션이 나타나면, 첫 번째인 "서버 없이 사용"을 탭합니다. build 23까지는 로그인 페이지가 먼저 나왔고, 양식 아래에 "서버 없이 사용"이 있었습니다.
 2. 사진과 동영상에 대한 접근을 허용합니다. 거부하면 앱은 "접근 허용"과 "설정 열기" 버튼과 함께 "앱이 이 기기의 사진을 볼 수 없습니다"라고 표시합니다.
 3. 사진 탭에는 기기의 타임라인이 나옵니다. 검색과 앨범은 서버에서 오는 기능이라 회색으로 표시됩니다. 라이브러리 탭에는 맨 위에 360°, 그 아래 이 장치에서(기기의 앨범)와 네트워크 공유가 있습니다.
 4. 오른쪽 위 메뉴에 "이 기기만"이라고 표시됩니다. 앱은 이 기기의 사진과 동영상을 보여 줄 뿐, 아무것도 어디로도 보내지 않습니다.
@@ -120,7 +120,7 @@ Immuch360은 계정도 서버도 필요하지 않습니다. 로그인 화면에�
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="썸네일 격자로 보이는 네트워크 공유 폴더: 360° 배지가 붙은 360° 사진들과 재생 표시가 붙은 360° 동영상, 오른쪽 위에 선택 버튼">
 </p>
 
-1. 라이브러리 탭을 열고, 네트워크 공유로 이동한 뒤 +를 누르고 "네트워크 공유 (NAS, 컴퓨터, 미디어 서버)"를 선택합니다.
+1. 라이브러리 탭을 열고, 네트워크 공유, 그다음 +와 "네트워크 공유 (NAS, 컴퓨터, 미디어 서버)"를 선택합니다. build 24부터는 환영 페이지의 "네트워크 공유 또는 미디어 서버 추가"가 서버 없이 네트워크 공유를 바로 엽니다.
 2. "네트워크에서 찾음" 아래에서 서버를 탭하거나, 양식을 직접 채웁니다: 종류, 서버 이름 또는 주소, 공유 또는 경로, 시작 폴더, 사용자 이름, 비밀번호.
 3. "연결 테스트"를 탭한 뒤 저장합니다. 공유를 탭하면 둘러볼 수 있습니다: 먼저 폴더가, 그다음 360°로 인식된 파일에는 360° 배지가 붙은 사진과 동영상이 나타납니다.
 4. Immich 서버가 연결된 상태에서 폴더의 파일을 선택하고 "Immich에 업로드"를 탭하면 서버로 전송됩니다.
@@ -134,7 +134,7 @@ Immuch360은 계정도 서버도 필요하지 않습니다. 로그인 화면에�
 
 [Immich](https://github.com/immich-app/immich) 서버를 사용하면 Immuch360은 웹 앱과 같은 서버와 계정을 쓰는 Immich 모바일 앱이 됩니다: 백업, 타임라인, 앨범, 검색, 인물, 추억, 공유, 파트너까지 모두 서버와 동기화됩니다. 공식 앱과 함께 설치할 수 있습니다. 그 위에 360° 배지와 목록, 모든 몰입형 뷰어, 각 동영상마다 원본 파일과 서버의 트랜스코딩된 스트림 중 선택, 동영상의 기술적 세부 정보, 그리고 공유나 기기에서 수동으로 서버에 보낸 파일까지 더해집니다.
 
-1. Immich 앱에서처럼 서버 주소, 이메일, 비밀번호로 로그인합니다. 라이브러리, 앨범, 백업 설정은 계정에 속한 것입니다.
+1. 환영 페이지에서 "Immich 서버에 연결"을 탭한 뒤, Immich 앱에서처럼 서버 주소, 이메일, 비밀번호로 로그인합니다. 뒤로를 누르면 환영 페이지로 돌아갑니다. build 23까지는 로그인 페이지가 바로 열렸습니다. 라이브러리, 앨범, 백업 설정은 계정에 저장된 것을 그대로 사용합니다.
 2. 설정의 Asset Viewer, Videos에서 "동영상 소스"는 이 기기가 디코딩할 수 있을 때는 원본을, 항상 원본을, 또는 항상 트랜스코딩된 스트림을 선택하도록 고를 수 있습니다.
 3. 앱이 없는 사람에게 360° 사진을 보여주려면 Immich 공유 링크로 공유하세요: Immich 웹 앱이 그 사람의 브라우저에서 구체로 보여줍니다.
 
@@ -154,7 +154,7 @@ Meta Quest에서는 같은 앱이 전체 라이브러리를 담은 창으로 실
 </p>
 
 1. [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)에서 앱을 설치하거나, 최신 build의 APK를 사이드로드합니다. [설치](#meta-quest)를 참고하세요.
-2. Immich 서버로 로그인하거나, 헤드셋 자체의 사진과 동영상을 보려면 "서버 없이 사용"을 탭합니다.
+2. 환영 페이지에서 헤드셋 자체의 사진과 동영상을 보려면 "서버 없이 사용"을, 서버에 로그인하려면 "Immich 서버에 연결"을 탭합니다.
 3. 360° 사진이나 동영상을 열고 360°를 누르면 몰입형 화면이 열립니다. B나 Y, 또는 정보 패널의 뒤로 버튼을 누르면 창으로 돌아갑니다.
 
 더 보기: [Meta Quest 헤드셋에서](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [헤드셋: 코덱, 스토어, 권한](../docs/immuch360/platform-support.md#meta-quest).
@@ -169,8 +169,8 @@ Meta Quest에서는 같은 앱이 전체 라이브러리를 담은 창으로 실
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Windows용 Immuch360 Desktop의 동영상 플레이어: 창 안에서 재생되는 거리 영상, 일시정지 버튼, 타임 바, 공유와 Immich에 업로드 버튼">
 </p>
 
-1. TV에서는 adb로 APK를 설치하고([설치](#android-tv-and-google-tv) 참고), 로그인하거나 "서버 없이 사용"을 선택한 뒤, 라이브러리에서 공유, Plex 서버, 카메라를 추가합니다.
-2. Windows 컴퓨터에서는 프리뷰를 압축 해제하고 `immuch360.exe`를 실행한 뒤([설치](#windows) 참고), 사진과 동영상이 있는 폴더를 선택하거나 서버에 로그인합니다.
+1. TV에서는 adb로 APK를 설치합니다([설치](#android-tv-and-google-tv) 참고). 환영 페이지에서 공유, Plex 서버, 카메라용으로 "네트워크 공유 또는 미디어 서버 추가"를, 또는 "서버 없이 사용", "Immich 서버에 연결"을 선택합니다.
+2. Windows 컴퓨터에서는 미리보기를 설치하거나 압축을 푼 뒤 `immuch360.exe`를 실행합니다([설치](#windows) 참고). desktop build 5부터는 환영 페이지의 "서버 없이 사용"이 폴더 선택 화면을 열고, "Immich 서버에 연결"이 로그인 페이지를 엽니다. 프로그램으로 열거나 그 창에 끌어다 놓은 사진, 동영상, 폴더는 즉시 열리며, 360°라면 360° 화면으로 열립니다. 여러 파일을 한꺼번에 열면 한 페이지에 함께 나타납니다.
 3. 뷰어에서는 리모컨의 재생/일시정지, 되감기, 빨리감기, 이전, 다음 버튼이 동작하며, 컴퓨터에서는 키보드 키(스페이스, J와 L, 전체 화면은 F)도 동일하게 동작합니다.
 
 더 보기: [TV에서 보기](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [Windows 컴퓨터에서](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [플랫폼 지원](../docs/immuch360/platform-support.md).
@@ -180,7 +180,7 @@ Meta Quest에서는 같은 앱이 전체 라이브러리를 담은 창으로 실
 
 - **Tapo 카메라**: 네트워크 공유 옆에 카메라를 추가할 수 있습니다. 앱은 Android, Android TV, Quest, Windows에서 실시간 화면을 보여주고, 모든 플랫폼에서 메모리 카드의 녹화 영상을 날짜별로 나열합니다. 클립은 카메라에서 가져와 다른 동영상처럼 재생되며 Immich로 보낼 수도 있습니다. 앱은 네트워크상의 카메라와만 통신하며 TP-Link의 서버와는 결코 통신하지 않습니다.
 - **Plex Media Server, plex.tv 없이**: 앱은 한 번만 붙여넣는 토큰으로 서버와 직접 페어링하여, 라이브러리의 원본 파일을 실시간으로 읽어옵니다. 그래서 360°는 집에서든, 포트 포워딩을 통해 집 밖에서든 그대로 360°로 유지됩니다.
-- **원본 360° 카메라 파일**: Insta360 카메라의 원본 .insp 사진과 .insv 동영상(렌즈 하나 또는 둘, 하나의 트랙, 두 개의 트랙, 또는 두 개의 파일), GoPro MAX의 .360 파일, DJI Osmo 360의 .osv 파일은 재생되는 동안 앱이 직접 스티칭하며, 파일에 기록된 보정값을 사용하고 어디에도 따로 설치할 필요가 없습니다.
+- **360° 카메라 원본 파일**: Insta360 카메라의 원본 .insp 사진과 .insv 동영상(렌즈 한 개 또는 두 개, 트랙 한 개, 트랙 두 개 또는 파일 두 개), GoPro MAX의 .360 파일과 DJI Osmo 360의 .osv 파일은 재생되는 동안 앱이 스티칭하며, 캘리브레이션은 파일에 기록되어 있어 어디에도 아무것도 설치할 필요가 없습니다. Android에서는 휴대폰 갤러리가 원본 파일을 목록에 표시하지 않으므로 공유, 컴퓨터, 또는 서버에서 재생하세요. Immich 서버는 .insp와 .insv만 받습니다.
 
 더 보기: [Tapo 카메라](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [원본 360° 카메라 파일](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
@@ -207,7 +207,7 @@ Meta Quest에서는 같은 앱이 전체 라이브러리를 담은 창으로 실
 | 이 기기를 네트워크에 공유 | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
 | 공유와 기기에서 Immich로 업로드 | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
 | 입력 | 터치, 자이로스코프 | 터치, 자이로스코프 | 리모컨 | 컨트롤러, 손 | 마우스, 키보드 | |
-| 받는 곳 | Google Play, APK | App Store(심사 중) | APK, Google Play(심사 중) | Horizon Store, APK | 프리뷰 ZIP | CI build만 |
+| 받는 곳 | Google Play, APK | App Store(심사 중) | APK, Google Play(심사 중) | Horizon Store, APK | 설치 프로그램 또는 ZIP(미리보기) | .deb, .rpm, DMG(초기 미리보기) |
 
 ✅ 해당 플랫폼의 앱에서 지원 · ❌ 제공하지 않음 · 🔜 계획 중 · 🔧 소스 코드에 있고 프로젝트 CI에서 빌드되지만 아직 해당 시스템에서 실행해 보지 않음. "한쪽 눈"은 3D 파일이 평면 화면에서 왼쪽 눈만 보여준다는 뜻입니다. 모든 ✅가 실제 기기에서 확인된 것은 아닙니다: 어디서 무엇을 확인했는지, 그리고 아직 확인해야 할 것은 [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md), [Compatibility](../docs/immuch360/compatibility.md)에 있습니다.
 
@@ -215,8 +215,8 @@ Meta Quest에서는 같은 앱이 전체 라이브러리를 담은 창으로 실
 - **iPhone과 iPad**: 모든 기능을 갖춘 앱이지만, 360° 동영상 플레이어는 재생과 일시정지만 지원하고, Tapo 실시간 화면은 나중에 추가되며, Apple이 멀티캐스트 권한을 허용하기 전까지 DLNA 검색은 유니캐스트 요청을 보냅니다.
 - **Android TV와 Google TV**: 리모컨으로 조작하는 같은 APK이며, 뷰어 역할만 합니다: 백업, 업로드, 편집 기능은 숨겨져 있습니다. Google TV 에뮬레이터(로그인, 타임라인, 뷰어, 공유, 리모컨 탐색)에서 확인했으며, 아직 실제 TV에서는 확인하지 못했습니다.
 - **Meta Quest 2, Pro, 3, 3S**: 창 형태의 앱과 몰입형 화면을 제공합니다. HEVC가 안전한 코덱이며, Quest 3에서는 H.264가 약 4096x2304에서 한계에 이릅니다. Quest 2와 Quest Pro는 아직 테스트하지 못했습니다.
-- **Windows 10과 11**: 갤러리 대신 폴더를 사용하고, 평면 및 360° 동영상을 위한 자체 동영상 플레이어(libmpv)를 갖춘 프리뷰이며, 원본 파일은 그래픽 칩에서 스티칭됩니다. 아직 설치 프로그램은 없습니다.
-- **macOS와 Linux**: 프로젝트는 프로젝트의 CI에서 빌드되지만(Linux는 빌드, macOS는 컴파일), 앱은 아직 해당 시스템에서 실행된 적이 없으며 해당 시스템의 동영상 플레이어 라이브러리도 아직 들어가 있지 않습니다.
+- **Windows 10과 11**: 미리보기 단계이며, 갤러리 대신 폴더를 사용하고, 평면 및 360° 동영상을 위한 전용 플레이어(libmpv), 그래픽 칩에서 스티칭되는 원본 파일, 프로그램으로 열거나 창에 끌어다 놓은 파일과 폴더, 설치 프로그램 또는 ZIP을 제공합니다.
+- **macOS와 Linux**: 프로젝트의 CI가 빌드한 패키지(.deb, .rpm, DMG)이며, Linux에서는 앱이 실행되어 사진과 360° 사진을 보여주지만 아직 동영상은 없고, SMB 공유에는 Ubuntu 24.04, Debian 13, Fedora 39 이상이 필요합니다. macOS 앱은 프로젝트의 CI에서만 실행되었으며, 동영상이 없고 네트워크 접근도 아직 시도하지 못했습니다.
 
 <a id="advanced-features"></a>
 ## 고급 기능
@@ -226,11 +226,11 @@ Meta Quest에서는 같은 앱이 전체 라이브러리를 담은 창으로 실
 - **형식**: 평면 사진과 동영상(기기가 디코딩할 수 있는 것: MP4, MOV, MKV 등); 이퀴렉탱귤러 360° 사진과 동영상; 부분 파노라마(GPano 크롭); VR180; 파일에서 읽거나(st3d 박스) 프레임에서 추정한 상하 또는 좌우 스테레오스코픽 3D; Apple 공간 사진(HEIC 스테레오 쌍)과 공간 동영상(MV-HEVC, 한쪽 눈); 원본 Insta360 .insp와 .insv, GoPro .360, DJI .osv; 구체에 톤 매핑된 10비트 HLG와 PQ 소스.
 - **투영과 메타데이터**: 서버나 공유에 범위 요청을 보내 파일에서 읽어오는 GPano와 구형 메타데이터; 카메라의 초기 시점; 기기에 기억되는 "360°로 보기"; 파일이나 파일명에서 인식되는 VR180; 변환된 복사본이 아니라 원본 파일을 재생하기 때문에 그대로 보존되는 메타데이터.
 - **네이티브 재생**: Android와 TV에서는 Media3, iOS에서는 SceneKit과 AVFoundation, 헤드셋에서는 Meta Spatial SDK, Windows에서는 libmpv; 기기가 디코딩할 수 있는 것에 따라 원본 또는 트랜스코딩된 스트림을 선택; 설정의 고급 항목에 있는 기기의 동영상 디코더 목록; 오디오 트랙 선택과 버퍼링 표시기.
-- **기기에서 스티칭되는 원본 파일**: 사진용 Flutter 프래그먼트 셰이더; 단일 트랙 동영상을 위한 플레이어 내 GPU 효과; 트랙당 또는 파일당 렌즈가 하나인 동영상을 위해 동시에 사용되는 두 개의 하드웨어 디코더와 GPU 컴포지터(Android와 Quest에서는 OpenGL ES 3, iOS에서는 Metal, Windows에서는 libmpv 필터 그래프); 카메라 고유의 보정값(Mei, V6, 등거리 모델)과 가속도계 기록; 기기가 두 개의 디코더를 동시에 실행할 수 없을 때 하나의 렌즈, 트랜스코딩된 스트림, 카메라의 LRV 사본, 또는 스티칭되지 않은 동영상으로 대체.
+- **기기에서 스티칭되는 원본 파일**: 사진을 위한 Flutter 프래그먼트 셰이더; 단일 트랙 동영상을 위한 플레이어 내 GPU 효과; 트랙 또는 파일마다 렌즈가 하나씩 있는 동영상을 위한 동시 하드웨어 디코더 두 개와 GPU 컴포지터(Android와 Quest에서는 OpenGL ES 3, iOS에서는 Metal, Windows에서는 데스크톱 빌드 5부터 앱이 그래픽 칩에서 프레임을 짝 맞추는 libmpv 플레이어 두 개); 카메라 자체의 캘리브레이션(Mei, V6, 등거리 모델)과 가속도계 기록; 기기가 디코더 두 개를 동시에 실행할 수 없을 때는 렌즈 한 개, 트랜스코딩된 스트림, 카메라의 LRV 복사본, 또는 스티칭되지 않은 동영상으로 폴백합니다.
 - **소스**: 기기의 갤러리; 컴퓨터의 폴더; Immich 서버; SMB 2와 3, WebDAV, DLNA/UPnP; 서버 고유의 인증서로 검증하는 HTTPS 기반 Plex; 로컬 네트워크(HTTPS와 RTSP)를 통한 Tapo 카메라; Wi-Fi에서 WebDAV 서버로 공유되는 휴대폰이나 컴퓨터; Bonjour/mDNS, 로컬 네트워크 스캔, SSDP, GDM, TP-Link 탐색으로 찾아내고 주소가 바뀌어도 계속 추적되는 서버.
 - **필요할 때 읽기**: 바이트 범위와 세션별 토큰으로 플레이어에 데이터를 제공하는 로컬 브리지; 큰 블록, 미리 읽기, 최대 6개의 SMB 연결 병렬 처리; 각 동영상의 한 프레임으로 만드는 썸네일; 기기에 아무것도 복사하지 않음.
 - **하드웨어**: 존재하는 모든 곳에서 측정된 한계(Quest 3의 H.264 상한, 소프트웨어 디코더에서 최대 2048x2048 렌즈 두 개)와 함께 사용되는 하드웨어 디코더; Windows에서는 디코딩된 각 프레임으로부터 그래픽 칩이 360° 화면을 그리며, 각 컴퓨터에서 프레임 크기를 측정하고 내장 또는 전용 그래픽 칩을 감지합니다.
-- **플랫폼별 특성**: 휴대폰의 자이로스코프와 Spatial 2.5D 플레이어; Quest의 몰입형 화면, 컨트롤러, 손 추적; Android TV의 리모컨 레이아웃, 키보드 대화 상자, TV 배너; 컴퓨터에서는 마우스와 키보드, 전체 화면, 단일 창, 프로그램으로 열거나 끌어다 놓은 파일, Windows에 디코더가 있을 때 폴더의 HEIC, AVIF, TIFF, 카메라 원본 사진, 그리고 비밀번호와 토큰을 위한 Windows 데이터 보호.
+- **플랫폼별 세부 사항**: 휴대폰의 자이로스코프와 Spatial 2.5D 플레이어; Quest의 몰입형 화면, 컨트롤러, 손 인식; Android TV의 리모컨 배치, 키보드 대화상자, TV 배너; 컴퓨터에서는 마우스와 키보드, 전체 화면, 단일 창, 프로그램으로 열거나 그 창에 끌어다 놓은 파일과 폴더, Windows에 디코더가 있을 때 폴더의 파일처럼 읽히는 HEIC, AVIF, TIFF와 카메라 원본 사진, 그리고 비밀번호와 토큰을 위한 Windows의 데이터 보호 기능.
 - **설계부터 지켜지는 개인정보 보호**: 계정 없음, 클라우드 없음, 분석 없음; 기기의 보안 저장소에 있는 비밀번호와 토큰; 기기에서만 사용되는 Spatial 플레이어의 카메라; 오직 사용자의 네트워크에서만 접근하는 공유, Plex, 카메라.
 
 <a id="technical-documentation"></a>
@@ -257,7 +257,7 @@ Meta Quest에서는 같은 앱이 전체 라이브러리를 담은 창으로 실
 ### iPhone과 iPad
 
 1. App Store 버전은 Apple의 심사를 기다리고 있습니다. 게시되기 전까지는 Mac에서 Xcode로 앱을 직접 빌드하세요. [직접 빌드하기](../docs/immuch360/build.md)를 참고하세요.
-2. Immich 서버로 로그인하거나 "서버 없이 사용"을 탭하세요.
+2. "서버 없이 사용"을 탭하거나, 서버에 로그인하려면 "Immich 서버에 연결"을 탭합니다. build 24부터 둘 다 환영 페이지에 있습니다.
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TV와 Google TV
@@ -277,14 +277,18 @@ Meta Quest에서는 같은 앱이 전체 라이브러리를 담은 창으로 실
 <a id="windows"></a>
 ### Windows
 
-1. [데스크톱 프리릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)에서 `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`(약 58MB, 확인용 `SHA256SUMS.txt` 포함)를 내려받아 원하는 곳에 압축을 풉니다. 예를 들어 Documents 폴더도 괜찮습니다.
-2. 압축을 푼 폴더에서 `immuch360.exe`를 실행하고 폴더 전체를 그대로 유지하세요: 프로그램은 동영상 플레이어인 `libmpv-2.dll`을 포함해 옆에 있는 파일들이 필요합니다.
-3. 파일은 아직 서명되지 않았습니다: Windows SmartScreen이 "Windows protected your PC"를 표시할 수 있으며, "More info"를 선택한 뒤 "Run anyway"를 선택하세요. 새 build를 처음 실행할 때는 Windows가 파일을 검사하는 동안 최대 1분 정도 걸릴 수 있습니다.
-4. Windows 10 또는 11, 64비트. 아직 설치 프로그램과 자동 업데이트는 없습니다: 다음 build도 같은 방식으로 압축을 푸세요.
+1. [desktop 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5)에서 `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe`를 다운로드하고(`SHA256SUMS.txt`로 확인 가능) 실행합니다. 파일은 아직 서명되지 않았으므로 Windows SmartScreen이 "Windows의 PC 보호"를 표시할 수 있습니다. "추가 정보"를 선택한 다음 "그래도 실행"을 선택합니다.
+2. "현재 사용자에게만 설치"(관리자 권한 불필요) 또는 "모든 사용자에게 설치"를 선택한 다음, 이미 Windows 언어로 선택되어 있는 설치 프로그램의 언어를 선택합니다.
+3. 시작 메뉴에서 Immuch360 Desktop을 실행합니다. 사진과 동영상은 "연결 프로그램"에 나타나지만(파일을 마우스 오른쪽 버튼으로 클릭한 뒤 연결 프로그램), 기본 프로그램으로는 절대 지정되지 않습니다. 새 build를 처음 실행할 때는 Windows가 파일을 검사하는 동안 1분 정도 걸릴 수 있습니다.
+4. Windows 10 또는 11, 64비트. 업데이트하려면 다음 build의 설치 프로그램을 실행하세요: 로그인, 폴더, 설정은 그대로 유지됩니다. 같은 릴리스의 ZIP은 폴더 형태의 같은 프로그램이므로, 원하는 곳에 압축을 풀고 그 안의 `immuch360.exe`를 실행하면 됩니다.
 
-### macOS와 Linux
+### Linux
 
-프로젝트는 소스 코드에 있으며 변경이 있을 때마다 프로젝트의 CI에서 빌드되지만, 앱은 아직 해당 시스템에서 실행된 적이 없고 해당 시스템의 동영상 플레이어 라이브러리도 아직 들어가 있지 않아 다운로드는 아직 없습니다. 빌드 방법은 [직접 빌드하기](../docs/immuch360/build.md)에 있습니다.
+Ubuntu 22.04 이상과 Debian 12 이상에서는: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; Fedora 40 이상에서는: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. 그런 다음 애플리케이션 목록에서 Immuch360 Desktop을 실행합니다. 초기 미리보기 단계로, 컴퓨터의 폴더, 사진과 구 형태의 360° 사진을 보여주지만 동영상은 아직 재생되지 않으며, SMB 공유에는 Ubuntu 24.04, Debian 13, Fedora 39 이상이 필요합니다.
+
+### macOS
+
+`Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg`를 열고 앱을 Applications로 드래그합니다(Apple 실리콘과 Intel, macOS 12 이상). 아직 서명도 공증도 되지 않았으므로, macOS 14 이하에서는 Control 키를 누른 채 클릭한 뒤 "열기"를 선택하고, macOS 15 이상에서는 "시스템 설정"의 "개인정보 보호 및 보안"에서 "무조건 열기"를 선택하세요. 프로젝트에서 작업하는 사람 중 누구도 Mac을 가지고 있지 않아서, 앱은 프로젝트의 CI에서만 실행되었고 아직 동영상도 재생되지 않으며 네트워크 접근도 시도되지 않았습니다. 제보를 환영합니다.
 
 <a id="privacy"></a>
 ## 개인정보
@@ -306,7 +310,7 @@ Immuch360은 [GNU AGPL v3](../LICENSE) 라이선스를 따르는 [Immich](https:
 아직 하지 않은 일을 가능성이 높은 순서로 적었습니다. 여기 있는 것은 약속이 아니며, [이슈 트래커](https://github.com/freeKC/Immuch360/issues)에 의견을 주시면 무엇을 먼저 할지 정하는 데 도움이 됩니다.
 
 - **스토어**: Google Play(build 23 심사 중, TV 등록도 심사 중), App Store(버전 3.3.0 심사 중), Meta Horizon Store(build 21 심사 중).
-- **컴퓨터**: Windows PC에서 모든 기능을 직접 테스트한 뒤, 웹캠으로 Spatial 2.5D를 테스트하고, macOS와 Linux를 동영상 플레이어와 함께 실행하고 출시한 다음, 설치 프로그램, 서명된 build, 자동 업데이트까지 준비합니다.
+- **컴퓨터**: Windows PC에서 모든 기능을 직접 테스트한 뒤, 웹캠으로 Spatial 2.5D를 테스트하고, Linux와 macOS의 동영상 플레이어를 테스트하고 실제 Mac에서도 테스트한 다음, 서명된 build와 자동 업데이트까지 준비합니다.
 - **휴대폰과 태블릿**: iOS 360° 동영상 플레이어의 타임 바, 휴대폰 360° 플레이어의 이전/다음, 평면 플레이어의 오디오 트랙 선택, iPhone과 iPad의 Tapo 실시간 화면.
 - **몰입형 미디어**: 듀얼 피시아이 .dng, GoPro와 DJI 동영상 자체 움직임 데이터로 수평 보정, 디코더가 지원하면 Quest에서 3D로 보이는 공간 동영상, 헤드셋에서 공간 사진 간 이전/다음.
 - **소스**: 공유 폴더 파일 간 스와이프, WebDAV용 Digest 인증, 컴퓨터에서 Plex 토큰을 가져오는 QR 코드, Plex용 IPv6, H.265 Tapo 녹화, TV 홈 화면의 채널.

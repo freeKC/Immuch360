@@ -95,6 +95,36 @@ std::optional<flutter::EncodableMap> VideoOutputManager::ProjectionStats(
   return output->second->ProjectionStats(probe);
 }
 
+void VideoOutputManager::SetPartner(
+    int64_t handle,
+    int64_t partner,
+    std::function<void(flutter::EncodableMap)> done) {
+  std::thread([=]() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    const auto fail = [&](const char* reason) {
+      done(flutter::EncodableMap{
+          {flutter::EncodableValue("ok"), flutter::EncodableValue(false)},
+          {flutter::EncodableValue("reason"), flutter::EncodableValue(reason)},
+      });
+    };
+    auto output = video_outputs_.find(handle);
+    if (output == video_outputs_.end()) {
+      fail("no video output");
+      return;
+    }
+    VideoOutput* other = nullptr;
+    if (partner != 0) {
+      auto found = video_outputs_.find(partner);
+      if (found == video_outputs_.end()) {
+        fail("no video output for the partner");
+        return;
+      }
+      other = found->second.get();
+    }
+    done(output->second->SetPartner(other));
+  }).detach();
+}
+
 VideoOutputManager::~VideoOutputManager() {
   std::lock_guard<std::mutex> lock(mutex_);
   {

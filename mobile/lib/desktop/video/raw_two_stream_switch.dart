@@ -1,7 +1,14 @@
 // The measured switch of the raw files of two streams on the computers (design 2.5, plan 2.2 step 2d): whether this
-// computer stacks the two streams of a raw file in one mpv core (raw_two_streams.dart), and through which decoding
-// path. hstack is a filter of FFmpeg that works on frames in memory, so the streams are decoded either in software
-// ("no") or by the GPU and copied back to memory (d3d11va-copy on Windows): zero copy decoding is not a choice.
+// computer decodes the two streams of a raw file in two players without a copy, or stacks them in one mpv core
+// (raw_two_streams.dart), and through which decoding path. hstack is a filter of FFmpeg that works on frames in
+// memory, so stacked streams are decoded either in software ("no") or by the GPU and copied back to memory
+// (d3d11va-copy on Windows).
+//
+// Two players come first where renderer C pairs them (Windows, the fisheye pairs): each stream has a decoder of its
+// own and stays on the GPU. On 2026-10-13 two libmpv cores decoded the two 3840 x 3840 HEVC 10 bit tracks of a DJI
+// Osmo 360 file at 25 fps, each into its own Direct3D 11 window without a copy, with no frame dropped on the RTX 4060
+// Laptop and 2 to 3 of 300 on the Intel UHD (mpv's fast scalers, which the players use). Measured on each computer
+// like the stacked paths, they give way to stacking or one lens where they do not keep up.
 //
 // What phase 2b measured on the laptop the desktop app was developed on (spike 5, i9-13980HX, 2026-10-09):
 // - an Insta360 X3 pair (two 2880 x 2880 H.264 files at 29.97 fps): 30 fps through the copy back of the RTX 4060
@@ -30,6 +37,7 @@ import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immich_mobile/desktop/video/raw_two_streams.dart';
+import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immuch_desktop_video/immuch_desktop_video.dart';
 import 'package:logging/logging.dart';
@@ -38,19 +46,24 @@ import 'package:path_provider/path_provider.dart';
 
 final _log = Logger('RawTwoStreams');
 
-/// mpv's decoding paths for two stacked streams, see the top of this file
+/// mpv's decoding paths for two stacked streams, and the two players, see the top of this file
 abstract final class TwoStreamPaths {
   static const software = 'no';
+
+  /// Two players, one stream each, decoded by the GPU without a copy and paired by renderer C
+  static const paired = rawPairedPath;
 
   /// The GPU decodes and copies each frame back to memory: d3d11va-copy, the path spike 5 measured, on Windows; mpv's
   /// safe copy back methods elsewhere (phase 4 measures them)
   static String get copyBack => CurrentPlatform.isWindows ? 'd3d11va-copy' : 'auto-copy-safe';
 
-  /// The order a GPU tries them in: the copy back first on a dedicated GPU, software first on an integrated one or
-  /// one not known (software decoding does not depend on the GPU). [copy] is the copy back path of this platform.
-  static List<String> orderFor({required bool? integrated, String? copy}) {
+  /// The order a GPU tries them in: two players first where they exist ([paired]), then the copy back first on a
+  /// dedicated GPU, software first on an integrated one or one not known (software decoding does not depend on the
+  /// GPU). [copy] is the copy back path of this platform.
+  static List<String> orderFor({required bool? integrated, String? copy, bool paired = false}) {
     final back = copy ?? copyBack;
-    return integrated == false ? [back, software] : [software, back];
+    final stack = integrated == false ? [back, software] : [software, back];
+    return [if (paired) TwoStreamPaths.paired, ...stack];
   }
 }
 
@@ -123,30 +136,33 @@ const twoStreamMeasuresOfTheBuild = [
 /// (0 when unknown) on [gpu] (GpuAdapter.key, or MeasuredGpu.unknown), [integrated] when that GPU is one
 typedef TwoStreamQuestion = ({String gpu, bool? integrated, String? codec, int? width, int? height, double frameRate});
 
-/// The decoding path to stack the two streams of [question] with, null when they are not to be stacked (see the top
-/// of this file), from [own], the measures of this computer, and [build], those of the build. [failed] are paths
-/// measured too slow during this playback, [copyBack] the copy back path of this platform (TwoStreamPaths.copyBack).
+/// The decoding path of the two streams of [question]: [TwoStreamPaths.paired] for two players, or the path to stack
+/// them with; null when neither (see the top of this file), from [own], the measures of this computer, and [build],
+/// those of the build. [failed] are paths measured too slow during this playback, [copyBack] the copy back path of
+/// this platform (TwoStreamPaths.copyBack), [paired] whether two players can play these streams here.
 /// In this order, for each path of [TwoStreamPaths.orderFor]:
 /// 1. a measure of this computer of the same kind of video through that path: it is what happened;
-/// 2. a measure through that path, of this computer then of the build for this kind of GPU, that kept up at a higher
-///    pixel rate (taken) or did not at a lower one (left);
+/// 2. a measure through that path, of this computer then of the build for this kind of GPU (stacked paths only), that
+///    kept up at a higher pixel rate (taken) or did not at a lower one (left);
 /// 3. none: the path is tried.
 /// Two streams above the pixel rate of the X3 pair (DesktopVideoDecoderApi.twoStreamPixelRate) are not stacked at
-/// all, unless this computer stacked as much smoothly through some path.
+/// all, unless this computer stacked as much smoothly through some path; two players have no such bound.
 TwoStreamChoice chooseTwoStreamPath(
   TwoStreamQuestion question, {
   required List<DecodeMeasure> own,
   List<DecodeMeasure> build = twoStreamMeasuresOfTheBuild,
   Set<String> failed = const {},
   String? copyBack,
+  bool paired = false,
 }) {
   final order = TwoStreamPaths.orderFor(integrated: question.integrated, copy: copyBack);
   final codec = question.codec;
   final width = question.width;
   final height = question.height;
+  final pairedLeft = paired && !failed.contains(TwoStreamPaths.paired);
   if (codec == null || width == null || height == null || width <= 0 || height <= 0) {
-    // As the phones: the decoders are not checked without a size or a codec, the stack is tried
-    final path = order.where((path) => !failed.contains(path)).firstOrNull;
+    // As the phones: the decoders are not checked without a size or a codec, two players or the stack are tried
+    final path = pairedLeft ? TwoStreamPaths.paired : order.where((path) => !failed.contains(path)).firstOrNull;
     return (hwdec: path, reason: path == null ? 'every path too slow' : 'size or codec unknown: $path tried');
   }
   final asked = DecodeMeasure(
@@ -175,12 +191,36 @@ TwoStreamChoice chooseTwoStreamPath(
     for (final measure in own.reversed)
       if (measure.instances == 2 && measure.gpu == question.gpu) measure,
   ];
+  final reasons = <String>[];
+  if (paired) {
+    if (!pairedLeft) {
+      reasons.add('two players too slow now');
+    } else {
+      // Two players: what this computer measured of them, else they are tried. The build's measures and the ceiling
+      // of the stacked paths do not apply.
+      final same = mine.where((m) => m.hwdec == TwoStreamPaths.paired && sameKind(m)).firstOrNull;
+      final known =
+          same ??
+          mine
+              .where((m) => m.hwdec == TwoStreamPaths.paired && m.codec == codec && (m.smooth ? atLeast(m) : atMost(m)))
+              .firstOrNull;
+      if (known == null) {
+        return (hwdec: TwoStreamPaths.paired, reason: 'not measured yet: two players tried');
+      }
+      if (known.smooth) {
+        return (hwdec: TwoStreamPaths.paired, reason: 'measured on this computer: ${known.describe()}');
+      }
+      reasons.add('two players measured on this computer: ${known.describe()}');
+    }
+  }
   const ceiling = DesktopVideoDecoderApi.twoStreamPixelRate;
   if (rate > ceiling * (1 + _rateTolerance) && !mine.any((m) => m.codec == codec && m.smooth && atLeast(m))) {
     return (
       hwdec: null,
-      reason:
-          '${(rate / 1e6).round()} Mpx/s, above the ${(ceiling / 1e6).round()} Mpx/s measured smooth for two streams',
+      reason: [
+        ...reasons,
+        '${(rate / 1e6).round()} Mpx/s, above the ${(ceiling / 1e6).round()} Mpx/s measured smooth for two streams',
+      ].join('; '),
     );
   }
   final kinds = {
@@ -192,7 +232,6 @@ TwoStreamChoice chooseTwoStreamPath(
     for (final measure in build)
       if (kinds.contains(measure.gpu)) measure,
   ];
-  final reasons = <String>[];
   for (final path in order) {
     if (failed.contains(path)) {
       reasons.add('$path too slow now');
@@ -322,13 +361,18 @@ class TwoStreamSwitch {
     TwoStreamMeasureStore? store,
     DecoderMeasureStore? decoderMeasures,
     Future<GpuAdapter?> Function()? adapter,
+    bool? pairing,
   }) : _store = store ?? TwoStreamMeasureStore.shared,
        _decoderMeasures = decoderMeasures ?? DecoderMeasureStore.shared,
-       _adapter = adapter ?? DesktopGpuDecoders.adapter;
+       _adapter = adapter ?? DesktopGpuDecoders.adapter,
+       pairing = pairing ?? PluginRenderer.supported;
 
   final TwoStreamMeasureStore _store;
   final DecoderMeasureStore _decoderMeasures;
   final Future<GpuAdapter?> Function() _adapter;
+
+  /// Whether renderer C pairs two players here (Windows): the fisheye pairs then play in two players first
+  final bool pairing;
 
   /// The paths measured too slow during this playback
   final failed = <String>{};
@@ -357,11 +401,16 @@ class TwoStreamSwitch {
     );
   }
 
-  /// The decoding path to stack [raw] with, or why not
+  /// Two players or the decoding path to stack [raw] with, or why neither
   Future<TwoStreamChoice> choose(RawStreams raw, {double frameRate = 0}) async {
     final asked = await question(raw, frameRate: frameRate);
-    final choice = chooseTwoStreamPath(asked, own: await _store.measures(), failed: failed);
-    _log.info('Two streams of ${asked.width}x${asked.height}: ${choice.hwdec ?? 'not stacked'} (${choice.reason})');
+    final choice = chooseTwoStreamPath(
+      asked,
+      own: await _store.measures(),
+      failed: failed,
+      paired: pairing && !raw.eac,
+    );
+    _log.info('Two streams of ${asked.width}x${asked.height}: ${choice.hwdec ?? 'one lens'} (${choice.reason})');
     return choice;
   }
 

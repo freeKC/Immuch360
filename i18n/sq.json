@@ -1901,6 +1901,11 @@
   "video_source_transcoded": "Gjithmonë transmetimi i transkoduar",
   "view_as_360": "Shiko si 360°",
   "view_as_360_remove": "Mos e trajto më si 360°",
+  "welcome_server_title": "Lidhu me një server Immich",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex ose një kamerë Tapo",
+  "welcome_shares_title": "Shto një ndarje rrjeti ose një server mediash",
+  "welcome_tagline": "Skedarët tuaj. Çdo ekran. Çdo kënd.",
+  "welcome_without_server_description": "Fotot dhe videot e kësaj pajisjeje. Shtoni ndarje dhe serverë mediash më vonë.",
   "you_dont_have_any_shared_links": "Nuk keni asnjë link të shpërndarë",
   "your_wifi_name": "Emri i Wi-Fi tuaj",
   "zoom_image": "Zmadho imazhin"

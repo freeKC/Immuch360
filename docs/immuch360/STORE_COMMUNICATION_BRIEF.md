@@ -52,7 +52,7 @@ The complete inventory, with the build each feature arrived in and its state per
 | Android phones and tablets | the complete app | Google Play: build 20 live since 7 October 2026, build 23 sent for review on 10 October; GitHub: build 23 APKs |
 | iPhone and iPad | the complete app; the 360° video player has play and pause only; no Tapo live view yet | App Store: version 3.3.0 waiting for Apple's review since 3 October (it carries the features of build 11); TestFlight: build 23 |
 | Android TV and Google TV | the same APK, driven by the remote, as a viewer (no backup, uploads or editing) | GitHub: the universal APK of build 23, sideloaded; Google Play: the TV listing under Google's review since 9 October |
-| Meta Quest 2, Pro, 3 and 3S | the app as a window plus the immersive view with true 3D | Meta Horizon Store: public since 7 October 2026 with build 14, build 21 in review, build 23 on the Alpha channel; GitHub: the Quest APK of build 23 |
+| Meta Quest 2, Pro, 3 and 3S | the app as a window plus the immersive view with true 3D | Meta Horizon Store: public since 7 October 2026 with build 14, build 21 returned by Meta on 12 October 2026 for its screenshots, a corrected submission being prepared, build 23 on the Alpha channel; GitHub: the Quest APK of build 23 |
 | Windows 10 and 11 | a preview: folders, flat and 360° videos, raw files, shares, Plex, cameras, the computer shared with the headset | GitHub: desktop build 4 pre release ZIP of 10 October 2026 |
 | macOS and Linux | the projects exist and are built by the CI; the app has not been started on those systems; no video player library yet | no download; never say "available" |
 
@@ -112,6 +112,6 @@ Claims not to make: that every codec or format plays (the device's decoders deci
 - Network shares: SMB 2 and 3 only; WebDAV Basic authentication; the local network permission on iOS.
 - Android TV: a viewer; backup, uploads and editing are hidden; sign in with an email and a password (no OAuth on a TV).
 - Windows: a preview without installer or automatic update, unsigned (SmartScreen asks once), a dedicated graphics chip recommended for 5.7K and 8K 360° videos.
-- The Immich server and account are optional; "Use without a server" is on the login page.
+- The Immich server and account are optional; "Use without a server" is the first choice of the welcome page, the first screen (from build 24; on the login page before).
 
 Last updated: 12 October 2026 (build 23, desktop build 4).

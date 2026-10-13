@@ -11,7 +11,7 @@ Immuch360 és una aplicació lliure i de codi obert per trobar, explorar, reprod
 
 - **Què fa?** Mostra les teves fotos i vídeos com una galeria i els reprodueix en el visualitzador que correspon a cada fitxer: pla, com una esfera que pots recórrer amb la mirada, en 3D, en unes ulleres de realitat virtual.
 - **Quin contingut?** Fotos i vídeos plans, panoràmiques, fotos i vídeos 360°, VR180, 3D estereoscòpic, fotos espacials d'Apple, i els fitxers en brut de càmeres 360° (Insta360, GoPro MAX, DJI Osmo 360), cosits per l'aplicació.
-- **A quins dispositius?** Telèfons i tauletes Android, iPhone i iPad, Android TV i Google TV, Meta Quest 2, Pro, 3 i 3S, Windows (versió prèvia), amb macOS i Linux en desenvolupament.
+- **A quins dispositius?** Telèfons i tauletes Android, iPhone i iPad, Android TV i Google TV, Meta Quest 2, Pro, 3 i 3S, Windows (versió prèvia), i Linux i macOS com a primeres versions prèvies.
 - **Necessito un servidor o un compte?** No. Immuch360 funciona tot sol amb el contingut del teu dispositiu. Un servidor Immich, un NAS, un servidor multimèdia o un servidor Plex són opcions que afegeixes quan vols.
 
 <p align="center">
@@ -26,8 +26,8 @@ Immuch360 és una aplicació lliure i de codi obert per trobar, explorar, reprod
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | versió 3.3.0 a l'espera de la revisió d'Apple; [compila-la tu mateix](../docs/immuch360/build.md) mentrestant |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#android-tv-and-google-tv) · Google Play | compilació 23 al GitHub; la fitxa de televisors està en revisió per part de Google |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | a l'Horizon Store (compilació 14; compilació 21 en revisió), compilació 23 al GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [ZIP de la versió prèvia](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | compilació 4 d'escriptori, una versió prèvia: fotos, vídeos plans i 360°, recursos compartits, Plex, càmeres |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS i Linux** | Codi font | compilat per la integració contínua del projecte, encara no engegat en aquests sistemes, encara sense descàrrega |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instal·lador o ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | compilació d'escriptori 5, una versió prèvia: fotos, vídeos plans i 360°, recursos compartits, Plex, càmeres, fitxers oberts amb el programa |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS i Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | primeres versions prèvies: a Linux, fotos i fotos 360°, encara sense vídeos; macOS només s'ha engegat a la integració contínua del projecte |
 
 *Els estats s'actualitzen a cada versió; els detalls, compilació per compilació, són a [Estat de les versions](../docs/immuch360/release-status.md).*
 
@@ -97,11 +97,11 @@ Més informació: [fotos i vídeos 360°](../docs/immuch360/user-guide.md#360-ph
 <a id="use-your-own-files-without-an-account"></a>
 ### Utilitza els teus propis fitxers, sense compte
 
-Immuch360 no necessita ni compte ni servidor. A la pàgina d'inici de sessió, "Utilitza sense servidor" obre l'aplicació amb les fotos i vídeos del dispositiu, amb tots els visualitzadors, la llista 360° i els orígens de xarxa. Res no surt del dispositiu. Més endavant es pot connectar un servidor, des d'Ajustos, i llavors apareixen les funcions de servidor.
+Immuch360 no necessita ni compte ni servidor. Des de la compilació 24, l'aplicació s'obre en una pàgina de benvinguda, on "Utilitza sense servidor" apareix primer: obre l'aplicació amb les fotos i els vídeos del dispositiu, amb tots els visualitzadors, la llista 360° i els orígens de xarxa. Res no surt del dispositiu. Es pot connectar un servidor més endavant, des dels Ajustos o la pestanya Biblioteca, i llavors apareixen les funcions del servidor.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="La pestanya Biblioteca sense servidor: l'entrada 360° a dalt, després En aquest dispositiu amb dues fotos 360° i Recursos compartits de xarxa amb un recurs compartit anomenat NAS">
 
-1. Obre l'aplicació. A la pàgina d'inici de sessió, sota l'adreça del servidor i Configuració, toca «Utilitza sense servidor».
+1. Obre l'aplicació. La pàgina de benvinguda mostra "El teu contingut. Qualsevol pantalla. Totes les perspectives." i tres opcions: toca la primera, "Utilitza sense servidor". Fins a la compilació 23, la pàgina d'inici de sessió apareixia primer, amb "Utilitza sense servidor" sota el formulari.
 2. Permet l'accés a les teves fotos i vídeos. Si ho rebutges, l'aplicació diu «L'aplicació no pot veure les fotos d'aquest dispositiu», amb «Permet l'accés» i «Obre la configuració».
 3. La pestanya Fotos mostra la cronologia del dispositiu. Cerca i Àlbums queden en gris, ja que provenen del servidor. La pestanya Biblioteca té 360° a dalt, després En aquest dispositiu (els àlbums del dispositiu) i Recursos compartits de xarxa.
 4. El menú de dalt a la dreta diu «Només aquest dispositiu»: l'aplicació mostra les fotos i vídeos d'aquest dispositiu, no s'envia res enlloc.
@@ -120,7 +120,7 @@ Els teus vídeos són en un NAS, un ordinador o un servidor multimèdia. Immuch3
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Una carpeta d'un recurs compartit de xarxa com una graella de miniatures: fotos 360° amb el distintiu 360° i un vídeo 360° amb una marca de reproducció, el botó Selecciona a dalt a la dreta">
 </p>
 
-1. Obre la pestanya Biblioteca, després Recursos compartits de xarxa, després + i "Un recurs compartit de xarxa (NAS, ordinador, servidor multimèdia)".
+1. Obre la pestanya Biblioteca, després Recursos compartits de xarxa, després + i "Un recurs compartit de xarxa (NAS, ordinador, servidor multimèdia)". Des de la compilació 24, "Afegeix un recurs compartit de xarxa o un servidor multimèdia" a la pàgina de benvinguda obre directament els Recursos compartits de xarxa, sense servidor.
 2. Toca un servidor a "Trobats a la xarxa", o omple el formulari a mà: tipus, nom o adreça del servidor, recurs compartit o camí, carpeta inicial, nom d'usuari i contrasenya.
 3. Toca "Prova la connexió" i després Desa. Toca el recurs compartit per explorar-lo: primer les carpetes, després les fotos i els vídeos, amb la insígnia 360° als fitxers reconeguts com a 360°.
 4. Amb un servidor Immich connectat, selecciona fitxers d'una carpeta i toca "Puja a l’Immich" per enviar-los al teu servidor.
@@ -134,7 +134,7 @@ Més informació: [recursos compartits de xarxa](../docs/immuch360/user-guide.md
 
 Amb un servidor [Immich](https://github.com/immich-app/immich), Immuch360 és l'aplicació mòbil d'Immich, amb el mateix servidor i el mateix compte que l'aplicació web: còpia de seguretat, línia de temps, àlbums, cerca, persones, records, compartició, col·laboradors, tot sincronitzat amb el teu servidor. S'instal·la al costat de l'aplicació oficial. A més: la insígnia i la llista 360°, tots els visualitzadors immersius, la tria entre el fitxer original i el flux transcodificat del servidor per a cada vídeo, els detalls tècnics d'un vídeo, i els fitxers d'un recurs compartit o del dispositiu enviats al teu servidor a mà.
 
-1. Inicia la sessió amb l'adreça del teu servidor, el teu correu electrònic i la teva contrasenya, igual que a l'aplicació Immich. La teva biblioteca, els àlbums i els ajustos de còpia de seguretat són els del teu compte.
+1. A la pàgina de benvinguda, toca "Connecta a un servidor Immich", després inicia la sessió amb l'adreça del teu servidor, el teu correu electrònic i la teva contrasenya, com a l'aplicació Immich; Enrere torna a la pàgina de benvinguda. Fins a la compilació 23, la pàgina d'inici de sessió s'obre directament. La teva biblioteca, els teus àlbums i els ajustos de còpia de seguretat són els del teu compte.
 2. A Ajustos, Visualitzador de fitxers, Vídeos, "Font del vídeo" tria l'original quan aquest dispositiu el pot descodificar, sempre l'original, o sempre el flux transcodificat.
 3. Per mostrar una foto 360° a algú que no té l'aplicació, comparteix-la amb un enllaç compartit d'Immich: l'aplicació web d'Immich la mostra com una esfera al seu navegador.
 
@@ -154,7 +154,7 @@ En unes Meta Quest, la mateixa aplicació funciona com una finestra amb tota la 
 </p>
 
 1. Instal·la l'aplicació des de l'[Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), o instal·la manualment l'APK d'una compilació més nova, consulta [Instal·lació](#meta-quest).
-2. Inicia la sessió amb el teu servidor Immich, o toca «Utilitza sense servidor» per a les fotos i vídeos del mateix casc.
+2. A la pàgina de benvinguda, toca "Utilitza sense servidor" per a les fotos i els vídeos propis de les ulleres, o "Connecta a un servidor Immich" per iniciar la sessió amb el teu servidor.
 3. Obre una foto o un vídeo 360° i prem 360°: s'obre la vista immersiva. B o Y, o el botó Enrere del panell d'informació, torna a mostrar la finestra.
 
 Més informació: [a les ulleres Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [les ulleres: còdecs, botiga i permisos](../docs/immuch360/platform-support.md#meta-quest).
@@ -169,8 +169,8 @@ La mateixa aplicació Android funciona a Android TV i Google TV amb el comandame
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="El reproductor de vídeo d'Immuch360 Desktop a Windows: un vídeo d'un carrer reproduint-se a la finestra, amb el botó de pausa, la barra de temps, Compartir i Puja a l’Immich">
 </p>
 
-1. En un televisor: instal·la l'APK amb adb (consulta [Instal·lació](#android-tv-and-google-tv)), inicia la sessió o tria "Utilitza sense servidor", afegeix un recurs compartit, un servidor Plex o una càmera des de la Biblioteca.
-2. En un ordinador amb Windows: descomprimeix la versió prèvia i inicia `immuch360.exe` (consulta [Instal·lació](#windows)), després tria les carpetes de les teves fotos i vídeos, o inicia la sessió al teu servidor.
+1. En un televisor: instal·la l'APK amb adb (consulta [Instal·lació](#android-tv-and-google-tv)); a la pàgina de benvinguda, tria "Afegeix un recurs compartit de xarxa o un servidor multimèdia" per a un recurs compartit, un servidor Plex o una càmera, "Utilitza sense servidor", o "Connecta a un servidor Immich".
+2. En un ordinador amb Windows: instal·la la versió prèvia o descomprimeix-la i inicia `immuch360.exe` (consulta [Instal·lació](#windows)); des de la compilació d'escriptori 5, "Utilitza sense servidor" a la pàgina de benvinguda obre la tria de les teves carpetes, i "Connecta a un servidor Immich" la pàgina d'inici de sessió. Una foto, un vídeo o una carpeta oberta amb el programa, o deixada anar a la seva finestra, s'obre a l'instant, el contingut 360° en la seva vista 360°; diversos fitxers s'obren junts en una sola pàgina.
 3. En un visualitzador, funcionen les tecles de reproduir i pausar, retrocedir, avançar, anterior i següent del comandament, i també les tecles del teclat en un ordinador (Espai, J i L, F per a pantalla completa).
 
 Més informació: [mira-ho al teu televisor](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [en un ordinador amb Windows](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [compatibilitat de plataformes](../docs/immuch360/platform-support.md).
@@ -180,7 +180,7 @@ Més informació: [mira-ho al teu televisor](../docs/immuch360/user-guide.md#wat
 
 - **Càmeres Tapo**: una càmera s'afegeix al costat dels recursos compartits de xarxa. L'aplicació la mostra en directe (Android, Android TV, la Quest i Windows) i llista els enregistraments de la targeta de memòria dia a dia a totes les plataformes; un fragment es descarrega de la càmera, es reprodueix com qualsevol vídeo i es pot enviar a Immich. L'aplicació només parla amb la càmera a la teva xarxa, mai amb els servidors de TP-Link.
 - **Plex Media Server, sense plex.tv**: l'aplicació s'aparella directament amb el teu servidor, amb un testimoni que enganxes una sola vegada, i llegeix en directe els fitxers originals de les teves biblioteques, de manera que el 360° es manté 360°, a casa i, mitjançant la redirecció de ports, fora de casa.
-- **Fitxers en brut de càmera 360°**: les fotos .insp i els vídeos .insv en brut de les càmeres Insta360 (un o dos objectius, en una pista, dues pistes o dos fitxers), els fitxers .360 de la GoPro MAX i els fitxers .osv de la DJI Osmo 360 es cosen per l'aplicació a mesura que es reprodueixen, amb la calibració escrita al fitxer, sense haver d'instal·lar res enlloc.
+- **Fitxers en brut de càmeres 360°**: les fotos en brut .insp i els vídeos en brut .insv de les càmeres Insta360 (un o dos objectius, en una pista, dues pistes o dos fitxers), els fitxers .360 de la GoPro MAX i els fitxers .osv de la DJI Osmo 360 són cosits per l'aplicació mentre es reprodueixen, amb el calibratge escrit al fitxer, sense res a instal·lar enlloc. A Android, reprodueix-los des d'un recurs compartit, un ordinador o el teu servidor, ja que la galeria del telèfon no llista els fitxers en brut; el servidor Immich només accepta .insp i .insv.
 
 Més informació: [càmeres Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [fitxers en brut de càmera 360°](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
@@ -207,7 +207,7 @@ Una sola base de codi, sis entorns. Això és el que té cadascun avui:
 | Compartir aquest dispositiu a la xarxa | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
 | Pujar a l'Immich des dels recursos compartits i el dispositiu | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
 | Entrada | tàctil, giroscopi | tàctil, giroscopi | comandament | comandaments, mans | ratolí, teclat | |
-| On es pot obtenir | Google Play, APK | App Store (en revisió) | APK, Google Play (en revisió) | Horizon Store, APK | ZIP de la versió prèvia | només compilacions de la integració contínua |
+| On obtenir-ho | Google Play, APK | App Store (en revisió) | APK, Google Play (en revisió) | Horizon Store, APK | instal·lador o ZIP (versió prèvia) | .deb, .rpm, DMG (primeres versions prèvies) |
 
 ✅ a l'aplicació en aquesta plataforma · ❌ no s'hi ofereix · 🔜 previst · 🔧 al codi font i compilat per la integració contínua del projecte, encara no engegat en aquest sistema. "Un ull" vol dir que un fitxer 3D mostra l'ull esquerre en una pantalla plana. No totes les ✅ s'han comprovat encara en un dispositiu real: què s'ha comprovat i on, i què queda per confirmar, és a [Funcionalitats](../docs/immuch360/features.md), [Compatibilitat de plataformes](../docs/immuch360/platform-support.md) i [Compatibilitat](../docs/immuch360/compatibility.md).
 
@@ -215,8 +215,8 @@ Una sola base de codi, sis entorns. Això és el que té cadascun avui:
 - **iPhone i iPad**: l'aplicació completa; el reproductor de vídeo 360° només té reproduir i pausar, la visualització en directe de Tapo arribarà més endavant, i la cerca DLNA envia sol·licituds unicast fins que Apple concedeixi el permís multicast.
 - **Android TV i Google TV**: el mateix APK, controlat pel comandament; un visualitzador: la còpia de seguretat, les pujades i l'edició estan amagades. Comprovat a l'emulador de Google TV (inici de sessió, línia de temps, visualitzadors, recursos compartits, navegació amb el comandament), encara no en un televisor real.
 - **Meta Quest 2, Pro, 3 i 3S**: l'aplicació com una finestra, més la vista immersiva; HEVC és el còdec segur, H.264 s'atura al voltant de 4096x2304 a la Quest 3; la Quest 2 i la Quest Pro encara no s'han provat.
-- **Windows 10 i 11**: una versió prèvia, amb carpetes en lloc d'una galeria, un reproductor de vídeo propi (libmpv) per a vídeos plans i 360°, fitxers en brut cosits al xip gràfic, encara sense instal·lador.
-- **macOS i Linux**: els projectes es compilen a la integració contínua del projecte (Linux generat, macOS compilat); l'aplicació encara no s'ha engegat en aquests sistemes i encara no s'hi ha inclòs la seva biblioteca de reproducció de vídeo.
+- **Windows 10 i 11**: una versió prèvia, amb carpetes en lloc d'una galeria, un reproductor de vídeo propi (libmpv) per a vídeos plans i 360°, fitxers en brut cosits al xip gràfic, fitxers i carpetes oberts amb el programa o deixats anar a la finestra, un instal·lador o un ZIP.
+- **macOS i Linux**: paquets compilats per la integració contínua del projecte (un .deb, un .rpm, un DMG); a Linux l'aplicació s'engega i mostra fotos i fotos 360°, encara sense vídeos, i els recursos compartits SMB necessiten Ubuntu 24.04, Debian 13 o Fedora 39 o posterior; l'aplicació de macOS només s'ha engegat a la integració contínua del projecte, sense vídeos i amb l'accés de xarxa sense provar.
 
 <a id="advanced-features"></a>
 ## Funcions avançades
@@ -226,11 +226,11 @@ Tot el que l'aplicació pot llegir i reproduir, per a qui vulgui conèixer-ho am
 - **Formats**: fotos i vídeos plans (el que el dispositiu pot descodificar: MP4, MOV, MKV i més); fotos i vídeos 360° equirectangulars; panoràmiques parcials (retall GPano); VR180; 3D estereoscòpic, a dalt i a baix o un al costat de l'altre, llegit del fitxer (la caixa st3d) o deduït del fotograma; fotos espacials d'Apple (parells estereoscòpics HEIC) i vídeos espacials (MV-HEVC, un ull); fitxers en brut .insp i .insv d'Insta360, .360 de GoPro, .osv de DJI; fonts HLG i PQ de 10 bits amb mapatge tonal a l'esfera.
 - **Projecció i metadades**: metadades GPano i esfèriques llegides del fitxer, amb sol·licituds per intervals en un servidor o un recurs compartit; la vista inicial de la càmera; "Mostra com a 360°" recordat al dispositiu; VR180 reconegut pel fitxer o pel seu nom; les metadades es mantenen intactes perquè es reprodueix el fitxer original, mai una còpia convertida.
 - **Reproducció nativa**: Media3 a Android i al televisor, SceneKit i AVFoundation a iOS, el Meta Spatial SDK a les ulleres, libmpv a Windows; l'original o el flux transcodificat triat segons el que pot descodificar el dispositiu; una llista dels descodificadors de vídeo del dispositiu a Ajustos, Avançat; la tria de pista d'àudio i un indicador de càrrega.
-- **Fitxers en brut cosits al dispositiu**: un shader de fragment de Flutter per a les fotos; un efecte de GPU al reproductor per a vídeos d'una sola pista; dos descodificadors de maquinari alhora i un compositor de GPU per a vídeos amb un objectiu per pista o per fitxer (OpenGL ES 3 a Android i a la Quest, Metal a iOS, el graf de filtres de libmpv a Windows); la calibració pròpia de la càmera (models Mei, V6 i equidistant) i el registre de l'acceleròmetre; alternatives a un sol objectiu, el flux transcodificat, la còpia LRV de la càmera o el vídeo sense cosir quan el dispositiu no pot fer servir dos descodificadors.
+- **Fitxers en brut cosits al dispositiu**: un ombrejador de fragments de Flutter per a les fotos; un efecte de GPU al reproductor per als vídeos d'una sola pista; dos descodificadors de maquinari alhora i un compositor de GPU per als vídeos amb un objectiu per pista o per fitxer (OpenGL ES 3 a Android i a la Quest, Metal a iOS, i a Windows, des de la compilació d'escriptori 5, dos reproductors libmpv els fotogrames dels quals l'aplicació aparella al xip gràfic); el calibratge propi de la càmera (models Mei, V6 i equidistants) i el registre de l'acceleròmetre; si el dispositiu no pot executar dos descodificadors, recorre a un sol objectiu, al flux transcodificat, a la còpia LRV de la càmera o al vídeo no cosit.
 - **Orígens**: la galeria del dispositiu; les carpetes d'un ordinador; un servidor Immich; SMB 2 i 3, WebDAV, DLNA/UPnP; Plex per HTTPS comprovat contra el certificat propi del servidor; càmeres Tapo a la xarxa local (HTTPS i RTSP); un telèfon o un ordinador compartit per Wi-Fi com a servidor WebDAV; servidors trobats per Bonjour/mDNS, una exploració de la xarxa local, SSDP, GDM i el descobriment de TP-Link, i seguits quan canvien d'adreça.
 - **Lectura sota demanda**: un pont local proveeix els reproductors amb intervals de bytes i un testimoni per sessió; blocs grans, lectura anticipada i fins a sis connexions SMB en paral·lel; miniatures a partir d'un fotograma de cada vídeo; res no es copia al dispositiu.
 - **Maquinari**: s'utilitzen descodificadors de maquinari allà on existeixen, amb els seus límits mesurats (el límit H.264 de la Quest 3, dos objectius de 2048x2048 com a màxim per als descodificadors per programari); a Windows la vista 360° és dibuixada pel xip gràfic a partir de cada fotograma descodificat, la mida del fotograma es mesura a cada ordinador, i es detecta el xip integrat o dedicat.
-- **Particularitats de cada plataforma**: el giroscopi i el reproductor Espacial 2.5D en telèfons; la vista immersiva, els comandaments i les mans a la Quest; la disposició del comandament, el diàleg de teclat i el bàner de televisor a Android TV; a l'ordinador, ratolí i teclat, pantalla completa, una sola finestra, un fitxer obert amb el programa o arrossegat a sobre, fotos HEIC, AVIF, TIFF i RAW de càmera de les carpetes quan Windows té un descodificador per a elles, i la protecció de dades de Windows per a contrasenyes i testimonis.
+- **Particularitats de cada plataforma**: el giroscopi i el reproductor Espacial 2.5D en els telèfons; la vista immersiva, els comandaments i les mans a la Quest; la disposició per al comandament, el diàleg del teclat i el bàner de televisor a Android TV; a l'ordinador, ratolí i teclat, pantalla completa, una sola finestra, fitxers i carpetes oberts amb el programa o deixats anar a la seva finestra, llegits com els fitxers de les teves carpetes, HEIC, AVIF, TIFF i fotos en brut de càmera de les carpetes quan Windows té un descodificador per a elles, i la protecció de dades de Windows per a contrasenyes i testimonis.
 - **Privadesa per disseny**: sense compte, sense núvol, sense anàlisi d'ús; contrasenyes i testimonis a l'emmagatzematge segur del dispositiu; la càmera del reproductor Espacial només s'utilitza al dispositiu; els recursos compartits, Plex i les càmeres només s'abasten a la teva xarxa.
 
 <a id="technical-documentation"></a>
@@ -257,7 +257,7 @@ Tot el que l'aplicació pot llegir i reproduir, per a qui vulgui conèixer-ho am
 ### iPhone i iPad
 
 1. La versió de l'App Store espera la revisió d'Apple. Fins que es publiqui, compila l'aplicació amb Xcode en un Mac, consulta [Compila-la tu mateix](../docs/immuch360/build.md).
-2. Inicia la sessió amb el teu servidor Immich, o toca "Utilitza sense servidor".
+2. Toca "Utilitza sense servidor", o "Connecta a un servidor Immich" per iniciar la sessió amb el teu servidor; totes dues són a la pàgina de benvinguda des de la compilació 24.
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TV i Google TV
@@ -277,14 +277,18 @@ Tot el que l'aplicació pot llegir i reproduir, per a qui vulgui conèixer-ho am
 <a id="windows"></a>
 ### Windows
 
-1. Descarrega `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` des del [pre-llançament d'escriptori](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) (uns 58 MB, amb `SHA256SUMS.txt` per comprovar-lo) i descomprimeix-lo on vulguis, per exemple a Documents.
-2. Inicia `immuch360.exe` des de la carpeta descomprimida i mantén la carpeta sencera: el programa necessita els fitxers del costat, entre ells `libmpv-2.dll`, el reproductor de vídeo.
-3. Els fitxers encara no estan signats: el SmartScreen del Windows pot mostrar "El Windows ha protegit el PC", tria "Més informació" i després "Executa igualment". El primer inici d'una compilació nova pot trigar fins a un minut mentre el Windows escaneja els fitxers.
-4. Windows 10 o 11, 64 bits. Encara no hi ha instal·lador ni actualització automàtica: descomprimeix la pròxima compilació de la mateixa manera.
+1. Descarrega `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` des de la [versió prèvia d'escriptori](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) (amb `SHA256SUMS.txt` per comprovar-lo) i obre'l. Els fitxers encara no estan signats: Windows SmartScreen pot mostrar "El Windows ha protegit l'equip", tria "Més informació" i després "Executa-ho de totes maneres".
+2. Tria "Instal·la només per a mi" (sense drets d'administrador) o "Instal·la per a tots els usuaris", després l'idioma de l'instal·lador, el de Windows ja seleccionat.
+3. Inicia Immuch360 Desktop des del menú Inici. Les fotos i els vídeos l'obtenen a "Obrir amb" (clic dret en un fitxer, Obrir amb); mai no s'estableix com el seu programa predeterminat. El primer inici d'una compilació nova pot trigar fins a un minut mentre Windows explora els fitxers.
+4. Windows 10 o 11, 64 bits. Per actualitzar, obre l'instal·lador de la compilació següent: la sessió iniciada, les carpetes i els ajustos es mantenen. El ZIP de la mateixa versió és el mateix programa en forma de carpeta, per descomprimir-lo on vulguis i iniciar `immuch360.exe` des d'allà.
 
-### macOS i Linux
+### Linux
 
-Els projectes són al codi font i es compilen amb la integració contínua del projecte a cada canvi, però l'aplicació encara no s'ha engegat en aquests sistemes i encara no hi tenen inclosa la seva biblioteca de reproducció de vídeo: encara no hi ha descàrrega. Els passos per compilar-los són a [Compila-la tu mateix](../docs/immuch360/build.md).
+A Ubuntu 22.04 o posterior i Debian 12 o posterior: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; a Fedora 40 o posterior: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Després inicia Immuch360 Desktop des de les teves aplicacions. Una versió prèvia inicial: les carpetes de l'ordinador, fotos i fotos 360° com una esfera; els vídeos encara no es reprodueixen, i els recursos compartits SMB necessiten Ubuntu 24.04, Debian 13 o Fedora 39 o posterior.
+
+### macOS
+
+Obre `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` i arrossega l'aplicació a Aplicacions (Apple silicon i Intel, macOS 12 o posterior). Encara no està signada ni notaritzada: fes clic amb Control i tria Open a macOS 14 i anteriors, o tria "Obre de totes maneres" a Configuració del Sistema, Privadesa i seguretat a macOS 15 i posteriors. Ningú dels qui treballen en el projecte té un Mac: l'aplicació només s'ha engegat a la integració contínua del projecte, encara no reprodueix vídeos i el seu accés de xarxa no s'ha provat. Els informes són benvinguts.
 
 <a id="privacy"></a>
 ## Privadesa
@@ -306,7 +310,7 @@ Les captures de telèfon d'aquesta pàgina es van fer amb la compilació Android
 El que encara no està fet, el més probable primer. Res d'això és una promesa, i els comentaris al [gestor d'incidències](https://github.com/freeKC/Immuch360/issues) ajuden a decidir què va primer.
 
 - **Les botigues**: Google Play (compilació 23 en revisió, la fitxa de televisors en revisió), l'App Store (versió 3.3.0 en revisió), la Meta Horizon Store (compilació 21 en revisió).
-- **Ordinadors**: la prova manual de cada funció en un PC amb Windows; després l'Espacial 2.5D amb la webcam; després macOS i Linux engegats i publicats, amb el seu reproductor de vídeo; després un instal·lador, una compilació signada i actualitzacions automàtiques.
+- **Ordinadors**: la prova manual de cada funció en un PC amb Windows; després l'Espacial 2.5D amb la webcam; després el reproductor de vídeo a Linux i a macOS i una prova en un Mac real; després una compilació signada i actualitzacions automàtiques.
 - **Telèfons i tauletes**: una barra de temps al reproductor de vídeo 360° d'iOS, anterior i següent als reproductors 360° dels telèfons, la tria de pista d'àudio al reproductor pla, la visualització en directe de Tapo a l'iPhone i l'iPad.
 - **Contingut immersiu**: .dng de doble ull de peix, anivellament de vídeos de GoPro i DJI a partir de les seves pròpies dades de moviment, vídeos espacials en 3D a la Quest si els seus descodificadors ho permeten, anterior i següent entre fotos espacials a les ulleres.
 - **Orígens**: lliscar entre els fitxers d'una carpeta compartida, autenticació Digest per a WebDAV, un codi QR per portar el testimoni de Plex des de l'ordinador, IPv6 per a Plex, enregistraments H.265 de Tapo, canals a la pantalla d'inici del televisor.

@@ -143,7 +143,7 @@ class ImmichAppBarDialog extends HookConsumerWidget {
                       return;
                     }
 
-                    unawaited(context.replaceRoute(const LoginRoute()));
+                    unawaited(context.replaceRoute(const WelcomeRoute()));
                   },
                 );
               },

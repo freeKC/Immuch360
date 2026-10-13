@@ -5,6 +5,8 @@
 #include <flutter/encodable_value.h>
 #include <flutter/flutter_view_controller.h>
 #include <flutter/method_channel.h>
+#include <windows.h>
+#include <shellapi.h>
 
 #include <memory>
 
@@ -35,9 +37,17 @@ class FlutterWindow : public Win32Window {
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
       instance_channel_;
 
+  // The files of later starts handled before that channel was made, sent on
+  // it once it is (OnCreate).
+  flutter::EncodableList early_hand_overs_;
+
   // Hands the command line a second start sent with WM_COPYDATA to Dart, and
   // brings this window to the front.
   void OnHandOver(const COPYDATASTRUCT& data);
+
+  // Hands the files and folders dropped on the window to Dart, on the channel
+  // of the later starts.
+  void OnDropFiles(HDROP drop);
 };
 
 #endif  // RUNNER_FLUTTER_WINDOW_H_

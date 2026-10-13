@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/placeholder_check.dart';
@@ -13,6 +14,10 @@ import 'package:photo_manager/photo_manager.dart';
 ///
 /// A file kept online only (OneDrive) or on a drive that is not connected has no file here: nothing reads it, and the
 /// upload reports it as not found on this computer.
+///
+/// A file opened with the program (desktop/files/opened_files.dart) is found the same way, by the id of its asset,
+/// whether its folder is in the library or not. The user chose to open it: it is read even when a cloud client keeps it
+/// online only.
 class DesktopStorageRepository extends StorageRepository {
   DesktopStorageRepository({Future<FolderLibrary> Function()? library, FileAttributesReader? attributes})
     : _library = library ?? FolderLibrary.shared,
@@ -22,6 +27,11 @@ class DesktopStorageRepository extends StorageRepository {
   final FileAttributesReader? _readAttributes;
 
   Future<LibraryFile?> _readable(String assetId) async {
+    final opened = OpenedFiles.file(assetId);
+    if (opened != null) {
+      // ignore: avoid_slow_async_io
+      return await File(opened.path).exists() ? opened : null;
+    }
     try {
       final file = (await _library()).file(assetId);
       if (file == null || !file.readable) {

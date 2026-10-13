@@ -1,10 +1,16 @@
 // Raw files of 360° cameras whose lenses come in two streams, on the computers (design 2.5, plan 2.2 step 2d): two
 // video tracks of one file (Insta360 X4 and later, the EAC tracks of a GoPro .360, a DJI .osv) or one file per lens
-// (an Insta360 X3 recording split in two). One mpv core decodes both and lays them side by side with lavfi-complex
-// "[vid1] [vid2] hstack [vo]"; the second file of a pair joins as an external track (external-files). FFmpeg's filter
-// graph pairs the frames of the two streams by their time stamps, so the seam does not tear as two players would.
-// Renderer C then stitches the stacked frame as it stitches a side by side file: the lens regions of the plan are
-// rewritten into the frame mpv draws (rawProjectionFor).
+// (an Insta360 X3 recording split in two). Two ways to decode them:
+// - two players, one stream each, each decoded by the GPU without a copy into a texture of its own, the view drawn
+//   from both by renderer C, which draws each pair of frames of the same time together (the media_kit_video plugin's
+//   IMMUCH360-NOTE.md, patch 7; raw_partner_player.dart for the second player). The fisheye pairs of Windows: a DJI
+//   Osmo 360 file (two 3840 x 3840 HEVC 10 bit tracks at 25 fps) played this way on the RTX 4060 of the test laptop
+//   at 25 fps with every frame paired, where two such tracks stacked in one player (an X4 file) played at 7 to 9;
+// - one mpv core that decodes both and lays them side by side with lavfi-complex "[vid1] [vid2] hstack [vo]", the
+//   second file of a pair joining as an external track (external-files). FFmpeg's filter graph pairs the frames of
+//   the two streams by their time stamps. hstack works on frames in memory, so this way copies every frame back
+//   from the GPU or decodes in software. Renderer C then stitches the stacked frame as it stitches a side by side
+//   file: the lens regions of the plan are rewritten into the frame mpv draws (rawProjectionFor).
 //
 // Whether a computer keeps up with two streams is measured on the playback (raw_two_stream_switch.dart). When it does
 // not, or when a stream fails, the phones' fallback chain applies in their order and with their messages
@@ -199,27 +205,45 @@ List<double>? _numbers(Object? value, int length) {
   return [for (final item in value) (item! as num).toDouble()];
 }
 
+/// The decoding path of two players, one stream each (see the top of this file), among mpv's hwdec names of the
+/// stacked paths in the measures and the steps
+const rawPairedPath = 'paired';
+
 /// What the frame mpv draws holds: some of the JSON's streams side by side, in that order, at their own widths (both
 /// stacked by hstack, or one alone); or the two lenses side by side in one frame, lens i in its half i, as a side by
-/// side file of the camera has them and as its LRV copy has them
+/// side file of the camera has them and as its LRV copy has them; or stream 0 alone, stream 1 being the frame of the
+/// second player of a pair ([RawFrame.paired])
 @immutable
 class RawFrame {
-  const RawFrame.streams(this.streams) : lensesSideBySide = false;
+  const RawFrame.streams(this.streams) : lensesSideBySide = false, paired = false;
 
-  const RawFrame.lensesSideBySide() : streams = const [0], lensesSideBySide = true;
+  const RawFrame.lensesSideBySide() : streams = const [0], lensesSideBySide = true, paired = false;
+
+  const RawFrame.paired() : streams = const [0, 1], lensesSideBySide = false, paired = true;
 
   final List<int> streams;
   final bool lensesSideBySide;
 
+  /// Two players: stream 0 in this frame, stream 1 in the frame of the other player, each lens in its own stream as
+  /// the JSON places it
+  final bool paired;
+
   @override
   bool operator ==(Object other) =>
-      other is RawFrame && other.lensesSideBySide == lensesSideBySide && listEquals(other.streams, streams);
+      other is RawFrame &&
+      other.lensesSideBySide == lensesSideBySide &&
+      other.paired == paired &&
+      listEquals(other.streams, streams);
 
   @override
-  int get hashCode => Object.hash(lensesSideBySide, Object.hashAll(streams));
+  int get hashCode => Object.hash(lensesSideBySide, paired, Object.hashAll(streams));
 
   @override
-  String toString() => lensesSideBySide ? 'RawFrame(lenses side by side)' : 'RawFrame(streams $streams)';
+  String toString() => paired
+      ? 'RawFrame(two players)'
+      : lensesSideBySide
+      ? 'RawFrame(lenses side by side)'
+      : 'RawFrame(streams $streams)';
 }
 
 /// The rawProjection JSON of [raw] rewritten for [frame], with what the stitch pass needs beside it: [enabled], for
@@ -236,12 +260,21 @@ class RawFrame {
 /// The EAC tracks of a GoPro keep their textures: the pass cuts the frame in [streamsInFrame] equal parts (the two
 /// tracks of a GoPro have one size), and one track alone becomes texture 0. Throws a [FormatException] for a JSON it
 /// cannot rewrite.
+///
+/// Two players ([RawFrame.paired], fisheye pairs only) keep the JSON as it is: texture 0 is the frame of the player,
+/// texture 1 the frame of the second player, each lens region in its own stream.
 @visibleForTesting
 ({Map<String, Object?> json, List<bool> enabled, int streamsInFrame}) rewriteRawRegions(
   RawStreams raw,
   RawFrame frame,
 ) {
   final json = Map<String, Object?>.of(raw.json);
+  if (frame.paired) {
+    if (raw.eac || !raw.twoStreams) {
+      throw const FormatException('rawProjection: two players draw two fisheye streams only');
+    }
+    return (json: json, enabled: const [true, true], streamsInFrame: 1);
+  }
   if (raw.eac) {
     if (frame.lensesSideBySide) {
       throw const FormatException('rawProjection: an EAC file has no side by side copy');
@@ -326,6 +359,7 @@ PluginProjection rawProjectionFor(RawStreams raw, RawFrame frame) {
     jsonEncode(rewritten.json),
     streamsEnabled: rewritten.enabled,
     streamsInFrame: rewritten.streamsInFrame,
+    partnerStream: frame.paired,
   );
 }
 
@@ -333,6 +367,9 @@ PluginProjection rawProjectionFor(RawStreams raw, RawFrame frame) {
 enum RawMode {
   /// One frame holding both lenses: a side by side file, or the LRV copy
   stitched,
+
+  /// Two players, one stream each, decoded without a copy (raw_partner_player.dart)
+  paired,
 
   /// Two streams stacked by hstack
   stacked,
@@ -390,6 +427,7 @@ class RawStep {
   /// What mpv's frame holds, null when nothing is stitched
   RawFrame? get frame => switch (mode) {
     RawMode.unstitched => null,
+    RawMode.paired => const RawFrame.paired(),
     _ when lowResolution => const RawFrame.lensesSideBySide(),
     _ => RawFrame.streams(streams),
   };
@@ -430,8 +468,8 @@ class RawStep {
       '${notice != null ? ', ${notice!.name}' : ''}: $reason)';
 }
 
-/// What the switch of raw_two_stream_switch.dart says about two streams: mpv's [hwdec] to stack them with, null when
-/// they are not to be stacked, and why
+/// What the switch of raw_two_stream_switch.dart says about two streams: [rawPairedPath] for two players, mpv's
+/// [hwdec] to stack them with, null when they are not to be decoded together, and why
 typedef TwoStreamChoice = ({String? hwdec, String reason});
 
 /// The fallback chain of a raw file of two streams on the computers, pure so that every step is unit tested: the
@@ -448,14 +486,20 @@ class RawPlaybackChain {
   /// Set once found: the player looks for it while the original opens, since only a failure needs it
   String? lowResolutionUrl;
 
-  /// The step a video starts with: one frame for a side by side file; for two streams, stacked when [choice] gives a
-  /// decoding path, else one lens with the phones' message
+  /// The step a video starts with: one frame for a side by side file; for two streams, two players or stacked when
+  /// [choice] says so, else one lens with the phones' message
   RawStep initial(TwoStreamChoice choice) {
     if (!raw.twoStreams) {
       return RawStep(mode: RawMode.stitched, streams: const [0], url: url, reason: 'one frame');
     }
     if (raw.twoFiles && raw.secondUrl == null) {
       return _oneLens(raw.streamOfFirstFile, RawNotice.oneLensFile, 'no other file to load');
+    }
+    if (choice.hwdec == rawPairedPath) {
+      // Two players stitch fisheye streams of any heights; the switch never asks them for the EAC tracks of a GoPro
+      return raw.eac
+          ? _oneLens(raw.primaryStream, RawNotice.oneLensDecoder, 'no two players for EAC tracks')
+          : _paired(choice.reason);
     }
     if (!raw.stackable) {
       return _oneLens(raw.primaryStream, RawNotice.oneLensDecoder, 'streams of two heights cannot be stacked');
@@ -467,14 +511,32 @@ class RawPlaybackChain {
     return _stacked(url, raw.twoFiles ? raw.secondUrl : null, hwdec: hwdec, fromFallback: false, reason: choice.reason);
   }
 
-  /// A stacked [step] measured too slow: stacked again through the next decoding path of [next], else one lens (or,
-  /// on the transcoded streams already, the LRV copy, else the frame unstitched). Null for any other step.
+  /// A stacked or paired [step] measured too slow, or two players that failed: through the next decoding path of
+  /// [next] (two players, or stacked), else one lens (or, on the transcoded streams already, the LRV copy, else the
+  /// frame unstitched). Null for any other step.
   RawStep? afterSlowStack(RawStep step, TwoStreamChoice next) {
-    if (step.mode != RawMode.stacked) {
+    if (step.mode != RawMode.stacked && step.mode != RawMode.paired) {
       return null;
     }
     final hwdec = next.hwdec;
     if (hwdec != null && hwdec != step.hwdec) {
+      if (hwdec == rawPairedPath) {
+        return raw.eac || step.fromFallback
+            ? _oneLens(raw.primaryStream, RawNotice.oneLensDecoder, 'no two players here: ${next.reason}')
+            : _paired(next.reason);
+      }
+      if (step.mode == RawMode.paired) {
+        if (!raw.stackable) {
+          return _oneLens(raw.primaryStream, RawNotice.oneLensDecoder, 'streams of two heights cannot be stacked');
+        }
+        return _stacked(
+          url,
+          raw.twoFiles ? raw.secondUrl : null,
+          hwdec: hwdec,
+          fromFallback: false,
+          reason: next.reason,
+        );
+      }
       return _stacked(step.url, step.externalUrl, hwdec: hwdec, fromFallback: step.fromFallback, reason: next.reason);
     }
     if (step.fromFallback) {
@@ -498,6 +560,12 @@ class RawPlaybackChain {
           return _oneLens(raw.streamOfFirstFile, RawNotice.oneLensFile, 'the other file cannot be read');
         }
         return _oneLens(raw.primaryStream, RawNotice.oneLensDecoder, 'the two streams failed together');
+      case RawMode.paired:
+        // The route asks the switch for a stack first (afterSlowStack); this is the step without one
+        if (raw.twoFiles && !externalReadable) {
+          return _oneLens(raw.streamOfFirstFile, RawNotice.oneLensFile, 'the other file cannot be read');
+        }
+        return _oneLens(raw.primaryStream, RawNotice.oneLensDecoder, 'the two players failed');
       case RawMode.stacked:
         return _lowResolution(step, 'the transcoded streams failed') ?? _unstitched('the transcoded streams failed');
       case RawMode.oneLens:
@@ -516,6 +584,17 @@ class RawPlaybackChain {
     streams: [stream],
     url: raw.urlOfStream(stream, url),
     notice: notice,
+    reason: reason,
+  );
+
+  /// Two players: the file of stream 0 in the page's player, the file of stream 1 in the second one (the same file
+  /// for two tracks)
+  RawStep _paired(String reason) => RawStep(
+    mode: RawMode.paired,
+    streams: const [0, 1],
+    url: raw.urlOfStream(0, url),
+    externalUrl: raw.urlOfStream(1, url),
+    hwdec: rawPairedPath,
     reason: reason,
   );
 

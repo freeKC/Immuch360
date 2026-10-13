@@ -624,5 +624,10 @@
   "view_as_360_remove": "Престани да третираш како 360°",
   "waiting": "Во исчекување",
   "week": "Недела",
+  "welcome_server_title": "Поврзи се со Immich сервер",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex или камера Tapo",
+  "welcome_shares_title": "Додај мрежно споделување или медиумски сервер",
+  "welcome_tagline": "Вашите медиуми. Секој екран. Секоја гледна точка.",
+  "welcome_without_server_description": "Фотографиите и видеата од овој уред. Додајте споделувања и медиумски сервери подоцна.",
   "year": "Година"
 }

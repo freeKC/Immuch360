@@ -66,6 +66,7 @@ class ProbeSample {
     this.failed = 0,
     this.error,
     this.drawMs,
+    this.pair,
   });
 
   /// Playback measured, in seconds
@@ -87,6 +88,9 @@ class ProbeSample {
   /// was timed
   final double? drawMs;
 
+  /// Two players for one raw file: how the plugin paired their frames over [seconds]; null for one player
+  final PairCounts? pair;
+
   double get framesPerSecond => seconds > 0 ? frames / seconds : 0;
 
   /// Drawn frames over the video's rate, null when the rate is not known
@@ -99,7 +103,61 @@ class ProbeSample {
   String toString() =>
       'ProbeSample(${framesPerSecond.toStringAsFixed(1)} of ${targetFramesPerSecond?.toStringAsFixed(1)} fps over '
       '${seconds.toStringAsFixed(1)} s, draw ${drawMs?.toStringAsFixed(1) ?? '?'} ms, memory '
-      '+${memoryGrowthMB ?? '?'} MiB${failed > 0 ? ', $failed failed${error == null ? '' : ': $error'}' : ''})';
+      '+${memoryGrowthMB ?? '?'} MiB${failed > 0 ? ', $failed failed${error == null ? '' : ': $error'}' : ''}'
+      '${pair == null ? '' : ', $pair'})';
+}
+
+/// How the plugin drew the frames of two players (the media_kit_video plugin's IMMUCH360-NOTE.md, patch 7): both
+/// frames of one time together, a frame alone once it waited long enough for its partner's, a frame drawn without a
+/// view to catch up, the second player's frames, and how much later they came, with the speed the second player was
+/// given to close that
+@immutable
+class PairCounts {
+  const PairCounts({
+    this.paired = 0,
+    this.alone = 0,
+    this.catchUp = 0,
+    this.partnerFrames = 0,
+    this.partnerOffsetMs = 0,
+    this.partnerSpeed = 0,
+  });
+
+  /// What [stats] counted, null when no frame of a second player was drawn
+  static PairCounts? of(ProjectionStats? stats) =>
+      stats == null || stats.partnerFrames == 0 && stats.pairedFrames == 0 && stats.aloneFrames == 0
+      ? null
+      : PairCounts(
+          paired: stats.pairedFrames,
+          alone: stats.aloneFrames,
+          catchUp: stats.catchUpFrames,
+          partnerFrames: stats.partnerFrames,
+          partnerOffsetMs: stats.partnerOffsetMs,
+          partnerSpeed: stats.partnerSpeed,
+        );
+
+  final int paired;
+  final int alone;
+  final int catchUp;
+  final int partnerFrames;
+  final double partnerOffsetMs;
+  final double partnerSpeed;
+
+  /// These counts and [other]'s, the delay and the speed of [other], the later
+  PairCounts operator +(PairCounts? other) => other == null
+      ? this
+      : PairCounts(
+          paired: paired + other.paired,
+          alone: alone + other.alone,
+          catchUp: catchUp + other.catchUp,
+          partnerFrames: partnerFrames + other.partnerFrames,
+          partnerOffsetMs: other.partnerOffsetMs,
+          partnerSpeed: other.partnerSpeed,
+        );
+
+  @override
+  String toString() =>
+      'two players: $paired paired, $alone alone, $catchUp caught up, $partnerFrames frames of the second, '
+      'its delay ${partnerOffsetMs.toStringAsFixed(1)} ms, its speed ${partnerSpeed.toStringAsFixed(4)}';
 }
 
 enum ProbeVerdict {
@@ -195,6 +253,7 @@ class RendererProbe {
   final _drawMs = <double>[];
   int _failingIntervals = 0;
   int _failed = 0;
+  PairCounts? _pair;
   bool _judged = false;
   bool _sawFrame = false;
   late bool _lowestTier;
@@ -217,6 +276,7 @@ class RendererProbe {
     _drawMs.clear();
     _failingIntervals = 0;
     _failed = 0;
+    _pair = null;
     _judged = false;
     _sawFrame = false;
     _timer = Timer.periodic(interval, (_) => unawaited(_tick()));
@@ -284,6 +344,8 @@ class RendererProbe {
       _frames += frames;
       _failed += counts?.failed ?? 0;
       _drawMs.addAll(counts?.frameMs ?? const []);
+      final pair = PairCounts.of(counts);
+      _pair = _pair == null ? pair : _pair! + pair;
       if (_seconds * 1e6 < window.inMicroseconds && !(growth != null && growth > RendererProbeLimits.memoryGrowthMB)) {
         return;
       }
@@ -303,6 +365,7 @@ class RendererProbe {
           failed: _failed,
           error: counts?.error,
           drawMs: _median(_drawMs),
+          pair: _pair,
         ),
         always: true,
       );

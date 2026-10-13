@@ -25,8 +25,9 @@ final isPanoramaProvider = Provider.autoDispose.family<bool, BaseAsset>(
 
 /// What kind of raw file of a 360° camera the asset is, null for any other: an Insta360 .insp photo or .insv video, a
 /// GoPro .360 or a DJI .osv video by its name (see [rawMediaKindOfName]); or a photo of the device found raw by
-/// reading it, renamed from .insp for example (see [LocalPanoramaRecord.raw360]). How a raw video holds its lenses is
-/// settled when it opens (see RawVideoResolver).
+/// reading it, renamed from .insp for example (see [LocalPanoramaRecord.raw360]), a file opened by its path on a computer
+/// included (see openedFilePanoramasProvider). How a raw video holds its lenses is settled when it opens (see
+/// RawVideoResolver).
 ///
 /// The server sees a JPEG or an MP4 in them and flags no projection: the viewers stitch them, with the calibration the
 /// file carries (see dualFisheyeCalibrationProvider). Kept apart from [isEquirectangularProvider], which tells the
@@ -35,7 +36,8 @@ final rawMediaKindProvider = Provider.autoDispose.family<RawMediaKind?, BaseAsse
   (ref, asset) => rawMediaKindOfAsset(
     asset,
     isFoundRaw: (localId) =>
-        ref.watch(localPanoramaAssetsProvider.select((records) => records[localId]?.raw360 ?? false)),
+        ref.watch(localPanoramaAssetsProvider.select((records) => records[localId]?.raw360 ?? false)) ||
+        ref.watch(openedFilePanoramasProvider.select((records) => records[localId]?.raw360 ?? false)),
   ),
 );
 

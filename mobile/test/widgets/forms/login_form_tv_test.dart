@@ -1,6 +1,6 @@
-// The login form with a remote control: a TV that never reached a server starts on "Use without a server", the
-// address, the email and the password are typed in the native text dialog, and OAuth, which opens a web page, is
-// replaced by a line that says so. A computer has the same line until OAuth is checked there.
+// The login form with a remote control: it starts on the server address, chosen on the welcome page, the address, the
+// email and the password are typed in the native text dialog, and OAuth, which opens a web page, is replaced by a line
+// that says so. A computer has the same line until OAuth is checked there.
 
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -134,14 +134,15 @@ void main() {
               supportedLocales: context.supportedLocales,
               locale: context.locale,
               routerConfig: router.config(),
+              // The text scale around the TV shell, which adds its overscan margins to what it reads
               builder: (context, child) {
-                final scaled = textScaler == null
-                    ? child!
+                final shell = tvShell ? TvShell(child: child!) : child!;
+                return textScaler == null
+                    ? shell
                     : MediaQuery(
                         data: MediaQuery.of(context).copyWith(textScaler: textScaler),
-                        child: child!,
+                        child: shell,
                       );
-                return tvShell ? TvShell(child: scaled) : scaled;
               },
             ),
           ),
@@ -178,13 +179,16 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('a TV that never reached a server starts on "Use without a server"', (tester) async {
+  testWidgets('a TV that never reached a server starts on the address too: the server was chosen before', (
+    tester,
+  ) async {
     // The store of the context is shared by the tests of this file
     await StoreService.I.delete(StoreKey.serverEndpoint);
     addTearDown(() => StoreService.I.put(StoreKey.serverEndpoint, PresentationContext.serverEndpoint));
     await pumpLoginForm(tester, tvMode: true);
 
-    expect(focusedIn(find.widgetWithText(ImmichTextButton, 'Use without a server')), isTrue);
+    expect(focusedIn(entryOf(ImmichURLInput)), isTrue);
+    expect(find.widgetWithText(ImmichTextButton, 'Use without a server'), findsNothing);
   });
 
   testWidgets('a TV that reached a server before starts on its address', (tester) async {
@@ -260,7 +264,8 @@ void main() {
   testWidgets('out of the remote control layout the fields are typed in and OAuth is a button', (tester) async {
     await pumpLoginForm(tester, tvMode: false);
     expect(find.text('Press OK to type'), findsNothing);
-    expect(focusedIn(find.widgetWithText(ImmichTextButton, 'Use without a server')), isFalse);
+    // Nothing takes the focus by itself, which would open the keyboard of a phone
+    expect(FocusManager.instance.primaryFocus?.context?.widget, isNot(isA<EditableText>()));
 
     await tester.enterText(find.byType(TextFormField).first, 'https://photos.example.org');
     await tester.tap(find.text('Next'));
@@ -279,7 +284,7 @@ void main() {
         buildNumber: '3030022',
         buildSignature: '',
       );
-      // A TV that never reached a server: the page starts on "Use without a server", the last action of the form
+      // A TV that never reached a server: the address is empty
       await StoreService.I.delete(StoreKey.serverEndpoint);
     });
 
@@ -305,11 +310,10 @@ void main() {
       return rect.top >= area.top - 0.5 && rect.bottom <= area.bottom + 0.5;
     }
 
-    testWidgets('every action of the server step shows at once, "Use without a server" with the focus', (tester) async {
+    testWidgets('every action of the server step shows at once, the address with the focus', (tester) async {
       tvScreen(tester);
       await pumpLoginForm(tester, tvMode: true, page: true, tvShell: true);
-      final useWithoutServer = find.widgetWithText(ImmichTextButton, 'Use without a server');
-      expect(focusedIn(useWithoutServer), isTrue);
+      expect(focusedIn(entryOf(ImmichURLInput)), isTrue);
 
       final area = visibleArea(tester, margin: TvShell.overscan.top);
       for (final (name, finder) in [
@@ -317,7 +321,7 @@ void main() {
         ('the address', entryOf(ImmichURLInput)),
         ('Next', find.text('Next')),
         ('Settings', find.widgetWithText(ImmichTextButton, 'Settings')),
-        ('Use without a server', useWithoutServer),
+        ('Back', find.widgetWithText(ImmichTextButton, 'Back')),
       ]) {
         expect(shows(tester, finder, area), isTrue, reason: '$name between ${area.top} and ${area.bottom}');
       }
@@ -327,10 +331,18 @@ void main() {
     testWidgets('with large text the page scrolls to the action that has the focus', (tester) async {
       tvScreen(tester);
       await pumpLoginForm(tester, tvMode: true, page: true, tvShell: true, textScaler: const TextScaler.linear(2.5));
-      final useWithoutServer = find.widgetWithText(ImmichTextButton, 'Use without a server');
+      final back = find.widgetWithText(ImmichTextButton, 'Back');
 
-      expect(focusedIn(useWithoutServer), isTrue);
-      expect(shows(tester, useWithoutServer, visibleArea(tester, margin: TvShell.overscan.top)), isTrue);
+      expect(focusedIn(entryOf(ImmichURLInput)), isTrue);
+      expect(shows(tester, entryOf(ImmichURLInput), visibleArea(tester, margin: TvShell.overscan.top)), isTrue);
+
+      // Down to the last action of the form, below the screen at first
+      for (var i = 0; i < 6 && !focusedIn(back); i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+        await tester.pumpAndSettle();
+      }
+      expect(focusedIn(back), isTrue);
+      expect(shows(tester, back, visibleArea(tester, margin: TvShell.overscan.top)), isTrue);
     });
 
     testWidgets('the credentials step starts on the email, even once Logs had the focus', (tester) async {
@@ -343,11 +355,13 @@ void main() {
       await pumpLoginForm(tester, tvMode: true, page: true, tvShell: true);
       final logs = find.ancestor(of: find.text('Logs'), matching: find.byType(RemoteFocusable));
 
-      // Down from "Use without a server" to Logs under the form, then up to the address
-      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-      await tester.pumpAndSettle();
+      // Down from the address to Logs under the form, then up to the address again
+      for (var i = 0; i < 6 && !focusedIn(logs); i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+        await tester.pumpAndSettle();
+      }
       expect(focusedIn(logs), isTrue);
-      for (var i = 0; i < 4; i++) {
+      for (var i = 0; i < 6 && !focusedIn(entryOf(ImmichURLInput)); i++) {
         await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
         await tester.pumpAndSettle();
       }

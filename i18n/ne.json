@@ -330,5 +330,10 @@
   "video_source_title": "भिडियो स्रोत",
   "video_source_transcoded": "सधैं ट्रान्सकोड गरिएको स्ट्रिम",
   "view_as_360": "360° को रूपमा हेर्नुहोस्",
-  "view_as_360_remove": "360° को रूपमा मान्न बन्द गर्नुहोस्"
+  "view_as_360_remove": "360° को रूपमा मान्न बन्द गर्नुहोस्",
+  "welcome_server_title": "Immich सर्भरमा जडान गर्नुहोस्",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex वा एउटा Tapo क्यामेरा",
+  "welcome_shares_title": "नेटवर्क सेयर वा मिडिया सर्भर थप्नुहोस्",
+  "welcome_tagline": "तपाईंको मिडिया। जुनसुकै स्क्रिन। हरेक दृष्टिकोण।",
+  "welcome_without_server_description": "यो उपकरणका फोटो र भिडियोहरू। सेयर र मिडिया सर्भरहरू पछि थप्नुहोस्।"
 }

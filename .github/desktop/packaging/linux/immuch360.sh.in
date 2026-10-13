@@ -1,0 +1,8 @@
+#!/bin/sh
+# Immuch360 Desktop @LABEL@, installed in /opt/immuch360 by its package. The program finds its data and its
+# libraries next to itself: it is started there, with the arguments as they came (the files to open).
+if [ "$1" = "--version" ]; then
+  echo "Immuch360 Desktop @LABEL@"
+  exit 0
+fi
+exec /opt/immuch360/immuch360 "$@"

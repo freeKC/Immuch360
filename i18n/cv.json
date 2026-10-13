@@ -397,5 +397,10 @@
   "video_source_title": "Видео ҫӑлкуҫӗ",
   "video_source_transcoded": "Яланах транскодланӑ поток",
   "view_as_360": "360° евĕр пăх",
-  "view_as_360_remove": "360° евĕр шутлама пăрах"
+  "view_as_360_remove": "360° евĕр шутлама пăрах",
+  "welcome_server_title": "Immich сервера ҫыхӑн",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex е Tapo камери",
+  "welcome_shares_title": "Тетел папкине е медиа сервера хуш",
+  "welcome_tagline": "Хӑвӑн ӳкерчӗксем. Кашни экранра. Кашни кӗтесрен.",
+  "welcome_without_server_description": "Ҫак хатӗрти сӑнӳкерчӗксемпе видеосем. Тетел папкисемпе медиа серверсене кайран хушӑр."
 }

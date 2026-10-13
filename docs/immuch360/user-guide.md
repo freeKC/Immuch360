@@ -46,6 +46,7 @@ When a feature is recent, the text says from which build it is there. The GitHub
 - [Video details, decoders and why a video stutters](#video-details-decoders-and-why-a-video-stutters)
 - [Everything else is Immich](#everything-else-is-immich)
 - [On a Windows computer: Immuch360 Desktop (preview)](#on-a-windows-computer-immuch360-desktop-preview)
+- [Install it on a computer: Windows, Linux and macOS](#install-it-on-a-computer-windows-linux-and-macos)
 - [Privacy](#privacy)
 
 </details>
@@ -143,21 +144,22 @@ The choice is remembered on the phone and changes nothing on the server. On a fi
 
 You have no Immich server, or you do not want an account: you only want the 360° photos of your phone to open as a sphere you can turn with the gyroscope. The Immich app asks for a login first.
 
-On the login page, "Use without a server" opens Immuch360 on the device's own photos and videos, with the 360°, 3D, VR180 and Spatial viewers, the 360° list and the network shares (from build 20 also the Plex servers and the Tapo cameras), no Immich account needed. The server features stay hidden or greyed out until you connect a server; nothing leaves the device. On a Meta Quest it opens the headset's own photos and videos; on a TV, which has none, it points to the network shares (see [Watch on your TV](#watch-on-your-tv-android-tv-and-google-tv)).
+From build 24 the app starts on a welcome page, where "Use without a server" is the first choice (before, it was a link under the login form). It opens Immuch360 on the device's own photos and videos, with the 360°, 3D, VR180 and Spatial viewers, the 360° list and the network shares (from build 20 also the Plex servers and the Tapo cameras), no Immich account needed. The server features stay hidden or greyed out until you connect a server; nothing leaves the device. On a Meta Quest it opens the headset's own photos and videos; on a TV, which has none, it points to the network shares (see [Watch on your TV](#watch-on-your-tv-android-tv-and-google-tv)).
 
 <img src="../../.github/readme/b19-library-no-server.png" width="260" alt="The Library tab without a server: the 360° entry at the top, then On this device with two 360° photos, and Network shares with a share named NAS">
 
 ### Start without a server
 
-1. Open the app. On the login page, below the server address and Settings, tap "Use without a server".
+1. Open the app. The welcome page shows the icon and the name of the app, "Your media. Any screen. Every perspective." and three choices: "Use without a server", "Add a network share or a media server" and "Connect to an Immich server". Tap the first one. Up to build 23, the app opened on the login page instead: tap "Use without a server" below the server address and Settings.
 2. Allow access to your photos and videos. If you refuse, the app says "The app cannot see the photos of this device", with "Allow access" and "Open the settings".
 3. The Photos tab shows the timeline of the device. Search and Albums stay greyed out, as they come from the server. The Library tab has 360° at the top, then On this device (the albums of the device) and Network shares.
 4. The menu at the top right says "This device only": the app shows the photos and videos of this device, nothing is sent anywhere.
+5. From build 24, the second choice of the welcome page, "Add a network share or a media server", starts the same way without a server but opens the Network shares page at once, without asking for the photos of the device; see [Add a share](#add-a-share). Back leads to the Photos tab, which asks for the photos later if you want them there.
 
 ### Connect a server later
 
-1. Open Settings (the menu at the top right, then Settings). The first entry is "Connect to a server", "Sync with an Immich server to back up, search and share". The menu at the top right has the same entry.
-2. Log in as usual. The timeline, albums, backup and the other server features appear.
+1. Open Settings (the menu at the top right, then Settings). The first entry is "Connect to a server", "Sync with an Immich server to back up, search and share". The menu at the top right has the same entry, and from build 24 so has the bottom of the Library tab, "Connect to an Immich server".
+2. Log in as usual. The timeline, albums, backup and the other server features appear. From build 24, Back under the server address returns to the page you came from.
 
 ### Limits
 
@@ -182,7 +184,7 @@ It finds the servers of your network by itself, and plays the files live in the 
 
 ### Add a share
 
-1. Open the Library tab, then Network shares. The first time, the page says "No share yet" with an "Add a share" button; + at the top right does the same at any time. From build 20 both ask what to add: "A network share (NAS, computer, media server)", "A Plex Media Server" or "A Tapo camera". Pick the first one.
+1. Open the Library tab, then Network shares; from build 24, on the welcome page of the first start, "Add a network share or a media server" opens this page directly, without a server. The first time, the page says "No share yet" with an "Add a share" button; + at the top right does the same at any time. From build 20 both ask what to add: "A network share (NAS, computer, media server)", "A Plex Media Server" or "A Tapo camera". Pick the first one.
 2. The "Add a share" page first looks for the servers of your network and lists them under "Found on the network", with their type (SMB, WebDAV, DLNA, Phone, and from build 20 Plex and Tapo). The search takes up to about six seconds; "Scan again" starts it over. It uses Bonjour/mDNS and a scan of the local network confirmed by a real SMB or WebDAV exchange, from build 19 an SSDP search for DLNA media servers, and from build 20 GDM, the discovery of Plex, and the discovery protocol of TP-Link for the Tapo cameras.
 3. Tap a server: the type, server, port and path are filled in. A Plex server or a Tapo camera opens its own page instead, filled in.
 4. Not in the list? Fill the form by hand. Type: "SMB (Samba, Windows share)", "WebDAV (Nextcloud, Synology and others)", "DLNA media server (Jellyfin, NAS, TV box)" or, from build 20, "Plex Media Server", which opens the page of [Plex Media Server, without plex.tv](#plex-media-server-without-plextv). Then Name, "Server name or address" (a name or an address; a full address such as `smb://nas/photos`, `\\nas\photos` or `https://nas:5006/photos` fills the other fields), "Port (optional)" when it is not the usual one, "Share" for SMB or "Path of the WebDAV address" for WebDAV, "Start folder (optional)", "User name" and "Password", and "Secure connection (HTTPS)" for WebDAV.
@@ -398,7 +400,7 @@ From build 16 Immuch360 stitches those files itself, on the phone, the tablet or
 
 ### Watch a raw file
 
-1. Put the raw files where the app reads them: the device's own gallery (copied from the camera's card), your Immich server (it takes .insp and .insv, and refuses .360 and .osv), an SMB or WebDAV share, and from build 19 the phone share and the DLNA servers that list these files (not checked yet).
+1. Put the raw files where the app reads them: an SMB or WebDAV share, your Immich server (it takes .insp and .insv, and refuses .360 and .osv), the folders of a computer in Immuch360 Desktop, and from build 19 the phone share and the DLNA servers that list these files (not checked yet). The gallery of an Android device does not list them: Android files .insv, .insp, .360, .lrv and .osv as other files, not as photos or videos (seen on an Android 12 emulator for the five, and on Android 15 for .osv), so a raw file copied to the phone shows neither in its gallery nor in the app. A raw photo renamed .jpg is still found raw by the app; a raw video renamed .mp4 shows as a plain video, since the app knows raw videos by their name.
 2. Keep the two files of an X3 pair together: the app looks for the other file next to the first one, on the device, on the server or in the share folder. When the other one is missing, the app says "This recording is split in two files, one per lens, and (name) was not found next to it", and suggests keeping both files together or exporting the video from the camera app.
 3. Open the file and tap 360°. Raw files get the 360° button and raw photos the 360° badge. From build 18 the raw Insta360 files of the server are in the 360° list too, found by their name.
 4. A photo opens in the sphere viewer with a label at the bottom: "Raw 360° file, stitched by the app", and the source of the calibration: "lens calibration read from the file", "lens calibration of the same camera" (kept from another file of the same camera, by its serial number, or by its model for a file that only names its model), or "nominal lens values, seams possible" (the values of an X3, when nothing better is available).
@@ -421,7 +423,7 @@ From build 19, on Android and the Quest:
 ### How the stitching works
 
 - **What the app reads**: the calibration block the camera appends to every file (lens model, centres, orientation of each lens, size of the calibration canvas) and the accelerometer record, used to level the horizon. The Mei (unified camera) model of the calibration string V3 is used first, V6 (X6 and later firmware) with its first terms next, the older equidistant string V1 last. Nothing is guessed from the camera model when the file has its calibration. The Insta360 X5 and X6 calibration (V6, indexed trailer) and the X4 video window are read from the file.
-- **Where it reads it**: the server (the original file, read with a range request for its last bytes), the device's own gallery, and the shares.
+- **Where it reads it**: the server (the original file, read with a range request for its last bytes), the device's own gallery (for a raw photo renamed .jpg), the shares and the folders of a computer.
 - **Photos and videos**: photos are stitched by a Flutter fragment shader before the sphere viewer; videos go to the native players with the calibration, a Media3 GL effect on Android and the Quest, a SceneKit shader on iOS.
 - **Two lenses in two tracks or two files**: the players decode both at once, one hardware decoder per lens, paired by time stamp, and a GPU compositor stitches them into the sphere: ExoPlayer and OpenGL ES 3 on Android and the Quest, an AVFoundation compositor in Metal on iOS. 10 bit HLG and PQ sources are tone mapped to the 8 bit sphere.
 
@@ -431,7 +433,8 @@ From build 19, on Android and the Quest:
 - **Horizon**: levelling uses the accelerometer the camera records in the file, averaged. A video is levelled once, from the start of the recording, and is not stabilised, so a handheld video keeps its shakes and its horizon may lean a little. GoPro and DJI files are not levelled (the camera's horizon is kept).
 - **Files without calibration**: a file without its calibration block (the members `_008` and `_009` of an X3 HDR group) uses the calibration the app kept from another file of the same camera or the same camera model, or the nominal X3 values if it has seen none.
 - **What was checked**: photos against Insta360 Studio exports of X3 files (same framing, level horizon, a yaw offset under a degree); single track videos on an Android emulator with a low resolution X3 file. The two track and two file paths were checked on real X4, X3 pair, GoPro MAX and Osmo 360 files with the app's CPU reference stitcher (level, continuous seams) and by the Android unit tests. Playback on a phone, a Quest and an iPhone is still the device test of builds 18 and 19, and raw files have not run on an iPhone yet: feedback welcome.
-- **On the server**: the Immich server refuses .360 and .osv uploads, so those two formats only exist on the device and on shares.
+- **DJI Osmo 360 files** (October 2026): a real .osv file, two 3840x3840 HEVC tracks of 10 bit (Main 10) at 25 frames a second with the camera's calibration after them, was read by the app's parsers and stitched by the CPU reference with continuous seams. On an Android 15 emulator, from a WebDAV share, it is listed with the 360° badge, but the emulator has no 10 bit HEVC decoder, so the file gets no thumbnail there and its 360° player says "Unable to play video"; a synthetic clip laid out the same way in 8 bit was listed with a thumbnail and played stitched to the end, both lenses paired, with the emulator's software decoders. A phone or a Quest with a 10 bit HEVC decoder is expected to play it with its hardware decoders, which no device run has confirmed yet. On Windows, see [Raw 360° videos](#use-it-on-a-computer) in the computer section.
+- **On the server**: the Immich server refuses .360 and .osv uploads, so those two formats only exist on shares and on computers. Renamed .mp4, the server takes them, but the app then shows a plain video.
 
 ## 3D and VR180 photos and videos
 
@@ -511,7 +514,7 @@ The media come from your Immich server, the headset itself, a NAS, a media serve
 ### Open the immersive view
 
 1. Install the app on the headset from the [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), or sideload the APK of a newer build, see [Install](platform-support.md#install-on-the-headset).
-2. Log in with your Immich server, or tap "Use without a server" for the headset's own photos and videos.
+2. On the welcome page (from build 24), choose "Use without a server" for the headset's own photos and videos, or "Connect to an Immich server" to log in with your server. Up to build 23, the login page comes first, with "Use without a server" under it.
 3. Open a 360° photo or video in the viewer, from the timeline, the 360° list, an album or a share folder.
 4. Press the 360° button, or "View as 360°" in the ⋮ menu. On the headset they open the immersive view directly, instead of the sphere viewer of phones.
 5. Look around by turning your head.
@@ -590,8 +593,9 @@ To install the app on a TV, see [Install it on the TV](platform-support.md#insta
 
 ### First start
 
-1. Sign in as on a phone: the arrows move a frame from field to field (from build 23 it passes above the label of a filled field rather than across it), and OK on a field ("Press OK to type") opens the keyboard of the TV in a dialog, for the server address, the email and the password.
-2. Or choose "Use without a server". A TV has no photos of its own, so the Photos tab says "This TV has no photos or videos of its own: open a network share from the Library." with a Network shares button. Add a share, a Plex server or a camera there, as on a phone (see [Network shares](#network-shares-a-nas-a-computer-or-a-media-server)).
+1. From build 24 the app opens on the welcome page with the frame on "Use without a server". The down arrow moves it to "Add a network share or a media server", then to "Connect to an Immich server", and OK opens the choice it is on. Up to build 23, the login page comes first, with "Use without a server" under the form.
+2. "Connect to an Immich server" opens the login page with the frame on the server address. Sign in as on a phone: the arrows move a frame from field to field (from build 23 it passes above the label of a filled field rather than across it), and OK on a field ("Press OK to type") opens the keyboard of the TV in a dialog, for the server address, the email and the password. Back, under the address, or the Back key of the remote returns to the welcome page.
+3. "Use without a server": a TV has no photos of its own, so the Photos tab says "This TV has no photos or videos of its own: open a network share from the Library." with a Network shares button. "Add a network share or a media server" goes straight to the Network shares page. Add a share, a Plex server or a camera there, as on a phone (see [Network shares](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Move around with the remote
 
@@ -718,7 +722,7 @@ On a computer, Immich offers its web app in a browser. **What Immuch360 Desktop 
 
 This is a preview: photos and flat videos work from desktop build 2, and from desktop build 3 the 360° video player (360°, 3D, VR180 and raw 360° videos) and the live view of Tapo cameras; the steps below that need build 3 say so. Since 9 October 2026 the desktop sources are in the main branch of the fork, `immuch360`, so phones, headsets, TVs and computers ship from the same sources. The phone, tablet, Quest and TV apps do not change with it and keep the name Immuch360.
 
-To download and install the preview, see [Download and install on Windows](platform-support.md#download-and-install-on-windows): the ZIP of desktop build 4, unzipped anywhere, and `immuch360.exe` started from its folder.
+To download and install the preview, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos): the ZIP of desktop build 4, unzipped anywhere, and from desktop build 5 an installer too, with packages for Linux and macOS.
 
 ### What the preview does
 
@@ -728,29 +732,30 @@ To download and install the preview, see [Download and install on Windows](platf
 - **360° photos as a sphere**, with the mouse and the keyboard; the raw .insp photos of Insta360 cameras open as on phones.
 - **Flat videos** (from desktop build 2): the videos of your folders, of your Immich server (the original or the transcoded stream, see [Video details and decoders](#video-details-decoders-and-why-a-video-stutters)), of SMB, WebDAV and DLNA shares, of Plex servers and the Tapo recordings play in the window, with the controls of the phones (play, pause, the time bar), a buffering indicator, and a menu of the audio tracks for a video that has several. The videos of your folders and of the shares show a frame of the video as their thumbnail, instead of a film icon.
 - **360°, 3D and VR180 videos** (from desktop build 3): the 360° button opens them in the app's 360° player, in the window or in full screen, from every source of flat videos, turned with the mouse and the keyboard, with the 3D and 360°/180° buttons of the phones (a 3D video shows its left eye, as on phones), seeking, the audio track menu and a buffering indicator.
-- **Raw 360° videos** (from desktop build 3): Insta360 .insv files, with both lenses in one track, in two tracks (X4 and later) or in two files (X3 pairs), GoPro .360 and DJI .osv files, stitched by the app on the graphics chip as they play, with the calibration of the file, as on phones.
+- **Raw 360° videos** (from desktop build 3): Insta360 .insv files, with both lenses in one track, in two tracks (X4 and later) or in two files (X3 pairs), GoPro .360 and DJI .osv files, stitched by the app on the graphics chip as they play, with the calibration of the file, as on phones. From desktop build 5 the files with one lens per track or per file play in two players, one per lens, as phones run two decoders.
 - **Network shares**: Samba (SMB), WebDAV and DLNA media servers, and Plex servers without plex.tv, browsed as on phones: their photos open and their videos play. For Tapo cameras, the recordings of the memory card: the list, fetching a clip and playing it; and from desktop build 3 the live view.
 - **Share this computer on the network**: the albums, months and 360° media of your folders, read only, for a Meta Quest or another device at home, as a phone shares itself. It exists on Windows only.
 - **Files**: downloads from the server go into a folder you choose, Share opens the Windows share panel, and the Logs page has "Save logs to a file".
 - **Photo formats**: in your folders, HEIC, AVIF, TIFF and camera raw photos (DNG, CR2, NEF, ARW) show when Windows has a decoder for them; otherwise they show as a tile that names the format.
-- **Open with**: a photo or a video opened with the program ("Open with", a file dropped on `immuch360.exe`, or a file given on its command line) opens in the viewer, and a second start hands its files to the window already open. In desktop build 4 a 360° photo or video opened this way shows flat, and "View as 360°" does not help yet: open it from its folder in the app instead, see [Known issues](known-issues.md#windows).
+- **Open with and drag and drop** (from desktop build 5): a photo or a video opened with the program ("Open with", a file dropped on `immuch360.exe`, a path given on its command line) or dropped on its window opens in the viewer, a 360° one in its 360° view at once; several files, or a folder, open on a page of their own; a second start hands its files to the window already open. See step 3 of [Use it on a computer](#use-it-on-a-computer).
 - **Spatial 2.5D**: its button shows on Windows, and says that Spatial 2.5D comes to Immuch360 Desktop in a later version.
 
 ### Use it on a computer
 
-1. **Choose your folders.** Without a server, the timeline starts with "Choose the folders of your photos and videos": click "Add a folder". With a server, the same card shows in the Library under "On this computer", and in the albums to back up, until a folder is chosen. Afterwards they have a "Folders on this computer" line, and so has Settings, "This computer".
+1. **Choose your folders.** From desktop build 5 the app starts on the welcome page: "Use without a server" opens the folders page while no folder is chosen, and Back from it leads to the timeline; Tab moves a frame from one choice to the next and Enter opens it. Without a server, the timeline starts with "Choose the folders of your photos and videos" until a folder is chosen: click "Add a folder". With a server, the same card shows in the Library under "On this computer", and in the albums to back up, until a folder is chosen. Afterwards they have a "Folders on this computer" line, and so has Settings, "This computer".
 2. **Cloud, USB and network folders.** Files that OneDrive (or another cloud drive) keeps online only are counted but not read, so adding a folder does not download your whole cloud: "Download and include" fetches them when you want them. A USB drive that comes back under another letter keeps its photos. Network folders, and folders on a memory card or a USB drive (so that Windows can still eject it), are not watched for changes: use Refresh after adding files there.
-3. **Look around a 360° photo**: drag with the mouse, zoom with the wheel, a double click or + and - (on any keyboard layout, AZERTY included), move with the arrow keys. F or F11 switches to full screen and Escape leaves it; Home and End go to the first and the last photo; I shows the details.
-4. **Go from photo to photo**: in a flat photo, the left and right arrows, or the chevrons that show at the edges while the mouse moves, go to the previous and the next one. Letters typed in the description field stay in the text.
-5. **Play a video**: open it from the timeline, a folder, a share, Plex or the recordings of a Tapo camera; it plays in the window. Enter, or the play and pause key of the keyboard, pauses and plays again. While it plays, the left and right arrows, or J and L, jump 10 seconds back or forward; paused, the arrows go to the previous and the next one. F or F11 switches to full screen, as for photos. The "Audio track" button chooses among the audio tracks of a video that has several.
-6. **When a video stops**: a paused video stays paused when you come back to the window. A video cut before its end, when the share or the server stops answering for example, says so: open it again and it picks up where it stopped, paused. A playlist file found in a folder or a share is not followed.
-7. **Play a 360° video** (from desktop build 3): open the video and click 360° in the top bar, as on a phone; for a 360° file the server does not flag, "View as 360°" in the ⋮ menu first, see [A 360° file that shows flat](#a-360-file-that-shows-flat-view-as-360). The 360° player opens in the window. Drag with the mouse to look around (the view keeps turning a little after a quick drag), zoom with the wheel, + and - or Page Up and Page Down, turn with the arrow keys held down. Space, or the play and pause key of the keyboard, pauses and plays again; J and L jump 10 seconds back or forward; Home goes back to the start; M turns the sound off and on. F, F11 or a double click switches to full screen; Escape leaves full screen, then closes the player. The controls (close, the title, 360°/180°, 3D, the audio track and full screen at the top; play, 10 seconds back and forward, the time bar and the sound at the bottom) hide with the mouse cursor after 3 seconds of play, and come back when the mouse moves or a key is pressed; Tab goes from one to the next.
-8. **3D and VR180**: in the 360° player, the 3D button cycles "Mono (not 3D)", "3D, top and bottom" and "3D, side by side", and the 360°/180° button switches between the full sphere and the half sphere of VR180, as in [3D and VR180](#3d-and-vr180-photos-and-videos). A 3D video shows its left eye.
-9. **Raw 360° videos** (from desktop build 3): open the raw file and click 360°, as on a phone, see [Raw 360° camera files](#raw-360-camera-files-without-the-cameras-app); keep the two files of an X3 pair together. A file with both lenses in one track is stitched as it plays. A file with one lens per track or per file plays both lenses side by side in one player when the computer keeps up: the first seconds of such a video are measured, and the result is kept for the next videos of that kind (a way found too slow is tried again after 14 days). When the computer does not keep up, the player goes through the steps of the phones, with their messages: one lens, half of the sphere black; the server's transcoded stream; the low resolution LRV copy the camera recorded next to the file, if there is one; the video unstitched. A raw video has no 3D and no 360°/180° button.
-10. **The live view of a Tapo camera** (from desktop build 3): open the camera as on a phone, see [Watch it live](#watch-it-live). The page plays the SD stream and full screen the HD one, with the buttons of a phone on the picture: the sound, off at first, SD or HD, and "Full screen". A stream that is lost (the camera restarts, the Wi-Fi drops) comes back by itself, tried again for about a minute and a half while the last picture stays on screen. A camera account the camera refuses is said so and not tried again, since failed sign ins count towards the camera's lockout.
-11. **Share the computer with the headset**: open the Library, then Network shares; the first tile is "Share this computer on the network", the computer side of [Share this phone on the network](#share-this-phone-on-the-network). Turn on "Share photos and videos on the network", then add the computer in the headset as that section says. The share stops when the app is closed or after an hour without use.
-12. **Allow the network**: Windows may ask whether Immuch360 Desktop can use the network. Allow it on private networks, otherwise the headset cannot find the computer. On a network Windows marks as public (a café, a hotel), or one whose type it cannot tell, the share does not start unless you choose "Share for this session", and the computer announces itself only on a network it shares on.
-13. **Settings, "This computer"**: the folders, the download folder, the network adapter used to find shares and to share the computer (when it has several, Wi-Fi and Ethernet for example), and trusted certificates: the certificate authority of your own server, as a PEM file, for an HTTPS address Windows does not trust by itself. Client certificates are imported in Settings, Advanced, as on phones.
+3. **Open a file or a folder from Windows** (from desktop build 5): in File Explorer, right click a photo or a video, "Open with", then Immuch360 Desktop; the ZIP registers nothing, so the first time choose "Choose another app" and the `immuch360.exe` of its folder. You can also drop files or a folder on the window of the app or on `immuch360.exe`, or give their paths on the command line, such as `immuch360.exe D:\Photos\pano.jpg`. One photo or video opens in the viewer, recognised as it would be in one of your folders: a 360° file opens in its 360° view at once, with its projection (360° or VR180, 3D, the raw files of 360° cameras, an X3 pair when its two files sit side by side); close that view to see it flat. "View as 360°" works on the others. Several files, or a folder, open on a page of their own, by date, like a folder of the library; a folder shows its own photos and videos, not those of its subfolders. The files stay where they are and do not join your folders. With the app already open, they go to its window rather than to a second copy. Several files opened at once from File Explorer open together on one page, although Windows starts the program once for each of them. On the very first start, before you sign in or choose "Use without a server", they wait, and open once you have.
+4. **Look around a 360° photo**: drag with the mouse, zoom with the wheel, a double click or + and - (on any keyboard layout, AZERTY included), move with the arrow keys. F or F11 switches to full screen and Escape leaves it; Home and End go to the first and the last photo; I shows the details.
+5. **Go from photo to photo**: in a flat photo, the left and right arrows, or the chevrons that show at the edges while the mouse moves, go to the previous and the next one. Letters typed in the description field stay in the text.
+6. **Play a video**: open it from the timeline, a folder, a share, Plex or the recordings of a Tapo camera; it plays in the window. Enter, or the play and pause key of the keyboard, pauses and plays again. While it plays, the left and right arrows, or J and L, jump 10 seconds back or forward; paused, the arrows go to the previous and the next one. F or F11 switches to full screen, as for photos. The "Audio track" button chooses among the audio tracks of a video that has several.
+7. **When a video stops**: a paused video stays paused when you come back to the window. A video cut before its end, when the share or the server stops answering for example, says so: open it again and it picks up where it stopped, paused. A playlist file found in a folder or a share is not followed.
+8. **Play a 360° video** (from desktop build 3): open the video and click 360° in the top bar, as on a phone; for a 360° file the server does not flag, "View as 360°" in the ⋮ menu first, see [A 360° file that shows flat](#a-360-file-that-shows-flat-view-as-360). The 360° player opens in the window. Drag with the mouse to look around (the view keeps turning a little after a quick drag), zoom with the wheel, + and - or Page Up and Page Down, turn with the arrow keys held down. Space, or the play and pause key of the keyboard, pauses and plays again; J and L jump 10 seconds back or forward; Home goes back to the start; M turns the sound off and on. F, F11 or a double click switches to full screen; Escape leaves full screen, then closes the player. The controls (close, the title, 360°/180°, 3D, the audio track and full screen at the top; play, 10 seconds back and forward, the time bar and the sound at the bottom) hide with the mouse cursor after 3 seconds of play, and come back when the mouse moves or a key is pressed; Tab goes from one to the next.
+9. **3D and VR180**: in the 360° player, the 3D button cycles "Mono (not 3D)", "3D, top and bottom" and "3D, side by side", and the 360°/180° button switches between the full sphere and the half sphere of VR180, as in [3D and VR180](#3d-and-vr180-photos-and-videos). A 3D video shows its left eye.
+10. **Raw 360° videos** (from desktop build 3): open the raw file and click 360°, as on a phone, see [Raw 360° camera files](#raw-360-camera-files-without-the-cameras-app); keep the two files of an X3 pair together. A file with both lenses in one track is stitched as it plays. From desktop build 5, a file with one lens per track or per file (Insta360 X4 and later, X3 pairs, DJI Osmo 360) plays in two players, one per lens, each decoded by the graphics chip, and the app draws the two pictures of each moment together. The first seconds of such a video are measured, and the result is kept for the next videos of that kind (a way found too slow is tried again after 14 days). When two players do not keep up, both lenses play side by side in one player if the computer keeps up with that, as in desktop builds 3 and 4 (the only way for a GoPro .360); otherwise the player goes through the steps of the phones, with their messages: one lens, half of the sphere black; the server's transcoded stream; the low resolution LRV copy the camera recorded next to the file, if there is one; the video unstitched. A raw video has no 3D and no 360°/180° button.
+11. **The live view of a Tapo camera** (from desktop build 3): open the camera as on a phone, see [Watch it live](#watch-it-live). The page plays the SD stream and full screen the HD one, with the buttons of a phone on the picture: the sound, off at first, SD or HD, and "Full screen". A stream that is lost (the camera restarts, the Wi-Fi drops) comes back by itself, tried again for about a minute and a half while the last picture stays on screen. A camera account the camera refuses is said so and not tried again, since failed sign ins count towards the camera's lockout.
+12. **Share the computer with the headset**: open the Library, then Network shares; the first tile is "Share this computer on the network", the computer side of [Share this phone on the network](#share-this-phone-on-the-network). Turn on "Share photos and videos on the network", then add the computer in the headset as that section says. The share stops when the app is closed or after an hour without use.
+13. **Allow the network**: Windows may ask whether Immuch360 Desktop can use the network. Allow it on private networks, otherwise the headset cannot find the computer. On a network Windows marks as public (a café, a hotel), or one whose type it cannot tell, the share does not start unless you choose "Share for this session", and the computer announces itself only on a network it shares on.
+14. **Settings, "This computer"**: the folders, the download folder, the network adapter used to find shares and to share the computer (when it has several, Wi-Fi and Ethernet for example), and trusted certificates: the certificate authority of your own server, as a PEM file, for an HTTPS address Windows does not trust by itself. Client certificates are imported in Settings, Advanced, as on phones.
 
 ### 360° videos and the graphics chip
 
@@ -776,16 +781,16 @@ When it is the decoding of a server video that does not keep up, not the drawing
 - **Nothing is deleted from your folders**: "Delete from device" is hidden, and Delete removes only the server copy, until the app can send files to the Windows recycle bin.
 - **Mouse and keyboard** in place of touch and the gyroscope.
 - **One video player for every source**: libmpv plays the videos of the server, the folders, the shares and Plex alike, and its flat player already has the audio track menu that the flat player of phones does not have yet.
-- **360° videos in the window** (from desktop build 3): the 360° player is a page of the app, not a separate native player, with a time bar, 10 second jumps and the sound button. Raw videos with one lens per track or per file are stacked side by side in one player, where phones run two decoders; the phones' fallback steps are the same, with the camera's LRV copy added before the unstitched video.
+- **360° videos in the window** (from desktop build 3): the 360° player is a page of the app, not a separate native player, with a time bar, 10 second jumps and the sound button. Raw videos with one lens per track or per file play in two players from desktop build 5, as phones run two decoders (desktop builds 3 and 4 stacked them side by side in one player); the phones' fallback steps are the same, with the stack and the camera's LRV copy added.
 - **The Tapo live view** (from desktop build 3) plays on the computer as on Android, while iPhones and iPads do not have it yet.
 
 ### Not there yet
 
-- **Two lens raw videos on a laptop**: even with a 2026 libmpv, the test laptop stacked an X3 pair (two 2880x2880 H.264 files) at 30 frames a second on its NVIDIA chip only; on its Intel chip, and for an X4 file (two 3840x3840 HEVC tracks) on both chips, the video plays one lens, half of the sphere black, as on a phone that cannot run two decoders.
+- **Two lens raw videos on a laptop**: in desktop builds 3 and 4 the test laptop stacked an X3 pair (two 2880x2880 H.264 files) at 30 frames a second on its NVIDIA chip only, and an X4 file (two 3840x3840 HEVC tracks) played one lens on both chips. From desktop build 5 they play in two players: on the NVIDIA chip, a DJI Osmo 360 file (two 3840x3840 HEVC 10 bit tracks at 25 frames a second), an X4 file (two 3840x3840 HEVC tracks at 30) and an X3 pair played with no frame dropped. The first time a file at 30 frames a second opens, the player may still say "it may not play smoothly on this device", until the computer has measured it. Not checked yet in the app: the Intel chip, where the flat viewer alone took 2.5 GB of shared GPU memory for the Osmo 360 file and the test stopped for lack of memory on the PC (two players outside the app dropped 2 to 3 frames of 300 there).
 - **3D on the screen only**: a 3D video shows its left eye, as on phones; there is no gyroscope and no headset view on the computer. To watch in true 3D, share the computer with a Meta Quest.
 - **Spatial 2.5D**, later with the webcam; the **map** and the Places view; **signing in with OAuth** (sign in with an email and a password instead); **Google Cast**; **notifications**.
-- **An installer, a signed build and automatic updates**: this build is a folder with `immuch360.exe`.
-- **Linux and macOS**: their projects are in the sources and the project's CI builds them on every change (the Linux app on Ubuntu, the macOS app compiled with Xcode 26.3), but the app has not been started on those systems yet, their video player library (libmpv) is not provided for them yet, and there is no download; they come after Windows.
+- **A signed build and automatic updates**: the installer (from desktop build 5) and the ZIP are not signed, and the next build is installed by hand.
+- **Linux and macOS**: from desktop build 5 they have packages, previews of a preview: on Linux the app starts and shows the photos of your folders and 360° photos, without videos yet, and the macOS app has only run on the project's CI, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos).
 - **Translations**: the new texts of the computer version are in English for now.
 
 ### Known problems
@@ -798,6 +803,62 @@ When it is the decoding of a server video that does not keep up, not the drawing
 - **What the 360° player and the live view were checked with**: the 360° player was run with synthetic 4K, 5.7K and 8K 360° clips on both graphics chips of a laptop (opened, played, turned while playing and paused, closed) with no crash and no reset of the graphics driver. Raw two lens videos were played from synthetic clips and from real X3 and X4 files. The Tapo live view was checked against a test RTSP server that signs in the way the cameras do (Digest), cut and refused on purpose, with no password in any log line, but not yet with a real camera. The test by hand, with real 360° and 3D files, both screens of a laptop, sleep and resume, and a real camera, is still to come.
 
 If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch360/issues) with the log saved from the Logs page, see [Logs](troubleshooting.md#logs). Check the log before sharing it: it can contain your server address.
+
+## Install it on a computer: Windows, Linux and macOS
+
+Immuch360 Desktop comes as desktop pre-releases on the [Releases](https://github.com/freeKC/Immuch360/releases) page of GitHub. Desktop build 4 is a ZIP for Windows. From desktop build 5, each desktop pre-release has six files, with `SHA256SUMS.txt` to check them:
+
+| Computer | File | What it is |
+|---|---|---|
+| Windows 10 and 11, 64 bit | `Immuch360-Desktop-<version>-windows-x64-setup.exe` | The installer |
+| Windows 10 and 11, 64 bit | `Immuch360-Desktop-<version>-windows-x64.zip` | The same program as a folder, to unzip anywhere |
+| Ubuntu 22.04 or later, Debian 12 or later, 64 bit | `Immuch360-Desktop-<version>-linux-amd64.deb` | The package for Debian and Ubuntu |
+| Fedora 40 or later, 64 bit | `Immuch360-Desktop-<version>-linux-x86_64.rpm` | The package for Fedora |
+| macOS 12 or later, Apple silicon or Intel | `Immuch360-Desktop-<version>-macos.dmg` | The app in a disk image |
+| macOS 12 or later, Apple silicon or Intel | `Immuch360-Desktop-<version>-macos.zip` | The same app, zipped |
+
+Your sign in, your folders and your settings stay in your profile on the computer, not with the program: installing the next build over it, or removing the program, keeps them.
+
+### Windows
+
+1. **Open the installer.** Its files are not signed yet, so Windows SmartScreen may say "Windows protected your PC": choose "More info", then "Run anyway". Where Smart App Control is on, it blocks unsigned programs.
+2. **For you, or for every user of the PC.** "Install for me only", the recommended choice, needs no administrator rights and installs the program in your profile; "Install for all users" installs it in Program Files and asks for an administrator. Then comes the language of the installer: the one of Windows is already selected, and the list has every language of Inno Setup.
+3. **Start it** from the Start menu, "Immuch360 Desktop"; a desktop shortcut is made when you tick it.
+4. **Open with**: the installer offers the app for photos (JPEG, PNG, HEIC, HEIF, AVIF, WebP, TIFF, DNG, Insta360 .insp) and videos (MP4, MOV, M4V, MKV, WebM, Insta360 .insv, GoPro .360, DJI .osv). Right click a file, then Open with, Immuch360 Desktop. It never makes itself the default program of a type: to open a type with it on a double click, choose it in Open with, "Choose another app", with "Always", or in Settings, Apps, Default apps, Immuch360 Desktop. Windows itself decides two cases: a type that no other program opens (often .osv and .360) opens with Immuch360 Desktop on a double click, since it is the only program offered, and a type whose program you never chose as the default (Insta360 Studio for .insp and .insv, for example) makes Windows ask once which program to use.
+5. **The next build**: open its installer, which replaces the program. **Remove it** in Settings, Apps, Installed apps, Immuch360 Desktop, Uninstall; your data stays in `%APPDATA%\com.aprogsys\Immuch360 Desktop`, which you can delete too.
+
+The ZIP is the same program as a folder: unzip it anywhere and start `immuch360.exe` from it, keeping the folder whole, see [Download and install on Windows](platform-support.md#download-and-install-on-windows). For an installation without questions: `Immuch360-Desktop-<version>-windows-x64-setup.exe /VERYSILENT /CURRENTUSER`, or `/ALLUSERS` for every user, with `/DIR="<folder>"` and `/LANG=french` if needed; `unins000.exe`, in the folder of the program, uninstalls it with `/VERYSILENT`.
+
+### Linux
+
+The packages are for 64 bit PCs. In the folder of the download, on Ubuntu or Debian:
+
+```bash
+sudo apt install ./Immuch360-Desktop-<version>-linux-amd64.deb
+```
+
+On Fedora:
+
+```bash
+sudo dnf install ./Immuch360-Desktop-<version>-linux-x86_64.rpm
+```
+
+The package manager adds what the app needs (GTK 3, WebKitGTK, libsecret, libmpv). Start "Immuch360 Desktop" from your applications, or `immuch360` in a terminal (`immuch360 --version` gives its version); file managers offer it in "Open with" for the same photos and videos as on Windows. Remove it with `sudo apt remove immuch360` or `sudo dnf remove immuch360`; your data stays in `~/.local/share/immuch360` and `~/.cache/immuch360`.
+
+What it does on Linux so far, as seen in a test of the .deb on Ubuntu 24.04 under WSLg (the Linux of Windows 11): it starts on the login page; without a server it suggests your Pictures and Videos folders and shows their photos and videos by date; a 360° photo opens as a sphere and turns with the mouse. What it does not do yet:
+
+- **Videos**: the viewer says "Video playback comes to Immuch360 Desktop in a later version", and a video has a film icon instead of a frame. The package already brings libmpv, the video library the player will use.
+- **SMB shares on Ubuntu 22.04 and Debian 12**: the SMB library the app ships needs a newer system library (glibc 2.38, in Ubuntu 24.04, Debian 13 and Fedora 39 or later), so SMB shares do not open there.
+- **A photo or a video opened with the app** ("Open with", the command line) showed flat in that first start, as on Windows in desktop build 4; the fix of desktop build 5 is compiled for Linux but has not been tried there.
+- **The keyring**: the app keeps its secrets in the keyring of your session (GNOME Keyring, KWallet), as desktop sessions have; the test container had none, and there the app could not keep them.
+
+### macOS
+
+1. **Open the DMG** and drag Immuch360 Desktop to Applications. The app runs on Apple silicon and Intel Macs, with macOS 12 or later.
+2. **The first start**: the app is not signed with an Apple Developer ID and not notarized yet, so macOS refuses to open it at first. On macOS 14 and earlier, Control click the app in Applications, choose Open, then Open again. On macOS 15 and later, open it once, then go to System Settings, Privacy & Security, choose "Open Anyway" next to the message about Immuch360 Desktop and confirm. In a terminal, `xattr -dr com.apple.quarantine "/Applications/Immuch360 Desktop.app"` does the same.
+3. Finder offers it in "Open with" for the same photos and videos.
+
+**Nobody working on the project has a Mac**: the app is built and checked on the Macs of the project's CI only. There, macOS offered it in "Open with" for the 19 file types, and it started and showed its login page, with its small texts drawn garbled in the screen capture of that virtual machine. It has not been used by hand on a Mac. It has no video player yet (libmpv is not in the macOS app), and its release build runs without the macOS sandbox from desktop build 5, so folders, servers and shares should be reachable; nobody has tried. Reports from Mac users are welcome in [Issues](https://github.com/freeKC/Immuch360/issues).
 
 ## Privacy
 
@@ -814,4 +875,4 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 
 The full policy is in [PRIVACY.md](../../PRIVACY.md).
 
-Last updated: 12 October 2026 (build 23, desktop build 4)
+Last updated: 13 October 2026 (build 23, desktop build 4, the packages of desktop build 5)

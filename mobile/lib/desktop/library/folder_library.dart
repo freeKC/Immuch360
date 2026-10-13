@@ -173,6 +173,27 @@ class FolderLibrary {
     return ended == 0 ? null : DateTime.fromMillisecondsSinceEpoch(ended);
   }
 
+  /// The id of the file at [path] as a local asset, whether the library has it or not: the id a scan gives it once a
+  /// folder around it is added (see LibraryIds.file), built from its volume and its path inside it. A file opened with
+  /// the program keeps its choices (viewed as 360°, a 3D layout) from one opening to the next, and into the library.
+  /// Null when the volume of its folder cannot be read.
+  String? idOfPath(String path) {
+    final absolute = rules.context.normalize(rules.context.absolute(path));
+    return idsInFolder(rules.context.dirname(absolute))?.call(rules.context.basename(absolute));
+  }
+
+  /// The ids of the files of the folder at [path] by their names, its volume read once (see [idOfPath]); null when
+  /// the volume cannot be read
+  String Function(String name)? idsInFolder(String path) {
+    final identity = _volumes.identify(rules.context.normalize(rules.context.absolute(path)));
+    if (identity == null) {
+      return null;
+    }
+    final rootId = identity.rootId(caseFold: rules.caseFold);
+    final ids = index.ids;
+    return (name) => ids.file(rootId, rules.key(name));
+  }
+
   /// The file behind the local asset [assetId], null when the library does not have it
   LibraryFile? file(String assetId) {
     final indexed = index.file(assetId);

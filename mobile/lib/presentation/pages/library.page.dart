@@ -550,9 +550,9 @@ class _QuickAccessButtonList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Folders, the locked folder and the partners all live on the server
+    // Folders, the locked folder and the partners all live on the server: without one, the way to connect one
     if (!ref.watch(hasServerProvider)) {
-      return const SliverPadding(padding: EdgeInsets.only(bottom: 32));
+      return const _ConnectServerEntry();
     }
 
     final partnerSharedWithAsync = ref.watch(sharedWithPartnerProvider);
@@ -614,6 +614,40 @@ class _QuickAccessButtonList extends ConsumerWidget {
               ),
               _PartnerList(partners: partners.toList()),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// In a session without a server, where the server's quick access entries would be: the login form, as Settings and
+/// the menu of the app bar offer it
+class _ConnectServerEntry extends StatelessWidget {
+  const _ConnectServerEntry();
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.only(left: 16, top: 12, right: 16, bottom: 32),
+      sliver: SliverToBoxAdapter(
+        // A Material rather than a coloured box, so that the tile's ink and focus show on it
+        child: Material(
+          color: context.colorScheme.primary.withAlpha(15),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: context.colorScheme.onSurface.withAlpha(10)),
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: ListTile(
+            key: const Key('library_connect_server'),
+            leading: const Icon(Icons.login_rounded, size: 26),
+            title: Text(
+              context.t.welcome_server_title,
+              style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
+            ),
+            subtitle: Text(context.t.local_session_connect_server_subtitle),
+            onTap: () => context.pushRoute(const LoginRoute()),
           ),
         ),
       ),

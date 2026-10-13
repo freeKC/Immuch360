@@ -309,5 +309,10 @@
   "video_source_title": "වීඩියෝ මූලාශ්‍රය",
   "video_source_transcoded": "සැමවිටම ට්‍රාන්ස්කෝඩ් කළ ප්‍රවාහය",
   "view_as_360": "360° ලෙස බලන්න",
-  "view_as_360_remove": "360° ලෙස සැලකීම නවත්වන්න"
+  "view_as_360_remove": "360° ලෙස සැලකීම නවත්වන්න",
+  "welcome_server_title": "Immich සේවාදායකයකට සම්බන්ධ වන්න",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex හෝ Tapo කැමරාවක්",
+  "welcome_shares_title": "ජාල බෙදාගැනීමක් හෝ මාධ්‍ය සේවාදායකයක් එක් කරන්න",
+  "welcome_tagline": "ඔබේ මාධ්‍ය. ඕන ම තිරයක්. සෑම දෘෂ්ටි කෝණයක්ම.",
+  "welcome_without_server_description": "මෙම උපාංගයේ ඡායාරූප සහ වීඩියෝ. බෙදාගැනීම් සහ මාධ්‍ය සේවාදායක පසුව එක් කරන්න."
 }

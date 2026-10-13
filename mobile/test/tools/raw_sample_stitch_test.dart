@@ -2,7 +2,7 @@
 // the file (the tracks, the calibration read from the file, the lens order, the window of the sensor): what the native
 // players must show, to compare with them on the same frame. Each file is only read, in place; ffmpeg decodes the
 // frame of each track. Each test is skipped unless its variable names its file, and IMMUCH_STITCH_OUT a directory:
-//   IMMUCH_OSV_SAMPLE=/path/to/CAM_20250715191201_0003_D.OSV (DJI Osmo 360)
+//   IMMUCH_OSV_SAMPLE=/path/to/CAM_20250101120000_0001_D.OSV (DJI Osmo 360)
 //   IMMUCH_GOPRO_SAMPLE=/path/to/GS010013.360 (GoPro MAX)
 //   IMMUCH_X4_SAMPLE=/path/to/VID_20240414_135511_00_027.insv (Insta360 X4, two tracks, indexed trailer)
 //   IMMUCH_X3_PAIR_SAMPLE=/path/to/VID_20240414_135506_00_088.insv (Insta360 X3 split pair, the _10_ file next to it)

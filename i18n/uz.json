@@ -321,5 +321,10 @@
   "video_source_title": "Video manbasi",
   "video_source_transcoded": "Har doim transkodlangan oqim",
   "view_as_360": "360° sifatida ko‘rish",
-  "view_as_360_remove": "360° sifatida hisoblashni to‘xtatish"
+  "view_as_360_remove": "360° sifatida hisoblashni to‘xtatish",
+  "welcome_server_title": "Immich serveriga ulanish",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex yoki Tapo kamerasi",
+  "welcome_shares_title": "Tarmoq ulashmasi yoki media server qoʻshish",
+  "welcome_tagline": "Sizning mediangiz. Istalgan ekran. Har qanday burchak.",
+  "welcome_without_server_description": "Shu qurilmadagi rasm va videolar. Tarmoq ulashmalari va media serverlarni keyinroq qoʻshing."
 }

@@ -15,7 +15,7 @@ NetworkEntry _file(String name, {String? mimeType}) =>
 
 void main() {
   test('takes the raw videos of Insta360, GoPro and DJI cameras for videos, and the .36p of the MAX 2 for a photo', () {
-    for (final name in ['VID_00_001.insv', 'GS010013.360', 'CAM_20250715191201_0003_D.OSV']) {
+    for (final name in ['VID_00_001.insv', 'GS010013.360', 'CAM_20250101120000_0001_D.OSV']) {
       expect(_file(name).isVideo, isTrue, reason: name);
       expect(_file(name).isMedia, isTrue, reason: name);
     }

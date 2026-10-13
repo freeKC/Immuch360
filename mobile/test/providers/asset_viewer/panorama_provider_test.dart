@@ -243,13 +243,62 @@ void main() {
     });
   });
 
+  group('files opened by their path (a computer)', () {
+    test('view as 360° a file whose content declares it, with no scan record, and keep it from the scans', () async {
+      final photo = LocalAssetFactory.create(id: 'opened-photo', name: 'trip.jpg');
+      final video = LocalAsset(
+        id: 'opened-video',
+        name: 'trip.mp4',
+        type: AssetType.video,
+        createdAt: DateTime(2024),
+        updatedAt: DateTime(2024),
+        width: 3840,
+        height: 1920,
+        playbackStyle: .video,
+        isEdited: false,
+      );
+      final flat = LocalAssetFactory.create(id: 'opened-flat', name: 'IMG_1.jpg');
+      final container = createContainer(exif: {photo: null, video: null, flat: null});
+
+      expect(container.read(isEquirectangularProvider(photo)), isFalse);
+      container.read(openedFilePanoramasProvider.notifier).addAll({
+        'opened-photo': LocalPanoramaRecord(isPanorama: true, checkedAt: DateTime(2024)),
+        'opened-video': LocalPanoramaRecord(isPanorama: true, halfSphere: false, checkedAt: DateTime(2024)),
+        'opened-flat': LocalPanoramaRecord(isPanorama: false, checkedAt: DateTime(2024)),
+      });
+
+      expect(container.read(isEquirectangularProvider(photo)), isTrue);
+      expect(container.read(isPanoramaProvider(photo)), isTrue);
+      expect(container.read(isFoundLocalPanoramaProvider(photo)), isTrue, reason: 'no "View as 360°" for it');
+      expect(container.read(isEquirectangularProvider(video)), isTrue);
+      expect(container.read(isEquirectangularProvider(flat)), isFalse);
+      expect(container.read(localPanoramaIdsProvider), containsAll(['opened-photo', 'opened-video']));
+      // Apart from the records of the scans, which drop the ids the database does not hold
+      expect(container.read(localPanoramaAssetsProvider), isEmpty);
+      expect(store.tryGet(StoreKey.localPanoramaAssets), isNull);
+    });
+
+    test('tell a raw photo by its content, renamed from .insp, as the scan does', () {
+      final renamed = LocalAssetFactory.create(id: 'opened-raw', name: 'IMG_001.jpg');
+      final container = createContainer(exif: {renamed: null});
+
+      container.read(openedFilePanoramasProvider.notifier).addAll({
+        'opened-raw': LocalPanoramaRecord(isPanorama: true, raw360: true, checkedAt: DateTime(2024)),
+      });
+
+      expect(container.read(rawMediaKindProvider(renamed)), RawMediaKind.insta360Photo);
+      expect(container.read(isPanoramaProvider(renamed)), isTrue);
+      expect(container.read(isEquirectangularProvider(renamed)), isFalse, reason: 'stitched, never read as equirect');
+    });
+  });
+
   group('rawMediaKindProvider', () {
     test('tells the raw files of 360° cameras by their name, whatever the frame of a video', () {
       final photo = RemoteAssetFactory.create(name: 'IMG_20240908_133036_00_001.insp');
       final video = RemoteAssetFactory.create(type: .video, name: 'VID_00_002.insv', width: 5760, height: 2880);
       final split = RemoteAssetFactory.create(type: .video, name: 'VID_10_002.insv', width: 2880, height: 2880);
       final goPro = LocalAssetFactory.create(id: 'gopro', name: 'GS010013.360');
-      final dji = LocalAssetFactory.create(id: 'dji', name: 'CAM_20250715191201_0003_D.OSV');
+      final dji = LocalAssetFactory.create(id: 'dji', name: 'CAM_20250101120000_0001_D.OSV');
       final jpeg = RemoteAssetFactory.create(name: 'IMG_001.jpg');
       final proxy = RemoteAssetFactory.create(type: .video, name: 'LRV_20240908_193126_11_004.lrv');
       final container = createContainer(exif: {photo: null, video: null, split: null, jpeg: null, proxy: null});

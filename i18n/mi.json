@@ -309,5 +309,10 @@
   "video_source_title": "Te mātāpuna ataata",
   "video_source_transcoded": "Te rerenga kua whakawaehere anō i ngā wā katoa",
   "view_as_360": "Tirohia hei 360°",
-  "view_as_360_remove": "Kaua e kī hei 360°"
+  "view_as_360_remove": "Kaua e kī hei 360°",
+  "welcome_server_title": "Tūhono ki tētahi tūmau Immich",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex, he kāmera Tapo rānei",
+  "welcome_shares_title": "Tāpirihia he tiritiri whatunga, he tūmau pāpāho rānei",
+  "welcome_tagline": "Āu pāpāho. Ngā mata katoa. Ngā tirohanga katoa.",
+  "welcome_without_server_description": "Ngā whakaahua me ngā ataata o tēnei pūrere. Tāpirihia ngā tiritiri me ngā tūmau pāpāho ā muri ake."
 }

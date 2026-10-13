@@ -407,5 +407,10 @@
   "video_source_title": "ប្រភពវីដេអូ",
   "video_source_transcoded": "ស្ទ្រីមដែលបានបំលែងកូដជានិច្ច",
   "view_as_360": "មើលជា 360°",
-  "view_as_360_remove": "ឈប់ចាត់ទុកជា 360°"
+  "view_as_360_remove": "ឈប់ចាត់ទុកជា 360°",
+  "welcome_server_title": "ភ្ជាប់ទៅម៉ាស៊ីនមេ Immich",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex ឬកាមេរ៉ា Tapo",
+  "welcome_shares_title": "បន្ថែមការចែករំលែកលើបណ្ដាញ ឬម៉ាស៊ីនមេមេឌៀ",
+  "welcome_tagline": "មេឌៀរបស់អ្នក។ គ្រប់អេក្រង់។ គ្រប់ទិដ្ឋភាព។",
+  "welcome_without_server_description": "រូបថត និងវីដេអូនៅលើឧបករណ៍នេះ។ បន្ថែមការចែករំលែក និងម៉ាស៊ីនមេមេឌៀនៅពេលក្រោយ។"
 }

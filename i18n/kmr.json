@@ -527,5 +527,10 @@
   "video_source_title": "Çavkaniya vîdyoyê",
   "video_source_transcoded": "Her tim herika veguherandî",
   "view_as_360": "Wek 360° bibîne",
-  "view_as_360_remove": "Êdî wek 360° nehesibîne"
+  "view_as_360_remove": "Êdî wek 360° nehesibîne",
+  "welcome_server_title": "Bi servera Immich ve girê bide",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex an kameraya Tapo",
+  "welcome_shares_title": "Parvekirineke torê an serverekî medyayê lê zêde bike",
+  "welcome_tagline": "Medyaya te. Her ekran. Her dîmen.",
+  "welcome_without_server_description": "Wêne û vîdyoyên vê cîhazê. Parvekirinên torê û serverên medyayê paşê lê zêde bike."
 }

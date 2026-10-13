@@ -111,7 +111,13 @@ class PluginProjection {
     this.tracks = 1,
     this.streamsEnabled = const [1, 1],
     this.uniforms = const {},
+    this.partnerStream = false,
+    this.secondary = false,
   });
+
+  /// The player that decodes stream 1 of a fisheye pair for the player that draws the view (two players for one raw
+  /// file, the plugin's IMMUCH360-NOTE.md, patch 7): it draws its frame into its texture and shows nothing
+  const PluginProjection.secondary() : this._(kind: ProjectionKind.fisheyePair, secondary: true);
 
   /// An equirectangular frame in [layout], [eye] shown (the left one by default, as the phones show), over the whole
   /// sphere or, for [SphereCoverage.half], its front half with black behind (VR180)
@@ -142,10 +148,14 @@ class PluginProjection {
   /// not decoded (one lens mode, half of the sphere black). [streamsInFrame]: the streams the frame holds when it is
   /// not the JSON's number of tracks (1 when only the first of two tracks is decoded). Throws a [FormatException] for a
   /// JSON it cannot draw.
+  ///
+  /// [partnerStream]: stream 1 is the frame of a second player ([PluginRenderer.setPartner]), not a part of this
+  /// player's frame; it stays off until that player drew a frame.
   factory PluginProjection.raw(
     String rawProjectionJson, {
     List<bool> streamsEnabled = const [true, true],
     int? streamsInFrame,
+    bool partnerStream = false,
   }) {
     final decoded = jsonDecode(rawProjectionJson);
     if (decoded is! Map<String, Object?>) {
@@ -159,6 +169,7 @@ class PluginProjection {
       },
       streamsEnabled: [for (var i = 0; i < 2; i++) (i < streamsEnabled.length && !streamsEnabled[i]) ? 0.0 : 1.0],
       uniforms: rawStitchUniforms(decoded),
+      partnerStream: partnerStream,
     );
   }
 
@@ -169,8 +180,20 @@ class PluginProjection {
   final List<double> streamsEnabled;
   final Map<String, List<double>> uniforms;
 
+  /// Stream 1 from a second player, see [PluginProjection.raw]
+  final bool partnerStream;
+
+  /// The second player of a pair, see [PluginProjection.secondary]
+  final bool secondary;
+
+  /// Two players share the tier: each stream gets half of its intermediate frame, as the two streams stacked in one
+  /// frame had
+  bool get halfTier => partnerStream || secondary;
+
   @override
-  String toString() => 'PluginProjection(${kind.name}, eye $eye, crop $crop, tracks $tracks)';
+  String toString() =>
+      'PluginProjection(${kind.name}, eye $eye, crop $crop, tracks $tracks'
+      '${partnerStream ? ', stream 1 from a second player' : ''}${secondary ? ', second player' : ''})';
 }
 
 /// The uniforms of the stitch pass for the rawProjection [json] (version 2), by the names of RawStitchShaders.kt and
@@ -294,6 +317,7 @@ abstract interface class PluginChannel {
   Future<ProjectionResult> disable(int handle);
   Future<bool> setView(int handle, PluginView view, {required bool sharp});
   Future<ProjectionStats?> stats(int handle, {bool probe = false});
+  Future<ProjectionResult> setPartner(int handle, int? partner);
 }
 
 class _MethodChannelPlugin implements PluginChannel {
@@ -311,6 +335,9 @@ class _MethodChannelPlugin implements PluginChannel {
 
   @override
   Future<ProjectionStats?> stats(int handle, {bool probe = false}) => ProjectionOutput.stats(handle, probe: probe);
+
+  @override
+  Future<ProjectionResult> setPartner(int handle, int? partner) => ProjectionOutput.setPartner(handle, partner);
 }
 
 /// The answer of [PluginRenderer.attach]: whether renderer C draws the player, and if not why (the probe then tries
@@ -416,6 +443,9 @@ class PluginRenderer {
 
   // setProjection, setOutputSize, setTier and detach go to the plugin one after the other
   Future<void> _queue = Future.value();
+
+  /// The renderer of the second player of a pair ([setPartner]): its tier follows this one's
+  PluginRenderer? _partner;
 
   bool get attached => _attached;
   PluginTier? get tier => _tier;
@@ -547,12 +577,51 @@ class PluginRenderer {
       final ok = await _enable();
       if (ok) {
         _lastTierChange = _now();
+        // The second player of a pair draws its stream at the same tier
+        await _partner?._followTier(tier);
       } else {
         _tier = previous;
       }
       return ok;
     });
   }
+
+  // The tier of the primary player of a pair, at once: the second player's frame changes with the first's
+  Future<bool> _followTier(PluginTier tier) => tier == _tier
+      ? Future.value(true)
+      : _change(() async {
+          final previous = _tier;
+          _tier = tier;
+          final ok = await _enable();
+          if (!ok) {
+            _tier = previous;
+          }
+          return ok;
+        });
+
+  /// The player of [partner], attached with [PluginProjection.secondary], decodes stream 1 of this player's stitch
+  /// (two players for one raw file); null ends the pairing. Both must be attached, this one with a projection of
+  /// [PluginProjection.partnerStream]. False when the plugin refused (the two players cannot read each other's
+  /// textures).
+  Future<bool> setPartner(PluginRenderer? partner) => _change(() async {
+    final handle = _handleValue;
+    final other = partner?._handleValue;
+    if (!_attached || handle == null || (partner != null && (other == null || !partner._attached))) {
+      return false;
+    }
+    final result = await _channel.setPartner(handle, other);
+    if (!result.ok) {
+      _log.warning('renderer C refused the second player: ${result.reason}');
+      _partner = null;
+      return false;
+    }
+    _partner = partner;
+    final tier = _tier;
+    if (partner != null && tier != null) {
+      await partner._followTier(tier);
+    }
+    return true;
+  });
 
   /// What the plugin drew since the previous call; [probe] asks for five pixels of the next draw (the next call
   /// gives them)
@@ -575,6 +644,8 @@ class PluginRenderer {
     _resize?.cancel();
     final done = Completer<void>();
     _enqueue(() async {
+      // The plugin ends the pairing of a player that goes flat
+      _partner = null;
       if (_attached) {
         _attached = false;
         final handle = _handleValue;
@@ -601,11 +672,14 @@ class PluginRenderer {
     tracks: projection.tracks,
     streamsEnabled: projection.streamsEnabled,
     uniforms: projection.uniforms,
-    maxFrameWidth: tier.maxFrameWidth,
-    maxFramePixels: tier.maxFramePixels,
-    outputWidth: math.max(1, outputSize.width.round()),
-    outputHeight: math.max(1, outputSize.height.round()),
+    maxFrameWidth: projection.halfTier ? tier.maxFrameWidth ~/ 2 : tier.maxFrameWidth,
+    maxFramePixels: projection.halfTier ? tier.maxFramePixels ~/ 2 : tier.maxFramePixels,
+    // The second player of a pair shows nothing: the smallest texture
+    outputWidth: projection.secondary ? 2 : math.max(1, outputSize.width.round()),
+    outputHeight: projection.secondary ? 2 : math.max(1, outputSize.height.round()),
     maxOutputHeight: maxOutputHeight,
+    partnerStream: projection.partnerStream,
+    secondary: projection.secondary,
   );
 
   Future<GpuAdapter?> _gpuAdapter() async {

@@ -36,6 +36,8 @@ class ProjectionSetup {
     required this.outputWidth,
     required this.outputHeight,
     required this.maxOutputHeight,
+    this.partnerStream = false,
+    this.secondary = false,
   });
 
   final ProjectionKind kind;
@@ -67,6 +69,15 @@ class ProjectionSetup {
   final int outputHeight;
   final int maxOutputHeight;
 
+  /// Two players for the two streams of a raw file (IMMUCH360-NOTE.md, patch 7): stream 1 of the stitch is the frame
+  /// of the partner player ([ProjectionOutput.setPartner]), read from its own texture, and stays off until the partner
+  /// drew a frame
+  final bool partnerStream;
+
+  /// This player only decodes its stream into its intermediate texture for the primary player of a pair, and shows
+  /// nothing
+  final bool secondary;
+
   Map<String, Object?> toArguments(int handle) => {
         'handle': handle,
         'enabled': true,
@@ -84,6 +95,8 @@ class ProjectionSetup {
         'outputWidth': outputWidth,
         'outputHeight': outputHeight,
         'maxOutputHeight': maxOutputHeight,
+        'partnerStream': partnerStream,
+        'secondary': secondary,
       };
 }
 
@@ -151,6 +164,12 @@ class ProjectionStats {
     this.error,
     this.glRenderer,
     this.probe,
+    this.pairedFrames = 0,
+    this.aloneFrames = 0,
+    this.catchUpFrames = 0,
+    this.partnerFrames = 0,
+    this.partnerOffsetMs = 0,
+    this.partnerSpeed = 0,
   });
 
   factory ProjectionStats.fromMap(Map<Object?, Object?> map) {
@@ -180,6 +199,12 @@ class ProjectionStats {
       error: error == null || error.isEmpty ? null : error,
       glRenderer: map['glRenderer'] as String?,
       probe: probe is List ? [for (final pixel in probe) pixel as int] : null,
+      pairedFrames: map['pairedFrames'] as int? ?? 0,
+      aloneFrames: map['aloneFrames'] as int? ?? 0,
+      catchUpFrames: map['catchUpFrames'] as int? ?? 0,
+      partnerFrames: map['partnerFrames'] as int? ?? 0,
+      partnerOffsetMs: (map['partnerOffsetMs'] as num?)?.toDouble() ?? 0,
+      partnerSpeed: (map['partnerSpeed'] as num?)?.toDouble() ?? 0,
     );
   }
 
@@ -217,6 +242,18 @@ class ProjectionStats {
 
   /// Five pixels of the output (centre, top, bottom, left, right), 0xAABBGGRR, when an earlier call asked for them
   final List<int>? probe;
+
+  /// Two players (IMMUCH360-NOTE.md, patch 7): draws of both frames of one time, of a frame alone once it waited long
+  /// enough for its partner's, of a frame drawn without a view to catch up, and the partner's frames drawn
+  final int pairedFrames;
+  final int aloneFrames;
+  final int catchUpFrames;
+  final int partnerFrames;
+
+  /// How much later the partner's frames come than this player's, smoothed, and the speed it was last given (0 before
+  /// the first correction)
+  final double partnerOffsetMs;
+  final double partnerSpeed;
 }
 
 /// The method calls of renderer C on the channel of media_kit_video
@@ -255,6 +292,15 @@ abstract final class ProjectionOutput {
         'sharp': sharp,
       }) ??
       false;
+
+  /// The player [partner], whose projection is a secondary one, decodes stream 1 of the stitch of the player [handle]
+  /// (IMMUCH360-NOTE.md, patch 7); null ends the pairing. Refused when the two players cannot read each other's
+  /// textures, or their projections are not those of a pair.
+  static Future<ProjectionResult> setPartner(int handle, int? partner) async =>
+      ProjectionResult.fromMap(await _channel.invokeMethod<Object?>(
+        'VideoOutputManager.SetPartner',
+        {'handle': handle, 'partner': partner ?? 0},
+      ));
 
   /// What the plugin drew since the previous call; [probe] asks for five pixels of the next draw, given by the
   /// next call. Null when the player has no video output.

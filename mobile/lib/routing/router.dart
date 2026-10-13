@@ -2,6 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/files/opened_files.dart';
+import 'package:immich_mobile/desktop/files/opened_files.page.dart';
 import 'package:immich_mobile/desktop/library/folders.page.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/domain/models/album/local_album.model.dart';
@@ -36,6 +38,7 @@ import 'package:immich_mobile/pages/library/shared_link/shared_link.page.dart';
 import 'package:immich_mobile/pages/library/shared_link/shared_link_edit.page.dart';
 import 'package:immich_mobile/pages/login/change_password.page.dart';
 import 'package:immich_mobile/pages/login/login.page.dart';
+import 'package:immich_mobile/pages/login/welcome.page.dart';
 import 'package:immich_mobile/pages/search/map/map_location_picker.page.dart';
 import 'package:immich_mobile/pages/settings/sync_status.page.dart';
 import 'package:immich_mobile/pages/share_intent/share_intent.page.dart';
@@ -133,6 +136,8 @@ class AppRouter extends RootStackRouter {
   late final List<AutoRoute> routes = [
     AutoRoute(page: SplashScreenRoute.page, initial: true),
     AutoRoute(page: LoginRoute.page),
+    // The first screen while no session exists: without a server, a share or a media server, or an Immich server
+    AutoRoute(page: WelcomeRoute.page),
     AutoRoute(page: ChangePasswordRoute.page),
     AutoRoute(
       page: TabShellRoute.page,
@@ -233,6 +238,8 @@ class AppRouter extends RootStackRouter {
     // Immuch360 Desktop: the folders of the library on a computer. Registered there only, so that the phone builds,
     // where the condition is a constant, leave out the folders page and the folder library behind it
     if (CurrentPlatform.isDesktop) AutoRoute(page: FoldersRoute.page, guards: [_duplicateGuard]),
+    // The files given to the program at once, see DesktopOpenFilesHandler
+    if (CurrentPlatform.isDesktop) AutoRoute(page: OpenedFilesRoute.page, guards: [_authGuard]),
     // required to handle all deeplinks in deep_link.service.dart
     // auto_route_library#1722
     RedirectRoute(path: '*', redirectTo: '/'),

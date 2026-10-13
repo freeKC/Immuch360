@@ -116,8 +116,9 @@ flowchart LR
   both test GPUs, because mpv's d3d11egl interop imports them into ANGLE without a copy. The 2024 libmpv that media-kit
   publishes (mpv 0.39) does not find `EGL_EXT_device_query` on ANGLE's display, so it copies every hardware frame back
   to memory (`d3d11va-copy`). A size or a codec the GPU refuses is decoded by the processor (`hwdec-current` is `no`),
-  as H.264 wider than 4096 pixels on both test GPUs. Raw videos in two streams always use `d3d11va-copy` or software
-  decoding, since FFmpeg's `hstack` filter runs on the processor.
+  as H.264 wider than 4096 pixels on both test GPUs. Raw videos stacked in one player use `d3d11va-copy` or software
+  decoding, since FFmpeg's `hstack` filter runs on the processor; from desktop build 5 the fisheye pairs play in two
+  players instead, each stream decoded on the GPU without a copy (see [Two players](#two-players-for-a-raw-file)).
 
 ### The intermediate texture and the tiers
 
@@ -156,8 +157,8 @@ the reason, and the player goes back to flat. The sources are in
 - **Fisheye pair.** The two lenses of a raw 360° camera, with the Mei, equidistant and Kannala-Brandt lens models. It
   is the GLSL of the Android app's stitch, with the lens terms the app reads from the file's calibration. The decoded
   streams lie side by side in the frame: one stream for a file that keeps both lenses in one track, two once
-  `lavfi-complex` has stacked two tracks or two files with `hstack`. A uniform turns one stream off for the one lens
-  fallback.
+  `lavfi-complex` has stacked two tracks or two files with `hstack`. With two players, lens 1 is read from the second
+  player's texture through a second sampler. A uniform turns one stream off for the one lens fallback.
 - **GoPro EAC pair.** The two tracks of a GoPro .360, three cube faces each, side by side in the frame.
 
 The view is yaw (positive to the right of the frame's centre), pitch (positive up) and the vertical field of view,
@@ -250,17 +251,56 @@ it: 8K HEVC with the 2024 libmpv lost 95 of 150 frames on the Intel UHD and is m
 4. A driver that refuses the view (no OpenGL ES 3.0, a pass it does not compile): the flat player, with "This computer
    cannot show the 360° view of this video: it plays flat."
 5. A decoder that does not keep up with a server video: the server's transcoded stream, from where it was.
-6. A raw video in two streams: both stacked in one mpv core with `lavfi-complex "[vid1] [vid2] hstack [vo]"` when this
-   computer was measured to keep up, the second file of an X3 pair joining as an external track. FFmpeg pairs the
-   frames of the two streams by time stamp, so the seam does not tear as with two players. Otherwise the phones' steps,
-   with their messages: one lens with half of the sphere black, the server's transcoded stream, the camera's low
-   resolution LRV copy when one sits next to the file, then the frame as recorded.
+6. A raw video in two streams: from desktop build 5, a fisheye pair (Insta360 X4 and later, X3 pairs, DJI Osmo 360)
+   plays in two players first, unless this computer measured them too slow for that kind of video. Then both streams
+   stacked in one mpv core with `lavfi-complex "[vid1] [vid2] hstack [vo]"` when this computer was measured to keep up,
+   the second file of an X3 pair joining as an external track; FFmpeg pairs the frames of the two streams by time
+   stamp. A GoPro .360 goes straight to the stack. Otherwise the phones' steps, with their messages: one lens with half
+   of the sphere black, the server's transcoded stream, the camera's low resolution LRV copy when one sits next to the
+   file, then the frame as recorded.
 7. A file libmpv cannot open: the app's usual error.
 
 On the test laptop, an X3 pair (two 2880x2880 H.264 files) stacked plays at 30 frames a second on the RTX 4060, with 0
 of 150 frames dropped. The Intel UHD dropped 45 to 61 of 150, so it plays one lens, at about 30. An X4 file (two
 3840x3840 HEVC tracks) stacked plays at 7 to 9 frames a second even on the RTX 4060, against 30 for one track alone,
 so X4 files go straight to one lens there.
+
+### Two players for a raw file
+
+From desktop build 5 a raw file whose two lenses are in two streams plays in two players. The 360° page's player
+decodes stream 0 with the sound; a second player of the pool decodes stream 1 alone, with no sound, and follows the
+first one's play, pause and seeks
+([raw_partner_player.dart](../../mobile/lib/desktop/video/raw_partner_player.dart)). Each stream is decoded by the GPU
+without a copy, 10 bit included, as for a flat video. The plugin pairs the two outputs (the media_kit_video plugin's
+[IMMUCH360-NOTE.md](../../mobile/packages/media_kit_video/IMMUCH360-NOTE.md), patch 7):
+
+- **One share group.** The ANGLE contexts of the players share their objects, so the first player's context reads
+  the second player's intermediate texture, and the stitch pass reads lens 1 from it.
+- **The frames of one time together.** Each draw asks both mpv cores whether a frame is due and of which time. Two
+  frames within half a frame period are drawn together, then the view. A frame whose partner is late waits a few
+  milliseconds, then is drawn alone.
+- **The second player kept in time.** It opens a little after the first and starts some frames behind it. The delay
+  of its frames is measured at each frame, and its speed is set every half second to the first player's, corrected by
+  up to 20%, until its frames come with the first one's. More than half a second apart, it is sent to the first
+  player's time.
+- **Measured like the stack.** The first seconds count the frames both players dropped, and the verdict is kept per
+  GPU and kind of video. Two players too slow, or a second player that fails or draws nothing, give the stack, then
+  one lens. The log says how many frames were drawn paired, the second player's delay and its speed.
+
+On the test laptop with a real Osmo 360 file (two 3840x3840 HEVC Main 10 tracks at 25 frames a second), two mpv
+players dropped no frame on the RTX 4060 and 1% on the Intel UHD before renderer C drew them (a spike of 13 October
+2026). In the app, from a CI build of 13 October 2026 on the RTX 4060: 25.0 of 25.0 frames a second at the full tier
+(both lenses 3840x3840), no frame dropped, a draw of 7.7 ms, and over the probe's 5 seconds all 125 frames of the two
+players drawn together, the second player 1.2 ms off. Over the first seconds, while the second player caught up, 106
+of 165 draws were pairs. The process held about 1.1 GB of memory and 2.9 to 3.8 GB of GPU memory. The first PC run, before
+the delay was measured from frames of any time, drew 148 of 150 frames alone: the second player stayed some frames
+behind, which would show as a time step at the seams. A real X4 file (two 3840x3840 HEVC
+tracks at 29.97 frames a second) and a real X3 pair (two 2880x2880 H.264 files) also played in two players on the RTX
+4060 with no frame dropped; over their first seven seconds, from the open, 133 and 124 draws were pairs. The first open
+of the X4 file still showed "it may not play smoothly": its 30 frames a second are above the 25 measured until then,
+and the measure of that open lifted it. The Intel UHD was not run in 360° in the app: opening the file in
+the flat viewer took the process to 3.2 GB of memory, 2.5 GB of it shared GPU memory, within five seconds, and the
+test's watchdog stopped it while other programs held most of the PC's memory.
 
 ### The player pool
 
@@ -331,7 +371,7 @@ this device", in the same page, lists what the GPU decodes. Windows picks the GP
 | Probe thresholds                       | [renderer_probe.dart](../../mobile/lib/desktop/video/render/renderer_probe.dart) (`RendererProbeLimits`)                                                                                                                                                                                                                                                                         |
 | The choice and the stored measures     | [sphere_renderer.dart](../../mobile/lib/desktop/video/render/sphere_renderer.dart), [sphere_renderer_tile.dart](../../mobile/lib/desktop/video/render/sphere_renderer_tile.dart)                                                                                                                                                                                                 |
 | The 360° player page and its fallbacks | [spherical_player_route.dart](../../mobile/lib/desktop/video/spherical_player_route.dart), [projection_params.dart](../../mobile/lib/desktop/video/projection_params.dart)                                                                                                                                                                                                       |
-| Raw videos in two streams              | [raw_two_streams.dart](../../mobile/lib/desktop/video/raw_two_streams.dart), [raw_two_stream_switch.dart](../../mobile/lib/desktop/video/raw_two_stream_switch.dart)                                                                                                                                                                                                             |
+| Raw videos in two streams              | [raw_two_streams.dart](../../mobile/lib/desktop/video/raw_two_streams.dart), [raw_two_stream_switch.dart](../../mobile/lib/desktop/video/raw_two_stream_switch.dart), [raw_partner_player.dart](../../mobile/lib/desktop/video/raw_partner_player.dart)                                                                                                                          |
 | mpv options, pool, decoders            | [desktop_player.dart](../../mobile/lib/desktop/video/desktop_player.dart), [player_pool.dart](../../mobile/lib/desktop/video/player_pool.dart), [gpu_decoders.dart](../../mobile/lib/desktop/video/gpu_decoders.dart), [decoder_measure.dart](../../mobile/lib/desktop/video/decoder_measure.dart)                                                                               |
 
 | Setting                                            | Value                 |
@@ -365,7 +405,8 @@ memory. `IMMUCH360_MEASURE_RENDERER=c` runs it through renderer C, and its heade
   videos to SDR.
 - **Raw files need both lens streams.** The two files of an X3 pair must sit together, and the Immich server refuses
   .360 and .osv uploads, so those play from the computer's folders and from shares. Stacking two streams needs the
-  2026 libmpv: the 2024 one lacks `hstack` and shows one lens.
+  2026 libmpv: the 2024 one lacks `hstack` and shows one lens. Two players need renderer C, so Windows only, and are
+  not used for the cube faces of a GoPro .360, which stay stacked.
 - **One eye of a 3D video**, on the screen, as on phones; true 3D is for a headset.
 - **The libmpv in the ZIP.** The preview ZIPs carry media-kit's 2024 libmpv until the fork's own build is switched on
   (below). With it, the Intel UHD copies every decoded frame back to memory, which slows the 360° player there.

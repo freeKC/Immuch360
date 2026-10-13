@@ -117,7 +117,7 @@ class RawProjectionTest {
   @Test
   fun `unknown keys are ignored`() {
     val extra =
-      RawFixtures.D.replace("{\"version\":2,", "{\"version\":2,\"serial\":\"95SXN6500213WL\",\"future\":[1,2],")
+      RawFixtures.D.replace("{\"version\":2,", "{\"version\":2,\"serial\":\"95SXN0000000AB\",\"future\":[1,2],")
     assertEquals(RawProjection.parse(RawFixtures.D).summary(), RawProjection.parse(extra).summary())
   }
 

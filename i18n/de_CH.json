@@ -568,5 +568,10 @@
   "view_as_360": "Als 360° anzeigen",
   "view_as_360_remove": "Nicht mehr als 360° behandeln",
   "view_details": "Details aaluege",
-  "view_link": "Link aazeige"
+  "view_link": "Link aazeige",
+  "welcome_server_title": "Mit einem Immich-Server verbinden",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex oder eine Tapo-Kamera",
+  "welcome_shares_title": "Netzwerkfreigabe oder Medienserver hinzufügen",
+  "welcome_tagline": "Deine Medien. Jeder Bildschirm. Jede Perspektive.",
+  "welcome_without_server_description": "Die Fotos und Videos dieses Geräts. Freigaben und Medienserver lassen sich später hinzufügen."
 }

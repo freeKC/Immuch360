@@ -309,5 +309,10 @@
   "video_source_title": "Sumber video",
   "video_source_transcoded": "Sokmo strim hok doh ditranskod",
   "view_as_360": "Lihat sebagai 360°",
-  "view_as_360_remove": "Berhenti anggap sebagai 360°"
+  "view_as_360_remove": "Berhenti anggap sebagai 360°",
+  "welcome_server_title": "Sambung ko server Immich",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex atau kamera Tapo",
+  "welcome_shares_title": "Tambah kongsi rangkaie atau server media",
+  "welcome_tagline": "Media demo. Mano-mano skrin. Satiap pandanga.",
+  "welcome_without_server_description": "Gambo nga video dale peranti ni. Tambah kongsi rangkaie nga server media kemudian."
 }

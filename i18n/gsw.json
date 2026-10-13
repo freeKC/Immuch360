@@ -1650,5 +1650,10 @@
   "video_source_transcoded": "Immer dr transkodiert Stream",
   "view_as_360": "Als 360° aazeige",
   "view_as_360_remove": "Nümme als 360° behandle",
-  "waiting": "Usstehend"
+  "waiting": "Usstehend",
+  "welcome_server_title": "Mit emne Immich-Server verbinde",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex oder e Tapo-Kamera",
+  "welcome_shares_title": "E Netzwerkfreigab oder e Medieserver hinzuefüege",
+  "welcome_tagline": "Dini Medie. Jede Bildschirm. Jede Perspektive.",
+  "welcome_without_server_description": "D’Fotos und Videos vo dem Grät. Freigabe und Medieserver chasch spöter hinzuefüege."
 }

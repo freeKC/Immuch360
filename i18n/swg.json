@@ -309,5 +309,10 @@
   "video_source_title": "Videoquelle",
   "video_source_transcoded": "Emmer dr umkodierte Stream",
   "view_as_360": "Als 360° aazeiga",
-  "view_as_360_remove": "Nemme als 360° behandla"
+  "view_as_360_remove": "Nemme als 360° behandla",
+  "welcome_server_title": "Mit ma Immich-Server verbinda",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex oder a Tapo-Kamera",
+  "welcome_shares_title": "A Netzwerkfreigab oder an Medieserver hinzufüega",
+  "welcome_tagline": "Dei Medie. Jeder Bildschirm. Jede Perspektiv.",
+  "welcome_without_server_description": "D'Fotos ond Videos vo dem Gerät. Freigaba ond Medieserver kasch au schpäter hinzufüega."
 }

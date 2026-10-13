@@ -8,13 +8,21 @@ name: Immuch360 Desktop
 #                  version numbers of the desktop builds (.github/desktop/desktop_version.py)
 #   gates          the checks that keep the phones as they are and the desktop code in its place, without Flutter
 #   test           analyze, the whole mobile suite (test/desktop included) and the Android and iOS plugin lists
-#   linux, macos   compile the desktop app (Linux on the oldest supported Ubuntu, for its glibc)
-#   windows        desktop tests on a real Windows, the release build, and the ZIP for the owner as an artifact
-#                  named Immuch360-Desktop-<version>-windows-x64.zip (unsigned, internal until the first release),
-#                  then the desktop tests that need the DLLs of that build (libmpv, ANGLE)
+#   linux          the Linux build on the oldest supported Ubuntu (for its glibc), and its .deb and .rpm (nFPM)
+#   linux-packages each package installed in a clean container of a distribution, its libraries checked
+#   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
+#                  Launch Services, and a first start of the app on the runner
+#   windows        desktop tests on a real Windows, the release build, the ZIP and the installer (Inno Setup) for the
+#                  owner as artifacts named Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
+#                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE)
+#   packages       the six files of the build together with their SHA-256, as a release gets them
 #   upstream-sync  on upstream-sync/* branches, next to the test and linux jobs: the sync checklist of design 8.4
 #                  point 7 in the run summary. An upstream sync reaches the desktop branch through the phone branch;
 #                  an upstream-sync/* branch is made from the desktop branch to see the effect of a sync before it lands.
+#
+# Every package file is an artifact of its own, named Immuch360-Desktop-<label>-<system>.<extension>; the label comes
+# from .github/desktop/desktop_version.py. On a desktop-v* tag, immuch360-desktop-release.yml runs this workflow and
+# attaches those files to the GitHub release of the tag.
 #
 # Runner labels and actions are pinned: windows-latest is now the Visual Studio 2026 image while the desktop builds
 # with Visual Studio 2022, like the owner's PC. The workflow builds pull request code, so it reads the repository only,
@@ -27,6 +35,12 @@ on:
   pull_request:
     branches: [desktop]
   workflow_dispatch:
+  # immuch360-desktop-release.yml, on a desktop-v* tag; the permissions below stay read only
+  workflow_call:
+    outputs:
+      label:
+        description: The version label of the build, which names its files
+        value: ${{ jobs.codegen.outputs.label }}
 
 permissions:
   contents: read
@@ -120,6 +134,12 @@ jobs:
       - name: This workflow pinned and without secrets
         run: python3 .github/desktop/check_workflow.py
 
+      - name: The release workflow pinned, on desktop-v* tags only
+        run: python3 .github/desktop/check_workflow.py --release
+
+      - name: The file types of the packages, and the document types of the macOS app
+        run: python3 .github/desktop/desktop_installers.py check
+
       # An upstream sync brings its own Android and iOS changes; everything else on the desktop branch leaves them alone
       - name: Nothing changed under mobile/android and mobile/ios, nor in the native code of the vendored packages
         if: ${{ !startsWith(github.ref, 'refs/heads/upstream-sync/') && !startsWith(github.head_ref, 'upstream-sync/') }}
@@ -192,12 +212,12 @@ jobs:
 
       # The list of the Flutter Linux setup (clang, CMake, Ninja, GTK, liblzma, libstdc++ 12 for the clang of 22.04),
       # libsecret for flutter_secure_storage_linux, WebKitGTK 4.1 and libsoup 3 for desktop_webview_window (the OAuth
-      # window of flutter_web_auth_2)
+      # window of flutter_web_auth_2), and patchelf for the RUNPATH of the libraries in the .deb and the .rpm
       - name: Linux build packages
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev \
-            libsecret-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev
+            libsecret-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev patchelf
 
       - name: Install mise
         uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
@@ -221,6 +241,88 @@ jobs:
           tar -xf generated-dart.tar && rm generated-dart.tar
           mise exec -- flutter pub get --enforce-lockfile
           mise exec -- flutter build linux --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+
+      # nFPM, one static program pinned by its version and its SHA-256, makes both packages from one description; the
+      # libraries the ELF files of the bundle link are listed first, for the dependencies the packages declare
+      - name: Packages (.deb and .rpm)
+        id: packages
+        env:
+          LABEL: ${{ needs.codegen.outputs.label }}
+          NFPM_VERSION: '2.47.0'
+          NFPM_SHA256: 0660ca602b2d2d2ae4781a06c692b3eeb9d437ffea05b831d76e41f4a3188783
+        run: |
+          bundle=mobile/build/linux/x64/release/bundle
+          for file in "$bundle/immuch360" "$bundle"/lib/*.so*; do objdump -p "$file" | awk '/NEEDED/ {print $2}'; done \
+            | sort | uniq -c
+          curl -sSfL -o "$RUNNER_TEMP/nfpm.tar.gz" \
+            "https://github.com/goreleaser/nfpm/releases/download/v$NFPM_VERSION/nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz"
+          echo "$NFPM_SHA256  $RUNNER_TEMP/nfpm.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/nfpm.tar.gz" -C "$RUNNER_TEMP" nfpm
+          python3 .github/desktop/desktop_installers.py linux --bundle "$bundle" --label "$LABEL" --out dist \
+            --nfpm "$RUNNER_TEMP/nfpm"
+          echo "deb=dist/Immuch360-Desktop-$LABEL-linux-amd64.deb" >> "$GITHUB_OUTPUT"
+          echo "rpm=dist/Immuch360-Desktop-$LABEL-linux-x86_64.rpm" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the .deb
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: ${{ steps.packages.outputs.deb }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Upload the .rpm
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: ${{ steps.packages.outputs.rpm }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  # Each package installed as a user would install it, in a clean container: the package manager brings the
+  # dependencies the package declares, then every library the ELF files need must be found, libmpv among them, the
+  # desktop entry must be valid and the MIME types of the raw camera files registered (check_package.sh). The oldest
+  # and newest Ubuntu LTS, Debian stable, Fedora 40 and the newest Fedora.
+  linux-packages:
+    name: Linux package on ${{ matrix.image }}
+    runs-on: ubuntu-24.04
+    needs: linux
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: ubuntu:22.04
+            package: deb
+          - image: ubuntu:24.04
+            package: deb
+          - image: debian:12
+            package: deb
+          - image: fedora:40
+            package: rpm
+          - image: fedora:44
+            package: rpm
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: Immuch360-Desktop-*-linux-*
+          merge-multiple: true
+          # Each artifact is one file uploaded as it is: kept whole, the two ZIPs too, under its own name
+          skip-decompress: true
+          path: dist
+
+      - name: Install and check
+        env:
+          IMAGE: ${{ matrix.image }}
+          PACKAGE: ${{ matrix.package }}
+        run: |
+          file=$(cd dist && ls ./*."$PACKAGE")
+          docker run --rm -v "$PWD/dist:/pkgs:ro" -v "$PWD/.github/desktop/packaging/linux:/check:ro" "$IMAGE" \
+            sh /check/check_package.sh "/pkgs/${file#./}"
 
   windows:
     name: Windows desktop tests, build and ZIP
@@ -298,21 +400,45 @@ jobs:
             --zip "$zip" --symbols dist/symbols --file-version "$FILE_VERSION" --info "version=$LABEL" \
             --info "file version=$FILE_VERSION" --info "commit=$GITHUB_SHA" --info "built by=$RUN_URL"
           echo "zip=$zip" >> "$GITHUB_OUTPUT"
+
+      # The installer of the same folder as the ZIP (Inno Setup 6 of the runner image): for one user or for every
+      # user of the PC, "Open with" for the types of .github/desktop/file-associations.json, an uninstaller
+      - name: Installer
+        id: installer
+        env:
+          LABEL: ${{ needs.codegen.outputs.label }}
+          FILE_VERSION: ${{ needs.codegen.outputs.file_version }}
+        run: |
+          python .github/desktop/desktop_installers.py windows --bundle "dist/Immuch360 Desktop" --label "$LABEL" \
+            --file-version "$FILE_VERSION" --out dist
+          setup="dist/Immuch360-Desktop-$LABEL-windows-x64-setup.exe"
+          echo "setup=$setup" >> "$GITHUB_OUTPUT"
+          zip="${{ steps.bundle.outputs.zip }}"
           {
             echo "### Immuch360 Desktop for Windows x64"
             echo
             echo "| File | Size | SHA-256 |"
             echo "|---|---|---|"
-            echo "| \`$(basename "$zip")\` | $(( $(stat -c %s "$zip") / 1048576 )) MB | \`$(sha256sum "$zip" | cut -d' ' -f1)\` |"
+            for file in "$setup" "$zip"; do
+              echo "| \`$(basename "$file")\` | $(( $(stat -c %s "$file") / 1048576 )) MB | \`$(sha256sum "$file" | cut -d' ' -f1)\` |"
+            done
             echo
-            echo "File version $FILE_VERSION. Unsigned internal build: SmartScreen may ask for a confirmation, Smart App Control blocks it."
+            echo "File version $FILE_VERSION. Unsigned build: SmartScreen may ask for a confirmation, Smart App Control blocks it."
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Uploaded as it is, so that the download is the ZIP itself and not a ZIP inside a ZIP
+      # Uploaded as they are, so that the download is the file itself and not a ZIP around it
       - name: Upload the ZIP
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           path: ${{ steps.bundle.outputs.zip }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Upload the installer
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: ${{ steps.installer.outputs.setup }}
           archive: false
           retention-days: 14
           if-no-files-found: error
@@ -342,7 +468,7 @@ jobs:
             test/desktop/video/desktop_player_windows_test.dart test/desktop/video/plugin_shaders_windows_test.dart
 
   macos:
-    name: macOS build (compile only)
+    name: macOS build, ZIP and DMG
     runs-on: macos-15
     needs: codegen
     if: github.event_name != 'push' || github.ref == 'refs/heads/desktop' || startsWith(github.ref, 'refs/tags/')
@@ -409,6 +535,128 @@ jobs:
           tar -xf generated-dart.tar && rm generated-dart.tar
           mise exec -- flutter pub get --enforce-lockfile
           mise exec -- flutter build macos --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+
+      # The app as Flutter builds it: universal, signed for the computer that runs it only ("Sign to Run Locally", no
+      # Apple certificate) and not notarized, so macOS asks for a confirmation at the first start. Zipped with ditto,
+      # which keeps the attributes of the bundle, and in a DMG with a link to the Applications folder
+      - name: ZIP and DMG
+        id: app
+        env:
+          LABEL: ${{ needs.codegen.outputs.label }}
+        run: |
+          app="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
+          plutil -lint "$app/Contents/Info.plist"
+          echo "architectures: $(lipo -archs "$app/Contents/MacOS/Immuch360 Desktop")"
+          codesign -dv "$app" 2>&1 | grep -E '^(Identifier|Format|Signature|TeamIdentifier)=' || true
+          python3 -c 'import plistlib, sys; d = plistlib.load(open(sys.argv[1], "rb")); print(len(d["CFBundleDocumentTypes"]), "document types,", len(d["UTImportedTypeDeclarations"]), "imported types")' "$app/Contents/Info.plist"
+          mkdir -p dist "$RUNNER_TEMP/dmg"
+          zip="dist/Immuch360-Desktop-$LABEL-macos.zip"
+          dmg="dist/Immuch360-Desktop-$LABEL-macos.dmg"
+          ditto -c -k --sequesterRsrc --keepParent "$app" "$zip"
+          cp -R "$app" "$RUNNER_TEMP/dmg/"
+          ln -s /Applications "$RUNNER_TEMP/dmg/Applications"
+          hdiutil create -volname "Immuch360 Desktop" -srcfolder "$RUNNER_TEMP/dmg" -fs HFS+ -format UDZO -ov "$dmg"
+          echo "zip=$zip" >> "$GITHUB_OUTPUT"
+          echo "dmg=$dmg" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Immuch360 Desktop for macOS (universal, unsigned, not notarized)"
+            echo
+            echo "| File | Size | SHA-256 |"
+            echo "|---|---|---|"
+            for file in "$dmg" "$zip"; do
+              echo "| \`$(basename "$file")\` | $(( $(stat -f %z "$file") / 1048576 )) MB | \`$(shasum -a 256 "$file" | cut -d' ' -f1)\` |"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Finder's "Open with" asks Launch Services which apps open a file: once registered, the app must be offered
+      # for every type of .github/desktop/file-associations.json (CFBundleDocumentTypes of mobile/macos/Runner/Info.plist)
+      - name: Open with, as Launch Services answers it
+        run: |
+          app="$PWD/mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
+          /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$app"
+          read -ra extensions <<< "$(python3 -c 'import json; d = json.load(open(".github/desktop/file-associations.json")); print(" ".join([*d["photos"], *d["videos"]]))')"
+          swift .github/desktop/packaging/macos/open_with.swift "$app" "${extensions[@]}"
+
+      # Nobody on the project has a Mac: the runner starts the app once, without a server, and the run summary says
+      # whether it still ran after 30 seconds, with a capture of the screen. Not a gate: the window server of a CI
+      # runner is not a Mac on a desk
+      - name: First start on the runner
+        continue-on-error: true
+        run: |
+          exe="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app/Contents/MacOS/Immuch360 Desktop"
+          mkdir -p first-start
+          "$exe" > first-start/output.log 2>&1 &
+          pid=$!
+          sleep 30
+          if kill -0 "$pid" 2>/dev/null; then
+            state="still running after 30 seconds"
+            screencapture -x first-start/screen.png || echo "no screen capture"
+            kill "$pid"
+          else
+            status=0
+            wait "$pid" || status=$?
+            state="ended by itself within 30 seconds (exit $status)"
+          fi
+          tail -n 60 first-start/output.log
+          echo "First start of the app on the macOS runner: $state." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the macOS ZIP
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: ${{ steps.app.outputs.zip }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Upload the DMG
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: ${{ steps.app.outputs.dmg }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Upload the first start
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: macos-first-start
+          path: first-start/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  # The six files of the build in one place with their SHA-256, as immuch360-desktop-release.yml attaches them to a
+  # release: a file missing or added shows on every run, not on the day of a release
+  packages:
+    name: Package files and checksums
+    runs-on: ubuntu-24.04
+    needs: [codegen, linux, macos, windows]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: Immuch360-Desktop-*
+          merge-multiple: true
+          # Each artifact is one file uploaded as it is: kept whole, the two ZIPs too, under its own name
+          skip-decompress: true
+          path: release
+
+      - name: Files and SHA-256
+        env:
+          LABEL: ${{ needs.codegen.outputs.label }}
+        run: |
+          python3 .github/desktop/desktop_release.py --dry-run --label "$LABEL" --sums release/SHA256SUMS.txt release/*
+          {
+            echo "### The files of a release"
+            echo
+            echo '```'
+            cat release/SHA256SUMS.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
   # An upstream change of a pigeon contract, of main.dart or of the HTTP clients shows on the day of the merge: the
   # test and linux jobs of the same run analyze, test and build the sync; this job adds what to read by hand

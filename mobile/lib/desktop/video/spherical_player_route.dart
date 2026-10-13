@@ -17,8 +17,9 @@
 //
 // What the page does that the phones' players do too: the 3D cycle and the 180 and 360 switch, the audio track, the
 // buffering with its percentage, the switch to the server's transcoded stream when the original fails, and for a raw
-// file of two streams (two tracks, or the two files of a pair) both lenses stacked in one mpv core when this computer
-// keeps up, else the phones' fallback chain with their messages (raw_two_streams.dart, raw_two_stream_switch.dart).
+// file of two streams (two tracks, or the two files of a pair) both lenses decoded by two players without a copy, or
+// stacked in one mpv core, when this computer keeps up, else the phones' fallback chain with their messages
+// (raw_two_streams.dart, raw_two_stream_switch.dart, raw_partner_player.dart).
 // On close: the layout and coverage shown last go to the session through PlayerEventsHub, and
 // externalPlayerClosedProvider lets the viewer behind take its video back.
 //
@@ -41,6 +42,7 @@ import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
 import 'package:immich_mobile/desktop/video/projection_params.dart';
+import 'package:immich_mobile/desktop/video/raw_partner_player.dart';
 import 'package:immich_mobile/desktop/video/raw_two_stream_switch.dart';
 import 'package:immich_mobile/desktop/video/raw_two_streams.dart';
 import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
@@ -227,6 +229,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   /// The other file of a stacked pair, as the player reads it (a path, or a bridge URL)
   String? _externalResolved;
   bool _stepping = false;
+
+  /// The second player of a raw file played by two players (RawMode.paired)
+  RawPartnerPlayer? _partner;
 
   /// The step being loaded failed while [_goTo] still waited for its load: taken up once the load returned
   bool _failedWhileStepping = false;
@@ -475,13 +480,117 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       _startTier = attached.tier;
     }
     _setRendering(SphereRendering.plugin(attached.tier!));
-    if (_step?.mode == RawMode.stacked) {
-      // Two stacked streams are measured first: a computer that does not decode them in time would take the
-      // renderer's tier down for every 360° video (the renderer probe starts once the stack keeps up)
-      _watchStack(engine, _step!);
+    final rawStep = _step;
+    if (rawStep != null && (rawStep.mode == RawMode.stacked || rawStep.mode == RawMode.paired)) {
+      if (rawStep.mode == RawMode.paired) {
+        // The second player, once this one draws through renderer C: it opens while this one opens
+        unawaited(_startPartner(engine, rawStep, attached.tier!));
+      }
+      // Two streams are measured first: a computer that does not decode them in time would take the renderer's tier
+      // down for every 360° video (the renderer probe starts once the two streams keep up)
+      _watchStack(engine, rawStep);
     } else {
       _startProbe();
     }
+  }
+
+  /// The second player of [step], which plays stream 1 for renderer C of [engine]'s player at [tier]
+  Future<void> _startPartner(PlaybackEngine engine, RawStep step, PluginTier tier) async {
+    final raw = _raw;
+    final second = step.externalUrl;
+    await _releasePartner();
+    if (raw == null || second == null) {
+      await _onPairFailure(step, 'no second stream');
+      return;
+    }
+    if (!mounted || !identical(_step, step)) {
+      return;
+    }
+    final partner = _partner = RawPartnerPlayer(
+      pool: _deps.pool ?? desktopPlayerPool,
+      setMpv: _setMpv,
+      pluginFor: _deps.pluginFor ?? _pluginForEngine,
+    );
+    partner.failure.addListener(_onPartnerFailure);
+    String? reason;
+    try {
+      // The other stream's file goes through the same resolver as the file: a server URL becomes the bridge's
+      final resource = await (_deps.resolve ?? desktopAppVideoResolver(ref))(sphericalVideoSource(second));
+      if (!mounted || !identical(_step, step) || !identical(_partner, partner)) {
+        return;
+      }
+      reason = await partner.start(
+        primary: engine,
+        resource: resource,
+        videoTrack: raw.videoTrackAlone(1),
+        start: Duration(milliseconds: _controller.onPlaybackPositionChanged.value),
+        tier: tier,
+      );
+    } catch (error) {
+      reason = 'the second stream cannot be played here: ${redactPlayerText('$error')}';
+    }
+    if (!mounted || !identical(_step, step) || !identical(_partner, partner)) {
+      return;
+    }
+    if (reason == null) {
+      final renderer = _renderer;
+      if (renderer == null || !identical(engine, _rendererEngine) || !await renderer.setPartner(partner.renderer)) {
+        reason = 'renderer C refused the pair';
+      }
+    }
+    if (reason != null) {
+      await _onPairFailure(step, reason);
+      return;
+    }
+    _log.info('Two players: stream 1 plays in the second player');
+  }
+
+  void _onPartnerFailure() {
+    final step = _step;
+    final reason = _partner?.failure.value;
+    if (step != null && step.mode == RawMode.paired && reason != null) {
+      unawaited(_onPairFailure(step, reason));
+    }
+  }
+
+  /// Two players that could not play [step]: a stack when the switch has one, else one lens (afterSlowStack)
+  Future<void> _onPairFailure(RawStep step, String reason) async {
+    // A closing page starts nothing: the stack would load the file again on a player going back to the pool
+    if (!mounted || _closed || !identical(_step, step) || _stepping) {
+      return;
+    }
+    _log.info('Two players failed: $reason');
+    _switch.failed.add(TwoStreamPaths.paired);
+    final raw = _raw;
+    final chain = _chain;
+    if (raw == null || chain == null) {
+      return;
+    }
+    TwoStreamChoice choice;
+    try {
+      choice = await _switch.choose(raw);
+    } catch (error) {
+      choice = (hwdec: null, reason: 'the switch failed: $error');
+    }
+    final next = chain.afterSlowStack(step, choice);
+    if (next != null && mounted && identical(_step, step)) {
+      await _goTo(next);
+    }
+  }
+
+  /// Gives the second player back to the pool, the pairing ended
+  Future<void> _releasePartner() async {
+    final partner = _partner;
+    if (partner == null) {
+      return;
+    }
+    _partner = null;
+    partner.failure.removeListener(_onPartnerFailure);
+    final renderer = _renderer;
+    if (renderer != null && renderer.attached) {
+      await renderer.setPartner(null);
+    }
+    await partner.release();
   }
 
   Future<void> _setMpv(PlaybackEngine engine, String name, String value) async {
@@ -521,6 +630,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   Future<void> _prepareRawStep(PlaybackEngine engine, RawStep step) async {
     final raw = _raw;
     _stopStackWatch();
+    // A second player serves a paired step only; that step starts its own once renderer C draws (_startPartner)
+    await _releasePartner();
     _rawOptionsSet[engine] = true;
     // The page closed while this step was being prepared: the adapter's unprepare may have run before some of these
     // options were set, so they are undone once more, and the pool does not keep the player with a stack, another
@@ -568,6 +679,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
           }
         case RawMode.oneLens:
           vid = '${raw!.videoTrackAlone(step.streams.single)}';
+        case RawMode.paired:
+          // Stream 0 here, with the sound, decoded without a copy where the GPU can; stream 1 in the second player
+          vid = '${raw!.videoTrackAlone(0)}';
         case RawMode.stitched || RawMode.unstitched:
           break;
       }
@@ -612,7 +726,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
         await _renderer?.detach();
       }
       _setRendering(const SphereRendering.flat(FlatReason.refused));
-    } else if (step.mode == RawMode.stacked) {
+    } else if (step.mode == RawMode.stacked || step.mode == RawMode.paired) {
       _firstFrameTimer = Timer(_deps.firstFrameTimeout ?? const Duration(seconds: 15), _onStackSilent);
     }
   }
@@ -633,7 +747,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       _sampler?.dispose();
       _sampler = TwoStreamSampler(
         engine,
-        (name) => _readMpv(engine, name),
+        (name) => _readTwoStreams(engine, step, name),
         gpu: question.gpu,
         codec: question.codec ?? track.codec ?? '',
         width: track.width ?? 0,
@@ -645,6 +759,19 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     }());
   }
 
+  /// mpv's [name] for the measure of [step]: for two players, the frames dropped by both
+  Future<String> _readTwoStreams(PlaybackEngine engine, RawStep step, String name) async {
+    final value = await _readMpv(engine, name);
+    final partner = _partner?.engine;
+    if (step.mode != RawMode.paired || partner == null || !_dropCounters.contains(name)) {
+      return value;
+    }
+    final other = await _readMpv(partner, name);
+    return '${(int.tryParse(value.trim()) ?? 0) + (int.tryParse(other.trim()) ?? 0)}';
+  }
+
+  static const _dropCounters = {'frame-drop-count', 'decoder-frame-drop-count'};
+
   void _stopStackWatch() {
     _sampler?.dispose();
     _sampler = null;
@@ -653,6 +780,19 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   }
 
   Future<void> _onStackMeasure(RawStep step, DecodeMeasure measure) async {
+    if (step.mode == RawMode.paired) {
+      // How the plugin paired the frames since the two players started (the renderer probe reads the counts from
+      // here on). A second player that drew nothing would leave half of the sphere black without a word.
+      final pair = PairCounts.of(await _renderer?.stats());
+      _log.info('Two players over the measure: ${pair ?? 'no frame of the second player drawn'}');
+      if (!mounted || !identical(_step, step)) {
+        return;
+      }
+      if (pair == null || pair.partnerFrames == 0) {
+        await _onPairFailure(step, 'the second player drew no frame');
+        return;
+      }
+    }
     await _switch.record(measure);
     if (!mounted || !identical(_step, step)) {
       return;
@@ -671,10 +811,11 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   /// failed
   void _onStackSilent() {
     _firstFrameTimer = null;
-    if (!mounted || _ready || _controller.buffering.value || _step?.mode != RawMode.stacked) {
+    final mode = _step?.mode;
+    if (!mounted || _ready || _controller.buffering.value || (mode != RawMode.stacked && mode != RawMode.paired)) {
       return;
     }
-    _log.info('Two stacked streams showed no frame in time');
+    _log.info('Two streams showed no frame in time');
     unawaited(_onRawFailure());
   }
 
@@ -683,6 +824,11 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     final step = _step;
     final chain = _chain;
     if (step == null || chain == null) {
+      return;
+    }
+    if (step.mode == RawMode.paired && !_stepping) {
+      // A stack when the switch has one, else one lens
+      await _onPairFailure(step, 'the page player failed');
       return;
     }
     if (_stepping) {
@@ -739,6 +885,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   /// Before the player leaves this page: renderer C off, mpv's choice of video track back
   Future<void> _unprepare(PlaybackEngine engine) async {
     _probe.stop();
+    await _releasePartner();
     if (identical(engine, _rendererEngine)) {
       await _renderer?.detach();
       _renderer = null;
@@ -946,13 +1093,15 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     } catch (error) {
       _log.fine('The kind of video was not read whole: $error');
     }
-    return sphereVideoClass(
+    final videoClass = sphereVideoClass(
       codec: codec,
       width: info?.width,
       height: info?.height,
       framesPerSecond: rate,
       hwdec: hwdec,
     );
+    // Two players draw twice the frames of one: a kind of video of its own for the tiers kept
+    return videoClass != null && _step?.mode == RawMode.paired ? '$videoClass, two players' : videoClass;
   }
 
   /// Once the first frame tells what kind of video plays: under Automatic, the tier the probe kept for that kind on
@@ -1123,6 +1272,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       return;
     }
     _closed = true;
+    // The second player of two back to the pool now: the page that opened this one takes a player back as soon as it
+    // hears of the close, and would otherwise take this one's partner, a failure this page no longer answers
+    unawaited(_releasePartner());
     PlayerEventsHub.spherical?.closed(_params.layout, _params.coverage);
     // After the frame: a provider does not change while the widget tree is being finalised
     final signal = _closedSignal;
@@ -1327,6 +1479,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     _controller.buffering.removeListener(_onBuffering);
     _controller.videoController.removeListener(_onBuffering);
     _controller.onPlaybackEnded.removeListener(_onStatus);
+    // The second player of two back to the pool, also when the page never got a player of its own
+    unawaited(_releasePartner());
     // Renderer C off and the player back to the pool, in this order (the adapter's unprepare)
     _controller.dispose();
     _visibility.dispose();

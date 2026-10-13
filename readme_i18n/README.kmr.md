@@ -11,7 +11,7 @@ Immuch360 sepaneke belaş û çavkanî-vekirî ye ku ji bo dîtina, gerîna nav,
 
 - **Sepan çi dike?** Ew wêne û vîdyoyên te wekî galerîyê nîşan dide û di dîtinvanê guncaw bi her pelê de lê dide: sade, wekî gogeke ku tu lê dora xwe binêrî, bi 3D, di kaskê de.
 - **Çi medya?** Wêne û vîdyoyên sade, panorama, wêne û vîdyoyên 360°, VR180, 3D ya stereoskopîk, wêneyên Apple Spatial, û pelên xerîm ên kameraên 360° (Insta360, GoPro MAX, DJI Osmo 360), ku ji hêla sepanê ve tên tikandin.
-- **Li ser kîjan cîhazan?** Li ser telefon û tabletên Android, iPhone û iPad, Android TV û Google TV, Meta Quest 2, Pro, 3 û 3S, Windows (pêşdîtin), digel macOS û Linux di çêkirinê de.
+- **Li ser kîjan cîhazan?** Têlefon û tabletên Android, iPhone û iPad, Android TV û Google TV, Meta Quest 2, Pro, 3 û 3S, Windows (pêşdîtin), û Linux û macOS wekî pêşdîtinên pêşîn.
 - **Gelo min hewceyî serverek an hesabek heye?** Na. Immuch360 bi tena serê xwe bi medyaya cîhaza te dixebite. Servereke Immich, NAS-ek, servereke medyayê an servereke Plex vebijark in ku tu dema bixwazî lê zêde dikî.
 
 <p align="center">
@@ -26,8 +26,8 @@ Immuch360 sepaneke belaş û çavkanî-vekirî ye ku ji bo dîtina, gerîna nav,
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone û iPad** | App Store | guhertoya 3.3.0 li bendê ye ku Apple wê nirxand bike; heta wê demê [bi xwe çêke](../docs/immuch360/build.md) |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV û Google TV** | [APK](#android-tv-and-google-tv) · Google Play | çêkirina 23 li ser GitHub; lîsteya TV di nirxandina Google de ye |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 û 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | li ser Horizon Store (çêkirina 14; çêkirina 21 di nirxandinê de), çêkirina 23 li ser GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [ZIP a pêşdîtinê](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | çêkirina sermasê 4, pêşdîtinek: wêne, vîdyoyên sade û 360°, parvekirin, Plex, kamera |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS û Linux** | Çavkanî | ji hêla CI ya projeyê ve hatiye çêkirin, hê li ser wan pergalan dest pê nekiriye, hê jî daxistin tune |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Sazker an ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | çêkirina 5 a sermaseyê, pêşdîtinek: wêne, vîdyoyên sade û 360°, parvekirin, Plex, kamera, pelên ku bi sepanê hatine vekirin |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS û Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | pêşdîtinên pêşîn: li ser Linux wêne û wêneyên 360°, hê vîdyo tune; macOS tenê li ser CI ya projeyê dest pê kiriye |
 
 *Rewş di her weşanê de tê rojane kirin; hûragahiyên, çêkirin bi çêkirin, di [Rewşa weşanê](../docs/immuch360/release-status.md) de ne.*
 
@@ -97,11 +97,11 @@ Zêdetir: [wêne û vîdyoyên 360°](../docs/immuch360/user-guide.md#360-photos
 <a id="use-your-own-files-without-an-account"></a>
 ### Pelên xwe bi kar bîne, bêyî hesab
 
-Immuch360 ne hesabek û ne jî serverek pêwîst dike. Li ser rûpela têketinê, «Bêyî server bi kar bîne» sepanê li ser wêne û vîdyoyên cîhazê vedike, bi her dîtinvan, lîsteya 360° û çavkaniyên torê. Tiştek ji cîhazê derneketîne. Server dikare paşê, ji Mîhengan, were girêdan, û taybetmendiyên serverê wê demê xuya dibin.
+Immuch360 ne hesabek û ne jî serverek pêdivî dike. Ji çêkirina 24ê pê ve, sepan li ser rûpelek bixêrhatinê vedibe, ku tê de "Bêyî server bi kar bîne" pêşî tê: ew sepanê li ser wêne û vîdyoyên cîhazê, bi her dîtinvan, lîsteya 360° û çavkaniyên torê ve vedike. Tiştek ji cîhazê derve nayê şandin. Server dikare paşê, ji Mîheng an ji Tabloya Kitêbxane, were girêdan, û wê demê taybetmendiyên serverê xuya dibin.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Tabloya Kitêbxane bêyî server: hêmana 360° li jor, paşê On this device bi du wêneyên 360°, û Parvekirinên torê bi parvekirineke bi navê NAS">
 
-1. Sepanê veke. Li ser rûpela têketinê, di bin navnîşana serverê û Settings de, li "Bêyî server bi kar bîne" bixe.
+1. Sepanê veke. Rûpela bixêrhatinê "Medyaya te. Her ekran. Her dîmen." nîşan dide û sê vebijark pêşkêş dike: li ya yekem bixe, "Bêyî server bi kar bîne". Heta çêkirina 23, rûpela têketinê pêşî dihat, bi "Bêyî server bi kar bîne" li jêr formê.
 2. Destûra gihîştina wêne û vîdyoyên xwe bide. Heke tu red bikî, sepan dibêje "Sepan nikare wêneyên vê cîhazê bibîne", bi "Destûra gihîştinê bide" û "Eyaran veke".
 3. Tabloya Sûret demjimêra cîhazê nîşan dide. Lê bigere û Albûm gewr dimînin, ji ber ku ew ji serverê tên. Tabloya Kitêbxane li jor 360° heye, paşê On this device (Li ser vê cîhazê, albûmên cîhazê) û Parvekirinên torê.
 4. Menûya li jor rastê dibêje "Tenê ev cîhaz": sepan wêne û vîdyoyên vê cîhazê nîşan dide, tiştek ji tu derê re nayê şandin.
@@ -120,7 +120,7 @@ Vîdyoyên te li ser NAS-ek, komputerek an servereke medyayê ne. Immuch360 bi x
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Peldankeke parvekirineke torê wekî torê wêneyên biçûk: wêneyên 360° bi nîşaneya 360° û vîdyoyeke 360° bi nîşaneya lîstinê, bişkoka Hilbijêre li jor rastê">
 </p>
 
-1. Tabloya Kitêbxane veke, paşê Parvekirinên torê, paşê + û «Parvekirina torê (NAS, komputer, serverê medyayê)».
+1. Tabloya Kitêbxane veke, paşê Parvekirinên torê, paşê + û "Parvekirina torê (NAS, komputer, serverê medyayê)". Ji çêkirina 24ê pê ve, "Parvekirineke torê an serverekî medyayê lê zêde bike" li ser rûpela bixêrhatinê rasterast Parvekirinên torê vedike, bêyî server.
 2. Li ser serverek di bin «Li ser torê hat dîtin» de bixe, an form bi destan tijî bike: cûre, nav an navnîşana serverê, parvekirin an rê, peldanka destpêkê, navê bikarhêner û şîfre.
 3. Li «Girêdanê biceribîne» bixe, paşê Tomar bike. Li parvekirinê bixe da ku lê bigerî: pêşî peldank, paşê wêne û vîdyo, bi nîşaneya 360° li ser pelên ku wekî 360° hatine nasîn.
 4. Bi servereke Immich a girêdayî, pelan di peldankekê de hilbijêre û li «Li Immich bar bike» bixe da ku wan bişînî serverê xwe.
@@ -134,7 +134,7 @@ Zêdetir: [parvekirinên torê](../docs/immuch360/user-guide.md#network-shares-a
 
 Bi servereke [Immich](https://github.com/immich-app/immich), Immuch360 sepana mobîl a Immich e, bi heman server û heman hesabê wekî sepana web: tomarkirin, xeta demê, albûm, lêgerîn, kes, bîranîn, parvekirin, hevkar, her tişt bi servera te re li hev hatiye. Ew li kêleka sepana fermî saz dibe. Li ser vê de: nîşan û lîsteya 360°, her dîtinvanê dorhêlî, hilbijartin di navbera pela orîjînal û rewa transkod kirî ya serverê ji bo her vîdyoyê, hûragahiyên teknîkî yên vîdyoyekê, û pelên parvekirinek an cîhazê ku bi destan ber bi serverê te ve hatine şandin.
 
-1. Bi navnîşana serverê te, e-nameya te û şîfreya te têkeve, wek di sepana Immich de. Kitêbxane, albûm û mîhengên tomarkirinê yên te yên hesabê te ne.
+1. Li ser rûpela bixêrhatinê, li "Bi servera Immich ve girê bide" bixe, paşê bi navnîşana serverê, îmêla û şîfreya xwe têkeve, mîna di sepana Immich de; Vegere dizivire rûpela bixêrhatinê. Heta çêkirina 23 rûpela têketinê rasterast vedibe. Kitêbxane, albûm û mîhengên backup ên te, yên hesabê te ne.
 2. Di Mîhengan de, Asset Viewer, Vîdyo, «Çavkaniya vîdyoyê» orîjînal hilbijêre dema ku ev cîhaz wê dixwîne, her dem orîjînal, an her dem rewa transkod kirî.
 3. Ji bo nîşandana wêneyeke 360° ji kesê ku sepanê nîne re, wê bi lînkeke parvekirî ya Immich parve bike: sepana web a Immich wê wekî gogê di gerokê wî/wê de nîşan dide.
 
@@ -154,7 +154,7 @@ Li ser Meta Questê heman sepan wekî pencereyeke bi tevahiya kitêbxaneya te di
 </p>
 
 1. Sepanê ji [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) saz bike, an APK-ya çêkirineke nûtir bi sideload saz bike, li [Saz bike](#meta-quest) binêre.
-2. Bi servera xwe ya Immich têkeve, an ji bo wêne û vîdyoyên kaskê bi xwe li "Bêyî server bi kar bîne" bixe.
+2. Li ser rûpela bixêrhatinê, ji bo wêne û vîdyoyên taybet ên kaskê li "Bêyî server bi kar bîne" bixe, an ji bo têketina bi serverê xwe li "Bi servera Immich ve girê bide" bixe.
 3. Wêneyek an vîdyoyeke 360° veke û li 360° bitikîne: dîmena dorhêlî vedibe. B an Y, an bişkoka Vegerê ya panela agahiyê, pencereyê vedigerîne.
 
 Zêdetir: [di kaska Meta Quest de](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [kask: kod, store û destûr](../docs/immuch360/platform-support.md#meta-quest).
@@ -169,8 +169,8 @@ Heman sepana Android li ser Android TV û Google TV bi kontrolkerê wekî tenê 
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Lîstikvanê vîdyoyê yê Immuch360 Desktop li ser Windows: vîdyoyeke kolanê ya ku di pencereyê de dilîze, bi bişkoka rawestandinê, xeta demê, Parve bike û «Li Immich bar bike»">
 </p>
 
-1. Li ser televizyonekê: APK-yê bi adb saz bike (li [Saz bike](#android-tv-and-google-tv) binêre), têkeve an «Bêyî server bi kar bîne» hilbijêre, di Kitêbxane de parvekirinek, servereke Plex an kamerayekê lê zêde bike.
-2. Li ser komputereke Windows: pêşdîtinê jê bike û `immuch360.exe` bide destpêkirin (li [Saz bike](#windows) binêre), paşê peldankên wêne û vîdyoyên xwe hilbijêre, an têkeve serverê xwe.
+1. Li ser televizyonekê: APK-yê bi adb saz bike (li [Saz bike](#android-tv-and-google-tv) binêre); li ser rûpela bixêrhatinê, ji bo parvekirinekê, serverekî Plex an kamerayekê "Parvekirineke torê an serverekî medyayê lê zêde bike" hilbijêre, "Bêyî server bi kar bîne", an "Bi servera Immich ve girê bide".
+2. Li ser komputereke Windows: pêşdîtinê saz bike an jê derxîne û `immuch360.exe` dest pê bike (li [Saz bike](#windows) binêre); ji çêkirina 5 a sermaseyê pê ve, "Bêyî server bi kar bîne" li ser rûpela bixêrhatinê hilbijartina peldankên te vedike, û "Bi servera Immich ve girê bide" rûpela têketinê vedike. Wêneyek, vîdyoyek an peldankek ku bi sepanê hatiye vekirin, an li ser pencereya wê hatiye avêtin, yekser vedibe, ya 360° di dîtina xwe ya 360° de; çend pel bi hev re li ser yek rûpelê vedibin.
 3. Di dîtinvanekê de, bişkokên lîstin û rawestandin, paşverû, pêşverû, ya berê û ya din ên kontrolkerê dixebitin, û bişkokên klavyeyê jî li ser komputerekê wiha dikin (Valahî, J û L, F ji bo tam-ekran).
 
 Zêdetir: [li ser televizyona xwe temaşe bike](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [li ser komputereke Windows](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [piştgiriya platformê](../docs/immuch360/platform-support.md).
@@ -180,7 +180,7 @@ Zêdetir: [li ser televizyona xwe temaşe bike](../docs/immuch360/user-guide.md#
 
 - **Kameraên Tapo**: kamerayek li kêleka parvekirinên torê tê zêdekirin. Sepan wê bi zindî nîşan dide (Android, Android TV, Quest û Windows) û tomarên kartela bîra wê rojê bi roj li ser her platformê rêz dike; perçeyek ji kamerayê tê anîn, wek her vîdyoyek dilîze û dikare ber bi Immich ve were şandin. Sepan tenê bi kamerayê li ser torê te diaxive, çu carî bi serverên TP-Link re.
 - **Plex Media Server, bêyî plex.tv**: sepan rasterast bi servera te re cot dibe, bi tokenek ku tu carek dipêçî, û pelên orîjînal ên kitêbxaneyên te bi zindî dixwîne, ji ber vê yekê 360° dimîne 360°, li malê û, bi riya rêberkirina porta te, dûrî malê jî.
-- **Pelên xerîm ên kamerayên 360°**: wêneyên xerîm ên .insp û vîdyoyên .insv yên kameraên Insta360 (yek an du lens, di yek rêçê, du rêçan an du pelan de), pelên .360 ên GoPro MAX û pelên .osv ên DJI Osmo 360 di dema lîstinê de ji hêla sepanê ve têne tikandin, bi kalîbrasyona ku di pelê de hatiye nivîsandin, bêyî ku li tu derê tiştek were sazkirin.
+- **Pelên xerîm ên kameraya 360°**: wêneyên xerîm ên .insp û vîdyoyên .insv yên kameraên Insta360 (yek an du lens, di yek rêçê de, du rêçan de an du pelan de), pelên .360 yên GoPro MAX û pelên .osv yên DJI Osmo 360 di dema lîstinê de ji hêla sepanê ve tên tikandin, bi kalîbrasyona ku di pelê de hatiye nivîsandin, bêyî ku tiştek li tu derê were sazkirin. Li ser Android, wan ji parvekirinek, komputerek an servera xwe bilîzin, ji ber ku galerîya telefonê pelên xerîm lîste nake; servera Immich tenê .insp û .insv distîne.
 
 Zêdetir: [kameraên Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [pelên xerîm ên kamerayên 360°](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
@@ -207,7 +207,7 @@ Yek bingeha kodê, şeş hawîrdor. Îro her yek çi heye:
 | Vê cîhazê li ser torê parve bike | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
 | Ji parvekirin û cîhazê ber bi Immich ve bar bike | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
 | Têketin | pêlêdan, jîroskop | pêlêdan, jîroskop | kontrolker | kontrolker, dest | mişk, klavye | |
-| Ji ku derê bistînî | Google Play, APK | App Store (di nirxandinê de) | APK, Google Play (di nirxandinê de) | Horizon Store, APK | ZIP a pêşdîtinê | tenê çêkirinên CI |
+| Ji ku tê wergirtin | Google Play, APK | App Store (di nirxandinê de) | APK, Google Play (di nirxandinê de) | Horizon Store, APK | sazker an ZIP (pêşdîtin) | .deb, .rpm, DMG (pêşdîtinên pêşîn) |
 
 ✅ li ser wê platformê di sepanê de · ❌ li wir nayê pêşkêşkirin · 🔜 plankirî · 🔧 di çavkaniyê de ye û ji hêla CI ya projeyê ve hatiye çêkirin, hê li ser wê pergalê dest pê nekiriye. «Yek çav» tê wateya ku pelek 3D çavê wê yê çepê li ser ekraneke sade nîşan dide. Ne her ✅ hê li ser cîhazeke rastîn hatiye kontrolkirin: çi li ku hatiye kontrolkirin û çi hê maye ku were piştrastkirin, di [Taybetmendî](../docs/immuch360/features.md), [Piştgiriya platformê](../docs/immuch360/platform-support.md) û [Lihevhatî](../docs/immuch360/compatibility.md) de ye.
 
@@ -215,8 +215,8 @@ Yek bingeha kodê, şeş hawîrdor. Îro her yek çi heye:
 - **iPhone û iPad**: sepana tam; lîstikvanê vîdyoyê yê 360° tenê lîstin û rawestandin heye, dîtina zindî ya Tapo paşê tê, û lêgerîna DLNA heta ku Apple destûra multicast bide daxwazên unicast dişîne.
 - **Android TV û Google TV**: heman APK, ji hêla kontrolkerê ve tê rêvebirin; dîtinvanek: tomarkirin, barkirin û sererastkirin hatine veşartin. Li ser emulatorê Google TV hatiye kontrolkirin (têketin, xeta demê, dîtinvan, parvekirin, navîgasyona kontrolkerê), hê li ser televizyoneke rastîn na.
 - **Meta Quest 2, Pro, 3 û 3S**: sepan wekî pencere, digel dîmena dorhêlî; HEVC kodê ewle ye, H.264 li Quest 3 nêzîkî 4096x2304 disekine; Quest 2 û Quest Pro hê nehatine ceribandin.
-- **Windows 10 û 11**: pêşdîtinek, bi peldank li şûna galerîyê, lîstikvanek vîdyoyê yê xwemalî (libmpv) ji bo vîdyoyên sade û 360°, pelên xerîm li ser çîpa grafîkê têne tikandin, hê sazkerek tune.
-- **macOS û Linux**: proje li ser CI ya projeyê têne çêkirin (Linux çêbûye, macOS hatiye berhevkirin); sepan hê li ser wan pergalan dest pê nekiriye û pirtûkxaneya lîstikvanê wan ya vîdyoyê hê nehatiye danîn.
+- **Windows 10 û 11**: pêşdîtinek, bi peldankan li şûna galerîyekê, lîstikvanekî vîdyoyê yê xwe (libmpv) ji bo vîdyoyên sade û 360°, pelên xav ên ku li ser çîpa grafîkê hatine dirûtin, pel û peldankên ku bi sepanê hatine vekirin an li ser pencereyê hatine avêtin, sazkerek an ZIP-ek.
+- **macOS û Linux**: pakêtên ku ji hêla CI ya projeyê ve hatine çêkirin (.deb, .rpm, DMG); li ser Linux sepan dest pê dike û wêne û wêneyên 360° nîşan dide, hê bêyî vîdyo; û parvekirinên SMB hewceyê Ubuntu 24.04, Debian 13 an Fedora 39 an paşîtir in; sepana macOS tenê li ser CI ya projeyê dest pê kiriye, bêyî vîdyo, û gihîştina torê ya wê hê nehatiye ceribandin.
 
 <a id="advanced-features"></a>
 ## Taybetmendiyên pêşketî
@@ -226,11 +226,11 @@ Tiştê ku sepan dikare bixwîne û lê bide, ji bo xwendevanê ku dixwaze tevah
 - **Format**: wêne û vîdyoyên sade (tiştê ku cîhaz dixwîne: MP4, MOV, MKV û hin din); wêne û vîdyoyên 360° yên equirectangular; panoramayên qismî (birîna GPano); VR180; 3D ya stereoskopîk, jor û jêr an li kêleka hev, ji pelê hatiye xwendin (qutiya st3d) an ji kareyê hatiye texmînkirin; wêneyên Apple Spatial (cot stereo yên HEIC) û vîdyoyên Spatial (MV-HEVC, yek çav); .insp û .insv yên xerîm ên Insta360, .360 ya GoPro, .osv ya DJI; çavkaniyên 10 bit HLG û PQ li ser gogê bi tone hatine nexşandin.
 - **Projeksiyon û metadata**: metadataya GPano û goyî ji pelê, bi daxwazên rêzê li ser serverek an parvekirinek hatiye xwendin; dîmena destpêkê ya kamerayê; «Wek 360° bibîne» li ser cîhazê tê bîranîn; VR180 ji pelê an navê wê tê nasîn; metadata tam dimîne ji ber ku pela orîjînal tê lîstin, çu carî ne kopiyeke hatiye guhertin.
 - **Lîstina xwemalî**: Media3 li ser Android û televizyonê, SceneKit û AVFoundation li ser iOS, Meta Spatial SDK di kaskê de, libmpv li ser Windows; orîjînal an rewa transkod kirî li gorî tiştê ku cîhaz dixwîne tê hilbijartin; lîsteyeke kodxwînerên vîdyoyê yên cîhazê di Mîhengan, Pêşketî de; hilbijartina rêça dengî û nîşaneke barkirinê.
-- **Pelên xerîm ên li ser cîhazê hatine tikandin**: shaderek perçeya Flutter ji bo wêneyan; bandoreke GPU di lîstikvanê de ji bo vîdyoyên bi yek rêçê; du kodxwînerên hardware bi hev re û kompozîtorek GPU ji bo vîdyoyên bi yek lens di her rêçê an her pelê de (OpenGL ES 3 li ser Android û Quest, Metal li ser iOS, grafika fîlterê ya libmpv li ser Windows); kalîbrasyona kamerayê bi xwe (modelên Mei, V6 û wekhev) û tomara pîvanek lerizînê; vegerên ber bi yek lens, rewa transkod kirî, kopiya LRV ya kamerayê an vîdyoya ne-tikandî dema ku cîhaz nikare du kodxwîneran bi hev re bixebitîne.
+- **Pelên xerîm ên li ser cîhazê hatine tikandin**: shadereke fragment a Flutter ji bo wêneyan; bandoreke GPU di lîstikvanê de ji bo vîdyoyên yek-rêçî; du kodxwînerên hardware bi hev re û compositoreke GPU ji bo vîdyoyên ku di her rêçê an pelê de yek lens heye (li ser Android û Quest OpenGL ES 3, li ser iOS Metal, û li ser Windows, ji build 5 a sermasê pê ve, du lîstikvanên libmpv yên ku sepan kareyên wan li ser çîpa grafîkê cot dike); kalîbrasyona kameraya bixwe (modelên Mei, V6 û modela dûrahiya wekhev) û tomara akselerometreyê; gava cîhaz nikare du kodxwîneran bi hev re bixebitîne, vegera bo yek lens, rewaya transkod kirî, kopiya LRV ya kamerayê an vîdyoya ku nehatiye tikandin.
 - **Çavkanî**: galerîya cîhazê; peldankên komputerekê; servereke Immich; SMB 2 û 3, WebDAV, DLNA/UPnP; Plex bi riya HTTPS li hember sertîfîkaya servera bi xwe hatiye kontrolkirin; kameraên Tapo li ser torê herêmî (HTTPS û RTSP); telefonek an komputerek li ser Wi-Fi wekî servereke WebDAV hatiye parvekirin; serverên ku bi Bonjour/mDNS, lêgerîna torê ya herêmî, SSDP, GDM û vedîtina TP-Link hatine dîtin, û dema navnîşana xwe biguherin têne şopandin.
 - **Xwendina li ser daxwazê**: pûleke herêmî lîstikvanan bi rêzên bytê û tokenek ji bo her danişînê peyda dike; blokên mezin, pêşxwendin û heta şeş girêdanên SMB bi hev re; wêneyên biçûk ji kareyeke her vîdyoyê; tiştek li ser cîhazê nayê kopîkirin.
 - **Hardware**: kodxwînerên hardware li her derê ku hene têne bikaranîn, bi sînorên wan ên pîvankirî (sînorê H.264 ya Quest 3, herî zêde du lensên 2048x2048 ji bo kodxwînerên software); li ser Windows dîmena 360° ji hêla çîpa grafîkê ve ji her kareya xwendî hatiye xêzkirin, mezinahiya kareyê li ser her komputerê hatiye pîvankirin, çîpa yekgirtî an taybet hatiye nasîn.
-- **Taybetmendiyên li gorî platformê**: jîroskop û lîstikvanê Spatial 2.5D li ser telefonan; dîmena dorhêlî, kontrolker û dest li ser Quest; rêzkirina kontrolkerê, dîyaloga klavyeyê û banera TV li ser Android TV; li ser komputerê mişk û klavye, tam-ekran, pencereyek tenê, pelek ku bi bernameyê hatiye vekirin an li ser hatiye avêtin, wêneyên xerîm ên HEIC, AVIF, TIFF û kamerayê yên peldankan dema ku Windows kodxwînerek ji bo wan hebe, û parastina daneyan ya Windows ji bo şîfre û token.
+- **Taybetmendiyên li gorî platformê**: jîroskop û lîstikvanê Spatial 2.5D li ser têlefonan; dîmena dorhêlî, kontrolker û dest li ser Quest; rêzkirina kontrolkerê, diyaloga klavyeyê û darika TV li ser Android TV; li ser komputerê, mişk û klavye, ekrana tam, tenê pencereyek, pel û peldankên ku bi sepanê hatine vekirin an li ser pencereya wê hatine avêtin, wekî pelên peldankên te tên xwendin, HEIC, AVIF, TIFF û wêneyên xav ên kamerayê yên peldankan gava Windows kodxwînerekî ji bo wan hebe, û parastina daneyê ya Windows ji bo şîfre û tokenan.
 - **Nepenî ji hêla sêwirandinê ve**: ne hesab, ne ewr, ne analîtîk; şîfre û token di embareke ewle ya cîhazê de; kameraya lîstikvanê Spatial tenê li ser cîhazê tê bikaranîn; parvekirin, Plex û kamera tenê li ser torê te têne gihîştin.
 
 <a id="technical-documentation"></a>
@@ -257,7 +257,7 @@ Tiştê ku sepan dikare bixwîne û lê bide, ji bo xwendevanê ku dixwaze tevah
 ### iPhone û iPad
 
 1. Guhertoya App Store li bendê ye ku Apple wê nirxand bike. Heta ku were weşandin, sepanê bi Xcode li ser Mac-ekê çêke, li [Bi xwe çêke](../docs/immuch360/build.md) binêre.
-2. Bi servera xwe ya Immich têkeve, an li «Bêyî server bi kar bîne» bixe.
+2. Li "Bêyî server bi kar bîne" bixe, an ji bo têketina bi serverê xwe li "Bi servera Immich ve girê bide" bixe; herdu jî ji çêkirina 24ê pê ve li ser rûpela bixêrhatinê ne.
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TV û Google TV
@@ -277,14 +277,18 @@ Tiştê ku sepan dikare bixwîne û lê bide, ji bo xwendevanê ku dixwaze tevah
 <a id="windows"></a>
 ### Windows
 
-1. `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` ji [pêşweşana sermasê](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) daxe (nêzîkî 58 MB, bi `SHA256SUMS.txt` ji bo kontrolkirinê) û li her derê, wek mînak di Documents de, jê bike.
-2. `immuch360.exe` ji peldanka jêkirî bide destpêkirin û peldankê tam biparêze: bername pelên li kêleka xwe pêwîst dike, di nav wan de `libmpv-2.dll`, lîstikvanê vîdyoyê.
-3. Pel hê nehatine îmzekirin: Windows SmartScreen dibe ku «Windows computera te parast» nîşan bide, «Zêdetir agahî» paşê «Dîsa jî bixebitîne» hilbijêre. Destpêka yekem a çêkirineke nû dikare heta deqîqeyekê bidome dema ku Windows pelan dipîve.
-4. Windows 10 an 11, 64 bit. Hê sazkerek û nûvekirina otomatîk tune: çêkirina din bi heman awayî jê bike.
+1. `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` ji [pêş-weşana sermaseyê](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) bistîne (bi `SHA256SUMS.txt` ji bo rastandina wê) û wê veke. Pel hê nehatine îmzekirin: Windows SmartScreen dikare "Windows protected your PC" nîşan bide, "More info" hilbijêre paşê "Run anyway".
+2. "Install for me only" (bêyî mafên rêvebir) an "Install for all users" hilbijêre, paşê zimanê sazkerê, ku berê wekî yê Windows hatiye hilbijartin.
+3. Immuch360 Desktop ji menûya Start dest pê bike. Wêne û vîdyo wê di "Open with" de digirin (pelekî bi rastê bitikîne, Open with); ew çu carî nabe bernameya pêşbijartî ya wan. Destpêka yekem a çêkirineke nû dikare heta deqeyekê bidomîne, dema ku Windows pelan skan dike.
+4. Windows 10 an 11, 64 bit. Ji bo nûvekirinê, sazkerê çêkirina paşîn veke: têketina te, peldank û mîhengên te dimînin. ZIP-a heman weşanê heman sepan e, wekî peldankek, ji bo li her derê jê were derxistin û `immuch360.exe` jê dest pê bike.
 
-### macOS û Linux
+### Linux
 
-Proje di çavkaniyê de ne û ji hêla CI ya projeyê ve bi her guhertinê têne çêkirin, lê sepan hê li ser wan pergalan dest pê nekiriye û pirtûkxaneya lîstikvanê wan ya vîdyoyê hê di wan de nîne: hê daxistin tune. Gavên ji bo çêkirina wan di [Bi xwe çêke](../docs/immuch360/build.md) de ne.
+Li ser Ubuntu 22.04 an paşîtir û Debian 12 an paşîtir: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; li ser Fedora 40 an paşîtir: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Paşê Immuch360 Desktop ji sepanên xwe dest pê bike. Pêşdîtinek pêşîn: peldankên komputerê, wêne û wêneyên 360° wekî gogê; vîdyo hê nayên lîstin, û parvekirinên SMB hewceyê Ubuntu 24.04, Debian 13 an Fedora 39 an paşîtir in.
+
+### macOS
+
+`Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` veke û sepanê berbi Applications ve bikişîne (Apple silicon û Intel, macOS 12 an paşîtir). Ew hê ne îmzekirî ye ne jî notarized e: li ser macOS 14 û berê wê Control bitikîne û Open hilbijêre, an li ser macOS 15 û paşîtir di System Settings, Privacy & Security de "Open Anyway" hilbijêre. Kesek ji yên li ser projeyê dixebitin Mac-ek nîne: sepan tenê li ser CI ya projeyê dest pê kiriye, hê vîdyo nalîze û gihîştina torê ya wê hê nehatiye ceribandin. Ragihandin bi xêr in.
 
 <a id="privacy"></a>
 ## Nepenî
@@ -306,7 +310,7 @@ Wêneyên telefonê yên vê rûpelê li ser çêkirina Android di emulatorek de
 Tiştên ku hîn nehatine kirin, yên herî muhtemel pêşî. Tiştek li vir ne soz e, û nerînên li ser [issue tracker](https://github.com/freeKC/Immuch360/issues) alîkariyê dikin ku were biryardan ka çi pêşî tê.
 
 - **Store**: Google Play (çêkirina 23 di nirxandinê de, lîsteya TV di nirxandinê de), App Store (guhertoya 3.3.0 di nirxandinê de), Meta Horizon Store (çêkirina 21 di nirxandinê de).
-- **Komputer**: ceribandina her fonksiyonê bi destan li ser komputereke Windows; paşê Spatial 2.5D bi webcamê; paşê macOS û Linux dest pê kirî û şandî, bi lîstikvanê vîdyoyê yê xwe; paşê sazkerek, çêkirineke îmzekirî û nûvekirinên otomatîk.
+- **Komputer**: ceribandina her fonksiyonê bi destan li ser komputereke Windows; paşê Spatial 2.5D bi webcamê; paşê lîstikvanê vîdyoyê li ser Linux û macOS û ceribandinek li ser Mac-ek rastîn; paşê çêkirineke îmzekirî û nûvekirinên otomatîk.
 - **Telefon û tablet**: xeteke demê di lîstikvanê vîdyoyê yê 360° yê iOS de, ya berê û ya din di lîstikvanên 360° yên telefonan de, hilbijartina rêça dengî di lîstikvanê sade de, dîtina zindî ya Tapo li ser iPhone û iPad.
 - **Medyaya dorhêlî**: .dng ya cot fisheye, ravekirina vîdyoyên GoPro û DJI ji daneyên tevgera wan bi xwe, vîdyoyên Spatial bi 3D li ser Quest heke kodxwînerên wê destûrê bidin, ya berê û ya din di navbera wêneyên Spatial de di kaskê de.
 - **Çavkanî**: şemitandin di navbera pelên peldankeke parvekirî de, rastandina Digest ji bo WebDAV, kodeke QR ji bo anîna tokena Plex ji komputerê, IPv6 ji bo Plex, tomarên Tapo yên H.265, kanalên li ser ekrana destpêkê ya TV.

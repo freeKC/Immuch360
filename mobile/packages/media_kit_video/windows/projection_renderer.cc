@@ -65,7 +65,9 @@ void ProjectionSetup::OutputSize(int32_t* width, int32_t* height) const {
 bool ProjectionSetup::SameFrameLayout(const ProjectionSetup& other) const {
   return kind == other.kind && tracks == other.tracks &&
          enabled[0] == other.enabled[0] && enabled[1] == other.enabled[1] &&
-         uniforms == other.uniforms;
+         uniforms == other.uniforms &&
+         partner_stream == other.partner_stream &&
+         secondary == other.secondary;
 }
 
 bool ProjectionRenderer::Prepare(int32_t client_version) {
@@ -251,7 +253,8 @@ void ProjectionRenderer::SetUniforms(GLuint program,
                                      const ProjectionSetup& setup,
                                      const ProjectionView& view,
                                      int32_t width,
-                                     int32_t height) {
+                                     int32_t height,
+                                     bool second) {
   const auto location = [program](const char* name) {
     return glGetUniformLocation(program, name);
   };
@@ -283,7 +286,9 @@ void ProjectionRenderer::SetUniforms(GLuint program,
   glUniform2f(location("uOutputSize"), static_cast<GLfloat>(width),
               static_cast<GLfloat>(height));
   const auto pixels_per_radian = (height / 2.0) / tan_half;
-  auto texels_per_radian = frame_width_ / (2.0 * kPi);
+  // Two lenses side by side in the frame, or one in it and the other in the
+  // second texture of the same size: the same texels per radian
+  auto texels_per_radian = frame_width_ * (second ? 2.0 : 1.0) / (2.0 * kPi);
   if (setup.kind == 0) {
     texels_per_radian =
         frame_width_ * setup.eye[2] / (2.0 * kPi * std::max(0.01f, setup.crop[2]));
@@ -297,7 +302,15 @@ void ProjectionRenderer::SetUniforms(GLuint program,
   }
   glUniform1f(location("uTracks"),
               static_cast<GLfloat>(std::max(1, setup.tracks)));
-  glUniform2fv(location("uEnabled"), 1, setup.enabled);
+  // Stream 1 of a pair of players: the partner's texture on unit 1, off until
+  // the partner drew a frame (patch 7)
+  GLfloat enabled[2] = {setup.enabled[0], setup.enabled[1]};
+  if (setup.partner_stream && !second) {
+    enabled[1] = 0.0f;
+  }
+  glUniform2fv(location("uEnabled"), 1, enabled);
+  glUniform1i(location("uSource1"), 1);
+  glUniform1f(location("uSecondTexture"), second ? 1.0f : 0.0f);
   for (const auto& [name, values] : setup.uniforms) {
     if (!IsStitchUniform(name)) {
       continue;
@@ -332,7 +345,8 @@ void ProjectionRenderer::SetUniforms(GLuint program,
 bool ProjectionRenderer::DrawView(const ProjectionSetup& setup,
                                   const ProjectionView& view,
                                   int32_t width,
-                                  int32_t height) {
+                                  int32_t height,
+                                  GLuint second_texture) {
   if (!prepared_ || frame_texture_ == 0 || !has_frame_) {
     return false;
   }
@@ -350,12 +364,24 @@ bool ProjectionRenderer::DrawView(const ProjectionSetup& setup,
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
   glUseProgram(program);
   bind_vertex_array_(vertex_array_);
+  const bool second =
+      setup.kind != 0 && setup.partner_stream && second_texture != 0;
+  if (second) {
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, second_texture);
+    bind_sampler_(1, 0);
+  }
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, frame_texture_);
   bind_sampler_(0, 0);
-  SetUniforms(program, setup, view, width, height);
+  SetUniforms(program, setup, view, width, height, second);
   glDrawArrays(GL_TRIANGLES, 0, 3);
   // The defaults mpv expects at its next render (render_gl.h, "OpenGL state")
+  if (second) {
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glActiveTexture(GL_TEXTURE0);
+  }
   glBindTexture(GL_TEXTURE_2D, 0);
   bind_vertex_array_(0);
   glUseProgram(0);

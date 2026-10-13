@@ -77,7 +77,6 @@ class LoginForm extends HookConsumerWidget {
     final isPasswordLoginEnable = useState<bool>(false);
     final oAuthButtonLabel = useState<String>('OAuth');
     final serverInfo = ref.watch(serverInfoProvider);
-    final isLocalSession = ref.watch(localSessionProvider);
     final warningMessage = useState<String?>(null);
     final loginFormKey = GlobalKey<FormState>();
     final ValueNotifier<String?> serverEndpoint = useState<String?>(null);
@@ -88,9 +87,6 @@ class LoginForm extends HookConsumerWidget {
     final passwordEntryFocus = useFocusNode(debugLabel: 'Password entry');
     // Kept across the builds of the form, whose key changes at each one: a new entry would lose the focus
     final emailEntryFocus = useFocusNode(debugLabel: 'Email entry');
-    // A TV that never reached a server is most likely there for the network shares: it starts on "Use without a
-    // server" rather than on the address
-    final neverConnected = useMemoized(() => getServerUrl() == null);
 
     Future<void> checkVersionMismatch() async {
       try {
@@ -314,26 +310,14 @@ class LoginForm extends HookConsumerWidget {
       }
     }
 
-    /// Opens the photos and videos of this device without a server; one can be connected later from the settings
-    Future<void> useWithoutServer() async {
-      final localSession = ref.read(localSessionProvider.notifier);
-      final refreshLocalSession = ref.read(localSessionRefreshProvider);
-      final viewIntentHandler = ref.read(viewIntentHandlerProvider);
-      final featureMessageService = ref.read(featureMessageServiceProvider);
-
-      await ref.read(galleryPermissionNotifier.notifier).requestGalleryPermission();
-      await localSession.enter();
-      unawaited(
-        refreshLocalSession(full: true).then((_) => viewIntentHandler.flushDeferredViewIntent()).catchError((Object e) {
-          log.severe('Failed to open a file shared with the app: $e');
-        }),
-      );
-      unawaited(featureMessageService.markSeen());
-      if (!context.mounted) {
-        return;
+    /// Back to the page the form was opened from: the welcome page, or the settings of a session without a server.
+    /// When the form is the only page (a deep link opened it), the welcome page replaces it.
+    void goBack() {
+      if (context.router.canPop()) {
+        unawaited(context.maybePop());
+      } else {
+        unawaited(context.router.replaceAll([const WelcomeRoute()]));
       }
-
-      unawaited(context.router.replaceAll([const TabShellRoute()]));
     }
 
     String generateRandomString(int length) {
@@ -501,7 +485,8 @@ class LoginForm extends HookConsumerWidget {
                     controller: serverEndpointController,
                     label: context.t.login_form_endpoint_url,
                     kind: TvTextKind.url,
-                    autofocus: isLocalSession || !neverConnected,
+                    // The server was chosen on the welcome page: on a TV the focus starts on its address
+                    autofocus: true,
                     onSubmitted: (_) => form.submit(),
                     child: ImmichURLInput(
                       controller: serverEndpointController,
@@ -519,16 +504,12 @@ class LoginForm extends HookConsumerWidget {
                   variant: ImmichVariant.ghost,
                   onPressed: () => context.pushRoute(const SettingsRoute()),
                 ),
-                if (!isLocalSession)
-                  RemoteInitialFocus(
-                    enabled: tvMode && neverConnected,
-                    child: ImmichTextButton(
-                      labelText: context.t.login_form_use_without_server,
-                      icon: Icons.cloud_off_rounded,
-                      variant: ImmichVariant.ghost,
-                      onPressed: useWithoutServer,
-                    ),
-                  ),
+                ImmichTextButton(
+                  labelText: context.t.back,
+                  icon: Icons.arrow_back,
+                  variant: ImmichVariant.ghost,
+                  onPressed: goBack,
+                ),
               ],
             ),
           )
@@ -624,8 +605,8 @@ class LoginForm extends HookConsumerWidget {
           );
 
     // A TV of 1080p shows 960 x 540 dp, less its overscan margins and the version line: the phone layout (the logo a
-    // fifth of the height down, 100 dp tall) pushed "Use without a server" below the screen. The TV gets a small logo
-    // at the top, under the margin of the TV shell.
+    // fifth of the height down, 100 dp tall) pushed the last action of the form below the screen. The TV gets a small
+    // logo at the top, under the margin of the TV shell.
     final logoSize = tvMode ? 56.0 : 100.0;
     final titleSize = tvMode ? 28.0 : 48.0;
 

@@ -193,6 +193,26 @@ void main() {
 
       expect(find.text('device albums'), findsOneWidget);
     });
+
+    testWidgets('offers an Immich server where the entries of a server would be, which opens the login form', (
+      tester,
+    ) async {
+      await pumpLibraryButtons(tester, local: true, library: const LibraryPage());
+      final entry = find.byKey(const Key('library_connect_server'));
+
+      await tester.dragUntilVisible(entry, find.byType(CustomScrollView).first, const Offset(0, -200));
+      await tester.pumpAndSettle();
+      expect(find.descendant(of: entry, matching: find.text('Connect to an Immich server')), findsOneWidget);
+      expect(
+        find.descendant(of: entry, matching: find.text('Sync with an Immich server to back up, search and share')),
+        findsOneWidget,
+      );
+
+      await tester.tap(entry);
+      await tester.pumpAndSettle();
+
+      expect(find.text('login page'), findsOneWidget);
+    });
   });
 
   group('App bar without a server', () {

@@ -127,6 +127,9 @@ ProjectionSetup ToProjectionSetup(const flutter::EncodableMap& arguments) {
       static_cast<int32_t>(ToInt64(Find(arguments, "outputHeight"), 1));
   setup.max_output_height = static_cast<int32_t>(
       ToInt64(Find(arguments, "maxOutputHeight"), setup.max_output_height));
+  // Immuch360, two players for one raw file (patch 7)
+  setup.partner_stream = ToBool(Find(arguments, "partnerStream"), false);
+  setup.secondary = ToBool(Find(arguments, "secondary"), false);
   return setup;
 }
 
@@ -333,6 +336,22 @@ void MediaKitVideoPlugin::HandleMethodCall(
         std::move(result);
     video_output_manager_->SetProjection(
         handle, setup, [this, reply](flutter::EncodableMap answer) {
+          RunOnMainThread([reply, answer]() {
+            reply->Success(flutter::EncodableValue(answer));
+          });
+        });
+  } else if (method_call.method_name().compare(
+                 "VideoOutputManager.SetPartner") == 0) {
+    // Immuch360: the second stream of a raw file from another player
+    // (IMMUCH360-NOTE.md, patch 7), answered once the thread pool paired them
+    const auto& arguments =
+        std::get<flutter::EncodableMap>(*method_call.arguments());
+    std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>> reply =
+        std::move(result);
+    video_output_manager_->SetPartner(
+        ToInt64(Find(arguments, "handle"), 0),
+        ToInt64(Find(arguments, "partner"), 0),
+        [this, reply](flutter::EncodableMap answer) {
           RunOnMainThread([reply, answer]() {
             reply->Success(flutter::EncodableValue(answer));
           });

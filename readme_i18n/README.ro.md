@@ -11,7 +11,7 @@ Immuch360 este o aplicație liberă și open source pentru a găsi, răsfoi, red
 
 - **Ce face?** Afișează fotografiile și videoclipurile dvs. ca o galerie și le redă în vizualizatorul care se potrivește fiecărui fișier: plat, ca o sferă pe care o explorați, în 3D, într-o cască.
 - **Ce fel de conținut?** Fotografii și videoclipuri plate, panorame, fotografii și videoclipuri 360°, VR180, 3D stereoscopic, fotografii spațiale Apple și fișierele brute ale camerelor 360° (Insta360, GoPro MAX, DJI Osmo 360), asamblate de aplicație.
-- **Pe ce dispozitive?** Telefoane și tablete Android, iPhone și iPad, Android TV și Google TV, căști Meta Quest 2, Pro, 3 și 3S, Windows (previzualizare), cu macOS și Linux în pregătire.
+- **Pe ce dispozitive?** Telefoane și tablete Android, iPhone și iPad, Android TV și Google TV, Meta Quest 2, Pro, 3 și 3S, Windows (previzualizare), și Linux și macOS ca previzualizări timpurii.
 - **Am nevoie de server sau de cont?** Nu. Immuch360 funcționează de unul singur cu conținutul dispozitivului dvs. Un server Immich, un NAS, un server media sau un server Plex sunt opțiuni pe care le adăugați când vreți.
 
 <p align="center">
@@ -26,8 +26,8 @@ Immuch360 este o aplicație liberă și open source pentru a găsi, răsfoi, red
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone și iPad** | App Store | versiunea 3.3.0 așteaptă verificarea Apple; până atunci [construiți-o singuri](../docs/immuch360/build.md) |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV și Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 pe GitHub; listarea pentru TV este în verificarea Google |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 și 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | pe Horizon Store (build 14; build 21 în verificare), build 23 pe GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [ZIP de previzualizare](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4, o previzualizare: fotografii, videoclipuri plate și 360°, partajări, Plex, camere |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS și Linux** | Cod sursă | construite de CI-ul proiectului, nepornite încă pe aceste sisteme, fără descărcare încă |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalator sau ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, o previzualizare: fotografii, videoclipuri plate și 360°, partajări, Plex, camere, fișiere deschise cu programul |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS și Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | previzualizări timpurii: pe Linux fotografii și fotografii 360°, fără videoclipuri încă; macOS a fost pornit doar pe CI-ul proiectului |
 
 *Stările sunt actualizate la fiecare lansare; detaliile, build cu build, se află în [Starea lansării](../docs/immuch360/release-status.md).*
 
@@ -97,11 +97,11 @@ Mai multe: [fotografii și videoclipuri 360°](../docs/immuch360/user-guide.md#3
 <a id="use-your-own-files-without-an-account"></a>
 ### Folosiți propriile fișiere, fără cont
 
-Immuch360 nu are nevoie nici de cont, nici de server. Pe pagina de autentificare, "Folosește fără server" deschide aplicația pe fotografiile și videoclipurile dispozitivului, cu fiecare vizualizator, lista 360° și sursele de rețea. Nimic nu părăsește dispozitivul. Un server poate fi conectat mai târziu, din Setări, și apar atunci funcțiile serverului.
+Immuch360 nu are nevoie nici de cont, nici de server. Din build 24, aplicația se deschide pe o pagină de bun venit, unde "Folosește fără server" vine prima: deschide aplicația pe fotografiile și videoclipurile dispozitivului, cu fiecare vizualizator, lista 360° și sursele de rețea. Nimic nu părăsește dispozitivul. Un server poate fi conectat mai târziu, din Setări sau din fila Librărie, iar funcțiile serverului apar atunci.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Fila Librărie fără server: intrarea 360° sus, apoi Pe acest dispozitiv cu două fotografii 360° și Partajări de rețea cu o partajare numită NAS">
 
-1. Deschideți aplicația. Pe pagina de autentificare, sub adresa serverului și Setări, atingeți „Folosește fără server”.
+1. Deschideți aplicația. Pagina de bun venit arată "Conținutul dvs. Orice ecran. Orice perspectivă." și trei opțiuni: atingeți prima, "Folosește fără server". Până la build 23, pagina de conectare venea prima, cu "Folosește fără server" sub formular.
 2. Permiteți accesul la fotografii și videoclipuri. Dacă refuzați, aplicația afișează „Aplicația nu poate vedea fotografiile de pe acest dispozitiv”, cu „Permite accesul” și „Deschide setările”.
 3. Fila Fotografii afișează cronologia dispozitivului. Căutați și Albume rămân dezactivate, deoarece vin de la server. Fila Librărie are 360° sus, apoi Pe acest dispozitiv (albumele dispozitivului) și Partajări de rețea.
 4. Meniul din dreapta sus afișează „Doar acest dispozitiv”: aplicația arată fotografiile și videoclipurile acestui dispozitiv, nimic nu este trimis nicăieri.
@@ -120,7 +120,7 @@ Videoclipurile dvs. se află pe un NAS, un computer sau un server media. Immuch3
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Un dosar al unei partajări de rețea ca grilă de miniaturi: fotografii 360° cu insigna 360° și un videoclip 360° cu un semn de redare, butonul Selectează în dreapta sus">
 </p>
 
-1. Deschideți fila Bibliotecă, apoi Partajări de rețea, apoi + și "O partajare de rețea (NAS, computer, server media)".
+1. Deschideți fila Librărie, apoi Partajări de rețea, apoi + și "O partajare de rețea (NAS, computer, server media)". Din build 24, "Adaugă o partajare de rețea sau un server media" de pe pagina de bun venit deschide Partajări de rețea direct, fără server.
 2. Atingeți un server sub "Găsite în rețea" sau completați formularul manual: tip, numele sau adresa serverului, partajare sau cale, dosar de pornire, nume de utilizator și parolă.
 3. Atingeți "Testați conexiunea", apoi Salvați. Atingeți partajarea pentru a o răsfoi: mai întâi dosarele, apoi fotografiile și videoclipurile, cu insigna 360° pe fișierele recunoscute ca 360°.
 4. Cu un server Immich conectat, selectați fișiere într-un dosar și atingeți "Încarcă în Immich" pentru a le trimite pe serverul dvs.
@@ -134,7 +134,7 @@ Mai multe: [partajări de rețea](../docs/immuch360/user-guide.md#network-shares
 
 Cu un server [Immich](https://github.com/immich-app/immich), Immuch360 este aplicația mobilă Immich, cu același server și același cont ca aplicația web: backup, cronologie, albume, căutare, persoane, amintiri, distribuire, parteneri, toate sincronizate cu serverul dvs. Se instalează alături de aplicația oficială. În plus: insigna și lista 360°, fiecare vizualizator imersiv, alegerea între fișierul original și fluxul transcodificat al serverului pentru fiecare videoclip, detaliile tehnice ale unui videoclip și fișierele unei partajări sau ale dispozitivului trimise pe serverul dvs. manual.
 
-1. Autentificați-vă cu adresa serverului, e-mailul și parola dvs., ca în aplicația Immich. Biblioteca, albumele și setările de backup sunt cele ale contului dvs.
+1. Pe pagina de bun venit, atingeți "Conectează-te la un server Immich", apoi conectați-vă cu adresa serverului dvs., cu e-mailul și parola dvs., ca în aplicația Immich; Înapoi vă readuce la pagina de bun venit. Până la build 23, pagina de conectare se deschide direct. Biblioteca dvs., albumele și setările de backup sunt cele ale contului dvs.
 2. În Setări, Vizualizator resurse, Videoclipuri, "Sursa video" alege originalul când acest dispozitiv îl decodează, mereu originalul sau mereu fluxul transcodificat.
 3. Pentru a arăta o fotografie 360° cuiva care nu are aplicația, distribuiți-o cu un link partajat Immich: aplicația web Immich o arată ca o sferă în browserul lor.
 
@@ -154,7 +154,7 @@ Pe un Meta Quest, aceeași aplicație funcționează ca o fereastră cu toată b
 </p>
 
 1. Instalați aplicația din [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), sau instalați manual APK-ul unui build mai nou, vedeți [Instalare](#meta-quest).
-2. Autentificați-vă cu serverul dvs. Immich sau atingeți „Folosește fără server” pentru fotografiile și videoclipurile căștii.
+2. Pe pagina de bun venit, atingeți "Folosește fără server" pentru fotografiile și videoclipurile proprii ale căștii, sau "Conectează-te la un server Immich" pentru a vă conecta cu serverul dvs.
 3. Deschideți o fotografie sau un videoclip 360° și apăsați 360°: se deschide vizualizarea imersivă. B sau Y, sau butonul Înapoi al panoului de informații, readuce fereastra.
 
 Mai multe: [în casca Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [casca: codecuri, magazin și permisiuni](../docs/immuch360/platform-support.md#meta-quest).
@@ -169,8 +169,8 @@ Aceeași aplicație Android funcționează pe Android TV și Google TV cu teleco
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Playerul video Immuch360 Desktop pe Windows: un videoclip cu o stradă redat în fereastră, cu butonul de pauză, bara de timp, Distribuie și Încarcă în Immich">
 </p>
 
-1. Pe un televizor: instalați APK-ul cu adb (vedeți [Instalare](#android-tv-and-google-tv)), autentificați-vă sau alegeți "Folosește fără server", adăugați o partajare, un server Plex sau o cameră din Bibliotecă.
-2. Pe un computer cu Windows: dezarhivați previzualizarea și porniți `immuch360.exe` (vedeți [Instalare](#windows)), apoi alegeți dosarele cu fotografiile și videoclipurile dvs. sau autentificați-vă pe serverul dvs.
+1. Pe un televizor: instalați APK-ul cu adb (vedeți [Instalare](#android-tv-and-google-tv)); pe pagina de bun venit, alegeți "Adaugă o partajare de rețea sau un server media" pentru o partajare, un server Plex sau o cameră, "Folosește fără server", sau "Conectează-te la un server Immich".
+2. Pe un computer cu Windows: instalați previzualizarea sau dezarhivați-o și porniți `immuch360.exe` (vedeți [Instalare](#windows)); din desktop build 5, "Folosește fără server" de pe pagina de bun venit deschide alegerea dosarelor dvs., iar "Conectează-te la un server Immich" pagina de conectare. O fotografie, un videoclip sau un dosar deschis cu programul, sau tras pe fereastra sa, se deschide imediat, unul 360° în vizualizarea sa 360°; mai multe fișiere se deschid împreună pe o singură pagină.
 3. Într-un vizualizator funcționează tastele de redare și pauză, derulare înapoi și înainte, precedent și următor ale telecomenzii, la fel ca tastele tastaturii pe un computer (Spațiu, J și L, F pentru ecran complet).
 
 Mai multe: [vizionați pe televizorul dvs.](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [pe un computer cu Windows](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [suportul platformelor](../docs/immuch360/platform-support.md).
@@ -180,7 +180,7 @@ Mai multe: [vizionați pe televizorul dvs.](../docs/immuch360/user-guide.md#watc
 
 - **Camere Tapo**: o cameră este adăugată alături de partajările de rețea. Aplicația o arată live (Android, Android TV, Quest și Windows) și listează înregistrările de pe cardul ei de memorie, zi de zi, pe fiecare platformă; un clip este descărcat de pe cameră, se redă ca orice videoclip și poate fi trimis în Immich. Aplicația comunică cu camera doar în rețeaua dvs., niciodată cu serverele TP-Link.
 - **Plex Media Server, fără plex.tv**: aplicația se asociază direct cu serverul dvs., cu un token pe care îl lipiți o singură dată, și citește live fișierele originale ale bibliotecilor dvs., astfel încât 360° rămâne 360°, acasă și, prin redirecționarea de porturi, în afara casei.
-- **Fișiere brute de cameră 360°**: fotografiile .insp și videoclipurile .insv brute ale camerelor Insta360 (unul sau două obiective, într-o singură pistă, două piste sau două fișiere), fișierele .360 ale GoPro MAX și fișierele .osv ale DJI Osmo 360 sunt asamblate de aplicație pe măsură ce se redau, cu calibrarea scrisă în fișier, fără nimic de instalat.
+- **Fișiere brute de la camere 360°**: fotografiile brute .insp și videoclipurile .insv ale camerelor Insta360 (unul sau două obiective, într-o pistă, două piste sau două fișiere), fișierele .360 ale GoPro MAX și fișierele .osv ale DJI Osmo 360 sunt asamblate de aplicație în timp ce se redau, cu calibrarea scrisă în fișier, fără nimic de instalat nicăieri. Pe Android, redă-le dintr-o partajare, un computer sau serverul tău, pentru că galeria telefonului nu listează fișierele brute; serverul Immich acceptă doar .insp și .insv.
 
 Mai multe: [camere Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [fișiere brute de cameră 360°](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
@@ -207,7 +207,7 @@ O bază de cod, șase medii. Ce are fiecare astăzi:
 | Partajați acest dispozitiv în rețea | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
 | Încărcare în Immich din partajări și din dispozitiv | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
 | Intrare | tactil, giroscop | tactil, giroscop | telecomandă | controlere, mâini | mouse, tastatură | |
-| De unde îl obțineți | Google Play, APK | App Store (în verificare) | APK, Google Play (în verificare) | Horizon Store, APK | ZIP de previzualizare | numai build-uri CI |
+| De unde o obțineți | Google Play, APK | App Store (în verificare) | APK, Google Play (în verificare) | Horizon Store, APK | instalator sau ZIP (previzualizare) | .deb, .rpm, DMG (previzualizări timpurii) |
 
 ✅ în aplicație pe acea platformă · ❌ neoferit acolo · 🔜 planificat · 🔧 în codul sursă și construit de CI-ul proiectului, nepornit încă pe acel sistem. "Un ochi" înseamnă că un fișier 3D arată ochiul stâng pe un ecran plat. Nu fiecare ✅ a fost verificat pe un dispozitiv real: ce a fost verificat unde, și ce rămâne de confirmat, se află în [Funcții](../docs/immuch360/features.md), [Suportul platformelor](../docs/immuch360/platform-support.md) și [Compatibilitate](../docs/immuch360/compatibility.md).
 
@@ -215,8 +215,8 @@ O bază de cod, șase medii. Ce are fiecare astăzi:
 - **iPhone și iPad**: aplicația completă; playerul video 360° are doar redare și pauză, vizualizarea live Tapo vine mai târziu, iar căutarea DLNA trimite cereri unicast până când Apple acordă permisiunea multicast.
 - **Android TV și Google TV**: același APK, condus de telecomandă; un vizualizator: backupul, încărcările și editarea sunt ascunse. Verificat pe emulatorul Google TV (autentificare, cronologie, vizualizatoare, partajări, navigarea cu telecomanda), nu încă pe un televizor real.
 - **Meta Quest 2, Pro, 3 și 3S**: aplicația ca o fereastră, plus vizualizarea imersivă; HEVC este codecul sigur, H.264 se blochează în jurul a 4096x2304 pe Quest 3; Quest 2 și Quest Pro nu sunt testate încă.
-- **Windows 10 și 11**: o previzualizare, cu dosare în locul unei galerii, un player video propriu (libmpv) pentru videoclipuri plate și 360°, fișiere brute asamblate pe cipul grafic, fără instalator încă.
-- **macOS și Linux**: proiectele se construiesc pe CI-ul proiectului (Linux construit, macOS compilat); aplicația nu a fost pornită încă pe aceste sisteme și biblioteca lor de player video nu este inclusă încă.
+- **Windows 10 și 11**: o previzualizare, cu dosare în loc de galerie, un player video propriu (libmpv) pentru videoclipuri plate și 360°, fișiere brute asamblate pe cipul grafic, fișiere și dosare deschise cu programul sau trase pe fereastră, un instalator sau un ZIP.
+- **macOS și Linux**: pachete construite de CI-ul proiectului (un .deb, un .rpm, un DMG); pe Linux aplicația pornește și arată fotografii și fotografii 360°, fără videoclipuri încă, iar partajările SMB au nevoie de Ubuntu 24.04, Debian 13 sau Fedora 39 sau mai nou; aplicația macOS a fost pornită doar pe CI-ul proiectului, fără videoclipuri și cu accesul ei la rețea neîncercat.
 
 <a id="advanced-features"></a>
 ## Funcții avansate
@@ -226,11 +226,11 @@ Ce poate citi și reda aplicația, pentru cititorul care vrea întreaga întinde
 - **Formate**: fotografii și videoclipuri plate (ce decodează dispozitivul: MP4, MOV, MKV și altele); fotografii și videoclipuri 360° echirectangulare; panorame parțiale (decupare GPano); VR180; 3D stereoscopic, sus și jos sau unul lângă altul, citit din fișier (cadrul st3d) sau ghicit din imagine; fotografii spațiale Apple (perechi stereo HEIC) și videoclipuri spațiale (MV-HEVC, un ochi); fișiere brute Insta360 .insp și .insv, GoPro .360, DJI .osv; surse HLG și PQ pe 10 biți mapate tonal pe sferă.
 - **Proiecție și metadate**: metadate GPano și sferice citite din fișier, cu cereri parțiale pe un server sau o partajare; vederea inițială a camerei; "Vizualizează ca 360°" reținut pe dispozitiv; VR180 recunoscut din fișier sau din numele lui; metadatele rămân intacte pentru că se redă fișierul original, niciodată o copie convertită.
 - **Redare nativă**: Media3 pe Android și pe televizor, SceneKit și AVFoundation pe iOS, Meta Spatial SDK în cască, libmpv pe Windows; originalul sau fluxul transcodificat alese în funcție de ce decodează dispozitivul; o listă a decodoarelor video ale dispozitivului în Setări, Avansat; alegerea pistei audio și un indicator de încărcare.
-- **Fișiere brute asamblate pe dispozitiv**: un shader de fragment Flutter pentru fotografii; un efect GPU în player pentru videoclipuri cu o singură pistă; două decodoare hardware simultan și un compozitor GPU pentru videoclipuri cu un obiectiv per pistă sau per fișier (OpenGL ES 3 pe Android și pe Quest, Metal pe iOS, graficul de filtre libmpv pe Windows); calibrarea proprie a camerei (modelele Mei, V6 și echidistant) și înregistrarea accelerometrului; soluții de rezervă la un obiectiv, fluxul transcodificat, copia LRV a camerei sau videoclipul neasamblat când dispozitivul nu poate rula două decodoare.
+- **Fișiere brute asamblate pe dispozitiv**: un fragment shader Flutter pentru fotografii; un efect GPU în player pentru videoclipuri cu o singură pistă; două decodoare hardware simultan și un compositor GPU pentru videoclipuri cu un obiectiv per pistă sau per fișier (OpenGL ES 3 pe Android și pe Quest, Metal pe iOS, iar pe Windows, din desktop build 5, două playere libmpv ale căror cadre sunt asociate de aplicație pe cipul grafic); calibrarea proprie a camerei (modelele Mei, V6 și echidistant) și înregistrarea accelerometrului; soluții de rezervă la un obiectiv, fluxul transcodificat, copia LRV a camerei sau videoclipul neasamblat, atunci când dispozitivul nu poate rula două decodoare.
 - **Surse**: galeria dispozitivului; dosarele unui computer; un server Immich; SMB 2 și 3, WebDAV, DLNA/UPnP; Plex prin HTTPS verificat față de certificatul propriu al serverului; camere Tapo pe rețeaua locală (HTTPS și RTSP); un telefon sau un computer partajat pe Wi-Fi ca server WebDAV; servere găsite prin Bonjour/mDNS, o scanare a rețelei locale, SSDP, GDM și descoperirea TP-Link, și urmărite când își schimbă adresa.
 - **Citire la cerere**: un intermediar local servește playerele cu intervale de bytes și un token per sesiune; blocuri mari, citire anticipată și până la șase conexiuni SMB paralele; miniaturi dintr-un cadru al fiecărui videoclip; nimic copiat pe dispozitiv.
 - **Hardware**: decodoare hardware folosite oriunde există, cu limitele lor măsurate (plafonul H.264 pe Quest 3, cel mult două obiective de 2048x2048 pentru decodoarele software); pe Windows, vizualizarea 360° desenată de cipul grafic din fiecare cadru decodat, dimensiunea cadrului măsurată pe fiecare computer, cipul integrat sau dedicat detectat.
-- **Specificități de platformă**: giroscopul și playerul Spatial 2.5D pe telefoane; vizualizarea imersivă, controlerele și mâinile pe Quest; aspectul telecomenzii, dialogul tastaturii și banner-ul TV pe Android TV; pe computer, mouse și tastatură, ecran complet, o singură fereastră, un fișier deschis cu programul sau tras pe el, fotografii HEIC, AVIF, TIFF și brute de cameră din dosare când Windows are un decodor pentru ele, și protecția datelor Windows pentru parole și token-uri.
+- **Particularități de platformă**: giroscopul și playerul Spatial 2.5D pe telefoane; vizualizarea imersivă, controlerele și mâinile pe Quest; aspectul condus de telecomandă, dialogul de tastatură și bannerul de televizor pe Android TV; pe computer, mouse și tastatură, ecran complet, o singură fereastră, fișiere și dosare deschise cu programul sau trase pe fereastra sa, citite la fel ca fișierele din dosarele dvs., fotografii HEIC, AVIF, TIFF și brute de cameră ale dosarelor când Windows are un decodor pentru ele, și protecția datelor din Windows pentru parole și token-uri.
 - **Confidențialitate prin construcție**: fără cont, fără cloud, fără analiză; parole și token-uri în stocarea securizată a dispozitivului; camera playerului Spatial folosită doar pe dispozitiv; partajări, Plex și camere accesate doar în rețeaua dvs.
 
 <a id="technical-documentation"></a>
@@ -257,7 +257,7 @@ Ce poate citi și reda aplicația, pentru cititorul care vrea întreaga întinde
 ### iPhone și iPad
 
 1. Versiunea pentru App Store așteaptă verificarea Apple. Până este publicată, construiți aplicația cu Xcode pe un Mac, vedeți [Construiți-o singuri](../docs/immuch360/build.md).
-2. Autentificați-vă cu serverul dvs. Immich, sau atingeți "Folosește fără server".
+2. Atingeți "Folosește fără server", sau "Conectează-te la un server Immich" pentru a vă conecta cu serverul dvs.; ambele se află pe pagina de bun venit începând cu build 24.
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TV și Google TV
@@ -277,14 +277,18 @@ Ce poate citi și reda aplicația, pentru cititorul care vrea întreaga întinde
 <a id="windows"></a>
 ### Windows
 
-1. Descărcați `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` de pe pagina [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) (aproximativ 58 MB, cu `SHA256SUMS.txt` pentru verificare) și dezarhivați-l oriunde, de exemplu în Documente.
-2. Porniți `immuch360.exe` din dosarul dezarhivat și păstrați dosarul întreg: programul are nevoie de fișierele de lângă el, printre care `libmpv-2.dll`, playerul video.
-3. Fișierele nu sunt semnate încă: Windows SmartScreen poate arăta "Windows v-a protejat PC-ul", alegeți "Mai multe informații" apoi "Executare în continuare". Prima pornire a unui build nou poate dura până la un minut, cât Windows scanează fișierele.
-4. Windows 10 sau 11, 64 de biți. Nu există instalator și nici actualizare automată încă: dezarhivați următorul build în același mod.
+1. Descărcați `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` din [lansarea preliminară pentru desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) (cu `SHA256SUMS.txt` pentru verificare) și porniți-l. Fișierele nu sunt semnate încă: Windows SmartScreen poate arăta "Windows v-a protejat PC-ul", alegeți "Informații suplimentare" apoi "Executare în continuare".
+2. Alegeți "Instalare numai pentru mine" (fără drepturi de administrator) sau "Instalare pentru toți utilizatorii", apoi limba instalatorului, cea deja selectată de Windows.
+3. Porniți Immuch360 Desktop din meniul Start. Fotografiile și videoclipurile îl au în "Deschidere cu" (clic dreapta pe un fișier, Deschidere cu); nu se face niciodată programul lor implicit. Prima pornire a unui build nou poate dura până la un minut, cât timp Windows scanează fișierele.
+4. Windows 10 sau 11, pe 64 de biți. Pentru actualizare, porniți instalatorul build-ului următor: autentificarea, dosarele și setările dvs. rămân. ZIP-ul aceleiași lansări este același program sub formă de dosar, de dezarhivat oriunde și de pornit `immuch360.exe` din el.
 
-### macOS și Linux
+### Linux
 
-Proiectele se află în codul sursă și sunt construite de CI-ul proiectului la fiecare modificare, dar aplicația nu a fost pornită încă pe aceste sisteme, iar biblioteca lor de player video nu este inclusă în ele: nu există descărcare încă. Pașii pentru a le construi se află în [Construiți-o singuri](../docs/immuch360/build.md).
+Pe Ubuntu 22.04 sau mai nou și Debian 12 sau mai nou: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; pe Fedora 40 sau mai nou: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Apoi porniți Immuch360 Desktop din aplicațiile dvs. O previzualizare timpurie: dosarele computerului, fotografii și fotografii 360° ca o sferă; videoclipurile nu se redau încă, iar partajările SMB au nevoie de Ubuntu 24.04, Debian 13 sau Fedora 39 sau mai nou.
+
+### macOS
+
+Deschideți `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` și trageți aplicația în Aplicații (Apple silicon și Intel, macOS 12 sau mai nou). Nu este semnată nici notarizată încă: faceți Control-clic pe ea și alegeți Deschide pe macOS 14 și mai vechi, sau alegeți "Deschide oricum" în Setări sistem, Confidențialitate și securitate pe macOS 15 și mai nou. Nimeni din proiect nu are un Mac: aplicația a fost pornită doar pe CI-ul proiectului, nu redă încă videoclipuri și accesul ei la rețea nu a fost încercat. Rapoartele sunt binevenite.
 
 <a id="privacy"></a>
 ## Confidențialitate
@@ -306,7 +310,7 @@ Capturile de telefon de pe această pagină au fost făcute pe build-ul Android 
 Ce nu este încă gata, începând cu ce este cel mai probabil. Nimic de aici nu este o promisiune, iar părerile din [sistemul de issues](https://github.com/freeKC/Immuch360/issues) ajută la stabilirea priorităților.
 
 - **Magazinele**: Google Play (build 23 în verificare, listarea TV în verificare), App Store (versiunea 3.3.0 în verificare), Meta Horizon Store (build 21 în verificare).
-- **Computere**: testarea manuală a fiecărei funcții pe un PC cu Windows; apoi Spatial 2.5D cu webcamul; apoi macOS și Linux pornite și livrate, cu playerul lor video; apoi un instalator, un build semnat și actualizări automate.
+- **Computere**: testarea manuală a fiecărei funcții pe un PC cu Windows; apoi Spatial 2.5D cu webcamul; apoi playerul video pe Linux și macOS și un test pe un Mac real; apoi un build semnat și actualizări automate.
 - **Telefoane și tablete**: o bară de timp în playerul video 360° pe iOS, precedentul și următorul în playerele 360° de pe telefoane, alegerea pistei audio în playerul plat, vizualizarea live Tapo pe iPhone și iPad.
 - **Conținut imersiv**: .dng cu fisheye dual, nivelarea videoclipurilor GoPro și DJI din datele lor proprii de mișcare, videoclipuri spațiale în 3D pe Quest dacă decodoarele sale o permit, precedentul și următorul între fotografii spațiale în cască.
 - **Surse**: glisarea între fișierele unui dosar de partajare, autentificare Digest pentru WebDAV, un cod QR pentru a aduce token-ul Plex de pe computer, IPv6 pentru Plex, înregistrări Tapo H.265, canale pe ecranul de pornire al televizorului.

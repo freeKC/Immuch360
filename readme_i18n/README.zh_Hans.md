@@ -11,7 +11,7 @@ Immuch360 是一款免费的开源应用，用于查找、浏览、播放和探�
 
 - **它能做什么？** 它会把您的照片和视频整理成图库，并用适合每个文件的查看器播放：扁平显示、球形环视、3D 显示，或在头显中显示。
 - **支持哪些媒体？** 扁平照片和视频、全景照片、360° 照片和视频、VR180、立体 3D、Apple 空间照片，以及由应用自行拼接的 360° 相机原始文件（Insta360、GoPro MAX、DJI Osmo 360）。
-- **支持哪些设备？** Android 手机和平板、iPhone 和 iPad、Android TV 和 Google TV、Meta Quest 2、Pro、3 和 3S、Windows（预览版），macOS 和 Linux 正在开发中。
+- **支持哪些设备？** Android 手机和平板、iPhone 和 iPad、Android TV 和 Google TV、Meta Quest 2、Pro、3 和 3S、Windows（预览版），以及作为早期预览版的 Linux 和 macOS。
 - **需要服务器或账户吗？** 不需要。Immuch360 可以单独使用设备上的媒体文件运行。Immich 服务器、NAS、媒体服务器或 Plex 服务器都只是您想用时才添加的可选项。
 
 <p align="center">
@@ -26,8 +26,8 @@ Immuch360 是一款免费的开源应用，用于查找、浏览、播放和探�
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 和 iPad** | App Store | 版本 3.3.0 正在等待 Apple 审核；期间可以[自行构建](../docs/immuch360/build.md) |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 和 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub 上为 build 23；电视版应用列表正在接受 Google 审核 |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store 上为 build 14（build 21 审核中），GitHub 上为 build 23 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [预览版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | 桌面版 build 4，预览版：照片、扁平和 360° 视频、共享、Plex、摄像头 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS 和 Linux** | 源代码 | 由项目的 CI 构建，尚未在这些系统上启动开发，暂无下载 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [安装程序或 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | 桌面版 build 5，预览版：照片、扁平和 360° 视频、共享、Plex、摄像头、用程序打开的文件 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS 和 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | 早期预览版：在 Linux 上有照片和 360° 照片，视频暂不支持；macOS 仅在项目的 CI 上启动过 |
 
 *每次发布都会更新这些状态；逐个 build 的详细信息见[发布状态](../docs/immuch360/release-status.md)。*
 
@@ -97,11 +97,11 @@ Immuch360 首先是一个普通照片和视频的图库与播放器。时间线�
 <a id="use-your-own-files-without-an-account"></a>
 ### 无需账户，使用您自己的文件
 
-Immuch360 既不需要账户，也不需要服务器。在登录页面点按“不连接服务器使用”，即可打开应用并显示设备上的照片和视频，并可使用全部查看器、360° 列表和网络来源。所有内容都不会离开设备。之后也可以在设置中连接服务器，此时服务器相关功能才会出现。
+Immuch360 既不需要账户，也不需要服务器。从 build 24 起，应用会先打开一个欢迎页面，排在首位的是“不连接服务器使用”：选择后会直接打开设备上的照片和视频，可使用全部查看器、360° 列表和网络来源。任何内容都不会离开设备。之后也可以从设置或资源库标签页连接服务器，届时服务器相关功能就会出现。
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="无服务器时的资源库标签页：顶部为 360° 入口，然后是包含两张 360° 照片的在本设备上，以及包含名为 NAS 的共享的网络共享">
 
-1. 打开应用。在登录页上服务器地址和「设置」的下方，点按「不连接服务器使用」。
+1. 打开应用。欢迎页面会显示“您的媒体。屏幕随心。视角尽览。”，并给出三个选项：点按第一个，“不连接服务器使用”。在 build 23 及更早版本中，登录页面会先出现，“不连接服务器使用”位于表单下方。
 2. 允许访问你的照片和视频。如果拒绝，应用会提示「应用无法查看此设备上的照片」，并提供「允许访问」和「打开设置」。
 3. 「照片」标签页显示设备的时间线。「搜索」和「相册」显示为灰色，因为它们来自服务器。「资源库」标签页顶部是 360°，然后是「在本设备上」（设备的相册）和「网络共享」。
 4. 右上角菜单显示「仅限此设备」：应用显示此设备的照片和视频，不会向任何地方发送任何内容。
@@ -120,7 +120,7 @@ Immuch360 既不需要账户，也不需要服务器。在登录页面点按“�
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="以缩略图网格显示的网络共享文件夹：带 360° 标记的 360° 照片和带播放标记的 360° 视频，右上角为选择按钮">
 </p>
 
-1. 打开媒体库标签页，然后选择网络共享，再点按 + 和“网络共享（NAS、电脑、媒体服务器）”。
+1. 依次打开资源库标签页、网络共享，然后点按 + 和“网络共享（NAS、电脑、媒体服务器）”。从 build 24 起，欢迎页面上的“添加网络共享或媒体服务器”可以直接打开网络共享，无需服务器。
 2. 点按“在网络上找到”下方的某个服务器，或手动填写表单：类型、服务器名称或地址、共享名或路径、起始文件夹、用户名和密码。
 3. 点按“测试连接”，然后保存。点按该共享即可浏览：先显示文件夹，然后是照片和视频，被识别为 360° 的文件上会带有 360° 标记。
 4. 在连接了 Immich 服务器的情况下，在文件夹中选中文件，然后点按“上传到 Immich”即可将它们发送到您的服务器。
@@ -134,7 +134,7 @@ Immuch360 既不需要账户，也不需要服务器。在登录页面点按“�
 
 配合 [Immich](https://github.com/immich-app/immich) 服务器使用时，Immuch360 就是 Immich 手机应用，使用与网页版相同的服务器和账户：备份、时间线、相册、搜索、人物、回忆、分享、合作伙伴，所有内容都与您的服务器保持同步。它可以与官方应用并存安装。在此基础上还增加了：360° 标记和列表、每一种沉浸式查看器、每个视频可在原始文件和服务器转码流之间选择、视频的技术详情，以及手动将共享或设备上的文件发送到您的服务器。
 
-1. 使用您的服务器地址、电子邮箱和密码登录，方式与 Immich 应用相同。您的媒体库、相册和备份设置都是您账户中的那些。
+1. 在欢迎页面点按“连接到 Immich 服务器”，然后使用您的服务器地址、电子邮件和密码登录，与 Immich 应用中相同；点按返回可回到欢迎页面。在 build 23 及更早版本中，登录页面会直接打开。您的媒体库、相册和备份设置均来自您的账户。
 2. 在设置、资源查看器、视频中，“视频来源”可以选择：设备能解码时使用原始文件、始终使用原始文件，或始终使用转码流。
 3. 要把一张 360° 照片展示给没有安装此应用的人，可以用 Immich 的共享链接分享：Immich 网页版会在对方的浏览器中以球体形式显示它。
 
@@ -154,7 +154,7 @@ Immuch360 既不需要账户，也不需要服务器。在登录页面点按“�
 </p>
 
 1. 从 [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 安装应用，或者旁加载较新 build 的 APK，详见[安装](#meta-quest)。
-2. 用你的 Immich 服务器登录，或点按「不连接服务器使用」来使用头显自身的照片和视频。
+2. 在欢迎页面上，如果要查看头显自身的照片和视频，请点按“不连接服务器使用”；如果要使用您的服务器登录，请点按“连接到 Immich 服务器”。
 3. 打开一张 360° 照片或一段 360° 视频并按下 360°：沉浸式视图随即打开。按 B 或 Y，或者按信息面板中的返回按钮，即可回到窗口界面。
 
 更多内容：[在 Meta Quest 头显中](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset)、[头显：编码格式、商店与权限](../docs/immuch360/platform-support.md#meta-quest)。
@@ -169,8 +169,8 @@ Immuch360 既不需要账户，也不需要服务器。在登录页面点按“�
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Windows 上 Immuch360 Desktop 的视频播放器：窗口中正在播放一段街道视频，带有暂停按钮、进度条、共享和上传到 Immich">
 </p>
 
-1. 在电视上：使用 adb 安装 APK（见[安装](#android-tv-and-google-tv)），登录，或选择“不连接服务器使用”，然后在媒体库中添加共享、Plex 服务器或摄像头。
-2. 在 Windows 电脑上：解压预览版并启动 `immuch360.exe`（见[安装](#windows)），然后选择存放照片和视频的文件夹，或登录您的服务器。
+1. 在电视上：使用 adb 安装 APK（见[安装](#android-tv-and-google-tv)）；在欢迎页面上，选择“添加网络共享或媒体服务器”可添加共享、Plex 服务器或摄像头，也可以选择“不连接服务器使用”或“连接到 Immich 服务器”。
+2. 在 Windows 电脑上：安装预览版，或解压后启动 `immuch360.exe`（见[安装](#windows)）；从桌面版 build 5 起，欢迎页面上的“不连接服务器使用”会打开文件夹选择界面，“连接到 Immich 服务器”则会打开登录页面。无论是用程序打开，还是拖放到其窗口上的照片、视频或文件夹，都会立即打开，360° 内容会以 360° 视图显示；多个文件一起打开时会在同一页面中显示。
 3. 在查看器中，遥控器的播放/暂停、快退、快进、上一个和下一个按键均可使用，电脑上的键盘按键也同样有效（空格键，J 和 L，F 键用于全屏）。
 
 更多内容：[在电视上观看](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv)、[在 Windows 电脑上](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview)、[平台支持](../docs/immuch360/platform-support.md)。
@@ -180,7 +180,7 @@ Immuch360 既不需要账户，也不需要服务器。在登录页面点按“�
 
 - **Tapo 摄像头**：摄像头会添加在网络共享旁边。应用可以显示其实时画面（Android、Android TV、Quest 和 Windows），并在所有平台上按天列出其存储卡中的录像；片段会从摄像头获取，播放方式与普通视频一样，也可以发送到 Immich。应用只与您网络中的摄像头通信，绝不会连接 TP-Link 的服务器。
 - **Plex Media Server，无需 plex.tv**：应用会直接与您的服务器配对，只需粘贴一次令牌，并实时读取媒体库中的原始文件，因此 360° 内容始终保持 360°，无论在家中，还是通过您的端口转发在外地访问。
-- **360° 相机原始文件**：Insta360 相机的 .insp 原始照片和 .insv 原始视频（单镜头或双镜头，可在一个轨道、两个轨道或两个文件中），以及 GoPro MAX 的 .360 文件和 DJI Osmo 360 的 .osv 文件，都会在播放时由应用根据文件中写入的校准数据自动拼接，无需在任何地方安装额外程序。
+- **360° 相机原始文件**：Insta360 相机的原始 .insp 照片和 .insv 视频（一个或两个镜头，位于一条轨道、两条轨道或两个文件中）、GoPro MAX 的 .360 文件以及 DJI Osmo 360 的 .osv 文件，会在播放时由应用拼接，校准数据已写入文件中，无需在任何地方安装任何东西。在 Android 上，可以从共享、电脑或您的服务器播放这些文件，因为手机图库不会列出原始文件；Immich 服务器仅接受 .insp 和 .insv。
 
 更多内容：[Tapo 摄像头](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)、[Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv)、[360° 相机原始文件](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app)。
 
@@ -207,7 +207,7 @@ Immuch360 既不需要账户，也不需要服务器。在登录页面点按“�
 | 在网络上共享此设备 | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
 | 从共享和设备上传到 Immich | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
 | 输入方式 | 触摸、陀螺仪 | 触摸、陀螺仪 | 遥控器 | 控制器、双手 | 鼠标、键盘 | |
-| 获取方式 | Google Play、APK | App Store（审核中） | APK、Google Play（审核中） | Horizon Store、APK | 预览版 ZIP | 仅 CI 构建 |
+| 获取方式 | Google Play、APK | App Store（审核中） | APK、Google Play（审核中） | Horizon Store、APK | 安装程序或 ZIP（预览版） | .deb、.rpm、DMG（早期预览版） |
 
 ✅ 该平台应用中已支持 · ❌ 该平台不提供 · 🔜 计划中 · 🔧 源码中已有，由项目的 CI 构建，但尚未在该系统上启动。“单眼”是指 3D 文件在平面屏幕上只显示左眼画面。并非每个 ✅ 都已在真实设备上验证：具体在哪里验证过什么、还有什么待确认，见[功能](../docs/immuch360/features.md)、[平台支持](../docs/immuch360/platform-support.md)和[兼容性](../docs/immuch360/compatibility.md)。
 
@@ -215,8 +215,8 @@ Immuch360 既不需要账户，也不需要服务器。在登录页面点按“�
 - **iPhone 和 iPad**：完整版应用；360° 视频播放器目前只支持播放和暂停，Tapo 实时画面稍后推出，在 Apple 授予多播权限之前，DLNA 搜索会发送单播请求。
 - **Android TV 和 Google TV**：使用同一个 APK，由遥控器操作；仅作为查看器：备份、上传和编辑功能均被隐藏。目前已在 Google TV 模拟器上验证（登录、时间线、查看器、共享、遥控器导航），尚未在真实电视上测试。
 - **Meta Quest 2、Pro、3 和 3S**：应用以窗口形式运行，并支持沉浸式视图；HEVC 是最可靠的编码格式，H.264 在 Quest 3 上的上限约为 4096x2304；Quest 2 和 Quest Pro 尚未测试。
-- **Windows 10 和 11**：预览版，使用文件夹而非图库，拥有自己的视频播放器（libmpv）来播放扁平和 360° 视频，原始文件由显卡芯片拼接，目前还没有安装程序。
-- **macOS 和 Linux**：相关项目已在项目的 CI 上构建（Linux 已构建，macOS 已编译）；应用尚未在这些系统上启动开发，视频播放器库也尚未加入。
+- **Windows 10 和 11**：预览版，使用文件夹代替图库，配备自带的视频播放器（libmpv）播放扁平和 360° 视频，原始文件由显卡芯片拼接，文件和文件夹可以用程序打开或拖放到窗口上，提供安装程序或 ZIP。
+- **macOS 和 Linux**：由项目的 CI 构建的软件包（一个 .deb、一个 .rpm、一个 DMG）；在 Linux 上，应用可以启动并显示照片和 360° 照片，暂不支持视频，SMB 共享需要 Ubuntu 24.04、Debian 13 或 Fedora 39 或更高版本；macOS 版应用仅在项目的 CI 上启动过，不支持视频，也未测试过网络访问。
 
 <a id="advanced-features"></a>
 ## 高级功能
@@ -226,11 +226,11 @@ Immuch360 既不需要账户，也不需要服务器。在登录页面点按“�
 - **格式**：扁平照片和视频（取决于设备可解码的格式：MP4、MOV、MKV 等）；等距矩形投影的 360° 照片和视频；部分全景照片（GPano 裁切）；VR180；上下或左右排列的立体 3D，可从文件读取（st3d box）或从画面猜测；Apple 空间照片（HEIC 立体对）和空间视频（MV-HEVC，单眼）；Insta360 的 .insp 和 .insv 原始文件、GoPro 的 .360、DJI 的 .osv；10 位 HLG 和 PQ 片源会在球面上进行色调映射。
 - **投影与元数据**：从文件中读取 GPano 和球面元数据，在服务器或共享上通过范围请求读取；保留相机的初始视角；设备会记住“以 360° 查看”的选择；VR180 可从文件本身或文件名识别；元数据保持完整，因为播放的始终是原始文件，而不是转换后的副本。
 - **原生播放**：Android 和电视上使用 Media3，iOS 上使用 SceneKit 和 AVFoundation，头显中使用 Meta Spatial SDK，Windows 上使用 libmpv；根据设备可解码的内容在原始文件和转码流之间选择；设置、高级中列出设备的视频解码器；支持音轨选择和缓冲指示。
-- **在设备上拼接原始文件**：照片使用 Flutter 片段着色器；单轨视频在播放器中使用 GPU 效果处理；每轨道或每文件各存一个镜头的视频会同时使用两个硬件解码器和一个 GPU 合成器（Android 和 Quest 上使用 OpenGL ES 3，iOS 上使用 Metal，Windows 上使用 libmpv 的滤镜图）；使用相机自身的校准数据（Mei、V6 和等距模型）和加速度计记录；当设备无法同时运行两个解码器时，会回退到单镜头、转码流、相机的 LRV 副本或未拼接的视频。
+- **在设备上拼接的原始文件**：照片使用 Flutter 片元着色器；单轨视频在播放器中使用 GPU 效果；每条轨道或每个文件只有一个镜头的视频，会同时使用两个硬件解码器和一个 GPU 合成器（Android 和 Quest 上使用 OpenGL ES 3，iOS 上使用 Metal，而在 Windows 上，从桌面版 build 5 起，使用两个 libmpv 播放器，应用会在显卡芯片上将它们的画面配对）；相机自身的校准数据（Mei、V6 和等距模型）以及加速度传感器记录；当设备无法同时运行两个解码器时，会回退到单镜头、转码流、相机的 LRV 副本或未拼接的视频。
 - **来源**：设备自身的图库；电脑上的文件夹；Immich 服务器；SMB 2 和 3、WebDAV、DLNA/UPnP；通过 HTTPS 连接的 Plex，并核对服务器自身的证书；本地网络上的 Tapo 摄像头（HTTPS 和 RTSP）；通过 Wi-Fi 以 WebDAV 服务器形式共享的手机或电脑；通过 Bonjour/mDNS、本地网络扫描、SSDP、GDM 和 TP-Link 发现协议找到的服务器，并在它们更改地址时持续跟踪。
 - **按需读取**：本地桥接层通过字节范围和每次会话的令牌为播放器提供数据；采用大块读取、提前读取，SMB 最多可并行使用六个连接；视频缩略图取自其中一帧；不会向设备复制任何内容。
 - **硬件**：在可用的地方都会使用硬件解码器，并遵循实测得到的限制（Quest 3 上 H.264 的上限、软件解码器最多支持两个 2048x2048 的镜头）；在 Windows 上，360° 画面由显卡芯片根据每个解码帧绘制，画面尺寸会在每台电脑上实测，并检测是集成显卡还是独立显卡。
-- **各平台特性**：手机上的陀螺仪和 Spatial 2.5D 播放器；Quest 上的沉浸式视图、控制器和双手操作；Android TV 上的遥控器布局、键盘对话框和电视横幅；在电脑上支持鼠标和键盘、全屏、单窗口、用程序打开文件或将文件拖放到程序上，在 Windows 具备相应解码器时还支持文件夹中的 HEIC、AVIF、TIFF 和相机原始照片，以及使用 Windows 的数据保护机制保存密码和令牌。
+- **平台特性**：手机上的陀螺仪和 Spatial 2.5D 播放器；Quest 上的沉浸式视图、控制器和双手操作；Android TV 上的遥控器布局、键盘对话框和电视横幅；电脑上的鼠标和键盘、全屏、单个窗口、可用程序打开或拖放到窗口上的文件和文件夹，读取方式与文件夹中的普通文件相同，还有 HEIC、AVIF、TIFF 和相机 RAW 照片（取决于 Windows 是否有对应解码器），以及 Windows 用于保护密码和令牌的数据保护功能。
 - **设计上就注重隐私**：无需账户，无云服务，无数据分析；密码和令牌保存在设备的安全存储中；Spatial 播放器使用的摄像头仅在设备本地运行；共享、Plex 和摄像头都只在您的本地网络中访问。
 
 <a id="technical-documentation"></a>
@@ -257,7 +257,7 @@ Immuch360 既不需要账户，也不需要服务器。在登录页面点按“�
 ### iPhone 和 iPad
 
 1. App Store 版本正在等待 Apple 审核。在正式发布之前，可以在 Mac 上用 Xcode 自行构建应用，详见[自行构建](../docs/immuch360/build.md)。
-2. 使用您的 Immich 服务器登录，或点按“不连接服务器使用”。
+2. 点按“不连接服务器使用”，或者点按“连接到 Immich 服务器”以登录您的服务器；从 build 24 起，这两个选项都在欢迎页面上。
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TV 和 Google TV
@@ -277,14 +277,18 @@ Immuch360 既不需要账户，也不需要服务器。在登录页面点按“�
 <a id="windows"></a>
 ### Windows
 
-1. 从[桌面版预发布](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)下载 `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`（约 58 MB，并附有用于校验的 `SHA256SUMS.txt`），然后解压到任意位置，例如文档文件夹。
-2. 从解压后的文件夹中启动 `immuch360.exe`，并保持该文件夹完整：程序需要其旁边的文件，其中包括作为视频播放器的 `libmpv-2.dll`。
-3. 这些文件尚未签名：Windows SmartScreen 可能会显示“Windows 已保护你的电脑”，此时选择“更多信息”，然后点按“仍要运行”。首次启动新 build 时，Windows 扫描文件最长可能需要一分钟。
-4. 需要 64 位的 Windows 10 或 11。目前还没有安装程序，也没有自动更新：后续 build 请用同样的方式解压使用。
+1. 从[桌面版预发布版](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5)下载 `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe`（可用 `SHA256SUMS.txt` 核对），然后打开它。文件尚未签名：Windows SmartScreen 可能会显示“Windows 已保护你的电脑”，选择“更多信息”，再选择“仍要运行”。
+2. 选择“仅为我安装”（无需管理员权限）或“为所有用户安装”，然后选择安装程序的语言，默认已选中 Windows 当前使用的语言。
+3. 从开始菜单启动 Immuch360 Desktop。照片和视频可以在“打开方式”中找到它（右键单击文件，选择打开方式）；它绝不会将自己设为默认程序。新 build 首次启动可能需要长达一分钟，因为 Windows 需要扫描文件。
+4. Windows 10 或 11，64 位。要更新，只需打开下一个 build 的安装程序：您的登录状态、文件夹和设置都会保留。同一版本的 ZIP 是同一个程序的文件夹形式，可以解压到任意位置，然后从中启动 `immuch360.exe`。
 
-### macOS 和 Linux
+### Linux
 
-相关项目已包含在源码中，并会在每次改动后由项目的 CI 构建，但应用尚未在这些系统上启动开发，视频播放器库也还没有加入：因此目前没有下载。构建步骤见[自行构建](../docs/immuch360/build.md)。
+在 Ubuntu 22.04 或更高版本以及 Debian 12 或更高版本上：`sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`；在 Fedora 40 或更高版本上：`sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`。然后从应用程序中启动 Immuch360 Desktop。这是一个早期预览版：支持电脑上的文件夹、照片和以球形显示的 360° 照片；视频暂不支持播放，SMB 共享需要 Ubuntu 24.04、Debian 13 或 Fedora 39 或更高版本。
+
+### macOS
+
+打开 `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg`，将应用拖到“应用程序”文件夹（支持 Apple silicon 和 Intel，macOS 12 或更高版本）。它尚未签名，也未经公证：在 macOS 14 或更早版本中，按住 Control 单击它并选择打开；在 macOS 15 或更高版本中，则需要在“系统设置”的“隐私与安全性”中选择“仍要打开”。项目没有人持有 Mac：该应用只在项目的 CI 上启动过，尚不支持视频播放，也未测试过网络访问。欢迎反馈。
 
 <a id="privacy"></a>
 ## 隐私
@@ -306,7 +310,7 @@ Immuch360 是 [Immich](https://github.com/immich-app/immich) 手机应用的非�
 尚未完成的工作，最可能先做的排在前面。这里的内容都不是承诺，[问题跟踪器](https://github.com/freeKC/Immuch360/issues)中的反馈有助于决定先做什么。
 
 - **应用商店**：Google Play（build 23 审核中，电视版列表审核中）、App Store（版本 3.3.0 审核中）、Meta Horizon Store（build 21 审核中）。
-- **电脑**：先在 Windows 电脑上手动测试每个功能；然后是使用摄像头的 Spatial 2.5D；接着启动并发布 macOS 和 Linux 版本及其视频播放器；最后是安装程序、签名 build 和自动更新。
+- **电脑**：先在 Windows 电脑上对每个功能进行手动测试；然后是配合网络摄像头的 Spatial 2.5D；接着是 Linux 和 macOS 上的视频播放器，并在真实 Mac 上测试；最后是签名 build 和自动更新。
 - **手机和平板**：为 iOS 的 360° 视频播放器加入进度条，为手机的 360° 播放器加入上一个和下一个，为扁平播放器加入音轨选择，以及在 iPhone 和 iPad 上支持 Tapo 实时画面。
 - **沉浸式媒体**：双鱼眼 .dng 文件，根据 GoPro 和 DJI 自身的运动数据对视频进行水平校正，在解码器允许的情况下让 Quest 上的空间视频以 3D 显示，以及在头显中为空间照片加入上一个和下一个切换。
 - **来源**：在共享文件夹的文件之间滑动切换，为 WebDAV 支持 Digest 认证，用二维码从电脑导入 Plex 令牌，为 Plex 支持 IPv6，支持 H.265 格式的 Tapo 录像，以及在电视主屏幕上显示频道。

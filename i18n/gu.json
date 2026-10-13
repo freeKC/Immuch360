@@ -400,5 +400,10 @@
   "video_source_title": "વિડિયો સ્રોત",
   "video_source_transcoded": "હંમેશા ટ્રાન્સકોડ કરેલો સ્ટ્રીમ",
   "view_as_360": "360° તરીકે જુઓ",
-  "view_as_360_remove": "360° તરીકે ગણવાનું બંધ કરો"
+  "view_as_360_remove": "360° તરીકે ગણવાનું બંધ કરો",
+  "welcome_server_title": "Immich સર્વર સાથે કનેક્ટ કરો",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex અથવા એક Tapo કૅમેરા",
+  "welcome_shares_title": "નેટવર્ક શેર અથવા મીડિયા સર્વર ઉમેરો",
+  "welcome_tagline": "તમારું મીડિયા. કોઈપણ સ્ક્રીન. દરેક દૃષ્ટિકોણ.",
+  "welcome_without_server_description": "આ ઉપકરણના ફોટા અને વીડિયો. શેર અને મીડિયા સર્વર પછીથી ઉમેરો."
 }

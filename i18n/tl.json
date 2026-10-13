@@ -346,5 +346,10 @@
   "video_source_title": "Pinagmulan ng video",
   "video_source_transcoded": "Palaging ang na-transcode na stream",
   "view_as_360": "Tingnan bilang 360°",
-  "view_as_360_remove": "Huwag nang ituring bilang 360°"
+  "view_as_360_remove": "Huwag nang ituring bilang 360°",
+  "welcome_server_title": "Kumonekta sa isang Immich server",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex o isang Tapo camera",
+  "welcome_shares_title": "Magdagdag ng network share o media server",
+  "welcome_tagline": "Ang media mo. Kahit anong screen. Bawat perspektibo.",
+  "welcome_without_server_description": "Ang mga larawan at video ng device na ito. Magdagdag ng mga share at media server mamaya."
 }

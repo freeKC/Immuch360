@@ -298,7 +298,7 @@ void main() {
       final sideBySide = await detect(NetworkMediaService(), '/VID_00_002.insv', bytes: video(5760, 2880));
       final split = await detect(NetworkMediaService(), '/VID_10_002.insv', bytes: video(2880, 2880));
       final goPro = await detect(NetworkMediaService(), '/GS010013.360', bytes: video(4096, 1344));
-      final dji = await detect(NetworkMediaService(), '/CAM_20250715191201_0003_D.OSV', bytes: video(3840, 3840));
+      final dji = await detect(NetworkMediaService(), '/CAM_20250101120000_0001_D.OSV', bytes: video(3840, 3840));
       final flat = await detect(NetworkMediaService(), '/VID_002.mp4', bytes: video(5760, 2880));
 
       expect(sideBySide?.rawKind, RawMediaKind.insta360Video);

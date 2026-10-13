@@ -11,7 +11,7 @@ Immuch360 là một ứng dụng miễn phí và mã nguồn mở để tìm, du
 
 - **Ứng dụng này làm gì?** Ứng dụng hiển thị ảnh và video của bạn dưới dạng thư viện và phát chúng trong trình xem phù hợp với từng tệp: dạng phẳng, dạng hình cầu để nhìn quanh, dạng 3D, trong kính thực tế ảo.
 - **Những loại nội dung nào?** Ảnh và video dạng phẳng, ảnh toàn cảnh, ảnh và video 360°, VR180, 3D nổi, ảnh không gian của Apple, và các tệp thô từ máy ảnh 360° (Insta360, GoPro MAX, DJI Osmo 360), được ứng dụng ghép lại.
-- **Trên những thiết bị nào?** Điện thoại và máy tính bảng Android, iPhone và iPad, Android TV và Google TV, Meta Quest 2, Pro, 3 và 3S, Windows (bản xem trước), với macOS và Linux đang được phát triển.
+- **Trên những thiết bị nào?** Điện thoại và máy tính bảng Android, iPhone và iPad, Android TV và Google TV, Meta Quest 2, Pro, 3 và 3S, Windows (bản xem trước), và Linux cùng macOS dưới dạng bản xem trước ban đầu.
 - **Tôi có cần máy chủ hoặc tài khoản không?** Không. Immuch360 hoạt động độc lập với nội dung trên thiết bị của bạn. Một máy chủ Immich, một NAS, một máy chủ đa phương tiện hoặc một máy chủ Plex là những tùy chọn bạn thêm vào khi muốn.
 
 <p align="center">
@@ -26,8 +26,8 @@ Immuch360 là một ứng dụng miễn phí và mã nguồn mở để tìm, du
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone và iPad** | App Store | phiên bản 3.3.0 đang chờ Apple xét duyệt; [tự dựng ứng dụng](../docs/immuch360/build.md) trong lúc chờ |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV và Google TV** | [APK](#android-tv-and-google-tv) · Google Play | bản dựng 23 trên GitHub; danh sách trên TV đang được Google xét duyệt |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 và 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | trên Horizon Store (bản dựng 14; bản dựng 21 đang được duyệt), bản dựng 23 trên GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Bản ZIP xem trước](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | bản dựng Desktop 4, một bản xem trước: ảnh, video dạng phẳng và 360°, chia sẻ mạng, Plex, camera |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS và Linux** | Mã nguồn | được CI của dự án xây dựng, chưa được bắt đầu trên các hệ thống đó, chưa có bản để tải xuống |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Bộ cài đặt hoặc ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | bản dựng máy tính 5, một bản xem trước: ảnh, video dạng phẳng và 360°, chia sẻ mạng, Plex, camera, tệp được mở bằng chương trình |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS và Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | bản xem trước ban đầu: trên Linux có ảnh và ảnh 360°, chưa có video; macOS chỉ mới được chạy trên CI của dự án |
 
 *Các trạng thái được cập nhật ở mỗi lần phát hành; chi tiết theo từng bản dựng có trong [Trạng thái phát hành](../docs/immuch360/release-status.md).*
 
@@ -97,11 +97,11 @@ Thêm: [ảnh và video 360°](../docs/immuch360/user-guide.md#360-photos-and-vi
 <a id="use-your-own-files-without-an-account"></a>
 ### Dùng tệp của riêng bạn, không cần tài khoản
 
-Immuch360 không cần tài khoản cũng không cần máy chủ. Trên trang đăng nhập, "Sử dụng không cần máy chủ" sẽ mở ứng dụng với ảnh và video của thiết bị, cùng mọi trình xem, danh sách 360° và các nguồn mạng. Không có gì rời khỏi thiết bị. Một máy chủ có thể được kết nối sau, từ Cài đặt, và khi đó các tính năng máy chủ sẽ xuất hiện.
+Immuch360 không cần tài khoản cũng không cần máy chủ. Từ bản dựng 24, ứng dụng mở ra trên một trang chào mừng, nơi "Sử dụng không cần máy chủ" đứng đầu tiên: nó mở ứng dụng trên ảnh và video của thiết bị, với mọi trình xem, danh sách 360° và các nguồn mạng. Không có gì rời khỏi thiết bị. Máy chủ có thể được kết nối sau, từ Cài đặt hoặc tab Thư viện, và khi đó các tính năng của máy chủ sẽ xuất hiện.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Thẻ Thư viện khi không có máy chủ: mục 360° ở trên cùng, sau đó Trên thiết bị này với hai ảnh 360°, và Chia sẻ mạng với một chia sẻ tên NAS">
 
-1. Mở ứng dụng. Trên trang đăng nhập, bên dưới địa chỉ máy chủ và Cài đặt, chạm "Sử dụng không cần máy chủ".
+1. Mở ứng dụng. Trang chào mừng hiển thị "Nội dung của bạn. Mọi màn hình. Mọi góc nhìn." và ba lựa chọn: nhấn vào lựa chọn đầu tiên, "Sử dụng không cần máy chủ". Cho đến bản dựng 23, trang đăng nhập xuất hiện trước, với "Sử dụng không cần máy chủ" ở dưới biểu mẫu.
 2. Cho phép truy cập ảnh và video. Nếu bạn từ chối, ứng dụng báo "Ứng dụng không thể xem ảnh trên thiết bị này", kèm "Cho phép truy cập" và "Mở cài đặt".
 3. Thẻ Ảnh hiển thị dòng thời gian của thiết bị. Tìm kiếm và Album bị làm mờ, vì chúng đến từ máy chủ. Thẻ Thư viện có 360° ở trên cùng, rồi Trên thiết bị này (các album của thiết bị) và Chia sẻ mạng.
 4. Menu ở góc trên bên phải ghi "Chỉ thiết bị này": ứng dụng hiển thị ảnh và video của thiết bị này, không có gì được gửi đi đâu.
@@ -120,7 +120,7 @@ Video của bạn nằm trên một NAS, một máy tính hoặc một máy ch�
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Một thư mục của chia sẻ mạng dạng lưới hình thu nhỏ: ảnh 360° có huy hiệu 360° và một video 360° có dấu phát, nút Chọn ở góc trên bên phải">
 </p>
 
-1. Mở tab Thư viện, sau đó Chia sẻ mạng, sau đó + và "Một chia sẻ mạng (NAS, máy tính, máy chủ đa phương tiện)".
+1. Mở tab Thư viện, rồi Chia sẻ mạng, rồi + và "Một chia sẻ mạng (NAS, máy tính, máy chủ đa phương tiện)". Từ bản dựng 24, "Thêm chia sẻ mạng hoặc máy chủ đa phương tiện" trên trang chào mừng mở trực tiếp Chia sẻ mạng, không cần máy chủ.
 2. Nhấn vào một máy chủ trong "Tìm thấy trên mạng", hoặc tự điền vào biểu mẫu: loại, tên hoặc địa chỉ máy chủ, tên chia sẻ hoặc đường dẫn, thư mục bắt đầu, tên người dùng và mật khẩu.
 3. Nhấn "Kiểm tra kết nối", sau đó Lưu. Nhấn vào chia sẻ để duyệt: thư mục trước, rồi ảnh và video, với huy hiệu 360° trên các tệp được nhận diện là 360°.
 4. Khi đã kết nối với một máy chủ Immich, chọn các tệp trong một thư mục và nhấn "Tải lên Immich" để gửi chúng đến máy chủ của bạn.
@@ -134,7 +134,7 @@ Thêm: [chia sẻ mạng](../docs/immuch360/user-guide.md#network-shares-a-nas-a
 
 Với một máy chủ [Immich](https://github.com/immich-app/immich), Immuch360 chính là ứng dụng di động Immich, dùng cùng máy chủ và cùng tài khoản như ứng dụng web: sao lưu, dòng thời gian, album, tìm kiếm, mọi người, kỷ niệm, chia sẻ, đối tác, tất cả đều được đồng bộ với máy chủ của bạn. Ứng dụng cài đặt bên cạnh ứng dụng chính thức. Thêm vào đó: huy hiệu và danh sách 360°, mọi trình xem đắm chìm, lựa chọn giữa tệp gốc và luồng đã chuyển mã của máy chủ cho mỗi video, chi tiết kỹ thuật của video, và các tệp từ một chia sẻ hoặc từ thiết bị được gửi đến máy chủ của bạn một cách thủ công.
 
-1. Đăng nhập bằng địa chỉ máy chủ, email và mật khẩu của bạn, giống như trong ứng dụng Immich. Thư viện, album và cài đặt sao lưu của bạn chính là của tài khoản bạn.
+1. Trên trang chào mừng, nhấn vào "Kết nối với máy chủ Immich", rồi đăng nhập bằng địa chỉ máy chủ, email và mật khẩu của bạn, như trong ứng dụng Immich; Quay lại sẽ đưa bạn về trang chào mừng. Cho đến bản dựng 23, trang đăng nhập mở ra trực tiếp. Thư viện, album và cài đặt sao lưu của bạn là của tài khoản bạn.
 2. Trong Cài đặt, Trình xem tài sản, Video, "Nguồn video" chọn tệp gốc khi thiết bị này giải mã được, luôn dùng tệp gốc, hoặc luôn dùng luồng đã chuyển mã.
 3. Để cho một người không có ứng dụng xem một ảnh 360°, hãy chia sẻ ảnh đó bằng một liên kết chia sẻ của Immich: ứng dụng web Immich sẽ hiển thị ảnh đó dạng hình cầu trên trình duyệt của họ.
 
@@ -154,7 +154,7 @@ Trên Meta Quest, cùng một ứng dụng chạy dưới dạng một cửa s�
 </p>
 
 1. Cài đặt ứng dụng từ [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), hoặc sideload APK của một bản dựng mới hơn, xem [Cài đặt](#meta-quest).
-2. Đăng nhập bằng máy chủ Immich của bạn, hoặc chạm "Sử dụng không cần máy chủ" để dùng ảnh và video của chính kính.
+2. Trên trang chào mừng, nhấn vào "Sử dụng không cần máy chủ" để xem ảnh và video riêng của kính, hoặc "Kết nối với máy chủ Immich" để đăng nhập với máy chủ của bạn.
 3. Mở một ảnh hoặc video 360° và nhấn 360°: chế độ xem đắm chìm sẽ mở ra. Nút B hoặc Y, hoặc nút Quay lại trên bảng thông tin, sẽ đưa cửa sổ trở lại.
 
 Thêm: [trong kính Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [về kính: codec, cửa hàng và quyền](../docs/immuch360/platform-support.md#meta-quest).
@@ -169,8 +169,8 @@ Cùng một ứng dụng Android chạy trên Android TV và Google TV với b�
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Trình phát video của Immuch360 Desktop trên Windows: một video đường phố đang phát trong cửa sổ, với nút tạm dừng, thanh thời gian, Chia sẻ và Tải lên Immich">
 </p>
 
-1. Trên TV: cài đặt APK bằng adb (xem [Cài đặt](#android-tv-and-google-tv)), đăng nhập hoặc chọn "Sử dụng không cần máy chủ", thêm một chia sẻ, một máy chủ Plex hoặc một camera từ Thư viện.
-2. Trên máy tính Windows: giải nén bản xem trước và chạy `immuch360.exe` (xem [Cài đặt](#windows)), sau đó chọn các thư mục chứa ảnh và video của bạn, hoặc đăng nhập vào máy chủ của bạn.
+1. Trên TV: cài đặt tệp APK bằng adb (xem [Cài đặt](#android-tv-and-google-tv)); trên trang chào mừng, chọn "Thêm chia sẻ mạng hoặc máy chủ đa phương tiện" cho một chia sẻ mạng, một máy chủ Plex hoặc một camera, "Sử dụng không cần máy chủ", hoặc "Kết nối với máy chủ Immich".
+2. Trên một máy tính Windows: cài đặt bản xem trước hoặc giải nén nó và chạy `immuch360.exe` (xem [Cài đặt](#windows)); từ bản dựng máy tính 5, "Sử dụng không cần máy chủ" trên trang chào mừng mở phần chọn các thư mục của bạn, còn "Kết nối với máy chủ Immich" mở trang đăng nhập. Một ảnh, một video hoặc một thư mục được mở bằng chương trình, hoặc được kéo thả vào cửa sổ của nó, sẽ mở ra ngay lập tức, tệp 360° sẽ mở trong chế độ xem 360° của nó; nhiều tệp cùng mở trên một trang.
 3. Trong một trình xem, các phím phát và tạm dừng, lùi, tiến nhanh, trước và tiếp theo của bộ điều khiển đều hoạt động, cũng như các phím trên bàn phím của máy tính (Space, J và L, F để toàn màn hình).
 
 Thêm: [xem trên TV của bạn](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [trên máy tính Windows](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [hỗ trợ nền tảng](../docs/immuch360/platform-support.md).
@@ -180,7 +180,7 @@ Thêm: [xem trên TV của bạn](../docs/immuch360/user-guide.md#watch-on-your-
 
 - **Camera Tapo**: một camera được thêm vào cùng với các chia sẻ mạng. Ứng dụng hiển thị hình ảnh trực tiếp từ camera (Android, Android TV, Quest và Windows) và liệt kê các bản ghi trên thẻ nhớ của nó theo từng ngày trên mọi nền tảng; một đoạn clip được tải về từ camera, phát như bất kỳ video nào và có thể được gửi đến Immich. Ứng dụng chỉ giao tiếp với camera trên mạng của bạn, không bao giờ với các máy chủ của TP-Link.
 - **Plex Media Server, không cần plex.tv**: ứng dụng ghép nối trực tiếp với máy chủ của bạn, bằng một token bạn dán vào một lần, và đọc trực tiếp các tệp gốc trong thư viện của bạn, nhờ đó 360° vẫn là 360°, ở nhà và, qua port forwarding, cả khi ở xa nhà.
-- **Tệp thô từ máy ảnh 360°**: các ảnh .insp và video .insv thô của máy ảnh Insta360 (một hoặc hai ống kính, trong một track, hai track hoặc hai tệp), các tệp .360 của GoPro MAX và các tệp .osv của DJI Osmo 360 được ứng dụng ghép lại ngay khi phát, dựa trên thông số hiệu chỉnh được ghi trong tệp, không cần cài đặt gì thêm ở bất kỳ đâu.
+- **Tệp thô từ máy ảnh 360°**: các ảnh .insp và video .insv thô của máy ảnh Insta360 (một hoặc hai ống kính, trong một track, hai track hoặc hai tệp), các tệp .360 của GoPro MAX và các tệp .osv của DJI Osmo 360 được ứng dụng ghép lại trong khi phát, với thông tin hiệu chỉnh được ghi trong tệp, không cần cài đặt gì ở đâu cả. Trên Android, hãy phát chúng từ một chia sẻ mạng, một máy tính hoặc máy chủ của bạn, vì thư viện ảnh của điện thoại không hiển thị các tệp thô; máy chủ Immich chỉ nhận .insp và .insv.
 
 Thêm: [camera Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [tệp thô từ máy ảnh 360°](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
@@ -207,7 +207,7 @@ Một mã nguồn duy nhất, sáu môi trường. Mỗi môi trường có gì 
 | Chia sẻ thiết bị này trên mạng | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
 | Tải lên Immich từ chia sẻ mạng và thiết bị | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
 | Đầu vào | chạm, con quay hồi chuyển | chạm, con quay hồi chuyển | bộ điều khiển | tay cầm, tay | chuột, bàn phím | |
-| Lấy ở đâu | Google Play, APK | App Store (đang được duyệt) | APK, Google Play (đang được duyệt) | Horizon Store, APK | ZIP bản xem trước | chỉ bản dựng CI |
+| Lấy ở đâu | Google Play, APK | App Store (đang được duyệt) | APK, Google Play (đang được duyệt) | Horizon Store, APK | bộ cài đặt hoặc ZIP (bản xem trước) | .deb, .rpm, DMG (bản xem trước ban đầu) |
 
 ✅ có trong ứng dụng trên nền tảng đó · ❌ không có ở đó · 🔜 đang dự kiến · 🔧 có trong mã nguồn và được CI của dự án xây dựng, chưa được bắt đầu trên hệ thống đó. "Một mắt" có nghĩa là một tệp 3D chỉ hiển thị mắt trái của nó trên màn hình phẳng. Không phải mọi ✅ đều đã được kiểm tra trên thiết bị thật: những gì đã được kiểm tra ở đâu, và những gì còn cần xác nhận, có trong [Tính năng](../docs/immuch360/features.md), [Hỗ trợ nền tảng](../docs/immuch360/platform-support.md) và [Khả năng tương thích](../docs/immuch360/compatibility.md).
 
@@ -215,8 +215,8 @@ Một mã nguồn duy nhất, sáu môi trường. Mỗi môi trường có gì 
 - **iPhone và iPad**: ứng dụng đầy đủ; trình phát video 360° chỉ có phát và tạm dừng, xem trực tiếp Tapo sẽ có sau, và việc tìm kiếm DLNA gửi các yêu cầu unicast cho đến khi Apple cấp quyền multicast.
 - **Android TV và Google TV**: cùng một APK, vận hành bằng bộ điều khiển; một trình xem: sao lưu, tải lên và chỉnh sửa bị ẩn. Đã kiểm tra trên trình giả lập Google TV (đăng nhập, dòng thời gian, trình xem, chia sẻ mạng, điều hướng bằng bộ điều khiển), chưa kiểm tra trên TV thật.
 - **Meta Quest 2, Pro, 3 và 3S**: ứng dụng dưới dạng cửa sổ, cộng với chế độ xem đắm chìm; HEVC là codec an toàn, H.264 dừng ở khoảng 4096x2304 trên Quest 3; Quest 2 và Quest Pro chưa được kiểm tra.
-- **Windows 10 và 11**: một bản xem trước, với thư mục thay cho thư viện, một trình phát video riêng (libmpv) cho video dạng phẳng và 360°, tệp thô được ghép trên chip đồ họa, chưa có bộ cài đặt.
-- **macOS và Linux**: các dự án được xây dựng trên CI của dự án (Linux đã được dựng, macOS đã được biên dịch); ứng dụng chưa được bắt đầu trên các hệ thống đó và thư viện trình phát video của chúng chưa được tích hợp.
+- **Windows 10 và 11**: một bản xem trước, với các thư mục thay cho thư viện, một trình phát video riêng (libmpv) cho video dạng phẳng và 360°, các tệp thô được ghép trên chip đồ họa, tệp và thư mục được mở bằng chương trình hoặc kéo thả vào cửa sổ, một bộ cài đặt hoặc một ZIP.
+- **macOS và Linux**: các gói được CI của dự án xây dựng (một .deb, một .rpm, một DMG); trên Linux, ứng dụng khởi động và hiển thị ảnh và ảnh 360°, chưa có video, và chia sẻ mạng SMB cần Ubuntu 24.04, Debian 13 hoặc Fedora 39 hoặc mới hơn; ứng dụng macOS chỉ mới được chạy trên CI của dự án, chưa có video và khả năng truy cập mạng của nó chưa được thử nghiệm.
 
 <a id="advanced-features"></a>
 ## Tính năng nâng cao
@@ -226,11 +226,11 @@ Những gì ứng dụng có thể đọc và phát, cho người đọc muốn 
 - **Định dạng**: ảnh và video dạng phẳng (những gì thiết bị giải mã được: MP4, MOV, MKV và nhiều hơn); ảnh và video 360° dạng equirectangular; ảnh toàn cảnh một phần (phần cắt GPano); VR180; 3D nổi, trên và dưới hoặc cạnh nhau, đọc từ tệp (hộp st3d) hoặc suy đoán từ khung hình; ảnh không gian của Apple (cặp ảnh stereo HEIC) và video không gian (MV-HEVC, một mắt); tệp thô .insp và .insv của Insta360, .360 của GoPro, .osv của DJI; nguồn HLG và PQ 10 bit được tone mapping trên hình cầu.
 - **Chiếu hình và metadata**: metadata GPano và dạng cầu được đọc từ tệp, bằng các yêu cầu theo dải (range request) trên máy chủ hoặc chia sẻ mạng; góc nhìn ban đầu của máy ảnh; "Xem dạng 360°" được nhớ trên thiết bị; VR180 được nhận diện từ tệp hoặc tên tệp; metadata được giữ nguyên vẹn vì tệp gốc được phát, chứ không phải một bản đã chuyển đổi.
 - **Phát gốc**: Media3 trên Android và TV, SceneKit và AVFoundation trên iOS, Meta Spatial SDK trong kính, libmpv trên Windows; tệp gốc hoặc luồng đã chuyển mã được chọn dựa trên khả năng giải mã của thiết bị; danh sách các bộ giải mã video của thiết bị trong Cài đặt, Nâng cao; lựa chọn track âm thanh và chỉ báo bộ đệm.
-- **Tệp thô được ghép trên thiết bị**: một fragment shader Flutter cho ảnh; một hiệu ứng GPU trong trình phát cho video một track; hai bộ giải mã phần cứng chạy đồng thời và một GPU compositor cho video có một ống kính trên mỗi track hoặc mỗi tệp (OpenGL ES 3 trên Android và Quest, Metal trên iOS, filter graph của libmpv trên Windows); thông số hiệu chỉnh riêng của máy ảnh (các mô hình Mei, V6 và equidistant) và dữ liệu ghi từ gia tốc kế; phương án dự phòng là dùng một ống kính, luồng đã chuyển mã, bản sao LRV của máy ảnh hoặc video chưa ghép khi thiết bị không thể chạy hai bộ giải mã cùng lúc.
+- **Tệp thô được ghép trên thiết bị**: một fragment shader của Flutter cho ảnh; một hiệu ứng GPU trong trình phát cho video một track; hai bộ giải mã phần cứng cùng lúc và một bộ ghép GPU cho video có một ống kính trên mỗi track hoặc mỗi tệp (OpenGL ES 3 trên Android và Quest, Metal trên iOS, và trên Windows, từ bản dựng máy tính 5, hai trình phát libmpv mà ứng dụng ghép cặp khung hình của chúng trên chip đồ họa); thông tin hiệu chỉnh riêng của máy ảnh (các mô hình Mei, V6 và equidistant) và bản ghi gia tốc kế; chuyển sang một ống kính, luồng đã chuyển mã, bản sao LRV của máy ảnh hoặc video chưa ghép khi thiết bị không thể chạy hai bộ giải mã.
 - **Nguồn**: thư viện của thiết bị; các thư mục trên máy tính; một máy chủ Immich; SMB 2 và 3, WebDAV, DLNA/UPnP; Plex qua HTTPS được kiểm tra theo chứng chỉ riêng của máy chủ; camera Tapo qua mạng cục bộ (HTTPS và RTSP); một điện thoại hoặc máy tính được chia sẻ qua Wi-Fi như một máy chủ WebDAV; các máy chủ được tìm thấy bằng Bonjour/mDNS, quét mạng cục bộ, SSDP, GDM và cơ chế khám phá của TP-Link, và được theo dõi khi chúng đổi địa chỉ.
 - **Đọc theo yêu cầu**: một cầu nối cục bộ phục vụ các trình phát bằng dải byte và một token riêng cho mỗi phiên; khối lớn, đọc trước và tối đa sáu kết nối SMB song song; ảnh thu nhỏ lấy từ một khung hình của mỗi video; không có gì được sao chép vào thiết bị.
 - **Phần cứng**: bộ giải mã phần cứng được dùng ở mọi nơi có sẵn, với giới hạn đã đo được (ngưỡng H.264 trên Quest 3, tối đa hai ống kính 2048x2048 đối với bộ giải mã phần mềm); trên Windows, khung nhìn 360° được chip đồ họa vẽ từ mỗi khung hình đã giải mã, kích thước khung hình được đo trên mỗi máy tính, chip tích hợp hay chip rời được nhận diện.
-- **Đặc thù theo nền tảng**: con quay hồi chuyển và trình phát Spatial 2.5D trên điện thoại; chế độ xem đắm chìm, tay cầm và tay trên Quest; bố cục bộ điều khiển, hộp thoại bàn phím và banner TV trên Android TV; trên máy tính, chuột và bàn phím, toàn màn hình, một cửa sổ duy nhất, một tệp được mở bằng chương trình hoặc kéo thả vào đó, ảnh HEIC, AVIF, TIFF và ảnh raw của máy ảnh trong các thư mục khi Windows có bộ giải mã cho chúng, và cơ chế bảo vệ dữ liệu của Windows cho mật khẩu và token.
+- **Đặc điểm riêng của từng nền tảng**: con quay hồi chuyển và trình phát Spatial 2.5D trên điện thoại; chế độ xem đắm chìm, tay cầm và tay trên Quest; bố cục cho bộ điều khiển, hộp thoại bàn phím và biểu ngữ TV trên Android TV; trên máy tính, chuột và bàn phím, toàn màn hình, một cửa sổ duy nhất, tệp và thư mục được mở bằng chương trình hoặc kéo thả vào cửa sổ của nó, được đọc như các tệp trong thư mục của bạn, ảnh HEIC, AVIF, TIFF và ảnh thô từ camera trong thư mục khi Windows có bộ giải mã cho chúng, và tính năng bảo vệ dữ liệu của Windows cho mật khẩu và token.
 - **Quyền riêng tư theo thiết kế**: không tài khoản, không đám mây, không phân tích dữ liệu; mật khẩu và token nằm trong bộ nhớ an toàn của thiết bị; camera của trình phát Spatial chỉ được dùng trên thiết bị; chia sẻ mạng, Plex và camera chỉ được truy cập trên mạng của bạn.
 
 <a id="technical-documentation"></a>
@@ -257,7 +257,7 @@ Những gì ứng dụng có thể đọc và phát, cho người đọc muốn 
 ### iPhone và iPad
 
 1. Phiên bản trên App Store đang chờ Apple xét duyệt. Trong khi chờ được phát hành, hãy tự dựng ứng dụng bằng Xcode trên một máy Mac, xem [Tự dựng ứng dụng](../docs/immuch360/build.md).
-2. Đăng nhập bằng máy chủ Immich của bạn, hoặc nhấn "Sử dụng không cần máy chủ".
+2. Nhấn vào "Sử dụng không cần máy chủ", hoặc "Kết nối với máy chủ Immich" để đăng nhập với máy chủ của bạn; cả hai đều có trên trang chào mừng từ bản dựng 24.
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TV và Google TV
@@ -277,14 +277,18 @@ Những gì ứng dụng có thể đọc và phát, cho người đọc muốn 
 <a id="windows"></a>
 ### Windows
 
-1. Tải `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` từ [bản pre-release cho desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) (khoảng 58 MB, kèm `SHA256SUMS.txt` để kiểm tra) và giải nén vào bất kỳ đâu, ví dụ trong Documents.
-2. Chạy `immuch360.exe` từ thư mục đã giải nén và giữ nguyên toàn bộ thư mục: chương trình cần các tệp nằm cạnh nó, trong đó có `libmpv-2.dll`, trình phát video.
-3. Các tệp chưa được ký số: Windows SmartScreen có thể hiển thị "Windows đã bảo vệ PC của bạn", hãy chọn "Thông tin khác" rồi "Vẫn chạy". Lần khởi động đầu tiên của một bản dựng mới có thể mất đến một phút khi Windows quét các tệp.
-4. Windows 10 hoặc 11, 64 bit. Chưa có bộ cài đặt và chưa có cập nhật tự động: hãy giải nén bản dựng tiếp theo theo cách tương tự.
+1. Tải xuống `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` từ [bản phát hành trước cho máy tính](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) (cùng với `SHA256SUMS.txt` để kiểm tra) và mở nó. Các tệp chưa được ký số: Windows SmartScreen có thể hiển thị "Windows đã bảo vệ PC của bạn", hãy chọn "Thông tin thêm" rồi "Vẫn chạy".
+2. Chọn "Chỉ cài đặt cho tôi" (không cần quyền quản trị viên) hoặc "Cài đặt cho tất cả người dùng", rồi chọn ngôn ngữ của bộ cài đặt, chính là ngôn ngữ đã được chọn sẵn trong Windows.
+3. Khởi động Immuch360 Desktop từ menu Start. Ảnh và video có nó trong "Mở bằng" (nhấn chuột phải vào một tệp, Mở bằng); nó không bao giờ tự đặt mình làm chương trình mặc định của chúng. Lần khởi động đầu tiên của một bản dựng mới có thể mất đến một phút trong khi Windows quét các tệp.
+4. Windows 10 hoặc 11, 64 bit. Để cập nhật, hãy mở bộ cài đặt của bản dựng tiếp theo: thông tin đăng nhập, thư mục và cài đặt của bạn vẫn được giữ lại. Tệp ZIP của cùng bản phát hành đó chính là chương trình đó dưới dạng một thư mục, có thể giải nén ở bất kỳ đâu và chạy `immuch360.exe` từ đó.
 
-### macOS và Linux
+### Linux
 
-Các dự án này có trong mã nguồn và được CI của dự án xây dựng ở mỗi thay đổi, nhưng ứng dụng chưa được bắt đầu trên các hệ thống đó và thư viện trình phát video của chúng chưa được tích hợp: hiện chưa có bản để tải xuống. Các bước để tự dựng chúng có trong [Tự dựng ứng dụng](../docs/immuch360/build.md).
+Trên Ubuntu 22.04 hoặc mới hơn và Debian 12 hoặc mới hơn: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; trên Fedora 40 hoặc mới hơn: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Sau đó khởi động Immuch360 Desktop từ danh sách ứng dụng của bạn. Một bản xem trước ban đầu: các thư mục của máy tính, ảnh và ảnh 360° dạng hình cầu; video chưa phát được, và chia sẻ mạng SMB cần Ubuntu 24.04, Debian 13 hoặc Fedora 39 hoặc mới hơn.
+
+### macOS
+
+Mở `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` và kéo ứng dụng vào Applications (Apple silicon và Intel, macOS 12 hoặc mới hơn). Nó chưa được ký số hay chứng thực: hãy nhấn chuột trong khi giữ Control, rồi chọn Mở trên macOS 14 và các phiên bản trước đó, hoặc chọn "Vẫn mở" trong Cài đặt Hệ thống, Quyền riêng tư & Bảo mật trên macOS 15 và các phiên bản mới hơn. Không ai trong nhóm phát triển dự án có máy Mac: ứng dụng chỉ mới được chạy trên CI của dự án, chưa phát được video nào và khả năng truy cập mạng của nó chưa được thử nghiệm. Rất hoan nghênh các báo cáo.
 
 <a id="privacy"></a>
 ## Quyền riêng tư
@@ -306,7 +310,7 @@ Các ảnh chụp điện thoại trên trang này được thực hiện trên 
 Những gì chưa làm, việc nhiều khả năng nhất đứng trước. Không có gì ở đây là lời hứa, và phản hồi trên [trình theo dõi vấn đề](https://github.com/freeKC/Immuch360/issues) giúp quyết định việc gì làm trước.
 
 - **Các cửa hàng**: Google Play (bản dựng 23 đang được duyệt, danh sách TV đang được duyệt), App Store (phiên bản 3.3.0 đang được duyệt), Meta Horizon Store (bản dựng 21 đang được duyệt).
-- **Máy tính**: kiểm tra từng chức năng bằng tay trên một PC Windows; sau đó Spatial 2.5D với webcam; sau đó macOS và Linux được bắt đầu và phát hành, cùng với trình phát video của chúng; sau đó một bộ cài đặt, một bản dựng đã ký số và cập nhật tự động.
+- **Máy tính**: kiểm tra từng chức năng bằng tay trên một PC Windows; sau đó Spatial 2.5D với webcam; sau đó trình phát video trên Linux và macOS và một lần kiểm tra trên một Mac thật; sau đó một bản dựng đã ký số và cập nhật tự động.
 - **Điện thoại và máy tính bảng**: một thanh thời gian trong trình phát video 360° trên iOS, nút trước và tiếp theo trong các trình phát 360° của điện thoại, lựa chọn track âm thanh trong trình phát dạng phẳng, xem trực tiếp Tapo trên iPhone và iPad.
 - **Nội dung đắm chìm**: .dng fisheye kép, cân bằng video GoPro và DJI từ dữ liệu chuyển động riêng của chúng, video không gian ở dạng 3D trên Quest nếu bộ giải mã của nó cho phép, nút trước và tiếp theo giữa các ảnh không gian trong kính.
 - **Nguồn**: vuốt chuyển giữa các tệp trong một thư mục chia sẻ, xác thực Digest cho WebDAV, mã QR để chuyển token Plex từ máy tính, IPv6 cho Plex, bản ghi Tapo H.265, các kênh trên màn hình chính của TV.

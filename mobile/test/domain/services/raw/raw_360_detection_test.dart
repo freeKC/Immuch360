@@ -24,7 +24,7 @@ void main() {
       expect(isRawVideoName('VID_20240908_133036_00_002.insv'), isTrue);
       expect(isRawVideoName('VID_002.INSV'), isTrue);
       expect(isRawVideoName('GS010013.360'), isTrue);
-      expect(isRawVideoName('CAM_20250715191201_0003_D.OSV'), isTrue);
+      expect(isRawVideoName('CAM_20250101120000_0001_D.OSV'), isTrue);
       expect(isRawVideoName('LRV_20240908_133036_01_004.lrv'), isFalse);
       expect(isRawVideoName('VID_002.mp4'), isFalse);
       expect(isRawVideoName('GS010013.36P'), isFalse);
@@ -35,7 +35,7 @@ void main() {
         ('IMG_20240908_133036_00_001.insp', false, RawMediaKind.insta360Photo),
         ('VID_20240908_133036_00_002.INSV', true, RawMediaKind.insta360Video),
         ('GS010013.360', true, RawMediaKind.goProVideo),
-        ('CAM_20250715191201_0003_D.OSV', true, RawMediaKind.djiVideo),
+        ('CAM_20250101120000_0001_D.OSV', true, RawMediaKind.djiVideo),
         ('LRV_20240908_133036_01_004.lrv', true, null),
         ('GL010013.LRF', true, null),
         ('GS010013.36P', false, null),

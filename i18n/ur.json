@@ -418,6 +418,11 @@
   "view_as_360_remove": "360° کے طور پر ماننا بند کریں",
   "waiting": "انتظار",
   "week": "ہفتہ",
+  "welcome_server_title": "Immich سرور سے جڑیں",
+  "welcome_shares_description": "SMB، WebDAV، DLNA، Plex یا ایک Tapo کیمرا",
+  "welcome_shares_title": "نیٹ ورک شیئر یا میڈیا سرور شامل کریں",
+  "welcome_tagline": "آپ کا میڈیا۔ ہر اسکرین۔ ہر زاویہ۔",
+  "welcome_without_server_description": "اس آلے کی تصاویر اور ویڈیوز۔ شیئرز اور میڈیا سرورز بعد میں شامل کریں۔",
   "year": "سال",
   "zoom_image": "زوم تصویر"
 }

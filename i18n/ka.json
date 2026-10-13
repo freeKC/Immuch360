@@ -771,6 +771,11 @@
   "warning": "გაფრთხილება",
   "week": "კვირა",
   "welcome": "მოგესალმებით",
+  "welcome_server_title": "Immich სერვერთან დაკავშირება",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex ან Tapo კამერა",
+  "welcome_shares_title": "ქსელური გაზიარების ან მედია სერვერის დამატება",
+  "welcome_tagline": "თქვენი მედია. ნებისმიერი ეკრანი. ყველა პერსპექტივა.",
+  "welcome_without_server_description": "ამ მოწყობილობის ფოტოები და ვიდეოები. გაზიარებები და მედია სერვერები შეგიძლიათ მოგვიანებით დაამატოთ.",
   "width": "სიგანე",
   "year": "წელი",
   "yes": "დიახ"

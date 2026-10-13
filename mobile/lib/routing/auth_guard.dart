@@ -11,6 +11,9 @@ import 'package:immich_mobile/services/auth.service.dart';
 import 'package:logging/logging.dart';
 import 'package:openapi/api.dart';
 
+/// A server that refused the token: its login form, above the welcome page that the Back of the form leads to
+const _signInAgain = [WelcomeRoute(), LoginRoute()];
+
 class AuthGuard extends AutoRouteGuard {
   final ApiService _apiService;
   final AuthService _authService;
@@ -34,7 +37,8 @@ class AuthGuard extends AutoRouteGuard {
     } on StoreKeyNotFoundException catch (_) {
       _log.warning('No access token in the store.');
       resolver.next(false);
-      unawaited(router.replaceAll([const LoginRoute()]));
+      // Neither a server session nor a session without a server: the welcome page
+      unawaited(router.replaceAll([const WelcomeRoute()]));
       return;
     }
 
@@ -60,7 +64,7 @@ class AuthGuard extends AutoRouteGuard {
           return;
         }
         _log.fine('User token is invalid. Redirecting to login');
-        await router.replaceAll([const LoginRoute()]);
+        await router.replaceAll(_signInAgain);
         await _authService.clearLocalData();
       }
     } on ApiException catch (e) {
@@ -71,7 +75,7 @@ class AuthGuard extends AutoRouteGuard {
         return;
       }
       _log.warning("Unauthorized access token.");
-      await router.replaceAll([const LoginRoute()]);
+      await router.replaceAll(_signInAgain);
       await _authService.clearLocalData();
     } catch (e) {
       _log.warning('Error validating access token from server: $e');

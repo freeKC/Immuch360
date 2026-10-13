@@ -380,14 +380,16 @@ class SplashScreenPageState extends ConsumerState<SplashScreenPage> {
                 }
 
                 unawaited(ref.read(authProvider.notifier).logout());
-                unawaited(context.router.replaceAll([const LoginRoute()]));
+                // The login form again, above the welcome page that its Back leads to
+                unawaited(context.router.replaceAll([const WelcomeRoute(), const LoginRoute()]));
               },
             ),
       );
     } else {
       log.severe('Missing crucial offline login info - Logging out completely');
       unawaited(ref.read(authProvider.notifier).logout());
-      unawaited(context.router.replaceAll([const LoginRoute()]));
+      // No session at all, the first start among others: the welcome page
+      unawaited(context.router.replaceAll([const WelcomeRoute()]));
       return;
     }
 

@@ -11,7 +11,7 @@ Ang Immuch360 ay libre at open source na app para hanapin, i-browse, i-play, at 
 
 - **Ano ang gawa nito?** Ipinapakita ang iyong mga larawan at video bilang isang gallery at ipinapatugtog ang mga ito sa viewer na tama para sa bawat file: patag, bilang isang sphere na iyong tinitingnan sa paligid, sa 3D, sa isang headset.
 - **Anong media?** Mga patag na larawan at video, panorama, 360° na larawan at video, VR180, stereoscopic 3D, Apple spatial photos, at ang raw files ng mga 360° camera (Insta360, GoPro MAX, DJI Osmo 360), na pinagdugtong-dugtong ng app.
-- **Sa aling mga device?** Mga Android phone at tablet, iPhone at iPad, Android TV at Google TV, Meta Quest 2, Pro, 3 at 3S, Windows (preview), habang ginagawa pa ang macOS at Linux.
+- **Sa aling mga device?** Android na telepono at tablet, iPhone at iPad, Android TV at Google TV, Meta Quest 2, Pro, 3 at 3S, Windows (preview), at Linux at macOS bilang mga paunang preview.
 - **Kailangan ko ba ng server o account?** Hindi. Gumagana ang Immuch360 nang mag-isa gamit ang media ng iyong device. Ang isang Immich server, isang NAS, isang media server, o isang Plex server ay mga opsyon na idaragdag mo kapag ninais mo.
 
 <p align="center">
@@ -26,8 +26,8 @@ Ang Immuch360 ay libre at open source na app para hanapin, i-browse, i-play, at 
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone at iPad** | App Store | bersyon 3.3.0 naghihintay ng pagsusuri ng Apple; samantala [i-build mo mismo](../docs/immuch360/build.md) |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV at Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 sa GitHub; ang listahan sa TV ay sinusuri pa ng Google |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 at 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | nasa Horizon Store (build 14; build 21 sinusuri), build 23 sa GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Preview ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4, isang preview: mga larawan, patag at 360° na video, shares, Plex, mga camera |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS at Linux** | Sources | ginagawa ng CI ng proyekto, hindi pa sinimulan sa mga sistemang ito, walang download pa |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer o ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, isang preview: mga larawan, patag at 360° na video, mga share, Plex, mga camera, mga file na binuksan gamit ang programa |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS at Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | mga paunang preview: sa Linux mayroong mga larawan at 360° na larawan, walang video pa; ang macOS ay sinimulan lang sa CI ng proyekto |
 
 *Ang mga status ay inaapdeyt sa bawat release; ang mga detalye, build kada build, ay nasa [Release status](../docs/immuch360/release-status.md).*
 
@@ -97,11 +97,11 @@ Higit pa: [mga 360° na larawan at video](../docs/immuch360/user-guide.md#360-ph
 <a id="use-your-own-files-without-an-account"></a>
 ### Gamitin ang sarili mong mga file, nang walang account
 
-Hindi kailangan ng Immuch360 ng account o server. Sa login page, ang "Gamitin nang walang server" ay magbubukas ng app sa mga larawan at video ng device, kasama ang bawat viewer, ang 360° list, at ang mga network source. Walang umaalis sa device. Ang isang server ay maaaring ikonekta mamaya, mula sa Settings, at lilitaw ang mga feature ng server pagkatapos.
+Hindi nangangailangan ang Immuch360 ng account o server. Mula sa build 24, bubuksan ng app ang isang welcome page, kung saan nauuna ang "Gamitin nang walang server": binubuksan nito ang app sa mga larawan at video ng device, kasama ang bawat viewer, ang 360° list, at ang mga network source. Walang aalis sa device. Maikokonekta ang isang server sa ibang pagkakataon, mula sa Settings o sa Library tab, at lalabas ang mga feature ng server.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Ang Library tab nang walang server: ang 360° na item sa itaas, sunod ang On this device na may dalawang 360° na larawan, at Mga network share na may share na pinangalanang NAS">
 
-1. Buksan ang app. Sa login page, sa ilalim ng address ng server at ng Settings, i-tap ang "Gamitin nang walang server".
+1. Buksan ang app. Ipinapakita ng welcome page ang "Ang media mo. Kahit anong screen. Bawat perspektibo." at tatlong pagpipilian: pindutin ang una, "Gamitin nang walang server". Hanggang build 23, nauuna ang login page, may "Gamitin nang walang server" sa ilalim ng form.
 2. Payagan ang access sa iyong mga larawan at video. Kung tatanggi ka, sasabihin ng app ang "Hindi makita ng app ang mga larawan ng device na ito", kasama ang "Payagan ang access" at "Buksan ang mga setting".
 3. Ipinapakita ng tab na Photos (Mga larawan) ang timeline ng device. Nananatiling naka-gray ang Search (Maghanap) at Albums (Mga album), dahil galing ang mga ito sa server. Nasa itaas ng Library tab ang 360°, sunod ang On this device (Sa device na ito) (ang mga album ng device) at Mga network share.
 4. Sinasabi ng menu sa itaas na kanan ang "Ang device na ito lang": ipinapakita ng app ang mga larawan at video ng device na ito, at walang ipinapadala kahit saan.
@@ -120,7 +120,7 @@ Ang iyong mga video ay nananahan sa isang NAS, computer, o media server. Hinahan
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Isang folder ng network share bilang grid ng mga thumbnail: mga 360° na larawan na may 360° badge at isang 360° na video na may play mark, ang Pumili button sa itaas na kanan">
 </p>
 
-1. Buksan ang tab na Library, tapos Network shares, tapos + at "Isang network share (NAS, computer, media server)".
+1. Buksan ang Library tab, tapos ang Mga network share, tapos ang + at "Isang network share (NAS, computer, media server)". Mula sa build 24, ang "Magdagdag ng network share o media server" sa welcome page ay direktang nagbubukas ng Mga network share, nang walang server.
 2. I-tap ang isang server sa ilalim ng "Nahanap sa network", o punan ang form nang manu-mano: tipo, pangalan o address ng server, share o path, panimulang folder, username at password.
 3. I-tap ang "Subukan ang koneksyon", tapos Save. I-tap ang share para i-browse ito: mga folder muna, tapos ang mga larawan at video, may 360° badge sa mga file na nakilalang 360°.
 4. Gamit ang isang nakakonektang Immich server, piliin ang mga file sa isang folder at i-tap ang "I-upload sa Immich" para ipadala ang mga ito sa iyong server.
@@ -134,7 +134,7 @@ Higit pa: [network shares](../docs/immuch360/user-guide.md#network-shares-a-nas-
 
 Gamit ang isang [Immich](https://github.com/immich-app/immich) server, ang Immuch360 ay ang mobile app ng Immich, kasama ang parehong server at parehong account ng web app: backup, timeline, mga album, search, mga tao, mga memorya, pagshare, mga partner, lahat sync sa iyong server. Ito ay nag-install sa tabi ng opisyal na app. Dagdag dito: ang 360° badge at list, bawat immersive viewer, ang pagpili sa pagitan ng orihinal na file at ng transcoded stream ng server para sa bawat video, ang mga teknikal na detalye ng isang video, at ang mga file ng isang share o ng device na ipinadala nang manu-mano sa iyong server.
 
-1. Mag-login gamit ang address ng iyong server, ang iyong email, at ang iyong password, tulad sa Immich app. Ang iyong library, mga album, at mga setting ng backup ay ang mga iyon ng iyong account.
+1. Sa welcome page, pindutin ang "Kumonekta sa isang Immich server", tapos mag-log in gamit ang address ng iyong server, ang iyong email, at ang iyong password, tulad sa Immich app; ang Back ay magbabalik sa welcome page. Hanggang build 23, direktang bubukas ang login page. Ang iyong library, album, at backup settings ay mula sa iyong account.
 2. Sa Settings, Asset Viewer, Videos, ang "Pinagmulan ng video" ay pumipili sa orihinal kapag ide-decode ito ng device na ito, lagi ang orihinal, o lagi ang transcoded stream.
 3. Para ipakita ang isang 360° na larawan sa isang taong walang app, i-share ito gamit ang isang Immich shared link: ipinapakita ng Immich web app ito bilang isang sphere sa kanilang browser.
 
@@ -154,7 +154,7 @@ Sa isang Meta Quest ang parehong app ay tumatakbo bilang isang window kasama ang
 </p>
 
 1. I-install ang app mula sa [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), o i-sideload ang APK ng mas bagong build, tingnan ang [I-install](#meta-quest).
-2. Mag-log in gamit ang Immich server mo, o i-tap ang "Gamitin nang walang server" para sa sariling mga larawan at video ng headset.
+2. Sa welcome page, pindutin ang "Gamitin nang walang server" para sa mga larawan at video ng headset mismo, o ang "Kumonekta sa isang Immich server" para mag-log in gamit ang iyong server.
 3. Buksan ang isang 360° na larawan o video at pindutin ang 360°: bubukas ang immersive view. Ang B o Y, o ang Back button ng info panel, ay magbabalik sa window.
 
 Higit pa: [sa Meta Quest headset](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [ang headset: codec, store at permissions](../docs/immuch360/platform-support.md#meta-quest).
@@ -169,8 +169,8 @@ Ang parehong Android app ay tumatakbo sa Android TV at Google TV gamit ang remot
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Ang video player ng Immuch360 Desktop sa Windows: isang video ng isang kalye na pinapatugtog sa window, may pause button, time bar, Share at I-upload sa Immich">
 </p>
 
-1. Sa isang TV: i-install ang APK gamit ang adb (tingnan ang [I-install](#android-tv-and-google-tv)), mag-login o piliin ang "Gamitin nang walang server", magdagdag ng share, Plex server, o camera mula sa Library.
-2. Sa isang Windows computer: i-unzip ang preview at simulan ang `immuch360.exe` (tingnan ang [I-install](#windows)), tapos piliin ang mga folder ng iyong mga larawan at video, o mag-login sa iyong server.
+1. Sa isang TV: i-install ang APK gamit ang adb (tingnan ang [I-install](#android-tv-and-google-tv)); sa welcome page, piliin ang "Magdagdag ng network share o media server" para sa isang share, isang Plex server, o isang camera, ang "Gamitin nang walang server", o ang "Kumonekta sa isang Immich server".
+2. Sa isang Windows computer: i-install ang preview o i-unzip ito at simulan ang `immuch360.exe` (tingnan ang [I-install](#windows)); mula sa desktop build 5, ang "Gamitin nang walang server" sa welcome page ay nagbubukas ng pagpili ng iyong mga folder, at ang "Kumonekta sa isang Immich server" ang login page. Isang larawan, video, o folder na binuksan gamit ang programa, o na-drop sa window nito, ay bubukas agad, isang 360° ay sa 360° view nito; maramihang file ay magbubukas nang sabay-sabay sa isang page.
 3. Sa isang viewer, gumagana ang play at pause, rewind, fast forward, previous at next na mga key ng remote, at gayundin ang mga key ng keyboard sa isang computer (Space, J at L, F para sa full screen).
 
 Higit pa: [panoorin sa iyong TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [sa isang Windows computer](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [suporta ng platform](../docs/immuch360/platform-support.md).
@@ -180,7 +180,7 @@ Higit pa: [panoorin sa iyong TV](../docs/immuch360/user-guide.md#watch-on-your-t
 
 - **Mga Tapo camera**: isang camera ay idinagdag sa tabi ng mga network share. Ipinapakita ito ng app nang live (Android, Android TV, ang Quest, at Windows) at ililista ang mga recording ng memory card nito araw-araw sa bawat platform; isang clip ay kinukuha mula sa camera, pinapatugtog tulad ng anumang video, at maaaring ipadala sa Immich. Kinakausap lamang ng app ang camera sa iyong network, hindi kailanman ang mga server ng TP-Link.
 - **Plex Media Server, nang walang plex.tv**: direktang nagpapares ang app sa iyong server, gamit ang isang token na idikit mo nang isang pagkakataon, at binabasa ang mga orihinal na file ng iyong mga library nang live, kaya ang 360° ay nanatiling 360°, sa bahay at, sa pamamagitan ng iyong port forwarding, sa labas ng bahay.
-- **Raw 360° camera files**: ang raw na .insp na larawan at .insv na video ng mga Insta360 camera (isa o dalawang lente, sa isang track, dalawang track, o dalawang file), ang .360 na mga file ng GoPro MAX, at ang .osv na mga file ng DJI Osmo 360 ay pinagdugtong-dugtong ng app habang pinapatugtog, may calibration na nakasulat sa file, nang walang kailangang i-install saan man.
+- **Mga raw na 360° camera file**: ang raw na .insp na larawan at .insv na video ng mga Insta360 camera (isa o dalawang lente, sa isang track, dalawang track o dalawang file), ang .360 na mga file ng GoPro MAX at ang .osv na mga file ng DJI Osmo 360 ay pinagdugtong-dugtong ng app habang pinapatugtog, may calibration na nakasulat sa file, nang walang kailangang i-install kahit saan. Sa Android, patugtugin ang mga ito mula sa isang share, isang computer o ang iyong server, dahil hindi nilista ng gallery ng telepono ang raw na mga file; tinatanggap lamang ng Immich server ang .insp at .insv.
 
 Higit pa: [mga Tapo camera](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [raw 360° camera files](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
@@ -207,7 +207,7 @@ Isang code base, anim na kapaligiran. Ano ang mayroon ang bawat isa ngayon:
 | I-share ang device na ito sa network | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
 | I-upload sa Immich mula sa shares at sa device | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
 | Input | pagtouch, gyroscope | pagtouch, gyroscope | remote | mga controller, kamay | mouse, keyboard | |
-| Saan makukuha | Google Play, APK | App Store (sinusuri) | APK, Google Play (sinusuri) | Horizon Store, APK | preview ZIP | CI builds lamang |
+| Saan ito makukuha | Google Play, APK | App Store (sinusuri) | APK, Google Play (sinusuri) | Horizon Store, APK | installer o ZIP (preview) | .deb, .rpm, DMG (mga paunang preview) |
 
 ✅ nasa app sa platform na iyon · ❌ hindi inaalok diyan · 🔜 planado · 🔧 nasa sources at ginagawa ng CI ng proyekto, hindi pa sinimulan sa sistemang iyon. Ang "isang mata" ay nangangahulugang ang isang 3D file ay nagpapakita ng kaliwang mata nito sa isang patag na screen. Hindi pa lahat ng ✅ nasuri sa isang totoong device: ano ang nasuri saan, at ano ang natitirang kumpirmahin, ay nasa [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md), at [Compatibility](../docs/immuch360/compatibility.md).
 
@@ -215,8 +215,8 @@ Isang code base, anim na kapaligiran. Ano ang mayroon ang bawat isa ngayon:
 - **iPhone at iPad**: ang kumpletong app; ang 360° video player ay may play at pause lamang, ang Tapo live view ay darating mamaya, at ang DLNA search ay nagpapadala ng unicast requests hanggang ibigay ng Apple ang multicast entitlement.
 - **Android TV at Google TV**: ang parehong APK, pinapatakbo ng remote; isang viewer: ang backup, mga upload, at editing ay nakatago. Nasuri sa Google TV emulator (login, timeline, mga viewer, shares, remote navigation), hindi pa sa totoong TV.
 - **Meta Quest 2, Pro, 3 at 3S**: ang app bilang window, kasama ang immersive view; ang HEVC ang ligtas na codec, ang H.264 ay humihinto sa paligid ng 4096x2304 sa Quest 3; ang Quest 2 at Quest Pro ay hindi pa nasusubok.
-- **Windows 10 at 11**: isang preview, may mga folder sa halip ng gallery, isang video player na pansarili (libmpv) para sa patag at 360° na video, raw files na pinagdugtong-dugtong sa graphics chip, walang installer pa.
-- **macOS at Linux**: ang mga proyekto ay binubuo sa CI ng proyekto (Linux built, macOS compiled); hindi pa sinimulan ang app sa mga sistemang ito at hindi pa isinama ang kanilang video player library.
+- **Windows 10 at 11**: isang preview, may mga folder sa halip na gallery, isang video player na pansarili (libmpv) para sa patag at 360° na video, mga raw file na pinagdugtong-dugtong sa graphics chip, mga file at folder na binuksan gamit ang programa o na-drop sa window, isang installer o isang ZIP.
+- **macOS at Linux**: mga package na ginawa ng CI ng proyekto (isang .deb, isang .rpm, isang DMG); sa Linux, nagsisimula ang app at nagpapakita ng mga larawan at 360° na larawan, walang video pa, at ang mga SMB share ay kailangan ng Ubuntu 24.04, Debian 13, o Fedora 39 pataas; ang macOS app ay tumakbo lang sa CI ng proyekto, walang video, at hindi pa nasubok ang access nito sa network.
 
 <a id="advanced-features"></a>
 ## Mga advanced na feature
@@ -226,11 +226,11 @@ Ano ang kayang basahin at patugtugin ng app, para sa mambabasang nagnanais ng bu
 - **Mga format**: patag na larawan at video (ang dine-decode ng device: MP4, MOV, MKV at higit pa); equirectangular na 360° na larawan at video; partial panorama (GPano crop); VR180; stereoscopic 3D, itaas at ibaba o magkatabi, binasa mula sa file (ang st3d box) o hinulaan mula sa frame; Apple spatial photos (HEIC stereo pairs) at spatial videos (MV-HEVC, isang mata); raw na Insta360 .insp at .insv, GoPro .360, DJI .osv; 10 bit HLG at PQ na sources na tone mapped sa sphere.
 - **Projection at metadata**: GPano at spherical metadata na binasa mula sa file, may range requests sa isang server o share; ang paunang tanawin ng camera; "Tingnan bilang 360°" na naaalala sa device; VR180 na nakilala mula sa file o sa pangalan nito; ang metadata ay nananatiling buo dahil ang orihinal na file ang pinapatugtog, hindi kailanman ang isang na-convert na kopya.
 - **Native playback**: Media3 sa Android at sa TV, SceneKit at AVFoundation sa iOS, ang Meta Spatial SDK sa headset, libmpv sa Windows; ang orihinal o ang transcoded stream na pinili batay sa dine-decode ng device; isang listahan ng mga video decoder ng device sa Settings, Advanced; ang pagpili ng audio track at isang buffering indicator.
-- **Raw files na pinagdugtong-dugtong sa device**: isang Flutter fragment shader para sa mga larawan; isang GPU effect sa player para sa single track na mga video; dalawang hardware decoder nang sabay at isang GPU compositor para sa mga video na may isang lente kada track o kada file (OpenGL ES 3 sa Android at sa Quest, Metal sa iOS, ang libmpv filter graph sa Windows); ang sariling calibration ng camera (modelong Mei, V6, at equidistant) at accelerometer record; mga fallback sa isang lente, sa transcoded stream, sa LRV copy ng camera, o sa unstitched video kapag hindi kayang patakbuhin ng device ang dalawang decoder.
+- **Mga raw file na pinagdugtong-dugtong sa device**: isang Flutter fragment shader para sa mga larawan; isang GPU effect sa player para sa mga video na may isang track; dalawang hardware decoder nang sabay at isang GPU compositor para sa mga video na may isang lente kada track o kada file (OpenGL ES 3 sa Android at sa Quest, Metal sa iOS, at sa Windows, mula sa desktop build 5, dalawang libmpv player na ang mga frame ay pinapares ng app sa graphics chip); ang sariling calibration ng camera (Mei, V6 at equidistant na mga modelo) at ang accelerometer record nito; fallback sa isang lente, ang transcoded stream, ang LRV copy ng camera o ang unstitched na video kapag hindi kayang patakbuhin ng device ang dalawang decoder.
 - **Mga source**: ang gallery ng device; ang mga folder ng isang computer; isang Immich server; SMB 2 at 3, WebDAV, DLNA/UPnP; Plex sa HTTPS na sinuri laban sa sariling certificate ng server; mga Tapo camera sa local network (HTTPS at RTSP); isang telepono o computer na nai-share sa Wi-Fi bilang isang WebDAV server; mga server na nahanap ng Bonjour/mDNS, isang local network scan, SSDP, GDM, at ang TP-Link discovery, at sinusundan kapag nagbago ang kanilang address.
 - **Pagbasa sa pangangailangan**: isang local bridge ang nagsisilbi sa mga player gamit ang byte ranges at isang per session token; malalaking block, read ahead, at hanggang anim na SMB connections nang sabay; mga thumbnail mula sa isang frame ng bawat video; walang kinopya sa device.
 - **Hardware**: hardware decoders na ginagamit saan man ito mayroon, kasama ang kanilang mga nasukat na limitasyon (ang H.264 ceiling ng Quest 3, dalawang 2048x2048 na lente nang pinakamarami para sa software decoders); sa Windows ang 360° view ay iginuhit ng graphics chip mula sa bawat na-decode na frame, ang laki ng frame ay sinukat sa bawat computer, ang integrated o dedicated chip ay natukoy.
-- **Mga detalye ayon sa platform**: ang gyroscope at ang Spatial 2.5D player sa mga telepono; ang immersive view, mga controller, at kamay sa Quest; ang remote layout, ang keyboard dialog, at ang TV banner sa Android TV; sa computer, mouse at keyboard, full screen, isang window lamang, isang file na binuksan ng programa o idrop dito, HEIC, AVIF, TIFF, at camera raw na mga larawan ng mga folder kapag may decoder ang Windows para sa mga ito, at ang Windows data protection para sa mga password at token.
+- **Mga detalye kada platform**: ang gyroscope at ang Spatial 2.5D player sa mga telepono; ang immersive view, mga controller, at mga kamay sa Quest; ang remote layout, ang keyboard dialog, at ang TV banner sa Android TV; sa computer, mouse at keyboard, full screen, isang single window, mga file at folder na binuksan gamit ang programa o na-drop sa window nito, binabasa tulad ng mga file ng iyong mga folder, HEIC, AVIF, TIFF, at raw na larawan ng camera ng mga folder kapag may decoder ang Windows para sa kanila, at ang Windows data protection para sa mga password at token.
 - **Privacy sa pamamagitan ng construction**: walang account, walang cloud, walang analytics; ang mga password at token ay nasa secure storage ng device; ang camera ng Spatial player ay ginagamit sa device lamang; ang mga share, Plex, at camera ay inaabot sa iyong network lamang.
 
 <a id="technical-documentation"></a>
@@ -257,7 +257,7 @@ Ano ang kayang basahin at patugtugin ng app, para sa mambabasang nagnanais ng bu
 ### iPhone at iPad
 
 1. Ang bersyon ng App Store ay naghihintay ng pagsusuri ng Apple. Hanggang ma-publish ito, i-build ang app gamit ang Xcode sa isang Mac, tingnan ang [I-build mo mismo](../docs/immuch360/build.md).
-2. Mag-login gamit ang iyong Immich server, o i-tap ang "Gamitin nang walang server".
+2. Pindutin ang "Gamitin nang walang server", o ang "Kumonekta sa isang Immich server" para mag-log in gamit ang iyong server; nasa welcome page ang dalawa mula sa build 24.
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TV at Google TV
@@ -277,14 +277,18 @@ Ano ang kayang basahin at patugtugin ng app, para sa mambabasang nagnanais ng bu
 <a id="windows"></a>
 ### Windows
 
-1. I-download ang `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` mula sa [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) (humigit-kumulang 58 MB, may `SHA256SUMS.txt` para suriin ito) at i-unzip saan man, halimbawa sa Documents.
-2. Simulan ang `immuch360.exe` mula sa na-unzip na folder at panatilihing buo ang folder: kinakailangan ng programa ang mga file sa tabi nito, kasama ang `libmpv-2.dll`, ang video player.
-3. Ang mga file ay hindi pa nilagdaan: maaaring ipakita ng Windows SmartScreen ang "Windows protected your PC", piliin ang "More info" tapos "Run anyway". Ang unang pagsisimula ng isang bagong build ay maaaring umabot hanggang isang minuto habang nag-scan ang Windows sa mga file.
-4. Windows 10 o 11, 64 bit. Walang installer at walang automatic update pa: i-unzip ang susunod na build sa parehong paraan.
+1. I-download ang `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` mula sa [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) (may `SHA256SUMS.txt` para suriin ito) at buksan ito. Hindi pa signed ang mga file: maaaring ipakita ng Windows SmartScreen ang "Windows protected your PC", piliin ang "More info" tapos ang "Run anyway".
+2. Piliin ang "Install for me only" (walang kailangang administrator rights) o ang "Install for all users", tapos ang wika ng installer, ang nakatakda na sa wika ng Windows.
+3. Simulan ang Immuch360 Desktop mula sa Start menu. Makikita ito ng mga larawan at video sa "Open with" (i-right-click ang isang file, Open with); kailanman ay hindi ito nagiging default program nila. Ang unang pagsisimula ng isang bagong build ay maaaring umabot ng isang minuto habang ni-scan ng Windows ang mga file.
+4. Windows 10 o 11, 64 bit. Para mag-update, buksan ang installer ng susunod na build: mananatili ang iyong log in, mga folder, at settings. Ang ZIP ng parehong release ay ang parehong programa bilang isang folder, i-unzip kahit saan at simulan ang `immuch360.exe` mula rito.
 
-### macOS at Linux
+### Linux
 
-Ang mga proyekto ay nasa sources at ginagawa ng CI ng proyekto sa bawat pagbabago, pero hindi pa sinimulan ang app sa mga sistemang ito at hindi pa isinama ang kanilang video player library: walang download pa. Ang mga hakbang para buuin ang mga ito ay nasa [I-build mo mismo](../docs/immuch360/build.md).
+Sa Ubuntu 22.04 pataas at Debian 12 pataas: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; sa Fedora 40 pataas: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Tapos simulan ang Immuch360 Desktop mula sa iyong mga application. Isang paunang preview: ang mga folder ng computer, mga larawan at 360° na larawan bilang isang sphere; hindi pa tumutugtog ang mga video, at ang mga SMB share ay kailangan ng Ubuntu 24.04, Debian 13, o Fedora 39 pataas.
+
+### macOS
+
+Buksan ang `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` at i-drag ang app sa Applications (Apple silicon at Intel, macOS 12 pataas). Hindi pa ito signed o notarized: i-Control-click ito at piliin ang Open sa macOS 14 at mas luma, o piliin ang "Open Anyway" sa System Settings, Privacy & Security sa macOS 15 at mas bago. Walang sinuman sa proyekto ang may Mac: ang app ay sinimulan lang sa CI ng proyekto, wala pa itong tumutugtog na video, at hindi pa nasubok ang access nito sa network. Malugod tinatanggap ang mga report.
 
 <a id="privacy"></a>
 ## Privacy
@@ -306,7 +310,7 @@ Ang mga phone capture ng pahinang ito ay kinuha sa Android build sa isang emulat
 Ang hindi pa tapos, nauuna ang pinakamalamang. Walang pangako rito, at nakatutulong ang feedback sa [issue tracker](https://github.com/freeKC/Immuch360/issues) sa pagpapasya kung ano ang mauuna.
 
 - **Ang mga store**: Google Play (build 23 sinusuri, ang listahan sa TV sinusuri), ang App Store (bersyon 3.3.0 sinusuri), ang Meta Horizon Store (build 21 sinusuri).
-- **Mga computer**: ang manual na pagsubok ng bawat function sa isang Windows PC; tapos Spatial 2.5D gamit ang webcam; tapos sinimulan at inilabas ang macOS at Linux, kasama ang kanilang video player; tapos isang installer, isang signed build, at automatic updates.
+- **Mga computer**: ang manual na pagsubok ng bawat function sa isang Windows PC; tapos Spatial 2.5D gamit ang webcam; tapos ang video player sa Linux at macOS at isang pagsubok sa isang totoong Mac; tapos isang signed build at automatic updates.
 - **Mga telepono at tablet**: isang time bar sa iOS 360° video player, previous at next sa mga 360° player ng mga telepono, ang pagpili ng audio track sa patag na player, ang Tapo live view sa iPhone at iPad.
 - **Immersive media**: dual fisheye .dng, paglebel ng mga video ng GoPro at DJI mula sa kanilang sariling motion data, mga spatial video sa 3D sa Quest kung ipinapayagan ng mga decoder nito, previous at next sa pagitan ng spatial photos sa headset.
 - **Mga source**: pagswipe sa pagitan ng mga file ng isang share folder, Digest authentication para sa WebDAV, isang QR code para dalhin ang Plex token mula sa computer, IPv6 para sa Plex, H.265 na mga Tapo recording, mga channel sa TV home screen.

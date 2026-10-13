@@ -309,5 +309,10 @@
   "video_source_title": "Aɣbalu n tvidyut",
   "video_source_transcoded": "Yal tikkelt tavidyut yettwabeddlen",
   "view_as_360": "Wali am 360°",
-  "view_as_360_remove": "Ḥbes asemres am 360°"
+  "view_as_360_remove": "Ḥbes asemres am 360°",
+  "welcome_server_title": "Qqen ɣer uqeddac Immich",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex neɣ takamiṛat Tapo",
+  "welcome_shares_title": "Rnu afaylu n uẓeṭṭa neɣ aqeddac n yimidyaten",
+  "welcome_tagline": "Ayla-k. Yal agdil. Yal tamuɣli.",
+  "welcome_without_server_description": "Tugniwin d tvidyutin n yibenk-a. Rnu ifuyla n uẓeṭṭa d iqeddacen n yimidyaten ticki."
 }

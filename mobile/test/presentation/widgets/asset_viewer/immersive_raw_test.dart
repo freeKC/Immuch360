@@ -367,7 +367,7 @@ void main() {
       ProbedTrack lens(int index) =>
           ProbedTrack(index: index, handlerType: 'vide', codec: 'hvc1', codedWidth: 3840, codedHeight: 3840);
       final probe = SphericalProbe(tracks: [lens(0), lens(1)]);
-      final asset = RemoteAssetFactory.create(type: .video, name: 'CAM_20250715191201_0003_D.OSV');
+      final asset = RemoteAssetFactory.create(type: .video, name: 'CAM_20250101120000_0001_D.OSV');
 
       await expectLater(
         resolver(

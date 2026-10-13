@@ -44,6 +44,34 @@ jobs:
       - run: flutter build windows
 ''';
 
+/// The shape of .github/workflows/immuch360-desktop-release.yml: the build workflow called with read permissions, a
+/// release job that writes the contents, on desktop-v* tags and by hand
+const _releaseWorkflow = '''
+name: Release fixture
+on:
+  push:
+    tags: ['desktop-v*']
+  workflow_dispatch:
+permissions: {}
+jobs:
+  build:
+    uses: ./.github/workflows/immuch360-desktop.yml
+    permissions:
+      contents: read
+  release:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 .github/desktop/desktop_release.py --repo "\$GITHUB_REPOSITORY" --tag "\$GITHUB_REF_NAME"
+        env:
+          GH_TOKEN: \${{ github.token }}
+''';
+
 const _mise = '''
 [tools]
 java = "21.0.2"
@@ -607,6 +635,61 @@ abstract class SyncEvents {
       expect(check(_goodWorkflow.replaceFirst('  pull_request:', '  pull_request_target:')).exitCode, 1);
       expect(check(_goodWorkflow.replaceFirst('permissions:\n  contents: read\n', '')).exitCode, 1);
     });
+
+    group('--release', () {
+      ScriptRun release(String workflow) {
+        final root = tree({'workflow.yml': workflow, 'mise.toml': _mise});
+        return runCiScript('check_workflow.py', [
+          '--release',
+          '--workflow',
+          p.join(root.path, 'workflow.yml'),
+          '--mise',
+          p.join(root.path, 'mise.toml'),
+        ]);
+      }
+
+      test('passes the release workflow: contents written, on desktop-v* tags and by hand', () {
+        final run = release(_releaseWorkflow);
+        expect(run.exitCode, 0, reason: '$run');
+        // The same workflow is refused by the rules of the build workflow, which never writes
+        final strict = check(_releaseWorkflow);
+        expect(strict.exitCode, 1, reason: '$strict');
+        expect(strict.output, contains('a write access (contents: write)'));
+      });
+
+      test('fails on a pull request, a branch, another tag, or a push without tags', () {
+        for (final (workflow, message) in [
+          (_releaseWorkflow.replaceFirst('  workflow_dispatch:', '  pull_request:'), 'runs on pull_request'),
+          (_releaseWorkflow.replaceFirst('  workflow_dispatch:', '  pull_request_target:'), 'pull_request_target'),
+          (_releaseWorkflow.replaceFirst('  workflow_dispatch:', '  workflow_run:'), 'runs on workflow_run'),
+          (_releaseWorkflow.replaceFirst("tags: ['desktop-v*']", "tags: ['desktop-v*', 'v*']"), 'the tags v*'),
+          (_releaseWorkflow.replaceFirst("tags: ['desktop-v*']", 'branches: [desktop]'), 'branches or paths'),
+          (_releaseWorkflow.replaceFirst("    tags: ['desktop-v*']\n", ''), 'push without a tag filter'),
+          (_releaseWorkflow.replaceFirst("tags: ['desktop-v*']", "tags:\n      - 'v*'"), 'the tags v*'),
+        ]) {
+          final run = release(workflow);
+          expect(run.exitCode, 1, reason: '$run');
+          expect(run.output, contains(message));
+        }
+      });
+
+      test('fails on any other write access, a secret, an unpinned action or a kept token', () {
+        expect(
+          release(_releaseWorkflow.replaceFirst('contents: write', 'contents: write\n      packages: write')).exitCode,
+          1,
+        );
+        expect(
+          release(
+            _releaseWorkflow.replaceFirst('permissions:\n      contents: write', 'permissions: write-all'),
+          ).exitCode,
+          1,
+        );
+        expect(release(_releaseWorkflow.replaceFirst('github.token', 'secrets.RELEASE_TOKEN')).exitCode, 1);
+        expect(release(_releaseWorkflow.replaceFirst(RegExp(r'checkout@\w+ # v7.0.1'), 'checkout@v7')).exitCode, 1);
+        expect(release(_releaseWorkflow.replaceFirst('persist-credentials: false', 'fetch-depth: 0')).exitCode, 1);
+        expect(release(_releaseWorkflow.replaceFirst('permissions: {}\n', '')).exitCode, 1);
+      });
+    });
   }, skip: skipCiScripts);
 
   // The gates on the repository itself, as the gates job runs them
@@ -633,6 +716,11 @@ abstract class SyncEvents {
 
     test('the desktop workflow is pinned and without secrets', () {
       final run = runCiScript('check_workflow.py', []);
+      expect(run.exitCode, 0, reason: '$run');
+    });
+
+    test('the release workflow is pinned and runs on desktop-v* tags only', () {
+      final run = runCiScript('check_workflow.py', ['--release']);
       expect(run.exitCode, 0, reason: '$run');
     });
 

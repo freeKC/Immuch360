@@ -28,7 +28,7 @@ From build 19 the DLNA client, the phone share and the detection of Apple spatia
 
 On a computer (Immuch360 Desktop), the Logs page also has "Save logs to a file": the log, or a ZIP of the log and the reports of the last crashes when there are some (its suggested name then ends with "with-crash-reports"). A crash report is a small minidump: the threads, where they stopped and only what is needed to follow their calls, with the names of the program files but not their folders; not the memory of the app.
 
-From desktop build 2 the video player of the computer writes there under `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` and `VideoThumbnailGrabber`, mpv's own warnings included, with tokens and passwords removed. From desktop build 3 it also writes the 360° player under `SphericalPlayer`, `SphereRenderer` and `PluginRenderer` (the size chosen, the frames per second measured, the graphics chip), the raw two lens videos under `RawTwoStreams`, the decoders of the graphics chip under `DesktopGpuDecoders`, `DesktopVideoDecoderApi` and `DecoderMeasure`, and the Tapo live view under `DesktopCameraLive`, whose lines never hold the camera account nor its password. Check the log before sharing it: it can contain your server address.
+From desktop build 2 the video player of the computer writes there under `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` and `VideoThumbnailGrabber`, mpv's own warnings included, with tokens and passwords removed. From desktop build 3 it also writes the 360° player under `SphericalPlayer`, `SphereRenderer` and `PluginRenderer` (the size chosen, the frames per second measured, the graphics chip), the raw two lens videos under `RawTwoStreams`, the decoders of the graphics chip under `DesktopGpuDecoders`, `DesktopVideoDecoderApi` and `DecoderMeasure`, and the Tapo live view under `DesktopCameraLive`, whose lines never hold the camera account nor its password. From desktop build 5 a raw video with one lens per track or per file plays in two players: `RawTwoStreams` says which way was chosen ("Two streams of 3840x3840: paired" for two players), `RawPartnerPlayer` why the second player stopped when it does, and `SphericalPlayer`, a few seconds in, how the two players drew ("Two players over the measure: two players: N paired, M alone, ... its delay X ms, its speed Y": most frames paired and a delay of a few milliseconds when all is well), then the frames per second of the view ("Renderer probe at full: ProbeSample(25.0 of 25.0 fps ...)"). Check the log before sharing it: it can contain your server address.
 
 ## A video stutters, or plays a blurry copy
 
@@ -71,6 +71,14 @@ When the server ignores HTTP Range requests on the original and the MP4 index (m
 
 **The first start of a new build is slow**: from 10 seconds to about a minute before the window shows, most likely while Microsoft Defender scans the new files, which are not signed yet. Wait for the window rather than starting the app again; the next starts take a second or two.
 
+### A file opened with the program does not show
+
+- **On the first start**, before you sign in or choose "Use without a server", the file waits, and opens once you have.
+- **"No assets to show"**: the file is no photo or video the app reads, see [Formats and sources](compatibility.md#formats-and-sources-by-platform).
+- **A folder shows fewer files than File Explorer**: it shows its own photos and videos, not those of its subfolders, at most 5000, and leaves out the files OneDrive keeps online only. To see all of it, add it in Settings, This computer.
+- **A 360° file shows flat**: its file declares no projection the app knows. "View as 360°" in the ⋮ menu views it as 360°, see [A 360° file that shows flat](user-guide.md#a-360-file-that-shows-flat-view-as-360).
+- **What was opened**: the lines of "OpenFiles" on the Logs page say how many files were read and how many are 360°, see [Logs](#logs).
+
 ### A 360° or 8K video is slow on a laptop
 
 **8K HEVC videos need a dedicated graphics chip, and 360° videos run better on one**: on the test laptop, the integrated Intel UHD chip showed about half the frames of an 8K HEVC video, while the dedicated NVIDIA chip played 8K HEVC and 5.7K H.264 with no dropped frame; the 360° player is smooth on the NVIDIA chip and slower on the Intel one, see [360° videos and the graphics chip](user-guide.md#360-videos-and-the-graphics-chip). Windows runs the app on the integrated chip unless told otherwise: in the Windows settings, System, Display, Graphics, add `immuch360.exe` and choose "High performance", then start the app again. On the integrated chip, a flat 5.7K H.264 video, which its decoder refuses, is decoded by the processor without a lost frame.
@@ -103,7 +111,9 @@ Each wrong password counts, and after a few the camera locks for a while. The ap
 - **"The Plex server refused this token."**, or "Paste a new token" on the folder page: get a new token as [Add a Plex server](user-guide.md#add-a-plex-server) says.
 - **"Your Plex server cannot be reached from outside your home network."**: turn on Remote Access with a port forwarding in Plex, or type the public address of the server. See [Away from home](user-guide.md#away-from-home).
 - **"This address answers without a Plex certificate."**: claim the server in Plex, or add it as an SMB, WebDAV or DLNA share. See [Plex Media Server](user-guide.md#plex-media-server-without-plextv).
-- **"Windows protected your PC"**: the files are not signed yet; choose "More info", then "Run anyway". See [Download and install on Windows](platform-support.md#download-and-install-on-windows).
+- **"Windows protected your PC"**: the files and the installer are not signed yet; choose "More info", then "Run anyway". See [Install it on a computer](user-guide.md#windows).
+- **"Immuch360 Desktop" cannot be opened, or Apple cannot check it** (macOS): the app is not signed with an Apple Developer ID nor notarized yet; Control click it and choose Open (macOS 14 and earlier), or choose "Open Anyway" in System Settings, Privacy & Security (macOS 15 and later). See [macOS](user-guide.md#macos).
+- **SMB shares do not open on Ubuntu 22.04 or Debian 12** (Linux): the SMB library of the app needs glibc 2.38, which those systems do not have. See [Linux](user-guide.md#linux).
 - **The picture does not face you in the headset**: turn it with the right thumbstick or the Turn button, and post the angle shown in an issue with your camera model. See [If the picture does not face you](user-guide.md#if-the-picture-does-not-face-you).
 
-Last updated: 12 October 2026 (build 23, desktop build 4)
+Last updated: 13 October 2026 (build 23, desktop build 4, the packages of desktop build 5)

@@ -331,7 +331,7 @@ void main() {
       final plan = await _resolver(_Calibrations(dji: _osmo360())).resolve(
         kind: RawMediaKind.djiVideo,
         input: _input(
-          'CAM_20250715191201_0003_D.OSV',
+          'CAM_20250101120000_0001_D.OSV',
           probe: _probe([
             _video(0, codecs: 'hvc1.2.4.H156', bitDepth: 10),
             _video(1, codecs: 'hvc1.2.4.H156', bitDepth: 10),

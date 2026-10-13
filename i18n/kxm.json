@@ -309,5 +309,10 @@
   "video_source_title": "แหล่งวิดีโอ",
   "video_source_transcoded": "สตรีมที่แปลงรหัสแล้วทุกเทื่อ",
   "view_as_360": "ดูเป็น 360°",
-  "view_as_360_remove": "เลิกถือเป็น 360°"
+  "view_as_360_remove": "เลิกถือเป็น 360°",
+  "welcome_server_title": "เชื่อมต่อกับเซิร์ฟเวอร์ Immich",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex หรือกล้อง Tapo",
+  "welcome_shares_title": "เพิ่มแชร์บนเครือข่ายหรือเซิร์ฟเวอร์สื่อ",
+  "welcome_tagline": "สื่อของเจ้า. จอใดก็ได้. ทุกมุมมอง.",
+  "welcome_without_server_description": "รูปภาพแล้วก็วิดีโอของเครื่องนี้ เพิ่มแชร์แล้วก็เซิร์ฟเวอร์สื่อทีหลังได้"
 }

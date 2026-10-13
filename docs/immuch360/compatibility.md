@@ -69,7 +69,7 @@ Immuch360 is a gallery, and it is also a free media player: it plays what the of
   - iPhone, iPad: a custom AVFoundation compositor with Metal.
   - Meta Quest: immersive, same two decoders and compositor (3840x1920 panel).
   - Android TV, Google TV: as on phones, when the TV runs two decoders at once.
-  - Windows (from desktop build 3): both lenses side by side in one player, then stitched, when the computer keeps up (measured on its own playback; on the test laptop, an X3 pair on its dedicated chip only); otherwise the phones' steps: one lens, the transcoded stream, the camera's low resolution LRV copy, the video unstitched.
+  - Windows (from desktop build 3): from desktop build 5, two players, one per lens, decoded by the graphics chip (a DJI Osmo 360 file at 25 frames a second on the dedicated chip of the test laptop); then both lenses side by side in one player when the computer keeps up (measured on its own playback; on the test laptop, an X3 pair on its dedicated chip only), the only way for a GoPro .360; otherwise the phones' steps: one lens, the transcoded stream, the camera's low resolution LRV copy, the video unstitched.
 - **Tapo camera live view (from build 20)**
   - Android phones: Media3 RTSP player: SD on the page, HD in full screen, sound button.
   - iPhone, iPad: not yet: a card says it comes later.
@@ -87,7 +87,7 @@ The Android TV and Google TV entries, from build 20, were tried in part on the G
 On Windows, the Immuch360 Desktop preview shows the photos, flat and 360°, raw Insta360 .insp photos included, with the mouse and the keyboard. From desktop build 2 it plays flat videos, from the server, the folders of the PC, the shares, Plex and the Tapo recordings, and from desktop build 3 it plays 360°, 3D, VR180 and raw 360° videos from the same sources in its own 360° player, and the Tapo live view. The 360° player is smooth on a dedicated graphics chip and has limits on an integrated one (see [On a Windows computer](user-guide.md#on-a-windows-computer-immuch360-desktop-preview)).
 
 - **Your Immich server**: the original or the server's transcoded stream, as Settings, Asset Viewer, Video source says (see [Video details and decoders](user-guide.md#video-details-decoders-and-why-a-video-stutters)). Same account as the web app.
-- **The phone or headset itself**: "Use without a server" on the login page, or the On this device entry of the Library tab.
+- **The phone or headset itself**: "Use without a server" on the welcome page (on the login page up to build 23), or the On this device entry of the Library tab.
 - **A NAS or a computer**: SMB and WebDAV shares, and from build 19 DLNA media servers, found on the network, read live (an SMB video over up to six connections), nothing copied; from build 15 the files you pick can be sent to your Immich account.
 - **Another phone (from build 19)**: "Share this phone on the network" on that phone: the headset, or any WebDAV client of the network, reads its albums, months and 360° media.
 - **A Plex Media Server (from build 20)**: its photo, movie and TV show libraries by folder, the original files read live over HTTPS checked against the server's own certificate, at home or through the address outside home, on every platform; see [Plex Media Server, without plex.tv](user-guide.md#plex-media-server-without-plextv).
@@ -150,7 +150,7 @@ On Windows, the Immuch360 Desktop preview shows the photos, flat and 360°, raw 
 - **Android TV and Google TV**: checked by automated tests, and on the Google TV emulator in builds 21 and 22 (login, timeline, albums, a flat photo, a video, the 360° sphere viewer and video player, the 360° list, an SMB share, the add menu, the share form, Settings and the remote navigation, but not the Plex and Tapo pages); of the TV fixes of build 23, only the bottom margin of the Photos tab was seen on the emulator; not yet checked on a real TV.
 - **The same app on a Windows computer**: desktop build 3 passed 855 of its 863 automated desktop tests on Windows (8 skipped by design) and the whole test suite of the app; on a Windows 11 PC it started, opened a saved session on an Immich server, synced, played a video and closed cleanly, and its 360° player was run with synthetic 4K, 5.7K and 8K clips on both graphics chips of a laptop with no crash. Desktop build 4 is covered by the project's CI (the desktop tests on Windows and the whole test suite of the app), and was started, played a 1080p video and closed cleanly by hand. The test of each function by hand, with real 360° files and a real Tapo camera, is in progress.
 - **Raw Insta360 .insp photos and single track .insv videos**: photos checked against Insta360 Studio exports of X3 files, videos on an Android emulator with a low resolution X3 file; not run on an iPhone yet.
-- **Raw videos with one lens per track or per file**: parsers and stitching checked on real X4, X3 pair, GoPro MAX and Osmo 360 files; playback is the device test of builds 18 and 19.
+- **Raw videos with one lens per track or per file**: parsers and stitching checked on real X4, X3 pair, GoPro MAX and Osmo 360 files; playback is the device test of builds 18 and 19. A real Osmo 360 file was played on Windows in two players (the NVIDIA chip of the test laptop, 25 frames a second, no frame dropped; not in 360° on the Intel chip, the PC being short of memory) and, on an Android 15 emulator, was listed from a WebDAV share but could not play, the emulator having no 10 bit HEVC decoder.
 - **Dual fisheye .dng**: planned.
 - **Server videos and the video decoders**: tested on an Android emulator; the Quest 3 H.264 limit was measured on the headset.
 - **Technical details of a video**: done.
@@ -194,7 +194,7 @@ What each function was checked on, gathered in one place from the sections of th
 | Meta Quest 3 | The immersive view (the controls of build 14, adjusted in build 16 after a user's feedback); 3D 360° photos and videos with the same samples; the mode without a server; an SMB share of a Freebox Server; the H.264 limit of its decoder, measured on the headset (about 4096x2304); Insta360 X4 8K HEVC videos, played by a user; the headset captures |
 | Android emulator | VR180 with synthetic media; the mode without a server; Samba and WebDAV test servers; the files of a Samba share sent to an Immich 3.2 server; the server videos and the video decoders; a single track raw video (a low resolution X3 file); the phone captures |
 | Google TV emulator | Builds 21 and 22: the login, the timeline, the albums, a flat photo, a video, the 360° sphere viewer and the 360° video player, the 360° list, an SMB share, the add menu with its network share, Plex and camera choices, the share form, Settings and the remote navigation fixes, but not the Plex and Tapo pages themselves; build 23: the bottom margin of the Photos tab, its other TV fixes being covered by automated tests; the TV captures |
-| Windows 11 laptop with an Intel UHD chip and an NVIDIA RTX 4060 Laptop | Desktop build 3 passed 855 of its 863 automated desktop tests (8 skipped by design) and the whole test suite of the app, and started, opened a saved session on an Immich server, synced, played a video and closed cleanly; desktop build 4, whose tests run in the project's CI, was started, played a 1080p video and closed cleanly by hand; the 360° player with synthetic 4K, 5.7K and 8K clips on both graphics chips; raw two lens videos from synthetic clips and real X3 and X4 files; the measurements of [the desktop 360° video renderer](desktop-360-video-renderer.md); the Windows captures |
+| Windows 11 laptop with an Intel UHD chip and an NVIDIA RTX 4060 Laptop | Desktop build 3 passed 855 of its 863 automated desktop tests (8 skipped by design) and the whole test suite of the app, and started, opened a saved session on an Immich server, synced, played a video and closed cleanly; desktop build 4, whose tests run in the project's CI, was started, played a 1080p video and closed cleanly by hand; the 360° player with synthetic 4K, 5.7K and 8K clips on both graphics chips; raw two lens videos from synthetic clips and real X3 and X4 files; the measurements of [the desktop 360° video renderer](desktop-360-video-renderer.md); the Windows captures; with CI builds of 13 October 2026 and CC0 media, files opened from the command line (before a session and with a saved one), by second starts and by drops sent to the window by a test script (360° photos and a 360° video opened in their 360° view, a flat photo and "View as 360°" on it, folders and files of two folders on the page of opened files, several starts at once with a file each on one page) |
 | A computer, with unit and end to end tests | The phone share with the headset's own WebDAV client and media bridge; the detection of Apple spatial photos, on a sample written by Apple's image library and on synthetic files, and their 3D composition; the two track and two file raw stitching, with the app's CPU reference stitcher on real X4, X3 pair, GoPro MAX and Osmo 360 files; raw photos against Insta360 Studio exports of X3 files |
 
 ### Servers and sources
@@ -287,7 +287,8 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 - Horizon: a video is levelled once, from the start of the recording, and not stabilised; GoPro and DJI files are not levelled: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
 - Files without their calibration block use the calibration of the same camera or model, or the nominal X3 values: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
 - Playback on a phone, a Quest and an iPhone is still the device test of builds 18 and 19: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
-- The Immich server refuses .360 and .osv uploads, so those files only exist on the device and on shares: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
+- The Immich server refuses .360 and .osv uploads, so those files only exist on shares and on computers: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
+- Raw files copied to an Android device are not in its gallery: Android files them as other files, not as photos or videos: [Watch a raw file](user-guide.md#watch-a-raw-file).
 - A device that cannot run two decoders plays one lens, the transcoded stream or the unstitched video: [Raw 360° camera files](user-guide.md#when-the-device-cannot-play-both-lenses).
 - No progress indicator yet while a raw photo is prepared for the headset: [Raw 360° camera files](user-guide.md#watch-a-raw-file).
 
@@ -319,7 +320,7 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 - No audio track choice in the immersive view: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
 - HEVC is the safe codec; H.264 stops around 4096x2304: [Limitations on the headset](platform-support.md#limitations-on-the-headset).
 - The headset build reaches plain HTTP only at names of the home network and the headset itself: [Meta Quest](platform-support.md#meta-quest).
-- The store version starts at build 14, and build 21, its first update, is in Meta's review: [Limitations on the headset](platform-support.md#limitations-on-the-headset).
+- The store version starts at build 14, and build 21, its first update, was returned by Meta on 12 October 2026 for its screenshots; a corrected submission is being prepared: [Limitations on the headset](platform-support.md#limitations-on-the-headset).
 - No storage, audio, location or camera permission, so no Wi-Fi name based server switching: [Limitations on the headset](platform-support.md#limitations-on-the-headset).
 - The Spatial SDK adds about 56 MB of 64-bit ARM native code to every APK: [Limitations on the headset](platform-support.md#limitations-on-the-headset).
 - The immersive view uses the Meta Spatial SDK, under the Meta Platform Technologies SDK License Agreement: [Limitations on the headset](platform-support.md#limitations-on-the-headset).
@@ -343,18 +344,18 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 
 ### Windows
 
-- Two lens raw videos are stacked in one player only when the computer keeps up; on the test laptop, an X3 pair on its NVIDIA chip only: [Not there yet](user-guide.md#not-there-yet).
+- Two lens raw videos play in two players from desktop build 5 (checked on a dedicated chip with Osmo 360, X4 and X3 files), and stacked in one player only when the computer keeps up: [Not there yet](user-guide.md#not-there-yet).
 - 3D on the screen only, the left eye; no gyroscope and no headset view: [Not there yet](user-guide.md#not-there-yet).
 - No Spatial 2.5D, map, Places, OAuth sign in, Google Cast or notifications yet: [Not there yet](user-guide.md#not-there-yet).
-- No installer, no signed build and no automatic updates yet: [Not there yet](user-guide.md#not-there-yet).
+- No signed build and no automatic updates yet; the installer comes with desktop build 5: [Install it on a computer](user-guide.md#install-it-on-a-computer-windows-linux-and-macos).
 - The new texts of the computer version are in English for now: [Not there yet](user-guide.md#not-there-yet).
 - The first start of a new build is slow, 8K HEVC needs a dedicated graphics chip, videos are drawn at most 1440 lines high, flat or in the 360° player, and a file being played cannot be renamed, moved or deleted: [Known problems](user-guide.md#known-problems).
 - The libmpv workflow builds an arm64 archive too, but there is no Windows on ARM app yet: [Windows](platform-support.md#windows).
-- In desktop build 4, a 360° photo or video opened with the program ("Open with", the command line) shows flat, and "View as 360°" does not help yet: [Known issues](known-issues.md#windows).
+- A folder opened with the program or dropped on its window shows its own photos and videos, not those of its subfolders, at most 5000, without the files OneDrive keeps online only; files opened that way stay out of your folders (from desktop build 5): [Use it on a computer](user-guide.md#use-it-on-a-computer).
 - On an integrated graphics chip, the 360° view works on frames at most 2880 pixels wide: [360° videos and the graphics chip](user-guide.md#360-videos-and-the-graphics-chip).
 
 ### macOS and Linux
 
-- Built by the project's CI, not started on those systems yet, with no video player library and no download: [macOS and Linux](platform-support.md#macos-and-linux).
+- Packages from desktop build 5 (a .deb, an .rpm, a macOS app), built by the project's CI: on Linux the app starts and shows photos and 360° photos, without videos yet; the macOS app has only run on the CI's Mac, without videos and with its network access untried: [macOS and Linux](platform-support.md#macos-and-linux).
 
-Last updated: 12 October 2026 (build 23, desktop build 4)
+Last updated: 13 October 2026 (build 23, desktop build 4, the packages of desktop build 5)

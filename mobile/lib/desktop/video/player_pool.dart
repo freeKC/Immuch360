@@ -95,7 +95,7 @@ class PlayerPool {
     return result;
   }
 
-  Future<PlaybackEngine> _acquire(PlayerLease lease) => _serial(() async {
+  Future<PlaybackEngine> _acquire(PlayerLease lease, PlaybackEngine? sparing) => _serial(() async {
     if (_disposed || lease._closed) {
       throw StateError('The player pool or the lease is closed');
     }
@@ -110,8 +110,12 @@ class PlayerPool {
     }
 
     final kind = lease.kind;
-    // A page's player that does not play goes first (see the top of this file); the frame grabber has one player
-    final resting = kind == PlayerKind.playback ? _leastRecentlyUsed(lease, (engine) => !engine.playing.value) : null;
+    // A page's player that does not play goes first (see the top of this file); the frame grabber has one player.
+    // The player [sparing] names is never taken: the one the second player of a pair plays with.
+    bool spared(PlaybackEngine engine) => identical(engine, sparing);
+    final resting = kind == PlayerKind.playback
+        ? _leastRecentlyUsed(lease, (engine) => !spared(engine) && !engine.playing.value)
+        : null;
     if (resting != null) {
       return give(await _takeFrom(resting, lease));
     }
@@ -140,7 +144,7 @@ class PlayerPool {
       }
     }
     // Every player is taken: the one of the lease used longest ago changes hands
-    final victim = _leastRecentlyUsed(lease, (_) => true);
+    final victim = _leastRecentlyUsed(lease, (engine) => !spared(engine));
     if (victim == null) {
       throw StateError('No ${kind.name} player is free');
     }
@@ -269,11 +273,12 @@ class PlayerLease {
   bool get isClosed => _closed;
 
   /// The player of this lease: the one it holds, one of a lease that does not play, an idle one, a new one, or the one
-  /// of the lease used longest ago. Clears [isSuspended]: the owner reopens its video in it. Another lease may take it
-  /// before the owner uses it: the owner checks [engine] first.
-  Future<PlaybackEngine> acquire() {
+  /// of the lease used longest ago, never [sparing] (the player the second player of a pair plays with). Clears
+  /// [isSuspended]: the owner reopens its video in it. Another lease may take it before the owner uses it: the owner
+  /// checks [engine] first.
+  Future<PlaybackEngine> acquire({PlaybackEngine? sparing}) {
     touch();
-    return _pool._acquire(this);
+    return _pool._acquire(this, sparing);
   }
 
   /// Marks the lease as just used (a play, a seek), so that the pool takes another one's player first

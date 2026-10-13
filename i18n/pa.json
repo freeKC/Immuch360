@@ -337,5 +337,10 @@
   "video_source_title": "ਵੀਡੀਓ ਸਰੋਤ",
   "video_source_transcoded": "ਹਮੇਸ਼ਾ ਟ੍ਰਾਂਸਕੋਡ ਕੀਤੀ ਸਟ੍ਰੀਮ",
   "view_as_360": "360° ਵਜੋਂ ਵੇਖੋ",
-  "view_as_360_remove": "360° ਵਜੋਂ ਮੰਨਣਾ ਬੰਦ ਕਰੋ"
+  "view_as_360_remove": "360° ਵਜੋਂ ਮੰਨਣਾ ਬੰਦ ਕਰੋ",
+  "welcome_server_title": "Immich ਸਰਵਰ ਨਾਲ ਕਨੈਕਟ ਕਰੋ",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex ਜਾਂ ਇੱਕ Tapo ਕੈਮਰਾ",
+  "welcome_shares_title": "ਨੈੱਟਵਰਕ ਸ਼ੇਅਰ ਜਾਂ ਮੀਡੀਆ ਸਰਵਰ ਜੋੜੋ",
+  "welcome_tagline": "ਤੁਹਾਡਾ ਮੀਡੀਆ। ਕੋਈ ਵੀ ਸਕ੍ਰੀਨ। ਹਰ ਨਜ਼ਰੀਆ।",
+  "welcome_without_server_description": "ਇਸ ਡਿਵਾਈਸ ਦੀਆਂ ਫ਼ੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ। ਸ਼ੇਅਰ ਅਤੇ ਮੀਡੀਆ ਸਰਵਰ ਬਾਅਦ ਵਿੱਚ ਜੋੜੋ।"
 }

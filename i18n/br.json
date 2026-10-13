@@ -309,5 +309,10 @@
   "video_source_title": "Mammenn ar video",
   "video_source_transcoded": "Atav ar red treuzkodet",
   "view_as_360": "Gwelet evel 360°",
-  "view_as_360_remove": "Paouez da dretiñ evel 360°"
+  "view_as_360_remove": "Paouez da dretiñ evel 360°",
+  "welcome_server_title": "Kevreañ ouzh ur servijer Immich",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex pe ur c'hamera Tapo",
+  "welcome_shares_title": "Ouzhpennañ ur rannadenn rouedad pe ur servijer media",
+  "welcome_tagline": "Ho restroù. Pep skramm. Pep gwel.",
+  "welcome_without_server_description": "Luc'hskeudennoù ha videoioù an trobarzhell-mañ. Ouzhpennit rannadennoù ha servijerioù media diwezhatoc'h."
 }

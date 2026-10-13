@@ -7,6 +7,7 @@
 // LICENSE file.
 #include "angle_surface_manager.h"
 
+#include <algorithm>
 #include <iostream>
 
 #pragma comment(lib, "dxgi.lib")
@@ -23,11 +24,21 @@
   }
 
 int ANGLESurfaceManager::instance_count_ = 0;
+std::mutex ANGLESurfaceManager::share_mutex_;
+std::vector<ANGLESurfaceManager*> ANGLESurfaceManager::share_members_;
+int64_t ANGLESurfaceManager::last_share_group_ = 0;
 
 ANGLESurfaceManager::ANGLESurfaceManager(int32_t width, int32_t height)
     : width_(width), height_(height) {
   mutex_ = ::CreateMutex(NULL, FALSE, NULL);
-  Create();
+  try {
+    Create();
+  } catch (...) {
+    // Immuch360: the destructor will not run, so no later context may join
+    // the share group through this one (patch 7)
+    LeaveShareGroup();
+    throw;
+  }
   instance_count_++;
 }
 
@@ -164,6 +175,17 @@ bool ANGLESurfaceManager::IsDeviceLost() const {
          d3d_11_device_->GetDeviceRemovedReason() != S_OK;
 }
 
+void ANGLESurfaceManager::MakeContextCurrent() {
+  eglMakeCurrent(display_, EGL_NO_SURFACE, EGL_NO_SURFACE, context_);
+}
+
+void ANGLESurfaceManager::LeaveShareGroup() {
+  std::lock_guard<std::mutex> lock(share_mutex_);
+  share_members_.erase(
+      std::remove(share_members_.begin(), share_members_.end(), this),
+      share_members_.end());
+}
+
 void ANGLESurfaceManager::MakeCurrent(bool value) {
   if (value) {
     eglMakeCurrent(display_, surface_, surface_, context_);
@@ -209,6 +231,8 @@ void ANGLESurfaceManager::CleanUp(bool release_context) {
     if (display_ != EGL_NO_DISPLAY && surface_ != EGL_NO_SURFACE) {
       eglReleaseTexImage(display_, surface_, EGL_BACK_BUFFER);
     }
+    // Immuch360: no later context joins the group through this one (patch 7)
+    LeaveShareGroup();
     if (display_ != EGL_NO_DISPLAY && context_ != EGL_NO_CONTEXT) {
       eglDestroyContext(display_, context_);
       context_ = EGL_NO_CONTEXT;
@@ -419,13 +443,42 @@ bool ANGLESurfaceManager::CreateContext(int32_t client_version) {
     config_ = nullptr;
     return false;
   }
-  context_ = eglCreateContext(
-      display_, config_, EGL_NO_CONTEXT,
-      es3 ? kEGLContextAttributesES3 : kEGLContextAttributes);
+  const auto* attributes =
+      es3 ? kEGLContextAttributesES3 : kEGLContextAttributes;
+  // Immuch360: in the share group of a context of this display and version
+  // that still exists, so that the players can read each other's frames
+  // (patch 7). One that cannot join it gets a group of its own.
+  EGLContext share = EGL_NO_CONTEXT;
+  int64_t group = 0;
+  {
+    std::lock_guard<std::mutex> lock(share_mutex_);
+    for (auto* member : share_members_) {
+      if (member != this && member->display_ == display_ &&
+          member->client_version_ == client_version &&
+          member->context_ != EGL_NO_CONTEXT) {
+        share = member->context_;
+        group = member->share_group_;
+        break;
+      }
+    }
+  }
+  context_ = eglCreateContext(display_, config_, share, attributes);
+  if (context_ == EGL_NO_CONTEXT && share != EGL_NO_CONTEXT) {
+    std::cout << "media_kit: ANGLESurfaceManager: a context of its own, "
+                 "the share group refused it (0x"
+              << std::hex << eglGetError() << std::dec << ")" << std::endl;
+    share = EGL_NO_CONTEXT;
+    context_ = eglCreateContext(display_, config_, EGL_NO_CONTEXT, attributes);
+  }
   if (context_ == EGL_NO_CONTEXT) {
     config_ = nullptr;
     return false;
   }
   client_version_ = client_version;
+  {
+    std::lock_guard<std::mutex> lock(share_mutex_);
+    share_group_ = share != EGL_NO_CONTEXT ? group : ++last_share_group_;
+    share_members_.push_back(this);
+  }
   return true;
 }

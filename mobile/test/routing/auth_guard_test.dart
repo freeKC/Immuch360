@@ -51,7 +51,7 @@ void main() {
   });
 
   /// Pumps a router whose tab shell is behind the guard, then opens the tab shell
-  Future<void> openTabShell(WidgetTester tester) async {
+  Future<StackRouter> openTabShell(WidgetTester tester) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -68,6 +68,10 @@ void main() {
           path: '/login',
           page: PageInfo(LoginRoute.name, builder: (_) => const Text('login')),
         ),
+        AutoRoute(
+          path: '/welcome',
+          page: PageInfo(WelcomeRoute.name, builder: (_) => const Text('welcome')),
+        ),
       ],
     );
 
@@ -78,13 +82,15 @@ void main() {
     // The push completes when the route is popped, which never happens here
     unawaited(router.push(const TabShellRoute()));
     await tester.pumpAndSettle();
+    return router;
   }
 
-  testWidgets('sends to the login page without a token', (tester) async {
-    await openTabShell(tester);
+  testWidgets('sends to the welcome page without a token', (tester) async {
+    final router = await openTabShell(tester);
 
-    expect(find.text('login'), findsOneWidget);
+    expect(find.text('welcome'), findsOneWidget);
     expect(find.text('tabs'), findsNothing);
+    expect(router.stack.map((page) => page.name), [WelcomeRoute.name]);
     verifyNever(() => authenticationApi.validateAccessToken());
   });
 
@@ -107,12 +113,29 @@ void main() {
     verify(() => authenticationApi.validateAccessToken()).called(1);
   });
 
-  testWidgets('a session without a server that has ended sends to the login page again', (tester) async {
+  testWidgets('a session without a server that has ended sends to the welcome page again', (tester) async {
     await StoreService.I.put(StoreKey.localSession, true);
     await StoreService.I.delete(StoreKey.localSession);
 
     await openTabShell(tester);
 
+    expect(find.text('welcome'), findsOneWidget);
+  });
+
+  testWidgets('a token the server refuses sends to its login form, above the welcome page', (tester) async {
+    await StoreService.I.put(StoreKey.accessToken, 'token');
+    // The answer of the server comes after the tab shell opened, as over a network
+    when(() => authenticationApi.validateAccessToken()).thenAnswer(
+      (_) => Future.delayed(const Duration(seconds: 2), () => ValidateAccessTokenResponseDto(authStatus: false)),
+    );
+
+    final router = await openTabShell(tester);
+    expect(find.text('tabs'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pumpAndSettle();
+
     expect(find.text('login'), findsOneWidget);
+    expect(router.stack.map((page) => page.name), [WelcomeRoute.name, LoginRoute.name]);
+    verify(() => authService.clearLocalData()).called(1);
   });
 }

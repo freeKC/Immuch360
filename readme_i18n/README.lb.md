@@ -11,7 +11,7 @@ Immuch360 ass eng gratis App mat oppenem Quellcode, fir deng Fotoen a Videoen ze
 
 - **Wat mécht d'App?** Si weist deng Fotoen a Videoen als Galerie a spillt se am Viewer of, deen zu all Fichier passt: flaach, als Kugel an där s du ronderëm kuckst, a 3D, an engem Headset.
 - **Wéi eng Medien?** Flaach Fotoen a Videoen, Panoramen, 360°-Fotoen a Videoen, VR180, stereoskopesch 3D, Apple-Raumfotoen an d'rau Dateien vu 360°-Kameraen (Insta360, GoPro MAX, DJI Osmo 360), déi vun der App zesummegesat ginn.
-- **Op wéi enge Geräter?** Android-Handys an -Tablets, iPhone an iPad, Android TV a Google TV, Meta Quest 2, Pro, 3 a 3S, Windows (Preview), a macOS a Linux sinn am Kommen.
+- **Op wéi enge Apparater?** Android-Handys an -Tablets, iPhone an iPad, Android TV a Google TV, Meta Quest 2, Pro, 3 a 3S, Windows (Preview), a Linux a macOS als fréi Previews.
 - **Brauch ech e Server oder e Kont?** Nee. Immuch360 funktionnéiert eleng mat de Medien vun dengem Apparat. En Immich-Server, en NAS, e Medieserver oder e Plex-Server sinn Optiounen, déi s du derbäisetz wann s du wëlls.
 
 <p align="center">
@@ -26,8 +26,8 @@ Immuch360 ass eng gratis App mat oppenem Quellcode, fir deng Fotoen a Videoen ze
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone an iPad** | App Store | Versioun 3.3.0 waart op Apple säi Review; [bau se dir selwer](../docs/immuch360/build.md) bis dann |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV a Google TV** | [APK](#android-tv-and-google-tv) · Google Play | Build 23 op GitHub; den TV-Entrée ass bei Google am Review |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 a 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | op dem Horizon Store (Build 14; Build 21 am Review), Build 23 op GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Preview-ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Desktop-Build 4, eng Preview: Fotoen, flaach a 360°-Videoen, Freigaben, Plex, Kameraen |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS a Linux** | Quellcode | vun der CI vum Projet gebaut, op dëse Systemer nach net ugefaang, nach kee Download |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer oder ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | Desktop-Build 5, e Preview: Fotoen, flaach a 360°-Videoen, Freigaben, Plex, Kameraen, Dateien opgemaach mat der App |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS a Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | fréi Previews: op Linux Fotoen a 360°-Fotoen, nach keng Videoen; macOS ass nëmme op der CI vum Projet ugefaang |
 
 *D'Statusen ginn bei all Verëffentlechung aktualiséiert; d'Detailer, Build fir Build, stinn am [Verëffentlechungsstatus](../docs/immuch360/release-status.md).*
 
@@ -97,11 +97,11 @@ Méi: [360°-Fotoen a Videoen](../docs/immuch360/user-guide.md#360-photos-and-vi
 <a id="use-your-own-files-without-an-account"></a>
 ### Deng eegen Dateien benotzen, ouni Kont
 
-Immuch360 brauch wäder e Kont nach e Server. Op der Login-Säit mécht „Ouni Server benotzen“ d'App mat de Fotoen a Videoen vum Apparat op, mat all Viewer, der 360°-Lëscht an den Netzwierkquellen. Näischt verléisst den Apparat. En Server kann méi spéit an den Astellungen verbonne ginn, a dann erschéngen d'Serverfunktiounen.
+Immuch360 brauch weder e Kont nach en Server. Zënter dem Build 24 geet d'App op enger Wëllkommssäit op, wou "Ouni Server benotzen" als éischt kënnt: si mécht d'App op mat de Fotoen a Videoen vum Apparat, mat all Viewer, der 360°-Lëscht an den Netzwierkquellen. Näischt verléisst den Apparat. En Server kann méi spéit verbonnen ginn, vun den Astellungen oder vum Tab Bibliothéik, an d'Serverfunktiounen erschéngen dann.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="D'Bibliothéik ouni Server: den 360°-Element uewen, dann On this device mat zwou 360°-Fotoen, an Netzwierkfreeginn mat enger Freeginn mam Numm NAS">
 
-1. Maacht d'App op. Op der Umeldungssäit, ënner der Serveradress an de Settings, tippt op "Ouni Server benotzen".
+1. Mach d'App op. D'Wëllkommssäit weist "Deng Medien. All Bildschierm. All Bléckwinkel." a dräi Méiglechkeeten: tipp op déi éischt, "Ouni Server benotzen". Bis zum Build 23 ass d'Login-Säit fir d'éischt komm, mat "Ouni Server benotzen" ënner dem Formulaire.
 2. Erlaabt den Zougrëff op Är Fotoen a Videoen. Wann Dir refuséiert, seet d'App "D'App gesäit d'Fotoen vun dësem Apparat net", mat "Zougrëff erlaben" an "Astellungen opmaachen".
 3. Den Tab Photos (Fotoen) weist d'Timeline vum Apparat. Search (Sichen) an Albums (Alben) bleiwe gro, well se vum Server kommen. Den Tab Bibliothéik huet uewen 360°, dann On this device (Op dësem Apparat, d'Alben vum Apparat) an Netzwierkfreeginn.
 4. D'Menü uewe riets seet "Nëmmen dësen Apparat": d'App weist d'Fotoen a Videoe vun dësem Apparat, näischt gëtt iergendwouhi geschéckt.
@@ -120,7 +120,7 @@ Deng Videoen leien op engem NAS, engem Computer oder engem Medieserver. Immuch36
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="En Dossier vun enger Netzwierkfreeginn als Gitter vu Miniaturbiller: 360°-Fotoe mam 360°-Badge an en 360°-Video mat engem Ofspillzeechen, de Knäppchen Auswielen uewe riets">
 </p>
 
-1. Mach den Tab Bibliothéik op, duerno Netzwierkfreigaben, duerno + a „Eng Netzwierkfreigab (NAS, Computer, Medieserver)“.
+1. Mach den Tab Bibliothéik op, duerno Netzwierkfreigaben, duerno + a "Eng Netzwierkfreigab (NAS, Computer, Medieserver)". Zënter dem Build 24 mécht "Eng Netzwierkfreigab oder e Medieserver derbäisetzen" op der Wëllkommssäit d'Netzwierkfreigaben direkt op, ouni Server.
 2. Tipp op e Server ënner „Am Netzwierk fonnt“, oder fëll d'Formulaire vun Hand aus: Typ, Servernumm oder -adress, Freigab oder Wee, Startdossier, Benotzernumm a Passwuert.
 3. Tipp op „Verbindung testen“, duerno Späicheren. Tipp op d'Freigab fir se duerchzegoen: fir d'éischt d'Dossieren, duerno d'Fotoen a Videoen, mam 360°-Badge op den Dateien, déi als 360° erkannt ginn.
 4. Mat engem verbonnenen Immich-Server wiel Dateien an engem Dossier aus an tipp op „Op Immich eroplueden“ fir se op denge Server ze schécken.
@@ -134,7 +134,7 @@ Méi: [Netzwierkfreigaben](../docs/immuch360/user-guide.md#network-shares-a-nas-
 
 Mat engem [Immich](https://github.com/immich-app/immich)-Server ass Immuch360 d'Immich-Handy-App, mam selwechte Server an dem selwechten Kont wéi d'Web-App: Backup, Zäitstral, Albumen, Sich, Leit, Erënnerungen, Deelen, Partner, alles synchroniséiert mat dengem Server. Si installéiert sech niewent der offizieller App. Dobäi: den 360°-Badge an d'Lëscht, all immersiven Viewer, d'Wiel tëscht der Original-Datei an dem transcodéierten Stream vum Server fir all Video, d'technesch Detailer vun enger Video, an d'Dateien vun enger Freigab oder vum Apparat, déi s du vun Hand op denge Server geschéckt hues.
 
-1. Login dech mat denger Serveradress, dengem E-Mail a dengem Passwuert, wéi an der Immich-App. Deng Bibliothéik, deng Albumen an deng Backup-Astellungen sinn déi vun dengem Kont.
+1. Op der Wëllkommssäit, tipp op "Mat engem Immich-Server verbannen", da mell dech mat denger Server-Adress, denger E-Mail an dengem Passwuert un, wéi an der Immich-App; Zréck bréngt dech op d'Wëllkommssäit zréck. Bis zum Build 23 geet d'Login-Säit direkt op. Deng Bibliothéik, Albumen a Backup-Astellungen si vun dengem Kont.
 2. An den Astellungen, Mediaviewer, Videoen, wielt „Videoquell“ d'Original wann dëse Apparat et decodéiere kann, ëmmer d'Original, oder ëmmer den transcodéierten Stream.
 3. Fir enger Persoun, déi d'App net huet, eng 360°-Foto ze weisen, deel se mat engem Immich-Share-Link: d'Immich-Web-App weist se als Kugel an hirem Browser.
 
@@ -154,7 +154,7 @@ Op engem Meta Quest leeft déiselwecht App als Fënster mat denger ganzer Biblio
 </p>
 
 1. Installéier d'App vum [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), oder lued d'APK vun engem méi neie Build vun Hand, kuck [Installéieren](#meta-quest).
-2. Meld Iech mat Ärem Immich-Server un, oder tippt op "Ouni Server benotzen" fir déi eege Fotoen a Videoe vum Headset.
+2. Op der Wëllkommssäit, tipp op "Ouni Server benotzen" fir déi eegen Fotoen a Videoen vum Headset, oder "Mat engem Immich-Server verbannen" fir dech mat dengem Server unzemellen.
 3. Mach eng 360°-Foto oder -Video op an dréck op 360°: d'immersiv Usiicht geet op. B oder Y, oder den Zréck-Knäppchen vum Info-Panel, bréngt d'Fënster zréck.
 
 Méi: [am Meta Quest-Headset](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [den Headset: Codecs, Store a Permissiounen](../docs/immuch360/platform-support.md#meta-quest).
@@ -169,8 +169,8 @@ Déiselwecht Android-App leeft op Android TV a Google TV, mat der Fernsteierung 
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Den Videoplayer vun Immuch360 Desktop op Windows: eng Video vun enger Strooss, déi an der Fënster leeft, mam Paus-Knäppchen, der Zäitlinn, Deelen an Op Immich eroplueden">
 </p>
 
-1. Op engem Fernseh: installéier d'APK mat adb (kuck [Installéieren](#android-tv-and-google-tv)), login dech oder wiel „Ouni Server benotzen“, füg eng Freigab, en Plex-Server oder eng Kamera vun der Bibliothéik derbäi.
-2. Op engem Windows-Computer: entpack d'Preview a start `immuch360.exe` (kuck [Installéieren](#windows)), wiel duerno d'Dossieren vun denge Fotoen a Videoen aus, oder login dech bei dengem Server.
+1. Op engem Fernseh: installéier d'APK mat adb (kuck [Installéieren](#android-tv-and-google-tv)); op der Wëllkommssäit, wiel "Eng Netzwierkfreigab oder e Medieserver derbäisetzen" fir eng Freigab, en Plex-Server oder eng Kamera, "Ouni Server benotzen", oder "Mat engem Immich-Server verbannen" aus.
+2. Op engem Windows-Computer: installéier de Preview oder entpak en an start `immuch360.exe` (kuck [Installéieren](#windows)); zënter dem Desktop-Build 5 mécht "Ouni Server benotzen" op der Wëllkommssäit d'Wiel vun denge Dossieren op, an "Mat engem Immich-Server verbannen" d'Login-Säit. E Foto, eng Video oder en Dossier, deen mat der App opgemaach oder op d'Fënster vun der App gezunn gëtt, geet direkt op, eng 360° an hirer 360°-Usiicht; e puer Dateien ginn zesumme op enger Säit opgemaach.
 3. An engem Viewer funktionnéieren d'Knäppercher Ofspillen a Paus, Réckspullen, Virspullen, Zréck a Weider vun der Fernsteierung, a genausou och d'Tastaturknäppercher op engem Computer (Leertast, J a L, F fir Vollbild).
 
 Méi: [op dengem Fernseh kucken](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [op engem Windows-Computer](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [Plattformënnerstëtzung](../docs/immuch360/platform-support.md).
@@ -180,7 +180,7 @@ Méi: [op dengem Fernseh kucken](../docs/immuch360/user-guide.md#watch-on-your-t
 
 - **Tapo-Kameraen**: eng Kamera gëtt niewent den Netzwierkfreigaben derbäigesat. D'App weist se live (Android, Android TV, Quest a Windows) an lëscht d'Opname vun hirer Memory-Card Dag fir Dag op all Plattform; e Clip gëtt vun der Kamera erofgeholl, leeft wéi all aner Video a kann un Immich geschéckt ginn. D'App schwätzt nëmmen mat der Kamera an denger Netzwierk, ni mat de Server vun TP-Link.
 - **Plex Media Server, ouni plex.tv**: d'App koppelt sech direkt mat dengem Server, mat engem Token, dee s du eemol aklepps, a liest d'Original-Dateien vun denge Bibliothéiken live, sou datt 360° 360° bleift, doheem a, duerch deng Port-Weiderleedung, ewech vun doheem.
-- **Rau 360°-Camera-Dateien**: déi rau .insp-Fotoen an .insv-Videoen vun Insta360-Kameraen (eng oder zwou Lënsen, an engem Track, zwee Tracks oder zwou Dateien), d'.360-Dateien vun der GoPro MAX an d'.osv-Dateien vun der DJI Osmo 360 ginn beim Ofspillen vun der App zesummegesat, mat der Kalibratioun, déi an der Datei geschriwwe steet, ouni iergendeppes iwwerall ze installéieren.
+- **Rau 360°-Kamera-Dateien**: d'rau .insp-Fotoen an .insv-Videoen vun Insta360-Kameraen (eng oder zwou Lënsen, an enger Spur, zwou Spuren oder zwou Dateien), d'.360-Dateien vum GoPro MAX an d'.osv-Dateien vum DJI Osmo 360 ginn beim Ofspillen vun der App zesummegesat, mat der Kalibréierung, déi an der Datei geschriwwe steet, a sou datt näischt iergendwou muss installéiert ginn. Op Android, spill se vun enger Freigab, engem Computer oder dengem Server of, well d'Galerie vum Handy keng rau Dateien weist; den Immich-Server akzeptéiert nëmmen .insp an .insv.
 
 Méi: [Tapo-Kameraen](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [rau 360°-Camera-Dateien](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
@@ -207,7 +207,7 @@ Eng eenzeg Codebasis, sechs Ëmfeld. Wat jiddereen haut huet:
 | Dëse Apparat am Netzwierk deelen | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
 | Op Immich eroplueden vu Freigaben a vum Apparat | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
 | Entrée | Touch, Gyroskop | Touch, Gyroskop | Fernsteierung | Controller, Hänn | Maus, Tastatur | |
-| Wou kritt een et | Google Play, APK | App Store (am Review) | APK, Google Play (am Review) | Horizon Store, APK | Preview-ZIP | nëmme CI-Builds |
+| Wou een et kritt | Google Play, APK | App Store (am Review) | APK, Google Play (am Review) | Horizon Store, APK | Installer oder ZIP (Preview) | .deb, .rpm, DMG (fréi Previews) |
 
 ✅ an der App op där Plattform · ❌ do net ugebueden · 🔜 geplangt · 🔧 am Quellcode a gebaut vun der CI vum Projet, op dësem System nach net ugefaang. „Ee Aa“ heescht, datt eng 3D-Datei hiert lénkt Aa op engem flaache Bildschierm weist. Net all ✅ gouf schonn op engem richtege Apparat getest: wat wou getest gouf, a wat nach ze confirméiere bleift, steet an de [Funktiounen](../docs/immuch360/features.md), der [Plattformënnerstëtzung](../docs/immuch360/platform-support.md) an der [Kompatibilitéit](../docs/immuch360/compatibility.md).
 
@@ -215,8 +215,8 @@ Eng eenzeg Codebasis, sechs Ëmfeld. Wat jiddereen haut huet:
 - **iPhone an iPad**: déi komplett App; den 360°-Videoplayer huet nëmme Ofspillen a Paus, de Tapo-Live-View kënnt méi spéit, an d'DLNA-Sich schéckt Unicast-Ufroen bis Apple d'Multicast-Entitlement gëtt.
 - **Android TV a Google TV**: déiselwecht APK, gesteiert vun der Fernsteierung; en Viewer: Backup, Upload an Editioun si verstoppt. Getest um Google-TV-Emulator (Login, Zäitstral, Viewers, Freigaben, Navigatioun mat der Fernsteierung), nach net op engem richtege Fernseh.
 - **Meta Quest 2, Pro, 3 a 3S**: d'App als Fënster, plus d'immersiv Usiicht; HEVC ass den séchere Codec, H.264 hält bei ongeféier 4096x2304 op dem Quest 3 op; de Quest 2 an den Quest Pro sinn nach net getest.
-- **Windows 10 an 11**: eng Preview, mat Dossieren un der Plaz vun enger Galerie, engem eegene Videoplayer (libmpv) fir flaach a 360°-Videoen, rau Dateien, déi op dem Grafikchip zesummegesat ginn, nach kee Installer.
-- **macOS a Linux**: d'Projete ginn op der CI vum Projet gebaut (Linux gebaut, macOS compiléiert); d'App huet op dëse Systemer nach net ugefaang, an hir Videoplayer-Bibliothéik ass nach net dran.
+- **Windows 10 an 11**: e Preview, mat Dossieren amplaz vun enger Galerie, engem eegene Videoplayer (libmpv) fir flaach a 360°-Videoen, rau Dateien, déi um Grafikchip zesummegesat ginn, Dateien a Dossieren, déi mat der App opgemaach oder op d'Fënster gezunn ginn, en Installer oder eng ZIP.
+- **macOS a Linux**: Packagen, déi vun der CI vum Projet gebaut ginn (.deb, .rpm, DMG); op Linux geet d'App op a weist Fotoen a 360°-Fotoen, nach keng Videoen, an SMB-Freigaben brauchen Ubuntu 24.04, Debian 13 oder Fedora 39 oder méi nei; d'macOS-App ass nëmme op der CI vum Projet gelaf, ouni Videoen a mat hirem Netzwierkzougang net probéiert.
 
 <a id="advanced-features"></a>
 ## Erweidert Funktiounen
@@ -226,11 +226,11 @@ Wat d'App liese a ofspille kann, fir de Lieser, deen déi ganz Breet wëll. All 
 - **Formater**: flaach Fotoen a Videoen (wat den Apparat decodéiere kann: MP4, MOV, MKV a méi); equirektangulär 360°-Fotoen a Videoen; deelweis Panoramen (GPano-Ausschnëtt); VR180; stereoskopesch 3D, uewen an ënnen oder nieftenee, aus der Datei gelies (d'st3d-Box) oder vum Bild geschat; Apple-Raumfotoen (HEIC-Stereopäre) a Raumvideoen (MV-HEVC, ee Aa); rau Insta360-.insp- a .insv-, GoPro-.360- a DJI-.osv-Dateien; 10-Bit-HLG- a PQ-Quellen, déi op der Kugel tongemappt ginn.
 - **Projektioun a Metadaten**: GPano- a spheresch Metadaten, aus der Datei gelies, mat Range-Ufroen op engem Server oder enger Freigab; d'ufänglech Usiicht vun der Kamera; „Als 360° weisen“ um Apparat gespäichert; VR180 aus der Datei oder hirem Numm erkannt; Metadaten bleiwen intakt, well d'Original-Datei ofgespillt gëtt, ni eng ëmgewandelt Kopie.
 - **Natiivt Ofspillen**: Media3 op Android an der TV, SceneKit an AVFoundation op iOS, den Meta Spatial SDK am Headset, libmpv op Windows; d'Original oder den transcodéierten Stream, ausgewielt no wat den Apparat decodéiere kann; eng Lëscht vun den Videodecoderen vum Apparat an den Astellungen, Erweidert; d'Auswiel vun der Audiospur an eng Buffer-Unzeig.
-- **Rau Dateien, déi um Apparat zesummegesat ginn**: e Flutter-Fragment-Shader fir Fotoen; en GPU-Effekt am Player fir Videoen mat nëmmen engem Track; zwee Hardware-Decoderen gläichzäiteg an e GPU-Compositor fir Videoen mat enger Lëns pro Track oder pro Datei (OpenGL ES 3 op Android an dem Quest, Metal op iOS, de libmpv-Filtergraf op Windows); déi eegen Kalibratioun vun der Kamera (Mei-, V6- an equidistant Modeller) an d'Opname vum Beschleunegungssensor; e Réckgrëff op eng Lëns, den transcodéierten Stream, d'LRV-Kopie vun der Kamera oder d'net zesummegesate Video, wann den Apparat net zwee Decoderen gläichzäiteg lafen loosse kann.
+- **Rau Dateien, um Apparat zesummegesat**: e Flutter-Fragment-Shader fir Fotoen; e GPU-Effekt am Player fir Videoen mat enger eenzeger Spur; zwee Hardware-Decoderen zur selwechter Zäit an e GPU-Compositor fir Videoen mat enger Lëns pro Spur oder pro Datei (OpenGL ES 3 op Android an dem Quest, Metal op iOS, a op Windows, vum Desktop-Build 5 un, zwee libmpv-Player, deenen hir Biller d'App um Grafikchip koppelt); d'eege Kalibréierung vun der Kamera (d'Modeller Mei, V6 an equidistant) an d'Opnam vum Beschleunegungssensor; fält zréck op eng Lëns, den transcodéierten Stream, d'LRV-Kopie vun der Kamera oder d'Video, déi net zesummegesat gouf, wann den Apparat net zwee Decoderen lafe loosse kann.
 - **Quellen**: d'Galerie vum Apparat; d'Dossieren vun engem Computer; en Immich-Server; SMB 2 a 3, WebDAV, DLNA/UPnP; Plex iwwer HTTPS, géint dem Server säin eegent Zertifikat kontrolléiert; Tapo-Kameraen iwwer d'lokal Netzwierk (HTTPS a RTSP); e Handy oder e Computer, deen iwwer Wi-Fi als WebDAV-Server gedeelt gëtt; Serveren, déi vu Bonjour/mDNS, engem lokalen Netzwierk-Scan, SSDP, GDM an der TP-Link-Erkennung fonnt an, wa si d'Adress wiesselen, verfollegt ginn.
 - **Liesen op Ufro**: eng lokal Bréck, déi d'Player mat Byte-Beräicher an engem Token pro Sëtzung versuergt; grouss Blocken, Virausliesen a bis zu sechs parallel SMB-Verbindungen; Miniaturbiller aus engem Bild vun all Video; näischt gëtt op den Apparat kopéiert.
 - **Hardware**: Hardware-Decoderen, déi iwwerall benotzt ginn, wou se existéieren, mat hiren gemiessene Limitten (déi H.264-Limite vum Quest 3, maximal zwou 2048x2048-Lënsen fir Software-Decoderen); op Windows gëtt d'360°-Usiicht vum Grafikchip aus all decodéiertem Bild gezeechent, d'Bildgréisst op all Computer gemooss, den integréierte oder separate Chip erkannt.
-- **Plattformspezifescht**: den Gyroskop an den Spatial-2.5D-Player op Handys; d'immersiv Usiicht, Controller an Hänn um Quest; d'Layout vun der Fernsteierung, den Tastatur-Dialog an de TV-Banner op Android TV; op dem Computer d'Maus an d'Tastatur, Vollbild, eng eenzeg Fënster, eng Datei, déi mam Programm opgemaach oder dropgezunn gëtt, HEIC-, AVIF-, TIFF- a Camera-Raw-Fotoen vun den Dossieren, wann Windows e Decoder dofir huet, an de Windows-Dateschutz fir Passwierder a Tokens.
+- **Plattformspezifesch Detailer**: de Gyroskop an de Spatial-2.5D-Player op Handys; d'immersiv Usiicht, Controller a Hänn um Quest; d'Layout vun der Fernsteierung, de Tastatur-Dialog an de Banner um Android TV; um Computer, Maus a Tastatur, Vollbild, en eenzegt Fënster, Dateien a Dossieren, déi mat der App opgemaach oder op d'Fënster vun der App gezunn ginn, gelies wéi d'Dateien vun denge Dossieren, HEIC-, AVIF- a TIFF-Fotoen a rau Camera-Fotoen vun den Dossieren, wann Windows en Decoder dofir huet, an de Windows-Dateschutz fir Passwierder an Tokens.
 - **Privatsphär vun Ufank un**: kee Kont, keng Cloud, keng Analytik; Passwierder a Tokens am séchere Späicher vum Apparat; d'Kamera vum Spatial-Player gëtt nëmmen um Apparat benotzt; Freigaben, Plex a Kameraen ginn nëmmen an denger Netzwierk erreecht.
 
 <a id="technical-documentation"></a>
@@ -257,7 +257,7 @@ Wat d'App liese a ofspille kann, fir de Lieser, deen déi ganz Breet wëll. All 
 ### iPhone an iPad
 
 1. D'App-Store-Versioun waart op Apple säi Review. Bis se publizéiert ass, bau d'App mat Xcode op engem Mac, kuck [Bau se dir selwer](../docs/immuch360/build.md).
-2. Login dech mat dengem Immich-Server, oder tipp op „Ouni Server benotzen“.
+2. Tipp op "Ouni Server benotzen", oder "Mat engem Immich-Server verbannen" fir dech mat dengem Server unzemellen; béid sinn zënter dem Build 24 op der Wëllkommssäit.
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TV a Google TV
@@ -277,14 +277,18 @@ Wat d'App liese a ofspille kann, fir de Lieser, deen déi ganz Breet wëll. All 
 <a id="windows"></a>
 ### Windows
 
-1. Lued `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` vun der [Desktop-Pre-Release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) erof (ongeféier 58 MB, mat `SHA256SUMS.txt` fir se ze kontrolléieren) an entpack se wou och ëmmer, zum Beispill an Documents.
-2. Start `immuch360.exe` aus dem entpacktem Dossier a behal den Dossier komplett: d'Programm brauch d'Dateien niewendru, dorënner `libmpv-2.dll`, den Videoplayer.
-3. D'Dateien si nach net signéiert: Windows SmartScreen kann „Windows huet däi PC geschützt“ weisen, wiel „Méi Informatiounen“ an duerno „Trotzdeem ausféieren“. Den éischte Start vun engem neie Build kann bis zu enger Minutt daueren, während Windows d'Dateien scannt.
-4. Windows 10 oder 11, 64 Bit. Et gëtt nach kee Installer a keen automatesche Update: entpack den nächste Build op déiselwecht Manéier.
+1. Lued `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` erof vun der [Desktop-Pre-Release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) (mat `SHA256SUMS.txt` fir se ze kontrolléieren) a mach se op. D'Dateien sinn nach net signéiert: Windows SmartScreen weist vläicht "Windows protected your PC", wiel "More info" duerno "Run anyway".
+2. Wiel "Install for me only" (keng Administrateursrechter néideg) oder "Install for all users" aus, duerno d'Sprooch vum Installer, déi vu Windows scho virausgewielt.
+3. Start Immuch360 Desktop vum Startmenü. Bei Fotoen a Videoen steet d'App ënner "Open with" (riets-klick op eng Datei, Open with); si mécht sech ni selwer zu hirer Standard-App. Den éischten Start vun engem neie Build kann bis zu enger Minutt daueren, während Windows d'Dateien scannt.
+4. Windows 10 oder 11, 64 Bit. Fir ze aktualiséieren, mach den Installer vum nächste Build op: deng Umeldung, Dossieren an Astellungen bleiwen. D'ZIP vun der selwechter Release ass déiselwecht App als Dossier, fir iwwerall z'entpaken an `immuch360.exe` vun do aus ze starten.
 
-### macOS a Linux
+### Linux
 
-D'Projete sinn am Quellcode a ginn vun der CI vum Projet bei all Ännerung gebaut, awer d'App huet op dëse Systemer nach net ugefaang an hir Videoplayer-Bibliothéik ass nach net dran: et gëtt nach kee Download. D'Schrëtt fir se ze bauen stinn am [Bau se dir selwer](../docs/immuch360/build.md).
+Op Ubuntu 22.04 oder méi nei an Debian 12 oder méi nei: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; op Fedora 40 oder méi nei: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Start duerno Immuch360 Desktop vun denge Apps. E fréi Preview: d'Dossieren vum Computer, Fotoen a 360°-Fotoen als Kugel; Videoen spillen nach net of, an SMB-Freigaben brauchen Ubuntu 24.04, Debian 13 oder Fedora 39 oder méi nei.
+
+### macOS
+
+Mach `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` op a zéi d'App an den Applications-Dossier (Apple silicon an Intel, macOS 12 oder méi nei). Si ass nach net signéiert a nach net notarized: Control-klick drop a wiel Open op macOS 14 a méi fréi, oder wiel "Open Anyway" an System Settings, Privacy & Security op macOS 15 a méi nei. Keen am Projet huet e Mac: d'App ass nëmme op der CI vum Projet ugefaang, si spillt nach keng Videoen of a hiren Netzwierkzougang ass net probéiert ginn. Rapporten si wëllkomm.
 
 <a id="privacy"></a>
 ## Dateschutz
@@ -306,7 +310,7 @@ D'Handy-Screenshots vun dëser Säit goufen um Android-Build an engem Emulator g
 Wat nach net gemaach ass, dat Wahrscheinlechst als éischt. Näischt hei ass e Verspriechen, a Feedback am [Issue-Tracker](https://github.com/freeKC/Immuch360/issues) hëlleft ze decidéieren, wat als éischt kënnt.
 
 - **D'Stores**: Google Play (Build 23 am Review, den TV-Entrée am Review), den App Store (Versioun 3.3.0 am Review), de Meta Horizon Store (Build 21 am Review).
-- **Computeren**: den Test vun all Funktioun vun Hand op engem Windows-PC; duerno Spatial 2.5D mat der Webcam; duerno macOS a Linux, déi ugefaang a geliwwert ginn, mat hirem Videoplayer; duerno en Installer, en signéierten Build an automatesch Updates.
+- **Computeren**: den Test vun all Funktioun vun Hand op engem Windows-PC; duerno Spatial 2.5D mat der Webcam; duerno den Videoplayer op Linux a macOS an en Test op engem richtege Mac; duerno en signéierten Build an automatesch Updates.
 - **Handys a Tablets**: eng Zäitlinn am iOS-360°-Videoplayer, Zréck a Weider an den 360°-Playeren vun Handys, d'Auswiel vun der Audiospur am flaachen Player, den Tapo-Live-View op iPhone an iPad.
 - **Immersiv Medien**: Dual-Fisheye-.dng, d'Egaliséieren vu GoPro- an DJI-Videoen aus hiren eegene Beweegungsdaten, Raumvideoen a 3D um Quest, wann hir Decoderen dat erlaben, Zréck a Weider tëscht Raumfotoen am Headset.
 - **Quellen**: Wëschen tëscht den Dateien vun engem Freigab-Dossier, Digest-Authentifikatioun fir WebDAV, e QR-Code fir den Plex-Token vum Computer ze huelen, IPv6 fir Plex, H.265-Tapo-Opnamen, Kanäl um TV-Heemsiichtsbildschierm.

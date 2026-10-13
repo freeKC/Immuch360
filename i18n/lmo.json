@@ -309,5 +309,10 @@
   "video_source_title": "Sorgent del video",
   "video_source_transcoded": "Semper el stream transcodificaa",
   "view_as_360": "Varda 'me 360°",
-  "view_as_360_remove": "Smett de tratà 'me 360°"
+  "view_as_360_remove": "Smett de tratà 'me 360°",
+  "welcome_server_title": "Conètes a on server Immich",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex o ona telecamera Tapo",
+  "welcome_shares_title": "Giontà ona condivision de ret o on server multimedial",
+  "welcome_tagline": "I tò media. Minga importa el schermo. Ogni prospettiva.",
+  "welcome_without_server_description": "I foto e i video de sto dispositiv. Giontà condivision e server multimedial pussee tard."
 }

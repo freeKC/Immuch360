@@ -11,7 +11,7 @@ Immuch360 er en gratis app med åpen kildekode for å finne, bla gjennom, spille
 
 - **Hva gjør den?** Den viser bildene og videoene dine som et galleri og spiller dem av i den fremviseren som passer hver fil: flate, som en kule du kan se deg rundt i, i 3D, i et headset.
 - **Hvilke medier?** Flate bilder og videoer, panoramaer, 360°-bilder og -videoer, VR180, stereoskopisk 3D, Apples spatial-bilder, og råfilene fra 360°-kameraer (Insta360, GoPro MAX, DJI Osmo 360), satt sammen av appen.
-- **På hvilke enheter?** Android-telefoner og -tabletter, iPhone og iPad, Android TV og Google TV, Meta Quest 2, Pro, 3 og 3S, Windows (forhåndsversjon), med macOS og Linux under utvikling.
+- **På hvilke enheter?** Android-telefoner og -tabletter, iPhone og iPad, Android TV og Google TV, Meta Quest 2, Pro, 3 og 3S, Windows (forhåndsvisning), og Linux og macOS som tidlige forhåndsvisninger.
 - **Trenger jeg en server eller en konto?** Nei. Immuch360 fungerer på egen hånd med mediene på enheten din. En Immich-server, et NAS, en medieserver eller en Plex-server er valg du legger til når du vil ha dem.
 
 <p align="center">
@@ -26,8 +26,8 @@ Immuch360 er en gratis app med åpen kildekode for å finne, bla gjennom, spille
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | versjon 3.3.0 venter på Apples vurdering; [bygg den selv](../docs/immuch360/build.md) i mellomtiden |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 på GitHub; TV-oppføringen er under Googles vurdering |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | på Horizon Store (build 14; build 21 under vurdering), build 23 på GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [ZIP-forhåndsversjon](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4, en forhåndsversjon: bilder, flate og 360°-videoer, delinger, Plex, kameraer |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS og Linux** | Kildekode | bygget av prosjektets CI, ikke startet på disse systemene ennå, ingen nedlasting ennå |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installasjonsprogram eller ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, en forhåndsvisning: bilder, flate og 360°-videoer, delinger, Plex, kameraer, filer åpnet med programmet |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS og Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | tidlige forhåndsvisninger: på Linux bilder og 360°-bilder, ingen videoer ennå; macOS er kun startet på prosjektets CI |
 
 *Statusene oppdateres ved hver utgivelse; detaljene, build for build, finnes i [Utgivelsesstatus](../docs/immuch360/release-status.md).*
 
@@ -97,11 +97,11 @@ Mer: [360°-bilder og -videoer](../docs/immuch360/user-guide.md#360-photos-and-v
 <a id="use-your-own-files-without-an-account"></a>
 ### Bruk dine egne filer, uten en konto
 
-Immuch360 trenger verken en konto eller en server. På innloggingssiden åpner "Bruk uten server" appen med bildene og videoene på enheten, med alle fremvisere, 360°-listen og nettverkskildene. Ingenting forlater enheten. En server kan kobles til senere, fra Innstillinger, og serverfunksjonene vises da.
+Immuch360 trenger verken en konto eller en server. Fra build 24 åpner appen på en velkomstside, der "Bruk uten server" kommer først: den åpner appen på bildene og videoene til enheten, med alle fremviserne, 360°-listen og nettverkskildene. Ingenting forlater enheten. En server kan kobles til senere, fra Innstillinger eller fanen Bibliotek, og serverfunksjonene vises da.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Bibliotek-fanen uten server: 360°-oppføringen øverst, deretter På denne enheten med to 360°-bilder, og Nettverksdelinger med en deling som heter NAS">
 
-1. Åpne appen. På innloggingssiden, under serveradressen og Innstillinger, trykker du på "Bruk uten server".
+1. Åpne appen. Velkomstsiden viser "Dine bilder og videoer. Alle skjermer. Alle perspektiver." og tre valg: trykk på det første, "Bruk uten server". Fram til build 23 kom innloggingssiden først, med "Bruk uten server" under formularet.
 2. Gi tilgang til bildene og videoene dine. Hvis du nekter, sier appen "Appen kan ikke se bildene på denne enheten", med "Gi tilgang" og "Åpne innstillinger".
 3. Bilder-fanen viser tidslinjen til enheten. Søk og Album forblir nedtonet, siden de kommer fra serveren. Bibliotek-fanen har 360° øverst, deretter På denne enheten (albumene på enheten) og Nettverksdelinger.
 4. Menyen øverst til høyre sier "Kun denne enheten": appen viser bildene og videoene på denne enheten, ingenting sendes noe sted.
@@ -120,7 +120,7 @@ Videoene dine ligger på et NAS, en datamaskin eller en medieserver. Immuch360 f
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="En mappe i en nettverksdeling som et rutenett av miniatyrbilder: 360°-bilder med 360°-merket og en 360°-video med et avspillingsmerke, Velg-knappen øverst til høyre">
 </p>
 
-1. Åpne fanen Bibliotek, deretter Nettverksdelinger, deretter + og "En nettverksdeling (NAS, datamaskin, medieserver)".
+1. Åpne fanen Bibliotek, deretter Nettverksdelinger, deretter + og "En nettverksdeling (NAS, datamaskin, medieserver)". Fra build 24 åpner "Legg til en nettverksdeling eller en medieserver" på velkomstsiden Nettverksdelinger direkte, uten en server.
 2. Trykk på en server under "Funnet på nettverket", eller fyll ut formularet manuelt: type, servernavn eller adresse, deling eller sti, startmappe, brukernavn og passord.
 3. Trykk på "Test tilkoblingen", deretter Lagre. Trykk på delingen for å bla gjennom den: mapper først, deretter bildene og videoene, med 360°-merket på filene som er gjenkjent som 360°.
 4. Når en Immich-server er koblet til, velg filer i en mappe og trykk på "Last opp til Immich" for å sende dem til serveren din.
@@ -134,7 +134,7 @@ Mer: [nettverksdelinger](../docs/immuch360/user-guide.md#network-shares-a-nas-a-
 
 Med en [Immich](https://github.com/immich-app/immich)-server er Immuch360 Immich-mobilappen, med samme server og samme konto som nettappen: sikkerhetskopiering, tidslinje, album, søk, personer, minner, deling, partnere, alt synkronisert med serveren din. Den installeres side om side med den offisielle appen. På toppen av det: 360°-merket og -listen, alle immersive fremvisere, valget mellom originalfilen og serverens omkodede strøm for hver video, de tekniske detaljene til en video, og filene fra en deling eller fra enheten som er sendt til serveren din manuelt.
 
-1. Logg inn med serveradressen din, e-posten din og passordet ditt, som i Immich-appen. Biblioteket, albumene og sikkerhetskopieringsinnstillingene dine er de samme som for kontoen din.
+1. På velkomstsiden, trykk på "Koble til en Immich-server", deretter logg inn med serveradressen din, e-posten din og passordet ditt, som i Immich-appen; Tilbake fører tilbake til velkomstsiden. Fram til build 23 åpner innloggingssiden direkte. Biblioteket, albumene og sikkerhetskopieringsinnstillingene dine tilhører kontoen din.
 2. I Innstillinger, Fremviser, Videoer, velger "Videokilde" originalen når denne enheten dekoder den, alltid originalen, eller alltid den omkodede strømmen.
 3. For å vise et 360°-bilde til noen som ikke har appen, del det med en delt Immich-lenke: Immich-nettappen viser det som en kule i nettleseren deres.
 
@@ -154,7 +154,7 @@ På en Meta Quest kjører den samme appen som et vindu med hele biblioteket ditt
 </p>
 
 1. Installer appen fra [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), eller sideload APK-en til en nyere build, se [Installer](#meta-quest).
-2. Logg inn med Immich-serveren din, eller trykk på "Bruk uten server" for headsettets egne bilder og videoer.
+2. På velkomstsiden, trykk på "Bruk uten server" for headsettets egne bilder og videoer, eller "Koble til en Immich-server" for å logge inn med serveren din.
 3. Åpne et 360°-bilde eller en 360°-video og trykk på 360°: den immersive visningen åpnes. B eller Y, eller Tilbake-knappen på infopanelet, bringer vinduet tilbake.
 
 Mer: [i Meta Quest-headsettet](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [headsettet: kodeker, butikk og tillatelser](../docs/immuch360/platform-support.md#meta-quest).
@@ -169,8 +169,8 @@ Den samme Android-appen kjører på Android TV og Google TV med fjernkontrollen 
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Videospilleren til Immuch360 Desktop på Windows: en video av en gate som spilles av i vinduet, med pauseknappen, tidslinjen, Del og Last opp til Immich">
 </p>
 
-1. På en TV: installer APK-en med adb (se [Installer](#android-tv-and-google-tv)), logg inn eller velg "Bruk uten server", legg til en deling, en Plex-server eller et kamera fra Bibliotek.
-2. På en Windows-datamaskin: pakk ut forhåndsversjonen og start `immuch360.exe` (se [Installer](#windows)), velg deretter mappene med bildene og videoene dine, eller logg inn på serveren din.
+1. På en TV: installer APK-en med adb (se [Installer](#android-tv-and-google-tv)); på velkomstsiden, velg "Legg til en nettverksdeling eller en medieserver" for en deling, en Plex-server eller et kamera, "Bruk uten server", eller "Koble til en Immich-server".
+2. På en Windows-datamaskin: installer forhåndsvisningen eller pakk den ut, og start `immuch360.exe` (se [Installer](#windows)); fra desktop build 5 åpner "Bruk uten server" på velkomstsiden valget av mappene dine, og "Koble til en Immich-server" innloggingssiden. Et bilde, en video eller en mappe åpnet med programmet, eller sluppet på vinduet dets, åpnes umiddelbart; er det 360°, åpnes det i 360°-visningen. Flere filer åpnes sammen på én side.
 3. I en fremviser fungerer play- og pause-, tilbakespolings-, fremspolings-, forrige- og neste-tastene på fjernkontrollen, og det samme gjør tastaturtastene på en datamaskin (mellomrom, J og L, F for fullskjerm).
 
 Mer: [se på TV-en din](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [på en Windows-datamaskin](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [plattformstøtte](../docs/immuch360/platform-support.md).
@@ -180,7 +180,7 @@ Mer: [se på TV-en din](../docs/immuch360/user-guide.md#watch-on-your-tv-android
 
 - **Tapo-kameraer**: et kamera legges til ved siden av nettverksdelingene. Appen viser det direkte (Android, Android TV, Quest og Windows) og lister opptakene fra minnekortet dag for dag på alle plattformer; et klipp hentes fra kameraet, spilles av som en vanlig video og kan sendes til Immich. Appen snakker med kameraet kun på ditt eget nettverk, aldri med TP-Links servere.
 - **Plex Media Server, uten plex.tv**: appen parer seg med serveren din direkte, med et token du limer inn én gang, og leser originalfilene i bibliotekene dine direkte, slik at 360° forblir 360°, hjemme og, gjennom portvideresendingen din, også når du er borte fra hjemmet.
-- **Rå 360°-kamerafiler**: rå .insp-bilder og .insv-videoer fra Insta360-kameraer (en eller to linser, i ett spor, to spor eller to filer), .360-filene fra GoPro MAX og .osv-filene fra DJI Osmo 360 settes sammen av appen mens de spilles av, med kalibreringen skrevet i filen, uten noe å installere noe sted.
+- **Rå 360°-kamerafiler**: de rå .insp-bildene og .insv-videoene fra Insta360-kameraer (én eller to linser, i ett spor, to spor eller to filer), .360-filene fra GoPro MAX og .osv-filene fra DJI Osmo 360 settes sammen av appen mens de spilles, med kalibreringen skrevet i filen, uten noe å installere noe sted. På Android spilles de av fra en deling, en datamaskin eller serveren din, siden telefonens galleri ikke lister råfiler; Immich-serveren tar bare .insp og .insv.
 
 Mer: [Tapo-kameraer](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [rå 360°-kamerafiler](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
@@ -207,7 +207,7 @@ Mer: [Tapo-kameraer](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-
 | Del denne enheten på nettverket | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
 | Last opp til Immich fra delinger og enheten | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
 | Inndata | berøring, gyroskop | berøring, gyroskop | fjernkontroll | kontrollere, hender | mus, tastatur | |
-| Hvor du får den | Google Play, APK | App Store (under vurdering) | APK, Google Play (under vurdering) | Horizon Store, APK | forhåndsversjon ZIP | kun CI-builder |
+| Hvor du får den | Google Play, APK | App Store (under vurdering) | APK, Google Play (under vurdering) | Horizon Store, APK | installasjonsprogram eller ZIP (forhåndsvisning) | .deb, .rpm, DMG (tidlige forhåndsvisninger) |
 
 ✅ i appen på den plattformen · ❌ ikke tilbudt der · 🔜 planlagt · 🔧 i kildekoden og bygget av prosjektets CI, ikke startet på det systemet ennå. "Ett øye" betyr at en 3D-fil viser sitt venstre øye på en flat skjerm. Ikke hver ✅ er sjekket på en ekte enhet ennå: hva som er sjekket hvor, og hva som gjenstår å bekrefte, finnes i [Funksjoner](../docs/immuch360/features.md), [Plattformstøtte](../docs/immuch360/platform-support.md) og [Kompatibilitet](../docs/immuch360/compatibility.md).
 
@@ -215,8 +215,8 @@ Mer: [Tapo-kameraer](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-
 - **iPhone og iPad**: den komplette appen; 360°-videospilleren har kun play og pause, Tapo-direktevisningen kommer senere, og DLNA-søket sender unicast-forespørsler inntil Apple gir multicast-tillatelsen.
 - **Android TV og Google TV**: samme APK, styrt av fjernkontrollen; en fremviser: sikkerhetskopiering, opplasting og redigering er skjult. Sjekket på Google TV-emulatoren (innlogging, tidslinje, fremvisere, delinger, navigasjon med fjernkontrollen), ikke på en ekte TV ennå.
 - **Meta Quest 2, Pro, 3 og 3S**: appen som et vindu, pluss den immersive visningen; HEVC er den trygge kodeken, H.264 stopper rundt 4096x2304 på Quest 3; Quest 2 og Quest Pro er ikke testet ennå.
-- **Windows 10 og 11**: en forhåndsversjon, med mapper istedenfor et galleri, en egen videospiller (libmpv) for flate og 360°-videoer, rå filer satt sammen på grafikkbrikken, ingen installasjonsprogram ennå.
-- **macOS og Linux**: prosjektene bygges på prosjektets CI (Linux bygget, macOS kompilert); appen er ikke startet på disse systemene og deres videospillerbibliotek er ikke på plass ennå.
+- **Windows 10 og 11**: en forhåndsvisning, med mapper i stedet for et galleri, en egen videospiller (libmpv) for flate og 360°-videoer, rå filer satt sammen på grafikkbrikken, filer og mapper åpnet med programmet eller sluppet på vinduet, et installasjonsprogram eller en ZIP.
+- **macOS og Linux**: pakker bygget av prosjektets CI (en .deb, en .rpm, en DMG); på Linux starter appen og viser bilder og 360°-bilder, uten videoer ennå, og SMB-delinger krever Ubuntu 24.04, Debian 13 eller Fedora 39 eller nyere; macOS-appen er bare kjørt på prosjektets CI, uten videoer og med nettverkstilgangen dens ikke utprøvd.
 
 <a id="advanced-features"></a>
 ## Avanserte funksjoner
@@ -226,11 +226,11 @@ Hva appen kan lese og spille av, for leseren som vil ha hele omfanget. Hver linj
 - **Formater**: flate bilder og videoer (det enheten dekoder: MP4, MOV, MKV og flere); ekvirektangulære 360°-bilder og -videoer; delvise panoramaer (GPano-beskjæring); VR180; stereoskopisk 3D, topp og bunn eller side om side, lest fra filen (st3d-boksen) eller gjettet fra rammen; Apple spatial-bilder (HEIC-stereopar) og spatial-videoer (MV-HEVC, ett øye); rå Insta360 .insp og .insv, GoPro .360, DJI .osv; 10-bits HLG- og PQ-kilder tonemappet på kulen.
 - **Projeksjon og metadata**: GPano- og sfærisk metadata lest fra filen, med områdeforespørsler på en server eller en deling; kameraets opprinnelige visning; "Vis som 360°" lagret på enheten; VR180 gjenkjent fra filen eller navnet dens; metadata holdt intakt fordi originalfilen spilles av, aldri en konvertert kopi.
 - **Native avspilling**: Media3 på Android og TV-en, SceneKit og AVFoundation på iOS, Meta Spatial SDK i headsettet, libmpv på Windows; originalen eller den omkodede strømmen velges fra det enheten dekoder; en liste over enhetens videodekodere i Innstillinger, Avansert; valget av lydspor og en bufferindikator.
-- **Rå filer satt sammen på enheten**: en Flutter-fragmentshader for bilder; en GPU-effekt i spilleren for videoer med ett spor; to maskinvaredekodere samtidig og en GPU-kompositør for videoer med én linse per spor eller per fil (OpenGL ES 3 på Android og Quest, Metal på iOS, libmpv-filtergrafen på Windows); kameraets egen kalibrering (Mei-, V6- og ekvidistante modeller) og akselerometeropptak; reserveløsninger til én linse, den omkodede strømmen, kameraets LRV-kopi eller den usammensatte videoen når enheten ikke kan kjøre to dekodere.
+- **Råfiler satt sammen på enheten**: en Flutter-fragmentshader for bilder; en GPU-effekt i spilleren for videoer med ett spor; to maskinvaredekodere samtidig og en GPU-compositor for videoer med én linse per spor eller per fil (OpenGL ES 3 på Android og Quest, Metal på iOS, og på Windows, fra desktop build 5, to libmpv-spillere hvis rammer appen parer på grafikkbrikken); kameraets egen kalibrering (Mei-, V6- og ekvidistante modeller) og akselerometeropptak; reserveløsninger til én linse, den omkodede strømmen, kameraets LRV-kopi eller videoen som ikke er satt sammen, når enheten ikke kan kjøre to dekodere.
 - **Kilder**: enhetens galleri; mappene på en datamaskin; en Immich-server; SMB 2 og 3, WebDAV, DLNA/UPnP; Plex over HTTPS sjekket mot serverens eget sertifikat; Tapo-kameraer over det lokale nettverket (HTTPS og RTSP); en telefon eller en datamaskin delt på Wi-Fi som en WebDAV-server; servere funnet med Bonjour/mDNS, et lokalt nettverksskann, SSDP, GDM og TP-Link-oppdagelsen, og fulgt når de endrer adresse.
 - **Lesing ved behov**: en lokal bro betjener spillerne med byteområder og et token per sesjon; store blokker, forhåndslesing og opptil seks SMB-tilkoblinger parallelt; miniatyrbilder fra en ramme av hver video; ingenting kopiert til enheten.
 - **Maskinvare**: maskinvaredekodere brukt der de finnes, med sine målte grenser (H.264-grensen på Quest 3, maks to 2048x2048-linser for programvaredekodere); på Windows tegnes 360°-visningen av grafikkbrikken fra hver dekodede ramme, rammestørrelsen målt på hver datamaskin, den integrerte eller dedikerte brikken oppdaget.
-- **Plattformspesifikt**: gyroskopet og Spatial 2.5D-spilleren på telefoner; den immersive visningen, kontrollerne og hendene på Quest; fjernkontroll-layouten, tastaturdialogen og TV-banneret på Android TV; på datamaskinen, mus og tastatur, fullskjerm, ett enkelt vindu, en fil åpnet med programmet eller sluppet på det, HEIC-, AVIF-, TIFF- og kamera-råbilder fra mappene når Windows har en dekoder for dem, og Windows' databeskyttelse for passord og tokener.
+- **Plattformspesifikt**: gyroskopet og Spatial 2.5D-spilleren på telefoner; den immersive visningen, kontrollerne og hendene på Quest; utformingen for fjernkontrollen, tastaturdialogen og TV-banneret på Android TV; på datamaskinen, mus og tastatur, fullskjerm, ett enkelt vindu, filer og mapper åpnet med programmet eller sluppet på vinduet dets, lest som filene i mappene dine, HEIC, AVIF, TIFF og råbilder fra kameraer i mappene når Windows har en dekoder for dem, og Windows' databeskyttelse av passord og tokener.
 - **Personvern ved design**: ingen konto, ingen sky, ingen analyse; passord og tokener i enhetens sikre lagring; kameraet til Spatial-spilleren brukt kun på enheten; delinger, Plex og kameraer nås kun på nettverket ditt.
 
 <a id="technical-documentation"></a>
@@ -257,7 +257,7 @@ Hva appen kan lese og spille av, for leseren som vil ha hele omfanget. Hver linj
 ### iPhone og iPad
 
 1. App Store-versjonen venter på Apples vurdering. Inntil den er publisert, bygg appen med Xcode på en Mac, se [Bygg den selv](../docs/immuch360/build.md).
-2. Logg inn med Immich-serveren din, eller trykk på "Bruk uten server".
+2. Trykk på "Bruk uten server", eller "Koble til en Immich-server" for å logge inn med serveren din; begge er på velkomstsiden fra build 24.
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TV og Google TV
@@ -277,14 +277,18 @@ Hva appen kan lese og spille av, for leseren som vil ha hele omfanget. Hver linj
 <a id="windows"></a>
 ### Windows
 
-1. Last ned `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` fra [forhåndsutgivelsen for desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) (omtrent 58 MB, med `SHA256SUMS.txt` for å sjekke den) og pakk den ut hvor som helst, for eksempel i Dokumenter.
-2. Start `immuch360.exe` fra den utpakkede mappen og hold mappen hel: programmet trenger filene ved siden av seg, blant dem `libmpv-2.dll`, videospilleren.
-3. Filene er ikke signert ennå: Windows SmartScreen kan vise "Windows beskyttet PC-en din", velg "Mer info" og deretter "Kjør likevel". Den første oppstarten av en ny build kan ta opptil ett minutt mens Windows skanner filene.
-4. Windows 10 eller 11, 64-bit. Det finnes ikke noe installasjonsprogram og ingen automatisk oppdatering ennå: pakk ut neste build på samme måte.
+1. Last ned `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` fra [desktop-forhåndsutgivelsen](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) (med `SHA256SUMS.txt` for å kontrollere den) og åpne den. Filene er ikke signert ennå: Windows SmartScreen kan vise "Windows beskyttet PC-en din", velg "Mer informasjon" og deretter "Kjør likevel".
+2. Velg "Installer bare for meg" (ingen administratorrettigheter) eller "Installer for alle brukere", deretter installasjonsprogrammets språk, der Windows' eget allerede er valgt.
+3. Start Immuch360 Desktop fra Startmenyen. Bilder og videoer får det i "Åpne med" (høyreklikk på en fil, Åpne med); den gjør seg aldri til standardprogrammet deres. Den første starten av en ny build kan ta opptil ett minutt mens Windows skanner filene.
+4. Windows 10 eller 11, 64-bit. For å oppdatere, åpne installasjonsprogrammet til den neste builden: innloggingen, mappene og innstillingene dine forblir. ZIP-en av samme utgivelse er det samme programmet som en mappe, som du kan pakke ut hvor som helst og starte `immuch360.exe` fra den.
 
-### macOS og Linux
+### Linux
 
-Prosjektene finnes i kildekoden og bygges av prosjektets CI ved hver endring, men appen er ikke startet på disse systemene ennå og deres videospillerbibliotek er ikke på plass i dem: det finnes ingen nedlasting ennå. Stegene for å bygge dem finnes i [Bygg den selv](../docs/immuch360/build.md).
+På Ubuntu 22.04 eller nyere og Debian 12 eller nyere: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; på Fedora 40 eller nyere: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Start deretter Immuch360 Desktop fra programmene dine. En tidlig forhåndsvisning: mappene på datamaskinen, bilder og 360°-bilder som en kule; videoer spilles ikke av ennå, og SMB-delinger krever Ubuntu 24.04, Debian 13 eller Fedora 39 eller nyere.
+
+### macOS
+
+Åpne `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` og dra appen til Programmer (Apple silicon og Intel, macOS 12 eller nyere). Den er ikke signert eller notarisert ennå: Control-klikk den og velg Åpne på macOS 14 og eldre, eller velg "Åpne likevel" i Systeminnstillinger, Personvern og sikkerhet på macOS 15 og nyere. Ingen som arbeider med prosjektet har en Mac: appen er bare startet på prosjektets CI, den spiller ingen videoer ennå og nettverkstilgangen dens er ikke utprøvd. Rapporter er velkomne.
 
 <a id="privacy"></a>
 ## Personvern
@@ -306,7 +310,7 @@ Telefonskjermbildene på denne siden ble tatt på Android-builden i en emulator,
 Det som ikke er gjort ennå, det mest sannsynlige først. Ingenting her er et løfte, og tilbakemeldinger i [saksoversikten](https://github.com/freeKC/Immuch360/issues) hjelper med å avgjøre hva som kommer først.
 
 - **Butikkene**: Google Play (build 23 under vurdering, TV-oppføringen under vurdering), App Store (versjon 3.3.0 under vurdering), Meta Horizon Store (build 21 under vurdering).
-- **Datamaskiner**: testing av hver funksjon manuelt på en Windows-PC; deretter Spatial 2.5D med webkameraet; deretter macOS og Linux startet og levert, med sin videospiller; deretter et installasjonsprogram, en signert build og automatiske oppdateringer.
+- **Datamaskiner**: testing av hver funksjon manuelt på en Windows-PC; deretter Spatial 2.5D med webkameraet; deretter videospilleren på Linux og macOS og en test på en ekte Mac; deretter en signert build og automatiske oppdateringer.
 - **Telefoner og tabletter**: en tidslinje i iOS-360°-videospilleren, forrige og neste i 360°-spillerne på telefoner, valget av lydspor i den flate spilleren, Tapo-direktevisningen på iPhone og iPad.
 - **Immersive medier**: dobbel fisheye .dng, nivellering av GoPro- og DJI-videoer fra deres egne bevegelsesdata, spatial-videoer i 3D på Quest hvis dekoderne tillater det, forrige og neste mellom spatial-bilder i headsettet.
 - **Kilder**: sveiping mellom filene i en delt mappe, Digest-autentisering for WebDAV, en QR-kode for å hente Plex-tokenet fra datamaskinen, IPv6 for Plex, H.265 Tapo-opptak, kanaler på TV-ens hjemmeskjerm.

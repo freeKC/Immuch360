@@ -11,7 +11,7 @@ Immuch360, fotoğraflarınızı ve videolarınızı bulmak, taramak, oynatmak ve
 
 - **Ne işe yarar?** Fotoğraflarınızı ve videolarınızı bir galeri olarak gösterir ve her dosyaya uyan görüntüleyicide oynatır: düz, içinde etrafa bakabileceğiniz bir küre olarak, 3D olarak, bir başlıkta.
 - **Hangi medya?** Düz fotoğraf ve videolar, panoramalar, 360° fotoğraf ve videolar, VR180, stereoskopik 3D, Apple uzamsal fotoğraflar ve uygulama tarafından dikilen 360° kameraların (Insta360, GoPro MAX, DJI Osmo 360) ham dosyaları.
-- **Hangi cihazlarda?** Android telefonlar ve tabletler, iPhone ve iPad, Android TV ve Google TV, Meta Quest 2, Pro, 3 ve 3S, Windows (önizleme); macOS ve Linux hazırlanıyor.
+- **Hangi cihazlarda?** Android telefonlar ve tabletler, iPhone ve iPad, Android TV ve Google TV, Meta Quest 2, Pro, 3 ve 3S, Windows (önizleme) ve erken önizlemeler olarak Linux ve macOS.
 - **Sunucuya veya hesaba ihtiyacım var mı?** Hayır. Immuch360, cihazınızın medyasıyla kendi başına çalışır. Bir Immich sunucusu, bir NAS, bir medya sunucusu veya bir Plex sunucusu, istediğinizde eklediğiniz seçeneklerdir.
 
 <p align="center">
@@ -26,8 +26,8 @@ Immuch360, fotoğraflarınızı ve videolarınızı bulmak, taramak, oynatmak ve
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ve iPad** | App Store | sürüm 3.3.0 Apple'ın incelemesini bekliyor; bu arada [kendiniz derleyin](../docs/immuch360/build.md) |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ve Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub'da build 23; TV listesi Google'ın incelemesinde |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ve 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store'da (build 14; inceleme aşamasında build 21), GitHub'da build 23 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Önizleme ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4, bir önizleme: fotoğraflar, düz ve 360° videolar, paylaşımlar, Plex, kameralar |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ve Linux** | Kaynak kodu | projenin CI'si tarafından derleniyor, bu sistemlerde henüz başlatılmadı, henüz indirme yok |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Yükleyici veya ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, bir önizleme: fotoğraflar, düz ve 360° videolar, paylaşımlar, Plex, kameralar, programla açılan dosyalar |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ve Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | erken önizlemeler: Linux'ta fotoğraflar ve 360° fotoğraflar var, henüz video yok; macOS yalnızca projenin CI'sinde başlatıldı |
 
 *Durumlar her sürümde güncellenir; build bazındaki ayrıntılar [Sürüm durumu](../docs/immuch360/release-status.md) sayfasındadır.*
 
@@ -97,11 +97,11 @@ Daha fazlası: [360° fotoğraflar ve videolar](../docs/immuch360/user-guide.md#
 <a id="use-your-own-files-without-an-account"></a>
 ### Hesap olmadan kendi dosyalarınızı kullanın
 
-Immuch360'ın ne bir hesaba ne de bir sunucuya gereksinimi vardır. Oturum açma sayfasında "Sunucu olmadan kullan", uygulamayı cihazın fotoğrafları ve videoları üzerinde, her görüntüleyici, 360° listesi ve ağ kaynaklarıyla birlikte açar. Hiçbir şey cihazdan çıkmaz. Bir sunucu daha sonra Ayarlar'dan bağlanabilir ve o zaman sunucu özellikleri görünür.
+Immuch360'ın hesaba da sunucuya da ihtiyacı yoktur. build 24'ten itibaren uygulama bir karşılama sayfasıyla açılır; burada önce "Sunucu olmadan kullan" gelir: uygulamayı cihazın fotoğrafları ve videolarıyla, her görüntüleyiciyle, 360° listesiyle ve ağ kaynaklarıyla açar. Cihazdan hiçbir şey çıkmaz. Bir sunucu daha sonra Ayarlar'dan veya Kitaplık sekmesinden bağlanabilir, böylece sunucu özellikleri görünür.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Sunucusuz Kütüphane sekmesi: üstte 360° öğesi, ardından iki 360° fotoğrafla Bu cihazda, ve NAS adlı bir paylaşımla Ağ paylaşımları">
 
-1. Uygulamayı açın. Giriş sayfasında, sunucu adresinin ve Ayarlar'ın altında "Sunucu olmadan kullan"a dokunun.
+1. Uygulamayı açın. Karşılama sayfası "Medyanız. Her ekranda. Her açıdan." yazısını ve üç seçeneği gösterir: ilkine dokunun, "Sunucu olmadan kullan". build 23'e kadar önce giriş sayfası gelirdi, formun altında "Sunucu olmadan kullan" bulunurdu.
 2. Fotoğraflarınıza ve videolarınıza erişime izin verin. Reddederseniz uygulama "Uygulama bu cihazdaki fotoğrafları göremiyor" der ve "Erişime izin ver" ile "Ayarları aç" seçeneklerini sunar.
 3. Fotoğraflar sekmesi cihazın zaman çizelgesini gösterir. Ara ve Albümler sunucudan geldikleri için soluk kalır. Kütüphane sekmesinde en üstte 360°, ardından Bu cihazda (cihazın albümleri) ve Ağ paylaşımları bulunur.
 4. Sağ üstteki menüde "Yalnızca bu cihaz" yazar: uygulama bu cihazın fotoğraf ve videolarını gösterir, hiçbir şey hiçbir yere gönderilmez.
@@ -120,7 +120,7 @@ Videolarınız bir NAS'ta, bilgisayarda veya medya sunucusunda bulunur. Immuch36
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Küçük resim ızgarası olarak bir ağ paylaşımı klasörü: 360° rozetli 360° fotoğraflar ve oynatma işaretli bir 360° video, sağ üstte Seç düğmesi">
 </p>
 
-1. Kitaplık sekmesini açın, sonra Ağ paylaşımları'nı, sonra + ve "Bir ağ paylaşımı (NAS, bilgisayar, medya sunucusu)"nu seçin.
+1. Kitaplık sekmesini, ardından Ağ paylaşımları'nı, ardından + simgesini ve "Bir ağ paylaşımı (NAS, bilgisayar, medya sunucusu)" seçeneğini açın. build 24'ten itibaren, karşılama sayfasındaki "Ağ paylaşımı veya medya sunucusu ekle" seçeneği, sunucu olmadan doğrudan Ağ paylaşımları'nı açar.
 2. "Ağda bulunanlar" altında bir sunucuya dokunun veya formu elle doldurun: tür, sunucu adı veya adresi, paylaşım veya yol, başlangıç klasörü, kullanıcı adı ve parola.
 3. "Bağlantıyı test et"e dokunun, sonra Kaydet'e. Göz atmak için paylaşıma dokunun: önce klasörler, sonra fotoğraflar ve videolar; 360° olarak tanınan dosyalarda 360° rozeti bulunur.
 4. Bir Immich sunucusu bağlıyken, bir klasördeki dosyaları seçin ve bunları sunucunuza göndermek için "Immich'e yükle"ye dokunun.
@@ -134,7 +134,7 @@ Daha fazlası: [ağ paylaşımları](../docs/immuch360/user-guide.md#network-sha
 
 Bir [Immich](https://github.com/immich-app/immich) sunucusuyla Immuch360, web uygulamasıyla aynı sunucuyu ve aynı hesabı kullanan Immich mobil uygulamasıdır: yedekleme, zaman çizelgesi, albümler, arama, kişiler, anılar, paylaşma, ortaklar; hepsi sunucunuzla eşzamanlıdır. Resmi uygulamanın yanına kurulur. Buna ek olarak: 360° rozeti ve listesi, her sürükleyici görüntüleyici, her video için orijinal dosya ile sunucunun yeniden kodladığı akış arasında seçim, bir videonun teknik ayrıntıları ve bir paylaşımın veya cihazın elle sunucunuza gönderilen dosyaları.
 
-1. Immich uygulamasında olduğu gibi sunucu adresiniz, e-postanız ve parolanızla oturum açın. Kitaplığınız, albümleriniz ve yedekleme ayarlarınız hesabınıza aittir.
+1. Karşılama sayfasında "Bir Immich sunucusuna bağlan"a dokunun, ardından Immich uygulamasındaki gibi sunucu adresinizle, e-postanızla ve parolanızla giriş yapın; Geri, karşılama sayfasına döner. build 23'e kadar giriş sayfası doğrudan açılırdı. Kitaplığınız, albümleriniz ve yedekleme ayarlarınız hesabınıza aittir.
 2. Ayarlar, Varlık Görüntüleyici, Videolar'da "Video kaynağı"; bu cihaz kodunu çözebildiğinde orijinali, her zaman orijinali veya her zaman yeniden kodlanmış akışı seçer.
 3. Uygulaması olmayan birine bir 360° fotoğraf göstermek için onu bir Immich paylaşım bağlantısıyla paylaşın: Immich web uygulaması bunu onların tarayıcısında bir küre olarak gösterir.
 
@@ -154,7 +154,7 @@ Bir Meta Quest'te aynı uygulama, tüm kitaplığınızla bir pencere olarak ça
 </p>
 
 1. Uygulamayı [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)'dan kurun veya daha yeni bir build'in APK'sını sideload edin, bkz. [Kurulum](#meta-quest).
-2. Immich sunucunuzla oturum açın ya da başlığın kendi fotoğraf ve videoları için "Sunucu olmadan kullan"a dokunun.
+2. Karşılama sayfasında, başlığın kendi fotoğrafları ve videoları için "Sunucu olmadan kullan"a dokunun veya sunucunuzla giriş yapmak için "Bir Immich sunucusuna bağlan"a dokunun.
 3. Bir 360° fotoğraf veya video açın ve 360°'ye basın: sürükleyici görünüm açılır. B veya Y, ya da bilgi panelinin Geri düğmesi, pencereyi geri getirir.
 
 Daha fazlası: [Meta Quest başlığında](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [başlık: codec'ler, mağaza ve izinler](../docs/immuch360/platform-support.md#meta-quest).
@@ -169,8 +169,8 @@ Aynı Android uygulaması, Android TV ve Google TV'de tek girdi olarak uzaktan k
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Windows'ta Immuch360 Desktop'ın video oynatıcısı: pencerede oynayan bir sokak videosu, duraklatma düğmesi, zaman çubuğu, Paylaş ve Immich'e yükle ile birlikte">
 </p>
 
-1. Bir TV'de: APK'yı adb ile kurun (bkz. [Kurulum](#android-tv-and-google-tv)), oturum açın veya "Sunucu olmadan kullan"ı seçin, Kitaplık'tan bir paylaşım, bir Plex sunucusu veya bir kamera ekleyin.
-2. Bir Windows bilgisayarında: önizlemeyi çıkarın ve `immuch360.exe`'yi başlatın (bkz. [Kurulum](#windows)), ardından fotoğraflarınızın ve videolarınızın klasörlerini seçin veya sunucunuza oturum açın.
+1. Bir TV'de: APK'yı adb ile kurun (bkz. [Kurulum](#android-tv-and-google-tv)); karşılama sayfasında bir paylaşım, bir Plex sunucusu veya bir kamera için "Ağ paylaşımı veya medya sunucusu ekle"yi, "Sunucu olmadan kullan"ı veya "Bir Immich sunucusuna bağlan"ı seçin.
+2. Bir Windows bilgisayarında: önizlemeyi kurun veya ZIP dosyasını açıp `immuch360.exe`yi başlatın (bkz. [Kurulum](#windows)); desktop build 5'ten itibaren, karşılama sayfasındaki "Sunucu olmadan kullan" klasörlerinizin seçimini açar, "Bir Immich sunucusuna bağlan" ise giriş sayfasını açar. Programla açılan veya penceresine sürüklenen bir fotoğraf, video veya klasör hemen açılır; 360° olan kendi 360° görünümünde açılır; birkaç dosya aynı sayfada birlikte açılır.
 3. Bir görüntüleyicide, uzaktan kumandanın oynat ve duraklat, geri sar, ileri sar, önceki ve sonraki tuşları çalışır; bir bilgisayarda klavye tuşları da aynı şekilde çalışır (Boşluk, J ve L, tam ekran için F).
 
 Daha fazlası: [TV'nizde izleyin](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [bir Windows bilgisayarında](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [platform desteği](../docs/immuch360/platform-support.md).
@@ -180,7 +180,7 @@ Daha fazlası: [TV'nizde izleyin](../docs/immuch360/user-guide.md#watch-on-your-
 
 - **Tapo kameraları**: bir kamera, ağ paylaşımlarının yanına eklenir. Uygulama onu canlı gösterir (Android, Android TV, Quest ve Windows) ve her platformda hafıza kartının kayıtlarını gün gün listeler; bir klip kameradan alınır, herhangi bir video gibi oynar ve Immich'e gönderilebilir. Uygulama kamerayla yalnızca ağınız üzerinden konuşur, asla TP-Link'in sunucularıyla değil.
 - **plex.tv olmadan Plex Media Server**: uygulama, bir kez yapıştırdığınız bir token ile sunucunuzla doğrudan eşleşir ve kitaplıklarınızın orijinal dosyalarını canlı olarak okur; böylece 360°, evde ve port yönlendirmeniz sayesinde evden uzaktayken de 360° kalır.
-- **Ham 360° kamera dosyaları**: Insta360 kameralarının ham .insp fotoğrafları ve .insv videoları (bir veya iki lens, bir parça, iki parça veya iki dosya halinde), GoPro MAX'in .360 dosyaları ve DJI Osmo 360'ın .osv dosyaları, dosyaya yazılmış kalibrasyonla, hiçbir yere hiçbir şey kurmadan, oynatılırken uygulama tarafından dikilir.
+- **Ham 360° kamera dosyaları**: Insta360 kameralarının (bir veya iki lens, bir parçada, iki parçada veya iki dosyada) ham .insp fotoğrafları ve .insv videoları, GoPro MAX'in .360 dosyaları ve DJI Osmo 360'ın .osv dosyaları, dosyaya yazılan kalibrasyonla birlikte, hiçbir yere hiçbir şey kurulmadan, oynatılırken uygulama tarafından dikilir. Android'de bunları bir paylaşımdan, bir bilgisayardan veya sunucunuzdan oynatın, çünkü telefonun galerisi ham dosyaları listelemez; Immich sunucusu yalnızca .insp ve .insv alır.
 
 Daha fazlası: [Tapo kameraları](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [ham 360° kamera dosyaları](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
@@ -207,7 +207,7 @@ Bir kod tabanı, altı ortam. Her birinin bugün sahip olduğu özellikler:
 | Bu cihazı ağda paylaş | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
 | Paylaşımlardan ve cihazdan Immich'e yükle | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
 | Girdi | dokunma, jiroskop | dokunma, jiroskop | uzaktan kumanda | kumandalar, eller | fare, klavye | |
-| Nereden edinilir | Google Play, APK | App Store (incelemede) | APK, Google Play (incelemede) | Horizon Store, APK | önizleme ZIP | yalnızca CI build'leri |
+| Nereden edinilir | Google Play, APK | App Store (incelemede) | APK, Google Play (incelemede) | Horizon Store, APK | yükleyici veya ZIP (önizleme) | .deb, .rpm, DMG (erken önizlemeler) |
 
 ✅ o platformdaki uygulamada var · ❌ orada sunulmuyor · 🔜 planlanıyor · 🔧 kaynaklarda ve projenin CI'si tarafından derleniyor, bu sistemde henüz başlatılmadı. "Tek göz", bir 3D dosyanın düz bir ekranda sol gözünü gösterdiği anlamına gelir. Her ✅ henüz gerçek bir cihazda denenmiş değildir: nerede ne denendiği ve neyin doğrulanmayı beklediği [Özellikler](../docs/immuch360/features.md), [Platform desteği](../docs/immuch360/platform-support.md) ve [Uyumluluk](../docs/immuch360/compatibility.md) sayfalarındadır.
 
@@ -215,8 +215,8 @@ Bir kod tabanı, altı ortam. Her birinin bugün sahip olduğu özellikler:
 - **iPhone ve iPad**: eksiksiz uygulama; 360° video oynatıcısında yalnızca oynat ve duraklat bulunur, Tapo canlı görüntüsü daha sonra gelecek ve DLNA araması, Apple multicast iznini verene kadar unicast istekleri gönderir.
 - **Android TV ve Google TV**: uzaktan kumandayla yönetilen aynı APK; bir görüntüleyici: yedekleme, yüklemeler ve düzenleme gizlidir. Google TV emülatöründe denendi (giriş, zaman çizelgesi, görüntüleyiciler, paylaşımlar, uzaktan kumanda navigasyonu), henüz gerçek bir TV'de değil.
 - **Meta Quest 2, Pro, 3 ve 3S**: bir pencere olarak uygulama, artı sürükleyici görünüm; güvenli codec HEVC'dir, Quest 3'te H.264 yaklaşık 4096x2304'te durur; Quest 2 ve Quest Pro henüz test edilmedi.
-- **Windows 10 ve 11**: galeri yerine klasörlerle bir önizleme, düz ve 360° videolar için kendi video oynatıcısı (libmpv), grafik çipinde dikilen ham dosyalar, henüz yükleyici yok.
-- **macOS ve Linux**: projeler, projenin CI'sinde derlenir (Linux derlendi, macOS derlendi); uygulama bu sistemlerde henüz başlatılmadı ve video oynatıcı kütüphanesi henüz eklenmedi.
+- **Windows 10 ve 11**: bir önizleme; galeri yerine klasörler, düz ve 360° videolar için kendi video oynatıcısı (libmpv), grafik çipinde dikilen ham dosyalar, programla açılan veya pencereye sürüklenen dosyalar ve klasörler, bir yükleyici veya bir ZIP.
+- **macOS ve Linux**: projenin CI'si tarafından derlenen paketler (bir .deb, bir .rpm, bir DMG); Linux'ta uygulama başlar, fotoğrafları ve 360° fotoğrafları gösterir, henüz video yoktur ve SMB paylaşımları için Ubuntu 24.04, Debian 13 veya Fedora 39 ya da üzeri gerekir; macOS uygulaması yalnızca projenin CI'sinde çalıştı, videosuzdur ve ağ erişimi denenmemiştir.
 
 <a id="advanced-features"></a>
 ## Gelişmiş özellikler
@@ -226,11 +226,11 @@ Uygulamanın okuyabildiği ve oynatabildiği her şey, tüm kapsamı görmek ist
 - **Formatlar**: düz fotoğraflar ve videolar (cihazın kodunu çözebildiği her şey: MP4, MOV, MKV ve daha fazlası); equirectangular 360° fotoğraflar ve videolar; kısmi panoramalar (GPano kırpması); VR180; dosyadan okunan (st3d kutusu) veya kareden tahmin edilen, üst ve alt veya yan yana stereoskopik 3D; Apple uzamsal fotoğraflar (HEIC stereo çiftleri) ve uzamsal videolar (MV-HEVC, tek göz); ham Insta360 .insp ve .insv, GoPro .360, DJI .osv; küre üzerinde ton eşlemesi yapılan 10 bit HLG ve PQ kaynaklar.
 - **Projeksiyon ve metadata**: bir sunucuda veya paylaşımda aralık istekleriyle dosyadan okunan GPano ve küresel metadata; kameranın ilk görünümü; cihazda hatırlanan "360° olarak görüntüle"; dosyadan veya adından tanınan VR180; hiçbir zaman dönüştürülmüş bir kopya değil, orijinal dosya oynatıldığı için bozulmadan kalan metadata.
 - **Yerel oynatma**: Android ve TV'de Media3, iOS'ta SceneKit ve AVFoundation, başlıkta Meta Spatial SDK, Windows'ta libmpv; cihazın kodunu çözebildiğine göre seçilen orijinal veya yeniden kodlanmış akış; Ayarlar, Gelişmiş'te cihazın video kod çözücülerinin listesi; ses parçası seçimi ve bir arabellek göstergesi.
-- **Cihazda dikilen ham dosyalar**: fotoğraflar için bir Flutter fragment shader; tek parçalı videolar için oynatıcıda bir GPU efekti; parça veya dosya başına bir lens içeren videolar için aynı anda iki donanım kod çözücü ve bir GPU compositor (Android ve Quest'te OpenGL ES 3, iOS'ta Metal, Windows'ta libmpv filtre grafiği); kameranın kendi kalibrasyonu (Mei, V6 ve eşit açılı modeller) ve ivmeölçer kaydı; cihaz iki kod çözücü çalıştıramadığında tek lense, yeniden kodlanmış akışa, kameranın LRV kopyasına veya dikilmemiş videoya geri dönüş.
+- **Cihazda dikilen ham dosyalar**: fotoğraflar için bir Flutter fragment shader; tek parçalı videolar için oynatıcıda bir GPU efekti; parça başına veya dosya başına bir lensli videolar için aynı anda iki donanım kod çözücü ve bir GPU birleştirici (Android ve Quest'te OpenGL ES 3, iOS'ta Metal, ve Windows'ta, desktop build 5'ten itibaren, karelerini uygulamanın grafik çipinde eşleştirdiği iki libmpv oynatıcı); kameranın kendi kalibrasyonu (Mei, V6 ve eşit uzaklıklı modeller) ve ivmeölçer kaydı; cihaz iki kod çözücüyü çalıştıramadığında tek lense, yeniden kodlanmış akışa, kameranın LRV kopyasına veya dikilmemiş videoya geri dönüşler.
 - **Kaynaklar**: cihazın galerisi; bir bilgisayarın klasörleri; bir Immich sunucusu; SMB 2 ve 3, WebDAV, DLNA/UPnP; sunucunun kendi sertifikasına karşı doğrulanan HTTPS üzerinden Plex; yerel ağ üzerinden Tapo kameraları (HTTPS ve RTSP); Wi-Fi üzerinde bir WebDAV sunucusu olarak paylaşılan bir telefon veya bilgisayar; Bonjour/mDNS, bir yerel ağ taraması, SSDP, GDM ve TP-Link keşfiyle bulunan ve adres değiştirdiklerinde takip edilen sunucular.
 - **İsteğe bağlı okuma**: yerel bir köprü, oynatıcılara bayt aralıkları ve oturum başına bir token ile hizmet verir; büyük bloklar, ileri okuma ve aynı anda en fazla altı SMB bağlantısı; her videonun bir karesinden küçük resimler; cihaza hiçbir şey kopyalanmaz.
 - **Donanım**: var oldukları her yerde ölçülen sınırlarıyla kullanılan donanım kod çözücüleri (Quest 3'ün H.264 tavanı, yazılım kod çözücüleri için en fazla iki 2048x2048 lens); Windows'ta her kod açılmış kareden grafik çipi tarafından çizilen 360° görünüm, her bilgisayarda ölçülen kare boyutu, algılanan tümleşik veya ayrık çip.
-- **Platforma özgü ayrıntılar**: telefonlarda jiroskop ve Uzamsal 2.5D oynatıcı; Quest'te sürükleyici görünüm, kumandalar ve eller; Android TV'de uzaktan kumanda düzeni, klavye iletişim kutusu ve TV afişi; bilgisayarda fare ve klavye, tam ekran, tek bir pencere, programla açılan veya üzerine bırakılan bir dosya, Windows'ta kod çözücüsü bulunduğunda klasörlerin HEIC, AVIF, TIFF ve kamera ham fotoğrafları ve parolalar ile tokenlar için Windows veri koruması.
+- **Platforma özgü ayrıntılar**: telefonlarda jiroskop ve Uzamsal 2.5D oynatıcı; Quest'te sürükleyici görünüm, kumandalar ve eller; Android TV'de uzaktan kumanda düzeni, klavye iletişim kutusu ve TV bandı; bilgisayarda fare ve klavye, tam ekran, tek bir pencere, programla açılan veya penceresine sürüklenen dosyalar ve klasörler, klasörlerinizin dosyaları gibi okunur, Windows'un kod çözücüsü olduğunda klasörlerin HEIC, AVIF, TIFF ve kamera ham fotoğrafları, ve parolalar ile tokenlar için Windows veri koruması.
 - **Tasarım itibarıyla gizlilik**: hesap yok, bulut yok, analitik yok; parolalar ve tokenlar cihazın güvenli depolamasında; Uzamsal oynatıcının kamerası yalnızca cihaz üzerinde kullanılır; paylaşımlara, Plex'e ve kameralara yalnızca ağınız üzerinden erişilir.
 
 <a id="technical-documentation"></a>
@@ -257,7 +257,7 @@ Uygulamanın okuyabildiği ve oynatabildiği her şey, tüm kapsamı görmek ist
 ### iPhone ve iPad
 
 1. App Store sürümü Apple'ın incelemesini bekliyor. Yayınlanana kadar uygulamayı bir Mac'te Xcode ile derleyin, bkz. [Kendiniz derleyin](../docs/immuch360/build.md).
-2. Immich sunucunuzla oturum açın veya "Sunucu olmadan kullan"a dokunun.
+2. "Sunucu olmadan kullan"a dokunun veya sunucunuzla giriş yapmak için "Bir Immich sunucusuna bağlan"a dokunun; ikisi de build 24'ten itibaren karşılama sayfasındadır.
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TV ve Google TV
@@ -277,14 +277,18 @@ Uygulamanın okuyabildiği ve oynatabildiği her şey, tüm kapsamı görmek ist
 <a id="windows"></a>
 ### Windows
 
-1. [Desktop ön sürümünden](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`'i indirin (yaklaşık 58 MB, doğrulamak için `SHA256SUMS.txt` ile birlikte) ve istediğiniz bir yere, örneğin Belgeler'e çıkarın.
-2. Açılan klasörden `immuch360.exe`'yi başlatın ve klasörü bütün halde tutun: program, yanındaki dosyalara, bunların arasında video oynatıcısı `libmpv-2.dll`'e gereksinim duyar.
-3. Dosyalar henüz imzalanmadı: Windows SmartScreen "Windows bilgisayarınızı korudu" mesajını gösterebilir, "Daha fazla bilgi"yi, sonra "Yine de çalıştır"ı seçin. Yeni bir build'in ilk başlatılması, Windows dosyaları tararken bir dakikaya kadar sürebilir.
-4. Windows 10 veya 11, 64 bit. Henüz yükleyici ve otomatik güncelleme yok: sonraki build'i de aynı şekilde çıkarın.
+1. `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe`'yi [masaüstü ön sürümünden](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) indirin (kontrol etmek için `SHA256SUMS.txt` ile) ve açın. Dosyalar henüz imzalı değildir: Windows SmartScreen "Windows protected your PC" yazısını gösterebilir; "More info" seçeneğine, ardından "Run anyway" seçeneğine tıklayın.
+2. "Install for me only" (yönetici hakları gerekmez) veya "Install for all users" seçeneğini seçin, ardından yükleyicinin dilini seçin; bu dil zaten Windows'un dili olarak ayarlıdır.
+3. Immuch360 Desktop'ı Başlat menüsünden başlatın. Fotoğraflar ve videolar onu "Birlikte Aç"ta bulur (bir dosyaya sağ tıklayın, Birlikte Aç); kendisini hiçbir zaman onların varsayılan programı yapmaz. Yeni bir build'in ilk başlatılması, Windows dosyaları tararken bir dakikaya kadar sürebilir.
+4. Windows 10 veya 11, 64 bit. Güncellemek için sonraki build'in yükleyicisini açın: girişiniz, klasörleriniz ve ayarlarınız kalır. Aynı sürümün ZIP'i, aynı programın bir klasör hâlidir; istediğiniz yere çıkarıp içinden `immuch360.exe`yi başlatabilirsiniz.
 
-### macOS ve Linux
+### Linux
 
-Projeler kaynak kodunda bulunur ve her değişiklikte projenin CI'si tarafından derlenir; ancak uygulama bu sistemlerde henüz başlatılmadı ve video oynatıcı kütüphanesi henüz içlerinde değil: henüz indirme yok. Bunları derleme adımları [Kendiniz derleyin](../docs/immuch360/build.md) sayfasındadır.
+Ubuntu 22.04 veya üzeri ve Debian 12 veya üzerinde: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; Fedora 40 veya üzerinde: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Ardından Immuch360 Desktop'ı uygulamalarınızdan başlatın. Erken bir önizleme: bilgisayarın klasörleri, küre olarak fotoğraflar ve 360° fotoğraflar; videolar henüz oynamaz ve SMB paylaşımları için Ubuntu 24.04, Debian 13 veya Fedora 39 ya da üzeri gerekir.
+
+### macOS
+
+`Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg`'yi açın ve uygulamayı Applications'a sürükleyin (Apple silicon ve Intel, macOS 12 veya üzeri). Henüz imzalı veya noter onaylı değildir: macOS 14 ve öncesinde Control tuşuyla tıklayıp Open seçeneğini seçin, veya macOS 15 ve sonrasında System Settings, Privacy & Security içinde "Open Anyway" seçeneğini seçin. Projede çalışanların hiçbirinde Mac yok: uygulama yalnızca projenin CI'sinde başlatıldı, henüz video oynatmıyor ve ağ erişimi denenmedi. Bildirimler memnuniyetle karşılanır.
 
 <a id="privacy"></a>
 ## Gizlilik
@@ -306,7 +310,7 @@ Bu sayfadaki telefon görüntüleri bir emülatörde Android build'inde, TV gör
 Henüz yapılmamış olanlar, en olası olanlar önce. Buradaki hiçbir şey bir söz değildir ve [sorun takipçisindeki](https://github.com/freeKC/Immuch360/issues) geri bildirimler neyin önce geleceğine karar vermeye yardımcı olur.
 
 - **Mağazalar**: Google Play (build 23 incelemede, TV listesi incelemede), App Store (sürüm 3.3.0 incelemede), Meta Horizon Store (build 21 incelemede).
-- **Bilgisayarlar**: bir Windows PC'de her işlevin elle testi; ardından webcam ile Uzamsal 2.5D; ardından video oynatıcılarıyla birlikte başlatılan ve yayınlanan macOS ve Linux; ardından bir yükleyici, imzalı bir build ve otomatik güncellemeler.
+- **Bilgisayarlar**: bir Windows PC'de her işlevin elle testi; ardından webcam ile Uzamsal 2.5D; ardından Linux ve macOS'ta video oynatıcı ve gerçek bir Mac'te bir test; ardından imzalı bir build ve otomatik güncellemeler.
 - **Telefonlar ve tabletler**: iOS 360° video oynatıcısında bir zaman çubuğu, telefonların 360° oynatıcılarında önceki ve sonraki, düz oynatıcıda ses parçası seçimi, iPhone ve iPad'de Tapo canlı görüntüsü.
 - **Sürükleyici medya**: çift fisheye .dng, GoPro ve DJI videolarının kendi hareket verilerinden dengelenmesi, kod çözücüleri izin veriyorsa Quest'te 3D uzamsal videolar, başlıkta uzamsal fotoğraflar arasında önceki ve sonraki.
 - **Kaynaklar**: bir paylaşım klasörünün dosyaları arasında kaydırma, WebDAV için Digest kimlik doğrulama, Plex token'ını bilgisayardan almak için bir QR kodu, Plex için IPv6, H.265 Tapo kayıtları, TV ana ekranında kanallar.

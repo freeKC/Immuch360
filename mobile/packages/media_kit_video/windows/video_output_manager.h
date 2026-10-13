@@ -59,6 +59,12 @@ class VideoOutputManager {
   std::optional<flutter::EncodableMap> ProjectionStats(int64_t handle,
                                                        bool probe);
 
+  // Immuch360: the player |partner| decodes the second stream of the stitch
+  // of the player |handle|; 0 ends the pairing (IMMUCH360-NOTE.md, patch 7).
+  void SetPartner(int64_t handle,
+                  int64_t partner,
+                  std::function<void(flutter::EncodableMap)> done);
+
   ~VideoOutputManager();
 
  private:

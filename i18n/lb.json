@@ -309,5 +309,10 @@
   "video_source_title": "Videoquell",
   "video_source_transcoded": "Ëmmer den transkodéierte Stream",
   "view_as_360": "Als 360° weisen",
-  "view_as_360_remove": "Net méi als 360° behandelen"
+  "view_as_360_remove": "Net méi als 360° behandelen",
+  "welcome_server_title": "Mat engem Immich-Server verbannen",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex oder eng Tapo-Kamera",
+  "welcome_shares_title": "Eng Netzwierkfreigab oder e Medieserver derbäisetzen",
+  "welcome_tagline": "Deng Medien. All Bildschierm. All Bléckwinkel.",
+  "welcome_without_server_description": "D'Fotoen a Videoe vun dësem Apparat. Freeginn a Medieserver kënne méi spéit derbäikommen."
 }

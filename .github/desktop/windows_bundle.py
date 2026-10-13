@@ -20,8 +20,9 @@ and the licence texts next to it (--notices, by default mobile/packages/media_ki
 When libmpv-2.dll is a build of the fork's workflow (immuch360-libmpv.yml: its archive, extracted by the Windows build
 in build/windows/<arch>/libmpv, holds the same DLL with BUILDINFO.txt and licenses/), those go into licenses/libmpv/.
 Any other libmpv-2.dll, media-kit's archive of 2024 by default, has no corresponding source the fork can give, so a ZIP
-for a release (--public, or a version info that is a release label such as 3.3.0-rc.0-20, which desktop_version.py
-gives a release tag only) is refused with it, unless the owner decides otherwise with --accept-2024-libmpv.
+for a release (--public, or a version info that is a release label such as 3.3.0-rc.0-20 or 3.3.0-rc.0-desktop.4,
+which desktop_version.py gives a release tag only) is refused with it, unless the owner decides otherwise with
+--accept-2024-libmpv.
 
   windows_bundle.py --release DIR --out DIR [--name "Immuch360 Desktop"] [--arch x64] [--crt-dir DIR]
                     [--system-dir DIR] [--zip FILE] [--symbols DIR] [--info KEY=VALUE ...]
@@ -68,10 +69,11 @@ VIDEO_FILES = ('libmpv-2.dll', 'libegl.dll', 'libglesv2.dll', 'vk_swiftshader.dl
 NOTICES_DIR = ROOT / 'mobile' / 'packages' / 'media_kit_video' / 'windows'
 LICENCE_TEXTS = ('NOTICES.md', 'licenses/LGPL-3.0.txt', 'licenses/GPL-3.0.txt', 'licenses/Apache-2.0.txt',
                  'licenses/ANGLE-BSD-3-Clause.txt')
-# The label desktop_version.py gives a build of a release tag; every other build has its commit after it. The build
-# number fits a Windows version field (at most 65535, five digits) and the commit has seven characters or more, so the
-# label of a version without a pre-release part and an all-digit commit (3.3.0-20-1234567) is not taken for a release
-RELEASE_LABEL = re.compile(r'^\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?-\d{1,5}$')
+# The label desktop_version.py gives a build of a release tag (3.3.0-rc.0-20) or of a desktop pre-release tag
+# (3.3.0-rc.0-desktop.4); every other build has its commit after it. The build number fits a Windows version field (at
+# most 65535, five digits) and the commit has seven characters or more, so the label of a version without a pre-release
+# part and an all-digit commit (3.3.0-20-1234567) is not taken for a release
+RELEASE_LABEL = re.compile(r'^\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?-(?:\d{1,5}|desktop\.\d{1,5})$')
 
 
 class NotPe(Exception):

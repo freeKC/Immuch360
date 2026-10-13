@@ -1,12 +1,14 @@
 #include "flutter_window.h"
 
 #include <flutter/standard_method_codec.h>
+#include <shellapi.h>
 
 #include <optional>
 #include <string>
 
 #include "app_identity.h"
 #include "flutter/generated_plugin_registrant.h"
+#include "utils.h"
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -42,7 +44,29 @@ bool FlutterWindow::OnCreate() {
           flutter_controller_->engine()->messenger(),
           IMMUCH360_INSTANCE_CHANNEL,
           &flutter::StandardMethodCodec::GetInstance());
+  // Room on that channel for the files of several later starts that come
+  // before Dart listens to it: Windows starts the app once per file opened
+  // with it, and a channel keeps one message by default. Flutter's control
+  // channel resizes the buffer, before any message of those starts.
+  flutter::MethodChannel<flutter::EncodableValue> channel_buffers(
+      flutter_controller_->engine()->messenger(), "dev.flutter/channel-buffers",
+      &flutter::StandardMethodCodec::GetInstance());
+  channel_buffers.InvokeMethod(
+      "resize",
+      std::make_unique<flutter::EncodableValue>(flutter::EncodableList{
+          flutter::EncodableValue(IMMUCH360_INSTANCE_CHANNEL),
+          flutter::EncodableValue(1000)}));
+  if (!early_hand_overs_.empty()) {
+    instance_channel_->InvokeMethod(
+        "openFiles",
+        std::make_unique<flutter::EncodableValue>(std::move(early_hand_overs_)));
+    early_hand_overs_.clear();
+  }
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
+  // Files dropped on the window open as a later start's do (OnDropFiles). The
+  // Flutter view, a child window, takes no drop itself: Windows hands a drop on
+  // it to this window, which accepts files.
+  ::DragAcceptFiles(GetHandle(), TRUE);
 
   flutter_controller_->engine()->SetNextFrameCallback([&]() {
     this->Show();
@@ -91,6 +115,9 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
       }
       break;
     }
+    case WM_DROPFILES:
+      OnDropFiles(reinterpret_cast<HDROP>(wparam));
+      return 0;
   }
 
   return Win32Window::MessageHandler(hwnd, message, wparam, lparam);
@@ -115,9 +142,41 @@ void FlutterWindow::OnHandOver(const COPYDATASTRUCT& data) {
       argument.push_back(bytes[i]);
     }
   }
-  if (instance_channel_ && !arguments.empty()) {
+  if (arguments.empty()) {
+    return;
+  }
+  if (!instance_channel_) {
+    // A start handled while the view is being made
+    early_hand_overs_.insert(early_hand_overs_.end(), arguments.begin(),
+                             arguments.end());
+    return;
+  }
+  instance_channel_->InvokeMethod(
+      "openFiles",
+      std::make_unique<flutter::EncodableValue>(std::move(arguments)));
+}
+
+void FlutterWindow::OnDropFiles(HDROP drop) {
+  // The paths of the dropped files and folders, UTF-8, as a later start gives
+  // them: Dart opens one file in the viewer, several or a folder as a page
+  flutter::EncodableList paths;
+  const UINT count = ::DragQueryFileW(drop, 0xFFFFFFFF, nullptr, 0);
+  for (UINT i = 0; i < count; i++) {
+    const UINT length = ::DragQueryFileW(drop, i, nullptr, 0);
+    if (length == 0) {
+      continue;
+    }
+    std::wstring path(length + 1, L'\0');
+    if (::DragQueryFileW(drop, i, path.data(), length + 1) == 0) {
+      continue;
+    }
+    path.resize(length);
+    paths.emplace_back(Utf8FromUtf16(path.c_str()));
+  }
+  ::DragFinish(drop);
+  if (instance_channel_ && !paths.empty()) {
     instance_channel_->InvokeMethod(
         "openFiles",
-        std::make_unique<flutter::EncodableValue>(std::move(arguments)));
+        std::make_unique<flutter::EncodableValue>(std::move(paths)));
   }
 }

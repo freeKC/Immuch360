@@ -342,5 +342,10 @@
   "video_source_title": "Sos blong video",
   "video_source_transcoded": "Oltaem transcoded stream",
   "view_as_360": "Lukum olsem 360°",
-  "view_as_360_remove": "Stop blong tritim olsem 360°"
+  "view_as_360_remove": "Stop blong tritim olsem 360°",
+  "welcome_server_title": "Konek long wan Immich server",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex o wan Tapo kamera",
+  "welcome_shares_title": "Ademap wan netwok sea o wan seva blong media",
+  "welcome_tagline": "Media blong yu. Eni skrin. Evri saed blong lukluk.",
+  "welcome_without_server_description": "Ol foto mo video blong divaes ia. Ademap ol sea mo seva blong media afta."
 }

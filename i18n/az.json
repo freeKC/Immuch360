@@ -480,5 +480,10 @@
   "video_source_title": "Video mənbəyi",
   "video_source_transcoded": "Həmişə transkod edilmiş axın",
   "view_as_360": "360° kimi bax",
-  "view_as_360_remove": "360° kimi qəbul etməyi dayandır"
+  "view_as_360_remove": "360° kimi qəbul etməyi dayandır",
+  "welcome_server_title": "Immich serverinə qoşul",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex və ya Tapo kamerası",
+  "welcome_shares_title": "Şəbəkə paylaşımı və ya media server əlavə et",
+  "welcome_tagline": "Media fayllarınız. İstənilən ekran. Hər baxış bucağı.",
+  "welcome_without_server_description": "Bu cihazdakı foto və videolar. Paylaşımları və media serverlərini sonra əlavə edin."
 }

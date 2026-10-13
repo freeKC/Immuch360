@@ -1,0 +1,25 @@
+{
+  "photos": {
+    "jpg": "JPEG photo",
+    "jpeg": "JPEG photo",
+    "png": "PNG image",
+    "heic": "HEIC photo",
+    "heif": "HEIF photo",
+    "avif": "AVIF image",
+    "webp": "WebP image",
+    "tif": "TIFF image",
+    "tiff": "TIFF image",
+    "dng": "DNG raw photo",
+    "insp": "Insta360 360° photo"
+  },
+  "videos": {
+    "mp4": "MPEG-4 video",
+    "mov": "QuickTime video",
+    "m4v": "MPEG-4 video",
+    "mkv": "Matroska video",
+    "webm": "WebM video",
+    "insv": "Insta360 360° video",
+    "360": "GoPro 360° video",
+    "osv": "DJI 360° video"
+  }
+}

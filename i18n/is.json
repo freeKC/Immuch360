@@ -1501,5 +1501,10 @@
   "video_source_transcoded": "Alltaf umkóðaða streymið",
   "view_as_360": "Skoða sem 360°",
   "view_as_360_remove": "Hætta að meðhöndla sem 360°",
+  "welcome_server_title": "Tengjast Immich-vélþjóni",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex eða Tapo-myndavél",
+  "welcome_shares_title": "Bæta við netdeilingu eða miðlaþjóni",
+  "welcome_tagline": "Þitt efni. Allir skjáir. Öll sjónarhorn.",
+  "welcome_without_server_description": "Myndir og myndskeið þessa tækis. Bættu við netdeilingum og miðlaþjónum síðar.",
   "yes": "Já"
 }

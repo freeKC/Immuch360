@@ -153,6 +153,30 @@ void main() {
     expect(players.made, hasLength(2));
   });
 
+  test('the second player of a pair never takes the player it plays with, even while that one opens', () async {
+    final players = FakePlayers();
+    final page = players.pool.lease(PlayerKind.playback, label: '360 video');
+    final first = await page.acquire() as FakePlaybackEngine;
+    await first.open('/videos/osmo.osv');
+    // Not playing yet: another lease would take it first
+    final pair = players.pool.lease(PlayerKind.playback, label: '360 video, second stream');
+    final second = await pair.acquire(sparing: first);
+    expect(second, isNot(same(first)));
+    expect(page.engine, same(first));
+    expect(players.made, hasLength(2));
+
+    // At the limit, both playing: the player that changes hands is never the spared one
+    final third = players.pool.lease(PlayerKind.playback, label: 'third');
+    await first.play();
+    await (second as FakePlaybackEngine).play();
+    expect(
+      await third.acquire(sparing: first),
+      same(second),
+      reason: 'the page was used longest ago, but its player is spared',
+    );
+    expect(page.engine, same(first));
+  });
+
   test('the pool waits for what the owner started on its player before it stops it or hands it over', () async {
     final players = FakePlayers();
     final a = players.pool.lease(PlayerKind.playback, label: 'a');

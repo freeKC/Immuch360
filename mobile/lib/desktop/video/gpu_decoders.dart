@@ -29,6 +29,9 @@ abstract final class DesktopGpuDecoders {
   static Future<D3D11DecoderProbe?>? _decoders;
   static final _checks = <String, Future<bool?>>{};
 
+  // Whether a failed probe was asked again: once per run
+  static bool _retried = false;
+
   static Future<D3D11DecoderProbe> _probeWindows({
     Iterable<String>? profiles,
     Iterable<(int, int)> sizes = const [],
@@ -61,6 +64,12 @@ abstract final class DesktopGpuDecoders {
       return found;
     } catch (error) {
       _log.warning('The decoders of the GPU could not be read, the static rule answers: $error');
+      // The probe of the start can fail while a new build is still scanned by the antivirus (seen at the first start
+      // of CI builds, before the log was ready): the next question asks the GPU once more
+      if (!_retried) {
+        _retried = true;
+        _decoders = null;
+      }
       return null;
     }
   }
@@ -98,6 +107,7 @@ abstract final class DesktopGpuDecoders {
   @visibleForTesting
   static void forget() {
     _decoders = null;
+    _retried = false;
     _checks.clear();
   }
 }

@@ -1,6 +1,6 @@
 // Reads real raw 360° files of the development machine with the probe and the parsers, and prints what they give. Each
 // file is only read, in place, and its test skipped unless its variable names it:
-//   IMMUCH_OSV_SAMPLE=/path/to/CAM_20250715191201_0003_D.OSV (DJI Osmo 360)
+//   IMMUCH_OSV_SAMPLE=/path/to/CAM_20250101120000_0001_D.OSV (DJI Osmo 360)
 //   IMMUCH_GOPRO_SAMPLE=/path/to/GS010013.360 (GoPro MAX)
 //   IMMUCH_TWOTRACK_SAMPLE=/path/to/twotrack-x3.insv (two video tracks and an X3 trailer)
 //   IMMUCH_INSP_SAMPLE=/path/to/IMG_20240908_133036_00_001.insp (Insta360 X3 photo)
@@ -69,17 +69,16 @@ void main() {
     }
     expect(probe.tracks[3].handlerName, 'CAM meta');
     expect(probe.tracks[5].handlerName, 'CAM dbgi');
-    expect(rawMediaKindOfName('CAM_20250715191201_0003_D.OSV', isVideo: true), RawMediaKind.djiVideo);
+    expect(rawMediaKindOfName('CAM_20250101120000_0001_D.OSV', isVideo: true), RawMediaKind.djiVideo);
 
     file.reads.clear();
     final dji = await readDjiOsvCalibration(file.read);
     final bytesRead = file.reads.fold(0, (sum, read) => sum + read.$2);
     _print('camd: $dji (${file.reads.length} reads, $bytesRead bytes)');
     _print('calibration: ${dji?.calibration.toJson()}');
-    expect(
-      (dji!.model, dji.serial, dji.firmware, dji.schema),
-      ('Osmo 360', '95SXN6500213WL', '10.00.05.06', 'dvtm_oq101.proto'),
-    );
+    expect((dji!.model, dji.schema), ('Osmo 360', 'dvtm_oq101.proto'));
+    expect(dji.serial, matches(RegExp(r'^[0-9A-Z]{14}$')));
+    expect(dji.firmware, matches(RegExp(r'^\d+(\.\d+)+$')));
     final calibration = dji.calibration;
     expect(calibration.model, DualFisheyeModel.kannalaBrandt);
     expect(calibration.canvasSquare, 3840);

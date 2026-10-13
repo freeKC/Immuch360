@@ -1,7 +1,7 @@
 // Synthetic DJI Osmo 360 .osv files for the tests of the camd parser: the protobuf records of the camd box (a header,
 // a config whose field 6 holds the calibration slots, a frame record), the camd box itself (a small MP4 of its own),
 // and a whole file with the tracks of the real sample. The lens values are those of the real sample
-// CAM_20250715191201_0003_D.OSV (serial 95SXN6500213WL, firmware 10.00.05.06), as floats, as the camera writes them.
+// CAM_20250101120000_0001_D.OSV (serial 95SXN0000000AB, firmware 10.00.05.06), as floats, as the camera writes them.
 
 import 'dart:convert';
 import 'dart:typed_data';
@@ -10,7 +10,7 @@ import '../../domain/services/spherical_probe_fixtures.dart';
 import 'insta360.stub.dart';
 
 const djiModel = 'Osmo 360';
-const djiSerial = '95SXN6500213WL';
+const djiSerial = '95SXN0000000AB';
 const djiFirmware = '10.00.05.06';
 
 /// The values of a DewarpParams slot

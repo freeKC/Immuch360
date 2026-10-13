@@ -40,6 +40,13 @@ struct ProjectionSetup {
   int32_t tracks = 1;
   float enabled[2] = {1.0f, 1.0f};
   std::map<std::string, std::vector<float>> uniforms;
+  // Immuch360, two players for the two streams of a raw file (patch 7):
+  // |partner_stream|, stream 1 is the frame of the partner player, read from
+  // its own texture, and off until the partner has one; |secondary|, this
+  // player only decodes its stream into its intermediate texture for the
+  // primary player, and draws no view.
+  bool partner_stream = false;
+  bool secondary = false;
   // The tier: the intermediate texture keeps the video's shape, at most this
   // wide and this many pixels
   int32_t max_frame_width = 8192;
@@ -91,6 +98,9 @@ class ProjectionRenderer {
                    const ProjectionSetup& setup);
 
   GLuint frame_fbo() const { return frame_fbo_; }
+  // Immuch360: the intermediate texture, which the primary player of a pair
+  // reads as its second stream (patch 7)
+  GLuint frame_texture() const { return frame_texture_; }
   int32_t frame_width() const { return frame_width_; }
   int32_t frame_height() const { return frame_height_; }
 
@@ -101,10 +111,13 @@ class ProjectionRenderer {
 
   // Draws the view into the bound surface (FBO 0) at |width| x |height|, then
   // leaves the OpenGL state at the defaults mpv expects (render_gl.h).
+  // |second_texture|, when not 0, is stream 1 of a stitch, read from that
+  // texture of the share group (patch 7).
   bool DrawView(const ProjectionSetup& setup,
                 const ProjectionView& view,
                 int32_t width,
-                int32_t height);
+                int32_t height,
+                GLuint second_texture = 0);
 
   // Reads five pixels of the output just drawn: the centre, then the middle
   // of the top, bottom, left and right edges (an eighth inside), as 0xAABBGGRR.
@@ -123,7 +136,8 @@ class ProjectionRenderer {
                    const ProjectionSetup& setup,
                    const ProjectionView& view,
                    int32_t width,
-                   int32_t height);
+                   int32_t height,
+                   bool second);
 
   using TexStorage2D = void(GL_APIENTRY*)(GLenum, GLsizei, GLenum, GLsizei,
                                           GLsizei);

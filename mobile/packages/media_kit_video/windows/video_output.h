@@ -16,9 +16,13 @@
 #include <render_gl.h>
 
 #include <atomic>
+#include <chrono>
+#include <condition_variable>
+#include <functional>
 #include <future>
 #include <memory>
 #include <mutex>
+#include <thread>
 #include <vector>
 
 #include <flutter/method_channel.h>
@@ -41,6 +45,26 @@ typedef struct _VideoOutputConfiguration {
         height(height),
         enable_hardware_acceleration(enable_hardware_acceleration) {}
 } VideoOutputConfiguration;
+
+// Immuch360: wakes the primary player of a pair once a frame waited long
+// enough for its partner's (IMMUCH360-NOTE.md, patch 7). One thread that
+// sleeps until the earliest time asked, then calls |fire|.
+class PairTimer {
+ public:
+  explicit PairTimer(std::function<void()> fire);
+  ~PairTimer();
+  void Arm(std::chrono::steady_clock::time_point at);
+
+ private:
+  void Run();
+
+  std::function<void()> fire_;
+  std::mutex mutex_;
+  std::condition_variable wake_;
+  std::optional<std::chrono::steady_clock::time_point> at_;
+  bool stop_ = false;
+  std::thread thread_;
+};
 
 class VideoOutput {
  public:
@@ -97,6 +121,14 @@ class VideoOutput {
   // ReadProbe| asked for by an earlier call with |probe| true.
   flutter::EncodableMap ProjectionStats(bool probe);
 
+  // Immuch360: the two streams of a raw 360 file decoded by two players
+  // (IMMUCH360-NOTE.md, patch 7). |partner|, whose projection is a secondary
+  // one, decodes stream 1 into its intermediate texture; this player draws the
+  // view from its own frame and the partner's, the two frames of one time
+  // together. nullptr ends the pairing. Runs on the thread pool and waits;
+  // "ok", and "reason" when false.
+  flutter::EncodableMap SetPartner(VideoOutput* partner);
+
  private:
   // Immuch360: the setup of renderer C, null when it is off.
   std::shared_ptr<const ProjectionSetup> CurrentProjection();
@@ -113,6 +145,26 @@ class VideoOutput {
   // Immuch360: the size of the decoded video (rotation applied), 0 x 0 when
   // mpv does not know it yet.
   std::pair<int64_t, int64_t> VideoParamsSize();
+
+  // Immuch360, two players for one raw file (patch 7). |DrawPaired| replaces
+  // |DrawProjection| on the primary player: it draws each frame of either
+  // player into its intermediate texture when the other's frame of the same
+  // time is there too (or once it waited long enough), then the view.
+  void DrawPaired(const ProjectionSetup& setup);
+  // Notes whether mpv has a new frame to draw, and its time, once per frame;
+  // the context of this player must be current. |period| is the frame period
+  // of the pair, in seconds.
+  void NotePending(int64_t now_ns, double period);
+  // mpv's frame into the intermediate texture of |setup|, or into the current
+  // surface while the video has no size yet; the context must be current.
+  bool RenderFrame(const ProjectionSetup& setup);
+  // A secondary player without its primary: its frames are drawn into its
+  // texture and nothing else, so that its mpv does not wait.
+  void DrawSecondaryAlone(const ProjectionSetup& setup);
+  // Ends the pairing this player is part of, either side. Thread pool only.
+  void Unpair();
+  // A draw of the pair from the thread pool, for |PairTimer|.
+  void PostPairDraw();
 
 
   void NotifyRender();
@@ -180,8 +232,53 @@ class VideoOutput {
     int32_t frame_height = 0;
     std::string error;
     std::string gl_renderer;
+    // Immuch360, two players (patch 7): draws of both frames of one time, of
+    // one frame alone after the wait, of a frame drawn to catch up without a
+    // view, and the partner's frames; the partner's delay and speed
+    int64_t paired = 0;
+    int64_t alone = 0;
+    int64_t catch_up = 0;
+    int64_t partner_frames = 0;
+    double partner_offset_ms = 0.0;
+    double partner_speed = 0.0;
   };
   ProjectionCounters projection_counters_;
+
+  // Immuch360: the pairing of two players (patch 7). |partner_| on the
+  // primary player, |primary_| on the secondary one; thread pool only, as
+  // |pending_| and |pair_|. |update_ns_| is when mpv last said it has a frame,
+  // written by mpv's thread.
+  struct PendingFrame {
+    bool waiting = false;
+    double pts = -1.0;
+    int64_t since_ns = 0;
+  };
+  struct PairState {
+    // The frame period and the last time drawn, to tell the frames apart
+    double period = 1.0 / 30.0;
+    double last_pts = -1.0;
+    int32_t period_samples = 0;
+    int32_t fps_reads = 0;
+    // The time and the arrival of the frame each player drew last, which
+    // tell how much later the partner's frames come than this player's
+    double mine_pts = -1.0;
+    int64_t mine_since_ns = 0;
+    double theirs_pts = -1.0;
+    int64_t theirs_since_ns = 0;
+    // That delay, smoothed, the speed the partner was last given to close it,
+    // and this player's speed
+    double offset_ms = 0.0;
+    double partner_speed = 0.0;
+    double speed = 1.0;
+    int64_t speed_at_ns = 0;
+    int64_t seek_at_ns = 0;
+  };
+  VideoOutput* partner_ = nullptr;
+  VideoOutput* primary_ = nullptr;
+  PendingFrame pending_;
+  PairState pair_;
+  std::atomic<int64_t> update_ns_{0};
+  std::unique_ptr<PairTimer> pair_timer_ = nullptr;
 
   std::unordered_map<int64_t, std::unique_ptr<flutter::TextureVariant>>
       texture_variants_ = {};

@@ -309,5 +309,10 @@
   "video_source_title": "Izvor videa",
   "video_source_transcoded": "Uvijek transkodirani stream",
   "view_as_360": "Prikaži kao 360°",
-  "view_as_360_remove": "Prestani tretirati kao 360°"
+  "view_as_360_remove": "Prestani tretirati kao 360°",
+  "welcome_server_title": "Poveži se s Immich serverom",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex ili kamera Tapo",
+  "welcome_shares_title": "Dodaj mrežni dijeljeni resurs ili medijski server",
+  "welcome_tagline": "Vaš sadržaj. Svaki ekran. Svaka perspektiva.",
+  "welcome_without_server_description": "Fotografije i videozapisi s ovog uređaja. Dijeljene resurse i medijske servere dodajte kasnije."
 }

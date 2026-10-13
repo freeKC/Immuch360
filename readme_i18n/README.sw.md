@@ -11,7 +11,7 @@ Immuch360 ni programu huria na ya chanzo wazi ya kutafuta, kuvinjari, kucheza na
 
 - **Inafanya nini?** Inaonyesha picha na video zako kama albamu na kuzicheza kwenye kitazamaji kinachofaa kila faili: bapa, kama tufe unaloweza kuzunguka ndani yake, katika 3D, kwenye kifaa cha kichwa.
 - **Midia gani?** Picha na video bapa, panorama, picha na video za 360°, VR180, 3D ya stereo, picha za spatial za Apple, na faili ghafi za kamera za 360° (Insta360, GoPro MAX, DJI Osmo 360), zinazoshonwa na programu.
-- **Kwenye vifaa gani?** Simu na kompyuta kibao za Android, iPhone na iPad, Android TV na Google TV, Meta Quest 2, Pro, 3 na 3S, Windows (toleo la awali), huku macOS na Linux zikiwa zinaandaliwa.
+- **Kwenye vifaa gani?** Simu na kompyuta kibao za Android, iPhone na iPad, Android TV na Google TV, Meta Quest 2, Pro, 3 na 3S, Windows (toleo la awali), na Linux na macOS kama majaribio ya mapema.
 - **Je, ninahitaji seva au akaunti?** Hapana. Immuch360 inafanya kazi yenyewe na midia ya kifaa chako. Seva ya Immich, NAS, seva ya midia au seva ya Plex ni chaguo unazoziongeza unapozihitaji.
 
 <p align="center">
@@ -26,8 +26,8 @@ Immuch360 ni programu huria na ya chanzo wazi ya kutafuta, kuvinjari, kucheza na
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone na iPad** | App Store | toleo 3.3.0 linasubiri ukaguzi wa Apple; [jijenge mwenyewe](../docs/immuch360/build.md) wakati huo huo |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV na Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 kwenye GitHub; orodha ya televisheni inakaguliwa na Google |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 na 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | kwenye Horizon Store (build 14; build 21 inakaguliwa), build 23 kwenye GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Preview ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4, toleo la awali: picha, video bapa na za 360°, hifadhi za mtandao, Plex, kamera |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS na Linux** | Chanzo | zinajengwa na CI ya mradi, bado hazijaanza kwenye mifumo hiyo, bado hakuna upakuaji |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Kisakinishi au ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, toleo la awali: picha, video bapa na za 360°, hifadhi, Plex, kamera, faili zinazofunguliwa na programu |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS na Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | majaribio ya mapema: kwenye Linux picha na picha za 360°, bado hakuna video; macOS imeanzishwa tu kwenye CI ya mradi |
 
 *Hali zinasasishwa kwa kila toleo; maelezo, build kwa build, yapo kwenye [Hali ya toleo](../docs/immuch360/release-status.md).*
 
@@ -97,11 +97,11 @@ Zaidi: [picha na video za 360°](../docs/immuch360/user-guide.md#360-photos-and-
 <a id="use-your-own-files-without-an-account"></a>
 ### Tumia faili zako mwenyewe, bila akaunti
 
-Immuch360 haihitaji akaunti wala seva. Kwenye ukurasa wa kuingia, "Tumia bila seva" inafungua programu kwenye picha na video za kifaa, pamoja na vitazamaji vyote, orodha ya 360° na vyanzo vya mtandao. Hakuna kinachoacha kifaa. Seva inaweza kuunganishwa baadaye, kutoka Settings, na vipengele vya seva huonekana wakati huo.
+Immuch360 haihitaji akaunti wala seva. Kuanzia build 24 programu inafunguka kwenye ukurasa wa kukaribisha, ambapo "Tumia bila seva" inakuja kwanza: inafungua programu kwenye picha na video za kifaa, pamoja na kila kitazamaji, orodha ya 360° na vyanzo vya mtandao. Hakuna chochote kinachotoka kwenye kifaa. Seva inaweza kuunganishwa baadaye, kutoka Mipangilio au kichupo cha Maktaba, na vipengele vya seva vinaonekana basi.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Kichupo cha Maktaba bila seva: kipengee cha 360° juu, kisha On this device chenye picha mbili za 360°, na Hifadhi za mtandao zenye hifadhi inayoitwa NAS">
 
-1. Fungua programu. Kwenye ukurasa wa kuingia, chini ya anwani ya seva na Settings, gusa "Tumia bila seva".
+1. Fungua programu. Ukurasa wa kukaribisha unaonyesha "Midia yako. Skrini yoyote. Mtazamo wowote." na chaguo tatu: gusa la kwanza, "Tumia bila seva". Mpaka build 23, ukurasa wa kuingia ulikuja kwanza, pamoja na "Tumia bila seva" chini ya fomu.
 2. Ruhusu ufikiaji wa picha na video zako. Ukikataa, programu inasema "Programu haiwezi kuona picha za kifaa hiki", pamoja na "Ruhusu ufikiaji" na "Fungua mipangilio".
 3. Kichupo cha Photos (Picha) kinaonyesha rekodi ya matukio ya kifaa. Search (Tafuta) na Albums (Albamu) zinabaki za kijivu, kwa kuwa zinatoka kwenye seva. Kichupo cha Maktaba kina 360° juu, kisha On this device (Kwenye kifaa hiki) (albamu za kifaa) na Hifadhi za mtandao.
 4. Menyu ya juu kulia inasema "Kifaa hiki pekee": programu inaonyesha picha na video za kifaa hiki, hakuna kinachotumwa popote.
@@ -120,7 +120,7 @@ Video zako ziko kwenye NAS, kompyuta au seva ya midia. Immuch360 inatafuta seva 
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Folda ya hifadhi ya mtandao kama gridi ya vijipicha: picha za 360° zenye beji ya 360° na video ya 360° yenye alama ya kucheza, kitufe cha Chagua juu kulia">
 </p>
 
-1. Fungua kichupo cha Maktaba, kisha Hifadhi za mtandao, kisha + na "Hifadhi ya mtandao (NAS, kompyuta, seva ya midia)".
+1. Fungua kichupo cha Maktaba, kisha Hifadhi za mtandao, kisha + na "Hifadhi ya mtandao (NAS, kompyuta, seva ya midia)". Kuanzia build 24, "Ongeza hifadhi ya mtandao au seva ya midia" kwenye ukurasa wa kukaribisha inafungua Hifadhi za mtandao moja kwa moja, bila seva.
 2. Gusa seva chini ya "Imepatikana kwenye mtandao", au jaza fomu kwa mkono: aina, jina au anwani ya seva, hifadhi au njia, folda ya kuanzia, jina la mtumiaji na nenosiri.
 3. Gusa "Jaribu muunganisho", kisha Hifadhi. Gusa hifadhi ili kuivinjari: folda kwanza, kisha picha na video, pamoja na beji ya 360° kwenye faili zinazotambuliwa kama za 360°.
 4. Ukiwa na seva ya Immich imeunganishwa, chagua faili kwenye folda na gusa "Pakia kwenye Immich" ili kuzituma kwa seva yako.
@@ -134,7 +134,7 @@ Zaidi: [hifadhi za mtandao](../docs/immuch360/user-guide.md#network-shares-a-nas
 
 Ukiwa na seva ya [Immich](https://github.com/immich-app/immich), Immuch360 ni programu ya simu ya Immich, yenye seva ileile na akaunti ileile kama programu ya wavuti: hifadhi rudufu, rekodi ya matukio, albamu, utafutaji, watu, kumbukumbu, kushiriki, washirika, zote zikilandanishwa na seva yako. Inasakinishwa kando ya programu rasmi. Zaidi ya hayo: beji na orodha ya 360°, kila kitazamaji cha kuzamisha, chaguo kati ya faili asili na mkondo uliobadilishwa wa seva kwa kila video, maelezo ya kiufundi ya video, na faili za hifadhi au za kifaa zinazotumwa kwa seva yako kwa mkono.
 
-1. Ingia kwa anwani ya seva yako, barua pepe yako na nenosiri lako, kama kwenye programu ya Immich. Maktaba yako, albamu zako na mipangilio ya hifadhi rudufu ni za akaunti yako.
+1. Kwenye ukurasa wa kukaribisha, gusa "Unganisha kwenye seva ya Immich", kisha ingia kwa anwani ya seva yako, barua pepe yako na nenosiri lako, kama kwenye programu ya Immich; Rudi inarudisha kwenye ukurasa wa kukaribisha. Mpaka build 23 ukurasa wa kuingia unafunguka moja kwa moja. Maktaba yako, albamu zako na mipangilio yako ya hifadhi rudufu ni ile ya akaunti yako.
 2. Kwenye Settings, Asset Viewer, Videos, "Chanzo cha video" huchagua asili wakati kifaa hiki kinaidekodi, asili kila wakati, au mkondo uliobadilishwa kila wakati.
 3. Ili kuonyesha picha ya 360° kwa mtu asiye na programu, ishiriki kwa kiungo cha kushiriki cha Immich: programu ya wavuti ya Immich inaionyesha kama tufe kwenye kivinjari chao.
 
@@ -154,7 +154,7 @@ Kwenye Meta Quest, programu ileile inafanya kazi kama dirisha lenye maktaba yako
 </p>
 
 1. Sakinisha programu kutoka [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), au sakinisha kwa mkono APK ya build mpya zaidi, tazama [Sakinisha](#meta-quest).
-2. Ingia kwa seva yako ya Immich, au gusa "Tumia bila seva" kwa picha na video za headset yenyewe.
+2. Kwenye ukurasa wa kukaribisha, gusa "Tumia bila seva" kwa picha na video za kifaa cha kichwa chenyewe, au "Unganisha kwenye seva ya Immich" ili kuingia na seva yako.
 3. Fungua picha au video ya 360° na bonyeza 360°: mtazamo wa kuzamisha unafunguka. B au Y, au kitufe cha Rudi cha paneli ya taarifa, kinarudisha dirisha.
 
 Zaidi: [ndani ya kifaa cha kichwa cha Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [kifaa cha kichwa: kodeki, duka na ruhusa](../docs/immuch360/platform-support.md#meta-quest).
@@ -169,8 +169,8 @@ Programu ileile ya Android inafanya kazi kwenye Android TV na Google TV kwa kidh
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Kicheza video cha Immuch360 Desktop kwenye Windows: video ya barabara ikicheza ndani ya dirisha, pamoja na kitufe cha kusitisha, upau wa muda, Shiriki na Pakia kwenye Immich">
 </p>
 
-1. Kwenye televisheni: sakinisha APK kwa adb (tazama [Sakinisha](#android-tv-and-google-tv)), ingia au chagua "Tumia bila seva", ongeza hifadhi, seva ya Plex au kamera kutoka Maktaba.
-2. Kwenye kompyuta ya Windows: fungua toleo la awali na anzisha `immuch360.exe` (tazama [Sakinisha](#windows)), kisha chagua folda za picha na video zako, au ingia kwenye seva yako.
+1. Kwenye televisheni: sakinisha APK kwa adb (tazama [Sakinisha](#android-tv-and-google-tv)); kwenye ukurasa wa kukaribisha, chagua "Ongeza hifadhi ya mtandao au seva ya midia" kwa hifadhi, seva ya Plex au kamera, "Tumia bila seva", au "Unganisha kwenye seva ya Immich".
+2. Kwenye kompyuta ya Windows: sakinisha toleo la awali au fungua ZIP yake na anzisha `immuch360.exe` (tazama [Sakinisha](#windows)); kuanzia desktop build 5, "Tumia bila seva" kwenye ukurasa wa kukaribisha inafungua uchaguzi wa folda zako, na "Unganisha kwenye seva ya Immich" ukurasa wa kuingia. Picha, video au folda inayofunguliwa na programu, au kudondoshwa kwenye dirisha lake, inafunguka papo hapo, ile ya 360° kwenye mtazamo wake wa 360°; faili kadhaa zinafunguka pamoja kwenye ukurasa mmoja.
 3. Kwenye kitazamaji, vitufe vya kucheza na kusitisha, kurudisha nyuma, kusogeza mbele, iliyotangulia na inayofuata za kidhibiti cha mbali hufanya kazi, na vivyo hivyo vitufe vya kibodi kwenye kompyuta (nafasi, J na L, F kwa skrini nzima).
 
 Zaidi: [tazama kwenye televisheni yako](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [kwenye kompyuta ya Windows](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [msaada wa jukwaa](../docs/immuch360/platform-support.md).
@@ -180,7 +180,7 @@ Zaidi: [tazama kwenye televisheni yako](../docs/immuch360/user-guide.md#watch-on
 
 - **Kamera za Tapo**: kamera inaongezwa karibu na hifadhi za mtandao. Programu inaionyesha moja kwa moja (Android, Android TV, Quest na Windows) na kuorodhesha rekodi za kadi yake ya kumbukumbu siku baada ya siku kwenye jukwaa lolote; kipande kinapatikana kutoka kamera, kinacheza kama video yoyote na kinaweza kutumwa kwa Immich. Programu inazungumza na kamera kwenye mtandao wako tu, kamwe na seva za TP-Link.
 - **Plex Media Server, bila plex.tv**: programu inajiunga na seva yako moja kwa moja, kwa tokeni unayoiweka mara moja, na kusoma faili asili za maktaba zako moja kwa moja, hivyo 360° inabaki 360°, nyumbani na, kupitia usafirishaji wa bandari yako, nje ya nyumba.
-- **Faili ghafi za kamera za 360°**: picha ghafi za .insp na video za .insv za kamera za Insta360 (lenzi moja au mbili, kwenye wimbo mmoja, wimbo mbili au faili mbili), faili za .360 za GoPro MAX na faili za .osv za DJI Osmo 360 zinashonwa na programu wakati zinacheza, kwa urekebishaji ulioandikwa kwenye faili, bila chochote cha kusakinisha popote.
+- **Faili ghafi za kamera za 360°**: Picha ghafi za .insp na video za .insv za kamera za Insta360 (lenzi moja au mbili, katika njia moja, njia mbili au faili mbili), faili za .360 za GoPro MAX na faili za .osv za DJI Osmo 360 zinashonwa na programu wakati zinachezwa, pamoja na urekebishaji ulioandikwa kwenye faili, bila chochote cha kusakinisha popote. Kwenye Android, zichezee kutoka hifadhi, kompyuta au seva yako, kwa sababu albamu ya simu haiorodheshi faili ghafi; seva ya Immich inapokea .insp na .insv tu.
 
 Zaidi: [kamera za Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [faili ghafi za kamera za 360°](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
@@ -207,7 +207,7 @@ Msingi mmoja wa kodi, mazingira sita. Kile kila moja inacho leo:
 | Shiriki kifaa hiki kwenye mtandao | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
 | Pakia kwenye Immich kutoka hifadhi na kifaa | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
 | Kiingizo | kugusa, jairoskopu | kugusa, jairoskopu | kidhibiti cha mbali | vidhibiti, mikono | kipanya, kibodi | |
-| Mahali pa kuipata | Google Play, APK | App Store (inakaguliwa) | APK, Google Play (inakaguliwa) | Horizon Store, APK | preview ZIP | build za CI tu |
+| Mahali pa kuipata | Google Play, APK | App Store (inakaguliwa) | APK, Google Play (inakaguliwa) | Horizon Store, APK | kisakinishi au ZIP (toleo la awali) | .deb, .rpm, DMG (majaribio ya mapema) |
 
 ✅ ndani ya programu kwenye jukwaa hilo · ❌ haipatikani huko · 🔜 imepangwa · 🔧 ndani ya chanzo na imejengwa na CI ya mradi, bado haijaanza kwenye mfumo huo. "Jicho moja" inamaanisha faili ya 3D inaonyesha jicho lake la kushoto kwenye skrini bapa. Si kila ✅ imekaguliwa kwenye kifaa halisi bado: kilichokaguliwa wapi, na kinachosalia kuthibitishwa, kipo kwenye [Vipengele](../docs/immuch360/features.md), [Msaada wa jukwaa](../docs/immuch360/platform-support.md) na [Utangamanifu](../docs/immuch360/compatibility.md).
 
@@ -215,8 +215,8 @@ Msingi mmoja wa kodi, mazingira sita. Kile kila moja inacho leo:
 - **iPhone na iPad**: programu kamili; kicheza video cha 360° kina kucheza na kusitisha tu, mtazamo wa moja kwa moja wa Tapo utakuja baadaye, na utafutaji wa DLNA hutuma maombi ya unicast hadi Apple itoe ruhusa ya multicast.
 - **Android TV na Google TV**: APK ileile, inayoendeshwa na kidhibiti cha mbali; kitazamaji: hifadhi rudufu, upakiaji na uhariri vimefichwa. Imekaguliwa kwenye kiigaji cha Google TV (kuingia, rekodi ya matukio, vitazamaji, hifadhi, uendeshaji wa kidhibiti cha mbali), bado haijakaguliwa kwenye televisheni halisi.
 - **Meta Quest 2, Pro, 3 na 3S**: programu kama dirisha, pamoja na mtazamo wa kuzamisha; HEVC ni kodeki salama, H.264 inasimama karibu 4096x2304 kwenye Quest 3; Quest 2 na Quest Pro hazijajaribiwa bado.
-- **Windows 10 na 11**: toleo la awali, lenye folda badala ya albamu, kicheza video chake chenyewe (libmpv) kwa video bapa na za 360°, faili ghafi zinazoshonwa kwenye chip ya michoro, bado hakuna kisakinishi.
-- **macOS na Linux**: miradi inajengwa na CI ya mradi (Linux imejengwa, macOS imekusanywa); programu bado haijaanza kwenye mifumo hiyo na maktaba yao ya kicheza video bado haijawekwa.
+- **Windows 10 na 11**: toleo la awali, lenye folda badala ya albamu, kicheza video chake chenyewe (libmpv) kwa video bapa na za 360°, faili ghafi zinazoshonwa na chip ya michoro, faili na folda zinazofunguliwa na programu au kudondoshwa kwenye dirisha, kisakinishi au ZIP.
+- **macOS na Linux**: vifurushi vilivyojengwa na CI ya mradi (.deb, .rpm, DMG); kwenye Linux programu inaanza na kuonyesha picha na picha za 360°, bado hakuna video; na hifadhi za SMB zinahitaji Ubuntu 24.04, Debian 13 au Fedora 39 au toleo jipya zaidi; programu ya macOS imeendeshwa tu kwenye CI ya mradi, bila video na huku ufikiaji wake wa mtandao haujajaribiwa.
 
 <a id="advanced-features"></a>
 ## Vipengele vya kina
@@ -226,11 +226,11 @@ Kile programu inachoweza kusoma na kucheza, kwa msomaji anayetaka ukubwa wote. M
 - **Miundo**: picha na video bapa (kile kifaa kinachodekodi: MP4, MOV, MKV na zaidi); picha na video za 360° za equirectangular; panorama zisizo kamili (upunguzaji wa GPano); VR180; 3D ya stereo, juu na chini au ubavu kwa ubavu, inayosomwa kutoka faili (kisanduku cha st3d) au kukisiwa kutoka fremu; picha za spatial za Apple (jozi za stereo za HEIC) na video za spatial (MV-HEVC, jicho moja); faili ghafi za Insta360 .insp na .insv, GoPro .360, DJI .osv; vyanzo vya HLG na PQ vya biti 10 vilivyorekebishwa toni kwenye tufe.
 - **Uonyeshaji na metadata**: metadata za GPano na za tufe zinazosomwa kutoka faili, kwa maombi ya safu kwenye seva au hifadhi; mtazamo wa awali wa kamera; "Tazama kama 360°" inakumbukwa kwenye kifaa; VR180 inatambuliwa kutoka faili au jina lake; metadata inabaki bila kubadilika kwa sababu faili asili ndiyo inayochezwa, kamwe nakala iliyobadilishwa.
 - **Uchezaji wa asili**: Media3 kwenye Android na televisheni, SceneKit na AVFoundation kwenye iOS, Meta Spatial SDK kwenye kifaa cha kichwa, libmpv kwenye Windows; faili asili au mkondo uliobadilishwa unachaguliwa kulingana na kile kifaa kinachodekodi; orodha ya videkoda vya video vya kifaa kwenye Settings, Advanced; chaguo la njia ya sauti na kionyeshi cha ubafa.
-- **Faili ghafi zinazoshonwa kwenye kifaa**: kivuli cha vipande cha Flutter kwa picha; athari ya GPU kwenye kicheza kwa video za wimbo mmoja; videkoda viwili vya maunzi kwa wakati mmoja na mtunzi wa GPU kwa video zenye lenzi moja kwa wimbo au kwa faili (OpenGL ES 3 kwenye Android na Quest, Metal kwenye iOS, grafu ya kichujio ya libmpv kwenye Windows); urekebishaji wake wa kamera (miundo ya Mei, V6 na equidistant) na rekodi ya kipima kasi; njia mbadala za lenzi moja, mkondo uliobadilishwa, nakala ya LRV ya kamera au video isiyoshonwa wakati kifaa hakiwezi kuendesha videkoda viwili.
+- **Faili ghafi zinazoshonwa kwenye kifaa**: fragment shader ya Flutter kwa picha; athari ya GPU kwenye kicheza kwa video za njia moja; videkoda mbili za maunzi kwa wakati mmoja na GPU compositor kwa video zenye lenzi moja kwa njia au faili (OpenGL ES 3 kwenye Android na Quest, Metal kwenye iOS, na kwenye Windows, kuanzia toleo la desktop 5, vicheza viwili vya libmpv ambavyo fremu zake huunganishwa na programu kwenye chip ya michoro); urekebishaji wa kamera wenyewe (mifano ya Mei, V6 na equidistant) na rekodi ya akselerometa; kifaa hubadili kutumia lenzi moja, mkondo uliobadilishwa, nakala ya LRV ya kamera, au video isiyoshonwa, kinaposhindwa kuendesha videkoda mbili.
 - **Vyanzo**: albamu ya kifaa; folda za kompyuta; seva ya Immich; SMB 2 na 3, WebDAV, DLNA/UPnP; Plex kupitia HTTPS inayokaguliwa dhidi ya cheti chake chenyewe cha seva; kamera za Tapo kupitia mtandao wa ndani (HTTPS na RTSP); simu au kompyuta inayoshirikiwa kwenye Wi-Fi kama seva ya WebDAV; seva zinazopatikana kwa Bonjour/mDNS, uchunguzi wa mtandao wa ndani, SSDP, GDM na ugunduzi wa TP-Link, na kufuatiliwa zinapobadilisha anwani.
 - **Usomaji kwa mahitaji**: daraja la ndani linahudumia vicheza kwa safu za baiti na tokeni kwa kila kipindi; vizuizi vikubwa, usomaji wa mbele na muunganisho hadi sita wa SMB kwa wakati mmoja; vijipicha kutoka fremu ya video kila moja; hakuna kinachonakiliwa kwenye kifaa.
 - **Maunzi**: videkoda vya maunzi hutumika popote vilipo, pamoja na mipaka yake iliyopimwa (kikomo cha H.264 cha Quest 3, lenzi mbili za 2048x2048 kwa upeo kwa videkoda vya programu); kwenye Windows mtazamo wa 360° unachorwa na chip ya michoro kutoka kila fremu iliyodekodiwa, ukubwa wa fremu unapimwa kwenye kompyuta kila moja, chip iliyoambatanishwa au ya pekee hugunduliwa.
-- **Mahususi za jukwaa**: jairoskopu na kicheza cha Spatial 2.5D kwenye simu; mtazamo wa kuzamisha, vidhibiti na mikono kwenye Quest; mpangilio wa kidhibiti cha mbali, kisanduku cha kibodi na bango la televisheni kwenye Android TV; kwenye kompyuta, kipanya na kibodi, skrini nzima, dirisha moja, faili inayofunguliwa na programu au kuachwa juu yake, picha za HEIC, AVIF, TIFF na kamera ghafi za folda wakati Windows ina dekoda kwa hizo, na ulinzi wa data wa Windows kwa manenosiri na tokeni.
+- **Mambo mahususi kwa jukwaa**: jairoskopu na kicheza cha Spatial 2.5D kwenye simu; mtazamo wa kuzamisha, vidhibiti na mikono kwenye Quest; mpangilio wa kidhibiti cha mbali, kidirisha cha kibodi na bango la televisheni kwenye Android TV; kwenye kompyuta, kipanya na kibodi, skrini nzima, dirisha moja, faili na folda zinazofunguliwa na programu au kudondoshwa kwenye dirisha lake, zinazosomwa kama faili za folda zako, picha za HEIC, AVIF na TIFF, na picha ghafi za kamera za folda wakati Windows ina kisimbuzi kwa ajili yake, na ulinzi wa data wa Windows kwa manenosiri na tokeni.
 - **Faragha kwa ujenzi**: hakuna akaunti, hakuna wingu, hakuna uchanganuzi; manenosiri na tokeni kwenye hifadhi salama ya kifaa; kamera ya kicheza cha Spatial inatumika kwenye kifaa tu; hifadhi, Plex na kamera zinafikiwa kwenye mtandao wako tu.
 
 <a id="technical-documentation"></a>
@@ -257,7 +257,7 @@ Kile programu inachoweza kusoma na kucheza, kwa msomaji anayetaka ukubwa wote. M
 ### iPhone na iPad
 
 1. Toleo la App Store linasubiri ukaguzi wa Apple. Mpaka lichapishwe, jijenge programu kwa Xcode kwenye Mac, tazama [Jijenge mwenyewe](../docs/immuch360/build.md).
-2. Ingia kwa seva yako ya Immich, au gusa "Tumia bila seva".
+2. Gusa "Tumia bila seva", au "Unganisha kwenye seva ya Immich" ili kuingia na seva yako; zote mbili zipo kwenye ukurasa wa kukaribisha kuanzia build 24.
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TV na Google TV
@@ -277,14 +277,18 @@ Kile programu inachoweza kusoma na kucheza, kwa msomaji anayetaka ukubwa wote. M
 <a id="windows"></a>
 ### Windows
 
-1. Pakua `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` kutoka [toleo la awali la desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) (karibu MB 58, pamoja na `SHA256SUMS.txt` ili kukikagua) na ufungue mahali popote, kwa mfano kwenye Documents.
-2. Anzisha `immuch360.exe` kutoka folda iliyofunguliwa na uhifadhi folda nzima: programu inahitaji faili zilizo karibu nayo, kati yake `libmpv-2.dll`, kicheza video.
-3. Faili bado hazijasainiwa: Windows SmartScreen inaweza kuonyesha "Windows protected your PC", chagua "More info" kisha "Run anyway". Uanzishaji wa kwanza wa build mpya unaweza kuchukua hadi dakika moja wakati Windows inachunguza faili.
-4. Windows 10 au 11, biti 64. Bado hakuna kisakinishi na hakuna masasisho ya moja kwa moja: fungua build inayofuata kwa njia ileile.
+1. Pakua `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` kutoka [toleo la awali la desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) (pamoja na `SHA256SUMS.txt` ili kuikagua) na uifungue. Faili hazijasainiwa bado: Windows SmartScreen inaweza kuonyesha "Windows protected your PC", chagua "More info" kisha "Run anyway".
+2. Chagua "Sakinisha kwa ajili yangu tu" (hakuna haki za msimamizi) au "Sakinisha kwa watumiaji wote", kisha lugha ya kisakinishi, ile ya Windows iliyochaguliwa tayari.
+3. Anzisha Immuch360 Desktop kutoka menyu ya Kuanza. Picha na video zinaipata kwenye "Fungua na" (bonyeza kulia kwenye faili, Fungua na); haijifanyi kamwe kuwa programu yao chaguomsingi. Uanzishaji wa kwanza wa build mpya unaweza kuchukua hadi dakika moja wakati Windows inachunguza faili.
+4. Windows 10 au 11, biti 64. Ili kusasisha, fungua kisakinishi cha build inayofuata: kuingia, folda na mipangilio yako zinabaki. ZIP ya toleo lilelile ni programu ileile kama folda, kufunguliwa popote na kuanzisha `immuch360.exe` kutoka humo.
 
-### macOS na Linux
+### Linux
 
-Miradi ipo kwenye chanzo na inajengwa na CI ya mradi kwa kila mabadiliko, lakini programu bado haijaanza kwenye mifumo hiyo na maktaba yao ya kicheza video haipo ndani yake: bado hakuna upakuaji. Hatua za kuzijenga zipo kwenye [Jijenge mwenyewe](../docs/immuch360/build.md).
+Kwenye Ubuntu 22.04 au toleo jipya zaidi na Debian 12 au toleo jipya zaidi: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; kwenye Fedora 40 au toleo jipya zaidi: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Kisha anzisha Immuch360 Desktop kutoka programu zako. Jaribio la mapema: folda za kompyuta, picha na picha za 360° kama tufe; video hazicheza bado, na hifadhi za SMB zinahitaji Ubuntu 24.04, Debian 13 au Fedora 39 au toleo jipya zaidi.
+
+### macOS
+
+Fungua `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` na uvute programu hadi Programu (Apple silicon na Intel, macOS 12 au toleo jipya zaidi). Haijasainiwa wala kuthibitishwa bado: bonyeza ukishikilia Control na uchague Fungua kwenye macOS 14 na zilizotangulia, au chagua "Open Anyway" kwenye System Settings, Privacy & Security kwenye macOS 15 na zinazofuata. Hakuna yeyote anayefanya kazi kwenye mradi anayemiliki Mac: programu imeanzishwa tu kwenye CI ya mradi, haichezi video bado na ufikiaji wake wa mtandao haujajaribiwa. Taarifa zinakaribishwa.
 
 <a id="privacy"></a>
 ## Faragha
@@ -306,7 +310,7 @@ Picha za simu za ukurasa huu zilipigwa kwenye build ya Android ndani ya kiigaji,
 Kile ambacho bado hakijafanywa, kinachowezekana zaidi kwanza. Hakuna hapa ambacho ni ahadi, na maoni kwenye [kifuatiliaji cha masuala](https://github.com/freeKC/Immuch360/issues) yanasaidia kuamua kipi kinakuja kwanza.
 
 - **Maduka**: Google Play (build 23 inakaguliwa, orodha ya televisheni inakaguliwa), App Store (toleo 3.3.0 linakaguliwa), Meta Horizon Store (build 21 inakaguliwa).
-- **Kompyuta**: kujaribu kila kazi kwa mkono kwenye PC ya Windows; kisha Spatial 2.5D kwa kamera ya wavuti; kisha macOS na Linux kuanzishwa na kusafirishwa, pamoja na kicheza video chake; kisha kisakinishi, build iliyosainiwa na masasisho ya moja kwa moja.
+- **Kompyuta**: kujaribu kila kazi kwa mkono kwenye PC ya Windows; kisha Spatial 2.5D kwa kamera ya wavuti; kisha kicheza video kwenye Linux na macOS na jaribio kwenye Mac halisi; kisha build iliyosainiwa na masasisho ya moja kwa moja.
 - **Simu na kompyuta kibao**: upau wa muda kwenye kicheza video cha 360° cha iOS, iliyotangulia na inayofuata kwenye vicheza vya 360° vya simu, chaguo la njia ya sauti kwenye kicheza bapa, mtazamo wa moja kwa moja wa Tapo kwenye iPhone na iPad.
 - **Midia ya kuzamisha**: .dng za fisheye mbili, kusawazisha video za GoPro na DJI kutoka data zao za mwendo, video za spatial katika 3D kwenye Quest ikiwa videkoda vyake vinaruhusu, iliyotangulia na inayofuata kati ya picha za spatial kwenye kifaa cha kichwa.
 - **Vyanzo**: kusogeza kidole kati ya faili za folda ya hifadhi, uthibitishaji wa Digest kwa WebDAV, msimbo wa QR wa kuleta tokeni ya Plex kutoka kompyuta, IPv6 kwa Plex, rekodi za Tapo za H.265, njia kwenye skrini ya mwanzo ya televisheni.

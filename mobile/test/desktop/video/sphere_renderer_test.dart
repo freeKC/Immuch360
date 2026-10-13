@@ -296,6 +296,34 @@ void main() {
       expect(judgeProbe(sample(30, memory: 400), lowestTier: false), ProbeVerdict.keep);
     });
 
+    test('two players: the counts of the plugin added over the window, the delay and the speed the latest', () {
+      ProjectionStats pair(int paired, int alone, int partner, double offset, double speed) => ProjectionStats(
+        enabled: true,
+        frames: paired + alone,
+        redraws: 0,
+        failed: 0,
+        frameMs: const [],
+        redrawMs: const [],
+        lockedMs: const [],
+        frameWidth: 3840,
+        frameHeight: 3840,
+        pairedFrames: paired,
+        aloneFrames: alone,
+        partnerFrames: partner,
+        partnerOffsetMs: offset,
+        partnerSpeed: speed,
+      );
+      expect(PairCounts.of(null), isNull);
+      expect(PairCounts.of(_frames(25)), isNull, reason: 'one player: nothing to tell');
+      final window = PairCounts.of(pair(24, 1, 25, 6, 1.02))! + PairCounts.of(pair(25, 0, 25, 2.5, 1.005));
+      expect((window.paired, window.alone, window.partnerFrames), (49, 1, 50));
+      expect(
+        '$window',
+        'two players: 49 paired, 1 alone, 0 caught up, 50 frames of the second, its delay 2.5 ms, its speed 1.0050',
+      );
+      expect(PairCounts.of(pair(0, 25, 0, 0, 1))!.partnerFrames, 0, reason: 'a second player that draws nothing');
+    });
+
     test('draws that all fail: renderer C is refused, whatever the tier', () {
       const nothing = ProbeSample(seconds: 3, frames: 0, failed: 90, error: 'intermediate FBO incomplete (36054)');
       expect(judgeProbe(nothing, lowestTier: false), ProbeVerdict.refused);

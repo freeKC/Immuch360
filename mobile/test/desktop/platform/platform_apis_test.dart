@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/library/folder_library_sync_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
 import 'package:immich_mobile/desktop/platform/desktop_background_worker_api.dart';
@@ -145,15 +146,13 @@ void main() {
       expect(rows.map((row) => row.codec), containsAll(DesktopVideoDecoderApi.softwareCodecs));
     });
 
-    test('command line files come out one by one, with a type from their extension', () async {
-      DesktopViewIntentHostApi.addLaunchPaths([r'C:\photos\VID_1.insv', '', r'C:\photos\IMG_2.jpg']);
-      final api = DesktopViewIntentHostApi();
-      final first = await api.consumeViewIntent();
-      final second = await api.consumeViewIntent();
-      expect(first?.path, r'C:\photos\VID_1.insv');
-      expect(first?.mimeType, 'video/mp4');
-      expect(second?.mimeType, 'image/jpeg');
-      expect(await api.consumeViewIntent(), isNull);
+    test('no view intent is ever pending: the files given to the program come as batches of paths', () async {
+      DesktopOpenRequests.add([r'C:\photos\VID_1.insv', r'C:\photos\IMG_2.jpg']);
+      addTearDown(DesktopOpenRequests.reset);
+
+      expect(await DesktopViewIntentHostApi().consumeViewIntent(), isNull);
+      await Future<void>.delayed(DesktopOpenRequests.together);
+      expect(DesktopOpenRequests.take(), [r'C:\photos\VID_1.insv', r'C:\photos\IMG_2.jpg']);
     });
 
     test('the client certificate is kept by the network API', () async {

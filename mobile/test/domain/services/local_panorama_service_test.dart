@@ -132,7 +132,7 @@ void main() {
         'IMG_VR180.jpg',
         'IMG_20240101_120000_00_001.insp',
         'VID_20240101_120000_00_001.INSV',
-        'CAM_20250715191201_0003_D.OSV',
+        'CAM_20250101120000_0001_D.OSV',
         'GS__0001.36P',
       ]) {
         expect(isLocalPanoramaCandidate(_asset('a', name: name, width: 4000, height: 3000)), isTrue, reason: name);
@@ -294,7 +294,7 @@ void main() {
       expect(await probeLocalPanoramaFile(sideBySide, isVideo: true), raw);
       expect(await probeLocalPanoramaFile(split, isVideo: true), raw, reason: 'its layout is settled when it opens');
       // Not read at all: the files do not even exist
-      for (final name in ['GS010013.360', 'CAM_20250715191201_0003_D.OSV', 'VID_20240908_193126_10_004.insv']) {
+      for (final name in ['GS010013.360', 'CAM_20250101120000_0001_D.OSV', 'VID_20240908_193126_10_004.insv']) {
         expect(await probeLocalPanoramaFile('${directory.path}/$name', isVideo: true), raw, reason: name);
       }
     });
@@ -576,7 +576,7 @@ void main() {
       assets = [
         // Build 17 found a split recording and two tracks flat, and never read a .360 or a .osv as raw
         _asset('split', name: 'VID_20240908_193126_10_004.insv', type: AssetType.video, width: 2880, height: 2880),
-        _asset('osv', name: 'CAM_20250715191201_0003_D.OSV', type: AssetType.video, width: 3840, height: 3840, age: 1),
+        _asset('osv', name: 'CAM_20250101120000_0001_D.OSV', type: AssetType.video, width: 3840, height: 3840, age: 1),
         // An equirect photo of a DJI camera without GPano tags, and a .36p
         _asset('dji', name: 'DJI_0001.JPG', width: 15520, height: 7760, age: 2),
         _asset('36p', name: 'GS__0001.36P', width: 7680, height: 3840, age: 3),

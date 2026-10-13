@@ -24,7 +24,8 @@ Each line links to the section that explains it. The limits by design, such as t
 
 ## Android phones and tablets
 
-- **Two lens raw videos on a phone** (Insta360 X4 and later, X3 pairs, GoPro .360, DJI .osv) have not been played on a phone yet: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
+- **Two lens raw videos on a phone** (Insta360 X4 and later, X3 pairs, GoPro .360, DJI .osv) have not been played on a phone yet; a DJI Osmo 360 file needs a 10 bit HEVC decoder, which the Android emulator lacks: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
+- **Raw files copied to the phone are not listed**: Android files .insv, .insp, .360, .lrv and .osv as other files, not as photos or videos, so they stay out of the gallery and of the app; play them from a share or a computer: [Watch a raw file](user-guide.md#watch-a-raw-file).
 - **A phone serving a Quest 3** with "Share this phone on the network" is not checked on a device yet: [Share this phone](user-guide.md#share-this-phone-on-the-network).
 - **Plex playback on a phone** is not checked on a device yet: [Plex Media Server](user-guide.md#plex-media-server-without-plextv).
 - **Apple spatial videos play one eye**, since Android has no public way to decode the second view: [Apple spatial photos and videos](user-guide.md#everywhere-else).
@@ -67,27 +68,28 @@ Each line links to the section that explains it. The limits by design, such as t
 - **A partial panorama is spread over the full sphere** in the immersive view, unless its GPano crop covers about half the width and the whole height: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
 - **The initial view the camera recorded (GPano) is not used** by the immersive view: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
 - **No audio track choice in the immersive view**: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
-- **The store version is build 14** until Meta approves build 21: [Release status](release-status.md).
+- **The store version is build 14** until Meta approves build 21 (returned on 12 October 2026 for its screenshots, a corrected submission being prepared): [Release status](release-status.md).
 
 ## Windows
 
 - **A preview**: the test of each function by hand on a Windows PC, with real files, both screens and a real camera, is in progress: [On a Windows computer](user-guide.md#on-a-windows-computer-immuch360-desktop-preview).
 - **The Tapo live view is not checked with a real camera yet**: [Known problems](#known-problems).
 - **No Windows on ARM app yet**: the libmpv workflow builds an arm64 archive, but no app ZIP for it is made: [Windows](platform-support.md#windows).
+- **Opening files from File Explorer by hand is not checked yet** (from desktop build 5): the command line, later starts (one at a time, or several at once with a file each, as File Explorer makes them) and drops sent to the window by a test script were checked on the test laptop, and the window came to the front for those starts; the "Open with" menu and a drag with the mouse were not: [Use it on a computer](user-guide.md#use-it-on-a-computer).
 - **What to do when something goes wrong**: [Troubleshooting](troubleshooting.md#windows).
 
 ### Not there yet
 
-- **Two lens raw videos on a laptop**: even with a 2026 libmpv, the test laptop stacked an X3 pair (two 2880x2880 H.264 files) at 30 frames a second on its NVIDIA chip only; on its Intel chip, and for an X4 file (two 3840x3840 HEVC tracks) on both chips, the video plays one lens, half of the sphere black, as on a phone that cannot run two decoders.
+- **Two lens raw videos on a laptop**: in desktop builds 3 and 4 the test laptop stacked an X3 pair (two 2880x2880 H.264 files) at 30 frames a second on its NVIDIA chip only, and an X4 file (two 3840x3840 HEVC tracks) played one lens on both chips. From desktop build 5 they play in two players: on the NVIDIA chip, a DJI Osmo 360 file (two 3840x3840 HEVC 10 bit tracks at 25 frames a second), an X4 file (two 3840x3840 HEVC tracks at 30) and an X3 pair played with no frame dropped. The first time a file at 30 frames a second opens, the player may still say "it may not play smoothly on this device", until the computer has measured it. Not checked yet in the app: the Intel chip, where the flat viewer alone took 2.5 GB of shared GPU memory for the Osmo 360 file and the test stopped for lack of memory on the PC (two players outside the app dropped 2 to 3 frames of 300 there).
 - **3D on the screen only**: a 3D video shows its left eye, as on phones; there is no gyroscope and no headset view on the computer. To watch in true 3D, share the computer with a Meta Quest.
 - **Spatial 2.5D**, later with the webcam; the **map** and the Places view; **signing in with OAuth** (sign in with an email and a password instead); **Google Cast**; **notifications**.
-- **An installer, a signed build and automatic updates**: this build is a folder with `immuch360.exe`.
-- **Linux and macOS**: their projects are in the sources and the project's CI builds them on every change (the Linux app on Ubuntu, the macOS app compiled with Xcode 26.3), but the app has not been started on those systems yet, their video player library (libmpv) is not provided for them yet, and there is no download; they come after Windows.
+- **A signed build and automatic updates**: the installer (from desktop build 5) and the ZIP are not signed, and the next build is installed by hand.
+- **Linux and macOS**: from desktop build 5 they have packages, previews of a preview: see [macOS and Linux](#macos-and-linux).
 - **Translations**: the new texts of the computer version are in English for now.
 
 ### Known problems
 
-- **A 360° file opened with the program shows flat** (desktop build 4, seen on 12 October 2026): a 360° photo or video opened with "Open with", dropped on `immuch360.exe` or given on its command line gets a temporary entry without metadata, so the viewer shows it flat, and "View as 360°" on it opens a page that keeps loading (a photo) or does nothing (a video). Open the file from its folder in the app instead. To be fixed in a next desktop build.
+- **After the installer, Windows may ask which program opens a .insp or .insv file**: the installer offers Immuch360 Desktop in "Open with" and never makes it a default program, but when the program of a type was never chosen as the default by you (Insta360 Studio for .insp and .insv, for example), Windows asks once at the next double click; and a type that no other program opens (often .osv and .360) opens with Immuch360 Desktop, the only program offered. Choose "Always" with the program you want, or change it in Settings, Apps, Default apps.
 - **The first start of a new build is slow**: from 10 seconds to about a minute before the window shows, most likely while Microsoft Defender scans the new files, which are not signed yet. Wait for the window rather than starting the app again; the next starts take a second or two.
 - **8K HEVC videos need a dedicated graphics chip, and 360° videos run better on one**: on the test laptop, the integrated Intel UHD chip showed about half the frames of an 8K HEVC video, while the dedicated NVIDIA chip played 8K HEVC and 5.7K H.264 with no dropped frame; the 360° player is smooth on the NVIDIA chip and slower on the Intel one, see [360° videos and the graphics chip](user-guide.md#360-videos-and-the-graphics-chip). Windows runs the app on the integrated chip unless told otherwise: in the Windows settings, System, Display, Graphics, add `immuch360.exe` and choose "High performance", then start the app again. On the integrated chip, a flat 5.7K H.264 video, which its decoder refuses, is decoded by the processor without a lost frame.
 - **Flat videos are drawn at most 1440 lines high**, then scaled to the window: on a 4K screen in full screen, a 4K or 8K video is a little softer than in a dedicated video player. This keeps an 8K video within the graphics power of a laptop. The 360° player reads the whole frame, or the smaller size its measure chose, and draws its view at most 1440 lines high too.
@@ -99,7 +101,12 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 
 ## macOS and Linux
 
-- **Not started on those systems yet**: built by the project's CI only, with no video player library and no download: [Platform support](platform-support.md#macos-and-linux).
+- **Packages from desktop build 5, previews of a preview**: a .deb, an .rpm and a macOS app, built by the project's CI: [Install it on a computer](user-guide.md#install-it-on-a-computer-windows-linux-and-macos).
+- **No videos yet**: the Linux and macOS apps have no video output yet; on Linux the viewer says "Video playback comes to Immuch360 Desktop in a later version". The Linux package already installs libmpv.
+- **Linux, SMB shares on Ubuntu 22.04 and Debian 12**: the SMB library of the app needs glibc 2.38, so SMB shares do not open there (Ubuntu 24.04, Debian 13 and Fedora 39 or later have it).
+- **Linux, the keyring**: the app keeps its secrets in the keyring of the session (GNOME Keyring, KWallet); without one it cannot keep them.
+- **macOS, never used by hand**: nobody working on the project has a Mac. On the Mac of the CI the app started and showed its login page, with its small texts drawn garbled in a screen capture of that virtual machine; its release build runs without the macOS sandbox from desktop build 5, so that it can read folders and reach a server or a share, which nobody has tried, and it is not signed with an Apple Developer ID nor notarized: [macOS](user-guide.md#macos).
+- **Files given to the app** (from desktop build 5): the drop on the window, the files the Finder opens with the app on macOS, and one copy per user on Linux, its later starts handing their files over the session bus, are compiled by the CI and have never run: [Platform support](platform-support.md#macos-and-linux).
 
 ## Not checked on a device yet
 
@@ -113,4 +120,4 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 - **A real Android TV or Google TV**, and the Plex and Tapo pages on a TV: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 - **Everything checked so far**, device by device and server by server: [Servers and devices checked](compatibility.md#servers-and-devices-checked).
 
-Last updated: 12 October 2026 (build 23, desktop build 4)
+Last updated: 13 October 2026 (build 23, desktop build 4, the packages of desktop build 5)

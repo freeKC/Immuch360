@@ -135,6 +135,111 @@ void main() {
     });
   });
 
+  group('two players, one stream each (renderer C pairs them on Windows)', () {
+    TwoStreamQuestion osmo({bool? integrated, String gpu = 'gpu-a'}) =>
+        (gpu: gpu, integrated: integrated, codec: VideoMime.hevc, width: 3840, height: 3840, frameRate: 25.0);
+    DecodeMeasure pairedMeasure({int dropped = 0, double frameRate = 25, String gpu = 'gpu-a'}) => DecodeMeasure(
+      gpu: gpu,
+      codec: VideoMime.hevc,
+      width: 3840,
+      height: 3840,
+      frameRate: frameRate,
+      hwdec: TwoStreamPaths.paired,
+      frames: 125,
+      dropped: dropped,
+      instances: 2,
+    );
+
+    test('first on any GPU, above the pixel rate stacked so far: two players have no such bound', () {
+      for (final integrated in [true, false, null]) {
+        final choice = chooseTwoStreamPath(
+          osmo(integrated: integrated),
+          own: const [],
+          copyBack: _copy,
+          paired: true,
+        );
+        expect(choice.hwdec, TwoStreamPaths.paired);
+        expect(choice.reason, contains('not measured yet'));
+      }
+      // Where they do not exist the stack rules as before: an Osmo 360 file is not stacked
+      expect(chooseTwoStreamPath(osmo(integrated: false), own: const [], copyBack: _copy).hwdec, isNull);
+    });
+
+    test('measured smooth on this computer: kept, also for a lower rate; too slow: the stack rules', () {
+      expect(
+        chooseTwoStreamPath(osmo(), own: [pairedMeasure()], copyBack: _copy, paired: true).reason,
+        contains('measured on this computer'),
+      );
+      expect(
+        chooseTwoStreamPath(osmo(), own: [pairedMeasure(frameRate: 30)], copyBack: _copy, paired: true).hwdec,
+        TwoStreamPaths.paired,
+        reason: 'two players kept up at a higher rate',
+      );
+      expect(
+        chooseTwoStreamPath(
+          osmo(gpu: 'gpu-b'),
+          own: [pairedMeasure(dropped: 50)],
+          copyBack: _copy,
+          paired: true,
+        ).hwdec,
+        TwoStreamPaths.paired,
+        reason: 'another GPU of this computer measured it: tried here',
+      );
+      final slow = chooseTwoStreamPath(
+        osmo(integrated: true),
+        own: [pairedMeasure(dropped: 50)],
+        copyBack: _copy,
+        paired: true,
+      );
+      expect(slow.hwdec, isNull, reason: 'two 3840 lenses above the stacked rate: one lens');
+      expect(slow.reason, contains('two players measured on this computer'));
+    });
+
+    test('two players too slow during this playback: an X3 pair is stacked as before', () {
+      final x3 = chooseTwoStreamPath(
+        _x3Pair(integrated: false),
+        own: const [],
+        failed: {TwoStreamPaths.paired},
+        copyBack: _copy,
+        paired: true,
+      );
+      expect(x3.hwdec, _copy);
+      final none = chooseTwoStreamPath(
+        osmo(),
+        own: const [],
+        failed: {TwoStreamPaths.paired},
+        copyBack: _copy,
+        paired: true,
+      );
+      expect(none.hwdec, isNull);
+      expect(none.reason, contains('two players too slow now'));
+    });
+
+    test('streams of unknown size or codec: two players are tried first', () {
+      const unknown = (gpu: 'g', integrated: true, codec: null, width: null, height: null, frameRate: 0.0);
+      expect(chooseTwoStreamPath(unknown, own: const [], copyBack: _copy, paired: true).hwdec, TwoStreamPaths.paired);
+      expect(
+        chooseTwoStreamPath(
+          unknown,
+          own: const [],
+          failed: {TwoStreamPaths.paired},
+          copyBack: _copy,
+          paired: true,
+        ).hwdec,
+        'no',
+      );
+    });
+
+    test('the order of the paths', () {
+      expect(TwoStreamPaths.orderFor(integrated: false, copy: _copy, paired: true), [
+        TwoStreamPaths.paired,
+        _copy,
+        'no',
+      ]);
+      expect(TwoStreamPaths.orderFor(integrated: true, copy: _copy), ['no', _copy]);
+    });
+  });
+
   group('the store of the measures', () {
     late Directory folder;
 
@@ -175,7 +280,13 @@ void main() {
         'vendorId': 0x8086,
         'integrated': true,
       });
-      final twoStreams = TwoStreamSwitch(store: store, decoderMeasures: decoders, adapter: () async => adapter);
+      // Stacking only, as on Linux and macOS: Windows pairs two players first (the tests of two players below)
+      final twoStreams = TwoStreamSwitch(
+        store: store,
+        decoderMeasures: decoders,
+        adapter: () async => adapter,
+        pairing: false,
+      );
       final raw = RawStreams.fromJson(const {
         'layout': 'twoFiles',
         'tracks': [
@@ -192,6 +303,47 @@ void main() {
       expect(await store.measures(), hasLength(1));
       final decoderMeasures = await decoders.measures();
       expect(decoderMeasures.single.instances, 2, reason: 'the viewer\'s warning asks about two streams');
+    });
+
+    test('the switch offers two players for fisheye streams only', () async {
+      final twoStreams = TwoStreamSwitch(
+        store: TwoStreamMeasureStore(folder: () async => folder),
+        decoderMeasures: DecoderMeasureStore(folder: () async => folder),
+        adapter: () async => null,
+        pairing: true,
+      );
+      final osmo = RawStreams.fromJson(const {
+        'layout': 'twoTracks',
+        'tracks': [
+          {'file': 0, 'videoTrack': 0, 'width': 3840, 'height': 3840, 'codec': 'hvc1', 'codecs': 'hvc1.2.4.H156'},
+          {'file': 0, 'videoTrack': 1, 'width': 3840, 'height': 3840, 'codec': 'hvc1', 'codecs': 'hvc1.2.4.H156'},
+        ],
+      });
+      expect((await twoStreams.choose(osmo)).hwdec, TwoStreamPaths.paired);
+      final goPro = RawStreams.fromJson(const {
+        'kind': 'eacGoPro',
+        'layout': 'twoTracks',
+        'tracks': [
+          {'file': 0, 'videoTrack': 0, 'width': 4096, 'height': 1344, 'codec': 'hvc1'},
+          {'file': 0, 'videoTrack': 1, 'width': 4096, 'height': 1344, 'codec': 'hvc1'},
+        ],
+      });
+      expect((await twoStreams.choose(goPro)).hwdec, isNot(TwoStreamPaths.paired));
+      await twoStreams.record(
+        const DecodeMeasure(
+          gpu: MeasuredGpu.unknown,
+          codec: VideoMime.hevc,
+          width: 3840,
+          height: 3840,
+          frameRate: 25,
+          hwdec: TwoStreamPaths.paired,
+          frames: 125,
+          dropped: 60,
+          instances: 2,
+        ),
+      );
+      expect(twoStreams.failed, {TwoStreamPaths.paired});
+      expect((await twoStreams.choose(osmo)).hwdec, isNull, reason: 'too slow in two players, above the stacked rate');
     });
   });
 

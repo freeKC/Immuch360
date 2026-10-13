@@ -18,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
+import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immuch_desktop_video/immuch_desktop_video.dart';
 import 'package:logging/logging.dart';
@@ -164,9 +165,10 @@ String _outputFormat(int bitDepth) => switch (bitDepth) {
 typedef _HardwareFit = ({D3D11DecoderProfile profile, D3D11ProfileInfo info});
 
 class DesktopVideoDecoderApi implements VideoDecoderApi {
-  DesktopVideoDecoderApi({DecoderMeasureStore? measures, DateTime Function()? now})
+  DesktopVideoDecoderApi({DecoderMeasureStore? measures, DateTime Function()? now, bool? pairing})
     : _measures = measures ?? DecoderMeasureStore.shared,
-      _now = now ?? DateTime.now;
+      _now = now ?? DateTime.now,
+      _pairing = pairing ?? PluginRenderer.supported;
 
   @override
   // ignore: non_constant_identifier_names
@@ -179,6 +181,10 @@ class DesktopVideoDecoderApi implements VideoDecoderApi {
   final DecoderMeasureStore _measures;
   final DateTime Function() _now;
 
+  /// Whether two streams decoded by the GPU play in two players here (Windows, raw_two_streams.dart): their bound is
+  /// [twoPlayerPixelRate] rather than [twoStreamPixelRate]
+  final bool _pairing;
+
   /// The largest frame FFmpeg's software decoders are taken to decode (the static rule)
   static const maxWidth = 8192;
   static const maxHeight = 8192;
@@ -188,6 +194,12 @@ class DesktopVideoDecoderApi implements VideoDecoderApi {
   /// software), while an X4 file (two 3840 x 3840 HEVC tracks) stacked at 7 to 9 fps even on the RTX (phase 2b, spike
   /// 5). Until the raw two lens player measures pairs itself, more than this "may not be smooth".
   static const twoStreamPixelRate = 2 * 2880 * 2880 * 30.0;
+
+  /// Pixels a second that two streams decoded by the GPU, one per player without a copy (raw_two_streams.dart), kept
+  /// up with: the two 3840 x 3840 HEVC 10 bit tracks of a DJI Osmo 360 file at 25 fps, decoded by two libmpv cores on
+  /// each GPU of the test laptop without a frame dropped on the RTX 4060 and with 2 to 3 of 300 on the Intel UHD
+  /// (2026-10-13). More than this "may not be smooth" until this computer measured it.
+  static const twoPlayerPixelRate = 2 * 3840 * 3840 * 25.0;
 
   /// The codecs FFmpeg decodes in software that the decoders page lists
   static const softwareCodecs = [VideoMime.avc, VideoMime.hevc, VideoMime.av1, VideoMime.vp9];
@@ -254,13 +266,16 @@ class DesktopVideoDecoderApi implements VideoDecoderApi {
           : 'larger than ${maxWidth}x$maxHeight, and ${adapter?.name ?? 'the GPU'} $why';
     }
     if (instances > 1 && supported) {
-      final rate = instances * width * height * math.max(frameRate, 30);
-      if (rate > twoStreamPixelRate) {
+      // Decoded by the GPU, two players take the streams at their own rate; stacked in one player, at 30 fps at least
+      final paired = hardware && _pairing;
+      final rate = instances * width * height * (paired && frameRate > 0 ? frameRate : math.max(frameRate, 30));
+      final ceiling = paired ? twoPlayerPixelRate : twoStreamPixelRate;
+      if (rate > ceiling * 1.01) {
         supported = false;
         reason =
             '$instances streams of $size at ${frameRate > 0 ? frameRate : 30} fps: '
-            '${(rate / 1e6).round()} Mpx/s, above the ${(twoStreamPixelRate / 1e6).round()} Mpx/s measured smooth '
-            'for two streams in one player';
+            '${(rate / 1e6).round()} Mpx/s, above the ${(ceiling / 1e6).round()} Mpx/s measured smooth '
+            'for two streams ${paired ? 'in two players' : 'in one player'}';
       }
     }
     final correction = await _measures.correction(

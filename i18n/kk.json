@@ -332,5 +332,10 @@
   "video_source_transcoded": "Әрқашан қайта кодталған ағын",
   "view_as_360": "360° ретінде көру",
   "view_as_360_remove": "360° ретінде қарастыруды тоқтату",
+  "welcome_server_title": "Immich серверіне қосылу",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex не Tapo камерасы",
+  "welcome_shares_title": "Желілік ортақ қалта не медиа сервер қосу",
+  "welcome_tagline": "Сіздің медиаңыз. Кез келген экран. Әрбір көзқарас.",
+  "welcome_without_server_description": "Осы құрылғыдағы фотолар мен бейнелер. Ортақ қалталар мен медиа серверлерді кейін қосыңыз.",
   "zoom_image": "суретті үлкейту"
 }

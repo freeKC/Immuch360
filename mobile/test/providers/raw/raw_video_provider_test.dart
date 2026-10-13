@@ -115,6 +115,64 @@ void main() {
       expect(sibling?.key, startsWith('asset:'));
     });
 
+    test('finds the other file of a file opened by its path next to it, which the database does not hold', () async {
+      final asked = <(String, String)>[];
+      final openedInputs = RawAssetInputs(
+        local: () => LocalAssetRepository(context.db),
+        remote: () => RemoteAssetRepository(context.db),
+        storage: storage,
+        probes: probes,
+        calibrations: DualFisheyeCalibrationService(
+          store: DualFisheyeCalibrationStore(() async => null),
+          storage: storage,
+          client: () => throw UnimplementedError('no network in these tests'),
+          serverEndpoint: () => null,
+          headers: () => const {},
+        ),
+        openedSibling: (localId, name) async {
+          asked.add((localId, name));
+          return LocalAsset(
+            id: 'opened-sibling',
+            name: name,
+            type: AssetType.video,
+            createdAt: recorded,
+            updatedAt: recorded,
+            playbackStyle: .video,
+            isEdited: false,
+          );
+        },
+      );
+      final opened = LocalAsset(
+        id: 'opened-file',
+        name: _opened,
+        type: AssetType.video,
+        createdAt: recorded,
+        updatedAt: recorded,
+        playbackStyle: .video,
+        isEdited: false,
+      );
+      final file = File('/dcim/opened-file');
+
+      final sibling = await openedInputs.siblings(
+        opened,
+        localFile: file,
+        source: ChosenVideoSource(url: file.uri.toString()),
+      )(_sibling);
+
+      expect(asked, [('opened-file', _sibling)]);
+      expect(sibling?.name, _sibling);
+      expect(sibling?.url, File('/dcim/opened-sibling').uri.toString());
+      expect(
+        await inputs.siblings(
+          opened,
+          localFile: file,
+          source: ChosenVideoSource(url: file.uri.toString()),
+        )(_sibling),
+        isNull,
+        reason: 'the phones look in the database only',
+      );
+    });
+
     test('takes a file of the device of no shared album within a minute only', () async {
       final opened = await localVideo('opened', _opened, recorded);
       await localVideo('later', _sibling, recorded.add(const Duration(minutes: 2)));

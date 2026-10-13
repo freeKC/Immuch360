@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Immuch360 Desktop
+GenericName=Photo and video viewer
+Comment=Photos and videos, 360° included, from Immich, your folders and your network shares
+Exec=immuch360 %F
+TryExec=immuch360
+Icon=com.aprogsys.immuch360
+Terminal=false
+StartupNotify=true
+StartupWMClass=com.aprogsys.immuch360
+Categories=Graphics;Viewer;Photography;
+Keywords=Immich;360;Photo;Video;Panorama;VR;
+MimeType=@MIME_TYPES@

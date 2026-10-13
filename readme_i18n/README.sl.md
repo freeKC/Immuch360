@@ -11,7 +11,7 @@ Immuch360 je brezplačna odprtokodna aplikacija za iskanje, brskanje, predvajanj
 
 - **Kaj naredi?** Vaše fotografije in videoposnetke prikaže kot galerijo in jih predvaja v pregledovalniku, ki ustreza vsaki datoteki: ravno, kot kroglo, po kateri se ogledujete, v 3D, v slušalkah.
 - **Katere medije?** Ravne fotografije in videoposnetke, panorame, fotografije in videoposnetke 360°, VR180, stereoskopski 3D, prostorske fotografije Apple in izvorne datoteke kamer 360° (Insta360, GoPro MAX, DJI Osmo 360), ki jih aplikacija sešije sama.
-- **Na katerih napravah?** Telefonih in tablicah Android, iPhone in iPad, Android TV in Google TV, slušalkah Meta Quest 2, Pro, 3 in 3S, Windows (predogled), macOS in Linux pa sta še v pripravi.
+- **Na katerih napravah?** Android telefoni in tablice, iPhone in iPad, Android TV in Google TV, Meta Quest 2, Pro, 3 in 3S, Windows (poskusno) ter Linux in macOS kot zgodnji poskusni različici.
 - **Potrebujem strežnik ali račun?** Ne. Immuch360 deluje samostojno z mediji vaše naprave. Strežnik Immich, NAS, predstavnostni strežnik ali strežnik Plex so možnosti, ki jih dodate, ko jih želite.
 
 <p align="center">
@@ -26,8 +26,8 @@ Immuch360 je brezplačna odprtokodna aplikacija za iskanje, brskanje, predvajanj
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone in iPad** | App Store | različica 3.3.0 čaka na pregled Apple; medtem jo lahko [zgradite sami](../docs/immuch360/build.md) |
 | <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV in Google TV** | [APK](#android-tv-and-google-tv) · Google Play | različica 23 na GitHubu; vnos za TV je v pregledu Googla |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 in 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | na Horizon Store (različica 14; različica 21 v pregledu), različica 23 na GitHubu |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [ZIP predogleda](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | različica namizne aplikacije 4, predogled: fotografije, ravni in 360° videoposnetki, skupne rabe, Plex, kamere |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS in Linux** | Izvorna koda | zgrajeno s CI projekta, na teh sistemih še ni zagnano, prenos še ni mogoč |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Namestitveni program ali ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | namizna zgradba 5, poskusna različica: fotografije, ravni in 360° videoposnetki, skupne rabe, Plex, kamere, datoteke, odprte s programom |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS in Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | zgodnji poskusni različici: na Linuxu fotografije in fotografije 360°, videoposnetkov še ni; macOS je bil zagnan samo na CI projekta |
 
 *Stanja se posodabljajo ob vsaki izdaji; podrobnosti, po posamezni različici, so v [Stanju izdaje](../docs/immuch360/release-status.md).*
 
@@ -97,11 +97,11 @@ Več: [fotografije in videoposnetki 360°](../docs/immuch360/user-guide.md#360-p
 <a id="use-your-own-files-without-an-account"></a>
 ### Uporabite svoje lastne datoteke brez računa
 
-Immuch360 ne potrebuje niti računa niti strežnika. Na strani za prijavo «Uporabi brez strežnika» odpre aplikacijo na fotografijah in videoposnetkih naprave, z vsemi pregledovalniki, seznamom 360° in omrežnimi viri. Nič ne zapusti naprave. Strežnik lahko povežete pozneje, v Nastavitvah, nato pa se prikažejo funkcije strežnika.
+Immuch360 ne potrebuje niti računa niti strežnika. Od zgradbe 24 se aplikacija odpre na pozdravni strani, kjer je najprej «Uporabi brez strežnika»: ta odpre aplikacijo na fotografijah in videoposnetkih naprave, z vsakim pregledovalnikom, seznamom 360° in omrežnimi viri. Nič ne zapusti naprave. Strežnik lahko pozneje povežete v Nastavitvah ali zavihku Knjižnica, nato pa se prikažejo funkcije strežnika.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Zavihek Knjižnica brez strežnika: vnos 360° na vrhu, nato Na tej napravi z dvema fotografijama 360° in Omrežne skupne rabe s skupno rabo z imenom NAS">
 
-1. Odprite aplikacijo. Na strani za prijavo pod naslovom strežnika in Nastavitvami se dotaknite „Uporabi brez strežnika“.
+1. Odprite aplikacijo. Pozdravna stran prikaže „Vaši mediji. Vsak zaslon. Vsak zorni kot.“ in tri možnosti: dotaknite se prve, «Uporabi brez strežnika». Do zgradbe 23 je bila najprej prijavna stran, z «Uporabi brez strežnika» pod obrazcem.
 2. Dovolite dostop do fotografij in videoposnetkov. Če ga zavrnete, aplikacija prikaže „Aplikacija ne vidi fotografij v tej napravi“ z gumboma „Dovoli dostop“ in „Odpri nastavitve“.
 3. Zavihek Slike prikazuje časovnico naprave. Iskanje in Albumi ostanejo sivi, ker prihajajo s strežnika. Zavihek Knjižnica ima na vrhu 360°, nato Na tej napravi (albumi naprave) in Omrežne skupne rabe.
 4. Meni desno zgoraj kaže „Samo ta naprava“: aplikacija prikazuje fotografije in videoposnetke te naprave, nič se nikamor ne pošilja.
@@ -120,7 +120,7 @@ Vaši videoposnetki so na NAS-u, računalniku ali predstavnostnem strežniku. Im
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Mapa omrežne skupne rabe kot mreža sličic: fotografije 360° z značko 360° in videoposnetek 360° z oznako predvajanja, gumb Izberi desno zgoraj">
 </p>
 
-1. Odprite zavihek Knjižnica, nato Omrežne skupne rabe, nato + in «Omrežna skupna raba (NAS, računalnik, predstavnostni strežnik)».
+1. Odprite zavihek Knjižnica, nato Omrežne skupne rabe, nato + in «Omrežna skupna raba (NAS, računalnik, predstavnostni strežnik)». Od zgradbe 24 «Dodaj omrežno skupno rabo ali predstavnostni strežnik» na pozdravni strani odpre Omrežne skupne rabe neposredno, brez strežnika.
 2. Dotaknite se strežnika pod «Najdeno v omrežju» ali izpolnite obrazec ročno: vrsta, ime ali naslov strežnika, skupna raba ali pot, začetna mapa, uporabniško ime in geslo.
 3. Dotaknite se «Preizkusi povezavo», nato Shrani. Dotaknite se skupne rabe za brskanje po njej: najprej mape, nato fotografije in videoposnetke, z značko 360° na datotekah, prepoznanih kot 360°.
 4. Ko je povezan strežnik Immich, izberite datoteke v mapi in se dotaknite «Naloži v Immich», da jih poslete na svoj strežnik.
@@ -134,7 +134,7 @@ Več: [omrežne skupne rabe](../docs/immuch360/user-guide.md#network-shares-a-na
 
 S strežnikom [Immich](https://github.com/immich-app/immich) je Immuch360 mobilna aplikacija Immich, z istim strežnikom in istim računom kot spletna aplikacija: varnostno kopiranje, časovnica, albumi, iskanje, osebe, spomini, delitev, partnerji, vse usklajeno z vašim strežnikom. Namesti se poleg uradne aplikacije. Poleg tega: značka in seznam 360°, vsi poglobljeni pregledovalniki, izbira med izvirno datoteko in pretvorjenim pretokom strežnika za vsak videoposnetek, tehnične podrobnosti videoposnetka ter datoteke iz skupne rabe ali naprave, ročno poslane na vaš strežnik.
 
-1. Prijavite se z naslovom svojega strežnika, e-pošto in geslom, kot v aplikaciji Immich. Vaša knjižnica, albumi in nastavitve varnostnega kopiranja so nastavitve vašega računa.
+1. Na pozdravni strani se dotaknite «Poveži se s strežnikom Immich», nato se prijavite z naslovom strežnika, e-poštnim naslovom in geslom, enako kot v aplikaciji Immich; Nazaj se vrne na pozdravno stran. Do zgradbe 23 se prijavna stran odpre neposredno. Vaša knjižnica, albumi in nastavitve varnostnega kopiranja so tisti vašega računa.
 2. V Nastavitvah, Pregledovalnik vsebine, Videoposnetki, «Vir videa» izbere izvirnik, kadar ga ta naprava dekodira, vedno izvirnik ali vedno pretvorjeni pretok.
 3. Da fotografijo 360° pokažete nekomu, ki nima aplikacije, jo delite s skupno povezavo Immich: spletna aplikacija Immich jo prikaže kot kroglo v njegovem brskalniku.
 
@@ -154,7 +154,7 @@ Na Meta Quest ista aplikacija teče kot okno z vašo celotno knjižnico, njen gu
 </p>
 
 1. Namestite aplikacijo iz [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) ali ročno namestite APK novejše različice, glejte [Namestitev](#meta-quest).
-2. Prijavite se s svojim strežnikom Immich ali se dotaknite „Uporabi brez strežnika“ za fotografije in videoposnetke samih očal.
+2. Na pozdravni strani se dotaknite «Uporabi brez strežnika» za lastne fotografije in videoposnetke slušalk, ali «Poveži se s strežnikom Immich» za prijavo s svojim strežnikom.
 3. Odprite fotografijo ali videoposnetek 360° in pritisnite 360°: poglobljen pogled se odpre. B ali Y, ali gumb Nazaj na informacijski ploščici, vrne okno.
 
 Več: [v slušalkah Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [slušalke: kodeki, trgovina in dovoljenja](../docs/immuch360/platform-support.md#meta-quest).
@@ -169,8 +169,8 @@ Ista aplikacija Android teče na Android TV in Google TV, kjer je daljinski upra
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Predvajalnik videoposnetkov Immuch360 Desktop na Windows: videoposnetek ulice se predvaja v oknu, s gumbom za premor, vrstico časa, Deli in Naloži v Immich">
 </p>
 
-1. Na televizorju: namestite APK z adb (glejte [Namestitev](#android-tv-and-google-tv)), prijavite se ali izberite «Uporabi brez strežnika», dodajte skupno rabo, strežnik Plex ali kamero iz Knjižnice.
-2. Na računalniku z Windows: razširite predogled in zaženite `immuch360.exe` (glejte [Namestitev](#windows)), nato izberite mape s svojimi fotografijami in videoposnetki ali se prijavite v svoj strežnik.
+1. Na televizorju: namestite APK z adb (glejte [Namestitev](#android-tv-and-google-tv)); na pozdravni strani izberite «Dodaj omrežno skupno rabo ali predstavnostni strežnik» za skupno rabo, strežnik Plex ali kamero, «Uporabi brez strežnika», ali «Poveži se s strežnikom Immich».
+2. Na računalniku z Windows: namestite poskusno različico ali jo razpakirajte in zaženite `immuch360.exe` (glejte [Namestitev](#windows)); od namizne zgradbe 5 «Uporabi brez strežnika» na pozdravni strani odpre izbiro vaših map, «Poveži se s strežnikom Immich» pa prijavno stran. Fotografija, videoposnetek ali mapa, odprta s programom ali spuščena v njegovo okno, se odpre takoj, 360° datoteka pa v svojem pogledu 360°; več datotek pa se skupaj odpre na eni strani.
 3. V pregledovalniku delujejo tipke daljinskega upravljalnika za predvajanje in premor, previjanje nazaj, previjanje naprej, prejšnje in naslednje, enako pa delujejo tudi tipke tipkovnice na računalniku (preslednica, J in L, F za celozaslonski način).
 
 Več: [oglejte si na svojem televizorju](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [na računalniku z Windows](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [podpora platform](../docs/immuch360/platform-support.md).
@@ -180,7 +180,7 @@ Več: [oglejte si na svojem televizorju](../docs/immuch360/user-guide.md#watch-o
 
 - **Kamere Tapo**: kamera se doda poleg omrežnih skupnih rab. Aplikacija jo prikazuje v živo (Android, Android TV, Quest in Windows) ter na vseh platformah dan za dnem izpiše posnetke z njene spominske kartice; posnetek se pridobi iz kamere, predvaja se kot vsak drug videoposnetek in ga je mogoče poslati v Immich. Aplikacija komunicira s kamero le v vašem omrežju, nikoli s strežniki TP-Link.
 - **Plex Media Server, brez plex.tv**: aplikacija se neposredno poveže z vašim strežnikom, s žetonom, ki ga enkrat vnesete, in v živo bere izvirne datoteke vaših knjižnic, tako da 360° ostane 360°, doma in, prek posredovanja vrat, tudi od doma.
-- **Izvorne datoteke kamer 360°**: izvorne fotografije .insp in videoposnetke .insv kamer Insta360 (en ali dva objektiva, v eni sledi, dveh sledih ali dveh datotekah), datoteke .360 kamere GoPro MAX in datoteke .osv kamere DJI Osmo 360 aplikacija sešije med predvajanjem, z umeritvijo, zapisano v datoteki, brez česar koli za namestitev.
+- **Izvorne datoteke kamer 360°**: Izvorne fotografije .insp in videoposnetke .insv kamer Insta360 (en ali dva objektiva, v eni sledi, dveh sledeh ali dveh datotekah), datoteke .360 kamere GoPro MAX in datoteke .osv kamere DJI Osmo 360 aplikacija sešije med predvajanjem, s kalibracijo, zapisano v datoteki, ne da bi bilo treba kjer koli kaj namestiti. Na Androidu jih predvajajte iz skupne rabe, računalnika ali svojega strežnika, ker galerija telefona ne prikazuje izvornih datotek; strežnik Immich sprejme le .insp in .insv.
 
 Več: [kamere Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [izvorne datoteke kamer 360°](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
@@ -207,7 +207,7 @@ Ena koda, šest okolij. Kaj ima vsako od njih danes:
 | Delite to napravo v omrežju | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
 | Nalaganje v Immich iz skupnih rab in naprave | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
 | Vnos | dotik, žiroskop | dotik, žiroskop | daljinski upravljalnik | krmilniki, roke | miška, tipkovnica | |
-| Kje jo dobite | Google Play, APK | App Store (v pregledu) | APK, Google Play (v pregledu) | Horizon Store, APK | ZIP predogleda | samo zgradbe CI |
+| Kje jo dobite | Google Play, APK | App Store (v pregledu) | APK, Google Play (v pregledu) | Horizon Store, APK | namestitveni program ali ZIP (poskusno) | .deb, .rpm, DMG (zgodnji poskusni različici) |
 
 ✅ v aplikaciji na tej platformi · ❌ tam ni na voljo · 🔜 načrtovano · 🔧 v izvorni kodi in zgrajeno s CI projekta, na tem sistemu še ni zagnano. «Eno oko» pomeni, da datoteka 3D na ravnem zaslonu prikaže svoje levo oko. Ne vsak ✅ je bil že preverjen na resnični napravi: kaj je bilo preverjeno in kje ter kaj še ostaja potrditi, je v [Funkcijah](../docs/immuch360/features.md), [Podpori platform](../docs/immuch360/platform-support.md) in [Združljivosti](../docs/immuch360/compatibility.md).
 
@@ -215,8 +215,8 @@ Ena koda, šest okolij. Kaj ima vsako od njih danes:
 - **iPhone in iPad**: popolna aplikacija; predvajalnik videoposnetkov 360° ima le predvajanje in premor, ogled v živo Tapo pride pozneje, iskanje DLNA pa pošilja enojne zahteve (unicast), dokler Apple ne dovoli večsmernega oddajanja (multicast).
 - **Android TV in Google TV**: isti APK, upravljan z daljinskim upravljalnikom; samo pregledovalnik: varnostno kopiranje, nalaganje in urejanje so skriti. Preverjeno na emulatorju Google TV (prijava, časovnica, pregledovalniki, skupne rabe, krmarjenje z daljinskim upravljalnikom), še ne na resničnem televizorju.
 - **Meta Quest 2, Pro, 3 in 3S**: aplikacija kot okno, poleg poglobljenega pogleda; HEVC je varen kodek, H.264 se ustavi okoli 4096x2304 na Quest 3; Quest 2 in Quest Pro še nista preizkušena.
-- **Windows 10 in 11**: predogled, z mapami namesto galerije, lastnim predvajalnikom videoposnetkov (libmpv) za ravne in 360° videoposnetke, izvorne datoteke sešite na grafičnem čipu, še brez namestitvenega programa.
-- **macOS in Linux**: projekta se gradita s CI projekta (Linux zgrajen, macOS prevedeno); aplikacija na teh sistemih še ni bila zagnana in njuna knjižnica predvajalnika videoposnetkov še ni vključena.
+- **Windows 10 in 11**: poskusna različica, z mapami namesto galerije, lastnim predvajalnikom videoposnetkov (libmpv) za ravne in 360° videoposnetke, izvornimi datotekami, sešitimi na grafičnem čipu, datotekami in mapami, odprtimi s programom ali spuščenimi v okno, ter namestitvenim programom ali ZIP-om.
+- **macOS in Linux**: paketi, zgrajeni s CI projekta (.deb, .rpm, DMG); na Linuxu se aplikacija zažene in prikaže fotografije in fotografije 360°, videoposnetkov še ni, skupne rabe SMB pa potrebujejo Ubuntu 24.04, Debian 13 ali Fedora 39 ali novejši; aplikacija macOS je bila zagnana samo na CI projekta, brez videoposnetkov in z nepreizkušenim dostopom do omrežja.
 
 <a id="advanced-features"></a>
 ## Napredne funkcije
@@ -226,11 +226,11 @@ Kaj aplikacija lahko prebere in predvaja, za bralca, ki želi celoten obseg. Vsa
 - **Formati**: ravne fotografije in videoposnetki (kar naprava dekodira: MP4, MOV, MKV in drugo); ekvirektangularne fotografije in videoposnetki 360°; delne panorame (izrez GPano); VR180; stereoskopski 3D, zgoraj in spodaj ali drug ob drugem, prebran iz datoteke (polje st3d) ali ugotovljen iz slike; prostorske fotografije Apple (stereo pari HEIC) in prostorski videoposnetki (MV-HEVC, eno oko); izvorne datoteke Insta360 .insp in .insv, GoPro .360, DJI .osv; 10-bitni viri HLG in PQ s preslikavo tonov na krogli.
 - **Projekcija in metapodatki**: metapodatki GPano in sferični metapodatki se preberejo iz datoteke, z zahtevami po razponih na strežniku ali skupni rabi; začetni pogled kamere; «Prikaži kot 360°» si naprava zapomni; VR180 se prepozna iz datoteke ali njenega imena; metapodatki ostanejo nedotaknjeni, saj se predvaja izvirna datoteka, nikoli pretvorjena kopija.
 - **Izvorno predvajanje**: Media3 na Android in televizorju, SceneKit in AVFoundation na iOS, Meta Spatial SDK v slušalkah, libmpv na Windows; izvirnik ali pretvorjeni pretok se izbere glede na to, kaj naprava dekodira; seznam video dekodirnikov naprave je v Nastavitvah, Napredno; izbira zvočne sledi in kazalnik medpomnjenja.
-- **Izvorne datoteke, sešite na napravi**: fragmentni senčilnik Flutter za fotografije; učinek GPU v predvajalniku za videoposnetke z eno sledjo; dva hardverska dekodirnika hkrati in kompozitor GPU za videoposnetke z enim objektivom na sled ali datoteko (OpenGL ES 3 na Android in Quest, Metal na iOS, filtrski graf libmpv na Windows); lastna umeritev kamere (modeli Mei, V6 in enakorazdaljni) in zapis pospeškometra; prehod na en objektiv, pretvorjeni pretok, kopijo LRV kamere ali nesešit videoposnetek, ko naprava ne zmore dveh dekodirnikov.
+- **Izvorne datoteke, sešite na napravi**: Flutter fragment shader za fotografije; GPU učinek v predvajalniku za videoposnetke z eno sledjo; dva strojna dekodirnika hkrati in GPU compositor za videoposnetke z enim objektivom na sled ali datoteko (OpenGL ES 3 na Android in Quest, Metal na iOS, na Windows pa od namizne različice 5 dva predvajalnika libmpv, katerih slike aplikacija poveže na grafičnem čipu); lastna kalibracija kamere (modeli Mei, V6 in equidistant) ter zapis pospeškometra; naprava preide na en objektiv, pretvorjeni pretok, kopijo LRV kamere ali nesešit videoposnetek, kadar ne zmore pognati dveh dekodirnikov.
 - **Viri**: galerija naprave; mape računalnika; strežnik Immich; SMB 2 in 3, WebDAV, DLNA/UPnP; Plex prek HTTPS, preverjen z lastnim potrdilom strežnika; kamere Tapo prek lokalnega omrežja (HTTPS in RTSP); telefon ali računalnik, ki se deli po Wi-Fi-ju kot strežnik WebDAV; strežniki, najdeni prek Bonjour/mDNS, pregleda lokalnega omrežja, SSDP, GDM in odkrivanja TP-Link, ter sledeni, ko spremenijo naslov.
 - **Branje na zahtevo**: lokalni most streže predvajalnikom z razponi bajtov in žetonom za vsako sejo; velikimi bloki, vnaprejšnjim branjem in do šestimi vzporednimi povezavami SMB; sličicami iz slike vsakega videoposnetka; nič se ne kopira na napravo.
 - **Strojna oprema**: strojni dekodirniki se uporabljajo, kjer obstajajo, z njihovimi izmerjenimi omejitvami (meja H.264 na Quest 3, največ dva objektiva 2048x2048 za programske dekodirnike); na Windows grafični čip iz vsake dekodirane slike izriše pogled 360°, velikost slike se izmeri na vsakem računalniku, zazna se integriran ali namenski čip.
-- **Posebnosti platform**: žiroskop in predvajalnik Spatial 2.5D na telefonih; poglobljen pogled, krmilniki in roke na Quest; postavitev daljinskega upravljalnika, pogovorno okno tipkovnice in pasica TV na Android TV; na računalniku miška in tipkovnica, celozaslonski način, eno samo okno, datoteka, odprta s programom ali spuščena nanj, fotografije HEIC, AVIF, TIFF in surove fotografije kamere iz map, kadar ima Windows zanje dekodirnik, ter zaščita podatkov Windows za gesla in žetone.
+- **Posebnosti platform**: žiroskop in predvajalnik Spatial 2.5D na telefonih; poglobljen pogled, krmilniki in roke na Quest; postavitev za daljinski upravljalnik, pogovorno okno s tipkovnico in pasica za Android TV; na računalniku miška in tipkovnica, celoten zaslon, eno okno, datoteke in mape, odprte s programom ali spuščene v njegovo okno, brane kot datoteke vaših map, HEIC, AVIF, TIFF in surove fotografije kamere iz vaših map, kadar ima Windows zanje dekodirnik, ter zaščita podatkov Windows za gesla in žetone.
 - **Zasebnost po zasnovi**: brez računa, brez oblaka, brez analitike; gesla in žetoni v varni shrambi naprave; kamera predvajalnika Spatial se uporablja samo na napravi; skupne rabe, Plex in kamere so dosegljivi samo v vašem omrežju.
 
 <a id="technical-documentation"></a>
@@ -257,7 +257,7 @@ Kaj aplikacija lahko prebere in predvaja, za bralca, ki želi celoten obseg. Vsa
 ### iPhone in iPad
 
 1. Različica za App Store čaka na pregled Apple. Dokler ni objavljena, zgradite aplikacijo z Xcode na Macu, glejte [Zgradite sami](../docs/immuch360/build.md).
-2. Prijavite se s svojim strežnikom Immich ali se dotaknite «Uporabi brez strežnika».
+2. Dotaknite se «Uporabi brez strežnika», ali «Poveži se s strežnikom Immich» za prijavo s svojim strežnikom; oba sta od zgradbe 24 na pozdravni strani.
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TV in Google TV
@@ -277,14 +277,18 @@ Kaj aplikacija lahko prebere in predvaja, za bralca, ki želi celoten obseg. Vsa
 <a id="windows"></a>
 ### Windows
 
-1. Prenesite `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` z [namizne predizdaje](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) (približno 58 MB, z `SHA256SUMS.txt` za preverjanje) in jo razširite kjer koli, na primer v Dokumentih.
-2. Zaženite `immuch360.exe` iz razširjene mape in ohranite mapo celotno: program potrebuje datoteke poleg njega, med njimi `libmpv-2.dll`, predvajalnik videoposnetkov.
-3. Datoteke še niso podpisane: Windows SmartScreen lahko prikaže «Windows je zaščitil vaš računalnik», izberite «Več informacij», nato «Vseeno zaženi». Prvi zagon nove zgradbe lahko traja do minuto, medtem ko Windows preiskuje datoteke.
-4. Windows 10 ali 11, 64-bitni. Namestitvenega programa in samodejnih posodobitev še ni: naslednjo zgradbo razširite na enak način.
+1. Prenesite datoteko `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` iz [namizne predizdaje](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) (s datoteko `SHA256SUMS.txt`, da jo preverite) in jo odprite. Datoteke še niso podpisane: Windows SmartScreen lahko prikaže „Windows je zaščitil vaš računalnik“, izberite «Dodatne informacije», nato «Vseeno zaženi».
+2. Izberite «Namesti samo zame» (brez skrbniških pravic) ali «Namesti za vse uporabnike», nato jezik namestitvenega programa, ki je privzeto že nastavljen na jezik Windows.
+3. Zaženite Immuch360 Desktop iz menija Start. Fotografije in videoposnetki ga dobijo v meniju «Odpri z» (z desnim klikom na datoteko, Odpri z); nikoli se ne nastavi kot njihov privzeti program. Prvi zagon nove zgradbe lahko traja do minuto, medtem ko Windows pregleduje datoteke.
+4. Windows 10 ali 11, 64-bitni. Za posodobitev odprite namestitveni program naslednje zgradbe: vaša prijava, mape in nastavitve ostanejo. ZIP iste izdaje je isti program kot mapa: razpakirajte ga kjer koli in iz njega zaženite `immuch360.exe`.
 
-### macOS in Linux
+### Linux
 
-Projekta sta v izvorni kodi in se gradita s CI projekta ob vsaki spremembi, vendar aplikacija na teh sistemih še ni bila zagnana in njuna knjižnica predvajalnika videoposnetkov še ni vključena: prenos še ni mogoč. Koraki za njuno gradnjo so v [Zgradite sami](../docs/immuch360/build.md).
+Na Ubuntu 22.04 ali novejšem in Debian 12 ali novejšem: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; na Fedora 40 ali novejšem: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Nato zaženite Immuch360 Desktop iz svojih aplikacij. Zgodnja poskusna različica: mape računalnika, fotografije in fotografije 360° kot krogla; videoposnetki se še ne predvajajo, skupne rabe SMB pa potrebujejo Ubuntu 24.04, Debian 13 ali Fedora 39 ali novejši.
+
+### macOS
+
+Odprite `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` in povlecite aplikacijo v Applications (Apple silicon in Intel, macOS 12 ali novejši). Še ni podpisana niti notarizirana: pridržite Control in jo kliknite, nato izberite Odpri na macOS 14 in starejših, ali izberite «Vseeno odpri» v Sistemskih nastavitvah, Zasebnost in varnost na macOS 15 in novejših. Nihče, ki dela na projektu, nima Maca: aplikacija je bila zagnana samo na CI projekta, še ne predvaja videoposnetkov in njen dostop do omrežja ni bil preizkušen. Poročila so zaželena.
 
 <a id="privacy"></a>
 ## Zasebnost
@@ -306,7 +310,7 @@ Posnetki telefona na tej strani so bili narejeni na zgradbi Android v emulatorju
 Kar še ni narejeno, najprej najverjetnejše. Nič od tega ni obljuba, povratne informacije v [sledilniku težav](https://github.com/freeKC/Immuch360/issues) pa pomagajo odločiti, kaj pride najprej.
 
 - **Trgovine**: Google Play (različica 23 v pregledu, vnos za TV v pregledu), App Store (različica 3.3.0 v pregledu), Meta Horizon Store (različica 21 v pregledu).
-- **Računalniki**: ročno preizkušanje vsake funkcije na računalniku z Windows; nato Spatial 2.5D s spletno kamero; nato zagon in izdaja macOS in Linux, z njunim predvajalnikom videoposnetkov; nato namestitveni program, podpisana zgradba in samodejne posodobitve.
+- **Računalniki**: ročno preizkušanje vsake funkcije na računalniku z Windows; nato Spatial 2.5D s spletno kamero; nato predvajalnik videoposnetkov na Linuxu in macOS ter preizkus na resničnem Macu; nato podpisana zgradba in samodejne posodobitve.
 - **Telefoni in tablice**: vrstica časa v predvajalniku videoposnetkov 360° na iOS, prejšnje in naslednje v predvajalnikih 360° na telefonih, izbira zvočne sledi v ravnem predvajalniku, ogled v živo Tapo na iPhonu in iPadu.
 - **Poglobljeni mediji**: dvojni .dng ribje oko, izravnava videoposnetkov GoPro in DJI iz njihovih lastnih podatkov o gibanju, prostorski videoposnetki v 3D na Quest, če to dovoljujejo njegovi dekodirniki, prejšnje in naslednje med prostorskimi fotografijami v slušalkah.
 - **Viri**: podrsavanje med datotekami v mapi skupne rabe, overjanje Digest za WebDAV, koda QR za prenos žetona Plex z računalnika, IPv6 za Plex, posnetki Tapo v H.265, kanali na domačem zaslonu TV.

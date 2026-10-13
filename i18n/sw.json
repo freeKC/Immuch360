@@ -309,5 +309,10 @@
   "video_source_title": "Chanzo cha video",
   "video_source_transcoded": "Mtiririko uliobadilishwa msimbo kila wakati",
   "view_as_360": "Tazama kama 360°",
-  "view_as_360_remove": "Acha kuchukulia kama 360°"
+  "view_as_360_remove": "Acha kuchukulia kama 360°",
+  "welcome_server_title": "Unganisha kwenye seva ya Immich",
+  "welcome_shares_description": "SMB, WebDAV, DLNA, Plex au kamera ya Tapo",
+  "welcome_shares_title": "Ongeza hifadhi ya mtandao au seva ya midia",
+  "welcome_tagline": "Midia yako. Skrini yoyote. Mtazamo wowote.",
+  "welcome_without_server_description": "Picha na video za kifaa hiki. Ongeza hifadhi za mtandao na seva za midia baadaye."
 }
