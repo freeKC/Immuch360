@@ -280,7 +280,13 @@ void main() {
         'vendorId': 0x8086,
         'integrated': true,
       });
-      final twoStreams = TwoStreamSwitch(store: store, decoderMeasures: decoders, adapter: () async => adapter);
+      // Stacking only, as on Linux and macOS: Windows pairs two players first (the tests of two players below)
+      final twoStreams = TwoStreamSwitch(
+        store: store,
+        decoderMeasures: decoders,
+        adapter: () async => adapter,
+        pairing: false,
+      );
       final raw = RawStreams.fromJson(const {
         'layout': 'twoFiles',
         'tracks': [

@@ -313,7 +313,8 @@ void main() {
     });
 
     test('in one player, or decoded in software, the stacked rule stays', () async {
-      final stacked = await api().canDecode('hvc1', 'hvc1.2.4.H156', 3840, 3840, 25, 10, 1, instances: 2);
+      final onePlayer = DesktopVideoDecoderApi(measures: store, now: () => now, pairing: false);
+      final stacked = await onePlayer.canDecode('hvc1', 'hvc1.2.4.H156', 3840, 3840, 25, 10, 1, instances: 2);
       expect(stacked.supported, isFalse);
       expect(stacked.reason, contains('in one player'));
       DesktopGpuDecoders.prober = null;
