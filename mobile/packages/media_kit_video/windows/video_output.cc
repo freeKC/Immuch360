@@ -1343,7 +1343,7 @@ void VideoOutput::DrawPaired(const ProjectionSetup& setup) {
     if (pts < 0.0 || other_pts < 0.0 || since == 0 || other_since == 0 ||
         std::abs(pts - other_pts) > kMaxDelayGap ||
         std::abs(since - other_since) >
-            static_cast<int64_t>(std::max(3.0 * period, 0.1) * 1e9)) {
+            static_cast<int64_t>(std::max<double>(3.0 * period, 0.1) * 1e9)) {
       return;
     }
     const double speed = pair_.speed > 0.0 ? pair_.speed : 1.0;
