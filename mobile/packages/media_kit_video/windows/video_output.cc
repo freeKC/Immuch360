@@ -1066,10 +1066,15 @@ int64_t SteadyNs() {
 constexpr double kMinPairWait = 0.012;
 
 // The partner's speed: corrected once in this many nanoseconds, by this
-// fraction of its delay per second, at most this much
+// fraction of its delay per second, at most this much. A partner that opened
+// a third of a second late runs 20% faster for about two seconds.
 constexpr int64_t kSpeedEveryNs = 500000000LL;
 constexpr double kSpeedGain = 1.0;
-constexpr double kMaxSpeedCorrection = 0.1;
+constexpr double kMaxSpeedCorrection = 0.2;
+
+// Two frames whose times are further apart than this, in seconds, tell
+// nothing of the delay: one of the players is seeking
+constexpr double kMaxDelayGap = 2.0;
 
 }  // namespace
 
@@ -1328,20 +1333,24 @@ void VideoOutput::DrawPaired(const ProjectionSetup& setup) {
     }
   }
   // The delay of the partner's frames behind this player's frames of the
-  // same time, from the arrivals of the frames drawn
+  // same time: when the partner's last frame came, less when this player's
+  // clock reached that frame's time, from the arrival and the time of this
+  // player's last frame. Frames of different times count, so that a partner
+  // that opened late is brought back however many frames behind it is; the
+  // other player's frame must be recent (none during a pause).
   const auto note_offset = [&](double pts, int64_t since, double other_pts,
                                int64_t other_since, bool partner_side) {
     if (pts < 0.0 || other_pts < 0.0 || since == 0 || other_since == 0 ||
-        std::abs(pts - other_pts) > tolerance) {
+        std::abs(pts - other_pts) > kMaxDelayGap ||
+        std::abs(since - other_since) >
+            static_cast<int64_t>(std::max(3.0 * period, 0.1) * 1e9)) {
       return;
     }
+    const double speed = pair_.speed > 0.0 ? pair_.speed : 1.0;
     const double offset =
-        static_cast<double>(partner_side ? since - other_since
-                                         : other_since - since) /
-        1e6;
-    if (std::abs(offset) > 4000.0 * period) {
-      return;
-    }
+        (partner_side ? 1.0 : -1.0) *
+        (static_cast<double>(since - other_since) / 1e6 -
+         (pts - other_pts) / speed * 1000.0);
     pair_.offset_ms += 0.2 * (offset - pair_.offset_ms);
   };
   const auto width = surface_manager_->width();
@@ -1392,6 +1401,7 @@ void VideoOutput::DrawPaired(const ProjectionSetup& setup) {
         speed <= 0.0) {
       speed = 1.0;
     }
+    pair_.speed = speed;
     double correction = 0.0;
     if (std::abs(pair_.offset_ms) > 2.0) {
       correction = std::clamp(pair_.offset_ms / 1000.0 * kSpeedGain,

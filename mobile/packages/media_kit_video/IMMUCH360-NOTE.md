@@ -131,6 +131,38 @@ Patches:
    registered (after a lost device of patch 4, or a failed `Resize`), the destructor waited for a promise that nothing
    would fulfil, holding `VideoOutputManager`'s mutex, so that every later player of the app hung; the cleanup is now
    posted to the thread pool in that case too.
+7. Windows, two players for one raw 360 file (`windows/angle_surface_manager.{h,cc}`,
+   `windows/projection_renderer.{h,cc}`, `windows/projection_shaders.h`, `windows/video_output.{h,cc}`,
+   `windows/video_output_manager.{h,cc}`, `windows/media_kit_video_plugin.cc`, `lib/src/projection_output.dart`).
+   The raw files whose lenses are in two streams (Insta360 X4 and later, X3 pairs, DJI Osmo 360) were stacked side by
+   side in one mpv core with FFmpeg's `hstack`, which needs the frames in memory: two 3840x3840 HEVC streams copied
+   back from the GPU are too much for a laptop. With this patch each stream gets its own player, decoded by the GPU
+   without a copy (`d3d11` into ANGLE through `d3d11egl`, 10 bit `p010` frames included), and renderer C draws the view
+   from both. The ANGLE contexts of the players join one share group (`share_group()`: each new context shares with a
+   live one of the same display and version, and leaves the group when it is destroyed or when its constructor
+   throws), so that the primary player's context reads the secondary player's intermediate texture. A projection
+   setup can be `secondary` (no pass of its own, a 2x2 output, its frame drawn into its intermediate texture only) or
+   `partnerStream` (the stitch pass reads lens 1 from a second sampler, `uSource1`, with `uSecondTexture` set).
+   `VideoOutputManager.SetPartner` (handle, partner or nothing) pairs the two outputs on the thread pool. From then on
+   the primary player draws for both (`DrawPaired`): each draw asks both mpv cores whether they have a frame and of
+   which time (`time-pos`, with `video-timing-offset` 0), draws two frames whose times are within 0.45 of a frame
+   period together and then the view, draws a frame alone once it waited for its partner longer than the measured
+   delay (at least 12 ms, at most 0.75 of a period, `PairTimer` waking the primary then), draws the earlier of two
+   frames apart by one or two periods without a view to catch up, and seeks the secondary player to the primary's time
+   when they are more than half a second apart (at most every 1.5 s). The delay of the secondary player's frames behind
+   the primary's is measured at each frame drawn, from the latest frame of each player whatever their times (when the
+   secondary player's frame came, less when the primary's clock reached that frame's time), and smoothed; every 500 ms
+   the secondary player's `speed` is set to the primary's, corrected by at most 20% in proportion to that delay, so
+   that its frames come with the primary's. A secondary player opens a little after the primary and starts some frames
+   behind it: the first PC run measured the delay only between frames of the same time, which never came, so the two
+   lenses stayed some frames apart; it is now closed within about two seconds. A secondary player whose primary
+   is gone draws its frames alone, so that its mpv never waits. `ProjectionStats` adds `pairedFrames`, `aloneFrames`,
+   `catchUpFrames`, `partnerFrames` (counts since the last read), `partnerOffsetMs` and `partnerSpeed`. Measured
+   before the patch with two mpv players on the test laptop and a real Osmo 360 file (two 3840x3840 HEVC Main 10
+   tracks at 25 frames a second): no frame dropped on the RTX 4060, 1% on the Intel UHD; with the patch, see
+   `docs/immuch360/desktop-360-video-renderer.md`. Checked without a window by
+   `mobile/test/desktop/video/plugin_shaders_windows_test.dart` (the fisheye pass reads lens 1 from the second
+   texture).
 
 Not done yet (plan 20-plan-desktop.md, 2.2): the D3D11 device on the adapter Flutter uses, only if spike 6 shows a
 mismatch on a hybrid GPU machine.

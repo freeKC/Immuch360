@@ -265,10 +265,11 @@ class VideoOutput {
     int64_t mine_since_ns = 0;
     double theirs_pts = -1.0;
     int64_t theirs_since_ns = 0;
-    // That delay, smoothed, and the speed the partner was last given to close
-    // it
+    // That delay, smoothed, the speed the partner was last given to close it,
+    // and this player's speed
     double offset_ms = 0.0;
     double partner_speed = 0.0;
+    double speed = 1.0;
     int64_t speed_at_ns = 0;
     int64_t seek_at_ns = 0;
   };

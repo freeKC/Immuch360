@@ -7,7 +7,7 @@
 // Kannala-Brandt fisheye model with five radial terms, the pose of the lens in yaw, pitch and roll, and its rotation as
 // a quaternion.
 //
-// Verified on a real Osmo 360 file (CAM_20250715191201_0003_D.OSV, firmware 10.00.05.06) and documented by OSVplat
+// Verified on a real Osmo 360 file (firmware 10.00.05.06) and documented by OSVplat
 // (docs/osmo360-telemetry.md, scripts/osv_meta.py, MIT) on another unit and firmware; the field names come from
 // telemetry-parser's dvtm_library.proto as osv_meta.py quotes it. See docs/18-design-projections-and-parsers.md,
 // sections 4.1 and 5.6.
