@@ -626,6 +626,32 @@ void main() {
       await close(tester);
     });
 
+    testWidgets('the pool gives the second player to another page: it leaves as it came, and one lens plays here', (
+      tester,
+    ) async {
+      await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo), pairing: true);
+      await settle(tester);
+      expect(page(tester).rawStep?.mode, RawMode.paired);
+      final second = players.made[1];
+      // This page's player was used last, so the pool takes the second one for the other page
+      await page(tester).controller.seekTo(2000);
+      await settle(tester);
+      mpv.clear();
+      final other = players.pool.lease(PlayerKind.playback, label: 'viewer');
+      PlaybackEngine? taken;
+      unawaited(other.acquire().then((engine) => taken = engine));
+      await settle(tester);
+      expect(taken, same(second));
+      // Every stream, the sound and the speed back, which the pool does not reset, before the other page has it
+      expect(mpv, containsAllInOrder(['vid=auto', 'aid=auto', 'sid=auto', 'speed=1']));
+      expect(channel.partners.last.$2, isNull, reason: 'the pair ended');
+      final step = page(tester).rawStep!;
+      expect((step.mode, step.notice), (RawMode.oneLens, RawNotice.oneLensDecoder));
+      unawaited(other.release());
+      await settle(tester);
+      await close(tester);
+    });
+
     testWidgets('two players measured too slow: one lens, the stack being above what keeps up', (tester) async {
       await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo), pairing: true);
       await settle(tester);

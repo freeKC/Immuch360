@@ -144,11 +144,32 @@ class RawPartnerPlayer {
     failure.value = reason;
   }
 
-  // The pool gave this player to another page: the pair cannot go on
+  // The pool gives this player to another page: the pair cannot go on, and the player leaves as the pool gave it
+  // (renderer C off, every stream and the sound back, speed 1), since the pool resets none of those; it stops it next
   Future<void> _onSuspend() async {
-    _fail('the pool took the second player');
+    final engine = _engine;
+    final renderer = _renderer;
+    _engine = null;
+    _renderer = null;
     _unfollow?.call();
     _unfollow = null;
+    _fail('the pool took the second player');
+    try {
+      await renderer?.dispose();
+      if (engine != null) {
+        await _giveBack(engine);
+      }
+    } catch (error) {
+      _log.fine('The second player went to another page as it was: $error');
+    }
+  }
+
+  // The options [start] changed, back to the pool's
+  Future<void> _giveBack(PlaybackEngine engine) async {
+    await _setMpv(engine, 'vid', 'auto');
+    await _setMpv(engine, 'aid', 'auto');
+    await _setMpv(engine, 'sid', 'auto');
+    await _setMpv(engine, 'speed', '1');
   }
 
   /// Ends the pair and gives the player back to the pool, as the pool gave it (renderer C off, every stream and the
@@ -169,10 +190,7 @@ class RawPartnerPlayer {
       if (engine != null && identical(_lease.engine, engine)) {
         await _lease.guard(() async {
           await engine.stop();
-          await _setMpv(engine, 'vid', 'auto');
-          await _setMpv(engine, 'aid', 'auto');
-          await _setMpv(engine, 'sid', 'auto');
-          await _setMpv(engine, 'speed', '1');
+          await _giveBack(engine);
         });
       }
     } catch (error) {

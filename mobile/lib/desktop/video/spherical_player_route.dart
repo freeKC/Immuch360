@@ -555,7 +555,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
 
   /// Two players that could not play [step]: a stack when the switch has one, else one lens (afterSlowStack)
   Future<void> _onPairFailure(RawStep step, String reason) async {
-    if (!mounted || !identical(_step, step) || _stepping) {
+    // A closing page starts nothing: the stack would load the file again on a player going back to the pool
+    if (!mounted || _closed || !identical(_step, step) || _stepping) {
       return;
     }
     _log.info('Two players failed: $reason');
@@ -1271,6 +1272,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       return;
     }
     _closed = true;
+    // The second player of two back to the pool now: the page that opened this one takes a player back as soon as it
+    // hears of the close, and would otherwise take this one's partner, a failure this page no longer answers
+    unawaited(_releasePartner());
     PlayerEventsHub.spherical?.closed(_params.layout, _params.coverage);
     // After the frame: a provider does not change while the widget tree is being finalised
     final signal = _closedSignal;
