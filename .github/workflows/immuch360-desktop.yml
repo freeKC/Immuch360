@@ -212,12 +212,12 @@ jobs:
 
       # The list of the Flutter Linux setup (clang, CMake, Ninja, GTK, liblzma, libstdc++ 12 for the clang of 22.04),
       # libsecret for flutter_secure_storage_linux, WebKitGTK 4.1 and libsoup 3 for desktop_webview_window (the OAuth
-      # window of flutter_web_auth_2)
+      # window of flutter_web_auth_2), and patchelf for the RUNPATH of the libraries in the .deb and the .rpm
       - name: Linux build packages
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev \
-            libsecret-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev
+            libsecret-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev patchelf
 
       - name: Install mise
         uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
@@ -311,6 +311,8 @@ jobs:
         with:
           pattern: Immuch360-Desktop-*-linux-*
           merge-multiple: true
+          # Each artifact is one file uploaded as it is: kept whole, the two ZIPs too, under its own name
+          skip-decompress: true
           path: dist
 
       - name: Install and check
@@ -639,6 +641,8 @@ jobs:
         with:
           pattern: Immuch360-Desktop-*
           merge-multiple: true
+          # Each artifact is one file uploaded as it is: kept whole, the two ZIPs too, under its own name
+          skip-decompress: true
           path: release
 
       - name: Files and SHA-256

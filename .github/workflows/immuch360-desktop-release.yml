@@ -42,6 +42,8 @@ jobs:
         with:
           pattern: Immuch360-Desktop-*
           merge-multiple: true
+          # Each artifact is one file uploaded as it is: kept whole, the two ZIPs too, under its own name
+          skip-decompress: true
           path: release
 
       # The six files of the build, all there and nothing else, before anything is attached

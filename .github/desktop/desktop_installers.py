@@ -18,11 +18,12 @@ and videos, each extension with a one line description. This script turns that l
   desktop_installers.py windows --bundle DIR --label LABEL --file-version A.B.C.D --out DIR [--iscc FILE]
       those lines, then Inno Setup 6 on the folder that windows_bundle.py made for the ZIP, so that the installer and
       the ZIP carry the same files: <out>/Immuch360-Desktop-<label>-windows-x64-setup.exe
-  desktop_installers.py linux --bundle DIR --label LABEL --out DIR [--nfpm FILE] [--stage-only]
+  desktop_installers.py linux --bundle DIR --label LABEL --out DIR [--nfpm FILE] [--patchelf FILE] [--stage-only]
       the bundle of `flutter build linux` under /opt/immuch360 with the launcher /usr/bin/immuch360, the desktop entry
       (its MimeType= made from the list), the icons and the MIME types of the raw camera files, staged in <out>/stage,
       then the .deb and the .rpm made from it by nFPM: <out>/Immuch360-Desktop-<label>-linux-amd64.deb and
-      <out>/Immuch360-Desktop-<label>-linux-x86_64.rpm
+      <out>/Immuch360-Desktop-<label>-linux-x86_64.rpm. The bundle loses libdartjni.so (Android only, it needs a Java
+      runtime), and patchelf replaces the build folder in the RUNPATH of its libraries by $ORIGIN
   desktop_installers.py versions --label LABEL
       the version of the Linux packages for a label of desktop_version.py
 
@@ -123,11 +124,15 @@ MACOS_IMPORTED = {
 
 # The libraries the Linux bundle needs from the system. Its ELF files link GTK 3 and GLib (the Flutter engine and every
 # plugin), libsecret (flutter_secure_storage_linux), WebKitGTK 4.1 with libsoup 3 (desktop_webview_window, the window
-# of a server's OAuth sign in) and libepoxy (the engine); libmpv is not linked but opened by media_kit when a video
-# plays (libmpv.so, .so.2 or .so.1). Debian and Ubuntu renamed some libraries for 64 bit time (libgtk-3-0t64 on
-# Ubuntu 24.04 and Debian 13): either name satisfies the package. Checked by packaging/linux/check_package.sh in
+# of a server's OAuth sign in), libepoxy (the engine), and glibc 2.34 and libstdc++ of GCC 11 at least (the build runs
+# on Ubuntu 22.04); libmpv is not linked but opened by media_kit when a video plays (libmpv.so, .so.2 or .so.1).
+# Debian and Ubuntu renamed some libraries for 64 bit time (libgtk-3-0t64 on Ubuntu 24.04 and Debian 13): either name
+# satisfies the package. libsmb2.so, which dart_smb2 downloads already built, needs glibc 2.38; it is opened when an SMB
+# share is browsed, so on an older glibc the app runs without SMB shares. Checked by packaging/linux/check_package.sh in
 # containers: every library each ELF file of /opt/immuch360 needs is found once the package is installed.
 DEB_DEPENDS = [
+    'libc6 (>= 2.34)',
+    'libstdc++6 (>= 11)',
     'libgtk-3-0t64 | libgtk-3-0',
     'libglib2.0-0t64 | libglib2.0-0',
     'libsecret-1-0',
@@ -137,6 +142,8 @@ DEB_DEPENDS = [
     'libmpv2 | libmpv1',
 ]
 RPM_DEPENDS = [
+    'glibc >= 2.34',
+    'libstdc++',
     'gtk3',
     'glib2',
     'libsecret',
@@ -145,6 +152,9 @@ RPM_DEPENDS = [
     'libepoxy',
     'mpv-libs',
 ]
+# Built by the jni package whenever a JDK is found, for Android only: it needs the libjvm.so of a Java runtime, as
+# dartjni.dll does on Windows (windows_bundle.py leaves that one out too)
+LINUX_LEFT_OUT = ('libdartjni.so',)
 ICON_SIZES = (16, 32, 64, 128, 256, 512)
 
 
@@ -439,6 +449,23 @@ def mime_package(types: dict) -> str:
             + ''.join(entries) + '</mime-info>\n')
 
 
+def run_paths(lib: pathlib.Path, patchelf: str | None) -> None:
+    """The plugins of a Flutter Linux build keep the folder they were built in as their RUNPATH (the ephemeral folder
+    of the build machine): an installed package must not search a folder of the CI, so it becomes $ORIGIN, the lib
+    folder itself, where the engine library they link is. The libraries load the same: the executable loads them and
+    the engine from $ORIGIN/lib first."""
+    for path in sorted(lib.glob('*.so*')):
+        if not path.is_file() or path.read_bytes()[:4] != b'\x7fELF':
+            continue
+        if not patchelf:
+            raise Problem('patchelf not found: install it (apt install patchelf) or give --patchelf')
+        current = subprocess.run([patchelf, '--print-rpath', str(path)], capture_output=True, text=True, check=True)
+        found = current.stdout.strip()
+        if found and any(not part.startswith('$ORIGIN') for part in found.split(':')):
+            subprocess.run([patchelf, '--set-rpath', '$ORIGIN', str(path)], check=True)
+            print(f'RUNPATH of lib/{path.name}: {found} is now $ORIGIN')
+
+
 def nfpm_config(stage: pathlib.Path, label: str) -> dict:
     version = linux_version(label)
 
@@ -488,7 +515,13 @@ def stage_linux(args, types: dict) -> pathlib.Path:
     stage = args.out / 'stage'
     if stage.exists():
         shutil.rmtree(stage)
-    shutil.copytree(bundle, stage / 'opt' / 'immuch360', symlinks=True)
+    app = stage / 'opt' / 'immuch360'
+    shutil.copytree(bundle, app, symlinks=True)
+    for name in LINUX_LEFT_OUT:
+        if (app / 'lib' / name).is_file():
+            (app / 'lib' / name).unlink()
+            print(f'left out: lib/{name}')
+    run_paths(app / 'lib', args.patchelf or shutil.which('patchelf'))
 
     def write(relative, text, mode=0o644):
         path = stage / relative
@@ -544,6 +577,8 @@ def linux(args, types: dict) -> int:
 
 
 def main(argv=None) -> int:
+    # The lines of this script stay in order with those of the programs it runs (Inno Setup, nFPM, patchelf)
+    sys.stdout.reconfigure(line_buffering=True)
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--associations', type=pathlib.Path, default=ASSOCIATIONS)
     commands = parser.add_subparsers(dest='command', required=True)
@@ -566,6 +601,7 @@ def main(argv=None) -> int:
     lin.add_argument('--label', required=True)
     lin.add_argument('--out', type=pathlib.Path, required=True)
     lin.add_argument('--nfpm', help='the nfpm program')
+    lin.add_argument('--patchelf', help='the patchelf program, for the RUNPATH of the libraries')
     lin.add_argument('--stage-only', action='store_true', help='stage and write the nFPM configuration only')
     versions = commands.add_parser('versions', help='the version of the Linux packages')
     versions.add_argument('--label', required=True)
@@ -604,7 +640,7 @@ def main(argv=None) -> int:
         if args.command == 'windows':
             return windows(args, types)
         return linux(args, types)
-    except (Problem, OSError, ValueError, plistlib.InvalidFileException) as error:
+    except (Problem, OSError, ValueError, plistlib.InvalidFileException, subprocess.CalledProcessError) as error:
         print(f'desktop_installers: {error}')
         return 2 if isinstance(error, OSError) else 1
 

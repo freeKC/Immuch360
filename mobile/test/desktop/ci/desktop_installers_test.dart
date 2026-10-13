@@ -164,6 +164,8 @@ void main() {
         'bundle/immuch360': 'ELF',
         'bundle/data/icudtl.dat': 'data',
         'bundle/lib/libapp.so': 'ELF',
+        // Built by jni for Android: it needs the libjvm.so of a Java runtime, so the packages leave it out
+        'bundle/lib/libdartjni.so': 'ELF',
       });
       final out = p.join(root.path, 'out');
       final run = installers(root, [
@@ -199,6 +201,8 @@ void main() {
         expect(File(p.join(stage, 'usr', 'bin', 'immuch360')).statSync().mode & 0x49, 0x49, reason: 'executable');
       }
       expect(read('opt/immuch360/lib/libapp.so'), 'ELF');
+      expect(File(p.join(stage, 'opt', 'immuch360', 'lib', 'libdartjni.so')).existsSync(), isFalse);
+      expect(run.output, contains('left out: lib/libdartjni.so'));
       expect(
         File(p.join(stage, 'usr/share/icons/hicolor/256x256/apps/com.aprogsys.immuch360.png')).existsSync(),
         isTrue,
@@ -211,8 +215,11 @@ void main() {
         ['immuch360', '3.3.0', 'rc.0', 'desktop.5'],
       );
       final overrides = nfpm['overrides'] as Map<String, dynamic>;
-      expect((overrides['deb'] as Map)['depends'], containsAll(['libmpv2 | libmpv1', 'libgtk-3-0t64 | libgtk-3-0']));
-      expect((overrides['rpm'] as Map)['depends'], containsAll(['mpv-libs', 'gtk3']));
+      expect(
+        (overrides['deb'] as Map)['depends'],
+        containsAll(['libmpv2 | libmpv1', 'libgtk-3-0t64 | libgtk-3-0', 'libc6 (>= 2.34)']),
+      );
+      expect((overrides['rpm'] as Map)['depends'], containsAll(['mpv-libs', 'gtk3', 'glibc >= 2.34']));
       final destinations = [for (final entry in nfpm['contents'] as List) (entry as Map)['dst']];
       expect(destinations, containsAll(['/opt/immuch360', '/usr/bin/immuch360']));
     });

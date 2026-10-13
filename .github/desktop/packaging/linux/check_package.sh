@@ -55,11 +55,17 @@ for file in /opt/immuch360/immuch360 /opt/immuch360/lib/*.so*; do
   [ -f "$file" ] || continue
   count=$((count + 1))
   # Fedora's ldd warns about libraries without the execute bit, which the loader does not need
-  if ldd "$file" 2>&1 | grep -v 'execution permission' | grep -q 'not found'; then
-    echo "  $file:"
-    ldd "$file" 2>&1 | grep 'not found' | sed 's/^/    /'
-    missing=1
+  problems=$(ldd "$file" 2>&1 | grep -v 'execution permission' | grep 'not found' || true)
+  [ -n "$problems" ] || continue
+  # libsmb2.so, built by dart_smb2 against glibc 2.38, is opened only when an SMB share is browsed: an older glibc
+  # takes the SMB shares away, not the app. Anything else missing is a dependency the package does not declare.
+  if [ "$(basename "$file")" = libsmb2.so ] && ! echo "$problems" | grep -v -q "version .GLIBC_"; then
+    echo "  note: lib/libsmb2.so needs a newer glibc than $(ldd --version | head -n 1 | grep -o '[0-9.]*$'): SMB shares will not open here"
+    continue
   fi
+  echo "  $file:"
+  echo "$problems" | sed 's/^\s*/    /'
+  missing=1
 done
 [ "$missing" -eq 0 ] || { echo "libraries missing: a dependency of the package is not declared"; exit 1; }
 echo "  $count files, every library found"
