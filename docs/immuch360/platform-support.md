@@ -128,6 +128,8 @@ Captures taken in the headset with the capture button (Meta button and trigger),
 
 **Input**: the mouse and the keyboard: F or F11 for full screen and Escape to leave it, the arrows, Home and End, I for the details; in a video Enter or Space to pause, J and L to jump 10 seconds, M for the sound; the wheel, `+` and `-` to zoom a 360° view. See [Use it on a computer](user-guide.md#use-it-on-a-computer).
 
+**Files from Windows** (from desktop build 5): "Open with" in File Explorer, files or a folder dropped on the window or on `immuch360.exe`, and paths on the command line open in the app, a 360° file in its 360° view; with the app open, they go to its window. See step 3 of [Use it on a computer](user-guide.md#use-it-on-a-computer).
+
 ### Download and install on Windows
 
 The current build is the GitHub pre-release [Immuch360 Desktop 3.3.0-rc.0, desktop build 4 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4). Its file is `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` (about 58 MB, 173 files once unzipped, the video player and its `licenses` folder included), with `SHA256SUMS.txt` to check it. It was built from the main branch, `immuch360`, at the commit its release notes name: the sources of the phone build 22, on Immich of 10 October 2026, plus the computer version. From desktop build 4 the video player library, `libmpv-2.dll`, is the project's own build of 2026, whose sources are published with it; it stacks the two lenses of raw videos stored one per track or per file, and lets the graphics chip draw the 360° view without copying each frame back. It needs Windows 10 or 11, 64 bit.
@@ -143,6 +145,8 @@ To check the ZIP, run `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.4
 ## macOS and Linux
 
 **Availability**: the code is present and built by the project's CI, nothing more. Their projects are in the sources (`mobile/macos`, `mobile/linux`, and the entry point `lib/main_desktop.dart` that the Windows build uses too). On every change of the `desktop` branch, the CI of Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) builds the Linux app on Ubuntu and compiles the macOS app with Xcode 26.3 and the macOS 26 SDK, as compile checks. The app has not been started on either system yet, the video player library (libmpv) is not provided for them yet, and there is no download. That is the honest state: more than a plan, not a product yet.
+
+Their runners already take the files given to the app (from desktop build 5): the files and folders dropped on the window on both systems; on Linux one copy runs per user, a later start handing its files to it over the session bus; on macOS the files the Finder opens with the app go to its window, once a package declares their types. That code is compiled by the CI and has never run on either system.
 
 **What is missing before a download**: starting and trying the app on each system; its video player library; the parts written for Windows only so far, the projection pass of the 360° video player, the probe of the graphics chip's decoders, without which the app answers from its static decoder rule, and the computer share; then a package for each system.
 

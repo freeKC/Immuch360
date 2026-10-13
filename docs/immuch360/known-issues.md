@@ -74,6 +74,7 @@ Each line links to the section that explains it. The limits by design, such as t
 - **A preview**: the test of each function by hand on a Windows PC, with real files, both screens and a real camera, is in progress: [On a Windows computer](user-guide.md#on-a-windows-computer-immuch360-desktop-preview).
 - **The Tapo live view is not checked with a real camera yet**: [Known problems](#known-problems).
 - **No Windows on ARM app yet**: the libmpv workflow builds an arm64 archive, but no app ZIP for it is made: [Windows](platform-support.md#windows).
+- **Opening files from File Explorer by hand is not checked yet** (from desktop build 5): the command line, a second start and drops sent to the window by a test script were checked on the test laptop; the "Open with" menu, a drag with the mouse and the window coming to the front on a second start were not: [Use it on a computer](user-guide.md#use-it-on-a-computer).
 - **What to do when something goes wrong**: [Troubleshooting](troubleshooting.md#windows).
 
 ### Not there yet
@@ -81,13 +82,12 @@ Each line links to the section that explains it. The limits by design, such as t
 - **Two lens raw videos on a laptop**: even with a 2026 libmpv, the test laptop stacked an X3 pair (two 2880x2880 H.264 files) at 30 frames a second on its NVIDIA chip only; on its Intel chip, and for an X4 file (two 3840x3840 HEVC tracks) on both chips, the video plays one lens, half of the sphere black, as on a phone that cannot run two decoders.
 - **3D on the screen only**: a 3D video shows its left eye, as on phones; there is no gyroscope and no headset view on the computer. To watch in true 3D, share the computer with a Meta Quest.
 - **Spatial 2.5D**, later with the webcam; the **map** and the Places view; **signing in with OAuth** (sign in with an email and a password instead); **Google Cast**; **notifications**.
-- **An installer, a signed build and automatic updates**: this build is a folder with `immuch360.exe`.
+- **An installer, a signed build and automatic updates**: this build is a folder with `immuch360.exe`. Since the ZIP registers nothing, Immuch360 Desktop shows in the "Open with" menu of File Explorer only once you choose it with "Choose another app".
 - **Linux and macOS**: their projects are in the sources and the project's CI builds them on every change (the Linux app on Ubuntu, the macOS app compiled with Xcode 26.3), but the app has not been started on those systems yet, their video player library (libmpv) is not provided for them yet, and there is no download; they come after Windows.
 - **Translations**: the new texts of the computer version are in English for now.
 
 ### Known problems
 
-- **A 360° file opened with the program shows flat** (desktop build 4, seen on 12 October 2026): a 360° photo or video opened with "Open with", dropped on `immuch360.exe` or given on its command line gets a temporary entry without metadata, so the viewer shows it flat, and "View as 360°" on it opens a page that keeps loading (a photo) or does nothing (a video). Open the file from its folder in the app instead. To be fixed in a next desktop build.
 - **The first start of a new build is slow**: from 10 seconds to about a minute before the window shows, most likely while Microsoft Defender scans the new files, which are not signed yet. Wait for the window rather than starting the app again; the next starts take a second or two.
 - **8K HEVC videos need a dedicated graphics chip, and 360° videos run better on one**: on the test laptop, the integrated Intel UHD chip showed about half the frames of an 8K HEVC video, while the dedicated NVIDIA chip played 8K HEVC and 5.7K H.264 with no dropped frame; the 360° player is smooth on the NVIDIA chip and slower on the Intel one, see [360° videos and the graphics chip](user-guide.md#360-videos-and-the-graphics-chip). Windows runs the app on the integrated chip unless told otherwise: in the Windows settings, System, Display, Graphics, add `immuch360.exe` and choose "High performance", then start the app again. On the integrated chip, a flat 5.7K H.264 video, which its decoder refuses, is decoded by the processor without a lost frame.
 - **Flat videos are drawn at most 1440 lines high**, then scaled to the window: on a 4K screen in full screen, a 4K or 8K video is a little softer than in a dedicated video player. This keeps an 8K video within the graphics power of a laptop. The 360° player reads the whole frame, or the smaller size its measure chose, and draws its view at most 1440 lines high too.
@@ -100,6 +100,7 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 ## macOS and Linux
 
 - **Not started on those systems yet**: built by the project's CI only, with no video player library and no download: [Platform support](platform-support.md#macos-and-linux).
+- **Files given to the app** (from desktop build 5): the drop on the window, the files the Finder opens with the app on macOS, and one copy per user on Linux, its later starts handing their files over the session bus, are compiled by the CI and have never run: [Platform support](platform-support.md#macos-and-linux).
 
 ## Not checked on a device yet
 

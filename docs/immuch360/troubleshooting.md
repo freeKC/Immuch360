@@ -71,6 +71,14 @@ When the server ignores HTTP Range requests on the original and the MP4 index (m
 
 **The first start of a new build is slow**: from 10 seconds to about a minute before the window shows, most likely while Microsoft Defender scans the new files, which are not signed yet. Wait for the window rather than starting the app again; the next starts take a second or two.
 
+### A file opened with the program does not show
+
+- **On the first start**, before you sign in or choose "Use without a server", the file waits, and opens once you have.
+- **"No assets to show"**: the file is no photo or video the app reads, see [Formats and sources](compatibility.md#formats-and-sources-by-platform).
+- **A folder shows fewer files than File Explorer**: it shows its own photos and videos, not those of its subfolders, at most 5000, and leaves out the files OneDrive keeps online only. To see all of it, add it in Settings, This computer.
+- **A 360° file shows flat**: its file declares no projection the app knows. "View as 360°" in the ⋮ menu views it as 360°, see [A 360° file that shows flat](user-guide.md#a-360-file-that-shows-flat-view-as-360).
+- **What was opened**: the lines of "OpenFiles" on the Logs page say how many files were read and how many are 360°, see [Logs](#logs).
+
 ### A 360° or 8K video is slow on a laptop
 
 **8K HEVC videos need a dedicated graphics chip, and 360° videos run better on one**: on the test laptop, the integrated Intel UHD chip showed about half the frames of an 8K HEVC video, while the dedicated NVIDIA chip played 8K HEVC and 5.7K H.264 with no dropped frame; the 360° player is smooth on the NVIDIA chip and slower on the Intel one, see [360° videos and the graphics chip](user-guide.md#360-videos-and-the-graphics-chip). Windows runs the app on the integrated chip unless told otherwise: in the Windows settings, System, Display, Graphics, add `immuch360.exe` and choose "High performance", then start the app again. On the integrated chip, a flat 5.7K H.264 video, which its decoder refuses, is decoded by the processor without a lost frame.
