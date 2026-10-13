@@ -76,13 +76,22 @@ class _Call {
 }
 
 class _FakeChannel implements PluginChannel {
-  _FakeChannel({this.glRenderer = _intel, this.refuse});
+  _FakeChannel({this.glRenderer = _intel, this.refuse, this.handle = 42});
 
   final String glRenderer;
 
+  /// The handle of the player this channel draws
+  final int handle;
+
   /// Why the plugin refuses an enable, null while it accepts
   String? refuse;
+
+  /// Why the plugin refuses a pair, null while it accepts
+  String? refusePartner;
   final calls = <_Call>[];
+
+  /// The pairs asked: the handle and its partner's (null to end it)
+  final partners = <(int, int?)>[];
 
   /// When set, setView waits for it: the plugin has not answered yet
   Completer<void>? holdViews;
@@ -92,7 +101,7 @@ class _FakeChannel implements PluginChannel {
   @override
   Future<ProjectionResult> enable(int handle, ProjectionSetup setup) async {
     // Not expect(): this runs in the renderer's own callbacks, where the test's guarded calls may be under way
-    if (handle != 42) {
+    if (handle != this.handle) {
       throw StateError('handle $handle');
     }
     calls.add(_Call('enable', setup));
@@ -133,6 +142,13 @@ class _FakeChannel implements PluginChannel {
     frameWidth: 4096,
     frameHeight: 2048,
   );
+
+  @override
+  Future<ProjectionResult> setPartner(int handle, int? partner) async {
+    partners.add((handle, partner));
+    final refused = refusePartner;
+    return refused == null ? const ProjectionResult(ok: true) : ProjectionResult(ok: false, reason: refused);
+  }
 }
 
 List<double> _transpose(List<double> rowMajor) => [for (var i = 0; i < 9; i++) rowMajor[(i % 3) * 3 + i ~/ 3]];
@@ -445,6 +461,94 @@ void main() {
       clock = clock.add(const Duration(milliseconds: 700));
       expect(await plugin.setTier(PluginTier.w2880), isTrue);
       expect(channel.named('enable').map((call) => call.setup!.maxFrameWidth), [4096, 2880]);
+    });
+
+    group('two players for the two streams of a raw file', () {
+      late _FakeChannel secondChannel;
+
+      PluginRenderer second() {
+        secondChannel = _FakeChannel(glRenderer: channel.glRenderer, handle: 43);
+        return PluginRenderer(handle: () async => 43, channel: secondChannel, now: () => clock);
+      }
+
+      PluginProjection firstStream() => PluginProjection.raw(_exampleA, streamsInFrame: 1, partnerStream: true);
+
+      testWidgets('each stream gets half of the tier, and the second player shows nothing', (tester) async {
+        final plugin = renderer();
+        await plugin.attach(projection: firstStream(), outputSize: const Size(1600, 900));
+        final first = channel.named('enable').single.setup!;
+        expect(
+          (first.maxFrameWidth, first.maxFramePixels),
+          (1440, 2880 * 1440 ~/ 2),
+          reason: 'as stacked in one frame',
+        );
+        expect((first.partnerStream, first.secondary, first.tracks), (true, false, 1));
+        expect((first.outputWidth, first.outputHeight), (1600, 900));
+
+        final partner = second();
+        final attached = await partner.attach(
+          projection: const PluginProjection.secondary(),
+          outputSize: const Size(1600, 900),
+          tier: PluginTier.w2880,
+        );
+        expect(attached.ok, isTrue);
+        final setup = secondChannel.named('enable').single.setup!;
+        expect((setup.secondary, setup.partnerStream, setup.kind), (true, false, ProjectionKind.fisheyePair));
+        expect((setup.outputWidth, setup.outputHeight, setup.maxFrameWidth), (2, 2, 1440));
+      });
+
+      testWidgets('the pair: both handles go to the plugin, and the second player keeps the first one\'s tier', (
+        tester,
+      ) async {
+        final plugin = renderer(glRenderer: _nvidia);
+        await plugin.attach(projection: firstStream(), outputSize: const Size(1600, 900));
+        expect(plugin.tier, PluginTier.full);
+        expect(channel.named('enable').last.setup!.maxFrameWidth, 4096, reason: 'a 3840 lens at its full size');
+        final partner = second();
+        await partner.attach(
+          projection: const PluginProjection.secondary(),
+          outputSize: const Size(2, 2),
+          tier: PluginTier.w2880,
+        );
+
+        expect(await plugin.setPartner(partner), isTrue);
+        expect(channel.partners, [(42, 43)]);
+        expect(partner.tier, PluginTier.full);
+        expect(secondChannel.named('enable').last.setup!.maxFrameWidth, 4096);
+
+        await plugin.stats();
+        clock = clock.add(const Duration(seconds: 2));
+        expect(await plugin.setTier(PluginTier.w4096), isTrue);
+        expect(partner.tier, PluginTier.w4096, reason: 'at once, without the one second wait of its own changes');
+        expect(secondChannel.named('enable').last.setup!.maxFrameWidth, 2048);
+
+        expect(await plugin.setPartner(null), isTrue);
+        expect(channel.partners.last, (42, null));
+      });
+
+      testWidgets('a pair the plugin refuses: false, and the tiers stay apart', (tester) async {
+        final plugin = renderer(glRenderer: _nvidia);
+        await plugin.attach(projection: firstStream(), outputSize: const Size(1600, 900));
+        final partner = second();
+        await partner.attach(
+          projection: const PluginProjection.secondary(),
+          outputSize: const Size(2, 2),
+          tier: PluginTier.w2880,
+        );
+        channel.refusePartner = 'the two players do not share their textures';
+        expect(await plugin.setPartner(partner), isFalse);
+        await plugin.stats();
+        clock = clock.add(const Duration(seconds: 2));
+        await plugin.setTier(PluginTier.w4096);
+        expect(partner.tier, PluginTier.w2880);
+      });
+
+      testWidgets('a second player that is not attached is not paired', (tester) async {
+        final plugin = renderer();
+        await plugin.attach(projection: firstStream(), outputSize: const Size(1600, 900));
+        expect(await plugin.setPartner(second()), isFalse);
+        expect(channel.partners, isEmpty);
+      });
     });
 
     testWidgets('another layout changes the pass only, and detach gives the player back', (tester) async {

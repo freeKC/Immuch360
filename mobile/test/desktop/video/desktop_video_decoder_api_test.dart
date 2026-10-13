@@ -296,6 +296,34 @@ void main() {
     });
   });
 
+  group('two streams in two players (Windows)', () {
+    DesktopVideoDecoderApi paired() => DesktopVideoDecoderApi(measures: store, now: () => now, pairing: true);
+
+    test('the two 10 bit lenses of a DJI Osmo 360 at 25 fps keep up on both GPUs, an X4 at 30 may not', () async {
+      for (final gpu in [_rtx, _intel]) {
+        prober.adapter = gpu;
+        DesktopGpuDecoders.forget();
+        final osmo = await paired().canDecode('hvc1', 'hvc1.2.4.H156', 3840, 3840, 25, 10, 1, instances: 2);
+        expect(osmo.supported, isTrue, reason: gpu.name);
+        expect(osmo.hardware, isTrue);
+        final x4 = await paired().canDecode('hvc1', null, 3840, 3840, 29.97, 8, 1, instances: 2);
+        expect(x4.supported, isFalse, reason: 'not measured at 30 fps yet');
+        expect(x4.reason, contains('in two players'));
+      }
+    });
+
+    test('in one player, or decoded in software, the stacked rule stays', () async {
+      final stacked = await api().canDecode('hvc1', 'hvc1.2.4.H156', 3840, 3840, 25, 10, 1, instances: 2);
+      expect(stacked.supported, isFalse);
+      expect(stacked.reason, contains('in one player'));
+      DesktopGpuDecoders.prober = null;
+      DesktopGpuDecoders.forget();
+      final software = await paired().canDecode('hvc1', 'hvc1.2.4.H156', 3840, 3840, 25, 10, 1, instances: 2);
+      expect(software.supported, isFalse);
+      expect(software.reason, contains('in one player'));
+    });
+  });
+
   group('the measured correction', () {
     test('on an integrated GPU whose HEVC comes back to memory, 8K follows the measure of the build', () async {
       prober.adapter = _intel;

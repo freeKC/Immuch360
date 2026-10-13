@@ -388,6 +388,86 @@ void main() {
       expect((heights.mode, heights.notice), (RawMode.oneLens, RawNotice.oneLensDecoder));
     });
 
+    group('two players, one stream each', () {
+      const paired = (hwdec: rawPairedPath, reason: 'not measured yet: two players tried');
+      final osmoTracks = [
+        _track(0, 0, width: 3840, height: 3840, codec: 'hvc1'),
+        _track(0, 1, width: 3840, height: 3840, codec: 'hvc1'),
+      ];
+
+      test('a two track file (a DJI Osmo 360): both players read the file, stream 1 in the second one', () {
+        final chain = RawPlaybackChain(
+          raw: RawStreams.fromJson(_fisheye(layout: 'twoTracks', tracks: osmoTracks, textures: const [0, 1])),
+          url: original,
+          fallbackUrl: transcoded,
+        );
+        final step = chain.initial(paired);
+        expect((step.mode, step.url, step.externalUrl), (RawMode.paired, original, original));
+        expect((step.hwdec, step.notice, '${step.streams}'), (rawPairedPath, null, '[0, 1]'));
+        expect(step.frame, const RawFrame.paired());
+      });
+
+      test('a split pair: the file of each stream in its player, whichever file holds stream 0', () {
+        final step = pairChain().initial(paired);
+        expect((step.url, step.externalUrl), (original, _bridgeSecond));
+        final swapped = RawPlaybackChain(
+          raw: RawStreams.fromJson(_fisheye(tracks: [_track(1, 0), _track(0, 0)])),
+          url: original,
+        ).initial(paired);
+        expect((swapped.url, swapped.externalUrl), (_bridgeSecond, original));
+      });
+
+      test('streams of two heights play too; a pair without its other file plays one lens', () {
+        final heights = RawPlaybackChain(
+          raw: RawStreams.fromJson(_fisheye(tracks: [_track(0, 0), _track(1, 0, height: 1440)])),
+          url: original,
+        ).initial(paired);
+        expect(heights.mode, RawMode.paired);
+        final alone = RawPlaybackChain(raw: RawStreams.fromJson(_fisheye(secondUrl: null)), url: original);
+        expect(alone.initial(paired).notice, RawNotice.oneLensFile);
+      });
+
+      test('the EAC tracks of a GoPro never play in two players', () {
+        final chain = RawPlaybackChain(raw: RawStreams.fromJson(_eac()), url: original);
+        final step = chain.initial(paired);
+        expect((step.mode, step.notice), (RawMode.oneLens, RawNotice.oneLensDecoder));
+        final stacked = chain.initial(stack);
+        expect(chain.afterSlowStack(stacked, paired)!.mode, RawMode.oneLens);
+      });
+
+      test('two players too slow or failed: a stack the switch keeps up with, else one lens', () {
+        final chain = pairChain();
+        final first = chain.initial(paired);
+        final stacked = chain.afterSlowStack(first, stack)!;
+        expect(
+          (stacked.mode, stacked.url, stacked.externalUrl, stacked.hwdec),
+          (RawMode.stacked, original, _bridgeSecond, 'no'),
+        );
+        final one = chain.afterSlowStack(first, none)!;
+        expect((one.mode, one.notice), (RawMode.oneLens, RawNotice.oneLensDecoder));
+        // Without the switch: one lens, of the file opened when the other cannot be read
+        expect(chain.afterFailure(first)!.notice, RawNotice.oneLensDecoder);
+        expect(chain.afterFailure(first, externalReadable: false)!.notice, RawNotice.oneLensFile);
+        // Two heights cannot be stacked
+        final heights = RawPlaybackChain(
+          raw: RawStreams.fromJson(_fisheye(tracks: [_track(0, 0), _track(1, 0, height: 1440)])),
+          url: original,
+        );
+        expect(heights.afterSlowStack(heights.initial(paired), stack)!.mode, RawMode.oneLens);
+      });
+
+      test('the frame of two players: the JSON as it is, stream 1 from the second player', () {
+        final raw = RawStreams.fromJson(_fisheye(layout: 'twoTracks', tracks: osmoTracks, textures: const [0, 1]));
+        final rewritten = rewriteRawRegions(raw, const RawFrame.paired());
+        expect(rewritten.json['lenses'], raw.json['lenses']);
+        expect((rewritten.enabled, rewritten.streamsInFrame), (const [true, true], 1));
+        final projection = rawProjectionFor(raw, const RawFrame.paired());
+        expect((projection.tracks, projection.partnerStream), (1, true));
+        expect(projection.streamsEnabled, [1.0, 1.0]);
+        expect(() => rewriteRawRegions(RawStreams.fromJson(_eac()), const RawFrame.paired()), throwsFormatException);
+      });
+    });
+
     test('a stack measured too slow: the next decoding path, then one lens', () {
       final chain = pairChain();
       final first = chain.initial(stack);

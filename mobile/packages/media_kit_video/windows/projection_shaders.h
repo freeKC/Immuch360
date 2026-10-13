@@ -66,10 +66,11 @@ out vec4 outColor;
 
 const float PI = 3.14159265358979;
 
-// Catmull-Rom over the 4 x 4 texels around st, in nine bilinear reads
-// (the weights of the two middle texels of each axis folded into one read)
-vec4 catmullRom(vec2 st) {
-  vec2 size = vec2(textureSize(uSource, 0));
+// Catmull-Rom over the 4 x 4 texels of source around st, in nine bilinear
+// reads (the weights of the two middle texels of each axis folded into one
+// read)
+vec4 catmullRomOf(sampler2D source, vec2 st) {
+  vec2 size = vec2(textureSize(source, 0));
   vec2 position = st * size;
   vec2 centre1 = floor(position - 0.5) + 0.5;
   vec2 f = position - centre1;
@@ -81,16 +82,20 @@ vec4 catmullRom(vec2 st) {
   vec2 t0 = (centre1 - 1.0) / size;
   vec2 t3 = (centre1 + 2.0) / size;
   vec2 t12 = (centre1 + w2 / w12) / size;
-  vec4 c = texture(uSource, vec2(t0.x, t0.y)) * w0.x * w0.y;
-  c += texture(uSource, vec2(t12.x, t0.y)) * w12.x * w0.y;
-  c += texture(uSource, vec2(t3.x, t0.y)) * w3.x * w0.y;
-  c += texture(uSource, vec2(t0.x, t12.y)) * w0.x * w12.y;
-  c += texture(uSource, vec2(t12.x, t12.y)) * w12.x * w12.y;
-  c += texture(uSource, vec2(t3.x, t12.y)) * w3.x * w12.y;
-  c += texture(uSource, vec2(t0.x, t3.y)) * w0.x * w3.y;
-  c += texture(uSource, vec2(t12.x, t3.y)) * w12.x * w3.y;
-  c += texture(uSource, vec2(t3.x, t3.y)) * w3.x * w3.y;
+  vec4 c = texture(source, vec2(t0.x, t0.y)) * w0.x * w0.y;
+  c += texture(source, vec2(t12.x, t0.y)) * w12.x * w0.y;
+  c += texture(source, vec2(t3.x, t0.y)) * w3.x * w0.y;
+  c += texture(source, vec2(t0.x, t12.y)) * w0.x * w12.y;
+  c += texture(source, vec2(t12.x, t12.y)) * w12.x * w12.y;
+  c += texture(source, vec2(t3.x, t12.y)) * w3.x * w12.y;
+  c += texture(source, vec2(t0.x, t3.y)) * w0.x * w3.y;
+  c += texture(source, vec2(t12.x, t3.y)) * w12.x * w3.y;
+  c += texture(source, vec2(t3.x, t3.y)) * w3.x * w3.y;
   return clamp(c, 0.0, 1.0);
+}
+
+vec4 catmullRom(vec2 st) {
+  return catmullRomOf(uSource, st);
 }
 
 // The colour at a point of the frame (fractions, top left origin)
@@ -131,15 +136,30 @@ vec3 sampleSphere(vec3 d) {
 // What both stitches share: the decoded streams of a raw video are side by
 // side in the frame (one for a side by side file, two once lavfi-complex has
 // stacked two tracks or two files with hstack), stream k in the k-th
-// |uTracks| part of its width.
+// |uTracks| part of its width; or, when two players decode one stream each
+// (IMMUCH360-NOTE.md, patch 7), stream 0 is the frame and stream 1 the frame
+// of the other player, a texture of the same size.
 constexpr const char* kFragmentStreams = R"glsl(
 // Number of streams side by side in the frame
 uniform float uTracks;
 // 1 for a stream that is decoded, 0 for the other one in one lens mode
 uniform vec2 uEnabled;
+// Stream 1 in a texture of its own: 1 with two players, 0 otherwise
+uniform float uSecondTexture;
+uniform sampler2D uSource1;
+
+vec3 sampleSecond(vec2 frame) {
+  if (uSharp > 0.5 && uTexelsPerPixel < 1.25) {
+    return catmullRomOf(uSource1, frame).rgb;
+  }
+  return texture(uSource1, frame).rgb;
+}
 
 // Fraction of stream tex (top left origin) to its colour
 vec3 sampleTexture(float tex, vec2 frac) {
+  if (uSecondTexture > 0.5) {
+    return tex < 0.5 ? sampleFrame(frac) : sampleSecond(frac);
+  }
   return sampleFrame(vec2((tex + frac.x) / uTracks, frac.y));
 }
 
@@ -151,6 +171,9 @@ float enabledOf(float tex) {
 // far inside its region, so that a bilinear read never mixes in the lens next
 // to it
 vec2 halfTexelOfStreams() {
+  if (uSecondTexture > 0.5) {
+    return vec2(0.5) / vec2(textureSize(uSource, 0));
+  }
   return vec2(0.5 * uTracks, 0.5) / vec2(textureSize(uSource, 0));
 }
 )glsl";

@@ -25,6 +25,8 @@
 
 #include <cstdint>
 #include <functional>
+#include <mutex>
+#include <vector>
 
 // Immuch360: EGL_OPENGL_ES3_BIT_KHR of EGL_KHR_create_context (EGL 1.5 names it
 // EGL_OPENGL_ES3_BIT), defined here so that the build does not depend on the
@@ -89,13 +91,29 @@ class ANGLESurfaceManager {
   // from it from now on.
   void SwapBack();
 
+  // Immuch360: the share group of |context_| (IMMUCH360-NOTE.md, patch 7).
+  // Every context of the display is created in the group of a context that
+  // still exists, so that a player can read the textures another one drew (the
+  // second lens of a raw 360 file); 0 before the context exists. Two managers
+  // with the same group share their textures and programs.
+  int64_t share_group() const { return share_group_; }
+
+  // Immuch360: makes the context current with no surface, to draw into an FBO
+  // of its own (the frame of the second lens).
+  void MakeContextCurrent();
+
  private:
   // Immuch360: the second internal texture and its pbuffer (patch 6).
   bool CreateBack();
   void ReleaseBack();
 
-  // Immuch360: chooses |config_| and creates |context_| for |client_version|.
+  // Immuch360: chooses |config_| and creates |context_| for |client_version|,
+  // in the share group of a context of the same version when there is one
+  // (patch 7).
   bool CreateContext(int32_t client_version);
+
+  // Immuch360: |context_| leaves the share group's list before it is destroyed.
+  void LeaveShareGroup();
 
   void SwapBuffers();
 
@@ -134,6 +152,8 @@ class ANGLESurfaceManager {
   EGLContext context_ = nullptr;
   EGLConfig config_ = nullptr;
   int32_t client_version_ = 0;
+  // Immuch360: the share group of |context_| (patch 7)
+  int64_t share_group_ = 0;
 
   static constexpr EGLint kEGLConfigurationAttributes[] = {
       EGL_RED_SIZE,   8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE,    8,
@@ -205,6 +225,13 @@ class ANGLESurfaceManager {
 
   // Number of active instances of ANGLESurfaceManager.
   static int32_t instance_count_;
+
+  // Immuch360: the managers whose context can be shared with, and the last
+  // share group made (patch 7). All of them run on the one worker thread of
+  // |VideoOutputManager|; the lock keeps the list right anyway.
+  static std::mutex share_mutex_;
+  static std::vector<ANGLESurfaceManager*> share_members_;
+  static int64_t last_share_group_;
 };
 
 #endif  // ANGLE_SURFACE_MANAGER_H_

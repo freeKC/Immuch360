@@ -117,6 +117,17 @@ class _Channel implements PluginChannel {
 
   @override
   Future<ProjectionStats?> stats(int handle, {bool probe = false}) async => counts?.call();
+
+  /// The pairs of two players asked, and why the plugin refuses them (null: it accepts)
+  final partners = <(int, int?)>[];
+  String? refusePartner;
+
+  @override
+  Future<ProjectionResult> setPartner(int handle, int? partner) async {
+    partners.add((handle, partner));
+    final refused = refusePartner;
+    return refused == null ? const ProjectionResult(ok: true) : ProjectionResult(ok: false, reason: refused);
+  }
 }
 
 class _Session implements SphericalVideoEvents {
@@ -164,6 +175,8 @@ void main() {
     String glRenderer = _intel,
     String? hwdec,
     DesktopVideoSourceResolver? resolve,
+    bool pairing = false,
+    String? refusePartner,
   }) {
     // Made in the test's own zone: the pool's futures then complete as the test pumps
     players = FakePlayers(onCreate: (engine) => engine.autoLoad = silent ? null : const Duration(seconds: 60));
@@ -174,7 +187,7 @@ void main() {
       'vendorId': integrated ? 0x8086 : 0x10de,
       'integrated': integrated,
     });
-    channel = _Channel(players, refuse: refuse, glRenderer: glRenderer);
+    channel = _Channel(players, refuse: refuse, glRenderer: glRenderer)..refusePartner = refusePartner;
     return SphericalPlayerDependencies(
       pool: players.pool,
       resolve: resolve ?? (source) async => source.path,
@@ -190,6 +203,7 @@ void main() {
         store: TwoStreamMeasureStore(folder: noFolder),
         decoderMeasures: DecoderMeasureStore(folder: noFolder),
         adapter: () async => adapter,
+        pairing: pairing,
       ),
       readable: (url) async => !url.contains('LRV_') && externalReadable,
       firstFrameTimeout: const Duration(seconds: 3),
@@ -212,6 +226,8 @@ void main() {
     String glRenderer = _intel,
     String? hwdec,
     DesktopVideoSourceResolver? resolve,
+    bool pairing = false,
+    String? refusePartner,
   }) async {
     tester.view.physicalSize = const Size(1600, 900);
     tester.view.devicePixelRatio = 1;
@@ -223,6 +239,8 @@ void main() {
       glRenderer: glRenderer,
       hwdec: hwdec,
       resolve: resolve,
+      pairing: pairing,
+      refusePartner: refusePartner,
     );
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -511,6 +529,101 @@ void main() {
     expect(find.textContaining('hvc1 3840x3840'), findsOneWidget);
     await close(tester);
     expect(mpv.last, 'vid=auto');
+  });
+
+  group('two players, one stream each (an Osmo 360 file on Windows)', () {
+    // Two 3840 x 3840 HEVC tracks, above what stacks smoothly
+    final osmo = pair
+        .replaceFirst('"layout":"twoFiles"', '"layout":"twoTracks"')
+        .replaceAll('"width":2880,"height":2880', '"width":3840,"height":3840')
+        .replaceFirst('{"file":1,"videoTrack":0', '{"file":0,"videoTrack":1')
+        .replaceFirst('"secondUrl":"/videos/VID_20240908_193126_10_004.insv"', '"secondUrl":null');
+    const file = '/videos/osmo.osv';
+    const args = SphericalPlayerArgs(url: file, title: 'osmo.osv');
+
+    Future<void> settle(WidgetTester tester) async {
+      for (var i = 0; i < 8; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+    }
+
+    testWidgets('stream 0 with the sound here, stream 1 in a second player, both drawn by renderer C', (tester) async {
+      await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo), pairing: true);
+      await settle(tester);
+      final step = page(tester).rawStep!;
+      expect((step.mode, step.url, step.externalUrl, step.hwdec), (RawMode.paired, file, file, TwoStreamPaths.paired));
+      expect(players.made, hasLength(2));
+      final [first, second] = players.made;
+      expect(first.calls, contains('open $file at 0'));
+      expect(second.calls, contains('open $file at 0'));
+      // This player: stream 0, decoded without a copy where the GPU can; the second one: stream 1, no sound
+      expect(mpv.take(4), rawOptions(hwdec: 'auto-safe', vid: '1'));
+      expect(mpv, containsAllInOrder(['hwdec=auto-safe', 'vid=2', 'aid=no', 'sid=no', 'speed=1']));
+      final firstSetup = channel.setups.firstWhere((setup) => setup.partnerStream);
+      expect((firstSetup.tracks, firstSetup.maxFrameWidth), (1, 1440), reason: 'each stream half of the 2880 tier');
+      expect(channel.setups.where((setup) => setup.secondary), isNotEmpty);
+      expect(channel.partners, hasLength(1));
+      expect(find.byKey(const Key('spherical_notice')), findsNothing);
+
+      // The second player plays with this one and goes where it goes
+      expect(second.calls, contains('play'));
+      await page(tester).controller.seekTo(4000);
+      await settle(tester);
+      expect(second.calls, contains('seek 4000'));
+
+      // Measured smooth: two players stay, both players' drops counted
+      await measureStack(tester, first, dropped: 0);
+      expect(page(tester).rawStep?.mode, RawMode.paired);
+
+      await close(tester);
+      expect(second.calls, contains('stop'));
+      expect(mpv, containsAllInOrder(['vid=auto', 'aid=auto', 'sid=auto', 'speed=1']));
+      expect(channel.partners.last.$2, isNull, reason: 'the pair ended before the player went back');
+    });
+
+    testWidgets('a pair the plugin refuses: one lens, the second player given back', (tester) async {
+      await pumpLauncher(
+        tester,
+        SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo),
+        pairing: true,
+        refusePartner: 'the two players do not share their textures',
+      );
+      await settle(tester);
+      final step = page(tester).rawStep!;
+      expect((step.mode, step.notice), (RawMode.oneLens, RawNotice.oneLensDecoder));
+      expect(players.made[1].calls, contains('stop'));
+      expect(find.textContaining('hvc1 3840x3840'), findsOneWidget);
+      await close(tester);
+    });
+
+    testWidgets('the second stream fails while it plays: one lens, the second player given back', (tester) async {
+      await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo), pairing: true);
+      await settle(tester);
+      expect(page(tester).rawStep?.mode, RawMode.paired);
+      players.made[1].emit(PlayerEventKind.failed, 'libmpv: decoding failed');
+      await settle(tester);
+      expect(page(tester).rawStep?.mode, RawMode.oneLens);
+      expect(players.made[1].calls, contains('stop'));
+      await close(tester);
+    });
+
+    testWidgets('two players measured too slow: one lens, the stack being above what keeps up', (tester) async {
+      await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo), pairing: true);
+      await settle(tester);
+      final first = players.made.first;
+      await measureStack(tester, first, dropped: 70);
+      final step = page(tester).rawStep!;
+      expect((step.mode, step.notice), (RawMode.oneLens, RawNotice.oneLensDecoder));
+      expect(first.calls, contains('open $file at 5000'), reason: 'from where the video was');
+      await close(tester);
+    });
+
+    testWidgets('without pairing (Linux, macOS): the stack rules as before', (tester) async {
+      await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo));
+      expect(page(tester).rawStep?.mode, RawMode.oneLens);
+      expect(players.made, hasLength(1));
+      await close(tester);
+    });
   });
 
   /// The probe's 5 s of playback after the second in which the first frame was drawn, and its verdict

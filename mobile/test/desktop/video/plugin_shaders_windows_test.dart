@@ -81,6 +81,7 @@ const _glCompileStatus = 0x8B81;
 const _glLinkStatus = 0x8B82;
 const _glTexture2d = 0x0DE1;
 const _glTexture0 = 0x84C0;
+const _glTexture1 = 0x84C1;
 const _glRgba = 0x1908;
 const _glRgba8 = 0x8058;
 const _glUnsignedByte = 0x1401;
@@ -134,6 +135,10 @@ class _Gles {
       uniform2f = gl.lookupFunction<Void Function(Int32, Float, Float), void Function(int, double, double)>(
         'glUniform2f',
       ),
+      uniform3f = gl
+          .lookupFunction<Void Function(Int32, Float, Float, Float), void Function(int, double, double, double)>(
+            'glUniform3f',
+          ),
       uniform4f = gl
           .lookupFunction<
             Void Function(Int32, Float, Float, Float, Float),
@@ -189,6 +194,7 @@ class _Gles {
   final void Function(int, int) uniform1i;
   final void Function(int, double) uniform1f;
   final void Function(int, double, double) uniform2f;
+  final void Function(int, double, double, double) uniform3f;
   final void Function(int, double, double, double, double) uniform4f;
   final void Function(int, int, int, Pointer<Float>) uniformMatrix3fv;
   final void Function(int, Pointer<Uint32>) genTextures;
@@ -458,5 +464,106 @@ void main() {
     // VR180: the front half only, black behind
     expect(draw(yaw: 0, pitch: 45, crop: const [0.25, 0, 0.5, 1]), isNot(black));
     expect(draw(yaw: 180, pitch: 45, crop: const [0.25, 0, 0.5, 1]), black);
+  }, skip: skip);
+
+  test('the fisheye pass reads the second lens from the texture of the second player (IMMUCH360-NOTE.md, patch 7)', () {
+    final sources = _shaderSources();
+    final program = gl.link(
+      gl.compile(_glVertexShader, sources['kVertexSource']!),
+      gl.compile(_glFragmentShader, _fragment(sources, 1)),
+    );
+    // One colour per lens frame: green in this player's frame (unit 0), magenta in the second player's (unit 1)
+    const side = 64;
+    void solid(int unit, (int, int, int) rgb) {
+      final pixels = arena<Uint8>(side * side * 4);
+      for (var i = 0; i < side * side; i++) {
+        pixels[i * 4] = rgb.$1;
+        pixels[i * 4 + 1] = rgb.$2;
+        pixels[i * 4 + 2] = rgb.$3;
+        pixels[i * 4 + 3] = 255;
+      }
+      final texture = arena<Uint32>();
+      gl
+        ..genTextures(1, texture)
+        ..activeTexture(unit)
+        ..bindTexture(_glTexture2d, texture.value)
+        ..texImage2D(_glTexture2d, 0, _glRgba8, side, side, 0, _glRgba, _glUnsignedByte, pixels)
+        ..texParameteri(_glTexture2d, _glTextureMinFilter, _glLinear)
+        ..texParameteri(_glTexture2d, _glTextureMagFilter, _glLinear)
+        ..texParameteri(_glTexture2d, _glTextureWrapS, _glClampToEdge)
+        ..texParameteri(_glTexture2d, _glTextureWrapT, _glClampToEdge);
+    }
+
+    solid(_glTexture0, (0, 255, 0));
+    solid(_glTexture1, (255, 0, 255));
+    gl.activeTexture(_glTexture0);
+    final vertexArray = arena<Uint32>();
+    gl
+      ..genVertexArrays(1, vertexArray)
+      ..bindVertexArray(vertexArray.value)
+      ..useProgram(program)
+      ..viewport(0, 0, size, size);
+    Pointer<Float> matrix(List<double> columns) {
+      final values = arena<Float>(9);
+      for (var i = 0; i < 9; i++) {
+        values[i] = columns[i];
+      }
+      return values;
+    }
+
+    // Lens 0 looks ahead, lens 1 behind: two equidistant lenses whose image circle reaches 95 degrees
+    final ahead = matrix(const [1, 0, 0, 0, 1, 0, 0, 0, 1]);
+    final behind = matrix(const [-1, 0, 0, 0, 1, 0, 0, 0, -1]);
+    const degrees = math.pi / 180;
+    const focal = (side / 2) / (95 * degrees);
+    (int, int, int) draw({required double yaw, required bool secondTexture}) {
+      final cy = math.cos(yaw * degrees);
+      final sy = math.sin(yaw * degrees);
+      final view = matrix([cy, 0, -sy, 0, 1, 0, sy, 0, cy]);
+      final tanHalf = math.tan(30 * degrees);
+      int at(String name) => gl.location(program, name);
+      gl
+        ..uniform1i(at('uSource'), 0)
+        ..uniform1i(at('uSource1'), 1)
+        ..uniformMatrix3fv(at('uViewToSphere'), 1, 0, view)
+        ..uniform2f(at('uTanHalfFov'), tanHalf, tanHalf)
+        ..uniform1f(at('uSharp'), 0)
+        ..uniform2f(at('uOutputSize'), size.toDouble(), size.toDouble())
+        ..uniform1f(at('uTexelsPerPixel'), 1)
+        ..uniform1f(at('uTracks'), 1)
+        ..uniform2f(at('uEnabled'), 1, 1)
+        ..uniform1f(at('uSecondTexture'), secondTexture ? 1 : 0)
+        ..uniformMatrix3fv(at('uViewToLens0'), 1, 0, ahead)
+        ..uniformMatrix3fv(at('uViewToLens1'), 1, 0, behind)
+        ..uniform4f(at('uIntr0'), focal, focal, side / 2, side / 2)
+        ..uniform4f(at('uIntr1'), focal, focal, side / 2, side / 2)
+        ..uniform4f(at('uK0'), 0, 0, 0, 0)
+        ..uniform4f(at('uK1'), 0, 0, 0, 0)
+        ..uniform4f(at('uX0'), 0, 0, 0, 0)
+        ..uniform4f(at('uX1'), 0, 0, 0, 0)
+        ..uniform4f(at('uRegion0'), 0, 0, 1, 1)
+        ..uniform4f(at('uRegion1'), 0, 0, 1, 1)
+        ..uniform1f(at('uTexOf0'), 0)
+        ..uniform1f(at('uTexOf1'), 1)
+        ..uniform1f(at('uEquidistantFocal0'), focal)
+        ..uniform1f(at('uEquidistantFocal1'), focal)
+        ..uniform1f(at('uModel'), 1)
+        ..uniform1f(at('uSquare'), side.toDouble())
+        ..uniform3f(at('uTheta'), 100 * degrees, 85 * degrees, 95 * degrees)
+        ..drawArrays(_glTriangles, 0, 3)
+        ..finish();
+      final out = arena<Uint8>(4);
+      gl.readPixels(size ~/ 2, size ~/ 2, 1, 1, _glRgba, _glUnsignedByte, out);
+      expect(gl.getError(), 0);
+      return (out[0], out[1], out[2]);
+    }
+
+    expect(draw(yaw: 0, secondTexture: true), (0, 255, 0), reason: 'ahead: lens 0, in this player\'s frame');
+    expect(draw(yaw: 180, secondTexture: true), (255, 0, 255), reason: 'behind: lens 1, in the second player\'s frame');
+    expect(draw(yaw: 180, secondTexture: false), (
+      0,
+      255,
+      0,
+    ), reason: 'one player: stream 1 is a part of this frame, here clamped to its last column');
   }, skip: skip);
 }

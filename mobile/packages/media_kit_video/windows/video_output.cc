@@ -19,6 +19,50 @@
 #define SW_RENDERING_PIXEL_BUFFER_SIZE \
   (SW_RENDERING_MAX_WIDTH) * (SW_RENDERING_MAX_HEIGHT) * (4)
 
+// Immuch360: see video_output.h (IMMUCH360-NOTE.md, patch 7).
+PairTimer::PairTimer(std::function<void()> fire)
+    : fire_(std::move(fire)), thread_([this]() { Run(); }) {}
+
+PairTimer::~PairTimer() {
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    stop_ = true;
+  }
+  wake_.notify_all();
+  if (thread_.joinable()) {
+    thread_.join();
+  }
+}
+
+void PairTimer::Arm(std::chrono::steady_clock::time_point at) {
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (at_.has_value() && at_.value() <= at) {
+      return;
+    }
+    at_ = at;
+  }
+  wake_.notify_all();
+}
+
+void PairTimer::Run() {
+  std::unique_lock<std::mutex> lock(mutex_);
+  while (!stop_) {
+    if (!at_.has_value()) {
+      wake_.wait(lock);
+      continue;
+    }
+    const auto at = at_.value();
+    if (wake_.wait_until(lock, at) == std::cv_status::timeout &&
+        at_.has_value() && at_.value() <= std::chrono::steady_clock::now()) {
+      at_.reset();
+      lock.unlock();
+      fire_();
+      lock.lock();
+    }
+  }
+}
+
 VideoOutput::VideoOutput(int64_t handle,
                          VideoOutputConfiguration configuration,
                          flutter::PluginRegistrarWindows* registrar,
@@ -111,6 +155,8 @@ VideoOutput::VideoOutput(int64_t handle,
 
 VideoOutput::~VideoOutput() {
   destroyed_ = true;
+  // Immuch360: no draw of a pair is asked for any more (patch 7)
+  pair_timer_.reset();
   auto promise = std::promise<void>();
   // Runs on the thread pool once every task posted before it has run, so
   // that no |Render| or |Resize| reaches the objects freed here.
@@ -123,6 +169,9 @@ VideoOutput::~VideoOutput() {
     textures_.clear();
     // S/W
     pixel_buffer_textures_.clear();
+    // Immuch360: the other player of a pair no longer reads this one's
+    // texture, nor this one the other's (patch 7)
+    Unpair();
     // Immuch360: the objects of renderer C belong to the context of
     // |surface_manager_|, which is destroyed next (patch 6).
     if (projection_renderer_ != nullptr && surface_manager_ != nullptr) {
@@ -170,6 +219,10 @@ void VideoOutput::NotifyRender() {
   if (destroyed_) {
     return;
   }
+  // Immuch360: when this player's frame came, for the pairing (patch 7)
+  update_ns_.store(std::chrono::duration_cast<std::chrono::nanoseconds>(
+                       std::chrono::steady_clock::now().time_since_epoch())
+                       .count());
   thread_pool_ref_->Post(std::bind(&VideoOutput::CheckAndResize, this));
   thread_pool_ref_->Post(std::bind(&VideoOutput::Render, this));
 }
@@ -605,6 +658,22 @@ void VideoOutput::DrawProjection(const ProjectionSetup& setup) {
   if (projection_renderer_ == nullptr || render_context_ == nullptr) {
     return;
   }
+  // Immuch360: two players for one raw file (patch 7). The secondary one draws
+  // nothing itself: its primary draws both frames and the view.
+  if (setup.secondary) {
+    if (primary_ != nullptr) {
+      if (const auto primary = primary_->CurrentProjection()) {
+        primary_->DrawPaired(*primary);
+      }
+    } else {
+      DrawSecondaryAlone(setup);
+    }
+    return;
+  }
+  if (partner_ != nullptr) {
+    DrawPaired(setup);
+    return;
+  }
   const auto start = std::chrono::steady_clock::now();
   // Whether mpv has a frame to show: a new one while playing, the current one
   // again after a seek or an option change. Without it only the view changed.
@@ -752,6 +821,8 @@ flutter::EncodableMap VideoOutput::SetProjection(
     // Back to upstream's texture at the size of the video, and the frame
     // drawn into it at once, also when the video is paused
     const auto to_flat = [&]() {
+      // Immuch360: a flat player is in no pair (patch 7)
+      Unpair();
       {
         std::lock_guard<std::mutex> lock(projection_mutex_);
         projection_ = nullptr;
@@ -779,9 +850,10 @@ flutter::EncodableMap VideoOutput::SetProjection(
     // refuses the projection with the shader's log, and the page plays the
     // video flat with its message, rather than a view that stays black while
     // the video plays (the draws would only count as failed)
+    // A secondary player of a pair draws no view: no pass to compile
     const auto ready =
         projection_renderer_->Prepare(surface_manager_->client_version()) &&
-        projection_renderer_->PrepareProgram(setup->kind);
+        (setup->secondary || projection_renderer_->PrepareProgram(setup->kind));
     surface_manager_->MakeCurrent(false);
     result[flutter::EncodableValue("glRenderer")] =
         flutter::EncodableValue(projection_renderer_->gl_renderer());
@@ -800,8 +872,15 @@ flutter::EncodableMap VideoOutput::SetProjection(
       return;
     }
     // Drawn into one of two internal textures while Flutter copies the
-    // other (|ANGLESurfaceManager::SetDoubleBuffered|)
-    surface_manager_->SetDoubleBuffered(true);
+    // other (|ANGLESurfaceManager::SetDoubleBuffered|); a secondary player of
+    // a pair shows nothing
+    surface_manager_->SetDoubleBuffered(!setup->secondary);
+    // A player that no longer reads a partner's stream, or no longer decodes
+    // one for a primary, leaves its pair (patch 7)
+    if ((partner_ != nullptr && !setup->partner_stream) ||
+        (primary_ != nullptr && !setup->secondary)) {
+      Unpair();
+    }
     const auto previous = CurrentProjection();
     if (previous != nullptr &&
         (previous->max_frame_width != setup->max_frame_width ||
@@ -914,6 +993,14 @@ flutter::EncodableMap VideoOutput::ProjectionStats(bool probe) {
     }
     value("error", flutter::EncodableValue(counters.error));
     value("glRenderer", flutter::EncodableValue(counters.gl_renderer));
+    // Immuch360, two players (patch 7)
+    value("pairedFrames", flutter::EncodableValue(counters.paired));
+    value("aloneFrames", flutter::EncodableValue(counters.alone));
+    value("catchUpFrames", flutter::EncodableValue(counters.catch_up));
+    value("partnerFrames", flutter::EncodableValue(counters.partner_frames));
+    value("partnerOffsetMs",
+          flutter::EncodableValue(counters.partner_offset_ms));
+    value("partnerSpeed", flutter::EncodableValue(counters.partner_speed));
     if (counters.probe_ready) {
       flutter::EncodableList pixels;
       for (const auto pixel : counters.probe) {
@@ -925,6 +1012,10 @@ flutter::EncodableMap VideoOutput::ProjectionStats(bool probe) {
     counters.frames = 0;
     counters.redraws = 0;
     counters.failed = 0;
+    counters.paired = 0;
+    counters.alone = 0;
+    counters.catch_up = 0;
+    counters.partner_frames = 0;
     counters.frame_ms.clear();
     counters.redraw_ms.clear();
     counters.locked_ms.clear();
@@ -941,4 +1032,463 @@ flutter::EncodableMap VideoOutput::ProjectionStats(bool probe) {
     PostRedraw();
   }
   return map;
+}
+
+// Immuch360: two players for the two streams of a raw 360 file
+// (IMMUCH360-NOTE.md, patch 7).
+//
+// Each player decodes one stream with its own decoder, without a copy, into
+// its intermediate texture; the textures of both are in one share group of
+// ANGLE (|ANGLESurfaceManager::share_group|). The primary player draws the
+// view from both. A frame is drawn into its texture when the other player's
+// frame of the same time is there too, so that the seam never joins two
+// moments: the time of a frame is mpv's time-pos when its frame waits to be
+// drawn (with video-timing-offset 0, mpv hands a frame over at its display
+// time and queues the next one only at the next display time). A frame whose
+// partner does not come within its wait is drawn alone; one older than the
+// frame the other player already waits with is drawn without a view. The
+// secondary player follows the primary's clock through its speed: how much
+// later its frames come than the primary's frames of the same time is
+// smoothed, and its speed is set a little above or below the primary's until
+// that delay is gone. A partner more than half a second away is sought to the
+// primary's time.
+
+namespace {
+
+int64_t SteadyNs() {
+  return std::chrono::duration_cast<std::chrono::nanoseconds>(
+             std::chrono::steady_clock::now().time_since_epoch())
+      .count();
+}
+
+// The shortest wait of a frame for its partner's, in seconds; the longest is
+// three quarters of a frame
+constexpr double kMinPairWait = 0.012;
+
+// The partner's speed: corrected once in this many nanoseconds, by this
+// fraction of its delay per second, at most this much
+constexpr int64_t kSpeedEveryNs = 500000000LL;
+constexpr double kSpeedGain = 1.0;
+constexpr double kMaxSpeedCorrection = 0.1;
+
+}  // namespace
+
+flutter::EncodableMap VideoOutput::SetPartner(VideoOutput* partner) {
+  flutter::EncodableMap result;
+  auto future = thread_pool_ref_->Post([&]() {
+    const auto fail = [&](const std::string& reason) {
+      result[flutter::EncodableValue("ok")] = flutter::EncodableValue(false);
+      result[flutter::EncodableValue("reason")] =
+          flutter::EncodableValue(reason);
+    };
+    if (partner == nullptr) {
+      Unpair();
+      result[flutter::EncodableValue("ok")] = flutter::EncodableValue(true);
+      return;
+    }
+    if (partner == this) {
+      fail("a player cannot be its own partner");
+      return;
+    }
+    if (surface_manager_ == nullptr || partner->surface_manager_ == nullptr) {
+      fail("software rendering");
+      return;
+    }
+    const auto group = surface_manager_->share_group();
+    if (group == 0 || group != partner->surface_manager_->share_group()) {
+      fail("the two players do not share their textures");
+      return;
+    }
+    const auto mine = CurrentProjection();
+    const auto theirs = partner->CurrentProjection();
+    if (mine == nullptr || mine->secondary || !mine->partner_stream ||
+        mine->kind == 0) {
+      fail("this player draws no stitch of two players");
+      return;
+    }
+    if (theirs == nullptr || !theirs->secondary) {
+      fail("the partner decodes no stream for a stitch");
+      return;
+    }
+    Unpair();
+    partner->Unpair();
+    partner_ = partner;
+    partner->primary_ = this;
+    pending_ = PendingFrame{};
+    partner->pending_ = PendingFrame{};
+    pair_ = PairState{};
+    if (pair_timer_ == nullptr) {
+      pair_timer_ = std::make_unique<PairTimer>([this]() { PostPairDraw(); });
+    }
+    {
+      std::lock_guard<std::mutex> lock(projection_mutex_);
+      auto& counters = projection_counters_;
+      counters.paired = 0;
+      counters.alone = 0;
+      counters.catch_up = 0;
+      counters.partner_frames = 0;
+      counters.partner_offset_ms = 0.0;
+      counters.partner_speed = 0.0;
+    }
+    std::cout << "media_kit: VideoOutput: "
+              << reinterpret_cast<int64_t>(handle_) << " draws the stream of "
+              << reinterpret_cast<int64_t>(partner->handle_) << std::endl;
+    result[flutter::EncodableValue("ok")] = flutter::EncodableValue(true);
+  });
+  future.wait();
+  return result;
+}
+
+void VideoOutput::Unpair() {
+  if (partner_ != nullptr) {
+    partner_->primary_ = nullptr;
+    partner_->pending_ = PendingFrame{};
+    partner_ = nullptr;
+  }
+  if (primary_ != nullptr) {
+    primary_->partner_ = nullptr;
+    primary_->pending_ = PendingFrame{};
+    primary_ = nullptr;
+  }
+  pending_ = PendingFrame{};
+}
+
+void VideoOutput::PostPairDraw() {
+  thread_pool_ref_->Post([this]() {
+    if (destroyed_ || partner_ == nullptr || surface_manager_ == nullptr ||
+        device_lost_) {
+      return;
+    }
+    if (const auto projection = CurrentProjection()) {
+      DrawProjection(*projection);
+    }
+  });
+}
+
+void VideoOutput::NotePending(int64_t now_ns, double period) {
+  const auto flags = mpv_render_context_update(render_context_);
+  if ((flags & MPV_RENDER_UPDATE_FRAME) == 0) {
+    // None, or mpv gave up waiting for it and went on
+    pending_.waiting = false;
+    return;
+  }
+  if (pending_.waiting) {
+    return;
+  }
+  pending_.waiting = true;
+  const auto update = update_ns_.load();
+  pending_.since_ns = update > 0 && update <= now_ns ? update : now_ns;
+  double pts = -1.0;
+  if (mpv_get_property(handle_, "time-pos", MPV_FORMAT_DOUBLE, &pts) < 0) {
+    pts = -1.0;
+  }
+  // Read late, time-pos may already be the next frame's: unknown then, and
+  // the frame pairs with whatever waits
+  if (now_ns - pending_.since_ns >
+      static_cast<int64_t>(0.75 * period * 1e9)) {
+    pts = -1.0;
+  }
+  pending_.pts = pts;
+}
+
+bool VideoOutput::RenderFrame(const ProjectionSetup& setup) {
+  const auto [video_width, video_height] = VideoParamsSize();
+  if (projection_renderer_->EnsureFrame(video_width, video_height, setup)) {
+    mpv_opengl_fbo fbo{
+        static_cast<int>(projection_renderer_->frame_fbo()),
+        projection_renderer_->frame_width(),
+        projection_renderer_->frame_height(),
+        kFrameFormat,
+    };
+    mpv_render_param params[]{
+        {MPV_RENDER_PARAM_OPENGL_FBO, &fbo},
+        {MPV_RENDER_PARAM_INVALID, nullptr},
+    };
+    mpv_render_context_render(render_context_, params);
+    projection_renderer_->set_has_frame(true);
+    return true;
+  }
+  // No size yet: mpv waits for each frame it hands over to be drawn, so it is
+  // drawn into the current surface, which shows nothing of it
+  mpv_opengl_fbo fbo{
+      0,
+      static_cast<int>(std::max<int64_t>(1, surface_manager_->width())),
+      static_cast<int>(std::max<int64_t>(1, surface_manager_->height())),
+      0,
+  };
+  mpv_render_param params[]{
+      {MPV_RENDER_PARAM_OPENGL_FBO, &fbo},
+      {MPV_RENDER_PARAM_INVALID, nullptr},
+  };
+  mpv_render_context_render(render_context_, params);
+  return false;
+}
+
+void VideoOutput::DrawSecondaryAlone(const ProjectionSetup& setup) {
+  if (!texture_id_ || surface_manager_ == nullptr || device_lost_) {
+    return;
+  }
+  surface_manager_->MakeCurrent(true);
+  const auto flags = mpv_render_context_update(render_context_);
+  if ((flags & MPV_RENDER_UPDATE_FRAME) != 0) {
+    RenderFrame(setup);
+    glFlush();
+  }
+  surface_manager_->MakeCurrent(false);
+}
+
+void VideoOutput::DrawPaired(const ProjectionSetup& setup) {
+  auto* partner = partner_;
+  if (partner == nullptr || projection_renderer_ == nullptr ||
+      render_context_ == nullptr || surface_manager_ == nullptr ||
+      !texture_id_ || device_lost_) {
+    return;
+  }
+  const auto partner_setup = partner->CurrentProjection();
+  if (partner_setup == nullptr || partner->projection_renderer_ == nullptr ||
+      partner->render_context_ == nullptr ||
+      partner->surface_manager_ == nullptr || partner->device_lost_) {
+    return;
+  }
+  const auto start = std::chrono::steady_clock::now();
+  const auto now_ns = SteadyNs();
+  // The frame period: the file's once mpv knows it, else learned from the
+  // times of the frames
+  if (pair_.period_samples == 0 && pair_.fps_reads < 50) {
+    pair_.fps_reads++;
+    double fps = 0.0;
+    if (mpv_get_property(handle_, "container-fps", MPV_FORMAT_DOUBLE, &fps) >=
+            0 &&
+        fps > 4.0 && fps < 250.0) {
+      pair_.period = 1.0 / fps;
+      pair_.period_samples = 100;
+    }
+  }
+  const double period = pair_.period;
+  // Each player's mpv asked in its own context: it may run work of its
+  // renderer there
+  partner->surface_manager_->MakeCurrent(true);
+  partner->NotePending(now_ns, period);
+  surface_manager_->MakeBackCurrent();
+  NotePending(now_ns, period);
+  ProjectionView view;
+  uint64_t generation = 0;
+  bool probe = false;
+  {
+    std::lock_guard<std::mutex> lock(projection_mutex_);
+    view = view_;
+    generation = view_generation_;
+    probe = projection_counters_.probe_requested;
+  }
+  auto& mine = pending_;
+  auto& theirs = partner->pending_;
+  const double tolerance = 0.45 * period;
+  const double wait = std::clamp(std::abs(pair_.offset_ms) / 1000.0 + 0.006,
+                                 kMinPairWait, 0.75 * period);
+  const auto max_wait_ns = static_cast<int64_t>(wait * 1e9);
+  bool render_mine = false;
+  bool render_theirs = false;
+  bool show = generation != drawn_generation_ || probe;
+  enum class Kind { kNone, kPaired, kAlone, kCatchUp };
+  auto kind = Kind::kNone;
+  if (mine.waiting && theirs.waiting) {
+    const double gap = theirs.pts - mine.pts;
+    if (mine.pts < 0.0 || theirs.pts < 0.0 || std::abs(gap) <= tolerance) {
+      render_mine = render_theirs = show = true;
+      kind = Kind::kPaired;
+    } else if (std::abs(gap) > 3.0 * period) {
+      // Far apart: both drawn, and a partner that went elsewhere sought to
+      // this player's time
+      render_mine = render_theirs = show = true;
+      kind = Kind::kAlone;
+      if (std::abs(gap) > 0.5 && now_ns - pair_.seek_at_ns > 1500000000LL) {
+        pair_.seek_at_ns = now_ns;
+        const auto position = std::to_string(mine.pts);
+        const char* command[] = {"seek", position.c_str(), "absolute+exact",
+                                 nullptr};
+        mpv_command(partner->handle_, command);
+        std::cout << "media_kit: VideoOutput: partner " << theirs.pts
+                  << " s sought to " << mine.pts << " s" << std::endl;
+      }
+    } else if (gap > 0.0) {
+      // The partner already waits with a later frame: the one of this time
+      // is gone, this frame is drawn to catch up, and the next pair shows
+      render_mine = true;
+      kind = Kind::kCatchUp;
+    } else {
+      render_theirs = true;
+      kind = Kind::kCatchUp;
+    }
+  } else if (mine.waiting || theirs.waiting) {
+    const auto& waiting = mine.waiting ? mine : theirs;
+    if (now_ns - waiting.since_ns >= max_wait_ns) {
+      (mine.waiting ? render_mine : render_theirs) = true;
+      show = true;
+      kind = Kind::kAlone;
+    }
+  }
+  // The delay of the partner's frames behind this player's frames of the
+  // same time, from the arrivals of the frames drawn
+  const auto note_offset = [&](double pts, int64_t since, double other_pts,
+                               int64_t other_since, bool partner_side) {
+    if (pts < 0.0 || other_pts < 0.0 || since == 0 || other_since == 0 ||
+        std::abs(pts - other_pts) > tolerance) {
+      return;
+    }
+    const double offset =
+        static_cast<double>(partner_side ? since - other_since
+                                         : other_since - since) /
+        1e6;
+    if (std::abs(offset) > 4000.0 * period) {
+      return;
+    }
+    pair_.offset_ms += 0.2 * (offset - pair_.offset_ms);
+  };
+  const auto width = surface_manager_->width();
+  const auto height = surface_manager_->height();
+  const auto mpv_start = std::chrono::steady_clock::now();
+  if (render_theirs) {
+    partner->surface_manager_->MakeCurrent(true);
+    partner->RenderFrame(*partner_setup);
+    // Submitted in this context before the primary's context reads the
+    // texture
+    glFlush();
+    note_offset(theirs.pts, theirs.since_ns, pair_.mine_pts,
+                pair_.mine_since_ns, true);
+    pair_.theirs_pts = theirs.pts;
+    pair_.theirs_since_ns = theirs.since_ns;
+    theirs.waiting = false;
+  }
+  surface_manager_->MakeBackCurrent();
+  if (render_mine) {
+    RenderFrame(setup);
+    note_offset(mine.pts, mine.since_ns, pair_.theirs_pts,
+                pair_.theirs_since_ns, false);
+    // The period, from the times of this player's frames, one after the
+    // other; a dropped frame's double step left out once it is known
+    if (mine.pts >= 0.0 && pair_.mine_pts >= 0.0) {
+      const double step = mine.pts - pair_.mine_pts;
+      if (step > 1.0 / 250.0 && step < 0.25) {
+        if (pair_.period_samples < 8) {
+          pair_.period += 0.5 * (step - pair_.period);
+          pair_.period_samples++;
+        } else if (step > 0.6 * pair_.period && step < 1.6 * pair_.period) {
+          pair_.period += 0.05 * (step - pair_.period);
+        }
+      }
+    }
+    pair_.mine_pts = mine.pts;
+    pair_.mine_since_ns = mine.since_ns;
+    mine.waiting = false;
+  }
+  const auto mpv_ms = MillisecondsSince(mpv_start);
+  // The partner's speed, a little above or below this player's until its
+  // frames come with this player's
+  if ((render_mine || render_theirs) &&
+      now_ns - pair_.speed_at_ns > kSpeedEveryNs) {
+    pair_.speed_at_ns = now_ns;
+    double speed = 1.0;
+    if (mpv_get_property(handle_, "speed", MPV_FORMAT_DOUBLE, &speed) < 0 ||
+        speed <= 0.0) {
+      speed = 1.0;
+    }
+    double correction = 0.0;
+    if (std::abs(pair_.offset_ms) > 2.0) {
+      correction = std::clamp(pair_.offset_ms / 1000.0 * kSpeedGain,
+                              -kMaxSpeedCorrection, kMaxSpeedCorrection);
+    }
+    double target = speed * (1.0 + correction);
+    if (std::abs(target - pair_.partner_speed) > 0.0005) {
+      mpv_set_property(partner->handle_, "speed", MPV_FORMAT_DOUBLE, &target);
+      pair_.partner_speed = target;
+    }
+  }
+  const auto view_start = std::chrono::steady_clock::now();
+  bool drawn = false;
+  if (show && projection_renderer_->has_frame()) {
+    const GLuint second = partner->projection_renderer_->has_frame()
+                              ? partner->projection_renderer_->frame_texture()
+                              : 0;
+    drawn =
+        projection_renderer_->DrawView(setup, view, width, height, second);
+  }
+  if (drawn || render_mine || render_theirs) {
+    glFinish();
+  }
+  const auto view_ms = MillisecondsSince(view_start);
+  bool read = false;
+  uint32_t pixels[5] = {0, 0, 0, 0, 0};
+  if (drawn && probe) {
+    projection_renderer_->ReadProbe(width, height, pixels);
+    read = true;
+  }
+  surface_manager_->MakeCurrent(false);
+  const auto locked_start = std::chrono::steady_clock::now();
+  if (drawn) {
+    surface_manager_->SwapBack();
+  }
+  const auto locked_ms = MillisecondsSince(locked_start);
+  const auto total_ms = MillisecondsSince(start);
+  if (show) {
+    drawn_generation_ = generation;
+  }
+  {
+    std::lock_guard<std::mutex> lock(projection_mutex_);
+    auto& counters = projection_counters_;
+    if (drawn) {
+      if (render_mine || render_theirs) {
+        counters.frames++;
+        Keep(counters.frame_ms, total_ms);
+        Keep(counters.mpv_ms, mpv_ms);
+        Keep(counters.view_ms, view_ms);
+      } else {
+        counters.redraws++;
+        Keep(counters.redraw_ms, total_ms);
+      }
+      Keep(counters.locked_ms, locked_ms);
+    } else if (show) {
+      counters.failed++;
+    }
+    switch (kind) {
+      case Kind::kPaired:
+        counters.paired++;
+        break;
+      case Kind::kAlone:
+        counters.alone++;
+        break;
+      case Kind::kCatchUp:
+        counters.catch_up++;
+        break;
+      case Kind::kNone:
+        break;
+    }
+    if (render_theirs) {
+      counters.partner_frames++;
+    }
+    counters.partner_offset_ms = pair_.offset_ms;
+    counters.partner_speed = pair_.partner_speed;
+    counters.frame_width = projection_renderer_->frame_width();
+    counters.frame_height = projection_renderer_->frame_height();
+    counters.error = projection_renderer_->error();
+    if (read) {
+      std::copy(pixels, pixels + 5, counters.probe);
+      counters.probe_ready = true;
+      counters.probe_requested = false;
+    }
+  }
+  if (drawn) {
+    try {
+      registrar_->texture_registrar()->MarkTextureFrameAvailable(texture_id_);
+    } catch (...) {
+      // The texture may be unregistered meanwhile, as in |Render|.
+    }
+  }
+  // A frame that still waits for its partner's is drawn alone once it waited
+  // long enough, if nothing came meanwhile
+  const auto* still = mine.waiting ? &mine : (theirs.waiting ? &theirs : nullptr);
+  if (still != nullptr && pair_timer_ != nullptr) {
+    pair_timer_->Arm(std::chrono::steady_clock::time_point(
+        std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+            std::chrono::nanoseconds(still->since_ns + max_wait_ns))));
+  }
 }
