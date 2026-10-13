@@ -74,7 +74,7 @@ Each line links to the section that explains it. The limits by design, such as t
 - **A preview**: the test of each function by hand on a Windows PC, with real files, both screens and a real camera, is in progress: [On a Windows computer](user-guide.md#on-a-windows-computer-immuch360-desktop-preview).
 - **The Tapo live view is not checked with a real camera yet**: [Known problems](#known-problems).
 - **No Windows on ARM app yet**: the libmpv workflow builds an arm64 archive, but no app ZIP for it is made: [Windows](platform-support.md#windows).
-- **Opening files from File Explorer by hand is not checked yet** (from desktop build 5): the command line, a second start and drops sent to the window by a test script were checked on the test laptop; the "Open with" menu, a drag with the mouse and the window coming to the front on a second start were not: [Use it on a computer](user-guide.md#use-it-on-a-computer).
+- **Opening files from File Explorer by hand is not checked yet** (from desktop build 5): the command line, later starts (one at a time, or several at once with a file each, as File Explorer makes them) and drops sent to the window by a test script were checked on the test laptop, and the window came to the front for those starts; the "Open with" menu and a drag with the mouse were not: [Use it on a computer](user-guide.md#use-it-on-a-computer).
 - **What to do when something goes wrong**: [Troubleshooting](troubleshooting.md#windows).
 
 ### Not there yet
