@@ -272,6 +272,12 @@ void main() {
         expect(run.exitCode, 1, reason: '$run');
         expect(File(path(zipFile)).existsSync(), isFalse);
 
+        // The label of a desktop pre-release tag is a release label too
+        run = bundle(version: '3.3.0-rc.0-desktop.5');
+        expect(run.exitCode, 1, reason: '$run');
+        expect(run.output, contains('no ZIP: a release ZIP would carry a libmpv-2.dll (LGPL)'));
+        expect(File(path(zipFile)).existsSync(), isFalse);
+
         run = bundle(extra: ['--accept-2024-libmpv']);
         expect(run.exitCode, 0, reason: '$run');
         expect(run.output, contains('warning: release ZIP'));

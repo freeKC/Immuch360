@@ -8,16 +8,22 @@ Map<String, String> _values(ScriptRun run) => {
     if (line.contains('=') && !line.startsWith('warning')) line.split('=').first.trim(): line.split('=').last.trim(),
 };
 
-ScriptRun _version(String pubspec, List<String> tags, {String? exactTag, String commit = 'abc1234'}) =>
-    runCiScript('desktop_version.py', [
-      '--pubspec-version',
-      pubspec,
-      '--tags',
-      tags.join(','),
-      if (exactTag != null) ...['--exact-tag', exactTag],
-      '--commit',
-      commit,
-    ]);
+ScriptRun _version(
+  String pubspec,
+  List<String> tags, {
+  String? exactTag,
+  String? desktopTag,
+  String commit = 'abc1234',
+}) => runCiScript('desktop_version.py', [
+  '--pubspec-version',
+  pubspec,
+  '--tags',
+  tags.join(','),
+  if (exactTag != null) ...['--exact-tag', exactTag],
+  if (desktopTag != null) ...['--desktop-tag', desktopTag],
+  '--commit',
+  commit,
+]);
 
 void main() {
   group('desktop_version.py', () {
@@ -40,6 +46,32 @@ void main() {
       expect(run.exitCode, 0, reason: '$run');
       expect(_values(run)['build_number'], '21');
       expect(_values(run)['label'], '3.3.0-rc.0-21');
+    });
+
+    test('a desktop pre-release tag names the desktop build in the label, the fork build stays the build number', () {
+      final run = _version('3.3.0-rc.0+3030021', [...tags, 'v3.3.0-rc.0-23'], desktopTag: 'desktop-v3.3.0-rc.0-5');
+      expect(run.exitCode, 0, reason: '$run');
+      expect(_values(run), {
+        'build_name': '3.3.0-rc.0',
+        'build_number': '23',
+        'file_version': '3.3.0.23',
+        'label': '3.3.0-rc.0-desktop.5',
+        'msix_version': '3.3.23.0',
+      });
+      // On a commit that is also a fork release, the desktop pre-release still names the files
+      expect(
+        _values(_version('3.3.0-rc.0+3030021', tags, exactTag: 'v3.3.0-rc.0-23', desktopTag: 'desktop-v3.3.0-rc.0-5')),
+        containsPair('label', '3.3.0-rc.0-desktop.5'),
+      );
+    });
+
+    test('refuses a desktop tag of another version, or one that is not desktop-v<version>-<build>', () {
+      var run = _version('3.3.0-rc.0+3030021', tags, desktopTag: 'desktop-v3.4.0-1');
+      expect(run.exitCode, 1, reason: '$run');
+      expect(run.output, contains('names version 3.4.0, the pubspec has 3.3.0-rc.0'));
+      run = _version('3.3.0-rc.0+3030021', tags, desktopTag: 'desktop-3.3.0-rc.0-5');
+      expect(run.exitCode, 1, reason: '$run');
+      expect(run.output, contains('is not desktop-v<version>-<desktop build>'));
     });
 
     test('upstream tags never count as fork builds', () {

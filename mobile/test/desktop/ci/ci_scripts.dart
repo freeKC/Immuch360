@@ -65,6 +65,22 @@ ScriptRun runCiScript(String name, List<String> arguments) {
   return ScriptRun(result.exitCode, '${result.stdout}${result.stderr}');
 }
 
+/// Runs the script [name] as [runCiScript] does, without blocking the test: for the tests that answer its requests
+/// meanwhile (a fake server in the same isolate). [environment] adds to the variables of the test.
+Future<ScriptRun> runCiScriptAsync(
+  String name,
+  List<String> arguments, {
+  Map<String, String> environment = const {},
+}) async {
+  final command = python!;
+  final result = await Process.run(
+    command.first,
+    [...command.skip(1), p.join(ciScriptsDir, name), ...arguments],
+    environment: {'PYTHONDONTWRITEBYTECODE': '1', 'PYTHONIOENCODING': 'utf-8', ...environment},
+  );
+  return ScriptRun(result.exitCode, '${result.stdout}${result.stderr}');
+}
+
 /// A throwaway folder; [files] maps paths with forward slashes to their text
 Directory fixtureTree(Map<String, String> files) {
   final root = Directory.systemTemp.createTempSync('immuch360_ci_');

@@ -4,16 +4,20 @@
 The fork numbers its releases with tags v<version>-<build> (v3.3.0-rc.0-20 is build 20). The pubspec's build number
 (3030018) does not fit a Windows version, whose four numbers have 16 bits each, so desktop builds pass
 --build-number <fork build> (design 6.1): the newest fork build tag reachable from the commit, or the tag itself on a
-tag build. Printed as key=value lines, appended to $GITHUB_OUTPUT with --github-output:
+tag build. The desktop pre-releases have tags of their own, desktop-v<version>-<n> for desktop build n
+(desktop-v3.3.0-rc.0-4): on such a commit the label names the desktop build, as the files of those releases always
+did, and the build number stays the fork build. Printed as key=value lines, appended to $GITHUB_OUTPUT with
+--github-output:
 
   build_name     the pubspec version without its build number (3.3.0-rc.0)
   build_number   the fork build, for flutter build --build-number (20)
   file_version   what Windows shows in the file properties (3.3.0.20)
-  label          for file names: 3.3.0-rc.0-20 on a release tag, 3.3.0-rc.0-20-<commit> otherwise
+  label          for file names: 3.3.0-rc.0-desktop.4 on a desktop pre-release tag, 3.3.0-rc.0-20 on a release tag,
+                 3.3.0-rc.0-20-<commit> otherwise
   msix_version   major.minor.(patch x 1000 + build).0, the Store package version of phase 4 (3.3.20.0)
 
---pubspec-version, --tags, --exact-tag and --commit replace what is read from the repository (the tests use them).
-Only read-only git commands are run.
+--pubspec-version, --tags, --exact-tag, --desktop-tag and --commit replace what is read from the repository (the tests
+use them). Only read-only git commands are run.
 """
 from __future__ import annotations
 
@@ -26,6 +30,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 FORK_TAG = re.compile(r'^v(\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?)-(\d+)$')
+DESKTOP_TAG = re.compile(r'^desktop-v(\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?)-(\d+)$')
 PUBSPEC_VERSION = re.compile(r'^version:\s*([^\s#]+)', re.MULTILINE)
 # Strict on purpose: the values end up in file names and in the commands of the workflow
 BUILD_NAME = re.compile(r'^(\d+)\.(\d+)\.(\d+)(?:-[0-9A-Za-z.]+)?$')
@@ -38,7 +43,7 @@ def fork_build(tag: str):
     return int(match.group(2)) if match else None
 
 
-def compute(pubspec_version: str, tags, exact_tag, commit: str) -> dict:
+def compute(pubspec_version: str, tags, exact_tag, commit: str, desktop_tag=None) -> dict:
     build_name = pubspec_version.split('+', 1)[0]
     numbers = BUILD_NAME.match(build_name)
     if not numbers:
@@ -46,6 +51,14 @@ def compute(pubspec_version: str, tags, exact_tag, commit: str) -> dict:
     if not COMMIT.match(commit):
         raise ValueError(f'unexpected commit id {commit!r}')
     major, minor, patch = (int(n) for n in numbers.groups())
+    desktop = None
+    if desktop_tag:
+        match = DESKTOP_TAG.match(desktop_tag.strip())
+        if not match:
+            raise ValueError(f'desktop tag {desktop_tag!r} is not desktop-v<version>-<desktop build>')
+        if match.group(1) != build_name:
+            raise ValueError(f'desktop tag {desktop_tag} names version {match.group(1)}, the pubspec has {build_name}')
+        desktop = int(match.group(2))
 
     exact = fork_build(exact_tag) if exact_tag else None
     builds = [b for b in (fork_build(t) for t in tags) if b is not None]
@@ -53,7 +66,10 @@ def compute(pubspec_version: str, tags, exact_tag, commit: str) -> dict:
     if build > LIMIT:
         raise ValueError(f'fork build {build} does not fit a Windows version number (at most {LIMIT})')
 
-    label = f'{build_name}-{build}' if exact is not None else f'{build_name}-{build}-{commit}'
+    if desktop is not None:
+        label = f'{build_name}-desktop.{desktop}'
+    else:
+        label = f'{build_name}-{build}' if exact is not None else f'{build_name}-{build}-{commit}'
     msix_build = patch * 1000 + build
     return {
         'build_name': build_name,
@@ -76,7 +92,9 @@ def from_repository(root: pathlib.Path):
     tags = git('tag', '--merged', 'HEAD', '--list', 'v*').split()
     on_head = [t for t in git('tag', '--points-at', 'HEAD', '--list', 'v*').split() if fork_build(t) is not None]
     exact = max(on_head, key=fork_build) if on_head else None
-    return version.group(1), tags, exact, git('rev-parse', '--short=7', 'HEAD').strip()
+    desktop = [t for t in git('tag', '--points-at', 'HEAD', '--list', 'desktop-v*').split() if DESKTOP_TAG.match(t)]
+    desktop_tag = max(desktop, key=lambda t: int(DESKTOP_TAG.match(t).group(2))) if desktop else None
+    return version.group(1), tags, exact, git('rev-parse', '--short=7', 'HEAD').strip(), desktop_tag
 
 
 def main(argv=None) -> int:
@@ -85,13 +103,15 @@ def main(argv=None) -> int:
     parser.add_argument('--pubspec-version')
     parser.add_argument('--tags', help='comma separated tags reachable from the commit')
     parser.add_argument('--exact-tag', help='the release tag of the commit, if any')
+    parser.add_argument('--desktop-tag', help='the desktop pre-release tag of the commit, if any')
     parser.add_argument('--commit', help='short commit id')
     parser.add_argument('--github-output', action='store_true', help='also append the values to $GITHUB_OUTPUT')
     args = parser.parse_args(argv)
 
     try:
         if args.pubspec_version is not None:
-            values = compute(args.pubspec_version, (args.tags or '').split(','), args.exact_tag, args.commit or 'local')
+            values = compute(args.pubspec_version, (args.tags or '').split(','), args.exact_tag, args.commit or 'local',
+                             args.desktop_tag)
         else:
             values = compute(*from_repository(args.root))
     except (ValueError, subprocess.CalledProcessError) as error:

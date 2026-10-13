@@ -13,7 +13,13 @@
   - read-only permissions, no secret, no pull_request_target, and checkouts that do not keep the token, since the
     code it runs comes from pull requests (signing, when it comes, goes to a workflow that runs on tags only).
 
-  check_workflow.py   exit 1 on any finding
+.github/workflows/immuch360-desktop-release.yml is such a workflow: it attaches the packages to the GitHub release of a
+desktop pre-release tag, so its release job writes to the repository. With --release the same rules hold, except that
+"contents: write" is its one write access (the top may also give no permission at all, "permissions: {}"), and it may
+run on the push of desktop-v* tags and by hand (workflow_dispatch) only: no pull request, no branch.
+
+  check_workflow.py             exit 1 on any finding
+  check_workflow.py --release   the release workflow
 
 --workflow and --mise point at other files (the tests use fixtures). The YAML is read line by line on purpose: no
 third party module is needed on the runners.
@@ -30,9 +36,33 @@ PINNED_RUNNER = re.compile(r'^(ubuntu-\d\d\.\d\d|windows-20\d\d|windows-11-arm|m
 USES = re.compile(r'^\s*(?:-\s*)?uses:\s*([^\s#]+)\s*(?:#\s*(\S+))?')
 PINNED_ACTION = re.compile(r'^[\w.-]+/[\w./-]+@[0-9a-f]{40}$')
 MISE_FLUTTER = re.compile(r'^\[tools\."aqua:flutter/flutter"\]\s*\n\s*version\s*=\s*"([^"]+)"', re.MULTILINE)
+RELEASE_EVENTS = ('push', 'workflow_dispatch')
 
 
-def findings(workflow: str, mise: str) -> list:
+def release_triggers(workflow: str) -> list:
+    """The release workflow runs on desktop-v* tags and by hand only"""
+    block = re.search(r'^on:[ \t]*\n((?:[ \t]+.*\n|[ \t]*\n)+)', workflow, re.MULTILINE)
+    if not block:
+        return ['the triggers ("on:") are not a block of events']
+    found = []
+    for event in re.findall(r'^  ([\w-]+):', block.group(1), re.MULTILINE):
+        if event not in RELEASE_EVENTS:
+            found.append(f'the release workflow runs on {event}: desktop-v* tags and workflow_dispatch only')
+    if re.search(r'^\s+(?:branches|branches-ignore|paths|paths-ignore|tags-ignore)\s*:', block.group(1), re.MULTILINE):
+        found.append('the release workflow runs on branches or paths: desktop-v* tags and workflow_dispatch only')
+    tags = re.search(r'^\s+tags:[ \t]*(\[.*\])?[ \t]*\n((?:\s+-.*\n)*)', block.group(1), re.MULTILINE)
+    patterns = []
+    if tags:
+        patterns = re.findall(r'[\w.*?/-]+', tags.group(1) or '') + re.findall(r'-\s*[\'"]?([^\'"\s]+)', tags.group(2))
+    if re.search(r'^  push:', block.group(1), re.MULTILINE) and not patterns:
+        found.append('the release workflow runs on push without a tag filter')
+    for pattern in patterns:
+        if not pattern.startswith('desktop-v'):
+            found.append(f'the release workflow runs on the tags {pattern}: desktop-v* only')
+    return found
+
+
+def findings(workflow: str, mise: str, release: bool = False) -> list:
     found = []
     lines = workflow.splitlines()
     for number, line in enumerate(lines, 1):
@@ -72,26 +102,39 @@ def findings(workflow: str, mise: str) -> list:
         found.append(f'{checkouts} checkouts and {kept} "persist-credentials: false": every checkout drops the token')
 
     permissions = re.search(r'^permissions:\s*\n((?:[ \t]+.*\n)+)', workflow, re.MULTILINE)
-    if not permissions or not re.search(r'^\s+contents:\s*read\s*$', permissions.group(1), re.MULTILINE):
-        found.append('the workflow does not set "permissions: contents: read" at the top')
+    none = release and re.search(r'^permissions:\s*\{\s*\}\s*$', workflow, re.MULTILINE)
+    if not none and (not permissions or not re.search(r'^\s+contents:\s*read\s*$', permissions.group(1), re.MULTILINE)):
+        found.append('the workflow does not set "permissions: contents: read" at the top'
+                     + (' (or "permissions: {}")' if release else ''))
     for number, line in enumerate(lines, 1):
         if re.match(r'^\s*(?:[\w-]+:\s*write|permissions:\s*write-all)\s*$', line):
+            if release and re.match(r'^\s*contents:\s*write\s*$', line):
+                continue
             found.append(f'line {number}: a write access ({line.strip()})')
+    if release:
+        found += release_triggers(workflow)
     return found
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument('--workflow', type=pathlib.Path, default=ROOT / '.github' / 'workflows' / 'immuch360-desktop.yml')
+    parser.add_argument('--workflow', type=pathlib.Path)
     parser.add_argument('--mise', type=pathlib.Path, default=ROOT / 'mobile' / 'mise.toml')
+    parser.add_argument('--release', action='store_true', help='the release workflow, which may write the contents')
     args = parser.parse_args(argv)
+    workflow = args.workflow or ROOT / '.github' / 'workflows' / (
+        'immuch360-desktop-release.yml' if args.release else 'immuch360-desktop.yml')
 
-    found = findings(args.workflow.read_text(encoding='utf-8'), args.mise.read_text(encoding='utf-8'))
+    found = findings(workflow.read_text(encoding='utf-8'), args.mise.read_text(encoding='utf-8'), args.release)
     for line in found:
-        print(f'{args.workflow.name}: {line}')
+        print(f'{workflow.name}: {line}')
     if found:
         return 1
-    print(f'{args.workflow.name}: runners, actions and Xcode pinned, Flutter as in mise.toml, read-only, no secret')
+    if args.release:
+        print(f'{workflow.name}: runners and actions pinned, no secret, desktop-v* tags and workflow_dispatch only, '
+              'contents its only write access')
+    else:
+        print(f'{workflow.name}: runners, actions and Xcode pinned, Flutter as in mise.toml, read-only, no secret')
     return 0
 
 

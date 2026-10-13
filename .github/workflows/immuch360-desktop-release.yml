@@ -1,0 +1,59 @@
+name: Immuch360 Desktop release
+
+# On the push of a desktop pre-release tag, desktop-v<version>-<n> for desktop build n (desktop-v3.3.0-rc.0-5), the
+# packages of Immuch360 Desktop are built from the tag by immuch360-desktop.yml, called here with its own read-only
+# permissions, then attached to the GitHub release of the tag: the Windows ZIP and installer, the Linux .deb and .rpm,
+# the macOS ZIP and DMG, and SHA256SUMS.txt for every file of the release. .github/desktop/desktop_release.py attaches
+# them, here with the token of the run as on the owner's computer with the owner's token, so that both ways give the
+# same release: it creates the release, as a pre-release, when the tag has none, and never replaces notes written by
+# hand. Run by hand on a desktop-v* tag (gh workflow run immuch360-desktop-release.yml --ref <tag>), it builds and
+# attaches them again; on a branch it builds them and lists what it would attach.
+#
+# This is the one desktop workflow that writes to the repository: its release job only, with "contents: write", on
+# desktop-v* tags and by hand, never on a pull request; .github/desktop/check_workflow.py --release holds it to that.
+
+on:
+  push:
+    tags: ['desktop-v*']
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  build:
+    name: Build
+    uses: ./.github/workflows/immuch360-desktop.yml
+    permissions:
+      contents: read
+
+  release:
+    name: Attach the packages to the release
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: Immuch360-Desktop-*
+          merge-multiple: true
+          path: release
+
+      # The six files of the build, all there and nothing else, before anything is attached
+      - name: The files of the build
+        env:
+          LABEL: ${{ needs.build.outputs.label }}
+        run: python3 .github/desktop/desktop_release.py --dry-run --label "$LABEL" release/*
+
+      - name: Attach them to the release of the tag
+        if: startsWith(github.ref, 'refs/tags/desktop-v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 .github/desktop/desktop_release.py --repo "$GITHUB_REPOSITORY" --tag "$GITHUB_REF_NAME" \
+            --commit "$GITHUB_SHA" release/*
