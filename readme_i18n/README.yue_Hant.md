@@ -1,575 +1,151 @@
 <details><summary>🌐 <b>粵語</b> · 其他語言 (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
-  <img src="../.github/readme/banner-2026-10.png" width="100%" alt="Immuch360：嚟自 Immich、你部電話或者 NAS 嘅 360°、3D 同 VR180 相片同影片。支援 Android、iOS 同 Meta Quest，有冇伺服器都得">
+  <img src="../.github/readme/hero-2026-10.jpg" width="100%" alt="Immuch360：你嘅媒體，乜畫面都得，睇盡每個角度。相片同影片：平面、全景、360°、3D 同 VR180，嚟自你嘅裝置、你嘅 NAS 或者你嘅 Immich 伺服器，用喺電話、平板、電視機、Meta Quest 頭戴裝置同電腦上面">
 </p>
 
 # Immuch360
 
-Immuch360 係加入咗可以四圍睇嘅 360° 相片同影片嘅 Immich 手機 App，同時亦係一個免費播放器，可以喺 Android 手機同平板、iPhone 同 iPad、Meta Quest 頭戴裝置（Quest 3 同 3S，由建置 21 開始仲有 Quest 2 同 Quest Pro，未測試），仲有由建置 20 開始嘅 Android TV 同 Google TV 上面播平面、360°、3D 同 VR180 相片同影片。Immuch360 Desktop，即係 Windows 電腦上面嘅同一個 App，已經以預覽版推出，睇[喺 Windows 電腦上面](#on-a-windows-computer-immuch360-desktop-preview)。
+**你嘅媒體。乜畫面都得。睇盡每個角度。**
 
-佢啱用 360° 相機（Insta360、GoPro MAX、DJI Osmo 360、Ricoh Theta、Samsung Gear 360）或者電話全景球模式影相嘅人，又或者有頭戴裝置嘅人，等佢哋可以睇返自己喺 Immich 伺服器、電話本身、NAS、媒體伺服器或者 Plex 伺服器入面嘅相片同影片：同一部伺服器，同一個帳戶，伺服器唔使裝外掛，甚至完全唔使伺服器。由建置 20 開始，佢仲可以睇 Tapo 鏡頭，包括直播畫面同記憶卡入面嘅錄影。
+Immuch360 係一個免費又開源嘅 app，等你搵、瀏覽、播放同探索你嘅相片同影片：普通嗰啲，仲有全景、360°、3D 同沉浸式嗰啲，呢啲相片影片喺其他 app 入面通常淨係顯示平面、重複或者拉扯變形嘅畫面。Immuch360 會喺佢哋本身嘅位置讀取：裝置本身、NAS、電腦、Plex 伺服器或者 Immich 伺服器，然後播喺電話、平板、電視機、Meta Quest 頭戴裝置同電腦上面。唔使帳戶，唔使雲端，唔使伺服器都得。
+
+- **佢做乜嘅？** 佢將你嘅相片同影片變做一個相簿，再用啱啱好夾嗰個檔案嘅檢視器播出嚟：平面、你可以周圍望吓嘅球體、3D，又或者戴住頭戴裝置睇。
+- **有啲乜嘢媒體？** 平面相片同影片、全景相、360° 相片同影片、VR180、立體 3D、Apple 空間相片，仲有 360° 相機（Insta360、GoPro MAX、DJI Osmo 360）嘅原始檔案，由 app 拼接好。
+- **用喺啲乜嘢裝置？** Android 電話同平板、iPhone 同 iPad、Android TV 同 Google TV、Meta Quest 2、Pro、3 同 3S、Windows（預覽版），macOS 同 Linux 仲喺開發中。
+- **使唔使伺服器或者帳戶？** 唔使。Immuch360 自己一個就可以用你裝置上嘅媒體運作。Immich 伺服器、NAS、媒體伺服器或者 Plex 伺服器都係你想要先加嘅選項。
 
 <p align="center">
-  <sub>非官方分支。同 Immich 或者 FUTO 冇關係。個名讀做「I am much 360」。</sub>
+  <sub>Immich 手機 app 嘅非官方 fork。同 Immich 或者 FUTO 冇關係。呢個名嘅讀音好似英文「I am much 360」噉。</sub>
 </p>
 
 <div align="center">
 
 | 平台 | 喺邊度攞 | 2026 年 10 月 12 日狀態 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手機同平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | GitHub 上面係建置 23，2026 年 10 月 10 日已經送去 Google Play（Google Play 上面由 10 月 7 日開始係建置 20） |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 同 iPad** | App Store | 版本 3.3.0 等緊 Apple 審批；期間可以[自己建置](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 同 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | 2026 年 10 月 7 日起喺 Horizon Store 上架（建置 14），建置 21 等緊 Meta 審批，建置 23 喺 alpha 頻道 |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 同 Google TV** | [APK](#install-it-on-the-tv) · Google Play | GitHub 上面係建置 23；電視用嘅 Google Play 上架頁面由 2026 年 10 月 9 日開始等緊 Google 審批 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [預覽版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | Windows 上面嘅桌面建置 4：相片、平面同 360° 影片；macOS 同 Linux 遲啲推出 |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 電話同平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | 喺 Google Play 上面（build 20；build 23 審核中），build 23 上咗 GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 同 iPad** | App Store | 3.3.0 版本等緊 Apple 審核；期間可以[自己編譯](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 同 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 上咗 GitHub；電視版本仲喺 Google 審核中 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 同 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | 喺 Horizon Store 上面（build 14；build 21 審核中），build 23 上咗 GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [預覽版 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4，一個預覽版：相片、平面同 360° 影片、網絡共享、Plex、相機 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS 同 Linux** | 原始碼 | 由專案嘅 CI 建置，仲未喺嗰啲系統上開跑，暫時都未有得下載 |
 
-*狀態會喺每次發佈更新；詳情睇[喺邊度攞](#where-to-get-it)。*
+*每次發布都會更新呢啲狀態；每個 build 嘅詳情喺[發布狀態](../docs/immuch360/release-status.md)入面。*
 
 </div>
 
-- 🌐 **原生 360°**<br>相片同影片以球面顯示，可以四圍睇，支援陀螺儀，包括相機 RAW 檔案（Insta360 由建置 16 開始，GoPro 同 DJI 由建置 18 開始）。仲有免費影片播放器：平面、360°、3D、VR180
-- 👓 **原生 3D**<br>立體 360° 同 VR180，上下或者左右排列，仲有 Apple 空間相片（由建置 19 開始）：頭戴裝置入面係真 3D，電話上面顯示一隻眼
-- 🎥 **原生 2.5D**<br>由立體影片喺平面螢幕上面整出深度，畫面跟住你個頭移動（實驗性，手機同平板）
-- 📱 **Android、iOS、Quest、電視**<br>一個 App 用喺電話、平板同 Quest 2、Pro、3 同 3S 頭戴裝置，頭戴裝置入面係真 3D，由建置 20 開始仲可以喺 Android TV 用遙控器操作，另外有睇到相片、平面同 360° 影片嘅 Windows 預覽版
-- 🔌 **有冇伺服器都得**<br>你嘅 Immich 伺服器，或者電話自己嘅相簿，唔使帳戶
-- 🗄️ **網絡共享**<br>Samba（SMB）、WebDAV，仲有由建置 19 開始嘅 DLNA 媒體伺服器，喺網絡上自動搵到，即時讀取，乜都唔使下載，你揀咗先至傳去 Immich。由建置 19 開始，電話仲可以將自己嘅相簿分享畀頭戴裝置
-- 📺 **喺電視上面**<br>由建置 20 開始，同一個 APK 用得喺 Android TV 同 Google TV：360° 相片同影片、你嘅伺服器同你嘅共享，全部用遙控器操作
-- 🎬 **Plex，唔使 plex.tv**<br>由建置 20 開始讀你嘅 Plex 媒體庫，直接播原檔，360° 依然係 360°，喺屋企同出面都得
-- 📹 **Tapo 鏡頭**<br>由建置 20 開始有直播畫面同記憶卡入面嘅錄影，只喺你嘅網絡入面，仲可以按你揀嘅將片段傳去 Immich
+<p align="center">
+  <img src="../.github/readme/platforms-2026-10.jpg" width="100%" alt="四個真實擷圖並排擺：Android 電話上嘅球體檢視器、Google TV 上嘅 360° 清單、Windows 上 Immuch360 Desktop 嘅影片播放器，仲有喺 Meta Quest 3 入面全方位圍住你嘅 360° 相片">
+</p>
 
 <details>
 <summary><b>目錄</b></summary>
 
-- [以球面顯示 360° 相片同影片](#360-photos-and-videos-as-a-sphere)
-- [唔使伺服器同帳戶](#without-a-server-or-an-account)
-- [網絡共享：NAS、電腦或者媒體伺服器](#network-shares-a-nas-a-computer-or-a-media-server)
-- [Plex Media Server，唔使 plex.tv](#plex-media-server-without-plextv)
-- [喺網絡上分享呢部電話](#share-this-phone-on-the-network)
-- [Tapo 鏡頭：直播畫面同記憶卡入面嘅錄影](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
-- [360° 相機 RAW 檔案，唔使相機嘅 App](#raw-360-camera-files-without-the-cameras-app)
-- [3D 同 VR180 相片同影片](#3d-and-vr180-photos-and-videos)
-- [平面螢幕上面嘅深度：Spatial 2.5D（實驗性）](#depth-on-a-flat-screen-spatial-25d-experimental)
-- [Apple 空間相片同影片](#apple-spatial-photos-and-videos)
-- [喺 Meta Quest 3 頭戴裝置入面](#in-the-meta-quest-3-headset)
-- [喺電視上面睇（Android TV 同 Google TV）](#watch-on-your-tv-android-tv-and-google-tv)
-- [搵你啲 360° 相：360° 清單](#find-your-360-shots-the-360-list)
-- [影片詳情、解碼器，同埋點解影片會窒](#video-details-decoders-and-why-a-video-stutters)
-- [其他全部都係 Immich](#everything-else-is-immich)
-- [同 Immich App 同其他 App 比較](#compared-with-the-immich-app-and-other-apps)
-- [各平台支援嘅格式同來源](#formats-and-sources-by-platform)
-- [Meta Quest 3](#meta-quest-3)
-- [喺 Windows 電腦上面：Immuch360 Desktop（預覽版）](#on-a-windows-computer-immuch360-desktop-preview)
-- [喺邊度攞](#where-to-get-it)
-- [自己建置](#build-it-yourself)
-- [紀錄](#logs)
+- [你可以做乜](#what-you-can-do)
+  - [睇你嘅相片同影片](#watch-your-photos-and-videos)
+  - [探索全景、360°、VR180 同 3D](#explore-panoramas-360-vr180-and-3d)
+  - [唔開帳戶，用你自己嘅檔案](#use-your-own-files-without-an-account)
+  - [連去 NAS、電腦或者媒體伺服器嘅媒體](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
+  - [搵到你嘅 Immich 媒體庫](#find-your-immich-library)
+  - [喺 Meta Quest 上沉浸式體驗](#go-immersive-on-meta-quest)
+  - [喺電視同電腦上面睇](#watch-on-the-tv-and-on-the-computer)
+  - [相機、Plex 同原始相機檔案](#cameras-plex-and-raw-camera-files)
+- [裝置同系統](#devices-and-systems)
+- [進階功能](#advanced-features)
+- [技術文件](#technical-documentation)
+- [安裝](#install)
 - [私隱](#privacy)
-- [授權同商標](#license-and-trademark)
+- [呢個專案](#the-project)
 - [路線圖](#roadmap)
-- [鳴謝](#credits)
 
 </details>
 
-## 你遇到邊個問題？
+<a id="what-you-can-do"></a>
+## 你可以做乜
 
-- **「我啲 360° 相顯示成一條拉長咗嘅扁平長條，360° 影片又當普通影片噉播。」** 睇[以球面顯示 360° 相片同影片](#360-photos-and-videos-as-a-sphere)。
-- **「我冇伺服器，亦唔想開帳戶。」** 睇[唔使伺服器同帳戶](#without-a-server-or-an-account)。
-- **「我想喺電話或者頭戴裝置度睇 NAS 入面啲影片，但唔想複製。」** 睇[網絡共享](#network-shares-a-nas-a-computer-or-a-media-server)。
-- **「Plex 將我啲 360° 影片當平面噉播，我想喺頭戴裝置、電視同出咗街都用到我嘅 Plex 媒體庫。」** 睇 [Plex Media Server，唔使 plex.tv](#plex-media-server-without-plextv)。
-- **「我啲相喺電話入面，我冇電腦或者 NAS 放畀頭戴裝置用。」** 睇[喺網絡上分享呢部電話](#share-this-phone-on-the-network)。
-- **「我想唔使開 Tapo App 都睇到我部 Tapo 鏡頭同尋晚啲片段，仲想將片段留喺 Immich。」** 睇 [Tapo 鏡頭](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)。
-- **「我啲 Insta360 檔案要先用 Insta360 App 處理先睇到」**（GoPro .360 同 DJI .osv 檔案都係）。睇[360° 相機 RAW 檔案](#raw-360-camera-files-without-the-cameras-app)。
-- **「我啲 3D 影片有重影，VR180 影片又拉到四圍都係。」** 睇 [3D 同 VR180](#3d-and-vr180-photos-and-videos) 同埋 [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental)。
-- **「我有 iPhone 影嘅空間相片。」** 睇 [Apple 空間相片同影片](#apple-spatial-photos-and-videos)。
-- **「電話上面用到，但我想喺 Quest 度用。」** 睇[喺 Meta Quest 3 頭戴裝置入面](#in-the-meta-quest-3-headset)。
-- **「我想喺電視上面用遙控器睇我啲 360° 相片同影片，同埋 NAS 或者 Plex 伺服器入面啲影片。」** 睇[喺電視上面睇](#watch-on-your-tv-android-tv-and-google-tv)。
-- **「我喺成堆相入面搵唔到我啲 360° 相。」** 睇 [360° 清單](#find-your-360-shots-the-360-list)。
-- **「我段 360° 影片會窒，或者播緊一個好矇嘅副本。」** 睇[影片詳情同解碼器](#video-details-decoders-and-why-a-video-stutters)。
-- **「我想喺 Windows 電腦上面用我嘅 360° 相片同 Immich 媒體庫，連埋電腦資料夾入面嘅相片同影片、我部 NAS 同我部 Plex 伺服器，仲要將部電腦分享俾我個頭戴裝置。」** 睇[喺 Windows 電腦上面](#on-a-windows-computer-immuch360-desktop-preview)（預覽版：相片同平面影片，由桌面建置 3 開始仲有 360°、3D、VR180 同原始 360° 影片同埋 Tapo 直播畫面）。
-- **「Immich App 啲功能我仲用唔用到？」** 用到，只係有兩個細改動，睇[其他全部都係 Immich](#everything-else-is-immich)。
+下面每個用法都會話你知你會得到乜，再話你知點樣用幾步做到。完整嘅指南，連埋所有選項、訊息同限制，都喺[使用指南](../docs/immuch360/user-guide.md)。
 
-如果功能比較新，內文會講明由邊個建置開始有。GitHub 發佈頁一定係最新嘅建置，各個 App 商店之後先跟上：睇[喺邊度攞](#where-to-get-it)。
+<a id="watch-your-photos-and-videos"></a>
+### 睇你嘅相片同影片
 
-<a id="360-photos-and-videos-as-a-sphere"></a>
-## 以球面顯示 360° 相片同影片
+Immuch360 首先係一個圖庫同埋普通相片影片嘅播放器。時間軸、相簿、最愛、回憶同搜尋功能需要 Immich 伺服器先用得到；裝置本身嘅相片影片，同埋電腦嘅資料夾，唔使伺服器都睇得到。影片會用原生播放器播放，有聲音、可以拖拉時間軸搵片段、有緩衝指示器，仲有喺 360°、空間同電腦播放器入面可以揀音軌。電視用遙控器控制一切；電腦就用滑鼠同鍵盤。
 
-你將相片備份去 [Immich](https://github.com/immich-app/immich) 伺服器，其中有啲係用 360° 相機或者電話全景球模式影嘅。喺官方手機 App 入面，呢啲相顯示成一條拉長咗嘅扁平長條，360° 影片都係當普通影片噉播。Immich 網頁版識得將 360° 相片顯示成球面，手機 App 就唔得：由 2024 年 1 月開始，已經有人喺[討論 #6572](https://github.com/immich-app/immich/discussions/6572) 度提出呢個要求。
+1. 打開「相片」分頁：你伺服器嘅時間軸，或者冇伺服器時裝置本身嘅時間軸。
+2. 㩒相片或者影片打開佢；向左右掃去睇下一個，用兩指縮放或者雙擊去放大縮小。
+3. 喺影片上面向上掃睇詳情：編碼格式、大小、幀率、位元率，仲有呢部裝置係唔係解碼得到。
 
-Immuch360 喺 Android 同 iOS 手機同平板上面，將佢哋開成一個可以四圍睇嘅球面。
+更多資訊：[檢視器同影片播放器](../docs/immuch360/user-guide.md#watch-your-photos-and-videos)、[影片詳情同解碼器](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters)。
 
-相片會跟住你拖動而轉，可以用兩隻手指縮放或者撳兩下放大，快速拖完之後仲會再轉多一陣，打開嗰陣用相機記錄落嚟嘅初始視角（GPano 元數據），放大之後會換用更清晰嘅紋理；部分全景都支援（GPano 裁切）。影片喺原生球面播放器入面播，有聲、可以拖動，又支援陀螺儀。
+<a id="explore-panoramas-360-vr180-and-3d"></a>
+### 探索全景、360°、VR180 同 3D
 
-已經拼接好嘅 360° 檔案邊度都用到：Insta360 App 或者 Studio、GoPro Player、Ricoh Theta 匯出嘅檔案，仲有電話嘅全景球相。直接由相機攞出嚟嘅 RAW 檔案會由 App 自己拼接，睇[360° 相機 RAW 檔案](#raw-360-camera-files-without-the-cameras-app)。
+360° 相片打開之後會變成一個球體，你可以用手指或者移動電話嚟轉動佢；360° 影片會喺球體播放器入面播放，有聲音；VR180 檔案會畫喺半個球體上面；立體 3D 檔案喺平面螢幕淨係顯示一邊眼嘅畫面，戴頭戴裝置就兩邊眼都睇得到。局部全景會保持佢哋嘅裁剪範圍，相片會由相機記錄嗰個角度開始顯示。伺服器冇標記做 360° 嘅檔案，㩒一下就可以當 360° 睇。
 
 <p align="center">
-  <img src="../.github/readme/b19-sphere.png" width="260" alt="球面查閱器入面一張湖邊嘅 360° 相片：左上角係關閉掣，右上角係 360°、3D 排列同陀螺儀掣">
+  <img src="../.github/readme/b19-sphere.jpg" width="260" alt="球面查閱器入面一張湖邊嘅 360° 相片：左上角係關閉掣，右上角係 360°、3D 排列同陀螺儀掣">
   <img src="../.github/readme/b19-video.png" width="420" alt="打橫拎住部電話，喺 360° 播放器入面播緊一段海邊公路嘅 360° 影片：左上角係關閉同檔案名，右上角係 360° 同 3D，中間係上一個、後退、播放、前進同下一個，底部係時間軸">
 </p>
 
-- **以球面顯示嘅 360° 相片**：左上角係關閉；右上角係 360°/180° 掣、3D 排列掣同陀螺儀。
-- **360° 播放器入面嘅 360° 影片**：撳一下畫面就會顯示控制項；右上角係 360° 同 3D。
+1. 打開相片或者影片。360° 檔案嘅縮圖上面會有個 360° 徽章，「媒體庫」分頁仲有個 360° 清單將佢哋全部集合埋一齊，可以用時期、來源、種類同相機嚟篩選。
+2. 㩒頂部工具列嘅 360°。拖動嚟周圍望，用兩指縮放，㩒陀螺儀按鈕就可以轉動電話嚟周圍望。
+3. 3D 按鈕會循環切換「平面 (唔係 3D)」、「3D，上下」同「3D，左右」；360°/180° 按鈕就會喺完整球體同 VR180 嘅半球體之間切換。
+4. 如果一個檔案明明係 360° 嘅但係顯示平面：㩒右上角嘅 ⋮，然後揀「以 360° 睇」。
 
-### 以球面打開 360° 相片
+喺電話同平板上面，立體影片喺平面螢幕上面都可以有深度感：空間 2.5D 播放器用前置相機追蹤你嘅頭部，顯示介於兩邊眼之間嘅畫面（實驗性功能）。用 iPhone 拍嘅 Apple 空間相片會被識別出嚟，喺 Meta Quest 入面以 3D 顯示。
 
-1. 由時間線、相簿、[360° 清單](#find-your-360-shots-the-360-list)或者共享資料夾打開相片。360° 相片嘅縮圖上面有個 360° 標記。
-2. 撳查閱器頂部列嘅 360°。球面查閱器就會打開，載入完整相片期間會顯示載入指示；平面檢視入面嘅縮放比例會保留。
-3. 拖動就可以四圍睇，用兩隻手指縮放，撳兩下放大。快速拖完之後，視角會再轉多一陣先慢慢停。
-4. 想轉動部電話嚟四圍睇，就撳右上角嘅陀螺儀掣（預設係熄咗）。
-5. 右上角另外兩個掣係 360°/180°（全球面或者 VR180 半球面，部分全景唔會顯示）同 3D（立體相片嘅排列），睇 [3D 同 VR180](#3d-and-vr180-photos-and-videos)。Insta360 RAW 相片就只有陀螺儀掣。
-6. 撳左上角個交叉就可以關閉。
+更多資訊：[360° 相片同影片](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere)、[3D 同 VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos)、[空間 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental)、[Apple 空間相片同影片](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos)、[360° 清單](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list)。
 
-### 播放 360° 影片
+<a id="use-your-own-files-without-an-account"></a>
+### 唔開帳戶，用你自己嘅檔案
 
-1. 打開影片，撳頂部列嘅 360°。喺 360° 影片上面，360° 掣排第一；喺手機同平板上面，嗰個設定開咗嘅話，後面會跟住 Spatial 掣（睇 [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental)）。
-2. 原生 360° 播放器會全螢幕打開，有聲播放：Android 用 Media3，iOS 用 SceneKit。
-3. 拖動或者郁部電話就可以四圍睇。Android 播放器一定會跟住部電話轉；iOS 播放器有個陀螺儀開關，預設係開咗。
-4. 撳一下畫面就會顯示控制項：頂部係關閉、360°/180° 同 3D，Android 仲有播放、跳轉掣同時間軸。iOS 播放器暫時只有播放同暫停。
-5. 如果影片有兩條或者以上嘅音軌（唔同語言、旁述），可以用「音軌」掣揀其中一條。影片載入緊或者停咗喺度嘅時候，播放器會顯示「緩衝緊」同播放緩衝區填咗幾多。
-
-如果部電話入面有呢個檔案，或者有網絡共享入面嘅檔案，播放器就會播佢哋。否則就由你嘅伺服器串流：預設係轉碼串流；如果你喺「設定」、「文件查閱器」、「影片來源」度揀咗，就播原檔（由建置 15 開始；之前係「一律播放原片」開關），睇[影片詳情同解碼器](#video-details-decoders-and-why-a-video-stutters)。
-
-<a id="a-360-file-that-shows-flat-view-as-360"></a>
-### 顯示成平面嘅 360° 檔案：以 360° 睇
-
-有啲 360° 檔案冇投影標記，所以伺服器唔會將佢哋標做 360°，佢哋就會顯示成平面。
-
-1. 打開相片或者影片，撳右上角嘅 ⋮。
-2. 撳「幻燈片」同「下載」中間嘅「以 360° 睇」。頂部列就會出現 360° 掣。
-3. 想還原嘅話，同一個項目而家會顯示做「唔再當 360° 處理」。
-
-呢個選擇會記喺部電話度，唔會改伺服器上面任何嘢。如果係網絡共享入面嘅檔案，就只會對今次檢視有效。
-
-### 限制
-
-- **iOS 360° 影片播放器**：只有播放同暫停，暫時未有時間軸。
-- **上一個同下一個**：電話上面嘅 360° 播放器暫時未可以轉去上一個或者下一個媒體；Quest 嘅沉浸式檢視就得。
-- **超大全景**：相片最大以 8192x4096 顯示，即係大部分電話 GPU 接受到嘅最大紋理，所以更大嘅全景會縮細到呢個尺寸。
-- **雙魚眼 .dng**：仍然顯示成平面。
-
-<a id="without-a-server-or-an-account"></a>
-## 唔使伺服器同帳戶
-
-你冇 Immich 伺服器，或者唔想開帳戶：你只係想部電話入面啲 360° 相可以開成球面，用陀螺儀嚟轉。Immich App 要你先登入。
-
-喺登入頁，「唔連伺服器使用」會用裝置自己嘅相片同影片打開 Immuch360，有齊 360°、3D、VR180 同 Spatial 查閱器、360° 清單同網絡共享（由建置 20 開始仲有 Plex 伺服器同 Tapo 鏡頭），唔使 Immich 帳戶。伺服器功能會收埋或者變灰，直至你連接伺服器為止；乜嘢都唔會離開部裝置。喺 Meta Quest 上面，佢會打開頭戴裝置自己嘅相片同影片；喺電視上面，因為電視冇自己嘅相片同影片，佢會帶你去網絡共享（睇[喺電視上面睇](#watch-on-your-tv-android-tv-and-google-tv)）。
+Immuch360 唔需要帳戶，亦唔需要伺服器。喺登入畫面，揀「唔連伺服器使用」就會打開裝置本身嘅相片同影片，連埋所有檢視器、360° 清單同網絡來源都用得到。所有資料都唔會離開裝置。之後隨時都可以喺「設定」入面連接伺服器，到時伺服器嘅功能就會出現。
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="冇伺服器時嘅媒體庫分頁：頂部係 360° 項目，跟住係有兩張 360° 相片嘅喺呢部裝置度，同埋有一個叫 NAS 嘅共享嘅網絡共享">
-
-### 唔連伺服器開始用
 
 1. 打開個 App。喺登入頁嘅伺服器地址同「設定」下面，撳「唔連伺服器使用」。
 2. 允許存取你嘅相片同影片。如果你拒絕，App 會顯示「個 App 睇唔到呢部裝置嘅相」，同埋提供「允許存取」同「開啟設定」。
 3. 「相」分頁顯示部裝置嘅時間線。「搜尋」同「相簿」會變灰，因為佢哋係嚟自伺服器。「媒體庫」分頁頂部係 360°，跟住係「喺呢部裝置度」（部裝置嘅相簿）同「網絡共享」。
 4. 右上角選單顯示「淨係呢部裝置」：App 只會顯示呢部裝置嘅相片同影片，乜都唔會傳去任何地方。
 
-### 遲啲先連接伺服器
+喺電腦上面，你揀嘅資料夾就扮演圖庫嘅角色；電視本身冇相片，所以就靠網絡來源嚟補位。
 
-1. 打開「設定」（右上角選單，再撳「設定」）。第一項係「連接伺服器」，「同 Immich 伺服器同步，就可以備份、搜尋同分享」。右上角選單都有同一個項目。
-2. 照平時噉登入。時間線、相簿、備份同其他伺服器功能就會出現。
+更多資訊：[唔使伺服器或者帳戶](../docs/immuch360/user-guide.md#without-a-server-or-an-account)。
 
-### 限制
+<a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
+### 連去 NAS、電腦或者媒體伺服器嘅媒體
 
-- **裝置自己嘅相簿**：App 會顯示裝置相簿入面嘅相片同影片。喺 iPhone 上面，掃描 360° 檔案時會跳過淨係存喺 iCloud 嘅檔案，直至佢哋下載咗落部裝置為止。
-- **冇伺服器嘅時候**，360° 清單包括裝置掃描搵到嘅內容，同埋你揀咗以 360° 睇嘅檔案，睇 [360° 清單](#find-your-360-shots-the-360-list)。
-
-<a id="network-shares-a-nas-a-computer-or-a-media-server"></a>
-## 網絡共享：NAS、電腦或者媒體伺服器
-
-你啲 360° 影片放咗喺 NAS 或者電腦，你想喺電話或者頭戴裝置度睇，但唔想先複製。用頭戴裝置嘅人通常最後要用線逐個檔案複製；Plex 同 Jellyfin 呢類媒體伺服器會將 360° 影片當平面播，佢哋論壇上面啲要求都係噉講；Immich App 就只讀你嘅 Immich 伺服器。
-
-Immuch360 可以直接由共享瀏覽同播放任何支援 SMB（Samba、Windows）、WebDAV，或者由建置 19 開始支援 DLNA/UPnP（媒體伺服器：Jellyfin、minidlna、Gerbera、Emby、NAS 或者電視盒）嘅伺服器入面嘅相片同影片。由建置 20 開始，Plex Media Server 有自己嘅類型，睇 [Plex Media Server，唔使 plex.tv](#plex-media-server-without-plextv)。
-
-佢會自己搵到你網絡入面嘅伺服器，用同 App 其他部分一樣嘅查閱器即時播放檔案（360°、3D、VR180、Spatial 2.5D、Quest 沉浸式檢視），有冇 Immich 伺服器都得，電話同 Meta Quest 3 都用到。乜都唔會下載。連接咗伺服器嘅話，你揀嘅檔案可以傳去你嘅 Immich 帳戶（由建置 15 開始）。
+你嘅影片可能放喺 NAS、電腦或者媒體伺服器上面。Immuch360 會自動搵到你網絡上嘅伺服器，瀏覽佢哋，再直接播放佢哋嘅相片影片，用 app 裡面任何一個檢視器都得，而且唔會複製任何東西：SMB（Samba、Windows 共享）、WebDAV（Nextcloud、Synology 等等）同 DLNA 媒體伺服器（Jellyfin、Emby、minidlna、NAS、電視盒）。電話都可以用 Wi-Fi 將自己嘅圖庫分享畀頭戴裝置或者任何 WebDAV 客戶端睇，Windows 電腦一樣做得到。
 
 <p align="center">
   <img src="../.github/readme/b19-add-share.png" width="260" alt="新增共享頁面：名稱、伺服器名稱或者地址、連接埠（可選）、共享名稱、揀一個共享、起始資料夾（可選）、用戶名稱、密碼、測試連線，同埋結果：已連線，起始資料夾入面有 2 個項目">
-  <img src="../.github/readme/b19-share-folder.png" width="260" alt="以縮圖格仔顯示嘅網絡共享資料夾：有 360° 標記嘅 360° 相片，同一段有播放標記嘅 360° 影片，右上角係選擇掣">
+  <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="以縮圖格仔顯示嘅網絡共享資料夾：有 360° 標記嘅 360° 相片，同一段有播放標記嘅 360° 影片，右上角係選擇掣">
 </p>
 
-- **新增共享**：測試連線之後，一個新 SMB 共享嘅各個欄位。
-- **共享入面嘅資料夾**：由共享即時讀取嘅 360° 相片同一段影片。
+1. 打開「媒體庫」分頁，然後揀「網絡共享」，再㩒 + 同「網絡共享（NAS、電腦、媒體伺服器）」。
+2. 喺「喺網絡上搵到」底下㩒一個伺服器，或者自己手動填表：類型、伺服器名稱或者位址、共享名或者路徑、開始資料夾、用戶名同密碼。
+3. 㩒「測試連線」，再㩒儲存。㩒個共享嚟瀏覽：先顯示資料夾，再顯示相片同影片，被識別做 360° 嘅檔案會有 360° 徽章。
+4. 連接咗 Immich 伺服器之後，喺資料夾入面揀啱檔案，再㩒「上傳去 Immich」送去你嘅伺服器。
 
-### 新增共享
+播放器會透過 app 入面嘅一個橋接，用位元組範圍讀取佢需要嘅資料，所以拖拉時間軸搵片段都用得到，而且唔會喺裝置上面儲存任何東西；SMB 影片最多會用六條連線同時讀取，令播放更加順暢。
 
-1. 打開「媒體庫」分頁，再打開「網絡共享」。第一次打開嗰陣，頁面會顯示「仲未有共享」同一個「新增共享」掣；右上角嘅 + 任何時候都做到同樣嘅嘢。由建置 20 開始，兩個都會先問你想加乜嘢：「網絡共享（NAS、電腦、媒體伺服器）」、「Plex Media Server」或者「Tapo 鏡頭」。揀第一個。
-2. 「新增共享」頁面會先搵你網絡入面嘅伺服器，然後喺「喺網絡上搵到」下面按類型（SMB、WebDAV、DLNA、電話，由建置 20 開始仲有 Plex 同 Tapo）列出嚟。搵嘢最多要大約六秒；「再掃描」會由頭再搵過。佢會用 Bonjour/mDNS，同埋用真正嘅 SMB 或者 WebDAV 交換確認過嘅本地網絡掃描，由建置 19 開始仲會用 SSDP 搜尋 DLNA 媒體伺服器，由建置 20 開始仲會用 Plex 嘅探索協定 GDM，同埋 TP-Link 用嚟搵 Tapo 鏡頭嘅探索協定。
-3. 撳其中一部伺服器：類型、伺服器、連接埠同路徑會自動填好。Plex 伺服器或者 Tapo 鏡頭就會打開佢自己嘅頁面，一樣已經填好。
-4. 清單入面冇？自己手動填表格。類型：「SMB（Samba，Windows 共享）」、「WebDAV（Nextcloud、Synology 等等）」、「DLNA 媒體伺服器（Jellyfin、NAS、電視盒）」，或者由建置 20 開始嘅「Plex Media Server」，佢會打開 [Plex Media Server，唔使 plex.tv](#plex-media-server-without-plextv) 講嘅頁面。跟住係「名稱」、「伺服器名稱或者地址」（名稱或者地址；好似 `smb://nas/photos`、`\\nas\photos` 或者 `https://nas:5006/photos` 噉嘅完整地址會填好其他欄位）、唔係平時嘅連接埠就填「連接埠（可選）」、SMB 填「共享名稱」或者 WebDAV 填「WebDAV 地址嘅路徑」、「起始資料夾（可選）」、「用戶名稱」同「密碼」，仲有 WebDAV 嘅「安全連線（HTTPS）」。
-5. SMB：入咗伺服器同用戶名稱之後，「揀一個共享」會列出伺服器上面嘅共享。
-6. DLNA：媒體伺服器冇用戶名稱同密碼。填伺服器、連接埠同佢裝置描述嘅「描述路徑」（minidlna 係 `/rootDesc.xml`），或者將成個地址（例如 `http://192.168.1.10:8200/rootDesc.xml`）貼落伺服器欄位。
-7. 撳「測試連線」。結果會係「已連線，起始資料夾入面有 N 個項目」，或者講明點解失敗。然後撳表格底部嘅「儲存」。由建置 22 開始，關閉一個已經輸入咗嘢嘅表格（X、返回）會先問「放棄修改？」，Plex 同鏡頭頁面都係噉；輸入咗嘢之後再揀搵到嘅 Plex 或者鏡頭，都會先問。
+更多資訊：[網絡共享](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server)、[將呢部電話喺網絡上分享](../docs/immuch360/user-guide.md#share-this-phone-on-the-network)、[DLNA 媒體伺服器](../docs/immuch360/user-guide.md#dlna-media-servers)。
 
-用戶名稱配空白密碼會照原樣傳送：Freebox Server 嘅磁碟要用 `freebox` 做用戶名稱，唔使密碼。之後想改或者刪除共享，就用「網絡共享」頁面入面嗰個共享隔籬嘅鉛筆圖示。
+<a id="find-your-immich-library"></a>
+### 搵到你嘅 Immich 媒體庫
 
-### 瀏覽同播放
+連接住[Immich](https://github.com/immich-app/immich) 伺服器嘅話，Immuch360 就係 Immich 嘅手機 app，用同一個伺服器同帳戶，同網頁版 app 一樣：備份、時間軸、相簿、搜尋、人物、回憶、分享、夥伴，全部都同你嘅伺服器同步。佢可以同官方 app 一齊裝喺裝置上面。喺官方功能之上，仲加埋：360° 徽章同清單、每一個沉浸式檢視器、每條影片可以揀原始檔案或者伺服器轉碼嘅串流、影片嘅技術詳情，仲有共享或者裝置嘅檔案可以手動傳送去你嘅伺服器。
 
-1. 撳一個共享。資料夾會排先，跟住係有縮圖嘅相片同影片格仔（每段影片都會攞一格畫面，快取喺部裝置度）。認到係 360° 嘅會有 360° 標記，由建置 19 開始，Apple 空間相片同影片會有 3D 標記。向下拉就可以重新整理。
-2. 撳相片：相片會全螢幕打開（兩隻手指縮放、撳兩下），佢個 360° 掣會打開球面查閱器。
-3. 撳影片：影片會喺原生播放器入面播（播放、暫停、拖進度），有個 360° 掣可以打開 360° 播放器同佢嘅 3D 同 360°/180° 掣，喺電話上面立體檔案仲有 Spatial 掣。
-4. 喺 Quest 上面，360° 掣會打開沉浸式檢視，由建置 19 開始，「用 3D 睇」可以用 3D 打開 Apple 空間相片。
-5. ⋮ 選單入面，冇 360° 標記嘅檔案有「以 360° 睇」，喺電話上面唔係立體嘅影片有「Spatial 2.5D」。
+1. 用你嘅伺服器位址、電郵同密碼登入，就好似用 Immich app 噉。你嘅媒體庫、相簿同備份設定都係你帳戶本身嗰啲。
+2. 喺「設定」、「資源檢視器」、「影片」入面，「影片來源」可以揀呢部裝置解碼得到就用原始檔案、永遠用原始檔案，或者永遠用轉碼串流。
+3. 如果想將一張 360° 相片展示畀冇裝呢個 app 嘅人睇，可以用 Immich 共享連結分享：Immich 嘅網頁版 app 會喺佢哋嘅瀏覽器入面以球體顯示。
 
-360°、3D 同 VR180 係根據檔案嘅 GPano 或者球面元數據認出嚟（用範圍請求讀取），VR180 仲可以由檔案名認出。由建置 16 開始，Insta360 RAW 檔案都認得到（.insp 相片睇檔案名或者相機嘅校準資料區塊，.insv 影片睇檔案名同畫面），仲會拼接。
+目前嘅 build，build 23，係基於 2026年10月10日嗰個 Immich `main`（3.3.0-rc.0 版本），測試過 Immich 3.2.4 伺服器，仲有一個用同一個 Immich `main` 建置嘅伺服器。如果有問題請喺[Issues](https://github.com/freeKC/Immuch360/issues)入面報告，唔好報去 Immich 嘅專案。
 
-<a id="send-files-of-a-share-to-immich"></a>
-### 將共享入面嘅檔案傳去 Immich
+更多資訊：[其他一切都係 Immich](../docs/immuch360/user-guide.md#everything-else-is-immich)、[同 Immich app 嘅比較](../docs/immuch360/compatibility.md#compared-with-the-immich-app)。
 
-由建置 15 開始，連接咗伺服器嘅時候：
+<a id="go-immersive-on-meta-quest"></a>
+### 喺 Meta Quest 上沉浸式體驗
 
-1. 喺共享資料夾入面長按相片或者影片，或者撳右上角嘅「選擇」。
-2. 剔你想要嘅，或者用「揀曬呢個資料夾嘅相片同影片」。
-3. 撳「上傳去 Immich」。檔案會逐個由共享串流去你嘅伺服器，每格都會顯示進度，底部有條進度列顯示「傳緊第 3 個，共 12 個」，仲有個「取消」掣。傳送期間請保持 App 開住。
-4. 傳完之後，App 會話你知傳咗幾多個檔案、幾多個已經喺伺服器度：伺服器會保留自己嘅副本，已經有嘅檔案會去重。之前傳過嘅檔案會有個標記（「之前已經傳咗去 Immich」），下次會跳過。
-
-喺共享入面打開咗嘅相片或者影片，佢個選單都有同一個項目。冇伺服器嘅時候，頁面會顯示「連接 Immich 伺服器先可以上傳」。裝置入面嘅相片同影片都可以喺「媒體庫」分頁用同一個方法傳送：「喺呢部裝置度」、某個相簿、選擇、「上傳去 Immich」，包括唔喺備份選擇入面嘅相簿；傳咗之後就當已經備份。
-
-### 唔使下載點樣播
-
-播放器透過 App 入面嘅一條橋讀取需要嘅位元組（只用回送地址、每個工作階段一個隨機權杖、位元組範圍），所以影片可以拖進度，亦唔會複製任何嘢落部裝置。播放器同頭戴裝置查閱器永遠攞唔到共享嘅地址，只會攞到條橋嘅 127.0.0.1；對伺服器嘅請求由 App 自己發出。
-
-為咗播得順，共享會用大區塊讀取，檔案喺兩次讀取之間保持打開，最多比播放器預先讀多 16 MB，播緊嘅影片會經最多六條並行 SMB 連線讀取，同負責縮圖同清單嘅連線分開。Freebox Server 每次讀取都回應得比較慢：一條連線有 4.5 MB/s，六條就有 19 MB/s，足夠播 132 Mbit/s 嘅 5.7K 匯出影片。
-
-播放器等緊數據嘅時候，360° 同 Spatial 播放器會顯示「緩衝緊」同播放緩衝區填咗幾多；平面播放器喺影片載入緊或者停咗嘅時候，會顯示冇百分比嘅「緩衝緊」。
-
-### DLNA 媒體伺服器
-
-由建置 19 開始，App 會向網絡嘅多點傳送群組發出媒體伺服器嘅 SSDP 搜尋，同時向本地 /24 網絡每個地址嘅 1900 連接埠發出同一個請求，然後讀取每部有回應嘅伺服器嘅裝置描述，留低有發佈內容（ContentDirectory）嘅伺服器。
-
-資料夾同檔案會用伺服器嘅 Browse 動作一頁一頁列出，用佢哋嘅標題做名：標題冇副檔名嘅檔案會加返佢類型嘅副檔名，同一個資料夾入面標題相同嘅第二個檔案會變成 `name (2)`。聲音檔唔會列出。縮圖係專輯封面或者伺服器整嘅細圖，由 App 自己載入，伺服器冇嘅話就用 App 自己嘅縮圖。檔案會由伺服器提供嘅原檔播放，兩樣都有嘅話唔會揀轉換咗嘅副本，而且用範圍請求讀取，所以可以拖進度。
-
-已經用 minidlna 同 Gerbera 檢查過；喺真實網絡入面搵伺服器，同埋 Plex、Jellyfin、NAS、Freebox Server、iPhone 同 Quest，係建置 19 嘅裝置測試。
-
-<a id="a-share-that-moved"></a>
-### 搬咗地址嘅共享
-
-由建置 19 開始，DLNA 共享同電話共享（睇[喺網絡上分享呢部電話](#share-this-phone-on-the-network)）會記住佢哋伺服器公佈嘅 ID。當其中一個喺原本地址冇再回應（路由器派咗新地址，伺服器喺另一個連接埠重新開過），佢嘅資料夾頁面會顯示「喺網絡上搵緊 (名稱)」，然後將個共享搬去佢而家回應嘅地方：冇密碼嘅 DLNA 伺服器會即刻搬；有用戶名稱同密碼嘅共享，就會先彈出一個顯示兩個地址嘅確認「用新地址？」，因為用戶名稱同密碼會傳去新地址。
-
-由建置 20 開始，喺網絡入面另一個地址再搵到嘅 Plex 伺服器都會即刻搬：傳權杖之前，佢嘅證書會證明佢係同一部伺服器。Tapo 鏡頭就喺佢自己嘅頁面用 MAC 地址去搵，睇 [Tapo 鏡頭](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)。
-
-### 限制
-
-- **SMB**：只支援 SMB 2 同 3，唔支援 SMB 1。
-- **WebDAV**：只支援 Basic 驗證（暫時唔支援 Digest）；自簽 HTTPS 證書一定要裝喺部裝置度。
-- **搵伺服器**：網絡掃描同 DLNA、Plex 同 Tapo 搜尋只會睇本地 /24 網絡，喺 iOS 上面要有本地網絡權限。喺 iPhone 同 iPad 上面，直至 Apple 批咗多點傳送權限（multicast entitlement）畀個 App 之前，DLNA 搜尋只會發單點傳送請求，而有啲伺服器唔會回應（Linux 上面嘅 minidlna）：請用描述地址加佢哋。
-- **DLNA**：只提供轉換副本嘅伺服器就會畀嗰個副本；一個資料夾最多列出 20,000 個項目。
-- **縮圖**：相片縮圖要解碼成個檔案，超過 30 MB 嘅相片冇縮圖。
-- **播放器**：平面播放器暫時未揀到音軌。電話上面暫時未可以喺資料夾入面由一個檔案掃去下一個（Quest 沉浸式檢視可以喺資料夾嘅 360° 檔案之間用上一個同下一個）。對網絡檔案揀嘅 3D 或者 180° 唔會記住。
-- **上傳**：只會喺 App 開住嘅時候進行，伺服器已經有嘅檔案都會成個傳晒，之後伺服器先會話係重複。
-
-<a id="plex-media-server-without-plextv"></a>
-## Plex Media Server，唔使 plex.tv
-
-你啲影片喺 Plex，而 Plex 將你啲 360° 相片同影片當平面噉顯示，佢論壇上面嘅要求都係噉講（其中一個由 2017 年開到而家）。你仲想喺頭戴裝置、電視同出咗街都用到呢個媒體庫。Immich App 只會讀你嘅 Immich 伺服器，而建置 19 嘅 DLNA 類型只可以喺屋企連到 Plex 嘅 DLNA 部分。
-
-由建置 20 開始，Immuch360 可以直接同你嘅 Plex Media Server 配對，唔使 plex.tv：佢會喺網絡上面搵到伺服器，你只要貼一次權杖，App 就會即時讀你媒體庫入面嘅原檔，App 每個查閱器都用得（360°、3D、VR180、Spatial 2.5D、Quest 沉浸式檢視、電視遙控器），喺屋企得，經你嘅連接埠轉發喺出面都得。乜都唔會複製，你揀嘅檔案可以傳去 Immich。
-
-### 新增 Plex 伺服器
-
-1. 打開「媒體庫」分頁，再打開「網絡共享」，然後撳 + 同「Plex Media Server」。共享表格入面嘅「Plex Media Server」類型，同埋「喺網絡上搵到」下面有 Plex 標籤嘅伺服器，都會打開同一個頁面。
-2. 「新增 Plex 伺服器」頁面會搵你網絡入面嘅 Plex 伺服器（「喺你嘅網絡搵緊 Plex 伺服器」），然後喺「喺網絡上搵到」下面列出嚟。撳你嗰部：一張卡會顯示佢嘅名、Plex 版本同一個短 ID。
-3. 清單入面冇？輸入佢嘅「伺服器地址」，例如 `192.168.1.20`、`192.168.1.20:32400` 或者 `https://...plex.direct:32400`，然後撳「查詢」。App 會讀伺服器嘅證書，其他乜都唔會傳。
-4. 喺電腦度攞權杖：用網頁瀏覽器打開 Plex 再登入，打開你媒體庫入面任何一張相或者一段影片，然後撳「...」、「Get Info」（取得資訊）、「View XML」（檢視 XML）。會開一個新分頁，網址最尾係 `X-Plex-Token=...`。將成個網址複製落嚟。
-5. 將佢貼喺「存取權杖」，或者傳去電話再撳「由剪貼簿貼上」：App 會由入面攞出伺服器同權杖。淨係貼 `X-Plex-Token=` 後面嗰段文字都得。頁面上面嘅「點樣攞」都係噉講；伺服器管理員仲可以用伺服器 `Preferences.xml` 檔案入面嘅 `PlexOnlineToken` 值，呢個唔會過期。喺電視上面，撳 OK 會打開鍵盤對話框：喺嗰度輸入權杖（通常係 20 個字元）。
-6. 撳「測試連線」。佢會答「已連接：N 個媒體庫」，或者講出咩問題，例如「Plex 伺服器拒絕咗呢個權杖。」
-7. 跟住「喺屋企以外存取」會顯示伺服器講嘅嘢：「伺服器話可以經 (地址):(連接埠) 連接。」，或者「伺服器冇講佢喺屋企以外嘅地址。」想喺出面用伺服器，就喺「屋企以外嘅地址（IP 或者名稱）」輸入你嘅公開地址或者 DynDNS 名稱，再喺「屋企以外嘅連接埠」輸入喺 Plex 轉發咗嘅連接埠（設定，遙距存取）。你輸入嘅嘢一定優先過伺服器講嘅嘢。
-8. 除非你改，「名稱」就係伺服器嘅名，「起始資料夾（可選）」可以直接打開某個媒體庫。撳「儲存」。伺服器會同共享一齊列出，顯示做 `plex://` 加佢嘅地址。
-
-### 瀏覽你嘅 Plex 媒體庫
-
-1. 喺「網絡共享」撳個伺服器。第一層會列出 App 顯示嘅媒體庫：相片、電影同其他影片、電視節目。音樂唔會顯示。
-2. 媒體庫下面係佢喺伺服器磁碟上面嘅資料夾（Plex 嘅「按資料夾」檢視），跟住係用檔案名稱顯示嘅相片同影片，有 Plex 整嘅縮圖。資料夾檢視冇回應嘅相片媒體庫會改為顯示佢嘅相簿。
-3. 同任何共享一樣，360° 同 3D 係靠讀檔案本身認出嚟：360° 相片會有 360° 標記，Apple 空間相片會有 3D 標記。
-4. 好似喺任何共享噉打開相片或者影片：360°、3D、360°/180°、電話上面嘅 Spatial 2.5D、Quest 入面嘅沉浸式檢視、電視上面嘅遙控器。影片會以原檔讀取，經 App 嘅本地橋按位元組範圍讀，所以可以拖進度，佢嘅 360° 同 3D 元數據亦會完整噉去到播放器。
-5. 揀檔案再撳「上傳去 Immich」，就可以好似由任何共享噉傳去你嘅伺服器（睇[將共享入面嘅檔案傳去 Immich](#send-files-of-a-share-to-immich)）。
-
-### 出咗街
-
-每次打開伺服器，App 會先試屋企嘅地址，400 毫秒之後再試屋企以外嘅地址。邊個地址最先以你部伺服器嘅身份回應就用邊個；如果係屋企以外嘅地址，資料夾頁面會顯示一個地球圖示，寫住「經屋企以外嘅地址連接」。
-
-呢個要喺 Plex 開咗遙距存取（設定，遙距存取），同埋你部路由器轉發咗一個連接埠：冇 plex.tv，App 用唔到 Plex 嘅中繼，所以冇連接埠轉發嘅伺服器只可以喺屋企打開，出咗街頁面會顯示「喺屋企網絡以外連唔到你嘅 Plex 伺服器。喺 Plex 用連接埠轉發開啟遙距存取（設定，遙距存取），或者輸入佢嘅公開地址。」
-
-伺服器講嘅地址每次喺屋企連接都會重新攞過。如果喺出面經佢連唔到（路由器會轉地址、兩部路由器串埋一齊），就喺伺服器嘅頁面輸入你自己嘅地址。當權杖唔再用得（例如你登出咗複製權杖嗰個瀏覽器工作階段），資料夾頁面會講出嚟，再提供「貼上新權杖」，佢會打開伺服器嘅頁面，停喺權杖欄位。
-
-### 同 Plex 同 DLNA 類型比較
-
-- **原檔**：App 讀檔案本身，從來唔讀 Plex 轉換過嘅副本，所以 360°、3D 同 VR180 元數據會保持完整，App 嘅查閱器會用到佢哋，而 Plex 嘅 App 會將呢啲檔案當平面噉顯示。
-- **唔使 plex.tv**：App 只會同你嘅伺服器通訊，一定經 HTTPS。傳權杖之前，會用伺服器自己、同伺服器 ID 綁定嘅 plex.direct 證書去檢查伺服器。權杖留喺裝置嘅安全儲存空間，只會放喺請求標頭傳去你嘅伺服器。
-- **同將同一部伺服器加做 DLNA 比較**：資料夾同磁碟上面一樣、Plex 嘅縮圖、喺屋企以外存取，同埋安全連線。
-
-### 限制
-
-- **只限認領咗嘅伺服器**：伺服器一定要喺 Plex 認領咗（登入過一次 Plex 帳戶），咁佢先會有 plex.direct 證書。唔係嘅話頁面會顯示「呢個地址回應時冇 Plex 證書。喺 Plex 認領呢部伺服器，或者將佢加做 SMB、WebDAV 或 DLNA 共享。」
-- **只限 IPv4**：「暫時唔支援 IPv6 地址。請輸入伺服器嘅 IPv4 地址。」
-- **權杖**可以完全存取你嘅 Plex 伺服器。喺 App 移除伺服器會喺裝置上面忘記權杖，但唔會撤銷佢：「喺你登出複製權杖嗰個瀏覽器工作階段之前，權杖喺伺服器上面仍然有效。」有到期日嘅權杖會顯示嗰個日期，App 冇辦法續期。
-- **出咗街**：只可以經連接埠轉發，冇中繼。
-- **媒體庫**：音樂唔會顯示，一個資料夾最多列出 20,000 項，受限制嘅用戶可能會見到「呢個權杖讀唔到伺服器嘅媒體庫。」
-- **360° 相機 RAW 檔案**（.insv、.insp、.360、.osv）只有喺 Plex 列出佢哋嘅時候先會顯示；唔係嘅話就將同一個 NAS 資料夾加做 SMB 或者 WebDAV 共享，睇 [360° 相機 RAW 檔案](#raw-360-camera-files-without-the-cameras-app)。
-- **搵伺服器**：熄咗「Enable local network discovery (GDM)」（啟用本地網絡探索）設定嘅伺服器搵唔到，請輸入佢嘅地址。喺 iPhone 同 iPad 上面，搜尋只會發單點傳送請求。同一部伺服器嘅 DLNA 部分都可能會帶住 DLNA 標籤出現喺清單：揀有 Plex 標籤嗰行。
-- **未喺裝置上檢查**：配對、資料夾、影片嘅位元組範圍、縮圖、錯嘅權杖同屋企以外嘅地址，已經喺電腦度對住一部真正嘅 Plex Media Server 1.42.1 檢查過，相片同電視節目媒體庫就只係對住模擬伺服器檢查過。喺電話、Quest、iPhone 同電視上面播放，同埋轉用屋企以外嘅地址，係建置 20 嘅裝置測試。
-- Immuch360 同 Plex 冇關係。
-
-<a id="share-this-phone-on-the-network"></a>
-## 喺網絡上分享呢部電話
-
-你啲相片同影片喺部電話度，你想喺頭戴裝置入面睇，但冇電腦、NAS 或者 Immich 伺服器。由建置 19 開始，電話（Android 或者 iPhone）可以經 Wi-Fi 提供自己嘅相片同影片，畀 Meta Quest 播放。Immich App 冇類似嘅功能。
-
-### 喺電話度開啟
-
-1. 打開「媒體庫」分頁，再打開「網絡共享」。第一格係「喺網絡上分享呢部電話」（會顯示「關閉」，或者顯示「開啟」同地址）。
-2. 撳佢，然後開啟「經 Wi-Fi 分享相片同影片」。如果未有相片同影片權限，App 會問你攞；喺 Android 13 或以上仲會問通知權限。
-3. 頁面會顯示「地址」（例如 `http://192.168.1.20:8360`：連接埠 8360，如果已經有人用就揀另一個空嘅）、部電話對外公佈嘅名（「Immuch360 on」加部電話嘅名）、「用戶名稱」（`phone` 加四個數字）同「密碼」（八個字元），每項都有複製掣，跟住係「已連接 N 部裝置」（最近一分鐘用過佢嘅裝置）同最近提供過嘅檔案。
-
-用戶名稱同密碼只會整一次，之後一直保留，所以頭戴裝置入面儲存咗嘅共享仍然有效；「新密碼」會換過個密碼。頭戴裝置上面唔會顯示呢一格。
-
-### 喺頭戴裝置度打開
-
-1. 喺頭戴裝置入面打開「媒體庫」、「網絡共享」，再撳 +。
-2. 喺「喺網絡上搵到」下面撳部電話：用戶名稱會自動填好。
-3. 入一次密碼（空格同大細楷冇所謂），然後撳「儲存」。
-
-之後佢就同其他 WebDAV 共享一樣：認 360°、RAW 檔案、沉浸式檢視、影片拖進度。網絡入面任何 WebDAV 用戶端都讀到佢。部電話攞到新地址嘅時候，頭戴裝置會搵返佢，用新地址之前會問你（睇[搬咗地址嘅共享](#a-share-that-moved)）。
-
-### 提供咩內容，提供幾耐
-
-- **資料夾**，唯讀：`Albums`（部電話每個相簿）、`By month`（全部相片同影片按月份排，最新嘅排先）同 `360`（App 喺部電話搵到嘅 360° 相片同影片，包括 RAW 檔案同你以 360° 睇嘅檔案）。檔案保留原本個名。喺 iPhone 上面，原況相片會提供靜態相，編輯過嘅相片或者影片會提供編輯後嘅版本，淨係存喺 iCloud 嘅內容就唔會提供。
-- **Android**：共享喺一個前景服務入面運行，有個通知（地址同用戶名稱）同「停止」掣，會令 Wi-Fi 同處理器保持喚醒，所以熄咗螢幕都會繼續。將個 App 掃走就會停止共享。
-- **iPhone 同 iPad**：iOS 唔會畀伺服器喺背景運行嘅時間，所以共享只會喺 App 喺前景嘅時候運行，期間螢幕會保持著住。App 去咗背景嘅時候共享會暫停，你返嚟之後會用同一個地址同密碼繼續。
-- **幾時停**：用開關、用「停止」、60 分鐘冇任何請求之後，同埋 App 關閉嘅時候。佢永遠唔會自己開始：每次開 App 嘅時候都係關閉。
-- **安全**：只限本地網絡。共享只會喺電話嘅 Wi-Fi、以太網同熱點地址上面監聽，永遠唔會喺流動數據或者 VPN 地址上面監聽，亦只會回應有本地地址嘅裝置。每個請求都要用戶名稱同密碼（HTTP Basic）；同一部裝置一分鐘內入錯十次密碼會被封鎖一分鐘。密碼喺 Wi-Fi 上面冇加密傳送（普通 HTTP）：請喺你信得過嘅網絡入面用共享，用完就熄咗佢。
-- **電話自己嘅熱點**：頭戴裝置可以連上去；如果喺熱點度搵唔到部電話，就輸入頁面上面顯示嘅地址。
-- **未喺裝置上檢查**：伺服器已經用單元測試，同埋喺電腦上面用頭戴裝置自己嘅 WebDAV 用戶端同媒體橋做嘅端對端測試檢查過。電話為 Quest 3 提供服務（搵伺服器、播放同拖一段 4 GB 嘅影片、熄螢幕 30 分鐘、熱點、喺通知度停止），同埋未喺 iPhone 上面行過嘅 iPhone 部分，係建置 19 嘅裝置測試。
-
-<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
-## Tapo 鏡頭：直播畫面同記憶卡入面嘅錄影
-
-你屋企有 Tapo 鏡頭，想唔使開 Tapo App，就喺相片隔籬睇花園部鏡頭同尋晚啲片段，仲想將某段片段留喺 Immich。Immich App 冇任何鏡頭功能，而 Tapo App 係另一個 App，登入咗你嘅 TP-Link 帳戶，啲片段同你啲相分開擺。
-
-由建置 20 開始，Immuch360 喺網絡共享隔籬加入咗 Tapo 鏡頭。佢喺 Android 電話同平板、Android TV 同 Meta Quest 上面顯示鏡頭嘅直播畫面，喺所有平台都會逐日顯示記憶卡入面嘅錄影：片段由鏡頭攞落嚟之後，就好似任何影片噉播，仲可以傳去 Immich。App 只會喺你嘅網絡入面同鏡頭通訊，從來唔會連去 TP-Link 嘅伺服器，亦從來唔會改鏡頭上面任何嘢。
-
-### 新增鏡頭
-
-1. 先喺 Tapo App：喺鏡頭嘅設定入面，去 Advanced Settings（進階設定）、Camera Account（鏡頭帳戶），開一個鏡頭帳戶（呢部鏡頭專用嘅用戶名稱同密碼，用嚟睇直播畫面），再喺 Me（我）下面嘅 Tapo Lab 開啟 Third-Party Compatibility（第三方兼容）。
-2. 喺 Immuch360，打開「媒體庫」分頁，再打開「網絡共享」，然後撳 + 同「Tapo 鏡頭」。
-3. 「新增鏡頭」頁面會搵鏡頭（「喺你嘅網絡搵緊 Tapo 鏡頭」），然後喺「喺網絡上搵到」下面帶住 Tapo 標籤列出嚟。撳你嗰部就會填好「鏡頭地址」，或者自己輸入佢嘅地址。共享表格入面有 Tapo 標籤嘅鏡頭都會打開同一個頁面。
-4. 「名稱」：部鏡頭喺清單入面顯示嘅名。
-5. 喺「記憶卡入面嘅錄影」下面，「TP-Link 帳戶密碼」：你喺 Tapo App 用嗰個帳戶嘅密碼。佢用嚟打開錄影；唔使你嘅電郵地址。
-6. 喺「直播」下面，「鏡頭帳戶用戶名稱」同「鏡頭帳戶密碼」：第 1 步嘅鏡頭帳戶。
-7. 兩樣有一樣就夠（「請輸入 TP-Link 帳戶密碼、鏡頭帳戶，或者兩樣都輸入。」）：淨係 TP-Link 密碼就睇到錄影，淨係鏡頭帳戶就睇到直播畫面。
-8. 撳「測試鏡頭」。佢會顯示「錄影：(型號)，韌體 (版本)」同記憶卡嘅狀態，同埋「直播畫面：(影像)，聲音 (音訊)」，或者分別講出邊樣失敗。
-9. 撳「儲存」。部鏡頭會列喺共享後面嘅「鏡頭」下面，知道型號之後會顯示型號，仲有 `tapo://` 加佢嘅地址。
-
-<a id="watch-it-live"></a>
-### 睇直播
-
-1. 撳部鏡頭。佢嘅直播畫面喺頁面最頂：先顯示「連接緊鏡頭」，跟住係有「直播」標記嘅畫面。
-2. 畫面上面嘅掣：聲音，一開始係熄咗嘅（「開聲」；裝置播唔到聲嘅時候顯示「呢部裝置冇聲」）、「標清」或者「高清」，同埋「全螢幕」。
-3. 電話喺頁面上面顯示標清，全螢幕就顯示高清；Quest 顯示高清。返回鍵會先離開全螢幕。
-4. 畫面下面係型號、韌體同記憶卡資料，例如「記憶卡：用咗 (已用)，總共 (總量)」或者「冇記憶卡」。
-
-喺 iPhone 同 iPad 上面，直播畫面嗰度會顯示「直播畫面會喺之後嘅版本嚟到 iPhone 同 iPad。錄影而家已經可以喺度播。」冇鏡頭帳戶嘅話，頁面會顯示「加入鏡頭帳戶先可以睇直播畫面。」
-
-### 播放同保留錄影
-
-1. 喺「記憶卡入面嘅錄影」下面，鏡頭頁面會按月列出有錄影嘅日子，最新嘅排先。冇 TP-Link 帳戶密碼嘅話，佢會顯示「加入 TP-Link 帳戶密碼先可以睇錄影。」
-2. 撳其中一日。嗰日嘅片段會按鏡頭自己時間嘅鐘頭排列，每段都有開始時間、長度、事件嘅鏡頭縮圖同類型：移動、人、寵物、車輛、BB 喊、動物、連續錄影或者事件。
-3. 撳一段片段。App 會由鏡頭攞佢落嚟（「由鏡頭攞緊影片：N%」，可以撳「取消」），跟住喺影片播放器播，有聲，可以拖進度。攞咗落嚟嘅片段會有「喺呢部裝置」，下次會即刻打開。
-4. 想將片段留喺 Immich（要連咗伺服器）：影片嘅 ⋮ 選單，「上傳去 Immich」。
-5. 想騰出空間：長撳攞咗落嚟嘅片段會有「刪除呢部裝置上面嘅副本」（喺電話上面），而鏡頭頁面有「刪除由呢部鏡頭攞落嚟嘅影片」，仲會顯示佢哋幾大。
-6. 右上角嘅重新整理掣，或者將頁面向下拉，會再問過部鏡頭。
-
-當部鏡頭喺原本地址冇再回應，佢嘅頁面會用 MAC 地址喺網絡上面搵佢，見到佢出示同一張證書之後，就搬去佢而家回應嘅地方。如果部鏡頭出示嘅證書同 App 第一次見到嘅唔同，就會先問你：「(地址) 嘅鏡頭顯示嘅證書同之前唔同。只有喺你重設過或者換過佢先好繼續。」
-
-### 同 Tapo App 比較
-
-- **只喺你嘅網絡入面**：App 喺本地網絡直接同鏡頭通訊，從來唔會連去 TP-Link 嘅伺服器。佢唔會登入 TP-Link 帳戶，所以唔使你嘅電郵地址。
-- **錄影變成普通影片**：攞咗落嚟嘅片段係有聲嘅 H.264 影片，你可以傳去 Immich，就算記憶卡已經錄咗嘢蓋過佢，佢都會留喺 Immich。
-- **同其他嘢擺埋一齊**：有冇 Immich 伺服器都得，喺電話、電視或者 Quest（喺視窗入面）都用到，好似共享噉喺網絡上面搵到。
-- **唯讀**：App 只會問鏡頭攞佢要顯示嘅嘢；從來唔會改設定，亦從來唔會刪除鏡頭上面任何嘢。
-
-### 限制
-
-- **未喺裝置上檢查**：建置 20 仲未喺真正嘅鏡頭上面行過。協定係根據一部韌體 1.3.4 嘅 C510W 嘅封包擷取寫嘅（2026 年年中嘅 V4 登入方式），App 喺測試入面對住模擬鏡頭檢查過。歡迎回報，請附上「測試鏡頭」顯示嘅型號同韌體，同埋[紀錄](#logs)入面嘅相關內容。
-- **直播畫面**：只限 Android 電話同平板、Android TV 同 Quest，iPhone 同 iPad 暫時未有。TP-Link 嘅限制一樣適用：每部鏡頭同一時間最多兩條高清串流同兩條標清串流（連 Tapo App 在內），而 Tapo Care、記憶卡同用 RTSP 或 ONVIF 嘅錄影機唔可以同時運行。
-- **鏡頭**：唔支援用電池嘅鏡頭，同埋接喺 Tapo 集線器（hub）後面嘅鏡頭。
-- **錄影**：每部鏡頭一次只可以下載一段。Tapo App 瀏覽緊記憶卡嘅時候，App 會喺 4、8 同 12 秒之後再試，然後顯示「鏡頭而家俾其他睇緊嘅人用緊，例如 Tapo App。一分鐘之後再試吓。」H.265 錄影暫時未轉換到（「呢段錄影係 H.265 格式，呢個版本暫時未轉換到。」），連續錄影冇縮圖，片段要完全攞晒落嚟先可以播。
-- **密碼**：每次入錯密碼都會計數，錯幾次之後鏡頭會鎖住一段時間（「入錯密碼太多次，鏡頭已經鎖住。N 分鐘之後再試吓。」）。App 從來唔會自己再試一個被拒絕嘅密碼：只有「測試鏡頭」或者「試多次」先會再問鏡頭。如果鏡頭接受設定用嘅密碼，但唔接受影片用嘅密碼，就喺 Tapo App 熄咗再開返 Third-Party Compatibility（第三方兼容），然後重新開過部鏡頭。
-- **空間**：攞咗落嚟嘅片段會留喺 App 嘅快取，所有鏡頭加埋最多 1 GB（最耐冇播過嘅會先刪）；系統可能會清走呢個快取，移除部鏡頭會刪除佢嘅片段。
-- **出咗街**：App 係經部鏡頭喺你網絡入面嘅地址連去佢，所以喺網絡外面連唔到。
-- Immuch360 同 TP-Link 冇關係。
-
-<a id="raw-360-camera-files-without-the-cameras-app"></a>
-## 360° 相機 RAW 檔案，唔使相機嘅 App
-
-Insta360 相機會錄低兩個鏡頭嘅兩個魚眼圓，可能並排喺同一個畫面、分開兩條軌道或者兩個檔案（.insp 係 JPEG，.insv 係 MP4），而由佢哋攞出 360° 畫面嘅官方方法就係 Insta360 App 或者 Studio。用 X4、X5、X6、GoPro MAX 或者 DJI Osmo 360 嘅人成日問記憶卡入面啲 RAW 檔案點算。Immich 網頁版會將任何 .insp 當做等距長方投影圖像，將兩個圓包喺球面上面；手機 App 就顯示成平面。
-
-由建置 16 開始，Immuch360 會喺電話、平板或者頭戴裝置上面自己拼接呢啲檔案，伺服器唔使裝任何嘢：
-
-- **Insta360 .insp 相片**（建置 16）：喺球面查閱器之前用 GPU 拼接，最高 8192x4096，另外有個尺寸細啲嘅 CPU 後備方案。
-- **兩個鏡頭喺同一條軌道嘅 Insta360 .insv 影片**（建置 16）：喺播放器入面用 GPU 效果拼接。
-- **Insta360 X4、X4 Air、X5 同 X6 .insv 影片，每個鏡頭一條正方形軌道**（建置 18）：同時用兩個解碼器（每個鏡頭一個），再由 GPU 合成器拼接成球面。
-- **5.7K 或以上嘅 Insta360 X3 同更舊型號：兩個檔案，`_00_` 同 `_10_`**（建置 18）：一樣，另一個檔案會喺第一個隔籬搵。
-- **GoPro MAX 同 MAX 2 .360：兩條軌道，每條有立方體嘅三個面**（建置 18）：一樣，重疊嘅欄會混合。
-- **DJI Osmo 360 .osv：兩條 10 位元正方形軌道**（建置 18）：一樣，用檔案入面嘅 Kannala-Brandt 校準。
-- **雙魚眼 .dng**（未支援）：顯示成平面。
-
-### 睇 RAW 檔案
-
-1. 將 RAW 檔案放喺 App 讀到嘅地方：裝置自己嘅相簿（由相機記憶卡複製）、你嘅 Immich 伺服器（接受 .insp 同 .insv，唔收 .360 同 .osv）、SMB 或者 WebDAV 共享，仲有由建置 19 開始嘅電話共享同列出呢啲檔案嘅 DLNA 伺服器（未檢查）。
-2. X3 一對檔案要放埋一齊：App 會喺第一個檔案隔籬搵另一個，無論喺裝置、伺服器定共享資料夾。搵唔到另一個嘅時候，App 會顯示「呢段錄影分開咗兩個檔案，每個鏡頭一個，但喺旁邊搵唔到 (名稱)」，建議你將兩個檔案放埋一齊，或者喺相機嘅 App 匯出影片。
-3. 打開檔案，撳 360°。RAW 檔案會有 360° 掣，RAW 相片會有 360° 標記。由建置 18 開始，伺服器上面嘅 Insta360 RAW 檔案都會按檔案名搵到，出現喺 360° 清單入面。
-4. 相片會喺球面查閱器打開，底部有個標籤：「RAW 360° 檔案，由 App 拼接」，同埋校準嘅來源：「由檔案讀出嘅鏡頭校準」、「同一部相機嘅鏡頭校準」（由同一部相機嘅另一個檔案記低，按序號對應；如果檔案只寫咗型號，就按型號對應）或者「鏡頭標稱數值，可能見到接縫」（冇更好資料時用 X3 嘅數值）。
-5. 影片會喺原生 360° 播放器打開，一路播一路拼接。佢嘅 3D 同 360°/180° 掣會收埋，因為 RAW 影片本身就係一個完整球面。影片播放器同頭戴裝置唔會顯示標籤。
-6. 喺頭戴裝置入面，沉浸式檢視對相片會用一張拼接好嘅臨時相，對影片會用同電話一樣嘅 GPU 效果。準備 RAW 相片嘅時候暫時未有進度顯示。
-7. 如果畫面向住一個怪方向（例如相機平放時影嘅相），可以喺電話度拖，或者喺頭戴裝置度用右搖桿或者「轉動」掣轉返。
-
-### 當裝置播唔到兩個鏡頭嘅時候
-
-播雙鏡頭影片之前，App 會問部裝置可唔可以行兩個咁大尺寸同幀率嘅解碼器；唔得嘅話，電話會警告「呢段 RAW 影片要同時用兩個 (尺寸) 影片解碼器：喺呢部裝置上面可能播得唔流暢」。解碼器行唔到嘅時候（例如 Quest 3 上面兩個 2880x2880 H.264 鏡頭），App 會播一個鏡頭並講明，半個球面會保持黑色，之後如果有轉碼串流就轉用伺服器嘅轉碼串流。如果部裝置行唔到 GPU 效果，影片會以未拼接狀態播放，兩個圓顯示喺球面上，同時顯示「喺呢部裝置上面 360° 拼接失敗」。
-
-由建置 19 開始，喺 Android 同 Quest 上面：
-
-- **個編解碼器冇硬體解碼器**（模擬器、電視盒）：部裝置會用軟體解碼器，兩個同時行嘅時候，檢查會將每個鏡頭限制喺 2048x2048。
-- **部裝置完全解碼唔到嘅鏡頭**（冇呢個編解碼器嘅解碼器，或者冇解碼器列出佢嘅設定檔）會跳過單鏡頭步驟，轉用伺服器嘅轉碼串流，冇嘅話就喺普通播放器播未拼接嘅原檔，顯示嗰個播放器自己嘅訊息。
-- **尺寸或者幀率已經被拒絕但仍然試嘅鏡頭**，要等第一格畫面畫出嚟之後先會顯示單鏡頭訊息。
-- **當單鏡頭嘅解碼器出錯**而又冇轉碼串流，影片會以未拼接狀態播放，唔會停喺錯誤度。
-- **喺 Android 模擬器上面**，唔會再閃出另一個鏡頭嘅畫面（而家每格畫面都會將每個鏡頭嘅紋理綁定去外部紋理目標）。
-
-### 拼接點運作
-
-- **App 讀咩**：相機加喺每個檔案尾嘅校準資料區塊（鏡頭模型、中心、每個鏡頭嘅方向、校準畫布嘅尺寸），同埋用嚟校正地平線嘅加速計記錄。會先用 V3 校準字串嘅 Mei（統一相機）模型，跟住係 V6（X6 同更新嘅韌體）嘅頭幾項，最後先係舊啲嘅等距字串 V1。如果檔案有自己嘅校準，就唔會根據相機型號估任何嘢。Insta360 X5 同 X6 嘅校準（V6，有索引嘅尾段資料）同 X4 嘅影片視窗都係由檔案讀出。
-- **由邊度讀**：伺服器（原檔，用範圍請求讀尾段嘅位元組）、裝置自己嘅相簿，同埋共享。
-- **相片同影片**：相片喺球面查閱器之前用 Flutter 片段著色器拼接；影片連同校準交畀原生播放器，Android 同 Quest 用 Media3 GL 效果，iOS 用 SceneKit 著色器。
-- **兩條軌道或者兩個檔案入面嘅兩個鏡頭**：播放器會同時解碼兩個，每個鏡頭一個硬體解碼器，按時間戳配對，再由 GPU 合成器拼接成球面：Android 同 Quest 用 ExoPlayer 同 OpenGL ES 3，iOS 用 Metal 寫嘅 AVFoundation 合成器。10 位元 HLG 同 PQ 來源會色調映射去 8 位元球面。
-
-### 限制
-
-- **接縫**：拼接只用相機嘅校準，冇做接縫優化，所以近相機嘅物件可能見到接縫，同相機自己嘅預覽一樣。
-- **地平線**：校正用相機記錄喺檔案入面嘅加速計數據嘅平均值。影片只會由錄影開始嗰陣校正一次，冇防震，所以手持影嘅影片會保留震動，地平線都可能有少少斜。GoPro 同 DJI 檔案唔會校正（保留相機嘅地平線）。
-- **冇校準嘅檔案**：冇校準資料區塊嘅檔案（X3 HDR 組入面嘅 `_008` 同 `_009`）會用 App 由同一部相機或者同一個型號嘅其他檔案記低嘅校準，一個都未見過嘅話就用 X3 標稱數值。
-- **檢查過啲咩**：相片同 X3 檔案嘅 Insta360 Studio 匯出結果比較過（構圖一樣、地平線水平、偏航誤差少過一度）；單軌道影片喺 Android 模擬器用低解像度 X3 檔案檢查過。雙軌道同雙檔案嘅處理，用 App 嘅 CPU 參考拼接器（地平線水平、接縫連續）同 Android 單元測試，喺真實嘅 X4、X3 一對檔案、GoPro MAX 同 Osmo 360 檔案上面檢查過。喺電話、Quest 同 iPhone 上面播放仍然係建置 18 同 19 嘅裝置測試，RAW 檔案亦未喺 iPhone 上面行過：歡迎回饋。
-- **伺服器上面**：Immich 伺服器唔接受上傳 .360 同 .osv，所以呢兩種格式只會喺裝置同共享度出現。
-
-<a id="3d-and-vr180-photos-and-videos"></a>
-## 3D 同 VR180 相片同影片
-
-喺 Immich App 入面，立體 360° 相片或者影片會同時顯示兩隻眼嘅畫面，即係重影；而只係覆蓋前面一半嘅 VR180 檔案就會拉到成個球面都係。
-
-Immuch360 會根據檔案（影片嘅 st3d box）認出 3D 排列，上下或者左右，或者睇畫面形狀估，每個查閱器都有個 3D 掣可以改。電話顯示左眼；Meta Quest 就畀每隻眼睇返自己嗰一半，係真 3D。VR180 檔案會畫喺半球面上，後面係黑色，唔會再見到拉長咗嘅畫面。佢哋係根據檔案（球面邊界或者網格、GPano 裁切）或者檔案名入面嘅「vr180」或者「180」認出，每個查閱器都有個 360°/180° 掣。
-
-### 改排列或者覆蓋範圍
-
-1. 用球面打開相片或者影片（360° 掣）。
-2. 3D 掣會喺「平面 (唔係 3D)」、「3D，上下」同「3D，左右」之間切換；佢嘅提示文字會講出而家嘅排列。
-3. 360°/180° 掣會喺「360°，全球面」同「180°，半球面 (VR180)」之間切換。部分全景唔會顯示呢個掣。
-4. 喺頭戴裝置入面，呢兩個掣喺沉浸式檢視嘅資訊面板上面。
-
-360°/180° 嘅選擇會為媒體庫入面嘅媒體記喺部裝置度，網絡共享入面嘅檔案暫時唔會記。3D 嘅選擇喺關咗查閱器之後唔會保留：下次會再用返檔案講明嘅排列或者估出嚟嘅結果（下面嘅 Spatial 2.5D 播放器會記住自己嘅選擇）。
-
-已經喺 Galaxy S24+ 同 Quest 3 上面用真實嘅 3D 360° 範例影片（VRTogether、Vuze、Kandao）同一張 3D 相片檢查過；VR180 就喺 Android 模擬器同 Galaxy S24+ 上面用合成素材檢查過。歡迎提供其他相機嘅回饋。
-
-<a id="depth-on-a-flat-screen-spatial-25d-experimental"></a>
-## 平面螢幕上面嘅深度：Spatial 2.5D（實驗性）
-
-立體影片可以喺平面螢幕上面有深度。影片嘅兩隻眼提供深度，前置鏡頭追蹤你個頭，App 再合成兩者之間嘅視角，令螢幕好似一扇望入場景嘅窗：郁吓個頭，近嘅物件就會相對背景移動。只限手機同平板。
-
-### 點用
-
-1. 確認已經開咗：「設定」、「文件查閱器」、「影片」、「Spatial 2.5D (實驗性)」。預設係開咗；熄咗之後，所有地方嘅 Spatial 掣都會消失。
-2. 打開一段影片。設定開咗嘅時候，頂部列會喺每段影片上面顯示 Spatial 掣（一個轉緊嘅 3D 圖示）；喺網絡共享資料夾入面只有立體檔案先有呢個掣，其他檔案可以喺 ⋮ 選單搵到 Spatial 2.5D。
-3. 撳佢。第一次會問前置鏡頭權限；要撳咗個掣先會用鏡頭。
-4. 右上角：影片有兩條或以上音軌時有「音軌」，而家嘅排列（撳佢會顯示清單：「自動」、「唔係立體」、「左右」、「上下」，後面兩個仲有左右眼對調嘅版本），360° 影片上面有 360°/180°，同埋「重新置中」，會將你而家個頭嘅位置當做中心。
-5. 底部：播放、時間軸，跟住係追蹤緊個頭時嘅「頭部靈敏度」，同埋由 L 到 R 嘅視點滑桿，用嚟手動移動視點；熄咗頭部追蹤或者搵唔到你塊面嘅時候就會顯示。
-6. 用交叉或者系統返回掣關閉。
-
-開咗「設定」、「進階」、「疑難排解」之後，播放器會喺左上角加一層覆蓋（算繪同視差速率、畫質等級、視點、追蹤狀態），一直顯示視點滑桿，仲會加一個「Disparity map」（視差圖）剔選格，用估計出嚟嘅深度代替畫面顯示。
-
-### 格式、私隱同限制
-
-- **格式**：左右同上下，包括左右眼對調嘅版本，全闊或者半闊，平面、360° 同 VR180。排列會由檔案讀取，否則睇畫面形狀或者檔案名估（sbs、ou、tb 等等；半闊檔案只可以靠檔案名認出），亦可以喺播放器手動揀。呢個選擇會為媒體庫入面嘅影片記低，網絡共享入面嘅檔案就唔會。
-- **鏡頭**：影像只會喺部裝置度處理，永遠唔會儲存，亦唔會傳去任何地方。Quest 建置完全冇相機權限（頭戴裝置冇 App 可以用嘅鏡頭），亦唔提供 Spatial 播放器：佢嘅掣同設定喺頭戴裝置上面會收埋。
-- **限制**：實驗性功能，只限手機同平板（Meta Quest 上面冇），需要 OpenGL ES 3.0 或者 Metal。深度只係估計。打橫用、塊面光線充足嘅時候效果最好。已經喺 Galaxy S24+ 上面檢查過；歡迎 iPhone 用戶回饋。
-- **後備**：如果有任何問題（冇鏡頭、裝置唔支援、讀唔到排列），就會返去普通播放器。
-
-<a id="apple-spatial-photos-and-videos"></a>
-## Apple 空間相片同影片
-
-iPhone 可以影空間相片同影片，但 Immich 伺服器對佢哋乜都唔講：喺 Immich App 入面，佢哋只係普通相片或者影片。由建置 19 開始，Immuch360 會讀檔案嚟認出佢哋，喺 Meta Quest 頭戴裝置入面用 3D 顯示空間相片。呢個唔係上面嗰個用嚟睇左右同上下影片嘅 Spatial 2.5D 播放器。
-
-- **空間相片**係 HEIC 檔案（`.heic`、`.heif`、`.hif`），入面有兩張相，每隻眼一張，組成一對立體相。App 會讀檔案開頭（喺裝置度、用範圍請求讀伺服器嘅原檔，或者網絡共享入面嘅檔案），將結果記喺部電話度，所以每張相只會讀一次。
-- **空間影片**（MV-HEVC）係由影片軌道認出：有第二個圖層，同埋講明咗兩隻眼。
-
-### 喺頭戴裝置入面用 3D 睇空間相片
-
-1. 喺頭戴裝置入面，用查閱器打開空間相片，或者喺網絡共享資料夾入面打開，嗰度嘅空間相片同影片有 3D 標記。
-2. 撳頂部列嘅「用 3D 睇」（共享入面嘅相片頁面都有）。
-3. 沉浸式檢視會將相片放喺你前面 2 m 嘅一個平面框入面，每隻眼睇到自己嗰張相，闊度按檔案提供嘅相機視野決定（冇就用 48°）。檔案入面寫咗嘅視差調整會套用。
-4. 搖桿向上或者向下可以放大或者縮細（每次 6°，由 30° 到 90°）；右搖桿向左或者向右可以將張相帶返去你面前。
-5. 資訊面板上面嘅 3D 掣會喺 3D 同「2D（左眼）」之間切換。「轉動」同 360°/180° 掣會收埋。
-6. 撳 B 或者 Y 返去。
-
-由空間相片暫時未可以轉去上一個同下一個（「空間相片暫時未可以用上一個同下一個」）。如果頭戴裝置解碼唔到第二隻眼，相片會用 2D 顯示，同時顯示「第二隻眼解碼唔到：以 2D 顯示」。3D 檢視顯示嘅係原檔，唔包括喺 Immich 入面做過嘅編輯。
-
-### 其他地方
-
-- **相片**：手機、平板同頭戴裝置視窗照舊顯示左眼，技術詳情會多一行，例如「Apple 空間相片，兩個 3072 x 3072 視圖」，檔案有提供視野嘅話都會顯示。伺服器上面嘅相片喺時間線冇標記：要等打開張相嘅時候 App 先知道。
-- **影片**：喺 App 每個播放器入面都會播佢哋嘅基礎圖層，即係一隻眼。Android 冇公開方法解碼第二個視圖；有自己 MV-HEVC 解碼器嘅裝置（某啲 Qualcomm 晶片）會改為將影片交畀嗰個解碼器，呢點未檢查。呢類影片喺一個工作階段入面第一次播放嘅時候會顯示「空間影片：呢部裝置只播一隻眼」（網絡共享入面嘅影片就會改為顯示 3D 標記），佢嘅技術詳情會顯示「Apple 空間影片（MV-HEVC），以 2D 顯示」，同埋檔案記錄咗嘅眼、基線同視野。
-- **解碼器**：「設定」、「進階」、「呢部裝置嘅影片解碼器」入面有個 MV-HEVC 項目，會列出部裝置用嚟解佢嘅解碼器，或者話你知冇。
-
-### 未喺裝置上檢查
-
-辨認功能已經用 Apple 自己嘅圖像程式庫寫出嚟嘅空間相片樣本同合成檔案檢查過，3D 合成就用單元測試檢查過。頭戴裝置入面嘅檢視（兩隻眼都解碼到、相片唔係倒轉亦唔係鏡像、深度方向正確、喺 2 m 睇得唔得舒服）同埋真實嘅 iPhone 相片同影片，係建置 19 嘅裝置測試。歡迎回報，請附上[紀錄](#logs)入面相關嘅行。
-
-<a id="in-the-meta-quest-3-headset"></a>
-## 喺 Meta Quest 3 頭戴裝置入面
-
-好多人買 Quest 3 係為咗睇自己嘅 360° 相片同影片，之後就會問啲檔案放邊、點樣唔使線就傳去頭戴裝置，同埋用邊個播放器：商店入面嘅 360° 同 3D 影片播放器都要收錢。
-
-同一個 Android App 會以視窗形式喺 Quest 3 同 3S 上面運行，由建置 21 開始亦喺 Quest 2 同 Quest Pro 上面運行（未測試），有齊你成個媒體庫。佢嘅 360° 掣會打開沉浸式檢視，相片或者影片會圍住你，轉頭就可以四圍睇，立體檔案係真 3D（Meta Spatial SDK）。
-
-媒體嚟自你嘅 Immich 伺服器、頭戴裝置本身、NAS、媒體伺服器、電話或者 Plex 伺服器，原地播放（媒體伺服器同電話由建置 19 開始，Plex 伺服器由建置 20 開始，未喺頭戴裝置上面檢查），由建置 20 開始，視窗仲會顯示 Tapo 鏡頭。佢係免費同開源。已經喺 Quest 3 上面檢查過，亦有用戶用 Insta360 X4 8K HEVC 影片檢查過。
-
-### 打開沉浸式檢視
-
-1. 喺 [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 幫頭戴裝置裝個 App，或者側載較新建置嘅 APK，睇[安裝](#install)。
-2. 用你嘅 Immich 伺服器登入，或者撳「唔連伺服器使用」嚟用頭戴裝置自己嘅相片同影片。
-3. 喺查閱器打開一張 360° 相片或者一段 360° 影片，可以由時間線、360° 清單、相簿或者共享資料夾打開。
-4. 撳 360° 掣，或者 ⋮ 選單入面嘅「以 360° 睇」。喺頭戴裝置上面，佢哋會直接打開沉浸式檢視，唔會打開電話嗰種球面查閱器。
-5. 轉頭四圍睇。
-6. 想返去視窗，就撳 B 或者 Y，或者資訊面板上面嘅「返回」掣。
-
-| 動作 | 控制器 | 手勢 |
-|---|---|---|
-| 返去 App | B 或者 Y | 「返回」掣 |
-| 播放或者暫停影片 | 資訊面板收埋嘅時候撳扳機鍵 | 「播放」或者「暫停」掣 |
-| 顯示或者收埋資訊面板 | A、X、握把鍵或者選單鍵 | 選單手勢，或者面板收埋時捏一下 |
-| 轉動視角（由建置 17 開始） | 右搖桿向左或者向右，每推一下轉 30° | 「轉動」掣（90°） |
-| 上一個或者下一個媒體 | 左搖桿向左或者向右 | 「上一個」同「下一個」掣 |
-| 影片向後或者向前跳 10 秒 | 搖桿向下或者向上 | 兩個跳轉掣，或者拖時間軸 |
-| 將畫面轉 90° | 相片上面搖桿向下或者向上，影片上面用「轉動」掣 | 「轉動」掣 |
-| 改 3D 排列（平面、上下、左右） | 3D 掣 | 3D 掣 |
-| 全球面或者半球面（VR180） | 360°/180° 掣 | 360°/180° 掣 |
-
-呢個表入面嘅掣同時間軸都係資訊面板上面嗰啲。用控制器嘅時候佢哋都用到：用光線指住佢哋再撳扳機鍵。
-
-- **轉動視角**：唔使轉頭都睇到後面。推住右搖桿唔放就會繼續轉，一行覆蓋顯示角度。
-- **一行覆蓋**：由建置 16 開始，用搖桿跳轉、轉動相片，或者上一個同下一個，會顯示一行覆蓋（時間、角度或者媒體名稱），資訊面板保持收埋。建置 17 之前，任何一枝搖桿都可以去上一個或者下一個媒體。
-
-### 資訊面板、上一個同下一個
-
-影片嘅資訊面板喺兩個 10 秒跳轉掣中間有條時間軸（位置、長度、緩衝咗幾多）；下面係「上一個」、「播放」或者「暫停」同「下一個」，再落係「轉動」、3D、360°/180° 同「返回」。相片嘅面板有同樣幾行，但冇時間軸同「播放」。3D 排列同 360°/180° 選擇只喺面板啲掣度。
-
-上一個同下一個會喺你入嚟嗰個地方嘅 360° 媒體之間切換，唔使離開沉浸式檢視：時間線、360° 清單（按篩選）、相簿、網絡共享入面嘅資料夾，或者頭戴裝置自己嘅媒體（「喺呢部裝置度」）。平面相片同影片會跳過。當你由時間線、相簿或者 360° 清單返去 App，會停喺你睇緊嘅媒體度（共享資料夾頁面就會停喺你打開嘅檔案度），而你由佢打開沉浸式檢視嗰段影片會由你離開嘅位置繼續播。
-
-由建置 17 開始，右搖桿用嚟轉動視角，同大部分頭戴裝置 App 嘅右搖桿一樣：推一下轉 30°，推住唔放就繼續轉，咁樣後面嘅嘢會轉到你面前，唔使轉頭或者轉張櫈；上一個同下一個喺左搖桿。
-
-由建置 16 開始，根據一位用戶喺頭戴裝置上面嘅回饋，用搖桿跳轉、轉動或者上一個/下一個嘅時候，會顯示一行 1.5 秒後淡出嘅覆蓋（時間、角度或者媒體標題），唔會再彈出資訊面板；面板仍然可以用 A、X、握把鍵或者選單鍵打開。同一個建置亦確保控制器瞓著、醒返或者轉用手勢追蹤嘅時候，面板開關都照樣用到，並喺紀錄入面記低呢啲切換，睇[紀錄](#logs)。
-
-用「用 3D 睇」打開嘅 Apple 空間相片唔會放喺球面上：佢會浮喺你面前，睇 [Apple 空間相片同影片](#apple-spatial-photos-and-videos)。
-
-### 頭戴裝置顯示咩
-
-相片會先顯示預覽，然後顯示原圖，最多縮細到 8192x4096（App 嘅上限）。如果頭戴裝置入面有嗰個影片檔案就直接播，網絡共享入面嘅檔案就經 App 嘅本地橋播放；否則就按「影片來源」設定由你嘅伺服器串流（由建置 15 開始；預設係原檔，原檔串流唔到或者超出頭戴裝置解碼器嘅能力時就用伺服器嘅轉碼版本，睇[影片詳情同解碼器](#video-details-decoders-and-why-a-video-stutters)）。由建置 16 開始，相機 RAW 檔案都可以喺度打開，由 App 拼接；RAW 影片本身就係一個完整球面，所以佢嘅 3D 同 360°/180° 掣會收埋。
-
-3D 排列（上下同左右）、360° 同 VR180 都會用 3D 顯示，每隻眼睇到畫面入面屬於自己嗰一半。檔案有講明排列（影片）就用檔案嘅，否則就睇形狀估（正方形：上下；4:1：左右）；估錯嘅話，請用資訊面板上面嘅 3D 掣。
+喺 Meta Quest 上面，同一個 app 會以一個視窗嘅形式運作，顯示你全部嘅媒體庫，佢嘅 360° 按鈕會打開一個沉浸式畫面，將相片或者影片喺你周圍全方位顯示：你轉動頭部就可以周圍望，立體檔案係真正嘅 3D，Apple 空間相片會以 3D 浮喺你面前，用控制器或者你隻手就可以操作時間軸、上一個同下一個，仲有個「轉身」按鈕，唔使轉椅都可以將你後面嘅畫面帶到前面。媒體可以嚟自你嘅伺服器、頭戴裝置本身、NAS、媒體伺服器、電話或者 Plex 伺服器，全部直接播放。
 
 <p align="center">
   <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Quest 3 入面圍住你嘅 360° 相片，有資訊面板：排列、360° 同返回掣">
@@ -577,663 +153,163 @@ iPhone 可以影空間相片同影片，但 Immich 伺服器對佢哋乜都唔�
   <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Quest 3 入面嘅立體 360° 影片，資訊面板顯示 3D，上下">
 </p>
 
-- **頭戴裝置入面嘅 360° 相片**：相片嘅沉浸式檢視，有資訊面板（排列、360°/180°、返回）。
-- **頭戴裝置入面嘅 360° 影片**：播緊嘅影片，有暫停。
-- **頭戴裝置入面嘅 3D 360° 影片**：上下立體影片，每隻眼各自有畫面（Kandao Obsidian 範例）。
+1. 由[Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 安裝呢個 app，或者側載較新 build 嘅 APK，詳見[安裝](#meta-quest)。
+2. 用你嘅 Immich 伺服器登入，或者撳「唔連伺服器使用」嚟用頭戴裝置自己嘅相片同影片。
+3. 打開一張 360° 相片或者影片，再㩒 360°：沉浸式畫面就會打開。㩒 B 或者 Y，或者資訊面板嘅返回按鈕，就可以帶返個視窗出嚟。
 
-呢啲截圖喺建置 14 之前影，當時 App 用緊法文。而家個面板仲多咗兩個 10 秒跳轉掣中間嘅時間軸、「上一個」同「下一個」，同埋「轉動」。
+更多資訊：[喺 Meta Quest 頭戴裝置入面](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset)、[頭戴裝置：編碼格式、商店同權限](../docs/immuch360/platform-support.md#meta-quest)。
 
-### 如果畫面冇向住你
+<a id="watch-on-the-tv-and-on-the-computer"></a>
+### 喺電視同電腦上面睇
 
-用右搖桿（或者資訊面板上面嘅「轉動」掣）轉動畫面，直至佢嘅中心喺你面前。角度會以「畫面轉咗去 N 度」顯示喺面板上，面板收埋嘅時候就顯示喺一行覆蓋入面：請將呢個數字連同你部相機嘅型號貼去一個 [issue](https://github.com/freeKC/Immuch360/issues)，等佢可以變成預設值。初始方向未為每部相機確認。
-
-### 沉浸式檢視嘅限制
-
-- **上一個同下一個**：喺時間線最多向前搵 400 個媒體，喺共享資料夾最多搵 50 個檔案，最長 12 秒；超過之後面板會話冇上一個或者下一個 360° 媒體。共享資料夾係逐個檔案檢查，所以喺好多平面檔案之後搵第一個 360° 檔案可能要幾秒。由空間相片暫時未用到。
-- **3D 選擇**：用 3D 掣揀嘅排列喺關咗查閱器之後唔會保留；360°/180° 選擇就會為媒體庫入面嘅媒體保留。
-- **拖進度**：如果影片來源唔回應位元組範圍請求，就拖唔到進度；面板會講明。
-- **平面影片**：平面（唔係 360°）嘅立體影片會喺視窗入面播，兩隻眼嘅畫面都睇到；沉浸式 3D 檢視係畀 360° 同 VR180 媒體用。
-- **更多**：頭戴裝置解碼到嘅編解碼器、商店、權限同 APK 大小，請睇 [Meta Quest 3](#meta-quest-3)。
-
-<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
-## 喺電視上面睇（Android TV 同 Google TV）
-
-你想喺大螢幕用電視遙控器睇 360° 相片同影片、你嘅相簿，同埋 NAS 或者 Plex 伺服器入面嘅影片，等成家人坐喺梳化一齊睇。Immich 手機 App 唔係電視 App：有個用戶將佢裝咗喺電視，發覺佢用滑鼠先用到，遙控器就用唔到（[討論 #1614](https://github.com/immich-app/immich/discussions/1614)），而 Immich 團隊冇計劃出官方電視 App（[討論 #13748](https://github.com/immich-app/immich/discussions/13748)）。
-
-由建置 20 開始，同一個 Android App 可以喺 Android TV 同 Google TV 上面運行，淨係用遙控器操作：電話同電視用同一個 APK，360° 同 3D 查閱器用方向鍵轉，網絡共享、Plex 同 Tapo 鏡頭喺電視上面都用到，有冇 Immich 伺服器都得。
-
-<a id="install-it-on-the-tv"></a>
-### 喺電視上面安裝
-
-1. Google Play 未喺電視上面提供呢個 App 之前（要等 Google 審批電視版本），請喺 [Releases](https://github.com/freeKC/Immuch360/releases) 頁面攞通用嘅 `Immuch360-v<version>-release.apk`。
-2. 喺電視上面開啟開發人員選項同 USB 偵錯（喺 Google TV：設定、系統、關於，揀「Android TV OS build」（Android TV 作業系統版本）七次，然後去設定、系統、開發人員選項；唔同電視嘅名稱會有啲唔同）。
-3. 喺同一個網絡嘅電腦度用 adb（Android SDK Platform Tools）：行 `adb connect <address of the TV>`（`<address of the TV>` 係電視嘅地址），喺電視上面接受提示，然後行 `adb install -r Immuch360-v<version>-release.apk`。
-4. 個 App 會帶住佢嘅橫額出現喺電視嘅 App 入面。下一個版本用同樣方法安裝：`-r` 會保留登入同設定。
-
-### 第一次開
-
-1. 好似喺電話噉登入：方向鍵會將焦點框喺欄位之間移動（由建置 23 開始，經過已填欄位嗰陣會喺標籤上面行過，而唔係橫過標籤），喺欄位上面撳 OK（「撳 OK 輸入」）會喺對話框打開電視鍵盤，用嚟輸入伺服器地址、電郵同密碼。
-2. 或者揀「唔連伺服器使用」。電視冇自己嘅相片，所以「相」分頁會顯示「呢部電視冇自己嘅相或者影片：請喺媒體庫打開網絡共享。」同一個「網絡共享」掣。喺嗰度加共享、Plex 伺服器或者鏡頭，同喺電話一樣（睇[網絡共享](#network-shares-a-nas-a-computer-or-a-media-server)）。
-
-### 用遙控器移動
-
-- 方向鍵移動焦點框，OK 打開焦點所在嘅嘢，返回鍵返回。喺分頁度，返回鍵會先去側邊選單，再去「相」，然後離開 App。喺選項清單入面，例如共享類型或者某個設定，方向鍵只會移動焦點框，撳 OK 先會揀選項（由建置 22 開始；之前方向鍵會直接改咗選擇）。
-- 頻道上同頻道下一次捲一頁。由建置 22 開始，相片格仔喺螢幕邊界以內每行顯示大約六格，裝置自己檔案嘅縮圖更清晰；喺電話上面頂部有圖片嘅頁面（360° 清單、「收藏夾」、裝置嘅相簿）會改為顯示一條簡單嘅列。由建置 23 開始，呢啲縮圖會用格仔兩倍嘅大細整，再順滑噉縮細，所以好似積雪樹枝咁嘅細節唔會再閃爍，而伺服器嘅相片會顯示伺服器較大嘅預覽圖，一樣咁清晰，而唔係拉闊到成格嘅細縮圖。
-- 由建置 22 開始，焦點框會由每頁嘅第一項開始（360° 清單嘅第一格、確認咗伺服器地址之後嘅電郵欄位），格仔捲動時會留喺螢幕邊界以內（由建置 23 開始，「設定」嘅兩個窗格都係），由格仔向上會去上面嗰行或者篩選，而唔係去返回掣。喺網絡共享或者鏡頭上面撳右鍵會去到佢嘅編輯掣，而「測試連線」嘅結果會自動捲入畫面。
-- 喺查閱器入面，遙控器嘅播放同暫停、快進、倒帶、下一個同上一個按鍵都用得，資訊鍵會顯示相片或者影片嘅詳情。
-
-### 用遙控器睇相片同影片
-
-1. **相片**：左右鍵去上一張或者下一張，OK 顯示或者收埋控制項，上鍵去頂部列（360° 掣喺嗰度），下鍵去底部列。
-2. **影片**：OK 暫停並顯示控制項，或者繼續播。播緊嘅時候，左右鍵向後或者向前跳 10 秒；暫停咗嘅時候，左右鍵就去上一個或者下一個項目，好似提示講噉：「已暫停：方向鍵去上一個或者下一個項目」。
-3. **360° 相片**，由 360° 掣打開：方向鍵四圍望，㩒住會快啲，放手之後畫面會慢慢停低。OK 會移去頂部列嘅掣，停喺「放大」，隔籬係「縮細」、視野同 3D；頻道上同頻道下都可以縮放。返回鍵由掣返去畫面，然後關閉。提示係「方向鍵四圍望，OK 顯示控制項，返回鍵關閉」。
-4. **360° 影片**，由 360° 掣打開：控制項收埋嘅時候方向鍵四圍望，OK 暫停並顯示控制項，返回鍵收埋控制項，然後關閉。提示係「方向鍵四圍望，OK 暫停並顯示控制項，返回鍵關閉」。
-5. **回憶**：左右鍵睇過啲相再去下一段回憶，上鍵去關閉掣，下鍵去「喺時間線入面睇」。
-6. **共享同 Plex**：喺共享嘅相片同影片頁面用同樣嘅按鍵，左右鍵會打開資料夾入面上一個或者下一個檔案。
-
-### 「遙控器版面」設定
-
-「設定」、「偏好」、「遙控器版面」：「大嘅焦點框同遙控器按鍵，唔顯示需要觸控螢幕嘅控制項。自動會喺 Android TV 同 Google TV 開啟。」預設係「自動」；「開」啱用鍵盤或者遊戲手掣操作嘅平板；「關」會喺電視上面熄咗佢。呢個設定只係 Android 有。由建置 22 開始，改咗之後會即刻套用到打開緊嘅頁面，頁面會留喺原位（之前「設定」會喺「進階」重新打開，下面仲有一個要撳返回先過到嘅啟動畫面）。無論設定係點，喺查閱器入面用鍵盤或者遊戲手掣都可以用方向鍵同 OK。
-
-### 限制
-
-- **查閱器**：喺電視上面，App 只係用嚟顯示同播放。備份、上傳、編輯、刪除、分享、揀多個項目、投放（Cast）、Spatial 2.5D、陀螺儀、地圖同地點，同埋「喺網絡上分享呢部電話」都會收埋。
-- **登入**：OAuth 要開網頁，電視做唔到：「用 (提供者) 登入要開網頁，呢部電視做唔到。請改用電郵同密碼登入。」
-- **連結**會喺「喺其他裝置打開」下面顯示佢嘅地址，而唔係打開瀏覽器，文字就喺系統嘅鍵盤對話框輸入。
-- **記憶體**：喺記憶體少嘅電視上面，360° 相片最大只會以 4096x2048 顯示，放大嘅時候唔會有更清晰嘅畫面。
-- **影片**：電視嘅解碼器決定播到乜，「影片來源」設定同解碼器檢查同電話一樣（睇[影片詳情同解碼器](#video-details-decoders-and-why-a-video-stutters)）；仲未喺電視上面量度過。
-- **未喺裝置上檢查**：電視支援只係用自動化測試檢查過，仲未喺電視或者電視模擬器上面行過。有待確認：方向鍵轉 360° 影片嘅方向、文字對話框入面嘅電視鍵盤（Gboard）、紅外線遙控器嘅 OK 鍵、邊界，同埋電視主畫面上面嘅橫額。歡迎回報。
-- **電視上面嘅 Google Play** 要等 Google 審批電視版本；喺嗰之前，就用 APK。
-- **其他電視**：未測試 Fire TV，亦冇 Apple TV 版本。
-
-<a id="find-your-360-shots-the-360-list"></a>
-## 搵你啲 360° 相：360° 清單
-
-360° 相同其他所有相撈埋一齊，好多人都想 Immich 可以篩選球面相同全景相（[討論 #12824](https://github.com/immich-app/immich/discussions/12824)）。Immich App 冇噉嘅清單。
-
-Immuch360 會喺 360° 相片嘅縮圖上面加 360° 標記（喺網絡共享資料夾入面，360° 影片都有），並喺「媒體庫」分頁頂部放一個 360° 項目。由建置 18 開始，有伺服器嘅時候，呢個清單包括伺服器標做 360° 嘅相片同影片、按檔案名搵到嘅 Insta360 RAW 檔案、360° 相機自己拼接好嘅相片，同你揀咗以 360° 睇嘅檔案，再加上裝置掃描搵到嘅內容；冇伺服器嘅時候，就係裝置掃描搵到嘅內容同你揀咗以 360° 睇嘅檔案。每項只會出現一次，唔理佢嘅副本喺邊，最新嘅排先。由建置 22 開始，格仔上面會有一行「喺網絡共享」，列出你啲共享入面嘅 360° 相片同影片，最新嘅排先：App 喺顯示佢哋嘅資料夾或者打開佢哋嘅時候認得佢哋（佢唔會自己去搜尋共享），下次開 App 仍然記得，共享刪除咗就會一齊忘記。喺冇自己相片嘅電視上面，360° 清單就係靠呢一行填滿。
-
-<img src="../.github/readme/b19-360-list.png" width="260" alt="360° 清單，4 個項目，打開咗日期面板：全部、2026 年同數量、全年、2026 年 8 月同 2026 年 4 月同數量、2025 年，同埋自定">
-
-### 篩選清單
-
-1. 打開「媒體庫」分頁，撳 360°（有伺服器時喺「收藏夾」隔籬，冇伺服器時單獨顯示）。
-2. 撳「日期」揀時段：「全部」、某一年（打開之後有「全年」同各個月，每項都有數量），或者用「自定」揀日子範圍。
-3. 有伺服器嘅時候，揀媒體喺邊：「喺伺服器」、「喺呢部裝置度」，同埋有內容時嘅「同我分享」。
-4. 揀類型：「相」、「影片」、3D、VR180。
-5. 清單入面有兩部或以上相機嘅時候，第二行會按 EXIF 牌子同型號列出佢哋，連數量。冇呢啲資料嘅 RAW 檔案會用佢副檔名對應嘅牌子命名（Insta360、GoPro、DJI），其他就顯示做「未知相機」。
-6. 同一組入面（位置、「相」同「影片」、3D 同 VR180、相機）揀嘅選項會加埋；唔同組之間就會收窄清單。「日期」、「相」同「影片」呢幾個選項都會套用到網絡共享嗰一行；3D、VR180 同相機就會收埋嗰一行，因為共享入面嘅檔案呢幾樣 App 一樣都唔知。「清空」會重設所有篩選；「冇 360° 相片或者影片符合呢啲篩選條件」即係篩選完之後乜都冇剩。
-7. 打開相片或者影片。喺 Quest 沉浸式檢視入面，上一個同下一個會跟住篩選咗嘅清單切換。
-
-<a id="video-details-decoders-and-why-a-video-stutters"></a>
-## 影片詳情、解碼器，同埋點解影片會窒
-
-好多人問 Quest 3 播到邊種編解碼器、尺寸同位元率，同埋點解 5.7K 匯出影片喺頭戴裝置入面會窒，喺電話度又播得好地地。答案係硬體解碼器：Quest 3（XR2 Gen 2）嘅 H.264 解碼器上限大約係 4096x2304，所以一段 5760x2880 嘅 H.264 影片（level 6.0，大約 200 Mbit/s，即係 Insta360 平時嘅匯出格式）喺頭戴裝置上面只解碼到大約 17 fps，仲會出現格仔狀瑕疵，但同一個檔案喺電話度就播得好正常。
-
-同一段影片轉做 HEVC（H.265）就喺頭戴裝置上面播得好好：一段 Insta360 X4 8K HEVC 影片（7680x3840、29.97 fps、210 Mbit/s、Main profile level 6.1、8 位元）喺沉浸式檢視入面播得好順，用原生解像度，唔使轉碼（由一位 Quest 3 用戶回報）。
-
-Immich App 得一個「一律播放原片」開關，亦只係顯示編解碼器。Immuch360 會顯示段影片係乜嘢、部裝置解碼到啲乜，再揀播得到嘅檔案。
-
-<img src="../.github/readme/b19-video-details.png" width="260" alt="一段 360° 影片嘅詳情：編解碼器 H.264 High (avc1.640033)、3840 x 1920、30 fps；位元率 16 Mbit/s；畫面 8 位元、SDR、BT.709；呢部裝置解碼到：係，硬體，最高 4096 x 2304">
-
-### 睇影片嘅詳情
-
-1. 打開影片再向上掃：詳情會喺畫面下面出現。
-2. 編解碼器：編解碼器連佢嘅設定檔同 codecs 字串、畫面尺寸同幀率，例如「H.264 High (avc1.640033) • 3840 x 1920 • 30 fps」，好似上面張圖噉。
-3. 位元率（由建置 18 開始）：影片軌道嘅位元率，或者檔案聲明嘅位元率；否則會標明「成個檔案，包括聲音」或者「按檔案大小估計」。
-4. 畫面（由建置 18 開始）：位元深度、SDR 或者 HDR 傳輸特性（HLG、PQ、Dolby Vision）同色彩空間。
-5. 呢部裝置解碼到：係定唔係、硬體定軟體、解碼器接受嘅最大尺寸，如果部裝置有個編解碼器但冇嗰個設定檔，就會顯示「冇 (設定檔) 嘅解碼器」。
-
-檔案讀完之後先會顯示對應嘅行，而且只會顯示檔案有提供嘅資料。Apple 空間相片或者影片會多一行自己嘅資料，睇 [Apple 空間相片同影片](#apple-spatial-photos-and-videos)。
-
-### 睇吓部裝置解碼到啲乜
-
-「設定」、「進階」、「呢部裝置嘅影片解碼器」（由建置 15 開始）會列出電話或者頭戴裝置解碼到嘅嘢：編解碼器、硬體定軟體、最大尺寸、幀率，由建置 18 開始仲有設定檔（Main、Main 10、HDR10）。由建置 19 開始有個 MV-HEVC 項目，即係 Apple 空間影片嘅編解碼器。「複製」掣會將份清單放入剪貼簿，方便你報告問題。
-
-### 揀原檔定轉碼串流
-
-1. 打開「設定」、「文件查閱器」，再打開「影片」。
-2. 喺「影片來源」（「伺服器有轉碼副本嘅時候播邊個檔案」）下面，揀「呢部裝置解碼到嘅話就播原檔」、「一定播原檔」或者「一定播轉碼串流」。
-
-由建置 15 開始，呢個選擇會套用喺每段伺服器影片：平面播放器、360° 同 Spatial 播放器，同埋 Quest 沉浸式檢視。喺你揀之前，電話會沿用舊嘅「一律播放原片」開關嘅設定（預設係熄咗：即係播轉碼串流；如果伺服器冇轉碼，轉碼串流就係原檔本身），而 Quest 會喺頭戴裝置解碼到嘅時候播原檔。
-
-檢查會由檔案讀出編解碼器、尺寸同幀率，再同硬體解碼器比較（Quest 3 嘅 H.264 會限制喺實測得出嘅 4096x2304）。解碼唔到原檔嘅播放器會轉用轉碼串流，並顯示訊息：「播緊轉碼串流：原檔（編解碼器同尺寸）超出咗呢部裝置解碼到嘅範圍」。
-
-喺頭戴裝置入面，沉浸式檢視會先播原檔，喺頭幾格畫面嘅時候，如果原檔超出解碼器嘅能力，就轉用伺服器嘅轉碼串流，並喺資訊面板上面講明；如果冇轉碼串流、轉碼串流仍然太大，或者檔案嚟自頭戴裝置或者網絡共享，資訊面板會顯示 10 秒，講明要改啲乜。建置 14，即係交咗去 Horizon Store 嗰個，只會檢查超過 4096x2304 嘅 H.264，然後用同樣方法試伺服器嘅播放串流。
-
-對於雙鏡頭 RAW 影片，檢查會要求同時有兩個解碼器，而由建置 19 開始，每路超過 2048x2048 嘅兩路串流唔會交畀軟體解碼器，睇 [360° 相機 RAW 檔案](#raw-360-camera-files-without-the-cameras-app)。
-
-### 畀頭戴裝置一段佢解碼到嘅影片
-
-喺 Immich 入面，去「系統管理」、「設定」、「影片轉碼設定」，再揀以下其中一種做法：
-
-- **所有 H.264 影片重新編碼做 HEVC**：將「影片編解碼器」設做 HEVC，「目標解像度」設做「原圖」（預設嘅 720p 會將 360° 影片縮細到 1440x720），「接受嘅影片編解碼器」入面只保留 HEVC。媒體庫入面所有 H.264 影片都會轉碼，唔只 360° 影片，頭戴裝置會收到全解像度嘅 HEVC。
-- **只轉大過 1440p 嘅影片**：「接受嘅影片編解碼器」保留 H.264，將「轉碼策略」設做「高於目標解析度或者格式唔係可接受範圍嘅影片」，「目標解像度」設做 1440p，最好將「影片編解碼器」設做 HEVC。大過呢個尺寸嘅都會轉碼，頭戴裝置會收到 2880x1440。普通 4K 影片都會轉碼做 1440p。
-
-呢啲設定會套用喺成部伺服器，對每個用戶同每個 App 都有效，重新編碼一個大媒體庫要用幾個鐘 CPU 時間同額外嘅磁碟空間；原檔唔會被修改。唔支援 HEVC 嘅瀏覽器（大部分系統上面嘅 Firefox、冇硬體 HEVC 嘅 Chrome）喺 Immich 網頁版入面會播唔到 HEVC 轉碼。新影片最簡單嘅做法係喺 Insta360 App 或者 Studio 匯出做 H.265。改完呢啲設定之後，現有嘅影片要重新轉碼：「系統管理」、「任務隊列」（舊版 Immich 係「任務」）、「影片轉碼」、「全部」。
-
-另一個做法，亦係網絡共享或者頭戴裝置入面嘅檔案唯一嘅做法（佢哋冇轉碼串流），就係上傳或者複製去共享之前，先將匯出檔案重新編碼做 HEVC：
-
-```bash
-ffmpeg -i VID_360.mp4 -c:v libx265 -crf 20 -preset medium -tag:v hvc1 -c:a copy -movflags +faststart VID_360_hevc.mp4
-exiftool -overwrite_original -tagsFromFile VID_360.mp4 -XMP-GSpherical:all VID_360_hevc.mp4
-exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
-```
-
-`-tag:v hvc1` 會用 Apple 裝置同瀏覽器預期嘅方式標記 HEVC 軌道，`-c:a copy` 會原封不動保留聲音。ffmpeg 會丟失匯出檔案嘅 360° 標記，exiftool 嗰行會將佢複製返去；冇咗佢，Immich 會將段影片當平面影片顯示。
-
-### 串流唔到嘅原檔
-
-如果伺服器忽略原檔嘅 HTTP Range 請求，而 MP4 索引（moov）又喺檔案尾，就要成個檔案下載完先播到第一格畫面，所以 App 會改用伺服器嘅播放串流。Immich 前面嘅反向代理如果會緩衝回應，或者刪走 Range 標頭，就會造成呢個情況。
-
-<a id="everything-else-is-immich"></a>
-## 其他全部都係 Immich
-
-官方 Immich 手機 App 做到嘅嘢呢度全部都有：備份、時間線、相簿、搜尋、分享、親友，全部同你嘅伺服器同步，用同網頁版一樣嘅伺服器同帳戶。Immuch360 會同官方 App 並排安裝（套件 `com.aprogsys.immuch360`）。由建置 15 開始有兩個分別：「一律播放原片」開關變成咗上面講嘅「影片來源」選擇，同埋你由裝置相簿手動上傳嘅相片同影片會當做已經備份。由建置 20 開始，App 喺電視上面係一個查閱器，睇[喺電視上面睇](#watch-on-your-tv-android-tv-and-google-tv)。
-
-想畀冇呢個 App 嘅人睇 360° 相片，可以用 Immich 共享連結分享：Immich 網頁版會喺佢哋嘅瀏覽器入面用球面顯示 360° 相片。
-
-目前嘅建置係建置 23（版本 3.3.0-rc.0，建置編號 3030021），基於 2026 年 10 月 10 日嘅 Immich `main`（版本 3.3.0-rc.0，仲未係穩定版）。基於同一個 Immich 嘅建置 22 用 Immich 3.2.4 伺服器同埋由同一個 Immich `main` 建置出嚟嘅伺服器測試過：登入、時間線、相簿、360° 相片同影片、影片播放同上傳，冇任何 API 錯誤。有問題請喺 [Issues](https://github.com/freeKC/Immuch360/issues) 回報，唔好報去 Immich 項目。Immich 本身嘅完整文件，請睇 [immich.app](https://immich.app)。
-
-<a id="compared-with-the-immich-app-and-other-apps"></a>
-## 同 Immich App 同其他 App 比較
-
-### 點解會有呢個分支，一個表講晒
-
-| | Immich 手機 App | Immuch360 |
-|---|:---:|:---:|
-| 可以四圍睇嘅球面 360° 相片（拖動、兩指縮放、撳兩下、慣性、相機嘅初始視角、部分全景） | ❌ 扁平長條 | ✅ |
-| 陀螺儀：郁部電話就可以四圍睇 | ❌ | ✅ |
-| 用球面播放器播 360° 影片，有聲、可以拖進度、揀音軌，仲有緩衝指示 | ❌ 平面影片 | ✅ Android 同 iOS（iOS 暫時未有時間軸） |
-| 3D（立體）360° 相片同影片 | ❌ 重影 | ✅ 電話上面顯示左眼，Quest 上面係真 3D |
-| VR180（半球面）相片同影片 | ❌ 拉到成個球面都係 | ✅ 半球面，360°/180° 掣 |
-| Apple 空間相片（HEIC 立體相對）同空間影片（MV-HEVC） | ❌ 普通相片或者影片，冇任何地方顯示佢係空間格式 | ✅ 由建置 19 開始：喺 Quest 入面用 3D 睇相片，其他地方顯示一隻眼同多一行詳情 |
-| Meta Quest 沉浸式檢視，有頭部追蹤、時間軸、上一個同下一個，同埋「轉動」 | ❌ | ✅ 同一個 App，用頭戴裝置建置或者電話 APK |
-| 縮圖上面嘅 360° 標記，同埋包括 RAW 檔案同篩選（時段、來源、類型、相機）嘅 360° 清單 | ❌ | ✅ 篩選由建置 18 開始 |
-| 伺服器冇標記嘅檔案可以用「以 360° 睇」 | ❌ | ✅ 記喺部電話度 |
-| Spatial 2.5D：由立體影片喺平面螢幕上面整出深度 | ❌ | ✅ 實驗性，手機同平板 |
-| 唔使任何伺服器，直接用裝置自己嘅相簿 | ❌ 一定要登入 | ✅ |
-| 喺網絡上搵到嘅 SMB 同 WebDAV 共享，即時播放，乜都唔使下載 | ❌ | ✅ 所有查閱器，電話同 Quest |
-| DLNA 媒體伺服器作為一種共享類型 | ❌ | ✅ 由建置 19 開始 |
-| 將共享入面嘅檔案傳去 Immich；手動傳送嘅裝置檔案當做已經備份 | ❌ 只限裝置檔案 | ✅ 由建置 15 開始 |
-| 喺網絡上分享呢部電話，畀頭戴裝置用 | ❌ | ✅ 由建置 19 開始，Android 同 iOS |
-| 直接播 Plex Media Server 媒體庫入面嘅原檔，喺屋企同出面都得，唔使 plex.tv | ❌ | ✅ 由建置 20 開始，所有查閱器，電話、平板、Quest 同電視都得 |
-| Tapo 鏡頭：直播畫面，同埋按你揀嘅傳去 Immich 嘅記憶卡錄影 | ❌ | ✅ 由建置 20 開始：錄影所有平台都得，直播畫面喺 Android、Android TV、Quest，由桌面建置 3 開始仲有 Windows |
-| Android TV 同 Google TV，用遙控器操作，同一個 APK | ❌ 唔係電視 App | ✅ 由建置 20 開始 |
-| Windows 電腦上面嘅同一個 App | ❌ 淨係電話同平板 | ✅ 預覽版：相片、平面同 360° 影片（桌面建置 4） |
-| Insta360 .insp RAW 相片同單軌道 .insv 影片 | ❌ 平面 | ✅ 由建置 16 開始 |
-| 每條軌道或者每個檔案一個鏡頭嘅 RAW 影片（Insta360 X4、X4 Air、X5、X6、X3 一對檔案、GoPro .360、DJI .osv） | ❌ 平面或者錯誤 | ✅ 由建置 18 開始 |
-| 雙魚眼 .dng | ❌ 平面 | ❌ 未支援 |
-| 伺服器影片：裝置解碼到就播原檔，否則播轉碼串流；裝置影片解碼器清單 | ❌ 得一個「一律播放原片」開關 | ✅ 由建置 15 開始 |
-| 影片技術詳情：位元率、畫面、設定檔、呢部裝置解碼唔解碼到 | ❌ 只有編解碼器 | ✅ 由建置 18 開始 |
-| 免費播放器，可以播嚟自伺服器、電話或者 NAS 嘅平面、360°、3D 同 VR180 影片 | ❌ 只有平面 | ✅（Quest 3 商店嘅播放器要收錢） |
-| 同一部伺服器、同一個帳戶，同官方 App 並排安裝 | | ✅ |
-
-<details>
-<summary><b>每一行嘅狀態</b>：點樣測試</summary>
-
-- **球面 360° 相片**：已喺 Galaxy S24+ 同 iPhone 14 上面測試。
-- **陀螺儀**：已喺 Galaxy S24+ 同 iPhone 14 上面測試。
-- **360° 影片**：已喺 Galaxy S24+ 同 iPhone 14 上面測試。
-- **3D 360° 相片同影片**：已喺 Galaxy S24+ 同 Quest 3 上面，用真實嘅 3D 360° 範例（VRTogether、Vuze、Kandao）同一張 3D 相片測試；歡迎提供其他相機嘅回報。
-- **VR180**：已喺 Android 模擬器同 Galaxy S24+ 上面用合成素材測試；歡迎裝置回饋。
-- **Apple 空間相片同影片**：辨認功能已用 Apple 圖像程式庫寫出嘅樣本相片同合成檔案檢查過；頭戴裝置檢視同真實 iPhone 檔案係建置 19 嘅裝置測試。
-- **Meta Quest 沉浸式檢視**：已喺 Quest 3 上面測試（建置 14 嘅控制方式，建置 16 根據一位用戶嘅回饋調整過），亦有用戶用 Insta360 X4 8K HEVC 影片測試過。
-- **360° 標記同 360° 清單**：完成。
-- **以 360° 睇**：完成。
-- **Spatial 2.5D**：已喺 Galaxy S24+ 上面測試；歡迎 iPhone 用戶回饋。
-- **唔使任何伺服器**：已喺 Galaxy S24+、Quest 3 同 Android 模擬器上面測試。
-- **SMB 同 WebDAV 共享**：已用 Freebox Server（SMB）喺 Galaxy S24+ 同 Quest 3 上面測試，亦喺 Android 模擬器上面用 Samba 同 WebDAV 測試伺服器測試過；歡迎其他 NAS 同 WebDAV 嘅回饋。
-- **DLNA 媒體伺服器**：已喺 Docker 入面用 minidlna 同 Gerbera 檢查過；Plex、Jellyfin、NAS、Freebox Server、iPhone 同 Quest 係建置 19 嘅裝置測試。
-- **將共享入面嘅檔案傳去 Immich**：已喺 Android 模擬器上面用 Samba 測試伺服器同 Immich 3.2 伺服器測試。
-- **喺網絡上分享呢部電話**：喺電腦上面做咗單元測試，同埋用頭戴裝置嘅 WebDAV 用戶端做咗端對端測試；電話為 Quest 提供服務，同埋 iPhone 部分，係建置 19 嘅裝置測試。
-- **Plex Media Server**：已經喺電腦度對住一部真正嘅 Plex Media Server 1.42.1 檢查過（配對、資料夾、位元組範圍、縮圖、屋企以外嘅地址）；未喺裝置上檢查。
-- **Tapo 鏡頭**：對住模擬鏡頭檢查過；未用真正嘅鏡頭檢查。
-- **Android TV 同 Google TV**：用自動化測試檢查過；未喺電視上面檢查。
-- **Windows 電腦上面嘅同一個 App**：桌面建置 3 喺 Windows 上面通過咗 863 個桌面自動測試入面嘅 855 個（8 個係刻意略過）同埋 App 成套測試；喺一部 Windows 11 電腦上面，App 啟動到、打開到 Immich 伺服器上面儲存咗嘅工作階段、同步到、播到影片，亦都正常關閉，佢嘅 360° 播放器亦都喺一部手提電腦嘅兩粒顯示晶片上面用合成嘅 4K、5.7K 同 8K 片段行過，冇死機。用真嘅 360° 檔案同真嘅 Tapo 鏡頭逐個功能人手測試仲進行緊。
-- **Insta360 .insp RAW 相片同單軌道 .insv 影片**：相片已同 X3 檔案嘅 Insta360 Studio 匯出結果比較過，影片已喺 Android 模擬器用低解像度 X3 檔案檢查過；未喺 iPhone 上面行過。
-- **每條軌道或者每個檔案一個鏡頭嘅 RAW 影片**：解析器同拼接已用真實嘅 X4、X3 一對檔案、GoPro MAX 同 Osmo 360 檔案檢查過；播放係建置 18 同 19 嘅裝置測試。
-- **雙魚眼 .dng**：計劃中。
-- **伺服器影片同影片解碼器**：已喺 Android 模擬器上面測試；Quest 3 嘅 H.264 上限係喺頭戴裝置上面實測。
-- **影片技術詳情**：完成。
-
-</details>
-
-### 大家為咗呢樣嘢用緊嘅其他 App
-
-- **Immich 網頁版**
-  - 會遇到咩問題：佢會用球面顯示 360° 相片，但會將 RAW .insp 當做完成咗嘅全景，將兩個圓包喺球面上面；VR 檢視仍然只係一個要求（[討論 #14768](https://github.com/immich-app/immich/discussions/14768)）。
-  - Immuch360 點做：喺裝置上面拼接 RAW 檔案，喺 Quest 入面打開沉浸式檢視。
-- **Insta360 App 或者 Studio**
-  - 會遇到咩問題：睇之前要先用佢將記憶卡入面嘅 RAW 檔案轉成 360° 畫面。
-  - Immuch360 點做：直接打開 RAW .insp 同 .insv 檔案，仲有 GoPro .360 同 DJI .osv 檔案。
-- **Plex、Jellyfin、Synology Photos**
-  - 會遇到咩問題：360° 相片同影片顯示成平面或者認唔到，佢哋論壇上面嘅討論都係噉講（Plex 有個要求由 2017 年開到而家）。
-  - Immuch360 點做：由建置 20 開始直接讀 Plex 媒體庫，或者經 SMB、WebDAV 或者 DLNA 讀取同一批資料夾，用球面播放，伺服器上面乜都唔使改。
-- **Tapo App**
-  - 會遇到咩問題：另一個 App，登入咗你嘅 TP-Link 帳戶，片段同你啲相分開擺。
-  - Immuch360 點做：喺你啲相隔籬顯示鏡頭，只喺你嘅網絡入面同佢通訊，仲將片段留做可以傳去 Immich 嘅影片（由建置 20 開始）。
-- **電視上面嘅 Immich 手機 App**
-  - 會遇到咩問題：唔係電視 App：有用戶話佢用滑鼠先用到，遙控器就用唔到。
-  - Immuch360 點做：同一個 App，為遙控器而設（由建置 20 開始）。
-- **複製檔案去頭戴裝置**
-  - 會遇到咩問題：每個檔案都要用線複製過去先睇到。
-  - Immuch360 點做：直接由 Immich、NAS、媒體伺服器或者電話原地播放。
-- **Quest 商店嘅 360° 同 3D 播放器**
-  - 會遇到咩問題：要收錢。
-  - Immuch360 點做：免費同開源（AGPL）。
-
-<a id="formats-and-sources-by-platform"></a>
-## 各平台支援嘅格式同來源
-
-Immuch360 係一個相簿，亦係一個免費媒體播放器：佢可以由第二個清單嘅來源播官方 App 播唔到嘅嘢，再用啱嗰個檔案嘅播放器播。
-
-- **平面影片（MP4、MOV、MKV，部裝置解碼到嘅格式）**
-  - Android 手機：Immich 播放器，網絡共享就用原生播放器。
-  - iPhone、iPad：一樣，除咗共享入面嘅 MKV 同 AVI 檔案，iOS 打唔開（喺伺服器上面會用轉碼播放）。
-  - Meta Quest：喺視窗入面。
-  - Android TV、Google TV：同電話一樣；OK 暫停，左右鍵跳 10 秒。
-  - Windows（由桌面建置 2 開始）：libmpv 播放器，播第二個清單入面每個來源；Enter 暫停，左右鍵或者 J 同 L 跳 10 秒。
-- **360° 相片**
-  - Android 手機：球面查閱器、陀螺儀。
-  - iPhone、iPad：一樣。
-  - Meta Quest：沉浸式，圍住你。
-  - Android TV、Google TV：用方向鍵轉嘅球面查閱器，用頻道鍵縮放。
-  - Windows：球面查閱器，用滑鼠同鍵盤。
-- **360° 影片**
-  - Android 手機：球面上嘅原生 Media3 播放器、陀螺儀、拖進度、揀音軌、緩衝指示。
-  - iPhone、iPad：球面上嘅原生 SceneKit 播放器、陀螺儀、揀音軌、緩衝指示；只有播放同暫停，暫時未有時間軸。
-  - Meta Quest：沉浸式，立體檔案係真 3D，有時間軸同 10 秒跳轉、上一個同下一個媒體。
-  - Android TV、Google TV：電話用嘅 Media3 播放器，用方向鍵轉。
-  - Windows（由桌面建置 3 開始）：App 自己嘅 360° 播放器（libmpv），用滑鼠或者方向鍵轉，用滾輪縮放，可以跳時間、揀音軌，有緩衝指示；喺獨立顯示晶片上面流暢，喺內建晶片上面闊度最多 2880 像素，5.7K H.264 亦都會慢啲。
-- **3D 360°（上下、左右）**
-  - Android 手機：左眼、排列掣。
-  - iPhone、iPad：一樣。
-  - Meta Quest：每隻眼睇到畫面入面屬於自己嗰一半。
-  - Android TV、Google TV：左眼、排列掣。
-  - Windows：相片同電話一樣；影片由桌面建置 3 開始，左眼、排列掣，喺獨立顯示晶片上面流暢，喺內建晶片上面有限制。
-- **VR180（半球面）相片同影片**
-  - Android 手機：半球面、360°/180° 掣。
-  - iPhone、iPad：一樣。
-  - Meta Quest：沉浸式半球面。
-  - Android TV、Google TV：半球面、360°/180° 掣。
-  - Windows：相片同電話一樣；影片由桌面建置 3 開始，半球面、360°/180° 掣，喺獨立顯示晶片上面流暢，喺內建晶片上面有限制。
-- **Spatial 2.5D（由立體影片喺平面螢幕上面整出深度）**
-  - Android 手機：原生播放器，用前置鏡頭追蹤頭部。
-  - iPhone、iPad：一樣。
-  - Meta Quest：唔提供。
-  - Android TV、Google TV：唔提供。
-- **Apple 空間相片（HEIC 立體相對，由建置 19 開始）**
-  - Android 手機：左眼，詳情入面有一行講明係空間相片。
-  - iPhone、iPad：一樣。
-  - Meta Quest：「用 3D 睇」：浮喺沉浸式檢視入面嘅相片，兩隻眼都有，3D 或者 2D，可以調大細。
-  - Android TV、Google TV：左眼，詳情入面有一行。
-- **Apple 空間影片（MV-HEVC，由建置 19 開始）**
-  - Android 手機：一隻眼（基礎圖層），有提示。
-  - iPhone、iPad：一樣。
-  - Meta Quest：喺視窗入面顯示一隻眼，有提示。
-  - Android TV、Google TV：一隻眼，有提示。
-- **Insta360 .insp RAW 相片（由建置 16 開始）**
-  - Android 手機：喺球面查閱器之前用 GPU 拼接，最高 8192x4096。
-  - iPhone、iPad：一樣。
-  - Meta Quest：沉浸式，用一張為頭戴裝置準備好嘅拼接相。
-  - Android TV、Google TV：同電話一樣。
-- **Insta360 .insv RAW 影片，兩個鏡頭喺同一條軌道（由建置 16 開始）**
-  - Android 手機：喺 Media3 播放器入面用 GPU 效果拼接。
-  - iPhone、iPad：用 SceneKit 著色器拼接。
-  - Meta Quest：沉浸式，用同一個 GPU 效果拼接。
-  - Android TV、Google TV：同電話一樣。
-  - Windows（由桌面建置 3 開始）：喺 App 嘅 360° 播放器入面由顯示晶片拼接，喺獨立晶片上面流暢，喺內建晶片上面有限制。
-- **每條軌道或者每個檔案一個鏡頭嘅 RAW 影片（由建置 18 開始）：Insta360 X4、X4 Air、X5、X6 .insv、X3 一對檔案、GoPro .360、DJI .osv**
-  - Android 手機：同時用兩個硬體解碼器，每個鏡頭一個（由建置 19 開始，冇硬體解碼器嘅裝置會用軟體解碼器，每個鏡頭最高 2048x2048），再由 GL 合成器拼接成球面；裝置行唔到兩個解碼器嘅時候，就播一個鏡頭，再唔得就播轉碼串流，最後播未拼接嘅影片。
-  - iPhone、iPad：自訂嘅 AVFoundation 合成器，用 Metal。
-  - Meta Quest：沉浸式，用同樣嘅兩個解碼器同合成器（3840x1920 面板）。
-  - Android TV、Google TV：同電話一樣，前提係電視可以同時行兩個解碼器。
-  - Windows（由桌面建置 3 開始）：部電腦跟得上嘅話，兩個鏡頭喺同一個播放器入面並排，然後拼接（按部電腦自己播放嘅情況量度；喺測試用嘅手提電腦上面，X3 一對檔案淨係喺佢嘅獨立晶片先得）；否則就行電話嘅步驟：單鏡頭、轉碼串流、相機錄低嘅低解像度 LRV 副本、未拼接嘅影片。
-- **Tapo 鏡頭直播畫面（由建置 20 開始）**
-  - Android 手機：Media3 RTSP 播放器：頁面上面係標清，全螢幕係高清，有聲音掣。
-  - iPhone、iPad：暫時未有：有張卡講之後會有。
-  - Meta Quest：喺視窗入面，高清。
-  - Android TV、Google TV：同電話一樣。
-  - Windows（由桌面建置 3 開始）：libmpv 播放器，頁面入面係標清，全螢幕係高清，有聲音掣。
-- **Tapo 鏡頭錄影（由建置 20 開始）**
-  - Android 手機：由記憶卡攞落嚟變成有聲嘅 H.264 影片，然後播，可以拖進度。
-  - iPhone、iPad：一樣。
-  - Meta Quest：一樣，喺視窗入面。
-  - Android TV、Google TV：一樣。
-
-Android TV 同 Google TV 嗰幾項（由建置 20 開始）仲未喺電視上面檢查過，睇[喺電視上面睇](#watch-on-your-tv-android-tv-and-google-tv)；鏡頭嗰幾項仲未用真正嘅鏡頭檢查過。
-
-喺 Windows 上面，Immuch360 Desktop 預覽版用滑鼠同鍵盤顯示平面同 360° 相片（包括 Insta360 原始 .insp 相片）。由桌面建置 2 開始佢播到平面影片，來源有伺服器、電腦嘅資料夾、共享、Plex 同 Tapo 錄影；由桌面建置 3 開始，佢仲會喺自己嘅 360° 播放器入面播同樣來源嘅 360°、3D、VR180 同原始 360° 影片，同埋 Tapo 直播畫面。360° 播放器喺獨立顯示晶片上面流暢，喺內建晶片上面有限制（睇[喺 Windows 電腦上面](#on-a-windows-computer-immuch360-desktop-preview)）。
-
-- **你嘅 Immich 伺服器**：按「設定」、「文件查閱器」、「影片來源」嘅設定，播原檔或者伺服器嘅轉碼串流（睇[影片詳情同解碼器](#video-details-decoders-and-why-a-video-stutters)）。同網頁版用同一個帳戶。
-- **電話或者頭戴裝置本身**：登入頁嘅「唔連伺服器使用」，或者「媒體庫」分頁嘅「喺呢部裝置度」項目。
-- **NAS 或者電腦**：SMB 同 WebDAV 共享，仲有由建置 19 開始嘅 DLNA 媒體伺服器，喺網絡上自動搵到，即時讀取（SMB 影片最多用六條連線），乜都唔使複製；由建置 15 開始，你揀嘅檔案可以傳去你嘅 Immich 帳戶。
-- **另一部電話（由建置 19 開始）**：喺嗰部電話度用「喺網絡上分享呢部電話」：頭戴裝置，或者網絡入面任何 WebDAV 用戶端，都讀到佢嘅相簿、月份同 360° 媒體。
-- **Plex Media Server（由建置 20 開始）**：按資料夾睇佢嘅相片、電影同電視節目媒體庫，經 HTTPS 即時讀原檔，用伺服器自己嘅證書檢查，喺屋企或者經屋企以外嘅地址都得，所有平台都用到；睇 [Plex Media Server，唔使 plex.tv](#plex-media-server-without-plextv)。
-- **Tapo 鏡頭（由建置 20 開始）**：用鏡頭帳戶睇直播畫面（Android、Android TV、Quest，同埋由桌面建置 3 開始嘅 Windows），用 TP-Link 帳戶密碼睇記憶卡入面嘅錄影（所有平台），只限本地網絡；睇 [Tapo 鏡頭](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)。
-- **Windows 電腦嘅資料夾（桌面預覽版）**：你喺 Immuch360 Desktop 揀嘅資料夾，代替電話嘅相簿嚟讀取；部電腦亦都可以將佢哋分享俾頭戴裝置，睇[喺 Windows 電腦上面](#on-a-windows-computer-immuch360-desktop-preview)。
-
-<a id="meta-quest-3"></a>
-## Meta Quest 3
-
-Immuch360 亦可以喺用 Horizon OS v69 或以上嘅 Meta Quest 頭戴裝置上面運行。由建置 21 開始，Horizon Store 建置為 Quest 2、Quest Pro、Quest 3 同 3S 上架，即係通用嘅 `-release.apk` 本身已經列明嘅四款；第一代 Quest 就冇，因為商店已經唔再接受佢。
-
-Quest 3 同 3S 已經測試過。Quest 2 同 Quest Pro 仲未測試：佢哋嘅影片解碼器比較慢，而 App 檢查嘅上限係喺 Quest 3 上面量度嘅，所以一段大嘅 H.264 影片喺呢兩款上面可能會顯示訊息拒絕播放，或者播得唔順。歡迎喺 [Issues](https://github.com/freeKC/Immuch360/issues) 回報呢兩款頭戴裝置嘅情況。
-
-點樣用就睇[喺 Meta Quest 3 頭戴裝置入面](#in-the-meta-quest-3-headset)；呢一節講安裝，同埋喺頭戴裝置上面有咩唔同。
-
-按 Horizon Store 嘅要求，頭戴裝置建置只會經 HTTPS 同伺服器通訊，或者經普通 HTTP 連去家居網絡嘅名稱（`.local`、`.lan`、`.home`、`.internal`、`.home.arpa`）同頭戴裝置本身。用 IP 寫成普通 HTTP 地址嘅伺服器，例如 `http://192.168.1.10:2283`，會俾呢個建置拒絕：請用 HTTPS、家居網絡名稱（`nas.local`），或者通用嘅 `-release.apk`，佢保留咗電話版嘅開放政策。
-
-本地網絡普通 HTTP 地址上面嘅 WebDAV、DLNA 同電話共享唔受影響：App 會自己讀取佢哋，只會將本地橋嘅地址交畀播放器（DLNA 同電話共享係建置 19 新加嘅，仲要喺頭戴裝置上面確認）。由建置 20 開始，Plex 伺服器係經 HTTPS 連接，Tapo 鏡頭就由 App 自己連接，佢嘅直播畫面經 RTSP 傳送，而 RTSP 唔係 HTTP：兩樣都應該唔受影響（要喺頭戴裝置上面確認）。
-
-<a id="install"></a>
-### 安裝
-
-Immuch360 由 2026 年 10 月 7 日起連同建置 14 喺 [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 上架，而建置 21 做佢嘅第一次更新，等緊 Meta 審批。想喺商店有之前攞到新建置，請側載某個發佈版本嘅 `-quest-release.apk` 檔案（專為頭戴裝置建置：64 位元、target SDK 34、只有頭戴裝置用到嘅權限），或者通用嘅 `-release.apk`：
-
-1. 先開一次開發人員模式。喺 Meta Horizon 手機 App 入面，打開 Devices（裝置），揀個頭戴裝置，再揀 Headset settings（頭戴裝置設定），然後揀 Developer mode（開發人員模式）。呢個要用開發人員帳戶，可以喺 developers.meta.com 免費開。電腦仲要有 adb（Android SDK Platform Tools），或者用 SideQuest。
-2. 用 USB-C 線將頭戴裝置連去電腦。喺頭戴裝置入面接受「Allow USB debugging」（允許 USB 偵錯）。
-3. 安裝 APK：
-
-   ```bash
-   adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
-   ```
-
-4. 喺頭戴裝置入面打開 Library（媒體庫），揀「Unknown sources」（不明來源）篩選，再啟動 Immuch360。
-5. 側載嘅 APK 唔會自己更新：用同樣方法安裝下一個發佈版本（`adb install -r` 會保留登入同設定）。Horizon Store 版本同 GitHub APK 用唔同嘅金鑰簽署，所以頭戴裝置唔會用其中一個蓋過另一個：想轉，就要先解除安裝個 App，咁會冇咗登入、設定同網絡共享清單。
-
-### 喺視窗入面
-
-成個 App 會以一個可以調整大小嘅 2D 視窗運行：登入、時間線、相簿、搜尋、「媒體庫」分頁（360° 清單、「喺呢部裝置度」、「網絡共享」）、設定，仲有相片同影片查閱器，平面相片同影片就喺度播。
-
-喺頭戴裝置上面，360° 掣同 ⋮ 選單入面嘅「以 360° 睇」會直接打開沉浸式檢視，唔會打開電話嗰種球面查閱器，而 Spatial 2.5D 掣同佢嘅設定唔會顯示。
-
-由建置 19 開始，Apple 空間相片有個「用 3D 睇」掣，而「喺網絡上分享呢部電話」嗰格唔會顯示：頭戴裝置係負責讀電話共享嗰一方。由建置 20 開始，Plex 伺服器同 Tapo 鏡頭都會喺視窗入面打開，鏡頭直播畫面係高清；「遙控器版面」設定保持「自動」，喺頭戴裝置上面即係熄咗。
-
-### 圖片
-
-截圖喺 Quest 3 頭戴裝置入面用截圖掣（Meta 掣加扳機鍵）影，App 用緊法文；「媒體庫」分頁係喺冇伺服器模式下顯示。
+同一個 Android app 會喺 Android TV 同 Google TV 上面運作，淨係用遙控器操作：方向鍵移動焦點，OK 打開，返回鍵返去上一頁，方向鍵仲可以喺 360° 相片或者影片入面周圍望。電視本身冇相片，所以會顯示你嘅 Immich 伺服器、網絡共享、Plex 伺服器同相機。喺 Windows 電腦上面，Immuch360 Desktop 完全唔使伺服器，直接讀取你揀嘅資料夾，用自己嘅播放器播放平面同 360° 影片，瀏覽同一啲共享同伺服器，仲可以喺屋企將電腦分享畀頭戴裝置用。
 
 <p align="center">
-  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="冇伺服器時嘅媒體庫分頁：喺呢部裝置度同網絡共享">
-  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="網絡共享頁面，有一個 Freebox Server 嘅 SMB 共享">
+  <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Google TV 上面嘅球體檢視器：一張湖邊嘅 360° 全景相，左上角有關閉按鈕，右上角有縮小、放大、360° 同 3D 按鈕，用遙控器嘅方向鍵轉動畫面">
+  <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Windows 上面 Immuch360 Desktop 嘅影片播放器：視窗入面播住一條街景影片，有暫停按鈕、時間軸、分享同「上傳去 Immich」">
 </p>
 
-- **冇伺服器**：冇伺服器模式下嘅「媒體庫」分頁，有頭戴裝置自己嘅媒體同網絡共享。
-- **網絡共享**：Freebox Server 嘅 Samba 共享，由頭戴裝置即時讀取。
+1. 喺電視上面：用 adb 安裝 APK（詳見[安裝](#android-tv-and-google-tv)），登入或者揀「唔連伺服器使用」，再喺「媒體庫」入面加一個共享、Plex 伺服器或者相機。
+2. 喺 Windows 電腦上面：解壓預覽版再開啟 `immuch360.exe`（詳見[安裝](#windows)），然後揀你嘅相片影片資料夾，或者登入你嘅伺服器。
+3. 喺檢視器入面，遙控器嘅播放、暫停、倒轉、快進、上一個同下一個按鍵都用得到，電腦嘅鍵盤鍵一樣得（空白鍵、J 同 L、F 全螢幕）。
 
-### 頭戴裝置上面嘅限制
+更多資訊：[喺你嘅電視上面睇](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv)、[喺 Windows 電腦上面](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview)、[平台支援](../docs/immuch360/platform-support.md)。
 
-- **影片編解碼器**：HEVC（H.265）係穩陣嘅選擇；H.264 去到大約 4096x2304 就頂唔順。App 檢查啲乜，同埋點樣畀頭戴裝置一段佢解碼到嘅影片，請睇[影片詳情同解碼器](#video-details-decoders-and-why-a-video-stutters)。
-- **商店**：商店版本由建置 14 開始。標明「由建置 15 開始」同之後嘅功能會跟建置 21，即係佢嘅第一次更新，喺 Meta 審批完之後推出（商店畀測試人員用嘅 alpha 測試頻道會收到每個新建置）；GitHub APK 而家已經全部都有。
-- **權限**：頭戴裝置建置只會要相片同影片（冇伺服器模式）同通知（備份進度）權限。佢冇儲存空間、音訊、位置或者相機權限，同電話建置唔同；所以頭戴裝置上面用唔到按 Wi-Fi 名稱切換伺服器。
-- **APK 大小**：Spatial SDK 會加大約 56 MB 嘅 64 位元 ARM 原生程式碼，電話版都有，雖然電話永遠唔會載入佢。
-- **授權**：沉浸式檢視用咗 Meta Spatial SDK，按 Meta Platform Technologies SDK License Agreement 發佈。
+<a id="cameras-plex-and-raw-camera-files"></a>
+### 相機、Plex 同原始相機檔案
 
-<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
-## 喺 Windows 電腦上面：Immuch360 Desktop（預覽版）
+- **Tapo 相機**：相機會同網絡共享一齊加入。App 可以直播畫面（Android、Android TV、Quest 同 Windows），仲可以喺每個平台逐日列出記憶卡入面嘅錄影；揀一段片段會由相機攞返嚟，好似任何影片噉播放，仲可以送去 Immich。App 淨係會同你網絡上嘅相機講數，永遠唔會連去 TP-Link 嘅伺服器。
+- **Plex Media Server，唔使 plex.tv**：app 會直接同你嘅伺服器配對，只需貼一次 token，就可以即時讀取你媒體庫嘅原始檔案，所以 360° 永遠都係 360°：喺屋企用得到，出門在外透過你嘅連接埠轉送一樣用得到。
+- **原始 360° 相機檔案**：Insta360 相機嘅原始 .insp 相片同 .insv 影片（一個鏡頭或者兩個鏡頭，可能係一個軌道、兩個軌道或者兩個檔案）、GoPro MAX 嘅 .360 檔案，同埋 DJI Osmo 360 嘅 .osv 檔案，都會喺播放嗰陣由 app 自動拼接，用檔案入面寫住嘅校正資料，乜都唔使裝。
 
-你嘅 Immich 媒體庫喺伺服器上面，其他相片同影片放喺部電腦嘅資料夾入面，仲有更多影片喺 NAS 或者 Plex 伺服器度，而你想喺大螢幕上面四圍睇你嘅 360° 相片同播你嘅影片，或者喺頭戴裝置入面睇部電腦嘅相。Immuch360 Desktop 就係 Windows 電腦上面嘅同一個 App，同電話 App 用同一套原始碼建置。
+更多資訊：[Tapo 相機](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)、[Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv)、[原始 360° 相機檔案](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app)。
 
-喺電腦上面，Immich 提供嘅係瀏覽器入面嘅網頁 App。**Immuch360 Desktop 多咗乜嘢**：唔使任何伺服器或者帳戶就用到部電腦嘅資料夾，喺 App 入面瀏覽同播放 SMB、WebDAV、DLNA 同 Plex 共享，Insta360 原始 .insp 相片以球面打開，仲有喺屋企將部電腦分享俾 Meta Quest。
+<a id="devices-and-systems"></a>
+## 裝置同系統
 
-呢個係預覽版：相片同平面影片由桌面建置 2 開始用得，由桌面建置 3 開始仲有 360° 影片播放器（360°、3D、VR180 同原始 360° 影片）同 Tapo 鏡頭嘅直播畫面；下面要用建置 3 嘅步驟會講明。由 2026 年 10 月 9 日開始，桌面版嘅原始碼已經喺呢個分支嘅主分支 `immuch360` 入面，所以電話、頭戴裝置、電視同電腦都由同一套原始碼推出。電話、平板、Quest 同電視 App 唔會因此改變，繼續叫 Immuch360。
+一個程式碼庫，六個環境。下面係每一個環境目前擁有嘅功能：
 
-<a id="download-and-install-on-windows"></a>
-### 喺 Windows 下載同安裝
+| 功能 | Android | iPhone、iPad | TV | Quest | Windows | macOS、Linux |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| 圖庫、相簿、搜尋，連接 Immich 伺服器 | ✅ | ✅ | ✅ 檢視器 | ✅ | ✅ | 🔧 |
+| 唔使伺服器：裝置本身嘅媒體 | ✅ | ✅ | 淨係共享 | ✅ | ✅ 資料夾 | 🔧 |
+| 平面相片同影片 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| 360° 相片，以球體顯示 | ✅ | ✅ | ✅ | ✅ 沉浸式 | ✅ | 🔧 |
+| 360° 影片 | ✅ | ✅ 冇時間軸 | ✅ | ✅ 沉浸式 | ✅ | 🔧 |
+| 3D 同 VR180 | ✅ 一邊眼 | ✅ 一邊眼 | ✅ 一邊眼 | ✅ 真 3D | ✅ 一邊眼 | 🔧 |
+| 空間 2.5D（頭部追蹤） | ✅ 實驗性 | ✅ 實驗性 | ❌ | ❌ | 🔜 | ❌ |
+| Apple 空間相片 | ✅ 一邊眼 | ✅ 一邊眼 | ✅ 一邊眼 | ✅ 3D | ✅ 一邊眼 | 🔧 |
+| Insta360、GoPro 同 DJI 嘅原始檔案 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| SMB、WebDAV、DLNA 共享 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| Tapo 相機：錄影 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| Tapo 相機：直播畫面 | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
+| 將呢部裝置分享喺網絡上 | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
+| 由共享同裝置上傳去 Immich | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
+| 輸入方式 | 觸控、陀螺儀 | 觸控、陀螺儀 | 遙控器 | 控制器、手勢 | 滑鼠、鍵盤 | |
+| 去邊攞 | Google Play、APK | App Store（審核中） | APK、Google Play（審核中） | Horizon Store、APK | 預覽版 ZIP | 淨係有 CI build |
 
-目前嘅建置係 GitHub 預發佈版本 [Immuch360 Desktop 3.3.0-rc.0, desktop build 4 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)。檔案係 `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`（大約 58 MB，解壓之後 173 個檔案，包括影片播放器同佢嘅 `licenses` 資料夾），仲有用嚟核對嘅 `SHA256SUMS.txt`。佢由主分支 `immuch360` 建置，commit 喺佢嘅發佈說明度有寫：基於 2026 年 10 月 10 日 Immich 嘅電話建置 22 嘅原始碼加埋電腦版本。由桌面建置 4 開始，影片播放器嘅程式庫 `libmpv-2.dll` 係項目自己 2026 年嘅建置，原始碼同佢一齊公開；佢將每條軌道或者每個檔案一個鏡頭咁儲存嘅原始影片嘅兩個鏡頭並排，等顯示晶片唔使將每一格畫面複製返出嚟都可以畫出 360° 畫面。要用 64 位元嘅 Windows 10 或者 11。
+✅ 代表喺嗰個平台嘅 app 入面有 · ❌ 代表嗰度未提供 · 🔜 代表計劃中 · 🔧 代表已經喺原始碼入面，由專案嘅 CI 建置，但仲未喺嗰個系統上開跑。「一邊眼」即係話一個 3D 檔案淨係會喺平面螢幕上面顯示左眼嗰邊嘅畫面。唔係每一個 ✅ 都已經喺真實裝置上面測試過：邊個做過咩測試，仲有啲乜嘢要確認，都寫喺[功能](../docs/immuch360/features.md)、[平台支援](../docs/immuch360/platform-support.md)同[相容性](../docs/immuch360/compatibility.md)入面。
 
-1. 下載個 ZIP，解壓去任何地方，例如「文件」。要換走桌面建置 2，就刪除佢個資料夾或者解壓去一個新資料夾：你嘅登入、你嘅資料夾同你嘅設定都喺你嘅 Windows 使用者設定檔入面，唔係喺嗰個資料夾。
-2. 喺解壓咗嘅資料夾度啟動 `immuch360.exe`。成個資料夾要保持完整：程式要用到佢旁邊嘅檔案，當中包括影片播放器 `libmpv-2.dll`，同埋讀取顯示晶片解碼器嘅 `immuch_desktop_video.dll`。
-3. 啲檔案暫時未簽署，所以 Windows SmartScreen 可能會顯示「Windows 已保護您的電腦」：揀「其他資訊」，再揀「仍要執行」。如果開咗智慧型應用程式控制，佢會封鎖未簽署嘅程式。
-4. 等個視窗出嚟。新建置第一次啟動要 10 秒到大約一分鐘，好大機會係 Microsoft Defender 掃緊啲新檔案：呢段時間唔好再啟動多次個 App。之後啟動只係要一兩秒。
-5. 喺登入頁，用伺服器地址、你嘅電郵同密碼登入你嘅 Immich 伺服器，或者撳「唔連伺服器使用」。
+- **Android 電話同平板**：完整嘅 app，支援觸控同陀螺儀，所有來源都得。
+- **iPhone 同 iPad**：完整嘅 app；360° 影片播放器暫時淨係得播放同暫停，Tapo 直播畫面遲啲先有，DLNA 搜尋會發送單播請求，直到 Apple 批准多播權限為止。
+- **Android TV 同 Google TV**：同一個 APK，用遙控器操作；屬於檢視器模式：備份、上傳同編輯都隱藏咗。已經喺 Google TV 模擬器上面測試過（登入、時間軸、檢視器、共享、遙控導航），但仲未喺真實電視上面測試。
+- **Meta Quest 2、Pro、3 同 3S**：app 以視窗形式運作，仲有沉浸式畫面；HEVC 係最穩陣嘅編碼格式，H.264 喺 Quest 3 上面大約 4096x2304 就頂唔住；Quest 2 同 Quest Pro 仲未測試過。
+- **Windows 10 同 11**：一個預覽版，用資料夾代替相簿，有自己嘅影片播放器（libmpv）播放平面同 360° 影片，原始檔案由顯示卡拼接，暫時都仲未有安裝程式。
+- **macOS 同 Linux**：呢兩個專案都會喺專案嘅 CI 上面建置（Linux 已建置，macOS 已編譯）；app 仲未喺嗰啲系統上面開跑，佢哋嘅影片播放器程式庫都仲未加入。
 
-要核對個 ZIP，就喺下載咗嘅資料夾度開命令提示字元，執行 `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256`：結果會同 `SHA256SUMS.txt` 入面寫嘅一樣。暫時未有安裝程式，亦都未有自動更新：留意 [Releases](https://github.com/freeKC/Immuch360/releases) 頁面，下一個建置都係咁樣解壓。
+<a id="advanced-features"></a>
+## 進階功能
 
-### 預覽版做到乜嘢
+呢個 app 可以讀取同播放嘅所有東西，畀想知道完整範圍嘅讀者。每一行嘅詳情都喺[使用指南](../docs/immuch360/user-guide.md)同[相容性頁面](../docs/immuch360/compatibility.md)入面。
 
-- **你嘅 Immich 伺服器**：時間線、相簿、人物、回憶同搜尋，仲有原尺寸嘅伺服器相片，同電話上面一樣。
-- **唔連伺服器**：你嘅相片同影片資料夾（建議用「圖片」同「影片」）代替電話嘅相簿。你揀咗嘅資料夾以外乜嘢都唔會讀，唔連伺服器嗰陣乜嘢都唔會離開部電腦。
-- **上載同備份**：App 開住嘅時候，由呢啲資料夾上載去你嘅 Immich 伺服器。
-- **以球面睇 360° 相片**，用滑鼠同鍵盤；Insta360 相機嘅原始 .insp 相片好似喺電話上面咁打開。
-- **平面影片**（由桌面建置 2 開始）：你啲資料夾、你嘅 Immich 伺服器（原始檔或者轉碼串流，睇[影片詳細資料同解碼器](#video-details-decoders-and-why-a-video-stutters)）、SMB、WebDAV 同 DLNA 共享、Plex 伺服器嘅影片同 Tapo 錄影都喺視窗入面播，有電話一樣嘅控制項（播放、暫停、時間軸）、緩衝指示，有幾條音軌嘅影片仲有音軌選單。你啲資料夾同共享嘅影片會用影片其中一格做縮圖，唔再係菲林圖示。
-- **360°、3D 同 VR180 影片**（由桌面建置 3 開始）：360° 掣會喺 App 嘅 360° 播放器入面打開佢哋，喺視窗或者全螢幕都得，來源同平面影片一樣；用滑鼠同鍵盤轉，有同電話一樣嘅 3D 同 360°/180° 掣（3D 影片顯示左眼，同電話一樣）、跳時間、音軌選單同緩衝指示。
-- **原始 360° 影片**（由桌面建置 3 開始）：Insta360 .insv 檔案，兩個鏡頭喺一條軌道、兩條軌道（X4 同之後嘅型號）或者兩個檔案（X3 一對檔案），仲有 GoPro .360 同 DJI .osv 檔案，App 會喺播放嗰陣用顯示晶片按檔案嘅校準資料拼接，同電話一樣。
-- **網絡共享**：Samba (SMB)、WebDAV 同 DLNA 媒體伺服器，仲有唔使 plex.tv 嘅 Plex 伺服器，瀏覽方法同電話一樣：入面嘅相片打開到，影片播到。Tapo 鏡頭方面，有記憶卡錄影：清單、攞一段片段同播佢；由桌面建置 3 開始仲有直播畫面。
-- **喺網絡上分享呢部電腦**：你啲資料夾嘅相簿、月份同 360° 媒體，唯讀，俾屋企嘅 Meta Quest 或者其他裝置用，好似電話分享自己咁。
-- **檔案**：由伺服器下載嘅嘢會放去你揀嘅資料夾，「儲存去資料夾」會保留所揀相片同影片嘅副本，「紀錄」頁面有「將紀錄儲存做檔案」。
+- **格式**：平面相片同影片（裝置解碼得到嘅格式：MP4、MOV、MKV 等等）；等距矩形 360° 相片同影片；局部全景（GPano 裁剪）；VR180；立體 3D，上下或者左右排列，可以由檔案本身讀取（st3d box）或者由畫面猜測；Apple 空間相片（HEIC 立體對）同空間影片（MV-HEVC，一邊眼）；原始 Insta360 .insp 同 .insv、GoPro .360、DJI .osv；10 bit HLG 同 PQ 來源會喺球體上面做色調映射。
+- **投影同元數據**：由檔案讀取 GPano 同球體元數據，喺伺服器或者共享上面用範圍請求；相機記錄嘅初始視角；裝置會記住「以 360° 睇」呢個設定；VR180 可以由檔案或者檔案名識別出嚟；因為播放嘅係原始檔案而唔係轉換過嘅複本，所以元數據保持完整。
+- **原生播放**：Android 同電視用 Media3，iOS 用 SceneKit 同 AVFoundation，頭戴裝置用 Meta Spatial SDK，Windows 用 libmpv；會根據裝置解碼能力自動揀原始檔案或者轉碼串流；「設定」、「進階」入面有裝置影片解碼器嘅清單；仲有音軌選擇同緩衝指示器。
+- **喺裝置上拼接原始檔案**：相片用 Flutter 嘅片段著色器；單軌影片用播放器入面嘅 GPU 效果；一鏡頭一軌道或者一鏡頭一檔案嘅影片就同時用兩個硬件解碼器加一個 GPU 合成器（Android 同 Quest 用 OpenGL ES 3，iOS 用 Metal，Windows 用 libmpv 嘅 filter graph）；相機本身嘅校正資料（Mei、V6 同等距模型）同加速度記錄；如果裝置跑唔到兩個解碼器，就會降級用單鏡頭、轉碼串流、相機嘅 LRV 複本或者未拼接嘅影片。
+- **來源**：裝置本身嘅圖庫；電腦嘅資料夾；Immich 伺服器；SMB 2 同 3、WebDAV、DLNA/UPnP；透過 HTTPS 連接 Plex，並對住伺服器本身嘅憑證做檢查；本地網絡上嘅 Tapo 相機（HTTPS 同 RTSP）；用 Wi-Fi 將電話或者電腦分享做 WebDAV 伺服器；透過 Bonjour/mDNS、本地網絡掃描、SSDP、GDM 同 TP-Link discovery 搵到嘅伺服器，佢哋轉咗位址都照樣追蹤得到。
+- **按需讀取**：一個本地橋接用位元組範圍同埋每個 session 嘅 token 服務播放器；大區塊讀取、預讀，同最多六條 SMB 連線並行；縮圖由每條影片擷取一個畫面；乜都唔會複製去裝置。
+- **硬件**：有硬件解碼器嘅話就一定用，仲有實測嘅上限（Quest 3 嘅 H.264 上限、軟件解碼器最多兩個 2048x2048 鏡頭）；Windows 上面嘅 360° 畫面由顯示卡根據每一個解碼畫面繪製，每部電腦嘅畫面大小都會實測，仲會偵測係內顯定係獨顯。
+- **各平台特性**：電話上有陀螺儀同空間 2.5D 播放器；Quest 上有沉浸式畫面、控制器同手勢；Android TV 上有遙控器版面、鍵盤對話框同電視橫額；電腦上有滑鼠鍵盤、全螢幕、單一視窗、用程式打開或者拖放檔案，如果 Windows 有相應解碼器，仲可以讀取資料夾入面嘅 HEIC、AVIF、TIFF 同相機 raw 相片，密碼同 token 就用 Windows 嘅資料保護功能。
+- **設計上保障私隱**：冇帳戶、冇雲端、冇分析追蹤；密碼同 token 存喺裝置嘅安全儲存入面；空間播放器嘅相機淨係喺裝置本身使用；共享、Plex 同相機都淨係透過你嘅網絡連接。
 
-### 喺電腦上面用
+<a id="technical-documentation"></a>
+## 技術文件
 
-1. **揀你嘅資料夾。** 唔連伺服器嗰陣，時間線一開始係「揀你啲相片同影片嘅資料夾」：撳「加資料夾」。連住伺服器嗰陣，未揀資料夾之前，同一張卡會喺「媒體庫」嘅「喺呢部電腦度」下面，同埋要備份嘅相簿入面出現。之後佢哋會有一行「呢部電腦上面嘅資料夾」，「設定」嘅「呢部電腦」都有。
-2. **雲端、USB 同網絡資料夾。** OneDrive（或者其他雲端硬碟）淨係放喺網上嘅檔案會計數但唔會讀，所以加資料夾唔會下載晒你成個雲端：「下載並加入」會喺你想要嗰陣攞返嚟。用另一個磁碟機代號接返嘅 USB 磁碟機會保留佢嘅相片。網絡資料夾，同埋記憶卡或者 USB 磁碟機上面嘅資料夾（等 Windows 仍然可以退出佢），唔會監察變動：喺嗰度加咗檔案之後請用「重新整理」。
-3. **喺 360° 相片入面四圍睇**：用滑鼠拖，用滾輪、雙擊或者 + 同 - 縮放（任何鍵盤配置都得，包括 AZERTY），用方向鍵移動。F 或者 F11 切換全螢幕，Escape 離開；Home 同 End 跳去第一張同最後一張相；I 顯示詳細資料。
-4. **一張張相咁睇**：喺平面相片入面，左右方向鍵，或者滑鼠郁嗰陣喺兩邊出現嘅箭嘴，會去上一張同下一張。喺描述欄打嘅字母會留喺文字入面。
-5. **播影片**：由時間線、資料夾、共享、Plex 或者 Tapo 鏡頭嘅錄影打開；佢會喺視窗入面播。Enter，或者鍵盤嘅播放暫停鍵，會暫停同再播。播緊嗰陣，左右方向鍵，或者 J 同 L，會向後或者向前跳 10 秒；暫停咗嗰陣，方向鍵會去上一個同下一個。F 或者 F11 切換全螢幕，同相片一樣。「音軌」掣用嚟喺有幾條音軌嘅影片入面揀音軌。
-6. **影片停咗嗰陣**：暫停咗嘅影片喺你返去個視窗嗰陣會保持暫停。未播完就斷咗嘅影片，例如共享或者伺服器冇回應嗰陣，會話俾你知：再打開佢，就會由停咗嘅位置繼續，保持暫停。喺資料夾或者共享入面搵到嘅播放清單檔案唔會跟住去。
-7. **播 360° 影片**（由桌面建置 3 開始）：打開影片，撳頂欄嘅 360°，同電話一樣；如果係伺服器冇標記嘅 360° 檔案，就先喺 ⋮ 選單揀「以 360° 睇」，睇[顯示成平面嘅 360° 檔案](#a-360-file-that-shows-flat-view-as-360)。360° 播放器會喺視窗入面打開。用滑鼠拖嚟四圍睇（快快手拖完之後視角仲會再轉少少），用滾輪、+ 同 - 或者 Page Up 同 Page Down 縮放，㩒住方向鍵就會轉。Space 或者鍵盤嘅播放暫停鍵會暫停同再播；J 同 L 向後或者向前跳 10 秒；Home 返去開頭；M 熄聲同開聲。F、F11 或者撳兩下入全螢幕；Escape 離開全螢幕，然後關閉播放器。控制項（上面係關閉、標題、360°/180°、3D、音軌同全螢幕；下面係播放、向後同向前 10 秒、時間列同聲音）播咗 3 秒之後會同滑鼠游標一齊收埋，郁滑鼠或者撳任何鍵就會再出現；Tab 會由一個跳去下一個。
-8. **3D 同 VR180**：喺 360° 播放器入面，3D 掣會喺「平面 (唔係 3D)」、「3D，上下」同「3D，左右」之間切換，360°/180° 掣會喺成個球面同 VR180 嘅半球面之間切換，同[3D 同 VR180](#3d-and-vr180-photos-and-videos)入面一樣。3D 影片顯示左眼。
-9. **原始 360° 影片**（由桌面建置 3 開始）：打開原始檔案，撳 360°，同電話一樣，睇[360° 相機 RAW 檔案](#raw-360-camera-files-without-the-cameras-app)；X3 一對檔案嘅兩個檔案要放埋一齊。兩個鏡頭喺一條軌道嘅檔案會喺播放嗰陣拼接。每條軌道或者每個檔案一個鏡頭嘅檔案，部電腦跟得上嘅話，會喺同一個播放器入面並排播兩個鏡頭：呢類影片頭幾秒會量度，結果會留俾之後同類嘅影片（量到太慢嘅方法會喺 14 日之後再試）。部電腦跟唔上嘅話，播放器會行電話嘅步驟，用返佢哋嘅訊息：單鏡頭，球面一半係黑色；伺服器嘅轉碼串流；相機喺檔案旁邊錄低嘅低解像度 LRV 副本（如果有）；未拼接嘅影片。原始影片冇 3D 同 360°/180° 掣。
-10. **Tapo 鏡頭嘅直播畫面**（由桌面建置 3 開始）：好似電話咁打開個鏡頭，睇[睇直播](#watch-it-live)。頁面播標清串流，全螢幕播高清串流，畫面上面有同電話一樣嘅掣：聲音（一開始係熄咗嘅）、「標清」或者「高清」，同埋「全螢幕」。斷咗嘅串流（鏡頭重新啟動、Wi-Fi 斷線）會自己返嚟，大約一分半鐘之內不斷重試，期間最後一格畫面會留喺螢幕上面。鏡頭唔接受嘅鏡頭帳戶會講出嚟，唔會再試，因為登入失敗會計入鏡頭嘅鎖定次數。
-11. **將部電腦分享俾頭戴裝置**：打開「媒體庫」，再打開「網絡共享」；第一格係「喺網絡上分享呢部電腦」，即係[喺網絡上分享呢部電話](#share-this-phone-on-the-network)嘅電腦版。開啟「喺網絡上分享相片同影片」，然後照嗰個章節講嘅方法喺頭戴裝置度加部電腦。App 關咗或者一個鐘冇用之後，分享會停。
-12. **允許網絡存取**：Windows 可能會問准唔准 Immuch360 Desktop 用網絡。喺私人網絡上面要允許，否則頭戴裝置搵唔到部電腦。喺 Windows 標記做公用嘅網絡（咖啡店、酒店），或者佢分唔到類型嘅網絡，除非你揀「只喺今次工作階段分享」，否則分享唔會開始；部電腦亦都只會喺佢分享緊嘅網絡上面公佈自己。
-13. **「設定」嘅「呢部電腦」**：資料夾、下載資料夾、用嚟搵共享同分享部電腦嘅網絡介面卡（有幾張嗰陣，例如 Wi-Fi 同乙太網絡），仲有信任嘅憑證：你自己伺服器嘅憑證機構，以 PEM 檔案提供，用喺 Windows 自己唔信任嘅 HTTPS 地址。用戶端憑證喺「設定」、「進階」度匯入，同電話一樣。
+- [功能：完整清單同各平台功能對照表](../docs/immuch360/features.md)
+- [使用指南：每一個功能嘅逐步教學，連埋選項同訊息](../docs/immuch360/user-guide.md)
+- [相容性：格式、編碼、解碼器、測試過嘅伺服器同裝置、限制](../docs/immuch360/compatibility.md)
+- [平台支援：每個系統有乜嘢、點樣安裝、有乜唔同](../docs/immuch360/platform-support.md)
+- [已知問題](../docs/immuch360/known-issues.md)同[疑難排解](../docs/immuch360/troubleshooting.md)，仲有報告問題時要附上嘅日誌
+- [技術詳情：架構、Flutter 同原生模組、媒體橋接、拼接流程、解碼器](../docs/immuch360/technical-details.md)
+- [桌面版 360° 影片渲染器：libmpv、投影處理同背後嘅測量數據](../docs/immuch360/desktop-360-video-renderer.md)
+- [發布狀態：build、商店同每個商店有乜嘢](../docs/immuch360/release-status.md)
+- [自己編譯：電話、頭戴裝置、電視同電腦](../docs/immuch360/build.md)
 
-<a id="360-videos-and-the-graphics-chip"></a>
-### 360° 影片同顯示晶片
+<a id="install"></a>
+## 安裝
 
-喺 360° 播放器入面（由桌面建置 3 開始），顯示晶片會由影片每一格畫面繪製你睇緊嘅視角。影片外掛程式叫 libmpv 將每一格畫面繪製成揀咗嘅尺寸嘅影像，然後 App 自己嘅繪製程序再由佢繪製出你睇緊嘅嗰部分球面。轉視角改變嘅係呢個繪製程序嘅一個數值，唔係播放器：拖動唔使用記憶體，暫停咗嘅影片轉嘅時候亦都唔使解碼任何嘢。
+### Android 電話同平板
 
-App 會量度每個 360° 影片頭幾秒，再揀晶片處理幾大嘅畫格：喺獨立晶片上面係成個畫格，喺內建喺處理器嘅晶片上面闊度最多 2880 像素（Windows 會話俾 App 知晶片屬於邊類，所以 Core Ultra 手提電腦嘅 Intel Arc 晶片當係內建晶片），晶片跟唔上就再細一級。量度結果會留俾之後同類嘅影片（編解碼器、尺寸、畫格速率同解碼器），唔係每個影片都留。
+1. 去[Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)，或者去[Releases](https://github.com/freeKC/Immuch360/releases) 頁面攞 APK：手機用 `Immuch360-v<version>-arm64-v8a-release.apk`；通用版 `Immuch360-v<version>-release.apk` 就乜裝置都用得到。
+2. 呢個 app 可以同官方 Immich app 一齊裝喺裝置上面。由 GitHub 嗰個 APK 唔會自動更新：記住留意 Releases 頁面；一旦你由某個商店安裝咗呢個 app，之後就跟返嗰個商店嘅更新。
 
-就算最細一級都唔流暢，播放器會顯示「呢張顯示卡冇辦法流暢顯示呢段影片嘅 360° 視角」；差得太遠，或者晶片完全繪製唔到視角（冇 OpenGL ES 3.0，或者驅動程式唔接受），影片會以平面播放，播放器會講原因。以平面播過嘅影片下次唔會直接以平面播：同類嘅下一段影片會重新量度。
+### iPhone 同 iPad
 
-如果跟唔上嘅唔係繪製，而係伺服器影片嘅解碼（由處理器解碼嘅影片，例如 5.7K H.264），播放器會由而家嘅位置轉去伺服器嘅轉碼串流，用同電話一樣嘅訊息：「播緊轉碼串流：原檔（編解碼器同尺寸）超出咗呢部裝置嘅解碼能力」。
+1. App Store 版本仲等緊 Apple 審核。喺未發布之前，可以喺 Mac 上面用 Xcode 自己編譯，詳見[自己編譯](../docs/immuch360/build.md)。
+2. 用你嘅 Immich 伺服器登入，或者㩒「唔連伺服器使用」。
 
-- **用手提電腦嘅獨立顯示晶片。** 除非另外指定，Windows 會用內建晶片行個 App。喺 Windows 設定嘅「系統」、「顯示器」、「圖形」度加入 `immuch360.exe`，揀「高效能」，然後重新啟動個 App。喺測試用嘅手提電腦上面（一粒 Intel UHD 晶片同一粒 NVIDIA RTX 4060 Laptop），NVIDIA 晶片喺視角轉緊嘅時候以全尺寸、每秒 30 格繪製 4K、5.7K 同 8K 嘅 360° 影片。Intel 晶片繪製佢哋嗰陣闊度最多 2880 像素：用 2026 年建置嘅 libmpv，4K H.264 同 8K HEVC 影片大約每秒 30 格；用 media-kit 嘅 2024 年 libmpv，4K 影片每秒 23 至 27 格（睇[暫時未有](#not-there-yet)）；由處理器解碼嘅 5.7K H.264 影片大約每秒 20 格：如果嚟自伺服器，播放器就會轉去轉碼串流；冇轉碼串流嘅影片（例如嚟自資料夾）會繼續播，同時顯示「呢張顯示卡冇辦法流暢顯示呢段影片嘅 360° 視角」。
-- **自己揀轉譯器。** 喺「設定」、「進階」度開啟「疑難排解」：會出現「360° 影片轉譯器」選項，預設係「自動」。佢仲提供「外掛程式，全尺寸」、「外掛程式，闊度最多 4096」、「外掛程式，闊度最多 2880」同「平面，唔用 360° 視角」，用喺你打開嘅下一段 360° 影片。下面嘅「最近一次量度」會講出上一段 360° 影片繪製嘅尺寸、每秒畫格數、顯示晶片同解碼器：將佢複製入錯誤報告。再揀一次「自動」，就算佢本身已經係揀咗，都會清除量度結果，之後嘅 360° 影片會重新量度。
-- **晶片解碼到乜嘢。** 「設定」、「進階」、「呢部裝置嘅影片解碼器」會按 Direct3D 11 嘅報告列出而家用緊嘅顯示晶片解碼到乜嘢，App 仲會用播放時量度到嘅結果修正呢份清單：「影片來源」設定同原始影片嘅雙鏡頭檢查都會跟佢。闊過 4096 像素嘅 H.264（360° 相機嘅 5.7K）由處理器解碼，因為測試用手提電腦兩粒晶片都唔支援。
+<a id="android-tv-and-google-tv"></a>
+### Android TV 同 Google TV
 
-**畀開發人員。** 360° 播放器用自己嘅轉譯器繪製，建基於 libmpv 同一個修補過嘅 media_kit_video 外掛程式：mpv 將每格畫面繪製到顯示晶片上面嘅一個紋理，再由一個 OpenGL ES 3.0 繪製程序將視角繪製到 Flutter 顯示嘅紋理，唔使經處理器複製。點解噉樣做、點樣運作、量度咗乜嘢同埋可以調校啲乜：[桌面版 360° 影片轉譯器](../docs/immuch360/desktop-360-video-renderer.md)。
+1. 喺 Google Play 仲未喺電視上提供呢個 app 之前，可以去[Releases](https://github.com/freeKC/Immuch360/releases) 頁面攞通用版 `Immuch360-v<version>-release.apk`。
+2. 喺電視上面開啟開發人員選項同 USB 偵錯（喺 Google TV：設定、系統、關於，揀「Android TV OS build」（Android TV 作業系統版本）七次，然後去設定、系統、開發人員選項；唔同電視嘅名稱會有啲唔同）。
+3. 喺同一個網絡嘅電腦度用 adb（Android SDK Platform Tools）：行 `adb connect <address of the TV>`，喺電視上面接受提示，然後行 `adb install -r Immuch360-v<version>-release.apk`。
+4. 個 App 會帶住佢嘅橫額出現喺電視嘅 App 入面。下一個版本用同樣方法安裝：`-r` 會保留登入同設定。
 
-### 同電話 App 比較
+<a id="meta-quest"></a>
+### Meta Quest
 
-- **備份喺 App 開住嗰陣運行**（或者最小化嗰陣），唔係喺視窗關咗之後喺背景運行。上載緊或者部電腦分享緊嗰陣關視窗，會先問你。
-- **用資料夾代替相簿**：App 讀你揀嘅資料夾，喺部電腦度保留自己嘅索引、縮圖同快取。
-- **一個視窗**：第二次打開 App 會叫返第一個視窗出嚟，而唔係開多一個副本。
-- **你啲資料夾入面乜嘢都唔會刪**：「由裝置刪除」收埋咗，「刪除」淨係移除伺服器上面嘅副本，直至 App 可以將檔案送去 Windows 資源回收筒為止。
-- **滑鼠同鍵盤**代替觸控同陀螺儀。
-- **所有來源用同一個影片播放器**：libmpv 一視同仁咁播伺服器、資料夾、共享同 Plex 嘅影片，佢嘅平面播放器已經有電話平面播放器暫時未有嘅音軌選單。
-- **視窗入面嘅 360° 影片**（由桌面建置 3 開始）：360° 播放器係 App 入面嘅一個頁面，唔係獨立嘅原生播放器，有時間列、10 秒跳躍同聲音掣。每條軌道或者每個檔案一個鏡頭嘅原始影片會喺同一個播放器入面並排，而電話就係行兩個解碼器；電話嘅後備步驟一樣，只係喺未拼接嘅影片之前加咗相機嘅 LRV 副本。
-- **Tapo 直播畫面**（由桌面建置 3 開始）喺電腦上面同 Android 一樣咁播，而 iPhone 同 iPad 暫時未有。
+1. 由[Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 安裝：呢個係商店版本，每次 Meta 審核完一個提交版本就會更新。
+2. 或者喺開發者模式下，用 adb 或者 SideQuest 側載[release](https://github.com/freeKC/Immuch360/releases)入面嘅 `-quest-release.apk` 檔案：`adb install -r Immuch360-v<version>-quest-release.apk`，然後打開頭戴裝置嘅媒體庫，揀「未知來源」。
+3. 商店版本同 GitHub 嗰個 APK 用唔同嘅簽署金鑰：想由一個轉去另一個嘅話，要先卸載 app，噉樣會令登入、設定同網絡共享清單都唔見咗。
 
-<a id="not-there-yet"></a>
-### 暫時未有
+<a id="windows"></a>
+### Windows
 
-- **手提電腦上面嘅雙鏡頭原始影片**：就算用 2026 年嘅 libmpv，測試用手提電腦都淨係喺佢嘅 NVIDIA 晶片上面以每秒 30 格並排播到 X3 一對檔案（兩個 2880x2880 嘅 H.264 檔案）；喺佢嘅 Intel 晶片上面，同埋 X4 檔案（兩條 3840x3840 嘅 HEVC 軌道）喺兩粒晶片上面，影片都只係播一個鏡頭，球面一半係黑色，同行唔到兩個解碼器嘅電話一樣。
-- **3D 只限螢幕**：3D 影片顯示左眼，同電話一樣；電腦上面冇陀螺儀，亦都冇頭戴裝置檢視。想睇真 3D，就將部電腦分享俾 Meta Quest。
-- **Spatial 2.5D**，之後會配合網絡攝影機；**地圖**同「地點」檢視；**用 OAuth 登入**（請改用電郵同密碼登入）；**Google Cast**；**通知**。
-- **安裝程式、已簽署嘅建置同自動更新**：呢個建置係一個有 `immuch360.exe` 嘅資料夾。
-- **Linux 同 macOS**：佢哋嘅項目喺原始碼入面，但係未喺嗰啲系統上面建置或者試過，佢哋嘅影片播放器亦都未放入去；佢哋會喺 Windows 之後推出。
-- **翻譯**：電腦版本嘅新文字暫時只有英文。
+1. 由[桌面版預發布](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) 下載 `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`（大約 58 MB，仲有 `SHA256SUMS.txt` 可以核對），再解壓去任何地方，例如「文件」資料夾。
+2. 由解壓咗嘅資料夾開啟 `immuch360.exe`，記住要保持資料夾完整：程式需要攞埋身邊嘅檔案，其中包括 `libmpv-2.dll`，即係影片播放器。
+3. 呢啲檔案仲未簽署：Windows SmartScreen 可能會顯示「Windows 保護咗你嘅電腦」，揀「更多資訊」，再揀「照樣執行」。新 build 第一次開啟可能要等到一分鐘，因為 Windows 會掃描檔案。
+4. Windows 10 或者 11，64 位元。暫時都仲未有安裝程式，亦冇自動更新：下一個 build 都係用同樣方法解壓就得。
 
-### 已知問題
+### macOS 同 Linux
 
-- **新建置第一次啟動好慢**：視窗出嚟之前要 10 秒到大約一分鐘，好大機會係 Microsoft Defender 掃緊啲未簽署嘅新檔案。請等個視窗出嚟，唔好再啟動多次個 App；之後啟動只係要一兩秒。
-- **8K HEVC 影片要用獨立顯示晶片，360° 影片喺獨立晶片上面亦都行得好啲**：喺測試用嘅手提電腦上面，內建 Intel UHD 晶片只顯示到 8K HEVC 影片大約一半嘅畫格，而獨立 NVIDIA 晶片播 8K HEVC 同 5.7K H.264 一格都冇甩；360° 播放器喺 NVIDIA 晶片上面流暢，喺 Intel 晶片上面慢啲，睇[360° 影片同顯示晶片](#360-videos-and-the-graphics-chip)。除非另外指定，Windows 會用內建晶片行個 App：喺 Windows 設定嘅「系統」、「顯示器」、「圖形」度加入 `immuch360.exe`，再揀「高效能」，然後重新啟動個 App。喺內建晶片上面，佢嘅解碼器唔接受嘅平面 5.7K H.264 影片會由處理器解碼，一格都冇甩。
-- **平面影片最多以 1440 行高度繪製**，然後縮放到視窗大細：喺 4K 螢幕全螢幕睇嗰陣，4K 或者 8K 影片會比專用影片播放器睇落淡少少。咁樣可以令 8K 影片喺手提電腦嘅繪圖效能範圍之內。360° 播放器就會處理成個畫格，或者佢量度揀咗嘅較細尺寸。
-- **你啲資料夾入面嘅影片喺 App 度播緊嗰陣，或者頭戴裝置讀緊分享電腦上面嘅檔案嗰陣**（播緊嘅影片、下載緊嘅相片），Windows 唔可以改名、搬或者刪除嗰個檔案，仲話佢喺 Immuch360 Desktop 度開咗：請先關咗段影片，或者停止頭戴裝置嘅播放。備份唔會咁樣霸住你啲檔案：檔案上載緊嗰陣都可以改名、搬或者刪除。
-- **未夠完善嘅地方**：桌面建置 3 喺 Windows 上面通過咗 863 個桌面測試入面嘅 855 個（8 個係刻意略過）同埋 App 成套測試，一個接一個打開 200 個播放器都冇洩漏，佢嘅發佈 ZIP 啟動到、播到一段測試片段，亦都正常關閉。喺真電腦上面逐個功能人手測試仲進行緊。
-- **360° 播放器同直播畫面用乜嘢檢查過**：360° 播放器喺一部手提電腦嘅兩粒顯示晶片上面用合成嘅 4K、5.7K 同 8K 360° 片段行過（打開、播放、播緊同暫停嗰陣轉、關閉），冇死機，顯示驅動程式亦都冇重設。雙鏡頭原始影片用合成片段同真嘅 X3 同 X4 檔案播過。Tapo 直播畫面用一部好似鏡頭咁登入（Digest）嘅測試 RTSP 伺服器檢查過，仲刻意斷線同拒絕連線，所有紀錄行都冇密碼，不過暫時未用真鏡頭檢查。用真嘅 360° 同 3D 檔案、手提電腦兩個螢幕、休眠同喚醒，同埋真鏡頭嘅人手測試仲未做。
-
-如果有問題，請附上喺「紀錄」頁面儲存嘅紀錄，開一個 [issue](https://github.com/freeKC/Immuch360/issues)，睇[紀錄](#logs)。分享之前請檢查吓紀錄：入面可能有你嘅伺服器地址。
-
-<a id="build-it-yourself-on-windows"></a>
-### 喺 Windows 自己建置
-
-你需要 x64 上面嘅 Windows 10 或者 11、Windows 版 Flutter 3.47.2、有「Desktop development with C++」工作負載嘅 Visual Studio 2022 或者佢嘅 Build Tools、喺 Windows 設定開咗嘅開發人員模式（Flutter 嘅外掛程式要用），同埋用嚟執行打包指令碼嘅 Python 3。
-
-1. 攞原始碼，然後執行程式碼產生。主分支 `immuch360` 都會建置電腦版本：唔使切換去其他分支。程式碼產生會用 Java 同 Node，所以要喺 Linux、macOS 或者 WSL 度執行；用 WSL 嘅話，將 clone 放喺 Windows 磁碟機上面，WSL 會喺 `/mnt/c` 或者 `/mnt/d` 下面見到：
-
-   ```bash
-   git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360/mobile
-   mise install
-   mise run install
-   mise run codegen
-   ```
-
-2. 喺 Windows，同一個 `mobile` 資料夾入面，建置個 App。第一次建置會由 GitHub 下載影片播放器嘅程式庫（libmpv 同 ANGLE），再用 SHA-256 逐個封存檔核對；佢亦都會用同一個 C++ 工作負載編譯讀取顯示晶片解碼器嘅細細個 Direct3D 11 外掛程式 `immuch_desktop_video`：
-
-   ```bat
-   flutter pub get
-   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
-   flutter run -d windows -t lib/main_desktop.dart
-   REM the app, in build\windows\x64\runner\Release\immuch360.exe
-   flutter build windows --release -t lib/main_desktop.dart
-   ```
-
-3. `Release` 資料夾喺建置佢嘅電腦上面行得到。要喺另一部電腦用，就保留成個資料夾，再喺 `immuch360.exe` 旁邊加 Visual C++ 執行階段。喺 clone 嘅根目錄，打包指令碼會複製佢，剔走淨係 Android 先用到嘅嘢，加入影片播放器嘅授權，檢查 App 載入嘅每個 DLL 都喺資料夾入面或者 Windows 本身入面，然後整個 ZIP：
-
-   ```bat
-   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
-   ```
-
-Immuch360 Desktop 嘅 CI（`.github/workflows/immuch360-desktop.yml`）喺跟住 `immuch360` 嘅 `desktop` 分支上面行：喺 Linux 上面行電話嘅檢查（電話建置乜嘢都冇改）同成套測試，喺 Windows 上面行桌面測試，仲有同一個 ZIP，然後喺嗰個建置上面行要用佢嘅 libmpv 同 ANGLE 嘅測試（Tapo 直播畫面嘅登入、影片檔案唔可以打開嘅嘢、360° 著色器）；佢嘅 Linux 工作喺 Ubuntu 上面建置個 App，佢嘅 macOS 工作就用 Xcode 26.3 同 macOS 26 SDK 編譯個 App（兩個都用同一個 `-t lib/main_desktop.dart`），只係當編譯檢查：兩個都未喺嗰啲系統上面啟動過。第二個工作流程（`.github/workflows/immuch360-libmpv.yml`）用固定版本嘅原始碼為 Windows x64 同 arm64 重新建置 libmpv，再連同佢哋嘅 SHA-256 發佈封存檔；喺嗰個建置開啟之前，ZIP 仍然帶住 media-kit 嘅封存檔，所以[暫時未有](#not-there-yet)入面講嘅 2024 年 libmpv 限制，你自己嘅建置都一樣有。
-
-<a id="where-to-get-it"></a>
-## 喺邊度攞
-
-個 App 嘅電話同平板版本已經喺 Google Play 上架；App Store 版本等緊 Apple 審批，Meta Horizon Store 已經上架，佢嘅第一次更新等緊 Meta 審批，而電視用嘅 Google Play 版本就等緊 Google 審批電視版本。Windows 用嘅 Immuch360 Desktop 喺 GitHub 有預覽版。GitHub 發佈頁一定係最新嘅建置：
-
-- **Android 手機同平板**
-  - 而家：[Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360)，或者 [Releases](https://github.com/freeKC/Immuch360/releases) 頁面上嘅 APK：電話用 `Immuch360-v<version>-arm64-v8a-release.apk`（通用嘅 `Immuch360-v<version>-release.apk` 邊度都用到，`-armeabi-v7a` 係畀舊款 32 位元電話用，`.aab` 檔案係畀 Google Play 用，唔係用嚟側載）。GitHub 建置通常行得比商店前。兩種都會同官方 Immich App 並排安裝（套件 `com.aprogsys.immuch360`）。
-  - 就快：喺 Google Play，建置 23 喺 2026 年 10 月 10 日送咗去，取代建置 20（由 10 月 7 日開始上架）；佢包括 Immich 十月嘅改動同建置 22 同 23 電視方面嘅修正。
-- **iPhone 同 iPad**
-  - 而家：等緊 Apple 審批。審批緊嘅版本有建置 11 嘅功能：上傳去 Immich 同「影片來源」選擇（建置 15），同埋 Insta360 RAW 檔案（建置 16），會喺之後嘅 App Store 更新推出。原始碼可以用 Xcode 或者喺 Codemagic 上面建置，睇[自己建置](#build-it-yourself)。
-  - 就快：App Store，審批緊。
-- **Meta Quest 2、Quest Pro、Quest 3 同 3S（Quest 2 同 Quest Pro 未測試）**
-  - 而家：[Releases](https://github.com/freeKC/Immuch360/releases) 頁面上嘅 `-quest-release.apk` 檔案（通用嘅 `-release.apk` 都得），喺開發人員模式下側載，睇[安裝](#install)。商店建置同 GitHub APK 用唔同嘅金鑰簽署：想由一個轉去另一個，就要先解除安裝個 App（佢嘅設定同儲存咗嘅共享都會冇咗）。
-  - 商店：[Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 由 2026 年 10 月 7 日起連同建置 14 上架，而建置 21，即係佢嘅第一次更新，等緊 Meta 審批；商店嘅 alpha 頻道（只限測試人員）會收到每個新建置。
-- **Android TV 同 Google TV（由建置 20 開始）**
-  - 而家：[Releases](https://github.com/freeKC/Immuch360/releases) 頁面上嘅通用 `Immuch360-v<version>-release.apk`，用 adb 側載，睇[喺電視上面安裝](#install-it-on-the-tv)。佢同電話上面係同一個 App。
-  - 就快：電視用嘅 Google Play，佢嘅上架頁面由 2026 年 10 月 9 日開始等緊 Google 審批。
-- **Windows 10 同 11，64 位元（預覽版）**
-  - 而家：Immuch360 Desktop 桌面建置 4，即係[桌面預發佈版本](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)嘅 ZIP `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip`，照[喺 Windows 下載同安裝](#download-and-install-on-windows)講嘅方法解壓同啟動。有相片、平面影片、360°、3D、VR180 同原始 360° 影片（喺獨立顯示晶片上面流暢，喺內建晶片上面有限制）同埋 Tapo 直播畫面。
-  - 就快：配合網絡攝影機嘅 Spatial 2.5D，然後係 Linux 同 macOS；安裝程式、已簽署嘅建置同更新遲啲先有。
-
-App Store 嘅連結一上架就會加喺呢度；個 App 已經喺 [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 上架。用你平時嘅 Immich 伺服器網址同帳戶登入，或者喺登入頁撳「唔連伺服器使用」，由裝置自己嘅相片同影片開始。GitHub 嘅 APK 唔會自己更新：留意 Releases 頁面；如果你係由商店安裝個 App，就由嗰個商店攞更新。
-
-<a id="build-it-yourself"></a>
-## 自己建置
-
-建置流程同 Immich 手機 App 一樣（Flutter 3.47，用 [mise](https://mise.jdx.dev) 管理）：
-
-```bash
-git clone https://github.com/freeKC/Immuch360.git
-cd Immuch360/mobile
-mise install
-mise run install
-mise run codegen
-flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
-flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
-flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
-```
-
-商店截圖係喺用 `--dart-define=IMMUCH_SCREENSHOTS=true` 整嘅除錯模擬器建置上面影，呢個參數只會收埋除錯橫額。
-
-兩個 Android flavour 係同一個 App。由建置 20 開始，`phone` 嗰個仲會聲明自己係電視 App（電視啟動器項目同橫額，唔要求觸控螢幕），而 `quest` 嗰個就冇呢啲。
-
-`quest` 嗰個以 SDK 34 為目標，只保留頭戴裝置用到嘅權限（相片、影片、通知）：媒體管理、背景位置、舊式儲存空間、音訊、媒體位置、裝置位置同相機權限都喺 `android/app/src/quest/AndroidManifest.xml` 入面移除咗，因為 Meta Horizon Store 唔接受頭兩個，而其他每個敏感權限都要提供理由；同一個檔案將 Quest 2、Quest Pro、Quest 3 同 3S 列為支援嘅裝置，並將普通 HTTP 限制喺頭戴裝置本身同家居網絡嘅名稱。個 APK 只係 64 位元，係因為佢個指令多咗兩個參數（`--target-platform android-arm64 --android-project-arg arm64only=true`）。`phone` 嗰個係 Google Play 要求嘅。
-
-想喺你自己部 Mac 上面建置 iOS 版本，就用 Xcode 同你自己嘅簽署團隊；用 Xcode 26 嘅話，要先行一次 `xcodebuild -downloadComponent MetalToolchain`，因為 Spatial 著色器需要佢。冇 Mac 嘅話，iOS 建置可以用呢個儲存庫嘅 `codemagic.yaml` 檔案喺 Codemagic（一部託管 Mac）上面行。Android 發佈建置喺 GitHub Actions 上面行（`.github/workflows/immuch360-release.yml`）。
-
-Immuch360 Desktop，即係 Windows 版本，用 Windows 版 Flutter 由同一套原始碼，即係 `immuch360` 分支建置：步驟喺[喺 Windows 自己建置](#build-it-yourself-on-windows)。
-
-呢個儲存庫入面冇任何機密資料：Android 簽署金鑰以加密嘅 GitHub Actions secrets 儲存，Apple 簽署資料以加密變數儲存喺 Codemagic。工作流程檔案只係用名稱引用佢哋。如果冇你自己嘅 `android/key.jks`，發佈建置會用除錯金鑰簽署，唔可以蓋過由 GitHub 或者商店安裝嘅版本（要先解除安裝嗰個）；除錯建置會以 Immuch360 debug 嘅名同佢並排安裝。Meta Horizon Store 嘅版本係發佈版本入面嘅 `quest` APK，用另一條金鑰簽署，即係商店 App 最初登記時用嗰條，所以佢都唔可以蓋過側載嘅 APK，反過嚟都一樣。
-
-### 分支
-
-- **`main`**：Immich `main`，停喺 `immuch360` 所基於嘅 commit（目前嘅建置係 2026 年 10 月 10 日），永遠唔會改；分支重新建基於較新嘅 Immich 時佢先會向前移。
-- **`immuch360`**：呢個分支喺 Immich 之上嘅改動，由 2026 年 10 月 9 日開始包括 Immuch360 Desktop。每個發佈版本都會講明基於邊個 Immich 版本。
-- **`desktop`**：Immuch360 Desktop，即係電腦版本，以前喺呢度建基於 `immuch360` 開發，直至 2026 年 10 月 9 日合併入 `immuch360`，等電話、頭戴裝置、電視同電腦都由同一套原始碼推出。而家佢跟住 `immuch360`，並帶住桌面預發佈版本嘅標籤（[桌面建置 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) 嚟自 commit 21f285c34，[桌面建置 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) 嚟自 5b723bd25，[桌面建置 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) 嚟自 2026 年 10 月 10 日 360° 影片播放器嘅合併，[桌面建置 4](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) 嚟自 99113354a，包括建置 22 同項目自己嘅 libmpv）。新嘅桌面工作會先嚟呢度，再隨住推出佢嘅桌面建置加入 `immuch360`。電腦版本唔會改 `mobile/android` 同 `mobile/ios` 下面任何嘢。
-
-<a id="logs"></a>
-## 紀錄
-
-喺 Android 同 Quest 上面，`adb logcat` 會喺 `Immuch360` 標籤下面顯示頭戴裝置嘅沉浸式檢視（由建置 19 開始仲有 Apple 空間相片嘅兩隻眼：第二隻眼點樣解碼、裁切、相片放喺邊），喺 `VideoDecoders` 下面顯示解碼器檢查，喺 `DualFisheyeEffect` 下面顯示左右排列 RAW 影片嘅拼接，喺 `TwoLensPlayer`、`TwoLensCompositor` 同 `LensVideoRenderer` 下面顯示建置 18 嘅雙鏡頭播放：
-
-```bash
-adb logcat -c
-# reproduce the problem, then
-adb logcat -d -v time -s Immuch360 VideoDecoders DualFisheyeEffect TwoLensPlayer TwoLensCompositor LensVideoRenderer
-adb logcat -d -v time > quest-full.log      # everything, including crashes and decoder errors (it can contain your server address, check before sharing)
-adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
-```
-
-由建置 19 開始，DLNA 用戶端、電話共享同 Apple 空間媒體嘅辨認都會寫入 App 自己嘅紀錄（右上角頭像選單入面嘅「紀錄」），標籤係 `Ssdp`、`DlnaFileSystem`、`NetworkBrowserPage`、`PhoneShare`、`PhoneShareServer`、`AppleSpatialService`、`HeicStereoProbe` 同 `NetworkMediaService`。由建置 20 開始，電視模式會寫喺 `TvMode` 同 `TvTextEntry` 標籤下面，Plex 伺服器寫喺 `Gdm`、`UdpTransport`、`PlexClient`、`PlexFileSystem` 同 `PlexServerEditPage`，Tapo 鏡頭寫喺 `TapoDiscovery`、`TapoHttps`、`TapoLogin`、`TapoControl`、`TapoMedia`、`TapoFileSystem`、`TapoTest`、`TapoCamera`、`CameraPage`、`CameraEditPage` 同 `CameraLiveView`；Plex 嘅紀錄從來唔會有權杖、地址或者標題，鏡頭嘅紀錄唔會有密碼。紀錄只會留喺部裝置度，除非你自己複製出去。
-
-喺電腦上面（Immuch360 Desktop），「紀錄」頁面仲有「將紀錄儲存做檔案」：儲存紀錄，或者有最近當機嘅時候，儲存一個包括紀錄同最近當機報告嘅 ZIP（嗰陣建議嘅檔名會以「with-crash-reports」結尾）。當機報告係一個細細嘅 minidump：啲執行緒、佢哋停喺邊度，同埋淨係追蹤佢哋嘅呼叫需要嘅嘢，有程式檔案嘅名但冇佢哋嘅資料夾；唔包括 App 嘅記憶體。
-
-由桌面建置 2 開始，電腦嘅影片播放器會用 `DesktopVideo`、`DesktopPlayer`、`DesktopVideoController`、`PlayerPool` 同 `VideoThumbnailGrabber` 寫入紀錄，包括 mpv 自己嘅警告，權杖同密碼會移除。由桌面建置 3 開始，佢仲會用 `SphericalPlayer`、`SphereRenderer` 同 `PluginRenderer` 寫入 360° 播放器（揀咗嘅尺寸、量度到嘅每秒畫格數、顯示晶片），用 `RawTwoStreams` 寫入雙鏡頭原始影片，用 `DesktopGpuDecoders`、`DesktopVideoDecoderApi` 同 `DecoderMeasure` 寫入顯示晶片嘅解碼器，用 `DesktopCameraLive` 寫入 Tapo 直播畫面，呢啲行從來唔會有鏡頭帳戶或者佢嘅密碼。分享之前請檢查吓紀錄：入面可能有你嘅伺服器地址。
+呢兩個專案都已經喺原始碼入面，每次有改動專案嘅 CI 都會建置佢哋，但 app 仲未喺嗰啲系統上面開跑，佢哋嘅影片播放器程式庫都仲未加入：所以暫時都未有得下載。編譯步驟喺[自己編譯](../docs/immuch360/build.md)入面。
 
 <a id="privacy"></a>
 ## 私隱
 
-- **乜都唔會傳畀開發者**：App 只會同你揀嘅 Immich 伺服器通訊（打開地圖嘅時候，仲有嗰部伺服器用嘅地圖圖塊服務），冇廣告、冇分析，亦冇開發者營運嘅當機回報服務，唔會傳任何嘢畀 Immuch360 嘅開發者。
-- **冇伺服器嘅時候**，唔會連任何伺服器：App 只會喺你打開嘅共享、Plex 伺服器同鏡頭，同埋你開咗嘅電話共享用網絡。
-- **網絡共享**：共享清單儲存喺部裝置度，永遠唔會傳去伺服器；密碼會存入裝置嘅鑰匙圈或者金鑰庫。
-- **Plex**（由建置 20 開始）：權杖留喺裝置嘅安全儲存空間，只會經 HTTPS 放喺請求標頭傳去你自己嘅伺服器；App 從來唔會連去 plex.tv。
-- **Tapo 鏡頭**（由建置 20 開始）：TP-Link 帳戶密碼同鏡頭帳戶密碼留喺裝置嘅安全儲存空間；App 只會喺本地網絡同鏡頭通訊，從來唔會連去 TP-Link 嘅伺服器；攞咗落嚟嘅片段會留喺 App 嘅快取，移除鏡頭嗰陣會一齊刪除。
-- **電視**：部裝置係咪電視係喺裝置上面判斷；乜都唔會傳出去。
-- **電話共享**：只限本地網絡，要用戶名稱同密碼，經普通 HTTP（睇[喺網絡上分享呢部電話](#share-this-phone-on-the-network)）。
-- **鏡頭**：只有 Spatial 2.5D 播放器會用，喺部裝置度處理；影像永遠唔會儲存，亦唔會傳去任何地方。
-- **喺電腦上面**（Immuch360 Desktop，Windows 預覽版）：App 淨係讀你揀嘅資料夾，喺部電腦度保留索引、縮圖同快取，用 Windows 嘅資料保護儲存密碼同權杖，只限你嘅 Windows 帳戶用。電腦分享跟電話分享嘅規則，喺 Windows 標記做公用或者佢分唔到類型嘅網絡上面唔會開始，除非你話要。
-- **電腦上面嘅影片播放器**（由桌面建置 2 開始）：你伺服器嘅影片經 App 傳去播放器，所以播放器從來唔會攞住你嘅工作階段權杖，佢預先讀嘅內容留喺記憶體，唔會寫落磁碟。佢淨係打開交俾佢嘅檔案：資料夾或者共享入面實際上係播放清單或者串流描述嘅檔案，唔會令佢連去其他地方。由桌面建置 3 開始，每段影片嘅地址只會喺記憶體入面交俾播放器，從來唔經暫存檔（App 為伺服器或者共享嘅影片整嘅連結有嗰個工作階段嘅一條鎖匙，喺桌面建置 2 每次打開都會喺磁碟上面留幾秒），而嗰條鎖匙從來唔會喺紀錄出現；Tapo 鏡頭嘅直播畫面都係咁樣將鏡頭帳戶交俾播放器，從來唔會寫入檔案或者紀錄行，亦都只會喺本地網絡同鏡頭通訊；360° 播放器同解碼器嘅量度資料（顯示晶片、影片格式、每秒畫格數，從來唔包括檔案名）會留喺電腦上面 App 嘅資料夾。
+開發者乜都唔會收到：冇帳戶、冇分析追蹤、冇當機報告服務、冇廣告。App 淨係會同你揀嘅伺服器講數（你嘅 Immich 伺服器、你嘅共享、你嘅 Plex 伺服器、你嘅相機），如果冇用伺服器，就乜都唔會連接。密碼同 token 都存喺裝置嘅安全儲存入面。空間 2.5D 播放器嘅相機淨係喺裝置本身使用；拍到嘅畫面永遠都唔會儲存，亦唔會送去任何地方。完整政策喺[PRIVACY.md](../PRIVACY.md)，每個來源嘅詳情就喺[使用指南](../docs/immuch360/user-guide.md#privacy)。
 
-完整嘅政策喺 [PRIVACY.md](../PRIVACY.md)。
+<a id="the-project"></a>
+## 呢個專案
 
-<a id="license-and-trademark"></a>
-## 授權同商標
+Immuch360 係 [Immich](https://github.com/immich-app/immich) 手機 app 嘅非官方 fork，採用 [GNU AGPL v3](../LICENSE) 授權，同 Immich 團隊或者 FUTO 都冇關係，亦冇得到佢哋認可。呢個 fork 存在嘅原因係因為手機上嘅 360° 檢視功能喺 Immich 自 2024年1月就已經有人提出要求，但官方 app 一直都未實現；而家呢個 fork 就先推出呢個功能，收集真實裝置嘅反饋，之後會用細細粒嘅 pull request 將維護者想要嘅部分送返去 Immich。官方 app 嘅所有功能都保留；branch、build 鏈同 CI 嘅詳情喺[自己編譯](../docs/immuch360/build.md)入面有講。
 
-呢個項目係 Immich 嘅分支，繼續採用 [GNU AGPL v3](../LICENSE)。每個 APK，包括電話版，都包含 Meta Spatial SDK，佢唔係開源（Meta Platform Technologies SDK License Agreement），只會喺 Meta Quest 頭戴裝置上面用；Windows 版本 Immuch360 Desktop 冇包括佢。Immuch360 同 Immich 團隊或者 FUTO 冇關係，亦冇得到佢哋認可。
+360° 相片檢視器係基於上游嘅 pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)（由 dmitry-brazhenko 提交），而呢個又係基於 bencefr 喺 [#30192](https://github.com/immich-app/immich/pull/30192) 入面做嘅原型；感謝佢哋兩位。Tapo 相機嘅部分係參考 [pytapo](https://github.com/JurajNyiri/pytapo)、[Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) 同 [python-kasa](https://github.com/python-kasa/python-kasa) 嘅文件寫成嘅。Meta Quest 嘅畫面依賴 Meta Spatial SDK，呢個 SDK 唔係開源嘅，所以淨係保留喺呢個 fork 入面。Windows 嘅 ZIP 檔包含由本專案建置嘅 libmpv（[mpv](https://mpv.io) 嘅程式庫，連埋 [FFmpeg](https://ffmpeg.org)），採用 LGPL 授權，連埋佢嘅授權條款同原始碼；呢頁提到嘅各個平台嘅詳情同商標都喺[授權同商標](../docs/immuch360/platform-support.md#license-and-trademarks)入面。
 
-Immuch360 Desktop 嘅 Windows ZIP，而且淨係佢，仲帶住佢嘅影片播放器：libmpv，即係 [mpv](https://mpv.io) 嘅程式庫，入面有 [FFmpeg](https://ffmpeg.org)，由 [media_kit](https://github.com/media-kit/media-kit) 嘅外掛程式驅動。mpv 同 FFmpeg 建置嗰陣冇包括佢哋淨係 GPL 嘅部分，佢哋嘅程式碼採用 GNU LGPL 2.1 版或者之後嘅版本；一齊建置出嚟嘅 `libmpv-2.dll` 以 GNU LGPL 3 版或者之後嘅版本發佈。App 喺執行期間先載入佢，所以你可以用你自己建置嘅版本取代佢。授權文字喺 ZIP 嘅 `licenses` 資料夾入面，每個程式庫連同授權同原始碼都列喺 [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md)。
-
-Android、Android TV 同 Google TV 係 Google LLC 嘅商標；Apple、iPhone、iPad 同 macOS 係 Apple Inc. 嘅商標；Meta 同 Meta Quest 係 Meta Platforms, Inc. 嘅商標；Windows 係 Microsoft 集團旗下公司嘅商標；Linux 係 Linus Torvalds 喺美國同其他國家嘅註冊商標。佢哋嘅標誌出現喺平台表入面，只係用嚟顯示 Immuch360 喺邊度運行，並唔代表任何認可或者關聯。Android 機械人係根據 Google 創作同分享嘅作品複製或者修改，並按照 Creative Commons 3.0 Attribution License 所述嘅條款使用。Linux 企鵝 Tux 由 Larry Ewing (lewing@isc.tamu.edu) 用 The GIMP 繪製，向量版本由 Simon Budig 同 Garrett LeSage 製作。標誌嘅來源同授權：[.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md)。
+呢頁嘅電話擷圖係喺 Android build 嘅模擬器上面攞嘅，電視嗰啲就係喺 Google TV 模擬器上面攞，Windows 嗰啲就係喺一部 Windows 11 PC 上面攞，全部都用咗[Poly Haven](https://polyhaven.com) 嘅 CC0 全景相；頭戴裝置嘅擷圖就係喺 Quest 3 上面攞嘅。
 
 <a id="roadmap"></a>
 ## 路線圖
 
 仲未做嘅嘢，最有可能先做嘅排先。呢度冇任何承諾，喺 [issue tracker](https://github.com/freeKC/Immuch360/issues) 上面嘅回饋會幫手決定先做邊樣。
 
-- **Immuch360 Desktop，先做 Windows**：桌面建置 3 已經推出，有 360° 影片播放器（360°、3D、VR180 同原始 360° 影片，原始檔案嘅兩個鏡頭，喺每部電腦量度嘅視角尺寸）同 Tapo 直播畫面，而桌面版嘅原始碼由 2026 年 10 月 9 日開始已經喺呢個分支嘅主分支 `immuch360` 入面（睇[喺 Windows 電腦上面](#on-a-windows-computer-immuch360-desktop-preview)）。下一步係用呢個分支自己工作流程建置嘅 libmpv 取代 2024 年嗰個，同埋喺 Windows 電腦上面用真檔案、兩個螢幕同真鏡頭逐個功能人手測試同修正；然後係配合網絡攝影機嘅 Spatial 2.5D；然後係 Linux 同 macOS；然後係安裝程式、已簽署嘅建置同自動更新。
-- **Google Play**：建置 20 由 2026 年 10 月 7 日開始已經上架，取代建置 18；電視用嘅上架頁面由 2026 年 10 月 9 日開始等緊 Google 審批。建置 21 喺電話同平板上面乜都冇改。
-- **App Store**：3.3.0 版本等緊 Apple 審批；佢有建置 11 嘅功能，所以上傳去 Immich 同影片解碼器檢查（建置 15），同埋 Insta360 RAW 檔案（建置 16），會喺下一次 App Store 更新推出。上架之後連結會加喺呢度。
-- **Meta Horizon Store**：Meta 喺 2026 年 10 月 7 日批咗連同建置 14 交嘅上架申請，個 App 由嗰日起已經喺 [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) 公開上架。建置 21 已經交咗做佢嘅第一次更新：佢帶嚟建置 14 之後嘅所有嘢（由共享上載去 Immich、按頭戴裝置解碼到嘅格式揀影片來源、Insta360、GoPro 同 DJI 嘅 RAW 檔案、DLNA、電話共享、Apple 空間相片、Plex Media Server 媒體庫、Tapo 鏡頭），商店會為 Quest 2、Quest Pro、Quest 3 同 3S 上架。想裝商店版本，側載咗嘅版本要先解除安裝（睇[安裝](#install)）。
-- **商店介紹**：Google Play 嘅介紹喺 2026 年 10 月重寫咗，仲換咗新截圖，電視截圖同電視橫額喺 2026 年 10 月 8 日加咗入去；電視用嘅介紹由 2026 年 10 月 9 日開始等緊 Google 審批。App Store 嘅文字仍然係描述最初嘅建置（360° 相片同影片、RAW 檔案顯示成平面）；之後會介紹 3D、VR180 同 Spatial 查閱器、冇伺服器模式、網絡共享、媒體播放器同 Insta360 RAW 檔案。Meta Horizon Store 嘅文字已經有介紹媒體播放器。
-- **360° 相機 RAW 檔案，下一步**：為頭戴裝置準備 RAW 相片時嘅進度指示；用 GoPro 同 DJI 影片自己嘅動作數據校正地平線；雙魚眼 .dng；建置 18 雙鏡頭播放嘅裝置報告（X4、X5、X6、GoPro MAX 2、Osmo 360），確認接縫同解碼器負荷。
-- **DLNA、電話共享同 Apple 空間格式，下一步**：建置 19 嘅裝置報告（經 DLNA 嘅 Plex、Jellyfin、NAS 同 Freebox Server；電話為 Quest 提供服務，包括經電話嘅熱點；喺頭戴裝置入面睇真實嘅 iPhone 空間相片同影片）；向 Apple 申請多點傳送權限，等 iPhone 可以搵到所有 DLNA 伺服器；喺頭戴裝置入面喺空間相片之間用上一個同下一個；時間線入面伺服器相片嘅空間標記；如果 Quest 嘅解碼器做得到，喺 Quest 上面用 3D 播空間影片。
-- **電話上面嘅 360° 播放器，下一步**：iOS 360° 影片播放器嘅時間軸（Android 版已經有），電話 360° 播放器好似 Quest 沉浸式檢視噉有上一個/下一個，同埋喺原生 360° 影片播放器入面睇相片。
-- **網絡共享，下一步**：喺相片同影片頁面由資料夾一個檔案掃去下一個（Quest 沉浸式檢視已經可以喺資料夾嘅 360° 檔案之間切換），WebDAV 嘅 Digest 驗證，由 Bonjour 記錄攞用戶名稱。
-- **平面影片**：喺電話嘅平面播放器揀音軌，伺服器、裝置同共享影片都一樣（360° 同 Spatial 播放器已經有，Immuch360 Desktop 嘅平面播放器都有）。
-- **Android TV，下一步**：喺 Google TV 模擬器同真正嘅電視上面做建置 20 嘅裝置測試，等 Google 審批完電視用嘅上架頁面之後，就喺 Google Play 推出電視版本；之後喺電視主畫面提供頻道。
-- **Tapo 鏡頭，下一步**：用真正嘅鏡頭做建置 20 嘅裝置測試；iPhone 同 iPad 上面嘅直播畫面；H.265 錄影；一邊攞片段一邊播；將成日嘅錄影放喺一條時間線上面。
-- **Plex，下一步**：建置 20 嘅裝置測試（電話、Quest、iPhone、電視、出咗街）；用 QR code 由電腦帶權杖過嚟；喺搵到嘅伺服器清單入面收埋 Plex 伺服器嘅 DLNA 部分；IPv6。
+- **各大商店**：Google Play（build 23 審核中，電視版本亦審核中）、App Store（3.3.0 版本審核中）、Meta Horizon Store（build 21 審核中）。
+- **電腦**：先喺 Windows PC 上面逐個功能手動測試；然後係用網絡攝影機嘅空間 2.5D；跟住令 macOS 同 Linux 開跑同推出，連埋佢哋嘅影片播放器；最後係安裝程式、已簽署嘅 build 同自動更新。
+- **電話同平板**：iOS 360° 影片播放器加時間軸、電話嘅 360° 播放器加上一個同下一個、平面播放器加音軌選擇、iPhone 同 iPad 嘅 Tapo 直播畫面。
+- **沉浸式媒體**：雙魚眼 .dng、用 GoPro 同 DJI 自己嘅動態數據校平影片、如果解碼器容許就喺 Quest 上面以 3D 顯示空間影片、頭戴裝置入面空間相片之間嘅上一個同下一個。
+- **來源**：喺共享資料夾嘅檔案之間滑動切換、WebDAV 嘅 Digest 驗證、用 QR code 由電腦攞 Plex token、Plex 支援 IPv6、H.265 嘅 Tapo 錄影、電視主畫面嘅頻道。
 - **上游**：向 Immich 提交細嘅 pull request，提供維護者想要嘅部分，由 360° 相片查閱器開始。
 
-<a id="credits"></a>
-## 鳴謝
-
-360° 相片查閱器係基於 dmitry-brazhenko 喺上游嘅 pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)，而嗰個 PR 本身係建基於 bencefr 喺 [#30192](https://github.com/immich-app/immich/pull/30192) 嘅原型。多謝兩位。
-
-建置 20 嘅 Tapo 鏡頭功能，係根據開源項目 [pytapo](https://github.com/JurajNyiri/pytapo)、[Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) 同 [python-kasa](https://github.com/python-kasa/python-kasa) 對呢啲鏡頭嘅說明寫成。
-
-點解要分支：手機上面嘅 360° 檢視由 2024 年 1 月開始已經有人要求，但官方 App 仲未有；相片查閱器喺上游 [#31169](https://github.com/immich-app/immich/pull/31169) 審批緊。呢個分支而家就推出佢，收集真實裝置嘅回饋，之後會用細嘅 pull request 將維護者想要嘅任何部分貢獻返畀 Immich。Meta Quest 檢視依賴唔係開源嘅 Meta Spatial SDK，所以會留喺呢個分支。
-
-呢頁嘅電話截圖係喺模擬器入面嘅 Android 建置影，用英文介面同 [Poly Haven](https://polyhaven.com) 嘅 CC0 全景相。
+完整清單，連埋每個功能仲等緊嘅裝置測試，都喺[發布狀態](../docs/immuch360/release-status.md#roadmap)。

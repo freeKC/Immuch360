@@ -9,7 +9,7 @@ patched media_kit_video plugin draws the view straight into the texture Flutter 
 
 This page is for developers who work with Flutter on the desktop, with media_kit or with mpv: why the renderer exists,
 how it works, what was measured, and what can be tuned. How to use the app is in the
-[README](../../README.md#on-a-windows-computer-immuch360-desktop-preview). This folder belongs to the Immuch360 fork,
+[user guide](user-guide.md#on-a-windows-computer-immuch360-desktop-preview). This folder belongs to the Immuch360 fork,
 not to the Immich documentation site next to it in `docs/`.
 
 ## Why it exists

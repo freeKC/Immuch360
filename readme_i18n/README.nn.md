@@ -1,575 +1,151 @@
 <details><summary>🌐 <b>Norsk nynorsk</b> · Andre språk (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
-  <img src="../.github/readme/banner-2026-10.png" width="100%" alt="Immuch360: 360°-, 3D- og VR180-bilete og -videoar, frå Immich, telefonen din eller ein NAS. Android, iOS og Meta Quest, med eller utan tenar">
+  <img src="../.github/readme/hero-2026-10.jpg" width="100%" alt="Immuch360: dine media, alle skjermar, alle perspektiv. Bilete og videoar, flate, panorama, 360°, 3D og VR180, frå eininga di, NAS-en din eller Immich-tenaren din, på telefonar, tablettar, TV-ar, Meta Quest-hovudsett og datamaskinar">
 </p>
 
 # Immuch360
 
-Immuch360 er Immich-mobilappen med 360°-bilete og -videoar du kan sjå deg rundt i, og ein gratis avspelar for flate bilete og videoar, 360°, 3D og VR180, på Android-telefonar og -nettbrett, iPhone og iPad, Meta Quest-headsett (Quest 3 og 3S, og frå build 21 Quest 2 og Quest Pro, ikkje testa), og frå build 20 Android TV og Google TV. Immuch360 Desktop, den same appen på ei Windows-datamaskin, er ute som førehandsversjon, sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview).
+**Dine media. Alle skjermar. Alle perspektiv.**
 
-Han er laga for deg som fotograferer med eit 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) eller med fotosfæremodusen på ein telefon, eller som har eit headsett, og vil sjå dine eigne opptak frå ein Immich-tenar, sjølve telefonen, ein NAS, ein medietenar eller ein Plex-tenar: same tenar, same konto, ikkje noko tillegg på tenaren, eller ingen tenar i det heile. Frå build 20 viser han også Tapo-kamera, direkte og med opptaka på minnekortet deira.
+Immuch360 er ein fri og open kjeldekode-app som lèt deg finne, bla gjennom, spele og utforske bileta og videoane dine: dei vanlege, og dei panoramiske, 360°, 3D og immersive som andre appar viser flate, dobla eller strekte ut. Appen les dei der dei er, på sjølve eininga, på ein NAS eller ein datamaskin, på ein Plex-tenar eller ein Immich-tenar, og spelar dei på telefonar, tablettar, TV-ar, Meta Quest-hovudsett og datamaskinar. Ingen konto, ingen nettsky, ingen tenar er nødvendig.
+
+- **Kva gjer appen?** Han viser bileta og videoane dine som eit galleri og spelar dei i visaren som passar til kvar fil: flatt, som ei kule du ser deg rundt i, i 3D, i eit hovudsett.
+- **Kva media?** Flate bilete og videoar, panorama, 360°-bilete og -videoar, VR180, stereoskopisk 3D, romlege Apple-bilete, og råfilene frå 360°-kamera (Insta360, GoPro MAX, DJI Osmo 360), sydd saman av appen.
+- **På kva einingar?** Android-telefonar og -tablettar, iPhone og iPad, Android TV og Google TV, Meta Quest 2, Pro, 3 og 3S, Windows (førehandsvising), med macOS og Linux under utvikling.
+- **Må eg ha ein tenar eller ein konto?** Nei. Immuch360 fungerer på eigen hand med media på eininga di. Ein Immich-tenar, ein NAS, ein medietenar eller ein Plex-tenar er alternativ du legg til når du vil ha dei.
 
 <p align="center">
-  <sub>Uoffisiell fork. Ikkje knytt til Immich eller FUTO. Namnet blir lese som "I am much 360".</sub>
+  <sub>Uoffisiell fork av Immich-mobilappen. Ikkje knytt til Immich eller FUTO. Namnet kan lesast som «I am much 360».</sub>
 </p>
 
 <div align="center">
 
 | Plattform | Kvar du får han | Status 12. oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonar og nettbrett | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | build 23 på GitHub, send til Google Play 10. oktober 2026 (build 20 publisert der sidan 7. oktober) |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | versjon 3.3.0 ventar på gjennomgangen til Apple; [bygg han sjølv](#build-it-yourself) i mellomtida |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | i Horizon Store sidan 7. oktober 2026 (build 14), build 21 til gjennomgang hos Meta, build 23 på alfakanalen |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#install-it-on-the-tv) · Google Play | build 23 på GitHub; Google Play-oppføringa for TV-ar har vore til gjennomgang hos Google sidan 9. oktober 2026 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Førehandsversjon som ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | skrivebordsbuild 4 på Windows: bilete, flate videoar og 360°-videoar; macOS og Linux seinare |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-telefonar og -tablettar | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | på Google Play (build 20; build 23 under vurdering), build 23 på GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | versjon 3.3.0 ventar på Apple sin vurdering; [bygg det sjølv](../docs/immuch360/build.md) i mellomtida |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 på GitHub; TV-oppføringa er under vurdering hos Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | på Horizon Store (build 14; build 21 under vurdering), build 23 på GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Førehandsvising ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4, ei førehandsvising: bilete, flate og 360°-videoar, delingar, Plex, kamera |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS og Linux** | Kjeldekode | bygd av CI-en til prosjektet, ikkje starta på desse systema enno, ingen nedlasting enno |
 
-*Statusane blir oppdaterte ved kvar utgjeving; detaljane står i [Kvar du får han](#where-to-get-it).*
+*Statusane blir oppdaterte ved kvar utgiving; detaljane, build for build, er i [Utgivingsstatus](../docs/immuch360/release-status.md).*
 
 </div>
 
-- 🌐 **Innebygd 360°**<br>Bilete og videoar som ei kule du ser deg rundt i, med gyroskopet, rå kamerafiler inkludert (Insta360 frå build 16, GoPro og DJI frå build 18). Også ein gratis videoavspelar: flat, 360°, 3D, VR180
-- 👓 **Innebygd 3D**<br>Stereoskopisk 360° og VR180, topp og botn eller side om side, og romlege bilete frå Apple (frå build 19): ekte 3D i headsettet, eitt auge på ein telefon
-- 🎥 **Innebygd 2.5D**<br>Djupn på ein flat skjerm frå ein stereoskopisk video, biletet følgjer hovudet ditt (eksperimentelt, telefonar og nettbrett)
-- 📱 **Android, iOS, Quest, TV**<br>Éin app på telefonar, nettbrett og headsetta Quest 2, Pro, 3 og 3S, ekte 3D i headsettet, frå build 20 på Android TV med fjernkontrollen, og ein førehandsversjon for Windows med bilete, flate videoar og 360°-videoar
-- 🔌 **Med eller utan tenar**<br>Immich-tenaren din, eller telefonen sitt eige galleri, utan konto
-- 🗄️ **Nettverksdelingar**<br>Samba (SMB), WebDAV og, frå build 19, DLNA-medietenarar, funne på nettverket og lesne direkte, ingenting blir lasta ned, og sende til Immich når du vel det. Frå build 19 deler ein telefon også sitt eige galleri med headsettet
-- 📺 **På TV-en**<br>Frå build 20 den same APK-en på Android TV og Google TV: 360°-bilete og -videoar, tenaren din og delingane dine, med fjernkontrollen
-- 🎬 **Plex, utan plex.tv**<br>Frå build 20 Plex-biblioteka dine, spelte av frå originalfilene slik at 360° held seg 360°, heime og borte
-- 📹 **Tapo-kamera**<br>Frå build 20 direktebiletet og opptaka på minnekortet, berre på ditt eige nettverk, og eit klipp sendt til Immich når du vel det
+<p align="center">
+  <img src="../.github/readme/platforms-2026-10.jpg" width="100%" alt="Fire ekte skjermbilete side ved side: kulevisaren på ein Android-telefon, 360°-lista på ein Google TV, videospelaren til Immuch360 Desktop på Windows, og eit 360°-bilete rundt deg i ein Meta Quest 3">
+</p>
 
 <details>
 <summary><b>Innhald</b></summary>
 
-- [360°-bilete og -videoar som kule](#360-photos-and-videos-as-a-sphere)
-- [Utan tenar og utan konto](#without-a-server-or-an-account)
-- [Nettverksdelingar: ein NAS, ei datamaskin eller ein medietenar](#network-shares-a-nas-a-computer-or-a-media-server)
-- [Plex Media Server, utan plex.tv](#plex-media-server-without-plextv)
-- [Del denne telefonen på nettverket](#share-this-phone-on-the-network)
-- [Tapo-kamera: direktebilete og opptaka på minnekortet](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
-- [Rå filer frå 360°-kamera, utan appen til kameraet](#raw-360-camera-files-without-the-cameras-app)
-- [3D- og VR180-bilete og -videoar](#3d-and-vr180-photos-and-videos)
-- [Djupn på ein flat skjerm: Spatial 2.5D (eksperimentell)](#depth-on-a-flat-screen-spatial-25d-experimental)
-- [Romlege bilete og videoar frå Apple](#apple-spatial-photos-and-videos)
-- [I Meta Quest 3-headsettet](#in-the-meta-quest-3-headset)
-- [Sjå på TV-en (Android TV og Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
-- [Finn 360°-opptaka dine: 360°-lista](#find-your-360-shots-the-360-list)
-- [Videodetaljar, dekodarar og kvifor ein video hakkar](#video-details-decoders-and-why-a-video-stutters)
-- [Alt anna er Immich](#everything-else-is-immich)
-- [Samanlikna med Immich-appen og andre appar](#compared-with-the-immich-app-and-other-apps)
-- [Format og kjelder, etter plattform](#formats-and-sources-by-platform)
-- [Meta Quest 3](#meta-quest-3)
-- [På ei Windows-datamaskin: Immuch360 Desktop (førehandsversjon)](#on-a-windows-computer-immuch360-desktop-preview)
-- [Kvar du får han](#where-to-get-it)
-- [Bygg han sjølv](#build-it-yourself)
-- [Loggar](#logs)
+- [Kva du kan gjere](#what-you-can-do)
+  - [Sjå bileta og videoane dine](#watch-your-photos-and-videos)
+  - [Utforsk panorama, 360°, VR180 og 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Bruk dine eigne filer, utan konto](#use-your-own-files-without-an-account)
+  - [Nå media på ein NAS, ein datamaskin eller ein medietenar](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
+  - [Finn Immich-biblioteket ditt](#find-your-immich-library)
+  - [Opplev full immersjon på Meta Quest](#go-immersive-on-meta-quest)
+  - [Sjå på TV-en og på datamaskinen](#watch-on-the-tv-and-on-the-computer)
+  - [Kamera, Plex og råfiler frå kamera](#cameras-plex-and-raw-camera-files)
+- [Einingar og system](#devices-and-systems)
+- [Avanserte funksjonar](#advanced-features)
+- [Teknisk dokumentasjon](#technical-documentation)
+- [Installering](#install)
 - [Personvern](#privacy)
-- [Lisens og varemerke](#license-and-trademark)
+- [Prosjektet](#the-project)
 - [Vegkart](#roadmap)
-- [Takk](#credits)
 
 </details>
 
-## Kva problem har du?
+<a id="what-you-can-do"></a>
+## Kva du kan gjere
 
-- **"360°-bileta mine blir viste som ei flat, utstrekt stripe, og 360°-videoane mine blir spelte av flatt."** Sjå [360°-bilete og -videoar som kule](#360-photos-and-videos-as-a-sphere).
-- **"Eg har ingen tenar, og eg vil ikkje ha ein konto."** Sjå [Utan tenar og utan konto](#without-a-server-or-an-account).
-- **"Eg vil sjå videoane på NAS-en min, på telefonen eller i headsettet, utan å kopiere dei."** Sjå [Nettverksdelingar](#network-shares-a-nas-a-computer-or-a-media-server).
-- **"Plex spelar av 360°-videoane mine flatt, og eg vil ha Plex-biblioteket mitt i headsettet, på TV-en og borte frå heimen."** Sjå [Plex Media Server, utan plex.tv](#plex-media-server-without-plextv).
-- **"Bileta mine ligg på telefonen, og eg har inga datamaskin eller NAS å leggje dei på for headsettet."** Sjå [Del denne telefonen på nettverket](#share-this-phone-on-the-network).
-- **"Eg vil sjå Tapo-kameraet mitt og klippa frå i natt utan Tapo-appen, og halde på eit klipp i Immich."** Sjå [Tapo-kamera](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
-- **"Insta360-filene mine treng Insta360-appen før eg kan sjå dei"** (og GoPro .360- og DJI .osv-filene også). Sjå [Rå filer frå 360°-kamera](#raw-360-camera-files-without-the-cameras-app).
-- **"3D-videoane mine ser doble ut, og VR180-videoane mine er strekte heile vegen rundt."** Sjå [3D og VR180](#3d-and-vr180-photos-and-videos) og [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
-- **"Eg har romlege bilete frå iPhonen min."** Sjå [Romlege bilete og videoar frå Apple](#apple-spatial-photos-and-videos).
-- **"Det fungerer på telefonen, men eg vil ha det i Quest."** Sjå [I Meta Quest 3-headsettet](#in-the-meta-quest-3-headset).
-- **"Eg vil sjå 360°-bileta og -videoane mine, og videoane på NAS-en eller Plex-tenaren min, på TV-en, med fjernkontrollen."** Sjå [Sjå på TV-en](#watch-on-your-tv-android-tv-and-google-tv).
-- **"Eg finn ikkje 360°-opptaka mine mellom alle dei andre."** Sjå [360°-lista](#find-your-360-shots-the-360-list).
-- **"360°-videoen min hakkar, eller spelar av ein uskarp kopi."** Sjå [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters).
-- **"Eg vil ha 360°-bileta mine og Immich-biblioteket mitt på Windows-PC-en, med bileta og videoane i mappene på PC-en, NAS-en og Plex-tenaren min, og PC-en delt med headsettet."** Sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview) (ein førehandsversjon: bilete og flate videoar, og frå skrivebordsbuild 3 360°-, 3D-, VR180- og rå 360°-videoar og Tapo-direktebiletet).
-- **"Held eg på det Immich-appen gjer?"** Ja, med to små endringar, sjå [Alt anna er Immich](#everything-else-is-immich).
+Kvar bruksmåte under skildrar kva du får, og deretter korleis du gjer det i nokre få steg. Den fullstendige rettleiinga, med alle val, meldingar og grenser, er i [brukarrettleiinga](../docs/immuch360/user-guide.md).
 
-Når ein funksjon er ny, står det i teksten frå kva build han finst. GitHub-utgivinga har alltid den nyaste builden, butikkane kjem etter: sjå [Kvar du får han](#where-to-get-it).
+<a id="watch-your-photos-and-videos"></a>
+### Sjå bileta og videoane dine
 
-<a id="360-photos-and-videos-as-a-sphere"></a>
-## 360°-bilete og -videoar som kule
+Immuch360 er først og fremst eit galleri og ein spelar for vanlege bilete og videoar. Tidslinja, albuma, favorittane, minna og søket fungerer med ein Immich-tenar; eininga sine eigne bilete og videoar, og mappene på ein datamaskin, vises utan tenar. Videoar spelar i ein nativ spelar med lyd, spoling, ein bufringsindikator og, i 360°-, Spatial- og datamaskinspelarane, eit val av lydspor. På ein TV styrer fjernkontrollen alt; på ein datamaskin gjer musa og tastaturet det.
 
-Du tek sikkerheitskopi av bileta dine til ein [Immich](https://github.com/immich-app/immich)-tenar, og nokre av dei kjem frå eit 360°-kamera eller frå fotosfæremodusen på ein telefon. I den offisielle mobilappen blir desse bileta viste som ei flat, utstrekt stripe, og 360°-videoar blir også spelte av flatt. Immich-nettappen kan vise eit 360°-bilete som ei kule, mobilappen kan ikkje: det har vore etterspurt sidan januar 2024 i [diskusjon #6572](https://github.com/immich-app/immich/discussions/6572).
+1. Opne fanen Foto: tidslinja til tenaren din, eller til eininga utan tenar.
+2. Trykk på eit bilete eller ein video for å opne det; sveip til venstre og høgre for å gå til neste, knip eller dobbeltrykk for å zoome.
+3. Sveip opp på ein video for detaljane: kodek, storleik, biletfrekvens, bitrate, og om denne eininga dekodar den.
 
-Immuch360 opnar dei som ei kule du ser deg rundt i, på Android- og iOS-telefonar og -nettbrett.
+Meir: [visarane og videospelaren](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [videodetaljar og dekoderar](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
 
-Eit bilete dreier seg når du dreg i det, zoomar med kniping eller dobbelttrykk, held fram med å dreie litt etter eit raskt drag, startar på startvisinga kameraet registrerte (GPano-metadata) og får ein skarpare tekstur når du zoomar inn; delvise panorama blir handterte (GPano-utsnitt). Ein video blir spelt av i ein innebygd sfærisk avspelar med lyd, draging og gyroskopet.
+<a id="explore-panoramas-360-vr180-and-3d"></a>
+### Utforsk panorama, 360°, VR180 og 3D
 
-Samansette 360°-filer fungerer overalt: eksportar frå Insta360-appen eller Studio, GoPro Player, Ricoh Theta og fotosfærar frå telefonar. Rå filer rett frå kameraet blir sette saman av appen, sjå [Rå filer frå 360°-kamera](#raw-360-camera-files-without-the-cameras-app).
+Eit 360°-bilete opnar seg som ei kule du snur med fingeren eller ved å bevege telefonen; ein 360°-video spelar i ein sfærisk spelar med lyd; VR180-filer blir teikna på ei halvkule; stereoskopiske 3D-filer viser eitt auge på ein flat skjerm og begge auga i eit hovudsett. Delvise panorama held utsnittet sitt, og biletet startar på utsikten som kameraet tok opp. Ei fil som tenaren ikkje merkjer, kan visast som 360° med eitt trykk.
 
 <p align="center">
-  <img src="../.github/readme/b19-sphere.png" width="260" alt="Eit 360°-bilete av ein innsjøbredd i kulevisinga: lukkeknappen øvst til venstre, knappane 360°, 3D-oppsett og gyroskop øvst til høgre">
+  <img src="../.github/readme/b19-sphere.jpg" width="260" alt="Eit 360°-bilete av ein innsjøbredd i kulevisinga: lukkeknappen øvst til venstre, knappane 360°, 3D-oppsett og gyroskop øvst til høgre">
   <img src="../.github/readme/b19-video.png" width="420" alt="Ein 360°-video av ein kystveg som blir spelt av i 360°-avspelaren på ein telefon halden på tvers: lukk og filnamnet øvst til venstre, 360° og 3D øvst til høgre, førre, spol tilbake, spel av, spol fram og neste i midten, tidslinja nedst">
 </p>
 
-- **Eit 360°-bilete som kule**: lukk øvst til venstre; øvst til høgre knappen 360°/180°, knappen for 3D-oppsett og gyroskopet.
-- **Ein 360°-video i 360°-avspelaren**: trykk på biletet for kontrollane; 360° og 3D øvst til høgre.
+1. Opne biletet eller videoen. 360°-filer har eit 360°-merke på miniatyrbiletet sitt, og fanen Bibliotek har ei 360°-liste som samlar dei, med filter etter periode, kjelde, type og kamera.
+2. Trykk på 360° i topplinja. Dra for å sjå deg rundt, knip for å zoome, trykk på gyroskopknappen for å sjå deg rundt ved å snu telefonen.
+3. 3D-knappen blar gjennom «Mono (ikkje 3D)», «3D, topp og botn» og «3D, side om side»; 360°/180°-knappen byter mellom den fulle kula og halvkula til VR180.
+4. For ei fil som vises flat sjølv om den er ei 360°-fil: ⋮ oppe til høgre, deretter «Vis som 360°».
 
-### Opne eit 360°-bilete som kule
+På telefonar og tablettar kan ein stereoskopisk video også få djupne på den flate skjermen: Spatial 2.5D-spelaren brukar frontkameraet til å følgje hovudet ditt og viser synsvinkelen mellom dei to augo (eksperimentelt). Romlege Apple-bilete som er tatt med ein iPhone, blir gjenkjende og vist i 3D i ein Meta Quest.
 
-1. Opne biletet frå tidslinja, eit album, [360°-lista](#find-your-360-shots-the-360-list) eller ei delingsmappe. 360°-bilete har eit 360°-merke på miniatyrbiletet.
-2. Trykk på 360° i den øvste lina i visinga. Kulevisinga blir opna, med ein lasteindikator medan heile biletet blir lasta; zoomen du hadde i den flate visinga, blir halden på.
-3. Dra for å sjå deg rundt, knip for å zoome, dobbelttrykk for å zoome inn. Etter eit raskt drag held visinga fram med å dreie litt og bremsar ned.
-4. For å sjå deg rundt ved å snu telefonen, trykk på gyroskopknappen øvst til høgre (av som standard).
-5. Dei to andre knappane øvst til høgre er 360°/180° (heil kule eller VR180-halvkule, blir ikkje vist på delvise panorama) og 3D (oppsettet til eit stereoskopisk bilete), sjå [3D og VR180](#3d-and-vr180-photos-and-videos). Eit rått Insta360-bilete har berre gyroskopet.
-6. Lukk med krossen øvst til venstre.
+Meir: [360°-bilete og -videoar](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D og VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Romlege Apple-bilete og -videoar](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [360°-lista](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
 
-### Spele av ein 360°-video
+<a id="use-your-own-files-without-an-account"></a>
+### Bruk dine eigne filer, utan konto
 
-1. Opne videoen og trykk på 360° i den øvste lina. På ein 360°-video kjem 360°-knappen først; på telefonar og nettbrett kjem Spatial-knappen etter han så lenge den innstillinga er på (sjå [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental)).
-2. Den innebygde 360°-avspelaren blir opna i fullskjerm og spelar av med lyd: Media3 på Android, SceneKit på iOS.
-3. Dra for å sjå deg rundt, eller rør på telefonen. Android-avspelaren følgjer alltid telefonen; den på iOS har ein gyroskopbrytar, på som standard.
-4. Trykk på biletet for kontrollane: lukk, 360°/180° og 3D øvst, deretter spel av, hoppeknappane og tidslinja på Android. iOS-avspelaren har førebels berre spel av og pause.
-5. Når videoen har to eller fleire lydspor (språk, kommentarar), lèt ein Lydspor-knapp deg velje eitt. Medan videoen blir lasta eller stoppar opp, viser avspelaren "Lastar" med fyllingsgraden til avspelingsbufferen.
-
-Avspelaren spelar av fila som er lagra på telefonen, eller fila på ei nettverksdeling, når ho finst. Elles straumar han frå tenaren din: den omkoda straumen som standard, eller originalen om du ber om det i Innstillingar, Asset Viewer (Biletvisar), Videokjelde (frå build 15; før det brytaren "Force original video" (Tving original video)), sjå [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters).
-
-<a id="a-360-file-that-shows-flat-view-as-360"></a>
-### Ei 360°-fil som blir vist flat: Vis som 360°
-
-Nokre 360°-filer har inga projeksjonsmerking, så tenaren markerer dei ikkje som 360°, og dei blir viste flate.
-
-1. Opne biletet eller videoen og trykk på ⋮ øvst til høgre.
-2. Trykk på "Vis som 360°", mellom Lysbildeframvisning og Last ned. 360°-knappen dukkar opp i den øvste lina.
-3. For å angre heiter det same menypunktet no "Slutt å handsame som 360°".
-
-Valet blir hugsa på telefonen og endrar ingenting på tenaren. For ei fil på ei nettverksdeling gjeld det berre den visinga.
-
-### Avgrensingar
-
-- **360°-videoavspelaren på iOS**: spel av og pause, inga tidslinje enno.
-- **Førre og neste**: 360°-avspelarane på telefonar går enno ikkje til førre eller neste medium; den oppslukande visinga i Quest gjer det.
-- **Svært store panorama**: eit bilete blir vist i maks 8192x4096, den største teksturen dei fleste telefon-GPU-ar tek imot, så eit større panorama blir skalert ned til den storleiken.
-- **Dobbel fiskeauge-.dng**: blir framleis vist flatt.
-
-<a id="without-a-server-or-an-account"></a>
-## Utan tenar og utan konto
-
-Du har ingen Immich-tenar, eller du vil ikkje ha ein konto: du vil berre at 360°-bileta på telefonen skal opnast som ei kule du kan dreie med gyroskopet. Immich-appen ber deg logge inn først.
-
-På innloggingssida opnar "Bruk utan tenar" Immuch360 med eininga sine eigne bilete og videoar, med 360°-, 3D-, VR180- og Spatial-visingane, 360°-lista og nettverksdelingane (frå build 20 også Plex-tenarane og Tapo-kameraa), utan Immich-konto. Tenarfunksjonane blir verande skjulte eller gråa ut til du koplar til ein tenar; ingenting forlèt eininga. På ein Meta Quest opnar han headsettet sine eigne bilete og videoar; på ein TV, som ikkje har nokon, viser han til nettverksdelingane (sjå [Sjå på TV-en](#watch-on-your-tv-android-tv-and-google-tv)).
+Immuch360 krev verken konto eller tenar. På innloggingssida opnar «Bruk utan tenar» appen med bileta og videoane på eininga, med alle visarar, 360°-lista og nettverkskjeldene. Ingenting forlèt eininga. Ein tenar kan koplast til seinare, frå Innstillingar, og tenarfunksjonane viser seg då.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Bibliotek-fana utan tenar: 360°-oppføringa øvst, deretter On this device med to 360°-bilete, og Nettverksdelingar med ei deling som heiter NAS">
-
-### Start utan tenar
 
 1. Opne appen. På innloggingssida, under tenaradressa og Innstillingar, trykkjer du på "Bruk utan tenar".
 2. Gje tilgang til bileta og videoane dine. Om du seier nei, seier appen "Appen kan ikkje sjå bileta på denne eininga", med "Gje tilgang" og "Opne innstillingane".
 3. Bilete-fana viser tidslinja til eininga. Søk og Album blir verande gråa ut, sidan dei kjem frå tenaren. Bibliotek-fana har 360° øvst, deretter On this device (På denne eininga, albuma på eininga) og Nettverksdelingar.
 4. Menyen øvst til høgre seier "Berre denne eininga": appen viser bileta og videoane på denne eininga, ingenting blir sendt nokon stad.
 
-### Kopla til ein tenar seinare
+På ein datamaskin spelar mappene du vel rolla til galleriet; på ein TV, som ikkje har eigne bilete, gjer nettverkskjeldene det.
 
-1. Opne Innstillingar (menyen øvst til høgre, deretter Innstillingar). Første oppføringa er "Kopla til ein tenar", "Synkroniser med ein Immich-tenar for å ta sikkerheitskopi, søkje og dele". Menyen øvst til høgre har same oppføringa.
-2. Logg inn som vanleg. Tidslinja, albuma, sikkerheitskopieringa og dei andre tenarfunksjonane dukkar opp.
+Meir: [utan tenar eller konto](../docs/immuch360/user-guide.md#without-a-server-or-an-account).
 
-### Avgrensingar
+<a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
+### Nå media på ein NAS, ein datamaskin eller ein medietenar
 
-- **Eininga sitt eige galleri**: appen viser bileta og videoane i galleriet på eininga. På ein iPhone hoppar søket etter 360°-filer over dei som berre ligg i iCloud, til dei er lasta ned til eininga.
-- **Utan tenar** inneheld 360°-lista det søket på eininga fann og filene du valde å vise som 360°, sjå [360°-lista](#find-your-360-shots-the-360-list).
-
-<a id="network-shares-a-nas-a-computer-or-a-media-server"></a>
-## Nettverksdelingar: ein NAS, ei datamaskin eller ein medietenar
-
-360°-videoane dine ligg på ein NAS eller ei datamaskin, og du vil sjå dei på telefonen eller i headsettet utan å kopiere dei først. For headsettet endar folk opp med å kopiere kvar fil over kabel; medietenarar som Plex og Jellyfin spelar av 360°-videoar flatt, slik førespurnader på foruma deira skildrar; Immich-appen les berre Immich-tenaren din.
-
-Immuch360 blar gjennom og spelar av bileta og videoane på ein kvar tenar som snakkar SMB (Samba, Windows), WebDAV eller, frå build 19, DLNA/UPnP (ein medietenar: Jellyfin, minidlna, Gerbera, Emby, ein NAS eller ein TV-boks), rett frå delinga. Frå build 20 har ein Plex Media Server ein eigen type, sjå [Plex Media Server, utan plex.tv](#plex-media-server-without-plextv).
-
-Han finn tenarane på nettverket ditt sjølv, og spelar av filene direkte i dei same visingane som resten av appen (360°, 3D, VR180, Spatial 2.5D, oppslukande vising i Quest), med eller utan Immich-tenar, på telefonar og på Meta Quest 3. Ingenting blir lasta ned. Når ein tenar er tilkopla, kan filene du vel bli sende til Immich-kontoen din (frå build 15).
+Videoane dine ligg på ein NAS, ein datamaskin eller ein medietenar. Immuch360 finn tenarane på nettverket ditt sjølv, blar gjennom dei og spelar bileta og videoane deira direkte, i alle visarane til appen, utan å kopiere noko: SMB (Samba, Windows-delingar), WebDAV (Nextcloud, Synology og andre) og DLNA-medietenarar (Jellyfin, Emby, minidlna, ein NAS, ein TV-boks). Ein telefon kan også dele sitt eige galleri over Wi-Fi for eit hovudsett eller ein WebDAV-klient, og det kan ein Windows-datamaskin også.
 
 <p align="center">
   <img src="../.github/readme/b19-add-share.png" width="260" alt="Sida Legg til ei deling: Namn, Tenarnamn eller adresse, Port (valfritt), Deling, Vel ei deling, Startmappe (valfritt), Brukarnamn, Passord, Test tilkoplinga, og resultatet Tilkopla, 2 element i startmappa">
-  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Ei mappe i ei nettverksdeling som eit rutenett av miniatyrbilete: 360°-bilete med 360°-merket og ein 360°-video med eit avspelingsmerke, Vel-knappen øvst til høgre">
+  <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Ei mappe i ei nettverksdeling som eit rutenett av miniatyrbilete: 360°-bilete med 360°-merket og ein 360°-video med eit avspelingsmerke, Vel-knappen øvst til høgre">
 </p>
 
-- **Legg til ei deling**: felta for ei ny SMB-deling, etter Test tilkoplinga.
-- **Ei mappe i ei deling**: 360°-bilete og ein video, lesne direkte frå delinga.
+1. Opne fanen Bibliotek, deretter Nettverksdelingar, deretter + og «Ei nettverksdeling (NAS, datamaskin, medietenar)».
+2. Trykk på ein tenar under «Funne på nettverket», eller fyll ut skjemaet manuelt: type, tenarnamn eller adresse, deling eller sti, startmappe, brukarnamn og passord.
+3. Trykk på «Test tilkoplinga», deretter Lagre. Trykk på delinga for å bla gjennom den: mapper først, deretter bileta og videoane, med 360°-merket på filene som er gjenkjende som 360°.
+4. Med ein Immich-tenar tilkopla, vel filer i ei mappe og trykk «Last opp til Immich» for å sende dei til tenaren din.
 
-### Legg til ei deling
+Spelarane les bytane dei trenger gjennom ei bru inni appen, med byteintervall, slik at spoling fungerer og ingenting blir lagra på eininga; ein SMB-video blir lest over opp til seks tilkoplingar samtidig for jamn avspeling.
 
-1. Opne Bibliotek-fana, deretter Nettverksdelingar. Første gongen seier sida "Ingen deling enno" med ein knapp "Legg til ei deling"; + øvst til høgre gjer det same når som helst. Frå build 20 spør begge kva du vil leggje til: "Ei nettverksdeling (NAS, datamaskin, medietenar)", "Ein Plex Media Server" eller "Eit Tapo-kamera". Vel det første.
-2. Sida "Legg til ei deling" leitar først etter tenarane på nettverket ditt og viser dei under "Funne på nettverket", med typen (SMB, WebDAV, DLNA, Telefon, og frå build 20 Plex og Tapo). Søket tek opptil om lag seks sekund; "Søk på nytt" startar det igjen. Det brukar Bonjour/mDNS og ei skanning av det lokale nettverket stadfest av ei ekte SMB- eller WebDAV-utveksling, frå build 19 eit SSDP-søk etter DLNA-medietenarar, og frå build 20 GDM, oppdaginga til Plex, og oppdagingsprotokollen til TP-Link for Tapo-kameraa.
-3. Trykk på ein tenar: typen, tenaren, porten og stien blir fylte ut. Ein Plex-tenar eller eit Tapo-kamera opnar i staden si eiga side, ferdig utfylt.
-4. Ikkje i lista? Fyll ut skjemaet for hand. Type: "SMB (Samba, Windows-deling)", "WebDAV (Nextcloud, Synology og andre)", "DLNA-medietenar (Jellyfin, NAS, TV-boks)" eller, frå build 20, "Plex Media Server", som opnar sida i [Plex Media Server, utan plex.tv](#plex-media-server-without-plextv). Deretter Namn, "Tenarnamn eller adresse" (eit namn eller ei adresse; ei fullstendig adresse som `smb://nas/photos`, `\\nas\photos` eller `https://nas:5006/photos` fyller ut dei andre felta), "Port (valfritt)" når han ikkje er den vanlege, "Deling" for SMB eller "Sti i WebDAV-adressa" for WebDAV, "Startmappe (valfritt)", "Brukarnamn" og "Passord", og "Sikker tilkopling (HTTPS)" for WebDAV.
-5. SMB: når tenaren og brukarnamnet er skrivne inn, viser "Vel ei deling" delingane på tenaren.
-6. DLNA: ein medietenar har ikkje brukarnamn eller passord. Oppgje tenaren, porten og "Skildringssti" for einingsskildringa (`/rootDesc.xml` for minidlna), eller lim inn heile adressa, som `http://192.168.1.10:8200/rootDesc.xml`, i tenarfeltet.
-7. Trykk på "Test tilkoplinga". Svaret er "Tilkopla, N element i startmappa", eller kvifor det mislukkast. Trykk deretter på Lagre, nedst i skjemaet. Frå build 22 spør appen først "Forkaste endringane?" når du lukkar eit skjema du har skrive i (X, Tilbake), også på Plex- og kamerasidene, og det same skjer når du vel ein funnen Plex-tenar eller eit funne kamera etter at noko er skrive inn.
+Meir: [nettverksdelingar](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [del denne telefonen på nettverket](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA-medietenarar](../docs/immuch360/user-guide.md#dlna-media-servers).
 
-Eit brukarnamn med tomt passord blir sendt slik: ein Freebox Server vil ha `freebox` og ikkje noko passord for diskane sine. For å endre eller fjerne ei deling seinare brukar du blyanten ved sida av henne på sida Nettverksdelingar.
+<a id="find-your-immich-library"></a>
+### Finn Immich-biblioteket ditt
 
-### Bla og spel av
+Med ein [Immich](https://github.com/immich-app/immich)-tenar er Immuch360 Immich-mobilappen, med same tenar og same konto som nettappen: sikkerheitskopiering, tidslinje, album, søk, personar, minne, deling, partnarar, alt synkronisert med tenaren din. Den blir installert side om side med den offisielle appen. På toppen av det: 360°-merket og -lista, alle immersive visarar, valet mellom originalfila og den omkoda strømmen frå tenaren for kvar video, dei tekniske detaljane til ein video, og filene frå ei deling eller frå eininga sendt til tenaren din manuelt.
 
-1. Trykk på ei deling. Mapper kjem først, deretter bileta og videoane som eit rutenett med miniatyrbilete (også eit bilete frå kvar video, mellomlagra på eininga). Dei som blir kjende att som 360°, har 360°-merket, og frå build 19 har romlege bilete og videoar frå Apple eit 3D-merke. Dra ned for å oppdatere.
-2. Trykk på eit bilete: det blir opna i fullskjerm (kniping, dobbelttrykk), og 360°-knappen opnar kulevisinga.
-3. Trykk på ein video: han blir spelt av i den innebygde avspelaren (spel av, pause, spoling), med ein 360°-knapp som opnar 360°-avspelaren med knappane 3D og 360°/180°, og på ein telefon ein Spatial-knapp for stereoskopiske filer.
-4. På ein Quest opnar 360°-knappen den oppslukande visinga, og frå build 19 opnar "Vis i 3D" eit romleg bilete frå Apple i 3D.
-5. Menyen ⋮ har "Vis som 360°" for filene utan 360°-merking, og på ein telefon "Spatial 2.5D" for videoane som ikkje er stereoskopiske.
+1. Logg inn med tenaradressa di, e-posten din og passordet ditt, som i Immich-appen. Biblioteket, albuma og innstillingane for sikkerheitskopiering er dei til kontoen din.
+2. I Innstillingar, Ressursvisar, Videoar, vel «Videokjelde» mellom originalen når denne eininga dekodar den, alltid originalen, eller alltid den omkoda strømmen.
+3. For å vise eit 360°-bilete til nokon som ikkje har appen, del det med ei Immich-delelenke: Immich-nettappen viser det som ei kule i nettlesaren deira.
 
-360°, 3D og VR180 blir kjende att frå GPano- eller sfæriske metadata i fila, lesne med områdeførespurnader (range requests), og VR180 også frå filnamnet. Frå build 16 blir også rå Insta360-filer kjende att (eit .insp-bilete på namnet eller kalibreringsblokka til kameraet, ein .insv-video på namnet og biletformatet) og sette saman.
+Den nåverande build-en, build 23, er basert på Immich `main` frå 10. oktober 2026 (versjon 3.3.0-rc.0) og vart testa mot ein Immich 3.2.4-tenar og ein tenar bygd frå same Immich `main`. Meld frå om problem i [Issues](https://github.com/freeKC/Immuch360/issues), ikkje til Immich-prosjektet.
 
-<a id="send-files-of-a-share-to-immich"></a>
-### Send filer frå ei deling til Immich
+Meir: [alt anna er Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [jamført med Immich-appen](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
-Frå build 15, når du er kopla til ein tenar:
+<a id="go-immersive-on-meta-quest"></a>
+### Opplev full immersjon på Meta Quest
 
-1. I ei delingsmappe held du inne på eit bilete eller ein video, eller trykkjer på Vel øvst til høgre.
-2. Kryss av det du vil, eller bruk "Vel alle bilete og videoar i denne mappa".
-3. Trykk på "Last opp til Immich". Filene blir straumde frå delinga til tenaren din éi om gongen, med framdrifta på kvar flis, og ei line nedst som seier "Sender 3 av 12" med ein Avbryt-knapp. Hald appen open medan han sender.
-4. Til slutt seier appen kor mange som vart sende og kor mange som alt var på tenaren: tenaren held på sin eigen kopi og fjernar duplikat av filene han alt har. Filer som er sende tidlegare, har eit merke ("Sendt til Immich tidlegare") og blir hoppa over neste gong.
-
-Det opne biletet eller videoen frå ei deling har same oppføringa i menyen. Utan tenar seier sida "Kopla til ein Immich-tenar for å laste opp". Bilete og videoar på eininga blir sende på same måten frå Bibliotek-fana: On this device, eit album, vel, "Last opp til Immich", også dei frå album som ikkje er med i sikkerheitskopivalet; når dei er sende, blir dei rekna som sikkerheitskopierte.
-
-### Slik blir det spelt av utan nedlasting
-
-Avspelarane les bytane dei treng gjennom ei bru inne i appen (berre loopback-adresse, tilfeldig token per økt, byteområde), så spoling i ein video fungerer og ingenting blir kopiert til eininga. Avspelarane og visinga i headsettet får aldri adressa til delinga, berre 127.0.0.1 til brua; førespurnadene til tenaren blir gjorde av appen sjølv.
-
-For jamn avspeling blir delinga lesen i store blokker, fila blir halden open mellom lesingane, opptil 16 MB blir lesne i forkant av avspelaren, og videoen som blir spelt, blir lesen over opptil seks SMB-tilkoplingar parallelt, skilde frå tilkoplinga som leverer miniatyrbilete og lister. Ein Freebox Server svarar seint på kvar lesing: éi tilkopling gjev 4,5 MB/s, seks gjev 19 MB/s, nok for ein 5.7K-eksport på 132 Mbit/s.
-
-Medan avspelaren ventar på data, viser 360°- og Spatial-avspelarane "Lastar" med fyllingsgraden til avspelingsbufferen; den flate avspelaren viser "Lastar" utan prosent medan videoen blir lasta eller stoppar opp.
-
-### DLNA-medietenarar
-
-Frå build 19 sender appen SSDP-søket etter medietenarar til multicast-gruppa på nettverket, og den same førespurnaden til port 1900 på kvar adresse i det lokale /24-nettverket, les deretter einingsskildringa til kvar tenar som svarar, og held på dei som publiserer innhaldet sitt (ein ContentDirectory).
-
-Mapper og filer blir lista med Browse-handlinga til tenaren, side for side, og får namn etter titlane: ei fil får filtypen til typen sin når tittelen ikkje har nokon, og ei fil nummer to med same tittel i ei mappe blir `name (2)`. Lyd blir utelaten. Miniatyrbilete er albumomslaga eller dei små bileta tenaren lagar, lasta av appen sjølv, med appen sitt eige miniatyrbilete når tenaren ikkje har noko. Ei fil blir spelt av frå originalen tenaren tilbyr, heller enn ein konvertert kopi når han tilbyr begge, lesen med områdeførespurnader, så spoling fungerer.
-
-Kontrollert mot minidlna og Gerbera; oppdaging på eit ekte nettverk, Plex, Jellyfin, ein NAS, Freebox Server, ein iPhone og Quest er einingstesten for build 19.
-
-<a id="a-share-that-moved"></a>
-### Ei deling som har flytta
-
-Frå build 19 held ei DLNA-deling og ei telefondeling (sjå [Del denne telefonen på nettverket](#share-this-phone-on-the-network)) på ID-en som tenaren deira kunngjer. Når ei av dei ikkje lenger svarar på adressa si (ei ny adresse frå ruteren, ein tenar starta på nytt på ein annan port), viser mappesida "Ser etter (namn) på nettverket" og flyttar delinga dit ho svarar no: med ein gong for ein DLNA-tenar, som ikkje har passord, og etter ei stadfesting, "Bruke den nye adressa?", som viser begge adressene, for ei deling med brukarnamn og passord, sidan dei ville bli sende til den nye adressa.
-
-Frå build 20 blir også ein Plex-tenar som blir funnen att på ei anna adresse i nettverket, flytta med ein gong: sertifikatet hans prov at det er den same tenaren før tokenet blir sendt. Eit Tapo-kamera blir leita etter med MAC-adressa frå si eiga side, sjå [Tapo-kamera](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
-
-### Avgrensingar
-
-- **SMB**: berre SMB 2 og 3, ikkje SMB 1.
-- **WebDAV**: berre Basic-autentisering (Digest er ikkje støtta enno); eit sjølvsignert HTTPS-sertifikat må vere installert på eininga.
-- **Finne tenarar**: nettverksskanninga og DLNA-, Plex- og Tapo-søka ser berre på det lokale /24-nettverket, og treng løyvet for lokalt nettverk på iOS. På iPhone og iPad sender DLNA-søket berre unicast-førespurnadene, til Apple gjev appen multicast-retten (entitlement), og nokre tenarar svarar ikkje på dei (minidlna på Linux): legg dei til med skildringsadressa.
-- **DLNA**: ein tenar som berre tilbyr ein konvertert kopi av ei fil, gjev den kopien; ei mappe viser høgst 20 000 oppføringar.
-- **Miniatyrbilete**: miniatyrbilete av bilete dekodar heile fila, og bilete over 30 MB får ingen.
-- **Avspelarar**: val av lydspor finst enno ikkje i den flate avspelaren. På ein telefon kan du enno ikkje sveipe frå éi fil i ei mappe til den neste (den oppslukande visinga i Quest har førre og neste for 360°-filene i mappa). Valet av 3D eller 180° for ei nettverksfil blir ikkje hugsa.
-- **Opplastingar**: dei køyrer berre medan appen er open, og ei fil tenaren alt har, blir send i heilskap før tenaren melder henne som duplikat.
-
-<a id="plex-media-server-without-plextv"></a>
-## Plex Media Server, utan plex.tv
-
-Videoane dine ligg i Plex, og Plex viser 360°-bileta og -videoane dine flatt, slik førespurnader på forumet skildrar (éin har stått open sidan 2017). Du vil også ha det biblioteket i headsettet, på TV-en og borte frå heimen. Immich-appen les berre Immich-tenaren din, og DLNA-typen frå build 19 når DLNA-sida av Plex berre heime.
-
-Frå build 20 koplar Immuch360 seg direkte til Plex Media Server, utan plex.tv: han finn tenaren på nettverket, du limer inn eit token éin gong, og appen les originalfilene i biblioteka dine direkte, i alle visingane i appen (360°, 3D, VR180, Spatial 2.5D, den oppslukande visinga i Quest, fjernkontrollen på TV-en), heime og, gjennom portvidaresendinga di, borte frå heimen. Ingenting blir kopiert, og filene du vel kan sendast til Immich.
-
-### Legg til ein Plex-tenar
-
-1. Opne Bibliotek-fana, deretter Nettverksdelingar, deretter + og "Ein Plex Media Server". Typen "Plex Media Server" i delingsskjemaet, og ein tenar med Plex-merket under "Funne på nettverket", opnar den same sida.
-2. Sida "Legg til ein Plex-tenar" leitar etter Plex-tenarane på nettverket ditt ("Søkjer etter Plex-tenarar på nettverket ditt") og viser dei under "Funne på nettverket". Trykk på din: eit kort viser namnet, Plex-versjonen og ein kort ID.
-3. Ikkje i lista? Skriv inn "Tenaradresse", som `192.168.1.20`, `192.168.1.20:32400` eller `https://...plex.direct:32400`, og trykk deretter på "Slå opp". Appen les sertifikatet til tenaren og sender ingenting anna.
-4. Hent tokenet, på ei datamaskin: opne Plex i ein nettlesar og logg inn, opne eit kva som helst bilete eller ein video i biblioteket, deretter "...", "Get Info", "View XML" (namna i Plex). Ei ny fane blir opna på ei adresse som sluttar med `X-Plex-Token=...`. Kopier heile den adressa.
-5. Lim ho inn i "Tilgangstoken", eller send ho til telefonen og trykk på "Lim inn frå utklippstavla": appen hentar tenaren og tokenet frå ho. Berre teksten etter `X-Plex-Token=` fungerer også. "Slik får du det", på sida, seier det same; tenaradministratorar kan også bruke verdien `PlexOnlineToken` frå `Preferences.xml`-fila til tenaren, som ikkje går ut. På ein TV opnar OK tastaturdialogen: skriv inn tokenet der (det er vanlegvis 20 teikn).
-6. Trykk på "Test tilkoplinga". Svaret er "Tilkopla: N bibliotek", eller kva som er gale, til dømes "Plex-tenaren avviste dette tokenet."
-7. "Tilgang utanfor heimen" viser så kva tenaren seier: "Tenaren seier at han kan nåast på (adresse):(port).", eller "Tenaren oppgav ikkje adressa si utanfor heimen." For å bruke tenaren borte frå heimen skriv du den offentlege adressa eller DynDNS-namnet ditt i "Adresse utanfor heimen (IP eller namn)", og porten som er vidaresend i Plex (Innstillingar, Ekstern tilgang) i "Port utanfor heimen". Det du skriv, går alltid føre det tenaren seier.
-8. "Namn" er namnet på tenaren med mindre du endrar det, og "Startmappe (valfritt)" kan opne eitt bibliotek direkte. Trykk på Lagre. Tenaren blir vist saman med delingane, som `plex://` og adressa.
-
-### Bla gjennom Plex-biblioteka
-
-1. Trykk på tenaren i Nettverksdelingar. Det første nivået viser biblioteka appen viser: bilete, filmar og andre videoar, TV-seriar. Musikk blir utelaten.
-2. Under eit bibliotek kjem mappene slik dei ligg på disken til tenaren ("by folder"-visinga i Plex), deretter bileta og videoane under filnamna, med miniatyrbileta Plex lagar. Eit biletbibliotek der mappevisinga ikkje svarar, viser albuma i staden.
-3. 360° og 3D blir kjende att ved å lese sjølve filene, som på ei kvar deling: 360°-bilete får 360°-merket, romlege bilete frå Apple 3D-merket.
-4. Opne eit bilete eller ein video som på ei kvar deling: 360°, 3D, 360°/180°, Spatial 2.5D på ein telefon, den oppslukande visinga i Quest, fjernkontrollen på ein TV. Ein video blir lesen som originalfila, med byteområde gjennom den lokale brua til appen, så spoling fungerer og 360°- og 3D-metadataa når avspelarane uendra.
-5. Vel filer og trykk på "Last opp til Immich" for å sende dei til tenaren din, som frå ei kvar deling (sjå [Send filer frå ei deling til Immich](#send-files-of-a-share-to-immich)).
-
-### Borte frå heimen
-
-Kvar gong han opnar tenaren, prøver appen adressa heime først og, 400 ms seinare, adressa utanfor heimen. Den første som svarar med tenaren din, blir brukt; når det er adressa utanfor heimen, viser mappesida eit globusikon med etiketten "Tilkopla via adressa utanfor heimen".
-
-Dette krev at Ekstern tilgang er slått på i Plex (Innstillingar, Ekstern tilgang) med ein port vidaresend av ruteren din: utan plex.tv kan ikkje appen bruke reléet til Plex, så ein tenar utan portvidaresending blir opna berre heime, og borte frå heimen seier sida "Plex-tenaren din kan ikkje nåast utanfor heimenettverket. Slå på ekstern tilgang med ei portvidaresending i Plex (Innstillingar, Ekstern tilgang), eller skriv inn den offentlege adressa."
-
-Adressa tenaren oppgjev, blir lært på nytt ved kvar tilkopling heime. Når ho ikkje svarar utanfrå (ein ruter som byter adresse, to ruterar etter kvarandre), skriv du inn di eiga på sida til tenaren. Når tokenet sluttar å verke (du logga til dømes ut av nettlesarøkta du kopierte det frå), seier mappesida det og tilbyr "Lim inn eit nytt token", som opnar sida til tenaren på tokenfeltet.
-
-### Samanlikna med Plex og med DLNA-typen
-
-- **Originalfilene**: appen les sjølve filene, aldri ein kopi konvertert av Plex, så 360°-, 3D- og VR180-metadataa blir verande intakte og visingane i appen brukar dei, der Plex-appane viser desse filene flatt.
-- **Ingen plex.tv**: appen snakkar berre med tenaren din, alltid over HTTPS. Tenaren blir kontrollert med sitt eige plex.direct-sertifikat, knytt til ID-en til tenaren, før tokenet blir sendt. Tokenet blir verande på eininga, i den sikre lagringa, og går berre til tenaren din, i eit førespurnadshovud.
-- **Samanlikna med å leggje til den same tenaren som DLNA**: mappene slik dei ligg på disken, miniatyrbileta frå Plex, tilgang utanfor heimen og ei sikker tilkopling.
-
-### Avgrensingar
-
-- **Berre tenarar det er gjort krav på**: det må vere gjort krav på tenaren i Plex (logga inn på ein Plex-konto éin gong), noko som gjev han plex.direct-sertifikatet. Elles seier sida "Denne adressa svarar utan eit Plex-sertifikat. Gjer krav på tenaren i Plex, eller legg han til som ei SMB-, WebDAV- eller DLNA-deling."
-- **Berre IPv4**: "IPv6-adresser er ikkje støtta enno. Skriv inn IPv4-adressa til tenaren."
-- **Tokenet** gjev full tilgang til Plex-tenaren din. Å fjerne tenaren i appen gløymer tokenet på eininga, men trekkjer det ikkje tilbake: "Tokenet held fram med å vere gyldig på tenaren til du loggar ut av nettlesarøkta du kopierte det frå." Eit token med sluttdato viser den datoen, og appen kan ikkje fornye det.
-- **Borte frå heimen**: berre gjennom ei portvidaresending, det finst ikkje noko relé.
-- **Bibliotek**: musikk blir ikkje vist, ei mappe viser høgst 20 000 oppføringar, og ein avgrensa brukar kan få "Dette tokenet kan ikkje lese biblioteka på tenaren."
-- **Rå filer frå 360°-kamera** (.insv, .insp, .360, .osv) blir viste berre om Plex viser dei; elles legg du til den same NAS-mappa som ei SMB- eller WebDAV-deling, sjå [Rå filer frå 360°-kamera](#raw-360-camera-files-without-the-cameras-app).
-- **Finne tenaren**: ein tenar der innstillinga "Enable local network discovery (GDM)" er slått av, blir ikkje funnen, så skriv inn adressa. På iPhone og iPad sender søket berre unicast-førespurnader. DLNA-sida av den same tenaren kan også bli vist i lista, med DLNA-merket: vel linja med Plex-merket.
-- **Ikkje kontrollert på ei eining enno**: samankoplinga, mappene, byteområda i ein video, miniatyrbileta, eit feil token og adressa utanfor heimen vart kontrollerte frå ei datamaskin mot ein ekte Plex Media Server 1.42.1, og bilet- og TV-seriebibliotek berre mot ein simulert tenar. Avspeling på ein telefon, i Quest, på ein iPhone og på ein TV, og bytet til adressa utanfor heimen, er einingstesten for build 20.
-- Immuch360 er ikkje tilknytt Plex.
-
-<a id="share-this-phone-on-the-network"></a>
-## Del denne telefonen på nettverket
-
-Bileta og videoane dine ligg på telefonen, og du vil sjå dei i headsettet, utan datamaskin, NAS eller Immich-tenar. Frå build 19 deler ein telefon, Android eller iPhone, sine eigne bilete og videoar på Wi-Fi, og ein Meta Quest spelar dei av. Immich-appen har ingenting liknande.
-
-### Slå det på, på telefonen
-
-1. Opne Bibliotek-fana, deretter Nettverksdelingar. Den første flisa er "Del denne telefonen på nettverket" (ho viser Av, eller På med adressa).
-2. Trykk på henne, og slå på "Del bilete og videoar på Wi-Fi". Appen ber om løyvet for bilete og videoar når det manglar, og på Android 13 og nyare om løyvet for varsel.
-3. Sida viser Adresse (som `http://192.168.1.20:8360`: port 8360, eller ein annan ledig når han er oppteken), namnet telefonen blir kunngjord under ("Immuch360 on" og namnet på telefonen), Brukarnamn (`phone` og fire siffer) og Passord (åtte teikn), kvar med ein kopieringsknapp, deretter "N einingar tilkopla" (einingane som brukte henne det siste minuttet) med den sist leverte fila.
-
-Brukarnamnet og passordet blir laga éin gong og haldne på, så headsettet held på den lagra delinga; "Nytt passord" byter ut passordet. Flisa blir ikkje vist i headsettet.
-
-### Opne det, i headsettet
-
-1. I headsettet opnar du Bibliotek, Nettverksdelingar, deretter +.
-2. Under "Funne på nettverket" trykkjer du på telefonen: brukarnamnet blir fylt ut.
-3. Skriv inn passordet éin gong (mellomrom og store bokstavar spelar inga rolle), deretter Lagre.
-
-Frå då av er det ei WebDAV-deling som alle andre: 360°-attkjenning, rå filer, den oppslukande visinga, spoling i videoar. Ein kvar WebDAV-klient på nettverket kan også lese henne. Når telefonen får ei anna adresse, leitar headsettet etter han og spør før den nye blir teken i bruk (sjå [Ei deling som har flytta](#a-share-that-moved)).
-
-### Kva ho deler, og kor lenge
-
-- **Mapper**, skriveverna: `Albums` (kvart album på telefonen), `By month` (kvart bilete og kvar video etter månad, nyaste først) og `360` (360°-bileta og -videoane appen fann på telefonen, rå filer og dei du viser som 360° inkluderte). Filene held på sine eigne namn. På ein iPhone gjev eit Live Photo stillbiletet sitt, eit redigert bilete eller ein redigert video den redigerte versjonen, og det som berre ligg i iCloud, blir utelate.
-- **Android**: delinga køyrer i ei forgrunnsteneste med eit varsel (adressa og brukarnamnet) og ein Stopp-knapp, og held Wi-Fi og prosessoren vakne, så ho held fram med skjermen av. Å sveipe bort appen stoppar henne.
-- **iPhone og iPad**: iOS gjev ikkje ein tenar tid i bakgrunnen, så delinga køyrer berre medan appen er i forgrunnen, og skjermen blir halden på så lenge. Ho blir sett på pause når appen går i bakgrunnen og kjem tilbake, med same adresse og passord, når du går tilbake til han.
-- **Når ho stoppar**: med brytaren, med Stopp, etter 60 minutt utan nokon førespurnad, og når appen blir lukka. Ho startar aldri av seg sjølv: ho er av kvar gong appen startar.
-- **Tryggleik**: berre lokalt nettverk. Delinga lyttar berre på Wi-Fi-, Ethernet- og hotspot-adressene til telefonen, aldri på adressa for mobildata eller VPN, og svarar berre einingar med ei lokal adresse. Kvar førespurnad krev brukarnamnet og passordet (HTTP Basic); ti feil passord frå éi eining innan eit minutt blokkerer henne i eit minutt. Passordet går ukryptert over Wi-Fi (vanleg HTTP): bruk delinga på eit nettverk du stolar på, og slå henne av når du er ferdig.
-- **Telefonen sitt eige hotspot**: headsettet kan kople seg til det; når det ikkje finn telefonen der, skriv du inn adressa som blir vist på sida.
-- **Ikkje kontrollert på ei eining enno**: tenaren er kontrollert med einingstestar og ende-til-ende-testar med headsettet sin eigen WebDAV-klient og mediebru, på ei datamaskin. Ein telefon som leverer til ein Quest 3 (oppdaging, ein video på 4 GB avspelt og spolt i, skjermen av i 30 minutt, hotspotet, Stopp frå varselet) og iPhone-sida, som ikkje har køyrt på ein iPhone enno, er einingstesten for build 19.
-
-<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
-## Tapo-kamera: direktebilete og opptaka på minnekortet
-
-Du har Tapo-kamera heime, og vil sjå hagekameraet og klippa frå i natt ved sida av bileta dine utan å opne Tapo-appen, og halde på eit klipp i Immich. Immich-appen har ingenting for kamera, og Tapo-appen er ein eigen app, logga inn på TP-Link-kontoen din, med klippa skilde frå bileta dine.
-
-Frå build 20 legg Immuch360 til eit Tapo-kamera ved sida av nettverksdelingane. Han viser kameraet direkte på Android-telefonar og -nettbrett, Android TV og Meta Quest, og på alle plattformer opptaka på minnekortet, dag for dag: eit klipp blir henta frå kameraet, blir så spelt av som ein kvar video og kan sendast til Immich. Appen snakkar med kameraet berre på ditt eige nettverk, aldri med tenarane til TP-Link, og endrar aldri noko på kameraet.
-
-### Legg til eit kamera
-
-1. Først i Tapo-appen: opprett kamerakontoen, i innstillingane for kameraet, Advanced Settings, Camera Account (eit brukarnamn og passord for dette kameraet, brukt til direktebiletet), og slå på Third-Party Compatibility, under Me, deretter Tapo Lab (namna i Tapo-appen).
-2. I Immuch360 opnar du Bibliotek-fana, deretter Nettverksdelingar, deretter + og "Eit Tapo-kamera".
-3. Sida "Legg til eit kamera" leitar etter kamera ("Søkjer etter Tapo-kamera på nettverket ditt") og viser dei under "Funne på nettverket" med Tapo-merket. Trykk på ditt for å fylle ut "Adressa til kameraet", eller skriv inn adressa. Eit kamera med Tapo-merket i delingsskjemaet opnar den same sida.
-4. "Namn": korleis kameraet blir vist i lista.
-5. Under "Opptak på minnekortet", "Passordet til TP-Link-kontoen": passordet til kontoen du brukar i Tapo-appen. Det opnar opptaka; e-postadressa di trengst ikkje.
-6. Under "Direkte", "Brukarnamnet til kamerakontoen" og "Passordet til kamerakontoen": kamerakontoen frå steg 1.
-7. Eitt av dei to er nok ("Skriv inn passordet til TP-Link-kontoen, kamerakontoen eller begge."): TP-Link-passordet åleine gjev opptaka, kamerakontoen åleine direktebiletet.
-8. Trykk på "Test kameraet". Det viser "Opptak: (modell), fastvare (versjon)" med tilstanden til minnekortet, og "Direktebilete: (video), lyd (lyd)", eller kva som feila for kvar av dei.
-9. Trykk på Lagre. Kameraet blir vist under "Kamera", etter delingane, med modellen når han er kjend og `tapo://` med adressa.
-
-<a id="watch-it-live"></a>
-### Sjå det direkte
-
-1. Trykk på kameraet. Direktebiletet er øvst på sida: "Koplar til kameraet", deretter biletet med Direkte-merket.
-2. Knappane på biletet: lyden, av til å byrje med ("Slå på lyden"; "Ingen lyd på denne eininga" når eininga ikkje kan spele han av), SD eller HD, og "Fullskjerm".
-3. Ein telefon viser SD på sida og HD i fullskjerm; Quest viser HD. Tilbake går først ut av fullskjerm.
-4. Under biletet kjem modellen og fastvaren og minnekortet, til dømes "Minnekort: (brukt) brukt av (totalt)" eller "Ikkje noko minnekort".
-
-På iPhone og iPad seier direktebiletet "Direktebiletet kjem til iPhone og iPad i ein seinare versjon. Opptaka vert alt spela av her." Utan kamerakontoen seier sida "Legg til kamerakontoen for å sjå direktebiletet."
-
-### Spel av og ta vare på opptaka
-
-1. Under "Opptak på minnekortet" viser kamerasida dagane med opptak, dei nyaste først, etter månad. Utan passordet til TP-Link-kontoen seier ho "Legg til passordet til TP-Link-kontoen for å sjå opptaka."
-2. Trykk på ein dag. Klippa kjem under timane i kameraet si eiga tid, kvart med start, lengd, miniatyrbiletet til kameraet for ei hending, og typen: Rørsle, Person, Kjæledyr, Køyretøy, Babygråt, Dyr, Kontinuerleg eller Hending.
-3. Trykk på eit klipp. Appen hentar det frå kameraet ("Hentar videoen frå kameraet: N %", med Avbryt), og spelar det deretter av i videoavspelaren, med lyd og spoling. Eit henta klipp er merkt "På denne eininga" og blir opna med ein gong neste gong.
-4. For å halde på eit klipp i Immich, med ein tenar tilkopla: ⋮-menyen for videoen, "Last opp til Immich".
-5. For å frigjere plass: eit langt trykk på eit henta klipp tilbyr "Slett kopien på denne eininga" (på ein telefon), og kamerasida har "Slett videoane som er henta frå dette kameraet", med storleiken deira.
-6. Oppdateringsknappen øvst til høgre, eller å dra sida nedover, spør kameraet på nytt.
-
-Når kameraet ikkje lenger svarar på adressa si, leitar sida etter det på nettverket med MAC-adressa og flyttar det dit det svarar no, så snart det viser det same sertifikatet. Eit kamera som viser eit anna sertifikat enn det appen såg først, får i staden eit spørsmål: "Kameraet på (adresse) viser eit anna sertifikat enn før. Hald fram berre om du har tilbakestilt eller bytt det."
-
-### Samanlikna med Tapo-appen
-
-- **Berre på ditt eige nettverk**: appen snakkar med sjølve kameraet, på det lokale nettverket, og aldri med tenarane til TP-Link. Han loggar ikkje inn på ein TP-Link-konto, så e-postadressa di trengst ikkje.
-- **Opptak blir vanlege videoar**: eit henta klipp er ein H.264-video med lyd, som du kan sende til Immich, der det blir verande etter at minnekortet har teke opp over det.
-- **Ved sida av resten**: med eller utan Immich-tenar, på ein telefon, ein TV eller i Quest (i vindauget), funne på nettverket som ei deling.
-- **Berre lesing**: appen ber berre kameraet om det han viser; han endrar aldri ei innstilling og slettar aldri noko på kameraet.
-
-### Avgrensingar
-
-- **Ikkje kontrollert på ei eining enno**: build 20 har ikkje køyrt med eit ekte kamera enno. Protokollen vart skriven ut frå opptak av trafikken til eit C510W med fastvare 1.3.4 (V4-innlogginga frå midten av 2026), og appen vart kontrollert mot eit simulert kamera i testane sine. Rapportar er velkomne, med modellen og fastvaren som "Test kameraet" viser og linjene frå [Loggar](#logs).
-- **Direktebilete**: berre på Android-telefonar og -nettbrett, Android TV og Quest, ikkje på iPhone og iPad enno. Avgrensingane til TP-Link gjeld: høgst to HD- og to SD-straumar samtidig per kamera, Tapo-appen medrekna, og Tapo Care, minnekortet og ein opptakar som brukar RTSP eller ONVIF kan ikkje alle køyre samtidig.
-- **Kamera**: batterikamera og kamera bak ein Tapo-hub er ikkje støtta.
-- **Opptak**: éi nedlasting om gongen per kamera. Medan Tapo-appen blar gjennom minnekortet, prøver appen igjen etter 4, 8 og 12 sekund, og seier deretter "Kameraet er oppteke med ein annan sjåar, til dømes Tapo-appen. Prøv igjen om eit minutt." Opptak i H.265 blir ikkje konverterte enno ("Dette opptaket er i H.265, som denne versjonen ikkje kan konvertere enno."), kontinuerlege opptak har ikkje miniatyrbilete, og eit klipp blir spelt av når det er ferdig henta.
-- **Passord**: kvart feil passord tel, og etter nokre få låser kameraet seg ei stund ("Kameraet er låst etter for mange feil passord. Prøv igjen om N minutt."). Appen prøver aldri eit avvist passord på nytt av seg sjølv: berre "Test kameraet" eller Retry (Prøv på nytt) spør kameraet igjen. Når kameraet godtek passordet for innstillingane sine, men ikkje for videoane sine, slår du Third-Party Compatibility av og på igjen i Tapo-appen, og startar kameraet på nytt.
-- **Plass**: henta klipp blir liggjande i mellomlageret til appen, høgst 1 GB for alle kameraa til saman (dei som er spelte av for lengst sidan, går først); systemet kan tømme det mellomlageret, og å fjerne eit kamera slettar klippa.
-- **Borte frå heimen**: appen når kameraet på adressa i nettverket ditt, altså ikkje utanfrå.
-- Immuch360 er ikkje tilknytt TP-Link.
-
-<a id="raw-360-camera-files-without-the-cameras-app"></a>
-## Rå filer frå 360°-kamera, utan appen til kameraet
-
-Insta360-kamera tek opp dei to fiskeaugesirklane frå objektiva sine, side om side i eitt bilete, i to spor eller i to filer (ein .insp er ein JPEG, ein .insv ein MP4), og den offisielle måten å få eit 360°-bilete ut av dei på er Insta360-appen eller Studio. Folk med ein X4, X5, X6, ein GoPro MAX eller ein DJI Osmo 360 spør kva dei skal gjere med dei rå filene på kortet. Immich-nettappen tek ein kvar .insp for eit ekvirektangulært bilete og legg dei to sirklane rundt kula; mobilappen viser dei flatt.
-
-Frå build 16 set Immuch360 saman desse filene sjølv, på telefonen, nettbrettet eller headsettet, utan å installere noko på tenaren:
-
-- **Insta360 .insp-bilete** (build 16): sette saman på GPU-en før kulevisinga, opptil 8192x4096, med ein CPU-reserve i mindre storleik.
-- **Insta360 .insv-videoar som har begge objektiva i eitt spor** (build 16): sette saman av ein GPU-effekt i avspelaren.
-- **Insta360 X4-, X4 Air-, X5- og X6-videoar (.insv), eitt kvadratisk spor per objektiv** (build 18): to dekodarar samtidig, éin per objektiv, og ein GPU-kompositør som set dei saman til kula.
-- **Insta360 X3 og eldre frå 5.7K og oppover: to filer, `_00_` og `_10_`** (build 18): det same, den andre fila blir funnen ved sida av den første.
-- **GoPro MAX og MAX 2 .360: to spor med tre kubesider kvar** (build 18): det same, med overlappskolonnane blanda.
-- **DJI Osmo 360 .osv: to kvadratiske 10-bits spor** (build 18): det same, med Kannala-Brandt-kalibreringa i fila.
-- **Dobbel fiskeauge-.dng** (ikkje enno): blir vist flatt.
-
-### Sjå ei rå fil
-
-1. Legg dei rå filene der appen les dei: eininga sitt eige galleri (kopierte frå kortet i kameraet), Immich-tenaren din (han tek imot .insp og .insv, og avviser .360 og .osv), ei SMB- eller WebDAV-deling, og frå build 19 telefondelinga og DLNA-tenarane som viser desse filene (ikkje kontrollert enno).
-2. Hald dei to filene i eit X3-par saman: appen ser etter den andre fila ved sida av den første, på eininga, på tenaren eller i delingsmappa. Når den andre manglar, seier appen "Dette opptaket er delt i to filer, éi per objektiv, og (namn) vart ikkje funnen ved sida av", og føreslår å halde begge filene saman eller eksportere videoen frå appen til kameraet.
-3. Opne fila og trykk på 360°. Rå filer får 360°-knappen og rå bilete 360°-merket. Frå build 18 er dei rå Insta360-filene på tenaren også i 360°-lista, funne på namnet.
-4. Eit bilete blir opna i kulevisinga med ei etikett nedst: "Rå 360°-fil, sett saman av appen", og kjelda til kalibreringa: "objektivkalibrering lesen frå fila", "objektivkalibrering frå same kamera" (teken vare på frå ei anna fil frå same kamera, etter serienummer, eller etter modell for ei fil som berre oppgjev modellen), eller "nominelle objektivverdiar, skøytar kan synast" (verdiane til ein X3, når ingenting betre finst).
-5. Ein video blir opna i den innebygde 360°-avspelaren og blir sett saman medan han blir spelt av. Knappane 3D og 360°/180° er skjulte, sidan ein rå video er éi heil kule. Videoavspelarane og headsettet viser inga etikett.
-6. I headsettet får den oppslukande visinga eit mellombels samansett bilete for eit bilete, og den same GPU-effekten som telefonen for ein video. Det finst ingen framdriftsindikator enno medan eit rått bilete blir gjort klart.
-7. Om biletet blir opna vendt i ei merkeleg retning (til dømes eit bilete teke med kameraet liggjande flatt), drar du i det på ein telefon, eller roterer det i headsettet med høgre styrespak eller Roter-knappen.
-
-### Når eininga ikkje kan spele av begge objektiva
-
-Før ein video med to objektiv blir spelt av, spør appen eininga om ho kan køyre to dekodarar med den storleiken og biletfrekvensen, og ein telefon åtvarar "Denne rå videoen treng to (storleik)-videodekodarar samtidig: han blir kanskje ikkje spelt jamt av på denne eininga" når svaret er nei. Når dekodarane ikkje kan køyre (til dømes to H.264-objektiv på 2880x2880 på ein Quest 3), spelar appen av eitt objektiv og seier frå, slik at halve kula blir verande svart, og deretter den omkoda straumen frå tenaren om han finst. Om GPU-effekten ikkje kan køyre på ei eining, blir videoen spelt av utan samansetjing, med dei to sirklane på kula, med "360°-samansetjinga mislukkast på denne eininga".
-
-Frå build 19, på Android og Quest:
-
-- **Ingen maskinvaredekodar** for kodeken (ein emulator, ein TV-boks): eininga får programvaredekodarar, som kontrollen avgrensar til 2048x2048 per objektiv når to køyrer samtidig.
-- **Eit objektiv eininga ikkje kan dekode i det heile** (ingen dekodar for kodeken, eller ingen som oppgjev profilen) hoppar over steget med eitt objektiv, til fordel for den omkoda straumen frå tenaren eller elles originalen utan samansetjing i den vanlege avspelaren, med den avspelaren si eiga melding.
-- **Eit objektiv som blir prøvd sjølv om storleiken eller biletfrekvensen vart avvist**, viser meldinga om eitt objektiv først når det første biletet er teikna.
-- **Når dekodaren for det eine objektivet sviktar** og det ikkje finst nokon omkoda straum, blir videoen spelt av utan samansetjing i staden for å stoppe med ein feil.
-- **På ein Android-emulator** blinkar ikkje lenger eit bilete frå det motsette objektivet inn (kvar objektivtekstur blir no bunden til det eksterne teksturmålet ved kvart bilete).
-
-### Slik fungerer samansetjinga
-
-- **Kva appen les**: kalibreringsblokka kameraet legg til kvar fil (objektivmodell, sentrum, retninga til kvart objektiv, storleiken på kalibreringslerretet) og opptaket frå akselerometeret, som blir brukt til å rette opp horisonten. Mei-modellen (unified camera) i kalibreringsstrengen V3 blir brukt først, V6 (X6 og nyare fastvare) med dei første ledda sine deretter, og den eldre ekvidistante strengen V1 sist. Ingenting blir gissa ut frå kameramodellen når fila har kalibreringa si. Kalibreringa til Insta360 X5 og X6 (V6, indeksert tilhengar) og videovindauget til X4 blir lesne frå fila.
-- **Kvar han les henne**: tenaren (originalfila, lesen med ein områdeførespurnad etter dei siste bytane), eininga sitt eige galleri, og delingane.
-- **Bilete og videoar**: bilete blir sette saman av ein Flutter-fragmentshader før kulevisinga; videoar går til dei innebygde avspelarane med kalibreringa, ein Media3 GL-effekt på Android og Quest, ein SceneKit-shader på iOS.
-- **To objektiv i to spor eller to filer**: avspelarane dekodar begge samtidig, éin maskinvaredekodar per objektiv, para etter tidsstempel, og ein GPU-kompositør set dei saman til kula: ExoPlayer og OpenGL ES 3 på Android og Quest, ein AVFoundation-kompositør i Metal på iOS. 10-bits HLG- og PQ-kjelder blir tonekartlagde til 8-bits kula.
-
-### Avgrensingar
-
-- **Skøytar**: samansetjinga brukar berre kalibreringa til kameraet, utan skøyteoptimalisering, så ting nær kameraet kan vise ein skøyt, som i kameraet si eiga førehandsvising.
-- **Horisont**: opprettinga brukar akselerometeret kameraet registrerer i fila, i gjennomsnitt. Ein video blir retta opp éin gong, frå starten av opptaket, og blir ikkje stabilisert, så ein video teken på frihand held på ristingane og horisonten kan helle litt. GoPro- og DJI-filer blir ikkje retta opp (horisonten til kameraet blir halden på).
-- **Filer utan kalibrering**: ei fil utan kalibreringsblokk (medlemene `_008` og `_009` i ei X3 HDR-gruppe) brukar kalibreringa appen har teke vare på frå ei anna fil frå same kamera eller same kameramodell, eller dei nominelle X3-verdiane om han ikkje har sett nokon.
-- **Kva som er kontrollert**: bilete mot Insta360 Studio-eksportar av X3-filer (same utsnitt, rett horisont, eit giravvik under éin grad); videoar med eitt spor på ein Android-emulator med ei X3-fil i låg oppløysing. Banane for to spor og to filer er kontrollerte på ekte filer frå X4, X3-par, GoPro MAX og Osmo 360 med referansesamansetjaren til appen på CPU (rett, samanhengande skøytar) og med Android-einingstestane. Avspeling på ein telefon, ein Quest og ein iPhone er framleis einingstesten for build 18 og 19, og rå filer har ikkje køyrt på ein iPhone enno: tilbakemeldingar er velkomne.
-- **På tenaren**: Immich-tenaren avviser opplastingar av .360 og .osv, så dei to formata finst berre på eininga og på delingar.
-
-<a id="3d-and-vr180-photos-and-videos"></a>
-## 3D- og VR180-bilete og -videoar
-
-I Immich-appen viser eit stereoskopisk 360°-bilete eller ein stereoskopisk 360°-video begge auga samtidig, eit dobbelt bilete, og ei VR180-fil, som berre dekkjer den fremre halvdelen, blir strekt heile vegen rundt kula.
-
-Immuch360 kjenner att 3D-oppsetta, topp og botn eller side om side, frå fila (st3d-boksen i ein video), eller gissar dei ut frå forma på biletet, og kvar vising har ein 3D-knapp for å endre dei. Ein telefon viser venstre auge; ein Meta Quest viser kvart auge sin eigen halvdel, i ekte 3D. VR180-filer blir teikna på ei halvkule, med baksida svart i staden for eit utstrekt bilete. Dei blir kjende att frå fila (sfæriske grenser eller nett, GPano-utsnitt) eller frå "vr180" eller "180" i namnet, og kvar vising har ein 360°/180°-knapp.
-
-### Endre oppsettet eller dekninga
-
-1. Opne biletet eller videoen som kule (360°-knappen).
-2. 3D-knappen byter mellom "Mono (ikkje 3D)", "3D, topp og botn" og "3D, side om side"; verktøytipset viser gjeldande oppsett.
-3. Knappen 360°/180° byter mellom "360°, heil kule" og "180°, halv kule (VR180)". Han blir ikkje vist på delvise panorama.
-4. I headsettet ligg dei same to knappane på infopanelet i den oppslukande visinga.
-
-Valet 360°/180° blir hugsa på eininga for media i biblioteket, enno ikkje for ei fil på ei nettverksdeling. 3D-valet blir ikkje hugsa når visinga blir lukka: oppsettet fila oppgjev, eller det gissa, gjeld igjen neste gong (Spatial 2.5D-avspelaren nedanfor hugsar sitt eige).
-
-Kontrollert på ein Galaxy S24+ og ein Quest 3 med ekte 3D 360°-dømevideoar (VRTogether, Vuze, Kandao) og eit 3D-bilete; VR180 på ein Android-emulator og ein Galaxy S24+ med syntetiske media. Rapportar frå andre kamera er velkomne.
-
-<a id="depth-on-a-flat-screen-spatial-25d-experimental"></a>
-## Djupn på ein flat skjerm: Spatial 2.5D (eksperimentell)
-
-Ein stereoskopisk video kan få djupn på ein flat skjerm. Dei to auga i videoen gjev djupna, frontkameraet følgjer hovudet ditt, og appen syntetiserer visinga mellom dei, slik at skjermen oppfører seg som eit vindauge mot scena: rør på hovudet, og ting nær deg flyttar seg mot bakgrunnen. Berre telefonar og nettbrett.
-
-### Bruk han
-
-1. Sjekk at han er på: Innstillingar, Asset Viewer, Videoar, "Spatial 2.5D (eksperimentell)". Han er på som standard; å slå han av fjernar Spatial-knappen overalt.
-2. Opne ein video. Så lenge innstillinga er på, viser den øvste lina Spatial-knappen (eit roterande 3D-ikon) på kvar video; i ei mappe på ei nettverksdeling får berre stereoskopiske filer han, og dei andre har Spatial 2.5D i menyen ⋮.
-3. Trykk på han. Løyvet til frontkameraet blir spurt om første gongen; kameraet blir berre brukt når du trykkjer på knappen.
-4. Øvst til høgre: Lydspor når videoen har to eller fleire, gjeldande oppsett (trykk for lista: Automatisk, Ikkje stereoskopisk, Side om side, Topp og botn, dei to siste også med auga bytte om), 360°/180° på ein 360°-video, og Sentrer på nytt, som tek den noverande posisjonen til hovudet som midten.
-5. Nedst: spel av, tidslinja, deretter Hovudfølsemd medan hovudet ditt blir spora, og glidebrytaren for synsstad frå L til R, som flyttar synsstaden for hand; han blir vist når hovudsporinga er av eller har mista andletet ditt.
-6. Lukk med krossen eller tilbakeknappen i systemet.
-
-Med Innstillingar, Avansert, Troubleshooting (Feilsøking) slått på, legg avspelaren til eit overlegg øvst til venstre (gjengivings- og disparitetsfrekvens, kvalitetsnivå, synsstad, sporingsstatus), viser alltid glidebrytaren for synsstad, og legg til ein avkryssingsboks "Disparity map" (disparitetskart) som viser den anslåtte djupna i staden for biletet.
-
-### Format, personvern og avgrensingar
-
-- **Format**: side om side og topp og botn, også med auga bytte om, full eller halv breidd, flat, 360° og VR180. Oppsettet blir lese frå fila, elles blir det gissa ut frå biletforma eller filnamnet (sbs, ou, tb og liknande; ei fil med halv breidd blir berre kjend att på namnet), og kan veljast for hand i avspelaren. Valet blir hugsa for ein video i biblioteket, ikkje for ei fil på ei nettverksdeling.
-- **Kamera**: bileta blir handsama berre på eininga, blir aldri lagra og aldri sende nokon stad. Quest-builden har ikkje noko kameraløyve i det heile (headsettet har ikkje noko kamera ein app kan bruke), og Spatial-avspelaren blir ikkje tilboden der: knappen og innstillinga er skjulte i headsettet.
-- **Avgrensingar**: eksperimentell, berre telefonar og nettbrett (ikkje Meta Quest), krev OpenGL ES 3.0 eller Metal. Djupna er eit anslag. Han fungerer best i liggjande retning med andletet godt opplyst. Kontrollert på ein Galaxy S24+; tilbakemeldingar frå iPhone er velkomne.
-- **Reserve**: om noko går gale (ikkje noko kamera, eining som ikkje er støtta, uleseleg oppsett), er du tilbake i den vanlege avspelaren.
-
-<a id="apple-spatial-photos-and-videos"></a>
-## Romlege bilete og videoar frå Apple
-
-Ein iPhone tek romlege bilete og videoar, og Immich-tenaren seier ingenting om dei: i Immich-appen er dei eit flatt bilete eller ein flat video. Frå build 19 kjenner Immuch360 dei att ved å lese filene, og viser eit romleg bilete i 3D i eit Meta Quest-headsett. Dette er ikkje Spatial 2.5D-avspelaren ovanfor, som er for videoar side om side og topp og botn.
-
-- **Romlege bilete** er HEIC-filer (`.heic`, `.heif`, `.hif`) som inneheld to bilete, eitt per auge, grupperte som eit stereopar. Appen les starten av fila (på eininga, originalen på tenaren med ein områdeførespurnad, eller ei fil på ei nettverksdeling) og hugsar svaret på telefonen, så eit bilete blir berre lese éin gong.
-- **Romlege videoar** (MV-HEVC) blir kjende att frå videosporet: eit andre lag, og begge auga oppgjevne.
-
-### Sjå eit romleg bilete i 3D i headsettet
-
-1. I headsettet opnar du det romlege biletet i visinga, eller i ei mappe på ei nettverksdeling, der romlege bilete og videoar har eit 3D-merke.
-2. Trykk på "Vis i 3D" i den øvste lina (biletsida for ei deling har han også).
-3. Den oppslukande visinga blir opna med biletet i ei flat ramme 2 m framfor deg, der kvart auge får sitt eige bilete, med ei breidd basert på synsfeltet til kameraet når fila oppgjev det (elles 48°). Disparitetsjusteringa som er skriven i fila, blir brukt.
-4. Styrespak opp eller ned gjer biletet større eller mindre (steg på 6°, frå 30° til 90°); høgre styrespak til venstre eller høgre flyttar det tilbake framfor deg.
-5. 3D-knappen på infopanelet byter mellom 3D og "2D (venstre auge)". Knappane Roter og 360°/180° er skjulte.
-6. Trykk på B eller Y for å gå tilbake.
-
-Førre og neste er enno ikkje tilgjengelege frå eit romleg bilete ("Førre og neste er enno ikkje tilgjengelege for romlege bilete"). Om headsettet ikkje kan dekode det andre auget, blir biletet vist i 2D med "Det andre auget kunne ikkje dekodast: vist i 2D". 3D-visinga viser originalfila, utan redigeringane som er gjorde i Immich.
-
-### Alle andre stader
-
-- **Bilete**: telefonar, nettbrett og headsettvindauget viser venstre auge, som før, og dei tekniske detaljane får ei ny rad, til dømes "Apple romleg bilete, to visingar på 3072 x 3072", med synsfeltet når fila oppgjev det. Tenarbilete har ikkje noko merke i tidslinja: appen finn det ut når eit bilete blir opna.
-- **Videoar**: dei spelar av grunnlaget sitt, eitt auge, i alle avspelarane i appen. Android har ingen offentleg måte å dekode den andre visinga på; ei eining med ein eigen dekodar for MV-HEVC (på nokre Qualcomm-brikker) ville fått videoen i staden, noko som ikkje er kontrollert enno. Første gong ein slik video blir spelt av i ei økt, seier appen "Romleg video: denne eininga spelar av eitt auge" (ein video på ei nettverksdeling har 3D-merket i staden), og dei tekniske detaljane seier "Apple romleg video (MV-HEVC), vist i 2D", med auget, grunnlina og synsfeltet fila registrerer.
-- **Dekodarar**: Innstillingar, Avansert, "Videodekodarar på denne eininga" har ei MV-HEVC-oppføring som viser ein dekodar på eininga for han, eller seier at det ikkje finst nokon.
-
-### Ikkje kontrollert på ei eining enno
-
-Attkjenninga er kontrollert på eit døme på eit romleg bilete skrive av Apple sitt eige biletbibliotek og på syntetiske filer, og 3D-komposisjonen med einingstestar. Headsettvisinga (begge auga dekoda, biletet rett veg og ikkje spegelvendt, djupna i rett retning, komforten på 2 m) og ekte bilete og videoar frå iPhone er einingstesten for build 19. Rapportar er velkomne, med linjene frå [Loggar](#logs).
-
-<a id="in-the-meta-quest-3-headset"></a>
-## I Meta Quest 3-headsettet
-
-Folk kjøper ein Quest 3 for å sjå sine eigne 360°-bilete og -videoar, og spør så kvar dei skal leggje filene, korleis dei får dei over på headsettet utan kabel, og kva avspelar dei skal bruke: avspelarane for 360°- og 3D-video i butikken kostar pengar.
-
-Den same Android-appen køyrer på Quest 3 og 3S, og frå build 21 på Quest 2 og Quest Pro (ikkje testa), som eit vindauge, med heile biblioteket ditt. 360°-knappen opnar ei oppslukande vising der biletet eller videoen er rundt deg og du ser deg rundt ved å snu hovudet, i ekte 3D for stereoskopiske filer (Meta Spatial SDK).
-
-Media kjem frå Immich-tenaren din, sjølve headsettet, ein NAS, ein medietenar, ein telefon eller ein Plex-tenar, og blir spelte av der dei ligg (ein medietenar og ein telefon frå build 19, ein Plex-tenar frå build 20, ikkje kontrollert i headsettet enno), og frå build 20 viser vindauget også Tapo-kameraa. Appen er gratis og open kjeldekode. Kontrollert på ein Quest 3, og av ein brukar med Insta360 X4 8K HEVC-videoar.
-
-### Opne den oppslukande visinga
-
-1. Installer appen på headsettet frå [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), eller sideload APK-en til ein nyare build, sjå [Installer](#install).
-2. Logg inn med Immich-tenaren din, eller trykk på "Bruk utan tenar" for headsettet sine eigne bilete og videoar.
-3. Opne eit 360°-bilete eller ein 360°-video i visinga, frå tidslinja, 360°-lista, eit album eller ei delingsmappe.
-4. Trykk på 360°-knappen, eller "Vis som 360°" i menyen ⋮. I headsettet opnar dei den oppslukande visinga direkte, i staden for kulevisinga på telefonar.
-5. Sjå deg rundt ved å snu hovudet.
-6. For å gå tilbake til vindauget trykkjer du på B eller Y, eller Tilbake-knappen på infopanelet.
-
-| Handling | Kontrollarar | Hender |
-|---|---|---|
-| Tilbake til appen | B eller Y | Tilbake-knappen |
-| Spel av eller set ein video på pause | Avtrekkar, når infopanelet er skjult | Knappen Spel av eller Pause |
-| Vis eller skjul infopanelet | A, X, grepknapp eller meny | Menyrørsle, eller kniping når panelet er skjult |
-| Roter visinga (frå build 17) | Høgre styrespak til venstre eller høgre, 30° per trykk | Roter-knappen (90°) |
-| Førre eller neste medium | Venstre styrespak til venstre eller høgre | Knappane Førre og Neste |
-| 10 sekund tilbake eller fram i ein video | Styrespak ned eller opp | Dei to hoppeknappane, eller dra tidslinja |
-| Roter biletet 90° | Styrespak ned eller opp på eit bilete, Roter-knappen på ein video | Roter-knappen |
-| Endre 3D-oppsettet (mono, topp og botn, side om side) | 3D-knappen | 3D-knappen |
-| Heil kule eller halvkule (VR180) | Knappen 360°/180° | Knappen 360°/180° |
-
-I denne tabellen er knappane og tidslinja dei som ligg på infopanelet. Med kontrollarar fungerer dei også: peik på dei med strålen og trykk på avtrekkaren.
-
-- **Roter visinga**: for å sjå bak deg utan å snu hovudet. Høgre styrespak held fram med å rotere medan han blir halden, og eit overlegg på éi line viser vinkelen.
-- **Overlegg på éi line**: frå build 16 viser spoling, rotering av eit bilete, eller førre og neste med styrespaken eit overlegg på éi line (tida, vinkelen eller namnet på mediet), og infopanelet blir verande skjult. Før build 17 gjekk kva styrespak som helst til førre eller neste medium.
-
-### Infopanelet, førre og neste
-
-Infopanelet for ein video har ei tidslinje (posisjon, lengd, kor mykje som er bufra) mellom to hoppeknappar på 10 sekund; under henne kjem Førre, Spel av eller Pause og Neste, deretter Roter, 3D, 360°/180° og Tilbake. Eit bilete har dei same radene utan tidslinja og Spel av. 3D-oppsettet og valet 360°/180° finst berre på knappane på panelet.
-
-Førre og neste går gjennom 360°-media frå staden du kom frå, utan å forlate den oppslukande visinga: tidslinja, 360°-lista (slik ho er filtrert), eit album, ei mappe på ei nettverksdeling, eller headsettet sine eigne media (On this device). Flate bilete og videoar blir hoppa over. Når du går tilbake til appen frå tidslinja, eit album eller 360°-lista, hamnar du på mediet du såg på (ei side for ei delingsmappe blir verande på fila du opna), og videoen du opna den oppslukande visinga frå, held fram der han slapp.
-
-Frå build 17 roterer høgre styrespak visinga, slik høgre styrespak roterer i dei fleste headsettappar: eit trykk roterer 30°, å halde han inne held fram med å rotere, slik at det som er bak deg kjem framfor utan at du snur hovudet eller stolen; førre og neste ligg på venstre styrespak.
-
-Frå build 16, etter tilbakemelding frå ein brukar i headsettet, viser spoling, rotering eller førre/neste med styrespaken eit overlegg på éi line (tida, vinkelen eller tittelen på mediet) som blir tona ut etter 1,5 sekund i staden for å hente fram infopanelet; panelet kjem framleis med A, X, grepknappen eller menyknappen. Den same builden held panelbrytaren i gang når kontrollarane sovnar, vaknar eller gjev plass for handsporing, og loggar desse overgangane, sjå [Loggar](#logs).
-
-Eit romleg bilete frå Apple som blir opna med "Vis i 3D", blir ikkje lagt på ei kule: det svevar framfor deg, sjå [Romlege bilete og videoar frå Apple](#apple-spatial-photos-and-videos).
-
-### Kva headsettet viser
-
-Bilete viser først ei førehandsvising, deretter originalen, skalert ned til maks 8192x4096 (grensa til appen). Videoar spelar av fila som er lagra på headsettet når ho finst, og ei fil på ei nettverksdeling gjennom den lokale brua i appen; elles straumar dei frå tenaren din slik innstillinga Videokjelde seier (frå build 15; som standard originalen, og den omkoda versjonen frå tenaren når originalen ikkje kan straumast eller går ut over dekodarane i headsettet, sjå [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters)). Rå kamerafiler blir også opna her frå build 16, sette saman av appen; knappane 3D og 360°/180° er skjulte for ein rå video, som er éi heil kule.
-
-3D-oppsett, topp og botn og side om side, 360° og VR180, blir viste i 3D, der kvart auge får sin eigen halvdel av biletet. Oppsettet kjem frå fila når ho oppgjev eitt (videoar), elles blir det gissa ut frå forma (kvadratisk: topp og botn, 4:1: side om side); når det er feil, brukar du 3D-knappen på infopanelet.
+På ein Meta Quest køyrer same app som eit vindu med heile biblioteket ditt, og appen sin 360°-knapp opnar ei immersiv vising der biletet eller videoen er rundt deg overalt: du ser deg rundt ved å snu hovudet, stereoskopiske filer er i ekte 3D, eit romleg Apple-bilete flyter framfor deg i 3D, og kontrollerane eller hendene dine styrer tidslinja, førre og neste, og Snu-knappen, som fører det som er bak deg fram utan å snu stolen. Media kjem frå tenaren din, hovudsettet sjølv, ein NAS, ein medietenar, ein telefon eller ein Plex-tenar, spela direkte.
 
 <p align="center">
   <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Eit 360°-bilete rundt deg i Quest 3, med infopanelet: knappane for oppsett, 360° og Tilbake">
@@ -577,663 +153,163 @@ Bilete viser først ei førehandsvising, deretter originalen, skalert ned til ma
   <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Ein stereoskopisk 360°-video i Quest 3, infopanelet viser 3D, topp og botn">
 </p>
 
-- **360°-bilete i headsettet**: den oppslukande visinga av eit bilete, med infopanelet (oppsett, 360°/180°, Tilbake).
-- **360°-video i headsettet**: ein video som blir spelt av, med Pause.
-- **3D 360°-video i headsettet**: ein stereoskopisk video topp og botn, kvart auge får sitt (dømet Kandao Obsidian).
+1. Installer appen frå [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), eller sideload APK-en til ein nyare build, sjå [Installering](#meta-quest).
+2. Logg inn med Immich-tenaren din, eller trykk på "Bruk utan tenar" for headsettet sine eigne bilete og videoar.
+3. Opne eit 360°-bilete eller -video og trykk på 360°: den immersive visinga opnar seg. B eller Y, eller Tilbake-knappen på infopanelet, fører vinduet tilbake.
 
-Desse skjermbileta vart tekne med appen på fransk, før build 14. Panelet har no også tidslinja mellom dei to hoppeknappane på 10 sekund, Førre og Neste, og Roter.
+Meir: [i Meta Quest-hovudsettet](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [hovudsettet: kodekar, butikk og tillatingar](../docs/immuch360/platform-support.md#meta-quest).
 
-### Om biletet ikkje vender mot deg
+<a id="watch-on-the-tv-and-on-the-computer"></a>
+### Sjå på TV-en og på datamaskinen
 
-Roter det med høgre styrespak (eller Roter-knappen på infopanelet) til midten er framfor deg. Vinkelen blir vist som "Biletet er rotert til N grader", på panelet eller på overlegget på éi line når panelet er skjult: legg gjerne inn det talet i ei [sak](https://github.com/freeKC/Immuch360/issues), med kameramodellen din, slik at det kan bli standardverdien. Startretninga er ikkje stadfest for alle kamera enno.
+Same Android-app køyrer på Android TV og Google TV med fjernkontrollen som einaste inndata: pilene flyttar rammen, OK opnar, Tilbake går tilbake, og pilene ser seg rundt i eit 360°-bilete eller -video. TV-en har ingen eigne bilete, så den viser Immich-tenaren din, nettverksdelingane dine, Plex-tenaren din og kameraa dine. På ein Windows-datamaskin les Immuch360 Desktop mappene du vel utan tenar i det heile, spelar flate og 360°-videoar i ein eigen spelar, blar gjennom same delingar og tenarar, og kan dele datamaskinen med eit hovudsett heime.
 
-### Avgrensingar i den oppslukande visinga
+<p align="center">
+  <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Kulevisaren på ein Google TV: eit 360°-panorama av ein innsjøstrand, lukkeknappen oppe til venstre, Zoom ut-, Zoom inn-, 360°- og 3D-knappane oppe til høgre, snudd med pilene på fjernkontrollen">
+  <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Videospelaren til Immuch360 Desktop på Windows: ein video av ei gate som spelar i vindauget, med pauseknappen, tidslinja, Del og Last opp til Immich">
+</p>
 
-- **Førre og neste**: dei ser høgst 400 medium framover i ei tidslinje og 50 filer i ei delingsmappe, i høgst 12 sekund; etter det seier panelet at det ikkje finst noko førre eller neste 360°-medium. Ei delingsmappe blir sjekka fil for fil, så den første 360°-fila etter mange flate kan ta nokre sekund å finne. Dei er enno ikkje tilgjengelege frå eit romleg bilete.
-- **3D-val**: oppsettet som er valt med 3D-knappen, blir ikkje hugsa når visinga blir lukka; valet 360°/180° blir hugsa, for media i biblioteket.
-- **Spoling**: ein video der kjelda ikkje svarar på byteområdeførespurnader, kan ikkje spolast i; panelet seier frå om det.
-- **Flate videoar**: ein flat (ikkje 360°) stereoskopisk video blir spelt av i vindauget med begge auga synlege; den oppslukande 3D-visinga er for 360°- og VR180-media.
-- **Meir**: kodekane headsettet dekodar, butikken, løyva og storleiken på APK-en står i [Meta Quest 3](#meta-quest-3).
+1. På ein TV: installer APK-en med adb (sjå [Installering](#android-tv-and-google-tv)), logg inn eller vel «Bruk utan tenar», legg til ei deling, ein Plex-tenar eller eit kamera frå Biblioteket.
+2. På ein Windows-datamaskin: pakk ut førehandsvisinga og start `immuch360.exe` (sjå [Installering](#windows)), vel deretter mappene med bileta og videoane dine, eller logg inn på tenaren din.
+3. I ein visar fungerer play- og pause-, spole tilbake-, spole framover-, førre- og neste-tastane på fjernkontrollen, og det gjer også tastaturtastane på ein datamaskin (Space, J og L, F for fullskjerm).
 
-<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
-## Sjå på TV-en (Android TV og Google TV)
+Meir: [sjå på TV-en din](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [på ein Windows-datamaskin](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [plattformstøtte](../docs/immuch360/platform-support.md).
 
-Du vil ha 360°-bileta og -videoane, albuma dine og videoane på NAS-en eller Plex-tenaren din på den store skjermen, for familien i sofaen, med fjernkontrollen til TV-en. Immich-mobilappen er ikkje ein TV-app: ein brukar som installerte han på ein TV, fann ut at han fungerer med ei mus, ikkje med fjernkontrollen ([diskusjon #1614](https://github.com/immich-app/immich/discussions/1614)), og Immich-teamet har ingen planar om ein offisiell TV-app ([diskusjon #13748](https://github.com/immich-app/immich/discussions/13748)).
+<a id="cameras-plex-and-raw-camera-files"></a>
+### Kamera, Plex og råfiler frå kamera
 
-Frå build 20 køyrer den same Android-appen på Android TV og Google TV, med fjernkontrollen som einaste inndata: éin APK for telefonar og TV-ar, 360°- og 3D-visingane dreidde med piltastane, og nettverksdelingane, Plex og Tapo-kameraa på TV-en, med eller utan Immich-tenar.
+- **Tapo-kamera**: eit kamera blir lagt til ved sida av nettverksdelingane. Appen viser det direkte (Android, Android TV, Quest og Windows) og listar opp opptaka på minnekortet dag for dag på kvar plattform; eit klipp blir henta frå kameraet, spelar som ei vanleg video og kan sendast til Immich. Appen snakkar berre med kameraet på nettverket ditt, aldri med tenarane til TP-Link.
+- **Plex Media Server, utan plex.tv**: appen koplar seg til tenaren din direkte, med eit token du limer inn éin gong, og les originalfilene i biblioteka dine direkte, slik at 360° held seg som 360°, heime og, via portvidaresendinga di, når du er borte frå heime.
+- **Råfiler frå 360°-kamera**: råfilene .insp-bilete og .insv-videoar frå Insta360-kamera (ei eller to linser, i eitt spor, to spor eller to filer), .360-filene frå GoPro MAX og .osv-filene frå DJI Osmo 360 blir sydd saman av appen medan dei spelar, med kalibreringa skrive i fila, utan noko å installere nokon stad.
 
-<a id="install-it-on-the-tv"></a>
-### Installer han på TV-en
+Meir: [Tapo-kamera](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [råfiler frå 360°-kamera](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
-1. Inntil Google Play tilbyr appen på TV-ar, noko som ventar på gjennomgangen til Google av TV-utgivinga, tek du den universelle `Immuch360-v<version>-release.apk` frå sida [Releases](https://github.com/freeKC/Immuch360/releases).
+<a id="devices-and-systems"></a>
+## Einingar og system
+
+Éin kodebase, seks miljø. Kva kvar av dei har i dag:
+
+| Funksjon | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galleri, album, søk med Immich-tenar | ✅ | ✅ | ✅ visar | ✅ | ✅ | 🔧 |
+| Utan tenar: eininga sine eigne media | ✅ | ✅ | berre delingar | ✅ | ✅ mapper | 🔧 |
+| Flate bilete og videoar | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| 360°-bilete som ei kule | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | 🔧 |
+| 360°-videoar | ✅ | ✅ ingen tidslinje | ✅ | ✅ immersiv | ✅ | 🔧 |
+| 3D og VR180 | ✅ eitt auge | ✅ eitt auge | ✅ eitt auge | ✅ ekte 3D | ✅ eitt auge | 🔧 |
+| Spatial 2.5D (hovudfølging) | ✅ eksperimentell | ✅ eksperimentell | ❌ | ❌ | 🔜 | ❌ |
+| Romlege Apple-bilete | ✅ eitt auge | ✅ eitt auge | ✅ eitt auge | ✅ 3D | ✅ eitt auge | 🔧 |
+| Råfiler frå Insta360, GoPro og DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| SMB-, WebDAV-, DLNA-delingar | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| Tapo-kamera: opptak | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| Tapo-kamera: direktevising | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
+| Del eininga på nettverket | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
+| Last opp til Immich frå delingar og eininga | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
+| Inndata | berøring, gyroskop | berøring, gyroskop | fjernkontroll | kontrollerar, hender | mus, tastatur | |
+| Kor du får den | Google Play, APK | App Store (under vurdering) | APK, Google Play (under vurdering) | Horizon Store, APK | førehandsvising ZIP | berre CI-build |
+
+✅ i appen på den plattforma · ❌ ikkje tilbode der · 🔜 planlagt · 🔧 i kjeldekoden og bygd av CI-en til prosjektet, ikkje starta på det systemet enno. «Eitt auge» betyr at ei 3D-fil viser det venstre auget på ein flat skjerm. Ikkje alle ✅ er sjekka på ei ekte eining enno: kva som var sjekka kor, og kva som står igjen å stadfeste, er i [Funksjonar](../docs/immuch360/features.md), [Plattformstøtte](../docs/immuch360/platform-support.md) og [Kompatibilitet](../docs/immuch360/compatibility.md).
+
+- **Android-telefonar og -tablettar**: den komplette appen, berøring og gyroskop, alle kjelder.
+- **iPhone og iPad**: den komplette appen; 360°-videospelaren har berre play og pause, Tapo-direktevisinga kjem seinare, og DLNA-søket sender unicast-førespurnader til Apple gir multicast-rettigheita.
+- **Android TV og Google TV**: same APK, styrt av fjernkontrollen; ein visar: sikkerheitskopiering, opplastingar og redigering er skjult. Sjekka på Google TV-emulatoren (innlogging, tidslinje, visarar, delingar, navigering med fjernkontrollen), ikkje på ein ekte TV enno.
+- **Meta Quest 2, Pro, 3 og 3S**: appen som eit vindu, pluss den immersive visinga; HEVC er den trygge kodeken, H.264 stoppar rundt 4096x2304 på Quest 3; Quest 2 og Quest Pro er ikkje testa enno.
+- **Windows 10 og 11**: ei førehandsvising, med mapper i staden for eit galleri, ein eigen videospelar (libmpv) for flate og 360°-videoar, råfiler sydd saman på grafikkbrikken, ikkje noko installasjonsprogram enno.
+- **macOS og Linux**: prosjekta byggjer på CI-en til prosjektet (Linux bygd, macOS kompilert); appen har ikkje vorte starta på dei systema og videospelarbiblioteket deira er ikkje på plass enno.
+
+<a id="advanced-features"></a>
+## Avanserte funksjonar
+
+Kva appen kan lese og spele, for lesaren som vil ha heile omfanget. Kvar linje er detaljert i [brukarrettleiinga](../docs/immuch360/user-guide.md) og [kompatibilitetssida](../docs/immuch360/compatibility.md).
+
+- **Formater**: flate bilete og videoar (det eininga dekodar: MP4, MOV, MKV og meir); equirektangulære 360°-bilete og -videoar; delvise panorama (GPano-utsnitt); VR180; stereoskopisk 3D, topp og botn eller side om side, lest frå fila (st3d-boksen) eller gjetta frå ramma; romlege Apple-bilete (HEIC-stereopar) og romlege videoar (MV-HEVC, eitt auge); råe Insta360 .insp og .insv, GoPro .360, DJI .osv; 10-bits HLG- og PQ-kjelder, tonemappa på kula.
+- **Projeksjon og metadata**: GPano- og sfæriske metadata lest frå fila, med intervallførespurnader til ein tenar eller ei deling; kameraet sin opprinnelege synsvinkel; «Vis som 360°» hugsa på eininga; VR180 gjenkjend frå fila eller namnet sitt; metadata halde intakt fordi originalfila spelast, aldri ei konvertert kopi.
+- **Nativ avspeling**: Media3 på Android og TV-en, SceneKit og AVFoundation på iOS, Meta Spatial SDK i hovudsettet, libmpv på Windows; originalen eller den omkoda strømmen valt frå det eininga dekodar; ei liste over eininga sine videodekoderar i Innstillingar, Avansert; valet av lydspor og ein bufringsindikator.
+- **Råfiler sydd saman på eininga**: ein Flutter-fragment-shader for bilete; ein GPU-effekt i spelaren for videoar med eitt spor; to maskinvaredekoderar samtidig og ein GPU-kompositør for videoar med ei linse per spor eller per fil (OpenGL ES 3 på Android og Quest, Metal på iOS, libmpv sin filtergraf på Windows); kameraet sin eigen kalibrering (Mei-, V6- og ekvidistante modeller) og akselerometeropptak; reserveløysingar til ei linse, den omkoda strømmen, kameraet sin LRV-kopi eller den usydde videoen når eininga ikkje kan køyre to dekoderar.
+- **Kjelder**: eininga sitt galleri; mappene til ein datamaskin; ein Immich-tenar; SMB 2 og 3, WebDAV, DLNA/UPnP; Plex over HTTPS sjekka mot tenaren sitt eige sertifikat; Tapo-kamera over det lokale nettverket (HTTPS og RTSP); ein telefon eller ein datamaskin delt på Wi-Fi som ein WebDAV-tenar; tenarar funne av Bonjour/mDNS, eit lokalt nettverkssøk, SSDP, GDM og TP-Link-oppdaginga, og følgt når dei endrar adresse.
+- **Lesing ved behov**: ei lokal bru forsyner spelarane med byteintervall og eit token per sesjon; store blokkar, lesing i førehand og opp til seks SMB-tilkoplingar samtidig; miniatyrbilete frå ei ramme i kvar video; ingenting kopiert til eininga.
+- **Maskinvare**: maskinvaredekoderar brukt der dei finst, med deira målte grenser (Quest 3 sin H.264-grense, maks to 2048x2048-linser for programvaredekoderar); på Windows blir 360°-visinga teikna av grafikkbrikken frå kvar dekoda ramme, rammestorleiken målt på kvar datamaskin, den integrerte eller dedikerte brikken oppdaga.
+- **Plattformspesifikt**: gyroskopet og Spatial 2.5D-spelaren på telefonar; den immersive visinga, kontrollerar og hender på Quest; fjernkontrolloppsettet, tastaturdialogen og TV-banneret på Android TV; på datamaskinen, mus og tastatur, fullskjerm, eit enkelt vindauge, ei fil opna med programmet eller droppa på det, HEIC, AVIF, TIFF og kamera-råbilete frå mappene når Windows har ein dekoder for dei, og Windows sin datavern for passord og token.
+- **Personvern frå grunnen av**: ingen konto, ingen nettsky, ingen analyse; passord og token i eininga sin sikre lagring; kameraet til Spatial-spelaren brukt berre på eininga; delingar, Plex og kamera nådd berre på nettverket ditt.
+
+<a id="technical-documentation"></a>
+## Teknisk dokumentasjon
+
+- [Funksjonar: den komplette oversikta og funksjon-per-plattform-matrisen](../docs/immuch360/features.md)
+- [Brukarrettleiing: kvar funksjon, steg for steg, med sine val og meldingar](../docs/immuch360/user-guide.md)
+- [Kompatibilitet: formater, kodekar, dekoderar, tenarar og einingar sjekka, grenser](../docs/immuch360/compatibility.md)
+- [Plattformstøtte: kva kvart system har, korleis det blir installert, kva som er ulikt](../docs/immuch360/platform-support.md)
+- [Kjende problem](../docs/immuch360/known-issues.md) og [Feilsøking](../docs/immuch360/troubleshooting.md), med loggane å leggje ved ein rapport
+- [Tekniske detaljar: arkitektur, Flutter og native modular, mediebrua, pipelinen for sysing, dekoderane](../docs/immuch360/technical-details.md)
+- [360°-videorendereren for datamaskin: libmpv, projeksjonssteget og målingane bak den](../docs/immuch360/desktop-360-video-renderer.md)
+- [Utgivingsstatus: build, butikkar og kva kvar butikk har](../docs/immuch360/release-status.md)
+- [Bygg det sjølv: telefonar, hovudsett, TV-ar og datamaskinar](../docs/immuch360/build.md)
+
+<a id="install"></a>
+## Installering
+
+### Android-telefonar og -tablettar
+
+1. [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), eller APK-en frå [Releases](https://github.com/freeKC/Immuch360/releases)-sida: `Immuch360-v<version>-arm64-v8a-release.apk` for ein telefon; den universelle `Immuch360-v<version>-release.apk` fungerer alle stader.
+2. Appen blir installert side ved side med den offisielle Immich-appen. APK-en frå GitHub oppdaterer seg ikkje sjølv: følg med på Releases-sida; når du har installert appen frå ein butikk, ta oppdateringane frå den butikken.
+
+### iPhone og iPad
+
+1. App Store-versjonen ventar på Apple sin vurdering. Til den er publisert, bygg appen med Xcode på ein Mac, sjå [Bygg det sjølv](../docs/immuch360/build.md).
+2. Logg inn med Immich-tenaren din, eller trykk på «Bruk utan tenar».
+
+<a id="android-tv-and-google-tv"></a>
+### Android TV og Google TV
+
+1. Til Google Play tilbyr appen på TV-ar, ta den universelle `Immuch360-v<version>-release.apk` frå [Releases](https://github.com/freeKC/Immuch360/releases)-sida.
 2. Slå på utviklaralternativa og USB-feilsøking på TV-en (på ein Google TV: Innstillingar, System, Om, vel "Android TV OS build" sju gonger, deretter Innstillingar, System, Utviklaralternativ; namna varierer mellom TV-ar).
 3. Frå ei datamaskin på det same nettverket, med adb (Android SDK Platform Tools): `adb connect <address of the TV>`, godta spørsmålet på TV-en, deretter `adb install -r Immuch360-v<version>-release.apk`.
 4. Appen blir vist blant appane på TV-en, med banneret sitt. Installer neste utgiving på same måte: `-r` held på innlogginga og innstillingane.
 
-### Første oppstart
+<a id="meta-quest"></a>
+### Meta Quest
 
-1. Logg inn som på ein telefon: piltastane flyttar ei ramme frå felt til felt (frå build 23 går ho over etiketten på eit utfylt felt i staden for tvers gjennom han), og OK på eit felt ("Trykk på OK for å skrive") opnar tastaturet til TV-en i ein dialog, for tenaradressa, e-postadressa og passordet.
-2. Eller vel "Bruk utan tenar". Ein TV har ingen eigne bilete, så Bilete-fana seier "Denne TV-en har ingen eigne bilete eller videoar: opne ei nettverksdeling frå Biblioteket." med ein Nettverksdelingar-knapp. Legg til ei deling, ein Plex-tenar eller eit kamera der, som på ein telefon (sjå [Nettverksdelingar](#network-shares-a-nas-a-computer-or-a-media-server)).
+1. Frå [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/): butikkversjonen, oppdatert etter kvart som Meta vurderer kvar innsending.
+2. Eller sideload `-quest-release.apk`-fila frå ei [utgiving](https://github.com/freeKC/Immuch360/releases) i utviklarmodus med adb eller SideQuest: `adb install -r Immuch360-v<version>-quest-release.apk`, opne deretter Biblioteket til hovudsettet, «Ukjende kjelder».
+3. Butikkversjonen og GitHub-APK-en er signert med ulike nøklar: for å byte frå den eine til den andre, avinstaller appen først, noko som mistar innlogginga, innstillingane og lista over nettverksdelingar.
 
-### Naviger med fjernkontrollen
+<a id="windows"></a>
+### Windows
 
-- Piltastane flyttar ramma, OK opnar det ho står på, Tilbake går tilbake. Frå ei fane går Tilbake til sidemenyen, deretter til Bilete, deretter ut av appen. I ei liste med val, som typen til ei deling eller ei innstilling, flyttar piltastane berre ramma, og OK vel alternativet (frå build 22; før endra piltastane valet).
-- Kanal opp og ned blar ei side om gongen. Frå build 22 viser biletrutenetta om lag seks ruter per rad innanfor margane på skjermen, med skarpare miniatyrbilete av eininga sine eigne filer, og sidene som har eit bilete som topp på ein telefon (360°-lista, Favorittar, albuma på eininga) viser i staden berre ei enkel linje. Frå build 23 blir desse miniatyrbileta laga i dobbel storleik av ruta si og skalerte mjukt ned, så fine detaljar som snødekte greiner ikkje lenger glitrar, og bileta frå tenaren viser den større førehandsvisinga hans, like skarp, i staden for det vesle miniatyrbiletet hans strekt ut til ruta.
-- Frå build 22 startar ramma på det første elementet på kvar side (den første ruta i 360°-lista, e-postfeltet når tenaradressa er stadfesta), held seg innanfor margane på skjermen medan eit rutenett rullar (frå build 23 også i dei to panela i Innstillingar), og går frå eit rutenett opp til rada eller filtera over det i staden for til Tilbake-knappen. Høgre frå ei nettverksdeling eller eit kamera når fram til redigeringsknappen, og resultatet av "Test tilkoplinga" blir rulla fram så det synest.
-- I visingane fungerer tastane på fjernkontrollen for spel av og pause, spol framover, spol bakover, neste og førre, og infotasten viser detaljane for eit bilete eller ein video.
+1. Last ned `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` frå [førehandsutgivinga for datamaskin](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) (om lag 58 MB, med `SHA256SUMS.txt` for å sjekke den) og pakk den ut kor som helst, for eksempel i Dokumenter-mappa.
+2. Start `immuch360.exe` frå den utpakka mappa og hald mappa heil: programmet trenger filene ved sida av seg, blant dei `libmpv-2.dll`, videospelaren.
+3. Filene er ikkje signert enno: Windows SmartScreen kan vise «Windows verna PC-en din», vel «Meir informasjon» deretter «Køyr likevel». Den første starten av ein ny build kan ta opp til eitt minutt medan Windows skannar filene.
+4. Windows 10 eller 11, 64-bit. Det finst ikkje noko installasjonsprogram og ingen automatisk oppdatering enno: pakk ut den neste build-en på same måte.
 
-### Bilete og videoar med fjernkontrollen
+### macOS og Linux
 
-1. **Eit bilete**: venstre og høgre går til førre eller neste, OK viser eller skjuler kontrollane, Opp går til den øvste lina (der 360°-knappen er) og Ned til den nedste.
-2. **Ein video**: OK set på pause og viser kontrollane, eller spelar av. Medan han blir spelt av, hoppar venstre og høgre 10 sekund tilbake eller framover; når han er sett på pause, går dei til førre eller neste element, som hintet seier: "Sett på pause: pilene går til førre eller neste element".
-3. **Eit 360°-bilete**, frå 360°-knappen: piltastane ser seg rundt, raskare når dei blir haldne inne, og visinga glid mjukt til ro. OK flyttar til knappane på den øvste lina, på "Zoom inn", ved sida av "Zoom ut", synsfeltet og 3D; kanal opp og ned zoomar også. Tilbake går frå knappane tilbake til biletet, og lukkar deretter. Hintet lyder "Piler for å sjå deg rundt, OK for kontrollane, Tilbake for å lukke".
-4. **Ein 360°-video**, frå 360°-knappen: piltastane ser seg rundt medan kontrollane er skjulte, OK set på pause og viser dei, Tilbake skjuler dei, og lukkar deretter. Hintet lyder "Piler for å sjå deg rundt, OK for å setje på pause og vise kontrollane, Tilbake for å lukke".
-5. **Minne**: venstre og høgre går gjennom bileta og vidare til neste minne, Opp går til lukkeknappen og Ned til "Sjå på tidslinja".
-6. **Delingar og Plex**: dei same tastane på bilet- og videosidene til ei deling, der venstre og høgre opnar førre eller neste fil i mappa.
-
-### Innstillinga Oppsett for fjernkontroll
-
-Innstillingar, Preferences (Preferansar), "Oppsett for fjernkontroll": "Store fokusrammer og fjernkontrolltastar, utan kontrollane som krev peikeskjerm. Automatisk slår det på på Android TV og Google TV." Automatisk er standard; På passar for eit nettbrett som blir styrt med eit tastatur eller ein spelkontroll; Av slår det av på ein TV. Innstillinga finst berre på Android. Frå build 22 blir ei endring brukt med ein gong på den opne sida, som blir verande der ho var (før opna Innstillingar seg på nytt på Avansert, over ein startskjerm som Tilbake måtte gå gjennom). Piltastane og OK fungerer i visingane med eit tastatur eller ein spelkontroll same kva innstillinga er.
-
-### Avgrensingar
-
-- **Ei vising**: på ein TV viser og spelar appen av. Sikkerheitskopiering, opplastingar, redigering, sletting, deling, val av fleire element, Cast, Spatial 2.5D, gyroskopet, kartet og Stad, og "Del denne telefonen på nettverket" er skjulte.
-- **Innlogging**: OAuth opnar ei nettside, noko ein TV ikkje kan: "Innlogging med (leverandør) opnar ei nettside, noko denne TV-en ikkje kan. Logg inn med e-post og passord i staden."
-- **Lenkjer** viser adressa si under "Opne på ei anna eining" i staden for å opne ein nettlesar, og tekst blir skriven i tastaturdialogen til systemet.
-- **Minne**: på ein TV med lite minne blir 360°-bilete viste i høgst 4096x2048, utan det skarpare biletet ved zoom.
-- **Videoar**: dekodarane til TV-en avgjer kva som blir spelt av, med den same innstillinga Videokjelde og den same dekodarkontrollen som på ein telefon (sjå [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters)); ikkje målt på ein TV enno.
-- **Ikkje kontrollert på ei eining enno**: TV-støtta vart kontrollert berre med automatiserte testar, og har ikkje køyrt på ein TV eller ein TV-emulator enno. Skal stadfestast: retninga piltastane dreier ein 360°-video i, tastaturet til TV-en (Gboard) i tekstdialogen, OK-tasten på infraraude fjernkontrollar, margane og banneret på startskjermen til TV-en. Rapportar er velkomne.
-- **Google Play på TV-ar** ventar på gjennomgangen til Google av TV-utgivinga; inntil då, APK-en.
-- **Andre TV-ar**: Fire TV er ikkje testa, og det finst ingen versjon for Apple TV.
-
-<a id="find-your-360-shots-the-360-list"></a>
-## Finn 360°-opptaka dine: 360°-lista
-
-360°-opptak er blanda med alle dei andre bileta, og folk ber Immich om ein måte å filtrere kuler og panorama på ([diskusjon #12824](https://github.com/immich-app/immich/discussions/12824)). Immich-appen har inga slik liste.
-
-Immuch360 set eit 360°-merke på miniatyrbileta til 360°-bilete (i ei mappe på ei nettverksdeling også på 360°-videoar), og ei 360°-oppføring øvst i Bibliotek-fana. Frå build 18 inneheld den lista, med ein tenar, bileta og videoane tenaren markerer som 360°, dei rå Insta360-filene etter namn, bileta eit 360°-kamera har sett saman sjølv og dei du valde å vise som 360°, pluss det søket på eininga fann; utan tenar, det søket på eininga fann og dei du valde å vise som 360°. Kvar av dei blir vist éin gong, same kvar kopiane ligg, nyaste først. Frå build 22 kjem ei rad "I nettverksdelingane" over rutenettet med 360°-bileta og -videoane frå delingane dine, nyaste først: appen lærer dei å kjenne når han viser mappa deira eller opnar dei (han søkjer ikkje gjennom ei deling på eiga hand), hugsar dei frå ein oppstart til den neste og gløymer dei saman med delinga deira. På ein TV, som ikkje har eigne bilete, er det denne rada som fyller 360°-lista.
-
-<img src="../.github/readme/b19-360-list.png" width="260" alt="360°-lista, 4 element, med Dato-arket ope: Alle, året 2026 med talet, Heile året, august 2026 og april 2026 med tala sine, året 2025, og Custom">
-
-### Filtrer lista
-
-1. Opne Bibliotek-fana og trykk på 360° (ved sida av Favorites (Favorittar) med ein tenar, åleine utan tenar).
-2. Trykk på Dato for perioden: Alle, eit år (opne det for "Heile året" og månadene, kvar med talet sitt), eller Custom (Eigendefinert) for eit utval dagar.
-3. Med ein tenar vel du kvar media ligg: "På tenaren", "On this device", og "Shared with me" (Delt med meg) når det finst slike.
-4. Vel type: Bilete, Videoar, 3D, VR180.
-5. Når lista inneheld to eller fleire kamera, viser ei andre rad dei etter EXIF-merke og -modell, med talet. Ei rå fil utan desse får namnet på merket som høyrer til filtypen (Insta360, GoPro, DJI), alt anna er "Ukjent kamera".
-6. Innanfor ei gruppe (stadene, Bilete og Videoar, 3D og VR180, kameraa) blir brikkene lagde saman; mellom grupper snevrar dei inn lista. Brikkene Dato, Bilete og Videoar gjeld også for rada med nettverksdelingane; 3D, VR180 og kameraa gøymer henne, sidan appen ikkje kjenner noko av dette for ei fil på ei deling. Tøm tilbakestiller alt; "Ingen 360°-bilete eller -videoar passar med desse filtera" tyder at filtera ikkje let noko vere att.
-7. Opne eit bilete eller ein video. I den oppslukande visinga i Quest følgjer førre og neste den filtrerte lista.
-
-<a id="video-details-decoders-and-why-a-video-stutters"></a>
-## Videodetaljar, dekodarar og kvifor ein video hakkar
-
-Folk spør kva kodek, storleik og bitrate Quest 3 spelar av, og kvifor ein 5.7K-eksport hakkar i headsettet medan han blir spelt fint på telefonen. Svaret er maskinvaredekodaren: H.264-dekodaren i Quest 3 (XR2 Gen 2) stoppar kring 4096x2304, så ein H.264-video på 5760x2880 (nivå 6.0, kring 200 Mbit/s, den vanlege Insta360-eksporten) blir dekoda med kring 17 fps i headsettet, med blokkartefaktar, medan den same fila blir spelt fint av på ein telefon.
-
-Den same videoen i HEVC (H.265) blir spelt godt av i headsettet: ein Insta360 X4 8K HEVC-video (7680x3840, 29,97 fps, 210 Mbit/s, Main-profil nivå 6.1, 8 bit) blir spelt jamt av i den oppslukande visinga, i si opphavlege oppløysing og utan omkoding (rapportert av ein brukar på ein Quest 3).
-
-Immich-appen har éin brytar, "Force original video", og viser berre kodeken. Immuch360 viser kva ein video er og kva eininga dekodar, og vel fila som kan spelast av.
-
-<img src="../.github/readme/b19-video-details.png" width="260" alt="Detaljane for ein 360°-video: Kodek H.264 High (avc1.640033), 3840 x 1920, 30 fps; Bitrate 16 Mbit/s; Bilete 8 bit, SDR, BT.709; Dekodar på denne eininga: Ja, Maskinvare, opptil 4096 x 2304">
-
-### Les detaljane for ein video
-
-1. Opne videoen og sveip opp: detaljane kjem under biletet.
-2. Kodek: kodeken med profilen og codecs-strengen, biletstorleiken og biletfrekvensen, til dømes "H.264 High (avc1.640033) • 3840 x 1920 • 30 fps", som på biletet ovanfor.
-3. Bitrate (frå build 18): bitraten til videosporet, eller den fila oppgjev; elles er han merkt "heile fila, inkludert lyd" eller "anslått ut frå filstorleiken".
-4. Bilete (frå build 18): bitdjupna, SDR eller HDR-overføringa (HLG, PQ, Dolby Vision) og fargerommet.
-5. Dekodar på denne eininga: ja eller nei, maskinvare eller programvare, den største storleiken dekodaren tek imot, og "Ingen dekodar for (profil)" når eininga har kodeken, men ikkje den profilen.
-
-Ei rad blir først vist når fila er lesen, og berre for det fila oppgjev. Eit romleg bilete eller ein romleg video frå Apple får ei eiga rad, sjå [Romlege bilete og videoar frå Apple](#apple-spatial-photos-and-videos).
-
-### Sjå kva eininga dekodar
-
-Innstillingar, Avansert, "Videodekodarar på denne eininga" (frå build 15) viser kva telefonen eller headsettet dekodar: kodek, maskinvare eller programvare, største storleik, biletfrekvens, og frå build 18 profilane (Main, Main 10, HDR10). Frå build 19 har lista ei MV-HEVC-oppføring, kodeken for romlege videoar frå Apple. Kopier-knappen legg lista på utklippstavla til ein feilrapport.
-
-### Vel originalen eller den omkoda straumen
-
-1. Opne Innstillingar, Asset Viewer, deretter Videoar.
-2. Under "Videokjelde" ("Kva fil som blir spelt når tenaren har ein omkoda kopi") vel du "Originalen når denne eininga kan dekode han", "Alltid originalen" eller "Alltid den omkoda straumen".
-
-Frå build 15 gjeld valet alle tenarvideoar: den flate avspelaren, 360°- og Spatial-avspelarane, og den oppslukande visinga i Quest. Til du vel, held ein telefon på det den tidlegare brytaren "Force original video" sa (av som standard: den omkoda straumen, som er sjølve originalen når tenaren ikkje har koda han om), og Quest spelar av originalen når headsettet kan dekode han.
-
-Kontrollen les kodeken, storleiken og biletfrekvensen frå fila og samanliknar dei med maskinvaredekodarane (H.264 på Quest 3 blir avgrensa til dei målte 4096x2304). Ein avspelar som ikkje kan dekode originalen, byter til den omkoda straumen med ei melding: "Spelar den omkoda straumen: originalen (kodek og storleik) går ut over det denne eininga kan dekode".
-
-I headsettet startar den oppslukande visinga originalen og byter, ved dei første bileta, til den omkoda straumen frå tenaren når originalen går ut over dekodarane, og seier frå om det på infopanelet; når det ikkje finst nokon omkoda straum, når han framleis er for stor, eller når fila kjem frå headsettet eller ei nettverksdeling, seier infopanelet frå om det i 10 sekund, med kva som må endrast. Build 14, den som er send inn til Horizon Store, sjekkar berre H.264 over 4096x2304, og prøver deretter avspelingsstraumen frå tenaren på same måten.
-
-For rå videoar med to objektiv ber kontrollen om to dekodarar samtidig, og frå build 19 avviser han to straumar over 2048x2048 kvar for ein programvaredekodar, sjå [Rå filer frå 360°-kamera](#raw-360-camera-files-without-the-cameras-app).
-
-### Gje headsettet ein video det kan dekode
-
-I Immich går du til Administrasjon, Innstillingar, Video Transcoding Settings (Innstillingar for videoomkoding), og vel eitt av desse:
-
-- **Alle H.264-videoar omkoda til HEVC**: set Video codec (Videokodek) til HEVC og Target resolution (Måloppløysing) til Original (standardverdien 720p ville krympa ein 360°-video til 1440x720), og hald berre HEVC i Tillatne videokodekar. Alle H.264-videoar i biblioteket blir koda om, ikkje berre 360°-videoane, og headsettet får HEVC i full oppløysing.
-- **Berre det som er større enn 1440p**: hald H.264 i Tillatne videokodekar, set Transcode policy (Retningslinjer for omkoding) til "Videoar med for høg oppløysing, eller ikkje i eit godkjend format" og Target resolution til 1440p, helst med Video codec sett til HEVC. Alt som er større, blir koda om, og headsettet får 2880x1440. Vanlege 4K-videoar blir også koda om til 1440p.
-
-Desse innstillingane gjeld heile tenaren, for alle brukarar og alle appar, og omkoding av eit stort bibliotek tek timar med prosessortid og ekstra diskplass; originalane blir ikkje endra. Nettlesarar utan HEVC-støtte (Firefox på dei fleste system, Chrome utan HEVC i maskinvare) spelar ikkje av ei HEVC-omkoding i Immich-nettappen. Den enklaste løysinga for nye videoar er å eksportere i H.265 frå Insta360-appen eller Studio. Etter at du har endra desse innstillingane, må dei eksisterande videoane kodast om på nytt: Administrasjon, Job Queues (Jobbkøar; Oppgåver i eldre Immich-versjonar), Transcode videos (Omkod videoar), Alle.
-
-Alternativet, og det einaste for filer på ei nettverksdeling eller på headsettet (dei har ingen omkoda straum), er å kode om eksporten til HEVC før du lastar han opp eller kopierer han til delinga:
-
-```bash
-ffmpeg -i VID_360.mp4 -c:v libx265 -crf 20 -preset medium -tag:v hvc1 -c:a copy -movflags +faststart VID_360_hevc.mp4
-exiftool -overwrite_original -tagsFromFile VID_360.mp4 -XMP-GSpherical:all VID_360_hevc.mp4
-exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
-```
-
-`-tag:v hvc1` merkjer HEVC-sporet slik Apple-einingar og nettlesarar ventar, `-c:a copy` held lyden som han er. ffmpeg fjernar 360°-merkinga frå eksporten, exiftool-lina kopierer henne tilbake; utan henne viser Immich videoen som ein flat video.
-
-### Originalar som ikkje kan straumast
-
-Når tenaren ignorerer HTTP Range-førespurnader på originalen og MP4-indeksen (moov) ligg på slutten av fila, måtte heile fila lastast ned før første biletet, så appen fell tilbake til avspelingsstraumen frå tenaren. Ein omvend proxy framfor Immich som bufrar svara eller fjernar Range-hovuda, kan føre til dette.
-
-<a id="everything-else-is-immich"></a>
-## Alt anna er Immich
-
-Alt den offisielle Immich-mobilappen gjer, finst her: sikkerheitskopiering, tidslinje, album, søk, deling, partnarar, alt synkronisert med tenaren din, med same tenar og same konto som nettappen. Immuch360 blir installert ved sida av den offisielle appen (pakke `com.aprogsys.immuch360`). Det er to skilnader, frå build 15: brytaren "Force original video" er blitt til valet Videokjelde som er skildra ovanfor, og bilete og videoar du lastar opp for hand frå eit album på eininga, blir rekna som sikkerheitskopierte. På ein TV er appen frå build 20 ei vising, sjå [Sjå på TV-en](#watch-on-your-tv-android-tv-and-google-tv).
-
-For å vise eit 360°-bilete til nokon som ikkje har appen, deler du det med ei delt lenkje i Immich: Immich-nettappen viser eit 360°-bilete som ei kule i nettlesaren deira.
-
-Den gjeldande builden, build 23 (versjon 3.3.0-rc.0, buildnummer 3030021), er basert på Immich `main` frå 10. oktober 2026 (versjon 3.3.0-rc.0, ikkje ei stabil utgiving enno). Build 22, på same Immich-grunnlag, vart testa mot ein Immich 3.2.4-tenar og mot ein tenar bygd frå den same Immich `main`: innlogging, tidslinje, album, 360°-bilete og -videoar, videoavspeling og opplastingar, utan nokon API-feil. Rapporter problem under [Issues](https://github.com/freeKC/Immuch360/issues), ikkje til Immich-prosjektet. Den fullstendige dokumentasjonen for sjølve Immich finn du på [immich.app](https://immich.app).
-
-<a id="compared-with-the-immich-app-and-other-apps"></a>
-## Samanlikna med Immich-appen og andre appar
-
-### Kvifor denne forken finst, i éin tabell
-
-| | Immich-mobilappen | Immuch360 |
-|---|:---:|:---:|
-| 360°-bilete som ei kule du ser deg rundt i (dra, knip, dobbelttrykk, treghet, startvisinga til kameraet, delvise panorama) | ❌ flat stripe | ✅ |
-| Gyroskop: sjå deg rundt ved å røre på telefonen | ❌ | ✅ |
-| 360°-videoar i ein sfærisk avspelar, med lyd, spoling, val av lydspor og ein bufferindikator | ❌ flat video | ✅ Android og iOS (inga tidslinje på iOS enno) |
-| 3D (stereoskopiske) 360°-bilete og -videoar | ❌ dobbelt bilete | ✅ venstre auge på telefonar, ekte 3D på Quest |
-| VR180-bilete og -videoar (halvkule) | ❌ strekt rundt kula | ✅ halvkule, knappen 360°/180° |
-| Romlege bilete frå Apple (HEIC-stereopar) og romlege videoar (MV-HEVC) | ❌ eit flatt bilete eller ein flat video, ingenting seier at det er romleg | ✅ frå build 19: bilete i 3D i Quest, eitt auge og ei detaljrad elles |
-| Oppslukande vising i Meta Quest med hovudsporing, ei tidslinje, førre og neste, og Roter | ❌ | ✅ same app, som headsettbuild eller telefon-APK-en |
-| 360°-merke på miniatyrbilete, og ei 360°-liste med rå filer og filter (periode, kjelde, type, kamera) | ❌ | ✅ filter frå build 18 |
-| "Vis som 360°" for filer tenaren ikkje markerer | ❌ | ✅ blir hugsa på telefonen |
-| Spatial 2.5D: djupn på ein flat skjerm frå ein stereoskopisk video | ❌ | ✅ eksperimentell, telefonar og nettbrett |
-| Bruk utan nokon tenar, med eininga sitt eige galleri | ❌ innlogging krevst | ✅ |
-| SMB- og WebDAV-delingar funne på nettverket og spelte av direkte, ingenting lasta ned | ❌ | ✅ alle visingar, telefonar og Quest |
-| DLNA-medietenarar som delingstype | ❌ | ✅ frå build 19 |
-| Send filene på ei deling til Immich; einingsfiler sende for hand blir rekna som sikkerheitskopierte | ❌ berre einingsfiler | ✅ frå build 15 |
-| Del denne telefonen på nettverket, for headsettet | ❌ | ✅ frå build 19, Android og iOS |
-| Plex Media Server-bibliotek spelte av frå originalfilene, heime og borte, utan plex.tv | ❌ | ✅ frå build 20, alle visingar, på telefonar, nettbrett, Quest og TV-ar |
-| Tapo-kamera: direktebiletet, og opptaka på minnekortet sende til Immich når du vel det | ❌ | ✅ frå build 20: opptak overalt, direkte på Android, Android TV, Quest og, frå skrivebordsbuild 3, Windows |
-| Android TV og Google TV, styrt med fjernkontrollen, i den same APK-en | ❌ ikkje ein TV-app | ✅ frå build 20 |
-| Den same appen på ei Windows-datamaskin | ❌ berre telefonar og nettbrett | ✅ førehandsversjon: bilete, flate videoar og 360°-videoar (skrivebordsbuild 4) |
-| Rå Insta360 .insp-bilete og .insv-videoar med eitt spor | ❌ flatt | ✅ frå build 16 |
-| Rå videoar med eitt objektiv per spor eller per fil (Insta360 X4, X4 Air, X5, X6, X3-par, GoPro .360, DJI .osv) | ❌ flatt eller feil | ✅ frå build 18 |
-| Dobbel fiskeauge-.dng | ❌ flatt | ❌ ikkje enno |
-| Tenarvideoar: originalen når eininga kan dekode han, elles den omkoda straumen; liste over videodekodarane på eininga | ❌ éin brytar "Force original video" | ✅ frå build 15 |
-| Tekniske detaljar for ein video: bitrate, bilete, profil, om denne eininga dekodar han | ❌ berre kodeken | ✅ frå build 18 |
-| Ein gratis avspelar for flate videoar, 360°, 3D og VR180, frå tenaren, telefonen eller ein NAS | ❌ berre flatt | ✅ (avspelarane i Quest 3-butikken kostar pengar) |
-| Same tenar, same konto, blir installert ved sida av den offisielle appen | | ✅ |
-
-<details>
-<summary><b>Status for kvar line</b>: korleis ho vart testa</summary>
-
-- **360°-bilete som ei kule**: testa på ein Galaxy S24+ og ein iPhone 14.
-- **Gyroskop**: testa på ein Galaxy S24+ og ein iPhone 14.
-- **360°-videoar**: testa på ein Galaxy S24+ og ein iPhone 14.
-- **3D 360°-bilete og -videoar**: testa på ein Galaxy S24+ og ein Quest 3, med ekte 3D 360°-døme (VRTogether, Vuze, Kandao) og eit 3D-bilete; rapportar frå andre kamera er velkomne.
-- **VR180**: testa på ein Android-emulator og ein Galaxy S24+ med syntetiske media; tilbakemeldingar frå einingar er velkomne.
-- **Romlege bilete og videoar frå Apple**: attkjenning kontrollert på eit dømebilete skrive av biletbiblioteket til Apple og på syntetiske filer; headsettvisinga og ekte iPhone-filer er einingstesten for build 19.
-- **Oppslukande vising i Meta Quest**: testa på ein Quest 3 (kontrollane i build 14, justerte i build 16 etter tilbakemelding frå ein brukar), og av ein brukar med Insta360 X4 8K HEVC-videoar.
-- **360°-merke og 360°-liste**: ferdig.
-- **Vis som 360°**: ferdig.
-- **Spatial 2.5D**: testa på ein Galaxy S24+; tilbakemeldingar frå iPhone er velkomne.
-- **Utan nokon tenar**: testa på ein Galaxy S24+, ein Quest 3 og ein Android-emulator.
-- **SMB- og WebDAV-delingar**: testa med ein Freebox Server (SMB) på ein Galaxy S24+ og ein Quest 3, og mot Samba- og WebDAV-testtenarar på ein Android-emulator; tilbakemeldingar om andre NAS-ar og WebDAV er velkomne.
-- **DLNA-medietenarar**: kontrollert mot minidlna og Gerbera i Docker; Plex, Jellyfin, ein NAS, Freebox Server, ein iPhone og Quest er einingstesten for build 19.
-- **Send filene på ei deling til Immich**: testa på ein Android-emulator mot ein Samba-testtenar og ein Immich 3.2-tenar.
-- **Del denne telefonen på nettverket**: einingstestar og ende-til-ende-testar med WebDAV-klienten til headsettet, på ei datamaskin; ein telefon som leverer til ein Quest, og iPhone-sida, er einingstesten for build 19.
-- **Plex Media Server**: kontrollert frå ei datamaskin mot ein ekte Plex Media Server 1.42.1 (samankopling, mapper, byteområde, miniatyrbilete, adressa utanfor heimen); ikkje kontrollert på ei eining enno.
-- **Tapo-kamera**: kontrollert mot eit simulert kamera; ikkje kontrollert med eit ekte kamera enno.
-- **Android TV og Google TV**: kontrollert med automatiserte testar; ikkje kontrollert på ein TV enno.
-- **Den same appen på ei Windows-datamaskin**: skrivebordsbuild 3 består 855 av dei 863 automatiserte skrivebordstestane sine på Windows (8 blir hoppa over med vilje) og heile testpakken til appen; på ein Windows 11-PC startar appen, opnar ei lagra økt på ein Immich-tenar, synkroniserer, spelar av ein video og blir lukka ryddig, og 360°-avspelaren er køyrd med syntetiske klipp i 4K, 5,7K og 8K på begge grafikkbrikkene i ein berbar PC utan krasj. Testen av kvar funksjon for hand, med ekte 360°-filer og eit ekte Tapo-kamera, pågår.
-- **Rå Insta360 .insp-bilete og .insv-videoar med eitt spor**: bilete kontrollerte mot Insta360 Studio-eksportar av X3-filer, videoar på ein Android-emulator med ei X3-fil i låg oppløysing; ikkje køyrt på ein iPhone enno.
-- **Rå videoar med eitt objektiv per spor eller per fil**: parsarar og samansetjing kontrollerte på ekte filer frå X4, X3-par, GoPro MAX og Osmo 360; avspeling er einingstesten for build 18 og 19.
-- **Dobbel fiskeauge-.dng**: planlagt.
-- **Tenarvideoar og videodekodarane**: testa på ein Android-emulator; H.264-grensa på Quest 3 vart målt på headsettet.
-- **Tekniske detaljar for ein video**: ferdig.
-
-</details>
-
-### Andre appar folk brukar til dette
-
-- **Immich-nettappen**
-  - Kva dei støyter på: viser eit 360°-bilete som ei kule, men tek ein rå .insp for eit ferdig panorama og legg dei to sirklane rundt kula; ei VR-vising er framleis berre ein førespurnad ([diskusjon #14768](https://github.com/immich-app/immich/discussions/14768)).
-  - Kva Immuch360 gjer: set saman rå filer på eininga, og opnar ei oppslukande vising i Quest.
-- **Insta360-appen eller Studio**
-  - Kva dei støyter på: trengst for å gjere dei rå filene på kortet om til eit 360°-bilete før du kan sjå dei.
-  - Kva Immuch360 gjer: opnar dei rå .insp- og .insv-filene direkte, og GoPro .360- og DJI .osv-filene.
-- **Plex, Jellyfin, Synology Photos**
-  - Kva dei støyter på: 360°-bilete og -videoar viste flatt eller ikkje kjende att, slik trådar på foruma deira skildrar (ein førespurnad hos Plex har stått open sidan 2017).
-  - Kva Immuch360 gjer: les sjølve Plex-biblioteket frå build 20, eller dei same mappene over SMB, WebDAV eller DLNA, og spelar dei av som ei kule, utan å endre noko på tenaren.
-- **Tapo-appen**
-  - Kva dei støyter på: ein eigen app, logga inn på TP-Link-kontoen din, med klippa skilde frå bileta dine.
-  - Kva Immuch360 gjer: viser kameraet ved sida av bileta dine, snakkar med det berre på ditt eige nettverk, og held på eit klipp som ein video du kan sende til Immich (frå build 20).
-- **Immich-mobilappen på ein TV**
-  - Kva dei støyter på: ikkje ein TV-app: ein brukar fortel at han fungerer med ei mus, ikkje med fjernkontrollen.
-  - Kva Immuch360 gjer: den same appen, laga for fjernkontrollen (frå build 20).
-- **Kopiere filer til headsettet**
-  - Kva dei støyter på: kvar fil blir kopiert over kabel før du kan sjå henne.
-  - Kva Immuch360 gjer: spelar av der filene ligg, frå Immich, ein NAS, ein medietenar eller ein telefon.
-- **360°- og 3D-avspelarane i Quest-butikken**
-  - Kva dei støyter på: kostar pengar.
-  - Kva Immuch360 gjer: gratis og open kjeldekode (AGPL).
-
-<a id="formats-and-sources-by-platform"></a>
-## Format og kjelder, etter plattform
-
-Immuch360 er eit galleri, og også ein gratis mediespelar: han spelar av det den offisielle appen ikkje kan, frå kjeldene i den andre lista, i avspelaren som passar fila.
-
-- **Flate videoar (MP4, MOV, MKV, det eininga dekodar)**
-  - Android-telefonar: Immich-avspelaren, og ein innebygd avspelar for nettverksdelingar.
-  - iPhone, iPad: det same, unntatt MKV- og AVI-filene på ei deling, som iOS ikkje opnar (på ein tenar blir dei spelte av omkoda).
-  - Meta Quest: i vindauget.
-  - Android TV, Google TV: som på telefonar; OK set på pause, venstre og høgre hoppar 10 s.
-  - Windows (frå skrivebordsbuild 2): libmpv-avspelaren, frå alle kjeldene i den andre lista; Enter set på pause, venstre og høgre eller J og L hoppar 10 s.
-- **360°-bilete**
-  - Android-telefonar: kulevising, gyroskop.
-  - iPhone, iPad: det same.
-  - Meta Quest: oppslukande, rundt deg.
-  - Android TV, Google TV: kulevising dreidd med piltastane, zooma med kanaltastane.
-  - Windows: kulevising, mus og tastatur.
-- **360°-videoar**
-  - Android-telefonar: innebygd Media3-avspelar på ei kule, gyroskop, spoling, val av lydspor, bufferindikator.
-  - iPhone, iPad: innebygd SceneKit-avspelar på ei kule, gyroskop, val av lydspor, bufferindikator; spel av og pause, inga tidslinje enno.
-  - Meta Quest: oppslukande, ekte 3D for stereoskopiske filer, tidslinje med hopp på 10 sekund, førre og neste medium.
-  - Android TV, Google TV: Media3-avspelaren frå telefonane, dreidd med piltastane.
-  - Windows (frå skrivebordsbuild 3): den eigne 360°-avspelaren til appen (libmpv), dreidd med musa eller piltastane, zooma med hjulet, spoling, val av lydspor, bufringsindikator; jamn på ei dedikert grafikkbrikke, høgst 2880 pikslar brei og tregare for 5,7K H.264 på ei integrert brikke.
-- **3D 360° (topp og botn, side om side)**
-  - Android-telefonar: venstre auge, oppsettknapp.
-  - iPhone, iPad: det same.
-  - Meta Quest: kvart auge får sin eigen halvdel av biletet.
-  - Android TV, Google TV: venstre auge, oppsettknapp.
-  - Windows: bilete som på telefonar; videoar frå skrivebordsbuild 3, venstre auge, oppsettknapp, jamt på ei dedikert grafikkbrikke, med avgrensingar på ei integrert brikke.
-- **VR180-bilete og -videoar (halvkule)**
-  - Android-telefonar: halvkule, knappen 360°/180°.
-  - iPhone, iPad: det same.
-  - Meta Quest: oppslukande halvkule.
-  - Android TV, Google TV: halvkule, knappen 360°/180°.
-  - Windows: bilete som på telefonar; videoar frå skrivebordsbuild 3, halvkule, knappen 360°/180°, jamt på ei dedikert grafikkbrikke, med avgrensingar på ei integrert brikke.
-- **Spatial 2.5D (djupn på flat skjerm frå ein stereoskopisk video)**
-  - Android-telefonar: innebygd avspelar, hovudsporing med frontkameraet.
-  - iPhone, iPad: det same.
-  - Meta Quest: ikkje tilgjengeleg.
-  - Android TV, Google TV: ikkje tilgjengeleg.
-- **Romlege bilete frå Apple (HEIC-stereopar, frå build 19)**
-  - Android-telefonar: venstre auge, ei detaljrad seier at det er romleg.
-  - iPhone, iPad: det same.
-  - Meta Quest: Vis i 3D: begge auga på eit bilete som svevar i den oppslukande visinga, 3D eller 2D, kan endrast i storleik.
-  - Android TV, Google TV: venstre auge, ei detaljrad.
-- **Romlege videoar frå Apple (MV-HEVC, frå build 19)**
-  - Android-telefonar: eitt auge (grunnlaget), med ei melding.
-  - iPhone, iPad: det same.
-  - Meta Quest: eitt auge i vindauget, med ei melding.
-  - Android TV, Google TV: eitt auge, med ei melding.
-- **Rå Insta360 .insp-bilete (frå build 16)**
-  - Android-telefonar: sette saman på GPU-en før kulevisinga, opptil 8192x4096.
-  - iPhone, iPad: det same.
-  - Meta Quest: oppslukande, frå eit samansett bilete gjort klart for headsettet.
-  - Android TV, Google TV: som på telefonar.
-- **Rå Insta360 .insv, begge objektiva i eitt spor (frå build 16)**
-  - Android-telefonar: sett saman av ein GPU-effekt i Media3-avspelaren.
-  - iPhone, iPad: sett saman av ein SceneKit-shader.
-  - Meta Quest: oppslukande, sett saman av den same GPU-effekten.
-  - Android TV, Google TV: som på telefonar.
-  - Windows (frå skrivebordsbuild 3): sett saman på grafikkbrikka i 360°-avspelaren til appen, jamt på ei dedikert brikke, med avgrensingar på ei integrert brikke.
-- **Rå videoar med eitt objektiv per spor eller per fil (frå build 18): Insta360 X4, X4 Air, X5, X6 .insv, X3-par, GoPro .360, DJI .osv**
-  - Android-telefonar: to maskinvaredekodarar samtidig, éin per objektiv (frå build 19 programvaredekodarar på ei eining utan maskinvaredekodar, opptil 2048x2048 per objektiv), og ein GL-kompositør som set dei saman til kula; eitt objektiv, så den omkoda straumen, så videoen utan samansetjing, når eininga ikkje kan køyre to.
-  - iPhone, iPad: ein eigen AVFoundation-kompositør med Metal.
-  - Meta Quest: oppslukande, dei same to dekodarane og kompositøren (panel på 3840x1920).
-  - Android TV, Google TV: som på telefonar, når TV-en køyrer to dekodarar samtidig.
-  - Windows (frå skrivebordsbuild 3): begge objektiva side om side i éin avspelar, deretter sette saman, når datamaskina heng med (målt på hennar eiga avspeling; på testmaskina eit X3-par berre på den dedikerte brikka); elles stega til telefonane: eitt objektiv, den omkoda straumen, LRV-kopien i låg oppløysing frå kameraet, videoen utan samansetjing.
-- **Direktebilete frå Tapo-kamera (frå build 20)**
-  - Android-telefonar: Media3 RTSP-avspelar: SD på sida, HD i fullskjerm, lydknapp.
-  - iPhone, iPad: ikkje enno: eit kort seier at det kjem seinare.
-  - Meta Quest: i vindauget, i HD.
-  - Android TV, Google TV: som på telefonar.
-  - Windows (frå skrivebordsbuild 3): libmpv-avspelaren, SD på sida, HD i fullskjerm, lydknapp.
-- **Opptak frå Tapo-kamera (frå build 20)**
-  - Android-telefonar: henta frå minnekortet til ein H.264-video med lyd, deretter spelt av med spoling.
-  - iPhone, iPad: det same.
-  - Meta Quest: det same, i vindauget.
-  - Android TV, Google TV: det same.
-
-Oppføringane for Android TV og Google TV, frå build 20, er ikkje kontrollerte på ein TV enno, sjå [Sjå på TV-en](#watch-on-your-tv-android-tv-and-google-tv); kameraoppføringane er ikkje kontrollerte med eit ekte kamera enno.
-
-På Windows viser førehandsversjonen av Immuch360 Desktop bileta, flate og 360°, også rå .insp-bilete frå Insta360, med mus og tastatur. Frå skrivebordsbuild 2 spelar han av flate videoar, frå tenaren, mappene på PC-en, delingane, Plex og Tapo-opptaka, og frå skrivebordsbuild 3 spelar han av 360°-, 3D-, VR180- og rå 360°-videoar frå dei same kjeldene i sin eigen 360°-avspelar, og Tapo-direktebiletet. 360°-avspelaren går jamt på ei dedikert grafikkbrikke og har avgrensingar på ei integrert (sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview)).
-
-- **Immich-tenaren din**: originalen eller den omkoda straumen frå tenaren, slik Innstillingar, Asset Viewer, Videokjelde seier (sjå [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters)). Same konto som nettappen.
-- **Sjølve telefonen eller headsettet**: "Bruk utan tenar" på innloggingssida, eller oppføringa On this device i Bibliotek-fana.
-- **Ein NAS eller ei datamaskin**: SMB- og WebDAV-delingar, og frå build 19 DLNA-medietenarar, funne på nettverket, lesne direkte (ein SMB-video over opptil seks tilkoplingar), ingenting kopiert; frå build 15 kan filene du vel bli sende til Immich-kontoen din.
-- **Ein annan telefon (frå build 19)**: "Del denne telefonen på nettverket" på den telefonen: headsettet, eller ein kvar WebDAV-klient på nettverket, les albuma, månadene og 360°-media.
-- **Ein Plex Media Server (frå build 20)**: bilet-, film- og TV-seriebiblioteka etter mappe, originalfilene lesne direkte over HTTPS kontrollert mot det eigne sertifikatet til tenaren, heime eller gjennom adressa utanfor heimen, på alle plattformer; sjå [Plex Media Server, utan plex.tv](#plex-media-server-without-plextv).
-- **Eit Tapo-kamera (frå build 20)**: direktebiletet med kamerakontoen (Android, Android TV, Quest, og Windows frå skrivebordsbuild 3), og opptaka på minnekortet med passordet til TP-Link-kontoen (alle plattformer), berre på det lokale nettverket; sjå [Tapo-kamera](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
-- **Mappene på ei Windows-datamaskin (førehandsversjon for skrivebord)**: mappene du vel i Immuch360 Desktop, lesne i staden for galleriet på ein telefon; datamaskina kan også dele dei med headsettet, sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview).
-
-<a id="meta-quest-3"></a>
-## Meta Quest 3
-
-Immuch360 køyrer også på Meta Quest-headsetta med Horizon OS v69 eller nyare. Frå build 21 er builden i Horizon Store oppført for Quest 2, Quest Pro, Quest 3 og 3S, dei fire som den universelle `-release.apk` allereie oppgjev; den første Quest er ikkje med, butikken godtek han ikkje lenger.
-
-Quest 3 og 3S er testa. Quest 2 og Quest Pro er ikkje testa enno: videodekodarane deira er treigare, og grensene appen sjekkar vart målte på ein Quest 3, så ein stor H.264-video kan bli avvist med ei melding eller hakke på dei. Rapportar frå desse to headsetta er velkomne under [Issues](https://github.com/freeKC/Immuch360/issues).
-
-Korleis du brukar han, står i [I Meta Quest 3-headsettet](#in-the-meta-quest-3-headset); denne delen handlar om installasjon og om kva som er annleis på headsettet.
-
-Headsettbuilden snakkar berre med tenarar over HTTPS, eller over vanleg HTTP med namn i heimenettverket (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) og med sjølve headsettet, slik Horizon Store krev. Ein tenar som er oppgjeven som ei vanleg HTTP-adresse med ein IP, som `http://192.168.1.10:2283`, blir avvist av den builden: bruk HTTPS, eit namn i heimenettverket (`nas.local`), eller den universelle `-release.apk`, som held på den opne policyen til telefonane.
-
-WebDAV-, DLNA- og telefondelingar på ei vanleg HTTP-adresse i det lokale nettverket blir ikkje råka: appen les dei sjølv og gjev avspelarane sine berre adressa til den lokale brua (skal stadfestast på headsettet for DLNA og telefondelinga, nye i build 19). Frå build 20 blir ein Plex-tenar nådd over HTTPS, og eit Tapo-kamera av appen sjølv, med direktebiletet over RTSP, som ikkje er HTTP: ingen av dei skal vere råka (skal stadfestast på headsettet).
-
-<a id="install"></a>
-### Installer
-
-Immuch360 har vore i [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) sidan 7. oktober 2026 med build 14, og build 21 er under gjennomgang hos Meta som den første oppdateringa. For å få ein build før butikken har han, sideloadar du `-quest-release.apk`-fila frå ei utgiving (bygd for headsettet: 64 bit, mål-SDK 34, berre løyva headsettet brukar), eller den universelle `-release.apk`:
-
-1. Slå på utviklarmodus éin gong. I Meta Horizon-appen på telefonen opnar du Devices (Einingar), vel headsettet, deretter Headset settings (Headsettinnstillingar), deretter Developer mode (Utviklarmodus). Dette krev ein utviklarkonto, som er gratis på developers.meta.com. Du treng også adb (Android SDK Platform Tools) på datamaskina, eller SideQuest.
-2. Kopla headsettet til ei datamaskin med ein USB-C-kabel. I headsettet godtek du "Allow USB debugging" (Tillat USB-feilsøking).
-3. Installer APK-en:
-
-   ```bash
-   adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
-   ```
-
-4. I headsettet opnar du biblioteket, vel filteret "Unknown sources" (Ukjende kjelder), og startar Immuch360.
-5. Ein sideloada APK oppdaterer seg ikkje sjølv: installer neste utgiving på same måten (`adb install -r` held på innlogginga og innstillingane). Versjonen frå Horizon Store og APK-en frå GitHub er signerte med ulike nøklar, så headsettet nektar å installere den eine over den andre: for å byte avinstallerer du appen først, noko som fjernar innlogginga, innstillingane og lista over nettverksdelingar.
-
-### I vindauget
-
-Heile appen køyrer som eit 2D-vindauge som kan endrast i storleik: innlogging, tidslinje, album, søk, Bibliotek-fana (360°-lista, On this device, Nettverksdelingar), innstillingane, og bilete- og videovisingane, der flate bilete og videoar blir spelte av.
-
-På headsettet opnar 360°-knappen, og Vis som 360° i menyen ⋮, den oppslukande visinga direkte i staden for kulevisinga på telefonar, og Spatial 2.5D-knappen og innstillinga blir ikkje viste.
-
-Frå build 19 har eit romleg bilete frå Apple ein Vis i 3D-knapp, og flisa Del denne telefonen på nettverket blir ikkje vist: det er headsettet som les delinga frå ein telefon. Frå build 20 blir også Plex-tenarane og Tapo-kameraa opna i vindauget, med direktebiletet til kameraet i HD; innstillinga "Oppsett for fjernkontroll" blir ståande på Automatisk, som lèt ho vere av på headsettet.
-
-### I bilete
-
-Skjermbilete tekne i headsettet med opptaksknappen (Meta-knappen og avtrekkaren), på ein Quest 3, med appen på fransk; Bibliotek-fana blir vist i modusen utan tenar.
-
-<p align="center">
-  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Bibliotek-fana utan tenar: On this device og Nettverksdelingar">
-  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Sida Nettverksdelingar med ei SMB-deling frå ein Freebox Server">
-</p>
-
-- **Utan tenar**: Bibliotek-fana i modusen utan tenar, med headsettet sine eigne media og nettverksdelingane.
-- **Nettverksdelingar**: ei Samba-deling frå ein Freebox Server, lesen direkte frå headsettet.
-
-### Avgrensingar på headsettet
-
-- **Videokodekar**: HEVC (H.265) er det trygge valet; H.264 stoppar kring 4096x2304. Kva appen sjekkar, og korleis du gjev headsettet ein video det dekodar, står i [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters).
-- **Butikk**: butikkversjonen startar på build 14. Funksjonane merkte "frå build 15" og seinare kjem med build 21, den første oppdateringa, når Meta har gått gjennom han (alfatestkanalen til butikken, for testarar, får kvar ny build); APK-en frå GitHub har alle allereie no.
-- **Løyve**: headsettbuilden ber berre om bilete og videoar (modusen utan tenar) og varsel (framdrifta for sikkerheitskopiering). Han har ikkje noko løyve for lagring, lyd, posisjon eller kamera, i motsetnad til telefonbuilden; byte av tenar basert på Wi-Fi-namnet er difor ikkje tilgjengeleg på headsettet.
-- **APK-storleik**: Spatial SDK legg til om lag 56 MB med innebygd 64-bits ARM-kode, også på telefonar, der han aldri blir lasta inn.
-- **Lisens**: den oppslukande visinga brukar Meta Spatial SDK, distribuert under Meta Platform Technologies SDK License Agreement.
-
-<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
-## På ei Windows-datamaskin: Immuch360 Desktop (førehandsversjon)
-
-Immich-biblioteket ditt ligg på ein tenar, andre bilete og videoar ligg i mappene på PC-en, fleire videoar på ein NAS eller ein Plex-tenar, og du vil gjerne sjå deg rundt i 360°-bileta dine og spele av videoane dine på ein stor skjerm, eller vise bileta frå PC-en i headsettet. Immuch360 Desktop er den same appen på ei Windows-datamaskin, bygd frå dei same kjeldene som telefonappane.
-
-På ei datamaskin tilbyr Immich nettappen sin i ein nettlesar. **Kva Immuch360 Desktop legg til**: mappene på PC-en utan tenar eller konto, SMB-, WebDAV-, DLNA- og Plex-delingar som ein blar i og spelar av frå appen, rå .insp-bilete frå Insta360 opna som ei kule, og PC-en delt med ein Meta Quest heime.
-
-Dette er ein førehandsversjon: bilete og flate videoar fungerer frå skrivebordsbuild 2, og frå skrivebordsbuild 3 360°-videoavspelaren (360°-, 3D-, VR180- og rå 360°-videoar) og direktebiletet frå Tapo-kamera; stega nedanfor som krev build 3, seier frå om det. Sidan 9. oktober 2026 ligg skrivebordskjeldene i hovudgreina til forken, `immuch360`, så telefonar, headsett, TV-ar og datamaskiner blir leverte frå dei same kjeldene. Appane for telefon, nettbrett, Quest og TV blir ikkje endra av han og held på namnet Immuch360.
-
-<a id="download-and-install-on-windows"></a>
-### Last ned og installer på Windows
-
-Den gjeldande builden er GitHub-førehandsutgivinga [Immuch360 Desktop 3.3.0-rc.0, desktop build 4 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4). Fila er `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` (om lag 58 MB, 173 filer når ho er pakka ut, med videoavspelaren og `licenses`-mappa hans), med `SHA256SUMS.txt` for å kontrollere ho. Han vart bygd frå hovudgreina, `immuch360`, ved den commiten som utgivingsnotata nemner: kjeldene til telefonbuild 22, på Immich frå 10. oktober 2026, pluss datamaskinversjonen. Frå skrivebordsbuild 4 er biblioteket til videoavspelaren, `libmpv-2.dll`, den eigne builden til prosjektet frå 2026, med kjeldene publiserte saman med han; han legg saman dei to objektiva i rå videoar som er lagra eitt per spor eller per fil, og lèt grafikkbrikka teikne 360°-visinga utan å kopiere kvart bilete tilbake. Han krev Windows 10 eller 11, 64 bit.
-
-1. Last ned ZIP-fila og pakk ho ut kvar som helst, til dømes i Dokument. For å byte ut skrivebordsbuild 2 slettar du mappa hans eller pakkar ut i ei ny: innlogginga, mappene og innstillingane dine ligg i Windows-profilen din, ikkje i den mappa.
-2. Start `immuch360.exe` frå den utpakka mappa. Hald mappa samla: programmet treng filene ved sida av seg, mellom dei `libmpv-2.dll`, videoavspelaren, og `immuch_desktop_video.dll`, som les dekodarane til grafikkbrikka.
-3. Filene er ikkje signerte enno, så Windows SmartScreen kan vise "Windows beskyttet PC-en din": vel "Mer informasjon", deretter "Kjør likevel". Der Smart App Control er slått på, blokkerer han usignerte program.
-4. Vent på vindauget. Den første oppstarten av ein ny build tek frå 10 sekund til om lag eitt minutt, truleg medan Microsoft Defender skannar dei nye filene: ikkje start appen på nytt i mellomtida. Dei neste oppstartane tek eit sekund eller to.
-5. På innloggingssida loggar du inn på Immich-tenaren din med adressa, e-postadressa og passordet ditt, eller klikkar på "Bruk utan tenar".
-
-For å kontrollere ZIP-fila køyrer du `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` i ein ledetekst, i mappa med nedlastinga: resultatet er det som står i `SHA256SUMS.txt`. Det finst enno ikkje noko installasjonsprogram og inga automatisk oppdatering: følg med på sida [Releases](https://github.com/freeKC/Immuch360/releases), og pakk ut neste build på same måten.
-
-### Kva førehandsversjonen gjer
-
-- **Immich-tenaren din**: tidslinja, albuma, personane, minna og søket, og tenarbileta i full storleik, som på ein telefon.
-- **Utan tenar**: mappene med bileta og videoane dine (Bilete og Videoar blir føreslegne) erstattar galleriet på ein telefon. Ingenting blir lese utanfor mappene du valde, og utan tenar forlèt ingenting datamaskina.
-- **Opplasting og sikkerheitskopi** frå desse mappene til Immich-tenaren din, medan appen er open.
-- **360°-bilete som ei kule**, med mus og tastatur; dei rå .insp-bileta frå Insta360-kamera blir opna som på telefonar.
-- **Flate videoar** (frå skrivebordsbuild 2): videoane i mappene dine, på Immich-tenaren din (originalen eller den omkoda straumen, sjå [Videodetaljar og dekodarar](#video-details-decoders-and-why-a-video-stutters)), på SMB-, WebDAV- og DLNA-delingar, på Plex-tenarar og Tapo-opptaka blir spela av i vindauget, med kontrollane frå telefonane (spel av, pause, tidslinja), ein bufringsindikator, og ein meny med lydspora for ein video som har fleire. Videoane i mappene dine og på delingane viser eit bilete frå videoen som miniatyrbilete, i staden for eit filmikon.
-- **360°-, 3D- og VR180-videoar** (frå skrivebordsbuild 3): 360°-knappen opnar dei i 360°-avspelaren til appen, i vindauget eller i fullskjerm, frå alle kjeldene for flate videoar, dreidde med mus og tastatur, med 3D- og 360°/180°-knappane frå telefonane (ein 3D-video viser venstre auge, som på telefonar), spoling, menyen for lydspor og ein bufringsindikator.
-- **Rå 360°-videoar** (frå skrivebordsbuild 3): Insta360 .insv-filer, med begge objektiva i eitt spor, i to spor (X4 og seinare) eller i to filer (X3-par), GoPro .360- og DJI .osv-filer, sette saman av appen på grafikkbrikka medan dei blir spela av, med kalibreringa i fila, som på telefonar.
-- **Nettverksdelingar**: Samba (SMB), WebDAV og DLNA-medietenarar, og Plex-tenarar utan plex.tv, ein blar i dei som på telefonar: bileta blir opna og videoane blir spela av. For Tapo-kamera, opptaka på minnekortet: lista, henting av eit klipp og avspeling av det; og frå skrivebordsbuild 3 direktebiletet.
-- **Del denne datamaskina på nettverket**: albuma, månadene og 360°-media i mappene dine, skriveverna, for ein Meta Quest eller ei anna eining heime, slik ein telefon deler seg sjølv.
-- **Filer**: nedlastingar frå tenaren hamnar i ei mappe du vel, "Lagre i ei mappe" held på ein kopi av dei valde bileta og videoane, og Logs-sida (Loggar) har "Lagre loggar i ei fil".
-
-### Bruk han på ei datamaskin
-
-1. **Vel mappene dine.** Utan tenar startar tidslinja med "Vel mappene med bileta og videoane dine": klikk på "Legg til ei mappe". Med tenar blir det same kortet vist i Bibliotek under "På denne datamaskina", og i albuma som skal sikkerheitskopierast, til ei mappe er vald. Etterpå har dei ei linje "Mapper på denne datamaskina", og det har også Innstillingar, "Denne datamaskina".
-2. **Sky-, USB- og nettverksmapper.** Filer som OneDrive (eller ei anna skylagring) berre har på nett, blir talde men ikkje lesne, så å leggje til ei mappe lastar ikkje ned heile skya di: "Last ned og ta med" hentar dei når du vil ha dei. Ein USB-stasjon som kjem tilbake under ein annan bokstav, held på bileta sine. Nettverksmapper, og mapper på eit minnekort eller ein USB-stasjon (slik at Windows framleis kan løyse han ut), blir ikkje overvaka for endringar: bruk Oppdater etter at du har lagt til filer der.
-3. **Sjå deg rundt i eit 360°-bilete**: dra med musa, zoom med hjulet, eit dobbeltklikk eller + og - (på alle tastaturoppsett, også AZERTY), flytt med piltastane. F eller F11 byter til fullskjerm og Escape går ut av han; Home og End går til det første og det siste biletet; I viser detaljane.
-4. **Gå frå bilete til bilete**: i eit flatt bilete går venstre- og høgrepila, eller vinkelteikna som blir viste i kantane medan musa rører seg, til førre og neste bilete. Bokstavar som blir skrivne i skildringsfeltet, blir verande i teksten.
-5. **Spel av ein video**: opne han frå tidslinja, ei mappe, ei deling, Plex eller opptaka til eit Tapo-kamera; han blir spela av i vindauget. Enter, eller spel av/pause-tasten på tastaturet, set på pause og spelar av igjen. Medan han blir spela av, hoppar venstre- og høgrepila, eller J og L, 10 sekund bakover eller framover; på pause går pilene til førre og neste. F eller F11 byter til fullskjerm, som for bilete. Knappen "Lydspor" vel mellom lydspora til ein video som har fleire.
-6. **Når ein video stoppar**: ein video på pause held seg på pause når du kjem tilbake til vindauget. Ein video som blir avbroten før slutten, til dømes når delinga eller tenaren sluttar å svare, seier frå om det: opne han igjen, så held han fram der han stoppa, på pause. Ei spelelistefil som finst i ei mappe eller ei deling, blir ikkje følgd.
-7. **Spel av ein 360°-video** (frå skrivebordsbuild 3): opne videoen og klikk på 360° i den øvste lina, som på ein telefon; for ei 360°-fil som tenaren ikkje merkjer, først "Vis som 360°" i ⋮-menyen, sjå [Ei 360°-fil som blir vist flat](#a-360-file-that-shows-flat-view-as-360). 360°-avspelaren blir opna i vindauget. Dra med musa for å sjå deg rundt (visinga held fram med å dreie litt etter eit raskt drag), zoom med hjulet, + og - eller Page Up og Page Down, drei med piltastane haldne nede. Space, eller spel av/pause-tasten på tastaturet, set på pause og spelar av igjen; J og L hoppar 10 sekund bakover eller framover; Home går tilbake til starten; M slår lyden av og på. F, F11 eller eit dobbeltklikk byter til fullskjerm; Escape går ut av fullskjerm, og lukkar deretter avspelaren. Kontrollane (lukk, tittelen, 360°/180°, 3D, lydsporet og fullskjerm øvst; spel av, 10 sekund bakover og framover, tidslinja og lyden nedst) blir gøymde saman med musepeikaren etter 3 sekund med avspeling, og kjem tilbake når musa rører seg eller ein tast blir trykt; Tab går frå den eine til den neste.
-8. **3D og VR180**: i 360°-avspelaren byter 3D-knappen mellom "Mono (ikkje 3D)", "3D, topp og botn" og "3D, side om side", og 360°/180°-knappen byter mellom heil kule og halvkula i VR180, som i [3D og VR180](#3d-and-vr180-photos-and-videos). Ein 3D-video viser venstre auge.
-9. **Rå 360°-videoar** (frå skrivebordsbuild 3): opne råfila og klikk på 360°, som på ein telefon, sjå [Rå filer frå 360°-kamera](#raw-360-camera-files-without-the-cameras-app); hald dei to filene i eit X3-par saman. Ei fil med begge objektiva i eitt spor blir sett saman medan ho blir spela av. Ei fil med eitt objektiv per spor eller per fil spelar av begge objektiva side om side i éin avspelar når datamaskina heng med: dei første sekunda av ein slik video blir målte, og resultatet blir teke vare på for dei neste videoane av den typen (ein metode som viste seg for treig, blir prøvd igjen etter 14 dagar). Når datamaskina ikkje heng med, går avspelaren gjennom stega til telefonane, med meldingane deira: eitt objektiv, halve kula svart; den omkoda straumen frå tenaren; LRV-kopien i låg oppløysing som kameraet tok opp ved sida av fila, om han finst; videoen utan samansetjing. Ein rå video har ingen 3D-knapp og ingen 360°/180°-knapp.
-10. **Direktebiletet frå eit Tapo-kamera** (frå skrivebordsbuild 3): opne kameraet som på ein telefon, sjå [Sjå det direkte](#watch-it-live). Sida spelar av SD-straumen og fullskjerm HD-straumen, med knappane til telefonen på biletet: lyden, av til å byrje med, SD eller HD, og "Fullskjerm". Ein straum som fell ut (kameraet startar på nytt, Wi-Fi-en fell ut), kjem tilbake av seg sjølv, prøvd igjen i om lag halvanna minutt medan det siste biletet blir ståande på skjermen. Ein kamerakonto som kameraet avviser, blir meld og ikkje prøvd igjen, sidan mislukka innloggingar tel mot sperringa til kameraet.
-11. **Del datamaskina med headsettet**: opne Bibliotek, deretter Nettverksdelingar; den første flisa er "Del denne datamaskina på nettverket", datamaskinsida av [Del denne telefonen på nettverket](#share-this-phone-on-the-network). Slå på "Del bilete og videoar på nettverket", og legg deretter til datamaskina i headsettet slik den delen skildrar. Delinga stoppar når appen blir lukka eller etter ein time utan bruk.
-12. **Tillat nettverket**: Windows kan spørje om Immuch360 Desktop kan bruke nettverket. Tillat det på private nettverk, elles finn ikkje headsettet datamaskina. På eit nettverk Windows merkjer som offentleg (ein kafé, eit hotell), eller eit nettverk Windows ikkje kan avgjere typen til, startar ikkje delinga med mindre du vel "Del for denne økta", og datamaskina kunngjer seg berre på eit nettverk ho deler på.
-13. **Innstillingar, "Denne datamaskina"**: mappene, nedlastingsmappa, nettverkskortet som blir brukt til å finne delingar og dele datamaskina (når ho har fleire, til dømes Wi-Fi og Ethernet), og klarerte sertifikat: sertifiseringsinstansen til din eigen tenar, som ei PEM-fil, for ei HTTPS-adresse Windows ikkje stolar på av seg sjølv. Klientsertifikat blir importerte i Innstillingar, Avansert, som på telefonar.
-
-<a id="360-videos-and-the-graphics-chip"></a>
-### 360°-videoar og grafikkbrikka
-
-I 360°-avspelaren (frå skrivebordsbuild 3) teiknar grafikkbrikka visinga du ser på frå kvart bilete i videoen. Videotillegget lèt libmpv teikne kvart bilete inn i eit bilete av den valde storleiken, og deretter teiknar det eigne teiknepasset til appen ut frå det den delen av kula du ser på. Å dreie visinga endrar ein verdi i det passet, ikkje avspelaren: å dra kostar ikkje noko minne, og ein video på pause blir dreidd utan at noko blir dekoda.
-
-Appen måler dei første sekunda av kvar 360°-video og vel kor stort bilete brikka arbeider med: heile biletet på ei dedikert brikke, høgst 2880 pikslar breitt på ei brikke som er bygd inn i prosessoren (Windows fortel appen kva type det er, så Intel Arc-brikka i ein berbar PC med Core Ultra blir rekna som innebygd), eitt steg mindre når brikka ikkje heng med. Det appen målte, blir teke vare på for dei neste videoane av same type (kodek, storleik, biletfrekvens og dekodar), ikkje for kvar video.
-
-Når sjølv det minste steget ikkje er jamt, seier avspelaren "Dette grafikkortet kan ikkje vise 360°-visinga av denne videoen jamt"; når det er langt unna, eller når brikka ikkje kan teikne visinga i det heile (ingen OpenGL ES 3.0, ein drivar som avviser det), blir videoen spela av flatt og avspelaren seier kvifor. Ein video som vart spela av flatt, blir ikkje spela av flatt neste gong: den neste videoen av same type blir målt på nytt.
-
-Når det er dekodinga av ein tenarvideo som ikkje heng med, ikkje teikninga (ein video som prosessoren dekodar, som 5,7K H.264), byter avspelaren til den omkoda straumen frå tenaren frå der han var, med meldinga frå telefonane: "Spelar av den omkoda straumen: originalen (kodek og storleik) går over det denne eininga kan dekode".
-
-- **Bruk den dedikerte grafikkbrikka i ein berbar PC.** Windows køyrer appen på den integrerte brikka med mindre noko anna er sagt. I Windows-innstillingane, System, Skjerm, Grafikk, legg til `immuch360.exe` og vel "Høy ytelse", og start deretter appen på nytt. På testmaskina (ei Intel UHD-brikke og ein NVIDIA RTX 4060 Laptop) teikna NVIDIA-brikka 360°-videoar i 4K, 5,7K og 8K i full storleik og med 30 bilete i sekundet medan visinga vart dreidd. Intel-brikka teikna dei høgst 2880 pikslar breie: ein 4K H.264- og ein 8K HEVC-video med om lag 30 bilete i sekundet med ein libmpv-build frå 2026, ein 4K-video med 23 til 27 med libmpv frå 2024 i media-kit (sjå [Ikkje på plass enno](#not-there-yet)), og ein 5,7K H.264-video, som prosessoren dekodar, med om lag 20: frå tenaren byter avspelaren då til den omkoda straumen; ein video utan omkoda straum, frå ei mappe til dømes, blir spela vidare med meldinga "Dette grafikkortet kan ikkje vise 360°-visinga av denne videoen jamt".
-- **Vel gjengivinga sjølv.** I Innstillingar, Avansert, slå på "Troubleshooting (Feilsøking)": ei oppføring "Gjengiving av 360°-video" blir vist, Automatisk som standard. Ho tilbyr også "Tillegg, full storleik", "Tillegg, høgst 4096 brei", "Tillegg, høgst 2880 brei" og "Flat, utan 360°-visinga", for den neste 360°-videoen du opnar. Under henne viser "Sist målt" storleiken den siste 360°-videoen vart teikna i, bileta i sekundet, grafikkbrikka og dekodaren: kopier det inn i ein feilrapport. Å velje "Automatisk" igjen, sjølv når det alt er valt, gløymer det som vart målt, og dei neste 360°-videoane blir målte på nytt.
-- **Kva brikka dekodar.** Innstillingar, Avansert, "Videodekodarar på denne eininga" viser kva grafikkbrikka som er i bruk, dekodar, slik Direct3D 11 rapporterer det, og appen rettar den lista med det han målte under avspeling: innstillinga Videokjelde og kontrollen av to objektiv for rå videoar følgjer henne. H.264 som er breiare enn 4096 pikslar (5,7K frå 360°-kamera), blir dekoda av prosessoren, sidan ingen av brikkene i testmaskina tek det.
-
-**For utviklarar.** 360°-avspelaren teiknar gjennom ei eiga gjengiving, bygd på libmpv og eit patcha media_kit_video-tillegg: mpv teiknar kvart videobilete inn i ei tekstur på grafikkbrikka, og eit OpenGL ES 3.0-pass teiknar visinga inn i teksturen Flutter viser, utan kopi gjennom prosessoren. Kvifor ho vart bygd slik, korleis ho fungerer, kva som vart målt og kva som kan justerast: [gjengivinga av 360°-video på skrivebordet](../docs/immuch360/desktop-360-video-renderer.md).
-
-### Samanlikna med telefonappane
-
-- **Sikkerheitskopien køyrer medan appen er open** (eller minimert), ikkje i bakgrunnen med vindauget lukka. Å lukke vindauget medan opplastingar går, eller medan datamaskina er delt, spør først.
-- **Mapper i staden for eit galleri**: appen les mappene du vel og held sin eigen indeks, miniatyrbilete og hurtigbuffer på datamaskina.
-- **Eitt vindauge**: å opne appen ein gong til hentar fram det første vindauget i staden for å starte ein kopi til.
-- **Ingenting blir sletta frå mappene dine**: "Slett frå eininga" er gøymd, og Slett fjernar berre tenarkopien, til appen kan sende filer til papirkorga i Windows.
-- **Mus og tastatur** i staden for berøring og gyroskopet.
-- **Éin videoavspelar for alle kjelder**: libmpv spelar av videoane frå tenaren, mappene, delingane og Plex på same måten, og den flate avspelaren hans har allereie menyen for lydspor som den flate avspelaren på telefonane enno ikkje har.
-- **360°-videoar i vindauget** (frå skrivebordsbuild 3): 360°-avspelaren er ei side i appen, ikkje ein eigen innebygd avspelar, med tidslinje, hopp på 10 sekund og lydknappen. Rå videoar med eitt objektiv per spor eller per fil blir lagde side om side i éin avspelar, der telefonane køyrer to dekodarar; reservestega til telefonane er dei same, med LRV-kopien frå kameraet lagd til før videoen utan samansetjing.
-- **Tapo-direktebiletet** (frå skrivebordsbuild 3) blir spela av på datamaskina som på Android, medan iPhone og iPad enno ikkje har det.
-
-<a id="not-there-yet"></a>
-### Ikkje på plass enno
-
-- **Rå videoar med to objektiv på ein berbar PC**: sjølv med ein libmpv frå 2026 la testmaskina saman eit X3-par (to H.264-filer på 2880x2880) med 30 bilete i sekundet berre på NVIDIA-brikka si; på Intel-brikka, og for ei X4-fil (to HEVC-spor på 3840x3840) på begge brikkene, spelar videoen av eitt objektiv, halve kula svart, som på ein telefon som ikkje kan køyre to dekodarar.
-- **3D berre på skjermen**: ein 3D-video viser venstre auge, som på telefonar; det finst ikkje noko gyroskop og inga headsettvising på datamaskina. For å sjå i ekte 3D deler du datamaskina med ein Meta Quest.
-- **Spatial 2.5D**, seinare med webkameraet; **kartet** og Stader-visinga; **innlogging med OAuth** (logg inn med e-post og passord i staden); **Google Cast**; **varsel**.
-- **Eit installasjonsprogram, ein signert build og automatiske oppdateringar**: denne builden er ei mappe med `immuch360.exe`.
-- **Linux og macOS**: prosjekta deira ligg i kjeldene, men dei er ikkje bygde eller prøvde på desse systema enno, og videoavspelaren deira er ikkje med enno; dei kjem etter Windows.
-- **Omsetjingar**: dei nye tekstane i datamaskinversjonen er førebels på engelsk.
-
-### Kjende problem
-
-- **Den første oppstarten av ein ny build er treig**: frå 10 sekund til om lag eitt minutt før vindauget blir vist, truleg medan Microsoft Defender skannar dei nye filene, som ikkje er signerte enno. Vent på vindauget i staden for å starte appen på nytt; dei neste oppstartane tek eit sekund eller to.
-- **8K HEVC-videoar treng ein dedikert grafikkbrikke, og 360°-videoar går betre på ei slik**: på testmaskina, ein berbar PC, viste den integrerte Intel UHD-brikka om lag halvparten av bileta i ein 8K HEVC-video, medan den dedikerte NVIDIA-brikka spelte av 8K HEVC og 5,7K H.264 utan eit einaste tapt bilete; 360°-avspelaren går jamt på NVIDIA-brikka og tregare på Intel-brikka, sjå [360°-videoar og grafikkbrikka](#360-videos-and-the-graphics-chip). Windows køyrer appen på den integrerte brikka med mindre noko anna er sagt: i Windows-innstillingane, System, Skjerm, Grafikk, legg til `immuch360.exe` og vel "Høy ytelse", og start deretter appen på nytt. På den integrerte brikka blir ein flat 5,7K H.264-video, som dekodaren hennar avviser, dekoda av prosessoren utan eit tapt bilete.
-- **Flate videoar blir teikna med høgst 1440 linjer i høgda**, og deretter skalerte til vindauget: på ein 4K-skjerm i fullskjerm er ein 4K- eller 8K-video litt mindre skarp enn i ein dedikert videoavspelar. Slik held ein 8K-video seg innanfor grafikkytinga til ein berbar PC. 360°-avspelaren arbeider i staden med heile biletet, eller med den mindre storleiken som målinga valde.
-- **Medan ein video frå mappene dine blir spela av i appen, eller medan headsettet les ei fil frå den delte datamaskina** (ein video det spelar av, eit bilete det lastar ned), kan ikkje Windows gje nytt namn til, flytte eller slette den fila og seier at ho er open i Immuch360 Desktop: lukk videoen, eller stopp avspelinga i headsettet, først. Sikkerheitskopiar held ikkje filene dine på den måten: ei fil kan få nytt namn, flyttast eller slettast medan ho blir lasta opp.
-- **Ujamne kantar**: skrivebordsbuild 3 består 855 av dei 863 skrivebordstestane sine på Windows (8 blir hoppa over med vilje) og heile testpakken til appen, 200 avspelarar opna etter kvarandre etterlèt ingen lekkasje, og ZIP-fila i utgivinga startar, spelar av eit testklipp og blir lukka ryddig. Testen av kvar funksjon for hand på ein ekte PC pågår framleis.
-- **Kva 360°-avspelaren og direktebiletet vart kontrollerte med**: 360°-avspelaren vart køyrd med syntetiske 360°-klipp i 4K, 5,7K og 8K på begge grafikkbrikkene i ein berbar PC (opna, spela av, dreidd under avspeling og på pause, lukka) utan krasj og utan at grafikkdrivaren vart nullstilt. Rå videoar med to objektiv vart spela av frå syntetiske klipp og frå ekte X3- og X4-filer. Tapo-direktebiletet vart kontrollert mot ein RTSP-testtenar som loggar inn slik kameraa gjer (Digest), broten og avvist med vilje, utan passord i nokon logglinje, men enno ikkje med eit ekte kamera. Testen for hand, med ekte 360°- og 3D-filer, begge skjermane på ein berbar PC, dvale og gjenopptaking, og eit ekte kamera, står att.
-
-Om noko går gale, opne gjerne ei [sak](https://github.com/freeKC/Immuch360/issues) med loggen lagra frå Logs-sida (Loggar), sjå [Loggar](#logs). Sjekk loggen før du deler han: han kan innehalde tenaradressa di.
-
-<a id="build-it-yourself-on-windows"></a>
-### Bygg han sjølv på Windows
-
-Du treng Windows 10 eller 11 på x64, Flutter 3.47.2 for Windows, Visual Studio 2022 eller Build Tools for det med arbeidsmengda "Desktop development with C++", utviklarmodus slått på i Windows-innstillingane (Flutter treng han for programtillegga), og Python 3 for pakkeskriptet.
-
-1. Hent kjeldene og køyr kodegenereringa. Hovudgreina, `immuch360`, byggjer også datamaskinversjonen: det finst inga grein å byte til. Kodegenereringa brukar Java og Node, så køyr ho på Linux, macOS eller i WSL; med WSL held du klonen på ein Windows-stasjon, som WSL ser under `/mnt/c` eller `/mnt/d`:
-
-   ```bash
-   git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360/mobile
-   mise install
-   mise run install
-   mise run codegen
-   ```
-
-2. På Windows, i den same `mobile`-mappa, bygg appen. Den første builden lastar ned biblioteka til videoavspelaren (libmpv og ANGLE) frå GitHub og kontrollerer kvart arkiv med SHA-256-summen; han kompilerer også det vesle Direct3D 11-tillegget som les dekodarane til grafikkbrikka, `immuch_desktop_video`, med den same C++-arbeidsmengda:
-
-   ```bat
-   flutter pub get
-   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
-   flutter run -d windows -t lib/main_desktop.dart
-   REM the app, in build\windows\x64\runner\Release\immuch360.exe
-   flutter build windows --release -t lib/main_desktop.dart
-   ```
-
-3. `Release`-mappa køyrer på PC-en som bygde ho. For ein annan PC held du på heile mappa og legg Visual C++-køyretida ved sida av `immuch360.exe`. Frå rota av klonen kopierer pakkeskriptet ho, utelèt det som berre tener Android, legg til lisensane til videoavspelaren, kontrollerer at kvar DLL appen lastar, finst i mappa eller i sjølve Windows, og lagar ZIP-fila:
-
-   ```bat
-   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
-   ```
-
-CI-en for Immuch360 Desktop (`.github/workflows/immuch360-desktop.yml`) køyrer på `desktop`-greina, som følgjer `immuch360`: telefonkontrollane (ingenting blir endra i telefonbuildane) og heile testpakken på Linux, skrivebordstestane på Windows, og den same ZIP-fila, deretter på den builden testane som treng libmpv og ANGLE frå han (innlogginga til Tapo-direktebiletet, kva ei videofil ikkje får opne, 360°-shaderane); Linux-jobben byggjer appen på Ubuntu og macOS-jobben kompilerer han med Xcode 26.3 og macOS 26 SDK (begge med den same `-t lib/main_desktop.dart`), berre som kompileringskontrollar: ingen av dei er starta på desse systema enno. Ein andre arbeidsflyt (`.github/workflows/immuch360-libmpv.yml`) byggjer libmpv på nytt for Windows x64 og arm64 frå låste kjelder og publiserer arkiva med SHA-256-summane; ZIP-filene har framleis med media-kit-arkivet til den builden blir slått på, så avgrensingane til libmpv frå 2024 i [Ikkje på plass enno](#not-there-yet) gjeld også din eigen build.
-
-<a id="where-to-get-it"></a>
-## Kvar du får han
-
-Appen finst på Google Play for telefonar og nettbrett; App Store-versjonen ventar på gjennomgang hos Apple, appen finst i Meta Horizon Store og den første oppdateringa er under gjennomgang hos Meta, og Google Play-versjonen for TV-ar ventar på gjennomgangen til Google av TV-utgivinga. Immuch360 Desktop, for Windows, er ein førehandsversjon på GitHub. GitHub-utgivinga er alltid den nyaste builden:
-
-- **Android-telefonar og -nettbrett**
-  - I dag: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), eller APK-en på sida [Releases](https://github.com/freeKC/Immuch360/releases): `Immuch360-v<version>-arm64-v8a-release.apk` for ein telefon (den universelle `Immuch360-v<version>-release.apk` fungerer overalt, `-armeabi-v7a` er for eldre 32-bits telefonar, og `.aab`-fila er for Google Play, ikkje for sideloading). GitHub-builden ligg vanlegvis føre butikken. Same korleis blir han installert ved sida av den offisielle Immich-appen (pakke `com.aprogsys.immuch360`).
-  - Snart: på Google Play vart build 23 send inn 10. oktober 2026 i staden for build 20 (publisert sidan 7. oktober); den har med Immich-endringane frå oktober og rettingane for TV frå build 22 og 23.
-- **iPhone og iPad**
-  - I dag: ventar på gjennomgang hos Apple. Versjonen under gjennomgang har funksjonane frå build 11: opplasting til Immich og valet Videokjelde (build 15) og dei rå Insta360-filene (build 16) kjem med ei seinare App Store-oppdatering. Kjeldekoden blir bygd med Xcode eller på Codemagic, sjå [Bygg han sjølv](#build-it-yourself).
-  - Snart: App Store, under gjennomgang.
-- **Meta Quest 2, Quest Pro, Quest 3 og 3S (Quest 2 og Quest Pro ikkje testa)**
-  - I dag: `-quest-release.apk`-fila frå sida [Releases](https://github.com/freeKC/Immuch360/releases) (den universelle `-release.apk` fungerer også), sideloada i utviklarmodus, sjå [Installer](#install). Butikkbuilden og APK-en frå GitHub er signerte med ulike nøklar: for å byte frå den eine til den andre avinstallerer du appen først (innstillingane og dei lagra delingane forsvinn med han).
-  - Butikk: [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) har hatt appen sidan 7. oktober 2026 med build 14, og build 21, den første oppdateringa, er under gjennomgang hos Meta; alfakanalen til butikken (berre testarar) får kvar ny build.
-- **Android TV og Google TV (frå build 20)**
-  - I dag: den universelle `Immuch360-v<version>-release.apk` frå sida [Releases](https://github.com/freeKC/Immuch360/releases), sideloada med adb, sjå [Installer han på TV-en](#install-it-on-the-tv). Det er den same appen som på telefonar.
-  - Snart: Google Play på TV-ar, der oppføringa har vore til gjennomgang hos Google sidan 9. oktober 2026.
-- **Windows 10 og 11, 64 bit (førehandsversjon)**
-  - I dag: Immuch360 Desktop, skrivebordsbuild 4, ZIP-fila `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` frå [førehandsutgivinga for skrivebord](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4), pakka ut og starta slik [Last ned og installer på Windows](#download-and-install-on-windows) skildrar. Bilete, flate videoar, 360°-, 3D-, VR180- og rå 360°-videoar (jamt på ei dedikert grafikkbrikke, med avgrensingar på ei integrert) og Tapo-direktebiletet.
-  - Snart: Spatial 2.5D med webkameraet, deretter Linux og macOS; eit installasjonsprogram, ein signert build og oppdateringar seinare.
-
-Lenkja til App Store blir lagd til her så snart oppføringa er publisert; appen finst alt i [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/). Logg inn med den vanlege URL-en til Immich-tenaren din og kontoen din, eller trykk på "Bruk utan tenar" på innloggingssida for å starte med eininga sine eigne bilete og videoar. APK-en frå GitHub oppdaterer seg ikkje sjølv: følg med på Releases-sida, og når du har installert appen frå ein butikk, hentar du oppdateringane frå den butikken.
-
-<a id="build-it-yourself"></a>
-## Bygg han sjølv
-
-Byggjekjeda er den same som for Immich mobile (Flutter 3.47, administrert med [mise](https://mise.jdx.dev)):
-
-```bash
-git clone https://github.com/freeKC/Immuch360.git
-cd Immuch360/mobile
-mise install
-mise run install
-mise run codegen
-flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
-flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
-flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
-```
-
-Skjermbilete til butikkane blir tekne på debug-buildar i simulatoren, bygde med `--dart-define=IMMUCH_SCREENSHOTS=true`, som berre skjuler debug-banneret.
-
-Dei to Android-variantane (flavours) er den same appen. Frå build 20 oppgjev `phone`-varianten seg også som ein TV-app (ei oppføring i appstartaren til TV-en og eit banner, ingen peikeskjerm kravd), noko `quest`-varianten utelèt.
-
-`quest`-varianten har SDK 34 som mål og held berre på løyva headsettet brukar (bilete, videoar, varsel): mediehandsaming, posisjon i bakgrunnen, eldre lagring, lyd, medieposisjon, einingsposisjon og kamera blir fjerna i `android/app/src/quest/AndroidManifest.xml`, fordi Meta Horizon Store avviser dei to første og ber om ei grunngjeving for kvart anna sensitivt løyve; den same fila oppgjev Quest 2, Quest Pro, Quest 3 og 3S som støtta einingar og avgrensar vanleg HTTP til sjølve headsettet og til namn i heimenettverket. APK-en er berre 64 bit på grunn av dei to ekstra argumenta på kommandolina (`--target-platform android-arm64 --android-project-arg arm64only=true`). `phone`-varianten er det Google Play krev.
-
-For å byggje for iOS på din eigen Mac brukar du Xcode og ditt eige signeringsteam; med Xcode 26 køyrer du `xcodebuild -downloadComponent MetalToolchain` éin gong først, sidan Spatial-shaderane treng han. Utan Mac køyrer iOS-buildar på Codemagic (ein drifta Mac) frå fila `codemagic.yaml` i dette repositoriet. Android-utgivingsbuildar køyrer på GitHub Actions (`.github/workflows/immuch360-release.yml`).
-
-Immuch360 Desktop, Windows-versjonen, blir bygd frå dei same kjeldene, `immuch360`-greina, med Flutter for Windows: stega står i [Bygg han sjølv på Windows](#build-it-yourself-on-windows).
-
-Ingen løyndomar ligg i dette repositoriet: Android-signeringsnøkkelen er lagra som krypterte løyndomar i GitHub Actions, og Apple-signeringsmaterialet som krypterte variablar på Codemagic. Arbeidsflytfilene viser berre til dei ved namn. Utan din eigen `android/key.jks` blir ein utgivingsbuild signert med debug-nøkkelen og kan ikkje installerast over ein kopi frå GitHub eller ein butikk (avinstaller han først); ein debug-build blir installert ved sida av som Immuch360 debug. Kopien i Meta Horizon Store er `quest`-APK-en frå utgivinga signert med ein annan nøkkel, den butikkappen først vart registrert med, så han kan heller ikkje installerast over ein sideloada APK, og heller ikkje omvendt.
-
-### Greiner
-
-- **`main`**: Immich `main` på commiten `immuch360` er basert på (10. oktober 2026 for dei gjeldande buildane), aldri endra; han blir flytta framover når forken blir rebasa på ein nyare Immich.
-- **`immuch360`**: endringane i denne forken oppå Immich, med Immuch360 Desktop sidan 9. oktober 2026. Kvar utgiving oppgjev kva Immich-versjon ho er basert på.
-- **`desktop`**: der Immuch360 Desktop, datamaskinversjonen, vart bygd oppå `immuch360`, til han vart fletta inn i ho 9. oktober 2026 slik at telefonar, headsett, TV-ar og datamaskiner blir leverte frå dei same kjeldene. Ho følgjer no `immuch360` og ber taggane for førehandsutgivingane for skrivebord ([skrivebordsbuild 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1) frå commit 21f285c34, [skrivebordsbuild 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2) frå 5b723bd25, [skrivebordsbuild 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3) frå flettinga av 360°-videoavspelaren 10. oktober 2026, [skrivebordsbuild 4](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) frå 99113354a, med build 22 og den eigne libmpv-en til prosjektet). Nytt skrivebordsarbeid hamnar der først og går inn i `immuch360` med skrivebordsbuilden som leverer det. Datamaskinversjonen endrar ingenting under `mobile/android` og `mobile/ios`.
-
-<a id="logs"></a>
-## Loggar
-
-På Android og Quest viser `adb logcat` den oppslukande visinga i headsettet under taggen `Immuch360` (frå build 19 også dei to auga i eit romleg bilete frå Apple: korleis det andre auget vart dekoda, utsnittet, kvar biletet er plassert), dekodarkontrollane under `VideoDecoders`, samansetjinga av ein rå video side om side under `DualFisheyeEffect`, og avspelinga med to objektiv frå build 18 under `TwoLensPlayer`, `TwoLensCompositor` og `LensVideoRenderer`:
-
-```bash
-adb logcat -c
-# reproduce the problem, then
-adb logcat -d -v time -s Immuch360 VideoDecoders DualFisheyeEffect TwoLensPlayer TwoLensCompositor LensVideoRenderer
-adb logcat -d -v time > quest-full.log      # everything, including crashes and decoder errors (it can contain your server address, check before sharing)
-adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
-```
-
-Frå build 19 skriv DLNA-klienten, telefondelinga og attkjenninga av romlege media frå Apple også til appen sin eigen logg (Logs (Loggar), i menyen bak profilbiletet øvst til høgre), under `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` og `NetworkMediaService`. Frå build 20 skriv TV-modusen der under `TvMode` og `TvTextEntry`, Plex-tenarane under `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` og `PlexServerEditPage`, og Tapo-kameraa under `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` og `CameraLiveView`; Plex-linjene inneheld aldri tokenet, ei adresse eller ein tittel, og kameralinjene utelèt passorda. Logglinjene blir verande på eininga med mindre du kopierer dei sjølv.
-
-På ei datamaskin (Immuch360 Desktop) har Logs-sida (Loggar) også "Lagre loggar i ei fil": loggen, eller ein ZIP med loggen og rapportane frå dei siste krasja når det finst nokon (det føreslegne namnet sluttar då med "with-crash-reports"). Ein krasjrapport er ein liten minidump: trådane, kvar dei stoppa og berre det som trengst for å følgje kalla deira, med namna på programfilene men ikkje mappene deira; ikkje minnet til appen.
-
-Frå skrivebordsbuild 2 skriv videoavspelaren på datamaskina dit under `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` og `VideoThumbnailGrabber`, også dei eigne åtvaringane til mpv, med token og passord fjerna. Frå skrivebordsbuild 3 skriv han også 360°-avspelaren under `SphericalPlayer`, `SphereRenderer` og `PluginRenderer` (storleiken som vart vald, bileta i sekundet som vart målte, grafikkbrikka), dei rå videoane med to objektiv under `RawTwoStreams`, dekodarane til grafikkbrikka under `DesktopGpuDecoders`, `DesktopVideoDecoderApi` og `DecoderMeasure`, og Tapo-direktebiletet under `DesktopCameraLive`, der linjene aldri inneheld kamerakontoen eller passordet til han. Sjekk loggen før du deler han: han kan innehalde tenaradressa di.
+Prosjekta er i kjeldekoden og blir bygd av CI-en til prosjektet ved kvar endring, men appen har ikkje vorte starta på dei systema enno og videospelarbiblioteket deira er ikkje i dei: det finst ingen nedlasting enno. Stega for å byggje dei er i [Bygg det sjølv](../docs/immuch360/build.md).
 
 <a id="privacy"></a>
 ## Personvern
 
-- **Ingenting går til utviklaren**: appen snakkar med Immich-tenaren du vel (og, når du opnar kartet, med karttenesta den tenaren brukar), har ingen reklame, ingen analyse og inga krasjrapporteringsteneste driven av utviklaren, og sender ingenting til utviklaren av Immuch360.
-- **Utan tenar** blir ingen tenar kontakta: appen brukar nettverket berre for delingane, Plex-tenarane og kameraa du opnar, og for telefondelinga, om du slår ho på.
-- **Nettverksdelingar**: lista over delingar blir lagra på eininga og blir aldri send til ein tenar; passord blir lagra i nøkkelringen eller nøkkellageret på eininga.
-- **Plex** (frå build 20): tokenet blir verande i den sikre lagringa på eininga og blir sendt berre til din eigen tenar, i eit førespurnadshovud over HTTPS; appen kontaktar aldri plex.tv.
-- **Tapo-kamera** (frå build 20): passordet til TP-Link-kontoen og passordet til kamerakontoen blir verande i den sikre lagringa på eininga; appen snakkar med kameraet berre på det lokale nettverket, aldri med tenarane til TP-Link; henta klipp blir verande i mellomlageret til appen og blir sletta saman med kameraet.
-- **TV**: om eininga er ein TV, blir avgjort på eininga; ingenting blir sendt.
-- **Telefondeling**: berre lokalt nettverk, med brukarnamn og passord, over vanleg HTTP (sjå [Del denne telefonen på nettverket](#share-this-phone-on-the-network)).
-- **Kamera**: blir berre brukt av Spatial 2.5D-avspelaren, på eininga; bileta blir aldri lagra og aldri sende nokon stad.
-- **På ei datamaskin** (Immuch360 Desktop, førehandsversjon for Windows): appen les berre mappene du vel, held indeksen, miniatyrbileta og hurtigbufferen på datamaskina, og lagrar passord og token med datavernet i Windows, berre for Windows-kontoen din. Delinga av datamaskina følgjer reglane for telefondelinga, og startar ikkje på eit nettverk Windows merkjer som offentleg, eller som Windows ikkje kan avgjere typen til, med mindre du seier det.
-- **Videoavspelaren på ei datamaskin** (frå skrivebordsbuild 2): videoane frå tenaren din når han gjennom appen, så avspelaren har aldri økttokenet ditt, og det han les på førehand, blir verande i minnet, ikkje på disken. Han opnar berre fila han får: ei fil i ei mappe eller ei deling som eigentleg er ei speleliste eller ei straumskildring, får han ikkje til å kople til nokon annan stad. Frå skrivebordsbuild 3 blir adressa til kvar video gitt til avspelaren berre i minnet, aldri gjennom ei mellombels fil (lenkja appen lagar for ein video frå tenaren eller ei deling, inneheld ein nøkkel for den økta, som låg på disken i nokre sekund ved kvar opning i skrivebordsbuild 2), og den nøkkelen blir aldri vist i loggen; direktebiletet frå eit Tapo-kamera gir kamerakontoen til avspelaren på same måten, aldri i ei fil eller ei logglinje, og snakkar med kameraet berre på det lokale nettverket; målingane til 360°-avspelaren og dekodarane (grafikkbrikka, videoformatet, bileta i sekundet, aldri eit filnamn) blir verande i mappa til appen på datamaskina.
+Ingenting går til utviklaren: ingen konto, ingen analyse, ingen krasjrapporteringstenest, ingen reklame. Appen snakkar berre med tenarane du vel (Immich-tenaren din, delingane dine, Plex-tenaren din, kameraa dine) og, utan tenar, med ingenting i det heile. Passord og token forblir i eininga sin sikre lagring. Kameraet til Spatial 2.5D-spelaren blir berre brukt på eininga; bilete frå det blir aldri lagra og aldri sendt nokon stad. Den fullstendige policyen er i [PRIVACY.md](../PRIVACY.md), og detaljane per kjelde i [brukarrettleiinga](../docs/immuch360/user-guide.md#privacy).
 
-Heile personvernfråsegna står i [PRIVACY.md](../PRIVACY.md).
+<a id="the-project"></a>
+## Prosjektet
 
-<a id="license-and-trademark"></a>
-## Lisens og varemerke
+Immuch360 er ein uoffisiell fork av [Immich](https://github.com/immich-app/immich)-mobilappen, under [GNU AGPL v3](../LICENSE), ikkje tilknytt til, og ikkje godkjend av, Immich-laget eller FUTO. Forken finst fordi 360°-vising på mobil har vorte etterspurt i Immich sidan januar 2024 og enno ikkje er i den offisielle appen; forken leverer den no, samlar ekte brukarrespons frå einingar, og vil gje tilbake til Immich, i små pull request, kva vedlikehaldarane vil ha. Alt den offisielle appen gjer, er behalde; greinene, byggkjeda og CI-en er skildra i [Bygg det sjølv](../docs/immuch360/build.md).
 
-Dette prosjektet er ein fork av Immich og blir verande under [GNU AGPL v3](../LICENSE). Kvar APK, også telefon-APK-ane, inneheld også Meta Spatial SDK, som ikkje er open kjeldekode (Meta Platform Technologies SDK License Agreement) og berre blir brukt på Meta Quest-headsett; Immuch360 Desktop, Windows-versjonen, inneheld det ikkje. Immuch360 er verken knytt til eller godkjend av Immich-teamet eller FUTO.
+360°-biletevisaren er basert på den oppstrøms pull-requesten [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) av dmitry-brazhenko, sjølv bygd på prototypen av bencefr i [#30192](https://github.com/immich-app/immich/pull/30192); takk til begge. Tapo-kameraa blei skrive frå det [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) og [python-kasa](https://github.com/python-kasa/python-kasa) dokumenterer. Meta Quest-visinga er avhengig av Meta Spatial SDK, som ikkje er open kjeldekode, så den forblir i denne forken. Windows-ZIP-en inneheld libmpv (biblioteket til [mpv](https://mpv.io), med [FFmpeg](https://ffmpeg.org)) bygd av prosjektet, under LGPL, med lisensane og kjeldekoden sin; detaljane og varemerka til plattformane nemnt på denne sida er i [Lisens og varemerke](../docs/immuch360/platform-support.md#license-and-trademarks).
 
-Windows-ZIP-fila til Immuch360 Desktop, og berre ho, inneheld også videoavspelaren sin: libmpv, biblioteket til [mpv](https://mpv.io), med [FFmpeg](https://ffmpeg.org) inni, styrt av programtillegga til [media_kit](https://github.com/media-kit/media-kit). mpv og FFmpeg er bygde utan dei delane som berre er GPL, og koden deira er under GNU LGPL versjon 2.1 eller nyare; bygd saman blir `libmpv-2.dll` distribuert under GNU LGPL versjon 3 eller nyare. Appen lastar han ved køyring, så du kan byte han ut med din eigen build. Lisenstekstane ligg i `licenses`-mappa i ZIP-fila, og kvart bibliotek med lisensen og kjeldene sine er oppført i [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md).
-
-Android, Android TV og Google TV er varemerke for Google LLC; Apple, iPhone, iPad og macOS er varemerke for Apple Inc.; Meta og Meta Quest er varemerke for Meta Platforms, Inc.; Windows er eit varemerke for Microsoft-konsernet; Linux er det registrerte varemerket til Linus Torvalds i USA og andre land. Logoane står i plattformtabellen berre for å vise kvar Immuch360 køyrer, og inneber inga godkjenning eller tilknyting. Android-roboten er attgjeven eller endra frå arbeid laga og delt av Google og blir brukt i samsvar med vilkåra skildra i Creative Commons 3.0 Attribution License. Tux, Linux-pingvinen, er laga av Larry Ewing (lewing@isc.tamu.edu), teikna med The GIMP, i vektorversjonen av Simon Budig og Garrett LeSage. Kjelder og lisensar for logoane: [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md).
+Skjermbileta av telefonen på denne sida blei tatt på Android-builden i ein emulator, TV-skjermbileta på Google TV-emulatoren og Windows-skjermbileta på ein Windows 11-PC, alle med CC0-panorama frå [Poly Haven](https://polyhaven.com); hovudsett-skjermbileta blei tatt på ein Quest 3.
 
 <a id="roadmap"></a>
 ## Vegkart
 
 Det som ikkje er gjort enno, det mest sannsynlege først. Ingenting her er ein lovnad, og tilbakemeldingar i [saksoversikta](https://github.com/freeKC/Immuch360/issues) hjelper til med å avgjere kva som kjem først.
 
-- **Immuch360 Desktop, Windows først**: skrivebordsbuild 3 er ute, med 360°-videoavspelaren (360°-, 3D-, VR180- og rå 360°-videoar, dei to objektiva i råfilene, storleiken på visinga målt på kvar datamaskin) og Tapo-direktebiletet, og skrivebordskjeldene ligg i hovudgreina til forken, `immuch360`, sidan 9. oktober 2026 (sjå [På ei Windows-datamaskin](#on-a-windows-computer-immuch360-desktop-preview)). Deretter libmpv frå den eigne arbeidsflyten til forken i staden for den frå 2024, og testen av kvar funksjon for hand på ein Windows-PC med ekte filer, begge skjermane og eit ekte kamera, med rettingane; så Spatial 2.5D med webkameraet; så Linux og macOS; så eit installasjonsprogram, ein signert build og automatiske oppdateringar.
-- **Google Play**: build 20 har vore publisert sidan 7. oktober 2026, i staden for build 18; oppføringa for TV-ar har vore til gjennomgang hos Google sidan 9. oktober 2026. Build 21 endrar ingenting på telefonar og nettbrett.
-- **App Store**: versjon 3.3.0 ventar på gjennomgang hos Apple; han har funksjonane frå build 11, så opplasting til Immich og kontrollen av videodekodarar (build 15) og dei rå Insta360-filene (build 16) kjem med neste App Store-oppdatering. Lenkja blir lagd til her når han er publisert.
-- **Meta Horizon Store**: Meta godkjende oppføringa 7. oktober 2026 med build 14, og appen har vore offentleg i [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) sidan den dagen. Build 21 er send inn som den første oppdateringa hennar: han har alt sidan build 14 (opplasting frå ei deling til Immich, videokjelda vald ut frå kva headsettet dekodar, rå filer frå Insta360, GoPro og DJI, DLNA, telefondelinga, romlege bilete frå Apple, Plex Media Server-bibliotek, Tapo-kamera), og butikken fører han opp for Quest 2, Quest Pro, Quest 3 og 3S. For å installere butikkversjonen må ein sideloada kopi avinstallerast først (sjå [Installer](#install)).
-- **Butikkoppføringar**: Google Play-oppføringa vart skriven om i oktober 2026 med nye skjermbilete, og TV-skjermbileta og TV-banneret vart lagde til 8. oktober 2026; oppføringa for TV-ar har vore til gjennomgang hos Google sidan 9. oktober 2026. Teksten i App Store skildrar framleis dei første buildane (360°-bilete og -videoar, rå filer viste flatt); han skal presentere 3D-, VR180- og Spatial-visingane, modusen utan tenar, nettverksdelingar, mediespelaren og dei rå Insta360-filene. Teksten i Meta Horizon Store presenterer alt mediespelaren.
-- **Rå filer frå 360°-kamera, vidare**: ein framdriftsindikator medan eit rått bilete blir gjort klart for headsettet; oppretting av GoPro- og DJI-videoar frå deira eigne rørsledata; dobbel fiskeauge-.dng; einingsrapportar om avspelinga med to objektiv i build 18 (X4, X5, X6, GoPro MAX 2, Osmo 360) for å stadfeste skøytar og dekodarbudsjett.
-- **DLNA, telefondeling og romlege media frå Apple, vidare**: einingsrapportane for build 19 (Plex, Jellyfin, ein NAS og Freebox Server over DLNA; ein telefon som leverer til ein Quest, også på hotspotet sitt; ekte romlege bilete og videoar frå iPhone i headsettet); multicast-retten som det er søkt om hos Apple, slik at iPhonar finn alle DLNA-tenarar; førre og neste mellom romlege bilete i headsettet; eit romleg merke på tenarbilete i tidslinja; romlege videoar i 3D på Quest, om dekodarane tillèt det.
-- **360°-avspelarar på telefonar, vidare**: ei tidslinje i 360°-videoavspelaren på iOS (den på Android har ei), førre/neste i 360°-avspelarane på telefonar som i den oppslukande visinga i Quest, og bilete i den innebygde 360°-videoavspelaren.
-- **Nettverksdelingar, neste steg**: sveiping frå éi fil i ei mappe til den neste på bilete- og videosidene (den oppslukande visinga i Quest går alt gjennom 360°-filene i ei mappe), Digest-autentisering for WebDAV, brukarnamnet frå Bonjour-oppføringa.
-- **Flate videoar**: val av lydspor i den flate avspelaren på telefonane, for videoar frå tenaren, eininga og delingar (360°- og Spatial-avspelarane har det, og det har også den flate avspelaren i Immuch360 Desktop).
-- **Android TV, vidare**: einingstesten av build 20 på Google TV-emulatoren og ein ekte TV, og TV-utgivinga på Google Play når Google har gått gjennom oppføringa for TV-ar; seinare kanalar på startskjermen til TV-en.
-- **Tapo-kamera, vidare**: einingstesten av build 20 med ekte kamera; direktebiletet på iPhone og iPad; H.265-opptak; avspeling av eit klipp medan det blir henta; ein heil dag med opptak på éi tidslinje.
-- **Plex, vidare**: einingstesten av build 20 (telefonar, Quest, ein iPhone, ein TV, borte frå heimen); overføring av tokenet frå datamaskina med ei QR-kode; skjuling av DLNA-sida av ein Plex-tenar i lista over funne tenarar; IPv6.
+- **Butikkane**: Google Play (build 23 under vurdering, TV-oppføringa under vurdering), App Store (versjon 3.3.0 under vurdering), Meta Horizon Store (build 21 under vurdering).
+- **Datamaskinar**: testen av kvar funksjon manuelt på ein Windows-PC; så Spatial 2.5D med webkameraet; så macOS og Linux starta og levert, med videospelaren deira; så eit installasjonsprogram, ein signert build og automatiske oppdateringar.
+- **Telefonar og tablettar**: ei tidslinje i iOS-360°-videospelaren, førre og neste i 360°-spelarane til telefonar, lydsporvalet i den flate spelaren, Tapo-direktevising på iPhone og iPad.
+- **Immersive media**: dobbel fiskeauge .dng, nivellering av GoPro- og DJI-videoar frå sine eigne rørsledata, romlege videoar i 3D på Quest om dekoderane tillèt det, førre og neste mellom romlege bilete i hovudsettet.
+- **Kjelder**: sveiping mellom filene i ei delingsmappe, Digest-autentisering for WebDAV, ein QR-kode for å ta med Plex-tokenet frå datamaskinen, IPv6 for Plex, H.265 Tapo-opptak, kanalar på TV-heimeskjermen.
 - **Oppstraums**: små pull requests til Immich for delane vedlikehaldarane ønskjer, med 360°-biletvisinga først.
 
-<a id="credits"></a>
-## Takk
-
-360°-biletvisinga er basert på pull requesten [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) oppstraums av dmitry-brazhenko, som sjølv byggjer på prototypen til bencefr i [#30192](https://github.com/immich-app/immich/pull/30192). Takk til begge.
-
-Tapo-kameraa i build 20 vart skrivne ut frå det open kjeldekode-prosjekta [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) og [python-kasa](https://github.com/python-kasa/python-kasa) dokumenterer om desse kameraa.
-
-Kvifor ein fork: 360°-vising på mobil har vore etterspurt sidan januar 2024 og finst ikkje i den offisielle appen enno; biletvisinga er under gjennomgang oppstraums i [#31169](https://github.com/immich-app/immich/pull/31169). Denne forken leverer ho no, samlar ekte tilbakemeldingar frå einingar, og vil tilby Immich, i små pull requests, det vedlikehaldarane ønskjer. Meta Quest-visinga byggjer på Meta Spatial SDK, som ikkje er open kjeldekode, så ho blir verande i denne forken.
-
-Telefonskjermbileta på denne sida vart tekne med Android-builden i ein emulator, med engelsk grensesnitt og CC0-panorama frå [Poly Haven](https://polyhaven.com).
+Den fullstendige lista, med einingskontrollane som framleis ventar for kvar funksjon, er i [Utgivingsstatus](../docs/immuch360/release-status.md#roadmap).

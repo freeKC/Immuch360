@@ -1,575 +1,151 @@
 <details><summary>🌐 <b>Հայերեն</b> · Այլ լեզուներ (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
-  <img src="../.github/readme/banner-2026-10.png" width="100%" alt="Immuch360: 360°, 3D և VR180 լուսանկարներ և տեսանյութեր Immich-ից, ձեր հեռախոսից կամ NAS-ից։ Android, iOS և Meta Quest, սերվերով կամ առանց սերվերի">
+  <img src="../.github/readme/hero-2026-10.jpg" width="100%" alt="Immuch360: your media, any screen, every perspective. Photos and videos, flat, panoramic, 360°, 3D and VR180, from your device, your NAS or your Immich server, on phones, tablets, TVs, Meta Quest headsets and computers">
 </p>
 
 # Immuch360
 
-Immuch360-ը Immich-ի բջջային հավելվածն է՝ 360° լուսանկարներով և տեսանյութերով, որոնց մեջ կարելի է շուրջը նայել, ինչպես նաև անվճար նվագարկիչ հարթ, 360°, 3D և VR180 լուսանկարների և տեսանյութերի համար՝ Android հեռախոսներում և պլանշետներում, iPhone-ում և iPad-ում, Meta Quest սաղավարտներում (Quest 3 և 3S, իսկ բիլդ 21-ից՝ Quest 2 և Quest Pro, չփորձարկված), իսկ բիլդ 20-ից՝ նաև Android TV-ում և Google TV-ում։ Immuch360 Desktop-ը՝ նույն հավելվածը Windows համակարգչում, թողարկվել է որպես նախնական տարբերակ, տե՛ս [Windows համակարգչում](#on-a-windows-computer-immuch360-desktop-preview)։
+**Your media. Any screen. Every perspective.**
 
-Այն նախատեսված է նրանց համար, ովքեր նկարում են 360° տեսախցիկով (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360) կամ հեռախոսի գնդաձև լուսանկարի ռեժիմով, կամ ունեն սաղավարտ, և ուզում են դիտել իրենց կադրերը Immich սերվերից, հենց հեռախոսից, NAS-ից, մեդիա սերվերից կամ Plex սերվերից: նույն սերվերը, նույն հաշիվը, առանց սերվերային հավելման, կամ ընդհանրապես առանց սերվերի։ Բիլդ 20-ից այն ցույց է տալիս նաև Tapo տեսախցիկները՝ ուղիղ եթերով և նրանց հիշողության քարտի տեսագրություններով։
+Immuch360 is a free and open source app to find, browse, play and explore your photos and videos: the ordinary ones, and the panoramic, 360°, 3D and immersive ones that other apps show flat, doubled or stretched. It reads them where they are, on the device itself, on a NAS or a computer, on a Plex server or on an Immich server, and plays them on phones, tablets, TVs, Meta Quest headsets and computers. No account, no cloud, no server required.
+
+- **What does it do?** It shows your photos and videos as a gallery and plays them in the viewer that fits each file: flat, as a sphere you look around in, in 3D, in a headset.
+- **Which media?** Flat photos and videos, panoramas, 360° photos and videos, VR180, stereoscopic 3D, Apple spatial photos, and the raw files of 360° cameras (Insta360, GoPro MAX, DJI Osmo 360), stitched by the app.
+- **On which devices?** Android phones and tablets, iPhone and iPad, Android TV and Google TV, Meta Quest 2, Pro, 3 and 3S, Windows (preview), with macOS and Linux in the making.
+- **Do I need a server or an account?** No. Immuch360 works on its own with the media of your device. An Immich server, a NAS, a media server or a Plex server are options you add when you want them.
 
 <p align="center">
-  <sub>Ոչ պաշտոնական ճյուղավորում (fork)։ Կապ չունի Immich-ի կամ FUTO-ի հետ։ Անունը կարդացվում է «I am much 360»։</sub>
+  <sub>Unofficial fork of the Immich mobile app. Not affiliated with Immich or FUTO. The name reads as "I am much 360".</sub>
 </p>
 
 <div align="center">
 
 | Հարթակ | Որտեղից ստանալ | Կարգավիճակը 2026 թվականի հոկտեմբերի 12-ին |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** հեռախոսներ և պլանշետներ | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | բիլդ 23-ը GitHub-ում է, ուղարկվել է Google Play 2026 թ. հոկտեմբերի 10-ին (բիլդ 20-ը այնտեղ հասանելի է հոկտեմբերի 7-ից) |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone և iPad** | App Store | 3.3.0 տարբերակը սպասում է Apple-ի վերանայմանը, իսկ մինչ այդ [կառուցեք ինքներդ](#build-it-yourself) |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 և 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest-3) | Horizon Store-ում է 2026 թ. հոկտեմբերի 7-ից (բիլդ 14), բիլդ 21-ը Meta-ի վերանայման մեջ է, բիլդ 23-ը ալֆա ալիքում է |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV և Google TV** | [APK](#install-it-on-the-tv) · Google Play | բիլդ 23-ը GitHub-ում; Google Play-ի գրառումը հեռուստացույցների համար Google-ի վերանայման մեջ է 2026 թ. հոկտեմբերի 9-ից |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **Windows / macOS / Linux** | [Նախնական ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4 Windows-ում: լուսանկարներ, հարթ և 360° տեսանյութեր; macOS և Linux ավելի ուշ |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 20; build 23 in review), build 23 on GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.0 waiting for Apple's review; [build it yourself](../docs/immuch360/build.md) meanwhile |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 on GitHub; the TV listing is under Google's review |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store (build 14; build 21 in review), build 23 on GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Preview ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4, a preview: photos, flat and 360° videos, shares, Plex, cameras |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | Sources | built by the project's CI, not started on those systems yet, no download yet |
 
-*Կարգավիճակները թարմացվում են յուրաքանչյուր թողարկման ժամանակ, մանրամասները՝ [Որտեղից ստանալ](#where-to-get-it) բաժնում։*
+*The statuses are updated at each release; the details, build by build, are in [Release status](../docs/immuch360/release-status.md).*
 
 </div>
 
-- 🌐 **Բնիկ 360°**<br>Լուսանկարներ և տեսանյութեր որպես գունդ, որի մեջ կարելի է շուրջը նայել, գիրոսկոպով, ներառյալ տեսախցիկների չմշակված ֆայլերը (Insta360-ը՝ բիլդ 16-ից, GoPro-ն և DJI-ը՝ բիլդ 18-ից)։ Նաև անվճար տեսանվագարկիչ: հարթ, 360°, 3D, VR180
-- 👓 **Բնիկ 3D**<br>Ստերեոսկոպիկ 360° և VR180, վերև/ներքև կամ կողք կողքի, ինչպես նաև Apple-ի տարածական լուսանկարներ (բիլդ 19-ից): իրական 3D սաղավարտում, մեկ աչք հեռախոսում
-- 🎥 **Բնիկ 2.5D**<br>Խորություն հարթ էկրանին ստերեոսկոպիկ տեսանյութից, տեսքը հետևում է ձեր գլխին (փորձնական, հեռախոսներ և պլանշետներ)
-- 📱 **Android, iOS, Quest, TV**<br>Մեկ հավելված հեռախոսներում, պլանշետներում և Quest 2, Pro, 3 և 3S սաղավարտներում, իրական 3D սաղավարտում, բիլդ 20-ից՝ Android TV-ում հեռակառավարման վահանակով, և Windows-ի նախնական տարբերակ՝ լուսանկարներով, հարթ և 360° տեսանյութերով
-- 🔌 **Սերվերով կամ առանց սերվերի**<br>Ձեր Immich սերվերը կամ հեռախոսի սեփական պատկերասրահը, առանց հաշվի
-- 🗄️ **Ցանցային համօգտագործումներ**<br>Samba (SMB), WebDAV և, բիլդ 19-ից, DLNA մեդիա սերվերներ, որոնք գտնվում են ցանցում և կարդացվում ուղիղ, ոչինչ չի ներբեռնվում, և ուղարկվում են Immich, երբ դուք եք որոշում։ Բիլդ 19-ից հեռախոսը կարող է նաև իր պատկերասրահը համօգտագործել սաղավարտի հետ
-- 📺 **Հեռուստացույցում**<br>Բիլդ 20-ից նույն APK-ն Android TV-ում և Google TV-ում. 360° լուսանկարներ և տեսանյութեր, ձեր սերվերը և ձեր համօգտագործումները՝ հեռակառավարման վահանակով
-- 🎬 **Plex՝ առանց plex.tv-ի**<br>Բիլդ 20-ից ձեր Plex գրադարանները՝ նվագարկված բնօրինակ ֆայլերից, որպեսզի 360°-ը մնա 360°, տանը և տնից դուրս
-- 📹 **Tapo տեսախցիկներ**<br>Բիլդ 20-ից ուղիղ դիտումը և հիշողության քարտի տեսագրությունները՝ միայն ձեր ցանցում, և տեսահատված՝ ուղարկված Immich, երբ դուք որոշեք
+<p align="center">
+  <img src="../.github/readme/platforms-2026-10.jpg" width="100%" alt="Four real captures side by side: the sphere viewer on an Android phone, the 360° list on a Google TV, the video player of Immuch360 Desktop on Windows, and a 360° photo all around you in a Meta Quest 3">
+</p>
 
 <details>
 <summary><b>Բովանդակություն</b></summary>
 
-- [360° լուսանկարներ և տեսանյութեր որպես գունդ](#360-photos-and-videos-as-a-sphere)
-- [Առանց սերվերի կամ հաշվի](#without-a-server-or-an-account)
-- [Ցանցային համօգտագործումներ: NAS, համակարգիչ կամ մեդիա սերվեր](#network-shares-a-nas-a-computer-or-a-media-server)
-- [Plex Media Server՝ առանց plex.tv-ի](#plex-media-server-without-plextv)
-- [Համօգտագործել այս հեռախոսը ցանցում](#share-this-phone-on-the-network)
-- [Tapo տեսախցիկներ. ուղիղ դիտում և հիշողության քարտի տեսագրություններ](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
-- [Տեսախցիկների չմշակված 360° ֆայլեր՝ առանց տեսախցիկի հավելվածի](#raw-360-camera-files-without-the-cameras-app)
-- [3D և VR180 լուսանկարներ և տեսանյութեր](#3d-and-vr180-photos-and-videos)
-- [Խորություն հարթ էկրանին: Spatial 2.5D (փորձնական)](#depth-on-a-flat-screen-spatial-25d-experimental)
-- [Apple-ի տարածական լուսանկարներ և տեսանյութեր](#apple-spatial-photos-and-videos)
-- [Meta Quest 3 սաղավարտում](#in-the-meta-quest-3-headset)
-- [Դիտել հեռուստացույցով (Android TV և Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
-- [Գտեք ձեր 360° կադրերը: 360° ցանկը](#find-your-360-shots-the-360-list)
-- [Տեսանյութի մանրամասներ, ապակոդավորիչներ և ինչու է տեսանյութը կմկմում](#video-details-decoders-and-why-a-video-stutters)
-- [Մնացած ամեն ինչը Immich է](#everything-else-is-immich)
-- [Համեմատություն Immich հավելվածի և այլ հավելվածների հետ](#compared-with-the-immich-app-and-other-apps)
-- [Ձևաչափեր և աղբյուրներ՝ ըստ հարթակի](#formats-and-sources-by-platform)
-- [Meta Quest 3](#meta-quest-3)
-- [Windows համակարգչում: Immuch360 Desktop (նախնական տարբերակ)](#on-a-windows-computer-immuch360-desktop-preview)
-- [Որտեղից ստանալ](#where-to-get-it)
-- [Կառուցեք ինքներդ](#build-it-yourself)
-- [Մատյաններ](#logs)
+- [What you can do](#what-you-can-do)
+  - [Watch your photos and videos](#watch-your-photos-and-videos)
+  - [Explore panoramas, 360°, VR180 and 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Use your own files, without an account](#use-your-own-files-without-an-account)
+  - [Reach the media of a NAS, a computer or a media server](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
+  - [Find your Immich library](#find-your-immich-library)
+  - [Go immersive on Meta Quest](#go-immersive-on-meta-quest)
+  - [Watch on the TV and on the computer](#watch-on-the-tv-and-on-the-computer)
+  - [Cameras, Plex and raw camera files](#cameras-plex-and-raw-camera-files)
+- [Devices and systems](#devices-and-systems)
+- [Advanced features](#advanced-features)
+- [Technical documentation](#technical-documentation)
+- [Install](#install)
 - [Գաղտնիություն](#privacy)
-- [Լիցենզիա և ապրանքային նշան](#license-and-trademark)
+- [The project](#the-project)
 - [Ճանապարհային քարտեզ](#roadmap)
-- [Երախտագիտություն](#credits)
 
 </details>
 
-## Ո՞ր խնդիրն ունեք
+<a id="what-you-can-do"></a>
+## What you can do
 
-- **«Իմ 360° լուսանկարները երևում են որպես հարթ, ձգված շերտ, իսկ 360° տեսանյութերը նվագարկվում են հարթ»։** Տե՛ս [360° լուսանկարներ և տեսանյութեր որպես գունդ](#360-photos-and-videos-as-a-sphere)։
-- **«Ես սերվեր չունեմ և հաշիվ չեմ ուզում»։** Տե՛ս [Առանց սերվերի կամ հաշվի](#without-a-server-or-an-account)։
-- **«Ուզում եմ դիտել իմ NAS-ի տեսանյութերը հեռախոսում կամ սաղավարտում՝ առանց դրանք պատճենելու»։** Տե՛ս [Ցանցային համօգտագործումներ](#network-shares-a-nas-a-computer-or-a-media-server)։
-- **«Plex-ը իմ 360° տեսանյութերը նվագարկում է հարթ, իսկ ես ուզում եմ իմ Plex գրադարանը սաղավարտում, հեռուստացույցում և տնից դուրս»։** Տե՛ս [Plex Media Server՝ առանց plex.tv-ի](#plex-media-server-without-plextv)։
-- **«Իմ լուսանկարները հեռախոսում են, և ես չունեմ համակարգիչ կամ NAS, որտեղ դրանք դնեմ սաղավարտի համար»։** Տե՛ս [Համօգտագործել այս հեռախոսը ցանցում](#share-this-phone-on-the-network)։
-- **«Ուզում եմ տեսնել իմ Tapo տեսախցիկը և անցած գիշերվա տեսահատվածները առանց Tapo հավելվածի, և պահել տեսահատվածը Immich-ում»։** Տե՛ս [Tapo տեսախցիկներ](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)։
-- **«Իմ Insta360 ֆայլերը դիտելու համար նախ Insta360 հավելվածն է պետք»** (նաև GoPro-ի .360 և DJI-ի .osv ֆայլերը)։ Տե՛ս [Տեսախցիկների չմշակված 360° ֆայլեր](#raw-360-camera-files-without-the-cameras-app)։
-- **«Իմ 3D տեսանյութերը կրկնակի են երևում, իսկ VR180 տեսանյութերը ձգված են ամբողջ շուրջը»։** Տե՛ս [3D և VR180](#3d-and-vr180-photos-and-videos) և [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental)։
-- **«Ունեմ տարածական լուսանկարներ իմ iPhone-ից»։** Տե՛ս [Apple-ի տարածական լուսանկարներ և տեսանյութեր](#apple-spatial-photos-and-videos)։
-- **«Հեռախոսում աշխատում է, բայց ուզում եմ Quest-ում»։** Տե՛ս [Meta Quest 3 սաղավարտում](#in-the-meta-quest-3-headset)։
-- **«Ուզում եմ դիտել իմ 360° լուսանկարներն ու տեսանյութերը, ինչպես նաև իմ NAS-ի կամ Plex սերվերի տեսանյութերը հեռուստացույցով՝ հեռակառավարման վահանակով»։** Տե՛ս [Դիտել հեռուստացույցով](#watch-on-your-tv-android-tv-and-google-tv)։
-- **«Չեմ կարողանում գտնել իմ 360° կադրերը մյուսների մեջ»։** Տե՛ս [360° ցանկը](#find-your-360-shots-the-360-list)։
-- **«Իմ 360° տեսանյութը կմկմում է կամ նվագարկվում է մշուշոտ պատճենը»։** Տե՛ս [Տեսանյութի մանրամասներ և ապակոդավորիչներ](#video-details-decoders-and-why-a-video-stutters)։
-- **«Ուզում եմ իմ 360° լուսանկարներն ու Immich գրադարանս ունենալ իմ Windows համակարգչում՝ նրա թղթապանակների լուսանկարներով և տեսանյութերով, իմ NAS-ով և իմ Plex սերվերով, և համակարգիչը համօգտագործել իմ սաղավարտի հետ»։** Տե՛ս [Windows համակարգչում](#on-a-windows-computer-immuch360-desktop-preview) (նախնական տարբերակ. լուսանկարներ և հարթ տեսանյութեր, իսկ desktop build 3-ից՝ 360°, 3D, VR180 և հում 360° տեսանյութեր և Tapo-ի ուղիղ դիտումը)։
-- **«Կպահպանե՞մ այն ամենը, ինչ անում է Immich հավելվածը»։** Այո, երկու փոքր փոփոխությամբ, տե՛ս [Մնացած ամեն ինչը Immich է](#everything-else-is-immich)։
+Each usage below says what you get, then how to do it in a few steps. The full guide, with every option, message and limit, is in the [user guide](../docs/immuch360/user-guide.md).
 
-Երբ գործառույթը նոր է, տեքստում նշված է, թե որ բիլդից է այն հասանելի։ GitHub-ի թողարկումը միշտ պարունակում է ամենանոր բիլդը, խանութները հետևում են ավելի ուշ: տե՛ս [Որտեղից ստանալ](#where-to-get-it)։
+<a id="watch-your-photos-and-videos"></a>
+### Watch your photos and videos
 
-<a id="360-photos-and-videos-as-a-sphere"></a>
-## 360° լուսանկարներ և տեսանյութեր որպես գունդ
+Immuch360 is first a gallery and a player for ordinary photos and videos. The timeline, the albums, the favorites, the memories and the search work with an Immich server; the device's own photos and videos, and the folders of a computer, show without any server. Videos play in a native player with sound, seeking, a buffering indicator and, in the 360°, Spatial and computer players, a choice of audio tracks. On a TV the remote drives everything; on a computer the mouse and the keyboard do.
 
-Դուք պահուստավորում եք ձեր լուսանկարները [Immich](https://github.com/immich-app/immich) սերվերում, և դրանց մի մասը արված է 360° տեսախցիկով կամ հեռախոսի գնդաձև լուսանկարի ռեժիմով։ Պաշտոնական բջջային հավելվածում այդ նկարները երևում են որպես հարթ, ձգված շերտ, և 360° տեսանյութերը նույնպես նվագարկվում են հարթ։ Immich-ի վեբ հավելվածը կարող է 360° լուսանկարը ցույց տալ որպես գունդ, բջջայինը՝ ոչ: դա խնդրվում է 2024 թվականի հունվարից [#6572 քննարկման](https://github.com/immich-app/immich/discussions/6572) մեջ։
+1. Open the Photos tab: the timeline of your server, or of the device without a server.
+2. Tap a photo or a video to open it; swipe left and right to go to the next one, pinch or double tap to zoom.
+3. Swipe up on a video for its details: codec, size, frame rate, bit rate, and whether this device decodes it.
 
-Immuch360-ը դրանք բացում է որպես գունդ, որի մեջ կարելի է շուրջը նայել, Android և iOS հեռախոսներում և պլանշետներում։
+More: [the viewers and the video player](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [video details and decoders](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
 
-Լուսանկարը պտտվում է, երբ այն քաշում եք, խոշորանում է երկու մատով կամ կրկնակի հպումով, արագ քաշելուց հետո դեռ մի քիչ շարունակում է պտտվել, բացվում է տեսախցիկի գրանցած սկզբնական տեսքով (GPano մետատվյալներ) և խոշորացնելիս ստանում է ավելի հստակ տեքստուրա: մասնակի համայնապատկերները նույնպես մշակվում են (GPano կտրվածք)։ Տեսանյութը նվագարկվում է բնիկ գնդաձև նվագարկիչում՝ ձայնով, քաշելով և գիրոսկոպով։
+<a id="explore-panoramas-360-vr180-and-3d"></a>
+### Explore panoramas, 360°, VR180 and 3D
 
-Արդեն միացված 360° ֆայլերն աշխատում են ամենուր: արտահանումներ Insta360 հավելվածից կամ Studio-ից, GoPro Player-ից, Ricoh Theta-ից և հեռախոսների գնդաձև լուսանկարներ։ Տեսախցիկից ուղիղ վերցված չմշակված ֆայլերը միացնում է հավելվածը, տե՛ս [Տեսախցիկների չմշակված 360° ֆայլեր](#raw-360-camera-files-without-the-cameras-app)։
+A 360° photo opens as a sphere you turn with a finger or by moving the phone; a 360° video plays in a spherical player with sound; VR180 files are drawn on a half sphere; stereoscopic 3D files show one eye on a flat screen and both eyes in a headset. Partial panoramas keep their crop, and the picture starts on the view the camera recorded. A file the server does not flag can be viewed as 360° with one tap.
 
 <p align="center">
-  <img src="../.github/readme/b19-sphere.png" width="260" alt="Լճափի 360° լուսանկար գնդաձև դիտակում: փակելու կոճակը վերևում ձախ, 360°, 3D դասավորության և գիրոսկոպի կոճակները վերևում աջ">
+  <img src="../.github/readme/b19-sphere.jpg" width="260" alt="Լճափի 360° լուսանկար գնդաձև դիտակում: փակելու կոճակը վերևում ձախ, 360°, 3D դասավորության և գիրոսկոպի կոճակները վերևում աջ">
   <img src="../.github/readme/b19-video.png" width="420" alt="Ծովափնյա ճանապարհի 360° տեսանյութ, որը նվագարկվում է հորիզոնական պահված հեռախոսի 360° նվագարկիչում: փակել և ֆայլի անունը վերևում ձախ, 360° և 3D վերևում աջ, նախորդ, հետ, նվագարկել, առաջ և հաջորդ մեջտեղում, ժամանակի գոտին ներքևում">
 </p>
 
-- **360° լուսանկար որպես գունդ**: փակել վերևում ձախ: վերևում աջ՝ 360°/180° կոճակը, 3D դասավորության կոճակը և գիրոսկոպը։
-- **360° տեսանյութ 360° նվագարկիչում**: հպեք նկարին կառավարման կոճակների համար: 360° և 3D վերևում աջ։
+1. Open the photo or video. 360° files carry a 360° badge on their thumbnail, and the Library tab has a 360° list that gathers them, with filters by period, source, kind and camera.
+2. Tap 360° in the top bar. Drag to look around, pinch to zoom, tap the gyroscope button to look around by turning the phone.
+3. The 3D button cycles "Mono (not 3D)", "3D, top and bottom" and "3D, side by side"; the 360°/180° button switches between the full sphere and the half sphere of VR180.
+4. For a file that shows flat although it is a 360° one: ⋮ at the top right, then "View as 360°".
 
-### Բացել 360° լուսանկարը որպես գունդ
+On phones and tablets, a stereoscopic video can also gain depth on the flat screen: the Spatial 2.5D player uses the front camera to follow your head and shows the view in between the two eyes (experimental). Apple spatial photos taken with an iPhone are recognised and shown in 3D in a Meta Quest.
 
-1. Բացեք լուսանկարը ժամանակագծից, ալբոմից, [360° ցանկից](#find-your-360-shots-the-360-list) կամ համօգտագործման թղթապանակից։ 360° լուսանկարների մանրապատկերին կա 360° նշան։
-2. Հպեք 360°-ին դիտակի վերին գոտում։ Բացվում է գնդաձև դիտակը՝ բեռնման ցուցիչով, մինչ ամբողջական նկարը բեռնվում է: հարթ տեսքում ձեր ունեցած խոշորացումը պահպանվում է։
-3. Քաշեք՝ շուրջը նայելու համար, երկու մատով խոշորացրեք, կրկնակի հպեք՝ մոտեցնելու համար։ Արագ քաշելուց հետո տեսքը դեռ մի քիչ պտտվում է և դանդաղում։
-4. Հեռախոսը պտտելով շուրջը նայելու համար հպեք գիրոսկոպի կոճակին վերևում աջ (լռելյայն անջատված է)։
-5. Վերևում աջ մյուս երկու կոճակներն են 360°/180° (ամբողջական գունդ կամ VR180 կիսագունդ, մասնակի համայնապատկերների վրա չի ցուցադրվում) և 3D (ստերեոսկոպիկ լուսանկարի դասավորությունը), տե՛ս [3D և VR180](#3d-and-vr180-photos-and-videos)։ Չմշակված Insta360 լուսանկարն ունի միայն գիրոսկոպը։
-6. Փակեք վերևում ձախ գտնվող խաչով։
+More: [360° photos and videos](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D and VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Apple spatial photos and videos](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [the 360° list](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
 
-### Նվագարկել 360° տեսանյութը
+<a id="use-your-own-files-without-an-account"></a>
+### Use your own files, without an account
 
-1. Բացեք տեսանյութը և հպեք 360°-ին վերին գոտում։ 360° տեսանյութում 360° կոճակը առաջինն է: հեռախոսներում և պլանշետներում դրան հաջորդում է Spatial կոճակը, քանի դեռ այդ կարգավորումը միացված է (տե՛ս [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental))։
-2. Բնիկ 360° նվագարկիչը բացվում է ամբողջ էկրանով և նվագարկում ձայնով: Android-ում՝ Media3, iOS-ում՝ SceneKit։
-3. Քաշեք՝ շուրջը նայելու համար, կամ շարժեք հեռախոսը։ Android-ի նվագարկիչը միշտ հետևում է հեռախոսին: iOS-ինն ունի գիրոսկոպի անջատիչ, լռելյայն միացված։
-4. Հպեք նկարին կառավարման կոճակների համար: վերևում՝ փակել, 360°/180° և 3D, ապա՝ նվագարկել, ցատկի կոճակները և Android-ում ժամանակի գոտին։ iOS-ի նվագարկիչը առայժմ ունի միայն նվագարկում և դադար։
-5. Երբ տեսանյութն ունի երկու կամ ավելի աուդիո ուղի (լեզուներ, մեկնաբանություն), «Աուդիո ուղի» կոճակը թույլ է տալիս ընտրել մեկը։ Մինչ տեսանյութը բեռնվում է կամ կանգ է առնում, նվագարկիչը ցույց է տալիս «Բեռնվում է»՝ իր նվագարկման բուֆերի լցվածությամբ։
-
-Նվագարկիչը նվագարկում է հեռախոսում պահված ֆայլը կամ ցանցային համօգտագործման ֆայլը, եթե այդպիսին կա։ Հակառակ դեպքում այն հոսքով բերում է ձեր սերվերից: լռելյայն՝ տրանսկոդավորված հոսքը, կամ բնօրինակը, եթե դա խնդրեք Settings (Կարգավորումներ), Asset Viewer (Դիտակ), «Տեսանյութի աղբյուր» բաժնում (բիլդ 15-ից: մինչ այդ՝ «Ստիպել բնագիր տեսահոլովակը» անջատիչը), տե՛ս [Տեսանյութի մանրամասներ և ապակոդավորիչներ](#video-details-decoders-and-why-a-video-stutters)։
-
-<a id="a-360-file-that-shows-flat-view-as-360"></a>
-### 360° ֆայլ, որը երևում է հարթ: Դիտել որպես 360°
-
-Որոշ 360° ֆայլեր չունեն պրոյեկցիայի պիտակ, ուստի սերվերը դրանք չի նշում որպես 360°, և դրանք երևում են հարթ։
-
-1. Բացեք լուսանկարը կամ տեսանյութը և հպեք ⋮-ին վերևում աջ։
-2. Հպեք «Դիտել որպես 360°»-ին, որը գտնվում է Slideshow (Սլայդշոու) և Download (Ներբեռնել) կետերի միջև։ 360° կոճակը հայտնվում է վերին գոտում։
-3. Չեղարկելու համար նույն կետն այժմ կոչվում է «Դադարել դիտարկել որպես 360°»։
-
-Ընտրությունը հիշվում է հեռախոսում և սերվերում ոչինչ չի փոխում։ Ցանցային համօգտագործման ֆայլի դեպքում այն գործում է միայն տվյալ դիտման համար։
-
-### Սահմանափակումներ
-
-- **iOS-ի 360° տեսանվագարկիչ**: նվագարկում և դադար, ժամանակի գոտի դեռ չկա։
-- **Նախորդ և հաջորդ**: հեռախոսների 360° նվագարկիչները դեռ չեն անցնում նախորդ կամ հաջորդ մեդիային: Quest-ի ընկղմվող դիտումն անցնում է։
-- **Շատ մեծ համայնապատկերներ**: լուսանկարը ցուցադրվում է առավելագույնը 8192x4096 չափով, որը հեռախոսների GPU-ների մեծ մասի ընդունած ամենամեծ տեքստուրան է, ուստի ավելի մեծ համայնապատկերը փոքրացվում է մինչև այդ չափը։
-- **Կրկնակի ձկնաչքային .dng**: դեռ երևում է հարթ։
-
-<a id="without-a-server-or-an-account"></a>
-## Առանց սերվերի կամ հաշվի
-
-Դուք չունեք Immich սերվեր կամ չեք ուզում հաշիվ ունենալ: պարզապես ուզում եք, որ ձեր հեռախոսի 360° լուսանկարները բացվեն որպես գունդ, որը կարող եք պտտել գիրոսկոպով։ Immich հավելվածը նախ մուտք է պահանջում։
-
-Մուտքի էջում «Օգտագործել առանց սերվերի»-ն բացում է Immuch360-ը սարքի սեփական լուսանկարների և տեսանյութերի վրա՝ 360°, 3D, VR180 և Spatial դիտակներով, 360° ցանկով և ցանցային համօգտագործումներով (բիլդ 20-ից նաև Plex սերվերներով և Tapo տեսախցիկներով), առանց Immich հաշվի։ Սերվերային գործառույթները մնում են թաքնված կամ մոխրագույն, մինչև սերվեր միացնեք: ոչինչ դուրս չի գալիս սարքից։ Meta Quest-ում այն բացում է սաղավարտի սեփական լուսանկարներն ու տեսանյութերը, իսկ հեռուստացույցում, որը դրանք չունի, ուղղորդում է դեպի ցանցային համօգտագործումները (տե՛ս [Դիտել հեռուստացույցով](#watch-on-your-tv-android-tv-and-google-tv))։
+Immuch360 needs neither an account nor a server. On the login page, "Use without a server" opens the app on the photos and videos of the device, with every viewer, the 360° list and the network sources. Nothing leaves the device. A server can be connected later, from Settings, and the server features then appear.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Գրադարան ներդիրը առանց սերվերի: 360° կետը վերևում, ապա Այս սարքավորումում՝ երկու 360° լուսանկարով, և Ցանցային համօգտագործումներ՝ NAS անունով համօգտագործմամբ">
-
-### Սկսել առանց սերվերի
 
 1. Բացեք հավելվածը։ Մուտքի էջում, սերվերի հասցեի և Settings-ի տակ, հպեք «Օգտագործել առանց սերվերի»-ին։
 2. Թույլատրեք մուտքը ձեր լուսանկարներին և տեսանյութերին։ Եթե մերժեք, հավելվածը կասի «Հավելվածը չի կարող տեսնել այս սարքի լուսանկարները»՝ «Թույլատրել մուտքը» և «Բացել կարգավորումները» կոճակներով։
 3. Նկարներ ներդիրը ցույց է տալիս սարքի ժամանակագիծը։ Փնտրե և Albums (Ալբոմներ) մնում են մոխրագույն, քանի որ դրանք գալիս են սերվերից։ Գրադարան ներդիրում վերևում 360°-ն է, ապա Այս սարքավորումում (սարքի ալբոմները) և Ցանցային համօգտագործումներ։
 4. Վերևում աջ գտնվող ընտրացանկում գրված է «Միայն այս սարքը»: հավելվածը ցույց է տալիս այս սարքի լուսանկարներն ու տեսանյութերը, ոչինչ ոչ մի տեղ չի ուղարկվում։
 
-### Միացնել սերվեր ավելի ուշ
+On a computer, the folders you choose play the part of the gallery; on a TV, which has no photos of its own, the network sources do.
 
-1. Բացեք Settings (վերևում աջ ընտրացանկը, ապա Settings)։ Առաջին կետն է «Միանալ սերվերին», «Համաժամացրեք Immich սերվերի հետ՝ պահուստավորելու, որոնելու և կիսվելու համար»։ Վերևում աջ ընտրացանկն ունի նույն կետը։
-2. Մուտք գործեք սովորականի պես։ Հայտնվում են ժամանակագիծը, ալբոմները, պահուստավորումը և սերվերի մյուս գործառույթները։
+More: [without a server or an account](../docs/immuch360/user-guide.md#without-a-server-or-an-account).
 
-### Սահմանափակումներ
+<a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
+### Reach the media of a NAS, a computer or a media server
 
-- **Սարքի սեփական պատկերասրահը**: հավելվածը ցույց է տալիս սարքի պատկերասրահի լուսանկարներն ու տեսանյութերը։ iPhone-ում 360° ֆայլերի որոնումը բաց է թողնում միայն iCloud-ում պահվածները, մինչև դրանք ներբեռնվեն սարքում։
-- **Առանց սերվերի** 360° ցանկը պարունակում է այն, ինչ գտել է սարքի որոնումը, և այն ֆայլերը, որոնք ընտրել եք դիտել որպես 360°, տե՛ս [360° ցանկը](#find-your-360-shots-the-360-list)։
-
-<a id="network-shares-a-nas-a-computer-or-a-media-server"></a>
-## Ցանցային համօգտագործումներ: NAS, համակարգիչ կամ մեդիա սերվեր
-
-Ձեր 360° տեսանյութերը գտնվում են NAS-ում կամ համակարգչում, և ուզում եք դրանք դիտել հեռախոսում կամ սաղավարտում՝ առանց նախապես պատճենելու։ Սաղավարտի դեպքում մարդիկ վերջում ամեն ֆայլը մալուխով են պատճենում։ Plex-ի և Jellyfin-ի նման մեդիա սերվերները 360° տեսանյութերը նվագարկում են հարթ, ինչպես նկարագրում են նրանց ֆորումների հարցումները։ Immich հավելվածը կարդում է միայն ձեր Immich սերվերը։
-
-Immuch360-ը զննում և նվագարկում է SMB (Samba, Windows), WebDAV կամ, բիլդ 19-ից, DLNA/UPnP (մեդիա սերվեր: Jellyfin, minidlna, Gerbera, Emby, NAS կամ TV արկղ) խոսող ցանկացած սերվերի լուսանկարներն ու տեսանյութերը՝ ուղիղ համօգտագործումից։ Բիլդ 20-ից Plex Media Server-ն ունի իր սեփական տեսակը, տե՛ս [Plex Media Server՝ առանց plex.tv-ի](#plex-media-server-without-plextv)։
-
-Այն ինքն է գտնում ձեր ցանցի սերվերները և ֆայլերը նվագարկում ուղիղ՝ նույն դիտակներում, ինչ հավելվածի մնացած մասը (360°, 3D, VR180, Spatial 2.5D, Quest-ի ընկղմվող դիտում), Immich սերվերով կամ առանց դրա, հեռախոսներում և Meta Quest 3-ում։ Ոչինչ չի ներբեռնվում։ Երբ սերվեր է միացված, ձեր ընտրած ֆայլերը կարող են ուղարկվել ձեր Immich հաշվին (բիլդ 15-ից)։
+Your videos sit on a NAS, a computer or a media server. Immuch360 finds the servers of your network by itself, browses them and plays their photos and videos in place, in every viewer of the app, without copying anything: SMB (Samba, Windows shares), WebDAV (Nextcloud, Synology and others) and DLNA media servers (Jellyfin, Emby, minidlna, a NAS, a TV box). A phone can also share its own gallery on the Wi-Fi for a headset or any WebDAV client, and so can a Windows computer.
 
 <p align="center">
   <img src="../.github/readme/b19-add-share.png" width="260" alt="Ավելացնել համօգտագործում էջը: Անուն, Սերվերի անունը կամ հասցեն, Պորտ (ըստ ցանկության), Համօգտագործում, Ընտրեք համօգտագործում, Սկզբնական թղթապանակ (ըստ ցանկության), Օգտանուն, Գաղտնաբառ, Ստուգել միացումը, և արդյունքը՝ Միացված է, սկզբնական թղթապանակում 2 տարր">
-  <img src="../.github/readme/b19-share-folder.png" width="260" alt="Ցանցային համօգտագործման թղթապանակ՝ որպես մանրապատկերների ցանց: 360° լուսանկարներ 360° նշանով և 360° տեսանյութ նվագարկման նշանով, Ընտրել կոճակը վերևում աջ">
+  <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Ցանցային համօգտագործման թղթապանակ՝ որպես մանրապատկերների ցանց: 360° լուսանկարներ 360° նշանով և 360° տեսանյութ նվագարկման նշանով, Ընտրել կոճակը վերևում աջ">
 </p>
 
-- **Ավելացնել համօգտագործում**: նոր SMB համօգտագործման դաշտերը՝ Ստուգել միացումը սեղմելուց հետո։
-- **Համօգտագործման թղթապանակ**: 360° լուսանկարներ և տեսանյութ՝ ուղիղ կարդացված համօգտագործումից։
+1. Open the Library tab, then Network shares, then + and "A network share (NAS, computer, media server)".
+2. Tap a server under "Found on the network", or fill the form by hand: type, server name or address, share or path, start folder, user name and password.
+3. Tap "Test the connection", then Save. Tap the share to browse it: folders first, then the photos and videos, with the 360° badge on the files recognised as 360°.
+4. With an Immich server connected, select files in a folder and tap "Upload to Immich" to send them to your server.
 
-### Ավելացնել համօգտագործում
+The players read the bytes they need through a bridge inside the app, with byte ranges, so seeking works and nothing is stored on the device; an SMB video is read over up to six connections in parallel for smooth playback.
 
-1. Բացեք Գրադարան ներդիրը, ապա Ցանցային համօգտագործումներ։ Առաջին անգամ էջում գրված է «Դեռ համօգտագործում չկա»՝ «Ավելացնել համօգտագործում» կոճակով։ Վերևում աջ գտնվող +-ը նույնն է անում ցանկացած պահի։ Բիլդ 20-ից երկուսն էլ հարցնում են, թե ինչ ավելացնել. «Ցանցային համօգտագործում (NAS, համակարգիչ, մեդիա սերվեր)», «Plex Media Server» կամ «Tapo տեսախցիկ»։ Ընտրեք առաջինը։
-2. «Ավելացնել համօգտագործում» էջը նախ փնտրում է ձեր ցանցի սերվերները և դրանք ցուցակագրում «Գտնված ցանցում» բաժնում՝ իրենց տեսակով (SMB, WebDAV, DLNA, Հեռախոս, իսկ բիլդ 20-ից՝ Plex և Tapo)։ Որոնումը տևում է մինչև մոտ վեց վայրկյան, «Կրկին որոնել»-ը այն վերսկսում է։ Այն օգտագործում է Bonjour/mDNS և տեղական ցանցի զննում, որը հաստատվում է իրական SMB կամ WebDAV փոխանակմամբ, բիլդ 19-ից SSDP որոնում DLNA մեդիա սերվերների համար, իսկ բիլդ 20-ից՝ GDM-ը՝ Plex-ի հայտնաբերման արձանագրությունը, և TP-Link-ի հայտնաբերման արձանագրությունը Tapo տեսախցիկների համար։
-3. Հպեք սերվերին: տեսակը, սերվերը, պորտը և ուղին լրացվում են։ Plex սերվերը կամ Tapo տեսախցիկը փոխարենը բացում է իր սեփական, արդեն լրացված էջը։
-4. Ցանկում չկա՞։ Լրացրեք ձևը ձեռքով։ Տեսակ: «SMB (Samba, Windows համօգտագործում)», «WebDAV (Nextcloud, Synology և այլն)», «DLNA մեդիա սերվեր (Jellyfin, NAS, TV արկղ)» կամ, բիլդ 20-ից, «Plex Media Server», որը բացում է [Plex Media Server՝ առանց plex.tv-ի](#plex-media-server-without-plextv) էջը։ Ապա Անուն, «Սերվերի անունը կամ հասցեն» (անուն կամ հասցե: ամբողջական հասցեն, օրինակ `smb://nas/photos`, `\\nas\photos` կամ `https://nas:5006/photos`, լրացնում է մյուս դաշտերը), «Պորտ (ըստ ցանկության)», երբ այն սովորականը չէ, «Համօգտագործում» SMB-ի համար կամ «WebDAV հասցեի ուղին» WebDAV-ի համար, «Սկզբնական թղթապանակ (ըստ ցանկության)», «Օգտանուն» և «Գաղտնաբառ», ինչպես նաև «Անվտանգ միացում (HTTPS)» WebDAV-ի համար։
-5. SMB: սերվերը և օգտանունը մուտքագրելուց հետո «Ընտրեք համօգտագործում»-ը ցուցակագրում է սերվերի համօգտագործումները։
-6. DLNA: մեդիա սերվերը չունի օգտանուն կամ գաղտնաբառ։ Նշեք սերվերը, պորտը և նրա սարքի նկարագրության «Նկարագրության ուղի»-ն (minidlna-ի համար՝ `/rootDesc.xml`), կամ սերվերի դաշտում տեղադրեք ամբողջական հասցեն, օրինակ `http://192.168.1.10:8200/rootDesc.xml`։
-7. Հպեք «Ստուգել միացումը»-ին։ Այն պատասխանում է «Միացված է, սկզբնական թղթապանակում N տարր» կամ ասում է, թե ինչու չհաջողվեց։ Ապա հպեք Պահե-ին ձևի ներքևում։ Բիլդ 22-ից սկսած՝ ձևը, որում ինչ-որ բան եք մուտքագրել, փակելիս (X, Հետ) նախ հարցվում է «Հրաժարվե՞լ փոփոխություններից», նաև Plex-ի և տեսախցիկի էջերում, և նույնն է լինում, երբ ինչ-որ բան մուտքագրելուց հետո ընտրում եք ցանցում գտնված Plex սերվեր կամ տեսախցիկ։
+More: [network shares](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [share this phone on the network](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA media servers](../docs/immuch360/user-guide.md#dlna-media-servers).
 
-Դատարկ գաղտնաբառով օգտանունն ուղարկվում է այնպես, ինչպես կա: Freebox Server-ը իր սկավառակների համար պահանջում է `freebox` և առանց գաղտնաբառի։ Համօգտագործումը հետագայում փոխելու կամ հեռացնելու համար օգտագործեք դրա կողքի մատիտը Ցանցային համօգտագործումներ էջում։
+<a id="find-your-immich-library"></a>
+### Find your Immich library
 
-### Զննել և նվագարկել
+With an [Immich](https://github.com/immich-app/immich) server, Immuch360 is the Immich mobile app, with the same server and the same account as the web app: backup, timeline, albums, search, people, memories, sharing, partners, all synced with your server. It installs next to the official app. On top of it: the 360° badge and list, every immersive viewer, the choice between the original file and the server's transcoded stream for each video, the technical details of a video, and the files of a share or of the device sent to your server by hand.
 
-1. Հպեք համօգտագործմանը։ Նախ թղթապանակներն են, ապա լուսանկարներն ու տեսանյութերը՝ մանրապատկերներով ցանցով (նաև յուրաքանչյուր տեսանյութից մեկ կադր, պահված սարքի քեշում)։ 360° ճանաչվածներն ունեն 360° նշան, իսկ բիլդ 19-ից Apple-ի տարածական լուսանկարներն ու տեսանյութերը՝ 3D նշան։ Թարմացնելու համար քաշեք ներքև։
-2. Հպեք լուսանկարին: այն բացվում է ամբողջ էկրանով (երկու մատով խոշորացում, կրկնակի հպում), և նրա 360° կոճակը բացում է գնդաձև դիտակը։
-3. Հպեք տեսանյութին: այն նվագարկվում է բնիկ նվագարկիչում (նվագարկում, դադար, առաջ-հետ տանել)՝ 360° կոճակով, որը բացում է 360° նվագարկիչը իր 3D և 360°/180° կոճակներով, իսկ հեռախոսում նաև Spatial կոճակ ստերեոսկոպիկ ֆայլերի համար։
-4. Quest-ում 360° կոճակը բացում է ընկղմվող դիտումը, իսկ բիլդ 19-ից «Դիտել 3D-ով»-ը բացում է Apple-ի տարածական լուսանկարը 3D-ով։
-5. ⋮ ընտրացանկն ունի «Դիտել որպես 360°» առանց 360° պիտակի ֆայլերի համար, իսկ հեռախոսում՝ «Spatial 2.5D» ոչ ստերեոսկոպիկ տեսանյութերի համար։
+1. Log in with your server address, your email and your password, as in the Immich app. Your library, albums and backup settings are those of your account.
+2. In Settings, Asset Viewer, Videos, "Video source" picks the original when this device decodes it, always the original, or always the transcoded stream.
+3. To show a 360° photo to someone who does not have the app, share it with an Immich shared link: the Immich web app shows it as a sphere in their browser.
 
-360°-ը, 3D-ն և VR180-ը ճանաչվում են ֆայլի GPano կամ գնդային մետատվյալներից, որոնք կարդացվում են տիրույթի հարցումներով (range requests), իսկ VR180-ը նաև ֆայլի անունից։ Բիլդ 16-ից ճանաչվում են նաև չմշակված Insta360 ֆայլերը (.insp լուսանկարը՝ իր անունով կամ տեսախցիկի չափաբերման բլոկով, .insv տեսանյութը՝ իր անունով և կադրով) և միացվում են։
+The current build, build 23, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0) and was tested against an Immich 3.2.4 server and a server built from that same Immich `main`. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
 
-<a id="send-files-of-a-share-to-immich"></a>
-### Ուղարկել համօգտագործման ֆայլերը Immich
+More: [everything else is Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [compared with the Immich app](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
-Բիլդ 15-ից, երբ միացված եք սերվերին:
+<a id="go-immersive-on-meta-quest"></a>
+### Go immersive on Meta Quest
 
-1. Համօգտագործման թղթապանակում երկար սեղմեք լուսանկարը կամ տեսանյութը, կամ հպեք Ընտրել-ին վերևում աջ։
-2. Նշեք այն, ինչ ուզում եք, կամ օգտագործեք «Ընտրել այս թղթապանակի բոլոր լուսանկարներն ու տեսանյութերը»։
-3. Հպեք «Վերբեռնել Immich-ում»-ին։ Ֆայլերը մեկ առ մեկ հոսքով անցնում են համօգտագործումից ձեր սերվեր, յուրաքանչյուր սալիկի վրա առաջընթացով, իսկ ներքևի գոտում գրված է «Ուղարկվում է 3 / 12»՝ Cancel (Չեղարկել) կոճակով։ Ուղարկման ընթացքում հավելվածը բաց պահեք։
-4. Վերջում հավելվածն ասում է, թե քանիսն ուղարկվեցին և քանիսն արդեն կային սերվերում: սերվերը պահում է իր սեփական պատճենը և հեռացնում արդեն ունեցած ֆայլերի կրկնօրինակները։ Ավելի վաղ ուղարկված ֆայլերը նշան են ստանում («Ավելի վաղ ուղարկվել է Immich») և հաջորդ անգամ բաց են թողնվում։
-
-Համօգտագործումից բացված լուսանկարը կամ տեսանյութն իր ընտրացանկում ունի նույն կետը։ Առանց սերվերի էջում գրված է «Միացեք Immich սերվերին՝ վերբեռնելու համար»։ Սարքի լուսանկարներն ու տեսանյութերն ուղարկվում են նույն կերպ Գրադարան ներդիրից: Այս սարքավորումում, ալբոմ, ընտրել, «Վերբեռնել Immich-ում», ներառյալ այն ալբոմներից, որոնք պահուստավորման ընտրության մեջ չեն։ Ուղարկվելուց հետո դրանք համարվում են պահուստավորված։
-
-### Ինչպես է նվագարկվում առանց ներբեռնելու
-
-Նվագարկիչները կարդում են անհրաժեշտ բայթերը հավելվածի ներսում գտնվող կամրջի միջոցով (միայն loopback հասցե, յուրաքանչյուր նստաշրջանի համար պատահական տոկեն, բայթերի տիրույթներ), ուստի տեսանյութում առաջ-հետ տանելն աշխատում է, և ոչինչ չի պատճենվում սարքում։ Նվագարկիչները և սաղավարտի դիտակը երբեք չեն ստանում համօգտագործման հասցեն, միայն կամրջի 127.0.0.1-ը։ Սերվերին ուղղված հարցումներն անում է հենց հավելվածը։
-
-Սահուն նվագարկման համար համօգտագործումը կարդացվում է մեծ բլոկներով, ֆայլը կարդալների միջև բաց է մնում, մինչև 16 ՄԲ կարդացվում է նվագարկչից առաջ, իսկ նվագարկվող տեսանյութը կարդացվում է մինչև վեց զուգահեռ SMB միացումներով, առանձին այն միացումից, որը սպասարկում է մանրապատկերներն ու ցուցակները։ Freebox Server-ը յուրաքանչյուր կարդալուն պատասխանում է դանդաղ: մեկ միացումը տալիս է 4,5 ՄԲ/վ, վեցը՝ 19 ՄԲ/վ, ինչը բավական է 132 Մբիթ/վ 5.7K արտահանման համար։
-
-Մինչ նվագարկիչը սպասում է տվյալների, 360° և Spatial նվագարկիչները ցույց են տալիս «Բեռնվում է»՝ իրենց նվագարկման բուֆերի լցվածությամբ, իսկ հարթ նվագարկիչը ցույց է տալիս «Բեռնվում է» առանց տոկոսի, մինչ տեսանյութը բեռնվում է կամ կանգ է առնում։
-
-### DLNA մեդիա սերվերներ
-
-Բիլդ 19-ից հավելվածը մեդիա սերվերների SSDP որոնումն ուղարկում է ցանցի multicast խմբին, և նույն հարցումը՝ տեղական /24 ցանցի յուրաքանչյուր հասցեի 1900 պորտին, ապա կարդում է պատասխանած յուրաքանչյուր սերվերի սարքի նկարագրությունը և պահում նրանց, որոնք հրապարակում են իրենց բովանդակությունը (ContentDirectory)։
-
-Թղթապանակներն ու ֆայլերը ցուցակագրվում են սերվերի Browse գործողությամբ, էջ առ էջ, և անվանվում իրենց վերնագրերով: ֆայլը ստանում է իր տեսակի ընդլայնումը, երբ վերնագիրը չունի այն, և թղթապանակում նույն վերնագրով երկրորդ ֆայլը դառնում է `name (2)`։ Աուդիոն բացառվում է։ Մանրապատկերները ալբոմի շապիկներն են կամ սերվերի ստեղծած փոքր նկարները, որոնք բեռնում է հենց հավելվածը, իսկ երբ սերվերը չունի դրանք, օգտագործվում է հավելվածի սեփական մանրապատկերը։ Ֆայլը նվագարկվում է սերվերի առաջարկած բնօրինակից, այլ ոչ թե փոխարկված պատճենից, երբ սերվերն առաջարկում է երկուսն էլ, կարդացվում է տիրույթի հարցումներով, ուստի առաջ-հետ տանելն աշխատում է։
-
-Ստուգված է minidlna-ի և Gerbera-ի հետ։ Իրական ցանցում հայտնաբերումը, Plex-ը, Jellyfin-ը, NAS-ը, Freebox Server-ը, iPhone-ը և Quest-ը բիլդ 19-ի սարքային փորձարկումն են։
-
-<a id="a-share-that-moved"></a>
-### Տեղափոխված համօգտագործում
-
-Բիլդ 19-ից DLNA համօգտագործումը և հեռախոսի համօգտագործումը (տե՛ս [Համօգտագործել այս հեռախոսը ցանցում](#share-this-phone-on-the-network)) պահում են իրենց սերվերի հայտարարած նույնացուցիչը։ Երբ դրանցից մեկն այլևս չի պատասխանում իր հասցեով (երթուղիչը նոր հասցե է տվել, սերվերը վերագործարկվել է այլ պորտով), նրա թղթապանակի էջը ցույց է տալիս «(անուն)-ի որոնում ցանցում» և տեղափոխում համօգտագործումն այնտեղ, որտեղ այն հիմա պատասխանում է: անմիջապես DLNA սերվերի դեպքում, որը գաղտնաբառ չունի, և հաստատումից հետո («Օգտագործե՞լ նոր հասցեն»), որը ցույց է տալիս երկու հասցեն էլ, օգտանունով և գաղտնաբառով համօգտագործման դեպքում, քանի որ դրանք կուղարկվեին նոր հասցեին։
-
-Բիլդ 20-ից ցանցի մեկ այլ հասցեում կրկին գտնված Plex սերվերը նույնպես անմիջապես տեղափոխվում է. նրա վկայականն ապացուցում է, որ դա նույն սերվերն է, նախքան թոքենն ուղարկվի։ Tapo տեսախցիկը որոնվում է իր MAC հասցեով՝ իր սեփական էջից, տե՛ս [Tapo տեսախցիկներ](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)։
-
-### Սահմանափակումներ
-
-- **SMB**: միայն SMB 2 և 3, առանց SMB 1-ի։
-- **WebDAV**: միայն Basic նույնականացում (Digest-ը դեռ չի աջակցվում)։ Ինքնաստորագրված HTTPS վկայականը պետք է տեղադրված լինի սարքում։
-- **Սերվերների որոնում**: ցանցի զննումը և DLNA, Plex ու Tapo որոնումները նայում են միայն տեղական /24 ցանցը և iOS-ում պահանջում են տեղական ցանցի թույլտվություն։ iPhone-ում և iPad-ում DLNA որոնումն ուղարկում է միայն unicast հարցումներ, մինչև Apple-ը հավելվածին տա multicast իրավունքը (entitlement), և որոշ սերվերներ չեն պատասխանում դրանց (minidlna-ն Linux-ում): ավելացրեք դրանք իրենց նկարագրության հասցեով։
-- **DLNA**: սերվերը, որն առաջարկում է ֆայլի միայն փոխարկված պատճենը, տալիս է այդ պատճենը։ Թղթապանակը ցուցակագրում է առավելագույնը 20 000 տարր։
-- **Մանրապատկերներ**: լուսանկարների մանրապատկերներն ապակոդավորում են ամբողջ ֆայլը, և 30 ՄԲ-ից մեծ լուսանկարները մանրապատկեր չեն ստանում։
-- **Նվագարկիչներ**: աուդիո ուղու ընտրությունը դեռ չկա հարթ նվագարկիչում։ Հեռախոսում դեռ հնարավոր չէ սահեցնել թղթապանակի մի ֆայլից հաջորդին (Quest-ի ընկղմվող դիտումն ունի նախորդ և հաջորդ թղթապանակի 360° ֆայլերի համար)։ Ցանցային ֆայլի համար կատարված 3D կամ 180° ընտրությունը չի հիշվում։
-- **Վերբեռնումներ**: դրանք աշխատում են միայն, երբ հավելվածը բաց է, և այն ֆայլը, որն արդեն կա սերվերում, ամբողջությամբ ուղարկվում է, նախքան սերվերը կհայտնի այն որպես կրկնօրինակ։
-
-<a id="plex-media-server-without-plextv"></a>
-## Plex Media Server՝ առանց plex.tv-ի
-
-Ձեր տեսանյութերը Plex-ում են, և Plex-ը ձեր 360° լուսանկարներն ու տեսանյութերը ցույց է տալիս հարթ, ինչպես նկարագրում են նրա ֆորումի հարցումները (դրանցից մեկը բաց է 2017 թվականից)։ Դուք նաև ուզում եք այդ գրադարանը սաղավարտում, հեռուստացույցում և տնից դուրս։ Immich հավելվածը կարդում է միայն ձեր Immich սերվերը, իսկ բիլդ 19-ի DLNA տեսակը Plex-ի DLNA կողմին հասնում է միայն տանը։
-
-Բիլդ 20-ից Immuch360-ը զուգակցվում է ձեր Plex Media Server-ի հետ ուղղակիորեն, առանց plex.tv-ի. այն գտնում է սերվերը ցանցում, դուք մեկ անգամ տեղադրում եք թոքենը, և հավելվածը ուղիղ կարդում է ձեր գրադարանների բնօրինակ ֆայլերը՝ հավելվածի բոլոր դիտակներում (360°, 3D, VR180, Spatial 2.5D, Quest-ի ընկղմվող դիտում, հեռուստացույցի հեռակառավարման վահանակ), տանը և, ձեր պորտի վերահասցեավորման միջոցով, տնից դուրս։ Ոչինչ չի պատճենվում, և ձեր ընտրած ֆայլերը կարող են ուղարկվել Immich։
-
-### Ավելացնել Plex սերվեր
-
-1. Բացեք Գրադարան ներդիրը, ապա Ցանցային համօգտագործումներ, ապա + և «Plex Media Server»։ Համօգտագործման ձևի «Plex Media Server» տեսակը և «Գտնված ցանցում» բաժնում Plex պիտակով սերվերը բացում են նույն էջը։
-2. «Ավելացնել Plex սերվեր» էջը փնտրում է ձեր ցանցի Plex սերվերները («Ձեր ցանցում Plex սերվերների որոնում») և դրանք ցուցակագրում «Գտնված ցանցում» բաժնում։ Հպեք ձերին. քարտը ցույց է տալիս նրա անունը, Plex-ի տարբերակը և կարճ նույնացուցիչ։
-3. Ցանկում չկա՞։ Մուտքագրեք նրա «Սերվերի հասցե»-ն, օրինակ `192.168.1.20`, `192.168.1.20:32400` կամ `https://...plex.direct:32400`, ապա հպեք «Որոնել»։ Հավելվածը կարդում է սերվերի վկայականը և ուրիշ ոչինչ չի ուղարկում։
-4. Ստացեք թոքենը համակարգչում. բացեք Plex-ը վեբ դիտարկչում և մուտք գործեք, բացեք ձեր գրադարանի ցանկացած լուսանկար կամ տեսանյութ, ապա «...», «Get Info», «View XML»։ Նոր ներդիր է բացվում `X-Plex-Token=...`-ով ավարտվող հասցեով։ Պատճենեք այդ ամբողջ հասցեն։
-5. Տեղադրեք այն «Մուտքի թոքեն» դաշտում, կամ ուղարկեք այն հեռախոսին և հպեք «Տեղադրել սեղմատախտակից». հավելվածը դրանից վերցնում է սերվերը և թոքենը։ Միայն `X-Plex-Token=`-ից հետո եկող տեքստն էլ է աշխատում։ Էջի «Ինչպես ստանալ այն»-ը նույնն է ասում. սերվերի ադմինիստրատորները կարող են նաև օգտագործել սերվերի `Preferences.xml` ֆայլի `PlexOnlineToken` արժեքը, որի ժամկետը չի լրանում։ Հեռուստացույցում OK-ը բացում է ստեղնաշարի երկխոսությունը. մուտքագրեք թոքենն այնտեղ (այն սովորաբար 20 նիշ է)։
-6. Հպեք «Ստուգել միացումը»։ Պատասխանն է «Միացված է՝ N գրադարան», կամ այն ասում է, թե ինչն է սխալ, օրինակ՝ «Plex սերվերը մերժեց այս թոքենը։»
-7. Այնուհետև «Մուտք տնից դուրս»-ը ցույց է տալիս, թե ինչ է ասում սերվերը. «Սերվերը հայտնում է, որ հասանելի է (հասցե):(պորտ) հասցեով։» կամ «Սերվերը չհայտնեց իր տնից դուրս հասցեն։» Սերվերը տնից դուրս օգտագործելու համար մուտքագրեք ձեր հանրային հասցեն կամ DynDNS անունը «Տնից դուրս հասցե (IP կամ անուն)» դաշտում, իսկ Plex-ում (Կարգավորումներ, Հեռակա մուտք) վերահասցեավորված պորտը՝ «Տնից դուրս պորտ» դաշտում։ Ձեր մուտքագրածը միշտ գերակա է սերվերի ասածից։
-8. «Անուն»-ը սերվերի անունն է, եթե այն չփոխեք, իսկ «Սկզբնական թղթապանակ (ըստ ցանկության)»-ը կարող է ուղղակիորեն բացել մեկ գրադարան։ Հպեք պահպանման կոճակին։ Սերվերը ցուցակագրվում է համօգտագործումների հետ՝ որպես `plex://` և նրա հասցեն։
-
-### Զննել ձեր Plex գրադարանները
-
-1. Հպեք սերվերին Ցանցային համօգտագործումներում։ Առաջին մակարդակում ցուցակագրված են այն գրադարանները, որոնք հավելվածը ցույց է տալիս. լուսանկարներ, ֆիլմեր և այլ տեսանյութեր, հեռուստասերիալներ։ Երաժշտությունը բաց է թողնված։
-2. Գրադարանի տակ գալիս են նրա թղթապանակները՝ ինչպես սերվերի սկավառակում են (Plex-ի «ըստ թղթապանակի» դիտումը), ապա լուսանկարներն ու տեսանյութերը՝ իրենց ֆայլերի անուններով, Plex-ի ստեղծած մանրապատկերներով։ Լուսանկարների գրադարանը, որի թղթապանակային դիտումը չի պատասխանում, փոխարենը ցույց է տալիս իր ալբոմները։
-3. 360°-ը և 3D-ն ճանաչվում են հենց ֆայլերը կարդալով, ինչպես ցանկացած համօգտագործումում. 360° լուսանկարները ստանում են 360° նշանը, Apple-ի տարածականները՝ 3D նշանը։
-4. Բացեք լուսանկարը կամ տեսանյութը, ինչպես ցանկացած համօգտագործումում. 360°, 3D, 360°/180°, Spatial 2.5D հեռախոսում, ընկղմվող դիտում Quest-ում, հեռակառավարման վահանակ հեռուստացույցում։ Տեսանյութը կարդացվում է որպես բնօրինակ ֆայլ՝ բայթերի տիրույթներով, հավելվածի տեղական կամրջի միջոցով, այնպես որ առաջ-հետ տանելը աշխատում է, և նրա 360° և 3D մետատվյալները նվագարկիչներին հասնում են անփոփոխ։
-5. Ընտրեք ֆայլեր և հպեք «Վերբեռնել Immich-ում»՝ դրանք ձեր սերվերին ուղարկելու համար, ինչպես ցանկացած համօգտագործումից (տե՛ս [Ուղարկել համօգտագործման ֆայլերը Immich](#send-files-of-a-share-to-immich))։
-
-### Տնից դուրս
-
-Ամեն անգամ, երբ բացում է սերվերը, հավելվածը նախ փորձում է տան հասցեն, իսկ 400 ms հետո՝ տնից դուրս հասցեն։ Օգտագործվում է առաջինը, որը պատասխանում է ձեր սերվերով. երբ դա տնից դուրս հասցեն է, թղթապանակի էջը ցույց է տալիս գլոբուսի պատկերակ «Միացված է տնից դուրս հասցեով» մակագրությամբ։
-
-Դրա համար անհրաժեշտ է Plex-ում միացված Հեռակա մուտք (Կարգավորումներ, Հեռակա մուտք)՝ ձեր երթուղիչի կողմից վերահասցեավորված պորտով. առանց plex.tv-ի հավելվածը չի կարող օգտագործել Plex-ի ռելեն, ուստի առանց պորտի վերահասցեավորման սերվերը բացվում է միայն տանը, իսկ տնից դուրս էջն ասում է. «Ձեր Plex սերվերը հասանելի չէ տնային ցանցից դուրս։ Plex-ում միացրեք հեռակա մուտքը պորտի վերահասցեավորմամբ (Կարգավորումներ, Հեռակա մուտք) կամ մուտքագրեք դրա հանրային հասցեն։»
-
-Սերվերի հայտնած հասցեն նորից է սովորվում տանը յուրաքանչյուր միացման ժամանակ։ Երբ այն դրսից չի պատասխանում (երթուղիչ, որը փոխում է իր հասցեն, երկու երթուղիչ իրար հետևից), մուտքագրեք ձերը սերվերի էջում։ Երբ թոքենը դադարում է աշխատել (օրինակ՝ դուրս եք եկել այն դիտարկչի աշխատաշրջանից, որտեղից պատճենել եք այն), թղթապանակի էջը դա ասում է և առաջարկում «Տեղադրել նոր թոքեն», որը բացում է սերվերի էջը թոքենի դաշտի վրա։
-
-### Համեմատած Plex-ի և DLNA տեսակի հետ
-
-- **Բնօրինակ ֆայլերը**: հավելվածը կարդում է հենց ֆայլերը, երբեք Plex-ի կողմից փոխարկված պատճենը, ուստի 360°, 3D և VR180 մետատվյալները մնում են անփոփոխ, և հավելվածի դիտակներն օգտագործում են դրանք, մինչդեռ Plex-ի հավելվածներն այդ ֆայլերը ցույց են տալիս հարթ։
-- **Առանց plex.tv-ի**: հավելվածը խոսում է միայն ձեր սերվերի հետ, միշտ HTTPS-ով։ Սերվերը ստուգվում է իր սեփական plex.direct վկայականով, որը կապված է սերվերի նույնացուցիչի հետ, նախքան թոքենն ուղարկվի։ Թոքենը մնում է սարքում՝ նրա անվտանգ պահոցում, և ուղարկվում է միայն ձեր սերվերին՝ հարցման գլխագրում։
-- **Համեմատած նույն սերվերը որպես DLNA ավելացնելու հետ**: թղթապանակները՝ ինչպես սկավառակում են, Plex-ի մանրապատկերները, մուտք տնից դուրս և անվտանգ միացում։
-
-### Սահմանափակումներ
-
-- **Միայն պահանջված սերվերներ**: սերվերը պետք է պահանջված լինի Plex-ում (մեկ անգամ մուտք գործած Plex հաշիվ), ինչը նրան տալիս է plex.direct վկայականը։ Հակառակ դեպքում էջն ասում է. «Այս հասցեն պատասխանում է առանց Plex վկայականի։ Պահանջեք սերվերը Plex-ում կամ ավելացրեք այն որպես SMB, WebDAV կամ DLNA համօգտագործում։»
-- **Միայն IPv4**: «IPv6 հասցեները դեռ չեն աջակցվում։ Մուտքագրեք սերվերի IPv4 հասցեն։»
-- **Թոքենը** լիարժեք մուտք է տալիս ձեր Plex սերվերին։ Հավելվածում սերվերը հեռացնելը մոռանում է թոքենը սարքում, բայց չի չեղարկում այն. «Թոքենը վավեր է մնում սերվերում, մինչև դուրս գաք այն դիտարկչի աշխատաշրջանից, որտեղից պատճենել եք այն։» Ավարտի ամսաթիվ ունեցող թոքենը ցույց է տալիս այդ ամսաթիվը, և հավելվածը չի կարող այն թարմացնել։
-- **Տնից դուրս**: միայն պորտի վերահասցեավորմամբ, ռելե չկա։
-- **Գրադարաններ**: երաժշտությունը չի ցուցադրվում, թղթապանակը ցուցակագրում է առավելագույնը 20 000 տարր, իսկ սահմանափակված օգտատերը կարող է ստանալ «Այս թոքենը չի կարող կարդալ սերվերի գրադարանները։»
-- **Տեսախցիկների չմշակված 360° ֆայլերը** (.insv, .insp, .360, .osv) երևում են միայն, եթե Plex-ը դրանք ցուցակագրում է. հակառակ դեպքում ավելացրեք նույն NAS թղթապանակը որպես SMB կամ WebDAV համօգտագործում, տե՛ս [Տեսախցիկների չմշակված 360° ֆայլեր](#raw-360-camera-files-without-the-cameras-app)։
-- **Սերվերի որոնում**: սերվերը, որի «Enable local network discovery (GDM)» կարգավորումն անջատված է, չի գտնվում, ուստի մուտքագրեք նրա հասցեն։ iPhone-ում և iPad-ում որոնումն ուղարկում է միայն unicast հարցումներ։ Նույն սերվերի DLNA կողմը նույնպես կարող է հայտնվել ցանկում՝ DLNA պիտակով. ընտրեք Plex պիտակով տողը։
-- **Դեռ ստուգված չէ սարքում**: զուգակցումը, թղթապանակները, տեսանյութի բայթերի տիրույթները, մանրապատկերները, սխալ թոքենը և տնից դուրս հասցեն ստուգվել են համակարգչից իրական Plex Media Server 1.42.1-ի վրա, իսկ լուսանկարների և հեռուստասերիալների գրադարանները՝ միայն մոդելավորված սերվերի վրա։ Նվագարկումը հեռախոսում, Quest-ում, iPhone-ում և հեռուստացույցում, ինչպես նաև տնից դուրս հասցեին անցումը բիլդ 20-ի սարքային փորձարկումն են։
-- Immuch360-ը կապված չէ Plex-ի հետ։
-
-<a id="share-this-phone-on-the-network"></a>
-## Համօգտագործել այս հեռախոսը ցանցում
-
-Ձեր լուսանկարներն ու տեսանյութերը հեռախոսում են, և ուզում եք դրանք տեսնել սաղավարտում՝ առանց համակարգչի, NAS-ի կամ Immich սերվերի։ Բիլդ 19-ից հեռախոսը, Android կամ iPhone, Wi-Fi-ով մատուցում է իր լուսանկարներն ու տեսանյութերը, և Meta Quest-ը նվագարկում է դրանք։ Immich հավելվածը նման բան չունի։
-
-### Միացնել հեռախոսում
-
-1. Բացեք Գրադարան ներդիրը, ապա Ցանցային համօգտագործումներ։ Առաջին սալիկն է «Համօգտագործել այս հեռախոսը ցանցում» (այնտեղ գրված է «Անջատված» կամ «Միացված»՝ հասցեով)։
-2. Հպեք դրան, ապա միացրեք «Համօգտագործել լուսանկարներն ու տեսանյութերը Wi-Fi-ով»-ը։ Հավելվածը խնդրում է լուսանկարների և տեսանյութերի թույլտվությունը, եթե այն բացակայում է, իսկ Android 13-ից սկսած՝ նաև ծանուցումների թույլտվությունը։
-3. Էջը ցույց է տալիս Հասցեն (օրինակ `http://192.168.1.20:8360`: պորտ 8360, կամ մեկ այլ ազատ պորտ, երբ այն զբաղված է), այն անունը, որով հեռախոսը հայտարարվում է («Immuch360 on» և հեռախոսի անունը), Օգտանունը (`phone` և չորս թվանշան) և Գաղտնաբառը (ութ նիշ), յուրաքանչյուրը՝ պատճենման կոճակով, ապա «N սարք միացված է» (վերջին րոպեում այն օգտագործած սարքերը)՝ վերջին մատուցված ֆայլով։
-
-Օգտանունն ու գաղտնաբառը ստեղծվում են մեկ անգամ և պահվում, ուստի սաղավարտը պահում է իր պահպանված համօգտագործումը։ «Նոր գաղտնաբառ»-ը փոխարինում է գաղտնաբառը։ Սալիկը սաղավարտում չի ցուցադրվում։
-
-### Բացել սաղավարտում
-
-1. Սաղավարտում բացեք Գրադարան, Ցանցային համօգտագործումներ, ապա +։
-2. «Գտնված ցանցում» բաժնում հպեք հեռախոսին: օգտանունը լրացվում է։
-3. Մուտքագրեք գաղտնաբառը մեկ անգամ (բացատներն ու մեծատառերը նշանակություն չունեն), ապա Պահե։
-
-Դրանից հետո սա WebDAV համօգտագործում է, ինչպես ցանկացած այլ: 360° հայտնաբերում, չմշակված ֆայլեր, ընկղմվող դիտում, առաջ-հետ տանել տեսանյութերում։ Ցանցի ցանկացած WebDAV հաճախորդ նույնպես կարող է այն կարդալ։ Երբ հեռախոսը նոր հասցե է ստանում, սաղավարտը փնտրում է այն և նախքան նոր հասցեն օգտագործելը հարցնում է (տե՛ս [Տեղափոխված համօգտագործում](#a-share-that-moved))։
-
-### Ինչ է մատուցում և որքան ժամանակ
-
-- **Թղթապանակներ**, միայն կարդալու համար: `Albums` (հեռախոսի յուրաքանչյուր ալբոմ), `By month` (յուրաքանչյուր լուսանկար և տեսանյութ՝ ըստ ամսվա, ամենանորը՝ առաջինը) և `360` (հավելվածի գտած 360° լուսանկարներն ու տեսանյութերը հեռախոսում, ներառյալ չմշակված ֆայլերը և նրանք, որոնք դիտում եք որպես 360°)։ Ֆայլերը պահում են իրենց անունները։ iPhone-ում կենդանի լուսանկարը (Live Photo) տալիս է իր ստատիկ պատկերը, խմբագրված լուսանկարը կամ տեսանյութը՝ իր խմբագրված տարբերակը, իսկ միայն iCloud-ում պահվածը բացառվում է։
-- **Android**: համօգտագործումն աշխատում է առաջին պլանի ծառայությունում՝ ծանուցմամբ (հասցեն և օգտանունը) և Կանգնեցնել կոճակով, և արթուն է պահում Wi-Fi-ն ու պրոցեսորը, ուստի շարունակում է աշխատել նաև անջատված էկրանով։ Հավելվածը սահեցնելով փակելը կանգնեցնում է այն։
-- **iPhone և iPad**: iOS-ը սերվերին ֆոնային ժամանակ չի տալիս, ուստի համօգտագործումն աշխատում է միայն, երբ հավելվածը առջևում է, և այդ ընթացքում էկրանն արթուն է մնում։ Այն դադարեցվում է, երբ հավելվածն անցնում է ֆոն, և վերսկսվում է նույն հասցեով և գաղտնաբառով, երբ վերադառնում եք։
-- **Երբ է կանգնում**: անջատիչով, Կանգնեցնել կոճակով, 60 րոպե առանց որևէ հարցման, և երբ հավելվածը փակվում է։ Այն երբեք ինքնուրույն չի սկսվում: հավելվածի յուրաքանչյուր գործարկման ժամանակ այն անջատված է։
-- **Անվտանգություն**: միայն տեղական ցանց։ Համօգտագործումը լսում է միայն հեռախոսի Wi-Fi, Ethernet և թեժ կետի հասցեներով, երբեք՝ բջջային տվյալների կամ VPN հասցեով, և պատասխանում է միայն տեղական հասցե ունեցող սարքերին։ Յուրաքանչյուր հարցում պահանջում է օգտանուն և գաղտնաբառ (HTTP Basic)։ Մեկ սարքից մեկ րոպեի ընթացքում տասը սխալ գաղտնաբառը արգելափակում է այն մեկ րոպեով։ Գաղտնաբառը Wi-Fi-ով անցնում է չգաղտնագրված (պարզ HTTP): օգտագործեք համօգտագործումը ձեր վստահած ցանցում և անջատեք այն, երբ ավարտեք։
-- **Հեռախոսի սեփական թեժ կետը**: սաղավարտը կարող է միանալ դրան։ Երբ այնտեղ չի գտնում հեռախոսը, մուտքագրեք էջում ցուցադրված հասցեն։
-- **Դեռ չի ստուգվել սարքում**: սերվերը ստուգվել է միավորային թեստերով և ծայրից ծայր թեստերով՝ սաղավարտի սեփական WebDAV հաճախորդով և մեդիա կամրջով, համակարգչում։ Quest 3-ին մատուցող հեռախոսը (հայտնաբերում, 4 ԳԲ տեսանյութ՝ նվագարկված և առաջ-հետ տարված, 30 րոպե անջատված էկրան, թեժ կետ, Կանգնեցնել ծանուցումից) և iPhone-ի կողմը, որը դեռ չի աշխատել iPhone-ում, բիլդ 19-ի սարքային փորձարկումն են։
-
-<a id="tapo-cameras-live-view-and-the-recordings-of-the-memory-card"></a>
-## Tapo տեսախցիկներ. ուղիղ դիտում և հիշողության քարտի տեսագրություններ
-
-Տանը Tapo տեսախցիկներ ունեք և ուզում եք տեսնել այգու տեսախցիկը և անցած գիշերվա տեսահատվածները ձեր լուսանկարների կողքին՝ առանց Tapo հավելվածը բացելու, և պահել տեսահատվածը Immich-ում։ Immich հավելվածը տեսախցիկների համար ոչինչ չունի, իսկ Tapo հավելվածը առանձին հավելված է՝ մուտք գործած ձեր TP-Link հաշվով, որտեղ տեսահատվածները ձեր լուսանկարներից առանձին են։
-
-Բիլդ 20-ից Immuch360-ը Tapo տեսախցիկ է ավելացնում ցանցային համօգտագործումների կողքին։ Այն տեսախցիկը ցույց է տալիս ուղիղ եթերով Android հեռախոսներում և պլանշետներում, Android TV-ում և Meta Quest-ում, իսկ բոլոր հարթակներում՝ նրա հիշողության քարտի տեսագրությունները՝ օր առ օր. տեսահատվածը բերվում է տեսախցիկից, ապա նվագարկվում է ինչպես ցանկացած տեսանյութ և կարող է ուղարկվել Immich։ Հավելվածը տեսախցիկի հետ խոսում է միայն ձեր ցանցում, երբեք TP-Link-ի սերվերների հետ, և երբեք որևէ բան չի փոխում տեսախցիկում։
-
-### Ավելացնել տեսախցիկ
-
-1. Նախ Tapo հավելվածում. ստեղծեք տեսախցիկի հաշիվը տեսախցիկի կարգավորումներում՝ Ընդլայնված կարգավորումներ, Տեսախցիկի հաշիվ (օգտանուն և գաղտնաբառ այս տեսախցիկի համար՝ ուղիղ դիտման համար), և միացրեք Երրորդ կողմի համատեղելիությունը՝ Ես, ապա Tapo Lab բաժնում։
-2. Immuch360-ում բացեք Գրադարան ներդիրը, ապա Ցանցային համօգտագործումներ, ապա + և «Tapo տեսախցիկ»։
-3. «Ավելացնել տեսախցիկ» էջը փնտրում է տեսախցիկներ («Ձեր ցանցում Tapo տեսախցիկների որոնում») և դրանք ցուցակագրում «Գտնված ցանցում» բաժնում՝ Tapo պիտակով։ Հպեք ձերին՝ «Տեսախցիկի հասցե»-ն լրացնելու համար, կամ մուտքագրեք նրա հասցեն։ Համօգտագործման ձևում Tapo պիտակով տեսախցիկը բացում է նույն էջը։
-4. «Անուն». ինչպես է տեսախցիկը ցուցակագրվում։
-5. «Տեսագրություններ հիշողության քարտում» բաժնում՝ «TP-Link հաշվի գաղտնաբառ». այն հաշվի գաղտնաբառը, որը օգտագործում եք Tapo հավելվածում։ Այն բացում է տեսագրությունները. ձեր էլ. փոստի հասցեն պետք չէ։
-6. «Ուղիղ» բաժնում՝ «Տեսախցիկի հաշվի օգտանուն» և «Տեսախցիկի հաշվի գաղտնաբառ». 1-ին քայլի տեսախցիկի հաշիվը։
-7. Երկուսից մեկը բավական է («Մուտքագրեք TP-Link հաշվի գաղտնաբառը, տեսախցիկի հաշիվը կամ երկուսն էլ։»). միայն TP-Link-ի գաղտնաբառը տալիս է տեսագրությունները, միայն տեսախցիկի հաշիվը՝ ուղիղ դիտումը։
-8. Հպեք «Ստուգել տեսախցիկը»։ Այն ցույց է տալիս «Տեսագրություններ՝ (մոդել), ներկառուցված ծրագիր (տարբերակ)» հիշողության քարտի վիճակով, և «Ուղիղ դիտում՝ (տեսանյութ), ձայն (աուդիո)», կամ թե ինչը չստացվեց յուրաքանչյուրի համար։
-9. Հպեք պահպանման կոճակին։ Տեսախցիկը ցուցակագրվում է «Տեսախցիկներ» բաժնում՝ համօգտագործումներից հետո, իր մոդելով, երբ այն հայտնի դառնա, և `tapo://`-ով՝ իր հասցեով։
-
-<a id="watch-it-live"></a>
-### Դիտել ուղիղ եթերով
-
-1. Հպեք տեսախցիկին։ Նրա ուղիղ դիտումը նրա էջի վերևում է. «Միանում է տեսախցիկին», ապա պատկերը «Ուղիղ» նշանով։
-2. Պատկերի վրայի կոճակները. ձայնը՝ սկզբում անջատված («Միացնել ձայնը»; «Այս սարքում ձայն չկա», երբ սարքը չի կարող այն նվագարկել), SD կամ HD և «Լիաէկրան»։
-3. Հեռախոսը էջում ցույց է տալիս SD, իսկ լիաէկրանում՝ HD. Quest-ը ցույց է տալիս HD։ Հետ կոճակը նախ դուրս է գալիս լիաէկրանից։
-4. Պատկերի տակ գալիս են մոդելը, ներկառուցված ծրագիրը և հիշողության քարտը, օրինակ՝ «Հիշողության քարտ՝ օգտագործված է (օգտագործված)՝ (ընդհանուր)-ից» կամ «Հիշողության քարտ չկա»։
-
-iPhone-ում և iPad-ում ուղիղ դիտման տեղում գրված է «Ուղիղ դիտումը iPhone-ին և iPad-ին կհասնի ավելի ուշ տարբերակում։ Տեսագրություններն արդեն նվագարկվում են այստեղ։» Առանց տեսախցիկի հաշվի էջն ասում է «Ավելացրեք տեսախցիկի հաշիվը՝ ուղիղ դիտումը տեսնելու համար։»
-
-### Նվագարկել և պահել տեսագրությունները
-
-1. «Տեսագրություններ հիշողության քարտում» բաժնում տեսախցիկի էջը ցուցակագրում է տեսագրություններ ունեցող օրերը՝ ամենանորից սկսած, ըստ ամիսների։ Առանց TP-Link հաշվի գաղտնաբառի այն ասում է «Ավելացրեք TP-Link հաշվի գաղտնաբառը՝ տեսագրությունները տեսնելու համար։»
-2. Հպեք օրվան։ Նրա տեսահատվածները գալիս են տեսախցիկի սեփական ժամանակի ժամերի տակ, յուրաքանչյուրը՝ իր սկզբով, տևողությամբ, իրադարձության դեպքում՝ տեսախցիկի մանրապատկերով, և իր տեսակով. Շարժում, Մարդ, Ընտանի կենդանի, Տրանսպորտային միջոց, Երեխայի լաց, Կենդանի, Անընդհատ կամ Իրադարձություն։
-3. Հպեք տեսահատվածին։ Հավելվածը այն բերում է տեսախցիկից («Տեսանյութը բերվում է տեսախցիկից՝ N%», Cancel (Չեղարկել) կոճակով), ապա նվագարկում է տեսանյութի նվագարկիչում՝ ձայնով և առաջ-հետ տանելու հնարավորությամբ։ Բերված տեսահատվածն ունի «Այս սարքում» նշումը և հաջորդ անգամ բացվում է անմիջապես։
-4. Տեսահատվածը Immich-ում պահելու համար, երբ սերվեր է միացված. տեսանյութի ⋮ ընտրացանկը, «Վերբեռնել Immich-ում»։
-5. Տարածք ազատելու համար. բերված տեսահատվածի վրա երկար սեղմումն առաջարկում է «Ջնջել պատճենը այս սարքում» (հեռախոսում), իսկ տեսախցիկի էջում կա «Ջնջել այս տեսախցիկից բերված տեսանյութերը»՝ դրանց չափով։
-6. Վերևում աջ գտնվող թարմացման կոճակը կամ էջը ներքև քաշելը կրկին հարցնում է տեսախցիկին։
-
-Երբ տեսախցիկն այլևս չի պատասխանում իր հասցեով, նրա էջը փնտրում է այն ցանցում՝ իր MAC հասցեով, և տեղափոխում այնտեղ, որտեղ այն հիմա պատասխանում է, հենց որ այն ցույց տա նույն վկայականը։ Տեսախցիկը, որը ցույց է տալիս այլ վկայական, քան այն, որը հավելվածն առաջին անգամ տեսել է, փոխարենը հարց է ստանում. «(հասցե) հասցեի տեսախցիկը ցույց է տալիս նախկինից տարբեր վկայական։ Շարունակեք միայն, եթե վերակայել կամ փոխարինել եք այն։»
-
-### Համեմատած Tapo հավելվածի հետ
-
-- **Միայն ձեր ցանցում**: հավելվածը խոսում է հենց տեսախցիկի հետ՝ տեղական ցանցում, և երբեք TP-Link-ի սերվերների հետ։ Այն մուտք չի գործում TP-Link հաշիվ, ուստի ձեր էլ. փոստի հասցեն պետք չէ։
-- **Տեսագրությունները դառնում են սովորական տեսանյութեր**: բերված տեսահատվածը H.264 տեսանյութ է իր ձայնով, որը կարող եք ուղարկել Immich, որտեղ այն մնում է նույնիսկ այն բանից հետո, երբ հիշողության քարտն արդեն վերագրել է այն։
-- **Մնացածի կողքին**: Immich սերվերով կամ առանց դրա, հեռախոսում, հեռուստացույցում կամ Quest-ում (պատուհանում), գտնված ցանցում՝ ինչպես համօգտագործում։
-- **Միայն կարդալու համար**: հավելվածը տեսախցիկից խնդրում է միայն այն, ինչ ցույց է տալիս. այն երբեք չի փոխում կարգավորում և երբեք ոչինչ չի ջնջում տեսախցիկում։
-
-### Սահմանափակումներ
-
-- **Դեռ ստուգված չէ սարքում**: բիլդ 20-ը դեռ չի աշխատել իրական տեսախցիկի հետ։ Արձանագրությունը գրվել է 1.3.4 ներկառուցված ծրագրով C510W-ի ձայնագրված փոխանակումներից (2026-ի կեսերի V4 մուտքը), իսկ հավելվածը ստուգվել է մոդելավորված տեսախցիկի վրա իր թեստերում։ Հաղորդումները ողջունելի են՝ այն մոդելով և ներկառուցված ծրագրով, որը ցույց է տալիս «Ստուգել տեսախցիկը»-ն, և [Մատյաններ](#logs)-ի տողերով։
-- **Ուղիղ դիտում**: միայն Android հեռախոսներում և պլանշետներում, Android TV-ում և Quest-ում, դեռ ոչ iPhone-ում և iPad-ում։ Գործում են TP-Link-ի սահմանափակումները. յուրաքանչյուր տեսախցիկի համար միաժամանակ առավելագույնը երկու HD և երկու SD հոսք՝ ներառյալ Tapo հավելվածը, իսկ Tapo Care-ը, հիշողության քարտը և RTSP կամ ONVIF օգտագործող ձայնագրիչը չեն կարող բոլորը միաժամանակ աշխատել։
-- **Տեսախցիկներ**: մարտկոցով տեսախցիկները և Tapo հանգույցի հետևում գտնվող տեսախցիկները չեն աջակցվում։
-- **Տեսագրություններ**: մեկ տեսախցիկի համար միաժամանակ մեկ ներբեռնում։ Մինչ Tapo հավելվածը զննում է հիշողության քարտը, հավելվածը կրկին փորձում է 4, 8 և 12 վայրկյան հետո, ապա ասում է «Տեսախցիկը զբաղված է մեկ այլ դիտողով, օրինակ՝ Tapo հավելվածով։ Կրկին փորձեք մեկ րոպեից։» H.265 տեսագրությունները դեռ չեն փոխարկվում («Այս տեսագրությունը H.265 է, որն այս տարբերակը դեռ չի կարող փոխարկել։»), անընդհատ տեսագրությունները մանրապատկեր չունեն, և տեսահատվածը նվագարկվում է միայն ամբողջությամբ բերվելուց հետո։
-- **Գաղտնաբառեր**: յուրաքանչյուր սխալ գաղտնաբառ հաշվվում է, և մի քանիսից հետո տեսախցիկը որոշ ժամանակով կողպվում է («Տեսախցիկը կողպված է չափազանց շատ սխալ գաղտնաբառերից հետո։ Կրկին փորձեք N րոպեից։»)։ Հավելվածը երբեք ինքնուրույն չի կրկնում մերժված գաղտնաբառը. տեսախցիկին կրկին հարցնում են միայն «Ստուգել տեսախցիկը»-ն կամ Retry (Կրկին փորձել)-ը։ Երբ տեսախցիկն ընդունում է գաղտնաբառն իր կարգավորումների համար, բայց ոչ իր տեսանյութերի համար, Tapo հավելվածում անջատեք և նորից միացրեք Երրորդ կողմի համատեղելիությունը, ապա վերագործարկեք տեսախցիկը։
-- **Տարածք**: բերված տեսահատվածները մնում են հավելվածի քեշում՝ առավելագույնը 1 ԳԲ բոլոր տեսախցիկների համար միասին (ամենավաղուց նվագարկվածները հեռացվում են առաջինը). համակարգը կարող է մաքրել այդ քեշը, իսկ տեսախցիկը հեռացնելը ջնջում է նրա տեսահատվածները։
-- **Տնից դուրս**: հավելվածը տեսախցիկին հասնում է ձեր ցանցում նրա հասցեով, ուստի ոչ դրանից դուրս։
-- Immuch360-ը կապված չէ TP-Link-ի հետ։
-
-<a id="raw-360-camera-files-without-the-cameras-app"></a>
-## Տեսախցիկների չմշակված 360° ֆայլեր՝ առանց տեսախցիկի հավելվածի
-
-Insta360 տեսախցիկները գրանցում են իրենց ոսպնյակների երկու ձկնաչքային շրջանները՝ կողք կողքի մեկ նկարում, երկու ուղիով կամ երկու ֆայլով (.insp-ը JPEG է, .insv-ը՝ MP4), և դրանցից 360° նկար ստանալու պաշտոնական ճանապարհը Insta360 հավելվածն է կամ Studio-ն։ X4, X5, X6, GoPro MAX կամ DJI Osmo 360 ունեցողները հարցնում են, թե ինչ անել իրենց քարտի չմշակված ֆայլերի հետ։ Immich-ի վեբ հավելվածը ցանկացած .insp ընդունում է որպես հավասարաչափ (equirectangular) նկար և երկու շրջանները փաթաթում գնդի շուրջը, իսկ բջջային հավելվածը դրանք ցույց է տալիս հարթ։
-
-Բիլդ 16-ից Immuch360-ն ինքն է միացնում այդ ֆայլերը՝ հեռախոսում, պլանշետում կամ սաղավարտում, առանց սերվերում որևէ բան տեղադրելու:
-
-- **Insta360 .insp լուսանկարներ** (բիլդ 16): միացվում են GPU-ի վրա գնդաձև դիտակից առաջ, մինչև 8192x4096, ավելի փոքր չափով CPU պահուստային տարբերակով։
-- **Insta360 .insv տեսանյութեր, որոնք երկու ոսպնյակները պահում են մեկ ուղում** (բիլդ 16): միացվում են նվագարկչի GPU էֆեկտով։
-- **Insta360 X4, X4 Air, X5 և X6 .insv տեսանյութեր, մեկ քառակուսի ուղի յուրաքանչյուր ոսպնյակի համար** (բիլդ 18): երկու ապակոդավորիչ միաժամանակ, մեկական յուրաքանչյուր ոսպնյակի համար, և GPU կոմպոզիտոր, որը դրանք միացնում է գնդի մեջ։
-- **Insta360 X3 և ավելի հին՝ 5.7K և ավելի: երկու ֆայլ, `_00_` և `_10_`** (բիլդ 18): նույնը, մյուս ֆայլը գտնվում է առաջինի կողքին։
-- **GoPro MAX և MAX 2 .360: երկու ուղի, յուրաքանչյուրը՝ խորանարդի երեք նիստով** (բիլդ 18): նույնը, համընկնող սյուները միախառնված։
-- **DJI Osmo 360 .osv: երկու քառակուսի 10 բիթանոց ուղի** (բիլդ 18): նույնը, ֆայլի Kannala-Brandt չափաբերմամբ։
-- **Կրկնակի ձկնաչքային .dng** (դեռ ոչ): երևում է հարթ։
-
-### Դիտել չմշակված ֆայլը
-
-1. Դրեք չմշակված ֆայլերն այնտեղ, որտեղից հավելվածը կարդում է: սարքի սեփական պատկերասրահում (պատճենված տեսախցիկի քարտից), ձեր Immich սերվերում (այն ընդունում է .insp և .insv, և մերժում է .360 և .osv), SMB կամ WebDAV համօգտագործումում, իսկ բիլդ 19-ից՝ հեռախոսի համօգտագործումում և այն DLNA սերվերներում, որոնք ցուցակագրում են այդ ֆայլերը (դեռ չի ստուգվել)։
-2. X3 զույգի երկու ֆայլերը պահեք միասին: հավելվածը մյուս ֆայլը փնտրում է առաջինի կողքին՝ սարքում, սերվերում կամ համօգտագործման թղթապանակում։ Երբ մյուսը բացակայում է, հավելվածն ասում է «Այս տեսագրությունը բաժանված է երկու ֆայլի՝ մեկական յուրաքանչյուր ոսպնյակի համար, և (անուն)-ը չի գտնվել դրա կողքին» և առաջարկում է երկու ֆայլերը միասին պահել կամ տեսանյութն արտահանել տեսախցիկի հավելվածից։
-3. Բացեք ֆայլը և հպեք 360°-ին։ Չմշակված ֆայլերը ստանում են 360° կոճակը, իսկ չմշակված լուսանկարները՝ 360° նշանը։ Բիլդ 18-ից սերվերի չմշակված Insta360 ֆայլերը նույնպես 360° ցանկում են՝ գտնված իրենց անունով։
-4. Լուսանկարը բացվում է գնդաձև դիտակում՝ ներքևում պիտակով: «Չմշակված 360° ֆայլ, միացված հավելվածի կողմից», և չափաբերման աղբյուրը: «ֆայլից կարդացված ոսպնյակների չափաբերում», «նույն տեսախցիկի ոսպնյակների չափաբերում» (պահված նույն տեսախցիկի մեկ այլ ֆայլից՝ ըստ սերիական համարի, կամ ըստ մոդելի այն ֆայլի համար, որը նշում է միայն իր մոդելը), կամ «ոսպնյակների անվանական արժեքներ, կարերը կարող են երևալ» (X3-ի արժեքները, երբ ավելի լավը չկա)։
-5. Տեսանյութը բացվում է բնիկ 360° նվագարկիչում և միացվում է նվագարկման ընթացքում։ Նրա 3D և 360°/180° կոճակները թաքնված են, քանի որ չմշակված տեսանյութը մեկ ամբողջական գունդ է։ Տեսանվագարկիչները և սաղավարտը պիտակ չեն ցույց տալիս։
-6. Սաղավարտում ընկղմվող դիտումը լուսանկարի համար ստանում է միացված ժամանակավոր նկար, իսկ տեսանյութի համար՝ նույն GPU էֆեկտը, ինչ հեռախոսում։ Չմշակված լուսանկարի պատրաստման ընթացքում առաջընթացի ցուցիչ դեռ չկա։
-7. Եթե նկարը բացվում է տարօրինակ ուղղությամբ (օրինակ՝ հարթ դրված տեսախցիկով արված լուսանկար), հեռախոսում քաշեք այն, իսկ սաղավարտում պտտեք աջ ջոյսթիքով կամ Պտտել կոճակով։
-
-### Երբ սարքը չի կարող նվագարկել երկու ոսպնյակները
-
-Երկու ոսպնյակով տեսանյութը նվագարկելուց առաջ հավելվածը սարքին հարցնում է, թե արդյոք այն կարող է աշխատեցնել այդ չափի և հաճախականության երկու ապակոդավորիչ, և երբ պատասխանը բացասական է, հեռախոսը զգուշացնում է «Այս չմշակված տեսանյութին միաժամանակ պետք են երկու (չափ) տեսաապակոդավորիչ. այս սարքում այն կարող է սահուն չնվագարկվել»։ Երբ ապակոդավորիչները չեն կարող աշխատել (օրինակ՝ երկու 2880x2880 H.264 ոսպնյակ Quest 3-ում), հավելվածը նվագարկում է մեկ ոսպնյակ և հայտնում այդ մասին, գնդի կեսը մնում է սև, ապա՝ սերվերի տրանսկոդավորված հոսքը, եթե այն կա։ Եթե GPU էֆեկտը չի կարող աշխատել սարքում, տեսանյութը նվագարկվում է առանց միացման, երկու շրջանները գնդի վրա, «360° միացումը ձախողվեց այս սարքում» հաղորդագրությամբ։
-
-Բիլդ 19-ից, Android-ում և Quest-ում:
-
-- **Կոդեկի համար ապարատային ապակոդավորիչ չկա** (էմուլյատոր, TV արկղ): սարքը ստանում է ծրագրային ապակոդավորիչներ, որոնք ստուգումը սահմանափակում է մինչև 2048x2048 յուրաքանչյուր ոսպնյակի համար, երբ երկուսն աշխատում են միաժամանակ։
-- **Ոսպնյակը, որը սարքն ընդհանրապես չի կարող ապակոդավորել** (դրա կոդեկի համար ապակոդավորիչ չկա, կամ ոչ մեկը չի ցուցակագրում դրա պրոֆիլը), բաց է թողնում մեկ ոսպնյակի քայլը՝ անցնելով սերվերի տրանսկոդավորված հոսքին, իսկ դրա բացակայության դեպքում՝ չմիացված բնօրինակին պարզ նվագարկիչում, այդ նվագարկչի սեփական հաղորդագրությամբ։
-- **Ոսպնյակը, որը փորձարկվում է, թեև դրա չափը կամ հաճախականությունը մերժվել էր**, մեկ ոսպնյակի հաղորդագրությունը ցույց է տալիս միայն իր առաջին կադրը նկարվելուց հետո։
-- **Երբ միակ ոսպնյակի ապակոդավորիչը ձախողվում է**, և տրանսկոդավորված հոսք չկա, տեսանյութը նվագարկվում է առանց միացման՝ սխալի վրա կանգ առնելու փոխարեն։
-- **Android էմուլյատորում** հակառակ ոսպնյակի կադրն այլևս չի առկայծում (յուրաքանչյուր ոսպնյակի տեքստուրա այժմ ամեն կադրում կապվում է արտաքին տեքստուրայի թիրախին)։
-
-### Ինչպես է աշխատում միացումը
-
-- **Ինչ է կարդում հավելվածը**: չափաբերման բլոկը, որը տեսախցիկը կցում է յուրաքանչյուր ֆայլի վերջում (ոսպնյակի մոդել, կենտրոններ, յուրաքանչյուր ոսպնյակի կողմնորոշում, չափաբերման կտավի չափը), և արագացուցչափի գրառումը, որն օգտագործվում է հորիզոնը հարթեցնելու համար։ Նախ օգտագործվում է V3 չափաբերման տողի Mei (միասնական տեսախցիկ) մոդելը, ապա V6-ը (X6 և ավելի նոր ծրագրակազմ)՝ իր առաջին անդամներով, վերջում՝ հին հավասարահեռ V1 տողը։ Երբ ֆայլն ունի իր չափաբերումը, տեսախցիկի մոդելից ոչինչ չի գուշակվում։ Insta360 X5 և X6 չափաբերումը (V6, ինդեքսավորված վերջնամաս) և X4-ի տեսապատուհանը կարդացվում են ֆայլից։
-- **Որտեղից է այն կարդում**: սերվերից (բնօրինակ ֆայլը, որը կարդացվում է իր վերջին բայթերի տիրույթի հարցումով), սարքի սեփական պատկերասրահից և համօգտագործումներից։
-- **Լուսանկարներ և տեսանյութեր**: լուսանկարները միացվում են Flutter-ի fragment shader-ով գնդաձև դիտակից առաջ։ Տեսանյութերը չափաբերման հետ միասին փոխանցվում են բնիկ նվագարկիչներին՝ Media3 GL էֆեկտ Android-ում և Quest-ում, SceneKit shader iOS-ում։
-- **Երկու ոսպնյակ երկու ուղիում կամ երկու ֆայլում**: նվագարկիչները միաժամանակ ապակոդավորում են երկուսն էլ, մեկ ապարատային ապակոդավորիչ յուրաքանչյուր ոսպնյակի համար, զուգակցված ըստ ժամանակային դրոշմի, և GPU կոմպոզիտորը դրանք միացնում է գնդի մեջ: ExoPlayer և OpenGL ES 3 Android-ում և Quest-ում, AVFoundation կոմպոզիտոր Metal-ով iOS-ում։ 10 բիթանոց HLG և PQ աղբյուրները տոնային քարտեզագրմամբ (tone mapping) բերվում են 8 բիթանոց գնդի։
-
-### Սահմանափակումներ
-
-- **Կարեր**: միացումն օգտագործում է միայն տեսախցիկի չափաբերումը, առանց կարերի օպտիմալացման, ուստի տեսախցիկին մոտ առարկաների վրա կարող է կար երևալ, ինչպես տեսախցիկի սեփական նախադիտման մեջ։
-- **Հորիզոն**: հարթեցումն օգտագործում է այն արագացուցչափը, որը տեսախցիկը գրանցում է ֆայլում, միջինացված։ Տեսանյութը հարթեցվում է մեկ անգամ՝ ձայնագրության սկզբից, և չի կայունացվում, ուստի ձեռքով նկարված տեսանյութը պահպանում է իր ցնցումները, և նրա հորիզոնը կարող է մի փոքր թեքվել։ GoPro և DJI ֆայլերը չեն հարթեցվում (տեսախցիկի հորիզոնը պահպանվում է)։
-- **Առանց չափաբերման ֆայլեր**: առանց չափաբերման բլոկի ֆայլը (X3 HDR խմբի `_008` և `_009` անդամները) օգտագործում է այն չափաբերումը, որը հավելվածը պահել է նույն տեսախցիկի կամ նույն մոդելի մեկ այլ ֆայլից, կամ X3-ի անվանական արժեքները, եթե ոչ մեկը չի տեսել։
-- **Ինչ է ստուգվել**: լուսանկարները՝ X3 ֆայլերի Insta360 Studio արտահանումների հետ համեմատմամբ (նույն կադրավորում, հարթ հորիզոն, մեկ աստիճանից պակաս շեղում ըստ yaw-ի): մեկ ուղիով տեսանյութերը՝ Android էմուլյատորում ցածր լուծաչափով X3 ֆայլով։ Երկու ուղու և երկու ֆայլի ուղիները ստուգվել են իրական X4, X3 զույգի, GoPro MAX և Osmo 360 ֆայլերի վրա՝ հավելվածի CPU հղման միացնողով (հարթություն, անընդհատ կարեր) և Android-ի միավորային թեստերով։ Նվագարկումը հեռախոսում, Quest-ում և iPhone-ում դեռ բիլդ 18-ի և 19-ի սարքային փորձարկումն է, և չմշակված ֆայլերը դեռ չեն աշխատել iPhone-ում: արձագանքները ողջունելի են։
-- **Սերվերում**: Immich սերվերը մերժում է .360 և .osv վերբեռնումները, ուստի այդ երկու ձևաչափերը գոյություն ունեն միայն սարքում և համօգտագործումներում։
-
-<a id="3d-and-vr180-photos-and-videos"></a>
-## 3D և VR180 լուսանկարներ և տեսանյութեր
-
-Immich հավելվածում ստերեոսկոպիկ 360° լուսանկարը կամ տեսանյութը միաժամանակ ցույց է տալիս երկու աչքերը, կրկնակի նկար, իսկ VR180 ֆայլը, որը ծածկում է միայն առջևի կեսը, ձգվում է ամբողջ գնդի շուրջը։
-
-Immuch360-ը ճանաչում է 3D դասավորությունները՝ վերև և ներքև կամ կողք կողքի, ֆայլից (տեսանյութի st3d տուփից) կամ գուշակում է դրանք կադրի ձևից, և յուրաքանչյուր դիտակ ունի 3D կոճակ՝ դրանք փոխելու համար։ Հեռախոսը ցույց է տալիս ձախ աչքը, Meta Quest-ը յուրաքանչյուր աչքին ցույց է տալիս իր կեսը՝ իրական 3D-ով։ VR180 ֆայլերը նկարվում են կիսագնդի վրա, հետևի մասը սև է՝ ձգված նկարի փոխարեն։ Դրանք ճանաչվում են ֆայլից (գնդային սահմաններ կամ ցանց, GPano կտրվածք) կամ անվան մեջ «vr180» կամ «180» լինելուց, և յուրաքանչյուր դիտակ ունի 360°/180° կոճակ։
-
-### Փոխել դասավորությունը կամ ծածկույթը
-
-1. Բացեք լուսանկարը կամ տեսանյութը որպես գունդ (360° կոճակը)։
-2. 3D կոճակը հերթով փոխում է «Մոնո (ոչ 3D)», «3D, վերև և ներքև» և «3D, կողք կողքի» տարբերակները։ Նրա հուշումը նշում է ընթացիկ դասավորությունը։
-3. 360°/180° կոճակը փոխարկում է «360°, ամբողջական գունդ» և «180°, կիսագունդ (VR180)» միջև։ Այն չի ցուցադրվում մասնակի համայնապատկերների վրա։
-4. Սաղավարտում նույն երկու կոճակները ընկղմվող դիտման տեղեկատվական վահանակում են։
-
-360°/180° ընտրությունը սարքում հիշվում է գրադարանի մեդիայի համար, բայց դեռ ոչ ցանցային համօգտագործման ֆայլի համար։ 3D ընտրությունը չի հիշվում, երբ դիտակը փակվում է: հաջորդ անգամ նորից կիրառվում է ֆայլի հայտարարած կամ գուշակված դասավորությունը (ստորև նկարագրված Spatial 2.5D նվագարկիչը հիշում է իր ընտրությունը)։
-
-Ստուգված է Galaxy S24+-ում և Quest 3-ում իրական 3D 360° նմուշային տեսանյութերով (VRTogether, Vuze, Kandao) և 3D լուսանկարով, VR180-ը՝ Android էմուլյատորում և Galaxy S24+-ում սինթետիկ մեդիայով։ Այլ տեսախցիկներից հաշվետվությունները ողջունելի են։
-
-<a id="depth-on-a-flat-screen-spatial-25d-experimental"></a>
-## Խորություն հարթ էկրանին: Spatial 2.5D (փորձնական)
-
-Ստերեոսկոպիկ տեսանյութը կարող է խորություն ստանալ հարթ էկրանին։ Տեսանյութի երկու աչքերը տալիս են խորությունը, առջևի տեսախցիկը հետևում է ձեր գլխին, և հավելվածը սինթեզում է դրանց միջև եղած տեսքը, ուստի էկրանն իրեն պահում է որպես պատուհան դեպի տեսարանը: շարժեք գլուխը, և մոտակա առարկաները կտեղաշարժվեն ֆոնի նկատմամբ։ Միայն հեռախոսներ և պլանշետներ։
-
-### Օգտագործում
-
-1. Ստուգեք, որ այն միացված է: Settings, Asset Viewer, Videos (Տեսանյութեր), «Spatial 2.5D (փորձնական)»։ Այն լռելյայն միացված է: անջատելը հեռացնում է Spatial կոճակը ամենուր։
-2. Բացեք տեսանյութ։ Քանի դեռ կարգավորումը միացված է, վերին գոտին յուրաքանչյուր տեսանյութի վրա ցույց է տալիս Spatial կոճակը (պտտվող 3D պատկերակ): ցանցային համօգտագործման թղթապանակում այն ստանում են միայն ստերեոսկոպիկ ֆայլերը, իսկ մյուսներն ունեն Spatial 2.5D ⋮ ընտրացանկում։
-3. Հպեք դրան։ Առջևի տեսախցիկի թույլտվությունը խնդրվում է առաջին անգամ: տեսախցիկն օգտագործվում է միայն կոճակը սեղմելուց հետո։
-4. Վերևում աջ: Աուդիո ուղի, երբ տեսանյութն ունի երկու կամ ավելի, ընթացիկ դասավորությունը (հպեք դրան ցուցակի համար: Ավտոմատ, Ստերեոսկոպիկ չէ, Կողք կողքի, Վերև և ներքև, վերջին երկուսը նաև փոխված աչքերով), 360°/180° 360° տեսանյութի վրա, և Վերակենտրոնացնել, որը ձեր գլխի ընթացիկ դիրքը վերցնում է որպես կենտրոն։
-5. Ներքևում: նվագարկում, ժամանակագիծը, ապա Գլխի զգայունություն, քանի դեռ ձեր գլուխը հետևվում է, և տեսակետի սահիչը L-ից R, որը ձեռքով տեղաշարժում է տեսակետը: այն երևում է, երբ գլխի հետևումն անջատված է կամ կորցրել է ձեր դեմքը։
-6. Փակեք խաչով կամ համակարգի «հետ» կոճակով։
-
-Երբ Settings, Advanced (Ընդլայնված), Troubleshooting (Անսարքությունների վերացում) միացված է, նվագարկիչը վերևում ձախ ավելացնում է վերադիր (արտապատկերման և անհամաչափության հաճախականություններ, որակի մակարդակ, տեսակետ, հետևման վիճակ), միշտ ցույց է տալիս տեսակետի սահիչը և ավելացնում է «Disparity map» (անհամաչափության քարտեզ) նշավանդակը, որը նկարի փոխարեն ցույց է տալիս գնահատված խորությունը։
-
-### Ձևաչափեր, գաղտնիություն և սահմանափակումներ
-
-- **Ձևաչափեր**: կողք կողքի և վերև ու ներքև, նաև փոխված աչքերով, ամբողջական կամ կես լայնությամբ, հարթ, 360° և VR180։ Դասավորությունը կարդացվում է ֆայլից, հակառակ դեպքում գուշակվում է կադրի ձևից կամ ֆայլի անունից (sbs, ou, tb և նմանատիպ: կես լայնությամբ ֆայլը ճանաչվում է միայն անունով), և կարող է ընտրվել ձեռքով նվագարկիչում։ Ընտրությունը հիշվում է գրադարանի տեսանյութի համար, բայց ոչ ցանցային համօգտագործման ֆայլի համար։
-- **Տեսախցիկ**: պատկերները մշակվում են միայն սարքում, երբեք չեն պահվում և երբեք ոչ մի տեղ չեն ուղարկվում։ Quest-ի բիլդն ընդհանրապես չունի տեսախցիկի թույլտվություն (սաղավարտը չունի տեսախցիկ, որը հավելվածը կարող է օգտագործել), և Spatial նվագարկիչն այնտեղ չի առաջարկվում: նրա կոճակն ու կարգավորումը թաքնված են սաղավարտում։
-- **Սահմանափակումներ**: փորձնական, միայն հեռախոսներ և պլանշետներ (ոչ Meta Quest-ում), պահանջում է OpenGL ES 3.0 կամ Metal։ Խորությունը գնահատական է։ Լավագույնս աշխատում է հորիզոնական դիրքում՝ լավ լուսավորված դեմքով։ Ստուգված է Galaxy S24+-ում: iPhone-ի արձագանքները ողջունելի են։
-- **Պահուստային տարբերակ**: եթե ինչ-որ բան սխալ է ընթանում (տեսախցիկ չկա, չաջակցվող սարք, անընթեռնելի դասավորություն), վերադառնում եք սովորական նվագարկիչ։
-
-<a id="apple-spatial-photos-and-videos"></a>
-## Apple-ի տարածական լուսանկարներ և տեսանյութեր
-
-iPhone-ը նկարում է տարածական լուսանկարներ և տեսանյութեր, և Immich սերվերը դրանց մասին ոչինչ չի ասում: Immich հավելվածում դրանք հարթ լուսանկար կամ տեսանյութ են։ Բիլդ 19-ից Immuch360-ը ճանաչում է դրանք՝ կարդալով ֆայլերը, և Meta Quest սաղավարտում տարածական լուսանկարը ցույց է տալիս 3D-ով։ Սա վերևում նկարագրված Spatial 2.5D նվագարկիչը չէ, որը նախատեսված է կողք կողքի և վերև ու ներքև տեսանյութերի համար։
-
-- **Տարածական լուսանկարները** HEIC ֆայլեր են (`.heic`, `.heif`, `.hif`), որոնք պարունակում են երկու նկար՝ մեկական յուրաքանչյուր աչքի համար, խմբավորված որպես ստերեո զույգ։ Հավելվածը կարդում է ֆայլի սկիզբը (սարքում, սերվերի բնօրինակը՝ տիրույթի հարցումով, կամ ցանցային համօգտագործման ֆայլը) և պատասխանը հիշում հեռախոսում, ուստի լուսանկարը կարդացվում է միայն մեկ անգամ։
-- **Տարածական տեսանյութերը** (MV-HEVC) ճանաչվում են տեսաուղուց: երկրորդ շերտ և երկու աչքերն էլ հայտարարված։
-
-### Տեսնել տարածական լուսանկարը 3D-ով սաղավարտում
-
-1. Սաղավարտում բացեք տարածական լուսանկարը դիտակում կամ ցանցային համօգտագործման թղթապանակում, որտեղ տարածական լուսանկարներն ու տեսանյութերն ունեն 3D նշան։
-2. Հպեք «Դիտել 3D-ով»-ին վերին գոտում (համօգտագործման լուսանկարի էջն էլ ունի այն)։
-3. Ընկղմվող դիտումը բացվում է լուսանկարով՝ հարթ շրջանակի վրա ձեզնից 2 մ առաջ, յուրաքանչյուր աչք ստանում է իր նկարը, տեսախցիկի տեսադաշտից վերցված լայնությամբ, երբ ֆայլը տալիս է այն (հակառակ դեպքում՝ 48°)։ Կիրառվում է ֆայլում գրված անհամաչափության ճշգրտումը։
-4. Ջոյսթիքը վեր կամ վար այն մեծացնում կամ փոքրացնում է (6° քայլերով, 30°-ից մինչև 90°): աջ ջոյսթիքը ձախ կամ աջ այն վերադարձնում է ձեր առջև։
-5. Տեղեկատվական վահանակի 3D կոճակը փոխարկում է 3D-ի և «2D (ձախ աչք)»-ի միջև։ Պտտել և 360°/180° կոճակները թաքնված են։
-6. Հետ գնալու համար սեղմեք B կամ Y։
-
-Նախորդը և հաջորդը դեռ հասանելի չեն տարածական լուսանկարից («Նախորդը և հաջորդը դեռ հասանելի չեն տարածական լուսանկարների համար»)։ Եթե սաղավարտը չի կարող ապակոդավորել երկրորդ աչքը, լուսանկարը ցուցադրվում է 2D-ով՝ «Երկրորդ աչքը հնարավոր չեղավ ապակոդավորել. ցուցադրվում է 2D-ով» հաղորդագրությամբ։ 3D տեսքը ցույց է տալիս բնօրինակ ֆայլը՝ առանց Immich-ում արված խմբագրումների։
-
-### Մնացած բոլոր տեղերում
-
-- **Լուսանկարներ**: հեռախոսները, պլանշետները և սաղավարտի պատուհանը ցույց են տալիս ձախ աչքը, ինչպես նախկինում, և տեխնիկական մանրամասները ստանում են նոր տող, օրինակ՝ «Apple տարածական լուսանկար, 3072 x 3072 երկու տեսք», տեսադաշտով, երբ ֆայլը տալիս է այն։ Սերվերի լուսանկարները ժամանակագծում նշան չունեն: հավելվածն իմանում է, երբ լուսանկարը բացվում է։
-- **Տեսանյութեր**: դրանք նվագարկում են իրենց հիմնական շերտը՝ մեկ աչք, հավելվածի յուրաքանչյուր նվագարկիչում։ Android-ը երկրորդ տեսքը ապակոդավորելու հրապարակային եղանակ չունի: MV-HEVC-ի սեփական ապակոդավորիչ ունեցող սարքին (որոշ Qualcomm չիպերում) փոխարենը կտրվեր տեսանյութը, ինչը դեռ չի ստուգվել։ Նման տեսանյութի առաջին նվագարկումը նստաշրջանում ասում է «Տարածական տեսանյութ. այս սարքը նվագարկում է մեկ աչք» (ցանցային համօգտագործման տեսանյութը փոխարենը ունի 3D նշան), և նրա տեխնիկական մանրամասներում գրված է «Apple տարածական տեսանյութ (MV-HEVC), ցուցադրվում է 2D-ով»՝ ֆայլում գրանցված աչքով, հիմքի հեռավորությամբ (baseline) և տեսադաշտով։
-- **Ապակոդավորիչներ**: Settings, Advanced, «Այս սարքի տեսավերծիչները» ունի MV-HEVC կետ, որը ցուցակագրում է սարքի համապատասխան ապակոդավորիչը կամ ասում է, որ այն չկա։
-
-### Դեռ չի ստուգվել սարքում
-
-Հայտնաբերումը ստուգվել է Apple-ի սեփական պատկերների գրադարանով գրված նմուշային տարածական լուսանկարի և սինթետիկ ֆայլերի վրա, իսկ 3D կոմպոզիցիան՝ միավորային թեստերով։ Սաղավարտում տեսքը (երկու աչքերն էլ ապակոդավորված, լուսանկարը ուղիղ և ոչ հայելային, խորությունը ճիշտ ուղղությամբ, դրա հարմարավետությունը 2 մ-ի վրա) և իրական iPhone-ի լուսանկարներն ու տեսանյութերը բիլդ 19-ի սարքային փորձարկումն են։ Հաշվետվությունները ողջունելի են՝ [Մատյաններ](#logs) բաժնի տողերով։
-
-<a id="in-the-meta-quest-3-headset"></a>
-## Meta Quest 3 սաղավարտում
-
-Մարդիկ Quest 3 են գնում իրենց սեփական 360° լուսանկարներն ու տեսանյութերը դիտելու համար, ապա հարցնում են, թե որտեղ դնել ֆայլերը, ինչպես դրանք սաղավարտ փոխանցել առանց մալուխի, և որ նվագարկիչն օգտագործել: խանութի 360° և 3D տեսանվագարկիչները վճարովի են։
-
-Նույն Android հավելվածն աշխատում է Quest 3-ում և 3S-ում, իսկ բիլդ 21-ից՝ Quest 2-ում և Quest Pro-ում (չփորձարկված), որպես պատուհան՝ ձեր ամբողջ գրադարանով։ Նրա 360° կոճակը բացում է ընկղմվող դիտում, որտեղ լուսանկարը կամ տեսանյութը ձեր շուրջն է, և դուք շուրջը նայում եք գլուխը շրջելով, ստերեոսկոպիկ ֆայլերի համար՝ իրական 3D-ով (Meta Spatial SDK)։
-
-Մեդիան գալիս է ձեր Immich սերվերից, հենց սաղավարտից, NAS-ից, մեդիա սերվերից, հեռախոսից կամ Plex սերվերից և նվագարկվում է տեղում (մեդիա սերվերը և հեռախոսը՝ բիլդ 19-ից, Plex սերվերը՝ բիլդ 20-ից, դեռ չստուգված սաղավարտում), իսկ բիլդ 20-ից պատուհանը ցույց է տալիս նաև Tapo տեսախցիկները։ Այն անվճար է և բաց կոդով։ Ստուգված է Quest 3-ում, ինչպես նաև մի օգտատիրոջ կողմից՝ Insta360 X4 8K HEVC տեսանյութերով։
-
-### Բացել ընկղմվող դիտումը
-
-1. Տեղադրեք հավելվածը սաղավարտում [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)-ից, կամ ձեռքով տեղադրեք (sideload) ավելի նոր բիլդի APK-ն, տե՛ս [Տեղադրում](#install)։
-2. Մուտք գործեք ձեր Immich սերվերով կամ հպեք «Օգտագործել առանց սերվերի»-ին՝ սաղավարտի սեփական լուսանկարների և տեսանյութերի համար։
-3. Բացեք 360° լուսանկար կամ տեսանյութ դիտակում՝ ժամանակագծից, 360° ցանկից, ալբոմից կամ համօգտագործման թղթապանակից։
-4. Սեղմեք 360° կոճակը կամ «Դիտել որպես 360°»-ը ⋮ ընտրացանկում։ Սաղավարտում դրանք անմիջապես բացում են ընկղմվող դիտումը՝ հեռախոսների գնդաձև դիտակի փոխարեն։
-5. Շուրջը նայեք՝ գլուխը շրջելով։
-6. Պատուհան վերադառնալու համար սեղմեք B կամ Y, կամ տեղեկատվական վահանակի Հետ կոճակը։
-
-| Գործողություն | Կարգավորիչներ | Ձեռքեր |
-|---|---|---|
-| Վերադառնալ հավելված | B կամ Y | Հետ կոճակը |
-| Նվագարկել կամ դադարեցնել տեսանյութը | Ձգան, երբ տեղեկատվական վահանակը թաքնված է | Նվագարկել կամ Դադար կոճակը |
-| Ցույց տալ կամ թաքցնել տեղեկատվական վահանակը | A, X, բռնակ կամ ընտրացանկ | Ընտրացանկի ժեստ, կամ մատների սեղմում, երբ վահանակը թաքնված է |
-| Պտտել տեսքը (բիլդ 17-ից) | Աջ ջոյսթիքը ձախ կամ աջ, 30° յուրաքանչյուր հրումով | Պտտել կոճակը (90°) |
-| Նախորդ կամ հաջորդ մեդիա | Ձախ ջոյսթիքը ձախ կամ աջ | Նախորդ և Հաջորդ կոճակները |
-| 10 վայրկյան հետ կամ առաջ տեսանյութում | Ջոյսթիքը վար կամ վեր | Երկու ցատկի կոճակները, կամ քաշեք ժամանակի գոտին |
-| Պտտել նկարը 90°-ով | Ջոյսթիքը վար կամ վեր լուսանկարի վրա, Պտտել կոճակը տեսանյութի վրա | Պտտել կոճակը |
-| Փոխել 3D դասավորությունը (մոնո, վերև և ներքև, կողք կողքի) | 3D կոճակը | 3D կոճակը |
-| Ամբողջական գունդ կամ կիսագունդ (VR180) | 360°/180° կոճակը | 360°/180° կոճակը |
-
-Այս աղյուսակում կոճակները և ժամանակի գոտին տեղեկատվական վահանակինն են։ Կարգավորիչներով դրանք նույնպես աշխատում են: ուղղեք դրանց ճառագայթը և սեղմեք ձգանը։
-
-- **Պտտել տեսքը**: հետևը նայելու համար առանց գլուխը շրջելու։ Աջ ջոյսթիքը պահելիս շարունակում է պտտել, և մեկ տողանի վերադիրը ցույց է տալիս անկյունը։
-- **Մեկ տողանի վերադիր**: բիլդ 16-ից ջոյսթիքով առաջ-հետ տանելը, լուսանկարի պտտումը, կամ նախորդն ու հաջորդը ցույց են տալիս մեկ տողանի վերադիր (ժամանակը, անկյունը կամ մեդիայի անունը), և տեղեկատվական վահանակը մնում է թաքնված։ Բիլդ 17-ից առաջ ցանկացած ջոյսթիք անցնում էր նախորդ կամ հաջորդ մեդիային։
-
-### Տեղեկատվական վահանակը, նախորդ և հաջորդ
-
-Տեսանյութի տեղեկատվական վահանակն ունի ժամանակի գոտի (դիրք, տևողություն, որքան է բուֆերացված) երկու 10 վայրկյանանոց ցատկի կոճակների միջև: դրա տակ են Նախորդ, Նվագարկել կամ Դադար և Հաջորդ, ապա Պտտել, 3D, 360°/180° և Հետ։ Լուսանկարն ունի նույն տողերը՝ առանց ժամանակի գոտու և Նվագարկել-ի։ 3D դասավորությունը և 360°/180° ընտրությունը միայն վահանակի կոճակների վրա են։
-
-Նախորդն ու հաջորդը անցնում են այն վայրի 360° մեդիայով, որտեղից եկել եք, առանց ընկղմվող դիտումից դուրս գալու: ժամանակագիծը, 360° ցանկը (ըստ զտման), ալբոմը, ցանցային համօգտագործման թղթապանակը կամ սաղավարտի սեփական մեդիան (Այս սարքավորումում)։ Հարթ լուսանկարներն ու տեսանյութերը բաց են թողնվում։ Երբ ժամանակագծից, ալբոմից կամ 360° ցանկից վերադառնում եք հավելված, այն կանգնում է այն մեդիայի վրա, որը դիտում էիք (համօգտագործման թղթապանակի էջը մնում է ձեր բացած ֆայլի վրա), և այն տեսանյութը, որի վրա բացել էիք ընկղմվող դիտումը, շարունակվում է այնտեղից, որտեղ թողել էիք։
-
-Բիլդ 17-ից աջ ջոյսթիքը պտտում է տեսքը, ինչպես սաղավարտային հավելվածների մեծ մասում: մեկ հրումը պտտում է 30°-ով, պահելը շարունակում է պտտել, ուստի այն, ինչ ձեր հետևում է, գալիս է ձեր առջև՝ առանց գլուխը կամ աթոռը շրջելու: նախորդն ու հաջորդը ձախ ջոյսթիքի վրա են։
-
-Բիլդ 16-ից, սաղավարտում մի օգտատիրոջ արձագանքից հետո, ջոյսթիքով առաջ-հետ տանելը, պտտելը կամ նախորդ/հաջորդը ցույց է տալիս մեկ տողանի վերադիր (ժամանակը, անկյունը կամ մեդիայի անվանումը), որը մարում է 1,5 վայրկյանից հետո՝ տեղեկատվական վահանակը բացելու փոխարեն: վահանակը դեռ բացվում է A, X, բռնակով կամ ընտրացանկի կոճակով։ Նույն բիլդը ապահովում է, որ վահանակի ցուցադրումը աշխատի նաև, երբ կարգավորիչները քնում են, արթնանում կամ տեղը զիջում ձեռքերի հետևմանը, և գրանցում է այդ անցումները մատյանում, տե՛ս [Մատյաններ](#logs)։
-
-«Դիտել 3D-ով»-ով բացված Apple-ի տարածական լուսանկարը չի դրվում գնդի վրա: այն լողում է ձեր առջև, տե՛ս [Apple-ի տարածական լուսանկարներ և տեսանյութեր](#apple-spatial-photos-and-videos)։
-
-### Ինչ է ցույց տալիս սաղավարտը
-
-Լուսանկարները նախ ցույց են տալիս նախադիտում, ապա բնօրինակը՝ փոքրացված առավելագույնը մինչև 8192x4096 (հավելվածի սահմանը)։ Տեսանյութերը նվագարկում են սաղավարտում պահված ֆայլը, երբ այն կա, իսկ ցանցային համօգտագործման ֆայլը՝ հավելվածի տեղական կամրջի միջոցով: հակառակ դեպքում դրանք հոսքով գալիս են ձեր սերվերից՝ ըստ Տեսանյութի աղբյուր կարգավորման (բիլդ 15-ից: լռելյայն՝ բնօրինակը, և սերվերի տրանսկոդավորված տարբերակը, երբ բնօրինակը չի կարող հոսքով նվագարկվել կամ գերազանցում է սաղավարտի ապակոդավորիչները, տե՛ս [Տեսանյութի մանրամասներ և ապակոդավորիչներ](#video-details-decoders-and-why-a-video-stutters))։ Բիլդ 16-ից այստեղ բացվում են նաև տեսախցիկների չմշակված ֆայլերը՝ միացված հավելվածի կողմից: չմշակված տեսանյութի համար 3D և 360°/180° կոճակները թաքնված են, քանի որ այն մեկ ամբողջական գունդ է։
-
-3D դասավորությունները՝ վերև և ներքև և կողք կողքի, 360° և VR180, ցուցադրվում են 3D-ով, յուրաքանչյուր աչք ստանում է կադրի իր կեսը։ Դասավորությունը գալիս է ֆայլից, երբ այն հայտարարում է այն (տեսանյութեր), հակառակ դեպքում գուշակվում է ձևից (քառակուսի: վերև և ներքև, 4:1: կողք կողքի): երբ այն սխալ է, օգտագործեք տեղեկատվական վահանակի 3D կոճակը։
+On a Meta Quest the same app runs as a window with your whole library, and its 360° button opens an immersive view where the photo or video is all around you: you look around by turning your head, stereoscopic files are in true 3D, an Apple spatial photo floats in front of you in 3D, and the controllers or your hands drive the time bar, previous and next, and the Turn button that brings what is behind you in front without turning your chair. The media come from your server, the headset itself, a NAS, a media server, a phone or a Plex server, played in place.
 
 <p align="center">
   <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Ձեր շուրջը գտնվող 360° լուսանկար Quest 3-ում՝ տեղեկատվական վահանակով: դասավորության, 360° և Հետ կոճակներ">
@@ -577,663 +153,163 @@ iPhone-ը նկարում է տարածական լուսանկարներ և տե�
   <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Ստերեոսկոպիկ 360° տեսանյութ Quest 3-ում, տեղեկատվական վահանակում գրված է 3D, վերև և ներքև">
 </p>
 
-- **360° լուսանկար սաղավարտում**: լուսանկարի ընկղմվող դիտումը տեղեկատվական վահանակով (դասավորություն, 360°/180°, Հետ)։
-- **360° տեսանյութ սաղավարտում**: նվագարկվող տեսանյութ՝ Դադար կոճակով։
-- **3D 360° տեսանյութ սաղավարտում**: վերև և ներքև ստերեոսկոպիկ տեսանյութ, յուրաքանչյուր աչք սպասարկված (Kandao Obsidian նմուշը)։
+1. Install the app from the [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), or sideload the APK of a newer build, see [Install](#meta-quest).
+2. Մուտք գործեք ձեր Immich սերվերով կամ հպեք «Օգտագործել առանց սերվերի»-ին՝ սաղավարտի սեփական լուսանկարների և տեսանյութերի համար։
+3. Open a 360° photo or video and press 360°: the immersive view opens. B or Y, or the Back button of the info panel, brings the window back.
 
-Այս պատկերները արվել են հավելվածով ֆրանսերենով, բիլդ 14-ից առաջ։ Վահանակն այժմ ունի նաև ժամանակի գոտին երկու 10 վայրկյանանոց ցատկի կոճակների միջև, Նախորդ և Հաջորդ, ինչպես նաև Պտտել։
+More: [in the Meta Quest headset](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [the headset: codecs, store and permissions](../docs/immuch360/platform-support.md#meta-quest).
 
-### Եթե նկարը ձեզ չի նայում
+<a id="watch-on-the-tv-and-on-the-computer"></a>
+### Watch on the TV and on the computer
 
-Պտտեք այն աջ ջոյսթիքով (կամ տեղեկատվական վահանակի Պտտել կոճակով), մինչև նրա կենտրոնը լինի ձեր առջև։ Անկյունը ցուցադրվում է որպես «Պատկերը պտտված է N աստիճան»՝ վահանակի վրա կամ մեկ տողանի վերադիրում, երբ վահանակը թաքնված է: հրապարակեք այդ թիվը [խնդրագրում (issue)](https://github.com/freeKC/Immuch360/issues)՝ ձեր տեսախցիկի մոդելի հետ, որպեսզի այն դառնա լռելյայն արժեք։ Սկզբնական կողմնորոշումը դեռ հաստատված չէ բոլոր տեսախցիկների համար։
+The same Android app runs on Android TV and Google TV with the remote as the only input: the arrows move the frame, OK opens, Back goes back, and the arrows look around a 360° photo or video. The TV has no photos of its own, so it shows your Immich server, your network shares, your Plex server and your cameras. On a Windows computer, Immuch360 Desktop reads the folders you choose with no server at all, plays flat and 360° videos in a player of its own, browses the same shares and servers, and can share the computer with a headset at home.
 
-### Ընկղմվող դիտման սահմանափակումները
+<p align="center">
+  <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="The sphere viewer on a Google TV: a 360° panorama of a lake shore, the close button at the top left, the Zoom out, Zoom in, 360° and 3D buttons at the top right, turned with the arrows of the remote">
+  <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="The video player of Immuch360 Desktop on Windows: a video of a street playing in the window, with the pause button, the time bar, Share and Upload to Immich">
+</p>
 
-- **Նախորդ և հաջորդ**: դրանք առաջ են նայում առավելագույնը 400 մեդիա ժամանակագծում և 50 ֆայլ համօգտագործման թղթապանակում, առավելագույնը 12 վայրկյան: դրանից հետո վահանակն ասում է, որ նախորդ կամ հաջորդ 360° մեդիա չկա։ Համօգտագործման թղթապանակը ստուգվում է ֆայլ առ ֆայլ, ուստի բազմաթիվ հարթ ֆայլերից հետո առաջին 360° ֆայլը գտնելը կարող է մի քանի վայրկյան տևել։ Դրանք դեռ հասանելի չեն տարածական լուսանկարից։
-- **3D ընտրություն**: 3D կոճակով ընտրված դասավորությունը չի հիշվում, երբ դիտակը փակվում է: 360°/180° ընտրությունը հիշվում է գրադարանի մեդիայի համար։
-- **Առաջ-հետ տանել**: տեսանյութը, որի աղբյուրը չի պատասխանում բայթերի տիրույթի հարցումներին, հնարավոր չէ առաջ-հետ տանել: վահանակն ասում է այդ մասին։
-- **Հարթ տեսանյութեր**: հարթ (ոչ 360°) ստերեոսկոպիկ տեսանյութը նվագարկվում է պատուհանում՝ երկու աչքերն էլ տեսանելի: ընկղմվող 3D դիտումը նախատեսված է 360° և VR180 մեդիայի համար։
-- **Այլ**: սաղավարտի ապակոդավորած կոդեկները, խանութը, թույլտվությունները և APK-ի չափը նկարագրված են [Meta Quest 3](#meta-quest-3) բաժնում։
+1. On a TV: install the APK with adb (see [Install](#android-tv-and-google-tv)), sign in or choose "Use without a server", add a share, a Plex server or a camera from the Library.
+2. On a Windows computer: unzip the preview and start `immuch360.exe` (see [Install](#windows)), then choose the folders of your photos and videos, or sign in to your server.
+3. In a viewer, the play and pause, rewind, fast forward, previous and next keys of the remote work, and so do the keyboard keys on a computer (Space, J and L, F for full screen).
 
-<a id="watch-on-your-tv-android-tv-and-google-tv"></a>
-## Դիտել հեռուստացույցով (Android TV և Google TV)
+More: [watch on your TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [on a Windows computer](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [platform support](../docs/immuch360/platform-support.md).
 
-Ուզում եք 360° լուսանկարներն ու տեսանյութերը, ձեր ալբոմները և ձեր NAS-ի կամ Plex սերվերի տեսանյութերը մեծ էկրանին՝ բազմոցին նստած ընտանիքի համար, հեռուստացույցի հեռակառավարման վահանակով։ Immich-ի բջջային հավելվածը հեռուստատեսային հավելված չէ. օգտատերը, որը այն տեղադրել է հեռուստացույցում, պարզել է, որ այն աշխատում է մկնիկով, ոչ թե հեռակառավարման վահանակով ([քննարկում #1614](https://github.com/immich-app/immich/discussions/1614)), իսկ Immich-ի թիմը պաշտոնական հեռուստատեսային հավելված չի ծրագրում ([քննարկում #13748](https://github.com/immich-app/immich/discussions/13748))։
+<a id="cameras-plex-and-raw-camera-files"></a>
+### Cameras, Plex and raw camera files
 
-Բիլդ 20-ից նույն Android հավելվածն աշխատում է Android TV-ում և Google TV-ում՝ հեռակառավարման վահանակով որպես միակ մուտքագրում. մեկ APK հեռախոսների և հեռուստացույցների համար, սլաքներով պտտվող 360° և 3D դիտակներ, և ցանցային համօգտագործումները, Plex-ը և Tapo տեսախցիկները հեռուստացույցում՝ Immich սերվերով կամ առանց դրա։
+- **Tapo cameras**: a camera is added next to the network shares. The app shows it live (Android, Android TV, the Quest and Windows) and lists the recordings of its memory card day by day on every platform; a clip is fetched from the camera, plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link.
+- **Plex Media Server, without plex.tv**: the app pairs with your server directly, with a token you paste once, and reads the original files of your libraries live, so 360° stays 360°, at home and, through your port forwarding, away from home.
+- **Raw 360° camera files**: the raw .insp photos and .insv videos of Insta360 cameras (one or two lenses, in one track, two tracks or two files), the .360 files of the GoPro MAX and the .osv files of the DJI Osmo 360 are stitched by the app as they play, with the calibration written in the file, with nothing to install anywhere.
 
-<a id="install-it-on-the-tv"></a>
-### Տեղադրել հեռուստացույցում
+More: [Tapo cameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [raw 360° camera files](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
-1. Մինչև Google Play-ը չառաջարկի հավելվածը հեռուստացույցների համար, ինչը սպասում է հեռուստատեսային թողարկման Google-ի վերանայմանը, վերցրեք ունիվերսալ `Immuch360-v<version>-release.apk`-ը [Releases](https://github.com/freeKC/Immuch360/releases) էջից։
+<a id="devices-and-systems"></a>
+## Devices and systems
+
+One code base, six environments. What each one has today:
+
+| Capability | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ viewer | ✅ | ✅ | 🔧 |
+| Without a server: the device's own media | ✅ | ✅ | shares only | ✅ | ✅ folders | 🔧 |
+| Flat photos and videos | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| 360° photos as a sphere | ✅ | ✅ | ✅ | ✅ immersive | ✅ | 🔧 |
+| 360° videos | ✅ | ✅ no time bar | ✅ | ✅ immersive | ✅ | 🔧 |
+| 3D and VR180 | ✅ one eye | ✅ one eye | ✅ one eye | ✅ true 3D | ✅ one eye | 🔧 |
+| Spatial 2.5D (head tracking) | ✅ experimental | ✅ experimental | ❌ | ❌ | 🔜 | ❌ |
+| Apple spatial photos | ✅ one eye | ✅ one eye | ✅ one eye | ✅ 3D | ✅ one eye | 🔧 |
+| Raw Insta360, GoPro and DJI files | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| Tapo cameras: recordings | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| Tapo cameras: live view | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
+| Share this device on the network | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
+| Upload to Immich from shares and the device | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
+| Input | touch, gyroscope | touch, gyroscope | remote | controllers, hands | mouse, keyboard | |
+| Where to get it | Google Play, APK | App Store (in review) | APK, Google Play (in review) | Horizon Store, APK | preview ZIP | CI builds only |
+
+✅ in the app on that platform · ❌ not offered there · 🔜 planned · 🔧 in the sources and built by the project's CI, not started on that system yet. "One eye" means a 3D file shows its left eye on a flat screen. Not every ✅ has been checked on a real device yet: what was checked where, and what remains to confirm, is in [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) and [Compatibility](../docs/immuch360/compatibility.md).
+
+- **Android phones and tablets**: the complete app, touch and gyroscope, every source.
+- **iPhone and iPad**: the complete app; the 360° video player has play and pause only, the Tapo live view comes later, and the DLNA search sends unicast requests until Apple grants the multicast entitlement.
+- **Android TV and Google TV**: the same APK, driven by the remote; a viewer: backup, uploads and editing are hidden. Checked on the Google TV emulator (login, timeline, viewers, shares, the remote navigation), not on a real TV yet.
+- **Meta Quest 2, Pro, 3 and 3S**: the app as a window, plus the immersive view; HEVC is the safe codec, H.264 stops around 4096x2304 on the Quest 3; the Quest 2 and Quest Pro are not tested yet.
+- **Windows 10 and 11**: a preview, with folders instead of a gallery, a video player of its own (libmpv) for flat and 360° videos, raw files stitched on the graphics chip, no installer yet.
+- **macOS and Linux**: the projects build on the project's CI (Linux built, macOS compiled); the app has not been started on those systems and their video player library is not in yet.
+
+<a id="advanced-features"></a>
+## Advanced features
+
+What the app can read and play, for the reader who wants the whole extent. Each line is detailed in the [user guide](../docs/immuch360/user-guide.md) and the [compatibility page](../docs/immuch360/compatibility.md).
+
+- **Formats**: flat photos and videos (what the device decodes: MP4, MOV, MKV and more); equirectangular 360° photos and videos; partial panoramas (GPano crop); VR180; stereoscopic 3D, top and bottom or side by side, read from the file (the st3d box) or guessed from the frame; Apple spatial photos (HEIC stereo pairs) and spatial videos (MV-HEVC, one eye); raw Insta360 .insp and .insv, GoPro .360, DJI .osv; 10 bit HLG and PQ sources tone mapped on the sphere.
+- **Projection and metadata**: GPano and spherical metadata read from the file, with range requests on a server or a share; the initial view of the camera; "View as 360°" remembered on the device; VR180 recognised from the file or its name; metadata kept intact because the original file is played, never a converted copy.
+- **Native playback**: Media3 on Android and the TV, SceneKit and AVFoundation on iOS, the Meta Spatial SDK in the headset, libmpv on Windows; the original or the transcoded stream chosen from what the device decodes; a list of the device's video decoders in Settings, Advanced; the audio track choice and a buffering indicator.
+- **Raw files stitched on the device**: a Flutter fragment shader for photos; a GPU effect in the player for single track videos; two hardware decoders at once and a GPU compositor for videos with one lens per track or per file (OpenGL ES 3 on Android and the Quest, Metal on iOS, the libmpv filter graph on Windows); the camera's own calibration (Mei, V6 and equidistant models) and accelerometer record; fallbacks to one lens, the transcoded stream, the camera's LRV copy or the unstitched video when the device cannot run two decoders.
+- **Sources**: the device's gallery; the folders of a computer; an Immich server; SMB 2 and 3, WebDAV, DLNA/UPnP; Plex over HTTPS checked against the server's own certificate; Tapo cameras over the local network (HTTPS and RTSP); a phone or a computer shared on the Wi-Fi as a WebDAV server; servers found by Bonjour/mDNS, a local network scan, SSDP, GDM and the TP-Link discovery, and followed when they change address.
+- **On demand reading**: a local bridge serves the players with byte ranges and a per session token; large blocks, read ahead and up to six SMB connections in parallel; thumbnails from a frame of each video; nothing copied to the device.
+- **Hardware**: hardware decoders used wherever they exist, with their measured limits (the Quest 3 H.264 ceiling, two 2048x2048 lenses at most for software decoders); on Windows the 360° view drawn by the graphics chip from each decoded frame, the frame size measured on each computer, the integrated or dedicated chip detected.
+- **Platform specifics**: the gyroscope and the Spatial 2.5D player on phones; the immersive view, controllers and hands on the Quest; the remote layout, the keyboard dialog and the TV banner on Android TV; on the computer, mouse and keyboard, full screen, a single window, a file opened with the program or dropped on it, HEIC, AVIF, TIFF and camera raw photos of the folders when Windows has a decoder for them, and the Windows data protection for passwords and tokens.
+- **Privacy by construction**: no account, no cloud, no analytics; passwords and tokens in the device's secure storage; the camera of the Spatial player used on the device only; shares, Plex and cameras reached on your network only.
+
+<a id="technical-documentation"></a>
+## Technical documentation
+
+- [Features: the complete inventory and the feature by platform matrix](../docs/immuch360/features.md)
+- [User guide: every function, step by step, with its options and messages](../docs/immuch360/user-guide.md)
+- [Compatibility: formats, codecs, decoders, servers and devices checked, limits](../docs/immuch360/compatibility.md)
+- [Platform support: what each system has, how it is installed, what differs](../docs/immuch360/platform-support.md)
+- [Known issues](../docs/immuch360/known-issues.md) and [Troubleshooting](../docs/immuch360/troubleshooting.md), with the logs to attach to a report
+- [Technical details: architecture, Flutter and native modules, the media bridge, the stitching pipeline, the decoders](../docs/immuch360/technical-details.md)
+- [The desktop 360° video renderer: libmpv, the projection pass and the measurements behind it](../docs/immuch360/desktop-360-video-renderer.md)
+- [Release status: builds, stores and what each store has](../docs/immuch360/release-status.md)
+- [Build it yourself: phones, headsets, TVs and computers](../docs/immuch360/build.md)
+
+<a id="install"></a>
+## Install
+
+### Android phones and tablets
+
+1. [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK of the [Releases](https://github.com/freeKC/Immuch360/releases) page: `Immuch360-v<version>-arm64-v8a-release.apk` for a phone; the universal `Immuch360-v<version>-release.apk` works everywhere.
+2. The app installs next to the official Immich app. The APK from GitHub does not update itself: watch the Releases page; once you have installed the app from a store, take the updates from that store.
+
+### iPhone and iPad
+
+1. The App Store version is waiting for Apple's review. Until it is published, build the app with Xcode on a Mac, see [Build it yourself](../docs/immuch360/build.md).
+2. Sign in with your Immich server, or tap "Use without a server".
+
+<a id="android-tv-and-google-tv"></a>
+### Android TV and Google TV
+
+1. Until Google Play offers the app on TVs, take the universal `Immuch360-v<version>-release.apk` of the [Releases](https://github.com/freeKC/Immuch360/releases) page.
 2. Հեռուստացույցում միացրեք մշակողի ընտրանքները և USB վրիպազերծումը (Google TV-ում. Կարգավորումներ, Համակարգ, Մասին, յոթ անգամ ընտրեք «Android TV OS build», ապա Կարգավորումներ, Համակարգ, Մշակողի ընտրանքներ. անունները տարբերվում են հեռուստացույցից հեռուստացույց)։
 3. Նույն ցանցում գտնվող համակարգչից, adb-ով (Android SDK Platform Tools). `adb connect <address of the TV>`, ընդունեք հարցումը հեռուստացույցում, ապա `adb install -r Immuch360-v<version>-release.apk`։
 4. Հավելվածը հայտնվում է հեռուստացույցի հավելվածների մեջ՝ իր պաստառով։ Հաջորդ թողարկումը տեղադրեք նույն կերպ. `-r`-ը պահպանում է մուտքը և կարգավորումները։
 
-### Առաջին գործարկում
+<a id="meta-quest"></a>
+### Meta Quest
 
-1. Մուտք գործեք ինչպես հեռախոսում. սլաքները շրջանակը տեղափոխում են դաշտից դաշտ (բիլդ 23-ից այն անցնում է լրացված դաշտի պիտակի վերևով, ոչ թե դրա միջով), իսկ OK-ը դաշտի վրա («Սեղմեք OK՝ գրելու համար») երկխոսության մեջ բացում է հեռուստացույցի ստեղնաշարը՝ սերվերի հասցեի, էլ. փոստի և գաղտնաբառի համար։
-2. Կամ ընտրեք «Օգտագործել առանց սերվերի»։ Հեռուստացույցը սեփական լուսանկարներ չունի, ուստի Նկարներ ներդիրն ասում է «Այս հեռուստացույցը չունի սեփական լուսանկարներ կամ տեսանյութեր. բացեք ցանցային համօգտագործում Գրադարանից։»՝ Ցանցային համօգտագործումներ կոճակով։ Այնտեղ ավելացրեք համօգտագործում, Plex սերվեր կամ տեսախցիկ, ինչպես հեռախոսում (տե՛ս [Ցանցային համօգտագործումներ](#network-shares-a-nas-a-computer-or-a-media-server))։
+1. From the [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/): the store version, updated as Meta reviews each submission.
+2. Or sideload the `-quest-release.apk` file of a [release](https://github.com/freeKC/Immuch360/releases) in developer mode with adb or SideQuest: `adb install -r Immuch360-v<version>-quest-release.apk`, then open the Library of the headset, "Unknown sources".
+3. The store version and the GitHub APK are signed with different keys: to switch from one to the other, uninstall the app first, which loses the login, the settings and the list of network shares.
 
-### Շարժվել հեռակառավարման վահանակով
+<a id="windows"></a>
+### Windows
 
-- Սլաքները տեղափոխում են շրջանակը, OK-ը բացում է այն, ինչի վրա այն գտնվում է, Հետ-ը վերադառնում է։ Ներդիրից Հետ-ը տանում է կողային ընտրացանկ, ապա Նկարներ, ապա դուրս է գալիս հավելվածից։ Ընտրանքների ցանկում, օրինակ՝ համօգտագործման տեսակը կամ կարգավորումը, սլաքները միայն տեղափոխում են շրջանակը, իսկ OK-ը ընտրում է տարբերակը (բիլդ 22-ից. նախկինում սլաքները փոխում էին ընտրությունը)։
-- Ալիքի վերև և ներքև կոճակները ոլորում են մեկ էջ միանգամից։ Բիլդ 22-ից լուսանկարների ցանցերը տողում ցույց են տալիս մոտ վեց սալիկ՝ էկրանի եզրերի ներսում, սարքի սեփական ֆայլերի ավելի հստակ մանրապատկերներով, իսկ այն էջերը, որոնք հեռախոսում ունեն նկարով վերնագիր (360° ցանկը, Ընտրյալներ, սարքի ալբոմները), դրա փոխարեն ցույց են տալիս մեկ գոտի։ Բիլդ 23-ից այդ մանրապատկերները պատրաստվում են իրենց սալիկի կրկնակի չափով և սահուն փոքրացվում, ուստի նուրբ մանրամասները, օրինակ՝ ձյունածածկ ճյուղերը, այլևս չեն առկայծում, իսկ սերվերի լուսանկարները ցույց են տալիս նրա ավելի մեծ նախադիտման պատկերը՝ նույնքան հստակ, այլ ոչ թե սալիկի չափով ձգված փոքր մանրապատկերը։
-- Բիլդ 22-ից շրջանակը սկսվում է յուրաքանչյուր էջի առաջին տարրից (360° ցանկի առաջին սալիկը, էլ. փոստի դաշտը՝ սերվերի հասցեն հաստատելուց հետո), մնում է էկրանի եզրերի ներսում, երբ ցանցը ոլորվում է (բիլդ 23-ից նաև Settings-ի երկու վահանակներում), և ցանցից բարձրանում է դրա վերևի տողին կամ զտիչներին, ոչ թե Հետ կոճակին։ Ցանցային համօգտագործումից կամ տեսախցիկից աջ սլաքը հասնում է դրա խմբագրման կոճակին, իսկ «Ստուգել միացումը»-ի արդյունքը ոլորվում է տեսադաշտ։
-- Դիտակներում աշխատում են հեռակառավարման վահանակի նվագարկման և դադարի, արագ առաջ, հետ փաթաթման, հաջորդի և նախորդի կոճակները, իսկ տեղեկատվության կոճակը ցույց է տալիս լուսանկարի կամ տեսանյութի մանրամասները։
+1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) (about 58 MB, with `SHA256SUMS.txt` to check it) and unzip it anywhere, for example in Documents.
+2. Start `immuch360.exe` from the unzipped folder and keep the folder whole: the program needs the files next to it, among them `libmpv-2.dll`, the video player.
+3. The files are not signed yet: Windows SmartScreen may show "Windows protected your PC", choose "More info" then "Run anyway". The first start of a new build can take up to a minute while Windows scans the files.
+4. Windows 10 or 11, 64 bit. There is no installer and no automatic update yet: unzip the next build the same way.
 
-### Լուսանկարներ և տեսանյութեր հեռակառավարման վահանակով
+### macOS and Linux
 
-1. **Լուսանկար**: ձախն ու աջը անցնում են նախորդին կամ հաջորդին, OK-ը ցույց է տալիս կամ թաքցնում կառավարման տարրերը, Վերևը տանում է վերին գոտի (որտեղ 360° կոճակն է), իսկ Ներքևը՝ ներքևի գոտի։
-2. **Տեսանյութ**: OK-ը դադարեցնում է՝ ցույց տալով կառավարման տարրերը, կամ նվագարկում։ Նվագարկման ընթացքում ձախն ու աջը ցատկում են 10 վայրկյան հետ կամ առաջ. դադարի ժամանակ դրանք անցնում են նախորդ կամ հաջորդ տարրին, ինչպես ասում է հուշումը. «Դադարեցված է. սլաքներն անցնում են նախորդ կամ հաջորդ տարրին»։
-3. **360° լուսանկար**, 360° կոճակից. սլաքներով նայում եք շուրջը, պահելիս՝ ավելի արագ, և դիտումը սահուն կանգ է առնում։ OK-ը անցնում է վերին գոտու կոճակներին՝ «Մեծացնել»-ի վրա, «Փոքրացնել»-ի, տեսադաշտի և 3D-ի կողքին. ալիքի վերև և ներքև կոճակները նույնպես մեծացնում և փոքրացնում են։ Հետ-ը կոճակներից վերադառնում է պատկերին, ապա փակում։ Հուշումն ասում է «Սլաքներ՝ շուրջը նայելու համար, OK՝ կառավարման համար, Հետ՝ փակելու համար»։
-4. **360° տեսանյութ**, 360° կոճակից. սլաքներով նայում եք շուրջը, մինչ կառավարման տարրերը թաքնված են, OK-ը դադարեցնում է և ցույց տալիս դրանք, Հետ-ը թաքցնում է դրանք, ապա փակում։ Հուշումն ասում է «Սլաքներ՝ շուրջը նայելու համար, OK՝ դադարեցնելու և կառավարումը ցույց տալու համար, Հետ՝ փակելու համար»։
-5. **Memories (Հիշողություններ)**: ձախն ու աջը անցնում են լուսանկարներով և շարունակում դեպի հաջորդ հիշողությունը, Վերևը տանում է փակելու կոճակին, իսկ Ներքևը՝ «View in timeline (Դիտել ժամանակագծում)»։
-6. **Համօգտագործումներ և Plex**: նույն կոճակները համօգտագործման լուսանկարների և տեսանյութերի էջերում, որտեղ ձախն ու աջը բացում են թղթապանակի նախորդ կամ հաջորդ ֆայլը։
-
-### Հեռակառավարման վահանակի դասավորություն կարգավորումը
-
-Settings (Կարգավորումներ), Preferences (Նախընտրություններ), «Հեռակառավարման վահանակի դասավորություն». «Ֆոկուսի մեծ շրջանակներ և հեռակառավարման կոճակներ՝ առանց հպէկրան պահանջող կառավարման տարրերի։ Ավտոմատը միացնում է այն Android TV-ում և Google TV-ում։» Ավտոմատը լռելյայն է. Միացվածը հարմար է ստեղնաշարով կամ խաղային վահանակով կառավարվող պլանշետի համար. Անջատվածն անջատում է այն հեռուստացույցում։ Կարգավորումը գոյություն ունի միայն Android-ում։ Բիլդ 22-ից փոփոխությունն անմիջապես կիրառվում է բաց էջի վրա, որը մնում է իր տեղում (նախկինում Settings-ը նորից բացվում էր Advanced-ի վրա՝ մեկնարկային էկրանի վերևում, որով Հետ-ը պետք է անցներ)։ Սլաքները և OK-ը դիտակներում աշխատում են ստեղնաշարով կամ խաղային վահանակով՝ անկախ կարգավորումից։
-
-### Սահմանափակումներ
-
-- **Դիտակ**: հեռուստացույցում հավելվածը ցույց է տալիս և նվագարկում։ Պահուստավորումը, վերբեռնումները, խմբագրումը, ջնջումը, համօգտագործումը, մի քանի տարրերի ընտրությունը, Cast-ը, Spatial 2.5D-ն, գիրոսկոպը, քարտեզը և Places (Վայրեր) բաժինը, ինչպես նաև «Համօգտագործել այս հեռախոսը ցանցում»-ը թաքցված են։
-- **Մուտք**: OAuth-ը բացում է վեբ էջ, ինչը հեռուստացույցը չի կարող անել. «(մատակարար)-ով մուտքը բացում է վեբ էջ, ինչը այս հեռուստացույցը չի կարող անել։ Փոխարենը մուտք գործեք էլ. փոստով և գաղտնաբառով։»
-- **Հղումները** ցույց են տալիս իրենց հասցեն «Բացել այլ սարքում» բաժնում՝ դիտարկիչ բացելու փոխարեն, իսկ տեքստը մուտքագրվում է համակարգի ստեղնաշարի երկխոսությունում։
-- **Հիշողություն**: քիչ հիշողությամբ հեռուստացույցում 360° լուսանկարները ցուցադրվում են առավելագույնը 4096x2048 չափով՝ առանց մեծացնելիս ավելի հստակ պատկերի։
-- **Տեսանյութեր**: հեռուստացույցի ապակոդավորիչներն են որոշում, թե ինչ է նվագարկվում՝ նույն Տեսանյութի աղբյուր կարգավորմամբ և ապակոդավորիչների ստուգմամբ, ինչ հեռախոսում (տե՛ս [Տեսանյութի մանրամասներ և ապակոդավորիչներ](#video-details-decoders-and-why-a-video-stutters)). դեռ չափված չէ հեռուստացույցում։
-- **Դեռ ստուգված չէ սարքում**: հեռուստացույցի աջակցությունը ստուգվել է միայն ավտոմատ թեստերով և դեռ չի աշխատել ոչ հեռուստացույցում, ոչ էլ հեռուստացույցի էմուլյատորում։ Հաստատման ենթակա են. սլաքների պտտման ուղղությունը 360° տեսանյութում, հեռուստացույցի ստեղնաշարը (Gboard) տեքստային երկխոսությունում, ինֆրակարմիր հեռակառավարման վահանակների OK կոճակը, լուսանցքները և պաստառը հեռուստացույցի գլխավոր էկրանին։ Հաղորդումները ողջունելի են։
-- **Google Play-ը հեռուստացույցներում** սպասում է հեռուստատեսային թողարկման Google-ի վերանայմանը. մինչ այդ՝ APK-ն։
-- **Այլ հեռուստացույցներ**: Fire TV-ն փորձարկված չէ, և Apple TV-ի տարբերակ չկա։
-
-<a id="find-your-360-shots-the-360-list"></a>
-## Գտեք ձեր 360° կադրերը: 360° ցանկը
-
-360° կադրերը խառնված են մնացած բոլոր լուսանկարների հետ, և մարդիկ Immich-ից խնդրում են գնդերն ու համայնապատկերները զտելու եղանակ ([#12824 քննարկում](https://github.com/immich-app/immich/discussions/12824))։ Immich հավելվածը նման ցանկ չունի։
-
-Immuch360-ը 360° նշան է դնում 360° լուսանկարների մանրապատկերներին (ցանցային համօգտագործման թղթապանակում՝ նաև 360° տեսանյութերին) և 360° կետ Գրադարան ներդիրի վերևում։ Բիլդ 18-ից այդ ցանկը սերվերի առկայությամբ պարունակում է սերվերի կողմից որպես 360° նշված լուսանկարներն ու տեսանյութերը, չմշակված Insta360 ֆայլերը՝ ըստ անվան, 360° տեսախցիկի կողմից ինքնուրույն միացված լուսանկարները և նրանք, որոնք ընտրել եք դիտել որպես 360°, գումարած այն, ինչ գտել է սարքի որոնումը: առանց սերվերի՝ այն, ինչ գտել է սարքի որոնումը, և նրանք, որոնք ընտրել եք դիտել որպես 360°։ Յուրաքանչյուրը հայտնվում է մեկ անգամ, որտեղ էլ լինեն նրա պատճենները, ամենանորը՝ առաջինը։ Բիլդ 22-ից մանրապատկերների ցանցի վերևում հայտնվում է «Ցանցային համօգտագործումներում» տողը՝ ձեր համօգտագործումների 360° լուսանկարներով և տեսանյութերով, ամենանորը՝ առաջինը. հավելվածը դրանք ճանաչում է, երբ ցույց է տալիս դրանց թղթապանակը կամ բացում դրանք (ինքնուրույն չի որոնում համօգտագործման մեջ), պահում է դրանք մի գործարկումից մյուսը և մոռանում դրանք իրենց համօգտագործման հետ։ Հեռուստացույցում, որը սեփական լուսանկարներ չունի, հենց այդ տողն է լցնում 360° ցանկը։
-
-<img src="../.github/readme/b19-360-list.png" width="260" alt="360° ցանկը, 4 տարր, բացված Ամսաթիվ թերթիկով: All, 2026 թվականը իր քանակով, Ամբողջ տարին, 2026 օգոստոսը և 2026 ապրիլը իրենց քանակներով, 2025 թվականը և Custom">
-
-### Զտել ցանկը
-
-1. Բացեք Գրադարան ներդիրը և հպեք 360°-ին (սերվերի դեպքում՝ Favorites (Ընտրյալներ)-ի կողքին, առանց սերվերի՝ միայնակ)։
-2. Հպեք Ամսաթիվ-ին ժամանակահատվածի համար: All (Բոլորը), տարի (բացեք այն «Ամբողջ տարին»-ի և նրա ամիսների համար, յուրաքանչյուրը՝ իր քանակով), կամ Custom (Հատուկ)՝ օրերի միջակայքի համար։
-3. Սերվերի դեպքում ընտրեք, թե որտեղ է մեդիան: «Սերվերում», «Այս սարքավորումում» և «Ինձ հետ կիսված», երբ այդպիսիք կան։
-4. Ընտրեք տեսակը: Նկարներ, Videos, 3D, VR180։
-5. Երբ ցանկը պարունակում է երկու կամ ավելի տեսախցիկ, երկրորդ տողը ցուցակագրում է դրանք ըստ EXIF արտադրողի և մոդելի՝ իրենց քանակներով։ Առանց այդ տվյալների չմշակված ֆայլը կոչվում է իր ընդլայնման ապրանքանիշով (Insta360, GoPro, DJI), մնացած ամեն ինչը՝ «Անհայտ տեսախցիկ»։
-6. Խմբի ներսում (վայրերը, Նկարներ և Videos, 3D և VR180, տեսախցիկները) ընտրությունները գումարվում են, խմբերի միջև՝ նեղացնում ցանկը։ Ամսաթիվ, Նկարներ և Videos ընտրությունները կիրառվում են նաև ցանցային համօգտագործումների տողի վրա. 3D-ն, VR180-ը և տեսախցիկները թաքցնում են այն, քանի որ հավելվածը դրանցից ոչ մեկը չգիտի համօգտագործման ֆայլի համար։ Clear (Մաքրել)-ը վերակայում է ամեն ինչ: «Այս զտիչներին համապատասխանող 360° լուսանկար կամ տեսանյութ չկա» նշանակում է, որ զտիչները ոչինչ չեն թողնում։
-7. Բացեք լուսանկար կամ տեսանյութ։ Quest-ի ընկղմվող դիտման մեջ նախորդն ու հաջորդը հետևում են զտված ցանկին։
-
-<a id="video-details-decoders-and-why-a-video-stutters"></a>
-## Տեսանյութի մանրամասներ, ապակոդավորիչներ և ինչու է տեսանյութը կմկմում
-
-Մարդիկ հարցնում են, թե որ կոդեկը, չափը և բիթային արագությունն է նվագարկում Quest 3-ը, և ինչու է 5.7K արտահանումը սաղավարտում կմկմում, մինչդեռ հեռախոսում նվագարկվում է։ Պատասխանը ապարատային ապակոդավորիչն է: Quest 3-ի (XR2 Gen 2) H.264 ապակոդավորիչը սահմանափակվում է մոտ 4096x2304-ով, ուստի 5760x2880 H.264 տեսանյութը (մակարդակ 6.0, մոտ 200 Մբիթ/վ, Insta360-ի սովորական արտահանումը) սաղավարտում ապակոդավորվում է մոտ 17 fps-ով՝ բլոկային աղավաղումներով, մինչդեռ նույն ֆայլը հեռախոսում լավ է նվագարկվում։
-
-Նույն տեսանյութը HEVC-ով (H.265) լավ է նվագարկվում սաղավարտում: Insta360 X4 8K HEVC տեսանյութը (7680x3840, 29,97 fps, 210 Մբիթ/վ, Main պրոֆիլ, մակարդակ 6.1, 8 բիթ) սահուն նվագարկվում է ընկղմվող դիտման մեջ՝ իր բնիկ լուծաչափով և առանց տրանսկոդավորման (ըստ Quest 3-ի մի օգտատիրոջ)։
-
-Immich հավելվածն ունի մեկ «Ստիպել բնագիր տեսահոլովակը» անջատիչ և ցույց է տալիս միայն կոդեկը։ Immuch360-ը ցույց է տալիս, թե ինչ է տեսանյութը և ինչ է ապակոդավորում սարքը, և ընտրում է այն ֆայլը, որը նվագարկվում է։
-
-<img src="../.github/readme/b19-video-details.png" width="260" alt="360° տեսանյութի մանրամասները: Կոդեկ H.264 High (avc1.640033), 3840 x 1920, 30 fps. Բիթային արագություն 16 Mbit/s. Պատկեր 8 բիթ, SDR, BT.709. Վերծանվում է այս սարքում: Այո, Ապարատային, մինչև 4096 x 2304">
-
-### Կարդալ տեսանյութի մանրամասները
-
-1. Բացեք տեսանյութը և սահեցրեք վերև: մանրամասները հայտնվում են նկարի տակ։
-2. Կոդեկ: կոդեկը՝ իր պրոֆիլով և կոդեկների տողով, կադրի չափը և կադրերի հաճախականությունը, օրինակ՝ «H.264 High (avc1.640033) • 3840 x 1920 • 30 fps», ինչպես վերևի նկարում։
-3. Բիթային արագություն (բիլդ 18-ից): տեսաուղու բիթային արագությունը կամ այն, որ հայտարարում է ֆայլը: հակառակ դեպքում այն նշվում է «ամբողջ ֆայլը՝ ձայնի հետ» կամ «գնահատված ֆայլի չափով»։
-4. Պատկեր (բիլդ 18-ից): բիթային խորությունը, SDR կամ HDR փոխանցման ֆունկցիան (HLG, PQ, Dolby Vision) և գունային տարածքը։
-5. Վերծանվում է այս սարքում: այո կամ ոչ, ապարատային կամ ծրագրային, ապակոդավորիչի ընդունած ամենամեծ չափը, և «(պրոֆիլ)-ի համար ապակոդավորիչ չկա», երբ սարքն ունի կոդեկը, բայց ոչ այդ պրոֆիլը։
-
-Տողը հայտնվում է միայն ֆայլը կարդալուց հետո և միայն այն մասին, ինչ ֆայլն ասում է։ Apple-ի տարածական լուսանկարը կամ տեսանյութը ստանում է իր սեփական տողը, տե՛ս [Apple-ի տարածական լուսանկարներ և տեսանյութեր](#apple-spatial-photos-and-videos)։
-
-### Տեսնել, թե ինչ է ապակոդավորում սարքը
-
-Settings, Advanced, «Այս սարքի տեսավերծիչները» (բիլդ 15-ից) ցուցակագրում է, թե ինչ է ապակոդավորում հեռախոսը կամ սաղավարտը: կոդեկ, ապարատային կամ ծրագրային, ամենամեծ չափը, կադրերի հաճախականությունը, իսկ բիլդ 18-ից՝ պրոֆիլները (Main, Main 10, HDR10)։ Բիլդ 19-ից այն ունի MV-HEVC կետ՝ Apple-ի տարածական տեսանյութերի կոդեկը։ Պատճենել կոճակը ցանկը դնում է սեղմատախտակին՝ սխալի հաշվետվության համար։
-
-### Ընտրել բնօրինակը կամ տրանսկոդավորված հոսքը
-
-1. Բացեք Settings, Asset Viewer, ապա Videos։
-2. «Տեսանյութի աղբյուր» («Որ ֆայլն է նվագարկվում, երբ սերվերն ունի տրանսկոդավորված պատճեն») բաժնում ընտրեք «Բնօրինակը, երբ այս սարքը կարող է այն վերծանել», «Միշտ բնօրինակը» կամ «Միշտ տրանսկոդավորված հոսքը»։
-
-Բիլդ 15-ից ընտրությունը կիրառվում է սերվերի յուրաքանչյուր տեսանյութի նկատմամբ: հարթ նվագարկիչ, 360° և Spatial նվագարկիչներ և Quest-ի ընկղմվող դիտում։ Քանի դեռ չեք ընտրել, հեռախոսը պահպանում է այն, ինչ ասում էր նախկին «Ստիպել բնագիր տեսահոլովակը» անջատիչը (լռելյայն անջատված: տրանսկոդավորված հոսքը, որը հենց բնօրինակն է, երբ սերվերը այն չի տրանսկոդավորել), իսկ Quest-ը նվագարկում է բնօրինակը, երբ սաղավարտը կարող է այն ապակոդավորել։
-
-Ստուգումը ֆայլից կարդում է կոդեկը, չափը և կադրերի հաճախականությունը և համեմատում ապարատային ապակոդավորիչների հետ (Quest 3-ում H.264-ը սահմանափակված է չափված 4096x2304-ով)։ Նվագարկիչը, որը չի կարող ապակոդավորել բնօրինակը, անցնում է տրանսկոդավորված հոսքին՝ հաղորդագրությամբ: «Նվագարկվում է տրանսկոդավորված հոսքը՝ բնօրինակը (կոդեկ և չափ) գերազանցում է այս սարքի վերծանման հնարավորությունները»։
-
-Սաղավարտում ընկղմվող դիտումը սկսում է բնօրինակը և, առաջին կադրերի ժամանակ, անցնում է սերվերի տրանսկոդավորված հոսքին, երբ բնօրինակը գերազանցում է ապակոդավորիչները, և այդ մասին ասում է տեղեկատվական վահանակում: երբ տրանսկոդավորված հոսք չկա, երբ այն դեռ չափազանց մեծ է, կամ երբ ֆայլը գալիս է սաղավարտից կամ ցանցային համօգտագործումից, տեղեկատվական վահանակը 10 վայրկյան ասում է այդ մասին՝ նշելով, թե ինչ փոխել։ Բիլդ 14-ը, որն ուղարկվել է Horizon Store, ստուգում է միայն 4096x2304-ից մեծ H.264-ը, ապա նույն կերպ փորձում է սերվերի նվագարկման հոսքը։
-
-Երկու ոսպնյակով չմշակված տեսանյութերի համար ստուգումը պահանջում է միաժամանակ երկու ապակոդավորիչ, իսկ բիլդ 19-ից ծրագրային ապակոդավորիչին չի տալիս 2048x2048-ից մեծ երկու հոսք, տե՛ս [Տեսախցիկների չմշակված 360° ֆայլեր](#raw-360-camera-files-without-the-cameras-app)։
-
-### Տվեք սաղավարտին տեսանյութ, որը նա կարող է ապակոդավորել
-
-Immich-ում անցեք Administration (Ադմինիստրացիա), Settings, Video Transcoding Settings (Տեսանյութերի տրանսկոդավորման կարգավորումներ) և ընտրեք դրանցից մեկը:
-
-- **H.264-ի յուրաքանչյուր տեսանյութ վերակոդավորված HEVC-ով**: Video codec (Տեսանյութի կոդեկ)-ը դրեք HEVC, Target resolution (Նպատակային լուծաչափ)-ը՝ Original (լռելյայն 720p-ն 360° տեսանյութը կփոքրացներ մինչև 1440x720), և Accepted video codecs (Ընդունելի տեսանյութի կոդեկներ)-ում թողեք միայն HEVC։ Գրադարանի H.264-ի յուրաքանչյուր տեսանյութ տրանսկոդավորվում է, ոչ միայն 360° տեսանյութերը, և սաղավարտը ստանում է ամբողջական լուծաչափով HEVC։
-- **Միայն այն, ինչ մեծ է 1440p-ից**: Accepted video codecs-ում թողեք H.264-ը, Transcode policy (Տրանսկոդավորման քաղաքականություն)-ն դրեք «Videos higher than target resolution or not in an accepted format» (Նպատակայինից բարձր լուծաչափով կամ ոչ ընդունելի ձևաչափով տեսանյութեր), իսկ Target resolution-ը՝ 1440p, ցանկալի է Video codec-ը HEVC դրած։ Ավելի մեծ ամեն ինչ տրանսկոդավորվում է, և սաղավարտը ստանում է 2880x1440։ Սովորական 4K տեսանյութերը նույնպես տրանսկոդավորվում են 1440p-ի։
-
-Այս կարգավորումները կիրառվում են ամբողջ սերվերի նկատմամբ, յուրաքանչյուր օգտատիրոջ և յուրաքանչյուր հավելվածի համար, և մեծ գրադարանի վերակոդավորումը պահանջում է ժամերով CPU ժամանակ և լրացուցիչ սկավառակային տարածք: բնօրինակները չեն փոփոխվում։ HEVC չաջակցող դիտարկիչները (Firefox-ը համակարգերի մեծ մասում, Chrome-ն առանց ապարատային HEVC-ի) Immich-ի վեբ հավելվածում չեն նվագարկի HEVC տրանսկոդավորումը։ Նոր տեսանյութերի համար ամենահեշտ լուծումը H.265-ով արտահանելն է Insta360 հավելվածից կամ Studio-ից։ Այս կարգավորումները փոխելուց հետո առկա տեսանյութերը պետք է նորից տրանսկոդավորվեն: Administration, Job Queues (Առաջադրանքների հերթեր) (Immich-ի հին տարբերակներում՝ Jobs (Առաջադրանքներ)), Transcode videos (Տրանսկոդավորել տեսանյութերը), All։
-
-Այլընտրանքը, և միակը ցանցային համօգտագործման կամ սաղավարտի ֆայլերի համար (դրանք տրանսկոդավորված հոսք չունեն), արտահանումը HEVC-ով վերակոդավորելն է՝ նախքան այն վերբեռնելը կամ համօգտագործում պատճենելը:
-
-```bash
-ffmpeg -i VID_360.mp4 -c:v libx265 -crf 20 -preset medium -tag:v hvc1 -c:a copy -movflags +faststart VID_360_hevc.mp4
-exiftool -overwrite_original -tagsFromFile VID_360.mp4 -XMP-GSpherical:all VID_360_hevc.mp4
-exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
-```
-
-`-tag:v hvc1`-ը պիտակավորում է HEVC ուղին այնպես, ինչպես սպասում են Apple սարքերն ու դիտարկիչները, `-c:a copy`-ն պահում է ձայնը այնպես, ինչպես կա։ ffmpeg-ը կորցնում է արտահանման 360° պիտակը, exiftool-ի տողը այն հետ է պատճենում: առանց դրա Immich-ը տեսանյութը ցույց է տալիս որպես հարթ։
-
-### Բնօրինակներ, որոնք չեն կարող հոսքով նվագարկվել
-
-Երբ սերվերը անտեսում է բնօրինակի HTTP Range հարցումները, և MP4 ինդեքսը (moov) ֆայլի վերջում է, առաջին կադրից առաջ պետք կլիներ ներբեռնել ամբողջ ֆայլը, ուստի հավելվածն անցնում է սերվերի նվագարկման հոսքին։ Immich-ի առջև դրված հակադարձ պրոքսին (reverse proxy), որը բուֆերացնում է պատասխանները կամ հեռացնում Range վերնագրերը, կարող է դրա պատճառ լինել։
-
-<a id="everything-else-is-immich"></a>
-## Մնացած ամեն ինչը Immich է
-
-Այն ամենը, ինչ անում է Immich-ի պաշտոնական բջջային հավելվածը, այստեղ է: պահուստավորում, ժամանակագիծ, ալբոմներ, որոնում, համօգտագործում, գործընկերներ, բոլորը համաժամացված ձեր սերվերի հետ, նույն սերվերով և նույն հաշվով, ինչ վեբ հավելվածը։ Immuch360-ը տեղադրվում է պաշտոնական հավելվածի կողքին (փաթեթ `com.aprogsys.immuch360`)։ Կա երկու տարբերություն, բիլդ 15-ից: «Ստիպել բնագիր տեսահոլովակը» անջատիչը դարձել է վերևում նկարագրված Տեսանյութի աղբյուր ընտրությունը, և սարքի ալբոմից ձեռքով վերբեռնած լուսանկարներն ու տեսանյութերը համարվում են պահուստավորված։ Հեռուստացույցում, բիլդ 20-ից, հավելվածը դիտակ է, տե՛ս [Դիտել հեռուստացույցով](#watch-on-your-tv-android-tv-and-google-tv)։
-
-Որպեսզի 360° լուսանկարը ցույց տաք մեկին, ով չունի հավելվածը, համօգտագործեք այն Immich-ի համօգտագործման հղումով: Immich-ի վեբ հավելվածը նրա դիտարկիչում 360° լուսանկարը ցույց է տալիս որպես գունդ։
-
-Ընթացիկ բիլդը՝ բիլդ 23-ը (տարբերակ 3.3.0-rc.0, բիլդի համար 3030021), հիմնված է 2026 թ. հոկտեմբերի 10-ի Immich-ի `main`-ի վրա (տարբերակ 3.3.0-rc.0, դեռ կայուն թողարկում չէ)։ Բիլդ 22-ը, Immich-ի նույն հիմքի վրա, փորձարկվել է Immich 3.2.4 սերվերի և Immich-ի այդ նույն `main`-ից կառուցված սերվերի հետ. մուտք, ժամանակագիծ, ալբոմներ, 360° լուսանկարներ և տեսանյութեր, տեսանյութերի նվագարկում և վերբեռնումներ՝ առանց API սխալի։ Խնդիրների մասին հայտնեք [Issues](https://github.com/freeKC/Immuch360/issues) բաժնում, ոչ թե Immich նախագծին։ Immich-ի ամբողջական փաստաթղթերի համար տե՛ս [immich.app](https://immich.app)։
-
-<a id="compared-with-the-immich-app-and-other-apps"></a>
-## Համեմատություն Immich հավելվածի և այլ հավելվածների հետ
-
-### Ինչու է գոյություն ունենում այս ճյուղավորումը, մեկ աղյուսակում
-
-| | Immich բջջային հավելված | Immuch360 |
-|---|:---:|:---:|
-| 360° լուսանկարներ որպես գունդ, որի մեջ կարելի է շուրջը նայել (քաշել, երկու մատով խոշորացնել, կրկնակի հպում, իներցիա, տեսախցիկի սկզբնական տեսքը, մասնակի համայնապատկերներ) | ❌ հարթ շերտ | ✅ |
-| Գիրոսկոպ: շուրջը նայել հեռախոսը շարժելով | ❌ | ✅ |
-| 360° տեսանյութեր գնդաձև նվագարկիչում՝ ձայնով, առաջ-հետ տանելով, աուդիո ուղու ընտրությամբ և բուֆերացման ցուցիչով | ❌ հարթ տեսանյութ | ✅ Android և iOS (iOS-ում դեռ ժամանակի գոտի չկա) |
-| 3D (ստերեոսկոպիկ) 360° լուսանկարներ և տեսանյութեր | ❌ կրկնակի նկար | ✅ ձախ աչք հեռախոսներում, իրական 3D Quest-ում |
-| VR180 (կիսագունդ) լուսանկարներ և տեսանյութեր | ❌ ձգված գնդի շուրջը | ✅ կիսագունդ, 360°/180° կոճակ |
-| Apple-ի տարածական լուսանկարներ (HEIC ստերեո զույգեր) և տարածական տեսանյութեր (MV-HEVC) | ❌ հարթ լուսանկար կամ տեսանյութ, ոչինչ չի ասում, որ այն տարածական է | ✅ բիլդ 19-ից: լուսանկարներ 3D-ով Quest-ում, այլ տեղերում՝ մեկ աչք և մանրամասների տող |
-| Meta Quest-ի ընկղմվող դիտում՝ գլխի հետևմամբ, ժամանակի գոտով, նախորդով և հաջորդով, և Պտտել-ով | ❌ | ✅ նույն հավելվածը՝ որպես սաղավարտի բիլդ կամ հեռախոսի APK |
-| 360° նշան մանրապատկերներին և 360° ցանկ՝ չմշակված ֆայլերով և զտիչներով (ժամանակահատված, աղբյուր, տեսակ, տեսախցիկ) | ❌ | ✅ զտիչները՝ բիլդ 18-ից |
-| «Դիտել որպես 360°» այն ֆայլերի համար, որոնք սերվերը չի նշում | ❌ | ✅ հիշվում է հեռախոսում |
-| Spatial 2.5D: խորություն հարթ էկրանին ստերեոսկոպիկ տեսանյութից | ❌ | ✅ փորձնական, հեռախոսներ և պլանշետներ |
-| Օգտագործում առանց որևէ սերվերի՝ սարքի սեփական պատկերասրահի վրա | ❌ մուտքը պարտադիր է | ✅ |
-| SMB և WebDAV համօգտագործումներ, որոնք գտնվում են ցանցում և նվագարկվում ուղիղ, ոչինչ չի ներբեռնվում | ❌ | ✅ յուրաքանչյուր դիտակ, հեռախոսներ և Quest |
-| DLNA մեդիա սերվերներ որպես համօգտագործման տեսակ | ❌ | ✅ բիլդ 19-ից |
-| Համօգտագործման ֆայլերն ուղարկել Immich. ձեռքով ուղարկված սարքի ֆայլերը համարվում են պահուստավորված | ❌ միայն սարքի ֆայլեր | ✅ բիլդ 15-ից |
-| Համօգտագործել այս հեռախոսը ցանցում՝ սաղավարտի համար | ❌ | ✅ բիլդ 19-ից, Android և iOS |
-| Plex Media Server-ի գրադարաններ՝ նվագարկված բնօրինակ ֆայլերից, տանը և տնից դուրս, առանց plex.tv-ի | ❌ | ✅ բիլդ 20-ից, բոլոր դիտակները, հեռախոսներում, պլանշետներում, Quest-ում և հեռուստացույցներում |
-| Tapo տեսախցիկներ. ուղիղ դիտումը և հիշողության քարտի տեսագրությունները՝ ուղարկված Immich, երբ դուք որոշեք | ❌ | ✅ բիլդ 20-ից. տեսագրությունները ամենուր, ուղիղ դիտումը Android-ում, Android TV-ում, Quest-ում և, desktop build 3-ից, Windows-ում |
-| Android TV և Google TV՝ հեռակառավարման վահանակով, նույն APK-ում | ❌ հեռուստատեսային հավելված չէ | ✅ բիլդ 20-ից |
-| Նույն հավելվածը Windows համակարգչում | ❌ միայն հեռախոսներ և պլանշետներ | ✅ նախնական տարբերակ. լուսանկարներ, հարթ և 360° տեսանյութեր (desktop build 4) |
-| Չմշակված Insta360 .insp լուսանկարներ և մեկ ուղիով .insv տեսանյութեր | ❌ հարթ | ✅ բիլդ 16-ից |
-| Չմշակված տեսանյութեր՝ մեկ ոսպնյակ յուրաքանչյուր ուղու կամ ֆայլի համար (Insta360 X4, X4 Air, X5, X6, X3 զույգեր, GoPro .360, DJI .osv) | ❌ հարթ կամ սխալ | ✅ բիլդ 18-ից |
-| Կրկնակի ձկնաչքային .dng | ❌ հարթ | ❌ դեռ ոչ |
-| Սերվերի տեսանյութեր: բնօրինակը, երբ սարքը կարող է այն ապակոդավորել, հակառակ դեպքում՝ տրանսկոդավորված հոսքը: սարքի տեսաապակոդավորիչների ցանկ | ❌ մեկ «Ստիպել բնագիր տեսահոլովակը» անջատիչ | ✅ բիլդ 15-ից |
-| Տեսանյութի տեխնիկական մանրամասներ: բիթային արագություն, պատկեր, պրոֆիլ, արդյոք այս սարքը կարող է այն ապակոդավորել | ❌ միայն կոդեկը | ✅ բիլդ 18-ից |
-| Անվճար նվագարկիչ հարթ, 360°, 3D և VR180 տեսանյութերի համար՝ սերվերից, հեռախոսից կամ NAS-ից | ❌ միայն հարթ | ✅ (Quest 3-ի խանութի նվագարկիչները վճարովի են) |
-| Նույն սերվերը, նույն հաշիվը, տեղադրվում է պաշտոնական հավելվածի կողքին | | ✅ |
-
-<details>
-<summary><b>Յուրաքանչյուր տողի կարգավիճակը</b>: ինչպես է այն փորձարկվել</summary>
-
-- **360° լուսանկարներ որպես գունդ**: փորձարկված է Galaxy S24+-ում և iPhone 14-ում։
-- **Գիրոսկոպ**: փորձարկված է Galaxy S24+-ում և iPhone 14-ում։
-- **360° տեսանյութեր**: փորձարկված է Galaxy S24+-ում և iPhone 14-ում։
-- **3D 360° լուսանկարներ և տեսանյութեր**: փորձարկված է Galaxy S24+-ում և Quest 3-ում իրական 3D 360° նմուշներով (VRTogether, Vuze, Kandao) և 3D լուսանկարով: այլ տեսախցիկներից հաշվետվությունները ողջունելի են։
-- **VR180**: փորձարկված է Android էմուլյատորում և Galaxy S24+-ում սինթետիկ մեդիայով: սարքերից արձագանքները ողջունելի են։
-- **Apple-ի տարածական լուսանկարներ և տեսանյութեր**: հայտնաբերումը ստուգված է Apple-ի պատկերների գրադարանով գրված նմուշային լուսանկարի և սինթետիկ ֆայլերի վրա: սաղավարտում տեսքը և իրական iPhone ֆայլերը բիլդ 19-ի սարքային փորձարկումն են։
-- **Meta Quest-ի ընկղմվող դիտում**: փորձարկված է Quest 3-ում (բիլդ 14-ի կառավարումը, ճշգրտված բիլդ 16-ում օգտատիրոջ արձագանքից հետո), ինչպես նաև մի օգտատիրոջ կողմից՝ Insta360 X4 8K HEVC տեսանյութերով։
-- **360° նշան և 360° ցանկ**: պատրաստ է։
-- **Դիտել որպես 360°**: պատրաստ է։
-- **Spatial 2.5D**: փորձարկված է Galaxy S24+-ում: iPhone-ի արձագանքները ողջունելի են։
-- **Առանց որևէ սերվերի**: փորձարկված է Galaxy S24+-ում, Quest 3-ում և Android էմուլյատորում։
-- **SMB և WebDAV համօգտագործումներ**: փորձարկված է Freebox Server-ով (SMB) Galaxy S24+-ում և Quest 3-ում, ինչպես նաև Samba և WebDAV փորձնական սերվերներով Android էմուլյատորում: այլ NAS-երի և WebDAV-ի արձագանքները ողջունելի են։
-- **DLNA մեդիա սերվերներ**: ստուգված է minidlna-ի և Gerbera-ի հետ Docker-ում: Plex-ը, Jellyfin-ը, NAS-ը, Freebox Server-ը, iPhone-ը և Quest-ը բիլդ 19-ի սարքային փորձարկումն են։
-- **Համօգտագործման ֆայլերն ուղարկել Immich**: փորձարկված է Android էմուլյատորում Samba փորձնական սերվերի և Immich 3.2 սերվերի հետ։
-- **Համօգտագործել այս հեռախոսը ցանցում**: միավորային թեստեր և ծայրից ծայր թեստեր սաղավարտի WebDAV հաճախորդով, համակարգչում: Quest-ին մատուցող հեռախոսը և iPhone-ի կողմը բիլդ 19-ի սարքային փորձարկումն են։
-- **Plex Media Server**: ստուգված է համակարգչից իրական Plex Media Server 1.42.1-ի վրա (զուգակցում, թղթապանակներ, բայթերի տիրույթներ, մանրապատկերներ, տնից դուրս հասցե). դեռ ստուգված չէ սարքում։
-- **Tapo տեսախցիկներ**: ստուգված է մոդելավորված տեսախցիկի վրա. դեռ ստուգված չէ իրական տեսախցիկով։
-- **Android TV և Google TV**: ստուգված է ավտոմատ թեստերով. դեռ ստուգված չէ հեռուստացույցում։
-- **Նույն հավելվածը Windows համակարգչում**: desktop build 3-ը Windows-ում անցնում է իր 863 ավտոմատ համակարգչային թեստերից 855-ը (8-ը բաց են թողնված դիտմամբ) և հավելվածի ամբողջ թեստային հավաքածուն. Windows 11 համակարգչում հավելվածը գործարկվում է, բացում է պահված սեսիա Immich սերվերում, համաժամեցնում է, նվագարկում է տեսանյութ և կոկիկ փակվում, իսկ նրա 360° նվագարկիչը գործարկվել է սինթետիկ 4K, 5.7K և 8K տեսահատվածներով նոութբուքի երկու գրաֆիկական չիպերի վրա՝ առանց վթարի։ Յուրաքանչյուր գործառույթի ձեռքով փորձարկումը՝ իրական 360° ֆայլերով և իրական Tapo տեսախցիկով, ընթացքի մեջ է։
-- **Չմշակված Insta360 .insp լուսանկարներ և մեկ ուղիով .insv տեսանյութեր**: լուսանկարները ստուգված են X3 ֆայլերի Insta360 Studio արտահանումների հետ, տեսանյութերը՝ Android էմուլյատորում ցածր լուծաչափով X3 ֆայլով: դեռ չեն աշխատել iPhone-ում։
-- **Չմշակված տեսանյութեր՝ մեկ ոսպնյակ յուրաքանչյուր ուղու կամ ֆայլի համար**: վերլուծիչները և միացումը ստուգված են իրական X4, X3 զույգի, GoPro MAX և Osmo 360 ֆայլերի վրա: նվագարկումը բիլդ 18-ի և 19-ի սարքային փորձարկումն է։
-- **Կրկնակի ձկնաչքային .dng**: նախատեսված է։
-- **Սերվերի տեսանյութեր և տեսաապակոդավորիչներ**: փորձարկված է Android էմուլյատորում: Quest 3-ի H.264 սահմանը չափվել է սաղավարտում։
-- **Տեսանյութի տեխնիկական մանրամասներ**: պատրաստ է։
-
-</details>
-
-### Այլ հավելվածներ, որոնք մարդիկ օգտագործում են դրա համար
-
-- **Immich-ի վեբ հավելվածը**
-  - Ինչի են բախվում: այն ցույց է տալիս 360° լուսանկարը որպես գունդ, բայց չմշակված .insp-ն ընդունում է որպես պատրաստի համայնապատկեր և նրա երկու շրջանները փաթաթում գնդի շուրջը: VR տեսքը դեռ հարցում է ([#14768 քննարկում](https://github.com/immich-app/immich/discussions/14768))։
-  - Ինչ է անում Immuch360-ը: միացնում է չմշակված ֆայլերը սարքում և բացում ընկղմվող դիտում Quest-ում։
-- **Insta360 հավելվածը կամ Studio-ն**
-  - Ինչի են բախվում: անհրաժեշտ է քարտի չմշակված ֆայլերը դիտելուց առաջ 360° նկարի վերածելու համար։
-  - Ինչ է անում Immuch360-ը: ուղիղ բացում է չմշակված .insp և .insv ֆայլերը, ինչպես նաև GoPro .360 և DJI .osv ֆայլերը։
-- **Plex, Jellyfin, Synology Photos**
-  - Ինչի են բախվում: 360° լուսանկարներն ու տեսանյութերը ցուցադրվում են հարթ կամ չեն ճանաչվում, ինչպես նկարագրում են նրանց ֆորումների թեմաները (Plex-ին ուղղված հարցումը բաց է 2017 թվականից)։
-  - Ինչ է անում Immuch360-ը: բիլդ 20-ից կարդում է հենց Plex-ի գրադարանը, կամ նույն թղթապանակները SMB-ով, WebDAV-ով կամ DLNA-ով, և նվագարկում դրանք որպես գունդ՝ առանց սերվերում որևէ բան փոխելու։
-- **Tapo հավելվածը**
-  - Ինչի են բախվում: առանձին հավելված՝ մուտք գործած ձեր TP-Link հաշվով, որտեղ տեսահատվածները ձեր լուսանկարներից առանձին են։
-  - Ինչ է անում Immuch360-ը: տեսախցիկը ցույց է տալիս ձեր լուսանկարների կողքին, խոսում է նրա հետ միայն ձեր ցանցում և պահում է տեսահատվածը որպես տեսանյութ, որը կարող եք ուղարկել Immich (բիլդ 20-ից)։
-- **Immich-ի բջջային հավելվածը հեռուստացույցում**
-  - Ինչի են բախվում: հեռուստատեսային հավելված չէ. օգտատերը հայտնում է, որ այն աշխատում է մկնիկով, ոչ թե հեռակառավարման վահանակով։
-  - Ինչ է անում Immuch360-ը: նույն հավելվածը՝ ստեղծված հեռակառավարման վահանակի համար (բիլդ 20-ից)։
-- **Ֆայլեր պատճենել սաղավարտ**
-  - Ինչի են բախվում: յուրաքանչյուր ֆայլ մալուխով պատճենվում է, նախքան այն կարելի է դիտել։
-  - Ինչ է անում Immuch360-ը: նվագարկում է տեղում՝ Immich-ից, NAS-ից, մեդիա սերվերից կամ հեռախոսից։
-- **Quest-ի խանութի 360° և 3D նվագարկիչները**
-  - Ինչի են բախվում: վճարովի։
-  - Ինչ է անում Immuch360-ը: անվճար և բաց կոդով (AGPL)։
-
-<a id="formats-and-sources-by-platform"></a>
-## Ձևաչափեր և աղբյուրներ՝ ըստ հարթակի
-
-Immuch360-ը պատկերասրահ է, և նաև անվճար մեդիա նվագարկիչ: այն նվագարկում է այն, ինչ պաշտոնական հավելվածը չի կարող, երկրորդ ցանկի աղբյուրներից, ֆայլին համապատասխանող նվագարկիչում։
-
-- **Հարթ տեսանյութեր (MP4, MOV, MKV, այն, ինչ սարքը ապակոդավորում է)**
-  - Android հեռախոսներ: Immich-ի նվագարկիչ և բնիկ նվագարկիչ ցանցային համօգտագործումների համար։
-  - iPhone, iPad: նույնը, բացի համօգտագործման MKV և AVI ֆայլերից, որոնք iOS-ը չի բացում (սերվերում դրանք նվագարկվում են տրանսկոդավորված)։
-  - Meta Quest: պատուհանում։
-  - Android TV, Google TV: ինչպես հեռախոսներում. OK-ը դադարեցնում է, ձախն ու աջը ցատկում են 10 վ։
-  - Windows (desktop build 2-ից): libmpv նվագարկիչը՝ երկրորդ ցուցակի բոլոր աղբյուրներից. Enter-ը դադարեցնում է, ձախն ու աջը կամ J-ն ու L-ը ցատկում են 10 վ։
-- **360° լուսանկարներ**
-  - Android հեռախոսներ: գնդաձև դիտակ, գիրոսկոպ։
-  - iPhone, iPad: նույնը։
-  - Meta Quest: ընկղմվող, ձեր շուրջը։
-  - Android TV, Google TV: գնդաձև դիտակ՝ պտտվող սլաքներով, մեծացում ալիքի կոճակներով։
-  - Windows: գնդաձև դիտակ, մկնիկ և ստեղնաշար։
-- **360° տեսանյութեր**
-  - Android հեռախոսներ: բնիկ Media3 նվագարկիչ գնդի վրա, գիրոսկոպ, առաջ-հետ տանել, աուդիո ուղու ընտրություն, բուֆերացման ցուցիչ։
-  - iPhone, iPad: բնիկ SceneKit նվագարկիչ գնդի վրա, գիրոսկոպ, աուդիո ուղու ընտրություն, բուֆերացման ցուցիչ: նվագարկում և դադար, ժամանակի գոտի դեռ չկա։
-  - Meta Quest: ընկղմվող, իրական 3D ստերեոսկոպիկ ֆայլերի համար, ժամանակի գոտի 10 վայրկյանանոց ցատկերով, նախորդ և հաջորդ մեդիա։
-  - Android TV, Google TV: հեռախոսների Media3 նվագարկիչը՝ պտտվող սլաքներով։
-  - Windows (desktop build 3-ից): հավելվածի սեփական 360° նվագարկիչը (libmpv), պտտվում է մկնիկով կամ սլաքներով, մեծացվում է անիվով, ոլորում, աուդիո ուղու ընտրություն, բուֆերացման ցուցիչ. սահուն՝ առանձին գրաֆիկական չիպի վրա, առավելագույնը 2880 պիքսել լայնությամբ և ավելի դանդաղ 5.7K H.264-ի համար՝ ներկառուցվածի վրա։
-- **3D 360° (վերև և ներքև, կողք կողքի)**
-  - Android հեռախոսներ: ձախ աչք, դասավորության կոճակ։
-  - iPhone, iPad: նույնը։
-  - Meta Quest: յուրաքանչյուր աչք ստանում է կադրի իր կեսը։
-  - Android TV, Google TV: ձախ աչք, դասավորության կոճակ։
-  - Windows: լուսանկարները՝ ինչպես հեռախոսներում. տեսանյութերը՝ desktop build 3-ից, ձախ աչք, դասավորության կոճակ, սահուն՝ առանձին գրաֆիկական չիպի վրա, սահմանափակումներով՝ ներկառուցվածի վրա։
-- **VR180 (կիսագունդ) լուսանկարներ և տեսանյութեր**
-  - Android հեռախոսներ: կիսագունդ, 360°/180° կոճակ։
-  - iPhone, iPad: նույնը։
-  - Meta Quest: ընկղմվող կիսագունդ։
-  - Android TV, Google TV: կիսագունդ, 360°/180° կոճակ։
-  - Windows: լուսանկարները՝ ինչպես հեռախոսներում. տեսանյութերը՝ desktop build 3-ից, կիսագունդ, 360°/180° կոճակ, սահուն՝ առանձին գրաֆիկական չիպի վրա, սահմանափակումներով՝ ներկառուցվածի վրա։
-- **Spatial 2.5D (հարթ էկրանի խորություն ստերեոսկոպիկ տեսանյութից)**
-  - Android հեռախոսներ: բնիկ նվագարկիչ, գլխի հետևում առջևի տեսախցիկով։
-  - iPhone, iPad: նույնը։
-  - Meta Quest: չի առաջարկվում։
-  - Android TV, Google TV: չի առաջարկվում։
-- **Apple-ի տարածական լուսանկարներ (HEIC ստերեո զույգեր, բիլդ 19-ից)**
-  - Android հեռախոսներ: ձախ աչք, մանրամասների տողն ասում է, որ այն տարածական է։
-  - iPhone, iPad: նույնը։
-  - Meta Quest: Դիտել 3D-ով: երկու աչքերը լուսանկարի վրա, որը լողում է ընկղմվող դիտման մեջ, 3D կամ 2D, չափափոխելի։
-  - Android TV, Google TV: ձախ աչք, մանրամասների տող։
-- **Apple-ի տարածական տեսանյութեր (MV-HEVC, բիլդ 19-ից)**
-  - Android հեռախոսներ: մեկ աչք (հիմնական շերտը)՝ ծանուցմամբ։
-  - iPhone, iPad: նույնը։
-  - Meta Quest: մեկ աչք պատուհանում՝ ծանուցմամբ։
-  - Android TV, Google TV: մեկ աչք՝ ծանուցմամբ։
-- **Չմշակված Insta360 .insp լուսանկարներ (բիլդ 16-ից)**
-  - Android հեռախոսներ: միացված GPU-ի վրա գնդաձև դիտակից առաջ, մինչև 8192x4096։
-  - iPhone, iPad: նույնը։
-  - Meta Quest: ընկղմվող, սաղավարտի համար պատրաստված միացված նկարից։
-  - Android TV, Google TV: ինչպես հեռախոսներում։
-- **Չմշակված Insta360 .insv, երկու ոսպնյակը մեկ ուղում (բիլդ 16-ից)**
-  - Android հեռախոսներ: միացված Media3 նվագարկչի GPU էֆեկտով։
-  - iPhone, iPad: միացված SceneKit shader-ով։
-  - Meta Quest: ընկղմվող, միացված նույն GPU էֆեկտով։
-  - Android TV, Google TV: ինչպես հեռախոսներում։
-  - Windows (desktop build 3-ից): միացվում է գրաֆիկական չիպի վրա հավելվածի 360° նվագարկիչում, սահուն՝ առանձին չիպի վրա, սահմանափակումներով՝ ներկառուցվածի վրա։
-- **Չմշակված տեսանյութեր՝ մեկ ոսպնյակ յուրաքանչյուր ուղու կամ ֆայլի համար (բիլդ 18-ից): Insta360 X4, X4 Air, X5, X6 .insv, X3 զույգեր, GoPro .360, DJI .osv**
-  - Android հեռախոսներ: երկու ապարատային ապակոդավորիչ միաժամանակ, մեկական յուրաքանչյուր ոսպնյակի համար (բիլդ 19-ից՝ ծրագրայիններ ապարատային ապակոդավորիչ չունեցող սարքում, մինչև 2048x2048 յուրաքանչյուր ոսպնյակի համար), և GL կոմպոզիտոր, որը միացնում է գնդի մեջ: մեկ ոսպնյակ, ապա տրանսկոդավորված հոսքը, ապա չմիացված տեսանյութը, երբ սարքը չի կարող երկուսն աշխատեցնել։
-  - iPhone, iPad: հատուկ AVFoundation կոմպոզիտոր Metal-ով։
-  - Meta Quest: ընկղմվող, նույն երկու ապակոդավորիչները և կոմպոզիտորը (3840x1920 վահանակ)։
-  - Android TV, Google TV: ինչպես հեռախոսներում, երբ հեռուստացույցը կարող է միաժամանակ երկու ապակոդավորիչ աշխատեցնել։
-  - Windows (desktop build 3-ից): երկու ոսպնյակները կողք կողքի մեկ նվագարկիչում, ապա միացված, երբ համակարգիչը հասցնում է (չափված իր իսկ նվագարկման վրա. փորձարկման նոութբուքում X3 զույգը՝ միայն նրա առանձին չիպի վրա). հակառակ դեպքում՝ հեռախոսների քայլերը. մեկ ոսպնյակ, տրանսկոդավորված հոսքը, տեսախցիկի ցածր լուծաչափով LRV պատճենը, տեսանյութը՝ առանց միացման։
-- **Tapo տեսախցիկի ուղիղ դիտում (բիլդ 20-ից)**
-  - Android հեռախոսներ: Media3 RTSP նվագարկիչ. SD էջում, HD լիաէկրանում, ձայնի կոճակ։
-  - iPhone, iPad: դեռ ոչ. քարտն ասում է, որ այն կգա ավելի ուշ։
-  - Meta Quest: պատուհանում, HD-ով։
-  - Android TV, Google TV: ինչպես հեռախոսներում։
-  - Windows (desktop build 3-ից): libmpv նվագարկիչը, էջում՝ SD, լիաէկրանում՝ HD, ձայնի կոճակ։
-- **Tapo տեսախցիկի տեսագրություններ (բիլդ 20-ից)**
-  - Android հեռախոսներ: բերված հիշողության քարտից H.264 տեսանյութի մեջ՝ իր ձայնով, ապա նվագարկված առաջ-հետ տանելու հնարավորությամբ։
-  - iPhone, iPad: նույնը։
-  - Meta Quest: նույնը, պատուհանում։
-  - Android TV, Google TV: նույնը։
-
-Android TV-ի և Google TV-ի կետերը, բիլդ 20-ից, դեռ ստուգված չեն հեռուստացույցում, տե՛ս [Դիտել հեռուստացույցով](#watch-on-your-tv-android-tv-and-google-tv). տեսախցիկի կետերը դեռ ստուգված չեն իրական տեսախցիկով։
-
-Windows-ում Immuch360 Desktop-ի նախնական տարբերակը ցույց է տալիս լուսանկարները՝ հարթ և 360°, ներառյալ Insta360-ի հում .insp լուսանկարները, մկնիկով և ստեղնաշարով։ desktop build 2-ից այն նվագարկում է հարթ տեսանյութեր՝ սերվերից, համակարգչի թղթապանակներից, համօգտագործումներից, Plex-ից և Tapo-ի տեսագրություններից, իսկ desktop build 3-ից նվագարկում է 360°, 3D, VR180 և հում 360° տեսանյութեր նույն աղբյուրներից՝ իր սեփական 360° նվագարկիչում, և Tapo-ի ուղիղ դիտումը։ 360° նվագարկիչը սահուն է առանձին գրաֆիկական չիպի վրա և ունի սահմանափակումներ ներկառուցվածի վրա (տե՛ս [Windows համակարգչում](#on-a-windows-computer-immuch360-desktop-preview))։
-
-- **Ձեր Immich սերվերը**: բնօրինակը կամ սերվերի տրանսկոդավորված հոսքը՝ ըստ Settings, Asset Viewer, Տեսանյութի աղբյուր կարգավորման (տե՛ս [Տեսանյութի մանրամասներ և ապակոդավորիչներ](#video-details-decoders-and-why-a-video-stutters))։ Նույն հաշիվը, ինչ վեբ հավելվածում։
-- **Հենց հեռախոսը կամ սաղավարտը**: «Օգտագործել առանց սերվերի» մուտքի էջում կամ Գրադարան ներդիրի Այս սարքավորումում կետը։
-- **NAS կամ համակարգիչ**: SMB և WebDAV համօգտագործումներ, իսկ բիլդ 19-ից նաև DLNA մեդիա սերվերներ, որոնք գտնվում են ցանցում, կարդացվում ուղիղ (SMB տեսանյութը՝ մինչև վեց միացումով), ոչինչ չի պատճենվում: բիլդ 15-ից ձեր ընտրած ֆայլերը կարող են ուղարկվել ձեր Immich հաշվին։
-- **Մեկ այլ հեռախոս (բիլդ 19-ից)**: «Համօգտագործել այս հեռախոսը ցանցում» այդ հեռախոսում: սաղավարտը կամ ցանցի ցանկացած WebDAV հաճախորդ կարդում է նրա ալբոմները, ամիսները և 360° մեդիան։
-- **Plex Media Server (բիլդ 20-ից)**: նրա լուսանկարների, ֆիլմերի և հեռուստասերիալների գրադարանները՝ ըստ թղթապանակի, բնօրինակ ֆայլերը՝ ուղիղ կարդացված HTTPS-ով, որը ստուգվում է սերվերի սեփական վկայականով, տանը կամ տնից դուրս հասցեով, բոլոր հարթակներում. տե՛ս [Plex Media Server՝ առանց plex.tv-ի](#plex-media-server-without-plextv)։
-- **Tapo տեսախցիկ (բիլդ 20-ից)**: ուղիղ դիտումը տեսախցիկի հաշվով (Android, Android TV, Quest, և Windows՝ desktop build 3-ից), և նրա հիշողության քարտի տեսագրությունները TP-Link հաշվի գաղտնաբառով (բոլոր հարթակներում), միայն տեղական ցանցում. տե՛ս [Tapo տեսախցիկներ](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)։
-- **Windows համակարգչի թղթապանակները (համակարգչային նախնական տարբերակ)**: Immuch360 Desktop-ում ձեր ընտրած թղթապանակները, որոնք կարդացվում են հեռախոսի պատկերասրահի փոխարեն. համակարգիչը կարող է նաև դրանք համօգտագործել սաղավարտի հետ, տե՛ս [Windows համակարգչում](#on-a-windows-computer-immuch360-desktop-preview)։
-
-<a id="meta-quest-3"></a>
-## Meta Quest 3
-
-Immuch360-ը աշխատում է նաև Horizon OS v69 կամ ավելի նոր տարբերակով Meta Quest սաղավարտներում։ Բիլդ 21-ից Horizon Store-ի բիլդը նշված է Quest 2-ի, Quest Pro-ի, Quest 3-ի և 3S-ի համար, այն չորսի, որոնք ունիվերսալ `-release.apk`-ն արդեն նշում է: առաջին Quest-ը՝ ոչ, խանութն այլևս այն չի ընդունում։
-
-Quest 3-ը և 3S-ը փորձարկված են։ Quest 2-ը և Quest Pro-ն դեռ փորձարկված չեն: նրանց տեսանյութերի ապակոդավորիչներն ավելի դանդաղ են, և հավելվածի ստուգած սահմանները չափվել են Quest 3-ում, ուստի մեծ H.264 տեսանյութը կարող է մերժվել հաղորդագրությամբ կամ ընդհատումներով նվագարկվել դրանցում։ Այս երկու սաղավարտներից հաշվետվությունները ողջունելի են [Issues](https://github.com/freeKC/Immuch360/issues) բաժնում։
-
-Ինչպես օգտագործել այն, նկարագրված է [Meta Quest 3 սաղավարտում](#in-the-meta-quest-3-headset) բաժնում: այս բաժինը վերաբերում է տեղադրմանը և այն ամենին, ինչ տարբերվում է սաղավարտում։
-
-Սաղավարտի բիլդը սերվերների հետ հաղորդակցվում է միայն HTTPS-ով կամ պարզ HTTP-ով տնային ցանցի անունների (`.local`, `.lan`, `.home`, `.internal`, `.home.arpa`) և հենց սաղավարտի հետ, ինչպես պահանջում է Horizon Store-ը։ Սերվերը, որը մուտքագրված է որպես IP-ով պարզ HTTP հասցե, օրինակ `http://192.168.1.10:2283`, այդ բիլդի կողմից մերժվում է: օգտագործեք HTTPS, տնային ցանցի անուն (`nas.local`) կամ ունիվերսալ `-release.apk`-ը, որը պահպանում է հեռախոսների բաց քաղաքականությունը։
-
-Տեղական ցանցի պարզ HTTP հասցեով WebDAV, DLNA և հեռախոսի համօգտագործումները դրան չեն վերաբերում: հավելվածն ինքն է դրանք կարդում և իր նվագարկիչներին տալիս միայն իր տեղական կամրջի հասցեն (սաղավարտում դեռ պետք է հաստատվի DLNA-ի և հեռախոսի համօգտագործման համար, որոնք նոր են բիլդ 19-ում)։ Բիլդ 20-ից Plex սերվերին հասնում են HTTPS-ով, իսկ Tapo տեսախցիկին՝ հենց հավելվածը, նրա ուղիղ դիտմանը՝ RTSP-ով, որը HTTP չէ. դրանցից ոչ մեկը չպետք է առնչվի դրան (սաղավարտում հաստատման ենթակա է)։
-
-<a id="install"></a>
-### Տեղադրում
-
-Immuch360-ը [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)-ում է 2026 թ. հոկտեմբերի 7-ից բիլդ 14-ով, և բիլդ 21-ը Meta-ի վերանայման մեջ է որպես նրա առաջին թարմացում։ Բիլդն ավելի շուտ ստանալու համար, քան այն կհայտնվի խանութում, ձեռքով տեղադրեք թողարկման `-quest-release.apk` ֆայլը (կառուցված սաղավարտի համար: 64 բիթ, թիրախային SDK 34, միայն սաղավարտի օգտագործած թույլտվությունները) կամ ունիվերսալ `-release.apk`-ը:
-
-1. Միացրեք մշակողի ռեժիմը մեկ անգամ։ Meta Horizon հեռախոսի հավելվածում բացեք Devices (Սարքեր), ընտրեք սաղավարտը, ապա Headset settings (Սաղավարտի կարգավորումներ), ապա Developer mode (Մշակողի ռեժիմ)։ Դրա համար անհրաժեշտ է մշակողի հաշիվ, որն անվճար է developers.meta.com-ում։ Համակարգչում ձեզ նաև պետք է adb (Android SDK Platform Tools) կամ SideQuest։
-2. Միացրեք սաղավարտը համակարգչին USB-C մալուխով։ Սաղավարտում ընդունեք «Allow USB debugging» (Թույլատրել USB վրիպազերծումը)։
-3. Տեղադրեք APK-ն:
-
-   ```bash
-   adb devices                      # the headset must be listed as "device"
-   adb install -r Immuch360-v<version>-quest-release.apk   # for example Immuch360-v3.3.0-rc.0-21-quest-release.apk
-   ```
-
-4. Սաղավարտում բացեք Library (Գրադարան), ընտրեք «Unknown sources» (Անհայտ աղբյուրներ) զտիչը և գործարկեք Immuch360-ը։
-5. Ձեռքով տեղադրված APK-ն ինքն իրեն չի թարմացվում: հաջորդ թողարկումը տեղադրեք նույն կերպ (`adb install -r`-ը պահպանում է մուտքը և կարգավորումները)։ Horizon Store-ի տարբերակը և GitHub-ի APK-ն ստորագրված են տարբեր բանալիներով, ուստի սաղավարտը մերժում է մեկը մյուսի վրա տեղադրել: փոխելու համար նախ ապատեղադրեք հավելվածը, ինչը կորցնում է մուտքը, կարգավորումները և ցանցային համօգտագործումների ցանկը։
-
-### Պատուհանում
-
-Ամբողջ հավելվածն աշխատում է որպես չափափոխելի 2D պատուհան: մուտք, ժամանակագիծ, ալբոմներ, որոնում, Գրադարան ներդիրը (360° ցանկ, Այս սարքավորումում, Ցանցային համօգտագործումներ), կարգավորումները, ինչպես նաև լուսանկարների և տեսանյութերի դիտակները, որտեղ նվագարկվում են հարթ լուսանկարներն ու տեսանյութերը։
-
-Սաղավարտում 360° կոճակը և ⋮ ընտրացանկի Դիտել որպես 360°-ը անմիջապես բացում են ընկղմվող դիտումը՝ հեռախոսների գնդաձև դիտակի փոխարեն, իսկ Spatial 2.5D կոճակը և նրա կարգավորումը չեն ցուցադրվում։
-
-Բիլդ 19-ից Apple-ի տարածական լուսանկարն ունի Դիտել 3D-ով կոճակ, և Համօգտագործել այս հեռախոսը ցանցում սալիկը չի ցուցադրվում: սաղավարտն է, որ կարդում է հեռախոսի համօգտագործումը։ Բիլդ 20-ից Plex սերվերները և Tapo տեսախցիկները նույնպես բացվում են պատուհանում, տեսախցիկի ուղիղ դիտումը՝ HD-ով. «Հեռակառավարման վահանակի դասավորություն» կարգավորումը մնում է Ավտոմատ, ինչը այն անջատված է թողնում սաղավարտում։
-
-### Նկարներով
-
-Պատկերներ՝ արված սաղավարտում պատկերման կոճակով (Meta կոճակ և ձգան), Quest 3-ում, հավելվածով ֆրանսերենով: Գրադարան ներդիրը ցուցադրված է առանց սերվերի ռեժիմում։
-
-<p align="center">
-  <img src="../.github/readme/quest-library-without-server.jpg" width="350" alt="Գրադարան ներդիրը առանց սերվերի: Այս սարքավորումում և Ցանցային համօգտագործումներ">
-  <img src="../.github/readme/quest-network-shares.jpg" width="350" alt="Ցանցային համօգտագործումներ էջը՝ Freebox Server-ի SMB համօգտագործմամբ">
-</p>
-
-- **Առանց սերվերի**: Գրադարան ներդիրը առանց սերվերի ռեժիմում՝ սաղավարտի սեփական մեդիայով և ցանցային համօգտագործումներով։
-- **Ցանցային համօգտագործումներ**: Freebox Server-ի Samba համօգտագործում՝ ուղիղ կարդացված սաղավարտից։
-
-### Սահմանափակումներ սաղավարտում
-
-- **Տեսանյութի կոդեկներ**: HEVC-ն (H.265) ապահով ընտրություն է: H.264-ը կանգնում է մոտ 4096x2304-ի վրա։ Թե ինչ է ստուգում հավելվածը, և ինչպես սաղավարտին տալ տեսանյութ, որը նա ապակոդավորում է, նկարագրված է [Տեսանյութի մանրամասներ և ապակոդավորիչներ](#video-details-decoders-and-why-a-video-stutters) բաժնում։
-- **Խանութ**: խանութի տարբերակը սկսվում է բիլդ 14-ից։ «Բիլդ 15-ից» և ավելի ուշ նշված գործառույթները կգան բիլդ 21-ով՝ նրա առաջին թարմացմամբ, երբ Meta-ն այն վերանայի (խանութի ալֆա փորձարկման ալիքը՝ փորձարկողների համար, ստանում է յուրաքանչյուր նոր բիլդ). GitHub-ի APK-ն արդեն ունի բոլորը։
-- **Թույլտվություններ**: սաղավարտի բիլդը խնդրում է միայն լուսանկարների և տեսանյութերի (առանց սերվերի ռեժիմ) և ծանուցումների (պահուստավորման առաջընթաց) թույլտվություն։ Այն չունի պահեստի, աուդիոյի, տեղորոշման կամ տեսախցիկի թույլտվություն, ի տարբերություն հեռախոսի բիլդի: ուստի Wi-Fi-ի անվան վրա հիմնված սերվերի փոխարկումը սաղավարտում հասանելի չէ։
-- **APK-ի չափ**: Spatial SDK-ն ավելացնում է մոտ 56 ՄԲ 64 բիթանոց ARM բնիկ կոդ, նաև հեռախոսներում, որտեղ այն երբեք չի բեռնվում։
-- **Լիցենզիա**: ընկղմվող դիտումն օգտագործում է Meta Spatial SDK-ն, որը տարածվում է Meta Platform Technologies SDK License Agreement-ի համաձայն։
-
-<a id="on-a-windows-computer-immuch360-desktop-preview"></a>
-## Windows համակարգչում: Immuch360 Desktop (նախնական տարբերակ)
-
-Ձեր Immich գրադարանը սերվերում է, այլ լուսանկարներ և տեսանյութեր համակարգչի թղթապանակներում են, ևս այլ տեսանյութեր՝ NAS-ում կամ Plex սերվերում, և կցանկանայիք մեծ էկրանին շուրջը նայել ձեր 360° լուսանկարներում և նվագարկել ձեր տեսանյութերը, կամ համակարգչի լուսանկարները ցույց տալ սաղավարտում։ Immuch360 Desktop-ը նույն հավելվածն է Windows համակարգչում, կառուցված նույն աղբյուրներից, ինչ հեռախոսային հավելվածները։
-
-Համակարգչում Immich-ն առաջարկում է իր վեբ հավելվածը դիտարկիչում։ **Ինչ է ավելացնում Immuch360 Desktop-ը**: համակարգչի թղթապանակները՝ առանց որևէ սերվերի կամ հաշվի, SMB, WebDAV, DLNA և Plex համօգտագործումներ՝ դիտվող և նվագարկվող հավելվածից, Insta360-ի հում .insp լուսանկարներ՝ բացված որպես գունդ, և համակարգիչը՝ համօգտագործված տան Meta Quest-ի հետ։
-
-Սա նախնական տարբերակ է. լուսանկարներն ու հարթ տեսանյութերն աշխատում են desktop build 2-ից, իսկ desktop build 3-ից՝ 360° տեսանվագարկիչը (360°, 3D, VR180 և հում 360° տեսանյութեր) և Tapo տեսախցիկների ուղիղ դիտումը. ստորև բերված քայլերը, որոնց անհրաժեշտ է բիլդ 3-ը, դա նշում են։ 2026 թվականի հոկտեմբերի 9-ից համակարգչային աղբյուրները գտնվում են ճյուղավորման հիմնական ճյուղում՝ `immuch360`, այնպես որ հեռախոսները, սաղավարտները, հեռուստացույցները և համակարգիչները թողարկվում են նույն աղբյուրներից։ Հեռախոսի, պլանշետի, Quest-ի և հեռուստացույցի հավելվածները դրանից չեն փոխվում և պահպանում են Immuch360 անունը։
-
-<a id="download-and-install-on-windows"></a>
-### Ներբեռնել և տեղադրել Windows-ում
-
-Ընթացիկ բիլդը GitHub-ի նախնական թողարկումն է՝ [Immuch360 Desktop 3.3.0-rc.0, desktop build 4 (Windows preview)](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)։ Նրա ֆայլն է `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` (մոտ 58 ՄԲ, բացելուց հետո 173 ֆայլ՝ ներառյալ տեսանվագարկիչը և դրա `licenses` թղթապանակը), `SHA256SUMS.txt`-ով՝ այն ստուգելու համար։ Այն կառուցվել է հիմնական ճյուղից՝ `immuch360`, այն commit-ում, որը նշված է նրա թողարկման նշումներում. հեռախոսի բիլդ 22-ի աղբյուրները՝ 2026 թ. հոկտեմբերի 10-ի Immich-ի վրա, գումարած համակարգչային տարբերակը։ Desktop build 4-ից սկսած՝ տեսանվագարկչի գրադարանը՝ `libmpv-2.dll`, նախագծի սեփական 2026 թվականի բիլդն է, որի աղբյուրները հրապարակվում են դրա հետ. այն կողք կողքի է դասավորում հում տեսանյութերի երկու ոսպնյակները, որոնք պահվում են մեկական յուրաքանչյուր ուղում կամ ֆայլում, և թույլ է տալիս գրաֆիկական չիպին նկարել 360° տեսքը՝ առանց յուրաքանչյուր կադր հետ պատճենելու։ Անհրաժեշտ է Windows 10 կամ 11, 64 բիթ։
-
-1. Ներբեռնեք ZIP-ը և բացեք այն ցանկացած տեղում, օրինակ՝ Documents-ում։ desktop build 2-ը փոխարինելու համար ջնջեք դրա թղթապանակը կամ բացեք նոր թղթապանակում. ձեր մուտքը, ձեր թղթապանակները և ձեր կարգավորումները մնում են ձեր Windows պրոֆիլում, ոչ թե այդ թղթապանակում։
-2. Գործարկեք `immuch360.exe`-ը բացված թղթապանակից։ Թղթապանակը պահեք ամբողջական. ծրագրին պետք են իր կողքի ֆայլերը, դրանց թվում `libmpv-2.dll`-ը՝ տեսանվագարկիչը, և `immuch_desktop_video.dll`-ը, որը կարդում է գրաֆիկական չիպի ապակոդավորիչները։
-3. Ֆայլերը դեռ ստորագրված չեն, ուստի Windows SmartScreen-ը կարող է ցույց տալ «Windows protected your PC». ընտրեք «More info», ապա «Run anyway»։ Որտեղ Smart App Control-ը միացված է, այն արգելափակում է չստորագրված ծրագրերը։
-4. Սպասեք պատուհանին։ Նոր բիլդի առաջին գործարկումը տևում է 10 վայրկյանից մինչև մոտ մեկ րոպե, ամենայն հավանականությամբ, քանի դեռ Microsoft Defender-ը ստուգում է նոր ֆայլերը. այդ ընթացքում հավելվածը նորից մի գործարկեք։ Հաջորդ գործարկումները տևում են մեկ-երկու վայրկյան։
-5. Մուտքի էջում մուտք գործեք ձեր Immich սերվեր՝ նրա հասցեով, ձեր էլ. փոստով և գաղտնաբառով, կամ սեղմեք «Օգտագործել առանց սերվերի»։
-
-ZIP-ը ստուգելու համար գործարկեք `certutil -hashfile Immuch360-Desktop-3.3.0-rc.0-desktop.3-windows-x64.zip SHA256` հրամանի տողում, ներբեռնման թղթապանակում. արդյունքը նույնն է, ինչ գրված է `SHA256SUMS.txt`-ում։ Դեռ չկան տեղադրիչ և ավտոմատ թարմացում. հետևեք [Releases](https://github.com/freeKC/Immuch360/releases) էջին և հաջորդ բիլդը բացեք նույն կերպ։
-
-### Ինչ է անում նախնական տարբերակը
-
-- **Ձեր Immich սերվերը**: ժամանակագիծը, ալբոմները, մարդիկ, հուշերը և որոնումը, և սերվերի լուսանկարները լրիվ չափով, ինչպես հեռախոսում։
-- **Առանց սերվերի**: ձեր լուսանկարների և տեսանյութերի թղթապանակները (առաջարկվում են Pictures և Videos) փոխարինում են հեռախոսի պատկերասրահին։ Ձեր ընտրած թղթապանակներից դուրս ոչինչ չի կարդացվում, և առանց սերվերի ոչինչ չի լքում համակարգիչը։
-- **Վերբեռնում և պահուստավորում** այդ թղթապանակներից ձեր Immich սերվեր, քանի դեռ հավելվածը բաց է։
-- **360° լուսանկարներ որպես գունդ**՝ մկնիկով և ստեղնաշարով. Insta360 տեսախցիկների հում .insp լուսանկարները բացվում են ինչպես հեռախոսներում։
-- **Հարթ տեսանյութեր** (desktop build 2-ից): ձեր թղթապանակների, ձեր Immich սերվերի (բնօրինակը կամ տրանսկոդավորված հոսքը, տե՛ս [Տեսանյութի մանրամասներ և ապակոդավորիչներ](#video-details-decoders-and-why-a-video-stutters)), SMB, WebDAV և DLNA համօգտագործումների, Plex սերվերների տեսանյութերը և Tapo-ի տեսագրությունները նվագարկվում են պատուհանում՝ հեռախոսների կառավարման տարրերով (նվագարկում, դադար, ժամանակի գոտի), բուֆերացման ցուցիչով և աուդիո ուղիների ընտրացանկով այն տեսանյութի համար, որն ունի մի քանիսը։ Ձեր թղթապանակների և համօգտագործումների տեսանյութերը որպես մանրապատկեր ցույց են տալիս տեսանյութի մի կադր՝ ժապավենի պատկերակի փոխարեն։
-- **360°, 3D և VR180 տեսանյութեր** (desktop build 3-ից): 360° կոճակը դրանք բացում է հավելվածի 360° նվագարկիչում՝ պատուհանում կամ լիաէկրան, հարթ տեսանյութերի բոլոր աղբյուրներից, պտտվում են մկնիկով և ստեղնաշարով, հեռախոսների 3D և 360°/180° կոճակներով (3D տեսանյութը ցույց է տալիս իր ձախ աչքը, ինչպես հեռախոսներում), ոլորումով, աուդիո ուղիների ընտրացանկով և բուֆերացման ցուցիչով։
-- **Հում 360° տեսանյութեր** (desktop build 3-ից): Insta360-ի .insv ֆայլեր՝ երկու ոսպնյակները մեկ ուղում, երկու ուղում (X4 և ավելի նոր) կամ երկու ֆայլում (X3 զույգեր), GoPro-ի .360 և DJI-ի .osv ֆայլեր, որոնք հավելվածը միացնում է գրաֆիկական չիպի վրա նվագարկման ընթացքում՝ ֆայլի չափաբերմամբ, ինչպես հեռախոսներում։
-- **Ցանցային համօգտագործումներ**: Samba (SMB), WebDAV և DLNA մեդիա սերվերներ, և Plex սերվերներ առանց plex.tv-ի, դիտվում են ինչպես հեռախոսներում. դրանց լուսանկարները բացվում են, իսկ տեսանյութերը նվագարկվում են։ Tapo տեսախցիկների համար՝ հիշողության քարտի տեսագրությունները. ցուցակը, տեսահատվածի ստացումը և դրա նվագարկումը, իսկ desktop build 3-ից՝ նաև ուղիղ դիտումը։
-- **Համօգտագործել այս համակարգիչը ցանցում**: ձեր թղթապանակների ալբոմները, ամիսները և 360° մեդիան, միայն կարդալու համար, Meta Quest-ի կամ տան այլ սարքի համար, ինչպես հեռախոսն է համօգտագործում իրեն։
-- **Ֆայլեր**: սերվերից ներբեռնումները գնում են ձեր ընտրած թղթապանակ, «Պահել թղթապանակում»-ը պահում է ընտրված լուսանկարների և տեսանյութերի պատճենը, իսկ Մատյաններ էջում կա «Պահել մատյանները ֆայլում»։
-
-### Օգտագործել համակարգչում
-
-1. **Ընտրեք ձեր թղթապանակները։** Առանց սերվերի ժամանակագիծը սկսվում է «Ընտրեք ձեր լուսանկարների և տեսանյութերի թղթապանակները» քարտով. սեղմեք «Ավելացնել թղթապանակ»։ Սերվերով նույն քարտը երևում է Գրադարանում՝ «Այս համակարգչում» բաժնի տակ, և պահուստավորվող ալբոմներում, մինչև որևէ թղթապանակ ընտրվի։ Դրանից հետո դրանք ունեն «Թղթապանակներ այս համակարգչում» տող, ինչպես նաև Settings-ը, «Այս համակարգիչը»։
-2. **Ամպային, USB և ցանցային թղթապանակներ։** Այն ֆայլերը, որոնք OneDrive-ը (կամ այլ ամպային սկավառակ) պահում է միայն առցանց, հաշվվում են, բայց չեն կարդացվում, այնպես որ թղթապանակ ավելացնելը չի ներբեռնում ձեր ամբողջ ամպը. «Ներբեռնել և ներառել»-ը դրանք բերում է, երբ ցանկանաք։ Այլ տառով վերադարձող USB սկավառակը պահպանում է իր լուսանկարները։ Ցանցային թղթապանակները, ինչպես նաև հիշողության քարտի կամ USB սկավառակի թղթապանակները (որպեսզի Windows-ը կարողանա այն դուրս հանել), չեն հսկվում փոփոխությունների համար. այնտեղ ֆայլեր ավելացնելուց հետո օգտագործեք Թարմացնել։
-3. **Շուրջը նայել 360° լուսանկարում**: քաշեք մկնիկով, մեծացրեք անիվով, կրկնակի սեղմումով կամ + և - ստեղներով (ցանկացած ստեղնաշարի դասավորությամբ, ներառյալ AZERTY), շարժվեք սլաքների ստեղներով։ F կամ F11-ը անցնում է լիաէկրան ռեժիմի, իսկ Escape-ը դուրս է գալիս դրանից. Home-ը և End-ը տանում են առաջին և վերջին լուսանկարին. I-ն ցույց է տալիս մանրամասները։
-4. **Անցնել լուսանկարից լուսանկար**: հարթ լուսանկարում ձախ և աջ սլաքները, կամ եզրերին մկնիկը շարժելիս հայտնվող սլաքանշանները, տանում են նախորդին և հաջորդին։ Նկարագրության դաշտում մուտքագրված տառերը մնում են տեքստում։
-5. **Նվագարկել տեսանյութ**: բացեք այն ժամանակագծից, թղթապանակից, համօգտագործումից, Plex-ից կամ Tapo տեսախցիկի տեսագրություններից. այն նվագարկվում է պատուհանում։ Enter-ը կամ ստեղնաշարի նվագարկման և դադարի ստեղնը դադարեցնում և նորից նվագարկում է։ Նվագարկման ընթացքում ձախ և աջ սլաքները, կամ J-ն ու L-ը, ցատկում են 10 վայրկյան հետ կամ առաջ. դադարի ժամանակ սլաքները տանում են նախորդին և հաջորդին։ F կամ F11-ը անցնում է լիաէկրան ռեժիմի, ինչպես լուսանկարների դեպքում։ «Աուդիո ուղի» կոճակը ընտրում է այն տեսանյութի աուդիո ուղիներից, որն ունի մի քանիսը։
-6. **Երբ տեսանյութը կանգ է առնում**: դադարեցված տեսանյութը մնում է դադարեցված, երբ վերադառնում եք պատուհանին։ Ավարտից առաջ ընդհատված տեսանյութը, օրինակ՝ երբ համօգտագործումը կամ սերվերը դադարում է պատասխանել, հայտնում է այդ մասին. նորից բացեք այն, և այն կշարունակվի այնտեղից, որտեղ կանգ էր առել, դադարեցված։ Թղթապանակում կամ համօգտագործման մեջ գտնված նվագացանկի ֆայլին հավելվածը չի հետևում։
-7. **Նվագարկել 360° տեսանյութ** (desktop build 3-ից): բացեք տեսանյութը և սեղմեք 360° վերին գոտում, ինչպես հեռախոսում. 360° ֆայլի համար, որը սերվերը չի նշում, նախ «Դիտել որպես 360°» ⋮ ընտրացանկում, տե՛ս [360° ֆայլ, որը երևում է հարթ](#a-360-file-that-shows-flat-view-as-360)։ 360° նվագարկիչը բացվում է պատուհանում։ Քաշեք մկնիկով՝ շուրջը նայելու համար (արագ քաշելուց հետո տեսքը մի փոքր էլ շարունակում է պտտվել), մեծացրեք անիվով, + և - կամ Page Up և Page Down ստեղներով, պտտեք՝ սեղմած պահելով սլաքների ստեղները։ Space-ը կամ ստեղնաշարի նվագարկման և դադարի ստեղնը դադարեցնում և նորից նվագարկում է. J-ն ու L-ը ցատկում են 10 վայրկյան հետ կամ առաջ. Home-ը վերադառնում է սկիզբ. M-ը անջատում և միացնում է ձայնը։ F, F11 կամ կրկնակի սեղմումը անցնում է լիաէկրան ռեժիմի. Escape-ը դուրս է գալիս լիաէկրանից, ապա փակում է նվագարկիչը։ Կառավարման տարրերը (վերևում՝ փակել, վերնագիրը, 360°/180°, 3D, աուդիո ուղին և լիաէկրանը, ներքևում՝ նվագարկել, 10 վայրկյան հետ և առաջ, ժամանակի գոտին և ձայնը) թաքնվում են մկնիկի ցուցիչի հետ նվագարկման 3 վայրկյանից հետո և վերադառնում են, երբ մկնիկը շարժվում է կամ ստեղն է սեղմվում. Tab-ը անցնում է մեկից հաջորդին։
-8. **3D և VR180**: 360° նվագարկիչում 3D կոճակը հերթով փոխում է «Մոնո (ոչ 3D)», «3D, վերև և ներքև» և «3D, կողք կողքի» ռեժիմները, իսկ 360°/180° կոճակը փոխարկում է ամբողջ գնդի և VR180-ի կիսագնդի միջև, ինչպես [3D և VR180 լուսանկարներ և տեսանյութեր](#3d-and-vr180-photos-and-videos) բաժնում։ 3D տեսանյութը ցույց է տալիս իր ձախ աչքը։
-9. **Հում 360° տեսանյութեր** (desktop build 3-ից): բացեք հում ֆայլը և սեղմեք 360°, ինչպես հեռախոսում, տե՛ս [Տեսախցիկների չմշակված 360° ֆայլեր](#raw-360-camera-files-without-the-cameras-app). X3 զույգի երկու ֆայլերը պահեք միասին։ Այն ֆայլը, որի երկու ոսպնյակները մեկ ուղում են, միացվում է նվագարկման ընթացքում։ Այն ֆայլը, որն ունի մեկ ոսպնյակ յուրաքանչյուր ուղում կամ ֆայլում, երկու ոսպնյակները նվագարկում է կողք կողքի մեկ նվագարկիչում, երբ համակարգիչը հասցնում է. այդպիսի տեսանյութի առաջին վայրկյանները չափվում են, և արդյունքը պահվում է այդ տեսակի հաջորդ տեսանյութերի համար (չափազանց դանդաղ համարված եղանակը կրկին փորձվում է 14 օր անց)։ Երբ համակարգիչը չի հասցնում, նվագարկիչը անցնում է հեռախոսների քայլերով՝ իրենց հաղորդագրություններով. մեկ ոսպնյակ, գնդի կեսը սև. սերվերի տրանսկոդավորված հոսքը. ցածր լուծաչափով LRV պատճենը, որը տեսախցիկը ձայնագրել է ֆայլի կողքին, եթե այն կա. տեսանյութը՝ առանց միացման։ Հում տեսանյութը չունի ոչ 3D, ոչ 360°/180° կոճակ։
-10. **Tapo տեսախցիկի ուղիղ դիտումը** (desktop build 3-ից): բացեք տեսախցիկը ինչպես հեռախոսում, տե՛ս [Դիտել ուղիղ եթերով](#watch-it-live)։ Էջը նվագարկում է SD հոսքը, իսկ լիաէկրանը՝ HD-ն, պատկերի վրա հեռախոսի կոճակներով. ձայնը՝ սկզբում անջատված, SD կամ HD և «Լիաէկրան»։ Կորած հոսքը (տեսախցիկը վերագործարկվում է, Wi-Fi-ն ընդհատվում է) վերադառնում է ինքնուրույն՝ կրկին փորձվելով մոտ մեկուկես րոպե, մինչ վերջին պատկերը մնում է էկրանին։ Տեսախցիկի հաշիվը, որը տեսախցիկը մերժում է, հայտնվում է որպես այդպիսին և այլևս չի փորձվում, քանի որ ձախողված մուտքերը հաշվվում են տեսախցիկի արգելափակման մեջ։
-11. **Համօգտագործել համակարգիչը սաղավարտի հետ**: բացեք Գրադարանը, ապա Ցանցային համօգտագործումներ. առաջին սալիկն է «Համօգտագործել այս համակարգիչը ցանցում», [Համօգտագործել այս հեռախոսը ցանցում](#share-this-phone-on-the-network)-ի համակարգչային կողմը։ Միացրեք «Համօգտագործել լուսանկարներն ու տեսանյութերը ցանցում»-ը, ապա ավելացրեք համակարգիչը սաղավարտում, ինչպես ասում է այդ բաժինը։ Համօգտագործումը դադարում է, երբ հավելվածը փակվում է կամ մեկ ժամ առանց օգտագործման հետո։
-12. **Թույլատրել ցանցը**: Windows-ը կարող է հարցնել, թե արդյոք Immuch360 Desktop-ը կարող է օգտագործել ցանցը։ Թույլատրեք դա մասնավոր ցանցերում, այլապես սաղավարտը չի գտնի համակարգիչը։ Այն ցանցում, որը Windows-ը նշում է որպես հանրային (սրճարան, հյուրանոց), կամ որի տեսակը չի կարողանում որոշել, համօգտագործումը չի սկսվում, եթե չընտրեք «Համօգտագործել այս սեսիայի համար», և համակարգիչն իրեն հայտարարում է միայն այն ցանցում, որտեղ համօգտագործում է։
-13. **Settings, «Այս համակարգիչը»**: թղթապանակները, ներբեռնումների թղթապանակը, ցանցային ադապտերը, որն օգտագործվում է համօգտագործումներ գտնելու և համակարգիչը համօգտագործելու համար (երբ դրանք մի քանիսն են, օրինակ՝ Wi-Fi և Ethernet), և վստահելի վկայագրերը. ձեր սեփական սերվերի վկայագրման կենտրոնը՝ որպես PEM ֆայլ, այն HTTPS հասցեի համար, որին Windows-ն ինքնուրույն չի վստահում։ Հաճախորդի վկայագրերը ներմուծվում են Settings, Advanced-ում, ինչպես հեռախոսներում։
-
-<a id="360-videos-and-the-graphics-chip"></a>
-### 360° տեսանյութերը և գրաֆիկական չիպը
-
-360° նվագարկիչում (desktop build 3-ից) գրաֆիկական չիպը տեսանյութի յուրաքանչյուր կադրից նկարում է այն տեսքը, որին դուք նայում եք։ Տեսանյութի պլագինը libmpv-ին ստիպում է յուրաքանչյուր կադր նկարել ընտրված չափի պատկերի մեջ, ապա հավելվածի սեփական նկարման փուլը դրանից նկարում է գնդի այն մասը, որին նայում եք։ Տեսքը պտտելը փոխում է այդ փուլի մեկ արժեքը, ոչ թե նվագարկիչը. քաշելը հիշողություն չի ծախսում, իսկ դադարեցված տեսանյութը պտտվում է առանց որևէ բան ապակոդավորելու։
-
-Հավելվածը չափում է յուրաքանչյուր 360° տեսանյութի առաջին վայրկյանները և ընտրում, թե որքան մեծ կադրի վրա աշխատի չիպը. ամբողջ կադրը՝ առանձին չիպի վրա, առավելագույնը 2880 պիքսել լայնությամբ՝ պրոցեսորի մեջ ներկառուցված չիպի վրա (Windows-ը հավելվածին ասում է, թե ինչ տեսակի է այն, ուստի Core Ultra նոութբուքի Intel Arc չիպը համարվում է ներկառուցված), մեկ աստիճան փոքր, երբ չիպը չի հասցնում։ Այն, ինչ չափել է, պահվում է նույն տեսակի (կոդեկ, չափ, կադրերի հաճախականություն և ապակոդավորիչ) հաջորդ տեսանյութերի համար, ոչ թե բոլոր տեսանյութերի։
-
-Երբ նույնիսկ ամենափոքր աստիճանը սահուն չէ, նվագարկիչն ասում է «Այս գրաֆիկական քարտը չի կարող սահուն ցույց տալ այս տեսանյութի 360° տեսքը». երբ դրանից հեռու է, կամ երբ չիպն ընդհանրապես չի կարող նկարել տեսքը (չկա OpenGL ES 3.0, դրայվերը մերժում է այն), տեսանյութը նվագարկվում է հարթ, և նվագարկիչն ասում է՝ ինչու։ Հարթ նվագարկված տեսանյութը հաջորդ անգամ հարթ չի նվագարկվում. նրա տեսակի հաջորդ տեսանյութը կրկին չափվում է։
-
-Երբ չի հասցնում սերվերի տեսանյութի ապակոդավորումը, ոչ թե նկարումը (տեսանյութ, որը պրոցեսորն է ապակոդավորում, օրինակ՝ 5.7K H.264), նվագարկիչը այն տեղից, որտեղ էր, անցնում է սերվերի տրանսկոդավորված հոսքին՝ հեռախոսների հաղորդագրությամբ. «Նվագարկվում է տրանսկոդավորված հոսքը. բնօրինակը (կոդեկ և չափ) գերազանցում է այն, ինչ այս սարքն ապակոդավորում է»։
-
-- **Օգտագործեք նոութբուքի առանձին գրաֆիկական չիպը։** Windows-ը հավելվածը գործարկում է ներկառուցված չիպի վրա, եթե այլ բան նշված չէ։ Windows-ի կարգավորումներում՝ System, Display, Graphics, ավելացրեք `immuch360.exe`-ը և ընտրեք «High performance», ապա վերագործարկեք հավելվածը։ Փորձարկման նոութբուքում (Intel UHD չիպ և NVIDIA RTX 4060 Laptop) NVIDIA չիպը նկարեց 4K, 5.7K և 8K 360° տեսանյութերը ամբողջ չափով և վայրկյանում 30 կադրով, մինչ տեսքը պտտվում էր։ Intel չիպը դրանք նկարեց առավելագույնը 2880 պիքսել լայնությամբ. 4K H.264 և 8K HEVC տեսանյութ՝ վայրկյանում մոտ 30 կադրով libmpv-ի 2026 թվականի բիլդով, 4K տեսանյութ՝ 23-ից 27՝ media-kit-ի 2024 թվականի libmpv-ով (տե՛ս [Դեռ չկա](#not-there-yet)), և 5.7K H.264 տեսանյութ, որը պրոցեսորն է ապակոդավորում, մոտ 20-ով. սերվերից նվագարկիչն այդ դեպքում անցնում է տրանսկոդավորված հոսքին, իսկ առանց տրանսկոդավորված հոսքի տեսանյութը, օրինակ՝ թղթապանակից, շարունակում է նվագարկվել «Այս գրաֆիկական քարտը չի կարող սահուն ցույց տալ այս տեսանյութի 360° տեսքը» հաղորդագրությամբ։
-- **Ընտրեք ռենդերերը ինքներդ։** Settings, Advanced-ում միացրեք «Խնդիրների լուծում»-ը. հայտնվում է «360° տեսանյութի ռենդերեր» կետը՝ լռելյայն Ավտոմատ։ Այն առաջարկում է նաև «Պլագին, ամբողջ չափ», «Պլագին, առավելագույնը 4096 լայնությամբ», «Պլագին, առավելագույնը 2880 լայնությամբ» և «Հարթ, առանց 360° տեսքի»՝ հաջորդ 360° տեսանյութի համար, որը կբացեք։ Դրա տակ «Վերջին չափումը» նշում է այն չափը, որով նկարվել է վերջին 360° տեսանյութը, նրա կադրերը վայրկյանում, գրաֆիկական չիպը և ապակոդավորիչը. պատճենեք այն սխալի հաշվետվության մեջ։ «Ավտոմատ»-ը կրկին ընտրելը, նույնիսկ երբ այն արդեն ընտրված է, մոռանում է չափվածը, և հաջորդ 360° տեսանյութերը կրկին չափվում են։
-- **Ինչ է ապակոդավորում չիպը։** Settings, Advanced, «Այս սարքի տեսանյութի ապակոդավորիչները» ցուցակում է, թե ինչ է ապակոդավորում օգտագործվող գրաֆիկական չիպը, ինչպես հաղորդում է Direct3D 11-ը, և հավելվածը ուղղում է այդ ցուցակը նվագարկման ընթացքում չափվածով. «Տեսանյութի աղբյուր» կարգավորումը և հում տեսանյութերի երկու ոսպնյակի ստուգումը հետևում են դրան։ 4096 պիքսելից լայն H.264-ը (360° տեսախցիկների 5.7K-ն) ապակոդավորվում է պրոցեսորով, քանի որ փորձարկման նոութբուքի ոչ մի չիպ այն չի ընդունում։
-
-**Մշակողների համար։** 360° նվագարկիչը նկարում է սեփական ռենդերերով, որը կառուցված է libmpv-ի և ձևափոխված (patched) media_kit_video պլագինի վրա. mpv-ն յուրաքանչյուր կադր նկարում է գրաֆիկական չիպի վրա գտնվող տեքստուրայի մեջ, իսկ OpenGL ES 3.0 անցումը տեսքը նկարում է այն տեքստուրայի մեջ, որը ցույց է տալիս Flutter-ը՝ առանց պրոցեսորով անցնող պատճենման։ Ինչու է այն կառուցվել այդպես, ինչպես է աշխատում, ինչ է չափվել և ինչ կարելի է կարգավորել. [համակարգչային տարբերակի 360° տեսանյութի ռենդերերը](../docs/immuch360/desktop-360-video-renderer.md)։
-
-### Համեմատություն հեռախոսային հավելվածների հետ
-
-- **Պահուստավորումն աշխատում է, քանի դեռ հավելվածը բաց է** (կամ ծալված), ոչ թե ֆոնում՝ փակ պատուհանով։ Պատուհանը փակելիս, երբ վերբեռնումներ են ընթանում կամ համակարգիչը համօգտագործվում է, նախ հարցնում է։
-- **Թղթապանակներ՝ պատկերասրահի փոխարեն**: հավելվածը կարդում է ձեր ընտրած թղթապանակները և իր ինդեքսը, մանրապատկերները և քեշը պահում է համակարգչում։
-- **Մեկ պատուհան**: հավելվածը երկրորդ անգամ բացելը վերադարձնում է առաջին պատուհանը՝ երկրորդ օրինակ գործարկելու փոխարեն։
-- **Ձեր թղթապանակներից ոչինչ չի ջնջվում**: «Ջնջել սարքից»-ը թաքցված է, իսկ Ջնջել-ը հեռացնում է միայն սերվերի պատճենը, մինչև հավելվածը կարողանա ֆայլեր ուղարկել Windows-ի աղբարկղ։
-- **Մկնիկ և ստեղնաշար**՝ հպման և գիրոսկոպի փոխարեն։
-- **Մեկ տեսանվագարկիչ բոլոր աղբյուրների համար**: libmpv-ն նույն կերպ է նվագարկում սերվերի, թղթապանակների, համօգտագործումների և Plex-ի տեսանյութերը, և նրա հարթ նվագարկիչն արդեն ունի աուդիո ուղիների ընտրացանկը, որը հեռախոսների հարթ նվագարկիչը դեռ չունի։
-- **360° տեսանյութեր պատուհանում** (desktop build 3-ից): 360° նվագարկիչը հավելվածի էջ է, ոչ թե առանձին բնիկ նվագարկիչ, ժամանակի գոտիով, 10 վայրկյանանոց ցատկերով և ձայնի կոճակով։ Մեկ ոսպնյակ յուրաքանչյուր ուղում կամ ֆայլում ունեցող հում տեսանյութերը դասավորվում են կողք կողքի մեկ նվագարկիչում, որտեղ հեռախոսները երկու ապակոդավորիչ են աշխատեցնում. հեռախոսների պահուստային քայլերը նույնն են, տեսախցիկի LRV պատճենը ավելացված է առանց միացման տեսանյութից առաջ։
-- **Tapo-ի ուղիղ դիտումը** (desktop build 3-ից) համակարգչում նվագարկվում է ինչպես Android-ում, մինչդեռ iPhone-ը և iPad-ը այն դեռ չունեն։
-
-<a id="not-there-yet"></a>
-### Դեռ չկա
-
-- **Երկու ոսպնյակով հում տեսանյութեր նոութբուքում**: նույնիսկ 2026 թվականի libmpv-ով փորձարկման նոութբուքը X3 զույգը (երկու 2880x2880 H.264 ֆայլ) կողք կողքի դասավորեց վայրկյանում 30 կադրով միայն իր NVIDIA չիպի վրա. իր Intel չիպի վրա, և X4 ֆայլի համար (երկու 3840x3840 HEVC ուղի) երկու չիպերի վրա էլ, տեսանյութը նվագարկում է մեկ ոսպնյակ, գնդի կեսը սև, ինչպես հեռախոսում, որը չի կարող երկու ապակոդավորիչ աշխատեցնել։
-- **3D միայն էկրանին**: 3D տեսանյութը ցույց է տալիս իր ձախ աչքը, ինչպես հեռախոսներում. համակարգչում չկան ոչ գիրոսկոպ, ոչ սաղավարտի տեսք։ Իրական 3D-ով դիտելու համար համօգտագործեք համակարգիչը Meta Quest-ի հետ։
-- **Spatial 2.5D**, ավելի ուշ՝ վեբ տեսախցիկով. **քարտեզը** և Վայրեր տեսքը. **մուտքը OAuth-ով** (փոխարենը մուտք գործեք էլ. փոստով և գաղտնաբառով). **Google Cast**. **ծանուցումները**։
-- **Տեղադրիչ, ստորագրված բիլդ և ավտոմատ թարմացումներ**: այս բիլդը թղթապանակ է `immuch360.exe`-ով։
-- **Linux և macOS**: դրանց նախագծերը աղբյուրներում են, բայց դեռ չեն կառուցվել կամ փորձարկվել այդ համակարգերում, և դրանց տեսանվագարկիչը դեռ դրանցում չէ. դրանք կգան Windows-ից հետո։
-- **Թարգմանություններ**: համակարգչային տարբերակի նոր տեքստերը առայժմ անգլերեն են։
-
-### Հայտնի խնդիրներ
-
-- **Նոր բիլդի առաջին գործարկումը դանդաղ է**: պատուհանի հայտնվելուց առաջ 10 վայրկյանից մինչև մոտ մեկ րոպե, ամենայն հավանականությամբ, քանի դեռ Microsoft Defender-ը ստուգում է նոր ֆայլերը, որոնք դեռ ստորագրված չեն։ Սպասեք պատուհանին՝ հավելվածը նորից գործարկելու փոխարեն. հաջորդ գործարկումները տևում են մեկ-երկու վայրկյան։
-- **8K HEVC տեսանյութերին անհրաժեշտ է առանձին գրաֆիկական չիպ, և 360° տեսանյութերն էլ ավելի լավ են աշխատում դրա վրա**: փորձարկման նոութբուքում ներկառուցված Intel UHD չիպը ցույց տվեց 8K HEVC տեսանյութի կադրերի մոտ կեսը, մինչդեռ առանձին NVIDIA չիպը նվագարկեց 8K HEVC և 5.7K H.264 առանց մեկ կադր կորցնելու. 360° նվագարկիչը սահուն է NVIDIA չիպի վրա և ավելի դանդաղ՝ Intel-ի վրա, տե՛ս [360° տեսանյութերը և գրաֆիկական չիպը](#360-videos-and-the-graphics-chip)։ Windows-ը հավելվածը գործարկում է ներկառուցված չիպի վրա, եթե այլ բան նշված չէ. Windows-ի կարգավորումներում՝ System, Display, Graphics, ավելացրեք `immuch360.exe`-ը և ընտրեք «High performance», ապա վերագործարկեք հավելվածը։ Ներկառուցված չիպի վրա հարթ 5.7K H.264 տեսանյութը, որը նրա ապակոդավորիչը մերժում է, ապակոդավորվում է պրոցեսորով՝ առանց կադր կորցնելու։
-- **Հարթ տեսանյութերը նկարվում են առավելագույնը 1440 տող բարձրությամբ**, ապա մասշտաբավորվում են պատուհանին. 4K էկրանին լիաէկրան ռեժիմում 4K կամ 8K տեսանյութը մի փոքր ավելի մեղմ է, քան հատուկ տեսանվագարկիչում։ Սա 8K տեսանյութը պահում է նոութբուքի գրաֆիկական հզորության սահմաններում։ 360° նվագարկիչը փոխարենը աշխատում է ամբողջ կադրի վրա կամ այն փոքր չափի վրա, որը ընտրել է նրա չափումը։
-- **Մինչ ձեր թղթապանակների տեսանյութը նվագարկվում է հավելվածում, կամ մինչ սաղավարտը կարդում է ֆայլ համօգտագործվող համակարգչից** (իր նվագարկած տեսանյութ, իր ներբեռնած լուսանկար), Windows-ը չի կարող վերանվանել, տեղափոխել կամ ջնջել այդ ֆայլը և ասում է, որ այն բաց է Immuch360 Desktop-ում. նախ փակեք տեսանյութը կամ դադարեցրեք նվագարկումը սաղավարտում։ Պահուստավորումները ձեր ֆայլերն այդպես չեն պահում. ֆայլը կարող է վերանվանվել, տեղափոխվել կամ ջնջվել, մինչ այն վերբեռնվում է։
-- **Անհարթություններ**: desktop build 3-ը Windows-ում անցնում է իր 863 համակարգչային թեստերից 855-ը (8-ը բաց են թողնված դիտմամբ) և հավելվածի ամբողջ թեստային հավաքածուն, իրար հետևից բացված 200 նվագարկիչ արտահոսք չեն թողնում, և նրա թողարկման ZIP-ը գործարկվում է, նվագարկում է փորձնական տեսահատված և կոկիկ փակվում։ Յուրաքանչյուր գործառույթի ձեռքով փորձարկումը իրական համակարգչում դեռ ընթացքի մեջ է։
-- **Ինչով են ստուգվել 360° նվագարկիչը և ուղիղ դիտումը**: 360° նվագարկիչը գործարկվել է սինթետիկ 4K, 5.7K և 8K 360° տեսահատվածներով նոութբուքի երկու գրաֆիկական չիպերի վրա (բացված, նվագարկված, պտտված նվագարկման և դադարի ժամանակ, փակված)՝ առանց վթարի և առանց գրաֆիկական դրայվերի վերագործարկման։ Երկու ոսպնյակով հում տեսանյութերը նվագարկվել են սինթետիկ տեսահատվածներից և իրական X3 և X4 ֆայլերից։ Tapo-ի ուղիղ դիտումը ստուգվել է փորձնական RTSP սերվերի դեմ, որը մուտք է ստուգում այնպես, ինչպես տեսախցիկները (Digest), դիտմամբ ընդհատված և մերժված, առանց գաղտնաբառի մատյանի որևէ տողում, բայց դեռ ոչ իրական տեսախցիկով։ Ձեռքով փորձարկումը՝ իրական 360° և 3D ֆայլերով, նոութբուքի երկու էկրաններով, քնով և վերսկսմամբ, և իրական տեսախցիկով, դեռ առջևում է։
-
-Եթե ինչ-որ բան սխալ է ընթանում, խնդրում ենք բացել [issue](https://github.com/freeKC/Immuch360/issues)՝ Մատյաններ էջից պահված մատյանով, տե՛ս [Մատյաններ](#logs)։ Ստուգեք մատյանը նախքան այն համօգտագործելը. այն կարող է պարունակել ձեր սերվերի հասցեն։
-
-<a id="build-it-yourself-on-windows"></a>
-### Կառուցել ինքներդ Windows-ում
-
-Ձեզ անհրաժեշտ են Windows 10 կամ 11 x64-ի վրա, Flutter 3.47.2 Windows-ի համար, Visual Studio 2022 կամ դրա Build Tools-ը «Desktop development with C++» աշխատանքային ծանրաբեռնվածությամբ, Windows-ի կարգավորումներում միացված Developer Mode (Flutter-ին այն պետք է հավելումների համար), և Python 3՝ փաթեթավորման սկրիպտի համար։
-
-1. Ստացեք աղբյուրները և գործարկեք կոդի գեներացիան։ Հիմնական ճյուղը՝ `immuch360`, կառուցում է նաև համակարգչային տարբերակը. անցնելու համար այլ ճյուղ չկա։ Կոդի գեներացիան օգտագործում է Java և Node, ուստի գործարկեք այն Linux-ում, macOS-ում կամ WSL-ում. WSL-ի դեպքում կլոնը պահեք Windows սկավառակի վրա, որը WSL-ը տեսնում է `/mnt/c` կամ `/mnt/d` տակ:
-
-   ```bash
-   git clone https://github.com/freeKC/Immuch360.git
-   cd Immuch360/mobile
-   mise install
-   mise run install
-   mise run codegen
-   ```
-
-2. Windows-ում, նույն `mobile` թղթապանակում, կառուցեք հավելվածը։ Առաջին կառուցումը GitHub-ից ներբեռնում է տեսանվագարկչի գրադարանները (libmpv և ANGLE) և յուրաքանչյուր արխիվ ստուգում է իր SHA-256-ով. այն նաև կոմպիլյացնում է փոքր Direct3D 11 պլագինը, որը կարդում է գրաֆիկական չիպի ապակոդավորիչները՝ `immuch_desktop_video`, նույն C++ աշխատանքային բեռով:
-
-   ```bat
-   flutter pub get
-   REM try it, with hot reload: a debug build, with a profile of its own (Immuch360 Desktop Debug), so it runs next to the app
-   flutter run -d windows -t lib/main_desktop.dart
-   REM the app, in build\windows\x64\runner\Release\immuch360.exe
-   flutter build windows --release -t lib/main_desktop.dart
-   ```
-
-3. `Release` թղթապանակն աշխատում է այն համակարգչում, որը կառուցել է այն։ Այլ համակարգչի համար պահեք ամբողջ թղթապանակը և ավելացրեք Visual C++ runtime-ը `immuch360.exe`-ի կողքին։ Կլոնի արմատից փաթեթավորման սկրիպտը պատճենում է այն, դուրս է թողնում այն, ինչը ծառայում է միայն Android-ին, ավելացնում է տեսանվագարկչի լիցենզիաները, ստուգում է, որ հավելվածի բեռնած յուրաքանչյուր DLL գտնվում է թղթապանակում կամ հենց Windows-ում, և ստեղծում է ZIP-ը:
-
-   ```bat
-   python .github\desktop\windows_bundle.py --release mobile\build\windows\x64\runner\Release --out <folder> --zip <file.zip>
-   ```
-
-Immuch360 Desktop-ի CI-ը (`.github/workflows/immuch360-desktop.yml`) աշխատում է `desktop` ճյուղում, որը հետևում է `immuch360`-ին. հեռախոսի ստուգումները (հեռախոսի բիլդերում ոչինչ չի փոխվում) և ամբողջ թեստային հավաքածուն Linux-ում, համակարգչային թեստերը Windows-ում, և նույն ZIP-ը, ապա այդ բիլդի վրա այն թեստերը, որոնց անհրաժեշտ են նրա libmpv-ն և ANGLE-ը (Tapo-ի ուղիղ դիտման մուտքը, այն, ինչ տեսաֆայլը չի կարող բացել, 360° շեյդերները). դրա Linux աշխատանքը կառուցում է հավելվածը Ubuntu-ում, իսկ macOS աշխատանքը կոմպիլյացնում է այն Xcode 26.3-ով և macOS 26 SDK-ով (երկուսն էլ նույն `-t lib/main_desktop.dart`-ով), միայն որպես կոմպիլյացիայի ստուգումներ. դրանցից ոչ մեկը դեռ չի գործարկվել այդ համակարգերում։ Երկրորդ աշխատանքային հոսքը (`.github/workflows/immuch360-libmpv.yml`) վերակառուցում է libmpv-ն Windows x64-ի և arm64-ի համար ամրագրված աղբյուրներից և հրապարակում է արխիվները իրենց SHA-256-ով. ZIP-երը դեռ պարունակում են media-kit-ի արխիվը, մինչև այդ բիլդը միացվի, ուստի 2024 թվականի libmpv-ի սահմանափակումները [Դեռ չկա](#not-there-yet) բաժնում վերաբերում են նաև ձեր սեփական բիլդին։
-
-<a id="where-to-get-it"></a>
-## Որտեղից ստանալ
-
-Հավելվածը Google Play-ում է հեռախոսների և պլանշետների համար. App Store-ի տարբերակը սպասում է Apple-ի վերանայմանը, հավելվածը Meta Horizon Store-ում է, և նրա առաջին թարմացումը Meta-ի վերանայման մեջ է, իսկ հեռուստացույցների համար Google Play-ի տարբերակը սպասում է հեռուստատեսային թողարկման Google-ի վերանայմանը։ Immuch360 Desktop-ը՝ Windows-ի համար, նախնական տարբերակ է GitHub-ում։ GitHub-ի թողարկումը միշտ ամենանոր բիլդն է:
-
-- **Android հեռախոսներ և պլանշետներ**
-  - Այսօր: [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) կամ APK-ն [Releases](https://github.com/freeKC/Immuch360/releases) էջում: `Immuch360-v<version>-arm64-v8a-release.apk` հեռախոսի համար (ունիվերսալ `Immuch360-v<version>-release.apk`-ն աշխատում է ամենուր, `-armeabi-v7a`-ն ավելի հին 32 բիթանոց հեռախոսների համար է, իսկ `.aab` ֆայլը Google Play-ի համար է, ոչ թե ձեռքով տեղադրման)։ GitHub-ի բիլդը սովորաբար առաջ է խանութից։ Ամեն դեպքում այն տեղադրվում է Immich-ի պաշտոնական հավելվածի կողքին (փաթեթ `com.aprogsys.immuch360`)։
-  - Շուտով: Google Play-ում բիլդ 23-ն ուղարկվել է 2026 թ. հոկտեմբերի 10-ին՝ բիլդ 20-ի փոխարեն (հասանելի է հոկտեմբերի 7-ից). այն պարունակում է Immich-ի հոկտեմբերյան փոփոխությունները և բիլդ 22-ի ու 23-ի հեռուստացույցի ուղղումները։
-- **iPhone և iPad**
-  - Այսօր: սպասում է Apple-ի վերանայմանը։ Վերանայվող տարբերակն ունի բիլդ 11-ի գործառույթները: Immich վերբեռնումը և Տեսանյութի աղբյուր ընտրությունը (բիլդ 15), ինչպես նաև չմշակված Insta360 ֆայլերը (բիլդ 16) կգան App Store-ի ավելի ուշ թարմացմամբ։ Աղբյուրային կոդը կառուցվում է Xcode-ով կամ Codemagic-ում, տե՛ս [Կառուցեք ինքներդ](#build-it-yourself)։
-  - Շուտով: App Store, վերանայման մեջ։
-- **Meta Quest 2, Quest Pro, Quest 3 և 3S (Quest 2-ը և Quest Pro-ն չփորձարկված)**
-  - Այսօր: [Releases](https://github.com/freeKC/Immuch360/releases) էջի `-quest-release.apk` ֆայլը (ունիվերսալ `-release.apk`-ն էլ է աշխատում), ձեռքով տեղադրված մշակողի ռեժիմում, տե՛ս [Տեղադրում](#install)։ Խանութի բիլդը և GitHub-ի APK-ն ստորագրված են տարբեր բանալիներով: մեկից մյուսին անցնելու համար նախ ապատեղադրեք հավելվածը (նրա կարգավորումները և պահպանված համօգտագործումները նույնպես կջնջվեն)։
-  - Խանութ: հավելվածը [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)-ում է 2026 թ. հոկտեմբերի 7-ից բիլդ 14-ով, և բիլդ 21-ը՝ նրա առաջին թարմացումը, Meta-ի վերանայման մեջ է: խանութի ալֆա ալիքը (միայն փորձարկողների համար) ստանում է յուրաքանչյուր նոր բիլդ։
-- **Android TV և Google TV (բիլդ 20-ից)**
-  - Այսօր: [Releases](https://github.com/freeKC/Immuch360/releases) էջի ունիվերսալ `Immuch360-v<version>-release.apk`-ը՝ ձեռքով տեղադրված adb-ով, տե՛ս [Տեղադրել հեռուստացույցում](#install-it-on-the-tv)։ Դա նույն հավելվածն է, ինչ հեռախոսներում։
-  - Շուտով: Google Play հեռուստացույցներում, որի գրառումը Google-ի վերանայման մեջ է 2026 թ. հոկտեմբերի 9-ից։
-- **Windows 10 և 11, 64 բիթ (նախնական տարբերակ)**
-  - Այսօր: Immuch360 Desktop, desktop build 4, [համակարգչային նախնական թողարկման](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` ZIP-ը՝ բացված և գործարկված, ինչպես ասում է [Ներբեռնել և տեղադրել Windows-ում](#download-and-install-on-windows) բաժինը։ Լուսանկարներ, հարթ տեսանյութեր, 360°, 3D, VR180 և հում 360° տեսանյութեր (սահուն՝ առանձին գրաֆիկական չիպի վրա, սահմանափակումներով՝ ներկառուցվածի վրա) և Tapo-ի ուղիղ դիտումը։
-  - Շուտով: Spatial 2.5D վեբ տեսախցիկով, ապա Linux և macOS. տեղադրիչ, ստորագրված բիլդ և թարմացումներ՝ ավելի ուշ։
-
-App Store-ի հղումը կավելացվի այստեղ, հենց որ գրառումը հրապարակվի, իսկ հավելվածն արդեն [Meta Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)-ում է։ Մուտք գործեք ձեր սովորական Immich սերվերի URL-ով և հաշվով, կամ մուտքի էջում հպեք «Օգտագործել առանց սերվերի»-ին՝ սարքի սեփական լուսանկարներով և տեսանյութերով սկսելու համար։ GitHub-ի APK-ն ինքն իրեն չի թարմացվում: հետևեք Releases էջին, և երբ հավելվածը տեղադրեք խանութից, թարմացումները ստացեք այդ խանութից։
-
-<a id="build-it-yourself"></a>
-## Կառուցեք ինքներդ
-
-Կառուցման շղթան նույնն է, ինչ Immich mobile-ինը (Flutter 3.47, կառավարվում է [mise](https://mise.jdx.dev)-ով):
-
-```bash
-git clone https://github.com/freeKC/Immuch360.git
-cd Immuch360/mobile
-mise install
-mise run install
-mise run codegen
-flutter build apk --release --flavor phone                                   # phones: the universal APK of the GitHub releases (add --split-per-abi for the per ABI files)
-flutter build appbundle --release --flavor phone                             # the App Bundle sent to Google Play (also mise run build:android)
-flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true   # Meta Quest 2, Pro, 3 and 3S: the -quest-release.apk of the releases (also mise run build:quest)
-flutter build ios --release                                                  # iPhone and iPad, on a Mac with Xcode and your own signing team
-```
-
-Խանութների էկրանապատկերներն արվում են սիմուլյատորի debug բիլդերի վրա, որոնք կառուցված են `--dart-define=IMMUCH_SCREENSHOTS=true`-ով, որը միայն թաքցնում է debug պաստառը։
-
-Երկու Android տարբերակները (flavors) նույն հավելվածն են։ Բիլդ 20-ից `phone`-ը իրեն հայտարարում է նաև որպես հեռուստատեսային հավելված (հեռուստացույցի գործարկիչի գրառում և պաստառ, հպէկրան չի պահանջվում), ինչը `quest`-ը բաց է թողնում։
-
-`quest`-ը թիրախավորում է SDK 34-ը և պահում է միայն սաղավարտի օգտագործած թույլտվությունները (լուսանկարներ, տեսանյութեր, ծանուցումներ): մեդիայի կառավարումը, ֆոնային տեղորոշումը, հին պահեստը, աուդիոն, մեդիայի տեղորոշումը, սարքի տեղորոշումը և տեսախցիկը հեռացված են `android/app/src/quest/AndroidManifest.xml`-ում, քանի որ Meta Horizon Store-ը մերժում է առաջին երկուսը և հիմնավորում է պահանջում յուրաքանչյուր այլ զգայուն թույլտվության համար: նույն ֆայլը որպես աջակցվող սարքեր նշում է Quest 2-ը, Quest Pro-ն, Quest 3-ը և 3S-ը և պարզ HTTP-ն սահմանափակում է հենց սաղավարտով և տնային ցանցի անուններով։ APK-ն միայն 64 բիթանոց է իր հրամանի տողի երկու լրացուցիչ արգումենտների պատճառով (`--target-platform android-arm64 --android-project-arg arm64only=true`)։ `phone`-ը այն է, ինչ պահանջում է Google Play-ը։
-
-Ձեր սեփական Mac-ում iOS-ի համար կառուցելու համար օգտագործեք Xcode-ը և ձեր սեփական ստորագրման թիմը: Xcode 26-ով նախ մեկ անգամ գործարկեք `xcodebuild -downloadComponent MetalToolchain`, քանի որ Spatial shader-ները դրա կարիքն ունեն։ Առանց Mac-ի iOS բիլդերն աշխատում են Codemagic-ում (հոսթինգային Mac) այս պահոցի `codemagic.yaml` ֆայլից։ Android թողարկման բիլդերն աշխատում են GitHub Actions-ում (`.github/workflows/immuch360-release.yml`)։
-
-Immuch360 Desktop-ը՝ Windows-ի տարբերակը, կառուցվում է նույն աղբյուրներից՝ `immuch360` ճյուղից, Windows-ի համար Flutter-ով. քայլերը [Կառուցել ինքներդ Windows-ում](#build-it-yourself-on-windows) բաժնում են։
-
-Այս պահոցում ոչ մի գաղտնիք չկա: Android ստորագրման բանալին պահվում է որպես գաղտնագրված GitHub Actions գաղտնիքներ, իսկ Apple ստորագրման նյութերը՝ որպես գաղտնագրված փոփոխականներ Codemagic-ում։ Աշխատանքային հոսքի ֆայլերը հղում են անում դրանց միայն անունով։ Առանց ձեր սեփական `android/key.jks`-ի թողարկման բիլդը ստորագրվում է debug բանալիով և չի կարող տեղադրվել GitHub-ից կամ խանութից ստացված պատճենի վրա (նախ ապատեղադրեք այն): debug բիլդը տեղադրվում է կողքին՝ որպես Immuch360 debug։ Meta Horizon Store-ի պատճենը թողարկման `quest` APK-ն է՝ ստորագրված այլ բանալիով, այն բանալիով, որով խանութի հավելվածն առաջին անգամ գրանցվել է, ուստի այն նույնպես չի կարող տեղադրվել ձեռքով տեղադրված APK-ի վրա, և հակառակը։
-
-### Ճյուղեր
-
-- **`main`**: Immich-ի `main`-ը այն commit-ում, որի վրա հիմնված է `immuch360`-ը (ընթացիկ բիլդերի համար՝ 2026 թ. հոկտեմբերի 10), երբեք չփոփոխված: այն առաջ է շարժվում, երբ ճյուղավորումը վերահիմնվում (rebase) է ավելի նոր Immich-ի վրա։
-- **`immuch360`**: այս ճյուղավորման փոփոխությունները Immich-ի վրա, 2026 թվականի հոկտեմբերի 9-ից ներառյալ Immuch360 Desktop-ը։ Յուրաքանչյուր թողարկում նշում է, թե Immich-ի որ տարբերակի վրա է այն հիմնված։
-- **`desktop`**: այստեղ էր կառուցվում Immuch360 Desktop-ը՝ համակարգչային տարբերակը, `immuch360`-ի վրա, մինչև 2026 թվականի հոկտեմբերի 9-ին այն միաձուլվեց դրա մեջ, որպեսզի հեռախոսները, սաղավարտները, հեռուստացույցները և համակարգիչները թողարկվեն նույն աղբյուրներից։ Այժմ այն հետևում է `immuch360`-ին և կրում է համակարգչային նախնական թողարկումների պիտակները ([desktop build 1](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-1)՝ 21f285c34 commit-ից, [desktop build 2](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-2)՝ 5b723bd25-ից, [desktop build 3](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-3)՝ 360° տեսանվագարկչի 2026 թվականի հոկտեմբերի 10-ի միաձուլումից, [desktop build 4](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4)՝ 99113354a-ից, բիլդ 22-ով և նախագծի սեփական libmpv-ով)։ Համակարգչային նոր աշխատանքը նախ հայտնվում է այստեղ և միանում է `immuch360`-ին այն desktop build-ի հետ, որը թողարկում է այն։ Համակարգչային տարբերակը ոչինչ չի փոխում `mobile/android`-ի և `mobile/ios`-ի տակ։
-
-<a id="logs"></a>
-## Մատյաններ
-
-Android-ում և Quest-ում `adb logcat`-ը ցույց է տալիս սաղավարտի ընկղմվող դիտումը `Immuch360` պիտակով (բիլդ 19-ից նաև Apple-ի տարածական լուսանկարի երկու աչքերը: ինչպես է ապակոդավորվել երկրորդ աչքը, կտրվածքը, որտեղ է տեղադրված լուսանկարը), ապակոդավորիչների ստուգումները՝ `VideoDecoders`-ով, կողք կողքի չմշակված տեսանյութի միացումը՝ `DualFisheyeEffect`-ով, և բիլդ 18-ի երկու ոսպնյակով նվագարկումը՝ `TwoLensPlayer`, `TwoLensCompositor` և `LensVideoRenderer` պիտակներով:
-
-```bash
-adb logcat -c
-# reproduce the problem, then
-adb logcat -d -v time -s Immuch360 VideoDecoders DualFisheyeEffect TwoLensPlayer TwoLensCompositor LensVideoRenderer
-adb logcat -d -v time > quest-full.log      # everything, including crashes and decoder errors (it can contain your server address, check before sharing)
-adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
-```
-
-Բիլդ 19-ից DLNA հաճախորդը, հեռախոսի համօգտագործումը և Apple-ի տարածական մեդիայի հայտնաբերումը գրում են նաև հավելվածի սեփական մատյանում (Logs (Մատյաններ), վերևում աջ գտնվող պրոֆիլի նկարի ընտրացանկում)՝ `Ssdp`, `DlnaFileSystem`, `NetworkBrowserPage`, `PhoneShare`, `PhoneShareServer`, `AppleSpatialService`, `HeicStereoProbe` և `NetworkMediaService` անուններով։ Բիլդ 20-ից հեռուստացույցի ռեժիմը այնտեղ գրում է `TvMode` և `TvTextEntry` անուններով, Plex սերվերները՝ `Gdm`, `UdpTransport`, `PlexClient`, `PlexFileSystem` և `PlexServerEditPage` անուններով, իսկ Tapo տեսախցիկները՝ `TapoDiscovery`, `TapoHttps`, `TapoLogin`, `TapoControl`, `TapoMedia`, `TapoFileSystem`, `TapoTest`, `TapoCamera`, `CameraPage`, `CameraEditPage` և `CameraLiveView` անուններով. Plex-ի տողերը երբեք չեն պարունակում թոքենը, հասցե կամ վերնագիր, իսկ տեսախցիկի տողերում գաղտնաբառեր չկան։ Մատյանի տողերը մնում են սարքում, եթե դուք ինքներդ դրանք չպատճենեք։
-
-Համակարգչում (Immuch360 Desktop) Մատյաններ էջում կա նաև «Պահել մատյանները ֆայլում». մատյանը, կամ մատյանի և վերջին վթարների հաշվետվությունների ZIP-ը, երբ դրանք կան (այդ դեպքում առաջարկվող անունն ավարտվում է «with-crash-reports»-ով)։ Վթարի հաշվետվությունը փոքր minidump է. հոսքերը, որտեղ են դրանք կանգ առել և միայն այն, ինչ անհրաժեշտ է դրանց կանչերին հետևելու համար, ծրագրի ֆայլերի անուններով, բայց առանց դրանց թղթապանակների. ոչ հավելվածի հիշողությունը։
-
-desktop build 2-ից համակարգչի տեսանվագարկիչը այնտեղ գրում է `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` և `VideoThumbnailGrabber` պիտակներով, ներառյալ mpv-ի սեփական նախազգուշացումները, թոքեններն ու գաղտնաբառերը հեռացված։ desktop build 3-ից այնտեղ գրվում են նաև 360° նվագարկիչը՝ `SphericalPlayer`, `SphereRenderer` և `PluginRenderer` պիտակներով (ընտրված չափը, չափված կադրերը վայրկյանում, գրաֆիկական չիպը), երկու ոսպնյակով հում տեսանյութերը՝ `RawTwoStreams`-ով, գրաֆիկական չիպի ապակոդավորիչները՝ `DesktopGpuDecoders`, `DesktopVideoDecoderApi` և `DecoderMeasure` պիտակներով, և Tapo-ի ուղիղ դիտումը՝ `DesktopCameraLive`-ով, որի տողերը երբեք չեն պարունակում տեսախցիկի հաշիվը կամ նրա գաղտնաբառը։ Ստուգեք մատյանը նախքան այն համօգտագործելը. այն կարող է պարունակել ձեր սերվերի հասցեն։
+The projects are in the sources and are built by the project's CI on every change, but the app has not been started on those systems yet and their video player library is not in them: there is no download yet. The steps to build them are in [Build it yourself](../docs/immuch360/build.md).
 
 <a id="privacy"></a>
 ## Գաղտնիություն
 
-- **Ոչինչ չի գնում մշակողին**: հավելվածը հաղորդակցվում է ձեր ընտրած Immich սերվերի հետ (և, երբ բացում եք քարտեզը, այն քարտեզի սալիկների ծառայության հետ, որն օգտագործում է այդ սերվերը), չունի գովազդ, վերլուծություն կամ մշակողի կողմից գործարկվող խափանումների հաշվետվության ծառայություն և ոչինչ չի ուղարկում Immuch360-ի մշակողին։
-- **Առանց սերվերի** ոչ մի սերվերի հետ կապ չի հաստատվում. հավելվածը ցանցն օգտագործում է միայն ձեր բացած համօգտագործումների, Plex սերվերների և տեսախցիկների համար, ինչպես նաև հեռախոսի համօգտագործման համար, եթե այն միացնեք։
-- **Ցանցային համօգտագործումներ**: համօգտագործումների ցանկը պահվում է սարքում և երբեք չի ուղարկվում սերվերին: գաղտնաբառերը պահվում են սարքի բանալիների պահոցում (keychain կամ keystore)։
-- **Plex** (բիլդ 20-ից). թոքենը մնում է սարքի անվտանգ պահոցում և ուղարկվում է միայն ձեր սեփական սերվերին՝ հարցման գլխագրում HTTPS-ով. հավելվածը երբեք կապ չի հաստատում plex.tv-ի հետ։
-- **Tapo տեսախցիկներ** (բիլդ 20-ից). TP-Link հաշվի գաղտնաբառը և տեսախցիկի հաշվի գաղտնաբառը մնում են սարքի անվտանգ պահոցում. հավելվածը տեսախցիկի հետ խոսում է միայն տեղական ցանցում, երբեք TP-Link-ի սերվերների հետ. բերված տեսահատվածները մնում են հավելվածի քեշում և ջնջվում են տեսախցիկի հետ միասին։
-- **Հեռուստացույց**. արդյոք սարքը հեռուստացույց է, որոշվում է սարքում. ոչինչ չի ուղարկվում։
-- **Հեռախոսի համօգտագործում**: միայն տեղական ցանց, օգտանունով և գաղտնաբառով, պարզ HTTP-ով (տե՛ս [Համօգտագործել այս հեռախոսը ցանցում](#share-this-phone-on-the-network))։
-- **Տեսախցիկ**: օգտագործվում է միայն Spatial 2.5D նվագարկչի կողմից, սարքում: պատկերները երբեք չեն պահվում և երբեք ոչ մի տեղ չեն ուղարկվում։
-- **Համակարգչում** (Immuch360 Desktop, Windows-ի նախնական տարբերակ): հավելվածը կարդում է միայն ձեր ընտրած թղթապանակները, իր ինդեքսը, մանրապատկերները և քեշը պահում է համակարգչում, իսկ գաղտնաբառերն ու թոքենները պահում է Windows-ի տվյալների պաշտպանությամբ՝ միայն ձեր Windows հաշվի համար։ Համակարգչի համօգտագործումը հետևում է հեռախոսի համօգտագործման կանոններին և չի սկսվում այն ցանցում, որը Windows-ը նշում է որպես հանրային, կամ որի տեսակը չի կարողանում որոշել, եթե դուք դա չասեք։
-- **Տեսանվագարկիչը համակարգչում** (desktop build 2-ից): ձեր սերվերի տեսանյութերը նրան հասնում են հավելվածի միջոցով, այնպես որ նվագարկիչը երբեք չի պահում ձեր սեսիայի թոքենը, իսկ այն, ինչ նա կարդում է նախապես, մնում է հիշողության մեջ, ոչ թե սկավառակի վրա։ Այն բացում է միայն իրեն տրված ֆայլը. թղթապանակի կամ համօգտագործման ֆայլը, որն իրականում նվագացանկ է կամ հոսքի նկարագրություն, չի ստիպում նրան միանալ որևէ այլ տեղ։ desktop build 3-ից յուրաքանչյուր տեսանյութի հասցեն նվագարկիչին տրվում է միայն հիշողության մեջ, երբեք ժամանակավոր ֆայլի միջոցով (այն հղումը, որը հավելվածը ստեղծում է սերվերի կամ համօգտագործման տեսանյութի համար, պարունակում է այդ սեսիայի բանալին, որը desktop build 2-ում յուրաքանչյուր բացման ժամանակ մի քանի վայրկյան մնում էր սկավառակի վրա), և այդ բանալին երբեք չի երևում մատյանում. Tapo տեսախցիկի ուղիղ դիտումը տեսախցիկի հաշիվը նվագարկիչին տալիս է նույն կերպ, երբեք ֆայլում կամ մատյանի տողում, և տեսախցիկի հետ կապվում է միայն տեղական ցանցում. 360° նվագարկիչի և ապակոդավորիչների չափումները (գրաֆիկական չիպը, տեսանյութի ձևաչափը, կադրերը վայրկյանում, երբեք ֆայլի անուն) մնում են հավելվածի թղթապանակում՝ համակարգչում։
+Nothing goes to the developer: no account, no analytics, no crash reporting service, no advertising. The app talks only to the servers you choose (your Immich server, your shares, your Plex server, your cameras) and, without a server, to nothing at all. Passwords and tokens stay in the secure storage of the device. The camera of the Spatial 2.5D player is used on the device only; its images are never stored and never sent anywhere. The full policy is in [PRIVACY.md](../PRIVACY.md), and the details per source in the [user guide](../docs/immuch360/user-guide.md#privacy).
 
-Ամբողջական քաղաքականությունը [PRIVACY.md](../PRIVACY.md)-ում է։
+<a id="the-project"></a>
+## The project
 
-<a id="license-and-trademark"></a>
-## Լիցենզիա և ապրանքային նշան
+Immuch360 is an unofficial fork of the [Immich](https://github.com/immich-app/immich) mobile app, under the [GNU AGPL v3](../LICENSE), not affiliated with, nor endorsed by, the Immich team or FUTO. The fork exists because 360° viewing on mobile has been requested in Immich since January 2024 and is not in the official app yet; it ships it now, gathers real device feedback, and will offer back to Immich, in small pull requests, whatever the maintainers want. Everything the official app does is kept; the branches, the build chain and the CI are described in [Build it yourself](../docs/immuch360/build.md).
 
-Այս նախագիծը Immich-ի ճյուղավորում է և մնում է [GNU AGPL v3](../LICENSE) լիցենզիայի ներքո։ Յուրաքանչյուր APK, ներառյալ հեռախոսինները, պարունակում է նաև Meta Spatial SDK-ն, որը բաց կոդով չէ (Meta Platform Technologies SDK License Agreement) և օգտագործվում է միայն Meta Quest սաղավարտներում. Immuch360 Desktop-ը՝ Windows-ի տարբերակը, այն չի պարունակում։ Immuch360-ը կապված չէ Immich թիմի կամ FUTO-ի հետ և չի հավանության արժանացել նրանց կողմից։
+The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192); thanks to both. The Tapo cameras were written from what [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) and [python-kasa](https://github.com/python-kasa/python-kasa) document. The Meta Quest view relies on the Meta Spatial SDK, which is not open source, so it stays in this fork. The Windows ZIP carries libmpv (the library of [mpv](https://mpv.io), with [FFmpeg](https://ffmpeg.org)) built by the project, under the LGPL, with its licences and sources; the details and the trademarks of the platforms named on this page are in [License and trademarks](../docs/immuch360/platform-support.md#license-and-trademarks).
 
-Immuch360 Desktop-ի Windows ZIP-ը, և միայն այն, պարունակում է նաև իր տեսանվագարկիչը. libmpv՝ [mpv](https://mpv.io)-ի գրադարանը, որի ներսում [FFmpeg](https://ffmpeg.org)-ն է, կառավարվող [media_kit](https://github.com/media-kit/media-kit)-ի հավելումներով։ mpv-ն և FFmpeg-ը կառուցված են առանց իրենց միայն GPL մասերի, և դրանց կոդը GNU LGPL 2.1 կամ ավելի ուշ տարբերակի ներքո է. միասին կառուցված `libmpv-2.dll`-ը տարածվում է GNU LGPL 3 կամ ավելի ուշ տարբերակի ներքո։ Հավելվածն այն բեռնում է գործարկման ժամանակ, ուստի կարող եք այն փոխարինել ձեր սեփական կառուցվածքով։ Լիցենզիաների տեքստերը ZIP-ի `licenses` թղթապանակում են, և յուրաքանչյուր գրադարան իր լիցենզիայով և աղբյուրներով նշված է [NOTICES.md](../mobile/packages/media_kit_video/windows/NOTICES.md)-ում։
-
-Android-ը, Android TV-ն և Google TV-ն Google LLC-ի ապրանքային նշաններն են. Apple-ը, iPhone-ը, iPad-ը և macOS-ը Apple Inc.-ի ապրանքային նշաններն են. Meta-ն և Meta Quest-ը Meta Platforms, Inc.-ի ապրանքային նշաններն են. Windows-ը Microsoft ընկերությունների խմբի ապրանքային նշանն է. Linux-ը Linus Torvalds-ի գրանցված ապրանքային նշանն է ԱՄՆ-ում և այլ երկրներում։ Դրանց լոգոները հարթակների աղյուսակում են միայն ցույց տալու համար, թե որտեղ է աշխատում Immuch360-ը, և չեն ենթադրում որևէ հավանություն կամ կապ։ Android ռոբոտը վերարտադրված կամ փոփոխված է Google-ի ստեղծած և տարածած աշխատանքից և օգտագործվում է Creative Commons 3.0 Attribution License-ում նկարագրված պայմաններով։ Tux-ը՝ Linux-ի պինգվինը, Larry Ewing-ի (lewing@isc.tamu.edu) աշխատանքն է, նկարված The GIMP-ով, Simon Budig-ի և Garrett LeSage-ի վեկտորային տարբերակով։ Լոգոների աղբյուրները և լիցենզիաները՝ [.github/readme/logos/SOURCES.md](../.github/readme/logos/SOURCES.md)։
+The phone captures of this page were taken on the Android build in an emulator, the TV ones on the Google TV emulator and the Windows ones on a Windows 11 PC, all with CC0 panoramas from [Poly Haven](https://polyhaven.com); the headset captures were taken on a Quest 3.
 
 <a id="roadmap"></a>
 ## Ճանապարհային քարտեզ
 
 Այն, ինչ դեռ արված չէ, ամենահավանականից սկսած։ Այստեղ ոչինչ խոստում չէ, և [խնդիրների հետևման համակարգում](https://github.com/freeKC/Immuch360/issues) արձագանքներն օգնում են որոշել, թե ինչն է առաջինը։
 
-- **Immuch360 Desktop, նախ Windows**: desktop build 3-ը թողարկված է՝ 360° տեսանվագարկիչով (360°, 3D, VR180 և հում 360° տեսանյութեր, հում ֆայլերի երկու ոսպնյակները, յուրաքանչյուր համակարգչում չափված տեսքի չափը) և Tapo-ի ուղիղ դիտումով, և 2026 թվականի հոկտեմբերի 9-ից համակարգչային աղբյուրները գտնվում են ճյուղավորման հիմնական ճյուղում՝ `immuch360` (տե՛ս [Windows համակարգչում](#on-a-windows-computer-immuch360-desktop-preview))։ Հաջորդը՝ ճյուղավորման սեփական աշխատանքային հոսքի libmpv-ն՝ 2024 թվականի տարբերակի փոխարեն, և յուրաքանչյուր գործառույթի ձեռքով փորձարկումը Windows համակարգչում իրական ֆայլերով, երկու էկրաններով և իրական տեսախցիկով, դրա ուղղումներով. ապա Spatial 2.5D վեբ տեսախցիկով. ապա Linux և macOS. ապա տեղադրիչ, ստորագրված բիլդ և ավտոմատ թարմացումներ։
-- **Google Play**: բիլդ 20-ը հասանելի է 2026 թ. հոկտեմբերի 7-ից՝ բիլդ 18-ի փոխարեն. հեռուստացույցների գրառումը Google-ի վերանայման մեջ է 2026 թ. հոկտեմբերի 9-ից։ Բիլդ 21-ը ոչինչ չի փոխում հեռախոսներում և պլանշետներում։
-- **App Store**: 3.3.0 տարբերակը սպասում է Apple-ի վերանայմանը: այն ունի բիլդ 11-ի գործառույթները, ուստի Immich վերբեռնումը և տեսաապակոդավորիչների ստուգումը (բիլդ 15), ինչպես նաև չմշակված Insta360 ֆայլերը (բիլդ 16) կգան App Store-ի հաջորդ թարմացմամբ։ Հղումը կավելացվի այստեղ, երբ այն հասանելի դառնա։
-- **Meta Horizon Store**: Meta-ն հաստատել է գրառումը 2026 թ. հոկտեմբերի 7-ին բիլդ 14-ով, և այդ օրվանից հավելվածը հրապարակայնորեն հասանելի է [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)-ում։ Բիլդ 21-ը ներկայացված է որպես նրա առաջին թարմացում. այն բերում է այն ամենը, ինչ ավելացվել է բիլդ 14-ից ի վեր (համօգտագործումից վերբեռնում Immich, տեսանյութի աղբյուրի ընտրություն՝ ըստ այն բանի, ինչ սաղավարտն ապակոդավորում է, չմշակված Insta360, GoPro և DJI ֆայլեր, DLNA, հեռախոսի համօգտագործում, Apple-ի տարածական լուսանկարներ, Plex Media Server-ի գրադարաններ, Tapo տեսախցիկներ), և խանութը այն նշում է Quest 2-ի, Quest Pro-ի, Quest 3-ի և 3S-ի համար։ Խանութի տարբերակը տեղադրելու համար ձեռքով տեղադրված պատճենը նախ պետք է ապատեղադրվի (տե՛ս [Տեղադրում](#install))։
-- **Խանութների նկարագրություններ**: Google Play-ի գրառումը վերաշարադրվել է 2026 թ. հոկտեմբերին՝ նոր էկրանապատկերներով, և դրա հեռուստացույցի էկրանապատկերներն ու հեռուստացույցի պաստառն ավելացվել են 2026 թ. հոկտեմբերի 8-ին. հեռուստացույցների գրառումը Google-ի վերանայման մեջ է 2026 թ. հոկտեմբերի 9-ից։ App Store-ի տեքստը դեռ նկարագրում է առաջին բիլդերը (360° լուսանկարներ և տեսանյութեր, չմշակված ֆայլերը՝ հարթ)։ Այն կներկայացնի 3D, VR180 և Spatial դիտակները, առանց սերվերի ռեժիմը, ցանցային համօգտագործումները, մեդիա նվագարկիչը և չմշակված Insta360 ֆայլերը։ Meta Horizon Store-ի տեքստն արդեն ներկայացնում է մեդիա նվագարկիչը։
-- **Տեսախցիկների չմշակված 360° ֆայլեր, հաջորդ քայլեր**: առաջընթացի ցուցիչ, մինչ չմշակված լուսանկարը պատրաստվում է սաղավարտի համար: GoPro և DJI տեսանյութերի հարթեցում իրենց սեփական շարժման տվյալներից: կրկնակի ձկնաչքային .dng. սարքային հաշվետվություններ բիլդ 18-ի երկու ոսպնյակով նվագարկման մասին (X4, X5, X6, GoPro MAX 2, Osmo 360)՝ կարերը և ապակոդավորիչների հնարավորությունները հաստատելու համար։
-- **DLNA, հեռախոսի համօգտագործում և Apple-ի տարածական մեդիա, հաջորդ քայլեր**: բիլդ 19-ի սարքային հաշվետվությունները (Plex, Jellyfin, NAS և Freebox Server DLNA-ով: Quest-ին մատուցող հեռախոս, նաև իր թեժ կետով: իրական iPhone-ի տարածական լուսանկարներ և տեսանյութեր սաղավարտում): Apple-ից խնդրված multicast իրավունքը, որպեսզի iPhone-ները գտնեն յուրաքանչյուր DLNA սերվեր: նախորդ և հաջորդ տարածական լուսանկարների միջև սաղավարտում: տարածական նշան սերվերի լուսանկարների վրա ժամանակագծում: տարածական տեսանյութեր 3D-ով Quest-ում, եթե նրա ապակոդավորիչները թույլ տան։
-- **360° նվագարկիչներ հեռախոսներում, հաջորդ քայլեր**: ժամանակի գոտի iOS-ի 360° տեսանվագարկիչում (Android-ինն ունի այն), նախորդ/հաջորդ հեռախոսների 360° նվագարկիչներում, ինչպես Quest-ի ընկղմվող դիտման մեջ, և լուսանկարներ բնիկ 360° տեսանվագարկիչում։
-- **Ցանցային համօգտագործումներ, հաջորդ քայլեր**: թղթապանակի մի ֆայլից հաջորդին սահեցնել լուսանկարների և տեսանյութերի էջերում (Quest-ի ընկղմվող դիտումն արդեն անցնում է թղթապանակի 360° ֆայլերով), Digest նույնականացում WebDAV-ի համար, օգտանունը Bonjour գրառումից։
-- **Հարթ տեսանյութեր**: աուդիո ուղու ընտրություն հեռախոսների հարթ նվագարկիչում՝ սերվերի, սարքի և համօգտագործման տեսանյութերի համար (360° և Spatial նվագարկիչներն ունեն այն, ինչպես նաև Immuch360 Desktop-ի հարթ նվագարկիչը)։
-- **Android TV, հաջորդը**: բիլդ 20-ի սարքային փորձարկումը Google TV էմուլյատորում և իրական հեռուստացույցում, և հեռուստատեսային թողարկումը Google Play-ում, երբ Google-ը վերանայի հեռուստացույցների գրառումը. ավելի ուշ՝ ալիքներ հեռուստացույցի գլխավոր էկրանին։
-- **Tapo տեսախցիկներ, հաջորդը**: բիլդ 20-ի սարքային փորձարկումը իրական տեսախցիկներով. ուղիղ դիտումը iPhone-ում և iPad-ում. H.265 տեսագրություններ. տեսահատվածի նվագարկում բերվելու ընթացքում. ամբողջ օրվա տեսագրությունները մեկ ժամանակագծում։
-- **Plex, հաջորդը**: բիլդ 20-ի սարքային փորձարկումը (հեռախոսներ, Quest, iPhone, հեռուստացույց, տնից դուրս). թոքենի փոխանցումը համակարգչից QR կոդով. Plex սերվերի DLNA կողմի թաքցնելը գտնված սերվերների ցանկում. IPv6։
+- **The stores**: Google Play (build 23 in review, the TV listing in review), the App Store (version 3.3.0 in review), the Meta Horizon Store (build 21 in review).
+- **Computers**: the test of each function by hand on a Windows PC; then Spatial 2.5D with the webcam; then macOS and Linux started and shipped, with their video player; then an installer, a signed build and automatic updates.
+- **Phones and tablets**: a time bar in the iOS 360° video player, previous and next in the 360° players of phones, the audio track choice in the flat player, the Tapo live view on iPhone and iPad.
+- **Immersive media**: dual fisheye .dng, levelling of GoPro and DJI videos from their own motion data, spatial videos in 3D on the Quest if its decoders allow it, previous and next between spatial photos in the headset.
+- **Sources**: swiping between the files of a share folder, Digest authentication for WebDAV, a QR code to bring the Plex token from the computer, IPv6 for Plex, H.265 Tapo recordings, channels on the TV home screen.
 - **Upstream**: փոքր pull request-ներ Immich-ին այն մասերի համար, որոնք ցանկանում են սպասարկողները, սկսած 360° լուսանկարների դիտակից։
 
-<a id="credits"></a>
-## Երախտագիտություն
-
-360° լուսանկարների դիտակը հիմնված է dmitry-brazhenko-ի upstream pull request-ի վրա՝ [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169), որն ինքը կառուցված է bencefr-ի նախատիպի վրա [#30192](https://github.com/immich-app/immich/pull/30192)-ում։ Շնորհակալություն երկուսին էլ։
-
-Բիլդ 20-ի Tapo տեսախցիկների աջակցությունը գրվել է այն բանի հիման վրա, ինչ բաց կոդով [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) և [python-kasa](https://github.com/python-kasa/python-kasa) նախագծերը փաստաթղթավորում են այս տեսախցիկների մասին։
-
-Ինչու ճյուղավորում: 360° դիտումը բջջայինում խնդրվում է 2024 թվականի հունվարից և դեռ չկա պաշտոնական հավելվածում: լուսանկարների դիտակը վերանայման մեջ է upstream-ում՝ [#31169](https://github.com/immich-app/immich/pull/31169)-ում։ Այս ճյուղավորումն այն տրամադրում է հիմա, հավաքում է իրական սարքերից արձագանքներ և փոքր pull request-ներով Immich-ին կառաջարկի այն ամենը, ինչ ցանկանում են սպասարկողները։ Meta Quest-ի դիտումը հիմնված է Meta Spatial SDK-ի վրա, որը բաց կոդով չէ, ուստի այն մնում է այս ճյուղավորման մեջ։
-
-Այս էջի հեռախոսի պատկերներն արվել են Android բիլդով էմուլյատորում՝ անգլերեն միջերեսով և [Poly Haven](https://polyhaven.com)-ի CC0 համայնապատկերներով։
+The full list, with the device checks still pending for each feature, is in [Release status](../docs/immuch360/release-status.md#roadmap).

@@ -18,12 +18,13 @@ What differs from upstream, to apply again when a newer commit is copied here:
 - `windows/CMakeLists.txt`: every archive is checked by SHA-256 instead of MD5 (`download_and_verify`), with the
   SHA-256 of the 2024 libmpv archives (x64 `e23701df...a007`, arm64 `d445d02a...33ae`) and of `ANGLE.7z`
   (`cc5911bb...5f9a`), whose MD5 matched upstream's when they were computed (2026-10-08).
-- `windows/CMakeLists.txt`: the switch `IMMUCH360_LIBMPV_FROM_CI`. Off by default: the 2024 archive of
+- `windows/CMakeLists.txt`: the switch `IMMUCH360_LIBMPV_FROM_CI`, on by default since desktop build 4 (release
+  `libmpv-windows-20261009-3`, pinned by its SHA-256). Off: the 2024 archive of
   `media-kit/libmpv-win32-video-cmake`. On: the archive of a `libmpv-windows-*` release of `freeKC/Immuch360`, built by
   `.github/workflows/immuch360-libmpv.yml` (plan 20-plan-desktop.md, 2.4, V-LIBMPV) and pinned by
-  `IMMUCH360_LIBMPV_TAG`, the archive names and their SHA-256, which stay empty until that workflow has published its
-  first release (the run summary prints the lines to paste); turning the switch on before that stops the configure with
-  a message. The environment variable of the same name overrides the default for one build
+  `IMMUCH360_LIBMPV_TAG`, the archive names and their SHA-256 (filled from the release's SHA256SUMS.txt; the run summary
+  prints the lines to paste); with the switch on and these values empty, the configure stops with a message. The
+  environment variable of the same name overrides the default for one build
   (`IMMUCH360_LIBMPV_FROM_CI=1 win_flutter.sh --env IMMUCH360_LIBMPV_FROM_CI build windows ...`).
 - `windows/CMakeLists.txt`: `zlib.dll` of `ANGLE.7z` is no longer bundled. That file is a debug build (it imports
   `VCRUNTIME140D.dll` and `ucrtbased.dll`, absent from a Windows without Visual Studio) and no file of the folder

@@ -27,8 +27,8 @@ per library) and its `BUILDINFO.txt` go into `licenses/libmpv/` as well.
 
 | Switch `IMMUCH360_LIBMPV_FROM_CI` | Archive | Versions |
 |---|---|---|
-| off (the default until the first published run) | `mpv-dev-x86_64-20241021-git-0f78584.7z`, SHA-256 `e23701df0adc1fe57c8ede3ff313513b0b80519870058c2d35ff02754284a007` (arm64: `mpv-dev-aarch64-20241021-git-0f78584.7z`, `d445d02ab2ee60b1b5988f08ce4d2394cdcc594e98321b746a313313e96133ae`), release `20241021` of `media-kit/libmpv-win32-video-cmake` | mpv v0.39.0-179-g0f78584518, FFmpeg N-117622-g8d940a07d (as the library reports them) |
-| on | the archives of a `libmpv-windows-*` release of `freeKC/Immuch360`, built by `.github/workflows/immuch360-libmpv.yml` and pinned by the SHA-256 of that release's `SHA256SUMS.txt` | in that release's `BUILDINFO-x86_64.txt` and `BUILDINFO-aarch64.txt` |
+| off (the fallback; the default until desktop build 3) | `mpv-dev-x86_64-20241021-git-0f78584.7z`, SHA-256 `e23701df0adc1fe57c8ede3ff313513b0b80519870058c2d35ff02754284a007` (arm64: `mpv-dev-aarch64-20241021-git-0f78584.7z`, `d445d02ab2ee60b1b5988f08ce4d2394cdcc594e98321b746a313313e96133ae`), release `20241021` of `media-kit/libmpv-win32-video-cmake` | mpv v0.39.0-179-g0f78584518, FFmpeg N-117622-g8d940a07d (as the library reports them) |
+| on (the default since desktop build 4, release `libmpv-windows-20261009-3`) | the archives of a `libmpv-windows-*` release of `freeKC/Immuch360`, built by `.github/workflows/immuch360-libmpv.yml` and pinned by the SHA-256 of that release's `SHA256SUMS.txt` | in that release's `BUILDINFO-x86_64.txt` and `BUILDINFO-aarch64.txt` |
 
 ### Licence
 
