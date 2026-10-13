@@ -44,6 +44,24 @@ bool FlutterWindow::OnCreate() {
           flutter_controller_->engine()->messenger(),
           IMMUCH360_INSTANCE_CHANNEL,
           &flutter::StandardMethodCodec::GetInstance());
+  // Room on that channel for the files of several later starts that come
+  // before Dart listens to it: Windows starts the app once per file opened
+  // with it, and a channel keeps one message by default. Flutter's control
+  // channel resizes the buffer, before any message of those starts.
+  flutter::MethodChannel<flutter::EncodableValue> channel_buffers(
+      flutter_controller_->engine()->messenger(), "dev.flutter/channel-buffers",
+      &flutter::StandardMethodCodec::GetInstance());
+  channel_buffers.InvokeMethod(
+      "resize",
+      std::make_unique<flutter::EncodableValue>(flutter::EncodableList{
+          flutter::EncodableValue(IMMUCH360_INSTANCE_CHANNEL),
+          flutter::EncodableValue(1000)}));
+  if (!early_hand_overs_.empty()) {
+    instance_channel_->InvokeMethod(
+        "openFiles",
+        std::make_unique<flutter::EncodableValue>(std::move(early_hand_overs_)));
+    early_hand_overs_.clear();
+  }
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
   // Files dropped on the window open as a later start's do (OnDropFiles). The
   // Flutter view, a child window, takes no drop itself: Windows hands a drop on
@@ -124,11 +142,18 @@ void FlutterWindow::OnHandOver(const COPYDATASTRUCT& data) {
       argument.push_back(bytes[i]);
     }
   }
-  if (instance_channel_ && !arguments.empty()) {
-    instance_channel_->InvokeMethod(
-        "openFiles",
-        std::make_unique<flutter::EncodableValue>(std::move(arguments)));
+  if (arguments.empty()) {
+    return;
   }
+  if (!instance_channel_) {
+    // A start handled while the view is being made
+    early_hand_overs_.insert(early_hand_overs_.end(), arguments.begin(),
+                             arguments.end());
+    return;
+  }
+  instance_channel_->InvokeMethod(
+      "openFiles",
+      std::make_unique<flutter::EncodableValue>(std::move(arguments)));
 }
 
 void FlutterWindow::OnDropFiles(HDROP drop) {

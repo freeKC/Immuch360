@@ -51,29 +51,60 @@ String _pathOf(String argument) {
 }
 
 /// What the program is asked to open, a batch per request: the command line of the first start, each later start
-/// (single_instance.dart) and each drop on the window. [DesktopOpenFilesHandler] opens them in turn.
+/// (single_instance.dart) and each drop on the window. Files that come within [together] of each other make one batch:
+/// Windows starts the program once per file when several are opened with it, and each of those starts hands its own
+/// file over. [DesktopOpenFilesHandler] opens the batches in turn.
 abstract final class DesktopOpenRequests {
+  /// How long the newest batch waits for more files before it can be opened
+  @visibleForTesting
+  static Duration together = const Duration(milliseconds: 500);
+
   static final _batches = Queue<List<String>>();
+  // The newest batch while more files can join it
+  static List<String>? _gathering;
+  static Timer? _quiet;
   static void Function()? _onRequest;
 
-  /// Asks to open [paths] together; nothing for an empty batch
+  /// Asks to open [paths]; they join the newest batch while it waits for more files, once each; nothing for no path
   static void add(Iterable<String> paths) {
     final batch = launchPathsOf(paths);
     if (batch.isEmpty) {
       return;
     }
-    _batches.add(batch);
-    _onRequest?.call();
+    final gathering = _gathering;
+    if (gathering == null) {
+      _batches.add(batch);
+      _gathering = batch;
+    } else {
+      final known = gathering.toSet();
+      for (final path in batch) {
+        if (known.add(path)) {
+          gathering.add(path);
+        }
+      }
+    }
+    _quiet?.cancel();
+    _quiet = Timer(together, () {
+      _gathering = null;
+      _onRequest?.call();
+    });
   }
 
-  /// The oldest batch not opened yet, null when there is none
-  static List<String>? take() => _batches.isEmpty ? null : _batches.removeFirst();
+  /// Gives back [batch], taken before and kept meanwhile, as the next one to open
+  static void putBack(List<String> batch) => _batches.addFirst(batch);
 
-  /// [onRequest] is told of each new batch
+  /// The oldest batch not opened yet, null when there is none or while it waits for more files
+  static List<String>? take() =>
+      _batches.isEmpty || identical(_batches.first, _gathering) ? null : _batches.removeFirst();
+
+  /// [onRequest] is told of each batch once it can be opened
   static void listen(void Function()? onRequest) => _onRequest = onRequest;
 
   @visibleForTesting
   static void reset() {
+    _quiet?.cancel();
+    _quiet = null;
+    _gathering = null;
     _batches.clear();
     _onRequest = null;
   }
@@ -157,7 +188,7 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
   final OpenedPathsReader _read;
   final Future<void> Function(AppRouter router) _whenAppShown;
 
-  // The latest batch given before a session was open
+  // The latest batch given before a session was open, all the files of the starts that came together
   List<String>? _deferred;
   bool _opening = false;
 
@@ -179,7 +210,7 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
       return;
     }
     _deferred = null;
-    DesktopOpenRequests.add(deferred);
+    DesktopOpenRequests.putBack(deferred);
     await _openRequests();
   }
 

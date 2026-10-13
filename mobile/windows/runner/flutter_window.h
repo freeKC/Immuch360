@@ -37,6 +37,10 @@ class FlutterWindow : public Win32Window {
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
       instance_channel_;
 
+  // The files of later starts handled before that channel was made, sent on
+  // it once it is (OnCreate).
+  flutter::EncodableList early_hand_overs_;
+
   // Hands the command line a second start sent with WM_COPYDATA to Dart, and
   // brings this window to the front.
   void OnHandOver(const COPYDATASTRUCT& data);

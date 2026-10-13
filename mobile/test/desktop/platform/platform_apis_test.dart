@@ -151,6 +151,7 @@ void main() {
       addTearDown(DesktopOpenRequests.reset);
 
       expect(await DesktopViewIntentHostApi().consumeViewIntent(), isNull);
+      await Future<void>.delayed(DesktopOpenRequests.together);
       expect(DesktopOpenRequests.take(), [r'C:\photos\VID_1.insv', r'C:\photos\IMG_2.jpg']);
     });
 

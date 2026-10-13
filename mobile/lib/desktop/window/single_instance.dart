@@ -6,8 +6,8 @@ import 'package:immich_mobile/desktop/files/open_files.dart';
 /// the files dropped on its window. One copy of the app runs per user, with one database.
 const singleInstanceChannel = MethodChannel('immuch360/instance');
 
-/// Takes the files of later starts and of drops as the files of the first start: a batch each (see
-/// DesktopOpenRequests). [onFiles] is told once they are queued.
+/// Takes the files of later starts and of drops as the files of the first start (see DesktopOpenRequests, which puts
+/// together the files that come at once). [onFiles] is told once they are queued.
 void listenForLaterStarts({void Function()? onFiles}) {
   singleInstanceChannel.setMethodCallHandler((call) async {
     if (call.method != 'openFiles' || call.arguments is! List) {

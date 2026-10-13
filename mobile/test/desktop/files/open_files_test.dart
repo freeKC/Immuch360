@@ -1,11 +1,13 @@
 // How a computer opens the files given to the program (lib/desktop/files/open_files.dart): the command line, the
-// files of later starts and of drops coming on the channel of the runner, a batch at a time, kept until a session is
-// open; one file in the viewer, a 360° one in its 360° view at once; several files or a folder on a page of their own.
+// files of later starts and of drops coming on the channel of the runner, a batch at a time (the files that come
+// together make one), kept until a session is open; one file in the viewer, a 360° one in its 360° view at once;
+// several files or a folder on a page of their own.
 
 import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:fake_async/fake_async.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -166,41 +168,83 @@ void main() {
   group('the requests', () {
     tearDown(DesktopOpenRequests.reset);
 
-    test('come as batches in their order, an empty one dropped, each new one told', () {
-      var told = 0;
-      DesktopOpenRequests.listen(() => told++);
+    test('the files that come together make one batch, each file once, told once no more come for a moment', () {
+      fakeAsync((async) {
+        var told = 0;
+        DesktopOpenRequests.listen(() => told++);
 
-      DesktopOpenRequests.add(['a.jpg', 'b.jpg']);
-      DesktopOpenRequests.add(['--flag']);
-      DesktopOpenRequests.add(['c.mp4']);
+        DesktopOpenRequests.add(['a.jpg']);
+        async.elapse(const Duration(milliseconds: 300));
+        DesktopOpenRequests.add(['--flag']);
+        DesktopOpenRequests.add(['b.jpg', 'a.jpg']);
+        async.elapse(const Duration(milliseconds: 499));
+        expect(told, 0);
+        expect(DesktopOpenRequests.take(), isNull);
 
-      expect(told, 2);
-      expect(DesktopOpenRequests.take(), ['a.jpg', 'b.jpg']);
-      expect(DesktopOpenRequests.take(), ['c.mp4']);
-      expect(DesktopOpenRequests.take(), isNull);
+        async.elapse(const Duration(milliseconds: 1));
+        expect(told, 1);
+        DesktopOpenRequests.add(['c.mp4']);
+        expect(DesktopOpenRequests.take(), ['a.jpg', 'b.jpg']);
+        expect(DesktopOpenRequests.take(), isNull);
+
+        async.elapse(DesktopOpenRequests.together);
+        expect(told, 2);
+        expect(DesktopOpenRequests.take(), ['c.mp4']);
+        expect(DesktopOpenRequests.take(), isNull);
+      });
     });
 
-    test('a later start and a drop on the window come on the channel of the runner, a batch each', () async {
-      var told = 0;
-      listenForLaterStarts(onFiles: () => told++);
-      addTearDown(() => singleInstanceChannel.setMethodCallHandler(null));
+    test('a batch given back comes before the others', () {
+      fakeAsync((async) {
+        DesktopOpenRequests.add(['b.jpg']);
+        DesktopOpenRequests.putBack(['a.jpg']);
 
-      Future<void> send(String method, Object? arguments) =>
+        expect(DesktopOpenRequests.take(), ['a.jpg']);
+        expect(DesktopOpenRequests.take(), isNull);
+        async.elapse(DesktopOpenRequests.together);
+        expect(DesktopOpenRequests.take(), ['b.jpg']);
+      });
+    });
+
+    test('later starts and drops come on the channel of the runner, together when they come at once', () {
+      fakeAsync((async) {
+        var told = 0;
+        listenForLaterStarts(onFiles: () => told++);
+        addTearDown(() => singleInstanceChannel.setMethodCallHandler(null));
+
+        void send(String method, Object? arguments) => unawaited(
           TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
             singleInstanceChannel.name,
             singleInstanceChannel.codec.encodeMethodCall(MethodCall(method, arguments)),
             (_) {},
-          );
+          ),
+        );
 
-      await send('openFiles', [r'C:\Users\me\Pictures\pano.jpg']);
-      await send('openFiles', [r'C:\Users\me\Pictures\a.jpg', r'C:\Users\me\Pictures\b.jpg', 3]);
-      await send('somethingElse', ['x.jpg']);
-      await send('openFiles', 'not a list');
+        // Two starts of "Open with" on two files and a drop of two more, at once
+        send('openFiles', [r'C:\Users\me\Pictures\pano.jpg']);
+        send('openFiles', [r'C:\Users\me\Pictures\IMG_1.jpg']);
+        send('openFiles', [r'C:\Users\me\Pictures\a.jpg', r'C:\Users\me\Pictures\b.jpg', 3]);
+        send('somethingElse', ['x.jpg']);
+        send('openFiles', 'not a list');
+        async.flushMicrotasks();
+        expect(told, 3);
+        expect(DesktopOpenRequests.take(), isNull);
 
-      expect(told, 2);
-      expect(DesktopOpenRequests.take(), [r'C:\Users\me\Pictures\pano.jpg']);
-      expect(DesktopOpenRequests.take(), [r'C:\Users\me\Pictures\a.jpg', r'C:\Users\me\Pictures\b.jpg']);
-      expect(DesktopOpenRequests.take(), isNull);
+        async.elapse(DesktopOpenRequests.together);
+        expect(DesktopOpenRequests.take(), [
+          r'C:\Users\me\Pictures\pano.jpg',
+          r'C:\Users\me\Pictures\IMG_1.jpg',
+          r'C:\Users\me\Pictures\a.jpg',
+          r'C:\Users\me\Pictures\b.jpg',
+        ]);
+
+        // A drop a while later is a batch of its own
+        send('openFiles', [r'C:\Users\me\Pictures\c.jpg']);
+        async.flushMicrotasks();
+        async.elapse(DesktopOpenRequests.together);
+        expect(DesktopOpenRequests.take(), [r'C:\Users\me\Pictures\c.jpg']);
+        expect(DesktopOpenRequests.take(), isNull);
+      });
     });
   });
 
@@ -263,6 +307,7 @@ void main() {
     late _TestAuthNotifier auth;
     late DesktopOpenFilesHandler handler;
     late Directory directory;
+    late Duration together;
 
     setUpAll(() {
       registerFallbackValue(<PageRouteInfo<dynamic>>[]);
@@ -271,6 +316,9 @@ void main() {
     });
 
     setUp(() {
+      // The batches open as soon as nothing more comes, at the next turn of the event loop
+      together = DesktopOpenRequests.together;
+      DesktopOpenRequests.together = Duration.zero;
       directory = Directory.systemTemp.createTempSync('open_files_handler_');
       _readable = {};
       OpenedFiles.clear();
@@ -296,6 +344,7 @@ void main() {
     tearDown(() {
       container.dispose();
       DesktopOpenRequests.reset();
+      DesktopOpenRequests.together = together;
       OpenedFiles.clear();
       directory.deleteSync(recursive: true);
     });
@@ -388,6 +437,39 @@ void main() {
       expect(batch.assets.map((asset) => asset.id), ['f-IMG_1.jpg', 'f-VID_2.mp4']);
       expect(OpenedFiles.file('f-VID_2.mp4')?.path, paths.last);
       expect(container.read(desktopOpenIn360Provider), isNull);
+    });
+
+    test('the files of several starts that come together open together on the page of opened files', () async {
+      await container.read(localSessionProvider.notifier).enter();
+      final paths = [file('IMG_1.jpg'), file('IMG_2.jpg'), file('VID_3.mp4')];
+
+      // Windows starts the program once per file opened with it, each start hands its file over
+      for (final path in paths) {
+        DesktopOpenRequests.add([path]);
+      }
+      await settle();
+
+      final routes = verify(() => router.replaceAll(captureAny())).captured.single as List<PageRouteInfo<dynamic>>;
+      expect(routes.last.routeName, OpenedFilesRoute.name);
+      final batch = await (routes.last.args as OpenedFilesRouteArgs).files;
+      expect(batch.assets.map((asset) => asset.id), ['f-IMG_1.jpg', 'f-IMG_2.jpg', 'f-VID_3.mp4']);
+    });
+
+    test('the files of several starts given before a session all open once one is open', () async {
+      final paths = [file('IMG_1.jpg'), file('IMG_2.jpg')];
+
+      DesktopOpenRequests.add([paths.first]);
+      DesktopOpenRequests.add([paths.last]);
+      await settle();
+      verifyNever(() => router.replaceAll(any()));
+
+      await container.read(localSessionProvider.notifier).enter();
+      await settle();
+
+      final routes = verify(() => router.replaceAll(captureAny())).captured.single as List<PageRouteInfo<dynamic>>;
+      expect(routes.last.routeName, OpenedFilesRoute.name);
+      final batch = await (routes.last.args as OpenedFilesRouteArgs).files;
+      expect(batch.assets.map((asset) => asset.id), ['f-IMG_1.jpg', 'f-IMG_2.jpg']);
     });
 
     test('a folder opens on the page of opened files, even with one photo in it', () async {
