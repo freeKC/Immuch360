@@ -4,8 +4,8 @@
 // - two players, one stream each, each decoded by the GPU without a copy into a texture of its own, the view drawn
 //   from both by renderer C, which draws each pair of frames of the same time together (the media_kit_video plugin's
 //   IMMUCH360-NOTE.md, patch 7; raw_partner_player.dart for the second player). The fisheye pairs of Windows: a DJI
-//   Osmo 360 file (two 3840 x 3840 HEVC 10 bit tracks) plays this way on both graphics chips of the test laptop, where
-//   stacking both in one player played it at 7 to 9 frames a second;
+//   Osmo 360 file (two 3840 x 3840 HEVC 10 bit tracks at 25 fps) played this way on the RTX 4060 of the test laptop
+//   at 25 fps with every frame paired, where two such tracks stacked in one player (an X4 file) played at 7 to 9;
 // - one mpv core that decodes both and lays them side by side with lavfi-complex "[vid1] [vid2] hstack [vo]", the
 //   second file of a pair joining as an external track (external-files). FFmpeg's filter graph pairs the frames of
 //   the two streams by their time stamps. hstack works on frames in memory, so this way copies every frame back

@@ -24,7 +24,8 @@ Each line links to the section that explains it. The limits by design, such as t
 
 ## Android phones and tablets
 
-- **Two lens raw videos on a phone** (Insta360 X4 and later, X3 pairs, GoPro .360, DJI .osv) have not been played on a phone yet: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
+- **Two lens raw videos on a phone** (Insta360 X4 and later, X3 pairs, GoPro .360, DJI .osv) have not been played on a phone yet; a DJI Osmo 360 file needs a 10 bit HEVC decoder, which the Android emulator lacks: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
+- **Raw files copied to the phone are not listed**: Android files .insv, .insp, .360, .lrv and .osv as other files, not as photos or videos, so they stay out of the gallery and of the app; play them from a share or a computer: [Watch a raw file](user-guide.md#watch-a-raw-file).
 - **A phone serving a Quest 3** with "Share this phone on the network" is not checked on a device yet: [Share this phone](user-guide.md#share-this-phone-on-the-network).
 - **Plex playback on a phone** is not checked on a device yet: [Plex Media Server](user-guide.md#plex-media-server-without-plextv).
 - **Apple spatial videos play one eye**, since Android has no public way to decode the second view: [Apple spatial photos and videos](user-guide.md#everywhere-else).
@@ -78,7 +79,7 @@ Each line links to the section that explains it. The limits by design, such as t
 
 ### Not there yet
 
-- **Two lens raw videos on a laptop**: even with a 2026 libmpv, the test laptop stacked an X3 pair (two 2880x2880 H.264 files) at 30 frames a second on its NVIDIA chip only; on its Intel chip, and for an X4 file (two 3840x3840 HEVC tracks) on both chips, the video plays one lens, half of the sphere black, as on a phone that cannot run two decoders.
+- **Two lens raw videos on a laptop**: in desktop builds 3 and 4 the test laptop stacked an X3 pair (two 2880x2880 H.264 files) at 30 frames a second on its NVIDIA chip only, and an X4 file (two 3840x3840 HEVC tracks) played one lens on both chips. From desktop build 5 they play in two players: a DJI Osmo 360 file (two 3840x3840 HEVC 10 bit tracks) played at 25 frames a second with no frame dropped on the NVIDIA chip. Not checked yet in the app: the Intel chip (two players outside the app dropped 2 to 3 frames of 300 there), and X4 and X3 files in two players.
 - **3D on the screen only**: a 3D video shows its left eye, as on phones; there is no gyroscope and no headset view on the computer. To watch in true 3D, share the computer with a Meta Quest.
 - **Spatial 2.5D**, later with the webcam; the **map** and the Places view; **signing in with OAuth** (sign in with an email and a password instead); **Google Cast**; **notifications**.
 - **An installer, a signed build and automatic updates**: this build is a folder with `immuch360.exe`.
