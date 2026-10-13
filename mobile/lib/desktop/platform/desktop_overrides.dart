@@ -3,6 +3,8 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/files/open_files.dart';
+import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/desktop/library/desktop_asset_media_repository.dart';
 import 'package:immich_mobile/desktop/library/desktop_file_media_repository.dart';
 import 'package:immich_mobile/desktop/library/desktop_storage_repository.dart';
@@ -12,6 +14,8 @@ import 'package:immich_mobile/desktop/platform/desktop_spherical_video_api.dart'
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
+import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
+import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
 import 'package:immich_mobile/repositories/asset_media.repository.dart';
 import 'package:immich_mobile/repositories/file_media.repository.dart';
 import 'package:immich_mobile/repositories/permission.repository.dart';
@@ -40,11 +44,18 @@ List<Override> desktopOverrides() => [
   // home_widget has no computer implementation and throws at each call; the sign in writes the credentials of the
   // home screen widget, so it failed every time
   widgetRepositoryProvider.overrideWith((ref) => const _NoHomeWidgetRepository()),
+  // The files given to the program (its command line, a later start, a drop on the window) rather than view intents
+  viewIntentHandlerProvider.overrideWith((ref) => DesktopOpenFilesHandler(ref)),
+  // The other file of an X3 pair opened with the program is next to it on the disk, not in the local tables
+  openedFileSiblingProvider.overrideWithValue(OpenedFiles.sibling),
 ];
 
 /// What wraps the app on a computer, inside MaterialApp (main.dart): the desktop keys and the window's close guard,
-/// and the folder library kept current while the app runs (its watcher, a rescan when the window comes back)
-Widget desktopAppShell(Widget app) => DesktopShell(child: FolderLibraryHost(child: app));
+/// the folder library kept current while the app runs (its watcher, a rescan when the window comes back), and the 360°
+/// view of a 360° file opened with the program
+Widget desktopAppShell(Widget app) => DesktopShell(
+  child: FolderLibraryHost(child: DesktopOpenedFilesHost(child: app)),
+);
 
 class _NoShareHandlerRepository extends ShareHandlerRepository {
   @override

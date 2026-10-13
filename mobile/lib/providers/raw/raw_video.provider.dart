@@ -69,8 +69,16 @@ final rawAssetInputsProvider = Provider<RawAssetInputs>(
     storage: ref.watch(storageRepositoryProvider),
     probes: ref.watch(sphericalProbeServiceProvider),
     calibrations: ref.watch(dualFisheyeCalibrationServiceProvider),
+    openedSibling: ref.watch(openedFileSiblingProvider),
   ),
 );
+
+/// Finds the other file of a split pair next to a file the local tables do not hold, by the id of that file and the
+/// name looked for: on a computer, a file opened with the program (desktop/files/opened_files.dart). None on the phones.
+final openedFileSiblingProvider = Provider<OpenedFileSiblingFinder?>((_) => null);
+
+/// See [openedFileSiblingProvider]
+typedef OpenedFileSiblingFinder = Future<LocalAsset?> Function(String localId, String siblingName);
 
 /// Why the raw video of [error] does not open in 360°, in the words of [t]: the other file of its split pair is not
 /// found next to it, or the app cannot stitch its layout on this device
@@ -106,10 +114,13 @@ class RawAssetInputs {
     required this._calibrations,
     this._originalUrl = serverOriginalVideoUrl,
     this._transcodedUrl = serverTranscodedVideoUrl,
+    this._openedSibling,
   });
 
   // The repositories of the database, asked for when a sibling is looked for
   final LocalAssetRepository Function() _local;
+  // Where the other file of a file the database does not hold is found, see openedFileSiblingProvider
+  final OpenedFileSiblingFinder? _openedSibling;
   final RemoteAssetRepository Function() _remote;
   final StorageRepository _storage;
   final SphericalProbeService _probes;
@@ -152,7 +163,8 @@ class RawAssetInputs {
       return null;
     }
     try {
-      final sibling = await _local().findSiblingByName(localId, siblingName);
+      final sibling =
+          await _local().findSiblingByName(localId, siblingName) ?? await _openedSibling?.call(localId, siblingName);
       if (sibling == null) {
         _log.info('${asset.name}: no $siblingName on the device next to it');
         return null;

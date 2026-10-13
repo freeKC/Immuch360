@@ -1,5 +1,5 @@
-// The two references of the shared code to the desktop pages, the folders route and the "This computer" settings
-// section, exist on the computers only: on a phone build the condition is a constant, so the folders page, the folder
+// The references of the shared code to the desktop pages, the folders route, the route of the files opened with the
+// program and the "This computer" settings section, exist on the computers only: on a phone build the condition is a constant, so the folders page, the folder
 // library and the computer settings behind them stay out of the app (design 1.1).
 
 import 'package:flutter/foundation.dart';
@@ -20,12 +20,17 @@ const _desktops = {TargetPlatform.windows, TargetPlatform.macOS, TargetPlatform.
 void main() {
   tearDown(() => debugDefaultTargetPlatformOverride = null);
 
-  test('the folders page is a route on the computers only', () {
+  test('the folders page and the page of opened files are routes on the computers only', () {
     for (final platform in TargetPlatform.values) {
       debugDefaultTargetPlatformOverride = platform;
       final router = AppRouter(MockApiService(), MockAuthService(), MockSecureStorageService(), _LocalAuthService());
       expect(
         router.routes.any((route) => route.name == FoldersRoute.name),
+        _desktops.contains(platform),
+        reason: platform.name,
+      );
+      expect(
+        router.routes.any((route) => route.name == OpenedFilesRoute.name),
         _desktops.contains(platform),
         reason: platform.name,
       );

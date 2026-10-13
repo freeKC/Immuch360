@@ -2,6 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/files/opened_files.dart';
+import 'package:immich_mobile/desktop/files/opened_files.page.dart';
 import 'package:immich_mobile/desktop/library/folders.page.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/domain/models/album/local_album.model.dart';
@@ -233,6 +235,8 @@ class AppRouter extends RootStackRouter {
     // Immuch360 Desktop: the folders of the library on a computer. Registered there only, so that the phone builds,
     // where the condition is a constant, leave out the folders page and the folder library behind it
     if (CurrentPlatform.isDesktop) AutoRoute(page: FoldersRoute.page, guards: [_duplicateGuard]),
+    // The files given to the program at once, see DesktopOpenFilesHandler
+    if (CurrentPlatform.isDesktop) AutoRoute(page: OpenedFilesRoute.page, guards: [_authGuard]),
     // required to handle all deeplinks in deep_link.service.dart
     // auto_route_library#1722
     RedirectRoute(path: '*', redirectTo: '/'),

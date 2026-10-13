@@ -83,14 +83,33 @@ final localPanoramaAssetsProvider = NotifierProvider<LocalPanoramaAssets, Map<St
   LocalPanoramaAssets.new,
 );
 
+/// What reading them told of the files opened by their path rather than found in the database of the device: on a
+/// computer, the files opened with the program ("Open with", a drop, its command line, see
+/// desktop/files/opened_files.dart), read with the rules of the scan (see probeLocalPanoramaFile). Keyed by their ids
+/// as local assets, for the session only, and apart from [localPanoramaAssetsProvider], whose scans drop the ids the
+/// database does not hold. The phones leave it empty.
+class OpenedFilePanoramas extends Notifier<Map<String, LocalPanoramaRecord>> {
+  @override
+  Map<String, LocalPanoramaRecord> build() => const {};
+
+  void addAll(Map<String, LocalPanoramaRecord> records) => state = Map.unmodifiable({...state, ...records});
+}
+
+final openedFilePanoramasProvider = NotifierProvider<OpenedFilePanoramas, Map<String, LocalPanoramaRecord>>(
+  OpenedFilePanoramas.new,
+);
+
 /// Ids (on the device) of the local assets whose files declare a 360° projection, or are raw files of 360° cameras,
-/// see [LocalPanoramaAssets]. The latter are listed with the others, on the 360° page and by the immersive viewer, but
-/// their frames are no equirectangular ones: see rawMediaKindProvider. Its listeners hear of a change only when the ids
-/// change, not at every file a scan reads.
+/// see [LocalPanoramaAssets], and of the files opened by their path found so (see [openedFilePanoramasProvider]). The
+/// raw ones are listed with the others, on the 360° page and by the immersive viewer, but their frames are no
+/// equirectangular ones: see rawMediaKindProvider. Its listeners hear of a change only when the ids change, not at
+/// every file a scan reads.
 class FoundLocalPanoramaIds extends Notifier<Set<String>> {
   @override
   Set<String> build() => Set.unmodifiable({
     for (final MapEntry(:key, :value) in ref.watch(localPanoramaAssetsProvider).entries)
+      if (value.isPanorama) key,
+    for (final MapEntry(:key, :value) in ref.watch(openedFilePanoramasProvider).entries)
       if (value.isPanorama) key,
   });
 
