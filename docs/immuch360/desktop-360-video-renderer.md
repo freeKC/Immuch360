@@ -294,8 +294,9 @@ players dropped no frame on the RTX 4060 and 1% on the Intel UHD before renderer
 players drawn together, the second player 1.2 ms off. Over the first seconds, while the second player caught up, 106
 of 165 draws were pairs. The process held about 1.1 GB of memory and 2.9 to 3.8 GB of GPU memory. The first PC run, before
 the delay was measured from frames of any time, drew 148 of 150 frames alone: the second player stayed some frames
-behind, which would show as a time step at the seams. The Intel UHD was not run in the app: the PC was short of memory
-during the check.
+behind, which would show as a time step at the seams. The Intel UHD was not run in 360° in the app: opening the file in
+the flat viewer took the process to 3.2 GB of memory, 2.5 GB of it shared GPU memory, within five seconds, and the
+test's watchdog stopped it while other programs held most of the PC's memory.
 
 ### The player pool
 
