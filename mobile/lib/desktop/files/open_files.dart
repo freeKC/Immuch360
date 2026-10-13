@@ -193,7 +193,7 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
       _log.info('Opening ${paths.length} paths as a page of their own');
       await router.replaceAll([
         const TabShellRoute(),
-        OpenedFilesRoute(title: openedFilesTitle(paths), files: opening),
+        OpenedFilesRoute(key: UniqueKey(), title: openedFilesTitle(paths), files: opening),
       ]);
       return;
     }
@@ -247,16 +247,31 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
 // ignore: avoid_slow_async_io
 Future<bool> isFolder(String path) => FileSystemEntity.isDirectory(path);
 
-/// The title of the page of the files opened at once ([paths]): the name of the folder they are in, or of the folder
-/// given; null when they come from several folders, for the page to count them
+/// The title of the page of the files opened at once ([paths]): the name of the folder given, or of the folder that
+/// holds all the files and folders given; null when only the root of a drive holds them, for the page to count them
 String? openedFilesTitle(List<String> paths) {
-  final folders = {for (final path in paths) FileSystemEntity.isDirectorySync(path) ? path : p.dirname(path)};
-  if (folders.length != 1) {
+  if (paths.isEmpty) {
     return null;
   }
-  final folder = folders.single;
-  final name = p.basename(folder);
-  return name.isEmpty ? folder : name;
+  final folders = [
+    for (final path in paths)
+      FileSystemEntity.isDirectorySync(path) ? p.normalize(p.absolute(path)) : p.dirname(p.normalize(p.absolute(path))),
+  ];
+  var common = folders.first;
+  for (final folder in folders.skip(1)) {
+    while (!p.equals(common, folder) && !p.isWithin(common, folder)) {
+      final parent = p.dirname(common);
+      if (parent == common) {
+        return null;
+      }
+      common = parent;
+    }
+  }
+  if (p.dirname(common) != common) {
+    return p.basename(common);
+  }
+  // A drive given itself is named by its path; files that only a drive holds are counted
+  return folders.every((folder) => p.equals(folder, common)) ? common : null;
 }
 
 /// Shows the 360° file just opened with the program in its 360° view (see [DesktopOpenIn360]), as its 360° button

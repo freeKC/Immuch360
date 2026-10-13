@@ -12,8 +12,8 @@ import 'package:immich_mobile/widgets/common/mesmerizing_sliver_app_bar.dart';
 /// as the page of a folder of the library shows them, by date, each with its 360° badge, without joining the library.
 /// A photo or a video opens in the viewer, which goes from one to the next. Read only: nothing here changes the files.
 ///
-/// [files] are read while the page waits; [title] is the name of their folder, or null when they come from several
-/// folders, for the page to count them.
+/// [files] are read while the page waits; [title] is the name of the folder that holds them all, or null when none
+/// does but the root of a drive, for the page to count them.
 @RoutePage()
 class OpenedFilesPage extends StatelessWidget {
   const OpenedFilesPage({super.key, this.title, required this.files});
@@ -38,7 +38,10 @@ class OpenedFilesPage extends StatelessWidget {
           body: Center(child: body),
         );
       }
+      // A scope per batch: a page that gets other files (a new drop while it is open) shows them, not the files of
+      // the timeline it made first, which an override keeps
       return ProviderScope(
+        key: ObjectKey(batch),
         overrides: [
           timelineServiceProvider.overrideWith((ref) {
             final service = ref

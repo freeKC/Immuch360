@@ -204,14 +204,23 @@ void main() {
     setUp(() => directory = Directory.systemTemp.createTempSync('opened_title_'));
     tearDown(() => directory.deleteSync(recursive: true));
 
-    test('the folder given, the folder of the files, or nothing for files of several folders', () {
+    test('the folder given, or the folder that holds every file and folder given', () {
       final card = Directory(p.join(directory.path, 'DCIM'))..createSync();
       final other = Directory(p.join(directory.path, 'Other'))..createSync();
 
       expect(openedFilesTitle([card.path]), 'DCIM');
       expect(openedFilesTitle([p.join(card.path, 'a.jpg'), p.join(card.path, 'b.jpg')]), 'DCIM');
-      expect(openedFilesTitle([p.join(card.path, 'a.jpg'), p.join(other.path, 'b.jpg')]), isNull);
-      expect(openedFilesTitle([card.path, other.path]), isNull);
+      expect(openedFilesTitle([card.path, p.join(card.path, 'a.jpg')]), 'DCIM');
+      expect(openedFilesTitle([p.join(card.path, 'a.jpg'), p.join(other.path, 'b.jpg')]), p.basename(directory.path));
+      expect(openedFilesTitle([card.path, other.path]), p.basename(directory.path));
+    });
+
+    test('a drive given itself is named by its path; files only a drive holds are counted instead', () {
+      final root = p.rootPrefix(Directory.systemTemp.absolute.path);
+
+      expect(openedFilesTitle([root]), root);
+      expect(openedFilesTitle([p.join(root, 'one', 'a.jpg'), p.join(root, 'two', 'b.jpg')]), isNull);
+      expect(openedFilesTitle([]), isNull);
     });
   });
 

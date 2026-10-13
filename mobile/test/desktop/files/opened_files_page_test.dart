@@ -79,14 +79,19 @@ void main() {
     });
   });
 
-  Future<void> pumpPage(WidgetTester tester, Future<OpenedBatch> files, {String? title}) async {
+  Future<void> pumpPage(
+    WidgetTester tester,
+    Future<OpenedBatch> files, {
+    String? title,
+    Widget Function()? page,
+  }) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
           initial: true,
           page: PageInfo(
             'Opened',
-            builder: (_) => OpenedFilesPage(title: title, files: files),
+            builder: (_) => page?.call() ?? OpenedFilesPage(title: title, files: files),
           ),
         ),
       ],
@@ -152,6 +157,36 @@ void main() {
     expect(shown.single.map((asset) => asset.id), ['f-IMG_1.jpg', 'f-IMG_2.jpg']);
     verify(() => timelines.fromAssetsWithBuckets(any(), TimelineOrigin.deepLink)).called(1);
     // The timers of the grid run out
+    await tester.pump(const Duration(seconds: 1));
+    tester.takeException();
+  });
+
+  testWidgets('shows the files of a new batch when the page gets one while it is open', (tester) async {
+    final files = ValueNotifier<Future<OpenedBatch>>(
+      Future.value(OpenedBatch([_photo('IMG_1.jpg'), _photo('IMG_2.jpg')], fromFolder: true)),
+    );
+    addTearDown(files.dispose);
+    await pumpPage(
+      tester,
+      files.value,
+      page: () => ValueListenableBuilder(
+        valueListenable: files,
+        builder: (_, value, _) => OpenedFilesPage(title: 'Trip', files: value),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    tester.takeException();
+    expect(shown.last.map((asset) => asset.id), ['f-IMG_1.jpg', 'f-IMG_2.jpg']);
+
+    files.value = Future.value(OpenedBatch([_photo('IMG_3.jpg')], fromFolder: true));
+    await tester.pump();
+    await tester.pump();
+    tester.takeException();
+
+    expect(shown.last.map((asset) => asset.id), ['f-IMG_3.jpg']);
+    // The page goes, then the timers of its header run out
+    await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(seconds: 1));
     tester.takeException();
   });
