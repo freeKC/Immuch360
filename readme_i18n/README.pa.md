@@ -1,103 +1,103 @@
 <details><summary>🌐 <b>ਪੰਜਾਬੀ</b> · ਹੋਰ ਭਾਸ਼ਾਵਾਂ (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 <p align="center">
-  <img src="../.github/readme/hero-2026-10.jpg" width="100%" alt="Immuch360: your media, any screen, every perspective. Photos and videos, flat, panoramic, 360°, 3D and VR180, from your device, your NAS or your Immich server, on phones, tablets, TVs, Meta Quest headsets and computers">
+  <img src="../.github/readme/hero-2026-10.jpg" width="100%" alt="Immuch360: ਤੁਹਾਡਾ ਮੀਡੀਆ, ਕੋਈ ਵੀ ਸਕਰੀਨ, ਹਰ ਨਜ਼ਰੀਆ। ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ, ਫਲੈਟ, ਪੈਨੋਰਾਮਿਕ, 360°, 3D ਅਤੇ VR180, ਤੁਹਾਡੀ ਡਿਵਾਈਸ, ਤੁਹਾਡੇ NAS ਜਾਂ ਤੁਹਾਡੇ Immich ਸਰਵਰ ਤੋਂ, ਫੋਨਾਂ, ਟੈਬਲੇਟਾਂ, TV, Meta Quest ਹੈੱਡਸੈੱਟਾਂ ਅਤੇ ਕੰਪਿਊਟਰਾਂ 'ਤੇ">
 </p>
 
 # Immuch360
 
-**Your media. Any screen. Every perspective.**
+**ਤੁਹਾਡਾ ਮੀਡੀਆ। ਕੋਈ ਵੀ ਸਕਰੀਨ। ਹਰ ਨਜ਼ਰੀਆ।**
 
-Immuch360 is a free and open source app to find, browse, play and explore your photos and videos: the ordinary ones, and the panoramic, 360°, 3D and immersive ones that other apps show flat, doubled or stretched. It reads them where they are, on the device itself, on a NAS or a computer, on a Plex server or on an Immich server, and plays them on phones, tablets, TVs, Meta Quest headsets and computers. No account, no cloud, no server required.
+Immuch360 ਤੁਹਾਡੀਆਂ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਲੱਭਣ, ਬ੍ਰਾਊਜ਼ ਕਰਨ, ਚਲਾਉਣ ਅਤੇ ਵੇਖਣ ਲਈ ਇੱਕ ਮੁਫ਼ਤ ਅਤੇ ਓਪਨ ਸੋਰਸ ਐਪ ਹੈ: ਸਧਾਰਨ ਵਾਲੀਆਂ, ਅਤੇ ਪੈਨੋਰਾਮਿਕ, 360°, 3D ਅਤੇ ਇਮਰਸਿਵ ਵਾਲੀਆਂ ਜਿਹਨਾਂ ਨੂੰ ਹੋਰ ਐਪ ਫਲੈਟ, ਦੁੱਗਣਾ ਜਾਂ ਖਿੱਚ ਕੇ ਦਿਖਾਉਂਦੇ ਹਨ। ਇਹ ਉਹਨਾਂ ਨੂੰ ਉੱਥੇ ਹੀ ਪੜ੍ਹਦਾ ਹੈ ਜਿੱਥੇ ਉਹ ਹਨ, ਡਿਵਾਈਸ ਉੱਤੇ ਹੀ, ਇੱਕ NAS ਜਾਂ ਕੰਪਿਊਟਰ ਉੱਤੇ, ਇੱਕ Plex ਸਰਵਰ ਜਾਂ ਇੱਕ Immich ਸਰਵਰ ਉੱਤੇ, ਅਤੇ ਉਹਨਾਂ ਨੂੰ ਫੋਨਾਂ, ਟੈਬਲੇਟਾਂ, TV, Meta Quest ਹੈੱਡਸੈੱਟਾਂ ਅਤੇ ਕੰਪਿਊਟਰਾਂ 'ਤੇ ਚਲਾਉਂਦਾ ਹੈ। ਕੋਈ ਖਾਤਾ, ਕੋਈ ਕਲਾਉਡ, ਕੋਈ ਸਰਵਰ ਲੋੜੀਂਦਾ ਨਹੀਂ।
 
-- **What does it do?** It shows your photos and videos as a gallery and plays them in the viewer that fits each file: flat, as a sphere you look around in, in 3D, in a headset.
-- **Which media?** Flat photos and videos, panoramas, 360° photos and videos, VR180, stereoscopic 3D, Apple spatial photos, and the raw files of 360° cameras (Insta360, GoPro MAX, DJI Osmo 360), stitched by the app.
-- **On which devices?** Android phones and tablets, iPhone and iPad, Android TV and Google TV, Meta Quest 2, Pro, 3 and 3S, Windows (preview), with macOS and Linux in the making.
-- **Do I need a server or an account?** No. Immuch360 works on its own with the media of your device. An Immich server, a NAS, a media server or a Plex server are options you add when you want them.
+- **ਇਹ ਕੀ ਕਰਦਾ ਹੈ?** ਇਹ ਤੁਹਾਡੀਆਂ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਨੂੰ ਇੱਕ ਗੈਲਰੀ ਵਜੋਂ ਦਿਖਾਉਂਦਾ ਹੈ ਅਤੇ ਉਹਨਾਂ ਨੂੰ ਹਰ ਫ਼ਾਈਲ ਦੇ ਅਨੁਕੂਲ ਵਿਊਅਰ ਵਿੱਚ ਚਲਾਉਂਦਾ ਹੈ: ਫਲੈਟ, ਇੱਕ ਗੋਲੇ ਵਜੋਂ ਜਿਸ ਦੇ ਆਲੇ-ਦੁਆਲੇ ਤੁਸੀਂ ਦੇਖਦੇ ਹੋ, 3D ਵਿੱਚ, ਇੱਕ ਹੈੱਡਸੈੱਟ ਵਿੱਚ।
+- **ਕਿਹੜਾ ਮੀਡੀਆ?** ਫਲੈਟ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ, ਪੈਨੋਰਾਮਾ, 360° ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ, VR180, ਸਟੀਰੀਓਸਕੋਪਿਕ 3D, Apple ਸਪੇਸ਼ੀਅਲ ਫੋਟੋਆਂ, ਅਤੇ 360° ਕੈਮਰਿਆਂ (Insta360, GoPro MAX, DJI Osmo 360) ਦੀਆਂ ਰਾਅ ਫ਼ਾਈਲਾਂ, ਜੋ ਐਪ ਵੱਲੋਂ ਸਟਿੱਚ ਕੀਤੀਆਂ ਜਾਂਦੀਆਂ ਹਨ।
+- **ਕਿਹੜੀਆਂ ਡਿਵਾਈਸਾਂ 'ਤੇ?** Android ਫੋਨ ਅਤੇ ਟੈਬਲੇਟ, iPhone ਅਤੇ iPad, Android TV ਅਤੇ Google TV, Meta Quest 2, Pro, 3 ਅਤੇ 3S, Windows (ਪ੍ਰੀਵਿਊ), ਨਾਲ ਹੀ macOS ਅਤੇ Linux ਬਣ ਰਹੇ ਹਨ।
+- **ਕੀ ਮੈਨੂੰ ਸਰਵਰ ਜਾਂ ਖਾਤੇ ਦੀ ਲੋੜ ਹੈ?** ਨਹੀਂ। Immuch360 ਤੁਹਾਡੀ ਡਿਵਾਈਸ ਦੇ ਮੀਡੀਆ ਨਾਲ ਆਪਣੇ ਆਪ ਕੰਮ ਕਰਦਾ ਹੈ। ਇੱਕ Immich ਸਰਵਰ, ਇੱਕ NAS, ਇੱਕ ਮੀਡੀਆ ਸਰਵਰ ਜਾਂ ਇੱਕ Plex ਸਰਵਰ ਉਹ ਚੋਣਾਂ ਹਨ ਜਿਹਨਾਂ ਨੂੰ ਤੁਸੀਂ ਚਾਹੋ ਤਾਂ ਜੋੜ ਸਕਦੇ ਹੋ।
 
 <p align="center">
-  <sub>Unofficial fork of the Immich mobile app. Not affiliated with Immich or FUTO. The name reads as "I am much 360".</sub>
+  <sub>Immich ਮੋਬਾਈਲ ਐਪ ਦਾ ਗੈਰ-ਅਧਿਕਾਰਤ ਫੋਰਕ। Immich ਜਾਂ FUTO ਨਾਲ ਸੰਬੰਧਿਤ ਨਹੀਂ। ਨਾਮ "I am much 360" ਵਜੋਂ ਪੜ੍ਹਿਆ ਜਾਂਦਾ ਹੈ।</sub>
 </p>
 
 <div align="center">
 
 | ਪਲੇਟਫਾਰਮ | ਕਿੱਥੋਂ ਪ੍ਰਾਪਤ ਕਰੀਏ | 12 ਅਕਤੂਬਰ 2026 ਨੂੰ ਸਥਿਤੀ |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 20; build 23 in review), build 23 on GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.0 waiting for Apple's review; [build it yourself](../docs/immuch360/build.md) meanwhile |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 on GitHub; the TV listing is under Google's review |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store (build 14; build 21 in review), build 23 on GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Preview ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | desktop build 4, a preview: photos, flat and 360° videos, shares, Plex, cameras |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | Sources | built by the project's CI, not started on those systems yet, no download yet |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ਫੋਨ ਅਤੇ ਟੈਬਲੇਟ | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play 'ਤੇ (ਬਿਲਡ 20; ਬਿਲਡ 23 ਰਿਵਿਊ ਵਿੱਚ), GitHub 'ਤੇ ਬਿਲਡ 23 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ਅਤੇ iPad** | App Store | ਵਰਜਨ 3.3.0 Apple ਦੇ ਰਿਵਿਊ ਦੀ ਉਡੀਕ ਵਿੱਚ; ਇਸ ਦੌਰਾਨ [ਆਪ ਬਣਾਓ](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ਅਤੇ Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub 'ਤੇ ਬਿਲਡ 23; TV ਲਿਸਟਿੰਗ Google ਦੇ ਰਿਵਿਊ ਅਧੀਨ ਹੈ |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ਅਤੇ 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store 'ਤੇ (ਬਿਲਡ 14; ਬਿਲਡ 21 ਰਿਵਿਊ ਵਿੱਚ), GitHub 'ਤੇ ਬਿਲਡ 23 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [ਪ੍ਰੀਵਿਊ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) | ਡੈਸਕਟਾਪ ਬਿਲਡ 4, ਇੱਕ ਪ੍ਰੀਵਿਊ: ਫੋਟੋਆਂ, ਫਲੈਟ ਅਤੇ 360° ਵੀਡੀਓ, ਸ਼ੇਅਰ, Plex, ਕੈਮਰੇ |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ਅਤੇ Linux** | ਸੋਰਸ | ਪ੍ਰੋਜੈਕਟ ਦੇ CI ਵੱਲੋਂ ਬਣਾਏ ਜਾਂਦੇ ਹਨ, ਇਹਨਾਂ ਸਿਸਟਮਾਂ 'ਤੇ ਅਜੇ ਸ਼ੁਰੂ ਨਹੀਂ ਹੋਏ, ਅਜੇ ਕੋਈ ਡਾਊਨਲੋਡ ਨਹੀਂ |
 
-*The statuses are updated at each release; the details, build by build, are in [Release status](../docs/immuch360/release-status.md).*
+*ਸਥਿਤੀਆਂ ਹਰ ਰਿਲੀਜ਼ 'ਤੇ ਅੱਪਡੇਟ ਕੀਤੀਆਂ ਜਾਂਦੀਆਂ ਹਨ; ਵੇਰਵੇ, ਬਿਲਡ ਦਰ ਬਿਲਡ, [ਰਿਲੀਜ਼ ਸਥਿਤੀ](../docs/immuch360/release-status.md) ਵਿੱਚ ਹਨ।*
 
 </div>
 
 <p align="center">
-  <img src="../.github/readme/platforms-2026-10.jpg" width="100%" alt="Four real captures side by side: the sphere viewer on an Android phone, the 360° list on a Google TV, the video player of Immuch360 Desktop on Windows, and a 360° photo all around you in a Meta Quest 3">
+  <img src="../.github/readme/platforms-2026-10.jpg" width="100%" alt="ਚਾਰ ਅਸਲ ਕੈਪਚਰ ਨਾਲ-ਨਾਲ: ਇੱਕ Android ਫੋਨ 'ਤੇ ਗੋਲਾ ਵਿਊਅਰ, ਇੱਕ Google TV 'ਤੇ 360° ਸੂਚੀ, Windows 'ਤੇ Immuch360 Desktop ਦਾ ਵੀਡੀਓ ਪਲੇਅਰ, ਅਤੇ ਇੱਕ Meta Quest 3 ਵਿੱਚ ਤੁਹਾਡੇ ਆਲੇ-ਦੁਆਲੇ ਇੱਕ 360° ਫੋਟੋ">
 </p>
 
 <details>
 <summary><b>ਸਮੱਗਰੀ</b></summary>
 
-- [What you can do](#what-you-can-do)
-  - [Watch your photos and videos](#watch-your-photos-and-videos)
-  - [Explore panoramas, 360°, VR180 and 3D](#explore-panoramas-360-vr180-and-3d)
-  - [Use your own files, without an account](#use-your-own-files-without-an-account)
-  - [Reach the media of a NAS, a computer or a media server](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
-  - [Find your Immich library](#find-your-immich-library)
-  - [Go immersive on Meta Quest](#go-immersive-on-meta-quest)
-  - [Watch on the TV and on the computer](#watch-on-the-tv-and-on-the-computer)
-  - [Cameras, Plex and raw camera files](#cameras-plex-and-raw-camera-files)
-- [Devices and systems](#devices-and-systems)
-- [Advanced features](#advanced-features)
-- [Technical documentation](#technical-documentation)
-- [Install](#install)
+- [ਤੁਸੀਂ ਕੀ ਕਰ ਸਕਦੇ ਹੋ](#what-you-can-do)
+  - [ਆਪਣੀਆਂ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਵੇਖੋ](#watch-your-photos-and-videos)
+  - [ਪੈਨੋਰਾਮਾ, 360°, VR180 ਅਤੇ 3D ਦੀ ਖੋਜ ਕਰੋ](#explore-panoramas-360-vr180-and-3d)
+  - [ਆਪਣੀਆਂ ਖੁਦ ਦੀਆਂ ਫ਼ਾਈਲਾਂ ਵਰਤੋ, ਖਾਤੇ ਤੋਂ ਬਿਨਾਂ](#use-your-own-files-without-an-account)
+  - [ਇੱਕ NAS, ਕੰਪਿਊਟਰ ਜਾਂ ਮੀਡੀਆ ਸਰਵਰ ਦੇ ਮੀਡੀਆ ਤੱਕ ਪਹੁੰਚੋ](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
+  - [ਆਪਣੀ Immich ਲਾਇਬ੍ਰੇਰੀ ਲੱਭੋ](#find-your-immich-library)
+  - [Meta Quest 'ਤੇ ਇਮਰਸਿਵ ਬਣੋ](#go-immersive-on-meta-quest)
+  - [TV ਅਤੇ ਕੰਪਿਊਟਰ 'ਤੇ ਵੇਖੋ](#watch-on-the-tv-and-on-the-computer)
+  - [ਕੈਮਰੇ, Plex ਅਤੇ ਰਾਅ ਕੈਮਰਾ ਫ਼ਾਈਲਾਂ](#cameras-plex-and-raw-camera-files)
+- [ਡਿਵਾਈਸਾਂ ਅਤੇ ਸਿਸਟਮ](#devices-and-systems)
+- [ਐਡਵਾਂਸਡ ਫੀਚਰ](#advanced-features)
+- [ਤਕਨੀਕੀ ਦਸਤਾਵੇਜ਼](#technical-documentation)
+- [ਇੰਸਟਾਲ ਕਰੋ](#install)
 - [ਪਰਦੇਦਾਰੀ](#privacy)
-- [The project](#the-project)
+- [ਪ੍ਰੋਜੈਕਟ](#the-project)
 - [ਅਗਲੀ ਯੋਜਨਾ](#roadmap)
 
 </details>
 
 <a id="what-you-can-do"></a>
-## What you can do
+## ਤੁਸੀਂ ਕੀ ਕਰ ਸਕਦੇ ਹੋ
 
-Each usage below says what you get, then how to do it in a few steps. The full guide, with every option, message and limit, is in the [user guide](../docs/immuch360/user-guide.md).
+ਹੇਠਾਂ ਹਰ ਵਰਤੋਂ ਦੱਸਦੀ ਹੈ ਕਿ ਤੁਹਾਨੂੰ ਕੀ ਮਿਲਦਾ ਹੈ, ਫਿਰ ਇਸਨੂੰ ਕੁਝ ਕਦਮਾਂ ਵਿੱਚ ਕਿਵੇਂ ਕਰਨਾ ਹੈ। ਹਰ ਚੋਣ, ਸੁਨੇਹੇ ਅਤੇ ਸੀਮਾ ਵਾਲੀ ਪੂਰੀ ਗਾਈਡ [ਯੂਜ਼ਰ ਗਾਈਡ](../docs/immuch360/user-guide.md) ਵਿੱਚ ਹੈ।
 
 <a id="watch-your-photos-and-videos"></a>
-### Watch your photos and videos
+### ਆਪਣੀਆਂ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਵੇਖੋ
 
-Immuch360 is first a gallery and a player for ordinary photos and videos. The timeline, the albums, the favorites, the memories and the search work with an Immich server; the device's own photos and videos, and the folders of a computer, show without any server. Videos play in a native player with sound, seeking, a buffering indicator and, in the 360°, Spatial and computer players, a choice of audio tracks. On a TV the remote drives everything; on a computer the mouse and the keyboard do.
+Immuch360 ਪਹਿਲਾਂ ਸਧਾਰਨ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਲਈ ਇੱਕ ਗੈਲਰੀ ਅਤੇ ਪਲੇਅਰ ਹੈ। ਟਾਈਮਲਾਈਨ, ਐਲਬਮਾਂ, ਪਸੰਦੀਦਾ, ਮੈਮੋਰੀਜ਼ ਅਤੇ ਖੋਜ ਇੱਕ Immich ਸਰਵਰ ਨਾਲ ਕੰਮ ਕਰਦੇ ਹਨ; ਡਿਵਾਈਸ ਦੀਆਂ ਖੁਦ ਦੀਆਂ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ, ਅਤੇ ਕੰਪਿਊਟਰ ਦੇ ਫੋਲਡਰ, ਬਿਨਾਂ ਕਿਸੇ ਸਰਵਰ ਦੇ ਦਿਖਾਈ ਦਿੰਦੇ ਹਨ। ਵੀਡੀਓ ਇੱਕ ਨੇਟਿਵ ਪਲੇਅਰ ਵਿੱਚ ਆਵਾਜ਼, ਸੀਕਿੰਗ, ਇੱਕ ਬਫਰਿੰਗ ਸੂਚਕ ਨਾਲ ਚਲਦੇ ਹਨ ਅਤੇ, 360°, Spatial ਅਤੇ ਕੰਪਿਊਟਰ ਪਲੇਅਰਾਂ ਵਿੱਚ, ਆਡੀਓ ਟਰੈਕਾਂ ਦੀ ਚੋਣ ਨਾਲ। TV 'ਤੇ ਰਿਮੋਟ ਸਭ ਕੁਝ ਚਲਾਉਂਦਾ ਹੈ; ਕੰਪਿਊਟਰ 'ਤੇ ਮਾਊਸ ਅਤੇ ਕੀਬੋਰਡ ਚਲਾਉਂਦੇ ਹਨ।
 
-1. Open the Photos tab: the timeline of your server, or of the device without a server.
-2. Tap a photo or a video to open it; swipe left and right to go to the next one, pinch or double tap to zoom.
-3. Swipe up on a video for its details: codec, size, frame rate, bit rate, and whether this device decodes it.
+1. ਫੋਟੋਆਂ ਟੈਬ ਖੋਲ੍ਹੋ: ਤੁਹਾਡੇ ਸਰਵਰ ਦੀ ਟਾਈਮਲਾਈਨ, ਜਾਂ ਬਿਨਾਂ ਸਰਵਰ ਡਿਵਾਈਸ ਦੀ।
+2. ਇਸਨੂੰ ਖੋਲ੍ਹਣ ਲਈ ਕਿਸੇ ਫੋਟੋ ਜਾਂ ਵੀਡੀਓ 'ਤੇ ਟੈਪ ਕਰੋ; ਅਗਲੀ 'ਤੇ ਜਾਣ ਲਈ ਖੱਬੇ ਅਤੇ ਸੱਜੇ ਸਵਾਈਪ ਕਰੋ, ਜ਼ੂਮ ਕਰਨ ਲਈ ਪਿੰਚ ਜਾਂ ਡਬਲ ਟੈਪ ਕਰੋ।
+3. ਕਿਸੇ ਵੀਡੀਓ ਦੇ ਵੇਰਵਿਆਂ ਲਈ ਉੱਪਰ ਸਵਾਈਪ ਕਰੋ: ਕੋਡੈਕ, ਆਕਾਰ, ਫ੍ਰੇਮ ਰੇਟ, ਬਿੱਟ ਰੇਟ, ਅਤੇ ਕੀ ਇਹ ਡਿਵਾਈਸ ਇਸਨੂੰ ਡੀਕੋਡ ਕਰਦੀ ਹੈ।
 
-More: [the viewers and the video player](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [video details and decoders](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
+ਹੋਰ: [ਵਿਊਅਰ ਅਤੇ ਵੀਡੀਓ ਪਲੇਅਰ](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [ਵੀਡੀਓ ਵੇਰਵੇ ਅਤੇ ਡੀਕੋਡਰ](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters)।
 
 <a id="explore-panoramas-360-vr180-and-3d"></a>
-### Explore panoramas, 360°, VR180 and 3D
+### ਪੈਨੋਰਾਮਾ, 360°, VR180 ਅਤੇ 3D ਦੀ ਖੋਜ ਕਰੋ
 
-A 360° photo opens as a sphere you turn with a finger or by moving the phone; a 360° video plays in a spherical player with sound; VR180 files are drawn on a half sphere; stereoscopic 3D files show one eye on a flat screen and both eyes in a headset. Partial panoramas keep their crop, and the picture starts on the view the camera recorded. A file the server does not flag can be viewed as 360° with one tap.
+ਇੱਕ 360° ਫੋਟੋ ਇੱਕ ਗੋਲੇ ਵਜੋਂ ਖੁੱਲ੍ਹਦੀ ਹੈ ਜਿਸਨੂੰ ਤੁਸੀਂ ਉਂਗਲ ਨਾਲ ਜਾਂ ਫੋਨ ਹਿਲਾ ਕੇ ਮੋੜਦੇ ਹੋ; ਇੱਕ 360° ਵੀਡੀਓ ਇੱਕ ਸਫੈਰੀਕਲ ਪਲੇਅਰ ਵਿੱਚ ਆਵਾਜ਼ ਨਾਲ ਚਲਦੀ ਹੈ; VR180 ਫ਼ਾਈਲਾਂ ਇੱਕ ਅੱਧੇ ਗੋਲੇ 'ਤੇ ਖਿੱਚੀਆਂ ਜਾਂਦੀਆਂ ਹਨ; ਸਟੀਰੀਓਸਕੋਪਿਕ 3D ਫ਼ਾਈਲਾਂ ਫਲੈਟ ਸਕਰੀਨ 'ਤੇ ਇੱਕ ਅੱਖ ਅਤੇ ਹੈੱਡਸੈੱਟ ਵਿੱਚ ਦੋਵੇਂ ਅੱਖਾਂ ਦਿਖਾਉਂਦੀਆਂ ਹਨ। ਅਧੂਰੇ ਪੈਨੋਰਾਮਾ ਆਪਣੀ ਕਰੌਪ ਰੱਖਦੇ ਹਨ, ਅਤੇ ਤਸਵੀਰ ਉਸ ਦ੍ਰਿਸ਼ ਤੋਂ ਸ਼ੁਰੂ ਹੁੰਦੀ ਹੈ ਜੋ ਕੈਮਰੇ ਨੇ ਰਿਕਾਰਡ ਕੀਤਾ ਸੀ। ਜਿਸ ਫ਼ਾਈਲ ਨੂੰ ਸਰਵਰ ਫਲੈਗ ਨਹੀਂ ਕਰਦਾ ਉਸਨੂੰ ਇੱਕ ਟੈਪ ਨਾਲ 360° ਵਜੋਂ ਵੇਖਿਆ ਜਾ ਸਕਦਾ ਹੈ।
 
 <p align="center">
   <img src="../.github/readme/b19-sphere.jpg" width="260" alt="ਗੋਲਾ ਵਿਊਅਰ ਵਿੱਚ ਝੀਲ ਦੇ ਕੰਢੇ ਦੀ 360° ਫ਼ੋਟੋ: ਉੱਪਰ ਖੱਬੇ ਬੰਦ ਕਰਨ ਵਾਲਾ ਬਟਨ, ਉੱਪਰ ਸੱਜੇ 360°, 3D ਲੇਆਉਟ ਅਤੇ ਜਾਇਰੋਸਕੋਪ ਬਟਨ">
   <img src="../.github/readme/b19-video.png" width="420" alt="ਲੇਟਵੇਂ ਫੜੇ ਫ਼ੋਨ ਦੇ 360° ਪਲੇਅਰ ਵਿੱਚ ਸਮੁੰਦਰੀ ਕੰਢੇ ਦੀ ਸੜਕ ਦੀ 360° ਵੀਡੀਓ ਚੱਲ ਰਹੀ: ਉੱਪਰ ਖੱਬੇ ਬੰਦ ਕਰੋ ਅਤੇ ਫ਼ਾਈਲ ਦਾ ਨਾਮ, ਉੱਪਰ ਸੱਜੇ 360° ਅਤੇ 3D, ਵਿਚਕਾਰ ਪਿਛਲਾ, ਪਿੱਛੇ ਜਾਓ, ਚਲਾਓ, ਅੱਗੇ ਜਾਓ ਅਤੇ ਅਗਲਾ, ਹੇਠਾਂ ਸਮਾਂ ਪੱਟੀ">
 </p>
 
-1. Open the photo or video. 360° files carry a 360° badge on their thumbnail, and the Library tab has a 360° list that gathers them, with filters by period, source, kind and camera.
-2. Tap 360° in the top bar. Drag to look around, pinch to zoom, tap the gyroscope button to look around by turning the phone.
-3. The 3D button cycles "Mono (not 3D)", "3D, top and bottom" and "3D, side by side"; the 360°/180° button switches between the full sphere and the half sphere of VR180.
-4. For a file that shows flat although it is a 360° one: ⋮ at the top right, then "View as 360°".
+1. ਫੋਟੋ ਜਾਂ ਵੀਡੀਓ ਖੋਲ੍ਹੋ। 360° ਫ਼ਾਈਲਾਂ ਆਪਣੇ ਥੰਬਨੇਲ 'ਤੇ ਇੱਕ 360° ਬੈਜ ਰੱਖਦੀਆਂ ਹਨ, ਅਤੇ ਲਾਇਬ੍ਰੇਰੀ ਟੈਬ ਵਿੱਚ ਇੱਕ 360° ਸੂਚੀ ਹੈ ਜੋ ਉਹਨਾਂ ਨੂੰ ਇਕੱਠਾ ਕਰਦੀ ਹੈ, ਸਮੇਂ, ਸਰੋਤ, ਕਿਸਮ ਅਤੇ ਕੈਮਰੇ ਦੇ ਫਿਲਟਰਾਂ ਨਾਲ।
+2. ਉੱਪਰਲੀ ਬਾਰ ਵਿੱਚ 360° 'ਤੇ ਟੈਪ ਕਰੋ। ਆਲੇ-ਦੁਆਲੇ ਦੇਖਣ ਲਈ ਖਿੱਚੋ, ਜ਼ੂਮ ਕਰਨ ਲਈ ਪਿੰਚ ਕਰੋ, ਫੋਨ ਮੋੜ ਕੇ ਆਲੇ-ਦੁਆਲੇ ਦੇਖਣ ਲਈ ਗਾਇਰੋਸਕੋਪ ਬਟਨ 'ਤੇ ਟੈਪ ਕਰੋ।
+3. 3D ਬਟਨ "ਮੋਨੋ (3D ਨਹੀਂ)", "3D, ਉੱਪਰ ਅਤੇ ਹੇਠਾਂ" ਅਤੇ "3D, ਨਾਲ-ਨਾਲ" ਵਿੱਚ ਘੁੰਮਦਾ ਹੈ; 360°/180° ਬਟਨ ਪੂਰੇ ਗੋਲੇ ਅਤੇ VR180 ਦੇ ਅੱਧੇ ਗੋਲੇ ਵਿਚਕਾਰ ਬਦਲਦਾ ਹੈ।
+4. ਜਿਹੜੀ ਫ਼ਾਈਲ 360° ਹੋਣ ਦੇ ਬਾਵਜੂਦ ਫਲੈਟ ਦਿਖਾਈ ਦਿੰਦੀ ਹੈ, ਉਸ ਲਈ: ਉੱਪਰ ਸੱਜੇ ⋮, ਫਿਰ "360° ਵਜੋਂ ਵੇਖੋ"।
 
-On phones and tablets, a stereoscopic video can also gain depth on the flat screen: the Spatial 2.5D player uses the front camera to follow your head and shows the view in between the two eyes (experimental). Apple spatial photos taken with an iPhone are recognised and shown in 3D in a Meta Quest.
+ਫੋਨਾਂ ਅਤੇ ਟੈਬਲੇਟਾਂ 'ਤੇ, ਇੱਕ ਸਟੀਰੀਓਸਕੋਪਿਕ ਵੀਡੀਓ ਫਲੈਟ ਸਕਰੀਨ 'ਤੇ ਵੀ ਡੂੰਘਾਈ ਪਾ ਸਕਦੀ ਹੈ: Spatial 2.5D ਪਲੇਅਰ ਤੁਹਾਡੇ ਸਿਰ ਨੂੰ ਟਰੈਕ ਕਰਨ ਲਈ ਫਰੰਟ ਕੈਮਰੇ ਦੀ ਵਰਤੋਂ ਕਰਦਾ ਹੈ ਅਤੇ ਦੋਵੇਂ ਅੱਖਾਂ ਦੇ ਵਿਚਕਾਰਲਾ ਦ੍ਰਿਸ਼ ਦਿਖਾਉਂਦਾ ਹੈ (ਪ੍ਰਯੋਗਾਤਮਕ)। iPhone ਨਾਲ ਖਿੱਚੀਆਂ Apple ਸਪੇਸ਼ੀਅਲ ਫੋਟੋਆਂ ਨੂੰ ਪਛਾਣਿਆ ਜਾਂਦਾ ਹੈ ਅਤੇ Meta Quest ਵਿੱਚ 3D ਵਿੱਚ ਦਿਖਾਇਆ ਜਾਂਦਾ ਹੈ।
 
-More: [360° photos and videos](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D and VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Apple spatial photos and videos](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [the 360° list](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+ਹੋਰ: [360° ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D ਅਤੇ VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Apple ਸਪੇਸ਼ੀਅਲ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [360° ਸੂਚੀ](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list)।
 
 <a id="use-your-own-files-without-an-account"></a>
-### Use your own files, without an account
+### ਆਪਣੀਆਂ ਖੁਦ ਦੀਆਂ ਫ਼ਾਈਲਾਂ ਵਰਤੋ, ਖਾਤੇ ਤੋਂ ਬਿਨਾਂ
 
-Immuch360 needs neither an account nor a server. On the login page, "Use without a server" opens the app on the photos and videos of the device, with every viewer, the 360° list and the network sources. Nothing leaves the device. A server can be connected later, from Settings, and the server features then appear.
+Immuch360 ਨੂੰ ਨਾ ਖਾਤੇ ਦੀ ਲੋੜ ਹੈ ਨਾ ਸਰਵਰ ਦੀ। ਲੌਗਇਨ ਪੇਜ 'ਤੇ, "ਸਰਵਰ ਤੋਂ ਬਿਨਾਂ ਵਰਤੋ" ਐਪ ਨੂੰ ਡਿਵਾਈਸ ਦੀਆਂ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ 'ਤੇ ਖੋਲ੍ਹਦਾ ਹੈ, ਹਰ ਵਿਊਅਰ, 360° ਸੂਚੀ ਅਤੇ ਨੈੱਟਵਰਕ ਸਰੋਤਾਂ ਨਾਲ। ਕੁਝ ਵੀ ਡਿਵਾਈਸ ਤੋਂ ਬਾਹਰ ਨਹੀਂ ਜਾਂਦਾ। ਸੈਟਿੰਗਾਂ ਤੋਂ, ਇੱਕ ਸਰਵਰ ਬਾਅਦ ਵਿੱਚ ਜੋੜਿਆ ਜਾ ਸਕਦਾ ਹੈ, ਅਤੇ ਫਿਰ ਸਰਵਰ ਫੀਚਰ ਦਿਖਾਈ ਦਿੰਦੇ ਹਨ।
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="ਸਰਵਰ ਤੋਂ ਬਿਨਾਂ ਲਾਇਬ੍ਰੇਰੀ ਟੈਬ: ਉੱਪਰ 360° ਇੰਦਰਾਜ, ਫਿਰ ਦੋ 360° ਫ਼ੋਟੋਆਂ ਨਾਲ On this device, ਅਤੇ NAS ਨਾਮ ਦੇ ਸ਼ੇਅਰ ਨਾਲ ਨੈੱਟਵਰਕ ਸ਼ੇਅਰ">
 
@@ -106,46 +106,46 @@ Immuch360 needs neither an account nor a server. On the login page, "Use without
 3. Photos (ਫ਼ੋਟੋਆਂ) ਟੈਬ ਡਿਵਾਈਸ ਦੀ ਟਾਈਮਲਾਈਨ ਦਿਖਾਉਂਦੀ ਹੈ। Search (ਖੋਜ) ਅਤੇ Albums (ਐਲਬਮਾਂ) ਸਲੇਟੀ ਰਹਿੰਦੇ ਹਨ, ਕਿਉਂਕਿ ਉਹ ਸਰਵਰ ਤੋਂ ਆਉਂਦੇ ਹਨ। ਲਾਇਬ੍ਰੇਰੀ ਟੈਬ ਵਿੱਚ ਉੱਪਰ 360°, ਫਿਰ On this device (ਇਸ ਡਿਵਾਈਸ 'ਤੇ, ਭਾਵ ਡਿਵਾਈਸ ਦੀਆਂ ਐਲਬਮਾਂ) ਅਤੇ ਨੈੱਟਵਰਕ ਸ਼ੇਅਰ ਹੁੰਦੇ ਹਨ।
 4. ਉੱਪਰ ਸੱਜੇ ਮੀਨੂ ਵਿੱਚ "ਸਿਰਫ਼ ਇਹ ਡਿਵਾਈਸ" ਲਿਖਿਆ ਹੁੰਦਾ ਹੈ: ਐਪ ਇਸ ਡਿਵਾਈਸ ਦੀਆਂ ਫ਼ੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਦਿਖਾਉਂਦੀ ਹੈ, ਕਿਤੇ ਵੀ ਕੁਝ ਨਹੀਂ ਭੇਜਿਆ ਜਾਂਦਾ।
 
-On a computer, the folders you choose play the part of the gallery; on a TV, which has no photos of its own, the network sources do.
+ਕੰਪਿਊਟਰ 'ਤੇ, ਤੁਹਾਡੇ ਚੁਣੇ ਫੋਲਡਰ ਗੈਲਰੀ ਦਾ ਕੰਮ ਕਰਦੇ ਹਨ; TV 'ਤੇ, ਜਿਸ ਦੀਆਂ ਆਪਣੀਆਂ ਕੋਈ ਫੋਟੋਆਂ ਨਹੀਂ ਹੁੰਦੀਆਂ, ਨੈੱਟਵਰਕ ਸਰੋਤ ਇਹ ਕੰਮ ਕਰਦੇ ਹਨ।
 
-More: [without a server or an account](../docs/immuch360/user-guide.md#without-a-server-or-an-account).
+ਹੋਰ: [ਸਰਵਰ ਜਾਂ ਖਾਤੇ ਤੋਂ ਬਿਨਾਂ](../docs/immuch360/user-guide.md#without-a-server-or-an-account)।
 
 <a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
-### Reach the media of a NAS, a computer or a media server
+### ਇੱਕ NAS, ਕੰਪਿਊਟਰ ਜਾਂ ਮੀਡੀਆ ਸਰਵਰ ਦੇ ਮੀਡੀਆ ਤੱਕ ਪਹੁੰਚੋ
 
-Your videos sit on a NAS, a computer or a media server. Immuch360 finds the servers of your network by itself, browses them and plays their photos and videos in place, in every viewer of the app, without copying anything: SMB (Samba, Windows shares), WebDAV (Nextcloud, Synology and others) and DLNA media servers (Jellyfin, Emby, minidlna, a NAS, a TV box). A phone can also share its own gallery on the Wi-Fi for a headset or any WebDAV client, and so can a Windows computer.
+ਤੁਹਾਡੀਆਂ ਵੀਡੀਓ ਇੱਕ NAS, ਕੰਪਿਊਟਰ ਜਾਂ ਮੀਡੀਆ ਸਰਵਰ 'ਤੇ ਹੁੰਦੀਆਂ ਹਨ। Immuch360 ਤੁਹਾਡੇ ਨੈੱਟਵਰਕ ਦੇ ਸਰਵਰ ਆਪਣੇ ਆਪ ਲੱਭਦਾ ਹੈ, ਉਹਨਾਂ ਨੂੰ ਬ੍ਰਾਊਜ਼ ਕਰਦਾ ਹੈ ਅਤੇ ਉਹਨਾਂ ਦੀਆਂ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਨੂੰ ਉੱਥੇ ਹੀ, ਐਪ ਦੇ ਹਰ ਵਿਊਅਰ ਵਿੱਚ, ਕੁਝ ਵੀ ਕਾਪੀ ਕੀਤੇ ਬਿਨਾਂ ਚਲਾਉਂਦਾ ਹੈ: SMB (Samba, Windows ਸ਼ੇਅਰ), WebDAV (Nextcloud, Synology ਅਤੇ ਹੋਰ) ਅਤੇ DLNA ਮੀਡੀਆ ਸਰਵਰ (Jellyfin, Emby, minidlna, ਇੱਕ NAS, ਇੱਕ TV ਬਾਕਸ)। ਇੱਕ ਫੋਨ ਆਪਣੀ ਗੈਲਰੀ Wi-Fi 'ਤੇ ਇੱਕ ਹੈੱਡਸੈੱਟ ਜਾਂ ਕਿਸੇ ਵੀ WebDAV ਕਲਾਇੰਟ ਲਈ ਵੀ ਸ਼ੇਅਰ ਕਰ ਸਕਦਾ ਹੈ, ਅਤੇ ਇੱਕ Windows ਕੰਪਿਊਟਰ ਵੀ ਇੰਝ ਕਰ ਸਕਦਾ ਹੈ।
 
 <p align="center">
   <img src="../.github/readme/b19-add-share.png" width="260" alt="ਸ਼ੇਅਰ ਸ਼ਾਮਲ ਕਰੋ ਪੰਨਾ: ਨਾਮ, ਸਰਵਰ ਦਾ ਨਾਮ ਜਾਂ ਪਤਾ, ਪੋਰਟ (ਵਿਕਲਪਿਕ), ਸ਼ੇਅਰ, ਇੱਕ ਸ਼ੇਅਰ ਚੁਣੋ, ਸ਼ੁਰੂਆਤੀ ਫੋਲਡਰ (ਵਿਕਲਪਿਕ), ਵਰਤੋਂਕਾਰ ਨਾਮ, ਪਾਸਵਰਡ, ਕਨੈਕਸ਼ਨ ਜਾਂਚੋ, ਅਤੇ ਨਤੀਜਾ ਕਨੈਕਟ ਹੋ ਗਿਆ, ਸ਼ੁਰੂਆਤੀ ਫੋਲਡਰ ਵਿੱਚ 2 ਇੰਦਰਾਜ">
   <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="ਥੰਬਨੇਲਾਂ ਦੇ ਗਰਿੱਡ ਵਜੋਂ ਨੈੱਟਵਰਕ ਸ਼ੇਅਰ ਦਾ ਫੋਲਡਰ: 360° ਬੈਜ ਵਾਲੀਆਂ 360° ਫ਼ੋਟੋਆਂ ਅਤੇ ਚਲਾਓ ਨਿਸ਼ਾਨ ਵਾਲੀ 360° ਵੀਡੀਓ, ਉੱਪਰ ਸੱਜੇ ਚੁਣੋ ਬਟਨ">
 </p>
 
-1. Open the Library tab, then Network shares, then + and "A network share (NAS, computer, media server)".
-2. Tap a server under "Found on the network", or fill the form by hand: type, server name or address, share or path, start folder, user name and password.
-3. Tap "Test the connection", then Save. Tap the share to browse it: folders first, then the photos and videos, with the 360° badge on the files recognised as 360°.
-4. With an Immich server connected, select files in a folder and tap "Upload to Immich" to send them to your server.
+1. ਲਾਇਬ੍ਰੇਰੀ ਟੈਬ ਖੋਲ੍ਹੋ, ਫਿਰ ਨੈੱਟਵਰਕ ਸ਼ੇਅਰ, ਫਿਰ + ਅਤੇ "ਇੱਕ ਨੈੱਟਵਰਕ ਸ਼ੇਅਰ (NAS, ਕੰਪਿਊਟਰ, ਮੀਡੀਆ ਸਰਵਰ)"।
+2. "ਨੈੱਟਵਰਕ 'ਤੇ ਮਿਲੇ" ਹੇਠਾਂ ਕਿਸੇ ਸਰਵਰ 'ਤੇ ਟੈਪ ਕਰੋ, ਜਾਂ ਫਾਰਮ ਆਪਣੇ ਹੱਥੀਂ ਭਰੋ: ਕਿਸਮ, ਸਰਵਰ ਨਾਮ ਜਾਂ ਐਡਰੈੱਸ, ਸ਼ੇਅਰ ਜਾਂ ਪਾਥ, ਸ਼ੁਰੂਆਤੀ ਫੋਲਡਰ, ਯੂਜ਼ਰ ਨਾਮ ਅਤੇ ਪਾਸਵਰਡ।
+3. "ਕਨੈਕਸ਼ਨ ਜਾਂਚੋ" 'ਤੇ ਟੈਪ ਕਰੋ, ਫਿਰ ਸੇਵ। ਸ਼ੇਅਰ ਨੂੰ ਬ੍ਰਾਊਜ਼ ਕਰਨ ਲਈ ਉਸ 'ਤੇ ਟੈਪ ਕਰੋ: ਪਹਿਲਾਂ ਫੋਲਡਰ, ਫਿਰ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ, 360° ਵਜੋਂ ਪਛਾਣੀਆਂ ਫ਼ਾਈਲਾਂ 'ਤੇ 360° ਬੈਜ ਨਾਲ।
+4. ਇੱਕ Immich ਸਰਵਰ ਜੁੜਿਆ ਹੋਣ 'ਤੇ, ਇੱਕ ਫੋਲਡਰ ਵਿੱਚ ਫ਼ਾਈਲਾਂ ਚੁਣੋ ਅਤੇ ਉਹਨਾਂ ਨੂੰ ਆਪਣੇ ਸਰਵਰ 'ਤੇ ਭੇਜਣ ਲਈ "Immich 'ਤੇ ਅੱਪਲੋਡ ਕਰੋ" 'ਤੇ ਟੈਪ ਕਰੋ।
 
-The players read the bytes they need through a bridge inside the app, with byte ranges, so seeking works and nothing is stored on the device; an SMB video is read over up to six connections in parallel for smooth playback.
+ਪਲੇਅਰ ਲੋੜੀਂਦੇ ਬਾਈਟ ਐਪ ਦੇ ਅੰਦਰਲੇ ਇੱਕ ਬ੍ਰਿਜ ਰਾਹੀਂ, ਬਾਈਟ ਰੇਂਜਾਂ ਨਾਲ ਪੜ੍ਹਦੇ ਹਨ, ਤਾਂ ਜੋ ਸੀਕਿੰਗ ਕੰਮ ਕਰੇ ਅਤੇ ਕੁਝ ਵੀ ਡਿਵਾਈਸ 'ਤੇ ਸਟੋਰ ਨਾ ਹੋਵੇ; ਇੱਕ SMB ਵੀਡੀਓ ਸੁਚੱਜੇ ਪਲੇਬੈਕ ਲਈ ਛੇ ਤੱਕ ਕਨੈਕਸ਼ਨਾਂ ਤੋਂ ਇੱਕੋ ਸਮੇਂ ਪੜ੍ਹੀ ਜਾਂਦੀ ਹੈ।
 
-More: [network shares](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [share this phone on the network](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA media servers](../docs/immuch360/user-guide.md#dlna-media-servers).
+ਹੋਰ: [ਨੈੱਟਵਰਕ ਸ਼ੇਅਰ](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [ਇਸ ਫੋਨ ਨੂੰ ਨੈੱਟਵਰਕ 'ਤੇ ਸ਼ੇਅਰ ਕਰੋ](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA ਮੀਡੀਆ ਸਰਵਰ](../docs/immuch360/user-guide.md#dlna-media-servers)।
 
 <a id="find-your-immich-library"></a>
-### Find your Immich library
+### ਆਪਣੀ Immich ਲਾਇਬ੍ਰੇਰੀ ਲੱਭੋ
 
-With an [Immich](https://github.com/immich-app/immich) server, Immuch360 is the Immich mobile app, with the same server and the same account as the web app: backup, timeline, albums, search, people, memories, sharing, partners, all synced with your server. It installs next to the official app. On top of it: the 360° badge and list, every immersive viewer, the choice between the original file and the server's transcoded stream for each video, the technical details of a video, and the files of a share or of the device sent to your server by hand.
+ਇੱਕ [Immich](https://github.com/immich-app/immich) ਸਰਵਰ ਨਾਲ, Immuch360 ਉਹੀ Immich ਮੋਬਾਈਲ ਐਪ ਹੈ, ਵੈੱਬ ਐਪ ਵਰਗੇ ਉਸੇ ਸਰਵਰ ਅਤੇ ਉਸੇ ਖਾਤੇ ਨਾਲ: ਬੈਕਅੱਪ, ਟਾਈਮਲਾਈਨ, ਐਲਬਮਾਂ, ਖੋਜ, ਲੋਕ, ਮੈਮੋਰੀਜ਼, ਸ਼ੇਅਰਿੰਗ, ਪਾਰਟਨਰ, ਸਭ ਤੁਹਾਡੇ ਸਰਵਰ ਨਾਲ ਸਿੰਕ। ਇਹ ਅਧਿਕਾਰਤ ਐਪ ਦੇ ਨਾਲ ਹੀ ਇੰਸਟਾਲ ਹੁੰਦਾ ਹੈ। ਇਸ ਤੋਂ ਵੱਧ: 360° ਬੈਜ ਅਤੇ ਸੂਚੀ, ਹਰ ਇਮਰਸਿਵ ਵਿਊਅਰ, ਹਰ ਵੀਡੀਓ ਲਈ ਅਸਲ ਫ਼ਾਈਲ ਅਤੇ ਸਰਵਰ ਦੀ ਟ੍ਰਾਂਸਕੋਡ ਕੀਤੀ ਸਟ੍ਰੀਮ ਵਿਚਕਾਰ ਚੋਣ, ਵੀਡੀਓ ਦੇ ਤਕਨੀਕੀ ਵੇਰਵੇ, ਅਤੇ ਸ਼ੇਅਰ ਜਾਂ ਡਿਵਾਈਸ ਦੀਆਂ ਫ਼ਾਈਲਾਂ ਜੋ ਹੱਥੀਂ ਤੁਹਾਡੇ ਸਰਵਰ 'ਤੇ ਭੇਜੀਆਂ ਗਈਆਂ।
 
-1. Log in with your server address, your email and your password, as in the Immich app. Your library, albums and backup settings are those of your account.
-2. In Settings, Asset Viewer, Videos, "Video source" picks the original when this device decodes it, always the original, or always the transcoded stream.
-3. To show a 360° photo to someone who does not have the app, share it with an Immich shared link: the Immich web app shows it as a sphere in their browser.
+1. ਆਪਣੇ ਸਰਵਰ ਐਡਰੈੱਸ, ਆਪਣੀ ਈਮੇਲ ਅਤੇ ਆਪਣੇ ਪਾਸਵਰਡ ਨਾਲ ਲੌਗ ਇਨ ਕਰੋ, ਜਿਵੇਂ Immich ਐਪ ਵਿੱਚ। ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ, ਐਲਬਮਾਂ ਅਤੇ ਬੈਕਅੱਪ ਸੈਟਿੰਗਾਂ ਤੁਹਾਡੇ ਖਾਤੇ ਦੀਆਂ ਹਨ।
+2. ਸੈਟਿੰਗਾਂ, ਐਸੇਟ ਵਿਊਅਰ, ਵੀਡੀਓ ਵਿੱਚ, "ਵੀਡੀਓ ਸਰੋਤ" ਅਸਲ ਨੂੰ ਚੁਣਦਾ ਹੈ ਜਦੋਂ ਇਹ ਡਿਵਾਈਸ ਇਸਨੂੰ ਡੀਕੋਡ ਕਰਦੀ ਹੈ, ਹਮੇਸ਼ਾ ਅਸਲ, ਜਾਂ ਹਮੇਸ਼ਾ ਟ੍ਰਾਂਸਕੋਡ ਕੀਤੀ ਸਟ੍ਰੀਮ।
+3. ਕਿਸੇ ਅਜਿਹੇ ਵਿਅਕਤੀ ਨੂੰ 360° ਫੋਟੋ ਦਿਖਾਉਣ ਲਈ ਜਿਸ ਕੋਲ ਐਪ ਨਹੀਂ ਹੈ, ਇਸਨੂੰ ਇੱਕ Immich ਸ਼ੇਅਰਡ ਲਿੰਕ ਨਾਲ ਸ਼ੇਅਰ ਕਰੋ: Immich ਵੈੱਬ ਐਪ ਇਸਨੂੰ ਉਹਨਾਂ ਦੇ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਇੱਕ ਗੋਲੇ ਵਜੋਂ ਦਿਖਾਉਂਦੀ ਹੈ।
 
-The current build, build 23, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0) and was tested against an Immich 3.2.4 server and a server built from that same Immich `main`. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
+ਮੌਜੂਦਾ ਬਿਲਡ, ਬਿਲਡ 23, 10 ਅਕਤੂਬਰ 2026 ਦੇ Immich `main` 'ਤੇ ਆਧਾਰਿਤ ਹੈ (ਵਰਜਨ 3.3.0-rc.0) ਅਤੇ ਇਸਨੂੰ ਇੱਕ Immich 3.2.4 ਸਰਵਰ ਅਤੇ ਉਸੇ Immich `main` ਤੋਂ ਬਣੇ ਇੱਕ ਸਰਵਰ ਦੇ ਵਿਰੁੱਧ ਟੈਸਟ ਕੀਤਾ ਗਿਆ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਸਮੱਸਿਆਵਾਂ [Issues](https://github.com/freeKC/Immuch360/issues) ਵਿੱਚ ਦੱਸੋ, Immich ਪ੍ਰੋਜੈਕਟ ਨੂੰ ਨਹੀਂ।
 
-More: [everything else is Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [compared with the Immich app](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+ਹੋਰ: [ਬਾਕੀ ਸਭ Immich ਹੈ](../docs/immuch360/user-guide.md#everything-else-is-immich), [Immich ਐਪ ਨਾਲ ਤੁਲਨਾ](../docs/immuch360/compatibility.md#compared-with-the-immich-app)।
 
 <a id="go-immersive-on-meta-quest"></a>
-### Go immersive on Meta Quest
+### Meta Quest 'ਤੇ ਇਮਰਸਿਵ ਬਣੋ
 
-On a Meta Quest the same app runs as a window with your whole library, and its 360° button opens an immersive view where the photo or video is all around you: you look around by turning your head, stereoscopic files are in true 3D, an Apple spatial photo floats in front of you in 3D, and the controllers or your hands drive the time bar, previous and next, and the Turn button that brings what is behind you in front without turning your chair. The media come from your server, the headset itself, a NAS, a media server, a phone or a Plex server, played in place.
+Meta Quest 'ਤੇ ਉਹੀ ਐਪ ਤੁਹਾਡੀ ਪੂਰੀ ਲਾਇਬ੍ਰੇਰੀ ਨਾਲ ਇੱਕ ਵਿੰਡੋ ਵਜੋਂ ਚਲਦੀ ਹੈ, ਅਤੇ ਇਸਦਾ 360° ਬਟਨ ਇੱਕ ਇਮਰਸਿਵ ਦ੍ਰਿਸ਼ ਖੋਲ੍ਹਦਾ ਹੈ ਜਿੱਥੇ ਫੋਟੋ ਜਾਂ ਵੀਡੀਓ ਤੁਹਾਡੇ ਆਲੇ-ਦੁਆਲੇ ਹੁੰਦੀ ਹੈ: ਤੁਸੀਂ ਆਪਣਾ ਸਿਰ ਮੋੜ ਕੇ ਆਲੇ-ਦੁਆਲੇ ਦੇਖਦੇ ਹੋ, ਸਟੀਰੀਓਸਕੋਪਿਕ ਫ਼ਾਈਲਾਂ ਅਸਲੀ 3D ਵਿੱਚ ਹੁੰਦੀਆਂ ਹਨ, ਇੱਕ Apple ਸਪੇਸ਼ੀਅਲ ਫੋਟੋ ਤੁਹਾਡੇ ਸਾਹਮਣੇ 3D ਵਿੱਚ ਤੈਰਦੀ ਹੈ, ਅਤੇ ਕੰਟਰੋਲਰ ਜਾਂ ਤੁਹਾਡੇ ਹੱਥ ਟਾਈਮ ਬਾਰ, ਪਿੱਛੇ ਅਤੇ ਅੱਗੇ, ਅਤੇ Turn ਬਟਨ ਨੂੰ ਚਲਾਉਂਦੇ ਹਨ ਜੋ ਤੁਹਾਡੀ ਕੁਰਸੀ ਮੋੜੇ ਬਿਨਾਂ ਤੁਹਾਡੇ ਪਿੱਛੇ ਵਾਲੀ ਚੀਜ਼ ਨੂੰ ਸਾਹਮਣੇ ਲਿਆਉਂਦਾ ਹੈ। ਮੀਡੀਆ ਤੁਹਾਡੇ ਸਰਵਰ, ਹੈੱਡਸੈੱਟ ਖੁਦ, ਇੱਕ NAS, ਮੀਡੀਆ ਸਰਵਰ, ਫੋਨ ਜਾਂ Plex ਸਰਵਰ ਤੋਂ ਆਉਂਦਾ ਹੈ, ਉੱਥੇ ਹੀ ਚਲਾਇਆ ਜਾਂਦਾ ਹੈ।
 
 <p align="center">
   <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Quest 3 ਵਿੱਚ ਤੁਹਾਡੇ ਚਾਰੇ ਪਾਸੇ 360° ਫ਼ੋਟੋ, ਜਾਣਕਾਰੀ ਪੈਨਲ ਨਾਲ: ਲੇਆਉਟ, 360° ਅਤੇ ਵਾਪਸ ਬਟਨ">
@@ -153,116 +153,116 @@ On a Meta Quest the same app runs as a window with your whole library, and its 3
   <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Quest 3 ਵਿੱਚ ਸਟੀਰੀਓਸਕੋਪਿਕ 360° ਵੀਡੀਓ, ਜਾਣਕਾਰੀ ਪੈਨਲ 'ਤੇ 3D, ਉੱਪਰ ਅਤੇ ਹੇਠਾਂ ਲਿਖਿਆ">
 </p>
 
-1. Install the app from the [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), or sideload the APK of a newer build, see [Install](#meta-quest).
+1. [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) ਤੋਂ ਐਪ ਇੰਸਟਾਲ ਕਰੋ, ਜਾਂ ਨਵੇਂ ਬਿਲਡ ਦੀ APK ਸਾਈਡਲੋਡ ਕਰੋ, ਦੇਖੋ [ਇੰਸਟਾਲ ਕਰੋ](#meta-quest)।
 2. ਆਪਣੇ Immich ਸਰਵਰ ਨਾਲ ਲੌਗਇਨ ਕਰੋ, ਜਾਂ ਹੈੱਡਸੈੱਟ ਦੀਆਂ ਆਪਣੀਆਂ ਫ਼ੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਲਈ "ਸਰਵਰ ਤੋਂ ਬਿਨਾਂ ਵਰਤੋ" 'ਤੇ ਟੈਪ ਕਰੋ।
-3. Open a 360° photo or video and press 360°: the immersive view opens. B or Y, or the Back button of the info panel, brings the window back.
+3. ਇੱਕ 360° ਫੋਟੋ ਜਾਂ ਵੀਡੀਓ ਖੋਲ੍ਹੋ ਅਤੇ 360° ਦਬਾਓ: ਇਮਰਸਿਵ ਦ੍ਰਿਸ਼ ਖੁੱਲ੍ਹਦਾ ਹੈ। B ਜਾਂ Y, ਜਾਂ ਇਨਫੋ ਪੈਨਲ ਦਾ Back ਬਟਨ, ਵਿੰਡੋ ਨੂੰ ਵਾਪਸ ਲਿਆਉਂਦਾ ਹੈ।
 
-More: [in the Meta Quest headset](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [the headset: codecs, store and permissions](../docs/immuch360/platform-support.md#meta-quest).
+ਹੋਰ: [Meta Quest ਹੈੱਡਸੈੱਟ ਵਿੱਚ](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [ਹੈੱਡਸੈੱਟ: ਕੋਡੈਕ, ਸਟੋਰ ਅਤੇ ਪਰਮਿਸ਼ਨ](../docs/immuch360/platform-support.md#meta-quest)।
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
-### Watch on the TV and on the computer
+### TV ਅਤੇ ਕੰਪਿਊਟਰ 'ਤੇ ਵੇਖੋ
 
-The same Android app runs on Android TV and Google TV with the remote as the only input: the arrows move the frame, OK opens, Back goes back, and the arrows look around a 360° photo or video. The TV has no photos of its own, so it shows your Immich server, your network shares, your Plex server and your cameras. On a Windows computer, Immuch360 Desktop reads the folders you choose with no server at all, plays flat and 360° videos in a player of its own, browses the same shares and servers, and can share the computer with a headset at home.
+ਉਹੀ Android ਐਪ Android TV ਅਤੇ Google TV 'ਤੇ ਰਿਮੋਟ ਨੂੰ ਇੱਕੋ ਇੰਪੁੱਟ ਵਜੋਂ ਵਰਤ ਕੇ ਚਲਦੀ ਹੈ: ਤੀਰ ਫਰੇਮ ਨੂੰ ਹਿਲਾਉਂਦੇ ਹਨ, OK ਖੋਲ੍ਹਦਾ ਹੈ, Back ਪਿੱਛੇ ਜਾਂਦਾ ਹੈ, ਅਤੇ ਤੀਰ ਇੱਕ 360° ਫੋਟੋ ਜਾਂ ਵੀਡੀਓ ਦੇ ਆਲੇ-ਦੁਆਲੇ ਦੇਖਣ ਲਈ ਵਰਤੇ ਜਾਂਦੇ ਹਨ। TV ਦੀਆਂ ਆਪਣੀਆਂ ਕੋਈ ਫੋਟੋਆਂ ਨਹੀਂ ਹੁੰਦੀਆਂ, ਇਸ ਲਈ ਇਹ ਤੁਹਾਡਾ Immich ਸਰਵਰ, ਤੁਹਾਡੇ ਨੈੱਟਵਰਕ ਸ਼ੇਅਰ, ਤੁਹਾਡਾ Plex ਸਰਵਰ ਅਤੇ ਤੁਹਾਡੇ ਕੈਮਰੇ ਦਿਖਾਉਂਦੀ ਹੈ। ਇੱਕ Windows ਕੰਪਿਊਟਰ 'ਤੇ, Immuch360 Desktop ਬਿਨਾਂ ਕਿਸੇ ਸਰਵਰ ਦੇ ਤੁਹਾਡੇ ਚੁਣੇ ਫੋਲਡਰ ਪੜ੍ਹਦਾ ਹੈ, ਫਲੈਟ ਅਤੇ 360° ਵੀਡੀਓ ਆਪਣੇ ਪਲੇਅਰ ਵਿੱਚ ਚਲਾਉਂਦਾ ਹੈ, ਉਹੀ ਸ਼ੇਅਰ ਅਤੇ ਸਰਵਰ ਬ੍ਰਾਊਜ਼ ਕਰਦਾ ਹੈ, ਅਤੇ ਘਰ ਵਿੱਚ ਕੰਪਿਊਟਰ ਨੂੰ ਹੈੱਡਸੈੱਟ ਨਾਲ ਸ਼ੇਅਰ ਕਰ ਸਕਦਾ ਹੈ।
 
 <p align="center">
-  <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="The sphere viewer on a Google TV: a 360° panorama of a lake shore, the close button at the top left, the Zoom out, Zoom in, 360° and 3D buttons at the top right, turned with the arrows of the remote">
-  <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="The video player of Immuch360 Desktop on Windows: a video of a street playing in the window, with the pause button, the time bar, Share and Upload to Immich">
+  <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Google TV 'ਤੇ ਗੋਲਾ ਵਿਊਅਰ: ਇੱਕ ਝੀਲ ਕੰਢੇ ਦਾ 360° ਪੈਨੋਰਾਮਾ, ਉੱਪਰ ਖੱਬੇ ਬੰਦ ਕਰਨ ਦਾ ਬਟਨ, ਉੱਪਰ ਸੱਜੇ Zoom out, Zoom in, 360° ਅਤੇ 3D ਬਟਨ, ਰਿਮੋਟ ਦੇ ਤੀਰਾਂ ਨਾਲ ਮੋੜੇ ਜਾਂਦੇ">
+  <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Windows 'ਤੇ Immuch360 Desktop ਦਾ ਵੀਡੀਓ ਪਲੇਅਰ: ਵਿੰਡੋ ਵਿੱਚ ਚਲਦੀ ਇੱਕ ਗਲੀ ਦੀ ਵੀਡੀਓ, ਪੌਜ਼ ਬਟਨ, ਟਾਈਮ ਬਾਰ, ਸ਼ੇਅਰ ਅਤੇ Immich 'ਤੇ ਅੱਪਲੋਡ ਕਰੋ ਨਾਲ">
 </p>
 
-1. On a TV: install the APK with adb (see [Install](#android-tv-and-google-tv)), sign in or choose "Use without a server", add a share, a Plex server or a camera from the Library.
-2. On a Windows computer: unzip the preview and start `immuch360.exe` (see [Install](#windows)), then choose the folders of your photos and videos, or sign in to your server.
-3. In a viewer, the play and pause, rewind, fast forward, previous and next keys of the remote work, and so do the keyboard keys on a computer (Space, J and L, F for full screen).
+1. TV 'ਤੇ: adb ਨਾਲ APK ਇੰਸਟਾਲ ਕਰੋ (ਦੇਖੋ [ਇੰਸਟਾਲ ਕਰੋ](#android-tv-and-google-tv)), ਸਾਈਨ ਇਨ ਕਰੋ ਜਾਂ "ਸਰਵਰ ਤੋਂ ਬਿਨਾਂ ਵਰਤੋ" ਚੁਣੋ, ਲਾਇਬ੍ਰੇਰੀ ਤੋਂ ਇੱਕ ਸ਼ੇਅਰ, Plex ਸਰਵਰ ਜਾਂ ਕੈਮਰਾ ਜੋੜੋ।
+2. Windows ਕੰਪਿਊਟਰ 'ਤੇ: ਪ੍ਰੀਵਿਊ ਅਨਜ਼ਿਪ ਕਰੋ ਅਤੇ `immuch360.exe` ਸ਼ੁਰੂ ਕਰੋ (ਦੇਖੋ [ਇੰਸਟਾਲ ਕਰੋ](#windows)), ਫਿਰ ਆਪਣੀਆਂ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਦੇ ਫੋਲਡਰ ਚੁਣੋ, ਜਾਂ ਆਪਣੇ ਸਰਵਰ ਵਿੱਚ ਸਾਈਨ ਇਨ ਕਰੋ।
+3. ਵਿਊਅਰ ਵਿੱਚ, ਰਿਮੋਟ ਦੀਆਂ ਪਲੇ ਅਤੇ ਪੌਜ਼, ਰੀਵਾਇੰਡ, ਫਾਸਟ ਫਾਰਵਰਡ, ਪਿੱਛੇ ਅਤੇ ਅੱਗੇ ਕੀਆਂ ਕੰਮ ਕਰਦੀਆਂ ਹਨ, ਅਤੇ ਕੰਪਿਊਟਰ 'ਤੇ ਕੀਬੋਰਡ ਕੀਆਂ ਵੀ (Space, J ਅਤੇ L, ਫੁੱਲ ਸਕਰੀਨ ਲਈ F)।
 
-More: [watch on your TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [on a Windows computer](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [platform support](../docs/immuch360/platform-support.md).
+ਹੋਰ: [ਆਪਣੇ TV 'ਤੇ ਵੇਖੋ](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [Windows ਕੰਪਿਊਟਰ 'ਤੇ](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [ਪਲੈਟਫਾਰਮ ਸਪੋਰਟ](../docs/immuch360/platform-support.md)।
 
 <a id="cameras-plex-and-raw-camera-files"></a>
-### Cameras, Plex and raw camera files
+### ਕੈਮਰੇ, Plex ਅਤੇ ਰਾਅ ਕੈਮਰਾ ਫ਼ਾਈਲਾਂ
 
-- **Tapo cameras**: a camera is added next to the network shares. The app shows it live (Android, Android TV, the Quest and Windows) and lists the recordings of its memory card day by day on every platform; a clip is fetched from the camera, plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link.
-- **Plex Media Server, without plex.tv**: the app pairs with your server directly, with a token you paste once, and reads the original files of your libraries live, so 360° stays 360°, at home and, through your port forwarding, away from home.
-- **Raw 360° camera files**: the raw .insp photos and .insv videos of Insta360 cameras (one or two lenses, in one track, two tracks or two files), the .360 files of the GoPro MAX and the .osv files of the DJI Osmo 360 are stitched by the app as they play, with the calibration written in the file, with nothing to install anywhere.
+- **Tapo ਕੈਮਰੇ**: ਇੱਕ ਕੈਮਰਾ ਨੈੱਟਵਰਕ ਸ਼ੇਅਰਾਂ ਦੇ ਨਾਲ ਜੋੜਿਆ ਜਾਂਦਾ ਹੈ। ਐਪ ਇਸਨੂੰ ਲਾਈਵ ਦਿਖਾਉਂਦੀ ਹੈ (Android, Android TV, Quest ਅਤੇ Windows) ਅਤੇ ਹਰ ਪਲੈਟਫਾਰਮ 'ਤੇ ਇਸਦੇ ਮੈਮਰੀ ਕਾਰਡ ਦੀਆਂ ਰਿਕਾਰਡਿੰਗਾਂ ਨੂੰ ਦਿਨ ਦਰ ਦਿਨ ਸੂਚੀਬੱਧ ਕਰਦੀ ਹੈ; ਇੱਕ ਕਲਿੱਪ ਕੈਮਰੇ ਤੋਂ ਲਿਆਂਦੀ ਜਾਂਦੀ ਹੈ, ਕਿਸੇ ਵੀ ਵੀਡੀਓ ਵਾਂਗ ਚਲਦੀ ਹੈ ਅਤੇ Immich ਨੂੰ ਭੇਜੀ ਜਾ ਸਕਦੀ ਹੈ। ਐਪ ਸਿਰਫ਼ ਤੁਹਾਡੇ ਨੈੱਟਵਰਕ 'ਤੇ ਕੈਮਰੇ ਨਾਲ ਗੱਲ ਕਰਦੀ ਹੈ, TP-Link ਦੇ ਸਰਵਰਾਂ ਨਾਲ ਕਦੇ ਨਹੀਂ।
+- **Plex Media Server, plex.tv ਤੋਂ ਬਿਨਾਂ**: ਐਪ ਸਿੱਧਾ ਤੁਹਾਡੇ ਸਰਵਰ ਨਾਲ ਪੇਅਰ ਹੁੰਦੀ ਹੈ, ਇੱਕ ਟੋਕਨ ਨਾਲ ਜੋ ਤੁਸੀਂ ਇੱਕ ਵਾਰ ਪੇਸਟ ਕਰਦੇ ਹੋ, ਅਤੇ ਤੁਹਾਡੀਆਂ ਲਾਇਬ੍ਰੇਰੀਆਂ ਦੀਆਂ ਅਸਲ ਫ਼ਾਈਲਾਂ ਨੂੰ ਲਾਈਵ ਪੜ੍ਹਦੀ ਹੈ, ਤਾਂ ਜੋ 360° ਘਰ ਵਿੱਚ, ਅਤੇ ਤੁਹਾਡੀ ਪੋਰਟ ਫਾਰਵਰਡਿੰਗ ਰਾਹੀਂ ਘਰ ਤੋਂ ਦੂਰ ਵੀ, 360° ਹੀ ਰਹੇ।
+- **ਰਾਅ 360° ਕੈਮਰਾ ਫ਼ਾਈਲਾਂ**: Insta360 ਕੈਮਰਿਆਂ ਦੀਆਂ ਰਾਅ .insp ਫੋਟੋਆਂ ਅਤੇ .insv ਵੀਡੀਓ (ਇੱਕ ਜਾਂ ਦੋ ਲੈਂਸ, ਇੱਕ ਟਰੈਕ, ਦੋ ਟਰੈਕ ਜਾਂ ਦੋ ਫ਼ਾਈਲਾਂ ਵਿੱਚ), GoPro MAX ਦੀਆਂ .360 ਫ਼ਾਈਲਾਂ ਅਤੇ DJI Osmo 360 ਦੀਆਂ .osv ਫ਼ਾਈਲਾਂ ਨੂੰ ਐਪ ਵੱਲੋਂ ਚਲਾਉਂਦੇ ਸਮੇਂ ਸਟਿੱਚ ਕੀਤਾ ਜਾਂਦਾ ਹੈ, ਫ਼ਾਈਲ ਵਿੱਚ ਲਿਖੀ ਕੈਲੀਬ੍ਰੇਸ਼ਨ ਨਾਲ, ਕਿਤੇ ਵੀ ਕੁਝ ਇੰਸਟਾਲ ਕਰਨ ਦੀ ਲੋੜ ਤੋਂ ਬਿਨਾਂ।
 
-More: [Tapo cameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [raw 360° camera files](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
+ਹੋਰ: [Tapo ਕੈਮਰੇ](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [ਰਾਅ 360° ਕੈਮਰਾ ਫ਼ਾਈਲਾਂ](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app)।
 
 <a id="devices-and-systems"></a>
-## Devices and systems
+## ਡਿਵਾਈਸਾਂ ਅਤੇ ਸਿਸਟਮ
 
-One code base, six environments. What each one has today:
+ਇੱਕ ਕੋਡ ਬੇਸ, ਛੇ ਵਾਤਾਵਰਣ। ਅੱਜ ਹਰ ਇੱਕ ਕੋਲ ਕੀ ਹੈ:
 
-| Capability | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
+| ਸਮਰੱਥਾ | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ viewer | ✅ | ✅ | 🔧 |
-| Without a server: the device's own media | ✅ | ✅ | shares only | ✅ | ✅ folders | 🔧 |
-| Flat photos and videos | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360° photos as a sphere | ✅ | ✅ | ✅ | ✅ immersive | ✅ | 🔧 |
-| 360° videos | ✅ | ✅ no time bar | ✅ | ✅ immersive | ✅ | 🔧 |
-| 3D and VR180 | ✅ one eye | ✅ one eye | ✅ one eye | ✅ true 3D | ✅ one eye | 🔧 |
-| Spatial 2.5D (head tracking) | ✅ experimental | ✅ experimental | ❌ | ❌ | 🔜 | ❌ |
-| Apple spatial photos | ✅ one eye | ✅ one eye | ✅ one eye | ✅ 3D | ✅ one eye | 🔧 |
-| Raw Insta360, GoPro and DJI files | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| ਗੈਲਰੀ, ਐਲਬਮਾਂ, Immich ਸਰਵਰ ਨਾਲ ਖੋਜ | ✅ | ✅ | ✅ ਵਿਊਅਰ | ✅ | ✅ | 🔧 |
+| ਸਰਵਰ ਤੋਂ ਬਿਨਾਂ: ਡਿਵਾਈਸ ਦਾ ਖੁਦ ਦਾ ਮੀਡੀਆ | ✅ | ✅ | ਸਿਰਫ਼ ਸ਼ੇਅਰ | ✅ | ✅ ਫੋਲਡਰ | 🔧 |
+| ਫਲੈਟ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| ਗੋਲੇ ਵਜੋਂ 360° ਫੋਟੋਆਂ | ✅ | ✅ | ✅ | ✅ ਇਮਰਸਿਵ | ✅ | 🔧 |
+| 360° ਵੀਡੀਓ | ✅ | ✅ ਟਾਈਮ ਬਾਰ ਨਹੀਂ | ✅ | ✅ ਇਮਰਸਿਵ | ✅ | 🔧 |
+| 3D ਅਤੇ VR180 | ✅ ਇੱਕ ਅੱਖ | ✅ ਇੱਕ ਅੱਖ | ✅ ਇੱਕ ਅੱਖ | ✅ ਅਸਲੀ 3D | ✅ ਇੱਕ ਅੱਖ | 🔧 |
+| Spatial 2.5D (ਹੈੱਡ ਟਰੈਕਿੰਗ) | ✅ ਪ੍ਰਯੋਗਾਤਮਕ | ✅ ਪ੍ਰਯੋਗਾਤਮਕ | ❌ | ❌ | 🔜 | ❌ |
+| Apple ਸਪੇਸ਼ੀਅਲ ਫੋਟੋਆਂ | ✅ ਇੱਕ ਅੱਖ | ✅ ਇੱਕ ਅੱਖ | ✅ ਇੱਕ ਅੱਖ | ✅ 3D | ✅ ਇੱਕ ਅੱਖ | 🔧 |
+| ਰਾਅ Insta360, GoPro ਅਤੇ DJI ਫ਼ਾਈਲਾਂ | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| SMB, WebDAV, DLNA ਸ਼ੇਅਰ | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
 | Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo cameras: recordings | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo cameras: live view | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Share this device on the network | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Upload to Immich from shares and the device | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Input | touch, gyroscope | touch, gyroscope | remote | controllers, hands | mouse, keyboard | |
-| Where to get it | Google Play, APK | App Store (in review) | APK, Google Play (in review) | Horizon Store, APK | preview ZIP | CI builds only |
+| Tapo ਕੈਮਰੇ: ਰਿਕਾਰਡਿੰਗਾਂ | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
+| Tapo ਕੈਮਰੇ: ਲਾਈਵ ਵਿਊ | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
+| ਇਸ ਡਿਵਾਈਸ ਨੂੰ ਨੈੱਟਵਰਕ 'ਤੇ ਸ਼ੇਅਰ ਕਰੋ | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
+| ਸ਼ੇਅਰ ਅਤੇ ਡਿਵਾਈਸ ਤੋਂ Immich 'ਤੇ ਅੱਪਲੋਡ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
+| ਇੰਪੁੱਟ | ਟੱਚ, ਗਾਇਰੋਸਕੋਪ | ਟੱਚ, ਗਾਇਰੋਸਕੋਪ | ਰਿਮੋਟ | ਕੰਟਰੋਲਰ, ਹੱਥ | ਮਾਊਸ, ਕੀਬੋਰਡ | |
+| ਕਿੱਥੋਂ ਲੈਣਾ ਹੈ | Google Play, APK | App Store (ਰਿਵਿਊ ਵਿੱਚ) | APK, Google Play (ਰਿਵਿਊ ਵਿੱਚ) | Horizon Store, APK | ਪ੍ਰੀਵਿਊ ZIP | ਸਿਰਫ਼ CI ਬਿਲਡ |
 
-✅ in the app on that platform · ❌ not offered there · 🔜 planned · 🔧 in the sources and built by the project's CI, not started on that system yet. "One eye" means a 3D file shows its left eye on a flat screen. Not every ✅ has been checked on a real device yet: what was checked where, and what remains to confirm, is in [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) and [Compatibility](../docs/immuch360/compatibility.md).
+✅ ਉਸ ਪਲੈਟਫਾਰਮ 'ਤੇ ਐਪ ਵਿੱਚ · ❌ ਉੱਥੇ ਨਹੀਂ ਦਿੱਤਾ · 🔜 ਯੋਜਨਾਬੱਧ · 🔧 ਸੋਰਸ ਵਿੱਚ ਅਤੇ ਪ੍ਰੋਜੈਕਟ ਦੇ CI ਵੱਲੋਂ ਬਣਾਇਆ, ਉਸ ਸਿਸਟਮ 'ਤੇ ਅਜੇ ਸ਼ੁਰੂ ਨਹੀਂ ਹੋਇਆ। "ਇੱਕ ਅੱਖ" ਦਾ ਮਤਲਬ ਹੈ ਕਿ ਇੱਕ 3D ਫ਼ਾਈਲ ਫਲੈਟ ਸਕਰੀਨ 'ਤੇ ਆਪਣੀ ਖੱਬੀ ਅੱਖ ਦਿਖਾਉਂਦੀ ਹੈ। ਹਰ ✅ ਨੂੰ ਅਜੇ ਕਿਸੇ ਅਸਲ ਡਿਵਾਈਸ 'ਤੇ ਜਾਂਚਿਆ ਨਹੀਂ ਗਿਆ: ਕਿੱਥੇ ਕੀ ਜਾਂਚਿਆ ਗਿਆ, ਅਤੇ ਕੀ ਪੁਸ਼ਟੀ ਕਰਨਾ ਬਾਕੀ ਹੈ, [ਫੀਚਰ](../docs/immuch360/features.md), [ਪਲੈਟਫਾਰਮ ਸਪੋਰਟ](../docs/immuch360/platform-support.md) ਅਤੇ [ਅਨੁਕੂਲਤਾ](../docs/immuch360/compatibility.md) ਵਿੱਚ ਹੈ।
 
-- **Android phones and tablets**: the complete app, touch and gyroscope, every source.
-- **iPhone and iPad**: the complete app; the 360° video player has play and pause only, the Tapo live view comes later, and the DLNA search sends unicast requests until Apple grants the multicast entitlement.
-- **Android TV and Google TV**: the same APK, driven by the remote; a viewer: backup, uploads and editing are hidden. Checked on the Google TV emulator (login, timeline, viewers, shares, the remote navigation), not on a real TV yet.
-- **Meta Quest 2, Pro, 3 and 3S**: the app as a window, plus the immersive view; HEVC is the safe codec, H.264 stops around 4096x2304 on the Quest 3; the Quest 2 and Quest Pro are not tested yet.
-- **Windows 10 and 11**: a preview, with folders instead of a gallery, a video player of its own (libmpv) for flat and 360° videos, raw files stitched on the graphics chip, no installer yet.
-- **macOS and Linux**: the projects build on the project's CI (Linux built, macOS compiled); the app has not been started on those systems and their video player library is not in yet.
+- **Android ਫੋਨ ਅਤੇ ਟੈਬਲੇਟ**: ਪੂਰੀ ਐਪ, ਟੱਚ ਅਤੇ ਗਾਇਰੋਸਕੋਪ, ਹਰ ਸਰੋਤ।
+- **iPhone ਅਤੇ iPad**: ਪੂਰੀ ਐਪ; 360° ਵੀਡੀਓ ਪਲੇਅਰ ਵਿੱਚ ਸਿਰਫ਼ ਪਲੇ ਅਤੇ ਪੌਜ਼ ਹੈ, Tapo ਲਾਈਵ ਵਿਊ ਬਾਅਦ ਵਿੱਚ ਆਉਂਦੀ ਹੈ, ਅਤੇ DLNA ਖੋਜ ਉਦੋਂ ਤੱਕ ਯੂਨੀਕਾਸਟ ਰਿਕਵੈਸਟ ਭੇਜਦੀ ਹੈ ਜਦੋਂ ਤੱਕ Apple ਮਲਟੀਕਾਸਟ ਇਨਟਾਈਟਲਮੈਂਟ ਨਹੀਂ ਦਿੰਦਾ।
+- **Android TV ਅਤੇ Google TV**: ਉਹੀ APK, ਰਿਮੋਟ ਵੱਲੋਂ ਚਲਾਈ ਜਾਂਦੀ; ਇੱਕ ਵਿਊਅਰ: ਬੈਕਅੱਪ, ਅੱਪਲੋਡ ਅਤੇ ਐਡਿਟਿੰਗ ਲੁਕਾਏ ਹੋਏ ਹਨ। Google TV ਐਮੂਲੇਟਰ 'ਤੇ ਜਾਂਚਿਆ (ਲੌਗਇਨ, ਟਾਈਮਲਾਈਨ, ਵਿਊਅਰ, ਸ਼ੇਅਰ, ਰਿਮੋਟ ਨੈਵੀਗੇਸ਼ਨ), ਅਜੇ ਕਿਸੇ ਅਸਲ TV 'ਤੇ ਨਹੀਂ।
+- **Meta Quest 2, Pro, 3 ਅਤੇ 3S**: ਐਪ ਇੱਕ ਵਿੰਡੋ ਵਜੋਂ, ਨਾਲ ਇਮਰਸਿਵ ਦ੍ਰਿਸ਼; HEVC ਸੁਰੱਖਿਤ ਕੋਡੈਕ ਹੈ, Quest 3 'ਤੇ H.264 ਲਗਭਗ 4096x2304 'ਤੇ ਰੁਕ ਜਾਂਦਾ ਹੈ; Quest 2 ਅਤੇ Quest Pro ਅਜੇ ਟੈਸਟ ਨਹੀਂ ਕੀਤੇ ਗਏ।
+- **Windows 10 ਅਤੇ 11**: ਇੱਕ ਪ੍ਰੀਵਿਊ, ਗੈਲਰੀ ਦੀ ਥਾਂ ਫੋਲਡਰਾਂ ਨਾਲ, ਫਲੈਟ ਅਤੇ 360° ਵੀਡੀਓ ਲਈ ਆਪਣਾ ਵੀਡੀਓ ਪਲੇਅਰ (libmpv), ਗ੍ਰਾਫਿਕਸ ਚਿੱਪ 'ਤੇ ਸਟਿੱਚ ਕੀਤੀਆਂ ਰਾਅ ਫ਼ਾਈਲਾਂ, ਅਜੇ ਕੋਈ ਇੰਸਟਾਲਰ ਨਹੀਂ।
+- **macOS ਅਤੇ Linux**: ਪ੍ਰੋਜੈਕਟ ਦੇ CI 'ਤੇ ਬਣਦੇ ਹਨ (Linux ਬਿਲਡ, macOS ਕੰਪਾਇਲ); ਐਪ ਇਹਨਾਂ ਸਿਸਟਮਾਂ 'ਤੇ ਅਜੇ ਸ਼ੁਰੂ ਨਹੀਂ ਹੋਈ ਅਤੇ ਇਹਨਾਂ ਦੀ ਵੀਡੀਓ ਪਲੇਅਰ ਲਾਇਬ੍ਰੇਰੀ ਅਜੇ ਸ਼ਾਮਲ ਨਹੀਂ ਹੈ।
 
 <a id="advanced-features"></a>
-## Advanced features
+## ਐਡਵਾਂਸਡ ਫੀਚਰ
 
-What the app can read and play, for the reader who wants the whole extent. Each line is detailed in the [user guide](../docs/immuch360/user-guide.md) and the [compatibility page](../docs/immuch360/compatibility.md).
+ਐਪ ਕੀ ਪੜ੍ਹ ਅਤੇ ਚਲਾ ਸਕਦੀ ਹੈ, ਉਸ ਪਾਠਕ ਲਈ ਜੋ ਪੂਰੀ ਹੱਦ ਜਾਣਨਾ ਚਾਹੁੰਦਾ ਹੈ। ਹਰ ਲਾਈਨ ਦਾ ਵੇਰਵਾ [ਯੂਜ਼ਰ ਗਾਈਡ](../docs/immuch360/user-guide.md) ਅਤੇ [ਅਨੁਕੂਲਤਾ ਪੇਜ](../docs/immuch360/compatibility.md) ਵਿੱਚ ਹੈ।
 
-- **Formats**: flat photos and videos (what the device decodes: MP4, MOV, MKV and more); equirectangular 360° photos and videos; partial panoramas (GPano crop); VR180; stereoscopic 3D, top and bottom or side by side, read from the file (the st3d box) or guessed from the frame; Apple spatial photos (HEIC stereo pairs) and spatial videos (MV-HEVC, one eye); raw Insta360 .insp and .insv, GoPro .360, DJI .osv; 10 bit HLG and PQ sources tone mapped on the sphere.
-- **Projection and metadata**: GPano and spherical metadata read from the file, with range requests on a server or a share; the initial view of the camera; "View as 360°" remembered on the device; VR180 recognised from the file or its name; metadata kept intact because the original file is played, never a converted copy.
-- **Native playback**: Media3 on Android and the TV, SceneKit and AVFoundation on iOS, the Meta Spatial SDK in the headset, libmpv on Windows; the original or the transcoded stream chosen from what the device decodes; a list of the device's video decoders in Settings, Advanced; the audio track choice and a buffering indicator.
-- **Raw files stitched on the device**: a Flutter fragment shader for photos; a GPU effect in the player for single track videos; two hardware decoders at once and a GPU compositor for videos with one lens per track or per file (OpenGL ES 3 on Android and the Quest, Metal on iOS, the libmpv filter graph on Windows); the camera's own calibration (Mei, V6 and equidistant models) and accelerometer record; fallbacks to one lens, the transcoded stream, the camera's LRV copy or the unstitched video when the device cannot run two decoders.
-- **Sources**: the device's gallery; the folders of a computer; an Immich server; SMB 2 and 3, WebDAV, DLNA/UPnP; Plex over HTTPS checked against the server's own certificate; Tapo cameras over the local network (HTTPS and RTSP); a phone or a computer shared on the Wi-Fi as a WebDAV server; servers found by Bonjour/mDNS, a local network scan, SSDP, GDM and the TP-Link discovery, and followed when they change address.
-- **On demand reading**: a local bridge serves the players with byte ranges and a per session token; large blocks, read ahead and up to six SMB connections in parallel; thumbnails from a frame of each video; nothing copied to the device.
-- **Hardware**: hardware decoders used wherever they exist, with their measured limits (the Quest 3 H.264 ceiling, two 2048x2048 lenses at most for software decoders); on Windows the 360° view drawn by the graphics chip from each decoded frame, the frame size measured on each computer, the integrated or dedicated chip detected.
-- **Platform specifics**: the gyroscope and the Spatial 2.5D player on phones; the immersive view, controllers and hands on the Quest; the remote layout, the keyboard dialog and the TV banner on Android TV; on the computer, mouse and keyboard, full screen, a single window, a file opened with the program or dropped on it, HEIC, AVIF, TIFF and camera raw photos of the folders when Windows has a decoder for them, and the Windows data protection for passwords and tokens.
-- **Privacy by construction**: no account, no cloud, no analytics; passwords and tokens in the device's secure storage; the camera of the Spatial player used on the device only; shares, Plex and cameras reached on your network only.
+- **ਫਾਰਮੈਟ**: ਫਲੈਟ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ (ਜੋ ਡਿਵਾਈਸ ਡੀਕੋਡ ਕਰਦੀ ਹੈ: MP4, MOV, MKV ਅਤੇ ਹੋਰ); ਇਕੁਇਰੈਕਟੈਂਗੁਲਰ 360° ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ; ਅਧੂਰੇ ਪੈਨੋਰਾਮਾ (GPano ਕਰੌਪ); VR180; ਸਟੀਰੀਓਸਕੋਪਿਕ 3D, ਉੱਪਰ ਅਤੇ ਹੇਠਾਂ ਜਾਂ ਨਾਲ-ਨਾਲ, ਫ਼ਾਈਲ ਤੋਂ ਪੜ੍ਹੀ (st3d ਬਾਕਸ) ਜਾਂ ਫ੍ਰੇਮ ਤੋਂ ਅਨੁਮਾਨਿਤ; Apple ਸਪੇਸ਼ੀਅਲ ਫੋਟੋਆਂ (HEIC ਸਟੀਰੀਓ ਜੋੜੇ) ਅਤੇ ਸਪੇਸ਼ੀਅਲ ਵੀਡੀਓ (MV-HEVC, ਇੱਕ ਅੱਖ); ਰਾਅ Insta360 .insp ਅਤੇ .insv, GoPro .360, DJI .osv; 10 ਬਿੱਟ HLG ਅਤੇ PQ ਸਰੋਤ ਗੋਲੇ 'ਤੇ ਟੋਨ ਮੈਪ ਕੀਤੇ।
+- **ਪ੍ਰੋਜੈਕਸ਼ਨ ਅਤੇ ਮੈਟਾਡਾਟਾ**: GPano ਅਤੇ ਸਫੈਰੀਕਲ ਮੈਟਾਡਾਟਾ ਫ਼ਾਈਲ ਤੋਂ ਪੜ੍ਹੇ, ਸਰਵਰ ਜਾਂ ਸ਼ੇਅਰ 'ਤੇ ਰੇਂਜ ਰਿਕਵੈਸਟਾਂ ਨਾਲ; ਕੈਮਰੇ ਦਾ ਸ਼ੁਰੂਆਤੀ ਦ੍ਰਿਸ਼; ਡਿਵਾਈਸ 'ਤੇ ਯਾਦ ਰੱਖਿਆ "360° ਵਜੋਂ ਵੇਖੋ"; VR180 ਫ਼ਾਈਲ ਜਾਂ ਉਸਦੇ ਨਾਮ ਤੋਂ ਪਛਾਣਿਆ; ਮੈਟਾਡਾਟਾ ਬਰਕਰਾਰ ਰਹਿੰਦਾ ਹੈ ਕਿਉਂਕਿ ਅਸਲ ਫ਼ਾਈਲ ਚਲਾਈ ਜਾਂਦੀ ਹੈ, ਕਦੇ ਵੀ ਕੋਈ ਬਦਲੀ ਹੋਈ ਕਾਪੀ ਨਹੀਂ।
+- **ਨੇਟਿਵ ਪਲੇਬੈਕ**: Android ਅਤੇ TV 'ਤੇ Media3, iOS 'ਤੇ SceneKit ਅਤੇ AVFoundation, ਹੈੱਡਸੈੱਟ ਵਿੱਚ Meta Spatial SDK, Windows 'ਤੇ libmpv; ਡਿਵਾਈਸ ਜੋ ਡੀਕੋਡ ਕਰਦੀ ਹੈ ਉਸ ਤੋਂ ਚੁਣਿਆ ਅਸਲ ਜਾਂ ਟ੍ਰਾਂਸਕੋਡ ਕੀਤੀ ਸਟ੍ਰੀਮ; ਸੈਟਿੰਗਾਂ, Advanced ਵਿੱਚ ਡਿਵਾਈਸ ਦੇ ਵੀਡੀਓ ਡੀਕੋਡਰਾਂ ਦੀ ਸੂਚੀ; ਆਡੀਓ ਟਰੈਕ ਚੋਣ ਅਤੇ ਇੱਕ ਬਫਰਿੰਗ ਸੂਚਕ।
+- **ਡਿਵਾਈਸ 'ਤੇ ਸਟਿੱਚ ਕੀਤੀਆਂ ਰਾਅ ਫ਼ਾਈਲਾਂ**: ਫੋਟੋਆਂ ਲਈ ਇੱਕ Flutter ਫ੍ਰੈਗਮੈਂਟ ਸ਼ੇਡਰ; ਸਿੰਗਲ ਟਰੈਕ ਵੀਡੀਓ ਲਈ ਪਲੇਅਰ ਵਿੱਚ ਇੱਕ GPU ਇਫੈਕਟ; ਹਰ ਟਰੈਕ ਜਾਂ ਫ਼ਾਈਲ ਵਿੱਚ ਇੱਕ ਲੈਂਸ ਵਾਲੀਆਂ ਵੀਡੀਓ ਲਈ ਇੱਕੋ ਸਮੇਂ ਦੋ ਹਾਰਡਵੇਅਰ ਡੀਕੋਡਰ ਅਤੇ ਇੱਕ GPU ਕੰਪੋਜ਼ੀਟਰ (Android ਅਤੇ Quest 'ਤੇ OpenGL ES 3, iOS 'ਤੇ Metal, Windows 'ਤੇ libmpv ਫਿਲਟਰ ਗ੍ਰਾਫ); ਕੈਮਰੇ ਦੀ ਆਪਣੀ ਕੈਲੀਬ੍ਰੇਸ਼ਨ (Mei, V6 ਅਤੇ ਇਕੁਇਡਿਸਟੈਂਟ ਮਾਡਲ) ਅਤੇ ਐਕਸੀਲਰੋਮੀਟਰ ਰਿਕਾਰਡ; ਜਦੋਂ ਡਿਵਾਈਸ ਦੋ ਡੀਕੋਡਰ ਨਹੀਂ ਚਲਾ ਸਕਦੀ ਤਾਂ ਇੱਕ ਲੈਂਸ, ਟ੍ਰਾਂਸਕੋਡ ਕੀਤੀ ਸਟ੍ਰੀਮ, ਕੈਮਰੇ ਦੀ LRV ਕਾਪੀ ਜਾਂ ਨਾ-ਸਟਿੱਚ ਕੀਤੀ ਵੀਡੀਓ 'ਤੇ ਫਾਲਬੈਕ।
+- **ਸਰੋਤ**: ਡਿਵਾਈਸ ਦੀ ਗੈਲਰੀ; ਕੰਪਿਊਟਰ ਦੇ ਫੋਲਡਰ; ਇੱਕ Immich ਸਰਵਰ; SMB 2 ਅਤੇ 3, WebDAV, DLNA/UPnP; ਸਰਵਰ ਦੇ ਆਪਣੇ ਸਰਟੀਫਿਕੇਟ ਦੇ ਵਿਰੁੱਧ ਜਾਂਚਿਆ HTTPS ਰਾਹੀਂ Plex; ਲੋਕਲ ਨੈੱਟਵਰਕ ਰਾਹੀਂ Tapo ਕੈਮਰੇ (HTTPS ਅਤੇ RTSP); Wi-Fi 'ਤੇ WebDAV ਸਰਵਰ ਵਜੋਂ ਸ਼ੇਅਰ ਕੀਤਾ ਫੋਨ ਜਾਂ ਕੰਪਿਊਟਰ; Bonjour/mDNS, ਇੱਕ ਲੋਕਲ ਨੈੱਟਵਰਕ ਸਕੈਨ, SSDP, GDM ਅਤੇ TP-Link ਖੋਜ ਨਾਲ ਲੱਭੇ ਸਰਵਰ, ਅਤੇ ਜਦੋਂ ਉਹ ਐਡਰੈੱਸ ਬਦਲਦੇ ਹਨ ਤਾਂ ਟਰੈਕ ਕੀਤੇ ਜਾਂਦੇ।
+- **ਮੰਗ 'ਤੇ ਰੀਡਿੰਗ**: ਇੱਕ ਲੋਕਲ ਬ੍ਰਿਜ ਪਲੇਅਰਾਂ ਨੂੰ ਬਾਈਟ ਰੇਂਜਾਂ ਅਤੇ ਹਰ ਸੈਸ਼ਨ ਦੇ ਟੋਕਨ ਨਾਲ ਸਰਵ ਕਰਦਾ ਹੈ; ਵੱਡੇ ਬਲਾਕ, ਅੱਗੇ ਪੜ੍ਹਨਾ ਅਤੇ ਛੇ ਤੱਕ SMB ਕਨੈਕਸ਼ਨ ਇੱਕੋ ਸਮੇਂ; ਹਰ ਵੀਡੀਓ ਦੇ ਇੱਕ ਫ੍ਰੇਮ ਤੋਂ ਥੰਬਨੇਲ; ਡਿਵਾਈਸ 'ਤੇ ਕੁਝ ਵੀ ਕਾਪੀ ਨਹੀਂ ਹੁੰਦਾ।
+- **ਹਾਰਡਵੇਅਰ**: ਹਾਰਡਵੇਅਰ ਡੀਕੋਡਰ ਜਿੱਥੇ ਵੀ ਮੌਜੂਦ ਹੋਣ ਵਰਤੇ ਜਾਂਦੇ ਹਨ, ਆਪਣੀਆਂ ਮਾਪੀਆਂ ਸੀਮਾਵਾਂ ਨਾਲ (Quest 3 H.264 ਦੀ ਸੀਮਾ, ਸਾਫਟਵੇਅਰ ਡੀਕੋਡਰਾਂ ਲਈ ਵੱਧ ਤੋਂ ਵੱਧ ਦੋ 2048x2048 ਲੈਂਸ); Windows 'ਤੇ ਹਰ ਡੀਕੋਡ ਕੀਤੇ ਫ੍ਰੇਮ ਤੋਂ ਗ੍ਰਾਫਿਕਸ ਚਿੱਪ ਵੱਲੋਂ ਖਿੱਚਿਆ 360° ਦ੍ਰਿਸ਼, ਹਰ ਕੰਪਿਊਟਰ 'ਤੇ ਮਾਪਿਆ ਫ੍ਰੇਮ ਆਕਾਰ, ਪਛਾਣੀ ਗਈ ਇੰਟੀਗ੍ਰੇਟਿਡ ਜਾਂ ਡੈਡੀਕੇਟਿਡ ਚਿੱਪ।
+- **ਪਲੈਟਫਾਰਮ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ**: ਫੋਨਾਂ 'ਤੇ ਗਾਇਰੋਸਕੋਪ ਅਤੇ Spatial 2.5D ਪਲੇਅਰ; Quest 'ਤੇ ਇਮਰਸਿਵ ਦ੍ਰਿਸ਼, ਕੰਟਰੋਲਰ ਅਤੇ ਹੱਥ; Android TV 'ਤੇ ਰਿਮੋਟ ਲੇਆਉਟ, ਕੀਬੋਰਡ ਡਾਇਲਾਗ ਅਤੇ TV ਬੈਨਰ; ਕੰਪਿਊਟਰ 'ਤੇ, ਮਾਊਸ ਅਤੇ ਕੀਬੋਰਡ, ਫੁੱਲ ਸਕਰੀਨ, ਇੱਕ ਇਕੱਲੀ ਵਿੰਡੋ, ਪ੍ਰੋਗਰਾਮ ਨਾਲ ਖੋਲ੍ਹੀ ਜਾਂ ਉਸ 'ਤੇ ਡ੍ਰੌਪ ਕੀਤੀ ਫ਼ਾਈਲ, ਜਦੋਂ Windows ਕੋਲ ਡੀਕੋਡਰ ਹੋਵੇ ਤਾਂ ਫੋਲਡਰਾਂ ਦੀਆਂ HEIC, AVIF, TIFF ਅਤੇ ਕੈਮਰਾ ਰਾਅ ਫੋਟੋਆਂ, ਅਤੇ ਪਾਸਵਰਡ ਅਤੇ ਟੋਕਨਾਂ ਲਈ Windows ਦੀ ਡਾਟਾ ਸੁਰੱਖਿਆ।
+- **ਬਣਤਰ ਵਿੱਚ ਹੀ ਪ੍ਰਾਈਵੇਸੀ**: ਕੋਈ ਖਾਤਾ ਨਹੀਂ, ਕੋਈ ਕਲਾਉਡ ਨਹੀਂ, ਕੋਈ ਐਨਾਲਿਟਿਕਸ ਨਹੀਂ; ਪਾਸਵਰਡ ਅਤੇ ਟੋਕਨ ਡਿਵਾਈਸ ਦੀ ਸੁਰੱਖਿਅਤ ਸਟੋਰੇਜ ਵਿੱਚ; Spatial ਪਲੇਅਰ ਦਾ ਕੈਮਰਾ ਸਿਰਫ਼ ਡਿਵਾਈਸ 'ਤੇ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ; ਸ਼ੇਅਰ, Plex ਅਤੇ ਕੈਮਰੇ ਸਿਰਫ਼ ਤੁਹਾਡੇ ਨੈੱਟਵਰਕ 'ਤੇ ਹੀ ਪਹੁੰਚੇ ਜਾਂਦੇ ਹਨ।
 
 <a id="technical-documentation"></a>
-## Technical documentation
+## ਤਕਨੀਕੀ ਦਸਤਾਵੇਜ਼
 
-- [Features: the complete inventory and the feature by platform matrix](../docs/immuch360/features.md)
-- [User guide: every function, step by step, with its options and messages](../docs/immuch360/user-guide.md)
-- [Compatibility: formats, codecs, decoders, servers and devices checked, limits](../docs/immuch360/compatibility.md)
-- [Platform support: what each system has, how it is installed, what differs](../docs/immuch360/platform-support.md)
-- [Known issues](../docs/immuch360/known-issues.md) and [Troubleshooting](../docs/immuch360/troubleshooting.md), with the logs to attach to a report
-- [Technical details: architecture, Flutter and native modules, the media bridge, the stitching pipeline, the decoders](../docs/immuch360/technical-details.md)
-- [The desktop 360° video renderer: libmpv, the projection pass and the measurements behind it](../docs/immuch360/desktop-360-video-renderer.md)
-- [Release status: builds, stores and what each store has](../docs/immuch360/release-status.md)
-- [Build it yourself: phones, headsets, TVs and computers](../docs/immuch360/build.md)
+- [ਫੀਚਰ: ਪੂਰੀ ਸੂਚੀ ਅਤੇ ਪਲੈਟਫਾਰਮ ਦਰ ਪਲੈਟਫਾਰਮ ਫੀਚਰ ਮੈਟ੍ਰਿਕਸ](../docs/immuch360/features.md)
+- [ਯੂਜ਼ਰ ਗਾਈਡ: ਹਰ ਫੰਕਸ਼ਨ, ਕਦਮ ਦਰ ਕਦਮ, ਆਪਣੀਆਂ ਚੋਣਾਂ ਅਤੇ ਸੁਨੇਹਿਆਂ ਨਾਲ](../docs/immuch360/user-guide.md)
+- [ਅਨੁਕੂਲਤਾ: ਫਾਰਮੈਟ, ਕੋਡੈਕ, ਡੀਕੋਡਰ, ਜਾਂਚੇ ਸਰਵਰ ਅਤੇ ਡਿਵਾਈਸ, ਸੀਮਾਵਾਂ](../docs/immuch360/compatibility.md)
+- [ਪਲੈਟਫਾਰਮ ਸਪੋਰਟ: ਹਰ ਸਿਸਟਮ ਕੋਲ ਕੀ ਹੈ, ਇਹ ਕਿਵੇਂ ਇੰਸਟਾਲ ਹੁੰਦਾ ਹੈ, ਕੀ ਵੱਖਰਾ ਹੈ](../docs/immuch360/platform-support.md)
+- [ਜਾਣੀਆਂ ਸਮੱਸਿਆਵਾਂ](../docs/immuch360/known-issues.md) ਅਤੇ [ਸਮੱਸਿਆ ਨਿਵਾਰਣ](../docs/immuch360/troubleshooting.md), ਰਿਪੋਰਟ ਨਾਲ ਜੋੜਨ ਵਾਲੇ ਲੌਗਾਂ ਨਾਲ
+- [ਤਕਨੀਕੀ ਵੇਰਵੇ: ਆਰਕੀਟੈਕਚਰ, Flutter ਅਤੇ ਨੇਟਿਵ ਮਾਡਿਊਲ, ਮੀਡੀਆ ਬ੍ਰਿਜ, ਸਟਿੱਚਿੰਗ ਪਾਈਪਲਾਈਨ, ਡੀਕੋਡਰ](../docs/immuch360/technical-details.md)
+- [ਡੈਸਕਟਾਪ 360° ਵੀਡੀਓ ਰੈਂਡਰਰ: libmpv, ਪ੍ਰੋਜੈਕਸ਼ਨ ਪਾਸ ਅਤੇ ਇਸ ਪਿੱਛੇ ਦੇ ਮਾਪ](../docs/immuch360/desktop-360-video-renderer.md)
+- [ਰਿਲੀਜ਼ ਸਥਿਤੀ: ਬਿਲਡ, ਸਟੋਰ ਅਤੇ ਹਰ ਸਟੋਰ ਕੋਲ ਕੀ ਹੈ](../docs/immuch360/release-status.md)
+- [ਆਪ ਬਣਾਓ: ਫੋਨ, ਹੈੱਡਸੈੱਟ, TV ਅਤੇ ਕੰਪਿਊਟਰ](../docs/immuch360/build.md)
 
 <a id="install"></a>
-## Install
+## ਇੰਸਟਾਲ ਕਰੋ
 
-### Android phones and tablets
+### Android ਫੋਨ ਅਤੇ ਟੈਬਲੇਟ
 
-1. [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK of the [Releases](https://github.com/freeKC/Immuch360/releases) page: `Immuch360-v<version>-arm64-v8a-release.apk` for a phone; the universal `Immuch360-v<version>-release.apk` works everywhere.
-2. The app installs next to the official Immich app. The APK from GitHub does not update itself: watch the Releases page; once you have installed the app from a store, take the updates from that store.
+1. [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), ਜਾਂ [Releases](https://github.com/freeKC/Immuch360/releases) ਪੇਜ ਦੀ APK: ਫੋਨ ਲਈ `Immuch360-v<version>-arm64-v8a-release.apk`; ਯੂਨੀਵਰਸਲ `Immuch360-v<version>-release.apk` ਹਰ ਥਾਂ ਕੰਮ ਕਰਦੀ ਹੈ।
+2. ਐਪ ਅਧਿਕਾਰਤ Immich ਐਪ ਦੇ ਨਾਲ ਹੀ ਇੰਸਟਾਲ ਹੁੰਦੀ ਹੈ। GitHub ਤੋਂ APK ਆਪਣੇ ਆਪ ਅੱਪਡੇਟ ਨਹੀਂ ਹੁੰਦੀ: Releases ਪੇਜ ਵੇਖਦੇ ਰਹੋ; ਜਦੋਂ ਤੁਸੀਂ ਕਿਸੇ ਸਟੋਰ ਤੋਂ ਐਪ ਇੰਸਟਾਲ ਕਰ ਲਈ, ਅੱਪਡੇਟ ਉਸੇ ਸਟੋਰ ਤੋਂ ਲਓ।
 
-### iPhone and iPad
+### iPhone ਅਤੇ iPad
 
-1. The App Store version is waiting for Apple's review. Until it is published, build the app with Xcode on a Mac, see [Build it yourself](../docs/immuch360/build.md).
-2. Sign in with your Immich server, or tap "Use without a server".
+1. App Store ਵਰਜਨ Apple ਦੇ ਰਿਵਿਊ ਦੀ ਉਡੀਕ ਵਿੱਚ ਹੈ। ਇਸਦੇ ਪ੍ਰਕਾਸ਼ਿਤ ਹੋਣ ਤੱਕ, Mac 'ਤੇ Xcode ਨਾਲ ਐਪ ਬਣਾਓ, ਦੇਖੋ [ਆਪ ਬਣਾਓ](../docs/immuch360/build.md)।
+2. ਆਪਣੇ Immich ਸਰਵਰ ਨਾਲ ਸਾਈਨ ਇਨ ਕਰੋ, ਜਾਂ "ਸਰਵਰ ਤੋਂ ਬਿਨਾਂ ਵਰਤੋ" 'ਤੇ ਟੈਪ ਕਰੋ।
 
 <a id="android-tv-and-google-tv"></a>
-### Android TV and Google TV
+### Android TV ਅਤੇ Google TV
 
-1. Until Google Play offers the app on TVs, take the universal `Immuch360-v<version>-release.apk` of the [Releases](https://github.com/freeKC/Immuch360/releases) page.
+1. ਜਦੋਂ ਤੱਕ Google Play TV 'ਤੇ ਐਪ ਨਹੀਂ ਦਿੰਦਾ, [Releases](https://github.com/freeKC/Immuch360/releases) ਪੇਜ ਦੀ ਯੂਨੀਵਰਸਲ `Immuch360-v<version>-release.apk` ਲਓ।
 2. ਟੀਵੀ 'ਤੇ ਡਿਵੈਲਪਰ ਵਿਕਲਪ ਅਤੇ USB ਡੀਬੱਗਿੰਗ ਚਾਲੂ ਕਰੋ (Google TV 'ਤੇ: ਸੈਟਿੰਗਾਂ, ਸਿਸਟਮ, ਬਾਰੇ, "Android TV OS build" ਸੱਤ ਵਾਰ ਚੁਣੋ, ਫਿਰ ਸੈਟਿੰਗਾਂ, ਸਿਸਟਮ, ਡਿਵੈਲਪਰ ਵਿਕਲਪ; ਨਾਮ ਟੀਵੀ ਅਨੁਸਾਰ ਵੱਖਰੇ ਹੁੰਦੇ ਹਨ)।
 3. ਉਸੇ ਨੈੱਟਵਰਕ ਦੇ ਕੰਪਿਊਟਰ ਤੋਂ, adb (Android SDK Platform Tools) ਨਾਲ: `adb connect <address of the TV>`, ਟੀਵੀ 'ਤੇ ਪ੍ਰੌਂਪਟ ਸਵੀਕਾਰ ਕਰੋ, ਫਿਰ `adb install -r Immuch360-v<version>-release.apk`।
 4. ਐਪ ਆਪਣੇ ਬੈਨਰ ਨਾਲ ਟੀਵੀ ਦੀਆਂ ਐਪਾਂ ਵਿੱਚ ਦਿਖਦੀ ਹੈ। ਅਗਲੀ ਰਿਲੀਜ਼ ਵੀ ਇਸੇ ਤਰ੍ਹਾਂ ਸਥਾਪਤ ਕਰੋ: `-r` ਲੌਗਇਨ ਅਤੇ ਸੈਟਿੰਗਾਂ ਰੱਖਦਾ ਹੈ।
@@ -270,46 +270,46 @@ What the app can read and play, for the reader who wants the whole extent. Each 
 <a id="meta-quest"></a>
 ### Meta Quest
 
-1. From the [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/): the store version, updated as Meta reviews each submission.
-2. Or sideload the `-quest-release.apk` file of a [release](https://github.com/freeKC/Immuch360/releases) in developer mode with adb or SideQuest: `adb install -r Immuch360-v<version>-quest-release.apk`, then open the Library of the headset, "Unknown sources".
-3. The store version and the GitHub APK are signed with different keys: to switch from one to the other, uninstall the app first, which loses the login, the settings and the list of network shares.
+1. [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) ਤੋਂ: ਸਟੋਰ ਵਰਜਨ, ਜੋ Meta ਹਰ ਸਬਮਿਸ਼ਨ ਦਾ ਰਿਵਿਊ ਕਰਨ 'ਤੇ ਅੱਪਡੇਟ ਹੁੰਦਾ ਹੈ।
+2. ਜਾਂ developer mode ਵਿੱਚ adb ਜਾਂ SideQuest ਨਾਲ ਕਿਸੇ [release](https://github.com/freeKC/Immuch360/releases) ਦੀ `-quest-release.apk` ਫ਼ਾਈਲ ਸਾਈਡਲੋਡ ਕਰੋ: `adb install -r Immuch360-v<version>-quest-release.apk`, ਫਿਰ ਹੈੱਡਸੈੱਟ ਦੀ Library ਖੋਲ੍ਹੋ, "Unknown sources"।
+3. ਸਟੋਰ ਵਰਜਨ ਅਤੇ GitHub APK ਵੱਖ-ਵੱਖ ਕੁੰਜੀਆਂ ਨਾਲ ਸਾਈਨ ਕੀਤੇ ਹਨ: ਇੱਕ ਤੋਂ ਦੂਜੇ 'ਤੇ ਜਾਣ ਲਈ, ਪਹਿਲਾਂ ਐਪ ਅਣਇੰਸਟਾਲ ਕਰੋ, ਜਿਸ ਨਾਲ ਲੌਗਇਨ, ਸੈਟਿੰਗਾਂ ਅਤੇ ਨੈੱਟਵਰਕ ਸ਼ੇਅਰਾਂ ਦੀ ਸੂਚੀ ਖਤਮ ਹੋ ਜਾਂਦੀ ਹੈ।
 
 <a id="windows"></a>
 ### Windows
 
-1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) (about 58 MB, with `SHA256SUMS.txt` to check it) and unzip it anywhere, for example in Documents.
-2. Start `immuch360.exe` from the unzipped folder and keep the folder whole: the program needs the files next to it, among them `libmpv-2.dll`, the video player.
-3. The files are not signed yet: Windows SmartScreen may show "Windows protected your PC", choose "More info" then "Run anyway". The first start of a new build can take up to a minute while Windows scans the files.
-4. Windows 10 or 11, 64 bit. There is no installer and no automatic update yet: unzip the next build the same way.
+1. [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-4) ਤੋਂ `Immuch360-Desktop-3.3.0-rc.0-desktop.4-windows-x64.zip` ਡਾਊਨਲੋਡ ਕਰੋ (ਲਗਭਗ 58 MB, ਜਾਂਚਣ ਲਈ `SHA256SUMS.txt` ਨਾਲ) ਅਤੇ ਇਸਨੂੰ ਕਿਤੇ ਵੀ ਅਨਜ਼ਿਪ ਕਰੋ, ਜਿਵੇਂ Documents ਵਿੱਚ।
+2. ਅਨਜ਼ਿਪ ਕੀਤੇ ਫੋਲਡਰ ਤੋਂ `immuch360.exe` ਸ਼ੁਰੂ ਕਰੋ ਅਤੇ ਫੋਲਡਰ ਨੂੰ ਪੂਰਾ ਰੱਖੋ: ਪ੍ਰੋਗਰਾਮ ਨੂੰ ਆਪਣੇ ਨਾਲ ਦੀਆਂ ਫ਼ਾਈਲਾਂ ਦੀ ਲੋੜ ਹੁੰਦੀ ਹੈ, ਜਿਹਨਾਂ ਵਿੱਚੋਂ ਵੀਡੀਓ ਪਲੇਅਰ `libmpv-2.dll` ਹੈ।
+3. ਫ਼ਾਈਲਾਂ ਅਜੇ ਸਾਈਨ ਨਹੀਂ ਕੀਤੀਆਂ ਗਈਆਂ: Windows SmartScreen "Windows protected your PC" ਦਿਖਾ ਸਕਦਾ ਹੈ, "More info" ਫਿਰ "Run anyway" ਚੁਣੋ। ਨਵੇਂ ਬਿਲਡ ਦੀ ਪਹਿਲੀ ਸ਼ੁਰੂਆਤ ਨੂੰ, Windows ਵੱਲੋਂ ਫ਼ਾਈਲਾਂ ਸਕੈਨ ਕਰਦੇ ਸਮੇਂ, ਇੱਕ ਮਿੰਟ ਤੱਕ ਲੱਗ ਸਕਦਾ ਹੈ।
+4. Windows 10 ਜਾਂ 11, 64 ਬਿੱਟ। ਅਜੇ ਕੋਈ ਇੰਸਟਾਲਰ ਅਤੇ ਕੋਈ ਆਟੋਮੈਟਿਕ ਅੱਪਡੇਟ ਨਹੀਂ: ਅਗਲੇ ਬਿਲਡ ਨੂੰ ਵੀ ਇਸੇ ਤਰ੍ਹਾਂ ਅਨਜ਼ਿਪ ਕਰੋ।
 
-### macOS and Linux
+### macOS ਅਤੇ Linux
 
-The projects are in the sources and are built by the project's CI on every change, but the app has not been started on those systems yet and their video player library is not in them: there is no download yet. The steps to build them are in [Build it yourself](../docs/immuch360/build.md).
+ਪ੍ਰੋਜੈਕਟ ਸੋਰਸ ਵਿੱਚ ਹਨ ਅਤੇ ਹਰ ਬਦਲਾਅ 'ਤੇ ਪ੍ਰੋਜੈਕਟ ਦੇ CI ਵੱਲੋਂ ਬਣਾਏ ਜਾਂਦੇ ਹਨ, ਪਰ ਐਪ ਇਹਨਾਂ ਸਿਸਟਮਾਂ 'ਤੇ ਅਜੇ ਸ਼ੁਰੂ ਨਹੀਂ ਹੋਈ ਅਤੇ ਇਹਨਾਂ ਦੀ ਵੀਡੀਓ ਪਲੇਅਰ ਲਾਇਬ੍ਰੇਰੀ ਇਹਨਾਂ ਵਿੱਚ ਨਹੀਂ ਹੈ: ਅਜੇ ਕੋਈ ਡਾਊਨਲੋਡ ਨਹੀਂ। ਇਹਨਾਂ ਨੂੰ ਬਣਾਉਣ ਦੇ ਕਦਮ [ਆਪ ਬਣਾਓ](../docs/immuch360/build.md) ਵਿੱਚ ਹਨ।
 
 <a id="privacy"></a>
 ## ਪਰਦੇਦਾਰੀ
 
-Nothing goes to the developer: no account, no analytics, no crash reporting service, no advertising. The app talks only to the servers you choose (your Immich server, your shares, your Plex server, your cameras) and, without a server, to nothing at all. Passwords and tokens stay in the secure storage of the device. The camera of the Spatial 2.5D player is used on the device only; its images are never stored and never sent anywhere. The full policy is in [PRIVACY.md](../PRIVACY.md), and the details per source in the [user guide](../docs/immuch360/user-guide.md#privacy).
+ਡਿਵੈਲਪਰ ਨੂੰ ਕੁਝ ਵੀ ਨਹੀਂ ਜਾਂਦਾ: ਕੋਈ ਖਾਤਾ ਨਹੀਂ, ਕੋਈ ਐਨਾਲਿਟਿਕਸ ਨਹੀਂ, ਕੋਈ ਕ੍ਰੈਸ਼ ਰਿਪੋਰਟਿੰਗ ਸਰਵਿਸ ਨਹੀਂ, ਕੋਈ ਇਸ਼ਤਿਹਾਰ ਨਹੀਂ। ਐਪ ਸਿਰਫ਼ ਤੁਹਾਡੇ ਚੁਣੇ ਸਰਵਰਾਂ ਨਾਲ ਗੱਲ ਕਰਦੀ ਹੈ (ਤੁਹਾਡਾ Immich ਸਰਵਰ, ਤੁਹਾਡੇ ਸ਼ੇਅਰ, ਤੁਹਾਡਾ Plex ਸਰਵਰ, ਤੁਹਾਡੇ ਕੈਮਰੇ) ਅਤੇ, ਸਰਵਰ ਤੋਂ ਬਿਨਾਂ, ਕਿਸੇ ਨਾਲ ਵੀ ਨਹੀਂ। ਪਾਸਵਰਡ ਅਤੇ ਟੋਕਨ ਡਿਵਾਈਸ ਦੀ ਸੁਰੱਖਿਅਤ ਸਟੋਰੇਜ ਵਿੱਚ ਰਹਿੰਦੇ ਹਨ। Spatial 2.5D ਪਲੇਅਰ ਦਾ ਕੈਮਰਾ ਸਿਰਫ਼ ਡਿਵਾਈਸ 'ਤੇ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ; ਇਸਦੀਆਂ ਤਸਵੀਰਾਂ ਕਦੇ ਸਟੋਰ ਨਹੀਂ ਹੁੰਦੀਆਂ ਅਤੇ ਕਦੇ ਕਿਤੇ ਭੇਜੀਆਂ ਨਹੀਂ ਜਾਂਦੀਆਂ। ਪੂਰੀ ਪਾਲਿਸੀ [PRIVACY.md](../PRIVACY.md) ਵਿੱਚ ਹੈ, ਅਤੇ ਹਰ ਸਰੋਤ ਦੇ ਵੇਰਵੇ [ਯੂਜ਼ਰ ਗਾਈਡ](../docs/immuch360/user-guide.md#privacy) ਵਿੱਚ।
 
 <a id="the-project"></a>
-## The project
+## ਪ੍ਰੋਜੈਕਟ
 
-Immuch360 is an unofficial fork of the [Immich](https://github.com/immich-app/immich) mobile app, under the [GNU AGPL v3](../LICENSE), not affiliated with, nor endorsed by, the Immich team or FUTO. The fork exists because 360° viewing on mobile has been requested in Immich since January 2024 and is not in the official app yet; it ships it now, gathers real device feedback, and will offer back to Immich, in small pull requests, whatever the maintainers want. Everything the official app does is kept; the branches, the build chain and the CI are described in [Build it yourself](../docs/immuch360/build.md).
+Immuch360 [Immich](https://github.com/immich-app/immich) ਮੋਬਾਈਲ ਐਪ ਦਾ ਇੱਕ ਗੈਰ-ਅਧਿਕਾਰਤ ਫੋਰਕ ਹੈ, [GNU AGPL v3](../LICENSE) ਅਧੀਨ, Immich ਟੀਮ ਜਾਂ FUTO ਨਾਲ ਸੰਬੰਧਿਤ ਨਹੀਂ ਅਤੇ ਨਾ ਹੀ ਉਹਨਾਂ ਵੱਲੋਂ ਪ੍ਰਮਾਣਿਤ। ਇਹ ਫੋਰਕ ਇਸ ਲਈ ਹੈ ਕਿਉਂਕਿ ਮੋਬਾਈਲ 'ਤੇ 360° ਦੇਖਣ ਦੀ ਮੰਗ Immich ਵਿੱਚ ਜਨਵਰੀ 2024 ਤੋਂ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ ਅਤੇ ਇਹ ਅਜੇ ਅਧਿਕਾਰਤ ਐਪ ਵਿੱਚ ਨਹੀਂ ਹੈ; ਇਹ ਹੁਣ ਇਸਨੂੰ ਲਿਆਉਂਦਾ ਹੈ, ਅਸਲ ਡਿਵਾਈਸ ਤੋਂ ਫੀਡਬੈਕ ਇਕੱਠਾ ਕਰਦਾ ਹੈ, ਅਤੇ ਛੋਟੀਆਂ ਪੁੱਲ ਰਿਕਵੈਸਟਾਂ ਵਿੱਚ, ਜੋ ਵੀ ਮੇਂਟੇਨਰ ਚਾਹੁੰਦੇ ਹਨ, Immich ਨੂੰ ਵਾਪਸ ਦੇਵੇਗਾ। ਅਧਿਕਾਰਤ ਐਪ ਜੋ ਵੀ ਕਰਦੀ ਹੈ ਉਹ ਸਭ ਰੱਖਿਆ ਗਿਆ ਹੈ; ਬ੍ਰਾਂਚ, ਬਿਲਡ ਚੇਨ ਅਤੇ CI [ਆਪ ਬਣਾਓ](../docs/immuch360/build.md) ਵਿੱਚ ਦਰਸਾਏ ਗਏ ਹਨ।
 
-The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192); thanks to both. The Tapo cameras were written from what [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) and [python-kasa](https://github.com/python-kasa/python-kasa) document. The Meta Quest view relies on the Meta Spatial SDK, which is not open source, so it stays in this fork. The Windows ZIP carries libmpv (the library of [mpv](https://mpv.io), with [FFmpeg](https://ffmpeg.org)) built by the project, under the LGPL, with its licences and sources; the details and the trademarks of the platforms named on this page are in [License and trademarks](../docs/immuch360/platform-support.md#license-and-trademarks).
+360° ਫੋਟੋ ਵਿਊਅਰ dmitry-brazhenko ਵੱਲੋਂ ਅੱਪਸਟ੍ਰੀਮ ਪੁੱਲ ਰਿਕਵੈਸਟ [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) 'ਤੇ ਆਧਾਰਿਤ ਹੈ, ਜੋ ਖੁਦ bencefr ਵੱਲੋਂ [#30192](https://github.com/immich-app/immich/pull/30192) ਵਿੱਚ ਬਣਾਏ ਪ੍ਰੋਟੋਟਾਈਪ 'ਤੇ ਬਣਿਆ ਹੈ; ਦੋਵਾਂ ਦਾ ਧੰਨਵਾਦ। Tapo ਕੈਮਰੇ [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ਅਤੇ [python-kasa](https://github.com/python-kasa/python-kasa) ਦੇ ਦਸਤਾਵੇਜ਼ਾਂ ਤੋਂ ਲਿਖੇ ਗਏ। Meta Quest ਦ੍ਰਿਸ਼ Meta Spatial SDK 'ਤੇ ਨਿਰਭਰ ਕਰਦਾ ਹੈ, ਜੋ ਓਪਨ ਸੋਰਸ ਨਹੀਂ ਹੈ, ਇਸ ਲਈ ਇਹ ਇਸ ਫੋਰਕ ਵਿੱਚ ਹੀ ਰਹਿੰਦਾ ਹੈ। Windows ZIP ਵਿੱਚ ਪ੍ਰੋਜੈਕਟ ਵੱਲੋਂ ਬਣਾਈ libmpv ਹੈ ([mpv](https://mpv.io) ਦੀ ਲਾਇਬ੍ਰੇਰੀ, [FFmpeg](https://ffmpeg.org) ਨਾਲ), LGPL ਅਧੀਨ, ਆਪਣੇ ਲਾਇਸੈਂਸਾਂ ਅਤੇ ਸੋਰਸ ਨਾਲ; ਇਸ ਪੇਜ 'ਤੇ ਨਾਮ ਦਿੱਤੇ ਪਲੈਟਫਾਰਮਾਂ ਦੇ ਵੇਰਵੇ ਅਤੇ ਟ੍ਰੇਡਮਾਰਕ [ਲਾਇਸੈਂਸ ਅਤੇ ਟ੍ਰੇਡਮਾਰਕ](../docs/immuch360/platform-support.md#license-and-trademarks) ਵਿੱਚ ਹਨ।
 
-The phone captures of this page were taken on the Android build in an emulator, the TV ones on the Google TV emulator and the Windows ones on a Windows 11 PC, all with CC0 panoramas from [Poly Haven](https://polyhaven.com); the headset captures were taken on a Quest 3.
+ਇਸ ਪੇਜ ਦੇ ਫੋਨ ਕੈਪਚਰ ਇੱਕ ਐਮੂਲੇਟਰ ਵਿੱਚ Android ਬਿਲਡ 'ਤੇ ਲਏ ਗਏ, TV ਵਾਲੇ Google TV ਐਮੂਲੇਟਰ 'ਤੇ ਅਤੇ Windows ਵਾਲੇ ਇੱਕ Windows 11 PC 'ਤੇ, ਸਾਰੇ [Poly Haven](https://polyhaven.com) ਦੇ CC0 ਪੈਨੋਰਾਮਾ ਨਾਲ; ਹੈੱਡਸੈੱਟ ਕੈਪਚਰ ਇੱਕ Quest 3 'ਤੇ ਲਏ ਗਏ।
 
 <a id="roadmap"></a>
 ## ਅਗਲੀ ਯੋਜਨਾ
 
 ਜੋ ਹਾਲੇ ਨਹੀਂ ਹੋਇਆ, ਸਭ ਤੋਂ ਸੰਭਾਵਿਤ ਪਹਿਲਾਂ। ਇੱਥੇ ਕੁਝ ਵੀ ਵਾਅਦਾ ਨਹੀਂ ਹੈ, ਅਤੇ [issue tracker](https://github.com/freeKC/Immuch360/issues) 'ਤੇ ਫੀਡਬੈਕ ਇਹ ਫ਼ੈਸਲਾ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰਦਾ ਹੈ ਕਿ ਪਹਿਲਾਂ ਕੀ ਆਵੇ।
 
-- **The stores**: Google Play (build 23 in review, the TV listing in review), the App Store (version 3.3.0 in review), the Meta Horizon Store (build 21 in review).
-- **Computers**: the test of each function by hand on a Windows PC; then Spatial 2.5D with the webcam; then macOS and Linux started and shipped, with their video player; then an installer, a signed build and automatic updates.
-- **Phones and tablets**: a time bar in the iOS 360° video player, previous and next in the 360° players of phones, the audio track choice in the flat player, the Tapo live view on iPhone and iPad.
-- **Immersive media**: dual fisheye .dng, levelling of GoPro and DJI videos from their own motion data, spatial videos in 3D on the Quest if its decoders allow it, previous and next between spatial photos in the headset.
-- **Sources**: swiping between the files of a share folder, Digest authentication for WebDAV, a QR code to bring the Plex token from the computer, IPv6 for Plex, H.265 Tapo recordings, channels on the TV home screen.
+- **ਸਟੋਰ**: Google Play (ਬਿਲਡ 23 ਰਿਵਿਊ ਵਿੱਚ, TV ਲਿਸਟਿੰਗ ਰਿਵਿਊ ਵਿੱਚ), App Store (ਵਰਜਨ 3.3.0 ਰਿਵਿਊ ਵਿੱਚ), Meta Horizon Store (ਬਿਲਡ 21 ਰਿਵਿਊ ਵਿੱਚ)।
+- **ਕੰਪਿਊਟਰ**: Windows PC 'ਤੇ ਹਰ ਫੰਕਸ਼ਨ ਦੀ ਹੱਥੀਂ ਜਾਂਚ; ਫਿਰ ਵੈਬਕੈਮ ਨਾਲ Spatial 2.5D; ਫਿਰ macOS ਅਤੇ Linux ਸ਼ੁਰੂ ਅਤੇ ਰਿਲੀਜ਼, ਆਪਣੇ ਵੀਡੀਓ ਪਲੇਅਰ ਨਾਲ; ਫਿਰ ਇੱਕ ਇੰਸਟਾਲਰ, ਇੱਕ ਸਾਈਨ ਕੀਤਾ ਬਿਲਡ ਅਤੇ ਆਟੋਮੈਟਿਕ ਅੱਪਡੇਟ।
+- **ਫੋਨ ਅਤੇ ਟੈਬਲੇਟ**: iOS 360° ਵੀਡੀਓ ਪਲੇਅਰ ਵਿੱਚ ਟਾਈਮ ਬਾਰ, ਫੋਨਾਂ ਦੇ 360° ਪਲੇਅਰਾਂ ਵਿੱਚ ਪਿੱਛੇ ਅਤੇ ਅੱਗੇ, ਫਲੈਟ ਪਲੇਅਰ ਵਿੱਚ ਆਡੀਓ ਟਰੈਕ ਚੋਣ, iPhone ਅਤੇ iPad 'ਤੇ Tapo ਲਾਈਵ ਵਿਊ।
+- **ਇਮਰਸਿਵ ਮੀਡੀਆ**: ਡੁਅਲ ਫਿਸ਼ਆਈ .dng, GoPro ਅਤੇ DJI ਵੀਡੀਓ ਦਾ ਆਪਣੇ ਮੋਸ਼ਨ ਡਾਟਾ ਤੋਂ ਲੈਵਲਿੰਗ, Quest 'ਤੇ 3D ਵਿੱਚ ਸਪੇਸ਼ੀਅਲ ਵੀਡੀਓ ਜੇ ਇਸਦੇ ਡੀਕੋਡਰ ਇਜਾਜ਼ਤ ਦੇਣ, ਹੈੱਡਸੈੱਟ ਵਿੱਚ ਸਪੇਸ਼ੀਅਲ ਫੋਟੋਆਂ ਵਿਚਕਾਰ ਪਿੱਛੇ ਅਤੇ ਅੱਗੇ।
+- **ਸਰੋਤ**: ਸ਼ੇਅਰ ਫੋਲਡਰ ਦੀਆਂ ਫ਼ਾਈਲਾਂ ਵਿਚਕਾਰ ਸਵਾਈਪ ਕਰਨਾ, WebDAV ਲਈ Digest ਪ੍ਰਮਾਣੀਕਰਨ, ਕੰਪਿਊਟਰ ਤੋਂ Plex ਟੋਕਨ ਲਿਆਉਣ ਲਈ ਇੱਕ QR ਕੋਡ, Plex ਲਈ IPv6, H.265 Tapo ਰਿਕਾਰਡਿੰਗਾਂ, TV ਦੀ ਹੋਮ ਸਕਰੀਨ 'ਤੇ ਚੈਨਲ।
 - **ਅੱਪਸਟ੍ਰੀਮ**: ਸੰਭਾਲਕਰਤਾ ਜੋ ਹਿੱਸੇ ਚਾਹੁਣ ਉਹਨਾਂ ਲਈ Immich ਨੂੰ ਛੋਟੀਆਂ ਪੁੱਲ ਰਿਕਵੈਸਟਾਂ, 360° ਫ਼ੋਟੋ ਵਿਊਅਰ ਤੋਂ ਸ਼ੁਰੂ ਕਰਕੇ।
 
-The full list, with the device checks still pending for each feature, is in [Release status](../docs/immuch360/release-status.md#roadmap).
+ਪੂਰੀ ਸੂਚੀ, ਹਰ ਫੀਚਰ ਲਈ ਅਜੇ ਬਾਕੀ ਡਿਵਾਈਸ ਜਾਂਚਾਂ ਨਾਲ, [ਰਿਲੀਜ਼ ਸਥਿਤੀ](../docs/immuch360/release-status.md#roadmap) ਵਿੱਚ ਹੈ।
