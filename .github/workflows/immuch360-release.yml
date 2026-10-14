@@ -58,10 +58,17 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
         run: |
-          mise exec -- flutter build apk --release --flavor phone
-          mise exec -- flutter build apk --release --flavor phone --split-per-abi --target-platform android-arm,android-arm64,android-x64
-          mise exec -- flutter build appbundle --release --flavor phone
-          mise exec -- flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true
+          # Android version code from the release tag v<version>-<build>: 3029998 + build, one code per tag
+          # (the stores refuse a version code already used; pubspec.yaml is only the fallback for manual runs)
+          BUILD_NUMBER=""
+          if [[ "${GITHUB_REF_NAME}" =~ ^v.*-([0-9]+)$ ]]; then
+            BUILD_NUMBER="--build-number=$((3029998 + ${BASH_REMATCH[1]}))"
+            echo "Android version code ${BUILD_NUMBER#--build-number=} for tag ${GITHUB_REF_NAME}"
+          fi
+          mise exec -- flutter build apk --release --flavor phone $BUILD_NUMBER
+          mise exec -- flutter build apk --release --flavor phone --split-per-abi --target-platform android-arm,android-arm64,android-x64 $BUILD_NUMBER
+          mise exec -- flutter build appbundle --release --flavor phone $BUILD_NUMBER
+          mise exec -- flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true $BUILD_NUMBER
           ls -la build/app/outputs/flutter-apk/ build/app/outputs/bundle/phoneRelease/
 
       - name: Rename APKs
