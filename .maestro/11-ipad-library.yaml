@@ -10,11 +10,20 @@ appId: com.aprogsys.immuch360.dev.debug
 - tapOn:
     text: "Allow"
     optional: true
-- tapOn: ".*Library.*"
-- extendedWaitUntil:
-    visible: "Network shares"
-    timeout: 20000
-    optional: true
+# The Library tab, again when a tap gets lost (the simulator sometimes cancels a touch); tab labels carry extra
+# accessibility text on iOS ("Library, Tab 4 of 4"), hence the regex
+- repeat:
+    times: 3
+    while:
+      notVisible: "Network shares"
+    commands:
+      - tapOn:
+          text: ".*Library.*"
+          optional: true
+      - extendedWaitUntil:
+          visible: "Network shares"
+          timeout: 10000
+          optional: true
 # The thumbnails of the albums of the device load meanwhile
 - waitForAnimationToEnd:
     timeout: 8000

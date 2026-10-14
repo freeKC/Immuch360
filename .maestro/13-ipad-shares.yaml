@@ -9,23 +9,48 @@ appId: com.aprogsys.immuch360.dev.debug
 - tapOn:
     text: "Allow"
     optional: true
-- tapOn: ".*Library.*"
-- extendedWaitUntil:
-    visible: "Network shares"
-    timeout: 20000
-- tapOn: "Network shares"
-- extendedWaitUntil:
-    visible: "Add a share"
-    timeout: 20000
+# The Library tab, again when a tap gets lost (the simulator sometimes cancels a touch); tab labels carry extra
+# accessibility text on iOS ("Library, Tab 4 of 4"), hence the regex
+- repeat:
+    times: 3
+    while:
+      notVisible: "Network shares"
+    commands:
+      - tapOn:
+          text: ".*Library.*"
+          optional: true
+      - extendedWaitUntil:
+          visible: "Network shares"
+          timeout: 10000
+          optional: true
+- repeat:
+    times: 3
+    while:
+      notVisible: "Add a share"
+    commands:
+      - tapOn:
+          text: "Network shares"
+          optional: true
+      - extendedWaitUntil:
+          visible: "Add a share"
+          timeout: 10000
+          optional: true
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: i05a-network-shares
-# The button under the empty list; the + of the app bar has the same label and opens the same sheet
-- tapOn: "Add a share"
-- extendedWaitUntil:
-    visible: "A Tapo camera"
-    timeout: 15000
-    optional: true
+# The + of the app bar or the button under the empty list: same label, same sheet
+- repeat:
+    times: 3
+    while:
+      notVisible: "A Tapo camera"
+    commands:
+      - tapOn:
+          text: "Add a share"
+          optional: true
+      - extendedWaitUntil:
+          visible: "A Tapo camera"
+          timeout: 10000
+          optional: true
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: i05-network-shares-add

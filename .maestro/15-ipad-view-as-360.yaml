@@ -1,6 +1,6 @@
 # Store screenshots without a server, iPad, flow 6 of 6: "View as 360°" in the menu of the viewer, on a 2:1 photo
-# without 360° tags (added to the photo library last, so the first tile of the Photos tab), then the sphere it opens,
-# then the menu once chosen ("Stop treating as 360°"). Last of the flows: the photo is in the 360° list afterwards.
+# without 360° tags (lake_pier, dated the newest, so the first tile of the Photos tab), then the sphere it opens, then
+# the menu once chosen ("Stop treating as 360°"). Last of the flows: the photo is in the 360° list afterwards.
 appId: com.aprogsys.immuch360.dev.debug
 ---
 - launchApp
@@ -15,51 +15,81 @@ appId: com.aprogsys.immuch360.dev.debug
     timeout: 8000
 - takeScreenshot: i08-photos
 # First tile of the Photos tab, 256 points wide: under the app bar (88 points) and the date headers (130), so from
-# y 218 to 474 points
-- tapOn:
-    point: "12%,25%"
-# The viewer opens above the tabs, whose labels then leave the accessibility tree
-- extendedWaitUntil:
-    notVisible: ".*Library.*"
-    timeout: 15000
-    optional: true
+# y 218 to 474 points. The viewer opens above the tabs, whose labels then leave the accessibility tree.
+- repeat:
+    times: 3
+    while:
+      visible: ".*Library.*"
+    commands:
+      - tapOn:
+          point: "12%,25%"
+      - extendedWaitUntil:
+          notVisible: ".*Library.*"
+          timeout: 10000
+          optional: true
 - waitForAnimationToEnd:
     timeout: 5000
 # The menu button at the right end of the viewer's top bar has no label: it spans x 984 to 1032 and y 38 to 86 points
-- tapOn:
-    point: "98%,4%"
-- extendedWaitUntil:
-    visible: "View as 360°"
-    timeout: 10000
-    optional: true
+- repeat:
+    times: 3
+    while:
+      notVisible: "Info"
+    commands:
+      - tapOn:
+          point: "98%,4%"
+      - extendedWaitUntil:
+          visible: "Info"
+          timeout: 8000
+          optional: true
 - waitForAnimationToEnd:
     timeout: 3000
 - takeScreenshot: i06-view-as-360
 # Not that photo (a 360° one has no such entry): close the menu, go to the next photo and open its menu
-- runFlow:
-    when:
+- repeat:
+    times: 4
+    while:
       notVisible: "View as 360°"
     commands:
-      - tapOn:
-          point: "50%,50%"
+      - runFlow:
+          when:
+            visible: "Info"
+          commands:
+            - tapOn:
+                point: "50%,50%"
       - swipe:
           start: "80%,50%"
           end: "20%,50%"
           duration: 400
       - waitForAnimationToEnd:
           timeout: 5000
-      - tapOn:
-          point: "98%,4%"
-      - extendedWaitUntil:
-          visible: "View as 360°"
-          timeout: 10000
-          optional: true
+      - repeat:
+          times: 2
+          while:
+            notVisible: "Info"
+          commands:
+            - tapOn:
+                point: "98%,4%"
+            - extendedWaitUntil:
+                visible: "Info"
+                timeout: 8000
+                optional: true
       - takeScreenshot: i06-view-as-360-next
 - runFlow:
     when:
       visible: "View as 360°"
     commands:
-      - tapOn: "View as 360°"
+      - repeat:
+          times: 3
+          while:
+            notVisible: "Close"
+          commands:
+            - tapOn:
+                text: "View as 360°"
+                optional: true
+            - extendedWaitUntil:
+                visible: "Close"
+                timeout: 10000
+                optional: true
       - extendedWaitUntil:
           visible: ".*Field of view.*"
           timeout: 30000
@@ -68,17 +98,31 @@ appId: com.aprogsys.immuch360.dev.debug
           timeout: 8000
       - takeScreenshot: i06b-sphere-forced
       # Back to the flat viewer, whose menu now offers to stop treating the photo as 360°
-      - tapOn:
-          text: "Close"
-          optional: true
+      - repeat:
+          times: 3
+          while:
+            visible: "Close"
+          commands:
+            - tapOn:
+                text: "Close"
+                optional: true
+            - extendedWaitUntil:
+                notVisible: "Close"
+                timeout: 8000
+                optional: true
       - waitForAnimationToEnd:
           timeout: 5000
-      - tapOn:
-          point: "98%,4%"
-      - extendedWaitUntil:
-          visible: "Stop treating as 360°"
-          timeout: 10000
-          optional: true
+      - repeat:
+          times: 3
+          while:
+            notVisible: "Info"
+          commands:
+            - tapOn:
+                point: "98%,4%"
+            - extendedWaitUntil:
+                visible: "Info"
+                timeout: 8000
+                optional: true
       - waitForAnimationToEnd:
           timeout: 3000
       - takeScreenshot: i06c-stop-treating

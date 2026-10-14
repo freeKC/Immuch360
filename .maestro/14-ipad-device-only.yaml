@@ -10,29 +10,34 @@ appId: com.aprogsys.immuch360.dev.debug
 - tapOn:
     text: "Allow"
     optional: true
-- tapOn: ".*Library.*"
-- extendedWaitUntil:
-    visible: "Network shares"
-    timeout: 20000
-    optional: true
-- waitForAnimationToEnd:
-    timeout: 5000
-# The face icon at the right end of the app bar has no label: its button spans x 976 to 1024 and y 36 to 84 points
-- tapOn:
-    point: "97%,4%"
-- extendedWaitUntil:
-    visible: "This device only"
-    timeout: 15000
-    optional: true
-- runFlow:
-    when:
-      notVisible: "This device only"
+# The Library tab, again when a tap gets lost (the simulator sometimes cancels a touch); tab labels carry extra
+# accessibility text on iOS ("Library, Tab 4 of 4"), hence the regex
+- repeat:
+    times: 3
+    while:
+      notVisible: "Network shares"
     commands:
       - tapOn:
-          point: "96%,5%"
+          text: ".*Library.*"
+          optional: true
       - extendedWaitUntil:
-          visible: "This device only"
-          timeout: 15000
+          visible: "Network shares"
+          timeout: 10000
+          optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+# The face icon at the right end of the app bar has no label: its button spans x 976 to 1024 and y 36 to 84 points.
+# The title of the sheet is read out with its description, hence the regex.
+- repeat:
+    times: 3
+    while:
+      notVisible: "This device only.*"
+    commands:
+      - tapOn:
+          point: "97%,4%"
+      - extendedWaitUntil:
+          visible: "This device only.*"
+          timeout: 10000
           optional: true
 - waitForAnimationToEnd:
     timeout: 5000

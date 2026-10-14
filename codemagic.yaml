@@ -162,21 +162,20 @@ workflows:
           for n in rooitou_park kloofendal_48d_partly_cloudy_puresky rooftop_night lake_pier; do
             curl -fsSL --retry 4 --retry-delay 5 -o "$MEDIA/src/$n.jpg" "$BASE/$n.jpg" || echo "could not download $n"
           done
-          # GPano tags on the first three, which the app then lists as 360°; none on the last one, for "View as 360°"
-          for n in rooitou_park kloofendal_48d_partly_cloudy_puresky rooftop_night; do
-            python3 .maestro/media/prepare_panoramas.py "$MEDIA/src/$n.jpg" "$MEDIA/ready/$n.jpg" --gpano
-          done
-          python3 .maestro/media/prepare_panoramas.py "$MEDIA/src/lake_pier.jpg" "$MEDIA/ready/lake_pier.jpg"
-          # One at a time, each dated at its import: lake_pier the newest photo (first tile of the Photos tab),
-          # rooftop_night the newest 360° one (first tile of the 360° list)
+          # Dated this morning ten minutes apart, which sets their order in the app, newest first: lake_pier first in
+          # the Photos tab, rooftop_night first in the 360° list. GPano tags on the first three, which the app then
+          # lists as 360°; none on lake_pier, for "View as 360°".
+          TODAY=$(date +%Y:%m:%d)
+          python3 .maestro/media/prepare_panoramas.py "$MEDIA/src/rooitou_park.jpg" "$MEDIA/ready/rooitou_park.jpg" "$TODAY 09:10:00" --gpano
+          python3 .maestro/media/prepare_panoramas.py "$MEDIA/src/kloofendal_48d_partly_cloudy_puresky.jpg" "$MEDIA/ready/kloofendal_48d_partly_cloudy_puresky.jpg" "$TODAY 09:20:00" --gpano
+          python3 .maestro/media/prepare_panoramas.py "$MEDIA/src/rooftop_night.jpg" "$MEDIA/ready/rooftop_night.jpg" "$TODAY 09:30:00" --gpano
+          python3 .maestro/media/prepare_panoramas.py "$MEDIA/src/lake_pier.jpg" "$MEDIA/ready/lake_pier.jpg" "$TODAY 09:40:00"
           for n in rooitou_park kloofendal_48d_partly_cloudy_puresky rooftop_night lake_pier; do
             if [ -f "$MEDIA/ready/$n.jpg" ]; then
-              touch "$MEDIA/ready/$n.jpg"
               xcrun simctl addmedia "$UDID" "$MEDIA/ready/$n.jpg"
-              sleep 3
             fi
           done
-          # What the photo library keeps of them: the originals, GPano tags included
+          # What the photo library keeps of them: the originals, dates and GPano tags included
           python3 .maestro/media/prepare_panoramas.py --check "$HOME/Library/Developer/CoreSimulator/Devices/$UDID/data/Media/DCIM"
       - name: Maestro flows without a server, a simulator screenshot after each
         ignore_failure: true
