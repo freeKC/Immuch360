@@ -1,0 +1,21 @@
+# Store screenshots without a server, iPad, flow 2 of 6: the Library tab of a session without a server (360°, On this
+# device, Network shares, Connect to an Immich server).
+appId: com.aprogsys.immuch360.dev.debug
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Library.*"
+    timeout: 60000
+# A system prompt the first flow left unanswered comes back at each launch
+- tapOn:
+    text: "Allow"
+    optional: true
+- tapOn: ".*Library.*"
+- extendedWaitUntil:
+    visible: "Network shares"
+    timeout: 20000
+    optional: true
+# The thumbnails of the albums of the device load meanwhile
+- waitForAnimationToEnd:
+    timeout: 8000
+- takeScreenshot: i04-library

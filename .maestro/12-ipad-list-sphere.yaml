@@ -1,0 +1,69 @@
+# Store screenshots without a server, iPad, flow 3 of 6: the list of the 360° photos of the device, then the first one
+# in the viewer, flat, then as a sphere.
+appId: com.aprogsys.immuch360.dev.debug
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Library.*"
+    timeout: 60000
+# A system prompt the first flow left unanswered comes back at each launch
+- tapOn:
+    text: "Allow"
+    optional: true
+- tapOn: ".*Library.*"
+- extendedWaitUntil:
+    visible: "360°"
+    timeout: 20000
+- tapOn: "360°"
+# The panoramas with GPano tags, found by the scan of the device: "3 items" once it is done
+- extendedWaitUntil:
+    visible: "[0-9]+ items?"
+    timeout: 90000
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 8000
+- takeScreenshot: i03-list-360
+# First tile of the grid, 256 points wide: under the header (332 points), the filter chips (56) and the date
+# headers (136), so from y 518 to 774 points
+- tapOn:
+    point: "12%,47%"
+# The viewer opens above the list, whose texts then leave the accessibility tree
+- extendedWaitUntil:
+    notVisible: "[0-9]+ items?"
+    timeout: 15000
+    optional: true
+# Still on the list: the tile was lower than expected
+- runFlow:
+    when:
+      visible: "[0-9]+ items?"
+    commands:
+      - tapOn:
+          point: "12%,53%"
+      - extendedWaitUntil:
+          notVisible: "[0-9]+ items?"
+          timeout: 15000
+          optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: i02a-viewer-flat
+- runFlow:
+    when:
+      notVisible: "[0-9]+ items?"
+    commands:
+      # The 360° button of the viewer's top bar, exposed through its tooltip
+      - tapOn: "360°"
+      # The sphere shows once the photo is decoded, with its "Field of view" button
+      - extendedWaitUntil:
+          visible: ".*Field of view.*"
+          timeout: 30000
+          optional: true
+      - waitForAnimationToEnd:
+          timeout: 8000
+      - takeScreenshot: i02-sphere
+      - swipe:
+          start: "75%,55%"
+          end: "35%,55%"
+          duration: 1200
+      - waitForAnimationToEnd:
+          timeout: 8000
+      - takeScreenshot: i02b-sphere-turned

@@ -75,7 +75,7 @@ workflows:
       - /tmp/xcodebuild_logs/*.log
 
   ios-maestro-360:
-    name: Immich mobile iOS simulator, login on demo server and open a 360 photo
+    name: Immuch360 iOS simulator screenshots without a server (Maestro)
     instance_type: mac_mini_m2
     max_build_duration: 90
     environment:
@@ -84,9 +84,6 @@ workflows:
       vars:
         MISE_YES: "1"
         MISE_TRUSTED_CONFIG_PATHS: "/Users/builder/clone"
-        ASSET_ID: "978b62d7-e65f-4568-a520-93cb896b2f83"
-        # Centre of the first thumbnail of the 360 list (iPhone); pass "12%,43%" for an iPad Pro 13
-        TILE_POINT: "14%,22%"
     cache:
       cache_paths:
         - $HOME/.pub-cache
@@ -131,40 +128,82 @@ workflows:
         script: |
           set -euxo pipefail
           APP=$(ls -d "$CM_BUILD_DIR"/mobile/build/ios/iphonesimulator/*.app | head -1)
-          UDID=$(xcrun simctl list devices available -j | python3 -c "import sys,json,os; p=os.environ.get('SIM_DEVICE_PREFIX','iPhone'); d=json.load(sys.stdin); devs=[x for rt,l in d['devices'].items() if 'iOS' in rt for x in l if x.get('isAvailable') and x['name'].startswith(p)]; print(devs[-1]['udid'])")
-          echo "$UDID" > "$CM_BUILD_DIR/udid.txt"
+          # The last available simulator whose name starts with SIM_DEVICE_PREFIX ("iPad Pro 13" for the 13 inch iPad
+          # set); its name, iOS version and Xcode go to sim-device.txt for the record of the screenshots
+          xcrun simctl list runtimes -j > "$CM_BUILD_DIR/sim-runtimes.json"
+          xcrun simctl list devices available -j | python3 -c "
+          import sys, json, os
+          p = os.environ.get('SIM_DEVICE_PREFIX', 'iPhone')
+          d = json.load(sys.stdin)
+          devs = [(rt, x) for rt, l in d['devices'].items() if 'iOS' in rt for x in l if x.get('isAvailable') and x['name'].startswith(p)]
+          rt, dev = devs[-1]
+          runtimes = json.load(open(os.environ['CM_BUILD_DIR'] + '/sim-runtimes.json'))['runtimes']
+          info = next((r for r in runtimes if r.get('identifier') == rt), {})
+          out = os.environ['CM_BUILD_DIR']
+          open(out + '/udid.txt', 'w').write(dev['udid'] + '\n')
+          open(out + '/sim-device.txt', 'w').write('device: %s\nruntime: %s (%s)\nudid: %s\n' % (dev['name'], info.get('name', rt), info.get('buildversion', ''), dev['udid']))
+          "
+          UDID=$(cat "$CM_BUILD_DIR/udid.txt")
+          xcodebuild -version | tr '\n' ' ' | sed 's/^/xcode: /' >> "$CM_BUILD_DIR/sim-device.txt"
+          echo >> "$CM_BUILD_DIR/sim-device.txt"
+          cat "$CM_BUILD_DIR/sim-device.txt"
           xcrun simctl boot "$UDID" || true
           xcrun simctl bootstatus "$UDID" -b
           xcrun simctl install "$UDID" "$APP"
-      - name: Maestro login on demo server
+      - name: Panoramas in the photo library of the simulator
+        ignore_failure: true
         script: |
-          set -euxo pipefail
-          export PATH="$PATH:$HOME/.maestro/bin"
+          set -uxo pipefail
           UDID=$(cat "$CM_BUILD_DIR/udid.txt")
-          mkdir -p "$CM_BUILD_DIR/maestro-out"
-          maestro --device "$UDID" test --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" .maestro/01-login-demo.yaml || true
-          maestro --device "$UDID" test --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" .maestro/04-library-early.yaml || true
-          ls -la "$CM_BUILD_DIR/maestro-out" || true
-          cp -f ./*.png "$CM_BUILD_DIR/maestro-out/" 2>/dev/null || true
-          xcrun simctl io "$UDID" screenshot "$CM_BUILD_DIR/maestro-out/s01-after-login-flow.png"
-      - name: Wait for initial sync, then open a 360 photo
-        script: |
-          set -euxo pipefail
-          export PATH="$PATH:$HOME/.maestro/bin"
-          UDID=$(cat "$CM_BUILD_DIR/udid.txt")
-          for i in 1 2 3 4 5 6; do
-            sleep 30
-            xcrun simctl io "$UDID" screenshot "$CM_BUILD_DIR/maestro-out/s02-sync-wait-$i.png"
+          MEDIA="$CM_BUILD_DIR/sim-media"
+          mkdir -p "$MEDIA/src" "$MEDIA/ready"
+          # CC0 equirectangular photos of Poly Haven (tonemapped JPGs, 8192 x 4096)
+          BASE="https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG"
+          for n in rooitou_park kloofendal_48d_partly_cloudy_puresky rooftop_night lake_pier; do
+            curl -fsSL --retry 4 --retry-delay 5 -o "$MEDIA/src/$n.jpg" "$BASE/$n.jpg" || echo "could not download $n"
           done
-          maestro --device "$UDID" test -e ASSET_ID="$ASSET_ID" --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" .maestro/02-open-360.yaml || true
-          cp -f ./*.png "$CM_BUILD_DIR/maestro-out/" 2>/dev/null || true
-          xcrun simctl io "$UDID" screenshot "$CM_BUILD_DIR/maestro-out/s03-final.png"
-          maestro --device "$UDID" test --debug-output "$CM_BUILD_DIR/maestro-out" --test-output-dir "$CM_BUILD_DIR/maestro-out" -e TILE_POINT="$TILE_POINT" .maestro/03-library-360.yaml || true
-          cp -f ./*.png "$CM_BUILD_DIR/maestro-out/" 2>/dev/null || true
+          # GPano tags on the first three, which the app then lists as 360°; none on the last one, for "View as 360°"
+          for n in rooitou_park kloofendal_48d_partly_cloudy_puresky rooftop_night; do
+            python3 .maestro/media/prepare_panoramas.py "$MEDIA/src/$n.jpg" "$MEDIA/ready/$n.jpg" --gpano
+          done
+          python3 .maestro/media/prepare_panoramas.py "$MEDIA/src/lake_pier.jpg" "$MEDIA/ready/lake_pier.jpg"
+          # One at a time, each dated at its import: lake_pier the newest photo (first tile of the Photos tab),
+          # rooftop_night the newest 360° one (first tile of the 360° list)
+          for n in rooitou_park kloofendal_48d_partly_cloudy_puresky rooftop_night lake_pier; do
+            if [ -f "$MEDIA/ready/$n.jpg" ]; then
+              touch "$MEDIA/ready/$n.jpg"
+              xcrun simctl addmedia "$UDID" "$MEDIA/ready/$n.jpg"
+              sleep 3
+            fi
+          done
+          # What the photo library keeps of them: the originals, GPano tags included
+          python3 .maestro/media/prepare_panoramas.py --check "$HOME/Library/Developer/CoreSimulator/Devices/$UDID/data/Media/DCIM"
+      - name: Maestro flows without a server, a simulator screenshot after each
+        ignore_failure: true
+        script: |
+          set -uxo pipefail
+          export PATH="$PATH:$HOME/.maestro/bin"
+          export MAESTRO_CLI_NO_ANALYTICS=1
+          export MAESTRO_DRIVER_STARTUP_TIMEOUT=180000
+          UDID=$(cat "$CM_BUILD_DIR/udid.txt")
+          OUT="$CM_BUILD_DIR/maestro-out"
+          mkdir -p "$OUT"
+          xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100 --wifiBars 3 || true
+          # In this order: the last one turns a photo into a 360° one, which would change the 360° list of the others
+          for flow in 10-ipad-welcome 11-ipad-library 12-ipad-list-sphere 13-ipad-shares 14-ipad-device-only 15-ipad-view-as-360; do
+            maestro --device "$UDID" test --debug-output "$OUT" --test-output-dir "$OUT" ".maestro/$flow.yaml" || echo "flow $flow did not pass"
+            # The screen the flow ended on, whatever happened in it
+            xcrun simctl io "$UDID" screenshot "$OUT/s-$flow.png" || true
+          done
+          # The screenshots of the flows next to those of the simulator
+          find "$OUT" -path '*takeScreenshot*' -name '*.png' -exec cp -f {} "$OUT/" \; || true
+          cp -f ./*.png "$OUT/" 2>/dev/null || true
+          ls -la "$OUT"
           cd "$CM_BUILD_DIR" && zip -qr maestro-out.zip maestro-out
     artifacts:
       - maestro-out.zip
       - maestro-out/*.png
+      - sim-device.txt
       - Immich-simulator.app.zip
 
   ios-testflight:

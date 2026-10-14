@@ -1,0 +1,49 @@
+# Store screenshots without a server on the iPad Pro 13 inch simulator (1032 x 1376 points), flow 1 of 6: the welcome
+# page at the first launch, then "Use without a server", which indexes the photos of the device and looks for the 360°
+# ones among them (the workflow added CC0 panoramas to the photo library before).
+appId: com.aprogsys.immuch360.dev.debug
+---
+- launchApp:
+    clearState: true
+# iOS asks for the notifications at the first launch
+- tapOn:
+    text: "Allow"
+    optional: true
+# The title and the description of a choice may be read out as one label, hence the regex
+- extendedWaitUntil:
+    visible: "Use without a server.*"
+    timeout: 90000
+- tapOn:
+    text: "Allow"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: i01-welcome
+# A system prompt that came up late would be on that screenshot: answer it and take the page again
+- runFlow:
+    when:
+      visible: "Allow"
+    commands:
+      - tapOn: "Allow"
+      - waitForAnimationToEnd:
+          timeout: 5000
+      - takeScreenshot: i01-welcome-2
+- tapOn: "Use without a server.*"
+# The photo library, unless Maestro granted it at launch (iOS 18 and later, then iOS 17 wording)
+- tapOn:
+    text: "Allow Full Access"
+    optional: true
+- tapOn:
+    text: "Allow Access to All Photos"
+    optional: true
+# Tab labels carry extra accessibility text on iOS ("Library, Tab 4 of 4"), hence the regex
+- extendedWaitUntil:
+    visible: ".*Library.*"
+    timeout: 60000
+- tapOn:
+    text: "Allow"
+    optional: true
+# Time for the device to be indexed and its files read
+- waitForAnimationToEnd:
+    timeout: 15000
+- takeScreenshot: i01b-photos

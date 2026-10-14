@@ -1,0 +1,31 @@
+# Store screenshots without a server, iPad, flow 4 of 6: the network shares page, then what "Add a share" offers.
+appId: com.aprogsys.immuch360.dev.debug
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Library.*"
+    timeout: 60000
+# A system prompt the first flow left unanswered comes back at each launch
+- tapOn:
+    text: "Allow"
+    optional: true
+- tapOn: ".*Library.*"
+- extendedWaitUntil:
+    visible: "Network shares"
+    timeout: 20000
+- tapOn: "Network shares"
+- extendedWaitUntil:
+    visible: "Add a share"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: i05a-network-shares
+# The button under the empty list; the + of the app bar has the same label and opens the same sheet
+- tapOn: "Add a share"
+- extendedWaitUntil:
+    visible: "A Tapo camera"
+    timeout: 15000
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: i05-network-shares-add
