@@ -152,6 +152,7 @@ class SearchPage extends HookConsumerWidget {
             child: FilterBottomSheetScaffold(
               title: context.t.search_filter_people_title,
               expanded: true,
+              tvActionRail: true,
               onSearch: handleApply,
               onClear: handleClear,
               child: PeoplePicker(onSelect: handleOnSelect, initialSelection: filter.value.people),
