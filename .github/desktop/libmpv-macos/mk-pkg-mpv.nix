@@ -6,9 +6,12 @@
 #     patch of 0.36);
 #   - the list of disabled options follows meson.options of that commit (meson refuses an option it does not know),
 #     and the build date is left out so that two runs of the same sources give the same library;
-#   - one patch, immuch360-mpv-objc-language.patch, in place of the recipe's three: the Objective-C language added
+#   - two patches in place of the recipe's three: immuch360-mpv-objc-language.patch, the Objective-C language added
 #     where Cocoa is, as the recipe's mpv-fix-missing-objc.patch does for 0.36 (mpv adds it only once xcrun reports
-#     an SDK, and the Nix sandbox has no xcrun). The other two are for iOS (AudioUnit) and the audio variant.
+#     an SDK, and the Nix sandbox has no xcrun); immuch360-mpv-clipboard-without-swift.patch, the macOS clipboard
+#     backend (mpv 0.40) built only with mpv's Swift part, which it calls through the generated osdep/mac/swift.h:
+#     the recipe builds without Swift (no xcrun in the sandbox either), and libmpv's clients have their own
+#     clipboard. The recipe's other two are for iOS (AudioUnit) and the audio variant.
 {
   pkgs ? import ../../utils/default/pkgs.nix,
   os ? import ../../utils/default/os.nix,
@@ -59,6 +62,7 @@ let
 
     cd $src
     patch -p1 <${../../../patches/immuch360-mpv-objc-language.patch}
+    patch -p1 <${../../../patches/immuch360-mpv-clipboard-without-swift.patch}
     cd -
 
     cp -r $src $out
@@ -271,8 +275,9 @@ pkgs.stdenvNoCC.mkDerivation {
       "''${OPTIONS[@]}" |
       tee configure.log
   '';
+  # Every file that can compile is compiled before the build stops, so that a run shows all of mpv's errors at once
   buildPhase = ''
-    meson compile -vC build
+    meson compile -vC build --ninja-args=-k,0
   '';
   installPhase = ''
     meson install -C build

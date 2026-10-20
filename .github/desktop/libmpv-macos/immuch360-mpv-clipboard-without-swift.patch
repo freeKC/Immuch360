@@ -1,0 +1,35 @@
+--- a/meson.build
++++ b/meson.build
+@@ -435,8 +435,7 @@
+     path_source += files('osdep/path-mac.m')
+     sources += files('osdep/language-mac.c',
+                      'osdep/utils-mac.c',
+-                     'osdep/mac/app_bridge.m',
+-                     'player/clipboard/clipboard-mac.m')
++                     'osdep/mac/app_bridge.m')
+     main_fn_source = files('osdep/main-fn-mac.c')
+ endif
+ 
+@@ -1628,6 +1627,11 @@
+     error('cplayer enabled but no suitable swift version could be found or was disabled!')
+ endif
+ 
++# The macOS clipboard calls the Swift part of mpv (osdep/mac/swift.h)
++if features['cocoa'] and features['swift']
++    sources += files('player/clipboard/clipboard-mac.m')
++endif
++
+ swift_sources = []
+ if features['cocoa'] and features['swift']
+     swift_sources += files('osdep/mac/application.swift',
+--- a/player/clipboard/clipboard.c
++++ b/player/clipboard/clipboard.c
+@@ -40,7 +40,7 @@
+ #if HAVE_WIN32_DESKTOP
+     &clipboard_backend_win32,
+ #endif
+-#if HAVE_COCOA
++#if HAVE_COCOA && HAVE_SWIFT
+     &clipboard_backend_mac,
+ #endif
+ #if HAVE_WAYLAND && HAVE_WAYLAND_PROTOCOLS_1_39

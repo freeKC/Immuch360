@@ -28,6 +28,7 @@ mkdir -p "$recipe/nix/packages/mk-pkg-libplacebo"
 cp "$here/mk-pkg-libplacebo.nix" "$recipe/nix/packages/mk-pkg-libplacebo/default.nix"
 echo 'import ../../utils/targets/pkgs.nix' > "$recipe/nix/packages/mk-pkg-libplacebo/targets.nix"
 cp "$here/immuch360-mpv-objc-language.patch" "$recipe/patches/immuch360-mpv-objc-language.patch"
+cp "$here/immuch360-mpv-clipboard-without-swift.patch" "$recipe/patches/immuch360-mpv-clipboard-without-swift.patch"
 
 for ini in "$recipe"/cross-files/macos-*.ini; do
   grep -q "min_version   = '-mmacosx-version-min=10.9'" "$ini" || { echo "$ini: no 10.9 line to change"; exit 1; }
