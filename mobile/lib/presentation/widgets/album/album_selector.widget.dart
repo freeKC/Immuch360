@@ -14,6 +14,7 @@ import 'package:immich_mobile/presentation/widgets/album/album_tile.dart';
 import 'package:immich_mobile/presentation/widgets/album/new_album_name_modal.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_choice_dialog.widget.dart';
 import 'package:immich_mobile/providers/album/album_sort_by_options.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/album.provider.dart';
@@ -280,6 +281,32 @@ class _SortButtonState extends ConsumerState<_SortButton> {
     });
   }
 
+  /// The sort modes in a dialog in the remote control layout, where the arrows left the menu for the albums under it.
+  /// The current mode is marked with the arrow of its order, as on the button; choosing it again reverses the order,
+  /// as in the menu.
+  Future<void> _showSortDialog() async {
+    final order = albumSortOption.effectiveOrder(albumSortIsReverse);
+    final chosen = await showTvChoiceDialog<AlbumSortMode>(
+      context: context,
+      title: context.t.sort_albums_by,
+      current: albumSortOption,
+      choices: [
+        for (final mode in AlbumSortMode.values)
+          TvChoice(
+            value: mode,
+            label: mode.label(context.t),
+            icon: mode == albumSortOption
+                ? (order == SortOrder.desc ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up_rounded)
+                : null,
+            key: ValueKey('album_sort_${mode.name}'),
+          ),
+      ],
+    );
+    if (chosen != null && mounted) {
+      await onMenuTapped(chosen);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final effectiveOrder = albumSortOption.effectiveOrder(albumSortIsReverse);
@@ -335,6 +362,10 @@ class _SortButtonState extends ConsumerState<_SortButton> {
       builder: (context, controller, child) {
         return RemoteFocusable(
           onTap: () {
+            if (MediaQuery.navigationModeOf(context) == NavigationMode.directional) {
+              unawaited(_showSortDialog());
+              return;
+            }
             if (controller.isOpen) {
               controller.close();
             } else {

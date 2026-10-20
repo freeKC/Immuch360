@@ -18,6 +18,7 @@ import 'package:immich_mobile/presentation/pages/search/paginated_search.provide
 import 'package:immich_mobile/presentation/widgets/bottom_sheet/general_bottom_sheet.widget.dart';
 import 'package:immich_mobile/presentation/widgets/search/quick_date_picker.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_choice_dialog.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/search/search_input_focus.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
@@ -152,6 +153,7 @@ class SearchPage extends HookConsumerWidget {
             child: FilterBottomSheetScaffold(
               title: context.t.search_filter_people_title,
               expanded: true,
+              tvActionRail: true,
               onSearch: handleApply,
               onClear: handleClear,
               child: PeoplePicker(onSelect: handleOnSelect, initialSelection: filter.value.people),
@@ -401,6 +403,7 @@ class SearchPage extends HookConsumerWidget {
       unawaited(
         showFilterBottomSheet(
           context: context,
+          isScrollControlled: true,
           child: FilterBottomSheetScaffold(
             title: context.t.search_filter_media_type_title,
             onSearch: handleApply,
@@ -481,6 +484,7 @@ class SearchPage extends HookConsumerWidget {
       unawaited(
         showFilterBottomSheet(
           context: context,
+          isScrollControlled: true,
           child: FilterBottomSheetScaffold(
             title: context.t.display_options,
             onSearch: handleApply,
@@ -505,6 +509,42 @@ class SearchPage extends HookConsumerWidget {
       TextSearchType.ocr => Icons.document_scanner_outlined,
     };
 
+    /// The search types in a dialog in the remote control layout: Left and Back on an open menu took the focus to the
+    /// navigation rail and left the menu open. The same types as the menu, the current one marked and focused first.
+    Future<void> showTextSearchTypeDialog() async {
+      final chosen = await showTvChoiceDialog<TextSearchType>(
+        context: context,
+        title: context.t.search_type,
+        current: textSearchType.value,
+        choices: [
+          if (serverFeatures.smartSearch)
+            TvChoice(
+              value: TextSearchType.context,
+              label: context.t.search_by_context,
+              icon: Icons.image_search_rounded,
+            ),
+          TvChoice(value: TextSearchType.filename, label: context.t.search_filter_filename, icon: Icons.abc_rounded),
+          TvChoice(
+            value: TextSearchType.description,
+            label: context.t.search_by_description,
+            icon: Icons.text_snippet_outlined,
+          ),
+          if (serverFeatures.ocr)
+            TvChoice(value: TextSearchType.ocr, label: context.t.search_by_ocr, icon: Icons.document_scanner_outlined),
+        ],
+      );
+      if (chosen == null || !context.mounted) {
+        return;
+      }
+      textSearchType.value = chosen;
+      searchHintText.value = switch (chosen) {
+        TextSearchType.context => context.t.sunrise_on_the_beach,
+        TextSearchType.filename => context.t.file_name_or_extension,
+        TextSearchType.description => context.t.search_by_description_example,
+        TextSearchType.ocr => context.t.search_by_ocr_example,
+      };
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -523,6 +563,10 @@ class SearchPage extends HookConsumerWidget {
               builder: (BuildContext context, MenuController controller, Widget? child) {
                 return IconButton(
                   onPressed: () {
+                    if (MediaQuery.navigationModeOf(context) == NavigationMode.directional) {
+                      unawaited(showTextSearchTypeDialog());
+                      return;
+                    }
                     if (controller.isOpen) {
                       controller.close();
                     } else {
