@@ -14,6 +14,7 @@ import 'package:immich_mobile/presentation/widgets/album/album_tile.dart';
 import 'package:immich_mobile/presentation/widgets/album/new_album_name_modal.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_choice_dialog.widget.dart';
 import 'package:immich_mobile/providers/album/album_sort_by_options.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/album.provider.dart';
@@ -280,13 +281,26 @@ class _SortButtonState extends ConsumerState<_SortButton> {
     });
   }
 
-  /// The sort modes in a dialog in the remote control layout: a dialog is a route of its own and keeps the focus until
-  /// it closes, while the arrows left the menu for the albums under it. The current mode is marked and has the focus
-  /// first; choosing it again reverses the order, as in the menu.
+  /// The sort modes in a dialog in the remote control layout, where the arrows left the menu for the albums under it.
+  /// The current mode is marked with the arrow of its order, as on the button; choosing it again reverses the order,
+  /// as in the menu.
   Future<void> _showSortDialog() async {
-    final chosen = await showDialog<AlbumSortMode>(
+    final order = albumSortOption.effectiveOrder(albumSortIsReverse);
+    final chosen = await showTvChoiceDialog<AlbumSortMode>(
       context: context,
-      builder: (_) => _SortDialog(current: albumSortOption, order: albumSortOption.effectiveOrder(albumSortIsReverse)),
+      title: context.t.sort_albums_by,
+      current: albumSortOption,
+      choices: [
+        for (final mode in AlbumSortMode.values)
+          TvChoice(
+            value: mode,
+            label: mode.label(context.t),
+            icon: mode == albumSortOption
+                ? (order == SortOrder.desc ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up_rounded)
+                : null,
+            key: ValueKey('album_sort_${mode.name}'),
+          ),
+      ],
     );
     if (chosen != null && mounted) {
       await onMenuTapped(chosen);
@@ -384,40 +398,6 @@ class _SortButtonState extends ConsumerState<_SortButton> {
           ),
         );
       },
-    );
-  }
-}
-
-class _SortDialog extends StatelessWidget {
-  const _SortDialog({required this.current, required this.order});
-
-  final AlbumSortMode current;
-  final SortOrder order;
-
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialog(
-      title: Text(context.t.sort_albums_by),
-      children: [
-        for (final mode in AlbumSortMode.values)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: ListTile(
-              key: ValueKey('album_sort_${mode.name}'),
-              autofocus: mode == current,
-              selected: mode == current,
-              selectedColor: context.colorScheme.onPrimary,
-              selectedTileColor: context.colorScheme.primary,
-              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
-              // The order of the current mode, as on the sort button
-              leading: mode == current
-                  ? Icon(order == SortOrder.desc ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up_rounded)
-                  : const SizedBox.square(dimension: 24),
-              title: Text(mode.label(context.t)),
-              onTap: () => Navigator.of(context).pop(mode),
-            ),
-          ),
-      ],
     );
   }
 }
