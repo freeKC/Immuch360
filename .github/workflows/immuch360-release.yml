@@ -36,7 +36,18 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
         with:
-          packages: 'platforms;android-36 build-tools;36.0.0'
+          # ndk: the NDK of Flutter 3.47.2 (flutter.ndkVersion in mobile/android/app/build.gradle), installed here so
+          # that Gradle does not download it on every build and the build hooks get the same one (next step)
+          packages: 'platforms;android-36 build-tools;36.0.0 ndk;28.2.13676358'
+
+      - name: Same NDK for the build hooks and Gradle
+        # The Flutter tool hands the NDK of ANDROID_NDK_HOME to the build hooks (the Rust core), not Gradle's
+        # ndkVersion. The runner image points it at NDK 27, whose linker aligns 64 bit libraries on 4 KB, which Google
+        # Play refuses (native/.cargo/config.toml forces 16 KB as well). Keep this version equal to flutter.ndkVersion.
+        run: |
+          ndk="$ANDROID_HOME/ndk/28.2.13676358"
+          test -x "$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang"
+          { echo "ANDROID_NDK_HOME=$ndk"; echo "ANDROID_NDK_ROOT=$ndk"; echo "ANDROID_NDK=$ndk"; } >> "$GITHUB_ENV"
 
       - name: Flutter dependencies and code generation
         env:
@@ -70,6 +81,18 @@ jobs:
           mise exec -- flutter build appbundle --release --flavor phone $BUILD_NUMBER
           mise exec -- flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true $BUILD_NUMBER
           ls -la build/app/outputs/flutter-apk/ build/app/outputs/bundle/phoneRelease/
+
+      - name: 16 KB page size check
+        # Google Play refuses an app targeting Android 15 or later when a 64 bit native library has LOAD segments
+        # aligned below 16 KB or the APK is not zip aligned for 16 KB pages; fail here rather than at the upload
+        working-directory: mobile
+        run: |
+          ZIPALIGN="$ANDROID_HOME/build-tools/36.0.0/zipalign" bash scripts/check_16kb.sh \
+            build/app/outputs/flutter-apk/app-phone-release.apk \
+            build/app/outputs/flutter-apk/app-arm64-v8a-phone-release.apk \
+            build/app/outputs/flutter-apk/app-x86_64-phone-release.apk \
+            build/app/outputs/bundle/phoneRelease/app-phone-release.aab \
+            build/app/outputs/flutter-apk/app-quest-release.apk
 
       - name: Rename APKs
         run: |

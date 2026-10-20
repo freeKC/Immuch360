@@ -1,10 +1,17 @@
 # Link against minSdk (mobile/android/app/build.gradle) instead of the API 35 that native_toolchain_rust picks.
+# max-page-size=16384 aligns the LOAD segments on 16 KB, which Google Play requires of 64 bit libraries for apps that
+# target Android 15 or later. The linker is the clang of whatever NDK the Flutter tool hands to the build hook
+# (ANDROID_NDK_HOME first, not Gradle's ndkVersion), and NDKs older than r28 align on 4 KB; LLD keeps the last value.
 [target.aarch64-linux-android]
-rustflags = ["-C", "link-arg=--target=aarch64-linux-android26"]
+rustflags = ["-C", "link-arg=--target=aarch64-linux-android26", "-C", "link-arg=-Wl,-z,max-page-size=16384"]
 
 # Neon on 32 bit arm is the NDK's default for C, the rust target leaves it off.
 [target.armv7-linux-androideabi]
-rustflags = ["-C", "link-arg=--target=armv7a-linux-androideabi26", "-C", "target-feature=+neon"]
+rustflags = [
+  "-C", "link-arg=--target=armv7a-linux-androideabi26",
+  "-C", "target-feature=+neon",
+  "-C", "link-arg=-Wl,-z,max-page-size=16384",
+]
 
 [target.x86_64-linux-android]
-rustflags = ["-C", "link-arg=--target=x86_64-linux-android26"]
+rustflags = ["-C", "link-arg=--target=x86_64-linux-android26", "-C", "link-arg=-Wl,-z,max-page-size=16384"]
