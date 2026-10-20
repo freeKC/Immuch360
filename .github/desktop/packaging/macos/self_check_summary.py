@@ -4,13 +4,14 @@
 The macOS job of .github/workflows/immuch360-desktop.yml starts the app twice with IMMUCH360_SELF_CHECK set
 (mobile/lib/desktop/window/self_check.dart): "folder", the folder of a photo and a video on the command line, with
 the video played by libmpv for five seconds; "video", that video alone. Each start leaves <name>.json (the report),
-<name>.log, <name>.state and <name>.png in the folder given.
+<name>.log, <name>.state and <name>.png in the folder given; a start without arguments or self check before them
+leaves plain.state, and the crash reports of macOS (Immuch360*.ips) are copied there too.
 
   self_check_summary.py FOLDER [--strict]
 
-Prints the table of the checks. With --strict, exits 1 when one of them failed: the app started and wrote its report
-both times, the secure storage gave back the secret it was given, libmpv was loaded and played the video, the folder
-opened as a page of its own and the video in the viewer.
+Prints the table of the checks. With --strict, exits 1 when one of them failed: the app ran 30 s without arguments,
+no crash was reported, it started and wrote its report both times, the secure storage gave back the secret it was
+given, libmpv was loaded and played the video, the folder opened as a page of its own and the video in the viewer.
 """
 from __future__ import annotations
 
@@ -44,6 +45,12 @@ def state_of(folder: pathlib.Path, name: str) -> str:
 def checks(folder: pathlib.Path) -> list[tuple[str, bool, str]]:
     """Each check as (what, passed, detail)"""
     results: list[tuple[str, bool, str]] = []
+    plain = state_of(folder, 'plain')
+    results.append(('Start without arguments or self check, as a user would, for 30 s', 'still running' in plain,
+                    plain))
+    crashes = sorted(path.name for path in folder.glob('Immuch360*'))
+    if crashes:
+        results.append(('Crash reports of macOS', False, ', '.join(crashes)))
     folder_report = read_report(folder, 'folder')
     video_report = read_report(folder, 'video')
 
@@ -57,8 +64,8 @@ def checks(folder: pathlib.Path) -> list[tuple[str, bool, str]]:
 
     storage = (folder_report or {}).get('secureStorage') or {}
     app = storage.get('app') or {}
-    results.append(('Secure storage as the app uses it (login keychain): write, read back, delete', app.get('ok') is True,
-                    json.dumps(app)))
+    results.append(('Secure storage as the app uses it (login keychain): write, read back, delete',
+                    app.get('ok') is True, json.dumps(app)))
     if 'dataProtectionKeychain' in storage:
         protected = storage['dataProtectionKeychain'] or {}
         # For the record: what the plugin's default would do in a build signed for the computer only
@@ -90,8 +97,8 @@ def markdown(results: list[tuple[str, bool, str]]) -> str:
     for what, passed, detail in results:
         cell = detail.replace('|', '\\|').replace('\n', ' ')
         lines.append(f"| {what} | {'passed' if passed else 'FAILED'} | {cell} |")
-    lines += ['', 'Screen captures: `folder.png`, `video.png` and `video-2s-later.png` in the `macos-first-start` '
-              'artifact.']
+    lines += ['', 'Screen captures: `plain.png`, `folder.png`, `video.png` and `video-2s-later.png` in the '
+              '`macos-first-start` artifact.']
     return '\n'.join(lines) + '\n'
 
 

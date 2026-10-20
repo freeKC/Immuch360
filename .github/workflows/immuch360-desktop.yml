@@ -650,9 +650,30 @@ jobs:
             tail -n 40 "$out/$name.log"
           }
 
+          # The start of the earlier first start, without arguments and without the self check: 30 s, then a capture
+          "$exe" > "$out/plain.log" 2>&1 &
+          pid=$!
+          sleep 30
+          screencapture -x "$out/plain.png" || echo "no screen capture"
+          if kill -0 "$pid" 2>/dev/null; then
+            echo "plain: still running after 30 seconds" > "$out/plain.state"
+            kill "$pid" 2>/dev/null || true
+            wait "$pid" 2>/dev/null || true
+          else
+            status=0
+            wait "$pid" || status=$?
+            echo "plain: ended by itself within 30 seconds (exit $status)" > "$out/plain.state"
+          fi
+          cat "$out/plain.state"
+
           IMMUCH360_SELF_CHECK_VIDEO="$media/test-video.mp4" run_app folder "$media"
           run_app video "$media/test-video.mp4"
           cp "$media/test-photo.jpg" "$out/"
+          # The crash reports macOS wrote meanwhile, if any (ReportCrash writes them a few seconds after the crash)
+          sleep 10
+          find "$HOME/Library/Logs/DiagnosticReports" /Library/Logs/DiagnosticReports -name 'Immuch360*' \
+            -exec cp {} "$out/" \; 2>/dev/null || true
+          ls "$out"
 
       - name: What the self check found
         if: always()

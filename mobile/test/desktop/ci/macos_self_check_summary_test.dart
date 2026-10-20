@@ -55,6 +55,7 @@ void _tests() {
   void write(String name, Map<String, Object?> report) {
     File(p.join(folder.path, '$name.json')).writeAsStringSync(jsonEncode(report));
     File(p.join(folder.path, '$name.state')).writeAsStringSync('$name: still running');
+    File(p.join(folder.path, 'plain.state')).writeAsStringSync('plain: still running after 30 seconds');
   }
 
   test('a good run passes every check', () {
@@ -80,6 +81,15 @@ void _tests() {
     final run = runCiScript(_script, [folder.path, '--strict']);
     expect(run.exitCode, 1);
     expect(run.output, contains('-25308'));
+  });
+
+  test('a crash report fails, and names the report', () {
+    write('folder', _folderReport());
+    write('video', _videoReport);
+    File(p.join(folder.path, 'Immuch360 Desktop-2026-10-20-114458.ips')).writeAsStringSync('{}');
+    final run = runCiScript(_script, [folder.path, '--strict']);
+    expect(run.exitCode, 1);
+    expect(run.output, contains('Immuch360 Desktop-2026-10-20-114458.ips'));
   });
 
   test('a video that did not play, or no report at all, fails', () {
