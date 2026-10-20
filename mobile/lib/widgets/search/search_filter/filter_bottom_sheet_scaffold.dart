@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 
 /// A shared filter sheet. On TV, [tvActionRail] puts the action buttons beside
 /// the scrollable filter content so the remote can reach them with one Right.
@@ -28,49 +29,60 @@ class FilterBottomSheetScaffold extends StatefulWidget {
 }
 
 class _FilterBottomSheetScaffoldState extends State<FilterBottomSheetScaffold> {
-  final _contentScope = FocusScopeNode(debugLabel: 'TV filter content');
+  /// Around the content in the rail layout: not a focus scope, so that the arrows of a radio button, which TvShell
+  /// moves through the traversal policy before this sheet sees them, can leave the content for the rail
+  final _content = FocusNode(debugLabel: 'TV filter content', canRequestFocus: false, skipTraversal: true);
   final _clearFocus = FocusNode(debugLabel: 'TV filter clear');
   final _applyFocus = FocusNode(debugLabel: 'TV filter apply');
   FocusNode? _lastContentFocus;
 
   @override
+  void initState() {
+    super.initState();
+    FocusManager.instance.addListener(_rememberContentFocus);
+  }
+
+  @override
   void dispose() {
-    _contentScope.dispose();
+    FocusManager.instance.removeListener(_rememberContentFocus);
+    _content.dispose();
     _clearFocus.dispose();
     _applyFocus.dispose();
     super.dispose();
   }
 
+  /// The item of the content that had the focus last, whatever took the focus to the rail: Right in a list, or an
+  /// arrow on a radio button
+  void _rememberContentFocus() {
+    final focused = FocusManager.instance.primaryFocus;
+    if (focused != null && focused.ancestors.contains(_content)) {
+      _lastContentFocus = focused;
+    }
+  }
+
+  /// Right anywhere in the content goes to Apply (Clear when there is no Apply), from any row of a long list
   KeyEventResult _onContentKey(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent || event.logicalKey != LogicalKeyboardKey.arrowRight) {
       return KeyEventResult.ignored;
     }
-
-    // A search text field still needs Left/Right for caret movement.
-    final focused = FocusManager.instance.primaryFocus;
-    final focusedContext = focused?.context;
-    if (focusedContext?.widget is EditableText ||
-        focusedContext?.findAncestorWidgetOfExactType<EditableText>() != null) {
-      return KeyEventResult.ignored;
-    }
-
-    _lastContentFocus = focused;
     (widget.onSearch == null ? _clearFocus : _applyFocus).requestFocus();
     return KeyEventResult.handled;
   }
 
+  /// Left on the rail goes back to the item the focus came from, even in a long, lazily built list, or to the first
+  /// item on screen when that one is gone
   KeyEventResult _onActionKey(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent || event.logicalKey != LogicalKeyboardKey.arrowLeft) {
       return KeyEventResult.ignored;
     }
-
-    // Return to the same person, even in a long, lazily built list.
     final previous = _lastContentFocus;
-    if (previous != null && previous.canRequestFocus && previous.context?.mounted == true) {
-      previous.requestFocus();
-    } else {
-      _contentScope.requestFocus();
+    final target = previous != null && previous.canRequestFocus && previous.ancestors.contains(_content)
+        ? previous
+        : topLeftFocusNode(_content.traversalDescendants);
+    if (target == null) {
+      return KeyEventResult.ignored;
     }
+    target.requestFocus();
     return KeyEventResult.handled;
   }
 
@@ -110,13 +122,8 @@ class _FilterBottomSheetScaffoldState extends State<FilterBottomSheetScaffold> {
               child: Row(
                 children: [
                   Expanded(
-                    child: FocusScope(
-                      node: _contentScope,
-                      child: Focus(
-                        skipTraversal: true,
-                        onKeyEvent: _onContentKey,
-                        child: widget.child,
-                      ),
+                    child: FocusTraversalGroup(
+                      child: Focus(focusNode: _content, onKeyEvent: _onContentKey, child: widget.child),
                     ),
                   ),
                   Padding(
