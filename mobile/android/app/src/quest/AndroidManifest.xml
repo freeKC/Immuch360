@@ -38,6 +38,8 @@
          optimistic for them, and a video their decoders refuse gets the usual message. The Quest 1 is not accepted
          by the store any more. The phone build declares the same list. -->
     <meta-data android:name="com.oculus.supportedDevices" android:value="quest2|questpro|quest3|quest3s" tools:replace="android:value" />
+    <!-- No phone share service on the headset: PhoneShareService.start and stop look the service up in the manifest
+         first and do nothing here, so closing the app does not make Android log "Unable to start service" -->
     <service android:name=".phoneshare.PhoneShareService" tools:node="remove" />
   </application>
 
