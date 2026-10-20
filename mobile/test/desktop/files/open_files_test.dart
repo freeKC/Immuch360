@@ -45,6 +45,8 @@ import '../../providers/infrastructure/local_session.fake.dart';
 
 class _MockAppRouter extends Mock implements AppRouter {}
 
+class _MockRouteData extends Mock implements RouteData {}
+
 class _MockTimelineFactory extends Mock implements TimelineFactory {}
 
 class _MockAuthService extends Mock implements AuthService {}
@@ -141,7 +143,12 @@ OpenedFile _opened(String path, {bool is360 = false, bool raw = false}) {
 }
 
 final _handlerProvider = Provider<DesktopOpenFilesHandler>(
-  (ref) => DesktopOpenFilesHandler(ref, read: (paths) async => _reads(paths), whenAppShown: (_) async {}),
+  (ref) => DesktopOpenFilesHandler(
+    ref,
+    read: (paths) async => _reads(paths),
+    whenAppShown: (_) async {},
+    nextFrame: () async {},
+  ),
 );
 
 // What the tests give the handler to read, by path; a path not listed holds no photo or video
@@ -326,6 +333,7 @@ void main() {
       timelines = _MockTimelineFactory();
       toasts = _RecordingToasts();
       when(() => router.replaceAll(any())).thenAnswer((_) async {});
+      when(() => router.stackData).thenReturn([]);
       when(() => timelines.fromAssets(any(), any())).thenReturn(_FakeTimelineService());
       container = ProviderContainer(
         overrides: [
@@ -392,6 +400,26 @@ void main() {
       await settle();
 
       verify(() => router.replaceAll(any())).called(1);
+    });
+
+    test('a file given while a viewer is shown closes that viewer before the new one opens', () async {
+      auth.setAuthenticated(true);
+      final viewer = _MockRouteData();
+      when(() => viewer.name).thenReturn(AssetViewerRoute.name);
+      when(() => router.stackData).thenReturn([viewer]);
+
+      DesktopOpenRequests.add([file('IMG_4.jpg')]);
+      await settle();
+
+      final captured = verify(() => router.replaceAll(captureAny())).captured;
+      expect(
+        [for (final routes in captured) (routes as List<PageRouteInfo<dynamic>>).map((r) => r.routeName)],
+        [
+          [TabShellRoute.name],
+          [TabShellRoute.name, AssetViewerRoute.name],
+        ],
+      );
+      expect(container.read(assetViewerProvider).currentAsset?.id, 'f-IMG_4.jpg');
     });
 
     test('one 360° photo opens in the viewer, then in its 360° view, read by its id', () async {
