@@ -1,41 +1,24 @@
-## Description
+<!-- Thank you for contributing to Immuch360. CONTRIBUTING.md has the details; remove the lines that do not apply. -->
 
-<!--- Describe your changes in detail -->
-<!--- Why is this change required? What problem does it solve? -->
-<!--- If it fixes an open issue, please link to the issue here. -->
+## What changed and why
 
-Fixes # (issue)
+<!-- The problem, and how this change solves it. Link the issue if there is one, for example: Fixes #12 -->
 
-## How Has This Been Tested?
+## Tested on
 
-<!-- Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration -->
+<!-- Each device with its system and the build you ran, for example: Chromecast with Google TV, Android TV 12, release build of this branch. Say if a device was an emulator. -->
 
-- [ ] Test A
-- [ ] Test B
+-
 
-<details><summary><h2>Screenshots (if appropriate)</h2></summary>
+## Checklist
 
-<!-- Images go below this line. -->
+- [ ] One topic in this pull request
+- [ ] Run on a real device for each platform the change concerns, listed above with the build
+- [ ] Gates run: the `.github/desktop/check_*.py` scripts listed in CONTRIBUTING.md, and `flutter analyze`, `flutter test` and `dart format` in `mobile/`
+- [ ] Screenshots or a short video below for a change of the interface, on each device concerned
+- [ ] New text of the app added to `i18n/en.json` only
+- [ ] No change to `README.md`, `readme_i18n/` or `docs/immuch360/`, unless the maintainer asked for it
 
-</details>
+## Screenshots
 
-<!-- API endpoint changes (if relevant)
-## API Changes
-The `/api/something` endpoint is now `/api/something-else`
--->
-
-## Checklist:
-
-- [ ] I have carefully read CONTRIBUTING.md
-- [ ] I have performed a self-review of my own code
-- [ ] I have made corresponding changes to the documentation if applicable
-- [ ] I have no unrelated changes in the PR.
-- [ ] I have confirmed that any new dependencies are strictly necessary.
-- [ ] I have written tests for new code (if applicable)
-- [ ] I have followed naming conventions/patterns in the surrounding code
-- [ ] All code in `src/services/` uses repositories implementations for database calls, filesystem operations, etc.
-- [ ] All code in `src/repositories/` is pretty basic/simple and does not have any immich specific logic (that belongs in `src/services/`)
-
-## Please describe to which degree, if any, an LLM was used in creating this pull request.
-
-...
+<!-- Drop images or short videos here, or remove this section when nothing on screen changed. -->
