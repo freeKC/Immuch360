@@ -150,7 +150,7 @@ Each wrong password counts, and after a few the camera locks for a while. The ap
 - **"This address answers without a Plex certificate."**: claim the server in Plex, or add it as an SMB, WebDAV or DLNA share. See [Plex Media Server](user-guide.md#plex-media-server-without-plextv).
 - **"Windows protected your PC"**: the files and the installer are not signed yet; choose "More info", then "Run anyway". See [Install it on a computer](user-guide.md#windows).
 - **"Immuch360 Desktop" cannot be opened, or Apple cannot check it** (macOS): the app is not signed with an Apple Developer ID nor notarized yet; Control click it and choose Open (macOS 14 and earlier), or choose "Open Anyway" in System Settings, Privacy & Security (macOS 15 and later). See [macOS](user-guide.md#macos).
-- **SMB shares do not open on Ubuntu 22.04 or Debian 12** (Linux, desktop build 5): the SMB library of desktop build 5 needed glibc 2.38; from desktop build 6 it works from glibc 2.25, so install desktop build 6. See [Linux](user-guide.md#linux).
+- **SMB shares do not open on Ubuntu 22.04 or Debian 12** (Linux, desktop build 5): the SMB library of desktop build 5 needed glibc 2.38; the library of desktop build 6 needs glibc 2.25 at most, so install desktop build 6 (SMB on Linux is not checked with a real share yet). See [Linux](user-guide.md#linux).
 - **"Videos need the libmpv library, which this computer does not have"** (Linux): install the package the message names, see [Videos do not play](#videos-do-not-play).
 - **The picture does not face you in the headset**: turn it with the right thumbstick or the Turn button, and post the angle shown in an issue with your camera model. See [If the picture does not face you](user-guide.md#if-the-picture-does-not-face-you).
 
