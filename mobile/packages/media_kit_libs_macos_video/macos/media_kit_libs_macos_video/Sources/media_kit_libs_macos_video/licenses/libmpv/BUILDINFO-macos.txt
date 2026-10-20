@@ -1,6 +1,6 @@
 libmpv for macOS (arm64 and x86_64, macOS 12 and later), built for Immuch360 Desktop
-run: https://github.com/freeKC/Immuch360/actions/runs/39413912143
-repository commit: 71cba2da6604117cc5fa217545266fbd33f761ae
+run: https://github.com/freeKC/Immuch360/actions/runs/39420482861
+repository commit: 50a7b85a72a45d34684ab3d25656c282724dffbb
 recipe: https://github.com/media-kit/libmpv-darwin-build at aadae8ce295dd15a222839c361c4c984ce9befb2, with .github/desktop/libmpv-macos
 package: mk-out-archive-xcframeworks-macos-universal-video-default
 Xcode: Xcode 16.4 Build version 16F6 
