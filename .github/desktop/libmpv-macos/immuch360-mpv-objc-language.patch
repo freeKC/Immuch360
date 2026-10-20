@@ -1,0 +1,10 @@
+--- a/meson.build	2026-10-20 09:38:29.970477714 +0200
++++ b/meson.build	2026-10-20 09:38:30.065508597 +0200
+@@ -431,6 +431,7 @@
+                    required: get_option('cocoa'))
+ features += {'cocoa': cocoa.found()}
+ if features['cocoa']
++    add_languages('objc', native: false)
+     dependencies += cocoa
+     path_source += files('osdep/path-mac.m')
+     sources += files('osdep/language-mac.c',
