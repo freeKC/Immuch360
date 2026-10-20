@@ -18,7 +18,6 @@ import 'dart:io' as io;
 
 import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:immich_mobile/desktop/network/desktop_cookie_jar.dart';
@@ -52,7 +51,7 @@ class DesktopHttpStack {
     this.readTimeout = const Duration(seconds: 60),
     this.writeTimeout = const Duration(seconds: 60),
     this.global = false,
-  }) : _secrets = secrets ?? const SecureStorageRepository(FlutterSecureStorage()),
+  }) : _secrets = secrets ?? const SecureStorageRepository(SecureStorageRepository.storage),
        _trusted = trustedCertificates ?? TrustedCertificates.instance,
        _readUserAgent = userAgent ?? _appUserAgent,
        _jar = DesktopCookieJar(clock: clock);
