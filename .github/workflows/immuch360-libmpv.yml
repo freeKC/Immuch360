@@ -852,6 +852,10 @@ jobs:
             for lib in Mpv Placebo Avcodec Avformat Avutil; do
               ls ../dist/*_"$lib".zip > /dev/null || { echo "no $lib.xcframework"; exit 1; }
             done
+            # mpv links with -undefined dynamic_lookup (b_lundef=false in its meson.build): a function that no library
+            # defines links all the same and is a jump to address 0 at run time. Only the IOSurface functions (the
+            # process has IOSurface.framework loaded through CoreVideo) and objc_msgSend may be looked up so
+            python3 "$GITHUB_WORKSPACE/immuch360/.github/desktop/libmpv-macos/check_undefined.py" ../dist/*.zip
           else
             tar -czhf "../dist/$MACOS_TARGET.tar.gz" -C result .
           fi

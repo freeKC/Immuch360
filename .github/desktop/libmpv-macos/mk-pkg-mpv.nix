@@ -8,10 +8,14 @@
 #     and the build date is left out so that two runs of the same sources give the same library;
 #   - two patches in place of the recipe's three: immuch360-mpv-objc-language.patch, the Objective-C language added
 #     where Cocoa is, as the recipe's mpv-fix-missing-objc.patch does for 0.36 (mpv adds it only once xcrun reports
-#     an SDK, and the Nix sandbox has no xcrun); immuch360-mpv-clipboard-without-swift.patch, the macOS clipboard
-#     backend (mpv 0.40) built only with mpv's Swift part, which it calls through the generated osdep/mac/swift.h:
-#     the recipe builds without Swift (no xcrun in the sandbox either), and libmpv's clients have their own
-#     clipboard. The recipe's other two are for iOS (AudioUnit) and the audio variant.
+#     an SDK, and the Nix sandbox has no xcrun); immuch360-mpv-cocoa-without-swift.patch, what mpv 0.38 and later
+#     tie to Cocoa but implement in its Swift part, used only with that part: the macOS clipboard backend, which
+#     includes the generated osdep/mac/swift.h, the media keys, and the "mac" client and the input context handed
+#     to the Swift application. The recipe builds without Swift (no xcrun in the sandbox either), and without the
+#     patch mpv_create called cocoa_set_input_context, which nothing defines (mpv links with -undefined
+#     dynamic_lookup), and crashed at address 0; check_undefined.py now fails such a build. libmpv's clients have
+#     their own clipboard, media keys and windows. The recipe's other two patches are for iOS (AudioUnit) and the
+#     audio variant.
 {
   pkgs ? import ../../utils/default/pkgs.nix,
   os ? import ../../utils/default/os.nix,
@@ -62,7 +66,7 @@ let
 
     cd $src
     patch -p1 <${../../../patches/immuch360-mpv-objc-language.patch}
-    patch -p1 <${../../../patches/immuch360-mpv-clipboard-without-swift.patch}
+    patch -p1 <${../../../patches/immuch360-mpv-cocoa-without-swift.patch}
     cd -
 
     cp -r $src $out
