@@ -280,6 +280,19 @@ class _SortButtonState extends ConsumerState<_SortButton> {
     });
   }
 
+  /// The sort modes in a dialog in the remote control layout: a dialog is a route of its own and keeps the focus until
+  /// it closes, while the arrows left the menu for the albums under it. The current mode is marked and has the focus
+  /// first; choosing it again reverses the order, as in the menu.
+  Future<void> _showSortDialog() async {
+    final chosen = await showDialog<AlbumSortMode>(
+      context: context,
+      builder: (_) => _SortDialog(current: albumSortOption, order: albumSortOption.effectiveOrder(albumSortIsReverse)),
+    );
+    if (chosen != null && mounted) {
+      await onMenuTapped(chosen);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final effectiveOrder = albumSortOption.effectiveOrder(albumSortIsReverse);
@@ -335,6 +348,10 @@ class _SortButtonState extends ConsumerState<_SortButton> {
       builder: (context, controller, child) {
         return RemoteFocusable(
           onTap: () {
+            if (MediaQuery.navigationModeOf(context) == NavigationMode.directional) {
+              unawaited(_showSortDialog());
+              return;
+            }
             if (controller.isOpen) {
               controller.close();
             } else {
@@ -367,6 +384,40 @@ class _SortButtonState extends ConsumerState<_SortButton> {
           ),
         );
       },
+    );
+  }
+}
+
+class _SortDialog extends StatelessWidget {
+  const _SortDialog({required this.current, required this.order});
+
+  final AlbumSortMode current;
+  final SortOrder order;
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: Text(context.t.sort_albums_by),
+      children: [
+        for (final mode in AlbumSortMode.values)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: ListTile(
+              key: ValueKey('album_sort_${mode.name}'),
+              autofocus: mode == current,
+              selected: mode == current,
+              selectedColor: context.colorScheme.onPrimary,
+              selectedTileColor: context.colorScheme.primary,
+              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+              // The order of the current mode, as on the sort button
+              leading: mode == current
+                  ? Icon(order == SortOrder.desc ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up_rounded)
+                  : const SizedBox.square(dimension: 24),
+              title: Text(mode.label(context.t)),
+              onTap: () => Navigator.of(context).pop(mode),
+            ),
+          ),
+      ],
     );
   }
 }
