@@ -20,14 +20,22 @@ public class TextureHW: NSObject, FlutterTexture, ResizableTextureProtocol {
     skipCheckArgs: true
   )
 
-  init(
+  // Immuch360: nil when OpenGL gives no pixel format or no context, and VideoOutput renders with TextureSW instead
+  init?(
     handle: OpaquePointer,
     updateCallback: @escaping UpdateCallback
   ) {
+    guard let pixelFormat = OpenGLHelpers.createPixelFormat() else {
+      return nil
+    }
+    guard let context = OpenGLHelpers.createContext(pixelFormat) else {
+      OpenGLHelpers.deletePixelFormat(pixelFormat)
+      return nil
+    }
     self.handle = handle
     self.updateCallback = updateCallback
-    self.pixelFormat = OpenGLHelpers.createPixelFormat()
-    self.context = OpenGLHelpers.createContext(pixelFormat)
+    self.pixelFormat = pixelFormat
+    self.context = context
     self.textureCache = OpenGLHelpers.createTextureCache(context, pixelFormat)
 
     super.init()

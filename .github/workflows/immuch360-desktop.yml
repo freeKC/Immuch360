@@ -623,7 +623,7 @@ jobs:
           run_app() {
             local name=$1
             shift
-            rm -f "$out/$name.json"
+            rm -f "$out/$name.json" "$out/$name.json.partial"
             IMMUCH360_SELF_CHECK="$out/$name.json" "$exe" "$@" > "$out/$name.log" 2>&1 &
             local pid=$!
             for _ in $(seq 1 150); do
@@ -678,7 +678,10 @@ jobs:
       - name: What the self check found
         if: always()
         continue-on-error: true
-        run: python3 .github/desktop/packaging/macos/self_check_summary.py first-start --strict | tee -a "$GITHUB_STEP_SUMMARY"
+        # pipefail: a failed check marks this step, the job stays green (continue-on-error)
+        run: |
+          set -o pipefail
+          python3 .github/desktop/packaging/macos/self_check_summary.py first-start --strict | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Upload the macOS ZIP
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

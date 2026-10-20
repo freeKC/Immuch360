@@ -3,7 +3,8 @@
 
 The macOS job of .github/workflows/immuch360-desktop.yml starts the app twice with IMMUCH360_SELF_CHECK set
 (mobile/lib/desktop/window/self_check.dart): "folder", the folder of a photo and a video on the command line, with
-the video played by libmpv for five seconds; "video", that video alone. Each start leaves <name>.json (the report),
+the video played by libmpv for five seconds; "video", that video alone. Each start leaves <name>.json (the report;
+<name>.json.partial instead when the app ended before the last step, with the results of the steps before),
 <name>.log, <name>.state and <name>.png in the folder given; a start without arguments or self check before them
 leaves plain.state, and the crash reports of macOS (Immuch360*.ips) are copied there too.
 
@@ -27,12 +28,15 @@ VIEWER_PAGE = 'AssetViewerRoute'
 MIN_PLAYED_SECONDS = 3.0
 
 
-def read_report(folder: pathlib.Path, name: str) -> dict | None:
-    path = folder / f'{name}.json'
-    try:
-        return json.loads(path.read_text(encoding='utf-8'))
-    except (OSError, ValueError):
-        return None
+def read_report(folder: pathlib.Path, name: str) -> tuple[dict | None, bool]:
+    """The report of a start and whether it is complete: <name>.json, or what <name>.json.partial holds when the app
+    ended before the self check did"""
+    for path, complete in ((folder / f'{name}.json', True), (folder / f'{name}.json.partial', False)):
+        try:
+            return json.loads(path.read_text(encoding='utf-8')), complete
+        except (OSError, ValueError):
+            continue
+    return None, False
 
 
 def state_of(folder: pathlib.Path, name: str) -> str:
@@ -51,16 +55,18 @@ def checks(folder: pathlib.Path) -> list[tuple[str, bool, str]]:
     crashes = sorted(path.name for path in folder.glob('Immuch360*'))
     if crashes:
         results.append(('Crash reports of macOS', False, ', '.join(crashes)))
-    folder_report = read_report(folder, 'folder')
-    video_report = read_report(folder, 'video')
+    folder_report, folder_complete = read_report(folder, 'folder')
+    video_report, video_complete = read_report(folder, 'video')
 
-    for name, report in (('folder', folder_report), ('video', video_report)):
+    for name, report, complete in (('folder', folder_report, folder_complete), ('video', video_report, video_complete)):
         detail = state_of(folder, name)
         if report is not None:
+            if not complete:
+                detail += '; partial report only, the app ended before the last step'
             detail += f"; first page {report.get('firstPage')}, session {report.get('session')}"
             if report.get('error'):
                 detail += f"; stopped: {report['error']}"
-        results.append((f'Start with the {name} on the command line, report written', report is not None, detail))
+        results.append((f'Start with the {name} on the command line, report written', complete, detail))
 
     storage = (folder_report or {}).get('secureStorage') or {}
     app = storage.get('app') or {}

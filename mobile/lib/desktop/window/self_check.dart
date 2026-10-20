@@ -1,14 +1,16 @@
 // IMMUCH360_SELF_CHECK: what a CI runner checks in the release build of a computer where nobody clicks (the macOS job
-// of .github/workflows/immuch360-desktop.yml). Set to the path of a file, it makes the app, once its first page shows:
-//   - start a session without a server when none is open, as "Use without a server" does but without the folder
-//     choice, so that the files and folders of the command line open as a user would see them, and name the pages
-//     shown once they had the time to open (a folder: the page of the opened files; one video: the viewer);
+// of .github/workflows/immuch360-desktop.yml). Set to the path of a file, it makes the app, after its first frame:
 //   - save a secret with the secure storage as the app does, read it back and delete it; on macOS also with the
 //     plugin's own default (the data protection keychain), for the record;
+//   - once its first page shows, start a session without a server when none is open, as "Use without a server" does
+//     but without the folder choice, so that the files and folders of the command line open as a user would see them,
+//     and name the pages shown once they had the time to open (a folder: the page of the opened files; one video: the
+//     viewer);
 //   - say whether libmpv was loaded and, when IMMUCH360_SELF_CHECK_VIDEO names a video, play it for five seconds in a
 //     player of its own, with the position, the decoder and the size mpv reports;
-// then write what it found to the file, as JSON, and print it. Nothing of it runs without the variable, which no start
-// from the Finder, the Start menu or a desktop entry sets.
+// then write what it found to the file, as JSON, and print it. Each result is also saved as soon as it is known, to
+// the same path followed by .partial, so that a step that ends the app leaves the results of the steps before it.
+// Nothing of it runs without the variable, which no start from the Finder, the Start menu or a desktop entry sets.
 
 import 'dart:async';
 import 'dart:convert';
@@ -38,6 +40,9 @@ abstract final class DesktopSelfCheck {
   static String? get reportPath => _nonEmpty(Platform.environment[reportVariable]);
 
   static String? get videoPath => _nonEmpty(Platform.environment[videoVariable]);
+
+  /// Where the results go while the self check runs (the report file once it is complete)
+  static String partialPath(String reportPath) => '$reportPath.partial';
 
   static String? _nonEmpty(String? value) => value == null || value.trim().isEmpty ? null : value;
 
@@ -80,31 +85,49 @@ class _DesktopSelfCheckHostState extends ConsumerState<DesktopSelfCheckHost> {
 
   Future<void> _run() async {
     final report = <String, Object?>{'platform': Platform.operatingSystem, 'started': DateTime.now().toIso8601String()};
+    Future<void> step(String name, Future<Object?> Function() run) async {
+      report[name] = await run();
+      await _save(report, partial: true);
+    }
+
     try {
-      report['firstPage'] = await _firstPage();
-      report['session'] = await _session();
-      report['pages'] = await _pagesAfterOpen();
-      report['secureStorage'] = {
-        'app': await secretRoundTrip(const SecureStorageRepository(SecureStorageRepository.storage)),
-        // What flutter_secure_storage does by default on macOS, to see whether the data protection keychain would work
-        if (CurrentPlatform.isMacOS)
-          'dataProtectionKeychain': await secretRoundTrip(const SecureStorageRepository(FlutterSecureStorage())),
-      };
-      report['video'] = await _video();
+      // The keychain first: it waits for no page, and nothing the files of the command line open can stop it
+      await step('secureStorage', _secureStorage);
+      await step('firstPage', _firstPage);
+      await step('session', _session);
+      await step('pages', _pagesAfterOpen);
+      await step('video', _video);
     } catch (error, stackTrace) {
       _log.severe('Self check stopped', error, stackTrace);
       report['error'] = '$error';
     }
     report['ended'] = DateTime.now().toIso8601String();
-    final text = const JsonEncoder.withIndent('  ').convert(report);
     // Printed for the log of the run, written for its checks
-    debugPrint('Immuch360 self check: $text');
+    debugPrint('Immuch360 self check: ${const JsonEncoder.withIndent('  ').convert(report)}');
+    await _save(report, partial: false);
+  }
+
+  /// [report] to the report file, or to the same path followed by .partial while steps are left; the partial file goes
+  /// once the report is complete
+  Future<void> _save(Map<String, Object?> report, {required bool partial}) async {
+    final partialFile = File(DesktopSelfCheck.partialPath(widget.reportPath));
     try {
-      await File(widget.reportPath).writeAsString(text);
+      final text = const JsonEncoder.withIndent('  ').convert(report);
+      await (partial ? partialFile : File(widget.reportPath)).writeAsString(text);
+      if (!partial && partialFile.existsSync()) {
+        await partialFile.delete();
+      }
     } catch (error) {
       _log.severe('Could not write the self check to ${widget.reportPath}: $error');
     }
   }
+
+  Future<Map<String, Object?>> _secureStorage() async => {
+    'app': await secretRoundTrip(const SecureStorageRepository(SecureStorageRepository.storage)),
+    // What flutter_secure_storage does by default on macOS, to see whether the data protection keychain would work
+    if (CurrentPlatform.isMacOS)
+      'dataProtectionKeychain': await secretRoundTrip(const SecureStorageRepository(FlutterSecureStorage())),
+  };
 
   @override
   Widget build(BuildContext context) => widget.child;

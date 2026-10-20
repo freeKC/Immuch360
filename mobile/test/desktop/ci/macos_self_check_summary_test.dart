@@ -92,6 +92,21 @@ void _tests() {
     expect(run.output, contains('Immuch360 Desktop-2026-10-20-114458.ips'));
   });
 
+  test('a start that ended before the last step: its partial report is read, and the start fails', () {
+    write('video', _videoReport);
+    final partial = Map<String, Object?>.of(_folderReport())..remove('video');
+    File(p.join(folder.path, 'folder.json.partial')).writeAsStringSync(jsonEncode(partial));
+    File(p.join(folder.path, 'folder.state')).writeAsStringSync('folder: ended by itself (exit 133)');
+    final run = runCiScript(_script, [folder.path, '--strict']);
+    expect(run.exitCode, 1);
+    expect(run.output, contains('partial report only'));
+    expect(
+      run.output,
+      contains('| Secure storage as the app uses it (login keychain): write, read back, delete | passed |'),
+      reason: 'the steps before the end are reported',
+    );
+  });
+
   test('a video that did not play, or no report at all, fails', () {
     write('folder', _folderReport(video: {'bundled': true, 'loaded': true, 'playedSeconds': 0.4}));
     final run = runCiScript(_script, [folder.path, '--strict']);

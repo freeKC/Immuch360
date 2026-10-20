@@ -90,19 +90,29 @@ public class VideoOutput: NSObject {
       )
     }
 
+    // Immuch360: TextureHW is nil when OpenGL gives no context (a Mac virtual machine, or a macOS without OpenGL):
+    // the software rendering of TextureSW then, as with hardware acceleration off, instead of a crash
+    var hardwareTexture: TextureHW? = nil
     if enableHardwareAcceleration {
-      texture = SafeResizableTexture(
-        TextureHW(
-          handle: handle,
-          // Use `weak self` to prevent memory leaks
-          updateCallback: { [weak self]() in
-            guard let that = self else {
-              return
-            }
-            that.updateCallback()
+      hardwareTexture = TextureHW(
+        handle: handle,
+        // Use `weak self` to prevent memory leaks
+        updateCallback: { [weak self]() in
+          guard let that = self else {
+            return
           }
-        )
+          that.updateCallback()
+        }
       )
+      if hardwareTexture == nil {
+        NSLog(
+          "VideoOutput: no OpenGL context for hardware rendering, software rendering instead"
+        )
+      }
+    }
+
+    if let hardwareTexture = hardwareTexture {
+      texture = SafeResizableTexture(hardwareTexture)
     } else {
       texture = SafeResizableTexture(
         TextureSW(

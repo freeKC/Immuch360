@@ -3,7 +3,10 @@ import OpenGL.GL
 import OpenGL.GL3
 
 public class OpenGLHelpers {
-  static public func createPixelFormat() -> CGLPixelFormatObj {
+  // Immuch360: nil instead of a crash when the system has no such pixel format (a Mac virtual machine with a
+  // paravirtual GPU, as the macOS runners of GitHub, or a macOS without OpenGL), so that VideoOutput falls back to
+  // the software rendering of TextureSW
+  static public func createPixelFormat() -> CGLPixelFormatObj? {
     // from mpv
     let attributes: [CGLPixelFormatAttribute] = [
       kCGLPFAOpenGLProfile,
@@ -20,23 +23,31 @@ public class OpenGLHelpers {
 
     var npix: GLint = 0
     var pixelFormat: CGLPixelFormatObj?
-    CGLChoosePixelFormat(attributes, &pixelFormat, &npix)
-
-    return pixelFormat!
-  }
-
-  static public func createContext(
-    _ pixelFormat: CGLPixelFormatObj
-  ) -> CGLContextObj {
-    var context: CGLContextObj?
-    let error = CGLCreateContext(pixelFormat, nil, &context)
-    if error != kCGLNoError {
-      let errS = String(cString: CGLErrorString(error))
-      NSLog(errS)
-      exit(1)
+    let error = CGLChoosePixelFormat(attributes, &pixelFormat, &npix)
+    if error != kCGLNoError || pixelFormat == nil {
+      NSLog(
+        "OpenGLHelpers: no OpenGL 3.2 pixel format: \(String(cString: CGLErrorString(error)))"
+      )
+      return nil
     }
 
-    return context!
+    return pixelFormat
+  }
+
+  // Immuch360: nil instead of exit(1) when the context cannot be made, for the same fallback
+  static public func createContext(
+    _ pixelFormat: CGLPixelFormatObj
+  ) -> CGLContextObj? {
+    var context: CGLContextObj?
+    let error = CGLCreateContext(pixelFormat, nil, &context)
+    if error != kCGLNoError || context == nil {
+      NSLog(
+        "OpenGLHelpers: no OpenGL context: \(String(cString: CGLErrorString(error)))"
+      )
+      return nil
+    }
+
+    return context
   }
 
   static public func createTextureCache(

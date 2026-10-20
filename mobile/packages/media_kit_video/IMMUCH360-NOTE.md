@@ -164,5 +164,14 @@ Patches:
    `mobile/test/desktop/video/plugin_shaders_windows_test.dart` (the fisheye pass reads lens 1 from the second
    texture).
 
+8. macOS, software rendering when OpenGL has no context (`macos/.../plugin/gl/OpenGLHelpers.swift`,
+   `plugin/TextureHW.swift`, `plugin/common/VideoOutput.swift`). Upstream force unwraps the OpenGL 3.2 pixel format of
+   `createPixelFormat` and calls `exit(1)` when `createContext` fails, so the first player of a Mac without such a
+   pixel format ends the app: the macOS runner of GitHub (a virtual Mac with a paravirtual GPU) crashed so at the first
+   player of the self check, "Unexpectedly found nil" in `OpenGLHelpers.createPixelFormat()`. Both now return nil
+   with the CGL error in the log, `TextureHW.init` is failable, and `VideoOutput` renders that player with `TextureSW`
+   (mpv's software render API, as with hardware acceleration off) and logs "no OpenGL context for hardware rendering".
+   A Mac with a GPU keeps the OpenGL path of upstream.
+
 Not done yet (plan 20-plan-desktop.md, 2.2): the D3D11 device on the adapter Flutter uses, only if spike 6 shows a
 mismatch on a hybrid GPU machine.
