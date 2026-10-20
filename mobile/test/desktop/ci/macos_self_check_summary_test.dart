@@ -61,10 +61,26 @@ void _tests() {
   test('a good run passes every check', () {
     write('folder', _folderReport());
     write('video', _videoReport);
+    write('finder', _videoReport);
     final run = runCiScript(_script, [folder.path, '--strict']);
     expect(run.exitCode, 0, reason: '$run');
     expect(run.output, isNot(contains('FAILED')));
     expect(run.output, contains('-34018'), reason: 'the data protection keychain is reported for the record');
+  });
+
+  test('a photo that Launch Services did not hand over fails', () {
+    write('folder', _folderReport());
+    write('video', _videoReport);
+    write('finder', {
+      ..._videoReport,
+      'pages': ['TabShellRoute'],
+    });
+    final run = runCiScript(_script, [folder.path, '--strict']);
+    expect(run.exitCode, 1);
+    expect(
+      run.output,
+      contains('| The photo handed over by Launch Services opened in the viewer | FAILED | TabShellRoute |'),
+    );
   });
 
   test('a secure storage that gave nothing back fails with --strict only', () {

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """What the self check of the app found on the macOS runner, as Markdown for the run summary.
 
-The macOS job of .github/workflows/immuch360-desktop.yml starts the app twice with IMMUCH360_SELF_CHECK set
+The macOS job of .github/workflows/immuch360-desktop.yml starts the app three times with IMMUCH360_SELF_CHECK set
 (mobile/lib/desktop/window/self_check.dart): "folder", the folder of a photo and a video on the command line, with
-the video played by libmpv for five seconds; "video", that video alone. Each start leaves <name>.json (the report;
+the video played by libmpv for five seconds; "video", that video alone; "finder", the photo handed over by Launch
+Services as the Finder does (open -a), then the video handed to the copy that runs (finder-then-video.png). Each start leaves <name>.json (the report;
 <name>.json.partial instead when the app ended before the last step, with the results of the steps before),
 <name>.log, <name>.state and <name>.png in the folder given; a start without arguments or self check before them
 leaves plain.state, and the crash reports of macOS (Immuch360*.ips) are copied there too.
@@ -12,7 +13,8 @@ leaves plain.state, and the crash reports of macOS (Immuch360*.ips) are copied t
 
 Prints the table of the checks. With --strict, exits 1 when one of them failed: the app ran 30 s without arguments,
 no crash was reported, it started and wrote its report both times, the secure storage gave back the secret it was
-given, libmpv was loaded and played the video, the folder opened as a page of its own and the video in the viewer.
+given, libmpv was loaded and played the video, the folder opened as a page of its own, the video in the viewer, and
+the photo of the Finder's way in the viewer too.
 """
 from __future__ import annotations
 
@@ -57,8 +59,12 @@ def checks(folder: pathlib.Path) -> list[tuple[str, bool, str]]:
         results.append(('Crash reports of macOS', False, ', '.join(crashes)))
     folder_report, folder_complete = read_report(folder, 'folder')
     video_report, video_complete = read_report(folder, 'video')
+    finder_report, finder_complete = read_report(folder, 'finder')
 
-    for name, report, complete in (('folder', folder_report, folder_complete), ('video', video_report, video_complete)):
+    for name, report, complete, what in (
+            ('folder', folder_report, folder_complete, 'Start with the folder on the command line'),
+            ('video', video_report, video_complete, 'Start with the video on the command line'),
+            ('finder', finder_report, finder_complete, 'Start by Launch Services with the photo, as from the Finder')):
         detail = state_of(folder, name)
         if report is not None:
             if not complete:
@@ -66,7 +72,7 @@ def checks(folder: pathlib.Path) -> list[tuple[str, bool, str]]:
             detail += f"; first page {report.get('firstPage')}, session {report.get('session')}"
             if report.get('error'):
                 detail += f"; stopped: {report['error']}"
-        results.append((f'Start with the {name} on the command line, report written', complete, detail))
+        results.append((f'{what}, report written', complete, detail))
 
     storage = (folder_report or {}).get('secureStorage') or {}
     app = storage.get('app') or {}
@@ -86,7 +92,7 @@ def checks(folder: pathlib.Path) -> list[tuple[str, bool, str]]:
     results.append((f'The test video played by libmpv for five seconds (at least {MIN_PLAYED_SECONDS:g} s of it)',
                     isinstance(played, (int, float)) and played >= MIN_PLAYED_SECONDS,
                     ', '.join(f'{key} {video.get(key)}' for key in
-                              ('playedSeconds', 'firstFrameMs', 'size', 'hwdec-current', 'video-codec',
+                              ('playedSeconds', 'firstFrameMs', 'size', 'hwdec-current', 'current-tracks/video/codec',
                                'frame-drop-count', 'error') if key in video)))
 
     folder_pages = (folder_report or {}).get('pages') or []
@@ -95,6 +101,9 @@ def checks(folder: pathlib.Path) -> list[tuple[str, bool, str]]:
     video_pages = (video_report or {}).get('pages') or []
     results.append(('The video of the command line opened in the viewer', VIEWER_PAGE in video_pages,
                     ' > '.join(video_pages) or 'no page'))
+    finder_pages = (finder_report or {}).get('pages') or []
+    results.append(('The photo handed over by Launch Services opened in the viewer', VIEWER_PAGE in finder_pages,
+                    ' > '.join(finder_pages) or 'no page'))
     return results
 
 
@@ -103,8 +112,8 @@ def markdown(results: list[tuple[str, bool, str]]) -> str:
     for what, passed, detail in results:
         cell = detail.replace('|', '\\|').replace('\n', ' ')
         lines.append(f"| {what} | {'passed' if passed else 'FAILED'} | {cell} |")
-    lines += ['', 'Screen captures: `plain.png`, `folder.png`, `video.png` and `video-2s-later.png` in the '
-              '`macos-first-start` artifact.']
+    lines += ['', 'Screen captures: `plain.png`, `folder.png`, `video.png`, `video-2s-later.png`, `finder.png` and '
+              '`finder-then-video.png` in the `macos-first-start` artifact.']
     return '\n'.join(lines) + '\n'
 
 

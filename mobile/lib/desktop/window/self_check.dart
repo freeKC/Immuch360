@@ -238,7 +238,13 @@ Future<Map<String, Object?>> playForAWhile(String path, Duration duration) async
     result['position'] = to.inMilliseconds / 1000;
     final size = created.videoSize.value;
     result['size'] = size == null ? null : '${size.width}x${size.height}';
-    for (final name in ['hwdec-current', 'video-codec', 'frame-drop-count', 'decoder-frame-drop-count']) {
+    // The codec as current-tracks gives it: video-codec read empty with mpv 0.41
+    for (final name in [
+      'hwdec-current',
+      'current-tracks/video/codec',
+      'frame-drop-count',
+      'decoder-frame-drop-count',
+    ]) {
       result[name] = await created.mpvProperty(name);
     }
   } catch (error) {
