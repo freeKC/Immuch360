@@ -577,28 +577,87 @@ jobs:
           read -ra extensions <<< "$(python3 -c 'import json; d = json.load(open(".github/desktop/file-associations.json")); print(" ".join([*d["photos"], *d["videos"]]))')"
           swift .github/desktop/packaging/macos/open_with.swift "$app" "${extensions[@]}"
 
-      # Nobody on the project has a Mac: the runner starts the app once, without a server, and the run summary says
-      # whether it still ran after 30 seconds, with a capture of the screen. Not a gate: the window server of a CI
-      # runner is not a Mac on a desk
-      - name: First start on the runner
+      # The libraries of the video player in the app: Mpv.framework and the others (media_kit_libs_macos_video, the
+      # fork's libmpv build), each with an @rpath name and no path of the machine that built them, and their licence
+      # texts in the resource bundle of that package
+      - name: libmpv in the app
+        run: |
+          app="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
+          ls "$app/Contents/Frameworks"
+          mpv="$app/Contents/Frameworks/Mpv.framework/Mpv"
+          [ -f "$mpv" ] || { echo "::error::no Mpv.framework in the app"; exit 1; }
+          echo "Mpv: $(lipo -archs "$mpv"), minimum macOS $(vtool -show-build "$mpv" | awk '/minos/ {print $2; exit}')"
+          otool -L "$mpv"
+          for framework in "$app"/Contents/Frameworks/*.framework; do
+            otool -L "$framework/$(basename "$framework" .framework)"
+          done > "$RUNNER_TEMP/frameworks.txt"
+          if grep -E '^[[:space:]]+/(nix|Users|private|tmp)/' "$RUNNER_TEMP/frameworks.txt"; then
+            echo "::error::a framework of the app names a library by a path of the build machine"
+            exit 1
+          fi
+          notices=$(find "$app/Contents/Resources" -path '*media_kit_libs_macos_video*' -name NOTICES.md | head -n 1)
+          [ -n "$notices" ] || { echo "::error::no NOTICES.md of the video libraries in the app"; exit 1; }
+          echo "notices: ${notices#"$app/"}"
+          ls "$(dirname "$notices")"
+
+      # Nobody on the project has a Mac: the runner starts the app twice, without a server, with what a user would give
+      # it, and with the self check of lib/desktop/window/self_check.dart (IMMUCH360_SELF_CHECK), which writes what it
+      # found to a JSON file. First the folder of a photo and a video made here (make_test_media.swift) on the command
+      # line, as the Finder hands files over, with the secure storage written and read back and the video played five
+      # seconds by libmpv; then the video alone, which opens in the viewer. A capture of the screen each time. The
+      # window server of a runner is not a Mac on a desk: the next step says what passed and what did not
+      - name: Self check on the runner
+        id: self_check
         continue-on-error: true
         run: |
-          exe="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app/Contents/MacOS/Immuch360 Desktop"
-          mkdir -p first-start
-          "$exe" > first-start/output.log 2>&1 &
-          pid=$!
-          sleep 30
-          if kill -0 "$pid" 2>/dev/null; then
-            state="still running after 30 seconds"
-            screencapture -x first-start/screen.png || echo "no screen capture"
-            kill "$pid"
-          else
-            status=0
-            wait "$pid" || status=$?
-            state="ended by itself within 30 seconds (exit $status)"
-          fi
-          tail -n 60 first-start/output.log
-          echo "First start of the app on the macOS runner: $state." >> "$GITHUB_STEP_SUMMARY"
+          app="$PWD/mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
+          exe="$app/Contents/MacOS/Immuch360 Desktop"
+          out="$PWD/first-start"
+          media="$RUNNER_TEMP/Immuch360 test media"
+          mkdir -p "$out"
+          swift .github/desktop/packaging/macos/make_test_media.swift "$media" 12
+          security list-keychains -d user || true
+          security show-keychain-info login.keychain 2>&1 || true
+
+          # Starts the app with the arguments given, waits for its report (at most 150 s), captures the screen
+          run_app() {
+            local name=$1
+            shift
+            rm -f "$out/$name.json"
+            IMMUCH360_SELF_CHECK="$out/$name.json" "$exe" "$@" > "$out/$name.log" 2>&1 &
+            local pid=$!
+            for _ in $(seq 1 150); do
+              [ -s "$out/$name.json" ] && break
+              kill -0 "$pid" 2>/dev/null || break
+              sleep 1
+            done
+            sleep 3
+            screencapture -x "$out/$name.png" || echo "no screen capture"
+            if [ "$name" = video ]; then
+              sleep 2
+              screencapture -x "$out/$name-2s-later.png" || true
+            fi
+            if kill -0 "$pid" 2>/dev/null; then
+              echo "$name: still running" > "$out/$name.state"
+              kill "$pid" 2>/dev/null || true
+              wait "$pid" 2>/dev/null || true
+            else
+              local status=0
+              wait "$pid" || status=$?
+              echo "$name: ended by itself (exit $status)" > "$out/$name.state"
+            fi
+            cat "$out/$name.state"
+            tail -n 40 "$out/$name.log"
+          }
+
+          IMMUCH360_SELF_CHECK_VIDEO="$media/test-video.mp4" run_app folder "$media"
+          run_app video "$media/test-video.mp4"
+          cp "$media/test-photo.jpg" "$out/"
+
+      - name: What the self check found
+        if: always()
+        continue-on-error: true
+        run: python3 .github/desktop/packaging/macos/self_check_summary.py first-start --strict | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Upload the macOS ZIP
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
