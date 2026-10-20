@@ -402,6 +402,7 @@ class SearchPage extends HookConsumerWidget {
       unawaited(
         showFilterBottomSheet(
           context: context,
+          isScrollControlled: true,
           child: FilterBottomSheetScaffold(
             title: context.t.search_filter_media_type_title,
             onSearch: handleApply,
@@ -482,6 +483,7 @@ class SearchPage extends HookConsumerWidget {
       unawaited(
         showFilterBottomSheet(
           context: context,
+          isScrollControlled: true,
           child: FilterBottomSheetScaffold(
             title: context.t.display_options,
             onSearch: handleApply,

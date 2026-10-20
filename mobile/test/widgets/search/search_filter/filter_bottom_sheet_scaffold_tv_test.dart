@@ -1,5 +1,6 @@
 // The filter sheets of the search page with a remote control: the action rail of the People sheet (Right to Apply, Up
-// to Clear, Left back to the row the focus came from, radio buttons included), and the layout of phones unchanged.
+// to Clear, Left back to the row the focus came from, radio buttons included), the Media Type and Display options
+// sheets whole on a 960 x 540 dp TV screen with their buttons in reach, and the layout of phones unchanged.
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
+import 'package:immich_mobile/widgets/search/search_filter/display_option_picker.dart';
 import 'package:immich_mobile/widgets/search/search_filter/filter_bottom_sheet_scaffold.dart';
 import 'package:immich_mobile/widgets/search/search_filter/media_type_picker.dart';
 import 'package:immich_mobile/widgets/search/search_filter/search_filter_utils.dart';
@@ -138,6 +140,54 @@ void main() {
       expect(focused(), image);
       expect(picked, isEmpty);
       expect(tester.widget<RadioGroup<AssetType>>(find.byType(RadioGroup<AssetType>)).groupValue, AssetType.other);
+    });
+  });
+
+  group('Media Type and Display options sheets on a 960 x 540 dp TV', () {
+    // The bottom margin of TvShell, 27 dp of overscan
+    const safeBottom = 540 - 27;
+
+    testWidgets('Media Type: whole on screen, Down from the last choice reaches Clear, then Right Apply', (
+      tester,
+    ) async {
+      await open(
+        tester,
+        FilterBottomSheetScaffold(
+          title: 'Select media type',
+          onSearch: () {},
+          onClear: () {},
+          child: MediaTypePicker(onSelect: (_) {}, filter: AssetType.other),
+        ),
+      );
+      // A RenderFlex overflow fails the test before this line otherwise
+      expect(tester.takeException(), isNull);
+      expect(tester.getRect(find.byKey(const Key('search_filter_apply'))).bottom, lessThanOrEqualTo(safeBottom));
+
+      focusOf(tester, 'Video').requestFocus();
+      await tester.pumpAndSettle();
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      expect(focused(), focusOf(tester, 'Clear'));
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focused(), focusOf(tester, 'Apply filter'));
+    });
+
+    testWidgets('Display options: whole on screen, Down from the last option reaches the buttons', (tester) async {
+      await open(
+        tester,
+        FilterBottomSheetScaffold(
+          title: 'Display options',
+          onSearch: () {},
+          onClear: () {},
+          child: DisplayOptionPicker(onSelect: (_) {}),
+        ),
+      );
+      expect(tester.takeException(), isNull);
+      expect(tester.getRect(find.byKey(const Key('search_filter_apply'))).bottom, lessThanOrEqualTo(safeBottom));
+
+      focusOf(tester, 'Archive').requestFocus();
+      await tester.pumpAndSettle();
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      expect(focused(), anyOf(focusOf(tester, 'Clear'), focusOf(tester, 'Apply filter')));
     });
   });
 
