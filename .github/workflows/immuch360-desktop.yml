@@ -673,7 +673,7 @@ jobs:
           run_app video "$media/test-video.mp4"
 
           # The Finder's way. open waits for the start only; the copy that runs is found by its executable path
-          rm -f "$out/finder.json" "$out/finder.json.partial"
+          rm -f "$out/finder.json" "$out/finder.json.partial" "$out/finder.json.later"
           if open -a "$app" --env "IMMUCH360_SELF_CHECK=$out/finder.json" --stdout "$out/finder.log" \
             --stderr "$out/finder.log" "$media/test-photo.jpg"; then
             for _ in $(seq 1 150); do

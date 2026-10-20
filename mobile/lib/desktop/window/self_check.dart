@@ -10,7 +10,9 @@
 //     player of its own, with the position, the decoder and the size mpv reports;
 // then write what it found to the file, as JSON, and print it. Each result is also saved as soon as it is known, to
 // the same path followed by .partial, so that a step that ends the app leaves the results of the steps before it.
-// Nothing of it runs without the variable, which no start from the Finder, the Start menu or a desktop entry sets.
+// Afterwards the pages and the asset in the viewer go to the same path followed by .later at each change, and the log
+// of the app goes to the output from the start. Nothing of it runs without the variable, which no start from the
+// Finder, the Start menu or a desktop entry sets.
 
 import 'dart:async';
 import 'dart:convert';
@@ -23,6 +25,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
+import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/repositories/secure_storage.repository.dart';
@@ -43,6 +46,9 @@ abstract final class DesktopSelfCheck {
 
   /// Where the results go while the self check runs (the report file once it is complete)
   static String partialPath(String reportPath) => '$reportPath.partial';
+
+  /// What the app shows after the report, should files be handed over to it later
+  static String laterPath(String reportPath) => '$reportPath.later';
 
   static String? _nonEmpty(String? value) => value == null || value.trim().isEmpty ? null : value;
 
@@ -77,10 +83,26 @@ class DesktopSelfCheckHost extends ConsumerStatefulWidget {
 }
 
 class _DesktopSelfCheckHostState extends ConsumerState<DesktopSelfCheckHost> {
+  StreamSubscription<LogRecord>? _logs;
+  VoidCallback? _stopWatching;
+
   @override
   void initState() {
     super.initState();
+    // The log of the app on the output as well, for the log of the run: the app keeps it in its database otherwise
+    _logs = Logger.root.onRecord.listen(
+      (record) => debugPrint(
+        '${record.level.name} ${record.loggerName}: ${record.message}${record.error == null ? '' : ': ${record.error}'}',
+      ),
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_run()));
+  }
+
+  @override
+  void dispose() {
+    unawaited(_logs?.cancel());
+    _stopWatching?.call();
+    super.dispose();
   }
 
   Future<void> _run() async {
@@ -105,6 +127,36 @@ class _DesktopSelfCheckHostState extends ConsumerState<DesktopSelfCheckHost> {
     // Printed for the log of the run, written for its checks
     debugPrint('Immuch360 self check: ${const JsonEncoder.withIndent('  ').convert(report)}');
     await _save(report, partial: false);
+    if (mounted) {
+      _watchLater();
+    }
+  }
+
+  /// What the app shows once the report is written, in the report's path followed by .later at each change of page or
+  /// of the asset in the viewer: the pages and the name of that asset after files were handed to the copy that runs
+  /// (the Finder's way)
+  void _watchLater() {
+    final router = ref.read(appRouterProvider);
+    final path = DesktopSelfCheck.laterPath(widget.reportPath);
+    void write() {
+      final later = {
+        'pages': [for (final route in router.stackData) route.name],
+        'asset': ref.read(assetViewerProvider).currentAsset?.name,
+        'at': DateTime.now().toIso8601String(),
+      };
+      try {
+        File(path).writeAsStringSync(jsonEncode(later));
+      } catch (error) {
+        _log.warning('Could not write $path: $error');
+      }
+    }
+
+    router.addListener(write);
+    final asset = ref.listenManual(assetViewerProvider.select((state) => state.currentAsset?.name), (_, _) => write());
+    _stopWatching = () {
+      router.removeListener(write);
+      asset.close();
+    };
   }
 
   /// [report] to the report file, or to the same path followed by .partial while steps are left; the partial file goes

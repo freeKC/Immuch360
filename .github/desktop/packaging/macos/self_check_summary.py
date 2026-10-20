@@ -4,7 +4,8 @@
 The macOS job of .github/workflows/immuch360-desktop.yml starts the app three times with IMMUCH360_SELF_CHECK set
 (mobile/lib/desktop/window/self_check.dart): "folder", the folder of a photo and a video on the command line, with
 the video played by libmpv for five seconds; "video", that video alone; "finder", the photo handed over by Launch
-Services as the Finder does (open -a), then the video handed to the copy that runs (finder-then-video.png). Each start leaves <name>.json (the report;
+Services as the Finder does (open -a), then the video handed to the copy that runs (finder.json.later, what the app
+showed after the report, and finder-then-video.png). Each start leaves <name>.json (the report;
 <name>.json.partial instead when the app ended before the last step, with the results of the steps before),
 <name>.log, <name>.state and <name>.png in the folder given; a start without arguments or self check before them
 leaves plain.state, and the crash reports of macOS (Immuch360*.ips) are copied there too.
@@ -14,7 +15,7 @@ leaves plain.state, and the crash reports of macOS (Immuch360*.ips) are copied t
 Prints the table of the checks. With --strict, exits 1 when one of them failed: the app ran 30 s without arguments,
 no crash was reported, it started and wrote its report both times, the secure storage gave back the secret it was
 given, libmpv was loaded and played the video, the folder opened as a page of its own, the video in the viewer, and
-the photo of the Finder's way in the viewer too.
+the photo of the Finder's way in the viewer too, then the video handed to the copy that runs.
 """
 from __future__ import annotations
 
@@ -26,6 +27,8 @@ import sys
 # The names of the pages (auto_route) that the files of the command line open
 OPENED_FILES_PAGE = 'OpenedFilesRoute'
 VIEWER_PAGE = 'AssetViewerRoute'
+# The video that make_test_media.swift makes
+TEST_VIDEO = 'test-video.mp4'
 # The video is played for five seconds from its first frame: some of it may go to the start of the decoder
 MIN_PLAYED_SECONDS = 3.0
 
@@ -104,6 +107,14 @@ def checks(folder: pathlib.Path) -> list[tuple[str, bool, str]]:
     finder_pages = (finder_report or {}).get('pages') or []
     results.append(('The photo handed over by Launch Services opened in the viewer', VIEWER_PAGE in finder_pages,
                     ' > '.join(finder_pages) or 'no page'))
+    try:
+        later = json.loads((folder / 'finder.json.later').read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        later = {}
+    later_pages = later.get('pages') or []
+    results.append(('Then the video handed to the copy that runs opened in the viewer',
+                    VIEWER_PAGE in later_pages and later.get('asset') == TEST_VIDEO,
+                    f"{' > '.join(later_pages) or 'no change of page seen'}, asset {later.get('asset')}"))
     return results
 
 

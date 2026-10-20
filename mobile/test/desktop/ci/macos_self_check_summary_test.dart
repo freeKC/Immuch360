@@ -58,10 +58,18 @@ void _tests() {
     File(p.join(folder.path, 'plain.state')).writeAsStringSync('plain: still running after 30 seconds');
   }
 
+  void writeLater(String asset) => File(p.join(folder.path, 'finder.json.later')).writeAsStringSync(
+    jsonEncode({
+      'pages': ['TabShellRoute', 'AssetViewerRoute'],
+      'asset': asset,
+    }),
+  );
+
   test('a good run passes every check', () {
     write('folder', _folderReport());
     write('video', _videoReport);
     write('finder', _videoReport);
+    writeLater('test-video.mp4');
     final run = runCiScript(_script, [folder.path, '--strict']);
     expect(run.exitCode, 0, reason: '$run');
     expect(run.output, isNot(contains('FAILED')));
@@ -106,6 +114,16 @@ void _tests() {
     final run = runCiScript(_script, [folder.path, '--strict']);
     expect(run.exitCode, 1);
     expect(run.output, contains('Immuch360 Desktop-2026-10-20-114458.ips'));
+  });
+
+  test('a video handed to the copy that runs and not shown fails', () {
+    write('folder', _folderReport());
+    write('video', _videoReport);
+    write('finder', _videoReport);
+    writeLater('test-photo.jpg');
+    final run = runCiScript(_script, [folder.path, '--strict']);
+    expect(run.exitCode, 1);
+    expect(run.output, contains('asset test-photo.jpg'));
   });
 
   test('a start that ended before the last step: its partial report is read, and the start fails', () {
