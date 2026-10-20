@@ -8,7 +8,8 @@
 # libplacebo's OpenGL, Vulkan and Direct3D backends, its shader compilers, LCMS, libdovi, xxhash and unwind are off.
 # Its sources come without their git submodules: fast_float (header only, for std::from_chars on floats, which the
 # libc++ of macOS 12 lacks) is put in 3rdparty/ from packages.lock.nix; Jinja2 and MarkupSafe, the Python modules of
-# its shader preprocessor, come from nixpkgs as build tools.
+# its shader preprocessor, come from nixpkgs as build tools, on PYTHONPATH: Meson runs the preprocessor with its own
+# Python (find_installation()), not with one that has them, and adds the empty submodule folders after that path.
 {
   pkgs ? import ../../utils/default/pkgs.nix,
   os ? import ../../utils/default/os.nix,
@@ -40,10 +41,10 @@ let
     mkdir -p $out/3rdparty/fast_float
     cp -r ${fastFloat}/include $out/3rdparty/fast_float/
   '';
-  python = pkgs.python3.withPackages (ps: [
-    ps.jinja2
-    ps.markupsafe
-  ]);
+  pythonPath = pkgs.python3Packages.makePythonPath [
+    pkgs.python3Packages.jinja2
+    pkgs.python3Packages.markupsafe
+  ];
 in
 
 pkgs.stdenvNoCC.mkDerivation {
@@ -57,8 +58,9 @@ pkgs.stdenvNoCC.mkDerivation {
     pkgs.meson
     pkgs.ninja
     pkgs.pkg-config
-    python
+    pkgs.python3
   ];
+  PYTHONPATH = pythonPath;
   configurePhase = ''
     meson setup build $src \
       --native-file ${nativeFile} \

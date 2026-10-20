@@ -832,6 +832,8 @@ jobs:
         working-directory: recipe
         env:
           XCODE_PATH: ${{ steps.xcode.outputs.path }}
+          # Every library that can build is built, so that one failure does not hide the next one
+          NIX_CONFIG: keep-going = true
         run: |
           nix --version
           # The recipe's Makefile: the version and the Xcode written to .nix/config, then nix build in the sandbox
