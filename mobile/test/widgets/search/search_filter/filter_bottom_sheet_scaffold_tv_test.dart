@@ -208,6 +208,18 @@ void main() {
       expect(tester.getRect(find.byKey(const Key('search_filter_apply'))).right, lessThan(960));
       expect(tester.getRect(find.byKey(const Key('search_filter_apply'))).bottom, lessThan(513));
       expect(find.byType(RadioListTile<int>), findsNWidgets(6));
+      // The last choice starts below the visible area on a 540 dp TV.
+      // Scrolling it into view must not move the persistent action buttons.
+      final scrollable = find.descendant(
+        of: find.byType(StarRatingPicker),
+        matching: find.byType(SingleChildScrollView),
+      );
+      expect(scrollable, findsOneWidget);
+      final initialApply = tester.getRect(find.byKey(const Key('search_filter_apply')));
+      await tester.drag(scrollable, const Offset(0, -160));
+      await tester.pumpAndSettle();
+      expect(tester.getRect(find.byKey(const Key('star_5'))).bottom, lessThanOrEqualTo(513));
+      expect(tester.getRect(find.byKey(const Key('search_filter_apply'))), initialApply);
     });
 
     testWidgets('Location-like dropdown form fits beside the TV action rail', (tester) async {
