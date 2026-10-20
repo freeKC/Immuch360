@@ -94,6 +94,10 @@ dependencies:
   media_kit: ^1.2.6
   media_kit_video: ^2.0.1
   media_kit_libs_windows_video: ^1.0.11
+  # Immuch360 Desktop: the macOS libmpv frameworks, the fork's own build (.github/workflows/immuch360-libmpv.yml) in a
+  # copy of media-kit's macOS libs package whose plugin declares macos only (see its IMMUCH360-NOTE.md)
+  media_kit_libs_macos_video:
+    path: packages/media_kit_libs_macos_video
   # Immuch360 Desktop: the decoders of the GPU in use (Direct3D 11 on Windows, through dart:ffi), the fork's own
   # package; its plugin declares windows only, used under lib/desktop/ only
   immuch_desktop_video:

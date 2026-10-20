@@ -743,7 +743,7 @@ jobs:
           done < archives.txt
 
       # The licence files of each library, as its sources hold them, for the release and for the notices of the app
-      # (mobile/packages/media_kit_libs_macos_video/NOTICES.md)
+      # (licenses/NOTICES.md in the sources of mobile/packages/media_kit_libs_macos_video)
       - name: Licence texts
         run: |
           mkdir -p licenses work
@@ -955,7 +955,7 @@ jobs:
             echo "libmpv (mpv with FFmpeg) for macOS, arm64 and x86_64, macOS 12 and later, built by .github/workflows/immuch360-libmpv.yml for Immuch360 Desktop. Not an app release: the macOS build of the app downloads the xcframeworks of this release through Swift Package Manager, each checked by its SHA-256."
             echo
             echo "- Recipe: \`$MACOS_RECIPE_REPOSITORY\` at \`$MACOS_RECIPE_REF\` with \`.github/desktop/libmpv-macos\`: FFmpeg and mpv at the commits of the Windows build, every library and archive in \`BUILDINFO-macos.txt\`."
-            echo "- Licence: GNU LGPL version 3 or later for libmpv and FFmpeg as built (mpv -Dgpl=false, FFmpeg --enable-version3 without GPL or nonfree parts); the licence texts of each library are in \`$TAG-licenses.tar.gz\`, the notices in \`mobile/packages/media_kit_libs_macos_video/NOTICES.md\`."
+            echo "- Licence: GNU LGPL version 3 or later for libmpv and FFmpeg as built (mpv -Dgpl=false, FFmpeg --enable-version3 without GPL or nonfree parts); the licence texts of each library are in \`$TAG-licenses.tar.gz\`, the notices in \`licenses/NOTICES.md\` of \`mobile/packages/media_kit_libs_macos_video\` and in the app."
             echo "- Corresponding source: \`$TAG-sources.tar.xz\` (the recipe with the overlay, and every archive it builds from)."
             echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
             echo

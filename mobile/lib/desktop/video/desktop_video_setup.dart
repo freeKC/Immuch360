@@ -13,8 +13,10 @@ final _log = Logger('DesktopVideo');
 
 bool _available = false;
 
-/// Whether libmpv was loaded at start. Only Windows carries it so far (media_kit_libs_windows_video): Linux and macOS
-/// get their libs packages in phase 4, and until then their players have no library to open.
+/// Whether libmpv was loaded at start. Windows carries it in media_kit_libs_windows_video, macOS in
+/// media_kit_libs_macos_video (Mpv.framework and its libraries in the app's Frameworks folder, the project's own build
+/// of .github/workflows/immuch360-libmpv.yml); Linux gets its libs package later, and until then its players have no
+/// library to open.
 bool get desktopVideoAvailable => _available;
 
 /// For the tests of the pages on a computer, which have no libmpv: with a pool of fake players they play as if it
@@ -22,13 +24,18 @@ bool get desktopVideoAvailable => _available;
 @visibleForTesting
 set desktopVideoAvailable(bool available) => _available = available;
 
+/// Whether the app of this computer bundles libmpv: Windows and macOS. On macOS the 360°, 3D and raw players draw flat
+/// with their reason, as renderer C is Windows only (PluginRenderer.supported).
+bool get desktopVideoBundled => CurrentPlatform.isWindows || CurrentPlatform.isMacOS;
+
 void setUpDesktopVideo() {
-  if (!CurrentPlatform.isWindows) {
+  if (!desktopVideoBundled) {
     _log.info('No libmpv on this operating system yet: videos are not played');
     return;
   }
   try {
-    // Finds libmpv-2.dll next to the executable, where the libs package's CMake puts it
+    // Finds libmpv-2.dll next to the executable on Windows, where the libs package's CMake puts it, and
+    // Mpv.framework/Mpv on macOS, which the app links through media_kit_video and loads with the app
     MediaKit.ensureInitialized();
     _available = true;
     // The decoders of the GPU in use, read in the background now (0.1 to 0.4 s, more at the driver's first start), so
