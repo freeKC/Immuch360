@@ -8,8 +8,11 @@ name: Immuch360 Desktop
 #                  version numbers of the desktop builds (.github/desktop/desktop_version.py)
 #   gates          the checks that keep the phones as they are and the desktop code in its place, without Flutter
 #   test           analyze, the whole mobile suite (test/desktop included) and the Android and iOS plugin lists
-#   linux          the Linux build on the oldest supported Ubuntu (for its glibc), and its .deb and .rpm (nFPM)
-#   linux-packages each package installed in a clean container of a distribution, its libraries checked
+#   linux          the Linux build on the oldest supported Ubuntu (for its glibc), with libsmb2 built there too, the
+#                  video tests on the system's libmpv, its .deb and .rpm (nFPM), and the build playing a video on a
+#                  virtual screen (Xvfb)
+#   linux-packages each package installed in a clean container of a distribution, its libraries checked, and the
+#                  installed app playing a video there
 #   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
 #                  Launch Services, and a first start of the app on the runner
 #   windows        desktop tests on a real Windows, the release build, the ZIP and the installer (Inno Setup) for the
@@ -212,12 +215,16 @@ jobs:
 
       # The list of the Flutter Linux setup (clang, CMake, Ninja, GTK, liblzma, libstdc++ 12 for the clang of 22.04),
       # libsecret for flutter_secure_storage_linux, WebKitGTK 4.1 and libsoup 3 for desktop_webview_window (the OAuth
-      # window of flutter_web_auth_2), and patchelf for the RUNPATH of the libraries in the .deb and the .rpm
+      # window of flutter_web_auth_2), patchelf for the RUNPATH of the libraries in the .deb and the .rpm, the headers
+      # of libmpv for media_kit_video (libmpv-dev, which brings libmpv1, the libmpv of Ubuntu 22.04, for the video tests
+      # and the start below; the app links none: mobile/packages/media_kit_video/IMMUCH360-NOTE.md, patch 8), and the
+      # virtual screen of that start with its captures (Xvfb, xwd, ImageMagick) and sqlite3 to read the app's log
       - name: Linux build packages
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev \
-            libsecret-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev patchelf
+            libsecret-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev patchelf libmpv-dev xvfb xauth x11-apps \
+            imagemagick sqlite3
 
       - name: Install mise
         uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
@@ -233,10 +240,17 @@ jobs:
           name: generated-dart
           path: mobile
 
+      # dart_smb2 downloads a libsmb2.so built on glibc 2.38, which Ubuntu 22.04 and Debian 12 do not have: the same
+      # sources are built here on 22.04 and bundled instead (mobile/packages/dart_smb2/IMMUCH360-NOTE.md). The script
+      # checks the commits, the exported functions against the release's library, and the glibc it asks for
+      - name: libsmb2 built on Ubuntu 22.04
+        run: bash .github/desktop/libsmb2/build_linux.sh "$RUNNER_TEMP/libsmb2"
+
       - name: Build
         working-directory: mobile
         env:
           BUILD_NUMBER: ${{ needs.codegen.outputs.build_number }}
+          IMMUCH360_LIBSMB2: ${{ runner.temp }}/libsmb2/libsmb2.so
         run: |
           tar -xf generated-dart.tar && rm generated-dart.tar
           mise exec -- flutter pub get --enforce-lockfile
@@ -279,14 +293,46 @@ jobs:
           retention-days: 14
           if-no-files-found: error
 
+      # The tests of test/desktop that need a real libmpv, skipped by the test job (no libmpv there), here with the
+      # libmpv1 of Ubuntu 22.04, the oldest the packages accept (libmpv_for_tests.dart): FFmpeg's answer to a camera's
+      # Digest challenge (the Tapo live view), the references a file may not open, the app's player on a path and
+      # through the media bridge (the folders, the shares and the server)
+      - name: Desktop tests on the system's libmpv
+        working-directory: mobile
+        run: |
+          mise exec -- flutter test test/desktop/video/camera_live_libmpv_test.dart \
+            test/desktop/video/mpv_references_test.dart test/desktop/video/desktop_player_libmpv_test.dart
+
+      # The release build started with a 6 second clip as a file opened with the program, on a virtual screen with
+      # software rendering: the app must still run, the picture must change over 5 seconds of playback and the app's
+      # log must hold no error of its players (packaging/linux/video_smoke.sh); the captures are an artifact. Run after a
+      # failed test above too, once the packages are made
+      - name: A video played on a virtual screen
+        if: ${{ !cancelled() && steps.packages.outcome == 'success' }}
+        run: |
+          xvfb-run -a -s "-screen 0 1280x800x24" sh .github/desktop/packaging/linux/video_smoke.sh \
+            mobile/build/linux/x64/release/bundle/immuch360 "$PWD/mobile/test/fixtures/video/flat-6s.mp4" video-smoke
+
+      - name: Upload the video start
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: linux-video-smoke
+          path: video-smoke/
+          retention-days: 14
+          if-no-files-found: ignore
+
   # Each package installed as a user would install it, in a clean container: the package manager brings the
-  # dependencies the package declares, then every library the ELF files need must be found, libmpv among them, the
-  # desktop entry must be valid and the MIME types of the raw camera files registered (check_package.sh). The oldest
+  # dependencies the package declares, then every library the ELF files need must be found, libmpv and libsmb2 among
+  # them, the desktop entry must be valid, the MIME types of the raw camera files registered, and the installed app
+  # must play a short video on a virtual screen with the distribution's libmpv (check_package.sh --video). The oldest
   # and newest Ubuntu LTS, Debian stable, Fedora 40 and the newest Fedora.
+  # The packages are checked once uploaded, even when a later step of the linux job failed (its tests, its video start)
   linux-packages:
     name: Linux package on ${{ matrix.image }}
     runs-on: ubuntu-24.04
     needs: linux
+    if: ${{ !cancelled() }}
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -321,8 +367,9 @@ jobs:
           PACKAGE: ${{ matrix.package }}
         run: |
           file=$(cd dist && ls ./*."$PACKAGE")
-          docker run --rm -v "$PWD/dist:/pkgs:ro" -v "$PWD/.github/desktop/packaging/linux:/check:ro" "$IMAGE" \
-            sh /check/check_package.sh "/pkgs/${file#./}"
+          docker run --rm -v "$PWD/dist:/pkgs:ro" -v "$PWD/.github/desktop/packaging/linux:/check:ro" \
+            -v "$PWD/mobile/test/fixtures/video:/clips:ro" "$IMAGE" \
+            sh /check/check_package.sh "/pkgs/${file#./}" --video /clips/flat-6s.mp4
 
   windows:
     name: Windows desktop tests, build and ZIP
@@ -454,8 +501,8 @@ jobs:
       # The desktop tests of the first step skip what needs the DLLs of a build (libmpv, ANGLE, the decoder probe),
       # which did not exist yet. Run here on the build itself, after the ZIP was made from it, so that the libmpv the
       # ZIP ships is the one checked: FFmpeg's answer to a camera's Digest challenge with the percent-encoded account,
-      # no account or rtsp:// address in mpv's lines (camera_live_windows_test), the references a file may not open
-      # (mpv_references_test), the app's player on a path and through the media bridge (desktop_player_windows_test),
+      # no account or rtsp:// address in mpv's lines (camera_live_libmpv_test), the references a file may not open
+      # (mpv_references_test), the app's player on a path and through the media bridge (desktop_player_libmpv_test),
       # the GLSL of renderer C compiled and drawn by ANGLE (plugin_shaders_windows_test: the hosted runners have no GPU,
       # so ANGLE's Direct3D 11 device is Windows' Basic Render Driver, which draws in software). The tests that need a
       # GPU's video decoder or mpv drawing into ANGLE (decoder_probe_windows_test, libmpv_probe_test) stay on the PC.
@@ -464,8 +511,8 @@ jobs:
         env:
           IMMUCH360_BUILD_DIR: build/windows/x64/runner/Release
         run: |
-          flutter test test/desktop/video/camera_live_windows_test.dart test/desktop/video/mpv_references_test.dart \
-            test/desktop/video/desktop_player_windows_test.dart test/desktop/video/plugin_shaders_windows_test.dart
+          flutter test test/desktop/video/camera_live_libmpv_test.dart test/desktop/video/mpv_references_test.dart \
+            test/desktop/video/desktop_player_libmpv_test.dart test/desktop/video/plugin_shaders_windows_test.dart
 
   macos:
     name: macOS build, ZIP and DMG

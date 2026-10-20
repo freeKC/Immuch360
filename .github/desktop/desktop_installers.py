@@ -125,11 +125,13 @@ MACOS_IMPORTED = {
 # The libraries the Linux bundle needs from the system. Its ELF files link GTK 3 and GLib (the Flutter engine and every
 # plugin), libsecret (flutter_secure_storage_linux), WebKitGTK 4.1 with libsoup 3 (desktop_webview_window, the window
 # of a server's OAuth sign in), libepoxy (the engine), and glibc 2.34 and libstdc++ of GCC 11 at least (the build runs
-# on Ubuntu 22.04); libmpv is not linked but opened by media_kit when a video plays (libmpv.so, .so.2 or .so.1).
-# Debian and Ubuntu renamed some libraries for 64 bit time (libgtk-3-0t64 on Ubuntu 24.04 and Debian 13): either name
-# satisfies the package. libsmb2.so, which dart_smb2 downloads already built, needs glibc 2.38; it is opened when an SMB
-# share is browsed, so on an older glibc the app runs without SMB shares. Checked by packaging/linux/check_package.sh in
-# containers: every library each ELF file of /opt/immuch360 needs is found once the package is installed.
+# on Ubuntu 22.04); libmpv is not linked but opened by media_kit and media_kit_video when the app starts (libmpv.so,
+# .so.2 or .so.1, whichever the distribution has: the videos play with it, mobile/packages/media_kit_video/
+# IMMUCH360-NOTE.md, patch 8). Debian and Ubuntu renamed some libraries for 64 bit time (libgtk-3-0t64 on Ubuntu 24.04 and Debian 13):
+# either name satisfies the package. libsmb2.so, which dart_smb2 would download built on glibc 2.38, is built on Ubuntu
+# 22.04 by the workflow (.github/desktop/libsmb2/build_linux.sh), so the SMB shares open on every system the packages
+# accept. Checked by packaging/linux/check_package.sh in containers: every library each ELF file of /opt/immuch360 needs
+# is found once the package is installed, and the installed app plays a video.
 DEB_DEPENDS = [
     'libc6 (>= 2.34)',
     'libstdc++6 (>= 11)',

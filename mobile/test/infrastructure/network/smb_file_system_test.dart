@@ -3,8 +3,8 @@
 //
 // The real tests load libsmb2 from IMMUCH_LIBSMB2 when set, else from ~/.cache/immuch-net-tests/libsmb2.so, else from
 // where the Linux build of dart_smb2 puts it. The prebuilt Linux library of dart_smb2 needs glibc 2.38; on an older
-// system build one with the scripts of github.com/ales-drnz/libsmb2-scripts (DART_SMB2_ROOT=<the dart_smb2 package>
-// ARCHS=x86_64 scripts/build_libsmb2_linux.sh, same libsmb2 and patches as the app) and copy it to
+// system build the one the Linux packages carry, from the same libsmb2 and patches
+// (.github/desktop/libsmb2/build_linux.sh OUT_DIR, as the desktop workflow does), and copy OUT_DIR/libsmb2.so to
 // ~/.cache/immuch-net-tests/libsmb2.so.
 
 // ignore_for_file: invalid_use_of_internal_member

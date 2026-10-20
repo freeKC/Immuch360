@@ -177,6 +177,7 @@ void main() {
     DesktopVideoSourceResolver? resolve,
     bool pairing = false,
     String? refusePartner,
+    bool pluginSupported = true,
   }) {
     // Made in the test's own zone: the pool's futures then complete as the test pumps
     players = FakePlayers(onCreate: (engine) => engine.autoLoad = silent ? null : const Duration(seconds: 60));
@@ -210,7 +211,7 @@ void main() {
       now: () => clock,
       framesPerSecond: (_) async => 30,
       appVersion: () async => 'test',
-      pluginSupported: true,
+      pluginSupported: pluginSupported,
       memoryMB: () => 100,
       hwdecCurrent: (_) async => hwdec,
     );
@@ -228,6 +229,7 @@ void main() {
     DesktopVideoSourceResolver? resolve,
     bool pairing = false,
     String? refusePartner,
+    bool pluginSupported = true,
   }) async {
     tester.view.physicalSize = const Size(1600, 900);
     tester.view.devicePixelRatio = 1;
@@ -241,6 +243,7 @@ void main() {
       resolve: resolve,
       pairing: pairing,
       refusePartner: refusePartner,
+      pluginSupported: pluginSupported,
     );
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -393,6 +396,68 @@ void main() {
     expect(players.made.single.calls, contains('open /videos/sphere.mp4 at 0'));
     expect(mpv, ['keepaspect=no', 'keepaspect=yes'], reason: 'mpv keeps the shape of the flat frame');
     await close(tester);
+  });
+
+  // Linux (and macOS): no renderer C (PluginRenderer.supported is Windows only), so every 360°, 3D, VR180 and raw video
+  // plays flat in the same player, with the message, and the plugin is never asked for a projection
+  group('without renderer C (Linux)', () {
+    const flatMessage = 'This computer cannot show the 360° view of this video: it plays flat.';
+
+    testWidgets('a 360° video plays flat at once, with the message', (tester) async {
+      await pumpLauncher(
+        tester,
+        const SphericalPlayerArgs(url: '/videos/sphere.mp4', title: 'sphere.mp4'),
+        pluginSupported: false,
+      );
+      expect(page(tester).rendering, const SphereRendering.flat(FlatReason.unsupported));
+      expect(find.text(flatMessage), findsOneWidget);
+      final engine = players.made.single;
+      expect(engine.calls, contains('open /videos/sphere.mp4 at 0'));
+      expect(engine.calls.last, 'play');
+      expect(channel.setups, isEmpty, reason: 'no projection asked of the plugin');
+      expect(mpv, isNot(contains('keepaspect=no')), reason: 'the flat frame keeps its shape');
+      await close(tester);
+      expect(session.closings, [(StereoLayout.mono, SphereCoverage.full)]);
+    });
+
+    testWidgets('a VR180 3D video plays flat, with the message', (tester) async {
+      await pumpLauncher(
+        tester,
+        const SphericalPlayerArgs(
+          url: '/videos/vr180.mp4',
+          title: 'vr180.mp4',
+          layout: StereoLayout.leftRight,
+          coverage: SphereCoverage.half,
+        ),
+        pluginSupported: false,
+      );
+      expect(page(tester).rendering, const SphereRendering.flat(FlatReason.unsupported));
+      expect(find.text(flatMessage), findsOneWidget);
+      expect(players.made.single.calls, contains('open /videos/vr180.mp4 at 0'));
+      expect(channel.setups, isEmpty);
+      await close(tester);
+    });
+
+    testWidgets('a raw file of two lenses shows them as the camera recorded them, with the phones\' message', (
+      tester,
+    ) async {
+      final pair = _pair.replaceFirst('"secondUrl":null', '"secondUrl":"/videos/VID_20240908_193126_10_004.insv"');
+      const first = '/videos/VID_20240908_193126_00_004.insv';
+      await pumpLauncher(
+        tester,
+        SphericalPlayerArgs(url: first, title: 'x3.insv', rawProjection: pair),
+        pluginSupported: false,
+      );
+      expect(page(tester).rendering, const SphereRendering.flat(FlatReason.unsupported));
+      expect(
+        find.text('The 360° stitching failed on this device. The video shows as the camera recorded it.'),
+        findsOneWidget,
+      );
+      expect(players.made, hasLength(1), reason: 'no second player without renderer C');
+      expect(players.made.single.calls, contains('open $first at 0'));
+      expect(channel.setups, isEmpty);
+      await close(tester);
+    });
   });
 
   // The X3 pair with its second file next to it

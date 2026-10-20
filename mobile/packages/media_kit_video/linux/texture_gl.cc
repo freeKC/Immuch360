@@ -7,6 +7,7 @@
 // LICENSE file.
 
 #include "include/media_kit_video/texture_gl.h"
+#include "include/media_kit_video/mpv_symbols.h"
 
 #include <epoxy/gl.h>
 #include <epoxy/egl.h>
@@ -247,7 +248,7 @@ gboolean texture_gl_populate_texture(FlTextureGL* texture,
         {MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME, &block_for_target_time},
         {MPV_RENDER_PARAM_INVALID, NULL},
     };
-    mpv_render_context_render(render_context, params);
+    mpv_symbols()->render_context_render(render_context, params);
     
     // Unbind FBO
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

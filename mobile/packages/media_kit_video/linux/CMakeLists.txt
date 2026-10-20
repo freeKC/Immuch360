@@ -21,13 +21,21 @@ if(MEDIA_KIT_LIBS_AVAILABLE)
     "video_output_manager.cc"
     "video_output.cc"
     "utils.cc"
+    "mpv_symbols.cc"
   )
 
   apply_standard_settings(${PLUGIN_NAME})
 
   # Check for libmpv & epoxy headers & libraries.
+  # Immuch360 (IMMUCH360-NOTE.md, patch 8): the headers of libmpv only. The
+  # library is not linked: mpv_symbols.cc finds its functions at run time in the
+  # libmpv media_kit opened, libmpv.so.2 or libmpv.so.1 alike.
   find_package(PkgConfig REQUIRED)
-  pkg_check_modules(mpv IMPORTED_TARGET mpv)
+  pkg_check_modules(mpv mpv)
+  if(NOT mpv_FOUND)
+    message(FATAL_ERROR "media_kit_video: the headers of libmpv are missing: "
+      "install libmpv-dev (Debian, Ubuntu) or mpv-devel (Fedora)")
+  endif()
   pkg_check_modules(epoxy IMPORTED_TARGET epoxy)
 
   set_target_properties(
@@ -54,8 +62,8 @@ if(MEDIA_KIT_LIBS_AVAILABLE)
     ${PLUGIN_NAME} PRIVATE
     flutter
     PkgConfig::GTK
-    PkgConfig::mpv
     PkgConfig::epoxy
+    ${CMAKE_DL_LIBS}
   )
 else()
   message(NOTICE "media_kit: WARNING: package:media_kit_libs_*** not found.")

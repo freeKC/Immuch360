@@ -87,13 +87,15 @@ dependencies:
   # Immuch360 Desktop: the window (title, smallest size, close guard, full screen); Windows, macOS and Linux only, used
   # under lib/desktop/ only
   window_manager: ^0.5.2
-  # Immuch360 Desktop: video through libmpv, used under lib/desktop/ only. The three packages are copies of one
+  # Immuch360 Desktop: video through libmpv, used under lib/desktop/ only. The four packages are copies of one
   # media-kit commit in packages/ (dependency_overrides below, changes in their IMMUCH360-NOTE.md); the libmpv and ANGLE
-  # libraries come with the Windows libs package, whose plugin declares windows only. Never media_kit_libs_video: it
+  # libraries come with the Windows libs package, whose plugin declares windows only; the Linux libs package, linux
+  # only, bundles nothing (libmpv is the system's) and switches the texture plugin on. Never media_kit_libs_video: it
   # brings the Android and iOS libs packages, which would put libmpv into the phone apps
   media_kit: ^1.2.6
   media_kit_video: ^2.0.1
   media_kit_libs_windows_video: ^1.0.11
+  media_kit_libs_linux: ^1.2.1
   # Immuch360 Desktop: the decoders of the GPU in use (Direct3D 11 on Windows, through dart:ffi), the fork's own
   # package; its plugin declares windows only, used under lib/desktop/ only
   immuch_desktop_video:
@@ -154,9 +156,11 @@ dependency_overrides:
   # Immuch360 Desktop: copies of github.com/media-kit/media-kit at c533e446755f51cf53c7e57aea873f2aa5355f81 (the newest
   # commit of main on 2026-10-08): media_kit without its web asset, which every app build would bundle, phones
   # included; media_kit_video with the computers as its only plugin platforms and two patches; the Windows libs package
-  # with a build fix (see their IMMUCH360-NOTE.md)
+  # with a build fix; the Linux libs package without its mimalloc download (see their IMMUCH360-NOTE.md)
   media_kit:
     path: packages/media_kit
+  media_kit_libs_linux:
+    path: packages/media_kit_libs_linux
   media_kit_libs_windows_video:
     path: packages/media_kit_libs_windows_video
   media_kit_video:

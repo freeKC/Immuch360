@@ -1,20 +1,17 @@
-// The app's player over the libmpv of the Windows build (REV-SEC and REV-GPU of phase 2a): with what a file refers to
-// refused (access-references, off from the creation of the player), a real video still opens, from its path and
-// through the media bridge, given to mpv by loadfile, and the same player opens the next one. What a crafted file must
-// not open is checked by mpv_references_test.dart. From the open to the first frame, no file of %TEMP% holds the
-// address (media_kit's own open writes it to a list file there for five seconds; desktop_player_open_test.dart checks
-// DesktopPlayer without libmpv).
+// The app's player over a real libmpv (REV-SEC and REV-GPU of phase 2a): with what a file refers to refused
+// (access-references, off from the creation of the player), a real video still opens, from its path and through the
+// media bridge, given to mpv by loadfile, and the same player opens the next one. What a crafted file must not open is
+// checked by mpv_references_test.dart. From the open to the first frame, no file of the temporary folder (%TEMP%, /tmp)
+// holds the address (media_kit's own open writes it to a list file there for five seconds;
+// desktop_player_open_test.dart checks DesktopPlayer without libmpv).
 //
-// Windows only, after a Windows build of the app (it holds libmpv-2.dll):
-//   flutter build windows --debug -t lib/main_desktop.dart
-//   flutter test test/desktop/video/desktop_player_windows_test.dart
-// IMMUCH360_BUILD_DIR may name another folder holding libmpv-2.dll.
+// On Windows the libmpv of a build of the app, on Linux the system's (libmpv_for_tests.dart): the videos of the
+// folders, of the shares and of the server, and their thumbnails, play through it there.
+//   flutter test test/desktop/video/desktop_player_libmpv_test.dart
 
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:ffi/ffi.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
@@ -22,25 +19,10 @@ import 'package:immich_mobile/desktop/video/video_thumbnail_grabber.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:path/path.dart' as p;
 
+import 'libmpv_for_tests.dart';
 import 'mpv_measure_support.dart';
-
-/// The folder of the Windows build that holds libmpv, null when there is none
-String? _buildDir() {
-  final given = Platform.environment['IMMUCH360_BUILD_DIR'];
-  final candidates = [
-    if (given != null && given.isNotEmpty) given,
-    for (final mode in ['Debug', 'Profile', 'Release']) p.join('build', 'windows', 'x64', 'runner', mode),
-  ];
-  for (final dir in candidates) {
-    if (File(p.join(dir, 'libmpv-2.dll')).existsSync()) {
-      return p.absolute(dir);
-    }
-  }
-  return null;
-}
 
 /// One file of this computer as a share, for the media bridge
 class _OneFileSystem implements NetworkFileSystem {
@@ -81,12 +63,9 @@ class _OneFileSystem implements NetworkFileSystem {
 bool _isJpeg(Uint8List? bytes) => bytes != null && bytes.length > 2 && bytes[0] == 0xFF && bytes[1] == 0xD8;
 
 void main() {
-  final buildDir = Platform.isWindows ? _buildDir() : null;
-  final skip = !Platform.isWindows
-      ? 'libmpv of the Windows build: Windows only'
-      : buildDir == null
-      ? 'no Windows build with libmpv-2.dll (flutter build windows first, or set IMMUCH360_BUILD_DIR)'
-      : false;
+  final libmpv = libmpvForTests();
+  final library = libmpv.library;
+  final skip = libmpv.skip ?? false;
 
   late Directory dir;
   late File video;
@@ -94,14 +73,10 @@ void main() {
   late _OneFileSystem share;
 
   setUpAll(() async {
-    if (buildDir == null) {
+    if (library == null) {
       return;
     }
-    final setDllDirectory = DynamicLibrary.open(
-      'kernel32.dll',
-    ).lookupFunction<Int32 Function(Pointer<Utf16>), int Function(Pointer<Utf16>)>('SetDllDirectoryW');
-    using((arena) => setDllDirectory(buildDir.toNativeUtf16(allocator: arena)));
-    MediaKit.ensureInitialized(libmpv: p.join(buildDir, 'libmpv-2.dll'));
+    loadLibmpvForTests(library);
     dir = await Directory.systemTemp.createTemp('immuch360_player_');
     video = await aviReference(dir, width: 640, height: 360, frames: 90);
     share = _OneFileSystem(video);
@@ -111,7 +86,7 @@ void main() {
   });
 
   tearDownAll(() async {
-    if (buildDir == null) {
+    if (library == null) {
       return;
     }
     await bridge.stop();
@@ -185,7 +160,7 @@ void main() {
               // Another program's file, binary or locked
             }
           }
-          expect(holding, isEmpty, reason: 'files of %TEMP% that hold the address');
+          expect(holding, isEmpty, reason: 'files of the temporary folder that hold the address');
         }
       } finally {
         await watch.cancel();

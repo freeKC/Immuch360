@@ -4,39 +4,21 @@
 // (DesktopPlayer.open); here each kind of file is opened by the thumbnail grabber, from its path and through the media
 // bridge, with its references pointing at a server of this test on 127.0.0.1 that must receive nothing.
 //
-// Windows only, after a Windows build of the app (it holds libmpv-2.dll):
-//   flutter build windows --debug -t lib/main_desktop.dart
+// On Windows the libmpv of a build of the app, on Linux the system's (libmpv_for_tests.dart):
 //   flutter test test/desktop/video/mpv_references_test.dart
-// IMMUCH360_BUILD_DIR may name another folder holding libmpv-2.dll.
 
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:ffi/ffi.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/video_thumbnail_grabber.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:path/path.dart' as p;
 
-/// The folder of the Windows build that holds libmpv, null when there is none
-String? _buildDir() {
-  final given = Platform.environment['IMMUCH360_BUILD_DIR'];
-  final candidates = [
-    if (given != null && given.isNotEmpty) given,
-    for (final mode in ['Debug', 'Profile', 'Release']) p.join('build', 'windows', 'x64', 'runner', mode),
-  ];
-  for (final dir in candidates) {
-    if (File(p.join(dir, 'libmpv-2.dll')).existsSync()) {
-      return p.absolute(dir);
-    }
-  }
-  return null;
-}
+import 'libmpv_for_tests.dart';
 
 /// The files of a folder as a share, for the media bridge
 class _FolderFileSystem implements NetworkFileSystem {
@@ -98,12 +80,9 @@ Map<String, String> _referencingFiles(String target) => {
 };
 
 void main() {
-  final buildDir = Platform.isWindows ? _buildDir() : null;
-  final skip = !Platform.isWindows
-      ? 'libmpv of the Windows build: Windows only'
-      : buildDir == null
-      ? 'no Windows build with libmpv-2.dll (flutter build windows first, or set IMMUCH360_BUILD_DIR)'
-      : false;
+  final libmpv = libmpvForTests();
+  final library = libmpv.library;
+  final skip = libmpv.skip ?? false;
 
   late HttpServer canary;
   final requests = <String>[];
@@ -117,14 +96,10 @@ void main() {
   );
 
   setUpAll(() async {
-    if (buildDir == null) {
+    if (library == null) {
       return;
     }
-    final setDllDirectory = DynamicLibrary.open(
-      'kernel32.dll',
-    ).lookupFunction<Int32 Function(Pointer<Utf16>), int Function(Pointer<Utf16>)>('SetDllDirectoryW');
-    using((arena) => setDllDirectory(buildDir.toNativeUtf16(allocator: arena)));
-    MediaKit.ensureInitialized(libmpv: p.join(buildDir, 'libmpv-2.dll'));
+    loadLibmpvForTests(library);
 
     canary = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     canary.listen((request) {
@@ -153,7 +128,7 @@ void main() {
   });
 
   tearDownAll(() async {
-    if (buildDir == null) {
+    if (library == null) {
       return;
     }
     await bridge.stop();

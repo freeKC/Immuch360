@@ -1,43 +1,26 @@
-// The live view's address and account through the libmpv of the Windows build (V-LIVE, design 5.5): FFmpeg's RTSP
-// client decodes the percent-encoded account of the address (cameraRtspUrlWithAccount) and answers the camera's Digest
-// challenge with it, whatever the characters of the password; a refused account is asked once; mpv's lines never
-// show the account. The simulated camera is the one of the probe's tests (rtsp_probe_test.dart): OPTIONS, DESCRIBE
-// refused with a Digest challenge, DESCRIBE again checked against the account, then an SDP like the cameras'. It
-// sends no media: the open ends after the SETUP, which is all these checks need.
+// The live view's address and account through a real libmpv (V-LIVE, design 5.5): FFmpeg's RTSP client decodes the
+// percent-encoded account of the address (cameraRtspUrlWithAccount) and answers the camera's Digest challenge with it,
+// whatever the characters of the password; a refused account is asked once; mpv's lines never show the account. The
+// simulated camera is the one of the probe's tests (rtsp_probe_test.dart): OPTIONS, DESCRIBE refused with a Digest
+// challenge, DESCRIBE again checked against the account, then an SDP like the cameras'. It sends no media: the open
+// ends after the SETUP, which is all these checks need.
 //
-// Windows only, after a Windows build of the app (it holds libmpv-2.dll):
-//   flutter build windows --debug -t lib/main_desktop.dart
-//   flutter test test/desktop/video/camera_live_windows_test.dart
-// IMMUCH360_BUILD_DIR may name another folder holding libmpv-2.dll.
+// On Windows the libmpv of a build of the app, on Linux the system's, as the Tapo live view gets it there (with the
+// FFmpeg of the distribution): see libmpv_for_tests.dart.
+//   flutter test test/desktop/video/camera_live_libmpv_test.dart
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
-import 'package:ffi/ffi.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/camera_live_view.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/infrastructure/tapo/tapo_crypto.dart';
 import 'package:logging/logging.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:path/path.dart' as p;
 
-/// The folder of the Windows build that holds libmpv, null when there is none
-String? _buildDir() {
-  final given = Platform.environment['IMMUCH360_BUILD_DIR'];
-  final candidates = [
-    if (given != null && given.isNotEmpty) given,
-    for (final mode in ['Debug', 'Profile', 'Release']) p.join('build', 'windows', 'x64', 'runner', mode),
-  ];
-  for (final dir in candidates) {
-    if (File(p.join(dir, 'libmpv-2.dll')).existsSync()) {
-      return p.absolute(dir);
-    }
-  }
-  return null;
-}
+import 'libmpv_for_tests.dart';
 
 /// What the Tapo cameras announce, synthetic values
 const _sdp =
@@ -190,24 +173,17 @@ Future<Player> _openLive(String address, List<String> lines) async {
 }
 
 void main() {
-  final buildDir = Platform.isWindows ? _buildDir() : null;
-  final skip = !Platform.isWindows
-      ? 'libmpv of the Windows build: Windows only'
-      : buildDir == null
-      ? 'no Windows build with libmpv-2.dll (flutter build windows first, or set IMMUCH360_BUILD_DIR)'
-      : false;
+  final libmpv = libmpvForTests();
+  final library = libmpv.library;
+  final skip = libmpv.skip ?? false;
 
   late List<LogRecord> records;
 
   setUpAll(() {
-    if (buildDir == null) {
+    if (library == null) {
       return;
     }
-    final setDllDirectory = DynamicLibrary.open(
-      'kernel32.dll',
-    ).lookupFunction<Int32 Function(Pointer<Utf16>), int Function(Pointer<Utf16>)>('SetDllDirectoryW');
-    using((arena) => setDllDirectory(buildDir.toNativeUtf16(allocator: arena)));
-    MediaKit.ensureInitialized(libmpv: p.join(buildDir, 'libmpv-2.dll'));
+    loadLibmpvForTests(library);
   });
 
   setUp(() {
