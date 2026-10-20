@@ -190,6 +190,7 @@ class SearchPage extends HookConsumerWidget {
             heightFactor: 0.8,
             child: FilterBottomSheetScaffold(
               title: context.t.search_filter_tags_title,
+              tvActionRail: true,
               expanded: true,
               onSearch: handleApply,
               onClear: handleClear,
@@ -234,6 +235,7 @@ class SearchPage extends HookConsumerWidget {
           isDismissible: true,
           child: FilterBottomSheetScaffold(
             title: context.t.search_filter_location_title,
+            tvActionRail: true,
             onSearch: handleApply,
             onClear: handleClear,
             child: Padding(
@@ -279,6 +281,7 @@ class SearchPage extends HookConsumerWidget {
           isDismissible: true,
           child: FilterBottomSheetScaffold(
             title: context.t.search_filter_camera_title,
+            tvActionRail: true,
             onSearch: handleApply,
             onClear: handleClear,
             child: Padding(
@@ -354,28 +357,32 @@ class SearchPage extends HookConsumerWidget {
     }
 
     void showQuickDatePicker() {
+      final picker = QuickDatePicker(
+        currentInput: dateInputFilter.value,
+        onRequestPicker: () {
+          ContextHelper(context).pop();
+          unawaited(showDatePicker());
+        },
+        onSelect: (date) {
+          ContextHelper(context).pop();
+          datePicked(date);
+        },
+      );
+
       unawaited(
         showFilterBottomSheet(
           context: context,
-          // As high as its choices, all of them on a TV screen too (the default cap of 9/16 of the height left two);
-          // the choices scroll when the screen is lower than that
+          // On a phone as high as its choices (the default cap of 9/16 of the height left two), the choices scrolling
+          // when the screen is lower than that; on a TV the shared utility gives it 80% of the height
           isScrollControlled: true,
           child: FilterBottomSheetScaffold(
             title: context.t.pick_date_range,
+            tvActionRail: true,
             onClear: () => datePicked(null),
-            child: Flexible(
-              child: QuickDatePicker(
-                currentInput: dateInputFilter.value,
-                onRequestPicker: () {
-                  ContextHelper(context).pop();
-                  unawaited(showDatePicker());
-                },
-                onSelect: (date) {
-                  ContextHelper(context).pop();
-                  datePicked(date);
-                },
-              ),
-            ),
+            // The rail layout already gives the choices the height beside the rail, where a Flexible is an error
+            child: MediaQuery.navigationModeOf(context) == NavigationMode.directional
+                ? picker
+                : Flexible(child: picker),
           ),
         ),
       );
@@ -408,8 +415,10 @@ class SearchPage extends HookConsumerWidget {
         showFilterBottomSheet(
           context: context,
           isScrollControlled: true,
+          // The shared bottom-sheet utility now provides the TV-sized viewport.
           child: FilterBottomSheetScaffold(
             title: context.t.search_filter_media_type_title,
+            tvActionRail: true,
             onSearch: handleApply,
             onClear: handleClear,
             child: MediaTypePicker(onSelect: handleOnSelected, filter: filter.value.mediaType),
@@ -444,6 +453,7 @@ class SearchPage extends HookConsumerWidget {
           isScrollControlled: true,
           child: FilterBottomSheetScaffold(
             title: context.t.rating,
+            tvActionRail: true,
             onSearch: handleApply,
             onClear: handleClear,
             child: StarRatingPicker(onSelect: handleOnSelected, filter: filter.value.rating),
@@ -491,6 +501,7 @@ class SearchPage extends HookConsumerWidget {
           isScrollControlled: true,
           child: FilterBottomSheetScaffold(
             title: context.t.display_options,
+            tvActionRail: true,
             onSearch: handleApply,
             onClear: handleClear,
             child: DisplayOptionPicker(onSelect: handleOnSelect, filter: filter.value.display),
