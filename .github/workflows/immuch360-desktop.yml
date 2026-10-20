@@ -11,7 +11,8 @@ name: Immuch360 Desktop
 #   linux          the Linux build on the oldest supported Ubuntu (for its glibc), and its .deb and .rpm (nFPM)
 #   linux-packages each package installed in a clean container of a distribution, its libraries checked
 #   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
-#                  Launch Services, and a first start of the app on the runner
+#                  Launch Services, libmpv and its notices checked in the app, and a self check of the app on the
+#                  runner (a folder and a video on the command line, the keychain, five seconds of libmpv)
 #   windows        desktop tests on a real Windows, the release build, the ZIP and the installer (Inno Setup) for the
 #                  owner as artifacts named Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
 #                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE)
