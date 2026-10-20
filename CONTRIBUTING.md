@@ -1,56 +1,87 @@
-# Contributing to Immich
+# Contributing to Immuch360
 
-We appreciate every contribution, and we're happy about every new contributor. So please feel invited to help make Immich a better product!
+Thank you for your interest in Immuch360. Bug reports, tests on devices I do not have, fixes and new features are all welcome, on every platform the app runs on: Android phones and tablets, iPhone and iPad, Android TV and Google TV, Meta Quest, Windows, Linux and macOS.
 
-## Getting started
+## What this project is, and is not
 
-To get you started quickly we have detailed guides for the dev setup on our [website](https://docs.immich.app/developer/setup). If you prefer, you can also use [Devcontainers](https://docs.immich.app/developer/devcontainers).
-There are also additional resources about Immich's architecture, database migrations, the use of OpenAPI, and more in our [developer documentation](https://docs.immich.app/developer/architecture).
+Immuch360 is an independent fork of the [Immich](https://github.com/immich-app/immich) mobile app, under the [GNU AGPL v3](LICENSE). It keeps what the Immich app does and adds 360°, 3D and VR180 viewing, network shares, Plex, Tapo cameras, the Meta Quest immersive view, the TV layout and the computer version. The [README](README.md#the-project) explains why the fork exists, and [Platform support](docs/immuch360/platform-support.md) what each system has today.
 
-## General
+It is not the Immich project: it is not affiliated with, nor endorsed by, the Immich team or FUTO, it does not change the Immich server, and the Immich maintainers do not review this repository.
 
-Please try to keep pull requests as focused as possible. A PR should do exactly one thing and not bleed into other, unrelated areas. The smaller a PR, the fewer changes are likely needed, and the quicker it will likely be merged. For larger/more impactful PRs, please reach out to us first to discuss your plans. The best way to do this is through our [Discord](https://discord.immich.app). We have a dedicated `#contributing` channel there. Additionally, please fill out the entire template when opening a PR.
+- **A problem that also happens in the official Immich app**, or with the Immich server or web app, belongs to [Immich](https://github.com/immich-app/immich/issues).
+- **Anything specific to Immuch360** belongs here: the 360°, 3D and VR180 viewers, the shares, Plex, Tapo, the Quest, the TV, the computer version, or a bug the official app does not have.
 
-## Finding work
+If you are not sure, open the issue here. I will tell you, and point it to Immich when it belongs there.
 
-If you are looking for something to work on, there are discussions and issues with a `good-first-issue` label on them. These are always a good starting point. If none of them sound interesting or fit your skill set, feel free to reach out on our Discord. We're happy to help you find something to work on!
+## Reporting a problem
 
-We usually do not assign issues to new contributors, since it happens often that a PR is never even opened. Again, reach out on Discord if you fear putting a lot of time into fixing an issue, but ending up with a duplicate PR.
+Open an [issue](https://github.com/freeKC/Immuch360/issues/new/choose) on this repository and tell me:
 
-### Opening new issues
+- **The device and its system**: phone, tablet, TV, Quest, Windows, Linux or macOS, with the model and the system version.
+- **The build**: the App Version line at the bottom of the menu of the profile picture, at the top right (for example `3.3.0-rc.0 build.23`), or the name of the file you installed and where it came from.
+- **Where the media comes from**: the device itself, an Immich server, an SMB, WebDAV or DLNA share, Plex or a Tapo camera.
+- **What kind of media**: flat, panorama, 360°, 3D, VR180 or a raw camera file, with the camera if you know it.
+- **What you did, what you expected and what happened**, with a screenshot or a short video when you can.
+- **The logs**, if you can get them: the Logs page, in the same menu, shares them, and on a computer it also has "Save logs to a file". [Troubleshooting](docs/immuch360/troubleshooting.md#logs) lists the `adb logcat` tags for Android and the Quest. Read the logs before posting them: they can contain your server address.
 
-If you find bugs or other problems while working on something, we appreciate that you open an issue, if there is no open issue covering the problem yet. To make it easier to debug and fix the issue, please read and fill out the whole issue template.
+[Known issues](docs/immuch360/known-issues.md) lists what is already known, platform by platform.
 
-## Use of generative AI
+Ideas and feature requests are welcome too: say what you would like and why it matters to you. The [Roadmap](README.md#roadmap) says what is planned.
 
-We ask you not to open PRs generated with an LLM. We find that code generated like this tends to need a large amount of back-and-forth, which is a very inefficient use of our time. Even a one line change can have significant impact. We cannot have any confidence in an LLM, so if it's non-trivial for us to verify it works and you don't show that you fully understand all implications of the change, reviewing the PR is not worth our time. If we want LLM-generated code, it's much faster for us to use an LLM ourselves than to go through an intermediary via a pull request.
+## Proposing a change
 
-Communication should be between humans. We want to hear from you in your own words. Posting descriptions or comments that have been generated by an LLM is not acceptable, and may be grounds for us to close a thread without further comment.
-If you use an LLM to translate a PR description or title, that is fine, although we recommend using purpose-built machine translation tools instead. Please make sure either way that you stick to the PR template and that the text is written concisely.
+1. Fork the repository and create your branch from `immuch360`, the default branch.
+2. Keep one topic per pull request: one fix or one feature. Small pull requests are reviewed sooner. For something large, open an issue first so that we can agree on the approach.
+3. Build and run the app as described in [Build it yourself](docs/immuch360/build.md), code generation included, and try the change on the devices it concerns.
+4. Run the gates below, then open the pull request against `immuch360` and fill in the template.
 
-LLMs must not be used to fix GitHub issues labelled good first issue. These issues are generally not urgent, and are intended to be learning opportunities for new contributors to get familiar with the codebase. Whether you are a newcomer or not, fully automating the process of fixing this issue squanders the learning opportunity and doesn’t add much value to the project. Using LLMs to fix issues labelled as “good first issue” is forbidden, and those PRs will be closed automatically.
+A draft pull request is fine if you want an early opinion, and you do not need an issue assigned to you before you start.
 
-Misrepresenting LLM use, contribution farming (automated low-effort PRs, generated discussion answers), or repeatedly hitting auto-close rules may be grounds for a block at maintainer discretion.
+### Gates
 
-## Feature freezes
+From the repository root, with Python 3 and nothing else to install:
 
-From time to time, we put a feature freeze on parts of the codebase. For us, this means we won't accept most PRs that make changes in that area. Exempted from this are simple bug fixes that require only minor changes. We will close feature PRs that target a feature-frozen area, even if that feature is highly requested and you put a lot of work into it. Please keep that in mind, and if you're ever uncertain if a PR would be accepted, reach out to us first (e.g., in the aforementioned `#contributing` channel). We hate to throw away work. Currently, we have feature freezes on:
+```bash
+python3 .github/desktop/check_desktop_imports.py
+python3 .github/desktop/check_platform_ternaries.py
+python3 .github/desktop/check_platform_audit.py
+python3 .github/desktop/check_pigeon_desktop.py
+python3 .github/desktop/check_workflow.py
+```
 
-- Sharing/Asset ownership
-- (External) libraries
+For a change to the computer version, also run `check_phone_projects.py` and `check_phone_packages.py` from the same folder: they make sure the phone builds do not change.
 
-## Non-code contributions
+Then, in `mobile/`:
 
-If you want to contribute to Immich but you don't feel comfortable programming in our tech stack, there are other ways you can help the team.
+```bash
+mise exec -- flutter analyze
+mise exec -- flutter test
+mise exec -- dart format <the Dart files you changed>
+```
 
-### Translations
+If a gate fails and you do not see why, say so in the pull request. I would rather help than see the work dropped.
 
-All our translations are done through [Weblate](https://hosted.weblate.org/projects/immich). These rely entirely on the community; if you speak a language that isn't fully translated yet, submitting translations there is greatly appreciated!
+### Translations and documentation
 
-### Datasets
+- Add new text of the app as keys in `i18n/en.json` only. The other languages are generated at each release, so leave the other files of `i18n/` as they are.
+- Leave `README.md`, `readme_i18n/` and `docs/immuch360/` alone unless I ask for a change there. I update them, with their translations, at each release. Describe the visible change in the pull request instead, and I will carry it into the documentation.
 
-Help us improve our [Immich Datasets](https://datasets.immich.app) by submitting photos and videos taken from a variety of devices, including smartphones, DSLRs, and action cameras, as well as photos with unique features, such as panoramas, burst photos, and photo spheres. These datasets will be publicly available for anyone to use, do not submit private/sensitive photos.
+## Automated and machine generated pull requests
 
-### Community support
+Pull requests written with automated tools or machine generated code are welcome, on one condition: you have built the result, run it on a real device, and you say so in the pull request, with the device and the build. A change that has never run is hard to review, whoever or whatever wrote it, and a test on a real device is what this project needs most.
 
-If you like helping others, answering Q&A discussions here on GitHub and replying to people on our Discord is also always appreciated.
+## Licence and credits
+
+Immuch360 is under the GNU AGPL v3, see [LICENSE](LICENSE). By opening a pull request, you agree that your contribution is published under the same licence.
+
+Your authorship stays in the git history: your commits are merged or cherry picked with you as their author, and when I have to rework one, you stay its author or are named in a `Co-authored-by` line.
+
+Contributors are thanked by name in [The project](README.md#the-project), the section of the README that already credits the work this fork builds on, from the release that ships their contribution. If you would rather not be named, or prefer another name, say so in the pull request.
+
+## Languages
+
+Code, comments, commit messages and pull requests are in English. Issues are welcome in English or in French.
+
+## Contact
+
+The [issues](https://github.com/freeKC/Immuch360/issues) are the place for questions, reports and ideas. The repository has no Discussions page and no chat server for now.

@@ -1,5 +1,8 @@
 blank_issues_enabled: true
 contact_links:
+  - name: Documentation and known issues
+    url: https://github.com/freeKC/Immuch360#technical-documentation
+    about: The user guide, the known issues by platform, and troubleshooting with the logs to attach to a report.
   - name: Immich itself (server, web app, official mobile app)
     url: https://github.com/immich-app/immich/issues
     about: Problems that also happen with the official Immich app belong to the Immich project, not here.
