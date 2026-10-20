@@ -229,12 +229,32 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_smb._tcp</string>
+		<string>_webdav._tcp</string>
+		<string>_webdavs._tcp</string>
+		<string>_http._tcp</string>
+		<string>_https._tcp</string>
+	</array>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string>Immuch360 Desktop shows the photos and videos of the folders you choose on your desktop.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Immuch360 Desktop shows the photos and videos of the folders you choose in your Documents.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>Immuch360 Desktop saves the photos and videos you download in your Downloads, and shows the folders you choose there.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>$(PRODUCT_COPYRIGHT)</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Immuch360 Desktop uses the local network to reach your Immich server by its address, to find and open network shares, media servers and cameras (SMB, WebDAV, DLNA, Plex, Tapo), to show your cameras, and to open the photos and videos a phone or a headset shares with it.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
+	<key>NSNetworkVolumesUsageDescription</key>
+	<string>Immuch360 Desktop shows the photos and videos of the network volumes you choose.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSRemovableVolumesUsageDescription</key>
+	<string>Immuch360 Desktop shows the photos and videos of the memory cards and drives you choose, such as the card of a 360° camera.</string>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>

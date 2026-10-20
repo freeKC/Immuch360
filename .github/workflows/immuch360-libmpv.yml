@@ -1,4 +1,4 @@
-name: Immuch360 libmpv for Windows
+name: Immuch360 libmpv for Windows and macOS
 
 # Rebuilds libmpv-2.dll (mpv with FFmpeg), the library media_kit plays video with in Immuch360 Desktop, for Windows x64
 # and arm64, and publishes both archives with their SHA-256, their licence texts and their sources, as artifacts of the
@@ -41,10 +41,28 @@ name: Immuch360 libmpv for Windows
 #   publish    SHA256SUMS.txt and the release: a pre-release that is never marked latest, so the phone release stays
 #              first on the release page; the run summary prints the lines to paste into the CMake of the libs package
 #
+# macOS (the same policy: the project's own build from pinned sources, published with them). The recipe is
+# media-kit/libmpv-darwin-build, the Nix build media_kit_libs_macos_video downloads its frameworks from, checked out at
+# a pinned commit (input macos_recipe_ref) with the files of .github/desktop/libmpv-macos/ over it (apply_overlay.sh):
+# its own pins stop at FFmpeg 6.0 and mpv 0.36 of 2023, so the overlay brings FFmpeg and mpv to the commits of the
+# Windows build (packages.lock.nix there, with libplacebo, which mpv now needs); the other libraries keep the recipe's
+# versions. Its default flavor, as media-kit's: mpv with -Dgpl=false, FFmpeg without GPL or nonfree parts, so LGPL. Jobs:
+#   macos-sources  every archive of the lock downloaded and checked by its SHA-256, the recipe with the overlay, the
+#                  licence texts of each library; packed for the release
+#   macos-libmpv   the Nix build on macos-15 with a pinned Xcode, for macOS 12 and later, arm64 and x86_64 in one
+#                  universal xcframework per library; the archive, one zip per xcframework for Swift Package Manager,
+#                  and BUILDINFO-macos.txt
+#   macos-publish  the release libmpv-macos-<date>-<run>, a pre-release never marked latest; the run summary prints the
+#                  lines to paste into the Package.swift of mobile/packages/media_kit_libs_macos_video
+# The macOS build takes FFmpeg and mpv from packages.lock.nix, never from the ffmpeg_ref and mpv_ref inputs, which are
+# the Windows build's (test/desktop/ci/libmpv_macos_pins_test.dart keeps the two at the same commits). The input systems
+# runs one of the two only; the quarterly run from the heads is Windows only (the macOS lock has no heads mode).
+#
 # Triggers: by hand (workflow_dispatch, once this file is on the default branch); every quarter (schedule, default
 # branch only), from the head of every library, to show what a refresh of the lock would bring: it publishes nothing
-# and its summary prints the new lock lines; pushes to the desktop branch that change this file or
-# .github/desktop/libmpv/ (the lock included), which is how the first run happens before the desktop branch is merged.
+# and its summary prints the new lock lines; pushes to the desktop branch that change this file,
+# .github/desktop/libmpv/ (the lock included) or .github/desktop/libmpv-macos/, which is how the first run happens
+# before the desktop branch is merged.
 # Only a run from pinned sources publishes. No secret is used; two jobs can write: image (packages, the copy of the
 # container) and publish (contents, the release).
 
@@ -84,6 +102,25 @@ on:
         required: false
         default: true
         type: boolean
+      systems:
+        description: 'Which builds run: both, windows or macos'
+        required: false
+        default: both
+        type: choice
+        options:
+          - both
+          - windows
+          - macos
+      macos_recipe_ref:
+        description: 'macOS: full commit of media-kit/libmpv-darwin-build (FFmpeg and mpv come from .github/desktop/libmpv-macos)'
+        required: false
+        default: 'aadae8ce295dd15a222839c361c4c984ce9befb2'
+        type: string
+      macos_target:
+        description: 'macOS: the Nix package to build; only the default, the archive, is published'
+        required: false
+        default: 'mk-out-archive-xcframeworks-macos-universal-video-default'
+        type: string
   schedule:
     # First day of each quarter, from the heads (see the header); FFmpeg security releases are dispatched by hand with
     # ffmpeg_ref
@@ -93,6 +130,7 @@ on:
     paths:
       - .github/workflows/immuch360-libmpv.yml
       - .github/desktop/libmpv/**
+      - .github/desktop/libmpv-macos/**
 
 permissions:
   contents: read
@@ -122,10 +160,21 @@ env:
   # Bump the version when the toolchain job changes what it leaves in the cache
   TOOLCHAIN_CACHE: libmpv-toolchain-v1
   # Meson comes from PyPI, checked by the hashes of .github/desktop/libmpv/meson-requirements.txt
+  # macOS (see the header): the recipe, its commit, the package built, and the one Xcode it builds with, named by its
+  # version as the desktop workflow names the app's. Not the app's 26.3: the libc++ of Xcode 26 refuses the
+  # _LIBCPP_ENABLE_ASSERTIONS that the recipe's Meson (from its nixpkgs pin) defines for C++ (uchardet stops there);
+  # Xcode 16.4, the image's default, only warns. The libraries need no macOS 26 SDK, and the app links them as they are
+  MACOS_RECIPE_REPOSITORY: media-kit/libmpv-darwin-build
+  MACOS_RECIPE_REF: ${{ inputs.macos_recipe_ref || 'aadae8ce295dd15a222839c361c4c984ce9befb2' }}
+  MACOS_TARGET: ${{ inputs.macos_target || 'mk-out-archive-xcframeworks-macos-universal-video-default' }}
+  MACOS_ARCHIVE_TARGET: mk-out-archive-xcframeworks-macos-universal-video-default
+  MACOS_XCODE_VERSION: '16.4'
 
 jobs:
   image:
     name: Build container
+    # The first Windows job: the others need it, so a run without Windows skips them all
+    if: inputs.systems != 'macos'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
@@ -636,3 +685,311 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
           cat cmake-pin.txt
+
+  macos-sources:
+    name: macOS library sources
+    if: inputs.systems != 'windows' && github.event_name != 'schedule'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Inputs and release tag
+        id: tag
+        run: |
+          [[ "$MACOS_RECIPE_REF" =~ ^[0-9a-f]{40}$ ]] || { echo "macos_recipe_ref: a full commit"; exit 1; }
+          [[ "$MACOS_TARGET" =~ ^mk-[a-z0-9-]+$ ]] || { echo "macos_target: a package of the recipe (mk-...)"; exit 1; }
+          echo "tag=libmpv-macos-$(date -u +%Y%m%d)-${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+
+      - name: Check out the overlay of this repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          path: immuch360
+          sparse-checkout: .github/desktop/libmpv-macos
+
+      - name: Check out the recipe
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          repository: ${{ env.MACOS_RECIPE_REPOSITORY }}
+          ref: ${{ env.MACOS_RECIPE_REF }}
+          path: recipe
+
+      - name: The overlay over the recipe
+        run: bash immuch360/.github/desktop/libmpv-macos/apply_overlay.sh recipe
+
+      # Every archive the build reads, as packages.lock.nix names it, checked by its SHA-256 here as Nix checks it there;
+      # fftools-ffi is pinned by a Nix hash and serves the encoders flavor only, which is not built
+      - name: Download every archive of the lock
+        run: |
+          mkdir -p archives
+          python3 - recipe/packages.lock.nix > archives.txt <<'PY'
+          import re, sys
+          text = open(sys.argv[1]).read()
+          for name, version, url, sha in re.findall(
+                  r'^  ([\w-]+) = \{\s*version = "([^"]*)";\s*url = "([^"]*)";\s*sha256 = "([^"]*)";', text, re.M):
+              print(name, version, url, sha)
+          PY
+          cat archives.txt
+          while read -r name version url sha; do
+            if [ "$name" = fftools-ffi ]; then
+              continue
+            fi
+            [[ "$sha" =~ ^[0-9a-f]{64}$ ]] || { echo "$name: no SHA-256 of the archive"; exit 1; }
+            file="archives/$name-$version-$(basename "$url")"
+            curl -fsSL --retry 3 -o "$file" "$url"
+            echo "$sha  $file" | sha256sum -c -
+          done < archives.txt
+
+      # The licence files of each library, as its sources hold them, for the release and for the notices of the app
+      # (licenses/NOTICES.md in the sources of mobile/packages/media_kit_libs_macos_video)
+      - name: Licence texts
+        run: |
+          mkdir -p licenses work
+          while read -r name version url sha; do
+            case "$name" in fftools-ffi|libogg|libvorbis|libvpx|libx264|libpngPatch) continue ;; esac
+            rm -rf work/src && mkdir -p work/src
+            # GNU tar finds the compression of each archive by itself
+            tar -xf "archives/$name-$version-$(basename "$url")" -C work/src --strip-components=1
+            mkdir -p "licenses/$name"
+            for f in work/src/LICENSE* work/src/LICENCE* work/src/COPYING* work/src/Copyright work/src/NOTICE* \
+              work/src/docs/LICENSE.TXT work/src/docs/FTL.TXT work/src/docs/GPLv2.TXT; do
+              if [ -f "$f" ]; then cp "$f" "licenses/$name/"; fi
+            done
+            ls "licenses/$name" | sed "s#^#$name: #"
+          done < archives.txt
+          rm -rf work
+
+      - name: Pack the sources
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          rm -rf recipe/.git
+          tar -cf - archives.txt archives recipe licenses immuch360/.github/desktop/libmpv-macos \
+            | xz -T0 -6 > "$TAG-sources.tar.xz"
+          tar -czf "$TAG-licenses.tar.gz" licenses
+          ls -l "$TAG-sources.tar.xz" "$TAG-licenses.tar.gz"
+
+      - name: Upload the sources
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: macos-sources
+          path: |
+            ${{ steps.tag.outputs.tag }}-sources.tar.xz
+            ${{ steps.tag.outputs.tag }}-licenses.tar.gz
+          retention-days: 30
+          compression-level: 0
+          if-no-files-found: error
+
+  macos-libmpv:
+    name: macOS libmpv (universal)
+    needs: macos-sources
+    runs-on: macos-15
+    timeout-minutes: 300
+    env:
+      TAG: ${{ needs.macos-sources.outputs.tag }}
+    steps:
+      - name: Check out the overlay of this repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          path: immuch360
+          sparse-checkout: .github/desktop/libmpv-macos
+
+      - name: Check out the recipe
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          repository: ${{ env.MACOS_RECIPE_REPOSITORY }}
+          ref: ${{ env.MACOS_RECIPE_REF }}
+          path: recipe
+
+      - name: The overlay over the recipe
+        run: bash immuch360/.github/desktop/libmpv-macos/apply_overlay.sh recipe
+
+      # The recipe compiles with the Xcode it is given (its nix/overlays/xcode.nix): the one of the app's build
+      - name: Xcode
+        id: xcode
+        run: |
+          xcode="/Applications/Xcode_$MACOS_XCODE_VERSION.app"
+          if [ ! -d "$xcode" ]; then
+            echo "::error::No Xcode $MACOS_XCODE_VERSION on this runner image"
+            ls /Applications | grep "^Xcode" || true
+            exit 1
+          fi
+          xcode=$(realpath "$xcode")
+          "$xcode/Contents/Developer/usr/bin/xcodebuild" -version
+          echo "path=$xcode" >> "$GITHUB_OUTPUT"
+
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+        with:
+          extra-conf: |
+            sandbox = true
+            sandbox-fallback = false
+
+      - name: Build
+        working-directory: recipe
+        env:
+          XCODE_PATH: ${{ steps.xcode.outputs.path }}
+          # Every library that can build is built, so that one failure does not hide the next one
+          NIX_CONFIG: keep-going = true
+        run: |
+          nix --version
+          # The recipe's Makefile: the version and the Xcode written to .nix/config, then nix build in the sandbox
+          make XCODE_PATH="$XCODE_PATH" VERSION="$TAG" TARGET="$MACOS_TARGET"
+          ls -lL result result/* | head -50
+
+      - name: Archive and BUILDINFO
+        working-directory: recipe
+        env:
+          XCODE_PATH: ${{ steps.xcode.outputs.path }}
+        run: |
+          mkdir -p ../dist
+          if [ "$MACOS_TARGET" = "$MACOS_ARCHIVE_TARGET" ]; then
+            cp result/*.tar.gz result/*.zip ../dist/
+            tar -tzf ../dist/*.tar.gz | grep -E '^[^/]+/[^/]+\.xcframework/$' | sort
+            for lib in Mpv Placebo Avcodec Avformat Avutil; do
+              ls ../dist/*_"$lib".zip > /dev/null || { echo "no $lib.xcframework"; exit 1; }
+            done
+            # mpv links with -undefined dynamic_lookup (b_lundef=false in its meson.build): a function that no library
+            # defines links all the same and is a jump to address 0 at run time. Only the IOSurface functions (the
+            # process has IOSurface.framework loaded through CoreVideo) and objc_msgSend may be looked up so
+            python3 "$GITHUB_WORKSPACE/immuch360/.github/desktop/libmpv-macos/check_undefined.py" ../dist/*.zip
+          else
+            tar -czhf "../dist/$MACOS_TARGET.tar.gz" -C result .
+          fi
+          {
+            echo "libmpv for macOS (arm64 and x86_64, macOS 12 and later), built for Immuch360 Desktop"
+            echo "run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "repository commit: $GITHUB_SHA"
+            echo "recipe: https://github.com/$MACOS_RECIPE_REPOSITORY at $MACOS_RECIPE_REF, with .github/desktop/libmpv-macos"
+            echo "package: $MACOS_TARGET"
+            echo "Xcode: $("$XCODE_PATH/Contents/Developer/usr/bin/xcodebuild" -version | tr '\n' ' ')"
+            echo "Nix: $(nix --version)"
+            echo
+            echo "Archives of packages.lock.nix (name, version, URL, SHA-256 of the archive):"
+            python3 - packages.lock.nix <<'PY'
+          import re, sys
+          text = open(sys.argv[1]).read()
+          for entry in re.findall(
+                  r'^  ([\w-]+) = \{\s*version = "([^"]*)";\s*url = "([^"]*)";\s*sha256 = "([^"]*)";', text, re.M):
+              print(' '.join(entry))
+          PY
+          } > ../dist/BUILDINFO-macos.txt
+          cat ../dist/BUILDINFO-macos.txt
+          (cd ../dist && shasum -a 256 ./* | sed 's# \./# #')
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: macos-archive
+          path: dist/
+          retention-days: 30
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Collect the build logs
+        if: always()
+        working-directory: recipe
+        run: |
+          mkdir -p ../logs-macos
+          # The log of every derivation Nix built or failed to build, from its store
+          for drv in $(nix path-info --derivation ".#$MACOS_TARGET" --recursive 2>/dev/null | grep -E 'mk-(pkg|out)-' || true); do
+            nix log "$drv" > "../logs-macos/$(basename "$drv").log" 2>/dev/null || rm -f "../logs-macos/$(basename "$drv").log"
+          done
+          ls ../logs-macos | head -50
+          tar -czf ../logs-macos.tar.gz -C .. logs-macos
+
+      - name: Upload the build logs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: logs-macos
+          path: logs-macos.tar.gz
+          retention-days: 7
+          if-no-files-found: ignore
+
+  macos-publish:
+    name: macOS release
+    needs: [macos-sources, macos-libmpv]
+    if: >-
+      github.event_name != 'schedule' && (github.event_name != 'workflow_dispatch' || inputs.publish)
+      && (inputs.macos_target == '' || inputs.macos_target == 'mk-out-archive-xcframeworks-macos-universal-video-default')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write # creates the release and its tag; with the Windows publish, the only writes of the workflow
+    env:
+      TAG: ${{ needs.macos-sources.outputs.tag }}
+    steps:
+      - name: Download the archive
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: macos-archive
+          path: dist
+
+      - name: Download the sources
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: macos-sources
+          path: dist
+
+      - name: Checksums, notes and the Package.swift lines
+        working-directory: dist
+        run: |
+          sha256sum ./* | sed 's# \./# #' | grep -v ' SHA256SUMS.txt$' > ../SHA256SUMS.txt
+          mv ../SHA256SUMS.txt .
+          cat SHA256SUMS.txt
+          base=$(ls ./*_macos-universal-video-default.tar.gz | sed 's#^\./##; s#\.tar\.gz$##')
+          # Swift Package Manager checks a binary target by the SHA-256 of its zip (swift package compute-checksum)
+          {
+            echo "let libmpvTag = \"$TAG\""
+            echo "let libmpvArtifactBase = \"https://github.com/$GITHUB_REPOSITORY/releases/download/\\(libmpvTag)/$base\""
+            echo "let libmpvChecksums = ["
+            for zip in "$base"_*.zip; do
+              name=${zip#"$base"_}
+              name=${name%.zip}
+              echo "    \"$name\": \"$(grep -F " $zip" SHA256SUMS.txt | cut -d' ' -f1)\","
+            done
+            echo "]"
+          } > ../package-pin.txt
+          cat ../package-pin.txt
+          {
+            echo "libmpv (mpv with FFmpeg) for macOS, arm64 and x86_64, macOS 12 and later, built by .github/workflows/immuch360-libmpv.yml for Immuch360 Desktop. Not an app release: the macOS build of the app downloads the xcframeworks of this release through Swift Package Manager, each checked by its SHA-256."
+            echo
+            echo "- Recipe: \`$MACOS_RECIPE_REPOSITORY\` at \`$MACOS_RECIPE_REF\` with \`.github/desktop/libmpv-macos\`: FFmpeg and mpv at the commits of the Windows build, every library and archive in \`BUILDINFO-macos.txt\`."
+            echo "- Licence: GNU LGPL version 3 or later for libmpv and FFmpeg as built (mpv -Dgpl=false, FFmpeg --enable-version3 without GPL or nonfree parts); the licence texts of each library are in \`$TAG-licenses.tar.gz\`, the notices in \`licenses/NOTICES.md\` of \`mobile/packages/media_kit_libs_macos_video\` and in the app."
+            echo "- Corresponding source: \`$TAG-sources.tar.xz\` (the recipe with the overlay, and every archive it builds from)."
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo
+            echo "SHA-256:"
+            echo
+            echo '```'
+            cat SHA256SUMS.txt
+            echo '```'
+          } > ../notes.md
+
+      - name: Release
+        working-directory: dist
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber ./*
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+              --title "libmpv for macOS, $TAG" --notes-file ../notes.md --prerelease --latest=false ./*
+          fi
+
+      - name: Lines for the Package.swift of the libs package
+        run: |
+          {
+            echo "### libmpv $TAG"
+            echo
+            echo "Paste into \`mobile/packages/media_kit_libs_macos_video/macos/media_kit_libs_macos_video/Package.swift\`:"
+            echo
+            echo '```swift'
+            cat package-pin.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

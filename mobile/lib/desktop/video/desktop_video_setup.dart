@@ -4,8 +4,9 @@
 // Where the library comes from: on Windows the project's own build, next to the executable
 // (media_kit_libs_windows_video); on Linux the system's, libmpv.so.2 or libmpv.so.1, which the .deb and the .rpm
 // depend on (libmpv2 or libmpv1, mpv-libs on Fedora: .github/desktop/desktop_installers.py) and which the vendored
-// media_kit_video finds at run time too (its IMMUCH360-NOTE.md, patch 8). The app ships no libmpv on Linux. macOS has
-// none in the app yet.
+// media_kit_video finds at run time too (its IMMUCH360-NOTE.md, patch 8); on macOS the project's own build again,
+// Mpv.framework in the app's Frameworks folder (media_kit_libs_macos_video, .github/workflows/immuch360-libmpv.yml).
+// The app ships no libmpv on Linux.
 
 import 'dart:async';
 
@@ -19,8 +20,9 @@ final _log = Logger('DesktopVideo');
 
 bool _available = false;
 
-/// Whether libmpv was loaded at start: on Windows and Linux, unless the library failed to load. macOS has no libmpv
-/// in the app yet, and its players have no library to open.
+/// Whether libmpv was loaded at start: on Windows (media_kit_libs_windows_video, next to the executable), on Linux
+/// (the system's libmpv.so.2 or libmpv.so.1) and on macOS (Mpv.framework in the app's Frameworks folder, the project's
+/// own build of .github/workflows/immuch360-libmpv.yml), unless the library failed to load.
 bool get desktopVideoAvailable => _available;
 
 /// For the tests of the pages on a computer, which have no libmpv: with a pool of fake players they play as if it
@@ -28,11 +30,17 @@ bool get desktopVideoAvailable => _available;
 @visibleForTesting
 set desktopVideoAvailable(bool available) => _available = available;
 
-/// Whether this system's build has a libmpv to load (see the top of this file)
-bool get desktopVideoLibraryExpected => CurrentPlatform.isWindows || CurrentPlatform.isLinux;
+/// Whether this system's build has a libmpv to load: Windows and macOS bundle it, Linux uses the system's (see the
+/// top of this file)
+bool get desktopVideoLibraryExpected => CurrentPlatform.isWindows || CurrentPlatform.isLinux || CurrentPlatform.isMacOS;
+
+/// Whether the app of this computer bundles libmpv: Windows and macOS. On macOS the 360°, 3D and raw players draw flat
+/// with their reason, as renderer C is Windows only (PluginRenderer.supported).
+bool get desktopVideoBundled => CurrentPlatform.isWindows || CurrentPlatform.isMacOS;
 
 /// Loads libmpv: media_kit's NativeLibrary tries LIBMPV_LIBRARY_PATH, then libmpv-2.dll next to the executable on
-/// Windows, or libmpv.so, libmpv.so.2 and libmpv.so.1 on Linux. Replaced by the tests.
+/// Windows, Mpv.framework/Mpv on macOS (linked through media_kit_video and loaded with the app), or libmpv.so,
+/// libmpv.so.2 and libmpv.so.1 on Linux. Replaced by the tests.
 @visibleForTesting
 void Function() loadLibmpv = MediaKit.ensureInitialized;
 
@@ -41,6 +49,8 @@ void Function() loadLibmpv = MediaKit.ensureInitialized;
 String libmpvMissingHint() => CurrentPlatform.isLinux
     ? 'install the libmpv2 package (libmpv1 on Ubuntu 22.04, mpv-libs on Fedora), which the .deb and the .rpm of '
           'Immuch360 depend on'
+    : CurrentPlatform.isMacOS
+    ? 'Mpv.framework should be in the Frameworks folder of Immuch360.app'
     : 'libmpv-2.dll should be next to immuch360.exe';
 
 void setUpDesktopVideo() {

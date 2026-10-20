@@ -3,6 +3,7 @@
   "immuch_desktop_video": "The fork's decoder probe for Immuch360 Desktop (Direct3D 11 decoder profiles through dart:ffi), in mobile/packages; its plugin platform is windows only, imported under mobile/lib/desktop only",
   "media_kit": "Video through libmpv for Immuch360 Desktop: a copy in mobile/packages (pure Dart, no plugin platforms, its web asset removed so that no build bundles it), imported under mobile/lib/desktop only",
   "media_kit_libs_linux": "The Linux side of media_kit, a copy in mobile/packages whose plugin platform is linux only: it bundles nothing (libmpv is the system's, a dependency of the .deb and the .rpm), sets LC_NUMERIC to C for libmpv and turns on the texture plugin of media_kit_video",
+  "media_kit_libs_macos_video": "The libmpv frameworks of media_kit for macOS, the fork's own build (.github/workflows/immuch360-libmpv.yml) in a copy in mobile/packages whose plugin platform is macos only",
   "media_kit_libs_windows_video": "The libmpv and ANGLE libraries of media_kit for Windows, a copy in mobile/packages whose plugin platform is windows only",
   "media_kit_video": "The video texture plugin of media_kit, a copy in mobile/packages whose plugin platforms are linux, macos and windows only; imported under mobile/lib/desktop only",
   "safe_local_storage": "Brought by media_kit; pure Dart, no plugin platforms, imported by media_kit only",

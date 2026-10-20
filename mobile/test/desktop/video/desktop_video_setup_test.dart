@@ -54,7 +54,7 @@ void main() {
     expect(loader, MediaKit.ensureInitialized);
   });
 
-  for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
+  for (final platform in [TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS]) {
     test('${platform.name}: libmpv is loaded at start and the videos play', () {
       debugDefaultTargetPlatformOverride = platform;
       expect(desktopVideoLibraryExpected, isTrue);
@@ -63,15 +63,6 @@ void main() {
       expect(desktopVideoAvailable, isTrue);
     });
   }
-
-  test('macOS: no libmpv in the app yet, nothing is loaded', () {
-    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
-    expect(desktopVideoLibraryExpected, isFalse);
-    final log = logged(setUpDesktopVideo);
-    expect(loads, 0);
-    expect(desktopVideoAvailable, isFalse);
-    expect(log.single.message, contains('No libmpv on this operating system yet'));
-  });
 
   test('Linux without libmpv: the start goes on, and the log names the package', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.linux;

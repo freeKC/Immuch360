@@ -1134,6 +1134,13 @@ packages:
       relative: true
     source: path
     version: "1.2.1+immuch360"
+  media_kit_libs_macos_video:
+    dependency: "direct main"
+    description:
+      path: "packages/media_kit_libs_macos_video"
+      relative: true
+    source: path
+    version: "1.1.5+immuch360"
   media_kit_libs_windows_video:
     dependency: "direct main"
     description:

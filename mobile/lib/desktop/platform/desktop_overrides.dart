@@ -12,6 +12,7 @@ import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
 import 'package:immich_mobile/desktop/platform/desktop_permission_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_spherical_video_api.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
+import 'package:immich_mobile/desktop/window/self_check.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
@@ -51,10 +52,11 @@ List<Override> desktopOverrides() => [
 ];
 
 /// What wraps the app on a computer, inside MaterialApp (main.dart): the desktop keys and the window's close guard,
-/// the folder library kept current while the app runs (its watcher, a rescan when the window comes back), and the 360°
-/// view of a 360° file opened with the program
+/// the folder library kept current while the app runs (its watcher, a rescan when the window comes back), the 360°
+/// view of a 360° file opened with the program, and the self check of a CI runner when its variable is set
+/// (self_check.dart)
 Widget desktopAppShell(Widget app) => DesktopShell(
-  child: FolderLibraryHost(child: DesktopOpenedFilesHost(child: app)),
+  child: FolderLibraryHost(child: DesktopOpenedFilesHost(child: DesktopSelfCheck.wrap(app))),
 );
 
 class _NoShareHandlerRepository extends ShareHandlerRepository {

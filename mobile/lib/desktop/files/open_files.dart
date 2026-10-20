@@ -168,9 +168,14 @@ Future<void> untilTabShell(AppRouter router) =>
 /// the viewer, and a 360° one in its 360° view at once, with the projection it declares; several, or a folder, open on
 /// the page of opened files ([OpenedFilesRoute]).
 class DesktopOpenFilesHandler implements ViewIntentHandler {
-  DesktopOpenFilesHandler(this._ref, {OpenedPathsReader? read, Future<void> Function(AppRouter router)? whenAppShown})
-    : _read = read ?? readOpenedPaths,
-      _whenAppShown = whenAppShown ?? untilTabShell {
+  DesktopOpenFilesHandler(
+    this._ref, {
+    OpenedPathsReader? read,
+    Future<void> Function(AppRouter router)? whenAppShown,
+    Future<void> Function()? nextFrame,
+  }) : _read = read ?? readOpenedPaths,
+       _whenAppShown = whenAppShown ?? untilTabShell,
+       _nextFrame = nextFrame ?? _endOfFrame {
     // The session starts after the app: a server session once its token is checked, a session without a server at once
     _ref.listen(authProvider.select((state) => state.isAuthenticated), (_, isAuthenticated) {
       if (isAuthenticated) {
@@ -187,6 +192,7 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
   final Ref _ref;
   final OpenedPathsReader _read;
   final Future<void> Function(AppRouter router) _whenAppShown;
+  final Future<void> Function() _nextFrame;
 
   // The latest batch given before a session was open, all the files of the starts that came together
   List<String>? _deferred;
@@ -285,6 +291,14 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
   }
 
   Future<void> _openViewer(AppRouter router, OpenedFile file) async {
+    // A viewer on screen is closed first, and is no longer the current route once a frame has passed. Kept until the
+    // new one replaced it, it took the first load of the new viewer's timeline for a change of its own and set its own
+    // asset again (AssetViewer._onTimelineReloadEvent): a file handed over while a viewer showed another one opened
+    // that other one (seen on the macOS runner, a video given by open -a while a photo was shown)
+    if (router.stackData.any((route) => route.name == AssetViewerRoute.name)) {
+      await router.replaceAll([const TabShellRoute()]);
+      await _nextFrame();
+    }
     final asset = file.asset;
     final viewer = _ref.read(assetViewerProvider.notifier)..reset();
     if (asset.isVideo) {
@@ -310,6 +324,10 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
     }
   }
 }
+
+/// The end of the next frame, or half a second when no frame comes (a hidden window may draw none)
+Future<void> _endOfFrame() =>
+    WidgetsBinding.instance.endOfFrame.timeout(const Duration(milliseconds: 500), onTimeout: () {});
 
 /// Whether [path] is a folder
 // ignore: avoid_slow_async_io
