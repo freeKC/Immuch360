@@ -38,6 +38,10 @@ export LIBGL_ALWAYS_SOFTWARE=1
 # The window on the virtual screen, even where a Wayland display is set (WSLg)
 export GDK_BACKEND=x11
 unset WAYLAND_DISPLAY
+# No session bus, as in a container: the bus of a CI runner answers neither the accessibility bus nor the secret
+# service, and each costs the start 25 seconds of D-Bus timeout. Without one, each start runs on its own
+# (my_application.cc) and libsecret fails at once
+export DBUS_SESSION_BUS_ADDRESS="unix:path=$home/no-session-bus"
 
 failed=0
 fail() {

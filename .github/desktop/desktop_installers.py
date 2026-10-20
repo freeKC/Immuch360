@@ -130,7 +130,8 @@ MACOS_IMPORTED = {
 # IMMUCH360-NOTE.md, patch 8). Debian and Ubuntu renamed some libraries for 64 bit time (libgtk-3-0t64 on Ubuntu 24.04 and Debian 13):
 # either name satisfies the package. libsmb2.so, which dart_smb2 would download built on glibc 2.38, is built on Ubuntu
 # 22.04 by the workflow (.github/desktop/libsmb2/build_linux.sh), so the SMB shares open on every system the packages
-# accept. Checked by packaging/linux/check_package.sh in containers: every library each ELF file of /opt/immuch360 needs
+# accept. xdg-user-dirs answers path_provider's documents folder (xdg-user-dir DOCUMENTS), which background_downloader
+# asks at start: a Fedora without it (its containers, a minimal install) stops on the splash page. Checked by packaging/linux/check_package.sh in containers: every library each ELF file of /opt/immuch360 needs
 # is found once the package is installed, and the installed app plays a video.
 DEB_DEPENDS = [
     'libc6 (>= 2.34)',
@@ -142,6 +143,7 @@ DEB_DEPENDS = [
     'libsoup-3.0-0',
     'libepoxy0',
     'libmpv2 | libmpv1',
+    'xdg-user-dirs',
 ]
 RPM_DEPENDS = [
     'glibc >= 2.34',
@@ -153,6 +155,7 @@ RPM_DEPENDS = [
     'libsoup3',
     'libepoxy',
     'mpv-libs',
+    'xdg-user-dirs',
 ]
 # Built by the jni package whenever a JDK is found, for Android only: it needs the libjvm.so of a Java runtime, as
 # dartjni.dll does on Windows (windows_bundle.py leaves that one out too)
