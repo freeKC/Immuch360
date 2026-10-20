@@ -16,6 +16,7 @@ import 'package:immich_mobile/widgets/search/search_filter/display_option_picker
 import 'package:immich_mobile/widgets/search/search_filter/filter_bottom_sheet_scaffold.dart';
 import 'package:immich_mobile/widgets/search/search_filter/media_type_picker.dart';
 import 'package:immich_mobile/widgets/search/search_filter/search_filter_utils.dart';
+import 'package:immich_mobile/widgets/search/search_filter/star_rating_picker.dart';
 
 void main() {
   /// Opens [sheet] as the search page does, on a 1920 x 1080 px TV screen (960 x 540 dp) unless [screen] (in dp) says
@@ -197,6 +198,51 @@ void main() {
       await tester.pumpAndSettle();
       await press(tester, LogicalKeyboardKey.arrowDown);
       expect(focused(), anyOf(focusOf(tester, 'Clear'), focusOf(tester, 'Apply filter')));
+    });
+  });
+
+  group('all filter families in a TV-sized sheet', () {
+    testWidgets('Star Rating: six rows and the Apply/Clear actions remain reachable', (tester) async {
+      await open(tester, railSheet(StarRatingPicker(onSelect: (_) {})));
+      expect(tester.takeException(), isNull);
+      expect(tester.getRect(find.byKey(const Key('search_filter_apply'))).right, lessThan(960));
+      expect(tester.getRect(find.byKey(const Key('search_filter_apply'))).bottom, lessThan(513));
+      expect(find.byType(RadioListTile<int>), findsNWidgets(6));
+    });
+
+    testWidgets('Location-like dropdown form fits beside the TV action rail', (tester) async {
+      await open(
+        tester,
+        railSheet(
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              children: [
+                TextField(decoration: InputDecoration(labelText: 'Country')),
+                SizedBox(height: 16),
+                TextField(decoration: InputDecoration(labelText: 'State')),
+                SizedBox(height: 16),
+                TextField(decoration: InputDecoration(labelText: 'City')),
+              ],
+            ),
+          ),
+        ),
+      );
+      expect(tester.takeException(), isNull);
+      expect(tester.getRect(find.byKey(const Key('search_filter_apply'))).right, lessThan(960));
+      expect(tester.getRect(find.byKey(const Key('search_filter_apply'))).bottom, lessThan(513));
+    });
+
+    testWidgets('Tag-like long lists scroll independently of their action rail', (tester) async {
+      await open(tester, railSheet(people()));
+      expect(tester.takeException(), isNull);
+      focusOf(tester, 'person 0').requestFocus();
+      await tester.pumpAndSettle();
+      for (var i = 0; i < 12; i++) {
+        await press(tester, LogicalKeyboardKey.arrowDown);
+      }
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focused()?.debugLabel, 'TV filter apply');
     });
   });
 
