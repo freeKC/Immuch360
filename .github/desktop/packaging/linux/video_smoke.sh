@@ -3,7 +3,9 @@
 # the X display of the caller (a virtual screen of xvfb-run), and
 #   - it still runs once the clip played for 5 seconds;
 #   - its picture changes at each of three captures 2.5 seconds apart (the clip, 6 seconds of FFmpeg's testsrc with a
-#     running clock, loops in the viewer), within 45 seconds of the start;
+#     running clock, loops in the viewer), within 45 seconds of the start. The clip is H.264 Constrained Baseline with
+#     one reference frame, which every distribution decodes: Fedora's FFmpeg has no H.264 decoder of its own and goes
+#     through OpenH264, which refuses the Main and High profiles of most cameras (RPM Fusion's FFmpeg decodes them);
 #   - media_kit_video made a video output for the player (its line "VideoOutput: H/W rendering" or "S/W rendering");
 #   - neither media_kit_video nor the app's log (its database, read with sqlite3) holds an error of the players or of
 #     libmpv: a libmpv that did not load, an output without libmpv, a warning of the loggers of the desktop video code.
