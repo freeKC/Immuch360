@@ -2,19 +2,27 @@
 # Installs a .deb or an .rpm of Immuch360 Desktop in a clean container of a distribution and checks it, as a user
 # would get it: the package manager brings the dependencies the package declares, then
 #   - immuch360 --version answers (the launcher /usr/bin/immuch360);
-#   - every library that each ELF file of /opt/immuch360 needs is found (ldd), so the dependencies are complete;
-#   - libmpv, which media_kit opens when a video plays (libmpv.so, .so.2 or .so.1), is installed;
+#   - every library that each ELF file of /opt/immuch360 needs is found (ldd), so the dependencies are complete,
+#     libsmb2.so included (built on Ubuntu 22.04 by the workflow, .github/desktop/libsmb2/build_linux.sh);
+#   - libmpv, which media_kit and media_kit_video open when a video plays (libmpv.so, .so.2 or .so.1), is installed;
 #   - the desktop entry passes desktop-file-validate, and the MIME types of the raw camera files are registered;
-#   - with --start, the app starts on a virtual screen (Xvfb, software rendering) and still runs after 20 seconds.
+#   - with --start, the app starts on a virtual screen (Xvfb, software rendering) and still runs after 20 seconds;
+#   - with --video CLIP, the app started with the clip plays it on a virtual screen (video_smoke.sh, next to this
+#     script), with the libmpv of the distribution; its output, log and captures go to OUT_DIR (/tmp/video-smoke by
+#     default).
 #
-#   docker run --rm -v "$PWD/dist:/pkgs:ro" -v "$PWD/.github/desktop/packaging/linux:/check:ro" ubuntu:24.04 \
-#     sh /check/check_package.sh /pkgs/Immuch360-Desktop-<label>-linux-amd64.deb [--start]
+#   docker run --rm -v "$PWD/dist:/pkgs:ro" -v "$PWD/.github/desktop/packaging/linux:/check:ro" \
+#     -v "$PWD/mobile/test/fixtures/video:/clips:ro" -v "$PWD/video-smoke:/out" ubuntu:24.04 \
+#     sh /check/check_package.sh /pkgs/Immuch360-Desktop-<label>-linux-amd64.deb \
+#     [--start | --video /clips/flat-6s.mp4 [/out]]
 #
 # Run as root inside the container; exit 1 on the first failed check.
 set -eu
 
 package=$1
 start=${2:-}
+clip=${3:-}
+smoke_out=${4:-/tmp/video-smoke}
 [ -f "$package" ] || { echo "no package at $package"; exit 1; }
 # shellcheck source=/dev/null
 . /etc/os-release
@@ -28,7 +36,8 @@ case "$package" in
     apt-get install -y -qq "$package" desktop-file-utils >/tmp/install.log 2>&1 || { cat /tmp/install.log; exit 1; }
     dpkg -s immuch360 | sed -n 's/^\(Version\|Depends\): /  \1: /p'
     install_extra() {
-      apt-get install -y -qq xvfb xauth libgl1-mesa-dri >/tmp/extra.log 2>&1 || { cat /tmp/extra.log; exit 1; }
+      apt-get install -y -qq xvfb xauth libgl1-mesa-dri x11-apps x11-utils sqlite3 >/tmp/extra.log 2>&1 \
+        || { cat /tmp/extra.log; exit 1; }
     }
     ;;
   *.rpm)
@@ -36,7 +45,7 @@ case "$package" in
     rpm -q --qf '  Version: %{VERSION}-%{RELEASE}\n' immuch360
     echo "  Requires: $(rpm -q --requires immuch360 | grep -v '^rpmlib(' | tr '\n' ' ')"
     install_extra() {
-      dnf install -y -q xorg-x11-server-Xvfb xorg-x11-xauth mesa-dri-drivers >/tmp/extra.log 2>&1 \
+      dnf install -y -q xorg-x11-server-Xvfb xorg-x11-xauth mesa-dri-drivers xwd xwininfo sqlite >/tmp/extra.log 2>&1 \
         || { cat /tmp/extra.log; exit 1; }
     }
     ;;
@@ -57,12 +66,8 @@ for file in /opt/immuch360/immuch360 /opt/immuch360/lib/*.so*; do
   # Fedora's ldd warns about libraries without the execute bit, which the loader does not need
   problems=$(ldd "$file" 2>&1 | grep -v 'execution permission' | grep 'not found' || true)
   [ -n "$problems" ] || continue
-  # libsmb2.so, built by dart_smb2 against glibc 2.38, is opened only when an SMB share is browsed: an older glibc
-  # takes the SMB shares away, not the app. Anything else missing is a dependency the package does not declare.
-  if [ "$(basename "$file")" = libsmb2.so ] && ! echo "$problems" | grep -v -q "version .GLIBC_"; then
-    echo "  note: lib/libsmb2.so needs a newer glibc than $(ldd --version | head -n 1 | grep -o '[0-9.]*$'): SMB shares will not open here"
-    continue
-  fi
+  # A glibc too old for libsmb2.so (the one dart_smb2 downloads needs 2.38) would take the SMB shares away: the
+  # workflow builds it on Ubuntu 22.04 instead, so it is checked like every other file
   echo "  $file:"
   echo "$problems" | sed 's/^\s*/    /'
   missing=1
@@ -92,7 +97,11 @@ else
   echo "  shared-mime-info is not installed here: the MIME types are not checked"
 fi
 
-if [ "$start" = "--start" ]; then
+if [ "$start" = "--video" ]; then
+  echo "-- a video played on a virtual screen"
+  install_extra
+  xvfb-run -a -s "-screen 0 1280x800x24" sh "$(dirname "$0")/video_smoke.sh" immuch360 "$clip" "$smoke_out"
+elif [ "$start" = "--start" ]; then
   echo "-- a start on a virtual screen"
   install_extra
   export LIBGL_ALWAYS_SOFTWARE=1

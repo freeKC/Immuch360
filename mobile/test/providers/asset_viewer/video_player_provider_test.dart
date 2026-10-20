@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart' show AppLifecycleState;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
@@ -230,6 +232,42 @@ void main() {
 
       verifyNever(() => controller.seekTo(any()));
       verifyNever(controller.play);
+    });
+  });
+
+  // A Linux session without the screen saver service that wakelock_plus asks (org.freedesktop.ScreenSaver: a bare
+  // window manager, WSLg, a CI virtual screen) refuses to keep the screen on
+  group('keeping the screen on', () {
+    final original = VideoPlayerNotifier.toggleWakelock;
+    late List<bool> toggles;
+
+    setUp(() {
+      toggles = [];
+      VideoPlayerNotifier.toggleWakelock = (on) async {
+        toggles.add(on);
+        throw Exception('org.freedesktop.DBus.Error.ServiceUnknown: org.freedesktop.ScreenSaver');
+      };
+    });
+
+    tearDown(() => VideoPlayerNotifier.toggleWakelock = original);
+
+    test('a refusal while the video plays, at its end and at the dispose is no unhandled error', () async {
+      final playbackInfo = _MockPlaybackInfo();
+      when(() => playbackInfo.status).thenReturn(PlaybackStatus.playing);
+      when(() => controller.playbackInfo).thenReturn(playbackInfo);
+      final errors = <Object>[];
+
+      await runZonedGuarded(() async {
+        player.onNativeStatusChanged();
+        await pumpEventQueue();
+        expect(player.state.status, VideoPlaybackStatus.playing, reason: 'the video plays all the same');
+        player.onNativePlaybackEnded();
+        player.dispose();
+        await pumpEventQueue();
+      }, (error, _) => errors.add(error));
+
+      expect(toggles, [true, false, false]);
+      expect(errors, isEmpty);
     });
   });
 }

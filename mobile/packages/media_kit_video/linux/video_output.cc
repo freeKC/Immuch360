@@ -7,6 +7,7 @@
 // LICENSE file.
 
 #include "include/media_kit_video/video_output.h"
+#include "include/media_kit_video/mpv_symbols.h"
 #include "include/media_kit_video/texture_gl.h"
 #include "include/media_kit_video/texture_sw.h"
 
@@ -43,7 +44,7 @@ static void video_output_dispose(GObject* object) {
   
   // Make sure that no more callbacks are invoked from mpv.
   if (self->render_context) {
-    mpv_render_context_set_update_callback(self->render_context, NULL, NULL);
+    mpv_symbols()->render_context_set_update_callback(self->render_context, NULL, NULL);
   }
 
   // H/W
@@ -62,7 +63,7 @@ static void video_output_dispose(GObject* object) {
       if (self->egl_context != EGL_NO_CONTEXT) {
         eglMakeCurrent(self->egl_display, EGL_NO_SURFACE, EGL_NO_SURFACE, self->egl_context);
       }
-      mpv_render_context_free(self->render_context);
+      mpv_symbols()->render_context_free(self->render_context);
       self->render_context = NULL;
       
       // Restore Flutter's context
@@ -90,7 +91,7 @@ static void video_output_dispose(GObject* object) {
     g_free(self->pixel_buffer);
     g_object_unref(self->texture_sw);
     if (self->render_context != NULL) {
-      mpv_render_context_free(self->render_context);
+      mpv_symbols()->render_context_free(self->render_context);
       self->render_context = NULL;
     }
   }
@@ -205,7 +206,18 @@ VideoOutput* video_output_new(FlTextureRegistrar* texture_registrar,
   }
   self->configuration.enable_hardware_acceleration = TRUE;
 #endif
-  mpv_set_option_string(self->handle, "video-sync", "audio");
+  // Immuch360 (patch 8): without the functions of libmpv the output draws
+  // nothing, on a S/W texture so that Dart still gets a texture id.
+  const MpvSymbols* mpv = mpv_symbols();
+  if (mpv == NULL) {
+    g_printerr("media_kit: VideoOutput: libmpv is missing, nothing is drawn.\n");
+    self->pixel_buffer = g_new0(guint8, SW_RENDERING_PIXEL_BUFFER_SIZE);
+    self->texture_sw = texture_sw_new(self);
+    fl_texture_registrar_register_texture(texture_registrar,
+                                          FL_TEXTURE(self->texture_sw));
+    return self;
+  }
+  mpv->set_option_string(self->handle, "video-sync", "audio");
   // Causes frame drops with `pulse` audio output. (SlotSun/dart_simple_live#42)
   // mpv_set_option_string(self->handle, "video-timing-offset", "0");
   gboolean hardware_acceleration_supported = FALSE;
@@ -295,8 +307,8 @@ VideoOutput* video_output_new(FlTextureRegistrar* texture_registrar,
                 params[2].data = gdk_x11_display_get_xdisplay(display);
               }
               
-              if (mpv_render_context_create(&self->render_context, self->handle, params) == 0) {
-                mpv_render_context_set_update_callback(
+              if (mpv->render_context_create(&self->render_context, self->handle, params) == 0) {
+                mpv->render_context_set_update_callback(
                     self->render_context,
                     [](void* data) {
                       VideoOutput* self = (VideoOutput*)data;
@@ -350,9 +362,9 @@ VideoOutput* video_output_new(FlTextureRegistrar* texture_registrar,
           {MPV_RENDER_PARAM_API_TYPE, (void*)MPV_RENDER_API_TYPE_SW},
           {MPV_RENDER_PARAM_INVALID, (void*)0},
       };
-      if (mpv_render_context_create(&self->render_context, self->handle,
-                                    params) == 0) {
-        mpv_render_context_set_update_callback(
+      if (mpv->render_context_create(&self->render_context, self->handle,
+                                     params) == 0) {
+        mpv->render_context_set_update_callback(
             self->render_context,
             [](void* data) {
               gdk_threads_add_idle(
@@ -374,7 +386,7 @@ VideoOutput* video_output_new(FlTextureRegistrar* texture_registrar,
                           {MPV_RENDER_PARAM_SW_POINTER, self->pixel_buffer},
                           {MPV_RENDER_PARAM_INVALID, (void*)0},
                       };
-                      mpv_render_context_render(self->render_context, params);
+                      mpv_symbols()->render_context_render(self->render_context, params);
                       fl_texture_registrar_mark_texture_frame_available(
                           self->texture_registrar,
                           FL_TEXTURE(self->texture_sw));
@@ -462,8 +474,14 @@ gint64 video_output_get_width(VideoOutput* self) {
   gint64 width = 0;
   gint64 height = 0;
 
-  mpv_node params;
-  mpv_get_property(self->handle, "video-out-params", MPV_FORMAT_NODE, &params);
+  // Immuch360 (patch 8): no libmpv, no size; and a node mpv did not fill
+  // reads as no map
+  const MpvSymbols* mpv = mpv_symbols();
+  if (mpv == NULL) {
+    return 0;
+  }
+  mpv_node params{};
+  mpv->get_property(self->handle, "video-out-params", MPV_FORMAT_NODE, &params);
 
   int64_t dw = 0, dh = 0, rotate = 0;
   if (params.format == MPV_FORMAT_NODE_MAP) {
@@ -482,7 +500,7 @@ gint64 video_output_get_width(VideoOutput* self) {
         }
       }
     }
-    mpv_free_node_contents(&params);
+    mpv->free_node_contents(&params);
   }
 
   width = rotate == 0 || rotate == 180 ? dw : dh;
@@ -512,8 +530,14 @@ gint64 video_output_get_height(VideoOutput* self) {
   gint64 width = 0;
   gint64 height = 0;
 
-  mpv_node params;
-  mpv_get_property(self->handle, "video-out-params", MPV_FORMAT_NODE, &params);
+  // Immuch360 (patch 8): no libmpv, no size; and a node mpv did not fill
+  // reads as no map
+  const MpvSymbols* mpv = mpv_symbols();
+  if (mpv == NULL) {
+    return 0;
+  }
+  mpv_node params{};
+  mpv->get_property(self->handle, "video-out-params", MPV_FORMAT_NODE, &params);
 
   int64_t dw = 0, dh = 0, rotate = 0;
   if (params.format == MPV_FORMAT_NODE_MAP) {
@@ -532,7 +556,7 @@ gint64 video_output_get_height(VideoOutput* self) {
         }
       }
     }
-    mpv_free_node_contents(&params);
+    mpv->free_node_contents(&params);
   }
 
   width = rotate == 0 || rotate == 180 ? dw : dh;

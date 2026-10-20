@@ -49,9 +49,10 @@ Patches:
    `eglGetPlatformDisplay` asks for EGL 1.5 on a current display that does not exist yet (reported in the issue); the
    config is chosen with `eglChooseConfig` (ES 2.0, RGBA 8) since Flutter's cannot be queried; the isolated context is
    released after its setup and in `dispose` instead of "restoring" a context that was never current. The path where
-   Flutter's context is current is unchanged. Compiled only when `media_kit_libs_linux` is in the app (phase 4); until
-   then the Linux build compiles the stub of upstream (`MEDIA_KIT_LIBS_NOT_FOUND`). To test in phase 4 on Wayland and
-   on X11: the issue reports a GLX `BadAccess` on X11 with the GDK display on two machines.
+   Flutter's context is current is unchanged. Compiled since the copy of `media_kit_libs_linux` joined the app
+   (2026-10-20, patch 8); before, the Linux build compiled the stub of upstream (`MEDIA_KIT_LIBS_NOT_FOUND`). To test
+   on Wayland and on X11 with a real GPU: the issue reports a GLX `BadAccess` on X11 with the GDK display on two
+   machines.
 
 3. Dart, the size of the texture (`lib/src/video_controller/native_video_controller/real.dart`,
    `lib/src/video_controller/video_controller.dart`). Upstream sets the texture to the size of each new video
@@ -163,6 +164,21 @@ Patches:
    `docs/immuch360/desktop-360-video-renderer.md`. Checked without a window by
    `mobile/test/desktop/video/plugin_shaders_windows_test.dart` (the fisheye pass reads lens 1 from the second
    texture).
+
+8. Linux, libmpv opened at run time, not linked (`linux/mpv_symbols.cc`, `linux/include/media_kit_video/mpv_symbols.h`,
+   `linux/video_output.cc`, `linux/texture_gl.cc`, `linux/CMakeLists.txt`). Upstream links the plugin to the libmpv it
+   is built against (`PkgConfig::mpv`). The Linux build runs on Ubuntu 22.04 for its glibc, whose libmpv is
+   `libmpv.so.1` (mpv 0.34), while Ubuntu 24.04, Debian 12 and Fedora have `libmpv.so.2`: a plugin linked to one does
+   not load where only the other is, and a plugin that does not load stops the whole app at start. The Linux packages
+   depend on either (`libmpv2 | libmpv1`, `mpv-libs`) and media_kit's Dart side already opens whichever is there
+   (`NativeLibrary`: `LIBMPV_LIBRARY_PATH`, then `libmpv.so`, `libmpv.so.2`, `libmpv.so.1`). The plugin now finds the
+   seven functions it calls (`mpv_set_option_string`, `mpv_get_property`, `mpv_free_node_contents` and four of the
+   render API, which both versions have) with `dlsym` in the same library: the one already in the process
+   (`RTLD_NOLOAD`, in the same order), else the first that opens. Without them an output gets a texture that draws
+   nothing, and says so. The CMake takes the headers of libmpv only (libmpv-dev on the build machine, a configure
+   error naming the package when they are missing) and links `libdl`. The ELF files of the bundle then need no libmpv,
+   which `.github/desktop/packaging/linux/check_package.sh` already expected. The switch that compiles the real plugin
+   instead of the stub is `MEDIA_KIT_LIBS_AVAILABLE`, set by `mobile/packages/media_kit_libs_linux`.
 
 Not done yet (plan 20-plan-desktop.md, 2.2): the D3D11 device on the adapter Flutter uses, only if spike 6 shows a
 mismatch on a hybrid GPU machine.

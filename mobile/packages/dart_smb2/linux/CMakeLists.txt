@@ -31,6 +31,21 @@ endif()
 set(_SMB2_LIB_DIR  "${CMAKE_CURRENT_SOURCE_DIR}/libs/${_SMB2_ARCH}")
 set(_BUNDLED_SMB2  "${_SMB2_LIB_DIR}/libsmb2.so")
 
+# Immuch360 (IMMUCH360-NOTE.md): the environment variable IMMUCH360_LIBSMB2 names a libsmb2.so built from the sources
+# of the same release on an older glibc (.github/desktop/libsmb2/build_linux.sh, run by the Linux job of the desktop
+# workflow on Ubuntu 22.04). It is bundled instead of the release's library, which needs glibc 2.38, and nothing is
+# downloaded.
+set(_SMB2_FROM_ENV "$ENV{IMMUCH360_LIBSMB2}")
+if(_SMB2_FROM_ENV)
+  if(NOT EXISTS "${_SMB2_FROM_ENV}")
+    message(FATAL_ERROR "[dart_smb2] IMMUCH360_LIBSMB2 names no file: ${_SMB2_FROM_ENV}")
+  endif()
+  # Under the name the Dart side opens
+  set(_BUNDLED_SMB2 "${CMAKE_CURRENT_BINARY_DIR}/libsmb2.so")
+  configure_file("${_SMB2_FROM_ENV}" "${_BUNDLED_SMB2}" COPYONLY)
+  message(STATUS "[dart_smb2] IMMUCH360_LIBSMB2: ${_SMB2_FROM_ENV}")
+else()
+
 # The SHA-256 check + remote download is toggled by libsmb2-scripts' "Libs"
 # actions: active in REMOTE mode (download from GitHub when the local libsmb2.so
 # is absent / stale), commented out in LOCAL mode (use the bundled binary
@@ -65,6 +80,7 @@ if(DOWNLOAD_NEEDED)
   endif()
 endif()
 # smb2kit:remote:end
+endif()
 
 if(EXISTS "${_BUNDLED_SMB2}")
   message(STATUS "[dart_smb2] Using bundled libsmb2: ${_BUNDLED_SMB2}")

@@ -9,7 +9,7 @@
 // thousands of files, and on Linux named pipes that Directory.list gives as files and whose read waits for a writer
 // forever (the 30 second timeouts of these tests on the Ubuntu CI).
 //
-// With the libmpv of a Windows build, desktop_player_windows_test.dart watches %TEMP% from the open to the first frame.
+// With a real libmpv, desktop_player_libmpv_test.dart watches the temporary folder from the open to the first frame.
 
 import 'dart:async';
 import 'dart:ffi';

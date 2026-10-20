@@ -349,13 +349,22 @@ String redactPlayerText(String text) {
       .replaceAllMapped(_credentialHeader, (match) => '${match[1]}${match[2]}<hidden>');
 }
 
+/// Whether a line of mpv's log comes from hardware decoding looking for a decoder this computer has: hwdec auto-safe
+/// tries them in turn, CUDA without an NVIDIA driver, VA-API without a driver for the GPU (a Linux computer, a virtual
+/// machine), a hardware device that cannot be made; mpv goes on to the next one, then to software decoding, which the
+/// decoder measure watches (decoder_measure.dart)
+@visibleForTesting
+bool isDecoderProbeLine(String prefix, String text) =>
+    prefix == 'vaapi' || prefix == 'vdpau' || prefix == 'cuda' || text.startsWith('AVHWDeviceContext:');
+
 /// Writes a line of mpv's log to the app's log, redacted. mpv's errors are warnings of the app (a bad frame, a
 /// share that stalls): a file that cannot be played at all reaches the user through [PlayerEventKind.failed].
 @visibleForTesting
 void logPlayerLine(String level, String prefix, String text) {
   final line = redactPlayerText('$prefix: $text');
-  // media_kit sets options this libmpv build does not have (osc) on every player: not an error of the video
-  if (prefix == 'media_kit' && text.contains('property not found')) {
+  // media_kit sets options this libmpv build does not have (osc) on every player, and hardware decoding tries the
+  // decoders in turn: not errors of the video
+  if ((prefix == 'media_kit' && text.contains('property not found')) || isDecoderProbeLine(prefix, text)) {
     _log.fine(line);
     return;
   }
@@ -502,9 +511,11 @@ class DesktopPlayer implements PlaybackEngine {
       stream.track.listen((track) => _audioTrack.value = _isPseudoTrack(track.audio.id) ? null : track.audio.id),
       stream.log.listen((log) {
         logPlayerLine(log.level, log.prefix, log.text);
+        // Why a camera's stream did not open, which a decoder this computer lacks never is
         if (kind == PlayerKind.live &&
             (log.level == 'error' || log.level == 'fatal') &&
-            log.prefix.startsWith('ffmpeg')) {
+            log.prefix.startsWith('ffmpeg') &&
+            !isDecoderProbeLine(log.prefix, log.text)) {
           _openError = redactPlayerText(log.text);
         }
       }),

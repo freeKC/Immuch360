@@ -217,9 +217,9 @@ void main() {
       final overrides = nfpm['overrides'] as Map<String, dynamic>;
       expect(
         (overrides['deb'] as Map)['depends'],
-        containsAll(['libmpv2 | libmpv1', 'libgtk-3-0t64 | libgtk-3-0', 'libc6 (>= 2.34)']),
+        containsAll(['libmpv2 | libmpv1', 'libgtk-3-0t64 | libgtk-3-0', 'libc6 (>= 2.34)', 'xdg-user-dirs']),
       );
-      expect((overrides['rpm'] as Map)['depends'], containsAll(['mpv-libs', 'gtk3', 'glibc >= 2.34']));
+      expect((overrides['rpm'] as Map)['depends'], containsAll(['mpv-libs', 'gtk3', 'glibc >= 2.34', 'xdg-user-dirs']));
       final destinations = [for (final entry in nfpm['contents'] as List) (entry as Map)['dst']];
       expect(destinations, containsAll(['/opt/immuch360', '/usr/bin/immuch360']));
     });

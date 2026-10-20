@@ -1,0 +1,21 @@
+name: media_kit_libs_linux
+description: GNU/Linux dependency package for package:media_kit. Necessary for initialization.
+# Copy of media_kit_libs_linux from github.com/media-kit/media-kit at c533e446755f51cf53c7e57aea873f2aa5355f81, used by
+# Immuch360 Desktop through dependency_overrides in mobile/pubspec.yaml; the changes are listed in IMMUCH360-NOTE.md
+publish_to: 'none'
+version: 1.2.1+immuch360
+homepage: https://github.com/media-kit/media-kit.git
+repository: https://github.com/media-kit/media-kit.git
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.27.4"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      linux:
+        pluginClass: MediaKitLibsLinuxPlugin

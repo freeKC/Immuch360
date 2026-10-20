@@ -1018,6 +1018,7 @@
   "desktop_video_360_transcoded": "The original could not be played: playing the server's transcoded stream.",
   "desktop_video_later": "Video playback comes to Immuch360 Desktop in a later version",
   "desktop_video_mute": "Mute",
+  "desktop_video_needs_libmpv": "Videos need the libmpv library, which this computer does not have: install the libmpv2 package (libmpv1 on Ubuntu 22.04, mpv-libs on Fedora), then start Immuch360 again.",
   "desktop_video_renderer_automatic": "Automatic",
   "desktop_video_renderer_flat": "Flat, without the 360° view",
   "desktop_video_renderer_gpu_hint": "Windows chooses the graphics card for each app in Settings, System, Display, Graphics.",
