@@ -3,8 +3,10 @@ package app.alextran.immich.phoneshare
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -29,6 +31,9 @@ import java.io.File
  * by itself ([START_NOT_STICKY]) and stops with the task of the app (swiped away, the engine and the server are gone
  * too), from its Stop action (Flutter is told, see [PhoneShareApiImpl.notifyStopRequested]), or when Flutter stops
  * the share.
+ *
+ * The Quest flavour removes the service from its manifest (the headset reads a share, it does not serve one): there,
+ * [start] and [stop] do nothing rather than ask Android for a service it does not know.
  */
 class PhoneShareService : Service() {
   private var wifiLock: WifiManager.WifiLock? = null
@@ -195,7 +200,15 @@ class PhoneShareService : Service() {
     @Volatile
     private var running: PhoneShareService? = null
 
+    /** Whether the manifest of this build declares the service; read once, it does not change while the app runs */
+    @Volatile
+    private var declared: Boolean? = null
+
     fun start(context: Context, texts: PhoneShareNotificationTexts) {
+      if (!isDeclared(context)) {
+        Log.i(TAG, "No phone share service in this build, the share runs while the app is in front")
+        return
+      }
       val intent =
         Intent(context, PhoneShareService::class.java)
           .setAction(ACTION_START)
@@ -205,7 +218,7 @@ class PhoneShareService : Service() {
       try {
         ContextCompat.startForegroundService(context, intent)
       } catch (e: Exception) {
-        // Not allowed from the background, or no such service in this flavour (the Quest build removes it)
+        // Not allowed from the background (Android 12 and later)
         Log.w(TAG, "The phone share service did not start", e)
       }
     }
@@ -215,10 +228,35 @@ class PhoneShareService : Service() {
     }
 
     fun stop(context: Context) {
+      if (!isDeclared(context)) {
+        return
+      }
       try {
         context.stopService(Intent(context, PhoneShareService::class.java))
       } catch (e: Exception) {
         Log.w(TAG, "The phone share service did not stop", e)
+      }
+    }
+
+    /**
+     * False in the Quest build, whose manifest removes the service. Android logs "Unable to start service ... not
+     * found" for every start or stop of a service the manifest does not declare, and MainActivity stops this one each
+     * time the app closes.
+     */
+    private fun isDeclared(context: Context): Boolean = declared ?: lookUpDeclared(context).also { declared = it }
+
+    private fun lookUpDeclared(context: Context): Boolean {
+      val component = ComponentName(context, PhoneShareService::class.java)
+      return try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          context.packageManager.getServiceInfo(component, PackageManager.ComponentInfoFlags.of(0))
+        } else {
+          @Suppress("DEPRECATION")
+          context.packageManager.getServiceInfo(component, 0)
+        }
+        true
+      } catch (e: PackageManager.NameNotFoundException) {
+        false
       }
     }
   }
