@@ -14,7 +14,8 @@ recipe=${1:?the folder of the recipe}
 min_version=12.0
 
 for file in packages.lock.nix nix/packages/mk-pkg-ffmpeg/default.nix nix/packages/mk-pkg-mpv/default.nix \
-  nix/packages/mk-out-libs/default.nix cross-files/macos-arm64.ini cross-files/macos-amd64.ini; do
+  nix/packages/mk-out-libs/default.nix nix/packages/mk-pkg-libpng/default.nix cross-files/macos-arm64.ini \
+  cross-files/macos-amd64.ini; do
   [[ -f "$recipe/$file" ]] || { echo "not the expected recipe: $file is missing"; exit 1; }
 done
 
@@ -22,6 +23,7 @@ cp "$here/packages.lock.nix" "$recipe/packages.lock.nix"
 cp "$here/mk-pkg-ffmpeg.nix" "$recipe/nix/packages/mk-pkg-ffmpeg/default.nix"
 cp "$here/mk-pkg-mpv.nix" "$recipe/nix/packages/mk-pkg-mpv/default.nix"
 cp "$here/mk-out-libs.nix" "$recipe/nix/packages/mk-out-libs/default.nix"
+cp "$here/mk-pkg-libpng.nix" "$recipe/nix/packages/mk-pkg-libpng/default.nix"
 mkdir -p "$recipe/nix/packages/mk-pkg-libplacebo"
 cp "$here/mk-pkg-libplacebo.nix" "$recipe/nix/packages/mk-pkg-libplacebo/default.nix"
 echo 'import ../../utils/targets/pkgs.nix' > "$recipe/nix/packages/mk-pkg-libplacebo/targets.nix"

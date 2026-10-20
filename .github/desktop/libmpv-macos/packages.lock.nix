@@ -1,9 +1,9 @@
 # The sources of the macOS libmpv of Immuch360 Desktop, copied over packages.lock.nix of the build recipe
 # (media-kit/libmpv-darwin-build) by apply_overlay.sh. Each sha256 is the SHA-256 of the archive as downloaded (the
 # recipe's fetch-tarball), except fftools-ffi's, a Nix hash; .github/workflows/immuch360-libmpv.yml checks every
-# archive again and publishes them with the release. FFmpeg, mpv, libplacebo and fast_float are the commits the Windows
-# build uses (inputs of the workflow and .github/desktop/libmpv/sources.lock); the other libraries keep the recipe's
-# versions.
+# archive again and publishes them with the release. FFmpeg, mpv, libplacebo, fast_float and the Vulkan headers are
+# the commits the Windows build uses (inputs of the workflow and .github/desktop/libmpv/sources.lock); the other
+# libraries keep the recipe's versions, except libpng, patched for the SDK of Xcode 16 (mk-pkg-libpng.nix).
 {
   dav1d = {
     version = "1.2.1";
@@ -99,5 +99,10 @@
     version = "0.0.8";
     url = "https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.8.tar.xz";
     sha256 = "e97a60cfc00a1c147a674b097bb1422abd9fa78a2d9ce3f3fdcc2e78a34ac5f0";
+  };
+  vulkan-headers = {
+    version = "c4685086";
+    url = "https://github.com/KhronosGroup/Vulkan-Headers/archive/c46850864f4661461b0f6cb9922c058ffea4915e.tar.gz";
+    sha256 = "539ff8eaa4abf22fddbd98225c68a0c5ddb940075a4048c8b7f5d04449070a4e";
   };
 }

@@ -7,9 +7,11 @@
 # Only what libmpv's OpenGL render API needs: libmpv draws through mpv's own OpenGL renderer (render_backend_gpu), so
 # libplacebo's OpenGL, Vulkan and Direct3D backends, its shader compilers, LCMS, libdovi, xxhash and unwind are off.
 # Its sources come without their git submodules: fast_float (header only, for std::from_chars on floats, which the
-# libc++ of macOS 12 lacks) is put in 3rdparty/ from packages.lock.nix; Jinja2 and MarkupSafe, the Python modules of
-# its shader preprocessor, come from nixpkgs as build tools, on PYTHONPATH: Meson runs the preprocessor with its own
-# Python (find_installation()), not with one that has them, and adds the empty submodule folders after that path.
+# libc++ of macOS 12 lacks) and the Vulkan headers (header only: with Vulkan off, libplacebo still compiles the stubs
+# of its Vulkan API, vulkan/stubs.c, which include <vulkan/vulkan.h>) are put in 3rdparty/ from packages.lock.nix;
+# Jinja2 and MarkupSafe, the Python modules of its shader preprocessor, come from nixpkgs as build tools, on
+# PYTHONPATH: Meson runs the preprocessor with its own Python (find_installation()), not with one that has them, and
+# adds the empty submodule folders after that path.
 {
   pkgs ? import ../../utils/default/pkgs.nix,
   os ? import ../../utils/default/os.nix,
@@ -20,6 +22,7 @@ let
   name = "libplacebo";
   packageLock = (import ../../../packages.lock.nix).${name};
   fastFloatLock = (import ../../../packages.lock.nix).fast_float;
+  vulkanHeadersLock = (import ../../../packages.lock.nix).vulkan-headers;
   inherit (packageLock) version;
 
   callPackage = pkgs.lib.callPackageWith { inherit pkgs os arch; };
@@ -35,11 +38,17 @@ let
     name = "${pname}-fast-float-source-${fastFloatLock.version}";
     inherit (fastFloatLock) url sha256;
   };
+  vulkanHeaders = callPackage ../../utils/fetch-tarball/default.nix {
+    name = "${pname}-vulkan-headers-source-${vulkanHeadersLock.version}";
+    inherit (vulkanHeadersLock) url sha256;
+  };
   fullSource = pkgs.runCommand "${pname}-full-source-${version}" { } ''
     cp -r ${src} $out
     chmod -R u+w $out
     mkdir -p $out/3rdparty/fast_float
     cp -r ${fastFloat}/include $out/3rdparty/fast_float/
+    mkdir -p $out/3rdparty/Vulkan-Headers
+    cp -r ${vulkanHeaders}/include $out/3rdparty/Vulkan-Headers/
   '';
   pythonPath = pkgs.python3Packages.makePythonPath [
     pkgs.python3Packages.jinja2
