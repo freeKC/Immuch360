@@ -161,12 +161,14 @@ env:
   TOOLCHAIN_CACHE: libmpv-toolchain-v1
   # Meson comes from PyPI, checked by the hashes of .github/desktop/libmpv/meson-requirements.txt
   # macOS (see the header): the recipe, its commit, the package built, and the one Xcode it builds with, named by its
-  # version as the desktop workflow names the app's (the same 26.3)
+  # version as the desktop workflow names the app's. Not the app's 26.3: the libc++ of Xcode 26 refuses the
+  # _LIBCPP_ENABLE_ASSERTIONS that the recipe's Meson (from its nixpkgs pin) defines for C++ (uchardet stops there);
+  # Xcode 16.4, the image's default, only warns. The libraries need no macOS 26 SDK, and the app links them as they are
   MACOS_RECIPE_REPOSITORY: media-kit/libmpv-darwin-build
   MACOS_RECIPE_REF: ${{ inputs.macos_recipe_ref || 'aadae8ce295dd15a222839c361c4c984ce9befb2' }}
   MACOS_TARGET: ${{ inputs.macos_target || 'mk-out-archive-xcframeworks-macos-universal-video-default' }}
   MACOS_ARCHIVE_TARGET: mk-out-archive-xcframeworks-macos-universal-video-default
-  MACOS_XCODE_VERSION: '26.3'
+  MACOS_XCODE_VERSION: '16.4'
 
 jobs:
   image:
