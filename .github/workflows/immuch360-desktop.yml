@@ -218,13 +218,14 @@ jobs:
       # window of flutter_web_auth_2), patchelf for the RUNPATH of the libraries in the .deb and the .rpm, the headers
       # of libmpv for media_kit_video (libmpv-dev, which brings libmpv1, the libmpv of Ubuntu 22.04, for the video tests
       # and the start below; the app links none: mobile/packages/media_kit_video/IMMUCH360-NOTE.md, patch 8), and the
-      # virtual screen of that start with its captures (Xvfb, xwd, ImageMagick) and sqlite3 to read the app's log
+      # virtual screen of that start with its captures (Xvfb, xwd, ImageMagick), sqlite3 to read the app's log, and gdb
+      # and xwininfo to tell what a start that does not get on was doing
       - name: Linux build packages
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev \
             libsecret-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev patchelf libmpv-dev xvfb xauth x11-apps \
-            imagemagick sqlite3
+            x11-utils imagemagick sqlite3 gdb
 
       - name: Install mise
         uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
@@ -340,14 +341,19 @@ jobs:
         include:
           - image: ubuntu:22.04
             package: deb
+            slug: ubuntu-22.04
           - image: ubuntu:24.04
             package: deb
+            slug: ubuntu-24.04
           - image: debian:12
             package: deb
+            slug: debian-12
           - image: fedora:40
             package: rpm
+            slug: fedora-40
           - image: fedora:44
             package: rpm
+            slug: fedora-44
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -367,9 +373,19 @@ jobs:
           PACKAGE: ${{ matrix.package }}
         run: |
           file=$(cd dist && ls ./*."$PACKAGE")
+          mkdir -p video-smoke
           docker run --rm -v "$PWD/dist:/pkgs:ro" -v "$PWD/.github/desktop/packaging/linux:/check:ro" \
-            -v "$PWD/mobile/test/fixtures/video:/clips:ro" "$IMAGE" \
-            sh /check/check_package.sh "/pkgs/${file#./}" --video /clips/flat-6s.mp4
+            -v "$PWD/mobile/test/fixtures/video:/clips:ro" -v "$PWD/video-smoke:/out" "$IMAGE" \
+            sh /check/check_package.sh "/pkgs/${file#./}" --video /clips/flat-6s.mp4 /out
+
+      - name: Upload the video start
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: linux-video-smoke-${{ matrix.slug }}
+          path: video-smoke/
+          retention-days: 14
+          if-no-files-found: ignore
 
   windows:
     name: Windows desktop tests, build and ZIP

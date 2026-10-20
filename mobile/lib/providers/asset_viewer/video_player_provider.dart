@@ -61,7 +61,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   void dispose() {
     _bufferingTimer?.cancel();
     _seekTimer?.cancel();
-    unawaited(WakelockPlus.disable());
+    unawaited(_keepScreenOn(false));
     _controller = null;
 
     super.dispose();
@@ -364,7 +364,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     final newStatus = _mapStatus(playbackInfo.status);
     switch (newStatus) {
       case VideoPlaybackStatus.playing:
-        unawaited(WakelockPlus.enable());
+        unawaited(_keepScreenOn(true));
         _startBufferingTimer();
       default:
         onNativePlaybackEnded();
@@ -376,8 +376,23 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   }
 
   void onNativePlaybackEnded() {
-    unawaited(WakelockPlus.disable());
+    unawaited(_keepScreenOn(false));
     _bufferingTimer?.cancel();
+  }
+
+  /// What keeps the screen on, replaced by the tests
+  @visibleForTesting
+  static Future<void> Function(bool on) toggleWakelock = (on) => WakelockPlus.toggle(enable: on);
+
+  /// Keeps the screen on while the video plays, or lets it go. A Linux session without the screen saver service that
+  /// wakelock_plus asks (org.freedesktop.ScreenSaver: a bare window manager, WSLg, a CI virtual screen) refuses it: the
+  /// video plays all the same, without an unhandled error per video
+  static Future<void> _keepScreenOn(bool on) async {
+    try {
+      await toggleWakelock(on);
+    } catch (error) {
+      _log.fine('The screen cannot be kept on: $error');
+    }
   }
 
   void _startBufferingTimer() {

@@ -120,7 +120,13 @@ void main() {
       expect(find.byKey(const Key('poster')), findsOneWidget);
       expect(find.byType(NativeVideoPlayerView), findsNothing);
       expect(find.byType(DesktopVideoView), findsNothing, reason: 'no player that would never get ready');
-      expect(find.text('Video playback comes to Immuch360 Desktop in a later version'), findsOneWidget);
+      // Linux names the package that brings the library, which a bundle copied by hand may lack
+      expect(
+        platform == TargetPlatform.linux
+            ? find.textContaining('install the libmpv2 package (libmpv1 on Ubuntu 22.04, mpv-libs on Fedora)')
+            : find.text('Video playback comes to Immuch360 Desktop in a later version'),
+        findsOneWidget,
+      );
       expect(
         find.ancestor(of: find.byType(DesktopVideoPlaceholder), matching: find.byType(Visibility)),
         findsNothing,
