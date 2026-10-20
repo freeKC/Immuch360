@@ -20,14 +20,14 @@ Immuch360은 무료 오픈소스 앱으로 사진과 동영상을 찾고 둘러�
 
 <div align="center">
 
-| 플랫폼 | 받는 곳 | 2026년 10월 12일 기준 상태 |
+| 플랫폼 | 받는 곳 | 2026년 10월 20일 기준 상태 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 휴대폰과 태블릿 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play(build 20; build 23 심사 중), GitHub에 build 23 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone과 iPad** | App Store | 버전 3.3.0, Apple 심사 대기 중; 그동안은 [직접 빌드](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub에 build 23; TV 등록은 Google 심사 중 |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3, 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store(build 14; build 21 심사 중), GitHub에 build 23 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [설치 프로그램 또는 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, 미리보기: 사진, 평면 및 360° 동영상, 공유, Plex, 카메라, 프로그램으로 연 파일 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS와 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | 초기 미리보기: Linux에서는 사진과 360° 사진, 아직 동영상은 없음; macOS는 프로젝트의 CI에서만 실행 |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 휴대폰과 태블릿 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play(build 25), GitHub에 build 26 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone과 iPad** | App Store | 버전 3.3.1(build 24), 10월 14일부터 Apple 심사 대기 중; 그동안은 [직접 빌드](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub에 build 26, 검색 필터의 리모컨 조작 수정 포함; TV 등록은 Google 심사 중 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3, 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store(build 23; build 25 심사 중), GitHub에 build 26 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [설치 프로그램 또는 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, 미리보기: 사진, 평면 및 360° 동영상, 공유, Plex, 카메라, 프로그램으로 연 파일, 89개 언어로 된 인터페이스 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS와 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | 미리보기: Linux에서는 사진, 360° 사진, 평면 동영상(360° 동영상은 평면으로 재생); macOS도 같지만 프로젝트의 CI Mac에서만 확인했으며 서명되지 않음 |
 
 *상태는 릴리스마다 갱신되며, build별 세부 사항은 [Release status](../docs/immuch360/release-status.md)에서 확인할 수 있습니다.*
 
@@ -138,7 +138,7 @@ Immuch360은 계정도 서버도 필요하지 않습니다. build 24부터 앱�
 2. 설정의 Asset Viewer, Videos에서 "동영상 소스"는 이 기기가 디코딩할 수 있을 때는 원본을, 항상 원본을, 또는 항상 트랜스코딩된 스트림을 선택하도록 고를 수 있습니다.
 3. 앱이 없는 사람에게 360° 사진을 보여주려면 Immich 공유 링크로 공유하세요: Immich 웹 앱이 그 사람의 브라우저에서 구체로 보여줍니다.
 
-현재 build인 build 23은 2026년 10월 10일의 Immich `main`(버전 3.3.0-rc.0)을 기반으로 하며, Immich 3.2.4 서버와 같은 Immich `main`으로 빌드한 서버에서 테스트했습니다. 문제가 있으면 Immich 프로젝트가 아니라 [Issues](https://github.com/freeKC/Immuch360/issues)에 알려주세요.
+현재 build인 build 26은 2026년 10월 10일의 Immich `main`(버전 3.3.0-rc.0)을 기반으로 하며, Immich 3.2.4 서버와 같은 Immich `main`으로 빌드한 서버에서 테스트했습니다. 문제가 있으면 Immich 프로젝트가 아니라 [Issues](https://github.com/freeKC/Immuch360/issues)에 알려주세요.
 
 더 보기: [나머지는 모두 Immich입니다](../docs/immuch360/user-guide.md#everything-else-is-immich), [Immich 앱과 비교](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Meta Quest에서는 같은 앱이 전체 라이브러리를 담은 창으로 실
 
 하나의 코드베이스, 여섯 가지 환경. 각 환경이 오늘 지원하는 것:
 
-| 기능 | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Immich 서버로 갤러리, 앨범, 검색 | ✅ | ✅ | ✅ 뷰어 | ✅ | ✅ | 🔧 |
-| 서버 없이: 기기 자체의 미디어 | ✅ | ✅ | 공유만 | ✅ | ✅ 폴더 | 🔧 |
-| 평면 사진과 동영상 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 구체로 보는 360° 사진 | ✅ | ✅ | ✅ | ✅ 몰입형 | ✅ | 🔧 |
-| 360° 동영상 | ✅ | ✅ 타임 바 없음 | ✅ | ✅ 몰입형 | ✅ | 🔧 |
-| 3D와 VR180 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ✅ 진짜 3D | ✅ 한쪽 눈 | 🔧 |
-| Spatial 2.5D(헤드 트래킹) | ✅ 실험적 | ✅ 실험적 | ❌ | ❌ | 🔜 | ❌ |
-| Apple 공간 사진 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ✅ 3D | ✅ 한쪽 눈 | 🔧 |
-| Insta360, GoPro, DJI 원본 파일 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA 공유 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo 카메라: 녹화 영상 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo 카메라: 실시간 화면 | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| 이 기기를 네트워크에 공유 | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| 공유와 기기에서 Immich로 업로드 | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| 입력 | 터치, 자이로스코프 | 터치, 자이로스코프 | 리모컨 | 컨트롤러, 손 | 마우스, 키보드 | |
-| 받는 곳 | Google Play, APK | App Store(심사 중) | APK, Google Play(심사 중) | Horizon Store, APK | 설치 프로그램 또는 ZIP(미리보기) | .deb, .rpm, DMG(초기 미리보기) |
+| 기능 | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Immich 서버로 갤러리, 앨범, 검색 | ✅ | ✅ | ✅ 뷰어 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| 서버 없이: 기기 자체의 미디어 | ✅ | ✅ | 공유만 | ✅ | ✅ 폴더 | ✅ 폴더 | ✅ 폴더 |
+| 평면 사진과 동영상 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 구체로 보는 360° 사진 | ✅ | ✅ | ✅ | ✅ 몰입형 | ✅ | ✅ | 🔧 CI |
+| 360° 동영상 | ✅ | ✅ 타임 바 없음 | ✅ | ✅ 몰입형 | ✅ | 평면만 | 평면만 |
+| 3D와 VR180 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ✅ 진짜 3D | ✅ 한쪽 눈 | 사진 한쪽 눈, 동영상 평면 | 사진 한쪽 눈, 동영상 평면 |
+| Spatial 2.5D(헤드 트래킹) | ✅ 실험적 | ✅ 실험적 | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple 공간 사진 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ✅ 3D | ✅ 한쪽 눈 | 🔧 CI | 🔧 CI |
+| Insta360, GoPro, DJI 원본 파일 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI 사진, 동영상 평면 | 🔧 CI 사진, 동영상 평면 |
+| SMB, WebDAV, DLNA 공유 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo 카메라: 녹화 영상 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo 카메라: 실시간 화면 | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| 이 기기를 네트워크에 공유 | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| 공유와 기기에서 Immich로 업로드 | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| 입력 | 터치, 자이로스코프 | 터치, 자이로스코프 | 리모컨 | 컨트롤러, 손 | 마우스, 키보드 | 마우스, 키보드 | 마우스, 키보드, 트랙패드 |
+| 받는 곳 | Google Play, APK | App Store(심사 중) | APK, Google Play(심사 중) | Horizon Store, APK | 설치 프로그램 또는 ZIP(미리보기) | .deb, .rpm(미리보기) | DMG 또는 ZIP(서명 없는 미리보기) |
 
-✅ 해당 플랫폼의 앱에서 지원 · ❌ 제공하지 않음 · 🔜 계획 중 · 🔧 소스 코드에 있고 프로젝트 CI에서 빌드되지만 아직 해당 시스템에서 실행해 보지 않음. "한쪽 눈"은 3D 파일이 평면 화면에서 왼쪽 눈만 보여준다는 뜻입니다. 모든 ✅가 실제 기기에서 확인된 것은 아닙니다: 어디서 무엇을 확인했는지, 그리고 아직 확인해야 할 것은 [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md), [Compatibility](../docs/immuch360/compatibility.md)에 있습니다.
+✅ 해당 플랫폼의 앱에서 지원 · ❌ 제공하지 않음 · 🔜 계획 중 · 🔧 CI 소스 코드에 있고 프로젝트 CI가 해당 시스템에서 빌드하고 실행했지만, 아직 그곳에서 실제 서버, 공유, 카메라로 확인하지 않음 · 평면만: 360° 렌더러가 Windows 전용이라 동영상이 안내 메시지와 함께 평면으로 재생됨. "한쪽 눈"은 3D 파일이 평면 화면에서 왼쪽 눈만 보여준다는 뜻입니다. 모든 ✅가 실제 기기에서 확인된 것은 아닙니다: 어디서 무엇을 확인했는지, 그리고 아직 확인해야 할 것은 [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md), [Compatibility](../docs/immuch360/compatibility.md)에 있습니다.
 
 - **Android 휴대폰과 태블릿**: 모든 기능을 갖춘 앱, 터치와 자이로스코프, 모든 소스 지원.
 - **iPhone과 iPad**: 모든 기능을 갖춘 앱이지만, 360° 동영상 플레이어는 재생과 일시정지만 지원하고, Tapo 실시간 화면은 나중에 추가되며, Apple이 멀티캐스트 권한을 허용하기 전까지 DLNA 검색은 유니캐스트 요청을 보냅니다.
 - **Android TV와 Google TV**: 리모컨으로 조작하는 같은 APK이며, 뷰어 역할만 합니다: 백업, 업로드, 편집 기능은 숨겨져 있습니다. Google TV 에뮬레이터(로그인, 타임라인, 뷰어, 공유, 리모컨 탐색)에서 확인했으며, 아직 실제 TV에서는 확인하지 못했습니다.
-- **Meta Quest 2, Pro, 3, 3S**: 창 형태의 앱과 몰입형 화면을 제공합니다. HEVC가 안전한 코덱이며, Quest 3에서는 H.264가 약 4096x2304에서 한계에 이릅니다. Quest 2와 Quest Pro는 아직 테스트하지 못했습니다.
+- **Meta Quest 2, Pro, 3, 3S**: 창 형태의 앱과 몰입형 화면을 제공합니다. HEVC가 안전한 코덱이며, Quest 3에서는 H.264가 약 4096x2304에서 한계에 이릅니다. 테스트한 기기는 Quest 3뿐이며, Quest 2, Quest Pro, Quest 3S는 아직 테스트하지 못했습니다.
 - **Windows 10과 11**: 미리보기 단계이며, 갤러리 대신 폴더를 사용하고, 평면 및 360° 동영상을 위한 전용 플레이어(libmpv), 그래픽 칩에서 스티칭되는 원본 파일, 프로그램으로 열거나 창에 끌어다 놓은 파일과 폴더, 설치 프로그램 또는 ZIP을 제공합니다.
-- **macOS와 Linux**: 프로젝트의 CI가 빌드한 패키지(.deb, .rpm, DMG)이며, Linux에서는 앱이 실행되어 사진과 360° 사진을 보여주지만 아직 동영상은 없고, SMB 공유에는 Ubuntu 24.04, Debian 13, Fedora 39 이상이 필요합니다. macOS 앱은 프로젝트의 CI에서만 실행되었으며, 동영상이 없고 네트워크 접근도 아직 시도하지 못했습니다.
+- **Linux**: 프로젝트의 CI가 빌드한 .deb와 .rpm이며, Ubuntu 22.04와 24.04, Debian 12, Fedora 40과 44에 설치해 확인했습니다. 사진, 360° 사진, 그리고 시스템의 libmpv로 재생하는 평면 동영상을 지원합니다(360°, 3D, 원본 동영상은 안내 메시지와 함께 평면으로 재생). SMB 공유는 Ubuntu 22.04와 Debian 12부터 지원합니다. 아직 실제 Linux PC에서는 실행하지 못했고, WSLg와 컨테이너에서만 실행했습니다.
+- **macOS**: 프로젝트의 CI가 빌드한 DMG와 ZIP이며, 유니버설이고 서명되지 않았습니다(Gatekeeper가 한 번 묻습니다). 앱이 실행되고, Finder에서 넘긴 것을 포함해 전달받은 파일과 폴더를 열며, 비밀 정보를 로그인 키체인에 보관하고, 자체 libmpv로 평면 동영상을 재생합니다. 이 모든 것은 프로젝트의 CI Mac에서만 확인했으며, 실제 Mac에서는 아직 아무것도 실행하지 못했습니다.
 
 <a id="advanced-features"></a>
 ## 고급 기능
@@ -300,7 +301,7 @@ Ubuntu 22.04 이상과 Debian 12 이상에서는: `sudo apt install ./Immuch360-
 
 Immuch360은 [GNU AGPL v3](../LICENSE) 라이선스를 따르는 [Immich](https://github.com/immich-app/immich) 모바일 앱의 비공식 포크이며, Immich 팀이나 FUTO와는 관련이 없고 그들의 승인을 받은 것도 아닙니다. 모바일에서의 360° 보기는 2024년 1월부터 Immich에서 요청되어 왔지만 아직 공식 앱에는 없기 때문에 이 포크가 존재하며, 지금 이를 제공하고 실제 기기에서의 피드백을 모아 메인테이너가 원하는 것을 작은 pull request로 Immich에 돌려주려고 합니다. 공식 앱이 하는 모든 일은 그대로 유지되며, 브랜치, 빌드 체계, CI는 [직접 빌드하기](../docs/immuch360/build.md)에 설명되어 있습니다.
 
-360° 사진 뷰어는 dmitry-brazhenko가 작성한 업스트림 pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)를 기반으로 하며, 이는 bencefr의 프로토타입인 [#30192](https://github.com/immich-app/immich/pull/30192)를 바탕으로 만들어졌습니다. 두 분 모두에게 감사드립니다. Tapo 카메라 기능은 [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control), [python-kasa](https://github.com/python-kasa/python-kasa)가 문서화한 내용을 바탕으로 작성되었습니다. Meta Quest 화면은 오픈소스가 아닌 Meta Spatial SDK를 사용하므로 이 포크에만 남아 있습니다. Windows ZIP에는 프로젝트가 LGPL 라이선스로 빌드한 libmpv([mpv](https://mpv.io) 라이브러리, [FFmpeg](https://ffmpeg.org) 포함)와 그 라이선스 및 소스가 함께 들어 있으며, 이 페이지에 언급된 플랫폼들의 세부 정보와 상표에 대한 내용은 [License and trademarks](../docs/immuch360/platform-support.md#license-and-trademarks)에 있습니다.
+360° 사진 뷰어는 dmitry-brazhenko가 작성한 업스트림 pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)를 기반으로 하며, 이는 bencefr의 프로토타입인 [#30192](https://github.com/immich-app/immich/pull/30192)를 바탕으로 만들어졌습니다. 두 분 모두에게 감사드립니다. TV에서 검색 필터의 리모컨 조작 수정과 앨범 정렬은 mlc70의 [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) 작업에서 시작되었습니다. Tapo 카메라 기능은 [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control), [python-kasa](https://github.com/python-kasa/python-kasa)가 문서화한 내용을 바탕으로 작성되었습니다. Meta Quest 화면은 오픈소스가 아닌 Meta Spatial SDK를 사용하므로 이 포크에만 남아 있습니다. Windows ZIP에는 프로젝트가 LGPL 라이선스로 빌드한 libmpv([mpv](https://mpv.io) 라이브러리, [FFmpeg](https://ffmpeg.org) 포함)와 그 라이선스 및 소스가 함께 들어 있으며, 이 페이지에 언급된 플랫폼들의 세부 정보와 상표에 대한 내용은 [License and trademarks](../docs/immuch360/platform-support.md#license-and-trademarks)에 있습니다.
 
 이 페이지의 휴대폰 화면은 에뮬레이터에서 실행한 Android build로, TV 화면은 Google TV 에뮬레이터로, Windows 화면은 Windows 11 PC로 촬영했으며, 모두 [Poly Haven](https://polyhaven.com)의 CC0 파노라마를 사용했습니다. 헤드셋 화면은 Quest 3에서 촬영했습니다.
 
@@ -309,8 +310,8 @@ Immuch360은 [GNU AGPL v3](../LICENSE) 라이선스를 따르는 [Immich](https:
 
 아직 하지 않은 일을 가능성이 높은 순서로 적었습니다. 여기 있는 것은 약속이 아니며, [이슈 트래커](https://github.com/freeKC/Immuch360/issues)에 의견을 주시면 무엇을 먼저 할지 정하는 데 도움이 됩니다.
 
-- **스토어**: Google Play(build 23 심사 중, TV 등록도 심사 중), App Store(버전 3.3.0 심사 중), Meta Horizon Store(build 21 심사 중).
-- **컴퓨터**: Windows PC에서 모든 기능을 직접 테스트한 뒤, 웹캠으로 Spatial 2.5D를 테스트하고, Linux와 macOS의 동영상 플레이어를 테스트하고 실제 Mac에서도 테스트한 다음, 서명된 build와 자동 업데이트까지 준비합니다.
+- **스토어**: Google Play(build 26 예정, TV 등록은 심사 중), App Store(버전 3.3.1, 10월 14일부터 심사 중), Meta Horizon Store(build 25 심사 중).
+- **컴퓨터**: Windows PC에서 모든 기능을 직접 테스트한 뒤, Linux와 macOS용 360° 동영상 렌더러를 만들고 실제 Mac과 실제 Linux PC에서 테스트하며, 이어서 서명된 build와 자동 업데이트, 마지막으로 웹캠을 이용한 Spatial 2.5D를 준비합니다.
 - **휴대폰과 태블릿**: iOS 360° 동영상 플레이어의 타임 바, 휴대폰 360° 플레이어의 이전/다음, 평면 플레이어의 오디오 트랙 선택, iPhone과 iPad의 Tapo 실시간 화면.
 - **몰입형 미디어**: 듀얼 피시아이 .dng, GoPro와 DJI 동영상 자체 움직임 데이터로 수평 보정, 디코더가 지원하면 Quest에서 3D로 보이는 공간 동영상, 헤드셋에서 공간 사진 간 이전/다음.
 - **소스**: 공유 폴더 파일 간 스와이프, WebDAV용 Digest 인증, 컴퓨터에서 Plex 토큰을 가져오는 QR 코드, Plex용 IPv6, H.265 Tapo 녹화, TV 홈 화면의 채널.

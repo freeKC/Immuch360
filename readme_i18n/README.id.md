@@ -20,14 +20,14 @@ Immuch360 adalah aplikasi gratis dan sumber terbuka untuk menemukan, menjelajahi
 
 <div align="center">
 
-| Platform | Tempat mendapatkannya | Status per 12 Oktober 2026 |
+| Platform | Tempat mendapatkannya | Status per 20 Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ponsel dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | di Google Play (build 20; build 23 sedang ditinjau), build 23 di GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dan iPad** | App Store | versi 3.3.0 menunggu peninjauan Apple; [bangun sendiri](../docs/immuch360/build.md) sementara itu |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 di GitHub; cantuman TV sedang dalam peninjauan Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3, dan 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | di Horizon Store (build 14; build 21 sedang ditinjau), build 23 di GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer atau ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, pratinjau: foto, video datar dan 360°, berbagi, Plex, kamera, berkas yang dibuka dengan program |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS dan Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | pratinjau awal: di Linux foto dan foto 360°, belum ada video; macOS baru dimulai di CI proyek ini |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ponsel dan tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | di Google Play (build 25), build 26 di GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dan iPad** | App Store | versi 3.3.1 (build 24) menunggu peninjauan Apple sejak 14 Oktober; [bangun sendiri](../docs/immuch360/build.md) sementara itu |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dan Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 di GitHub, dengan perbaikan remote untuk filter pencarian; cantuman TV sedang dalam peninjauan Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3, dan 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | di Horizon Store (build 23; build 25 sedang ditinjau), build 26 di GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer atau ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, pratinjau: foto, video datar dan 360°, berbagi, Plex, kamera, berkas yang dibuka dengan program, antarmuka dalam 89 bahasa |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS dan Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | pratinjau: di Linux foto, foto 360°, dan video datar (video 360° diputar datar); di macOS sama, hanya diperiksa di Mac CI proyek ini, tanpa tanda tangan |
 
 *Status ini diperbarui pada setiap rilis; rinciannya, build demi build, ada di [Status rilis](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Dengan server [Immich](https://github.com/immich-app/immich), Immuch360 adalah a
 2. Di Pengaturan, Penampil Aset, Video, "Sumber video" memilih berkas asli ketika perangkat ini dapat mendekodenya, selalu berkas asli, atau selalu stream yang ditranskode.
 3. Untuk menunjukkan foto 360° kepada orang yang tidak memiliki aplikasi ini, bagikan dengan tautan berbagi Immich: aplikasi web Immich akan menampilkannya sebagai bola di peramban mereka.
 
-Build saat ini, build 23, didasarkan pada Immich `main` tanggal 10 Oktober 2026 (versi 3.3.0-rc.0) dan telah diuji dengan server Immich 3.2.4 serta server yang dibangun dari Immich `main` yang sama. Silakan laporkan masalah di [Issues](https://github.com/freeKC/Immuch360/issues), bukan ke proyek Immich.
+Build saat ini, build 26, didasarkan pada Immich `main` tanggal 10 Oktober 2026 (versi 3.3.0-rc.0) dan telah diuji dengan server Immich 3.2.4 serta server yang dibangun dari Immich `main` yang sama. Silakan laporkan masalah di [Issues](https://github.com/freeKC/Immuch360/issues), bukan ke proyek Immich.
 
 Selengkapnya: [selebihnya adalah Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [dibandingkan dengan aplikasi Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Selengkapnya: [kamera Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-vi
 
 Satu basis kode, enam lingkungan. Apa yang dimiliki masing-masing saat ini:
 
-| Kemampuan | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeri, album, pencarian dengan server Immich | ✅ | ✅ | ✅ penampil | ✅ | ✅ | 🔧 |
-| Tanpa server: media milik perangkat sendiri | ✅ | ✅ | hanya berbagi | ✅ | ✅ folder | 🔧 |
-| Foto dan video datar | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Foto 360° sebagai bola | ✅ | ✅ | ✅ | ✅ imersif | ✅ | 🔧 |
-| Video 360° | ✅ | ✅ tanpa bilah waktu | ✅ | ✅ imersif | ✅ | 🔧 |
-| 3D dan VR180 | ✅ satu mata | ✅ satu mata | ✅ satu mata | ✅ 3D sejati | ✅ satu mata | 🔧 |
-| Spasial 2.5D (pelacakan kepala) | ✅ eksperimental | ✅ eksperimental | ❌ | ❌ | 🔜 | ❌ |
-| Foto spasial Apple | ✅ satu mata | ✅ satu mata | ✅ satu mata | ✅ 3D | ✅ satu mata | 🔧 |
-| Berkas mentah Insta360, GoPro, dan DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Berbagi SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kamera Tapo: rekaman | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kamera Tapo: tampilan langsung | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Membagikan perangkat ini di jaringan | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Unggah ke Immich dari berbagi dan perangkat | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Input | sentuh, giroskop | sentuh, giroskop | remote | kontroler, tangan | mouse, papan ketik | |
-| Tempat mendapatkannya | Google Play, APK | App Store (sedang ditinjau) | APK, Google Play (sedang ditinjau) | Horizon Store, APK | installer atau ZIP (pratinjau) | .deb, .rpm, DMG (pratinjau awal) |
+| Kemampuan | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galeri, album, pencarian dengan server Immich | ✅ | ✅ | ✅ penampil | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tanpa server: media milik perangkat sendiri | ✅ | ✅ | hanya berbagi | ✅ | ✅ folder | ✅ folder | ✅ folder |
+| Foto dan video datar | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Foto 360° sebagai bola | ✅ | ✅ | ✅ | ✅ imersif | ✅ | ✅ | 🔧 CI |
+| Video 360° | ✅ | ✅ tanpa bilah waktu | ✅ | ✅ imersif | ✅ | hanya datar | hanya datar |
+| 3D dan VR180 | ✅ satu mata | ✅ satu mata | ✅ satu mata | ✅ 3D sejati | ✅ satu mata | foto satu mata, video datar | foto satu mata, video datar |
+| Spasial 2.5D (pelacakan kepala) | ✅ eksperimental | ✅ eksperimental | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Foto spasial Apple | ✅ satu mata | ✅ satu mata | ✅ satu mata | ✅ 3D | ✅ satu mata | 🔧 CI | 🔧 CI |
+| Berkas mentah Insta360, GoPro, dan DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI foto, video datar | 🔧 CI foto, video datar |
+| Berbagi SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kamera Tapo: rekaman | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kamera Tapo: tampilan langsung | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Membagikan perangkat ini di jaringan | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Unggah ke Immich dari berbagi dan perangkat | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Input | sentuh, giroskop | sentuh, giroskop | remote | kontroler, tangan | mouse, papan ketik | mouse, papan ketik | mouse, papan ketik, trackpad |
+| Tempat mendapatkannya | Google Play, APK | App Store (sedang ditinjau) | APK, Google Play (sedang ditinjau) | Horizon Store, APK | installer atau ZIP (pratinjau) | .deb, .rpm (pratinjau) | DMG atau ZIP (pratinjau tanpa tanda tangan) |
 
-✅ ada di aplikasi pada platform tersebut · ❌ tidak ditawarkan di sana · 🔜 direncanakan · 🔧 ada di dalam sumber dan dibangun oleh CI proyek, belum dimulai pada sistem tersebut. "Satu mata" berarti berkas 3D menampilkan mata kirinya di layar datar. Belum semua ✅ diperiksa pada perangkat nyata: apa yang diperiksa dan di mana, serta apa yang masih perlu dipastikan, ada di [Fitur](../docs/immuch360/features.md), [Dukungan platform](../docs/immuch360/platform-support.md), dan [Kompatibilitas](../docs/immuch360/compatibility.md).
+✅ ada di aplikasi pada platform tersebut · ❌ tidak ditawarkan di sana · 🔜 direncanakan · 🔧 CI ada di dalam sumber, dibangun dan dijalankan oleh CI proyek pada sistem tersebut, tetapi belum diperiksa di sana dengan server, berbagi, atau kamera sungguhan · hanya datar: video diputar datar, dengan sebuah pesan, karena perender 360° hanya ada di Windows. "Satu mata" berarti berkas 3D menampilkan mata kirinya di layar datar. Belum semua ✅ diperiksa pada perangkat nyata: apa yang diperiksa dan di mana, serta apa yang masih perlu dipastikan, ada di [Fitur](../docs/immuch360/features.md), [Dukungan platform](../docs/immuch360/platform-support.md), dan [Kompatibilitas](../docs/immuch360/compatibility.md).
 
 - **Ponsel dan tablet Android**: aplikasi lengkap, sentuh dan giroskop, semua sumber.
 - **iPhone dan iPad**: aplikasi lengkap; pemutar video 360° hanya memiliki play dan pause, tampilan langsung Tapo akan datang kemudian, dan pencarian DLNA mengirim permintaan unicast sampai Apple memberikan entitlement multicast.
 - **Android TV dan Google TV**: APK yang sama, dikendalikan oleh remote; sebuah penampil: backup, unggahan, dan penyuntingan disembunyikan. Diperiksa pada emulator Google TV (masuk, linimasa, penampil, berbagi, navigasi remote), belum pada TV nyata.
-- **Meta Quest 2, Pro, 3, dan 3S**: aplikasi sebagai jendela, ditambah tampilan imersif; HEVC adalah codec yang aman, H.264 berhenti di sekitar 4096x2304 pada Quest 3; Quest 2 dan Quest Pro belum diuji.
+- **Meta Quest 2, Pro, 3, dan 3S**: aplikasi sebagai jendela, ditambah tampilan imersif; HEVC adalah codec yang aman, H.264 berhenti di sekitar 4096x2304 pada Quest 3; hanya Quest 3 yang sudah diuji, Quest 2, Quest Pro, dan Quest 3S belum diuji.
 - **Windows 10 dan 11**: pratinjau, dengan folder sebagai pengganti galeri, pemutar video sendiri (libmpv) untuk video datar dan 360°, berkas mentah yang digabungkan pada chip grafis, berkas dan folder yang dibuka dengan program atau dijatuhkan pada jendelanya, installer atau ZIP.
-- **macOS dan Linux**: paket yang dibangun oleh CI proyek ini (.deb, .rpm, DMG); di Linux aplikasi berjalan dan menampilkan foto serta foto 360°, belum ada video, dan berbagi SMB membutuhkan Ubuntu 24.04, Debian 13, atau Fedora 39 atau yang lebih baru; aplikasi macOS baru berjalan di CI proyek ini, tanpa video dan akses jaringannya belum diuji.
+- **Linux**: sebuah .deb dan sebuah .rpm yang dibangun oleh CI proyek ini, dipasang dan diperiksa di Ubuntu 22.04 dan 24.04, Debian 12, serta Fedora 40 dan 44; foto, foto 360°, dan video datar melalui libmpv milik sistem (video 360°, 3D, dan mentah diputar datar dengan sebuah pesan); berbagi SMB mulai dari Ubuntu 22.04 dan Debian 12; belum dijalankan di PC Linux sungguhan, hanya di WSLg dan di dalam kontainer.
+- **macOS**: sebuah DMG dan sebuah ZIP yang dibangun oleh CI proyek ini, universal, tanpa tanda tangan (Gatekeeper bertanya sekali); aplikasi ini berjalan, membuka berkas dan folder yang diberikan kepadanya, termasuk dari Finder, menyimpan rahasianya di rantai kunci login, dan memutar video datar dengan libmpv miliknya sendiri, semuanya hanya diperiksa di Mac CI proyek ini; belum ada yang dijalankan di Mac sungguhan.
 
 <a id="advanced-features"></a>
 ## Fitur lanjutan
@@ -300,7 +301,7 @@ Tidak ada apa pun yang dikirim ke pengembang: tidak ada akun, tidak ada analitik
 
 Immuch360 adalah fork tidak resmi dari aplikasi mobile [Immich](https://github.com/immich-app/immich), di bawah lisensi [GNU AGPL v3](../LICENSE), tidak berafiliasi dengan, dan tidak didukung oleh, tim Immich atau FUTO. Fork ini ada karena tampilan 360° di perangkat mobile telah diminta di Immich sejak Januari 2024 dan belum ada di aplikasi resminya; fork ini menghadirkannya sekarang, mengumpulkan masukan dari perangkat nyata, dan akan menawarkan balik ke Immich, dalam pull request kecil-kecil, apa pun yang diinginkan oleh para maintainer. Semua yang dilakukan aplikasi resmi tetap dipertahankan; branch, rantai build, dan CI dijelaskan di [Bangun sendiri](../docs/immuch360/build.md).
 
-Penampil foto 360° didasarkan pada pull request upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) oleh dmitry-brazhenko, yang sendiri dibangun di atas prototipe oleh bencefr di [#30192](https://github.com/immich-app/immich/pull/30192); terima kasih untuk keduanya. Kamera Tapo ditulis berdasarkan dokumentasi dari [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control), dan [python-kasa](https://github.com/python-kasa/python-kasa). Tampilan Meta Quest mengandalkan Meta Spatial SDK, yang bukan sumber terbuka, sehingga tetap berada hanya di fork ini. ZIP Windows menyertakan libmpv (pustaka [mpv](https://mpv.io), dengan [FFmpeg](https://ffmpeg.org)) yang dibangun oleh proyek ini, di bawah lisensi LGPL, dengan lisensi dan sumbernya; rincian dan merek dagang platform yang disebutkan di halaman ini ada di [Lisensi dan merek dagang](../docs/immuch360/platform-support.md#license-and-trademarks).
+Penampil foto 360° didasarkan pada pull request upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) oleh dmitry-brazhenko, yang sendiri dibangun di atas prototipe oleh bencefr di [#30192](https://github.com/immich-app/immich/pull/30192); terima kasih untuk keduanya. Perbaikan remote untuk filter pencarian dan pengurutan album di TV berawal dari karya mlc70 di [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Kamera Tapo ditulis berdasarkan dokumentasi dari [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control), dan [python-kasa](https://github.com/python-kasa/python-kasa). Tampilan Meta Quest mengandalkan Meta Spatial SDK, yang bukan sumber terbuka, sehingga tetap berada hanya di fork ini. ZIP Windows menyertakan libmpv (pustaka [mpv](https://mpv.io), dengan [FFmpeg](https://ffmpeg.org)) yang dibangun oleh proyek ini, di bawah lisensi LGPL, dengan lisensi dan sumbernya; rincian dan merek dagang platform yang disebutkan di halaman ini ada di [Lisensi dan merek dagang](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Tangkapan layar ponsel pada halaman ini diambil pada build Android di emulator, tangkapan TV pada emulator Google TV, dan tangkapan Windows pada PC Windows 11, semuanya dengan panorama CC0 dari [Poly Haven](https://polyhaven.com); tangkapan headset diambil pada Quest 3.
 
@@ -309,8 +310,8 @@ Tangkapan layar ponsel pada halaman ini diambil pada build Android di emulator, 
 
 Hal-hal yang belum selesai, dimulai dari yang paling mungkin. Tidak ada yang di sini merupakan janji, dan masukan di [pelacak issue](https://github.com/freeKC/Immuch360/issues) membantu menentukan apa yang didahulukan.
 
-- **Toko aplikasi**: Google Play (build 23 sedang ditinjau, cantuman TV sedang ditinjau), App Store (versi 3.3.0 sedang ditinjau), Meta Horizon Store (build 21 sedang ditinjau).
-- **Komputer**: pengujian setiap fungsi secara manual pada PC Windows; lalu Spasial 2.5D dengan webcam; lalu pemutar video di Linux dan macOS serta pengujian pada Mac asli; lalu build yang ditandatangani dan pembaruan otomatis.
+- **Toko aplikasi**: Google Play (build 26 segera hadir, cantuman TV sedang ditinjau), App Store (versi 3.3.1 sedang ditinjau sejak 14 Oktober), Meta Horizon Store (build 25 sedang ditinjau).
+- **Komputer**: pengujian setiap fungsi secara manual di PC Windows; lalu perender video 360° di Linux dan macOS, pengujian di Mac sungguhan dan PC Linux sungguhan; lalu build yang ditandatangani dan pembaruan otomatis; lalu Spasial 2.5D dengan webcam.
 - **Ponsel dan tablet**: bilah waktu pada pemutar video 360° di iOS, sebelumnya dan berikutnya pada pemutar 360° di ponsel, pilihan trek audio pada pemutar datar, tampilan langsung Tapo pada iPhone dan iPad.
 - **Media imersif**: .dng dual fisheye, perataan video GoPro dan DJI dari data gerak mereka sendiri, video spasial dalam 3D pada Quest jika dekodernya memungkinkan, sebelumnya dan berikutnya di antara foto spasial di headset.
 - **Sumber**: menggeser di antara berkas dalam folder berbagi, autentikasi Digest untuk WebDAV, kode QR untuk membawa token Plex dari komputer, IPv6 untuk Plex, rekaman Tapo H.265, kanal pada layar utama TV.

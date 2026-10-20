@@ -20,14 +20,14 @@ Immuch360 je besplatna aplikacija otvorenog koda za pronalaženje, pregledavanje
 
 <div align="center">
 
-| Platforma | Gdje je nabaviti | Stanje na dan 12. oktobra 2026. |
+| Platforma | Gdje je nabaviti | Stanje na dan 20. oktobra 2026. |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | na Google Play (build 20; build 23 u pregledu), build 23 na GitHubu |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | verzija 3.3.0 čeka Appleov pregled; u međuvremenu [izgradite je sami](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 na GitHubu; TV stranica je u Googleovom pregledu |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | na Horizon Store (build 14; build 21 u pregledu), build 23 na GitHubu |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instaler ili ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, pregled: fotografije, ravni i 360° video zapisi, dijeljeni resursi, Plex, kamere, datoteke otvorene programom |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS i Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | rani pregledi: na Linuxu fotografije i 360° fotografije, još bez video zapisa; macOS je samo pokrenut na CI sistemu projekta |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoni i tableti | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | na Google Play (build 25), build 26 na GitHubu |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | verzija 3.3.1 (build 24) čeka Appleov pregled od 14. oktobra; u međuvremenu [izgradite je sami](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 na GitHubu, s ispravkama filtera pretrage za daljinski upravljač; TV stranica je u Googleovom pregledu |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | na Horizon Store (build 23; build 25 u pregledu), build 26 na GitHubu |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instaler ili ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, pregled: fotografije, ravni i 360° video zapisi, dijeljeni resursi, Plex, kamere, datoteke otvorene programom, interfejs na 89 jezika |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS i Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | pregledi: na Linuxu fotografije, 360° fotografije i ravni video zapisi (360° video zapisi se reproduciraju ravno); na macOS-u isto, provjereno samo na CI Macu projekta, nepotpisano |
 
 *Statusi se ažuriraju uz svako izdanje; detalji, iz builda u build, dostupni su u [Status izdanja](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Uz [Immich](https://github.com/immich-app/immich) server, Immuch360 je Immich mo
 2. U Postavkama, Preglednik sadržaja, Video zapisi, "Izvor videa" bira original kada ovaj uređaj može da ga dekodira, uvijek original, ili uvijek transkodirani zapis.
 3. Da pokažete 360° fotografiju nekome ko nema aplikaciju, podijelite je putem Immich linka za dijeljenje: Immich web aplikacija će je prikazati kao sferu u njihovom pretraživaču.
 
-Trenutni build, build 23, zasnovan je na Immich grani `main` od 10. oktobra 2026 (verzija 3.3.0-rc.0) i testiran je na Immich 3.2.4 serveru i serveru izgrađenom od tog istog Immich `main`. Prijavite probleme u [Issues](https://github.com/freeKC/Immuch360/issues), a ne Immich projektu.
+Trenutni build, build 26, zasnovan je na Immich grani `main` od 10. oktobra 2026 (verzija 3.3.0-rc.0) i testiran je na Immich 3.2.4 serveru i serveru izgrađenom od tog istog Immich `main`. Prijavite probleme u [Issues](https://github.com/freeKC/Immuch360/issues), a ne Immich projektu.
 
 Više: [sve ostalo je Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [poređenje sa Immich aplikacijom](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Više: [Tapo kamere](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-
 
 Jedna baza koda, šest okruženja. Šta svako od njih danas ima:
 
-| Mogućnost | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerija, albumi, pretraga uz Immich server | ✅ | ✅ | ✅ preglednik | ✅ | ✅ | 🔧 |
-| Bez servera: vlastiti sadržaj uređaja | ✅ | ✅ | samo dijeljeni resursi | ✅ | ✅ fascikle | 🔧 |
-| Ravne fotografije i video zapisi | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360° fotografije kao sfera | ✅ | ✅ | ✅ | ✅ imerzivno | ✅ | 🔧 |
-| 360° video zapisi | ✅ | ✅ bez vremenske trake | ✅ | ✅ imerzivno | ✅ | 🔧 |
-| 3D i VR180 | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ✅ pravi 3D | ✅ jedno oko | 🔧 |
-| Spatial 2.5D (praćenje glave) | ✅ eksperimentalno | ✅ eksperimentalno | ❌ | ❌ | 🔜 | ❌ |
-| Apple prostorne fotografije | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ✅ 3D | ✅ jedno oko | 🔧 |
-| Sirove Insta360, GoPro i DJI datoteke | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA dijeljeni resursi | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kamere: snimci | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kamere: prikaz uživo | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Podijeli ovaj uređaj na mreži | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Otpremi na Immich sa dijeljenih resursa i uređaja | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Unos | dodir, giroskop | dodir, giroskop | daljinski upravljač | kontroleri, ruke | miš, tastatura | |
-| Gdje je nabaviti | Google Play, APK | App Store (u pregledu) | APK, Google Play (u pregledu) | Horizon Store, APK | instaler ili ZIP (pregled) | .deb, .rpm, DMG (rani pregledi) |
+| Mogućnost | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galerija, albumi, pretraga uz Immich server | ✅ | ✅ | ✅ preglednik | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Bez servera: vlastiti sadržaj uređaja | ✅ | ✅ | samo dijeljeni resursi | ✅ | ✅ fascikle | ✅ fascikle | ✅ fascikle |
+| Ravne fotografije i video zapisi | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 360° fotografije kao sfera | ✅ | ✅ | ✅ | ✅ imerzivno | ✅ | ✅ | 🔧 CI |
+| 360° video zapisi | ✅ | ✅ bez vremenske trake | ✅ | ✅ imerzivno | ✅ | samo ravno | samo ravno |
+| 3D i VR180 | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ✅ pravi 3D | ✅ jedno oko | fotografije jedno oko, video zapisi ravno | fotografije jedno oko, video zapisi ravno |
+| Spatial 2.5D (praćenje glave) | ✅ eksperimentalno | ✅ eksperimentalno | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple prostorne fotografije | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ✅ 3D | ✅ jedno oko | 🔧 CI | 🔧 CI |
+| Sirove Insta360, GoPro i DJI datoteke | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI fotografije, video zapisi ravno | 🔧 CI fotografije, video zapisi ravno |
+| SMB, WebDAV, DLNA dijeljeni resursi | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamere: snimci | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamere: prikaz uživo | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Podijeli ovaj uređaj na mreži | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Otpremi na Immich sa dijeljenih resursa i uređaja | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Unos | dodir, giroskop | dodir, giroskop | daljinski upravljač | kontroleri, ruke | miš, tastatura | miš, tastatura | miš, tastatura, touchpad |
+| Gdje je nabaviti | Google Play, APK | App Store (u pregledu) | APK, Google Play (u pregledu) | Horizon Store, APK | instaler ili ZIP (pregled) | .deb, .rpm (pregled) | DMG ili ZIP (nepotpisani pregled) |
 
-✅ u aplikaciji na toj platformi · ❌ nije ponuđeno tamo · 🔜 planirano · 🔧 u izvornom kodu i izgrađeno putem CI sistema projekta, još nije pokrenuto na tom sistemu. "Jedno oko" znači da 3D datoteka prikazuje svoje lijevo oko na ravnom ekranu. Nije svaki ✅ još provjeren na stvarnom uređaju: šta je provjereno gdje, i šta preostaje da se potvrdi, dostupno je u [Funkcije](../docs/immuch360/features.md), [Podrška za platforme](../docs/immuch360/platform-support.md) i [Kompatibilnost](../docs/immuch360/compatibility.md).
+✅ u aplikaciji na toj platformi · ❌ nije ponuđeno tamo · 🔜 planirano · 🔧 CI u izvornom kodu, izgrađeno i pokrenuto putem CI sistema projekta na tom sistemu, ali tamo još nije provjereno sa stvarnim serverom, dijeljenim resursom ili kamerom · samo ravno: video se reproducira ravno, uz poruku, jer 360° prikaz videa postoji samo na Windowsu. "Jedno oko" znači da 3D datoteka prikazuje svoje lijevo oko na ravnom ekranu. Nije svaki ✅ još provjeren na stvarnom uređaju: šta je provjereno gdje, i šta preostaje da se potvrdi, dostupno je u [Funkcije](../docs/immuch360/features.md), [Podrška za platforme](../docs/immuch360/platform-support.md) i [Kompatibilnost](../docs/immuch360/compatibility.md).
 
 - **Android telefoni i tableti**: potpuna aplikacija, dodir i giroskop, svi izvori.
 - **iPhone i iPad**: potpuna aplikacija; 360° reproduktor videa ima samo reprodukciju i pauzu, Tapo prikaz uživo stiže kasnije, a DLNA pretraga šalje unicast zahtjeve dok Apple ne dodijeli multicast dozvolu (entitlement).
 - **Android TV i Google TV**: isti APK, upravljan daljinskim upravljačem; preglednik: sigurnosno kopiranje, otpremanje i uređivanje su skriveni. Provjereno na Google TV emulatoru (prijava, vremenska linija, preglednici, dijeljeni resursi, navigacija daljinskim upravljačem), još nije na stvarnom TV-u.
-- **Meta Quest 2, Pro, 3 i 3S**: aplikacija kao prozor, plus imerzivni prikaz; HEVC je siguran kodek, H.264 se zaustavlja oko 4096x2304 na Quest 3; Quest 2 i Quest Pro još nisu testirani.
+- **Meta Quest 2, Pro, 3 i 3S**: aplikacija kao prozor, plus imerzivni prikaz; HEVC je siguran kodek, H.264 se zaustavlja oko 4096x2304 na Quest 3; testiran je samo Quest 3, a Quest 2, Quest Pro i Quest 3S još nisu testirani.
 - **Windows 10 i 11**: pregled, sa fasciklama umjesto galerije, vlastitim video reproduktorom (libmpv) za ravne i 360° video zapise, sirove datoteke sastavljene na grafičkom čipu, datoteke i fascikle otvorene programom ili ispuštene na prozor, instaler ili ZIP.
-- **macOS i Linux**: paketi izgrađeni putem CI sistema projekta (.deb, .rpm, DMG); na Linuxu se aplikacija pokreće i prikazuje fotografije i 360° fotografije, još bez video zapisa, a SMB dijeljeni resursi traže Ubuntu 24.04, Debian 13 ili Fedoru 39 ili noviju; macOS aplikacija je samo pokrenuta na CI sistemu projekta, bez video zapisa i sa neisprobanim mrežnim pristupom.
+- **Linux**: .deb i .rpm izgrađeni putem CI sistema projekta, instalirani i provjereni na Ubuntu 22.04 i 24.04, Debian 12 i Fedori 40 i 44; fotografije, 360° fotografije i ravni video zapisi putem sistemskog libmpv (360°, 3D i sirovi video zapisi se reproduciraju ravno, uz poruku); SMB dijeljeni resursi od Ubuntu 22.04 i Debian 12 naviše; još nije pokrenuto na stvarnom Linux računaru, samo pod WSLg i u kontejnerima.
+- **macOS**: DMG i ZIP izgrađeni putem CI sistema projekta, univerzalni, nepotpisani (Gatekeeper pita jednom); aplikacija se pokreće, otvara datoteke i fascikle koje joj se predaju, uključujući one iz Findera, čuva svoje tajne u login keychainu i reproducira ravne video zapise vlastitim libmpv, sve provjereno samo na CI Macu projekta; na stvarnom Macu još ništa nije pokrenuto.
 
 <a id="advanced-features"></a>
 ## Napredne funkcije
@@ -300,7 +301,7 @@ Ništa ne odlazi razvojniku: nema računa, nema analitike, nema servisa za prija
 
 Immuch360 je nezvanični fork mobilne aplikacije [Immich](https://github.com/immich-app/immich), pod licencom [GNU AGPL v3](../LICENSE), koji nije povezan sa Immich timom ili FUTO-om, ni od njih podržan. Fork postoji zato što je 360° prikaz na mobilnim uređajima traženi u Immichu od januara 2024. i još nije u zvaničnoj aplikaciji; on to sada isporučuje, prikuplja stvarne povratne informacije sa uređaja, i vratiće Immichu, u malim pull requestovima, sve što održavaoci žele. Sve što zvanična aplikacija radi je zadržano; grane, lanac izgradnje i CI su opisani u [Izgradite je sami](../docs/immuch360/build.md).
 
-360° preglednik fotografija je zasnovan na upstream pull requestu [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) od dmitry-brazhenko, koji je sam zasnovan na prototipu od bencefr u [#30192](https://github.com/immich-app/immich/pull/30192); hvala obojici. Tapo kamere su napisane na osnovu onoga što dokumentuju [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) i [python-kasa](https://github.com/python-kasa/python-kasa). Meta Quest prikaz se oslanja na Meta Spatial SDK, koji nije otvorenog koda, pa zato ostaje u ovom forku. Windows ZIP sadrži libmpv (biblioteku [mpv](https://mpv.io), sa [FFmpeg](https://ffmpeg.org)) izgrađen od strane projekta, pod LGPL licencom, sa svojim licencama i izvornim kodom; detalji i zaštitni znakovi platformi navedenih na ovoj stranici su u [Licenca i zaštitni znakovi](../docs/immuch360/platform-support.md#license-and-trademarks).
+360° preglednik fotografija je zasnovan na upstream pull requestu [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) od dmitry-brazhenko, koji je sam zasnovan na prototipu od bencefr u [#30192](https://github.com/immich-app/immich/pull/30192); hvala obojici. Ispravke filtera pretrage i sortiranja albuma za daljinski upravljač na TV-ima nastale su iz rada korisnika mlc70 u [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Tapo kamere su napisane na osnovu onoga što dokumentuju [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) i [python-kasa](https://github.com/python-kasa/python-kasa). Meta Quest prikaz se oslanja na Meta Spatial SDK, koji nije otvorenog koda, pa zato ostaje u ovom forku. Windows ZIP sadrži libmpv (biblioteku [mpv](https://mpv.io), sa [FFmpeg](https://ffmpeg.org)) izgrađen od strane projekta, pod LGPL licencom, sa svojim licencama i izvornim kodom; detalji i zaštitni znakovi platformi navedenih na ovoj stranici su u [Licenca i zaštitni znakovi](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Snimci ekrana telefona na ovoj stranici su snimljeni na Android buildu u emulatoru, TV snimci na Google TV emulatoru, a Windows snimci na Windows 11 računaru, svi sa CC0 panoramama sa [Poly Haven](https://polyhaven.com); snimci sa slušalica su snimljeni na Quest 3.
 
@@ -309,8 +310,8 @@ Snimci ekrana telefona na ovoj stranici su snimljeni na Android buildu u emulato
 
 Ono što još nije gotovo, najvjerovatnije prvo. Ništa ovdje nije obećanje, a povratne informacije u [sistemu za prijavu problema](https://github.com/freeKC/Immuch360/issues) pomažu da se odluči šta dolazi prvo.
 
-- **Trgovine**: Google Play (build 23 u pregledu, TV stranica u pregledu), App Store (verzija 3.3.0 u pregledu), Meta Horizon Store (build 21 u pregledu).
-- **Računari**: ručno testiranje svake funkcije na Windows računaru; zatim Spatial 2.5D sa web kamerom; zatim reproduktor videa na Linuxu i macOSu i test na stvarnom Macu; zatim potpisan build i automatska ažuriranja.
+- **Trgovine**: Google Play (build 26 uskoro, TV stranica u pregledu), App Store (verzija 3.3.1 u pregledu od 14. oktobra), Meta Horizon Store (build 25 u pregledu).
+- **Računari**: ručno testiranje svake funkcije na Windows računaru; zatim 360° reproduktor videa na Linuxu i macOS-u, test na stvarnom Macu i stvarnom Linux računaru; zatim potpisan build i automatska ažuriranja; zatim Spatial 2.5D sa web kamerom.
 - **Telefoni i tableti**: vremenska traka u iOS 360° reproduktoru videa, prethodno i sljedeće u 360° reproduktorima telefona, izbor audio zapisa u ravnom reproduktoru, Tapo prikaz uživo na iPhoneu i iPadu.
 - **Imerzivni sadržaj**: dual fisheye .dng, nivelisanje GoPro i DJI video zapisa na osnovu njihovih vlastitih podataka o kretanju, prostorni video zapisi u 3D na Questu ako to njegovi dekoderi dozvoljavaju, prethodno i sljedeće između prostornih fotografija u slušalicama.
 - **Izvori**: prevlačenje između datoteka u fascikli dijeljenog resursa, Digest autentifikacija za WebDAV, QR kod za prenošenje Plex tokena sa računara, IPv6 za Plex, H.265 Tapo snimci, kanali na početnom ekranu TV-a.

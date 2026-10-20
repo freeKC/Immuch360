@@ -20,14 +20,14 @@ Immuch360 ایک آزاد اور اوپن سورس ایپ ہے جو آپ کی ت
 
 <div align="center">
 
-| پلیٹ فارم | یہ کہاں سے ملے | 12 اکتوبر 2026 کو صورتحال |
+| پلیٹ فارم | یہ کہاں سے ملے | 20 اکتوبر 2026 کو صورتحال |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** فونز اور ٹیبلٹس | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play پر (بلڈ 20؛ بلڈ 23 زیرِ جائزہ)، GitHub پر بلڈ 23 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone اور iPad** | App Store | ورژن 3.3.0 Apple کے جائزے کے منتظر ہے؛ اس دوران [خود بنائیں](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV اور Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub پر بلڈ 23؛ TV لسٹنگ Google کے جائزے کے تحت ہے |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2، Pro، 3 اور 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store پر (بلڈ 14؛ بلڈ 21 زیرِ جائزہ)، GitHub پر بلڈ 23 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [انسٹالر یا ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | ڈیسک ٹاپ بلڈ 5، ایک پیش نظارہ: تصاویر، فلیٹ اور 360° ویڈیوز، شیئرز، Plex، کیمرے، پروگرام کے ساتھ کھولی گئی فائلیں |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS اور Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | ابتدائی پیش نظارے: Linux پر تصاویر اور 360° تصاویر، ابھی ویڈیوز نہیں؛ macOS صرف پراجیکٹ کے CI پر چلایا گیا |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** فونز اور ٹیبلٹس | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play پر (بلڈ 25)، GitHub پر بلڈ 26 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone اور iPad** | App Store | ورژن 3.3.1 (بلڈ 24) 14 اکتوبر سے Apple کے جائزے کا منتظر ہے؛ اس دوران [خود بنائیں](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV اور Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub پر بلڈ 26، سرچ فلٹرز کے ریموٹ کنٹرول کی درستگیوں کے ساتھ؛ TV لسٹنگ Google کے جائزے کے تحت ہے |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2، Pro، 3 اور 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store پر (بلڈ 23؛ بلڈ 25 زیرِ جائزہ)، GitHub پر بلڈ 26 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [انسٹالر یا ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | ڈیسک ٹاپ بلڈ 6، ایک پیش نظارہ: تصاویر، فلیٹ اور 360° ویڈیوز، شیئرز، Plex، کیمرے، پروگرام کے ساتھ کھولی گئی فائلیں، 89 زبانوں میں انٹرفیس |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS اور Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | پیش نظارے: Linux پر تصاویر، 360° تصاویر اور فلیٹ ویڈیوز (360° ویڈیوز فلیٹ چلتی ہیں)؛ macOS پر بھی یہی، صرف پراجیکٹ کے CI والے Mac پر چیک کیا گیا، بغیر سائن کے |
 
 *اسٹیٹس ہر ریلیز پر اپ ڈیٹ کیے جاتے ہیں؛ بلڈ بہ بلڈ تفصیلات [ریلیز اسٹیٹس](../docs/immuch360/release-status.md) میں موجود ہیں۔*
 
@@ -138,7 +138,7 @@ Immuch360 کو نہ اکاؤنٹ کی ضرورت ہے نہ سرور کی۔ بل�
 2. سیٹنگز، ایسٹ ویور، ویڈیوز میں، "ویڈیو کا ماخذ" یہ منتخب کرتا ہے کہ جب یہ ڈیوائس اسے ڈی کوڈ کر سکے تو اصل فائل، ہمیشہ اصل فائل، یا ہمیشہ ٹرانس کوڈڈ سٹریم استعمال ہو۔
 3. کسی ایسے شخص کو 360° تصویر دکھانے کے لیے جس کے پاس ایپ نہیں ہے، اسے Immich شیئرڈ لنک کے ساتھ شیئر کریں: Immich ویب ایپ اسے ان کے براؤزر میں کرہ کی صورت میں دکھاتی ہے۔
 
-موجودہ بلڈ، بلڈ 23، Immich کی `main` کے 10 اکتوبر 2026 والے ورژن (ورژن 3.3.0-rc.0) پر مبنی ہے اور اسے ایک Immich 3.2.4 سرور اور اسی Immich `main` سے بنے ایک سرور کے خلاف ٹیسٹ کیا گیا ہے۔ براہ کرم مسائل [اشوز](https://github.com/freeKC/Immuch360/issues) میں رپورٹ کریں، Immich پراجیکٹ کو نہیں۔
+موجودہ بلڈ، بلڈ 26، Immich کی `main` کے 10 اکتوبر 2026 والے ورژن (ورژن 3.3.0-rc.0) پر مبنی ہے اور اسے ایک Immich 3.2.4 سرور اور اسی Immich `main` سے بنے ایک سرور کے خلاف ٹیسٹ کیا گیا ہے۔ براہ کرم مسائل [اشوز](https://github.com/freeKC/Immuch360/issues) میں رپورٹ کریں، Immich پراجیکٹ کو نہیں۔
 
 مزید: [باقی سب کچھ Immich ہی ہے](../docs/immuch360/user-guide.md#everything-else-is-immich)، [Immich ایپ کے ساتھ موازنہ](../docs/immuch360/compatibility.md#compared-with-the-immich-app)۔
 
@@ -189,34 +189,35 @@ Meta Quest پر وہی ایپ ایک ونڈو کی صورت میں آپ کی پ�
 
 ایک کوڈ بیس، چھ ماحول۔ آج ہر ایک کے پاس کیا ہے:
 
-| صلاحیت | Android | iPhone، iPad | TV | Quest | Windows | macOS، Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| گیلری، البمز، Immich سرور کے ساتھ سرچ | ✅ | ✅ | ✅ ویور | ✅ | ✅ | 🔧 |
-| بغیر سرور کے: ڈیوائس کا اپنا میڈیا | ✅ | ✅ | صرف شیئرز | ✅ | ✅ فولڈرز | 🔧 |
-| فلیٹ تصاویر اور ویڈیوز | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360° تصاویر بطور کرہ | ✅ | ✅ | ✅ | ✅ عمیق | ✅ | 🔧 |
-| 360° ویڈیوز | ✅ | ✅ بغیر ٹائم بار | ✅ | ✅ عمیق | ✅ | 🔧 |
-| 3D اور VR180 | ✅ ایک آنکھ | ✅ ایک آنکھ | ✅ ایک آنکھ | ✅ حقیقی 3D | ✅ ایک آنکھ | 🔧 |
-| اسپیشل 2.5D (ہیڈ ٹریکنگ) | ✅ تجرباتی | ✅ تجرباتی | ❌ | ❌ | 🔜 | ❌ |
-| Apple اسپیشل تصاویر | ✅ ایک آنکھ | ✅ ایک آنکھ | ✅ ایک آنکھ | ✅ 3D | ✅ ایک آنکھ | 🔧 |
-| خام Insta360، GoPro اور DJI فائلیں | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB، WebDAV، DLNA شیئرز | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo کیمرے: ریکارڈنگز | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo کیمرے: لائیو ویو | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| اس ڈیوائس کو نیٹ ورک پر شیئر کریں | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| شیئرز اور ڈیوائس سے Immich پر اپ لوڈ کریں | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| ان پٹ | ٹچ، گائروسکوپ | ٹچ، گائروسکوپ | ریموٹ | کنٹرولرز، ہاتھ | ماؤس، کی بورڈ | |
-| کہاں سے حاصل کریں | Google Play, APK | App Store (زیرِ جائزہ) | APK, Google Play (زیرِ جائزہ) | Horizon Store, APK | انسٹالر یا ZIP (پیش نظارہ) | .deb, .rpm, DMG (ابتدائی پیش نظارے) |
+| صلاحیت | Android | iPhone، iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| گیلری، البمز، Immich سرور کے ساتھ سرچ | ✅ | ✅ | ✅ ویور | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| بغیر سرور کے: ڈیوائس کا اپنا میڈیا | ✅ | ✅ | صرف شیئرز | ✅ | ✅ فولڈرز | ✅ فولڈرز | ✅ فولڈرز |
+| فلیٹ تصاویر اور ویڈیوز | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 360° تصاویر بطور کرہ | ✅ | ✅ | ✅ | ✅ عمیق | ✅ | ✅ | 🔧 CI |
+| 360° ویڈیوز | ✅ | ✅ بغیر ٹائم بار | ✅ | ✅ عمیق | ✅ | صرف فلیٹ | صرف فلیٹ |
+| 3D اور VR180 | ✅ ایک آنکھ | ✅ ایک آنکھ | ✅ ایک آنکھ | ✅ حقیقی 3D | ✅ ایک آنکھ | تصاویر ایک آنکھ، ویڈیوز فلیٹ | تصاویر ایک آنکھ، ویڈیوز فلیٹ |
+| اسپیشل 2.5D (ہیڈ ٹریکنگ) | ✅ تجرباتی | ✅ تجرباتی | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple اسپیشل تصاویر | ✅ ایک آنکھ | ✅ ایک آنکھ | ✅ ایک آنکھ | ✅ 3D | ✅ ایک آنکھ | 🔧 CI | 🔧 CI |
+| خام Insta360، GoPro اور DJI فائلیں | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI تصاویر، ویڈیوز فلیٹ | 🔧 CI تصاویر، ویڈیوز فلیٹ |
+| SMB، WebDAV، DLNA شیئرز | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo کیمرے: ریکارڈنگز | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo کیمرے: لائیو ویو | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| اس ڈیوائس کو نیٹ ورک پر شیئر کریں | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| شیئرز اور ڈیوائس سے Immich پر اپ لوڈ کریں | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| ان پٹ | ٹچ، گائروسکوپ | ٹچ، گائروسکوپ | ریموٹ | کنٹرولرز، ہاتھ | ماؤس، کی بورڈ | ماؤس، کی بورڈ | ماؤس، کی بورڈ، ٹریک پیڈ |
+| کہاں سے حاصل کریں | Google Play, APK | App Store (زیرِ جائزہ) | APK, Google Play (زیرِ جائزہ) | Horizon Store, APK | انسٹالر یا ZIP (پیش نظارہ) | .deb, .rpm (پیش نظارہ) | DMG یا ZIP (بغیر سائن کا پیش نظارہ) |
 
-✅ اس پلیٹ فارم پر ایپ میں موجود · ❌ وہاں دستیاب نہیں · 🔜 منصوبہ شدہ · 🔧 سورسز میں موجود اور پراجیکٹ کے CI سے بنتی ہے، ابھی اس سسٹم پر شروع نہیں ہوئی۔ "ایک آنکھ" کا مطلب ہے کہ ایک 3D فائل فلیٹ اسکرین پر اپنی بائیں آنکھ دکھاتی ہے۔ ہر ✅ کو ابھی حقیقی ڈیوائس پر چیک نہیں کیا گیا: کیا کہاں چیک کیا گیا، اور کیا تصدیق کے لیے باقی ہے، یہ [فیچرز](../docs/immuch360/features.md)، [پلیٹ فارم سپورٹ](../docs/immuch360/platform-support.md) اور [کمپیٹیبلٹی](../docs/immuch360/compatibility.md) میں موجود ہے۔
+✅ اس پلیٹ فارم پر ایپ میں موجود · ❌ وہاں دستیاب نہیں · 🔜 منصوبہ شدہ · 🔧 CI سورسز میں موجود، اس سسٹم پر پراجیکٹ کے CI سے بنی اور شروع ہوئی، وہاں ابھی کسی حقیقی سرور، شیئر یا کیمرے کے ساتھ چیک نہیں کی گئی · صرف فلیٹ: ویڈیو ایک پیغام کے ساتھ فلیٹ چلتی ہے، کیونکہ 360° رینڈرر صرف Windows پر ہے۔ "ایک آنکھ" کا مطلب ہے کہ ایک 3D فائل فلیٹ اسکرین پر اپنی بائیں آنکھ دکھاتی ہے۔ ہر ✅ کو ابھی حقیقی ڈیوائس پر چیک نہیں کیا گیا: کیا کہاں چیک کیا گیا، اور کیا تصدیق کے لیے باقی ہے، یہ [فیچرز](../docs/immuch360/features.md)، [پلیٹ فارم سپورٹ](../docs/immuch360/platform-support.md) اور [کمپیٹیبلٹی](../docs/immuch360/compatibility.md) میں موجود ہے۔
 
 - **Android فونز اور ٹیبلٹس**: مکمل ایپ، ٹچ اور گائروسکوپ، ہر ماخذ۔
 - **iPhone اور iPad**: مکمل ایپ؛ 360° ویڈیو پلیئر میں صرف پلے اور پاز ہیں، Tapo لائیو ویو بعد میں آئے گا، اور DLNA سرچ یونیکاسٹ ریکوئسٹس بھیجتی ہے جب تک Apple ملٹی کاسٹ اینٹائٹلمنٹ نہیں دیتا۔
 - **Android TV اور Google TV**: وہی APK، ریموٹ سے چلائی جاتی ہے؛ ایک ویور: بیک اپ، اپ لوڈز اور ایڈیٹنگ چھپی ہوتی ہیں۔ Google TV ایمولیٹر (لاگ ان، ٹائم لائن، ویورز، شیئرز، ریموٹ نیویگیشن) پر چیک کی گئی، ابھی کسی حقیقی TV پر نہیں۔
-- **Meta Quest 2، Pro، 3 اور 3S**: ونڈو کی صورت میں ایپ، ساتھ عمیق ویو؛ HEVC محفوظ کوڈیک ہے، H.264 Quest 3 پر تقریباً 4096x2304 پر رک جاتا ہے؛ Quest 2 اور Quest Pro ابھی ٹیسٹ نہیں کیے گئے۔
+- **Meta Quest 2، Pro، 3 اور 3S**: ونڈو کی صورت میں ایپ، ساتھ عمیق ویو؛ HEVC محفوظ کوڈیک ہے، H.264 Quest 3 پر تقریباً 4096x2304 پر رک جاتا ہے؛ صرف Quest 3 ٹیسٹ کیا گیا ہے، Quest 2، Quest Pro اور Quest 3S ابھی ٹیسٹ نہیں کیے گئے۔
 - **Windows 10 اور 11**: ایک پیش نظارہ، گیلری کے بجائے فولڈرز کے ساتھ، فلیٹ اور 360° ویڈیوز کے لیے اپنا ویڈیو پلیئر (libmpv)، گرافکس چپ پر جوڑی گئی خام فائلیں، پروگرام کے ساتھ کھولی گئی یا ونڈو پر ڈراپ کی گئی فائلیں اور فولڈرز، ایک انسٹالر یا ایک ZIP۔
-- **macOS اور Linux**: پراجیکٹ کے CI سے بنے پیکجز (ایک .deb، ایک .rpm، ایک DMG)؛ Linux پر ایپ شروع ہوتی ہے اور تصاویر اور 360° تصاویر دکھاتی ہے، ابھی ویڈیوز کے بغیر، اور SMB شیئرز کے لیے Ubuntu 24.04، Debian 13 یا Fedora 39 یا بعد کا ورژن درکار ہے؛ macOS ایپ صرف پراجیکٹ کے CI پر چلائی گئی ہے، ویڈیوز کے بغیر اور اس کی نیٹ ورک تک رسائی آزمائی نہیں گئی۔
+- **Linux**: پراجیکٹ کے CI سے بنے ایک .deb اور ایک .rpm، جو Ubuntu 22.04 اور 24.04، Debian 12 اور Fedora 40 اور 44 پر انسٹال اور چیک کیے گئے؛ سسٹم کی libmpv کے ذریعے تصاویر، 360° تصاویر اور فلیٹ ویڈیوز (360°، 3D اور خام ویڈیوز ایک پیغام کے ساتھ فلیٹ چلتی ہیں)؛ Ubuntu 22.04 اور Debian 12 سے آگے SMB شیئرز؛ ابھی کسی حقیقی Linux PC پر نہیں چلایا گیا، صرف WSLg میں اور کنٹینرز میں۔
+- **macOS**: پراجیکٹ کے CI سے بنے ایک DMG اور ایک ZIP، یونیورسل، بغیر سائن کے (Gatekeeper ایک بار پوچھتا ہے)؛ ایپ شروع ہوتی ہے، اسے دی گئی فائلیں اور فولڈرز کھولتی ہے، Finder سمیت، اپنی خفیہ معلومات لاگ ان کی چین میں رکھتی ہے اور اپنی libmpv کے ساتھ فلیٹ ویڈیوز چلاتی ہے، یہ سب صرف پراجیکٹ کے CI والے Mac پر چیک کیا گیا؛ ابھی کسی حقیقی Mac پر کچھ نہیں چلا۔
 
 <a id="advanced-features"></a>
 ## ایڈوانس خصوصیات
@@ -300,7 +301,7 @@ Ubuntu 22.04 یا بعد کا ورژن اور Debian 12 یا بعد کا ورژ�
 
 Immuch360 [Immich](https://github.com/immich-app/immich) موبائل ایپ کا ایک غیر سرکاری فورک ہے، [GNU AGPL v3](../LICENSE) کے تحت، نہ Immich ٹیم یا FUTO سے وابستہ ہے نہ ان کی توثیق شدہ۔ یہ فورک اس لیے موجود ہے کیونکہ موبائل پر 360° ویونگ کی درخواست Immich میں جنوری 2024 سے کی جا رہی ہے اور یہ ابھی آفیشل ایپ میں شامل نہیں ہے؛ یہ اسے ابھی فراہم کرتا ہے، حقیقی ڈیوائس فیڈ بیک جمع کرتا ہے، اور جو کچھ مینٹینرز چاہیں وہ چھوٹی پل ریکوئسٹس کی صورت میں Immich کو واپس پیش کرے گا۔ آفیشل ایپ جو کچھ کرتی ہے وہ سب برقرار رکھا گیا ہے؛ برانچز، بلڈ چین اور CI کی تفصیل [خود بنائیں](../docs/immuch360/build.md) میں دی گئی ہے۔
 
-360° فوٹو ویور اپ سٹریم پل ریکوئسٹ [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) پر مبنی ہے جو dmitry-brazhenko نے بنائی، جو خود [#30192](https://github.com/immich-app/immich/pull/30192) میں bencefr کے پروٹو ٹائپ پر بنی تھی؛ دونوں کا شکریہ۔ Tapo کیمرے وہی لکھے گئے جو [pytapo](https://github.com/JurajNyiri/pytapo)، [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) اور [python-kasa](https://github.com/python-kasa/python-kasa) دستاویز کرتے ہیں۔ Meta Quest ویو Meta Spatial SDK پر انحصار کرتا ہے، جو اوپن سورس نہیں ہے، چنانچہ یہ صرف اس فورک میں ہی رہتا ہے۔ Windows ZIP میں libmpv شامل ہے ([mpv](https://mpv.io) کی لائبریری، [FFmpeg](https://ffmpeg.org) کے ساتھ) جو پراجیکٹ نے بنائی ہے، LGPL کے تحت، اپنے لائسنسز اور سورسز کے ساتھ؛ اس صفحے پر نام لیے گئے پلیٹ فارمز کی تفصیلات اور ٹریڈ مارکس [لائسنس اور ٹریڈ مارکس](../docs/immuch360/platform-support.md#license-and-trademarks) میں ہیں۔
+360° فوٹو ویور اپ سٹریم پل ریکوئسٹ [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) پر مبنی ہے جو dmitry-brazhenko نے بنائی، جو خود [#30192](https://github.com/immich-app/immich/pull/30192) میں bencefr کے پروٹو ٹائپ پر بنی تھی؛ دونوں کا شکریہ۔ سرچ فلٹرز کے ریموٹ کنٹرول کی درستگیاں اور TVs پر البمز کی ترتیب mlc70 کے اس کام سے شروع ہوئیں جو [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) میں ہے۔ Tapo کیمروں کا کوڈ ان معلومات سے لکھا گیا جو [pytapo](https://github.com/JurajNyiri/pytapo)، [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) اور [python-kasa](https://github.com/python-kasa/python-kasa) دستاویز کرتے ہیں۔ Meta Quest ویو Meta Spatial SDK پر انحصار کرتا ہے، جو اوپن سورس نہیں ہے، چنانچہ یہ اسی فورک میں رہتا ہے۔ Windows ZIP میں libmpv شامل ہے ([mpv](https://mpv.io) کی لائبریری، [FFmpeg](https://ffmpeg.org) کے ساتھ) جو پراجیکٹ نے بنائی ہے، LGPL کے تحت، اپنے لائسنسز اور سورسز کے ساتھ؛ اس صفحے پر نام لیے گئے پلیٹ فارمز کی تفصیلات اور ٹریڈ مارکس [لائسنس اور ٹریڈ مارکس](../docs/immuch360/platform-support.md#license-and-trademarks) میں ہیں۔
 
 اس صفحے کے فون کیپچرز Android بلڈ پر ایک ایمولیٹر میں لیے گئے، TV والے Google TV ایمولیٹر پر اور Windows والے ایک Windows 11 PC پر، سب [Poly Haven](https://polyhaven.com) کے CC0 پینوراما کے ساتھ؛ ہیڈسیٹ کیپچرز ایک Quest 3 پر لیے گئے۔
 
@@ -309,8 +310,8 @@ Immuch360 [Immich](https://github.com/immich-app/immich) موبائل ایپ ک�
 
 جو ابھی نہیں ہوا، سب سے زیادہ متوقع پہلے۔ یہاں کچھ بھی وعدہ نہیں، اور [ایشو ٹریکر](https://github.com/freeKC/Immuch360/issues) پر آراء یہ طے کرنے میں مدد دیتی ہیں کہ پہلے کیا آئے۔
 
-- **اسٹورز**: Google Play (بلڈ 23 زیرِ جائزہ، TV لسٹنگ زیرِ جائزہ)، App Store (ورژن 3.3.0 زیرِ جائزہ)، Meta Horizon Store (بلڈ 21 زیرِ جائزہ)۔
-- **کمپیوٹرز**: Windows PC پر ہر فنکشن کا دستی ٹیسٹ؛ پھر ویب کیم کے ساتھ اسپیشل 2.5D؛ پھر Linux اور macOS پر ویڈیو پلیئر اور ایک حقیقی Mac پر ٹیسٹ؛ پھر ایک سائن شدہ بلڈ اور خودکار اپ ڈیٹس۔
+- **اسٹورز**: Google Play (بلڈ 26 آنے والی ہے، TV لسٹنگ زیرِ جائزہ)، App Store (ورژن 3.3.1، 14 اکتوبر سے زیرِ جائزہ)، Meta Horizon Store (بلڈ 25 زیرِ جائزہ)۔
+- **کمپیوٹرز**: Windows PC پر ہر فنکشن کا دستی ٹیسٹ؛ پھر Linux اور macOS پر 360° ویڈیو رینڈرر، ایک حقیقی Mac اور ایک حقیقی Linux PC پر ٹیسٹ؛ پھر ایک سائن شدہ بلڈ اور خودکار اپ ڈیٹس؛ پھر ویب کیم کے ساتھ اسپیشل 2.5D۔
 - **فونز اور ٹیبلٹس**: iOS 360° ویڈیو پلیئر میں ٹائم بار، فونز کے 360° پلیئرز میں پچھلا اور اگلا، فلیٹ پلیئر میں آڈیو ٹریک کا انتخاب، iPhone اور iPad پر Tapo لائیو ویو۔
 - **عمیق میڈیا**: ڈوئل فش آئی .dng، GoPro اور DJI ویڈیوز کی اپنے موشن ڈیٹا سے لیولنگ، Quest پر اسپیشل ویڈیوز 3D میں اگر اس کے ڈی کوڈرز اجازت دیں، ہیڈسیٹ میں اسپیشل تصاویر کے درمیان پچھلا اور اگلا۔
 - **ماخذ**: شیئر فولڈر کی فائلوں کے درمیان سوائپنگ، WebDAV کے لیے Digest آتھنٹیکیشن، کمپیوٹر سے Plex ٹوکن لانے کے لیے QR کوڈ، Plex کے لیے IPv6، H.265 Tapo ریکارڈنگز، TV ہوم اسکرین پر چینلز۔

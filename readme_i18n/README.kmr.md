@@ -20,14 +20,14 @@ Immuch360 sepaneke belaş û çavkanî-vekirî ye ku ji bo dîtina, gerîna nav,
 
 <div align="center">
 
-| Platform | Ji ku derê bistînî | Rewş di 12ê Cotmeha 2026an de |
+| Platform | Ji ku derê bistînî | Rewş di 20ê Cotmeha 2026an de |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** têlefon û tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | li ser Google Play (çêkirina 20; çêkirina 23 di nirxandinê de), çêkirina 23 li ser GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone û iPad** | App Store | guhertoya 3.3.0 li bendê ye ku Apple wê nirxand bike; heta wê demê [bi xwe çêke](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV û Google TV** | [APK](#android-tv-and-google-tv) · Google Play | çêkirina 23 li ser GitHub; lîsteya TV di nirxandina Google de ye |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 û 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | li ser Horizon Store (çêkirina 14; çêkirina 21 di nirxandinê de), çêkirina 23 li ser GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Sazker an ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | çêkirina 5 a sermaseyê, pêşdîtinek: wêne, vîdyoyên sade û 360°, parvekirin, Plex, kamera, pelên ku bi sepanê hatine vekirin |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS û Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | pêşdîtinên pêşîn: li ser Linux wêne û wêneyên 360°, hê vîdyo tune; macOS tenê li ser CI ya projeyê dest pê kiriye |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** têlefon û tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | li ser Google Play (çêkirina 25), çêkirina 26 li ser GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone û iPad** | App Store | guhertoya 3.3.1 (çêkirina 24) ji 14ê Cotmehê ve li benda nirxandina Apple ye; heta wê demê [bi xwe çêke](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV û Google TV** | [APK](#android-tv-and-google-tv) · Google Play | çêkirina 26 li ser GitHub, bi sererastkirinên telekomandayê di parzûnên lêgerînê de; lîsteya TV di nirxandina Google de ye |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 û 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | li ser Horizon Store (çêkirina 23; çêkirina 25 di nirxandinê de), çêkirina 26 li ser GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Sazker an ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | çêkirina 6 a sermaseyê, pêşdîtinek: wêne, vîdyoyên sade û 360°, parvekirin, Plex, kamera, pelên ku bi sepanê hatine vekirin, navrû bi 89 zimanan |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS û Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | pêşdîtin: li ser Linux wêne, wêneyên 360° û vîdyoyên sade (vîdyoyên 360° sade tên lîstin); li ser macOS heman tişt, tenê li ser Mac-a CI ya projeyê hatiye kontrolkirin, bê îmze |
 
 *Rewş di her weşanê de tê rojane kirin; hûragahiyên, çêkirin bi çêkirin, di [Rewşa weşanê](../docs/immuch360/release-status.md) de ne.*
 
@@ -138,7 +138,7 @@ Bi servereke [Immich](https://github.com/immich-app/immich), Immuch360 sepana mo
 2. Di Mîhengan de, Asset Viewer, Vîdyo, «Çavkaniya vîdyoyê» orîjînal hilbijêre dema ku ev cîhaz wê dixwîne, her dem orîjînal, an her dem rewa transkod kirî.
 3. Ji bo nîşandana wêneyeke 360° ji kesê ku sepanê nîne re, wê bi lînkeke parvekirî ya Immich parve bike: sepana web a Immich wê wekî gogê di gerokê wî/wê de nîşan dide.
 
-Çêkirina heyî, çêkirina 23, li ser `main` ya Immich ya 10ê Cotmeha 2026an (guhertoya 3.3.0-rc.0) hatiye avakirin û li hember servereke Immich 3.2.4 û servereke ku ji heman `main` ya Immich hatiye çêkirin hatiye ceribandin. Ji kerema xwe pirsgirêkan di [Pirsgirêk](https://github.com/freeKC/Immuch360/issues) de ragihîne, ne ji projeya Immich re.
+Çêkirina heyî, çêkirina 26, li ser `main` ya Immich ya 10ê Cotmeha 2026an (guhertoya 3.3.0-rc.0) hatiye avakirin û li hember servereke Immich 3.2.4 û servereke ku ji heman `main` ya Immich hatiye çêkirin hatiye ceribandin. Ji kerema xwe pirsgirêkan di [Pirsgirêk](https://github.com/freeKC/Immuch360/issues) de ragihîne, ne ji projeya Immich re.
 
 Zêdetir: [her tiştê din Immich e](../docs/immuch360/user-guide.md#everything-else-is-immich), [li gorî sepana Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Zêdetir: [kameraên Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-vie
 
 Yek bingeha kodê, şeş hawîrdor. Îro her yek çi heye:
 
-| Jêhatîbûn | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerî, albûm, lêgerîn bi servereke Immich | ✅ | ✅ | ✅ dîtinvan | ✅ | ✅ | 🔧 |
-| Bêyî server: medyaya cîhazê bi xwe | ✅ | ✅ | tenê parvekirin | ✅ | ✅ peldank | 🔧 |
-| Wêne û vîdyoyên sade | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Wêneyên 360° wekî gog | ✅ | ✅ | ✅ | ✅ dorhêlî | ✅ | 🔧 |
-| Vîdyoyên 360° | ✅ | ✅ bêyî xeta demê | ✅ | ✅ dorhêlî | ✅ | 🔧 |
-| 3D û VR180 | ✅ yek çav | ✅ yek çav | ✅ yek çav | ✅ 3D rastîn | ✅ yek çav | 🔧 |
-| Spatial 2.5D (şopandina serî) | ✅ ceribandinî | ✅ ceribandinî | ❌ | ❌ | 🔜 | ❌ |
-| Wêneyên Apple Spatial | ✅ yek çav | ✅ yek çav | ✅ yek çav | ✅ 3D | ✅ yek çav | 🔧 |
-| Pelên xerîm ên Insta360, GoPro û DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Parvekirinên SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kameraên Tapo: tomar | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kameraên Tapo: dîtina zindî | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Vê cîhazê li ser torê parve bike | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Ji parvekirin û cîhazê ber bi Immich ve bar bike | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Têketin | pêlêdan, jîroskop | pêlêdan, jîroskop | kontrolker | kontrolker, dest | mişk, klavye | |
-| Ji ku tê wergirtin | Google Play, APK | App Store (di nirxandinê de) | APK, Google Play (di nirxandinê de) | Horizon Store, APK | sazker an ZIP (pêşdîtin) | .deb, .rpm, DMG (pêşdîtinên pêşîn) |
+| Jêhatîbûn | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galerî, albûm, lêgerîn bi servereke Immich | ✅ | ✅ | ✅ dîtinvan | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Bêyî server: medyaya cîhazê bi xwe | ✅ | ✅ | tenê parvekirin | ✅ | ✅ peldank | ✅ peldank | ✅ peldank |
+| Wêne û vîdyoyên sade | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Wêneyên 360° wekî gog | ✅ | ✅ | ✅ | ✅ dorhêlî | ✅ | ✅ | 🔧 CI |
+| Vîdyoyên 360° | ✅ | ✅ bêyî xeta demê | ✅ | ✅ dorhêlî | ✅ | tenê sade | tenê sade |
+| 3D û VR180 | ✅ yek çav | ✅ yek çav | ✅ yek çav | ✅ 3D rastîn | ✅ yek çav | wêne yek çav, vîdyo sade | wêne yek çav, vîdyo sade |
+| Spatial 2.5D (şopandina serî) | ✅ ceribandinî | ✅ ceribandinî | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Wêneyên Apple Spatial | ✅ yek çav | ✅ yek çav | ✅ yek çav | ✅ 3D | ✅ yek çav | 🔧 CI | 🔧 CI |
+| Pelên xav ên Insta360, GoPro û DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI wêne, vîdyo sade | 🔧 CI wêne, vîdyo sade |
+| Parvekirinên SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kameraên Tapo: tomar | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kameraên Tapo: dîtina zindî | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Vê cîhazê li ser torê parve bike | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Ji parvekirin û cîhazê ber bi Immich ve bar bike | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Têketin | pêlêdan, jîroskop | pêlêdan, jîroskop | telekomanda | kontrolker, dest | mişk, klavye | mişk, klavye | mişk, klavye, trackpad |
+| Ji ku tê wergirtin | Google Play, APK | App Store (di nirxandinê de) | APK, Google Play (di nirxandinê de) | Horizon Store, APK | sazker an ZIP (pêşdîtin) | .deb, .rpm (pêşdîtin) | DMG an ZIP (pêşdîtina bê îmze) |
 
-✅ li ser wê platformê di sepanê de · ❌ li wir nayê pêşkêşkirin · 🔜 plankirî · 🔧 di çavkaniyê de ye û ji hêla CI ya projeyê ve hatiye çêkirin, hê li ser wê pergalê dest pê nekiriye. «Yek çav» tê wateya ku pelek 3D çavê wê yê çepê li ser ekraneke sade nîşan dide. Ne her ✅ hê li ser cîhazeke rastîn hatiye kontrolkirin: çi li ku hatiye kontrolkirin û çi hê maye ku were piştrastkirin, di [Taybetmendî](../docs/immuch360/features.md), [Piştgiriya platformê](../docs/immuch360/platform-support.md) û [Lihevhatî](../docs/immuch360/compatibility.md) de ye.
+✅ li ser wê platformê di sepanê de · ❌ li wir nayê pêşkêşkirin · 🔜 plankirî · 🔧 CI di çavkaniyê de ye, ji hêla CI ya projeyê ve li ser wê pergalê hatiye çêkirin û destpêkirin, hê li wir bi serverek, parvekirinek an kamerayeke rastîn nehatiye kontrolkirin · tenê sade: vîdyo bi peyamekê sade tê lîstin, ji ber ku nîşandêra 360° tenê li ser Windows heye. «Yek çav» tê wateya ku pelek 3D çavê wê yê çepê li ser ekraneke sade nîşan dide. Ne her ✅ hê li ser cîhazeke rastîn hatiye kontrolkirin: çi li ku hatiye kontrolkirin û çi hê maye ku were piştrastkirin, di [Taybetmendî](../docs/immuch360/features.md), [Piştgiriya platformê](../docs/immuch360/platform-support.md) û [Lihevhatî](../docs/immuch360/compatibility.md) de ye.
 
 - **Telefon û tabletên Android**: sepana tam, pêlêdan û jîroskop, her çavkanî.
 - **iPhone û iPad**: sepana tam; lîstikvanê vîdyoyê yê 360° tenê lîstin û rawestandin heye, dîtina zindî ya Tapo paşê tê, û lêgerîna DLNA heta ku Apple destûra multicast bide daxwazên unicast dişîne.
 - **Android TV û Google TV**: heman APK, ji hêla kontrolkerê ve tê rêvebirin; dîtinvanek: tomarkirin, barkirin û sererastkirin hatine veşartin. Li ser emulatorê Google TV hatiye kontrolkirin (têketin, xeta demê, dîtinvan, parvekirin, navîgasyona kontrolkerê), hê li ser televizyoneke rastîn na.
-- **Meta Quest 2, Pro, 3 û 3S**: sepan wekî pencere, digel dîmena dorhêlî; HEVC kodê ewle ye, H.264 li Quest 3 nêzîkî 4096x2304 disekine; Quest 2 û Quest Pro hê nehatine ceribandin.
+- **Meta Quest 2, Pro, 3 û 3S**: sepan wekî pencere, digel dîmena dorhêlî; HEVC kodeka ewle ye, H.264 li Quest 3 nêzîkî 4096x2304 disekine; tenê Quest 3 hatiye ceribandin, Quest 2, Quest Pro û Quest 3S hê nehatine ceribandin.
 - **Windows 10 û 11**: pêşdîtinek, bi peldankan li şûna galerîyekê, lîstikvanekî vîdyoyê yê xwe (libmpv) ji bo vîdyoyên sade û 360°, pelên xav ên ku li ser çîpa grafîkê hatine dirûtin, pel û peldankên ku bi sepanê hatine vekirin an li ser pencereyê hatine avêtin, sazkerek an ZIP-ek.
-- **macOS û Linux**: pakêtên ku ji hêla CI ya projeyê ve hatine çêkirin (.deb, .rpm, DMG); li ser Linux sepan dest pê dike û wêne û wêneyên 360° nîşan dide, hê bêyî vîdyo; û parvekirinên SMB hewceyê Ubuntu 24.04, Debian 13 an Fedora 39 an paşîtir in; sepana macOS tenê li ser CI ya projeyê dest pê kiriye, bêyî vîdyo, û gihîştina torê ya wê hê nehatiye ceribandin.
+- **Linux**: .deb û .rpm ku ji hêla CI ya projeyê ve hatine çêkirin, li ser Ubuntu 22.04 û 24.04, Debian 12 û Fedora 40 û 44 hatine sazkirin û kontrolkirin; wêne, wêneyên 360° û vîdyoyên sade bi libmpv ya pergalê (vîdyoyên 360°, 3D û xav bi peyamekê sade tên lîstin); parvekirinên SMB ji Ubuntu 22.04 û Debian 12 û pê ve; hê li ser komputereke Linux a rastîn nehatiye xebitandin, tenê di bin WSLg de û di konteyneran de.
+- **macOS**: DMG û ZIP ku ji hêla CI ya projeyê ve hatine çêkirin, gerdûnî, bê îmze (Gatekeeper carekê dipirse); ew dest pê dike, pel û peldankên ku jê re têne dayîn vedike, yên ji Finder jî, nihêniyên xwe di login keychain de diparêze û vîdyoyên sade bi libmpv ya xwe dilîze, hemû tenê li ser Mac-a CI ya projeyê hatine kontrolkirin; hê tiştek li ser Mac-eke rastîn nehatiye xebitandin.
 
 <a id="advanced-features"></a>
 ## Taybetmendiyên pêşketî
@@ -300,7 +301,7 @@ Tiştek ji pêşdebir re naçe: ne hesab, ne analîtîk, ne karûbarekî ragihan
 
 Immuch360 şaxeke ne-fermî ya sepana mobîl a [Immich](https://github.com/immich-app/immich) e, di bin [GNU AGPL v3](../LICENSE) de, ne bi tîma Immich an FUTO re têkildar e û ne jî ji hêla wan ve tê piştgirîkirin. Şax heye ji ber ku dîtina 360° li ser mobîlê ji Çileya 2024an ve li Immich hatiye xwestin û hê di sepana fermî de nîne; ew niha wê pêşkêş dike, raya cîhazên rastîn kom dike, û dê di pull requestên biçûk de, tiştê ku parêzvan bixwazin, ber bi Immich ve pêşkêş bike. Her tiştê ku sepana fermî dike tê parastin; şax, zincîra çêkirinê û CI di [Bi xwe çêke](../docs/immuch360/build.md) de hatine rave kirin.
 
-Dîtinvanê wêneyê 360° li ser pull requesta serekanî [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) ya dmitry-brazhenko hatiye avakirin, ya bi xwe li ser prototîpa bencefr di [#30192](https://github.com/immich-app/immich/pull/30192) de hatiye çêkirin; spas ji her duyan re. Kameraên Tapo ji tiştê ku [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) û [python-kasa](https://github.com/python-kasa/python-kasa) belge dikin hatine nivîsandin. Dîmena Meta Quest xwe dispêre Meta Spatial SDK, ku ne çavkanî-vekirî ye, ji ber vê yekê ew di vê şaxê de dimîne. ZIP-a Windows libmpv (pirtûkxaneya [mpv](https://mpv.io), bi [FFmpeg](https://ffmpeg.org)) ya ji hêla projeyê ve hatiye çêkirin, di bin LGPL de, bi lîsans û çavkaniyên wê, digire; hûragahî û nîşaneyên bazirganiyê yên platformên ku li ser vê rûpelê hatine binavkirin di [Lîsans û nîşaneyên bazirganiyê](../docs/immuch360/platform-support.md#license-and-trademarks) de ne.
+Dîtinvanê wêneyê 360° li ser pull requesta serekanî [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) ya dmitry-brazhenko hatiye avakirin, ya bi xwe li ser prototîpa bencefr di [#30192](https://github.com/immich-app/immich/pull/30192) de hatiye çêkirin; spas ji her duyan re. Sererastkirinên telekomandayê di parzûnên lêgerînê de û rêzkirina albûman li ser TV-yan ji xebata mlc70 di [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) de dest pê kirin. Kameraên Tapo ji tiştê ku [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) û [python-kasa](https://github.com/python-kasa/python-kasa) belge dikin hatine nivîsandin. Dîmena Meta Quest xwe dispêre Meta Spatial SDK, ku ne çavkanî-vekirî ye, ji ber vê yekê ew di vê şaxê de dimîne. ZIP-a Windows libmpv (pirtûkxaneya [mpv](https://mpv.io), bi [FFmpeg](https://ffmpeg.org)) ya ji hêla projeyê ve hatiye çêkirin, di bin LGPL de, bi lîsans û çavkaniyên wê, digire; hûragahî û nîşaneyên bazirganiyê yên platformên ku li ser vê rûpelê hatine binavkirin di [Lîsans û nîşaneyên bazirganiyê](../docs/immuch360/platform-support.md#license-and-trademarks) de ne.
 
 Wêneyên telefonê yên vê rûpelê li ser çêkirina Android di emulatorek de hatine kişandin, yên televizyonê li ser emulatorê Google TV û yên Windows li ser komputereke Windows 11, hemû bi panoramayên CC0 ji [Poly Haven](https://polyhaven.com); wêneyên kaskê li ser Quest 3-ê hatine kişandin.
 
@@ -309,8 +310,8 @@ Wêneyên telefonê yên vê rûpelê li ser çêkirina Android di emulatorek de
 
 Tiştên ku hîn nehatine kirin, yên herî muhtemel pêşî. Tiştek li vir ne soz e, û nerînên li ser [issue tracker](https://github.com/freeKC/Immuch360/issues) alîkariyê dikin ku were biryardan ka çi pêşî tê.
 
-- **Store**: Google Play (çêkirina 23 di nirxandinê de, lîsteya TV di nirxandinê de), App Store (guhertoya 3.3.0 di nirxandinê de), Meta Horizon Store (çêkirina 21 di nirxandinê de).
-- **Komputer**: ceribandina her fonksiyonê bi destan li ser komputereke Windows; paşê Spatial 2.5D bi webcamê; paşê lîstikvanê vîdyoyê li ser Linux û macOS û ceribandinek li ser Mac-ek rastîn; paşê çêkirineke îmzekirî û nûvekirinên otomatîk.
+- **Firoşgeh**: Google Play (çêkirina 26 tê, lîsteya TV di nirxandinê de), App Store (guhertoya 3.3.1 ji 14ê Cotmehê ve di nirxandinê de), Meta Horizon Store (çêkirina 25 di nirxandinê de).
+- **Komputer**: ceribandina her fonksiyonê bi destan li ser komputereke Windows; paşê nîşandêra vîdyoyên 360° li ser Linux û macOS, ceribandinek li ser Mac-eke rastîn û komputereke Linux a rastîn; paşê çêkirineke îmzekirî û nûvekirinên otomatîk; paşê Spatial 2.5D bi webcamê.
 - **Telefon û tablet**: xeteke demê di lîstikvanê vîdyoyê yê 360° yê iOS de, ya berê û ya din di lîstikvanên 360° yên telefonan de, hilbijartina rêça dengî di lîstikvanê sade de, dîtina zindî ya Tapo li ser iPhone û iPad.
 - **Medyaya dorhêlî**: .dng ya cot fisheye, ravekirina vîdyoyên GoPro û DJI ji daneyên tevgera wan bi xwe, vîdyoyên Spatial bi 3D li ser Quest heke kodxwînerên wê destûrê bidin, ya berê û ya din di navbera wêneyên Spatial de di kaskê de.
 - **Çavkanî**: şemitandin di navbera pelên peldankeke parvekirî de, rastandina Digest ji bo WebDAV, kodeke QR ji bo anîna tokena Plex ji komputerê, IPv6 ji bo Plex, tomarên Tapo yên H.265, kanalên li ser ekrana destpêkê ya TV.

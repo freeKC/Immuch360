@@ -341,8 +341,10 @@ media bridge, and nothing else ([desktop_player.dart](../../mobile/lib/desktop/v
 
 libmpv is loaded once at start, before the first page. When `libmpv-2.dll` is missing or does not load, the app starts
 anyway: photos and everything else work. Where a video would play, the viewer shows a placeholder over the poster,
-"Video playback comes to Immuch360 Desktop in a later version". The Linux and macOS builds, which carry no libmpv yet,
-take the same path. Where libmpv loads but renderer C cannot run, the 360° player plays the video flat and says why.
+"Video playback comes to Immuch360 Desktop in a later version" (on Linux, from desktop build 6, a message that names the libmpv
+package to install). From desktop build 6 the Linux and macOS builds load libmpv too: the system's on Linux, the
+project's own build inside the app on macOS. Where libmpv loads but renderer C cannot run, as on Linux and macOS, the
+360° player plays the video flat and says why: "This computer cannot show the 360° view of this video: it plays flat."
 
 ## Settings and tuning
 
@@ -389,9 +391,11 @@ memory. `IMMUCH360_MEASURE_RENDERER=c` runs it through renderer C, and its heade
 
 ## Limits and what is next
 
-- **Windows only, for now.** Linux and macOS come later. On Linux, the fork's media_kit_video carries the fix proposed
-  for media_kit #1404 (hardware rendering on Flutter 3.38 and later), and renderer C would run over EGL. macOS needs a
-  port of its own.
+- **Windows only, for now.** Linux and macOS come later; from desktop build 6 they play flat videos through libmpv and
+  play 360°, 3D, VR180 and raw videos flat. On Linux, the fork's media_kit_video carries the fix proposed for media_kit
+  #1404 (hardware rendering on Flutter 3.38 and later), built from desktop build 6, and renderer C would run over EGL;
+  under X11 the isolated EGL context of the plugin fails today and frames go through the processor. macOS needs a port
+  of its own (its plugin draws through OpenGL 3.2, or in software when OpenGL gives no context).
 - **A Flutter package, then upstream.** Once the three systems work, the plan is to extract the renderer into a Flutter
   package of its own, and to propose to media_kit a hook where an app can add its own GL pass between mpv's frame and
   the texture Flutter shows.

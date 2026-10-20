@@ -20,14 +20,14 @@ Immuch360 एउटा स्वतन्त्र र खुला स्रो
 
 <div align="center">
 
-| प्लेटफर्म | कहाँबाट पाउने | 12 अक्टोबर 2026 को स्थिति |
+| प्लेटफर्म | कहाँबाट पाउने | 20 अक्टोबर 2026 को स्थिति |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** फोन र ट्याब्लेट | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play मा (build 20; build 23 समीक्षामा), GitHub मा build 23 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone र iPad** | App Store | version 3.3.0 Apple को समीक्षाको पर्खाइमा; यसबीचमा [आफैं बनाउनुहोस्](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV र Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub मा build 23; TV लिस्टिङ Google को समीक्षामा छ |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 र 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store मा (build 14; build 21 समीक्षामा), GitHub मा build 23 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [इन्स्टलर वा ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, एक preview: फोटो, सपाट र 360° भिडियो, सेयर, Plex, क्यामेरा, एपले खोलेका फाइल |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS र Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | सुरुको preview: Linux मा फोटो र 360° फोटो, अहिलेसम्म भिडियो छैन; macOS प्रोजेक्टको CI मा मात्र सुरु भएको |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** फोन र ट्याब्लेट | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play मा (build 25), GitHub मा build 26 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone र iPad** | App Store | version 3.3.1 (build 24) 14 अक्टोबरदेखि Apple को समीक्षाको पर्खाइमा; यसबीचमा [आफैं बनाउनुहोस्](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV र Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub मा build 26, खोज फिल्टरका रिमोट कन्ट्रोल सुधारसहित; TV लिस्टिङ Google को समीक्षामा छ |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 र 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store मा (build 23; build 25 समीक्षामा), GitHub मा build 26 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [इन्स्टलर वा ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, एक preview: फोटो, सपाट र 360° भिडियो, सेयर, Plex, क्यामेरा, एपले खोलेका फाइल, 89 भाषामा इन्टरफेस |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS र Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | preview: Linux मा फोटो, 360° फोटो र सपाट भिडियो (360° भिडियो सपाट बज्छन्); macOS मा पनि उस्तै, प्रोजेक्टको CI Mac मा मात्र जाँचिएको, साइन नगरिएको |
 
 *हरेक रिलिजमा स्थिति अपडेट गरिन्छ; build अनुसारको विवरण [Release status](../docs/immuch360/release-status.md) मा छ।*
 
@@ -138,7 +138,7 @@ Immuch360 लाई खाता वा सर्भर कुनै पनि �
 2. Settings, Asset Viewer, Videos मा, "भिडियो स्रोत" ले यो डिभाइसले डिकोड गर्न सक्दा मूल फाइल, सधैं मूल फाइल, वा सधैं ट्रान्सकोड गरिएको स्ट्रिम छनोट गर्छ।
 3. एप नभएको कुनै व्यक्तिलाई 360° फोटो देखाउन, त्यसलाई Immich सेयर गरिएको लिङ्कसँग सेयर गर्नुहोस्: Immich वेब एपले त्यो उनीहरूको ब्राउजरमा गोलाकारको रूपमा देखाउँछ।
 
-हालको build, build 23, 10 अक्टोबर 2026 को Immich `main` (version 3.3.0-rc.0) मा आधारित छ र यसलाई Immich 3.2.4 सर्भर र उही Immich `main` बाट बनेको सर्भरविरुद्ध परीक्षण गरिएको थियो। समस्याहरू [Issues](https://github.com/freeKC/Immuch360/issues) मा रिपोर्ट गर्नुहोस्, Immich प्रोजेक्टलाई होइन।
+हालको build, build 26, 10 अक्टोबर 2026 को Immich `main` (version 3.3.0-rc.0) मा आधारित छ र यसलाई Immich 3.2.4 सर्भर र उही Immich `main` बाट बनेको सर्भरविरुद्ध परीक्षण गरिएको थियो। समस्याहरू [Issues](https://github.com/freeKC/Immuch360/issues) मा रिपोर्ट गर्नुहोस्, Immich प्रोजेक्टलाई होइन।
 
 थप: [बाँकी सबै Immich नै हो](../docs/immuch360/user-guide.md#everything-else-is-immich), [Immich एपसँग तुलना](../docs/immuch360/compatibility.md#compared-with-the-immich-app)।
 
@@ -189,34 +189,35 @@ Meta Quest मा उही एप तपाईंको सम्पूर्�
 
 एउटै कोड बेस, छ वातावरण। आज हरेकसँग के छ:
 
-| क्षमता | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| ग्यालरी, एल्बम, Immich सर्भरसँग खोज | ✅ | ✅ | ✅ भ्युअर | ✅ | ✅ | 🔧 |
-| सर्भर बिना: डिभाइसको आफ्नै मिडिया | ✅ | ✅ | सेयर मात्र | ✅ | ✅ फोल्डर | 🔧 |
-| सपाट फोटो र भिडियो | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| गोलाकार 360° फोटो | ✅ | ✅ | ✅ | ✅ इमर्सिव | ✅ | 🔧 |
-| 360° भिडियो | ✅ | ✅ टाइम बार छैन | ✅ | ✅ इमर्सिव | ✅ | 🔧 |
-| 3D र VR180 | ✅ एक आँखा | ✅ एक आँखा | ✅ एक आँखा | ✅ साँचो 3D | ✅ एक आँखा | 🔧 |
-| Spatial 2.5D (हेड ट्र्याकिङ) | ✅ प्रयोगात्मक | ✅ प्रयोगात्मक | ❌ | ❌ | 🔜 | ❌ |
-| Apple स्पेशल फोटो | ✅ एक आँखा | ✅ एक आँखा | ✅ एक आँखा | ✅ 3D | ✅ एक आँखा | 🔧 |
-| कच्चा Insta360, GoPro र DJI फाइल | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA सेयर | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo क्यामेरा: रेकर्डिङ | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo क्यामेरा: लाइभ भ्यू | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| यो डिभाइस नेटवर्कमा सेयर गर्नुहोस् | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| सेयर र डिभाइसबाट Immich मा अपलोड | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| इनपुट | टच, जाइरोस्कोप | टच, जाइरोस्कोप | रिमोट | कन्ट्रोलर, हात | माउस, किबोर्ड | |
-| यो कहाँ पाइन्छ | Google Play, APK | App Store (समीक्षामा) | APK, Google Play (समीक्षामा) | Horizon Store, APK | इन्स्टलर वा ZIP (preview) | .deb, .rpm, DMG (सुरुको preview) |
+| क्षमता | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| ग्यालरी, एल्बम, Immich सर्भरसँग खोज | ✅ | ✅ | ✅ भ्युअर | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| सर्भर बिना: डिभाइसको आफ्नै मिडिया | ✅ | ✅ | सेयर मात्र | ✅ | ✅ फोल्डर | ✅ फोल्डर | ✅ फोल्डर |
+| सपाट फोटो र भिडियो | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| गोलाकार 360° फोटो | ✅ | ✅ | ✅ | ✅ इमर्सिव | ✅ | ✅ | 🔧 CI |
+| 360° भिडियो | ✅ | ✅ टाइम बार छैन | ✅ | ✅ इमर्सिव | ✅ | सपाट मात्र | सपाट मात्र |
+| 3D र VR180 | ✅ एक आँखा | ✅ एक आँखा | ✅ एक आँखा | ✅ साँचो 3D | ✅ एक आँखा | फोटो एक आँखा, भिडियो सपाट | फोटो एक आँखा, भिडियो सपाट |
+| Spatial 2.5D (हेड ट्र्याकिङ) | ✅ प्रयोगात्मक | ✅ प्रयोगात्मक | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple स्पेशल फोटो | ✅ एक आँखा | ✅ एक आँखा | ✅ एक आँखा | ✅ 3D | ✅ एक आँखा | 🔧 CI | 🔧 CI |
+| कच्चा Insta360, GoPro र DJI फाइल | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI फोटो, भिडियो सपाट | 🔧 CI फोटो, भिडियो सपाट |
+| SMB, WebDAV, DLNA सेयर | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo क्यामेरा: रेकर्डिङ | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo क्यामेरा: लाइभ भ्यू | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| यो डिभाइस नेटवर्कमा सेयर गर्नुहोस् | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| सेयर र डिभाइसबाट Immich मा अपलोड | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| इनपुट | टच, जाइरोस्कोप | टच, जाइरोस्कोप | रिमोट | कन्ट्रोलर, हात | माउस, किबोर्ड | माउस, किबोर्ड | माउस, किबोर्ड, ट्र्याकप्याड |
+| यो कहाँ पाइन्छ | Google Play, APK | App Store (समीक्षामा) | APK, Google Play (समीक्षामा) | Horizon Store, APK | इन्स्टलर वा ZIP (preview) | .deb, .rpm (preview) | DMG वा ZIP (साइन नगरिएको preview) |
 
-✅ त्यो प्लेटफर्मको एपमा · ❌ त्यहाँ उपलब्ध छैन · 🔜 योजनामा · 🔧 sources मा छ र प्रोजेक्टको CI ले बनाउँछ, त्यो प्रणालीमा अझै सुरु भएको छैन। "एक आँखा" भन्नाले 3D फाइलले सपाट स्क्रिनमा आफ्नो देब्रे आँखा देखाउँछ भन्ने हो। हरेक ✅ अझै वास्तविक डिभाइसमा जाँचिएको छैन: कहाँ के जाँचियो, र के पुष्टि गर्न बाँकी छ, [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) र [Compatibility](../docs/immuch360/compatibility.md) मा छ।
+✅ त्यो प्लेटफर्मको एपमा · ❌ त्यहाँ उपलब्ध छैन · 🔜 योजनामा · 🔧 CI sources मा छ, त्यो प्रणालीमा प्रोजेक्टको CI ले बनाएको र सुरु गरेको, त्यहाँ वास्तविक सर्भर, सेयर वा क्यामेरासँग अझै जाँचिएको छैन · सपाट मात्र: भिडियो सन्देशसहित सपाट बज्छ, किनभने 360° रेन्डरर Windows मा मात्र छ। "एक आँखा" भन्नाले 3D फाइलले सपाट स्क्रिनमा आफ्नो देब्रे आँखा देखाउँछ भन्ने हो। हरेक ✅ अझै वास्तविक डिभाइसमा जाँचिएको छैन: कहाँ के जाँचियो, र के पुष्टि गर्न बाँकी छ, [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) र [Compatibility](../docs/immuch360/compatibility.md) मा छ।
 
 - **Android फोन र ट्याब्लेट**: पूरा एप, टच र जाइरोस्कोप, हरेक स्रोत।
 - **iPhone र iPad**: पूरा एप; 360° भिडियो प्लेयरमा play र pause मात्र छ, Tapo लाइभ भ्यू पछि आउँछ, र Apple ले multicast entitlement नदिउन्जेल DLNA खोजले unicast अनुरोध पठाउँछ।
 - **Android TV र Google TV**: उही APK, रिमोटले चालित; एक भ्युअर: backup, अपलोड र editing लुकाइएका छन्। Google TV एमुलेटरमा जाँचिएको (login, timeline, भ्युअर, सेयर, रिमोट नेभिगेसन), वास्तविक TV मा अझै होइन।
-- **Meta Quest 2, Pro, 3 र 3S**: विन्डोको रूपमा एप, र इमर्सिव दृश्य थपिएर; HEVC सुरक्षित कोडेक हो, Quest 3 मा H.264 लगभग 4096x2304 मा रोकिन्छ; Quest 2 र Quest Pro मा अझै परीक्षण भएको छैन।
+- **Meta Quest 2, Pro, 3 र 3S**: विन्डोको रूपमा एप, र इमर्सिव दृश्य थपिएर; HEVC सुरक्षित कोडेक हो, Quest 3 मा H.264 लगभग 4096x2304 मा रोकिन्छ; Quest 3 मा मात्र परीक्षण गरिएको छ, Quest 2, Quest Pro र Quest 3S मा अझै परीक्षण भएको छैन।
 - **Windows 10 र 11**: एक preview, ग्यालरीको सट्टा फोल्डर, सपाट र 360° भिडियोका लागि आफ्नो भिडियो प्लेयर (libmpv), ग्राफिक्स चिपमा जोडिएका कच्चा फाइल, एपले खोलेका वा विन्डोमा ड्रप गरिएका फाइल र फोल्डर, एक इन्स्टलर वा ZIP।
-- **macOS र Linux**: प्रोजेक्टको CI ले बनाएका प्याकेज (एक .deb, एक .rpm, एक DMG); Linux मा एप सुरु हुन्छ र फोटो र 360° फोटो देखाउँछ, अहिलेसम्म भिडियो छैन, र SMB सेयरलाई Ubuntu 24.04, Debian 13 वा Fedora 39 वा पछिको चाहिन्छ; macOS एप प्रोजेक्टको CI मा मात्र चलेको छ, भिडियो बिना र नेटवर्क पहुँच नजाँचिएको।
+- **Linux**: प्रोजेक्टको CI ले बनाएका एक .deb र एक .rpm, Ubuntu 22.04 र 24.04, Debian 12 र Fedora 40 र 44 मा इन्स्टल गरी जाँचिएका; प्रणालीको libmpv मार्फत फोटो, 360° फोटो र सपाट भिडियो (360°, 3D र कच्चा भिडियो सन्देशसहित सपाट बज्छन्); Ubuntu 22.04 र Debian 12 देखि SMB सेयर; अझै वास्तविक Linux PC मा चलाइएको छैन, WSLg मा र कन्टेनरमा मात्र।
+- **macOS**: प्रोजेक्टको CI ले बनाएका एक DMG र एक ZIP, universal, साइन नगरिएका (Gatekeeper ले एक पटक सोध्छ); एप सुरु हुन्छ, Finder सहित यसलाई दिइएका फाइल र फोल्डर खोल्छ, आफ्ना गोप्य कुरा login keychain मा राख्छ र आफ्नै libmpv ले सपाट भिडियो बजाउँछ, यो सबै प्रोजेक्टको CI Mac मा मात्र जाँचिएको; वास्तविक Mac मा अझै केही चलेको छैन।
 
 <a id="advanced-features"></a>
 ## उन्नत सुविधाहरू
@@ -300,7 +301,7 @@ Ubuntu 22.04 वा पछिको र Debian 12 वा पछिकोमा: 
 
 Immuch360 [Immich](https://github.com/immich-app/immich) मोबाइल एपको [GNU AGPL v3](../LICENSE) अन्तर्गतको अनाधिकारिक फोर्क हो, Immich टिम वा FUTO सँग सम्बद्ध वा समर्थित छैन। यो फोर्क अवस्थित छ किनभने मोबाइलमा 360° हेराइ Immich मा जनवरी 2024 देखि माग गरिएको छ तर अझै अधिकारिक एपमा छैन; यसले अहिले नै त्यो उपलब्ध गराउँछ, वास्तविक डिभाइसको प्रतिक्रिया जम्मा गर्छ, र maintainer ले चाहेको जुनसुकै कुरा साना pull request मार्फत Immich लाई फिर्ता प्रस्ताव गर्नेछ। अधिकारिक एपले गर्ने सबै कुरा कायम राखिएको छ; branch, build chain र CI [Build it yourself](../docs/immuch360/build.md) मा वर्णन गरिएका छन्।
 
-360° फोटो भ्युअर dmitry-brazhenko द्वारा अपस्ट्रिम pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) मा आधारित छ, जो आफैं bencefr द्वारा [#30192](https://github.com/immich-app/immich/pull/30192) मा बनाइएको prototype मा आधारित थियो; दुवैलाई धन्यवाद। Tapo क्यामेराहरू [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) र [python-kasa](https://github.com/python-kasa/python-kasa) ले दस्तावेज गरेको कुराबाट लेखिएका थिए। Meta Quest दृश्य Meta Spatial SDK मा आधारित छ, जो open source छैन, त्यसैले यो यही fork मा रहन्छ। Windows ZIP ले प्रोजेक्टले बनाएको libmpv ([mpv](https://mpv.io) को library, [FFmpeg](https://ffmpeg.org) सहित) LGPL अन्तर्गत, यसका licence र sources सहित बोक्छ; यस पृष्ठमा उल्लेख गरिएका platform का विवरण र trademark [License and trademarks](../docs/immuch360/platform-support.md#license-and-trademarks) मा छन्।
+360° फोटो भ्युअर dmitry-brazhenko द्वारा अपस्ट्रिम pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) मा आधारित छ, जो आफैं bencefr द्वारा [#30192](https://github.com/immich-app/immich/pull/30192) मा बनाइएको prototype मा आधारित थियो; दुवैलाई धन्यवाद। TV मा खोज फिल्टरका रिमोट कन्ट्रोल सुधार र एल्बम क्रमबद्धता [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) मा mlc70 को कामबाट सुरु भएका हुन्। Tapo क्यामेराहरू [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) र [python-kasa](https://github.com/python-kasa/python-kasa) ले दस्तावेज गरेको कुराबाट लेखिएका थिए। Meta Quest दृश्य Meta Spatial SDK मा आधारित छ, जो open source छैन, त्यसैले यो यही fork मा रहन्छ। Windows ZIP ले प्रोजेक्टले बनाएको libmpv ([mpv](https://mpv.io) को library, [FFmpeg](https://ffmpeg.org) सहित) LGPL अन्तर्गत, यसका licence र sources सहित बोक्छ; यस पृष्ठमा उल्लेख गरिएका platform का विवरण र trademark [License and trademarks](../docs/immuch360/platform-support.md#license-and-trademarks) मा छन्।
 
 यस पृष्ठका फोनका क्याप्चर Android build मा एमुलेटरमा, TV का Google TV एमुलेटरमा र Windows का Windows 11 PC मा लिइएका थिए, सबै [Poly Haven](https://polyhaven.com) का CC0 पानोरामासहित; हेडसेटका क्याप्चर Quest 3 मा लिइएका थिए।
 
@@ -309,8 +310,8 @@ Immuch360 [Immich](https://github.com/immich-app/immich) मोबाइल ए�
 
 अझै नभएका कुराहरू, सबैभन्दा सम्भावित पहिले। यहाँको कुनै पनि कुरा वाचा होइन, र [issue tracker](https://github.com/freeKC/Immuch360/issues) मा दिइने प्रतिक्रियाले के पहिले आउँछ भनी निर्णय गर्न मद्दत गर्छ।
 
-- **स्टोरहरू**: Google Play (build 23 समीक्षामा, TV लिस्टिङ समीक्षामा), App Store (version 3.3.0 समीक्षामा), Meta Horizon Store (build 21 समीक्षामा)।
-- **कम्प्युटर**: Windows PC मा हातैले हरेक फङ्क्शनको परीक्षण; त्यसपछि webcam सहित Spatial 2.5D; त्यसपछि Linux र macOS मा भिडियो प्लेयर र वास्तविक Mac मा परीक्षण; त्यसपछि signed build र automatic update।
+- **स्टोरहरू**: Google Play (build 26 आउँदैछ, TV लिस्टिङ समीक्षामा), App Store (version 3.3.1 14 अक्टोबरदेखि समीक्षामा), Meta Horizon Store (build 25 समीक्षामा)।
+- **कम्प्युटर**: Windows PC मा हातैले हरेक फङ्क्शनको परीक्षण; त्यसपछि Linux र macOS मा 360° भिडियो रेन्डरर, वास्तविक Mac र वास्तविक Linux PC मा परीक्षण; त्यसपछि signed build र automatic update; त्यसपछि webcam सहित Spatial 2.5D।
 - **फोन र ट्याब्लेट**: iOS को 360° भिडियो प्लेयरमा time bar, फोनका 360° प्लेयरमा अघिल्लो र अर्को, सपाट प्लेयरमा अडियो ट्रयाक छनोट, iPhone र iPad मा Tapo लाइभ भ्यू।
 - **इमर्सिव मिडिया**: dual fisheye .dng, GoPro र DJI भिडियोको आफ्नै motion data बाट levelling, यसका decoder ले मिलाएमा Quest मा 3D मा spatial भिडियो, हेडसेटमा spatial फोटोहरू बीच अघिल्लो र अर्को।
 - **Sources**: सेयर फोल्डरका फाइलहरू बीच स्वाइप गर्ने, WebDAV का लागि Digest authentication, कम्प्युटरबाट Plex token ल्याउने QR code, Plex का लागि IPv6, H.265 Tapo रेकर्डिङ, TV home screen मा channel।

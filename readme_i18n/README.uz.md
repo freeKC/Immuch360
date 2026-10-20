@@ -20,14 +20,14 @@ Immuch360 fotosuratlaringiz va videolaringizni topish, ko‘rish, ijro etish va 
 
 <div align="center">
 
-| Platforma | Qayerdan olish mumkin | 2026-yil 12-oktabr holatiga koʻra |
+| Platforma | Qayerdan olish mumkin | 2026-yil 20-oktabr holatiga koʻra |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonlar va planshetlar | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play'da (build 20; build 23 ko‘rib chiqilmoqda), GitHub'da build 23 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone va iPad** | App Store | 3.3.0 versiyasi Apple tomonidan ko‘rib chiqilishini kutmoqda; shu bilan birga [o‘zingiz yig‘ib oling](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV va Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub'da build 23; TV ro‘yxati Google tomonidan ko‘rib chiqilmoqda |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 va 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store'da (build 14; build 21 ko‘rib chiqilmoqda), GitHub'da build 23 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [O‘rnatuvchi yoki ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | ish stoli uchun build 5, sinov versiyasi: fotosuratlar, tekis va 360° videolar, ulashmalar, Plex, kameralar, dastur bilan ochilgan fayllar |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS va Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | dastlabki sinov versiyalari: Linux'da fotosuratlar va 360° fotosuratlar, hali videosiz; macOS faqat loyihaning CI tizimida ishga tushirilgan |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonlar va planshetlar | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play'da (build 25), GitHub'da build 26 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone va iPad** | App Store | 3.3.1 versiyasi (build 24) 14-oktabrdan beri Apple tomonidan ko‘rib chiqilishini kutmoqda; shu orada [o‘zingiz yig‘ib oling](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV va Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub'da build 26, qidiruv filtrlarini pult bilan boshqarishdagi tuzatishlar bilan; TV ro‘yxati Google tomonidan ko‘rib chiqilmoqda |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 va 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store'da (build 23; build 25 ko‘rib chiqilmoqda), GitHub'da build 26 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [O‘rnatuvchi yoki ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | ish stoli uchun build 6, sinov versiyasi: fotosuratlar, tekis va 360° videolar, ulashmalar, Plex, kameralar, dastur bilan ochilgan fayllar, 89 tildagi interfeys |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS va Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | sinov versiyalari: Linux'da fotosuratlar, 360° fotosuratlar va tekis videolar (360° videolar tekis ijro etiladi); macOS'da ham shunday, faqat loyihaning CI Mac'ida tekshirilgan, imzosiz |
 
 *Holatlar har bir chiqarilishda yangilanadi; build'lar bo‘yicha batafsil ma‘lumot [Chiqarilish holati](../docs/immuch360/release-status.md) sahifasida.*
 
@@ -138,7 +138,7 @@ Batafsil: [tarmoq ulashmalari](../docs/immuch360/user-guide.md#network-shares-a-
 2. Sozlamalar, Asset Viewer, Videos bo‘limida "Video manbasi" qurilma uni dekodlay olsa asl faylni, doim asl faylni yoki doim transkodlangan oqimni tanlaydi.
 3. Ilovasi bo‘lmagan kishiga 360° fotosuratni ko‘rsatish uchun uni Immich ulashilgan havolasi orqali ulashing: Immich veb-ilovasi uni ularning brauzerida sfera sifatida ko‘rsatadi.
 
-Hozirgi build, build 23, 2026-yil 10-oktabrdagi Immich `main`'iga (3.3.0-rc.0 versiyasi) asoslangan va Immich 3.2.4 serveri bilan, shuningdek o‘sha Immich `main`'idan yig‘ilgan server bilan sinovdan o‘tkazilgan. Muammolarni Immich loyihasiga emas, [Issues](https://github.com/freeKC/Immuch360/issues) sahifasiga yuboring.
+Hozirgi build, build 26, 2026-yil 10-oktabrdagi Immich `main`'iga (3.3.0-rc.0 versiyasi) asoslangan va Immich 3.2.4 serveri bilan, shuningdek o‘sha Immich `main`'idan yig‘ilgan server bilan sinovdan o‘tkazilgan. Muammolarni Immich loyihasiga emas, [Issues](https://github.com/freeKC/Immuch360/issues) sahifasiga yuboring.
 
 Batafsil: [qolgan hammasi Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [Immich ilovasi bilan taqqoslash](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Batafsil: [Tapo kameralari](../docs/immuch360/user-guide.md#tapo-cameras-live-vi
 
 Bitta kod bazasi, oltita muhit. Har birida bugun nima borligi:
 
-| Imkoniyat | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Immich server bilan galereya, albomlar, qidiruv | ✅ | ✅ | ✅ ko‘ruvchi | ✅ | ✅ | 🔧 |
-| Serversiz: qurilmaning o‘z mediasi | ✅ | ✅ | faqat ulashmalar | ✅ | ✅ papkalar | 🔧 |
-| Tekis fotosuratlar va videolar | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360° fotosuratlar sfera sifatida | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | 🔧 |
-| 360° videolar | ✅ | ✅ vaqt chizig‘isiz | ✅ | ✅ immersiv | ✅ | 🔧 |
-| 3D va VR180 | ✅ bitta ko‘z | ✅ bitta ko‘z | ✅ bitta ko‘z | ✅ haqiqiy 3D | ✅ bitta ko‘z | 🔧 |
-| Spatial 2.5D (bosh kuzatuvi) | ✅ tajribaviy | ✅ tajribaviy | ❌ | ❌ | 🔜 | ❌ |
-| Apple fazoviy fotosuratlari | ✅ bitta ko‘z | ✅ bitta ko‘z | ✅ bitta ko‘z | ✅ 3D | ✅ bitta ko‘z | 🔧 |
-| Xom Insta360, GoPro va DJI fayllari | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA ulashmalari | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kameralari: yozuvlar | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kameralari: jonli ko‘rinish | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Bu qurilmani tarmoqda ulashish | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Ulashmalar va qurilmadan Immich'ga yuklash | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Kiritish | teginish, giroskop | teginish, giroskop | pult | qo‘l boshqaruvchilari, qo‘llar | sichqoncha, klaviatura | |
-| Qayerdan olish mumkin | Google Play, APK | App Store (ko‘rib chiqilmoqda) | APK, Google Play (ko‘rib chiqilmoqda) | Horizon Store, APK | o‘rnatuvchi yoki ZIP (sinov versiyasi) | .deb, .rpm, DMG (dastlabki sinov versiyalari) |
+| Imkoniyat | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Immich server bilan galereya, albomlar, qidiruv | ✅ | ✅ | ✅ ko‘ruvchi | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Serversiz: qurilmaning o‘z mediasi | ✅ | ✅ | faqat ulashmalar | ✅ | ✅ papkalar | ✅ papkalar | ✅ papkalar |
+| Tekis fotosuratlar va videolar | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 360° fotosuratlar sfera sifatida | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
+| 360° videolar | ✅ | ✅ vaqt chizig‘isiz | ✅ | ✅ immersiv | ✅ | faqat tekis | faqat tekis |
+| 3D va VR180 | ✅ bitta ko‘z | ✅ bitta ko‘z | ✅ bitta ko‘z | ✅ haqiqiy 3D | ✅ bitta ko‘z | fotosuratlar bitta ko‘z, videolar tekis | fotosuratlar bitta ko‘z, videolar tekis |
+| Spatial 2.5D (bosh kuzatuvi) | ✅ tajribaviy | ✅ tajribaviy | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple fazoviy fotosuratlari | ✅ bitta ko‘z | ✅ bitta ko‘z | ✅ bitta ko‘z | ✅ 3D | ✅ bitta ko‘z | 🔧 CI | 🔧 CI |
+| Xom Insta360, GoPro va DJI fayllari | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI fotosuratlar, videolar tekis | 🔧 CI fotosuratlar, videolar tekis |
+| SMB, WebDAV, DLNA ulashmalari | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameralari: yozuvlar | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameralari: jonli ko‘rinish | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Bu qurilmani tarmoqda ulashish | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Ulashmalar va qurilmadan Immich'ga yuklash | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kiritish | teginish, giroskop | teginish, giroskop | pult | qo‘l boshqaruvchilari, qo‘llar | sichqoncha, klaviatura | sichqoncha, klaviatura | sichqoncha, klaviatura, trekpad |
+| Qayerdan olish mumkin | Google Play, APK | App Store (ko‘rib chiqilmoqda) | APK, Google Play (ko‘rib chiqilmoqda) | Horizon Store, APK | o‘rnatuvchi yoki ZIP (sinov versiyasi) | .deb, .rpm (sinov versiyasi) | DMG yoki ZIP (imzosiz sinov versiyasi) |
 
-✅ bu platformada ilovada mavjud · ❌ u yerda taklif etilmaydi · 🔜 rejalashtirilgan · 🔧 manba kodida bor va loyihaning CI tizimida yig‘iladi, lekin bu tizimda hali ishga tushirilmagan. "Bitta ko‘z" degani, 3D fayl tekis ekranda chap ko‘zini ko‘rsatadi. Har bir ✅ hali haqiqiy qurilmada tekshirilgan emas: qayerda nima tekshirilgani va yana nimani tasdiqlash kerakligi [Imkoniyatlar](../docs/immuch360/features.md), [Platforma qo‘llovi](../docs/immuch360/platform-support.md) va [Muvofiqlik](../docs/immuch360/compatibility.md) sahifalarida berilgan.
+✅ bu platformada ilovada mavjud · ❌ u yerda taklif etilmaydi · 🔜 rejalashtirilgan · 🔧 CI manba kodida bor, loyihaning CI tizimi uni shu tizimda yig‘ib ishga tushirgan, lekin u yerda hali haqiqiy server, ulashma yoki kamera bilan tekshirilmagan · faqat tekis: video xabar bilan tekis ijro etiladi, chunki 360° renderlash moduli faqat Windows'da bor. "Bitta ko‘z" degani, 3D fayl tekis ekranda chap ko‘zini ko‘rsatadi. Har bir ✅ hali haqiqiy qurilmada tekshirilgan emas: qayerda nima tekshirilgani va yana nimani tasdiqlash kerakligi [Imkoniyatlar](../docs/immuch360/features.md), [Platforma qo‘llovi](../docs/immuch360/platform-support.md) va [Muvofiqlik](../docs/immuch360/compatibility.md) sahifalarida berilgan.
 
 - **Android telefonlar va planshetlar**: to‘liq ilova, teginish va giroskop, barcha manbalar.
 - **iPhone va iPad**: to‘liq ilova; 360° video pleerida faqat ijro va pauza bor, Tapo jonli ko‘rinishi keyinroq qo‘shiladi, DLNA qidiruvi esa Apple multicast ruxsatini bermaguncha unicast so‘rovlarini yuboradi.
 - **Android TV va Google TV**: pult bilan boshqariladigan bir xil APK; faqat ko‘ruvchi: zaxira nusxalash, yuklash va tahrirlash yashiringan. Google TV emulyatorida tekshirilgan (kirish, vaqt chizig‘i, ko‘ruvchilar, ulashmalar, pult bilan boshqarish), hali haqiqiy televizorda emas.
-- **Meta Quest 2, Pro, 3 va 3S**: ilova oyna sifatida, shuningdek immersiv ko‘rinish; HEVC ishonchli kodek, H.264 esa Quest 3'da taxminan 4096x2304'da to‘xtaydi; Quest 2 va Quest Pro hali sinovdan o‘tkazilmagan.
+- **Meta Quest 2, Pro, 3 va 3S**: ilova oyna sifatida, shuningdek immersiv ko‘rinish; HEVC ishonchli kodek, H.264 esa Quest 3'da taxminan 4096x2304'da to‘xtaydi; faqat Quest 3 sinovdan o‘tkazilgan, Quest 2, Quest Pro va Quest 3S hali sinovdan o‘tkazilmagan.
 - **Windows 10 va 11**: sinov versiyasi, galereya o‘rniga papkalar bilan, tekis va 360° videolar uchun o‘z video pleeri (libmpv), grafika chipida birlashtiriladigan xom fayllar, dastur bilan ochilgan yoki oynaga tashlangan fayllar va papkalar, o‘rnatuvchi yoki ZIP.
-- **macOS va Linux**: loyihaning CI tizimi tomonidan yig‘ilgan paketlar (bitta .deb, bitta .rpm, bitta DMG); Linux'da ilova ishga tushadi va fotosuratlar va 360° fotosuratlarni ko‘rsatadi, hali videosiz, SMB ulashmalari uchun esa Ubuntu 24.04, Debian 13 yoki Fedora 39 yoki undan keyingi versiya kerak; macOS ilovasi faqat loyihaning CI tizimida ishga tushirilgan, videosiz va tarmoqqa kirishi sinalmagan holda.
+- **Linux**: loyihaning CI tizimida yig‘ilgan .deb va .rpm paketlari, Ubuntu 22.04 va 24.04, Debian 12 hamda Fedora 40 va 44'da o‘rnatilib tekshirilgan; tizimning libmpv'si orqali fotosuratlar, 360° fotosuratlar va tekis videolar (360°, 3D va xom videolar xabar bilan tekis ijro etiladi); Ubuntu 22.04 va Debian 12'dan boshlab SMB ulashmalari; hali haqiqiy Linux kompyuterida ishga tushirilmagan, faqat WSLg ostida va konteynerlarda.
+- **macOS**: loyihaning CI tizimida yig‘ilgan DMG va ZIP, universal, imzosiz (Gatekeeper bir marta so‘raydi); ilova ishga tushadi, unga berilgan fayl va papkalarni, jumladan Finder'dan berilganlarini ochadi, maxfiy ma’lumotlarini login kalitlar to‘plamida (keychain) saqlaydi va tekis videolarni o‘zining libmpv'si bilan ijro etadi, bularning barchasi faqat loyihaning CI Mac'ida tekshirilgan; haqiqiy Mac'da hali hech narsa ishga tushirilmagan.
 
 <a id="advanced-features"></a>
 ## Qo‘shimcha imkoniyatlar
@@ -300,7 +301,7 @@ Dasturchiga hech narsa yuborilmaydi: hisob yo‘q, analitika yo‘q, nosozlik hi
 
 Immuch360 [Immich](https://github.com/immich-app/immich) mobil ilovasining [GNU AGPL v3](../LICENSE) ostidagi norasmiy fork'i, Immich jamoasi yoki FUTO bilan bog‘liq emas va ular tomonidan qo‘llab-quvvatlanmaydi. Fork mavjudligining sababi, mobilada 360° ko‘rish Immich'da 2024-yil yanvaridan beri so‘ralgan, ammo hali rasmiy ilovada yo‘q; bu fork uni hozir taqdim etadi, haqiqiy qurilmalardan fikr-mulohaza to‘playdi va mas‘ullar nimani istasa, shuni kichik pull request'lar orqali Immich'ga qaytarib taklif qiladi. Rasmiy ilova qiladigan hamma narsa saqlanadi; tarmoqchalar, yig‘ish zanjiri va CI [O‘zingiz yig‘ib oling](../docs/immuch360/build.md) sahifasida tasvirlangan.
 
-360° fotosurat ko‘ruvchisi dmitry-brazhenko'ning asl loyihadagi [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) pull request'iga asoslangan, bu esa o‘z navbatida bencefr'ning [#30192](https://github.com/immich-app/immich/pull/30192)dagi prototipiga qurilgan; ikkisiga ham rahmat. Tapo kameralari [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) va [python-kasa](https://github.com/python-kasa/python-kasa) hujjatlashtirgan narsalar asosida yozilgan. Meta Quest ko‘rinishi ochiq manbali bo‘lmagan Meta Spatial SDK'ga tayanadi, shuning uchun u shu fork'da qoladi. Windows ZIP'i loyiha tomonidan LGPL ostida yig‘ilgan libmpv'ni ([mpv](https://mpv.io) kutubxonasi, [FFmpeg](https://ffmpeg.org) bilan) o‘z litsenziyalari va manba kodlari bilan birga olib yuradi; shu sahifada nomlangan platformalarning tafsilotlari va savdo belgilari [Litsenziya va savdo belgilari](../docs/immuch360/platform-support.md#license-and-trademarks) sahifasida berilgan.
+360° fotosurat ko‘ruvchisi dmitry-brazhenko'ning asl loyihadagi [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) pull request'iga asoslangan, bu esa o‘z navbatida bencefr'ning [#30192](https://github.com/immich-app/immich/pull/30192)dagi prototipiga qurilgan; ikkisiga ham rahmat. Qidiruv filtrlarini pult bilan boshqarishdagi tuzatishlar va televizorlarda albomlarni saralash mlc70'ning [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1)dagi ishidan boshlangan. Tapo kameralari [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) va [python-kasa](https://github.com/python-kasa/python-kasa) hujjatlashtirgan narsalar asosida yozilgan. Meta Quest ko‘rinishi ochiq manbali bo‘lmagan Meta Spatial SDK'ga tayanadi, shuning uchun u shu fork'da qoladi. Windows ZIP'i loyiha tomonidan LGPL ostida yig‘ilgan libmpv'ni ([mpv](https://mpv.io) kutubxonasi, [FFmpeg](https://ffmpeg.org) bilan) o‘z litsenziyalari va manba kodlari bilan birga olib yuradi; shu sahifada nomlangan platformalarning tafsilotlari va savdo belgilari [Litsenziya va savdo belgilari](../docs/immuch360/platform-support.md#license-and-trademarks) sahifasida berilgan.
 
 Bu sahifadagi telefon suratlari Android build'ida emulyatorda, televizor suratlari Google TV emulyatorida va Windows suratlari Windows 11 kompyuterida olingan, barchasi [Poly Haven](https://polyhaven.com)ning CC0 panoramalari bilan; shlem suratlari esa Quest 3'da olingan.
 
@@ -309,8 +310,8 @@ Bu sahifadagi telefon suratlari Android build'ida emulyatorda, televizor suratla
 
 Hali qilinmagan ishlar, eng ehtimoliylari birinchi. Bu yerdagi hech narsa vaʼda emas, [muammolar kuzatuvchisi](https://github.com/freeKC/Immuch360/issues) dagi fikrlar esa nima birinchi kelishini hal qilishga yordam beradi.
 
-- **Do‘konlar**: Google Play (build 23 ko‘rib chiqilmoqda, TV ro‘yxati ko‘rib chiqilmoqda), App Store (3.3.0 versiyasi ko‘rib chiqilmoqda), Meta Horizon Store (build 21 ko‘rib chiqilmoqda).
-- **Kompyuterlar**: Windows kompyuterida har bir funksiyani qo‘lda sinash; keyin veb-kamera bilan Spatial 2.5D; keyin Linux va macOS'da video pleer va haqiqiy Mac'da sinov; keyin imzolangan build va avtomatik yangilanishlar.
+- **Do‘konlar**: Google Play (build 26 tez orada, TV ro‘yxati ko‘rib chiqilmoqda), App Store (3.3.1 versiyasi 14-oktabrdan beri ko‘rib chiqilmoqda), Meta Horizon Store (build 25 ko‘rib chiqilmoqda).
+- **Kompyuterlar**: Windows kompyuterida har bir funksiyani qo‘lda sinash; keyin Linux va macOS'da 360° video renderlash moduli, haqiqiy Mac'da va haqiqiy Linux kompyuterida sinov; keyin imzolangan build va avtomatik yangilanishlar; keyin veb-kamera bilan Spatial 2.5D.
 - **Telefonlar va planshetlar**: iOS 360° video pleerida vaqt chizig‘i, telefonlarning 360° pleerlarida oldingi va keyingi, tekis pleerda audio yo‘lak tanlovi, iPhone va iPad'da Tapo jonli ko‘rinishi.
 - **Immersiv media**: ikkilangan fisheye .dng, GoPro va DJI videolarini o‘z harakat ma‘lumotlari asosida tekislash, dekoderlari ruxsat bersa Quest'da fazoviy videolarni 3D'da ko‘rsatish, shlemda fazoviy fotosuratlar orasida oldingi va keyingi.
 - **Manbalar**: ulashma papkasidagi fayllar orasida surish, WebDAV uchun Digest autentifikatsiyasi, Plex tokenini kompyuterdan olib kelish uchun QR kod, Plex uchun IPv6, H.265 Tapo yozuvlari, TV bosh ekranidagi kanallar.

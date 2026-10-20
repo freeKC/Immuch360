@@ -20,14 +20,14 @@ Immuch360 ni programu huria na ya chanzo wazi ya kutafuta, kuvinjari, kucheza na
 
 <div align="center">
 
-| Jukwaa | Mahali pa kuipata | Hali tarehe 12 Oktoba 2026 |
+| Jukwaa | Mahali pa kuipata | Hali tarehe 20 Oktoba 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** simu na kompyuta kibao | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kwenye Google Play (build 20; build 23 inakaguliwa), build 23 kwenye GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone na iPad** | App Store | toleo 3.3.0 linasubiri ukaguzi wa Apple; [jijenge mwenyewe](../docs/immuch360/build.md) wakati huo huo |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV na Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 kwenye GitHub; orodha ya televisheni inakaguliwa na Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 na 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | kwenye Horizon Store (build 14; build 21 inakaguliwa), build 23 kwenye GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Kisakinishi au ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, toleo la awali: picha, video bapa na za 360°, hifadhi, Plex, kamera, faili zinazofunguliwa na programu |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS na Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | majaribio ya mapema: kwenye Linux picha na picha za 360°, bado hakuna video; macOS imeanzishwa tu kwenye CI ya mradi |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** simu na kompyuta kibao | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kwenye Google Play (build 25), build 26 kwenye GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone na iPad** | App Store | toleo 3.3.1 (build 24) linasubiri ukaguzi wa Apple tangu 14 Oktoba; [jijenge mwenyewe](../docs/immuch360/build.md) wakati huo huo |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV na Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 kwenye GitHub, pamoja na marekebisho ya kidhibiti cha mbali kwenye vichujio vya utafutaji; orodha ya televisheni inakaguliwa na Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 na 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | kwenye Horizon Store (build 23; build 25 inakaguliwa), build 26 kwenye GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Kisakinishi au ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, toleo la awali: picha, video bapa na za 360°, hifadhi, Plex, kamera, faili zinazofunguliwa na programu, kiolesura katika lugha 89 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS na Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | matoleo ya awali: kwenye Linux picha, picha za 360° na video bapa (video za 360° zinachezwa bapa); kwenye macOS vivyo hivyo, imekaguliwa tu kwenye Mac ya CI ya mradi, haijasainiwa |
 
 *Hali zinasasishwa kwa kila toleo; maelezo, build kwa build, yapo kwenye [Hali ya toleo](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Ukiwa na seva ya [Immich](https://github.com/immich-app/immich), Immuch360 ni pr
 2. Kwenye Settings, Asset Viewer, Videos, "Chanzo cha video" huchagua asili wakati kifaa hiki kinaidekodi, asili kila wakati, au mkondo uliobadilishwa kila wakati.
 3. Ili kuonyesha picha ya 360° kwa mtu asiye na programu, ishiriki kwa kiungo cha kushiriki cha Immich: programu ya wavuti ya Immich inaionyesha kama tufe kwenye kivinjari chao.
 
-Build ya sasa, build 23, inategemea Immich `main` ya tarehe 10 Oktoba 2026 (toleo 3.3.0-rc.0) na ilijaribiwa dhidi ya seva ya Immich 3.2.4 na seva iliyojengwa kutoka Immich `main` ileile. Tafadhali ripoti matatizo kwenye [Issues](https://github.com/freeKC/Immuch360/issues), si kwa mradi wa Immich.
+Build ya sasa, build 26, inategemea Immich `main` ya tarehe 10 Oktoba 2026 (toleo 3.3.0-rc.0) na ilijaribiwa dhidi ya seva ya Immich 3.2.4 na seva iliyojengwa kutoka Immich `main` ileile. Tafadhali ripoti matatizo kwenye [Issues](https://github.com/freeKC/Immuch360/issues), si kwa mradi wa Immich.
 
 Zaidi: [kila kitu kingine ni Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [ikilinganishwa na programu ya Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Zaidi: [kamera za Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-a
 
 Msingi mmoja wa kodi, mazingira sita. Kile kila moja inacho leo:
 
-| Uwezo | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Albamu, picha, utafutaji kwa seva ya Immich | ✅ | ✅ | ✅ kitazamaji | ✅ | ✅ | 🔧 |
-| Bila seva: midia yake ya kifaa | ✅ | ✅ | hifadhi tu | ✅ | ✅ folda | 🔧 |
-| Picha na video bapa | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Picha za 360° kama tufe | ✅ | ✅ | ✅ | ✅ ya kuzamisha | ✅ | 🔧 |
-| Video za 360° | ✅ | ✅ bila upau wa muda | ✅ | ✅ ya kuzamisha | ✅ | 🔧 |
-| 3D na VR180 | ✅ jicho moja | ✅ jicho moja | ✅ jicho moja | ✅ 3D ya kweli | ✅ jicho moja | 🔧 |
-| Spatial 2.5D (kufuatilia kichwa) | ✅ ya majaribio | ✅ ya majaribio | ❌ | ❌ | 🔜 | ❌ |
-| Picha za spatial za Apple | ✅ jicho moja | ✅ jicho moja | ✅ jicho moja | ✅ 3D | ✅ jicho moja | 🔧 |
-| Faili ghafi za Insta360, GoPro na DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Hifadhi za SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kamera za Tapo: rekodi | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kamera za Tapo: mtazamo wa moja kwa moja | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Shiriki kifaa hiki kwenye mtandao | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Pakia kwenye Immich kutoka hifadhi na kifaa | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Kiingizo | kugusa, jairoskopu | kugusa, jairoskopu | kidhibiti cha mbali | vidhibiti, mikono | kipanya, kibodi | |
-| Mahali pa kuipata | Google Play, APK | App Store (inakaguliwa) | APK, Google Play (inakaguliwa) | Horizon Store, APK | kisakinishi au ZIP (toleo la awali) | .deb, .rpm, DMG (majaribio ya mapema) |
+| Uwezo | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Albamu, picha, utafutaji kwa seva ya Immich | ✅ | ✅ | ✅ kitazamaji | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Bila seva: midia yake ya kifaa | ✅ | ✅ | hifadhi tu | ✅ | ✅ folda | ✅ folda | ✅ folda |
+| Picha na video bapa | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Picha za 360° kama tufe | ✅ | ✅ | ✅ | ✅ ya kuzamisha | ✅ | ✅ | 🔧 CI |
+| Video za 360° | ✅ | ✅ bila upau wa muda | ✅ | ✅ ya kuzamisha | ✅ | bapa tu | bapa tu |
+| 3D na VR180 | ✅ jicho moja | ✅ jicho moja | ✅ jicho moja | ✅ 3D ya kweli | ✅ jicho moja | picha jicho moja, video bapa | picha jicho moja, video bapa |
+| Spatial 2.5D (kufuatilia kichwa) | ✅ ya majaribio | ✅ ya majaribio | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Picha za spatial za Apple | ✅ jicho moja | ✅ jicho moja | ✅ jicho moja | ✅ 3D | ✅ jicho moja | 🔧 CI | 🔧 CI |
+| Faili ghafi za Insta360, GoPro na DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI picha, video bapa | 🔧 CI picha, video bapa |
+| Hifadhi za SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kamera za Tapo: rekodi | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kamera za Tapo: mtazamo wa moja kwa moja | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Shiriki kifaa hiki kwenye mtandao | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Pakia kwenye Immich kutoka hifadhi na kifaa | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kiingizo | kugusa, jairoskopu | kugusa, jairoskopu | kidhibiti cha mbali | vidhibiti, mikono | kipanya, kibodi | kipanya, kibodi | kipanya, kibodi, padi ya kugusa |
+| Mahali pa kuipata | Google Play, APK | App Store (inakaguliwa) | APK, Google Play (inakaguliwa) | Horizon Store, APK | kisakinishi au ZIP (toleo la awali) | .deb, .rpm (toleo la awali) | DMG au ZIP (toleo la awali lisilosainiwa) |
 
-✅ ndani ya programu kwenye jukwaa hilo · ❌ haipatikani huko · 🔜 imepangwa · 🔧 ndani ya chanzo na imejengwa na CI ya mradi, bado haijaanza kwenye mfumo huo. "Jicho moja" inamaanisha faili ya 3D inaonyesha jicho lake la kushoto kwenye skrini bapa. Si kila ✅ imekaguliwa kwenye kifaa halisi bado: kilichokaguliwa wapi, na kinachosalia kuthibitishwa, kipo kwenye [Vipengele](../docs/immuch360/features.md), [Msaada wa jukwaa](../docs/immuch360/platform-support.md) na [Utangamanifu](../docs/immuch360/compatibility.md).
+✅ ndani ya programu kwenye jukwaa hilo · ❌ haipatikani huko · 🔜 imepangwa · 🔧 CI ndani ya chanzo, imejengwa na kuanzishwa na CI ya mradi kwenye mfumo huo, bado haijakaguliwa huko kwa seva, hifadhi au kamera halisi · bapa tu: video inachezwa bapa, pamoja na ujumbe, kwa sababu kionyeshi cha 360° kipo kwenye Windows tu. "Jicho moja" inamaanisha faili ya 3D inaonyesha jicho lake la kushoto kwenye skrini bapa. Si kila ✅ imekaguliwa kwenye kifaa halisi bado: kilichokaguliwa wapi, na kinachosalia kuthibitishwa, kipo kwenye [Vipengele](../docs/immuch360/features.md), [Msaada wa jukwaa](../docs/immuch360/platform-support.md) na [Utangamanifu](../docs/immuch360/compatibility.md).
 
 - **Simu na kompyuta kibao za Android**: programu kamili, kugusa na jairoskopu, chanzo kila kimoja.
 - **iPhone na iPad**: programu kamili; kicheza video cha 360° kina kucheza na kusitisha tu, mtazamo wa moja kwa moja wa Tapo utakuja baadaye, na utafutaji wa DLNA hutuma maombi ya unicast hadi Apple itoe ruhusa ya multicast.
 - **Android TV na Google TV**: APK ileile, inayoendeshwa na kidhibiti cha mbali; kitazamaji: hifadhi rudufu, upakiaji na uhariri vimefichwa. Imekaguliwa kwenye kiigaji cha Google TV (kuingia, rekodi ya matukio, vitazamaji, hifadhi, uendeshaji wa kidhibiti cha mbali), bado haijakaguliwa kwenye televisheni halisi.
-- **Meta Quest 2, Pro, 3 na 3S**: programu kama dirisha, pamoja na mtazamo wa kuzamisha; HEVC ni kodeki salama, H.264 inasimama karibu 4096x2304 kwenye Quest 3; Quest 2 na Quest Pro hazijajaribiwa bado.
+- **Meta Quest 2, Pro, 3 na 3S**: programu kama dirisha, pamoja na mtazamo wa kuzamisha; HEVC ni kodeki salama, H.264 inasimama karibu 4096x2304 kwenye Quest 3; Quest 3 pekee imejaribiwa, Quest 2, Quest Pro na Quest 3S hazijajaribiwa bado.
 - **Windows 10 na 11**: toleo la awali, lenye folda badala ya albamu, kicheza video chake chenyewe (libmpv) kwa video bapa na za 360°, faili ghafi zinazoshonwa na chip ya michoro, faili na folda zinazofunguliwa na programu au kudondoshwa kwenye dirisha, kisakinishi au ZIP.
-- **macOS na Linux**: vifurushi vilivyojengwa na CI ya mradi (.deb, .rpm, DMG); kwenye Linux programu inaanza na kuonyesha picha na picha za 360°, bado hakuna video; na hifadhi za SMB zinahitaji Ubuntu 24.04, Debian 13 au Fedora 39 au toleo jipya zaidi; programu ya macOS imeendeshwa tu kwenye CI ya mradi, bila video na huku ufikiaji wake wa mtandao haujajaribiwa.
+- **Linux**: .deb na .rpm zilizojengwa na CI ya mradi, zimesakinishwa na kukaguliwa kwenye Ubuntu 22.04 na 24.04, Debian 12 na Fedora 40 na 44; picha, picha za 360° na video bapa kupitia libmpv ya mfumo (video za 360°, 3D na ghafi zinachezwa bapa pamoja na ujumbe); hifadhi za SMB kuanzia Ubuntu 22.04 na Debian 12; bado haijaendeshwa kwenye PC halisi ya Linux, tu chini ya WSLg na ndani ya kontena.
+- **macOS**: DMG na ZIP zilizojengwa na CI ya mradi, za ulimwengu wote, hazijasainiwa (Gatekeeper inauliza mara moja); programu inaanza, inafungua faili na folda inazopewa, ikiwemo kutoka Finder, inahifadhi siri zake kwenye keychain ya kuingia na inacheza video bapa kwa libmpv yake yenyewe, yote yamekaguliwa tu kwenye Mac ya CI ya mradi; hakuna kilichoendeshwa kwenye Mac halisi bado.
 
 <a id="advanced-features"></a>
 ## Vipengele vya kina
@@ -300,7 +301,7 @@ Hakuna kinachofika kwa msanidi programu: hakuna akaunti, hakuna uchanganuzi, hak
 
 Immuch360 ni tawi lisilo rasmi la programu ya simu ya [Immich](https://github.com/immich-app/immich), chini ya [GNU AGPL v3](../LICENSE), halihusiani na, wala haliidhinishwi na, timu ya Immich au FUTO. Tawi hili lipo kwa sababu kutazama 360° kwenye simu kumeombwa kwenye Immich tangu Januari 2024 na bado hakimo kwenye programu rasmi; linalisafirisha sasa, linakusanya maoni ya kifaa halisi, na litatoa tena kwa Immich, kwa pull request ndogo, kile ambacho watunzaji wanataka. Kila kitu programu rasmi inachofanya kimehifadhiwa; matawi, mnyororo wa ujenzi na CI vimeelezwa kwenye [Jijenge mwenyewe](../docs/immuch360/build.md).
 
-Kitazamaji cha picha za 360° kinategemea pull request ya upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) ya dmitry-brazhenko, yenyewe iliyojengwa juu ya mfano wa awali wa bencefr kwenye [#30192](https://github.com/immich-app/immich/pull/30192); shukrani kwa wote wawili. Kamera za Tapo ziliandikwa kutoka kile [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) na [python-kasa](https://github.com/python-kasa/python-kasa) wanavyoeleza. Mtazamo wa Meta Quest unategemea Meta Spatial SDK, ambayo si chanzo wazi, hivyo inabaki kwenye tawi hili. ZIP ya Windows inabeba libmpv (maktaba ya [mpv](https://mpv.io), pamoja na [FFmpeg](https://ffmpeg.org)) iliyojengwa na mradi, chini ya LGPL, pamoja na leseni na chanzo chake; maelezo na alama za biashara za majukwaa yaliyotajwa kwenye ukurasa huu zipo kwenye [Leseni na alama za biashara](../docs/immuch360/platform-support.md#license-and-trademarks).
+Kitazamaji cha picha za 360° kinategemea pull request ya upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) ya dmitry-brazhenko, yenyewe iliyojengwa juu ya mfano wa awali wa bencefr kwenye [#30192](https://github.com/immich-app/immich/pull/30192); shukrani kwa wote wawili. Marekebisho ya kidhibiti cha mbali kwenye vichujio vya utafutaji na upangaji wa albamu kwenye televisheni yalianzia kwenye kazi ya mlc70 katika [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Kamera za Tapo ziliandikwa kutoka kile [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) na [python-kasa](https://github.com/python-kasa/python-kasa) wanavyoeleza. Mtazamo wa Meta Quest unategemea Meta Spatial SDK, ambayo si chanzo wazi, hivyo inabaki kwenye tawi hili. ZIP ya Windows inabeba libmpv (maktaba ya [mpv](https://mpv.io), pamoja na [FFmpeg](https://ffmpeg.org)) iliyojengwa na mradi, chini ya LGPL, pamoja na leseni na chanzo chake; maelezo na alama za biashara za majukwaa yaliyotajwa kwenye ukurasa huu zipo kwenye [Leseni na alama za biashara](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Picha za simu za ukurasa huu zilipigwa kwenye build ya Android ndani ya kiigaji, za televisheni kwenye kiigaji cha Google TV na za Windows kwenye PC ya Windows 11, zote na panorama za CC0 kutoka [Poly Haven](https://polyhaven.com); picha za kifaa cha kichwa zilipigwa kwenye Quest 3.
 
@@ -309,8 +310,8 @@ Picha za simu za ukurasa huu zilipigwa kwenye build ya Android ndani ya kiigaji,
 
 Kile ambacho bado hakijafanywa, kinachowezekana zaidi kwanza. Hakuna hapa ambacho ni ahadi, na maoni kwenye [kifuatiliaji cha masuala](https://github.com/freeKC/Immuch360/issues) yanasaidia kuamua kipi kinakuja kwanza.
 
-- **Maduka**: Google Play (build 23 inakaguliwa, orodha ya televisheni inakaguliwa), App Store (toleo 3.3.0 linakaguliwa), Meta Horizon Store (build 21 inakaguliwa).
-- **Kompyuta**: kujaribu kila kazi kwa mkono kwenye PC ya Windows; kisha Spatial 2.5D kwa kamera ya wavuti; kisha kicheza video kwenye Linux na macOS na jaribio kwenye Mac halisi; kisha build iliyosainiwa na masasisho ya moja kwa moja.
+- **Maduka**: Google Play (build 26 inakuja, orodha ya televisheni inakaguliwa), App Store (toleo 3.3.1 linakaguliwa tangu 14 Oktoba), Meta Horizon Store (build 25 inakaguliwa).
+- **Kompyuta**: kujaribu kila kazi kwa mkono kwenye PC ya Windows; kisha kionyeshi cha video za 360° kwenye Linux na macOS, jaribio kwenye Mac halisi na PC halisi ya Linux; kisha build iliyosainiwa na masasisho ya moja kwa moja; kisha Spatial 2.5D kwa kamera ya wavuti.
 - **Simu na kompyuta kibao**: upau wa muda kwenye kicheza video cha 360° cha iOS, iliyotangulia na inayofuata kwenye vicheza vya 360° vya simu, chaguo la njia ya sauti kwenye kicheza bapa, mtazamo wa moja kwa moja wa Tapo kwenye iPhone na iPad.
 - **Midia ya kuzamisha**: .dng za fisheye mbili, kusawazisha video za GoPro na DJI kutoka data zao za mwendo, video za spatial katika 3D kwenye Quest ikiwa videkoda vyake vinaruhusu, iliyotangulia na inayofuata kati ya picha za spatial kwenye kifaa cha kichwa.
 - **Vyanzo**: kusogeza kidole kati ya faili za folda ya hifadhi, uthibitishaji wa Digest kwa WebDAV, msimbo wa QR wa kuleta tokeni ya Plex kutoka kompyuta, IPv6 kwa Plex, rekodi za Tapo za H.265, njia kwenye skrini ya mwanzo ya televisheni.

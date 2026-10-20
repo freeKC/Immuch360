@@ -20,14 +20,14 @@ Immuch360 er frjálst og opið forrit til að finna, skoða, spila og kanna mynd
 
 <div align="center">
 
-| Kerfi | Hvar á að sækja það | Staða 12. október 2026 |
+| Kerfi | Hvar á að sækja það | Staða 20. október 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** símar og spjaldtölvur | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | á Google Play (build 20; build 23 í yfirferð), build 23 á GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | útgáfa 3.3.0 bíður eftir yfirferð Apple; [byggðu forritið](../docs/immuch360/build.md) á meðan |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 á GitHub; sjónvarpsskráningin er í yfirferð hjá Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | á Horizon Store (build 14; build 21 í yfirferð), build 23 á GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Uppsetningarforrit eða ZIP-skrá](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, forskoðunarútgáfa: myndir, flöt og 360° myndskeið, deildir, Plex, myndavélar, skrár opnaðar með forritinu |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS og Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | frumstigs forskoðanir: á Linux myndir og 360° myndir, engin myndskeið ennþá; macOS aðeins keyrt á CI verkefnisins |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** símar og spjaldtölvur | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | á Google Play (build 25), build 26 á GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | útgáfa 3.3.1 (build 24) hefur beðið eftir yfirferð Apple síðan 14. október; [byggðu forritið](../docs/immuch360/build.md) á meðan |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 á GitHub, með lagfæringum á leitarsíunum fyrir fjarstýringuna; sjónvarpsskráningin er í yfirferð hjá Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | á Horizon Store (build 23; build 25 í yfirferð), build 26 á GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Uppsetningarforrit eða ZIP-skrá](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, forskoðunarútgáfa: myndir, flöt og 360° myndskeið, deildir, Plex, myndavélar, skrár opnaðar með forritinu, viðmótið á 89 tungumálum |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS og Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | forskoðanir: á Linux myndir, 360° myndir og flöt myndskeið (360° myndskeið spilast flöt); á macOS það sama, aðeins staðfest á Mac-vél CI verkefnisins, óundirritað |
 
 *Stöðurnar eru uppfærðar við hverja útgáfu; nánari upplýsingar, fyrir hvert build, eru í [Stöðu útgáfu](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Með [Immich](https://github.com/immich-app/immich) vélþjóni er Immuch360 Imm
 2. Í Stillingum, Skráarskoðun, Myndskeið, velur „Uppruni myndskeiðs“ upprunalegu skrána þegar þetta tæki afkóðar hana, alltaf upprunalegu skrána, eða alltaf umkóðaða streymið.
 3. Til að sýna 360° mynd einhverjum sem er ekki með forritið, deildu henni með Immich deilitengli: Immich vefforritið sýnir hana sem kúlu í vafranum hjá viðkomandi.
 
-Núverandi build, build 23, byggir á Immich `main` frá 10. október 2026 (útgáfa 3.3.0-rc.0) og var prófað gegn Immich 3.2.4 vélþjóni og vélþjóni byggðum úr sama Immich `main`. Vinsamlegast tilkynntu vandamál í [Issues](https://github.com/freeKC/Immuch360/issues), ekki til Immich verkefnisins.
+Núverandi build, build 26, byggir á Immich `main` frá 10. október 2026 (útgáfa 3.3.0-rc.0) og var prófað gegn Immich 3.2.4 vélþjóni og vélþjóni byggðum úr sama Immich `main`. Vinsamlegast tilkynntu vandamál í [Issues](https://github.com/freeKC/Immuch360/issues), ekki til Immich verkefnisins.
 
 Meira: [allt annað er Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [í samanburði við Immich forritið](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Meira: [Tapo myndavélar](../docs/immuch360/user-guide.md#tapo-cameras-live-view
 
 Einn grunnkóði, sex umhverfi. Það sem hvert þeirra hefur í dag:
 
-| Eiginleiki | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Myndasafn, albúm, leit með Immich vélþjóni | ✅ | ✅ | ✅ skoðari | ✅ | ✅ | 🔧 |
-| Án vélþjóns: eigið efni tækisins | ✅ | ✅ | aðeins deildir | ✅ | ✅ möppur | 🔧 |
-| Flatar myndir og myndskeið | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360° myndir sem kúla | ✅ | ✅ | ✅ | ✅ umlykjandi | ✅ | 🔧 |
-| 360° myndskeið | ✅ | ✅ engin tímastika | ✅ | ✅ umlykjandi | ✅ | 🔧 |
-| 3D og VR180 | ✅ eitt auga | ✅ eitt auga | ✅ eitt auga | ✅ fullt 3D | ✅ eitt auga | 🔧 |
-| Spatial 2.5D (höfuðrakning) | ✅ tilraun | ✅ tilraun | ❌ | ❌ | 🔜 | ❌ |
-| Rýmismyndir frá Apple | ✅ eitt auga | ✅ eitt auga | ✅ eitt auga | ✅ 3D | ✅ eitt auga | 🔧 |
-| Óunnar skrár úr Insta360, GoPro og DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA deildir | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo myndavélar: upptökur | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo myndavélar: beint streymi | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Deila þessu tæki á netinu | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Hlaða upp í Immich úr deildum og af tækinu | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Inntak | snerting, skynjari | snerting, skynjari | fjarstýring | stýripinnar, hendur | mús, lyklaborð | |
-| Hvar má fá það | Google Play, APK | App Store (í yfirferð) | APK, Google Play (í yfirferð) | Horizon Store, APK | uppsetningarforrit eða ZIP-skrá (forskoðun) | .deb, .rpm, DMG (frumstigs forskoðanir) |
+| Eiginleiki | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Myndasafn, albúm, leit með Immich vélþjóni | ✅ | ✅ | ✅ skoðari | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Án vélþjóns: eigið efni tækisins | ✅ | ✅ | aðeins deildir | ✅ | ✅ möppur | ✅ möppur | ✅ möppur |
+| Flatar myndir og myndskeið | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 360° myndir sem kúla | ✅ | ✅ | ✅ | ✅ umlykjandi | ✅ | ✅ | 🔧 CI |
+| 360° myndskeið | ✅ | ✅ engin tímastika | ✅ | ✅ umlykjandi | ✅ | aðeins flatt | aðeins flatt |
+| 3D og VR180 | ✅ eitt auga | ✅ eitt auga | ✅ eitt auga | ✅ fullt 3D | ✅ eitt auga | myndir eitt auga, myndskeið flöt | myndir eitt auga, myndskeið flöt |
+| Spatial 2.5D (höfuðrakning) | ✅ tilraun | ✅ tilraun | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Rýmismyndir frá Apple | ✅ eitt auga | ✅ eitt auga | ✅ eitt auga | ✅ 3D | ✅ eitt auga | 🔧 CI | 🔧 CI |
+| Óunnar skrár úr Insta360, GoPro og DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI myndir, myndskeið flöt | 🔧 CI myndir, myndskeið flöt |
+| SMB, WebDAV, DLNA deildir | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo myndavélar: upptökur | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo myndavélar: beint streymi | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Deila þessu tæki á netinu | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Hlaða upp í Immich úr deildum og af tækinu | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Inntak | snerting, skynjari | snerting, skynjari | fjarstýring | stýripinnar, hendur | mús, lyklaborð | mús, lyklaborð | mús, lyklaborð, snertiflötur |
+| Hvar má fá það | Google Play, APK | App Store (í yfirferð) | APK, Google Play (í yfirferð) | Horizon Store, APK | uppsetningarforrit eða ZIP-skrá (forskoðun) | .deb, .rpm (forskoðun) | DMG eða ZIP-skrá (óundirrituð forskoðun) |
 
-✅ í forritinu á því kerfi · ❌ ekki í boði þar · 🔜 áætlað · 🔧 í grunnkóðanum og byggt af CI-kerfi verkefnisins, ekki enn byrjað á því kerfi. „Eitt auga“ þýðir að 3D skrá sýnir vinstra augað á flötum skjá. Ekki hefur hvert ✅ verið staðfest á raunverulegu tæki enn: hvað var prófað hvar, og hvað er eftir að staðfesta, er í [eiginleikum](../docs/immuch360/features.md), [stuðningi við kerfi](../docs/immuch360/platform-support.md) og [samhæfni](../docs/immuch360/compatibility.md).
+✅ í forritinu á því kerfi · ❌ ekki í boði þar · 🔜 áætlað · 🔧 CI í grunnkóðanum, byggt og ræst af CI-kerfi verkefnisins á því kerfi, en ekki enn staðfest þar með raunverulegum vélþjóni, deild eða myndavél · aðeins flatt: myndskeiðið spilast flatt, með skilaboðum, því 360° birtirinn er aðeins til á Windows. „Eitt auga“ þýðir að 3D skrá sýnir vinstra augað á flötum skjá. Ekki hefur hvert ✅ verið staðfest á raunverulegu tæki enn: hvað var prófað hvar, og hvað er eftir að staðfesta, er í [eiginleikum](../docs/immuch360/features.md), [stuðningi við kerfi](../docs/immuch360/platform-support.md) og [samhæfni](../docs/immuch360/compatibility.md).
 
 - **Android símar og spjaldtölvur**: fullkomið forritið, snerting og skynjari, allar uppsprettur.
 - **iPhone og iPad**: fullkomið forritið; 360° myndskeiðsspilarinn hefur aðeins spilun og hlé, Tapo beina streymið kemur síðar, og DLNA leitin sendir einvarpsfyrirspurnir þar til Apple veitir margvarpsheimildina.
 - **Android TV og Google TV**: sama APK-skráin, stýrt með fjarstýringunni; skoðari: öryggisafritun, upphleðslur og breytingar eru falin. Prófað á Google TV eftirgervlinum (innskráning, tímalína, skoðarar, deildir, leiðsögn með fjarstýringu), ekki á raunverulegu sjónvarpi ennþá.
-- **Meta Quest 2, Pro, 3 og 3S**: forritið sem gluggi, auk umlykjandi sýnarinnar; HEVC er öruggi kóðekinn, H.264 stoppar í kringum 4096x2304 á Quest 3; Quest 2 og Quest Pro eru ekki prófaðir ennþá.
+- **Meta Quest 2, Pro, 3 og 3S**: forritið sem gluggi, auk umlykjandi sýnarinnar; HEVC er öruggi kóðekinn, H.264 stoppar í kringum 4096x2304 á Quest 3; aðeins Quest 3 hefur verið prófaður, Quest 2, Quest Pro og Quest 3S eru ekki prófaðir ennþá.
 - **Windows 10 og 11**: forskoðunarútgáfa, með möppum í stað myndasafns, eigin myndskeiðsspilara (libmpv) fyrir flöt og 360° myndskeið, óunnar skrár saumaðar saman á skjákortinu, skrár og möppur opnaðar með forritinu eða sleppt á gluggann, uppsetningarforrit eða ZIP-skrá.
-- **macOS og Linux**: pakkar byggðir af CI verkefnisins (.deb, .rpm, DMG); á Linux keyrir forritið og sýnir myndir og 360° myndir, engin myndskeið ennþá, og SMB deildir þurfa Ubuntu 24.04, Debian 13 eða Fedora 39 eða nýrra; macOS forritið hefur aðeins verið keyrt á CI verkefnisins, án myndskeiða, og netaðgangur þess hefur ekki verið reyndur.
+- **Linux**: .deb pakki og .rpm pakki byggðir af CI verkefnisins, settir upp og staðfestir á Ubuntu 22.04 og 24.04, Debian 12 og Fedora 40 og 44; myndir, 360° myndir og flöt myndskeið í gegnum libmpv kerfisins (360°, 3D og óunnin myndskeið spilast flöt með skilaboðum); SMB deildir frá Ubuntu 22.04 og Debian 12; ekki enn keyrt á raunverulegri Linux tölvu, aðeins undir WSLg og í gámum.
+- **macOS**: DMG og ZIP-skrá byggðar af CI verkefnisins, alhliða (universal), óundirritaðar (Gatekeeper spyr einu sinni); forritið ræsist, opnar skrár og möppur sem því eru gefnar, líka úr Finder, geymir leyndarmál sín í innskráningarlyklakippunni og spilar flöt myndskeið með eigin libmpv, allt aðeins staðfest á Mac-vél CI verkefnisins; ekkert hefur enn keyrt á raunverulegri Mac-tölvu.
 
 <a id="advanced-features"></a>
 ## Ítarlegri eiginleikar
@@ -300,7 +301,7 @@ Engin gögn fara til þróandans: enginn reikningur, engin greiningargögn, engi
 
 Immuch360 er óopinber grein af [Immich](https://github.com/immich-app/immich) farsímaforritinu, undir [GNU AGPL v3](../LICENSE), ekki tengt, né samþykkt af, Immich teyminu eða FUTO. Greinin er til vegna þess að beðið hefur verið um 360° skoðun í farsímum í Immich frá janúar 2024 og er ekki komin í opinbera forritið ennþá; hún sendir hana núna, safnar raunverulegri endurgjöf frá tækjum, og mun bjóða Immich, í litlum pull request-um, það sem umsjónarmennirnir vilja. Allt sem opinbera forritið gerir er varðveitt; greinarnar, byggingarkeðjan og CI-kerfið eru útskýrð í [Byggja forritið](../docs/immuch360/build.md).
 
-360° myndaskoðarinn byggir á upprunalegu pull request-inu [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) frá dmitry-brazhenko, sem sjálft byggir á frumgerðinni frá bencefr í [#30192](https://github.com/immich-app/immich/pull/30192); þakkir til þeirra beggja. Tapo myndavélarnar voru skrifaðar út frá því sem [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) og [python-kasa](https://github.com/python-kasa/python-kasa) lýsa. Meta Quest sýnin byggir á Meta Spatial SDK, sem er ekki opinn hugbúnaður, svo hún er aðeins í þessari grein. Windows ZIP-skráin ber með sér libmpv (safn [mpv](https://mpv.io), með [FFmpeg](https://ffmpeg.org)) byggt af verkefninu, undir LGPL, með leyfum og grunnkóða þess; nánari upplýsingar og vörumerki þeirra kerfa sem nefnd eru á þessari síðu eru í [Leyfi og vörumerki](../docs/immuch360/platform-support.md#license-and-trademarks).
+360° myndaskoðarinn byggir á upprunalegu pull request-inu [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) frá dmitry-brazhenko, sem sjálft byggir á frumgerðinni frá bencefr í [#30192](https://github.com/immich-app/immich/pull/30192); þakkir til þeirra beggja. Lagfæringar á leitarsíunum fyrir fjarstýringuna og röðun albúma í sjónvörpum byggja á vinnu mlc70 í [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Tapo myndavélarnar voru skrifaðar út frá því sem [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) og [python-kasa](https://github.com/python-kasa/python-kasa) lýsa. Meta Quest sýnin byggir á Meta Spatial SDK, sem er ekki opinn hugbúnaður, svo hún er aðeins í þessari grein. Windows ZIP-skráin ber með sér libmpv (safn [mpv](https://mpv.io), með [FFmpeg](https://ffmpeg.org)) byggt af verkefninu, undir LGPL, með leyfum og grunnkóða þess; nánari upplýsingar og vörumerki þeirra kerfa sem nefnd eru á þessari síðu eru í [Leyfi og vörumerki](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Símaskjámyndirnar á þessari síðu voru teknar á Android útgáfunni í eftirgervli, sjónvarpsskjámyndirnar á Google TV eftirgervlinum og Windows-skjámyndirnar á Windows 11 tölvu, allar með CC0 víðmyndum frá [Poly Haven](https://polyhaven.com); höfuðtækjaskjámyndirnar voru teknar á Quest 3.
 
@@ -309,8 +310,8 @@ Símaskjámyndirnar á þessari síðu voru teknar á Android útgáfunni í eft
 
 Það sem er ekki enn búið, það líklegasta fyrst. Ekkert hér er loforð, og ábendingar á [verkbeiðnalistanum](https://github.com/freeKC/Immuch360/issues) hjálpa til við að ákveða hvað kemur fyrst.
 
-- **Verslanirnar**: Google Play (build 23 í yfirferð, sjónvarpsskráningin í yfirferð), App Store (útgáfa 3.3.0 í yfirferð), Meta Horizon Store (build 21 í yfirferð).
-- **Tölvur**: handvirk prófun hverrar virkni á Windows tölvu; síðan Spatial 2.5D með vefmyndavélinni; síðan myndskeiðsspilarinn á Linux og macOS og prófun á raunverulegri Mac-tölvu; síðan undirrituð útgáfa og sjálfvirkar uppfærslur.
+- **Verslanirnar**: Google Play (build 26 væntanlegt, sjónvarpsskráningin í yfirferð), App Store (útgáfa 3.3.1 í yfirferð síðan 14. október), Meta Horizon Store (build 25 í yfirferð).
+- **Tölvur**: handvirk prófun hverrar virkni á Windows tölvu; síðan 360° myndskeiðsbirtirinn á Linux og macOS, prófun á raunverulegri Mac-tölvu og raunverulegri Linux tölvu; síðan undirrituð útgáfa og sjálfvirkar uppfærslur; síðan Spatial 2.5D með vefmyndavélinni.
 - **Símar og spjaldtölvur**: tímastika í iOS 360° myndskeiðsspilaranum, fyrri og næsta í 360° spilurum síma, val á hljóðrás í flata spilaranum, Tapo beina streymið á iPhone og iPad.
 - **Umlykjandi efni**: tvöfaldar fisheye .dng skrár, jöfnun GoPro og DJI myndskeiða út frá eigin hreyfigögnum þeirra, rýmismyndskeið í 3D á Quest ef afkóðarar þess leyfa það, fyrri og næsta milli rýmismynda í höfuðtækinu.
 - **Uppsprettur**: að strjúka milli skráa í deildarmöppu, Digest auðkenning fyrir WebDAV, QR kóði til að færa Plex tókann frá tölvunni, IPv6 fyrir Plex, H.265 Tapo upptökur, rásir á upphafsskjá sjónvarpsins.

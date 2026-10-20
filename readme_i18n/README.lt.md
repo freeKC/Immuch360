@@ -20,14 +20,14 @@ Immuch360 yra nemokama ir atvirojo kodo programa, skirta rasti, naršyti, atkurt
 
 <div align="center">
 
-| Platforma | Kur gauti | Būsena 2026 m. spalio 12 d. |
+| Platforma | Kur gauti | Būsena 2026 m. spalio 20 d. |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play (build 20; build 23 tikrinama), build 23 GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ir iPad** | App Store | versija 3.3.0 laukia Apple patikrinimo; kol kas [susikurkite patys](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ir Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 GitHub; TV įrašas tikrinamas Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ir 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store (build 14; build 21 tikrinama), build 23 GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Diegimo programa arba ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, peržiūra: nuotraukos, plokšti ir 360° vaizdo įrašai, bendrinimai, Plex, kameros, failai, atverti programos |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ir Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | ankstyvos peržiūros: Linux nuotraukos ir 360° nuotraukos, vaizdo įrašų kol kas nėra; macOS kol kas nepradėta projekto CI sistemoje |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play (build 25), build 26 GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ir iPad** | App Store | versija 3.3.1 (build 24) laukia Apple patikrinimo nuo spalio 14 d.; kol kas [susikurkite patys](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ir Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 GitHub, su pataisytu paieškos filtrų valdymu nuotolinio valdymo pultu; TV įrašas tikrinamas Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ir 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store (build 23; build 25 tikrinama), build 26 GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Diegimo programa arba ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, peržiūra: nuotraukos, plokšti ir 360° vaizdo įrašai, bendrinimai, Plex, kameros, failai, atverti programa, sąsaja 89 kalbomis |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ir Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | peržiūros: Linux sistemoje nuotraukos, 360° nuotraukos ir plokšti vaizdo įrašai (360° vaizdo įrašai rodomi plokšti); macOS sistemoje tas pats, patikrinta tik projekto CI Mac kompiuteryje, nepasirašyta |
 
 *Būsenos atnaujinamos su kiekvienu leidimu; detalės, build po build, yra [Leidimo būsenoje](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Su [Immich](https://github.com/immich-app/immich) serveriu Immuch360 yra Immich 
 2. Nustatymuose, Failų žiūryklė, Vaizdo įrašai, "Vaizdo šaltinis" pasirenka originalą, kai šis įrenginys jį dekoduoja, visada originalą, arba visada perkoduotą srautą.
 3. Norėdami parodyti 360° nuotrauką kažkam, kas neturi programos, bendrinkite ją su Immich bendrinimo nuoroda: Immich žiniatinklio programa parodo ją kaip sferą jo naršyklėje.
 
-Dabartinė versija, build 23, yra pagrįsta Immich `main` nuo 2026 m. spalio 10 d. (versija 3.3.0-rc.0) ir buvo išbandyta su Immich 3.2.4 serveriu ir serveriu, sukurtu iš to pačio Immich `main`. Prašome pranešti apie problemas [Issues](https://github.com/freeKC/Immuch360/issues), o ne Immich projektui.
+Dabartinis build, build 26, paremtas 2026 m. spalio 10 d. Immich `main` (versija 3.3.0-rc.0) ir išbandytas su Immich 3.2.4 serveriu bei serveriu, sukurtu iš to paties Immich `main`. Apie problemas praneškite [Issues](https://github.com/freeKC/Immuch360/issues), o ne Immich projektui.
 
 Daugiau: [visa kita yra Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [palyginimas su Immich programa](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Daugiau: [Tapo kameros](../docs/immuch360/user-guide.md#tapo-cameras-live-view-a
 
 Viena kodo bazė, šešios aplinkos. Kas kiekvienoje yra šiandien:
 
-| Galimybė | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerija, albumai, paieška su Immich serveriu | ✅ | ✅ | ✅ žiūryklė | ✅ | ✅ | 🔧 |
-| Be serverio: įrenginio nuosavi failai | ✅ | ✅ | tik bendrinimai | ✅ | ✅ aplankai | 🔧 |
-| Plokšti nuotraukos ir vaizdo įrašai | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360° nuotraukos kaip sfera | ✅ | ✅ | ✅ | ✅ panardinantis | ✅ | 🔧 |
-| 360° vaizdo įrašai | ✅ | ✅ be laiko juostos | ✅ | ✅ panardinantis | ✅ | 🔧 |
-| 3D ir VR180 | ✅ viena akis | ✅ viena akis | ✅ viena akis | ✅ tikras 3D | ✅ viena akis | 🔧 |
-| Spatial 2.5D (galvos sekimas) | ✅ eksperimentinis | ✅ eksperimentinis | ❌ | ❌ | 🔜 | ❌ |
-| Apple erdvinės nuotraukos | ✅ viena akis | ✅ viena akis | ✅ viena akis | ✅ 3D | ✅ viena akis | 🔧 |
-| Neapdoroti Insta360, GoPro ir DJI failai | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA bendrinimai | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kameros: įrašai | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kameros: tiesioginis vaizdas | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Bendrinti šį įrenginį tinkle | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Įkėlimas į Immich iš bendrinimų ir įrenginio | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Įvestis | prisilietimas, giroskopas | prisilietimas, giroskopas | nuotolinis valdymo pultas | valdikliai, rankos | pelė, klaviatūra | |
-| Kur gauti | Google Play, APK | App Store (tikrinama) | APK, Google Play (tikrinama) | Horizon Store, APK | diegimo programa arba ZIP (peržiūra) | .deb, .rpm, DMG (ankstyvos peržiūros) |
+| Galimybė | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galerija, albumai, paieška su Immich serveriu | ✅ | ✅ | ✅ žiūryklė | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Be serverio: įrenginio nuosavi failai | ✅ | ✅ | tik bendrinimai | ✅ | ✅ aplankai | ✅ aplankai | ✅ aplankai |
+| Plokšti nuotraukos ir vaizdo įrašai | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 360° nuotraukos kaip sfera | ✅ | ✅ | ✅ | ✅ panardinantis | ✅ | ✅ | 🔧 CI |
+| 360° vaizdo įrašai | ✅ | ✅ be laiko juostos | ✅ | ✅ panardinantis | ✅ | tik plokšti | tik plokšti |
+| 3D ir VR180 | ✅ viena akis | ✅ viena akis | ✅ viena akis | ✅ tikras 3D | ✅ viena akis | nuotraukos viena akimi, vaizdo įrašai plokšti | nuotraukos viena akimi, vaizdo įrašai plokšti |
+| Spatial 2.5D (galvos sekimas) | ✅ eksperimentinis | ✅ eksperimentinis | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple erdvinės nuotraukos | ✅ viena akis | ✅ viena akis | ✅ viena akis | ✅ 3D | ✅ viena akis | 🔧 CI | 🔧 CI |
+| Neapdoroti Insta360, GoPro ir DJI failai | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI nuotraukos, vaizdo įrašai plokšti | 🔧 CI nuotraukos, vaizdo įrašai plokšti |
+| SMB, WebDAV, DLNA bendrinimai | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameros: įrašai | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameros: tiesioginis vaizdas | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Bendrinti šį įrenginį tinkle | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Įkėlimas į Immich iš bendrinimų ir įrenginio | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Įvestis | prisilietimas, giroskopas | prisilietimas, giroskopas | nuotolinis valdymo pultas | valdikliai, rankos | pelė, klaviatūra | pelė, klaviatūra | pelė, klaviatūra, jutiklinis kilimėlis |
+| Kur gauti | Google Play, APK | App Store (tikrinama) | APK, Google Play (tikrinama) | Horizon Store, APK | diegimo programa arba ZIP (peržiūra) | .deb, .rpm (peržiūra) | DMG arba ZIP (nepasirašyta peržiūra) |
 
-✅ programoje toje platformoje · ❌ nesiūloma joje · 🔜 planuojama · 🔧 šaltinio kode ir kuriama projekto CI, kol kas nepradėta toje sistemoje. "Viena akis" reiškia, kad 3D failas rodo savo kairę akį plokščiame ekrane. Ne kiekvienas ✅ jau patikrintas realiame įrenginyje: kas patikrinta ir kur, ir kas liko patvirtinti, yra [Funkcijose](../docs/immuch360/features.md), [Platformų palaikyme](../docs/immuch360/platform-support.md) ir [Suderinamume](../docs/immuch360/compatibility.md).
+✅ programoje toje platformoje · ❌ nesiūloma joje · 🔜 planuojama · 🔧 CI šaltinio kode, sukurta ir paleista projekto CI toje sistemoje, ten dar nepatikrinta su realiu serveriu, bendrinimu ar kamera · tik plokšti: vaizdo įrašas rodomas plokščias, su pranešimu, nes 360° atvaizdavimo variklis veikia tik Windows. "Viena akis" reiškia, kad 3D failas rodo savo kairę akį plokščiame ekrane. Ne kiekvienas ✅ jau patikrintas realiame įrenginyje: kas patikrinta ir kur, ir kas liko patvirtinti, yra [Funkcijose](../docs/immuch360/features.md), [Platformų palaikyme](../docs/immuch360/platform-support.md) ir [Suderinamume](../docs/immuch360/compatibility.md).
 
 - **Android telefonai ir planšetės**: pilna programa, prisilietimas ir giroskopas, visi šaltiniai.
 - **iPhone ir iPad**: pilna programa; 360° vaizdo grotuvas turi tik paleidimą ir pauzę, Tapo tiesioginis vaizdas atsiras vėliau, o DLNA paieška siunčia unicast užklausas, kol Apple suteiks multicast leidimą.
 - **Android TV ir Google TV**: tas pats APK, valdomas nuotolinio valdymo pultu; žiūryklė: atsarginė kopija, įkėlimai ir redagavimas yra paslėpti. Patikrinta Google TV emuliatoriuje (prisijungimas, laiko juosta, žiūryklės, bendrinimai, navigacija nuotolinio valdymo pultu), kol kas ne realiame televizoriuje.
-- **Meta Quest 2, Pro, 3 ir 3S**: programa kaip langas, plius panardinantis vaizdas; HEVC yra saugus kodekas, H.264 sustoja apie 4096x2304 Quest 3; Quest 2 ir Quest Pro kol kas neišbandyti.
+- **Meta Quest 2, Pro, 3 ir 3S**: programa kaip langas, taip pat panardinantis vaizdas; HEVC yra patikimas kodekas, o H.264 Quest 3 įrenginyje veikia iki maždaug 4096x2304; išbandytas tik Quest 3, o Quest 2, Quest Pro ir Quest 3S dar neišbandyti.
 - **Windows 10 ir 11**: peržiūra su aplankais vietoj galerijos, savo vaizdo grotuvas (libmpv) plokštiems ir 360° vaizdo įrašams, neapdoroti failai, sujungti grafikos luste, failai ir aplankai, atverti programos arba numesti ant lango, diegimo programa arba ZIP.
-- **macOS ir Linux**: paketai, sukurti projekto CI (.deb, .rpm, DMG); Linux programa paleidžiama ir rodo nuotraukas ir 360° nuotraukas, vaizdo įrašų kol kas nėra, o SMB bendrinimams reikia Ubuntu 24.04, Debian 13 arba Fedora 39 ar naujesnės; macOS programa kol kas nepradėta tik projekto CI sistemoje, be vaizdo įrašų ir su nepatikrinta tinklo prieiga.
+- **Linux**: .deb ir .rpm paketai, sukurti projekto CI, įdiegti ir patikrinti Ubuntu 22.04 ir 24.04, Debian 12 bei Fedora 40 ir 44; nuotraukos, 360° nuotraukos ir plokšti vaizdo įrašai per sistemos libmpv (360°, 3D ir neapdoroti vaizdo įrašai rodomi plokšti su pranešimu); SMB bendrinimai nuo Ubuntu 22.04 ir Debian 12; dar nepaleista realiame Linux kompiuteryje, tik WSLg ir konteineriuose.
+- **macOS**: DMG ir ZIP, sukurti projekto CI, universalūs, nepasirašyti (Gatekeeper paklausia vieną kartą); programa pasileidžia, atveria jai perduotus failus ir aplankus, taip pat iš Finder, saugo savo slaptus duomenis prisijungimo raktinėje (login keychain) ir atkuria plokščius vaizdo įrašus su savo libmpv, visa tai patikrinta tik projekto CI Mac kompiuteryje; realiame Mac kol kas niekas nepaleista.
 
 <a id="advanced-features"></a>
 ## Papildomos funkcijos
@@ -300,7 +301,7 @@ Nieko nesiunčiama kūrėjui: be paskyros, be analizės, be klaidų pranešimų 
 
 Immuch360 yra neoficiali [Immich](https://github.com/immich-app/immich) mobiliosios programos šaka, pagal [GNU AGPL v3](../LICENSE), nesusijusi su Immich komanda ar FUTO ir neturinti jų palaikymo. Šaka egzistuoja, nes 360° žiūrėjimas mobiliuosiuose įrenginiuose prašomas Immich nuo 2024 m. sausio ir dar nėra oficialioje programoje; ji pateikia tai dabar, renka atsiliepimus iš realių įrenginių ir pasiūlys atgal Immich, mažais pull requests, viską, ko panorės prižiūrėtojai. Visa, ką daro oficiali programa, yra išsaugota; šakos, kūrimo grandinė ir CI aprašyti [Susikurkite patys](../docs/immuch360/build.md).
 
-360° nuotraukų žiūryklė pagrįsta originaliu pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) iš dmitry-brazhenko, savo ruožtu sukurtu ant bencefr prototipo [#30192](https://github.com/immich-app/immich/pull/30192); dėkojame abiem. Tapo kameros parašytos pagal tai, ką dokumentuoja [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ir [python-kasa](https://github.com/python-kasa/python-kasa). Meta Quest vaizdas remiasi Meta Spatial SDK, kuris nėra atvirojo kodo, todėl jis lieka tik šioje šakoje. Windows ZIP turi libmpv (biblioteka iš [mpv](https://mpv.io), su [FFmpeg](https://ffmpeg.org)), sukurtą projekto, pagal LGPL, su jos licencijomis ir šaltinio kodu; detalės ir šioje puslapyje nurodytų platformų prekiniai ženklai yra [Licencija ir prekiniai ženklai](../docs/immuch360/platform-support.md#license-and-trademarks).
+360° nuotraukų žiūryklė paremta dmitry-brazhenko upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169), kuris pats sukurtas pagal bencefr prototipą [#30192](https://github.com/immich-app/immich/pull/30192); ačiū abiem. Paieškos filtrų valdymo nuotolinio valdymo pultu pataisymai ir albumų rūšiavimas televizoriuose pradėti nuo mlc70 darbo [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Tapo kamerų palaikymas parašytas pagal tai, ką dokumentuoja [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ir [python-kasa](https://github.com/python-kasa/python-kasa). Meta Quest vaizdas remiasi Meta Spatial SDK, kuris nėra atvirojo kodo, todėl jis lieka šioje šakoje. Windows ZIP pateikiama projekto sukurta libmpv ([mpv](https://mpv.io) biblioteka, su [FFmpeg](https://ffmpeg.org)), pagal LGPL, su jos licencijomis ir šaltiniais; detalės ir šiame puslapyje minimų platformų prekių ženklai yra skiltyje [Licencija ir prekių ženklai](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Telefono nuotraukos šiame puslapyje buvo padarytos Android versijoje emuliatoriuje, televizoriaus emuliatoriuje Google TV, o Windows nuotraukos Windows 11 kompiuteryje, visos su CC0 panoramomis iš [Poly Haven](https://polyhaven.com); akinių nuotraukos padarytos Quest 3.
 
@@ -309,8 +310,8 @@ Telefono nuotraukos šiame puslapyje buvo padarytos Android versijoje emuliatori
 
 Kas dar nepadaryta, labiausiai tikėtina pirma. Niekas čia nėra pažadas, o atsiliepimai [pranešimų sekiklyje](https://github.com/freeKC/Immuch360/issues) padeda nuspręsti, kas bus pirma.
 
-- **Parduotuvės**: Google Play (build 23 tikrinama, TV įrašas tikrinamas), App Store (versija 3.3.0 tikrinama), Meta Horizon Store (build 21 tikrinama).
-- **Kompiuteriai**: kiekvienos funkcijos rankinis testavimas Windows kompiuteryje; tada Spatial 2.5D su internetine kamera; tada vaizdo grotuvas Linux ir macOS ir testavimas tikrame Mac; tada pasirašyta versija ir automatiniai atnaujinimai.
+- **Parduotuvės**: Google Play (build 26 netrukus, TV įrašas tikrinamas), App Store (versija 3.3.1 tikrinama nuo spalio 14 d.), Meta Horizon Store (build 25 tikrinama).
+- **Kompiuteriai**: kiekvienos funkcijos rankinis testavimas Windows kompiuteryje; tada 360° vaizdo įrašų atvaizdavimo variklis Linux ir macOS, testas realiame Mac ir realiame Linux kompiuteryje; tada pasirašytas build ir automatiniai atnaujinimai; tada Spatial 2.5D su internetine kamera.
 - **Telefonai ir planšetės**: laiko juosta iOS 360° vaizdo grotuve, ankstesnis ir kitas telefonų 360° grotuvuose, garso takelio pasirinkimas plokščiame grotuve, Tapo tiesioginis vaizdas iPhone ir iPad.
 - **Įtraukiantys failai**: dvigubas fisheye .dng, GoPro ir DJI vaizdo įrašų išlyginimas pagal jų pačių judesio duomenis, erdviniai vaizdo įrašai 3D formatu Quest, jei jo dekoderiai tai leidžia, ankstesnis ir kitas tarp erdvinių nuotraukų akiniuose.
 - **Šaltiniai**: braukimas tarp bendrinimo aplanko failų, Digest autentifikacija WebDAV, QR kodas Plex žetonui perkelti iš kompiuterio, IPv6 Plex, H.265 Tapo įrašai, kanalai televizoriaus pradiniame ekrane.

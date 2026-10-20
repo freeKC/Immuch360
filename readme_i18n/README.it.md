@@ -20,14 +20,14 @@ Immuch360 è un'app gratuita e open source per trovare, sfogliare, riprodurre ed
 
 <div align="center">
 
-| Piattaforma | Dove scaricarla | Stato al 12 ottobre 2026 |
+| Piattaforma | Dove scaricarla | Stato al 20 ottobre 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoni e tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | su Google Play (build 20; build 23 in revisione), build 23 su GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone e iPad** | App Store | versione 3.3.0 in attesa della revisione di Apple; nel frattempo [compilalo da solo](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV e Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 su GitHub; la scheda TV è in revisione da parte di Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 e 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | sull'Horizon Store (build 14; build 21 in revisione), build 23 su GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Programma di installazione o ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, un'anteprima: foto, video piatti e a 360°, condivisioni, Plex, fotocamere, file aperti con il programma |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS e Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | prime anteprime: su Linux foto e foto a 360°, ancora senza video; macOS solo avviato sulla CI del progetto |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoni e tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | su Google Play (build 25), build 26 su GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone e iPad** | App Store | versione 3.3.1 (build 24) in attesa della revisione di Apple dal 14 ottobre; nel frattempo [compilalo da solo](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV e Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 su GitHub, con le correzioni dei filtri di ricerca per il telecomando; la scheda TV è in revisione da parte di Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 e 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | sull'Horizon Store (build 23; build 25 in revisione), build 26 su GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Programma di installazione o ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, un'anteprima: foto, video piatti e a 360°, condivisioni, Plex, fotocamere, file aperti con il programma, l'interfaccia in 89 lingue |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS e Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | anteprime: su Linux foto, foto a 360° e video piatti (i video a 360° vengono riprodotti piatti); su macOS lo stesso, verificato solo sul Mac della CI del progetto, non firmato |
 
 *Gli stati vengono aggiornati a ogni release; i dettagli, build per build, sono in [Stato delle release](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Con un server [Immich](https://github.com/immich-app/immich), Immuch360 è l'app
 2. In Impostazioni, Visualizzatore risorse, Video, "Sorgente video" sceglie l'originale quando questo dispositivo lo decodifica, sempre l'originale, oppure sempre lo stream transcodificato.
 3. Per mostrare una foto a 360° a qualcuno che non ha l'app, condividila con un link condiviso di Immich: l'app web di Immich la mostra come una sfera nel loro browser.
 
-La build attuale, build 23, è basata su Immich `main` del 10 ottobre 2026 (versione 3.3.0-rc.0) ed è stata testata con un server Immich 3.2.4 e un server compilato da quello stesso Immich `main`. Segnala i problemi in [Issues](https://github.com/freeKC/Immuch360/issues), non al progetto Immich.
+La build attuale, build 26, è basata su Immich `main` del 10 ottobre 2026 (versione 3.3.0-rc.0) ed è stata testata con un server Immich 3.2.4 e un server compilato da quello stesso Immich `main`. Segnala i problemi in [Issues](https://github.com/freeKC/Immuch360/issues), non al progetto Immich.
 
 Altro: [tutto il resto è Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [confronto con l'app Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Altro: [fotocamere Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-
 
 Un'unica base di codice, sei ambienti. Cosa offre ciascuno oggi:
 
-| Funzionalità | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galleria, album, ricerca con un server Immich | ✅ | ✅ | ✅ visualizzatore | ✅ | ✅ | 🔧 |
-| Senza server: i contenuti del dispositivo | ✅ | ✅ | solo condivisioni | ✅ | ✅ cartelle | 🔧 |
-| Foto e video piatti | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Foto a 360° come sfera | ✅ | ✅ | ✅ | ✅ immersivo | ✅ | 🔧 |
-| Video a 360° | ✅ | ✅ senza barra del tempo | ✅ | ✅ immersivo | ✅ | 🔧 |
-| 3D e VR180 | ✅ un occhio | ✅ un occhio | ✅ un occhio | ✅ vero 3D | ✅ un occhio | 🔧 |
-| Spatial 2.5D (tracciamento della testa) | ✅ sperimentale | ✅ sperimentale | ❌ | ❌ | 🔜 | ❌ |
-| Foto spaziali Apple | ✅ un occhio | ✅ un occhio | ✅ un occhio | ✅ 3D | ✅ un occhio | 🔧 |
-| File raw Insta360, GoPro e DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Condivisioni SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Fotocamere Tapo: registrazioni | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Fotocamere Tapo: diretta | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Condividi questo dispositivo sulla rete | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Carica su Immich dalle condivisioni e dal dispositivo | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Input | tocco, giroscopio | tocco, giroscopio | telecomando | controller, mani | mouse, tastiera | |
-| Dove trovarlo | Google Play, APK | App Store (in revisione) | APK, Google Play (in revisione) | Horizon Store, APK | programma di installazione o ZIP (anteprima) | .deb, .rpm, DMG (prime anteprime) |
+| Funzionalità | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galleria, album, ricerca con un server Immich | ✅ | ✅ | ✅ visualizzatore | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Senza server: i contenuti del dispositivo | ✅ | ✅ | solo condivisioni | ✅ | ✅ cartelle | ✅ cartelle | ✅ cartelle |
+| Foto e video piatti | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Foto a 360° come sfera | ✅ | ✅ | ✅ | ✅ immersivo | ✅ | ✅ | 🔧 CI |
+| Video a 360° | ✅ | ✅ senza barra del tempo | ✅ | ✅ immersivo | ✅ | solo piatti | solo piatti |
+| 3D e VR180 | ✅ un occhio | ✅ un occhio | ✅ un occhio | ✅ vero 3D | ✅ un occhio | foto un occhio, video piatti | foto un occhio, video piatti |
+| Spatial 2.5D (tracciamento della testa) | ✅ sperimentale | ✅ sperimentale | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Foto spaziali Apple | ✅ un occhio | ✅ un occhio | ✅ un occhio | ✅ 3D | ✅ un occhio | 🔧 CI | 🔧 CI |
+| File raw Insta360, GoPro e DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI foto, video piatti | 🔧 CI foto, video piatti |
+| Condivisioni SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Fotocamere Tapo: registrazioni | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Fotocamere Tapo: diretta | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Condividi questo dispositivo sulla rete | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Carica su Immich dalle condivisioni e dal dispositivo | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Input | tocco, giroscopio | tocco, giroscopio | telecomando | controller, mani | mouse, tastiera | mouse, tastiera | mouse, tastiera, trackpad |
+| Dove trovarlo | Google Play, APK | App Store (in revisione) | APK, Google Play (in revisione) | Horizon Store, APK | programma di installazione o ZIP (anteprima) | .deb, .rpm (anteprima) | DMG o ZIP (anteprima non firmata) |
 
-✅ nell'app su quella piattaforma · ❌ non offerto lì · 🔜 pianificato · 🔧 nei sorgenti e compilato dalla CI del progetto, non ancora avviato su quel sistema. "Un occhio" significa che un file 3D mostra il suo occhio sinistro su uno schermo piatto. Non ogni ✅ è stato ancora verificato su un dispositivo reale: cosa è stato verificato dove, e cosa resta da confermare, è in [Funzionalità](../docs/immuch360/features.md), [Supporto delle piattaforme](../docs/immuch360/platform-support.md) e [Compatibilità](../docs/immuch360/compatibility.md).
+✅ nell'app su quella piattaforma · ❌ non offerto lì · 🔜 pianificato · 🔧 CI nei sorgenti, compilato e avviato dalla CI del progetto su quel sistema, ma non ancora verificato lì con un vero server, una vera condivisione o una vera fotocamera · solo piatti: il video viene riprodotto piatto, con un messaggio, perché il renderer a 360° esiste solo su Windows. "Un occhio" significa che un file 3D mostra il suo occhio sinistro su uno schermo piatto. Non ogni ✅ è stato ancora verificato su un dispositivo reale: cosa è stato verificato dove, e cosa resta da confermare, è in [Funzionalità](../docs/immuch360/features.md), [Supporto delle piattaforme](../docs/immuch360/platform-support.md) e [Compatibilità](../docs/immuch360/compatibility.md).
 
 - **Telefoni e tablet Android**: l'app completa, tocco e giroscopio, ogni fonte.
 - **iPhone e iPad**: l'app completa; il lettore video 360° ha solo play e pausa, la diretta Tapo arriva più avanti, e la ricerca DLNA invia richieste unicast finché Apple non concede l'entitlement multicast.
 - **Android TV e Google TV**: lo stesso APK, guidato dal telecomando; un visualizzatore: backup, caricamenti e modifica sono nascosti. Verificato sull'emulatore Google TV (accesso, timeline, visualizzatori, condivisioni, la navigazione col telecomando), non ancora su una TV reale.
-- **Meta Quest 2, Pro, 3 e 3S**: l'app come finestra, più la vista immersiva; HEVC è il codec sicuro, H.264 si ferma intorno a 4096x2304 sul Quest 3; il Quest 2 e il Quest Pro non sono ancora stati testati.
+- **Meta Quest 2, Pro, 3 e 3S**: l'app come finestra, più la vista immersiva; HEVC è il codec sicuro, H.264 si ferma intorno a 4096x2304 sul Quest 3; solo il Quest 3 è stato testato, il Quest 2, il Quest Pro e il Quest 3S non lo sono ancora.
 - **Windows 10 e 11**: un'anteprima, con cartelle al posto di una galleria, un lettore video proprio (libmpv) per i video piatti e a 360°, file raw assemblati sul chip grafico, file e cartelle aperti con il programma o trascinati sulla finestra, un programma di installazione o uno ZIP.
-- **macOS e Linux**: pacchetti compilati dalla CI del progetto (un .deb, un .rpm, un DMG); su Linux l'app si avvia e mostra foto e foto a 360°, ancora senza video, e le condivisioni SMB richiedono Ubuntu 24.04, Debian 13 o Fedora 39 o successivi; l'app macOS è stata solo avviata sulla CI del progetto, senza video e con il suo accesso di rete non provato.
+- **Linux**: un .deb e un .rpm compilati dalla CI del progetto, installati e verificati su Ubuntu 22.04 e 24.04, Debian 12 e Fedora 40 e 44; foto, foto a 360° e video piatti tramite la libmpv del sistema (i video a 360°, 3D e raw vengono riprodotti piatti con un messaggio); condivisioni SMB a partire da Ubuntu 22.04 e Debian 12; non ancora eseguito su un vero PC Linux, solo in WSLg e in container.
+- **macOS**: un DMG e uno ZIP compilati dalla CI del progetto, universali, non firmati (Gatekeeper chiede conferma una volta); l'app si avvia, apre i file e le cartelle che le vengono passati, anche dal Finder, conserva i suoi segreti nel portachiavi di login e riproduce i video piatti con la propria libmpv, il tutto verificato solo sul Mac della CI del progetto; niente è ancora stato eseguito su un vero Mac.
 
 <a id="advanced-features"></a>
 ## Funzionalità avanzate
@@ -300,7 +301,7 @@ Niente arriva allo sviluppatore: nessun account, nessuna analisi, nessun servizi
 
 Immuch360 è un fork non ufficiale dell'app mobile [Immich](https://github.com/immich-app/immich), sotto licenza [GNU AGPL v3](../LICENSE), non affiliato né approvato dal team di Immich o da FUTO. Il fork esiste perché la visualizzazione a 360° su mobile è richiesta in Immich da gennaio 2024 e non è ancora nell'app ufficiale; la distribuisce ora, raccoglie riscontri reali dai dispositivi, e offrirà a Immich, in piccole pull request, tutto ciò che i maintainer vorranno. Tutto ciò che fa l'app ufficiale viene mantenuto; i branch, la catena di compilazione e la CI sono descritti in [Compilalo da solo](../docs/immuch360/build.md).
 
-Il visualizzatore di foto a 360° si basa sulla pull request upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) di dmitry-brazhenko, essa stessa costruita sul prototipo di bencefr in [#30192](https://github.com/immich-app/immich/pull/30192); grazie a entrambi. Le fotocamere Tapo sono state scritte a partire da quanto documentano [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) e [python-kasa](https://github.com/python-kasa/python-kasa). La vista Meta Quest si basa sul Meta Spatial SDK, che non è open source, quindi resta in questo fork. Lo ZIP per Windows porta con sé libmpv (la libreria di [mpv](https://mpv.io), con [FFmpeg](https://ffmpeg.org)) compilata dal progetto, sotto licenza LGPL, con le sue licenze e i suoi sorgenti; i dettagli e i marchi delle piattaforme citate in questa pagina sono in [Licenza e marchi](../docs/immuch360/platform-support.md#license-and-trademarks).
+Il visualizzatore di foto a 360° si basa sulla pull request upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) di dmitry-brazhenko, essa stessa costruita sul prototipo di bencefr in [#30192](https://github.com/immich-app/immich/pull/30192); grazie a entrambi. Le correzioni dei filtri di ricerca per il telecomando e l'ordinamento degli album sui televisori sono partiti dal lavoro di mlc70 in [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Le fotocamere Tapo sono state scritte a partire da quanto documentano [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) e [python-kasa](https://github.com/python-kasa/python-kasa). La vista Meta Quest si basa sul Meta Spatial SDK, che non è open source, quindi resta in questo fork. Lo ZIP per Windows porta con sé libmpv (la libreria di [mpv](https://mpv.io), con [FFmpeg](https://ffmpeg.org)) compilata dal progetto, sotto licenza LGPL, con le sue licenze e i suoi sorgenti; i dettagli e i marchi delle piattaforme citate in questa pagina sono in [Licenza e marchi](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Le catture da telefono di questa pagina sono state fatte sulla build Android in un emulatore, quelle TV sull'emulatore Google TV e quelle Windows su un PC Windows 11, tutte con panorami CC0 da [Poly Haven](https://polyhaven.com); le catture da visore sono state fatte su un Quest 3.
 
@@ -309,8 +310,8 @@ Le catture da telefono di questa pagina sono state fatte sulla build Android in 
 
 Ciò che non è ancora fatto, a partire dal più probabile. Nulla qui è una promessa, e i riscontri nel [tracker delle segnalazioni](https://github.com/freeKC/Immuch360/issues) aiutano a decidere cosa viene prima.
 
-- **Gli store**: Google Play (build 23 in revisione, la scheda TV in revisione), l'App Store (versione 3.3.0 in revisione), il Meta Horizon Store (build 21 in revisione).
-- **Computer**: il test manuale di ogni funzione su un PC Windows; poi Spatial 2.5D con la webcam; poi il lettore video su Linux e macOS e un test su un Mac reale; poi una build firmata e aggiornamenti automatici.
+- **Gli store**: Google Play (build 26 in arrivo, la scheda TV in revisione), l'App Store (versione 3.3.1 in revisione dal 14 ottobre), il Meta Horizon Store (build 25 in revisione).
+- **Computer**: il test manuale di ogni funzione su un PC Windows; poi il renderer dei video a 360° su Linux e macOS, un test su un Mac reale e su un vero PC Linux; poi una build firmata e aggiornamenti automatici; poi Spatial 2.5D con la webcam.
 - **Telefoni e tablet**: una barra del tempo nel lettore video 360° di iOS, precedente e successivo nei lettori 360° dei telefoni, la scelta della traccia audio nel lettore piatto, la diretta Tapo su iPhone e iPad.
 - **Contenuti immersivi**: .dng fisheye doppio, livellamento dei video GoPro e DJI dai propri dati di movimento, video spaziali in 3D sul Quest se i suoi decoder lo permettono, precedente e successivo tra le foto spaziali nel visore.
 - **Fonti**: lo scorrimento tra i file di una cartella condivisa, l'autenticazione Digest per WebDAV, un codice QR per portare il token Plex dal computer, IPv6 per Plex, registrazioni Tapo H.265, canali nella schermata principale della TV.

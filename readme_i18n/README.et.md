@@ -20,14 +20,14 @@ Immuch360 on tasuta ja avatud lähtekoodiga rakendus, millega leiad, sirvid, esi
 
 <div align="center">
 
-| Platvorm | Kust seda saada | Olek 12. oktoobril 2026 |
+| Platvorm | Kust seda saada | Olek 20. oktoobril 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Androidi** telefonid ja tahvelarvutid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play'is (build 20; build 23 ülevaatamisel), build 23 GitHubis |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ja iPad** | App Store | versioon 3.3.0 ootab Apple'i ülevaatust; seniks [ehita see endale](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 GitHubis; TV-nimekiri on Google'i ülevaatuse all |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store'is (build 14; build 21 ülevaatamisel), build 23 GitHubis |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Paigaldusprogramm või ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, eelversioon: fotod, lame- ja 360° videod, jagud, Plex, kaamerad, programmiga avatud failid |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ja Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | varajased eelversioonid: Linuxil fotod ja 360° fotod, videoid veel ei ole; macOS on käivitatud ainult projekti CI-l |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Androidi** telefonid ja tahvelarvutid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play'is (build 25), build 26 GitHubis |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ja iPad** | App Store | versioon 3.3.1 (build 24) ootab Apple'i ülevaatust alates 14. oktoobrist; seniks [ehita see endale](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 GitHubis, otsingufiltrite puldiparandustega; TV-nimekiri on Google'i ülevaatuse all |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store'is (build 23; build 25 ülevaatamisel), build 26 GitHubis |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Paigaldusprogramm või ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, eelversioon: fotod, lame- ja 360° videod, jagud, Plex, kaamerad, programmiga avatud failid, liides 89 keeles |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ja Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | eelversioonid: Linuxil fotod, 360° fotod ja lamevideod (360° videod mängivad lamedalt); macOS-il sama, kontrollitud ainult projekti CI Macil, allkirjastamata |
 
 *Olekuid uuendatakse igal väljalaskel; üksikasjad, buildi kaupa, on lehel [Väljalaske olek](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Rohkem: [võrgujagud](../docs/immuch360/user-guide.md#network-shares-a-nas-a-com
 2. Seadetes, Meediavaatur, Videod, "Video allikas" valib originaali, kui seade seda dekodeerib, alati originaali või alati transkodeeritud voo.
 3. Et näidata 360° fotot kellelegi, kellel rakendust ei ole, jaga seda Immich'i jagamislingiga: Immich'i veebirakendus näitab seda nende brauseris kerana.
 
-Praegune build, build 23, põhineb Immich'i 10. oktoobri 2026 branchil `main` (versioon 3.3.0-rc.0) ja seda testiti Immich 3.2.4 serveri ja samalt Immich'i `main` branchilt ehitatud serveri vastu. Palun teata probleemidest lehel [Probleemid](https://github.com/freeKC/Immuch360/issues), mitte Immich'i projektile.
+Praegune build, build 26, põhineb Immich'i 10. oktoobri 2026 branchil `main` (versioon 3.3.0-rc.0) ja seda testiti Immich 3.2.4 serveri ja samalt Immich'i `main` branchilt ehitatud serveri vastu. Palun teata probleemidest lehel [Probleemid](https://github.com/freeKC/Immuch360/issues), mitte Immich'i projektile.
 
 Rohkem: [kõik ülejäänu on Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [võrdlus Immich'i rakendusega](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Rohkem: [Tapo kaamerad](../docs/immuch360/user-guide.md#tapo-cameras-live-view-a
 
 Üks koodibaas, kuus keskkonda. Mis igaühel neist täna on:
 
-| Võimalus | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerii, albumid, otsing Immich-serveriga | ✅ | ✅ | ✅ vaatur | ✅ | ✅ | 🔧 |
-| Ilma serverita: seadme oma meedia | ✅ | ✅ | ainult jagud | ✅ | ✅ kaustad | 🔧 |
-| Lamefotod ja -videod | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360° fotod kerana | ✅ | ✅ | ✅ | ✅ kaasahaarav | ✅ | 🔧 |
-| 360° videod | ✅ | ✅ ajariba puudub | ✅ | ✅ kaasahaarav | ✅ | 🔧 |
-| 3D ja VR180 | ✅ üks silm | ✅ üks silm | ✅ üks silm | ✅ tõeline 3D | ✅ üks silm | 🔧 |
-| Ruumiline 2.5D (pea jälgimine) | ✅ katseline | ✅ katseline | ❌ | ❌ | 🔜 | ❌ |
-| Apple'i ruumilised fotod | ✅ üks silm | ✅ üks silm | ✅ üks silm | ✅ 3D | ✅ üks silm | 🔧 |
-| Insta360, GoPro ja DJI toorfailid | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA jagud | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kaamerad: salvestused | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kaamerad: otsevaade | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Jaga seda seadet võrgus | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Laadi Immich'isse üles jagudest ja seadmest | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Sisend | puuteekraan, güroskoop | puuteekraan, güroskoop | pult | kontrollerid, käed | hiir, klaviatuur | |
-| Kust saada | Google Play, APK | App Store (ülevaatamisel) | APK, Google Play (ülevaatamisel) | Horizon Store, APK | paigaldusprogramm või ZIP (eelversioon) | .deb, .rpm, DMG (varajased eelversioonid) |
+| Võimalus | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galerii, albumid, otsing Immich-serveriga | ✅ | ✅ | ✅ vaatur | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Ilma serverita: seadme oma meedia | ✅ | ✅ | ainult jagud | ✅ | ✅ kaustad | ✅ kaustad | ✅ kaustad |
+| Lamefotod ja -videod | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 360° fotod kerana | ✅ | ✅ | ✅ | ✅ kaasahaarav | ✅ | ✅ | 🔧 CI |
+| 360° videod | ✅ | ✅ ajariba puudub | ✅ | ✅ kaasahaarav | ✅ | ainult lamedalt | ainult lamedalt |
+| 3D ja VR180 | ✅ üks silm | ✅ üks silm | ✅ üks silm | ✅ tõeline 3D | ✅ üks silm | fotod üks silm, videod lamedalt | fotod üks silm, videod lamedalt |
+| Ruumiline 2.5D (pea jälgimine) | ✅ katseline | ✅ katseline | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple'i ruumilised fotod | ✅ üks silm | ✅ üks silm | ✅ üks silm | ✅ 3D | ✅ üks silm | 🔧 CI | 🔧 CI |
+| Insta360, GoPro ja DJI toorfailid | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI fotod, videod lamedalt | 🔧 CI fotod, videod lamedalt |
+| SMB, WebDAV, DLNA jagud | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kaamerad: salvestused | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kaamerad: otsevaade | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Jaga seda seadet võrgus | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Laadi Immich'isse üles jagudest ja seadmest | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Sisend | puuteekraan, güroskoop | puuteekraan, güroskoop | pult | kontrollerid, käed | hiir, klaviatuur | hiir, klaviatuur | hiir, klaviatuur, puuteplaat |
+| Kust saada | Google Play, APK | App Store (ülevaatamisel) | APK, Google Play (ülevaatamisel) | Horizon Store, APK | paigaldusprogramm või ZIP (eelversioon) | .deb, .rpm (eelversioon) | DMG või ZIP (allkirjastamata eelversioon) |
 
-✅ rakenduses sellel platvormil · ❌ seal ei pakuta · 🔜 planeeritud · 🔧 lähtekoodis ja projekti CI ehitatud, sellel süsteemil veel käivitamata. "Üks silm" tähendab, et 3D fail näitab oma vasakut silma lamel ekraanil. Mitte igat ✅ ei ole veel päris seadmel kontrollitud: mis on kontrollitud kus, ja mis on veel kinnitamata, on lehtedel [Funktsioonid](../docs/immuch360/features.md), [Platvormi tugi](../docs/immuch360/platform-support.md) ja [Ühilduvus](../docs/immuch360/compatibility.md).
+✅ rakenduses sellel platvormil · ❌ seal ei pakuta · 🔜 planeeritud · 🔧 CI lähtekoodis, projekti CI ehitab ja käivitab selle sellel süsteemil, seal pole seda veel päris serveri, jao ega kaameraga kontrollitud · ainult lamedalt: video mängib lamedalt, teatega, sest 360° renderdaja töötab ainult Windowsil. "Üks silm" tähendab, et 3D fail näitab oma vasakut silma lamedal ekraanil. Mitte igat ✅ ei ole veel päris seadmel kontrollitud: mis on kontrollitud kus, ja mis on veel kinnitamata, on lehtedel [Funktsioonid](../docs/immuch360/features.md), [Platvormi tugi](../docs/immuch360/platform-support.md) ja [Ühilduvus](../docs/immuch360/compatibility.md).
 
 - **Androidi telefonid ja tahvelarvutid**: täielik rakendus, puuteekraan ja güroskoop, kõik allikad.
 - **iPhone ja iPad**: täielik rakendus; 360° videopleieril on ainult esitamine ja paus, Tapo otsevaade tuleb hiljem, ja DLNA otsing saadab unicast päringuid, kuni Apple annab multicast õiguse.
 - **Android TV ja Google TV**: sama APK, mida juhitakse puldiga; vaatur: varundus, üleslaadimised ja redigeerimine on peidetud. Kontrollitud Google TV emulaatoril (sisselogimine, ajajoon, vaaturid, jagud, puldiga navigeerimine), päris teleril veel mitte.
-- **Meta Quest 2, Pro, 3 ja 3S**: rakendus aknana, pluss kaasahaarav vaade; HEVC on turvaline koodek, H.264 peatub Quest 3-l umbes 4096x2304 juures; Quest 2 ja Quest Pro ei ole veel testitud.
+- **Meta Quest 2, Pro, 3 ja 3S**: rakendus aknana, pluss kaasahaarav vaade; HEVC on turvaline koodek, H.264 peatub Quest 3-l umbes 4096x2304 juures; testitud on ainult Quest 3, Quest 2, Quest Pro ja Quest 3S ei ole veel testitud.
 - **Windows 10 ja 11**: eelversioon, kus galerii asemel on kaustad, oma videopleier (libmpv) lame- ja 360° videote jaoks, graafikakiibil õmmeldud toorfailid, programmiga avatud või aknasse lohistatud failid ja kaustad, paigaldusprogramm või ZIP.
-- **macOS ja Linux**: projekti CI ehitatud paketid (.deb, .rpm, DMG); Linuxil käivitub rakendus ja näitab fotosid ja 360° fotosid, videoid veel ei ole, ja SMB jagud vajavad Ubuntu 24.04, Debian 13 või Fedora 39 või uuemat; macOS rakendus on käivitatud ainult projekti CI-l, videoid ei ole ja selle võrguühendust ei ole katsetatud.
+- **Linux**: projekti CI ehitatud .deb ja .rpm, paigaldatud ja kontrollitud Ubuntu 22.04 ja 24.04, Debian 12 ning Fedora 40 ja 44 peal; fotod, 360° fotod ja lamevideod süsteemi libmpv kaudu (360°, 3D ja toorvideod mängivad lamedalt koos teatega); SMB jagud alates Ubuntu 22.04 ja Debian 12; päris Linuxi arvutis veel käivitamata, ainult WSLg all ja konteinerites.
+- **macOS**: projekti CI ehitatud DMG ja ZIP, universaalsed, allkirjastamata (Gatekeeper küsib ühe korra); see käivitub, avab talle antud failid ja kaustad, ka Finderist, hoiab oma saladusi sisselogimise võtmeahelas ja mängib lamevideoid oma libmpv-ga, kõik kontrollitud ainult projekti CI Macil; päris Macil pole veel midagi käivitatud.
 
 <a id="advanced-features"></a>
 ## Täpsemad võimalused
@@ -300,7 +301,7 @@ Arendajale ei lähe midagi: ei kontot, ei analüütikat, ei krahhiraportite teen
 
 Immuch360 on [Immich'i](https://github.com/immich-app/immich) mobiilirakenduse mitteametlik haru, [GNU AGPL v3](../LICENSE) litsentsi all, ei ole seotud Immich'i meeskonna või FUTO-ga ega nende poolt heaks kiidetud. Haru on olemas, kuna 360° vaatamist mobiilis on Immich'ist palutud alates 2024. aasta jaanuarist ja seda ei ole ametlikus rakenduses veel; haru pakub seda juba praegu, kogub tagasisidet päris seadmetelt ning pakub Immich'ile tagasi, väikeste pull request'idena, kõike, mida hooldajad soovivad. Kõik, mida ametlik rakendus teeb, on säilitatud; harud, ehitusahel ja CI on kirjeldatud lehel [Ehita ise](../docs/immuch360/build.md).
 
-360° fotovaatur põhineb ülesvoolu pull request'il [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169), autor dmitry-brazhenko, mis ise põhineb bencefr-i prototüübil pull request'is [#30192](https://github.com/immich-app/immich/pull/30192); tänu mõlemale. Tapo kaamerate kood on kirjutatud selle põhjal, mida dokumenteerivad [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ja [python-kasa](https://github.com/python-kasa/python-kasa). Meta Questi vaade põhineb Meta Spatial SDK-l, mis ei ole avatud lähtekoodiga, mistõttu see jääb selles harus. Windowsi ZIP sisaldab libmpv teeki (teek pärineb [mpv](https://mpv.io) projektilt ja kasutab [FFmpeg'i](https://ffmpeg.org)), mille on ehitanud see projekt, LGPL litsentsi all, koos oma litsentside ja lähtekoodiga; selle lehel nimetatud platvormide üksikasjad ja kaubamärgid on lehel [Litsents ja kaubamärgid](../docs/immuch360/platform-support.md#license-and-trademarks).
+360° fotovaatur põhineb ülesvoolu pull request'il [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169), autor dmitry-brazhenko, mis ise põhineb bencefr-i prototüübil pull request'is [#30192](https://github.com/immich-app/immich/pull/30192); tänu mõlemale. Otsingufiltrite puldiparandused ja albumite sortimine teleritel said alguse mlc70 tööst pull request'is [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Tapo kaamerate kood on kirjutatud selle põhjal, mida dokumenteerivad [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ja [python-kasa](https://github.com/python-kasa/python-kasa). Meta Questi vaade põhineb Meta Spatial SDK-l, mis ei ole avatud lähtekoodiga, mistõttu see jääb selles harus. Windowsi ZIP sisaldab libmpv teeki (teek pärineb [mpv](https://mpv.io) projektilt ja kasutab [FFmpeg'i](https://ffmpeg.org)), mille on ehitanud see projekt, LGPL litsentsi all, koos oma litsentside ja lähtekoodiga; selle lehel nimetatud platvormide üksikasjad ja kaubamärgid on lehel [Litsents ja kaubamärgid](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Selle lehe telefoni kuvatõmmised on tehtud Androidi buildiga emulaatoris, teleri kuvatõmmised Google TV emulaatoril ja Windowsi kuvatõmmised Windows 11 arvutil, kõik CC0 panoraamidega [Poly Havenist](https://polyhaven.com); peakomplekti kuvatõmmised on tehtud Quest 3-l.
 
@@ -309,8 +310,8 @@ Selle lehe telefoni kuvatõmmised on tehtud Androidi buildiga emulaatoris, teler
 
 Mis on veel tegemata, kõige tõenäolisemad eespool. Miski siin pole lubadus ning tagasiside [veahalduris](https://github.com/freeKC/Immuch360/issues) aitab otsustada, mis tuleb esimesena.
 
-- **Poed**: Google Play (build 23 ülevaatamisel, TV-nimekiri ülevaatamisel), App Store (versioon 3.3.0 ülevaatamisel), Meta Horizon Store (build 21 ülevaatamisel).
-- **Arvutid**: igat funktsiooni käsitsi testitakse Windowsi arvutil; seejärel Spatial 2.5D veebikaameraga; seejärel videopleier Linuxil ja macOS-il ja test päris Macil; seejärel allkirjastatud build ja automaatsed uuendused.
+- **Poed**: Google Play (build 26 tulekul, TV-nimekiri ülevaatamisel), App Store (versioon 3.3.1 ülevaatamisel alates 14. oktoobrist), Meta Horizon Store (build 25 ülevaatamisel).
+- **Arvutid**: igat funktsiooni käsitsi testitakse Windowsi arvutil; seejärel 360° videorenderdaja Linuxil ja macOS-il, test päris Macil ja päris Linuxi arvutil; seejärel allkirjastatud build ja automaatsed uuendused; seejärel Spatial 2.5D veebikaameraga.
 - **Telefonid ja tahvelarvutid**: ajariba iOS-i 360° videopleieris, eelmine ja järgmine telefonide 360° pleierites, heliraja valik lamepleieris, Tapo otsevaade iPhone'il ja iPad'il.
 - **Kaasahaarav meedia**: topelt kalasilm .dng, GoPro ja DJI videote loodimine nende enda liikumisandmete põhjal, ruumilised videod 3D-s Questil, kui selle dekoodrid seda lubavad, eelmine ja järgmine ruumiliste fotode vahel peakomplektis.
 - **Allikad**: libistamine jagatud kausta failide vahel, Digest autentimine WebDAV jaoks, QR-kood Plexi tokeni arvutist toomiseks, IPv6 Plexi jaoks, H.265 Tapo salvestused, kanalid teleri avakuval.

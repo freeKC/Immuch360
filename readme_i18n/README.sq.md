@@ -20,14 +20,14 @@ Immuch360 është një aplikacion falas dhe me burim të hapur për të gjetur, 
 
 <div align="center">
 
-| Platforma | Ku ta merrni | Gjendja më 12 tetor 2026 |
+| Platforma | Ku ta merrni | Gjendja më 20 tetor 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefona dhe tableta | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | në Google Play (build 20; build 23 në shqyrtim), build 23 në GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dhe iPad** | App Store | versioni 3.3.0 në pritje të shqyrtimit nga Apple; ndërkohë, [ndërtoje vetë](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dhe Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 në GitHub; listimi për TV është në shqyrtim nga Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dhe 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | në Horizon Store (build 14; build 21 në shqyrtim), build 23 në GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalues ose ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | build 5 për desktop, paraprak: foto, video të sheshta dhe 360°, ndarje, Plex, kamera, skedarë të hapura me programin |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS dhe Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | paraprakë fillestarë: në Linux foto dhe foto 360°, akoma pa video; macOS është nisur vetëm në CI e projektit |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefona dhe tableta | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | në Google Play (build 25), build 26 në GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dhe iPad** | App Store | versioni 3.3.1 (build 24) në pritje të shqyrtimit nga Apple që nga 14 tetori; ndërkohë, [ndërtoje vetë](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dhe Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 në GitHub, me rregullimet e telekomandës te filtrat e kërkimit; listimi për TV është në shqyrtim nga Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dhe 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | në Horizon Store (build 23; build 25 në shqyrtim), build 26 në GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalues ose ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | build 6 për desktop, paraprak: foto, video të sheshta dhe 360°, ndarje, Plex, kamera, skedarë të hapura me programin, ndërfaqja në 89 gjuhë |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS dhe Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | paraprakë: në Linux foto, foto 360° dhe video të sheshta (videot 360° luhen të sheshta); në macOS e njëjta gjë, e kontrolluar vetëm në Mac-un e CI të projektit, e panënshkruar |
 
 *Statuset përditësohen me çdo publikim; detajet, build pas build, janë në [Statusi i publikimit](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Me një server [Immich](https://github.com/immich-app/immich), Immuch360 është
 2. Në Cilësimet, Shikuesi i Skedarëve, Video, "Burimi i videos" zgjedh origjinalin kur kjo pajisje e dekodon, gjithmonë origjinalin, ose gjithmonë transmetimin e transkoduar.
 3. Për t'i treguar një foto 360° dikujt që nuk ka aplikacionin, ndajeni me një lidhje ndarjeje Immich: aplikacioni web i Immich e tregon si një sferë në shfletuesin e tyre.
 
-Versioni aktual, build 23, bazohet në `main` e Immich nga 10 tetori 2026 (versioni 3.3.0-rc.0) dhe është testuar kundrejt një serveri Immich 3.2.4 dhe një serveri të ndërtuar nga e njëjta `main` e Immich. Ju lutemi raportoni problemet në [Issues](https://github.com/freeKC/Immuch360/issues), jo tek projekti Immich.
+Versioni aktual, build 26, bazohet në `main` e Immich nga 10 tetori 2026 (versioni 3.3.0-rc.0) dhe është testuar kundrejt një serveri Immich 3.2.4 dhe një serveri të ndërtuar nga e njëjta `main` e Immich. Ju lutemi raportoni problemet në [Issues](https://github.com/freeKC/Immuch360/issues), jo tek projekti Immich.
 
 Më shumë: [gjithçka tjetër është Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [krahasuar me aplikacionin Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Më shumë: [kamerat Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-vie
 
 Një bazë kodi e vetme, gjashtë mjedise. Çfarë ka secila sot:
 
-| Aftësia | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeri, albume, kërkim me një server Immich | ✅ | ✅ | ✅ shikues | ✅ | ✅ | 🔧 |
-| Pa server: mediat e vetë pajisjes | ✅ | ✅ | vetëm ndarje | ✅ | ✅ dosje | 🔧 |
-| Foto dhe video të sheshta | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Foto 360° si sferë | ✅ | ✅ | ✅ | ✅ përfshirëse | ✅ | 🔧 |
-| Video 360° | ✅ | ✅ pa shirit kohe | ✅ | ✅ përfshirëse | ✅ | 🔧 |
-| 3D dhe VR180 | ✅ një sy | ✅ një sy | ✅ një sy | ✅ 3D i vërtetë | ✅ një sy | 🔧 |
-| Spatial 2.5D (ndjekja e kokës) | ✅ eksperimentale | ✅ eksperimentale | ❌ | ❌ | 🔜 | ❌ |
-| Foto hapësinore Apple | ✅ një sy | ✅ një sy | ✅ një sy | ✅ 3D | ✅ një sy | 🔧 |
-| Skedarë bruto Insta360, GoPro dhe DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Ndarje SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kamerat Tapo: regjistrime | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kamerat Tapo: pamje e drejtpërdrejtë | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Ndaj këtë pajisje në rrjet | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Ngarkim në Immich nga ndarjet dhe pajisja | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Hyrja | prekje, gjiroskop | prekje, gjiroskop | telekomandë | kontrollues, duar | mi, tastierë | |
-| Ku ta merrni | Google Play, APK | App Store (në shqyrtim) | APK, Google Play (në shqyrtim) | Horizon Store, APK | instalues ose ZIP (paraprak) | .deb, .rpm, DMG (paraprakë fillestarë) |
+| Aftësia | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galeri, albume, kërkim me një server Immich | ✅ | ✅ | ✅ shikues | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Pa server: mediat e vetë pajisjes | ✅ | ✅ | vetëm ndarje | ✅ | ✅ dosje | ✅ dosje | ✅ dosje |
+| Foto dhe video të sheshta | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Foto 360° si sferë | ✅ | ✅ | ✅ | ✅ përfshirëse | ✅ | ✅ | 🔧 CI |
+| Video 360° | ✅ | ✅ pa shirit kohe | ✅ | ✅ përfshirëse | ✅ | vetëm të sheshta | vetëm të sheshta |
+| 3D dhe VR180 | ✅ një sy | ✅ një sy | ✅ një sy | ✅ 3D i vërtetë | ✅ një sy | foto një sy, video të sheshta | foto një sy, video të sheshta |
+| Spatial 2.5D (ndjekja e kokës) | ✅ eksperimentale | ✅ eksperimentale | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Foto hapësinore Apple | ✅ një sy | ✅ një sy | ✅ një sy | ✅ 3D | ✅ një sy | 🔧 CI | 🔧 CI |
+| Skedarë bruto Insta360, GoPro dhe DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI foto, video të sheshta | 🔧 CI foto, video të sheshta |
+| Ndarje SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kamerat Tapo: regjistrime | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kamerat Tapo: pamje e drejtpërdrejtë | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Ndaj këtë pajisje në rrjet | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Ngarkim në Immich nga ndarjet dhe pajisja | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Hyrja | prekje, gjiroskop | prekje, gjiroskop | telekomandë | kontrollues, duar | mi, tastierë | mi, tastierë | mi, tastierë, trackpad |
+| Ku ta merrni | Google Play, APK | App Store (në shqyrtim) | APK, Google Play (në shqyrtim) | Horizon Store, APK | instalues ose ZIP (paraprak) | .deb, .rpm (paraprak) | DMG ose ZIP (paraprak i panënshkruar) |
 
-✅ në aplikacionin në atë platformë · ❌ nuk ofrohet aty · 🔜 i planifikuar · 🔧 në kodin burimor dhe i ndërtuar nga CI e projektit, akoma i panisur në atë sistem. "Një sy" do të thotë se një skedar 3D tregon syrin e majtë në një ekran të sheshtë. Jo çdo ✅ është kontrolluar akoma në një pajisje reale: çfarë është kontrolluar dhe ku, dhe çfarë mbetet për t'u konfirmuar, është në [Veçoritë](../docs/immuch360/features.md), [Mbështetja e platformave](../docs/immuch360/platform-support.md) dhe [Pajtueshmëria](../docs/immuch360/compatibility.md).
+✅ në aplikacionin në atë platformë · ❌ nuk ofrohet aty · 🔜 i planifikuar · 🔧 CI në kodin burimor, i ndërtuar dhe i nisur nga CI e projektit në atë sistem, akoma i pakontrolluar aty me një server, ndarje ose kamerë reale · vetëm të sheshta: videoja luhet e sheshtë, me një mesazh, sepse paraqitësi 360° është vetëm për Windows. "Një sy" do të thotë se një skedar 3D tregon syrin e majtë në një ekran të sheshtë. Jo çdo ✅ është kontrolluar akoma në një pajisje reale: çfarë është kontrolluar dhe ku, dhe çfarë mbetet për t'u konfirmuar, është në [Veçoritë](../docs/immuch360/features.md), [Mbështetja e platformave](../docs/immuch360/platform-support.md) dhe [Pajtueshmëria](../docs/immuch360/compatibility.md).
 
 - **Telefona dhe tableta Android**: aplikacioni i plotë, prekje dhe gjiroskop, çdo burim.
 - **iPhone dhe iPad**: aplikacioni i plotë; luajtësi i videove 360° ka vetëm luajtje dhe pauzë, pamja e drejtpërdrejtë e Tapo vjen më vonë, dhe kërkimi DLNA dërgon kërkesa unicast derisa Apple të jep lejen multicast.
 - **Android TV dhe Google TV**: i njëjti APK, drejtuar nga telekomanda; një shikues: rezervimi, ngarkimet dhe redaktimi janë të fshehura. Kontrolluar në emuluesin e Google TV (hyrja, rendi kohor, shikuesit, ndarjet, lëvizja me telekomandë), akoma jo në një TV real.
-- **Meta Quest 2, Pro, 3 dhe 3S**: aplikacioni si dritare, plus pamja përfshirëse; HEVC është kodeku i sigurt, H.264 ndalon rreth 4096x2304 në Quest 3; Quest 2 dhe Quest Pro nuk janë testuar akoma.
+- **Meta Quest 2, Pro, 3 dhe 3S**: aplikacioni si dritare, plus pamja përfshirëse; HEVC është kodeku i sigurt, H.264 ndalon rreth 4096x2304 në Quest 3; është testuar vetëm Quest 3, ndërsa Quest 2, Quest Pro dhe Quest 3S nuk janë testuar akoma.
 - **Windows 10 dhe 11**: paraprak, me dosje në vend të një galerie, një luajtës videosh të vetin (libmpv) për video të sheshta dhe 360°, skedarë bruto të bashkuara në çipin grafik, skedarë dhe dosje të hapura me programin ose të lëshuara në dritare, një instalues ose një ZIP.
-- **macOS dhe Linux**: paketa të ndërtuara nga CI e projektit (një .deb, një .rpm, një DMG); në Linux aplikacioni niset dhe shfaq foto dhe foto 360°, akoma pa video, dhe ndarjet SMB kërkojnë Ubuntu 24.04, Debian 13 ose Fedora 39 ose më të ri; aplikacioni i macOS është nisur vetëm në CI e projektit, nuk luan akoma video dhe qasja e tij në rrjet nuk është provuar.
+- **Linux**: një .deb dhe një .rpm të ndërtuara nga CI e projektit, të instaluara dhe të kontrolluara në Ubuntu 22.04 dhe 24.04, Debian 12 dhe Fedora 40 dhe 44; foto, foto 360° dhe video të sheshta përmes libmpv të sistemit (videot 360°, 3D dhe bruto luhen të sheshta, me një mesazh); ndarje SMB që nga Ubuntu 22.04 dhe Debian 12; akoma i pa nisur në një PC real me Linux, vetëm nën WSLg dhe në kontejnerë.
+- **macOS**: një DMG dhe një ZIP të ndërtuara nga CI e projektit, universale, të panënshkruara (Gatekeeper pyet një herë); aplikacioni niset, hap skedarët dhe dosjet që i jepen, edhe nga Finder, i mban sekretet e tij në zinxhirin e çelësave të hyrjes dhe luan video të sheshta me libmpv-në e vet, gjithçka e kontrolluar vetëm në Mac-un e CI të projektit; asgjë nuk ka punuar akoma në një Mac real.
 
 <a id="advanced-features"></a>
 ## Veçori të avancuara
@@ -300,7 +301,7 @@ Asgjë nuk shkon tek zhvilluesi: pa llogari, pa analitikë, pa shërbim raportim
 
 Immuch360 është një degëzim jozyrtar i aplikacionit mobil [Immich](https://github.com/immich-app/immich), sipas [GNU AGPL v3](../LICENSE), pa lidhje me, dhe pa mbështetje nga, ekipi i Immich ose FUTO. Degëzimi ekziston sepse shikimi 360° në mobil është kërkuar në Immich prej janarit 2024 dhe nuk është akoma në aplikacionin zyrtar; ai e sjell tani, mbledh përshtypje nga pajisje reale, dhe do t'i ofrojë mbrapsht Immich, në pull request të vegjël, çfarëdo që dëshirojnë mirëmbajtësit. Gjithçka që bën aplikacioni zyrtar është ruajtur; degët, zinxhiri i ndërtimit dhe CI përshkruhen në [Ndërtoje vetë](../docs/immuch360/build.md).
 
-Shikuesi i fotove 360° bazohet në pull request-in origjinal [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) nga dmitry-brazhenko, i ndërtuar nga ana e tij mbi prototipin e bencefr në [#30192](https://github.com/immich-app/immich/pull/30192); falënderime për të dy. Kamerat Tapo u shkruan nga ç'ka dokumentojnë [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) dhe [python-kasa](https://github.com/python-kasa/python-kasa). Pamja e Meta Quest mbështetet në Meta Spatial SDK, i cili nuk është me burim të hapur, kështu që mbetet vetëm në këtë degëzim. ZIP-i i Windows mbart libmpv (biblioteka e [mpv](https://mpv.io), me [FFmpeg](https://ffmpeg.org)) e ndërtuar nga projekti, sipas LGPL, me licencat dhe burimet e saj; detajet dhe markat tregtare të platformave të përmendura në këtë faqe janë në [Licenca dhe markat tregtare](../docs/immuch360/platform-support.md#license-and-trademarks).
+Shikuesi i fotove 360° bazohet në pull request-in origjinal [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) nga dmitry-brazhenko, i ndërtuar nga ana e tij mbi prototipin e bencefr në [#30192](https://github.com/immich-app/immich/pull/30192); falënderime për të dy. Rregullimet e telekomandës te filtrat e kërkimit dhe renditja e albumeve në televizorë nisën nga puna e mlc70 në [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Kamerat Tapo u shkruan nga ç'ka dokumentojnë [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) dhe [python-kasa](https://github.com/python-kasa/python-kasa). Pamja e Meta Quest mbështetet në Meta Spatial SDK, i cili nuk është me burim të hapur, kështu që mbetet në këtë degëzim. ZIP-i i Windows mbart libmpv (biblioteka e [mpv](https://mpv.io), me [FFmpeg](https://ffmpeg.org)) e ndërtuar nga projekti, sipas LGPL, me licencat dhe burimet e saj; detajet dhe markat tregtare të platformave të përmendura në këtë faqe janë në [Licenca dhe markat tregtare](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Kapjet e telefonit të kësaj faqeje janë bërë në build-in Android në një emulues, ato të TV-së në emuluesin Google TV dhe ato të Windows në një PC Windows 11, të gjitha me panorama CC0 nga [Poly Haven](https://polyhaven.com); kapjet e kacukës janë bërë në një Quest 3.
 
@@ -309,8 +310,8 @@ Kapjet e telefonit të kësaj faqeje janë bërë në build-in Android në një 
 
 Çfarë nuk është bërë ende, më e mundshmja e para. Asgjë këtu nuk është premtim, dhe komentet në [gjurmuesin e problemeve](https://github.com/freeKC/Immuch360/issues) ndihmojnë të vendoset çfarë vjen e para.
 
-- **Dyqanet**: Google Play (build 23 në shqyrtim, listimi për TV në shqyrtim), App Store (versioni 3.3.0 në shqyrtim), Meta Horizon Store (build 21 në shqyrtim).
-- **Kompjuterë**: testimi i çdo funksioni me dorë në një PC Windows; pastaj Spatial 2.5D me kamerën web; pastaj luajtësi i videove në Linux dhe macOS, dhe një testim në një Mac real; pastaj një build i nënshkruar dhe përditësime automatike.
+- **Dyqanet**: Google Play (build 26 së shpejti, listimi për TV në shqyrtim), App Store (versioni 3.3.1 në shqyrtim që nga 14 tetori), Meta Horizon Store (build 25 në shqyrtim).
+- **Kompjuterë**: testimi i çdo funksioni me dorë në një PC Windows; pastaj paraqitësi i videove 360° në Linux dhe macOS, një testim në një Mac real dhe në një PC real me Linux; pastaj një build i nënshkruar dhe përditësime automatike; pastaj Spatial 2.5D me kamerën web.
 - **Telefona dhe tableta**: një shirit kohe në luajtësin e videove 360° të iOS, i mëparshmi dhe tjetri në luajtësit 360° të telefonave, zgjedhja e pistës audio në luajtësin e sheshtë, pamja e drejtpërdrejtë e Tapo në iPhone dhe iPad.
 - **Media përfshirëse**: .dng fisheye i dyfishuar, drejtimi i videove GoPro dhe DJI nga të dhënat e tyre të vetë lëvizjes, video hapësinore në 3D në Quest nëse dekoduesit e tij e lejojnë, i mëparshmi dhe tjetri midis fotove hapësinore në kacukë.
 - **Burimet**: rrëshqitja midis skedarëve të një dosjeje të ndarë, vërtetimi Digest për WebDAV, një kod QR për të sjellë token-in e Plex nga kompjuteri, IPv6 për Plex, regjistrime Tapo H.265, kanale në ekranin fillestar të TV-së.

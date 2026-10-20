@@ -20,14 +20,14 @@ Immuch360 estas senpaga kaj malfermkoda apo por trovi, foliumi, ludi kaj esplori
 
 <div align="center">
 
-| Platformo | Kie akiri ĝin | Stato je la 12-a de oktobro 2026 |
+| Platformo | Kie akiri ĝin | Stato je la 20-a de oktobro 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonoj kaj tabulkomputiloj | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | en Google Play (konstruo 20; konstruo 23 en revizio), konstruo 23 en GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone kaj iPad** | App Store | versio 3.3.0 atendanta la revizion de Apple; dume [konstruu ĝin mem](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV kaj Google TV** | [APK](#android-tv-and-google-tv) · Google Play | konstruo 23 en GitHub; la TV-listigo estas sub la revizio de Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 kaj 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | en la Horizon Store (konstruo 14; konstruo 21 en revizio), konstruo 23 en GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalilo aŭ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | labortabla konstruo 5, antaŭeldono: fotoj, plataj kaj 360°-aj videoj, kunhavigoj, Plex, kameraoj, dosieroj malfermitaj per la programo |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS kaj Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | fruaj antaŭeldonoj: sur Linux fotoj kaj 360°-fotoj, ankoraŭ sen videoj; macOS komenciĝis nur sur la CI de la projekto |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonoj kaj tabulkomputiloj | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | en Google Play (konstruo 25), konstruo 26 en GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone kaj iPad** | App Store | versio 3.3.1 (konstruo 24) atendanta la revizion de Apple ekde la 14-a de oktobro; dume [konstruu ĝin mem](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV kaj Google TV** | [APK](#android-tv-and-google-tv) · Google Play | konstruo 26 en GitHub, kun la teleregilaj korektoj de la serĉfiltriloj; la TV-listigo estas sub la revizio de Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 kaj 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | en la Horizon Store (konstruo 23; konstruo 25 en revizio), konstruo 26 en GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalilo aŭ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | labortabla konstruo 6, antaŭeldono: fotoj, plataj kaj 360°-aj videoj, kunhavigoj, Plex, kameraoj, dosieroj malfermitaj per la programo, la interfaco en 89 lingvoj |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS kaj Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | antaŭeldonoj: sur Linux fotoj, 360°-fotoj kaj plataj videoj (360°-videoj ludas plate); sur macOS same, kontrolita nur sur la CI-Mac de la projekto, nesubskribita |
 
 *La statusoj estas ĝisdatigitaj je ĉiu eldono; la detaloj, konstruo post konstruo, estas en [Statuso de eldonoj](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Kun [Immich](https://github.com/immich-app/immich)-servilo, Immuch360 estas la I
 2. En Agordoj, Dosiera spektilo, Videoj, "Videofonto" elektas la originalon kiam ĉi tiu aparato deĉifras ĝin, ĉiam la originalon, aŭ ĉiam la transkoditan fluon.
 3. Por montri 360°-foton al iu, kiu ne havas la apon, kunhavigu ĝin per Immich-kunhavigita ligilo: la Immich-retapo montras ĝin kiel sfero en ties retumilo.
 
-La nuna konstruo, konstruo 23, baziĝas sur Immich `main` de la 10-a de oktobro 2026 (versio 3.3.0-rc.0) kaj estis testita kontraŭ Immich 3.2.4-servilo kaj servilo konstruita el tiu sama Immich `main`. Bonvolu raporti problemojn en [Issues](https://github.com/freeKC/Immuch360/issues), ne al la Immich-projekto.
+La nuna konstruo, konstruo 26, baziĝas sur Immich `main` de la 10-a de oktobro 2026 (versio 3.3.0-rc.0) kaj estis testita kontraŭ Immich 3.2.4-servilo kaj servilo konstruita el tiu sama Immich `main`. Bonvolu raporti problemojn en [Issues](https://github.com/freeKC/Immuch360/issues), ne al la Immich-projekto.
 
 Pli: [ĉio alia estas Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [komparo kun la Immich-apo](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Pli: [Tapo-kameraoj](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-
 
 Unu fontkodbazo, ses medioj. Kion ĉiu havas hodiaŭ:
 
-| Kapablo | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerio, albumoj, serĉo per Immich-servilo | ✅ | ✅ | ✅ spektilo | ✅ | ✅ | 🔧 |
-| Sen servilo: la propraj memeaĵoj de la aparato | ✅ | ✅ | nur kunhavigoj | ✅ | ✅ dosierujoj | 🔧 |
-| Plataj fotoj kaj videoj | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360°-fotoj kiel sfero | ✅ | ✅ | ✅ | ✅ merga | ✅ | 🔧 |
-| 360°-videoj | ✅ | ✅ sen tempobreto | ✅ | ✅ merga | ✅ | 🔧 |
-| 3D kaj VR180 | ✅ unu okulo | ✅ unu okulo | ✅ unu okulo | ✅ vera 3D | ✅ unu okulo | 🔧 |
-| Spaca 2.5D (kapsekvado) | ✅ eksperimenta | ✅ eksperimenta | ❌ | ❌ | 🔜 | ❌ |
-| Apple-spacaj fotoj | ✅ unu okulo | ✅ unu okulo | ✅ unu okulo | ✅ 3D | ✅ unu okulo | 🔧 |
-| Krudaj Insta360-, GoPro- kaj DJI-dosieroj | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB-, WebDAV-, DLNA-kunhavigoj | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo-kameraoj: registraĵoj | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo-kameraoj: viva vido | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Kunhavigi ĉi tiun aparaton en la reto | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Alŝuti al Immich el kunhavigoj kaj la aparato | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Enigo | tuŝo, giroskopo | tuŝo, giroskopo | teleregilo | regiloj, manoj | muso, klavaro | |
-| Kie akiri ĝin | Google Play, APK | App Store (en revizio) | APK, Google Play (en revizio) | Horizon Store, APK | instalilo aŭ ZIP (antaŭeldono) | .deb, .rpm, DMG (fruaj antaŭeldonoj) |
+| Kapablo | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galerio, albumoj, serĉo per Immich-servilo | ✅ | ✅ | ✅ spektilo | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Sen servilo: la propraj memeaĵoj de la aparato | ✅ | ✅ | nur kunhavigoj | ✅ | ✅ dosierujoj | ✅ dosierujoj | ✅ dosierujoj |
+| Plataj fotoj kaj videoj | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 360°-fotoj kiel sfero | ✅ | ✅ | ✅ | ✅ merga | ✅ | ✅ | 🔧 CI |
+| 360°-videoj | ✅ | ✅ sen tempobreto | ✅ | ✅ merga | ✅ | nur plate | nur plate |
+| 3D kaj VR180 | ✅ unu okulo | ✅ unu okulo | ✅ unu okulo | ✅ vera 3D | ✅ unu okulo | fotoj unu okulo, videoj plate | fotoj unu okulo, videoj plate |
+| Spaca 2.5D (kapsekvado) | ✅ eksperimenta | ✅ eksperimenta | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple-spacaj fotoj | ✅ unu okulo | ✅ unu okulo | ✅ unu okulo | ✅ 3D | ✅ unu okulo | 🔧 CI | 🔧 CI |
+| Krudaj Insta360-, GoPro- kaj DJI-dosieroj | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI fotoj, videoj plate | 🔧 CI fotoj, videoj plate |
+| SMB-, WebDAV-, DLNA-kunhavigoj | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kameraoj: registraĵoj | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kameraoj: viva vido | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kunhavigi ĉi tiun aparaton en la reto | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Alŝuti al Immich el kunhavigoj kaj la aparato | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Enigo | tuŝo, giroskopo | tuŝo, giroskopo | teleregilo | regiloj, manoj | muso, klavaro | muso, klavaro | muso, klavaro, tuŝplato |
+| Kie akiri ĝin | Google Play, APK | App Store (en revizio) | APK, Google Play (en revizio) | Horizon Store, APK | instalilo aŭ ZIP (antaŭeldono) | .deb, .rpm (antaŭeldono) | DMG aŭ ZIP (nesubskribita antaŭeldono) |
 
-✅ en la apo sur tiu platformo · ❌ ne proponata tie · 🔜 planata · 🔧 en la fontkodo kaj konstruata de la CI de la projekto, ankoraŭ ne komencita sur tiu sistemo. "Unu okulo" signifas, ke 3D-dosiero montras sian maldekstran okulon sur plata ekrano. Ne ĉiu ✅ estis kontrolita sur reala aparato ankoraŭ: kio estis kontrolita kie, kaj kio restas por konfirmi, estas en [Funkcioj](../docs/immuch360/features.md), [Subteno de platformoj](../docs/immuch360/platform-support.md) kaj [Kongrueco](../docs/immuch360/compatibility.md).
+✅ en la apo sur tiu platformo · ❌ ne proponata tie · 🔜 planata · 🔧 CI en la fontkodo, konstruata kaj lanĉata de la CI de la projekto sur tiu sistemo, ankoraŭ ne kontrolita tie kun reala servilo, kunhavigo aŭ kamerao · nur plate: la video ludas plate, kun mesaĝo, ĉar la 360°-bildigilo funkcias nur sur Windows. "Unu okulo" signifas, ke 3D-dosiero montras sian maldekstran okulon sur plata ekrano. Ne ĉiu ✅ estis kontrolita sur reala aparato ankoraŭ: kio estis kontrolita kie, kaj kio restas por konfirmi, estas en [Funkcioj](../docs/immuch360/features.md), [Subteno de platformoj](../docs/immuch360/platform-support.md) kaj [Kongrueco](../docs/immuch360/compatibility.md).
 
 - **Android-telefonoj kaj tabulkomputiloj**: la kompleta apo, tuŝo kaj giroskopo, ĉiu fonto.
 - **iPhone kaj iPad**: la kompleta apo; la 360°-videoludilo havas nur ludi kaj paŭzigi, la Tapo-viva vido venas poste, kaj la DLNA-serĉo sendas unikastajn petojn ĝis Apple donas la multikastan rajtigon.
 - **Android TV kaj Google TV**: la sama APK, regata de la teleregilo; spektilo: savkopio, alŝutoj kaj redaktado estas kaŝitaj. Kontrolita sur la Google TV-emulilo (ensaluto, templinio, spektiloj, kunhavigoj, la teleregila navigado), ankoraŭ ne sur reala televidilo.
-- **Meta Quest 2, Pro, 3 kaj 3S**: la apo kiel fenestro, plus la merga vido; HEVC estas la sekura kodeko, H.264 haltas ĉirkaŭ 4096x2304 sur la Quest 3; la Quest 2 kaj Quest Pro ankoraŭ ne estas testitaj.
+- **Meta Quest 2, Pro, 3 kaj 3S**: la apo kiel fenestro, plus la merga vido; HEVC estas la sekura kodeko, H.264 haltas ĉirkaŭ 4096x2304 sur la Quest 3; nur la Quest 3 estas testita, la Quest 2, Quest Pro kaj Quest 3S ankoraŭ ne estas testitaj.
 - **Windows 10 kaj 11**: antaŭeldono, kun dosierujoj anstataŭ galerio, propra videoludilo (libmpv) por plataj kaj 360°-aj videoj, krudaj dosieroj kunkudritaj sur la grafika blato, dosieroj kaj dosierujoj malfermitaj per la programo aŭ faligitaj sur la fenestro, instalilo aŭ ZIP.
-- **macOS kaj Linux**: pakaĵoj konstruitaj de la CI de la projekto (.deb, .rpm, DMG); sur Linux la apo lanĉiĝas kaj montras fotojn kaj 360°-fotojn, ankoraŭ sen videoj, kaj SMB-kunhavigoj bezonas Ubuntu 24.04, Debian 13 aŭ Fedora 39 aŭ pli novan; la macOS-apo nur funkciis sur la CI de la projekto, sen videoj kaj kun ĝia reta aliro nekontrolita.
+- **Linux**: .deb kaj .rpm konstruitaj de la CI de la projekto, instalitaj kaj kontrolitaj sur Ubuntu 22.04 kaj 24.04, Debian 12 kaj Fedora 40 kaj 44; fotoj, 360°-fotoj kaj plataj videoj per la libmpv de la sistemo (360°-, 3D- kaj krudaj videoj ludas plate kun mesaĝo); SMB-kunhavigoj ekde Ubuntu 22.04 kaj Debian 12; ankoraŭ ne lanĉita sur reala Linux-komputilo, nur sub WSLg kaj en ujoj.
+- **macOS**: DMG kaj ZIP konstruitaj de la CI de la projekto, universalaj, nesubskribitaj (Gatekeeper demandas unufoje); ĝi lanĉiĝas, malfermas la dosierojn kaj dosierujojn donitajn al ĝi, ankaŭ el Finder, konservas siajn sekretojn en la ensaluta ŝlosilaro kaj ludas platajn videojn per sia propra libmpv, ĉio kontrolita nur sur la CI-Mac de la projekto; nenio ankoraŭ funkciis sur reala Mac.
 
 <a id="advanced-features"></a>
 ## Progresintaj funkcioj
@@ -300,7 +301,7 @@ Nenio iras al la programisto: neniu konto, neniu analitiko, neniu kraŝ-raporta 
 
 Immuch360 estas neoficiala forko de la [Immich](https://github.com/immich-app/immich)-poŝtelefona apo, sub la [GNU AGPL v3](../LICENSE), ne afiliigita kun, nek subtenata de, la Immich-teamo aŭ FUTO. La forko ekzistas ĉar 360°-spektado sur poŝtelefono estis petita en Immich ekde januaro 2024 kaj ankoraŭ ne estas en la oficiala apo; ĝi liveras ĝin nun, kolektas realajn reagojn de aparatoj, kaj revenigos al Immich, per etaj tir-petoj, kion ajn la prizorgantoj volas. Ĉio, kion la oficiala apo faras, estas konservita; la branĉoj, la konstruĉeno kaj la CI estas priskribitaj en [Konstruu ĝin mem](../docs/immuch360/build.md).
 
-La 360°-fotospektilo baziĝas sur la supra tir-peto [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) de dmitry-brazhenko, mem konstruita sur la prototipo de bencefr en [#30192](https://github.com/immich-app/immich/pull/30192); dankon al ambaŭ. La Tapo-kameraoj estis skribitaj surbaze de tio, kion [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) kaj [python-kasa](https://github.com/python-kasa/python-kasa) dokumentas. La Meta Quest-vido dependas de la Meta Spatial SDK, kiu ne estas malfermkoda, do ĝi restas en ĉi tiu forko. La Windows-ZIP portas libmpv (la biblioteko de [mpv](https://mpv.io), kun [FFmpeg](https://ffmpeg.org)) konstruitan de la projekto, sub la LGPL, kun ĝiaj permesiloj kaj fontoj; la detaloj kaj la varmarkoj de la platformoj nomitaj sur ĉi tiu paĝo estas en [Permesilo kaj varmarkoj](../docs/immuch360/platform-support.md#license-and-trademarks).
+La 360°-fotospektilo baziĝas sur la supra tir-peto [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) de dmitry-brazhenko, mem konstruita sur la prototipo de bencefr en [#30192](https://github.com/immich-app/immich/pull/30192); dankon al ambaŭ. La teleregilaj korektoj de la serĉfiltriloj kaj la ordigo de albumoj sur televidiloj komenciĝis el la laboro de mlc70 en [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). La Tapo-kameraoj estis skribitaj surbaze de tio, kion [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) kaj [python-kasa](https://github.com/python-kasa/python-kasa) dokumentas. La Meta Quest-vido dependas de la Meta Spatial SDK, kiu ne estas malfermkoda, do ĝi restas en ĉi tiu forko. La Windows-ZIP portas libmpv (la biblioteko de [mpv](https://mpv.io), kun [FFmpeg](https://ffmpeg.org)) konstruitan de la projekto, sub la LGPL, kun ĝiaj permesiloj kaj fontoj; la detaloj kaj la varmarkoj de la platformoj nomitaj sur ĉi tiu paĝo estas en [Permesilo kaj varmarkoj](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 La telefonaj ekrankopioj de ĉi tiu paĝo estis prenitaj sur la Android-konstruo en emulilo, la televidilaj sur la Google TV-emulilo kaj la Windows-aj sur Windows 11-komputilo, ĉiuj kun CC0-panoramoj de [Poly Haven](https://polyhaven.com); la kaskaj ekrankopioj estis prenitaj sur Quest 3.
 
@@ -309,8 +310,8 @@ La telefonaj ekrankopioj de ĉi tiu paĝo estis prenitaj sur la Android-konstruo
 
 Kio ankoraŭ ne estas farita, la plej verŝajna unue. Nenio ĉi tie estas promeso, kaj komentoj en la [cimspurilo](https://github.com/freeKC/Immuch360/issues) helpas decidi, kio venos unue.
 
-- **La vendejoj**: Google Play (konstruo 23 en revizio, la TV-listigo en revizio), la App Store (versio 3.3.0 en revizio), la Meta Horizon Store (konstruo 21 en revizio).
-- **Komputiloj**: la mana testo de ĉiu funkcio sur Windows-komputilo; poste Spatial 2.5D per la retkamerao; poste la videoludilo sur Linux kaj macOS kaj testo sur reala Mac; poste subskribita konstruo kaj aŭtomataj ĝisdatigoj.
+- **La vendejoj**: Google Play (konstruo 26 venonta, la TV-listigo en revizio), la App Store (versio 3.3.1 en revizio ekde la 14-a de oktobro), la Meta Horizon Store (konstruo 25 en revizio).
+- **Komputiloj**: la mana testo de ĉiu funkcio sur Windows-komputilo; poste la 360°-videobildigilo sur Linux kaj macOS, testo sur reala Mac kaj sur reala Linux-komputilo; poste subskribita konstruo kaj aŭtomataj ĝisdatigoj; poste Spaca 2.5D per la retkamerao.
 - **Telefonoj kaj tabulkomputiloj**: tempobreto en la iOS 360°-videoludilo, antaŭa kaj sekva en la 360°-ludiloj de telefonoj, la elekto de sonspuro en la plata ludilo, la Tapo-viva vido sur iPhone kaj iPad.
 - **Mergaj memeaĵoj**: duobla fiŝokula .dng, ebenigo de GoPro- kaj DJI-videoj el iliaj propraj movdatumoj, spacaj videoj en 3D sur la Quest se ĝiaj deĉifriloj permesas tion, antaŭa kaj sekva inter spacaj fotoj en la kasko.
 - **Fontoj**: svingado inter la dosieroj de kunhavigita dosierujo, Digest-aŭtentigo por WebDAV, QR-kodo por alporti la Plex-ĵetonon de la komputilo, IPv6 por Plex, H.265-Tapo-registraĵoj, kanaloj sur la hejma ekrano de la televidilo.

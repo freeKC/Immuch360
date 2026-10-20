@@ -1,6 +1,6 @@
 # Troubleshooting
 
-What to do when something goes wrong: the logs to attach to a report, a video that stutters, the first start on Windows, and the messages that need an answer.
+What to do when something goes wrong: the logs to attach to a report, a video that stutters, the first start on Windows, videos on Linux, a Mac, and the messages that need an answer.
 
 Back to the [README](../../README.md)
 
@@ -18,6 +18,8 @@ adb logcat -d -v time > quest-full.log      # everything, including crashes and 
 adb logcat -d -v time -s PhoneShareService PhoneShareApi   # on the phone that shares itself (from build 19)
 ```
 
+Up to build 25, a Quest's full log shows "Unable to start service Intent { cmp=com.aprogsys.immuch360/... }: not found" each time the app closes. It is harmless: the app asked to stop the service of the phone share, which the Quest build does not carry. From build 26 it no longer asks there, and the line is gone.
+
 The native players of Android and their bridges to Flutter write under tags of their own too: `SphericalVideoActivity` (the 360° video player of phones and TVs), `SpatialVideoActivity` and `SpatialHeadTracker` (the Spatial 2.5D player and its head tracking), `RawProjection` (the calibration of a raw video as the players read it, and why they refuse one), and `VideoDecoderApi`, `SphericalVideoApi` and `SpatialVideoApi` (the calls from Flutter to the decoder check and to the two players):
 
 ```bash
@@ -28,7 +30,7 @@ From build 19 the DLNA client, the phone share and the detection of Apple spatia
 
 On a computer (Immuch360 Desktop), the Logs page also has "Save logs to a file": the log, or a ZIP of the log and the reports of the last crashes when there are some (its suggested name then ends with "with-crash-reports"). A crash report is a small minidump: the threads, where they stopped and only what is needed to follow their calls, with the names of the program files but not their folders; not the memory of the app.
 
-From desktop build 2 the video player of the computer writes there under `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` and `VideoThumbnailGrabber`, mpv's own warnings included, with tokens and passwords removed. From desktop build 3 it also writes the 360° player under `SphericalPlayer`, `SphereRenderer` and `PluginRenderer` (the size chosen, the frames per second measured, the graphics chip), the raw two lens videos under `RawTwoStreams`, the decoders of the graphics chip under `DesktopGpuDecoders`, `DesktopVideoDecoderApi` and `DecoderMeasure`, and the Tapo live view under `DesktopCameraLive`, whose lines never hold the camera account nor its password. From desktop build 5 a raw video with one lens per track or per file plays in two players: `RawTwoStreams` says which way was chosen ("Two streams of 3840x3840: paired" for two players), `RawPartnerPlayer` why the second player stopped when it does, and `SphericalPlayer`, a few seconds in, how the two players drew ("Two players over the measure: two players: N paired, M alone, ... its delay X ms, its speed Y": most frames paired and a delay of a few milliseconds when all is well), then the frames per second of the view ("Renderer probe at full: ProbeSample(25.0 of 25.0 fps ...)"). Check the log before sharing it: it can contain your server address.
+From desktop build 2 the video player of the computer writes there under `DesktopVideo`, `DesktopPlayer`, `DesktopVideoController`, `PlayerPool` and `VideoThumbnailGrabber`, mpv's own warnings included, with tokens and passwords removed. From desktop build 3 it also writes the 360° player under `SphericalPlayer`, `SphereRenderer` and `PluginRenderer` (the size chosen, the frames per second measured, the graphics chip), the raw two lens videos under `RawTwoStreams`, the decoders of the graphics chip under `DesktopGpuDecoders`, `DesktopVideoDecoderApi` and `DecoderMeasure`, and the Tapo live view under `DesktopCameraLive`, whose lines never hold the camera account nor its password. From desktop build 5 a raw video with one lens per track or per file plays in two players: `RawTwoStreams` says which way was chosen ("Two streams of 3840x3840: paired" for two players), `RawPartnerPlayer` why the second player stopped when it does, and `SphericalPlayer`, a few seconds in, how the two players drew ("Two players over the measure: two players: N paired, M alone, ... its delay X ms, its speed Y": most frames paired and a delay of a few milliseconds when all is well), then the frames per second of the view ("Renderer probe at full: ProbeSample(25.0 of 25.0 fps ...)"). On Linux and macOS (from desktop build 6), `DesktopVideo` says at start whether libmpv was loaded, and on Linux, when it was not, which package to install. Files opened with the program or handed to the app that runs write under `OpenFiles`. Check the log before sharing it: it can contain your server address.
 
 ## A video stutters, or plays a blurry copy
 
@@ -91,6 +93,41 @@ When the server ignores HTTP Range requests on the original and the MP4 index (m
 
 More on the 360° player and the graphics chip: [360° videos and the graphics chip](user-guide.md#360-videos-and-the-graphics-chip).
 
+## Linux
+
+### Videos do not play
+
+- **"Videos need the libmpv library, which this computer does not have"**: the packages bring libmpv; a copy of the app put in place by hand does not. Install the package the message names (`libmpv2`, `libmpv1` on Ubuntu 22.04, `mpv-libs` on Fedora), then start the app again. The `DesktopVideo` lines of the log say which library the app looked for.
+- **Camera videos do not play properly on Fedora, and the log repeats "libopenh264: DecodeFrame failed"**: Fedora's own FFmpeg decodes H.264 through OpenH264 only, which refuses the Main and High profiles of camera videos. Install the FFmpeg of RPM Fusion once RPM Fusion is set up on the system, then start the app again:
+
+  ```bash
+  sudo dnf swap ffmpeg-free ffmpeg --allowerasing
+  ```
+
+- **A large video drops frames**: on an X11 session the frames are drawn by the processor (the isolated EGL context of the graphics chip fails there); a Wayland session uses the graphics chip. Choose a Wayland session at login if your system offers one.
+- **A 360° video plays flat** with "This computer cannot show the 360° view of this video: it plays flat.": the 360° video player is Windows only for now, see [macOS and Linux](platform-support.md#macos-and-linux).
+
+### The app is slow to start, or forgets its sign in
+
+Without a secret service (GNOME Keyring or KWallet), as on a minimal window manager or in a container, the first start logs a keyring error, each access to a secret can wait 25 seconds, and the app cannot keep its secrets. Start the app in a desktop session that has a keyring, or install and start GNOME Keyring in yours.
+
+The data of the app is in `~/.local/share/immuch360` and `~/.cache/immuch360`; on some systems the first folder is `~/.local/share/com.aprogsys.immuch360`.
+
+## macOS
+
+### The first start
+
+"Immuch360 Desktop" cannot be opened, or Apple cannot check it: the app is not signed with an Apple Developer ID nor notarized yet. On macOS 15 and later, open it once, then choose "Open Anyway" in System Settings, Privacy & Security; on macOS 14 and earlier, Control click it and choose Open. Gatekeeper asks once. These steps have not been tried on a real Mac yet. See [macOS](user-guide.md#macos).
+
+### A report from a Mac
+
+Nobody working on the project has a Mac, so a report from one helps a lot. The app was checked on the Mac of the project's CI only, by a self check built into it, which runs only when the variable `IMMUCH360_SELF_CHECK` names a file. Started from a terminal that way, the app writes what it found to that file: whether the keychain keeps a secret, the first page, whether libmpv loaded, and, with `IMMUCH360_SELF_CHECK_VIDEO` naming a video, 5 seconds of that video with its decoder. It also starts a session without a server when none is open, as "Use without a server" does. Close the app once the file is there, after a minute or two, and attach the file and the log to an [issue](https://github.com/freeKC/Immuch360/issues):
+
+```bash
+IMMUCH360_SELF_CHECK="$HOME/immuch360-check.json" IMMUCH360_SELF_CHECK_VIDEO="$HOME/Movies/clip.mp4" \
+  "/Applications/Immuch360 Desktop.app/Contents/MacOS/Immuch360 Desktop" > "$HOME/immuch360-check.log" 2>&1
+```
+
 ## Tapo cameras
 
 ### "The camera is busy with another viewer, such as the Tapo app. Try again in a minute."
@@ -113,7 +150,8 @@ Each wrong password counts, and after a few the camera locks for a while. The ap
 - **"This address answers without a Plex certificate."**: claim the server in Plex, or add it as an SMB, WebDAV or DLNA share. See [Plex Media Server](user-guide.md#plex-media-server-without-plextv).
 - **"Windows protected your PC"**: the files and the installer are not signed yet; choose "More info", then "Run anyway". See [Install it on a computer](user-guide.md#windows).
 - **"Immuch360 Desktop" cannot be opened, or Apple cannot check it** (macOS): the app is not signed with an Apple Developer ID nor notarized yet; Control click it and choose Open (macOS 14 and earlier), or choose "Open Anyway" in System Settings, Privacy & Security (macOS 15 and later). See [macOS](user-guide.md#macos).
-- **SMB shares do not open on Ubuntu 22.04 or Debian 12** (Linux): the SMB library of the app needs glibc 2.38, which those systems do not have. See [Linux](user-guide.md#linux).
+- **SMB shares do not open on Ubuntu 22.04 or Debian 12** (Linux, desktop build 5): the SMB library of desktop build 5 needed glibc 2.38; from desktop build 6 it works from glibc 2.25, so install desktop build 6. See [Linux](user-guide.md#linux).
+- **"Videos need the libmpv library, which this computer does not have"** (Linux): install the package the message names, see [Videos do not play](#videos-do-not-play).
 - **The picture does not face you in the headset**: turn it with the right thumbstick or the Turn button, and post the angle shown in an issue with your camera model. See [If the picture does not face you](user-guide.md#if-the-picture-does-not-face-you).
 
-Last updated: 13 October 2026 (build 23, desktop build 4, the packages of desktop build 5)
+Last updated: 20 October 2026 (build 26, desktop build 6)

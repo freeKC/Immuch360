@@ -20,14 +20,14 @@ Is aip shaor foinse oscailte í Immuch360 chun do ghrianghraif agus d'fhíseáin
 
 <div align="center">
 
-| Ardán | Cá bhfaighidh tú í | Stádas ar 12 Deireadh Fómhair 2026 |
+| Ardán | Cá bhfaighidh tú í | Stádas ar 20 Deireadh Fómhair 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** fóin agus táibléid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | ar Google Play (leagan 20; leagan 23 faoi athbhreithniú), leagan 23 ar GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone agus iPad** | App Store | leagan 3.3.0 ag feitheamh athbhreithniú Apple; [tóg féin é](../docs/immuch360/build.md) idir an dá linn |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV agus Google TV** | [APK](#android-tv-and-google-tv) · Google Play | leagan 23 ar GitHub; liosta an TV faoi athbhreithniú Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 agus 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | ar an Horizon Store (leagan 14; leagan 21 faoi athbhreithniú), leagan 23 ar GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Suiteálaí nó ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | tógáil deisce 5, réamhamharc: grianghraif, físeáin chothroma agus 360°, comhroinnt, Plex, ceamaraí, comhaid oscailte leis an aip |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS agus Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | réamhamhairc luatha: ar Linux grianghraif agus grianghraif 360°, gan físeáin fós; níor tosaíodh macOS ach ar CI an tionscadail |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** fóin agus táibléid | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | ar Google Play (leagan 25), leagan 26 ar GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone agus iPad** | App Store | leagan 3.3.1 (tógáil 24) ag feitheamh athbhreithniú Apple ón 14 Deireadh Fómhair; [tóg féin é](../docs/immuch360/build.md) idir an dá linn |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV agus Google TV** | [APK](#android-tv-and-google-tv) · Google Play | leagan 26 ar GitHub, le ceartúcháin an chianrialtáin do na scagairí cuardaigh; liosta an TV faoi athbhreithniú Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 agus 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | ar an Horizon Store (leagan 23; leagan 25 faoi athbhreithniú), leagan 26 ar GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Suiteálaí nó ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | tógáil deisce 6, réamhamharc: grianghraif, físeáin chothroma agus 360°, comhroinnt, Plex, ceamaraí, comhaid oscailte leis an aip, an comhéadan i 89 teanga |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS agus Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | réamhamhairc: ar Linux grianghraif, grianghraif 360° agus físeáin chothroma (seinntear físeáin 360° cothrom); ar macOS mar an gcéanna, seiceáilte ar Mac CI an tionscadail amháin, gan síniú |
 
 *Nuashonraítear na stádais ag gach leagan; tá na sonraí, leagan ar leagan, i [Stádas an leagain](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Le freastalaí [Immich](https://github.com/immich-app/immich), is í Immuch360 a
 2. Sna Socruithe, Amharcóir Sócmhainní, Físeáin, roghnaíonn "Foinse físe" an bunaidh nuair a dhíchódaíonn an gléas seo é, an bunaidh i gcónaí, nó an sruth trasachóideoidh i gcónaí.
 3. Chun grianghraf 360° a thaispeáint do dhuine nach bhfuil an aip aige, comhroinn é le nasc comhroinnte Immich: taispeánann an aip ghréasáin Immich é mar sféar ina mbrabhsálaí.
 
-Tá an leagan reatha, leagan 23, bunaithe ar `main` Immich ón 10 Deireadh Fómhair 2026 (leagan 3.3.0-rc.0) agus tástáladh é in aghaidh freastalaí Immich 3.2.4 agus freastalaí tógtha ón `main` céanna sin. Tuairiscigh fadhbanna le do thoil in [Issues](https://github.com/freeKC/Immuch360/issues), ní chuig tionscadal Immich.
+Tá an leagan reatha, leagan 26, bunaithe ar `main` Immich ón 10 Deireadh Fómhair 2026 (leagan 3.3.0-rc.0) agus tástáladh é in aghaidh freastalaí Immich 3.2.4 agus freastalaí tógtha ón `main` céanna sin de chuid Immich. Tuairiscigh fadhbanna le do thoil in [Issues](https://github.com/freeKC/Immuch360/issues), ní chuig tionscadal Immich.
 
 Tuilleadh: [is Immich é gach rud eile](../docs/immuch360/user-guide.md#everything-else-is-immich), [i gcomparáid leis an aip Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Tuilleadh: [ceamaraí Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-vi
 
 Bunchód amháin, sé thimpeallacht. Seo atá ag gach ceann inniu:
 
-| Cumas | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Gailearaí, ailbhéim, cuardach le freastalaí Immich | ✅ | ✅ | ✅ amharcóir | ✅ | ✅ | 🔧 |
-| Gan freastalaí: meáin féin an ghléis | ✅ | ✅ | comhroinnt amháin | ✅ | ✅ fillteáin | 🔧 |
-| Grianghraif agus físeáin chothroma | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Grianghraif 360° mar sféar | ✅ | ✅ | ✅ | ✅ tumthach | ✅ | 🔧 |
-| Físeáin 360° | ✅ | ✅ gan barra ama | ✅ | ✅ tumthach | ✅ | 🔧 |
-| 3D agus VR180 | ✅ súil amháin | ✅ súil amháin | ✅ súil amháin | ✅ 3D cheart | ✅ súil amháin | 🔧 |
-| Spásúil 2.5D (rianú cinn) | ✅ turgnamhach | ✅ turgnamhach | ❌ | ❌ | 🔜 | ❌ |
-| Grianghraif spásúla Apple | ✅ súil amháin | ✅ súil amháin | ✅ súil amháin | ✅ 3D | ✅ súil amháin | 🔧 |
-| Comhaid amha Insta360, GoPro agus DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Comhroinnt SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Ceamaraí Tapo: taifeadtaí | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Ceamaraí Tapo: amharc beo | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Comhroinn an ghléas seo ar an líonra | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Uaslódáil chuig Immich ó chomhroinnt agus ón ghléas | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Ionchur | tadhall, gíreascóp | tadhall, gíreascóp | cianrialtán | rialtóirí, lámha | luch, méarchlár | |
-| Cá bhfaighidh tú í | Google Play, APK | App Store (faoi athbhreithniú) | APK, Google Play (faoi athbhreithniú) | Horizon Store, APK | suiteálaí nó ZIP (réamhamharc) | .deb, .rpm, DMG (réamhamhairc luatha) |
+| Cumas | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Gailearaí, ailbhéim, cuardach le freastalaí Immich | ✅ | ✅ | ✅ amharcóir | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Gan freastalaí: meáin féin an ghléis | ✅ | ✅ | comhroinnt amháin | ✅ | ✅ fillteáin | ✅ fillteáin | ✅ fillteáin |
+| Grianghraif agus físeáin chothroma | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Grianghraif 360° mar sféar | ✅ | ✅ | ✅ | ✅ tumthach | ✅ | ✅ | 🔧 CI |
+| Físeáin 360° | ✅ | ✅ gan barra ama | ✅ | ✅ tumthach | ✅ | cothrom amháin | cothrom amháin |
+| 3D agus VR180 | ✅ súil amháin | ✅ súil amháin | ✅ súil amháin | ✅ 3D cheart | ✅ súil amháin | grianghraif súil amháin, físeáin chothroma | grianghraif súil amháin, físeáin chothroma |
+| Spásúil 2.5D (rianú cinn) | ✅ turgnamhach | ✅ turgnamhach | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Grianghraif spásúla Apple | ✅ súil amháin | ✅ súil amháin | ✅ súil amháin | ✅ 3D | ✅ súil amháin | 🔧 CI | 🔧 CI |
+| Comhaid amha Insta360, GoPro agus DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI grianghraif, físeáin chothroma | 🔧 CI grianghraif, físeáin chothroma |
+| Comhroinnt SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Ceamaraí Tapo: taifeadtaí | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Ceamaraí Tapo: amharc beo | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Comhroinn an gléas seo ar an líonra | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Uaslódáil chuig Immich ó chomhroinnt agus ón ghléas | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Ionchur | tadhall, gíreascóp | tadhall, gíreascóp | cianrialtán | rialtóirí, lámha | luch, méarchlár | luch, méarchlár | luch, méarchlár, ceap tadhaill |
+| Cá bhfaighidh tú í | Google Play, APK | App Store (faoi athbhreithniú) | APK, Google Play (faoi athbhreithniú) | Horizon Store, APK | suiteálaí nó ZIP (réamhamharc) | .deb, .rpm (réamhamharc) | DMG nó ZIP (réamhamharc gan síniú) |
 
-✅ san aip ar an ardán sin · ❌ nach dtugtar ann · 🔜 pleanáilte · 🔧 sna foinsí agus tógtha ag CI an tionscadail, níor tosaíodh ar an gcóras sin fós. Ciallaíonn "súil amháin" go dtaispeánann comhad 3D a shúil chlé ar scáileán cothrom. Níor seiceáladh gach ✅ ar ghléas fíor fós: cad a seiceáladh agus cén áit, agus cad atá fágtha le dearbhú, tá siad in [Gnéithe](../docs/immuch360/features.md), [Tacaíocht ardáin](../docs/immuch360/platform-support.md) agus [Comhoiriúnacht](../docs/immuch360/compatibility.md).
+✅ san aip ar an ardán sin · ❌ nach dtugtar ann · 🔜 pleanáilte · 🔧 CI sna foinsí, tógtha agus tosaithe ag CI an tionscadail ar an gcóras sin, gan seiceáil fós ansin le freastalaí, comhroinnt ná ceamara fíor · cothrom amháin: seinntear an físeán cothrom, le teachtaireacht, mar nach bhfuil an rindreálaí 360° ann ach ar Windows. Ciallaíonn "súil amháin" go dtaispeánann comhad 3D a shúil chlé ar scáileán cothrom. Níor seiceáladh gach ✅ ar ghléas fíor fós: cad a seiceáladh agus cén áit, agus cad atá fágtha le dearbhú, tá siad in [Gnéithe](../docs/immuch360/features.md), [Tacaíocht ardáin](../docs/immuch360/platform-support.md) agus [Comhoiriúnacht](../docs/immuch360/compatibility.md).
 
 - **Fóin agus táibléid Android**: an aip iomlán, tadhall agus gíreascóp, gach foinse.
 - **iPhone agus iPad**: an aip iomlán; níl ach seinm agus sos ag an seinnteoir físeáin 360°, tagann amharc beo Tapo níos déanaí, agus seolann cuardach DLNA iarrataí aon-tharchuir go dtí go dtugann Apple an ceadúnas iltharchuir.
 - **Android TV agus Google TV**: an APK céanna, rialaithe ag an gcianrialtán; amharcóir amháin: tá cúltaca, uaslódálacha agus eagarthóireacht i bhfolach. Seiceáladh ar aithriseoir Google TV (logáil isteach, amlíne, amharcóirí, comhroinnt, nascleanúint an chianrialtáin), ní ar theilifís fíor fós.
-- **Meta Quest 2, Pro, 3 agus 3S**: an aip mar fhuinneog, móide an amharc tumthach; is é HEVC an códóir sábháilte, stopann H.264 timpeall 4096x2304 ar an Quest 3; níl an Quest 2 agus an Quest Pro tástáilte fós.
+- **Meta Quest 2, Pro, 3 agus 3S**: an aip mar fhuinneog, móide an t-amharc tumthach; is é HEVC an codec sábháilte, stopann H.264 thart ar 4096x2304 ar an Quest 3; níl ach an Quest 3 tástáilte, níl an Quest 2, an Quest Pro ná an Quest 3S tástáilte fós.
 - **Windows 10 agus 11**: réamhamharc, le fillteáin in ionad gailearaí, seinnteoir físeáin dá chuid féin (libmpv) do fhíseáin chothroma agus 360°, comhaid bunaidh fuaite ar an sliseog grafaicí, comhaid agus fillteáin oscailte leis an aip nó scaoilte ar an fhuinneog, suiteálaí nó ZIP.
-- **macOS agus Linux**: pacáistí tógtha ag CI an tionscadail (.deb, .rpm, DMG); ar Linux tosaíonn an aip agus taispeánann sí grianghraif agus grianghraif 360°, gan físeáin fós, agus tá Ubuntu 24.04, Debian 13 nó Fedora 39 nó níos nuaí de dhíth ar chomhroinnt SMB; níor rith an aip macOS ach ar CI an tionscadail, gan físeáin agus gan a rochtain líonra triailte.
+- **Linux**: .deb agus .rpm tógtha ag CI an tionscadail, suiteáilte agus seiceáilte ar Ubuntu 22.04 agus 24.04, Debian 12 agus Fedora 40 agus 44; grianghraif, grianghraif 360° agus físeáin chothroma trí libmpv an chórais (seinntear físeáin 360°, 3D agus amha cothrom le teachtaireacht); comhroinnt SMB ó Ubuntu 22.04 agus Debian 12 ar aghaidh; níor ritheadh fós ar PC Linux fíor í, ach faoi WSLg agus i gcoimeádáin amháin.
+- **macOS**: DMG agus ZIP tógtha ag CI an tionscadail, uilíoch, gan síniú (fiafraíonn Gatekeeper uair amháin); tosaíonn an aip, osclaíonn sí na comhaid agus na fillteáin a thugtar di, Finder san áireamh, coinníonn sí a rúin san eochairshlabhra logála isteach agus seinneann sí físeáin chothroma lena libmpv féin, iad uile seiceáilte ar Mac CI an tionscadail amháin; níor rith rud ar bith ar Mac fíor fós.
 
 <a id="advanced-features"></a>
 ## Gnéithe forchéimnithe
@@ -300,7 +301,7 @@ Ní théann rud ar bith chuig an fhorbróir: gan cuntas, gan anailísíocht, gan
 
 Is forc neamhoifigiúil de aip mhóbíleach [Immich](https://github.com/immich-app/immich) í Immuch360, faoin [GNU AGPL v3](../LICENSE), gan baint le, ná formheas ó, foireann Immich nó FUTO. Tá an forc ann mar iarradh amharc 360° ar mhóibíleach in Immich ó mhí Eanáir 2024 agus níl sé san aip oifigiúil fós; soláthraíonn sé é anois, bailíonn sé aiseolas ó ghléasanna fíor, agus tairgfidh sé ar ais chuig Immich, i pull requests beaga, cibé rud atá uathu ag na cothaitheoirí. Coinnítear gach rud a dhéanann an aip oifigiúil; déantar cur síos ar na brainsí, slabhra na tógála agus an CI in [Tóg féin é](../docs/immuch360/build.md).
 
-Tá an amharcóir grianghraf 360° bunaithe ar an pull request bunfhoinse [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) le dmitry-brazhenko, é féin tógtha ar an fhrotaitíopa le bencefr in [#30192](https://github.com/immich-app/immich/pull/30192); go raibh maith acu beirt. Scríobhadh na ceamaraí Tapo ón rud a dhoiciméadaíonn [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) agus [python-kasa](https://github.com/python-kasa/python-kasa). Braitheann an amharc Meta Quest ar an Meta Spatial SDK, nach foinse oscailte é, mar sin fanann sé san forc seo amháin. Iompraíonn an ZIP Windows libmpv (leabharlann [mpv](https://mpv.io), le [FFmpeg](https://ffmpeg.org)) tógtha ag an tionscadal, faoin LGPL, lena cheadúnais agus foinsí; tá na sonraí agus trádmharcanna na n-ardán ainmnithe ar an leathanach seo in [Ceadúnas agus trádmharcanna](../docs/immuch360/platform-support.md#license-and-trademarks).
+Tá an amharcóir grianghraf 360° bunaithe ar an pull request bunfhoinse [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) le dmitry-brazhenko, é féin tógtha ar an fhrotaitíopa le bencefr in [#30192](https://github.com/immich-app/immich/pull/30192); go raibh maith acu beirt. Thosaigh ceartúcháin an chianrialtáin do na scagairí cuardaigh agus sórtáil na n-albam ar an TV ó obair mlc70 in [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Scríobhadh na ceamaraí Tapo ón rud a dhoiciméadaíonn [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) agus [python-kasa](https://github.com/python-kasa/python-kasa). Braitheann an t-amharc Meta Quest ar an Meta Spatial SDK, nach foinse oscailte é, mar sin fanann sé san forc seo. Iompraíonn an ZIP Windows libmpv (leabharlann [mpv](https://mpv.io), le [FFmpeg](https://ffmpeg.org)) tógtha ag an tionscadal, faoin LGPL, lena cheadúnais agus a fhoinsí; tá na sonraí agus trádmharcanna na n-ardán ainmnithe ar an leathanach seo in [Ceadúnas agus trádmharcanna](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Tógadh gabhálacha fóin an leathanaigh seo ar leagan Android in aithriseoir, na cinn TV ar aithriseoir Google TV agus na cinn Windows ar PC Windows 11, iad uile le pánorámaí CC0 ó [Poly Haven](https://polyhaven.com); tógadh gabhálacha an chluasáin ar Quest 3.
 
@@ -309,8 +310,8 @@ Tógadh gabhálacha fóin an leathanaigh seo ar leagan Android in aithriseoir, n
 
 An méid nach bhfuil déanta fós, an rud is dóichí ar dtús. Ní gealltanas aon rud anseo, agus cabhraíonn aiseolas ar an [rianaire fadhbanna](https://github.com/freeKC/Immuch360/issues) le cinneadh a dhéanamh cad a thiocfaidh ar dtús.
 
-- **Na stórais**: Google Play (leagan 23 faoi athbhreithniú, liosta an TV faoi athbhreithniú), an App Store (leagan 3.3.0 faoi athbhreithniú), an Meta Horizon Store (leagan 21 faoi athbhreithniú).
-- **Ríomhairí**: tástáil gach feidhme de láimh ar PC Windows; ansin Spásúil 2.5D leis an gceamara gréasáin; ansin an seinnteoir físeáin ar Linux agus macOS agus tástáil ar Mac fíor; ansin tógáil sínithe agus nuashonruithe uathoibríoch.
+- **Na stórais**: Google Play (leagan 26 le teacht, liosta an TV faoi athbhreithniú), an App Store (leagan 3.3.1 faoi athbhreithniú ón 14 Deireadh Fómhair), an Meta Horizon Store (leagan 25 faoi athbhreithniú).
+- **Ríomhairí**: tástáil gach feidhme de láimh ar PC Windows; ansin an rindreálaí físeáin 360° ar Linux agus macOS, tástáil ar Mac fíor agus ar PC Linux fíor; ansin tógáil sínithe agus nuashonruithe uathoibríocha; ansin Spásúil 2.5D leis an gceamara gréasáin.
 - **Fóin agus táibléid**: barra ama i seinnteoir físeáin 360° iOS, roimhe agus ina dhiaidh i seinnteoirí 360° na bhfón, rogha an rian fuaime sa seinnteoir cothrom, amharc beo Tapo ar iPhone agus iPad.
 - **Meáin tumthach**: .dng súil éisc dúbailte, leibhéalú físeáin GoPro agus DJI óna sonraí gluaisne féin, físeáin spásúla i 3D ar an Quest má cheadaíonn a dhíchódóirí é, roimhe agus ina dhiaidh idir grianghraif spásúla sa chluasán.
 - **Foinsí**: sleamhnú idir comhaid fillteán comhroinnte, fíordheimhniú Digest do WebDAV, cód QR chun tóiceán Plex a thabhairt ón ríomhaire, IPv6 do Plex, taifeadtaí Tapo H.265, cainéil ar scáileán baile an TV.

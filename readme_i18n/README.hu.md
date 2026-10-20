@@ -20,14 +20,14 @@ Az Immuch360 egy ingyenes és nyílt forráskódú alkalmazás a fényképei és
 
 <div align="center">
 
-| Platform | Honnan szerezhető be | Állapot 2026. október 12-én |
+| Platform | Honnan szerezhető be | Állapot 2026. október 20-án |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonok és táblagépek | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | a Google Play-en (build 20; build 23 felülvizsgálat alatt), build 23 a GitHubon |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone és iPad** | App Store | a 3.3.0 verzió az Apple felülvizsgálatára vár; [építse meg saját maga](../docs/immuch360/build.md) addig |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV és Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 a GitHubon; a tévés listázás a Google felülvizsgálata alatt áll |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 és 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | a Horizon Store-on (build 14; build 21 felülvizsgálat alatt), build 23 a GitHubon |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Telepítő vagy ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, egy preview verzió: fényképek, sík és 360°-os videók, megosztások, Plex, kamerák, a programmal megnyitott fájlok |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS és Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | korai preview verziók: Linuxon fényképek és 360°-os fényképek, még nincsenek videók; a macOS csak a projekt CI-jén indult el |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonok és táblagépek | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | a Google Play-en (build 25), build 26 a GitHubon |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone és iPad** | App Store | a 3.3.1 verzió (build 24) október 14. óta az Apple felülvizsgálatára vár; addig [építse meg saját maga](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV és Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 a GitHubon, a keresési szűrők távirányítós javításaival; a tévés listázás a Google felülvizsgálata alatt áll |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 és 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | a Horizon Store-on (build 23; build 25 felülvizsgálat alatt), build 26 a GitHubon |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Telepítő vagy ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, egy preview verzió: fényképek, sík és 360°-os videók, megosztások, Plex, kamerák, a programmal megnyitott fájlok, a felület 89 nyelven |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS és Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | preview verziók: Linuxon fényképek, 360°-os fényképek és sík videók (a 360°-os videók síkban játszódnak le); macOS-en ugyanez, csak a projekt CI Mac gépén ellenőrizve, aláírás nélkül |
 
 *Az állapotok minden kiadásnál frissülnek; a részletek, buildről buildre, itt találhatók: [Kiadási állapot](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Egy [Immich](https://github.com/immich-app/immich) szerverrel az Immuch360 az Im
 2. A Beállításokban, a Médianézegetőben, a Videóknál a „Videóforrás” választja ki az eredetit, ha ez az eszköz dekódolja, mindig az eredetit, vagy mindig az átkódolt adatfolyamot.
 3. Ha egy 360°-os fényképet szeretne megmutatni valakinek, akinek nincs meg az alkalmazása, ossza meg egy Immich megosztott linkkel: az Immich webalkalmazás gömbként jeleníti meg a böngészőjében.
 
-A jelenlegi build, a build 23, az Immich `main` ágának 2026. október 10-i állapotán alapul (3.3.0-rc.0 verzió), és egy Immich 3.2.4 szerver, valamint egy ugyanabból az Immich `main` ágból épített szerver ellen lett tesztelve. A problémákat kérjük az [Issues](https://github.com/freeKC/Immuch360/issues) oldalon jelezze, ne az Immich projektnek.
+A jelenlegi build, a build 26, az Immich `main` ágának 2026. október 10-i állapotán alapul (3.3.0-rc.0 verzió), és egy Immich 3.2.4 szerver, valamint egy ugyanabból az Immich `main` ágból épített szerver ellen lett tesztelve. A problémákat kérjük az [Issues](https://github.com/freeKC/Immuch360/issues) oldalon jelezze, ne az Immich projektnek.
 
 Részletek: [minden más az Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [összehasonlítva az Immich alkalmazással](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Részletek: [Tapo kamerák](../docs/immuch360/user-guide.md#tapo-cameras-live-vi
 
 Egy kódbázis, hat környezet. Mi van meg ma mindegyikben:
 
-| Képesség | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galéria, albumok, keresés egy Immich szerverrel | ✅ | ✅ | ✅ nézegető | ✅ | ✅ | 🔧 |
-| Szerver nélkül: az eszköz saját médiája | ✅ | ✅ | csak megosztások | ✅ | ✅ mappák | 🔧 |
-| Sík fényképek és videók | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360°-os fényképek gömbként | ✅ | ✅ | ✅ | ✅ immerzív | ✅ | 🔧 |
-| 360°-os videók | ✅ | ✅ nincs idősáv | ✅ | ✅ immerzív | ✅ | 🔧 |
-| 3D és VR180 | ✅ egy szem | ✅ egy szem | ✅ egy szem | ✅ valódi 3D | ✅ egy szem | 🔧 |
-| Spatial 2.5D (fejkövetés) | ✅ kísérleti | ✅ kísérleti | ❌ | ❌ | 🔜 | ❌ |
-| Apple térbeli fényképek | ✅ egy szem | ✅ egy szem | ✅ egy szem | ✅ 3D | ✅ egy szem | 🔧 |
-| Nyers Insta360, GoPro és DJI fájlok | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA megosztások | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kamerák: felvételek | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kamerák: élő nézet | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Eszköz megosztása a hálózaton | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Feltöltés az Immichbe megosztásokból és az eszközről | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Bevitel | érintés, giroszkóp | érintés, giroszkóp | távirányító | kontrollerek, kezek | egér, billentyűzet | |
-| Honnan szerezhető be | Google Play, APK | App Store (felülvizsgálat alatt) | APK, Google Play (felülvizsgálat alatt) | Horizon Store, APK | telepítő vagy ZIP (preview) | .deb, .rpm, DMG (korai preview verziók) |
+| Képesség | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galéria, albumok, keresés egy Immich szerverrel | ✅ | ✅ | ✅ nézegető | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Szerver nélkül: az eszköz saját médiája | ✅ | ✅ | csak megosztások | ✅ | ✅ mappák | ✅ mappák | ✅ mappák |
+| Sík fényképek és videók | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 360°-os fényképek gömbként | ✅ | ✅ | ✅ | ✅ immerzív | ✅ | ✅ | 🔧 CI |
+| 360°-os videók | ✅ | ✅ nincs idősáv | ✅ | ✅ immerzív | ✅ | csak sík | csak sík |
+| 3D és VR180 | ✅ egy szem | ✅ egy szem | ✅ egy szem | ✅ valódi 3D | ✅ egy szem | fényképek egy szem, videók sík | fényképek egy szem, videók sík |
+| Spatial 2.5D (fejkövetés) | ✅ kísérleti | ✅ kísérleti | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple térbeli fényképek | ✅ egy szem | ✅ egy szem | ✅ egy szem | ✅ 3D | ✅ egy szem | 🔧 CI | 🔧 CI |
+| Nyers Insta360, GoPro és DJI fájlok | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI fényképek, videók sík | 🔧 CI fényképek, videók sík |
+| SMB, WebDAV, DLNA megosztások | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamerák: felvételek | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamerák: élő nézet | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Ennek az eszköznek a megosztása a hálózaton | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Feltöltés az Immichbe megosztásokból és az eszközről | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Bevitel | érintés, giroszkóp | érintés, giroszkóp | távirányító | kontrollerek, kezek | egér, billentyűzet | egér, billentyűzet | egér, billentyűzet, érintőpad |
+| Honnan szerezhető be | Google Play, APK | App Store (felülvizsgálat alatt) | APK, Google Play (felülvizsgálat alatt) | Horizon Store, APK | telepítő vagy ZIP (preview) | .deb, .rpm (preview) | DMG vagy ZIP (aláíratlan preview) |
 
-✅ megvan az alkalmazásban azon a platformon · ❌ ott nem elérhető · 🔜 tervezett · 🔧 megvan a forráskódban, és a projekt CI-je lefordítja, de azon a rendszeren még nem indult el. Az „egy szem” azt jelenti, hogy egy 3D fájl a bal szemét mutatja egy sík képernyőn. Nem minden ✅-t ellenőriztek még valódi eszközön: hogy mit ellenőriztek hol, és mi vár még megerősítésre, az a [Funkciók](../docs/immuch360/features.md), a [Platformtámogatás](../docs/immuch360/platform-support.md) és a [Kompatibilitás](../docs/immuch360/compatibility.md) oldalakon található.
+✅ megvan az alkalmazásban azon a platformon · ❌ ott nem elérhető · 🔜 tervezett · 🔧 CI megvan a forráskódban, a projekt CI-je lefordítja és elindítja azon a rendszeren, de ott még nem ellenőrizték valódi szerverrel, megosztással vagy kamerával · csak sík: a videó síkban játszódik le, egy üzenettel, mert a 360°-os megjelenítő csak Windowson érhető el. Az „egy szem” azt jelenti, hogy egy 3D fájl a bal szemét mutatja egy sík képernyőn. Nem minden ✅-t ellenőriztek még valódi eszközön: hogy mit ellenőriztek hol, és mi vár még megerősítésre, az a [Funkciók](../docs/immuch360/features.md), a [Platformtámogatás](../docs/immuch360/platform-support.md) és a [Kompatibilitás](../docs/immuch360/compatibility.md) oldalakon található.
 
 - **Android telefonok és táblagépek**: a teljes alkalmazás, érintés és giroszkóp, minden forrás.
 - **iPhone és iPad**: a teljes alkalmazás; a 360°-os videólejátszó csak lejátszást és szünetet tud, a Tapo élő nézet később érkezik, és a DLNA keresés unicast kéréseket küld, amíg az Apple meg nem adja a multicast jogosultságot.
 - **Android TV és Google TV**: ugyanaz az APK, a távirányítóval vezérelve; egy nézegető: a biztonsági mentés, a feltöltések és a szerkesztés el van rejtve. Ellenőrizve a Google TV emulátoron (bejelentkezés, idővonal, nézegetők, megosztások, a távirányítós navigáció), valódi tévén még nem.
-- **Meta Quest 2, Pro, 3 és 3S**: az alkalmazás ablakként, plusz az immerzív nézet; a HEVC a biztos kodek, a H.264 körülbelül 4096x2304-nél megáll a Quest 3-on; a Quest 2 és a Quest Pro még nincs letesztelve.
+- **Meta Quest 2, Pro, 3 és 3S**: az alkalmazás ablakként, plusz az immerzív nézet; a HEVC a biztos kodek, a H.264 körülbelül 4096x2304-nél megáll a Quest 3-on; csak a Quest 3 van letesztelve, a Quest 2, a Quest Pro és a Quest 3S még nincs.
 - **Windows 10 és 11**: egy preview verzió, mappákkal a galéria helyett, saját videólejátszóval (libmpv) a sík és 360°-os videókhoz, a grafikus chipen összefűzött nyers fájlokkal, a programmal megnyitott vagy az ablakra húzott fájlokkal és mappákkal, egy telepítővel vagy egy ZIP-pel.
-- **macOS és Linux**: a projekt CI-je által épített csomagok (egy .deb, egy .rpm, egy DMG); Linuxon az alkalmazás elindul, és megjeleníti a fényképeket és a 360°-os fényképeket, még nincsenek videók, és az SMB megosztásokhoz Ubuntu 24.04, Debian 13 vagy Fedora 39 vagy újabb szükséges; a macOS alkalmazás csak a projekt CI-jén indult el, videók nélkül, és a hálózati hozzáférését nem próbálták ki.
+- **Linux**: a projekt CI-je által épített .deb és .rpm csomag, telepítve és ellenőrizve Ubuntu 22.04 és 24.04, Debian 12, valamint Fedora 40 és 44 rendszereken; fényképek, 360°-os fényképek és sík videók a rendszer libmpv könyvtárán keresztül (a 360°-os, 3D és nyers videók síkban játszódnak le, egy üzenettel); SMB megosztások Ubuntu 22.04 és Debian 12 verziótól kezdve; valódi Linux PC-n még nem futott, csak WSLg alatt és konténerekben.
+- **macOS**: a projekt CI-je által épített DMG és ZIP, univerzális, aláíratlan (a Gatekeeper egyszer rákérdez); elindul, megnyitja a neki átadott fájlokat és mappákat, a Finderből is, a titkait a bejelentkezési kulcskarikában tárolja, és a saját libmpv könyvtárával lejátssza a sík videókat, mindezt csak a projekt CI Mac gépén ellenőrizve; valódi Macen még semmi sem futott.
 
 <a id="advanced-features"></a>
 ## Speciális funkciók
@@ -300,7 +301,7 @@ Semmi sem kerül a fejlesztőhöz: nincs fiók, nincs analitika, nincs hibajelen
 
 Az Immuch360 az [Immich](https://github.com/immich-app/immich) mobilalkalmazás nem hivatalos forkja, a [GNU AGPL v3](../LICENSE) licenc alatt, nem áll kapcsolatban az Immich csapatával vagy a FUTO-val, és nem élvezi támogatásukat. A fork azért létezik, mert a 360°-os megtekintést mobilon 2024 januárja óta kérik az Immichhez, és az még nincs benne a hivatalos alkalmazásban; ez most elhozza, valódi eszközökről gyűjt visszajelzéseket, és apró pull requestekben visszaajánlja az Immichnek, amit a karbantartók szeretnének. Minden megmarad, amit a hivatalos alkalmazás tud; az ágakat, a build láncot és a CI-t az [Építse meg saját maga](../docs/immuch360/build.md) oldal mutatja be.
 
-A 360°-os fényképnézegető a dmitry-brazhenko által készített upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) pull requesten alapul, amely maga is a bencefr által a [#30192](https://github.com/immich-app/immich/pull/30192)-ben készített prototípusra épül; köszönet mindkettőjüknek. A Tapo kamerák azok alapján íródtak, amit a [pytapo](https://github.com/JurajNyiri/pytapo), a [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) és a [python-kasa](https://github.com/python-kasa/python-kasa) dokumentál. A Meta Quest nézet a Meta Spatial SDK-ra épül, amely nem nyílt forráskódú, így ez csak ebben a forkban marad meg. A Windows ZIP a projekt által épített libmpv-t tartalmazza (a [mpv](https://mpv.io) könyvtárát, [FFmpeg](https://ffmpeg.org)-gel), az LGPL alatt, a licenceivel és forráskódjaival; az ezen az oldalon megnevezett platformok részletei és védjegyei a [Licenc és védjegyek](../docs/immuch360/platform-support.md#license-and-trademarks) részben találhatók.
+A 360°-os fényképnézegető a dmitry-brazhenko által készített upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) pull requesten alapul, amely maga is a bencefr által a [#30192](https://github.com/immich-app/immich/pull/30192)-ben készített prototípusra épül; köszönet mindkettőjüknek. A keresési szűrők távirányítós javításai és az albumok rendezése a tévéken mlc70 munkájából indultak ki, az [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) pull requestben. A Tapo kamerák azok alapján íródtak, amit a [pytapo](https://github.com/JurajNyiri/pytapo), a [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) és a [python-kasa](https://github.com/python-kasa/python-kasa) dokumentál. A Meta Quest nézet a Meta Spatial SDK-ra épül, amely nem nyílt forráskódú, így ez csak ebben a forkban marad meg. A Windows ZIP a projekt által épített libmpv-t tartalmazza (a [mpv](https://mpv.io) könyvtárát, [FFmpeg](https://ffmpeg.org)-gel), az LGPL alatt, a licenceivel és forráskódjaival; az ezen az oldalon megnevezett platformok részletei és védjegyei a [Licenc és védjegyek](../docs/immuch360/platform-support.md#license-and-trademarks) részben találhatók.
 
 Az oldal telefonos felvételei az Android buildről készültek egy emulátorban, a tévés felvételek a Google TV emulátoron, a Windows-os felvételek pedig egy Windows 11 PC-n, mindegyik [Poly Haven](https://polyhaven.com)-ről származó CC0 panorámákkal; a headsetes felvételek egy Quest 3-on készültek.
 
@@ -309,8 +310,8 @@ Az oldal telefonos felvételei az Android buildről készültek egy emulátorban
 
 Ami még nincs kész, a legvalószínűbbel kezdve. Semmi sem ígéret itt, és a visszajelzések a [hibakövetőben](https://github.com/freeKC/Immuch360/issues) segítenek eldönteni, mi kerüljön sorra először.
 
-- **A store-ok**: Google Play (build 23 felülvizsgálat alatt, a tévés listázás felülvizsgálat alatt), App Store (3.3.0 verzió felülvizsgálat alatt), Meta Horizon Store (build 21 felülvizsgálat alatt).
-- **Számítógépek**: minden funkció kézi tesztelése egy Windows PC-n; majd a Spatial 2.5D a webkamerával; majd a videólejátszó Linuxon és macOS-en, és egy teszt egy valódi Macen; majd egy aláírt build és automatikus frissítések.
+- **A store-ok**: Google Play (a build 26 hamarosan érkezik, a tévés listázás felülvizsgálat alatt), App Store (a 3.3.1 verzió október 14. óta felülvizsgálat alatt), Meta Horizon Store (build 25 felülvizsgálat alatt).
+- **Számítógépek**: minden funkció kézi tesztelése egy Windows PC-n; majd a 360°-os videómegjelenítő Linuxon és macOS-en, egy teszt egy valódi Macen és egy valódi Linux PC-n; majd egy aláírt build és automatikus frissítések; majd a Spatial 2.5D a webkamerával.
 - **Telefonok és táblagépek**: idősáv az iOS 360°-os videólejátszójában, előző és következő a telefonok 360°-os lejátszóiban, hangsáv-választás a sík lejátszóban, a Tapo élő nézet iPhone-on és iPaden.
 - **Immerzív média**: kettős fisheye .dng, GoPro és DJI videók vízszintezése a saját mozgásadataikból, térbeli videók 3D-ben a Questen, ha a dekóderei engedik, előző és következő a térbeli fényképek között a headsetben.
 - **Források**: csúsztatás egy megosztott mappa fájljai között, Digest hitelesítés WebDAV-hoz, egy QR-kód a Plex token átviteléhez a számítógépről, IPv6 a Plexhez, H.265 Tapo felvételek, csatornák a tévé kezdőképernyőjén.

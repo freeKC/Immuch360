@@ -20,14 +20,14 @@ Immuch360 គឺជាកម្មវិធីឥតគិតថ្លៃ និ
 
 <div align="center">
 
-| វេទិកា | ទទួលបានវានៅឯណា | ស្ថានភាពនៅថ្ងៃទី 12 ខែតុលា ឆ្នាំ 2026 |
+| វេទិកា | ទទួលបានវានៅឯណា | ស្ថានភាពនៅថ្ងៃទី 20 ខែតុលា ឆ្នាំ 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ទូរសព្ទ និងថេប្លេត | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | នៅលើ Google Play (build 20; build 23 កំពុងពិនិត្យ) build 23 នៅលើ GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone និង iPad** | App Store | កំណែ 3.3.0 កំពុងរង់ចាំការពិនិត្យរបស់ Apple; [សាងសង់ដោយខ្លួនឯង](../docs/immuch360/build.md) ក្នុងចន្លោះនេះ |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV និង Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 នៅលើ GitHub; បញ្ជីទូរទស្សន៍កំពុងពិនិត្យដោយ Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2 Pro 3 និង 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | នៅលើ Horizon Store (build 14; build 21 កំពុងពិនិត្យ) build 23 នៅលើ GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [កម្មវិធីដំឡើង ឬ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, កំណែសាកល្បង: រូបថត វីដេអូរាបស្មើ និង 360° ការចែករំលែក Plex កាមេរ៉ា ឯកសារដែលបើកជាមួយកម្មវិធី |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS និង Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | ការសាកល្បងដំបូង: នៅលើ Linux រូបថត និងរូបថត 360° មិនទាន់មានវីដេអូនៅឡើយទេ; macOS ចាប់ផ្តើមតែនៅលើ CI របស់គម្រោង |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ទូរសព្ទ និងថេប្លេត | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | នៅលើ Google Play (build 25), build 26 នៅលើ GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone និង iPad** | App Store | កំណែ 3.3.1 (build 24) កំពុងរង់ចាំការពិនិត្យរបស់ Apple តាំងពីថ្ងៃទី 14 ខែតុលា; [សាងសង់ដោយខ្លួនឯង](../docs/immuch360/build.md) ក្នុងចន្លោះនេះ |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV និង Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 នៅលើ GitHub ជាមួយការកែតម្រូវឧបករណ៍បញ្ជាពីចម្ងាយសម្រាប់តម្រងស្វែងរក; បញ្ជីទូរទស្សន៍កំពុងពិនិត្យដោយ Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 និង 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | នៅលើ Horizon Store (build 23; build 25 កំពុងពិនិត្យ), build 26 នៅលើ GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [កម្មវិធីដំឡើង ឬ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, កំណែសាកល្បង: រូបថត, វីដេអូរាបស្មើ និង 360°, ការចែករំលែក, Plex, កាមេរ៉ា, ឯកសារដែលបើកជាមួយកម្មវិធី, ចំណុចប្រទាក់ជា 89 ភាសា |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS និង Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | កំណែសាកល្បង: នៅលើ Linux រូបថត, រូបថត 360° និងវីដេអូរាបស្មើ (វីដេអូ 360° ចាក់ជារាបស្មើ); នៅលើ macOS ដូចគ្នា ដែលបានពិនិត្យតែលើ Mac CI របស់គម្រោងប៉ុណ្ណោះ, មិនទាន់ចុះហត្ថលេខា |
 
 *ស្ថានភាពត្រូវបានធ្វើបច្ចុប្បន្នភាពរាល់ការចេញផ្សាយ; ព័ត៌មានលម្អិត build នីមួយៗ មាននៅក្នុង [ស្ថានភាពការចេញផ្សាយ](../docs/immuch360/release-status.md)។*
 
@@ -138,7 +138,7 @@ Immuch360 មិនចាំបាច់គណនី ក៏មិនចាំប
 2. នៅក្នុងការកំណត់ កម្មវិធីមើលឯកសារ វីដេអូ "ប្រភពវីដេអូ" ជ្រើសឯកសារដើមនៅពេលឧបករណ៍នេះអាចឌិកូដវា ជានិច្ចជាឯកសារដើម ឬជានិច្ចជាស្ទ្រីមដែលបានបំលែងកូដ។
 3. ដើម្បីបង្ហាញរូបថត 360° ដល់អ្នកដែលមិនមានកម្មវិធីនេះ ចែករំលែកវាជាមួយតំណចែករំលែករបស់ Immich: កម្មវិធីគេហទំព័រ Immich បង្ហាញវាជាស្វែរនៅក្នុងកម្មវិធីរុករករបស់ពួកគេ។
 
-build បច្ចុប្បន្ន build 23 ផ្អែកលើ Immich `main` ថ្ងៃទី 10 ខែតុលា 2026 (កំណែ 3.3.0-rc.0) ហើយបានសាកល្បងលើម៉ាស៊ីនមេ Immich 3.2.4 និងម៉ាស៊ីនមេដែលសាងសង់ពី Immich `main` ដូចគ្នានោះ។ សូមរាយការណ៍បញ្ហាទៅ [Issues](https://github.com/freeKC/Immuch360/issues) មិនមែនទៅគម្រោង Immich ទេ។
+build បច្ចុប្បន្ន build 26 ផ្អែកលើ Immich `main` ថ្ងៃទី 10 ខែតុលា 2026 (កំណែ 3.3.0-rc.0) ហើយបានសាកល្បងលើម៉ាស៊ីនមេ Immich 3.2.4 និងម៉ាស៊ីនមេដែលសាងសង់ពី Immich `main` ដូចគ្នានោះ។ សូមរាយការណ៍បញ្ហាទៅ [Issues](https://github.com/freeKC/Immuch360/issues) មិនមែនទៅគម្រោង Immich ទេ។
 
 បន្ថែម: [អ្វីៗផ្សេងទៀតគឺជា Immich](../docs/immuch360/user-guide.md#everything-else-is-immich) [ប្រៀបធៀបជាមួយកម្មវិធី Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app)។
 
@@ -189,34 +189,35 @@ build បច្ចុប្បន្ន build 23 ផ្អែកលើ Immich `m
 
 កូដមូលដ្ឋានមួយ ប្រព័ន្ធប្រតិបត្តិការប្រាំមួយ។ អ្វីដែលនីមួយៗមានសព្វថ្ងៃ:
 
-| សមត្ថភាព | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| វិចិត្រសាល អាល់ប៊ុម ការស្វែងរក ជាមួយម៉ាស៊ីនមេ Immich | ✅ | ✅ | ✅ កម្មវិធីមើល | ✅ | ✅ | 🔧 |
-| ដោយគ្មានម៉ាស៊ីនមេ: មេឌៀផ្ទាល់ខ្លួនរបស់ឧបករណ៍ | ✅ | ✅ | ការចែករំលែកតែប៉ុណ្ណោះ | ✅ | ✅ ថត | 🔧 |
-| រូបថត និងវីដេអូរាបស្មើ | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| រូបថត 360° ជាស្វែរ | ✅ | ✅ | ✅ | ✅ ជ្រមុជ | ✅ | 🔧 |
-| វីដេអូ 360° | ✅ | ✅ គ្មានរបារពេលវេលា | ✅ | ✅ ជ្រមុជ | ✅ | 🔧 |
-| 3D និង VR180 | ✅ ភ្នែកមួយ | ✅ ភ្នែកមួយ | ✅ ភ្នែកមួយ | ✅ 3D ពិតប្រាកដ | ✅ ភ្នែកមួយ | 🔧 |
-| Spatial 2.5D (តាមដានក្បាល) | ✅ ពិសោធន៍ | ✅ ពិសោធន៍ | ❌ | ❌ | 🔜 | ❌ |
-| រូបថតលំហ Apple | ✅ ភ្នែកមួយ | ✅ ភ្នែកមួយ | ✅ ភ្នែកមួយ | ✅ 3D | ✅ ភ្នែកមួយ | 🔧 |
-| ឯកសារដើម Insta360, GoPro និង DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| ការចែករំលែក SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| កាមេរ៉ា Tapo: កំណត់ត្រា | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| កាមេរ៉ា Tapo: ទិដ្ឋភាពផ្ទាល់ | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| ចែករំលែកឧបករណ៍នេះលើបណ្តាញ | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| ផ្ទុកឡើងទៅ Immich ពីការចែករំលែក និងឧបករណ៍ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| ការបញ្ចូល | ប៉ះ ហ្គីរ៉ូស្កុប | ប៉ះ ហ្គីរ៉ូស្កុប | ឧបករណ៍បញ្ជា | ឧបករណ៍បញ្ជា ដៃ | កណ្តុរ ក្តារចុច | |
-| កន្លែងទទួលវា | Google Play, APK | App Store (កំពុងពិនិត្យ) | APK, Google Play (កំពុងពិនិត្យ) | Horizon Store, APK | កម្មវិធីដំឡើង ឬ ZIP (កំណែសាកល្បង) | .deb, .rpm, DMG (ការសាកល្បងដំបូង) |
+| សមត្ថភាព | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| វិចិត្រសាល អាល់ប៊ុម ការស្វែងរក ជាមួយម៉ាស៊ីនមេ Immich | ✅ | ✅ | ✅ កម្មវិធីមើល | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| ដោយគ្មានម៉ាស៊ីនមេ: មេឌៀផ្ទាល់ខ្លួនរបស់ឧបករណ៍ | ✅ | ✅ | ការចែករំលែកតែប៉ុណ្ណោះ | ✅ | ✅ ថត | ✅ ថត | ✅ ថត |
+| រូបថត និងវីដេអូរាបស្មើ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| រូបថត 360° ជាស្វែរ | ✅ | ✅ | ✅ | ✅ ជ្រមុជ | ✅ | ✅ | 🔧 CI |
+| វីដេអូ 360° | ✅ | ✅ គ្មានរបារពេលវេលា | ✅ | ✅ ជ្រមុជ | ✅ | រាបស្មើតែប៉ុណ្ណោះ | រាបស្មើតែប៉ុណ្ណោះ |
+| 3D និង VR180 | ✅ ភ្នែកមួយ | ✅ ភ្នែកមួយ | ✅ ភ្នែកមួយ | ✅ 3D ពិតប្រាកដ | ✅ ភ្នែកមួយ | រូបថតភ្នែកមួយ, វីដេអូរាបស្មើ | រូបថតភ្នែកមួយ, វីដេអូរាបស្មើ |
+| Spatial 2.5D (តាមដានក្បាល) | ✅ ពិសោធន៍ | ✅ ពិសោធន៍ | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| រូបថតលំហ Apple | ✅ ភ្នែកមួយ | ✅ ភ្នែកមួយ | ✅ ភ្នែកមួយ | ✅ 3D | ✅ ភ្នែកមួយ | 🔧 CI | 🔧 CI |
+| ឯកសារដើម Insta360, GoPro និង DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI រូបថត, វីដេអូរាបស្មើ | 🔧 CI រូបថត, វីដេអូរាបស្មើ |
+| ការចែករំលែក SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| កាមេរ៉ា Tapo: កំណត់ត្រា | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| កាមេរ៉ា Tapo: ទិដ្ឋភាពផ្ទាល់ | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| ចែករំលែកឧបករណ៍នេះលើបណ្តាញ | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| ផ្ទុកឡើងទៅ Immich ពីការចែករំលែក និងឧបករណ៍ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| ការបញ្ចូល | ប៉ះ, ហ្គីរ៉ូស្កុប | ប៉ះ, ហ្គីរ៉ូស្កុប | ឧបករណ៍បញ្ជាពីចម្ងាយ | ឧបករណ៍បញ្ជា, ដៃ | កណ្តុរ, ក្តារចុច | កណ្តុរ, ក្តារចុច | កណ្តុរ, ក្តារចុច, ផ្ទាំងប៉ះ |
+| កន្លែងទទួលវា | Google Play, APK | App Store (កំពុងពិនិត្យ) | APK, Google Play (កំពុងពិនិត្យ) | Horizon Store, APK | កម្មវិធីដំឡើង ឬ ZIP (កំណែសាកល្បង) | .deb, .rpm (កំណែសាកល្បង) | DMG ឬ ZIP (កំណែសាកល្បងមិនទាន់ចុះហត្ថលេខា) |
 
-✅ នៅក្នុងកម្មវិធីលើវេទិកានោះ · ❌ មិនផ្តល់ជូននៅទីនោះទេ · 🔜 ក្នុងផែនការ · 🔧 នៅក្នុងកូដប្រភព ហើយសាងសង់ដោយ CI របស់គម្រោង មិនទាន់ចាប់ផ្តើមលើប្រព័ន្ធនោះ។ "ភ្នែកមួយ" មានន័យថាឯកសារ 3D បង្ហាញភ្នែកខាងឆ្វេងរបស់វានៅលើអេក្រង់រាបស្មើ។ មិនមែនគ្រប់សញ្ញា ✅ ទាំងអស់ត្រូវបានពិនិត្យលើឧបករណ៍ពិតនៅឡើយទេ: អ្វីដែលបានពិនិត្យនៅទីណា និងអ្វីដែលនៅសេសសល់ត្រូវបញ្ជាក់ មាននៅក្នុង [មុខងារ](../docs/immuch360/features.md) [ការគាំទ្រវេទិកា](../docs/immuch360/platform-support.md) និង [ភាពឆបគ្នា](../docs/immuch360/compatibility.md)។
+✅ នៅក្នុងកម្មវិធីលើវេទិកានោះ · ❌ មិនផ្តល់ជូននៅទីនោះទេ · 🔜 ក្នុងផែនការ · 🔧 CI នៅក្នុងកូដប្រភព សាងសង់ និងចាប់ផ្តើមដោយ CI របស់គម្រោងលើប្រព័ន្ធនោះ ប៉ុន្តែមិនទាន់បានពិនិត្យជាមួយម៉ាស៊ីនមេ ការចែករំលែក ឬកាមេរ៉ាពិតនៅទីនោះនៅឡើយទេ · រាបស្មើតែប៉ុណ្ណោះ: វីដេអូចាក់ជារាបស្មើ ជាមួយសារមួយ ព្រោះកម្មវិធីបង្ហាញ 360° មានតែលើ Windows ប៉ុណ្ណោះ។ "ភ្នែកមួយ" មានន័យថាឯកសារ 3D បង្ហាញភ្នែកខាងឆ្វេងរបស់វានៅលើអេក្រង់រាបស្មើ។ មិនមែនគ្រប់សញ្ញា ✅ ទាំងអស់ត្រូវបានពិនិត្យលើឧបករណ៍ពិតនៅឡើយទេ: អ្វីដែលបានពិនិត្យនៅទីណា និងអ្វីដែលនៅសេសសល់ត្រូវបញ្ជាក់ មាននៅក្នុង [មុខងារ](../docs/immuch360/features.md) [ការគាំទ្រវេទិកា](../docs/immuch360/platform-support.md) និង [ភាពឆបគ្នា](../docs/immuch360/compatibility.md)។
 
 - **ទូរសព្ទ និងថេប្លេត Android**: កម្មវិធីពេញលេញ ប៉ះ និងហ្គីរ៉ូស្កុប ប្រភពគ្រប់ប្រភេទ។
 - **iPhone និង iPad**: កម្មវិធីពេញលេញ; កម្មវិធីចាក់វីដេអូ 360° មានតែចាក់ និងផ្អាកប៉ុណ្ណោះ ទិដ្ឋភាពផ្ទាល់ Tapo មកនៅពេលក្រោយ ហើយការស្វែងរក DLNA ផ្ញើសំណើ unicast រហូតដល់ Apple ផ្តល់សិទ្ធិ multicast។
 - **Android TV និង Google TV**: APK ដូចគ្នា ដឹកនាំដោយឧបករណ៍បញ្ជា; កម្មវិធីមើលមួយ: ការបេកអាប់ ការផ្ទុកឡើង និងការកែសម្រួលត្រូវបានលាក់។ បានពិនិត្យលើ emulator Google TV (ចូល តារាងពេលវេលា កម្មវិធីមើល ការចែករំលែក ការរុករកឧបករណ៍បញ្ជា) មិនទាន់លើទូរទស្សន៍ពិតនៅឡើយទេ។
-- **Meta Quest 2 Pro 3 និង 3S**: កម្មវិធីជាបន្ទូច បន្ថែមទិដ្ឋភាពជ្រមុជ; HEVC ជា codec ដែលមានសុវត្ថិភាព H.264 ឈប់នៅជុំវិញ 4096x2304 លើ Quest 3; Quest 2 និង Quest Pro មិនទាន់ត្រូវបានសាកល្បងនៅឡើយទេ។
+- **Meta Quest 2, Pro, 3 និង 3S**: កម្មវិធីជាបង្អួច បន្ថែមទិដ្ឋភាពជ្រមុជ; HEVC ជា codec ដែលមានសុវត្ថិភាព H.264 ឈប់នៅជុំវិញ 4096x2304 លើ Quest 3; មានតែ Quest 3 ប៉ុណ្ណោះដែលត្រូវបានសាកល្បង, Quest 2, Quest Pro និង Quest 3S មិនទាន់ត្រូវបានសាកល្បងនៅឡើយទេ។
 - **Windows 10 និង 11**: កំណែសាកល្បងមួយ ជាមួយថតជំនួសឱ្យវិចិត្រសាល កម្មវិធីចាក់វីដេអូផ្ទាល់ខ្លួនរបស់វា (libmpv) សម្រាប់វីដេអូរាបស្មើ និង 360° ឯកសារដើមត្រូវបានតោគ្នាដោយឈីបក្រាហ្វិក ឯកសារ និងថតដែលបើកជាមួយកម្មវិធី ឬទម្លាក់លើបង្អួច កម្មវិធីដំឡើង ឬ ZIP។
-- **macOS និង Linux**: កញ្ចប់ដែលបានសាងសង់ដោយ CI របស់គម្រោង (.deb, .rpm, DMG); នៅលើ Linux កម្មវិធីចាប់ផ្តើម ហើយបង្ហាញរូបថត និងរូបថត 360° ដោយមិនទាន់មានវីដេអូនៅឡើយទេ ហើយការចែករំលែក SMB ត្រូវការ Ubuntu 24.04, Debian 13 ឬ Fedora 39 ឬក្រោយនេះ; កម្មវិធី macOS បានដំណើរការតែលើ CI របស់គម្រោង ដោយគ្មានវីដេអូ ហើយការចូលប្រើបណ្តាញរបស់វាមិនទាន់ត្រូវបានសាកល្បងនៅឡើយទេ។
+- **Linux**: .deb និង .rpm ដែលសាងសង់ដោយ CI របស់គម្រោង បានដំឡើង និងពិនិត្យលើ Ubuntu 22.04 និង 24.04, Debian 12 និង Fedora 40 និង 44; រូបថត, រូបថត 360° និងវីដេអូរាបស្មើ តាមរយៈ libmpv របស់ប្រព័ន្ធ (វីដេអូ 360°, 3D និងវីដេអូដើម ចាក់ជារាបស្មើ ជាមួយសារមួយ); ការចែករំលែក SMB ចាប់ពី Ubuntu 22.04 និង Debian 12 ឡើងទៅ; មិនទាន់ដំណើរការលើ PC Linux ពិតនៅឡើយទេ មានតែក្រោម WSLg និងក្នុង container ប៉ុណ្ណោះ។
+- **macOS**: DMG និង ZIP ដែលសាងសង់ដោយ CI របស់គម្រោង ជាកំណែសកល មិនទាន់ចុះហត្ថលេខា (Gatekeeper សួរម្តង); វាចាប់ផ្តើម បើកឯកសារ និងថតដែលផ្តល់ឱ្យវា រួមទាំងពី Finder រក្សាទុកការសម្ងាត់របស់វានៅក្នុង login keychain ហើយចាក់វីដេអូរាបស្មើជាមួយ libmpv ផ្ទាល់ខ្លួនរបស់វា ទាំងអស់នេះបានពិនិត្យតែលើ Mac CI របស់គម្រោងប៉ុណ្ណោះ; មិនទាន់មានអ្វីដំណើរការលើ Mac ពិតនៅឡើយទេ។
 
 <a id="advanced-features"></a>
 ## មុខងារកម្រិតខ្ពស់
@@ -300,7 +301,7 @@ build បច្ចុប្បន្ន build 23 ផ្អែកលើ Immich `m
 
 Immuch360 គឺជាកំណែមិនផ្លូវការនៃកម្មវិធីទូរសព្ទ [Immich](https://github.com/immich-app/immich) ក្រោម [GNU AGPL v3](../LICENSE) មិនមានទំនាក់ទំនង ឬការគាំទ្រពីក្រុម Immich ឬ FUTO ឡើយ។ កំណែនេះកើតមានឡើងព្រោះការមើល 360° លើទូរសព្ទត្រូវបានស្នើឡើងនៅក្នុង Immich តាំងពីខែមករា 2024 ហើយមិនទាន់នៅក្នុងកម្មវិធីផ្លូវការនៅឡើយទេ; វាចែកចាយវាឥឡូវនេះ ប្រមូលមតិកែលម្អពិតប្រាកដពីឧបករណ៍ ហើយនឹងផ្តល់ត្រឡប់ទៅ Immich ជា pull request តូចៗ អ្វីគ្រប់យ៉ាងដែលអ្នកថែទាំចង់បាន។ អ្វីគ្រប់យ៉ាងដែលកម្មវិធីផ្លូវការធ្វើ ត្រូវបានរក្សា; សាខា ខ្សែសង្វាក់សាងសង់ និង CI ត្រូវបានពន្យល់នៅក្នុង [សាងសង់ដោយខ្លួនឯង](../docs/immuch360/build.md)។
 
-កម្មវិធីមើលរូបថត 360° គឺផ្អែកលើ pull request ដើម [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) ដោយ dmitry-brazhenko ដែលខ្លួនវាសាងសង់លើគំរូដំបូងរបស់ bencefr ក្នុង [#30192](https://github.com/immich-app/immich/pull/30192); សូមអរគុណដល់ទាំងពីរ។ កាមេរ៉ា Tapo ត្រូវបានសរសេរពីអ្វីដែល [pytapo](https://github.com/JurajNyiri/pytapo) [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) និង [python-kasa](https://github.com/python-kasa/python-kasa) បានឯកសារ។ ទិដ្ឋភាព Meta Quest ពឹងផ្អែកលើ Meta Spatial SDK ដែលមិនមែនជាប្រភពបើកចំហ ដូច្នេះវានៅតែក្នុងកំណែនេះ។ ZIP របស់ Windows ផ្ទុក libmpv (បណ្ណាល័យរបស់ [mpv](https://mpv.io) ជាមួយ [FFmpeg](https://ffmpeg.org)) សាងសង់ដោយគម្រោង ក្រោម LGPL ជាមួយអាជ្ញាបណ្ណ និងកូដប្រភពរបស់វា; ព័ត៌មានលម្អិត និងម៉ាកសញ្ញារបស់វេទិកាដែលបានរៀបរាប់នៅក្នុងទំព័រនេះ មាននៅក្នុង [អាជ្ញាបណ្ណ និងម៉ាកសញ្ញា](../docs/immuch360/platform-support.md#license-and-trademarks)។
+កម្មវិធីមើលរូបថត 360° គឺផ្អែកលើ pull request ដើម [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) ដោយ dmitry-brazhenko ដែលខ្លួនវាសាងសង់លើគំរូដំបូងរបស់ bencefr ក្នុង [#30192](https://github.com/immich-app/immich/pull/30192); សូមអរគុណដល់ទាំងពីរ។ ការកែតម្រូវឧបករណ៍បញ្ជាពីចម្ងាយសម្រាប់តម្រងស្វែងរក និងការតម្រៀបអាល់ប៊ុមនៅលើទូរទស្សន៍ បានចាប់ផ្តើមពីការងាររបស់ mlc70 ក្នុង [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1)។ កាមេរ៉ា Tapo ត្រូវបានសរសេរពីអ្វីដែល [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) និង [python-kasa](https://github.com/python-kasa/python-kasa) បានឯកសារ។ ទិដ្ឋភាព Meta Quest ពឹងផ្អែកលើ Meta Spatial SDK ដែលមិនមែនជាប្រភពបើកចំហ ដូច្នេះវានៅតែក្នុងកំណែនេះ។ ZIP របស់ Windows ផ្ទុក libmpv (បណ្ណាល័យរបស់ [mpv](https://mpv.io) ជាមួយ [FFmpeg](https://ffmpeg.org)) សាងសង់ដោយគម្រោង ក្រោម LGPL ជាមួយអាជ្ញាបណ្ណ និងកូដប្រភពរបស់វា; ព័ត៌មានលម្អិត និងម៉ាកសញ្ញារបស់វេទិកាដែលបានរៀបរាប់នៅក្នុងទំព័រនេះ មាននៅក្នុង [អាជ្ញាបណ្ណ និងម៉ាកសញ្ញា](../docs/immuch360/platform-support.md#license-and-trademarks)។
 
 រូបថតទូរសព្ទនៃទំព័រនេះត្រូវបានថតលើ build Android ក្នុង emulator រូបថតទូរទស្សន៍លើ emulator Google TV និងរូបថត Windows លើកុំព្យូទ័រ Windows 11 ទាំងអស់ជាមួយប្រព័ន្ធឡើង CC0 ពី [Poly Haven](https://polyhaven.com); រូបថតកាសត្រូវបានថតលើ Quest 3។
 
@@ -309,8 +310,8 @@ Immuch360 គឺជាកំណែមិនផ្លូវការនៃកម�
 
 អ្វីដែលមិនទាន់ធ្វើ អ្វីដែលទំនងជាងគេមុន។ គ្មានអ្វីនៅទីនេះជាការសន្យាទេ ហើយមតិកែលម្អនៅលើ [issue tracker](https://github.com/freeKC/Immuch360/issues) ជួយសម្រេចថាអ្វីមកមុន។
 
-- **ហាង**: Google Play (build 23 កំពុងពិនិត្យ បញ្ជីទូរទស្សន៍កំពុងពិនិត្យ) App Store (កំណែ 3.3.0 កំពុងពិនិត្យ) Meta Horizon Store (build 21 កំពុងពិនិត្យ)។
-- **កុំព្យូទ័រ**: ការសាកល្បងមុខងារនីមួយៗដោយដៃលើ PC Windows; បន្ទាប់មក Spatial 2.5D ជាមួយ webcam; បន្ទាប់មកកម្មវិធីចាក់វីដេអូនៅលើ Linux និង macOS និងការសាកល្បងលើ Mac ពិតមួយ; បន្ទាប់មក build ចុះហត្ថលេខា និងបច្ចុប្បន្នភាពស្វ័យប្រវត្តិ។
+- **ហាង**: Google Play (build 26 នឹងមកដល់, បញ្ជីទូរទស្សន៍កំពុងពិនិត្យ), App Store (កំណែ 3.3.1 កំពុងពិនិត្យតាំងពីថ្ងៃទី 14 ខែតុលា), Meta Horizon Store (build 25 កំពុងពិនិត្យ)។
+- **កុំព្យូទ័រ**: ការសាកល្បងមុខងារនីមួយៗដោយដៃលើ PC Windows; បន្ទាប់មកកម្មវិធីបង្ហាញវីដេអូ 360° នៅលើ Linux និង macOS និងការសាកល្បងលើ Mac ពិត និង PC Linux ពិតមួយ; បន្ទាប់មក build ចុះហត្ថលេខា និងបច្ចុប្បន្នភាពស្វ័យប្រវត្តិ; បន្ទាប់មក Spatial 2.5D ជាមួយ webcam។
 - **ទូរសព្ទ និងថេប្លេត**: របារពេលវេលាក្នុងកម្មវិធីចាក់វីដេអូ 360° របស់ iOS ទៅមុខ និងថយក្រោយក្នុងកម្មវិធីចាក់ 360° របស់ទូរសព្ទ ជម្រើសផ្លូវសំឡេងក្នុងកម្មវិធីចាក់រាបស្មើ ទិដ្ឋភាពផ្ទាល់ Tapo លើ iPhone និង iPad។
 - **មេឌៀជ្រមុជ**: .dng fisheye ទ្វេ ការតម្រង់កម្រិតនៃវីដេអូ GoPro និង DJI ពីទិន្នន័យចលនាផ្ទាល់ខ្លួនរបស់ពួកវា វីដេអូលំហជា 3D លើ Quest ប្រសិនបើឌិកូដ័ររបស់វាអនុញ្ញាត ទៅមុខ និងថយក្រោយរវាងរូបថតលំហក្នុងកាស។
 - **ប្រភព**: អូសរវាងឯកសារនៃថតចែករំលែកមួយ ការផ្ទៀងផ្ទាត់ Digest សម្រាប់ WebDAV កូដ QR ដើម្បីនាំ token Plex ពីកុំព្យូទ័រ IPv6 សម្រាប់ Plex កំណត់ត្រា Tapo H.265 ប៉ុស្តិ៍នៅលើអេក្រង់ដើមទូរទស្សន៍។

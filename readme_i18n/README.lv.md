@@ -20,14 +20,14 @@ Immuch360 ir bezmaksas un atvērtā koda lietotne, kas atrod, pārlūko, atskaņ
 
 <div align="center">
 
-| Platforma | Kur iegūt | Statuss 2026. gada 12. oktobrī |
+| Platforma | Kur iegūt | Statuss 2026. gada 20. oktobrī |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** tālruņi un planšetes | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play (build 20; build 23 pārbaudē), build 23 GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone un iPad** | App Store | versija 3.3.0 gaida Apple pārbaudi; pa to laiku [uzbūvējiet pašu](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV un Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 GitHub; TV ieraksts Google pārbaudē |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 un 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store (build 14; build 21 pārbaudē), build 23 GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalators vai ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, priekšskatījums: foto, plakani un 360° video, koplietojumi, Plex, kameras, ar programmu atvērti faili |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS un Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | agrīni priekšskatījumi: Linux ar foto un 360° foto, vēl bez video; macOS lietotne tikai sākta projekta CI |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** tālruņi un planšetes | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play (build 25), build 26 GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone un iPad** | App Store | versija 3.3.1 (build 24) gaida Apple pārbaudi kopš 14. oktobra; pa to laiku [uzbūvējiet pašu](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV un Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 GitHub, ar labotu meklēšanas filtru vadību ar tālvadības pulti; TV ieraksts Google pārbaudē |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 un 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store (build 23; build 25 pārbaudē), build 26 GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalators vai ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, priekšskatījums: foto, plakani un 360° video, koplietojumi, Plex, kameras, ar programmu atvērti faili, saskarne 89 valodās |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS un Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | priekšskatījumi: Linux ar foto, 360° foto un plakaniem video (360° video atskaņojas plakani); macOS tas pats, pārbaudīts tikai projekta CI Mac datorā, neparakstīts |
 
 *Statusi tiek atjaunināti ar katru laidienu; detaļas, build pēc build, ir [Laidiena statusā](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Ar [Immich](https://github.com/immich-app/immich) serveri Immuch360 ir Immich mo
 2. Iestatījumos, Aktīvā elementa skatītājā, Videos, "Video avots" izvēlas oriģinālu, ja šī ierīce to atkodē, vienmēr oriģinālu, vai vienmēr transkodēto straumi.
 3. Lai parādītu 360° foto kādam, kam nav lietotnes, kopīgojiet to ar Immich kopīgo saiti: Immich web lietotne to parāda kā lodi viņu pārlūkā.
 
-Pašreizējais build, build 23, ir bāzēts uz Immich `main` no 2026. gada 10. oktobra (versija 3.3.0-rc.0) un ir pārbaudīts ar Immich 3.2.4 serveri un serveri, kas veidots no tā paša Immich `main`. Lūdzu, ziņojiet par problēmām [problēmu sekotājā](https://github.com/freeKC/Immuch360/issues), nevis Immich projektam.
+Pašreizējais build, build 26, ir balstīts uz Immich `main` no 2026. gada 10. oktobra (versija 3.3.0-rc.0) un pārbaudīts ar Immich 3.2.4 serveri un serveri, kas uzbūvēts no tā paša Immich `main`. Lūdzu, ziņojiet par problēmām sadaļā [Issues](https://github.com/freeKC/Immuch360/issues), nevis Immich projektam.
 
 Vairāk: [viss cits ir Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [salīdzinājums ar Immich lietotni](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Vairāk: [Tapo kameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-a
 
 Viena koda bāze, sešas vides. Kas katrai ir šodien:
 
-| Iespēja | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerija, albumi, meklēšana ar Immich serveri | ✅ | ✅ | ✅ skatītājs | ✅ | ✅ | 🔧 |
-| Bez servera: ierīces pašas media | ✅ | ✅ | tikai koplietojumi | ✅ | ✅ mapes | 🔧 |
-| Plakani foto un video | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360° foto kā lode | ✅ | ✅ | ✅ | ✅ iespaidīgi | ✅ | 🔧 |
-| 360° video | ✅ | ✅ nav laika joslas | ✅ | ✅ iespaidīgi | ✅ | 🔧 |
-| 3D un VR180 | ✅ viena acs | ✅ viena acs | ✅ viena acs | ✅ patiess 3D | ✅ viena acs | 🔧 |
-| Spatial 2.5D (galvas sekošana) | ✅ eksperimentāls | ✅ eksperimentāls | ❌ | ❌ | 🔜 | ❌ |
-| Apple spatial foto | ✅ viena acs | ✅ viena acs | ✅ viena acs | ✅ 3D | ✅ viena acs | 🔧 |
-| Insta360, GoPro un DJI oriģinālie faili | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA koplietojumi | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kameras: ieraksti | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kameras: tiešraide | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Koplietot šo ierīci tīklā | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Augšupielāde uz Immich no koplietojumiem un ierīces | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Ievade | pieskāriens, žiroskops | pieskāriens, žiroskops | tālvadības pults | kontrolieri, rokas | pele, klaviatūra | |
-| Kur to iegūt | Google Play, APK | App Store (pārbaudē) | APK, Google Play (pārbaudē) | Horizon Store, APK | instalators vai ZIP (priekšskatījums) | .deb, .rpm, DMG (agrīni priekšskatījumi) |
+| Iespēja | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galerija, albumi, meklēšana ar Immich serveri | ✅ | ✅ | ✅ skatītājs | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Bez servera: ierīces pašas media | ✅ | ✅ | tikai koplietojumi | ✅ | ✅ mapes | ✅ mapes | ✅ mapes |
+| Plakani foto un video | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 360° foto kā lode | ✅ | ✅ | ✅ | ✅ iespaidīgi | ✅ | ✅ | 🔧 CI |
+| 360° video | ✅ | ✅ nav laika joslas | ✅ | ✅ iespaidīgi | ✅ | tikai plakani | tikai plakani |
+| 3D un VR180 | ✅ viena acs | ✅ viena acs | ✅ viena acs | ✅ patiess 3D | ✅ viena acs | foto viena acs, video plakani | foto viena acs, video plakani |
+| Spatial 2.5D (galvas sekošana) | ✅ eksperimentāls | ✅ eksperimentāls | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple spatial foto | ✅ viena acs | ✅ viena acs | ✅ viena acs | ✅ 3D | ✅ viena acs | 🔧 CI | 🔧 CI |
+| Insta360, GoPro un DJI oriģinālie faili | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI foto, video plakani | 🔧 CI foto, video plakani |
+| SMB, WebDAV, DLNA koplietojumi | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameras: ieraksti | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameras: tiešraide | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Koplietot šo ierīci tīklā | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Augšupielāde uz Immich no koplietojumiem un ierīces | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Ievade | pieskāriens, žiroskops | pieskāriens, žiroskops | tālvadības pults | kontrolieri, rokas | pele, klaviatūra | pele, klaviatūra | pele, klaviatūra, skārienpaliktnis |
+| Kur to iegūt | Google Play, APK | App Store (pārbaudē) | APK, Google Play (pārbaudē) | Horizon Store, APK | instalators vai ZIP (priekšskatījums) | .deb, .rpm (priekšskatījums) | DMG vai ZIP (neparakstīts priekšskatījums) |
 
-✅ lietotnē šajā platformā · ❌ tur netiek piedāvāts · 🔜 plānots · 🔧 pirmkodā un projekta CI veidots, uz šīs sistēmas vēl nav sākts. "Viena acs" nozīmē, ka 3D fails rāda savas kreisās acs attēlu plakanā ekrānā. Ne katrs ✅ vēl ir pārbaudīts reālā ierīcē: kas kur pārbaudīts un kas vēl jāapstiprina, ir [Funkcijās](../docs/immuch360/features.md), [Platformas atbalstā](../docs/immuch360/platform-support.md) un [Saderībā](../docs/immuch360/compatibility.md).
+✅ lietotnē šajā platformā · ❌ tur netiek piedāvāts · 🔜 plānots · 🔧 CI pirmkodā, projekta CI uzbūvēts un palaists šajā sistēmā, tur vēl nav pārbaudīts ar īstu serveri, koplietojumu vai kameru · tikai plakani: video atskaņojas plakani, ar paziņojumu, jo 360° renderētājs darbojas tikai Windows. "Viena acs" nozīmē, ka 3D fails rāda savas kreisās acs attēlu plakanā ekrānā. Ne katrs ✅ vēl ir pārbaudīts reālā ierīcē: kas kur pārbaudīts un kas vēl jāapstiprina, ir [Funkcijās](../docs/immuch360/features.md), [Platformas atbalstā](../docs/immuch360/platform-support.md) un [Saderībā](../docs/immuch360/compatibility.md).
 
 - **Android tālruņi un planšetes**: pilna lietotne, pieskāriens un žiroskops, visi avoti.
 - **iPhone un iPad**: pilna lietotne; 360° video atskaņotājam ir tikai atskaņošana un pauze, Tapo tiešraide tiks vēlāk, un DLNA meklēšana sūta unicast pieprasījumus, kamēr Apple piešķirs multicast atļauju.
 - **Android TV un Google TV**: tā pati APK, vadīta ar tālvadības pulti; skatītājs: rezerves kopēšana, augšupielādes un redaktēšana ir paslēptas. Pārbaudīts Google TV emulatorā (pieslēgšanās, laika skala, skatītāji, koplietojumi, navigācija ar tālvadības pulti), vēl nav pārbaudīts reālā televizorā.
-- **Meta Quest 2, Pro, 3 un 3S**: lietotne kā logs, plus iespaidīgais skats; HEVC ir drošais kodeks, H.264 apstājas ap 4096x2304 Quest 3; Quest 2 un Quest Pro vēl nav testēti.
+- **Meta Quest 2, Pro, 3 un 3S**: lietotne kā logs, kā arī iespaidīgais skats; HEVC ir drošais kodeks, H.264 uz Quest 3 apstājas ap 4096x2304; pārbaudīts tikai Quest 3, bet Quest 2, Quest Pro un Quest 3S vēl nav pārbaudīti.
 - **Windows 10 un 11**: priekšskatījums, mapes galerijas vietā, savs plakanu un 360° video atskaņotājs (libmpv), raw faili, sašūti grafikas čipā, ar programmu atvērti vai logā nomesti faili un mapes, instalators vai ZIP.
-- **macOS un Linux**: pakotnes, projekta CI veidotas (.deb, .rpm, DMG); Linux lietotne sāk darbu un rāda foto un 360° foto, vēl bez video, un SMB koplietojumiem nepieciešams Ubuntu 24.04, Debian 13 vai Fedora 39, vai jaunāka; macOS lietotne ir darbojusies tikai projekta CI, bez video un ar nepārbaudītu tīkla piekļuvi.
+- **Linux**: .deb un .rpm, ko uzbūvējis projekta CI, instalēti un pārbaudīti Ubuntu 22.04 un 24.04, Debian 12 un Fedora 40 un 44; foto, 360° foto un plakani video caur sistēmas libmpv (360°, 3D un oriģinālie video atskaņojas plakani ar paziņojumu); SMB koplietojumi no Ubuntu 22.04 un Debian 12; vēl nav palaists īstā Linux datorā, tikai WSLg vidē un konteineros.
+- **macOS**: DMG un ZIP, ko uzbūvējis projekta CI, universāli, neparakstīti (Gatekeeper vaicā vienreiz); lietotne startē, atver tai nodotos failus un mapes, arī no Finder, glabā savus noslēpumus pieteikšanās atslēgu piekariņā (login keychain) un atskaņo plakanus video ar savu libmpv, viss pārbaudīts tikai projekta CI Mac datorā; īstā Mac vēl nekas nav palaists.
 
 <a id="advanced-features"></a>
 ## Papildu funkcijas
@@ -300,7 +301,7 @@ Nekas neaizceļo pie izstrādātāja: nav konta, analītikas, avāriju ziņošan
 
 Immuch360 ir neoficiāls [Immich](https://github.com/immich-app/immich) mobilās lietotnes fork, saskaņā ar [GNU AGPL v3](../LICENSE), nav saistīts ar un to neatbalsta Immich komanda vai FUTO. Fork pastāv, jo 360° skatīšana mobilajā lietotnē Immich tiek pieprasīta kopš 2024. gada janvāra un oficiālajā lietotnē vēl nav; tas to piegādā tagad, apkopo reālu ierīču atgriezenisko saiti un piedāvās atpakaļ Immich, mazos pull request, to, ko uzturētāji gribēs. Viss, ko dara oficiālā lietotne, ir saglabāts; zari, build ķēde un CI ir aprakstīti [Uzbūvējiet pašu](../docs/immuch360/build.md).
 
-360° foto skatītājs ir bāzēts uz upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) no dmitry-brazhenko, tas pats veidots uz bencefr prototipa [#30192](https://github.com/immich-app/immich/pull/30192); paldies abiem. Tapo kameras rakstītas no tā, ko dokumentē [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) un [python-kasa](https://github.com/python-kasa/python-kasa). Meta Quest skats paļaujas uz Meta Spatial SDK, kas nav atvērtā koda, tāpēc paliek tikai šajā fork. Windows ZIP ietver libmpv (bibliotēku no [mpv](https://mpv.io), ar [FFmpeg](https://ffmpeg.org)), projekta veidotu, saskaņā ar LGPL, ar tā licencēm un pirmkodu; detaļas un šajā lapā minēto platformu preču zīmes ir [Licencē un preču zīmēs](../docs/immuch360/platform-support.md#license-and-trademarks).
+360° foto skatītājs ir balstīts uz dmitry-brazhenko upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169), kas pats veidots uz bencefr prototipa [#30192](https://github.com/immich-app/immich/pull/30192); paldies abiem. Meklēšanas filtru vadības ar tālvadības pulti labojumi un albumu kārtošana televizoros sākās no mlc70 darba [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Tapo kameru atbalsts uzrakstīts pēc tā, ko dokumentē [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) un [python-kasa](https://github.com/python-kasa/python-kasa). Meta Quest skats balstās uz Meta Spatial SDK, kas nav atvērtā koda, tāpēc tas paliek šajā fork. Windows ZIP satur projekta uzbūvētu libmpv ([mpv](https://mpv.io) bibliotēku, ar [FFmpeg](https://ffmpeg.org)) saskaņā ar LGPL, ar tās licencēm un pirmkodu; detaļas un šajā lapā minēto platformu preču zīmes ir sadaļā [Licence un preču zīmes](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Šīs lapas tālruņa uzņēmumi uzņemti Android build emulatorā, televizora uzņemti Google TV emulatorā un Windows uzņemti Windows 11 datorā, visi ar CC0 panorāmām no [Poly Haven](https://polyhaven.com); briļļu uzņēmumi uzņemti Quest 3 brillēs.
 
@@ -309,8 +310,8 @@ Immuch360 ir neoficiāls [Immich](https://github.com/immich-app/immich) mobilās
 
 Kas vēl nav izdarīts, visticamākais vispirms. Nekas šeit nav solījums, un atsauksmes [problēmu sekotājā](https://github.com/freeKC/Immuch360/issues) palīdz izlemt, kas nāks vispirms.
 
-- **Veikali**: Google Play (build 23 pārbaudē, TV ieraksts pārbaudē), App Store (versija 3.3.0 pārbaudē), Meta Horizon Store (build 21 pārbaudē).
-- **Datori**: katras funkcijas pārbaude ar roku Windows datorā; tad Spatial 2.5D ar webkameru; tad video atskaņotājs Linux un macOS un pārbaude uz reāla Mac; tad parakstīts build un automātiski atjauninājumi.
+- **Veikali**: Google Play (build 26 drīzumā, TV ieraksts pārbaudē), App Store (versija 3.3.1 pārbaudē kopš 14. oktobra), Meta Horizon Store (build 25 pārbaudē).
+- **Datori**: katras funkcijas manuāla pārbaude Windows datorā; tad 360° video renderētājs Linux un macOS, pārbaude īstā Mac un īstā Linux datorā; tad parakstīts build un automātiskie atjauninājumi; tad Spatial 2.5D ar tīmekļa kameru.
 - **Tālruņi un planšetes**: laika josla iOS 360° video atskaņotājā, iepriekšējais un nākamais tālruņu 360° atskaņotājos, audio celiņa izvēle plakanajā atskaņotājā, Tapo tiešraide iPhone un iPad.
 - **Iespaidīga media**: dubultā fisheye .dng, GoPro un DJI video līmeņošana no to pašu kustības datiem, spatial video 3D Quest, ja tās dekoderi to atļauj, iepriekšējais un nākamais starp spatial foto brillēs.
 - **Avoti**: vilkšana starp koplietojuma mapes failiem, Digest autentifikācija WebDAV, QR kods, lai atnestu Plex tokenu no datora, IPv6 Plex, H.265 Tapo ieraksti, kanāli TV sākuma ekrānā.

@@ -20,14 +20,14 @@ Immuch360 అనేది మీ ఫోటోలు మరియు వీడి
 
 <div align="center">
 
-| ప్లాట్‌ఫారమ్ | ఎక్కడ పొందాలి | 12 అక్టోబర్ 2026 నాటి స్థితి |
+| ప్లాట్‌ఫారమ్ | ఎక్కడ పొందాలి | 20 అక్టోబర్ 2026 నాటి స్థితి |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ఫోన్‌లు మరియు టాబ్లెట్‌లు | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Playలో (build 20; build 23 సమీక్షలో), build 23 GitHubలో |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone మరియు iPad** | App Store | వెర్షన్ 3.3.0 Apple సమీక్ష కోసం వేచి ఉంది; అంతవరకు [దాన్ని మీరే నిర్మించండి](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV మరియు Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 GitHubలో; TV లిస్టింగ్ Google సమీక్షలో ఉంది |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 మరియు 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Storeలో (build 14; build 21 సమీక్షలో), build 23 GitHubలో |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [ఇన్‌స్టాలర్ లేదా ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, ఒక ప్రివ్యూ: ఫోటోలు, ఫ్లాట్ మరియు 360° వీడియోలు, షేర్‌లు, Plex, కెమెరాలు, ప్రోగ్రామ్‌తో తెరిచిన ఫైళ్లు |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS మరియు Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | ప్రారంభ ప్రివ్యూలు: Linuxలో ఫోటోలు మరియు 360° ఫోటోలు, వీడియోలు ఇంకా లేవు; macOS ప్రాజెక్ట్ CIలో మాత్రమే ప్రారంభించబడింది |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** ఫోన్‌లు మరియు టాబ్లెట్‌లు | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Playలో (build 25), build 26 GitHubలో |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone మరియు iPad** | App Store | వెర్షన్ 3.3.1 (build 24) 14 అక్టోబర్ నుండి Apple సమీక్ష కోసం వేచి ఉంది; అంతవరకు [దాన్ని మీరే నిర్మించండి](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV మరియు Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 GitHubలో, శోధన ఫిల్టర్‌లలో రిమోట్ కంట్రోల్ సవరణలతో; TV లిస్టింగ్ Google సమీక్షలో ఉంది |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 మరియు 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Storeలో (build 23; build 25 సమీక్షలో), build 26 GitHubలో |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [ఇన్‌స్టాలర్ లేదా ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, ఒక ప్రివ్యూ: ఫోటోలు, ఫ్లాట్ మరియు 360° వీడియోలు, షేర్‌లు, Plex, కెమెరాలు, ప్రోగ్రామ్‌తో తెరిచిన ఫైళ్లు, 89 భాషలలో ఇంటర్‌ఫేస్ |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS మరియు Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | ప్రివ్యూలు: Linuxలో ఫోటోలు, 360° ఫోటోలు మరియు ఫ్లాట్ వీడియోలు (360° వీడియోలు ఫ్లాట్‌గా ప్లే అవుతాయి); macOSలో కూడా అంతే, ప్రాజెక్ట్ CI Macలో మాత్రమే తనిఖీ చేయబడింది, సైన్ చేయబడలేదు |
 
 *స్థితులు ప్రతి రిలీజ్‌లో అప్‌డేట్ చేయబడతాయి; వివరాలు, బిల్డ్ బిల్డ్‌కు, [రిలీజ్ స్థితి](../docs/immuch360/release-status.md)లో ఉన్నాయి.*
 
@@ -138,7 +138,7 @@ Immuch360కు ఖాతా అవసరం లేదు, సర్వర్ �
 2. Settingsలో, Asset Viewer, Videos, "వీడియో మూలం" ఈ డివైస్ దానిని డీకోడ్ చేసినప్పుడు అసలు ఫైల్‌ను, ఎల్లప్పుడూ అసలు ఫైల్‌ను, లేదా ఎల్లప్పుడూ ట్రాన్స్‌కోడ్ చేసిన స్ట్రీమ్‌ను ఎంచుకుంటుంది.
 3. యాప్ లేని ఎవరికైనా ఒక 360° ఫోటోను చూపించడానికి, దానిని Immich షేర్డ్ లింక్‌తో షేర్ చేయండి: Immich వెబ్ యాప్ దానిని వారి బ్రౌజర్‌లో గోళంగా చూపిస్తుంది.
 
-ప్రస్తుత బిల్డ్, build 23, 10 అక్టోబర్ 2026 నాటి Immich `main` (వెర్షన్ 3.3.0-rc.0) ఆధారంగా ఉంది మరియు ఒక Immich 3.2.4 సర్వర్ మరియు అదే Immich `main` నుండి బిల్డ్ చేయబడిన సర్వర్‌కు వ్యతిరేకంగా పరీక్షించబడింది. దయచేసి సమస్యలను [Issues](https://github.com/freeKC/Immuch360/issues)లో నివేదించండి, Immich ప్రాజెక్ట్‌కు కాదు.
+ప్రస్తుత బిల్డ్, build 26, 10 అక్టోబర్ 2026 నాటి Immich `main` (వెర్షన్ 3.3.0-rc.0) ఆధారంగా ఉంది మరియు ఒక Immich 3.2.4 సర్వర్ మరియు అదే Immich `main` నుండి బిల్డ్ చేయబడిన సర్వర్‌కు వ్యతిరేకంగా పరీక్షించబడింది. దయచేసి సమస్యలను [Issues](https://github.com/freeKC/Immuch360/issues)లో నివేదించండి, Immich ప్రాజెక్ట్‌కు కాదు.
 
 మరింత: [మిగతావన్నీ Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [Immich యాప్‌తో పోలిక](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Immuch360కు ఖాతా అవసరం లేదు, సర్వర్ �
 
 ఒక కోడ్ బేస్, ఆరు పరిసరాలు. ప్రతి ఒక్కటి ఈరోజు ఏమి కలిగి ఉంది:
 
-| సామర్థ్యం | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Immich సర్వర్‌తో గ్యాలరీ, ఆల్బమ్‌లు, శోధన | ✅ | ✅ | ✅ వీక్షకం | ✅ | ✅ | 🔧 |
-| సర్వర్ లేకుండా: డివైస్ స్వంత మీడియా | ✅ | ✅ | షేర్‌లు మాత్రమే | ✅ | ✅ ఫోల్డర్‌లు | 🔧 |
-| ఫ్లాట్ ఫోటోలు మరియు వీడియోలు | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| గోళంగా 360° ఫోటోలు | ✅ | ✅ | ✅ | ✅ ఇమ్మర్సివ్ | ✅ | 🔧 |
-| 360° వీడియోలు | ✅ | ✅ టైమ్ బార్ లేదు | ✅ | ✅ ఇమ్మర్సివ్ | ✅ | 🔧 |
-| 3D మరియు VR180 | ✅ ఒక కన్ను | ✅ ఒక కన్ను | ✅ ఒక కన్ను | ✅ నిజమైన 3D | ✅ ఒక కన్ను | 🔧 |
-| Spatial 2.5D (హెడ్ ట్రాకింగ్) | ✅ ప్రయోగాత్మకం | ✅ ప్రయోగాత్మకం | ❌ | ❌ | 🔜 | ❌ |
-| Apple spatial ఫోటోలు | ✅ ఒక కన్ను | ✅ ఒక కన్ను | ✅ ఒక కన్ను | ✅ 3D | ✅ ఒక కన్ను | 🔧 |
-| రా Insta360, GoPro మరియు DJI ఫైళ్లు | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA షేర్‌లు | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo కెమెరాలు: రికార్డింగ్‌లు | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo కెమెరాలు: లైవ్ వీక్షణం | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| ఈ డివైస్‌ను నెట్‌వర్క్‌లో షేర్ చేయండి | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| షేర్‌లు మరియు డివైస్ నుండి Immichకు అప్‌లోడ్ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| ఇన్‌పుట్ | టచ్, గైరోస్కోప్ | టచ్, గైరోస్కోప్ | రిమోట్ | కంట్రోలర్‌లు, చేతులు | మౌస్, కీబోర్డ్ | |
-| ఎక్కడ పొందాలి | Google Play, APK | App Store (రివ్యూలో) | APK, Google Play (రివ్యూలో) | Horizon Store, APK | ఇన్‌స్టాలర్ లేదా ZIP (ప్రివ్యూ) | .deb, .rpm, DMG (ప్రారంభ ప్రివ్యూలు) |
+| సామర్థ్యం | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Immich సర్వర్‌తో గ్యాలరీ, ఆల్బమ్‌లు, శోధన | ✅ | ✅ | ✅ వీక్షకం | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| సర్వర్ లేకుండా: డివైస్ స్వంత మీడియా | ✅ | ✅ | షేర్‌లు మాత్రమే | ✅ | ✅ ఫోల్డర్‌లు | ✅ ఫోల్డర్‌లు | ✅ ఫోల్డర్‌లు |
+| ఫ్లాట్ ఫోటోలు మరియు వీడియోలు | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| గోళంగా 360° ఫోటోలు | ✅ | ✅ | ✅ | ✅ ఇమ్మర్సివ్ | ✅ | ✅ | 🔧 CI |
+| 360° వీడియోలు | ✅ | ✅ టైమ్ బార్ లేదు | ✅ | ✅ ఇమ్మర్సివ్ | ✅ | ఫ్లాట్ మాత్రమే | ఫ్లాట్ మాత్రమే |
+| 3D మరియు VR180 | ✅ ఒక కన్ను | ✅ ఒక కన్ను | ✅ ఒక కన్ను | ✅ నిజమైన 3D | ✅ ఒక కన్ను | ఫోటోలు ఒక కన్ను, వీడియోలు ఫ్లాట్ | ఫోటోలు ఒక కన్ను, వీడియోలు ఫ్లాట్ |
+| Spatial 2.5D (హెడ్ ట్రాకింగ్) | ✅ ప్రయోగాత్మకం | ✅ ప్రయోగాత్మకం | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple spatial ఫోటోలు | ✅ ఒక కన్ను | ✅ ఒక కన్ను | ✅ ఒక కన్ను | ✅ 3D | ✅ ఒక కన్ను | 🔧 CI | 🔧 CI |
+| రా Insta360, GoPro మరియు DJI ఫైళ్లు | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI ఫోటోలు, వీడియోలు ఫ్లాట్ | 🔧 CI ఫోటోలు, వీడియోలు ఫ్లాట్ |
+| SMB, WebDAV, DLNA షేర్‌లు | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo కెమెరాలు: రికార్డింగ్‌లు | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo కెమెరాలు: లైవ్ వీక్షణం | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| ఈ డివైస్‌ను నెట్‌వర్క్‌లో షేర్ చేయండి | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| షేర్‌లు మరియు డివైస్ నుండి Immichకు అప్‌లోడ్ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| ఇన్‌పుట్ | టచ్, గైరోస్కోప్ | టచ్, గైరోస్కోప్ | రిమోట్ | కంట్రోలర్‌లు, చేతులు | మౌస్, కీబోర్డ్ | మౌస్, కీబోర్డ్ | మౌస్, కీబోర్డ్, ట్రాక్‌ప్యాడ్ |
+| ఎక్కడ పొందాలి | Google Play, APK | App Store (రివ్యూలో) | APK, Google Play (రివ్యూలో) | Horizon Store, APK | ఇన్‌స్టాలర్ లేదా ZIP (ప్రివ్యూ) | .deb, .rpm (ప్రివ్యూ) | DMG లేదా ZIP (సైన్ చేయని ప్రివ్యూ) |
 
-✅ ఆ ప్లాట్‌ఫామ్‌లో యాప్‌లో · ❌ అక్కడ లేదు · 🔜 ప్రణాళిక చేయబడింది · 🔧 సోర్స్ కోడ్‌లో మరియు ప్రాజెక్ట్ CI ద్వారా బిల్డ్ చేయబడింది, ఆ సిస్టమ్‌లో ఇంకా ప్రారంభించబడలేదు. "ఒక కన్ను" అంటే ఒక 3D ఫైల్ ఫ్లాట్ స్క్రీన్‌పై తన ఎడమ కన్నును చూపిస్తుంది. ప్రతి ✅ ఇంకా ఒక నిజమైన డివైస్‌లో పరీక్షించబడలేదు: ఎక్కడ ఏమి పరీక్షించబడింది, మరియు ధృవీకరించడానికి ఏమి మిగిలి ఉంది, [ఫీచర్లు](../docs/immuch360/features.md), [ప్లాట్‌ఫామ్ సపోర్ట్](../docs/immuch360/platform-support.md) మరియు [కంపాటిబిలిటీ](../docs/immuch360/compatibility.md)లో ఉంది.
+✅ ఆ ప్లాట్‌ఫామ్‌లో యాప్‌లో · ❌ అక్కడ లేదు · 🔜 ప్రణాళిక చేయబడింది · 🔧 CI సోర్స్ కోడ్‌లో ఉంది, ఆ సిస్టమ్‌లో ప్రాజెక్ట్ CI ద్వారా బిల్డ్ చేయబడి ప్రారంభించబడింది, అక్కడ నిజమైన సర్వర్, షేర్ లేదా కెమెరాతో ఇంకా తనిఖీ చేయబడలేదు · ఫ్లాట్ మాత్రమే: 360° రెండరర్ Windowsలో మాత్రమే ఉన్నందున, వీడియో ఒక సందేశంతో ఫ్లాట్‌గా ప్లే అవుతుంది. "ఒక కన్ను" అంటే ఒక 3D ఫైల్ ఫ్లాట్ స్క్రీన్‌పై తన ఎడమ కన్నును చూపిస్తుంది. ప్రతి ✅ ఇంకా ఒక నిజమైన డివైస్‌లో తనిఖీ చేయబడలేదు: ఎక్కడ ఏమి తనిఖీ చేయబడింది, మరియు ధృవీకరించడానికి ఏమి మిగిలి ఉంది, [ఫీచర్లు](../docs/immuch360/features.md), [ప్లాట్‌ఫామ్ సపోర్ట్](../docs/immuch360/platform-support.md) మరియు [కంపాటిబిలిటీ](../docs/immuch360/compatibility.md)లో ఉంది.
 
 - **Android ఫోన్‌లు మరియు టాబ్లెట్‌లు**: పూర్తి యాప్, టచ్ మరియు గైరోస్కోప్, ప్రతి మూలం.
 - **iPhone మరియు iPad**: పూర్తి యాప్; 360° వీడియో ప్లేయర్‌కు play మరియు pause మాత్రమే ఉన్నాయి, Tapo లైవ్ వీక్షణం తరువాత వస్తుంది, మరియు Apple multicast entitlement ఇచ్చే వరకు DLNA శోధన unicast రిక్వెస్ట్‌లను పంపుతుంది.
 - **Android TV మరియు Google TV**: అదే APK, రిమోట్ ద్వారా నడిపించబడుతుంది; ఒక వీక్షకం: బ్యాకప్, అప్‌లోడ్‌లు మరియు ఎడిటింగ్ దాచబడ్డాయి. Google TV ఎమ్యులేటర్‌లో పరీక్షించబడింది (లాగిన్, టైమ్‌లైన్, వీక్షకాలు, షేర్‌లు, రిమోట్ నావిగేషన్), ఇంకా నిజమైన TVలో కాదు.
-- **Meta Quest 2, Pro, 3 మరియు 3S**: ఒక విండోగా యాప్, దానితో పాటు ఇమ్మర్సివ్ వీక్షణం; HEVC సురక్షితమైన codec, Quest 3లో H.264 సుమారు 4096x2304 వద్ద ఆగుతుంది; Quest 2 మరియు Quest Pro ఇంకా పరీక్షించబడలేదు.
+- **Meta Quest 2, Pro, 3 మరియు 3S**: ఒక విండోగా యాప్, దానితో పాటు ఇమ్మర్సివ్ వీక్షణం; HEVC సురక్షితమైన codec, Quest 3లో H.264 సుమారు 4096x2304 వద్ద ఆగుతుంది; Quest 3 మాత్రమే పరీక్షించబడింది, Quest 2, Quest Pro మరియు Quest 3S ఇంకా పరీక్షించబడలేదు.
 - **Windows 10 మరియు 11**: ఒక ప్రివ్యూ, గ్యాలరీ కాకుండా ఫోల్డర్‌లతో, ఫ్లాట్ మరియు 360° వీడియోల కోసం దాని స్వంత వీడియో ప్లేయర్ (libmpv), గ్రాఫిక్స్ చిప్‌పై స్టిచ్ చేయబడిన రా ఫైళ్లు, ప్రోగ్రామ్‌తో తెరిచిన లేదా విండోపై డ్రాప్ చేసిన ఫైళ్లు మరియు ఫోల్డర్‌లు, ఒక ఇన్‌స్టాలర్ లేదా ఒక ZIP.
-- **macOS మరియు Linux**: ప్రాజెక్ట్ CI ద్వారా బిల్డ్ చేయబడిన ప్యాకేజీలు (ఒక .deb, ఒక .rpm, ఒక DMG); Linuxలో యాప్ ప్రారంభమై ఫోటోలు మరియు 360° ఫోటోలు చూపిస్తుంది, వీడియోలు ఇంకా లేవు, మరియు SMB షేర్‌లకు Ubuntu 24.04, Debian 13 లేదా Fedora 39 లేదా తరువాతది అవసరం; macOS యాప్ ప్రాజెక్ట్ CIలో మాత్రమే నడిచింది, వీడియోలు లేకుండా మరియు దాని నెట్‌వర్క్ యాక్సెస్ పరీక్షించకుండా.
+- **Linux**: ప్రాజెక్ట్ CI ద్వారా బిల్డ్ చేయబడిన ఒక .deb మరియు ఒక .rpm, Ubuntu 22.04 మరియు 24.04, Debian 12 మరియు Fedora 40 మరియు 44లో ఇన్‌స్టాల్ చేసి తనిఖీ చేయబడ్డాయి; సిస్టమ్ libmpv ద్వారా ఫోటోలు, 360° ఫోటోలు మరియు ఫ్లాట్ వీడియోలు (360°, 3D మరియు రా వీడియోలు ఒక సందేశంతో ఫ్లాట్‌గా ప్లే అవుతాయి); Ubuntu 22.04 మరియు Debian 12 నుండి SMB షేర్‌లు; ఇంకా నిజమైన Linux PCలో నడపబడలేదు, WSLg కింద మరియు కంటైనర్‌లలో మాత్రమే.
+- **macOS**: ప్రాజెక్ట్ CI ద్వారా బిల్డ్ చేయబడిన ఒక DMG మరియు ఒక ZIP, యూనివర్సల్, సైన్ చేయబడలేదు (Gatekeeper ఒకసారి అడుగుతుంది); యాప్ ప్రారంభమవుతుంది, Finderతో సహా తనకు ఇచ్చిన ఫైళ్లు మరియు ఫోల్డర్‌లను తెరుస్తుంది, తన రహస్యాలను login keychainలో ఉంచుతుంది మరియు తన స్వంత libmpvతో ఫ్లాట్ వీడియోలను ప్లే చేస్తుంది, ఇవన్నీ ప్రాజెక్ట్ CI Macలో మాత్రమే తనిఖీ చేయబడ్డాయి; నిజమైన Macలో ఇంకా ఏదీ నడపబడలేదు.
 
 <a id="advanced-features"></a>
 ## అధునాతన ఫీచర్లు
@@ -300,7 +301,7 @@ Ubuntu 22.04 లేదా తరువాతది మరియు Debian 12 ల
 
 Immuch360 అనేది [GNU AGPL v3](../LICENSE) కింద, Immich బృందం లేదా FUTOతో సంబంధం లేని లేదా ఆమోదించబడని, [Immich](https://github.com/immich-app/immich) మొబైల్ యాప్ యొక్క ఒక అనధికారిక ఫోర్క్. మొబైల్‌లో 360° వీక్షణం జనవరి 2024 నుండి Immichలో అడగబడింది మరియు ఇంకా అధికారిక యాప్‌లో లేనందున ఈ ఫోర్క్ ఉంది; ఇది ఇప్పుడు దానిని షిప్ చేస్తుంది, నిజమైన డివైస్ ఫీడ్‌బ్యాక్‌ను సేకరిస్తుంది, మరియు మెయింటైనర్‌లు కోరుకున్నదాన్ని చిన్న pull requestలలో Immichకు తిరిగి అందిస్తుంది. అధికారిక యాప్ చేసే అన్నింటినీ నిలుపుకుంది; బ్రాంచ్‌లు, బిల్డ్ చైన్ మరియు CI [దాన్ని మీరే నిర్మించండి](../docs/immuch360/build.md)లో వివరించబడ్డాయి.
 
-360° ఫోటో వీక్షకం dmitry-brazhenko upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) ఆధారంగా ఉంది, అది స్వయంగా [#30192](https://github.com/immich-app/immich/pull/30192)లో bencefr prototype ఆధారంగా ఉంది; ఇద్దరికీ కృతజ్ఞతలు. Tapo కెమెరాలు [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) మరియు [python-kasa](https://github.com/python-kasa/python-kasa) డాక్యుమెంట్ చేసిన దాని నుండి వ్రాయబడ్డాయి. Meta Quest వీక్షణం Meta Spatial SDKపై ఆధారపడింది, ఇది ఓపెన్ సోర్స్ కాదు, కాబట్టి ఇది ఈ ఫోర్క్‌లోనే ఉంటుంది. Windows ZIP ప్రాజెక్ట్ ద్వారా నిర్మించబడిన libmpv ([mpv](https://mpv.io) లైబ్రరీ, [FFmpeg](https://ffmpeg.org)తో) LGPL కింద, దాని లైసెన్స్‌లు మరియు సోర్స్‌లతో కలిగి ఉంది; ఈ పేజీలో పేరు పెట్టబడిన ప్లాట్‌ఫామ్‌ల వివరాలు మరియు ట్రేడ్‌మార్క్‌లు [లైసెన్స్ మరియు ట్రేడ్‌మార్క్‌లు](../docs/immuch360/platform-support.md#license-and-trademarks)లో ఉన్నాయి.
+360° ఫోటో వీక్షకం dmitry-brazhenko upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) ఆధారంగా ఉంది, అది స్వయంగా [#30192](https://github.com/immich-app/immich/pull/30192)లో bencefr prototype ఆధారంగా ఉంది; ఇద్దరికీ కృతజ్ఞతలు. శోధన ఫిల్టర్‌లలో రిమోట్ కంట్రోల్ సవరణలు మరియు TVలలో ఆల్బమ్ క్రమీకరణ [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1)లో mlc70 చేసిన పని నుండి మొదలయ్యాయి. Tapo కెమెరాలు [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) మరియు [python-kasa](https://github.com/python-kasa/python-kasa) డాక్యుమెంట్ చేసిన దాని నుండి వ్రాయబడ్డాయి. Meta Quest వీక్షణం Meta Spatial SDKపై ఆధారపడింది, ఇది ఓపెన్ సోర్స్ కాదు, కాబట్టి ఇది ఈ ఫోర్క్‌లోనే ఉంటుంది. Windows ZIP ప్రాజెక్ట్ ద్వారా నిర్మించబడిన libmpv ([mpv](https://mpv.io) లైబ్రరీ, [FFmpeg](https://ffmpeg.org)తో) LGPL కింద, దాని లైసెన్స్‌లు మరియు సోర్స్‌లతో కలిగి ఉంది; ఈ పేజీలో పేరు పెట్టబడిన ప్లాట్‌ఫామ్‌ల వివరాలు మరియు ట్రేడ్‌మార్క్‌లు [లైసెన్స్ మరియు ట్రేడ్‌మార్క్‌లు](../docs/immuch360/platform-support.md#license-and-trademarks)లో ఉన్నాయి.
 
 ఈ పేజీ ఫోన్ క్యాప్చర్‌లు ఒక ఎమ్యులేటర్‌లో Android బిల్డ్‌పై తీసుకోబడ్డాయి, TV వాటిని Google TV ఎమ్యులేటర్‌పై మరియు Windows వాటిని ఒక Windows 11 PCపై, [Poly Haven](https://polyhaven.com) నుండి CC0 పనోరమాలతో; హెడ్‌సెట్ క్యాప్చర్‌లు ఒక Quest 3పై తీసుకోబడ్డాయి.
 
@@ -309,8 +310,8 @@ Immuch360 అనేది [GNU AGPL v3](../LICENSE) కింద, Immich బృ�
 
 ఇంకా పూర్తి కానివి, ముందు వచ్చే అవకాశం ఉన్నవి ముందు. ఇక్కడ ఏదీ వాగ్దానం కాదు, [ఇష్యూ ట్రాకర్](https://github.com/freeKC/Immuch360/issues) లో అభిప్రాయాలు ఏది ముందు రావాలో నిర్ణయించడంలో సహాయపడతాయి.
 
-- **స్టోర్‌లు**: Google Play (build 23 సమీక్షలో, TV లిస్టింగ్ సమీక్షలో), App Store (వెర్షన్ 3.3.0 సమీక్షలో), Meta Horizon Store (build 21 సమీక్షలో).
-- **కంప్యూటర్‌లు**: Windows PCలో చేతితో ప్రతి ఫంక్షన్ పరీక్ష; తరువాత webcamతో Spatial 2.5D; తరువాత Linux మరియు macOSలో వీడియో ప్లేయర్ మరియు ఒక నిజమైన Macలో పరీక్ష; తరువాత సైన్ చేయబడిన బిల్డ్ మరియు ఆటోమాటిక్ అప్‌డేట్‌లు.
+- **స్టోర్‌లు**: Google Play (build 26 త్వరలో, TV లిస్టింగ్ సమీక్షలో), App Store (వెర్షన్ 3.3.1 14 అక్టోబర్ నుండి సమీక్షలో), Meta Horizon Store (build 25 సమీక్షలో).
+- **కంప్యూటర్‌లు**: Windows PCలో చేతితో ప్రతి ఫంక్షన్ పరీక్ష; తరువాత Linux మరియు macOSలో 360° వీడియో రెండరర్, ఒక నిజమైన Mac మరియు ఒక నిజమైన Linux PCలో పరీక్ష; తరువాత సైన్ చేయబడిన బిల్డ్ మరియు ఆటోమాటిక్ అప్‌డేట్‌లు; తరువాత webcamతో Spatial 2.5D.
 - **ఫోన్‌లు మరియు టాబ్లెట్‌లు**: iOS 360° వీడియో ప్లేయర్‌లో ఒక టైమ్ బార్, ఫోన్‌ల 360° ప్లేయర్‌లలో మునుపటి మరియు తరువాతి, ఫ్లాట్ ప్లేయర్‌లో ఆడియో ట్రాక్ ఎంపిక, iPhone మరియు iPadలో Tapo లైవ్ వీక్షణం.
 - **ఇమ్మర్సివ్ మీడియా**: డ్యువల్ fisheye .dng, GoPro మరియు DJI వీడియోల స్వంత చలన డేటా నుండి లెవలింగ్, Quest డీకోడర్‌లు అనుమతిస్తే 3Dలో spatial వీడియోలు, హెడ్‌సెట్‌లో spatial ఫోటోల మధ్య మునుపటి మరియు తరువాతి.
 - **మూలాలు**: ఒక షేర్ ఫోల్డర్ ఫైళ్ల మధ్య స్వైపింగ్, WebDAV కోసం Digest authentication, కంప్యూటర్ నుండి Plex tokenను తీసుకురావడానికి ఒక QR కోడ్, Plex కోసం IPv6, H.265 Tapo రికార్డింగ్‌లు, TV home screenలో ఛానెల్‌లు.

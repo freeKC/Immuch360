@@ -20,14 +20,14 @@ Immuch360 je bezplatná aplikácia s otvoreným zdrojovým kódom na vyhľadáva
 
 <div align="center">
 
-| Platforma | Kde ju získať | Stav k 12. októbru 2026 |
+| Platforma | Kde ju získať | Stav k 20. októbru 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefóny a tablety | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | na Google Play (build 20; build 23 v recenzii), build 23 na GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone a iPad** | App Store | verzia 3.3.0 čaká na recenziu Apple; dovtedy si ju [zostavte sami](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV a Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 na GitHub; záznam pre TV je v recenzii u Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 a 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | na Horizon Store (build 14; build 21 v recenzii), build 23 na GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Inštalátor alebo ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, náhľad: fotky, ploché a 360° videá, úložiská, Plex, kamery, súbory otvorené programom |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS a Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | skoré náhľady: na Linuxe fotky a 360° fotky, zatiaľ žiadne videá; macOS len spustený na CI projektu |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefóny a tablety | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | na Google Play (build 25), build 26 na GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone a iPad** | App Store | verzia 3.3.1 (build 24) čaká na recenziu Apple od 14. októbra; dovtedy si ju [zostavte sami](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV a Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 na GitHub, s opravami diaľkového ovládania vo filtroch vyhľadávania; záznam pre TV je v recenzii u Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 a 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | na Horizon Store (build 23; build 25 v recenzii), build 26 na GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Inštalátor alebo ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, náhľad: fotky, ploché a 360° videá, úložiská, Plex, kamery, súbory otvorené programom, rozhranie v 89 jazykoch |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS a Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | náhľady: na Linuxe fotky, 360° fotky a ploché videá (360° videá sa prehrávajú ploché); na macOS to isté, overené len na Macu v CI projektu, nepodpísané |
 
 *Stavy sa aktualizujú pri každom vydaní; podrobnosti, build po builde, sú v [Stave vydaní](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ So serverom [Immich](https://github.com/immich-app/immich) je Immuch360 mobilnou
 2. V Nastaveniach, Prehliadač súborov, Videá, „Zdroj videa“ vyberá originál, keď ho toto zariadenie dekóduje, vždy originál, alebo vždy prekódovaný stream.
 3. Ak chcete ukázať fotku 360° niekomu, kto nemá aplikáciu, zdieľajte ju zdieľaným odkazom Immich: webová aplikácia Immich ju zobrazí ako guľu v jeho prehliadači.
 
-Aktuálny build, build 23, je založený na vetve `main` Immich z 10. októbra 2026 (verzia 3.3.0-rc.0) a bol testovaný oproti serveru Immich 3.2.4 a serveru zostavenému z tej istej vetvy `main`. Problémy prosím nahlasujte na [Issues](https://github.com/freeKC/Immuch360/issues), nie projektu Immich.
+Aktuálny build, build 26, je založený na vetve `main` Immich z 10. októbra 2026 (verzia 3.3.0-rc.0) a bol testovaný oproti serveru Immich 3.2.4 a serveru zostavenému z tej istej vetvy `main` Immich. Problémy prosím nahlasujte na [Issues](https://github.com/freeKC/Immuch360/issues), nie projektu Immich.
 
 Viac: [všetko ostatné je Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [porovnanie s aplikáciou Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Viac: [kamery Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-t
 
 Jedna kódová základňa, šesť prostredí. Čo má každé z nich dnes:
 
-| Funkcia | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galéria, albumy, vyhľadávanie so serverom Immich | ✅ | ✅ | ✅ prehliadač | ✅ | ✅ | 🔧 |
-| Bez servera: vlastné médiá zariadenia | ✅ | ✅ | len úložiská | ✅ | ✅ priečinky | 🔧 |
-| Ploché fotky a videá | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Fotky 360° ako guľa | ✅ | ✅ | ✅ | ✅ imerzívne | ✅ | 🔧 |
-| Videá 360° | ✅ | ✅ bez časovej lišty | ✅ | ✅ imerzívne | ✅ | 🔧 |
-| 3D a VR180 | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ✅ skutočné 3D | ✅ jedno oko | 🔧 |
-| Spatial 2.5D (sledovanie hlavy) | ✅ experimentálne | ✅ experimentálne | ❌ | ❌ | 🔜 | ❌ |
-| Priestorové fotky Apple | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ✅ 3D | ✅ jedno oko | 🔧 |
-| RAW súbory Insta360, GoPro a DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Úložiská SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kamery Tapo: záznamy | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kamery Tapo: živý prenos | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Zdieľanie tohto zariadenia v sieti | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Nahrávanie do Immich z úložísk a zariadenia | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Vstup | dotyk, gyroskop | dotyk, gyroskop | diaľkové ovládanie | ovládače, ruky | myš, klávesnica | |
-| Kde ho získať | Google Play, APK | App Store (v recenzii) | APK, Google Play (v recenzii) | Horizon Store, APK | inštalátor alebo ZIP (náhľad) | .deb, .rpm, DMG (skoré náhľady) |
+| Funkcia | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galéria, albumy, vyhľadávanie so serverom Immich | ✅ | ✅ | ✅ prehliadač | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Bez servera: vlastné médiá zariadenia | ✅ | ✅ | len úložiská | ✅ | ✅ priečinky | ✅ priečinky | ✅ priečinky |
+| Ploché fotky a videá | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Fotky 360° ako guľa | ✅ | ✅ | ✅ | ✅ imerzívne | ✅ | ✅ | 🔧 CI |
+| Videá 360° | ✅ | ✅ bez časovej lišty | ✅ | ✅ imerzívne | ✅ | len ploché | len ploché |
+| 3D a VR180 | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ✅ skutočné 3D | ✅ jedno oko | fotky jedno oko, videá ploché | fotky jedno oko, videá ploché |
+| Spatial 2.5D (sledovanie hlavy) | ✅ experimentálne | ✅ experimentálne | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Priestorové fotky Apple | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ✅ 3D | ✅ jedno oko | 🔧 CI | 🔧 CI |
+| RAW súbory Insta360, GoPro a DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI fotky, videá ploché | 🔧 CI fotky, videá ploché |
+| Úložiská SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kamery Tapo: záznamy | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kamery Tapo: živý prenos | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Zdieľanie tohto zariadenia v sieti | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Nahrávanie do Immich z úložísk a zariadenia | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Vstup | dotyk, gyroskop | dotyk, gyroskop | diaľkové ovládanie | ovládače, ruky | myš, klávesnica | myš, klávesnica | myš, klávesnica, trackpad |
+| Kde ho získať | Google Play, APK | App Store (v recenzii) | APK, Google Play (v recenzii) | Horizon Store, APK | inštalátor alebo ZIP (náhľad) | .deb, .rpm (náhľad) | DMG alebo ZIP (nepodpísaný náhľad) |
 
-✅ v aplikácii na tejto platforme · ❌ tam neponúkané · 🔜 plánované · 🔧 v zdrojovom kóde a zostavované CI projektu, na tomto systéme ešte nezačaté. „Jedno oko“ znamená, že 3D súbor zobrazuje svoje ľavé oko na plochej obrazovke. Nie každé ✅ bolo už overené na skutočnom zariadení: kde čo bolo overené a čo ešte zostáva potvrdiť, je v [Funkciách](../docs/immuch360/features.md), [Podpore platforiem](../docs/immuch360/platform-support.md) a [Kompatibilite](../docs/immuch360/compatibility.md).
+✅ v aplikácii na tejto platforme · ❌ tam neponúkané · 🔜 plánované · 🔧 CI v zdrojovom kóde, zostavené a spustené CI projektu na tomto systéme, tam ešte neoverené so skutočným serverom, úložiskom ani kamerou · len ploché: video sa prehrá ploché, so správou, pretože 360° renderer je len pre Windows. „Jedno oko“ znamená, že 3D súbor zobrazuje svoje ľavé oko na plochej obrazovke. Nie každé ✅ bolo už overené na skutočnom zariadení: kde čo bolo overené a čo ešte zostáva potvrdiť, je v [Funkciách](../docs/immuch360/features.md), [Podpore platforiem](../docs/immuch360/platform-support.md) a [Kompatibilite](../docs/immuch360/compatibility.md).
 
 - **Telefóny a tablety Android**: kompletná aplikácia, dotyk a gyroskop, všetky zdroje.
 - **iPhone a iPad**: kompletná aplikácia; videoprehrávač 360° má len prehrávanie a pauzu, živý prenos Tapo prichádza neskôr a vyhľadávanie DLNA odosiela unicastové požiadavky, kým Apple nepovolí oprávnenie multicast.
 - **Android TV a Google TV**: rovnaký APK, ovládaný diaľkovým ovládaním; prehliadač: záloha, nahrávanie a úprava sú skryté. Overené na emulátore Google TV (prihlásenie, časová osa, prehliadače, úložiská, navigácia diaľkovým ovládaním), ešte nie na skutočnom televízore.
-- **Meta Quest 2, Pro, 3 a 3S**: aplikácia ako okno, plus imerzívny pohľad; HEVC je bezpečný kodek, H.264 sa zastavuje okolo 4096x2304 na Quest 3; Quest 2 a Quest Pro ešte nie sú testované.
+- **Meta Quest 2, Pro, 3 a 3S**: aplikácia ako okno, plus imerzívny pohľad; HEVC je bezpečný kodek, H.264 sa zastavuje okolo 4096x2304 na Quest 3; testovaný je len Quest 3, Quest 2, Quest Pro a Quest 3S ešte nie sú testované.
 - **Windows 10 a 11**: náhľad, s priečinkami namiesto galérie, vlastným videoprehrávačom (libmpv) pre ploché a 360° videá, RAW súbormi zošitými grafickým čipom, súbormi a priečinkami otvorenými programom alebo presunutými na okno, inštalátorom alebo ZIP-om.
-- **macOS a Linux**: balíky zostavené CI projektu (.deb, .rpm, DMG); na Linuxe sa aplikácia spustí a zobrazí fotky a 360° fotky, zatiaľ žiadne videá, a sieťové úložiská SMB potrebujú Ubuntu 24.04, Debian 13 alebo Fedora 39 alebo novší; aplikácia macOS bola doteraz spustená len na CI projektu, bez videí a s nevyskúšaným prístupom k sieti.
+- **Linux**: .deb a .rpm zostavené CI projektu, nainštalované a overené na Ubuntu 22.04 a 24.04, Debian 12 a Fedora 40 a 44; fotky, 360° fotky a ploché videá cez systémovú libmpv (360°, 3D a RAW videá sa prehrávajú ploché, so správou); sieťové úložiská SMB od Ubuntu 22.04 a Debian 12; zatiaľ nespustené na skutočnom PC s Linuxom, len pod WSLg a v kontajneroch.
+- **macOS**: DMG a ZIP zostavené CI projektu, univerzálne, nepodpísané (Gatekeeper sa raz opýta); aplikácia sa spustí, otvorí súbory a priečinky, ktoré dostane, aj z Findera, uchováva svoje tajomstvá v prihlasovacej kľúčenke a prehráva ploché videá s vlastnou libmpv, všetko overené len na Macu v CI projektu; na skutočnom Macu zatiaľ nič nebežalo.
 
 <a id="advanced-features"></a>
 ## Pokročilé funkcie
@@ -300,7 +301,7 @@ Nič neputuje k vývojárovi: žiadny účet, žiadna analytika, žiadna služba
 
 Immuch360 je neoficiálny fork mobilnej aplikácie [Immich](https://github.com/immich-app/immich), pod licenciou [GNU AGPL v3](../LICENSE), nesúvisiaci s tímom Immich ani FUTO a nepodporovaný nimi. Tento fork existuje, pretože zobrazovanie 360° na mobile je v Immich žiadané už od januára 2024 a ešte nie je v oficiálnej aplikácii; prináša ho teraz, zhromažďuje spätnú väzbu zo skutočných zariadení a vráti Immich, v malých pull requestoch, všetko, čo si správcovia budú žiadať. Všetko, čo robí oficiálna aplikácia, zostáva zachované; vetvy, zostavovací reťazec a CI sú popísané v [Zostavte si ju sami](../docs/immuch360/build.md).
 
-Prehliadač fotiek 360° je založený na pull requeste [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) od dmitry-brazhenko, ktorý sám vychádza z prototypu bencefr v [#30192](https://github.com/immich-app/immich/pull/30192); ďakujeme obom. Kamery Tapo boli napísané podľa toho, čo dokumentujú [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) a [python-kasa](https://github.com/python-kasa/python-kasa). Pohľad Meta Quest sa spolieha na Meta Spatial SDK, ktorý nie je otvorený zdrojový kód, takže zostáva v tomto forku. ZIP pre Windows nesie libmpv (knižnicu [mpv](https://mpv.io), s [FFmpeg](https://ffmpeg.org)) zostavenú projektom, pod licenciou LGPL, s jej licenciami a zdrojmi; podrobnosti a ochranné známky platforiem spomenutých na tejto stránke sú v [Licencii a ochranných známkach](../docs/immuch360/platform-support.md#license-and-trademarks).
+Prehliadač fotiek 360° je založený na pull requeste [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) od dmitry-brazhenko, ktorý sám vychádza z prototypu bencefr v [#30192](https://github.com/immich-app/immich/pull/30192); ďakujeme obom. Opravy diaľkového ovládania vo filtroch vyhľadávania a triedenie albumov na televízoroch vychádzajú z práce mlc70 v [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Kamery Tapo boli napísané podľa toho, čo dokumentujú [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) a [python-kasa](https://github.com/python-kasa/python-kasa). Pohľad Meta Quest sa spolieha na Meta Spatial SDK, ktorý nie je otvorený zdrojový kód, takže zostáva v tomto forku. ZIP pre Windows nesie libmpv (knižnicu [mpv](https://mpv.io), s [FFmpeg](https://ffmpeg.org)) zostavenú projektom, pod licenciou LGPL, s jej licenciami a zdrojmi; podrobnosti a ochranné známky platforiem spomenutých na tejto stránke sú v [Licencii a ochranných známkach](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Zábery z telefónu na tejto stránke boli urobené na builde pre Android v emulátore, zábery z televízora na emulátore Google TV a zábery z Windows na PC s Windows 11, všetky s panorámami CC0 z [Poly Haven](https://polyhaven.com); zábery z headsetu boli urobené na Quest 3.
 
@@ -309,8 +310,8 @@ Zábery z telefónu na tejto stránke boli urobené na builde pre Android v emul
 
 Čo zatiaľ nie je hotové, od najpravdepodobnejšieho. Nič z toho nie je sľub a spätná väzba v [systéme hlásení](https://github.com/freeKC/Immuch360/issues) pomáha rozhodnúť, čo príde ako prvé.
 
-- **Obchody**: Google Play (build 23 v recenzii, záznam pre TV v recenzii), App Store (verzia 3.3.0 v recenzii), Meta Horizon Store (build 21 v recenzii).
-- **Počítače**: ručné testovanie každej funkcie na PC s Windows; potom Spatial 2.5D s webkamerou; potom videoprehrávač na Linuxe a macOS a test na skutočnom Macu; potom podpísaný build a automatické aktualizácie.
+- **Obchody**: Google Play (build 26 čoskoro, záznam pre TV v recenzii), App Store (verzia 3.3.1 v recenzii od 14. októbra), Meta Horizon Store (build 25 v recenzii).
+- **Počítače**: ručné testovanie každej funkcie na PC s Windows; potom 360° renderer videa na Linuxe a macOS, test na skutočnom Macu a skutočnom PC s Linuxom; potom podpísaný build a automatické aktualizácie; potom Spatial 2.5D s webkamerou.
 - **Telefóny a tablety**: časová lišta v videoprehrávači 360° na iOS, predchádzajúce a ďalšie v prehrávačoch 360° telefónov, výber audio stopy v plochom prehrávači, živý prenos Tapo na iPhone a iPad.
 - **Imerzívne médiá**: duálne fisheye .dng, vyrovnávanie videí GoPro a DJI z ich vlastných pohybových dát, priestorové videá v 3D na Quest, ak to ich dekodéry umožnia, predchádzajúce a ďalšie medzi priestorovými fotkami v headsete.
 - **Zdroje**: potiahnutie medzi súbormi priečinka úložiska, Digest autentifikácia pre WebDAV, QR kód na prenesenie tokenu Plex z počítača, IPv6 pre Plex, záznamy Tapo v H.265, kanály na domovskej obrazovke televízora.

@@ -20,14 +20,14 @@ He taupānga koreutu, puka tuwhera a Immuch360 hei kimi, hei tirotiro, hei whaka
 
 <div align="center">
 
-| Pūhara | Me pēhea te whiwhi | Tūnga i te 12 Whiringa-ā-nuku 2026 |
+| Pūhara | Me pēhea te whiwhi | Tūnga i te 20 Whiringa-ā-nuku 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** waea pūkoro me papapātuhi | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kei Google Play (hanganga 20; hanganga 23 kei te arotakehia), hanganga 23 kei GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone me iPad** | App Store | arotakenga 3.3.0 kei te tatari ki te arotake a Apple; i tēnei wā [hangaia ake ko koe](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV me Google TV** | [APK](#android-tv-and-google-tv) · Google Play | hanganga 23 kei GitHub; kei te arotakehia te rārangi TV e Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 me te 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | kei te Horizon Store (hanganga 14; hanganga 21 kei te arotakehia), hanganga 23 kei GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Kaiwhakauru, ZIP rānei](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | hanganga desktop 5, he whakaaturanga: whakaahua, kiriata papatahi me te 360°, tiritiri, Plex, kāmera, kōnae i whakatuwherahia mā te hōtaka |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS me Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | ngā whakaaturanga tōmua: i runga i Linux he whakaahua me he whakaahua 360°, kāore anō he kiriata; kāore a macOS anō kia tīmata, i runga noa i te CI o te kaupapa |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** waea pūkoro me papapātuhi | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kei Google Play (hanganga 25), hanganga 26 kei GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone me iPad** | App Store | putanga 3.3.1 (hanganga 24) kei te tatari ki te arotake a Apple mai i te 14 Whiringa-ā-nuku; i tēnei wā [hangaia ake ko koe](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV me Google TV** | [APK](#android-tv-and-google-tv) · Google Play | hanganga 26 kei GitHub, me ngā whakatikatika pou whakahau mō ngā tātari rapu; kei te arotakehia te rārangi TV e Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 me te 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | kei te Horizon Store (hanganga 23; hanganga 25 kei te arotakehia), hanganga 26 kei GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Kaiwhakauru, ZIP rānei](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | hanganga desktop 6, he whakaaturanga: whakaahua, kiriata papatahi me te 360°, tiritiri, Plex, kāmera, kōnae i whakatuwherahia mā te hōtaka, te atanga i ngā reo 89 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS me Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | ngā whakaaturanga: i runga i Linux he whakaahua, he whakaahua 360° me ngā kiriata papatahi (ka papatahi te whakatangi o ngā kiriata 360°); i runga i macOS he rite tonu, i tirohia i runga noa i te Mac CI o te kaupapa, kāore i hainatia |
 
 *Ka whakahoutia ngā tūnga i ia tukunga; ko ngā taipitopito, hanganga mā te hanganga, kei [Te tūnga tuku](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Me tētahi tūmau [Immich](https://github.com/immich-app/immich), ko Immuch360 t
 2. I roto i ngā Tautuhinga, Kaimātakitaki Rawa, Kiriata, ka tīpako te "Te mātāpuna ataata" i te kōnae taketake ina wetewetehia tēnei e te taputapu, i te kōnae taketake tonu, i te awa whakaputa tonu rānei.
 3. Kia whakaatu tētahi whakaahua 360° ki tētahi kāore ōna taupānga, tiritirihia mā tētahi hono tiritiri Immich: ka whakaatu te taupānga ipurangi a Immich hei porotaka i tō rātou pūtirotiro.
 
-Ko te hanganga o nāianei, hanganga 23, e ahu mai ana i Immich `main` o te 10 o Oketopa 2026 (arotakenga 3.3.0-rc.0), ā, i whakamātauhia ki tētahi tūmau Immich 3.2.4 me tētahi tūmau i hangaia mai i tērā Immich `main` tonu. Tēnā koa pānuitia ngā raruraru ki [Issues](https://github.com/freeKC/Immuch360/issues), kāore ki te kaupapa Immich.
+Ko te hanganga o nāianei, hanganga 26, e ahu mai ana i te `main` o Immich o te 10 Whiringa-ā-nuku 2026 (putanga 3.3.0-rc.0), ā, i whakamātauria ki tētahi tūmau Immich 3.2.4 me tētahi tūmau i hangaia mai i taua `main` o Immich anō. Tēnā, pūrongotia ngā raruraru ki [Issues](https://github.com/freeKC/Immuch360/issues), kaua ki te kaupapa Immich.
 
 Ētahi atu: [ko te katoa atu he Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [te whakataurite ki te taupānga Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Ka rere te taupānga Android kotahi i runga i Android TV me Google TV me te pou 
 
 Kotahi tūāpapa waehere, e ono ngā taiao. He aha kei a tēnā, kei tēnā i tēnei rā:
 
-| Āheinga | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Whare whakaahua, kohinga, rapu me tētahi tūmau Immich | ✅ | ✅ | ✅ kaimātakitaki | ✅ | ✅ | 🔧 |
-| Me te kore tūmau: ngā pāpāho ake o te taputapu | ✅ | ✅ | ko ngā tiritiri anake | ✅ | ✅ kōpaki | 🔧 |
-| Whakaahua me kiriata papatahi | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Whakaahua 360° hei porotaka | ✅ | ✅ | ✅ | ✅ rukuhanga | ✅ | 🔧 |
-| Kiriata 360° | ✅ | ✅ kāore he pae wā | ✅ | ✅ rukuhanga | ✅ | 🔧 |
-| 3D me VR180 | ✅ kotahi karu | ✅ kotahi karu | ✅ kotahi karu | ✅ 3D pono | ✅ kotahi karu | 🔧 |
-| Mokowā 2.5D (aru māhunga) | ✅ arotakenga | ✅ arotakenga | ❌ | ❌ | 🔜 | ❌ |
-| Whakaahua mokowā a Apple | ✅ kotahi karu | ✅ kotahi karu | ✅ kotahi karu | ✅ 3D | ✅ kotahi karu | 🔧 |
-| Kōnae mata Insta360, GoPro me DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tiritiri SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kāmera Tapo: hopunga | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kāmera Tapo: tirohanga ora | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Tiritiri i tēnei taputapu i te whatunga | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Tukuake ki Immich mai i ngā tiritiri me te taputapu | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Whakaurunga | pā, pūhiki-haurangi | pā, pūhiki-haurangi | pou whakahau | rengarenga, ringaringa | kiore, papapātuhi | |
-| Me pēhea te whiwhi | Google Play, APK | App Store (kei te arotakehia) | APK, Google Play (kei te arotakehia) | Horizon Store, APK | kaiwhakauru, ZIP rānei (he whakaaturanga) | .deb, .rpm, DMG (ngā whakaaturanga tōmua) |
+| Āheinga | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Whare whakaahua, kohinga, rapu me tētahi tūmau Immich | ✅ | ✅ | ✅ kaimātakitaki | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Me te kore tūmau: ngā pāpāho ake o te taputapu | ✅ | ✅ | ko ngā tiritiri anake | ✅ | ✅ kōpaki | ✅ kōpaki | ✅ kōpaki |
+| Whakaahua me kiriata papatahi | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Whakaahua 360° hei porotaka | ✅ | ✅ | ✅ | ✅ rukuhanga | ✅ | ✅ | 🔧 CI |
+| Kiriata 360° | ✅ | ✅ kāore he pae wā | ✅ | ✅ rukuhanga | ✅ | papatahi anake | papatahi anake |
+| 3D me VR180 | ✅ kotahi karu | ✅ kotahi karu | ✅ kotahi karu | ✅ 3D pono | ✅ kotahi karu | whakaahua kotahi karu, kiriata papatahi | whakaahua kotahi karu, kiriata papatahi |
+| Mokowā 2.5D (aru māhunga) | ✅ whakamātautau | ✅ whakamātautau | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Whakaahua mokowā a Apple | ✅ kotahi karu | ✅ kotahi karu | ✅ kotahi karu | ✅ 3D | ✅ kotahi karu | 🔧 CI | 🔧 CI |
+| Kōnae mata Insta360, GoPro me DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI whakaahua, kiriata papatahi | 🔧 CI whakaahua, kiriata papatahi |
+| Tiritiri SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kāmera Tapo: hopunga | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kāmera Tapo: tirohanga ora | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tiritiri i tēnei taputapu i te whatunga | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Tukuake ki Immich mai i ngā tiritiri me te taputapu | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Whakaurunga | pā, pūhiki-haurangi | pā, pūhiki-haurangi | pou whakahau | rengarenga, ringaringa | kiore, papapātuhi | kiore, papapātuhi | kiore, papapātuhi, papa pā |
+| Me pēhea te whiwhi | Google Play, APK | App Store (kei te arotakehia) | APK, Google Play (kei te arotakehia) | Horizon Store, APK | kaiwhakauru, ZIP rānei (he whakaaturanga) | .deb, .rpm (he whakaaturanga) | DMG, ZIP rānei (he whakaaturanga kāore i hainatia) |
 
-✅ kei te taupānga i runga i tēnā pūnaha · ❌ kāore e whāngaihia i reira · 🔜 kei te whakaritea · 🔧 kei te puna waehere, e hangaia ana e te CI o te kaupapa, kāore anō kia tīmata i runga i tēnā pūnaha. Ko te tikanga o "kotahi karu" he whakaatu te kōnae 3D i tōna karu mauī i runga i te mata papatahi. Ehara i te mea kua tirohia ngā ✅ katoa i runga i tētahi taputapu pono: ko te mea i tirohia, i hea, me te mea e toe ana kia whakaūhia, kei [Ngā āhuatanga](../docs/immuch360/features.md), [Te tautoko pūnaha](../docs/immuch360/platform-support.md), me [Te noho rite](../docs/immuch360/compatibility.md).
+✅ kei te taupānga i runga i tēnā pūnaha · ❌ kāore e whakaratohia i reira · 🔜 kei te whakaritea · 🔧 CI kei te puna waehere, ka hangaia, ka whakaterea e te CI o te kaupapa i runga i tēnā pūnaha, kāore anō kia tirohia ki tētahi tūmau, tiritiri, kāmera pono rānei i reira · papatahi anake: ka papatahi te whakatangi o te kiriata, me tētahi karere, nā te mea mō Windows anake te kaiwhakaatu 360°. Ko te tikanga o "kotahi karu" he whakaatu te kōnae 3D i tōna karu mauī i runga i te mata papatahi. Ehara i te mea kua tirohia ngā ✅ katoa i runga i tētahi taputapu pono: ko te mea i tirohia, i hea, me te mea e toe ana kia whakaūhia, kei [Ngā āhuatanga](../docs/immuch360/features.md), [Te tautoko pūnaha](../docs/immuch360/platform-support.md), me [Te noho rite](../docs/immuch360/compatibility.md).
 
 - **Waea pūkoro me papapātuhi Android**: te taupānga katoa, te pā me te pūhiki-haurangi, ia pūtake.
 - **iPhone me iPad**: te taupānga katoa; ko te kaiwhakatangi ataata 360° he whakatangi me te tārewa anake, ka tae mai te tirohanga ora a Tapo i muri iho, ā, ka tukuhia e te rapu DLNA ngā tono unicast kia tukua ai e Apple te mana multicast.
 - **Android TV me Google TV**: te APK kotahi, e whakahaerehia ana e te pou whakahau; he kaimātakitaki: kei te hunaia te tiaki, ngā tukuake me te whakatika. Kua tirohia i runga i te whakatinana Google TV (takiuru, rārangi wā, kaimātakitaki, tiritiri, te whakahaere pou whakahau), kāore anō i runga i tētahi pouaka whakaata pono.
-- **Meta Quest 2, Pro, 3 me te 3S**: te taupānga hei matapihi, tāpiri atu te tirohanga rukuhanga; ko te HEVC te codec haumaru, ka mutu te H.264 tata ki te 4096x2304 i runga i te Quest 3; kāore anō te Quest 2 me te Quest Pro kia whakamātauhia.
+- **Meta Quest 2, Pro, 3 me te 3S**: te taupānga hei matapihi, me te tirohanga rukuhanga anō hoki; ko HEVC te codec haumaru, ka mutu te H.264 i te āhua o te 4096x2304 i runga i te Quest 3; ko te Quest 3 anake kua whakamātauria, kāore anō te Quest 2, te Quest Pro me te Quest 3S kia whakamātauria.
 - **Windows 10 me te 11**: he whakaaturanga, ko ngā kōpaki, ehara i te whare whakaahua, tōna ake kaiwhakatangi kiriata (libmpv) mō ngā kiriata papatahi me te 360°, he kōnae mata kua tuituihia i runga i te matū whakaahua, he kōnae me he kōpaki i whakatuwherahia mā te hōtaka, i whakataka rānei ki runga i te matapihi, he kaiwhakauru, he ZIP rānei.
-- **macOS me Linux**: he mea i hangaia e te CI o te kaupapa (he .deb, he .rpm, he DMG); i runga i Linux ka tīmata te taupānga, ka whakaatu i ngā whakaahua me ngā whakaahua 360°, kāore anō he kiriata, ā, e hiahiatia e ngā tiritiri SMB Ubuntu 24.04, Debian 13, Fedora 39 rānei, tērā hōu ake rānei; ko te taupānga macOS kāore anō kia rere, i runga noa i te CI o te kaupapa, kāore he kiriata, ā, kāore anō tōna urunga whatunga kia whakamātauhia.
+- **Linux**: he .deb me he .rpm i hangaia e te CI o te kaupapa, i whakaurua, i tirohia hoki i runga i Ubuntu 22.04 me 24.04, Debian 12 me Fedora 40 me 44; ngā whakaahua, ngā whakaahua 360° me ngā kiriata papatahi mā te libmpv o te pūnaha (ka papatahi te whakatangi o ngā kiriata 360°, 3D me ngā kiriata mata, me tētahi karere); ngā tiritiri SMB mai i Ubuntu 22.04 me Debian 12 whakarunga; kāore anō kia whakahaerehia i runga i tētahi rorohiko Linux pono, i raro noa i te WSLg me roto i ngā ipu.
+- **macOS**: he DMG me he ZIP i hangaia e te CI o te kaupapa, mō ngā tukatuka katoa, kāore i hainatia (kotahi te pātai a Gatekeeper); ka tīmata, ka whakatuwhera i ngā kōnae me ngā kōpaki ka hoatu ki a ia, tae atu ki a Finder, ka pupuri i ōna muna i te login keychain, ā, ka whakatangi i ngā kiriata papatahi mā tōna ake libmpv, i tirohia katoatia i runga noa i te Mac CI o te kaupapa; kāore anō he mea kia whakahaerehia i runga i tētahi Mac pono.
 
 <a id="advanced-features"></a>
 ## Ngā āhuatanga matatau
@@ -300,7 +301,7 @@ Kāore he mea e haere ki te kaiwhakawhanake: kāore he pūkete, he tātari, he r
 
 He peka taupānga [Immich](https://github.com/immich-app/immich) pūkoro, ēhara i te mea whaimana, a Immuch360, i raro i te [GNU AGPL v3](../LICENSE), kāore i te hono ki, kāore hoki i te tautokona e, te tīma Immich, FUTO rānei. Kei te noho tonu tēnei peka nā te mea kua tonohia te tirohanga 360° i runga i te pūkoro i roto i a Immich mai i Hānuere 2024, ā, kāore anō kei roto i te taupānga whaimana; ka tukuna ināianei, ka kohia ngā urupare pono mai i ngā taputapu, ā, ka whakahokia ki a Immich, mā ngā tono kuhu iti, tērā ka hiahiatia e ngā kaitiaki. Kei te pupuri tonu te katoa e mahia ana e te taupānga whaimana; ko ngā peka, te mekameka hanga, me te CI kei te whakaahuatia i [Hangaia ake ko koe](../docs/immuch360/build.md).
 
-Ko te kaimātakitaki whakaahua 360° e ahu mai i te tono kuhu matua [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) nā dmitry-brazhenko, i hangaia mai anō i te ariā tuatahi a bencefr i [#30192](https://github.com/immich-app/immich/pull/30192); mihi atu ki a rāua tokorua. I tuhia ngā kāmera Tapo mai i ngā mea ka whakaahuatia e [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control), me [python-kasa](https://github.com/python-kasa/python-kasa). Ka whakawhirinaki te tirohanga Meta Quest ki te Meta Spatial SDK, ehara nei i te mea puna tuwhera, nā reira ka noho tonu i roto i tēnei peka. Ka kawea e te ZIP Windows a libmpv (te whare pukapuka a [mpv](https://mpv.io), me [FFmpeg](https://ffmpeg.org)) i hangaia e te kaupapa, i raro i te LGPL, me ōna raihana me ōna puna; kei [Raihana me ngā tohu hokona](../docs/immuch360/platform-support.md#license-and-trademarks) ngā taipitopito me ngā tohu hokona o ngā pūnaha e whakaingoatia ana i tēnei wharangi.
+Ko te kaimātakitaki whakaahua 360° e ahu mai ana i te tono kuhu upstream [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) nā dmitry-brazhenko, i hangaia ake i runga i te tauira tōmua nā bencefr i [#30192](https://github.com/immich-app/immich/pull/30192); ngā mihi ki a rāua tokorua. Ko ngā whakatikatika pou whakahau mō ngā tātari rapu me te raupapa kohinga i runga i ngā TV i tīmata mai i te mahi a mlc70 i [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). I tuhia ngā kāmera Tapo mai i ngā mea e tuhia ana e [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) me [python-kasa](https://github.com/python-kasa/python-kasa). Ko te tirohanga Meta Quest e whakawhirinaki ana ki te Meta Spatial SDK, ehara nei i te puna tuwhera, nō reira ka noho tonu ki tēnei peka. Kei roto i te ZIP Windows te libmpv (te whare pukapuka o [mpv](https://mpv.io), me [FFmpeg](https://ffmpeg.org)) i hangaia e te kaupapa, i raro i te LGPL, me ōna raihana me ōna puna; ko ngā taipitopito me ngā waitohu o ngā pūhara e whakahuatia ana i tēnei whārangi kei [Raihana me ngā waitohu](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 I hopukina ngā whakaahua waea pūkoro o tēnei wharangi i runga i te hanganga Android i roto i tētahi whakatinana, ko ngā mea TV i runga i te whakatinana Google TV, ā, ko ngā mea Windows i runga i tētahi rorohiko Windows 11, katoa me ngā whakaahua whānui CC0 mai i [Poly Haven](https://polyhaven.com); i hopukina ngā whakaahua taputapu mahunga i runga i tētahi Quest 3.
 
@@ -309,8 +310,8 @@ I hopukina ngā whakaahua waea pūkoro o tēnei wharangi i runga i te hanganga A
 
 Ngā mea kāore anō kia oti, ko te mea tūpono rawa i te tuatahi. Ehara tētahi mea i konei i te kupu taurangi, ā, ka āwhina ngā urupare i te [pūaroturuki take](https://github.com/freeKC/Immuch360/issues) ki te whakatau he aha ka tae tuatahi.
 
-- **Ngā toa**: Google Play (hanganga 23 kei te arotakehia, kei te arotakehia hoki te rārangi TV), te App Store (arotakenga 3.3.0 kei te arotakehia), te Meta Horizon Store (hanganga 21 kei te arotakehia).
-- **Rorohiko**: te whakamātau o ia mahi mā te ringa i runga i tētahi rorohiko Windows; kātahi te Mokowā 2.5D me te kāmera ipurangi; kātahi te kaiwhakatangi kiriata i runga i Linux me macOS, me tētahi whakamātautau i runga i tētahi Mac pono; kātahi he hanganga kua hainatia, me ngā whakahoutanga aunoa.
+- **Ngā toa**: Google Play (hanganga 26 ka tae mai, kei te arotakehia te rārangi TV), te App Store (putanga 3.3.1 kei te arotakehia mai i te 14 Whiringa-ā-nuku), te Meta Horizon Store (hanganga 25 kei te arotakehia).
+- **Ngā rorohiko**: te whakamātau ā-ringa i ia taumahi i runga i tētahi PC Windows; kātahi ko te kaiwhakaatu kiriata 360° i runga i Linux me macOS, he whakamātau i runga i tētahi Mac pono me tētahi PC Linux pono; kātahi he hanganga kua hainatia me ngā whakahōunga aunoa; kātahi ko Mokowā 2.5D me te kāmera tukutuku.
 - **Waea pūkoro me papapātuhi**: he pae wā i te kaiwhakatangi ataata 360° iOS, te mea o mua me te mea e whai ake i ngā kaiwhakatangi 360° o ngā waea pūkoro, te kōwhiringa ara oro i te kaiwhakatangi papatahi, te tirohanga ora a Tapo i runga i te iPhone me te iPad.
 - **Pāpāho rukuhanga**: takirua karu ika-whārua .dng, te whakaōrite i ngā kiriata GoPro me DJI mai i ō rātou ake raraunga nekehanga, kiriata mokowā hei 3D i runga i te Quest mehemea ka taea e ōna kaiwetewete, te mea o mua me te mea e whai ake i waenga i ngā whakaahua mokowā i roto i te taputapu mahunga.
 - **Pūtake**: te paki i waenga i ngā kōnae o tētahi kōpaki tiritiri, te whakamanatanga Digest mō WebDAV, he waehere QR hei kawe i te tohu Plex mai i te rorohiko, IPv6 mō Plex, hopunga Tapo H.265, ngā ara i te mata kāinga o te pouaka whakaata.

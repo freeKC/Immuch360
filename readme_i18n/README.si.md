@@ -20,14 +20,14 @@ Immuch360 යනු ඔබේ ඡායාරූප සහ වීඩියෝ �
 
 <div align="center">
 
-| වේදිකාව | එය ලබා ගන්නේ කොහෙන්ද | 2026 ඔක්තෝබර් 12 දින තත්ත්වය |
+| වේදිකාව | එය ලබා ගන්නේ කොහෙන්ද | 2026 ඔක්තෝබර් 20 දින තත්ත්වය |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** දුරකථන සහ ටැබ්ලට් | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play මත (build 20; build 23 සමාලෝචනයේ), build 23 GitHub මත |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone සහ iPad** | App Store | 3.3.0 අනුවාදය Apple ගේ සමාලෝචනය සඳහා රැඳී සිටී; මේ අතරතුර [එය ඔබම සකසා ගන්න](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV සහ Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 GitHub මත; TV ලැයිස්තුව Google හි සමාලෝචනයේ |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 සහ 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store මත (build 14; build 21 සමාලෝචනයේ), build 23 GitHub මත |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer හෝ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, පෙරදසුනක්: ඡායාරූප, සමතල සහ 360° වීඩියෝ, බෙදාගැනීම්, Plex, කැමරා, යෙදුම සමඟ විවෘත කළ ගොනු |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS සහ Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | ආරම්භක පෙරදසුන්: Linux මත ඡායාරූප සහ 360° ඡායාරූප, තවම වීඩියෝ නැත; macOS ව්‍යාපෘතියේ CI එකේ පමණක් ආරම්භ කර ඇත |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** දුරකථන සහ ටැබ්ලට් | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play මත (build 25), build 26 GitHub මත |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone සහ iPad** | App Store | 3.3.1 අනුවාදය (build 24) ඔක්තෝබර් 14 සිට Apple ගේ සමාලෝචනය සඳහා රැඳී සිටී; මේ අතරතුර [එය ඔබම සකසා ගන්න](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV සහ Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 GitHub මත, සෙවුම් පෙරහන්වල දුරස්ථ පාලක නිවැරදි කිරීම් සමඟ; TV ලැයිස්තුව Google හි සමාලෝචනයේ |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 සහ 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store මත (build 23; build 25 සමාලෝචනයේ), build 26 GitHub මත |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer හෝ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, පෙරදසුනක්: ඡායාරූප, සමතල සහ 360° වීඩියෝ, බෙදාගැනීම්, Plex, කැමරා, යෙදුම සමඟ විවෘත කළ ගොනු, භාෂා 89 කින් අතුරුමුහුණත |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS සහ Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | පෙරදසුන්: Linux මත ඡායාරූප, 360° ඡායාරූප සහ සමතල වීඩියෝ (360° වීඩියෝ සමතලව ධාවනය වේ); macOS මත එයමයි, ව්‍යාපෘතියේ CI Mac එකේ පමණක් පරීක්ෂා කර ඇත, sign කර නැත |
 
 *එක් එක් නිකුතුවේදී තත්ත්වයන් යවදාතනය කෙරේ; build එක් එකට විස්තර [නිකුතු තත්ත්වය](../docs/immuch360/release-status.md) හි ඇත.*
 
@@ -138,7 +138,7 @@ Immuch360 ට ගිණුමක් හෝ සේවාදායකයක් අ
 2. Settings, Asset Viewer, Videos තුළ, "වීඩියෝ මූලාශ්‍රය" මෙම උපකරණය එය ඩිකෝඩ් කරන විට මූල ගොනුව, සෑම විටම මූල ගොනුව, හෝ සෑම විටම පරිවර්තනය කළ ස්ට්‍රීම් තෝරා ගනී.
 3. යෙදුම නැති කෙනෙකුට 360° ඡායාරූපයක් පෙන්වීමට, එය Immich බෙදාගත් සබැඳියක් සමඟ බෙදාගන්න: Immich වෙබ් යෙදුම එය ඔවුන්ගේ බ්‍රවුසරයේ ගෝලයක් ලෙස පෙන්වයි.
 
-වර්තමාන build එක, build 23, 2026 ඔක්තෝබර් 10 දිනැති Immich හි `main` මත පදනම් වේ (3.3.0-rc.0 අනුවාදය) සහ Immich 3.2.4 සේවාදායකයක් සහ එම Immich `main` එකෙන්ම සකසන ලද සේවාදායකයක් සමඟ පරීක්ෂා කරන ලදී. කරුණාකර [Issues](https://github.com/freeKC/Immuch360/issues) හි ගැටළු වාර්තා කරන්න, Immich ව්‍යාපෘතියට නොවේ.
+වර්තමාන build එක, build 26, 2026 ඔක්තෝබර් 10 දිනැති Immich හි `main` මත පදනම් වේ (3.3.0-rc.0 අනුවාදය) සහ Immich 3.2.4 සේවාදායකයක් සහ එම Immich `main` එකෙන්ම සකසන ලද සේවාදායකයක් සමඟ පරීක්ෂා කරන ලදී. කරුණාකර [Issues](https://github.com/freeKC/Immuch360/issues) හි ගැටළු වාර්තා කරන්න, Immich ව්‍යාපෘතියට නොවේ.
 
 තවත්: [අනෙක් සියල්ල Immich ය](../docs/immuch360/user-guide.md#everything-else-is-immich), [Immich යෙදුම සමඟ සංසන්දනය](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Meta Quest එකක, එකම යෙදුම ඔබේ සම්පූර්�
 
 එක් කේත පදනමක්, පරිසරයන් හයක්. එක් එක් එකට අද ඇති දේ:
 
-| හැකියාව | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Immich සේවාදායකයක් සමඟ ගැලරිය, ඇල්බම්, සෙවීම | ✅ | ✅ | ✅ දර්ශකය | ✅ | ✅ | 🔧 |
-| සේවාදායකයක් නොමැතිව: උපකරණයේම මාධ්‍ය | ✅ | ✅ | බෙදාගැනීම් පමණක් | ✅ | ✅ බහාලුම් | 🔧 |
-| සමතල ඡායාරූප සහ වීඩියෝ | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| ගෝලයක් ලෙස 360° ඡායාරූප | ✅ | ✅ | ✅ | ✅ ගැබිනි | ✅ | 🔧 |
-| 360° වීඩියෝ | ✅ | ✅ කාල තීරුවක් නැත | ✅ | ✅ ගැබිනි | ✅ | 🔧 |
-| 3D සහ VR180 | ✅ එක් ඇසක් | ✅ එක් ඇසක් | ✅ එක් ඇසක් | ✅ සැබෑ 3D | ✅ එක් ඇසක් | 🔧 |
-| Spatial 2.5D (හිස සොයා ගැනීම) | ✅ පර්යේෂණාත්මක | ✅ පර්යේෂණාත්මක | ❌ | ❌ | 🔜 | ❌ |
-| Apple ස්පේෂල් ඡායාරූප | ✅ එක් ඇසක් | ✅ එක් ඇසක් | ✅ එක් ඇසක් | ✅ 3D | ✅ එක් ඇසක් | 🔧 |
-| Insta360, GoPro සහ DJI raw ගොනු | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA බෙදාගැනීම් | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo කැමරා: වාර්තා | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo කැමරා: සජීවී දර්ශනය | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| මෙම උපකරණය ජාලයේ බෙදාගන්න | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| බෙදාගැනීම් සහ උපකරණයෙන් Immich වෙත උඩුගත කිරීම | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| ආදානය | ස්පර්ශ, ගයිරෝස්කෝප් | ස්පර්ශ, ගයිරෝස්කෝප් | දුරස්ථය | කොන්ට්‍රෝලර්, අත් | මූසිකය, යතුරුපුවරුව | |
-| ලබා ගත හැකි තැන | Google Play, APK | App Store (සමාලෝචනයේ) | APK, Google Play (සමාලෝචනයේ) | Horizon Store, APK | installer හෝ ZIP (පෙරදසුන) | .deb, .rpm, DMG (ආරම්භක පෙරදසුන්) |
+| හැකියාව | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Immich සේවාදායකයක් සමඟ ගැලරිය, ඇල්බම්, සෙවීම | ✅ | ✅ | ✅ දර්ශකය | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| සේවාදායකයක් නොමැතිව: උපකරණයේම මාධ්‍ය | ✅ | ✅ | බෙදාගැනීම් පමණක් | ✅ | ✅ බහාලුම් | ✅ බහාලුම් | ✅ බහාලුම් |
+| සමතල ඡායාරූප සහ වීඩියෝ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| ගෝලයක් ලෙස 360° ඡායාරූප | ✅ | ✅ | ✅ | ✅ ගිල්වන | ✅ | ✅ | 🔧 CI |
+| 360° වීඩියෝ | ✅ | ✅ කාල තීරුවක් නැත | ✅ | ✅ ගිල්වන | ✅ | සමතල පමණි | සමතල පමණි |
+| 3D සහ VR180 | ✅ එක් ඇසක් | ✅ එක් ඇසක් | ✅ එක් ඇසක් | ✅ සැබෑ 3D | ✅ එක් ඇසක් | ඡායාරූප එක් ඇසක්, වීඩියෝ සමතල | ඡායාරූප එක් ඇසක්, වීඩියෝ සමතල |
+| Spatial 2.5D (හිසේ චලනය ලුහුබැඳීම) | ✅ පර්යේෂණාත්මක | ✅ පර්යේෂණාත්මක | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple ස්පේෂල් ඡායාරූප | ✅ එක් ඇසක් | ✅ එක් ඇසක් | ✅ එක් ඇසක් | ✅ 3D | ✅ එක් ඇසක් | 🔧 CI | 🔧 CI |
+| Insta360, GoPro සහ DJI raw ගොනු | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI ඡායාරූප, වීඩියෝ සමතල | 🔧 CI ඡායාරූප, වීඩියෝ සමතල |
+| SMB, WebDAV, DLNA බෙදාගැනීම් | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo කැමරා: පටිගත කිරීම් | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo කැමරා: සජීවී දර්ශනය | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| මෙම උපකරණය ජාලයේ බෙදාගන්න | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| බෙදාගැනීම් සහ උපකරණයෙන් Immich වෙත උඩුගත කිරීම | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| ආදානය | ස්පර්ශ, ගයිරෝස්කෝප් | ස්පර්ශ, ගයිරෝස්කෝප් | දුරස්ථය | කොන්ට්‍රෝලර්, අත් | මූසිකය, යතුරුපුවරුව | මූසිකය, යතුරුපුවරුව | මූසිකය, යතුරුපුවරුව, ට්‍රැක්පෑඩ් |
+| ලබා ගත හැකි තැන | Google Play, APK | App Store (සමාලෝචනයේ) | APK, Google Play (සමාලෝචනයේ) | Horizon Store, APK | installer හෝ ZIP (පෙරදසුන) | .deb, .rpm (පෙරදසුන) | DMG හෝ ZIP (sign නොකළ පෙරදසුන) |
 
-✅ එම වේදිකාවේ යෙදුමේ · ❌ එහි ලබා නොදේ · 🔜 සැලසුම් කර ඇත · 🔧 මූලාශ්‍ර කේතයේ ඇති අතර ව්‍යාපෘතියේ CI මගින් නිර්මාණය කරයි, එම පද්ධතියේ තවම ආරම්භ කර නැත. "එක් ඇසක්" යන්නෙන් අදහස් වන්නේ 3D ගොනුවක් සමතල තිරයක එහි වම් ඇස පෙන්වන බවයි. සෑම ✅ ක්ම තවම සැබෑ උපකරණයක පරීක්ෂා කර නැත: කුමක් කොතැනදී පරීක්ෂා කළේද, සහ තවම තහවුරු කළ යුතු දේ, [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) සහ [Compatibility](../docs/immuch360/compatibility.md) හි ඇත.
+✅ එම වේදිකාවේ යෙදුමේ · ❌ එහි ලබා නොදේ · 🔜 සැලසුම් කර ඇත · 🔧 CI මූලාශ්‍ර කේතයේ ඇත, ව්‍යාපෘතියේ CI මගින් එම පද්ධතියේ නිර්මාණය කර ආරම්භ කරයි, එහි සැබෑ සේවාදායකයක්, බෙදාගැනීමක් හෝ කැමරාවක් සමඟ තවම පරීක්ෂා කර නැත · සමතල පමණි: 360° renderer එක Windows සඳහා පමණක් ඇති නිසා, වීඩියෝව පණිවිඩයක් සමඟ සමතලව ධාවනය වේ. "එක් ඇසක්" යන්නෙන් අදහස් වන්නේ 3D ගොනුවක් සමතල තිරයක එහි වම් ඇස පෙන්වන බවයි. සෑම ✅ ක්ම තවම සැබෑ උපකරණයක පරීක්ෂා කර නැත: කුමක් කොතැනදී පරීක්ෂා කළේද, සහ තවම තහවුරු කළ යුතු දේ, [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) සහ [Compatibility](../docs/immuch360/compatibility.md) හි ඇත.
 
 - **Android දුරකථන සහ ටැබ්ලට්**: සම්පූර්ණ යෙදුම, ස්පර්ශ සහ ගයිරෝස්කෝප්, සෑම මූලාශ්‍රයක්ම.
 - **iPhone සහ iPad**: සම්පූර්ණ යෙදුම; 360° වීඩියෝ ක්‍රීඩකයට ක්‍රීඩනය සහ නැවැත්වීම පමණක් ඇත, Tapo සජීවී දර්ශනය පසුව පැමිණේ, සහ Apple multicast අවසරය ලබා දෙන තුරු DLNA සෙවීම unicast ඉල්ලීම් යවයි.
 - **Android TV සහ Google TV**: එකම APK, දුරස්ථය මගින් පාලනය වේ; දර්ශකයක් පමණි: backup, upload සහ සංස්කරණය සඟවා ඇත. Google TV emulator මත (login, කාලරේඛාව, දර්ශක, බෙදාගැනීම්, දුරස්ථ සංචලනය) පරීක්ෂා කර ඇත, තවම සැබෑ TV එකක නැත.
-- **Meta Quest 2, Pro, 3 සහ 3S**: කවුළුවක් ලෙස යෙදුම, ගැබිනි දර්ශනයත් සමඟ; HEVC යනු ආරක්ෂිත codec එකයි, Quest 3 මත H.264 පමණ 4096x2304 දී නතර වේ; Quest 2 සහ Quest Pro තවම පරීක්ෂා කර නැත.
+- **Meta Quest 2, Pro, 3 සහ 3S**: කවුළුවක් ලෙස යෙදුම, ගිල්වන දර්ශනයත් සමඟ; HEVC යනු ආරක්ෂිත codec එකයි, Quest 3 මත H.264 ආසන්න වශයෙන් 4096x2304 දී නතර වේ; Quest 3 පමණක් පරීක්ෂා කර ඇත, Quest 2, Quest Pro සහ Quest 3S තවම පරීක්ෂා කර නැත.
 - **Windows 10 සහ 11**: ගැලරියකට වෙනුවට ෆෝල්ඩර සහිත පෙරදසුනක්, සමතල සහ 360° වීඩියෝ සඳහා තමන්ගේම වීඩියෝ ක්‍රීඩකයක් (libmpv), graphics chip එකෙන් සම්බන්ධ කළ raw ගොනු, යෙදුම සමඟ විවෘත කළ හෝ කවුළුව මත දැම ගොනු සහ ෆෝල්ඩර, installer එකක් හෝ ZIP එකක්.
-- **macOS සහ Linux**: ව්‍යාපෘතියේ CI එක සකසන ලද පැකේජ (.deb, .rpm, DMG); Linux මත යෙදුම ආරම්භ වී ඡායාරූප සහ 360° ඡායාරූප පෙන්වයි, තවම වීඩියෝ නැත, සහ SMB බෙදාගැනීම් සඳහා Ubuntu 24.04, Debian 13 හෝ Fedora 39 හෝ ඊට වඩා අලුත් අවශ්‍යයි; macOS යෙදුම ව්‍යාපෘතියේ CI එකේ පමණක් ක්‍රියාත්මක වී ඇත, වීඩියෝ රහිතව සහ එහි ජාල ප්‍රවේශය නොපරීක්ෂිතව.
+- **Linux**: ව්‍යාපෘතියේ CI එක සකසන ලද .deb එකක් සහ .rpm එකක්, Ubuntu 22.04 සහ 24.04, Debian 12 සහ Fedora 40 සහ 44 මත ස්ථාපනය කර පරීක්ෂා කර ඇත; පද්ධතියේ libmpv හරහා ඡායාරූප, 360° ඡායාරූප සහ සමතල වීඩියෝ (360°, 3D සහ raw වීඩියෝ පණිවිඩයක් සමඟ සමතලව ධාවනය වේ); Ubuntu 22.04 සහ Debian 12 සිට SMB බෙදාගැනීම්; තවම සැබෑ Linux PC එකක ක්‍රියාත්මක කර නැත, WSLg යටතේ සහ containers තුළ පමණි.
+- **macOS**: ව්‍යාපෘතියේ CI එක සකසන ලද DMG එකක් සහ ZIP එකක්, universal, sign කර නැත (Gatekeeper එක් වරක් අසයි); එය ආරම්භ වේ, Finder ද ඇතුළුව එයට දෙන ගොනු සහ බහාලුම් විවෘත කරයි, එහි රහස් login keychain එකේ තබා ගනී සහ තමන්ගේම libmpv සමඟ සමතල වීඩියෝ ධාවනය කරයි, මේ සියල්ල ව්‍යාපෘතියේ CI Mac එකේ පමණක් පරීක්ෂා කර ඇත; සැබෑ Mac එකක තවම කිසිවක් ක්‍රියාත්මක වී නැත.
 
 <a id="advanced-features"></a>
 ## උසස් විශේෂාංග
@@ -300,7 +301,7 @@ developer වෙත කිසිවක් යන්නේ නැත: ගිණ�
 
 Immuch360 යනු [GNU AGPL v3](../LICENSE) යටතේ, Immich කණ්ඩායම හෝ FUTO සමඟ සම්බන්ධ නැති, හෝ ඔවුන් විසින් අනුමත නොකළ, [Immich](https://github.com/immich-app/immich) ජංගම යෙදුමෙන් වෙන් වූ නිල නොවන අනුවාදයකි. මෙම ව්‍යාපෘතිය පැවතීමට හේතුව ජංගම දුරකථනයේ 360° දැකීම 2024 ජනවාරි මාසයේ සිට Immich හි ඉල්ලා ඇති නමුත් තවම නිල යෙදුමේ නොමැති බැවිනි; එය දැන් එය නිකුත් කර, සැබෑ උපකරණ ප්‍රතිචාර එකතු කර, maintainer ලාට අවශ්‍ය ඕන දෙයක් කුඩා pull requests වලින් Immich වෙත ආපසු ලබා දෙනු ඇත. නිල යෙදුම කරන සියල්ල රැකේ; branches, build chain එක සහ CI එක [එය ඔබම සකසා ගන්න](../docs/immuch360/build.md) හි විස්තර කර ඇත.
 
-360° ඡායාරූප දර්ශකය dmitry-brazhenko ගේ upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) මත පදනම් වේ, එය [#30192](https://github.com/immich-app/immich/pull/30192) හි bencefr ගේ prototype එක මත ගොඩනගා ඇත; දෙදෙනාටම ස්තුතියි. Tapo කැමරා [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) සහ [python-kasa](https://github.com/python-kasa/python-kasa) විස්තර කරන දේවලින් ලියන ලදී. Meta Quest දර්ශනය විවෘත මූලාශ්‍ර නොවන Meta Spatial SDK මත රැඳේ, ඒ නිසා එය මෙම fork එකේම පවතී. Windows ZIP එකේ ව්‍යාපෘතිය විසින් LGPL යටතේ, එහි licences සහ මූලාශ්‍ර සමඟ, සකසන ලද libmpv ([mpv](https://mpv.io) හි පුස්තකාලය, [FFmpeg](https://ffmpeg.org) සමඟ) ඇත; මෙම පිටුවේ නම් කර ඇති වේදිකාවල විස්තර සහ trademarks [License and trademarks](../docs/immuch360/platform-support.md#license-and-trademarks) හි ඇත.
+360° ඡායාරූප දර්ශකය dmitry-brazhenko ගේ upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) මත පදනම් වේ, එය [#30192](https://github.com/immich-app/immich/pull/30192) හි bencefr ගේ prototype එක මත ගොඩනගා ඇත; දෙදෙනාටම ස්තුතියි. TV මත සෙවුම් පෙරහන්වල දුරස්ථ පාලක නිවැරදි කිරීම් සහ ඇල්බම් පිළිවෙළට සැකසීම [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) හි mlc70 ගේ වැඩෙන් ආරම්භ විය. Tapo කැමරා [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) සහ [python-kasa](https://github.com/python-kasa/python-kasa) විස්තර කරන දේවලින් ලියන ලදී. Meta Quest දර්ශනය විවෘත මූලාශ්‍ර නොවන Meta Spatial SDK මත රැඳේ, ඒ නිසා එය මෙම fork එකේ පවතී. Windows ZIP එකේ ව්‍යාපෘතිය විසින් LGPL යටතේ, එහි licences සහ මූලාශ්‍ර සමඟ, සකසන ලද libmpv ([mpv](https://mpv.io) හි පුස්තකාලය, [FFmpeg](https://ffmpeg.org) සමඟ) ඇත; මෙම පිටුවේ නම් කර ඇති වේදිකාවල විස්තර සහ trademarks [License and trademarks](../docs/immuch360/platform-support.md#license-and-trademarks) හි ඇත.
 
 මෙම පිටුවේ දුරකථන ග්‍රහණ emulator එකක Android build එකක ගත් අතර, TV ග්‍රහණ Google TV emulator එකේ සහ Windows ග්‍රහණ Windows 11 PC එකක ගත් අතර, සියල්ල [Poly Haven](https://polyhaven.com) වෙතින් CC0 පැනෝරමා සමඟ; හෙඩ්සෙට් ග්‍රහණ Quest 3 එකක ගත් ලදී.
 
@@ -309,8 +310,8 @@ Immuch360 යනු [GNU AGPL v3](../LICENSE) යටතේ, Immich කණ්ඩ�
 
 තවම නිම නොකළ දේ, වඩාත්ම සිදුවිය හැකි දේ මුලින්. මෙහි කිසිවක් පොරොන්දුවක් නොවේ, [issue tracker](https://github.com/freeKC/Immuch360/issues) හි ප්‍රතිචාර මුලින් එන්නේ කුමක්දැයි තීරණය කිරීමට උපකාරී වේ.
 
-- **Stores**: Google Play (build 23 සමාලෝචනයේ, TV ලැයිස්තුව සමාලෝචනයේ), App Store (3.3.0 අනුවාදය සමාලෝචනයේ), Meta Horizon Store (build 21 සමාලෝචනයේ).
-- **පරිගණක**: Windows PC එකක අතින් එක් එක් ක්‍රියාකාරිත්වයක් පරීක්ෂා කිරීම; ඉන්පසු webcam සමඟ Spatial 2.5D; ඉන්පසු Linux සහ macOS මත වීඩියෝ ක්‍රීඩකය සහ සැබෑ Mac එකක පරීක්ෂණයක්; ඉන්පසු sign කළ build එකක් සහ ස්වයංක්‍රීය යවදාතන.
+- **යෙදුම් වෙළඳසැල්**: Google Play (build 26 ඉදිරියේදී, TV ලැයිස්තුව සමාලෝචනයේ), App Store (3.3.1 අනුවාදය ඔක්තෝබර් 14 සිට සමාලෝචනයේ), Meta Horizon Store (build 25 සමාලෝචනයේ).
+- **පරිගණක**: Windows PC එකක අතින් එක් එක් ක්‍රියාකාරිත්වයක් පරීක්ෂා කිරීම; ඉන්පසු Linux සහ macOS මත 360° වීඩියෝ renderer එක, සැබෑ Mac එකක සහ සැබෑ Linux PC එකක පරීක්ෂණයක්; ඉන්පසු sign කළ build එකක් සහ ස්වයංක්‍රීය යාවත්කාලීන කිරීම්; ඉන්පසු webcam සමඟ Spatial 2.5D.
 - **දුරකථන සහ ටැබ්ලට්**: iOS 360° වීඩියෝ ක්‍රීඩකයේ කාල තීරුවක්, දුරකථනවල 360° ක්‍රීඩකවල ඉදිරියට/පසුපසට, සමතල ක්‍රීඩකයේ ශ්‍රවණ ට්‍රැක් තේරීම, iPhone සහ iPad හි Tapo සජීවී දර්ශනය.
 - **ගැබිනි මාධ්‍ය**: dual fisheye .dng, GoPro සහ DJI වීඩියෝ ඒවායේම චලන දත්ත වලින් level කිරීම, එහි decoder ඉඩ දෙන්නේ නම් Quest මත 3D ස්පේෂල් වීඩියෝ, හෙඩ්සෙටයේ ස්පේෂල් ඡායාරූප අතර ඉදිරියට/පසුපසට.
 - **මූලාශ්‍ර**: බෙදාගැනීම් බහාලුමක ගොනු අතර ස්වයිප් කිරීම, WebDAV සඳහා Digest authentication, පරිගණකයෙන් Plex token ගෙන ඒමට QR code එකක්, Plex සඳහා IPv6, H.265 Tapo වාර්තා, TV home screen එකේ channels.

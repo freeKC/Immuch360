@@ -20,14 +20,14 @@ Immuch360 hem wan fri mo open source app blong faenem, lukaotem, plei mo eksploe
 
 <div align="center">
 
-| Platfom | Wea blong kasem | Stejes long 12 Oktoba 2026 |
+| Platfom | Wea blong kasem | Stejes long 20 Oktoba 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** fon mo tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | long Google Play (build 20; build 23 stap long rivyu), build 23 long GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone mo iPad** | App Store | version 3.3.0 i wet blong Apple i rivyu; [buildim hem yu wan](../docs/immuch360/build.md) long miantaem |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV mo Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 long GitHub; lising blong TV i stap long rivyu blong Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 mo 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | long Horizon Store (build 14; build 21 stap long rivyu), build 23 long GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer o ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, wan privyu: foto, flat mo 360° video, sea, Plex, kamera, fael we oli openem wetem program |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS mo Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | ol fastaem privyu: long Linux, foto mo 360° foto, no gat video yet; macOS i stat nomo long CI blong projek |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** fon mo tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | long Google Play (build 25), build 26 long GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone mo iPad** | App Store | version 3.3.1 (build 24) i wet blong Apple i rivyu stat long 14 Oktoba; [buildim hem yu wan](../docs/immuch360/build.md) long miantaem |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV mo Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 long GitHub, wetem ol fiks blong rimot long ol sij filta; lising blong TV i stap long rivyu blong Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 mo 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | long Horizon Store (build 23; build 25 stap long rivyu), build 26 long GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer o ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, wan privyu: foto, flat mo 360° video, sea, Plex, kamera, fael we oli openem wetem program, intefes long 89 lanwis |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS mo Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | privyu: long Linux, foto, 360° foto mo flat video (360° video i plei flat); long macOS sem samting, oli jekem nomo long CI Mac blong projek, i no saenem |
 
 *Oli apdetem ol stejes long evri release; ol ditel, build wetem build, oli stap long [Release status](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Wetem wan [Immich](https://github.com/immich-app/immich) server, Immuch360 hem w
 2. Long Settings, Asset Viewer, Videos, "Sos blong video" i jusum orijinol taem divaes ia i save dikodem, oltaem orijinol, o oltaem transkod strim.
 3. Blong soem wan 360° foto long wan man we i no gat app, seaem hem wetem wan Immich sea link: Immich web app i soem hem olsem wan sfia long browsa blong hem.
 
-Build we i stap naoia, build 23, i aotem long Immich `main` blong 10 Oktoba 2026 (version 3.3.0-rc.0) mo oli testem hem agensem wan Immich 3.2.4 server mo wan server we oli buildim from sem Immich `main`. Plis ripotem ol problem long [Issues](https://github.com/freeKC/Immuch360/issues), no long projek blong Immich.
+Build we i stap naoia, build 26, i aotem long Immich `main` blong 10 Oktoba 2026 (version 3.3.0-rc.0) mo oli testem hem agensem wan Immich 3.2.4 server mo wan server we oli buildim from sem Immich `main`. Plis ripotem ol problem long [Issues](https://github.com/freeKC/Immuch360/issues), no long projek blong Immich.
 
 Mo moa: [evri narafala samting hem Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [bitwin wetem Immich app](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Mo moa: [Tapo kamera](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and
 
 Wan kod bes, sikis environmen. Wanem evriwan i gat tedei:
 
-| Fija | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Laebri, albam, sij wetem wan Immich server | ✅ | ✅ | ✅ vyua | ✅ | ✅ | 🔧 |
-| Wetaot wan server: media blong divaes hem wan | ✅ | ✅ | sea nomo | ✅ | ✅ folda | 🔧 |
-| Flat foto mo video | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360° foto olsem wan sfia | ✅ | ✅ | ✅ | ✅ imesiv | ✅ | 🔧 |
-| 360° video | ✅ | ✅ no gat ba blong taem | ✅ | ✅ imesiv | ✅ | 🔧 |
-| 3D mo VR180 | ✅ wan lek | ✅ wan lek | ✅ wan lek | ✅ trufala 3D | ✅ wan lek | 🔧 |
-| Spatial 2.5D (trakim hed) | ✅ eksperimentol | ✅ eksperimentol | ❌ | ❌ | 🔜 | ❌ |
-| Apple spatial foto | ✅ wan lek | ✅ wan lek | ✅ wan lek | ✅ 3D | ✅ wan lek | 🔧 |
-| Rao fael blong Insta360, GoPro mo DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA sea | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kamera: rikoding | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kamera: laef vyu | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Seaem divaes ia long netwok | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Aplod i go long Immich from sea mo divaes | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Input | tajim, gyroscope | tajim, gyroscope | rimot | kontrola, han | maos, kiboad | |
-| Wea blong kasem hem | Google Play, APK | App Store (stap long rivyu) | APK, Google Play (stap long rivyu) | Horizon Store, APK | Installer o ZIP (privyu) | .deb, .rpm, DMG (ol fastaem privyu) |
+| Fija | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Laebri, albam, sij wetem wan Immich server | ✅ | ✅ | ✅ vyua | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Wetaot wan server: media blong divaes hem wan | ✅ | ✅ | sea nomo | ✅ | ✅ folda | ✅ folda | ✅ folda |
+| Flat foto mo video | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 360° foto olsem wan sfia | ✅ | ✅ | ✅ | ✅ imesiv | ✅ | ✅ | 🔧 CI |
+| 360° video | ✅ | ✅ no gat ba blong taem | ✅ | ✅ imesiv | ✅ | flat nomo | flat nomo |
+| 3D mo VR180 | ✅ wan lek | ✅ wan lek | ✅ wan lek | ✅ trufala 3D | ✅ wan lek | foto wan lek, video flat | foto wan lek, video flat |
+| Spatial 2.5D (trakim hed) | ✅ eksperimentol | ✅ eksperimentol | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple spatial foto | ✅ wan lek | ✅ wan lek | ✅ wan lek | ✅ 3D | ✅ wan lek | 🔧 CI | 🔧 CI |
+| Rao fael blong Insta360, GoPro mo DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI foto, video flat | 🔧 CI foto, video flat |
+| SMB, WebDAV, DLNA sea | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamera: rikoding | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamera: laef vyu | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Seaem divaes ia long netwok | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Aplod i go long Immich from sea mo divaes | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Input | tajim, gyroscope | tajim, gyroscope | rimot | kontrola, han | maos, kiboad | maos, kiboad | maos, kiboad, trakpad |
+| Wea blong kasem hem | Google Play, APK | App Store (stap long rivyu) | APK, Google Play (stap long rivyu) | Horizon Store, APK | Installer o ZIP (privyu) | .deb, .rpm (privyu) | DMG o ZIP (privyu we i no saenem) |
 
-✅ i stap long app long platform ia · ❌ i no stap ofa long hem · 🔜 oli plan blong mekem · 🔧 i stap long sos mo CI blong projek i buildim, i no stat yet long sistem ia. "Wan lek" i minim wan 3D fael i soem lef lek blong hem long wan flat skrin. I no evri ✅ we oli jekem yet long wan trufala divaes: wanem we oli jekem wea, mo wanem i stap yet blong konfem, i stap long [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) mo [Compatibility](../docs/immuch360/compatibility.md).
+✅ i stap long app long platform ia · ❌ i no stap ofa long hem · 🔜 oli plan blong mekem · 🔧 CI i stap long sos, CI blong projek i buildim mo statem long sistem ia, be oli no jekem yet long ples ia wetem wan trufala server, sea o kamera · flat nomo: video i plei flat, wetem wan mesej, from we enjin blong 360° vyu i blong Windows nomo. "Wan lek" i minim wan 3D fael i soem lef lek blong hem long wan flat skrin. I no evri ✅ we oli jekem yet long wan trufala divaes: wanem we oli jekem wea, mo wanem i stap yet blong konfem, i stap long [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) mo [Compatibility](../docs/immuch360/compatibility.md).
 
 - **Android fon mo tablet**: fulwan app, tajim mo gyroscope, evri sos.
 - **iPhone mo iPad**: fulwan app; 360° video pleia i gat plei mo stop smol nomo, Tapo laef vyu bambae i kam bihaen, mo DLNA sij i sendem unicast rikwes kasem taem Apple i givim multicast intaetelmen.
 - **Android TV mo Google TV**: sem APK, rimot i draevem; wan vyua: bakap, aplod mo editing oli haed. Oli jekem long Google TV emiuleta (login, taemlaen, vyua, sea, navigesen wetem rimot), i no gat jek yet long wan trufala TV.
-- **Meta Quest 2, Pro, 3 mo 3S**: app olsem wan window, plas imesiv vyu; HEVC hem seif kodek, H.264 i stop raonabaot 4096x2304 long Quest 3; Quest 2 mo Quest Pro, oli no testem yet.
+- **Meta Quest 2, Pro, 3 mo 3S**: app olsem wan window, plas imesiv vyu; HEVC hem seif kodek, H.264 i stop raonabaot 4096x2304 long Quest 3; oli testem Quest 3 nomo, Quest 2, Quest Pro mo Quest 3S, oli no testem yet.
 - **Windows 10 mo 11**: wan privyu, wetem ol folda we oli mekem wok blong wan laebri, wan video pleia blong hem wan (libmpv) blong flat mo 360° video, rao fael we oli joenem long grafiks jip, fael mo folda we oli openem wetem program o draptem long window, wan installer o wan ZIP.
-- **macOS mo Linux**: paket we CI blong projek i buildim (wan .deb, wan .rpm, wan DMG); long Linux, app i stat mo soem foto mo 360° foto, i no gat video yet, mo SMB sea i nid Ubuntu 24.04, Debian 13 o Fedora 39 o niufala; macOS app i ron nomo long CI blong projek, i no gat video mo netwok akses blong hem i no testem yet.
+- **Linux**: wan .deb mo wan .rpm we CI blong projek i buildim, oli instolem mo jekem long Ubuntu 22.04 mo 24.04, Debian 12 mo Fedora 40 mo 44; foto, 360° foto mo flat video tru long libmpv blong sistem (360°, 3D mo rao video i plei flat wetem wan mesej); SMB sea stat long Ubuntu 22.04 mo Debian 12 i go antap; i no ron yet long wan trufala Linux PC, nomo aninit long WSLg mo insaed long ol kontena.
+- **macOS**: wan DMG mo wan ZIP we CI blong projek i buildim, yunivesol, oli no saenem (Gatekeeper i askem wan taem nomo); app i stat, i openem ol fael mo folda we oli givim long hem, wetem Finder tu, i kipim ol sikret blong hem long login keychain mo i pleiem flat video wetem libmpv blong hem wan, oli jekem evri samting ia nomo long CI Mac blong projek; i no gat samting i ron yet long wan trufala Mac.
 
 <a id="advanced-features"></a>
 ## Ol advans fija
@@ -300,7 +301,7 @@ I no gat samting i go long developa: no akaon, no analitiks, no savis blong ripo
 
 Immuch360 hem wan fork we i no ofisol blong [Immich](https://github.com/immich-app/immich) mobile app, aninit long [GNU AGPL v3](../LICENSE), hem i no join wetem, mo tim blong Immich o FUTO i no sapotem hem. Fork ia i exist from we pipol oli askem blong lukluk 360° long mobael insaed long Immich stat long Jenuari 2024 mo i no stap yet long ofisol app; naoia fork ia i sipim finis, hipimap fidbak from trufala divaes, mo bambae i ofa i go bak long Immich, long smol pull request, wanem mentena oli wantem. Evri samting we ofisol app i mekem, i stap kip; ol branj, jen blong build mo CI, oli eksplenem long [Buildim hem yu wan](../docs/immuch360/build.md).
 
-360° foto vyua i aotem long apstrim pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) blong dmitry-brazhenko, we hem wan i bildim long prototaep blong bencefr long [#30192](https://github.com/immich-app/immich/pull/30192); tankiu long tufala. Tapo kamera, oli raetem olgeta from wanem [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) mo [python-kasa](https://github.com/python-kasa/python-kasa) oli dokumenem. Meta Quest vyu i rilae long Meta Spatial SDK, we i no open source, taswe i stap insaed long fork ia nomo. Windows ZIP i karem libmpv (laebri blong [mpv](https://mpv.io), wetem [FFmpeg](https://ffmpeg.org)) we projek i buildim, aninit long LGPL, wetem ol laesens mo sos blong hem; ol ditel mo ol tredmak blong ol platform we oli nemem long pej ia, oli stap long [License and trademarks](../docs/immuch360/platform-support.md#license-and-trademarks).
+360° foto vyua i aotem long apstrim pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) blong dmitry-brazhenko, we hem wan i bildim long prototaep blong bencefr long [#30192](https://github.com/immich-app/immich/pull/30192); tankiu long tufala. Ol fiks blong rimot long ol sij filta mo long fasin blong sotem albam long TV oli stat long wok blong mlc70 long [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Tapo kamera, oli raetem olgeta from wanem [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) mo [python-kasa](https://github.com/python-kasa/python-kasa) oli dokumenem. Meta Quest vyu i rilae long Meta Spatial SDK, we i no open source, taswe i stap insaed long fork ia nomo. Windows ZIP i karem libmpv (laebri blong [mpv](https://mpv.io), wetem [FFmpeg](https://ffmpeg.org)) we projek i buildim, aninit long LGPL, wetem ol laesens mo sos blong hem; ol ditel mo ol tredmak blong ol platform we oli nemem long pej ia, oli stap long [License and trademarks](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Ol kapja blong fon long pej ia, oli tekem long Android build insaed long wan emiuleta, ol blong TV long Google TV emiuleta mo ol blong Windows long wan Windows 11 PC, evriwan wetem CC0 panorama from [Poly Haven](https://polyhaven.com); ol kapja blong hedset, oli tekem long wan Quest 3.
 
@@ -309,8 +310,8 @@ Ol kapja blong fon long pej ia, oli tekem long Android build insaed long wan emi
 
 Ol samting we oli no finis yet, olgeta we bambae i kam fastaem i stap antap. I no gat wan samting long ples ia we i wan promis, mo toktok long [lis blong ol problem](https://github.com/freeKC/Immuch360/issues) i halpem blong jusum wanem i kam fastaem.
 
-- **Ol stoa**: Google Play (build 23 long rivyu, lising blong TV long rivyu), App Store (version 3.3.0 long rivyu), Meta Horizon Store (build 21 long rivyu).
-- **Kompiuta**: test blong evri fonksen wetem hand long wan Windows PC; afta Spatial 2.5D wetem webkam; afta video pleia blong Linux mo macOS, mo wan test long wan trufala Mac; afta wan build we oli saenem mo apdet otomatik.
+- **Ol stoa**: Google Play (build 26 bambae i kam, lising blong TV long rivyu), App Store (version 3.3.1 long rivyu stat long 14 Oktoba), Meta Horizon Store (build 25 long rivyu).
+- **Kompiuta**: test blong evri fonksen wetem hand long wan Windows PC; afta enjin blong 360° video long Linux mo macOS, wan test long wan trufala Mac mo wan trufala Linux PC; afta wan build we oli saenem mo apdet otomatik; afta Spatial 2.5D wetem webkam.
 - **Fon mo tablet**: wan ba blong taem insaed long iOS 360° video pleia, bifo mo nekis long 360° pleia blong fon, jusum odio trak insaed long flat pleia, Tapo laef vyu long iPhone mo iPad.
 - **Imesiv media**: dual fisheye .dng, levelim GoPro mo DJI video from data blong mufmen blong olgeta, spatial video long 3D long Quest sapos dikoda i letem, bifo mo nekis bitwin spatial foto insaed long hedset.
 - **Sos**: swaepim bitwin ol fael blong wan folda blong sea, Digest athentikesen blong WebDAV, wan QR kod blong bringim Plex token from kompiuta, IPv6 blong Plex, H.265 Tapo rikoding, janel long hom skrin blong TV.

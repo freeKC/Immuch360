@@ -20,14 +20,14 @@ Immuch360 zo un arload digoust ha digor e darzh evit kavout, furchal, c'hoari ha
 
 <div align="center">
 
-| Platform | Pelec'h e kaout | Stad d'an 12 a viz Here 2026 |
+| Platform | Pelec'h e kaout | Stad d'an 20 a viz Here 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** pellgomzerioù ha tablezennoù | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | war Google Play (savadur 20; savadur 23 war adwel), savadur 23 war GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone hag iPad** | App Store | stumm 3.3.0 gortoz adwel Apple; [sevel eñ hoc'h-unan](../docs/immuch360/build.md) e-pad an amzer-se |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ha Google TV** | [APK](#android-tv-and-google-tv) · Google Play | savadur 23 war GitHub; emañ al listenn evit ar skinwelioù dindan adwel Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ha 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | war an Horizon Store (savadur 14; savadur 21 war adwel), savadur 23 war GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer pe ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | savadur desktop 5, ur rakwel: skeudennoù, videoioù plat ha 360°, rannadennoù, Plex, kameraoù, restroù digoret gant an arload |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ha Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | rakwelioù kentañ: war Linux skeudennoù ha skeudennoù 360°, video ebet c'hoazh; macOS nemetken loc'het war CI ar raktres |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** pellgomzerioù ha tablezennoù | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | war Google Play (savadur 25), savadur 26 war GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone hag iPad** | App Store | stumm 3.3.1 (savadur 24) o c'hortoz adwel Apple abaoe ar 14 a viz Here; [sevel eñ hoc'h-unan](../docs/immuch360/build.md) e-pad an amzer-se |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ha Google TV** | [APK](#android-tv-and-google-tv) · Google Play | savadur 26 war GitHub, gant reizhadennoù ar pellrener evit siloù an enklask; emañ al listenn evit ar skinwelioù dindan adwel Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ha 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | war an Horizon Store (savadur 23; savadur 25 war adwel), savadur 26 war GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer pe ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | savadur 6 evit an urzhiataer, ur rakwel: skeudennoù, videoioù plat ha 360°, rannadennoù, Plex, kameraoù, restroù digoret gant an arload, an etrefas e 89 yezh |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ha Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | rakwelioù: war Linux skeudennoù, skeudennoù 360° ha videoioù plat (ar videoioù 360° a vez lennet plat); war macOS memes tra, gwiriet war Mac CI ar raktres hepken, hep siell |
 
 *Hizivaet eo ar stadoù da bep embannadur; an munudoù, savadur ha savadur, zo e [Stad an embannadurioù](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Gant ur servijer [Immich](https://github.com/immich-app/immich), Immuch360 eo an
 2. En Arventennoù, Gweler ar Restroù, Videoioù, "Mammenn ar video" a zibab an hini orin pa zirgod an trevnad-mañ anezhañ, bepred an hini orin, pe bepred ar red treuzkodet.
 3. Evit diskouez ur skeudenn 360° da unan bennak n'en deus ket an arload, rannañ anezhi gant ul liamm rannet Immich: an arload web Immich a ziskouez anezhi evel ur sferenn en e merdeer.
 
-Ar savadur a-vremañ, savadur 23, zo diazezet war Immich `main` eus 10 Here 2026 (stumm 3.3.0-rc.0) hag a zo bet amprouet ouzh ur servijer Immich 3.2.4 hag ur servijer savet diwar ar memes Immich `main`. Mar plij, danevelliñ ar gudennoù e [Kudennoù](https://github.com/freeKC/Immuch360/issues), ket d'ar raktres Immich.
+Ar savadur a-vremañ, savadur 26, zo diazezet war Immich `main` eus 10 Here 2026 (stumm 3.3.0-rc.0) hag a zo bet amprouet ouzh ur servijer Immich 3.2.4 hag ur servijer savet diwar ar memes Immich `main`. Mar plij, danevellit ar gudennoù e [Kudennoù](https://github.com/freeKC/Immuch360/issues), ha neket d'ar raktres Immich.
 
 Muioc'h: [an holl re all zo Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [keñveriet gant an arload Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Muioc'h: [kameraoù Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view
 
 Ur gwrizienn god hepken, c'hwec'h endro. Petra a zo gant pep hini hiziv:
 
-| Keweriusted | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeri, albumoù, enklask gant ur servijer Immich | ✅ | ✅ | ✅ gweler | ✅ | ✅ | 🔧 |
-| Hep servijer: restroù an trevnad e-unan | ✅ | ✅ | rannadennoù hepken | ✅ | ✅ teuliadoù | 🔧 |
-| Skeudennoù ha videoioù plat | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Skeudennoù 360° evel ur sferenn | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | 🔧 |
-| Videoioù 360° | ✅ | ✅ barrenn-amzer ebet | ✅ | ✅ immersiv | ✅ | 🔧 |
-| 3D ha VR180 | ✅ ul lagad | ✅ ul lagad | ✅ ul lagad | ✅ 3D gwirion | ✅ ul lagad | 🔧 |
-| Spasial 2.5D (heuliañ ar penn) | ✅ arnodel | ✅ arnodel | ❌ | ❌ | 🔜 | ❌ |
-| Skeudennoù spasial Apple | ✅ ul lagad | ✅ ul lagad | ✅ ul lagad | ✅ 3D | ✅ ul lagad | 🔧 |
-| Restroù brut Insta360, GoPro ha DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Rannadennoù SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kameraoù Tapo: enrolladennoù | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Kameraoù Tapo: gwel war-eeun | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Rannañ an trevnad-mañ war ar rouedad | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Pellgas da Immich diwar rannadennoù hag an trevnad | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Enankad | stok, jiroskop | stok, jiroskop | pellrener | manelloù, daouarn | logodenn, klavier | |
-| Pelec'h e kaout | Google Play, APK | App Store (war adwel) | APK, Google Play (war adwel) | Horizon Store, APK | installer pe ZIP (rakwel) | .deb, .rpm, DMG (rakwelioù kentañ) |
+| Keweriusted | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galeri, albumoù, enklask gant ur servijer Immich | ✅ | ✅ | ✅ gweler | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Hep servijer: restroù an trevnad e-unan | ✅ | ✅ | rannadennoù hepken | ✅ | ✅ teuliadoù | ✅ teuliadoù | ✅ teuliadoù |
+| Skeudennoù ha videoioù plat | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Skeudennoù 360° evel ur sferenn | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
+| Videoioù 360° | ✅ | ✅ barrenn-amzer ebet | ✅ | ✅ immersiv | ✅ | plat hepken | plat hepken |
+| 3D ha VR180 | ✅ ul lagad | ✅ ul lagad | ✅ ul lagad | ✅ 3D gwirion | ✅ ul lagad | skeudennoù ul lagad, videoioù plat | skeudennoù ul lagad, videoioù plat |
+| Spasial 2.5D (heuliañ ar penn) | ✅ arnodel | ✅ arnodel | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Skeudennoù spasial Apple | ✅ ul lagad | ✅ ul lagad | ✅ ul lagad | ✅ 3D | ✅ ul lagad | 🔧 CI | 🔧 CI |
+| Restroù brut Insta360, GoPro ha DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI skeudennoù, videoioù plat | 🔧 CI skeudennoù, videoioù plat |
+| Rannadennoù SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kameraoù Tapo: enrolladennoù | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kameraoù Tapo: gwel war-eeun | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Rannañ an trevnad-mañ war ar rouedad | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Pellgas da Immich diwar rannadennoù hag an trevnad | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Enankad | stok, jiroskop | stok, jiroskop | pellrener | manelloù, daouarn | logodenn, klavier | logodenn, klavier | logodenn, klavier, pavez-stok |
+| Pelec'h e kaout | Google Play, APK | App Store (war adwel) | APK, Google Play (war adwel) | Horizon Store, APK | installer pe ZIP (rakwel) | .deb, .rpm (rakwel) | DMG pe ZIP (rakwel hep siell) |
 
-✅ en arload war ar platform-se · ❌ ne vez ket kinniget eno · 🔜 steuñvet · 🔧 er mammennoù ha savet gant CI ar raktres, n'eo ket bet kroget c'hoazh war ar reizhiad-se. "Ul lagad" a dalv e ziskouez ur restr 3D e lagad kleiz war ur skramm plat. N'eo ket bet amprouet pep ✅ war un trevnad gwirion c'hoazh: petra zo bet amprouet ha pelec'h, ha petra a chom da gadarnaat, zo e [Perzhioù](../docs/immuch360/features.md), [Skor ar reizhiadoù](../docs/immuch360/platform-support.md) ha [Keverlec'hded](../docs/immuch360/compatibility.md).
+✅ en arload war ar platform-se · ❌ ne vez ket kinniget eno · 🔜 steuñvet · 🔧 CI er mammennoù, savet ha loc'het gant CI ar raktres war ar reizhiad-se, n'eo ket bet gwiriet eno c'hoazh gant ur servijer, ur rannadenn pe ur c'hamera gwirion · plat hepken: ar video a vez lennet plat, gant ur gemennadenn, rak ar c'heflusker skeudenniñ 360° n'eus anezhañ nemet war Windows. "Ul lagad" a dalv e ziskouez ur restr 3D e lagad kleiz war ur skramm plat. N'eo ket bet amprouet pep ✅ war un trevnad gwirion c'hoazh: petra zo bet amprouet ha pelec'h, ha petra a chom da gadarnaat, zo e [Perzhioù](../docs/immuch360/features.md), [Skor ar reizhiadoù](../docs/immuch360/platform-support.md) ha [Keverlec'hded](../docs/immuch360/compatibility.md).
 
 - **Pellgomzerioù ha tablezennoù Android**: an arload klok, stok ha jiroskop, pep mammenn.
 - **iPhone hag iPad**: an arload klok; ar c'hoarier video 360° n'en deus nemet c'hoari hag ehan, gwel war-eeun Tapo a zeuio diwezhatoc'h, hag enklask DLNA a gas goulennoù unicast betek ma vo aotreet multicast gant Apple.
 - **Android TV ha Google TV**: ar memes APK, renet gant ar pellrener; ur gweler: kuzhet eo ar c'hopiañ surentez, ar pellgasoù hag ar c'hemmoù. Amprouet war emulatour Google TV (kennaskañ, linenn-amzer, gwelerioù, rannadennoù, merdeiñ ar pellrener), ket c'hoazh war ur skinwel gwirion.
-- **Meta Quest 2, Pro, 3 ha 3S**: an arload evel ur prenestr, hag ouzhpenn se ar gwel immersiv; HEVC eo ar kodek sur, H.264 a baouez war-dro 4096x2304 war ar Quest 3; ar Quest 2 hag ar Quest Pro n'int ket bet amprouet c'hoazh.
+- **Meta Quest 2, Pro, 3 ha 3S**: an arload evel ur prenestr, hag ouzhpenn se ar gwel immersiv; HEVC eo ar kodek sur, H.264 a baouez war-dro 4096x2304 war ar Quest 3; ar Quest 3 hepken zo bet amprouet, ar Quest 2, ar Quest Pro hag ar Quest 3S n'int ket bet amprouet c'hoazh.
 - **Windows 10 ha 11**: ur rakwel, gant teuliadoù e-lec'h ur galeri, ur c'hoarier video dezhañ e-unan (libmpv) evit videoioù plat ha 360°, restroù brut gwriet war ar chipenn grafek, restroù ha teuliadoù digoret gant an arload pe taolet war ar prenestr, un installer pe ur ZIP.
-- **macOS ha Linux**: pakadoù savet gant CI ar raktres (ur .deb, un .rpm, ur DMG); war Linux an arload a loc'h hag a ziskouez skeudennoù ha skeudennoù 360°, video ebet c'hoazh, ha ar rannadennoù SMB a rank kaout Ubuntu 24.04, Debian 13 pe Fedora 39 pe nevesoc'h; an arload macOS n'eo bet loc'het nemet war CI ar raktres, hep video, hag e haeziñ rouedad n'eo ket bet amprouet c'hoazh.
+- **Linux**: ur .deb hag un .rpm savet gant CI ar raktres, staliet ha gwiriet war Ubuntu 22.04 ha 24.04, Debian 12 ha Fedora 40 ha 44; skeudennoù, skeudennoù 360° ha videoioù plat dre libmpv ar reizhiad (ar videoioù 360°, 3D ha brut a vez lennet plat gant ur gemennadenn); rannadennoù SMB adalek Ubuntu 22.04 ha Debian 12; n'eo ket bet loc'het c'hoazh war ur PC Linux gwirion, nemet dindan WSLg hag en endalc'herioù.
+- **macOS**: ur DMG hag ur ZIP savet gant CI ar raktres, hollvedel, hep siell (Gatekeeper a c'houlenn ur wech); an arload a loc'h, a zigor ar restroù hag an teuliadoù roet dezhañ, diwar Finder ivez, a ziwall e sekredoù er chadenn-alc'hwezioù kennaskañ hag a lenn ar videoioù plat gant e libmpv dezhañ e-unan, pep tra gwiriet war Mac CI ar raktres hepken; netra n'eo bet loc'het war ur Mac gwirion c'hoazh.
 
 <a id="advanced-features"></a>
 ## Perzhioù araokaet
@@ -300,7 +301,7 @@ Netra ne ya d'an diorrour: kont ebet, dielfennadur ebet, servij danevelliñ sac'
 
 Immuch360 zo ur forc'h dizoficial eus an arload hezoug [Immich](https://github.com/immich-app/immich), dindan [GNU AGPL v3](../LICENSE), hep bezañ liammet ouzh, na skoret gant, skipailh Immich pe FUTO. Ar forc'h a zo bet savet peogwir eo bet goulennet gwelet 360° war hezoug e Immich adalek Genver 2024 ha n'emañ ket c'hoazh en arload ofisiel; kaset eo bremañ, dastum a ra evezhiadennoù diwar trevnadoù gwirion, hag e vo kinniget en-dro da Immich, dre pull requests bihan, ar pezh a fell d'ar merourien. Pep tra a ra an arload ofisiel zo miret; ar brankoù, chadenn ar sevel hag ar CI zo deskrivet e [Sevel eñ hoc'h-unan](../docs/immuch360/build.md).
 
-Diazezet eo ar gweler skeudenn 360° war ar pull request orin [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) gant dmitry-brazhenko, savet e-unan war ar prototip gant bencefr e [#30192](https://github.com/immich-app/immich/pull/30192); trugarez d'an daou. Ar c'hameraoù Tapo zo bet skrivet diwar ar pezh a zeskriv [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ha [python-kasa](https://github.com/python-kasa/python-kasa). Ar gwel Meta Quest a bouez war ar Meta Spatial SDK, n'eo ket digor e darzh, neuze e chom er forc'h-mañ. ZIP Windows a zoug libmpv (levraoueg [mpv](https://mpv.io), gant [FFmpeg](https://ffmpeg.org)) savet gant ar raktres, dindan LGPL, gant e aotreoù hag e vammennoù; munudoù ha merkoù kenwerzhel ar platformoù anvet war ar bajenn-mañ zo e [Aotre ha merkoù kenwerzhel](../docs/immuch360/platform-support.md#license-and-trademarks).
+Diazezet eo ar gweler skeudenn 360° war ar pull request orin [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) gant dmitry-brazhenko, savet e-unan war ar prototip gant bencefr e [#30192](https://github.com/immich-app/immich/pull/30192); trugarez d'an daou. Reizhadennoù ar pellrener evit siloù an enklask hag urzhiañ an albumoù war ar skinwelioù zo bet kroget diwar labour mlc70 e [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Ar c'hameraoù Tapo zo bet skrivet diwar ar pezh a zeskriv [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ha [python-kasa](https://github.com/python-kasa/python-kasa). Ar gwel Meta Quest a bouez war ar Meta Spatial SDK, n'eo ket digor e darzh, neuze e chom er forc'h-mañ. ZIP Windows a zoug libmpv (levraoueg [mpv](https://mpv.io), gant [FFmpeg](https://ffmpeg.org)) savet gant ar raktres, dindan LGPL, gant e aotreoù hag e vammennoù; munudoù ha merkoù kenwerzhel ar platformoù anvet war ar bajenn-mañ zo e [Aotre ha merkoù kenwerzhel](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Capturioù pellgomzer ar bajenn-mañ zo bet tapet war savadur Android en un emulatour, ar re skinwel war emulatour Google TV ha ar re Windows war ur PC Windows 11, holl gant panoramaoù CC0 diwar [Poly Haven](https://polyhaven.com); capturioù ar kasked zo bet tapet war ur Quest 3.
 
@@ -309,8 +310,8 @@ Capturioù pellgomzer ar bajenn-mañ zo bet tapet war savadur Android en un emul
 
 Ar pezh n'eo ket graet c'hoazh, an hini moarvat da gentañ. Netra amañ n'eo ur bromesa, hag an evezhiadennoù war ar [roll kudennoù](https://github.com/freeKC/Immuch360/issues) a sikour da zivizout petra a zeu da gentañ.
 
-- **Ar stalioù**: Google Play (savadur 23 war adwel, roll ar skinwel war adwel), an App Store (stumm 3.3.0 war adwel), ar Meta Horizon Store (savadur 21 war adwel).
-- **Urzhiataerioù**: amprouiñ pep arc'hwel gant an dorn war ur PC Windows; neuze Spasial 2.5D gant ar webcam; neuze ar c'hoarier video war Linux ha macOS, hag un amprouadenn war ur Mac gwirion; neuze ur savadur siellet hag hizivadurioù emgefreek.
+- **Ar stalioù**: Google Play (savadur 26 da zont, roll ar skinwel war adwel), an App Store (stumm 3.3.1 war adwel abaoe ar 14 a viz Here), ar Meta Horizon Store (savadur 25 war adwel).
+- **Urzhiataerioù**: amprouiñ pep arc'hwel gant an dorn war ur PC Windows; neuze ar c'heflusker skeudenniñ video 360° war Linux ha macOS, un amprouadenn war ur Mac gwirion hag war ur PC Linux gwirion; neuze ur savadur siellet hag hizivadurioù emgefreek; neuze Spasial 2.5D gant ar webcam.
 - **Pellgomzerioù ha tablezennoù**: ur varrenn-amzer er c'hoarier video 360° iOS, kent ha war-lerc'h er c'hoarierioù 360° ar pellgomzerioù, an dibab roud klevet er c'hoarier plat, gwel war-eeun Tapo war iPhone hag iPad.
 - **Restroù immersiv**: .dng daouedoù fisheye, kempouezañ videoioù GoPro ha DJI diwar o roadennoù fiñv dezho, videoioù spasial e 3D war ar Quest ma aotre e zirgoderioù se, kent ha war-lerc'h etre skeudennoù spasial er kasked.
 - **Mammennoù**: riklañ etre restroù un teuliad rannet, gwiriadenn Digest evit WebDAV, ur c'hod QR evit degas jedon Plex diwar an urzhiataer, IPv6 evit Plex, enrolladennoù Tapo H.265, kanolioù war skramm degemer ar skinwel.

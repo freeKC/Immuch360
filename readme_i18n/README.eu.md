@@ -20,14 +20,14 @@ Immuch360 doako eta kode irekiko aplikazio bat da, zure argazkiak eta bideoak bi
 
 <div align="center">
 
-| Plataforma | Non lortu | Egoera 2026ko urriaren 12ean |
+| Plataforma | Non lortu | Egoera 2026ko urriaren 20an |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefono eta tabletak | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play-n (20. eraikuntza; 23.a berrikuspenean), 23. eraikuntza GitHub-en |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone eta iPad** | App Store | 3.3.0 bertsioa Apple-ren berrikuspenaren zain; bitartean, [eraiki zeuk](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV eta Google TV** | [APK](#android-tv-and-google-tv) · Google Play | 23. eraikuntza GitHub-en; telebistarako zerrenda Google-ren berrikuspenaren zain dago |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 eta 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store-n (14. eraikuntza; 21.a berrikuspenean), 23. eraikuntza GitHub-en |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalatzailea edo ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | mahaigaineko 5. eraikuntza, aurrebista bat: argazkiak, bideo lau eta 360°koak, partekatzeak, Plex, kamerak, programarekin irekitako fitxategiak |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS eta Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | aurrebista goiztiarrak: Linux-en argazkiak eta 360° argazkiak, oraindik bideorik ez; macOS proiektuaren CIn bakarrik abiarazi da |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefono eta tabletak | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play-n (25. eraikuntza), 26. eraikuntza GitHub-en |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone eta iPad** | App Store | 3.3.1 bertsioa (24. eraikuntza) Apple-ren berrikuspenaren zain urriaren 14tik; bitartean, [eraiki zeuk](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV eta Google TV** | [APK](#android-tv-and-google-tv) · Google Play | 26. eraikuntza GitHub-en, bilaketa-iragazkietako urrutiko agintearen zuzenketekin; telebistarako zerrenda Google-ren berrikuspenaren zain dago |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 eta 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store-n (23. eraikuntza; 25.a berrikuspenean), 26. eraikuntza GitHub-en |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalatzailea edo ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | mahaigaineko 6. eraikuntza, aurrebista bat: argazkiak, bideo lau eta 360°koak, partekatzeak, Plex, kamerak, programarekin irekitako fitxategiak, interfazea 89 hizkuntzatan |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS eta Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | aurrebistak: Linux-en argazkiak, 360° argazkiak eta bideo lauak (360° bideoak lau erreproduzitzen dira); macOS-en gauza bera, proiektuaren CI Mac-ean bakarrik egiaztatuta, sinatu gabe |
 
 *Egoerak kaleratze bakoitzean eguneratzen dira; eraikuntzaz eraikuntza xehetasunak [Kaleratze-egoera](../docs/immuch360/release-status.md) orrian daude.*
 
@@ -138,7 +138,7 @@ Gehiago: [sareko partekatzeak](../docs/immuch360/user-guide.md#network-shares-a-
 2. Ezarpenak atalean, Elementu-bistaratzailea, Bideoak, "Bideoaren iturria" aukerak jatorrizkoa hautatzen du gailu honek deskodetzen duenean, beti jatorrizkoa, edo beti transkodetutako korrontea.
 3. Aplikazioa ez duen norbaiti 360° argazki bat erakusteko, partekatu Immich-en partekatutako esteka batekin: Immich-en web-aplikazioak esfera gisa erakutsiko du haren nabigatzailean.
 
-Oraingo eraikuntza, 23.a, Immich-en `main`-en 2026ko urriaren 10eko bertsioan oinarritzen da (3.3.0-rc.0 bertsioa), eta Immich 3.2.4 zerbitzari baten eta Immich `main` beraren bidez eraikitako zerbitzari baten aurka probatu da. Mesedez, jakinarazi arazoak [Issues](https://github.com/freeKC/Immuch360/issues) atalean, ez Immich proiektuari.
+Oraingo eraikuntza, 26.a, Immich-en `main`-en 2026ko urriaren 10eko bertsioan oinarritzen da (3.3.0-rc.0 bertsioa), eta Immich 3.2.4 zerbitzari baten eta Immich `main` beraren bidez eraikitako zerbitzari baten aurka probatu da. Mesedez, jakinarazi arazoak [Issues](https://github.com/freeKC/Immuch360/issues) atalean, ez Immich proiektuari.
 
 Gehiago: [gainerako guztia Immich da](../docs/immuch360/user-guide.md#everything-else-is-immich), [Immich aplikazioarekin alderatuta](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Gehiago: [Tapo kamerak](../docs/immuch360/user-guide.md#tapo-cameras-live-view-a
 
 Kode-base bakarra, sei ingurune. Bakoitzak gaur zer duen:
 
-| Gaitasuna | Android | iPhone, iPad | Telebista | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeria, albumak, bilaketa Immich zerbitzari batekin | ✅ | ✅ | ✅ bistaratzailea | ✅ | ✅ | 🔧 |
-| Zerbitzaririk gabe: gailuaren bere edukiak | ✅ | ✅ | partekatzeak bakarrik | ✅ | ✅ karpetak | 🔧 |
-| Argazki eta bideo lauak | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360° argazkiak esfera gisa | ✅ | ✅ | ✅ | ✅ murgiltzailea | ✅ | 🔧 |
-| 360° bideoak | ✅ | ✅ denbora-barra gabe | ✅ | ✅ murgiltzailea | ✅ | 🔧 |
-| 3D eta VR180 | ✅ begi bat | ✅ begi bat | ✅ begi bat | ✅ 3D osoa | ✅ begi bat | 🔧 |
-| Spatial 2.5D (buru-jarraipena) | ✅ esperimentala | ✅ esperimentala | ❌ | ❌ | 🔜 | ❌ |
-| Apple-ren argazki espazialak | ✅ begi bat | ✅ begi bat | ✅ begi bat | ✅ 3D | ✅ begi bat | 🔧 |
-| Insta360, GoPro eta DJI fitxategi gordinak | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB, WebDAV, DLNA partekatzeak | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kamerak: grabazioak | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo kamerak: zuzeneko ikuspegia | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Partekatu gailu hau sarean | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Partekatzeetatik eta gailutik Immich-era igo | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Sarrera | ukipena, giroskopioa | ukipena, giroskopioa | urrutiko agintea | kontrolagailuak, eskuak | sagua, teklatua | |
-| Non eskuratu | Google Play, APK | App Store (berrikuspenean) | APK, Google Play (berrikuspenean) | Horizon Store, APK | instalatzailea edo ZIP (aurrebista) | .deb, .rpm, DMG (aurrebista goiztiarrak) |
+| Gaitasuna | Android | iPhone, iPad | Telebista | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galeria, albumak, bilaketa Immich zerbitzari batekin | ✅ | ✅ | ✅ bistaratzailea | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Zerbitzaririk gabe: gailuaren bere edukiak | ✅ | ✅ | partekatzeak bakarrik | ✅ | ✅ karpetak | ✅ karpetak | ✅ karpetak |
+| Argazki eta bideo lauak | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 360° argazkiak esfera gisa | ✅ | ✅ | ✅ | ✅ murgiltzailea | ✅ | ✅ | 🔧 CI |
+| 360° bideoak | ✅ | ✅ denbora-barra gabe | ✅ | ✅ murgiltzailea | ✅ | lau bakarrik | lau bakarrik |
+| 3D eta VR180 | ✅ begi bat | ✅ begi bat | ✅ begi bat | ✅ 3D osoa | ✅ begi bat | argazkiak begi bat, bideoak lau | argazkiak begi bat, bideoak lau |
+| Spatial 2.5D (buru-jarraipena) | ✅ esperimentala | ✅ esperimentala | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple-ren argazki espazialak | ✅ begi bat | ✅ begi bat | ✅ begi bat | ✅ 3D | ✅ begi bat | 🔧 CI | 🔧 CI |
+| Insta360, GoPro eta DJI fitxategi gordinak | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI argazkiak, bideoak lau | 🔧 CI argazkiak, bideoak lau |
+| SMB, WebDAV, DLNA partekatzeak | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamerak: grabazioak | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamerak: zuzeneko ikuspegia | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Partekatu gailu hau sarean | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Partekatzeetatik eta gailutik Immich-era igo | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Sarrera | ukipena, giroskopioa | ukipena, giroskopioa | urrutiko agintea | kontrolagailuak, eskuak | sagua, teklatua | sagua, teklatua | sagua, teklatua, ukipen-panela |
+| Non eskuratu | Google Play, APK | App Store (berrikuspenean) | APK, Google Play (berrikuspenean) | Horizon Store, APK | instalatzailea edo ZIP (aurrebista) | .deb, .rpm (aurrebista) | DMG edo ZIP (sinatu gabeko aurrebista) |
 
-✅ plataforma horretako aplikazioan · ❌ ez da hor eskaintzen · 🔜 aurreikusita · 🔧 iturburuetan eta proiektuaren CIak eraikita, oraindik sistema horretan hasi gabe. "Begi bat" esan nahi du 3D fitxategi batek bere ezkerreko begia erakusten duela pantaila lau batean. Ez da ✅ bakoitza benetako gailu batean egiaztatu oraindik: non egiaztatu den, eta zer geratzen den berresteko, [Ezaugarriak](../docs/immuch360/features.md), [Plataformen euskarria](../docs/immuch360/platform-support.md) eta [Bateragarritasuna](../docs/immuch360/compatibility.md) orrietan dago.
+✅ plataforma horretako aplikazioan · ❌ ez da hor eskaintzen · 🔜 aurreikusita · 🔧 CI iturburuetan, proiektuaren CIak sistema horretan eraiki eta abiarazia, baina oraindik han benetako zerbitzari, partekatze edo kamera batekin egiaztatu gabe · lau bakarrik: bideoa lau erreproduzitzen da, mezu batekin, 360° errendatzailea Windows-en bakarrik dagoelako. "Begi bat" esan nahi du 3D fitxategi batek bere ezkerreko begia erakusten duela pantaila lau batean. Ez da ✅ bakoitza benetako gailu batean egiaztatu oraindik: non egiaztatu den, eta zer geratzen den berresteko, [Ezaugarriak](../docs/immuch360/features.md), [Plataformen euskarria](../docs/immuch360/platform-support.md) eta [Bateragarritasuna](../docs/immuch360/compatibility.md) orrietan dago.
 
 - **Android telefono eta tabletak**: aplikazio osoa, ukipena eta giroskopioa, iturri guztiak.
 - **iPhone eta iPad**: aplikazio osoa; 360° bideo-erreproduktoreak erreproduzitu eta pausatu baino ez du, Tapo-ren zuzeneko ikuspegia geroago iritsiko da, eta DLNA bilaketak unicast eskaerak bidaltzen ditu Apple-k multicast baimena eman arte.
 - **Android TV eta Google TV**: APK bera, urrutiko aginteak gidatuta; bistaratzaile bat: babeskopia, igoerak eta edizioa ezkutatuta daude. Google TV emuladorean egiaztatuta (saio-hasiera, kronologia, bistaratzaileak, partekatzeak, urrutiko agintearen nabigazioa), oraindik ez benetako telebista batean.
-- **Meta Quest 2, Pro, 3 eta 3S**: aplikazioa leiho gisa, murgiltze-ikuspegiaz gain; HEVC da kodek segurua, H.264 4096x2304 bueltan gelditzen da Quest 3n; Quest 2 eta Quest Pro oraindik ez dira probatu.
+- **Meta Quest 2, Pro, 3 eta 3S**: aplikazioa leiho gisa, murgiltze-ikuspegiaz gain; HEVC da kodek segurua, H.264 4096x2304 bueltan gelditzen da Quest 3n; Quest 3 bakarrik probatu da, Quest 2, Quest Pro eta Quest 3S oraindik ez dira probatu.
 - **Windows 10 eta 11**: aurrebista bat, galeriaren ordez karpetekin, bere erreproduktore propioa (libmpv) bideo lau eta 360°koetarako, txip grafikoan jositako fitxategi gordinak, programarekin irekitako edo leihora arrastatutako fitxategi eta karpetak, instalatzaile bat edo ZIP bat.
-- **macOS eta Linux**: proiektuaren CIak eraikitako paketeak (.deb bat, .rpm bat, DMG bat); Linux-en aplikazioa abiarazten da eta argazkiak eta 360° argazkiak erakusten ditu, oraindik bideorik gabe, eta SMB partekatzeek Ubuntu 24.04, Debian 13 edo Fedora 39 edo berriagoa behar dute; macOS aplikazioa proiektuaren CIan bakarrik exekutatu da, bideorik gabe eta bere sareko sarbidea probatu gabe.
+- **Linux**: proiektuaren CIak eraikitako .deb bat eta .rpm bat, Ubuntu 22.04 eta 24.04, Debian 12 eta Fedora 40 eta 44 sistemetan instalatu eta egiaztatuak; argazkiak, 360° argazkiak eta bideo lauak sistemaren libmpv bidez (360°, 3D eta bideo gordinak lau erreproduzitzen dira mezu batekin); SMB partekatzeak Ubuntu 22.04 eta Debian 12tik aurrera; oraindik ez da benetako Linux PC batean exekutatu, WSLg-n eta edukiontzietan bakarrik.
+- **macOS**: proiektuaren CIak eraikitako DMG bat eta ZIP bat, unibertsalak, sinatu gabeak (Gatekeeper-ek behin galdetzen du); abiarazten da, ematen zaizkion fitxategiak eta karpetak irekitzen ditu, Finder barne, bere sekretuak saio-hasierako giltzatakoan gordetzen ditu eta bideo lauak bere libmpv propioarekin erreproduzitzen ditu, dena proiektuaren CI Mac-ean bakarrik egiaztatuta; oraindik ezer ez da benetako Mac batean exekutatu.
 
 <a id="advanced-features"></a>
 ## Ezaugarri aurreratuak
@@ -300,7 +301,7 @@ Ezer ez da garatzailera bidaltzen: ez konturik, ez analitikarik, ez hutsegiteen 
 
 Immuch360 [Immich](https://github.com/immich-app/immich) aplikazio mugikorraren fork ez-ofiziala da, [GNU AGPL v3](../LICENSE) lizentziapean; ez dago Immich taldearekin ez FUTOrekin lotuta, eta ez dute babesten. Fork hau sortu da, 360°ko ikuspegia mugikorrerako 2024ko urtarrilatik eskatzen delako Immich-en eta oraindik aplikazio ofizialean ez dagoelako; orain eskaintzen du, benetako gailuetako iritziak biltzen ditu, eta mantentzaileek nahi dutena Immich-i itzuliko dio, pull request txikietan. Aplikazio ofizialak egiten duen guztia mantentzen da; adarrak, eraikuntza-katea eta CIa [Eraiki zeuk](../docs/immuch360/build.md) orrian azaltzen dira.
 
-360° argazki-bistaratzailea Immich-eko [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) pull requestean oinarritzen da, dmitry-brazhenko-k egina, eta hori bera bencefr-en [#30192](https://github.com/immich-app/immich/pull/30192) prototipoan oinarritzen da; eskerrik asko bioi. Tapo kamerak [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) eta [python-kasa](https://github.com/python-kasa/python-kasa)-k dokumentatutakotik idatzi dira. Meta Quest ikuspegia Meta Spatial SDKn oinarritzen da, kode irekikoa ez dena, eta horregatik fork honetan bakarrik dago. Windows ZIPak libmpv darama ([mpv](https://mpv.io) liburutegia, [FFmpeg](https://ffmpeg.org)-rekin), proiektuak eraikia, LGPL lizentziapean, bere lizentzia eta iturburuekin; orrialde honetan aipatutako plataformen xehetasunak eta marka erregistratuak [Lizentzia eta marka erregistratuak](../docs/immuch360/platform-support.md#license-and-trademarks) atalean daude.
+360° argazki-bistaratzailea Immich-eko [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) pull requestean oinarritzen da, dmitry-brazhenko-k egina, eta hori bera bencefr-en [#30192](https://github.com/immich-app/immich/pull/30192) prototipoan oinarritzen da; eskerrik asko bioi. Bilaketa-iragazkietako urrutiko agintearen zuzenketak eta telebistetako albumen ordenazioa mlc70-ek [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) pull requestean egindako lanetik abiatu ziren. Tapo kamerak [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) eta [python-kasa](https://github.com/python-kasa/python-kasa)-k dokumentatutakotik idatzi dira. Meta Quest ikuspegia Meta Spatial SDKn oinarritzen da, kode irekikoa ez dena, eta horregatik fork honetan bakarrik dago. Windows ZIPak libmpv darama ([mpv](https://mpv.io) liburutegia, [FFmpeg](https://ffmpeg.org)-rekin), proiektuak eraikia, LGPL lizentziapean, bere lizentzia eta iturburuekin; orrialde honetan aipatutako plataformen xehetasunak eta marka erregistratuak [Lizentzia eta marka erregistratuak](../docs/immuch360/platform-support.md#license-and-trademarks) atalean daude.
 
 Orrialde honetako telefono-pantaila-argazkiak Android eraikuntzan emulagailu batean atera dira, telebistakoak Google TV emuladorean eta Windows-ekoak Windows 11 PC batean, guztiak [Poly Haven](https://polyhaven.com)-eko CC0 panoramekin; kaskoko pantaila-argazkiak Quest 3 batean atera dira.
 
@@ -309,8 +310,8 @@ Orrialde honetako telefono-pantaila-argazkiak Android eraikuntzan emulagailu bat
 
 Oraindik egin gabe dagoena, litekeenena lehenik. Hemen ezer ez da promesa bat, eta [arazo-jarraitzailean](https://github.com/freeKC/Immuch360/issues) emandako iruzkinek lehenik zer datorren erabakitzen laguntzen dute.
 
-- **Dendak**: Google Play (23. eraikuntza berrikuspenean, telebistarako zerrenda berrikuspenean), App Store (3.3.0 bertsioa berrikuspenean), Meta Horizon Store (21. eraikuntza berrikuspenean).
-- **Ordenagailuak**: funtzio bakoitzaren proba eskuz Windows PC batean; ondoren Spatial 2.5D webcamarekin; ondoren bideo-erreproduktorea Linux eta macOS-en, eta proba bat benetako Mac batean; azkenik sinatutako eraikuntza bat eta eguneratze automatikoak.
+- **Dendak**: Google Play (26. eraikuntza laster, telebistarako zerrenda berrikuspenean), App Store (3.3.1 bertsioa berrikuspenean urriaren 14tik), Meta Horizon Store (25. eraikuntza berrikuspenean).
+- **Ordenagailuak**: funtzio bakoitzaren proba eskuz Windows PC batean; ondoren 360° bideo-errendatzailea Linux eta macOS-en, proba bat benetako Mac batean eta benetako Linux PC batean; ondoren sinatutako eraikuntza bat eta eguneratze automatikoak; azkenik Spatial 2.5D webcamarekin.
 - **Telefonoak eta tabletak**: denbora-barra bat iOS-eko 360° bideo-erreproduktorean, aurrekoa eta hurrengoa telefonoen 360° erreproduktoreetan, audio-pistaren aukera erreproduktore lauan, Tapo-ren zuzeneko ikuspegia iPhone eta iPad-en.
 - **Eduki murgiltzailea**: .dng fisheye bikoitza, GoPro eta DJI bideoen horizontala zuzentzea beren mugimendu-datuetatik, Quest-eko bideo espazialak 3Dn bere deskodetzaileek ahalbidetzen badute, kaskoko argazki espazialen artean aurrekoa eta hurrengoa.
 - **Iturriak**: partekatutako karpeta baten fitxategien artean lerratzea, WebDAV-erako Digest autentifikazioa, QR kode bat Plex tokena ordenagailutik ekartzeko, IPv6 Plex-erako, H.265 Tapo grabazioak, kanalak telebistaren hasierako pantailan.

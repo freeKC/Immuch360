@@ -20,14 +20,14 @@ Immuch360 是一款免費開源的應用程式，讓你尋找、瀏覽、播放�
 
 <div align="center">
 
-| 平台 | 取得方式 | 2026 年 10 月 12 日狀態 |
+| 平台 | 取得方式 | 2026 年 10 月 20 日狀態 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手機和平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play 上為 build 20（build 23 審核中），GitHub 上為 build 23 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 和 iPad** | App Store | 3.3.0 版本正在等待 Apple 審核；在此之前可以[自行建置](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 和 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub 上為 build 23；電視版本上架正在 Google 審核中 |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store 上為 build 14（build 21 審核中），GitHub 上為 build 23 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [安裝程式或 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | 桌面版 build 5，預覽版：照片、平面和 360° 影片、共用、Plex、相機、用應用程式開啟的檔案 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS 和 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | 早期預覽版：在 Linux 上有照片和 360° 照片，影片還不支援；macOS 僅在專案的 CI 上啟動過 |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手機和平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play 上為 build 25，GitHub 上為 build 26 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 和 iPad** | App Store | 3.3.1 版本（build 24）自 10 月 14 日起等待 Apple 審核；在此之前可以[自行建置](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 和 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub 上為 build 26，修正了以遙控器操作搜尋篩選器的問題；電視版本上架正在 Google 審核中 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store 上為 build 23（build 25 審核中），GitHub 上為 build 26 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [安裝程式或 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | 桌面版 build 6，預覽版：照片、平面和 360° 影片、共用、Plex、相機、用應用程式開啟的檔案、89 種語言的介面 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS 和 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | 預覽版：在 Linux 上有照片、360° 照片和平面影片（360° 影片以平面方式播放）；macOS 上亦同，但僅在專案的 CI Mac 上驗證過，未簽署 |
 
 *狀態會在每次發行時更新；每個 build 的詳細資訊請見[發行狀態](../docs/immuch360/release-status.md)。*
 
@@ -138,7 +138,7 @@ Immuch360 既不需要帳號，也不需要伺服器。從 build 24 開始，應
 2. 在設定、資源檢視器、影片中，「影片來源」可以設定成：此裝置能解碼時使用原始檔案、永遠使用原始檔案，或永遠使用轉碼串流。
 3. 若想將 360° 照片展示給沒有安裝此應用程式的人，可以透過 Immich 共用連結分享：Immich 網頁版會在他們的瀏覽器中以球形顯示該照片。
 
-目前的 build，也就是 build 23，是基於 2026 年 10 月 10 日的 Immich `main`（版本 3.3.0-rc.0），並已針對 Immich 3.2.4 伺服器，以及以同一個 Immich `main` 建置的伺服器進行測試。若發現問題，請在[Issues](https://github.com/freeKC/Immuch360/issues)回報，而不要回報給 Immich 專案。
+目前的 build，也就是 build 26，是基於 2026 年 10 月 10 日的 Immich `main`（版本 3.3.0-rc.0），並已針對 Immich 3.2.4 伺服器，以及以同一個 Immich `main` 建置的伺服器進行測試。若發現問題，請在[Issues](https://github.com/freeKC/Immuch360/issues)回報，而不要回報給 Immich 專案。
 
 更多資訊：[其他一切都是 Immich](../docs/immuch360/user-guide.md#everything-else-is-immich)、[與 Immich 應用程式的比較](../docs/immuch360/compatibility.md#compared-with-the-immich-app)。
 
@@ -189,34 +189,35 @@ Immuch360 既不需要帳號，也不需要伺服器。從 build 24 開始，應
 
 一套程式碼，六種環境。以下是每種環境目前支援的功能：
 
-| 功能 | Android | iPhone、iPad | TV | Quest | Windows | macOS、Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| 圖庫、相簿、搜尋（搭配 Immich 伺服器） | ✅ | ✅ | ✅ 檢視器 | ✅ | ✅ | 🔧 |
-| 無伺服器：裝置本身的媒體 | ✅ | ✅ | 僅共用 | ✅ | ✅ 資料夾 | 🔧 |
-| 平面照片和影片 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| 360° 照片（球形） | ✅ | ✅ | ✅ | ✅ 沉浸式 | ✅ | 🔧 |
-| 360° 影片 | ✅ | ✅ 無進度列 | ✅ | ✅ 沉浸式 | ✅ | 🔧 |
-| 3D 和 VR180 | ✅ 單眼 | ✅ 單眼 | ✅ 單眼 | ✅ 真實 3D | ✅ 單眼 | 🔧 |
-| 空間 2.5D（頭部追蹤） | ✅ 實驗性 | ✅ 實驗性 | ❌ | ❌ | 🔜 | ❌ |
-| Apple 空間照片 | ✅ 單眼 | ✅ 單眼 | ✅ 單眼 | ✅ 3D | ✅ 單眼 | 🔧 |
-| Insta360、GoPro 和 DJI 原始檔案 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| SMB、WebDAV、DLNA 共用 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo 相機：錄影 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Tapo 相機：即時畫面 | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| 在網路上分享此裝置 | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| 從共用和裝置上傳至 Immich | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| 輸入方式 | 觸控、陀螺儀 | 觸控、陀螺儀 | 遙控器 | 控制器、雙手 | 滑鼠、鍵盤 | |
-| 取得方式 | Google Play、APK | App Store（審核中） | APK、Google Play（審核中） | Horizon Store、APK | 安裝程式或 ZIP（預覽版） | .deb、.rpm、DMG（早期預覽版） |
+| 功能 | Android | iPhone、iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 圖庫、相簿、搜尋（搭配 Immich 伺服器） | ✅ | ✅ | ✅ 檢視器 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| 無伺服器：裝置本身的媒體 | ✅ | ✅ | 僅共用 | ✅ | ✅ 資料夾 | ✅ 資料夾 | ✅ 資料夾 |
+| 平面照片和影片 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 360° 照片（球形） | ✅ | ✅ | ✅ | ✅ 沉浸式 | ✅ | ✅ | 🔧 CI |
+| 360° 影片 | ✅ | ✅ 無進度列 | ✅ | ✅ 沉浸式 | ✅ | 僅平面 | 僅平面 |
+| 3D 和 VR180 | ✅ 單眼 | ✅ 單眼 | ✅ 單眼 | ✅ 真實 3D | ✅ 單眼 | 照片單眼，影片平面 | 照片單眼，影片平面 |
+| 空間 2.5D（頭部追蹤） | ✅ 實驗性 | ✅ 實驗性 | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple 空間照片 | ✅ 單眼 | ✅ 單眼 | ✅ 單眼 | ✅ 3D | ✅ 單眼 | 🔧 CI | 🔧 CI |
+| Insta360、GoPro 和 DJI 原始檔案 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI 照片，影片平面 | 🔧 CI 照片，影片平面 |
+| SMB、WebDAV、DLNA 共用 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo 相機：錄影 | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo 相機：即時畫面 | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| 在網路上分享此裝置 | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| 從共用和裝置上傳至 Immich | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| 輸入方式 | 觸控、陀螺儀 | 觸控、陀螺儀 | 遙控器 | 控制器、雙手 | 滑鼠、鍵盤 | 滑鼠、鍵盤 | 滑鼠、鍵盤、觸控式軌跡板 |
+| 取得方式 | Google Play、APK | App Store（審核中） | APK、Google Play（審核中） | Horizon Store、APK | 安裝程式或 ZIP（預覽版） | .deb、.rpm（預覽版） | DMG 或 ZIP（未簽署預覽版） |
 
-✅ 該平台應用程式中已支援 · ❌ 該平台未提供 · 🔜 規劃中 · 🔧 原始碼中已有，並由專案的 CI 建置，尚未在該系統上啟動。「單眼」代表 3D 檔案在平面螢幕上只顯示左眼畫面。並非每個 ✅ 都已在實機上驗證：各項目在哪裡驗證過、還有哪些待確認，請見[功能](../docs/immuch360/features.md)、[平台支援](../docs/immuch360/platform-support.md)和[相容性](../docs/immuch360/compatibility.md)。
+✅ 該平台應用程式中已支援 · ❌ 該平台未提供 · 🔜 規劃中 · 🔧 CI 原始碼中已有，已由專案的 CI 在該系統上建置並啟動，但尚未在該系統上以真實的伺服器、共用或相機驗證 · 僅平面：影片會以平面方式播放並顯示提示訊息，因為 360° 渲染器目前僅支援 Windows。「單眼」代表 3D 檔案在平面螢幕上只顯示左眼畫面。並非每個 ✅ 都已在實機上驗證：各項目在哪裡驗證過、還有哪些待確認，請見[功能](../docs/immuch360/features.md)、[平台支援](../docs/immuch360/platform-support.md)和[相容性](../docs/immuch360/compatibility.md)。
 
 - **Android 手機和平板**：完整版應用程式，支援觸控和陀螺儀，以及所有來源。
 - **iPhone 和 iPad**：完整版應用程式；360° 影片播放器目前只有播放和暫停功能，Tapo 即時畫面將在之後推出，而在 Apple 授予多播權限之前，DLNA 搜尋會使用單播請求。
 - **Android TV 和 Google TV**：使用相同的 APK，以遙控器操作；僅作為檢視器：備份、上傳和編輯功能都被隱藏。目前已在 Google TV 模擬器上驗證（登入、時間軸、檢視器、共用、遙控器導航），尚未在實機電視上測試。
-- **Meta Quest 2、Pro、3 和 3S**：應用程式以視窗形式顯示，並提供沉浸式畫面；HEVC 是可靠的編碼格式，H.264 在 Quest 3 上的上限約為 4096x2304；Quest 2 和 Quest Pro 尚未測試。
+- **Meta Quest 2、Pro、3 和 3S**：應用程式以視窗形式顯示，並提供沉浸式畫面；HEVC 是可靠的編碼格式，H.264 在 Quest 3 上的上限約為 4096x2304；目前僅測試過 Quest 3，Quest 2、Quest Pro 和 Quest 3S 尚未測試。
 - **Windows 10 和 11**：預覽版，用資料夾取代圖庫，配備自己的影片播放器（libmpv）播放平面和 360° 影片，原始檔案由顯示晶片拼接，檔案和資料夾可以用應用程式開啟，或拖放到視窗上，並提供安裝程式或 ZIP。
-- **macOS 和 Linux**：由專案的 CI 建置的套件（一個 .deb、一個 .rpm、一個 DMG）；在 Linux 上，應用程式可以啟動並顯示照片和 360° 照片，影片還不支援，SMB 共用需要 Ubuntu 24.04、Debian 13 或 Fedora 39 或更新版本；macOS 版應用程式僅在專案的 CI 上啟動過，不支援影片，也沒有測試過網路存取。
+- **Linux**：由專案的 CI 建置的 .deb 和 .rpm，已在 Ubuntu 22.04 和 24.04、Debian 12 以及 Fedora 40 和 44 上安裝並驗證；透過系統的 libmpv 顯示照片、360° 照片並播放平面影片（360°、3D 和原始影片會以平面方式播放並顯示提示訊息）；SMB 共用從 Ubuntu 22.04 和 Debian 12 起可用；尚未在實體 Linux 電腦上執行，僅在 WSLg 和容器中執行過。
+- **macOS**：由專案的 CI 建置的 DMG 和 ZIP，通用二進位檔，未簽署（Gatekeeper 會詢問一次）；應用程式可以啟動，能開啟交給它的檔案和資料夾（包括來自 Finder 的），將機密資訊保存在登入鑰匙圈中，並以自帶的 libmpv 播放平面影片，以上皆僅在專案的 CI Mac 上驗證過；尚未在實體 Mac 上執行過任何內容。
 
 <a id="advanced-features"></a>
 ## 進階功能
@@ -300,7 +301,7 @@ Immuch360 既不需要帳號，也不需要伺服器。從 build 24 開始，應
 
 Immuch360 是 [Immich](https://github.com/immich-app/immich) 行動應用程式的非官方分支，採用 [GNU AGPL v3](../LICENSE) 授權，與 Immich 團隊或 FUTO 無關，也未獲得他們的認可。這個分支的存在，是因為行動裝置上的 360° 檢視功能自 2024 年 1 月以來就一直有人在 Immich 中提出需求，但官方應用程式至今尚未提供；本專案現在就先提供這項功能，收集真實裝置的回饋，並會將維護者需要的部分，以小型 pull request 的形式回饋給 Immich。官方應用程式原有的所有功能都會保留；分支、建置流程和 CI 的說明請見[自行建置](../docs/immuch360/build.md)。
 
-360° 照片檢視器是基於 dmitry-brazhenko 提出的上游 pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)，而該 pull request 本身又是建立在 bencefr 於 [#30192](https://github.com/immich-app/immich/pull/30192) 中提出的原型之上；在此感謝兩位的貢獻。Tapo 相機功能是依據 [pytapo](https://github.com/JurajNyiri/pytapo)、[Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) 和 [python-kasa](https://github.com/python-kasa/python-kasa) 所記載的內容撰寫而成。Meta Quest 畫面依賴 Meta Spatial SDK，由於它並非開放原始碼，因此只會保留在這個分支中。Windows 版 ZIP 隨附由本專案建置的 libmpv（[mpv](https://mpv.io) 的函式庫，搭配 [FFmpeg](https://ffmpeg.org)），採用 LGPL 授權，並附有其授權條款和原始碼；本頁提及平台的詳細資訊和商標說明請見[授權和商標](../docs/immuch360/platform-support.md#license-and-trademarks)。
+360° 照片檢視器是基於 dmitry-brazhenko 提出的上游 pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)，而該 pull request 本身又是建立在 bencefr 於 [#30192](https://github.com/immich-app/immich/pull/30192) 中提出的原型之上；在此感謝兩位的貢獻。以遙控器操作搜尋篩選器的修正，以及電視上的相簿排序，源自 mlc70 在 [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) 中的成果。Tapo 相機功能是依據 [pytapo](https://github.com/JurajNyiri/pytapo)、[Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) 和 [python-kasa](https://github.com/python-kasa/python-kasa) 所記載的內容撰寫而成。Meta Quest 畫面依賴 Meta Spatial SDK，由於它並非開放原始碼，因此只會保留在這個分支中。Windows 版 ZIP 隨附由本專案建置的 libmpv（[mpv](https://mpv.io) 的函式庫，搭配 [FFmpeg](https://ffmpeg.org)），採用 LGPL 授權，並附有其授權條款和原始碼；本頁提及平台的詳細資訊和商標說明請見[授權和商標](../docs/immuch360/platform-support.md#license-and-trademarks)。
 
 本頁的手機畫面擷取自模擬器中的 Android 版本，電視畫面擷取自 Google TV 模擬器，Windows 畫面則擷取自一台 Windows 11 電腦，全都使用來自 [Poly Haven](https://polyhaven.com) 的 CC0 全景圖；頭戴裝置的畫面則擷取自 Quest 3。
 
@@ -309,8 +310,8 @@ Immuch360 是 [Immich](https://github.com/immich-app/immich) 行動應用程式�
 
 尚未完成的工作，最可能先做的排在前面。這裡的內容都不是承諾，[問題追蹤器](https://github.com/freeKC/Immuch360/issues)中的回饋有助於決定先做什麼。
 
-- **商店**：Google Play（build 23 審核中，電視版本上架審核中）、App Store（版本 3.3.0 審核中）、Meta Horizon Store（build 21 審核中）。
-- **電腦**：先在 Windows 電腦上手動測試每個功能；接著是搭配網路攝影機的 Spatial 2.5D；然後是 Linux 和 macOS 上的影片播放器，並在實機 Mac 上測試；最後是已簽署的 build 和自動更新。
+- **商店**：Google Play（build 26 即將推出，電視版本上架審核中）、App Store（版本 3.3.1 自 10 月 14 日起審核中）、Meta Horizon Store（build 25 審核中）。
+- **電腦**：先在 Windows 電腦上手動測試每個功能；然後是 Linux 和 macOS 上的 360° 影片渲染器，並在實體 Mac 和實體 Linux 電腦上測試；接著是已簽署的 build 和自動更新；最後是搭配網路攝影機的 Spatial 2.5D。
 - **手機和平板**：iOS 的 360° 影片播放器加入進度列、手機的 360° 播放器加入上一個和下一個、平面播放器加入音軌選擇、iPhone 和 iPad 加入 Tapo 即時畫面。
 - **沉浸式媒體**：雙魚眼 .dng 檔案、根據 GoPro 和 DJI 影片自身的動態資料進行水平校正、在解碼器允許的情況下於 Quest 上以 3D 顯示空間影片、在頭戴裝置中於空間照片之間切換上一個和下一個。
 - **來源**：在共用資料夾的檔案之間滑動切換、WebDAV 的 Digest 驗證、透過 QR code 從電腦取得 Plex 權杖、Plex 的 IPv6 支援、H.265 格式的 Tapo 錄影，以及電視主畫面上的頻道功能。

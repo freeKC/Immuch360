@@ -20,14 +20,14 @@ Immuch360 este o aplicație liberă și open source pentru a găsi, răsfoi, red
 
 <div align="center">
 
-| Platformă | De unde o obțineți | Stare la 12 octombrie 2026 |
+| Platformă | De unde o obțineți | Stare la 20 octombrie 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoane și tablete | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | pe Google Play (build 20; build 23 în verificare), build 23 pe GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone și iPad** | App Store | versiunea 3.3.0 așteaptă verificarea Apple; până atunci [construiți-o singuri](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV și Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 23 pe GitHub; listarea pentru TV este în verificarea Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 și 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | pe Horizon Store (build 14; build 21 în verificare), build 23 pe GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalator sau ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | desktop build 5, o previzualizare: fotografii, videoclipuri plate și 360°, partajări, Plex, camere, fișiere deschise cu programul |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS și Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) | previzualizări timpurii: pe Linux fotografii și fotografii 360°, fără videoclipuri încă; macOS a fost pornit doar pe CI-ul proiectului |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoane și tablete | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | pe Google Play (build 25), build 26 pe GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone și iPad** | App Store | versiunea 3.3.1 (build 24) așteaptă verificarea Apple din 14 octombrie; până atunci [construiți-o singuri](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV și Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 pe GitHub, cu remedierile pentru telecomandă în filtrele de căutare; listarea pentru TV este în verificarea Google |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 și 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | pe Horizon Store (build 23; build 25 în verificare), build 26 pe GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalator sau ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, o previzualizare: fotografii, videoclipuri plate și 360°, partajări, Plex, camere, fișiere deschise cu programul, interfața în 89 de limbi |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS și Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | previzualizări: pe Linux fotografii, fotografii 360° și videoclipuri plate (videoclipurile 360° se redau plat); pe macOS la fel, verificat doar pe Mac-ul CI al proiectului, nesemnat |
 
 *Stările sunt actualizate la fiecare lansare; detaliile, build cu build, se află în [Starea lansării](../docs/immuch360/release-status.md).*
 
@@ -138,7 +138,7 @@ Cu un server [Immich](https://github.com/immich-app/immich), Immuch360 este apli
 2. În Setări, Vizualizator resurse, Videoclipuri, "Sursa video" alege originalul când acest dispozitiv îl decodează, mereu originalul sau mereu fluxul transcodificat.
 3. Pentru a arăta o fotografie 360° cuiva care nu are aplicația, distribuiți-o cu un link partajat Immich: aplicația web Immich o arată ca o sferă în browserul lor.
 
-Build-ul actual, build 23, se bazează pe ramura `main` a Immich din 10 octombrie 2026 (versiunea 3.3.0-rc.0) și a fost testat pe un server Immich 3.2.4 și pe un server construit din aceeași ramură `main`. Raportați problemele în [Issues](https://github.com/freeKC/Immuch360/issues), nu proiectului Immich.
+Build-ul actual, build 26, se bazează pe ramura `main` a Immich din 10 octombrie 2026 (versiunea 3.3.0-rc.0) și a fost testat pe un server Immich 3.2.4 și pe un server construit din aceeași ramură `main` a Immich. Raportați problemele în [Issues](https://github.com/freeKC/Immuch360/issues), nu proiectului Immich.
 
 Mai multe: [tot restul este Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [comparație cu aplicația Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -189,34 +189,35 @@ Mai multe: [camere Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-
 
 O bază de cod, șase medii. Ce are fiecare astăzi:
 
-| Capacitate | Android | iPhone, iPad | TV | Quest | Windows | macOS, Linux |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerie, albume, căutare cu un server Immich | ✅ | ✅ | ✅ vizualizator | ✅ | ✅ | 🔧 |
-| Fără server: conținutul propriu al dispozitivului | ✅ | ✅ | numai partajări | ✅ | ✅ dosare | 🔧 |
-| Fotografii și videoclipuri plate | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Fotografii 360° ca sferă | ✅ | ✅ | ✅ | ✅ imersiv | ✅ | 🔧 |
-| Videoclipuri 360° | ✅ | ✅ fără bară de timp | ✅ | ✅ imersiv | ✅ | 🔧 |
-| 3D și VR180 | ✅ un ochi | ✅ un ochi | ✅ un ochi | ✅ 3D real | ✅ un ochi | 🔧 |
-| Spatial 2.5D (urmărirea capului) | ✅ experimental | ✅ experimental | ❌ | ❌ | 🔜 | ❌ |
-| Fotografii spațiale Apple | ✅ un ochi | ✅ un ochi | ✅ un ochi | ✅ 3D | ✅ un ochi | 🔧 |
-| Fișiere brute Insta360, GoPro și DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Partajări SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Camere Tapo: înregistrări | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 |
-| Camere Tapo: vizualizare live | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 |
-| Partajați acest dispozitiv în rețea | ✅ | ✅ | ❌ | ❌ | ✅ | 🔧 |
-| Încărcare în Immich din partajări și din dispozitiv | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 |
-| Intrare | tactil, giroscop | tactil, giroscop | telecomandă | controlere, mâini | mouse, tastatură | |
-| De unde o obțineți | Google Play, APK | App Store (în verificare) | APK, Google Play (în verificare) | Horizon Store, APK | instalator sau ZIP (previzualizare) | .deb, .rpm, DMG (previzualizări timpurii) |
+| Capacitate | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galerie, albume, căutare cu un server Immich | ✅ | ✅ | ✅ vizualizator | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Fără server: conținutul propriu al dispozitivului | ✅ | ✅ | numai partajări | ✅ | ✅ dosare | ✅ dosare | ✅ dosare |
+| Fotografii și videoclipuri plate | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Fotografii 360° ca sferă | ✅ | ✅ | ✅ | ✅ imersiv | ✅ | ✅ | 🔧 CI |
+| Videoclipuri 360° | ✅ | ✅ fără bară de timp | ✅ | ✅ imersiv | ✅ | doar plat | doar plat |
+| 3D și VR180 | ✅ un ochi | ✅ un ochi | ✅ un ochi | ✅ 3D real | ✅ un ochi | fotografii un ochi, videoclipuri plate | fotografii un ochi, videoclipuri plate |
+| Spatial 2.5D (urmărirea capului) | ✅ experimental | ✅ experimental | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Fotografii spațiale Apple | ✅ un ochi | ✅ un ochi | ✅ un ochi | ✅ 3D | ✅ un ochi | 🔧 CI | 🔧 CI |
+| Fișiere brute Insta360, GoPro și DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI fotografii, videoclipuri plate | 🔧 CI fotografii, videoclipuri plate |
+| Partajări SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Camere Tapo: înregistrări | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Camere Tapo: vizualizare live | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Partajați acest dispozitiv în rețea | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Încărcare în Immich din partajări și din dispozitiv | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Intrare | tactil, giroscop | tactil, giroscop | telecomandă | controlere, mâini | mouse, tastatură | mouse, tastatură | mouse, tastatură, trackpad |
+| De unde o obțineți | Google Play, APK | App Store (în verificare) | APK, Google Play (în verificare) | Horizon Store, APK | instalator sau ZIP (previzualizare) | .deb, .rpm (previzualizare) | DMG sau ZIP (previzualizare nesemnată) |
 
-✅ în aplicație pe acea platformă · ❌ neoferit acolo · 🔜 planificat · 🔧 în codul sursă și construit de CI-ul proiectului, nepornit încă pe acel sistem. "Un ochi" înseamnă că un fișier 3D arată ochiul stâng pe un ecran plat. Nu fiecare ✅ a fost verificat pe un dispozitiv real: ce a fost verificat unde, și ce rămâne de confirmat, se află în [Funcții](../docs/immuch360/features.md), [Suportul platformelor](../docs/immuch360/platform-support.md) și [Compatibilitate](../docs/immuch360/compatibility.md).
+✅ în aplicație pe acea platformă · ❌ neoferit acolo · 🔜 planificat · 🔧 CI în codul sursă, construit și pornit de CI-ul proiectului pe acel sistem, neverificat încă acolo cu un server, o partajare sau o cameră reală · doar plat: videoclipul se redă plat, cu un mesaj, deoarece randarea 360° există doar pe Windows. "Un ochi" înseamnă că un fișier 3D arată ochiul stâng pe un ecran plat. Nu fiecare ✅ a fost verificat pe un dispozitiv real: ce a fost verificat unde, și ce rămâne de confirmat, se află în [Funcții](../docs/immuch360/features.md), [Suportul platformelor](../docs/immuch360/platform-support.md) și [Compatibilitate](../docs/immuch360/compatibility.md).
 
 - **Telefoane și tablete Android**: aplicația completă, tactil și giroscop, fiecare sursă.
 - **iPhone și iPad**: aplicația completă; playerul video 360° are doar redare și pauză, vizualizarea live Tapo vine mai târziu, iar căutarea DLNA trimite cereri unicast până când Apple acordă permisiunea multicast.
 - **Android TV și Google TV**: același APK, condus de telecomandă; un vizualizator: backupul, încărcările și editarea sunt ascunse. Verificat pe emulatorul Google TV (autentificare, cronologie, vizualizatoare, partajări, navigarea cu telecomanda), nu încă pe un televizor real.
-- **Meta Quest 2, Pro, 3 și 3S**: aplicația ca o fereastră, plus vizualizarea imersivă; HEVC este codecul sigur, H.264 se blochează în jurul a 4096x2304 pe Quest 3; Quest 2 și Quest Pro nu sunt testate încă.
+- **Meta Quest 2, Pro, 3 și 3S**: aplicația ca o fereastră, plus vizualizarea imersivă; HEVC este codecul sigur, H.264 se blochează în jurul a 4096x2304 pe Quest 3; doar Quest 3 este testat, Quest 2, Quest Pro și Quest 3S nu sunt testate încă.
 - **Windows 10 și 11**: o previzualizare, cu dosare în loc de galerie, un player video propriu (libmpv) pentru videoclipuri plate și 360°, fișiere brute asamblate pe cipul grafic, fișiere și dosare deschise cu programul sau trase pe fereastră, un instalator sau un ZIP.
-- **macOS și Linux**: pachete construite de CI-ul proiectului (un .deb, un .rpm, un DMG); pe Linux aplicația pornește și arată fotografii și fotografii 360°, fără videoclipuri încă, iar partajările SMB au nevoie de Ubuntu 24.04, Debian 13 sau Fedora 39 sau mai nou; aplicația macOS a fost pornită doar pe CI-ul proiectului, fără videoclipuri și cu accesul ei la rețea neîncercat.
+- **Linux**: un .deb și un .rpm construite de CI-ul proiectului, instalate și verificate pe Ubuntu 22.04 și 24.04, Debian 12 și Fedora 40 și 44; fotografii, fotografii 360° și videoclipuri plate prin libmpv-ul sistemului (videoclipurile 360°, 3D și brute se redau plat, cu un mesaj); partajări SMB începând cu Ubuntu 22.04 și Debian 12; nu a rulat încă pe un PC real cu Linux, doar sub WSLg și în containere.
+- **macOS**: un DMG și un ZIP construite de CI-ul proiectului, universale, nesemnate (Gatekeeper întreabă o dată); aplicația pornește, deschide fișierele și dosarele primite, inclusiv din Finder, își păstrează secretele în portchei-ul de autentificare (login keychain) și redă videoclipuri plate cu propriul libmpv, totul verificat doar pe Mac-ul CI al proiectului; nimic nu a rulat încă pe un Mac real.
 
 <a id="advanced-features"></a>
 ## Funcții avansate
@@ -300,7 +301,7 @@ Nimic nu ajunge la dezvoltator: fără cont, fără analiză, fără serviciu de
 
 Immuch360 este un fork neoficial al aplicației mobile [Immich](https://github.com/immich-app/immich), sub licența [GNU AGPL v3](../LICENSE), neafiliat cu și neavizat de echipa Immich sau de FUTO. Acest fork există pentru că vizualizarea 360° pe mobil a fost cerută la Immich din ianuarie 2024 și nu se află încă în aplicația oficială; el o livrează acum, adună reacții reale de pe dispozitive și va oferi înapoi către Immich, în pull request-uri mici, orice vor dezvoltatorii proiectului. Tot ce face aplicația oficială este păstrat; ramurile, lanțul de construire și CI-ul sunt descrise în [Construiți-o singuri](../docs/immuch360/build.md).
 
-Vizualizatorul de fotografii 360° se bazează pe pull request-ul amonte [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) al lui dmitry-brazhenko, el însuși construit pe prototipul lui bencefr din [#30192](https://github.com/immich-app/immich/pull/30192); mulțumiri amândurora. Camerele Tapo au fost scrise din ce documentează [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) și [python-kasa](https://github.com/python-kasa/python-kasa). Vizualizarea pe Meta Quest se bazează pe Meta Spatial SDK, care nu este open source, așa că rămâne doar în acest fork. ZIP-ul Windows conține libmpv (biblioteca lui [mpv](https://mpv.io), cu [FFmpeg](https://ffmpeg.org)) construită de proiect, sub LGPL, cu licențele și sursele sale; detaliile și mărcile comerciale ale platformelor numite pe această pagină se află în [Licență și mărci comerciale](../docs/immuch360/platform-support.md#license-and-trademarks).
+Vizualizatorul de fotografii 360° se bazează pe pull request-ul amonte [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) al lui dmitry-brazhenko, el însuși construit pe prototipul lui bencefr din [#30192](https://github.com/immich-app/immich/pull/30192); mulțumiri amândurora. Remedierile pentru telecomandă în filtrele de căutare și sortarea albumelor pe televizoare au pornit de la munca lui mlc70 din [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Camerele Tapo au fost scrise din ce documentează [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) și [python-kasa](https://github.com/python-kasa/python-kasa). Vizualizarea pe Meta Quest se bazează pe Meta Spatial SDK, care nu este open source, așa că rămâne în acest fork. ZIP-ul Windows conține libmpv (biblioteca lui [mpv](https://mpv.io), cu [FFmpeg](https://ffmpeg.org)) construită de proiect, sub LGPL, cu licențele și sursele sale; detaliile și mărcile comerciale ale platformelor numite pe această pagină se află în [Licență și mărci comerciale](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Capturile de telefon de pe această pagină au fost făcute pe build-ul Android într-un emulator, cele de televizor pe emulatorul Google TV, iar cele de Windows pe un PC cu Windows 11, toate cu panorame CC0 de la [Poly Haven](https://polyhaven.com); capturile de cască au fost făcute pe un Quest 3.
 
@@ -309,8 +310,8 @@ Capturile de telefon de pe această pagină au fost făcute pe build-ul Android 
 
 Ce nu este încă gata, începând cu ce este cel mai probabil. Nimic de aici nu este o promisiune, iar părerile din [sistemul de issues](https://github.com/freeKC/Immuch360/issues) ajută la stabilirea priorităților.
 
-- **Magazinele**: Google Play (build 23 în verificare, listarea TV în verificare), App Store (versiunea 3.3.0 în verificare), Meta Horizon Store (build 21 în verificare).
-- **Computere**: testarea manuală a fiecărei funcții pe un PC cu Windows; apoi Spatial 2.5D cu webcamul; apoi playerul video pe Linux și macOS și un test pe un Mac real; apoi un build semnat și actualizări automate.
+- **Magazinele**: Google Play (build 26 urmează, listarea TV în verificare), App Store (versiunea 3.3.1 în verificare din 14 octombrie), Meta Horizon Store (build 25 în verificare).
+- **Computere**: testarea manuală a fiecărei funcții pe un PC cu Windows; apoi randarea video 360° pe Linux și macOS, un test pe un Mac real și pe un PC real cu Linux; apoi un build semnat și actualizări automate; apoi Spatial 2.5D cu webcamul.
 - **Telefoane și tablete**: o bară de timp în playerul video 360° pe iOS, precedentul și următorul în playerele 360° de pe telefoane, alegerea pistei audio în playerul plat, vizualizarea live Tapo pe iPhone și iPad.
 - **Conținut imersiv**: .dng cu fisheye dual, nivelarea videoclipurilor GoPro și DJI din datele lor proprii de mișcare, videoclipuri spațiale în 3D pe Quest dacă decodoarele sale o permit, precedentul și următorul între fotografii spațiale în cască.
 - **Surse**: glisarea între fișierele unui dosar de partajare, autentificare Digest pentru WebDAV, un cod QR pentru a aduce token-ul Plex de pe computer, IPv6 pentru Plex, înregistrări Tapo H.265, canale pe ecranul de pornire al televizorului.
