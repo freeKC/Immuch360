@@ -1,6 +1,7 @@
 // The Location and Camera filter sheets with a remote control: each field is one focus stop that the arrows go
 // through, OK opens its choices in a dialog that holds the focus, a choice fills the field as the menu does, Back
-// changes nothing; phones keep the menu.
+// changes nothing; phones keep the menu. Location has the action rail of the other sheets; Camera keeps its buttons
+// under Make and Model, which sit side by side on a TV.
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +90,7 @@ void main() {
   /// The Location sheet of the search page
   Widget locationSheet({SearchLocationFilter? filter}) => FilterBottomSheetScaffold(
     title: 'Location',
+    tvActionRail: true,
     onSearch: () {},
     onClear: () {},
     child: Padding(
@@ -97,7 +99,8 @@ void main() {
     ),
   );
 
-  /// The Camera sheet of the search page
+  /// The Camera sheet of the search page, without the action rail, which would take Right and Down from Make and leave
+  /// Model out of reach
   Widget cameraSheet() => FilterBottomSheetScaffold(
     title: 'Camera',
     onSearch: () {},
@@ -151,7 +154,9 @@ void main() {
   }
 
   group('Location sheet on TV', () {
-    testWidgets('Down goes from Country to State to City, then to the buttons; Up comes back', (tester) async {
+    testWidgets('Down goes from Country to State to City; Right reaches the rail, Left comes back; Up too', (
+      tester,
+    ) async {
       await open(tester, locationSheet());
       expect(dropdownMenus, findsNothing);
       await focusField(tester, 'Country');
@@ -160,10 +165,12 @@ void main() {
       expect(focused(), fieldFocus(tester, 'State'));
       await press(tester, LogicalKeyboardKey.arrowDown);
       expect(focused(), fieldFocus(tester, 'City'));
-      await press(tester, LogicalKeyboardKey.arrowDown);
-      expect(focusedIn(find.byType(OutlinedButton)) || focusedIn(find.byType(ElevatedButton)), isTrue);
 
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focused()?.debugLabel, 'TV filter apply');
       await press(tester, LogicalKeyboardKey.arrowUp);
+      expect(focused()?.debugLabel, 'TV filter clear');
+      await press(tester, LogicalKeyboardKey.arrowLeft);
       expect(focused(), fieldFocus(tester, 'City'));
       await press(tester, LogicalKeyboardKey.arrowUp);
       await press(tester, LogicalKeyboardKey.arrowUp);
@@ -283,6 +290,18 @@ void main() {
       await press(tester, LogicalKeyboardKey.select);
       expect(fieldText(tester, 'Model'), 'Z 8');
       expect(picked.last, {'make': 'Nikon', 'model': 'Z 8'});
+    });
+  });
+
+  group('Camera sheet on TV, no rail', () {
+    testWidgets('Down from Make reaches the buttons under the fields, Right goes on to Apply', (tester) async {
+      await open(tester, cameraSheet());
+      await focusField(tester, 'Make');
+
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      expect(focusedIn(find.byType(OutlinedButton)) || focusedIn(find.byType(ElevatedButton)), isTrue);
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focusedIn(find.byKey(const Key('search_filter_apply'))), isTrue);
     });
   });
 

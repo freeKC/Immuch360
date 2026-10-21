@@ -279,9 +279,10 @@ class SearchPage extends HookConsumerWidget {
           context: context,
           isScrollControlled: true,
           isDismissible: true,
+          // No action rail: Make and Model sit side by side on a TV, and the rail would take Right and Down from Make,
+          // leaving Model out of reach of the remote
           child: FilterBottomSheetScaffold(
             title: context.t.search_filter_camera_title,
-            tvActionRail: true,
             onSearch: handleApply,
             onClear: handleClear,
             child: Padding(
