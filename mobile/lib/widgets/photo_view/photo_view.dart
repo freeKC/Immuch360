@@ -268,6 +268,7 @@ class PhotoView extends StatefulWidget {
     this.disableScaleGestures,
     this.errorBuilder,
     this.enablePanAlways,
+    this.quarterTurns = 0,
   }) : child = null,
        childSize = null;
 
@@ -315,7 +316,8 @@ class PhotoView extends StatefulWidget {
        imageProvider = null,
        gaplessPlayback = false,
        loadingBuilder = null,
-       index = 0;
+       index = 0,
+       quarterTurns = 0;
 
   /// Given a [imageProvider] it resolves into an zoomable image widget using. It
   /// is required
@@ -365,6 +367,12 @@ class PhotoView extends StatefulWidget {
 
   /// A flag that enables the rotation gesture support
   final bool enableRotation;
+
+  /// How many quarter turns clockwise the image is shown turned (the one-key rotation of the viewers), 0 to 3: the fit
+  /// and the zoom levels follow the turned size. A new [imageProvider] given with new turns keeps the old turns until
+  /// its first frame, so that a picture turned on the server takes the place of the one turned on screen at once.
+  /// Images only.
+  final int quarterTurns;
 
   /// The specified custom child to be shown instead of a image
   final Widget? child;
@@ -614,6 +622,7 @@ class _PhotoViewState extends State<PhotoView> with AutomaticKeepAliveClientMixi
                 errorBuilder: widget.errorBuilder,
                 enablePanAlways: widget.enablePanAlways,
                 index: widget.index,
+                quarterTurns: widget.quarterTurns,
               );
       },
     );
