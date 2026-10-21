@@ -19,6 +19,10 @@ class ToastService {
   FutureOr<void> error(String message, {ToastOption? toast}) {
     snackbar.error(message, duration: toast?.timeout, action: toast?.action);
   }
+
+  FutureOr<void> info(String message, {ToastOption? toast}) {
+    snackbar.info(message, duration: toast?.timeout, action: toast?.action);
+  }
 }
 
 extension on ToastOption {
