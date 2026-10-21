@@ -664,6 +664,18 @@ jobs:
           echo "notices: ${notices#"$app/"}"
           ls "$(dirname "$notices")"
 
+      # libsmb2 (dart_smb2, LGPL-2.1-or-later) in the app with its notice and licence texts, assets of the package
+      # (mobile/packages/dart_smb2/libsmb2) that the licence page of the app shows
+      - name: libsmb2 and its licence in the app
+        run: |
+          app="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
+          [ -d "$app/Contents/Frameworks/libsmb2.framework" ] || { echo "::error::no libsmb2.framework in the app"; exit 1; }
+          texts="$app/Contents/Frameworks/App.framework/Resources/flutter_assets/packages/dart_smb2/libsmb2"
+          for name in NOTICE COPYING LICENCE-LGPL-2.1.txt; do
+            [ -f "$texts/$name" ] || { echo "::error::no $name of libsmb2 in the app"; exit 1; }
+          done
+          ls -l "$texts"
+
       # Nobody on the project has a Mac: the runner starts the app three times, without a server, with what a user would
       # give it, and with the self check of lib/desktop/window/self_check.dart (IMMUCH360_SELF_CHECK), which writes
       # what it found to a JSON file. First the folder of a photo and a video made here (make_test_media.swift) on the

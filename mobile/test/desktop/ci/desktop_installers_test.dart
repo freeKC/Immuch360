@@ -166,6 +166,8 @@ void main() {
         'bundle/lib/libapp.so': 'ELF',
         // Built by jni for Android: it needs the libjvm.so of a Java runtime, so the packages leave it out
         'bundle/lib/libdartjni.so': 'ELF',
+        // dart_smb2's library (LGPL-2.1-or-later): its notice and licence go into the packages
+        'bundle/lib/libsmb2.so': 'ELF',
       });
       final out = p.join(root.path, 'out');
       final run = installers(root, [
@@ -207,7 +209,11 @@ void main() {
         File(p.join(stage, 'usr/share/icons/hicolor/256x256/apps/com.aprogsys.immuch360.png')).existsSync(),
         isTrue,
       );
-      expect(read('usr/share/doc/immuch360/copyright'), contains('GNU AFFERO GENERAL PUBLIC LICENSE'));
+      final copyright = read('usr/share/doc/immuch360/copyright');
+      expect(copyright, contains('GNU AFFERO GENERAL PUBLIC LICENSE'));
+      expect(copyright, contains('/opt/immuch360/lib/libsmb2.so, the library of the SMB shares'));
+      expect(copyright, contains('GNU LESSER GENERAL PUBLIC LICENSE'));
+      expect(read('usr/share/licenses/immuch360/libsmb2/NOTICE'), contains('595d128b4d11a88a335eee961689a157e4f76cd3'));
 
       final nfpm = jsonDecode(File(p.join(out, 'nfpm.json')).readAsStringSync()) as Map<String, dynamic>;
       expect(
@@ -221,7 +227,14 @@ void main() {
       );
       expect((overrides['rpm'] as Map)['depends'], containsAll(['mpv-libs', 'gtk3', 'glibc >= 2.34', 'xdg-user-dirs']));
       final destinations = [for (final entry in nfpm['contents'] as List) (entry as Map)['dst']];
-      expect(destinations, containsAll(['/opt/immuch360', '/usr/bin/immuch360']));
+      expect(
+        destinations,
+        containsAll([
+          '/opt/immuch360',
+          '/usr/bin/immuch360',
+          '/usr/share/licenses/immuch360/libsmb2/LICENCE-LGPL-2.1.txt',
+        ]),
+      );
     });
 
     test('refuses a folder that is not the bundle of flutter build linux', () {
