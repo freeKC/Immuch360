@@ -1,7 +1,7 @@
-// The filter sheets of the search page with a remote control: the action rail of the People sheet (Right to Apply, Up
-// to Clear, Left back to the row the focus came from, radio buttons included), the Media Type, Display options and
-// date sheets whole on a 960 x 540 dp TV screen with their buttons in reach (the year of the date sheet in a dialog),
-// and the layout of phones unchanged.
+// The filter sheets of the search page with a remote control: the action rail (Right to Apply, Up to Clear, Left back
+// to the row the focus came from, radio buttons included) of every sheet but Camera, the Media Type, Display options,
+// Rating and date sheets whole on a 960 x 540 dp TV screen with their buttons in reach (the year of the date sheet in
+// a dialog), 80% of the TV screen for every sheet, and the layout of phones unchanged.
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
+import 'package:immich_mobile/models/search/search_filter.model.dart';
 import 'package:immich_mobile/presentation/widgets/search/quick_date_picker.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/widgets/search/search_filter/display_option_picker.dart';
@@ -153,51 +154,103 @@ void main() {
     });
   });
 
-  group('Media Type and Display options sheets on a 960 x 540 dp TV', () {
+  group('Media Type, Display options and Rating sheets on a 960 x 540 dp TV, with the rail as the search page has', () {
     // The bottom margin of TvShell, 27 dp of overscan
     const safeBottom = 540 - 27;
 
-    testWidgets('Media Type: whole on screen, Down from the last choice reaches Clear, then Right Apply', (
+    /// A sheet of the search page with its action rail, sized by the shared utility
+    Widget pageSheet(String title, Widget child) =>
+        FilterBottomSheetScaffold(title: title, tvActionRail: true, onSearch: () {}, onClear: () {}, child: child);
+
+    testWidgets('Media Type: whole on screen, Down from the last choice reaches the rail, Left comes back', (
       tester,
     ) async {
+      final picked = <AssetType>[];
       await open(
         tester,
-        FilterBottomSheetScaffold(
-          title: 'Select media type',
-          onSearch: () {},
-          onClear: () {},
-          child: MediaTypePicker(onSelect: (_) {}, filter: AssetType.other),
-        ),
+        pageSheet('Select media type', MediaTypePicker(onSelect: picked.add, filter: AssetType.other)),
       );
       // A RenderFlex overflow fails the test before this line otherwise
       expect(tester.takeException(), isNull);
       expect(tester.getRect(find.byKey(const Key('search_filter_apply'))).bottom, lessThanOrEqualTo(safeBottom));
 
-      focusOf(tester, 'Video').requestFocus();
+      final video = focusOf(tester, 'Video');
+      video.requestFocus();
       await tester.pumpAndSettle();
       await press(tester, LogicalKeyboardKey.arrowDown);
-      expect(focused(), focusOf(tester, 'Clear'));
-      await press(tester, LogicalKeyboardKey.arrowRight);
-      expect(focused(), focusOf(tester, 'Apply filter'));
+      expect(focused()?.debugLabel, anyOf('TV filter clear', 'TV filter apply'));
+      await press(tester, LogicalKeyboardKey.arrowLeft);
+      expect(focused(), video);
+      expect(picked, isEmpty, reason: 'a move is no choice');
     });
 
-    testWidgets('Display options: whole on screen, Down from the last option reaches the buttons', (tester) async {
-      await open(
-        tester,
-        FilterBottomSheetScaffold(
-          title: 'Display options',
-          onSearch: () {},
-          onClear: () {},
-          child: DisplayOptionPicker(onSelect: (_) {}),
-        ),
-      );
+    testWidgets('Display options: whole on screen, Right from an option reaches Apply, Left comes back', (
+      tester,
+    ) async {
+      await open(tester, pageSheet('Display options', DisplayOptionPicker(onSelect: (_) {})));
       expect(tester.takeException(), isNull);
       expect(tester.getRect(find.byKey(const Key('search_filter_apply'))).bottom, lessThanOrEqualTo(safeBottom));
 
-      focusOf(tester, 'Archive').requestFocus();
+      final archive = focusOf(tester, 'Archive');
+      archive.requestFocus();
       await tester.pumpAndSettle();
-      await press(tester, LogicalKeyboardKey.arrowDown);
-      expect(focused(), anyOf(focusOf(tester, 'Clear'), focusOf(tester, 'Apply filter')));
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focused()?.debugLabel, 'TV filter apply');
+      await press(tester, LogicalKeyboardKey.arrowLeft);
+      expect(focused(), archive);
+    });
+
+    testWidgets('Rating: Down goes through the six choices, the last one scrolled into view; Right reaches Apply', (
+      tester,
+    ) async {
+      final picked = <SearchRatingFilter>[];
+      await open(tester, pageSheet('Rating', StarRatingPicker(onSelect: picked.add)));
+      expect(tester.takeException(), isNull);
+      expect(tester.getRect(find.byKey(const Key('search_filter_apply'))).bottom, lessThanOrEqualTo(safeBottom));
+
+      focusOf(tester, 'Unrated').requestFocus();
+      await tester.pumpAndSettle();
+      for (var i = 0; i < 5; i++) {
+        await press(tester, LogicalKeyboardKey.arrowDown);
+      }
+      expect(focused(), focusOf(tester, '5 stars'));
+      expect(tester.getRect(find.byKey(const Key('star_5'))).bottom, lessThanOrEqualTo(safeBottom));
+
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focused()?.debugLabel, 'TV filter apply');
+      await press(tester, LogicalKeyboardKey.arrowLeft);
+      expect(focused(), focusOf(tester, '5 stars'));
+      expect(picked, isEmpty, reason: 'a move is no choice');
+    });
+  });
+
+  group('the shared sheet utility', () {
+    Finder sizedBoxes() =>
+        find.ancestor(of: find.byType(FilterBottomSheetScaffold), matching: find.byType(FractionallySizedBox));
+
+    Widget displaySheet() => FilterBottomSheetScaffold(
+      title: 'Display options',
+      onSearch: () {},
+      onClear: () {},
+      child: DisplayOptionPicker(onSelect: (_) {}),
+    );
+
+    testWidgets('gives a sheet 80% of a TV screen', (tester) async {
+      await open(tester, displaySheet());
+      expect(sizedBoxes(), findsOneWidget);
+      expect(tester.widget<FractionallySizedBox>(sizedBoxes()).heightFactor, 0.8);
+      expect(tester.getRect(find.byType(FilterBottomSheetScaffold)).height, greaterThan(540 * 0.7));
+    });
+
+    testWidgets('does not wrap the People and Tags sheets, already sized, a second time', (tester) async {
+      await open(tester, railSheet(people()));
+      expect(sizedBoxes(), findsOneWidget);
+    });
+
+    testWidgets('leaves a phone sheet as high as its content', (tester) async {
+      await open(tester, displaySheet(), tvMode: false, screen: const Size(390, 844));
+      expect(sizedBoxes(), findsNothing);
+      expect(tester.getRect(find.byType(FilterBottomSheetScaffold)).height, lessThan(844 / 2));
     });
   });
 
@@ -267,14 +320,20 @@ void main() {
       pickerRequests = 0;
     });
 
-    /// The date sheet of the search page
-    Widget dateSheet({DateFilterInputModel? current}) => FilterBottomSheetScaffold(
-      title: 'Select a date range',
-      onClear: () {},
-      child: Flexible(
-        child: QuickDatePicker(currentInput: current, onSelect: selected.add, onRequestPicker: () => pickerRequests++),
-      ),
-    );
+    /// The date sheet of the search page: the rail on a TV, the choices in a Flexible on a phone
+    Widget dateSheet({DateFilterInputModel? current, bool tv = true}) {
+      final picker = QuickDatePicker(
+        currentInput: current,
+        onSelect: selected.add,
+        onRequestPicker: () => pickerRequests++,
+      );
+      return FilterBottomSheetScaffold(
+        title: 'Select a date range',
+        tvActionRail: true,
+        onClear: () {},
+        child: tv ? picker : Flexible(child: picker),
+      );
+    }
 
     /// The first text of the control that has the focus: the title of a row
     String? focusedLabel() {
@@ -299,7 +358,7 @@ void main() {
     final thisYear = DateTime.now().year;
     final rows = ['Last month', 'Last 3 months', 'Last 9 months', 'In $thisYear', 'Custom range'];
 
-    testWidgets('TV: the five choices whole on screen, one focus stop each, Down from the last reaches Clear', (
+    testWidgets('TV: the five choices whole on screen, one focus stop each, Right reaches Clear, Left comes back', (
       tester,
     ) async {
       await open(tester, dateSheet());
@@ -322,8 +381,10 @@ void main() {
       }
       expect(visited, rows);
 
-      await press(tester, LogicalKeyboardKey.arrowDown);
-      expect(focused(), focusOf(tester, 'Clear'));
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focused()?.debugLabel, 'TV filter clear');
+      await press(tester, LogicalKeyboardKey.arrowLeft);
+      expect(focusedLabel(), rows.last);
       expect(selected, isEmpty, reason: 'a move is no choice');
     });
 
@@ -377,7 +438,7 @@ void main() {
     });
 
     testWidgets('phone, portrait: as high as its choices, the year menu kept', (tester) async {
-      await open(tester, dateSheet(), tvMode: false, screen: const Size(390, 844));
+      await open(tester, dateSheet(tv: false), tvMode: false, screen: const Size(390, 844));
       expect(tester.takeException(), isNull);
       for (final row in rows.where((row) => !row.startsWith('In '))) {
         expect(tester.getRect(find.text(row)).bottom, lessThanOrEqualTo(844), reason: row);
@@ -388,7 +449,7 @@ void main() {
     });
 
     testWidgets('phone, landscape: the choices scroll above the buttons', (tester) async {
-      await open(tester, dateSheet(), tvMode: false, screen: const Size(844, 390));
+      await open(tester, dateSheet(tv: false), tvMode: false, screen: const Size(844, 390));
       expect(tester.takeException(), isNull);
       final scrollable = tester.state<ScrollableState>(
         find.descendant(of: find.byType(QuickDatePicker), matching: find.byType(Scrollable)).first,
