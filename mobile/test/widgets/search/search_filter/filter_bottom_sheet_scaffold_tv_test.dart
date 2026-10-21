@@ -251,18 +251,26 @@ void main() {
     Finder sizedBoxes() =>
         find.ancestor(of: find.byType(FilterBottomSheetScaffold), matching: find.byType(FractionallySizedBox));
 
-    Widget displaySheet() => FilterBottomSheetScaffold(
+    Widget displaySheet({bool rail = true}) => FilterBottomSheetScaffold(
       title: 'Display options',
+      tvActionRail: rail,
       onSearch: () {},
       onClear: () {},
       child: DisplayOptionPicker(onSelect: (_) {}),
     );
 
-    testWidgets('gives a sheet 80% of a TV screen', (tester) async {
+    testWidgets('gives a sheet with the rail 80% of a TV screen', (tester) async {
       await open(tester, displaySheet());
       expect(sizedBoxes(), findsOneWidget);
       expect(tester.widget<FractionallySizedBox>(sizedBoxes()).heightFactor, 0.8);
       expect(tester.getRect(find.byType(FilterBottomSheetScaffold)).height, greaterThan(540 * 0.7));
+    });
+
+    testWidgets('leaves a TV sheet without the rail, as Camera, as high as its content', (tester) async {
+      await open(tester, displaySheet(rail: false));
+      expect(sizedBoxes(), findsNothing);
+      expect(tester.getRect(find.byType(FilterBottomSheetScaffold)).height, lessThan(540 * 0.7));
+      expect(tester.getRect(find.byKey(const Key('search_filter_apply'))).bottom, lessThanOrEqualTo(540 - 27));
     });
 
     testWidgets('does not wrap the People and Tags sheets, already sized, a second time', (tester) async {
