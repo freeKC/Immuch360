@@ -12,6 +12,16 @@ export const ACTION_BAR_SPOTLIGHT_ID = 'media-viewer-actions';
 
 const ActionBar = createSpotlightContainer({enterTo: 'last-focused'});
 
+// Immuch360: the buttons of the action bar of a photo are given by the viewer (zoom, 360°, 3D...), in their order
+export interface ViewerAction {
+	key: string;
+	icon?: string;
+	text?: string;
+	label: string;
+	onClick: () => void;
+	spotlightId?: string;
+}
+
 interface MediaControlsProps {
 	rootRef: React.Ref<HTMLDivElement>;
 	asset: TimelineAsset;
@@ -23,13 +33,14 @@ interface MediaControlsProps {
 	onPrev: () => void;
 	onNext: () => void;
 	onClose: () => void;
-	onRotate: () => void;
-	onStartSlideshow: () => void;
+	actions: ViewerAction[];
+	/** A line under the date, such as the hint of the 360° viewer or why it shows a photo flat */
+	notice?: string;
 	onActionBarFocusChange: (focused: boolean) => void;
 }
 
 export const MediaControls: React.FC<MediaControlsProps> = React.memo(
-	({rootRef, asset, position, isVideo, controlsVisible, canGoPrev, canGoNext, onPrev, onNext, onClose, onRotate, onStartSlideshow, onActionBarFocusChange}) => {
+	({rootRef, asset, position, isVideo, controlsVisible, canGoPrev, canGoNext, onPrev, onNext, onClose, actions, notice, onActionBarFocusChange}) => {
 		const handleBarFocus = useCallback(() => onActionBarFocusChange(true), [onActionBarFocusChange]);
 		const handleBarBlur = useCallback(
 			(event: React.FocusEvent<HTMLDivElement>) => {
@@ -45,7 +56,10 @@ export const MediaControls: React.FC<MediaControlsProps> = React.memo(
 					{isVideo && (
 						<Button icon="closex" size="small" backgroundOpacity="transparent" onClick={onClose} spotlightId={CLOSE_BUTTON_SPOTLIGHT_ID} />
 					)}
-					<MediaInfo asset={asset} />
+					<div className={css.infoColumn}>
+						<MediaInfo asset={asset} />
+						{notice ? <div className={css.notice}>{notice}</div> : null}
+					</div>
 					<span className={chrome.pill}>{position}</span>
 				</div>
 
@@ -60,9 +74,11 @@ export const MediaControls: React.FC<MediaControlsProps> = React.memo(
 				{!isVideo && (
 					<div className={chrome.bottomBar}>
 						<ActionBar spotlightId={ACTION_BAR_SPOTLIGHT_ID} className={chrome.actionBar} onFocus={handleBarFocus} onBlur={handleBarBlur}>
-							<RoundButton icon="rotate" tooltipText="Rotate" onClick={onRotate} />
-							<RoundButton icon="play" tooltipText="Slideshow" onClick={onStartSlideshow} />
-							<RoundButton icon="closex" tooltipText="Close" onClick={onClose} />
+							{actions.map((action) => (
+								<RoundButton key={action.key} icon={action.icon} tooltipText={action.label} onClick={action.onClick} spotlightId={action.spotlightId}>
+									{action.text}
+								</RoundButton>
+							))}
 						</ActionBar>
 					</div>
 				)}

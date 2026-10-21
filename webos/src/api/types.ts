@@ -56,6 +56,9 @@ export interface ImmichAsset {
 	height?: number;
 	// 'timeline' | 'hidden' | 'archive' | 'locked'; absent on old servers
 	visibility?: string;
+	// Immuch360: what the 360° viewer reads (GET /api/assets/{id})
+	originalFileName?: string;
+	originalMimeType?: string;
 }
 
 interface ExifInfo {
@@ -64,6 +67,11 @@ interface ExifInfo {
 	// Populated on /search/cities responses (all server versions, v3 included)
 	city?: string | null;
 	country?: string | null;
+	// Immuch360: the 360° rules read them (projectionType "EQUIRECTANGULAR" is the server's 360° flag)
+	make?: string | null;
+	model?: string | null;
+	projectionType?: string | null;
+	fileSizeInByte?: number | null;
 }
 
 export interface ColumnarAssetResponse {
@@ -84,6 +92,14 @@ export interface ColumnarAssetResponse {
 	// Immich v3+
 	city?: (string | null)[];
 	country?: (string | null)[];
+	// Immuch360: the server's 360° flag of each asset ("EQUIRECTANGULAR"), for the badge and the viewer
+	projectionType?: (string | null)[];
+}
+
+// Immuch360: GET /api/server/about, read by the diagnostics page
+export interface ImmichServerAbout {
+	version?: string;
+	versionUrl?: string;
 }
 
 export interface ImmichAlbum {

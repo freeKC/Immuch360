@@ -8,6 +8,11 @@ export interface VideoPlayerApi {
 	areControlsVisible: () => boolean;
 	showControls: () => void;
 	hideControls: () => void;
+	// Immuch360: the remote's 10 s steps and play and pause keys
+	jump: (seconds: number) => void;
+	play: () => void;
+	pause: () => void;
+	getMediaState: () => {paused?: boolean; currentTime?: number; duration?: number};
 }
 
 interface VideoPlayerProps {

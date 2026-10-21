@@ -1,7 +1,7 @@
 import {APIError, type APIClient} from './client';
-import type {ColumnarAssetResponse, ImmichAlbum, ImmichAlbumDetails, ImmichAsset, ImmichPerson, PeopleResponse} from './types';
+import type {ColumnarAssetResponse, ImmichAlbum, ImmichAlbumDetails, ImmichAsset, ImmichPerson, ImmichServerAbout, PeopleResponse} from './types';
 import type {PhotoRepository} from '../domain/PhotoRepository';
-import {MAIN_TIMELINE, type Album, type AlbumDetails, type Person, type Place, type TimelineAsset, type TimelineBucket, type TimelineScope} from '../domain/types';
+import {MAIN_TIMELINE, type Album, type AlbumDetails, type AssetDetails, type Person, type Place, type TimelineAsset, type TimelineBucket, type TimelineScope} from '../domain/types';
 import {toDurationSeconds} from '../utils/FormattingService';
 
 interface ImmichSearchResponse {
@@ -72,6 +72,7 @@ function transformColumnarResponse(columnar: ColumnarAssetResponse): TimelineAss
 		durationSeconds: toDurationSeconds(columnar.duration[i]),
 		city: columnar.city?.[i],
 		country: columnar.country?.[i],
+		projectionType: columnar.projectionType?.[i],
 	}));
 }
 
@@ -133,6 +134,7 @@ export class ImmichRepository implements PhotoRepository {
 			durationSeconds: toDurationSeconds(a.duration),
 			city: a.exifInfo?.city,
 			country: a.exifInfo?.country,
+			projectionType: a.exifInfo?.projectionType,
 		};
 	}
 
@@ -218,6 +220,44 @@ export class ImmichRepository implements PhotoRepository {
 
 	public faceUrl(personId: string): string {
 		return this.client.getFaceThumbnailUrl(personId);
+	}
+
+	// Immuch360: the name, size, camera and 360° flag the viewer decides with
+	public async getAssetDetails(assetId: string): Promise<AssetDetails> {
+		const a = await this.client.fetch<ImmichAsset>(`/assets/${assetId}`);
+		const width = a.exifInfo?.exifImageWidth ?? a.width ?? null;
+		const height = a.exifInfo?.exifImageHeight ?? a.height ?? null;
+		return {
+			id: a.id,
+			type: a.type === 'VIDEO' ? 'VIDEO' : 'IMAGE',
+			originalFileName: a.originalFileName ?? '',
+			originalMimeType: a.originalMimeType ?? null,
+			width: width || null,
+			height: height || null,
+			make: a.exifInfo?.make ?? null,
+			model: a.exifInfo?.model ?? null,
+			projectionType: a.exifInfo?.projectionType ?? null,
+			fileSize: a.exifInfo?.fileSizeInByte ?? null,
+		};
+	}
+
+	// Immuch360: the preview the sphere is drawn from, and where its GPano tags are read
+	public fetchPreviewBytes(assetId: string, signal?: AbortSignal): Promise<ArrayBuffer> {
+		return this.client.fetchMediaBytes(this.previewUrl(assetId), signal);
+	}
+
+	// Immuch360: the version the diagnostics page shows; null when the server does not say
+	public async getServerVersion(): Promise<string | null> {
+		try {
+			const about = await this.client.fetch<ImmichServerAbout>('/server/about');
+			return about.version ?? null;
+		} catch {
+			return null;
+		}
+	}
+
+	public serverUrl(): string {
+		return this.client.getBaseUrl();
 	}
 }
 

@@ -1,0 +1,21 @@
+{
+  "id": ["7f1c2b8e-0d4f-4d1e-9a51-2a5b7c3e9f10", "0b6e0f62-5d8a-4a7f-8a4b-9a2c4b1d7e21", "c3d9a7f4-1e2b-4c5d-8f6a-7b8c9d0e1f32"],
+  "ownerId": ["u1", "u1", "u1"],
+  "ratio": [2, 1.3333333333333333, 1.7777777777777777],
+  "isFavorite": [false, true, false],
+  "visibility": ["timeline", "timeline", "timeline"],
+  "isTrashed": [false, false, false],
+  "isImage": [true, true, false],
+  "thumbhash": ["1QcSHQRnh493V4dIh4eXh1h4kJUI", null, "HBkSHYSIeHiPiHh8eJd4eTN0EEQG"],
+  "createdAt": ["2024-06-15T09:12:01.000Z", "2024-06-14T18:00:00.000Z", "2024-06-02T07:30:00.000Z"],
+  "fileCreatedAt": ["2024-06-15T08:10:00.000Z", "2024-06-14T16:45:12.000Z", "2024-06-02T05:20:00.000Z"],
+  "localOffsetHours": [2, 2, -4],
+  "duration": [null, null, 12500],
+  "stack": [null, null, null],
+  "projectionType": ["EQUIRECTANGULAR", null, null],
+  "livePhotoVideoId": [null, null, null],
+  "city": ["Annecy", "Lyon", null],
+  "country": ["France", "France", null],
+  "latitude": [45.899, 45.764, null],
+  "longitude": [6.129, 4.835, null]
+}

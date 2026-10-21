@@ -10,6 +10,22 @@ export interface TimelineAsset {
 	durationSeconds: number | null;
 	city?: string | null;
 	country?: string | null;
+	// Immuch360: the server's 360° flag ("EQUIRECTANGULAR"), see src/immuch360/sphere/rules.ts
+	projectionType?: string | null;
+}
+
+// Immuch360: what the 360° viewer needs to know of an asset beyond the timeline (GET /api/assets/{id})
+export interface AssetDetails {
+	id: string;
+	type: AssetType;
+	originalFileName: string;
+	originalMimeType: string | null;
+	width: number | null;
+	height: number | null;
+	make: string | null;
+	model: string | null;
+	projectionType: string | null;
+	fileSize: number | null;
 }
 
 export interface TimelineBucket {

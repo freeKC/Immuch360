@@ -89,4 +89,22 @@ export class APIClient {
 	public getVideoPlaybackUrl(assetId: string): string {
 		return this.buildMediaUrl(`/assets/${assetId}/video/playback`);
 	}
+
+	// Immuch360: the server address the account was added with, /api included
+	public getBaseUrl(): string {
+		return this.baseUrl;
+	}
+
+	// Immuch360: the bytes of a media URL (credentials in the query, as for <img>), for the WebGL sphere, which needs
+	// pixels of the app's own origin. No header is added, so the request needs no CORS preflight.
+	public async fetchMediaBytes(url: string, signal?: AbortSignal): Promise<ArrayBuffer> {
+		let response: Response;
+		try {
+			response = await fetch(url, {signal});
+		} catch (error) {
+			throw new APIError(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+		}
+		if (!response.ok) throw new APIError(`API request failed: ${response.statusText}`, response.status);
+		return response.arrayBuffer();
+	}
 }

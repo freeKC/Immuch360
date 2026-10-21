@@ -1,4 +1,4 @@
-import type {Album, AlbumDetails, Person, Place, TimelineAsset, TimelineBucket, TimelineScope} from './types';
+import type {Album, AlbumDetails, AssetDetails, Person, Place, TimelineAsset, TimelineBucket, TimelineScope} from './types';
 
 export interface PhotoRepository {
 	getBuckets(scope?: TimelineScope): Promise<TimelineBucket[]>;
@@ -19,4 +19,10 @@ export interface PhotoRepository {
 	previewUrl(assetId: string): string;
 	videoPlaybackUrl(assetId: string): string;
 	faceUrl(personId: string): string;
+
+	// Immuch360: the 360° viewer and the diagnostics page
+	getAssetDetails(assetId: string): Promise<AssetDetails>;
+	fetchPreviewBytes(assetId: string, signal?: AbortSignal): Promise<ArrayBuffer>;
+	getServerVersion(): Promise<string | null>;
+	serverUrl(): string;
 }

@@ -1,11 +1,18 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useWebOSKeys} from '../../hooks/useWebOSKeys';
 import {useAutoHideControls} from '../../hooks/useAutoHideControls';
 import {useAssetRotation} from '../../hooks/useAssetRotation';
+import {useAssetDetails} from '../../hooks/useAssetDetails';
+import {usePhotoZoom} from '../../hooks/usePhotoZoom';
 import {useRepository} from '../../domain/RepositoryContext';
 import {createSpotlightContainer, forceFocus, SpottableDiv} from '../../utils/spotlight';
 import type {TimelineAsset} from '../../domain/types';
-import {MediaControls, ACTION_BAR_SPOTLIGHT_ID} from './MediaControls';
+import {t} from '../../immuch360/i18n';
+import {CONTROLS_HIDE_AFTER_MS, SEEK_STEP_SECONDS, playPauseWantsPlay, remoteAction, videoArrows} from '../../immuch360/keys';
+import {isForced360, setForced360, setSphereChoice, sphereChoice, type SphereChoice} from '../../immuch360/forced360';
+import {isEquirectangularProjection, isShownAs360, nextStereoLayout, type SphereView as ResolvedSphereView} from '../../immuch360/sphere/rules';
+import {SphereView, type SphereViewHandle} from '../../immuch360/sphere/SphereView';
+import {MediaControls, ACTION_BAR_SPOTLIGHT_ID, type ViewerAction} from './MediaControls';
 import {VideoPlayer, VideoPlayerApi} from './VideoPlayer';
 import css from './MediaViewer.module.less';
 
@@ -21,9 +28,18 @@ interface MediaViewerProps {
 
 const VIEWER_SPOTLIGHT_ID = 'media-viewer';
 const STAGE_SPOTLIGHT_ID = 'media-viewer-stage';
+// Immuch360: OK on a 360° photo focuses this button, as the Flutter viewer does on Android TV
+const ZOOM_IN_SPOTLIGHT_ID = 'media-viewer-zoom-in';
 // Trap Spotlight inside the viewer so D-pad can't reach the underlying rail/grid (which would
 // trigger NavigationRail's focus-based expand and other surprises).
 const ViewerContainer = createSpotlightContainer({enterTo: 'last-focused'});
+
+// Immuch360: on a 360° photo the arrows turn the view, so only OK brings the controls back
+const SPHERE_REVEAL_KEYS: readonly string[] = ['Enter'];
+
+// Immuch360: a photo whose shape is 2:1 within 2% may be one a 360° camera stitched without GPano tags; its details
+// (name, camera) tell, so they are fetched for it
+const looksEquirect = (ratio: number) => Math.abs(ratio / 2 - 1) <= 0.02;
 
 // useWebOSKeys preventDefaults + stops propagation before calling the handler, so a no-op
 // is enough to fully swallow a key (Spotlight never sees it → focus can't leak).
@@ -45,13 +61,46 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 
 	const isVideo = asset?.type === 'VIDEO';
 
+	// Immuch360: is this photo shown on the 360° sphere? The server's flag, the user's "View as 360°", or a 360° camera
+	// that stitched it (its details tell). Raw files of 360° cameras never are.
+	const [forcedVersion, setForcedVersion] = useState(0);
+	const forced = useMemo(() => (asset ? isForced360(asset.id) : false), [asset, forcedVersion]); // eslint-disable-line react-hooks/exhaustive-deps
+	const flagged = isEquirectangularProjection(asset?.projectionType);
+	const details = useAssetDetails(asset?.id, !!asset && !isVideo && (flagged || forced || looksEquirect(asset.ratio)));
+	const [sphereFailure, setSphereFailure] = useState<{assetId: string; reason: string} | null>(null);
+	const sphereFailed = !!asset && sphereFailure?.assetId === asset.id;
+	const wants360 =
+		!!asset &&
+		!isVideo &&
+		isShownAs360({
+			isVideo: false,
+			projectionType: asset.projectionType ?? details?.projectionType,
+			forced,
+			name: details?.originalFileName,
+			make: details?.make,
+			model: details?.model,
+			width: details?.width,
+			height: details?.height,
+		});
+	const show360 = wants360 && !sphereFailed;
+	const video360 = isVideo && flagged;
+	const [choiceVersion, setChoiceVersion] = useState(0);
+	const choice: SphereChoice = useMemo(() => (asset ? sphereChoice(asset.id) : {}), [asset, choiceVersion]); // eslint-disable-line react-hooks/exhaustive-deps
+	const [resolved, setResolved] = useState<ResolvedSphereView | null>(null);
+	const sphereRef = useRef<SphereViewHandle>(null);
+
 	const [actionBarFocused, setActionBarFocused] = useState(false);
-	const [rotation, rotate] = useAssetRotation(isVideo ? undefined : asset?.id);
+	const [rotation, rotate] = useAssetRotation(isVideo || show360 ? undefined : asset?.id);
+	const {zoomed, zoomIn: photoZoomIn, zoomOut: photoZoomOut, reset: resetZoom, pan, style: zoomStyle} = usePhotoZoom(isVideo || show360 ? undefined : asset?.id);
 	const controlsRef = useRef<HTMLDivElement>(null);
 
 	// Auto-hide is for still images only. Video keeps its always-visible MediaControls and
 	// relies on Sandstone VideoPlayer's own auto-hide (OK/Select is play/pause there).
-	const {visible: controlsVisible, show: showControls, hide: hideControls} = useAutoHideControls({enabled: !isVideo, controlsRef});
+	const {visible: controlsVisible, show: showControls, hide: hideControls} = useAutoHideControls({
+		enabled: !isVideo,
+		controlsRef,
+		revealKeys: show360 ? SPHERE_REVEAL_KEYS : undefined,
+	});
 	const inActionBar = !isVideo && controlsVisible && actionBarFocused;
 
 	// The bar faded out under an idle focus: hand it back to the stage rather than leave it on
@@ -79,32 +128,105 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		setVideoControlsVisible(false);
 		// The bar may unmount (photo → video) without a blur reaching us.
 		setActionBarFocused(false);
+		setResolved(null);
 	}
 	const videoControlsOpen = isVideo && videoControlsVisible;
 
+	// Immuch360: the top bar of a video (close, date, position) hides with Sandstone's transport bar instead of staying
+	// over the film; it shows for 5 s when a video opens, as the controls do after a key
+	const [videoIntro, setVideoIntro] = useState<string | null>(null);
+	useEffect(() => {
+		if (!isVideo || !asset) return undefined;
+		setVideoIntro(asset.id);
+		const timer = window.setTimeout(() => setVideoIntro(null), CONTROLS_HIDE_AFTER_MS);
+		return () => window.clearTimeout(timer);
+	}, [isVideo, asset]);
+	const chromeVisible = isVideo ? videoControlsOpen || videoIntro === asset?.id : controlsVisible;
+
+	// Immuch360: Left and Right go to the neighbours whatever the video does; a video alone in the viewer seeks 10 s
+	const hasNeighbours = totalCount > 1;
+	const seekVideo = useCallback((seconds: number) => playerApiRef.current?.jump(seconds), []);
+	const videoLeft = useCallback(() => (videoArrows(hasNeighbours) === 'navigate' ? handlePrev() : seekVideo(-SEEK_STEP_SECONDS)), [hasNeighbours, handlePrev, seekVideo]);
+	const videoRight = useCallback(() => (videoArrows(hasNeighbours) === 'navigate' ? handleNext() : seekVideo(SEEK_STEP_SECONDS)), [hasNeighbours, handleNext, seekVideo]);
+
 	// Back closes the transport bar if open, the viewer otherwise. Our Back bridge
 	// (capture + stopImmediatePropagation) preempts Sandstone's Cancelable, so the
-	// two-step behavior has to be restored here.
+	// two-step behavior has to be restored here. Immuch360: a zoomed photo zooms out first.
 	const handleBack = useCallback(() => {
 		if (videoControlsOpen && playerApiRef.current) {
 			playerApiRef.current.hideControls();
 			return;
 		}
+		if (zoomed) {
+			resetZoom();
+			return;
+		}
 		onClose();
-	}, [videoControlsOpen, onClose]);
+	}, [videoControlsOpen, onClose, zoomed, resetZoom]);
 
-	useWebOSKeys({
-		onBack: handleBack,
-		// Left/right page between media, except inside the action bar (Spotlight moves between
-		// its buttons) and while the video transport bar is open (Sandstone seeks).
-		onArrowLeft: videoControlsOpen || inActionBar ? undefined : handlePrev,
-		onArrowRight: videoControlsOpen || inActionBar ? undefined : handleNext,
-		// Up/down must never reach Spotlight unhandled, or it leaks focus to the grid behind the
-		// overlay. Unassigned here, they are reveal keys (useAutoHideControls) or belong to the
-		// Sandstone video bar.
-		onArrowUp: isVideo ? (videoControlsOpen ? undefined : swallowKey) : inActionBar ? focusStage : controlsVisible ? swallowKey : undefined,
-		onArrowDown: isVideo ? undefined : inActionBar ? swallowKey : controlsVisible ? focusActionBar : undefined,
-	});
+	const panLeft = useCallback(() => pan(-1, 0), [pan]);
+	const panRight = useCallback(() => pan(1, 0), [pan]);
+	const panUp = useCallback(() => pan(0, -1), [pan]);
+	const panDown = useCallback(() => pan(0, 1), [pan]);
+	const panning = zoomed && !inActionBar;
+
+	let arrowLeft: (() => void) | undefined;
+	let arrowRight: (() => void) | undefined;
+	let arrowUp: (() => void) | undefined;
+	let arrowDown: (() => void) | undefined;
+	if (isVideo) {
+		// Left/right page between media, except while the video transport bar is open (Sandstone seeks there)
+		arrowLeft = videoControlsOpen ? undefined : videoLeft;
+		arrowRight = videoControlsOpen ? undefined : videoRight;
+		// Up/down must never reach Spotlight unhandled, or it leaks focus to the grid behind the overlay
+		arrowUp = videoControlsOpen ? undefined : swallowKey;
+		arrowDown = undefined;
+	} else if (show360) {
+		// The sphere turns with the arrows (SphereView) unless the focus is in the action bar
+		arrowUp = inActionBar ? focusStage : undefined;
+		arrowDown = inActionBar ? swallowKey : undefined;
+	} else if (panning) {
+		arrowLeft = panLeft;
+		arrowRight = panRight;
+		arrowUp = panUp;
+		arrowDown = panDown;
+	} else {
+		// Left/right page between media, except inside the action bar (Spotlight moves between its buttons)
+		arrowLeft = inActionBar ? undefined : handlePrev;
+		arrowRight = inActionBar ? undefined : handleNext;
+		// Unassigned, up/down are reveal keys (useAutoHideControls)
+		arrowUp = inActionBar ? focusStage : controlsVisible ? swallowKey : undefined;
+		arrowDown = inActionBar ? swallowKey : controlsVisible ? focusActionBar : undefined;
+	}
+
+	useWebOSKeys({onBack: handleBack, onArrowLeft: arrowLeft, onArrowRight: arrowRight, onArrowUp: arrowUp, onArrowDown: arrowDown});
+
+	// Immuch360: the other keys of the remote in the viewer: the track keys go to the neighbours, Stop closes a video,
+	// rewind and fast forward step 10 s, the play and pause keys do as their name says, the channel keys zoom a photo
+	useEffect(() => {
+		const onKeyDown = (event: KeyboardEvent) => {
+			const action = remoteAction(event);
+			let handled = true;
+			if (action === 'previousTrack') handlePrev();
+			else if (action === 'nextTrack') handleNext();
+			else if (isVideo && action === 'stop') onClose();
+			else if (isVideo && (action === 'rewind' || action === 'fastForward')) seekVideo(action === 'rewind' ? -SEEK_STEP_SECONDS : SEEK_STEP_SECONDS);
+			else if (isVideo && playerApiRef.current && (action === 'play' || action === 'pause' || action === 'playPause')) {
+				const api = playerApiRef.current;
+				const play = playPauseWantsPlay(action, !api.getMediaState().paused);
+				if (play) api.play();
+				else api.pause();
+			} else if (!isVideo && !show360 && !inActionBar && (action === 'channelUp' || action === 'channelDown')) {
+				if (action === 'channelUp') photoZoomIn();
+				else photoZoomOut();
+			} else handled = false;
+			if (!handled) return;
+			event.preventDefault();
+			event.stopImmediatePropagation();
+		};
+		window.addEventListener('keydown', onKeyDown, {capture: true});
+		return () => window.removeEventListener('keydown', onKeyDown, {capture: true});
+	}, [handlePrev, handleNext, isVideo, show360, inActionBar, onClose, seekVideo, photoZoomIn, photoZoomOut]);
 
 	// Photos rest focus on the stage; forcing it also pulls focus off the grid card behind the
 	// overlay when the viewer was opened with the pointer.
@@ -112,7 +234,16 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		forceFocus(isVideo ? VIEWER_SPOTLIGHT_ID : STAGE_SPOTLIGHT_ID);
 	}, [isVideo]);
 
-	const handleStageClick = controlsVisible ? hideControls : showControls;
+	// Immuch360: OK on a 360° photo shows the controls with the zoom button focused (the arrows turn the view)
+	const handleStageClick = useCallback(() => {
+		if (show360) {
+			showControls();
+			forceFocus(ZOOM_IN_SPOTLIGHT_ID);
+			return;
+		}
+		if (controlsVisible) hideControls();
+		else showControls();
+	}, [show360, controlsVisible, hideControls, showControls]);
 
 	useEffect(() => {
 		const prefetch = (index: number) => {
@@ -125,38 +256,125 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		prefetch(currentIndex + 1);
 	}, [currentIndex, getAssetAt, repository]);
 
+	const handleSphereFailed = useCallback((reason: string) => {
+		if (asset) setSphereFailure({assetId: asset.id, reason});
+	}, [asset]);
+
+	const toggleForced = useCallback(() => {
+		if (!asset) return;
+		setForced360(asset.id, !forced);
+		setForcedVersion((n) => n + 1);
+		setSphereFailure(null);
+	}, [asset, forced]);
+
+	const saveChoice = useCallback(
+		(next: SphereChoice) => {
+			if (!asset) return;
+			setSphereChoice(asset.id, next);
+			setChoiceVersion((n) => n + 1);
+		},
+		[asset]
+	);
+
+	const actions: ViewerAction[] = useMemo(() => {
+		if (!asset || isVideo) return [];
+		const list: ViewerAction[] = [];
+		const zoomIn = show360 ? () => sphereRef.current?.zoomIn() : photoZoomIn;
+		const zoomOut = show360 ? () => sphereRef.current?.zoomOut() : photoZoomOut;
+		if (show360) {
+			if (currentIndex > 0) list.push({key: 'prev', icon: 'arrowlargeleft', label: t('previous'), onClick: handlePrev});
+		} else {
+			list.push({key: 'rotate', icon: 'rotate', label: t('webos_rotate'), onClick: rotate});
+		}
+		list.push({key: 'zoomOut', icon: 'zoomout', label: t('tv_zoom_out'), onClick: zoomOut});
+		list.push({key: 'zoomIn', icon: 'zoomin', label: t('tv_zoom_in'), onClick: zoomIn, spotlightId: ZOOM_IN_SPOTLIGHT_ID});
+		if (show360 && resolved) {
+			list.push({
+				key: 'coverage',
+				text: resolved.coverage === 'full' ? '360°' : '180°',
+				label: resolved.coverage === 'full' ? t('panorama_coverage_full') : t('panorama_coverage_half'),
+				onClick: () => saveChoice({...choice, coverage: resolved.coverage === 'full' ? 'half' : 'full'}),
+			});
+			list.push({
+				key: 'layout',
+				text: resolved.layout === 'mono' ? '2D' : '3D',
+				label: `${t('panorama_stereo_layout')}: ${t(resolved.layout === 'mono' ? 'panorama_stereo_mono' : resolved.layout === 'topBottom' ? 'panorama_stereo_top_bottom' : 'panorama_stereo_left_right')}`,
+				onClick: () => saveChoice({...choice, layout: nextStereoLayout(resolved.layout)}),
+			});
+		}
+		if (!flagged && (forced || !show360)) {
+			list.push({key: 'view360', icon: 'view360', label: forced ? t('view_as_360_remove') : t('view_as_360'), onClick: toggleForced});
+		}
+		list.push({key: 'slideshow', icon: 'play', label: t('slideshow'), onClick: onStartSlideshow});
+		list.push({key: 'close', icon: 'closex', label: t('close'), onClick: onClose});
+		if (show360 && currentIndex < totalCount - 1) list.push({key: 'next', icon: 'arrowlargeright', label: t('next'), onClick: handleNext});
+		return list;
+	}, [asset, isVideo, show360, resolved, flagged, forced, choice, currentIndex, totalCount, photoZoomIn, photoZoomOut, rotate, handlePrev, handleNext, onStartSlideshow, onClose, saveChoice, toggleForced]);
+
+	// The Magic Remote drags the sphere through the stage, which lies over it
+	const stageMouse = useMemo(
+		() =>
+			show360
+				? {
+						onMouseDown: (event: React.MouseEvent) => sphereRef.current?.dragStart(event.clientX, event.clientY),
+						onMouseMove: (event: React.MouseEvent) => sphereRef.current?.dragMove(event.clientX, event.clientY),
+						onMouseUp: () => sphereRef.current?.dragEnd(),
+						onMouseLeave: () => sphereRef.current?.dragEnd(),
+						onWheel: (event: React.WheelEvent) => sphereRef.current?.wheel(event.deltaY),
+					}
+				: {},
+		[show360]
+	);
+
 	if (!asset) return null;
 
 	const mediaUrl = isVideo ? repository.videoPlaybackUrl(asset.id) : repository.previewUrl(asset.id);
+	let notice: string | undefined;
+	if (show360) notice = t('tv_look_hint');
+	else if (wants360 && sphereFailure) notice = sphereFailure.reason;
+	else if (video360) notice = t('webos_360_video_flat');
 
 	return (
 		<ViewerContainer spotlightId={VIEWER_SPOTLIGHT_ID} spotlightRestrict="self-only" className={css.viewerOverlay}>
 			<div className={css.viewerContent}>
 				{isVideo ? (
 					<VideoPlayer src={mediaUrl} onControlsAvailable={handleVideoControlsAvailable} apiRef={playerApiRef} />
-				) : (
-					<img
-						src={mediaUrl}
-						alt=""
-						className={rotation % 180 ? `${css.photo} ${css.quarterTurn}` : css.photo}
-						style={rotation ? {transform: `rotate(${rotation}deg)`} : undefined}
+				) : show360 ? (
+					<SphereView
+						ref={sphereRef}
+						assetId={asset.id}
+						details={details}
+						chosenLayout={choice.layout}
+						chosenCoverage={choice.coverage}
+						keysEnabled={!inActionBar}
+						onFailed={handleSphereFailed}
+						onResolved={setResolved}
 					/>
+				) : (
+					<div className={css.zoomBox} style={zoomStyle}>
+						<img
+							src={mediaUrl}
+							alt=""
+							className={rotation % 180 ? `${css.photo} ${css.quarterTurn}` : css.photo}
+							style={rotation ? {transform: `rotate(${rotation}deg)`} : undefined}
+						/>
+					</div>
 				)}
 			</div>
-			{!isVideo && <SpottableDiv spotlightId={STAGE_SPOTLIGHT_ID} className={css.stage} onClick={handleStageClick} />}
+			{!isVideo && <SpottableDiv spotlightId={STAGE_SPOTLIGHT_ID} className={css.stage} onClick={handleStageClick} {...stageMouse} />}
 			<MediaControls
 				rootRef={controlsRef}
 				asset={asset}
 				position={position}
 				isVideo={isVideo}
-				controlsVisible={controlsVisible}
+				controlsVisible={chromeVisible}
 				canGoPrev={currentIndex > 0}
 				canGoNext={currentIndex < totalCount - 1}
 				onPrev={handlePrev}
 				onNext={handleNext}
 				onClose={onClose}
-				onRotate={rotate}
-				onStartSlideshow={onStartSlideshow}
+				actions={actions}
+				notice={notice}
 				onActionBarFocusChange={setActionBarFocused}
 			/>
 		</ViewerContainer>

@@ -1,11 +1,14 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import type {RefObject} from 'react';
+import {CONTROLS_HIDE_AFTER_MS} from '../immuch360/keys';
 
 interface UseAutoHideControlsOptions {
 	enabled: boolean;
 	// The controls' container: input aimed at it (focus inside, pointer over it) is activity.
 	controlsRef: RefObject<HTMLElement | null>;
 	hideDelayMs?: number;
+	// Immuch360: the keys that bring hidden controls back; the 360° viewer keeps the arrows for turning the view
+	revealKeys?: readonly string[];
 }
 
 interface AutoHideControls {
@@ -14,19 +17,20 @@ interface AutoHideControls {
 	hide: () => void;
 }
 
-const DEFAULT_HIDE_DELAY_MS = 4000;
+// Immuch360: 5 s, as the controls of the Flutter app on a TV (CONTROLS_HIDE_AFTER_MS)
+const DEFAULT_HIDE_DELAY_MS = CONTROLS_HIDE_AFTER_MS;
 
 // D-pad keys that summon the controls back. Left/Right are deliberately excluded so paging
 // through photos stays "silent" (the chrome doesn't flash on every move). OK/Select maps to
 // 'Enter' on our target webOS firmwares.
-const REVEAL_KEYS = new Set(['Enter', 'ArrowUp', 'ArrowDown']);
+const DEFAULT_REVEAL_KEYS: readonly string[] = ['Enter', 'ArrowUp', 'ArrowDown'];
 
 /**
  * Controls that fade out after `hideDelayMs` of inactivity. While they are shown, any key
  * pressed on them (moving between buttons included) and any pointer movement over them
  * restarts the countdown, so they never vanish under a user who is still using them.
  */
-export const useAutoHideControls = ({enabled, controlsRef, hideDelayMs = DEFAULT_HIDE_DELAY_MS}: UseAutoHideControlsOptions): AutoHideControls => {
+export const useAutoHideControls = ({enabled, controlsRef, hideDelayMs = DEFAULT_HIDE_DELAY_MS, revealKeys = DEFAULT_REVEAL_KEYS}: UseAutoHideControlsOptions): AutoHideControls => {
 	const [visible, setVisible] = useState(true);
 	const [wasEnabled, setWasEnabled] = useState(enabled);
 	const timerRef = useRef<number | null>(null);
@@ -72,6 +76,7 @@ export const useAutoHideControls = ({enabled, controlsRef, hideDelayMs = DEFAULT
 		startTimer();
 
 		const isOnControls = (target: EventTarget | null) => target instanceof Node && !!controlsRef.current?.contains(target);
+		const REVEAL_KEYS = new Set(revealKeys);
 
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if (visibleRef.current) {
@@ -103,7 +108,7 @@ export const useAutoHideControls = ({enabled, controlsRef, hideDelayMs = DEFAULT
 			window.removeEventListener('mousemove', handlePointerMove);
 			clearTimer();
 		};
-	}, [enabled, controlsRef, startTimer, clearTimer]);
+	}, [enabled, controlsRef, startTimer, clearTimer, revealKeys]);
 
 	const show = useCallback(() => {
 		setVisible(true);

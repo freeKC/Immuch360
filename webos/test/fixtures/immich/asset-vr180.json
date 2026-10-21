@@ -1,0 +1,18 @@
+{
+  "id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+  "type": "IMAGE",
+  "originalFileName": "Lake_VR180.jpg",
+  "originalMimeType": "image/jpeg",
+  "fileCreatedAt": "2023-12-24T10:00:00.000Z",
+  "localDateTime": "2023-12-24T11:00:00.000Z",
+  "duration": null,
+  "visibility": "timeline",
+  "exifInfo": {
+    "make": "Canon",
+    "model": "EOS R5",
+    "exifImageWidth": 8192,
+    "exifImageHeight": 4096,
+    "fileSizeInByte": 9100000,
+    "projectionType": null
+  }
+}

@@ -5,6 +5,9 @@ import {SpottableDiv} from '../utils/spotlight';
 import {useRepository} from '../domain/RepositoryContext';
 import type {TimelineAsset} from '../domain/types';
 import css from './AssetCard.module.less';
+import {t} from '../immuch360/i18n';
+import {isForced360} from '../immuch360/forced360';
+import {isEquirectangularProjection} from '../immuch360/sphere/rules';
 
 interface AssetCardProps {
 	asset: TimelineAsset;
@@ -31,9 +34,9 @@ const AssetThumbnail: React.FC<{thumbnailUrl: string; assetId: string}> = ({thum
 	}, [attempt]);
 	if (attempt === 'unavailable') {
 		return (
-			<div className={css.unavailable} role="img" aria-label="Preview unavailable">
+			<div className={css.unavailable} role="img" aria-label={t('webos_preview_unavailable')}>
 				<Icon>picture</Icon>
-				<span>Preview unavailable</span>
+				<span>{t('webos_preview_unavailable')}</span>
 			</div>
 		);
 	}
@@ -65,6 +68,9 @@ export const AssetCard: React.FC<AssetCardProps> = React.memo(({asset, onSelect,
 	return (
 		<SpottableDiv className={css.assetCard} style={style} onClick={handleClick} data-asset-id={asset.id}>
 			<AssetThumbnail key={thumbnailUrl} thumbnailUrl={thumbnailUrl} assetId={asset.id} />
+
+			{/* Immuch360: the 360° badge of the tiles, from the server's flag of the timeline or the user's choice */}
+			{(isEquirectangularProjection(asset.projectionType) || isForced360(asset.id)) && <div className={css.sphereBadge}>{t('webos_360_badge')}</div>}
 
 			{isVideo && (
 				<div className={css.videoBadge}>
