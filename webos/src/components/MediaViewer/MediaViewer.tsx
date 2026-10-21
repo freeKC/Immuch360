@@ -7,10 +7,10 @@ import {usePhotoZoom} from '../../hooks/usePhotoZoom';
 import {useRepository} from '../../domain/RepositoryContext';
 import {createSpotlightContainer, forceFocus, SpottableDiv} from '../../utils/spotlight';
 import type {TimelineAsset} from '../../domain/types';
-import {t} from '../../immuch360/i18n';
+import {i18nKey, t} from '../../immuch360/i18n';
 import {CONTROLS_HIDE_AFTER_MS, SEEK_STEP_SECONDS, VIDEO_STALL_MS, photoRotationStep, playPauseWantsPlay, remoteAction, videoArrows} from '../../immuch360/keys';
 import {isForced360, setForced360, setSphereChoice, sphereChoice, type SphereChoice} from '../../immuch360/forced360';
-import {isEquirectangularProjection, isShownAs360, nextStereoLayout, type SphereView as ResolvedSphereView} from '../../immuch360/sphere/rules';
+import {isEquirectangularProjection, isShownAs360, nextStereoLayout, type SphereView as ResolvedSphereView, type StereoLayout} from '../../immuch360/sphere/rules';
 import {SphereView, type SphereViewHandle} from '../../immuch360/sphere/SphereView';
 import {AssetDetailsPanel} from '../../immuch360/details/AssetDetailsPanel';
 import {FULLSIZE_FROM_SCALE, wantsFullsize} from '../../immuch360/photoSize';
@@ -40,6 +40,14 @@ const ViewerContainer = createSpotlightContainer({enterTo: 'last-focused'});
 const SPHERE_REVEAL_KEYS: readonly string[] = ['Enter'];
 // Immuch360: on a flat photo Up turns it by 90° (photoRotationStep), so OK and Down bring the controls back
 const FLAT_PHOTO_REVEAL_KEYS: readonly string[] = ['Enter', 'ArrowDown'];
+
+// Immuch360: the name of each 3D layout on the 2D/3D button, held through i18nKey so that tools/build-i18n.mjs bundles
+// the three texts (a key chosen by a ternary inside t() is not seen by it)
+const STEREO_LAYOUT_NAMES: Record<StereoLayout, string> = {
+	mono: i18nKey('panorama_stereo_mono'),
+	topBottom: i18nKey('panorama_stereo_top_bottom'),
+	leftRight: i18nKey('panorama_stereo_left_right'),
+};
 
 // Immuch360: a photo whose shape is 2:1 within 2% may be one a 360° camera stitched without GPano tags; its details
 // (name, camera) tell, so they are fetched for it
@@ -349,7 +357,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 						{
 							key: 'layout',
 							text: resolved.layout === 'mono' ? '2D' : '3D',
-							label: `${t('panorama_stereo_layout')}: ${t(resolved.layout === 'mono' ? 'panorama_stereo_mono' : resolved.layout === 'topBottom' ? 'panorama_stereo_top_bottom' : 'panorama_stereo_left_right')}`,
+							label: `${t('panorama_stereo_layout')}: ${t(STEREO_LAYOUT_NAMES[resolved.layout])}`,
 							onClick: () => saveChoice({...choice, layout: nextStereoLayout(resolved.layout)}),
 						},
 					]
