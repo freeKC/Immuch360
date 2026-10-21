@@ -37,7 +37,7 @@ class CameraPicker extends HookConsumerWidget {
         AsyncData(:final value) => value.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
         _ => [],
       },
-      label: Text(context.t.make),
+      label: context.t.make,
       controller: makeTextController,
       leadingIcon: const Icon(Icons.photo_camera_rounded),
       onSelected: (value) {
@@ -56,7 +56,7 @@ class CameraPicker extends HookConsumerWidget {
         AsyncData(:final value) => value.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
         _ => [],
       },
-      label: Text(context.t.model),
+      label: context.t.model,
       controller: modelTextController,
       leadingIcon: const Icon(Icons.camera),
       onSelected: (value) {

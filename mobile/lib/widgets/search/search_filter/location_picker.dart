@@ -61,7 +61,7 @@ class LocationPicker extends HookConsumerWidget {
             AsyncData(:final value) => value.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
             _ => [],
           },
-          label: Text(context.t.country),
+          label: context.t.country,
           controller: countryTextController,
           onSelected: (value) {
             if (value.toString() == selectedCountry.value) {
@@ -80,7 +80,7 @@ class LocationPicker extends HookConsumerWidget {
             AsyncData(:final value) => value.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
             _ => [],
           },
-          label: Text(context.t.state),
+          label: context.t.state,
           controller: stateTextController,
           onSelected: (value) {
             if (value.toString() == selectedState.value) {
@@ -98,7 +98,7 @@ class LocationPicker extends HookConsumerWidget {
             AsyncData(:final value) => value.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
             _ => [],
           },
-          label: Text(context.t.city),
+          label: context.t.city,
           controller: cityTextController,
           onSelected: (value) {
             selectedCity.value = value.toString();
