@@ -402,7 +402,8 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// [remoteVideoArrows], [remoteKeyShowsVideoControls]). Elsewhere: OK pauses and plays, left and right seek by 10 s
   /// while it plays and go to the previous or next asset once it is paused or ended.
   ///
-  /// On a TV OK acts on its release, and held on the viewer it opens the details instead (see [_onTvOk]).
+  /// On a TV OK acts on its release, and held on the viewer it opens the details instead (see [_onTvOk]); Up from the
+  /// top row of the bottom bar goes straight to the top bar.
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     final key = event.logicalKey;
     final press = isRemotePress(event);
@@ -439,6 +440,14 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     }
     if (tvOk) {
       return _onTvOk(event);
+    }
+    if (tvMode && press && key == LogicalKeyboardKey.arrowUp && _upLeavesBottomBar()) {
+      // Up from play and pause gave the focus to the viewer itself first, between the bars, with no ring to show it
+      final target = _topBarTarget(withBack: true);
+      if (target != null) {
+        target.requestFocus();
+        return KeyEventResult.handled;
+      }
     }
     if (!node.hasPrimaryFocus) {
       return KeyEventResult.ignored;
@@ -540,6 +549,23 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     return KeyEventResult.handled;
   }
 
+  /// Whether Up leaves the bottom bar: its focused button has nothing of the bar above it (the progress bar of a
+  /// video is under its buttons)
+  bool _upLeavesBottomBar() {
+    final focused = FocusManager.instance.primaryFocus;
+    if (focused == null || !_bottomBarFocus.hasFocus) {
+      return false;
+    }
+    final top = focused.rect.top;
+    return !_bottomBarFocus.traversalDescendants.any((node) => node != focused && node.rect.bottom <= top);
+  }
+
+  /// Where Up takes the focus in the top bar: its buttons on the right (360° first), else its Back button only
+  /// [withBack]
+  FocusNode? _topBarTarget({required bool withBack}) =>
+      _topActionsFocus.traversalDescendants.firstOrNull ??
+      (withBack ? _topBarFocus.traversalDescendants.firstOrNull : null);
+
   bool _isPlaying(AutoDisposeStateNotifierProvider<VideoPlayerNotifier, VideoPlayerState> video) {
     final status = ref.read(video).status;
     return status == VideoPlaybackStatus.playing || status == VideoPlaybackStatus.buffering;
@@ -589,9 +615,7 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
       if (!mounted) {
         return;
       }
-      final top =
-          _topActionsFocus.traversalDescendants.firstOrNull ??
-          (withBack ? _topBarFocus.traversalDescendants.firstOrNull : null);
+      final top = _topBarTarget(withBack: withBack);
       final bottom = _bottomBarFocus.traversalDescendants.firstOrNull;
       final target = identical(bar, _topBarFocus) ? top ?? bottom : bottom ?? top;
       target?.requestFocus();

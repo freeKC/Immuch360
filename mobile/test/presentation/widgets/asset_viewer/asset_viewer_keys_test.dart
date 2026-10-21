@@ -1,9 +1,10 @@
 // The asset viewer with a remote control: left and right go through the photos; on a TV through the videos too,
 // whatever they do, while a keyboard of a phone seeks through a video that plays; on a TV OK shows the controls of a
 // video with play and pause focused, any key brings them back and they hide 5 s after the last key while it plays;
-// info and Menu open the details, and on a TV so does OK held 700 ms, which then acts on its release; the bars never
-// take the focus while hidden, and the viewer takes it back when they hide; on a TV Back leaves the bars before it
-// closes the viewer, and OK on the Back arrow of the top bar closes it.
+// info and Menu open the details, and on a TV so does OK held 700 ms, which then acts on its release; Up from play
+// and pause reaches the top bar at once; the bars never take the focus while hidden, and the viewer takes it back when
+// they hide; on a TV Back leaves the bars before it closes the viewer, and OK on the Back arrow of the top bar closes
+// it.
 
 import 'dart:async';
 
@@ -481,6 +482,16 @@ void main() {
     await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
     await settle(tester);
     expect(calls, ['pause']);
+  });
+
+  testWidgets('on a TV Up from play and pause reaches the top bar in one press', (tester) async {
+    await pumpVideo(tester, []);
+
+    await press(tester, LogicalKeyboardKey.select);
+    expect(playPauseFocused(tester), isTrue);
+
+    await press(tester, LogicalKeyboardKey.arrowUp);
+    expect(focusIn<ViewerTopAppBar>(), isTrue);
   });
 
   testWidgets('while the bars are hidden their buttons cannot take the focus, so no arrow lands there', (tester) async {
