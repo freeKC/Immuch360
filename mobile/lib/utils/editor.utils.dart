@@ -62,3 +62,24 @@ NormalizedTransform normalizeTransformEdits(List<AssetEdit> edits) {
 
   return (rotation: quarterTurns * 90, mirrorHorizontal: false, mirrorVertical: isCloseToZero(a) ? b == c : a == -d);
 }
+
+/// How many quarter turns clockwise [edits] turn the picture, 0 to 3, the mirror aside (see [normalizeTransformEdits])
+int quarterTurnsOfEdits(List<AssetEdit> edits) => normalizeTransformEdits(edits).rotation ~/ 90;
+
+/// [edits] once the picture they make is turned by [turns] quarter turns clockwise (negative turns go counter
+/// clockwise): what the editor saves after as many presses on "rotate clockwise", in the editor's order, the crop first
+/// and untouched, then the mirror, then the rotation. An empty list means no edit at all, which removes them.
+///
+/// The server applies the edits in their order, so turning the result is appending a rotation; the mirror and the
+/// rotations then fold into one mirror and one rotation, as the editor reads them (see [normalizeTransformEdits]). The
+/// crop keeps its parameters as stored: it never goes through a rectangle, so it does not drift by a pixel.
+List<AssetEdit> composeQuarterTurns(List<AssetEdit> edits, int turns) {
+  final crop = edits.whereType<CropEdit>().firstOrNull;
+  final transform = normalizeTransformEdits(edits);
+  final rotation = ((transform.rotation + 90 * turns) % 360 + 360) % 360;
+  return [
+    ?crop,
+    if (transform.mirrorVertical) MirrorEdit(MirrorParameters(axis: MirrorAxis.vertical)),
+    if (rotation != 0) RotateEdit(RotateParameters(angle: rotation)),
+  ];
+}
