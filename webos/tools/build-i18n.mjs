@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Immuch360: the texts of the webOS app, taken from the fork's i18n/ files at build time.
 //
-//   node tools/build-i18n.mjs              writes src/immuch360/i18n/generated/{en,locales}.json
+//   node tools/build-i18n.mjs              writes src/immuch360/i18n/generated/{en,locales,names}.json
 //   node tools/build-i18n.mjs --dist dist  also writes dist/i18n/<locale>.json for the 88 other locales
 //
 // The keys are those the code asks for: every t('key') and i18nKey('key') of src/ (tests aside). Their English comes
@@ -72,9 +72,27 @@ const locales = readdirSync(FORK_I18N)
 	.map((name) => name.slice(0, -5))
 	.sort();
 
+// The name of each language in itself, for the Language choice of the About page. Written here, with the ICU data of
+// Node, because the Chromium of a webOS 4 to 6 TV has no Intl.DisplayNames. Immich's web app names a few that ICU
+// does not know the same way (web/src/lib/utils/i18n.ts).
+const NAMES_ICU_LACKS = {bi: 'Bislama', kxm: 'Khmer Surin', mfa: 'Malay (Pattani)', swg: 'Schwäbisch', tl: 'Tagalog'};
+function nativeName(locale) {
+	if (NAMES_ICU_LACKS[locale]) return NAMES_ICU_LACKS[locale];
+	const tag = locale.replace(/_/g, '-');
+	let name = locale;
+	try {
+		name = new Intl.DisplayNames([tag], {type: 'language'}).of(tag) ?? locale;
+	} catch {
+		// A code ICU rejects keeps its own name
+	}
+	return name.charAt(0).toLocaleUpperCase(tag) + name.slice(1);
+}
+const names = Object.fromEntries(['en', ...locales].map((locale) => [locale, nativeName(locale)]));
+
 mkdirSync(GENERATED, {recursive: true});
 writeFileSync(join(GENERATED, 'en.json'), JSON.stringify(sorted(english), null, '\t') + '\n');
 writeFileSync(join(GENERATED, 'locales.json'), JSON.stringify(locales) + '\n');
+writeFileSync(join(GENERATED, 'names.json'), JSON.stringify(names, null, '\t') + '\n');
 const webosOnly = Object.keys(english).filter((key) => key.startsWith('webos_')).length;
 console.log(`[build-i18n] ${keys.size} keys (${webosOnly} webos_* ones), ${locales.length + 1} locales → ${relative(WEBOS, GENERATED)}`);
 

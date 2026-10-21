@@ -77,3 +77,23 @@ describe('locale matching', () => {
 		assert.equal(localeTag('fr'), 'fr');
 	});
 });
+
+describe('the Language choice of the About page', () => {
+	// Written by tools/build-i18n.mjs, which npm run test-unit runs first
+	const names = JSON.parse(readFileSync(new URL('../../src/immuch360/i18n/generated/names.json', import.meta.url), 'utf8'));
+
+	test('every locale file has a name, in its own language', () => {
+		for (const locale of available) assert.ok(names[locale], locale);
+		assert.equal(names.en, 'English');
+		assert.equal(names.fr, 'Français');
+		assert.equal(names.de, 'Deutsch');
+		assert.match(names.pt_BR, /^Português/);
+		assert.equal(names.swg, 'Schwäbisch');
+	});
+
+	test('a chosen locale file is matched to itself', () => {
+		for (const locale of ['fr', 'pt_BR', 'zh_Hans', 'zh_Hant', 'sr_Latn', 'nb_NO', 'en']) {
+			if (available.indexOf(locale) >= 0) assert.equal(pickLocale([locale], available), locale, locale);
+		}
+	});
+});

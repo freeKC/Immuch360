@@ -25,10 +25,12 @@ Immuch360 is not affiliated with Immich, nor with LG.
 | Find the 360° photos and videos | A "360°" badge on their tiles | No badge |
 | See a VR180 or 3D photo | Half sphere for VR180, the left eye for 3D, with a 360°/180° and a 3D button | Shown flat |
 | See a 360° photo the server does not flag | "View as 360°" in the photo's controls, kept on the TV | Not available |
-| Read the app in your language | The texts it shares with the Immuch360 app come in its 89 locales and follow the language of the TV; the few texts only the TV app has are in English for now | English |
+| Read the app in your language | The texts it shares with the Immuch360 app come in its 89 locales and follow the language of the TV, or the Language choice of the About page; the few texts only the TV app has are in English for now | English |
 | Leave a playing video with the remote | Left and Right go to the previous or next item, even while it plays; a video alone seeks 10 s | Same while the bar is hidden |
+| Know why a video does not play | After a media error, or 20 s with nothing shown, a message gives its format and size instead of an endless spinner | Spinner |
 | Watch a film without the date over it | The top bar of a video hides with the controls, 5 s after the last key | Always shown |
-| Look closer at a photo | Zoom with the channel keys or the zoom buttons, then move with the arrows; Back zooms out | Not available |
+| Look closer at a photo | Zoom with the channel keys or the zoom buttons, then move with the arrows; Back zooms out. Past 2x the full-size picture replaces the preview when the server makes one (Administration, Image settings) | Not available |
+| Read the name, size and camera of a photo or video | Info (or the details button) opens a panel that stays as you move to the next item; Back closes it | Date and place only |
 | Turn a sideways photo | One key: Up turns it by 90° (R, ] or [ on a keyboard), kept for that photo on the TV | A button in the photo's controls |
 | Send a useful bug report | About page: TV model, webOS and Chromium versions, WebGL, video decoders, a video-in-WebGL test, all in a QR code | Not available |
 
@@ -79,6 +81,7 @@ in [src/immuch360/keys.ts](src/immuch360/keys.ts).
 | Play, Pause, Play/Pause | 415, 19, 179 | | | | play, pause, toggle |
 | Rewind, Fast forward | 412, 417 | | | | 10 s back, forward |
 | Stop | 413 | | | | close the video |
+| Info, or I on a keyboard | 457 | | details | details | details |
 | Previous, Next track | 177, 176 | | previous, next | previous, next | previous, next |
 | Magic Remote | pointer, wheel | point and click | | drag with OK held, wheel zooms | |
 | Keyboard R or ], [ | 82, 221, 219 | | turn 90° clockwise, counterclockwise | | |

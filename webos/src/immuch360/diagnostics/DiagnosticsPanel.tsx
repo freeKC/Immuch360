@@ -2,12 +2,24 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import Scroller from '@enact/sandstone/Scroller';
 import Button from '@enact/sandstone/Button';
+import Dropdown from '@enact/sandstone/Dropdown';
 import {QrCode} from '../../components/QrCode/QrCode';
 import {useRepository} from '../../domain/RepositoryContext';
 import {SpottableDiv} from '../../utils/spotlight';
-import {t} from '../i18n';
+import {availableLocales, chosenLocale, localeName, setChosenLocale, t} from '../i18n';
 import {BASE_VERSION, collectDiagnostics, diagnosticsText, probeVideoTexture, type DiagnosticsLine} from './collect';
 import css from './DiagnosticsPanel.module.less';
+
+// The Language choice: the TV's language first, then each locale by its own name. A choice restarts the page, so that
+// every text, date and number is read again in it.
+const LOCALES = availableLocales();
+
+const handleLanguage = ({selected}: {selected: number}) => {
+	const locale = selected > 0 ? LOCALES[selected - 1] ?? null : null;
+	if (locale === chosenLocale()) return;
+	setChosenLocale(locale);
+	window.location.reload();
+};
 
 const DiagnosticsPanel: React.FC = () => {
 	const repository = useRepository();
@@ -34,6 +46,8 @@ const DiagnosticsPanel: React.FC = () => {
 	}, [repository]);
 
 	const all = lines.concat([{label: t('webos_diagnostics_video_texture'), value: videoTexture}]);
+	const chosen = chosenLocale();
+	const languages = [t('tv_layout_auto')].concat(LOCALES.map(localeName));
 
 	return (
 		<Scroller direction="vertical" scrollMode="native" verticalScrollbar="hidden" className={css.scroller}>
@@ -44,6 +58,12 @@ const DiagnosticsPanel: React.FC = () => {
 				</div>
 				<div className={css.columns}>
 					<div className={css.table}>
+						<div className={css.language}>
+							<span className={css.label}>{t('language')}</span>
+							<Dropdown size="small" width="large" selected={chosen ? LOCALES.indexOf(chosen) + 1 : 0} onSelect={handleLanguage}>
+								{languages}
+							</Dropdown>
+						</div>
 						{all.map((line) => (
 							<SpottableDiv key={line.label} className={css.row}>
 								<span className={css.label}>{line.label}</span>

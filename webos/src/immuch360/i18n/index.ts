@@ -4,12 +4,14 @@
 // - generated/en.json, the English texts, bundled so that a text is always there;
 // - generated/locales.json, the names of the locale files;
 // - at pack time, dist/i18n/<locale>.json for every other locale, with the keys it translates.
-// The locale of the TV is loaded before the first render (loadLocale); a key it lacks falls back to English.
+// The locale of the TV, or the one chosen on the About page, is loaded before the first render (loadLocale); a key it
+// lacks falls back to English.
 
 import {formatMessage, type MessageParams} from './format';
 import {localeTag, pickLocale} from './locale';
 import en from './generated/en.json';
 import locales from './generated/locales.json';
+import names from './generated/names.json';
 
 const english = en as Record<string, string>;
 let messages: Record<string, string> = english;
@@ -37,7 +39,35 @@ export const localeLoadError = (): string | null => loadError;
 /** The locale files the app ships, English included */
 export const availableLocales = (): string[] => ['en'].concat((locales as string[]).filter((name) => name !== 'en'));
 
+/** The name of a locale in its own language ("Français", "Deutsch"), written at build time */
+export const localeName = (locale: string): string => (names as Record<string, string>)[locale] ?? locale;
+
+// The language chosen on the About page, kept on the TV; none means the language of the TV
+const CHOSEN_KEY = 'immuch360_language';
+
+/** The locale file chosen on the About page, or null to follow the TV */
+export function chosenLocale(): string | null {
+	try {
+		const chosen = localStorage.getItem(CHOSEN_KEY);
+		return chosen && availableLocales().indexOf(chosen) >= 0 ? chosen : null;
+	} catch {
+		return null;
+	}
+}
+
+/** Keeps the choice of the About page (null to follow the TV again); it applies at the next start of the app */
+export function setChosenLocale(locale: string | null): void {
+	try {
+		if (locale) localStorage.setItem(CHOSEN_KEY, locale);
+		else localStorage.removeItem(CHOSEN_KEY);
+	} catch {
+		// No storage: the TV's language stays
+	}
+}
+
 function preferredLanguages(): string[] {
+	const chosen = chosenLocale();
+	if (chosen) return [chosen];
 	if (typeof navigator === 'undefined') return [];
 	const list = (navigator.languages as readonly string[] | undefined) ?? [];
 	return list.length ? list.slice() : [navigator.language];
