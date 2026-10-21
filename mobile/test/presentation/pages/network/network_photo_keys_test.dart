@@ -1,5 +1,7 @@
 // The photo page of a share with a remote control: the Back button of its app bar leaves the page, where Back from
-// the app bar only returns to the photo, and a photo that cannot be had shows Retry, which Down and OK reach.
+// the app bar only returns to the photo, and a photo that cannot be had shows Retry, which Down and OK reach. A flat
+// photo turns with the one-key rotation (OK then OK, R, the yellow and blue keys), kept on the device for its file;
+// a 360° or 3D one, or one not read yet, never does.
 
 import 'dart:async';
 
@@ -13,6 +15,7 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
@@ -35,6 +38,25 @@ class _NoDetection extends NetworkMediaService {
   }) async => null;
 }
 
+/// Tells what [info] says of every file, once [gate] (when given) is done
+class _Detection extends NetworkMediaService {
+  _Detection(this.info, {this.gate});
+
+  final NetworkMediaInfo info;
+  final Completer<void>? gate;
+
+  @override
+  Future<NetworkMediaInfo?> detect(
+    NetworkEntry entry,
+    ByteRangeReader read, {
+    bool thorough = false,
+    bool Function()? isWanted,
+  }) async {
+    await gate?.future;
+    return info;
+  }
+}
+
 const _source = NetworkSource(id: 'nas', type: NetworkSourceType.smb, name: 'Home NAS', host: 'nas', share: 'media');
 
 void main() {
@@ -55,8 +77,8 @@ void main() {
     await db.close();
   });
 
-  /// The page opened from a folder, so that its app bar has a Back button
-  Future<void> pumpPhoto(WidgetTester tester) async {
+  /// The page opened from a folder, so that its app bar has a Back button; [detection] tells what the file is
+  Future<void> pumpPhoto(WidgetTester tester, {NetworkMediaService? detection}) async {
     const page = NetworkPhotoPage(sourceId: 'nas', path: '/a.jpg');
     final router = await pumpNetworkRouter(
       tester,
@@ -68,7 +90,7 @@ void main() {
         storeServiceProvider.overrideWithValue(store),
         overrideConnections((ref) => FakeConnections(ref, share)),
         isHorizonOsProvider.overrideWith((ref) async => false),
-        networkMediaServiceProvider.overrideWith((ref) => _NoDetection()),
+        networkMediaServiceProvider.overrideWith((ref) => detection ?? _NoDetection()),
       ],
     );
     unawaited(router.push(NetworkPhotoRoute(sourceId: 'nas', path: '/a.jpg')));
@@ -139,5 +161,81 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
     expect(retry, findsNothing);
     expect(FocusManager.instance.primaryFocus?.debugLabel, 'Network photo', reason: 'the page takes the keys again');
+  });
+
+  int turnsOnScreen(WidgetTester tester) => tester
+      .widget<RotatedBox>(find.descendant(of: find.byType(NetworkPhotoPage), matching: find.byType(RotatedBox)))
+      .quarterTurns;
+
+  Future<void> pressColour(WidgetTester tester, LogicalKeyboardKey key) async {
+    // No physical key in the simulator's maps for the colour keys of a remote
+    await tester.sendKeyEvent(
+      key,
+      physicalKey: key == LogicalKeyboardKey.colorF2Yellow ? PhysicalKeyboardKey.f23 : PhysicalKeyboardKey.f24,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+  }
+
+  testWidgets('a flat photo turns with R and the colour keys, and turns again when the page opens again', (
+    tester,
+  ) async {
+    await pumpPhoto(tester, detection: _Detection(const NetworkMediaInfo()));
+    expect(turnsOnScreen(tester), 0);
+
+    await press(tester, LogicalKeyboardKey.keyR);
+    expect(turnsOnScreen(tester), 1);
+    await pressColour(tester, LogicalKeyboardKey.colorF2Yellow);
+    expect(turnsOnScreen(tester), 2);
+    await pressColour(tester, LogicalKeyboardKey.colorF3Blue);
+    expect(turnsOnScreen(tester), 1);
+    final modified = MemoryShare.modified.millisecondsSinceEpoch;
+    expect(
+      store.tryGet(StoreKey.viewRotations),
+      '{"n:nas:/a.jpg":{"t":1,"s":${share.files['/a.jpg']!.length},"m":$modified}}',
+    );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await pumpPhoto(tester, detection: _Detection(const NetworkMediaInfo()));
+    expect(turnsOnScreen(tester), 1, reason: 'kept on the device for that file');
+  });
+
+  testWidgets('on a TV OK from the photo lands on Rotate, and each OK turns the photo again', (tester) async {
+    await pumpPhoto(tester, detection: _Detection(const NetworkMediaInfo()));
+    // The focus of the button, through its icon
+    final rotate = find.descendant(of: find.byKey(const Key('network_photo_rotate')), matching: find.byType(Icon));
+    expect(rotate, findsOneWidget);
+
+    await press(tester, LogicalKeyboardKey.select);
+    expect(hasFocus(tester, rotate), isTrue);
+    await press(tester, LogicalKeyboardKey.select);
+    expect(turnsOnScreen(tester), 1);
+    await press(tester, LogicalKeyboardKey.select);
+    expect(turnsOnScreen(tester), 2);
+    expect(hasFocus(tester, rotate), isTrue);
+  });
+
+  testWidgets('nothing turns a photo not read yet, nor a 360° or raw one', (tester) async {
+    final gate = Completer<void>();
+    await pumpPhoto(tester, detection: _Detection(const NetworkMediaInfo(), gate: gate));
+    expect(find.byKey(const Key('network_photo_rotate')), findsNothing);
+    await press(tester, LogicalKeyboardKey.keyR);
+    expect(turnsOnScreen(tester), 0, reason: 'what the file is, is not known yet');
+    gate.complete();
+    await tester.pump(const Duration(milliseconds: 50));
+    expect(find.byKey(const Key('network_photo_rotate')), findsOneWidget);
+
+    for (final info in const [
+      NetworkMediaInfo(cameraEquirect: true),
+      NetworkMediaInfo(rawKind: RawMediaKind.insta360Photo),
+    ]) {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpPhoto(tester, detection: _Detection(info));
+      expect(find.byKey(const Key('network_photo_rotate')), findsNothing);
+      await press(tester, LogicalKeyboardKey.keyR);
+      await pressColour(tester, LogicalKeyboardKey.colorF2Yellow);
+      expect(turnsOnScreen(tester), 0, reason: '$info');
+    }
+    expect(store.tryGet(StoreKey.viewRotations), isNull);
   });
 }
