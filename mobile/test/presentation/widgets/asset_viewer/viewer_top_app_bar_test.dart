@@ -951,7 +951,7 @@ void main() {
 
       verify(
         () => immersiveApi.open(
-          '$server/assets/${asset.id}/original?edited=true',
+          '$server/assets/${asset.id}/original?edited=false',
           any(),
           false,
           asset.name,
@@ -1039,7 +1039,7 @@ void main() {
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
-      expect(previewRequests, [Uri.parse('$server/assets/${asset.id}/thumbnail?size=preview&edited=true')]);
+      expect(previewRequests, [Uri.parse('$server/assets/${asset.id}/thumbnail?size=preview&edited=false')]);
     });
 
     testWidgets('keeps the 3D layout of a full sphere whose crop tags cover all of it', (tester) async {

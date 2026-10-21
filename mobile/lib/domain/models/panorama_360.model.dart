@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
+import 'package:immich_mobile/domain/models/unedited_frame.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 
 /// Where a media of the 360° page is
@@ -151,10 +152,15 @@ class Panorama360Entry {
     this.make,
     this.model,
     this.flagged = false,
-  });
+    AssetFrame? frame,
+  }) : frame = frame ?? (width: asset.width, height: asset.height);
 
   /// A RemoteAsset (its localId set when a copy is on the device) or a LocalAsset that is on the device only
   final BaseAsset asset;
+
+  /// The size of its file upright, which the viewers show: the size of the asset, unless the server rewrote it with
+  /// an edit (see uneditedFrame)
+  final AssetFrame frame;
 
   /// Local calendar day at midnight, the day of its bucket
   final DateTime day;

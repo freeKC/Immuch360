@@ -72,6 +72,11 @@ enum StoreKey<T> {
   /// a viewer), for the 360° list: a JSON list of NetworkPanoramaFile, the latest found last
   networkPanoramaFiles<String>._(5025),
 
+  /// The flat photos turned with the one-key rotation of the viewers and kept on this device (see view_rotation.dart):
+  /// a JSON map from `a:<asset key>` to the quarter turns, and from `n:<source id>:<path>` to the quarter turns, size
+  /// and date of a file of a share, the latest last
+  viewRotations<String>._(5026),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

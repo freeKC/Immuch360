@@ -9,6 +9,7 @@ import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
+import 'package:immich_mobile/domain/models/view_rotation.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
@@ -22,6 +23,7 @@ import 'package:immich_mobile/presentation/widgets/network/network_upload.widget
 import 'package:immich_mobile/presentation/widgets/tv/remote_back_button.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -84,6 +86,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   /// What the file declares, null until read
   NetworkMediaInfo? _info;
 
+  /// The photo once found on the share, for the keys
+  _Photo? _current;
+
   /// Reads the file straight from the share, for the calibration of a raw photo; null until the share is open
   ByteRangeReader? _shareReader;
 
@@ -143,6 +148,19 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
       }
       return KeyEventResult.handled;
     }
+    // The one-key rotation, from anywhere on the page: the yellow and blue keys of a remote, R and Shift R
+    final rotation = isRemoteRotateClockwise(event)
+        ? 1
+        : isRemoteRotateCounterClockwise(event)
+        ? -1
+        : 0;
+    final photo = _current;
+    if (rotation != 0 && photo != null && _canRotate) {
+      if (press) {
+        _rotate(photo, rotation);
+      }
+      return KeyEventResult.handled;
+    }
     if (!node.hasPrimaryFocus) {
       return KeyEventResult.ignored;
     }
@@ -169,6 +187,49 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     return KeyEventResult.ignored;
   }
 
+  /// Whether the photo turns with the one-key rotation: once its file was read, when it is neither 360° nor a stereo
+  /// pair nor the raw file of a 360° camera. Those keep their views, which turn the camera rather than the picture.
+  bool get _canRotate {
+    final info = _info;
+    return info != null && !info.is360 && info.stereoPair == null && info.rawKind == null && !isRawPhotoName(_name);
+  }
+
+  /// The quarter turns kept on this device for [photo], 0 for a photo that does not turn
+  int _turnsOf(_Photo photo) {
+    if (!_canRotate) {
+      return 0;
+    }
+    final entry = photo.entry;
+    return ref.watch(
+      viewRotationsProvider.select(
+        (entries) => viewRotationShareTurnsOf(
+          entries,
+          widget.sourceId,
+          widget.path,
+          size: entry.size,
+          modifiedMs: entry.modified?.millisecondsSinceEpoch,
+        ),
+      ),
+    );
+  }
+
+  /// Turns [photo] by [delta] quarter turns clockwise, kept on this device for its file, and shows it whole again
+  void _rotate(_Photo photo, int delta) {
+    final entry = photo.entry;
+    unawaited(
+      ref
+          .read(viewRotationsProvider.notifier)
+          .rotateShare(
+            widget.sourceId,
+            widget.path,
+            delta,
+            size: entry.size,
+            modifiedMs: entry.modified?.millisecondsSinceEpoch,
+          ),
+    );
+    _transformation.value = Matrix4.identity();
+  }
+
   /// The previous or next photo or video of the folder, in place of this page: a TV user does not go back to the grid
   /// between files. Nothing without a folder.
   void _openNeighbour(int step) {
@@ -190,7 +251,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     final url = await connections.mediaUrl(widget.sourceId, widget.path);
     _shareReader = networkFileReader(fileSystem, widget.path);
     unawaited(_detect(service, entry, httpRangeReader(client, url)));
-    return (entry: entry, url: url);
+    return _current = (entry: entry, url: url);
   }
 
   // Through the media bridge, with range requests, like the players read the file
@@ -207,6 +268,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
       _rootFocus.requestFocus();
     }
     setState(() {
+      _current = null;
       _photo = _load();
     });
   }
@@ -337,6 +399,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     // button. Out of the directional moves while the app bar has the focus (set here, not while the focus changes);
     // Down and Back go back to it.
     _rootFocus.skipTraversal = _appBarFocus.hasFocus;
+    // Watched here, in the build of this page: the photo is known once the file was read, which rebuilds the page
+    final current = _current;
+    final turns = current == null ? 0 : _turnsOf(current);
     final page = FutureBuilder<_Photo>(
       future: _photo,
       builder: (context, snapshot) {
@@ -357,6 +422,17 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // First, so that OK from the photo lands on it on a TV, and each OK turns the photo again
+                  if (photo != null && _canRotate)
+                    GestureDetector(
+                      onLongPress: () => _rotate(photo, -1),
+                      child: IconButton(
+                        key: const Key('network_photo_rotate'),
+                        icon: const Icon(Icons.rotate_90_degrees_cw_rounded),
+                        tooltip: context.t.editor_rotate_right,
+                        onPressed: () => _rotate(photo, 1),
+                      ),
+                    ),
                   if (photo != null && stereoPair != null)
                     IconButton(
                       key: const Key('apple_spatial_view_3d'),
@@ -415,12 +491,12 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
               // Immuch360 Desktop: previous and next for the mouse (lib/desktop/window/hover_chevrons.dart)
               ? CurrentPlatform.isDesktop
                     ? withDesktopPageChevrons(
-                        _buildPhoto(photo),
+                        _buildPhoto(photo, turns),
                         canNavigate: (step) =>
                             networkFolderNeighbourRoute(widget.sourceId, widget.folder, widget.path, step) != null,
                         onNavigate: _openNeighbour,
                       )
-                    : _buildPhoto(photo)
+                    : _buildPhoto(photo, turns)
               : snapshot.connectionState != ConnectionState.done
               ? const NetworkLoadingView(color: Colors.white70)
               : Focus(
@@ -447,7 +523,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     );
   }
 
-  Widget _buildPhoto(_Photo photo) {
+  Widget _buildPhoto(_Photo photo, int turns) {
     final image = networkPhotoImage(photo.url);
     _listenToImage(image);
     return GestureDetector(
@@ -457,13 +533,18 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
         transformationController: _transformation,
         maxScale: 8,
         child: SizedBox.expand(
-          child: Image(
-            image: image,
-            fit: BoxFit.contain,
-            gaplessPlayback: true,
-            loadingBuilder: (context, child, progress) =>
-                progress == null ? child : const NetworkLoadingView(color: Colors.white70),
-            errorBuilder: (context, error, _) => NetworkErrorView(error: error, color: Colors.white70),
+          // Turned as a layout (the one-key rotation): the screen's box goes to the image with its sides swapped for
+          // an odd number of turns, so that the turned photo fits it whole; no decode, no copy
+          child: RotatedBox(
+            quarterTurns: turns,
+            child: Image(
+              image: image,
+              fit: BoxFit.contain,
+              gaplessPlayback: true,
+              loadingBuilder: (context, child, progress) =>
+                  progress == null ? child : const NetworkLoadingView(color: Colors.white70),
+              errorBuilder: (context, error, _) => NetworkErrorView(error: error, color: Colors.white70),
+            ),
           ),
         ),
       ),

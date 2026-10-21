@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/actions/delete.action.dart';
 import 'package:immich_mobile/presentation/actions/edit_asset.action.dart';
 import 'package:immich_mobile/presentation/actions/restore.action.dart';
+import 'package:immich_mobile/presentation/actions/rotate.action.dart';
 import 'package:immich_mobile/presentation/actions/share.action.dart';
 import 'package:immich_mobile/presentation/actions/upload.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/add_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/ocr_toggle_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
@@ -44,15 +48,22 @@ class ViewerBottomBar extends ConsumerWidget {
     final isInTrash = ref.watch(timelineServiceProvider).origin == TimelineOrigin.trash;
 
     final originalTheme = context.themeData;
+    // A TV hides the row of actions: its rotation sits on the right of the OCR toggle, never where OK from the photo
+    // lands (see AssetViewer), so that a double OK cannot turn a photo
+    final tvRotate = ref.watch(tvModeProvider) && !isInTrash && canRotateInViewer(ref, asset);
+    // The text boxes are not drawn over a photo turned on screen (see AssetPage)
+    final showOcr = asset.isImage && ref.watch(displayQuarterTurnsProvider(asset)) == 0;
 
     final actions = <Widget>[
       ..._actionColumnButtons(context, ref, const [RestoreAction(source: .viewer), ShareAction(source: .viewer)]),
 
       if (!isInLockedView) ...[
         if (!isInTrash) ...[
-          ..._actionColumnButtons(context, ref, const [
-            UploadAction(source: .viewer, showProgress: true),
-            EditAssetAction(source: .viewer),
+          ..._actionColumnButtons(context, ref, [
+            const UploadAction(source: .viewer, showProgress: true),
+            // A computer has the rotation in the top bar (ViewerTopAppBar)
+            if (!CurrentPlatform.isDesktop) const RotateAction(source: .viewer),
+            const EditAssetAction(source: .viewer),
           ]),
           if (asset.hasRemote) ImmichColorOverride(color: null, child: AddActionButton(originalTheme: originalTheme)),
         ],
@@ -94,7 +105,18 @@ class ViewerBottomBar extends ConsumerWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (asset.isImage) OcrToggleButton(asset: asset),
+                          // A TV: the OCR toggle first, then Rotate on its right, one Right away. The row spans the
+                          // bar, so that the bar and its shade span the screen as with the row of a phone.
+                          if (tvRotate)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                if (showOcr) OcrToggleButton(asset: asset),
+                                TvRotateButton(asset: asset),
+                              ],
+                            )
+                          else if (showOcr)
+                            OcrToggleButton(asset: asset),
                           if (asset.isVideo) VideoControls(videoPlayerName: asset.id),
                           if (!isViewOnly)
                             ImmichColorOverride(

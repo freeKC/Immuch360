@@ -96,8 +96,9 @@ List<Bucket> panorama360Buckets(List<Panorama360Entry> sorted, GroupAssetsBy gro
 
 /// 3D and VR180 as the viewers will show the media, from what is at hand: the coverage the user picked
 /// ([chosenCoverage]), what the device scan read ([recordHalfSphere], [recordRaw]), the probe already in memory
-/// ([probe]), else the guesses of resolveSphereView from the name and the frame shape. A raw file is neither: the
-/// stitch fills the whole sphere with one picture.
+/// ([probe]), else the guesses of resolveSphereView from the name and the shape of the file ([Panorama360Entry.frame],
+/// never the size an edit of the server gave the asset). A raw file is neither: the stitch fills the whole sphere with
+/// one picture.
 Set<Panorama360Trait> panorama360TraitsOf(
   Panorama360Entry entry, {
   SphereCoverage? chosenCoverage,
@@ -111,8 +112,8 @@ Set<Panorama360Trait> panorama360TraitsOf(
   }
   final view = resolveSphereView(
     fileName: asset.name,
-    width: asset.width,
-    height: asset.height,
+    width: entry.frame.width,
+    height: entry.frame.height,
     probe: probe,
     chosenCoverage:
         chosenCoverage ??

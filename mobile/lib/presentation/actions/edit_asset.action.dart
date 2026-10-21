@@ -9,6 +9,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/asset_edit.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/server_capability.model.dart';
+import 'package:immich_mobile/domain/services/asset.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/pages/edit/editor.provider.dart';
@@ -84,13 +85,45 @@ class EditAssetAction extends AssetActionBuilder {
 }
 
 @visibleForTesting
-Future<void> applyEdits(WidgetRef ref, String remoteId, List<AssetEdit> edits) async {
-  final websocket = ref.read(websocketProvider.notifier);
+Future<Object?> applyEdits(WidgetRef ref, String remoteId, List<AssetEdit> edits) => applyAssetEdits(
+  service: ref.read(assetServiceProvider),
+  websocket: ref.read(websocketProvider.notifier),
+  remoteId: remoteId,
+  edits: edits,
+);
 
+/// Replaces the edits of the asset [remoteId] on the server with [edits] (none removes them), then waits up to 10 s for
+/// the server to say the edited files are ready. Gives what the server sent then, its new thumbhash among others (see
+/// [editReadyThumbhash]), or null when nothing came in time. The editor ignores it; the one-key rotation of the viewer
+/// reads it (see ViewRotationController). Fails as the request fails.
+Future<Object?> applyAssetEdits({
+  required AssetService service,
+  required WebsocketNotifier websocket,
+  required String remoteId,
+  required List<AssetEdit> edits,
+}) async {
   bool isCurrentId(dynamic data) => data is Map && (data['asset'] as Map?)?['id'] == remoteId;
-  await ref.read(assetServiceProvider).applyEdits(remoteId, edits);
-  await Future.any([
+  // Listened to before the request, so that a fast server cannot answer before anyone listens
+  final ready = Future.any([
     websocket.waitForEvent('AssetEditReadyV1', isCurrentId, const .new(seconds: 10)),
     websocket.waitForEvent('AssetEditReadyV2', isCurrentId, const .new(seconds: 10)),
-  ]).catchError((_) {});
+  ]).then<Object?>((data) => data as Object?, onError: (_) => null);
+  try {
+    await service.applyEdits(remoteId, edits);
+  } catch (_) {
+    unawaited(ready);
+    rethrow;
+  }
+  return ready;
+}
+
+/// The thumbhash of the asset in [data], what the server sends once the edited files are ready (AssetEditReadyV1 and
+/// V2); null when it holds none
+String? editReadyThumbhash(Object? data) {
+  if (data is! Map) {
+    return null;
+  }
+  final asset = data['asset'];
+  final thumbhash = asset is Map ? asset['thumbhash'] : null;
+  return thumbhash is String ? thumbhash : null;
 }

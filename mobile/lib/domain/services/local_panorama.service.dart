@@ -18,6 +18,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/unedited_frame.dart';
 import 'package:immich_mobile/domain/services/exif_head.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
@@ -170,8 +171,9 @@ bool _isAbout(double ratio, double target) => (ratio / target - 1).abs() <= 0.02
 /// Whether [asset], a photo or a video of the device, may be 360°, so that its file is worth reading: a 2:1 frame
 /// (within 2 percent), the shape of an equirectangular image, or a name that says so ("360", "pano", "vr180", the
 /// .insp and .insv files of Insta360 cameras), or a square or 1:2 frame, where two 360° or VR180 eyes are stacked,
-/// with a name that tells 3D or VR180. Raw .osv and .36p files too.
-bool isLocalPanoramaCandidate(BaseAsset asset) {
+/// with a name that tells 3D or VR180. Raw .osv and .36p files too. The shape is that of [frame] when given (the
+/// file of an asset the server edited, see uneditedFrameOf), else the size of the asset.
+bool isLocalPanoramaCandidate(BaseAsset asset, {AssetFrame? frame}) {
   if (!asset.isImage && !asset.isVideo) {
     return false;
   }
@@ -179,8 +181,8 @@ bool isLocalPanoramaCandidate(BaseAsset asset) {
   if (_panoramaName.hasMatch(name)) {
     return true;
   }
-  final width = asset.width;
-  final height = asset.height;
+  final width = frame == null ? asset.width : frame.width;
+  final height = frame == null ? asset.height : frame.height;
   if (width == null || height == null || width <= 0 || height <= 0) {
     return false;
   }

@@ -323,7 +323,7 @@ void main() {
       return navigator;
     }
 
-    String originalOf(String id) => '$_server/assets/$id/original?edited=true';
+    String originalOf(String id) => '$_server/assets/$id/original?edited=false';
 
     test('shows the nearest 360° asset each way in place, asking the database once per chunk', () async {
       flagged = {'a4', 'a7'};

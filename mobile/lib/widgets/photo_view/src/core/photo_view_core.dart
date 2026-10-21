@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:immich_mobile/domain/models/view_rotation.dart';
 import 'package:immich_mobile/widgets/photo_view/photo_view.dart'
     show
         PhotoViewHeroAttributes,
@@ -52,6 +53,7 @@ class PhotoViewCore extends StatefulWidget {
     required this.disableGestures,
     required this.disableScaleGestures,
     required this.enablePanAlways,
+    this.quarterTurns = 0,
   }) : customChild = null;
 
   const PhotoViewCore.customChild({
@@ -81,7 +83,8 @@ class PhotoViewCore extends StatefulWidget {
     required this.enablePanAlways,
   }) : semanticLabel = null,
        imageProvider = null,
-       gaplessPlayback = false;
+       gaplessPlayback = false,
+       quarterTurns = 0;
 
   final Decoration? backgroundDecoration;
   final ImageProvider? imageProvider;
@@ -115,6 +118,9 @@ class PhotoViewCore extends StatefulWidget {
   final bool enablePanAlways;
 
   final FilterQuality filterQuality;
+
+  /// How many quarter turns clockwise the image is drawn turned, 0 to 3; [scaleBoundaries] hold the turned size
+  final int quarterTurns;
 
   @override
   State<StatefulWidget> createState() {
@@ -442,15 +448,21 @@ class PhotoViewCoreState extends State<PhotoViewCore>
             height: scaleBoundaries.childSize.height * scale,
             child: widget.customChild,
           )
-        : Image(
-            key: widget.heroAttributes?.tag != null ? ObjectKey(widget.heroAttributes!.tag) : null,
-            image: widget.imageProvider!,
-            semanticLabel: widget.semanticLabel,
-            gaplessPlayback: widget.gaplessPlayback ?? false,
-            filterQuality: widget.filterQuality,
-            width: scaleBoundaries.childSize.width * scale,
-            fit: BoxFit.contain,
-            isAntiAlias: widget.filterQuality == FilterQuality.high,
+        // Turned as a layout, painting the same texture: no decode and no copy of the image. The child size of the
+        // scale boundaries is the turned one, so the image itself is as wide as the turned one is high for an odd
+        // number of turns. Always under a RotatedBox, so that a turn never builds the image again.
+        : RotatedBox(
+            quarterTurns: widget.quarterTurns,
+            child: Image(
+              key: widget.heroAttributes?.tag != null ? ObjectKey(widget.heroAttributes!.tag) : null,
+              image: widget.imageProvider!,
+              semanticLabel: widget.semanticLabel,
+              gaplessPlayback: widget.gaplessPlayback ?? false,
+              filterQuality: widget.filterQuality,
+              width: rotatedSize(scaleBoundaries.childSize, widget.quarterTurns).width * scale,
+              fit: BoxFit.contain,
+              isAntiAlias: widget.filterQuality == FilterQuality.high,
+            ),
           );
   }
 }

@@ -86,6 +86,31 @@ bool isRemoteZoomIn(KeyEvent event) =>
 bool isRemoteZoomOut(KeyEvent event) =>
     remoteZoomOutKeys.contains(event.logicalKey) || (CurrentPlatform.isDesktop && typesZoomOutCharacter(event));
 
+/// Turns the photo shown 90° clockwise (the one-key rotation): the yellow key of a remote (KEYCODE_PROG_YELLOW), or R
+/// of a keyboard, see [isRotateLetter]
+bool isRemoteRotateClockwise(KeyEvent event) =>
+    event.logicalKey == LogicalKeyboardKey.colorF2Yellow || isRotateLetter(event, shift: false);
+
+/// Turns the photo shown 90° counter clockwise: the blue key of a remote (KEYCODE_PROG_BLUE), or Shift R
+bool isRemoteRotateCounterClockwise(KeyEvent event) =>
+    event.logicalKey == LogicalKeyboardKey.colorF3Blue || isRotateLetter(event, shift: true);
+
+/// Whether [event] is R of a keyboard, with Shift when [shift], without Control, Alt or Meta (left to the system and
+/// the other shortcuts), while no text field has the keyboard ([typing], by default [isTypingText]): the letter then
+/// belongs to the text. The colour keys are the standard keys Android leaves to applications, on most TV remotes and
+/// on the LG Magic Remote (webOS key codes 405 and 406); the remotes without them have the Rotate button of the
+/// viewer's bar.
+bool isRotateLetter(KeyEvent event, {required bool shift, bool? typing}) {
+  if (event.logicalKey != LogicalKeyboardKey.keyR) {
+    return false;
+  }
+  final keyboard = HardwareKeyboard.instance;
+  if (keyboard.isControlPressed || keyboard.isMetaPressed || keyboard.isAltPressed) {
+    return false;
+  }
+  return keyboard.isShiftPressed == shift && !(typing ?? isTypingText());
+}
+
 /// How far left and right, fast forward and rewind move a playing video (the Play TV criterion TV-PC)
 const remoteSeekStep = Duration(seconds: 10);
 

@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:immich_mobile/domain/models/view_rotation.dart';
 import 'package:immich_mobile/widgets/photo_view/photo_view.dart';
 import 'package:immich_mobile/widgets/photo_view/src/core/photo_view_core.dart';
 import 'package:immich_mobile/widgets/photo_view/src/photo_view_default_widgets.dart';
@@ -39,6 +40,7 @@ class ImageWrapper extends StatefulWidget {
     required this.errorBuilder,
     required this.enablePanAlways,
     required this.index,
+    this.quarterTurns = 0,
   });
 
   final ImageProvider imageProvider;
@@ -74,6 +76,9 @@ class ImageWrapper extends StatefulWidget {
   final bool? enablePanAlways;
   final int index;
 
+  /// See [PhotoView.quarterTurns]
+  final int quarterTurns;
+
   @override
   State<ImageWrapper> createState() => _ImageWrapperState();
 }
@@ -87,6 +92,9 @@ class _ImageWrapperState extends State<ImageWrapper> {
   Object? _lastException;
   StackTrace? _lastStack;
   bool _didLoadSynchronously = false;
+
+  /// The quarter turns of the frame on screen (see [PhotoView.quarterTurns])
+  late int _quarterTurns = normalizeQuarterTurns(widget.quarterTurns);
 
   @override
   void dispose() {
@@ -104,8 +112,18 @@ class _ImageWrapperState extends State<ImageWrapper> {
   void didUpdateWidget(ImageWrapper oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.imageProvider != oldWidget.imageProvider) {
+      // The new turns come with the new image's first frame (see handleImageFrame)
       _resolveImage();
+    } else if (normalizeQuarterTurns(widget.quarterTurns) != _quarterTurns) {
+      _turnTo(widget.quarterTurns);
     }
+  }
+
+  /// Shows the image turned by [turns] from now on, centred again: the zoom relative to the fit is kept by the
+  /// scale boundaries of the turned size (see PhotoViewCore)
+  void _turnTo(int turns) {
+    _quarterTurns = normalizeQuarterTurns(turns);
+    widget.controller.position = Offset.zero;
   }
 
   // Should be called only when _imageSize is not null
@@ -115,7 +133,7 @@ class _ImageWrapperState extends State<ImageWrapper> {
       widget.maxScale ?? double.infinity,
       widget.initialScale ?? PhotoViewComputedScale.contained,
       widget.outerSize,
-      _imageSize!,
+      rotatedSize(_imageSize!, _quarterTurns),
     );
   }
 
@@ -136,6 +154,7 @@ class _ImageWrapperState extends State<ImageWrapper> {
     void handleImageFrame(ImageInfo info, bool synchronousCall) {
       void setupCB() {
         _imageSize = Size(info.image.width.toDouble(), info.image.height.toDouble());
+        _quarterTurns = normalizeQuarterTurns(widget.quarterTurns);
         _loading = false;
 
         _loadingProgress = null;
@@ -169,6 +188,10 @@ class _ImageWrapperState extends State<ImageWrapper> {
 
   void _updateSourceStream(ImageStream newStream) {
     if (_imageStream?.key == newStream.key) {
+      // The same image: no new frame will bring the new turns
+      if (normalizeQuarterTurns(widget.quarterTurns) != _quarterTurns) {
+        _turnTo(widget.quarterTurns);
+      }
       return;
     }
     _imageStream?.removeListener(_imageStreamListener!);
@@ -241,6 +264,7 @@ class _ImageWrapperState extends State<ImageWrapper> {
       disableGestures: widget.disableGestures ?? false,
       disableScaleGestures: widget.disableScaleGestures ?? false,
       enablePanAlways: widget.enablePanAlways ?? false,
+      quarterTurns: _quarterTurns,
     );
   }
 
