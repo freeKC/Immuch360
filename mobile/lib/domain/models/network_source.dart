@@ -14,10 +14,18 @@ enum NetworkSourceType {
   webdav,
   dlna,
   plex,
-  tapo;
+  tapo,
+
+  /// A folder picked in the system picker on Android: a drone, a controller or a card plugged into the phone (see
+  /// DocumentTreeFileSystem). Lives in memory only, never stored (see ImportSourcesNotifier): its id starts with
+  /// NetworkEntry.importSourcePrefix.
+  documentTree;
 
   /// Stored in StoreKey.networkSources, the list that builds 19 and older read and write back
   bool get inLegacyList => this == smb || this == webdav || this == dlna;
+
+  /// Whether a source of this type is ever stored
+  bool get isStored => this != documentTree;
 }
 
 /// A stored list: the sources this build reads, and the entries of a type it does not know, kept as they are so that
@@ -135,7 +143,8 @@ class NetworkSource {
       return null;
     }
     final id = json['id'];
-    final type = NetworkSourceType.values.where((t) => t.name == json['type']).firstOrNull;
+    // A picked folder is never stored: one found in a list was not written by this app
+    final type = NetworkSourceType.values.where((t) => t.name == json['type'] && t.isStored).firstOrNull;
     final name = json['name'];
     final host = json['host'];
     if (id is! String || type == null || name is! String || host is! String) {

@@ -1,5 +1,6 @@
 {
   "CameraLiveApi": "Tapo live view, phase 2 of the desktop plan: until then the camera page offers the live view on Android only (hasLive in camera.page.dart)",
+  "DocumentTreeApi": "DJI drone page, Android phones only: droneImportSupportedProvider answers false off Android, so the page and its tile never show on the computers",
   "ImmersiveApi": "Meta Quest immersive viewer: isHorizonOsProvider answers false off Android before calling it",
   "TvApi": "Android TV: readTvDeviceInfo answers \"not a TV\" off Android before calling it"
 }

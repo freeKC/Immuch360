@@ -298,10 +298,15 @@ class NetworkMediaTile extends ConsumerWidget {
     this.onLongPress,
     this.isSelected,
     this.autofocus = false,
+    this.frameUrl,
   });
 
   final NetworkEntry entry;
   final Uri? url;
+
+  /// Where a frame of a video is taken from when it is not the video itself: the low resolution proxy a drone writes
+  /// beside it (.LRF), a few MB read instead of the head of a large video
+  final Uri? frameUrl;
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
 
@@ -356,7 +361,7 @@ class NetworkMediaTile extends ConsumerWidget {
               if (hasThumbnail)
                 withServerThumbnail(_PhotoThumbnail(url: url, name: entry.name))
               else if (hasFrame)
-                withServerThumbnail(_VideoThumbnail(entry: entry, url: url))
+                withServerThumbnail(_VideoThumbnail(entry: entry, url: frameUrl ?? url))
               else
                 // A photo too large to read for a thumbnail still shows the picture its server made of it
                 withServerThumbnail(

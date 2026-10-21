@@ -52,5 +52,7 @@ class NetworkSourceRelocator {
     NetworkSourceType.webdav || NetworkSourceType.dlna => source.useTls ? 443 : 80,
     NetworkSourceType.plex => 32400,
     NetworkSourceType.tapo => 443,
+    // Never found on the network: a folder picked on the device
+    NetworkSourceType.documentTree => 0,
   };
 }

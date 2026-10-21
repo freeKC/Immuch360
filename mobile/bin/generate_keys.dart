@@ -118,6 +118,9 @@ const _kParamTypeOverrides = <String, String>{
   'camera_sd_used.used': 'String',
   'cleanup_found_assets_with_size.size': 'String',
   'in_year.year': 'String',
+  // Progress of the copies into the gallery, counts of files
+  'dji_import_keeping.done': 'int',
+  'dji_import_keeping.total': 'int',
   // Names and addresses written out by the caller (a Bonjour name, "http://192.168.1.20:8360"), so that an
   // InternetAddress or a Uri, whose text is not the one shown, cannot be passed instead
   'network_share_relocating.name': 'String',

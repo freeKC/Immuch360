@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
+import 'package:immich_mobile/infrastructure/network/document_tree_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/smb_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/upnp/dlna_file_system.dart';
@@ -25,6 +26,7 @@ final networkFileSystemOpenersProvider = Provider<Map<NetworkSourceType, Network
     NetworkSourceType.dlna: DlnaFileSystem.open,
     NetworkSourceType.plex: PlexFileSystem.open,
     NetworkSourceType.tapo: TapoFileSystem.open,
+    NetworkSourceType.documentTree: DocumentTreeFileSystem.open,
   };
 });
 
@@ -140,12 +142,14 @@ class NetworkConnections {
     bool isCurrent() => !_disposed && (_generations[sourceId] ?? 0) == generation;
 
     final sources = _ref.read(networkSourcesProvider.notifier);
-    final source = sources.byId(sourceId);
+    // A folder picked on the DJI drone page lives among the import sources, without a password
+    final isImport = sourceId.startsWith(NetworkEntry.importSourcePrefix);
+    final source = isImport ? _ref.read(importSourcesProvider)[sourceId] : sources.byId(sourceId);
     if (source == null) {
       throw NetworkFileSystemException('Unknown share $sourceId', isNotFound: true);
     }
     final open = _opener(source.type);
-    final password = await sources.readPassword(sourceId);
+    final password = isImport ? null : await sources.readPassword(sourceId);
     final fileSystem = await open(source, password);
 
     try {

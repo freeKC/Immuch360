@@ -120,6 +120,65 @@ ExifHead? parseExifHead(Uint8List head) {
   );
 }
 
+// The thumbnail of IFD1: where its JPEG starts, from the TIFF header, and how long it is
+const _thumbnailOffsetTag = 0x0201;
+const _thumbnailLengthTag = 0x0202;
+
+/// Bytes of the head of a photo read for the thumbnail of its EXIF (see [parseExifThumbnail]): cameras write it within
+/// the first 64 KB, right after the tags
+const exifThumbnailHeadLength = 64 * 1024;
+
+/// The small JPEG a camera writes in the EXIF of a photo (IFD1, JPEGInterchangeFormat and its length), for a quick
+/// thumbnail without reading the whole photo: 160 x 120 pixels on DJI drones. Null when the photo has none, or it does
+/// not lie whole within [head].
+Uint8List? parseExifThumbnail(Uint8List head) {
+  final tiff = _exifTiffStart(head);
+  if (tiff == null || tiff + 8 > head.length) {
+    return null;
+  }
+  final data = ByteData.sublistView(head);
+  final Endian endian;
+  switch (String.fromCharCodes(head, tiff, tiff + 2)) {
+    case 'II':
+      endian = Endian.little;
+    case 'MM':
+      endian = Endian.big;
+    default:
+      return null;
+  }
+  if (data.getUint16(tiff + 2, endian) != 42) {
+    return null;
+  }
+  final ifd0 = tiff + data.getUint32(tiff + 4, endian);
+  if (ifd0 + 2 > head.length) {
+    return null;
+  }
+  // The offset of the next IFD follows the entries of IFD0
+  final next = ifd0 + 2 + 12 * data.getUint16(ifd0, endian);
+  if (next + 4 > head.length) {
+    return null;
+  }
+  final ifd1 = data.getUint32(next, endian);
+  if (ifd1 == 0) {
+    return null;
+  }
+  final offsetEntry = _ifdEntry(data, tiff, ifd1, _thumbnailOffsetTag, endian);
+  final lengthEntry = _ifdEntry(data, tiff, ifd1, _thumbnailLengthTag, endian);
+  if (offsetEntry == null || lengthEntry == null) {
+    return null;
+  }
+  final start = tiff + data.getUint32(offsetEntry, endian);
+  final length = data.getUint32(lengthEntry, endian);
+  if (length < 4 || start + length > head.length) {
+    return null;
+  }
+  // A JPEG from its start of image marker
+  if (head[start] != 0xff || head[start + 1] != 0xd8) {
+    return null;
+  }
+  return Uint8List.sublistView(head, start, start + length);
+}
+
 // Where the TIFF header of the EXIF of the JPEG [head] starts: the segments are walked from the start of the image to the
 // APP1 segment that begins with "Exif\0\0". Null for a file that is not a JPEG, or without EXIF in [head].
 int? _exifTiffStart(Uint8List head) {

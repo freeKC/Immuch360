@@ -7,6 +7,7 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/phone_share.page.dart';
+import 'package:immich_mobile/presentation/widgets/drone/drone_import_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
@@ -31,6 +32,8 @@ String networkSourceAddress(NetworkSource source) {
           ? 'plex://${source.plex!.publicHost}:${source.plex!.publicPort ?? _plexDefaultPort}'
           : 'plex://${source.host}:${source.port ?? _plexDefaultPort}',
     NetworkSourceType.tapo => 'tapo://${source.host}',
+    // A folder picked on the DJI drone page: the volume or the device it is on
+    NetworkSourceType.documentTree => 'usb://${source.name}',
   };
 }
 
@@ -41,12 +44,14 @@ IconData networkSourceIcon(NetworkSourceType type) => switch (type) {
   NetworkSourceType.dlna => Icons.perm_media_outlined,
   NetworkSourceType.plex => Icons.video_library_outlined,
   NetworkSourceType.tapo => Icons.videocam_outlined,
+  NetworkSourceType.documentTree => Icons.usb_rounded,
 };
 
 /// The page that opens a source: its own pages for a camera, which is not browsed as folders; the browser at the start
 /// folder for a share
 PageRouteInfo networkSourceOpenRoute(NetworkSource source) => switch (source.type) {
   NetworkSourceType.tapo => CameraRoute(sourceId: source.id),
+  NetworkSourceType.documentTree => const DroneImportRoute(),
   NetworkSourceType.smb ||
   NetworkSourceType.webdav ||
   NetworkSourceType.dlna ||
@@ -58,6 +63,8 @@ PageRouteInfo networkSourceEditRoute(NetworkSource source, {bool focusCredential
   NetworkSourceType.smb || NetworkSourceType.webdav || NetworkSourceType.dlna => NetworkShareEditRoute(source: source),
   NetworkSourceType.plex => PlexServerEditRoute(source: source, focusToken: focusCredentials),
   NetworkSourceType.tapo => CameraEditRoute(source: source),
+  // Nothing to edit: the page picks another folder
+  NetworkSourceType.documentTree => const DroneImportRoute(),
 };
 
 /// Asks what to add (a network share, a Plex Media Server, a Tapo camera) and opens its page
@@ -101,6 +108,7 @@ class NetworkSharesPage extends ConsumerWidget {
               ? Column(
                   children: [
                     const PhoneShareTile(),
+                    const DroneImportTile(),
                     Expanded(child: _NoShares(onAdd: add)),
                   ],
                 )
@@ -108,6 +116,7 @@ class NetworkSharesPage extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 8, bottom: 32),
                   children: [
                     const PhoneShareTile(),
+                    const DroneImportTile(),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
                       child: Text(

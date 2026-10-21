@@ -5,8 +5,8 @@
 // stitched by the app: an Insta360 photo named .insp or ending with the trailer of the camera, a video named .insv,
 // .360 (GoPro) or .osv (DJI), whose layout is settled when it opens (see raw_360_detection.dart and
 // raw_video_plan.dart). So are the equirect photos a 360° camera stitched itself without GPano tags: a GoPro .36p, a
-// 2:1 JPEG whose EXIF names a 360° camera or a DJI drone, or a photo whose Insta360 trailer says the camera stitched it. The viewers
-// then show a file with the rules of resolveSphereView, from what it declares and its name.
+// 2:1 JPEG whose EXIF names a 360° camera or a DJI drone, or a photo whose Insta360 trailer says the camera stitched
+// it. The viewers then show a file with the rules of resolveSphereView, from what it declares and its name.
 //
 // The same reads tell the Apple spatial media: a HEIF photo holding a stereo pair (see probeHeicStereoPair), a video
 // holding two MV-HEVC layers (see SphericalProbe.multiview).
@@ -396,9 +396,13 @@ class _LastReadReader {
 
 /// What the files of the shares declare, kept as long as the app runs
 final networkMediaServiceProvider = Provider<NetworkMediaService>(
-  // The 360° files found go to the 360° list
+  // The 360° files found go to the 360° list, but those of a drone or a card plugged in: they are gone once unplugged
   (ref) => NetworkMediaService(
-    onRead: (entry, {required is360}) => ref.read(networkPanoramasProvider.notifier).record(entry, is360: is360),
+    onRead: (entry, {required is360}) {
+      if (!entry.isImported) {
+        ref.read(networkPanoramasProvider.notifier).record(entry, is360: is360);
+      }
+    },
   ),
 );
 

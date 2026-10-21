@@ -4,8 +4,10 @@
 // back). Each secret lives in the secure storage under the secretKey (and for a camera the cameraSecretKey) of its
 // source.
 
+import 'dart:convert';
 import 'dart:math';
 
+import 'package:crypto/crypto.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -190,7 +192,39 @@ final networkSourcesProvider = NotifierProvider<NetworkSourcesNotifier, List<Net
   NetworkSourcesNotifier.new,
 );
 
-/// The source with this id, null once it is removed
+/// The source with this id, null once it is removed. A folder picked on the DJI drone page is found among the import
+/// sources (see [importSourcesProvider]).
 final networkSourceProvider = Provider.family<NetworkSource?, String>((ref, id) {
+  if (id.startsWith(NetworkEntry.importSourcePrefix)) {
+    return ref.watch(importSourcesProvider)[id];
+  }
   return ref.watch(networkSourcesProvider).where((source) => source.id == id).firstOrNull;
 });
+
+/// The folders picked on the DJI drone page (a drone, a controller or a card plugged in), as sources of type
+/// [NetworkSourceType.documentTree]: in memory only, by id, never stored and never listed with the shares. Their
+/// connections open, register on the media bridge and close like those of the shares (see NetworkConnections).
+class ImportSourcesNotifier extends Notifier<Map<String, NetworkSource>> {
+  @override
+  Map<String, NetworkSource> build() => const {};
+
+  /// The id of the source of the picked folder [treeUri]: the same for the same folder, whatever the session
+  static String idFor(String treeUri) =>
+      '${NetworkEntry.importSourcePrefix}${sha1.convert(utf8.encode(treeUri)).toString().substring(0, 16)}';
+
+  /// Adds [source], or replaces the one with its id
+  void put(NetworkSource source) {
+    assert(source.type == NetworkSourceType.documentTree && source.id.startsWith(NetworkEntry.importSourcePrefix));
+    state = Map.unmodifiable({...state, source.id: source});
+  }
+
+  void remove(String id) {
+    if (state.containsKey(id)) {
+      state = Map.unmodifiable({...state}..remove(id));
+    }
+  }
+}
+
+final importSourcesProvider = NotifierProvider<ImportSourcesNotifier, Map<String, NetworkSource>>(
+  ImportSourcesNotifier.new,
+);

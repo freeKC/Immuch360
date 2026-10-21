@@ -16,6 +16,7 @@ import app.alextran.immich.connectivity.ConnectivityApiImpl
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.ImmichPlugin
 import app.alextran.immich.core.NetworkApiPlugin
+import app.alextran.immich.documenttree.DocumentTreePlugin
 import me.albemala.native_video_player.NativeVideoPlayerPlugin
 import app.alextran.immich.images.LocalImageApi
 import app.alextran.immich.immersive.ImmersiveApi
@@ -120,6 +121,8 @@ class MainActivity : FlutterFragmentActivity() {
       VideoDecoderApi.setUp(messenger, VideoDecoderApiImpl())
 
       flutterEngine.plugins.add(ViewIntentPlugin())
+      // The DJI drone page: folders picked in the system picker (a drone, a controller or a card over USB)
+      flutterEngine.plugins.add(DocumentTreePlugin())
       flutterEngine.plugins.add(backgroundEngineLockImpl)
       flutterEngine.plugins.add(nativeSyncApiImpl)
       flutterEngine.plugins.add(permissionApiImpl)

@@ -481,7 +481,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       NetworkSourceType.webdav => normalizeNetworkPath(shareText, empty: ''),
       NetworkSourceType.dlna => normalizeDescriptionPath(shareText),
       // Never held by this form: they have pages of their own
-      NetworkSourceType.plex || NetworkSourceType.tapo => null,
+      NetworkSourceType.plex || NetworkSourceType.tapo || NetworkSourceType.documentTree => null,
     };
     if (share == null) {
       return null;
