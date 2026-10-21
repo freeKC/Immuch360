@@ -262,6 +262,15 @@ class RemoteAssetRepository extends DatabaseAccessor<Drift> with $RemoteAssetRep
     return query.map((row) => row.toDto()!).get();
   }
 
+  /// Whether the asset carries edits of a kind this app does not know, which [getAssetEdits] leaves out: whoever
+  /// writes the edits back from that list would drop them
+  Future<bool> hasUnknownAssetEdits(String assetId) async {
+    final query = _db.assetEditEntity.select()
+      ..where((row) => row.assetId.equals(assetId) & row.action.equals(AssetEditAction.other.index))
+      ..limit(1);
+    return (await query.get()).isNotEmpty;
+  }
+
   Future<void> updateAssets(
     List<String> remoteIds, {
     Option<bool> isFavorite = const .none(),

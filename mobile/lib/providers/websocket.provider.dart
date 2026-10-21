@@ -115,12 +115,14 @@ class WebsocketNotifier extends StateNotifier<WebsocketState> {
     state = const WebsocketState(isConnected: false, socket: null);
   }
 
-  Future<void> waitForEvent(String event, bool Function(dynamic)? predicate, Duration timeout) {
-    final completer = Completer<void>();
+  /// Waits for the next [event] that [predicate] accepts, and gives its data; fails with a [TimeoutException] past
+  /// [timeout]
+  Future<dynamic> waitForEvent(String event, bool Function(dynamic)? predicate, Duration timeout) {
+    final completer = Completer<dynamic>();
 
     void handler(dynamic data) {
       if (predicate == null || predicate(data)) {
-        completer.complete();
+        completer.complete(data);
         state.socket?.off(event, handler);
       }
     }
