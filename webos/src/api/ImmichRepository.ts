@@ -214,6 +214,11 @@ export class ImmichRepository implements PhotoRepository {
 		return this.client.getThumbnailUrl(assetId, 'preview');
 	}
 
+	// Immuch360: the full-size picture when the server generates one, else it redirects to the preview
+	public fullsizeUrl(assetId: string): string {
+		return this.client.getThumbnailUrl(assetId, 'fullsize');
+	}
+
 	public videoPlaybackUrl(assetId: string): string {
 		return this.client.getVideoPlaybackUrl(assetId);
 	}

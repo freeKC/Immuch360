@@ -13,7 +13,7 @@
 // | Rewind, Fast forward    | 412, 417                       | 10 s back or forward                                       |
 // | Stop                    | 413                            | close the video                                            |
 // | Previous, Next track    | 177, 176                       | previous and next item, where the remote has them          |
-// | Info                    | 457                            | the details of the item                                    |
+// | Info                    | 457 (and I of a keyboard)      | show or hide the details of the item; Back closes them     |
 // | Red Green Yellow Blue   | 403 404 405 406                | left free                                                  |
 //
 // A flat photo turns by 90° with one key, and the turn is kept for that photo on the TV (src/utils/rotationStore.ts):
@@ -109,6 +109,8 @@ const BY_KEY: Record<string, RemoteAction> = {
 	MediaTrackPrevious: 'previousTrack',
 	MediaTrackNext: 'nextTrack',
 	Info: 'info',
+	i: 'info',
+	I: 'info',
 	r: 'rotateRight',
 	R: 'rotateRight',
 	']': 'rotateRight',
@@ -133,6 +135,9 @@ export const SEEK_STEP_SECONDS = 10;
 
 /** How long the controls of a viewer stay after they show or after the last key */
 export const CONTROLS_HIDE_AFTER_MS = 5000;
+
+/** A video that has not started this long after it opened, without being paused, does not play on this TV */
+export const VIDEO_STALL_MS = 20000;
 
 /**
  * What Left and Right do on a video while the viewer has the focus: on a TV they go to the previous or next item

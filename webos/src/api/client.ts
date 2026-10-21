@@ -78,7 +78,8 @@ export class APIClient {
 	}
 
 	// Immich v3 serves the unedited original (ignoring crops/rotations) unless edited=true.
-	public getThumbnailUrl(assetId: string, size: 'preview' | 'thumbnail' = 'thumbnail'): string {
+	// Immuch360: 'fullsize' is the full-size picture the server generates (Image settings), the preview otherwise.
+	public getThumbnailUrl(assetId: string, size: 'preview' | 'thumbnail' | 'fullsize' = 'thumbnail'): string {
 		return this.buildMediaUrl(`/assets/${assetId}/thumbnail?size=${size}&edited=true`);
 	}
 

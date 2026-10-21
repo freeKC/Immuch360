@@ -30,6 +30,7 @@ describe('remoteAction', () => {
 		assert.equal(remoteAction({keyCode: 0, key: 'GoBack'}), 'back');
 		assert.equal(remoteAction({keyCode: 0, key: 'MediaPlayPause'}), 'playPause');
 		assert.equal(remoteAction({keyCode: 0, key: 'ChannelUp'}), 'channelUp');
+		assert.equal(remoteAction({keyCode: 73, key: 'i'}), 'info');
 		assert.equal(remoteAction({keyCode: 65, key: 'a'}), null);
 		assert.equal(remoteAction({keyCode: 0}), null);
 	});

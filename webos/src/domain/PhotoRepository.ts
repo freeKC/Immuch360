@@ -17,6 +17,8 @@ export interface PhotoRepository {
 
 	thumbnailUrl(assetId: string): string;
 	previewUrl(assetId: string): string;
+	// Immuch360: the picture of a photo zoomed in past 2x (src/immuch360/photoSize.ts)
+	fullsizeUrl(assetId: string): string;
 	videoPlaybackUrl(assetId: string): string;
 	faceUrl(personId: string): string;
 

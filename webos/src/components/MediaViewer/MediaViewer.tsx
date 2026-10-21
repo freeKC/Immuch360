@@ -8,10 +8,12 @@ import {useRepository} from '../../domain/RepositoryContext';
 import {createSpotlightContainer, forceFocus, SpottableDiv} from '../../utils/spotlight';
 import type {TimelineAsset} from '../../domain/types';
 import {t} from '../../immuch360/i18n';
-import {CONTROLS_HIDE_AFTER_MS, SEEK_STEP_SECONDS, photoRotationStep, playPauseWantsPlay, remoteAction, videoArrows} from '../../immuch360/keys';
+import {CONTROLS_HIDE_AFTER_MS, SEEK_STEP_SECONDS, VIDEO_STALL_MS, photoRotationStep, playPauseWantsPlay, remoteAction, videoArrows} from '../../immuch360/keys';
 import {isForced360, setForced360, setSphereChoice, sphereChoice, type SphereChoice} from '../../immuch360/forced360';
 import {isEquirectangularProjection, isShownAs360, nextStereoLayout, type SphereView as ResolvedSphereView} from '../../immuch360/sphere/rules';
 import {SphereView, type SphereViewHandle} from '../../immuch360/sphere/SphereView';
+import {AssetDetailsPanel} from '../../immuch360/details/AssetDetailsPanel';
+import {FULLSIZE_FROM_SCALE, wantsFullsize} from '../../immuch360/photoSize';
 import {MediaControls, ACTION_BAR_SPOTLIGHT_ID, type ViewerAction} from './MediaControls';
 import {VideoPlayer, VideoPlayerApi} from './VideoPlayer';
 import css from './MediaViewer.module.less';
@@ -68,7 +70,15 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const [forcedVersion, setForcedVersion] = useState(0);
 	const forced = useMemo(() => (asset ? isForced360(asset.id) : false), [asset, forcedVersion]); // eslint-disable-line react-hooks/exhaustive-deps
 	const flagged = isEquirectangularProjection(asset?.projectionType);
-	const details = useAssetDetails(asset?.id, !!asset && !isVideo && (flagged || forced || looksEquirect(asset.ratio)));
+	// Immuch360: the details panel (Info, I, or its button) stays open from one item to the next until Info or Back
+	const [detailsOpen, setDetailsOpen] = useState(false);
+	const toggleDetails = useCallback(() => setDetailsOpen((open) => !open), []);
+	// Immuch360: a flat photo zoomed in past 2x shows its full-size picture, once its size is known to fit a TV
+	const [zoomedPast2x, setZoomedPast2x] = useState(false);
+	// Immuch360: the video that did not play (an error, or nothing after 20 s): a message replaces the endless spinner
+	const [videoFailure, setVideoFailure] = useState<string | null>(null);
+	const videoFailed = isVideo && !!asset && videoFailure === asset.id;
+	const details = useAssetDetails(asset?.id, !!asset && (detailsOpen || zoomedPast2x || videoFailed || (!isVideo && (flagged || forced || looksEquirect(asset.ratio)))));
 	const [sphereFailure, setSphereFailure] = useState<{assetId: string; reason: string} | null>(null);
 	const sphereFailed = !!asset && sphereFailure?.assetId === asset.id;
 	const wants360 =
@@ -93,7 +103,9 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 
 	const [actionBarFocused, setActionBarFocused] = useState(false);
 	const [rotation, rotate] = useAssetRotation(isVideo || show360 ? undefined : asset?.id);
-	const {zoomed, zoomIn: photoZoomIn, zoomOut: photoZoomOut, reset: resetZoom, pan, style: zoomStyle} = usePhotoZoom(isVideo || show360 ? undefined : asset?.id);
+	const {zoom, zoomed, zoomIn: photoZoomIn, zoomOut: photoZoomOut, reset: resetZoom, pan, style: zoomStyle} = usePhotoZoom(isVideo || show360 ? undefined : asset?.id);
+	if (zoomedPast2x !== zoom.scale > FULLSIZE_FROM_SCALE) setZoomedPast2x(zoom.scale > FULLSIZE_FROM_SCALE);
+	const sharp = !isVideo && !show360 && wantsFullsize(zoom.scale, details?.width, details?.height);
 	const controlsRef = useRef<HTMLDivElement>(null);
 
 	// Auto-hide is for still images only. Video keeps its always-visible MediaControls and
@@ -145,7 +157,29 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		const timer = window.setTimeout(() => setVideoIntro(null), CONTROLS_HIDE_AFTER_MS);
 		return () => window.clearTimeout(timer);
 	}, [isVideo, assetId]);
-	const chromeVisible = isVideo ? videoControlsOpen || videoIntro === asset?.id : controlsVisible;
+
+	// Immuch360: once a second until the video starts, whether the TV gave up on it (a media error), or whether it still
+	// shows nothing 20 s after it opened while nobody paused it
+	useEffect(() => {
+		if (!isVideo || !assetId) return undefined;
+		const opened = Date.now();
+		const timer = window.setInterval(() => {
+			const api = playerApiRef.current;
+			if (!api) return;
+			const state = api.getMediaState();
+			if ((state.currentTime ?? 0) > 0) {
+				window.clearInterval(timer);
+				return;
+			}
+			const stalled = Date.now() - opened >= VIDEO_STALL_MS && state.paused === false;
+			if (api.getVideoNode()?.error || stalled) {
+				window.clearInterval(timer);
+				setVideoFailure(assetId);
+			}
+		}, 1000);
+		return () => window.clearInterval(timer);
+	}, [isVideo, assetId]);
+	const chromeVisible = isVideo ? videoControlsOpen || videoIntro === asset?.id || videoFailed : controlsVisible;
 
 	// Immuch360: Left and Right go to the neighbours whatever the video does; a video alone in the viewer seeks 10 s
 	const hasNeighbours = totalCount > 1;
@@ -155,8 +189,13 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 
 	// Back closes the transport bar if open, the viewer otherwise. Our Back bridge
 	// (capture + stopImmediatePropagation) preempts Sandstone's Cancelable, so the
-	// two-step behavior has to be restored here. Immuch360: a zoomed photo zooms out first.
+	// two-step behavior has to be restored here. Immuch360: the details panel closes first, a zoomed photo zooms out
+	// before the viewer closes.
 	const handleBack = useCallback(() => {
+		if (detailsOpen) {
+			setDetailsOpen(false);
+			return;
+		}
 		if (videoControlsOpen && playerApiRef.current) {
 			playerApiRef.current.hideControls();
 			return;
@@ -166,7 +205,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 			return;
 		}
 		onClose();
-	}, [videoControlsOpen, onClose, zoomed, resetZoom]);
+	}, [detailsOpen, videoControlsOpen, onClose, zoomed, resetZoom]);
 
 	const panLeft = useCallback(() => pan(-1, 0), [pan]);
 	const panRight = useCallback(() => pan(1, 0), [pan]);
@@ -218,7 +257,8 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 				// The zoom and its position were for the photo as it stood
 				if (zoomed) resetZoom();
 				rotate(turn);
-			} else if (action === 'previousTrack') handlePrev();
+			} else if (action === 'info') toggleDetails();
+			else if (action === 'previousTrack') handlePrev();
 			else if (action === 'nextTrack') handleNext();
 			else if (isVideo && action === 'stop') onClose();
 			else if (isVideo && (action === 'rewind' || action === 'fastForward')) seekVideo(action === 'rewind' ? -SEEK_STEP_SECONDS : SEEK_STEP_SECONDS);
@@ -237,7 +277,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		};
 		window.addEventListener('keydown', onKeyDown, {capture: true});
 		return () => window.removeEventListener('keydown', onKeyDown, {capture: true});
-	}, [handlePrev, handleNext, isVideo, show360, inActionBar, zoomed, onClose, seekVideo, photoZoomIn, photoZoomOut, resetZoom, rotate]);
+	}, [handlePrev, handleNext, isVideo, show360, inActionBar, zoomed, onClose, seekVideo, photoZoomIn, photoZoomOut, resetZoom, rotate, toggleDetails]);
 
 	// Photos rest focus on the stage; forcing it also pulls focus off the grid card behind the
 	// overlay when the viewer was opened with the pointer.
@@ -329,11 +369,12 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 			{key: 'zoomIn', icon: 'zoomin', label: t('tv_zoom_in'), onClick: show360 ? sphereZoomIn : photoZoomIn, spotlightId: ZOOM_IN_SPOTLIGHT_ID},
 			...sphereChoices,
 			...view360,
+			{key: 'details', icon: 'info', label: t('details'), onClick: toggleDetails},
 			{key: 'slideshow', icon: 'play', label: t('slideshow'), onClick: onStartSlideshow},
 			{key: 'close', icon: 'closex', label: t('close'), onClick: onClose},
 			...last,
 		];
-	}, [asset, isVideo, show360, resolved, flagged, forced, choice, currentIndex, totalCount, photoZoomIn, photoZoomOut, sphereZoomIn, sphereZoomOut, rotate, handlePrev, handleNext, onStartSlideshow, onClose, saveChoice, toggleForced]);
+	}, [asset, isVideo, show360, resolved, flagged, forced, choice, currentIndex, totalCount, photoZoomIn, photoZoomOut, sphereZoomIn, sphereZoomOut, rotate, toggleDetails, handlePrev, handleNext, onStartSlideshow, onClose, saveChoice, toggleForced]);
 
 	// The Magic Remote drags the sphere through the stage, which lies over it
 	const stageMouse = useMemo(
@@ -352,11 +393,15 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 
 	if (!asset) return null;
 
-	const mediaUrl = isVideo ? repository.videoPlaybackUrl(asset.id) : repository.previewUrl(asset.id);
+	const mediaUrl = isVideo ? repository.videoPlaybackUrl(asset.id) : sharp ? repository.fullsizeUrl(asset.id) : repository.previewUrl(asset.id);
 	let notice: string | undefined;
 	if (show360) notice = t('tv_look_hint');
 	else if (wants360 && sphereFailure) notice = sphereFailure.reason;
-	else if (video360) notice = t('webos_360_video_flat');
+	else if (videoFailed) {
+		const size = details?.width && details.height ? `${details.width} × ${details.height}` : null;
+		const format = [details?.originalMimeType, size].filter(Boolean).join(', ');
+		notice = t('webos_video_cannot_play', {format: format || t('unknown')});
+	} else if (video360) notice = t('webos_360_video_flat');
 
 	return (
 		<ViewerContainer spotlightId={VIEWER_SPOTLIGHT_ID} spotlightRestrict="self-only" className={css.viewerOverlay}>
@@ -401,6 +446,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 				notice={notice}
 				onActionBarFocusChange={setActionBarFocused}
 			/>
+			{detailsOpen && <AssetDetailsPanel asset={asset} details={details} />}
 		</ViewerContainer>
 	);
 });

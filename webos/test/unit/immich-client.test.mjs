@@ -96,6 +96,7 @@ describe('ImmichRepository with recorded responses', () => {
 	test('media URLs carry the credentials, the preview bytes come without headers', async () => {
 		const repo = repository('https://photos.example.org/api');
 		assert.equal(repo.previewUrl('abc'), 'https://photos.example.org/api/assets/abc/thumbnail?size=preview&edited=true&apiKey=k3y');
+		assert.equal(repo.fullsizeUrl('abc'), 'https://photos.example.org/api/assets/abc/thumbnail?size=fullsize&edited=true&apiKey=k3y');
 		assert.equal(repo.videoPlaybackUrl('abc'), 'https://photos.example.org/api/assets/abc/video/playback?apiKey=k3y');
 		const bytes = new Uint8Array(await repo.fetchPreviewBytes('abc'));
 		assert.deepEqual(Array.from(bytes), [0xff, 0xd8, 0xff, 0xd9]);

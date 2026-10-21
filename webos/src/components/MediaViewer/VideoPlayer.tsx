@@ -13,6 +13,8 @@ export interface VideoPlayerApi {
 	play: () => void;
 	pause: () => void;
 	getMediaState: () => {paused?: boolean; currentTime?: number; duration?: number};
+	// Immuch360: the media node, whose error tells a video the TV cannot play
+	getVideoNode: () => {error?: unknown} | null;
 }
 
 interface VideoPlayerProps {

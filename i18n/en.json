@@ -2792,6 +2792,7 @@
   "webos_switch": "Switch",
   "webos_today": "Today",
   "webos_url_shortcuts": "URL shortcuts",
+  "webos_video_cannot_play": "This TV could not play this video ({format}).",
   "webos_yesterday": "Yesterday",
   "week": "Week",
   "welcome": "Welcome",
