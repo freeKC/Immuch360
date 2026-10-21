@@ -208,6 +208,29 @@ describe('useTimelineViewportFocus', () => {
 		expect(pressKey('ArrowUp', 38).defaultPrevented).toBe(false);
 	});
 
+	test('the channel keys scroll a page, then focus the first card in view', () => {
+		jest.useFakeTimers();
+		const {viewport, cards} = makeViewport(makeRect(240, 100, 200, 150), makeRect(448, 100, 200, 150));
+		viewport.scrollTop = 1000;
+		jest.spyOn(Spotlight, 'getCurrent').mockReturnValue(cards[1] as never);
+		const focus = jest.spyOn(Spotlight, 'focus').mockReturnValue(true);
+
+		renderHook(() => useTimelineViewportFocus({enabled: true, viewportRef: {current: viewport}}));
+		expect(pressKey('PageDown', 34).defaultPrevented).toBe(true);
+		expect(viewport.scrollTop).toBe(1648);
+		act(() => {
+			jest.runAllTimers();
+		});
+		expect(focus).toHaveBeenCalledWith(cards[0]);
+
+		expect(pressKey('PageUp', 33).defaultPrevented).toBe(true);
+		expect(viewport.scrollTop).toBe(1000);
+		expect(pressKey('PageUp', 33).defaultPrevented).toBe(true);
+		expect(pressKey('PageUp', 33).defaultPrevented).toBe(true);
+		expect(viewport.scrollTop).toBe(0);
+		jest.useRealTimers();
+	});
+
 	test('leaves in-grid focus moves to the key handler', () => {
 		const {viewport, cards} = makeViewport(makeRect(240, 900, 200, 150), makeRect(448, 900, 200, 150));
 		viewport.scrollTop = 1000;

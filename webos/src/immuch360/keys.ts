@@ -8,7 +8,7 @@
 // | Arrows                  | 37 38 39 40                    | move the focus; viewer: Left and Right previous and next   |
 // | OK                      | 13 (Enter)                     | open; photo: show or hide the controls; video: controls    |
 // | Back                    | 461 (GoBack), 1536, 8, 10009, 27 | close the overlay, then the page (see useWebOSKeys)      |
-// | Channel up and down     | 33 34 (PageUp, PageDown)       | zoom in and out by 1.25 in the viewers                     |
+// | Channel up and down     | 33 34 (PageUp, PageDown)       | timeline: a page up or down; viewers: zoom by 1.25         |
 // | Play, Pause, Play/Pause | 415, 19, 179                   | play always plays, pause always pauses, the toggle toggles |
 // | Rewind, Fast forward    | 412, 417                       | 10 s back or forward                                       |
 // | Stop                    | 413                            | close the video                                            |

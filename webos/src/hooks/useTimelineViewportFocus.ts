@@ -3,6 +3,7 @@ import type {RefObject} from 'react';
 import Spotlight, {getDirection} from '@enact/spotlight';
 import {spottableClass} from '@enact/spotlight/Spottable';
 import {NAVIGATION_RAIL_ID} from '../utils/constants';
+import {remoteAction} from '../immuch360/keys';
 
 interface UseTimelineViewportFocusOptions {
 	enabled: boolean;
@@ -26,6 +27,11 @@ const ROW_TOLERANCE_PX = 24;
 const VISIBILITY_EPSILON_PX = 4;
 // Breathing room left between a freshly focused card and the viewport edge when scrolling it in.
 const SCROLL_MARGIN_PX = 16;
+// Immuch360: the channel keys scroll the grid by this share of its height, so that a row of the previous page stays
+// in sight, then focus the first card in view once the grid has rendered it (a few tries while a month loads).
+const PAGE_FRACTION = 0.9;
+const PAGE_FOCUS_DELAY_MS = 120;
+const PAGE_FOCUS_TRIES = 8;
 
 interface Card {
 	el: HTMLElement;
@@ -65,8 +71,10 @@ export const useTimelineViewportFocus = ({enabled, viewportRef, rightEdgeSpotlig
 		if (!enabled) return undefined;
 
 		const handleKeyDown = (event: KeyboardEvent) => {
-			const dir = getDirection(event.keyCode) as Direction | false;
-			if (!dir) return;
+			const action = remoteAction(event);
+			const page = action === 'channelDown' ? 1 : action === 'channelUp' ? -1 : 0;
+			const dir = page ? false : (getDirection(event.keyCode) as Direction | false);
+			if (!dir && !page) return;
 			// A modal owns 5-way navigation even if pointer movement temporarily blurred its
 			// focused control. Re-anchoring the timeline here would consume the key before the
 			// modal's own focus trap can recover.
@@ -82,6 +90,13 @@ export const useTimelineViewportFocus = ({enabled, viewportRef, rightEdgeSpotlig
 			const current = spotlight.getCurrent();
 			// Focus lives elsewhere on screen (rail, search input, header) — leave it to Spotlight.
 			if (current && current !== document.body && document.contains(current) && !viewport.contains(current)) return;
+
+			if (page) {
+				viewport.scrollTop = Math.max(0, viewport.scrollTop + page * vr.height * PAGE_FRACTION);
+				consume(event);
+				focusFirstInView(viewport, PAGE_FOCUS_TRIES);
+				return;
+			}
 
 			const cards = renderedCards(viewport);
 			const focused = current && viewport.contains(current) ? current : null;
@@ -141,6 +156,16 @@ export function focusTimelineViewport(viewport: HTMLElement, preferred?: HTMLEle
 	if (!target) return false;
 	focusCard(target, viewport);
 	return true;
+}
+
+// Immuch360: after a page scroll, the top-left card of the new page once it is rendered; nothing while it is not, so
+// that the view is never dragged back to a card of the old page
+function focusFirstInView(viewport: HTMLElement, tries: number): void {
+	window.setTimeout(() => {
+		const card = topLeftInView(renderedCards(viewport), viewport.getBoundingClientRect());
+		if (card) focusCard(card, viewport);
+		else if (tries > 1) focusFirstInView(viewport, tries - 1);
+	}, PAGE_FOCUS_DELAY_MS);
 }
 
 function consume(event: KeyboardEvent): void {

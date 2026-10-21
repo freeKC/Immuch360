@@ -77,7 +77,7 @@ in [src/immuch360/keys.ts](src/immuch360/keys.ts).
 | Arrows | 37 to 40 | move the focus | Left and Right: previous, next; Up: turn 90°; Down: controls; zoomed in: move | turn the view while held | Left and Right: previous, next (alone: 10 s); Up, Down: controls |
 | OK | 13 | open | show or hide the controls | controls, zoom button focused | controls |
 | Back | 461, 1536, 8, 10009, 27 | back | zoom out, then close | close | close the controls, then the video |
-| Channel up, down | 33, 34 | | zoom in, out | zoom in, out | |
+| Channel up, down | 33, 34 | timeline: a page up, down | zoom in, out | zoom in, out | |
 | Play, Pause, Play/Pause | 415, 19, 179 | | | | play, pause, toggle |
 | Rewind, Fast forward | 412, 417 | | | | 10 s back, forward |
 | Stop | 413 | | | | close the video |
