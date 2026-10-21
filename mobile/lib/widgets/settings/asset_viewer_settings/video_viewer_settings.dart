@@ -9,6 +9,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_ui/immich_ui.dart';
 
 class VideoViewerSettings extends HookConsumerWidget {
@@ -18,7 +19,9 @@ class VideoViewerSettings extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final viewer = ref.watch(appConfigProvider).viewer;
     final useAutoPlayVideo = useState(viewer.autoPlayVideo);
-    final useLoopVideo = useState(viewer.loopVideo);
+    // A TV has its own Looping setting, off by default (see loopVideoProvider)
+    final isTelevision = ref.watch(tvDeviceProvider).isTelevision;
+    final useLoopVideo = useState(isTelevision ? viewer.loopVideoOnTv : viewer.loopVideo);
     // The source picked, null until the user picks one
     final usePickedVideoSource = useState(viewer.videoSource);
     final useSpatial25d = useState(viewer.spatial25d);
@@ -36,7 +39,9 @@ class VideoViewerSettings extends HookConsumerWidget {
       unawaited(ref.read(settingsProvider).write(.viewerAutoPlayVideo, useAutoPlayVideo.value));
     });
     useValueChanged<bool, void>(useLoopVideo.value, (_, _) {
-      unawaited(ref.read(settingsProvider).write(.viewerLoopVideo, useLoopVideo.value));
+      unawaited(
+        ref.read(settingsProvider).write(isTelevision ? .viewerLoopVideoOnTv : .viewerLoopVideo, useLoopVideo.value),
+      );
     });
     useValueChanged<bool, void>(useSpatial25d.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerSpatial25d, useSpatial25d.value));

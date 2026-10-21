@@ -2,18 +2,28 @@ import 'dart:math';
 
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/models/cast/cast_manager_state.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/cast.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/widgets/asset_viewer/animated_play_pause.dart';
 
+/// Play, pause and seek for the video of the asset viewer. They hide 5 s after they show while it plays, and 5 s after
+/// the last key that reaches them.
+///
+/// On a TV (the remote control layout) they also hide while the video loads, every key of the remote starts the 5 s
+/// again wherever it goes, they show when the video ends, and -10 s and +10 s buttons follow play and pause, for the
+/// remotes without fast forward and rewind: left and right go to the previous or next asset there (see
+/// remoteVideoArrows).
 class VideoControls extends ConsumerStatefulWidget {
   final String videoPlayerName;
 
@@ -34,7 +44,8 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
   @override
   void initState() {
     super.initState();
-    _hideTimer = RestartableTimer(const Duration(seconds: 5), _onHideTimer);
+    _hideTimer = RestartableTimer(videoControlsHideAfter, _onHideTimer);
+    HardwareKeyboard.instance.addHandler(_onAnyKey);
   }
 
   @override
@@ -47,16 +58,46 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
 
   @override
   void dispose() {
+    HardwareKeyboard.instance.removeHandler(_onAnyKey);
     _hideTimer.cancel();
     super.dispose();
+  }
+
+  /// On a TV every key starts the 5 s again, the keys that the viewer takes itself (fast forward, play and pause...)
+  /// included: the controls hide 5 s after the last key, never under a user who is still using the remote
+  bool _onAnyKey(KeyEvent event) {
+    if (mounted && event is! KeyUpEvent && ref.read(tvModeProvider)) {
+      _hideTimer.reset();
+    }
+    return false;
   }
 
   void _onHideTimer() {
     if (!mounted) {
       return;
     }
-    if (ref.read(_provider).status == VideoPlaybackStatus.playing) {
+    final tvMode = ref.read(tvModeProvider);
+    // On a TV, not under a menu or a dialog of the viewer: 5 s once it closes
+    if (tvMode && !(ModalRoute.of(context)?.isCurrent ?? true)) {
+      _hideTimer.reset();
+      return;
+    }
+    final status = ref.read(_provider).status;
+    // A TV also hides them while the video loads: a slow network would keep them there for ever
+    if (status == VideoPlaybackStatus.playing || (tvMode && status == VideoPlaybackStatus.buffering)) {
       ref.read(assetViewerProvider.notifier).setControls(false);
+    }
+  }
+
+  /// On a TV the controls show when the video reaches its end (loop off): the replay button and the time are there.
+  /// A video just loaded is reported ended too, at its start, which does not count.
+  void _onStatus(VideoPlaybackStatus? previous, VideoPlaybackStatus status) {
+    _hideTimer.reset();
+    if (status == VideoPlaybackStatus.completed &&
+        previous != VideoPlaybackStatus.completed &&
+        ref.read(tvModeProvider) &&
+        ref.read(_provider).position > Duration.zero) {
+      ref.read(assetViewerProvider.notifier).setControls(true);
     }
   }
 
@@ -67,6 +108,24 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
     }
 
     ref.read(_provider.notifier).toggle();
+  }
+
+  /// The -10 s and +10 s buttons of a TV
+  void _seekBy(bool isCasting, Duration delta) {
+    _hideTimer.reset();
+    if (!isCasting) {
+      ref.read(_provider.notifier).seekBy(delta);
+      return;
+    }
+    final cast = ref.read(castProvider);
+    var target = cast.currentTime + delta;
+    if (target < Duration.zero) {
+      target = Duration.zero;
+    }
+    if (cast.duration > Duration.zero && target > cast.duration) {
+      target = cast.duration;
+    }
+    ref.read(castProvider.notifier).seekTo(target);
   }
 
   void _onSeek(bool isCasting, double value) {
@@ -100,10 +159,11 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
         _hideTimer.reset();
       }
     });
-    ref.listen(_provider.select((v) => v.status), (_, _) => _hideTimer.reset());
+    ref.listen(_provider.select((v) => v.status), _onStatus);
 
     final notifier = ref.watch(_provider.notifier);
     final isLoaded = duration != Duration.zero;
+    final tvMode = ref.watch(tvModeProvider);
 
     // Every key that reaches the controls (a remote moving between them) starts the 5 s again: they hide 5 s after the
     // last key, not under a user who is still using them
@@ -137,6 +197,28 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
                 // The computers' player lists the audio tracks of a video that has several
                 if (CurrentPlatform.isDesktop && !isCasting)
                   const DesktopAudioTrackButton(shadows: VideoControls._controlShadows),
+                // A remote without fast forward and rewind keys seeks with these: on a TV left and right go to the
+                // previous or next asset. After play and pause, which OK focuses first.
+                if (tvMode) ...[
+                  IconButton(
+                    key: const Key('video_controls_seek_back'),
+                    iconSize: 32,
+                    padding: const EdgeInsets.all(12),
+                    constraints: const BoxConstraints(),
+                    tooltip: context.t.desktop_video_seek_back,
+                    icon: const Icon(Icons.replay_10, color: Colors.white, shadows: VideoControls._controlShadows),
+                    onPressed: isLoaded ? () => _seekBy(isCasting, -remoteSeekStep) : null,
+                  ),
+                  IconButton(
+                    key: const Key('video_controls_seek_forward'),
+                    iconSize: 32,
+                    padding: const EdgeInsets.all(12),
+                    constraints: const BoxConstraints(),
+                    tooltip: context.t.desktop_video_seek_forward,
+                    icon: const Icon(Icons.forward_10, color: Colors.white, shadows: VideoControls._controlShadows),
+                    onPressed: isLoaded ? () => _seekBy(isCasting, remoteSeekStep) : null,
+                  ),
+                ],
                 const Spacer(),
                 IgnorePointer(
                   child: Text(
@@ -152,10 +234,10 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
                 const SizedBox(width: 12),
               ],
             ),
-            // On a TV the viewer seeks with left and right: a focused slider would keep the arrows (Flutter issue
-            // 54984)
+            // On a TV the arrows belong to the viewer and to the buttons: a focused slider would keep them (Flutter
+            // issue 54984)
             ExcludeFocus(
-              excluding: ref.watch(tvModeProvider),
+              excluding: tvMode,
               child: Slider(
                 value: min(position.inMicroseconds.toDouble(), duration.inMicroseconds.toDouble()),
                 min: 0,

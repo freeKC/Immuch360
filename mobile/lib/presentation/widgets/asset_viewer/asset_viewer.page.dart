@@ -145,9 +145,6 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   final _topActionsFocus = FocusNode(debugLabel: 'Asset viewer actions', canRequestFocus: false, skipTraversal: true);
   final _bottomBarFocus = FocusNode(debugLabel: 'Asset viewer bottom bar', canRequestFocus: false, skipTraversal: true);
 
-  /// "Paused: the arrows go to the previous or next item" shows once per opening of the viewer
-  bool _pausedHintShown = false;
-
   void _onTapNavigate(int direction) {
     final page = _pageController.page?.toInt();
     if (page == null) {
@@ -385,13 +382,21 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
 
   /// The keys of a remote control, a keyboard or a game pad. Next, previous, info and the media keys work wherever
   /// the focus is in the viewer; the arrows and OK only while the viewer itself has it, else they belong to the
-  /// focused button. A photo: left and right go to the previous or next asset, OK shows or hides the controls. A video
-  /// that plays: OK pauses, left and right seek by 10 s (Play TV criterion TV-PC). A paused video: OK plays, left and
-  /// right go to the previous or next asset. Up and Down show the controls and focus the top or the bottom bar.
+  /// focused button. A photo: left and right go to the previous or next asset, OK shows or hides the controls. Up and
+  /// Down show the controls and focus the top or the bottom bar. Fast forward and rewind seek a video by 10 s.
+  ///
+  /// A video on a TV: left and right go to the previous or next asset whatever the video does, OK shows the controls
+  /// with play and pause focused, and any other key but Back, the volume and info shows them too (see
+  /// [remoteVideoArrows], [remoteKeyShowsVideoControls]). Elsewhere: OK pauses and plays, left and right seek by 10 s
+  /// while it plays and go to the previous or next asset once it is paused or ended.
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     final key = event.logicalKey;
     final press = isRemotePress(event);
     final video = _videoPlayer;
+    final tvMode = ref.read(tvModeProvider);
+    if (tvMode && video != null && press && remoteKeyShowsVideoControls(key)) {
+      _showVideoControls();
+    }
     if (remoteDetailsKeys.contains(key)) {
       if (press) {
         _toggleDetails();
@@ -431,7 +436,10 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     final playing = video != null && _isPlaying(video);
     if (remoteOkKeys.contains(key)) {
       if (press) {
-        if (video != null) {
+        if (video != null && remoteVideoOkFocusesControls(tvMode: tvMode)) {
+          // Play and pause, the first button of the bottom bar: a second OK presses it
+          _showControlsAndFocus(_bottomBarFocus, withBack: false);
+        } else if (video != null) {
           _setPlaying(video, !playing);
         } else if (ref.read(assetViewerProvider).showingControls) {
           ref.read(assetViewerProvider.notifier).setControls(false);
@@ -444,7 +452,10 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     }
     if (key == LogicalKeyboardKey.arrowLeft || key == LogicalKeyboardKey.arrowRight) {
       final step = key == LogicalKeyboardKey.arrowRight ? 1 : -1;
-      if (playing) {
+      final arrows = video == null
+          ? RemoteVideoArrows.navigate
+          : remoteVideoArrows(tvMode: tvMode, playing: playing, hasNeighbours: _totalAssets > 1);
+      if (video != null && arrows == RemoteVideoArrows.seek) {
         // Held, it keeps seeking
         if (event is! KeyUpEvent) {
           _seekBy(video, remoteSeekStep * step);
@@ -474,7 +485,6 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     if (!play) {
       unawaited(notifier.pause());
       ref.read(assetViewerProvider.notifier).setControls(true);
-      _showPausedHint();
       return;
     }
     if (ref.read(video).status == VideoPlaybackStatus.completed) {
@@ -484,26 +494,18 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     }
   }
 
-  /// Once per opening: paused, the arrows no longer seek but go to the next asset
-  void _showPausedHint() {
-    if (_pausedHintShown || !ref.read(tvModeProvider)) {
-      return;
-    }
-    _pausedHintShown = true;
-    context.scaffoldMessenger.showSnackBar(SnackBar(content: Text(context.t.tv_paused_arrows_hint)));
+  void _seekBy(AutoDisposeStateNotifierProvider<VideoPlayerNotifier, VideoPlayerState> video, Duration delta) {
+    ref.read(video.notifier).seekBy(delta);
+    ref.read(assetViewerProvider.notifier).setControls(true);
   }
 
-  void _seekBy(AutoDisposeStateNotifierProvider<VideoPlayerNotifier, VideoPlayerState> video, Duration delta) {
-    final playback = ref.read(video);
-    var target = playback.position + delta;
-    if (target < Duration.zero) {
-      target = Duration.zero;
+  /// Shows the controls of the video on screen, not over its details. They hide 5 s after the last key while it plays
+  /// (see VideoControls).
+  void _showVideoControls() {
+    final viewer = ref.read(assetViewerProvider);
+    if (!viewer.showingControls && !viewer.showingDetails) {
+      ref.read(assetViewerProvider.notifier).setControls(true);
     }
-    if (playback.duration > Duration.zero && target > playback.duration) {
-      target = playback.duration;
-    }
-    ref.read(video.notifier).seekTo(target);
-    ref.read(assetViewerProvider.notifier).setControls(true);
   }
 
   void _toggleDetails() {
