@@ -212,8 +212,12 @@ export const SphereView = forwardRef<SphereViewHandle, SphereViewProps>(
 				const renderer = rendererRef.current;
 				if (!renderer) return;
 				const decoded = await decodeFrame(bytes, sniffImageType(bytes), Math.min(TEXTURE_CAP, renderer.maxTextureSize()));
-				if (cancelled) return;
+				if (cancelled) {
+					decoded.release();
+					return;
+				}
 				renderer.setFrame(decoded.source, decoded.width, decoded.height);
+				decoded.release();
 				frameRef.current = {width: decoded.naturalWidth, height: decoded.naturalHeight, gpano};
 				const initial = gpano?.initialView ? initialViewDirection(gpano.initialView) : {longitude: 0, latitude: 0};
 				m.yaw = initial.longitude;

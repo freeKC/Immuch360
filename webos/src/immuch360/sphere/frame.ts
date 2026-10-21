@@ -1,43 +1,32 @@
 // Immuch360: turns the bytes of a preview into a frame the sphere can upload.
 //
 // The pixels must be of the app's own origin, or WebGL refuses them (a picture loaded from the server by <img> taints
-// the texture). The bytes are fetched once (they also hold the GPano tags), wrapped in a Blob and decoded by an
-// Image from its object URL. A frame wider or taller than the cap is drawn into a smaller canvas first.
+// the texture). The bytes are fetched once (they also hold the GPano tags) and decoded from a Blob: by
+// createImageBitmap where the engine has it (Chromium 50 and later, off the main thread, and a bitmap from a Blob is
+// always clean), else by an Image from an object URL. A frame wider or taller than the cap is drawn into a smaller
+// canvas first. release() frees the decoded picture once it is uploaded.
 
 import {fitTexture} from './SphereRenderer';
 
 export interface DecodedFrame {
-	source: HTMLImageElement | HTMLCanvasElement;
+	source: HTMLImageElement | HTMLCanvasElement | ImageBitmap;
 	width: number;
 	height: number;
 	/** The size of the picture before any downscale */
 	naturalWidth: number;
 	naturalHeight: number;
+	release: () => void;
 }
 
-export function decodeFrame(bytes: ArrayBuffer, mimeType: string, maxSide: number): Promise<DecodedFrame> {
+type Picture = HTMLImageElement | ImageBitmap;
+
+function loadImage(blob: Blob): Promise<HTMLImageElement> {
 	return new Promise((resolve, reject) => {
-		const url = URL.createObjectURL(new Blob([bytes], {type: mimeType}));
+		const url = URL.createObjectURL(blob);
 		const image = new Image();
 		image.onload = () => {
 			URL.revokeObjectURL(url);
-			const naturalWidth = image.naturalWidth;
-			const naturalHeight = image.naturalHeight;
-			const size = fitTexture(naturalWidth, naturalHeight, maxSide);
-			if (size.width === naturalWidth && size.height === naturalHeight) {
-				resolve({source: image, width: naturalWidth, height: naturalHeight, naturalWidth, naturalHeight});
-				return;
-			}
-			const canvas = document.createElement('canvas');
-			canvas.width = size.width;
-			canvas.height = size.height;
-			const context = canvas.getContext('2d');
-			if (!context) {
-				reject(new Error('no 2D canvas'));
-				return;
-			}
-			context.drawImage(image, 0, 0, size.width, size.height);
-			resolve({source: canvas, width: size.width, height: size.height, naturalWidth, naturalHeight});
+			resolve(image);
 		};
 		image.onerror = () => {
 			URL.revokeObjectURL(url);
@@ -45,6 +34,52 @@ export function decodeFrame(bytes: ArrayBuffer, mimeType: string, maxSide: numbe
 		};
 		image.src = url;
 	});
+}
+
+async function decode(blob: Blob): Promise<{picture: Picture; width: number; height: number}> {
+	if (typeof createImageBitmap === 'function') {
+		try {
+			const bitmap = await createImageBitmap(blob);
+			return {picture: bitmap, width: bitmap.width, height: bitmap.height};
+		} catch {
+			// some engines refuse a format createImageBitmap does not know: the Image below may still read it
+		}
+	}
+	const image = await loadImage(blob);
+	return {picture: image, width: image.naturalWidth, height: image.naturalHeight};
+}
+
+const close = (picture: Picture) => {
+	if ('close' in picture && typeof picture.close === 'function') picture.close();
+};
+
+export async function decodeFrame(bytes: ArrayBuffer, mimeType: string, maxSide: number): Promise<DecodedFrame> {
+	const {picture, width, height} = await decode(new Blob([bytes], {type: mimeType}));
+	const size = fitTexture(width, height, maxSide);
+	if (size.width === width && size.height === height) {
+		return {source: picture, width, height, naturalWidth: width, naturalHeight: height, release: () => close(picture)};
+	}
+	const canvas = document.createElement('canvas');
+	canvas.width = size.width;
+	canvas.height = size.height;
+	const context = canvas.getContext('2d');
+	if (!context) {
+		close(picture);
+		throw new Error('no 2D canvas');
+	}
+	context.drawImage(picture, 0, 0, size.width, size.height);
+	close(picture);
+	return {
+		source: canvas,
+		width: size.width,
+		height: size.height,
+		naturalWidth: width,
+		naturalHeight: height,
+		release: () => {
+			canvas.width = 0;
+			canvas.height = 0;
+		},
+	};
 }
 
 /** The type of a preview from its first bytes: Immich writes JPEG or WebP previews */

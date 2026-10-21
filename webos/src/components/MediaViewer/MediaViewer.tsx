@@ -135,12 +135,13 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	// Immuch360: the top bar of a video (close, date, position) hides with Sandstone's transport bar instead of staying
 	// over the film; it shows for 5 s when a video opens, as the controls do after a key
 	const [videoIntro, setVideoIntro] = useState<string | null>(null);
+	const assetId = asset?.id;
 	useEffect(() => {
-		if (!isVideo || !asset) return undefined;
-		setVideoIntro(asset.id);
+		if (!isVideo || !assetId) return undefined;
+		setVideoIntro(assetId);
 		const timer = window.setTimeout(() => setVideoIntro(null), CONTROLS_HIDE_AFTER_MS);
 		return () => window.clearTimeout(timer);
-	}, [isVideo, asset]);
+	}, [isVideo, assetId]);
 	const chromeVisible = isVideo ? videoControlsOpen || videoIntro === asset?.id : controlsVisible;
 
 	// Immuch360: Left and Right go to the neighbours whatever the video does; a video alone in the viewer seeks 10 s

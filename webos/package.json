@@ -19,7 +19,7 @@
 		"license": "enact license",
 		"test": "npm run i18n && enact test",
 		"test-watch": "enact test --watch",
-		"test-unit": "node --import ./tools/ts-hooks.mjs --test \"test/unit/*.test.mjs\"",
+		"test-unit": "npm run i18n && node --import ./tools/ts-hooks.mjs --test \"test/unit/*.test.mjs\"",
 		"test-service": "node service/test.js",
 		"test-tools": "node --test tools/legacy-css.test.mjs"
 	},
