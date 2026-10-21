@@ -19,10 +19,21 @@ gzip without a name or a date), so the same commits give the same file. It is an
 (mobile/packages/dart_smb2/libsmb2/, written by `mise //mobile:codegen`, whose task runs this script) and a file of
 every release (immuch360-release.yml, immuch360-desktop.yml).
 
-  pack_sources.py OUT [--libsmb2-archive FILE] [--scripts-repository URL] [--scripts-commit SHA]
+Both inputs come from third parties: the scripts from ales-drnz/libsmb2-scripts, the archive of libsmb2 from GitHub's
+archive endpoint. When either fails (the repository removed or rewritten, or GitHub serving the archive with other
+bytes, as it did in January 2023), the same input is taken from a release of the fork made for that commit of the
+scripts, libsmb2-inputs-<first 7 characters of the commit>: a git bundle of the scripts,
+libsmb2-scripts-<commit>.bundle, and the archive of libsmb2, libsmb2-<libsmb2 commit>.tar.gz. The fallback goes
+through the same checks: the commit id of the scripts, which git verifies every fetched object against, and the
+SHA-256 the scripts pin for libsmb2. So the archive written is the same whichever source gave each input.
 
---libsmb2-archive takes the archive of libsmb2 from a file instead of downloading it (still checked by its SHA-256);
---scripts-repository and --scripts-commit name other scripts (the tests use a local repository). Needs git and, without
+  pack_sources.py OUT [--libsmb2-archive FILE] [--scripts-repository URL] [--scripts-commit SHA]
+                  [--libsmb2-url TEMPLATE] [--fallback LOCATION]
+
+--libsmb2-archive takes the archive of libsmb2 from a file instead of downloading it (still checked by its SHA-256,
+no fallback); --scripts-repository and --scripts-commit name other scripts (the tests use a local repository);
+--libsmb2-url is the upstream address of the archive of libsmb2, {commit} standing for its commit; --fallback is the
+release (or a local folder) holding the two fallback files, an empty value for none. Needs git and, without
 --libsmb2-archive, the network. Exit codes: 0 written, 1 a check failed (commit, SHA-256, tree), 2 bad arguments.
 """
 from __future__ import annotations
@@ -46,6 +57,11 @@ SCRIPTS_REPOSITORY = 'https://github.com/ales-drnz/libsmb2-scripts.git'
 # libsmb2-scripts 0.1.3 (2026-09-19), the scripts of dart_smb2's release libsmb2-r8
 SCRIPTS_COMMIT = 'f0688e739ec56842981e455cf8eba4a34e7682e7'
 LIBSMB2_URL = 'https://github.com/sahlberg/libsmb2/archive/{commit}.tar.gz'
+# The two inputs again, under the fork's control, tried after the upstream source of each fails: a release of
+# freeKC/Immuch360 per commit of the scripts, which only the owner changes
+FALLBACK = 'https://github.com/freeKC/Immuch360/releases/download/libsmb2-inputs-{short}'
+FALLBACK_SCRIPTS = 'libsmb2-scripts-{commit}.bundle'
+FALLBACK_LIBSMB2 = 'libsmb2-{commit}.tar.gz'
 TOP = 'immuch360-libsmb2-sources'
 
 
@@ -54,20 +70,48 @@ class Problem(Exception):
 
 
 def git(cwd: pathlib.Path, *arguments: str, data: bytes | None = None) -> bytes:
-    result = subprocess.run(['git', *arguments], cwd=cwd, input=data, capture_output=True)
+    # A repository that is gone makes GitHub ask for a login: a failure here, never a prompt
+    environment = dict(os.environ, GIT_TERMINAL_PROMPT='0')
+    result = subprocess.run(['git', *arguments], cwd=cwd, input=data, capture_output=True, env=environment)
     if result.returncode != 0:
         raise Problem(f'git {" ".join(arguments)}: {result.stderr.decode(errors="replace").strip()}')
     return result.stdout
 
 
-def scripts_tree(repository: str, commit: str, work: pathlib.Path) -> tuple[dict[str, tuple[int, bytes]], int]:
-    """The files of the scripts at [commit] (path: (mode, content)), read from git's objects so that no checkout
-    setting (line ends) changes them, and the commit date"""
-    git(work, 'init', '-q')
-    git(work, 'fetch', '-q', '--depth', '1', repository, commit)
+def fetch_commit(work: pathlib.Path, source: str, commit: str, shallow: bool) -> None:
+    git(work, 'fetch', '-q', *(['--depth', '1'] if shallow else []), source, commit)
     fetched = git(work, 'rev-parse', 'FETCH_HEAD').decode().strip()
     if fetched != commit:
-        raise Problem(f'{repository} gave {fetched}, not the pinned commit {commit}')
+        raise Problem(f'{source} gave {fetched}, not the pinned commit {commit}')
+
+
+def fetch_scripts(work: pathlib.Path, repository: str, commit: str, fallback: str) -> None:
+    """Fetches [commit] of the scripts into a new repository, work/scripts, from [repository], else from the bundle of
+    [fallback] (none when empty)"""
+    repo = work / 'scripts'
+    repo.mkdir()
+    git(repo, 'init', '-q')
+    try:
+        fetch_commit(repo, repository, commit, shallow=True)
+        return
+    except Problem as problem:
+        if not fallback:
+            raise
+        print(f'  {problem}', file=sys.stderr)
+    location = f'{fallback}/{FALLBACK_SCRIPTS.format(commit=commit)}'
+    print(f'  the scripts from the fallback {location}')
+    bundle = work / 'scripts.bundle'
+    bundle.write_bytes(fetch(location))
+    # A bundle has no shallow fetch; git still checks every object it takes against the commit id
+    fetch_commit(repo, str(bundle), commit, shallow=False)
+
+
+def scripts_tree(repository: str, commit: str, work: pathlib.Path,
+                 fallback: str = '') -> tuple[dict[str, tuple[int, bytes]], int]:
+    """The files of the scripts at [commit] (path: (mode, content)), read from git's objects so that no checkout
+    setting (line ends) changes them, and the commit date"""
+    fetch_scripts(work, repository, commit, fallback)
+    work = work / 'scripts'
     entries = []
     for line in git(work, 'ls-tree', '-r', '-z', '--full-tree', commit).split(b'\0'):
         if not line:
@@ -97,6 +141,37 @@ def pinned(versions: str, name: str) -> str:
     if not match:
         raise Problem(f'no {name} in scripts/shared/_versions.sh')
     return match.group(1)
+
+
+def fetch(location: str) -> bytes:
+    """The bytes at [location], an address (downloaded) or a path on this machine"""
+    if re.match(r'^[a-z][a-z0-9+.-]*://', location):
+        return download(location)
+    try:
+        return pathlib.Path(location).read_bytes()
+    except OSError as error:
+        raise Problem(f'{location}: {error.strerror or error}') from error
+
+
+def libsmb2_input(upstream: str, fallback: str, commit: str, sha256: str) -> bytes:
+    """The archive of libsmb2 at [commit] with the SHA-256 the scripts pin: from [upstream], else from [fallback]
+    (none when empty)"""
+    locations = [upstream.format(commit=commit)]
+    if fallback:
+        locations.append(f'{fallback}/{FALLBACK_LIBSMB2.format(commit=commit)}')
+    for index, location in enumerate(locations):
+        if index:
+            print(f'  the archive of libsmb2 from the fallback {location}')
+        try:
+            data = fetch(location)
+        except Problem as problem:
+            print(f'  {problem}', file=sys.stderr)
+            continue
+        digest = hashlib.sha256(data).hexdigest()
+        if digest == sha256:
+            return data
+        print(f'  {location}: SHA-256 {digest}, not the one the scripts pin', file=sys.stderr)
+    raise Problem(f'no archive of libsmb2 with the SHA-256 the scripts pin, {sha256}, at {" or ".join(locations)}')
 
 
 def download(url: str) -> bytes:
@@ -182,10 +257,14 @@ def archive(files: dict[str, tuple[int, bytes]], date: int) -> bytes:
     return packed.getvalue()
 
 
-def pack(out: pathlib.Path, repository: str, commit: str, libsmb2_archive: pathlib.Path | None) -> str:
+def pack(out: pathlib.Path, repository: str, commit: str, libsmb2_archive: pathlib.Path | None,
+         libsmb2_url: str = LIBSMB2_URL, fallback: str | None = None) -> str:
+    if fallback is None:
+        fallback = FALLBACK.format(short=commit[:7])
+    fallback = fallback.rstrip('/')
     with tempfile.TemporaryDirectory(prefix='immuch360-libsmb2-') as temporary:
         print(f'== libsmb2-scripts at {commit}')
-        tree, date = scripts_tree(repository, commit, pathlib.Path(temporary))
+        tree, date = scripts_tree(repository, commit, pathlib.Path(temporary), fallback)
     if 'scripts/shared/_versions.sh' not in tree:
         raise Problem('no scripts/shared/_versions.sh in the scripts')
     versions = tree['scripts/shared/_versions.sh'][1].decode()
@@ -196,12 +275,12 @@ def pack(out: pathlib.Path, repository: str, commit: str, libsmb2_archive: pathl
     print(f'== libsmb2 at {libsmb2_commit}')
     if libsmb2_archive is not None:
         libsmb2 = libsmb2_archive.read_bytes()
+        digest = hashlib.sha256(libsmb2).hexdigest()
+        if digest != libsmb2_sha256:
+            raise Problem(f'the archive of libsmb2 has the SHA-256 {digest}, the scripts pin {libsmb2_sha256}')
     else:
-        libsmb2 = download(LIBSMB2_URL.format(commit=libsmb2_commit))
-    digest = hashlib.sha256(libsmb2).hexdigest()
-    if digest != libsmb2_sha256:
-        raise Problem(f'the archive of libsmb2 has the SHA-256 {digest}, the scripts pin {libsmb2_sha256}')
-    print(f'  SHA-256 {digest}, as the scripts pin it')
+        libsmb2 = libsmb2_input(libsmb2_url, fallback, libsmb2_commit, libsmb2_sha256)
+    print(f'  SHA-256 {libsmb2_sha256}, as the scripts pin it')
 
     scripts = f'libsmb2-scripts-{commit}'
     files = {f'{TOP}/{scripts}/{path}': entry for path, entry in tree.items()}
@@ -225,6 +304,8 @@ def main(argv: list[str]) -> int:
     parser.add_argument('--libsmb2-archive', type=pathlib.Path)
     parser.add_argument('--scripts-repository', default=SCRIPTS_REPOSITORY)
     parser.add_argument('--scripts-commit', default=SCRIPTS_COMMIT)
+    parser.add_argument('--libsmb2-url', default=LIBSMB2_URL)
+    parser.add_argument('--fallback', help='default: ' + FALLBACK)
     arguments = parser.parse_args(argv)
     if not re.fullmatch(r'[0-9a-f]{40}', arguments.scripts_commit):
         print(f'--scripts-commit: not a full commit id: {arguments.scripts_commit}', file=sys.stderr)
@@ -233,7 +314,8 @@ def main(argv: list[str]) -> int:
         print(f'--libsmb2-archive: no file {arguments.libsmb2_archive}', file=sys.stderr)
         return 2
     try:
-        pack(arguments.out, arguments.scripts_repository, arguments.scripts_commit, arguments.libsmb2_archive)
+        pack(arguments.out, arguments.scripts_repository, arguments.scripts_commit, arguments.libsmb2_archive,
+             arguments.libsmb2_url, arguments.fallback)
     except Problem as problem:
         print(f'pack_sources.py: {problem}', file=sys.stderr)
         return 1

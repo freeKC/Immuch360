@@ -38,16 +38,19 @@ Copied from pub.dev (BSD-3-Clause, https://github.com/ales-drnz/dart_smb2), with
   `macos/dart_smb2/Package.swift`, whose `smb2kit:remote` block is swapped for the `smb2kit:local` one (the framework in
   `Frameworks/libsmb2.xcframework` next to it); the podspecs serve a CocoaPods build only.
 
-- `libsmb2/Immuch360-libsmb2-sources.tar.gz` (not in git): the corresponding source of every libsmb2 of the app, so
-  that each build carries it next to the binary, the store builds included. `.github/desktop/libsmb2/pack_sources.py`
-  packs it from the pinned commits only (libsmb2-scripts `f0688e739ec5` as git stores it, the libsmb2 archive it pins
-  in its cache, the Linux build script and a README), the same way each time; the task `codegen:libsmb2-sources` of
-  `mobile/mise.toml` runs it, so `mise //mobile:codegen` writes it before any build, on the CI (phone release,
-  desktop, Codemagic) and on a developer's machine alike, and git ignores it. A build without it still works, without
-  the archive: the CI checks that the APKs, the Windows ZIP, the `.deb` and the macOS app hold it. The Linux job of the
-  desktop workflow builds `libsmb2.so` from that same file, offline, and each release attaches it
-  (`Immuch360-libsmb2-sources.tar.gz` on the phone releases, `Immuch360-Desktop-<version>-libsmb2-sources.tar.gz` on
-  the desktop ones). The licence page entry and `NOTICE` say where it is in each package and how to extract it.
+- `libsmb2/Immuch360-libsmb2-sources.tar.gz` (not in git): the corresponding source of every libsmb2 of the app, so that
+  each build carries it next to the binary, the store builds included. `.github/desktop/libsmb2/pack_sources.py` packs
+  it from the pinned commits only (libsmb2-scripts `f0688e739ec5` as git stores it, the libsmb2 archive it pins in its
+  cache, the Linux build script and a README), the same way each time; the task `codegen:libsmb2-sources` of
+  `mobile/mise.toml` runs it, so `mise //mobile:codegen` writes it before any build, on the CI (phone release, desktop,
+  Codemagic) and on a developer's machine alike, and git ignores it. When an upstream source fails (the repository of
+  the scripts removed or rewritten, GitHub serving the libsmb2 archive with other bytes), the script takes that input
+  from the fork's release `libsmb2-inputs-f0688e7` (a git bundle of the scripts and the libsmb2 archive), checked by the
+  same commit id and SHA-256, so the archive stays the same. A build without it still works, without the archive: the CI
+  checks that the APKs, the Windows ZIP, the `.deb` and the macOS app hold it. The Linux job of the desktop workflow
+  builds `libsmb2.so` from that same file, offline, and each release attaches it (`Immuch360-libsmb2-sources.tar.gz` on
+  the phone releases, `Immuch360-Desktop-<version>-libsmb2-sources.tar.gz` on the desktop ones). The licence page entry
+  and `NOTICE` say where it is in each package and how to extract it.
 
 The binaries of release `libsmb2-r8` are built from the sources named above (libsmb2-scripts `f0688e739ec5`, libsmb2
 `595d128b4d11`), which the notice gives as their corresponding source. Checked on 2026-10-21 by building them again:

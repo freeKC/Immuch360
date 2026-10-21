@@ -125,6 +125,9 @@ The same sources are public upstream:
 https://github.com/ales-drnz/libsmb2-scripts/tree/f0688e739ec56842981e455cf8eba4a34e7682e7
 and
 https://github.com/sahlberg/libsmb2/archive/595d128b4d11a88a335eee961689a157e4f76cd3.tar.gz
+Immuch360 keeps a copy of both, a git bundle of libsmb2-scripts and that
+archive of libsmb2, on its release libsmb2-inputs-f0688e7:
+https://github.com/freeKC/Immuch360/releases/tag/libsmb2-inputs-f0688e7
 
 YOUR RIGHTS
 

@@ -122,14 +122,31 @@ void main() {
 
   tearDown(() => root.deleteSync(recursive: true));
 
-  ScriptRun pack(String out, {String? libsmb2Archive, String? scriptsCommit}) => runCiScript(_script, [
+  /// The archive of libsmb2 comes from [libsmb2Archive] (by default the right one), or from [libsmb2Url] and then the
+  /// fallback when that is given. The fallback is never the fork's release on the network: a folder of the test,
+  /// absent unless the test fills it.
+  ScriptRun pack(
+    String out, {
+    String? libsmb2Archive,
+    String? scriptsCommit,
+    String? scriptsRepository,
+    String? libsmb2Url,
+    String? fallback,
+  }) => runCiScript(_script, [
     out,
     '--scripts-repository',
-    scripts,
+    scriptsRepository ?? scripts,
     '--scripts-commit',
     scriptsCommit ?? commit,
-    '--libsmb2-archive',
-    libsmb2Archive ?? libsmb2.path,
+    if (libsmb2Url == null) ...[
+      '--libsmb2-archive',
+      libsmb2Archive ?? libsmb2.path,
+    ] else ...[
+      '--libsmb2-url',
+      libsmb2Url,
+    ],
+    '--fallback',
+    fallback ?? p.join(root.path, 'no-fallback'),
   ]);
 
   test('the same commits give the same archive: the scripts as git stores them, libsmb2 in their cache, the Linux '
@@ -183,4 +200,77 @@ void main() {
     expect(run.exitCode, 1, reason: '$run');
     expect(File(out).existsSync(), isFalse);
   }, skip: _skip);
+
+  group('the fallback of the fork', () {
+    late String fallback;
+    late String upstream;
+    late String upstreamLibsmb2;
+
+    setUp(() {
+      // The release of the fork for this commit of the scripts: a git bundle of them and the archive of libsmb2
+      fallback = p.join(root.path, 'fallback');
+      Directory(fallback).createSync();
+      _git(scripts, ['bundle', 'create', '-q', p.join(fallback, 'libsmb2-scripts-$commit.bundle'), 'main']);
+      libsmb2.copySync(p.join(fallback, 'libsmb2-$_libsmb2Commit.tar.gz'));
+      // GitHub's archive endpoint, as a file of the test
+      upstream = p.join(root.path, 'upstream', 'libsmb2-{commit}.tar.gz');
+      upstreamLibsmb2 = p.join(root.path, 'upstream', 'libsmb2-$_libsmb2Commit.tar.gz');
+      Directory(p.dirname(upstreamLibsmb2)).createSync();
+    });
+
+    test('each input comes from upstream while upstream gives it, from the fallback after it fails, and the archive '
+        'is the same', () {
+      final expected = p.join(root.path, 'expected.tar.gz');
+      expect(pack(expected).exitCode, 0);
+
+      libsmb2.copySync(upstreamLibsmb2);
+      final fromUpstream = p.join(root.path, 'upstream.tar.gz');
+      final first = pack(fromUpstream, libsmb2Url: upstream, fallback: fallback);
+      expect(first.exitCode, 0, reason: '$first');
+      expect(first.output, isNot(contains('fallback')));
+      expect(File(fromUpstream).readAsBytesSync(), File(expected).readAsBytesSync());
+
+      // The repository of the scripts is gone, and GitHub serves libsmb2 with other bytes
+      File(upstreamLibsmb2).writeAsBytesSync(utf8.encode('libsmb2 at a commit, packed again'));
+      final fromFallback = p.join(root.path, 'fallback.tar.gz');
+      final second = pack(
+        fromFallback,
+        scriptsRepository: p.join(root.path, 'gone'),
+        libsmb2Url: upstream,
+        fallback: fallback,
+      );
+      expect(second.exitCode, 0, reason: '$second');
+      expect(second.output, contains('the scripts from the fallback'));
+      expect(second.output, contains('not the one the scripts pin'));
+      expect(second.output, contains('the archive of libsmb2 from the fallback'));
+      expect(File(fromFallback).readAsBytesSync(), File(expected).readAsBytesSync());
+    }, skip: _skip);
+
+    test('the fallback goes through the same checks: another libsmb2 or a bundle without the commit is refused', () {
+      File(p.join(fallback, 'libsmb2-$_libsmb2Commit.tar.gz')).writeAsBytesSync(utf8.encode('another libsmb2'));
+      final out = p.join(root.path, 'out', 'sources.tar.gz');
+      final libsmb2Run = pack(out, libsmb2Url: upstream, fallback: fallback);
+      expect(libsmb2Run.exitCode, 1, reason: '$libsmb2Run');
+      expect(libsmb2Run.output, contains('no archive of libsmb2 with the SHA-256 the scripts pin'));
+      expect(File(out).existsSync(), isFalse);
+
+      // A later commit of the scripts, which the bundle of the fallback does not hold, under its name
+      File(p.join(scripts, 'CHANGELOG.md')).writeAsStringSync('later\n');
+      _git(scripts, ['add', '.']);
+      _git(scripts, ['commit', '-q', '-m', 'later']);
+      final later = _git(scripts, ['rev-parse', 'HEAD']);
+      File(
+        p.join(fallback, 'libsmb2-scripts-$commit.bundle'),
+      ).renameSync(p.join(fallback, 'libsmb2-scripts-$later.bundle'));
+      final scriptsRun = pack(
+        out,
+        scriptsRepository: p.join(root.path, 'gone'),
+        scriptsCommit: later,
+        fallback: fallback,
+      );
+      expect(scriptsRun.exitCode, 1, reason: '$scriptsRun');
+      expect(scriptsRun.output, contains('the scripts from the fallback'));
+      expect(File(out).existsSync(), isFalse);
+    }, skip: _skip);
+  });
 }
