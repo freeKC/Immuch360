@@ -249,7 +249,7 @@ void main() {
     });
 
     test('hasDroneDjiXmp finds the namespace in the head of a file', () {
-      final xmp =
+      const xmp =
           '<x:xmpmeta><rdf:Description xmlns:drone-dji="http://www.dji.com/drone-dji/1.0/" '
           'drone-dji:GimbalPitchDegree="-90.0"/></x:xmpmeta>';
       final head = Uint8List.fromList([0xff, 0xd8, ...List.filled(300, 0x20), ...xmp.codeUnits]);

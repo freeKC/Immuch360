@@ -54,6 +54,31 @@ void main() {
     expect(await store.find(entry('/a.jpg')), isNotNull);
   });
 
+  test('knows a file imported from a drone or a card by its name, size and date, whatever the plug', () async {
+    final store = open();
+    final viaDrone = entry('/DCIM/DJI_001/DJI_20261021143000_0001_D.JPG', sourceId: 'tree:aircraft');
+    await store.add(viaDrone, 'asset-1');
+
+    final viaReader = entry('/DJI_001/DJI_20261021143000_0001_D.JPG', sourceId: 'tree:card-reader');
+    expect((await store.find(viaReader))?.remoteId, 'asset-1', reason: 'another plug, another folder');
+    expect(await store.find(entry(viaReader.path, sourceId: 'tree:x', size: 101)), isNull, reason: 'another size');
+    expect(
+      await store.find(entry(viaReader.path, sourceId: 'tree:x', modified: DateTime.utc(2026, 10, 3))),
+      isNull,
+      reason: 'another date',
+    );
+    expect(await store.find(entry(viaReader.path)), isNull, reason: 'the same name on a share is another file');
+    const undated = NetworkEntry(sourceId: 'tree:a', path: '/IMG.JPG', isDirectory: false, size: 5);
+    await store.add(undated, 'asset-2');
+    expect(
+      (await store.find(
+        const NetworkEntry(sourceId: 'tree:b', path: '/x/IMG.JPG', isDirectory: false, size: 5),
+      ))?.remoteId,
+      'asset-2',
+      reason: 'without a date, by name and size',
+    );
+  });
+
   test('forgets a file the server does not have anymore, across launches', () async {
     final store = open();
     await store.add(entry('/a.jpg'), 'asset-1');

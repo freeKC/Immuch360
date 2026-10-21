@@ -152,7 +152,10 @@ void main() {
       });
     }
 
-    Future<UploadResult> uploadStream({Map<String, String> headers = const {}}) => sut.uploadStream(
+    Future<UploadResult> uploadStream({
+      Map<String, String> headers = const {},
+      ({String filename, String xmp})? sidecar,
+    }) => sut.uploadStream(
       openRead: () {
         opened++;
         return Stream.fromIterable([bytes.sublist(0, 4), bytes.sublist(4)]);
@@ -161,6 +164,7 @@ void main() {
       filename: 'trip.mp4',
       fields: const {'deviceAssetId': 'share-1'},
       headers: headers,
+      sidecar: sidecar,
       cancelToken: null,
       logContext: 'share-1',
       httpClient: client,
@@ -189,6 +193,26 @@ void main() {
       expect(file.filename, 'trip.mp4');
       expect(file.length, bytes.length);
       expect(utf8.decode(bodies.single, allowMalformed: true), contains('the bytes of a video'));
+    });
+
+    test('sends a sidecar as the sidecarData part, in every send', () async {
+      stubStreamSend((attempt) {
+        if (attempt == 1) {
+          throw http.ClientException('Broken pipe');
+        }
+        return response(201, '{"id":"remote-1"}');
+      });
+
+      final result = await uploadStream(sidecar: (filename: 'trip.mp4.xmp', xmp: '<x:xmpmeta>GPano</x:xmpmeta>'));
+
+      expect(result.isSuccess, isTrue);
+      for (final (index, request) in sent.indexed) {
+        final files = (request as http.MultipartRequest).files;
+        expect(files.map((file) => file.field), ['assetData', 'sidecarData']);
+        expect(files.last.filename, 'trip.mp4.xmp');
+        expect(utf8.decode(bodies[index], allowMalformed: true), contains('<x:xmpmeta>GPano</x:xmpmeta>'));
+      }
+      expect(sent, hasLength(2));
     });
 
     test('opens the stream again from its start when the first send dies before a response', () async {

@@ -117,6 +117,21 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
 
   NetworkFolderKey get _folderKey => (sourceId: widget.sourceId, path: widget.path);
 
+  @override
+  void initState() {
+    super.initState();
+    // The places of drone videos that the server had not read in time are set now that it may have (see
+    // VideoLocationService.retryPending): a small file read, and nothing more when it is empty
+    try {
+      if (ref.read(hasServerProvider)) {
+        unawaited(ref.read(videoLocationServiceProvider).retryPending());
+      }
+    } catch (error) {
+      // A chore of the background: the page does not depend on it
+      _log.fine('Could not go through the places waiting for the server: $error');
+    }
+  }
+
   Future<_Folder> _load() async {
     final first = !_readOnce;
     _readOnce = true;

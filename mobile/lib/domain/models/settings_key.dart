@@ -84,7 +84,14 @@ enum SettingsKey<T> {
   slideshowDirection<SlideshowDirection>(codec: EnumCodec(SlideshowDirection.values)),
 
   // Feature message
-  featureMessageSeenRelease<SemVer>(codec: SemVerCodec());
+  featureMessageSeenRelease<SemVer>(codec: SemVerCodec()),
+
+  // Uploads from the shares and the drone page: send the spheres of drones with an XMP sidecar that makes the server
+  // show them as 360° (see NetworkUploadOptions.tagSpheres)
+  uploadTagSpheres<bool>(),
+
+  // Settings, Advanced, "DJI drones (experimental)": the DJI drone page of the Network shares (Android phones)
+  djiImportEnabled<bool>();
 
   final ValueCodec<T>? _codecOverride;
 

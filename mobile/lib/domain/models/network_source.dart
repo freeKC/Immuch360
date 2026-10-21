@@ -287,6 +287,14 @@ class NetworkEntry {
   String get name =>
       path.endsWith('/') && path.length > 1 ? path.substring(0, path.length - 1).split('/').last : path.split('/').last;
 
+  /// Whether the entry comes from a drone, a controller or a card plugged into the device (a folder picked in the
+  /// system picker, see NetworkSourceType.documentTree): the same file is found again through another cable or reader
+  /// by its name, its size and its date, not by its place
+  bool get isImported => sourceId.startsWith(importSourcePrefix);
+
+  /// The start of the id of every source of a folder picked in the system picker: such a source is never stored
+  static const importSourcePrefix = 'tree:';
+
   String get extension {
     final dot = name.lastIndexOf('.');
     return dot < 0 ? '' : name.substring(dot + 1).toLowerCase();
@@ -334,6 +342,22 @@ class NetworkEntry {
   bool get isImage => !isDirectory && imageExtensions.contains(extension);
   bool get isVideo => !isDirectory && videoExtensions.contains(extension);
   bool get isMedia => isImage || isVideo;
+
+  /// The files a camera or a drone writes beside its media, which are no media of their own and which the Immich
+  /// server refuses: the low resolution proxies (.lrf of DJI, .lrv of GoPro and Insta360), the flight data of a DJI
+  /// video (.srt), the thumbnail of a GoPro video (.thm), the sound a DJI drone records apart from its silent video
+  /// (.m4a, recorded by the phone)
+  static const companionExtensions = {'lrf', 'lrv', 'srt', 'thm', 'm4a'};
+
+  /// Whether the file is one of [companionExtensions]: never sent to the server, never listed as media
+  bool get isCompanion => !isDirectory && companionExtensions.contains(extension);
+
+  /// The media of 360° cameras the Immich server refuses (DJI .osv, GoPro .360 and .36p): shown and played from where
+  /// they are, never sent
+  static const serverRefusedExtensions = {'osv', '360', '36p'};
+
+  /// Whether the server refuses the file, see [serverRefusedExtensions]
+  bool get isRefusedByServer => !isDirectory && serverRefusedExtensions.contains(extension);
 
   /// A content type for the bridge and the players, from [mimeType] or the extension
   String get guessedMimeType {

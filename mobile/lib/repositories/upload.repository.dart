@@ -87,13 +87,16 @@ class UploadRepository {
 
   /// Sends a file that is not on this device (a file of a network share) from the stream [openRead] gives: [length]
   /// bytes named [filename], with [fields] and the extra [headers]. [openRead] is called for each send and must start
-  /// at the first byte each time: a send that dies before a response is made once more.
+  /// at the first byte each time: a send that dies before a response is made once more. A [sidecar] goes in the same
+  /// request as the sidecarData part, an XMP file the server keeps beside the asset and reads over the tags of the file
+  /// (its name must end with .xmp).
   Future<UploadResult> uploadStream({
     required Stream<List<int>> Function() openRead,
     required int length,
     required String filename,
     required Map<String, String> fields,
     Map<String, String> headers = const {},
+    ({String filename, String xmp})? sidecar,
     required Completer<void>? cancelToken,
     void Function(int bytes, int totalBytes)? onProgress,
     required String logContext,
@@ -101,6 +104,9 @@ class UploadRepository {
   }) {
     return _upload(
       buildFile: () => MultipartFile("assetData", openRead(), length, filename: filename),
+      buildSidecar: sidecar == null
+          ? null
+          : () => MultipartFile.fromBytes("sidecarData", utf8.encode(sidecar.xmp), filename: sidecar.filename),
       fields: fields,
       headers: headers,
       cancelToken: cancelToken,
@@ -112,6 +118,7 @@ class UploadRepository {
 
   Future<UploadResult> _upload({
     required MultipartFile Function() buildFile,
+    MultipartFile Function()? buildSidecar,
     required Map<String, String> fields,
     Map<String, String> headers = const {},
     required Completer<void>? cancelToken,
@@ -132,6 +139,9 @@ class UploadRepository {
       request.headers.addAll(headers);
       request.fields.addAll(fields);
       request.files.add(buildFile());
+      if (buildSidecar != null) {
+        request.files.add(buildSidecar());
+      }
       return request;
     }
 

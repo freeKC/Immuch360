@@ -133,6 +133,10 @@ const _kParamTypeOverrides = <String, String>{
   'plex_server_found.id': 'String',
   // A date written out by the caller for the locale
   'plex_token_expires.date': 'String',
+  // Sizes written out with their unit by the caller ("3.4 GB"), and the extension of a file name ("osv")
+  'upload_mobile_data_warning.size': 'String',
+  'upload_refused_reason.kind': 'String',
+  'upload_sheet_size.size': 'String',
   // The codec and the frame size of a lens, filled in by the native players: the digits alone, as for the frame sizes
   // below
   'raw_video_one_lens_decoder.codec': 'String',

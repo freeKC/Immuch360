@@ -57,9 +57,13 @@ class UploadRecordStore {
   static const _version = 1;
 
   /// The key of [entry] in the record: its share, its path, its size and its date. A file changed on its share has
-  /// another key, and is sent again.
-  static String keyOf(NetworkEntry entry) =>
-      jsonEncode([entry.sourceId, entry.path, entry.size, entry.modified?.toUtc().millisecondsSinceEpoch]);
+  /// another key, and is sent again. A file imported from a drone, a controller or a card (see
+  /// NetworkEntry.isImported) by its name, its size and its date only: the picked folder and the ids of its files
+  /// change with the cable, the card reader and each plug, its names and sizes do not (DJI names hold the second the
+  /// file was made).
+  static String keyOf(NetworkEntry entry) => entry.isImported
+      ? jsonEncode(['import', entry.name, entry.size, entry.modified?.toUtc().millisecondsSinceEpoch])
+      : jsonEncode([entry.sourceId, entry.path, entry.size, entry.modified?.toUtc().millisecondsSinceEpoch]);
 
   /// The name of the record file of the user [userId] of the server [server]. An asset id means something on its
   /// server and to its owner only: another server or another user signed in on this device has a record of its own.

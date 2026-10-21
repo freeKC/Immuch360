@@ -7,6 +7,12 @@ import 'package:immich_mobile/domain/services/dji_srt.dart';
 
 // Synthetic .SRT texts in the formats of DJI drones, at invented positions
 
+/// The line of the settings and the position of a block
+String settings(double lat, double lon) =>
+    '[iso: 100] [shutter: 1/1000.0] [fnum: 1.8] [ev: 0] [color_md: default] [focal_len: 24.00] '
+    '[latitude: ${lat.toStringAsFixed(6)}] [longitude: ${lon.toStringAsFixed(6)}] '
+    '[rel_alt: 12.300 abs_alt: 512.700] [ct: 5300] </font>';
+
 /// Neo 2 style blocks, one per frame: [fixes] positions in order
 String _neo2(List<(double, double)> fixes, {String newline = '\n'}) {
   final blocks = <String>[];
@@ -17,9 +23,7 @@ String _neo2(List<(double, double)> fixes, {String newline = '\n'}) {
         '00:00:00,${(index * 33).toString().padLeft(3, '0')} --> 00:00:00,${((index + 1) * 33).toString().padLeft(3, '0')}',
         '<font size="28">FrameCnt: ${index + 1}, DiffTime: 33ms',
         '2026-10-21 14:31:0${index % 10}.${(index * 33 % 1000).toString().padLeft(3, '0')}',
-        '[iso: 100] [shutter: 1/1000.0] [fnum: 1.8] [ev: 0] [color_md: default] [focal_len: 24.00] '
-            '[latitude: ${lat.toStringAsFixed(6)}] [longitude: ${lon.toStringAsFixed(6)}] '
-            '[rel_alt: 12.300 abs_alt: 512.700] [ct: 5300] </font>',
+        settings(lat, lon),
       ].join(newline),
     );
   }

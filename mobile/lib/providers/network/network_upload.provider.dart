@@ -8,14 +8,17 @@ import 'dart:math';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/network_upload.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
+import 'package:immich_mobile/domain/services/video_location.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/repositories/asset_api.repository.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
+import 'package:maplibre_gl/maplibre_gl.dart' show LatLng;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -36,12 +39,45 @@ final uploadRecordStoreProvider = Provider<UploadRecordStore>((ref) {
   );
 });
 
+/// Sets the place of the videos of drones from their flight data once the server has read them (see
+/// VideoLocationService); the places that wait for the server are kept per server and user in the support folder of
+/// the app, none without a user. Tests replace it.
+final videoLocationServiceProvider = Provider<VideoLocationService>((ref) {
+  final userId = ref.watch(currentUserProvider.select((user) => user?.id));
+  final server = Store.tryGet(StoreKey.serverUrl) ?? Store.tryGet(StoreKey.serverEndpoint);
+  return VideoLocationService(
+    _AssetApiPlaces(ref),
+    () async => userId == null || server == null
+        ? null
+        : File(p.join((await getApplicationSupportDirectory()).path, VideoLocationService.fileNameFor(server, userId))),
+  );
+});
+
+/// The place step through the asset api, read at each call: the api is not needed before
+class _AssetApiPlaces implements VideoLocationApi {
+  const _AssetApiPlaces(this._ref);
+
+  final Ref _ref;
+
+  @override
+  Future<AssetPlaceState?> placeState(String assetId) => _ref.read(assetApiRepositoryProvider).placeState(assetId);
+
+  @override
+  Future<void> setLocation(String assetId, double latitude, double longitude) =>
+      _ref.read(assetApiRepositoryProvider).update([assetId], location: .some(LatLng(latitude, longitude)));
+}
+
 final networkUploadServiceProvider = Provider<NetworkUploadService>(
   (ref) => NetworkUploadService(
     ref.watch(foregroundUploadServiceProvider),
     ref.watch(uploadRecordStoreProvider),
     // Read once a file recorded before is selected again: the api is not needed before
     (remoteId) => ref.read(assetApiRepositoryProvider).isInLibrary(remoteId),
+    // What the browser read of a photo already, else read now: a sphere of a drone gets its sidecar
+    mediaInfo: (fileSystem, entry) =>
+        ref.read(networkMediaServiceProvider).detect(entry, networkFileReader(fileSystem, entry.path)),
+    placeVideo: (remoteId, latitude, longitude) =>
+        ref.read(videoLocationServiceProvider).place(remoteId, latitude, longitude),
   ),
 );
 
@@ -121,9 +157,14 @@ class NetworkUploadNotifier extends Notifier<NetworkUploadState> {
     return const NetworkUploadState();
   }
 
-  /// Sends the files among [entries] of the share [sourceId]; null when an upload is already under way. Throws when
-  /// the share cannot be reached. Once [stop] was called, the upload it stopped no longer changes the state.
-  Future<NetworkUploadSummary?> upload(String sourceId, List<NetworkEntry> entries) async {
+  /// Sends the files among [entries] of the share [sourceId], with [options]; null when an upload is already under way.
+  /// Throws when the share cannot be reached. Once [stop] was called, the upload it stopped no longer changes the
+  /// state.
+  Future<NetworkUploadSummary?> upload(
+    String sourceId,
+    List<NetworkEntry> entries, {
+    NetworkUploadOptions options = const NetworkUploadOptions(),
+  }) async {
     if (state.isRunning) {
       return null;
     }
@@ -151,6 +192,7 @@ class NetworkUploadNotifier extends Notifier<NetworkUploadState> {
         fileSystem,
         files,
         cancelToken: cancelToken,
+        options: options,
         listener: NetworkUploadListener(
           onProgress: (id, progress) {
             if (isCurrent() && state.progress.containsKey(id)) {
@@ -164,6 +206,9 @@ class NetworkUploadNotifier extends Notifier<NetworkUploadState> {
             final progress = {...state.progress};
             if (outcome == NetworkUploadOutcome.failed) {
               progress[id] = NetworkUploadState.failed;
+            } else if (outcome == NetworkUploadOutcome.refused) {
+              // Not sent, nothing recorded: the summary says why
+              progress.remove(id);
             } else {
               progress.remove(id);
               unawaited(records.refresh());
