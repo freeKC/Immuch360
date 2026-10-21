@@ -24,7 +24,9 @@ for a release (--public, or a version info that is a release label such as 3.3.0
 which desktop_version.py gives a release tag only) is refused with it, unless the owner decides otherwise with
 --accept-2024-libmpv. libsmb2.dll, the library of the SMB shares (dart_smb2, LGPL-2.1-or-later), travels with its
 notice (copyright, build, where its source is) and licence texts in licenses/libsmb2/ (--libsmb2-notices, by default
-mobile/packages/dart_smb2/libsmb2).
+mobile/packages/dart_smb2/libsmb2), and with its corresponding source: the folder must hold the archive its NOTICE
+names, data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz, which `mise //mobile:codegen`
+packs before the build (.github/desktop/libsmb2/pack_sources.py); a folder without it is refused.
 
   windows_bundle.py --release DIR --out DIR [--name "Immuch360 Desktop"] [--arch x64] [--crt-dir DIR]
                     [--system-dir DIR] [--zip FILE] [--symbols DIR] [--info KEY=VALUE ...]
@@ -76,6 +78,8 @@ LICENCE_TEXTS = ('NOTICES.md', 'licenses/LGPL-3.0.txt', 'licenses/GPL-3.0.txt', 
 # licence page of the app (mobile/packages/dart_smb2/IMMUCH360-NOTE.md)
 LIBSMB2_NOTICES_DIR = ROOT / 'mobile' / 'packages' / 'dart_smb2' / 'libsmb2'
 LIBSMB2_TEXTS = ('NOTICE', 'COPYING', 'LICENCE-LGPL-2.1.txt')
+# Its corresponding source, an asset of the app that the code generation packs and NOTICE names
+LIBSMB2_SOURCES = 'data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz'
 # The label desktop_version.py gives a build of a release tag (3.3.0-rc.0-20) or of a desktop pre-release tag
 # (3.3.0-rc.0-desktop.4); every other build has its commit after it. The build number fits a Windows version field (at
 # most 65535, five digits) and the commit has seven characters or more, so the label of a version without a pre-release
@@ -359,6 +363,10 @@ def bundle(args) -> int:
         missing = copy_libsmb2_notices(folder, args.libsmb2_notices)
         if missing:
             print('the notice and licence of libsmb2 must travel with it, not found: ' + ', '.join(missing))
+            return 2
+        if not (folder / LIBSMB2_SOURCES).is_file():
+            print(f'the corresponding source of libsmb2 must travel with it, not in the folder: {LIBSMB2_SOURCES} '
+                  '(mise //mobile:codegen packs it before flutter build windows)')
             return 2
         notes.append('libsmb2.dll (SMB shares): GNU LGPL 2.1 or later; licenses/libsmb2/NOTICE says where its sources')
         notes.append('are, with the licence texts next to it.')

@@ -24,6 +24,9 @@ String _list({Map<String, String>? photos, Map<String, String>? videos}) => json
   'videos': videos ?? {'mp4': 'MPEG-4 video', 'osv': 'DJI 360° video'},
 });
 
+/// The archive of the sources of libsmb2 in the bundle, an asset of the app that mise //mobile:codegen packs
+const _libsmb2Sources = 'data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz';
+
 void main() {
   final folders = <Directory>[];
 
@@ -166,8 +169,10 @@ void main() {
         'bundle/lib/libapp.so': 'ELF',
         // Built by jni for Android: it needs the libjvm.so of a Java runtime, so the packages leave it out
         'bundle/lib/libdartjni.so': 'ELF',
-        // dart_smb2's library (LGPL-2.1-or-later): its notice and licence go into the packages
+        // dart_smb2's library (LGPL-2.1-or-later): its notice and licence go into the packages, and the archive of
+        // its sources is an asset of the app
         'bundle/lib/libsmb2.so': 'ELF',
+        'bundle/$_libsmb2Sources': 'the sources of libsmb2',
       });
       final out = p.join(root.path, 'out');
       final run = installers(root, [
@@ -214,6 +219,7 @@ void main() {
       expect(copyright, contains('/opt/immuch360/lib/libsmb2.so, the library of the SMB shares'));
       expect(copyright, contains('GNU LESSER GENERAL PUBLIC LICENSE'));
       expect(read('usr/share/licenses/immuch360/libsmb2/NOTICE'), contains('595d128b4d11a88a335eee961689a157e4f76cd3'));
+      expect(read('opt/immuch360/$_libsmb2Sources'), 'the sources of libsmb2');
 
       final nfpm = jsonDecode(File(p.join(out, 'nfpm.json')).readAsStringSync()) as Map<String, dynamic>;
       expect(
@@ -235,6 +241,29 @@ void main() {
           '/usr/share/licenses/immuch360/libsmb2/LICENCE-LGPL-2.1.txt',
         ]),
       );
+    });
+
+    test('refuses a bundle with lib/libsmb2.so whose assets lack the archive of its sources', () {
+      final root = tree({
+        'list.json': _list(),
+        'bundle/immuch360': 'ELF',
+        'bundle/data/icudtl.dat': 'data',
+        'bundle/lib/libsmb2.so': 'ELF',
+      });
+      final run = installers(root, [
+        'linux',
+        '--bundle',
+        p.join(root.path, 'bundle'),
+        '--label',
+        '3.3.0-rc.0-23',
+        '--out',
+        p.join(root.path, 'out'),
+        '--stage-only',
+      ]);
+      expect(run.exitCode, 1, reason: '$run');
+      expect(run.output, contains('the corresponding source of libsmb2 must travel with lib/libsmb2.so'));
+      expect(run.output, contains(_libsmb2Sources));
+      expect(File(p.join(root.path, 'out', 'nfpm.json')).existsSync(), isFalse);
     });
 
     test('refuses a folder that is not the bundle of flutter build linux', () {

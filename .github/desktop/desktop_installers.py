@@ -25,7 +25,9 @@ and videos, each extension with a one line description. This script turns that l
       <out>/Immuch360-Desktop-<label>-linux-x86_64.rpm. The bundle loses libdartjni.so (Android only, it needs a Java
       runtime), and patchelf replaces the build folder in the RUNPATH of its libraries by $ORIGIN. When the bundle has
       lib/libsmb2.so (dart_smb2, LGPL-2.1-or-later), its notice and licence go into the copyright file of the .deb
-      and into /usr/share/licenses/immuch360/libsmb2/ of the .rpm (mobile/packages/dart_smb2/libsmb2)
+      and into /usr/share/licenses/immuch360/libsmb2/ of the .rpm (mobile/packages/dart_smb2/libsmb2), and the bundle
+      must hold its corresponding source, data/flutter_assets/packages/dart_smb2/libsmb2/
+      Immuch360-libsmb2-sources.tar.gz, which `mise //mobile:codegen` packs before the build
   desktop_installers.py versions --label LABEL
       the version of the Linux packages for a label of desktop_version.py
 
@@ -167,6 +169,8 @@ LINUX_LEFT_OUT = ('libdartjni.so',)
 LIBSMB2_NOTICES = ROOT / 'mobile' / 'packages' / 'dart_smb2' / 'libsmb2'
 LIBSMB2_TEXTS = ('NOTICE', 'COPYING', 'LICENCE-LGPL-2.1.txt')
 LIBSMB2_LICENSES = 'usr/share/licenses/immuch360/libsmb2'
+# Its corresponding source, an asset of the app that the code generation packs and NOTICE names
+LIBSMB2_SOURCES = 'data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz'
 ICON_SIZES = (16, 32, 64, 128, 256, 512)
 
 
@@ -555,6 +559,9 @@ def stage_linux(args, types: dict) -> pathlib.Path:
         if missing:
             raise Problem(f'the notice and licence of libsmb2 must travel with lib/libsmb2.so, not found in '
                           f'{LIBSMB2_NOTICES}: {", ".join(missing)}')
+        if not (app / LIBSMB2_SOURCES).is_file():
+            raise Problem(f'the corresponding source of libsmb2 must travel with lib/libsmb2.so, not in the bundle: '
+                          f'{LIBSMB2_SOURCES} (mise //mobile:codegen packs it before flutter build linux)')
         texts = {name: (LIBSMB2_NOTICES / name).read_text(encoding='utf-8') for name in LIBSMB2_TEXTS}
         copyright_text += ('\n' + '-' * 78 + '\n\n/opt/immuch360/lib/libsmb2.so, the library of the SMB shares\n'
                            'License: LGPL-2.1-or-later\n\n' + texts['NOTICE'] + '\n' + texts['LICENCE-LGPL-2.1.txt'])
