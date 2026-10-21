@@ -13,8 +13,6 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
-import 'package:immich_mobile/domain/models/view_rotation.dart';
-import 'package:immich_mobile/domain/services/apple_spatial/heic_stereo_probe.dart';
 import 'package:immich_mobile/domain/services/local_panorama.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
@@ -92,7 +90,7 @@ void main() {
     await db.close();
   });
 
-  final flatExif = ExifInfo(width: 4000, height: 3000, make: 'Canon', model: 'EOS');
+  const flatExif = ExifInfo(width: 4000, height: 3000, make: 'Canon', model: 'EOS');
 
   /// A container where the exif of each asset of [exif] is the one given (an asset of the server not in it has its exif
   /// still loading), the server runs [server], the signed in user is [_userId], and the read only mode is [readOnly]
@@ -176,11 +174,11 @@ void main() {
 
     test('never turns a 360° photo, whatever makes it so', () async {
       final tagged = RemoteAssetFactory.create(ownerId: _userId);
-      final taggedExif = ExifInfo(width: 4000, height: 2000, projectionType: ProjectionType.equirectangular);
+      const taggedExif = ExifInfo(width: 4000, height: 2000, projectionType: ProjectionType.equirectangular);
       expect(await modeOf(createContainer(exif: {tagged: taggedExif}), tagged), RotationMode.none, reason: 'GPano');
 
       final goPro = RemoteAssetFactory.create(ownerId: _userId, width: 5760, height: 2880);
-      final goProExif = ExifInfo(width: 5760, height: 2880, make: 'GoPro', model: 'GoPro MAX');
+      const goProExif = ExifInfo(width: 5760, height: 2880, make: 'GoPro', model: 'GoPro MAX');
       expect(await modeOf(createContainer(exif: {goPro: goProExif}), goPro), RotationMode.none, reason: 'camera rule');
 
       final p36 = RemoteAssetFactory.create(ownerId: _userId, name: 'GS010001.36p');

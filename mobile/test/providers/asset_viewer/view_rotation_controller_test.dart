@@ -50,7 +50,7 @@ class _FakeServer {
   final sent = <String>[];
   List<AssetEdit> base = const [];
   bool unknownEdits = false;
-  Object? failure;
+  Exception? failure;
   Completer<String?>? gate;
   var _hash = 0;
 
@@ -119,7 +119,7 @@ void main() {
         serverInfoProvider.overrideWith((ref) => _ServerInfo()),
         currentUserProvider.overrideWith((ref) => CurrentUserProvider(users)),
         readonlyModeProvider.overrideWith(_ReadOnlyOff.new),
-        assetExifProvider(photo).overrideWith((ref) => Stream.value(ExifInfo(width: 4000, height: 3000))),
+        assetExifProvider(photo).overrideWith((ref) => Stream.value(const ExifInfo(width: 4000, height: 3000))),
         viewRotationServerProvider.overrideWithValue(server.server),
         viewRotationAssetIdsProvider.overrideWithValue((_) async => null),
         toastServiceProvider.overrideWithValue(toast),
