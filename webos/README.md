@@ -60,9 +60,8 @@ You need an LG TV with webOS 4.0 or later, on the same network as your computer,
 
 5. Sign in with your phone (scan the QR code), with your email and password, or with an API key.
 
-A Developer Mode session lasts 1000 hours (it used to be 50); its EXTEND button, or
-`ares-launch --device <name> com.palmdts.devmode -p extend=true`, renews it. When it expires, the TV removes the apps
-installed this way. The
+A Developer Mode session lasts 1000 hours (it used to be 50); the EXTEND button of the Developer Mode app renews it.
+When it expires, the TV removes the apps installed this way. The
 [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) of webosbrew installs an `.ipk` on a TV in Developer
 Mode without the command line.
 
