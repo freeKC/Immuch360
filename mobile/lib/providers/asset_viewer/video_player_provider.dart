@@ -243,6 +243,18 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     });
   }
 
+  /// Seeks [delta] from where the video is: not before its start, nor past its end once its duration is known
+  void seekBy(Duration delta) {
+    var target = state.position + delta;
+    if (target < Duration.zero) {
+      target = Duration.zero;
+    }
+    if (state.duration > Duration.zero && target > state.duration) {
+      target = state.duration;
+    }
+    seekTo(target);
+  }
+
   void toggle() {
     _holdStatus = null;
     _playOnForeground = false;
