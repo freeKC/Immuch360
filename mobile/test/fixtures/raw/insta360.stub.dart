@@ -1,12 +1,12 @@
 // Synthetic Insta360 files for the tests of the trailer reader: a JPEG stub, protobuf metadata, the records of a trailer
 // and its fixed tail, and the head of a photo whose EXIF names the camera and whose MakerNote holds one IMU sample as
-// ASCII. The calibration strings are those of a real X3 (firmware v1.0.93), as the research report on the formats gives
-// them.
+// ASCII. The calibration strings and the MakerNote sample are those of a real X3 (firmware v1.0.93); the serial number
+// is made up.
 
 import 'dart:convert';
 import 'dart:typed_data';
 
-const x3Serial = 'IAQFB24035RBRX';
+const x3Serial = 'IAQZZ00000TEST';
 const x3Model = 'Insta360 X3';
 const x3Firmware = 'v1.0.93_build1';
 
