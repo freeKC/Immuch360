@@ -26,9 +26,12 @@ class PersonSliverAppBar extends ConsumerStatefulWidget {
   });
 
   final Person person;
-  final VoidCallback onNameTap;
-  final VoidCallback onBirthdayTap;
-  final VoidCallback onShowOptions;
+
+  /// Null when the person cannot be edited (view only, a TV): no options button, the name and birthday are not
+  /// tappable, and no "Add a name" or "Add birthday" invites an edit
+  final VoidCallback? onNameTap;
+  final VoidCallback? onBirthdayTap;
+  final VoidCallback? onShowOptions;
 
   @override
   ConsumerState<PersonSliverAppBar> createState() => _MesmerizingSliverAppBarState();
@@ -89,10 +92,11 @@ class _MesmerizingSliverAppBarState extends ConsumerState<PersonSliverAppBar> {
               },
             ),
             actions: [
-              IconButton(
-                icon: Icon(Icons.more_vert, color: actionIconColor, shadows: actionIconShadows),
-                onPressed: widget.onShowOptions,
-              ),
+              if (widget.onShowOptions != null)
+                IconButton(
+                  icon: Icon(Icons.more_vert, color: actionIconColor, shadows: actionIconShadows),
+                  onPressed: widget.onShowOptions,
+                ),
             ],
             flexibleSpace: Builder(
               builder: (context) {
@@ -135,8 +139,8 @@ class _MesmerizingSliverAppBarState extends ConsumerState<PersonSliverAppBar> {
 class _ExpandedBackground extends ConsumerStatefulWidget {
   final double scrollProgress;
   final Person person;
-  final VoidCallback onNameTap;
-  final VoidCallback onBirthdayTap;
+  final VoidCallback? onNameTap;
+  final VoidCallback? onBirthdayTap;
 
   const _ExpandedBackground({
     required this.scrollProgress,
@@ -240,12 +244,12 @@ class _ExpandedBackgroundState extends ConsumerState<_ExpandedBackground> with S
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       GestureDetector(
-                        onTap: () => widget.onNameTap.call(),
+                        onTap: widget.onNameTap,
                         child: SizedBox(
                           width: double.infinity,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
-                            child: widget.person.name.isNotEmpty
+                            child: widget.person.name.isNotEmpty || widget.onNameTap == null
                                 ? Text(
                                     widget.person.name,
                                     maxLines: 1,
@@ -279,38 +283,41 @@ class _ExpandedBackgroundState extends ConsumerState<_ExpandedBackground> with S
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      GestureDetector(
-                        onTap: widget.onBirthdayTap,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(Icons.cake_rounded, color: Colors.white, size: 14),
-                            const SizedBox(width: 4),
+                      // Nothing to show without a birthday when it cannot be added
+                      if (widget.person.birthDate != null || widget.onBirthdayTap != null) ...[
+                        const SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: widget.onBirthdayTap,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(Icons.cake_rounded, color: Colors.white, size: 14),
+                              const SizedBox(width: 4),
 
-                            if (widget.person.birthDate != null)
-                              Text(
-                                "${DateFormat.yMMMd(context.locale.toString()).format(widget.person.birthDate!)} (${formatAge(widget.person.birthDate!, DateTime.now())})",
-                                style: context.textTheme.labelLarge?.copyWith(
-                                  color: Colors.white,
-                                  height: 1.2,
-                                  fontSize: 14,
+                              if (widget.person.birthDate != null)
+                                Text(
+                                  "${DateFormat.yMMMd(context.locale.toString()).format(widget.person.birthDate!)} (${formatAge(widget.person.birthDate!, DateTime.now())})",
+                                  style: context.textTheme.labelLarge?.copyWith(
+                                    color: Colors.white,
+                                    height: 1.2,
+                                    fontSize: 14,
+                                  ),
+                                )
+                              else
+                                Text(
+                                  context.t.add_birthday,
+                                  style: context.textTheme.labelLarge?.copyWith(
+                                    color: Colors.grey[400],
+                                    height: 1.2,
+                                    fontSize: 14,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Colors.white,
+                                  ),
                                 ),
-                              )
-                            else
-                              Text(
-                                context.t.add_birthday,
-                                style: context.textTheme.labelLarge?.copyWith(
-                                  color: Colors.grey[400],
-                                  height: 1.2,
-                                  fontSize: 14,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: Colors.white,
-                                ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
