@@ -33,8 +33,10 @@ class ViewerRotateIconButton extends ConsumerWidget {
   }
 }
 
-/// The rotation in the bottom bar of a TV: first there, so that OK from the photo lands on it, then each OK turns the
-/// photo again and the focus stays. The yellow and blue keys of the remote turn it from anywhere.
+/// The rotation in the bottom bar of a TV, on the right of the OCR toggle: OK from the photo never lands on it, so that
+/// a double OK on a household TV cannot turn a photo, on the server for one of the user. Right from the OCR toggle (or
+/// Down from the photo when the bar has nothing else) reaches it, then each OK turns the photo again and the focus
+/// stays. The yellow and blue keys of the remote turn it from anywhere.
 class TvRotateButton extends ConsumerWidget {
   const TvRotateButton({super.key, required this.asset});
 
@@ -43,35 +45,33 @@ class TvRotateButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final label = context.t.rotate;
-    // Centred across the whole bar, so that the bar and its shade span the screen as with the row of a phone
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: RemoteFocusable(
-          key: const Key('tv_rotate_button'),
-          onTap: () => rotateAssetFromWidget(ref, asset, 1),
-          onLongPress: () => rotateAssetFromWidget(ref, asset, -1),
-          child: Semantics(
-            button: true,
-            label: context.t.editor_rotate_right,
-            excludeSemantics: true,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.4),
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.rotate_90_degrees_cw_rounded, size: 22, color: Colors.white),
-                  const SizedBox(width: 8),
-                  Text(
-                    label,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+    // The right margin of the OCR toggle, whose row ends with this button
+    return Padding(
+      padding: const EdgeInsets.only(right: 32, bottom: 8),
+      child: RemoteFocusable(
+        key: const Key('tv_rotate_button'),
+        onTap: () => rotateAssetFromWidget(ref, asset, 1),
+        onLongPress: () => rotateAssetFromWidget(ref, asset, -1),
+        child: Semantics(
+          button: true,
+          label: context.t.editor_rotate_right,
+          excludeSemantics: true,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.4),
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.rotate_90_degrees_cw_rounded, size: 22, color: Colors.white),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                ),
+              ],
             ),
           ),
         ),
@@ -79,6 +79,9 @@ class TvRotateButton extends ConsumerWidget {
     );
   }
 }
+
+/// Whether [node] is the focus of a [TvRotateButton], where OK from the photo never lands (see AssetViewer)
+bool isTvRotateFocus(FocusNode node) => node.context?.findAncestorWidgetOfExactType<TvRotateButton>() != null;
 
 /// A thin bar while the server saves a rotation of [asset] and makes its turned picture; nothing otherwise
 class RotationProgressBar extends ConsumerWidget {

@@ -1,7 +1,8 @@
 // The one-key rotation in the asset viewer: R and Shift R of a keyboard, the yellow and blue keys of a remote, the
-// Rotate button of the bottom row on a phone, the one of the bottom bar on a TV (OK from the photo lands on it, each OK
-// turns again and the focus stays), the one of the top bar on a computer. Nothing of it for a video or a photo viewed
-// in 360°, whose keys go on as if unread; and R typed into a text field stays a letter.
+// Rotate button of the bottom row on a phone, the one of the bottom bar on a TV (on the right of the OCR toggle, never
+// where OK from the photo lands, so that a double OK turns nothing; once reached each OK turns again and the focus
+// stays), the one of the top bar on a computer. Nothing of it for a video or a photo viewed in 360°, whose keys go on
+// as if unread; and R typed into a text field stays a letter.
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -10,13 +11,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/data/store.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/ocr.model.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/ocr_toggle_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
@@ -26,6 +30,7 @@ import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../fixtures/asset.stub.dart';
+import '../../../unit/factories/remote_asset_factory.dart';
 import '../../../unit/presentation/presentation_context.dart';
 
 class _SeededAssetViewerNotifier extends AssetViewerStateNotifier {
@@ -87,7 +92,12 @@ void main() {
     tester.takeException();
   }
 
-  Future<ProviderContainer> pumpViewer(WidgetTester tester, BaseAsset asset, {bool tvMode = false}) async {
+  Future<ProviderContainer> pumpViewer(
+    WidgetTester tester,
+    BaseAsset asset, {
+    bool tvMode = false,
+    List<Override> overrides = const [],
+  }) async {
     final timeline = TimelineService((
       assetSource: (index, count) async => [asset].skip(index).take(count).toList(),
       bucketSource: () => Stream.value([const Bucket(assetCount: 1)]),
@@ -109,6 +119,7 @@ void main() {
             tvModeProvider.overrideWithValue(tvMode),
             assetViewerProvider.overrideWith(() => _SeededAssetViewerNotifier(asset)),
             viewRotationAssetIdsProvider.overrideWithValue((_) async => null),
+            ...overrides,
           ],
           child: Builder(
             builder: (context) => MaterialApp(
@@ -211,16 +222,28 @@ void main() {
     expect(turnsOf(container, photo), 1);
   });
 
-  testWidgets('on a TV OK from the photo lands on Rotate, and each OK turns again, the focus staying', (tester) async {
+  bool rotateHasFocus() =>
+      FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<TvRotateButton>() != null;
+
+  testWidgets('on a TV a double OK on the photo turns nothing; Down reaches Rotate, then each OK turns again', (
+    tester,
+  ) async {
     final container = await pumpViewer(tester, photo, tvMode: true);
     expect(find.byType(TvRotateButton), findsOneWidget);
 
+    // A photo of the device has no recognized text: OK shows the controls and leaves the focus on the photo, as before
+    // the rotation, and the second OK hides them again
     await press(tester, LogicalKeyboardKey.select);
     expect(container.read(assetViewerProvider).showingControls, isTrue);
-    bool rotateHasFocus() =>
-        FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<TvRotateButton>() != null;
-    expect(rotateHasFocus(), isTrue);
+    expect(rotateHasFocus(), isFalse);
+    await press(tester, LogicalKeyboardKey.select);
+    expect(container.read(assetViewerProvider).showingControls, isFalse);
+    expect(turnsOf(container, photo), 0);
 
+    // Down goes to the bottom bar, where Rotate is alone
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    expect(container.read(assetViewerProvider).showingControls, isTrue);
+    expect(rotateHasFocus(), isTrue);
     await press(tester, LogicalKeyboardKey.select);
     expect(turnsOf(container, photo), 1);
     expect(rotateHasFocus(), isTrue);
@@ -231,6 +254,107 @@ void main() {
     // The colour keys from there too
     await press(tester, LogicalKeyboardKey.colorF3Blue);
     expect(turnsOf(container, photo), 1);
+  });
+
+  testWidgets('on a TV OK lands on the OCR toggle, and Rotate on its right is one Right away', (tester) async {
+    final remote = RemoteAssetFactory.create(id: 'ocr1');
+    final text = Ocr(
+      id: 'text1',
+      assetId: remote.id,
+      x1: 0.1,
+      y1: 0.1,
+      x2: 0.4,
+      y2: 0.1,
+      x3: 0.4,
+      y3: 0.2,
+      x4: 0.1,
+      y4: 0.2,
+      boxScore: 0.9,
+      textScore: 0.9,
+      text: 'Exit',
+      isVisible: true,
+    );
+    final container = await pumpViewer(
+      tester,
+      remote,
+      tvMode: true,
+      overrides: [
+        rotationModeFamily(RotationSubject(remote)).overrideWith((_) => RotationMode.device),
+        Store.ocr.forAsset(remote.id).overrideWith((_) async => [text]),
+      ],
+    );
+    final ocr = find.descendant(of: find.byType(OcrToggleButton), matching: find.byType(InkWell));
+    bool ocrHasFocus() =>
+        FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<OcrToggleButton>() != null;
+
+    await press(tester, LogicalKeyboardKey.select);
+    expect(container.read(assetViewerProvider).showingControls, isTrue);
+    expect(ocr, findsOneWidget);
+    expect(tester.getCenter(ocr).dx, lessThan(tester.getCenter(find.byType(TvRotateButton)).dx));
+    expect(ocrHasFocus(), isTrue);
+
+    // A second OK toggles the text boxes, it does not turn the photo
+    await press(tester, LogicalKeyboardKey.select);
+    expect(container.read(assetViewerProvider).showingOcr, isTrue);
+    expect(turnsOf(container, remote), 0);
+    await press(tester, LogicalKeyboardKey.select);
+    expect(container.read(assetViewerProvider).showingOcr, isFalse);
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    expect(rotateHasFocus(), isTrue);
+    await press(tester, LogicalKeyboardKey.select);
+    expect(turnsOf(container, remote), 1);
+    expect(rotateHasFocus(), isTrue, reason: 'the OCR toggle hides on a turned photo, Rotate keeps the focus');
+    expect(ocr, findsNothing);
+    await press(tester, LogicalKeyboardKey.colorF3Blue);
+    expect(turnsOf(container, remote), 0);
+    expect(ocr, findsOneWidget);
+    expect(rotateHasFocus(), isTrue);
+  });
+
+  testWidgets('on a TV the yellow key on the focused OCR toggle hands the focus back to the photo', (tester) async {
+    final remote = RemoteAssetFactory.create(id: 'ocr2');
+    final container = await pumpViewer(
+      tester,
+      remote,
+      tvMode: true,
+      overrides: [
+        rotationModeFamily(RotationSubject(remote)).overrideWith((_) => RotationMode.device),
+        Store.ocr
+            .forAsset(remote.id)
+            .overrideWith(
+              (_) async => [
+                Ocr(
+                  id: 'text2',
+                  assetId: remote.id,
+                  x1: 0.1,
+                  y1: 0.1,
+                  x2: 0.4,
+                  y2: 0.1,
+                  x3: 0.4,
+                  y3: 0.2,
+                  x4: 0.1,
+                  y4: 0.2,
+                  boxScore: 0.9,
+                  textScore: 0.9,
+                  text: 'Exit',
+                  isVisible: true,
+                ),
+              ],
+            ),
+      ],
+    );
+
+    await press(tester, LogicalKeyboardKey.select);
+    await press(tester, LogicalKeyboardKey.colorF2Yellow);
+    expect(turnsOf(container, remote), 1);
+    expect(find.byType(OcrToggleButton), findsNothing);
+    expect(rotateHasFocus(), isFalse);
+
+    // The next OK is not lost and turns nothing: it hides the controls
+    await press(tester, LogicalKeyboardKey.select);
+    expect(container.read(assetViewerProvider).showingControls, isFalse);
+    expect(turnsOf(container, remote), 1);
   });
 
   testWidgets('a computer has the rotation in the top bar, not in the bottom row', (tester) async {

@@ -48,8 +48,11 @@ class ViewerBottomBar extends ConsumerWidget {
     final isInTrash = ref.watch(timelineServiceProvider).origin == TimelineOrigin.trash;
 
     final originalTheme = context.themeData;
-    // A TV hides the row of actions: its rotation comes first in the bar, where OK from the photo lands
+    // A TV hides the row of actions: its rotation sits on the right of the OCR toggle, never where OK from the photo
+    // lands (see AssetViewer), so that a double OK cannot turn a photo
     final tvRotate = ref.watch(tvModeProvider) && !isInTrash && canRotateInViewer(ref, asset);
+    // The text boxes are not drawn over a photo turned on screen (see AssetPage)
+    final showOcr = asset.isImage && ref.watch(displayQuarterTurnsProvider(asset)) == 0;
 
     final actions = <Widget>[
       ..._actionColumnButtons(context, ref, const [RestoreAction(source: .viewer), ShareAction(source: .viewer)]),
@@ -102,9 +105,17 @@ class ViewerBottomBar extends ConsumerWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (tvRotate) TvRotateButton(asset: asset),
-                          // The text boxes are not drawn over a photo turned on screen (see AssetPage)
-                          if (asset.isImage && ref.watch(displayQuarterTurnsProvider(asset)) == 0)
+                          // A TV: the OCR toggle first, then Rotate on its right, one Right away. The row spans the
+                          // bar, so that the bar and its shade span the screen as with the row of a phone.
+                          if (tvRotate)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                if (showOcr) OcrToggleButton(asset: asset),
+                                TvRotateButton(asset: asset),
+                              ],
+                            )
+                          else if (showOcr)
                             OcrToggleButton(asset: asset),
                           if (asset.isVideo) VideoControls(videoPlayerName: asset.id),
                           if (!isViewOnly)

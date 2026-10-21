@@ -446,8 +446,9 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
         } else if (ref.read(assetViewerProvider).showingControls) {
           ref.read(assetViewerProvider.notifier).setControls(false);
         } else {
-          // Never the Back button of the top bar: a second OK would close the viewer by surprise
-          _showControlsAndFocus(_bottomBarFocus, withBack: false);
+          // Never the Back button of the top bar, nor the Rotate button of a TV: a second OK would close the viewer
+          // by surprise, or turn the photo, on the server for one of the user
+          _showControlsAndFocus(_bottomBarFocus, withBack: false, withRotate: false);
         }
       }
       return KeyEventResult.handled;
@@ -537,8 +538,8 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
 
   /// Shows the controls and focuses a button of [bar]: the buttons on the right of the top bar (360° first) or the top
   /// one of the bottom bar (play for a video), else whatever the other bar offers, the Back button of the top bar
-  /// only [withBack]
-  void _showControlsAndFocus(FocusNode bar, {bool withBack = true}) {
+  /// only [withBack]. The Rotate button of a TV comes after any other button of the bottom bar, and only [withRotate].
+  void _showControlsAndFocus(FocusNode bar, {bool withBack = true, bool withRotate = true}) {
     ref.read(assetViewerProvider.notifier).setControls(true);
     // The bars take the focus once shown, from the next frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -548,7 +549,10 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
       final top =
           _topActionsFocus.traversalDescendants.firstOrNull ??
           (withBack ? _topBarFocus.traversalDescendants.firstOrNull : null);
-      final bottom = _bottomBarFocus.traversalDescendants.firstOrNull;
+      final bottomItems = _bottomBarFocus.traversalDescendants;
+      final bottom =
+          bottomItems.where((node) => !isTvRotateFocus(node)).firstOrNull ??
+          (withRotate ? bottomItems.firstOrNull : null);
       final target = identical(bar, _topBarFocus) ? top ?? bottom : bottom ?? top;
       target?.requestFocus();
     });
