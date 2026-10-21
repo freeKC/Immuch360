@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_choice_dialog.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:intl/intl.dart';
 
 sealed class DateFilterInputModel {
@@ -149,15 +150,18 @@ class QuickDatePicker extends HookWidget {
   }
 
   /// A row that [onTap] handles whatever the choice: [child] neither takes the taps nor, with a remote control, the
-  /// focus, so that the row is one focus stop and OK always reaches [onTap]
+  /// focus, so that the row is one focus stop and OK always reaches [onTap]. The arrows move from it as from the radio
+  /// buttons above it (see TvRadioRow), so that Up after a move down to it is not lost.
   Widget _singleFocusRow(BuildContext context, {required VoidCallback onTap, required Widget child}) {
-    return InkWell(
-      onTap: onTap,
-      child: IgnorePointer(
-        ignoring: true,
-        child: ExcludeFocus(
-          excluding: MediaQuery.navigationModeOf(context) == NavigationMode.directional,
-          child: child,
+    return TvRadioRow(
+      child: InkWell(
+        onTap: onTap,
+        child: IgnorePointer(
+          ignoring: true,
+          child: ExcludeFocus(
+            excluding: MediaQuery.navigationModeOf(context) == NavigationMode.directional,
+            child: child,
+          ),
         ),
       ),
     );

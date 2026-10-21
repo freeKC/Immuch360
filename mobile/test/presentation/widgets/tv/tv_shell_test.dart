@@ -1,6 +1,6 @@
 // The remote control layout around the app: Flutter's directional navigation, the overscan margins of the TV
-// guidelines, channel up and down for pages, up and down out of a text field and out of a group of radio buttons, and
-// the focus always highlighted.
+// guidelines, channel up and down for pages, up and down out of a text field and out of a group of radio buttons (and
+// through the rows of such a group that are no radio button), and the focus always highlighted.
 
 import 'dart:async';
 
@@ -227,6 +227,62 @@ void main() {
       await tester.pumpAndSettle();
       expect(picked, 'third', reason: 'OK picks the choice that has the focus');
       expect(focused(tester, 'third'), isTrue);
+    });
+
+    testWidgets('a row of the group that is no radio button moves as one, so that no Up is lost on the way back', (
+      tester,
+    ) async {
+      var opened = 0;
+      await pump(
+        tester,
+        StatefulBuilder(
+          builder: (context, setState) => Scaffold(
+            body: RadioGroup<String>(
+              groupValue: picked,
+              onChanged: (value) => setState(() => picked = value),
+              child: Column(
+                children: [
+                  const RadioListTile<String>(value: 'first', title: Text('first')),
+                  const RadioListTile<String>(value: 'second', title: Text('second')),
+                  // As the year and the custom range of the date filter: one focus stop that opens a dialog
+                  TvRadioRow(
+                    child: InkWell(onTap: () => opened++, child: const Text('row')),
+                  ),
+                  const RadioListTile<String>(value: 'last', title: Text('last')),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      Focus.of(tester.element(find.text('first'))).requestFocus();
+      await tester.pumpAndSettle();
+
+      final visited = <String>[];
+      for (final key in [
+        LogicalKeyboardKey.arrowDown,
+        LogicalKeyboardKey.arrowDown,
+        LogicalKeyboardKey.arrowDown,
+        LogicalKeyboardKey.arrowUp,
+        LogicalKeyboardKey.arrowUp,
+        LogicalKeyboardKey.arrowUp,
+      ]) {
+        await tester.sendKeyEvent(key);
+        await tester.pumpAndSettle();
+        visited.add(['first', 'second', 'row', 'last'].firstWhere((text) => focused(tester, text)));
+      }
+      expect(visited, ['second', 'row', 'last', 'row', 'second', 'first']);
+      expect(picked, 'first', reason: 'a move is no choice');
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      expect(focused(tester, 'row'), isTrue);
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.pumpAndSettle();
+      expect(opened, 1, reason: 'OK on the row is its own');
+      expect(picked, 'first');
     });
 
     testWidgets('out of the remote control layout the arrows keep choosing, as Flutter does', (tester) async {

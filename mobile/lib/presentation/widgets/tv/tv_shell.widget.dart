@@ -156,7 +156,8 @@ const _radioSearchDepth = 40;
 ///
 /// The move goes through the traversal policy around the group, the one the controls next to it use: the group's own
 /// policy keeps a history of its moves that the moves of the other controls do not update, and Up from the field
-/// under the group then Up again would bounce back to the field.
+/// under the group then Up again would bounce back to the field. The rows of the group that are no radio button but
+/// one focus stop among them ([TvRadioRow]) move the same way, through the same policy, for the same reason.
 @visibleForTesting
 KeyEventResult radioArrowMovesFocus(KeyEvent event) {
   final direction = _arrowDirections[event.logicalKey];
@@ -174,7 +175,23 @@ KeyEventResult radioArrowMovesFocus(KeyEvent event) {
   return KeyEventResult.handled;
 }
 
-/// The RadioGroup around [context] when it is the focus of a radio button of that group, else null
+/// A row of a RadioGroup that is no radio button itself but one focus stop among them, as the year and the custom
+/// range of the date filter (an InkWell over a RadioListTile that takes no focus): with the remote control layout the
+/// arrows move from it as from a radio button (see [radioArrowMovesFocus]). Without it, its moves went through the
+/// group's own traversal policy and those of the radio buttons through the policy around the group, whose history of
+/// Down moves then sent the next Up from a radio button back to where the focus already was: one Up lost after the
+/// year. Elsewhere it changes nothing.
+class TvRadioRow extends StatelessWidget {
+  const TvRadioRow({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => child;
+}
+
+/// The RadioGroup around [context] when it is the focus of a radio button of that group (or of a [TvRadioRow]), else
+/// null
 BuildContext? _radioGroupOf(BuildContext context) {
   var radio = false;
   BuildContext? group;
@@ -185,7 +202,7 @@ BuildContext? _radioGroupOf(BuildContext context) {
       group = radio ? element : null;
       return false;
     }
-    radio = radio || widget is RadioListTile || widget is Radio || widget is RawRadio;
+    radio = radio || widget is RadioListTile || widget is Radio || widget is RawRadio || widget is TvRadioRow;
     depth++;
     // Past the depth without a radio button: some other control, which the group leaves alone anyway
     return radio || depth < _radioSearchDepth;

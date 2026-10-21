@@ -425,6 +425,42 @@ void main() {
       expect(selected, isEmpty, reason: 'a move is no choice');
     });
 
+    testWidgets('TV: Up from the year row and from Custom range goes back one row per press', (tester) async {
+      await open(tester, dateSheet());
+      Future<List<String?>> walk(List<LogicalKeyboardKey> keys) async {
+        final visited = <String?>[];
+        for (final key in keys) {
+          await press(tester, key);
+          visited.add(focusedLabel());
+        }
+        return visited;
+      }
+
+      const down = LogicalKeyboardKey.arrowDown;
+      const up = LogicalKeyboardKey.arrowUp;
+      // As seen on the emulator: Down to the year, then Up three times
+      focusOf(tester, rows.first).requestFocus();
+      await tester.pumpAndSettle();
+      expect(await walk([down, down, down, up, up, up]), [rows[1], rows[2], rows[3], rows[2], rows[1], rows[0]]);
+
+      // Down to Custom range and all the way back
+      expect(await walk([down, down, down, down]), rows.sublist(1));
+      expect(await walk([up, up, up, up]), rows.reversed.skip(1).toList());
+
+      // Back and forth around the two rows that open a dialog
+      expect(await walk([down, down, down, up, down, up, up]), [
+        rows[1],
+        rows[2],
+        rows[3],
+        rows[2],
+        rows[3],
+        rows[2],
+        rows[1],
+      ]);
+      expect(selected, isEmpty, reason: 'a move is no choice');
+      expect(pickerRequests, 0);
+    });
+
     testWidgets('TV: OK on the year opens the years, the current one focused, and a year is picked', (tester) async {
       await open(tester, dateSheet(current: YearFilter(thisYear - 1)));
       expect(find.text('In ${thisYear - 1}'), findsOneWidget);
