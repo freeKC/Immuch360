@@ -370,6 +370,30 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
         ? 'nothing played for ${VideoPlayerNotifier.stallTimeout.inSeconds} s'
         : failure?.message;
     _log.warning('${widget.asset.name} does not play from $_sourceLabel: $why');
+    unawaited(_logFile());
+  }
+
+  /// What the file of a video that does not play is, and what the decoders of the device say of it, for the Logs page:
+  /// the panel shows the same, but a TV user may only be able to share the logs
+  Future<void> _logFile() async {
+    final asset = widget.asset;
+    try {
+      final probes = ref.read(sphericalProbeServiceProvider);
+      final sources = ref.read(videoSourceServiceProvider);
+      final probe = await probes.probe(asset);
+      final verdict = await sources.verdict(probe);
+      final file = probe == null
+          ? 'unknown file'
+          : '${probe.codecs ?? probe.codec} ${probe.codedWidth} x ${probe.codedHeight} at ${probe.frameRate} fps, '
+                '${probe.videoBitRate ?? probe.declaredBitRate ?? probe.mediaBitRate} bit/s';
+      final decoders = verdict == null
+          ? 'no decoder verdict'
+          : 'decodes here: ${verdict.supported}, hardware: ${verdict.hardware}, '
+                'largest ${verdict.maxWidth} x ${verdict.maxHeight}, ${verdict.reason ?? 'no reason given'}';
+      _log.info('${asset.name}: $file; $decoders');
+    } catch (error) {
+      _log.info('No file details for ${asset.name}: $error');
+    }
   }
 
   void _removeListeners() {
