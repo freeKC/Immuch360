@@ -11,5 +11,10 @@ const libsmb2LicenseAssets = 'packages/dart_smb2/libsmb2';
 Stream<LicenseEntry> libsmb2Licenses() async* {
   final notice = await rootBundle.loadString('$libsmb2LicenseAssets/NOTICE');
   final lgpl = await rootBundle.loadString('$libsmb2LicenseAssets/LICENCE-LGPL-2.1.txt');
-  yield LicenseEntryWithLineBreaks(const ['libsmb2'], '$notice\n$lgpl');
+  yield libsmb2LicenseEntry(notice, lgpl);
 }
+
+/// The entry of the licence page from the two texts. A checkout on Windows gives them CRLF line ends, and the parser
+/// of [LicenseEntryWithLineBreaks] would keep each carriage return inside the paragraph it joins, so they go first.
+LicenseEntry libsmb2LicenseEntry(String notice, String lgpl) =>
+    LicenseEntryWithLineBreaks(const ['libsmb2'], '$notice\n$lgpl'.replaceAll('\r\n', '\n'));
