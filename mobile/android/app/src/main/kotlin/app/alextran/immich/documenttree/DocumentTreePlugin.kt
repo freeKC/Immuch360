@@ -49,6 +49,7 @@ import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
@@ -102,6 +103,11 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
   private var activityBinding: ActivityPluginBinding? = null
   private var events: DocumentTreeEvents? = null
   private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+  // The reads of files, one at a time in the order they come: an upload asks for the next chunk while it sends the
+  // current one, and a file that can only be read from its start must get them in order
+  private val readExecutor = Executors.newSingleThreadExecutor()
+  private val readDispatcher = readExecutor.asCoroutineDispatcher()
   private val mainHandler = Handler(Looper.getMainLooper())
   private var pendingPick: ((Result<TreePick?>) -> Unit)? = null
 
@@ -140,6 +146,7 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     DocumentTreeApi.setUp(binding.binaryMessenger, null)
     watchUsb(false)
     closer.shutdownNow()
+    readExecutor.shutdownNow()
     synchronized(openFiles) {
       openFiles.values.forEach { it.close() }
       openFiles.clear()
@@ -372,7 +379,7 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
 
   override fun read(treeUri: String, documentId: String, offset: Long, length: Long, callback: (Result<ByteArray>) -> Unit) {
     val ctx = context ?: return callback(Result.failure(FlutterError("no_context", null, null)))
-    ioScope.launch {
+    ioScope.launch(readDispatcher) {
       callback(
         guarded(ctx, treeUri) {
           val file = openFile(ctx.contentResolver, treeUri, documentId)
