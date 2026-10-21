@@ -10,6 +10,18 @@ final class CustomImageCache implements ImageCache {
   final _small = ImageCache();
   final _large = ImageCache()..maximumSize = 5; // Maximum 5 images
 
+  /// Smaller caches on a TV, whose memory is smaller and whose pictures are larger: the thumbnails and the grid
+  /// previews up to [televisionSmallBytes] rather than 100 MB, and [televisionLargeCount] full images rather than 5 (the
+  /// one shown and its two neighbours, see AssetPreloader), up to the same bytes
+  void limitForTelevision() {
+    _small.maximumSizeBytes = televisionSmallBytes;
+    _large.maximumSize = televisionLargeCount;
+    _large.maximumSizeBytes = televisionSmallBytes;
+  }
+
+  static const televisionSmallBytes = 64 << 20;
+  static const televisionLargeCount = 3;
+
   @override
   int get maximumSize => _small.maximumSize + _large.maximumSize;
 

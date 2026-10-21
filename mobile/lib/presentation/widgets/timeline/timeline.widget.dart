@@ -553,7 +553,10 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                       final grid = CustomScrollView(
                         primary: true,
                         physics: physics,
-                        scrollCacheExtent: .pixels(maxHeight * 2),
+                        // A screen above and below the one shown on a TV, two on a phone: the tiles built there keep
+                        // their pictures alive, larger on a TV (see tvPreviewDecodeSize), whose memory is smaller, and
+                        // the remote moves one row at a time
+                        scrollCacheExtent: .pixels(maxHeight * (tvMode ? 1 : 2)),
                         slivers: [
                           if (isSelectionMode)
                             const SelectionSliverAppBar()
