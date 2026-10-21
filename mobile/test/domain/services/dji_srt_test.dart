@@ -155,6 +155,44 @@ void main() {
       expect(reader.reads.fold(0, (sum, read) => sum + read.$2), greaterThanOrEqualTo(bytes.length));
     });
 
+    test('a 10 MB file without a fix is read once and each block parsed once', () async {
+      // About 36,000 blocks: a 20 minute Neo 2 clip at 30 fps, indoors
+      const blocks = 36000;
+      final bytes = Uint8List.fromList(utf8.encode(_neo2([for (var i = 0; i < blocks; i++) (0.0, 0.0)])));
+      expect(bytes.length, greaterThan(10 * 1000 * 1000));
+      final reader = _reader(bytes);
+      final scanner = DjiSrtScanner();
+
+      expect(await readDjiSrtFix(reader.read, bytes.length, scanner: scanner), isNull);
+      expect(scanner.blocksParsed, blocks, reason: 'the text of a block is not parsed again at the next read');
+      expect(reader.reads.fold(0, (sum, read) => sum + read.$2), bytes.length);
+    });
+
+    test('a character or a line end cut between two reads is put back together', () async {
+      final text = _neo2([(0, 0), (0, 0), (48.858222, 2.2945)], newline: '\r\n').replaceAll('FrameCnt', 'Caméra');
+      final bytes = Uint8List.fromList(utf8.encode(text));
+      final accent = utf8.encode(text.substring(0, text.indexOf('é'))).length;
+      final lineEnd = utf8.encode(text.substring(0, text.indexOf('\r\n\r\n'))).length;
+      for (final cut in [accent + 1, lineEnd + 1, lineEnd + 2, lineEnd + 3]) {
+        final scanner = DjiSrtScanner();
+        final first = scanner.addBytes(Uint8List.sublistView(bytes, 0, cut));
+        final fix = first ?? scanner.addBytes(Uint8List.sublistView(bytes, cut), isLast: true);
+
+        expect((fix?.latitude, fix?.longitude), (48.858222, 2.2945), reason: 'cut at $cut');
+        expect(scanner.blocksParsed, 3, reason: 'no block made of a cut line end, cut at $cut');
+      }
+    });
+
+    test('a long file without blank lines is not scanned again at each read', () async {
+      const line = '[iso: 100] [latitude: 0.000000] [longitude: 0.000000]\n';
+      final bytes = Uint8List.fromList(utf8.encode(line * 40000));
+      final reader = _reader(bytes);
+      final scanner = DjiSrtScanner();
+
+      expect(await readDjiSrtFix(reader.read, bytes.length, scanner: scanner), isNull);
+      expect(scanner.blocksParsed, lessThanOrEqualTo(bytes.length ~/ DjiSrtScanner.maxCarry + 2));
+    });
+
     test('a fix in the last block of a short file is found', () async {
       final bytes = Uint8List.fromList(utf8.encode(_neo2([(0, 0), (41.9, 12.5)]).trimRight()));
       final reader = _reader(bytes);

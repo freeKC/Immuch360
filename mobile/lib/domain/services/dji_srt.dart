@@ -15,8 +15,8 @@
 
 import 'dart:convert';
 import 'dart:math' as math;
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:logging/logging.dart';
 
@@ -43,16 +43,116 @@ const _zero = 1e-6;
 /// without a position). When [complete] is false, [text] is the head of a longer file: its last block may be cut, and
 /// is left out.
 DjiSrtFix? parseDjiSrtFix(String text, {bool complete = true}) {
-  var normalized = text.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
-  if (normalized.startsWith('\uFEFF')) {
-    normalized = normalized.substring(1);
+  return DjiSrtScanner().addText(text, isLast: complete);
+}
+
+/// The blocks of an .SRT file as its text comes, in pieces (see [readDjiSrtFix]): each block is parsed once, when the
+/// blank line after it has come, so that reading a long file without a fix costs its length, not the square of it.
+/// Only the text after the last complete block is kept between two pieces.
+class DjiSrtScanner {
+  /// The text kept between two pieces when no blank line came for this long: a file that is not made of blocks is
+  /// then taken line by line, so that its text is not scanned again at each piece
+  static const maxCarry = 64 * 1024;
+
+  final _decoded = StringBuffer();
+  late final _decoder = const Utf8Decoder(
+    allowMalformed: true,
+  ).startChunkedConversion(StringConversionSink.fromStringSink(_decoded));
+
+  /// The text after the last complete block, line ends already made \n
+  String _carry = '';
+  bool _started = false;
+  bool _finished = false;
+  int _ambiguous = 0;
+
+  /// The blocks parsed so far, for the tests that bound the work
+  @visibleForTesting
+  int blocksParsed = 0;
+
+  /// Adds the next [bytes] of the file, UTF-8 (a character cut between two pieces is put back together); gives the
+  /// first fix of the blocks complete so far, null when none. [isLast] tells that the file ends there.
+  DjiSrtFix? addBytes(List<int> bytes, {bool isLast = false}) {
+    _decoder.add(bytes);
+    if (isLast) {
+      _decoder.close();
+    }
+    final text = _decoded.toString();
+    _decoded.clear();
+    return addText(text, isLast: isLast);
   }
-  var blocks = normalized.split(_blankLine);
-  if (!complete && blocks.isNotEmpty) {
-    blocks = blocks.sublist(0, blocks.length - 1);
+
+  /// Adds the next [text] of the file, see [addBytes]
+  DjiSrtFix? addText(String text, {bool isLast = false}) {
+    if (_finished) {
+      return null;
+    }
+    var piece = text;
+    if (!_started && piece.isNotEmpty) {
+      _started = true;
+      if (piece.startsWith('\uFEFF')) {
+        piece = piece.substring(1);
+      }
+    }
+    var normalized = '$_carry$piece';
+    // A \r at the end of a piece may be the first half of a \r\n: kept raw until the next piece
+    var heldReturn = false;
+    if (!isLast && normalized.endsWith('\r')) {
+      normalized = normalized.substring(0, normalized.length - 1);
+      heldReturn = true;
+    }
+    normalized = normalized.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
+    var start = 0;
+    for (final blankLine in _blankLine.allMatches(normalized)) {
+      final fix = _parseBlock(normalized.substring(start, blankLine.start));
+      start = blankLine.end;
+      if (fix != null) {
+        return _found(fix);
+      }
+    }
+    var carry = normalized.substring(start);
+    if (carry.length > maxCarry) {
+      final newline = carry.lastIndexOf('\n');
+      if (newline > 0) {
+        final fix = _parseBlock(carry.substring(0, newline));
+        carry = carry.substring(newline + 1);
+        if (fix != null) {
+          return _found(fix);
+        }
+      }
+    }
+    _carry = heldReturn ? '$carry\r' : carry;
+    if (isLast) {
+      return finish();
+    }
+    return null;
   }
-  var ambiguous = 0;
-  for (final block in blocks) {
+
+  /// The file ended: its last block, cut or not, is parsed too. Null when no block held a fix.
+  DjiSrtFix? finish() {
+    if (_finished) {
+      return null;
+    }
+    _finished = true;
+    final last = _carry.replaceAll('\r', '\n');
+    _carry = '';
+    final fix = last.trim().isEmpty ? null : _parseBlock(last);
+    if (fix == null && _ambiguous > 0) {
+      _log.info(
+        '$_ambiguous GPS(a, b) positions with no value beyond 90: the order of latitude and longitude is unknown',
+      );
+    }
+    return fix;
+  }
+
+  DjiSrtFix _found(DjiSrtFix fix) {
+    _finished = true;
+    _carry = '';
+    return fix;
+  }
+
+  /// The fix of one block, null when it holds none
+  DjiSrtFix? _parseBlock(String block) {
+    blocksParsed++;
     final plain = block.replaceAll(_tag, ' ');
     final latitude = _latitude.firstMatch(plain);
     final longitude = _longitude.firstMatch(plain);
@@ -73,20 +173,16 @@ DjiSrtFix? parseDjiSrtFix(String text, {bool complete = true}) {
           } else if (second.abs() > 90 && first.abs() <= 90) {
             (lat, lon) = (first, second);
           } else {
-            ambiguous++;
+            _ambiguous++;
           }
         }
       }
     }
     if (lat == null || lon == null || _isZero(lat, lon) || lat.abs() > 90 || lon.abs() > 180) {
-      continue;
+      return null;
     }
     return (latitude: lat, longitude: lon, localTime: _parseLocalTime(plain));
   }
-  if (ambiguous > 0) {
-    _log.info('$ambiguous GPS(a, b) positions with no value beyond 90: the order of latitude and longitude is unknown');
-  }
-  return null;
 }
 
 bool _isZero(double a, double b) => a.abs() < _zero && b.abs() < _zero;
@@ -120,8 +216,8 @@ const djiSrtWindowStep = 256 * 1024;
 /// The first fix of the .SRT file of [length] bytes that [read] reads (see [parseDjiSrtFix]): its head first, then
 /// more of it in steps until a fix is found or the file ends, so that the file of a ten minute flight (a few MB) is
 /// rarely read whole. Errors of [read] are not caught.
-Future<DjiSrtFix?> readDjiSrtFix(ByteRangeReader read, int length) async {
-  final bytes = BytesBuilder(copy: false);
+Future<DjiSrtFix?> readDjiSrtFix(ByteRangeReader read, int length, {@visibleForTesting DjiSrtScanner? scanner}) async {
+  scanner ??= DjiSrtScanner();
   var offset = 0;
   var window = djiSrtFirstWindow;
   while (offset < length) {
@@ -129,17 +225,15 @@ Future<DjiSrtFix?> readDjiSrtFix(ByteRangeReader read, int length) async {
     if (chunk.isEmpty) {
       break;
     }
-    bytes.add(chunk);
     offset += chunk.length;
-    final complete = offset >= length;
-    // A character cut at the end of the window only touches the last block, which is left out until complete
-    final fix = parseDjiSrtFix(utf8.decode(bytes.toBytes(), allowMalformed: true), complete: complete);
+    // Each block is parsed once, as soon as the blank line after it came (see DjiSrtScanner)
+    final fix = scanner.addBytes(chunk, isLast: offset >= length);
     if (fix != null) {
       return fix;
     }
     window = djiSrtWindowStep;
   }
-  return null;
+  return scanner.finish();
 }
 
 final _srtName = RegExp(r'\.srt$', caseSensitive: false);
