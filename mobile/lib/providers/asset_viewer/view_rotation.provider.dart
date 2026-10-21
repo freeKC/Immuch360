@@ -6,7 +6,8 @@
 // themselves. Every rule that makes the app show an asset in one of them makes it mode none, and so does a rule the
 // app cannot settle yet (the exif still loading, a file of the device not read yet): no button, no key, no stored
 // turn, no request. Those views read neither the turns kept here nor the server's edits: they ask for the unedited
-// files (see panoramaImageProvider and immersiveMediaUrl).
+// files (see panoramaImageProvider and immersiveMediaUrl), and guess their layout from the size of those files, never
+// from the size an edit gave the asset (see uneditedFrameOf).
 
 import 'dart:async';
 import 'dart:collection';
@@ -21,6 +22,7 @@ import 'package:immich_mobile/domain/models/asset_edit.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/server_capability.model.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/models/unedited_frame.dart';
 import 'package:immich_mobile/domain/models/view_rotation.dart';
 import 'package:immich_mobile/domain/services/local_panorama.service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -37,6 +39,7 @@ import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
+import 'package:immich_mobile/providers/sync_status.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/providers/websocket.provider.dart';
 import 'package:immich_mobile/services/toast.service.dart';
@@ -83,7 +86,7 @@ class RotationSubject {
       asset.name,
       asset.type,
       asset.isEditable,
-      asset is RemoteAsset ? (asset.ownerId, asset.isTrashed) : null,
+      asset is RemoteAsset ? (asset.ownerId, asset.isTrashed, asset.isLocked) : null,
     );
   }
 
@@ -99,19 +102,23 @@ AutoDisposeProvider<RotationMode> rotationModeProvider(BaseAsset asset) => rotat
 
 /// How an asset turns with the one-key rotation, see [RotationMode].
 ///
-/// None for anything but a photo, for an asset in the trash, and for every photo the app shows in 360°, 180° or 3D:
-/// the user chose "View as 360°" for it, its exif declares an equirectangular projection, a 360° camera stitched it
-/// (the camera rule), its file on the device was found 360° or raw, its name is that of a raw file of a 360° camera, or
+/// None for anything but a photo, for an asset in the trash or in the locked folder (where the editor is not offered
+/// either), and for every photo the app shows in 360°, 180° or 3D: the user chose "View as 360°" for it, its exif
+/// declares an equirectangular projection, a 360° camera stitched it (the camera rule), it is a 2:1 photo of an
+/// Insta360 camera, its file on the device was found 360° or raw, its name is that of a raw file of a 360° camera, or
 /// it is an Apple spatial photo. None too while that cannot be told yet: the exif of an asset of the server still
 /// loading or missing, a file of the device that may be 360° and was not read yet, a HEIF photo whose stereo pair is
-/// still being looked for.
+/// still being looked for or could not be read.
+///
+/// The shapes are those of the files ([uneditedFrameOf]), never the size an edit of the server gave the asset: a 1:2
+/// photo turned once on the server is no 2:1 one that may be 360°.
 ///
 /// Server for a photo of the user on a server that takes edits (2.6.0 and later), unless the read only mode is on, or
 /// the server refuses its format. Device for any other flat photo: a photo of the device only, of a partner, of a
 /// shared album, on an older server, a motion photo, an animation.
 final rotationModeFamily = Provider.autoDispose.family<RotationMode, RotationSubject>((ref, subject) {
   final asset = subject.asset;
-  if (!asset.isImage || (asset is RemoteAsset && asset.isTrashed)) {
+  if (!asset.isImage || (asset is RemoteAsset && (asset.isTrashed || asset.isLocked))) {
     return RotationMode.none;
   }
   if (ref.watch(rawMediaKindProvider(asset)) != null ||
@@ -119,10 +126,24 @@ final rotationModeFamily = Provider.autoDispose.family<RotationMode, RotationSub
       ref.watch(isFoundLocalPanoramaProvider(asset))) {
     return RotationMode.none;
   }
+  AssetFrame? fileFrame;
   if (asset.hasRemote) {
-    final hasExif = ref.watch(assetExifProvider(asset).select((exif) => exif.valueOrNull != null));
-    if (!hasExif || ref.watch(hasEquirectangularExifProvider(asset))) {
+    final exif = ref.watch(
+      assetExifProvider(asset).select((state) {
+        final exif = state.valueOrNull;
+        return exif == null
+            ? null
+            : (make: exif.make, size: (width: exif.width, height: exif.height), file: uneditedFrameOf(asset, exif));
+      }),
+    );
+    if (exif == null || ref.watch(hasEquirectangularExifProvider(asset))) {
       return RotationMode.none;
+    }
+    if (_isInsta360Sphere(exif.make, isKnownFrame(exif.size) ? exif.size : exif.file)) {
+      return RotationMode.none;
+    }
+    if (isKnownFrame(exif.file)) {
+      fileFrame = exif.file;
     }
   }
   if (ref.watch(hasEquirectCameraExifProvider(asset))) {
@@ -130,14 +151,15 @@ final rotationModeFamily = Provider.autoDispose.family<RotationMode, RotationSub
   }
   final localId = asset.localId;
   if (localId != null &&
-      isLocalPanoramaCandidate(asset) &&
+      isLocalPanoramaCandidate(asset, frame: fileFrame) &&
       !ref.watch(localPanoramaAssetsProvider.select((records) => records.containsKey(localId))) &&
       !ref.watch(openedFilePanoramasProvider.select((records) => records.containsKey(localId)))) {
     return RotationMode.none;
   }
   if (isHeifName(asset.name)) {
     final spatial = ref.watch(appleSpatialInfoProvider(asset));
-    if ((spatial.isLoading && !spatial.hasValue) || spatial.valueOrNull?.photo != null) {
+    // A check that failed tells nothing: the photo may hold two eyes
+    if ((spatial.isLoading && !spatial.hasValue) || spatial.hasError || spatial.valueOrNull?.photo != null) {
       return RotationMode.none;
     }
   }
@@ -153,9 +175,26 @@ final rotationModeFamily = Provider.autoDispose.family<RotationMode, RotationSub
   return RotationMode.device;
 });
 
+/// Whether [make] and [frame] are those of a 360° photo of an Insta360 camera: 2:1 (or 1:2), or of a size not known.
+/// Raw dual fisheye renamed .jpg or stitched by the camera, the exif of the server cannot tell them apart, so the
+/// viewers leave both flat until the user views them as 360° (see hasEquirectCameraExifProvider), but the 360° page
+/// lists them and the Meta Quest shows them on the sphere: never turned. The other photos of the brand (its action
+/// cameras) turn.
+bool _isInsta360Sphere(String? make, AssetFrame frame) {
+  if (make?.trim().toLowerCase() != 'arashi vision') {
+    return false;
+  }
+  if (!isKnownFrame(frame)) {
+    return true;
+  }
+  final width = frame.width!;
+  final height = frame.height!;
+  return (math.max(width, height) / math.min(width, height) / 2 - 1).abs() <= 0.02;
+}
+
 /// The turns kept on this device, per asset of the library and per file of a share (see [ViewRotationEntry]), stored
-/// in [StoreKey.viewRotations]. A share removed takes its files along; the assets gone from the database are dropped
-/// once per run, at the first rotation.
+/// in [StoreKey.viewRotations]. A share removed takes its files along, even while nothing read them; the assets gone
+/// from the database are dropped once per run, at a rotation, once the database can tell (see [_pruneOnce]).
 class ViewRotations extends Notifier<Map<String, ViewRotationEntry>> {
   ViewRotations({this.maxEntries = maxViewRotations});
 
@@ -170,28 +209,36 @@ class ViewRotations extends Notifier<Map<String, ViewRotationEntry>> {
   @override
   Map<String, ViewRotationEntry> build() {
     ref.listen(networkSourcesProvider, (_, sources) => _keepSourcesOf(sources));
+    final Map<String, ViewRotationEntry> stored;
     try {
-      return UnmodifiableMapView(decodeViewRotations(ref.watch(storeServiceProvider).tryGet(StoreKey.viewRotations)));
+      stored = decodeViewRotations(ref.watch(storeServiceProvider).tryGet(StoreKey.viewRotations));
     } on UnsupportedError catch (error) {
       // The store is not initialised: nothing was turned yet, and a viewer must not fail for that
       _log.fine('No store for the rotations: $error');
       return const {};
     }
+    final kept = _withoutSharesGone(stored, ref.read(networkSourcesProvider));
+    if (kept.length != stored.length) {
+      // Removed while nothing read the rotations
+      unawaited(_write(kept));
+    }
+    return UnmodifiableMapView(kept);
   }
 
   /// The quarter turns kept for [asset], 0 when none
   int assetTurns(BaseAsset asset) => viewRotationTurnsOf(state, asset);
 
-  /// Keeps [turns] quarter turns for [asset] (0 forgets it). A rotation chosen before the upload, under the id on the
-  /// device, moves under the server id.
+  /// Keeps [turns] quarter turns for [asset] (0 forgets it), an asset of the server with the user signed in. A
+  /// rotation chosen before the upload, under the id on the device, moves under the server id.
   Future<void> setAssetTurns(BaseAsset asset, int turns) async {
     final key = viewRotationAssetKey(asset);
     final localKey = viewRotationLocalKey(asset);
     final normalized = normalizeQuarterTurns(turns);
+    final userId = asset is RemoteAsset ? ref.read(currentUserProvider)?.id : null;
     var next = withViewRotation(
       state,
       key,
-      normalized == 0 ? null : ViewRotationEntry(normalized),
+      normalized == 0 ? null : ViewRotationEntry(normalized, userId: userId),
       maxEntries: maxEntries,
     );
     if (localKey != null && localKey != key) {
@@ -222,27 +269,50 @@ class ViewRotations extends Notifier<Map<String, ViewRotationEntry>> {
   }
 
   void _keepSourcesOf(List<NetworkSource> sources) {
-    final ids = {for (final source in sources) source.id};
-    bool isGone(String key) => key.startsWith('n:') && !ids.any((id) => isViewRotationShareKeyOf(key, id));
-    if (!state.keys.any(isGone)) {
+    final kept = _withoutSharesGone(state, sources);
+    if (kept.length == state.length) {
       return;
     }
-    unawaited(_save({...state}..removeWhere((key, _) => isGone(key))));
+    unawaited(_save(kept));
+  }
+
+  // [entries] without the files of the shares that are not among [sources]
+  static Map<String, ViewRotationEntry> _withoutSharesGone(
+    Map<String, ViewRotationEntry> entries,
+    List<NetworkSource> sources,
+  ) {
+    final ids = {for (final source in sources) source.id};
+    bool isGone(String key) => key.startsWith('n:') && !ids.any((id) => isViewRotationShareKeyOf(key, id));
+    return entries.keys.any(isGone) ? ({...entries}..removeWhere((key, _) => isGone(key))) : entries;
   }
 
   /// Drops the rotations of the assets that are no longer in the database (their ids are never used again), once per
-  /// run. Not on a computer, whose files opened with the program are no assets of the database, nor while the
-  /// database holds no asset of the server (signed out, or before the first sync).
+  /// run, as soon as the database can tell: signed in, with a sync of the server finished in this run and none
+  /// running, so that an asset not synced yet after a sign in is not taken for one gone. Only the files of this device
+  /// and the assets turned under the user signed in are checked: those turned under another account (another server,
+  /// another user) wait for it. Not on a computer, whose files opened with the program are no assets of the database,
+  /// nor while the database holds no asset of the server.
   Future<void> _pruneOnce() async {
-    if (_prunedThisRun || CurrentPlatform.isDesktop) {
-      return;
-    }
-    _prunedThisRun = true;
-    final ids = {for (final key in state.keys) ?viewRotationAssetId(key)};
-    if (ids.isEmpty) {
+    if (_prunedThisRun || CurrentPlatform.isDesktop || !state.keys.any((key) => viewRotationAssetId(key) != null)) {
       return;
     }
     try {
+      if (ref.read(syncStatusProvider).remoteSyncStatus != SyncStatus.success) {
+        // Tried again at the next rotation
+        return;
+      }
+      final userId = ref.read(currentUserProvider)?.id;
+      if (userId == null) {
+        return;
+      }
+      final ids = {
+        for (final MapEntry(:key, :value) in state.entries)
+          if (value.userId == null || value.userId == userId) ?viewRotationAssetId(key),
+      };
+      if (ids.isEmpty) {
+        return;
+      }
+      _prunedThisRun = true;
       final existing = await ref.read(viewRotationAssetIdsProvider)(ids);
       if (existing == null) {
         return;
@@ -260,6 +330,11 @@ class ViewRotations extends Notifier<Map<String, ViewRotationEntry>> {
 
   Future<void> _save(Map<String, ViewRotationEntry> entries) async {
     state = UnmodifiableMapView(entries);
+    await _write(entries);
+    unawaited(_pruneOnce());
+  }
+
+  Future<void> _write(Map<String, ViewRotationEntry> entries) async {
     try {
       final store = ref.read(storeServiceProvider);
       if (entries.isEmpty) {
@@ -271,14 +346,22 @@ class ViewRotations extends Notifier<Map<String, ViewRotationEntry>> {
       // The rotation still holds until the app restarts
       _log.warning('Could not remember the rotations', error, stackTrace);
     }
-    unawaited(_pruneOnce());
   }
 }
 
-/// The quarter turns [entries] keep for [asset]: under its server id, else under its id on the device
+/// The quarter turns [entries] keep for [asset]: under its own key (see [viewRotationAssetKey]); else, for an asset
+/// of the server whose picture carries no edit, those chosen for its file on the device before the upload, the same
+/// picture then. Once the server edited it, its picture is no longer the file those turns were chosen for.
 int viewRotationTurnsOf(Map<String, ViewRotationEntry> entries, BaseAsset asset) {
+  final own = entries[viewRotationAssetKey(asset)];
+  if (own != null) {
+    return own.turns;
+  }
   final localKey = viewRotationLocalKey(asset);
-  return (entries[viewRotationAssetKey(asset)] ?? (localKey == null ? null : entries[localKey]))?.turns ?? 0;
+  if (localKey == null || (asset is RemoteAsset && asset.isEdited)) {
+    return 0;
+  }
+  return entries[localKey]?.turns ?? 0;
 }
 
 final viewRotationsProvider = NotifierProvider<ViewRotations, Map<String, ViewRotationEntry>>(ViewRotations.new);

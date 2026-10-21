@@ -40,6 +40,13 @@ void main() {
       expect(viewRotationAssetId(viewRotationShareKey('s1', '/a.jpg')), isNull);
     });
 
+    test('a file of the device is kept under its id there, even once its copy is on the server', () {
+      // The device albums draw the file, never what an edit of the server made of its copy
+      final backedUp = LocalAssetFactory.create(remoteId: 'remote-1');
+      expect(viewRotationAssetKey(backedUp), 'a:${backedUp.id}');
+      expect(viewRotationLocalKey(backedUp), 'a:${backedUp.id}');
+    });
+
     test('a file of a share is kept under its share and path', () {
       final key = viewRotationShareKey('s1', '/Photos/a.jpg');
       expect(key, 'n:s1:/Photos/a.jpg');
@@ -60,6 +67,16 @@ void main() {
       final decoded = decodeViewRotations(json);
       expect(decoded, entries);
       expect(decoded.keys.toList(), ['a:asset-1', 'n:s1:/a.jpg', 'a:asset-2']);
+    });
+
+    test('keeps the user an asset of a server was turned under', () {
+      final entries = {'a:remote-1': const ViewRotationEntry(1, userId: 'me'), 'a:local-1': const ViewRotationEntry(2)};
+      final json = encodeViewRotations(entries);
+      expect(json, '{"a:remote-1":{"t":1,"u":"me"},"a:local-1":2}');
+      expect(decodeViewRotations(json), entries);
+      expect(decodeViewRotations('{"a:bad-user":{"t":1,"u":3},"a:bad-turns":{"t":5,"u":"me"},"a:ok":{"t":3}}'), {
+        'a:ok': const ViewRotationEntry(3),
+      });
     });
 
     test('skips a damaged value, unknown kinds of keys and turns out of 1 to 3', () {

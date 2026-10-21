@@ -26,6 +26,7 @@ import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.da
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
+import 'package:immich_mobile/providers/sync_status.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -235,6 +236,62 @@ void main() {
         spatial: {heic: Future.value(const AppleSpatialInfo.photo(pair))},
       );
       expect(await modeOf(spatial, heic), RotationMode.none);
+
+      final failing = Completer<AppleSpatialInfo?>();
+      final failed = createContainer(exif: {heic: flatExif}, spatial: {heic: failing.future});
+      expect(await modeOf(failed, heic), RotationMode.none);
+      failing.completeError(Exception('unreadable'));
+      await pumpEventQueue();
+      expect(failed.read(rotationModeProvider(heic)), RotationMode.none, reason: 'a check that failed tells nothing');
+    });
+
+    test(
+      'never turns a 360° photo of an Insta360 camera, raw or stitched, but turns the others of the brand',
+      () async {
+        // Only on the server, named .jpg: a raw dual fisheye photo renamed, or one the camera stitched without GPano
+        final sphere = RemoteAssetFactory.create(
+          ownerId: _userId,
+          name: 'IMG_20250101_101010_00_001.jpg',
+          width: 5760,
+          height: 2880,
+        );
+        const x4 = ExifInfo(width: 5760, height: 2880, make: 'Arashi Vision', model: 'Insta360 X4');
+        expect(await modeOf(createContainer(exif: {sphere: x4}), sphere), RotationMode.none);
+
+        final action = RemoteAssetFactory.create(ownerId: _userId, width: 4000, height: 3000);
+        const acePro = ExifInfo(width: 4000, height: 3000, make: 'Arashi Vision', model: 'Insta360 Ace Pro');
+        expect(await modeOf(createContainer(exif: {action: acePro}), action), RotationMode.server, reason: '4:3');
+      },
+    );
+
+    test('reads the shape of the file, never the size the server gave a photo it turned', () async {
+      // A 1:2 photo of a phone (18:9 screen), turned once on the server, which now sizes it 2:1. Its file was never a
+      // 360° candidate, so the scan of the device has no record of it to wait for.
+      final turned = RemoteAssetFactory.create(
+        ownerId: _userId,
+        localId: 'phone-1',
+        width: 2160,
+        height: 1080,
+      ).copyWith(isEdited: true);
+      const tall = ExifInfo(width: 1080, height: 2160, make: 'Google', model: 'Pixel 8');
+      final container = createContainer(exif: {turned: tall});
+      expect(await modeOf(container, turned), RotationMode.server);
+      expect(container.read(rotationModeProvider(turned.copyWith(isFavorite: true))), RotationMode.server);
+
+      // A 2:1 file turned is still one that may be 360°, until the scan read it
+      final wide = RemoteAssetFactory.create(
+        ownerId: _userId,
+        localId: 'phone-2',
+        width: 2000,
+        height: 4000,
+      ).copyWith(isEdited: true);
+      const wideFile = ExifInfo(width: 4000, height: 2000);
+      expect(await modeOf(createContainer(exif: {wide: wideFile}), wide), RotationMode.none);
+    });
+
+    test('never turns a photo of the locked folder, where the editor is not offered either', () async {
+      final locked = RemoteAssetFactory.create(ownerId: _userId, visibility: AssetVisibility.locked);
+      expect(await modeOf(createContainer(exif: {locked: flatExif}), locked), RotationMode.none);
     });
 
     test('keeps the mode of a copy of the asset that differs only in what the mode does not read', () async {
@@ -273,7 +330,31 @@ void main() {
       await rotations.rotateAsset(uploaded, 1);
       expect(rotations.assetTurns(uploaded), 0);
       await rotations.rotateAsset(uploaded, 1);
-      expect(store.tryGet(StoreKey.viewRotations), '{"a:${uploaded.id}":1}');
+      expect(store.tryGet(StoreKey.viewRotations), '{"a:${uploaded.id}":{"t":1,"u":"$_userId"}}');
+    });
+
+    test('keeps a file of the device apart from the server picture of its copy once that is edited', () async {
+      final container = createContainer();
+      final rotations = container.read(viewRotationsProvider.notifier);
+      // A device album shows the file, never what an edit of the server made of its copy
+      final inAlbum = LocalAssetFactory.create(id: 'local-1', remoteId: 'remote-1');
+      await rotations.rotateAsset(inAlbum, 1);
+      expect(store.tryGet(StoreKey.viewRotations), '{"a:local-1":1}');
+
+      final copy = RemoteAssetFactory.create(id: 'remote-1', localId: 'local-1', ownerId: _userId);
+      expect(rotations.assetTurns(copy), 1, reason: 'the same picture while the server has no edit of it');
+      expect(rotations.assetTurns(copy.copyWith(isEdited: true)), 0, reason: 'no longer the picture turned');
+
+      await rotations.rotateAsset(copy, 1);
+      expect(store.tryGet(StoreKey.viewRotations), '{"a:remote-1":{"t":2,"u":"$_userId"}}', reason: 'with its user');
+    });
+
+    test('forgets the files of a share removed while nothing read the rotations', () async {
+      await store.put(StoreKey.viewRotations, '{"n:gone:/a.jpg":{"t":1},"n:s1:/b.jpg":{"t":2},"a:x":1}');
+      final container = createContainer(sources: () => _Sources([_source('s1')]));
+      expect(container.read(viewRotationsProvider).keys, ['n:s1:/b.jpg', 'a:x']);
+      await pumpEventQueue();
+      expect(store.tryGet(StoreKey.viewRotations), '{"n:s1:/b.jpg":{"t":2},"a:x":1}');
     });
 
     test('keeps a share file by its path, and forgets it with its share', () async {
@@ -293,8 +374,11 @@ void main() {
       expect(store.tryGet(StoreKey.viewRotations), '{"n:s2:/b.jpg":{"t":3,"s":30,"m":40}}');
     });
 
-    test('drops the assets gone from the library once per run, at the first rotation', () async {
-      await store.put(StoreKey.viewRotations, '{"a:gone":1,"a:kept":2,"n:s1:/a.jpg":{"t":1}}');
+    test('drops the assets gone from the library once per run, once a sync of the server finished', () async {
+      await store.put(
+        StoreKey.viewRotations,
+        '{"a:gone":{"t":1,"u":"$_userId"},"a:kept":2,"a:elsewhere":{"t":1,"u":"other"},"n:s1:/a.jpg":{"t":1}}',
+      );
       final asked = <Set<String>>[];
       final container = createContainer(
         sources: () => _Sources([_source('s1')]),
@@ -304,11 +388,21 @@ void main() {
         },
       );
       final rotations = container.read(viewRotationsProvider.notifier);
+      final sync = container.read(syncStatusProvider.notifier);
+
       await rotations.rotateAsset(LocalAssetFactory.create(id: 'new'), 1);
       await pumpEventQueue();
+      expect(asked, isEmpty, reason: 'no sync finished in this run: the database may not hold every asset yet');
+      sync.startRemoteSync();
+      await rotations.rotateAsset(LocalAssetFactory.create(id: 'new'), 1);
+      await pumpEventQueue();
+      expect(asked, isEmpty, reason: 'a sync running, after a sign in for example');
 
-      expect(asked.single, {'gone', 'kept', 'new'});
-      expect(container.read(viewRotationsProvider).keys, ['a:kept', 'n:s1:/a.jpg', 'a:new']);
+      sync.completeRemoteSync();
+      await rotations.rotateAsset(LocalAssetFactory.create(id: 'new'), 1);
+      await pumpEventQueue();
+      expect(asked.single, {'gone', 'kept', 'new'}, reason: 'not the asset turned under another account');
+      expect(container.read(viewRotationsProvider).keys, ['a:kept', 'a:elsewhere', 'n:s1:/a.jpg', 'a:new']);
       await rotations.rotateAsset(LocalAssetFactory.create(id: 'new'), 1);
       await pumpEventQueue();
       expect(asked, hasLength(1), reason: 'once per run');

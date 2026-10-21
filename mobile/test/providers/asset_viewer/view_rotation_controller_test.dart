@@ -241,7 +241,7 @@ void main() {
       container.read(viewRotationControllerProvider.notifier).rotate(photo, 1);
       async.elapse(const Duration(seconds: 1));
       expect(server.sent, isEmpty);
-      expect(store.tryGet(StoreKey.viewRotations), '{"a:${photo.id}":1}');
+      expect(store.tryGet(StoreKey.viewRotations), '{"a:${photo.id}":{"t":1,"u":"$_userId"}}');
       expect(shown(container, photo), 1);
       verify(() => toast.info(any())).called(1);
     });

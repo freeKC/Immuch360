@@ -15,9 +15,11 @@ int normalizeQuarterTurns(int turns) => ((turns % 4) + 4) % 4;
 /// [size] once turned by [turns] quarter turns: width and height swap for an odd number
 Size rotatedSize(Size size, int turns) => normalizeQuarterTurns(turns).isOdd ? size.flipped : size;
 
-/// Key of an asset of the library in the remembered rotations: its server id when it has one, else its id on the
-/// device, as for the other choices kept per asset (see [spatialLayoutKey])
-String viewRotationAssetKey(BaseAsset asset) => _assetKey(spatialLayoutKey(asset));
+/// Key of an asset of the library in the remembered rotations: an asset of the server under its server id, as for
+/// the other choices kept per asset (see [spatialLayoutKey]); a file of the device under its id there, even when its
+/// copy is on the server: the views of the device albums draw the file, never what an edit of the server made of it,
+/// so its turns are kept apart from those of the server's picture.
+String viewRotationAssetKey(BaseAsset asset) => _assetKey(asset is LocalAsset ? asset.id : spatialLayoutKey(asset));
 
 /// The key of [asset] under its id on the device, null when it has none: a rotation chosen before the upload is
 /// found there once the asset has a server id
@@ -42,26 +44,32 @@ bool isViewRotationShareKeyOf(String key, String sourceId) => key.startsWith('$_
 
 /// A remembered rotation: [turns] quarter turns clockwise (1 to 3). A file of a share also keeps its [size] and its
 /// [modifiedMs] as it was turned: a different size or date means another file under the same path, whose rotation is
-/// then ignored.
+/// then ignored. An asset of a server keeps the user signed in when it was turned ([userId]): only that user's
+/// library tells whether it is gone, another account's leaves it alone.
 class ViewRotationEntry {
-  const ViewRotationEntry(this.turns, {this.size, this.modifiedMs});
+  const ViewRotationEntry(this.turns, {this.size, this.modifiedMs, this.userId});
 
   final int turns;
   final int? size;
   final int? modifiedMs;
+  final String? userId;
 
   /// Whether this rotation was made for a file of [size] modified at [modifiedMs]
   bool matchesFile({int? size, int? modifiedMs}) => this.size == size && this.modifiedMs == modifiedMs;
 
   @override
   bool operator ==(Object other) =>
-      other is ViewRotationEntry && other.turns == turns && other.size == size && other.modifiedMs == modifiedMs;
+      other is ViewRotationEntry &&
+      other.turns == turns &&
+      other.size == size &&
+      other.modifiedMs == modifiedMs &&
+      other.userId == userId;
 
   @override
-  int get hashCode => Object.hash(turns, size, modifiedMs);
+  int get hashCode => Object.hash(turns, size, modifiedMs, userId);
 
   @override
-  String toString() => 'ViewRotationEntry($turns, size: $size, modifiedMs: $modifiedMs)';
+  String toString() => 'ViewRotationEntry($turns, size: $size, modifiedMs: $modifiedMs, userId: $userId)';
 }
 
 /// The quarter turns [entries] keep for the file at [path] of the share [sourceId], of [size] bytes modified at
@@ -80,9 +88,9 @@ int viewRotationShareTurnsOf(
 /// Past this many photos, the ones turned first are forgotten
 const maxViewRotations = 5000;
 
-/// Reads the remembered rotations from their JSON form: a map from `a:<asset id>` to the quarter turns, and from
-/// `n:<source id>:<path>` to `{"t": turns, "s": size, "m": modified ms}`, the latest last. A damaged value, an unknown
-/// kind of key and turns out of 1 to 3 are skipped.
+/// Reads the remembered rotations from their JSON form: a map from `a:<asset id>` to the quarter turns, or to
+/// `{"t": turns, "u": user id}` for an asset of a server, and from `n:<source id>:<path>` to `{"t": turns, "s": size,
+/// "m": modified ms}`, the latest last. A damaged value, an unknown kind of key and turns out of 1 to 3 are skipped.
 Map<String, ViewRotationEntry> decodeViewRotations(String? json) {
   final entries = <String, ViewRotationEntry>{};
   if (json == null || json.isEmpty) {
@@ -102,7 +110,7 @@ Map<String, ViewRotationEntry> decodeViewRotations(String? json) {
       continue;
     }
     final entry = key.startsWith(_assetPrefix)
-        ? _turnsOf(value)
+        ? (value is Map ? _assetEntryOf(value) : _turnsOf(value))
         : key.startsWith(_sharePrefix) && value is Map
         ? _shareEntryOf(value)
         : null;
@@ -115,6 +123,15 @@ Map<String, ViewRotationEntry> decodeViewRotations(String? json) {
 
 ViewRotationEntry? _turnsOf(Object? value) =>
     value is int && value >= 1 && value <= 3 ? ViewRotationEntry(value) : null;
+
+ViewRotationEntry? _assetEntryOf(Map<dynamic, dynamic> value) {
+  final turns = _turnsOf(value['t']);
+  final userId = value['u'];
+  if (turns == null || (userId != null && userId is! String)) {
+    return null;
+  }
+  return ViewRotationEntry(turns.turns, userId: userId as String?);
+}
 
 ViewRotationEntry? _shareEntryOf(Map<dynamic, dynamic> value) {
   final turns = _turnsOf(value['t']);
@@ -135,6 +152,8 @@ String encodeViewRotations(Map<String, ViewRotationEntry> entries) => jsonEncode
             if (value.size != null) 's': value.size,
             if (value.modifiedMs != null) 'm': value.modifiedMs,
           }
+        : value.userId != null
+        ? {'t': value.turns, 'u': value.userId}
         : value.turns,
 });
 
