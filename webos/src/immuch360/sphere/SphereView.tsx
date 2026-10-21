@@ -90,8 +90,9 @@ export const SphereView = forwardRef<SphereViewHandle, SphereViewProps>(
 			if (renderer?.hasFrame()) renderer.draw({yaw: m.yaw, pitch: m.pitch, fov: m.fov, sharp});
 		}, []);
 
+		// A named function, so that the frame loop asks for its next frame without reading tick before it is declared
 		const tick = useCallback(
-			(now: number) => {
+			function step(now: number) {
 				const m = motion.current;
 				const dt = m.last ? Math.min(0.1, (now - m.last) / 1000) : 0;
 				m.last = now;
@@ -122,7 +123,7 @@ export const SphereView = forwardRef<SphereViewHandle, SphereViewProps>(
 				const active = moving || !!m.drag;
 				draw(!active);
 				if (active) {
-					m.raf = requestAnimationFrame(tick);
+					m.raf = requestAnimationFrame(step);
 				} else {
 					m.raf = 0;
 					m.last = 0;
@@ -144,8 +145,6 @@ export const SphereView = forwardRef<SphereViewHandle, SphereViewProps>(
 			},
 			[kick]
 		);
-
-
 
 		// The canvas follows the size of the viewer, at most 1.5 device pixels per CSS pixel
 		const fitCanvas = useCallback(() => {

@@ -19,16 +19,19 @@ const DiagnosticsPanel: React.FC = () => {
 		void probeVideoTexture().then(setVideoTexture);
 	}, []);
 
+	// The first test starts with the page, its state already "testing"; Retry runs it again
 	useEffect(() => {
 		let cancelled = false;
 		void collectDiagnostics(repository).then((found) => {
 			if (!cancelled) setLines(found);
 		});
-		runVideoTest();
+		void probeVideoTexture().then((result) => {
+			if (!cancelled) setVideoTexture(result);
+		});
 		return () => {
 			cancelled = true;
 		};
-	}, [repository, runVideoTest]);
+	}, [repository]);
 
 	const all = lines.concat([{label: t('webos_diagnostics_video_texture'), value: videoTexture}]);
 

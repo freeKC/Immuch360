@@ -122,6 +122,10 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	// Reset on media change: Sandstone doesn't notify when the player unmounts (video →
 	// photo), which would leave the state stuck on "visible". State adjustment during
 	// render, not in an effect (`react-hooks/set-state-in-effect`, Enact CI strict).
+	// Immuch360: the top bar of a video (close, date, position) hides with Sandstone's transport bar instead of staying
+	// over the film; it shows for 5 s when a video opens, as the controls do after a key. The video it shows for is set
+	// with the asset (below), the timer only clears it.
+	const [videoIntro, setVideoIntro] = useState<string | null>(isVideo && asset ? asset.id : null);
 	const [prevAssetId, setPrevAssetId] = useState(asset?.id);
 	if (asset?.id !== prevAssetId) {
 		setPrevAssetId(asset?.id);
@@ -129,16 +133,13 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		// The bar may unmount (photo → video) without a blur reaching us.
 		setActionBarFocused(false);
 		setResolved(null);
+		setVideoIntro(isVideo && asset ? asset.id : null);
 	}
 	const videoControlsOpen = isVideo && videoControlsVisible;
 
-	// Immuch360: the top bar of a video (close, date, position) hides with Sandstone's transport bar instead of staying
-	// over the film; it shows for 5 s when a video opens, as the controls do after a key
-	const [videoIntro, setVideoIntro] = useState<string | null>(null);
 	const assetId = asset?.id;
 	useEffect(() => {
 		if (!isVideo || !assetId) return undefined;
-		setVideoIntro(assetId);
 		const timer = window.setTimeout(() => setVideoIntro(null), CONTROLS_HIDE_AFTER_MS);
 		return () => window.clearTimeout(timer);
 	}, [isVideo, assetId]);
@@ -277,40 +278,53 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		[asset]
 	);
 
+	// The zoom buttons of the sphere call it through its handle, only when pressed
+	const sphereZoomIn = useCallback(() => sphereRef.current?.zoomIn(), []);
+	const sphereZoomOut = useCallback(() => sphereRef.current?.zoomOut(), []);
+
+	// The buttons of the action bar, in their order. Built from literals only: the zoom buttons of the sphere read a
+	// ref when pressed, and the React lint rules forbid handing such a function to a call during render.
 	const actions: ViewerAction[] = useMemo(() => {
 		if (!asset || isVideo) return [];
-		const list: ViewerAction[] = [];
-		const zoomIn = show360 ? () => sphereRef.current?.zoomIn() : photoZoomIn;
-		const zoomOut = show360 ? () => sphereRef.current?.zoomOut() : photoZoomOut;
-		if (show360) {
-			if (currentIndex > 0) list.push({key: 'prev', icon: 'arrowlargeleft', label: t('previous'), onClick: handlePrev});
-		} else {
-			list.push({key: 'rotate', icon: 'rotate', label: t('webos_rotate'), onClick: rotate});
-		}
-		list.push({key: 'zoomOut', icon: 'zoomout', label: t('tv_zoom_out'), onClick: zoomOut});
-		list.push({key: 'zoomIn', icon: 'zoomin', label: t('tv_zoom_in'), onClick: zoomIn, spotlightId: ZOOM_IN_SPOTLIGHT_ID});
-		if (show360 && resolved) {
-			list.push({
-				key: 'coverage',
-				text: resolved.coverage === 'full' ? '360°' : '180°',
-				label: resolved.coverage === 'full' ? t('panorama_coverage_full') : t('panorama_coverage_half'),
-				onClick: () => saveChoice({...choice, coverage: resolved.coverage === 'full' ? 'half' : 'full'}),
-			});
-			list.push({
-				key: 'layout',
-				text: resolved.layout === 'mono' ? '2D' : '3D',
-				label: `${t('panorama_stereo_layout')}: ${t(resolved.layout === 'mono' ? 'panorama_stereo_mono' : resolved.layout === 'topBottom' ? 'panorama_stereo_top_bottom' : 'panorama_stereo_left_right')}`,
-				onClick: () => saveChoice({...choice, layout: nextStereoLayout(resolved.layout)}),
-			});
-		}
-		if (!flagged && (forced || !show360)) {
-			list.push({key: 'view360', icon: 'view360', label: forced ? t('view_as_360_remove') : t('view_as_360'), onClick: toggleForced});
-		}
-		list.push({key: 'slideshow', icon: 'play', label: t('slideshow'), onClick: onStartSlideshow});
-		list.push({key: 'close', icon: 'closex', label: t('close'), onClick: onClose});
-		if (show360 && currentIndex < totalCount - 1) list.push({key: 'next', icon: 'arrowlargeright', label: t('next'), onClick: handleNext});
-		return list;
-	}, [asset, isVideo, show360, resolved, flagged, forced, choice, currentIndex, totalCount, photoZoomIn, photoZoomOut, rotate, handlePrev, handleNext, onStartSlideshow, onClose, saveChoice, toggleForced]);
+		const sphereChoices: ViewerAction[] =
+			show360 && resolved
+				? [
+						{
+							key: 'coverage',
+							text: resolved.coverage === 'full' ? '360°' : '180°',
+							label: resolved.coverage === 'full' ? t('panorama_coverage_full') : t('panorama_coverage_half'),
+							onClick: () => saveChoice({...choice, coverage: resolved.coverage === 'full' ? 'half' : 'full'}),
+						},
+						{
+							key: 'layout',
+							text: resolved.layout === 'mono' ? '2D' : '3D',
+							label: `${t('panorama_stereo_layout')}: ${t(resolved.layout === 'mono' ? 'panorama_stereo_mono' : resolved.layout === 'topBottom' ? 'panorama_stereo_top_bottom' : 'panorama_stereo_left_right')}`,
+							onClick: () => saveChoice({...choice, layout: nextStereoLayout(resolved.layout)}),
+						},
+					]
+				: [];
+		const first: ViewerAction[] = show360
+			? currentIndex > 0
+				? [{key: 'prev', icon: 'arrowlargeleft', label: t('previous'), onClick: handlePrev}]
+				: []
+			: [{key: 'rotate', icon: 'rotate', label: t('webos_rotate'), onClick: rotate}];
+		const view360: ViewerAction[] =
+			!flagged && (forced || !show360)
+				? [{key: 'view360', icon: 'view360', label: forced ? t('view_as_360_remove') : t('view_as_360'), onClick: toggleForced}]
+				: [];
+		const last: ViewerAction[] =
+			show360 && currentIndex < totalCount - 1 ? [{key: 'next', icon: 'arrowlargeright', label: t('next'), onClick: handleNext}] : [];
+		return [
+			...first,
+			{key: 'zoomOut', icon: 'zoomout', label: t('tv_zoom_out'), onClick: show360 ? sphereZoomOut : photoZoomOut},
+			{key: 'zoomIn', icon: 'zoomin', label: t('tv_zoom_in'), onClick: show360 ? sphereZoomIn : photoZoomIn, spotlightId: ZOOM_IN_SPOTLIGHT_ID},
+			...sphereChoices,
+			...view360,
+			{key: 'slideshow', icon: 'play', label: t('slideshow'), onClick: onStartSlideshow},
+			{key: 'close', icon: 'closex', label: t('close'), onClick: onClose},
+			...last,
+		];
+	}, [asset, isVideo, show360, resolved, flagged, forced, choice, currentIndex, totalCount, photoZoomIn, photoZoomOut, sphereZoomIn, sphereZoomOut, rotate, handlePrev, handleNext, onStartSlideshow, onClose, saveChoice, toggleForced]);
 
 	// The Magic Remote drags the sphere through the stage, which lies over it
 	const stageMouse = useMemo(
