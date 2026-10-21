@@ -14,19 +14,13 @@
 // | Stop                    | 413                            | close the video                                            |
 // | Previous, Next track    | 177, 176                       | previous and next item, where the remote has them          |
 // | Info                    | 457 (and I of a keyboard)      | show or hide the details of the item; Back closes them     |
-// | Red Green Yellow Blue   | 403 404 405 406                | left free                                                  |
+// | Yellow                  | 405 (and R of a keyboard)      | photo: turn 90° clockwise                                  |
+// | Blue                    | 406 (and Shift R)              | photo: turn 90° counterclockwise                           |
+// | Red, Green              | 403, 404                       | left free                                                  |
 //
-// A flat photo turns by 90° with one key, and the turn is kept for that photo on the TV (src/utils/rotationStore.ts):
-//
-// | Key                     | webOS keyCode (key)            | Action                                                     |
-// |-------------------------|--------------------------------|------------------------------------------------------------|
-// | Up                      | 38                             | turn 90° clockwise, when the photo is not zoomed and the   |
-// |                         |                                | focus is on it (Up from the action bar goes back to it)    |
-// | R or ] of a keyboard    | 82 or 221 (r, R, ])            | turn 90° clockwise                                         |
-// | [ of a keyboard         | 219 ([)                        | turn 90° counterclockwise                                  |
-//
-// Every LG remote has Up, the Magic Remote included, which has no colour keys of its own. The [ and ] keys are those
-// of the photo editor of Immich's web app.
+// The turn keys are those of the Android TV app (isRemoteRotateClockwise of remote_keys.dart). A Magic Remote without
+// colour keys shows them on screen (its ... or 123 button); the turn button of the photo's controls does the same. The
+// turn is kept on the server as an edit, or on the TV (src/immuch360/rotation/).
 //
 // 1536 is Back on webOS 25 and later, but the wheel of the Magic Remote sends 1536 too, with key "Unidentified":
 // that pair is not Back (immich-tv-webos found it on a TV). 8 is Back on a few firmwares, except in a text field.
@@ -60,6 +54,10 @@ export type RemoteAction =
 export interface KeyLike {
 	keyCode: number;
 	key?: string;
+	shiftKey?: boolean;
+	ctrlKey?: boolean;
+	altKey?: boolean;
+	metaKey?: boolean;
 }
 
 const BY_CODE: Record<number, RemoteAction> = {
@@ -111,10 +109,6 @@ const BY_KEY: Record<string, RemoteAction> = {
 	Info: 'info',
 	i: 'info',
 	I: 'info',
-	r: 'rotateRight',
-	R: 'rotateRight',
-	']': 'rotateRight',
-	'[': 'rotateLeft',
 };
 
 const WHEEL_OR_BACK = 1536;
@@ -127,6 +121,11 @@ const BACKSPACE = 8;
 export function remoteAction(event: KeyLike, editingText = false): RemoteAction | null {
 	if (event.keyCode === WHEEL_OR_BACK) return event.key === 'Unidentified' ? null : 'back';
 	if (event.keyCode === BACKSPACE) return editingText ? null : 'back';
+	if (event.key === 'r' || event.key === 'R') {
+		// R of a keyboard turns the photo, Shift R the other way; with Control, Alt or Meta it is a shortcut of another
+		if (editingText || event.ctrlKey || event.altKey || event.metaKey) return null;
+		return event.shiftKey ? 'rotateLeft' : 'rotateRight';
+	}
 	return BY_CODE[event.keyCode] ?? (event.key ? BY_KEY[event.key] ?? null : null);
 }
 
@@ -165,21 +164,13 @@ export function playPauseWantsPlay(action: RemoteAction | null, isPlaying: boole
 	return null;
 }
 
-/** Where a key is pressed in the viewer of a flat photo */
-export interface PhotoKeyContext {
-	/** The photo is zoomed in: the arrows move it */
-	zoomed: boolean;
-	/** The focus is on the action bar: the arrows move between its buttons */
-	inActionBar: boolean;
-}
-
 /**
- * The quarter turns a key gives a flat photo: 1 clockwise, -1 counterclockwise, null for a key that does not turn it.
- * Up turns it only when it is not zoomed and the focus is on the photo; the keyboard keys turn it anywhere.
+ * The quarter turns a key gives a flat photo: 1 clockwise (yellow, R), -1 counterclockwise (blue, Shift R), null for a
+ * key that does not turn it. The arrows never turn it: Up is pressed by habit, to bring the controls back or to leave
+ * the pointer of the Magic Remote, and a turn is saved on the server.
  */
-export function photoRotationStep(action: RemoteAction | null, where: PhotoKeyContext): 1 | -1 | null {
-	if (action === 'rotateRight') return 1;
-	if (action === 'rotateLeft') return -1;
-	if (action === 'up' && !where.zoomed && !where.inActionBar) return 1;
+export function photoRotationStep(action: RemoteAction | null): 1 | -1 | null {
+	if (action === 'yellow' || action === 'rotateRight') return 1;
+	if (action === 'blue' || action === 'rotateLeft') return -1;
 	return null;
 }

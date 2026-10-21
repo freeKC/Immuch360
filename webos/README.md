@@ -31,13 +31,13 @@ Immuch360 is not affiliated with Immich, nor with LG.
 | Watch a film without the date over it | The top bar of a video hides with the controls, 5 s after the last key | Always shown |
 | Look closer at a photo | Zoom with the channel keys or the zoom buttons, then move with the arrows; Back zooms out. Past 2x the full-size picture replaces the preview when the server makes one (Administration, Image settings) | Not available |
 | Read the name, size and camera of a photo or video | Info (or the details button) opens a panel that stays as you move to the next item; Back closes it | Date and place only |
-| Turn a sideways photo | One key: Up turns it by 90° (R, ] or [ on a keyboard), kept for that photo on the TV | A button in the photo's controls |
+| Turn a sideways photo | One key, as on Android TV: yellow turns it 90° clockwise, blue counterclockwise (R and Shift R on a keyboard). Your own photos are turned through Immich's photo editor (Immich 2.6 and later), so they show turned everywhere; the others are turned on this TV only | A button in the photo's controls, kept on the TV |
 | Send a useful bug report | About page: TV model, webOS and Chromium versions, WebGL, video decoders, a video-in-WebGL test, all in a QR code | Not available |
 
 360° videos play flat for now, with a message: whether LG TVs hand video frames to WebGL is what the video test of the
 About page finds out.
 
-Not on a TV: uploads and editing, the phone's own media, network shares, Plex and Tapo cameras (planned through the
+Not on a TV: uploads and the photo editor (only its quarter turn is here), the phone's own media, network shares, Plex and Tapo cameras (planned through the
 app's JS service), Cast, the gyroscope.
 
 ## Install on a TV in Developer Mode
@@ -76,7 +76,7 @@ in [src/immuch360/keys.ts](src/immuch360/keys.ts).
 
 | Key | webOS code | In lists | Photo | 360° photo | Video |
 |---|---|---|---|---|---|
-| Arrows | 37 to 40 | move the focus | Left and Right: previous, next; Up: turn 90°; Down: controls; zoomed in: move | turn the view while held | Left and Right: previous, next (alone: 10 s); Up, Down: controls |
+| Arrows | 37 to 40 | move the focus | Left and Right: previous, next; Up, Down: controls; zoomed in: move | turn the view while held | Left and Right: previous, next (alone: 10 s); Up, Down: controls |
 | OK | 13 | open | show or hide the controls | controls, zoom button focused | controls |
 | Back | 461, 1536, 8, 10009, 27 | back | zoom out, then close | close | close the controls, then the video |
 | Channel up, down | 33, 34 | timeline: a page up, down | zoom in, out | zoom in, out | |
@@ -85,13 +85,25 @@ in [src/immuch360/keys.ts](src/immuch360/keys.ts).
 | Stop | 413 | | | | close the video |
 | Info, or I on a keyboard | 457 | | details | details | details |
 | Previous, Next track | 177, 176 | | previous, next | previous, next | previous, next |
+| Yellow, Blue | 405, 406 | | turn 90° clockwise, counterclockwise | | |
 | Magic Remote | pointer, wheel | point and click | | drag with OK held, wheel zooms | |
-| Keyboard R or ], [ | 82, 221, 219 | | turn 90° clockwise, counterclockwise | | |
+| Keyboard R, Shift R | 82 | | turn 90° clockwise, counterclockwise | | |
 
-One key turns a photo by 90°: Up on a remote (every LG remote has it, the Magic Remote included), R or ] on a
-keyboard, [ to turn the other way, as in the photo editor of Immich's web app. The turn is kept for that photo on this
-TV and the slideshow shows it too; Immich has no place on the server for it yet. The turn button of the action bar
-(Down, then OK on it) does the same.
+One key turns a photo by 90°, with the keys of the Android TV app: yellow clockwise, blue counterclockwise, R and
+Shift R on a keyboard. A Magic Remote without colour keys shows them on screen (its `...` or `123` button), and the turn
+button of the photo's controls (Down, then OK on it) does the same. Holding a key down turns the photo once.
+
+Where the turn is kept, as in the other Immuch360 apps:
+
+- your own photos, on Immich 2.6 or later: through Immich's photo editor, on the server, so the photo shows turned on
+  the web, on the phones and on this TV, and its edits in the editor (a crop, a mirror) are kept. The photo turns on
+  screen at once; the server then makes its turned picture, which takes its place a moment later. An API key needs the
+  `asset.edit.create` permission (and `asset.edit.get`, `asset.edit.delete`) for it;
+- the photos of a partner or of a shared album, motion photos, GIFs, an older server, or a key without those
+  permissions: on this TV only, for that photo (the viewer says so the first time), and the slideshow shows it too.
+
+The arrows never turn a photo: Up is pressed by habit, to bring the controls back or to leave the pointer of the Magic
+Remote, and a turn is saved.
 
 1536 is Back on recent firmwares, but the wheel of the Magic Remote sends it too (with the key "Unidentified"): that
 pair is not Back. 8 is Back on a few firmwares, except while typing.

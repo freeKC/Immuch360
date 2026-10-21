@@ -78,30 +78,37 @@ describe('the video policy of a TV', () => {
 	});
 });
 
-describe('one key turns a flat photo by 90°', () => {
-	const onPhoto = {zoomed: false, inActionBar: false};
-
-	test('Up on the photo turns it clockwise, on every LG remote', () => {
-		assert.equal(photoRotationStep(remoteAction({keyCode: 38, key: 'ArrowUp'}), onPhoto), 1);
+describe('one key turns a flat photo by 90°, as on Android TV', () => {
+	test('yellow turns it clockwise, blue counterclockwise', () => {
+		assert.equal(photoRotationStep(remoteAction({keyCode: 405})), 1);
+		assert.equal(photoRotationStep(remoteAction({keyCode: 406})), -1);
 	});
 
-	test('Up moves a zoomed photo, and leaves the action bar, instead of turning', () => {
-		assert.equal(photoRotationStep('up', {zoomed: true, inActionBar: false}), null);
-		assert.equal(photoRotationStep('up', {zoomed: false, inActionBar: true}), null);
+	test('R of a keyboard turns it clockwise, Shift R counterclockwise', () => {
+		assert.equal(remoteAction({keyCode: 82, key: 'r'}), 'rotateRight');
+		assert.equal(remoteAction({keyCode: 82, key: 'R', shiftKey: true}), 'rotateLeft');
+		// Caps Lock without Shift
+		assert.equal(remoteAction({keyCode: 82, key: 'R'}), 'rotateRight');
+		assert.equal(photoRotationStep('rotateRight'), 1);
+		assert.equal(photoRotationStep('rotateLeft'), -1);
 	});
 
-	test('R and ] of a keyboard turn it clockwise, [ counterclockwise, wherever the focus is', () => {
-		for (const key of ['r', 'R', ']']) {
-			assert.equal(remoteAction({keyCode: 0, key}), 'rotateRight', key);
-			assert.equal(photoRotationStep(remoteAction({keyCode: 0, key}), {zoomed: true, inActionBar: true}), 1, key);
+	test('R with Control, Alt or Meta, or typed in a text field, is not a turn', () => {
+		assert.equal(remoteAction({keyCode: 82, key: 'r', ctrlKey: true}), null);
+		assert.equal(remoteAction({keyCode: 82, key: 'r', altKey: true}), null);
+		assert.equal(remoteAction({keyCode: 82, key: 'r', metaKey: true}), null);
+		assert.equal(remoteAction({keyCode: 82, key: 'r'}, true), null);
+	});
+
+	test('the arrows never turn it, Up included (pressed by habit, and a turn is saved on the server)', () => {
+		assert.equal(photoRotationStep(remoteAction({keyCode: 38, key: 'ArrowUp'})), null);
+		for (const action of ['up', 'down', 'left', 'right', 'ok', 'back', 'channelUp', 'info', 'red', 'green', null]) {
+			assert.equal(photoRotationStep(action), null, String(action));
 		}
-		assert.equal(remoteAction({keyCode: 219, key: '['}), 'rotateLeft');
-		assert.equal(photoRotationStep('rotateLeft', onPhoto), -1);
 	});
 
-	test('the other keys do not turn it', () => {
-		for (const action of ['down', 'left', 'right', 'ok', 'back', 'channelUp', 'info', 'red', null]) {
-			assert.equal(photoRotationStep(action, onPhoto), null, String(action));
-		}
+	test('the brackets of the web editor are no turn keys on the TV', () => {
+		assert.equal(remoteAction({keyCode: 219, key: '['}), null);
+		assert.equal(remoteAction({keyCode: 221, key: ']'}), null);
 	});
 });

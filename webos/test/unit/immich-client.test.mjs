@@ -61,6 +61,21 @@ describe('ImmichRepository with recorded responses', () => {
 		);
 	});
 
+	test('the pictures of a month carry the thumbhash of each asset as their cache key, as in the web app', async () => {
+		const repo = repository();
+		await repo.getBucketAssets('2024-06-01');
+		const [first, second] = ['7f1c2b8e-0d4f-4d1e-9a51-2a5b7c3e9f10', '0b6e0f62-5d8a-4a7f-8a4b-9a2c4b1d7e21'];
+		assert.equal(
+			repo.thumbnailUrl(first),
+			`https://photos.example.org/api/assets/${first}/thumbnail?size=thumbnail&edited=true&c=1QcSHQRnh493V4dIh4eXh1h4kJUI&apiKey=k3y`
+		);
+		// No thumbhash, no key
+		assert.equal(repo.previewUrl(second), `https://photos.example.org/api/assets/${second}/thumbnail?size=preview&edited=true&apiKey=k3y`);
+		// A turn made on this TV gives the pictures a new key
+		repo.setPictureKey(first, 'NEW+key');
+		assert.equal(repo.previewUrl(first), `https://photos.example.org/api/assets/${first}/thumbnail?size=preview&edited=true&c=NEW%2Bkey&apiKey=k3y`);
+	});
+
 	test('the details of a 360° photo, and how the viewer shows it', async () => {
 		const details = await repository().getAssetDetails('7f1c2b8e-0d4f-4d1e-9a51-2a5b7c3e9f10');
 		assert.deepEqual(details, {
@@ -74,6 +89,10 @@ describe('ImmichRepository with recorded responses', () => {
 			model: 'Insta360 X4',
 			projectionType: 'EQUIRECTANGULAR',
 			fileSize: 18734512,
+			ownerId: '0b6a4e1c-3f2d-4c8b-9e7a-5d1f2a3b4c5d',
+			livePhotoVideoId: null,
+			isTrashed: false,
+			thumbhash: '1QcSHQRnh493V4dIh4eXh1h4kJUI',
 		});
 		assert.deepEqual(resolveSphereView({fileName: details.originalFileName, width: details.width, height: details.height}), {
 			layout: 'mono',

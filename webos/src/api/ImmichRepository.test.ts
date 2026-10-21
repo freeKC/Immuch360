@@ -230,3 +230,73 @@ describe('ImmichRepository.videoPlaybackUrl', () => {
 		);
 	});
 });
+
+// Immuch360: the cache key of the pictures, and the edits of the one-key rotation
+describe('ImmichRepository picture keys', () => {
+	test('the pictures of an asset seen in a timeline carry its thumbhash, as the web app sends it', async () => {
+		const client = new APIClient(apiKeyConfig);
+		const repo = new ImmichRepository(client);
+		jest.spyOn(client, 'fetch').mockResolvedValue({
+			id: ['a1', 'a2'],
+			isImage: [true, true],
+			ratio: [1, 1],
+			fileCreatedAt: ['2026-03-14T10:00:00.000Z', '2026-03-14T11:00:00.000Z'],
+			duration: [null, null],
+			thumbhash: ['ab+c/d==', null],
+		});
+		await repo.getBucketAssets('2026-03-01');
+		expect(repo.previewUrl('a1')).toBe(
+			'https://immich.example.com/api/assets/a1/thumbnail?size=preview&edited=true&c=ab%2Bc%2Fd%3D%3D&apiKey=test-api-key',
+		);
+		expect(repo.thumbnailUrl('a2')).toBe('https://immich.example.com/api/assets/a2/thumbnail?size=thumbnail&edited=true&apiKey=test-api-key');
+	});
+
+	test('the key a turn gave an asset comes first, and a key can be asked for directly', () => {
+		const repo = new ImmichRepository(new APIClient(apiKeyConfig));
+		repo.setPictureKey('a1', 'new');
+		expect(repo.pictureKey('a1')).toBe('new');
+		expect(repo.fullsizeUrl('a1')).toBe('https://immich.example.com/api/assets/a1/thumbnail?size=fullsize&edited=true&c=new&apiKey=test-api-key');
+		expect(repo.previewUrl('a1', 'other')).toBe('https://immich.example.com/api/assets/a1/thumbnail?size=preview&edited=true&c=other&apiKey=test-api-key');
+	});
+});
+
+describe('ImmichRepository edits', () => {
+	test('reads the edits without their ids, and refuses a kind it does not know', async () => {
+		const fetch = jest
+			.fn()
+			.mockResolvedValueOnce({assetId: 'a1', edits: [{id: 'e1', action: 'rotate', parameters: {angle: 90}}]})
+			.mockResolvedValueOnce({assetId: 'a1', edits: [{id: 'e2', action: 'blur', parameters: {}}]});
+		const repo = repoWithFetch(fetch);
+		await expect(repo.getAssetEdits('a1')).resolves.toEqual([{action: 'rotate', parameters: {angle: 90}}]);
+		await expect(repo.getAssetEdits('a1')).resolves.toBeNull();
+		expect(fetch).toHaveBeenCalledWith('/assets/a1/edits');
+	});
+
+	test('puts the whole list, or deletes the edits for an empty one', async () => {
+		const fetch = jest.fn().mockResolvedValue({});
+		const repo = repoWithFetch(fetch);
+		await repo.replaceAssetEdits('a1', [{action: 'rotate', parameters: {angle: 180}}]);
+		await repo.replaceAssetEdits('a1', []);
+		expect(fetch).toHaveBeenNthCalledWith(1, '/assets/a1/edits', {
+			method: 'PUT',
+			body: JSON.stringify({edits: [{action: 'rotate', parameters: {angle: 180}}]}),
+		});
+		expect(fetch).toHaveBeenNthCalledWith(2, '/assets/a1/edits', {method: 'DELETE'});
+	});
+
+	test('the user and the version of the server, asked once', async () => {
+		const fetch = jest.fn((endpoint: string) => Promise.resolve(endpoint === '/users/me' ? {id: 'u1'} : {major: 3, minor: 2, patch: 4}));
+		const repo = repoWithFetch(fetch as unknown as jest.Mock);
+		await expect(repo.getRotationContext()).resolves.toEqual({userId: 'u1', serverVersion: {major: 3, minor: 2, patch: 4}});
+		await repo.getRotationContext();
+		expect(fetch).toHaveBeenCalledTimes(2);
+	});
+
+	test('a part the server does not give is null, and is asked again next time', async () => {
+		const fetch = jest.fn((endpoint: string) => (endpoint === '/users/me' ? Promise.reject(new Error('403')) : Promise.resolve({major: 3, minor: 0, patch: 0})));
+		const repo = repoWithFetch(fetch as unknown as jest.Mock);
+		await expect(repo.getRotationContext()).resolves.toEqual({userId: null, serverVersion: {major: 3, minor: 0, patch: 0}});
+		await repo.getRotationContext();
+		expect(fetch).toHaveBeenCalledTimes(4);
+	});
+});

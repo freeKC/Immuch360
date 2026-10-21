@@ -21,6 +21,9 @@ The history of immich-tv-webos is not imported (one squashed commit keeps the hi
 - The viewer (`src/components/MediaViewer`): the 360° sphere (`src/immuch360/sphere`), "View as 360°", the 3D and
   coverage buttons, the zoom of photos, the key policy of the Android TV app on videos, the top bar of videos that hides,
   5 s before the controls hide; `useAutoHideControls` takes the keys that reveal them.
+- The one-key rotation (`src/immuch360/rotation`): yellow and blue turn a photo, saved through Immich's photo editor
+  (`PUT /api/assets/{id}/edits`) for the user's own photos, else in the inherited `rotationStore`; the pictures carry
+  the asset's thumbhash as their cache key (`c`), as in Immich's web app.
 - The 360° badge of the tiles, the 360° flag read from the timeline and from the asset details (`src/api`).
 - The About page with the diagnostics and their QR code (`src/immuch360/diagnostics`), in the navigation rail.
 - The welcome page shows the Immuch360 icon and tagline.

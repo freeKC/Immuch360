@@ -33,6 +33,16 @@ describe('rotationStore', () => {
 		expect(JSON.parse(localStorage.getItem('immich_rotations')!)).toEqual({});
 	});
 
+	test('sets a turn directly, any multiple of 90 brought into 0 to 270, 0 forgetting it', () => {
+		const store = freshStore();
+		expect(store.setRotation('c', 270)).toBe(270);
+		expect(store.setRotation('c', -90)).toBe(270);
+		expect(store.setRotation('c', 450)).toBe(90);
+		expect(freshStore().getRotation('c')).toBe(90);
+		expect(store.setRotation('c', 0)).toBe(0);
+		expect(JSON.parse(localStorage.getItem('immich_rotations')!)).toEqual({});
+	});
+
 	test('keeps only the most recently rotated assets', () => {
 		const store = freshStore();
 		for (let i = 0; i < 1001; i++) store.rotateClockwise(`asset-${i}`);

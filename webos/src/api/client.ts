@@ -78,9 +78,12 @@ export class APIClient {
 	}
 
 	// Immich v3 serves the unedited original (ignoring crops/rotations) unless edited=true.
-	// Immuch360: 'fullsize' is the full-size picture the server generates (Image settings), the preview otherwise.
-	public getThumbnailUrl(assetId: string, size: 'preview' | 'thumbnail' | 'fullsize' = 'thumbnail'): string {
-		return this.buildMediaUrl(`/assets/${assetId}/thumbnail?size=${size}&edited=true`);
+	// Immuch360: 'fullsize' is the full-size picture the server generates (Image settings), the preview otherwise. The
+	// cache key (the asset's thumbhash, as Immich's web app sends it in c) changes when the picture does, after an edit:
+	// the TV then fetches the new one rather than the copy it kept (the server lets it keep them a day).
+	public getThumbnailUrl(assetId: string, size: 'preview' | 'thumbnail' | 'fullsize' = 'thumbnail', cacheKey?: string | null): string {
+		const key = cacheKey ? `&c=${encodeURIComponent(cacheKey)}` : '';
+		return this.buildMediaUrl(`/assets/${assetId}/thumbnail?size=${size}&edited=true${key}`);
 	}
 
 	public getFaceThumbnailUrl(personId: string): string {

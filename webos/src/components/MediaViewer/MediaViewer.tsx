@@ -38,8 +38,6 @@ const ViewerContainer = createSpotlightContainer({enterTo: 'last-focused'});
 
 // Immuch360: on a 360° photo the arrows turn the view, so only OK brings the controls back
 const SPHERE_REVEAL_KEYS: readonly string[] = ['Enter'];
-// Immuch360: on a flat photo Up turns it by 90° (photoRotationStep), so OK and Down bring the controls back
-const FLAT_PHOTO_REVEAL_KEYS: readonly string[] = ['Enter', 'ArrowDown'];
 
 // Immuch360: the name of each 3D layout on the 2D/3D button, held through i18nKey so that tools/build-i18n.mjs bundles
 // the three texts (a key chosen by a ternary inside t() is not seen by it)
@@ -110,7 +108,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const sphereRef = useRef<SphereViewHandle>(null);
 
 	const [actionBarFocused, setActionBarFocused] = useState(false);
-	const [rotation, rotate] = useAssetRotation(isVideo || show360 ? undefined : asset?.id);
+	const {rotation, rotate, notice: rotationNotice} = useAssetRotation(isVideo || show360 ? undefined : asset?.id);
 	const {zoom, zoomed, zoomIn: photoZoomIn, zoomOut: photoZoomOut, reset: resetZoom, pan, style: zoomStyle} = usePhotoZoom(isVideo || show360 ? undefined : asset?.id);
 	if (zoomedPast2x !== zoom.scale > FULLSIZE_FROM_SCALE) setZoomedPast2x(zoom.scale > FULLSIZE_FROM_SCALE);
 	const sharp = !isVideo && !show360 && wantsFullsize(zoom.scale, details?.width, details?.height);
@@ -121,7 +119,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const {visible: controlsVisible, show: showControls, hide: hideControls} = useAutoHideControls({
 		enabled: !isVideo,
 		controlsRef,
-		revealKeys: show360 ? SPHERE_REVEAL_KEYS : FLAT_PHOTO_REVEAL_KEYS,
+		revealKeys: show360 ? SPHERE_REVEAL_KEYS : undefined,
 	});
 	const inActionBar = !isVideo && controlsVisible && actionBarFocused;
 
@@ -192,7 +190,8 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		}, 1000);
 		return () => window.clearInterval(timer);
 	}, [isVideo, assetId]);
-	const chromeVisible = isVideo ? videoControlsOpen || videoIntro === asset?.id || videoFailed : controlsVisible;
+	// Immuch360: a photo whose turn stays on the TV, or could not be saved, shows the controls with a message about it
+	const chromeVisible = isVideo ? videoControlsOpen || videoIntro === asset?.id || videoFailed : controlsVisible || !!rotationNotice;
 
 	// Immuch360: Left and Right go to the neighbours whatever the video does; a video alone in the viewer seeks 10 s
 	const hasNeighbours = totalCount > 1;
@@ -250,26 +249,29 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		// Left/right page between media, except inside the action bar (Spotlight moves between its buttons)
 		arrowLeft = inActionBar ? undefined : handlePrev;
 		arrowRight = inActionBar ? undefined : handleNext;
-		// Immuch360: Up on the photo turns it by 90° (the key handler below); from the action bar it goes back to the photo.
-		// Unassigned, Down is a reveal key (useAutoHideControls).
-		arrowUp = inActionBar ? focusStage : undefined;
+		// Unassigned, up/down are reveal keys (useAutoHideControls)
+		arrowUp = inActionBar ? focusStage : controlsVisible ? swallowKey : undefined;
 		arrowDown = inActionBar ? swallowKey : controlsVisible ? focusActionBar : undefined;
 	}
 
 	useWebOSKeys({onBack: handleBack, onArrowLeft: arrowLeft, onArrowRight: arrowRight, onArrowUp: arrowUp, onArrowDown: arrowDown});
 
-	// Immuch360: the other keys of the remote in the viewer: Up (and R, ] or [ of a keyboard) turns a flat photo by 90°,
-	// the track keys go to the neighbours, Stop closes a video, rewind and fast forward step 10 s, the play and pause
-	// keys do as their name says, the channel keys zoom a photo
+	// Immuch360: the other keys of the remote in the viewer: yellow turns a flat photo 90° clockwise and blue
+	// counterclockwise (R and Shift R on a keyboard), as on Android TV; the track keys go to the neighbours, Stop closes
+	// a video, rewind and fast forward step 10 s, the play and pause keys do as their name says, the channel keys zoom a
+	// photo
 	useEffect(() => {
 		const onKeyDown = (event: KeyboardEvent) => {
 			const action = remoteAction(event);
-			const turn = !isVideo && !show360 ? photoRotationStep(action, {zoomed, inActionBar}) : null;
+			const turn = !isVideo && !show360 ? photoRotationStep(action) : null;
 			let handled = true;
 			if (turn !== null) {
-				// The zoom and its position were for the photo as it stood
-				if (zoomed) resetZoom();
-				rotate(turn);
+				// A key held down repeats: one press is one turn
+				if (!event.repeat) {
+					// The zoom and its position were for the photo as it stood
+					if (zoomed) resetZoom();
+					rotate(turn);
+				}
 			} else if (action === 'info') toggleDetails();
 			else if (action === 'previousTrack') handlePrev();
 			else if (action === 'nextTrack') handleNext();
@@ -409,6 +411,8 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const mediaUrl = isVideo ? repository.videoPlaybackUrl(asset.id) : sharp ? repository.fullsizeUrl(asset.id) : repository.previewUrl(asset.id);
 	let notice: string | undefined;
 	if (show360) notice = t('tv_look_hint');
+	else if (rotationNotice === 'failed') notice = t('rotate_failed');
+	else if (rotationNotice === 'keptOnDevice') notice = t('rotate_kept_on_device');
 	else if (wants360 && sphereFailure) notice = sphereFailure.reason;
 	else if (videoFailed) {
 		const size = details?.width && details.height ? `${details.width} × ${details.height}` : null;

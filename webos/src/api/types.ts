@@ -59,6 +59,11 @@ export interface ImmichAsset {
 	// Immuch360: what the 360° viewer reads (GET /api/assets/{id})
 	originalFileName?: string;
 	originalMimeType?: string;
+	// Immuch360: what the one-key rotation reads; the thumbhash is also the cache key of the asset's pictures
+	ownerId?: string;
+	thumbhash?: string | null;
+	livePhotoVideoId?: string | null;
+	isTrashed?: boolean;
 }
 
 interface ExifInfo {
@@ -94,6 +99,23 @@ export interface ColumnarAssetResponse {
 	country?: (string | null)[];
 	// Immuch360: the server's 360° flag of each asset ("EQUIRECTANGULAR"), for the badge and the viewer
 	projectionType?: (string | null)[];
+}
+
+// Immuch360: GET /api/server/version (no sign-in needed) and GET /api/users/me, read by the one-key rotation
+export interface ImmichServerVersion {
+	major: number;
+	minor: number;
+	patch: number;
+}
+
+export interface ImmichUser {
+	id: string;
+}
+
+// Immuch360: GET /api/assets/{id}/edits (Immich 2.5 and later)
+export interface ImmichAssetEdits {
+	assetId: string;
+	edits: {id?: string; action: string; parameters: unknown}[];
 }
 
 // Immuch360: GET /api/server/about, read by the diagnostics page

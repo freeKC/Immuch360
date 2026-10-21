@@ -1,6 +1,19 @@
 import {APIError, type APIClient} from './client';
-import type {ColumnarAssetResponse, ImmichAlbum, ImmichAlbumDetails, ImmichAsset, ImmichPerson, ImmichServerAbout, PeopleResponse} from './types';
+import type {
+	ColumnarAssetResponse,
+	ImmichAlbum,
+	ImmichAlbumDetails,
+	ImmichAsset,
+	ImmichAssetEdits,
+	ImmichPerson,
+	ImmichServerAbout,
+	ImmichServerVersion,
+	ImmichUser,
+	PeopleResponse,
+} from './types';
 import type {PhotoRepository} from '../domain/PhotoRepository';
+import {editsFromServer, type AssetEdit} from '../immuch360/rotation/edits';
+import type {RotationContext} from '../immuch360/rotation/mode';
 import {MAIN_TIMELINE, type Album, type AlbumDetails, type AssetDetails, type Person, type Place, type TimelineAsset, type TimelineBucket, type TimelineScope} from '../domain/types';
 import {toDurationSeconds} from '../utils/FormattingService';
 
@@ -23,6 +36,10 @@ function timelineScopeParams(scope: TimelineScope): string {
 	if (scope.personId) return `personId=${scope.personId}&visibility=timeline`;
 	return TIMELINE_FILTER_PARAMS;
 }
+
+// Immuch360: the cache keys of the pictures of this many assets are kept (the latest seen); past it, a picture's URL
+// goes without one, as before
+const MAX_PICTURE_KEYS = 20000;
 
 const pad2 = (n: number): string => (n < 10 ? '0' + n : '' + n);
 const pad3 = (n: number): string => (n < 10 ? '00' + n : n < 100 ? '0' + n : '' + n);
@@ -78,9 +95,24 @@ function transformColumnarResponse(columnar: ColumnarAssetResponse): TimelineAss
 
 export class ImmichRepository implements PhotoRepository {
 	private client: APIClient;
+	// Immuch360: the thumbhash of each asset seen in a timeline or a search, the cache key of its pictures
+	private readonly thumbhashes = new Map<string, string>();
+	// Immuch360: the key a turn made on this TV gave the pictures of an asset, ahead of the thumbhash seen before it
+	private readonly turnedKeys = new Map<string, string>();
+	private rotationContext: Promise<RotationContext> | null = null;
 
 	constructor(client: APIClient) {
 		this.client = client;
+	}
+
+	private rememberThumbhash(id: string, thumbhash: string | null | undefined): void {
+		if (!thumbhash) return;
+		this.thumbhashes.delete(id);
+		this.thumbhashes.set(id, thumbhash);
+		if (this.thumbhashes.size > MAX_PICTURE_KEYS) {
+			const oldest = this.thumbhashes.keys().next();
+			if (!oldest.done) this.thumbhashes.delete(oldest.value);
+		}
 	}
 
 	private mapAlbum(a: ImmichAlbum): Album {
@@ -106,6 +138,8 @@ export class ImmichRepository implements PhotoRepository {
 			`/timeline/bucket?timeBucket=${timeBucket}&${timelineScopeParams(scope)}`,
 			{signal}
 		);
+		const thumbhashes = Array.isArray(columnar.thumbhash) && columnar.thumbhash.length === columnar.id.length ? columnar.thumbhash : null;
+		if (thumbhashes) columnar.id.forEach((id, i) => this.rememberThumbhash(id, thumbhashes[i]));
 		return transformColumnarResponse(columnar);
 	}
 
@@ -203,20 +237,32 @@ export class ImmichRepository implements PhotoRepository {
 		return items
 			// Search returns hidden assets (live-photo companion videos) whose thumbnails 404
 			.filter((a) => a.visibility !== 'hidden' && a.visibility !== 'locked')
-			.map((a) => this.assetFromImmichAsset(a));
+			.map((a) => {
+				this.rememberThumbhash(a.id, a.thumbhash);
+				return this.assetFromImmichAsset(a);
+			});
 	}
 
-	public thumbnailUrl(assetId: string): string {
-		return this.client.getThumbnailUrl(assetId, 'thumbnail');
+	public thumbnailUrl(assetId: string, pictureKey?: string | null): string {
+		return this.client.getThumbnailUrl(assetId, 'thumbnail', pictureKey ?? this.pictureKey(assetId));
 	}
 
-	public previewUrl(assetId: string): string {
-		return this.client.getThumbnailUrl(assetId, 'preview');
+	public previewUrl(assetId: string, pictureKey?: string | null): string {
+		return this.client.getThumbnailUrl(assetId, 'preview', pictureKey ?? this.pictureKey(assetId));
 	}
 
 	// Immuch360: the full-size picture when the server generates one, else it redirects to the preview
-	public fullsizeUrl(assetId: string): string {
-		return this.client.getThumbnailUrl(assetId, 'fullsize');
+	public fullsizeUrl(assetId: string, pictureKey?: string | null): string {
+		return this.client.getThumbnailUrl(assetId, 'fullsize', pictureKey ?? this.pictureKey(assetId));
+	}
+
+	// Immuch360: the cache key of the pictures of an asset: the one a turn on this TV gave them, else its thumbhash
+	public pictureKey(assetId: string): string | null {
+		return this.turnedKeys.get(assetId) ?? this.thumbhashes.get(assetId) ?? null;
+	}
+
+	public setPictureKey(assetId: string, key: string): void {
+		this.turnedKeys.set(assetId, key);
 	}
 
 	public videoPlaybackUrl(assetId: string): string {
@@ -243,6 +289,10 @@ export class ImmichRepository implements PhotoRepository {
 			model: a.exifInfo?.model ?? null,
 			projectionType: a.exifInfo?.projectionType ?? null,
 			fileSize: a.exifInfo?.fileSizeInByte ?? null,
+			ownerId: a.ownerId ?? null,
+			livePhotoVideoId: a.livePhotoVideoId ?? null,
+			isTrashed: a.isTrashed ?? false,
+			thumbhash: a.thumbhash ?? null,
 		};
 	}
 
@@ -263,6 +313,40 @@ export class ImmichRepository implements PhotoRepository {
 
 	public serverUrl(): string {
 		return this.client.getBaseUrl();
+	}
+
+	// Immuch360: who is signed in, on which version of Immich; asked once, again after a failure. A part the server
+	// does not give (an API key without the user.read permission) is null, and the rotation then stays on the TV.
+	public getRotationContext(): Promise<RotationContext> {
+		if (!this.rotationContext) {
+			const asked = Promise.all([
+				this.client.fetch<ImmichUser>('/users/me').then((user) => user.id || null, () => null),
+				this.client.fetch<ImmichServerVersion>('/server/version').then(
+					(version) => (typeof version.major === 'number' ? {major: version.major, minor: version.minor ?? 0, patch: version.patch ?? 0} : null),
+					() => null
+				),
+			]).then(([userId, serverVersion]) => {
+				if (!userId || !serverVersion) this.rotationContext = null;
+				return {userId, serverVersion};
+			});
+			this.rotationContext = asked;
+		}
+		return this.rotationContext;
+	}
+
+	// Immuch360: the edits of a photo in Immich's photo editor, null when one is of a kind this app does not know
+	public async getAssetEdits(assetId: string): Promise<AssetEdit[] | null> {
+		const response = await this.client.fetch<ImmichAssetEdits>(`/assets/${assetId}/edits`);
+		return editsFromServer(Array.isArray(response.edits) ? response.edits : []);
+	}
+
+	// Immuch360: replaces the edits of a photo (the server then makes its pictures again); an empty list removes them
+	public async replaceAssetEdits(assetId: string, edits: AssetEdit[]): Promise<void> {
+		if (edits.length) {
+			await this.client.fetch(`/assets/${assetId}/edits`, {method: 'PUT', body: JSON.stringify({edits})});
+		} else {
+			await this.client.fetch(`/assets/${assetId}/edits`, {method: 'DELETE'});
+		}
 	}
 }
 
