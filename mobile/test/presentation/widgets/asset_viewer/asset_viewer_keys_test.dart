@@ -1,10 +1,10 @@
 // The asset viewer with a remote control: left and right go through the photos; on a TV through the videos too,
 // whatever they do, while a keyboard of a phone seeks through a video that plays; on a TV OK shows the controls of a
 // video with play and pause focused, any key brings them back and they hide 5 s after the last key while it plays;
-// info and Menu open the details, and on a TV so does OK held 700 ms, which then acts on its release; Up from play
-// and pause reaches the top bar at once; the bars never take the focus while hidden, and the viewer takes it back when
-// they hide; on a TV Back leaves the bars before it closes the viewer, and OK on the Back arrow of the top bar closes
-// it.
+// info and Menu open the details, and on a TV so does OK held 700 ms, which then acts on its release (held on play and
+// pause, it presses the button once, never once per repeat); Up from play and pause reaches the top bar at once; the
+// bars never take the focus while hidden, and the viewer takes it back when they hide; on a TV Back leaves the bars
+// before it closes the viewer, and OK on the Back arrow of the top bar closes it.
 
 import 'dart:async';
 
@@ -75,6 +75,11 @@ class _FakePlayer extends VideoPlayerNotifier {
   void seekTo(Duration position) {
     calls.add('seek ${position.inSeconds}');
     state = state.copyWith(position: position);
+  }
+
+  @override
+  Future<void> retry() async {
+    calls.add('retry');
   }
 }
 
@@ -453,6 +458,83 @@ void main() {
     expect(events.whereType<ViewerShowDetailsEvent>(), hasLength(1));
     expect(focusIn<VideoControls>(), isFalse, reason: 'a short OK would focus play and pause');
     // The timers of the controls that the details showed run out
+    await tester.pump(const Duration(seconds: 6));
+  });
+
+  // The repeats of a held OK as a remote sends them, every 50 ms from 500 ms on: from [from] to [until] after the key
+  // went down
+  Future<void> repeatOk(WidgetTester tester, {required Duration from, required Duration until}) async {
+    const firstRepeat = Duration(milliseconds: 500);
+    var held = from;
+    if (held < firstRepeat) {
+      await tester.pump(firstRepeat - held);
+      held = firstRepeat;
+    }
+    while (held < until) {
+      await tester.sendKeyRepeatEvent(LogicalKeyboardKey.select);
+      await tester.pump(const Duration(milliseconds: 50));
+      held += const Duration(milliseconds: 50);
+    }
+  }
+
+  testWidgets('on a TV OK held on play and pause presses it once, then opens the details', (tester) async {
+    final calls = <String>[];
+    await pumpVideo(tester, calls, status: VideoPlaybackStatus.paused);
+    final events = <Event>[];
+    final subscription = EventStream.shared.listen<Event>(events.add);
+    addTearDown(subscription.cancel);
+
+    await press(tester, LogicalKeyboardKey.select);
+    expect(playPauseFocused(tester), isTrue);
+    expect(calls, isEmpty);
+
+    // A short OK on the button: one press, and nothing more once the time of a hold is past
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+    await tester.pump(const Duration(seconds: 1));
+    expect(calls, ['play']);
+    expect(events.whereType<ViewerShowDetailsEvent>(), isEmpty);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+    await repeatOk(tester, from: Duration.zero, until: const Duration(milliseconds: 650));
+    expect(calls, ['play', 'pause'], reason: 'one press as the key went down, none for its three repeats');
+    expect(events.whereType<ViewerShowDetailsEvent>(), isEmpty, reason: '650 ms');
+
+    await repeatOk(tester, from: const Duration(milliseconds: 650), until: const Duration(seconds: 1));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+    await settle(tester);
+    expect(events.whereType<ViewerShowDetailsEvent>(), hasLength(1));
+    expect(events.whereType<ViewerHideDetailsEvent>(), isEmpty, reason: 'the rest of the press closes nothing');
+    // The details hold the video as they open (one more pause); the repeats pressed nothing
+    expect(calls, ['play', 'pause', 'pause']);
+    // The timers of the controls run out
+    await tester.pump(const Duration(seconds: 6));
+  });
+
+  testWidgets('on a TV OK held on play of a failed video tries it once, then opens the details', (tester) async {
+    final calls = <String>[];
+    final container = await pumpVideo(tester, calls);
+    final events = <Event>[];
+    final subscription = EventStream.shared.listen<Event>(events.add);
+    addTearDown(subscription.cancel);
+    container.read(videoPlayerProvider(video.id).notifier).onNativeError('Decoder init failed');
+    await settle(tester);
+
+    await press(tester, LogicalKeyboardKey.select);
+    expect(playPauseFocused(tester), isTrue);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+    await repeatOk(tester, from: Duration.zero, until: const Duration(milliseconds: 650));
+    expect(calls, ['retry'], reason: 'not a reload for every other repeat');
+
+    await repeatOk(tester, from: const Duration(milliseconds: 650), until: const Duration(milliseconds: 1500));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+    await settle(tester);
+    expect(events.whereType<ViewerShowDetailsEvent>(), hasLength(1));
+    // The details hold the video as they open (a pause); the repeats pressed nothing
+    expect(calls, ['retry', 'pause']);
+    // The viewer probes the file of the failed video for the logs, and the controls have their timers: they run out
     await tester.pump(const Duration(seconds: 6));
   });
 

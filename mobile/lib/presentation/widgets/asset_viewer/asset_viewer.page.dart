@@ -145,9 +145,13 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   final _topActionsFocus = FocusNode(debugLabel: 'Asset viewer actions', canRequestFocus: false, skipTraversal: true);
   final _bottomBarFocus = FocusNode(debugLabel: 'Asset viewer bottom bar', canRequestFocus: false, skipTraversal: true);
 
-  /// OK held on the viewer itself with the remote control layout: released before it fires, it was a plain OK; else
-  /// the details open (see [remoteOkHoldForDetails])
+  /// OK held with the remote control layout, on the viewer itself or on a button of its bars: released before it
+  /// fires, it was a plain OK; else the details open (see [remoteOkHoldForDetails])
   Timer? _okHold;
+
+  /// Whether the press of [_okHold] went to a button of the bars, which acted as the key went down: its release is
+  /// no plain OK of the viewer
+  bool _okHoldOnButton = false;
 
   /// The details opened under a held OK: the rest of that press, its repeats and its release, goes nowhere rather than
   /// to the row of the details that has the focus now
@@ -402,15 +406,15 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// [remoteVideoArrows], [remoteKeyShowsVideoControls]). Elsewhere: OK pauses and plays, left and right seek by 10 s
   /// while it plays and go to the previous or next asset once it is paused or ended.
   ///
-  /// On a TV OK acts on its release, and held on the viewer it opens the details instead (see [_onTvOk]); Up from the
-  /// top row of the bottom bar goes straight to the top bar.
+  /// On a TV OK acts on its release, and held on the viewer or on a button of the bars it opens the details (see
+  /// [_onTvOk]); Up from the top row of the bottom bar goes straight to the top bar.
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     final key = event.logicalKey;
     final press = isRemotePress(event);
     final video = _videoPlayer;
     final tvMode = ref.read(tvModeProvider);
-    // OK on the viewer itself: whether it shows the controls is known on its release
-    final tvOk = tvMode && remoteOkKeys.contains(key) && (node.hasPrimaryFocus || _okHold != null);
+    // OK on the viewer itself, whether it shows the controls is known on its release; or OK on a button of the bars
+    final tvOk = tvMode && remoteOkKeys.contains(key) && (node.hasPrimaryFocus || _barsHaveFocus || _okHold != null);
     if (tvMode && video != null && press && remoteKeyShowsVideoControls(key) && !tvOk) {
       _showVideoControls();
     }
@@ -439,7 +443,7 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
       return KeyEventResult.handled;
     }
     if (tvOk) {
-      return _onTvOk(event);
+      return _onTvOk(event, onViewer: node.hasPrimaryFocus);
     }
     if (tvMode && press && key == LogicalKeyboardKey.arrowUp && _upLeavesBottomBar()) {
       // Up from play and pause gave the focus to the viewer itself first, between the bars, with no ring to show it
@@ -509,28 +513,47 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     }
   }
 
-  /// OK on the viewer itself with the remote control layout. Most remotes of Google TV have no info key and the menu
-  /// of the top bar is hidden there (view only), so OK held [remoteOkHoldForDetails] opens the details; a shorter
-  /// press is a plain OK on its release (see [_onOk]). The repeats of a held key change nothing.
-  KeyEventResult _onTvOk(KeyEvent event) {
+  /// OK with the remote control layout, on the viewer itself ([onViewer]) or on a button of the bars. Most remotes of
+  /// Google TV have no info key and the menu of the top bar is hidden there (view only), so OK held
+  /// [remoteOkHoldForDetails] opens the details. On the viewer a shorter press is a plain OK on its release (see
+  /// [_onOk]); a button is pressed once, as the key goes down, as everywhere else. The repeats of a held key change
+  /// nothing: Flutter's select shortcut takes them too, and play and pause flipped twenty times a second under a held
+  /// OK, a failed video reloading every other time, while the details never opened.
+  KeyEventResult _onTvOk(KeyEvent event, {required bool onViewer}) {
     switch (event) {
       case KeyDownEvent():
         _okHold?.cancel();
-        _okHold = Timer(remoteOkHoldForDetails, () {
-          _okHold = null;
-          _dropHeldOk = true;
-          _toggleDetails();
-        });
+        _okHoldOnButton = !onViewer;
+        _okHold = Timer(remoteOkHoldForDetails, _onOkHeld);
+        return onViewer ? KeyEventResult.handled : KeyEventResult.ignored;
       case KeyUpEvent():
         final hold = _okHold;
         _okHold = null;
         if (hold != null && hold.isActive) {
           hold.cancel();
-          _onOk();
+          if (!_okHoldOnButton) {
+            _onOk();
+          }
         }
+        return onViewer ? KeyEventResult.handled : KeyEventResult.ignored;
       case KeyRepeatEvent():
+        return KeyEventResult.handled;
     }
     return KeyEventResult.handled;
+  }
+
+  /// OK held [remoteOkHoldForDetails] (see [_onTvOk]): the details open, or close when the press began on the viewer
+  /// over them. Not when a button of the bars opened a page or a dialog of its own as the key went down.
+  void _onOkHeld() {
+    _okHold = null;
+    if (!mounted || !(ModalRoute.of(context)?.isCurrent ?? true)) {
+      return;
+    }
+    if (_okHoldOnButton && ref.read(assetViewerProvider).showingDetails) {
+      return;
+    }
+    _dropHeldOk = true;
+    _toggleDetails();
   }
 
   /// Before the focus tree: drops what is left of an OK whose hold opened the details (see [_onTvOk]), up to its
