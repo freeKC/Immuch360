@@ -78,6 +78,7 @@ the gate is per desktop and is noted.
 | `lib/presentation/widgets/asset_viewer/panorama_viewer.widget.dart:58` | 360 video player on phones only | wired (phase 2c): true on the computers where libmpv loaded, the 360° route of DesktopSphericalVideoApi plays it |
 | `lib/presentation/widgets/asset_viewer/video_viewer.widget.dart:150` | Android file URI, else path | right: a path; the video placeholder stands for the player (G1) until phase 2 |
 | `lib/presentation/widgets/asset_viewer/video_viewer.widget.dart:171` | idem | right |
+| `lib/presentation/widgets/drone/drone_import_tile.widget.dart:19` | DJI drone page on Android phones only (October 2026, not in build 20) | hidden: the computers take the not Android branch, so neither the Settings row nor the tile shows, and DocumentTreeApi is never called |
 | `lib/presentation/widgets/map/map.widget.dart:90` | Android map style | hidden: no map on the computers (deviceFeaturesProvider.maps) |
 | `lib/presentation/widgets/map/map.widget.dart:106` | iOS map style | hidden |
 | `lib/providers/app_life_cycle.provider.dart:155` | Android full sync on resume | iOS like partial sync on the computers; LIB adds the folder rescan on resume after five minutes (Design 1.8) |
