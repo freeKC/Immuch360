@@ -1,0 +1,63 @@
+@import '../styles/_mixins.less';
+
+.card {
+	display: block;
+	cursor: pointer;
+	transition: transform 0.15s ease-out;
+
+	&:focus {
+		outline: none;
+		transform: scale(@focus-scale);
+	}
+}
+
+// padding-top keeps the cover square: aspect-ratio is Chrome 88+ and ignored on webOS 5/6.
+.cover {
+	position: relative;
+	padding-top: 100%;
+	border-radius: @radius-card;
+	overflow: hidden;
+	background: @surface;
+
+	.card:focus & {
+		.focus-ring();
+	}
+}
+
+.thumbnail {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.placeholderIcon {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: 0;
+	transform: translate(-50%, -50%);
+	color: @text-subtle;
+}
+
+.title {
+	margin-top: 20px;
+	font-size: var(--font-body);
+	font-weight: 600;
+	color: @text;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.secondary {
+	margin-top: 4px;
+	font-size: var(--font-caption);
+	color: @text-subtle;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

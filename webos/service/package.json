@@ -1,0 +1,9 @@
+{
+	"name": "com.seeky91.immichtv.service",
+	"version": "1.7.0",
+	"description": "LAN pairing service for phone sign-in (Immich TV)",
+	"main": "service.js",
+	"engines": {
+		"node": ">=0.12.2"
+	}
+}

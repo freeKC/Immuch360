@@ -1,0 +1,123 @@
+@import '../../styles/_theme.less';
+
+.scrubberHost {
+	position: relative;
+	// Must match DATE_SCRUBBER_WIDTH_PX in utils/constants.ts (grid width math depends on it).
+	flex: 0 0 240px;
+	width: 240px;
+	height: 100%;
+	overflow: visible;
+	z-index: 2;
+}
+
+.scrubber {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	background: transparent;
+	border-left: 1px solid transparent;
+	cursor: ns-resize;
+	user-select: none;
+	overflow: visible;
+	transition: background-color 0.15s ease, border-color 0.15s ease;
+
+	&:focus {
+		outline: none;
+		background: rgba(255, 255, 255, 0.05);
+		border-left-color: @hairline;
+	}
+}
+
+.track {
+	position: absolute;
+	top: 60px;
+	bottom: 60px;
+	right: 43px;
+	width: 2px;
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.marker {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 0;
+}
+
+.dot {
+	position: absolute;
+	// Centered on the track (right 43px + 1px).
+	right: 41px;
+	top: -3px;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.32);
+	transition: transform 0.12s ease, background-color 0.12s ease;
+}
+
+.markerSelected .dot {
+	background: @text;
+	transform: scale(2);
+}
+
+.year {
+	position: absolute;
+	right: 66px;
+	top: -0.5rem;
+	font-size: var(--font-caption);
+	font-weight: 600;
+	line-height: 1rem;
+	color: @text-muted;
+	white-space: nowrap;
+}
+
+.positionLine {
+	position: absolute;
+	right: 0;
+	width: 94px;
+	height: 4px;
+	border-radius: 2px;
+	background: @text;
+	transform: translateY(-2px);
+	pointer-events: none;
+}
+
+.dateBubble {
+	position: absolute;
+	right: 52px;
+	min-width: 188px;
+	padding: 10px 20px;
+	border-radius: 12px;
+	background: @surface-raised;
+	font-size: var(--font-caption);
+	font-weight: 600;
+	color: @text;
+	white-space: nowrap;
+	text-align: center;
+	transform: translateY(-50%);
+	pointer-events: none;
+
+	.scrubber:focus & {
+		background: @focus-bg;
+		color: @focus-text;
+	}
+}
+
+.status,
+.error {
+	display: block;
+	font-size: 0.58rem;
+	font-weight: 400;
+	opacity: 0.7;
+}
+
+.error {
+	color: #f28b82;
+	opacity: 1;
+
+	.scrubber:focus & {
+		color: #b3261e;
+	}
+}

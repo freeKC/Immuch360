@@ -1,0 +1,36 @@
+import React, {useCallback, useMemo} from 'react';
+import {SpottableDiv} from '../../utils/spotlight';
+import type {Account} from '../../utils/accountsStore';
+import {deriveLabel, deriveInitial, pickGradient, hostFromUrl} from '../../utils/accountVisual';
+import css from './AccountCard.module.less';
+
+interface AccountCardProps {
+	account: Account;
+	isActive: boolean;
+	isDefault: boolean;
+	onSelect: (id: string) => void;
+}
+
+export const AccountCard: React.FC<AccountCardProps> = ({account, isActive, isDefault, onSelect}) => {
+	const label = useMemo(() => deriveLabel(account), [account]);
+	const gradient = useMemo(() => pickGradient(account.id), [account.id]);
+	const letter = useMemo(() => deriveInitial(account), [account]);
+	const handleClick = useCallback(() => onSelect(account.id), [account.id, onSelect]);
+
+	const host = useMemo(() => hostFromUrl(account.baseUrl), [account.baseUrl]);
+
+	return (
+		<SpottableDiv
+			role="button"
+			className={[css.card, isActive ? css.active : ''].filter(Boolean).join(' ')}
+			onClick={handleClick}
+		>
+			{isDefault ? <span className={css.badge}>DEFAULT</span> : null}
+			<div className={css.avatar} style={{background: gradient}}>
+				{letter}
+			</div>
+			<div className={css.label}>{label}</div>
+			{host !== label && <div className={css.host}>{host}</div>}
+		</SpottableDiv>
+	);
+};

@@ -1,0 +1,79 @@
+.viewerOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: #000;
+	z-index: 1000;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.viewerContent {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.viewerMedia {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+}
+
+// Sized to the screen, not to the file: low-resolution photos (old cameras, small previews)
+// scale up to fill it like the slideshow does, instead of sitting small in the middle.
+.photo {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+// Hide Sandstone VideoPlayer's built-in back button — duplicates our MediaControls X.
+// The sentinel aria-label is set on the VideoPlayer.tsx side (HIDDEN_BACK_LABEL).
+// :global() is required because:
+//   1. Sandstone renders the button as <div role="button"> (not <button>).
+//   2. The button lives in Sandstone's FloatingLayer portal, outside the .viewerMedia
+//      ancestor chain, so a CSS-Modules-scoped descendant selector never matches.
+:global([aria-label='immich-tv-internal-back-hidden']) {
+	display: none;
+}
+
+.navButton {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	// The glyph stays legible on bright photos without a backdrop.
+	text-shadow: 0 0 16px rgba(0, 0, 0, 0.7);
+
+	&.navButtonLeft {
+		left: 80px;
+	}
+
+	&.navButtonRight {
+		right: 80px;
+	}
+}
+
+// Transparent focus target behind the chrome: idle D-pad focus sits here (left/right page,
+// Down enters the action bar), and OK/click on it toggles the controls.
+.stage {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	outline: none;
+}
+
+// Quarter turns lay the image out in a screen-rotated box, then rotate it into place.
+.quarterTurn {
+	width: 100vh;
+	height: 100vw;
+	flex-shrink: 0;
+}

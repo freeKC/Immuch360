@@ -1,0 +1,18 @@
+@import '../styles/_theme.less';
+
+// Fixed height: must equal BUCKET_HEADER_HEIGHT_PX (utils/constants.ts), which the virtualized
+// layout reserves for each day header.
+.dateHeader {
+	display: flex;
+	align-items: flex-end;
+	height: 128px;
+	padding-bottom: 20px;
+	box-sizing: border-box;
+	font-size: var(--font-title);
+	font-weight: 600;
+	line-height: 1.2;
+	color: @text;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

@@ -1,0 +1,111 @@
+import type {AssetOrder} from '../domain/types';
+
+export enum AuthMethod {
+	USER_CREDENTIALS = 'USER_CREDENTIALS',
+	API_KEY = 'API_KEY',
+}
+
+interface BaseAuthConfig {
+	baseUrl: string;
+	method: AuthMethod;
+}
+
+export interface UserCredentialsConfig extends BaseAuthConfig {
+	method: typeof AuthMethod.USER_CREDENTIALS;
+	email: string;
+	accessToken?: string;
+}
+
+export interface ApiKeyConfig extends BaseAuthConfig {
+	method: typeof AuthMethod.API_KEY;
+	apiKey: string;
+}
+
+export type AuthConfig = UserCredentialsConfig | ApiKeyConfig;
+
+// One shared result for every auth path (credentials, API key, phone pairing); keep it single-source to avoid drift.
+export type AuthSubmitResult = {success: true} | {success: false; errorMessage: string};
+
+// Credentials an auth form collects for a new account, consumed by useAccounts; single-source so form and hook can't drift.
+interface AuthFormCredentialsPayload {
+	method: AuthMethod.USER_CREDENTIALS;
+	baseUrl: string;
+	email: string;
+	password: string;
+}
+
+interface AuthFormApiKeyPayload {
+	method: AuthMethod.API_KEY;
+	baseUrl: string;
+	apiKey: string;
+}
+
+export type AuthFormPayload = AuthFormCredentialsPayload | AuthFormApiKeyPayload;
+
+export interface ImmichAsset {
+	id: string;
+	type: string;
+	fileCreatedAt: string;
+	// Local wall-clock time; present on full asset DTOs (albums, search) on all supported servers
+	localDateTime?: string;
+	// "H:MM:SS.mmm" on Immich < v3, milliseconds on v3+
+	duration: string | number | null;
+	// Immich < v3 nests dimensions in exifInfo; v3 puts them at the top level
+	exifInfo?: ExifInfo;
+	width?: number;
+	height?: number;
+	// 'timeline' | 'hidden' | 'archive' | 'locked'; absent on old servers
+	visibility?: string;
+}
+
+interface ExifInfo {
+	exifImageWidth?: number;
+	exifImageHeight?: number;
+	// Populated on /search/cities responses (all server versions, v3 included)
+	city?: string | null;
+	country?: string | null;
+}
+
+export interface ColumnarAssetResponse {
+	id: string[];
+	duration: (string | number | null)[];
+	isImage: boolean[];
+	fileCreatedAt: string[];
+	// Recent servers ship the UTC→local delta instead of localDateTime…
+	localOffsetHours?: number[];
+	// …older ones ship localDateTime directly
+	localDateTime?: string[];
+	ownerId: string[];
+	ratio: number[];
+	thumbhash: (string | null)[];
+	isFavorite: boolean[];
+	isTrashed: boolean[];
+	livePhotoVideoId: (string | null)[];
+	// Immich v3+
+	city?: (string | null)[];
+	country?: (string | null)[];
+}
+
+export interface ImmichAlbum {
+	id: string;
+	albumName: string;
+	description: string;
+	albumThumbnailAssetId: string | null;
+	assetCount: number;
+}
+
+export interface ImmichAlbumDetails extends ImmichAlbum {
+	order?: AssetOrder;
+}
+
+export interface ImmichPerson {
+	id: string;
+	name: string;
+	// Removed in Immich v3
+	assetCount?: number;
+	isHidden: boolean;
+}
+
+export interface PeopleResponse {
+	people: ImmichPerson[];
+}

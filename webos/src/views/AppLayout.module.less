@@ -1,0 +1,34 @@
+@import '../styles/_theme.less';
+
+.layout {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	height: 100vh;
+	overflow: hidden;
+	// Varies only by Y, so the transparent rail and the content share one seamless backdrop.
+	background: linear-gradient(180deg, @bg-top 0%, @bg-bottom 100%);
+}
+
+.viewContainer {
+	flex: 1;
+	min-width: 0;
+	height: 100%;
+	overflow: hidden;
+	position: relative;
+}
+
+.panelActive {
+	width: 100%;
+	height: 100%;
+}
+
+.panelHidden {
+	position: absolute;
+	left: -9999px;
+	width: 100%;
+	height: 100%;
+	visibility: hidden;
+	pointer-events: none;
+	overflow: hidden;
+}

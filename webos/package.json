@@ -1,0 +1,99 @@
+{
+	"name": "immich-tv-webos",
+	"version": "1.7.0",
+	"description": "Read-only Immich photo & video client for LG webOS TVs",
+	"author": "Quentin Jean-Amans <quentin.sqja@gmail.com> (https://github.com/Seeky91)",
+	"main": "src/index.tsx",
+	"scripts": {
+		"serve": "enact serve",
+		"pack": "enact pack",
+		"pack-p": "enact pack -p && node tools/transpile-legacy.mjs && node tools/prune-ilib.mjs",
+		"watch": "enact pack --watch",
+		"clean": "enact clean",
+		"lint": "enact lint .",
+		"typecheck": "tsc --noEmit",
+		"license": "enact license",
+		"test": "enact test",
+		"test-watch": "enact test --watch",
+		"test-service": "node service/test.js",
+		"test-tools": "node --test tools/legacy-css.test.mjs"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Seeky91/immich-tv-webos.git"
+	},
+	"bugs": {
+		"url": "https://github.com/Seeky91/immich-tv-webos/issues"
+	},
+	"homepage": "https://github.com/Seeky91/immich-tv-webos#readme",
+	"keywords": [
+		"immich",
+		"webos",
+		"lg",
+		"tv",
+		"enact",
+		"sandstone",
+		"photo-gallery"
+	],
+	"engines": {
+		"npm": ">=6.9.0"
+	},
+	"enact": {
+		"theme": "sandstone",
+		"publicUrl": "./"
+	},
+	"browserslist": [
+		"Chrome >= 79"
+	],
+	"cssnano": {
+		"preset": [
+			"default",
+			{
+				"overrideBrowserslist": "Chrome >= 53"
+			}
+		]
+	},
+	"eslintConfig": {
+		"extends": "enact-proxy"
+	},
+	"eslintIgnore": [
+		"node_modules/*",
+		"build/*",
+		"dist/*"
+	],
+	"jest": {
+		"moduleNameMapper": {
+			"^react$": "<rootDir>/node_modules/react/index.js",
+			"^react/jsx-runtime$": "<rootDir>/node_modules/react/jsx-runtime.js",
+			"^react/jsx-dev-runtime$": "<rootDir>/node_modules/react/jsx-dev-runtime.js",
+			"^react-dom$": "<rootDir>/node_modules/react-dom/index.js",
+			"^react-dom/client$": "<rootDir>/node_modules/react-dom/client.js",
+			"^@testing-library/react$": "<rootDir>/node_modules/@testing-library/react/dist/index.js"
+		}
+	},
+	"dependencies": {
+		"@enact/core": "^4.7.8",
+		"@enact/i18n": "^4.7.8",
+		"@enact/sandstone": "^2.7.12",
+		"@enact/spotlight": "^4.7.8",
+		"@enact/ui": "^4.7.8",
+		"@enact/webos": "^4.7.8",
+		"@tanstack/react-query": "^5.90.14",
+		"ilib": "npm:ilib-webos@^14.19.0-webos1",
+		"prop-types": "^15.8.1",
+		"qrcode-generator": "^2.0.4",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	},
+	"devDependencies": {
+		"@testing-library/react": "^16.3.1",
+		"@types/jest": "^30.0.0",
+		"@types/react": "^18.2.0",
+		"@types/react-dom": "^18.2.0",
+		"baseline-browser-mapping": "^2.9.14",
+		"esbuild": "^0.28.0",
+		"eslint-config-enact-proxy": "^1.0.7",
+		"typescript": "^5.9.3"
+	}
+}

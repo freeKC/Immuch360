@@ -1,0 +1,56 @@
+@import '../../styles/_theme.less';
+
+.scroller {
+	height: 100%;
+}
+
+// Insets live inside the scroll clip box, not on the Scroller, so focused cards on the
+// edges have room for the focus scale and ring.
+.page {
+	padding: @page-inset-top @page-inset-x 96px;
+}
+
+.header {
+	display: flex;
+	align-items: baseline;
+	margin-bottom: 56px;
+}
+
+.title {
+	font-size: var(--font-display);
+	font-weight: 600;
+	color: @text;
+}
+
+.subtitle {
+	margin-left: 24px;
+	font-size: var(--font-caption);
+	color: @text-subtle;
+}
+
+@columns: 5;
+@column-gap: 32px;
+@row-gap: 48px;
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(@columns, minmax(0, 1fr));
+	column-gap: @column-gap;
+	row-gap: @row-gap;
+}
+
+// Chromium 53 (webOS 4) has no CSS grid; engines that have it skip this block entirely.
+@supports not (display: grid) {
+	// The negative margins widen the row by one gap so each card's trailing gap fits:
+	// widths then sum to exactly 100% instead of relying on a rounded calc().
+	.grid {
+		display: flex;
+		flex-wrap: wrap;
+		margin: 0 -@column-gap -@row-gap 0;
+
+		> * {
+			width: calc(100% / @columns - @column-gap);
+			margin: 0 @column-gap @row-gap 0;
+		}
+	}
+}
