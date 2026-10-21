@@ -111,6 +111,11 @@ void main() {
 
   bool showing() => container.read(assetViewerProvider).showingControls;
 
+  // A video that loads has its stall check running (VideoPlayerNotifier.stallTimeout): pausing it stops the check, and
+  // starts no hide timer
+  void stopLoading() =>
+      (container.read(videoPlayerProvider('video').notifier) as _Playing).setStatus(VideoPlaybackStatus.paused);
+
   testWidgets('hide 5 s after they show while the video plays', (tester) async {
     await pump(tester);
 
@@ -171,6 +176,7 @@ void main() {
     await tester.pump(const Duration(seconds: 5, milliseconds: 100));
 
     expect(showing(), isFalse);
+    stopLoading();
   });
 
   testWidgets('a phone keeps them while the video loads, as before', (tester) async {
@@ -179,6 +185,7 @@ void main() {
     await tester.pump(const Duration(seconds: 10));
 
     expect(showing(), isTrue);
+    stopLoading();
   });
 
   testWidgets('paused, they stay', (tester) async {
