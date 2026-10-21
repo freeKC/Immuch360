@@ -148,6 +148,8 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		setActionBarFocused(false);
 		setResolved(null);
 		setVideoIntro(isVideo && asset ? asset.id : null);
+		// A video that failed is tried again, and checked again, when it is opened again
+		setVideoFailure(null);
 	}
 	const videoControlsOpen = isVideo && videoControlsVisible;
 
