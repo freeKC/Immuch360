@@ -229,6 +229,8 @@ void main() {
 
     expect(calls, isEmpty, reason: 'no seek in a video that does not play');
     expect(container.read(assetViewerJumpProvider).currentIndex, 1);
+    // The viewer probes the file of the failed video for the logs: its time limit runs out here
+    await tester.pump(const Duration(seconds: 6));
   });
 
   testWidgets('info opens the details', (tester) async {

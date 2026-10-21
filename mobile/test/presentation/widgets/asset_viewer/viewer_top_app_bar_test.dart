@@ -265,12 +265,18 @@ void main() {
   };
   // The buffering indicator of the native video players, which fill in the percentage
   const englishBufferingLabels = {'buffering': 'Buffering {percent}%'};
-  // The message of a switch to the transcoded stream of the native video players, which fill in the track they could
-  // not decode
+  // The messages of the native video players about the decoders: a switch to the transcoded stream, an original that
+  // plays anyway, the errors of a decoder and of a video that does not load, the track they could not decode left for
+  // them to fill in
   const englishSourceLabels = {
     'sourceSwitched':
         'Playing the transcoded stream: the original ({codec} {width} x {height}) exceeds what this '
         'device decodes',
+    'sourceUndecodable': '{codec} {width} x {height} is beyond the video decoders of this device: it may not play',
+    'errorDecoder': 'This device cannot decode this video ({codec} {width} x {height})',
+    'errorNoFrame':
+        'This video does not play: the decoder of this device gives no picture for it ({codec} {width} x {height})',
+    'errorStalled': 'This video is not loading: the network or the server sends it too slowly',
   };
   // The messages of the native 360° players about raw videos: the decoders may not keep up with the two streams, then
   // what the player shows when it falls back, the codec and the frame size of a lens left for it to fill in
@@ -2551,9 +2557,34 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
+      // Nothing the device decodes: the user reads why before any player opens, and may still try
+      expect(find.byKey(const Key('undecodable_video_dialog')), findsOneWidget);
+      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
+      await tester.tap(find.widgetWithText(TextButton, 'Play'));
+      await tester.pumpAndSettle();
+
       expect(sphericalOpened(), ('$server/assets/${asset.id}/original', null));
       expect(find.text(switchedMessage), findsNothing);
       expect(find.text(forcedMessage), findsOneWidget);
+    });
+
+    testWidgets('opens no native 360° player when the user closes the word that the device cannot decode the video', (
+      tester,
+    ) async {
+      final asset = owned(type: .video);
+      probes.result = probe8k;
+      cannotDecode();
+      transcodedSize = originalSize;
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, panoramaVideoSupported: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('undecodable_video_dialog')), findsOneWidget);
+      await tester.tap(find.widgetWithText(TextButton, 'Close'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('undecodable_video_dialog')), findsNothing);
+      verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
     });
 
     testWidgets('gives the native 360° player nothing to fall back to when it plays the transcoded stream', (
