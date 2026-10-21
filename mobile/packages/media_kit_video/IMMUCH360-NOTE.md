@@ -187,6 +187,29 @@ Patches:
    with the CGL error in the log, `TextureHW.init` is failable, and `VideoOutput` renders that player with `TextureSW`
    (mpv's software render API, as with hardware acceleration off) and logs "no OpenGL context for hardware rendering".
    A Mac with a GPU keeps the OpenGL path of upstream.
+10. Linux, the isolated EGL context next to GDK's GL context (`linux/isolated_egl.cc`,
+   `linux/include/media_kit_video/isolated_egl.h`, `linux/video_output.cc`, `linux/texture_gl.cc`,
+   `linux/CMakeLists.txt`, `linux/test/isolated_egl_test.cc`). On X11 every output fell back to S/W rendering with
+   "Failed to make isolated EGL context current. Error: 0x3002" (EGL_BAD_ACCESS), while Wayland rendered with the GPU.
+   GTK 3 paints a window holding GL content through a GL context of its own, GLX on X11 and EGL on Wayland, and leaves
+   it current on the platform thread after each frame (`gdk_window_end_paint_internal`); libglvnd refuses an EGL
+   context on a thread where a GLX one is current ("Another window API already has a current context",
+   `src/EGL/libegl.c`). Under Wayland the switch went through, but GDK then believed its context still current, and
+   the code of patch 2 took GDK's EGL context for Flutter's (its display and config). Now every place that makes the
+   isolated context current on any thread (`video_output_new`, `video_output_dispose`, `texture_gl_dispose`) puts
+   GDK's context aside through `gdk_gl_context_clear_current` and makes it current again after, restores another
+   EGL context (Flutter's, before Flutter 3.38) as before, and binds the EGL API it found; a context is taken for
+   Flutter's only when GDK has none current, else the config is chosen as Flutter chooses its own (ES 2.0, RGBA 8).
+   Before the H/W path is taken, a 1x1 texture goes through an EGLImage into another texture, as `TextureGL` hands
+   each frame to Flutter; when the display or the context cannot, the output is drawn in S/W instead of black. The
+   log line says the path: "H/W rendering with isolated EGL context (X11, renderer)" or "S/W rendering (reason)"; a
+   failed H/W setup unregisters its texture and destroys its context instead of leaving them behind. Flutter's
+   texture names are deleted in Flutter's context (at once on the raster thread, else at the next populate there),
+   not in the context current where the output is disposed of, GDK's on the platform thread, and the 1x1 texture
+   made before the first frame is deleted when the first frame comes. The test program, built and run by the Linux job
+   of the desktop workflow on its virtual screen, paints a GTK window as Flutter's view does and checks all of it;
+   checked on this PC too, under Xvfb (llvmpipe) and under WSLg on X11 and Wayland (D3D12 on an Intel GPU), where the
+   former code failed with 0x3002 on X11.
 
 Not done yet (plan 20-plan-desktop.md, 2.2): the D3D11 device on the adapter Flutter uses, only if spike 6 shows a
 mismatch on a hybrid GPU machine.
