@@ -309,6 +309,29 @@ jobs:
           echo "deb=dist/Immuch360-Desktop-$LABEL-linux-amd64.deb" >> "$GITHUB_OUTPUT"
           echo "rpm=dist/Immuch360-Desktop-$LABEL-linux-x86_64.rpm" >> "$GITHUB_OUTPUT"
 
+      # libsmb2 (dart_smb2, LGPL-2.1-or-later) in the .deb as a user installs it: the library, the notice and the LGPL
+      # in the copyright file, and the assets of the package with the archive of its sources, byte for byte the release
+      # file
+      - name: libsmb2, its notice and its sources in the .deb
+        env:
+          DEB: ${{ steps.packages.outputs.deb }}
+          SOURCES: ${{ steps.libsmb2.outputs.sources }}
+        run: |
+          dpkg-deb --fsys-tarfile "$DEB" > "$RUNNER_TEMP/deb.tar"
+          tar -tf "$RUNNER_TEMP/deb.tar" > "$RUNNER_TEMP/deb.txt"
+          assets=./opt/immuch360/data/flutter_assets/packages/dart_smb2/libsmb2
+          for file in ./opt/immuch360/lib/libsmb2.so "$assets/NOTICE" "$assets/COPYING" "$assets/LICENCE-LGPL-2.1.txt" \
+            "$assets/Immuch360-libsmb2-sources.tar.gz"; do
+            grep -qxF "$file" "$RUNNER_TEMP/deb.txt" || { echo "::error::no $file in the .deb"; exit 1; }
+          done
+          tar -xOf "$RUNNER_TEMP/deb.tar" "$assets/Immuch360-libsmb2-sources.tar.gz" | cmp - "$SOURCES" \
+            || { echo "::error::the libsmb2 sources in the .deb are not the release file"; exit 1; }
+          tar -xOf "$RUNNER_TEMP/deb.tar" ./usr/share/doc/immuch360/copyright > "$RUNNER_TEMP/copyright"
+          grep -q '^License: LGPL-2.1-or-later' "$RUNNER_TEMP/copyright" \
+            || { echo "::error::no libsmb2 section in the copyright file of the .deb"; exit 1; }
+          echo "the .deb holds libsmb2.so, its notice and licence texts, and the sources"
+          sha256sum "$SOURCES"
+
       - name: Upload the .deb
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -494,6 +517,33 @@ jobs:
             --zip "$zip" --symbols dist/symbols --file-version "$FILE_VERSION" --info "version=$LABEL" \
             --info "file version=$FILE_VERSION" --info "commit=$GITHUB_SHA" --info "built by=$RUN_URL"
           echo "zip=$zip" >> "$GITHUB_OUTPUT"
+
+      # libsmb2 (dart_smb2, LGPL-2.1-or-later) in the ZIP as a user unzips it: the DLL, its notice and licence texts in
+      # licenses/libsmb2, and the assets of the package with the archive of its sources, byte for byte the asset packed
+      # by the code generation, the release file of the linux job
+      - name: libsmb2, its notice and its sources in the ZIP
+        env:
+          ZIP: ${{ steps.bundle.outputs.zip }}
+        run: |
+          python - "$ZIP" mobile/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz <<'PY'
+          import hashlib, pathlib, sys, zipfile
+          archive, sources = sys.argv[1], pathlib.Path(sys.argv[2])
+          top = 'Immuch360 Desktop/'
+          assets = top + 'data/flutter_assets/packages/dart_smb2/libsmb2/'
+          wanted = [top + 'libsmb2.dll'] + [folder + name for folder in (top + 'licenses/libsmb2/', assets)
+                                            for name in ('NOTICE', 'COPYING', 'LICENCE-LGPL-2.1.txt')]
+          wanted.append(assets + 'Immuch360-libsmb2-sources.tar.gz')
+          with zipfile.ZipFile(archive) as bundle:
+              names = set(bundle.namelist())
+              missing = [name for name in wanted if name not in names]
+              if missing:
+                  sys.exit('::error::not in the ZIP: ' + ', '.join(missing))
+              packed = bundle.read(assets + 'Immuch360-libsmb2-sources.tar.gz')
+          if packed != sources.read_bytes():
+              sys.exit('::error::the libsmb2 sources in the ZIP are not the archive packed')
+          print('the ZIP holds libsmb2.dll, its notice and licence texts, and the sources')
+          print(hashlib.sha256(packed).hexdigest())
+          PY
 
       # The installer of the same folder as the ZIP (Inno Setup 6 of the runner image): for one user or for every
       # user of the PC, "Open with" for the types of .github/desktop/file-associations.json, an uninstaller
@@ -694,17 +744,31 @@ jobs:
           echo "notices: ${notices#"$app/"}"
           ls "$(dirname "$notices")"
 
-      # libsmb2 (dart_smb2, LGPL-2.1-or-later) in the app with its notice and licence texts, assets of the package
-      # (mobile/packages/dart_smb2/libsmb2) that the licence page of the app shows
-      - name: libsmb2 and its licence in the app
+      # libsmb2 (dart_smb2, LGPL-2.1-or-later) in the app with its notice and licence texts and the archive of its
+      # sources, assets of the package (mobile/packages/dart_smb2/libsmb2) that the licence page of the app shows. The
+      # sources are packed again on this Mac, as Codemagic packs them for the iOS build: the files must be the same
+      - name: libsmb2, its licence and its sources in the app
         run: |
           app="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
+          sources=mobile/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
           [ -d "$app/Contents/Frameworks/libsmb2.framework" ] || { echo "::error::no libsmb2.framework in the app"; exit 1; }
           texts="$app/Contents/Frameworks/App.framework/Resources/flutter_assets/packages/dart_smb2/libsmb2"
-          for name in NOTICE COPYING LICENCE-LGPL-2.1.txt; do
+          for name in NOTICE COPYING LICENCE-LGPL-2.1.txt Immuch360-libsmb2-sources.tar.gz; do
             [ -f "$texts/$name" ] || { echo "::error::no $name of libsmb2 in the app"; exit 1; }
           done
+          cmp "$texts/Immuch360-libsmb2-sources.tar.gz" "$sources" \
+            || { echo "::error::the libsmb2 sources in the app are not the archive packed"; exit 1; }
           ls -l "$texts"
+          python3 .github/desktop/libsmb2/pack_sources.py "$RUNNER_TEMP/packed-on-macos.tar.gz"
+          if cmp -s "$RUNNER_TEMP/packed-on-macos.tar.gz" "$sources"; then
+            echo "packed on macOS: the same file"
+          elif [ "$(gzip -dc "$RUNNER_TEMP/packed-on-macos.tar.gz" | shasum -a 256)" = \
+            "$(gzip -dc "$sources" | shasum -a 256)" ]; then
+            echo "::notice::packed on macOS: the same tar, compressed to other bytes by the zlib of this Mac"
+          else
+            echo "::error::the sources packed on macOS differ from those packed on Linux"
+            exit 1
+          fi
 
       # Nobody on the project has a Mac: the runner starts the app three times, without a server, with what a user would
       # give it, and with the self check of lib/desktop/window/self_check.dart (IMMUCH360_SELF_CHECK), which writes

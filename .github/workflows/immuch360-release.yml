@@ -1,6 +1,7 @@
 name: Immuch360 Android release
 
-# Builds the signed Android APKs of the fork and attaches them to a GitHub Release.
+# Builds the signed Android APKs of the fork and attaches them to a GitHub Release, with the archive of the sources of
+# libsmb2 (LGPL-2.1-or-later), the SMB library inside every APK, which the APKs also carry as an asset.
 # Triggered by pushing a tag like v3.3.0-1, or manually.
 
 on:
@@ -49,6 +50,8 @@ jobs:
           test -x "$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang"
           { echo "ANDROID_NDK_HOME=$ndk"; echo "ANDROID_NDK_ROOT=$ndk"; echo "ANDROID_NDK=$ndk"; } >> "$GITHUB_ENV"
 
+      # The code generation also packs the sources of libsmb2 (.github/desktop/libsmb2/pack_sources.py) into
+      # mobile/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz, an asset of the app
       - name: Flutter dependencies and code generation
         env:
           MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
@@ -104,6 +107,27 @@ jobs:
           mv ../bundle/phoneRelease/app-phone-release.aab "Immuch360-${GITHUB_REF_NAME}.aab"
           ls -la
 
+      # libsmb2 (dart_smb2, LGPL-2.1-or-later) must travel with its notice, its licence texts and its corresponding
+      # source, assets of the package (mobile/packages/dart_smb2/libsmb2, NOTICE says where they are): each APK and the
+      # AAB must hold them, the archive byte for byte as packed. The release gets the same archive as a file
+      - name: libsmb2 notice, licence and sources in every APK and the AAB
+        working-directory: mobile/build/app/outputs/flutter-apk
+        run: |
+          sources="$GITHUB_WORKSPACE/mobile/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz"
+          [ -f "$sources" ] || { echo "::error::the code generation packed no sources of libsmb2"; exit 1; }
+          echo "sources of libsmb2: SHA-256 $(sha256sum "$sources" | cut -d' ' -f1)"
+          for package in Immuch360-*.apk Immuch360-*.aab; do
+            assets=assets/flutter_assets/packages/dart_smb2/libsmb2
+            [[ "$package" == *.aab ]] && assets="base/$assets"
+            for name in NOTICE COPYING LICENCE-LGPL-2.1.txt Immuch360-libsmb2-sources.tar.gz; do
+              unzip -l "$package" "$assets/$name" > /dev/null || { echo "::error::no $assets/$name in $package"; exit 1; }
+            done
+            unzip -p "$package" "$assets/Immuch360-libsmb2-sources.tar.gz" | cmp - "$sources" \
+              || { echo "::error::the libsmb2 sources in $package are not the archive packed"; exit 1; }
+            echo "$package: $assets holds the notice, the licence texts and the sources"
+          done
+          cp "$sources" Immuch360-libsmb2-sources.tar.gz
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -111,6 +135,7 @@ jobs:
           path: |
             mobile/build/app/outputs/flutter-apk/Immuch360-*.apk
             mobile/build/app/outputs/flutter-apk/Immuch360-*.aab
+            mobile/build/app/outputs/flutter-apk/Immuch360-libsmb2-sources.tar.gz
 
       - name: GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
@@ -119,5 +144,6 @@ jobs:
           files: |
             mobile/build/app/outputs/flutter-apk/Immuch360-*.apk
             mobile/build/app/outputs/flutter-apk/Immuch360-*.aab
+            mobile/build/app/outputs/flutter-apk/Immuch360-libsmb2-sources.tar.gz
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, 'preview') }}
