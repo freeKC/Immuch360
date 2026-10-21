@@ -91,6 +91,24 @@ void main() {
       expect(entries.every((entry) => entry.asset is RemoteAsset), isTrue);
     });
 
+    test('gives the size of the file of an asset the server edited, which the viewers show', () async {
+      // Viewed as 360° by choice after a quarter turn on the server: the asset is sized 1:2, its file 2:1, sideways
+      final turned = await newAsset(width: 2048, height: 4096, exifWidth: 2048, exifHeight: 4096);
+      await (ctx.db.update(
+        ctx.db.remoteAssetEntity,
+      )..where((row) => row.id.equals(turned.id))).write(const RemoteAssetEntityCompanion(isEdited: Value(true)));
+      await (ctx.db.update(
+        ctx.db.remoteExifEntity,
+      )..where((row) => row.assetId.equals(turned.id))).write(const RemoteExifEntityCompanion(orientation: Value('6')));
+      final plain = await newAsset(width: 4096, height: 2048, exifWidth: 1, exifHeight: 1);
+
+      final entries = await loadRemote(forcedKeys: {turned.id, plain.id});
+
+      Panorama360Entry entryOf(String id) => entries.firstWhere((entry) => entry.asset.remoteId == id);
+      expect(entryOf(turned.id).frame, (width: 4096, height: 2048));
+      expect(entryOf(plain.id).frame, (width: 4096, height: 2048), reason: 'no edit: the size of the asset');
+    });
+
     test('keeps archived assets and leaves out trashed, locked and hidden ones', () async {
       final archived = await newAsset(projectionType: 'EQUIRECTANGULAR', visibility: .archive);
       await newAsset(projectionType: 'EQUIRECTANGULAR', deletedAt: DateTime.utc(2024, 9, 5));

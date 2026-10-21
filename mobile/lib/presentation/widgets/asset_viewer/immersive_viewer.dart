@@ -24,12 +24,14 @@ import 'package:http/http.dart' as http;
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/models/unedited_frame.dart';
 import 'package:immich_mobile/domain/services/immersive_navigation.service.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_stitcher.dart';
@@ -51,6 +53,7 @@ import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.da
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/db.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -378,23 +381,31 @@ class ImmersiveAssetResolver {
     required this._videoSources,
     this.videoSourcePolicy = VideoSourcePolicy.preferOriginalWithinDecoder,
     this.raw,
+    this.exifOf,
   });
 
   /// Reads the services from the providers. Call it before the first await of an opener: the widget may be gone after.
-  factory ImmersiveAssetResolver.read(WidgetRef ref, {required Map<String, String> stereoLabels}) =>
-      ImmersiveAssetResolver(
-        api: ref.read(immersiveApiProvider),
-        stereoLabels: stereoLabels,
-        coverageOverrides: ref.read(sphereCoverageOverridesProvider.notifier),
-        storage: ref.read(storageRepositoryProvider),
-        probeService: ref.read(sphericalProbeServiceProvider),
-        gpanoClient: ref.read(immersiveGPanoClientProvider),
-        videoSources: ref.read(videoSourceServiceProvider),
-        videoSourcePolicy: ref.read(appConfigProvider).viewer.immersiveVideoSourcePolicy,
-        raw: RawImmersiveMedia.read(ref),
-      );
+  factory ImmersiveAssetResolver.read(WidgetRef ref, {required Map<String, String> stereoLabels}) {
+    final assets = ref.read(assetServiceProvider);
+    return ImmersiveAssetResolver(
+      api: ref.read(immersiveApiProvider),
+      stereoLabels: stereoLabels,
+      coverageOverrides: ref.read(sphereCoverageOverridesProvider.notifier),
+      storage: ref.read(storageRepositoryProvider),
+      probeService: ref.read(sphericalProbeServiceProvider),
+      gpanoClient: ref.read(immersiveGPanoClientProvider),
+      videoSources: ref.read(videoSourceServiceProvider),
+      videoSourcePolicy: ref.read(appConfigProvider).viewer.immersiveVideoSourcePolicy,
+      raw: RawImmersiveMedia.read(ref),
+      exifOf: (asset) => assets.watchExif(asset).first,
+    );
+  }
 
   final ImmersiveApi api;
+
+  /// The exif of an asset as the database holds it, for the size of its file once the server edited it (see
+  /// [uneditedFrameOf]); null to guess an edited asset from its name and its GPano crop only
+  final Future<ExifInfo?> Function(BaseAsset asset)? exifOf;
 
   /// The raw dual fisheye media, stitched or with their calibration; null to take them as any other media
   final RawImmersiveMedia? raw;
@@ -445,10 +456,13 @@ class ImmersiveAssetResolver {
     final remoteUrl = immersiveMediaUrl(asset);
     // A photo on the server opens from its original there
     final localId = asset.isVideo || remoteUrl == null ? asset.localId : null;
+    // The viewer shows the unedited file: the guesses read its size, never the one the server gave the asset after an
+    // edit, which a turn swaps
+    final frame = uneditedFrameOf(asset, hasEditedFrame(asset) ? await _exifOf(asset) : null);
     SphereView view({Rect? gpanoCrop, SphericalProbe? probe}) => resolveSphereView(
       fileName: asset.name,
-      width: asset.width,
-      height: asset.height,
+      width: frame.width,
+      height: frame.height,
       gpanoCrop: gpanoCrop,
       probe: probe,
       chosenCoverage: coverageOverrides.get(asset),
@@ -537,6 +551,19 @@ class ImmersiveAssetResolver {
       fallbackUrl: source.fallbackUrl,
       sourceNotice: source.notice,
     );
+  }
+
+  Future<ExifInfo?> _exifOf(BaseAsset asset) async {
+    final exifOf = this.exifOf;
+    if (exifOf == null) {
+      return null;
+    }
+    try {
+      return await exifOf(asset).timeout(const Duration(seconds: 2));
+    } catch (error) {
+      _log.info('No exif for the size of ${asset.name}: $error');
+      return null;
+    }
   }
 
   /// What the viewer opens for [asset], an Apple spatial photo whose two eyes [pair] describes: its copy on the device

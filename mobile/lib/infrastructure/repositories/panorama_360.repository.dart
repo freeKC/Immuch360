@@ -7,6 +7,8 @@ import 'package:immich_mobile/data/db/main/table/remote/asset.drift.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/panorama_360.model.dart';
+import 'package:immich_mobile/domain/models/unedited_frame.dart';
+import 'package:immich_mobile/infrastructure/utils/exif.converter.dart';
 
 /// The candidates of the 360° page of the Library, read from the local database: the remote assets the sync stream
 /// brought (own, partner and album assets, their exif included) and the assets of this device. No network: the server
@@ -133,7 +135,16 @@ class Panorama360Repository {
         (rae.stackId.isNull() |
             rae.id.isInQuery(_db.stackEntity.selectOnly()..addColumns([_db.stackEntity.primaryAssetId])));
     final query = rae.select().join([leftOuterJoin(exif, exif.assetId.equalsExp(rae.id), useColumns: false)])
-      ..addColumns([localId, day, exif.make, exif.model, exif.projectionType])
+      ..addColumns([
+        localId,
+        day,
+        exif.make,
+        exif.model,
+        exif.projectionType,
+        exif.width,
+        exif.height,
+        exif.orientation,
+      ])
       ..where(base & match);
 
     final rows = await query.get();
@@ -147,6 +158,15 @@ class Panorama360Repository {
             make: row.read(exif.make),
             model: row.read(exif.model),
             flagged: row.read(exif.projectionType) == ProjectionType.equirectangular.value,
+            // An asset edited on the server has the size of its edited picture; the viewers show the file
+            frame: uneditedFrame(
+              width: data.width,
+              height: data.height,
+              isEdited: data.isEdited,
+              exifWidth: row.read(exif.width),
+              exifHeight: row.read(exif.height),
+              exifFlipped: ExifDtoConverter.isOrientationFlipped(row.read(exif.orientation)),
+            ),
           );
         })
         .toList(growable: false);
