@@ -285,6 +285,11 @@ final networkMediaInfoProvider = FutureProvider.autoDispose.family<NetworkMediaI
   }
   final service = ref.read(networkMediaServiceProvider);
   final fileSystem = await ref.read(networkConnectionsProvider).fileSystem(key.sourceId);
+  if (fileSystem case NetworkSequentialReads(readsFromStartOnly: true) when entry.isVideo) {
+    // The moov box of a video sits at its end, often: on a device that sends files from their start only, reading it
+    // would read the whole video
+    return null;
+  }
   return service.detect(entry, networkFileReader(fileSystem, key.path), isWanted: () => wanted);
 });
 
@@ -325,9 +330,10 @@ class NetworkMediaTile extends ConsumerWidget {
     final isSpatial = ref.watch(
       networkMediaInfoProvider(networkMediaKey(entry)).select((info) => info.valueOrNull?.isAppleSpatial ?? false),
     );
-    final wasSent = ref.watch(
-      networkUploadRecordsProvider.select((records) => records.containsKey(UploadRecordStore.keyOf(entry))),
-    );
+    final record = ref.watch(networkUploadRecordsProvider.select((records) => records[UploadRecordStore.keyOf(entry)]));
+    final wasSent = isKeptOnServer(record);
+    // Sent, then put in the trash of the server, where it will be purged: not shown as safe
+    final inTrash = record?.inTrash ?? false;
     final uploadProgress = ref.watch(networkUploadProvider.select((upload) => upload.progress[networkUploadId(entry)]));
     final url = this.url;
     final hasThumbnail = entry.isImage && url != null && (entry.size ?? 0) <= networkThumbnailMaxFileSize;
@@ -341,7 +347,11 @@ class NetworkMediaTile extends ConsumerWidget {
     Widget withServerThumbnail(Widget picture) => _withServerThumbnail(entry, picture, serverPictures);
 
     return Semantics(
-      label: wasSent ? '${entry.name}, ${context.t.network_upload_sent_before}' : entry.name,
+      label: wasSent
+          ? '${entry.name}, ${context.t.network_upload_sent_before}'
+          : inTrash
+          ? '${entry.name}, ${context.t.network_upload_in_trash_mark}'
+          : entry.name,
       button: true,
       selected: isSelected ?? false,
       onTap: onTap,
@@ -399,6 +409,16 @@ class NetworkMediaTile extends ConsumerWidget {
                   child: Tooltip(
                     message: context.t.network_upload_sent_before,
                     child: const Icon(Icons.cloud_done_outlined, color: Colors.white, size: 18, shadows: _shadows),
+                  ),
+                )
+              else if (inTrash)
+                Positioned(
+                  key: const Key('network_media_in_trash_badge'),
+                  right: 6,
+                  bottom: 6,
+                  child: Tooltip(
+                    message: context.t.network_upload_in_trash_mark,
+                    child: const Icon(Icons.delete_outline_rounded, color: Colors.white, size: 18, shadows: _shadows),
                   ),
                 ),
               if (uploadProgress != null)

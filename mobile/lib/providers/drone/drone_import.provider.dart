@@ -155,8 +155,13 @@ enum DroneImportPhase {
 /// The copies under way into the gallery: [done] of [total] files, the current one at [bytes] of [fileBytes]
 typedef DroneKeepProgress = ({int done, int total, int bytes, int fileBytes});
 
-/// What "Keep on the device" did
-typedef DroneKeepSummary = ({int saved, int failed, bool cancelled, String? lastError});
+/// What "Keep on the device" did: [saved] files, of which [inDownloads] went to the Download folder rather than the
+/// gallery (the files the Immich server refuses, see DroneImportNotifier.keep)
+typedef DroneKeepSummary = ({int saved, int inDownloads, int failed, bool cancelled, String? lastError});
+
+/// The MIME type a file the Immich server refuses is kept as: the gallery would rename it after a video type, so it
+/// goes to the Download folder under its own name (see DocumentTreeApi.copyToGallery)
+const droneKeepOtherMimeType = 'application/octet-stream';
 
 class DroneImportState {
   const DroneImportState({
@@ -170,6 +175,8 @@ class DroneImportState {
     this.frameUrls = const {},
     this.error,
     this.keeping,
+    this.incomplete = false,
+    this.readsFromStartOnly = false,
   });
 
   /// The folders picked before, the latest first, and the URIs of those not plugged in now
@@ -190,6 +197,12 @@ class DroneImportState {
   final Object? error;
   final DroneKeepProgress? keeping;
 
+  /// Files may be missing from the listing: the device was still sending its list, or a folder could not be listed
+  final bool incomplete;
+
+  /// The device sends files from their start only (see NetworkSequentialReads): the videos without proxy get no frame
+  final bool readsFromStartOnly;
+
   DroneImportState copyWith({
     List<RecentTree>? recents,
     Set<String>? missing,
@@ -203,6 +216,8 @@ class DroneImportState {
     bool clearError = false,
     DroneKeepProgress? keeping,
     bool clearKeeping = false,
+    bool? incomplete,
+    bool? readsFromStartOnly,
   }) => DroneImportState(
     recents: recents ?? this.recents,
     missing: missing ?? this.missing,
@@ -214,6 +229,8 @@ class DroneImportState {
     frameUrls: frameUrls ?? this.frameUrls,
     error: clearError ? null : (error ?? this.error),
     keeping: clearKeeping ? null : (keeping ?? this.keeping),
+    incomplete: incomplete ?? this.incomplete,
+    readsFromStartOnly: readsFromStartOnly ?? this.readsFromStartOnly,
   );
 }
 
@@ -222,11 +239,13 @@ const _skippedFolders = {'misc', 'android', 'lost.dir', 'system volume informati
 
 /// The files of the folder picked on [fileSystem]: when it holds DCIM, those of DCIM; at most two folder levels below,
 /// so that DCIM/DJI_001 and DCIM/PANORAMA/001_0042 are read; the folders of [_skippedFolders] and those whose name
-/// starts with a dot left out
-Future<List<NetworkEntry>> scanDroneFolder(NetworkFileSystem fileSystem) async {
+/// starts with a dot left out. A folder below that cannot be listed is left out, and counted in [skipped], unless the
+/// device is gone.
+Future<({List<NetworkEntry> files, int skipped})> scanDroneFolder(NetworkFileSystem fileSystem) async {
   final top = await fileSystem.list('/');
   final dcim = top.firstWhereOrNull((entry) => entry.isDirectory && entry.name.toUpperCase() == 'DCIM');
   final files = <NetworkEntry>[];
+  var skipped = 0;
   Future<void> walk(List<NetworkEntry> entries, int depth) async {
     for (final entry in entries) {
       if (!entry.isDirectory) {
@@ -237,12 +256,23 @@ Future<List<NetworkEntry>> scanDroneFolder(NetworkFileSystem fileSystem) async {
       if (depth >= 2 || name.startsWith('.') || _skippedFolders.contains(name)) {
         continue;
       }
-      await walk(await fileSystem.list(entry.path), depth + 1);
+      final List<NetworkEntry> children;
+      try {
+        children = await fileSystem.list(entry.path);
+      } on NetworkFileSystemException catch (error) {
+        if (fileSystem is DocumentTreeFileSystem && fileSystem.isUnplugged) {
+          rethrow;
+        }
+        _log.warning('Could not list ${entry.path}, left out: ${error.message}');
+        skipped++;
+        continue;
+      }
+      await walk(children, depth + 1);
     }
   }
 
   await walk(dcim == null ? top : await fileSystem.list(dcim.path), 0);
-  return files;
+  return (files: files, skipped: skipped);
 }
 
 class DroneImportNotifier extends Notifier<DroneImportState> implements DocumentTreeEvents {
@@ -253,18 +283,50 @@ class DroneImportNotifier extends Notifier<DroneImportState> implements Document
 
   DocumentTreeApi get _api => ref.read(documentTreeApiProvider);
 
+  /// Whether the page is on screen: the USB events are watched only meanwhile
+  bool _pageShown = false;
+
   @override
   DroneImportState build() {
     final setUpEvents = ref.watch(documentTreeEventsSetUpProvider);
     final api = ref.watch(documentTreeApiProvider);
     setUpEvents(this);
-    unawaited(_quietly(() => api.watchUsb(true)));
     ref.onDispose(() {
       setUpEvents(null);
-      unawaited(_quietly(() => api.watchUsb(false)));
+      if (_pageShown) {
+        unawaited(_quietly(() => api.watchUsb(false)));
+      }
     });
     unawaited(_loadRecents());
     return const DroneImportState();
+  }
+
+  /// The page opened ([shown]) or closed: the USB devices are watched while it is open, and what changed while it was
+  /// closed is looked at again when it opens
+  void pageShown(bool shown) {
+    if (shown == _pageShown) {
+      return;
+    }
+    _pageShown = shown;
+    unawaited(_quietly(() => _api.watchUsb(shown)));
+    if (shown && state.recents.isNotEmpty) {
+      unawaited(_recheck());
+    }
+  }
+
+  /// Whether the folder open, or the folders picked before, came or went while the page was closed
+  Future<void> _recheck() async {
+    final tree = state.tree;
+    if (tree == null) {
+      await _checkRecents();
+      return;
+    }
+    final answers = await _reopen(tree.treeUri) != null;
+    if (answers && state.phase == DroneImportPhase.unplugged) {
+      await _onUsbChanged(true);
+    } else if (!answers && state.phase != DroneImportPhase.unplugged) {
+      await _onUsbChanged(false);
+    }
   }
 
   /// Opens the system picker and reads the folder chosen; nothing when the user goes back
@@ -353,7 +415,9 @@ class DroneImportNotifier extends Notifier<DroneImportState> implements Document
     await _remember(pick);
     try {
       final fileSystem = await connections.fileSystem(sourceId);
-      final listing = groupDroneFiles(await scanDroneFolder(fileSystem));
+      final scan = await scanDroneFolder(fileSystem);
+      final listing = groupDroneFiles(scan.files);
+      final tree = fileSystem is DocumentTreeFileSystem ? fileSystem : null;
       final urls = <String, Uri>{};
       final frameUrls = <String, Uri>{};
       for (final entry in listing.allMedia) {
@@ -368,8 +432,16 @@ class DroneImportNotifier extends Notifier<DroneImportState> implements Document
       if (generation != _generation) {
         return;
       }
-      state = state.copyWith(phase: DroneImportPhase.ready, listing: listing, urls: urls, frameUrls: frameUrls);
+      state = state.copyWith(
+        phase: DroneImportPhase.ready,
+        listing: listing,
+        urls: urls,
+        frameUrls: frameUrls,
+        incomplete: scan.skipped > 0 || (tree?.hasIncompleteListing ?? false),
+        readsFromStartOnly: tree?.readsFromStartOnly ?? false,
+      );
       _log.info('${pick.title}: ${listing.allMedia.length} photos and videos in ${listing.days.length} days');
+      unawaited(_checkTrash(listing.allMedia));
     } catch (error, stackTrace) {
       if (generation != _generation) {
         return;
@@ -380,15 +452,19 @@ class DroneImportNotifier extends Notifier<DroneImportState> implements Document
     }
   }
 
-  /// Copies [entries] into the gallery, album [droneImportAlbum], one at a time, until [cancelKeep]
+  /// Copies [entries] into the gallery, album [droneImportAlbum], one at a time, until [cancelKeep]. The files the
+  /// Immich server refuses (see NetworkEntry.isRefusedByServer, a raw 360° video of a DJI camera) go to the Download
+  /// folder under their own name: the gallery would rename them after a video type, and the device backup would then
+  /// send them to Immich as flat videos.
   Future<DroneKeepSummary> keep(List<NetworkEntry> entries) async {
     final tree = state.tree;
     final sourceId = state.sourceId;
     if (tree == null || sourceId == null || entries.isEmpty || state.keeping != null) {
-      return (saved: 0, failed: 0, cancelled: false, lastError: null);
+      return (saved: 0, inDownloads: 0, failed: 0, cancelled: false, lastError: null);
     }
     _keepCancelled = false;
     var saved = 0;
+    var inDownloads = 0;
     var failed = 0;
     String? lastError;
     state = state.copyWith(keeping: (done: 0, total: entries.length, bytes: 0, fileBytes: entries.first.size ?? 0));
@@ -412,11 +488,14 @@ class DroneImportNotifier extends Notifier<DroneImportState> implements Document
             tree.treeUri,
             documentId,
             entry.name,
-            entry.guessedMimeType,
+            entry.isRefusedByServer ? droneKeepOtherMimeType : entry.guessedMimeType,
             droneImportAlbum,
             droneTakenAt(entry).millisecondsSinceEpoch,
           );
           saved++;
+          if (entry.isRefusedByServer) {
+            inDownloads++;
+          }
         } on PlatformException catch (error) {
           if (error.code == 'cancelled') {
             break;
@@ -440,7 +519,7 @@ class DroneImportNotifier extends Notifier<DroneImportState> implements Document
       _copying = null;
       state = state.copyWith(clearKeeping: true);
     }
-    return (saved: saved, failed: failed, cancelled: _keepCancelled, lastError: lastError);
+    return (saved: saved, inDownloads: inDownloads, failed: failed, cancelled: _keepCancelled, lastError: lastError);
   }
 
   /// Stops the copies into the gallery: the file being copied is not kept
@@ -486,8 +565,9 @@ class DroneImportNotifier extends Notifier<DroneImportState> implements Document
       _log.info('${tree.title} was unplugged');
       _generation++;
       final sourceId = state.sourceId;
-      if (ref.read(networkUploadProvider).isRunning) {
-        ref.read(networkUploadProvider.notifier).cancel();
+      if (sourceId != null) {
+        // Only an upload from this folder: one from a share goes on
+        ref.read(networkUploadProvider.notifier).cancelFrom(sourceId);
       }
       cancelKeep();
       state = state.copyWith(phase: DroneImportPhase.unplugged);
@@ -525,12 +605,24 @@ class DroneImportNotifier extends Notifier<DroneImportState> implements Document
   }
 
   Future<void> _remember(TreePick pick) async {
-    final recents = [
-      RecentTree.of(pick, DateTime.now()),
-      ...state.recents.where((tree) => tree.treeUri != pick.treeUri),
-    ].take(droneRecentLimit).toList();
+    final all = [RecentTree.of(pick, DateTime.now()), ...state.recents.where((tree) => tree.treeUri != pick.treeUri)];
+    final recents = all.take(droneRecentLimit).toList();
     state = state.copyWith(recents: recents);
     await ref.read(droneRecentStoreProvider).save(recents);
+    // The grants of the folders dropped from the list are given back: Android keeps a limited number per app
+    for (final dropped in all.skip(droneRecentLimit)) {
+      await _quietly(() => _api.release(dropped.treeUri));
+    }
+  }
+
+  /// The files sent before whose asset was put in the Immich trash since lose their cloud mark (see
+  /// NetworkUploadRecordsNotifier.checkTrash)
+  Future<void> _checkTrash(Iterable<NetworkEntry> entries) async {
+    try {
+      await ref.read(networkUploadRecordsProvider.notifier).checkTrash(entries);
+    } catch (error) {
+      _log.info('Could not look at the trash of the server for the files sent before: $error');
+    }
   }
 
   Future<TreePick?> _reopen(String treeUri) async {

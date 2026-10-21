@@ -64,9 +64,18 @@ class _DroneImportPageState extends ConsumerState<DroneImportPage> {
   /// The spheres whose source shots are shown, by path
   final _expanded = <String>{};
 
+  /// The photos read before the upload sheet opens: [done] of [total]; null when none is being read
+  ({int done, int total})? _preparing;
+
+  /// Kept from the start: the page tells it when it closes, when its ref is no longer usable
+  late final DroneImportNotifier _droneNotifier;
+
   @override
   void initState() {
     super.initState();
+    _droneNotifier = ref.read(droneImportProvider.notifier);
+    // After the first frame: the notifier may change its state, which a build under way must not see
+    unawaited(Future.microtask(() => _droneNotifier.pageShown(true)));
     try {
       // The places of drone videos that the server had not read in time (see VideoLocationService.retryPending)
       if (ref.read(hasServerProvider)) {
@@ -77,7 +86,13 @@ class _DroneImportPageState extends ConsumerState<DroneImportPage> {
     }
   }
 
-  DroneImportNotifier get _notifier => ref.read(droneImportProvider.notifier);
+  @override
+  void dispose() {
+    _droneNotifier.pageShown(false);
+    super.dispose();
+  }
+
+  DroneImportNotifier get _notifier => _droneNotifier;
 
   /// The photos and videos as the page shows them now, the sources of the spheres shown included
   List<DroneTileItem> _items(DroneDay day) => [
@@ -129,7 +144,8 @@ class _DroneImportPageState extends ConsumerState<DroneImportPage> {
 
   void _selectNew(String sourceId, DroneImportListing listing) {
     final records = ref.read(networkUploadRecordsProvider);
-    final paths = droneNewFiles(listing, (entry) => records.containsKey(UploadRecordStore.keyOf(entry)));
+    // A file whose asset sits in the Immich trash counts as new: the server will purge it
+    final paths = droneNewFiles(listing, (entry) => isKeptOnServer(records[UploadRecordStore.keyOf(entry)]));
     ref.read(networkSelectionProvider(droneSelectionKey(sourceId)).notifier).replace(paths.map((entry) => entry.path));
   }
 
@@ -151,17 +167,36 @@ class _DroneImportPageState extends ConsumerState<DroneImportPage> {
       return;
     }
     ref.read(networkSelectionProvider(droneSelectionKey(sourceId)).notifier).end();
-    // Read before the sheet, so that it offers the 360° tags of the spheres among the files: the head of each photo
+    // Read before the sheet, so that it offers the 360° tags of the spheres among the files: the head of each photo,
+    // a few at a time, with the count on screen. Those not started after 20 s are dropped: the upload goes first.
     final media = ref.read(networkMediaServiceProvider);
-    try {
-      final fileSystem = await ref.read(networkConnectionsProvider).fileSystem(sourceId);
-      await Future.wait([
-        for (final entry in entries)
-          if (entry.isImage && media.cached(entry) == null)
-            media.detect(entry, networkFileReader(fileSystem, entry.path), thorough: true),
-      ]).timeout(const Duration(seconds: 20));
-    } catch (error) {
-      _log.info('Could not read every photo before the upload: $error');
+    final photos = [
+      for (final entry in entries)
+        if (entry.isImage && media.cached(entry) == null) entry,
+    ];
+    if (photos.isNotEmpty) {
+      var wanted = true;
+      var done = 0;
+      setState(() => _preparing = (done: 0, total: photos.length));
+      try {
+        final fileSystem = await ref.read(networkConnectionsProvider).fileSystem(sourceId);
+        await Future.wait([
+          for (final entry in photos)
+            media.detect(entry, networkFileReader(fileSystem, entry.path), isWanted: () => wanted).whenComplete(() {
+              done++;
+              if (mounted && wanted) {
+                setState(() => _preparing = (done: done, total: photos.length));
+              }
+            }),
+        ]).timeout(const Duration(seconds: 20));
+      } catch (error) {
+        _log.info('Could not read every photo before the upload: $error');
+      } finally {
+        wanted = false;
+        if (mounted) {
+          setState(() => _preparing = null);
+        }
+      }
     }
     if (!mounted) {
       return;
@@ -209,8 +244,10 @@ class _DroneImportPageState extends ConsumerState<DroneImportPage> {
       unawaited(WakelockPlus.disable());
     }
     final lastError = summary.lastError;
+    final inGallery = summary.saved - summary.inDownloads;
     final parts = [
-      if (summary.saved > 0) t.dji_import_kept(count: summary.saved, album: droneImportAlbum),
+      if (inGallery > 0) t.dji_import_kept(count: inGallery, album: droneImportAlbum),
+      if (summary.inDownloads > 0) t.dji_import_kept_downloads(count: summary.inDownloads, album: droneImportAlbum),
       if (summary.cancelled) t.network_upload_cancelled,
       if (summary.failed > 0 && lastError != null) t.network_upload_error(error: lastError),
     ];
@@ -234,6 +271,7 @@ class _DroneImportPageState extends ConsumerState<DroneImportPage> {
         : ref.watch(networkSelectionProvider(droneSelectionKey(sourceId)));
     final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));
     final keeping = state.keeping;
+    final preparing = _preparing;
 
     return PopScope(
       canPop: !selection.isActive,
@@ -268,6 +306,8 @@ class _DroneImportPageState extends ConsumerState<DroneImportPage> {
               ),
         bottomNavigationBar: isUploading
             ? const NetworkUploadProgressBar()
+            : preparing != null
+            ? _PreparingBar(done: preparing.done, total: preparing.total)
             : keeping != null
             ? _KeepProgressBar(progress: keeping, onCancel: _notifier.cancelKeep)
             : selection.isActive
@@ -337,6 +377,8 @@ class _DroneImportPageState extends ConsumerState<DroneImportPage> {
           SliverToBoxAdapter(
             child: _TreeHeader(tree: tree, onChange: () => unawaited(_notifier.closeTree())),
           ),
+          if (state.incomplete)
+            SliverToBoxAdapter(child: _IncompleteNote(onRefresh: () => unawaited(_notifier.refresh()))),
           if (listing.isEmpty)
             SliverFillRemaining(
               hasScrollBody: false,
@@ -386,11 +428,15 @@ class _DroneImportPageState extends ConsumerState<DroneImportPage> {
           final item = items[index];
           final media = item.media;
           final path = item.entry.path;
+          final frameUrl = state.frameUrls[path];
+          // On a device that sends files from their start only, a frame of a video without proxy would cost a read
+          // of the whole video: a plain video tile
+          final noFrame = state.readsFromStartOnly && item.entry.isVideo && frameUrl == null;
           return DroneMediaTile(
             key: ValueKey(path),
             item: item,
-            url: state.urls[path],
-            frameUrl: state.frameUrls[path],
+            url: noFrame ? null : state.urls[path],
+            frameUrl: frameUrl,
             isSelected: selection.isActive ? selection.contains(path) : null,
             sourcesShown: _expanded.contains(path),
             onTap: () => _open(state, item.entry),
@@ -538,7 +584,10 @@ class _TreeHeader extends StatelessWidget {
       contentPadding: const EdgeInsets.only(left: 20, right: 8),
       leading: Icon(droneTreeIcon(tree.kind), color: context.primaryColor),
       title: Text(tree.title, maxLines: 1, overflow: TextOverflow.ellipsis),
-      subtitle: Text('${_kindLabel(context.t, tree.kind)}, ${tree.folderName}', maxLines: 1),
+      subtitle: Text(
+        context.t.dji_import_tree_subtitle(kind: _kindLabel(context.t, tree.kind), folder: tree.folderName),
+        maxLines: 1,
+      ),
       trailing: TextButton(onPressed: onChange, child: Text(context.t.dji_import_choose_other)),
     );
   }
@@ -557,6 +606,66 @@ class _DayHeader extends StatelessWidget {
       child: Text(
         DateFormat.yMMMMEEEEd(locale).format(day),
         style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+}
+
+/// The device was still sending its list of files, or a folder could not be listed: files may be missing
+class _IncompleteNote extends StatelessWidget {
+  const _IncompleteNote({required this.onRefresh});
+
+  final VoidCallback onRefresh;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      key: const Key('drone_import_incomplete'),
+      padding: const EdgeInsets.fromLTRB(16, 0, 8, 4),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline_rounded, color: context.colorScheme.error, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              context.t.dji_import_still_listing,
+              style: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.error),
+            ),
+          ),
+          TextButton(onPressed: onRefresh, child: Text(context.t.refresh)),
+        ],
+      ),
+    );
+  }
+}
+
+/// The photos read before the upload sheet opens
+class _PreparingBar extends StatelessWidget {
+  const _PreparingBar({required this.done, required this.total});
+
+  final int done;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      key: const Key('drone_import_preparing'),
+      color: context.colorScheme.surfaceContainer,
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LinearProgressIndicator(value: total == 0 ? null : done / total),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                context.t.dji_import_preparing(done: done, total: total),
+                style: context.textTheme.titleSmall,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

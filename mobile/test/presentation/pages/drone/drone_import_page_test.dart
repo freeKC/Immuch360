@@ -19,9 +19,11 @@ import 'package:immich_mobile/presentation/widgets/drone/drone_import_tile.widge
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/providers/drone/drone_import.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 
@@ -64,9 +66,9 @@ class _MemoryRecords extends UploadRecordStore {
 
 /// The folders picked before, in memory: widget tests do not wait for real file reads
 class _MemoryRecents extends DroneRecentStore {
-  _MemoryRecents() : super(() async => null);
+  _MemoryRecents([this.trees = const []]) : super(() async => null);
 
-  List<RecentTree> trees = [];
+  List<RecentTree> trees;
 
   @override
   Future<List<RecentTree>> load() async => trees;
@@ -135,14 +137,15 @@ void main() {
   Finder tileOf(String path) =>
       find.byWidgetPredicate((widget) => widget is NetworkMediaTile && widget.entry.path == path);
 
-  Future<void> pumpPage(WidgetTester tester) async {
+  Future<void> pumpPage(WidgetTester tester, {List<RecentTree> recents = const []}) async {
     await pumpNetworkRouter(
       tester,
       home: const DroneImportPage(),
       overrides: [
         documentTreeApiProvider.overrideWithValue(api),
         documentTreeEventsSetUpProvider.overrideWithValue((listener) => events = listener),
-        droneRecentStoreProvider.overrideWithValue(_MemoryRecents()),
+        droneRecentStoreProvider.overrideWithValue(_MemoryRecents(recents)),
+        remoteTrashStatesProvider.overrideWithValue((_) async => const {}),
         networkFileSystemOpenersProvider.overrideWithValue({
           NetworkSourceType.documentTree: (source, _) async =>
               DocumentTreeFileSystem(source, api, unpluggedMessage: () => 'The drone or card was unplugged'),
@@ -333,6 +336,109 @@ void main() {
     expect(find.text('Not plugged in'), findsOneWidget);
   });
 
+  testWidgets('watches the USB devices only while the page is open', (tester) async {
+    await pumpPage(tester);
+    expect(api.watching, [true]);
+
+    await tester.pumpWidget(const SizedBox());
+
+    expect(api.watching, [true, false]);
+  });
+
+  testWidgets('says that files may be missing when the device was still sending its list', (tester) async {
+    api.listComplete = false;
+    await pumpPage(tester);
+    await chooseDrone(tester);
+
+    expect(find.byKey(const Key('drone_import_incomplete')), findsOneWidget);
+
+    api.listComplete = true;
+    await tester.tap(
+      find.descendant(of: find.byKey(const Key('drone_import_incomplete')), matching: find.text('Refresh')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('drone_import_incomplete')), findsNothing);
+  });
+
+  testWidgets('on a device that sends whole files only, a video without proxy gets no frame', (tester) async {
+    const noProxy = '/DCIM/DJI_001/DJI_20261021143300_0004_D.MP4';
+    api
+      ..files[noProxy] = bytes(300)
+      ..seekable = false;
+    await pumpPage(tester);
+    await chooseDrone(tester);
+    await tester.scrollUntilVisible(tileOf(noProxy), 200);
+
+    expect(tester.widget<NetworkMediaTile>(tileOf(noProxy)).url, isNull, reason: 'its frame would read all of it');
+    await tester.scrollUntilVisible(tileOf(_video), -200);
+    expect(tester.widget<NetworkMediaTile>(tileOf(_video)).frameUrl, isNotNull, reason: 'the frame of its .LRF');
+  });
+
+  testWidgets('a file whose asset sits in the Immich trash is marked so, and counts as new', (tester) async {
+    records.records[UploadRecordStore.keyOf(
+      NetworkEntry(sourceId: 'tree:any', path: _photo, isDirectory: false, size: api.files[_photo]!.length),
+    )] = UploadRecord(
+      remoteId: 'trashed',
+      sentAt: DateTime.utc(2026, 10, 21),
+      inTrash: true,
+    );
+    await pumpPage(tester);
+    await chooseDrone(tester);
+
+    expect(
+      find.descendant(of: tileOf(_photo), matching: find.byKey(const Key('network_media_in_trash_badge'))),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: tileOf(_photo), matching: find.byKey(const Key('network_media_sent_badge'))),
+      findsNothing,
+    );
+
+    await tester.tap(find.byKey(const Key('drone_import_select')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('drone_import_select_new')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.descendant(of: tileOf(_photo), matching: find.byKey(const Key('network_media_selected'))),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('keeps a file Immich does not accept in the Download folder, under its own name', (tester) async {
+    await pumpPage(tester);
+    await chooseDrone(tester);
+    await tester.scrollUntilVisible(tileOf(_osv), 200);
+
+    await tester.longPress(tileOf(_osv));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('drone_import_keep')));
+    await tester.pumpAndSettle();
+
+    expect(api.copies.single.name, 'CAM_20261021143200_0003_D.OSV');
+    expect(api.copies.single.mimeType, droneKeepOtherMimeType, reason: 'the gallery would rename it into an MP4');
+    expect(find.textContaining('saved in Download/Immuch360 import'), findsOneWidget);
+    expect(find.textContaining('in the gallery'), findsNothing);
+  });
+
+  testWidgets('gives back the grant of a folder dropped from "Used before"', (tester) async {
+    final older = [
+      for (var i = 0; i < droneRecentLimit; i++)
+        RecentTree(
+          treeUri: 'content://other/tree/$i',
+          title: 'Card $i',
+          folderName: 'DCIM',
+          kind: 'usb',
+          lastSeen: DateTime.utc(2026, 10, 20, i),
+        ),
+    ];
+    await pumpPage(tester, recents: older);
+    await chooseDrone(tester);
+
+    expect(api.released, [older.last.treeUri]);
+  });
+
   group('upload sheet', () {
     Future<List<NetworkUploadOptions?>> pumpSheet(WidgetTester tester, NetworkUploadSheet sheet) async {
       final chosen = <NetworkUploadOptions?>[];
@@ -408,17 +514,39 @@ void main() {
       overrides: overrides,
     );
 
-    testWidgets('shows once the setting is on where the page is offered', (tester) async {
-      await pumpTile(tester, [droneImportEnabledProvider.overrideWithValue(true)]);
+    /// An Android phone or tablet with the setting [enabled], the Quest build when [quest], the TV layout when [tv]
+    List<Override> android({bool enabled = true, bool quest = false, bool tv = false}) => [
+      appConfigProvider.overrideWithValue(AppConfig(djiImportEnabled: enabled)),
+      isHorizonOsProvider.overrideWith((_) async => quest),
+      tvModeProvider.overrideWithValue(tv),
+    ];
 
-      expect(find.byKey(const Key('drone_import_tile')), findsOneWidget);
+    Future<bool> shownOnAndroid(WidgetTester tester, List<Override> overrides) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        await pumpTile(tester, overrides);
+        await tester.pumpAndSettle();
+        return find.byKey(const Key('drone_import_tile')).evaluate().isNotEmpty;
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    }
+
+    testWidgets('shows on an Android phone once the setting is on', (tester) async {
+      expect(await shownOnAndroid(tester, android()), isTrue);
       expect(find.text('DJI drone'), findsOneWidget);
     });
 
-    testWidgets('is hidden with the setting off', (tester) async {
-      await pumpTile(tester, [droneImportEnabledProvider.overrideWithValue(false)]);
+    testWidgets('is hidden on an Android phone with the setting off', (tester) async {
+      expect(await shownOnAndroid(tester, android(enabled: false)), isFalse);
+    });
 
-      expect(find.byKey(const Key('drone_import_tile')), findsNothing);
+    testWidgets('is hidden on the Quest build whatever the setting', (tester) async {
+      expect(await shownOnAndroid(tester, android(quest: true)), isFalse);
+    });
+
+    testWidgets('is hidden in the TV layout whatever the setting', (tester) async {
+      expect(await shownOnAndroid(tester, android(tv: true)), isFalse);
     });
 
     testWidgets('is hidden off Android whatever the setting', (tester) async {
