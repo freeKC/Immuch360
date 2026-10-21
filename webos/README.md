@@ -130,8 +130,8 @@ npm run set-version -- 0.1.0   # the version of appinfo.json and of the service
 ```
 
 `npm run ipk` reads the texts from `../i18n/*.json` (the keys the code asks for, see `tools/build-i18n.mjs`). The texts
-only the TV app has are in `i18n/en.json` of this folder, keys `webos_*`, until they move to the fork's `i18n/en.json`
-for Weblate.
+only the TV app has are the `webos_*` keys of the fork's `i18n/en.json`, translated with the others at a release; until
+then they show in English.
 
 The CI workflow `.github/workflows/immuch360-webos.yml` tests and builds the `.ipk` on every push that touches `webos/`
 or `i18n/`, and by hand; `.github/workflows/immuch360-webos-release.yml` builds it from a `webos-v<x.y.z>` tag and

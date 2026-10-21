@@ -15,8 +15,8 @@ The history of immich-tv-webos is not imported (one squashed commit keeps the hi
 - Name, ids and icons: `com.aprogsys.immuch360`, its service `com.aprogsys.immuch360.service` (webOS wants the service
   id to start with the app id), the screen saver client name, `appinfo.json`, `Makefile`, the icons and splash.
 - `package.json`: name, licence, the Enact and webOS command line tools pinned as dev dependencies, our scripts.
-- Texts through the fork's `i18n/` files (`src/immuch360/i18n`, `tools/build-i18n.mjs`, `i18n/en.json` for the webOS
-  only texts); dates and numbers in the language of the TV.
+- Texts through the fork's `i18n/` files (`src/immuch360/i18n`, `tools/build-i18n.mjs`; the texts only the TV app has
+  are the `webos_*` keys of the fork's `i18n/en.json`); dates and numbers in the language of the TV.
 - The dark palette of the fork (`src/styles/_theme.less`).
 - The viewer (`src/components/MediaViewer`): the 360° sphere (`src/immuch360/sphere`), "View as 360°", the 3D and
   coverage buttons, the zoom of photos, the key policy of the Android TV app on videos, the top bar of videos that hides,

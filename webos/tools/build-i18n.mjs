@@ -5,9 +5,9 @@
 //   node tools/build-i18n.mjs --dist dist  also writes dist/i18n/<locale>.json for the 88 other locales
 //
 // The keys are those the code asks for: every t('key') and i18nKey('key') of src/ (tests aside). Their English comes
-// from webos/i18n/en.json for the few texts only the TV app has (webos_* keys, to move into i18n/en.json, where Weblate
-// translates them, at the next release), else from ../i18n/en.json. A key found in neither fails the build. Each other
-// locale file keeps the keys it translates; the app falls back to English for the rest.
+// from ../i18n/en.json, where the few texts only the TV app has are the webos_* keys, translated with the others at a
+// release. A key missing from it fails the build. Each other locale file keeps the keys it translates; the app falls
+// back to English for the rest.
 
 import {mkdirSync, readFileSync, readdirSync, statSync, writeFileSync} from 'node:fs';
 import {dirname, join, relative} from 'node:path';
@@ -15,7 +15,6 @@ import {fileURLToPath} from 'node:url';
 
 const WEBOS = join(dirname(fileURLToPath(import.meta.url)), '..');
 const FORK_I18N = process.env.IMMUCH360_I18N_DIR ?? join(WEBOS, '..', 'i18n');
-const LOCAL_EN = join(WEBOS, 'i18n', 'en.json');
 const GENERATED = join(WEBOS, 'src', 'immuch360', 'i18n', 'generated');
 const KEY_CALL = /\b(?:t|i18nKey)\(\s*['"]([A-Za-z0-9_.]+)['"]/g;
 
@@ -56,18 +55,17 @@ for (const file of sourceFiles(join(WEBOS, 'src'))) {
 	for (const match of withoutComments(readFileSync(file, 'utf8')).matchAll(KEY_CALL)) keys.add(match[1]);
 }
 
-const local = readJson(LOCAL_EN);
 const forkEn = flatten(readJson(join(FORK_I18N, 'en.json')));
 const english = {};
 const missing = [];
 for (const key of keys) {
-	const text = local[key] ?? forkEn[key];
+	const text = forkEn[key];
 	if (text === undefined) missing.push(key);
 	else english[key] = text;
 }
-if (missing.length) fail(`keys in neither webos/i18n/en.json nor i18n/en.json: ${missing.sort().join(', ')}`);
-const unused = Object.keys(local).filter((key) => !keys.has(key));
-if (unused.length) console.warn(`[build-i18n] webos/i18n/en.json keys the code does not use: ${unused.join(', ')}`);
+if (missing.length) fail(`keys missing from i18n/en.json: ${missing.sort().join(', ')}`);
+const unused = Object.keys(forkEn).filter((key) => key.startsWith('webos_') && !keys.has(key));
+if (unused.length) console.warn(`[build-i18n] webos_* keys of i18n/en.json the code does not use: ${unused.join(', ')}`);
 
 const locales = readdirSync(FORK_I18N)
 	.filter((name) => name.endsWith('.json') && name !== 'en.json')
@@ -77,8 +75,8 @@ const locales = readdirSync(FORK_I18N)
 mkdirSync(GENERATED, {recursive: true});
 writeFileSync(join(GENERATED, 'en.json'), JSON.stringify(sorted(english), null, '\t') + '\n');
 writeFileSync(join(GENERATED, 'locales.json'), JSON.stringify(locales) + '\n');
-const fromFork = Object.keys(english).filter((key) => local[key] === undefined).length;
-console.log(`[build-i18n] ${keys.size} keys (${fromFork} from i18n/, ${keys.size - fromFork} webOS only), ${locales.length + 1} locales → ${relative(WEBOS, GENERATED)}`);
+const webosOnly = Object.keys(english).filter((key) => key.startsWith('webos_')).length;
+console.log(`[build-i18n] ${keys.size} keys (${webosOnly} webos_* ones), ${locales.length + 1} locales → ${relative(WEBOS, GENERATED)}`);
 
 const distIndex = process.argv.indexOf('--dist');
 if (distIndex > 0) {
