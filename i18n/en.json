@@ -2705,7 +2705,7 @@
   "video_failed_beyond_decoders": "{codec} {width} x {height} is beyond the video decoders of this device (at most {maxWidth} x {maxHeight})",
   "video_failed_no_decoder": "No video decoder of this device plays {codec}",
   "video_failed_retry_hint": "Play tries again. Info, in the menu at the top, shows its codec, size and bit rate.",
-  "video_failed_retry_hint_tv": "Play tries again. The Info key of the remote, or the Logs page in the profile menu, shows its codec, size and bit rate.",
+  "video_failed_retry_hint_tv": "Play tries again. Hold OK, or press Info or Menu on the remote, to see its codec, size and bit rate. The Logs page in the profile menu tells more.",
   "video_failed_server_hint": "The server can make a copy this device plays: in Administration, Video transcoding, set the transcode policy to \"Videos higher than target resolution or not in an accepted format\", then run Transcode videos.",
   "video_failed_title": "This video cannot be played",
   "video_hover_setting": "Play video thumbnail on hover",
