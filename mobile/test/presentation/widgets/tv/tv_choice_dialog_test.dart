@@ -1,5 +1,6 @@
 // The dialog of choices of the remote control layout: it keeps the focus whatever the arrows, the current choice is
-// marked and has the focus first, OK gives back the choice and Back gives back nothing.
+// marked and has the focus first, OK gives back the choice and Back gives back nothing. A long list (the cities of a
+// library) is built lazily and opens on the current choice.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -151,5 +152,106 @@ void main() {
 
     expect(find.descendant(of: find.byKey(const ValueKey(_Fruit.cherry)), matching: find.byIcon(Icons.star)), findsOne);
     expect(tester.getTopLeft(find.text('apple')).dx, tester.getTopLeft(find.text('cherry')).dx);
+  });
+
+  group('a long list', () {
+    late List<int?> numbers;
+
+    setUp(() => numbers = []);
+
+    /// A page with a button that asks for one of [count] numbers, [current] the current one
+    Future<void> pumpNumbers(WidgetTester tester, {int count = 500, int? current = 400}) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 2;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => TvShell(enabled: true, child: child!),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                autofocus: true,
+                onPressed: () async => numbers.add(
+                  await showTvChoiceDialog<int?>(
+                    context: context,
+                    title: 'Pick a number',
+                    current: current,
+                    choices: [for (var i = 0; i < count; i++) TvChoice(value: i, label: 'number $i', key: ValueKey(i))],
+                  ),
+                ),
+                child: const Text('ask'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await press(tester, LogicalKeyboardKey.select);
+    }
+
+    /// Whether the tile of [number] is built and whole inside the list
+    bool visible(WidgetTester tester, int number) {
+      final tile = find.byKey(ValueKey(number));
+      if (tile.evaluate().isEmpty) {
+        return false;
+      }
+      final list = tester.getRect(find.byType(ListView));
+      final rect = tester.getRect(tile);
+      return rect.top >= list.top && rect.bottom <= list.bottom;
+    }
+
+    testWidgets('only the tiles around the screen are built, the current one in view with the focus', (tester) async {
+      await pumpNumbers(tester);
+
+      expect(find.byType(ListTile).evaluate().length, lessThan(40));
+      expect(find.byKey(const ValueKey(0)), findsNothing);
+      expect(visible(tester, 400), isTrue);
+      expect(focusedIn(find.byKey(const ValueKey(400))), isTrue);
+      expect(tester.widget<ListTile>(find.byKey(const ValueKey(400))).selected, isTrue);
+    });
+
+    testWidgets('the arrows move through the list and stay in the dialog, OK gives back the number', (tester) async {
+      await pumpNumbers(tester);
+
+      for (var i = 0; i < 12; i++) {
+        await press(tester, LogicalKeyboardKey.arrowDown);
+      }
+      expect(focusedIn(find.byKey(const ValueKey(412))), isTrue);
+      expect(visible(tester, 412), isTrue, reason: 'scrolled with the focus');
+      await press(tester, LogicalKeyboardKey.arrowLeft);
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focusedIn(find.byType(Dialog)), isTrue);
+
+      await press(tester, LogicalKeyboardKey.arrowUp);
+      expect(focusedIn(find.byKey(const ValueKey(411))), isTrue);
+      await press(tester, LogicalKeyboardKey.select);
+
+      expect(find.byType(Dialog), findsNothing);
+      expect(numbers, [411]);
+    });
+
+    testWidgets('the last choice opens in view, and Down stops there', (tester) async {
+      await pumpNumbers(tester, current: 499);
+      expect(visible(tester, 499), isTrue);
+      expect(focusedIn(find.byKey(const ValueKey(499))), isTrue);
+
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      expect(focusedIn(find.byKey(const ValueKey(499))), isTrue);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(numbers, [null]);
+    });
+
+    testWidgets('with no current choice, the list opens at the top on the first one', (tester) async {
+      await pumpNumbers(tester, current: null);
+      expect(visible(tester, 0), isTrue);
+      expect(focusedIn(find.byKey(const ValueKey(0))), isTrue);
+    });
+
+    testWidgets('up to $tvChoiceDialogLazyAbove choices, the plain dialog', (tester) async {
+      await pumpNumbers(tester, count: tvChoiceDialogLazyAbove, current: 3);
+      expect(find.byType(SimpleDialog), findsOneWidget);
+      expect(find.byType(ListTile), findsNWidgets(tvChoiceDialogLazyAbove));
+    });
   });
 }

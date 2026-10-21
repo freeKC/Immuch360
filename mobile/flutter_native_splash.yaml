@@ -35,6 +35,9 @@ flutter_native_splash:
   # background_image_dark must be specified.  color_dark and background_image_dark cannot both be
   # set.
   color_dark: "#000000"
+  # Android TV: res/values-television, values-television-v31 and drawable-television/background.png keep the dark
+  # launch window whatever the night mode the TV reports. This tool does not know them: after a run of
+  # flutter_native_splash:create, keep them in line with the night ones by hand.
   #background_image_dark: "assets/dark-background.png"
   #image_dark: assets/splash-invert.png
   #branding_dark: assets/dart_dark.png
