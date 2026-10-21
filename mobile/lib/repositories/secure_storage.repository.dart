@@ -1,5 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 
 final secureStorageRepositoryProvider = Provider(
   (ref) => const SecureStorageRepository(SecureStorageRepository.storage),
@@ -34,16 +36,25 @@ class SecureStorageRepository {
   /// again. Android keeps every secret out of the backups already (allowBackup is false).
   static const _deviceOnly = IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device);
 
+  /// The plugin; on Linux behind the store of the session (lib/desktop/platform/linux_secret_storage.dart), which uses
+  /// the keyring when one answers and the memory of the session otherwise, in every isolate
+  FlutterSecureStorage get _storage {
+    if (CurrentPlatform.isLinux) {
+      LinuxSecretStorage.install();
+    }
+    return _secureStorage;
+  }
+
   Future<String?> read(String key) {
-    return _secureStorage.read(key: key);
+    return _storage.read(key: key);
   }
 
   /// [deviceOnly]: see [_deviceOnly]
   Future<void> write(String key, String value, {bool deviceOnly = false}) {
     if (deviceOnly) {
-      return _secureStorage.write(key: key, value: value, iOptions: _deviceOnly);
+      return _storage.write(key: key, value: value, iOptions: _deviceOnly);
     }
-    return _secureStorage.write(key: key, value: value);
+    return _storage.write(key: key, value: value);
   }
 
   /// [deviceOnly] must be what the key was written with: the iOS delete of the plugin (flutter_secure_storage 9.2.4,
@@ -51,8 +62,8 @@ class SecureStorageRepository {
   /// and deleted with another stays in the Keychain
   Future<void> delete(String key, {bool deviceOnly = false}) {
     if (deviceOnly) {
-      return _secureStorage.delete(key: key, iOptions: _deviceOnly);
+      return _storage.delete(key: key, iOptions: _deviceOnly);
     }
-    return _secureStorage.delete(key: key);
+    return _storage.delete(key: key);
   }
 }

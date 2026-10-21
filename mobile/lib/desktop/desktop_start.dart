@@ -2,14 +2,20 @@
 // the phones share (runImmich in main.dart).
 
 import 'package:immich_mobile/desktop/files/open_files.dart';
+import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/window/single_instance.dart';
 import 'package:immich_mobile/desktop/window/window_setup.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 
 /// [args] are the command line of the program: the files given to "Open with", or dropped on the program, opened once
 /// a session is (see DesktopOpenFilesHandler), like those of the later starts and of the drops on the window
 Future<void> startDesktop(List<String> args) async {
   DesktopOpenRequests.add(args);
+  // On Linux the session bus is asked for a keyring while the rest of the app starts
+  if (CurrentPlatform.isLinux) {
+    LinuxSecretStorage.install();
+  }
   listenForLaterStarts();
   setUpDesktopVideo();
   await setUpDesktopWindow();

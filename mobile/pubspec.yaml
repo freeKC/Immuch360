@@ -108,6 +108,11 @@ dependencies:
   # decode thumbhashes in the native core (native/), whose buffer the computers could not free with malloc.free on
   # Windows (another heap)
   thumbhash: 0.1.0+1
+  # Immuch360 Desktop on Linux: whether a secret service answers on the session bus, asked in Dart before libsecret
+  # is (lib/desktop/platform/linux_secret_storage.dart), and the platform side of flutter_secure_storage it wraps.
+  # Both were in the lock already (wakelock_plus brings dbus), at the same versions; used under lib/desktop/ only
+  dbus: ^0.7.13
+  flutter_secure_storage_platform_interface: ^1.1.2
   socket_io_client:
     git:
       url: https://github.com/mertalev/socket.io-client-dart

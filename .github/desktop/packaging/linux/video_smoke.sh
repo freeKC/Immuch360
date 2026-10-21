@@ -8,6 +8,8 @@
 #     through OpenH264, which refuses the Main and High profiles of most cameras (RPM Fusion's FFmpeg decodes them);
 #   - media_kit_video made a video output for the player (its line "VideoOutput: H/W rendering" or "S/W rendering"),
 #     on the hardware path when EXPECT_RENDERING is H/W (mobile/packages/media_kit_video/IMMUCH360-NOTE.md, patch 10);
+#   - without a session bus, the app keeps its secrets for the session without asking libsecret and its log says so
+#     (lib/desktop/platform/linux_secret_storage.dart): no libsecret error, no keyring error in the log;
 #   - neither media_kit_video nor the app's log (its database, read with sqlite3) holds an error of the players or of
 #     libmpv: a libmpv that did not load, an output without libmpv, a warning of the loggers of the desktop video code.
 #
@@ -43,7 +45,7 @@ export GDK_BACKEND=x11
 unset WAYLAND_DISPLAY
 # No session bus, as in a container: the bus of a CI runner answers neither the accessibility bus nor the secret
 # service, and each costs the start 25 seconds of D-Bus timeout. Without one, each start runs on its own
-# (my_application.cc) and libsecret fails at once
+# (my_application.cc) and the app keeps its secrets in memory without asking libsecret
 export DBUS_SESSION_BUS_ADDRESS="unix:path=$home/no-session-bus"
 
 failed=0
@@ -199,6 +201,9 @@ echo "  ${rendering:-no rendering line}"
 if [ -n "${EXPECT_RENDERING:-}" ] && ! grep -q "VideoOutput: $EXPECT_RENDERING rendering" "$out/output.log"; then
   fail "the video was not drawn on the $EXPECT_RENDERING path"
 fi
+if grep -q 'libsecret_error' "$out/first-start.log" "$out/output.log"; then
+  fail "libsecret was asked without a session bus"
+fi
 
 echo "-- the log of the app"
 logs=$(find "$home" -name immich_logs.sqlite | head -n 1)
@@ -218,6 +223,14 @@ else
   if awk -F '\t' -v loggers="^($video_loggers)\$" '$1 >= 6 && $2 ~ loggers {found = 1} END {exit !found}' \
     "$out/log.txt"; then
     fail "the video code logged a warning or an error"
+  fi
+  if grep -q 'Failed to unlock the keyring' "$out/log.txt"; then
+    fail "the keyring error of libsecret reached the app"
+  fi
+  if awk -F '\t' '$1 >= 6 && $2 == "LinuxSecretStorage"' "$out/log.txt" | grep -q 'kept in memory only'; then
+    echo "  no keyring: the secrets are kept for the session, as the log says"
+  else
+    fail "the log does not say that the secrets are kept for the session"
   fi
 fi
 
