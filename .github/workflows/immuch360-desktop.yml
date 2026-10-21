@@ -4,12 +4,13 @@ name: Immuch360 Desktop
 # pull requests and the upstream sync branches; the Android release workflow (immuch360-release.yml) is not touched.
 #
 # Jobs:
-#   codegen        the generated Dart once for every job (Windows and macOS need neither Java nor node), and the
-#                  version numbers of the desktop builds (.github/desktop/desktop_version.py)
+#   codegen        the generated Dart once for every job (Windows and macOS need neither Java nor node), with the
+#                  archive of the sources of libsmb2 that every build carries, and the version numbers of the desktop
+#                  builds (.github/desktop/desktop_version.py)
 #   gates          the checks that keep the phones as they are and the desktop code in its place, without Flutter
 #   test           analyze, the whole mobile suite (test/desktop included) and the Android and iOS plugin lists
-#   linux          the Linux build on the oldest supported Ubuntu (for its glibc), with libsmb2 built there too and the
-#                  archive of its sources, the video tests on the system's libmpv, its .deb and .rpm (nFPM), and the
+#   linux          the Linux build on the oldest supported Ubuntu (for its glibc), with libsmb2 built there too from
+#                  the archive of its sources, the video tests on the system's libmpv, its .deb and .rpm (nFPM), and the
 #                  build playing a video on a virtual screen (Xvfb)
 #   linux-packages each package installed in a clean container of a distribution, its libraries checked, and the
 #                  installed app playing a video there
@@ -96,11 +97,17 @@ jobs:
           mise //mobile:install:ci
           mise //mobile:codegen
 
-      # Every file the code generation wrote, whatever its pattern: the untracked files of lib, generated and test
+      # Every file the code generation wrote, whatever its pattern: the untracked files of lib, generated and test, and
+      # the archive of the sources of libsmb2 (.github/desktop/libsmb2/pack_sources.py), an asset of dart_smb2 that every
+      # job builds into the app and the linux job builds libsmb2 from
       - name: Pack the generated Dart
         working-directory: mobile
         run: |
-          git ls-files --others -- lib generated test | grep -v '/\.dart_tool/' > "$RUNNER_TEMP/generated-dart.txt"
+          sources=packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
+          [ -f "$sources" ] || { echo "::error::the code generation wrote no $sources"; exit 1; }
+          echo "$sources: SHA-256 $(sha256sum "$sources" | cut -d' ' -f1)"
+          { git ls-files --others -- lib generated test | grep -v '/\.dart_tool/'; echo "$sources"; } \
+            > "$RUNNER_TEMP/generated-dart.txt"
           tar -cf generated-dart.tar -T "$RUNNER_TEMP/generated-dart.txt"
           echo "$(wc -l < "$RUNNER_TEMP/generated-dart.txt") generated files"
 
@@ -243,17 +250,25 @@ jobs:
           name: generated-dart
           path: mobile
 
+      - name: Generated files
+        working-directory: mobile
+        run: tar -xf generated-dart.tar && rm generated-dart.tar
+
       # dart_smb2 downloads a libsmb2.so built on glibc 2.38, which Ubuntu 22.04 and Debian 12 do not have: the same
-      # sources are built here on 22.04 and bundled instead (mobile/packages/dart_smb2/IMMUCH360-NOTE.md). The script
-      # checks the commits, the exported functions against the release's library, and the glibc it asks for. libsmb2
-      # is under the LGPL: the script also writes the archive of the sources it built from, a file of every release
-      - name: libsmb2 built on Ubuntu 22.04, and its sources
+      # sources are built here on 22.04 and bundled instead (mobile/packages/dart_smb2/IMMUCH360-NOTE.md). libsmb2 is
+      # under the LGPL: the script builds it offline from the archive of its sources that the code generation packed,
+      # the asset every build of the app carries, and checks the exported functions against the release's library and
+      # the glibc it asks for. The same archive is a file of every release
+      - name: libsmb2 built on Ubuntu 22.04 from the archive of its sources
         id: libsmb2
         env:
           LABEL: ${{ needs.codegen.outputs.label }}
         run: |
+          asset=mobile/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
+          bash .github/desktop/libsmb2/build_linux.sh "$RUNNER_TEMP/libsmb2" "$asset"
           sources="$RUNNER_TEMP/libsmb2-sources/Immuch360-Desktop-$LABEL-libsmb2-sources.tar.gz"
-          bash .github/desktop/libsmb2/build_linux.sh "$RUNNER_TEMP/libsmb2" "$sources"
+          mkdir -p "$(dirname "$sources")"
+          cp "$asset" "$sources"
           echo "sources=$sources" >> "$GITHUB_OUTPUT"
 
       - name: Upload the libsmb2 sources
@@ -270,7 +285,6 @@ jobs:
           BUILD_NUMBER: ${{ needs.codegen.outputs.build_number }}
           IMMUCH360_LIBSMB2: ${{ runner.temp }}/libsmb2/libsmb2.so
         run: |
-          tar -xf generated-dart.tar && rm generated-dart.tar
           mise exec -- flutter pub get --enforce-lockfile
           mise exec -- flutter build linux --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
 

@@ -12,19 +12,19 @@ Copied from pub.dev (BSD-3-Clause, https://github.com/ales-drnz/dart_smb2), with
   connections to a share after a Wi-Fi change) could corrupt it. The app takes the same lock for its own connects.
 
 - `linux/CMakeLists.txt`: the environment variable `IMMUCH360_LIBSMB2` names a `libsmb2.so` to bundle instead of the
-  release's, which is then not downloaded. The `libsmb2_linux-x86_64.so` of release `libsmb2-r8` asks glibc 2.38 for
-  one function, `__isoc23_strtol` (what `strtol` becomes when compiled against the headers of glibc 2.38 or later), so
-  SMB shares did not open on Ubuntu 22.04 and Debian 12 (glibc 2.35 and 2.36). The Linux job of the desktop workflow
-  builds the same library again on Ubuntu 22.04 with `.github/desktop/libsmb2/build_linux.sh`: the sources of the
-  release are those of `ales-drnz/libsmb2-scripts` at its version 0.1.3 (commit `f0688e739ec5`), which pins libsmb2 at
-  commit `595d128b4d11` by the SHA-256 of its archive and applies its patches; the script checks that the library
-  exports the same 515 symbols as the release's and asks no glibc version above 2.34 (it asks 2.25 at most). libsmb2 is
-  under the LGPL 2.1 or later, loaded at run time and replaceable; its sources are those two public commits. Checked on
-  2026-10-20: the library built by the script in an `ubuntu:22.04` container asks glibc 2.25 at most and its `ldd` finds
-  everything on Ubuntu 22.04 (glibc 2.35) and Debian 12 (2.36); the Samba tests of
-  `test/infrastructure/network/smb_file_system_test.dart` (`IMMUCH_NET_TESTS=1`, `IMMUCH_LIBSMB2` pointing at that
-  library) pass, 14 of 14 (the listing, the reads and the errors, then the streaming through the media bridge). Without
-  the variable (a build on a developer's machine) the release's library is downloaded as before.
+  release's, which is then not downloaded. The `libsmb2_linux-x86_64.so` of release `libsmb2-r8` asks glibc 2.38 for one
+  function, `__isoc23_strtol` (what `strtol` becomes when compiled against the headers of glibc 2.38 or later), so SMB
+  shares did not open on Ubuntu 22.04 and Debian 12 (glibc 2.35 and 2.36). The Linux job of the desktop workflow builds
+  the same library again on Ubuntu 22.04 with `.github/desktop/libsmb2/build_linux.sh`, from the archive of its sources
+  (below): the sources of the release are those of `ales-drnz/libsmb2-scripts` at its version 0.1.3 (commit
+  `f0688e739ec5`), which pins libsmb2 at commit `595d128b4d11` by the SHA-256 of its archive and applies its patches;
+  the script builds offline and checks that the library exports the same 515 symbols as the release's and asks no glibc
+  version above 2.34 (it asks 2.25 at most). libsmb2 is under the LGPL 2.1 or later, loaded at run time and replaceable;
+  its sources are those two public commits. Checked on 2026-10-20: the library built by the script in an `ubuntu:22.04`
+  container asks glibc 2.25 at most and its `ldd` finds everything on Ubuntu 22.04 (glibc 2.35) and Debian 12 (2.36);
+  the Samba tests of `test/infrastructure/network/smb_file_system_test.dart` (`IMMUCH_NET_TESTS=1`, `IMMUCH_LIBSMB2`
+  pointing at that library) pass, 14 of 14 (the listing, the reads and the errors, then the streaming through the media
+  bridge). Without the variable (a build on a developer's machine) the release's library is downloaded as before.
 
 - `libsmb2/` (new) and `pubspec.yaml` (`flutter: assets`): the notice of libsmb2 (`NOTICE`: copyright, the build each
   system carries, the patches of libsmb2-scripts, where the source is, the other notices inside libsmb2) with libsmb2's
@@ -34,6 +34,17 @@ Copied from pub.dev (BSD-3-Clause, https://github.com/ales-drnz/dart_smb2), with
   the app's licence page; the desktop packages also copy them (`licenses/libsmb2/` of the Windows folder, the
   copyright file of the `.deb`, `/usr/share/licenses/immuch360/libsmb2/` of the `.rpm`). dart_smb2 0.2.x adds a
   `NOTICE` of its own for the same reason.
+
+- `libsmb2/Immuch360-libsmb2-sources.tar.gz` (not in git): the corresponding source of every libsmb2 of the app, so
+  that each build carries it next to the binary, the store builds included. `.github/desktop/libsmb2/pack_sources.py`
+  packs it from the pinned commits only (libsmb2-scripts `f0688e739ec5` as git stores it, the libsmb2 archive it pins
+  in its cache, the Linux build script and a README), the same way each time; the task `codegen:libsmb2-sources` of
+  `mobile/mise.toml` runs it, so `mise //mobile:codegen` writes it before any build, on the CI (phone release,
+  desktop, Codemagic) and on a developer's machine alike, and git ignores it. A build without it still works, without
+  the archive: the CI checks that the APKs, the Windows ZIP, the `.deb` and the macOS app hold it. The Linux job of the
+  desktop workflow builds `libsmb2.so` from that same file, offline, and each release attaches it
+  (`Immuch360-libsmb2-sources.tar.gz` on the phone releases, `Immuch360-Desktop-<version>-libsmb2-sources.tar.gz` on
+  the desktop ones). The licence page entry and `NOTICE` say where it is in each package and how to extract it.
 
 The binaries of release `libsmb2-r8` are built from the sources named above (libsmb2-scripts `f0688e739ec5`, libsmb2
 `595d128b4d11`), which the notice gives as their corresponding source. Checked on 2026-10-21 by building them again:
