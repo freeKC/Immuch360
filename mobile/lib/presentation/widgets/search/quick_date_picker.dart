@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_choice_dialog.widget.dart';
 import 'package:intl/intl.dart';
 
 sealed class DateFilterInputModel {
@@ -120,6 +121,48 @@ class QuickDatePicker extends HookWidget {
 
   Text _monthLabel(BuildContext context, int monthsFromNow) => Text(context.t.last_months(count: monthsFromNow));
 
+  /// With a remote control: the row shows the year, and OK opens the years in a dialog. The menu of the phones keeps
+  /// the focus there (it takes Up and Down, and OK does not pick an entry), so only the year shown could be picked.
+  Widget _remoteYearPicker(BuildContext context) {
+    Future<void> chooseYear() async {
+      final year = await showTvChoiceDialog<int?>(
+        context: context,
+        title: context.t.year,
+        choices: [for (final year in _recentYears.reversed) TvChoice(value: year, label: year.toString())],
+        current: _initialYear,
+      );
+      if (year != null) {
+        onSelect(YearFilter(year));
+      }
+    }
+
+    return _singleFocusRow(
+      context,
+      onTap: chooseYear,
+      child: RadioListTile(
+        title: Text(context.t.in_year(year: _initialYear.toString())),
+        secondary: const Icon(Icons.arrow_drop_down_rounded),
+        value: _QuickPickerType.year,
+        toggleable: true,
+      ),
+    );
+  }
+
+  /// A row that [onTap] handles whatever the choice: [child] neither takes the taps nor, with a remote control, the
+  /// focus, so that the row is one focus stop and OK always reaches [onTap]
+  Widget _singleFocusRow(BuildContext context, {required VoidCallback onTap, required Widget child}) {
+    return InkWell(
+      onTap: onTap,
+      child: IgnorePointer(
+        ignoring: true,
+        child: ExcludeFocus(
+          excluding: MediaQuery.navigationModeOf(context) == NavigationMode.directional,
+          child: child,
+        ),
+      ),
+    );
+  }
+
   Widget _yearPicker(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Row(
@@ -149,23 +192,22 @@ class QuickDatePicker extends HookWidget {
   Widget _exactPicker(BuildContext context) {
     final hasPreviousInput = currentInput != null && currentInput is CustomDateFilter;
 
-    return InkWell(
+    return _singleFocusRow(
+      context,
       onTap: onRequestPicker,
-      child: IgnorePointer(
-        ignoring: true,
-        child: RadioListTile(
-          title: Text(context.t.pick_custom_range),
-          subtitle: hasPreviousInput ? Text(currentInput!.asHumanReadable(context)) : null,
-          secondary: hasPreviousInput ? const Icon(Icons.edit) : null,
-          value: _QuickPickerType.custom,
-          toggleable: true,
-        ),
+      child: RadioListTile(
+        title: Text(context.t.pick_custom_range),
+        subtitle: hasPreviousInput ? Text(currentInput!.asHumanReadable(context)) : null,
+        secondary: hasPreviousInput ? const Icon(Icons.edit) : null,
+        value: _QuickPickerType.custom,
+        toggleable: true,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final remote = MediaQuery.navigationModeOf(context) == NavigationMode.directional;
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Scrollbar(
@@ -196,7 +238,10 @@ class QuickDatePicker extends HookWidget {
                 RadioListTile(title: _monthLabel(context, 1), value: _QuickPickerType.last1Month, toggleable: true),
                 RadioListTile(title: _monthLabel(context, 3), value: _QuickPickerType.last3Months, toggleable: true),
                 RadioListTile(title: _monthLabel(context, 9), value: _QuickPickerType.last9Months, toggleable: true),
-                RadioListTile(title: _yearPicker(context), value: _QuickPickerType.year, toggleable: true),
+                if (remote)
+                  _remoteYearPicker(context)
+                else
+                  RadioListTile(title: _yearPicker(context), value: _QuickPickerType.year, toggleable: true),
                 _exactPicker(context),
               ],
             ),
