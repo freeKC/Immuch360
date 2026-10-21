@@ -42,6 +42,7 @@ class DocEntry {
     this.size,
     this.lastModifiedMs,
     required this.supportsThumbnail,
+    this.seekable,
   });
 
   final String documentId;
@@ -55,6 +56,20 @@ class DocEntry {
 
   /// Whether the provider makes a thumbnail of it (DocumentsContract.Document.FLAG_SUPPORTS_THUMBNAIL)
   final bool supportsThumbnail;
+
+  /// Whether the file can be read at a position: false on a device that sends files from their start only (MTP
+  /// without partial reads), where reading near the end of a file reads all of it; null when not known yet
+  final bool? seekable;
+}
+
+/// The files and folders of a folder, and whether the provider had listed all of them
+class DocListing {
+  const DocListing({required this.entries, required this.complete});
+
+  final List<DocEntry> entries;
+
+  /// False when the device was still sending its list after the longest wait (MTP): files may be missing
+  final bool complete;
 }
 
 @HostApi()
@@ -69,9 +84,10 @@ abstract class DocumentTreeApi {
   TreePick? reopen(String treeUri);
 
   /// The files and folders of the folder [documentId] of [treeUri] (null for the folder picked): one query, asked
-  /// again while the provider says it is still loading (an MTP device lists its files in batches)
+  /// again while the provider says it is still loading (an MTP device lists its files in batches) and new files keep
+  /// coming
   @async
-  List<DocEntry> list(String treeUri, String? documentId);
+  DocListing list(String treeUri, String? documentId);
 
   /// The file or folder [documentId] of [treeUri] (null for the folder picked)
   @async
@@ -79,7 +95,7 @@ abstract class DocumentTreeApi {
 
   /// [length] bytes of the file [documentId] from [offset]; fewer at its end. Read at the position when the file
   /// allows it, else from its start (a device that cannot read parts of a file). Fails with the code "unplugged" when
-  /// the device is gone.
+  /// the device is gone, "stalled" when the read was stopped because the device stopped answering.
   @async
   Uint8List read(String treeUri, String documentId, int offset, int length);
 
@@ -106,7 +122,8 @@ abstract class DocumentTreeApi {
   /// Stops the copy [copyId]
   void cancelCopy(int copyId);
 
-  /// Closes the files of [treeUri] kept open between reads
+  /// Closes the files of [treeUri] kept open between reads, in the background: a read under way on one of them stops
+  /// with the code "stalled"
   void closeTree(String treeUri);
 
   /// Gives back the read grant of [treeUri]: the folder is forgotten

@@ -1,6 +1,7 @@
 // A folder picked in the system picker, in memory, for the tests of DocumentTreeFileSystem and of the DJI drone page:
 // the files by path from the folder picked ("/DCIM/DJI_001/DJI_0001.JPG"), each document id being its path.
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/services.dart';
@@ -36,11 +37,19 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
   /// The most bytes one read gives, as the Kotlin side caps them
   int? maxRead;
 
+  /// What the listings tell: whether the device had sent its whole list, and whether files are read at a position
+  bool listComplete = true;
+  bool? seekable = true;
+
+  /// The reads wait for this while it is set: a device that stopped answering
+  Completer<void>? stall;
+
   final listed = <String?>[];
   final reads = <(String, int, int)>[];
   final copies = <({String path, String name, String mimeType, String album, int takenAtMs})>[];
   final cancelled = <int>[];
   final closed = <String>[];
+  final released = <String>[];
   final watching = <bool>[];
 
   TreePick get pick => TreePick(treeUri: treeUri, title: title, folderName: 'DCIM', kind: kind);
@@ -54,7 +63,7 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
   Future<TreePick?> reopen(String treeUri) async => unplugged || treeUri != this.treeUri ? null : pick;
 
   @override
-  Future<List<DocEntry>> list(String treeUri, String? documentId) async {
+  Future<DocListing> list(String treeUri, String? documentId) async {
     listed.add(documentId);
     if (unplugged) {
       throw _unplugged;
@@ -73,7 +82,7 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
           ? _file(id)
           : DocEntry(documentId: id, name: name, isDirectory: true, supportsThumbnail: false);
     }
-    return children.values.toList();
+    return DocListing(entries: children.values.toList(), complete: listComplete);
   }
 
   DocEntry _file(String path) => DocEntry(
@@ -84,6 +93,7 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
     mimeType: 'application/octet-stream',
     lastModifiedMs: dates[path]?.millisecondsSinceEpoch,
     supportsThumbnail: thumbnailPaths.contains(path),
+    seekable: seekable,
   );
 
   @override
@@ -100,6 +110,11 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
   @override
   Future<Uint8List> read(String treeUri, String documentId, int offset, int length) async {
     reads.add((documentId, offset, length));
+    final stall = this.stall;
+    if (stall != null) {
+      await stall.future;
+      throw PlatformException(code: 'stalled', message: 'closed under the read');
+    }
     if (unplugged) {
       throw _unplugged;
     }
@@ -137,7 +152,7 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
   Future<void> closeTree(String treeUri) async => closed.add(treeUri);
 
   @override
-  Future<void> release(String treeUri) async {}
+  Future<void> release(String treeUri) async => released.add(treeUri);
 
   @override
   Future<void> watchUsb(bool watch) async => watching.add(watch);

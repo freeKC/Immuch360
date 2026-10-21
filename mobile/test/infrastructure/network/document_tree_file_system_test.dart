@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -111,6 +112,64 @@ void main() {
     await expectLater(sut.list('/DCIM'), throwsA(isA<NetworkFileSystemException>()));
     expect(api.reads.length, readsBefore, reason: 'no call once unplugged');
     expect(() => sut.checkPlugged(), throwsA(isA<NetworkFileSystemException>()));
+  });
+
+  test('a read the device does not answer is given up, the files closed, and the next reads fail at once', () async {
+    final stalling = DocumentTreeFileSystem(
+      source,
+      api,
+      stalledMessage: () => 'The drone or card stopped answering',
+      readTimeout: const Duration(milliseconds: 50),
+    );
+    await stalling.list('/DCIM/DJI_001');
+    api.stall = Completer<void>();
+    const video = '/DCIM/DJI_001/DJI_20261021143100_0002_D.MP4';
+
+    await expectLater(
+      stalling.readRange(video, 0, 10),
+      throwsA(
+        isA<NetworkFileSystemException>().having((e) => e.message, 'message', 'The drone or card stopped answering'),
+      ),
+    );
+    expect(api.closed, [source.share], reason: 'closing the files stops the read stuck on the Kotlin side');
+    final readsBefore = api.reads.length;
+    await expectLater(stalling.readRange(video, 0, 10), throwsA(isA<NetworkFileSystemException>()));
+    expect(api.reads.length, readsBefore, reason: 'not queued behind the stuck read');
+
+    // The stuck read ends (the Kotlin side closed its file): the device is read again
+    api.stall!.complete();
+    api.stall = null;
+    await pumpEventQueue();
+    expect(await stalling.readRange(video, 0, 10), bytes(10));
+    expect(stalling.isUnplugged, isFalse);
+  });
+
+  test('a read stopped on the Kotlin side tells that the device stopped answering', () async {
+    final stalling = DocumentTreeFileSystem(source, api, stalledMessage: () => 'The drone or card stopped answering');
+    await stalling.list('/DCIM/DJI_001');
+    api.stall = Completer<void>()..complete();
+
+    await expectLater(
+      stalling.readRange('/DCIM/DJI_001/DJI_20261021143100_0002_D.MP4', 0, 10),
+      throwsA(
+        isA<NetworkFileSystemException>().having((e) => e.message, 'message', 'The drone or card stopped answering'),
+      ),
+    );
+  });
+
+  test('tells when a device was still sending its list, and when it reads files from their start only', () async {
+    await sut.list('/DCIM/DJI_001');
+    expect((sut.hasIncompleteListing, sut.readsFromStartOnly), (false, false));
+
+    api
+      ..listComplete = false
+      ..seekable = false;
+    await sut.list('/DCIM/DJI_001');
+    expect((sut.hasIncompleteListing, sut.readsFromStartOnly), (true, true));
+
+    api.listComplete = true;
+    await sut.list('/DCIM/DJI_001');
+    expect(sut.hasIncompleteListing, isFalse, reason: 'listed whole again');
   });
 
   test('thumbnails come from the EXIF of a photo, else from the provider, else none', () async {

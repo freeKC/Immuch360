@@ -42,10 +42,15 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.nio.ByteBuffer
+import java.nio.channels.ClosedChannelException
+import java.nio.channels.FileChannel
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
+import java.util.concurrent.RejectedExecutionException
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -58,8 +63,10 @@ private const val TAG = "DocumentTreePlugin"
 // Request code of the folder picker, "DT"
 private const val PICK_REQUEST = 0x4454
 
-// Longest wait for a provider that lists a folder in batches (MTP), and between two looks at it
-private const val LOADING_CAP_MS = 10_000L
+// A provider that lists a folder in batches (MTP) is waited for while new files keep coming: until none came for
+// LOADING_QUIET_MS, at most LOADING_CAP_MS in all; LOADING_LOOK_MS between two looks at it
+private const val LOADING_QUIET_MS = 10_000L
+private const val LOADING_CAP_MS = 120_000L
 private const val LOADING_LOOK_MS = 1_000L
 
 // Largest read at once, what the uploads ask (readWholeFile reads 8 MB chunks)
@@ -69,9 +76,12 @@ private const val MAX_READ = 8 * 1024 * 1024
 private const val MAX_OPEN = 2
 private const val IDLE_CLOSE_MS = 30_000L
 
-// On a file that cannot be read at a position, a jump forward up to this far is read through; further, or backwards,
-// the file is opened again
-private const val SKIP_LIMIT = 16L * 1024 * 1024
+// A file that cannot be read at a position and stands further than this from its start costs a long read to open
+// again: it is the last one closed to make room for another (the file an upload streams)
+private const val CHEAP_REOPEN = 16L * 1024 * 1024
+
+// The largest file opened to learn whether a device reads parts of files (see learnSeekable)
+private const val PROBE_MAX_SIZE = 8L * 1024 * 1024
 
 private const val COPY_BUFFER = 1024 * 1024
 private const val PROGRESS_EVERY_MS = 250L
@@ -111,19 +121,38 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
   private val mainHandler = Handler(Looper.getMainLooper())
   private var pendingPick: ((Result<TreePick?>) -> Unit)? = null
 
-  // The files open for reading, the least recently used first
+  // The files open for reading, the least recently used first; the closer of the idle ones runs while one is open
   private val openFiles = LinkedHashMap<String, OpenFile>(4, 0.75f, true)
   private val closer = Executors.newSingleThreadScheduledExecutor()
+  private var closerTask: ScheduledFuture<*>? = null
+  private val runningCopies = ConcurrentHashMap.newKeySet<Long>()
   private val cancelledCopies = ConcurrentHashMap.newKeySet<Long>()
   private var usbReceiver: BroadcastReceiver? = null
 
+  // Whether the files of each tree can be read at a position, learned from the first file opened
+  private val treeSeekable = ConcurrentHashMap<String, Boolean>()
+
   private class OpenFile(val treeUri: String, val pfd: ParcelFileDescriptor, val seekable: Boolean) {
     val stream = FileInputStream(pfd.fileDescriptor)
-    // Where a file that cannot be read at a position stands
-    var position = 0L
-    var lastUsed = SystemClock.elapsedRealtime()
+    val channel: FileChannel = stream.channel
+    private val closed = AtomicBoolean(false)
 
+    // Where a file that cannot be read at a position stands
+    @Volatile var position = 0L
+    @Volatile var lastUsed = SystemClock.elapsedRealtime()
+
+    /**
+     * Closes the file from any thread, without waiting for a read under way: closing the channel first makes such a
+     * read stop with a ClosedChannelException (a device that stopped answering)
+     */
     fun close() {
+      if (!closed.compareAndSet(false, true)) {
+        return
+      }
+      try {
+        channel.close()
+      } catch (_: IOException) {
+      }
       try {
         stream.close()
       } catch (_: IOException) {
@@ -139,7 +168,6 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     context = binding.applicationContext
     events = DocumentTreeEvents(binding.binaryMessenger)
     DocumentTreeApi.setUp(binding.binaryMessenger, this)
-    closer.scheduleWithFixedDelay({ closeIdle() }, IDLE_CLOSE_MS, IDLE_CLOSE_MS / 3, TimeUnit.MILLISECONDS)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -147,10 +175,11 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     watchUsb(false)
     closer.shutdownNow()
     readExecutor.shutdownNow()
-    synchronized(openFiles) {
-      openFiles.values.forEach { it.close() }
-      openFiles.clear()
+    val closing = synchronized(openFiles) {
+      closerTask = null
+      openFiles.values.toList().also { openFiles.clear() }
     }
+    closing.forEach { it.close() }
     ioScope.cancel()
     events = null
     context = null
@@ -292,13 +321,15 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
 
   // Listing
 
-  override fun list(treeUri: String, documentId: String?, callback: (Result<List<DocEntry>>) -> Unit) {
+  override fun list(treeUri: String, documentId: String?, callback: (Result<DocListing>) -> Unit) {
     val ctx = context ?: return callback(Result.failure(FlutterError("no_context", null, null)))
     ioScope.launch {
       callback(
         guarded(ctx, treeUri) {
           val uri = Uri.parse(treeUri)
-          queryChildren(ctx.contentResolver, uri, documentId ?: treeDocumentId(uri))
+          val (entries, complete) = queryChildren(ctx.contentResolver, uri, documentId ?: treeDocumentId(uri))
+          learnSeekable(ctx.contentResolver, treeUri, entries)
+          DocListing(entries = entries.map { withSeekable(treeUri, it) }, complete = complete)
         },
       )
     }
@@ -311,30 +342,42 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
         guarded(ctx, treeUri) {
           val uri = Uri.parse(treeUri)
           val document = DocumentsContract.buildDocumentUriUsingTree(uri, documentId ?: treeDocumentId(uri))
-          queryOne(ctx.contentResolver, document) ?: throw IOException("Not found: $documentId")
+          withSeekable(treeUri, queryOne(ctx.contentResolver, document) ?: throw IOException("Not found: $documentId"))
         },
       )
     }
   }
 
   /**
-   * The children of [documentId]: one query, asked again while the provider says it is still loading (an MTP device
-   * lists 20 files at a time and tells when more came), at most [LOADING_CAP_MS]
+   * The children of [documentId], and whether they are all there: one query, asked again while the provider says it is
+   * still loading (an MTP device lists 20 files at a time and tells when more came) and new files keep coming, see
+   * [LOADING_QUIET_MS] and [LOADING_CAP_MS]
    */
-  private fun queryChildren(resolver: ContentResolver, treeUri: Uri, documentId: String): List<DocEntry> {
+  private fun queryChildren(
+    resolver: ContentResolver,
+    treeUri: Uri,
+    documentId: String,
+  ): Pair<List<DocEntry>, Boolean> {
     val children = DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, documentId)
-    val deadline = SystemClock.elapsedRealtime() + LOADING_CAP_MS
+    val start = SystemClock.elapsedRealtime()
+    var lastCount = -1
+    var lastGrowth = start
     while (true) {
       val cursor = resolver.query(children, PROJECTION, null, null, null)
         ?: throw IOException("The folder cannot be listed")
       cursor.use {
         val loading = it.extras?.getBoolean(DocumentsContract.EXTRA_LOADING, false) == true
-        val remaining = deadline - SystemClock.elapsedRealtime()
+        val now = SystemClock.elapsedRealtime()
+        if (it.count > lastCount) {
+          lastCount = it.count
+          lastGrowth = now
+        }
+        val remaining = minOf(lastGrowth + LOADING_QUIET_MS, start + LOADING_CAP_MS) - now
         if (!loading || remaining <= 0) {
           if (loading) {
-            Log.w(TAG, "The folder was still loading after ${LOADING_CAP_MS / 1000} s: listed as it is")
+            Log.w(TAG, "The folder was still loading after ${(now - start) / 1000} s, ${it.count} files: listed so")
           }
-          return readEntries(it)
+          return readEntries(it) to !loading
         }
         val changed = CountDownLatch(1)
         val observer = object : ContentObserver(mainHandler) {
@@ -375,6 +418,43 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     return entries
   }
 
+  /** [entry] with whether its file can be read at a position, as far as its tree is known */
+  private fun withSeekable(treeUri: String, entry: DocEntry): DocEntry =
+    if (entry.isDirectory) entry else entry.copy(seekable = treeSeekable[treeUri])
+
+  /**
+   * Learns whether the files of [treeUri] can be read at a position, once per tree: always on a USB drive or a card
+   * (a real file), else by opening the smallest file of [entries] that is small enough, since a device that sends
+   * whole files only may send all of it once opened
+   */
+  private fun learnSeekable(resolver: ContentResolver, treeUri: String, entries: List<DocEntry>) {
+    if (treeSeekable.containsKey(treeUri)) {
+      return
+    }
+    val uri = Uri.parse(treeUri)
+    if (uri.authority == EXTERNAL_STORAGE) {
+      treeSeekable[treeUri] = true
+      return
+    }
+    val probe = entries
+      .filter { !it.isDirectory && (it.size ?: 0L) in 1L..PROBE_MAX_SIZE }
+      .minByOrNull { it.size ?: 0L } ?: return
+    try {
+      resolver.openFileDescriptor(DocumentsContract.buildDocumentUriUsingTree(uri, probe.documentId), "r")?.use {
+        treeSeekable[treeUri] = isSeekable(it)
+      }
+    } catch (e: Exception) {
+      Log.i(TAG, "Could not tell whether the files of $treeUri can be read at a position: ${e.message}")
+    }
+  }
+
+  private fun isSeekable(pfd: ParcelFileDescriptor): Boolean = try {
+    Os.lseek(pfd.fileDescriptor, 0, OsConstants.SEEK_CUR)
+    true
+  } catch (e: ErrnoException) {
+    false
+  }
+
   // Reading
 
   override fun read(treeUri: String, documentId: String, offset: Long, length: Long, callback: (Result<ByteArray>) -> Unit) {
@@ -384,7 +464,6 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
         guarded(ctx, treeUri) {
           val file = openFile(ctx.contentResolver, treeUri, documentId)
           synchronized(file) {
-            file.lastUsed = SystemClock.elapsedRealtime()
             val wanted = minOf(length, MAX_READ.toLong()).toInt()
             if (file.seekable) readAt(file, offset, wanted) else readOn(ctx.contentResolver, treeUri, documentId, file, offset, wanted)
           }
@@ -396,27 +475,34 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
   private fun openFile(resolver: ContentResolver, treeUri: String, documentId: String): OpenFile {
     val key = "$treeUri\n$documentId"
     synchronized(openFiles) {
-      openFiles[key]?.let { return it }
+      // Marked as used under the lock, so that the closer of idle files cannot take it in between
+      openFiles[key]?.let {
+        it.lastUsed = SystemClock.elapsedRealtime()
+        return it
+      }
     }
     val document = DocumentsContract.buildDocumentUriUsingTree(Uri.parse(treeUri), documentId)
     val pfd = resolver.openFileDescriptor(document, "r") ?: throw IOException("The file cannot be opened")
-    val seekable = try {
-      Os.lseek(pfd.fileDescriptor, 0, OsConstants.SEEK_CUR)
-      true
-    } catch (e: ErrnoException) {
+    val seekable = isSeekable(pfd)
+    if (!seekable) {
       // A pipe: the device cannot read parts of a file (MTP without GetPartialObject)
       Log.i(TAG, "$documentId can only be read from its start")
-      false
     }
+    treeSeekable[treeUri] = seekable
     val file = OpenFile(treeUri, pfd, seekable)
+    val evicted = ArrayList<OpenFile>()
     synchronized(openFiles) {
-      openFiles.put(key, file)?.close()
+      openFiles.put(key, file)?.let(evicted::add)
       while (openFiles.size > MAX_OPEN) {
-        val eldest = openFiles.entries.first()
-        openFiles.remove(eldest.key)
-        synchronized(eldest.value) { eldest.value.close() }
+        val victim = OpenFilesPolicy.victim(
+          openFiles.entries.map { OpenFileState(it.key, it.value.seekable, it.value.position) },
+          keep = key,
+        ) ?: break
+        openFiles.remove(victim)?.let(evicted::add)
       }
+      scheduleCloserLocked()
     }
+    evicted.forEach { it.close() }
     return file
   }
 
@@ -424,7 +510,7 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     val buffer = ByteBuffer.allocate(length)
     var position = offset
     while (buffer.hasRemaining()) {
-      val count = file.stream.channel.read(buffer, position)
+      val count = file.channel.read(buffer, position)
       if (count <= 0) {
         break
       }
@@ -433,7 +519,11 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     return if (buffer.position() == length) buffer.array() else buffer.array().copyOf(buffer.position())
   }
 
-  /** Reads a file that cannot be read at a position: on from where it stands, or from its start again */
+  /**
+   * Reads a file that cannot be read at a position: on from where it stands, reading through the bytes before
+   * [offset] (a pipe cannot skip them either), or from its start again for a position behind it. Each step marks the
+   * file as used: only a read that stopped moving is taken for a stall by the closer of idle files.
+   */
   private fun readOn(
     resolver: ContentResolver,
     treeUri: String,
@@ -443,51 +533,83 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     length: Int,
   ): ByteArray {
     var file = open
-    if (offset < file.position || offset - file.position > SKIP_LIMIT) {
+    val plan = SequentialReadPlan.of(file.position, offset)
+    if (plan.reopen) {
       Log.i(TAG, "Opening $documentId again to read at $offset from ${file.position}")
       closeFile(treeUri, documentId)
       file = openFile(resolver, treeUri, documentId)
     }
-    val scratch = ByteArray(minOf(COPY_BUFFER.toLong(), maxOf(offset - file.position, 1L)).toInt())
+    val scratch = ByteBuffer.allocate(minOf(COPY_BUFFER.toLong(), maxOf(offset - file.position, 1L)).toInt())
     while (file.position < offset) {
-      val count = file.stream.read(scratch, 0, minOf(scratch.size.toLong(), offset - file.position).toInt())
+      scratch.clear()
+      scratch.limit(minOf(scratch.capacity().toLong(), offset - file.position).toInt())
+      val count = file.channel.read(scratch)
       if (count <= 0) {
         return ByteArray(0)
       }
       file.position += count
+      file.lastUsed = SystemClock.elapsedRealtime()
     }
-    val bytes = ByteArray(length)
-    var read = 0
-    while (read < length) {
-      val count = file.stream.read(bytes, read, length - read)
+    val buffer = ByteBuffer.allocate(length)
+    while (buffer.hasRemaining()) {
+      val count = file.channel.read(buffer)
       if (count <= 0) {
         break
       }
-      read += count
+      file.position += count
+      file.lastUsed = SystemClock.elapsedRealtime()
     }
-    file.position += read
-    return if (read == length) bytes else bytes.copyOf(read)
+    return if (buffer.position() == length) buffer.array() else buffer.array().copyOf(buffer.position())
   }
 
   private fun closeFile(treeUri: String, documentId: String) {
-    synchronized(openFiles) { openFiles.remove("$treeUri\n$documentId") }?.let { synchronized(it) { it.close() } }
+    synchronized(openFiles) {
+      openFiles.remove("$treeUri\n$documentId").also { stopCloserIfIdleLocked() }
+    }?.close()
   }
 
   override fun closeTree(treeUri: String) {
     val closing = synchronized(openFiles) {
       val keys = openFiles.filterValues { it.treeUri == treeUri }.keys
-      keys.mapNotNull { openFiles.remove(it) }
+      keys.mapNotNull { openFiles.remove(it) }.also { stopCloserIfIdleLocked() }
     }
-    closing.forEach { synchronized(it) { it.close() } }
+    if (closing.isNotEmpty()) {
+      // Never on the main thread: closing a file whose read is stuck may wait for that read to give up
+      ioScope.launch { closing.forEach { it.close() } }
+    }
   }
 
+  /**
+   * Closes the files unused for [IDLE_CLOSE_MS]; a read stuck that long on a device that stopped answering stops then
+   * with the code "stalled"
+   */
   private fun closeIdle() {
     val now = SystemClock.elapsedRealtime()
     val closing = synchronized(openFiles) {
       val keys = openFiles.filterValues { now - it.lastUsed > IDLE_CLOSE_MS }.keys
-      keys.mapNotNull { openFiles.remove(it) }
+      keys.mapNotNull { openFiles.remove(it) }.also { stopCloserIfIdleLocked() }
     }
-    closing.forEach { synchronized(it) { it.close() } }
+    closing.forEach { it.close() }
+  }
+
+  /** Starts the closer of idle files, if needed; with [openFiles] held */
+  private fun scheduleCloserLocked() {
+    if (closerTask != null) {
+      return
+    }
+    closerTask = try {
+      closer.scheduleWithFixedDelay({ closeIdle() }, IDLE_CLOSE_MS / 3, IDLE_CLOSE_MS / 3, TimeUnit.MILLISECONDS)
+    } catch (e: RejectedExecutionException) {
+      null
+    }
+  }
+
+  /** Stops the closer of idle files once none is open; with [openFiles] held */
+  private fun stopCloserIfIdleLocked() {
+    if (openFiles.isEmpty()) {
+      closerTask?.cancel(false)
+      closerTask = null
+    }
   }
 
   override fun thumbnail(treeUri: String, documentId: String, size: Long, callback: (Result<ByteArray?>) -> Unit) {
@@ -522,6 +644,7 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     callback: (Result<String>) -> Unit,
   ) {
     val ctx = context ?: return callback(Result.failure(FlutterError("no_context", null, null)))
+    runningCopies.add(copyId)
     ioScope.launch {
       try {
         val source = DocumentsContract.buildDocumentUriUsingTree(Uri.parse(treeUri), documentId)
@@ -537,13 +660,17 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
       } catch (e: Exception) {
         callback(Result.failure(failure(ctx, treeUri, e)))
       } finally {
+        runningCopies.remove(copyId)
         cancelledCopies.remove(copyId)
       }
     }
   }
 
   override fun cancelCopy(copyId: Long) {
-    cancelledCopies.add(copyId)
+    // A copy that ended already leaves nothing to cancel, and no id behind
+    if (runningCopies.contains(copyId)) {
+      cancelledCopies.add(copyId)
+    }
   }
 
   @RequiresApi(Build.VERSION_CODES.Q)
@@ -558,17 +685,21 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     total: Long,
   ): String {
     val resolver = ctx.contentResolver
-    val collection = if (mimeType.startsWith("video/")) {
-      MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-    } else {
-      MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+    val isMedia = isGalleryMedia(mimeType)
+    val collection = when {
+      mimeType.startsWith("video/") -> MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+      mimeType.startsWith("image/") -> MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+      else -> MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
     }
     val values = ContentValues().apply {
       put(MediaStore.MediaColumns.DISPLAY_NAME, name)
       put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
-      put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DCIM}/$album")
+      put(
+        MediaStore.MediaColumns.RELATIVE_PATH,
+        "${if (isMedia) Environment.DIRECTORY_DCIM else Environment.DIRECTORY_DOWNLOADS}/$album",
+      )
       put(MediaStore.MediaColumns.IS_PENDING, 1)
-      if (takenAtMs > 0) {
+      if (takenAtMs > 0 && isMedia) {
         put(MediaStore.MediaColumns.DATE_TAKEN, takenAtMs)
       }
     }
@@ -594,6 +725,14 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     }
   }
 
+  /**
+   * Whether a file of [mimeType] goes to the gallery (DCIM); any other file goes to Download, where its name is kept as
+   * it is (a raw 360° video of a DJI camera, which the gallery would rename into an MP4 and the device backup would then
+   * send to Immich as a flat video)
+   */
+  private fun isGalleryMedia(mimeType: String) =
+    mimeType.startsWith("image/") || mimeType.startsWith("video/")
+
   /** Android 8 and 9: a file in DCIM, written with the storage permission the app asks with the photos one */
   @Suppress("DEPRECATION")
   private fun copyIntoDcim(
@@ -606,7 +745,12 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     takenAtMs: Long,
     total: Long,
   ): String {
-    val folder = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), album)
+    val folder = File(
+      Environment.getExternalStoragePublicDirectory(
+        if (isGalleryMedia(mimeType)) Environment.DIRECTORY_DCIM else Environment.DIRECTORY_DOWNLOADS,
+      ),
+      album,
+    )
     if (!folder.isDirectory && !folder.mkdirs()) {
       throw IOException("Cannot make the album $album")
     }
@@ -724,8 +868,15 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     Result.failure(failure(ctx, treeUri, e))
   }
 
-  /** "unplugged" when the folder picked does not answer anymore, "io" for any other failure */
+  /**
+   * "stalled" for a read stopped because its file was closed under it (a device that stopped answering, see
+   * [closeIdle]), "unplugged" when the folder picked does not answer anymore, "io" for any other failure
+   */
   private fun failure(ctx: Context, treeUri: String, error: Exception): FlutterError {
+    if (error is ClosedChannelException) {
+      // Not asked whether the folder still answers: the device that stalled may stall that query too
+      return FlutterError("stalled", "The device stopped answering", null)
+    }
     val uri = Uri.parse(treeUri)
     val reachable = try {
       queryOne(ctx.contentResolver, DocumentsContract.buildDocumentUriUsingTree(uri, treeDocumentId(uri))) != null
@@ -737,5 +888,36 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
       return FlutterError("unplugged", error.message ?: error.javaClass.simpleName, null)
     }
     return FlutterError("io", error.message ?: error.javaClass.simpleName, null)
+  }
+}
+
+/**
+ * Where a read of a file that can only be read from its start (a pipe) begins: on from where the file stands when the
+ * offset is at or after it, reading through the bytes in between, which is never more than opening it again would read;
+ * from its start again only for an offset behind it
+ */
+internal data class SequentialReadPlan(val reopen: Boolean, val skip: Long) {
+  companion object {
+    fun of(position: Long, offset: Long): SequentialReadPlan = if (offset < position) {
+      SequentialReadPlan(reopen = true, skip = offset)
+    } else {
+      SequentialReadPlan(reopen = false, skip = offset - position)
+    }
+  }
+}
+
+/** What [OpenFilesPolicy] knows of an open file */
+internal data class OpenFileState(val key: String, val seekable: Boolean, val position: Long)
+
+internal object OpenFilesPolicy {
+  /**
+   * The file to close among [files] (the least recently used first) to make room, never [keep]: the least recently used
+   * one that costs little to open again, a file read at a position or a pipe within [CHEAP_REOPEN] of its start, so
+   * that a pipe far into its file (the one an upload streams) stays open while the tiles read the heads of others; the
+   * least recently used one when all are costly
+   */
+  fun victim(files: List<OpenFileState>, keep: String): String? {
+    val others = files.filter { it.key != keep }
+    return (others.firstOrNull { it.seekable || it.position <= CHEAP_REOPEN } ?: others.firstOrNull())?.key
   }
 }
