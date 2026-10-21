@@ -8,6 +8,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 
 /// What the user reads about a video that does not play: a [title], the [cause] as far as its file and the decoders of
 /// the device tell (null when nothing does), and the [advice] lines, what to do next
@@ -16,19 +17,21 @@ typedef VideoFailureText = ({String title, String? cause, List<String> advice});
 /// Words for [failure], from [details], what the probe of the file and the decoder check found (null while they are
 /// not known). A file beyond the decoders of the device is the cause whatever the player said, a stall without one is
 /// the network or the server. [fromServer]: the video came from the server, which can make a copy the device plays.
+/// [remote]: the remote control layout of a TV, where the viewer has no menu at the top (Info is a key of the remote).
 VideoFailureText describeVideoFailure(
   VideoPlaybackFailure failure,
   VideoDecodeDetails? details,
   Translations t, {
   required bool fromServer,
   required String locale,
+  bool remote = false,
 }) {
   final probe = details?.probe;
   final verdict = details?.verdict;
   final codec = probe?.codec;
   final width = probe?.codedWidth;
   final height = probe?.codedHeight;
-  final retry = t.video_failed_retry_hint;
+  final retry = remote ? t.video_failed_retry_hint_tv : t.video_failed_retry_hint;
   if (verdict != null && !verdict.supported && codec != null && width != null && height != null) {
     final name = videoCodecName(codec);
     final cause = verdict.maxWidth > 0 && verdict.maxHeight > 0
@@ -73,6 +76,7 @@ class VideoFailurePanel extends ConsumerWidget {
       context.t,
       fromServer: fromServer,
       locale: context.locale.toLanguageTag(),
+      remote: ref.watch(tvModeProvider),
     );
     final textTheme = context.textTheme;
     return Center(

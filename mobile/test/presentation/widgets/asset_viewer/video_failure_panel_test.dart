@@ -31,12 +31,14 @@ void main() {
     DecodeVerdict? verdict,
     VideoBitRate? bitRate,
     bool fromServer = true,
+    bool remote = false,
   }) => describeVideoFailure(
     failure,
     (probe: probe, verdict: verdict, bitRate: bitRate),
     t,
     fromServer: fromServer,
     locale: 'en',
+    remote: remote,
   );
 
   testWidgets('names the decoders of the device when the file is beyond them, with the server advice', (tester) async {
@@ -47,6 +49,19 @@ void main() {
     expect(text.title, 'This video cannot be played');
     expect(text.cause, 'H.264 5760 x 2880 is beyond the video decoders of this device (at most 4096 x 2304)');
     expect(text.advice, [t.video_failed_server_hint, t.video_failed_retry_hint]);
+  });
+
+  testWidgets('with a remote, the advice names the Info key and the Logs page, not the menu a TV does not show', (
+    tester,
+  ) async {
+    final t = await translations(tester);
+
+    expect(describe(t, error, probe: probe57k, verdict: refused, remote: true).advice, [
+      t.video_failed_server_hint,
+      t.video_failed_retry_hint_tv,
+    ]);
+    expect(describe(t, stalled, remote: true).advice, [t.video_failed_retry_hint_tv]);
+    expect(t.video_failed_retry_hint_tv, isNot(contains('menu at the top')));
   });
 
   testWidgets('a stall of a file beyond the decoders is the decoder, not the network', (tester) async {
