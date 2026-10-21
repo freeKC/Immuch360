@@ -2474,7 +2474,6 @@
   "tv_oauth_unavailable": "用 {provider} 登入要開網頁，呢部電視做唔到。請改用電郵同密碼登入。",
   "tv_open_elsewhere_body": "呢部電視開唔到網頁。請喺手機或者電腦打開呢個地址：",
   "tv_open_elsewhere_title": "喺其他裝置打開",
-  "tv_paused_arrows_hint": "已暫停：方向鍵去上一個或者下一個項目",
   "tv_text_entry_hint": "撳 OK 輸入",
   "tv_video_360_hint": "方向鍵四圍望，OK 暫停並顯示控制項，返回鍵關閉",
   "tv_zoom_in": "放大",

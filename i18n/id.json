@@ -2586,7 +2586,6 @@
   "tv_oauth_unavailable": "Masuk dengan {provider} membuka halaman web, yang tidak dapat dilakukan TV ini. Masuklah dengan email dan kata sandi.",
   "tv_open_elsewhere_body": "TV ini tidak dapat membuka halaman web. Buka alamat ini di ponsel atau komputer:",
   "tv_open_elsewhere_title": "Buka di perangkat lain",
-  "tv_paused_arrows_hint": "Dijeda: panah berpindah ke item sebelumnya atau berikutnya",
   "tv_text_entry_hint": "Tekan OK untuk mengetik",
   "tv_video_360_hint": "Panah untuk melihat sekeliling, OK untuk menjeda dan menampilkan kontrol, Kembali untuk menutup",
   "tv_zoom_in": "Perbesar",

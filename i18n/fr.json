@@ -2588,7 +2588,6 @@
   "tv_oauth_unavailable": "La connexion avec {provider} ouvre une page web, ce que ce téléviseur ne peut pas faire. Connectez-vous plutôt avec une adresse e-mail et un mot de passe.",
   "tv_open_elsewhere_body": "Ce téléviseur ne peut pas ouvrir de pages web. Ouvrez cette adresse sur un téléphone ou un ordinateur :",
   "tv_open_elsewhere_title": "Ouvrir sur un autre appareil",
-  "tv_paused_arrows_hint": "En pause : les flèches passent à l'élément précédent ou suivant",
   "tv_text_entry_hint": "Appuyez sur OK pour saisir",
   "tv_video_360_hint": "Flèches pour regarder autour, OK pour mettre en pause et afficher les commandes, Retour pour fermer",
   "tv_zoom_in": "Zoom avant",

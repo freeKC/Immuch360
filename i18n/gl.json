@@ -2586,7 +2586,6 @@
   "tv_oauth_unavailable": "Iniciar sesión con {provider} abre unha páxina web, algo que esta televisión non pode facer. Inicia sesión cun correo e un contrasinal.",
   "tv_open_elsewhere_body": "Esta televisión non pode abrir páxinas web. Abre este enderezo nun teléfono ou nun ordenador:",
   "tv_open_elsewhere_title": "Abrir noutro dispositivo",
-  "tv_paused_arrows_hint": "En pausa: as frechas van ao elemento anterior ou seguinte",
   "tv_text_entry_hint": "Preme OK para escribir",
   "tv_video_360_hint": "Frechas para mirar arredor, OK para pausar e mostrar os controis, Atrás para pechar",
   "tv_zoom_in": "Achegar",

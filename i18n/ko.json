@@ -2562,7 +2562,6 @@
   "tv_oauth_unavailable": "{provider}(으)로 로그인하면 웹 페이지가 열리는데, 이 TV에서는 할 수 없습니다. 대신 이메일과 비밀번호로 로그인하세요.",
   "tv_open_elsewhere_body": "이 TV에서는 웹 페이지를 열 수 없습니다. 이 주소를 휴대폰이나 컴퓨터에서 여세요:",
   "tv_open_elsewhere_title": "다른 기기에서 열기",
-  "tv_paused_arrows_hint": "일시 정지됨: 화살표로 이전 또는 다음 항목으로 이동",
   "tv_text_entry_hint": "OK를 눌러 입력",
   "tv_video_360_hint": "화살표로 둘러보기, OK로 일시 정지 및 컨트롤 표시, 뒤로로 닫기",
   "tv_zoom_in": "확대",

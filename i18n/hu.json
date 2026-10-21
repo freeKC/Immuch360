@@ -2587,7 +2587,6 @@
   "tv_oauth_unavailable": "A(z) {provider} bejelentkezés egy weboldalt nyit meg, amire ez a tévé nem képes. Jelentkezzen be inkább e-mail-címmel és jelszóval.",
   "tv_open_elsewhere_body": "Ez a tévé nem tud weboldalakat megnyitni. Nyissa meg ezt a címet egy telefonon vagy számítógépen:",
   "tv_open_elsewhere_title": "Megnyitás másik eszközön",
-  "tv_paused_arrows_hint": "Szüneteltetve: a nyilak az előző vagy a következő elemre lépnek",
   "tv_text_entry_hint": "Nyomja meg az OK gombot a gépeléshez",
   "tv_video_360_hint": "Nyilak a körülnézéshez, OK a szüneteltetéshez és a vezérlők megjelenítéséhez, Vissza a bezáráshoz",
   "tv_zoom_in": "Nagyítás",

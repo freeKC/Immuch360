@@ -2588,7 +2588,6 @@
   "tv_oauth_unavailable": "Iniciar sesión con {provider} abre una página web, algo que este televisor no puede hacer. Inicia sesión con un correo y una contraseña.",
   "tv_open_elsewhere_body": "Este televisor no puede abrir páginas web. Abre esta dirección en un teléfono o un ordenador:",
   "tv_open_elsewhere_title": "Abrir en otro dispositivo",
-  "tv_paused_arrows_hint": "En pausa: las flechas van al elemento anterior o siguiente",
   "tv_text_entry_hint": "Pulsa OK para escribir",
   "tv_video_360_hint": "Flechas para mirar alrededor, OK para pausar y mostrar los controles, Atrás para cerrar",
   "tv_zoom_in": "Acercar",

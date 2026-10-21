@@ -2588,7 +2588,6 @@
   "tv_oauth_unavailable": "Iniciar sessão com {provider} abre uma página web, o que esta TV não consegue fazer. Inicie sessão com um e-mail e uma palavra-passe.",
   "tv_open_elsewhere_body": "Esta TV não consegue abrir páginas web. Abra este endereço num telemóvel ou computador:",
   "tv_open_elsewhere_title": "Abrir noutro dispositivo",
-  "tv_paused_arrows_hint": "Em pausa: as setas passam para o item anterior ou seguinte",
   "tv_text_entry_hint": "Prima OK para escrever",
   "tv_video_360_hint": "Setas para olhar em redor, OK para pausar e mostrar os controlos, Voltar para fechar",
   "tv_zoom_in": "Aproximar",

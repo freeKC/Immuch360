@@ -1543,7 +1543,6 @@
   "tv_oauth_unavailable": "Innskráning með {provider} opnar vefsíðu, sem þetta sjónvarp getur ekki. Skráðu þig frekar inn með netfangi og lykilorði.",
   "tv_open_elsewhere_body": "Þetta sjónvarp getur ekki opnað vefsíður. Opnaðu þetta vistfang í síma eða tölvu:",
   "tv_open_elsewhere_title": "Opna á öðru tæki",
-  "tv_paused_arrows_hint": "Í bið: örvarnar fara í fyrra eða næsta atriði",
   "tv_text_entry_hint": "Ýttu á OK til að skrifa",
   "tv_video_360_hint": "Örvar til að líta í kring, OK til að gera hlé og sýna stjórntækin, Til baka til að loka",
   "tv_zoom_in": "Auka aðdrátt",

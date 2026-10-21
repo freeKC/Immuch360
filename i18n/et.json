@@ -2587,7 +2587,6 @@
   "tv_oauth_unavailable": "Teenusega {provider} sisselogimine avab veebilehe, mida see teler teha ei saa. Logi selle asemel sisse e-posti ja parooliga.",
   "tv_open_elsewhere_body": "See teler ei saa veebilehti avada. Ava see aadress telefonis või arvutis:",
   "tv_open_elsewhere_title": "Ava teises seadmes",
-  "tv_paused_arrows_hint": "Peatatud: nooled viivad eelmise või järgmise üksuse juurde",
   "tv_text_entry_hint": "Kirjutamiseks vajuta OK",
   "tv_video_360_hint": "Nooled ringi vaatamiseks, OK peatamiseks ja juhtnuppude näitamiseks, Tagasi sulgemiseks",
   "tv_zoom_in": "Suurenda",

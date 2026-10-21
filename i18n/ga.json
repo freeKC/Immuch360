@@ -2587,7 +2587,6 @@
   "tv_oauth_unavailable": "Osclaíonn síniú isteach le {provider} leathanach gréasáin, rud nach féidir leis an teilifís seo. Sínigh isteach le ríomhphost agus pasfhocal ina ionad sin.",
   "tv_open_elsewhere_body": "Ní féidir leis an teilifís seo leathanaigh ghréasáin a oscailt. Oscail an seoladh seo ar fhón nó ar ríomhaire:",
   "tv_open_elsewhere_title": "Oscail ar ghléas eile",
-  "tv_paused_arrows_hint": "Curtha ar sos: téann na saigheada chuig an mír roimhe nó an chéad mhír eile",
   "tv_text_entry_hint": "Brúigh OK chun clóscríobh",
   "tv_video_360_hint": "Saigheada chun féachaint thart, OK chun sos a chur agus na rialuithe a thaispeáint, Siar chun dúnadh",
   "tv_zoom_in": "Zúmáil isteach",

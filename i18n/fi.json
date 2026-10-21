@@ -2388,7 +2388,6 @@
   "tv_oauth_unavailable": "Kirjautuminen palvelulla {provider} avaa verkkosivun, mihin tämä televisio ei pysty. Kirjaudu sen sijaan sähköpostilla ja salasanalla.",
   "tv_open_elsewhere_body": "Tämä televisio ei voi avata verkkosivuja. Avaa tämä osoite puhelimella tai tietokoneella:",
   "tv_open_elsewhere_title": "Avaa toisella laitteella",
-  "tv_paused_arrows_hint": "Keskeytetty: nuolet siirtävät edelliseen tai seuraavaan kohteeseen",
   "tv_text_entry_hint": "Paina OK kirjoittaaksesi",
   "tv_video_360_hint": "Nuolet katseluun, OK keskeyttää ja näyttää säätimet, Takaisin sulkee",
   "tv_zoom_in": "Lähennä",

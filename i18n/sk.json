@@ -2587,7 +2587,6 @@
   "tv_oauth_unavailable": "Prihlásenie cez {provider} otvára webovú stránku, čo tento televízor nedokáže. Prihláste sa namiesto toho e-mailom a heslom.",
   "tv_open_elsewhere_body": "Tento televízor nedokáže otvárať webové stránky. Otvorte túto adresu v telefóne alebo počítači:",
   "tv_open_elsewhere_title": "Otvoriť v inom zariadení",
-  "tv_paused_arrows_hint": "Pozastavené: šípky prejdú na predchádzajúcu alebo ďalšiu položku",
   "tv_text_entry_hint": "Stlačte OK na písanie",
   "tv_video_360_hint": "Šípkami sa rozhliadate, OK pozastaví a zobrazí ovládanie, Späť zatvorí",
   "tv_zoom_in": "Priblížiť",

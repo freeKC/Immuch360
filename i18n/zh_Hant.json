@@ -2522,7 +2522,6 @@
   "tv_oauth_unavailable": "使用 {provider} 登入需要開啟網頁，這台電視無法做到。請改用電子郵件和密碼登入。",
   "tv_open_elsewhere_body": "這台電視無法開啟網頁。請在手機或電腦上開啟此位址：",
   "tv_open_elsewhere_title": "在其他裝置上開啟",
-  "tv_paused_arrows_hint": "已暫停：方向鍵切換到上一個或下一個項目",
   "tv_text_entry_hint": "按 OK 輸入",
   "tv_video_360_hint": "方向鍵環顧四周，OK 暫停並顯示控制項，返回鍵關閉",
   "tv_zoom_in": "放大",

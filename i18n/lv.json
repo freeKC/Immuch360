@@ -2366,7 +2366,6 @@
   "tv_oauth_unavailable": "Pierakstīšanās ar {provider} atver tīmekļa lapu, ko šis televizors nevar. Tā vietā pierakstieties ar e-pastu un paroli.",
   "tv_open_elsewhere_body": "Šis televizors nevar atvērt tīmekļa lapas. Atveriet šo adresi tālrunī vai datorā:",
   "tv_open_elsewhere_title": "Atvērt citā ierīcē",
-  "tv_paused_arrows_hint": "Pauzēts: bultiņas pāriet uz iepriekšējo vai nākamo vienumu",
   "tv_text_entry_hint": "Nospiediet OK, lai rakstītu",
   "tv_video_360_hint": "Bultiņas, lai paskatītos apkārt, OK pauzei un vadīklu rādīšanai, Atpakaļ, lai aizvērtu",
   "tv_zoom_in": "Tuvināt",

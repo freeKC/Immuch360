@@ -2587,7 +2587,6 @@
   "tv_oauth_unavailable": "Prijava z {provider} odpre spletno stran, česar ta televizor ne zmore. Namesto tega se prijavite z e-pošto in geslom.",
   "tv_open_elsewhere_body": "Ta televizor ne more odpirati spletnih strani. Odprite ta naslov na telefonu ali računalniku:",
   "tv_open_elsewhere_title": "Odpri v drugi napravi",
-  "tv_paused_arrows_hint": "Začasno ustavljeno: puščice gredo na prejšnji ali naslednji element",
   "tv_text_entry_hint": "Pritisnite OK za tipkanje",
   "tv_video_360_hint": "Puščice za razgledovanje, OK za premor in prikaz kontrolnikov, Nazaj za zapiranje",
   "tv_zoom_in": "Povečaj",

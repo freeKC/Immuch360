@@ -2587,7 +2587,6 @@
   "tv_oauth_unavailable": "L'accesso con {provider} apre una pagina web, cosa che questa TV non può fare. Accedi invece con email e password.",
   "tv_open_elsewhere_body": "Questa TV non può aprire pagine web. Apri questo indirizzo su un telefono o un computer:",
   "tv_open_elsewhere_title": "Apri su un altro dispositivo",
-  "tv_paused_arrows_hint": "In pausa: le frecce passano all'elemento precedente o successivo",
   "tv_text_entry_hint": "Premi OK per scrivere",
   "tv_video_360_hint": "Frecce per guardarti intorno, OK per mettere in pausa e mostrare i controlli, Indietro per chiudere",
   "tv_zoom_in": "Ingrandisci",

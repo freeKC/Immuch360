@@ -2260,7 +2260,6 @@
   "tv_oauth_unavailable": "Prijava preko {provider} otvara veb stranicu, a to ovaj televizor ne može. Umesto toga se prijavite imejlom i šifrom.",
   "tv_open_elsewhere_body": "Ovaj televizor ne može da otvara veb stranice. Otvorite ovu adresu na telefonu ili računaru:",
   "tv_open_elsewhere_title": "Otvori na drugom uređaju",
-  "tv_paused_arrows_hint": "Pauzirano: strelice idu na prethodnu ili sledeću stavku",
   "tv_text_entry_hint": "Pritisnite OK za kucanje",
   "tv_video_360_hint": "Strelice za razgledanje, OK za pauzu i prikaz kontrola, Nazad za zatvaranje",
   "tv_zoom_in": "Uvećaj",

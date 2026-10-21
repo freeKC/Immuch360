@@ -2488,7 +2488,6 @@
   "tv_oauth_unavailable": "{provider} bidez saioa hasteak web-orri bat irekitzen du, eta telebista honek ezin du hori egin. Hasi saioa helbide elektroniko eta pasahitz batekin.",
   "tv_open_elsewhere_body": "Telebista honek ezin ditu web-orriak ireki. Ireki helbide hau telefono edo ordenagailu batean:",
   "tv_open_elsewhere_title": "Ireki beste gailu batean",
-  "tv_paused_arrows_hint": "Pausatuta: geziek aurreko edo hurrengo elementura eramaten dute",
   "tv_text_entry_hint": "Sakatu OK idazteko",
   "tv_video_360_hint": "Geziak inguruan begiratzeko, OK pausatzeko eta kontrolak erakusteko, Atzera ixteko",
   "tv_zoom_in": "Handitu",

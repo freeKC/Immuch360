@@ -2587,7 +2587,6 @@
   "tv_oauth_unavailable": "Inloggen met {provider} opent een webpagina, en dat kan deze tv niet. Log in plaats daarvan in met een e-mailadres en een wachtwoord.",
   "tv_open_elsewhere_body": "Deze tv kan geen webpagina's openen. Open dit adres op een telefoon of een computer:",
   "tv_open_elsewhere_title": "Openen op een ander apparaat",
-  "tv_paused_arrows_hint": "Gepauzeerd: de pijlen gaan naar het vorige of volgende item",
   "tv_text_entry_hint": "Druk op OK om te typen",
   "tv_video_360_hint": "Pijlen om rond te kijken, OK om te pauzeren en de bediening te tonen, Terug om te sluiten",
   "tv_zoom_in": "Inzoomen",

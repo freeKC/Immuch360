@@ -352,7 +352,6 @@
   "tv_oauth_unavailable": "Prijava putem {provider} otvara web-stranicu, a to ovaj televizor ne može. Umjesto toga prijavite se e-poštom i lozinkom.",
   "tv_open_elsewhere_body": "Ovaj televizor ne može otvarati web-stranice. Otvorite ovu adresu na telefonu ili računaru:",
   "tv_open_elsewhere_title": "Otvori na drugom uređaju",
-  "tv_paused_arrows_hint": "Pauzirano: strelice idu na prethodnu ili sljedeću stavku",
   "tv_text_entry_hint": "Pritisnite OK za kucanje",
   "tv_video_360_hint": "Strelice za razgledavanje, OK za pauzu i prikaz kontrola, Natrag za zatvaranje",
   "tv_zoom_in": "Povećaj",
