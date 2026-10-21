@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/data/db/main/table/asset/edit.dart';
@@ -253,6 +254,22 @@ class RemoteAssetRepository extends DatabaseAccessor<Drift> with $RemoteAssetRep
 
   Future<int> getCount() {
     return _db.managers.remoteAssetEntity.count();
+  }
+
+  /// Whether each asset of [ids] that the timeline knows sits in the trash; the assets it does not know are left out
+  Future<Map<String, bool>> trashStates(Set<String> ids) async {
+    final states = <String, bool>{};
+    final table = _db.remoteAssetEntity;
+    // SQLite takes a limited number of variables in one statement
+    for (final slice in ids.toList().slices(500)) {
+      final query = selectOnly(table)
+        ..addColumns([table.id, table.deletedAt])
+        ..where(table.id.isIn(slice));
+      for (final row in await query.get()) {
+        states[row.read(table.id)!] = row.read(table.deletedAt) != null;
+      }
+    }
+    return states;
   }
 
   Future<List<AssetEdit>> getAssetEdits(String assetId) {

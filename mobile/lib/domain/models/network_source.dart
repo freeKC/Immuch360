@@ -26,6 +26,10 @@ enum NetworkSourceType {
 
   /// Whether a source of this type is ever stored
   bool get isStored => this != documentTree;
+
+  /// Whether its folders hold the files as a camera or a drone wrote them, side files included (the .SRT of a video):
+  /// a file share or a picked folder, not a media server, which lists media only
+  bool get keepsSideFiles => this == smb || this == webdav || this == documentTree;
 }
 
 /// A stored list: the sources this build reads, and the entries of a type it does not know, kept as they are so that

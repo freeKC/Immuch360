@@ -33,6 +33,21 @@ enum NetworkUploadOutcome {
 
   /// The server does not accept files of its kind (see NetworkEntry.isRefusedByServer): not sent
   refused,
+
+  /// The server has it in its trash, where it will be purged: it answers "duplicate" to a new upload and leaves it there
+  inTrash,
+}
+
+/// Where the server keeps an asset
+enum RemoteAssetPresence {
+  /// In the library, out of the trash
+  inLibrary,
+
+  /// In the trash: the server purges it after a while
+  inTrash,
+
+  /// Deleted for good, or never there
+  gone,
 }
 
 /// What an upload from a share does beyond sending the files
@@ -60,11 +75,15 @@ class NetworkUploadSummary {
     this.spheresAlreadyThere = 0,
     this.placed = 0,
     this.placesPending = 0,
+    this.inTrash = 0,
   });
 
   final int sent;
   final int duplicates;
   final int failed;
+
+  /// The files the server has in its trash only (see NetworkUploadOutcome.inTrash): to restore there
+  final int inTrash;
 
   /// The names of the files the server does not accept, not sent
   final List<String> refused;
@@ -98,15 +117,16 @@ class NetworkUploadListener {
   final void Function(String id, NetworkUploadOutcome outcome)? onFinished;
 }
 
-/// Whether the server still has the asset [remoteId], out of its trash; throws when it cannot tell
-typedef RemoteAssetCheck = Future<bool> Function(String remoteId);
+/// Where the server keeps the asset [remoteId]; throws when it cannot tell
+typedef RemoteAssetCheck = Future<RemoteAssetPresence> Function(String remoteId);
 
 /// What the file of a photo of [fileSystem] declares (see NetworkMediaService.detect), null when it cannot tell
 typedef NetworkMediaInfoReader = Future<NetworkMediaInfo?> Function(NetworkFileSystem fileSystem, NetworkEntry entry);
 
-/// Gives the uploaded video [remoteId] the place [latitude], [longitude] unless it has one (see
-/// VideoLocationService.place)
-typedef VideoPlacer = Future<VideoPlaceOutcome> Function(String remoteId, double latitude, double longitude);
+/// Gives the uploaded video [remoteId] the place [latitude], [longitude] unless it has one; leaves it to the pending
+/// list at once when [stop] completes (see VideoLocationService.place)
+typedef VideoPlacer =
+    Future<VideoPlaceOutcome> Function(String remoteId, double latitude, double longitude, {Future<void>? stop});
 
 class NetworkUploadService {
   NetworkUploadService(this._uploads, this._records, this._isOnServer, {this._mediaInfo, this._placeVideo});
@@ -119,7 +139,8 @@ class NetworkUploadService {
 
   /// Sends [entries], files of [fileSystem], to the server, in their order, until [cancelToken] completes. The files
   /// recorded as sent and unchanged since, whose asset the server confirms it still has, are not read at all, and count
-  /// as duplicates. The files the server refuses are not sent. [options] tells what else goes with the files.
+  /// as duplicates, or as in the trash when the asset is there. The files the server refuses are not sent. [options]
+  /// tells what else goes with the files.
   Future<NetworkUploadSummary> upload(
     NetworkFileSystem fileSystem,
     List<NetworkEntry> entries, {
@@ -136,6 +157,7 @@ class NetworkUploadService {
     var spheresAlreadyThere = 0;
     var placed = 0;
     var placesPending = 0;
+    var inTrash = 0;
     // The flight data of the videos by their id, and the folders listed to find it
     final fixes = <String, DjiSrtFix>{};
     final folders = <String, Future<List<NetworkEntry>?>>{};
@@ -157,13 +179,22 @@ class NetworkUploadService {
         listener.onFinished?.call(id, NetworkUploadOutcome.refused);
         continue;
       }
-      if (await _isStillSent(entry)) {
-        duplicates++;
-        listener.onFinished?.call(id, NetworkUploadOutcome.duplicate);
-        continue;
+      switch (await _recordedPresence(entry)) {
+        case RemoteAssetPresence.inLibrary:
+          duplicates++;
+          listener.onFinished?.call(id, NetworkUploadOutcome.duplicate);
+          continue;
+        case RemoteAssetPresence.inTrash:
+          // Sending it again would only cost the transfer: the server would answer "duplicate" and leave it there
+          inTrash++;
+          listener.onFinished?.call(id, NetworkUploadOutcome.inTrash);
+          continue;
+        case RemoteAssetPresence.gone:
+        case null:
+          break;
       }
       final sidecarXmp = options.tagSpheres && entry.isImage ? await _sphereSidecar(fileSystem, entry) : null;
-      if (options.placeVideos && entry.isVideo && _placeVideo != null) {
+      if (options.placeVideos && entry.isVideo && _placeVideo != null && fileSystem.source.type.keepsSideFiles) {
         final fix = await _flightFix(fileSystem, entry, folders);
         if (fix != null) {
           fixes[id] = fix;
@@ -186,9 +217,7 @@ class NetworkUploadService {
         onSending: (id, entry) => sending[id] = entry,
         onProgress: (id, bytes, total) => listener.onProgress?.call(id, total > 0 ? bytes / total : 0),
         onSuccess: (id, remoteId, {required isDuplicate}) {
-          if (isDuplicate) {
-            duplicates++;
-          } else {
+          if (!isDuplicate) {
             sent++;
           }
           if (withSidecar.contains(id)) {
@@ -204,7 +233,8 @@ class NetworkUploadService {
           if (fix != null && placeVideo != null) {
             // In the background, while the next files go: the server reads each video in a job of its own
             pending.add(
-              placeVideo(remoteId, fix.latitude, fix.longitude).then(
+              // A cancel hands the places still waiting to the pending list, rather than keep the user waiting
+              placeVideo(remoteId, fix.latitude, fix.longitude, stop: cancelToken.future).then(
                 (outcome) {
                   if (outcome == VideoPlaceOutcome.placed) {
                     placed++;
@@ -218,14 +248,33 @@ class NetworkUploadService {
             );
           }
           final entry = sending[id] ?? byId[id];
-          if (entry != null) {
-            // Recorded before the listener hears of it, so that the badge of the file is there when it looks
-            pending.add(
-              _record(entry, remoteId).whenComplete(() {
-                listener.onFinished?.call(id, isDuplicate ? NetworkUploadOutcome.duplicate : NetworkUploadOutcome.sent);
-              }),
-            );
+          if (!isDuplicate) {
+            if (entry != null) {
+              // Recorded before the listener hears of it, so that the badge of the file is there when it looks
+              pending.add(
+                _record(entry, remoteId).whenComplete(() => listener.onFinished?.call(id, NetworkUploadOutcome.sent)),
+              );
+            }
+            return;
           }
+          // The server answers "duplicate" with the id of an asset in its trash too: asked where it is before the
+          // file is taken as sent
+          pending.add(
+            _presenceOfDuplicate(remoteId).then((presence) async {
+              if (presence == RemoteAssetPresence.inTrash) {
+                inTrash++;
+              } else {
+                duplicates++;
+              }
+              if (entry != null && presence != RemoteAssetPresence.gone) {
+                await _record(entry, remoteId, inTrash: presence == RemoteAssetPresence.inTrash);
+              }
+              listener.onFinished?.call(
+                id,
+                presence == RemoteAssetPresence.inTrash ? NetworkUploadOutcome.inTrash : NetworkUploadOutcome.duplicate,
+              );
+            }),
+          );
         },
         onError: (id, errorMessage) {
           failed++;
@@ -247,7 +296,18 @@ class NetworkUploadService {
       spheresAlreadyThere: spheresAlreadyThere,
       placed: placed,
       placesPending: placesPending,
+      inTrash: inTrash,
     );
+  }
+
+  /// Where the server keeps [remoteId], the asset it answered "duplicate" with; in the library when it cannot tell
+  Future<RemoteAssetPresence> _presenceOfDuplicate(String remoteId) async {
+    try {
+      return await _isOnServer(remoteId);
+    } catch (error, stackTrace) {
+      _log.warning('Could not ask the server where $remoteId is', error, stackTrace);
+      return RemoteAssetPresence.inLibrary;
+    }
   }
 
   /// The GPano sidecar of [entry] when it is a sphere without GPano tags whose frame size its EXIF gives (see
@@ -313,28 +373,36 @@ class NetworkUploadService {
     }
   }
 
-  /// Whether [entry] was sent before, did not change since, and its asset is still on the server out of the trash. A
-  /// record of an asset the server does not have anymore is forgotten; one it cannot tell about is kept. Either way the
-  /// file is sent again, and the server answers "duplicate" if it has it after all.
-  Future<bool> _isStillSent(NetworkEntry entry) async {
+  /// Where the server keeps the asset of [entry] when it was sent before and did not change since; null when it was not
+  /// sent, or the server cannot tell. The record follows the answer: forgotten for an asset gone, marked for one in the
+  /// trash, unmarked for one restored since. A file whose asset is gone, or that the server cannot tell about, is sent
+  /// again, and the server answers "duplicate" if it has it after all.
+  Future<RemoteAssetPresence?> _recordedPresence(NetworkEntry entry) async {
     final record = await _records.find(entry);
     if (record == null) {
-      return false;
+      return null;
     }
     try {
-      if (await _isOnServer(record.remoteId)) {
-        return true;
+      final presence = await _isOnServer(record.remoteId);
+      switch (presence) {
+        case RemoteAssetPresence.gone:
+          await _records.remove(entry);
+        case RemoteAssetPresence.inTrash || RemoteAssetPresence.inLibrary:
+          final inTrash = presence == RemoteAssetPresence.inTrash;
+          if (record.inTrash != inTrash) {
+            await _records.add(entry, record.remoteId, sentAt: record.sentAt, inTrash: inTrash);
+          }
       }
-      await _records.remove(entry);
+      return presence;
     } catch (error, stackTrace) {
       _log.warning('Could not ask the server about ${record.remoteId}, sent from ${entry.path}', error, stackTrace);
+      return null;
     }
-    return false;
   }
 
-  Future<void> _record(NetworkEntry entry, String remoteId) async {
+  Future<void> _record(NetworkEntry entry, String remoteId, {bool inTrash = false}) async {
     try {
-      await _records.add(entry, remoteId);
+      await _records.add(entry, remoteId, inTrash: inTrash);
     } catch (error, stackTrace) {
       _log.warning('Could not record that ${entry.path} was sent', error, stackTrace);
     }

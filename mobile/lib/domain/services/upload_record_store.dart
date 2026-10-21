@@ -14,12 +14,16 @@ final _log = Logger('UploadRecordStore');
 
 /// A file of a share the server has: the asset it became, and when it was sent
 class UploadRecord {
-  const UploadRecord({required this.remoteId, required this.sentAt});
+  const UploadRecord({required this.remoteId, required this.sentAt, this.inTrash = false});
 
   final String remoteId;
   final DateTime sentAt;
 
-  Map<String, Object?> toJson() => {'id': remoteId, 'at': sentAt.toUtc().toIso8601String()};
+  /// The asset sits in the trash of the server, last time the app looked: the server will purge it, so the file is not
+  /// shown as sent, and is offered again
+  final bool inTrash;
+
+  Map<String, Object?> toJson() => {'id': remoteId, 'at': sentAt.toUtc().toIso8601String(), if (inTrash) 'trash': true};
 
   static UploadRecord? fromJson(Object? json) {
     if (json is! Map) {
@@ -30,18 +34,22 @@ class UploadRecord {
     if (id is! String || id.isEmpty || at == null) {
       return null;
     }
-    return UploadRecord(remoteId: id, sentAt: at);
+    return UploadRecord(remoteId: id, sentAt: at, inTrash: json['trash'] == true);
   }
 
   @override
-  bool operator ==(Object other) => other is UploadRecord && other.remoteId == remoteId && other.sentAt == sentAt;
+  bool operator ==(Object other) =>
+      other is UploadRecord && other.remoteId == remoteId && other.sentAt == sentAt && other.inTrash == inTrash;
 
   @override
-  int get hashCode => Object.hash(remoteId, sentAt);
+  int get hashCode => Object.hash(remoteId, sentAt, inTrash);
 
   @override
-  String toString() => 'UploadRecord($remoteId, $sentAt)';
+  String toString() => 'UploadRecord($remoteId, $sentAt${inTrash ? ', in the trash' : ''})';
 }
+
+/// Whether [record] stands for a file the server keeps: recorded, and not in its trash
+bool isKeptOnServer(UploadRecord? record) => record != null && !record.inTrash;
 
 /// The record of the files sent from the shares, in the JSON file [file] gives; none when it gives null (no user signed
 /// in): nothing is read nor written then. Read once, on first use; each change is written at once, one write after the
@@ -57,13 +65,29 @@ class UploadRecordStore {
   static const _version = 1;
 
   /// The key of [entry] in the record: its share, its path, its size and its date. A file changed on its share has
-  /// another key, and is sent again. A file imported from a drone, a controller or a card (see
-  /// NetworkEntry.isImported) by its name, its size and its date only: the picked folder and the ids of its files
-  /// change with the cable, the card reader and each plug, its names and sizes do not (DJI names hold the second the
-  /// file was made).
-  static String keyOf(NetworkEntry entry) => entry.isImported
-      ? jsonEncode(['import', entry.name, entry.size, entry.modified?.toUtc().millisecondsSinceEpoch])
-      : jsonEncode([entry.sourceId, entry.path, entry.size, entry.modified?.toUtc().millisecondsSinceEpoch]);
+  /// another key, and is sent again.
+  ///
+  /// A file imported from a drone, a controller or a card (see NetworkEntry.isImported) by its name and its size: the
+  /// picked folder and the ids of its files change with the cable, the card reader and each plug, its names and sizes
+  /// do not. Its date is not trusted whole: a FAT card has no time zone (Android reads it with the offset of the phone,
+  /// which changes abroad) and a device over MTP gives its own. A DJI name holds the second the file was made, so the
+  /// name and the size are enough; any other name keeps the seconds of its date within the quarter hour, which no
+  /// time zone offset changes.
+  static String keyOf(NetworkEntry entry) {
+    if (!entry.isImported) {
+      return jsonEncode([entry.sourceId, entry.path, entry.size, entry.modified?.toUtc().millisecondsSinceEpoch]);
+    }
+    final modified = entry.modified;
+    if (modified == null || _timestampedName.hasMatch(entry.name)) {
+      return jsonEncode(['import', entry.name, entry.size]);
+    }
+    return jsonEncode(['import', entry.name, entry.size, (modified.millisecondsSinceEpoch ~/ 1000) % _quarterHour]);
+  }
+
+  /// "DJI_20261021143000_0001_D.JPG": the date and time the file was made, to the second
+  static final _timestampedName = RegExp(r'^DJI_\d{14}_', caseSensitive: false);
+
+  static const _quarterHour = 15 * 60;
 
   /// The name of the record file of the user [userId] of the server [server]. An asset id means something on its
   /// server and to its owner only: another server or another user signed in on this device has a record of its own.
@@ -76,11 +100,34 @@ class UploadRecordStore {
   /// The record of [entry] while it is unchanged on its share, null when it was not sent
   Future<UploadRecord?> find(NetworkEntry entry) async => (await load())[keyOf(entry)];
 
-  /// Records that [entry] is on the server as the asset [remoteId], from [sentAt] (now when null)
-  Future<void> add(NetworkEntry entry, String remoteId, {DateTime? sentAt}) async {
+  /// Records that [entry] is on the server as the asset [remoteId], from [sentAt] (now when null), in its trash when
+  /// [inTrash]
+  Future<void> add(NetworkEntry entry, String remoteId, {DateTime? sentAt, bool inTrash = false}) async {
     final records = await load();
-    records[keyOf(entry)] = UploadRecord(remoteId: remoteId, sentAt: (sentAt ?? DateTime.now()).toUtc());
+    records[keyOf(entry)] = UploadRecord(
+      remoteId: remoteId,
+      sentAt: (sentAt ?? DateTime.now()).toUtc(),
+      inTrash: inTrash,
+    );
     await _save(records);
+  }
+
+  /// Marks the records of the assets of [trashed] as in the trash of the server, and those of [restored] as out of it;
+  /// gives whether anything changed
+  Future<bool> markTrash({Set<String> trashed = const {}, Set<String> restored = const {}}) async {
+    final records = await load();
+    var changed = false;
+    for (final MapEntry(:key, value: record) in records.entries.toList()) {
+      final inTrash = trashed.contains(record.remoteId) || (record.inTrash && !restored.contains(record.remoteId));
+      if (inTrash != record.inTrash) {
+        records[key] = UploadRecord(remoteId: record.remoteId, sentAt: record.sentAt, inTrash: inTrash);
+        changed = true;
+      }
+    }
+    if (changed) {
+      await _save(records);
+    }
+    return changed;
   }
 
   /// Forgets [entry]: the server does not have its asset anymore

@@ -130,9 +130,17 @@ class VideoLocationService {
       'video_places_${sha1.convert(utf8.encode(jsonEncode([server, userId])))}.json';
 
   /// Sets the place [latitude], [longitude] on the video [assetId] once the server has read its metadata, unless they
-  /// hold a place: looks every [interval] for up to [timeout], then leaves it to the pending list
-  Future<VideoPlaceOutcome> place(String assetId, double latitude, double longitude) async {
+  /// hold a place: looks every [interval] for up to [timeout], then leaves it to the pending list. Once [stop]
+  /// completes (the user cancelled the upload), the place goes to the pending list at once.
+  Future<VideoPlaceOutcome> place(String assetId, double latitude, double longitude, {Future<void>? stop}) async {
     final deadline = _now().add(timeout);
+    var stopped = false;
+    unawaited(stop?.then((_) => stopped = true));
+    Future<VideoPlaceOutcome> leaveToPending() async {
+      await _addPending(PendingVideoPlace(assetId: assetId, latitude: latitude, longitude: longitude, since: _now()));
+      return VideoPlaceOutcome.pending;
+    }
+
     while (true) {
       AssetPlaceState? state;
       var known = true;
@@ -150,11 +158,13 @@ class VideoLocationService {
       if (state != null && state.extracted) {
         return _setUnlessPlaced(assetId, state, latitude, longitude);
       }
-      if (!_now().isBefore(deadline)) {
-        await _addPending(PendingVideoPlace(assetId: assetId, latitude: latitude, longitude: longitude, since: _now()));
-        return VideoPlaceOutcome.pending;
+      if (stopped || !_now().isBefore(deadline)) {
+        return leaveToPending();
       }
-      await _delay(interval);
+      await (stop == null ? _delay(interval) : Future.any([_delay(interval), stop]));
+      if (stopped) {
+        return leaveToPending();
+      }
     }
   }
 

@@ -89,6 +89,7 @@ String? networkUploadResultMessage(Translations t, NetworkUploadSummary summary)
     if (summary.cancelled) t.network_upload_cancelled,
     if (summary.sent > 0) t.network_upload_done(count: summary.sent),
     if (summary.duplicates > 0) t.network_upload_duplicates(count: summary.duplicates),
+    if (summary.inTrash > 0) t.upload_in_trash(count: summary.inTrash),
     // One failure says why; several say how many, the server giving the same reason for each most of the time
     if (summary.failed == 1 && lastError != null)
       t.network_upload_error(error: lastError)

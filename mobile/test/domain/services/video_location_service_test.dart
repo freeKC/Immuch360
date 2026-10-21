@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -95,6 +96,26 @@ void main() {
 
     expect(await service().place('v1', 45.5, 6.5), VideoPlaceOutcome.placed);
     expect(api.asked, ['v1', 'v1', 'v1']);
+  });
+
+  test('a cancelled upload leaves the place to the pending list at once, without waiting for the server', () async {
+    api.states['v1'] = [_notRead];
+    final stop = Completer<void>();
+    final sut = VideoLocationService(
+      api,
+      () async => File('${directory.path}/places.json'),
+      now: () => now,
+      // The waits between two looks never end by themselves: only the cancel ends this one
+      delay: (_) => Completer<void>().future,
+    );
+
+    final outcome = sut.place('v1', 45.5, 6.5, stop: stop.future);
+    await pumpEventQueue();
+    stop.complete();
+
+    expect(await outcome, VideoPlaceOutcome.pending);
+    expect(api.asked, ['v1'], reason: 'the server is not asked again');
+    expect((await sut.pending()).single.assetId, 'v1');
   });
 
   test('leaves the place to the pending list after 90 seconds, and sets it on a later pass', () async {

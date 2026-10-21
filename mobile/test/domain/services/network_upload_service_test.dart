@@ -35,14 +35,15 @@ class _NoShare implements NetworkFileSystem {
 
 /// A share in memory: its files by path, listed by folder
 class _MemoryShare implements NetworkFileSystem {
-  _MemoryShare(this.files, {this.id = 'nas'});
+  _MemoryShare(this.files, {this.id = 'nas', this.type = NetworkSourceType.smb});
 
   final Map<String, Uint8List> files;
   final String id;
+  final NetworkSourceType type;
   final listed = <String>[];
 
   @override
-  NetworkSource get source => NetworkSource(id: id, type: NetworkSourceType.smb, name: 'NAS', host: 'nas.local');
+  NetworkSource get source => NetworkSource(id: id, type: type, name: 'NAS', host: 'nas.local');
 
   NetworkEntry _entry(String path) => NetworkEntry(
     sourceId: id,
@@ -86,8 +87,8 @@ void main() {
   late List<List<String>> sent;
   late Map<String, _Answer> answers;
 
-  /// What the server says of the assets of the files recorded, by asset id: there by default
-  late Map<String, Future<bool> Function()> assets;
+  /// What the server says of the assets of the files recorded, by asset id: in the library by default
+  late Map<String, Future<RemoteAssetPresence> Function()> assets;
   late List<String> asked;
   late List<NetworkUploadItem> items;
   final fileSystem = _NoShare();
@@ -108,7 +109,7 @@ void main() {
     asked = [];
     sut = NetworkUploadService(uploads, records, (remoteId) {
       asked.add(remoteId);
-      return assets[remoteId]?.call() ?? Future.value(true);
+      return assets[remoteId]?.call() ?? Future.value(RemoteAssetPresence.inLibrary);
     });
     sent = [];
     items = [];
@@ -188,9 +189,9 @@ void main() {
     expect(outcomes['nas:/a.jpg'], NetworkUploadOutcome.duplicate);
   });
 
-  test('sends again a file whose asset the server deleted or trashed, and forgets the old asset', () async {
+  test('sends again a file whose asset the server deleted, and forgets the old asset', () async {
     await records.add(file('/a.jpg'), 'deleted');
-    assets['deleted'] = () async => false;
+    assets['deleted'] = () async => RemoteAssetPresence.gone;
     answers['a.jpg'] = (remoteId: null, isDuplicate: false, error: 'offline');
 
     final summary = await sut.upload(fileSystem, [file('/a.jpg')], cancelToken: Completer<void>());
@@ -201,6 +202,43 @@ void main() {
     expect(summary.duplicates, 0);
     expect(summary.failed, 1);
     expect(await records.find(file('/a.jpg')), isNull, reason: 'not on the server, whatever became of the send');
+  });
+
+  test('a duplicate whose asset sits in the trash of the server is not taken as sent', () async {
+    answers['a.jpg'] = (remoteId: 'trashed-a', isDuplicate: true, error: null);
+    assets['trashed-a'] = () async => RemoteAssetPresence.inTrash;
+    final outcomes = <String, NetworkUploadOutcome>{};
+
+    final summary = await sut.upload(
+      fileSystem,
+      [file('/a.jpg')],
+      cancelToken: Completer<void>(),
+      listener: NetworkUploadListener(onFinished: (id, outcome) => outcomes[id] = outcome),
+    );
+
+    expect((summary.inTrash, summary.duplicates, summary.sent), (1, 0, 0));
+    expect(outcomes['nas:/a.jpg'], NetworkUploadOutcome.inTrash);
+    final record = await records.find(file('/a.jpg'));
+    expect((record?.remoteId, record?.inTrash), ('trashed-a', true));
+    expect(isKeptOnServer(record), isFalse, reason: 'no cloud mark: the server will purge it');
+  });
+
+  test('a file recorded whose asset went to the trash is not sent again, and counts once restored', () async {
+    await records.add(file('/a.jpg'), 'earlier');
+    assets['earlier'] = () async => RemoteAssetPresence.inTrash;
+
+    final inTrash = await sut.upload(fileSystem, [file('/a.jpg')], cancelToken: Completer<void>());
+
+    expect(sent, [<String>[]], reason: 'the server would answer "duplicate" and leave it in the trash');
+    expect(inTrash.inTrash, 1);
+    expect((await records.find(file('/a.jpg')))?.inTrash, isTrue);
+
+    // Restored from the trash in Immich
+    assets['earlier'] = () async => RemoteAssetPresence.inLibrary;
+    final restored = await sut.upload(fileSystem, [file('/a.jpg')], cancelToken: Completer<void>());
+
+    expect((restored.duplicates, restored.inTrash), (1, 0));
+    expect(isKeptOnServer(await records.find(file('/a.jpg'))), isTrue);
   });
 
   test('sends again a file the server cannot tell about, and keeps its record until it answers', () async {
@@ -250,7 +288,7 @@ void main() {
     await records.add(file('/b.jpg'), 'asset-b');
     assets['asset-a'] = () async {
       cancelToken.complete();
-      return true;
+      return RemoteAssetPresence.inLibrary;
     };
 
     final summary = await sut.upload(fileSystem, [file('/a.jpg'), file('/b.jpg')], cancelToken: cancelToken);
@@ -305,9 +343,9 @@ void main() {
     NetworkUploadService droneService({VideoPlaceOutcome outcome = VideoPlaceOutcome.placed}) => NetworkUploadService(
       uploads,
       records,
-      (remoteId) async => true,
+      (remoteId) async => RemoteAssetPresence.inLibrary,
       mediaInfo: (fileSystem, entry) async => infos[entry.name],
-      placeVideo: (remoteId, latitude, longitude) async {
+      placeVideo: (remoteId, latitude, longitude, {stop}) async {
         placedVideos.add((remoteId, latitude, longitude));
         return outcome;
       },
@@ -422,6 +460,20 @@ void main() {
       expect(placedVideos, [('new-DJI_20261021143100_0002_D.MP4', 45.25, 6.5), ('old-3', 44.75, 5.5)]);
       expect(summary.placed, 2);
       expect(share.listed, ['/DCIM/DJI_001'], reason: 'the folder is listed once');
+    });
+
+    test('does not look for flight data on a media server, which lists media only', () async {
+      final share = _MemoryShare({
+        '/DJI_0002_D.MP4': Uint8List(10),
+        '/DJI_0002_D.SRT': srt(45.25, 6.5),
+      }, type: NetworkSourceType.dlna);
+
+      final summary = await droneService().upload(share, [
+        await share.stat('/DJI_0002_D.MP4'),
+      ], cancelToken: Completer<void>());
+
+      expect(share.listed, isEmpty);
+      expect((summary.sent, summary.placed), (1, 0));
     });
 
     test('counts the places that wait for the server, and places nothing with the option off', () async {
