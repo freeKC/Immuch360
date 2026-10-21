@@ -112,7 +112,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({initialUrl, onSubmit, onBack,
 						onChange={setEmail}
 						placeholder={t('email')}
 						disabled={submitting}
-						clearLabel="Clear Email"
+						clearLabel={t('clear_value')}
 					/>
 				</LabeledField>
 				<LabeledField label={t('password')}>
@@ -122,7 +122,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({initialUrl, onSubmit, onBack,
 						type="password"
 						placeholder={t('password')}
 						disabled={submitting}
-						clearLabel="Clear Password"
+						clearLabel={t('clear_value')}
 					/>
 				</LabeledField>
 				<div className={css.actions}>
@@ -150,7 +150,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({initialUrl, onSubmit, onBack,
 						onChange={setApiKey}
 						placeholder={t('api_key')}
 						disabled={submitting}
-						clearLabel="Clear API Key"
+						clearLabel={t('clear_value')}
 					/>
 				</LabeledField>
 				<div className={css.actions}>

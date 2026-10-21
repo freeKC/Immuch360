@@ -36,7 +36,7 @@ export const UrlInput: React.FC<UrlInputProps> = ({value, onChange, placeholder,
 				placeholder={placeholder}
 				disabled={disabled}
 				autoFocus={autoFocus}
-				clearLabel="Clear URL"
+				clearLabel={t('clear_value')}
 			/>
 			<div className={css.chips} role="group" aria-label={t('webos_url_shortcuts')}>
 				{SHORTCUTS.map(s => (

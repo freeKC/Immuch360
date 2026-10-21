@@ -8,6 +8,9 @@ import type {PairingDriver, PairedAccountResult} from '../../pairing/types';
 import css from './PairingTab.module.less';
 import {t} from '../../immuch360/i18n';
 
+// Stands for the address in the sentence of step 2, then split on
+const URL_MARK = '\u0001';
+
 interface PairingTabProps {
 	driver: PairingDriver;
 	suggestedUrl: string;
@@ -31,13 +34,17 @@ export const PairingTab: React.FC<PairingTabProps> = ({driver, suggestedUrl, onP
 
 	if (state.phase === 'waiting') {
 		const manualUrl = state.url.replace(/\?.*$/, '');
+		// One sentence for the translators, {url} where the address goes; the address is drawn in its own style
+		const [scanBefore, scanAfter = ''] = t('webos_pairing_step_scan', {url: URL_MARK}).split(URL_MARK);
 		return (
 			<div className={css.pairing}>
 				<QrCode value={state.url} className={css.qr} />
 				<div className={css.details}>
 					<p className={css.step}>{t('webos_pairing_step_wifi')}</p>
 					<p className={css.step}>
-						{t('webos_pairing_step_scan_before')}<span className={css.url}>{manualUrl}</span>{t('webos_pairing_step_scan_after')}
+						{scanBefore}
+						<span className={css.url}>{manualUrl}</span>
+						{scanAfter}
 					</p>
 					<p className={css.step}>{t('webos_pairing_step_sign_in')}</p>
 					<div className={css.codeRow}>

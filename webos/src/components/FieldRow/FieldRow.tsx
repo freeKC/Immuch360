@@ -2,6 +2,7 @@ import React, {useCallback} from 'react';
 import Input from '@enact/sandstone/Input';
 import {SpottableDiv} from '../../utils/spotlight';
 import css from './FieldRow.module.less';
+import {t} from '../../immuch360/i18n';
 
 interface FieldRowProps {
 	value: string;
@@ -25,7 +26,7 @@ export const FieldRow: React.FC<FieldRowProps> = ({
 	type,
 	disabled,
 	autoFocus,
-	clearLabel = 'Clear',
+	clearLabel,
 }) => {
 	// Sandstone Input emits a custom {value} payload (not a standard React event).
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,7 +47,7 @@ export const FieldRow: React.FC<FieldRowProps> = ({
 			/>
 			<SpottableDiv
 				role="button"
-				aria-label={clearLabel}
+				aria-label={clearLabel ?? t('clear_value')}
 				className={css.clear}
 				onClick={handleClear}
 			>
