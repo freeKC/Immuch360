@@ -1,13 +1,13 @@
-VERSION := $(shell node -p "require('./package.json').version")
+VERSION := $(shell node -p "require('./webos-meta/appinfo.json').version")
 
 pack:
-	npm run pack-p && ares-package dist/ service/ -o ./build/ -n -e "*dev.js" -e "*test.js"
+	npm run ipk
 
 install:
-	ares-install --device lg-tv ./build/com.seeky91.immichtv_$(VERSION)_all.ipk
+	ares-install --device lg-tv ./build/com.aprogsys.immuch360_$(VERSION)_all.ipk
 
 launch:
-	ares-launch --device lg-tv com.seeky91.immichtv
+	ares-launch --device lg-tv com.aprogsys.immuch360
 
 inspect:
-	ares-inspect --device lg-tv com.seeky91.immichtv
+	ares-inspect --device lg-tv com.aprogsys.immuch360

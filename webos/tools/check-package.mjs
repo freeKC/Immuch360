@@ -1,0 +1,122 @@
+#!/usr/bin/env node
+// Immuch360: checks the .ipk ares-package made, before it is installed or released.
+//
+//   node tools/check-package.mjs build [--list build/ipk-files.json]
+//
+// An .ipk is an ar archive (debian-binary, control.tar.gz, data.tar.gz). The check reads it with node alone and
+// fails when the app or its service is not where webOS looks for them, when appinfo.json does not name Immuch360,
+// when the version of the .ipk name, of appinfo.json and of the service differ, when development files of the service
+// went in, or when the package grew past 10 MB. --list writes every file and its size, to compare two builds.
+
+import {readFileSync, readdirSync, writeFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {gunzipSync} from 'node:zlib';
+import {createHash} from 'node:crypto';
+
+const APP_ID = 'com.aprogsys.immuch360';
+const SERVICE_ID = `${APP_ID}.service`;
+const MAX_IPK_BYTES = 10 * 1024 * 1024;
+
+const dir = process.argv[2] ?? 'build';
+const listIndex = process.argv.indexOf('--list');
+const problems = [];
+
+function fail(message) {
+	console.error(`[check-package] FAILED: ${message}`);
+	process.exit(1);
+}
+
+const ipks = readdirSync(dir).filter((name) => name.endsWith('.ipk'));
+if (ipks.length !== 1) fail(`one .ipk expected in ${dir}, found ${ipks.length}`);
+const ipkName = ipks[0];
+const ipk = readFileSync(join(dir, ipkName));
+
+// ar: "!<arch>\n", then 60 byte headers (name 16, size at 48, 10 digits) and their data, padded to even offsets
+function arMembers(buffer) {
+	if (buffer.toString('latin1', 0, 8) !== '!<arch>\n') fail(`${ipkName} is not an ar archive`);
+	const members = {};
+	let offset = 8;
+	while (offset + 60 <= buffer.length) {
+		const name = buffer.toString('latin1', offset, offset + 16).trim().replace(/\/$/, '');
+		const size = parseInt(buffer.toString('latin1', offset + 48, offset + 58).trim(), 10);
+		members[name] = buffer.subarray(offset + 60, offset + 60 + size);
+		offset += 60 + size + (size % 2);
+	}
+	return members;
+}
+
+// tar (ustar): 512 byte headers, name 100 + prefix 155, size in octal, type flag
+function tarFiles(buffer) {
+	const files = {};
+	let offset = 0;
+	let longName = null;
+	while (offset + 512 <= buffer.length) {
+		const header = buffer.subarray(offset, offset + 512);
+		if (header.every((byte) => byte === 0)) break;
+		const field = (start, length) => header.toString('latin1', start, start + length).replace(/\0.*$/s, '');
+		const size = parseInt(field(124, 12).trim() || '0', 8);
+		const type = field(156, 1) || '0';
+		const prefix = field(345, 155);
+		let name = longName ?? (prefix ? `${prefix}/${field(0, 100)}` : field(0, 100));
+		longName = null;
+		const data = buffer.subarray(offset + 512, offset + 512 + size);
+		if (type === 'L') longName = data.toString('latin1').replace(/\0.*$/s, '');
+		else if (type === '0' || type === '\0') files[name.replace(/^\.\//, '')] = data;
+		offset += 512 + Math.ceil(size / 512) * 512;
+	}
+	return files;
+}
+
+const members = arMembers(ipk);
+for (const name of ['debian-binary', 'control.tar.gz', 'data.tar.gz']) {
+	if (!members[name]) fail(`${ipkName} has no ${name}`);
+}
+const control = tarFiles(gunzipSync(members['control.tar.gz']));
+const data = tarFiles(gunzipSync(members['data.tar.gz']));
+
+const appDir = `usr/palm/applications/${APP_ID}/`;
+const serviceDir = `usr/palm/services/${SERVICE_ID}/`;
+const need = (path) => {
+	if (!data[path]) problems.push(`missing ${path}`);
+	return data[path];
+};
+
+const appinfoBytes = need(`${appDir}appinfo.json`);
+for (const file of ['index.html', 'main.js', 'main.css', 'icon.png', 'icon-large.png', 'i18n/fr.json', 'i18n/de.json']) need(appDir + file);
+for (const file of ['service.js', 'services.json', 'package.json']) need(serviceDir + file);
+for (const path of Object.keys(data)) {
+	if (path.startsWith(serviceDir) && /(^|\/)(dev|test)\.js$/.test(path)) problems.push(`development file in the service: ${path}`);
+}
+
+let version = null;
+if (appinfoBytes) {
+	const appinfo = JSON.parse(appinfoBytes.toString('utf8'));
+	version = appinfo.version;
+	if (appinfo.id !== APP_ID) problems.push(`appinfo.json id ${appinfo.id}, not ${APP_ID}`);
+	if (appinfo.title !== 'Immuch360') problems.push(`appinfo.json title ${appinfo.title}`);
+	if (ipkName !== `${APP_ID}_${appinfo.version}_all.ipk`) problems.push(`${ipkName} does not carry the version ${appinfo.version}`);
+}
+const servicePackage = data[`${serviceDir}package.json`];
+if (servicePackage && version && JSON.parse(servicePackage.toString('utf8')).version !== version) {
+	problems.push('the service and the app have different versions');
+}
+const servicesJson = data[`${serviceDir}services.json`];
+if (servicesJson && JSON.parse(servicesJson.toString('utf8')).id !== SERVICE_ID) problems.push(`services.json does not name ${SERVICE_ID}`);
+const controlText = Object.values(control).map((bytes) => bytes.toString('utf8')).join('\n');
+if (!controlText.includes(`Package: ${APP_ID}`)) problems.push('control does not name the package');
+if (ipk.length > MAX_IPK_BYTES) problems.push(`${ipk.length} bytes, more than ${MAX_IPK_BYTES}`);
+
+const mainJs = data[`${appDir}main.js`];
+const lookbehinds = mainJs ? (mainJs.toString('latin1').match(/\(\?<[=!]/g) ?? []).length : 0;
+
+const files = Object.keys(data).sort().map((path) => ({path, size: data[path].length}));
+const total = files.reduce((sum, file) => sum + file.size, 0);
+console.log(`[check-package] ${ipkName}: ${ipk.length} bytes, sha256 ${createHash('sha256').update(ipk).digest('hex')}`);
+console.log(`[check-package] ${files.length} files, ${total} bytes unpacked, version ${version}`);
+for (const file of files.slice().sort((a, b) => b.size - a.size).slice(0, 8)) console.log(`  ${String(file.size).padStart(9)}  ${file.path}`);
+console.log(`[check-package] main.js: ${lookbehinds} lookbehind assertion(s) in regular expressions (Chromium 53 has none)`);
+if (listIndex > 0) {
+	writeFileSync(process.argv[listIndex + 1], JSON.stringify({ipk: ipkName, bytes: ipk.length, files}, null, 1) + '\n');
+}
+if (problems.length) fail(problems.join('; '));
+console.log('[check-package] OK');

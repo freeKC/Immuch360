@@ -1,43 +1,52 @@
 {
-	"name": "immich-tv-webos",
-	"version": "1.7.0",
-	"description": "Read-only Immich photo & video client for LG webOS TVs",
-	"author": "Quentin Jean-Amans <quentin.sqja@gmail.com> (https://github.com/Seeky91)",
+	"name": "immuch360-webos",
+	"version": "0.0.0",
+	"description": "Immuch360 for LG webOS TVs: an Immich photo and video viewer with 360 degree photos, built on immich-tv-webos",
+	"author": "FreeKC (https://github.com/freeKC)",
 	"main": "src/index.tsx",
 	"scripts": {
-		"serve": "enact serve",
-		"pack": "enact pack",
-		"pack-p": "enact pack -p && node tools/transpile-legacy.mjs && node tools/prune-ilib.mjs",
+		"serve": "npm run i18n && enact serve",
+		"pack": "npm run i18n && enact pack",
+		"pack-p": "npm run i18n && enact pack -p && node tools/transpile-legacy.mjs && node tools/prune-ilib.mjs && node tools/build-i18n.mjs --dist dist",
+		"ipk": "npm run pack-p && ares-package dist/ service/ -o ./build/ -n -e \"*dev.js\" -e \"*test.js\" && node tools/check-package.mjs build --list build/ipk-files.json",
+		"set-version": "node tools/set-version.mjs",
+		"i18n": "node tools/build-i18n.mjs",
+		"check-package": "node tools/check-package.mjs build --list build/ipk-files.json",
 		"watch": "enact pack --watch",
 		"clean": "enact clean",
 		"lint": "enact lint .",
-		"typecheck": "tsc --noEmit",
+		"typecheck": "npm run i18n && tsc --noEmit",
 		"license": "enact license",
-		"test": "enact test",
+		"test": "npm run i18n && enact test",
 		"test-watch": "enact test --watch",
+		"test-unit": "node --import ./tools/ts-hooks.mjs --test \"test/unit/*.test.mjs\"",
 		"test-service": "node service/test.js",
 		"test-tools": "node --test tools/legacy-css.test.mjs"
 	},
-	"license": "MIT",
+	"license": "AGPL-3.0-only",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Seeky91/immich-tv-webos.git"
+		"url": "git+https://github.com/freeKC/Immuch360.git",
+		"directory": "webos"
 	},
 	"bugs": {
-		"url": "https://github.com/Seeky91/immich-tv-webos/issues"
+		"url": "https://github.com/freeKC/Immuch360/issues"
 	},
-	"homepage": "https://github.com/Seeky91/immich-tv-webos#readme",
+	"homepage": "https://github.com/freeKC/Immuch360/tree/immuch360/webos#readme",
 	"keywords": [
 		"immich",
+		"immuch360",
 		"webos",
 		"lg",
 		"tv",
+		"360",
+		"panorama",
 		"enact",
-		"sandstone",
-		"photo-gallery"
+		"sandstone"
 	],
 	"engines": {
-		"npm": ">=6.9.0"
+		"node": ">=24",
+		"npm": ">=10"
 	},
 	"enact": {
 		"theme": "sandstone",
@@ -87,13 +96,19 @@
 		"react-dom": "^18.2.0"
 	},
 	"devDependencies": {
+		"@enact/cli": "7.3.4",
 		"@testing-library/react": "^16.3.1",
 		"@types/jest": "^30.0.0",
 		"@types/react": "^18.2.0",
 		"@types/react-dom": "^18.2.0",
+		"@webos-tools/cli": "3.2.6",
 		"baseline-browser-mapping": "^2.9.14",
 		"esbuild": "^0.28.0",
 		"eslint-config-enact-proxy": "^1.0.7",
 		"typescript": "^5.9.3"
-	}
+	},
+	"private": true,
+	"contributors": [
+		"Quentin Jean-Amans (https://github.com/Seeky91), author of immich-tv-webos, the base of this app"
+	]
 }

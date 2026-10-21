@@ -13,3 +13,6 @@ dist
 # misc
 .DS_Store
 npm-debug.log
+
+# Immuch360: written by tools/build-i18n.mjs at each build
+src/immuch360/i18n/generated

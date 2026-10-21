@@ -1,7 +1,7 @@
 import LS2Request from '@enact/webos/LS2Request';
 
 const SERVICE = 'luna://com.webos.service.tvpower/power';
-const CLIENT_NAME = 'com.seeky91.immichtv.slideshow';
+const CLIENT_NAME = 'com.aprogsys.immuch360.slideshow';
 const ignore = () => {};
 
 /**

@@ -1,9 +1,9 @@
 {
-	"id": "com.seeky91.immichtv.service",
+	"id": "com.aprogsys.immuch360.service",
 	"description": "LAN pairing service for phone sign-in",
 	"services": [
 		{
-			"name": "com.seeky91.immichtv.service",
+			"name": "com.aprogsys.immuch360.service",
 			"description": "Serves the phone sign-in page and hands the session token to the app"
 		}
 	]

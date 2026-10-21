@@ -8,7 +8,7 @@ var Service = require('webos-service');
 var pairing = require('./lib/pairing');
 var serverLib = require('./lib/server');
 
-var SERVICE_ID = 'com.seeky91.immichtv.service';
+var SERVICE_ID = 'com.aprogsys.immuch360.service';
 var BASE_PORT = 8788;
 var PORT_TRIES = 5;
 

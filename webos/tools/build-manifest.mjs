@@ -33,8 +33,9 @@ const manifest = {
 	version: appinfo.version,
 	type: appinfo.type,
 	appDescription: pkg.description,
-	iconUri: `https://raw.githubusercontent.com/${repo}/main/assets/icon-store.png`,
-	sourceUrl: `https://github.com/${repo}`,
+	// Immuch360: the app lives in webos/ of the immuch360 branch
+	iconUri: `https://raw.githubusercontent.com/${repo}/immuch360/webos/assets/icon-store.png`,
+	sourceUrl: `https://github.com/${repo}/tree/immuch360/webos`,
 	rootRequired: false,
 	ipkUrl: `https://github.com/${repo}/releases/download/${ref}/${ipkName}`,
 	ipkHash: { sha256 },

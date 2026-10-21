@@ -3,7 +3,7 @@ import type {PairingDriver, PairingStartInfo, PairingPollResult} from './types';
 import type {PairingServiceResponse} from './serviceResponse';
 import {parseStartInfo, parsePollResult} from './serviceResponse';
 
-const SERVICE = 'luna://com.seeky91.immichtv.service';
+const SERVICE = 'luna://com.aprogsys.immuch360.service';
 const CALL_TIMEOUT_MS = 10000;
 
 function lunaCall(method: string, parameters: Record<string, unknown>): Promise<PairingServiceResponse> {
