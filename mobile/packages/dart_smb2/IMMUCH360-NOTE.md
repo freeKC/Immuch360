@@ -46,11 +46,12 @@ Copied from pub.dev (BSD-3-Clause, https://github.com/ales-drnz/dart_smb2), with
   Codemagic) and on a developer's machine alike, and git ignores it. When an upstream source fails (the repository of
   the scripts removed or rewritten, GitHub serving the libsmb2 archive with other bytes), the script takes that input
   from the fork's release `libsmb2-inputs-f0688e7` (a git bundle of the scripts and the libsmb2 archive), checked by the
-  same commit id and SHA-256, so the archive stays the same. A build without it still works, without the archive: the CI
-  checks that the APKs, the Windows ZIP, the `.deb` and the macOS app hold it. The Linux job of the desktop workflow
-  builds `libsmb2.so` from that same file, offline, and each release attaches it (`Immuch360-libsmb2-sources.tar.gz` on
-  the phone releases, `Immuch360-Desktop-<version>-libsmb2-sources.tar.gz` on the desktop ones). The licence page entry
-  and `NOTICE` say where it is in each package and how to extract it.
+  same commit id and SHA-256, so the archive stays the same. A build without the archive still works, but does not leave
+  the CI: the APKs, the AAB, the IPA (Codemagic), the Windows ZIP, the `.deb`, the `.rpm` and the macOS app are checked
+  to hold it, and `windows_bundle.py` and `desktop_installers.py` refuse a folder with libsmb2 but without it. The Linux
+  job of the desktop workflow builds `libsmb2.so` from that same file, offline, and each release attaches it
+  (`Immuch360-libsmb2-sources.tar.gz` on the phone releases, `Immuch360-Desktop-<version>-libsmb2-sources.tar.gz` on the
+  desktop ones). The licence page entry and `NOTICE` say where it is in each package and how to extract it.
 
 The binaries of release `libsmb2-r8` are built from the sources named above (libsmb2-scripts `f0688e739ec5`, libsmb2
 `595d128b4d11`), which the notice gives as their corresponding source. Checked on 2026-10-21 by building them again:

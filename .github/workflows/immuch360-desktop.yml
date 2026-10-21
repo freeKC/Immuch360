@@ -227,14 +227,14 @@ jobs:
       # window of flutter_web_auth_2), patchelf for the RUNPATH of the libraries in the .deb and the .rpm, the headers
       # of libmpv for media_kit_video (libmpv-dev, which brings libmpv1, the libmpv of Ubuntu 22.04, for the video tests
       # and the start below; the app links none: mobile/packages/media_kit_video/IMMUCH360-NOTE.md, patch 8), and the
-      # virtual screen of that start with its captures (Xvfb, xwd, ImageMagick), sqlite3 to read the app's log, and gdb
-      # and xwininfo to tell what a start that does not get on was doing
+      # virtual screen of that start with its captures (Xvfb, xwd, ImageMagick), sqlite3 to read the app's log, gdb
+      # and xwininfo to tell what a start that does not get on was doing, and rpm2cpio and cpio to open the .rpm
       - name: Linux build packages
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev \
             libsecret-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev patchelf libmpv-dev xvfb xauth x11-apps \
-            x11-utils imagemagick sqlite3 gdb
+            x11-utils imagemagick sqlite3 gdb rpm2cpio cpio
 
       - name: Install mise
         uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
@@ -331,6 +331,30 @@ jobs:
             || { echo "::error::no libsmb2 section in the copyright file of the .deb"; exit 1; }
           echo "the .deb holds libsmb2.so, its notice and licence texts, and the sources"
           sha256sum "$SOURCES"
+
+      # The same in the .rpm, which nFPM makes from the same staged folder: the library, the assets of the package with
+      # the archive of its sources, byte for byte the release file, and the notice and licence texts of
+      # /usr/share/licenses
+      - name: libsmb2, its notice and its sources in the .rpm
+        env:
+          RPM: ${{ steps.packages.outputs.rpm }}
+          SOURCES: ${{ steps.libsmb2.outputs.sources }}
+        run: |
+          # The rpm2cpio of Ubuntu 22.04 exits 1 on the .rpm of nFPM though it writes the whole payload: cpio, which fails
+          # on an archive cut short, and the checks below judge it
+          rpm2cpio "$RPM" > "$RUNNER_TEMP/rpm.cpio" || true
+          cpio -t --quiet < "$RUNNER_TEMP/rpm.cpio" > "$RUNNER_TEMP/rpm-files.txt"
+          sed -e 's|^\./|/|' -e 's|^\([^/]\)|/\1|' "$RUNNER_TEMP/rpm-files.txt" > "$RUNNER_TEMP/rpm.txt"
+          assets=/opt/immuch360/data/flutter_assets/packages/dart_smb2/libsmb2
+          licences=/usr/share/licenses/immuch360/libsmb2
+          for file in /opt/immuch360/lib/libsmb2.so "$assets/NOTICE" "$assets/COPYING" "$assets/LICENCE-LGPL-2.1.txt" \
+            "$assets/Immuch360-libsmb2-sources.tar.gz" "$licences/NOTICE" "$licences/COPYING" \
+            "$licences/LICENCE-LGPL-2.1.txt"; do
+            grep -qxF "$file" "$RUNNER_TEMP/rpm.txt" || { echo "::error::no $file in the .rpm"; exit 1; }
+          done
+          cpio -i --quiet --to-stdout "*$assets/Immuch360-libsmb2-sources.tar.gz" < "$RUNNER_TEMP/rpm.cpio" \
+            | cmp - "$SOURCES" || { echo "::error::the libsmb2 sources in the .rpm are not the release file"; exit 1; }
+          echo "the .rpm holds libsmb2.so, its notice and licence texts, and the sources"
 
       - name: Upload the .deb
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
