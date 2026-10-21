@@ -23,6 +23,16 @@ describe('rotationStore', () => {
 		expect(JSON.parse(localStorage.getItem('immich_rotations')!)).toEqual({});
 	});
 
+	test('turns counterclockwise too, and both ways meet', () => {
+		const store = freshStore();
+		expect(store.rotateBy('b', -1)).toBe(270);
+		expect(store.rotateBy('b', -1)).toBe(180);
+		expect(store.rotateBy('b', 1)).toBe(270);
+		expect(freshStore().getRotation('b')).toBe(270);
+		expect(store.rotateBy('b', 1)).toBe(0);
+		expect(JSON.parse(localStorage.getItem('immich_rotations')!)).toEqual({});
+	});
+
 	test('keeps only the most recently rotated assets', () => {
 		const store = freshStore();
 		for (let i = 0; i < 1001; i++) store.rotateClockwise(`asset-${i}`);

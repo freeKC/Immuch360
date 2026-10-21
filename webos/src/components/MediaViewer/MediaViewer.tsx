@@ -8,7 +8,7 @@ import {useRepository} from '../../domain/RepositoryContext';
 import {createSpotlightContainer, forceFocus, SpottableDiv} from '../../utils/spotlight';
 import type {TimelineAsset} from '../../domain/types';
 import {t} from '../../immuch360/i18n';
-import {CONTROLS_HIDE_AFTER_MS, SEEK_STEP_SECONDS, playPauseWantsPlay, remoteAction, videoArrows} from '../../immuch360/keys';
+import {CONTROLS_HIDE_AFTER_MS, SEEK_STEP_SECONDS, photoRotationStep, playPauseWantsPlay, remoteAction, videoArrows} from '../../immuch360/keys';
 import {isForced360, setForced360, setSphereChoice, sphereChoice, type SphereChoice} from '../../immuch360/forced360';
 import {isEquirectangularProjection, isShownAs360, nextStereoLayout, type SphereView as ResolvedSphereView} from '../../immuch360/sphere/rules';
 import {SphereView, type SphereViewHandle} from '../../immuch360/sphere/SphereView';
@@ -36,6 +36,8 @@ const ViewerContainer = createSpotlightContainer({enterTo: 'last-focused'});
 
 // Immuch360: on a 360° photo the arrows turn the view, so only OK brings the controls back
 const SPHERE_REVEAL_KEYS: readonly string[] = ['Enter'];
+// Immuch360: on a flat photo Up turns it by 90° (photoRotationStep), so OK and Down bring the controls back
+const FLAT_PHOTO_REVEAL_KEYS: readonly string[] = ['Enter', 'ArrowDown'];
 
 // Immuch360: a photo whose shape is 2:1 within 2% may be one a 360° camera stitched without GPano tags; its details
 // (name, camera) tell, so they are fetched for it
@@ -99,7 +101,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const {visible: controlsVisible, show: showControls, hide: hideControls} = useAutoHideControls({
 		enabled: !isVideo,
 		controlsRef,
-		revealKeys: show360 ? SPHERE_REVEAL_KEYS : undefined,
+		revealKeys: show360 ? SPHERE_REVEAL_KEYS : FLAT_PHOTO_REVEAL_KEYS,
 	});
 	const inActionBar = !isVideo && controlsVisible && actionBarFocused;
 
@@ -196,20 +198,27 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		// Left/right page between media, except inside the action bar (Spotlight moves between its buttons)
 		arrowLeft = inActionBar ? undefined : handlePrev;
 		arrowRight = inActionBar ? undefined : handleNext;
-		// Unassigned, up/down are reveal keys (useAutoHideControls)
-		arrowUp = inActionBar ? focusStage : controlsVisible ? swallowKey : undefined;
+		// Immuch360: Up on the photo turns it by 90° (the key handler below); from the action bar it goes back to the photo.
+		// Unassigned, Down is a reveal key (useAutoHideControls).
+		arrowUp = inActionBar ? focusStage : undefined;
 		arrowDown = inActionBar ? swallowKey : controlsVisible ? focusActionBar : undefined;
 	}
 
 	useWebOSKeys({onBack: handleBack, onArrowLeft: arrowLeft, onArrowRight: arrowRight, onArrowUp: arrowUp, onArrowDown: arrowDown});
 
-	// Immuch360: the other keys of the remote in the viewer: the track keys go to the neighbours, Stop closes a video,
-	// rewind and fast forward step 10 s, the play and pause keys do as their name says, the channel keys zoom a photo
+	// Immuch360: the other keys of the remote in the viewer: Up (and R, ] or [ of a keyboard) turns a flat photo by 90°,
+	// the track keys go to the neighbours, Stop closes a video, rewind and fast forward step 10 s, the play and pause
+	// keys do as their name says, the channel keys zoom a photo
 	useEffect(() => {
 		const onKeyDown = (event: KeyboardEvent) => {
 			const action = remoteAction(event);
+			const turn = !isVideo && !show360 ? photoRotationStep(action, {zoomed, inActionBar}) : null;
 			let handled = true;
-			if (action === 'previousTrack') handlePrev();
+			if (turn !== null) {
+				// The zoom and its position were for the photo as it stood
+				if (zoomed) resetZoom();
+				rotate(turn);
+			} else if (action === 'previousTrack') handlePrev();
 			else if (action === 'nextTrack') handleNext();
 			else if (isVideo && action === 'stop') onClose();
 			else if (isVideo && (action === 'rewind' || action === 'fastForward')) seekVideo(action === 'rewind' ? -SEEK_STEP_SECONDS : SEEK_STEP_SECONDS);
@@ -228,7 +237,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		};
 		window.addEventListener('keydown', onKeyDown, {capture: true});
 		return () => window.removeEventListener('keydown', onKeyDown, {capture: true});
-	}, [handlePrev, handleNext, isVideo, show360, inActionBar, onClose, seekVideo, photoZoomIn, photoZoomOut]);
+	}, [handlePrev, handleNext, isVideo, show360, inActionBar, zoomed, onClose, seekVideo, photoZoomIn, photoZoomOut, resetZoom, rotate]);
 
 	// Photos rest focus on the stage; forcing it also pulls focus off the grid card behind the
 	// overlay when the viewer was opened with the pointer.
@@ -307,7 +316,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 			? currentIndex > 0
 				? [{key: 'prev', icon: 'arrowlargeleft', label: t('previous'), onClick: handlePrev}]
 				: []
-			: [{key: 'rotate', icon: 'rotate', label: t('webos_rotate'), onClick: rotate}];
+			: [{key: 'rotate', icon: 'rotate', label: t('editor_rotate_right'), onClick: rotate}];
 		const view360: ViewerAction[] =
 			!flagged && (forced || !show360)
 				? [{key: 'view360', icon: 'view360', label: forced ? t('view_as_360_remove') : t('view_as_360'), onClick: toggleForced}]

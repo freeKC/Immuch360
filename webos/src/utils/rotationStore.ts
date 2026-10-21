@@ -22,8 +22,13 @@ export function getRotation(assetId: string): Rotation {
 }
 
 export function rotateClockwise(assetId: string): Rotation {
+	return rotateBy(assetId, 1);
+}
+
+// Immuch360: one quarter turn either way, 1 clockwise and -1 counterclockwise (the [ key of a keyboard)
+export function rotateBy(assetId: string, quarterTurns: 1 | -1): Rotation {
 	const map = load();
-	const next = ((getRotation(assetId) + 90) % 360) as Rotation;
+	const next = ((getRotation(assetId) + 360 + 90 * quarterTurns) % 360) as Rotation;
 	// Re-inserting keeps keys in recency order (UUID keys preserve insertion order), so the
 	// oldest entries are the ones trimmed.
 	delete map[assetId];

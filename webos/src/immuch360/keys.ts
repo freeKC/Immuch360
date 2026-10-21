@@ -16,6 +16,18 @@
 // | Info                    | 457                            | the details of the item                                    |
 // | Red Green Yellow Blue   | 403 404 405 406                | left free                                                  |
 //
+// A flat photo turns by 90° with one key, and the turn is kept for that photo on the TV (src/utils/rotationStore.ts):
+//
+// | Key                     | webOS keyCode (key)            | Action                                                     |
+// |-------------------------|--------------------------------|------------------------------------------------------------|
+// | Up                      | 38                             | turn 90° clockwise, when the photo is not zoomed and the   |
+// |                         |                                | focus is on it (Up from the action bar goes back to it)    |
+// | R or ] of a keyboard    | 82 or 221 (r, R, ])            | turn 90° clockwise                                         |
+// | [ of a keyboard         | 219 ([)                        | turn 90° counterclockwise                                  |
+//
+// Every LG remote has Up, the Magic Remote included, which has no colour keys of its own. The [ and ] keys are those
+// of the photo editor of Immich's web app.
+//
 // 1536 is Back on webOS 25 and later, but the wheel of the Magic Remote sends 1536 too, with key "Unidentified":
 // that pair is not Back (immich-tv-webos found it on a TV). 8 is Back on a few firmwares, except in a text field.
 
@@ -40,7 +52,9 @@ export type RemoteAction =
 	| 'red'
 	| 'green'
 	| 'yellow'
-	| 'blue';
+	| 'blue'
+	| 'rotateRight'
+	| 'rotateLeft';
 
 /** The parts of a keydown event the map reads */
 export interface KeyLike {
@@ -95,6 +109,10 @@ const BY_KEY: Record<string, RemoteAction> = {
 	MediaTrackPrevious: 'previousTrack',
 	MediaTrackNext: 'nextTrack',
 	Info: 'info',
+	r: 'rotateRight',
+	R: 'rotateRight',
+	']': 'rotateRight',
+	'[': 'rotateLeft',
 };
 
 const WHEEL_OR_BACK = 1536;
@@ -139,5 +157,24 @@ export function playPauseWantsPlay(action: RemoteAction | null, isPlaying: boole
 	if (action === 'play') return true;
 	if (action === 'pause') return false;
 	if (action === 'playPause') return !isPlaying;
+	return null;
+}
+
+/** Where a key is pressed in the viewer of a flat photo */
+export interface PhotoKeyContext {
+	/** The photo is zoomed in: the arrows move it */
+	zoomed: boolean;
+	/** The focus is on the action bar: the arrows move between its buttons */
+	inActionBar: boolean;
+}
+
+/**
+ * The quarter turns a key gives a flat photo: 1 clockwise, -1 counterclockwise, null for a key that does not turn it.
+ * Up turns it only when it is not zoomed and the focus is on the photo; the keyboard keys turn it anywhere.
+ */
+export function photoRotationStep(action: RemoteAction | null, where: PhotoKeyContext): 1 | -1 | null {
+	if (action === 'rotateRight') return 1;
+	if (action === 'rotateLeft') return -1;
+	if (action === 'up' && !where.zoomed && !where.inActionBar) return 1;
 	return null;
 }

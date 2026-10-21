@@ -7,6 +7,7 @@ import {
 	CONTROLS_HIDE_AFTER_MS,
 	SEEK_STEP_SECONDS,
 	keyShowsVideoControls,
+	photoRotationStep,
 	playPauseWantsPlay,
 	remoteAction,
 	videoArrows,
@@ -73,5 +74,33 @@ describe('the video policy of a TV', () => {
 	test('10 s steps, controls gone 5 s after the last key', () => {
 		assert.equal(SEEK_STEP_SECONDS, 10);
 		assert.equal(CONTROLS_HIDE_AFTER_MS, 5000);
+	});
+});
+
+describe('one key turns a flat photo by 90°', () => {
+	const onPhoto = {zoomed: false, inActionBar: false};
+
+	test('Up on the photo turns it clockwise, on every LG remote', () => {
+		assert.equal(photoRotationStep(remoteAction({keyCode: 38, key: 'ArrowUp'}), onPhoto), 1);
+	});
+
+	test('Up moves a zoomed photo, and leaves the action bar, instead of turning', () => {
+		assert.equal(photoRotationStep('up', {zoomed: true, inActionBar: false}), null);
+		assert.equal(photoRotationStep('up', {zoomed: false, inActionBar: true}), null);
+	});
+
+	test('R and ] of a keyboard turn it clockwise, [ counterclockwise, wherever the focus is', () => {
+		for (const key of ['r', 'R', ']']) {
+			assert.equal(remoteAction({keyCode: 0, key}), 'rotateRight', key);
+			assert.equal(photoRotationStep(remoteAction({keyCode: 0, key}), {zoomed: true, inActionBar: true}), 1, key);
+		}
+		assert.equal(remoteAction({keyCode: 219, key: '['}), 'rotateLeft');
+		assert.equal(photoRotationStep('rotateLeft', onPhoto), -1);
+	});
+
+	test('the other keys do not turn it', () => {
+		for (const action of ['down', 'left', 'right', 'ok', 'back', 'channelUp', 'info', 'red', null]) {
+			assert.equal(photoRotationStep(action, onPhoto), null, String(action));
+		}
 	});
 });

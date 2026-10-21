@@ -29,6 +29,7 @@ Immuch360 is not affiliated with Immich, nor with LG.
 | Leave a playing video with the remote | Left and Right go to the previous or next item, even while it plays; a video alone seeks 10 s | Same while the bar is hidden |
 | Watch a film without the date over it | The top bar of a video hides with the controls, 5 s after the last key | Always shown |
 | Look closer at a photo | Zoom with the channel keys or the zoom buttons, then move with the arrows; Back zooms out | Not available |
+| Turn a sideways photo | One key: Up turns it by 90° (R, ] or [ on a keyboard), kept for that photo on the TV | A button in the photo's controls |
 | Send a useful bug report | About page: TV model, webOS and Chromium versions, WebGL, video decoders, a video-in-WebGL test, all in a QR code | Not available |
 
 360° videos play flat for now, with a message: whether LG TVs hand video frames to WebGL is what the video test of the
@@ -71,7 +72,7 @@ in [src/immuch360/keys.ts](src/immuch360/keys.ts).
 
 | Key | webOS code | In lists | Photo | 360° photo | Video |
 |---|---|---|---|---|---|
-| Arrows | 37 to 40 | move the focus | Left and Right: previous, next; zoomed in: move | turn the view while held | Left and Right: previous, next (alone: 10 s); Up, Down: controls |
+| Arrows | 37 to 40 | move the focus | Left and Right: previous, next; Up: turn 90°; Down: controls; zoomed in: move | turn the view while held | Left and Right: previous, next (alone: 10 s); Up, Down: controls |
 | OK | 13 | open | show or hide the controls | controls, zoom button focused | controls |
 | Back | 461, 1536, 8, 10009, 27 | back | zoom out, then close | close | close the controls, then the video |
 | Channel up, down | 33, 34 | | zoom in, out | zoom in, out | |
@@ -80,6 +81,12 @@ in [src/immuch360/keys.ts](src/immuch360/keys.ts).
 | Stop | 413 | | | | close the video |
 | Previous, Next track | 177, 176 | | previous, next | previous, next | previous, next |
 | Magic Remote | pointer, wheel | point and click | | drag with OK held, wheel zooms | |
+| Keyboard R or ], [ | 82, 221, 219 | | turn 90° clockwise, counterclockwise | | |
+
+One key turns a photo by 90°: Up on a remote (every LG remote has it, the Magic Remote included), R or ] on a
+keyboard, [ to turn the other way, as in the photo editor of Immich's web app. The turn is kept for that photo on this
+TV and the slideshow shows it too; Immich has no place on the server for it yet. The turn button of the action bar
+(Down, then OK on it) does the same.
 
 1536 is Back on recent firmwares, but the wheel of the Magic Remote sends it too (with the key "Unidentified"): that
 pair is not Back. 8 is Back on a few firmwares, except while typing.
