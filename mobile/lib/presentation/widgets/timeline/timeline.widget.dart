@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
@@ -157,6 +158,10 @@ class _AlwaysReadOnlyNotifier extends ReadOnlyModeNotifier {
   void toggleReadonlyMode() {}
 }
 
+/// How often a held arrow moves the focus in the grid of a TV: 10 rows a second, see _SliverTimelineState
+@visibleForTesting
+const tvHeldArrowInterval = Duration(milliseconds: 100);
+
 class _SliverTimeline extends ConsumerStatefulWidget {
   const _SliverTimeline({
     this.topSliverWidget,
@@ -193,6 +198,9 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
   int? _restoreAssetIndex;
 
   final Debouncer _fastScrollDebouncer = Debouncer(interval: const Duration(milliseconds: 100));
+
+  /// Runs for [tvHeldArrowInterval] after an arrow moved the focus in the grid of a TV, see [_throttleHeldArrows]
+  Timer? _heldArrowCooldown;
 
   @override
   void initState() {
@@ -300,6 +308,7 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     WidgetsBinding.instance.removeObserver(this);
     FocusManager.instance.removeListener(_keepFocusInsideTvMargins);
     _fastScrollDebouncer.dispose();
+    _heldArrowCooldown?.cancel();
     _scrollController.dispose();
     unawaited(_eventSubscription?.cancel());
     super.dispose();
@@ -332,6 +341,28 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
       ),
     );
   }
+
+  /// A held arrow in the grid of a TV moves the focus at most once every [tvHeldArrowInterval]: the remote repeats a
+  /// held key some 20 times a second, and each row passed built its tiles and asked for their pictures, more than a TV
+  /// keeps up with (the grid went on moving well after the key was released). A press always moves.
+  KeyEventResult _throttleHeldArrows(FocusNode node, KeyEvent event) {
+    if (event is KeyUpEvent || !_arrowKeys.contains(event.logicalKey)) {
+      return KeyEventResult.ignored;
+    }
+    if (event is KeyRepeatEvent && (_heldArrowCooldown?.isActive ?? false)) {
+      return KeyEventResult.handled;
+    }
+    _heldArrowCooldown?.cancel();
+    _heldArrowCooldown = Timer(tvHeldArrowInterval, () {});
+    return KeyEventResult.ignored;
+  }
+
+  static final _arrowKeys = {
+    LogicalKeyboardKey.arrowUp,
+    LogicalKeyboardKey.arrowDown,
+    LogicalKeyboardKey.arrowLeft,
+    LogicalKeyboardKey.arrowRight,
+  };
 
   /// The arrows of a remote on the items of the grid, the TV only. Up from an item of the content goes to the nearest
   /// item above it that scrolls with the grid, the row above first: Flutter takes the item whose middle is the
@@ -608,7 +639,12 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                           NotificationListener<ScrollNotification>(
                             onNotification: _onScrollVelocityNotification,
                             child: tvMode
-                                ? Actions(actions: {DirectionalFocusIntent: _tvArrows}, child: timeline)
+                                ? Focus(
+                                    canRequestFocus: false,
+                                    skipTraversal: true,
+                                    onKeyEvent: _throttleHeldArrows,
+                                    child: Actions(actions: {DirectionalFocusIntent: _tvArrows}, child: timeline),
+                                  )
                                 : timeline,
                           ),
                           if (isBottomWidgetVisible)

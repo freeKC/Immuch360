@@ -247,6 +247,45 @@ void main() {
       await expectArrowsKeepFocusInsideMargins(tester);
     });
 
+    testWidgets('a held arrow moves at most one row every 100 ms, a press always moves', (tester) async {
+      await pumpTimeline(tester, tvMode: true, count: 240);
+      Focus.of(tester.element(tiles().first)).requestFocus();
+      await tester.pumpAndSettle();
+      var moves = 0;
+      var focused = FocusManager.instance.primaryFocus;
+      void countMove() {
+        final now = FocusManager.instance.primaryFocus;
+        if (now != focused) {
+          moves++;
+          focused = now;
+        }
+      }
+
+      // Held one second: the press, then repeats every 50 ms as a remote sends them
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      countMove();
+      for (var repeat = 0; repeat < 20; repeat++) {
+        await tester.pump(const Duration(milliseconds: 50));
+        await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowDown);
+        await tester.pump();
+        countMove();
+      }
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+
+      expect(moves, inInclusiveRange(10, 12), reason: 'the press and every other repeat, not 21 rows');
+
+      // Presses right after each other all move
+      moves = 0;
+      for (var press = 0; press < 3; press++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+        await tester.pump();
+        countMove();
+      }
+      expect(moves, 3);
+    });
+
     testWidgets('in the Photos tab too, where the empty bottom bar of the tab shell takes the bottom padding away', (
       tester,
     ) async {
