@@ -8,9 +8,9 @@ name: Immuch360 Desktop
 #                  version numbers of the desktop builds (.github/desktop/desktop_version.py)
 #   gates          the checks that keep the phones as they are and the desktop code in its place, without Flutter
 #   test           analyze, the whole mobile suite (test/desktop included) and the Android and iOS plugin lists
-#   linux          the Linux build on the oldest supported Ubuntu (for its glibc), with libsmb2 built there too, the
-#                  video tests on the system's libmpv, its .deb and .rpm (nFPM), and the build playing a video on a
-#                  virtual screen (Xvfb)
+#   linux          the Linux build on the oldest supported Ubuntu (for its glibc), with libsmb2 built there too and the
+#                  archive of its sources, the video tests on the system's libmpv, its .deb and .rpm (nFPM), and the
+#                  build playing a video on a virtual screen (Xvfb)
 #   linux-packages each package installed in a clean container of a distribution, its libraries checked, and the
 #                  installed app playing a video there
 #   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
@@ -19,7 +19,8 @@ name: Immuch360 Desktop
 #   windows        desktop tests on a real Windows, the release build, the ZIP and the installer (Inno Setup) for the
 #                  owner as artifacts named Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
 #                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE)
-#   packages       the six files of the build together with their SHA-256, as a release gets them
+#   packages       the seven files of the build (the six packages and the libsmb2 sources) together with their
+#                  SHA-256, as a release gets them
 #   upstream-sync  on upstream-sync/* branches, next to the test and linux jobs: the sync checklist of design 8.4
 #                  point 7 in the run summary. An upstream sync reaches the desktop branch through the phone branch;
 #                  an upstream-sync/* branch is made from the desktop branch to see the effect of a sync before it lands.
@@ -244,9 +245,24 @@ jobs:
 
       # dart_smb2 downloads a libsmb2.so built on glibc 2.38, which Ubuntu 22.04 and Debian 12 do not have: the same
       # sources are built here on 22.04 and bundled instead (mobile/packages/dart_smb2/IMMUCH360-NOTE.md). The script
-      # checks the commits, the exported functions against the release's library, and the glibc it asks for
-      - name: libsmb2 built on Ubuntu 22.04
-        run: bash .github/desktop/libsmb2/build_linux.sh "$RUNNER_TEMP/libsmb2"
+      # checks the commits, the exported functions against the release's library, and the glibc it asks for. libsmb2
+      # is under the LGPL: the script also writes the archive of the sources it built from, a file of every release
+      - name: libsmb2 built on Ubuntu 22.04, and its sources
+        id: libsmb2
+        env:
+          LABEL: ${{ needs.codegen.outputs.label }}
+        run: |
+          sources="$RUNNER_TEMP/libsmb2-sources/Immuch360-Desktop-$LABEL-libsmb2-sources.tar.gz"
+          bash .github/desktop/libsmb2/build_linux.sh "$RUNNER_TEMP/libsmb2" "$sources"
+          echo "sources=$sources" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the libsmb2 sources
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: ${{ steps.libsmb2.outputs.sources }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
 
       - name: Build
         working-directory: mobile
@@ -812,7 +828,7 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
-  # The six files of the build in one place with their SHA-256, as immuch360-desktop-release.yml attaches them to a
+  # The seven files of the build in one place with their SHA-256, as immuch360-desktop-release.yml attaches them to a
   # release: a file missing or added shows on every run, not on the day of a release
   packages:
     name: Package files and checksums

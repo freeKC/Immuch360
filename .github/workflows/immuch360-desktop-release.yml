@@ -3,7 +3,8 @@ name: Immuch360 Desktop release
 # On the push of a desktop pre-release tag, desktop-v<version>-<n> for desktop build n (desktop-v3.3.0-rc.0-5), the
 # packages of Immuch360 Desktop are built from the tag by immuch360-desktop.yml, called here with its own read-only
 # permissions, then attached to the GitHub release of the tag: the Windows ZIP and installer, the Linux .deb and .rpm,
-# the macOS ZIP and DMG, and SHA256SUMS.txt for every file of the release. .github/desktop/desktop_release.py attaches
+# the macOS ZIP and DMG, the sources of the libsmb2 library the Linux packages carry (LGPL), and SHA256SUMS.txt for every
+# file of the release. .github/desktop/desktop_release.py attaches
 # them, here with the token of the run as on the owner's computer with the owner's token, so that both ways give the
 # same release: it creates the release, as a pre-release, when the tag has none, and never replaces notes written by
 # hand. Run by hand on a desktop-v* tag (gh workflow run immuch360-desktop-release.yml --ref <tag>), it builds and
@@ -46,7 +47,7 @@ jobs:
           skip-decompress: true
           path: release
 
-      # The six files of the build, all there and nothing else, before anything is attached
+      # The seven files of the build, all there and nothing else, before anything is attached
       - name: The files of the build
         env:
           LABEL: ${{ needs.build.outputs.label }}
