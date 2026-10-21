@@ -16,6 +16,7 @@ import {
 import {randomId} from '../utils/uuid';
 import {makeAuthErrorMessage} from './_authHelpers';
 import type {PairedAccountResult} from '../pairing/types';
+import {t} from '../immuch360/i18n';
 
 const accountToConfig = (acc: Account): UserCredentialsConfig | ApiKeyConfig => {
 	if (acc.method === AuthMethod.API_KEY) {
@@ -162,7 +163,7 @@ export const useAccounts = () => {
 				});
 				const ok = await validateAuth(client);
 				if (!ok) {
-					return {success: false, errorMessage: 'The server rejected the phone sign-in session. Try again.'};
+					return {success: false, errorMessage: t('webos_pairing_rejected')};
 				}
 				const account: Account = {
 					id: randomId(),

@@ -13,6 +13,7 @@ import {createSlideshowPlaylist, type SlideshowOrder, type SlideshowSource} from
 import type {TimelineAsset} from '../../domain/types';
 import chrome from '../MediaChrome.module.less';
 import css from './Slideshow.module.less';
+import {t} from '../../immuch360/i18n';
 
 interface SlideshowProps {
 	start: TimelineAsset | null;
@@ -204,27 +205,27 @@ export const Slideshow: React.FC<SlideshowProps> = ({start, source, onExit}) => 
 			{stage.slots.map((asset, slot) =>
 				asset ? <SlideLayer key={slot} asset={asset} slot={slot as 0 | 1} isFront={slot === stage.front} onLoad={handleLayerLoad} /> : null
 			)}
-			{isEmpty && <div className={css.message}>No photos to show.</div>}
+			{isEmpty && <div className={css.message}>{t('webos_slideshow_empty')}</div>}
 			<div ref={osdRef} className={osdVisible ? chrome.chrome : `${chrome.chrome} ${chrome.hidden}`}>
 				<div className={chrome.topBar}>{current && <MediaInfo asset={current} />}</div>
 				<div className={chrome.bottomBar}>
 					<div className={chrome.actionBar}>
 						<RoundButton
 							icon={paused ? 'play' : 'pause'}
-							tooltipText={paused ? 'Play' : 'Pause'}
+							tooltipText={paused ? t('play') : t('pause')}
 							spotlightId={PLAY_BUTTON_SPOTLIGHT_ID}
 							data-spotlight-default-element
 							onClick={togglePaused}
 						/>
 						<RoundButton
 							icon={settings.order === 'shuffle' ? 'shuffleon' : 'shuffle'}
-							tooltipText={settings.order === 'shuffle' ? 'Shuffle on' : 'Shuffle off'}
+							tooltipText={settings.order === 'shuffle' ? t('webos_shuffle_on') : t('webos_shuffle_off')}
 							onClick={toggleOrder}
 						/>
-						<RoundButton tooltipText="Interval" onClick={cycleInterval}>
+						<RoundButton tooltipText={t('webos_interval')} onClick={cycleInterval}>
 							{formatInterval(settings.intervalSeconds)}
 						</RoundButton>
-						<RoundButton icon="closex" tooltipText="Exit" onClick={handleExit} />
+						<RoundButton icon="closex" tooltipText={t('exit_slideshow')} onClick={handleExit} />
 					</div>
 				</div>
 			</div>

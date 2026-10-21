@@ -1,15 +1,14 @@
 import {APIError} from '../api/client';
 import {AuthMethod} from '../api/types';
+import {t} from '../immuch360/i18n';
 
-const NETWORK_ERROR_MESSAGE =
-	"Couldn't reach the server. Verify the URL and that your Immich server allows requests from this app (CORS).";
 
 export function makeAuthErrorMessage(error: unknown, method: AuthMethod): string {
 	if (error instanceof APIError) {
 		if (error.status === 401) {
-			return method === AuthMethod.API_KEY ? 'Invalid API key' : 'Invalid email or password';
+			return method === AuthMethod.API_KEY ? t('webos_error_invalid_api_key') : t('webos_error_invalid_credentials');
 		}
-		if (error.status) return `Server returned ${error.status}`;
+		if (error.status) return t('webos_error_server_status', {status: String(error.status)});
 	}
-	return NETWORK_ERROR_MESSAGE;
+	return t('webos_error_cors');
 }

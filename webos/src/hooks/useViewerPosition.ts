@@ -1,13 +1,14 @@
 import {useMemo} from 'react';
 import {monthKey} from '../domain/transforms';
 import type {DayGroup, TimelineAsset, TimelineBucket} from '../domain/types';
+import {currentLocaleTag} from '../immuch360/i18n';
 
 interface PositionTimeline {
 	allBuckets: TimelineBucket[];
 	loadedMonths: ReadonlyMap<string, DayGroup[]>;
 }
 
-const format = (rank: number, total: number) => `${(rank + 1).toLocaleString('en-US')} / ${total.toLocaleString('en-US')}`;
+const format = (rank: number, total: number) => `${(rank + 1).toLocaleString(currentLocaleTag())} / ${total.toLocaleString(currentLocaleTag())}`;
 
 /**
  * "rank / total" label for the viewer. A month-bucket timeline only holds its loaded months, so

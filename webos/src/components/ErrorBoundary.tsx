@@ -1,4 +1,5 @@
 import React from 'react';
+import {t} from '../immuch360/i18n';
 
 interface ErrorBoundaryProps {
 	children: React.ReactNode;
@@ -29,7 +30,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 			return (
 				this.props.fallback ?? (
 					<div style={{padding: 40, textAlign: 'center', color: '#fff'}}>
-						<h2>Something went wrong</h2>
+						<h2>{t('errors.something_went_wrong')}</h2>
 						<p>{this.state.error?.message}</p>
 					</div>
 				)

@@ -6,7 +6,7 @@ import PlaceView from './PlaceView';
 import {usePlaces} from '../hooks/usePlaces';
 import {useFocusOnReturn} from '../hooks/useFocusOnReturn';
 import type {RoutePanelProps} from '../types/navigation';
-import {formatCount} from '../utils/FormattingService';
+import {t} from '../immuch360/i18n';
 
 const PlacesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 	const [selectedCity, setSelectedCity] = useState<string | null>(null);
@@ -28,10 +28,10 @@ const PlacesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 			isLoading={isLoading}
 			error={error}
 			isEmpty={!places?.length}
-			loadingText="Loading places…"
-			emptyText="No places found. Photos need location data to appear here."
+			loadingText={t('webos_loading')}
+			emptyText={t('webos_places_empty')}
 		>
-			<CollectionGrid title="Places" subtitle={places ? formatCount(places.length, 'place') : undefined}>
+			<CollectionGrid title={t('places')} subtitle={places ? t('places_count', {count: places.length}) : undefined}>
 				{places?.map((place) => (
 					<PlaceCard key={place.city} place={place} onSelect={handleSelectPlace} />
 				))}

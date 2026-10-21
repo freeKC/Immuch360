@@ -4,6 +4,7 @@ import {useTimeline} from '../hooks/useTimeline';
 import {AssetGridView} from '../components/AssetGridView';
 import type {TimelineScope} from '../domain/types';
 import {formatCount} from '../utils/FormattingService';
+import {t} from '../immuch360/i18n';
 
 interface AlbumViewProps {
 	albumId: string;
@@ -26,7 +27,7 @@ const AlbumView: React.FC<AlbumViewProps> = ({albumId, onBack, contentWidth}) =>
 			isLoading={isAlbumLoading || isTimelineLoading}
 			error={albumError ?? timelineError}
 			isEmpty={!album || timeline.allBuckets.length === 0}
-			emptyText="This album is empty."
+			emptyText={t('webos_album_empty')}
 			spotlightId="album-grid"
 			onBack={onBack}
 			contentWidth={contentWidth}

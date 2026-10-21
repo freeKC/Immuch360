@@ -10,6 +10,7 @@ import type {SearchQuery} from '../hooks/useSearch';
 import {createSpotlightContainer} from '../utils/spotlight';
 import type {RoutePanelProps} from '../types/navigation';
 import css from './SearchPanel.module.less';
+import {t} from '../immuch360/i18n';
 
 const Container = createSpotlightContainer({enterTo: 'default-element'});
 
@@ -23,8 +24,8 @@ const PersonResults: React.FC<{personId: string; contentWidth: number}> = ({pers
 			isLoading={isLoading}
 			error={isError ? error : null}
 			isEmpty={timeline.allBuckets.length === 0}
-			loadingText="Searching…"
-			emptyText="No results found."
+			loadingText={t('webos_searching')}
+			emptyText={t('no_results')}
 		>
 			<TimelineGrid timeline={timeline} contentWidth={contentWidth} />
 		</QueryStateView>
@@ -61,7 +62,7 @@ const SearchPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 				<div className={css.inputWrapper}>
 					{/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
 					<Input
-						placeholder="Search…"
+						placeholder={t('search_your_photos')}
 						value={inputValue}
 						onChange={handleInputChange}
 						size="small"
@@ -86,8 +87,8 @@ const SearchPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 						isLoading={isSearchLoading}
 						error={error}
 						isEmpty={!textQuery || groups.length === 0}
-						loadingText="Searching…"
-						emptyText={!textQuery ? 'Choose a person or search your photos' : 'No results found.'}
+						loadingText={t('webos_searching')}
+						emptyText={!textQuery ? t('webos_search_prompt') : t('no_results')}
 					>
 						<TimelineGrid groups={groups} contentWidth={contentWidth} />
 					</QueryStateView>

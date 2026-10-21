@@ -159,7 +159,9 @@ describe('AccountPanel', () => {
 				{...noopHandlers}
 			/>,
 		);
-		expect(screen.getByText(/Welcome to Immich/i)).toBeTruthy();
+		// Immuch360: the welcome page shows the app name and the tagline of the fork
+		expect(screen.getByText('Immuch360')).toBeTruthy();
+		expect(screen.getByText(/Any screen/i)).toBeTruthy();
 	});
 
 	test('overlay grid shows cards + add', () => {

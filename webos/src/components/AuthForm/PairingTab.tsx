@@ -6,6 +6,7 @@ import {usePhonePairing} from '../../hooks/usePhonePairing';
 import type {AuthSubmitResult} from '../../api/types';
 import type {PairingDriver, PairedAccountResult} from '../../pairing/types';
 import css from './PairingTab.module.less';
+import {t} from '../../immuch360/i18n';
 
 interface PairingTabProps {
 	driver: PairingDriver;
@@ -34,16 +35,16 @@ export const PairingTab: React.FC<PairingTabProps> = ({driver, suggestedUrl, onP
 			<div className={css.pairing}>
 				<QrCode value={state.url} className={css.qr} />
 				<div className={css.details}>
-					<p className={css.step}>1. Connect your phone to the same Wi-Fi as this TV</p>
+					<p className={css.step}>{t('webos_pairing_step_wifi')}</p>
 					<p className={css.step}>
-						2. Scan the code — or visit <span className={css.url}>{manualUrl}</span> and enter the code below
+						{t('webos_pairing_step_scan_before')}<span className={css.url}>{manualUrl}</span>{t('webos_pairing_step_scan_after')}
 					</p>
-					<p className={css.step}>3. Sign in to your Immich server</p>
+					<p className={css.step}>{t('webos_pairing_step_sign_in')}</p>
 					<div className={css.codeRow}>
-						<span className={css.codeLabel}>Code</span>
+						<span className={css.codeLabel}>{t('webos_pairing_code')}</span>
 						<span className={css.code}>{state.code}</span>
 					</div>
-					<p className={css.status}>Waiting for your phone…</p>
+					<p className={css.status}>{t('webos_pairing_waiting')}</p>
 				</div>
 			</div>
 		);
@@ -55,7 +56,7 @@ export const PairingTab: React.FC<PairingTabProps> = ({driver, suggestedUrl, onP
 				<ErrorMessage message={state.message} />
 				<div className={css.retry}>
 					<Button size="small" onClick={restart} backgroundOpacity="opaque">
-						Try again
+						{t('retry')}
 					</Button>
 				</div>
 			</div>
@@ -64,7 +65,7 @@ export const PairingTab: React.FC<PairingTabProps> = ({driver, suggestedUrl, onP
 
 	return (
 		<div className={css.message}>
-			<p className={css.status}>{state.phase === 'finalizing' ? 'Signing in…' : 'Preparing phone sign-in…'}</p>
+			<p className={css.status}>{state.phase === 'finalizing' ? t('webos_pairing_signing_in') : t('webos_pairing_preparing')}</p>
 		</div>
 	);
 };

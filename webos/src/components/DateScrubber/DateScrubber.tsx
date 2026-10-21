@@ -4,6 +4,7 @@ import {formatBucketMonth} from '../../utils/FormattingService';
 import {DATE_SCRUBBER_SPOTLIGHT_ID} from '../../utils/constants';
 import type {TimelineBucket} from '../../domain/types';
 import css from './DateScrubber.module.less';
+import {t} from '../../immuch360/i18n';
 
 interface DateScrubberProps {
 	buckets: TimelineBucket[];
@@ -212,7 +213,7 @@ export const DateScrubber: React.FC<DateScrubberProps> = React.memo(
 					<div className={css.positionLine} style={{top: `${indicatorTop}%`}} aria-hidden="true" />
 					<div className={css.dateBubble} style={{top: `${bubbleTop}%`}}>
 						{displayBucket ? formatBucketMonth(displayBucket.timeBucket) : ''}
-						{isLoading && <span className={css.status}>Loading…</span>}
+						{isLoading && <span className={css.status}>{t('webos_loading')}</span>}
 						{hasError && !isLoading && <span className={css.error}>Couldn’t load</span>}
 					</div>
 				</SpottableDiv>

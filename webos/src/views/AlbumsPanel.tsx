@@ -6,7 +6,7 @@ import AlbumView from './AlbumView';
 import {useAlbums} from '../hooks/useAlbums';
 import {useFocusOnReturn} from '../hooks/useFocusOnReturn';
 import type {RoutePanelProps} from '../types/navigation';
-import {formatCount} from '../utils/FormattingService';
+import {t} from '../immuch360/i18n';
 
 const AlbumsPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 	const [selectedAlbumId, setSelectedAlbumId] = useState<string | null>(null);
@@ -28,10 +28,10 @@ const AlbumsPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 			isLoading={isLoading}
 			error={error}
 			isEmpty={!albums?.length}
-			loadingText="Loading albums…"
-			emptyText="No albums found."
+			loadingText={t('webos_loading')}
+			emptyText={t('webos_albums_empty')}
 		>
-			<CollectionGrid title="Albums" subtitle={albums ? formatCount(albums.length, 'album') : undefined}>
+			<CollectionGrid title={t('albums')} subtitle={albums ? t('albums_count', {count: albums.length}) : undefined}>
 				{albums?.map((album) => (
 					<AlbumCard key={album.id} album={album} onSelect={handleSelectAlbum} />
 				))}

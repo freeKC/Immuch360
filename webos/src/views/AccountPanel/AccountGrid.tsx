@@ -6,6 +6,7 @@ import {AccountActionBar} from '../../components/AccountActionBar/AccountActionB
 import {SpottableDiv, createSpotlightContainer} from '../../utils/spotlight';
 import type {Account} from '../../utils/accountsStore';
 import css from './AccountGrid.module.less';
+import {t} from '../../immuch360/i18n';
 
 interface AccountGridProps {
 	accounts: Account[];
@@ -70,7 +71,7 @@ export const AccountGrid: React.FC<AccountGridProps> = ({
 
 	return (
 		<GridContainer className={css.wrap} spotlightId={GRID_SPOTLIGHT_ID}>
-			<h4 className={css.heading}>Accounts</h4>
+			<h4 className={css.heading}>{t('webos_accounts')}</h4>
 			<div className={css.grid}>
 				{sorted.map(a => (
 					<div key={a.id} onFocus={focusHandlers[a.id]}>
@@ -91,7 +92,7 @@ export const AccountGrid: React.FC<AccountGridProps> = ({
 					<span className={css.addIcon}>
 						<Icon size="small">plus</Icon>
 					</span>
-					<span>Add account</span>
+					<span>{t('webos_add_account')}</span>
 				</SpottableDiv>
 			</div>
 			<AccountActionBar

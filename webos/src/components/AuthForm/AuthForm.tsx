@@ -8,6 +8,7 @@ import {PairingTab} from './PairingTab';
 import {AuthMethod, type AuthSubmitResult, type AuthFormPayload} from '../../api/types';
 import type {PairingDriver, PairedAccountResult} from '../../pairing/types';
 import css from './AuthForm.module.less';
+import {t} from '../../immuch360/i18n';
 
 // Canonical auth-attempt types live in api/types; re-exported here for the form's consumers.
 export type {AuthSubmitResult, AuthFormPayload};
@@ -61,7 +62,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({initialUrl, onSubmit, onBack,
 
 	const submitApi = useCallback(() => {
 		if (!url || !apiKey) {
-			setError('Please enter both URL and API key');
+			setError(t('webos_enter_url_and_api_key'));
 			return;
 		}
 		void submit({method: AuthMethod.API_KEY, baseUrl: url, apiKey});
@@ -81,7 +82,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({initialUrl, onSubmit, onBack,
 	const tabs = [];
 	if (pairingDriver && onPairedLogin) {
 		tabs.push(
-			<Tab title="Phone" icon="mobile" tabKey="phone" key="phone">
+			<Tab title={t('webos_phone')} icon="mobile" tabKey="phone" key="phone">
 				{tabIndex === 0 ? (
 					<PairingTab
 						driver={pairingDriver}
@@ -94,9 +95,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({initialUrl, onSubmit, onBack,
 		);
 	}
 	tabs.push(
-		<Tab title="Email" icon="profile" tabKey="creds" key="creds">
+		<Tab title={t('email')} icon="profile" tabKey="creds" key="creds">
 			<div className={css.tabContent}>
-				<LabeledField label="Server URL">
+				<LabeledField label={t('server_info_box_server_url')}>
 					<UrlInput
 						value={url}
 						onChange={setUrl}
@@ -105,37 +106,37 @@ export const AuthForm: React.FC<AuthFormProps> = ({initialUrl, onSubmit, onBack,
 						autoFocus
 					/>
 				</LabeledField>
-				<LabeledField label="Email">
+				<LabeledField label={t('email')}>
 					<FieldRow
 						value={email}
 						onChange={setEmail}
-						placeholder="Email"
+						placeholder={t('email')}
 						disabled={submitting}
 						clearLabel="Clear Email"
 					/>
 				</LabeledField>
-				<LabeledField label="Password">
+				<LabeledField label={t('password')}>
 					<FieldRow
 						value={password}
 						onChange={setPassword}
 						type="password"
-						placeholder="Password"
+						placeholder={t('password')}
 						disabled={submitting}
 						clearLabel="Clear Password"
 					/>
 				</LabeledField>
 				<div className={css.actions}>
 					<Button onClick={submitCreds} disabled={submitting} backgroundOpacity="opaque">
-						{submitting ? 'Connecting…' : 'Connect'}
+						{submitting ? t('webos_connecting') : t('webos_connect')}
 					</Button>
 				</div>
 			</div>
 		</Tab>,
 	);
 	tabs.push(
-		<Tab title="API Key" icon="lock" tabKey="apikey" key="apikey">
+		<Tab title={t('api_key')} icon="lock" tabKey="apikey" key="apikey">
 			<div className={css.tabContent}>
-				<LabeledField label="Server URL">
+				<LabeledField label={t('server_info_box_server_url')}>
 					<UrlInput
 						value={url}
 						onChange={setUrl}
@@ -143,18 +144,18 @@ export const AuthForm: React.FC<AuthFormProps> = ({initialUrl, onSubmit, onBack,
 						placeholder="http(s)://…"
 					/>
 				</LabeledField>
-				<LabeledField label="API Key">
+				<LabeledField label={t('api_key')}>
 					<FieldRow
 						value={apiKey}
 						onChange={setApiKey}
-						placeholder="API Key"
+						placeholder={t('api_key')}
 						disabled={submitting}
 						clearLabel="Clear API Key"
 					/>
 				</LabeledField>
 				<div className={css.actions}>
 					<Button onClick={submitApi} disabled={submitting} backgroundOpacity="opaque">
-						{submitting ? 'Connecting…' : 'Connect'}
+						{submitting ? t('webos_connecting') : t('webos_connect')}
 					</Button>
 				</div>
 			</div>
@@ -165,7 +166,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({initialUrl, onSubmit, onBack,
 		<div className={css.root}>
 			{onBack ? (
 				<Button className={css.backBtn} size="small" icon="arrowsmallleft" onClick={onBack}>
-					Back
+					{t('back')}
 				</Button>
 			) : null}
 

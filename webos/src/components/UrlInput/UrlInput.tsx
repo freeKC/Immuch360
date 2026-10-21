@@ -2,6 +2,7 @@ import React, {useEffect, useMemo, useRef} from 'react';
 import {SpottableDiv} from '../../utils/spotlight';
 import {FieldRow} from '../FieldRow/FieldRow';
 import css from './UrlInput.module.less';
+import {t} from '../../immuch360/i18n';
 
 const SHORTCUTS = ['http://', 'https://', '.local', '.com', ':2283', ':30041'] as const;
 
@@ -37,7 +38,7 @@ export const UrlInput: React.FC<UrlInputProps> = ({value, onChange, placeholder,
 				autoFocus={autoFocus}
 				clearLabel="Clear URL"
 			/>
-			<div className={css.chips} role="group" aria-label="URL shortcuts">
+			<div className={css.chips} role="group" aria-label={t('webos_url_shortcuts')}>
 				{SHORTCUTS.map(s => (
 					<SpottableDiv
 						key={s}

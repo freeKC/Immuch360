@@ -4,6 +4,7 @@ import React from 'react';
 import {createRoot, hydrateRoot} from 'react-dom/client';
 
 import App from './App/App';
+import {loadLocale} from './immuch360/i18n';
 
 const appElement = <App />;
 
@@ -13,7 +14,9 @@ if (typeof window !== 'undefined') {
 		if (ENACT_PACK_ISOMORPHIC) {
 			hydrateRoot(rootElement, appElement);
 		} else {
-			createRoot(rootElement).render(appElement);
+			// Immuch360: the texts of the TV's language are read before the first render (English on any error)
+			const render = () => createRoot(rootElement).render(appElement);
+			loadLocale().then(render, render);
 		}
 	}
 }

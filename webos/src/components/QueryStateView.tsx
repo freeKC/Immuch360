@@ -1,6 +1,7 @@
 import React from 'react';
 import {presentError} from '../utils/presentError';
 import css from './QueryStateView.module.less';
+import {t} from '../immuch360/i18n';
 
 interface QueryStateViewProps {
 	isLoading: boolean;
@@ -17,9 +18,9 @@ export const QueryStateView: React.FC<QueryStateViewProps> = ({
 	isLoading,
 	error,
 	isEmpty = false,
-	loadingText = 'Loading…',
+	loadingText = t('webos_loading'),
 	errorText,
-	emptyText = 'Nothing here yet.',
+	emptyText = t('nothing_here_yet'),
 	className,
 	children,
 }) => {

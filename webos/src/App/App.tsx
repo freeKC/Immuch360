@@ -17,6 +17,7 @@ import './attachErrorHandler';
 import '../styles/tokens.less';
 
 import css from './App.module.less';
+import {t} from '../immuch360/i18n';
 
 const AppBase: React.FC = () => {
 	const {
@@ -112,7 +113,7 @@ const AppBase: React.FC = () => {
 	// Branch 2: accounts exist but no repository yet
 	if (isValidating && !repository && !overlayOpen) {
 		return (
-			<div className={css.boot}>Loading…</div>
+			<div className={css.boot}>{t('webos_loading')}</div>
 		);
 	}
 

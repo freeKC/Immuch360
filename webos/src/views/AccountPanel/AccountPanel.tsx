@@ -7,8 +7,9 @@ import {createSpotlightContainer} from '../../utils/spotlight';
 import {useWebOSKeys} from '../../hooks/useWebOSKeys';
 import type {Account} from '../../utils/accountsStore';
 import type {PairingDriver, PairedAccountResult} from '../../pairing/types';
-import bannerImage from '../../assets/immich-banner.webp';
+import bannerImage from '../../assets/immuch360-icon.png';
 import css from './AccountPanel.module.less';
+import {t} from '../../immuch360/i18n';
 
 export type AccountPanelMode = 'first-launch' | 'overlay';
 
@@ -144,11 +145,12 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 		}
 		return (
 			<div className={css.firstLaunch}>
-				<img src={bannerImage} alt="Immich" className={css.banner} />
-				<h2 className={css.welcomeTitle}>Welcome to Immich for TV</h2>
-				<p className={css.welcomeSub}>Add your Immich account to start browsing.</p>
+				<img src={bannerImage} alt="" className={css.banner} />
+				<h2 className={css.welcomeTitle}>Immuch360</h2>
+				<p className={css.welcomeSub}>{t('welcome_tagline')}</p>
+				<p className={css.welcomeSub}>{t('welcome_server_title')}</p>
 				<Button autoFocus size="large" icon="plus" onClick={goForm} backgroundOpacity="opaque">
-					Add account
+					{t('webos_add_account')}
 				</Button>
 			</div>
 		);

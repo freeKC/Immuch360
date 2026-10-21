@@ -1,3 +1,5 @@
+import {currentLocale, currentLocaleTag, t} from '../immuch360/i18n';
+
 // Immich servers before v3 send asset durations as "H:MM:SS.mmm" strings; v3+ sends
 // milliseconds. Normalize both to seconds at the API boundary.
 export function toDurationSeconds(duration: string | number | null | undefined): number | null {
@@ -20,13 +22,13 @@ export function formatDuration(durationSeconds: number): string {
 }
 
 export function formatCount(count: number, noun: string): string {
-	return `${count.toLocaleString('en-US')} ${noun}${count === 1 ? '' : 's'}`;
+	return `${count.toLocaleString(currentLocaleTag())} ${noun}${count === 1 ? '' : 's'}`;
 }
 
 export function formatBucketMonth(timeBucket: string): string {
 	const [year, month] = timeBucket.split('-').map(Number);
 	if (!year || !month || month < 1 || month > 12) return timeBucket;
-	return new Date(year, month - 1).toLocaleDateString('en-US', {month: 'short', year: 'numeric'});
+	return new Date(year, month - 1).toLocaleDateString(currentLocaleTag(), {month: 'short', year: 'numeric'});
 }
 
 export function formatBucketDate(timeBucket: string): string {
@@ -43,17 +45,18 @@ export function formatBucketDate(timeBucket: string): string {
 	const dateNormalized = new Date(date);
 	dateNormalized.setHours(0, 0, 0, 0);
 
-	if (dateNormalized.getTime() === today.getTime()) return 'Today';
-	if (dateNormalized.getTime() === yesterday.getTime()) return 'Yesterday';
+	if (dateNormalized.getTime() === today.getTime()) return t('webos_today');
+	if (dateNormalized.getTime() === yesterday.getTime()) return t('webos_yesterday');
 
-	return date.toLocaleDateString('en-US', {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'});
+	return date.toLocaleDateString(currentLocaleTag(), {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'});
 }
 
 // localDateTime carries the wall-clock time in UTC fields, so it's formatted in UTC.
 export function formatAssetDateTime(localDateTime: string): {date: string; time: string} {
 	const date = new Date(localDateTime);
 	return {
-		date: date.toLocaleDateString('en-US', {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC'}),
-		time: date.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit', timeZone: 'UTC'}),
+		date: date.toLocaleDateString(currentLocaleTag(), {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC'}),
+		// English keeps the 24 hour clock of immich-tv-webos; other languages use their own
+		time: date.toLocaleTimeString(currentLocale() === 'en' ? 'en-GB' : currentLocaleTag(), {hour: '2-digit', minute: '2-digit', timeZone: 'UTC'}),
 	};
 }
