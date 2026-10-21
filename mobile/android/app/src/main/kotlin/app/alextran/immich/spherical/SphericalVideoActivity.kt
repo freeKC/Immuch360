@@ -32,6 +32,7 @@ import androidx.media3.common.C
 import androidx.media3.common.ErrorMessageProvider
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
@@ -41,6 +42,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.ResolvingDataSource
+import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.video.VideoFrameMetadataListener
@@ -1113,7 +1115,7 @@ class SphericalVideoActivity : ComponentActivity() {
    * without the label.
    */
   private fun errorMessageFor(error: PlaybackException): String? {
-    val format = player?.videoFormat
+    val format = videoFormatOf(error)
     val codec = VideoDecoders.codecName(format?.sampleMimeType)
     val width = format?.width ?: 0
     val height = format?.height ?: 0
@@ -1135,13 +1137,23 @@ class SphericalVideoActivity : ComponentActivity() {
   }
 
   /**
+   * The video format behind [error]: the one the player plays, else the one its video renderer failed on. A decoder
+   * that does not start never gives the player a video format, and the error view would fall back on the generic
+   * "Unable to play video" for the commonest failure on a TV, a video beyond its decoders.
+   */
+  private fun videoFormatOf(error: PlaybackException): Format? =
+    player?.videoFormat
+      ?: (error as? ExoPlaybackException)?.takeIf { it.type == ExoPlaybackException.TYPE_RENDERER }?.rendererFormat
+        ?.takeIf { MimeTypes.isVideo(it.sampleMimeType) }
+
+  /**
    * Writes the error the user sees to the Logs page, with what the player saw of the video and what the device is:
    * logcat alone kept it before, out of reach of a TV user. Not the URL, which may hold a token.
    */
   private fun reportFailure(error: PlaybackException) {
     val current = player
     val url = playbackUrl()
-    val format = current?.videoFormat
+    val format = videoFormatOf(error)
     val video =
       format?.let {
         val rate = if (it.bitrate > 0) ", ${PlaybackReport.megabits(it.bitrate.toLong())} Mbit/s" else ""
