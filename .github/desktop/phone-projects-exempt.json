@@ -1,7 +1,7 @@
 {
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
-    "blob": "462ad55f592632c9c6d25febb341bb0a96640f46",
-    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons"
+    "blob": "29e0d6c0d644f53cad73d9aa76653e334c6213d1",
+    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/AppHealth.kt": {
     "blob": "72007f2819b19ef23c3dffaadaad85110bb1285f",
@@ -14,6 +14,10 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/VideoDecoders.kt": {
     "blob": "349b4d8510907714215d1935668829c4e4d69775",
     "reason": "TV lot (5e7bf8e27): no 360 player for a stream the device cannot decode"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/documenttree/DocumentTreePlugin.kt": {
+    "blob": "10ee08ac7cacbf75e3f340ee57dd86769453fea0",
+    "reason": "DJI import (feat-dji-import, 30e76a894, 4f82d5fb6, e5693a92e): folders picked in the system picker (a drone, a controller or a card over USB) listed and read for the DJI drone page of the phone app"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/PlaybackReport.kt": {
     "blob": "98bf447a264a700196aa94270c45916032417769",
@@ -46,6 +50,10 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/StreamingLoadControlTest.kt": {
     "blob": "bea2b1026f5d95e732ec62044b7b79ca91a67ad8",
     "reason": "TV lot (5e7bf8e27): unit tests of StreamingLoadControl, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/documenttree/DocumentTreeReadsTest.kt": {
+    "blob": "00eb864c380c04d835a08b4a85d1501e69a95341",
+    "reason": "DJI import (e5693a92e): unit tests of the read planning of DocumentTreePlugin, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/PlaybackReportTest.kt": {
     "blob": "29ccb659b150adfc6305a4fc930eda5e266bec43",
