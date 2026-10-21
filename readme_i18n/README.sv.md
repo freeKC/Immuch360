@@ -10,8 +10,8 @@
 Immuch360 är en app med fri och öppen källkod för att hitta, bläddra i, spela upp och utforska dina foton och videor: de vanliga och de panorama-, 360°-, 3D- och immersiva som andra appar visar platta, dubblerade eller utsträckta. Appen läser dem där de finns, på enheten själv, på en NAS eller en dator, på en Plex-server eller på en Immich-server, och spelar upp dem på telefoner, surfplattor, TV-apparater, Meta Quest-headset och datorer. Inget konto, inget moln, ingen server krävs.
 
 - **Vad gör den?** Den visar dina foton och videor som ett galleri och spelar upp dem i den visare som passar varje fil: platt, som en sfär du ser dig omkring i, i 3D, i ett headset.
-- **Vilket innehåll?** Platta foton och videor, panoramabilder, 360°-foton och videor, VR180, stereoskopisk 3D, Apple-spatiala foton, samt råfilerna från 360°-kameror (Insta360, GoPro MAX, DJI Osmo 360), sammanfogade av appen.
-- **På vilka enheter?** Android-telefoner och surfplattor, iPhone och iPad, Android TV och Google TV, Meta Quest 2, Pro, 3 och 3S, Windows (förhandsversion), samt Linux och macOS som tidiga förhandsversioner.
+- **Vilket innehåll?** Platta foton och videor, panoramabilder, 360°-foton och videor, VR180, stereoskopisk 3D, Apple-spatiala foton, DJI-drönarnas 360°-sfärer, samt råfilerna från 360°-kameror (Insta360, GoPro MAX, DJI Osmo 360), sammanfogade av appen.
+- **På vilka enheter?** Android-telefoner och surfplattor, iPhone och iPad, Android TV och Google TV, LG-TV med webOS (en separat app, första testbygget), Meta Quest 2, Pro, 3 och 3S, Windows (förhandsversion), samt Linux och macOS som tidiga förhandsversioner.
 - **Behöver jag en server eller ett konto?** Nej. Immuch360 fungerar på egen hand med innehållet på din enhet. En Immich-server, en NAS, en mediaserver eller en Plex-server är alternativ du lägger till när du vill.
 
 <p align="center">
@@ -20,14 +20,15 @@ Immuch360 är en app med fri och öppen källkod för att hitta, bläddra i, spe
 
 <div align="center">
 
-| Plattform | Var du hämtar den | Status den 20 oktober 2026 |
+| Plattform | Var du hämtar den | Status den 22 oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoner och surfplattor | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | på Google Play (build 25), build 26 på GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoner och surfplattor | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | på Google Play (build 25; build 26 under granskning), build 27 på GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone och iPad** | App Store | version 3.3.1 (build 24) väntar på Apples granskning sedan den 14 oktober; [bygg den själv](../docs/immuch360/build.md) så länge |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV och Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 på GitHub, med fjärrkontrollsrättningarna i sökfiltren; TV-listningen är under granskning hos Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 och 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | på Horizon Store (build 23; build 25 under granskning), build 26 på GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installationsprogram eller ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | desktop build 6, en förhandsversion: foton, platta och 360°-videor, resurser, Plex, kameror, filer öppnade med programmet, gränssnittet på 89 språk |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS och Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | förhandsversioner: på Linux foton, 360°-foton och platta videor (360°-videor spelas platt); på macOS detsamma, kontrollerat endast på projektets CI-Mac, osignerat |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV och Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 27 på GitHub: mörkt tema som standard, Vänster och Höger under en video, ett tydligt meddelande när en video inte kan spelas upp; TV-listningen är under granskning hos Google |
+| **LG-TV** med webOS 4.0 och senare | [.ipk-testbygge](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0) | testbygge 0.1.0 från den 21 oktober, att installera i [Developer Mode](#lg-tvs-webos); ännu inte kört på en riktig LG-TV |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 och 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | på Horizon Store (build 23; build 25 under granskning), build 27 på GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installationsprogram eller ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | desktop build 7, en förhandsversion: foton, platta och 360°-videor, resurser, Plex, kameror, filer öppnade med programmet, foton vridna med en tangent, gränssnittet på 89 språk |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS och Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | förhandsversioner: på Linux foton, 360°-foton och platta videor (360°-videor spelas platt); på macOS detsamma, kontrollerat endast på projektets CI-Mac, osignerat |
 
 *Statusarna uppdateras vid varje utgåva; detaljerna, per build, finns i [Utgåvestatus](../docs/immuch360/release-status.md).*
 
@@ -42,13 +43,16 @@ Immuch360 är en app med fri och öppen källkod för att hitta, bläddra i, spe
 
 - [Vad du kan göra](#what-you-can-do)
   - [Titta på dina foton och videor](#watch-your-photos-and-videos)
+  - [Vrid ett foto med en tangent](#turn-a-photo-with-one-key)
   - [Utforska panoramabilder, 360°, VR180 och 3D](#explore-panoramas-360-vr180-and-3d)
   - [Använd dina egna filer, utan konto](#use-your-own-files-without-an-account)
   - [Nå innehållet på en NAS, en dator eller en mediaserver](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
   - [Hitta ditt Immich-bibliotek](#find-your-immich-library)
   - [Gå immersivt på Meta Quest](#go-immersive-on-meta-quest)
   - [Titta på TV och på datorn](#watch-on-the-tv-and-on-the-computer)
+  - [Immuch360 på en LG-TV (webOS)](#immuch360-on-an-lg-tv-webos)
   - [Kameror, Plex och råa kamerafiler](#cameras-plex-and-raw-camera-files)
+  - [Din DJI-drönares foton och videor på din Immich-server](#your-dji-drones-photos-and-videos-on-your-immich-server)
 - [Enheter och system](#devices-and-systems)
 - [Avancerade funktioner](#advanced-features)
 - [Teknisk dokumentation](#technical-documentation)
@@ -74,6 +78,19 @@ Immuch360 är först och främst ett galleri och en spelare för vanliga foton o
 3. Svep uppåt på en video för dess detaljer: kodek, storlek, bildfrekvens, bithastighet, och om enheten avkodar den.
 
 Mer: [visarna och videospelaren](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [videodetaljer och avkodare](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
+
+<a id="turn-a-photo-with-one-key"></a>
+### Vrid ett foto med en tangent
+
+Rotera ett foto 90° med ett enda tryck, utan att öppna en redigerare: en knapp, en tangent på tangentbordet eller en färgknapp på TV:ns fjärrkontroll, på alla plattformar. Immich-appen vrider ett foto i sin redigerare; Immuch360 gör det med en tangent, och för dina egna foton på en Immich-server 2.6 eller senare går det via samma redigerare på servern, så att webbappen och dina andra enheter visar dem vridna. Alla andra foton vrids bara på den här enheten. 360°-, 180°- och 3D-foton vrids aldrig, så att de immersiva vyerna förblir i våg.
+
+1. **Telefoner, surfplattor och Meta Quest-fönstret**: öppna fotot och tryck på Rotera i den nedre raden, före Redigera, för att vrida det medurs; ett långt tryck vrider det åt andra hållet. Med ett tangentbord, R och Shift+R.
+2. **Android TV och Google TV**: fjärrkontrollens gula knapp vrider fotot medurs och den blå knappen moturs, var fokus än befinner sig i visaren. På en fjärrkontroll utan färgknappar, tryck Ned: fältet under fotot visas med Rotera markerat (ett steg åt Höger bort när fotot har en textknapp), och varje OK vrider fotot.
+3. **LG-TV (webOS)**: gul och blå som på Android TV, R och Shift+R på ett tangentbord, eller vridknappen bland fotots kontroller.
+4. **Windows, Linux och macOS**: R vrider medurs, Shift+R moturs, eller rotationsknappen i det övre fältet, före helskärm.
+5. **Foton från en nätverksresurs, Plex eller en kamera**: rotationsknappen först i det övre fältet, R och Shift+R, eller den gula och den blå knappen.
+
+Var vridningen sparas: ett foto från ditt eget konto på Immich 2.6 eller senare vrids via serverns fotoredigerare, som behåller originalfilen och skapar en vriden bild (ett tunt fält visas medan den arbetar; fyra vridningar, eller en vridning tillbaka, återställer originalet). Enhetens foton, foton från en resurs, en partner eller ett delat album, och alla foton på en äldre server vrids bara på den här enheten, för just det fotot, och filen ändras aldrig; appen säger det en gång för ett Immich-foto. I Android-, iOS- och datorapparna syns en vridning som sparats på enheten i visaren, men ännu inte i miniatyrerna, bildspelet och minnena. Videor, den låsta mappen och alla 360°-, 180°- eller 3D-foton har ingen Rotera.
 
 <a id="explore-panoramas-360-vr180-and-3d"></a>
 ### Utforska panoramabilder, 360°, VR180 och 3D
@@ -138,7 +155,7 @@ Med en [Immich](https://github.com/immich-app/immich)-server är Immuch360 Immic
 2. I Inställningar, Tillgångsvisare, Videor, väljer "Videokälla" originalet när enheten avkodar det, alltid originalet, eller alltid den omkodade strömmen.
 3. För att visa ett 360°-foto för någon som inte har appen, dela det med en delad Immich-länk: Immich-webbappen visar det som en sfär i deras webbläsare.
 
-Det aktuella bygget, build 26, baseras på Immichs `main` från den 10 oktober 2026 (version 3.3.0-rc.0) och har testats mot en Immich 3.2.4-server och en server byggd från samma Immich `main`. Rapportera problem i [Issues](https://github.com/freeKC/Immuch360/issues), inte till Immich-projektet.
+Det aktuella bygget, build 27, baseras på Immichs `main` från den 10 oktober 2026 (version 3.3.0-rc.0) och har testats mot en Immich 3.2.4-server och en server byggd från samma Immich `main`. Rapportera problem i [Issues](https://github.com/freeKC/Immuch360/issues), inte till Immich-projektet.
 
 Mer: [allt annat är Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [jämfört med Immich-appen](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -162,7 +179,7 @@ Mer: [i Meta Quest-headsetet](../docs/immuch360/user-guide.md#in-the-meta-quest-
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 ### Titta på TV och på datorn
 
-Samma Android-app körs på Android TV och Google TV med fjärrkontrollen som enda inmatning: pilarna flyttar ramen, OK öppnar, Bakåt går tillbaka, och pilarna låter dig se dig omkring i ett 360°-foto eller en 360°-video. TV:n har inga egna foton, så den visar din Immich-server, dina nätverksresurser, din Plex-server och dina kameror. På en Windows-dator läser Immuch360 Desktop de mappar du väljer utan någon server alls, spelar upp platta och 360°-videor i en egen spelare, bläddrar i samma resurser och servrar, och kan dela datorn med ett headset hemma.
+Samma Android-app körs på Android TV och Google TV, med mörkt tema från första starten och fjärrkontrollen som enda inmatning: pilarna flyttar ramen, OK öppnar, Bakåt går tillbaka; i visaren går Vänster och Höger till föregående eller nästa foto eller video, även medan en video spelas, och i ett 360°-foto eller en 360°-video låter pilarna dig se dig omkring. TV:n har inga egna foton, så den visar din Immich-server, dina nätverksresurser, din Plex-server och dina kameror; LG-TV har [en egen app](#immuch360-on-an-lg-tv-webos). På en Windows-dator läser Immuch360 Desktop de mappar du väljer utan någon server alls, spelar upp platta och 360°-videor i en egen spelare, bläddrar i samma resurser och servrar, och kan dela datorn med ett headset hemma.
 
 <p align="center">
   <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Sfärvisaren på en Google TV: ett 360°-panorama av en sjöstrand, stängknappen längst upp till vänster, knapparna Zooma ut, Zooma in, 360° och 3D längst upp till höger, vridna med fjärrkontrollens pilar">
@@ -171,9 +188,24 @@ Samma Android-app körs på Android TV och Google TV med fjärrkontrollen som en
 
 1. På en TV: installera APK-filen med adb (se [Installera](#android-tv-and-google-tv)); på välkomstsidan välj "Lägg till en nätverksresurs eller en mediaserver" för en resurs, en Plex-server eller en kamera, "Använd utan server", eller "Anslut till en Immich-server".
 2. På en Windows-dator: installera förhandsversionen eller packa upp den och starta `immuch360.exe` (se [Installera](#windows)); från desktop build 5 öppnar "Använd utan server" på välkomstsidan valet av dina mappar, och "Anslut till en Immich-server" inloggningssidan. Ett foto, en video eller en mapp som öppnas med programmet, eller släpps på dess fönster, öppnas genast, en 360°-fil i sin 360°-vy; flera filer öppnas tillsammans på en sida.
-3. I en visare fungerar fjärrkontrollens knappar för uppspelning och paus, snabbspolning bakåt och framåt, samt föregående och nästa; och det gör även tangentbordets tangenter på en dator (Mellanslag, J och L, F för helskärm).
+3. I en visare fungerar fjärrkontrollens knappar för uppspelning och paus, snabbspolning bakåt och framåt, samt föregående och nästa; och det gör även tangentbordets tangenter på en dator (Mellanslag, J och L, F för helskärm). På en TV visar OK under en video kontrollerna med uppspelning och paus markerat, följt av knapparna -10 s och +10 s, och ett andra OK pausar; kontrollerna och datumet döljs 5 s efter den senaste knapptryckningen. Videor upprepas inte längre på en TV, om du inte slår på Inställningar, Tillgångsvisare, Videor, Loopar.
+4. På en TV öppnar Menu-knappen, Info-knappen eller ett nedhållet OK detaljerna för fotot eller videon, skrivskyddade: datum, plats, kamera, kodek, storlek och bithastighet. En video som TV:n inte kan avkoda säger det, med sin kodek, sin storlek och gränsen för TV:ns avkodare, i stället för att laddas i all evighet; en 360°-video som överskrider avkodarna frågar innan 360°-spelaren öppnas, och orsaken skrivs på sidan Loggar i profilmenyn.
 
 Mer: [titta på din TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [på en Windows-dator](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [plattformsstöd](../docs/immuch360/platform-support.md).
+
+<a id="immuch360-on-an-lg-tv-webos"></a>
+### Immuch360 på en LG-TV (webOS)
+
+Immuch360 finns också som en Immich-app för LG webOS-TV: en separat app för LG-TV med webOS 4.0 och senare (från 2018), styrd med fjärrkontrollen, som visar din Immich-server och lägger dina 360°-foton på en sfär som du vrider med pilarna. Immichs egna appar går inte att installera på en LG-TV. Den bygger på [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) av Seeky91, som stod för tidslinjen, albumen, personer, platser, sökningen, bildspelet och inloggningen med en telefon; tack till Seeky91. Version 0.1.0 är ett testbygge: den har ännu inte körts på en riktig LG-TV, den installeras bara i Developer Mode, och varje rapport i [Issues](https://github.com/freeKC/Immuch360/issues) hjälper.
+
+1. Installera den på en TV i Developer Mode, se [Installera](#lg-tvs-webos). Den har ett eget app-id, så den installeras bredvid Immich TV av Seeky91.
+2. Logga in med din telefon (skanna QR-koden), med din e-postadress och ditt lösenord, eller med en API-nyckel.
+3. Bläddra med pilarna och OK. I visaren går Vänster och Höger till föregående eller nästa foto eller video, även medan en video spelas; kontrollerna döljs 5 s efter den senaste knapptryckningen; Info öppnar detaljerna; kanalknapparna zoomar; Magic Remote-pekaren och hjulet fungerar.
+4. Ett 360°-foto öppnas på en sfär som du vrider med pilarna; "Visa som 360°" täcker ett 2:1-foto som servern inte markerar; ett VR180-foto visas på en halvsfär och ett 3D-foto med ett öga. De gula och blå knapparna vrider ett platt foto.
+
+Inte i detta bygge: 360°-videor på sfären (de spelas platt, med ett meddelande), nätverksresurser, Plex och Tapo-kameror (planerat), uppladdningar. När en video inte spelas upp anger ett meddelande dess format och storlek i stället för en ändlös laddningssymbol. På webOS före 25 måste den omvända proxyn framför Immich skicka CORS-huvuden; appen förklarar dem när den stöter på problemet.
+
+Mer: [webOS-appen: installation, fjärrkontrollens knappar, CORS-huvuden](../webos/README.md).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 ### Kameror, Plex och råa kamerafiler
@@ -184,39 +216,55 @@ Mer: [titta på din TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android
 
 Mer: [Tapo-kameror](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [råa 360°-kamerafiler](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
+<a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
+### Din DJI-drönares foton och videor på din Immich-server
+
+Importera foton och videor från en DJI-drönare via USB, direkt till din Immich-server: anslut drönaren, dess fjärrkontroll eller en kortläsare till en Android-telefon, välj de nya filerna och skicka dem, med videorna placerade på kartan utifrån drönarens flygdata och drönarens 360°-sfärer visade som 360°. Immich-appen säkerhetskopierar bara det som redan finns i telefonens galleri, och Immich-servern kan ännu inte läsa platsen för en video från DJI Neo 2. Den här sidan är experimentell, finns bara på Android-telefoner och surfplattor, och har ännu inte provats med en riktig drönare.
+
+1. I Inställningar, Avancerat, slå på "DJI-drönare (experimentell)". En ruta "DJI-drönare" visas i Bibliotek, Nätverksresurser.
+2. Anslut drönaren (en Neo 2 kan vara avstängd), dess fjärrkontroll eller en kortläsare till telefonen med en USB-C-datakabel. På sidan DJI-drönare, tryck på "Välj drönaren eller kortet", välj den i väljarens sidomeny, öppna dess DCIM-mapp eller behåll hela enheten, sedan "Använd den här mappen" och Tillåt.
+3. Sidan listar foton och videor per dag, utan sidofilerna .LRF, .SRT, .THM och .m4a. Tryck på "Välj alla nya", sedan "Ladda upp till Immich"; filer som skickats tidigare har en molnmarkering och hoppas över. "Behåll på enheten" kopierar i stället filerna till telefonens galleri, i albumet "Immuch360 import".
+4. För att en video ska hamna på kartan, slå på Video Subtitles i DJI Fly (videoläge, Settings, Camera) innan du flyger: drönaren skriver då en .SRT-fil bredvid varje video, appen läser platsen från den och sätter den på din server efter uppladdningen, när Immich inte hittade någon.
+
+DJI-drönarnas 360°-sfärer (Mini, Air, Mavic och andra, igenkända utifrån sin kamera) visas som 360° i Immuch360 även utan 360°-taggar. Immich behöver de taggarna: uppladdningsalternativet "Tagga drönarsfärer som 360° för Immich", avstängt som standard, skickar fotot oförändrat med en liten .xmp-fil bredvid, så att även Immich visar det som en sfär. Neo 2 har inget sfär- eller panoramaläge: dess foton och videor är platta. När telefonen spelade in ljudet till ett Neo 2-klipp ligger ljudet i en separat .m4a-fil: sidan markerar klippet, och Immich tar emot det utan ljud (ladda ner det med DJI Fly för att behålla ljudet). Alla kamerakort med en DCIM-mapp fungerar på samma sätt i en kortläsare. Inget skickas till DJI.
+
 <a id="devices-and-systems"></a>
 ## Enheter och system
 
-En kodbas, sex miljöer. Vad varje miljö har idag:
+En kodbas för sex miljöer, och en separat app för LG-TV. Vad varje miljö har idag:
 
-| Funktion | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galleri, album, sökning med en Immich-server | ✅ | ✅ | ✅ visare | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Utan server: enhetens eget innehåll | ✅ | ✅ | endast resurser | ✅ | ✅ mappar | ✅ mappar | ✅ mappar |
-| Platta foton och videor | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 360°-foton som en sfär | ✅ | ✅ | ✅ | ✅ immersivt | ✅ | ✅ | 🔧 CI |
-| 360°-videor | ✅ | ✅ ingen förloppslinje | ✅ | ✅ immersivt | ✅ | endast platt | endast platt |
-| 3D och VR180 | ✅ ett öga | ✅ ett öga | ✅ ett öga | ✅ äkta 3D | ✅ ett öga | foton ett öga, videor platta | foton ett öga, videor platta |
-| Spatial 2.5D (huvudspårning) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple-spatiala foton | ✅ ett öga | ✅ ett öga | ✅ ett öga | ✅ 3D | ✅ ett öga | 🔧 CI | 🔧 CI |
-| Råa Insta360-, GoPro- och DJI-filer | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI foton, videor platta | 🔧 CI foton, videor platta |
-| SMB-, WebDAV- och DLNA-resurser | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kameror: inspelningar | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kameror: livevisning | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Dela denna enhet på nätverket | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Ladda upp till Immich från resurser och enheten | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Inmatning | touch, gyroskop | touch, gyroskop | fjärrkontroll | handkontroller, händer | mus, tangentbord | mus, tangentbord | mus, tangentbord, styrplatta |
-| Var du hittar den | Google Play, APK | App Store (under granskning) | APK, Google Play (under granskning) | Horizon Store, APK | installationsprogram eller ZIP (förhandsversion) | .deb, .rpm (förhandsversion) | DMG eller ZIP (osignerad förhandsversion) |
+| Funktion | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galleri, album, sökning med en Immich-server | ✅ | ✅ | ✅ visare | ✅ visare | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Utan server: enhetens eget innehåll | ✅ | ✅ | endast resurser | ❌ | ✅ | ✅ mappar | ✅ mappar | ✅ mappar |
+| Platta foton och videor | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Vrid ett foto med en tangent | ✅ | ✅ | ✅ färgknappar | ✅ färgknappar | ✅ fönster | ✅ | ✅ | ✅ |
+| 360°-foton som en sfär | ✅ | ✅ | ✅ | ✅ | ✅ immersivt | ✅ | ✅ | 🔧 CI |
+| 360°-videor | ✅ | ✅ ingen förloppslinje | ✅ meddelande om den inte kan avkodas | endast platt | ✅ immersivt | ✅ | endast platt | endast platt |
+| 3D och VR180 | ✅ ett öga | ✅ ett öga | ✅ ett öga | foton ett öga, videor platta | ✅ äkta 3D | ✅ ett öga | foton ett öga, videor platta | foton ett öga, videor platta |
+| Spatial 2.5D (huvudspårning) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Apple-spatiala foton | ✅ ett öga | ✅ ett öga | ✅ ett öga | ❌ | ✅ 3D | ✅ ett öga | 🔧 CI | 🔧 CI |
+| Råa Insta360-, GoPro- och DJI-filer | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI foton, videor platta | 🔧 CI foton, videor platta |
+| SMB-, WebDAV- och DLNA-resurser | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kameror: inspelningar | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kameror: livevisning | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Dela denna enhet på nätverket | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Ladda upp till Immich från resurser och enheten | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Import från en DJI-drönare eller ett kort via USB (experimentell) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Mörkt tema | som systemet | som systemet | ✅ som standard | ✅ enda temat | som systemet | som systemet | som systemet | som systemet |
+| Inmatning | touch, gyroskop | touch, gyroskop | fjärrkontroll; Vänster och Höger även under en video, Menu för detaljerna | fjärrkontroll, Magic Remote | handkontroller, händer | mus, tangentbord | mus, tangentbord | mus, tangentbord, styrplatta |
+| Var du hittar den | Google Play, APK | App Store (under granskning) | APK, Google Play (under granskning) | .ipk-testbygge, Developer Mode | Horizon Store, APK | installationsprogram eller ZIP (förhandsversion) | .deb, .rpm (förhandsversion) | DMG eller ZIP (osignerad förhandsversion) |
 
-✅ i appen på den plattformen · ❌ erbjuds inte där · 🔜 planerat · 🔧 CI i källkoden, byggt och startat av projektets CI på det systemet, ännu inte kontrollerat där med en riktig server, resurs eller kamera · endast platt: videon spelas platt, med ett meddelande, eftersom 360°-renderaren bara finns på Windows. "Ett öga" betyder att en 3D-fil visar sitt vänstra öga på en platt skärm. Inte alla ✅ har kontrollerats på en riktig enhet än: vad som har kontrollerats var, och vad som återstår att bekräfta, finns i [Funktioner](../docs/immuch360/features.md), [Plattformsstöd](../docs/immuch360/platform-support.md) och [Kompatibilitet](../docs/immuch360/compatibility.md).
+✅ i appen på den plattformen · ❌ erbjuds inte där · 🔜 planerat · 🔧 CI i källkoden, byggt och startat av projektets CI på det systemet, ännu inte kontrollerat där med en riktig server, resurs eller kamera · endast platt: videon spelas platt, med ett meddelande, eftersom datorernas 360°-videorenderare bara finns på Windows, och på LG-TV återstår det att mäta om webOS lämnar över videobildrutor till sfären. "Ett öga" betyder att en 3D-fil visar sitt vänstra öga på en platt skärm. Kolumnen LG webOS är en separat app, vars testbygge 0.1.0 klarar sina tester i projektets CI och ännu inte har körts på en TV. Inte alla ✅ har kontrollerats på en riktig enhet än: vad som har kontrollerats var, och vad som återstår att bekräfta, finns i [Funktioner](../docs/immuch360/features.md), [Plattformsstöd](../docs/immuch360/platform-support.md) och [Kompatibilitet](../docs/immuch360/compatibility.md).
 
 - **Android-telefoner och surfplattor**: den kompletta appen, touch och gyroskop, alla källor.
 - **iPhone och iPad**: den kompletta appen; 360°-videospelaren har bara uppspelning och paus, Tapo-livevisningen kommer senare, och DLNA-sökningen skickar unicast-förfrågningar tills Apple beviljar multicast-behörigheten.
-- **Android TV och Google TV**: samma APK, styrd av fjärrkontrollen; en visare: säkerhetskopiering, uppladdningar och redigering är dolda. Testat i Google TV-emulatorn (inloggning, tidslinje, visare, resurser, fjärrkontrollens navigering), inte på en riktig TV än.
+- **Android TV och Google TV**: samma APK, styrd av fjärrkontrollen, mörk som standard; en visare: säkerhetskopiering, uppladdningar och redigeraren är dolda och detaljerna är skrivskyddade, men ett foto vrids fortfarande med en tangent. Alla sökfilter fungerar med fjärrkontrollen: Plats och Kamera öppnar sina val i en lista, datumfiltret visar alla sina val, och alternativpanelerna Taggar, Plats, Datum, Medietyp, Stjärnbetyg och Visningsalternativ placerar Rensa och Verkställ bredvid valen, ett steg åt Höger bort, på större delen av skärmhöjden. Fotorutnätet använder mindre bildminne, och en nedhållen pil flyttar det högst cirka 10 rader per sekund. Kontrollerat i Google TV-emulatorn; ett första test på en riktig Android TV, den 21 oktober, ledde till TV-ändringarna i build 27, som ännu inte har provats på en riktig TV.
+- **LG-TV med webOS 4.0 och senare**: en separat app för fjärrkontrollen och Magic Remote, byggd på [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): en Immich-visare med 360°-fotona på en sfär, ett foto som vrids med en tangent, ett mörkt tema och appens 89 språk (de få texterna i själva TV-appen på engelska tills vidare); ännu inga resurser, Plex eller kameror, 360°-videor platta. Testbygge 0.1.0, kontrollerat av sina tester i projektets CI, ännu inte på en TV.
 - **Meta Quest 2, Pro, 3 och 3S**: appen som ett fönster, plus den immersiva vyn; HEVC är den säkra kodeken, H.264 stoppar runt 4096x2304 på Quest 3; bara Quest 3 är testad, Quest 2, Quest Pro och Quest 3S är inte testade än.
 - **Windows 10 och 11**: en förhandsversion, med mappar istället för ett galleri, en egen videospelare (libmpv) för vanliga och 360°-videor, råa filer sammanfogade på grafikchippet, filer och mappar öppnade med programmet eller släppta på fönstret, ett installationsprogram eller en ZIP.
-- **Linux**: en .deb och en .rpm byggda av projektets CI, installerade och kontrollerade på Ubuntu 22.04 och 24.04, Debian 12 och Fedora 40 och 44; foton, 360°-foton och platta videor via systemets libmpv (360°-, 3D- och råa videor spelas platt med ett meddelande); SMB-resurser från Ubuntu 22.04 och Debian 12; ännu inte kört på en riktig Linux-dator, bara under WSLg och i containrar.
+- **Linux**: en .deb och en .rpm byggda av projektets CI, installerade och kontrollerade på Ubuntu 22.04 och 24.04, Debian 12 och Fedora 40 och 44; foton, 360°-foton och platta videor via systemets libmpv (360°-, 3D- och råa videor spelas platt med ett meddelande), ritade via hårdvaruvägen även i X11-sessioner från desktop build 7; SMB-resurser från Ubuntu 22.04 och Debian 12; utan nyckelring (GNOME Keyring eller KWallet) fryser appen inte längre i 25 s vid första starten: den behåller lösenorden bara för sessionen och säger det i sina inställningar; ännu inte kört på en riktig Linux-dator, bara under WSLg och i containrar.
 - **macOS**: en DMG och en ZIP byggda av projektets CI, universella, osignerade (Gatekeeper frågar en gång); appen startar, öppnar filerna och mapparna den får, även från Finder, förvarar sina hemligheter i inloggningsnyckelringen och spelar platta videor med sin egen libmpv, allt kontrollerat endast på projektets CI-Mac; inget har körts på en riktig Mac än.
 
 <a id="advanced-features"></a>
@@ -225,10 +273,10 @@ En kodbas, sex miljöer. Vad varje miljö har idag:
 Vad appen kan läsa och spela upp, för den läsare som vill ha hela omfattningen. Varje rad beskrivs i detalj i [användarguiden](../docs/immuch360/user-guide.md) och [kompatibilitetssidan](../docs/immuch360/compatibility.md).
 
 - **Format**: platta foton och videor (vad enheten avkodar: MP4, MOV, MKV med fler); equirektangulära 360°-foton och videor; partiella panoramabilder (GPano-beskärning); VR180; stereoskopisk 3D, topp och botten eller sida vid sida, läst från filen (st3d-boxen) eller gissad från bildrutan; Apple-spatiala foton (HEIC-stereopar) och spatiala videor (MV-HEVC, ett öga); råa Insta360 .insp och .insv, GoPro .360, DJI .osv; 10-bitars HLG- och PQ-källor tonmappade på sfären.
-- **Projektion och metadata**: GPano och sfärisk metadata läst från filen, med räckviddsförfrågningar mot en server eller en resurs; kamerans ursprungliga vy; "Visa som 360°" ihågkommen på enheten; VR180 igenkänd från filen eller dess namn; metadata bevarad intakt eftersom originalfilen spelas upp, aldrig en konverterad kopia.
+- **Projektion och metadata**: GPano och sfärisk metadata läst från filen, med räckviddsförfrågningar mot en server eller en resurs; kamerans ursprungliga vy; DJI-drönarnas sfärer igenkända utifrån sin kamera, med en valfri .xmp-sidofil så att även Immich markerar dem; "Visa som 360°" ihågkommen på enheten; VR180 igenkänd från filen eller dess namn; platsen för en drönarvideo läst från dess .SRT-flyglogg; metadata bevarad intakt eftersom originalfilen spelas upp, aldrig en konverterad kopia; en kvarts vridning sparad via Immich-redigeraren eller behållen på enheten, aldrig på en immersiv fil.
 - **Inbyggd uppspelning**: Media3 på Android och TV:n, SceneKit och AVFoundation på iOS, Meta Spatial SDK i headsetet, libmpv på Windows; originalet eller den omkodade strömmen väljs utifrån vad enheten avkodar; en lista över enhetens videoavkodare i Inställningar, Avancerat; valet av ljudspår och en buffringsindikator.
 - **Råa filer sammanfogade på enheten**: en Flutter-fragmentshader för foton; en GPU-effekt i spelaren för videor med ett enda spår; två hårdvaruavkodare samtidigt och en GPU-compositor för videor med en lins per spår eller fil (OpenGL ES 3 på Android och Quest, Metal på iOS, och på Windows, från skrivbordsversion 5, två libmpv-spelare vars bildrutor appen parar ihop på grafikchippet); kamerans egen kalibrering (modellerna Mei, V6 och equidistant) och accelerometerdata; enheten växlar till en lins, den omkodade strömmen, kamerans LRV-kopia eller den osammanfogade videon när den inte kan köra två avkodare.
-- **Källor**: enhetens galleri; mapparna på en dator; en Immich-server; SMB 2 och 3, WebDAV, DLNA/UPnP; Plex över HTTPS kontrollerad mot serverns eget certifikat; Tapo-kameror över det lokala nätverket (HTTPS och RTSP); en telefon eller en dator delad på Wi-Fi som en WebDAV-server; servrar hittade med Bonjour/mDNS, en lokal nätverksskanning, SSDP, GDM och TP-Link-identifieringen, och följda när de byter adress.
+- **Källor**: enhetens galleri; mapparna på en dator; en drönare, dess fjärrkontroll eller ett kamerakort via USB, genom systemets mappväljare (Android, experimentell); en Immich-server; SMB 2 och 3, WebDAV, DLNA/UPnP; Plex över HTTPS kontrollerad mot serverns eget certifikat; Tapo-kameror över det lokala nätverket (HTTPS och RTSP); en telefon eller en dator delad på Wi-Fi som en WebDAV-server; servrar hittade med Bonjour/mDNS, en lokal nätverksskanning, SSDP, GDM och TP-Link-identifieringen, och följda när de byter adress.
 - **Läsning vid behov**: en lokal brygga försörjer spelarna med byte-intervall och en token per session; stora block, inläsning i förväg och upp till sex SMB-anslutningar parallellt; miniatyrbilder från en bildruta i varje video; ingenting kopieras till enheten.
 - **Hårdvara**: hårdvaruavkodare används där de finns, med sina uppmätta gränser (Quest 3:s H.264-tak, högst två 2048x2048-linser för mjukvaruavkodare); på Windows ritas 360°-vyn av grafikchippet från varje avkodad bildruta, bildstorleken mäts på varje dator, det integrerade eller dedikerade chippet upptäcks.
 - **Plattformsspecifikt**: gyroskopet och Spatial 2.5D-spelaren på telefoner; den immersiva vyn, handkontrollerna och händerna på Quest; fjärrkontrollslayouten, tangentbordsdialogen och TV-banderollen på Android TV; på datorn mus och tangentbord, helskärm, ett enda fönster, filer och mappar öppnade med programmet eller släppta på dess fönster, lästa som filerna i dina mappar, HEIC-, AVIF-, TIFF- och råa kamerafoton från mapparna när Windows har en avkodare för dem, och Windows-dataskyddet för lösenord och token.
@@ -246,6 +294,7 @@ Vad appen kan läsa och spela upp, för den läsare som vill ha hela omfattninge
 - [Skrivbordets 360°-videorenderare: libmpv, projektionspasset och mätningarna bakom det](../docs/immuch360/desktop-360-video-renderer.md)
 - [Utgåvestatus: byggen, butiker och vad varje butik har](../docs/immuch360/release-status.md)
 - [Bygg den själv: telefoner, headset, TV-apparater och datorer](../docs/immuch360/build.md)
+- [Immuch360 för LG webOS-TV: installera i Developer Mode, fjärrkontrollens knappar, CORS-huvudena](../webos/README.md)
 
 <a id="install"></a>
 ## Installera
@@ -268,6 +317,14 @@ Vad appen kan läsa och spela upp, för den läsare som vill ha hela omfattninge
 3. Från en dator i samma nätverk, med adb (Android SDK Platform Tools): `adb connect <address of the TV>`, godkänn frågan på tv:n, sedan `adb install -r Immuch360-v<version>-release.apk`.
 4. Appen visas bland tv:ns appar, med sin banderoll. Installera nästa version på samma sätt: `-r` behåller inloggningen och inställningarna.
 
+<a id="lg-tvs-webos"></a>
+### LG-TV (webOS)
+
+1. Du behöver en LG-TV med webOS 4.0 eller senare, en dator i samma nätverk och ett kostnadsfritt LG-utvecklarkonto. På TV:n, installera Developer Mode från LG Content Store, logga in, slå på Dev Mode Status och låt TV:n starta om; anteckna dess IP-adress och lösenfrasen som appen visar.
+2. På datorn, installera webOS CLI (Node.js 18 eller senare): `npm install -g @webos-tools/cli`, registrera sedan TV:n med `ares-setup-device` (dess IP-adress, port 9922, användare `prisoner`) och `ares-novacom --device <name> --getkey`, som frågar efter lösenfrasen.
+3. Ladda ner `Immuch360-webOS-0.1.0.ipk` från [webOS-förhandsutgåvan](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0), kontrollera den mot `SHA256SUMS.txt`, kör sedan `ares-install --device <name> Immuch360-webOS-0.1.0.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) från webosbrew gör samma sak utan kommandoraden.
+4. En Developer Mode-session varar i 1000 timmar och knappen EXTEND i Developer Mode-appen förnyar den; när den går ut tar TV:n bort de appar som installerats på det här sättet. Detaljerna finns i [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
+
 <a id="meta-quest"></a>
 ### Meta Quest
 
@@ -278,18 +335,18 @@ Vad appen kan läsa och spela upp, för den läsare som vill ha hela omfattninge
 <a id="windows"></a>
 ### Windows
 
-1. Ladda ner `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` från [desktop-förhandsutgåvan](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) (med `SHA256SUMS.txt` för att kontrollera den) och öppna den. Filerna är inte signerade än: Windows SmartScreen kan visa "Windows skyddade din dator", välj "Mer information" och sedan "Köra ändå".
+1. Ladda ner `Immuch360-Desktop-3.3.0-rc.0-desktop.7-windows-x64-setup.exe` från [desktop-förhandsutgåvan](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) (med `SHA256SUMS.txt` för att kontrollera den) och öppna den. Filerna är inte signerade än: Windows SmartScreen kan visa "Windows skyddade din dator", välj "Mer information" och sedan "Kör ändå".
 2. Välj "Installera endast för mig" (inga administratörsrättigheter) eller "Installera för alla användare", och sedan installationsprogrammets språk, där Windows språk redan är förvalt.
 3. Starta Immuch360 Desktop från Start-menyn. Foton och videor hittar den i "Öppna med" (högerklicka på en fil, Öppna med); den gör sig aldrig till deras standardprogram. Den första starten av en ny build kan ta upp till en minut medan Windows skannar filerna.
 4. Windows 10 eller 11, 64 bitar. För att uppdatera, öppna installationsprogrammet för nästa build: din inloggning, dina mappar och dina inställningar bevaras. ZIP-filen för samma utgåva är samma program som en mapp, att packa upp var som helst och starta `immuch360.exe` från den.
 
 ### Linux
 
-På Ubuntu 22.04 eller senare och Debian 12 eller senare: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; på Fedora 40 eller senare: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Starta sedan Immuch360 Desktop från dina program. En tidig förhandsversion: datorns mappar, foton och 360°-foton som en sfär; videor spelas inte upp än, och SMB-resurser kräver Ubuntu 24.04, Debian 13 eller Fedora 39 eller senare.
+På Ubuntu 22.04 eller senare och Debian 12 eller senare: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-amd64.deb`; på Fedora 40 eller senare: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-x86_64.rpm`, båda från [desktop-förhandsutgåvan](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7). Starta sedan Immuch360 Desktop från dina program. En förhandsversion: datorns mappar, foton och 360°-foton som en sfär, och platta videor via systemets libmpv, som paketet installerar (360°-, 3D- och råa videor spelas platt, med ett meddelande); SMB-resurser fungerar från Ubuntu 22.04 och Debian 12. På Fedora behöver kameravideor FFmpeg från RPM Fusion. Utan GNOME Keyring eller KWallet sparas lösenorden bara för sessionen, och appens inställningar säger det.
 
 ### macOS
 
-Öppna `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` och dra appen till Program (Apple silicon och Intel, macOS 12 eller senare). Den är inte signerad eller notariserad än: Ctrl-klicka på den och välj Öppna på macOS 14 och tidigare, eller välj "Öppna trots allt" i Systeminställningar, Sekretess och säkerhet på macOS 15 och senare. Ingen som arbetar med projektet har en Mac: appen har bara startats på projektets CI, den spelar inga videor än och dess nätverksåtkomst har inte prövats. Rapporter är välkomna.
+Öppna `Immuch360-Desktop-3.3.0-rc.0-desktop.7-macos.dmg` från [desktop-förhandsutgåvan](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) och dra appen till Program (Apple silicon och Intel, macOS 12 eller senare). Den är inte signerad eller notariserad än: Ctrl-klicka på den och välj Öppna på macOS 14 och tidigare, eller välj "Öppna ändå" i Systeminställningar, Integritet och säkerhet på macOS 15 och senare. Ingen som arbetar med projektet har en Mac: appen har bara körts på projektets CI-Mac, där den öppnar filer och mappar och spelar platta videor med sin egen libmpv; dess nätverksåtkomst har inte prövats. Rapporter är välkomna.
 
 <a id="privacy"></a>
 ## Integritet
@@ -301,7 +358,7 @@ Ingenting går till utvecklaren: inget konto, ingen analys, ingen kraschrapporte
 
 Immuch360 är en inofficiell fork av [Immich](https://github.com/immich-app/immich)-mobilappen, under [GNU AGPL v3](../LICENSE), inte ansluten till, och inte godkänd av, Immich-teamet eller FUTO. Forken finns eftersom 360°-visning på mobilen har efterfrågats i Immich sedan januari 2024 och ännu inte finns i den officiella appen; den levererar det nu, samlar in verklig feedback från enheter, och kommer att erbjuda tillbaka till Immich, i små pull requests, vad underhållarna vill ha. Allt den officiella appen gör behålls; grenarna, byggkedjan och CI:n beskrivs i [Bygg den själv](../docs/immuch360/build.md).
 
-360°-fotovisaren bygger på uppströms pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) av dmitry-brazhenko, som i sin tur bygger på prototypen av bencefr i [#30192](https://github.com/immich-app/immich/pull/30192); tack till båda. Fjärrkontrollsrättningarna i sökfiltren och albumsorteringen på TV utgick från arbetet av mlc70 i [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Tapo-kamerorna skrevs utifrån vad [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) och [python-kasa](https://github.com/python-kasa/python-kasa) dokumenterar. Meta Quest-vyn bygger på Meta Spatial SDK, som inte är öppen källkod, så den stannar i denna fork. Windows-ZIP-filen innehåller libmpv (biblioteket från [mpv](https://mpv.io), med [FFmpeg](https://ffmpeg.org)) byggt av projektet, under LGPL, med dess licenser och källkod; detaljerna och varumärkena för plattformarna som nämns på denna sida finns i [Licens och varumärken](../docs/immuch360/platform-support.md#license-and-trademarks).
+360°-fotovisaren bygger på uppströms pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) av dmitry-brazhenko, som i sin tur bygger på prototypen av bencefr i [#30192](https://github.com/immich-app/immich/pull/30192); tack till båda. Fjärrkontrollsrättningarna i sökfiltren och albumsorteringen på TV utgick från arbetet av mlc70 i [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1), och åtgärdsfältet och filterpanelerna på 80 procent av skärmhöjden kommer från mlc70:s [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3), med bevarat författarskap; tack till mlc70. LG webOS-appen bygger på [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) av Seeky91, under MIT-licensen, bevarad i sin egen mapp; tack till Seeky91. Tapo-kamerorna skrevs utifrån vad [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) och [python-kasa](https://github.com/python-kasa/python-kasa) dokumenterar. Meta Quest-vyn bygger på Meta Spatial SDK, som inte är öppen källkod, så den stannar i denna fork. SMB-resurserna använder libsmb2, under LGPL 2.1 eller senare: från build 27 och desktop build 7 innehåller varje bygge dess meddelande, dess licenstexter och dess källkodsarkiv, `Immuch360-libsmb2-sources.tar.gz`, som också bifogas varje utgåva. Windows- och macOS-byggena innehåller libmpv (biblioteket från [mpv](https://mpv.io), med [FFmpeg](https://ffmpeg.org)) byggt av projektet, under LGPL, med dess licenser och källkod, listade på appens licenssida (Licenser, längst ned i profilmenyn); detaljerna och varumärkena för plattformarna som nämns på denna sida finns i [Licens och varumärken](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Telefonbilderna på denna sida togs på Android-bygget i en emulator, TV-bilderna på Google TV-emulatorn och Windows-bilderna på en Windows 11-dator, alla med CC0-panoramabilder från [Poly Haven](https://polyhaven.com); headsetbilderna togs på en Quest 3.
 
@@ -310,11 +367,13 @@ Telefonbilderna på denna sida togs på Android-bygget i en emulator, TV-bildern
 
 Det som inte är klart än, det mest sannolika först. Inget här är ett löfte, och återkoppling i [ärendehanteraren](https://github.com/freeKC/Immuch360/issues) hjälper till att bestämma vad som kommer först.
 
-- **Butikerna**: Google Play (build 26 på väg, TV-listningen under granskning), App Store (version 3.3.1 under granskning sedan den 14 oktober), Meta Horizon Store (build 25 under granskning).
+- **Butikerna**: Google Play (build 26 under granskning, sedan build 27; TV-listningen under granskning), App Store (version 3.3.1 under granskning sedan den 14 oktober), Meta Horizon Store (build 25 under granskning).
 - **Datorer**: testet av varje funktion för hand på en Windows-dator; sedan 360°-videorenderaren på Linux och macOS, ett test på en riktig Mac och en riktig Linux-dator; sedan ett signerat bygge och automatiska uppdateringar; sedan Spatial 2.5D med webbkameran.
+- **TV-apparater**: ett test av build 27 på en riktig Android TV; LG webOS-appen på en riktig LG-TV, sedan dess 360°-videor på sfären och nätverksresurserna, Plex och Tapo-kameror; en QR-kod för att para ihop en TV eller en dator med en telefon, där den stora skärmen visar den och telefonen skannar den.
 - **Telefoner och surfplattor**: en förloppslinje i iOS 360°-videospelaren, föregående och nästa i 360°-spelarna på telefoner, valet av ljudspår i den platta spelaren, Tapo-livevisningen på iPhone och iPad.
 - **Immersivt innehåll**: dubbla fisheye-.dng-filer, nivellering av GoPro- och DJI-videor utifrån deras egna rörelsedata, spatiala videor i 3D på Quest om dess avkodare tillåter det, föregående och nästa mellan spatiala foton i headsetet.
 - **Källor**: svepning mellan filerna i en resursmapp, Digest-autentisering för WebDAV, en QR-kod för att föra över Plex-token från datorn, IPv6 för Plex, H.265 Tapo-inspelningar, kanaler på TV:ns hemskärm.
+- **Drönare**: ett test med en riktig DJI Neo 2, sedan ljudet som telefonen spelat in sammanfogat med klippet; livevisningen och styrningen av drönarens kamera får vänta till senare.
 - **Uppströms**: små pull requests till Immich för de delar som utvecklarna vill ha, med början i 360°-fotovisaren.
 
 Den fullständiga listan, med enhetskontrollerna som fortfarande väntar för varje funktion, finns i [Utgåvestatus](../docs/immuch360/release-status.md#roadmap).

@@ -394,7 +394,8 @@ memory. `IMMUCH360_MEASURE_RENDERER=c` runs it through renderer C, and its heade
 - **Windows only, for now.** Linux and macOS come later; from desktop build 6 they play flat videos through libmpv and
   play 360°, 3D, VR180 and raw videos flat. On Linux, the fork's media_kit_video carries the fix proposed for media_kit
   #1404 (hardware rendering on Flutter 3.38 and later), built from desktop build 6, and renderer C would run over EGL;
-  under X11 the isolated EGL context of the plugin fails today and frames go through the processor. macOS needs a port
+  from desktop build 7 the isolated EGL context of the plugin works under X11 too (GDK's GLX context is set aside
+  around each switch, patch 10), so the frames stay on the graphics chip there as under Wayland. macOS needs a port
   of its own (its plugin draws through OpenGL 3.2, or in software when OpenGL gives no context).
 - **A Flutter package, then upstream.** Once the three systems work, the plan is to extract the renderer into a Flutter
   package of its own, and to propose to media_kit a hook where an app can add its own GL pass between mpv's frame and

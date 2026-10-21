@@ -21,6 +21,8 @@ Each line links to the section that explains it. The limits by design, such as t
 - **Plex: IPv4 addresses only**, and no relay away from home: [Plex Media Server](user-guide.md#plex-media-server-without-plextv).
 - **The 360° video players of phones do not hand their playback position back** to the flat player when they close, nor use the initial view the camera recorded: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
 - **Tapo: H.265 recordings are not converted yet**, and a clip plays once it is fully fetched: [Tapo cameras](user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **A turn kept on the device is not shown everywhere** (from build 27): the slideshow, the memories, the thumbnails and casting show the photo as it is; a turn saved on the server through Immich's photo editor shows everywhere: [Turn a photo with one key](user-guide.md#turn-a-photo-with-one-key).
+- **A photo of the device that may be 360°** (2:1, or "pano" or "360" in its name) gets the rotate button only once the 360° scan has read it: [Turn a photo with one key](user-guide.md#turn-a-photo-with-one-key).
 
 ## Android phones and tablets
 
@@ -29,6 +31,9 @@ Each line links to the section that explains it. The limits by design, such as t
 - **A phone serving a Quest 3** with "Share this phone on the network" is not checked on a device yet: [Share this phone](user-guide.md#share-this-phone-on-the-network).
 - **Plex playback on a phone** is not checked on a device yet: [Plex Media Server](user-guide.md#plex-media-server-without-plextv).
 - **Apple spatial videos play one eye**, since Android has no public way to decode the second view: [Apple spatial photos and videos](user-guide.md#everywhere-else).
+- **The DJI drone page is experimental and not checked with a real drone yet** (from build 27): it ran on an Android phone emulator with synthetic files; a real DJI Neo 2, a USB drive or card reader, a device in File transfer mode (MTP) and an unplug in the middle of a large file are still to try: [DJI drones](user-guide.md#dji-drones-photos-and-videos-over-usb-experimental).
+- **DJI: the sound recorded by the phone is not merged**: a drone keeps that sound in a separate .m4a file, which DJI Fly merges when it downloads the clip; the app sends the video without it and says so on the tile: [DJI drones](user-guide.md#dji-drones-photos-and-videos-over-usb-experimental).
+- **DJI: a device in File transfer mode may send its list of files slowly**: the page says when the list may be incomplete, and Refresh reads it again; it does not read it again by itself: [DJI drones](user-guide.md#dji-drones-photos-and-videos-over-usb-experimental).
 
 ## iPhone and iPad
 
@@ -45,16 +50,30 @@ Each line links to the section that explains it. The limits by design, such as t
 
 ## Android TV and Google TV
 
-- **The Location filter of the search keeps the focus in its Country field** (from build 26 the other filter sheets work with the remote): Down, Right and OK do not leave that field, and Back closes the sheet without applying it: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
-- **The quick date sheet of the search shows two choices at a time** on a TV and scrolls to the others; the arrows reach every choice and Clear: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
-- **Not checked on a real TV yet**: builds 21, 22 and 26 were tried on the Google TV emulator, and of the TV fixes of build 23 only the bottom margin of the Photos tab was seen there; to be confirmed on a TV: the direction in which the arrows turn a 360° video, the keyboard of the TV (Gboard) in the text dialog, the OK key of infrared remotes, the margins and the banner on the TV home screen: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
+- **Build 27 has not run on a real TV yet**: the first run on a real Android TV, on 21 October 2026 with build 25 or 26, found five problems (a video playing in a loop that Left and Right could not leave, the controls over the picture, 360° videos that never played, white pages, one freeze while photos scrolled), which build 27 answers; those answers were checked on the Google TV emulator and by widget tests. Still to confirm on a TV: the direction in which the arrows turn a 360° video, the keyboard of the TV (Gboard) in the text dialog, the OK key of infrared remotes, a held OK on the remote of the TV, the margins and the banner on the TV home screen: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
+- **A 360° video beyond the decoders of the TV still does not play**: from build 27 the app says so instead of loading forever, names the cause and the largest size the TV decodes, and asks before it opens the 360° player; the server's transcoded stream, or a smaller export, is the way to watch it: [When a video does not play](user-guide.md#when-a-video-does-not-play).
+- **The freeze seen once while photos scrolled is not explained yet**: build 27 uses less image memory on a TV and holds a held arrow to about 10 rows a second, and writes a stalled app (no answer for 3 seconds) and why the app last ended to the Logs page; a report with those lines helps: [Logs](troubleshooting.md#logs).
+- **Left and Right go to the next item while a video plays, and OK shows the controls first** (from build 27): Google's quality guidelines for TV apps ask that, during playback, Left and Right seek and OK pauses. Build 27 follows what the first run on a real TV asked for; if the review of the TV listing asks otherwise, going back is one switch in the code: [Release status](release-status.md#roadmap).
+- **The video page of a share and the 360° photo viewer** do not open details with Menu or a held OK, which the photo and video viewer does from build 27: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
+- **On a TV, OK then OK on a photo of a share turns it** (from build 27): the rotate button is the first of the top bar of the share photo page, so a second OK turns the photo, on the TV only; in the main viewer OK never lands on Rotate: [Turn a photo with one key](user-guide.md#turn-a-photo-with-one-key).
+- **"Custom range" of the date filter** opens the date range picker of the system, which was not tried with the remote: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 - **The Plex and Tapo pages have not been opened on a TV**, not even on the emulator: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 - **The Settings page of a TV still lists the Backup section** when a server is connected, although backup is hidden everywhere else on a TV, and it still shows the setting of Spatial 2.5D, whose button is hidden: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
-- **The decoders of a TV are not measured yet**: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
+- **The decoders of a real TV are not measured yet**: the Google TV emulator decodes in software: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 - **Signing in with OAuth is not possible** on a TV: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
-- **On a TV with little memory, 360° photos are shown at 4096x2048 at most**: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
+- **On a TV with little memory, 360° photos are shown at 4096x2048 at most** (from build 27, a TV with 3 GB of memory or less counts as one): [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 - **Fire TV is not tested**, and there is no Apple TV version: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 - **Google Play on TVs** waits for Google's review of the TV listing: [Release status](release-status.md).
+
+## LG webOS TVs
+
+- **Not run on a real LG TV yet**, nor in LG's simulator: webOS 0.1.0 is a first test build, whose tests and package checks run in the project's CI; reports from testers with a TV in Developer Mode are welcome: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **360° videos play flat**, with a message: whether a TV hands video frames to WebGL is what the video test of its About page finds out. 360° photos turn on the sphere: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **The texts only the TV app has are in English** until the next webOS release; the texts it shares with the Immuch360 app come in its 89 languages: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **On webOS before 25 the server needs CORS headers**: the reverse proxy in front of Immich must send them, and the app explains them when it meets the problem: [Install it on an LG TV](platform-support.md#install-it-on-an-lg-tv).
+- **Not on an LG TV**: uploads, the photo editor (only its quarter turn is there), the network shares, Plex, the Tapo cameras and Cast: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **A photo turned on the TV** keeps its former thumbnail in the grid until the grid draws it again (scroll away and back), and no indicator shows while the turn is saved on the server: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **Only through Developer Mode**: the app is not in the LG Content Store, and the TV removes it when the 1000 hours of a Developer Mode session run out, unless the session is renewed: [Install it on an LG TV](platform-support.md#install-it-on-an-lg-tv).
 
 ## Meta Quest
 
@@ -104,9 +123,10 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 
 - **Packages from desktop build 5, early previews**: a .deb, an .rpm and a macOS app, built by the project's CI: [Install it on a computer](user-guide.md#install-it-on-a-computer-windows-linux-and-macos).
 - **360°, 3D, VR180 and raw dual lens videos play flat** on Linux and macOS (from desktop build 6, when flat videos came), with "This computer cannot show the 360° view of this video: it plays flat.": the 360° video player draws through renderer C, written for Windows only so far: [macOS and Linux](platform-support.md#macos-and-linux).
-- **Linux, never run on a real Linux PC**: only under WSLg (the Linux of Windows 11) and in the containers of the CI, so the graphics chip of a real PC is not checked there; the Immich server gallery, the SMB, WebDAV and DLNA shares, Plex, the Tapo recordings and live view, Apple spatial photos and the upload to Immich are in the sources and built by the CI, not checked on Linux yet: [macOS and Linux](platform-support.md#macos-and-linux).
-- **Linux, videos drawn by the processor on X11 sessions**: the isolated EGL context of the graphics chip fails under X11, so the frames go through the processor and a large video may drop frames; under Wayland the same build uses the graphics chip. Choose a Wayland session if your system offers one: [Linux](user-guide.md#linux).
-- **Linux, without a secret service**: on a session with no GNOME Keyring or KWallet (a minimal window manager, a container), the first start logs a keyring error, each access to a secret can wait 25 seconds, and the app cannot keep its secrets: [Linux](user-guide.md#linux).
+- **Linux, never run on a real Linux PC**: only under WSLg (the Linux of Windows 11) and in the containers of the CI, so the graphics chip of a real PC is not checked there (from desktop build 7 the videos take the graphics chip on X11 sessions too, checked in the CI with Mesa's software rasterizer and with a test program under WSLg, not with the app on a real Intel or AMD chip); the Immich server gallery, the SMB, WebDAV and DLNA shares, Plex, the Tapo recordings and live view, Apple spatial photos and the upload to Immich are in the sources and built by the CI, not checked on Linux yet: [macOS and Linux](platform-support.md#macos-and-linux).
+- **Linux, videos drawn by the processor on X11 sessions, up to desktop build 6**: the isolated EGL context of the graphics chip failed under X11, so the frames went through the processor; desktop build 7 fixes it. A system whose graphics cannot share a frame between two contexts still draws in software, and says so when the app is started from a terminal: [Linux](user-guide.md#linux).
+- **Linux, without a secret service**: on a session with no GNOME Keyring or KWallet (a minimal window manager, a container), the app keeps its secrets for the session only, so it asks for the server's sign in and the passwords of the shares again at its next start; from desktop build 7 it no longer waits 25 seconds at each secret, and Settings, This computer says "Secrets kept for this session only": [Linux](user-guide.md#linux).
+- **Linux, Fedora in the CI**: the CI plays an H.264 clip with each package, which Fedora's own FFmpeg decodes through OpenH264, installed from Fedora's Cisco repository; when that repository does not answer the runners, the package check of Fedora fails for a reason outside the app ("libopenh264: Unable to create decoder", seen on Fedora 40 on 21 October 2026). The first start in the Fedora 40 container also ended once with a crash under software rendering, before any video, which the next attempt did not show. Neither was seen outside the CI's containers, and the same .rpm passed both Fedora checks on another computer: [Build it yourself](build.md#packages-of-immuch360-desktop).
 - **Linux, camera videos on Fedora**: Fedora's own FFmpeg decodes H.264 through OpenH264 only, which refuses the Main and High profiles of camera videos; install the FFmpeg of RPM Fusion with `sudo dnf swap ffmpeg-free ffmpeg --allowerasing`: [Linux](user-guide.md#linux).
 - **Linux, without libmpv**: the packages bring libmpv; a bundle copied by hand onto a system without it runs without videos, and the viewer names the package to install: [Linux](user-guide.md#linux).
 - **Linux, the folders are not watched**: files added to a folder show after Refresh or the next rescan: [macOS and Linux](platform-support.md#macos-and-linux).
@@ -122,8 +142,11 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 - **DLNA** on a real network, with Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest: [DLNA media servers](user-guide.md#dlna-media-servers).
 - **Apple spatial photos in the headset**, and real iPhone photos and videos: [Apple spatial photos and videos](user-guide.md#not-checked-on-a-device-yet).
 - **The Quest 2, Quest Pro and Quest 3S**: [Meta Quest](platform-support.md#meta-quest).
-- **A real Android TV or Google TV**, and the Plex and Tapo pages on a TV: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
+- **Build 27 on a real Android TV or Google TV**, and the Plex and Tapo pages on a TV: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
+- **A real LG TV**: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **A real DJI drone**, a USB drive or card reader, and a device in File transfer mode: [DJI drones](user-guide.md#dji-drones-photos-and-videos-over-usb-experimental).
+- **The one-key rotation on a phone, an iPhone, a Quest and a computer**: it ran on the Google TV emulator against an Immich server, and the other platforms are covered by widget tests: [Turn a photo with one key](user-guide.md#turn-a-photo-with-one-key).
 - **A real Linux PC and a real Mac**: [macOS and Linux](platform-support.md#macos-and-linux).
 - **Everything checked so far**, device by device and server by server: [Servers and devices checked](compatibility.md#servers-and-devices-checked).
 
-Last updated: 20 October 2026 (build 26, desktop build 6)
+Last updated: 22 October 2026 (build 27, desktop build 7, webOS 0.1.0)

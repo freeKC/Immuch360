@@ -4,7 +4,7 @@ Every function of Immuch360, step by step, with its options, its messages and it
 
 Back to the [README](../../README.md)
 
-This guide covers every function of Immuch360, for your ordinary photos and videos as for those of a 360° camera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360), of the photo sphere mode of a phone or of a 3D camera, from an Immich server, the device itself, a NAS, a media server, a Plex server or a Tapo camera, on phones, tablets, TVs, Meta Quest headsets and computers (Windows, and early previews for Linux and macOS).
+This guide covers every function of Immuch360, for your ordinary photos and videos as for those of a 360° camera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360), of the photo sphere mode of a phone or of a 3D camera, from an Immich server, the device itself, a NAS, a media server, a Plex server, a Tapo camera or a DJI drone, on phones, tablets, TVs (Android TV and Google TV, and a first test build for LG webOS TVs), Meta Quest headsets and computers (Windows, and early previews for Linux and macOS).
 
 **Which problem do you have?**
 
@@ -14,13 +14,16 @@ This guide covers every function of Immuch360, for your ordinary photos and vide
 - **"Plex plays my 360° videos flat, and I want my Plex library in the headset, on the TV and away from home."** See [Plex Media Server, without plex.tv](#plex-media-server-without-plextv).
 - **"My photos are on my phone, and I have no computer or NAS to put them on for the headset."** See [Share this phone on the network](#share-this-phone-on-the-network).
 - **"I want to see my Tapo camera and last night's clips without the Tapo app, and keep a clip in Immich."** See [Tapo cameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **"My drone videos are not on the Immich map, and I want the files of my DJI drone on my server without a computer."** See [DJI drones](#dji-drones-photos-and-videos-over-usb-experimental).
+- **"My photo is sideways, and I want to turn it with one key, on the phone, the TV or the computer."** See [Turn a photo with one key](#turn-a-photo-with-one-key).
 - **"My Insta360 files need the Insta360 app before I can watch them"** (and the GoPro .360 and DJI .osv files too). See [Raw 360° camera files](#raw-360-camera-files-without-the-cameras-app).
 - **"My 3D videos look doubled, and my VR180 videos are stretched all around."** See [3D and VR180](#3d-and-vr180-photos-and-videos) and [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **"I have spatial photos from my iPhone."** See [Apple spatial photos and videos](#apple-spatial-photos-and-videos).
 - **"It works on the phone, but I want it in the Quest."** See [In the Meta Quest 3 headset](#in-the-meta-quest-3-headset).
-- **"I want to watch my 360° photos and videos, and the videos of my NAS or my Plex server, on the TV, with the remote."** See [Watch on your TV](#watch-on-your-tv-android-tv-and-google-tv).
+- **"I want to watch my 360° photos and videos, and the videos of my NAS or my Plex server, on the TV, with the remote."** See [Watch on your TV](#watch-on-your-tv-android-tv-and-google-tv), and for an LG TV, [LG webOS TVs](platform-support.md#lg-webos-tvs).
 - **"I cannot find my 360° shots among all the others."** See [The 360° list](#find-your-360-shots-the-360-list).
 - **"My 360° video stutters, or plays a blurry copy."** See [Video details and decoders](#video-details-decoders-and-why-a-video-stutters).
+- **"A video loads forever, or does not play on my TV."** See [When a video does not play](#when-a-video-does-not-play).
 - **"I want my 360° photos and my Immich library on my Windows PC, with the photos and videos of its folders, my NAS and my Plex server, and the PC shared with my headset."** See [On a Windows computer](#on-a-windows-computer-immuch360-desktop-preview) (a preview: photos and flat videos, and from desktop build 3 360°, 3D, VR180 and raw 360° videos and the Tapo live view).
 - **"Do I keep what the Immich app does?"** Yes, with two small changes, see [Everything else is Immich](#everything-else-is-immich).
 
@@ -36,6 +39,7 @@ When a feature is recent, the text says from which build it is there. The GitHub
 - [Plex Media Server, without plex.tv](#plex-media-server-without-plextv)
 - [Share this phone on the network](#share-this-phone-on-the-network)
 - [Tapo cameras: live view and the recordings of the memory card](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [DJI drones: photos and videos over USB (experimental)](#dji-drones-photos-and-videos-over-usb-experimental)
 - [Raw 360° camera files, without the camera's app](#raw-360-camera-files-without-the-cameras-app)
 - [3D and VR180 photos and videos](#3d-and-vr180-photos-and-videos)
 - [Depth on a flat screen: Spatial 2.5D (experimental)](#depth-on-a-flat-screen-spatial-25d-experimental)
@@ -68,13 +72,34 @@ Immuch360 is first a gallery and a player for ordinary photos and videos. The ti
 2. Swipe left or right for the next or the previous photo or video of the timeline, the album or the list you came from.
 3. Pinch or double tap to zoom in, and drag to move around the zoomed photo.
 4. Swipe up for the details: the date, the place, the camera and the file. Swipe down on the photo to close the viewer.
-5. The top bar has the favorite button, the ⋮ menu (Slideshow, "View as 360°", Download and more) and, on a 360° file, the 360° button, see [360° photos and videos as a sphere](#360-photos-and-videos-as-a-sphere). The bottom bar has the actions of the Immich app: share, edit, add to an album, delete, and upload for a file of the device that is not on the server yet.
+5. The top bar has the favorite button, the ⋮ menu (Slideshow, "View as 360°", Download and more) and, on a 360° file, the 360° button, see [360° photos and videos as a sphere](#360-photos-and-videos-as-a-sphere). The bottom bar has the actions of the Immich app: share, edit, add to an album, delete, and upload for a file of the device that is not on the server yet; from build 27, Rotate too, before Edit, see [Turn a photo with one key](#turn-a-photo-with-one-key).
+
+### Turn a photo with one key
+
+A photo taken sideways, or a scan the wrong way up: from build 27 one key turns it by 90°, on every platform. The Immich app turns a photo only in its photo editor (Edit, rotate, Save); Immuch360 does it with one press, from the viewer, a TV remote included.
+
+1. **Phones and tablets**: open the photo and tap **Rotate** in the bottom row, before Edit: the photo turns 90° clockwise at once, at any zoom. A long press turns it the other way. With a keyboard, R turns it clockwise and Shift+R counter clockwise (not while you type in a text field). In the read only mode, the button is in the top bar.
+2. **Meta Quest, in the window**: the same Rotate button, with the controller pointer; a long press turns it the other way.
+3. **TV**: the **yellow** key of the remote turns the photo clockwise and the **blue** key counter clockwise, from anywhere in the viewer. On a remote without colour keys, use the Rotate button of the bottom bar: OK on the photo shows the bars, then Right from the text button reaches Rotate, or Down when the photo has no recognized text; OK on Rotate turns the photo, and each OK again. OK on the photo itself never turns it, and a held OK on Rotate opens the details without a turn.
+4. **Computer**: R, Shift+R, or the rotate button of the top bar, before full screen.
+5. **A photo of a share** (SMB, WebDAV, DLNA, Plex, Tapo): the rotate button is the first of its top bar, and R, Shift+R, yellow and blue work there too.
+6. Four presses bring the photo back as it was.
+
+Where the turn goes:
+
+- **Your own photos on an Immich server 2.6.0 or later**: the turn is saved through Immich's photo editor, as if you had turned the photo there. Quick presses make one request; a thin bar shows at the top while the server makes the turned picture, which then takes the place of the one on screen; the web app, the other devices and the thumbnails show it turned. A crop or a mirror made in the editor before is kept. To undo it, turn it back, or remove the edit in the editor.
+- **Everything else** (the photos of a partner or of a shared album, motion photos, GIF and SVG files, an older server, the read only mode, the photos of the device and of the shares): the turn is remembered on this device, for that photo. The first time in a session for an Immich photo, the app says "The rotation is kept on this device only". The slideshow, the memories, the thumbnails and casting show such a photo as it is.
+- **"Could not save the rotation on the server"**: the photo comes back as the server has it; try again.
+
+What never turns: videos; 360°, 180° and 3D photos, and the photos you view as 360°, whose views follow your head or the phone and always read the photo as the camera made it; Apple spatial photos; raw files of 360° cameras; 2:1 photos of Insta360 cameras, even when the server does not flag them 360°; the trash and the locked folder. A photo whose kind the app does not know yet (its details still loading, a photo of the device that the 360° scan has not read) gets the button once it is known.
+
+On LG TVs the webOS app has the same keys and the same rule, see [LG webOS TVs](platform-support.md#lg-webos-tvs).
 
 ### Play a video
 
-1. Open a video as a photo: it plays in the viewer, with its sound. In Settings, Asset Viewer, Videos, "Auto play videos" starts a video as soon as it opens, and "Looping" plays it again from the start when it ends.
+1. Open a video as a photo: it plays in the viewer, with its sound. In Settings, Asset Viewer, Videos, "Auto play videos" starts a video as soon as it opens, and "Looping" plays it again from the start when it ends (off by default on a TV, from build 27).
 2. Tap the video to show or hide the controls: play and pause (replay once it has ended), the position and the length, and the time bar to seek. They hide by themselves a few seconds after the last touch.
-3. While the video loads or stalls, the player shows "Buffering".
+3. While the video loads or stalls, the player shows "Buffering". From build 27 a video that cannot play says why instead of loading forever, see [When a video does not play](#when-a-video-does-not-play).
 4. A 360° video has the 360° button in the top bar, which opens the [360° player](#play-a-360-video); on a phone or a tablet the Spatial button follows it while that setting is on, see [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 5. Swipe up for the details of the video: the codec, the size, the frame rate, the bit rate, the picture, and whether this device decodes it, see [Video details, decoders and why a video stutters](#video-details-decoders-and-why-a-video-stutters).
 
@@ -82,7 +107,7 @@ The player plays the file stored on the device when there is one, the file of a 
 
 ### On a TV, in a headset and on a computer
 
-- **TV**: OK pauses or plays a video; while it plays, left and right jump 10 seconds, and while it is paused they go to the previous or next item; the media keys of the remote work. See [Photos and videos with the remote](#photos-and-videos-with-the-remote).
+- **TV**: from build 27, Left and Right go to the previous or next item, also while a video plays; OK shows the controls of a video, and a second OK pauses; the controls hide 5 seconds after the last key; the media keys of the remote work. Up to build 26, OK paused and Left and Right jumped 10 seconds while a video played. See [Photos and videos with the remote](#photos-and-videos-with-the-remote).
 - **Meta Quest**: the app runs as a window, where photos and videos open as on a phone; the 360° button opens the immersive view, see [In the Meta Quest 3 headset](#in-the-meta-quest-3-headset).
 - **Computer**: the arrows, or the chevrons at the edges, go from photo to photo; Enter pauses a video, J and L jump 10 seconds, F or F11 switches to full screen. See [Use it on a computer](#use-it-on-a-computer).
 
@@ -132,6 +157,8 @@ Some 360° files carry no projection tag, so the server does not flag them as 36
 3. To undo it, the same entry now reads "Stop treating as 360°".
 
 The choice is remembered on the phone and changes nothing on the server. On a file of a network share it applies to that viewing only.
+
+From build 27 the spheres of DJI drones, which most often carry no projection tag, show as 360° without this step: the app recognises them by the camera code in their EXIF, as the photos a GoPro or a DJI 360° camera stitched itself. To send them to Immich with the tag its web app needs, see [DJI drones](#dji-drones-photos-and-videos-over-usb-experimental).
 
 ### Limits
 
@@ -384,6 +411,48 @@ When the camera no longer answers at its address, its page looks for it on the n
 - **Away from home**: the app reaches the camera at its address on your network, so not from outside it.
 - Immuch360 is not affiliated with TP-Link.
 
+## DJI drones: photos and videos over USB (experimental)
+
+Your drone's videos reach Immich through the album of DJI Fly, but a DJI Neo 2 video arrives without its place: the drone records its position in a track that the metadata tool of the Immich server does not read yet, and the only other copy of it is the flight data file (.SRT) the drone writes beside each video, which stays on the drone. Most spheres of DJI drones carry no 360° tags either, so Immich shows them flat. And you may want the originals on your server without a computer and without DJI Fly.
+
+From build 27, on Android phones and tablets, Immuch360 reads the drone, its controller or a card over a USB-C cable, lists their photos and videos, and sends the originals to your Immich server, each video placed on the map from its flight data. The Immich app backs up the phone's gallery only. This page is experimental: it ran on an Android emulator with synthetic files, not with a real drone yet, and reports are welcome in [Issues](https://github.com/freeKC/Immuch360/issues).
+
+### Turn it on and plug in the drone
+
+1. Settings, Advanced, turn on "DJI drones (experimental)". A "DJI drone" tile appears in the Library tab, Network shares, under "Share this phone on the network". It is not offered on the Quest, on a TV, on iPhone and iPad, or on a computer.
+2. For the place of your videos: in DJI Fly, in video mode, Settings, Camera, turn **Video Subtitles** on before the flight. Without it a Neo 2 video has no place the app can read.
+3. Plug the drone, its controller or a card reader into the phone with a USB-C data cable. A Neo 2 can stay off.
+4. Open "DJI drone", then "Choose the drone or the card". The folder picker of Android opens: open its side menu, choose the drone, the controller or the card, then its DCIM folder or the whole drive, "Use this folder", "Allow". The next time the drone is under "Used before", which opens it without the picker while it is plugged in; Forget removes it.
+
+### What the page shows
+
+- The photos and videos by day. The proxy (.LRF), flight data (.SRT), .THM and sound (.m4a) files of a video stay with it and are not listed; a video tile takes its frame from the proxy.
+- A sphere with its 360° badge, and the shots it was made from behind a "+N" chip; shots of a sphere the drone did not stitch show as such.
+- A crossed speaker on a clip whose sound the phone recorded: "The sound of this clip was recorded by the phone and is in a separate file. Immich receives the video without sound; download the clip with DJI Fly to keep it."
+- "Not accepted by Immich" on the files the server refuses (.osv, .360, .36p).
+- A device in File transfer mode may send its list slowly: "The device was still sending its list of files: some may be missing. Refresh in a moment."
+- Open a photo or a video as in a share: the video plays from the drone, nothing is copied.
+
+### Send the files to Immich
+
+1. Tap the checklist icon at the top, then "Select all new" (or long press each file): the files not sent before, without the source shots of a sphere and the refused files.
+2. "Upload to Immich": the sheet gives the count and the size, warns above 500 MB on mobile data, says "Videos with flight data are placed on the map", and, when a sphere is among the files, offers "Tag drone spheres as 360° for Immich", off by default. On, the photo goes unchanged, with a small .xmp file beside it on your server that tells Immich it is a 360° photo; off, Immuch360 still shows it as a sphere, and the Immich web app shows it flat.
+3. The files go one at a time, the screen kept on. A video is placed on the map from the first position of its flight data, once the server has read the video, and only when the server found no place in it; when the server is slow, the place is set later, the next time a share or the drone page opens.
+4. The summary counts the files sent, the spheres tagged, the videos placed, the files already on the server, those in the Immich trash and those refused. A file sent before is marked "Sent to Immich earlier" whatever the cable or the reader, and skipped; one in the Immich trash shows a bin, and the summary says to restore it there to keep it.
+5. Unplugged during an upload: "The drone or card was unplugged". Plug it back (the page reads it again, or Refresh) and send again: the files sent are skipped, and the one cut starts over, since the Immich API cannot resume a file. "The drone or card stopped answering. Unplug it and plug it back in." says the same of a device that no longer answers.
+
+### Keep on the device
+
+Select files, then "Keep on the device": they go into the gallery of the phone, album "Immuch360 import" (`DCIM/Immuch360 import`), where the phone's backup can find them. A video kept that way loses the place of its flight data, which the page says first. The files Immich does not accept go to `Download/Immuch360 import`, their names unchanged.
+
+### The DJI Neo 2, and other drones
+
+- The Neo 2 has no panorama or sphere mode. The spheres of other DJI drones (Mini, Air, Mavic and others) show as 360° photos on every platform, recognised by the camera code in their EXIF, and so do spheres you stitch yourself from Neo 2 shots.
+- Its 49 GB of storage are inside the drone; by DJI's manual it is read with a cable while switched off, most likely as a USB drive.
+- QuickTransfer, the Wi-Fi copy of DJI Fly, is not supported.
+- A card from another camera in a USB-C card reader is read the same way, and so is a phone, or a DJI RC 2, in File transfer mode (neither tried yet).
+- More facts and limits: [DJI drones and the DJI Neo 2](compatibility.md#dji-drones-and-the-dji-neo-2).
+
 ## Raw 360° camera files, without the camera's app
 
 Insta360 cameras record the two fisheye circles of their lenses, side by side in one picture, in two tracks or in two files (an .insp is a JPEG, an .insv an MP4), and the official way to get a 360° picture out of them is the Insta360 app or Studio. People with an X4, X5, X6, a GoPro MAX or a DJI Osmo 360 ask what to do with the raw files of their card. The Immich web app takes any .insp for an equirectangular picture and wraps the two circles around the sphere; the mobile app shows them flat.
@@ -587,13 +656,15 @@ Turn it with the right thumbstick (or the Turn button of the info panel) until i
 
 You want the 360° photos and videos, your albums and the videos of your NAS or Plex server on the big screen, for the family on the sofa, with the TV remote. The Immich mobile app is not a TV app: a user who installed it on a TV found that it works with a mouse, not with the remote ([discussion #1614](https://github.com/immich-app/immich/discussions/1614)), and the Immich team has no plans for an official TV app ([discussion #13748](https://github.com/immich-app/immich/discussions/13748)).
 
-From build 20 the same Android app runs on Android TV and Google TV, with the remote as the only input: one APK for phones and TVs, the 360° and 3D viewers turned with the arrows, and the network shares, Plex and the Tapo cameras on the TV, with or without an Immich server.
+From build 20 the same Android app runs on Android TV and Google TV, with the remote as the only input: one APK for phones and TVs, the 360° and 3D viewers turned with the arrows, and the network shares, Plex and the Tapo cameras on the TV, with or without an Immich server. From build 27 it is dark by default, as a screen across a room wants, and its videos, its details and its search filters follow what the first run on a real TV asked for.
+
+LG TVs run webOS, not Android: they have an app of their own, in a first test build, see [LG webOS TVs](platform-support.md#lg-webos-tvs).
 
 To install the app on a TV, see [Install it on the TV](platform-support.md#install-it-on-the-tv): until Google Play offers it on TVs, the universal APK of the Releases page, installed with adb.
 
 ### First start
 
-1. From build 24 the app opens on the welcome page with the frame on "Use without a server". The down arrow moves it to "Add a network share or a media server", then to "Connect to an Immich server", and OK opens the choice it is on. Up to build 23, the login page comes first, with "Use without a server" under the form.
+1. From build 27 the app is dark from its launch screen on, even when the TV is set to light; on a TV, Settings, Preferences, Theme has one "Dark mode" switch, and turned off it makes the app light. From build 24 the app opens on the welcome page with the frame on "Use without a server". The down arrow moves it to "Add a network share or a media server", then to "Connect to an Immich server", and OK opens the choice it is on. Up to build 23, the login page comes first, with "Use without a server" under the form.
 2. "Connect to an Immich server" opens the login page with the frame on the server address. Sign in as on a phone: the arrows move a frame from field to field (from build 23 it passes above the label of a filled field rather than across it), and OK on a field ("Press OK to type") opens the keyboard of the TV in a dialog, for the server address, the email and the password. Back, under the address, or the Back key of the remote returns to the welcome page.
 3. "Use without a server": a TV has no photos of its own, so the Photos tab says "This TV has no photos or videos of its own: open a network share from the Library." with a Network shares button. "Add a network share or a media server" goes straight to the Network shares page. Add a share, a Plex server or a camera there, as on a phone (see [Network shares](#network-shares-a-nas-a-computer-or-a-media-server)).
 
@@ -602,17 +673,18 @@ To install the app on a TV, see [Install it on the TV](platform-support.md#insta
 - The arrows move the frame, OK opens what it is on, Back goes back. From a tab, Back goes to the side menu, then to Photos, then out of the app. In a list of choices, such as the type of a share or a setting, the arrows only move the frame and OK picks the choice (from build 22; before, the arrows changed the choice).
 - Channel up and down scroll a page at a time. From build 22 the photo grids show about six tiles per row inside the margins of the screen, with sharper thumbnails of the device's own files, and the pages with a picture header on a phone (the 360° list, Favorites, the albums of the device) show a single bar instead. From build 23 those thumbnails are made twice the size of their tile and shrunk smoothly, so fine detail such as snowy branches no longer sparkles, and the photos of the server show its larger preview picture, as sharp, rather than its small thumbnail stretched to the tile.
 - From build 22 the frame starts on the first item of each page (the first tile of the 360° list, the email field once the server address is confirmed), stays inside the margins of the screen as a grid scrolls (from build 23 in the two panes of Settings too), and goes from a grid up to the row or the filters above it rather than to the Back button. Right from a network share or a camera reaches its edit button, and the outcome of "Test the connection" scrolls into view.
-- In the viewers, the play and pause, fast forward, rewind, next and previous keys of the remote work, and the info key shows the details of a photo or video.
+- In the viewers, the play and pause, fast forward, rewind, next and previous keys of the remote work. The info key, and from build 27 the Menu key or OK held for a moment, open the details of a photo or video. From build 27 they are read only on a TV: the description shows as text, with no field and no keyboard opening on the way down, no pencils, and the frame starts on their first row; Back closes them.
 - **Search filters** (from build 26): in the People filter, OK picks a person, Right reaches Apply, Up from Apply reaches Clear, and Left goes back to the person you were on. In the other filter sheets, Down from the last choice reaches Clear, and Right from Clear reaches Apply. The Media Type and Display options sheets fit the screen. The album sort, in the Albums tab, and the search type button of the Search page open in a dialog: the current choice is marked and has the frame, OK applies another one (OK on the current sort mode reverses its order), and Back closes the dialog without a change.
+- **Search filters, from build 27**: the Tags, Location, Date, Media Type, Star Rating and Display options sheets take most of the height of the screen and put Clear and Apply beside the choices: Right from a choice reaches Apply, Up from Apply reaches Clear, Left goes back. In Location and Camera, OK on Country, State, City, Make or Model opens the choices in a list, with the current one marked; a country changes the states and cities offered, a make the models. Camera keeps its buttons under Make and Model. The date sheet shows its five choices, and OK on "In (year)" opens a list of years. Star Rating scrolls to all its choices. Thanks to mlc70, whose pull requests [#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) and [#3](https://github.com/mlc70/Immuch-Android-TV/pull/3) started this work.
 
 ### Photos and videos with the remote
 
-1. **A photo**: left and right go to the previous or next one, OK shows or hides the controls, Up goes to the top bar (where the 360° button is) and Down to the bottom bar.
-2. **A video**: OK pauses, showing the controls, or plays. While it plays, left and right jump 10 seconds back or forward; while it is paused they go to the previous or next item, as the hint says: "Paused: the arrows go to the previous or next item".
+1. **A photo**: left and right go to the previous or next one, OK shows or hides the controls, Up goes to the top bar (where the 360° button is) and Down to the bottom bar. From build 27 the yellow and blue keys turn it, see [Turn a photo with one key](#turn-a-photo-with-one-key).
+2. **A video**, from build 27: Left and Right go to the previous or next item, also while it plays (a video alone in its list jumps 10 seconds). OK shows the controls with play and pause selected, and a second OK pauses; Right from there reaches the 10 second back and forward buttons, and Up reaches the top bar in one press. The controls and the date hide 5 seconds after the last key and come back with any other key. The play and pause, rewind and fast forward keys keep their meaning. A video no longer plays in a loop on a TV: it stops on its last frame with the replay button (Settings, Asset Viewer, Videos, Looping turns the loop back on). Up to build 26, OK paused, and while a video played Left and Right jumped 10 seconds. When a video cannot play, see [When a video does not play](#when-a-video-does-not-play).
 3. **A 360° photo**, from the 360° button: the arrows look around, faster while held, and the view eases to a stop. OK moves to the buttons of the top bar, on "Zoom in", next to "Zoom out", the field of view and 3D; channel up and down zoom too. Back returns from the buttons to the picture, then closes. The hint reads "Arrows to look around, OK for the controls, Back to close".
 4. **A 360° video**, from the 360° button: the arrows look around while the controls are hidden, OK pauses and shows them, Back hides them, then closes. The hint reads "Arrows to look around, OK to pause and show the controls, Back to close".
 5. **Memories**: left and right go through the photos and on to the next memory, Up goes to the close button and Down to "View in timeline".
-6. **Shares and Plex**: the same keys in the photo and video pages of a share, where left and right open the previous or next file of the folder.
+6. **Shares and Plex**: the same keys in the photo and video pages of a share, where left and right open the previous or next file of the folder; from build 27 the name and the controls of a video hide 5 seconds after the last key there too.
 
 ### The Remote control layout setting
 
@@ -620,13 +692,13 @@ Settings, Preferences, "Remote control layout": "Large focus frames and remote c
 
 ### Limits
 
-- **A viewer**: on a TV the app shows and plays. Backup, uploads, editing, deleting, sharing, selecting several items, Cast, the Spatial 2.5D button, the gyroscope, the map and Places, and "Share this phone on the network" are hidden. The Settings page still shows the setting of Spatial 2.5D and, with a server, the Backup section, although the Spatial button and backup are hidden everywhere else (see [Known issues](known-issues.md#android-tv-and-google-tv)).
+- **A viewer**: on a TV the app shows and plays; from build 27 it also turns a photo with one key, the one edit it makes. Backup, uploads, the other edits, deleting, sharing, selecting several items, Cast, the Spatial 2.5D button, the gyroscope, the map and Places, and "Share this phone on the network" are hidden. The Settings page still shows the setting of Spatial 2.5D and, with a server, the Backup section, although the Spatial button and backup are hidden everywhere else (see [Known issues](known-issues.md#android-tv-and-google-tv)).
 - **Sign in**: OAuth opens a web page, which a TV cannot do: "Signing in with (provider) opens a web page, which this TV cannot do. Sign in with an email and a password instead."
 - **Links** show their address under "Open on another device" instead of opening a browser, and text is typed in the keyboard dialog of the system.
-- **Memory**: on a TV with little memory, 360° photos are shown at 4096x2048 at most, without the sharper picture on zoom.
-- **Videos**: the decoders of the TV decide what plays, with the same Video source setting and decoder check as on a phone (see [Video details and decoders](#video-details-decoders-and-why-a-video-stutters)); not measured on a TV yet.
-- **Two search filters with the remote**: the Location filter sheet keeps the frame in its Country field, where Down, Right and OK do not leave it (Back closes the sheet without applying it), and the quick date sheet shows two choices at a time and scrolls to the others.
-- **Not yet checked on a device**: the TV support was checked by automated tests and on the Google TV emulator, but it has not run on a real TV yet. Builds 21 and 22 were tried on the emulator: the login, the timeline, the albums, a flat photo, a video, the 360° sphere viewer and the 360° video player, the 360° list, an SMB share, the add menu with its network share, Plex and camera choices, the share form, Settings and the remote navigation fixes; the Plex and Tapo pages themselves were not opened there. Of the TV fixes of build 23, only the bottom margin of the Photos tab was seen on the emulator, the others are covered by automated tests; the search filters of build 26 were tried there with the remote. To be confirmed on a real TV: the direction in which the arrows turn a 360° video, the keyboard of the TV (Gboard) in the text dialog, the OK key of infrared remotes, the margins and the banner on the TV home screen. Reports are welcome.
+- **Memory**: on a TV with little memory, 360° photos are shown at 4096x2048 at most, without the sharper picture on zoom; from build 27 a TV with 3 GB of memory or less counts as one, the photo grid keeps fewer pictures in memory, and a held arrow moves it at most about 10 rows a second.
+- **Videos**: the decoders of the TV decide what plays, with the same Video source setting and decoder check as on a phone (see [Video details and decoders](#video-details-decoders-and-why-a-video-stutters)); not measured on a real TV yet. A video beyond them still does not play; from build 27 the app says so, see [When a video does not play](#when-a-video-does-not-play).
+- **The details** do not open with Menu or a held OK in the video page of a share and in the 360° photo viewer, and "Custom range" of the date filter was not tried with the remote.
+- **Real TVs**: the app ran on a real Android TV for the first time on 21 October 2026, with build 25 or 26: photos and 360° photos went well, and its five problems (videos, controls, 360° videos, the white pages, one freeze) led to build 27, which was checked by automated tests and on the Google TV emulator, not on a real TV yet. Builds 21 and 22 were tried on the emulator: the login, the timeline, the albums, a flat photo, a video, the 360° sphere viewer and the 360° video player, the 360° list, an SMB share, the add menu with its network share, Plex and camera choices, the share form, Settings and the remote navigation fixes; the Plex and Tapo pages themselves were not opened there. Of the TV fixes of build 23, only the bottom margin of the Photos tab was seen on the emulator, the others are covered by automated tests; the search filters of build 26 were tried there with the remote, and so were the videos, the theme, the details, the filters and the rotation of build 27. To be confirmed on a real TV: the direction in which the arrows turn a 360° video, the keyboard of the TV (Gboard) in the text dialog, the OK key of infrared remotes, the margins and the banner on the TV home screen. Reports are welcome.
 - **Google Play on TVs** waits for Google's review of the TV release; until then, the APK.
 - **Other TVs**: Fire TV is not tested, and there is no Apple TV version.
 
@@ -658,9 +730,19 @@ The Immich app has one "Force original video" switch and shows the codec only. I
 
 <img src="../../.github/readme/b19-video-details.png" width="260" alt="The details of a 360° video: Codec H.264 High (avc1.640033), 3840 x 1920, 30 fps; Bit rate 16 Mbit/s; Picture 8 bit, SDR, BT.709; Decodes on this device: Yes, Hardware, up to 4096 x 2304">
 
+### When a video does not play
+
+From build 27, a video that cannot play says why, instead of loading forever:
+
+- **"This video cannot be played"**, with the cause, for example "H.264 5760 x 2880 is beyond the video decoders of this device (at most 4096 x 2304)", or "No video decoder of this device plays (codec)". For a server video it adds what the server can do: in Administration, Video transcoding, set the transcode policy to "Videos higher than target resolution or not in an accepted format", then run Transcode videos (see [Give the headset a video it can decode](#give-the-headset-a-video-it-can-decode), which applies to TVs too).
+- **"This video is not loading"**, after 20 seconds with nothing played: the network or the server sends it too slowly, with its bit rate when the app knows it.
+- Play tries again. On a TV, Left and Right move on to the next item, and the details show its codec, size and bit rate: hold OK, or press Info or Menu.
+- **A 360° video beyond the decoders** (Android): the 360° button asks first, with the cause and the advice for the server, and offers Play or Close (Close has the frame on a TV). Play opens the 360° player anyway, which says "(codec) (size) is beyond the video decoders of this device: it may not play", then names the cause when it cannot: the decoder refused it, gave no picture, or the video did not load within 30 seconds.
+- The Logs page (in the profile menu) has the details, for a report: which stream played, what the decoders of the device take, and what failed, see [Logs](troubleshooting.md#logs).
+
 ### Read the details of a video
 
-1. Open the video and swipe up: the details come under the picture.
+1. Open the video and swipe up: the details come under the picture. On a TV, press Info, or from build 27 Menu, or hold OK.
 2. Codec: the codec with its profile and codecs string, the frame size and the frame rate, for example "H.264 High (avc1.640033) • 3840 x 1920 • 30 fps", as in the picture above.
 3. Bit rate (from build 18): the bit rate of the video track, or the one the file declares; otherwise it is marked "whole file, audio included" or "estimated from the file size".
 4. Picture (from build 18): the bit depth, SDR or the HDR transfer (HLG, PQ, Dolby Vision) and the colour space.
@@ -714,7 +796,7 @@ Everything the official Immich mobile app does is here: backup, timeline, albums
 
 To show a 360° photo to someone who does not have the app, share it with an Immich shared link: the Immich web app shows a 360° photo as a sphere in their browser.
 
-The current build, build 26 (version 3.3.0-rc.0, build number 3030024), is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0, not a stable release yet). Build 22, on the same Immich base, was tested against an Immich 3.2.4 server and against a server built from that same Immich `main`: login, timeline, albums, 360° photos and videos, video playback and uploads, with no API error. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project. For the full documentation of Immich itself, see [immich.app](https://immich.app).
+The current build, build 27 (version 3.3.0-rc.0, build number 3030025), is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0, not a stable release yet). Build 22, on the same Immich base, was tested against an Immich 3.2.4 server and against a server built from that same Immich `main`: login, timeline, albums, 360° photos and videos, video playback and uploads, with no API error. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project. For the full documentation of Immich itself, see [immich.app](https://immich.app).
 
 ## On a Windows computer: Immuch360 Desktop (preview)
 
@@ -724,7 +806,7 @@ On a computer, Immich offers its web app in a browser. **What Immuch360 Desktop 
 
 This is a preview: photos and flat videos work from desktop build 2, and from desktop build 3 the 360° video player (360°, 3D, VR180 and raw 360° videos) and the live view of Tapo cameras; the steps below that need build 3 say so. Since 9 October 2026 the desktop sources are in the main branch of the fork, `immuch360`, so phones, headsets, TVs and computers ship from the same sources. The phone, tablet, Quest and TV apps do not change with it and keep the name Immuch360.
 
-To download and install the preview, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos): the installer or the ZIP of desktop build 6, with packages for Linux and macOS, early previews.
+To download and install the preview, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos): the installer or the ZIP of desktop build 7, with packages for Linux and macOS, early previews.
 
 ### What the preview does
 
@@ -732,6 +814,7 @@ To download and install the preview, see [Install it on a computer](#install-it-
 - **Without a server**: the folders of your photos and videos (Pictures and Videos are suggested) replace the gallery of a phone. Nothing is read outside the folders you chose, and without a server nothing leaves the computer.
 - **Upload and backup** from those folders to your Immich server, while the app is open.
 - **360° photos as a sphere**, with the mouse and the keyboard; the raw .insp photos of Insta360 cameras open as on phones.
+- **Turn a photo** (from desktop build 7): R, Shift+R, or the rotate button of the top bar, see [Turn a photo with one key](#turn-a-photo-with-one-key).
 - **Flat videos** (from desktop build 2): the videos of your folders, of your Immich server (the original or the transcoded stream, see [Video details and decoders](#video-details-decoders-and-why-a-video-stutters)), of SMB, WebDAV and DLNA shares, of Plex servers and the Tapo recordings play in the window, with the controls of the phones (play, pause, the time bar), a buffering indicator, and a menu of the audio tracks for a video that has several. The videos of your folders and of the shares show a frame of the video as their thumbnail, instead of a film icon.
 - **360°, 3D and VR180 videos** (from desktop build 3): the 360° button opens them in the app's 360° player, in the window or in full screen, from every source of flat videos, turned with the mouse and the keyboard, with the 3D and 360°/180° buttons of the phones (a 3D video shows its left eye, as on phones), seeking, the audio track menu and a buffering indicator.
 - **Raw 360° videos** (from desktop build 3): Insta360 .insv files, with both lenses in one track, in two tracks (X4 and later) or in two files (X3 pairs), GoPro .360 and DJI .osv files, stitched by the app on the graphics chip as they play, with the calibration of the file, as on phones. From desktop build 5 the files with one lens per track or per file play in two players, one per lens, as phones run two decoders.
@@ -748,7 +831,7 @@ To download and install the preview, see [Install it on a computer](#install-it-
 2. **Cloud, USB and network folders.** Files that OneDrive (or another cloud drive) keeps online only are counted but not read, so adding a folder does not download your whole cloud: "Download and include" fetches them when you want them. A USB drive that comes back under another letter keeps its photos. Network folders, and folders on a memory card or a USB drive (so that Windows can still eject it), are not watched for changes: use Refresh after adding files there.
 3. **Open a file or a folder from Windows** (from desktop build 5): in File Explorer, right click a photo or a video, "Open with", then Immuch360 Desktop; the ZIP registers nothing, so the first time choose "Choose another app" and the `immuch360.exe` of its folder. You can also drop files or a folder on the window of the app or on `immuch360.exe`, or give their paths on the command line, such as `immuch360.exe D:\Photos\pano.jpg`. One photo or video opens in the viewer, recognised as it would be in one of your folders: a 360° file opens in its 360° view at once, with its projection (360° or VR180, 3D, the raw files of 360° cameras, an X3 pair when its two files sit side by side); close that view to see it flat. "View as 360°" works on the others. Several files, or a folder, open on a page of their own, by date, like a folder of the library; a folder shows its own photos and videos, not those of its subfolders. The files stay where they are and do not join your folders. With the app already open, they go to its window rather than to a second copy, and from desktop build 6 a file handed over while the viewer shows another one opens in its place. Several files opened at once from File Explorer open together on one page, although Windows starts the program once for each of them. On the very first start, before you sign in or choose "Use without a server", they wait, and open once you have.
 4. **Look around a 360° photo**: drag with the mouse, zoom with the wheel, a double click or + and - (on any keyboard layout, AZERTY included), move with the arrow keys. F or F11 switches to full screen and Escape leaves it; Home and End go to the first and the last photo; I shows the details.
-5. **Go from photo to photo**: in a flat photo, the left and right arrows, or the chevrons that show at the edges while the mouse moves, go to the previous and the next one. Letters typed in the description field stay in the text.
+5. **Go from photo to photo**: in a flat photo, the left and right arrows, or the chevrons that show at the edges while the mouse moves, go to the previous and the next one. From desktop build 7, R and Shift+R turn the photo by 90°. Letters typed in the description field stay in the text.
 6. **Play a video**: open it from the timeline, a folder, a share, Plex or the recordings of a Tapo camera; it plays in the window. Enter, or the play and pause key of the keyboard, pauses and plays again. While it plays, the left and right arrows, or J and L, jump 10 seconds back or forward; paused, the arrows go to the previous and the next one. F or F11 switches to full screen, as for photos. The "Audio track" button chooses among the audio tracks of a video that has several.
 7. **When a video stops**: a paused video stays paused when you come back to the window. A video cut before its end, when the share or the server stops answering for example, says so: open it again and it picks up where it stopped, paused. A playlist file found in a folder or a share is not followed.
 8. **Play a 360° video** (from desktop build 3): open the video and click 360° in the top bar, as on a phone; for a 360° file the server does not flag, "View as 360°" in the ⋮ menu first, see [A 360° file that shows flat](#a-360-file-that-shows-flat-view-as-360). The 360° player opens in the window. Drag with the mouse to look around (the view keeps turning a little after a quick drag), zoom with the wheel, + and - or Page Up and Page Down, turn with the arrow keys held down. Space, or the play and pause key of the keyboard, pauses and plays again; J and L jump 10 seconds back or forward; Home goes back to the start; M turns the sound off and on. F, F11 or a double click switches to full screen; Escape leaves full screen, then closes the player. The controls (close, the title, 360°/180°, 3D, the audio track and full screen at the top; play, 10 seconds back and forward, the time bar and the sound at the bottom) hide with the mouse cursor after 3 seconds of play, and come back when the mouse moves or a key is pressed; Tab goes from one to the next.
@@ -800,14 +883,14 @@ When it is the decoding of a server video that does not keep up, not the drawing
 - **8K HEVC videos need a dedicated graphics chip, and 360° videos run better on one**: on the test laptop, the integrated Intel UHD chip showed about half the frames of an 8K HEVC video, while the dedicated NVIDIA chip played 8K HEVC and 5.7K H.264 with no dropped frame; the 360° player is smooth on the NVIDIA chip and slower on the Intel one, see [360° videos and the graphics chip](#360-videos-and-the-graphics-chip). Windows runs the app on the integrated chip unless told otherwise: in the Windows settings, System, Display, Graphics, add `immuch360.exe` and choose "High performance", then start the app again. On the integrated chip, a flat 5.7K H.264 video, which its decoder refuses, is decoded by the processor without a lost frame.
 - **Flat videos are drawn at most 1440 lines high**, then scaled to the window: on a 4K screen in full screen, a 4K or 8K video is a little softer than in a dedicated video player. This keeps an 8K video within the graphics power of a laptop. The 360° player reads the whole frame, or the smaller size its measure chose, and draws its view at most 1440 lines high too.
 - **While a video of your folders plays in the app, or while the headset reads a file from the shared computer** (a video it plays, a photo it downloads), Windows cannot rename, move or delete that file and says it is open in Immuch360 Desktop: close the video, or stop the playback in the headset, first. Backups do not hold your files that way: a file can be renamed, moved or deleted while it is uploaded.
-- **Rough edges**: desktop build 3 passed 855 of its 863 desktop tests on Windows (8 are skipped by design) and the whole test suite of the app, 200 players opened one after the other left no leak, and its release ZIP started, played a test clip and closed cleanly. Desktop build 4 is covered by the project's CI (the desktop tests on Windows and the whole test suite of the app), and was started, played a 1080p video and closed cleanly by hand; desktop builds 5 and 6 are built and tested by the same CI. The test of every function by hand on a real PC is still to do.
+- **Rough edges**: desktop build 3 passed 855 of its 863 desktop tests on Windows (8 are skipped by design) and the whole test suite of the app, 200 players opened one after the other left no leak, and its release ZIP started, played a test clip and closed cleanly. Desktop build 4 is covered by the project's CI (the desktop tests on Windows and the whole test suite of the app), and was started, played a 1080p video and closed cleanly by hand; desktop builds 5 to 7 are built and tested by the same CI. The test of every function by hand on a real PC is still to do.
 - **What the 360° player and the live view were checked with**: the 360° player was run with synthetic 4K, 5.7K and 8K 360° clips on both graphics chips of a laptop (opened, played, turned while playing and paused, closed) with no crash and no reset of the graphics driver. Raw two lens videos were played from synthetic clips and from real X3 and X4 files. The Tapo live view was checked against a test RTSP server that signs in the way the cameras do (Digest), cut and refused on purpose, with no password in any log line, but not yet with a real camera. The test by hand, with real 360° and 3D files, both screens of a laptop, sleep and resume, and a real camera, is still to come.
 
 If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch360/issues) with the log saved from the Logs page, see [Logs](troubleshooting.md#logs). Check the log before sharing it: it can contain your server address.
 
 ## Install it on a computer: Windows, Linux and macOS
 
-Immuch360 Desktop comes as desktop pre-releases on the [Releases](https://github.com/freeKC/Immuch360/releases) page of GitHub; the current one is [desktop build 6](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6). From desktop build 5, each desktop pre-release has six files, with `SHA256SUMS.txt` to check them:
+Immuch360 Desktop comes as desktop pre-releases on the [Releases](https://github.com/freeKC/Immuch360/releases) page of GitHub; the current one is [desktop build 7](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7). From desktop build 7, each desktop pre-release has seven files (six in desktop builds 5 and 6), with `SHA256SUMS.txt` to check them:
 
 | Computer | File | What it is |
 |---|---|---|
@@ -817,6 +900,7 @@ Immuch360 Desktop comes as desktop pre-releases on the [Releases](https://github
 | Fedora 40 or later, 64 bit | `Immuch360-Desktop-<version>-linux-x86_64.rpm` | The package for Fedora |
 | macOS 12 or later, Apple silicon or Intel | `Immuch360-Desktop-<version>-macos.dmg` | The app in a disk image |
 | macOS 12 or later, Apple silicon or Intel | `Immuch360-Desktop-<version>-macos.zip` | The same app, zipped |
+| Every system | `Immuch360-Desktop-<version>-libsmb2-sources.tar.gz` | The corresponding source of libsmb2, the SMB library inside the app (from desktop build 7; the app carries the same archive), see [License and trademarks](platform-support.md#license-and-trademarks) |
 
 Your sign in, your folders and your settings stay in your profile on the computer, not with the program: installing the next build over it, or removing the program, keeps them.
 
@@ -855,8 +939,8 @@ Start "Immuch360 Desktop" from your applications, or `immuch360` in a terminal (
 What it does on Linux, from desktop build 6: the welcome page; without a server, your Pictures and Videos folders suggested and their photos and videos by date; a 360° photo as a sphere turned with the mouse; flat videos, played by the libmpv of the system, with a frame of each video as its thumbnail. That much was checked under WSLg (the Linux of Windows 11) and in clean containers of Ubuntu 22.04 and 24.04, Debian 12, Fedora 40 and Fedora 44, where each package played a video; it has not run on a real Linux PC yet. Your Immich server, the SMB, WebDAV and DLNA shares (SMB from Ubuntu 22.04 and Debian 12 on), Plex, the Tapo recordings and live view, Apple spatial photos and the upload to Immich are in the sources and built by the project's CI, but not checked on Linux yet: reports are welcome. What it does not do yet:
 
 - **360°, 3D, VR180 and raw videos** play flat, with "This computer cannot show the 360° view of this video: it plays flat.": the 360° player is Windows only for now. 360° photos turn as a sphere.
-- **Videos on X11 sessions** are drawn by the processor, because the isolated EGL context of the graphics chip fails there, so a large video may drop frames; a Wayland session uses the graphics chip.
-- **The keyring**: the app keeps its secrets in the keyring of your session (GNOME Keyring, KWallet), as desktop sessions have. Without one, the first start logs a keyring error, each access to a secret can wait 25 seconds, and the app cannot keep its secrets.
+- **The graphics chip of a real PC**: from desktop build 7 the videos are drawn by the graphics chip on X11 sessions too, as under Wayland (desktop build 6 drew them with the processor on X11), but this was checked in the CI with Mesa's software rasterizer only. Started from a terminal, the app prints which path it took: `H/W rendering with isolated EGL context`, or `S/W rendering` with the reason.
+- **The keyring**: the app keeps its secrets in the keyring of your session (GNOME Keyring, KWallet), as desktop sessions have. Without one, from desktop build 7, it keeps them in memory for the session and says so in Settings, This computer: "Secrets kept for this session only". Sign in again at the next start, or install gnome-keyring or KWallet to keep them. Desktop build 6 and earlier waited up to 25 seconds at each secret there.
 - **Without libmpv**, in a copy of the app put in place by hand rather than installed from a package, videos do not play and the viewer says which package to install: "Videos need the libmpv library, which this computer does not have: install the libmpv2 package (libmpv1 on Ubuntu 22.04, mpv-libs on Fedora), then start Immuch360 again."
 - **The computer share** is Windows only, and the folders are not watched for changes: use Refresh after adding files.
 
@@ -877,11 +961,14 @@ What it does on Linux, from desktop build 6: the welcome page; without a server,
 - **Plex** (from build 20): the token stays in the secure storage of the device and is sent only to your own server, in a request header over HTTPS; the app never contacts plex.tv.
 - **Tapo cameras** (from build 20): the TP-Link account password and the camera account password stay in the secure storage of the device; the app talks to the camera on the local network only, never to the servers of TP-Link; fetched clips stay in the cache of the app and are deleted with the camera.
 - **TV**: whether the device is a TV is read on the device; nothing is sent.
+- **One-key rotation** (from build 27): the turn of a photo you own goes to your Immich server, as an edit of its photo editor; the others stay on the device.
+- **DJI drones** (from build 27): the app reads only the folder you pick, keeps its read grant and the list "Used before" on the phone, and sends the files only to your Immich server; nothing goes to DJI.
+- **The Logs page** (from build 27): why a video did not play, a stalled app and why it last ended stay in the app's log on the device until you share them.
 - **Phone share**: local network only, with a user name and password, over plain HTTP (see [Share this phone on the network](#share-this-phone-on-the-network)).
 - **Camera**: used only by the Spatial 2.5D player, on the device; the images are never stored and never sent anywhere.
-- **On a computer** (Immuch360 Desktop, a preview): the app reads only the folders you choose, keeps its index, thumbnails and cache on the computer, and stores passwords and tokens with the data protection of Windows, for your Windows account only, in the keyring of your session on Linux, and in your login keychain on macOS. The computer share follows the rules of the phone share, and does not start on a network Windows marks as public, or whose type it cannot tell, unless you say so.
+- **On a computer** (Immuch360 Desktop, a preview): the app reads only the folders you choose, keeps its index, thumbnails and cache on the computer, and stores passwords and tokens with the data protection of Windows, for your Windows account only, in the keyring of your session on Linux (in memory for the session when there is none, from desktop build 7), and in your login keychain on macOS. The computer share follows the rules of the phone share, and does not start on a network Windows marks as public, or whose type it cannot tell, unless you say so.
 - **The video player on a computer** (from desktop build 2): the videos of your server reach it through the app, so the player never holds your session token, and what it reads ahead stays in memory, not on the disk. It opens only the file it is given: a file of a folder or a share that is in fact a playlist or a stream description does not make it connect anywhere else. From desktop build 3, the address of each video is given to the player in memory only, never through a temporary file (the link the app makes for a video of the server or a share holds a key of that session, which sat on the disk for a few seconds at each open in desktop build 2), and that key never shows in the log; the live view of a Tapo camera gives the camera account to the player the same way, never in a file or a log line, and talks to the camera on the local network only; the measures of the 360° player and of the decoders (the graphics chip, the format of the video, the frames per second, never a file name) stay in the app's folder on the computer.
 
 The full policy is in [PRIVACY.md](../../PRIVACY.md).
 
-Last updated: 20 October 2026 (build 26, desktop build 6)
+Last updated: 22 October 2026 (build 27, desktop build 7, webOS 0.1.0)

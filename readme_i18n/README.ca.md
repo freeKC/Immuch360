@@ -10,8 +10,8 @@
 Immuch360 és una aplicació lliure i de codi obert per trobar, explorar, reproduir i descobrir les teves fotos i vídeos: els normals, i els panoràmics, 360°, 3D i immersius que altres aplicacions mostren plans, duplicats o estirats. Els llegeix allà on són, al mateix dispositiu, en un NAS o un ordinador, en un servidor Plex o en un servidor Immich, i els reprodueix en telèfons, tauletes, televisors, ulleres Meta Quest i ordinadors. No calen compte, núvol ni servidor.
 
 - **Què fa?** Mostra les teves fotos i vídeos com una galeria i els reprodueix en el visualitzador que correspon a cada fitxer: pla, com una esfera que pots recórrer amb la mirada, en 3D, en unes ulleres de realitat virtual.
-- **Quin contingut?** Fotos i vídeos plans, panoràmiques, fotos i vídeos 360°, VR180, 3D estereoscòpic, fotos espacials d'Apple, i els fitxers en brut de càmeres 360° (Insta360, GoPro MAX, DJI Osmo 360), cosits per l'aplicació.
-- **A quins dispositius?** Telèfons i tauletes Android, iPhone i iPad, Android TV i Google TV, Meta Quest 2, Pro, 3 i 3S, Windows (versió prèvia), i Linux i macOS com a primeres versions prèvies.
+- **Quin contingut?** Fotos i vídeos plans, panoràmiques, fotos i vídeos 360°, VR180, 3D estereoscòpic, fotos espacials d'Apple, les esferes 360° dels drons DJI, i els fitxers en brut de càmeres 360° (Insta360, GoPro MAX, DJI Osmo 360), cosits per l'aplicació.
+- **A quins dispositius?** Telèfons i tauletes Android, iPhone i iPad, Android TV i Google TV, televisors LG amb webOS (una aplicació a part, primera compilació de prova), Meta Quest 2, Pro, 3 i 3S, Windows (versió prèvia), i Linux i macOS com a primeres versions prèvies.
 - **Necessito un servidor o un compte?** No. Immuch360 funciona tot sol amb el contingut del teu dispositiu. Un servidor Immich, un NAS, un servidor multimèdia o un servidor Plex són opcions que afegeixes quan vols.
 
 <p align="center">
@@ -20,14 +20,15 @@ Immuch360 és una aplicació lliure i de codi obert per trobar, explorar, reprod
 
 <div align="center">
 
-| Plataforma | On aconseguir-la | Estat a 20 d'octubre de 2026 |
+| Plataforma | On aconseguir-la | Estat a 22 d'octubre de 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telèfons i tauletes | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | a Google Play (compilació 25), compilació 26 al GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telèfons i tauletes | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | a Google Play (compilació 25; compilació 26 en revisió), compilació 27 al GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone i iPad** | App Store | versió 3.3.1 (compilació 24) a l'espera de la revisió d'Apple des del 14 d'octubre; [compila-la tu mateix](../docs/immuch360/build.md) mentrestant |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#android-tv-and-google-tv) · Google Play | compilació 26 al GitHub, amb les correccions del comandament als filtres de cerca; la fitxa de televisors està en revisió per part de Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | a l'Horizon Store (compilació 23; compilació 25 en revisió), compilació 26 al GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instal·lador o ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | compilació d'escriptori 6, una versió prèvia: fotos, vídeos plans i 360°, recursos compartits, Plex, càmeres, fitxers oberts amb el programa, la interfície en 89 idiomes |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS i Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | versions prèvies: a Linux fotos, fotos 360° i vídeos plans (els vídeos 360° es reprodueixen en pla); a macOS el mateix, comprovat només al Mac de CI del projecte, sense signar |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV i Google TV** | [APK](#android-tv-and-google-tv) · Google Play | compilació 27 al GitHub: tema fosc per defecte, Esquerra i Dreta durant un vídeo, un missatge clar quan un vídeo no es pot reproduir; la fitxa de televisors està en revisió per part de Google |
+| **Televisors LG** amb webOS 4.0 o posterior | [Compilació de prova .ipk](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0) | compilació de prova 0.1.0 del 21 d'octubre, per instal·lar en [Developer Mode](#lg-tvs-webos); encara no s'ha executat en un televisor LG real |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 i 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | a l'Horizon Store (compilació 23; compilació 25 en revisió), compilació 27 al GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instal·lador o ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | compilació d'escriptori 7, una versió prèvia: fotos, vídeos plans i 360°, recursos compartits, Plex, càmeres, fitxers oberts amb el programa, fotos girades amb una sola tecla, la interfície en 89 idiomes |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS i Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | versions prèvies: a Linux fotos, fotos 360° i vídeos plans (els vídeos 360° es reprodueixen en pla); a macOS el mateix, comprovat només al Mac de CI del projecte, sense signar |
 
 *Els estats s'actualitzen a cada versió; els detalls, compilació per compilació, són a [Estat de les versions](../docs/immuch360/release-status.md).*
 
@@ -42,13 +43,16 @@ Immuch360 és una aplicació lliure i de codi obert per trobar, explorar, reprod
 
 - [Què pots fer](#what-you-can-do)
   - [Mira les teves fotos i vídeos](#watch-your-photos-and-videos)
+  - [Gira una foto amb una sola tecla](#turn-a-photo-with-one-key)
   - [Explora panoràmiques, 360°, VR180 i 3D](#explore-panoramas-360-vr180-and-3d)
   - [Utilitza els teus propis fitxers, sense compte](#use-your-own-files-without-an-account)
   - [Accedeix al contingut d'un NAS, un ordinador o un servidor multimèdia](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
   - [Troba la teva biblioteca Immich](#find-your-immich-library)
   - [Submergeix-te amb Meta Quest](#go-immersive-on-meta-quest)
   - [Mira-ho al televisor i a l'ordinador](#watch-on-the-tv-and-on-the-computer)
+  - [Immuch360 en un televisor LG (webOS)](#immuch360-on-an-lg-tv-webos)
   - [Càmeres, Plex i fitxers en brut de càmera](#cameras-plex-and-raw-camera-files)
+  - [Les fotos i els vídeos del teu dron DJI al teu servidor Immich](#your-dji-drones-photos-and-videos-on-your-immich-server)
 - [Dispositius i sistemes](#devices-and-systems)
 - [Funcions avançades](#advanced-features)
 - [Documentació tècnica](#technical-documentation)
@@ -74,6 +78,19 @@ Immuch360 és, primer de tot, una galeria i un reproductor per a fotos i vídeos
 3. Llisca cap amunt en un vídeo per veure'n els detalls: còdec, mida, fotogrames per segon, taxa de bits, i si aquest dispositiu el pot descodificar.
 
 Més informació: [els visualitzadors i el reproductor de vídeo](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [detalls del vídeo i descodificadors](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
+
+<a id="turn-a-photo-with-one-key"></a>
+### Gira una foto amb una sola tecla
+
+Gira una foto 90° amb una sola pulsació, sense obrir cap editor: un botó, una tecla del teclat o una tecla de color del comandament del televisor, a totes les plataformes. L'aplicació Immich gira una foto al seu editor; Immuch360 ho fa amb una sola tecla, i per a les teves pròpies fotos en un servidor Immich 2.6 o posterior passa per aquest mateix editor del servidor, de manera que l'aplicació web i els teus altres dispositius les mostren girades. Qualsevol altra foto es gira només en aquest dispositiu. Les fotos 360°, 180° i 3D no giren mai, perquè les vistes immersives quedin anivellades.
+
+1. **Telèfons, tauletes i la finestra de Meta Quest**: obre la foto i toca Rotate a la fila inferior, abans d'Edita, per girar-la en el sentit de les agulles del rellotge; una pulsació llarga la gira en l'altre sentit. Amb un teclat, R i Shift+R.
+2. **Android TV i Google TV**: la tecla groga del comandament gira la foto en el sentit de les agulles del rellotge i la blava en sentit contrari, sigui on sigui el focus al visualitzador. En un comandament sense tecles de color, prem Avall: apareix la barra de sota la foto amb Rotate seleccionat (a un pas cap a la dreta quan la foto té un botó de text), i cada OK gira la foto.
+3. **Televisors LG (webOS)**: la groga i la blava com a Android TV, R i Shift+R en un teclat, o el botó de girar dels controls de la foto.
+4. **Windows, Linux i macOS**: R gira en el sentit de les agulles del rellotge, Shift+R en sentit contrari, o el botó de girar de la barra superior, abans del de pantalla completa.
+5. **Fotos d'un recurs compartit de xarxa, de Plex o d'una càmera**: el botó de girar, el primer de la barra superior, R i Shift+R, o les tecles groga i blava.
+
+On es desa el gir: una foto del teu propi compte a Immich 2.6 o posterior es gira a través de l'editor de fotos del servidor, que conserva el fitxer original i crea una imatge girada (mentre treballa es mostra una barra fina; quatre girs, o un gir enrere, tornen a l'original). Les fotos del dispositiu, d'un recurs compartit, d'un company o d'un àlbum compartit, i qualsevol foto en un servidor més antic, es giren només en aquest dispositiu, per a aquella foto, i el fitxer no es modifica mai; l'aplicació ho avisa una vegada per a una foto d'Immich. A les aplicacions d'Android, iOS i ordinador, un gir desat al dispositiu es veu al visualitzador, però encara no a les miniatures, la presentació de diapositives ni els records. Els vídeos, la carpeta protegida i qualsevol foto 360°, 180° o 3D no tenen Rotate.
 
 <a id="explore-panoramas-360-vr180-and-3d"></a>
 ### Explora panoràmiques, 360°, VR180 i 3D
@@ -138,7 +155,7 @@ Amb un servidor [Immich](https://github.com/immich-app/immich), Immuch360 és l'
 2. A Ajustos, Visualitzador de fitxers, Vídeos, "Font del vídeo" tria l'original quan aquest dispositiu el pot descodificar, sempre l'original, o sempre el flux transcodificat.
 3. Per mostrar una foto 360° a algú que no té l'aplicació, comparteix-la amb un enllaç compartit d'Immich: l'aplicació web d'Immich la mostra com una esfera al seu navegador.
 
-La compilació actual, la compilació 26, es basa en el `main` d'Immich del 10 d'octubre de 2026 (versió 3.3.0-rc.0) i s'ha provat amb un servidor Immich 3.2.4 i un servidor compilat a partir d'aquest mateix `main` d'Immich. Si trobes problemes, informa'n a [Issues](https://github.com/freeKC/Immuch360/issues), no al projecte Immich.
+La compilació actual, la compilació 27, es basa en el `main` d'Immich del 10 d'octubre de 2026 (versió 3.3.0-rc.0) i s'ha provat amb un servidor Immich 3.2.4 i un servidor compilat a partir d'aquest mateix `main` d'Immich. Si trobes problemes, informa'n a [Issues](https://github.com/freeKC/Immuch360/issues), no al projecte Immich.
 
 Més informació: [tota la resta és Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [comparació amb l'aplicació Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -162,7 +179,7 @@ Més informació: [a les ulleres Meta Quest](../docs/immuch360/user-guide.md#in-
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 ### Mira-ho al televisor i a l'ordinador
 
-La mateixa aplicació Android funciona a Android TV i Google TV amb el comandament com a única entrada: les fletxes mouen el focus, OK obre, Enrere torna enrere, i les fletxes miren al voltant d'una foto o un vídeo 360°. El televisor no té fotos pròpies, així que mostra el teu servidor Immich, els teus recursos compartits de xarxa, el teu servidor Plex i les teves càmeres. En un ordinador amb Windows, Immuch360 Desktop llegeix les carpetes que tries sense cap servidor, reprodueix vídeos plans i 360° en un reproductor propi, explora els mateixos recursos compartits i servidors, i pot compartir l'ordinador amb unes ulleres de realitat virtual a casa.
+La mateixa aplicació Android funciona a Android TV i Google TV, amb un tema fosc des del primer inici i amb el comandament com a única entrada: les fletxes mouen el focus, OK obre, Enrere torna enrere; al visualitzador, Esquerra i Dreta passen a la foto o el vídeo anterior o següent, fins i tot mentre es reprodueix un vídeo, i en una foto o un vídeo 360° les fletxes miren al voltant. El televisor no té fotos pròpies, així que mostra el teu servidor Immich, els teus recursos compartits de xarxa, el teu servidor Plex i les teves càmeres; els televisors LG tenen [una aplicació pròpia](#immuch360-on-an-lg-tv-webos). En un ordinador amb Windows, Immuch360 Desktop llegeix les carpetes que tries sense cap servidor, reprodueix vídeos plans i 360° en un reproductor propi, explora els mateixos recursos compartits i servidors, i pot compartir l'ordinador amb unes ulleres de realitat virtual a casa.
 
 <p align="center">
   <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="El visualitzador d'esfera en un Google TV: una panoràmica 360° d'una riba de llac, el botó de tancar a dalt a l'esquerra, els botons d'allunyar, acostar, 360° i 3D a dalt a la dreta, girada amb les fletxes del comandament">
@@ -171,9 +188,24 @@ La mateixa aplicació Android funciona a Android TV i Google TV amb el comandame
 
 1. En un televisor: instal·la l'APK amb adb (consulta [Instal·lació](#android-tv-and-google-tv)); a la pàgina de benvinguda, tria "Afegeix un recurs compartit de xarxa o un servidor multimèdia" per a un recurs compartit, un servidor Plex o una càmera, "Utilitza sense servidor", o "Connecta a un servidor Immich".
 2. En un ordinador amb Windows: instal·la la versió prèvia o descomprimeix-la i inicia `immuch360.exe` (consulta [Instal·lació](#windows)); des de la compilació d'escriptori 5, "Utilitza sense servidor" a la pàgina de benvinguda obre la tria de les teves carpetes, i "Connecta a un servidor Immich" la pàgina d'inici de sessió. Una foto, un vídeo o una carpeta oberta amb el programa, o deixada anar a la seva finestra, s'obre a l'instant, el contingut 360° en la seva vista 360°; diversos fitxers s'obren junts en una sola pàgina.
-3. En un visualitzador, funcionen les tecles de reproduir i pausar, retrocedir, avançar, anterior i següent del comandament, i també les tecles del teclat en un ordinador (Espai, J i L, F per a pantalla completa).
+3. En un visualitzador, funcionen les tecles de reproduir i pausar, retrocedir, avançar, anterior i següent del comandament, i també les tecles del teclat en un ordinador (Espai, J i L, F per a pantalla completa). En un televisor, OK durant un vídeo mostra els controls amb reproduir i pausar seleccionat, seguit dels botons -10 s i +10 s, i un segon OK posa en pausa; els controls i la data s'amaguen 5 s després de l'última tecla. Els vídeos ja no es repeteixen en bucle en un televisor, tret que activis Configuració, Visualitzador de recursos, Vídeos, Bucle.
+4. En un televisor, la tecla Menu, la tecla Info o OK mantingut premut obre els detalls de la foto o del vídeo, només de lectura: data, lloc, càmera, còdec, mida i taxa de bits. Un vídeo que el televisor no pot descodificar ho diu, amb el seu còdec, la seva mida i el límit dels descodificadors del televisor, en lloc de carregar indefinidament; un vídeo 360° que supera els descodificadors pregunta abans d'obrir el reproductor 360°, i el motiu queda escrit a la pàgina Registres del menú del perfil.
 
 Més informació: [mira-ho al teu televisor](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [en un ordinador amb Windows](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [compatibilitat de plataformes](../docs/immuch360/platform-support.md).
+
+<a id="immuch360-on-an-lg-tv-webos"></a>
+### Immuch360 en un televisor LG (webOS)
+
+Immuch360 també es presenta com a aplicació Immich per a televisors LG webOS: una aplicació a part per a televisors LG amb webOS 4.0 o posterior (des del 2018), controlada amb el comandament, que mostra el teu servidor Immich i posa les teves fotos 360° en una esfera que gires amb les fletxes. Les aplicacions pròpies d'Immich no s'instal·len en un televisor LG. Està construïda sobre [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) de Seeky91, que va aportar la línia de temps, els àlbums, les persones, els llocs, la cerca, la presentació de diapositives i l'inici de sessió amb un telèfon; gràcies a Seeky91. La versió 0.1.0 és una compilació de prova: encara no s'ha executat en un televisor LG real, només s'instal·la en Developer Mode, i qualsevol informe a [Issues](https://github.com/freeKC/Immuch360/issues) ajuda.
+
+1. Instal·la-la en un televisor en Developer Mode, consulta [Instal·lació](#lg-tvs-webos). Té el seu propi app id, de manera que s'instal·la al costat d'Immich TV de Seeky91.
+2. Inicia la sessió amb el telèfon (escaneja el codi QR), amb el correu electrònic i la contrasenya, o amb una clau API.
+3. Navega amb les fletxes i OK. Al visualitzador, Esquerra i Dreta passen a la foto o el vídeo anterior o següent, també mentre es reprodueix un vídeo; els controls s'amaguen 5 s després de l'última tecla; Info obre els detalls; les tecles de canal fan zoom; el punter i la roda del Magic Remote funcionen.
+4. Una foto 360° s'obre en una esfera que gires amb les fletxes; "Mostra com a 360°" cobreix una foto 2:1 que el servidor no marca; una foto VR180 es mostra en una mitja esfera i una foto 3D amb un ull. Les tecles groga i blava giren una foto plana.
+
+No inclòs en aquesta compilació: vídeos 360° a l'esfera (es reprodueixen en pla, amb un missatge), recursos compartits de xarxa, Plex i càmeres Tapo (previstos), pujades. Quan un vídeo no es reprodueix, un missatge n'indica el format i la mida en lloc d'una roda que gira sense fi. A webOS anterior a la 25, el servidor intermediari invers davant d'Immich ha d'enviar capçaleres CORS; l'aplicació les explica quan troba el problema.
+
+Més informació: [l'aplicació webOS: instal·lació, tecles del comandament, capçaleres CORS](../webos/README.md).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 ### Càmeres, Plex i fitxers en brut de càmera
@@ -184,39 +216,55 @@ Més informació: [mira-ho al teu televisor](../docs/immuch360/user-guide.md#wat
 
 Més informació: [càmeres Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [fitxers en brut de càmera 360°](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
+<a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
+### Les fotos i els vídeos del teu dron DJI al teu servidor Immich
+
+Importa les fotos i els vídeos d'un dron DJI per USB, directament al teu servidor Immich: connecta el dron, el seu comandament o un lector de targetes a un telèfon Android, tria els fitxers nous i envia'ls, amb els vídeos situats al mapa a partir de les dades de vol del dron i les esferes 360° del dron mostrades com a 360°. L'aplicació Immich només fa còpia de seguretat del que ja és a la galeria del telèfon, i el servidor Immich encara no pot llegir la ubicació d'un vídeo d'un DJI Neo 2. Aquesta pàgina és experimental, només a telèfons i tauletes Android, i encara no s'ha provat amb un dron real.
+
+1. A Configuració, Avançat, activa "DJI drones (experimental)". Apareix una fitxa "DJI drone" a Biblioteca, Recursos compartits de xarxa.
+2. Connecta el dron (un Neo 2 pot estar apagat), el seu comandament o un lector de targetes al telèfon amb un cable de dades USB-C. A la pàgina del dron DJI, toca "Choose the drone or the card", tria'l al menú lateral del selector, obre la seva carpeta DCIM o conserva tota la unitat, i després "Use this folder" i Allow.
+3. La pàgina llista les fotos i els vídeos per dia, sense els fitxers auxiliars .LRF, .SRT, .THM i .m4a. Toca "Select all new" i després "Upload to Immich"; els fitxers enviats abans porten una marca de núvol i s'ometen. "Keep on the device" copia en canvi els fitxers a la galeria del telèfon, a l'àlbum "Immuch360 import".
+4. Perquè un vídeo aparegui al mapa, activa Video Subtitles a DJI Fly (mode vídeo, Settings, Camera) abans de volar: llavors el dron escriu un fitxer .SRT al costat de cada vídeo, l'aplicació en llegeix la ubicació i l'assigna al teu servidor després de la pujada, quan Immich no n'ha trobat cap.
+
+Les esferes 360° dels drons DJI (Mini, Air, Mavic i altres, reconegudes per la seva càmera) es mostren com a 360° a Immuch360 fins i tot sense etiquetes 360°. Immich necessita aquestes etiquetes: l'opció de pujada "Tag drone spheres as 360° for Immich", desactivada per defecte, envia la foto sense canvis amb un petit fitxer .xmp al costat, perquè Immich també la mostri com una esfera. El Neo 2 no té mode esfera ni panoràmica: les seves fotos i vídeos són plans. Quan el telèfon ha enregistrat el so d'un clip del Neo 2, aquest so és en un fitxer .m4a a part: la pàgina marca el clip, i Immich el rep sense so (descarrega'l amb DJI Fly per conservar el so). Qualsevol targeta de càmera amb una carpeta DCIM funciona igual en un lector de targetes. No s'envia res a DJI.
+
 <a id="devices-and-systems"></a>
 ## Dispositius i sistemes
 
-Una sola base de codi, sis entorns. Això és el que té cadascun avui:
+Una sola base de codi per a sis entorns, i una aplicació a part per als televisors LG. Això és el que té cadascun avui:
 
-| Capacitat | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeria, àlbums, cerca amb un servidor Immich | ✅ | ✅ | ✅ visualitzador | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Sense servidor: el contingut propi del dispositiu | ✅ | ✅ | només recursos compartits | ✅ | ✅ carpetes | ✅ carpetes | ✅ carpetes |
-| Fotos i vídeos plans | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Fotos 360° com a esfera | ✅ | ✅ | ✅ | ✅ immersiu | ✅ | ✅ | 🔧 CI |
-| Vídeos 360° | ✅ | ✅ sense barra de temps | ✅ | ✅ immersiu | ✅ | només en pla | només en pla |
-| 3D i VR180 | ✅ un ull | ✅ un ull | ✅ un ull | ✅ 3D real | ✅ un ull | fotos un ull, vídeos en pla | fotos un ull, vídeos en pla |
-| Espacial 2.5D (seguiment del cap) | ✅ experimental | ✅ experimental | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Fotos espacials d'Apple | ✅ un ull | ✅ un ull | ✅ un ull | ✅ 3D | ✅ un ull | 🔧 CI | 🔧 CI |
-| Fitxers en brut d'Insta360, GoPro i DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI fotos, vídeos en pla | 🔧 CI fotos, vídeos en pla |
-| Recursos compartits SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Càmeres Tapo: enregistraments | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Càmeres Tapo: visualització en directe | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Compartir aquest dispositiu a la xarxa | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Pujar a l'Immich des dels recursos compartits i el dispositiu | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Entrada | tàctil, giroscopi | tàctil, giroscopi | comandament | comandaments, mans | ratolí, teclat | ratolí, teclat | ratolí, teclat, ratolí tàctil |
-| On obtenir-ho | Google Play, APK | App Store (en revisió) | APK, Google Play (en revisió) | Horizon Store, APK | instal·lador o ZIP (versió prèvia) | .deb, .rpm (versió prèvia) | DMG o ZIP (versió prèvia sense signar) |
+| Capacitat | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galeria, àlbums, cerca amb un servidor Immich | ✅ | ✅ | ✅ visualitzador | ✅ visualitzador | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Sense servidor: el contingut propi del dispositiu | ✅ | ✅ | només recursos compartits | ❌ | ✅ | ✅ carpetes | ✅ carpetes | ✅ carpetes |
+| Fotos i vídeos plans | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Girar una foto amb una sola tecla | ✅ | ✅ | ✅ tecles de color | ✅ tecles de color | ✅ finestra | ✅ | ✅ | ✅ |
+| Fotos 360° com a esfera | ✅ | ✅ | ✅ | ✅ | ✅ immersiu | ✅ | ✅ | 🔧 CI |
+| Vídeos 360° | ✅ | ✅ sense barra de temps | ✅ missatge si no es pot descodificar | només en pla | ✅ immersiu | ✅ | només en pla | només en pla |
+| 3D i VR180 | ✅ un ull | ✅ un ull | ✅ un ull | fotos un ull, vídeos en pla | ✅ 3D real | ✅ un ull | fotos un ull, vídeos en pla | fotos un ull, vídeos en pla |
+| Espacial 2.5D (seguiment del cap) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Fotos espacials d'Apple | ✅ un ull | ✅ un ull | ✅ un ull | ❌ | ✅ 3D | ✅ un ull | 🔧 CI | 🔧 CI |
+| Fitxers en brut d'Insta360, GoPro i DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI fotos, vídeos en pla | 🔧 CI fotos, vídeos en pla |
+| Recursos compartits SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Càmeres Tapo: enregistraments | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Càmeres Tapo: visualització en directe | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Compartir aquest dispositiu a la xarxa | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Pujar a l'Immich des dels recursos compartits i el dispositiu | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Importar des d'un dron DJI o una targeta per USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Tema fosc | com el sistema | com el sistema | ✅ per defecte | ✅ únic tema | com el sistema | com el sistema | com el sistema | com el sistema |
+| Entrada | tàctil, giroscopi | tàctil, giroscopi | comandament; Esquerra i Dreta també durant un vídeo, Menu per als detalls | comandament, Magic Remote | comandaments, mans | ratolí, teclat | ratolí, teclat | ratolí, teclat, ratolí tàctil |
+| On obtenir-ho | Google Play, APK | App Store (en revisió) | APK, Google Play (en revisió) | compilació de prova .ipk, Developer Mode | Horizon Store, APK | instal·lador o ZIP (versió prèvia) | .deb, .rpm (versió prèvia) | DMG o ZIP (versió prèvia sense signar) |
 
-✅ a l'aplicació en aquesta plataforma · ❌ no s'hi ofereix · 🔜 previst · 🔧 CI al codi font, compilat i engegat per la CI del projecte en aquest sistema, però encara no comprovat allà amb un servidor, un recurs compartit o una càmera reals · només en pla: el vídeo es reprodueix en pla, amb un missatge, perquè el renderitzador 360° només existeix a Windows. "Un ull" vol dir que un fitxer 3D mostra l'ull esquerre en una pantalla plana. No totes les ✅ s'han comprovat encara en un dispositiu real: què s'ha comprovat i on, i què queda per confirmar, és a [Funcionalitats](../docs/immuch360/features.md), [Compatibilitat de plataformes](../docs/immuch360/platform-support.md) i [Compatibilitat](../docs/immuch360/compatibility.md).
+✅ a l'aplicació en aquesta plataforma · ❌ no s'hi ofereix · 🔜 previst · 🔧 CI al codi font, compilat i engegat per la CI del projecte en aquest sistema, però encara no comprovat allà amb un servidor, un recurs compartit o una càmera reals · només en pla: el vídeo es reprodueix en pla, amb un missatge, perquè el renderitzador de vídeo 360° dels ordinadors només existeix a Windows, i als televisors LG encara cal mesurar si webOS lliura els fotogrames del vídeo a l'esfera. "Un ull" vol dir que un fitxer 3D mostra l'ull esquerre en una pantalla plana. La columna LG webOS és una aplicació a part, la compilació de prova 0.1.0 de la qual supera les seves proves a la CI del projecte i encara no s'ha executat en cap televisor. No totes les ✅ s'han comprovat encara en un dispositiu real: què s'ha comprovat i on, i què queda per confirmar, és a [Funcionalitats](../docs/immuch360/features.md), [Compatibilitat de plataformes](../docs/immuch360/platform-support.md) i [Compatibilitat](../docs/immuch360/compatibility.md).
 
 - **Telèfons i tauletes Android**: l'aplicació completa, tàctil i giroscopi, tots els orígens.
 - **iPhone i iPad**: l'aplicació completa; el reproductor de vídeo 360° només té reproduir i pausar, la visualització en directe de Tapo arribarà més endavant, i la cerca DLNA envia sol·licituds unicast fins que Apple concedeixi el permís multicast.
-- **Android TV i Google TV**: el mateix APK, controlat pel comandament; un visualitzador: la còpia de seguretat, les pujades i l'edició estan amagades. Comprovat a l'emulador de Google TV (inici de sessió, línia de temps, visualitzadors, recursos compartits, navegació amb el comandament), encara no en un televisor real.
+- **Android TV i Google TV**: el mateix APK, controlat pel comandament, fosc per defecte; un visualitzador: la còpia de seguretat, les pujades i l'editor estan amagats i els detalls són només de lectura, però una foto encara es gira amb una sola tecla. Tots els filtres de cerca funcionen amb el comandament: Ubicació i Càmera obren les seves opcions en una llista, el filtre de data mostra totes les seves opcions, i els fulls d'Etiquetes, Ubicació, Data, Tipus de mitjà, Puntuació per estrelles i Opcions de visualització posen Neteja i Aplica al costat de les opcions, a un pas cap a la dreta, en la major part de l'alçada de la pantalla. La graella de fotos fa servir menys memòria d'imatge, i una fletxa mantinguda la desplaça com a màxim unes 10 files per segon. Comprovat a l'emulador de Google TV; una primera prova en un Android TV real, el 21 d'octubre, va donar lloc als canvis per a televisor de la compilació 27, que encara no s'han provat en un televisor real.
+- **Televisors LG amb webOS 4.0 o posterior**: una aplicació a part per al comandament i el Magic Remote, construïda sobre [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): un visualitzador d'Immich amb les fotos 360° en una esfera, una foto girada amb una sola tecla, un tema fosc i els 89 idiomes de l'aplicació (els pocs textos de la mateixa aplicació de televisor, en anglès de moment); encara sense recursos compartits, Plex ni càmeres, vídeos 360° en pla. Compilació de prova 0.1.0, comprovada per les seves proves a la CI del projecte, encara no en un televisor.
 - **Meta Quest 2, Pro, 3 i 3S**: l'aplicació com una finestra, més la vista immersiva; HEVC és el còdec segur, H.264 s'atura al voltant de 4096x2304 a la Quest 3; només s'ha provat la Quest 3, i la Quest 2, la Quest Pro i la Quest 3S encara no s'han provat.
 - **Windows 10 i 11**: una versió prèvia, amb carpetes en lloc d'una galeria, un reproductor de vídeo propi (libmpv) per a vídeos plans i 360°, fitxers en brut cosits al xip gràfic, fitxers i carpetes oberts amb el programa o deixats anar a la finestra, un instal·lador o un ZIP.
-- **Linux**: un .deb i un .rpm compilats per la CI del projecte, instal·lats i comprovats a Ubuntu 22.04 i 24.04, Debian 12 i Fedora 40 i 44; fotos, fotos 360° i vídeos plans a través de la libmpv del sistema (els vídeos 360°, 3D i en brut es reprodueixen en pla, amb un missatge); recursos compartits SMB a partir d'Ubuntu 22.04 i Debian 12; encara no s'ha executat en un PC Linux real, només sota WSLg i en contenidors.
+- **Linux**: un .deb i un .rpm compilats per la CI del projecte, instal·lats i comprovats a Ubuntu 22.04 i 24.04, Debian 12 i Fedora 40 i 44; fotos, fotos 360° i vídeos plans a través de la libmpv del sistema (els vídeos 360°, 3D i en brut es reprodueixen en pla, amb un missatge), dibuixats per la via de maquinari també en sessions X11 des de la compilació d'escriptori 7; recursos compartits SMB a partir d'Ubuntu 22.04 i Debian 12; sense un anell de claus (GNOME Keyring o KWallet) l'aplicació ja no es bloqueja 25 s en el primer inici: desa les contrasenyes només per a la sessió i ho indica a la seva configuració; encara no s'ha executat en un PC Linux real, només sota WSLg i en contenidors.
 - **macOS**: un DMG i un ZIP compilats per la CI del projecte, universals, sense signar (Gatekeeper pregunta una vegada); s'engega, obre els fitxers i les carpetes que se li passen, també des del Finder, desa els seus secrets al clauer d'inici de sessió i reprodueix vídeos plans amb la seva pròpia libmpv, tot comprovat només al Mac de CI del projecte; encara no s'ha executat res en un Mac real.
 
 <a id="advanced-features"></a>
@@ -225,10 +273,10 @@ Una sola base de codi, sis entorns. Això és el que té cadascun avui:
 Tot el que l'aplicació pot llegir i reproduir, per a qui vulgui conèixer-ho amb tot detall. Cada punt es detalla a la [guia d'usuari](../docs/immuch360/user-guide.md) i a la [pàgina de compatibilitat](../docs/immuch360/compatibility.md).
 
 - **Formats**: fotos i vídeos plans (el que el dispositiu pot descodificar: MP4, MOV, MKV i més); fotos i vídeos 360° equirectangulars; panoràmiques parcials (retall GPano); VR180; 3D estereoscòpic, a dalt i a baix o un al costat de l'altre, llegit del fitxer (la caixa st3d) o deduït del fotograma; fotos espacials d'Apple (parells estereoscòpics HEIC) i vídeos espacials (MV-HEVC, un ull); fitxers en brut .insp i .insv d'Insta360, .360 de GoPro, .osv de DJI; fonts HLG i PQ de 10 bits amb mapatge tonal a l'esfera.
-- **Projecció i metadades**: metadades GPano i esfèriques llegides del fitxer, amb sol·licituds per intervals en un servidor o un recurs compartit; la vista inicial de la càmera; "Mostra com a 360°" recordat al dispositiu; VR180 reconegut pel fitxer o pel seu nom; les metadades es mantenen intactes perquè es reprodueix el fitxer original, mai una còpia convertida.
+- **Projecció i metadades**: metadades GPano i esfèriques llegides del fitxer, amb sol·licituds per intervals en un servidor o un recurs compartit; la vista inicial de la càmera; les esferes dels drons DJI reconegudes per la seva càmera, amb un fitxer auxiliar .xmp opcional perquè Immich també les marqui; "Mostra com a 360°" recordat al dispositiu; VR180 reconegut pel fitxer o pel seu nom; la ubicació d'un vídeo de dron llegida del seu registre de vol .SRT; les metadades es mantenen intactes perquè es reprodueix el fitxer original, mai una còpia convertida; un quart de volta desat a través de l'editor d'Immich o conservat al dispositiu, mai en un fitxer immersiu.
 - **Reproducció nativa**: Media3 a Android i al televisor, SceneKit i AVFoundation a iOS, el Meta Spatial SDK a les ulleres, libmpv a Windows; l'original o el flux transcodificat triat segons el que pot descodificar el dispositiu; una llista dels descodificadors de vídeo del dispositiu a Ajustos, Avançat; la tria de pista d'àudio i un indicador de càrrega.
 - **Fitxers en brut cosits al dispositiu**: un ombrejador de fragments de Flutter per a les fotos; un efecte de GPU al reproductor per als vídeos d'una sola pista; dos descodificadors de maquinari alhora i un compositor de GPU per als vídeos amb un objectiu per pista o per fitxer (OpenGL ES 3 a Android i a la Quest, Metal a iOS, i a Windows, des de la compilació d'escriptori 5, dos reproductors libmpv els fotogrames dels quals l'aplicació aparella al xip gràfic); el calibratge propi de la càmera (models Mei, V6 i equidistants) i el registre de l'acceleròmetre; si el dispositiu no pot executar dos descodificadors, recorre a un sol objectiu, al flux transcodificat, a la còpia LRV de la càmera o al vídeo no cosit.
-- **Orígens**: la galeria del dispositiu; les carpetes d'un ordinador; un servidor Immich; SMB 2 i 3, WebDAV, DLNA/UPnP; Plex per HTTPS comprovat contra el certificat propi del servidor; càmeres Tapo a la xarxa local (HTTPS i RTSP); un telèfon o un ordinador compartit per Wi-Fi com a servidor WebDAV; servidors trobats per Bonjour/mDNS, una exploració de la xarxa local, SSDP, GDM i el descobriment de TP-Link, i seguits quan canvien d'adreça.
+- **Orígens**: la galeria del dispositiu; les carpetes d'un ordinador; un dron, el seu comandament o una targeta de càmera per USB, a través del selector de carpetes del sistema (Android, experimental); un servidor Immich; SMB 2 i 3, WebDAV, DLNA/UPnP; Plex per HTTPS comprovat contra el certificat propi del servidor; càmeres Tapo a la xarxa local (HTTPS i RTSP); un telèfon o un ordinador compartit per Wi-Fi com a servidor WebDAV; servidors trobats per Bonjour/mDNS, una exploració de la xarxa local, SSDP, GDM i el descobriment de TP-Link, i seguits quan canvien d'adreça.
 - **Lectura sota demanda**: un pont local proveeix els reproductors amb intervals de bytes i un testimoni per sessió; blocs grans, lectura anticipada i fins a sis connexions SMB en paral·lel; miniatures a partir d'un fotograma de cada vídeo; res no es copia al dispositiu.
 - **Maquinari**: s'utilitzen descodificadors de maquinari allà on existeixen, amb els seus límits mesurats (el límit H.264 de la Quest 3, dos objectius de 2048x2048 com a màxim per als descodificadors per programari); a Windows la vista 360° és dibuixada pel xip gràfic a partir de cada fotograma descodificat, la mida del fotograma es mesura a cada ordinador, i es detecta el xip integrat o dedicat.
 - **Particularitats de cada plataforma**: el giroscopi i el reproductor Espacial 2.5D en els telèfons; la vista immersiva, els comandaments i les mans a la Quest; la disposició per al comandament, el diàleg del teclat i el bàner de televisor a Android TV; a l'ordinador, ratolí i teclat, pantalla completa, una sola finestra, fitxers i carpetes oberts amb el programa o deixats anar a la seva finestra, llegits com els fitxers de les teves carpetes, HEIC, AVIF, TIFF i fotos en brut de càmera de les carpetes quan Windows té un descodificador per a elles, i la protecció de dades de Windows per a contrasenyes i testimonis.
@@ -246,6 +294,7 @@ Tot el que l'aplicació pot llegir i reproduir, per a qui vulgui conèixer-ho am
 - [El renderitzador de vídeo 360° de l'escriptori: libmpv, el pas de projecció i els mesuraments que l'expliquen](../docs/immuch360/desktop-360-video-renderer.md)
 - [Estat de les versions: compilacions, botigues i què té cada botiga](../docs/immuch360/release-status.md)
 - [Compila-la tu mateix: telèfons, ulleres de realitat virtual, televisors i ordinadors](../docs/immuch360/build.md)
+- [Immuch360 per a televisors LG webOS: instal·lació en Developer Mode, les tecles del comandament, les capçaleres CORS](../webos/README.md)
 
 <a id="install"></a>
 ## Instal·lació
@@ -268,6 +317,14 @@ Tot el que l'aplicació pot llegir i reproduir, per a qui vulgui conèixer-ho am
 3. Des d'un ordinador de la mateixa xarxa, amb adb (Android SDK Platform Tools): `adb connect <address of the TV>`, accepta l'avís al televisor, després `adb install -r Immuch360-v<version>-release.apk`.
 4. L'aplicació apareix entre les aplicacions del televisor, amb la seva bandera. Instal·la la versió següent de la mateixa manera: `-r` conserva la sessió i la configuració.
 
+<a id="lg-tvs-webos"></a>
+### Televisors LG (webOS)
+
+1. Necessites un televisor LG amb webOS 4.0 o posterior, un ordinador a la mateixa xarxa i un compte gratuït de desenvolupador d'LG. Al televisor, instal·la Developer Mode des de l'LG Content Store, inicia la sessió, activa Dev Mode Status i deixa que el televisor es reiniciï; anota'n l'adreça IP i la frase de pas que mostra l'aplicació.
+2. A l'ordinador, instal·la la webOS CLI (Node.js 18 o posterior): `npm install -g @webos-tools/cli`, després registra el televisor amb `ares-setup-device` (la seva adreça IP, el port 9922, l'usuari `prisoner`) i `ares-novacom --device <name> --getkey`, que demana la frase de pas.
+3. Descarrega `Immuch360-webOS-0.1.0.ipk` des de la [versió prèvia de webOS](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0), comprova'l amb `SHA256SUMS.txt`, i després executa `ares-install --device <name> Immuch360-webOS-0.1.0.ipk`. El [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) de webosbrew fa el mateix sense la línia d'ordres.
+4. Una sessió de Developer Mode dura 1000 hores i el botó EXTEND de l'aplicació Developer Mode la renova; quan caduca, el televisor elimina les aplicacions instal·lades d'aquesta manera. Els detalls són a [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
+
 <a id="meta-quest"></a>
 ### Meta Quest
 
@@ -278,18 +335,18 @@ Tot el que l'aplicació pot llegir i reproduir, per a qui vulgui conèixer-ho am
 <a id="windows"></a>
 ### Windows
 
-1. Descarrega `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` des de la [versió prèvia d'escriptori](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) (amb `SHA256SUMS.txt` per comprovar-lo) i obre'l. Els fitxers encara no estan signats: Windows SmartScreen pot mostrar "El Windows ha protegit l'equip", tria "Més informació" i després "Executa-ho de totes maneres".
+1. Descarrega `Immuch360-Desktop-3.3.0-rc.0-desktop.7-windows-x64-setup.exe` des de la [versió prèvia d'escriptori](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) (amb `SHA256SUMS.txt` per comprovar-lo) i obre'l. Els fitxers encara no estan signats: Windows SmartScreen pot mostrar "El Windows ha protegit l'equip", tria "Més informació" i després "Executa-ho de totes maneres".
 2. Tria "Instal·la només per a mi" (sense drets d'administrador) o "Instal·la per a tots els usuaris", després l'idioma de l'instal·lador, el de Windows ja seleccionat.
 3. Inicia Immuch360 Desktop des del menú Inici. Les fotos i els vídeos l'obtenen a "Obrir amb" (clic dret en un fitxer, Obrir amb); mai no s'estableix com el seu programa predeterminat. El primer inici d'una compilació nova pot trigar fins a un minut mentre Windows explora els fitxers.
 4. Windows 10 o 11, 64 bits. Per actualitzar, obre l'instal·lador de la compilació següent: la sessió iniciada, les carpetes i els ajustos es mantenen. El ZIP de la mateixa versió és el mateix programa en forma de carpeta, per descomprimir-lo on vulguis i iniciar `immuch360.exe` des d'allà.
 
 ### Linux
 
-A Ubuntu 22.04 o posterior i Debian 12 o posterior: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; a Fedora 40 o posterior: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Després inicia Immuch360 Desktop des de les teves aplicacions. Una versió prèvia inicial: les carpetes de l'ordinador, fotos i fotos 360° com una esfera; els vídeos encara no es reprodueixen, i els recursos compartits SMB necessiten Ubuntu 24.04, Debian 13 o Fedora 39 o posterior.
+A Ubuntu 22.04 o posterior i Debian 12 o posterior: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-amd64.deb`; a Fedora 40 o posterior: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-x86_64.rpm`, tots dos des de la [versió prèvia d'escriptori](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7). Després inicia Immuch360 Desktop des de les teves aplicacions. Una versió prèvia: les carpetes de l'ordinador, fotos i fotos 360° com una esfera, i vídeos plans a través de la libmpv del sistema, que el paquet instal·la (els vídeos 360°, 3D i en brut es reprodueixen en pla, amb un missatge); els recursos compartits SMB funcionen a partir d'Ubuntu 22.04 i Debian 12. A Fedora, els vídeos de càmera necessiten l'FFmpeg de RPM Fusion. Sense GNOME Keyring ni KWallet, les contrasenyes es desen només per a la sessió, i la configuració de l'aplicació ho indica.
 
 ### macOS
 
-Obre `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` i arrossega l'aplicació a Aplicacions (Apple silicon i Intel, macOS 12 o posterior). Encara no està signada ni notaritzada: fes clic amb Control i tria Open a macOS 14 i anteriors, o tria "Obre de totes maneres" a Configuració del Sistema, Privadesa i seguretat a macOS 15 i posteriors. Ningú dels qui treballen en el projecte té un Mac: l'aplicació només s'ha engegat a la integració contínua del projecte, encara no reprodueix vídeos i el seu accés de xarxa no s'ha provat. Els informes són benvinguts.
+Obre `Immuch360-Desktop-3.3.0-rc.0-desktop.7-macos.dmg` des de la [versió prèvia d'escriptori](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) i arrossega l'aplicació a Aplicacions (Apple silicon i Intel, macOS 12 o posterior). Encara no està signada ni notaritzada: fes clic amb Control i tria Open a macOS 14 i anteriors, o tria "Obre de totes maneres" a Configuració del Sistema, Privadesa i seguretat a macOS 15 i posteriors. Ningú dels qui treballen en el projecte té un Mac: l'aplicació només s'ha executat al Mac de CI del projecte, on obre fitxers i carpetes i reprodueix vídeos plans amb la seva pròpia libmpv; el seu accés de xarxa no s'ha provat. Els informes són benvinguts.
 
 <a id="privacy"></a>
 ## Privadesa
@@ -301,7 +358,7 @@ Res no arriba al desenvolupador: sense compte, sense anàlisi d'ús, sense serve
 
 Immuch360 és una bifurcació no oficial de l'aplicació mòbil [Immich](https://github.com/immich-app/immich), sota la llicència [GNU AGPL v3](../LICENSE), sense cap afiliació ni aval de l'equip d'Immich ni de FUTO. Aquesta bifurcació existeix perquè la visualització 360° al mòbil es demana a Immich des de gener de 2024 i encara no és a l'aplicació oficial; ara l'aplicació ho ofereix, recull comentaris reals de dispositius, i oferirà a Immich, en petites pull requests, tot allò que els mantenidors vulguin. Es manté tot el que fa l'aplicació oficial; les branques, la cadena de compilació i la integració contínua es descriuen a [Compila-la tu mateix](../docs/immuch360/build.md).
 
-El visualitzador de fotos 360° es basa en la pull request original [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) de dmitry-brazhenko, que alhora es basa en el prototip de bencefr a [#30192](https://github.com/immich-app/immich/pull/30192); gràcies a tots dos. Les correccions del comandament als filtres de cerca i a l'ordenació d'àlbums dels televisors van partir del treball de mlc70 a [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Les càmeres Tapo es van escriure a partir del que documenten [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) i [python-kasa](https://github.com/python-kasa/python-kasa). La vista de Meta Quest depèn del Meta Spatial SDK, que no és de codi obert, per això es manté en aquesta bifurcació. El ZIP de Windows inclou libmpv (la biblioteca de [mpv](https://mpv.io), amb [FFmpeg](https://ffmpeg.org)) compilada pel projecte, sota la LGPL, amb les seves llicències i codi font; els detalls i les marques registrades de les plataformes esmentades en aquesta pàgina són a [Llicència i marques registrades](../docs/immuch360/platform-support.md#license-and-trademarks).
+El visualitzador de fotos 360° es basa en la pull request original [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) de dmitry-brazhenko, que alhora es basa en el prototip de bencefr a [#30192](https://github.com/immich-app/immich/pull/30192); gràcies a tots dos. Les correccions del comandament als filtres de cerca i a l'ordenació d'àlbums dels televisors van partir del treball de mlc70 a [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1), i la barra d'accions i els fulls de filtres al 80 per cent de l'alçada de la pantalla provenen de [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3) de mlc70, amb l'autoria conservada; gràcies a mlc70. L'aplicació LG webOS està construïda sobre [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) de Seeky91, sota la llicència MIT, conservada a la seva carpeta; gràcies a Seeky91. Les càmeres Tapo es van escriure a partir del que documenten [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) i [python-kasa](https://github.com/python-kasa/python-kasa). La vista de Meta Quest depèn del Meta Spatial SDK, que no és de codi obert, per això es manté en aquesta bifurcació. Els recursos compartits SMB fan servir libsmb2, sota la LGPL 2.1 o posterior: des de la compilació 27 i la compilació d'escriptori 7, cada compilació inclou el seu avís, els textos de la seva llicència i el seu arxiu de codi font, `Immuch360-libsmb2-sources.tar.gz`, que també s'adjunta a cada versió. Les compilacions de Windows i macOS inclouen libmpv (la biblioteca de [mpv](https://mpv.io), amb [FFmpeg](https://ffmpeg.org)) compilada pel projecte, sota la LGPL, amb les seves llicències i codi font, que figuren a la pàgina de llicències de l'aplicació (Llicències, a la part inferior del menú del perfil); els detalls i les marques registrades de les plataformes esmentades en aquesta pàgina són a [Llicència i marques registrades](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Les captures de telèfon d'aquesta pàgina es van fer amb la compilació Android en un emulador, les de televisor amb l'emulador de Google TV i les de Windows en un PC amb Windows 11, totes amb panoràmiques CC0 de [Poly Haven](https://polyhaven.com); les captures amb ulleres es van fer amb una Quest 3.
 
@@ -310,11 +367,13 @@ Les captures de telèfon d'aquesta pàgina es van fer amb la compilació Android
 
 El que encara no està fet, el més probable primer. Res d'això és una promesa, i els comentaris al [gestor d'incidències](https://github.com/freeKC/Immuch360/issues) ajuden a decidir què va primer.
 
-- **Les botigues**: Google Play (compilació 26 properament, la fitxa de televisors en revisió), l'App Store (versió 3.3.1 en revisió des del 14 d'octubre), la Meta Horizon Store (compilació 25 en revisió).
+- **Les botigues**: Google Play (compilació 26 en revisió, després la compilació 27; la fitxa de televisors en revisió), l'App Store (versió 3.3.1 en revisió des del 14 d'octubre), la Meta Horizon Store (compilació 25 en revisió).
 - **Ordinadors**: la prova manual de cada funció en un PC amb Windows; després el renderitzador de vídeo 360° a Linux i a macOS, una prova en un Mac real i en un PC Linux real; després una compilació signada i actualitzacions automàtiques; després l'Espacial 2.5D amb la webcam.
+- **Televisors**: una prova de la compilació 27 en un Android TV real; l'aplicació LG webOS en un televisor LG real, i després els seus vídeos 360° a l'esfera i els recursos compartits de xarxa, Plex i les càmeres Tapo; un codi QR per vincular un televisor o un ordinador amb un telèfon, amb la pantalla gran mostrant-lo i el telèfon escanejant-lo.
 - **Telèfons i tauletes**: una barra de temps al reproductor de vídeo 360° d'iOS, anterior i següent als reproductors 360° dels telèfons, la tria de pista d'àudio al reproductor pla, la visualització en directe de Tapo a l'iPhone i l'iPad.
 - **Contingut immersiu**: .dng de doble ull de peix, anivellament de vídeos de GoPro i DJI a partir de les seves pròpies dades de moviment, vídeos espacials en 3D a la Quest si els seus descodificadors ho permeten, anterior i següent entre fotos espacials a les ulleres.
 - **Orígens**: lliscar entre els fitxers d'una carpeta compartida, autenticació Digest per a WebDAV, un codi QR per portar el testimoni de Plex des de l'ordinador, IPv6 per a Plex, enregistraments H.265 de Tapo, canals a la pantalla d'inici del televisor.
+- **Drons**: una prova amb un DJI Neo 2 real, i després el so enregistrat pel telèfon fusionat amb el seu clip; la visualització en directe i el control de la càmera del dron queden per a més endavant.
 - **Upstream**: petites pull requests a l'Immich per a les parts que vulguin els mantenidors, començant pel visualitzador de fotos 360°.
 
 La llista completa, amb les comprovacions de dispositiu que falten per a cada funció, és a [Estat de les versions](../docs/immuch360/release-status.md#roadmap).

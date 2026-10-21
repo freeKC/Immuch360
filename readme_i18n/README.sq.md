@@ -10,8 +10,8 @@
 Immuch360 është një aplikacion falas dhe me burim të hapur për të gjetur, shfletuar, luajtur dhe eksploruar fotot dhe videot tuaja: të zakonshmet, dhe panoramiket, 360°, 3D dhe përfshirëset që aplikacionet e tjera i tregojnë të sheshta, të dyfishuara ose të shtrira. Ai i lexon aty ku janë, në vetë pajisjen, në një NAS ose kompjuter, në një server Plex ose në një server Immich, dhe i luan në telefona, tableta, televizorë, kacuka Meta Quest dhe kompjuterë. Nuk kërkohet llogari, cloud, apo server.
 
 - **Çfarë bën?** Tregon fotot dhe videot tuaja si një galeri dhe i luan në shikuesin që i përshtatet çdo skedari: të sheshtë, si një sferë rreth së cilës shikoni, në 3D, në një kacukë.
-- **Çfarë mediash?** Foto dhe video të sheshta, panorama, foto dhe video 360°, VR180, 3D stereoskopik, foto hapësinore Apple, dhe skedarët bruto të kamerave 360° (Insta360, GoPro MAX, DJI Osmo 360), të bashkuara nga aplikacioni.
-- **Në cilat pajisje?** Android telefona dhe tableta, iPhone dhe iPad, Android TV dhe Google TV, Meta Quest 2, Pro, 3 dhe 3S, Windows (paraprak), dhe Linux e macOS si paraprakë fillestarë.
+- **Çfarë mediash?** Foto dhe video të sheshta, panorama, foto dhe video 360°, VR180, 3D stereoskopik, foto hapësinore Apple, sferat 360° të dronëve DJI, dhe skedarët bruto të kamerave 360° (Insta360, GoPro MAX, DJI Osmo 360), të bashkuara nga aplikacioni.
+- **Në cilat pajisje?** Android telefona dhe tableta, iPhone dhe iPad, Android TV dhe Google TV, televizorë LG me webOS (një aplikacion më vete, build-i i parë testimi), Meta Quest 2, Pro, 3 dhe 3S, Windows (paraprak), dhe Linux e macOS si paraprakë fillestarë.
 - **A duhet server ose llogari?** Jo. Immuch360 funksionon vetëm me mediat e pajisjes tuaj. Një server Immich, një NAS, një server mediash ose një server Plex janë opsione që shtoni kur të doni.
 
 <p align="center">
@@ -20,14 +20,15 @@ Immuch360 është një aplikacion falas dhe me burim të hapur për të gjetur, 
 
 <div align="center">
 
-| Platforma | Ku ta merrni | Gjendja më 20 tetor 2026 |
+| Platforma | Ku ta merrni | Gjendja më 22 tetor 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefona dhe tableta | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | në Google Play (build 25), build 26 në GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefona dhe tableta | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | në Google Play (build 25; build 26 në shqyrtim), build 27 në GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone dhe iPad** | App Store | versioni 3.3.1 (build 24) në pritje të shqyrtimit nga Apple që nga 14 tetori; ndërkohë, [ndërtoje vetë](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dhe Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 26 në GitHub, me rregullimet e telekomandës te filtrat e kërkimit; listimi për TV është në shqyrtim nga Google |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dhe 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | në Horizon Store (build 23; build 25 në shqyrtim), build 26 në GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalues ose ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | build 6 për desktop, paraprak: foto, video të sheshta dhe 360°, ndarje, Plex, kamera, skedarë të hapura me programin, ndërfaqja në 89 gjuhë |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS dhe Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | paraprakë: në Linux foto, foto 360° dhe video të sheshta (videot 360° luhen të sheshta); në macOS e njëjta gjë, e kontrolluar vetëm në Mac-un e CI të projektit, e panënshkruar |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV dhe Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 27 në GitHub: temë e errët si parazgjedhje, Majtas dhe Djathtas gjatë një videoje, një mesazh i qartë kur një video nuk mund të luhet; listimi për TV është në shqyrtim nga Google |
+| **Televizorë LG** me webOS 4.0 e më të ri | [build testimi .ipk](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0) | build testimi 0.1.0 i 21 tetorit, për t'u instaluar në [Developer Mode](#lg-tvs-webos); akoma i pa nisur në një TV real LG |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 dhe 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | në Horizon Store (build 23; build 25 në shqyrtim), build 27 në GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalues ose ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | build 7 për desktop, paraprak: foto, video të sheshta dhe 360°, ndarje, Plex, kamera, skedarë të hapura me programin, foto të rrotulluara me një tast, ndërfaqja në 89 gjuhë |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS dhe Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | paraprakë: në Linux foto, foto 360° dhe video të sheshta (videot 360° luhen të sheshta); në macOS e njëjta gjë, e kontrolluar vetëm në Mac-un e CI të projektit, e panënshkruar |
 
 *Statuset përditësohen me çdo publikim; detajet, build pas build, janë në [Statusi i publikimit](../docs/immuch360/release-status.md).*
 
@@ -42,13 +43,16 @@ Immuch360 është një aplikacion falas dhe me burim të hapur për të gjetur, 
 
 - [Çfarë mund të bëni](#what-you-can-do)
   - [Shikoni fotot dhe videot tuaja](#watch-your-photos-and-videos)
+  - [Rrotulloni një foto me një tast](#turn-a-photo-with-one-key)
   - [Eksploroni panorama, 360°, VR180 dhe 3D](#explore-panoramas-360-vr180-and-3d)
   - [Përdorni skedarët tuaj, pa llogari](#use-your-own-files-without-an-account)
   - [Arrini mediat e një NAS-i, kompjuteri ose serveri mediash](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
   - [Gjeni bibliotekën tuaj Immich](#find-your-immich-library)
   - [Përjetoni përfshirjen me Meta Quest](#go-immersive-on-meta-quest)
   - [Shikoni në TV dhe në kompjuter](#watch-on-the-tv-and-on-the-computer)
+  - [Immuch360 në një TV LG (webOS)](#immuch360-on-an-lg-tv-webos)
   - [Kamera, Plex dhe skedarë bruto të kamerave](#cameras-plex-and-raw-camera-files)
+  - [Fotot dhe videot e dronit tuaj DJI në serverin tuaj Immich](#your-dji-drones-photos-and-videos-on-your-immich-server)
 - [Pajisjet dhe sistemet](#devices-and-systems)
 - [Veçori të avancuara](#advanced-features)
 - [Dokumentacioni teknik](#technical-documentation)
@@ -74,6 +78,19 @@ Immuch360 është fillimisht një galeri dhe luajtës për fotot dhe videot e za
 3. Rrëshqitni lart në një video për detajet e saj: kodeku, madhësia, shpejtësia e kuadrove, shpejtësia e biteve, dhe nëse kjo pajisje e dekodon.
 
 Më shumë: [shikuesit dhe luajtësi i videove](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [detajet e videos dhe dekoduesit](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
+
+<a id="turn-a-photo-with-one-key"></a>
+### Rrotulloni një foto me një tast
+
+Rrotulloni një foto 90° me një shtypje, pa hapur një redaktues: me një buton, një tast të tastierës ose një tast me ngjyrë të telekomandës së TV-së, në çdo platformë. Aplikacioni Immich e rrotullon një foto në redaktuesin e tij; Immuch360 e bën me një tast, dhe për fotot tuaja në një server Immich 2.6 ose më të ri kalon përmes të njëjtit redaktues të serverit, kështu që aplikacioni web dhe pajisjet tuaja të tjera i tregojnë të rrotulluara. Çdo foto tjetër rrotullohet vetëm në këtë pajisje. Fotot 360°, 180° dhe 3D nuk rrotullohen kurrë, që pamjet përfshirëse të mbeten horizontale.
+
+1. **Telefonat, tabletat dhe dritarja e Meta Quest**: hapni foton dhe prekni Rrotullo në rreshtin e poshtëm, para Modifiko, për ta rrotulluar në drejtim orar; një shtypje e gjatë e rrotullon në drejtimin tjetër. Me një tastierë, R dhe Shift+R.
+2. **Android TV dhe Google TV**: tasti i verdhë i telekomandës e rrotullon foton në drejtim orar dhe tasti blu në drejtim kundërorar, kudo që të jetë fokusi në shikues. Në një telekomandë pa taste me ngjyrë, shtypni Poshtë: shiriti nën foto shfaqet me Rrotullo të zgjedhur (një Djathtas më tej kur fotoja ka një buton me tekst), dhe çdo OK e rrotullon foton.
+3. **Televizorët LG (webOS)**: tastet e verdhë dhe blu si në Android TV, R dhe Shift+R në një tastierë, ose butoni i rrotullimit te kontrollet e fotos.
+4. **Windows, Linux dhe macOS**: R rrotullon në drejtim orar, Shift+R në drejtim kundërorar, ose butoni i rrotullimit në shiritin e sipërm, para ekranit të plotë.
+5. **Fotot e një ndarjeje rrjeti, Plex ose një kamere**: butoni i rrotullimit i pari në shiritin e sipërm, R dhe Shift+R, ose tastet e verdhë dhe blu.
+
+Ku ruhet rrotullimi: një foto e llogarisë tuaj në Immich 2.6 ose më të ri rrotullohet përmes redaktuesit të fotove të serverit, i cili ruan skedarin origjinal dhe krijon një figurë të rrotulluar (një shirit i hollë shfaqet ndërsa punon; katër rrotullime, ose një rrotullim mbrapsht, kthejnë origjinalin). Fotot e pajisjes, të një ndarjeje, të një partneri ose të një albumi të ndarë, dhe çdo foto në një server më të vjetër rrotullohen vetëm në këtë pajisje, vetëm për atë foto, dhe skedari nuk ndryshohet kurrë; aplikacioni e thotë këtë një herë për një foto Immich. Në aplikacionet Android, iOS dhe të kompjuterit, një rrotullim i mbajtur në pajisje shfaqet në shikues, akoma jo në miniaturat, shfaqjen e diapozitivëve dhe kujtimet. Videot, dosja e kyçur dhe çdo foto 360°, 180° ose 3D nuk kanë Rrotullo.
 
 <a id="explore-panoramas-360-vr180-and-3d"></a>
 ### Eksploroni panorama, 360°, VR180 dhe 3D
@@ -138,7 +155,7 @@ Me një server [Immich](https://github.com/immich-app/immich), Immuch360 është
 2. Në Cilësimet, Shikuesi i Skedarëve, Video, "Burimi i videos" zgjedh origjinalin kur kjo pajisje e dekodon, gjithmonë origjinalin, ose gjithmonë transmetimin e transkoduar.
 3. Për t'i treguar një foto 360° dikujt që nuk ka aplikacionin, ndajeni me një lidhje ndarjeje Immich: aplikacioni web i Immich e tregon si një sferë në shfletuesin e tyre.
 
-Versioni aktual, build 26, bazohet në `main` e Immich nga 10 tetori 2026 (versioni 3.3.0-rc.0) dhe është testuar kundrejt një serveri Immich 3.2.4 dhe një serveri të ndërtuar nga e njëjta `main` e Immich. Ju lutemi raportoni problemet në [Issues](https://github.com/freeKC/Immuch360/issues), jo tek projekti Immich.
+Versioni aktual, build 27, bazohet në `main` e Immich nga 10 tetori 2026 (versioni 3.3.0-rc.0) dhe është testuar kundrejt një serveri Immich 3.2.4 dhe një serveri të ndërtuar nga e njëjta `main` e Immich. Ju lutemi raportoni problemet në [Issues](https://github.com/freeKC/Immuch360/issues), jo tek projekti Immich.
 
 Më shumë: [gjithçka tjetër është Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [krahasuar me aplikacionin Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -162,7 +179,7 @@ Më shumë: [në kacukën Meta Quest](../docs/immuch360/user-guide.md#in-the-met
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 ### Shikoni në TV dhe në kompjuter
 
-I njëjti aplikacion Android funksionon në Android TV dhe Google TV me telekomandën si i vetmi hyrje: shigjetat lëvizin fokusin, OK hap, Mbrapa kthehet, dhe shigjetat shikojnë rreth një fotoje ose videoje 360°. TV-ja nuk ka foto të veta, kështu që tregon serverin tuaj Immich, ndarjet e rrjetit tuaj, serverin tuaj Plex dhe kamerat tuaja. Në një kompjuter Windows, Immuch360 Desktop lexon dosjet që zgjidhni pa asnjë server fare, luan video të sheshta dhe 360° në një luajtës të vetin, shfleton të njëjtat ndarje dhe serverë, dhe mund të ndajë kompjuterin me një kacukë në shtëpi.
+I njëjti aplikacion Android funksionon në Android TV dhe Google TV, me temë të errët që nga nisja e parë, me telekomandën si të vetmen hyrje: shigjetat lëvizin fokusin, OK hap, Mbrapa kthehet; në shikues Majtas dhe Djathtas shkojnë te fotoja ose videoja e mëparshme ose tjetra, edhe ndërsa luhet një video, dhe në një foto ose video 360° shigjetat shikojnë përreth. TV-ja nuk ka foto të veta, kështu që tregon serverin tuaj Immich, ndarjet e rrjetit tuaj, serverin tuaj Plex dhe kamerat tuaja; televizorët LG kanë [një aplikacion të tyrin](#immuch360-on-an-lg-tv-webos). Në një kompjuter Windows, Immuch360 Desktop lexon dosjet që zgjidhni pa asnjë server fare, luan video të sheshta dhe 360° në një luajtës të vetin, shfleton të njëjtat ndarje dhe serverë, dhe mund të ndajë kompjuterin me një kacukë në shtëpi.
 
 <p align="center">
   <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Shikuesi sferik në një Google TV: një panoramë 360° e bregut të një liqeni, butoni i mbylljes lart majtas, butonat Zmadho, Zvogëlo, 360° dhe 3D lart djathtas, rrotulluar me shigjetat e telekomandës">
@@ -171,9 +188,24 @@ I njëjti aplikacion Android funksionon në Android TV dhe Google TV me telekoma
 
 1. Në një TV: instaloni APK-në me adb (shihni [Instalimi](#android-tv-and-google-tv)); në faqen e mirëseerdhjes, zgjidhni "Shto një ndarje rrjeti ose një server mediash" për një ndarje, një server Plex ose një kamerë, "Përdor pa server", ose "Lidhu me një server Immich".
 2. Në një kompjuter Windows: instaloni versionin paraprak ose shpaketojeni dhe nisni `immuch360.exe` (shihni [Instalimi](#windows)); nga build 5 për desktop, "Përdor pa server" në faqen e mirëseerdhjes hap zgjedhjen e dosjeve tuaja, dhe "Lidhu me një server Immich" faqen e hyrjes. Një foto, një video ose një dosje e hapur me programin, ose e lëshuar në dritaren e tij, hapet menjëherë, një 360° në pamjen e vet 360°; disa skedarë hapen së bashku në një faqe.
-3. Në një shikues, funksionojnë tastet e telekomandës për luajtje dhe pauzë, kthim mbrapa, përpara shpejt, i mëparshmi dhe tjetri, dhe ashtu funksionojnë tastet e tastierës në një kompjuter (Space, J dhe L, F për ekran të plotë).
+3. Në një shikues, funksionojnë tastet e telekomandës për luajtje dhe pauzë, kthim mbrapa, përpara shpejt, i mëparshmi dhe tjetri, dhe ashtu funksionojnë tastet e tastierës në një kompjuter (Space, J dhe L, F për ekran të plotë). Në një TV, OK gjatë një videoje shfaq kontrollet me luajtje dhe pauzë të zgjedhur, të ndjekur nga butonat -10 s dhe +10 s, dhe një OK i dytë e ndalon videon; kontrollet dhe data fshihen 5 s pas tastit të fundit. Videot nuk luhen më në lak në një TV, përveç nëse aktivizoni Cilësimet, Shikuesi i Skedarëve, Video, Përsëritja.
+4. Në një TV, tasti Menu, tasti Info ose OK i mbajtur shtypur hap detajet e fotos ose videos, vetëm për lexim: data, vendi, kamera, kodeku, madhësia dhe shpejtësia e biteve. Një video që TV-ja nuk mund ta dekodojë e thotë këtë, me kodekun, madhësinë dhe kufirin e dekoduesve të TV-së, në vend që të ngarkohet pafundësisht; një video 360° përtej aftësive të dekoduesve pyet para se të hapë luajtësin 360°, dhe arsyeja shkruhet në faqen Regjistrat të menysë së profilit.
 
 Më shumë: [shikoni në TV-në tuaj](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [në një kompjuter Windows](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [mbështetja e platformave](../docs/immuch360/platform-support.md).
+
+<a id="immuch360-on-an-lg-tv-webos"></a>
+### Immuch360 në një TV LG (webOS)
+
+Immuch360 vjen edhe si aplikacion Immich për televizorët LG me webOS: një aplikacion më vete për televizorët LG me webOS 4.0 e më të ri (që nga 2018), i drejtuar nga telekomanda, që tregon serverin tuaj Immich dhe vendos fotot tuaja 360° në një sferë që e rrotulloni me shigjetat. Aplikacionet e vetë Immich nuk instalohen në një TV LG. Është ndërtuar mbi [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) nga Seeky91, i cili solli rendin kohor, albumet, njerëzit, vendet, kërkimin, shfaqjen e diapozitivëve dhe hyrjen me telefon; falënderime për Seeky91. Versioni 0.1.0 është një build testimi: nuk është nisur akoma në një TV real LG, instalohet vetëm në Developer Mode, dhe çdo raportim në [Issues](https://github.com/freeKC/Immuch360/issues) ndihmon.
+
+1. Instalojeni në një TV në Developer Mode, shihni [Instalimi](#lg-tvs-webos). Ka ID-në e vet të aplikacionit, kështu që instalohet krahas Immich TV të Seeky91.
+2. Hyni me telefonin tuaj (skanoni kodin QR), me email-in dhe fjalëkalimin tuaj, ose me një çelës API.
+3. Shfletoni me shigjetat dhe OK. Në shikues, Majtas dhe Djathtas shkojnë te fotoja ose videoja e mëparshme ose tjetra, edhe ndërsa luhet një video; kontrollet fshihen 5 s pas tastit të fundit; Info hap detajet; tastet e kanaleve zmadhojnë dhe zvogëlojnë; treguesi dhe rrota e Magic Remote funksionojnë.
+4. Një foto 360° hapet në një sferë që e rrotulloni me shigjetat; "Shiko si 360°" mbulon një foto 2:1 që serveri nuk e shënon; një foto VR180 shfaqet në një gjysmësferë dhe një foto 3D me një sy. Tastet e verdhë dhe blu rrotullojnë një foto të sheshtë.
+
+Nuk janë në këtë build: video 360° në sferë (luhen të sheshta, me një mesazh), ndarjet e rrjetit, Plex dhe kamerat Tapo (të planifikuara), ngarkimet. Kur një video nuk luhet, një mesazh jep formatin dhe madhësinë e saj në vend të një rrotulluesi pa fund. Në webOS para versionit 25, proxy-ja e kundërt para Immich duhet të dërgojë kokat CORS; aplikacioni i shpjegon kur ndesh problemin.
+
+Më shumë: [aplikacioni webOS: instalimi, tastet e telekomandës, kokat CORS](../webos/README.md).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 ### Kamera, Plex dhe skedarë bruto të kamerave
@@ -184,39 +216,55 @@ Më shumë: [shikoni në TV-në tuaj](../docs/immuch360/user-guide.md#watch-on-y
 
 Më shumë: [kamerat Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [skedarë bruto të kamerave 360°](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
+<a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
+### Fotot dhe videot e dronit tuaj DJI në serverin tuaj Immich
+
+Importoni fotot dhe videot e një droni DJI përmes USB, drejtpërdrejt në serverin tuaj Immich: lidhni dronin, kontrolluesin e tij ose një lexues kartash me një telefon Android, zgjidhni skedarët e rinj dhe dërgojini, me videot të vendosura në hartë nga të dhënat e fluturimit të dronit dhe sferat 360° të dronit të shfaqura si 360°. Aplikacioni Immich rezervon vetëm atë që është tashmë në galerinë e telefonit, dhe serveri Immich ende nuk mund të lexojë vendin e një videoje DJI Neo 2. Kjo faqe është eksperimentale, vetëm në telefonat dhe tabletat Android, dhe nuk është provuar akoma me një dron real.
+
+1. Te Cilësimet, Të avancuara, aktivizoni "Dronët DJI (eksperimentale)". Një pllakë "Dron DJI" shfaqet te Biblioteka, Ndarjet e rrjetit.
+2. Lidhni dronin (një Neo 2 mund të mbetet i fikur), kontrolluesin e tij ose një lexues kartash me telefonin me një kabllo të dhënash USB-C. Në faqen e dronit DJI, prekni "Zgjidh dronin ose kartën", zgjidheni në menynë anësore të zgjedhësit, hapni dosjen e tij DCIM ose mbani të gjithë diskun, pastaj "Përdor këtë dosje" dhe Lejo.
+3. Faqja liston fotot dhe videot sipas ditës, pa skedarët anësorë .LRF, .SRT, .THM dhe .m4a. Prekni "Zgjidh të gjithë të rinjtë", pastaj "Ngarko në Immich"; skedarët e dërguar më parë mbajnë një shenjë reje dhe anashkalohen. "Mbaj në pajisje" në vend të kësaj kopjon skedarët në galerinë e telefonit, në albumin "Immuch360 import".
+4. Që një video të dalë në hartë, aktivizoni Video Subtitles në DJI Fly (modaliteti video, Settings, Camera) para se të fluturoni: droni pastaj shkruan një skedar .SRT pranë çdo videoje, aplikacioni lexon vendin prej tij dhe e vendos në serverin tuaj pas ngarkimit, kur Immich nuk ka gjetur asnjë.
+
+Sferat 360° të dronëve DJI (Mini, Air, Mavic dhe të tjerë, të njohur nga kamera e tyre) shfaqen si 360° në Immuch360 edhe pa etiketa 360°. Immich ka nevojë për ato etiketa: opsioni i ngarkimit "Etiketo sferat e dronëve si 360° për Immich", i çaktivizuar si parazgjedhje, e dërgon foton të pandryshuar me një skedar të vogël .xmp pranë saj, që Immich ta shfaqë gjithashtu si sferë. Neo 2 nuk ka modalitet sfere ose panorame: fotot dhe videot e tij janë të sheshta. Kur telefoni ka regjistruar zërin e një klipi Neo 2, ai zë është në një skedar të veçantë .m4a: faqja e shënon klipin, dhe Immich e merr pa zë (shkarkojeni me DJI Fly për të mbajtur zërin). Çdo kartë kamere me një dosje DCIM funksionon njësoj në një lexues kartash. Asgjë nuk dërgohet te DJI.
+
 <a id="devices-and-systems"></a>
 ## Pajisjet dhe sistemet
 
-Një bazë kodi e vetme, gjashtë mjedise. Çfarë ka secila sot:
+Një bazë kodi e vetme për gjashtë mjedise, dhe një aplikacion më vete për televizorët LG. Çfarë ka secila sot:
 
-| Aftësia | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeri, albume, kërkim me një server Immich | ✅ | ✅ | ✅ shikues | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Pa server: mediat e vetë pajisjes | ✅ | ✅ | vetëm ndarje | ✅ | ✅ dosje | ✅ dosje | ✅ dosje |
-| Foto dhe video të sheshta | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Foto 360° si sferë | ✅ | ✅ | ✅ | ✅ përfshirëse | ✅ | ✅ | 🔧 CI |
-| Video 360° | ✅ | ✅ pa shirit kohe | ✅ | ✅ përfshirëse | ✅ | vetëm të sheshta | vetëm të sheshta |
-| 3D dhe VR180 | ✅ një sy | ✅ një sy | ✅ një sy | ✅ 3D i vërtetë | ✅ një sy | foto një sy, video të sheshta | foto një sy, video të sheshta |
-| Spatial 2.5D (ndjekja e kokës) | ✅ eksperimentale | ✅ eksperimentale | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Foto hapësinore Apple | ✅ një sy | ✅ një sy | ✅ një sy | ✅ 3D | ✅ një sy | 🔧 CI | 🔧 CI |
-| Skedarë bruto Insta360, GoPro dhe DJI | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI foto, video të sheshta | 🔧 CI foto, video të sheshta |
-| Ndarje SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamerat Tapo: regjistrime | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamerat Tapo: pamje e drejtpërdrejtë | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ndaj këtë pajisje në rrjet | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Ngarkim në Immich nga ndarjet dhe pajisja | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Hyrja | prekje, gjiroskop | prekje, gjiroskop | telekomandë | kontrollues, duar | mi, tastierë | mi, tastierë | mi, tastierë, trackpad |
-| Ku ta merrni | Google Play, APK | App Store (në shqyrtim) | APK, Google Play (në shqyrtim) | Horizon Store, APK | instalues ose ZIP (paraprak) | .deb, .rpm (paraprak) | DMG ose ZIP (paraprak i panënshkruar) |
+| Aftësia | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galeri, albume, kërkim me një server Immich | ✅ | ✅ | ✅ shikues | ✅ shikues | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Pa server: mediat e vetë pajisjes | ✅ | ✅ | vetëm ndarje | ❌ | ✅ | ✅ dosje | ✅ dosje | ✅ dosje |
+| Foto dhe video të sheshta | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Rrotullo një foto me një tast | ✅ | ✅ | ✅ tastet me ngjyrë | ✅ tastet me ngjyrë | ✅ dritare | ✅ | ✅ | ✅ |
+| Foto 360° si sferë | ✅ | ✅ | ✅ | ✅ | ✅ përfshirëse | ✅ | ✅ | 🔧 CI |
+| Video 360° | ✅ | ✅ pa shirit kohe | ✅ mesazh nëse nuk dekodohet | vetëm të sheshta | ✅ përfshirëse | ✅ | vetëm të sheshta | vetëm të sheshta |
+| 3D dhe VR180 | ✅ një sy | ✅ një sy | ✅ një sy | foto një sy, video të sheshta | ✅ 3D i vërtetë | ✅ një sy | foto një sy, video të sheshta | foto një sy, video të sheshta |
+| Spatial 2.5D (ndjekja e kokës) | ✅ eksperimentale | ✅ eksperimentale | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Foto hapësinore Apple | ✅ një sy | ✅ një sy | ✅ një sy | ❌ | ✅ 3D | ✅ një sy | 🔧 CI | 🔧 CI |
+| Skedarë bruto Insta360, GoPro dhe DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI foto, video të sheshta | 🔧 CI foto, video të sheshta |
+| Ndarje SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kamerat Tapo: regjistrime | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Kamerat Tapo: pamje e drejtpërdrejtë | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Ndaj këtë pajisje në rrjet | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Ngarkim në Immich nga ndarjet dhe pajisja | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Import nga një dron DJI ose një kartë përmes USB (eksperimentale) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Tema e errët | si sistemi | si sistemi | ✅ si parazgjedhje | ✅ tema e vetme | si sistemi | si sistemi | si sistemi | si sistemi |
+| Hyrja | prekje, gjiroskop | prekje, gjiroskop | telekomandë; Majtas dhe Djathtas edhe gjatë një videoje, Menu për detajet | telekomandë, Magic Remote | kontrollues, duar | mi, tastierë | mi, tastierë | mi, tastierë, trackpad |
+| Ku ta merrni | Google Play, APK | App Store (në shqyrtim) | APK, Google Play (në shqyrtim) | build testimi .ipk, Developer Mode | Horizon Store, APK | instalues ose ZIP (paraprak) | .deb, .rpm (paraprak) | DMG ose ZIP (paraprak i panënshkruar) |
 
-✅ në aplikacionin në atë platformë · ❌ nuk ofrohet aty · 🔜 i planifikuar · 🔧 CI në kodin burimor, i ndërtuar dhe i nisur nga CI e projektit në atë sistem, akoma i pakontrolluar aty me një server, ndarje ose kamerë reale · vetëm të sheshta: videoja luhet e sheshtë, me një mesazh, sepse paraqitësi 360° është vetëm për Windows. "Një sy" do të thotë se një skedar 3D tregon syrin e majtë në një ekran të sheshtë. Jo çdo ✅ është kontrolluar akoma në një pajisje reale: çfarë është kontrolluar dhe ku, dhe çfarë mbetet për t'u konfirmuar, është në [Veçoritë](../docs/immuch360/features.md), [Mbështetja e platformave](../docs/immuch360/platform-support.md) dhe [Pajtueshmëria](../docs/immuch360/compatibility.md).
+✅ në aplikacionin në atë platformë · ❌ nuk ofrohet aty · 🔜 i planifikuar · 🔧 CI në kodin burimor, i ndërtuar dhe i nisur nga CI e projektit në atë sistem, akoma i pakontrolluar aty me një server, ndarje ose kamerë reale · vetëm të sheshta: videoja luhet e sheshtë, me një mesazh, sepse paraqitësi i videove 360° në kompjuterë është vetëm për Windows, dhe në televizorët LG mbetet të matet nëse webOS ia kalon kuadrot e videos sferës. "Një sy" do të thotë se një skedar 3D tregon syrin e majtë në një ekran të sheshtë. Kolona LG webOS është një aplikacion më vete, build-i i testimit 0.1.0 i të cilit kalon testet e tij në CI e projektit dhe nuk është nisur akoma në një TV. Jo çdo ✅ është kontrolluar akoma në një pajisje reale: çfarë është kontrolluar dhe ku, dhe çfarë mbetet për t'u konfirmuar, është në [Veçoritë](../docs/immuch360/features.md), [Mbështetja e platformave](../docs/immuch360/platform-support.md) dhe [Pajtueshmëria](../docs/immuch360/compatibility.md).
 
 - **Telefona dhe tableta Android**: aplikacioni i plotë, prekje dhe gjiroskop, çdo burim.
 - **iPhone dhe iPad**: aplikacioni i plotë; luajtësi i videove 360° ka vetëm luajtje dhe pauzë, pamja e drejtpërdrejtë e Tapo vjen më vonë, dhe kërkimi DLNA dërgon kërkesa unicast derisa Apple të jep lejen multicast.
-- **Android TV dhe Google TV**: i njëjti APK, drejtuar nga telekomanda; një shikues: rezervimi, ngarkimet dhe redaktimi janë të fshehura. Kontrolluar në emuluesin e Google TV (hyrja, rendi kohor, shikuesit, ndarjet, lëvizja me telekomandë), akoma jo në një TV real.
+- **Android TV dhe Google TV**: i njëjti APK, drejtuar nga telekomanda, i errët si parazgjedhje; një shikues: rezervimi, ngarkimet dhe redaktuesi janë të fshehura dhe detajet janë vetëm për lexim, por një foto ende rrotullohet me një tast. Çdo filtër kërkimi funksionon me telekomandën: Vendndodhja dhe Kamera i hapin zgjedhjet e tyre në një listë, filtri i datës shfaq të gjitha zgjedhjet e tij, dhe fletët Etiketat, Vendndodhja, Data, Lloji i medias, Vlerësimi me yje dhe Opsionet e shfaqjes vendosin Pastro dhe Zbato pranë zgjedhjeve, një Djathtas larg, në pjesën më të madhe të lartësisë së ekranit. Rrjeta e fotove përdor më pak memorie imazhesh, dhe një shigjetë e mbajtur shtypur e lëviz më së shumti rreth 10 rreshta në sekondë. Kontrolluar në emuluesin e Google TV; një test i parë në një Android TV real, më 21 tetor, çoi te ndryshimet për TV të build 27, të cilat nuk janë provuar akoma në një TV real.
+- **Televizorët LG me webOS 4.0 e më të ri**: një aplikacion më vete për telekomandën dhe Magic Remote, i ndërtuar mbi [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): një shikues Immich me fotot 360° në një sferë, rrotullim fotoje me një tast, një temë të errët dhe 89 gjuhët e aplikacionit (tekstet e pakta të vetë aplikacionit TV për momentin në anglisht); akoma pa ndarje, Plex ose kamera, video 360° të sheshta. Build testimi 0.1.0, i kontrolluar nga testet e tij në CI e projektit, akoma jo në një TV.
 - **Meta Quest 2, Pro, 3 dhe 3S**: aplikacioni si dritare, plus pamja përfshirëse; HEVC është kodeku i sigurt, H.264 ndalon rreth 4096x2304 në Quest 3; është testuar vetëm Quest 3, ndërsa Quest 2, Quest Pro dhe Quest 3S nuk janë testuar akoma.
 - **Windows 10 dhe 11**: paraprak, me dosje në vend të një galerie, një luajtës videosh të vetin (libmpv) për video të sheshta dhe 360°, skedarë bruto të bashkuara në çipin grafik, skedarë dhe dosje të hapura me programin ose të lëshuara në dritare, një instalues ose një ZIP.
-- **Linux**: një .deb dhe një .rpm të ndërtuara nga CI e projektit, të instaluara dhe të kontrolluara në Ubuntu 22.04 dhe 24.04, Debian 12 dhe Fedora 40 dhe 44; foto, foto 360° dhe video të sheshta përmes libmpv të sistemit (videot 360°, 3D dhe bruto luhen të sheshta, me një mesazh); ndarje SMB që nga Ubuntu 22.04 dhe Debian 12; akoma i pa nisur në një PC real me Linux, vetëm nën WSLg dhe në kontejnerë.
+- **Linux**: një .deb dhe një .rpm të ndërtuara nga CI e projektit, të instaluara dhe të kontrolluara në Ubuntu 22.04 dhe 24.04, Debian 12 dhe Fedora 40 dhe 44; foto, foto 360° dhe video të sheshta përmes libmpv të sistemit (videot 360°, 3D dhe bruto luhen të sheshta, me një mesazh), të vizatuara përmes rrugës harduerike edhe në seancat X11 që nga build 7 për desktop; ndarje SMB që nga Ubuntu 22.04 dhe Debian 12; pa një mbajtës çelësash (GNOME Keyring ose KWallet) aplikacioni nuk ngrin më për 25 s në nisjen e parë: i mban fjalëkalimet vetëm për seancën dhe e thotë këtë në cilësimet e tij; akoma i pa nisur në një PC real me Linux, vetëm nën WSLg dhe në kontejnerë.
 - **macOS**: një DMG dhe një ZIP të ndërtuara nga CI e projektit, universale, të panënshkruara (Gatekeeper pyet një herë); aplikacioni niset, hap skedarët dhe dosjet që i jepen, edhe nga Finder, i mban sekretet e tij në zinxhirin e çelësave të hyrjes dhe luan video të sheshta me libmpv-në e vet, gjithçka e kontrolluar vetëm në Mac-un e CI të projektit; asgjë nuk ka punuar akoma në një Mac real.
 
 <a id="advanced-features"></a>
@@ -225,10 +273,10 @@ Një bazë kodi e vetme, gjashtë mjedise. Çfarë ka secila sot:
 Çfarë mund të lexojë dhe luajë aplikacioni, për lexuesin që dëshiron gjithë shtrirjen. Çdo rresht detajohet në [udhëzuesin e përdoruesit](../docs/immuch360/user-guide.md) dhe [faqen e pajtueshmërisë](../docs/immuch360/compatibility.md).
 
 - **Formatet**: foto dhe video të sheshta (ç'ka pajisja dekodon: MP4, MOV, MKV dhe më shumë); foto dhe video 360° ekuirektangulare; panorama të pjesshme (prerje GPano); VR180; 3D stereoskopik, lart dhe poshtë ose krah për krah, lexuar nga skedari (kutia st3d) ose vlerësuar nga kuadri; foto hapësinore Apple (çifte stereo HEIC) dhe video hapësinore (MV-HEVC, një sy); Insta360 .insp dhe .insv bruto, GoPro .360, DJI .osv; burime HLG dhe PQ 10-bit të harmonizuara në ton në sferë.
-- **Projeksioni dhe metadatat**: metadatat GPano dhe sferike lexuar nga skedari, me kërkesa intervalesh në një server ose ndarje; pamja fillestare e kamerës; "Shiko si 360°" kujtuar në pajisje; VR180 njohur nga skedari ose emri i tij; metadatat mbeten të paprekura sepse luhet skedari origjinal, kurrë një kopje e konvertuar.
+- **Projeksioni dhe metadatat**: metadatat GPano dhe sferike lexuar nga skedari, me kërkesa intervalesh në një server ose ndarje; pamja fillestare e kamerës; sferat e dronëve DJI të njohura nga kamera e tyre, me një skedar shoqërues opsional .xmp që Immich t'i shënojë gjithashtu; "Shiko si 360°" kujtuar në pajisje; VR180 njohur nga skedari ose emri i tij; vendi i një videoje droni lexuar nga regjistri i fluturimit .SRT; metadatat mbeten të paprekura sepse luhet skedari origjinal, kurrë një kopje e konvertuar; një çerek rrotullimi i ruajtur përmes redaktuesit të Immich ose i mbajtur në pajisje, kurrë në një skedar përfshirës.
 - **Luajtja vendase**: Media3 në Android dhe TV, SceneKit dhe AVFoundation në iOS, Meta Spatial SDK në kacukë, libmpv në Windows; origjinali ose transmetimi i transkoduar zgjedhur sipas ç'ka pajisja dekodon; një listë e dekoduesve të videove të pajisjes në Cilësimet, E Avancuar; zgjedhja e pistës audio dhe një tregues ngarkimi.
 - **Skedarë bruto të bashkuara në pajisje**: një Flutter fragment shader për foto; një efekt GPU në luajtësin për video me një pistë të vetme; dy dekodues harduerik njëherësh dhe një GPU compositor për video me një lente për pistë ose skedar (OpenGL ES 3 në Android dhe Quest, Metal në iOS, dhe në Windows, nga versioni desktop 5, dy luajtës libmpv, kuadrot e të cilëve aplikacioni i çiftëzon në çipin grafik); kalibrimi i vet i kamerës (modelet Mei, V6 dhe equidistant) dhe regjistrimi i akselerometrit; pajisja kalon në një lente të vetme, transmetimin e transkoduar, kopjen LRV të kamerës ose videon e pabashkuar, kur nuk mund të ekzekutojë dy dekodues.
-- **Burimet**: galeria e pajisjes; dosjet e një kompjuteri; një server Immich; SMB 2 dhe 3, WebDAV, DLNA/UPnP; Plex përmes HTTPS, kontrolluar kundrejt certifikatës së vetë serverit; kamerat Tapo në rrjetin lokal (HTTPS dhe RTSP); një telefon ose kompjuter i ndarë në Wi-Fi si server WebDAV; serverë gjetur nga Bonjour/mDNS, një skanim i rrjetit lokal, SSDP, GDM dhe zbulimi TP-Link, dhe ndjekur kur ndërrojnë adresën.
+- **Burimet**: galeria e pajisjes; dosjet e një kompjuteri; një dron, kontrolluesi i tij ose një kartë kamere përmes USB, përmes zgjedhësit të dosjeve të sistemit (Android, eksperimentale); një server Immich; SMB 2 dhe 3, WebDAV, DLNA/UPnP; Plex përmes HTTPS, kontrolluar kundrejt certifikatës së vetë serverit; kamerat Tapo në rrjetin lokal (HTTPS dhe RTSP); një telefon ose kompjuter i ndarë në Wi-Fi si server WebDAV; serverë gjetur nga Bonjour/mDNS, një skanim i rrjetit lokal, SSDP, GDM dhe zbulimi TP-Link, dhe ndjekur kur ndërrojnë adresën.
 - **Leximi me kërkesë**: një urë lokale shërben luajtësit me intervale bajtësh dhe një token për sesion; blloqe të mëdha, lexim paraprak dhe deri në gjashtë lidhje SMB paralele; miniatura nga një kuadër i çdo videoje; asgjë e kopjuar në pajisje.
 - **Harduer**: dekodues harduerik të përdorur kudo ku ekzistojnë, me kufijtë e tyre të matur (kufiri H.264 i Quest 3, më së shumti dy lente 2048x2048 për dekoduesit softuerik); në Windows pamja 360° vizatuar nga çipi grafik nga çdo kuadër i dekoduar, madhësia e kuadrit matur në çdo kompjuter, çipi i integruar ose i veçantë zbuluar.
 - **Veçoritë e platformave**: gjiroskopi dhe luajtësi Spatial 2.5D në telefona; pamja përfshirëse, kontrolluesit dhe duart në Quest; skema e telekomandës, dialogu i tastierës dhe baneri i TV-së në Android TV; në kompjuter, miu dhe tastiera, ekran i plotë, një dritare e vetme, skedarë dhe dosje të hapura me programin ose të lëshuara në dritaren e tij, lexohen si skedarët e dosjeve tuaja; foto HEIC, AVIF, TIFF dhe foto bruto kamere nga dosjet tuaja, kur Windows ka një dekodues për to; dhe mbrojtja e të dhënave Windows për fjalëkalimet dhe token.
@@ -246,6 +294,7 @@ Një bazë kodi e vetme, gjashtë mjedise. Çfarë ka secila sot:
 - [Shpërfaqësi i videove 360° për desktop: libmpv, kalimi i projeksionit dhe matjet pas tij](../docs/immuch360/desktop-360-video-renderer.md)
 - [Statusi i publikimit: build-e, dyqane dhe çfarë ka çdo dyqan](../docs/immuch360/release-status.md)
 - [Ndërtoje vetë: telefona, kacuka, TV dhe kompjuterë](../docs/immuch360/build.md)
+- [Immuch360 për televizorët LG webOS: instalimi në Developer Mode, tastet e telekomandës, kokat CORS](../webos/README.md)
 
 <a id="install"></a>
 ## Instalimi
@@ -268,6 +317,14 @@ Një bazë kodi e vetme, gjashtë mjedise. Çfarë ka secila sot:
 3. Nga një kompjuter në të njëjtin rrjet, me adb (Android SDK Platform Tools): `adb connect <address of the TV>`, pranoni kërkesën në televizor, pastaj `adb install -r Immuch360-v<version>-release.apk`.
 4. Aplikacioni shfaqet mes aplikacioneve të televizorit, me banerin e tij. Instaloni publikimin e radhës në të njëjtën mënyrë: `-r` mban hyrjen dhe cilësimet.
 
+<a id="lg-tvs-webos"></a>
+### Televizorët LG (webOS)
+
+1. Ju nevojitet një TV LG me webOS 4.0 ose më të ri, një kompjuter në të njëjtin rrjet dhe një llogari falas zhvilluesi LG. Në TV, instaloni Developer Mode nga LG Content Store, hyni në llogari, aktivizoni Dev Mode Status dhe lëreni TV-në të rinisë; shënoni adresën e tij IP dhe frazën kalimi që tregon aplikacioni.
+2. Në kompjuter, instaloni webOS CLI (Node.js 18 ose më të ri): `npm install -g @webos-tools/cli`, pastaj regjistroni TV-në me `ares-setup-device` (adresa e tij IP, porta 9922, përdoruesi `prisoner`) dhe `ares-novacom --device <name> --getkey`, i cili kërkon frazën kalimi.
+3. Shkarkoni `Immuch360-webOS-0.1.0.ipk` nga [parapublikimi webOS](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0), kontrollojeni kundrejt `SHA256SUMS.txt`, pastaj ekzekutoni `ares-install --device <name> Immuch360-webOS-0.1.0.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) i webosbrew bën të njëjtën gjë pa vijën e komandës.
+4. Një seancë Developer Mode zgjat 1000 orë dhe butoni EXTEND i aplikacionit Developer Mode e rinovon; kur skadon, TV-ja heq aplikacionet e instaluara në këtë mënyrë. Detajet janë në [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
+
 <a id="meta-quest"></a>
 ### Meta Quest
 
@@ -278,18 +335,18 @@ Një bazë kodi e vetme, gjashtë mjedise. Çfarë ka secila sot:
 <a id="windows"></a>
 ### Windows
 
-1. Shkarkoni skedarin `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` nga [parapublikimi për desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) (me `SHA256SUMS.txt` për ta kontrolluar) dhe hapeni. Skedarët akoma nuk janë nënshkruar: Windows SmartScreen mund të shfaqë “Windows protected your PC”, zgjidhni "More info", pastaj "Run anyway".
+1. Shkarkoni skedarin `Immuch360-Desktop-3.3.0-rc.0-desktop.7-windows-x64-setup.exe` nga [parapublikimi për desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) (me `SHA256SUMS.txt` për ta kontrolluar) dhe hapeni. Skedarët akoma nuk janë nënshkruar: Windows SmartScreen mund të shfaqë "Windows protected your PC", zgjidhni "More info", pastaj "Run anyway".
 2. Zgjidhni "Install for me only" (pa të drejta administratori) ose "Install for all users", pastaj gjuhën e instaluesit, e cila është vendosur tashmë sipas gjuhës së Windows.
 3. Nisni Immuch360 Desktop nga menyja Start. Fotot dhe videot e marrin te "Hap me" (klikim i djathtë mbi një skedar, Hap me); nuk bëhet kurrë programi i tyre i paracaktuar. Nisja e parë e një build-i të ri mund të zgjasë deri në një minutë, ndërsa Windows skanon skedarët.
 4. Windows 10 ose 11, 64-bit. Për t'u përditësuar, hapni instaluesin e build-it të ardhshëm: hyrja, dosjet dhe cilësimet tuaja mbeten. ZIP-i i të njëjtit publikim është i njëjti program si një dosje: shpaketojeni kudo dhe nisni `immuch360.exe` prej tij.
 
 ### Linux
 
-Në Ubuntu 22.04 ose më të ri dhe Debian 12 ose më të ri: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; në Fedora 40 ose më të ri: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Pastaj nisni Immuch360 Desktop nga aplikacionet tuaja. Paraprak fillestar: dosjet e kompjuterit, foto dhe foto 360° si sferë; videot akoma nuk luajnë, dhe ndarjet SMB kërkojnë Ubuntu 24.04, Debian 13 ose Fedora 39 ose më të ri.
+Në Ubuntu 22.04 ose më të ri dhe Debian 12 ose më të ri: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-amd64.deb`; në Fedora 40 ose më të ri: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-x86_64.rpm`, të dyja nga [parapublikimi për desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7). Pastaj nisni Immuch360 Desktop nga aplikacionet tuaja. Paraprak: dosjet e kompjuterit, foto dhe foto 360° si sferë, dhe video të sheshta përmes libmpv të sistemit, të cilën e instalon paketa (videot 360°, 3D dhe bruto luhen të sheshta, me një mesazh); ndarjet SMB funksionojnë që nga Ubuntu 22.04 dhe Debian 12. Në Fedora, videot e kamerave kanë nevojë për FFmpeg nga RPM Fusion. Pa GNOME Keyring ose KWallet, fjalëkalimet mbahen vetëm për seancën, dhe cilësimet e aplikacionit e thonë këtë.
 
 ### macOS
 
-Hapni `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` dhe zvarritni aplikacionin te Applications (Apple silicon dhe Intel, macOS 12 ose më i ri). Akoma nuk është i nënshkruar as i noterizuar: Control-klikoni mbi të dhe zgjidhni Open në macOS 14 dhe më të vjetër, ose zgjidhni "Open Anyway" te System Settings, Privacy & Security në macOS 15 dhe më të rinj. Askush që punon në projekt nuk ka një Mac: aplikacioni është nisur vetëm në CI e projektit, akoma nuk luan video dhe qasja e tij në rrjet nuk është provuar. Raportimet janë të mirëpritura.
+Hapni `Immuch360-Desktop-3.3.0-rc.0-desktop.7-macos.dmg` nga [parapublikimi për desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) dhe zvarritni aplikacionin te Applications (Apple silicon dhe Intel, macOS 12 ose më i ri). Akoma nuk është i nënshkruar as i noterizuar: Control-klikoni mbi të dhe zgjidhni Open në macOS 14 dhe më të vjetër, ose zgjidhni "Open Anyway" te System Settings, Privacy & Security në macOS 15 dhe më të rinj. Askush që punon në projekt nuk ka një Mac: aplikacioni është nisur vetëm në Mac-un e CI të projektit, ku hap skedarë dhe dosje dhe luan video të sheshta me libmpv-në e vet; qasja e tij në rrjet nuk është provuar. Raportimet janë të mirëpritura.
 
 <a id="privacy"></a>
 ## Privatësia
@@ -301,7 +358,7 @@ Asgjë nuk shkon tek zhvilluesi: pa llogari, pa analitikë, pa shërbim raportim
 
 Immuch360 është një degëzim jozyrtar i aplikacionit mobil [Immich](https://github.com/immich-app/immich), sipas [GNU AGPL v3](../LICENSE), pa lidhje me, dhe pa mbështetje nga, ekipi i Immich ose FUTO. Degëzimi ekziston sepse shikimi 360° në mobil është kërkuar në Immich prej janarit 2024 dhe nuk është akoma në aplikacionin zyrtar; ai e sjell tani, mbledh përshtypje nga pajisje reale, dhe do t'i ofrojë mbrapsht Immich, në pull request të vegjël, çfarëdo që dëshirojnë mirëmbajtësit. Gjithçka që bën aplikacioni zyrtar është ruajtur; degët, zinxhiri i ndërtimit dhe CI përshkruhen në [Ndërtoje vetë](../docs/immuch360/build.md).
 
-Shikuesi i fotove 360° bazohet në pull request-in origjinal [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) nga dmitry-brazhenko, i ndërtuar nga ana e tij mbi prototipin e bencefr në [#30192](https://github.com/immich-app/immich/pull/30192); falënderime për të dy. Rregullimet e telekomandës te filtrat e kërkimit dhe renditja e albumeve në televizorë nisën nga puna e mlc70 në [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1). Kamerat Tapo u shkruan nga ç'ka dokumentojnë [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) dhe [python-kasa](https://github.com/python-kasa/python-kasa). Pamja e Meta Quest mbështetet në Meta Spatial SDK, i cili nuk është me burim të hapur, kështu që mbetet në këtë degëzim. ZIP-i i Windows mbart libmpv (biblioteka e [mpv](https://mpv.io), me [FFmpeg](https://ffmpeg.org)) e ndërtuar nga projekti, sipas LGPL, me licencat dhe burimet e saj; detajet dhe markat tregtare të platformave të përmendura në këtë faqe janë në [Licenca dhe markat tregtare](../docs/immuch360/platform-support.md#license-and-trademarks).
+Shikuesi i fotove 360° bazohet në pull request-in origjinal [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) nga dmitry-brazhenko, i ndërtuar nga ana e tij mbi prototipin e bencefr në [#30192](https://github.com/immich-app/immich/pull/30192); falënderime për të dy. Rregullimet e telekomandës te filtrat e kërkimit dhe renditja e albumeve në televizorë nisën nga puna e mlc70 në [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1), dhe shiriti i veprimeve dhe fletët e filtrave në 80 përqind të lartësisë së ekranit vijnë nga [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3) i mlc70, me autorësinë e ruajtur; falënderime për mlc70. Aplikacioni LG webOS është ndërtuar mbi [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) nga Seeky91, sipas licencës MIT, i mbajtur në dosjen e vet; falënderime për Seeky91. Kamerat Tapo u shkruan nga ç'ka dokumentojnë [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) dhe [python-kasa](https://github.com/python-kasa/python-kasa). Pamja e Meta Quest mbështetet në Meta Spatial SDK, i cili nuk është me burim të hapur, kështu që mbetet në këtë degëzim. Ndarjet SMB përdorin libsmb2, sipas LGPL 2.1 ose më të re: që nga build 27 dhe build 7 për desktop, çdo build mbart njoftimin e saj, tekstet e licencës dhe arkivin e burimeve, `Immuch360-libsmb2-sources.tar.gz`, i cili bashkëngjitet gjithashtu në çdo publikim. Build-et për Windows dhe macOS mbartin libmpv (biblioteka e [mpv](https://mpv.io), me [FFmpeg](https://ffmpeg.org)) e ndërtuar nga projekti, sipas LGPL, me licencat dhe burimet e saj, të listuara në faqen e licencave të aplikacionit (Licenses, në fund të menysë së profilit); detajet dhe markat tregtare të platformave të përmendura në këtë faqe janë në [Licenca dhe markat tregtare](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Kapjet e telefonit të kësaj faqeje janë bërë në build-in Android në një emulues, ato të TV-së në emuluesin Google TV dhe ato të Windows në një PC Windows 11, të gjitha me panorama CC0 nga [Poly Haven](https://polyhaven.com); kapjet e kacukës janë bërë në një Quest 3.
 
@@ -310,11 +367,13 @@ Kapjet e telefonit të kësaj faqeje janë bërë në build-in Android në një 
 
 Çfarë nuk është bërë ende, më e mundshmja e para. Asgjë këtu nuk është premtim, dhe komentet në [gjurmuesin e problemeve](https://github.com/freeKC/Immuch360/issues) ndihmojnë të vendoset çfarë vjen e para.
 
-- **Dyqanet**: Google Play (build 26 së shpejti, listimi për TV në shqyrtim), App Store (versioni 3.3.1 në shqyrtim që nga 14 tetori), Meta Horizon Store (build 25 në shqyrtim).
+- **Dyqanet**: Google Play (build 26 në shqyrtim, pastaj build 27; listimi për TV në shqyrtim), App Store (versioni 3.3.1 në shqyrtim që nga 14 tetori), Meta Horizon Store (build 25 në shqyrtim).
 - **Kompjuterë**: testimi i çdo funksioni me dorë në një PC Windows; pastaj paraqitësi i videove 360° në Linux dhe macOS, një testim në një Mac real dhe në një PC real me Linux; pastaj një build i nënshkruar dhe përditësime automatike; pastaj Spatial 2.5D me kamerën web.
+- **Televizorët**: një test i build 27 në një Android TV real; aplikacioni LG webOS në një TV real LG, pastaj videot e tij 360° në sferë dhe ndarjet e rrjetit, Plex dhe kamerat Tapo; një kod QR për të çiftuar një TV ose një kompjuter me një telefon, ku ekrani i madh e shfaq dhe telefoni e skanon.
 - **Telefona dhe tableta**: një shirit kohe në luajtësin e videove 360° të iOS, i mëparshmi dhe tjetri në luajtësit 360° të telefonave, zgjedhja e pistës audio në luajtësin e sheshtë, pamja e drejtpërdrejtë e Tapo në iPhone dhe iPad.
 - **Media përfshirëse**: .dng fisheye i dyfishuar, drejtimi i videove GoPro dhe DJI nga të dhënat e tyre të vetë lëvizjes, video hapësinore në 3D në Quest nëse dekoduesit e tij e lejojnë, i mëparshmi dhe tjetri midis fotove hapësinore në kacukë.
 - **Burimet**: rrëshqitja midis skedarëve të një dosjeje të ndarë, vërtetimi Digest për WebDAV, një kod QR për të sjellë token-in e Plex nga kompjuteri, IPv6 për Plex, regjistrime Tapo H.265, kanale në ekranin fillestar të TV-së.
+- **Dronët**: një test me një DJI Neo 2 real, pastaj zëri i regjistruar nga telefoni i bashkuar me klipin e tij; pamja e drejtpërdrejtë dhe kontrolli i kamerës së dronit lihen për më vonë.
 - **Upstream**: pull request të vegjël për Immich për pjesët që duan mirëmbajtësit, duke filluar nga shikuesi i fotove 360°.
 
 Lista e plotë, me kontrollet e pajisjeve ende në pritje për çdo veçori, është në [Statusi i publikimit](../docs/immuch360/release-status.md#roadmap).

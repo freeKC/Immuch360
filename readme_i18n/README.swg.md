@@ -10,8 +10,8 @@
 Immuch360 isch a freie ond Open-Source App, mit dera du dei Fotos ond Videos finda, duchstöbera, abspiela ond entdecka kasch: die gwöhnliche ond die panoramische, 360°-, 3D- ond immersive, wo andere Apps flach, doppelt odr verzoga zeiga. Se liest se dort, wo se liega, auf em Gerät selber, auf am NAS odr am Computer, auf am Plex-Server odr auf am Immich-Server, ond spielt se ab auf Handys, Tablets, Fernseher, Meta Quest Headsets ond Computer. Koi Account, koi Cloud, koi Server nötig.
 
 - **Was macht se?** Se zeigt dei Fotos ond Videos als Galerie ond spielt se ab em Player, wo zu jedere Datei passt: flach, als Kugel, wo mr se rom aaguckt, in 3D, in am Headset.
-- **Weiche Mediadatatroa?** Flache Fotos ond Videos, Panoramen, 360°-Fotos ond -Videos, VR180, stereoskopisches 3D, räumliche Apple-Fotos ond die Rohdatatroa von 360°-Kameras (Insta360, GoPro MAX, DJI Osmo 360), wo von dr App zammagnäht werda.
-- **Auf was für Geräte?** Android-Handys ond Tablets, iPhone ond iPad, Android TV ond Google TV, Meta Quest 2, Pro, 3 ond 3S, Windows (Preview), ond Linux ond macOS als frühe Previews.
+- **Weiche Mediadatatroa?** Flache Fotos ond Videos, Panoramen, 360°-Fotos ond -Videos, VR180, stereoskopisches 3D, räumliche Apple-Fotos, die 360°-Kugla von DJI-Drohna ond die Rohdatatroa von 360°-Kameras (Insta360, GoPro MAX, DJI Osmo 360), wo von dr App zammagnäht werda.
+- **Auf was für Geräte?** Android-Handys ond Tablets, iPhone ond iPad, Android TV ond Google TV, LG-Fernseher mit webOS (a eigene App, dr erschte Test-Build), Meta Quest 2, Pro, 3 ond 3S, Windows (Preview), ond Linux ond macOS als frühe Previews.
 - **Brauch i a Server odr a Account?** Noi. Immuch360 funktioniert für sich alloi mit dr Mediadatatroa von deim Gerät. A Immich-Server, a NAS, a Medieserver odr a Plex-Server send Optione, wo du dazuanimmsch, wenn du se willsch.
 
 <p align="center">
@@ -20,14 +20,15 @@ Immuch360 isch a freie ond Open-Source App, mit dera du dei Fotos ond Videos fin
 
 <div align="center">
 
-| Plattform | Wo mr's kriagt | Stand am 20. Oktober 2026 |
+| Plattform | Wo mr's kriagt | Stand am 22. Oktober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-Handys ond Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | auf Google Play (Build 25), Build 26 auf GitHub |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-Handys ond Tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | auf Google Play (Build 25; Build 26 em Review), Build 27 auf GitHub |
 | <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ond iPad** | App Store | Version 3.3.1 (Build 24) wartet seit em 14. Oktober auf 's Apple Review; [selber baua](../docs/immuch360/build.md) bis dohi |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ond Google TV** | [APK](#android-tv-and-google-tv) · Google Play | Build 26 auf GitHub, mit de Fernbedienongs-Korrekture en de Suachfilter; dr TV-Eintrag isch em Google Review |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ond 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | em Horizon Store (Build 23; Build 25 em Review), Build 26 auf GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer odr ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | Desktop-Build 6, a Preview: Fotos, flache ond 360°-Videos, Freigaba, Plex, Kameras, Datatroa, wo mit dr App aufgehn, d Oberfläch en 89 Sprocha |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ond Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-6) | Previews: auf Linux Fotos, 360°-Fotos ond flache Videos (360°-Videos laufa flach); auf macOS 's gleiche, bloß auf em CI-Mac vom Projekt gprüft, net signiert |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ond Google TV** | [APK](#android-tv-and-google-tv) · Google Play | Build 27 auf GitHub: standardmäßig dunkles Design, Links ond Rechts während am Video, a klare Meldong, wenn a Video net laufa ka; dr TV-Eintrag isch em Google Review |
+| **LG-Fernseher** mit webOS 4.0 ond neuer | [.ipk-Test-Build](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0) | Test-Build 0.1.0 vom 21. Oktober, zom Installiera em [Developer Mode](#lg-tvs-webos); no net auf am echta LG-Fernseher gloffa |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ond 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | em Horizon Store (Build 23; Build 25 em Review), Build 27 auf GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer odr ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | Desktop-Build 7, a Preview: Fotos, flache ond 360°-Videos, Freigaba, Plex, Kameras, Datatroa, wo mit dr App aufgehn, Fotos mit oiner Tast gdreht, d Oberfläch en 89 Sprocha |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ond Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | Previews: auf Linux Fotos, 360°-Fotos ond flache Videos (360°-Videos laufa flach); auf macOS 's gleiche, bloß auf em CI-Mac vom Projekt gprüft, net signiert |
 
 *Dr Stand wird bei jedere Veröffentlichong aktualisiert; die Einzelheita, Build für Build, stenga em [Veröffentlichongsstand](../docs/immuch360/release-status.md).*
 
@@ -42,13 +43,16 @@ Immuch360 isch a freie ond Open-Source App, mit dera du dei Fotos ond Videos fin
 
 - [Was du mache kasch](#what-you-can-do)
   - [Dei Fotos ond Videos aaguaga](#watch-your-photos-and-videos)
+  - [A Foto mit oiner Tast dreha](#turn-a-photo-with-one-key)
   - [Panoramen, 360°, VR180 ond 3D entdecka](#explore-panoramas-360-vr180-and-3d)
   - [Dei eigene Datatroa nutza, ohne Account](#use-your-own-files-without-an-account)
   - [Die Mediadatatroa von am NAS, am Computer odr am Medieserver erreicha](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
   - [Dei Immich-Bibliothek finda](#find-your-immich-library)
   - [Immersiv werda auf Meta Quest](#go-immersive-on-meta-quest)
   - [Auf em Fernseher ond em Computer aaguaga](#watch-on-the-tv-and-on-the-computer)
+  - [Immuch360 auf am LG-Fernseher (webOS)](#immuch360-on-an-lg-tv-webos)
   - [Kameras, Plex ond Rohdatatroa vo dr Kamera](#cameras-plex-and-raw-camera-files)
+  - [Die Fotos ond Videos von deiner DJI-Drohne auf deim Immich-Server](#your-dji-drones-photos-and-videos-on-your-immich-server)
 - [Geräte ond Systeme](#devices-and-systems)
 - [Erweiterte Funktione](#advanced-features)
 - [Technische Dokumentation](#technical-documentation)
@@ -74,6 +78,19 @@ Immuch360 isch zerscht amol a Galerie ond a Player für gwöhnliche Fotos ond Vi
 3. Wisch bei am Video noch oba für d' Details: Codec, Größe, Bildrate, Bitrate, ond ob des Gerät's dekodiera kann.
 
 Meh: [die Player ond dr Videoplayer](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [Videodetails ond Dekoder](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
+
+<a id="turn-a-photo-with-one-key"></a>
+### A Foto mit oiner Tast dreha
+
+Dreh a Foto mit oim Druck om 90°, ohne en Editor aufzmacha: mit am Knopf, ara Tast auf dr Tastatur odr ara Farbtast auf dr Fernbedienong vom Fernseher, auf jeder Plattform. D Immich-App dreht a Foto en ihrem Editor; Immuch360 machts mit oiner Tast, ond für deine eigene Fotos auf am Immich-Server 2.6 odr neuer gohts durch genau den Editor vom Server, so dass d Web-App ond deine andere Geräte se gdreht aazeiget. Jedes andere Foto wird bloß auf dem Gerät gdreht. 360°-, 180°- ond 3D-Fotos werdet nia gdreht, damit die immersive Aasichta grad bleibet.
+
+1. **Handys, Tablets ond 's Meta-Quest-Fenster**: mach 's Foto auf ond tipp en dr untere Zeil auf Drehen, vor Bearbeiten, zom's em Uhrzeigersinn dreha; a langer Druck dreht's andersrom. Mit ara Tastatur: R ond Shift+R.
+2. **Android TV ond Google TV**: die gelbe Tast von dr Fernbedienong dreht 's Foto em Uhrzeigersinn ond die blaue gega da Uhrzeigersinn, egal wo dr Fokus em Player isch. Auf ara Fernbedienong ohne Farbtasta drück Nonter: d Leischt onter em Foto kommt mit Drehen ausgwählt (oimol Rechts weiter, wenn 's Foto an Textknopf hot), ond jedes OK dreht 's Foto.
+3. **LG-Fernseher (webOS)**: gelb ond blau wie auf Android TV, R ond Shift+R auf ara Tastatur, odr dr Drehknopf bei de Steuerelement vom Foto.
+4. **Windows, Linux ond macOS**: R dreht em Uhrzeigersinn, Shift+R gega da Uhrzeigersinn, odr dr Drehknopf en dr obere Leischt, vor Vollbild.
+5. **Fotos von ara Netzwerkfreigab, Plex odr ara Kamera**: dr Drehknopf als erschter en dr obere Leischt, R ond Shift+R, odr die gelbe ond blaue Tast.
+
+Wo 's Dreha gspeichert wird: a Foto von deim eigena Konto auf Immich 2.6 odr neuer wird durch da Foto-Editor vom Server gdreht, wo d Originaldatei bhält ond a gdrehts Bild macht (a dünne Leischt zeigt sich, solang er schafft; vier Drehunga, odr oi Drehung zrück, bringet 's Original wieder). D Fotos vom Gerät, von ara Freigab, von am Partner odr am geteilta Album, ond jedes Foto auf am ältera Server werdet bloß auf dem Gerät gdreht, für des Foto, ond d Datei wird nia verändert; d App sagt des oimol für a Immich-Foto. En de Android-, iOS- ond Computer-Apps sieht mr a Drehung, wo auf em Gerät bhalta wird, em Player, aber no net en de Vorschaubilder, dr Diashow ond de Erinnerunga. Videos, dr gsperrte Ordner ond jedes 360°-, 180°- odr 3D-Foto hend koi Drehen.
 
 <a id="explore-panoramas-360-vr180-and-3d"></a>
 ### Panoramen, 360°, VR180 ond 3D entdecka
@@ -138,7 +155,7 @@ Mit am [Immich](https://github.com/immich-app/immich)-Server isch Immuch360 die 
 2. En de Einstellunga, Medieaazeig, Videos, wählt „Videoquelle“ 's Original, wenn des Gerät's dekodiera kann, immer 's Original, odr immer dr transkodierte Stream.
 3. Zom oim a 360°-Foto zeiga, wo die App net hot, teil's mit am Immich-Freigabelink: die Immich-Web-App zeigt's als Kugel em sein Browser.
 
-Dr aktuelle Build, Build 26, basiert auf em Immich-`main` vom 10. Oktober 2026 (Version 3.3.0-rc.0) ond isch teschtet worda gega a Immich-3.2.4-Server ond a Server, wo aus em gleicha Immich-`main` baut isch. Meld Problem bitte en [Issues](https://github.com/freeKC/Immuch360/issues), net am Immich-Projekt.
+Dr aktuelle Build, Build 27, basiert auf em Immich-`main` vom 10. Oktober 2026 (Version 3.3.0-rc.0) ond isch teschtet worda gega a Immich-3.2.4-Server ond a Server, wo aus em gleicha Immich-`main` baut isch. Meld Problem bitte en [Issues](https://github.com/freeKC/Immuch360/issues), net am Immich-Projekt.
 
 Meh: [alles andere isch Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [Vergleich mit dr Immich-App](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
@@ -162,7 +179,7 @@ Meh: [em Meta Quest Headset](../docs/immuch360/user-guide.md#in-the-meta-quest-3
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 ### Auf em Fernseher ond em Computer aaguaga
 
-Die gleiche Android-App lauft auf Android TV ond Google TV mit dr Fernbedienong als oinzige Eingab: die Pfeil beweged 's Bild, OK macht auf, Zrück goht zrück, ond die Pfeil gucka rom bei am 360°-Foto odr -Video. Dr Fernseher hot koi eigene Fotos, drom zeigt er dein Immich-Server, dei Netzwerkfreigaba, dein Plex-Server ond dei Kameras. Auf am Windows-Computer liest Immuch360 Desktop die Ordner, wo du wählsch, komplett ohne Server, spielt flache ond 360°-Videos em eigena Player ab, duchstöbert die gleiche Freigaba ond Server, ond kann dein Computer mit am Headset dahoim teila.
+Die gleiche Android-App lauft auf Android TV ond Google TV, vom erschta Start a em dunkla Design, mit dr Fernbedienong als oinzige Eingab: die Pfeil beweged 's Bild, OK macht auf, Zrück goht zrück; em Player ganget Links ond Rechts zom vorherige odr nächste Foto odr Video, sogar während a Video lauft, ond bei am 360°-Foto odr -Video gucket die Pfeil rom. Dr Fernseher hot koi eigene Fotos, drom zeigt er dein Immich-Server, dei Netzwerkfreigaba, dein Plex-Server ond dei Kameras; LG-Fernseher hend [a eigene App](#immuch360-on-an-lg-tv-webos). Auf am Windows-Computer liest Immuch360 Desktop die Ordner, wo du wählsch, komplett ohne Server, spielt flache ond 360°-Videos em eigena Player ab, duchstöbert die gleiche Freigaba ond Server, ond kann dein Computer mit am Headset dahoim teila.
 
 <p align="center">
   <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Dr Kugel-Player auf am Google TV: a 360°-Panorama von am Seeufer, 's Schließa-Knöpfle oba links, die Knöpfle Rauszooma, Reizooma, 360° ond 3D oba rechts, dreht mit de Pfeil vo dr Fernbedienong">
@@ -171,9 +188,24 @@ Die gleiche Android-App lauft auf Android TV ond Google TV mit dr Fernbedienong 
 
 1. Auf am Fernseher: installier 's APK mit adb (schau [Installiera](#android-tv-and-google-tv)); uf dr Willkommasseite wähl "A Netzwerkfreigab oder an Medieserver hinzufüega" aus für a Freigab, a Plex-Server odr a Kamera, "Ohne Server nutza", odr "Mit ma Immich-Server verbinda".
 2. Auf am Windows-Computer: installier 's Preview odr pack's aus ond start `immuch360.exe` (schau [Installiera](#windows)); ab Desktop-Build 5 macht "Ohne Server nutza" auf dr Willkommasseite d Auswahl von deine Ordner auf, ond "Mit ma Immich-Server verbinda" d'Aamelde-Seite. A Foto, a Video odr a Ordner, wo mit dr App aufgmacht wird odr uf ihr Fenster zoga wird, goht sofort auf, bei ara 360°-Datei en ihrer 360°-Aasicht; mehrere Datatroa gehn zusammen auf ara Seite auf.
-3. En am Player funktioniera 's Abspiela ond d' Pausa, 's Zruckspula, 's Vorspula, Zrück ond Weiter von dr Fernbedienong, ond ebbenso die Tastaturtasta auf am Computer (Leertast, J ond L, F für Vollbild).
+3. En am Player funktioniera 's Abspiela ond d' Pausa, 's Zruckspula, 's Vorspula, Zrück ond Weiter von dr Fernbedienong, ond ebbenso die Tastaturtasta auf am Computer (Leertast, J ond L, F für Vollbild). Auf am Fernseher zeigt OK während am Video d Steuerelement mit Abspiela ond Pausa ausgwählt, drnach d Knöpf -10 s ond +10 s, ond a zwoits OK macht Pause; d Steuerelement ond 's Datum verschwindet 5 s noch dr letzta Tast. Videos laufet auf am Fernseher nemme en dr Schleif, außer du schaltsch Einstellunga, Medieaazeig, Videos, Schleife ei.
+4. Auf am Fernseher macht d Menu-Tast, d Info-Tast odr a ghebts OK d Details vom Foto odr Video auf, bloß zom Lesa: Datum, Ort, Kamera, Codec, Größ ond Bitrate. A Video, wo dr Fernseher net dekodiera ka, sagt des, mit seim Codec, seiner Größ ond dr Grenz von de Dekoder vom Fernseher, statt ewig z' lada; a 360°-Video, wo über d Dekoder nausgoht, frogt, bevor dr 360°-Player aufgoht, ond dr Grund stoht auf dr Protokoll-Seit em Profilmenü.
 
 Meh: [auf deim Fernseher aaguaga](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [auf am Windows-Computer](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [Plattformunterstützong](../docs/immuch360/platform-support.md).
+
+<a id="immuch360-on-an-lg-tv-webos"></a>
+### Immuch360 auf am LG-Fernseher (webOS)
+
+Immuch360 gibt's au als Immich-App für LG-webOS-Fernseher: a eigene App für LG-Fernseher mit webOS 4.0 ond neuer (ab 2018), gstuert mit dr Fernbedienong, wo dein Immich-Server zeigt ond deine 360°-Fotos auf a Kugel legt, wo du mit de Pfeil drehsch. Die eigene Apps von Immich lassed sich net auf am LG-Fernseher installiera. Se isch auf [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) von Seeky91 baut, wo dr Zeitstrahl, d Albe, d Leit, d Ort, d Suach, d Diashow ond 's Aamelda mit am Handy mitbrocht hot; Danke an Seeky91. Version 0.1.0 isch a Test-Build: se isch no net auf am echta LG-Fernseher gloffa, se lässt sich bloß em Developer Mode installiera, ond jede Meldong en [Issues](https://github.com/freeKC/Immuch360/issues) hilft.
+
+1. Installier se auf am Fernseher em Developer Mode, guck [Installiera](#lg-tvs-webos). Se hot a eigene App-ID, drom lässt se sich neba Immich TV von Seeky91 installiera.
+2. Meld di mit deim Handy a (scann da QR-Code), mit deiner E-Mail ond deim Passwort, odr mit am API-Schlüssel.
+3. Stöber mit de Pfeil ond OK. Em Player ganget Links ond Rechts zom vorherige odr nächste Foto odr Video, au während a Video lauft; d Steuerelement verschwindet 5 s noch dr letzta Tast; Info macht d Details auf; d Kanaltasta zoomet; dr Zeiger ond 's Rädle von dr Magic Remote funktioniera.
+4. A 360°-Foto goht auf ara Kugel auf, wo du mit de Pfeil drehsch; „Als 360° aazeiga“ deckt a 2:1-Foto ab, wo dr Server net markiert; a VR180-Foto zeigt sich auf ara Halbkugel ond a 3D-Foto mit oim Aug. Die gelbe ond blaue Tast drehet a flachs Foto.
+
+Net en dem Build: 360°-Videos auf dr Kugel (se laufet flach, mit ara Meldong), Netzwerkfreigaba, Plex ond Tapo-Kameras (geplant), Uploads. Wenn a Video net lauft, nennt a Meldong sei Format ond sei Größ statt ama endlosa Ladekringel. Auf webOS vor 25 muss dr Reverse Proxy vor Immich CORS-Header schicka; d App erklärt se, wenn se auf des Problem stoßt.
+
+Meh: [d webOS-App: Installation, Tasta von dr Fernbedienong, CORS-Header](../webos/README.md).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 ### Kameras, Plex ond Rohdatatroa vo dr Kamera
@@ -184,39 +216,55 @@ Meh: [auf deim Fernseher aaguaga](../docs/immuch360/user-guide.md#watch-on-your-
 
 Meh: [Tapo-Kameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [Rohdatatroa vo dr 360°-Kamera](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
+<a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
+### Die Fotos ond Videos von deiner DJI-Drohne auf deim Immich-Server
+
+Importier d Fotos ond Videos von ara DJI-Drohne über USB, direkt auf dein Immich-Server: steck d Drohne, ihr Controller odr an Kartaleser an a Android-Handy, wähl die neue Datatroa aus ond schick se; d Videos werdet dabei aus de Flugdata von dr Drohne auf d Kart gsetzt ond d 360°-Kugla von dr Drohne als 360° zeigt. D Immich-App sichert bloß des, was scho en dr Galerie vom Handy isch, ond dr Immich-Server ka da Ort von am DJI-Neo-2-Video no net lesa. Die Seit isch experimentell, gibt's bloß auf Android-Handys ond Tablets, ond isch no net mit ara echta Drohne probiert worda.
+
+1. En de Einstellunga, Erweitert, schalt „DJI-Drohna (experimentell)“ ei. A Kachel „DJI-Drohne“ taucht en Bibliothek, Netzwerkfreigaba auf.
+2. Steck d Drohne (a Neo 2 ka aus bleiba), ihr Controller odr an Kartaleser mit am USB-C-Datakabel ans Handy. Auf dr Seit DJI-Drohne tipp auf „Drohne odr Kart wähla“, wähl se em Seitamenü vom Auswahldialog, mach ihrn DCIM-Ordner auf odr nemm 's ganze Laufwerk, dann „Diesen Ordner verwenden“ ond Zulassen.
+3. D Seit listet d Fotos ond Videos noch Tag auf, ohne die .LRF-, .SRT-, .THM- ond .m4a-Beidatatroa. Tipp auf „Alle neue auswähla“, dann „Zu Immich hochlada“; Datatroa, wo scho vorher gschickt worda send, hend a Wolka-Zeicha ond werdet übersprunga. „Auf em Gerät bhalta“ kopiert d Datatroa stattdessa en d Galerie vom Handy, ens Album „Immuch360 import“.
+4. Damit a Video auf dr Kart landet, schalt vor em Fliega Video Subtitles en DJI Fly ei (Videomodus, Settings, Camera): d Drohne schreibt dann a .SRT-Datei neba jedes Video, d App liest dr Ort draus ond setzt ihn noch em Hochlada auf deim Server, wenn Immich koin gfonda hot.
+
+D 360°-Kugla von DJI-Drohna (Mini, Air, Mavic ond andere, an ihrer Kamera erkannt) zeiget sich en Immuch360 als 360°, au ohne 360°-Tags. Immich braucht die Tags: d Upload-Option „Drohnakugla für Immich als 360° markiera“, standardmäßig aus, schickt 's Foto unverändert mit ara kleina .xmp-Datei dernebe, so dass Immich 's au als Kugel zeigt. D Neo 2 hot koin Kugel- ond koin Panoramamodus: ihre Fotos ond Videos send flach. Wenn 's Handy da Ton von am Neo-2-Clip aufgnomma hot, isch der Ton en ara eigene .m4a-Datei: d Seit markiert da Clip, ond Immich kriagt 'n ohne Ton (lad 'n mit DJI Fly runter, wenn du da Ton bhalta willsch). Jede Kamerakart mit am DCIM-Ordner funktioniert genauso en am Kartaleser. Nix wird an DJI gschickt.
+
 <a id="devices-and-systems"></a>
 ## Geräte ond Systeme
 
-Oi Codebasis, sechs Umgebunga. Was jede heut hot:
+Oi Codebasis für sechs Umgebunga, ond a eigene App für LG-Fernseher. Was jede heut hot:
 
-| Fähigkeit | Android | iPhone, iPad | TV | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerie, Albe, Suach mit am Immich-Server | ✅ | ✅ | ✅ Player | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ohne Server: die eigene Mediadatatroa vom Gerät | ✅ | ✅ | bloß Freigaba | ✅ | ✅ Ordner | ✅ Ordner | ✅ Ordner |
-| Flache Fotos ond Videos | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 360°-Fotos als Kugel | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
-| 360°-Videos | ✅ | ✅ koi Zeitleischt | ✅ | ✅ immersiv | ✅ | bloß flach | bloß flach |
-| 3D ond VR180 | ✅ a Aug | ✅ a Aug | ✅ a Aug | ✅ echtes 3D | ✅ a Aug | Fotos a Aug, Videos flach | Fotos a Aug, Videos flach |
-| Spatial 2.5D (Kopfverfolgong) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Räumliche Apple-Fotos | ✅ a Aug | ✅ a Aug | ✅ a Aug | ✅ 3D | ✅ a Aug | 🔧 CI | 🔧 CI |
-| Rohe Insta360-, GoPro- ond DJI-Datatroa | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI Fotos, Videos flach | 🔧 CI Fotos, Videos flach |
-| SMB-, WebDAV-, DLNA-Freigaba | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-Kameras: Aufnahma | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-Kameras: Liveaasicht | ✅ | 🔜 | ✅ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Des Gerät em Netzwerk freigeba | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Zu Immich hochlada aus Freigaba ond vom Gerät | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Eingab | Touch, Gyroskop | Touch, Gyroskop | Fernbedienong | Controller, Händ | Maus, Tastatur | Maus, Tastatur | Maus, Tastatur, Trackpad |
-| Wo's z'kriaga isch | Google Play, APK | App Store (em Review) | APK, Google Play (em Review) | Horizon Store, APK | Installer odr ZIP (Preview) | .deb, .rpm (Preview) | DMG odr ZIP (Preview, net signiert) |
+| Fähigkeit | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Galerie, Albe, Suach mit am Immich-Server | ✅ | ✅ | ✅ Player | ✅ Player | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Ohne Server: die eigene Mediadatatroa vom Gerät | ✅ | ✅ | bloß Freigaba | ❌ | ✅ | ✅ Ordner | ✅ Ordner | ✅ Ordner |
+| Flache Fotos ond Videos | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| A Foto mit oiner Tast dreha | ✅ | ✅ | ✅ Farbtasta | ✅ Farbtasta | ✅ Fenster | ✅ | ✅ | ✅ |
+| 360°-Fotos als Kugel | ✅ | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
+| 360°-Videos | ✅ | ✅ koi Zeitleischt | ✅ Meldong, wenn net dekodierbar | bloß flach | ✅ immersiv | ✅ | bloß flach | bloß flach |
+| 3D ond VR180 | ✅ a Aug | ✅ a Aug | ✅ a Aug | Fotos a Aug, Videos flach | ✅ echtes 3D | ✅ a Aug | Fotos a Aug, Videos flach | Fotos a Aug, Videos flach |
+| Spatial 2.5D (Kopfverfolgong) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
+| Räumliche Apple-Fotos | ✅ a Aug | ✅ a Aug | ✅ a Aug | ❌ | ✅ 3D | ✅ a Aug | 🔧 CI | 🔧 CI |
+| Rohe Insta360-, GoPro- ond DJI-Datatroa | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI Fotos, Videos flach | 🔧 CI Fotos, Videos flach |
+| SMB-, WebDAV-, DLNA-Freigaba | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-Kameras: Aufnahma | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-Kameras: Liveaasicht | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Des Gerät em Netzwerk freigeba | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Zu Immich hochlada aus Freigaba ond vom Gerät | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
+| Import von ara DJI-Drohne odr ara Kart über USB (experimentell) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Dunkles Design | wie 's System | wie 's System | ✅ standardmäßig | ✅ oinzigs Design | wie 's System | wie 's System | wie 's System | wie 's System |
+| Eingab | Touch, Gyroskop | Touch, Gyroskop | Fernbedienong; Links ond Rechts au während am Video, Menu für d Details | Fernbedienong, Magic Remote | Controller, Händ | Maus, Tastatur | Maus, Tastatur | Maus, Tastatur, Trackpad |
+| Wo's z'kriaga isch | Google Play, APK | App Store (em Review) | APK, Google Play (em Review) | .ipk-Test-Build, Developer Mode | Horizon Store, APK | Installer odr ZIP (Preview) | .deb, .rpm (Preview) | DMG odr ZIP (Preview, net signiert) |
 
-✅ en dr App auf dera Plattform · ❌ dört net agboda · 🔜 geplant · 🔧 CI em Quellcode, gbaut ond gstartet von dr CI vom Projekt auf dem System, dört aber no net mit am echta Server, ara Freigab odr ara Kamera gprüft · bloß flach: 's Video lauft flach, mit ara Meldong, weil dr 360°-Renderer bloß auf Windows gibt. „A Aug“ heißt, dass a 3D-Datei ihr linkes Aug auf am flache Bildschirm zeigt. Net jedes ✅ isch scho auf am echta Gerät gprüft worda: was wo gprüft worda isch, ond was no z' bestätiga isch, stoht en [Funktione](../docs/immuch360/features.md), [Plattformunterstützong](../docs/immuch360/platform-support.md) ond [Kompatibilität](../docs/immuch360/compatibility.md).
+✅ en dr App auf dera Plattform · ❌ dört net agboda · 🔜 geplant · 🔧 CI em Quellcode, gbaut ond gstartet von dr CI vom Projekt auf dem System, dört aber no net mit am echta Server, ara Freigab odr ara Kamera gprüft · bloß flach: 's Video lauft flach, mit ara Meldong, weil 's dr 360°-Videorenderer von de Computer bloß auf Windows gibt, ond bei LG-Fernseher muss no gmessa werda, ob webOS d Videobilder an d Kugel weitergibt. „A Aug“ heißt, dass a 3D-Datei ihr linkes Aug auf am flache Bildschirm zeigt. D Spalte LG webOS isch a eigene App, deren Test-Build 0.1.0 seine Tests en dr CI vom Projekt bstoht ond no net auf am Fernseher gloffa isch. Net jedes ✅ isch scho auf am echta Gerät gprüft worda: was wo gprüft worda isch, ond was no z' bestätiga isch, stoht en [Funktione](../docs/immuch360/features.md), [Plattformunterstützong](../docs/immuch360/platform-support.md) ond [Kompatibilität](../docs/immuch360/compatibility.md).
 
 - **Android-Handys ond Tablets**: die komplette App, Touch ond Gyroskop, jede Quelle.
 - **iPhone ond iPad**: die komplette App; dr 360°-Videoplayer hot bloß Abspiela ond Pausa, die Tapo-Liveaasicht komma später, ond die DLNA-Suach schickt Unicast-Aafroga, bis Apple die Multicast-Berechtigong gibt.
-- **Android TV ond Google TV**: 's gleiche APK, gstuert von dr Fernbedienong; a Player: Backup, Uploads ond 's Bearbeita send versteckt. Gprüft auf em Google-TV-Emulator (Aamelda, Zeitstrahl, Player, Freigaba, Fernbedienongsnavigation), no net auf am echta Fernseher.
+- **Android TV ond Google TV**: 's gleiche APK, gstuert von dr Fernbedienong, standardmäßig dunkel; a Player: Backup, Uploads ond dr Editor send versteckt ond d Details send bloß zom Lesa, aber a Foto lässt sich trotzdem mit oiner Tast dreha. Jeder Suachfilter funktioniert mit dr Fernbedienong: Ort ond Kamera machet ihre Auswahl en ara Liste auf, dr Datumsfilter zeigt all seine Auswahl, ond d Optionsbereich Tags, Ort, Datum, Medientyp, Sternbewertung ond Anzeigeoptionen setzet Löschen ond Anwenden neba d Auswahl, oimol Rechts weiter, auf em größta Teil vo dr Bildschirmhöh. 's Fotoraster braucht weniger Bildspeicher, ond a ghebter Pfeil bewegt's höchstens etwa 10 Zeila en dr Sekond. Gprüft auf em Google-TV-Emulator; a erschter Test auf am echta Android TV, am 21. Oktober, hot zu de TV-Änderunga von Build 27 gführt, wo no net auf am echta Fernseher probiert worda send.
+- **LG-Fernseher mit webOS 4.0 ond neuer**: a eigene App für d Fernbedienong ond d Magic Remote, baut auf [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): a Immich-Player mit de 360°-Fotos auf ara Kugel, a Foto, wo sich mit oiner Tast dreha lässt, a dunkles Design ond d 89 Sprocha von dr App (die paar Text von dr TV-App selber vorerscht auf Englisch); no koi Freigaba, Plex odr Kameras, 360°-Videos flach. Test-Build 0.1.0, durch seine Tests en dr CI vom Projekt gprüft, no net auf am Fernseher.
 - **Meta Quest 2, Pro, 3 ond 3S**: die App als Fenster, dazua die immersive Aasicht; HEVC isch dr sichere Codec, H.264 hört uf bei zirka 4096x2304 auf em Quest 3; bloß dr Quest 3 isch teschtet, dr Quest 2, dr Quest Pro ond dr Quest 3S send no net teschtet.
 - **Windows 10 ond 11**: a Preview, mit Ordner statt ara Galerie, am eigena Videoplayer (libmpv) für flache ond 360°-Videos, rohe Datatroa, wo vom Grafikchip zammagnäht werda, Datatroa ond Ordner, wo mit dr App aufgmacht werda odr uf 's Fenster zoga werda, am Installer odr ara ZIP.
-- **Linux**: a .deb ond a .rpm, wo von dr CI vom Projekt gbaut send, installiert ond gprüft auf Ubuntu 22.04 ond 24.04, Debian 12 ond Fedora 40 ond 44; Fotos, 360°-Fotos ond flache Videos über 's libmpv vom System (360°-, 3D- ond rohe Videos laufa flach mit ara Meldong); SMB-Freigaba ab Ubuntu 22.04 ond Debian 12; no net auf am echta Linux-PC gloffa, bloß onter WSLg ond en Container.
+- **Linux**: a .deb ond a .rpm, wo von dr CI vom Projekt gbaut send, installiert ond gprüft auf Ubuntu 22.04 ond 24.04, Debian 12 ond Fedora 40 ond 44; Fotos, 360°-Fotos ond flache Videos über 's libmpv vom System (360°-, 3D- ond rohe Videos laufa flach mit ara Meldong), ab Desktop-Build 7 au en X11-Sitzunga über da Hardware-Weg zeichnet; SMB-Freigaba ab Ubuntu 22.04 ond Debian 12; ohne Schlüsselbund (GNOME Keyring odr KWallet) friert d App beim erschta Start nemme 25 s ei: se bhält d Passwörter bloß für d Sitzung ond sagt des en ihre Einstellunga; no net auf am echta Linux-PC gloffa, bloß onter WSLg ond en Container.
 - **macOS**: a DMG ond a ZIP, wo von dr CI vom Projekt gbaut send, universal, net signiert (Gatekeeper frogt oimol); d App goht auf, macht d Datatroa ond Ordner auf, wo mr ihr geit, au aus em Finder, hebt ihre Gheimnisse em Anmelde-Schlüsselbund auf ond spielt flache Videos mit ihrem eigena libmpv ab, alles bloß auf em CI-Mac vom Projekt gprüft; auf am echta Mac isch no nix gloffa.
 
 <a id="advanced-features"></a>
@@ -225,10 +273,10 @@ Oi Codebasis, sechs Umgebunga. Was jede heut hot:
 Was die App lesa ond abspiela kann, für dene, wo 's ganze wissa will. Jede Zeil isch ausführlich beschrieba em [Benutzerhandbuch](../docs/immuch360/user-guide.md) ond auf dr [Kompatibilitätsseite](../docs/immuch360/compatibility.md).
 
 - **Formate**: flache Fotos ond Videos (was 's Gerät dekodiera kann: MP4, MOV, MKV ond meh); equirektangulare 360°-Fotos ond -Videos; Teilpanoramen (GPano-Zuschnitt); VR180; stereoskopisches 3D, oba ond onda odr nebanander, glesa aus dr Datei (die st3d-Box) odr gschätzt aus em Bild; räumliche Apple-Fotos (HEIC-Stereopaar) ond räumliche Videos (MV-HEVC, a Aug); rohes Insta360 .insp ond .insv, GoPro .360, DJI .osv; 10-Bit-HLG- ond PQ-Quella, tonegmappt auf d' Kugel.
-- **Projektion ond Metadata**: GPano- ond sphärische Metadata, glesa aus dr Datei, mit Bereichsaafroga auf am Server odr ara Freigab; die Startaasicht vo dr Kamera; „Als 360° aazeiga“ gspeichert auf em Gerät; VR180 erkannt aus dr Datei odr ihrem Name; Metadata bleibt unverändert, weil die Originaldatei abgspielt wird, nie a konvertierte Kopie.
+- **Projektion ond Metadata**: GPano- ond sphärische Metadata, glesa aus dr Datei, mit Bereichsaafroga auf am Server odr ara Freigab; die Startaasicht vo dr Kamera; d Kugla von DJI-Drohna, an ihrer Kamera erkannt, mit ara optionala .xmp-Beidatei, damit Immich se au markiert; „Als 360° aazeiga“ gspeichert auf em Gerät; VR180 erkannt aus dr Datei odr ihrem Name; dr Ort von am Drohnavideo, glesa aus seim .SRT-Fluglog; Metadata bleibt unverändert, weil die Originaldatei abgspielt wird, nie a konvertierte Kopie; a Vierteldrehung, gspeichert durch da Immich-Editor odr auf em Gerät bhalta, nia auf ara immersiva Datei.
 - **Native Wiedergab**: Media3 auf Android ond em Fernseher, SceneKit ond AVFoundation auf iOS, 's Meta Spatial SDK em Headset, libmpv auf Windows; 's Original odr dr transkodierte Stream, gwählt noch dem, was 's Gerät dekodiera kann; a Liste von de Videodekoder vom Gerät en de Einstellunga, Erweitert; die Tonspurauswahl ond a Puffer-Zeicha.
 - **Rohdatatroa, zammagnäht uf em Gerät**: a Flutter-Fragment-Shader für Fotos; a GPU-Effekt em Player für Videos mit bloß oiner Spur; zwoi Hardware-Dekoder gleichzeitig ond a GPU-Compositor für Videos mit oiner Linse pro Spur odr Datei (OpenGL ES 3 auf Android ond dr Quest, Metal auf iOS, ond auf Windows, ab em Desktop-Build 5, zwoi libmpv-Player, deren Bilder d' App uf em Grafikchip paart); d' eigene Kalibrierung vo dr Kamera (d' Modelle Mei, V6 ond equidistant) ond d' Aufzeichnong vom Accelerometer; 's Gerät wechselt uf a Linse, dr transkodierte Stream, d' LRV-Kopie vo dr Kamera odr 's net zammagnähte Video, wenn's koine zwoi Dekoder laufa lassa kann.
-- **Quella**: die Galerie vom Gerät; die Ordner von am Computer; a Immich-Server; SMB 2 ond 3, WebDAV, DLNA/UPnP; Plex über HTTPS, gprüft gega 's eigene Zertifikat vom Server; Tapo-Kameras über 's lokale Netzwerk (HTTPS ond RTSP); a Handy odr a Computer, freigeba em WLAN als WebDAV-Server; Server gfonda durch Bonjour/mDNS, a Scan em lokala Netzwerk, SSDP, GDM ond die TP-Link-Erkennong, ond weiterverfolgt, wenn se d' Adress wechsla.
+- **Quella**: die Galerie vom Gerät; die Ordner von am Computer; a Drohne, ihr Controller odr a Kamerakart über USB, durch da Ordnerauswahldialog vom System (Android, experimentell); a Immich-Server; SMB 2 ond 3, WebDAV, DLNA/UPnP; Plex über HTTPS, gprüft gega 's eigene Zertifikat vom Server; Tapo-Kameras über 's lokale Netzwerk (HTTPS ond RTSP); a Handy odr a Computer, freigeba em WLAN als WebDAV-Server; Server gfonda durch Bonjour/mDNS, a Scan em lokala Netzwerk, SSDP, GDM ond die TP-Link-Erkennong, ond weiterverfolgt, wenn se d' Adress wechsla.
 - **Lesa noch Bedarf**: a lokale Brück bedient die Player mit Byte-Bereich ond am Token pro Sitzong; große Blöck, Voraus-Lesa ond bis zu sechs parallele SMB-Verbindunga; Vorschaubilder aus oim Bild vo jedem Video; nix auf 's Gerät kopiert.
 - **Hardware**: Hardware-Dekoder genutzt, wo immer se existiera, mit ihre gmessene Grenze (die H.264-Obergrenz vom Quest 3, höchschtens zwoi 2048x2048-Linsa für Software-Dekoder); auf Windows wird die 360°-Aasicht vom Grafikchip aus jedem dekodierte Bild gmolt, die Bildgröß gmessa auf jedem Computer, dr integrierte odr dedizierte Chip erkannt.
 - **Plattform-Bsonderheita**: 's Gyroskop ond dr Spatial-2.5D-Player auf de Handys; die immersive Aasicht, Controller ond Händ auf em Quest; 's Fernbedienong-Layout, dr Tastatur-Dialog ond 's TV-Banner auf Android TV; auf em Computer Maus ond Tastatur, Vollbild, a oinziges Fenster, Datatroa ond Ordner, wo mit dr App aufgmacht werda odr uf ihr Fenster zoga werda, glesa wie die Datatroa von deine Ordner, HEIC-, AVIF- ond TIFF-Fotos ond rohe Kamerafotos von de Ordner, wenn Windows a Dekoder dofür hot, ond dr Windows-Datenschutz für Passwörter ond Token.
@@ -246,6 +294,7 @@ Was die App lesa ond abspiela kann, für dene, wo 's ganze wissa will. Jede Zeil
 - [Dr Desktop-360°-Videorenderer: libmpv, dr Projektionsdurchgang ond die Messunga dahinter](../docs/immuch360/desktop-360-video-renderer.md)
 - [Veröffentlichongsstand: Builds, Stores ond was jeder Store hot](../docs/immuch360/release-status.md)
 - [Selber baua: Handys, Headsets, Fernseher ond Computer](../docs/immuch360/build.md)
+- [Immuch360 für LG-webOS-Fernseher: Installation em Developer Mode, d Tasta von dr Fernbedienong, d CORS-Header](../webos/README.md)
 
 <a id="install"></a>
 ## Installiera
@@ -268,6 +317,14 @@ Was die App lesa ond abspiela kann, für dene, wo 's ganze wissa will. Jede Zeil
 3. Vo ma Computer em gleicha Netzwerk, mit adb (Android SDK Platform Tools): `adb connect <address of the TV>`, d Abfrog uffm Fernseher bschtätiga, dann `adb install -r Immuch360-v<version>-release.apk`.
 4. D App taucht bei de Apps vom Fernseher auf, mit ihrem Banner. S nägschte Release installiersch gnauso: `-r` bhält d Aameldong ond d Eistellunga.
 
+<a id="lg-tvs-webos"></a>
+### LG-Fernseher (webOS)
+
+1. Du brauchsch an LG-Fernseher mit webOS 4.0 odr neuer, an Computer em gleicha Netzwerk ond a kostalos LG-Entwicklerkonto. Auf em Fernseher installiersch Developer Mode aus em LG Content Store, meldsch di a, schaltsch Dev Mode Status ei ond lässt da Fernseher neu starta; schreib dir sei IP-Adress ond d Passphrase auf, wo d App zeigt.
+2. Auf em Computer installiersch d webOS CLI (Node.js 18 odr neuer): `npm install -g @webos-tools/cli`, dann meldsch da Fernseher mit `ares-setup-device` a (sei IP-Adress, Port 9922, Benutzer `prisoner`) ond mit `ares-novacom --device <name> --getkey`, wo noch dr Passphrase frogt.
+3. Lad `Immuch360-webOS-0.1.0.ipk` von dr [webOS-Pre-Release](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0) runter, prüf se gega `SHA256SUMS.txt`, dann `ares-install --device <name> Immuch360-webOS-0.1.0.ipk`. Dr [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) von webosbrew macht 's gleiche ohne Kommandozeil.
+4. A Developer-Mode-Sitzung hebt 1000 Stond, ond dr EXTEND-Knopf von dr Developer-Mode-App verlängert se; wenn se ablauft, entfernt dr Fernseher d Apps, wo so installiert worda send. D Details stenget en [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
+
 <a id="meta-quest"></a>
 ### Meta Quest
 
@@ -278,18 +335,18 @@ Was die App lesa ond abspiela kann, für dene, wo 's ganze wissa will. Jede Zeil
 <a id="windows"></a>
 ### Windows
 
-1. Lad `Immuch360-Desktop-3.3.0-rc.0-desktop.5-windows-x64-setup.exe` von dr [Desktop-Pre-Release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-5) (mit `SHA256SUMS.txt` zom's z'checka) ond mach's auf. D Datatroa send no net signiert: Windows SmartScreen zeigt eventuell "Windows hat Ihren PC geschützt", wähl "Weitere Informationen" aus, dr nach "Trotzdem ausführen".
+1. Lad `Immuch360-Desktop-3.3.0-rc.0-desktop.7-windows-x64-setup.exe` von dr [Desktop-Pre-Release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) (mit `SHA256SUMS.txt` zom's z'checka) ond mach's auf. D Datatroa send no net signiert: Windows SmartScreen zeigt eventuell "Windows hat Ihren PC geschützt", wähl "Weitere Informationen" aus, dr nach "Trotzdem ausführen".
 2. Wähl "Bloß für mi installiera" (koi Admin-Rechte) odr "Für alle Benutzer installiera" aus, dr nach d Sproch vom Installer, scho auf die von Windows gstellt.
 3. Start Immuch360 Desktop vom Start-Menü aus. Fotos ond Videos finda's bei "Öffnen mit" (Rechtsklick auf a Datei, Öffnen mit); se macht sich nie zu ihrem Standardprogramm. Dr erschte Start von am neue Build kann bis zu ra Minute dauera, während Windows d Datatroa durchsuacht.
 4. Windows 10 odr 11, 64 Bit. Zom aktualisiera, mach dr Installer vom nächschta Build auf: dei Aamelda, dei Ordner ond dei Einstellunga bleiba. 's ZIP vo dr gleicha Release isch 's gleiche Programm als Ordner, zom's überall auszupacka ond `immuch360.exe` draus zu starta.
 
 ### Linux
 
-Auf Ubuntu 22.04 odr neuer ond Debian 12 odr neuer: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-amd64.deb`; auf Fedora 40 odr neuer: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.5-linux-x86_64.rpm`. Dr nach start Immuch360 Desktop von deine Programme aus. A frühes Preview: d Ordner vom Computer, Fotos ond 360°-Fotos als Kugel; Videos spiela no net ab, ond SMB-Freigaba braucha Ubuntu 24.04, Debian 13 odr Fedora 39 odr neuer.
+Auf Ubuntu 22.04 odr neuer ond Debian 12 odr neuer: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-amd64.deb`; auf Fedora 40 odr neuer: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-x86_64.rpm`, beide von dr [Desktop-Pre-Release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7). Dr nach start Immuch360 Desktop von deine Programme aus. A Preview: d Ordner vom Computer, Fotos ond 360°-Fotos als Kugel, ond flache Videos über 's libmpv vom System, wo 's Paket mitinstalliert (360°-, 3D- ond rohe Videos laufa flach, mit ara Meldong); SMB-Freigaba ganget ab Ubuntu 22.04 ond Debian 12. Auf Fedora brauchet Kameravideos 's FFmpeg von RPM Fusion. Ohne GNOME Keyring odr KWallet werdet d Passwörter bloß für d Sitzung bhalta, ond d Einstellunga von dr App saget des.
 
 ### macOS
 
-Mach `Immuch360-Desktop-3.3.0-rc.0-desktop.5-macos.dmg` auf ond zieh d App in d Programme (Apple Silicon ond Intel, macOS 12 odr neuer). Se isch no net signiert ond no net notarisiert: mach a Control-Klick druf ond wähl Öffnen aus auf macOS 14 ond älter, odr wähl "Trotzdem öffnen" aus en de Systemeinstellungen, Datenschutz & Sicherheit, auf macOS 15 ond neuer. Neamerd, wo am Projekt schafft, hot a Mac: d App isch bloß auf dr CI vom Projekt gstartet worda, se spielt no koi Videos ab ond ihr Netzwerkzuagriff isch no net probiert worda. Rückmeldunga send willkommen.
+Mach `Immuch360-Desktop-3.3.0-rc.0-desktop.7-macos.dmg` von dr [Desktop-Pre-Release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) auf ond zieh d App en d Programme (Apple Silicon ond Intel, macOS 12 odr neuer). Se isch no net signiert ond no net notarisiert: mach a Control-Klick druf ond wähl Öffnen aus auf macOS 14 ond älter, odr wähl "Trotzdem öffnen" aus en de Systemeinstellungen, Datenschutz & Sicherheit, auf macOS 15 ond neuer. Neamerd, wo am Projekt schafft, hot a Mac: d App isch bloß auf em CI-Mac vom Projekt gloffa, wo se Datatroa ond Ordner aufmacht ond flache Videos mit ihrem eigena libmpv abspielt; ihr Netzwerkzuagriff isch no net probiert worda. Rückmeldunga send willkommen.
 
 <a id="privacy"></a>
 ## Datenschutz
@@ -301,7 +358,7 @@ Nix goht zom Entwickler: koi Account, koi Analyse, koi Absturzbericht-Dienscht, 
 
 Immuch360 isch a inoffizieller Fork vo dr [Immich](https://github.com/immich-app/immich) Handy-App, onter dr [GNU AGPL v3](../LICENSE), koi Verbindong zom ond koi Unterstützong vom Immich-Team odr FUTO. Dr Fork gibt's, weil 's 360°-Aaguaga auf em Handy scho seit Januar 2024 em Immich gwünscht wird ond no net en dr offizielle App drin isch; er bringt's jetzt raus, sammlet echtes Feedback von de Geräte ond wird Immich, en kleine Pull Requests, alles aabieta, was die Maintainer wölla. Alles, was die offizielle App macht, bleibt dabei; die Branches, d' Build-Kett ond d' CI send beschrieba em [Selber baua](../docs/immuch360/build.md).
 
-Dr 360°-Fotoplayer basiert auf em vorglagerte Pull Request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) von dmitry-brazhenko, selber gbaut auf em Prototyp von bencefr en [#30192](https://github.com/immich-app/immich/pull/30192); Danke an beidi. Die Fernbedienongs-Korrekture en de Suachfilter ond 's Albe-Sortiera auf de Fernseher send aus dr Arbet von mlc70 en [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) entstanda. Die Tapo-Kameras send gschrieba worda aus dem, was [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ond [python-kasa](https://github.com/python-kasa/python-kasa) dokumentiera. Die Meta-Quest-Aasicht nutzt 's Meta Spatial SDK, wo net Open Source isch, drom bleibt's en dem Fork. 's Windows-ZIP bringt libmpv mit (die Bibliothek von [mpv](https://mpv.io), mit [FFmpeg](https://ffmpeg.org)), gbaut vom Projekt, onter dr LGPL, mit ihre Lizenza ond Quella; die Details ond die Marke von de Plattforme, wo auf dera Seite gnennt send, stenga em [Lizenz ond Marke](../docs/immuch360/platform-support.md#license-and-trademarks).
+Dr 360°-Fotoplayer basiert auf em vorglagerte Pull Request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) von dmitry-brazhenko, selber gbaut auf em Prototyp von bencefr en [#30192](https://github.com/immich-app/immich/pull/30192); Danke an beidi. Die Fernbedienongs-Korrekture en de Suachfilter ond 's Albe-Sortiera auf de Fernseher send aus dr Arbet von mlc70 en [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) entstanda, ond d Aktionsleischt ond d Filterbereich auf 80 Prozent vo dr Bildschirmhöh kommet aus [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3) von mlc70, mit erhaltener Urheberschaft; Danke an mlc70. D LG-webOS-App isch auf [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) von Seeky91 baut, onter dr MIT-Lizenz, en seim eigena Ordner bhalta; Danke an Seeky91. Die Tapo-Kameras send gschrieba worda aus dem, was [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ond [python-kasa](https://github.com/python-kasa/python-kasa) dokumentiera. Die Meta-Quest-Aasicht nutzt 's Meta Spatial SDK, wo net Open Source isch, drom bleibt's en dem Fork. D SMB-Freigaba nutzet libsmb2, onter dr LGPL 2.1 odr neuer: ab Build 27 ond Desktop-Build 7 bringt jeder Build sein Hinweis, seine Lizenztext ond sei Quellarchiv mit, `Immuch360-libsmb2-sources.tar.gz`, wo au an jeder Release hängt. D Windows- ond macOS-Builds bringet libmpv mit (die Bibliothek von [mpv](https://mpv.io), mit [FFmpeg](https://ffmpeg.org)), gbaut vom Projekt, onter dr LGPL, mit ihre Lizenza ond Quella, aufglistet auf dr Lizenzseit von dr App (Lizenzen, ganz onta em Profilmenü); die Details ond die Marke von de Plattforme, wo auf dera Seite gnennt send, stenga em [Lizenz ond Marke](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 Die Handy-Aufnahma von dera Seite send auf em Android-Build em Emulator gmacht worda, die vom Fernseher auf em Google-TV-Emulator ond die von Windows auf am Windows-11-PC, alli mit CC0-Panoramen von [Poly Haven](https://polyhaven.com); die Headset-Aufnahma send auf am Quest 3 gmacht worda.
 
@@ -310,11 +367,13 @@ Die Handy-Aufnahma von dera Seite send auf em Android-Build em Emulator gmacht w
 
 Was no ned fertig isch, s Wahrscheinlichschte zerscht. Nix dovo isch a Versprecha, ond Rückmeldonga em [Issue-Tracker](https://github.com/freeKC/Immuch360/issues) helfet zom entscheida, was zerscht kommt.
 
-- **Die Stores**: Google Play (Build 26 kommt no, dr TV-Eintrag em Review), dr App Store (Version 3.3.1 seit em 14. Oktober em Review), dr Meta Horizon Store (Build 25 em Review).
+- **Die Stores**: Google Play (Build 26 em Review, dann Build 27; dr TV-Eintrag em Review), dr App Store (Version 3.3.1 seit em 14. Oktober em Review), dr Meta Horizon Store (Build 25 em Review).
 - **Computer**: dr Test von jedere Funktion von Hand auf am Windows-PC; dr nach dr 360°-Videorenderer auf Linux ond macOS, a Test auf am echta Mac ond am echta Linux-PC; dr nach a signierter Build ond automatische Updates; dr nach Spatial 2.5D mit dr Webcam.
+- **Fernseher**: a Test von Build 27 auf am echta Android TV; d LG-webOS-App auf am echta LG-Fernseher, dann ihre 360°-Videos auf dr Kugel ond d Netzwerkfreigaba, Plex ond Tapo-Kameras; a QR-Code, zom an Fernseher odr an Computer mit am Handy z' kopple, wobei dr große Bildschirm ihn zeigt ond 's Handy ihn scannt.
 - **Handys ond Tablets**: a Zeitleischt em iOS-360°-Videoplayer, Zrück ond Weiter en de 360°-Player von de Handys, die Tonspurauswahl em flache Player, die Tapo-Liveaasicht auf iPhone ond iPad.
 - **Immersive Mediadatatroa**: Dual-Fisheye-.dng, 's Nivelliera von GoPro- ond DJI-Videos aus ihre eigene Bewegongsdata, räumliche Videos in 3D auf em Quest, wenn seine Dekoder's erlauba, Zrück ond Weiter zwischa räumliche Fotos em Headset.
 - **Quella**: 's Wischa zwischa de Datatroa von am Freigabordner, Digest-Authentifizierong für WebDAV, a QR-Code, zom dr Plex-Token vom Computer z' hola, IPv6 für Plex, H.265-Tapo-Aufnahma, Kanäl auf em TV-Startbildschirm.
+- **Drohna**: a Test mit ara echta DJI Neo 2, dann dr Ton, wo 's Handy aufgnomma hot, en sein Clip neigmischt; d Liveaasicht ond d Steuerong von dr Drohnakamera kommet später.
 - **Upstream**: kleine Pull Requests an Immich fir d Teil, die d Maintainer wellet, aagfanga mit dr 360°-Fotoaasicht.
 
 Die komplette Lischt, mit de Gerätprüfunga, wo für jede Funktion no offa send, stoht em [Veröffentlichongsstand](../docs/immuch360/release-status.md#roadmap).
