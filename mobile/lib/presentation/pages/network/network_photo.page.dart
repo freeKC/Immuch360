@@ -399,6 +399,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     // button. Out of the directional moves while the app bar has the focus (set here, not while the focus changes);
     // Down and Back go back to it.
     _rootFocus.skipTraversal = _appBarFocus.hasFocus;
+    // Watched here, in the build of this page: the photo is known once the file was read, which rebuilds the page
+    final current = _current;
+    final turns = current == null ? 0 : _turnsOf(current);
     final page = FutureBuilder<_Photo>(
       future: _photo,
       builder: (context, snapshot) {
@@ -488,12 +491,12 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
               // Immuch360 Desktop: previous and next for the mouse (lib/desktop/window/hover_chevrons.dart)
               ? CurrentPlatform.isDesktop
                     ? withDesktopPageChevrons(
-                        _buildPhoto(photo),
+                        _buildPhoto(photo, turns),
                         canNavigate: (step) =>
                             networkFolderNeighbourRoute(widget.sourceId, widget.folder, widget.path, step) != null,
                         onNavigate: _openNeighbour,
                       )
-                    : _buildPhoto(photo)
+                    : _buildPhoto(photo, turns)
               : snapshot.connectionState != ConnectionState.done
               ? const NetworkLoadingView(color: Colors.white70)
               : Focus(
@@ -520,7 +523,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     );
   }
 
-  Widget _buildPhoto(_Photo photo) {
+  Widget _buildPhoto(_Photo photo, int turns) {
     final image = networkPhotoImage(photo.url);
     _listenToImage(image);
     return GestureDetector(
@@ -533,7 +536,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
           // Turned as a layout (the one-key rotation): the screen's box goes to the image with its sides swapped for
           // an odd number of turns, so that the turned photo fits it whole; no decode, no copy
           child: RotatedBox(
-            quarterTurns: _turnsOf(photo),
+            quarterTurns: turns,
             child: Image(
               image: image,
               fit: BoxFit.contain,

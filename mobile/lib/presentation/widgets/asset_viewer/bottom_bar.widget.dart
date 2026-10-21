@@ -14,6 +14,7 @@ import 'package:immich_mobile/presentation/widgets/action_buttons/add_action_but
 import 'package:immich_mobile/presentation/widgets/asset_viewer/ocr_toggle_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
@@ -102,7 +103,9 @@ class ViewerBottomBar extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (tvRotate) TvRotateButton(asset: asset),
-                          if (asset.isImage) OcrToggleButton(asset: asset),
+                          // The text boxes are not drawn over a photo turned on screen (see AssetPage)
+                          if (asset.isImage && ref.watch(displayQuarterTurnsProvider(asset)) == 0)
+                            OcrToggleButton(asset: asset),
                           if (asset.isVideo) VideoControls(videoPlayerName: asset.id),
                           if (!isViewOnly)
                             ImmichColorOverride(
