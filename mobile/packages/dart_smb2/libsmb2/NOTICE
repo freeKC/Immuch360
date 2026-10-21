@@ -17,7 +17,7 @@ Source: this app carries the corresponding source of its libsmb2, the file
 Immuch360-libsmb2-sources.tar.gz next to this notice among the assets of the
 app (flutter_assets/packages/dart_smb2/libsmb2/). WHERE THE SOURCE IS, below,
 says where that is in each package and how to extract it. The releases of
-Immuch360 on GitHub carry the same file.
+Immuch360 on GitHub carry an archive of the same sources.
 
 WHICH LIBSMB2 THIS IS
 
@@ -108,11 +108,18 @@ Then "tar -xzf Immuch360-libsmb2-sources.tar.gz" (or 7-Zip on Windows)
 extracts the sources.
 
 On GitHub: every release of Immuch360 that carries libsmb2, on
-https://github.com/freeKC/Immuch360/releases, has the same archive as a file:
-Immuch360-libsmb2-sources.tar.gz on the releases of the phone, TV and Quest
-apps and on desktop builds 1 to 6, and
+https://github.com/freeKC/Immuch360/releases, has an archive of the same
+sources as a file: Immuch360-libsmb2-sources.tar.gz on the releases of the
+phone, TV and Quest apps and on desktop builds 1 to 6, and
 Immuch360-Desktop-<version>-libsmb2-sources.tar.gz, listed in SHA256SUMS.txt,
-on the releases of Immuch360 Desktop from desktop build 7 on.
+on the releases of Immuch360 Desktop from desktop build 7 on. The releases
+completed on 21 October 2026 (builds 9 to 26 of the phone, TV and Quest apps,
+desktop builds 1 to 6) carry the archive of SHA-256
+6acdfe7db4eda1d8f7ef4356cfcbf4260947bfe475e64b2e4749184195ea58e5, and the
+builds made since then the one of SHA-256
+9d160e6e3a78cd50506403c1b9b256700d2510fe4b2707e269b45d47348c6905. Both hold
+libsmb2 and libsmb2-scripts at the commits above; only their README.txt and
+build_linux.sh differ.
 
 The same sources are public upstream:
 https://github.com/ales-drnz/libsmb2-scripts/tree/f0688e739ec56842981e455cf8eba4a34e7682e7
