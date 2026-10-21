@@ -72,11 +72,19 @@ Set<LogicalKeyboardKey> get remoteSeekBackwardKeys =>
 
 final _remoteSeekBackwardKeys = {LogicalKeyboardKey.mediaRewind};
 
-/// The details of the item shown; on a computer also I
+/// The details of the item shown: info, and Menu for the remotes without an info key (most of those of Google TV, which
+/// also hold OK for them, see [remoteOkHoldForDetails]); on a computer info and I, its Menu key keeps its own meaning
 Set<LogicalKeyboardKey> get remoteDetailsKeys =>
-    CurrentPlatform.isDesktop ? desktopDetailsKeys(_remoteDetailsKeys) : _remoteDetailsKeys;
+    CurrentPlatform.isDesktop ? desktopDetailsKeys(_remoteInfoKeys) : _remoteDetailsKeys;
 
-final _remoteDetailsKeys = {LogicalKeyboardKey.info};
+final _remoteInfoKeys = {LogicalKeyboardKey.info};
+
+final _remoteDetailsKeys = {LogicalKeyboardKey.info, LogicalKeyboardKey.contextMenu};
+
+/// How long OK held on a viewer itself opens the details, with the remote control layout: a shorter press is a plain
+/// OK, which then acts on its release. Most remotes of Google TV have no info key, and the menu of the top bar is
+/// hidden there (view only).
+const remoteOkHoldForDetails = Duration(milliseconds: 700);
 
 /// Whether [event] zooms in: a key of [remoteZoomInKeys], or on a computer any key that types "+"
 bool isRemoteZoomIn(KeyEvent event) =>
@@ -127,7 +135,8 @@ RemoteVideoArrows remoteVideoArrows({required bool tvMode, required bool playing
 bool remoteVideoOkFocusesControls({required bool tvMode}) => tvMode;
 
 /// The keys that never bring back the controls of a video on a TV: left and right and the next and previous keys go
-/// to another item and leave the controls as they are, Back goes back, the volume is the TV's, info opens the details
+/// to another item and leave the controls as they are, Back goes back, the volume is the TV's, info and Menu open the
+/// details
 final _keysThatKeepVideoControlsHidden = {
   LogicalKeyboardKey.arrowLeft,
   LogicalKeyboardKey.arrowRight,
@@ -140,10 +149,11 @@ final _keysThatKeepVideoControlsHidden = {
   LogicalKeyboardKey.audioVolumeDown,
   LogicalKeyboardKey.audioVolumeMute,
   LogicalKeyboardKey.info,
+  LogicalKeyboardKey.contextMenu,
 };
 
 /// Whether [key] brings back the controls of a video on a TV: any key but those that go to another item, Back, the
-/// volume and info
+/// volume, info and Menu
 bool remoteKeyShowsVideoControls(LogicalKeyboardKey key) => !_keysThatKeepVideoControlsHidden.contains(key);
 
 /// Whether [event] is a press, not the repeat of a held key nor a release

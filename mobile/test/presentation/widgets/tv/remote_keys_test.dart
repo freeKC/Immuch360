@@ -123,7 +123,7 @@ void main() {
       }
     });
 
-    test('but those that go to another item, Back, the volume and info', () {
+    test('but those that go to another item, Back, the volume, info and Menu', () {
       for (final key in [
         LogicalKeyboardKey.arrowLeft,
         LogicalKeyboardKey.arrowRight,
@@ -135,9 +135,15 @@ void main() {
         LogicalKeyboardKey.audioVolumeDown,
         LogicalKeyboardKey.audioVolumeMute,
         LogicalKeyboardKey.info,
+        LogicalKeyboardKey.contextMenu,
       ]) {
         expect(remoteKeyShowsVideoControls(key), isFalse, reason: key.debugName);
       }
     });
+  });
+
+  test('info and Menu open the details on a remote, OK held 700 ms too', () {
+    expect(remoteDetailsKeys, {LogicalKeyboardKey.info, LogicalKeyboardKey.contextMenu});
+    expect(remoteOkHoldForDetails, const Duration(milliseconds: 700));
   });
 }

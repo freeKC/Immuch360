@@ -1,8 +1,9 @@
 // The asset viewer with a remote control: left and right go through the photos; on a TV through the videos too,
 // whatever they do, while a keyboard of a phone seeks through a video that plays; on a TV OK shows the controls of a
 // video with play and pause focused, any key brings them back and they hide 5 s after the last key while it plays;
-// info opens the details; the bars never take the focus while hidden, and the viewer takes it back when they hide; on
-// a TV Back leaves the bars before it closes the viewer, and OK on the Back arrow of the top bar closes it.
+// info and Menu open the details, and on a TV so does OK held 700 ms, which then acts on its release; the bars never
+// take the focus while hidden, and the viewer takes it back when they hide; on a TV Back leaves the bars before it
+// closes the viewer, and OK on the Back arrow of the top bar closes it.
 
 import 'dart:async';
 
@@ -18,9 +19,11 @@ import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/domain/utils/event_stream.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_bottom_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -119,6 +122,9 @@ void main() {
     bool tvMode = true,
     List<Override> overrides = const [],
     bool pushed = false,
+    // The remote control layout around the app, as main.dart has it: directional navigation, where every row of the
+    // details takes the focus
+    bool shell = false,
   }) async {
     final timeline = timelineOf(assets);
     addTearDown(timeline.dispose);
@@ -144,6 +150,7 @@ void main() {
               localizationsDelegates: context.localizationDelegates,
               supportedLocales: context.supportedLocales,
               locale: context.locale,
+              builder: shell ? (context, child) => TvShell(enabled: tvMode, child: child!) : null,
               home: pushed
                   ? Builder(
                       builder: (context) => Scaffold(
@@ -380,6 +387,100 @@ void main() {
     await press(tester, LogicalKeyboardKey.info);
 
     expect(events.whereType<ViewerShowDetailsEvent>(), isNotEmpty);
+  });
+
+  testWidgets('Menu opens the details too: most remotes of Google TV have no info key', (tester) async {
+    await pumpViewer(tester, photos);
+    final events = <Event>[];
+    final subscription = EventStream.shared.listen<Event>(events.add);
+    addTearDown(subscription.cancel);
+
+    await press(tester, LogicalKeyboardKey.contextMenu);
+
+    expect(events.whereType<ViewerShowDetailsEvent>(), hasLength(1));
+  });
+
+  testWidgets('on a TV OK held on a photo opens the details, and the rest of that press does nothing', (tester) async {
+    final container = await pumpViewer(tester, photos);
+    final events = <Event>[];
+    final subscription = EventStream.shared.listen<Event>(events.add);
+    addTearDown(subscription.cancel);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.select);
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(events.whereType<ViewerShowDetailsEvent>(), isEmpty, reason: '650 ms');
+    expect(showing(container), isFalse, reason: 'OK acts on its release on a TV');
+
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(events.whereType<ViewerShowDetailsEvent>(), hasLength(1));
+    await tester.pump();
+    // The details show the bars with them, as the info key does
+    final bars = showing(container);
+
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.select);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+    await settle(tester);
+    expect(events.whereType<ViewerShowDetailsEvent>(), hasLength(1));
+    expect(events.whereType<ViewerHideDetailsEvent>(), isEmpty);
+    expect(showing(container), bars, reason: 'the release is no short OK, which would hide the bars of a photo');
+    expect(container.read(assetViewerJumpProvider).currentIndex, 0);
+
+    // The next press is a plain OK again
+    container.read(assetViewerProvider.notifier).setShowingDetails(false);
+    await settle(tester);
+    final before = showing(container);
+    await press(tester, LogicalKeyboardKey.select);
+    expect(showing(container), !before, reason: 'a short OK shows or hides the bars of a photo');
+  });
+
+  testWidgets('on a TV OK held on a video opens the details instead of focusing play and pause', (tester) async {
+    final calls = <String>[];
+    final container = await pumpVideo(tester, calls);
+    final events = <Event>[];
+    final subscription = EventStream.shared.listen<Event>(events.add);
+    addTearDown(subscription.cancel);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(showing(container), isFalse, reason: 'held, OK does not show the controls yet');
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+    await settle(tester);
+
+    expect(events.whereType<ViewerShowDetailsEvent>(), hasLength(1));
+    expect(focusIn<VideoControls>(), isFalse, reason: 'a short OK would focus play and pause');
+    // The timers of the controls that the details showed run out
+    await tester.pump(const Duration(seconds: 6));
+  });
+
+  testWidgets('on a TV the details take the focus as they open, and the viewer has it again as they close', (
+    tester,
+  ) async {
+    final container = await pumpViewer(tester, photos, shell: true);
+    container.read(assetViewerProvider.notifier).setShowingDetails(true);
+    await settle(tester);
+    expect(focusIn<AssetDetails>(), isTrue, reason: 'their first row has it');
+
+    container.read(assetViewerProvider.notifier).setShowingDetails(false);
+    await settle(tester);
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    expect(container.read(assetViewerJumpProvider).currentIndex, 1, reason: 'the viewer has the keys again');
+  });
+
+  testWidgets('a keyboard of a phone: OK acts as it goes down, held or not', (tester) async {
+    final calls = <String>[];
+    await pumpVideo(tester, calls, tvMode: false);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+    await tester.pump();
+    expect(calls, ['pause']);
+    await tester.pump(const Duration(seconds: 1));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+    await settle(tester);
+    expect(calls, ['pause']);
   });
 
   testWidgets('while the bars are hidden their buttons cannot take the focus, so no arrow lands there', (tester) async {
