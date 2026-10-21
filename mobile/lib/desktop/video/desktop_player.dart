@@ -352,10 +352,13 @@ String redactPlayerText(String text) {
 /// Whether a line of mpv's log comes from hardware decoding looking for a decoder this computer has: hwdec auto-safe
 /// tries them in turn, CUDA without an NVIDIA driver, VA-API without a driver for the GPU (a Linux computer, a virtual
 /// machine), a hardware device that cannot be made; mpv goes on to the next one, then to software decoding, which the
-/// decoder measure watches (decoder_measure.dart)
+/// decoder measure watches (decoder_measure.dart). The OpenGL render path of media_kit_video (Linux) loads the
+/// interops of those decoders with its render context, under prefixes such as libmpv_render/vaapi/vaapi
 @visibleForTesting
 bool isDecoderProbeLine(String prefix, String text) =>
-    prefix == 'vaapi' || prefix == 'vdpau' || prefix == 'cuda' || text.startsWith('AVHWDeviceContext:');
+    prefix.split('/').any(_probedDecoders.contains) || text.startsWith('AVHWDeviceContext:');
+
+const _probedDecoders = {'vaapi', 'vdpau', 'cuda'};
 
 /// Writes a line of mpv's log to the app's log, redacted. mpv's errors are warnings of the app (a bad frame, a
 /// share that stalls): a file that cannot be played at all reaches the user through [PlayerEventKind.failed].
