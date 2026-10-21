@@ -4,9 +4,9 @@
 A desktop pre-release has the tag desktop-v<version>-<n>, for desktop build n (desktop-v3.3.0-rc.0-4 is desktop
 build 4). Two ways lead to it, and both run this script, so that they give the same release:
   - the workflow immuch360-desktop-release.yml, on the push of such a tag: the Windows ZIP and installer, the Linux
-    .deb and .rpm, the macOS ZIP and DMG that immuch360-desktop.yml built from the tag, and the archive of the sources
-    of the libsmb2 library the Linux packages carry (LGPL, .github/desktop/libsmb2/build_linux.sh), with the token
-    of the run;
+    .deb and .rpm, the macOS ZIP and DMG that immuch360-desktop.yml built from the tag, and the archive of the
+    corresponding source of libsmb2 (LGPL), which every package carries as an asset of the app and which
+    .github/desktop/libsmb2/pack_sources.py makes for every build, with the token of the run;
   - the owner, from a computer, with a token of their own: the release notes, or a file built elsewhere.
 
   desktop_release.py --repo OWNER/NAME --tag TAG [--commit SHA] [--name NAME] [--notes FILE] [FILE ...]
