@@ -33,7 +33,10 @@ Copied from pub.dev (BSD-3-Clause, https://github.com/ales-drnz/dart_smb2), with
   carries these files as assets of the package and `lib/utils/libsmb2_license.dart` shows the notice and the LGPL on
   the app's licence page; the desktop packages also copy them (`licenses/libsmb2/` of the Windows folder, the
   copyright file of the `.deb`, `/usr/share/licenses/immuch360/libsmb2/` of the `.rpm`). dart_smb2 0.2.x adds a
-  `NOTICE` of its own for the same reason.
+  `NOTICE` of its own for the same reason. Its YOUR RIGHTS part says how to build with another libsmb2: iOS and macOS
+  take the package through Swift Package Manager, so there the pins are `ios/dart_smb2/Package.swift` and
+  `macos/dart_smb2/Package.swift`, whose `smb2kit:remote` block is swapped for the `smb2kit:local` one (the framework in
+  `Frameworks/libsmb2.xcframework` next to it); the podspecs serve a CocoaPods build only.
 
 - `libsmb2/Immuch360-libsmb2-sources.tar.gz` (not in git): the corresponding source of every libsmb2 of the app, so
   that each build carries it next to the binary, the store builds included. `.github/desktop/libsmb2/pack_sources.py`

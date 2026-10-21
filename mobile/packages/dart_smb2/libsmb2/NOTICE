@@ -135,12 +135,22 @@ Immuch360 is free software itself (GNU AGPL version 3,
 https://github.com/freeKC/Immuch360), so the phone, TV and Quest apps can be
 built again from their source with another libsmb2. The build of
 mobile/packages/dart_smb2 puts the libsmb2-r8 binaries back whenever a file
-differs from the SHA-256 it pins (android/build.gradle.kts, the podspecs of
-ios and macos, windows/CMakeLists.txt), so either set those pinned hashes to
-the ones of your build, or comment out the block between the smb2kit:remote
-markers of each of these files (the LOCAL mode of libsmb2-scripts) to build
-with the library you put in place of the downloaded one; on Linux, the
-variable IMMUCH360_LIBSMB2 names the libsmb2.so to bundle.
+differs from the SHA-256 it pins (android/build.gradle.kts,
+windows/CMakeLists.txt), so either set those pinned hashes to the ones of
+your build, or comment out the block between the smb2kit:remote markers of
+each of these files (the LOCAL mode of libsmb2-scripts) to build with the
+library you put in place of the downloaded one; on Linux, the variable
+IMMUCH360_LIBSMB2 names the libsmb2.so to bundle.
+
+The iOS and macOS builds take dart_smb2 through Swift Package Manager:
+ios/dart_smb2/Package.swift and macos/dart_smb2/Package.swift pin the
+libsmb2-r8 framework by the URL and the checksum of its zip. To build with
+yours, comment out the block between the smb2kit:remote markers of each of
+them and uncomment the block between the smb2kit:local markers, whose target
+takes the framework from Frameworks/libsmb2.xcframework next to that
+Package.swift, then put your libsmb2.xcframework there. A build through
+CocoaPods reads the podspecs of ios and macos instead: comment out their
+smb2kit:remote block, and they take the framework from that same folder.
 
 OTHER NOTICES INSIDE LIBSMB2
 
