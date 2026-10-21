@@ -54,6 +54,14 @@ final tvModeProvider = Provider.autoDispose<bool>((ref) {
   };
 });
 
+/// Whether the players loop a video: the Looping setting of this device. A TV has its own, off by default: a film ends
+/// there rather than start again, and a video that never ends kept a remote on it. Phones keep theirs, on by default,
+/// the remote control layout forced on included. By the device, known before the first frame, like the TV defaults.
+final loopVideoProvider = Provider.autoDispose<bool>((ref) {
+  final viewer = ref.watch(appConfigProvider.select((config) => config.viewer));
+  return ref.watch(tvDeviceProvider).isTelevision ? viewer.loopVideoOnTv : viewer.loopVideo;
+});
+
 /// The app is a viewer: what the read only mode hides in the viewers and the app bars (share, upload, edit, add to an
 /// album, delete, multi select) is hidden on a TV too, without the tab restrictions of the read only mode. Declares
 /// its dependencies so that the scoped readonlyModeProvider of Timeline(readOnly: true) reaches it.

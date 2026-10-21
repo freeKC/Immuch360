@@ -2587,7 +2587,6 @@
   "tv_oauth_unavailable": "Inloggning med {provider} öppnar en webbsida, vilket den här tv:n inte kan. Logga in med e-post och lösenord i stället.",
   "tv_open_elsewhere_body": "Den här tv:n kan inte öppna webbsidor. Öppna den här adressen på en telefon eller en dator:",
   "tv_open_elsewhere_title": "Öppna på en annan enhet",
-  "tv_paused_arrows_hint": "Pausad: pilarna går till föregående eller nästa objekt",
   "tv_text_entry_hint": "Tryck på OK för att skriva",
   "tv_video_360_hint": "Pilar för att se dig omkring, OK för att pausa och visa reglagen, Tillbaka för att stänga",
   "tv_zoom_in": "Zooma in",

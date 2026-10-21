@@ -147,8 +147,17 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   final _topActionsFocus = FocusNode(debugLabel: 'Asset viewer actions', canRequestFocus: false, skipTraversal: true);
   final _bottomBarFocus = FocusNode(debugLabel: 'Asset viewer bottom bar', canRequestFocus: false, skipTraversal: true);
 
-  /// "Paused: the arrows go to the previous or next item" shows once per opening of the viewer
-  bool _pausedHintShown = false;
+  /// OK held with the remote control layout, on the viewer itself or on a button of its bars: released before it
+  /// fires, it was a plain OK; else the details open (see [remoteOkHoldForDetails])
+  Timer? _okHold;
+
+  /// Whether the press of [_okHold] went to a button of the bars, which acted as the key went down: its release is
+  /// no plain OK of the viewer
+  bool _okHoldOnButton = false;
+
+  /// The details opened under a held OK: the rest of that press, its repeats and its release, goes nowhere rather than
+  /// to the row of the details that has the focus now
+  bool _dropHeldOk = false;
 
   void _onTapNavigate(int direction) {
     final page = _pageController.page?.toInt();
@@ -226,6 +235,7 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     // Back on a TV depends on where the focus is
     _topBarFocus.addListener(_onBarsFocus);
     _bottomBarFocus.addListener(_onBarsFocus);
+    FocusManager.instance.addEarlyKeyEventHandler(_onEarlyKey);
 
     WidgetsBinding.instance.addPostFrameCallback(_onAssetInit);
 
@@ -238,6 +248,8 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     _jump._detach(this);
     _topBarFocus.removeListener(_onBarsFocus);
     _bottomBarFocus.removeListener(_onBarsFocus);
+    FocusManager.instance.removeEarlyKeyEventHandler(_onEarlyKey);
+    _okHold?.cancel();
     _rootFocus.dispose();
     _topBarFocus.dispose();
     _topActionsFocus.dispose();
@@ -385,15 +397,29 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     return asset != null && asset.isVideo ? videoPlayerProvider(asset.id) : null;
   }
 
-  /// The keys of a remote control, a keyboard or a game pad. Next, previous, info and the media keys work wherever
-  /// the focus is in the viewer; the arrows and OK only while the viewer itself has it, else they belong to the
-  /// focused button. A photo: left and right go to the previous or next asset, OK shows or hides the controls. A video
-  /// that plays: OK pauses, left and right seek by 10 s (Play TV criterion TV-PC). A paused video: OK plays, left and
-  /// right go to the previous or next asset. Up and Down show the controls and focus the top or the bottom bar.
+  /// The keys of a remote control, a keyboard or a game pad. Next, previous, info (and Menu, see [remoteDetailsKeys])
+  /// and the media keys work wherever the focus is in the viewer; the arrows and OK only while the viewer itself has
+  /// it, else they belong to the focused button. A photo: left and right go to the previous or next asset, OK shows or
+  /// hides the controls. Up and Down show the controls and focus the top or the bottom bar. Fast forward and rewind
+  /// seek a video by 10 s.
+  ///
+  /// A video on a TV: left and right go to the previous or next asset whatever the video does, OK shows the controls
+  /// with play and pause focused, and any other key but Back, the volume, info and Menu shows them too (see
+  /// [remoteVideoArrows], [remoteKeyShowsVideoControls]). Elsewhere: OK pauses and plays, left and right seek by 10 s
+  /// while it plays and go to the previous or next asset once it is paused or ended.
+  ///
+  /// On a TV OK acts on its release, and held on the viewer or on a button of the bars it opens the details (see
+  /// [_onTvOk]); Up from the top row of the bottom bar goes straight to the top bar.
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     final key = event.logicalKey;
     final press = isRemotePress(event);
     final video = _videoPlayer;
+    final tvMode = ref.read(tvModeProvider);
+    // OK on the viewer itself, whether it shows the controls is known on its release; or OK on a button of the bars
+    final tvOk = tvMode && remoteOkKeys.contains(key) && (node.hasPrimaryFocus || _barsHaveFocus || _okHold != null);
+    if (tvMode && video != null && press && remoteKeyShowsVideoControls(key) && !tvOk) {
+      _showVideoControls();
+    }
     if (remoteDetailsKeys.contains(key)) {
       if (press) {
         _toggleDetails();
@@ -426,6 +452,17 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
       }
       return KeyEventResult.handled;
     }
+    if (tvOk) {
+      return _onTvOk(event, onViewer: node.hasPrimaryFocus);
+    }
+    if (tvMode && press && key == LogicalKeyboardKey.arrowUp && _upLeavesBottomBar()) {
+      // Up from play and pause gave the focus to the viewer itself first, between the bars, with no ring to show it
+      final target = _topBarTarget(withBack: true);
+      if (target != null) {
+        target.requestFocus();
+        return KeyEventResult.handled;
+      }
+    }
     if (!node.hasPrimaryFocus) {
       return KeyEventResult.ignored;
     }
@@ -441,21 +478,16 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     final playing = video != null && _isPlaying(video);
     if (remoteOkKeys.contains(key)) {
       if (press) {
-        if (video != null) {
-          _setPlaying(video, !playing);
-        } else if (ref.read(assetViewerProvider).showingControls) {
-          ref.read(assetViewerProvider.notifier).setControls(false);
-        } else {
-          // Never the Back button of the top bar, nor the Rotate button of a TV: a second OK would close the viewer
-          // by surprise, or turn the photo, on the server for one of the user
-          _showControlsAndFocus(_bottomBarFocus, withBack: false, withRotate: false);
-        }
+        _onOk();
       }
       return KeyEventResult.handled;
     }
     if (key == LogicalKeyboardKey.arrowLeft || key == LogicalKeyboardKey.arrowRight) {
       final step = key == LogicalKeyboardKey.arrowRight ? 1 : -1;
-      if (playing) {
+      final arrows = video == null
+          ? RemoteVideoArrows.navigate
+          : remoteVideoArrows(tvMode: tvMode, playing: playing, hasNeighbours: _totalAssets > 1);
+      if (video != null && arrows == RemoteVideoArrows.seek) {
         // Held, it keeps seeking
         if (event is! KeyUpEvent) {
           _seekBy(video, remoteSeekStep * step);
@@ -488,6 +520,100 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     return KeyEventResult.handled;
   }
 
+  /// OK on the viewer itself: on a video, show the controls with play and pause focused on a TV, else play or pause;
+  /// on a photo, show or hide the controls
+  void _onOk() {
+    final video = _videoPlayer;
+    if (video != null && remoteVideoOkFocusesControls(tvMode: ref.read(tvModeProvider))) {
+      // Play and pause, the first button of the bottom bar: a second OK presses it
+      _showControlsAndFocus(_bottomBarFocus, withBack: false);
+    } else if (video != null) {
+      _setPlaying(video, !_isPlaying(video));
+    } else if (ref.read(assetViewerProvider).showingControls) {
+      ref.read(assetViewerProvider.notifier).setControls(false);
+    } else {
+      // Never the Back button of the top bar, nor the Rotate button of a TV: a second OK would close the viewer by
+      // surprise, or turn the photo, on the server for one of the user
+      _showControlsAndFocus(_bottomBarFocus, withBack: false, withRotate: false);
+    }
+  }
+
+  /// OK with the remote control layout, on the viewer itself ([onViewer]) or on a button of the bars. Most remotes of
+  /// Google TV have no info key and the menu of the top bar is hidden there (view only), so OK held
+  /// [remoteOkHoldForDetails] opens the details. On the viewer a shorter press is a plain OK on its release (see
+  /// [_onOk]); a button is pressed once, as the key goes down, as everywhere else. The repeats of a held key change
+  /// nothing: Flutter's select shortcut takes them too, and play and pause flipped twenty times a second under a held
+  /// OK, a failed video reloading every other time, while the details never opened.
+  KeyEventResult _onTvOk(KeyEvent event, {required bool onViewer}) {
+    switch (event) {
+      case KeyDownEvent():
+        _okHold?.cancel();
+        _okHoldOnButton = !onViewer;
+        _okHold = Timer(remoteOkHoldForDetails, _onOkHeld);
+        return onViewer ? KeyEventResult.handled : KeyEventResult.ignored;
+      case KeyUpEvent():
+        final hold = _okHold;
+        _okHold = null;
+        if (hold != null && hold.isActive) {
+          hold.cancel();
+          if (!_okHoldOnButton) {
+            _onOk();
+          }
+        }
+        return onViewer ? KeyEventResult.handled : KeyEventResult.ignored;
+      case KeyRepeatEvent():
+        return KeyEventResult.handled;
+    }
+    return KeyEventResult.handled;
+  }
+
+  /// OK held [remoteOkHoldForDetails] (see [_onTvOk]): the details open, or close when the press began on the viewer
+  /// over them. Not when a button of the bars opened a page or a dialog of its own as the key went down.
+  void _onOkHeld() {
+    _okHold = null;
+    if (!mounted || !(ModalRoute.of(context)?.isCurrent ?? true)) {
+      return;
+    }
+    if (_okHoldOnButton && ref.read(assetViewerProvider).showingDetails) {
+      return;
+    }
+    _dropHeldOk = true;
+    _toggleDetails();
+  }
+
+  /// Before the focus tree: drops what is left of an OK whose hold opened the details (see [_onTvOk]), up to its
+  /// release. A new press goes through, in case that release never came.
+  KeyEventResult _onEarlyKey(KeyEvent event) {
+    if (!_dropHeldOk || !remoteOkKeys.contains(event.logicalKey)) {
+      return KeyEventResult.ignored;
+    }
+    if (event is KeyDownEvent) {
+      _dropHeldOk = false;
+      return KeyEventResult.ignored;
+    }
+    if (event is KeyUpEvent) {
+      _dropHeldOk = false;
+    }
+    return KeyEventResult.handled;
+  }
+
+  /// Whether Up leaves the bottom bar: its focused button has nothing of the bar above it (the progress bar of a
+  /// video is under its buttons)
+  bool _upLeavesBottomBar() {
+    final focused = FocusManager.instance.primaryFocus;
+    if (focused == null || !_bottomBarFocus.hasFocus) {
+      return false;
+    }
+    final top = focused.rect.top;
+    return !_bottomBarFocus.traversalDescendants.any((node) => node != focused && node.rect.bottom <= top);
+  }
+
+  /// Where Up takes the focus in the top bar: its buttons on the right (360° first), else its Back button only
+  /// [withBack]
+  FocusNode? _topBarTarget({required bool withBack}) =>
+      _topActionsFocus.traversalDescendants.firstOrNull ??
+      (withBack ? _topBarFocus.traversalDescendants.firstOrNull : null);
+
   bool _isPlaying(AutoDisposeStateNotifierProvider<VideoPlayerNotifier, VideoPlayerState> video) {
     final status = ref.read(video).status;
     return status == VideoPlaybackStatus.playing || status == VideoPlaybackStatus.buffering;
@@ -499,7 +625,6 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     if (!play) {
       unawaited(notifier.pause());
       ref.read(assetViewerProvider.notifier).setControls(true);
-      _showPausedHint();
       return;
     }
     if (ref.read(video).status == VideoPlaybackStatus.completed) {
@@ -509,26 +634,18 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     }
   }
 
-  /// Once per opening: paused, the arrows no longer seek but go to the next asset
-  void _showPausedHint() {
-    if (_pausedHintShown || !ref.read(tvModeProvider)) {
-      return;
-    }
-    _pausedHintShown = true;
-    context.scaffoldMessenger.showSnackBar(SnackBar(content: Text(context.t.tv_paused_arrows_hint)));
+  void _seekBy(AutoDisposeStateNotifierProvider<VideoPlayerNotifier, VideoPlayerState> video, Duration delta) {
+    ref.read(video.notifier).seekBy(delta);
+    ref.read(assetViewerProvider.notifier).setControls(true);
   }
 
-  void _seekBy(AutoDisposeStateNotifierProvider<VideoPlayerNotifier, VideoPlayerState> video, Duration delta) {
-    final playback = ref.read(video);
-    var target = playback.position + delta;
-    if (target < Duration.zero) {
-      target = Duration.zero;
+  /// Shows the controls of the video on screen, not over its details. They hide 5 s after the last key while it plays
+  /// (see VideoControls).
+  void _showVideoControls() {
+    final viewer = ref.read(assetViewerProvider);
+    if (!viewer.showingControls && !viewer.showingDetails) {
+      ref.read(assetViewerProvider.notifier).setControls(true);
     }
-    if (playback.duration > Duration.zero && target > playback.duration) {
-      target = playback.duration;
-    }
-    ref.read(video.notifier).seekTo(target);
-    ref.read(assetViewerProvider.notifier).setControls(true);
   }
 
   void _toggleDetails() {
@@ -546,9 +663,7 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
       if (!mounted) {
         return;
       }
-      final top =
-          _topActionsFocus.traversalDescendants.firstOrNull ??
-          (withBack ? _topBarFocus.traversalDescendants.firstOrNull : null);
+      final top = _topBarTarget(withBack: withBack);
       final bottomItems = _bottomBarFocus.traversalDescendants;
       final bottom =
           bottomItems.where((node) => !isTvRotateFocus(node)).firstOrNull ??

@@ -82,6 +82,17 @@ object VideoDecoders {
   const val LABEL_SWITCHED = "sourceSwitched"
 
   /**
+   * Keys of the other messages about the decoders, with the same "{codec}", "{width}" and "{height}": the original is
+   * beyond what the device decodes and there is no transcoded stream to switch to ([LABEL_UNDECODABLE]), a decoder
+   * refused the video ([LABEL_ERROR_DECODER]), a decoder took the video but gave no picture ([LABEL_ERROR_NO_FRAME]).
+   * [LABEL_ERROR_STALLED], without placeholders, is the video that does not load.
+   */
+  const val LABEL_UNDECODABLE = "sourceUndecodable"
+  const val LABEL_ERROR_DECODER = "errorDecoder"
+  const val LABEL_ERROR_NO_FRAME = "errorNoFrame"
+  const val LABEL_ERROR_STALLED = "errorStalled"
+
+  /**
    * MIME type of each sample entry four character code, and of the codec names of ffprobe (what the Immich server
    * reports), so that Flutter can ask with whichever it knows. Dolby Vision gets its own type: a device without a Dolby
    * Vision decoder may still play its HEVC, H.264 or AV1 base layer, see [answer].

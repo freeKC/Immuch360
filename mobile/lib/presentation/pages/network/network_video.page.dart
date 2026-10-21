@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:async/async.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -54,9 +55,14 @@ typedef _Video = ({NetworkEntry entry, Uri url});
 /// sphere with the rawProjection JSON of its plan (see RawVideoResolver), the calibration read from the share, the
 /// other file of a split pair looked for next to it. One that does not open says why when its 360° button is pressed.
 ///
-/// With a remote control, a keyboard or a game pad (see [NetworkVideoPageState._onKey]): OK pauses or plays, left and
-/// right seek while it plays and go to the previous or next file of [folder] while it is paused, up and down reach the
-/// app bar and the controls. On a TV, Back hides the controls before it leaves.
+/// The app bar and the controls hide 5 s after they show while the video plays, and 5 s after the last key; a tap
+/// toggles them.
+///
+/// With a remote control, a keyboard or a game pad (see [NetworkVideoPageState._onKey]): up and down reach the app bar
+/// and the controls. On a TV, left and right go to the previous or next file of [folder] whatever the video does, OK
+/// shows the controls with play and pause focused, any other key but Back and the volume shows them, they also hide
+/// while the video loads and show at its end, and Back hides them before it leaves. Elsewhere OK pauses or plays, left
+/// and right seek while it plays and go to the previous or next file while it is paused.
 @RoutePage()
 class NetworkVideoPage extends ConsumerStatefulWidget {
   const NetworkVideoPage({super.key, required this.sourceId, required this.path, this.folder});
@@ -111,8 +117,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// since there are no controls and nothing plays
   final _errorFocus = FocusNode(debugLabel: 'Network video error', canRequestFocus: false, skipTraversal: true);
 
-  /// "Paused: the arrows go to the previous or next item" shows once per run of the app
-  static bool _pausedHintShown = false;
+  /// Hides the app bar and the controls [videoControlsHideAfter] after they show, or after the last key, while the
+  /// video plays
+  late final RestartableTimer _hideTimer;
 
   /// The key of the player of this page in [videoPlayerProvider]
   String get _playerKey => 'network:${widget.sourceId}:${widget.path}';
@@ -125,6 +132,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _hideTimer = RestartableTimer(videoControlsHideAfter, _onHideTimer);
+    HardwareKeyboard.instance.addHandler(_onAnyKey);
     // Back on a TV depends on where the focus is
     _appBarFocus.addListener(_onAppBarFocus);
     if (CurrentPlatform.isDesktop) {
@@ -143,6 +152,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    HardwareKeyboard.instance.removeHandler(_onAnyKey);
+    _hideTimer.cancel();
     _removeListeners();
     _appBarFocus.removeListener(_onAppBarFocus);
     _rootFocus.dispose();
@@ -158,6 +169,67 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       setState(() {});
     }
   }
+
+  /// Every key starts the 5 s again, wherever it goes: the bars hide 5 s after the last key, never under a user who is
+  /// still using the remote or the keyboard
+  bool _onAnyKey(KeyEvent event) {
+    if (event is! KeyUpEvent) {
+      _hideTimer.reset();
+    }
+    return false;
+  }
+
+  void _onHideTimer() {
+    if (!mounted || !_showControls) {
+      return;
+    }
+    if (!(ModalRoute.of(context)?.isCurrent ?? true)) {
+      // Under a menu of the app bar: 5 s once it closes
+      _hideTimer.reset();
+      return;
+    }
+    // Paused or ended they stay, until it plays again (a change of status starts the 5 s again). A TV also hides them
+    // while the video loads: a slow network would keep them there for ever.
+    final status = ref.read(videoPlayerProvider(_playerKey)).status;
+    final plays =
+        status == VideoPlaybackStatus.playing || (status == VideoPlaybackStatus.buffering && ref.read(tvModeProvider));
+    if (!plays || _playerError != null) {
+      return;
+    }
+    // A button of the bars had the focus: the page takes it back, so that the next key of a remote is not lost
+    final barsHadFocus = _rootFocus.hasFocus && !_rootFocus.hasPrimaryFocus;
+    setState(() => _showControls = false);
+    if (barsHadFocus) {
+      _rootFocus.requestFocus();
+    }
+  }
+
+  /// Shows or hides the app bar and the controls; shown, they hide 5 s later while the video plays
+  void _setControls(bool show) {
+    if (show) {
+      _hideTimer.reset();
+    }
+    if (_showControls != show) {
+      setState(() => _showControls = show);
+    }
+  }
+
+  /// A change of the video's status starts the 5 s again; on a TV the controls show when it reaches its end, with the
+  /// replay button (a video just loaded is reported ended too, at its start, which does not count)
+  void _onStatus(VideoPlaybackStatus? previous, VideoPlaybackStatus status) {
+    _hideTimer.reset();
+    if (status == VideoPlaybackStatus.completed &&
+        previous != VideoPlaybackStatus.completed &&
+        ref.read(tvModeProvider) &&
+        ref.read(videoPlayerProvider(_playerKey)).position > Duration.zero) {
+      _setControls(true);
+    }
+  }
+
+  /// Whether the folder the video was opened from has another photo or video before or after it
+  bool get _hasNeighbours =>
+      networkFolderNeighbourRoute(widget.sourceId, widget.folder, widget.path, -1) != null ||
+      networkFolderNeighbourRoute(widget.sourceId, widget.folder, widget.path, 1) != null;
 
   /// Down from a button of the app bar goes to Retry in place of a video that could not be had or played, else to the
   /// controls, which it shows, as from the page itself
@@ -185,10 +257,16 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
 
   /// The keys of a remote control, a keyboard or a game pad. Media keys (play, pause, fast forward, rewind, next,
   /// previous) work wherever the focus is on the page; the arrows and OK only while the page itself has it, else they
-  /// belong to the focused button. In place of a video that could not be had or played, Down and OK go to Retry.
+  /// belong to the focused button. In place of a video that could not be had or played, Down and OK go to Retry. Left,
+  /// right and OK follow [remoteVideoArrows] and [remoteVideoOkFocusesControls]; on a TV any key but those that go to
+  /// another file, Back and the volume shows the controls ([remoteKeyShowsVideoControls]).
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     final key = event.logicalKey;
     final press = isRemotePress(event);
+    final tvMode = ref.read(tvModeProvider);
+    if (tvMode && press && remoteKeyShowsVideoControls(key)) {
+      _setControls(true);
+    }
     if (remotePlayPauseKeys.contains(key)) {
       if (press) {
         _setPlaying(remotePlayPauseWantsPlay(key, isPlaying: _isPlaying));
@@ -219,13 +297,19 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
     if (remoteOkKeys.contains(key)) {
       if (press) {
-        _setPlaying(!_isPlaying);
+        if (remoteVideoOkFocusesControls(tvMode: tvMode)) {
+          // A second OK presses play and pause
+          _showControlsAndFocus(top: false);
+        } else {
+          _setPlaying(!_isPlaying);
+        }
       }
       return KeyEventResult.handled;
     }
     if (key == LogicalKeyboardKey.arrowLeft || key == LogicalKeyboardKey.arrowRight) {
       final step = key == LogicalKeyboardKey.arrowRight ? 1 : -1;
-      if (_isPlaying) {
+      final arrows = remoteVideoArrows(tvMode: tvMode, playing: _isPlaying, hasNeighbours: _hasNeighbours);
+      if (arrows == RemoteVideoArrows.seek) {
         // Held, it keeps seeking
         if (event is! KeyUpEvent) {
           _seekBy(remoteSeekStep * step);
@@ -250,13 +334,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     return KeyEventResult.ignored;
   }
 
-  /// Plays, or pauses and shows the controls (Play TV criterion TV-PC). A video at its end plays from the start.
+  /// Plays, or pauses and shows the controls. A video at its end plays from the start.
   void _setPlaying(bool play) {
     final notifier = _notifier;
     if (!play) {
       unawaited(notifier.pause());
-      setState(() => _showControls = true);
-      _showPausedHint();
+      _setControls(true);
       return;
     }
     if (ref.read(videoPlayerProvider(_playerKey)).status == VideoPlaybackStatus.completed) {
@@ -266,26 +349,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
   }
 
-  /// Once: paused, the arrows no longer seek but go to the next file, when there is one
-  void _showPausedHint() {
-    if (_pausedHintShown || !ref.read(tvModeProvider) || widget.folder == null) {
-      return;
-    }
-    _pausedHintShown = true;
-    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.t.tv_paused_arrows_hint)));
-  }
-
   void _seekBy(Duration delta) {
-    final playback = ref.read(videoPlayerProvider(_playerKey));
-    var target = playback.position + delta;
-    if (target < Duration.zero) {
-      target = Duration.zero;
-    }
-    if (playback.duration > Duration.zero && target > playback.duration) {
-      target = playback.duration;
-    }
-    _notifier.seekTo(target);
-    setState(() => _showControls = true);
+    _notifier.seekBy(delta);
+    _setControls(true);
   }
 
   /// The previous or next photo or video of the folder, in place of this page: a TV user does not go back to the grid
@@ -299,7 +365,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
 
   /// Shows the controls and focuses the app bar ([top]) or the play button
   void _showControlsAndFocus({required bool top}) {
-    setState(() => _showControls = true);
+    _setControls(true);
     // The play button is in the tree from the next frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
@@ -314,7 +380,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
 
   /// Back on a TV, while the controls show or the app bar has the focus: they hide, and the page takes the keys again
   void _hideControls() {
-    setState(() => _showControls = false);
+    _setControls(false);
     _rootFocus.requestFocus();
   }
 
@@ -402,6 +468,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     controller.onPlaybackEnded.addListener(_onPlaybackEnded);
     controller.onError.addListener(_onPlayerError);
     _controller = controller;
+    ref.listenManual(videoPlayerProvider(_playerKey).select((v) => v.status), _onFailure);
     unawaited(_loadVideo());
   }
 
@@ -420,7 +487,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       return;
     }
     // Read before the first await: the page may be gone by then
-    final loop = ref.read(appConfigProvider).viewer.loopVideo;
+    final loop = ref.read(loopVideoProvider);
     final notifier = _notifier;
     await notifier.load(source);
     await notifier.setLoop(loop);
@@ -470,11 +537,25 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   }
 
   void _onPlayerError() {
-    final error = _controller?.onError.value;
-    if (error != null && mounted) {
+    final controller = _controller;
+    final error = controller?.onError.value;
+    if (controller != null && error != null && mounted) {
       _log.warning('Could not play $_name: $error');
       setState(() => _playerError = error);
+      // Failed, not playing: the remote goes to the next file. Back to null, so that the same error after Retry is
+      // heard again
+      _notifier.onNativeError(error);
+      scheduleMicrotask(() => controller.onError.value = null);
     }
+  }
+
+  /// Nothing played for [VideoPlayerNotifier.stallTimeout]: the page says so, with Retry, instead of "Buffering"
+  void _onFailure(VideoPlaybackStatus? previous, VideoPlaybackStatus status) {
+    if (status != VideoPlaybackStatus.failed || _notifier.failure?.kind != VideoFailureKind.stalled || !mounted) {
+      return;
+    }
+    _log.warning('Nothing of $_name played for ${VideoPlayerNotifier.stallTimeout.inSeconds} s');
+    setState(() => _playerError = context.t.video_error_stalled);
   }
 
   /// How the 360° viewers show the video: what it declares, else guesses from its frame size and its name
@@ -609,6 +690,21 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         return;
       }
     }
+    // A share has no smaller stream: a file beyond the decoders of the device opens no player that would load forever
+    // unless the user still wants to try
+    if (plan == null && mounted) {
+      final probe = _info?.probe;
+      final verdict = await ref.read(videoSourceServiceProvider).verdict(probe);
+      if (verdict != null && !verdict.supported) {
+        _log.warning('$_name is beyond the decoders of this device: ${verdict.reason}');
+        if (!mounted || !await confirmUndecodableVideo(context, probe, verdict, fromServer: false)) {
+          return;
+        }
+      }
+    }
+    if (!mounted) {
+      return;
+    }
     final opened = await openSphericalVideoUrl(
       context,
       ref,
@@ -649,6 +745,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   Widget build(BuildContext context) {
     // Watched so that the player lives as long as the page
     ref.watch(videoPlayerProvider(_playerKey).select((v) => v.status));
+    ref.listen(videoPlayerProvider(_playerKey).select((v) => v.status), _onStatus);
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
     final can360 = (isHorizonOs ?? false) || ref.watch(panorama360VideoSupportedProvider);
     // Like in the asset viewer: an experimental setting, on phones only, never while the platform check is pending
@@ -742,12 +839,25 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
           ],
         );
 
+        // The app bar goes with the controls over a video, and stays over a video that could not be had or played
+        final showAppBar = _showControls || video == null || _playerError != null;
         return Scaffold(
           backgroundColor: Colors.black,
           extendBodyBehindAppBar: true,
           appBar: PreferredSize(
             preferredSize: appBar.preferredSize,
-            child: Focus(focusNode: _appBarFocus, onKeyEvent: _onAppBarKey, child: appBar),
+            child: Focus(
+              focusNode: _appBarFocus,
+              onKeyEvent: _onAppBarKey,
+              child: IgnorePointer(
+                ignoring: !showAppBar,
+                // Hidden, its buttons must not take the focus either: an arrow of a remote would land on them
+                child: ExcludeFocus(
+                  excluding: !showAppBar,
+                  child: AnimatedOpacity(opacity: showAppBar ? 1 : 0, duration: Durations.short2, child: appBar),
+                ),
+              ),
+            ),
           ),
           body: video != null
               ? _buildPlayer()
@@ -785,7 +895,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => setState(() => _showControls = !_showControls),
+      onTap: () => _setControls(!_showControls),
       child: Stack(
         children: [
           if (isRouteActive)

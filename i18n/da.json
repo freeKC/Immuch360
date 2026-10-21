@@ -2578,7 +2578,6 @@
   "tv_oauth_unavailable": "Login med {provider} åbner en webside, hvilket dette tv ikke kan. Log i stedet ind med e-mail og kodeord.",
   "tv_open_elsewhere_body": "Dette tv kan ikke åbne websider. Åbn denne adresse på en telefon eller en computer:",
   "tv_open_elsewhere_title": "Åbn på en anden enhed",
-  "tv_paused_arrows_hint": "Sat på pause: pilene går til forrige eller næste element",
   "tv_text_entry_hint": "Tryk på OK for at skrive",
   "tv_video_360_hint": "Pile for at se dig omkring, OK for at sætte på pause og vise knapperne, Tilbage for at lukke",
   "tv_zoom_in": "Zoom ind",

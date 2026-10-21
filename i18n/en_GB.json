@@ -2548,7 +2548,6 @@
   "tv_oauth_unavailable": "Signing in with {provider} opens a web page, which this TV cannot do. Sign in with an email and a password instead.",
   "tv_open_elsewhere_body": "This TV cannot open web pages. Open this address on a phone or a computer:",
   "tv_open_elsewhere_title": "Open on another device",
-  "tv_paused_arrows_hint": "Paused: the arrows go to the previous or next item",
   "tv_text_entry_hint": "Press OK to type",
   "tv_video_360_hint": "Arrows to look around, OK to pause and show the controls, Back to close",
   "tv_zoom_in": "Zoom in",

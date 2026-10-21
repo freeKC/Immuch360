@@ -1,7 +1,10 @@
-// The video page of a share with a remote control: OK pauses and plays, left and right seek by 10 s while it plays
-// and go to the previous or next file of the folder while it is paused, the media keys work from anywhere on the
-// page, and on a TV Back hides the controls before it leaves, while the Back button of the app bar leaves at once. A
-// video that cannot be had shows Retry, which Down and OK reach. A phone keeps Back as before.
+// The video page of a share with a remote control. On a TV left and right go to the previous or next file of the
+// folder whatever the video does (they seek in a file opened on its own), OK shows the controls with play and pause
+// focused, any key brings back the app bar and the controls, which hide 5 s after the last key while the video plays,
+// and Back hides them before it leaves, while the Back button of the app bar leaves at once. Elsewhere OK pauses and
+// plays, left and right seek by 10 s while it plays and go to the previous or next file while it is paused. The media
+// keys work from anywhere on the page. A video that cannot be had shows Retry, which Down and OK reach. A phone keeps
+// Back as before, and its bars hide 5 s after they show while the video plays too.
 
 import 'dart:async';
 
@@ -19,6 +22,7 @@ import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_video.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
@@ -29,6 +33,7 @@ import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
+import 'package:native_video_player/native_video_player.dart';
 
 import '../../../domain/services/spherical_probe_fixtures.dart';
 import 'network_viewer_fakes.dart';
@@ -51,6 +56,13 @@ class _FakePlayer extends VideoPlayerNotifier {
   }
 
   final List<String> calls;
+
+  // Nothing native loads it: the status stays the one of the test, never "buffering" a second later
+  @override
+  Future<void> load(VideoSource source) async {}
+
+  @override
+  Future<void> setLoop(bool loop) async => _loops.add(loop);
 
   @override
   Future<void> play() async {
@@ -77,6 +89,9 @@ class _FakePlayer extends VideoPlayerNotifier {
   }
 }
 
+/// What the page asked of the player's loop
+final _loops = <bool>[];
+
 const _source = NetworkSource(id: 'nas', type: NetworkSourceType.smb, name: 'Home NAS', host: 'nas', share: 'media');
 
 void main() {
@@ -94,6 +109,7 @@ void main() {
     share = MemoryShare(_source, files: {'/a.jpg': fakePhoto(), '/clip.mp4': video, '/b.mp4': video});
     share.folders['/'] = [share.file('/a.jpg'), share.file('/clip.mp4'), share.file('/b.mp4')];
     calls = [];
+    _loops.clear();
     systemPops = 0;
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(SystemChannels.platform_views, (call) async {
@@ -125,6 +141,7 @@ void main() {
     bool tvMode = true,
     bool inFolder = true,
     bool pushed = false,
+    bool isTelevision = false,
   }) async {
     final entries = share.folders['/']!;
     final folder = NetworkFolderMedia(
@@ -141,6 +158,7 @@ void main() {
       settle: false,
       overrides: [
         tvModeProvider.overrideWithValue(tvMode),
+        tvDeviceProvider.overrideWithValue(TvDeviceInfo(isTelevision: isTelevision, isLowRamDevice: false)),
         storeServiceProvider.overrideWithValue(store),
         overrideConnections((ref) => FakeConnections(ref, share)),
         appConfigProvider.overrideWithValue(const AppConfig()),
@@ -173,8 +191,52 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
   }
 
-  testWidgets('OK pauses a video that plays, with its controls, and plays it again', (tester) async {
+  FocusNode playFocus(WidgetTester tester) =>
+      tester.widget<IconButton>(find.byKey(const Key('network_video_play_pause'))).focusNode!;
+
+  bool controlsShown() => find.byType(NetworkVideoControls).evaluate().isNotEmpty;
+
+  bool appBarShown(WidgetTester tester) =>
+      tester
+          .widget<AnimatedOpacity>(find.ancestor(of: find.byType(AppBar), matching: find.byType(AnimatedOpacity)).first)
+          .opacity ==
+      1;
+
+  testWidgets('on a TV OK shows the controls with play and pause focused, and a second OK pauses', (tester) async {
     await pumpVideo(tester, status: VideoPlaybackStatus.playing);
+
+    await press(tester, LogicalKeyboardKey.select);
+    expect(calls, isEmpty);
+    expect(controlsShown(), isTrue);
+    expect(playFocus(tester).hasPrimaryFocus, isTrue);
+
+    await press(tester, LogicalKeyboardKey.select);
+    expect(calls, ['pause']);
+  });
+
+  testWidgets('on a TV right goes to the next file of the folder while it plays', (tester) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing);
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    await tester.pumpAndSettle();
+
+    expect(find.text('video nas /b.mp4'), findsOneWidget);
+    expect(calls, isEmpty);
+  });
+
+  testWidgets('on a TV left goes to the previous one while it loads', (tester) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.buffering);
+
+    await press(tester, LogicalKeyboardKey.arrowLeft);
+    await tester.pumpAndSettle();
+
+    expect(find.text('photo nas /a.jpg'), findsOneWidget);
+  });
+
+  testWidgets('a phone with a keyboard: OK pauses a video that plays, with its controls, and plays it again', (
+    tester,
+  ) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing, tvMode: false);
 
     await press(tester, LogicalKeyboardKey.select);
     expect(calls, ['pause']);
@@ -184,8 +246,8 @@ void main() {
     expect(calls, ['pause', 'play']);
   });
 
-  testWidgets('left and right seek by 10 s while it plays', (tester) async {
-    await pumpVideo(tester, status: VideoPlaybackStatus.playing);
+  testWidgets('a phone with a keyboard: left and right seek by 10 s while it plays', (tester) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing, tvMode: false);
 
     await press(tester, LogicalKeyboardKey.arrowRight);
     await press(tester, LogicalKeyboardKey.arrowRight);
@@ -193,6 +255,83 @@ void main() {
 
     expect(calls, ['seek 40', 'seek 50', 'seek 40']);
     expect(find.text('video nas /clip.mp4'), findsNothing, reason: 'still on the page');
+  });
+
+  testWidgets('on a TV the app bar and the controls hide 5 s after the last key while it plays', (tester) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing);
+    expect(controlsShown(), isTrue);
+    expect(appBarShown(tester), isTrue);
+
+    await tester.pump(const Duration(seconds: 3));
+    await press(tester, LogicalKeyboardKey.mediaFastForward);
+    await tester.pump(const Duration(seconds: 4));
+    expect(controlsShown(), isTrue, reason: '4 s after the last key');
+    await tester.pump(const Duration(seconds: 1));
+    expect(controlsShown(), isFalse);
+    expect(appBarShown(tester), isFalse);
+    expect(find.text('clip.mp4'), findsOneWidget, reason: 'faded out, still in the tree');
+
+    // Any key brings them back, the page keeps the keys
+    await press(tester, LogicalKeyboardKey.channelDown);
+    expect(controlsShown(), isTrue);
+    expect(appBarShown(tester), isTrue);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'Network video');
+  });
+
+  testWidgets('on a TV the controls hide under play and pause, and the next key is not lost', (tester) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing);
+
+    await press(tester, LogicalKeyboardKey.select);
+    expect(playFocus(tester).hasPrimaryFocus, isTrue);
+    await tester.pump(const Duration(seconds: 5));
+    expect(controlsShown(), isFalse);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'Network video');
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    await tester.pumpAndSettle();
+    expect(find.text('video nas /b.mp4'), findsOneWidget);
+  });
+
+  testWidgets('paused, the app bar and the controls stay', (tester) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.paused);
+
+    await tester.pump(const Duration(seconds: 10));
+
+    expect(controlsShown(), isTrue);
+    expect(appBarShown(tester), isTrue);
+  });
+
+  testWidgets('on a phone they hide 5 s after they show while it plays too, and a tap brings them back', (
+    tester,
+  ) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing, tvMode: false);
+
+    await tester.pump(const Duration(seconds: 5));
+    expect(controlsShown(), isFalse);
+    expect(appBarShown(tester), isFalse);
+
+    await tester.tapAt(tester.getCenter(find.byType(NetworkVideoPage)));
+    await tester.pump();
+    expect(controlsShown(), isTrue);
+    expect(appBarShown(tester), isTrue);
+  });
+
+  testWidgets('a TV plays a video once by default, a phone loops it', (tester) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.paused, isTelevision: true);
+    expect(_loops, [false]);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    _loops.clear();
+    await pumpVideo(tester, status: VideoPlaybackStatus.paused, tvMode: false);
+    expect(_loops, [true]);
+  });
+
+  testWidgets('a phone keeps them while the video loads', (tester) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.buffering, tvMode: false);
+
+    await tester.pump(const Duration(seconds: 10));
+
+    expect(controlsShown(), isTrue);
   });
 
   testWidgets('the media keys: play and pause, fast forward and rewind', (tester) async {
@@ -225,13 +364,15 @@ void main() {
     expect(find.text('photo nas /a.jpg'), findsOneWidget);
   });
 
-  testWidgets('without a folder (a camera clip) the arrows stay on the page', (tester) async {
+  testWidgets('without a folder (a camera clip) the arrows stay on the page, and seek on a TV', (tester) async {
     await pumpVideo(tester, status: VideoPlaybackStatus.paused, inFolder: false);
 
     await press(tester, LogicalKeyboardKey.arrowRight);
     await press(tester, LogicalKeyboardKey.arrowLeft);
+    await press(tester, LogicalKeyboardKey.arrowLeft);
 
     expect(find.byType(NetworkVideoPage), findsOneWidget);
+    expect(calls, ['seek 40', 'seek 30', 'seek 20']);
   });
 
   testWidgets('Down focuses play, the arrows then move between the controls, and the play key still works', (

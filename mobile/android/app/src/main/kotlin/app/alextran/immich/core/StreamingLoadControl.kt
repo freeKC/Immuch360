@@ -1,5 +1,6 @@
 package app.alextran.immich.core
 
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
@@ -18,9 +19,15 @@ import androidx.media3.exoplayer.LoadControl
  * Media3 also stops loading once the buffer holds a number of bytes, about 137 MiB for a video with sound, whatever
  * the durations above: that is less than 9 s of a 360 video at 132 Mbit/s, so a stall of the share longer than that
  * stalled the video. The buffer here may hold half of the Java heap of the app (largeHeap, 512 MiB on recent phones),
- * up to [MAX_TARGET_BUFFER_BYTES] and never less than the Media3 default, see [targetBufferBytes].
+ * up to [MAX_TARGET_BUFFER_BYTES], see [targetBufferBytes]. On a TV whose heap is 128 to 256 MiB, that is less than
+ * the Media3 default: the default would take the whole heap.
+ *
+ * A video whose buffering makes no progress for [STUCK_BUFFERING_TIMEOUT_MS] ends in an error (Media3 waits 10 min
+ * by default): a server or a network that sends nothing, or a decoder that never gives a frame.
  */
 object StreamingLoadControl {
+  private const val TAG = "StreamingLoadControl"
+
   const val MIN_BUFFER_MS = 50_000
   const val MAX_BUFFER_MS = 60_000
   const val BUFFER_FOR_PLAYBACK_MS = 2_500
@@ -29,10 +36,8 @@ object StreamingLoadControl {
   /** The most bytes the buffer holds, whatever the heap: 24 s of a video at 132 Mbit/s */
   const val MAX_TARGET_BUFFER_BYTES = 384 * 1024 * 1024
 
-  /** The bytes Media3 buffers by default for a streamed video with sound, the least the buffer holds here */
-  @OptIn(UnstableApi::class)
-  const val MIN_TARGET_BUFFER_BYTES =
-    DefaultLoadControl.DEFAULT_VIDEO_BUFFER_SIZE + DefaultLoadControl.DEFAULT_AUDIO_BUFFER_SIZE
+  /** How long the buffering of a streamed video may make no progress before the player gives up with an error */
+  const val STUCK_BUFFERING_TIMEOUT_MS = 30_000
 
   /** Whether [url] is read over HTTP: the loopback media bridge, or any http(s) URL */
   fun isStreamed(url: String): Boolean {
@@ -41,24 +46,29 @@ object StreamingLoadControl {
   }
 
   @OptIn(UnstableApi::class)
-  fun create(): LoadControl =
-    DefaultLoadControl.Builder()
+  fun create(): LoadControl {
+    val maxHeap = Runtime.getRuntime().maxMemory()
+    val target = targetBufferBytes(maxHeap)
+    Log.i(TAG, "Java heap of ${maxHeap shr 20} MiB: the buffer holds up to ${target shr 20} MiB")
+    return DefaultLoadControl.Builder()
       .setBufferDurationsMs(
         MIN_BUFFER_MS,
         MAX_BUFFER_MS,
         BUFFER_FOR_PLAYBACK_MS,
         BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
       )
-      .setTargetBufferBytes(targetBufferBytes(Runtime.getRuntime().maxMemory()))
+      .setTargetBufferBytes(target)
       .build()
+  }
 
   /**
-   * The bytes the buffer of a streamed video may hold for a Java heap of [maxHeapBytes]: half of it, from
-   * [MIN_TARGET_BUFFER_BYTES] to [MAX_TARGET_BUFFER_BYTES]. The loading stops there even if the buffer holds less
-   * than [MIN_BUFFER_MS] of media, so that a video with a high bitrate does not run the app out of memory.
+   * The bytes the buffer of a streamed video may hold for a Java heap of [maxHeapBytes]: half of it, up to
+   * [MAX_TARGET_BUFFER_BYTES]. The loading stops there even if the buffer holds less than [MIN_BUFFER_MS] of media,
+   * so that a video with a high bitrate does not run the app out of memory; the playback starts then too, whatever
+   * [BUFFER_FOR_PLAYBACK_MS] says.
    */
   fun targetBufferBytes(maxHeapBytes: Long): Int =
-    (maxHeapBytes / 2).coerceIn(MIN_TARGET_BUFFER_BYTES.toLong(), MAX_TARGET_BUFFER_BYTES.toLong()).toInt()
+    (maxHeapBytes / 2).coerceIn(1L, MAX_TARGET_BUFFER_BYTES.toLong()).toInt()
 
   /**
    * The media the player waits for, loaded ahead of the position, before it plays: [BUFFER_FOR_PLAYBACK_MS] at first
@@ -74,8 +84,15 @@ object StreamingLoadControl {
       else -> DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS
     }
 
-  /** Gives [builder] the streaming buffers when [url] is read over HTTP, and leaves it as it is otherwise */
+  /**
+   * Gives [builder] the streaming buffers and the [STUCK_BUFFERING_TIMEOUT_MS] check when [url] is read over HTTP,
+   * and leaves it as it is otherwise
+   */
   @OptIn(UnstableApi::class)
   fun applyTo(builder: ExoPlayer.Builder, url: String): ExoPlayer.Builder =
-    if (isStreamed(url)) builder.setLoadControl(create()) else builder
+    if (isStreamed(url)) {
+      builder.setLoadControl(create()).setStuckBufferingDetectionTimeoutMs(STUCK_BUFFERING_TIMEOUT_MS)
+    } else {
+      builder
+    }
 }

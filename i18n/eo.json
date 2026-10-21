@@ -2451,7 +2451,6 @@
   "tv_oauth_unavailable": "Ensaluto per {provider} malfermas retpaĝon, kion ĉi tiu televidilo ne povas. Ensalutu anstataŭe per retpoŝto kaj pasvorto.",
   "tv_open_elsewhere_body": "Ĉi tiu televidilo ne povas malfermi retpaĝojn. Malfermu ĉi tiun adreson en telefono aŭ komputilo:",
   "tv_open_elsewhere_title": "Malfermi en alia aparato",
-  "tv_paused_arrows_hint": "Paŭzita: la sagoj iras al la antaŭa aŭ sekva elemento",
   "tv_text_entry_hint": "Premu OK por tajpi",
   "tv_video_360_hint": "Sagoj por ĉirkaŭrigardi, OK por paŭzi kaj montri la regilojn, Reen por fermi",
   "tv_zoom_in": "Zomi",

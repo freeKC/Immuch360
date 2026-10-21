@@ -1935,7 +1935,6 @@
   "tv_oauth_unavailable": "Identifikimi me {provider} hap një faqe uebi, gjë që ky televizor nuk e bën dot. Identifikohuni më mirë me email dhe fjalëkalim.",
   "tv_open_elsewhere_body": "Ky televizor nuk hap dot faqe uebi. Hapeni këtë adresë në një telefon ose kompjuter:",
   "tv_open_elsewhere_title": "Hape në një pajisje tjetër",
-  "tv_paused_arrows_hint": "Në pauzë: shigjetat shkojnë te elementi i mëparshëm ose i radhës",
   "tv_text_entry_hint": "Shtypni OK për të shkruar",
   "tv_video_360_hint": "Shigjetat për të parë përreth, OK për pauzë dhe për të shfaqur kontrollet, Prapa për ta mbyllur",
   "tv_zoom_in": "Zmadho",

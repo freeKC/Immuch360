@@ -392,6 +392,49 @@ void main() {
     });
   });
 
+  group('VideoSourceService.refusedServerStream', () {
+    const original = '$server/assets/video-1/original';
+    const transcoded = '$server/assets/video-1/video/playback';
+
+    Future<DecodeVerdict?> refused(ChosenVideoSource source, {SphericalProbe? probe = probe}) =>
+        service.refusedServerStream(videoId: 'video-1', probe: probe, source: source);
+
+    test('refuses the transcoded stream of a server that transcoded nothing, under every policy', () async {
+      api.supported = false;
+      respond = (request) async => sized(request, original: 1000, transcoded: 1000);
+
+      final verdict = await refused(const ChosenVideoSource(url: transcoded));
+
+      expect(verdict?.supported, isFalse);
+      expect(api.questions, hasLength(1), reason: 'asked even under "Always the transcoded stream"');
+    });
+
+    test('refuses the original with nothing to fall back to', () async {
+      api.supported = false;
+
+      expect(await refused(const ChosenVideoSource(url: original)), isNotNull);
+    });
+
+    test('lets a smaller stream of the server play', () async {
+      api.supported = false;
+
+      expect(await refused(const ChosenVideoSource(url: transcoded)), isNull);
+    });
+
+    test('lets the player fall back by itself', () async {
+      api.supported = false;
+
+      expect(await refused(const ChosenVideoSource(url: original, fallbackUrl: transcoded)), isNull);
+    });
+
+    test('lets a file the device decodes, or an unknown one, play', () async {
+      expect(await refused(const ChosenVideoSource(url: original)), isNull);
+
+      api.supported = false;
+      expect(await refused(const ChosenVideoSource(url: original), probe: null), isNull);
+    });
+  });
+
   group('videoDecodeDetailsProvider', () {
     final video = RemoteAssetFactory.create(type: .video).copyWith(durationMs: 20000);
     late MockStorageRepository storage;

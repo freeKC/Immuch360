@@ -2526,7 +2526,6 @@
   "tv_oauth_unavailable": "Prisijungimas per {provider} atidaro tinklalapį, o šis televizorius to negali. Prisijunkite el. paštu ir slaptažodžiu.",
   "tv_open_elsewhere_body": "Šis televizorius negali atidaryti tinklalapių. Atidarykite šį adresą telefone arba kompiuteryje:",
   "tv_open_elsewhere_title": "Atidaryti kitame įrenginyje",
-  "tv_paused_arrows_hint": "Pristabdyta: rodyklės pereina prie ankstesnio arba kito elemento",
   "tv_text_entry_hint": "Paspauskite OK, kad rašytumėte",
   "tv_video_360_hint": "Rodyklės apsidairyti, OK pristabdyti ir rodyti valdiklius, Atgal uždaryti",
   "tv_zoom_in": "Priartinti",

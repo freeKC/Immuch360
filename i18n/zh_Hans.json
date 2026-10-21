@@ -2586,7 +2586,6 @@
   "tv_oauth_unavailable": "使用 {provider} 登录需要打开网页，这台电视无法做到。请改用电子邮件和密码登录。",
   "tv_open_elsewhere_body": "这台电视无法打开网页。请在手机或电脑上打开此地址：",
   "tv_open_elsewhere_title": "在其他设备上打开",
-  "tv_paused_arrows_hint": "已暂停：方向键切换到上一项或下一项",
   "tv_text_entry_hint": "按 OK 输入",
   "tv_video_360_hint": "方向键环顾四周，OK 暂停并显示控件，返回键关闭",
   "tv_zoom_in": "放大",

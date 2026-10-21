@@ -462,7 +462,6 @@
   "tv_oauth_unavailable": "Ang pag-sign in gamit ang {provider} ay nagbubukas ng web page, na hindi kaya ng TV na ito. Mag-sign in na lang gamit ang email at password.",
   "tv_open_elsewhere_body": "Hindi makapagbukas ng mga web page ang TV na ito. Buksan ang address na ito sa isang phone o computer:",
   "tv_open_elsewhere_title": "Buksan sa ibang device",
-  "tv_paused_arrows_hint": "Naka-pause: pumupunta ang mga arrow sa nakaraan o susunod na item",
   "tv_text_entry_hint": "Pindutin ang OK para mag-type",
   "tv_video_360_hint": "Mga arrow para tumingin sa paligid, OK para i-pause at ipakita ang mga control, Back para isara",
   "tv_zoom_in": "Mag-zoom in",

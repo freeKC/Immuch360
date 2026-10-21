@@ -13,6 +13,7 @@ import app.alextran.immich.camera.CameraLiveApiImpl
 import app.alextran.immich.camera.CameraLiveViewFactory
 import app.alextran.immich.connectivity.ConnectivityApi
 import app.alextran.immich.connectivity.ConnectivityApiImpl
+import app.alextran.immich.core.AppHealth
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.ImmichPlugin
 import app.alextran.immich.core.NetworkApiPlugin
@@ -62,6 +63,18 @@ class MainActivity : FlutterFragmentActivity() {
     val cameraLiveViews = CameraLiveViewFactory(messenger)
     flutterEngine.platformViewsController.registry.registerViewFactory(CameraLiveViewFactory.VIEW_TYPE, cameraLiveViews)
     CameraLiveApi.setUp(messenger, CameraLiveApiImpl(cameraLiveViews))
+    // The stalls of the main thread and why the app ended last time, for the Logs page
+    AppHealth.attach(this, messenger)
+  }
+
+  override fun onResume() {
+    super.onResume()
+    AppHealth.watch(this, true)
+  }
+
+  override fun onPause() {
+    AppHealth.watch(this, false)
+    super.onPause()
   }
 
   override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
@@ -73,6 +86,7 @@ class MainActivity : FlutterFragmentActivity() {
     // The TV dialog must not keep this activity once it is gone
     TvApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     CameraLiveApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
+    AppHealth.detach()
     super.cleanUpFlutterEngine(flutterEngine)
   }
 

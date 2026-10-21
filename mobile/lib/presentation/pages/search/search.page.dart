@@ -357,20 +357,24 @@ class SearchPage extends HookConsumerWidget {
       unawaited(
         showFilterBottomSheet(
           context: context,
+          // As high as its choices, all of them on a TV screen too (the default cap of 9/16 of the height left two);
+          // the choices scroll when the screen is lower than that
+          isScrollControlled: true,
           child: FilterBottomSheetScaffold(
             title: context.t.pick_date_range,
-            expanded: true,
             onClear: () => datePicked(null),
-            child: QuickDatePicker(
-              currentInput: dateInputFilter.value,
-              onRequestPicker: () {
-                ContextHelper(context).pop();
-                unawaited(showDatePicker());
-              },
-              onSelect: (date) {
-                ContextHelper(context).pop();
-                datePicked(date);
-              },
+            child: Flexible(
+              child: QuickDatePicker(
+                currentInput: dateInputFilter.value,
+                onRequestPicker: () {
+                  ContextHelper(context).pop();
+                  unawaited(showDatePicker());
+                },
+                onSelect: (date) {
+                  ContextHelper(context).pop();
+                  datePicked(date);
+                },
+              ),
             ),
           ),
         ),

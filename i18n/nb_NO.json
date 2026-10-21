@@ -2587,7 +2587,6 @@
   "tv_oauth_unavailable": "Pålogging med {provider} åpner en nettside, noe denne TV-en ikke kan. Logg inn med e-post og passord i stedet.",
   "tv_open_elsewhere_body": "Denne TV-en kan ikke åpne nettsider. Åpne denne adressen på en telefon eller en datamaskin:",
   "tv_open_elsewhere_title": "Åpne på en annen enhet",
-  "tv_paused_arrows_hint": "Satt på pause: pilene går til forrige eller neste element",
   "tv_text_entry_hint": "Trykk på OK for å skrive",
   "tv_video_360_hint": "Piler for å se deg rundt, OK for å sette på pause og vise kontrollene, Tilbake for å lukke",
   "tv_zoom_in": "Zoom inn",

@@ -18,6 +18,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
@@ -38,6 +39,8 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
+import 'package:immich_mobile/platform/video_decoder_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
@@ -87,6 +90,11 @@ final _log = Logger('PanoramaViewer');
 /// the player maps on the sphere itself, one picture over the whole sphere. One that does not open (the other file of
 /// its pair missing, a layout the player does not play) says why (see [rawVideoUnsupportedMessage]). One of two
 /// streams that the decoders of the phone may not keep up with says so, and opens anyway.
+///
+/// A server video whose only stream is beyond the decoders of the device (see
+/// [VideoSourceService.refusedServerStream]: a 5.7K H.264 export the server left as it is, on a TV) opens no player
+/// that would load forever: the user reads why, with the server setting that makes a copy the device plays, and may
+/// still try. Not when the user chose the original whatever happens: the notice of that choice tells already.
 Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset asset) async {
   final remoteId = asset.remoteId;
   final localId = asset.localId;
@@ -144,6 +152,15 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
         return;
       }
     }
+    if (localFile == null && plan == null && policy != VideoSourcePolicy.alwaysOriginal) {
+      final refused = await videoSources.refusedServerStream(videoId: remoteId!, probe: probe, source: source);
+      if (refused != null) {
+        _log.warning('${asset.name} is beyond the decoders of this device, with no smaller stream: ${refused.reason}');
+        if (!context.mounted || !await confirmUndecodableVideo(context, probe, refused)) {
+          return;
+        }
+      }
+    }
     final view = plan != null
         ? raw360SphereView
         : resolveSphereView(
@@ -184,6 +201,38 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
     // Nothing else would bring the viewer's player back
     await player.resumeAfterExternalPlayer();
   }
+}
+
+/// Tells the user that the video [probe] describes is beyond the decoders of the device ([verdict]), and for a server
+/// video ([fromServer]) that the server can make a copy it plays. True when the user still wants to try, false on Close
+/// or Back (the default, focused).
+Future<bool> confirmUndecodableVideo(
+  BuildContext context,
+  SphericalProbe? probe,
+  DecodeVerdict verdict, {
+  bool fromServer = true,
+}) async {
+  final t = context.t;
+  final text = describeVideoFailure(
+    const VideoPlaybackFailure(VideoFailureKind.error),
+    (probe: probe, verdict: verdict, bitRate: null),
+    t,
+    fromServer: fromServer,
+    locale: Localizations.localeOf(context).toLanguageTag(),
+  );
+  final play = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      key: const Key('undecodable_video_dialog'),
+      title: Text(text.title),
+      content: Text([?text.cause, if (fromServer) t.video_failed_server_hint].join('\n\n')),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(true), child: Text(t.play)),
+        TextButton(autofocus: true, onPressed: () => Navigator.of(context).pop(false), child: Text(t.close)),
+      ],
+    ),
+  );
+  return play ?? false;
 }
 
 /// Plays the video at [url] full screen in the native 360° player, like [openPanoramaVideo] for a video that is no

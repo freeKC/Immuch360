@@ -2587,7 +2587,6 @@
   "tv_oauth_unavailable": "Logowanie przez {provider} otwiera stronę internetową, czego ten telewizor nie potrafi. Zaloguj się zamiast tego adresem e-mail i hasłem.",
   "tv_open_elsewhere_body": "Ten telewizor nie może otwierać stron internetowych. Otwórz ten adres na telefonie lub komputerze:",
   "tv_open_elsewhere_title": "Otwórz na innym urządzeniu",
-  "tv_paused_arrows_hint": "Wstrzymano: strzałki przechodzą do poprzedniego lub następnego elementu",
   "tv_text_entry_hint": "Naciśnij OK, aby pisać",
   "tv_video_360_hint": "Strzałki, aby się rozejrzeć, OK, aby wstrzymać i pokazać sterowanie, Wstecz, aby zamknąć",
   "tv_zoom_in": "Powiększ",

@@ -9,6 +9,7 @@ import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/edit_location.action.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/sheet_tile.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/widgets/asset_viewer/detail_panel/exif_map.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 
@@ -65,7 +66,12 @@ class _LocationDetailsState extends ConsumerState<LocationDetails> {
       return const SizedBox.shrink();
     }
 
-    final editLocation = const EditLocationAction(source: .viewer).create(context, ref);
+    // Read only with the remote control layout: no pencil, and no "Add a location" row for an asset without one
+    final readOnly = ref.watch(tvModeProvider);
+    if (readOnly && !hasCoordinates) {
+      return const SizedBox.shrink();
+    }
+    final editLocation = readOnly ? null : const EditLocationAction(source: .viewer).create(context, ref);
     final locationName = _getLocationName(exifInfo);
     final coordinates = "${exifInfo?.latitude?.toStringAsFixed(4)}, ${exifInfo?.longitude?.toStringAsFixed(4)}";
 

@@ -1,11 +1,14 @@
 // The remote control layout: on by itself on Android TV and Google TV, forced on or off by the setting, never on iOS.
-// On a TV the app is a viewer, as in the read only mode, which a timeline may also scope to itself.
+// On a TV the app is a viewer, as in the read only mode, which a timeline may also scope to itself. A TV has its own
+// Looping setting, off by default.
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
+import 'package:immich_mobile/domain/models/config/viewer_config.dart';
+import 'package:immich_mobile/domain/models/settings_key.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -87,6 +90,47 @@ void main() {
 
       expect(root.read(viewOnlyProvider), isFalse);
       expect(timeline.read(viewOnlyProvider), isTrue);
+    });
+  });
+
+  group('loopVideoProvider', () {
+    bool loops({required bool isTelevision, AppConfig config = const AppConfig()}) {
+      final created = ProviderContainer(
+        overrides: [
+          appConfigProvider.overrideWithValue(config),
+          tvDeviceProvider.overrideWithValue(TvDeviceInfo(isTelevision: isTelevision, isLowRamDevice: false)),
+        ],
+      );
+      addTearDown(created.dispose);
+      return created.read(loopVideoProvider);
+    }
+
+    test('off by default on a TV, on by default elsewhere', () {
+      expect(loops(isTelevision: true), isFalse);
+      expect(loops(isTelevision: false), isTrue);
+    });
+
+    test('each device reads its own setting', () {
+      const phoneOff = AppConfig(viewer: ViewerConfig(loopVideo: false));
+      const tvOn = AppConfig(viewer: ViewerConfig(loopVideoOnTv: true));
+      expect(loops(isTelevision: false, config: phoneOff), isFalse);
+      expect(loops(isTelevision: true, config: phoneOff), isFalse, reason: 'the phone setting is not the TV one');
+      expect(loops(isTelevision: true, config: tvOn), isTrue);
+      expect(loops(isTelevision: false, config: tvOn), isTrue, reason: 'the phone default');
+    });
+
+    test('a phone with the remote control layout forced on keeps its own', () {
+      const config = AppConfig(tvLayout: TvLayoutMode.on);
+      expect(loops(isTelevision: false, config: config), isTrue);
+    });
+
+    test('the TV setting is stored under its own key, which older builds skip', () {
+      expect(SettingsKey.viewerLoopVideoOnTv.name, 'viewerLoopVideoOnTv');
+      expect(const AppConfig().read(SettingsKey.viewerLoopVideoOnTv), isFalse);
+      final written = const AppConfig().write(SettingsKey.viewerLoopVideoOnTv, true);
+      expect(written.viewer.loopVideoOnTv, isTrue);
+      expect(written.viewer.loopVideo, isTrue, reason: 'the phone setting is left alone');
+      expect(AppConfig.fromEntries({SettingsKey.viewerLoopVideoOnTv: true}).viewer.loopVideoOnTv, isTrue);
     });
   });
 

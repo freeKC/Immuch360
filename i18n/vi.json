@@ -2587,7 +2587,6 @@
   "tv_oauth_unavailable": "Đăng nhập bằng {provider} sẽ mở một trang web, điều mà TV này không làm được. Hãy đăng nhập bằng email và mật khẩu.",
   "tv_open_elsewhere_body": "TV này không thể mở trang web. Hãy mở địa chỉ này trên điện thoại hoặc máy tính:",
   "tv_open_elsewhere_title": "Mở trên thiết bị khác",
-  "tv_paused_arrows_hint": "Đã tạm dừng: các mũi tên chuyển đến mục trước hoặc tiếp theo",
   "tv_text_entry_hint": "Nhấn OK để nhập",
   "tv_video_360_hint": "Mũi tên để nhìn xung quanh, OK để tạm dừng và hiện điều khiển, Quay lại để đóng",
   "tv_zoom_in": "Phóng to",

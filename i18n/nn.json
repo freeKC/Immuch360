@@ -920,7 +920,6 @@
   "tv_oauth_unavailable": "Innlogging med {provider} opnar ei nettside, noko denne TV-en ikkje kan. Logg inn med e-post og passord i staden.",
   "tv_open_elsewhere_body": "Denne TV-en kan ikkje opne nettsider. Opne denne adressa på ein telefon eller ei datamaskin:",
   "tv_open_elsewhere_title": "Opne på ei anna eining",
-  "tv_paused_arrows_hint": "Sett på pause: pilene går til førre eller neste element",
   "tv_text_entry_hint": "Trykk på OK for å skrive",
   "tv_video_360_hint": "Piler for å sjå deg rundt, OK for å setje på pause og vise kontrollane, Tilbake for å lukke",
   "tv_zoom_in": "Zoom inn",

@@ -1,6 +1,7 @@
 // The filter sheets of the search page with a remote control: the action rail of the People sheet (Right to Apply, Up
-// to Clear, Left back to the row the focus came from, radio buttons included), the Media Type and Display options
-// sheets whole on a 960 x 540 dp TV screen with their buttons in reach, and the layout of phones unchanged.
+// to Clear, Left back to the row the focus came from, radio buttons included), the Media Type, Display options and
+// date sheets whole on a 960 x 540 dp TV screen with their buttons in reach (the year of the date sheet in a dialog),
+// and the layout of phones unchanged.
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
+import 'package:immich_mobile/presentation/widgets/search/quick_date_picker.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/widgets/search/search_filter/display_option_picker.dart';
 import 'package:immich_mobile/widgets/search/search_filter/filter_bottom_sheet_scaffold.dart';
@@ -16,9 +18,16 @@ import 'package:immich_mobile/widgets/search/search_filter/media_type_picker.dar
 import 'package:immich_mobile/widgets/search/search_filter/search_filter_utils.dart';
 
 void main() {
-  /// Opens [sheet] as the search page does, on a 1920 x 1080 px TV screen (960 x 540 dp)
-  Future<void> open(WidgetTester tester, Widget sheet, {bool tvMode = true, bool isScrollControlled = true}) async {
-    tester.view.physicalSize = const Size(1920, 1080);
+  /// Opens [sheet] as the search page does, on a 1920 x 1080 px TV screen (960 x 540 dp) unless [screen] (in dp) says
+  /// otherwise
+  Future<void> open(
+    WidgetTester tester,
+    Widget sheet, {
+    bool tvMode = true,
+    bool isScrollControlled = true,
+    Size screen = const Size(960, 540),
+  }) async {
+    tester.view.physicalSize = screen * 2;
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
@@ -188,6 +197,146 @@ void main() {
       await tester.pumpAndSettle();
       await press(tester, LogicalKeyboardKey.arrowDown);
       expect(focused(), anyOf(focusOf(tester, 'Clear'), focusOf(tester, 'Apply filter')));
+    });
+  });
+
+  group('date sheet', () {
+    late List<DateFilterInputModel> selected;
+    late int pickerRequests;
+
+    setUp(() {
+      selected = [];
+      pickerRequests = 0;
+    });
+
+    /// The date sheet of the search page
+    Widget dateSheet({DateFilterInputModel? current}) => FilterBottomSheetScaffold(
+      title: 'Select a date range',
+      onClear: () {},
+      child: Flexible(
+        child: QuickDatePicker(currentInput: current, onSelect: selected.add, onRequestPicker: () => pickerRequests++),
+      ),
+    );
+
+    /// The first text of the control that has the focus: the title of a row
+    String? focusedLabel() {
+      final focusedElement = focused()?.context as Element?;
+      String? label;
+      void visit(Element element) {
+        if (label != null) {
+          return;
+        }
+        final widget = element.widget;
+        if (widget is Text) {
+          label = widget.data;
+          return;
+        }
+        element.visitChildren(visit);
+      }
+
+      focusedElement?.visitChildren(visit);
+      return label;
+    }
+
+    final thisYear = DateTime.now().year;
+    final rows = ['Last month', 'Last 3 months', 'Last 9 months', 'In $thisYear', 'Custom range'];
+
+    testWidgets('TV: the five choices whole on screen, one focus stop each, Down from the last reaches Clear', (
+      tester,
+    ) async {
+      await open(tester, dateSheet());
+      expect(tester.takeException(), isNull);
+      for (final row in rows) {
+        expect(tester.getRect(find.text(row)).bottom, lessThanOrEqualTo(540 - TvShell.overscan.bottom), reason: row);
+      }
+      expect(
+        tester.getRect(find.widgetWithText(OutlinedButton, 'Clear')).bottom,
+        lessThanOrEqualTo(540 - TvShell.overscan.bottom),
+      );
+      expect(find.byWidgetPredicate((widget) => widget is DropdownMenu), findsNothing);
+
+      focusOf(tester, rows.first).requestFocus();
+      await tester.pumpAndSettle();
+      final visited = [focusedLabel()];
+      for (var i = 1; i < rows.length; i++) {
+        await press(tester, LogicalKeyboardKey.arrowDown);
+        visited.add(focusedLabel());
+      }
+      expect(visited, rows);
+
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      expect(focused(), focusOf(tester, 'Clear'));
+      expect(selected, isEmpty, reason: 'a move is no choice');
+    });
+
+    testWidgets('TV: OK on the year opens the years, the current one focused, and a year is picked', (tester) async {
+      await open(tester, dateSheet(current: YearFilter(thisYear - 1)));
+      expect(find.text('In ${thisYear - 1}'), findsOneWidget);
+      focusOf(tester, 'Last 9 months').requestFocus();
+      await tester.pumpAndSettle();
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      expect(focusedLabel(), 'In ${thisYear - 1}');
+
+      await press(tester, LogicalKeyboardKey.select);
+      final dialog = find.byType(SimpleDialog);
+      expect(dialog, findsOneWidget);
+      expect(find.descendant(of: dialog, matching: find.text('Year')), findsOneWidget);
+      // Newest first, down to 2000
+      final years = tester
+          .widgetList<ListTile>(find.descendant(of: dialog, matching: find.byType(ListTile)))
+          .map((tile) => (tile.title as Text?)?.data)
+          .toList();
+      expect(years.first, '$thisYear');
+      expect(years.last, '2000');
+      expect(focusedLabel(), '${thisYear - 1}');
+
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      await press(tester, LogicalKeyboardKey.select);
+
+      expect(dialog, findsNothing);
+      expect(selected, hasLength(1));
+      expect((selected.single as YearFilter).year, thisYear - 3);
+    });
+
+    testWidgets('TV: Back closes the years and picks nothing; OK on Custom range asks for the range', (tester) async {
+      await open(tester, dateSheet());
+      focusOf(tester, 'Last 9 months').requestFocus();
+      await tester.pumpAndSettle();
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      await press(tester, LogicalKeyboardKey.select);
+      expect(find.byType(SimpleDialog), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.byType(SimpleDialog), findsNothing);
+      expect(selected, isEmpty);
+      expect(focusedLabel(), 'In $thisYear');
+
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      expect(focusedLabel(), 'Custom range');
+      await press(tester, LogicalKeyboardKey.select);
+      expect(pickerRequests, 1);
+    });
+
+    testWidgets('phone, portrait: as high as its choices, the year menu kept', (tester) async {
+      await open(tester, dateSheet(), tvMode: false, screen: const Size(390, 844));
+      expect(tester.takeException(), isNull);
+      for (final row in rows.where((row) => !row.startsWith('In '))) {
+        expect(tester.getRect(find.text(row)).bottom, lessThanOrEqualTo(844), reason: row);
+      }
+      expect(find.byWidgetPredicate((widget) => widget is DropdownMenu), findsOneWidget);
+      final sheetTop = tester.getRect(find.text('Select a date range')).top;
+      expect(sheetTop, greaterThan(844 / 3), reason: 'not stretched to the whole screen');
+    });
+
+    testWidgets('phone, landscape: the choices scroll above the buttons', (tester) async {
+      await open(tester, dateSheet(), tvMode: false, screen: const Size(844, 390));
+      expect(tester.takeException(), isNull);
+      final scrollable = tester.state<ScrollableState>(
+        find.descendant(of: find.byType(QuickDatePicker), matching: find.byType(Scrollable)).first,
+      );
+      expect(scrollable.position.maxScrollExtent, greaterThan(0));
+      expect(tester.getRect(find.widgetWithText(OutlinedButton, 'Clear')).bottom, lessThanOrEqualTo(390));
     });
   });
 

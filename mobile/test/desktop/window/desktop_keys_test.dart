@@ -46,7 +46,7 @@ void main() {
         debugDefaultTargetPlatformOverride = platform;
         expect(remoteSeekForwardKeys, {LogicalKeyboardKey.mediaFastForward}, reason: platform.name);
         expect(remoteSeekBackwardKeys, {LogicalKeyboardKey.mediaRewind}, reason: platform.name);
-        expect(remoteDetailsKeys, {LogicalKeyboardKey.info}, reason: platform.name);
+        expect(remoteDetailsKeys, {LogicalKeyboardKey.info, LogicalKeyboardKey.contextMenu}, reason: platform.name);
       }
     });
 

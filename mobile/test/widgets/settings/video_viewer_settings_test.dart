@@ -4,7 +4,9 @@ import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/settings_key.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/widgets/settings/asset_viewer_settings/video_viewer_settings.dart';
 
 import '../../unit/presentation/presentation_context.dart';
@@ -68,6 +70,34 @@ void main() {
     expect(spatialSwitch, findsNothing);
     expect(find.byType(SwitchListTile), findsNWidgets(2), reason: 'the other video settings stay');
     expect(find.text('Video source'), findsOneWidget);
+  });
+
+  group('looping', () {
+    final loopSwitch = find.widgetWithText(SwitchListTile, 'Looping');
+
+    testWidgets('on by default on a phone, and stored as the phone setting', (tester) async {
+      await tester.pumpTestWidget(context, const VideoViewerSettings());
+      expect(tester.widget<SwitchListTile>(loopSwitch).value, isTrue);
+
+      await tester.tap(loopSwitch);
+      await tester.pumpAndSettle();
+
+      expect(SettingsRepository.instance.appConfig.viewer.loopVideo, isFalse);
+      expect(SettingsRepository.instance.appConfig.viewer.loopVideoOnTv, isFalse, reason: 'untouched');
+    });
+
+    testWidgets('off by default on a TV, and stored as the TV setting', (tester) async {
+      final tv = [tvDeviceProvider.overrideWithValue(TvDeviceInfo(isTelevision: true, isLowRamDevice: false))];
+      await tester.pumpTestWidget(context, const VideoViewerSettings(), overrides: tv);
+      expect(tester.widget<SwitchListTile>(loopSwitch).value, isFalse);
+
+      await tester.tap(loopSwitch);
+      await tester.pumpAndSettle();
+
+      expect(tester.widget<SwitchListTile>(loopSwitch).value, isTrue);
+      expect(SettingsRepository.instance.appConfig.viewer.loopVideoOnTv, isTrue);
+      expect(SettingsRepository.instance.appConfig.viewer.loopVideo, isTrue, reason: 'the phone setting is left alone');
+    });
   });
 
   group('video source', () {

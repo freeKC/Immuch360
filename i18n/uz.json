@@ -364,7 +364,6 @@
   "tv_oauth_unavailable": "{provider} orqali kirish veb-sahifani ochadi, bu televizor esa buni qila olmaydi. O'rniga elektron pochta va parol bilan kiring.",
   "tv_open_elsewhere_body": "Bu televizor veb-sahifalarni ocha olmaydi. Bu manzilni telefon yoki kompyuterda oching:",
   "tv_open_elsewhere_title": "Boshqa qurilmada ochish",
-  "tv_paused_arrows_hint": "Pauza: strelkalar oldingi yoki keyingi elementga o'tadi",
   "tv_text_entry_hint": "Yozish uchun OK ni bosing",
   "tv_video_360_hint": "Atrofga qarash uchun strelkalar, pauza va boshqaruvni ko'rsatish uchun OK, yopish uchun Orqaga",
   "tv_zoom_in": "Yaqinlashtirish",

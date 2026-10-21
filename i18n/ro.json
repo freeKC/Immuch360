@@ -2575,7 +2575,6 @@
   "tv_oauth_unavailable": "Conectarea cu {provider} deschide o pagină web, ceea ce acest televizor nu poate face. Conectați-vă în schimb cu un e-mail și o parolă.",
   "tv_open_elsewhere_body": "Acest televizor nu poate deschide pagini web. Deschideți această adresă pe un telefon sau un computer:",
   "tv_open_elsewhere_title": "Deschideți pe alt dispozitiv",
-  "tv_paused_arrows_hint": "În pauză: săgețile trec la elementul anterior sau următor",
   "tv_text_entry_hint": "Apăsați OK pentru a scrie",
   "tv_video_360_hint": "Săgeți pentru a privi în jur, OK pentru pauză și afișarea comenzilor, Înapoi pentru a închide",
   "tv_zoom_in": "Mărire",

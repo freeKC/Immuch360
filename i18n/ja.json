@@ -2585,7 +2585,6 @@
   "tv_oauth_unavailable": "{provider} でのサインインはウェブページを開きますが、このテレビではできません。代わりにメールアドレスとパスワードでサインインしてください。",
   "tv_open_elsewhere_body": "このテレビではウェブページを開けません。このアドレスをスマートフォンかコンピューターで開いてください:",
   "tv_open_elsewhere_title": "別のデバイスで開く",
-  "tv_paused_arrows_hint": "一時停止中: 矢印で前後の項目に移動します",
   "tv_text_entry_hint": "OK を押して入力",
   "tv_video_360_hint": "矢印で見回す、OK で一時停止してコントロールを表示、戻るで閉じる",
   "tv_zoom_in": "拡大",

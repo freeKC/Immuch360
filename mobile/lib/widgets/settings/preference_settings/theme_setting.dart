@@ -6,6 +6,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/theme.provider.dart';
 import 'package:immich_mobile/widgets/settings/preference_settings/primary_color_setting.dart';
 import 'package:immich_ui/immich_ui.dart';
 
@@ -14,8 +16,13 @@ class ThemeSetting extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // On a TV, Automatic is dark (see appThemeModeProvider) and only the Dark mode switch is offered: on or off, as
+    // the app shows it
+    final television = ref.watch(tvDeviceProvider).isTelevision;
     final currentTheme = useState(ref.watch(appConfigProvider.select((config) => config.theme.mode)));
-    final isDarkTheme = useValueNotifier(currentTheme.value == ThemeMode.dark);
+    final isDarkTheme = useValueNotifier(
+      resolveThemeMode(currentTheme.value, television: television) == ThemeMode.dark,
+    );
     final isSystemTheme = useValueNotifier(currentTheme.value == ThemeMode.system);
     final colorfulInterface = useValueNotifier(
       ref.watch(appConfigProvider.select((config) => config.theme.colorfulInterface)),
@@ -52,12 +59,13 @@ class ThemeSetting extends HookConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SettingGroupTitle(title: context.t.theme, icon: Icons.color_lens_outlined),
-        SettingsSwitchListTile(
-          valueNotifier: isSystemTheme,
-          title: context.t.theme_setting_system_theme_switch,
-          onChanged: onSystemThemeChange,
-        ),
-        if (currentTheme.value != ThemeMode.system)
+        if (!television)
+          SettingsSwitchListTile(
+            valueNotifier: isSystemTheme,
+            title: context.t.theme_setting_system_theme_switch,
+            onChanged: onSystemThemeChange,
+          ),
+        if (television || currentTheme.value != ThemeMode.system)
           SettingsSwitchListTile(
             valueNotifier: isDarkTheme,
             title: context.t.map_settings_dark_mode,

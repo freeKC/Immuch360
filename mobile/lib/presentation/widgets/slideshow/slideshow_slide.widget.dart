@@ -139,6 +139,10 @@ class _SlideshowVideo extends ConsumerWidget {
           onCompleted();
         }
       }
+      // A video that does not play does not hold the slideshow up
+      if (status == VideoPlaybackStatus.failed && isCurrent) {
+        onCompleted();
+      }
     });
 
     return PhotoView.customChild(

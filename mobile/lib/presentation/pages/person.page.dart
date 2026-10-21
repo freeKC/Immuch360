@@ -8,6 +8,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/people/person_option_sheet.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/utils/people.utils.dart';
 import 'package:immich_mobile/widgets/common/person_sliver_app_bar.dart';
@@ -74,6 +75,9 @@ class _PersonPageState extends ConsumerState<PersonPage> {
 
   @override
   Widget build(BuildContext context) {
+    // The read only mode, or a TV, where the app is a viewer: the name and the birthday are not edited from here (the
+    // details of a photo on a TV lead here, read only themselves)
+    final viewOnly = ref.watch(viewOnlyProvider);
     return ProviderScope(
       overrides: [
         timelineServiceProvider.overrideWith((ref) {
@@ -91,9 +95,9 @@ class _PersonPageState extends ConsumerState<PersonPage> {
       child: Timeline(
         appBar: PersonSliverAppBar(
           person: _person,
-          onNameTap: () => handleEditName(context),
-          onBirthdayTap: () => handleEditBirthday(context),
-          onShowOptions: () => showOptionSheet(context),
+          onNameTap: viewOnly ? null : () => handleEditName(context),
+          onBirthdayTap: viewOnly ? null : () => handleEditBirthday(context),
+          onShowOptions: viewOnly ? null : () => showOptionSheet(context),
         ),
       ),
     );

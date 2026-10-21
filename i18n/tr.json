@@ -2588,7 +2588,6 @@
   "tv_oauth_unavailable": "{provider} ile oturum açmak bir web sayfası açar ve bu televizyon bunu yapamaz. Bunun yerine e-posta ve şifreyle oturum açın.",
   "tv_open_elsewhere_body": "Bu televizyon web sayfalarını açamaz. Bu adresi bir telefonda veya bilgisayarda açın:",
   "tv_open_elsewhere_title": "Başka bir cihazda aç",
-  "tv_paused_arrows_hint": "Duraklatıldı: oklar önceki veya sonraki öğeye gider",
   "tv_text_entry_hint": "Yazmak için OK'e basın",
   "tv_video_360_hint": "Etrafa bakmak için oklar, duraklatmak ve kontrolleri göstermek için OK, kapatmak için Geri",
   "tv_zoom_in": "Yakınlaştır",

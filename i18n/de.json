@@ -2588,7 +2588,6 @@
   "tv_oauth_unavailable": "Die Anmeldung mit {provider} öffnet eine Webseite, was dieser Fernseher nicht kann. Melde dich stattdessen mit E-Mail und Passwort an.",
   "tv_open_elsewhere_body": "Dieser Fernseher kann keine Webseiten öffnen. Öffne diese Adresse auf einem Handy oder Computer:",
   "tv_open_elsewhere_title": "Auf einem anderen Gerät öffnen",
-  "tv_paused_arrows_hint": "Pausiert: Die Pfeile gehen zum vorherigen oder nächsten Element",
   "tv_text_entry_hint": "OK drücken, um zu tippen",
   "tv_video_360_hint": "Pfeile zum Umsehen, OK zum Pausieren und Anzeigen der Bedienelemente, Zurück zum Schließen",
   "tv_zoom_in": "Vergrößern",

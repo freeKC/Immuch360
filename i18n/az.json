@@ -523,7 +523,6 @@
   "tv_oauth_unavailable": "{provider} ilə daxil olmaq veb səhifə açır, bu televizor isə bunu edə bilmir. Bunun əvəzinə e-poçt və parolla daxil olun.",
   "tv_open_elsewhere_body": "Bu televizor veb səhifələri aça bilmir. Bu ünvanı telefonda və ya kompüterdə açın:",
   "tv_open_elsewhere_title": "Başqa cihazda aç",
-  "tv_paused_arrows_hint": "Fasilədə: oxlar əvvəlki və ya növbəti elementə keçir",
   "tv_text_entry_hint": "Yazmaq üçün OK basın",
   "tv_video_360_hint": "Ətrafa baxmaq üçün oxlar, fasilə və idarəetməni göstərmək üçün OK, bağlamaq üçün Geri",
   "tv_zoom_in": "Yaxınlaşdır",

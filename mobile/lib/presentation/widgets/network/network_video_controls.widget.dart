@@ -7,6 +7,7 @@ import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/widgets/asset_viewer/animated_play_pause.dart';
@@ -14,7 +15,8 @@ import 'package:immich_mobile/widgets/asset_viewer/animated_play_pause.dart';
 const _shadows = [Shadow(color: Colors.black87, blurRadius: 6, offset: Offset(0, 1))];
 
 /// Play, pause and seek for the player of a video of a network share, the one of [videoPlayerProvider] under
-/// [playerKey]
+/// [playerKey]. On a TV -10 s and +10 s buttons follow play and pause, for the remotes without fast forward and rewind:
+/// left and right go to the previous or next file there (see remoteVideoArrows).
 class NetworkVideoControls extends ConsumerWidget {
   const NetworkVideoControls({super.key, required this.playerKey, this.playFocusNode});
 
@@ -31,6 +33,7 @@ class NetworkVideoControls extends ConsumerWidget {
     final isPlaying = status == VideoPlaybackStatus.playing || status == VideoPlaybackStatus.buffering;
     final isFinished = status == VideoPlaybackStatus.completed;
     final isLoaded = duration != Duration.zero;
+    final tvMode = ref.watch(tvModeProvider);
 
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
@@ -54,6 +57,26 @@ class NetworkVideoControls extends ConsumerWidget {
               ),
               // The computers' player lists the audio tracks of a video that has several
               if (CurrentPlatform.isDesktop) const DesktopAudioTrackButton(shadows: _shadows),
+              if (tvMode) ...[
+                IconButton(
+                  key: const Key('network_video_seek_back'),
+                  iconSize: 32,
+                  padding: const EdgeInsets.all(12),
+                  constraints: const BoxConstraints(),
+                  tooltip: context.t.desktop_video_seek_back,
+                  icon: const Icon(Icons.replay_10, color: Colors.white, shadows: _shadows),
+                  onPressed: isLoaded ? () => notifier.seekBy(-remoteSeekStep) : null,
+                ),
+                IconButton(
+                  key: const Key('network_video_seek_forward'),
+                  iconSize: 32,
+                  padding: const EdgeInsets.all(12),
+                  constraints: const BoxConstraints(),
+                  tooltip: context.t.desktop_video_seek_forward,
+                  icon: const Icon(Icons.forward_10, color: Colors.white, shadows: _shadows),
+                  onPressed: isLoaded ? () => notifier.seekBy(remoteSeekStep) : null,
+                ),
+              ],
               const Spacer(),
               IgnorePointer(
                 child: Text(
@@ -69,9 +92,10 @@ class NetworkVideoControls extends ConsumerWidget {
               const SizedBox(width: 12),
             ],
           ),
-          // On a TV the page seeks with left and right: a focused slider would keep the arrows (Flutter issue 54984)
+          // On a TV the arrows belong to the page and to the buttons: a focused slider would keep them (Flutter issue
+          // 54984)
           ExcludeFocus(
-            excluding: ref.watch(tvModeProvider),
+            excluding: tvMode,
             child: Slider(
               value: min(position.inMicroseconds.toDouble(), duration.inMicroseconds.toDouble()),
               min: 0,

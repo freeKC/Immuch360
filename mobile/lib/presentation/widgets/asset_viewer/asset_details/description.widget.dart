@@ -5,6 +5,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/infrastructure/action.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/widgets/common/immich_toast.dart';
 
@@ -61,6 +62,16 @@ class _SheetAssetDescriptionState extends ConsumerState<SheetAssetDescription> {
     final isOwner = ref.watch(currentUserProvider)?.id == (asset is RemoteAsset ? asset.ownerId : null);
 
     final currentDescription = widget.exifInfo?.description ?? '';
+    // Read only with the remote control layout: the field took the focus on the way down the details and opened the
+    // keyboard of the TV, and the app changes nothing there (see viewOnlyProvider). No description, no row.
+    if (ref.watch(tvModeProvider)) {
+      return currentDescription.isEmpty
+          ? const SizedBox.shrink()
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+              child: Text(currentDescription, style: Theme.of(context).textTheme.bodyLarge),
+            );
+    }
     final hintText = isOwner ? context.t.exif_bottom_sheet_description : context.t.exif_bottom_sheet_no_description;
     if (_controller.text != currentDescription && !_descriptionFocus.hasFocus) {
       _controller.text = currentDescription;
