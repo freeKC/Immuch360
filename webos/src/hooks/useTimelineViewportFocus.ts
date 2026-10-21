@@ -91,7 +91,8 @@ export const useTimelineViewportFocus = ({enabled, viewportRef, rightEdgeSpotlig
 			// Focus lives elsewhere on screen (rail, search input, header) — leave it to Spotlight.
 			if (current && current !== document.body && document.contains(current) && !viewport.contains(current)) return;
 
-			if (page) {
+			if (!dir) {
+				// A channel key: a page up or down
 				viewport.scrollTop = Math.max(0, viewport.scrollTop + page * vr.height * PAGE_FRACTION);
 				consume(event);
 				focusFirstInView(viewport, PAGE_FOCUS_TRIES);
