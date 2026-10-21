@@ -13,6 +13,12 @@ any later version (LGPL-2.1-or-later). Its text follows this notice and is in
 LICENCE-LGPL-2.1.txt. libsmb2's own COPYING file, next to it, says which parts
 of libsmb2 are under which licence.
 
+Source: this app carries the corresponding source of its libsmb2, the file
+Immuch360-libsmb2-sources.tar.gz next to this notice among the assets of the
+app (flutter_assets/packages/dart_smb2/libsmb2/). WHERE THE SOURCE IS, below,
+says where that is in each package and how to extract it. The releases of
+Immuch360 on GitHub carry the same file.
+
 WHICH LIBSMB2 THIS IS
 
 Every build of Immuch360 carries libsmb2 at upstream commit
@@ -23,7 +29,8 @@ f0688e739ec56842981e455cf8eba4a34e7682e7
 
 - Android, iOS, macOS and Windows: the binaries of release libsmb2-r8 of
 https://github.com/ales-drnz/dart_smb2, which dart_smb2 0.1.3 downloads and
-checks by their SHA-256.
+checks by their SHA-256 (the Android build strips their symbol tables when it
+packs them into an APK).
 
 - Linux: a library Immuch360 builds from the same sources on Ubuntu 22.04, so
 that it runs with glibc 2.25 or later (.github/desktop/libsmb2/build_linux.sh
@@ -66,20 +73,51 @@ sources compiled again.
 
 WHERE THE SOURCE IS
 
-The corresponding source of every libsmb2 binary in Immuch360 is:
+The corresponding source of every libsmb2 binary in Immuch360 is the archive
+Immuch360-libsmb2-sources.tar.gz. It holds libsmb2-scripts at commit
+f0688e739ec56842981e455cf8eba4a34e7682e7 (its patches, its configuration
+header, the wrapper built into the library and the build script of each
+system), the archive of libsmb2 at commit
+595d128b4d11a88a335eee961689a157e4f76cd3 in the cache of those scripts
+(SHA-256 b4e3fe3890655dce283a39caf47a0a4adf1e0a5ab1a6a33235e5cabcdb336249),
+the Linux build script of Immuch360 and a README.txt that says how to build
+libsmb2 from it without the network.
 
-- libsmb2 at commit 595d128b4d11a88a335eee961689a157e4f76cd3:
-https://github.com/sahlberg/libsmb2/archive/595d128b4d11a88a335eee961689a157e4f76cd3.tar.gz
-(SHA-256 b4e3fe3890655dce283a39caf47a0a4adf1e0a5ab1a6a33235e5cabcdb336249);
+In the app: every build carries the archive among the assets of the dart_smb2
+package, next to this notice:
 
-- libsmb2-scripts at commit f0688e739ec56842981e455cf8eba4a34e7682e7, with the
-patches, the configuration header and the build script of each system:
+- Android (phone, TV, Quest): in the APK, a ZIP file any unzip tool opens, at
+assets/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
+
+For the app installed from a store, "adb shell pm path com.aprogsys.immuch360"
+names its base.apk, which "adb pull" copies to a computer.
+
+- iOS: in the IPA (a ZIP file), at
+Payload/Immuch360.app/Frameworks/App.framework/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
+
+- Windows: in the folder of the app, at
+data\flutter_assets\packages\dart_smb2\libsmb2\Immuch360-libsmb2-sources.tar.gz
+
+- macOS: in the app (Show Package Contents in the Finder), at
+Contents/Frameworks/App.framework/Resources/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
+
+- Linux (.deb and .rpm), at
+/opt/immuch360/data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
+
+Then "tar -xzf Immuch360-libsmb2-sources.tar.gz" (or 7-Zip on Windows)
+extracts the sources.
+
+On GitHub: every release of Immuch360 that carries libsmb2, on
+https://github.com/freeKC/Immuch360/releases, has the same archive as a file:
+Immuch360-libsmb2-sources.tar.gz on the releases of the phone, TV and Quest
+apps and on desktop builds 1 to 6, and
+Immuch360-Desktop-<version>-libsmb2-sources.tar.gz, listed in SHA256SUMS.txt,
+on the releases of Immuch360 Desktop from desktop build 7 on.
+
+The same sources are public upstream:
 https://github.com/ales-drnz/libsmb2-scripts/tree/f0688e739ec56842981e455cf8eba4a34e7682e7
-
-Each release of Immuch360 Desktop also carries both, with the Linux build
-script of Immuch360, in its file
-Immuch360-Desktop-<version>-libsmb2-sources.tar.gz on
-https://github.com/freeKC/Immuch360/releases, its SHA-256 in SHA256SUMS.txt.
+and
+https://github.com/sahlberg/libsmb2/archive/595d128b4d11a88a335eee961689a157e4f76cd3.tar.gz
 
 YOUR RIGHTS
 
@@ -87,10 +125,22 @@ You may replace this library with your own build of libsmb2, for example one
 made from these sources with your changes. Immuch360 uses libsmb2 through its
 C functions only and loads it by name at run time: the desktop app takes the
 file in its own folder (lib/libsmb2.so on Linux, libsmb2.dll on Windows,
-Contents/Frameworks/libsmb2.framework on macOS). Immuch360 is free software
-itself (GNU AGPL version 3, https://github.com/freeKC/Immuch360), so the
-phone, TV and Quest apps can be built again from their source with another
-libsmb2.
+Contents/Frameworks/libsmb2.framework on macOS). On macOS, sign the app again
+for your computer after the change, as macOS refuses an app whose files
+changed after it was signed:
+
+    codesign --force --deep --sign - "Immuch360 Desktop.app"
+
+Immuch360 is free software itself (GNU AGPL version 3,
+https://github.com/freeKC/Immuch360), so the phone, TV and Quest apps can be
+built again from their source with another libsmb2. The build of
+mobile/packages/dart_smb2 puts the libsmb2-r8 binaries back whenever a file
+differs from the SHA-256 it pins (android/build.gradle.kts, the podspecs of
+ios and macos, windows/CMakeLists.txt), so either set those pinned hashes to
+the ones of your build, or comment out the block between the smb2kit:remote
+markers of each of these files (the LOCAL mode of libsmb2-scripts) to build
+with the library you put in place of the downloaded one; on Linux, the
+variable IMMUCH360_LIBSMB2 names the libsmb2.so to bundle.
 
 OTHER NOTICES INSIDE LIBSMB2
 
@@ -98,7 +148,7 @@ The DCE/RPC code that libsmb2 builds in for the list of shares
 (libdcerpc/dcerpc.c and libdcerpc/dcerpc-srvsvc.c) is under the BSD 2-Clause
 licence:
 
-Copyright (C) 2018 by Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Copyright (C) 2018-2026 by Ronnie Sahlberg <ronniesahlberg@gmail.com>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
