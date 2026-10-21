@@ -13,7 +13,7 @@ class StarRatingPicker extends HookWidget {
   Widget build(BuildContext context) {
     final selectedRating = useState(filter);
 
-    return RadioGroup(
+    final choices = RadioGroup(
       groupValue: selectedRating.value?.rating.fold((v) => v ?? 0, () => null),
       onChanged: (int? newValue) {
         if (newValue == null) {
@@ -34,5 +34,14 @@ class StarRatingPicker extends HookWidget {
         ),
       ),
     );
+
+    // Six radio tiles are taller than a TV filter sheet once its title and
+    // overscan margins are accounted for. Keep the list scrollable so every
+    // rating remains accessible without pushing Clear/Apply off-screen.
+    if (MediaQuery.navigationModeOf(context) == NavigationMode.directional) {
+      return SingleChildScrollView(child: choices);
+    }
+
+    return choices;
   }
 }
