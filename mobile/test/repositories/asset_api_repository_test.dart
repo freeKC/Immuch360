@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/services/network_upload.service.dart';
 import 'package:immich_mobile/repositories/asset_api.repository.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:openapi/api.dart';
@@ -29,28 +30,28 @@ void main() {
     return asset;
   }
 
-  group('isInLibrary', () {
-    test('is true for an asset the server has, in or out of the trash', () async {
+  group('presence', () {
+    test('tells an asset in the library from one in the trash', () async {
       answer('kept', () async => asset(isTrashed: false));
       answer('trashed', () async => asset(isTrashed: true));
 
-      expect(await sut.isInLibrary('kept'), isTrue);
+      expect(await sut.presence('kept'), RemoteAssetPresence.inLibrary);
       // The server answers "duplicate" to a new upload of a trashed file and leaves it in the trash
-      expect(await sut.isInLibrary('trashed'), isTrue);
+      expect(await sut.presence('trashed'), RemoteAssetPresence.inTrash);
     });
 
-    test('is false for an asset the server does not have', () async {
+    test('is gone for an asset the server does not have', () async {
       answer('deleted', () => throw ApiException(400, 'Not found or no asset.read access'));
       answer('gone', () => throw ApiException(404, 'Not found'));
 
-      expect(await sut.isInLibrary('deleted'), isFalse);
-      expect(await sut.isInLibrary('gone'), isFalse);
+      expect(await sut.presence('deleted'), RemoteAssetPresence.gone);
+      expect(await sut.presence('gone'), RemoteAssetPresence.gone);
     });
 
     test('throws when the server cannot tell', () async {
       answer('any', () => throw ApiException(500, 'Internal server error'));
 
-      await expectLater(sut.isInLibrary('any'), throwsA(isA<ApiException>()));
+      await expectLater(sut.presence('any'), throwsA(isA<ApiException>()));
     });
   });
 }

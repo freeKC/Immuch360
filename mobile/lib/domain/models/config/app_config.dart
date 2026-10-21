@@ -45,6 +45,9 @@ abstract class AppConfig with _$AppConfig {
     @Default(NetworkConfig()) NetworkConfig network,
     @Default(ShareConfig()) ShareConfig share,
     @Default(FeatureMessageConfig()) FeatureMessageConfig featureMessage,
+    // Stored by name, like the others: older builds skip them
+    @Default(false) bool uploadTagSpheres,
+    @Default(false) bool djiImportEnabled,
   }) = _AppConfig;
 
   T read<T>(SettingsKey<T> key) =>
@@ -99,6 +102,8 @@ abstract class AppConfig with _$AppConfig {
             .slideshowLook => slideshow.look,
             .slideshowDirection => slideshow.direction,
             .featureMessageSeenRelease => featureMessage.seenRelease,
+            .uploadTagSpheres => uploadTagSpheres,
+            .djiImportEnabled => djiImportEnabled,
           })
           as T;
 
@@ -159,6 +164,8 @@ abstract class AppConfig with _$AppConfig {
       .slideshowLook => copyWith(slideshow: slideshow.copyWith(look: value as SlideshowLook)),
       .slideshowDirection => copyWith(slideshow: slideshow.copyWith(direction: value as SlideshowDirection)),
       .featureMessageSeenRelease => copyWith(featureMessage: featureMessage.copyWith(seenRelease: value as SemVer)),
+      .uploadTagSpheres => copyWith(uploadTagSpheres: value as bool),
+      .djiImportEnabled => copyWith(djiImportEnabled: value as bool),
     };
   }
 }

@@ -8,14 +8,18 @@ import 'dart:math';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/network_upload.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
+import 'package:immich_mobile/domain/services/video_location.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/providers/infrastructure/db.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/repositories/asset_api.repository.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
+import 'package:maplibre_gl/maplibre_gl.dart' show LatLng;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -36,13 +40,53 @@ final uploadRecordStoreProvider = Provider<UploadRecordStore>((ref) {
   );
 });
 
+/// Sets the place of the videos of drones from their flight data once the server has read them (see
+/// VideoLocationService); the places that wait for the server are kept per server and user in the support folder of
+/// the app, none without a user. Tests replace it.
+final videoLocationServiceProvider = Provider<VideoLocationService>((ref) {
+  final userId = ref.watch(currentUserProvider.select((user) => user?.id));
+  final server = Store.tryGet(StoreKey.serverUrl) ?? Store.tryGet(StoreKey.serverEndpoint);
+  return VideoLocationService(
+    _AssetApiPlaces(ref),
+    () async => userId == null || server == null
+        ? null
+        : File(p.join((await getApplicationSupportDirectory()).path, VideoLocationService.fileNameFor(server, userId))),
+  );
+});
+
+/// The place step through the asset api, read at each call: the api is not needed before
+class _AssetApiPlaces implements VideoLocationApi {
+  const _AssetApiPlaces(this._ref);
+
+  final Ref _ref;
+
+  @override
+  Future<AssetPlaceState?> placeState(String assetId) => _ref.read(assetApiRepositoryProvider).placeState(assetId);
+
+  @override
+  Future<void> setLocation(String assetId, double latitude, double longitude) =>
+      _ref.read(assetApiRepositoryProvider).update([assetId], location: .some(LatLng(latitude, longitude)));
+}
+
 final networkUploadServiceProvider = Provider<NetworkUploadService>(
   (ref) => NetworkUploadService(
     ref.watch(foregroundUploadServiceProvider),
     ref.watch(uploadRecordStoreProvider),
-    // Read once a file recorded before is selected again: the api is not needed before
-    (remoteId) => ref.read(assetApiRepositoryProvider).isInLibrary(remoteId),
+    // Read once a file recorded before is selected again, or the server answers "duplicate": not needed before
+    (remoteId) => ref.read(assetApiRepositoryProvider).presence(remoteId),
+    // What the browser read of a photo already, else read now: a sphere of a drone gets its sidecar
+    mediaInfo: (fileSystem, entry) =>
+        ref.read(networkMediaServiceProvider).detect(entry, networkFileReader(fileSystem, entry.path)),
+    placeVideo: (remoteId, latitude, longitude, {stop}) =>
+        ref.read(videoLocationServiceProvider).place(remoteId, latitude, longitude, stop: stop),
   ),
+);
+
+/// Whether the assets among the ids given sit in the trash, as the timeline synced from the server last tells; the
+/// assets it does not know are left out. No request to the server. Tests replace it.
+final remoteTrashStatesProvider = Provider<Future<Map<String, bool>> Function(Set<String> ids)>(
+  (ref) =>
+      (ids) => ref.read(driftProvider).remoteAssetRepository.trashStates(ids),
 );
 
 /// The files of the shares sent to the server, by [UploadRecordStore.keyOf]: empty until the record is read
@@ -66,6 +110,36 @@ class NetworkUploadRecordsNotifier extends Notifier<Map<String, UploadRecord>> {
   Future<void> refresh() async {
     final records = await ref.read(uploadRecordStoreProvider).load();
     state = Map.unmodifiable(records);
+  }
+
+  /// Marks the records of [entries] whose asset the timeline shows in the trash of the server, and unmarks those
+  /// restored since, in one look at the timeline (see [remoteTrashStatesProvider]): a file put in the trash after its
+  /// upload loses its cloud mark before the user clears the drone or the card. A record whose asset the timeline does
+  /// not know is left as it is (sent a moment ago, or deleted for good: the server is asked when it is sent again).
+  Future<void> checkTrash(Iterable<NetworkEntry> entries) async {
+    final store = ref.read(uploadRecordStoreProvider);
+    final records = await store.load();
+    final ids = <String>{
+      for (final entry in entries)
+        if (records[UploadRecordStore.keyOf(entry)] case final UploadRecord record) record.remoteId,
+    };
+    if (ids.isEmpty) {
+      return;
+    }
+    final states = await ref.read(remoteTrashStatesProvider)(ids);
+    final changed = await store.markTrash(
+      trashed: {
+        for (final MapEntry(:key, :value) in states.entries)
+          if (value) key,
+      },
+      restored: {
+        for (final MapEntry(:key, :value) in states.entries)
+          if (!value) key,
+      },
+    );
+    if (changed) {
+      await refresh();
+    }
   }
 }
 
@@ -110,6 +184,9 @@ class NetworkUploadState {
 class NetworkUploadNotifier extends Notifier<NetworkUploadState> {
   Completer<void>? _cancelToken;
 
+  /// The share the upload under way reads
+  String? _sourceId;
+
   @override
   NetworkUploadState build() {
     // A session without a server has nowhere to send the files anymore
@@ -121,9 +198,14 @@ class NetworkUploadNotifier extends Notifier<NetworkUploadState> {
     return const NetworkUploadState();
   }
 
-  /// Sends the files among [entries] of the share [sourceId]; null when an upload is already under way. Throws when
-  /// the share cannot be reached. Once [stop] was called, the upload it stopped no longer changes the state.
-  Future<NetworkUploadSummary?> upload(String sourceId, List<NetworkEntry> entries) async {
+  /// Sends the files among [entries] of the share [sourceId], with [options]; null when an upload is already under way.
+  /// Throws when the share cannot be reached. Once [stop] was called, the upload it stopped no longer changes the
+  /// state.
+  Future<NetworkUploadSummary?> upload(
+    String sourceId,
+    List<NetworkEntry> entries, {
+    NetworkUploadOptions options = const NetworkUploadOptions(),
+  }) async {
     if (state.isRunning) {
       return null;
     }
@@ -139,6 +221,7 @@ class NetworkUploadNotifier extends Notifier<NetworkUploadState> {
 
     final cancelToken = Completer<void>();
     _cancelToken = cancelToken;
+    _sourceId = sourceId;
     bool isCurrent() => identical(_cancelToken, cancelToken);
     state = NetworkUploadState(
       isRunning: true,
@@ -151,6 +234,7 @@ class NetworkUploadNotifier extends Notifier<NetworkUploadState> {
         fileSystem,
         files,
         cancelToken: cancelToken,
+        options: options,
         listener: NetworkUploadListener(
           onProgress: (id, progress) {
             if (isCurrent() && state.progress.containsKey(id)) {
@@ -164,6 +248,9 @@ class NetworkUploadNotifier extends Notifier<NetworkUploadState> {
             final progress = {...state.progress};
             if (outcome == NetworkUploadOutcome.failed) {
               progress[id] = NetworkUploadState.failed;
+            } else if (outcome == NetworkUploadOutcome.refused) {
+              // Not sent, nothing recorded: the summary says why
+              progress.remove(id);
             } else {
               progress.remove(id);
               unawaited(records.refresh());
@@ -177,6 +264,7 @@ class NetworkUploadNotifier extends Notifier<NetworkUploadState> {
       unawaited(records.refresh());
       if (isCurrent()) {
         _cancelToken = null;
+        _sourceId = null;
         // The files not sent because of a cancel go back to normal; the failures stay marked
         state = NetworkUploadState(
           progress: {
@@ -196,12 +284,20 @@ class NetworkUploadNotifier extends Notifier<NetworkUploadState> {
     }
   }
 
+  /// Stops the upload under way when it reads the share [sourceId] (a drone or a card unplugged), not otherwise
+  void cancelFrom(String sourceId) {
+    if (_sourceId == sourceId) {
+      cancel();
+    }
+  }
+
   /// Stops the upload under way and forgets it at once, its failures with it: called on logout, when the request in
   /// flight must not go on streaming and nothing of the upload concerns the next user. The upload stopped ends on its
   /// own, without changing the state anymore.
   void stop() {
     cancel();
     _cancelToken = null;
+    _sourceId = null;
     state = const NetworkUploadState();
   }
 

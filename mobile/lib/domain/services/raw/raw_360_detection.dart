@@ -7,7 +7,8 @@
 // docs/18-design-projections-and-parsers.md, section 7.1.
 //
 // It also tells the equirect photos a 360° camera stitched itself (GoPro .36P, DJI and GoPro JPEGs without GPano tags),
-// which are no raw files: the equirect viewers show them as they are.
+// which are no raw files: the equirect viewers show them as they are. DJI drones stitch their spheres the same way, as
+// 2:1 JPEGs without GPano tags (see isDroneCamera).
 
 import 'dart:convert';
 import 'dart:math' as math;
@@ -135,7 +136,19 @@ String? splitFirstLensName(String name) {
 /// those first): [make] contains "gopro" and [model] contains "max"; [make] contains "dji" and [model] contains "360"
 /// or "oq"; [make] is "arashi vision" (Insta360 stitching in the camera). Case aside. Never true for a raw .insp,
 /// whose trailer the caller tests first.
-bool isEquirectCameraPhoto({required String name, String? make, String? model, int? width, int? height}) {
+///
+/// So is the sphere of a DJI drone, which DJI writes without GPano tags (see [isDroneCamera]): [make] "DJI" with the
+/// code of a drone camera as [model] ("FC8482"), "Hasselblad" with an "L2D-20c" style model, or a make with "dji" in
+/// it when the XMP of the photo declares the drone-dji namespace ([hasDroneXmp], known where the file itself is read:
+/// the scan of the device and the shares). No other mode of a DJI drone gives a 2:1 photo.
+bool isEquirectCameraPhoto({
+  required String name,
+  String? make,
+  String? model,
+  int? width,
+  int? height,
+  bool hasDroneXmp = false,
+}) {
   if (isRawPhotoName(name)) {
     return false;
   }
@@ -149,7 +162,49 @@ bool isEquirectCameraPhoto({required String name, String? make, String? model, i
   final camera = model?.trim().toLowerCase() ?? '';
   return (maker.contains('gopro') && camera.contains('max')) ||
       (maker.contains('dji') && (camera.contains('360') || camera.contains('oq'))) ||
-      maker == 'arashi vision';
+      maker == 'arashi vision' ||
+      isDroneCamera(make: make, model: model, hasDroneXmp: hasDroneXmp);
+}
+
+// The camera code of a DJI drone: FC and three or four digits, maybe letters after them (FC8482, FC9470, FC3411)
+final _djiDroneModel = RegExp(r'^FC\d{3,4}[A-Z]*$', caseSensitive: false);
+// The Hasselblad cameras of the Mavic drones: L1D-20c (Mavic 2 Pro), L2D-20c (Mavic 3), L3D-100c (Mavic 4 Pro)
+final _hasselbladDroneModel = RegExp(r'^L\dD-\d+c$', caseSensitive: false);
+
+/// Whether [make] and [model] name the camera of a DJI drone, whatever its frame: "DJI" with a camera code like
+/// "FC8482" (DJI writes the code of the camera, not the name of the drone), "Hasselblad" with a model like "L2D-20c",
+/// or a make with "dji" in it and an XMP that declares the drone-dji namespace ([hasDroneXmp]). Case and spaces aside.
+/// The handheld cameras (Osmo Pocket "PP-101", Osmo Action "AC004") are none. The same rule is written in SQL for the
+/// assets of the server, see Panorama360Repository.
+bool isDroneCamera({String? make, String? model, bool hasDroneXmp = false}) {
+  final maker = make?.trim().toLowerCase() ?? '';
+  final camera = model?.trim() ?? '';
+  return (maker == 'dji' && _djiDroneModel.hasMatch(camera)) ||
+      (maker == 'hasselblad' && _hasselbladDroneModel.hasMatch(camera)) ||
+      (maker.contains('dji') && hasDroneXmp);
+}
+
+// The XMP namespace DJI drones write their flight data in (xmlns:drone-dji="http://www.dji.com/drone-dji/1.0/")
+final _droneDjiNamespace = ascii.encode('drone-dji');
+
+/// Bytes of the head of a JPEG looked through for the drone-dji XMP namespace, see [hasDroneDjiXmp]
+const droneXmpWindow = 64 * 1024;
+
+/// Whether [head], the first bytes of a photo, holds the XMP namespace of DJI drones (drone-dji), which their photos
+/// carry with the flight data of the shot (attitude of the gimbal and of the aircraft)
+bool hasDroneDjiXmp(Uint8List head) {
+  final needle = _droneDjiNamespace;
+  final last = head.length - needle.length;
+  outer:
+  for (var i = 0; i <= last; i++) {
+    for (var j = 0; j < needle.length; j++) {
+      if (head[i + j] != needle[j]) {
+        continue outer;
+      }
+    }
+    return true;
+  }
+  return false;
 }
 
 /// How the viewers show a raw 360° media once stitched: one picture over the whole sphere. Its name or its 2:1 shape

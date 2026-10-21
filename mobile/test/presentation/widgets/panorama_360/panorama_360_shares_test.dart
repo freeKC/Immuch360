@@ -58,7 +58,7 @@ class _NoRecords extends UploadRecordStore {
   Future<Map<String, UploadRecord>> load() async => {};
 
   @override
-  Future<void> add(NetworkEntry entry, String remoteId, {DateTime? sentAt}) async {}
+  Future<void> add(NetworkEntry entry, String remoteId, {DateTime? sentAt, bool inTrash = false}) async {}
 }
 
 void main() {

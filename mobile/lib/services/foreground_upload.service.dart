@@ -10,6 +10,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart' hide As
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/asset.service.dart';
+import 'package:immich_mobile/domain/services/gpano_sidecar.dart';
 import 'package:immich_mobile/domain/services/network_file_reader.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
@@ -65,6 +66,7 @@ class UploadSource {
     required this.modifiedAt,
     required this.deviceAssetId,
     this.isFavorite = false,
+    this.sidecarXmp,
   });
 
   /// What the callbacks get
@@ -79,14 +81,20 @@ class UploadSource {
   final DateTime modifiedAt;
   final String deviceAssetId;
   final bool isFavorite;
+
+  /// An XMP sidecar sent with the file (see gpanoSidecarXmp), named after it; null for none
+  final String? sidecarXmp;
 }
 
 /// A file of a network share to send to the server, read on [fileSystem]
 class NetworkUploadItem {
-  const NetworkUploadItem({required this.fileSystem, required this.entry});
+  const NetworkUploadItem({required this.fileSystem, required this.entry, this.sidecarXmp});
 
   final NetworkFileSystem fileSystem;
   final NetworkEntry entry;
+
+  /// The XMP sidecar that goes with the file, null for none: the GPano tags of a drone sphere (see gpanoSidecarXmp)
+  final String? sidecarXmp;
 
   /// What the callbacks get for this file: its share and its path
   String get id => networkUploadId(entry);
@@ -96,9 +104,11 @@ class NetworkUploadItem {
 String networkUploadId(NetworkEntry entry) => '${entry.sourceId}:${entry.path}';
 
 /// The deviceAssetId of a file of a share: stable for the file at this place, whatever device sends it, and apart from
-/// the ids of the assets of the device
-String networkDeviceAssetId(NetworkEntry entry) =>
-    'share-${sha1.convert(utf8.encode('${entry.sourceId}${entry.path}'))}';
+/// the ids of the assets of the device. A file imported from a drone or a card (see NetworkEntry.isImported) by its
+/// name and size, the same through the drone, a card reader or another plug.
+String networkDeviceAssetId(NetworkEntry entry) => entry.isImported
+    ? 'import-${sha1.convert(utf8.encode('${entry.name}${entry.size}'))}'
+    : 'share-${sha1.convert(utf8.encode('${entry.sourceId}${entry.path}'))}';
 
 /// The share of a file being sent, noting whether it gave fewer bytes than asked: the reader never asks past the size
 /// announced, so the file got shorter since its stat
@@ -365,6 +375,7 @@ class ForegroundUploadService {
         createdAt: date,
         modifiedAt: date,
         deviceAssetId: deviceAssetId,
+        sidecarXmp: item.sidecarXmp,
       );
 
       // No x-immich-checksum header: hashing the file first would read it from the share twice. The server hashes
@@ -678,11 +689,13 @@ class ForegroundUploadService {
         'duration': '0',
       };
 
+      final sidecarXmp = source.sidecarXmp;
       return await _uploadRepository.uploadStream(
         openRead: source.openRead,
         length: source.length,
         filename: source.filename,
         fields: fields,
+        sidecar: sidecarXmp == null ? null : (filename: gpanoSidecarName(source.filename), xmp: sidecarXmp),
         cancelToken: cancelToken,
         onProgress: onProgress,
         logContext: logContext,

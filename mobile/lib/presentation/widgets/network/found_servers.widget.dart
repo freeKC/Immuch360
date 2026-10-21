@@ -94,6 +94,8 @@ class FoundServersList extends StatelessWidget {
                         NetworkSourceType.dlna => context.t.network_share_scan_type_dlna,
                         NetworkSourceType.plex => context.t.network_share_scan_type_plex,
                         NetworkSourceType.tapo => context.t.network_share_scan_type_tapo,
+                        // Never found on the network
+                        NetworkSourceType.documentTree => context.t.dji_import_title,
                       },
                 style: context.textTheme.labelMedium?.copyWith(
                   color: context.primaryColor,

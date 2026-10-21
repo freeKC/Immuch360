@@ -5,8 +5,8 @@
 // stitched by the app: an Insta360 photo named .insp or ending with the trailer of the camera, a video named .insv,
 // .360 (GoPro) or .osv (DJI), whose layout is settled when it opens (see raw_360_detection.dart and
 // raw_video_plan.dart). So are the equirect photos a 360° camera stitched itself without GPano tags: a GoPro .36p, a
-// 2:1 JPEG whose EXIF names a 360° camera, or a photo whose Insta360 trailer says the camera stitched it. The viewers
-// then show a file with the rules of resolveSphereView, from what it declares and its name.
+// 2:1 JPEG whose EXIF names a 360° camera or a DJI drone, or a photo whose Insta360 trailer says the camera stitched
+// it. The viewers then show a file with the rules of resolveSphereView, from what it declares and its name.
 //
 // The same reads tell the Apple spatial media: a HEIF photo holding a stereo pair (see probeHeicStereoPair), a video
 // holding two MV-HEVC layers (see SphericalProbe.multiview).
@@ -38,7 +38,15 @@ final _log = Logger('NetworkMediaService');
 
 /// What the file of a photo or a video of a share declares
 class NetworkMediaInfo {
-  const NetworkMediaInfo({this.gpano, this.probe, this.rawKind, this.cameraEquirect = false, this.stereoPair});
+  const NetworkMediaInfo({
+    this.gpano,
+    this.probe,
+    this.rawKind,
+    this.cameraEquirect = false,
+    this.stereoPair,
+    this.frameWidth,
+    this.frameHeight,
+  });
 
   /// The GPano tags of a photo, null for a video and for a photo without any
   final GPanoTags? gpano;
@@ -56,6 +64,18 @@ class NetworkMediaInfo {
 
   /// The two eyes of an Apple spatial photo (a HEIF file), null for any other file
   final HeicStereoPair? stereoPair;
+
+  /// The size of the picture of a photo its EXIF gives (PixelXDimension and PixelYDimension), null when it gives none
+  /// or the photo was told without reading it
+  final int? frameWidth;
+  final int? frameHeight;
+
+  /// Whether it is an equirect photo a camera stitched itself without declaring it in GPano tags, so that the server
+  /// shows it flat: what the "Tag drone spheres as 360°" option of an upload adds the tags for (see gpanoSidecarXmp)
+  bool get isUntaggedSphere {
+    final gpano = this.gpano;
+    return cameraEquirect && rawKind == null && (gpano == null || !isEquirectangularGPano(gpano));
+  }
 
   /// The two layers of an Apple spatial video, null for any other file
   MultiviewInfo? get multiview => probe?.multiview;
@@ -101,7 +121,7 @@ class NetworkMediaInfo {
   @override
   String toString() =>
       'NetworkMediaInfo(is360: $is360, gpano: $gpano, probe: $probe, rawKind: $rawKind, '
-      'cameraEquirect: $cameraEquirect, stereoPair: $stereoPair)';
+      'cameraEquirect: $cameraEquirect, stereoPair: $stereoPair, frame: $frameWidth x $frameHeight)';
 }
 
 /// A file of a share as the results are kept: they hold until its size or its date changes
@@ -277,17 +297,27 @@ class NetworkMediaService {
           : NetworkMediaInfo(gpano: gpano, rawKind: RawMediaKind.insta360Photo);
     }
     var cameraEquirect = isEquirectCameraPhoto(name: entry.name);
+    ExifHead? exif;
     if (!cameraEquirect) {
-      final exif = parseExifHead(await remembering.read(0, exifHeadLength));
+      exif = parseExifHead(await remembering.read(0, exifHeadLength));
+      final isDji = exif?.make?.toLowerCase().contains('dji') ?? false;
       cameraEquirect = isEquirectCameraPhoto(
         name: entry.name,
         make: exif?.make,
         model: exif?.model,
         width: exif?.pixelWidth,
         height: exif?.pixelHeight,
+        // Within the head the GPano read went through already: no read more
+        hasDroneXmp: isDji && hasDroneDjiXmp(await remembering.read(0, droneXmpWindow)),
       );
     }
-    return NetworkMediaInfo(gpano: gpano, cameraEquirect: cameraEquirect, stereoPair: stereoPair);
+    return NetworkMediaInfo(
+      gpano: gpano,
+      cameraEquirect: cameraEquirect,
+      stereoPair: stereoPair,
+      frameWidth: exif?.pixelWidth,
+      frameHeight: exif?.pixelHeight,
+    );
   }
 
   void _tell(NetworkEntry entry, {required bool is360}) {
@@ -366,9 +396,13 @@ class _LastReadReader {
 
 /// What the files of the shares declare, kept as long as the app runs
 final networkMediaServiceProvider = Provider<NetworkMediaService>(
-  // The 360° files found go to the 360° list
+  // The 360° files found go to the 360° list, but those of a drone or a card plugged in: they are gone once unplugged
   (ref) => NetworkMediaService(
-    onRead: (entry, {required is360}) => ref.read(networkPanoramasProvider.notifier).record(entry, is360: is360),
+    onRead: (entry, {required is360}) {
+      if (!entry.isImported) {
+        ref.read(networkPanoramasProvider.notifier).record(entry, is360: is360);
+      }
+    },
   ),
 );
 

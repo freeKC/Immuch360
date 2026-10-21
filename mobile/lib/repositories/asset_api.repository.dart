@@ -2,6 +2,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/asset_edit.model.dart' hide AssetEditAction;
 import 'package:immich_mobile/domain/models/stack.model.dart';
+import 'package:immich_mobile/domain/services/network_upload.service.dart' show RemoteAssetPresence;
 import 'package:immich_mobile/providers/api.provider.dart';
 import 'package:immich_mobile/repositories/api.repository.dart';
 import 'package:immich_mobile/utils/option.dart';
@@ -70,21 +71,46 @@ class AssetApiRepository extends ApiRepository {
     return (await checkNull(_api.getAssetInfo(id))).checksum;
   }
 
-  /// Whether the server still has the asset [id], out of its trash. It answers 400 ("Not found or no access") or 404
-  /// for an asset deleted since; any other failure is thrown.
-  Future<bool> isInLibrary(String id) async {
+  /// Where the server keeps the asset [id]: in the library, in its trash, or nowhere (it answers 400, "Not found or no
+  /// access", or 404 for an asset deleted for good); any other failure is thrown. A trashed asset is told apart: the
+  /// server answers "duplicate" with its id to a new upload of the same file and leaves it in the trash, where it will
+  /// be purged.
+  Future<RemoteAssetPresence> presence(String id) async {
     try {
-      // A trashed asset still counts: the server answers "duplicate" with its id to a new upload of the same file
-      // and leaves it in the trash, so sending the file again would only cost the transfer (restore it from the
-      // trash instead)
-      await checkNull(_api.getAssetInfo(id));
-      return true;
+      final asset = await checkNull(_api.getAssetInfo(id));
+      return asset.isTrashed ? RemoteAssetPresence.inTrash : RemoteAssetPresence.inLibrary;
     } on ApiException catch (error) {
       if (error.code == 400 || error.code == 404) {
-        return false;
+        return RemoteAssetPresence.gone;
       }
       rethrow;
     }
+  }
+
+  /// Whether the server has read the metadata of the asset [id] already, and found a place in them: what the place
+  /// step of the videos of a drone waits for (see VideoLocationService). Null when the server has no such asset (400
+  /// or 404); any other failure is thrown. The server makes the exif of an upload with its file size only, and fills
+  /// the frame size and the dates once it has read the file.
+  Future<({bool extracted, bool hasLocation})?> placeState(String id) async {
+    final AssetResponseDto asset;
+    try {
+      asset = await checkNull(_api.getAssetInfo(id));
+    } on ApiException catch (error) {
+      if (error.code == 400 || error.code == 404) {
+        return null;
+      }
+      rethrow;
+    }
+    final exif = asset.exifInfo.orElse(null);
+    if (exif == null) {
+      return (extracted: false, hasLocation: false);
+    }
+    final extracted =
+        exif.exifImageWidth.orElse(null) != null ||
+        exif.exifImageHeight.orElse(null) != null ||
+        exif.dateTimeOriginal.orElse(null) != null;
+    final hasLocation = exif.latitude.orElse(null) != null && exif.longitude.orElse(null) != null;
+    return (extracted: extracted, hasLocation: hasLocation);
   }
 
   Future<void> updateDescription(String assetId, String description) {

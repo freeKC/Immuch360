@@ -54,6 +54,77 @@ void main() {
     expect(await store.find(entry('/a.jpg')), isNotNull);
   });
 
+  test('knows a file imported from a drone or a card by its name and size, whatever the plug', () async {
+    final store = open();
+    final viaDrone = entry('/DCIM/DJI_001/DJI_20261021143000_0001_D.JPG', sourceId: 'tree:aircraft');
+    await store.add(viaDrone, 'asset-1');
+
+    final viaReader = entry('/DJI_001/DJI_20261021143000_0001_D.JPG', sourceId: 'tree:card-reader');
+    expect((await store.find(viaReader))?.remoteId, 'asset-1', reason: 'another plug, another folder');
+    expect(await store.find(entry(viaReader.path, sourceId: 'tree:x', size: 101)), isNull, reason: 'another size');
+    expect(
+      (await store.find(entry(viaReader.path, sourceId: 'tree:x', modified: DateTime.utc(2026, 10, 3, 7))))?.remoteId,
+      'asset-1',
+      reason: 'a DJI name holds the second the file was made: the date of the card is not needed',
+    );
+    expect(await store.find(entry(viaReader.path)), isNull, reason: 'the same name on a share is another file');
+    const undated = NetworkEntry(sourceId: 'tree:a', path: '/IMG.JPG', isDirectory: false, size: 5);
+    await store.add(undated, 'asset-2');
+    expect(
+      (await store.find(
+        const NetworkEntry(sourceId: 'tree:b', path: '/x/IMG.JPG', isDirectory: false, size: 5),
+      ))?.remoteId,
+      'asset-2',
+      reason: 'without a date, by name and size',
+    );
+  });
+
+  test(
+    'knows a file of another camera across time zones, by the seconds of its date within the quarter hour',
+    () async {
+      final store = open();
+      final made = DateTime.utc(2026, 10, 21, 12, 34, 56);
+      await store.add(entry('/DCIM/100GOPRO/GX010042.MP4', sourceId: 'tree:a', modified: made), 'asset-1');
+
+      // A FAT card read with the offset of another time zone (whole hours, half and three quarter hours)
+      for (final offset in const [
+        Duration(hours: 2),
+        Duration(hours: -5),
+        Duration(hours: 5, minutes: 30),
+        Duration(minutes: 45),
+      ]) {
+        expect(
+          (await store.find(
+            entry('/DCIM/100GOPRO/GX010042.MP4', sourceId: 'tree:b', modified: made.add(offset)),
+          ))?.remoteId,
+          'asset-1',
+          reason: 'shifted by $offset',
+        );
+      }
+      expect(
+        await store.find(
+          entry('/DCIM/100GOPRO/GX010042.MP4', sourceId: 'tree:b', modified: made.add(const Duration(minutes: 7))),
+        ),
+        isNull,
+        reason: 'another file of the same name and size, made at another time',
+      );
+    },
+  );
+
+  test('keeps whether the asset of a file sits in the trash of the server, and marks it in bulk', () async {
+    final store = open();
+    await store.add(entry('/a.jpg'), 'asset-1');
+    await store.add(entry('/b.jpg'), 'asset-2', inTrash: true);
+
+    expect(await store.markTrash(trashed: {'asset-1'}, restored: {'asset-2'}), isTrue);
+    expect(await store.markTrash(trashed: {'asset-1'}), isFalse, reason: 'nothing changed');
+
+    final reopened = open();
+    expect((await reopened.find(entry('/a.jpg')))?.inTrash, isTrue);
+    expect(isKeptOnServer(await reopened.find(entry('/a.jpg'))), isFalse);
+    expect((await reopened.find(entry('/b.jpg')))?.inTrash, isFalse);
+  });
+
   test('forgets a file the server does not have anymore, across launches', () async {
     final store = open();
     await store.add(entry('/a.jpg'), 'asset-1');

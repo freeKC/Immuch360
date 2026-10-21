@@ -59,4 +59,57 @@ void main() {
       expect(cut, const ExifHead());
     });
   });
+
+  group('parseExifThumbnail', () {
+    // A JPEG head with EXIF: IFD0 with the make, then IFD1 pointing at [thumbnail], little or big endian
+    Uint8List head(List<int> thumbnail, {bool bigEndian = false, bool withIfd1 = true}) {
+      List<int> u16(int value) => bigEndian ? [value >> 8 & 0xff, value & 0xff] : [value & 0xff, value >> 8 & 0xff];
+      List<int> u32(int value) {
+        final bytes = [value & 0xff, value >> 8 & 0xff, value >> 16 & 0xff, value >> 24 & 0xff];
+        return bigEndian ? bytes.reversed.toList() : bytes;
+      }
+
+      List<int> entry(int tag, int type, int count, List<int> value) => [
+        ...u16(tag),
+        ...u16(type),
+        ...u32(count),
+        ...value,
+      ];
+      // TIFF header (8), IFD0 at 8: 1 entry (2 + 12 + 4), IFD1 at 26: 2 entries (2 + 24 + 4), thumbnail at 56
+      const ifd1 = 26;
+      const thumbnailAt = 56;
+      final tiff = [
+        ...(bigEndian ? 'MM'.codeUnits : 'II'.codeUnits),
+        ...u16(42),
+        ...u32(8),
+        ...u16(1),
+        ...entry(0x010f, 2, 4, 'DJI\x00'.codeUnits),
+        ...u32(withIfd1 ? ifd1 : 0),
+        ...u16(2),
+        ...entry(0x0201, 4, 1, u32(thumbnailAt)),
+        ...entry(0x0202, 4, 1, u32(thumbnail.length)),
+        ...u32(0),
+        ...thumbnail,
+      ];
+      final app1 = [...'Exif'.codeUnits, 0, 0, ...tiff];
+      final length = app1.length + 2;
+      return Uint8List.fromList([0xff, 0xd8, 0xff, 0xe1, length >> 8, length & 0xff, ...app1, 0xff, 0xda]);
+    }
+
+    final jpeg = [0xff, 0xd8, ...List.filled(40, 7), 0xff, 0xd9];
+
+    test('gives the JPEG of IFD1, in both byte orders', () {
+      expect(parseExifThumbnail(head(jpeg)), jpeg);
+      expect(parseExifThumbnail(head(jpeg, bigEndian: true)), jpeg);
+      expect(parseExifHead(head(jpeg))?.make, 'DJI');
+    });
+
+    test('gives null without IFD1, for a thumbnail past the head, and for no JPEG', () {
+      expect(parseExifThumbnail(head(jpeg, withIfd1: false)), isNull);
+      final whole = head(jpeg);
+      expect(parseExifThumbnail(Uint8List.sublistView(whole, 0, whole.length - 20)), isNull);
+      expect(parseExifThumbnail(head([1, 2, 3, 4, 5, 6])), isNull);
+      expect(parseExifThumbnail(Uint8List.fromList([0x89, 0x50, 0x4e, 0x47])), isNull);
+    });
+  });
 }

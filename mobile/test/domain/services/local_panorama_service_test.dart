@@ -247,6 +247,25 @@ void main() {
       expect(await read(photo('Apple', 'iPhone 15', width: 8000, height: 4000)), flat, reason: 'no 360° camera');
       expect(await read(photo('GoPro', 'GoPro Max')), flat, reason: 'no size known');
     });
+
+    test('takes the 2:1 photo of a DJI drone for a sphere, by its EXIF or its drone-dji XMP', () async {
+      const equirect = (isPanorama: true, halfSphere: false, raw360: false);
+      const flat = (isPanorama: false, halfSphere: null, raw360: false);
+      final droneXmp = ascii.encode('<rdf:Description xmlns:drone-dji="http://www.dji.com/drone-dji/1.0/"/>');
+      Uint8List photo(String make, String model, {List<int> xmp = const []}) => Uint8List.fromList([
+        ...insta360PhotoHead(make: make, model: model, pixelWidth: 8000, pixelHeight: 4000),
+        ...xmp,
+      ]);
+      Future<LocalPanoramaProbe> read(Uint8List bytes) =>
+          probeLocalPanoramaPhoto(_reader(bytes), bytes.length, name: 'DJI_0042.JPG');
+
+      // A Mavic 3 sphere, by its Hasselblad camera
+      expect(await read(photo('Hasselblad', 'L2D-20c')), equirect);
+      // An enterprise drone whose model is no FC code: told by the namespace of its XMP
+      expect(await read(photo('DJI Ltd', 'M3E', xmp: droneXmp)), equirect);
+      expect(await read(photo('DJI Ltd', 'M3E')), flat);
+      expect(await read(photo('Canon Inc', 'EOS R5', xmp: droneXmp)), flat);
+    });
   });
 
   group('probeLocalPanoramaFile', () {
@@ -378,8 +397,8 @@ void main() {
       final json = encodeLocalPanoramaRecords(records);
 
       expect(jsonDecode(json), {
-        'b': {'p': true, 'h': true, 't': DateTime(2024, 1, 2).millisecondsSinceEpoch, 'v': 2},
-        'a': {'p': false, 't': DateTime(2024, 1, 1).millisecondsSinceEpoch, 'v': 2},
+        'b': {'p': true, 'h': true, 't': DateTime(2024, 1, 2).millisecondsSinceEpoch, 'v': 3},
+        'a': {'p': false, 't': DateTime(2024, 1, 1).millisecondsSinceEpoch, 'v': 3},
       });
       final decoded = decodeLocalPanoramaRecords(json);
       expect(decoded, records);
@@ -392,7 +411,7 @@ void main() {
       final json = encodeLocalPanoramaRecords(records);
 
       expect(jsonDecode(json), {
-        'raw': {'p': true, 'r': true, 't': DateTime(2024, 1, 3).millisecondsSinceEpoch, 'v': 2},
+        'raw': {'p': true, 'r': true, 't': DateTime(2024, 1, 3).millisecondsSinceEpoch, 'v': 3},
       });
       expect(decodeLocalPanoramaRecords(json), records);
       expect(decodeLocalPanoramaRecords('{"a":{"p":true,"t":5}}')['a']?.raw360, isFalse);
@@ -406,7 +425,7 @@ void main() {
 
       expect(records['new']?.version, LocalPanoramaRecord.currentVersion);
       expect(jsonDecode(encodeLocalPanoramaRecords(records)), {
-        'new': {'p': false, 't': DateTime(2024, 1, 4).millisecondsSinceEpoch, 'v': 2},
+        'new': {'p': false, 't': DateTime(2024, 1, 4).millisecondsSinceEpoch, 'v': 3},
         'old': {'p': false, 't': DateTime(2024, 1, 3).millisecondsSinceEpoch},
       });
       expect(decodeLocalPanoramaRecords(encodeLocalPanoramaRecords(records)), records);
@@ -548,10 +567,10 @@ void main() {
           'insp': {'p': false, 't': checkedAt},
           'pano': {'p': true, 't': checkedAt},
           'video': {'p': false, 't': checkedAt},
-          'current': {'p': false, 't': checkedAt, 'v': 2},
+          'current': {'p': false, 't': checkedAt, 'v': LocalPanoramaRecord.currentVersion},
         }),
       );
-      expect(known.values.map((record) => record.version), [0, 0, 0, 0, 0, 2]);
+      expect(known.values.map((record) => record.version), [0, 0, 0, 0, 0, 3]);
       probes = {
         for (final id in ['renamed', 'insv', 'insp']) id: (isPanorama: true, halfSphere: null, raw360: true),
       };
@@ -590,7 +609,7 @@ void main() {
         jsonEncode({
           for (final id in ['split', 'osv', 'dji', '36p', 'video']) id: {'p': false, 't': checkedAt, 'v': 1},
           'pano': {'p': true, 't': checkedAt, 'v': 1},
-          'current': {'p': false, 't': checkedAt, 'v': 2},
+          'current': {'p': false, 't': checkedAt, 'v': LocalPanoramaRecord.currentVersion},
         }),
       );
       probes = {
@@ -609,6 +628,41 @@ void main() {
       for (final id in ['pano', 'video', 'current']) {
         expect(records[id], known[id], reason: id);
       }
+
+      read.clear();
+      expect(await scanner.scan(records), records);
+      expect(read, isEmpty, reason: 'read again once');
+    });
+
+    test('reads again once the flat 2:1 photos of version 2, which may be the spheres of DJI drones', () async {
+      assets = [
+        // A Mini 4 Pro sphere found flat by build 26
+        _asset('drone', name: 'DJI_20261021150000_0042_D.JPG', width: 8192, height: 4096),
+        // Read the same: a 360° photo of version 2, a flat 4:3 photo (no candidate), a record of the current rules
+        _asset('pano', age: 1),
+        _asset('flat', name: 'DJI_20261021143000_0001_D.JPG', width: 4000, height: 3000, age: 2),
+        _asset('current', name: 'IMG_0002.JPG', age: 3),
+      ];
+      final checkedAt = DateTime(2024, 6, 15).millisecondsSinceEpoch;
+      final known = decodeLocalPanoramaRecords(
+        jsonEncode({
+          'drone': {'p': false, 't': checkedAt, 'v': 2},
+          'pano': {'p': true, 't': checkedAt, 'v': 2},
+          'current': {'p': false, 't': checkedAt, 'v': 3},
+        }),
+      );
+      probes = {'drone': (isPanorama: true, halfSphere: false, raw360: false)};
+      final scanner = service();
+
+      final records = await scanner.scan(known);
+
+      expect(read, ['drone']);
+      expect(records['drone'], LocalPanoramaRecord(isPanorama: true, halfSphere: false, checkedAt: now));
+      expect(records['drone']?.version, 3);
+      for (final id in ['pano', 'current']) {
+        expect(records[id], known[id], reason: id);
+      }
+      expect(records.containsKey('flat'), isFalse, reason: 'no candidate');
 
       read.clear();
       expect(await scanner.scan(records), records);

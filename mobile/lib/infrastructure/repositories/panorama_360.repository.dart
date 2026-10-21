@@ -87,8 +87,8 @@ class Panorama360Repository {
 
   /// The photos a 360° camera stitched into an equirect picture itself, without the GPano tags that make the server flag
   /// them, by the rule of the viewers (see isEquirectCameraPhoto): 2:1 within 1 percent (the size of the exif, else the
-  /// one of the asset), from a GoPro MAX or a DJI 360° camera (Osmo 360, model "oq"). The .36p photos of the GoPro MAX 2
-  /// never get here: the server refuses them.
+  /// one of the asset), from a GoPro MAX or a DJI 360° camera (Osmo 360, model "oq"), or the sphere of a DJI drone (see
+  /// [_droneCamera]). The .36p photos of the GoPro MAX 2 never get here: the server refuses them.
   ///
   /// An Insta360 photo (make "Arashi Vision") only when it is named .jpg, at a small risk taken on purpose: only the
   /// trailer of its file tells a photo the camera stitched from a raw one renamed .jpg, and the database does not hold
@@ -105,10 +105,28 @@ class Panorama360Repository {
     final isCamera =
         (make.like('%gopro%') & model.like('%max%')) |
         (make.like('%dji%') & (model.like('%360%') | model.like('%oq%'))) |
-        (make.equals('arashi vision') & rae.name.lower().like('%.jpg'));
+        (make.equals('arashi vision') & rae.name.lower().like('%.jpg')) |
+        _droneCamera(make, exif.model.upper().trim());
     return rae.type.equalsValue(AssetType.image) &
         isCamera &
         (width / height - const Constant(2.0)).abs().isSmallerOrEqualValue(0.02);
+  }
+
+  /// The camera of a DJI drone as isDroneCamera tells it, from the [make] (lower case, trimmed) and the [model] (upper
+  /// case, trimmed) of the exif: "dji" with a camera code, FC and three or four digits then letters only ("FC8482",
+  /// "FC9470"); "hasselblad" with "L", a digit, "D-", digits and "C" ("L2D-20C"). With SQLite GLOB, built in, where
+  /// REGEXP is not. The XMP of the file, which the database does not hold, plays no part here.
+  static Expression<bool> _droneCamera(Expression<String> make, Expression<String> model) {
+    Expression<bool> glob(String pattern) =>
+        FunctionCallExpression<bool>('glob', [Variable.withString(pattern), model]);
+    final djiCode =
+        glob('FC[0-9][0-9][0-9]*') &
+        // Nothing but digits and letters after FC, no more than four digits, and no digit after a letter
+        glob('FC*[^0-9A-Z]*').not() &
+        glob('FC[0-9][0-9][0-9][0-9][0-9]*').not() &
+        glob('FC*[A-Z]*[0-9]*').not();
+    final hasselbladCode = glob('L[0-9]D-[0-9]*C') & glob('L[0-9]D-*[^0-9]*C').not();
+    return (make.equals('dji') & djiCode) | (make.equals('hasselblad') & hasselbladCode);
   }
 
   Future<List<Panorama360Entry>> _remoteEntries(

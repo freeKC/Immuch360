@@ -44,8 +44,12 @@ class _MemoryRecords extends UploadRecordStore {
   Future<Map<String, UploadRecord>> load() async => records;
 
   @override
-  Future<void> add(NetworkEntry entry, String remoteId, {DateTime? sentAt}) async {
-    records[UploadRecordStore.keyOf(entry)] = UploadRecord(remoteId: remoteId, sentAt: DateTime.utc(2026, 10, 2));
+  Future<void> add(NetworkEntry entry, String remoteId, {DateTime? sentAt, bool inTrash = false}) async {
+    records[UploadRecordStore.keyOf(entry)] = UploadRecord(
+      remoteId: remoteId,
+      sentAt: DateTime.utc(2026, 10, 2),
+      inTrash: inTrash,
+    );
   }
 
   @override
@@ -215,6 +219,28 @@ void main() {
     expect(state().progress, isEmpty);
   });
 
+  test('a drone unplugged stops the upload from its folder only', () async {
+    final started = Completer<void>();
+    stubUploads(
+      onFile: (_, cancelToken) async {
+        if (!started.isCompleted) {
+          started.complete();
+        }
+        await cancelToken.future;
+      },
+    );
+
+    final upload = notifier().upload('nas', [share.file('/a.jpg')]);
+    await started.future;
+    notifier().cancelFrom('tree:0123456789abcdef');
+    await pumpEventQueue();
+
+    expect(state().isRunning, isTrue, reason: 'an upload from a share goes on');
+
+    notifier().cancelFrom('nas');
+    expect((await upload)?.cancelled, isTrue);
+  });
+
   test('stops the upload once there is no server anymore', () async {
     Completer<void>? token;
     final started = Completer<void>();
@@ -323,7 +349,7 @@ void main() {
 
   test('asks the server about a file recorded before, and sends it again once the server lost it', () async {
     final assets = MockAssetApiRepository();
-    when(() => assets.isInLibrary('lost')).thenAnswer((_) async => false);
+    when(() => assets.presence('lost')).thenAnswer((_) async => RemoteAssetPresence.gone);
     container = makeContainer([assetApiRepositoryProvider.overrideWithValue(assets)]);
     await records.add(share.file('/a.jpg'), 'lost');
     stubUploads();

@@ -39,6 +39,11 @@ class NetworkSelectionNotifier extends AutoDisposeFamilyNotifier<NetworkSelectio
     state = NetworkSelection(isActive: true, paths: state.paths.containsAll(all) ? const {} : all);
   }
 
+  /// Picks exactly the files of [paths] ("Select all new" of the drone page)
+  void replace(Iterable<String> paths) {
+    state = NetworkSelection(isActive: true, paths: paths.toSet());
+  }
+
   /// Stops picking
   void end() {
     state = const NetworkSelection();

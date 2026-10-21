@@ -53,6 +53,13 @@ abstract interface class NetworkRemoteEndpoint {
   bool get isOutsideHome;
 }
 
+/// A share whose files may only be read from their start (a device that sends whole files, see DocumentTreeFileSystem):
+/// a read near the end of a file reads all of it, so the browser does not look there for what a video declares
+abstract interface class NetworkSequentialReads {
+  /// Whether the files are known to be readable from their start only
+  bool get readsFromStartOnly;
+}
+
 /// The order of [NetworkFileSystem.list]: folders first, then files, both by name without case (then with case, so
 /// that two names differing by case only keep one order)
 int compareNetworkEntries(NetworkEntry a, NetworkEntry b) {

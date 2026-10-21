@@ -158,12 +158,33 @@ void main() {
     );
 
     test('the stored types: the first three in the list older builds read, the later ones in their own', () {
-      expect(NetworkSourceType.values.map((type) => type.name), ['smb', 'webdav', 'dlna', 'plex', 'tapo']);
+      expect(NetworkSourceType.values.map((type) => type.name), [
+        'smb',
+        'webdav',
+        'dlna',
+        'plex',
+        'tapo',
+        'documentTree',
+      ]);
       expect(NetworkSourceType.values.where((type) => type.inLegacyList), [
         NetworkSourceType.smb,
         NetworkSourceType.webdav,
         NetworkSourceType.dlna,
       ]);
+      // A folder picked on the DJI drone page lives in memory only
+      expect(NetworkSourceType.values.where((type) => !type.isStored), [NetworkSourceType.documentTree]);
+    });
+
+    test('a picked folder found in a stored list is dropped, never read back', () {
+      final dropped = <Object?>[];
+      final stored = NetworkSource.decodeStored(
+        '[{"id":"tree:0123","type":"documentTree","name":"USB drive","host":"usb","share":"content://tree"}]',
+        onDropped: dropped.add,
+      );
+
+      expect(stored.sources, isEmpty);
+      expect(stored.unknown, isEmpty);
+      expect(dropped, hasLength(1));
     });
 
     test('stores a Plex server with its hash, address outside home and version, and reads it back', () {

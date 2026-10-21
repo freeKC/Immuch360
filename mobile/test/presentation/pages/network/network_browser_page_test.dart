@@ -111,7 +111,7 @@ class _MemoryRecords extends UploadRecordStore {
   Future<Map<String, UploadRecord>> load() async => records;
 
   @override
-  Future<void> add(NetworkEntry entry, String remoteId, {DateTime? sentAt}) async {
+  Future<void> add(NetworkEntry entry, String remoteId, {DateTime? sentAt, bool inTrash = false}) async {
     records[UploadRecordStore.keyOf(entry)] = UploadRecord(remoteId: remoteId, sentAt: DateTime.utc(2026, 10, 2));
   }
 }

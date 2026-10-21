@@ -2,10 +2,14 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/models/upload/share_intent_attachment.model.dart';
+import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
 import 'package:immich_mobile/services/share_intent_service.dart';
+import 'package:immich_mobile/services/toast.service.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
@@ -14,23 +18,44 @@ final shareIntentUploadProvider = StateNotifierProvider<ShareIntentUploadStateNo
     ref.watch(appRouterProvider),
     ref.read(foregroundUploadServiceProvider),
     ref.read(shareIntentServiceProvider),
+    toasts: ref.read(toastServiceProvider),
   ),
 );
+
+/// Whether the file named [fileName] is a proxy, flight data or sound file a camera or a drone writes beside its media
+/// (see NetworkEntry.companionExtensions): never uploaded, the server refuses them
+bool isCompanionFileName(String fileName) {
+  final dot = fileName.lastIndexOf('.');
+  return dot >= 0 && NetworkEntry.companionExtensions.contains(fileName.substring(dot + 1).toLowerCase());
+}
 
 class ShareIntentUploadStateNotifier extends StateNotifier<List<ShareIntentAttachment>> {
   final AppRouter router;
   final ForegroundUploadService _foregroundUploadService;
   final ShareIntentService _shareIntentService;
+  final ToastService? _toasts;
   final Logger _logger = Logger('ShareIntentUploadStateNotifier');
 
-  ShareIntentUploadStateNotifier(this.router, this._foregroundUploadService, this._shareIntentService) : super([]);
+  ShareIntentUploadStateNotifier(this.router, this._foregroundUploadService, this._shareIntentService, {this._toasts})
+    : super([]);
 
   void init() {
     _shareIntentService.onSharedMedia = onSharedMedia;
     _shareIntentService.init();
   }
 
-  void onSharedMedia(List<ShareIntentAttachment> attachments) {
+  void onSharedMedia(List<ShareIntentAttachment> shared) {
+    // A file manager may share the .LRF proxy of a DJI video as a video, or its .SRT along with it: the server refuses
+    // them, and they are no media of their own
+    final attachments = shared.where((attachment) => !isCompanionFileName(attachment.fileName)).toList();
+    final skipped = shared.length - attachments.length;
+    if (skipped > 0) {
+      _logger.info('Skipped $skipped proxy or flight data files shared to the app');
+      unawaited(Future.sync(() => _toasts?.info(StaticTranslations.instance.share_skipped_companions(count: skipped))));
+    }
+    if (attachments.isEmpty) {
+      return;
+    }
     router.removeWhere((route) => route.name == "ShareIntentRoute");
     clearAttachments();
     addAttachments(attachments);

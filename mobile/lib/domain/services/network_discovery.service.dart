@@ -100,7 +100,10 @@ class DiscoveredServer {
     switch (type) {
       NetworkSourceType.dlna => (discoveryId ?? path).toLowerCase(),
       NetworkSourceType.plex => (discoveryId ?? '').toLowerCase(),
-      NetworkSourceType.smb || NetworkSourceType.webdav || NetworkSourceType.tapo => '',
+      NetworkSourceType.smb ||
+      NetworkSourceType.webdav ||
+      NetworkSourceType.tapo ||
+      NetworkSourceType.documentTree => '',
     },
   );
 
