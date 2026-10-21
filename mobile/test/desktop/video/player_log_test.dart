@@ -81,12 +81,14 @@ void main() {
       ('error', 'ffmpeg', 'AVHWDeviceContext: Cannot load libcuda.so.1'),
       ('error', 'ffmpeg', 'AVHWDeviceContext: Could not dynamically load CUDA'),
       ('error', 'vaapi', 'libva: vaGetDriverNameByIndex() failed with unknown libva error, driver_name = (null)'),
+      // The VA-API interop the OpenGL render path loads with its render context (Linux, a container without a driver)
+      ('error', 'libmpv_render/vaapi/vaapi', 'libva: vaGetDriverNames() failed with unknown libva error'),
       ('error', 'ffmpeg/video', 'h264: Invalid NAL unit size (1 > 0).'),
     ];
     for (final (level, prefix, text) in lines) {
       logPlayerLine(level, prefix, text);
     }
-    expect(records.map((record) => record.level), [Level.FINE, Level.FINE, Level.FINE, Level.WARNING]);
+    expect(records.map((record) => record.level), [Level.FINE, Level.FINE, Level.FINE, Level.FINE, Level.WARNING]);
   });
 
   test('redactPlayerText keeps what helps (the decoder, the error) and drops the rest', () {

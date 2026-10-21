@@ -305,12 +305,28 @@ jobs:
           mise exec -- flutter test test/desktop/video/camera_live_libmpv_test.dart \
             test/desktop/video/mpv_references_test.dart test/desktop/video/desktop_player_libmpv_test.dart
 
+      # The isolated EGL context of the video outputs next to the GL context GDK leaves current on the platform thread
+      # (mobile/packages/media_kit_video/IMMUCH360-NOTE.md, patch 10): a GTK window painted with GL content as Flutter's
+      # view paints, the context made current where libglvnd refused it before (EGL_BAD_ACCESS under GLX), GDK's and
+      # another EGL context current again after, and a texture handed through an EGLImage, on the virtual screen with
+      # Mesa's software renderer (llvmpipe) as the start below. Run after a failed step above too
+      - name: The isolated EGL context of the video outputs on X11
+        if: ${{ !cancelled() }}
+        working-directory: mobile/packages/media_kit_video/linux
+        run: |
+          g++ -std=c++17 -Wall -Werror -o "$RUNNER_TEMP/isolated_egl_test" test/isolated_egl_test.cc isolated_egl.cc \
+            $(pkg-config --cflags --libs gtk+-3.0 epoxy)
+          LIBGL_ALWAYS_SOFTWARE=1 GDK_BACKEND=x11 xvfb-run -a -s "-screen 0 640x480x24" "$RUNNER_TEMP/isolated_egl_test"
+
       # The release build started with a 6 second clip as a file opened with the program, on a virtual screen with
       # software rendering: the app must still run, the picture must change over 5 seconds of playback and the app's
-      # log must hold no error of its players (packaging/linux/video_smoke.sh); the captures are an artifact. Run after a
-      # failed test above too, once the packages are made
+      # log must hold no error of its players (packaging/linux/video_smoke.sh); the picture must come through the
+      # hardware path of media_kit_video, which llvmpipe serves on this screen (EXPECT_RENDERING). The captures are an
+      # artifact. Run after a failed test above too, once the packages are made
       - name: A video played on a virtual screen
         if: ${{ !cancelled() && steps.packages.outcome == 'success' }}
+        env:
+          EXPECT_RENDERING: H/W
         run: |
           xvfb-run -a -s "-screen 0 1280x800x24" sh .github/desktop/packaging/linux/video_smoke.sh \
             mobile/build/linux/x64/release/bundle/immuch360 "$PWD/mobile/test/fixtures/video/flat-6s.mp4" video-smoke

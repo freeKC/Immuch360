@@ -22,6 +22,7 @@ if(MEDIA_KIT_LIBS_AVAILABLE)
     "video_output.cc"
     "utils.cc"
     "mpv_symbols.cc"
+    "isolated_egl.cc"
   )
 
   apply_standard_settings(${PLUGIN_NAME})

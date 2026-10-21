@@ -1,6 +1,7 @@
 // The "This computer" section of the settings (plan 1.2, design 4.7): its groups and their labels, the Tab order from
-// the folders down to the certificates with a visible ring on each stop, and a large text size that still fits. The
-// files the groups read live in a temporary folder.
+// the folders down to the certificates with a visible ring on each stop, and a large text size that still fits; on
+// Linux, the notice of secrets kept for the session only while there is no keyring. The files the groups read live in
+// a temporary folder.
 
 import 'dart:io';
 
@@ -10,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/network/network_choice.dart';
+import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
 import 'package:immich_mobile/desktop/settings/computer_settings.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
@@ -37,7 +39,11 @@ void main() {
     folder.deleteSync(recursive: true);
   });
 
-  Future<void> pumpSettings(WidgetTester tester, {double textScale = 1}) async {
+  Future<void> pumpSettings(
+    WidgetTester tester, {
+    double textScale = 1,
+    ValueNotifier<SessionOnlySecrets?>? sessionSecrets,
+  }) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -59,7 +65,7 @@ void main() {
               data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
               child: child!,
             ),
-            home: const Scaffold(body: ComputerSettings()),
+            home: Scaffold(body: ComputerSettings(sessionSecrets: sessionSecrets)),
           ),
         ),
       ),
@@ -103,6 +109,23 @@ void main() {
       containsAllInOrder(['desktop_settings_folders', 'desktop_network_adapter', 'desktop_trusted_certificates_add']),
     );
     expect(stops.indexOf('desktop_settings_download_folder'), lessThan(stops.indexOf('desktop_network_adapter')));
+  });
+
+  testWidgets('on Linux without a keyring, the secrets are said to be kept for this session only', (tester) async {
+    final sessionSecrets = ValueNotifier<SessionOnlySecrets?>(null);
+    addTearDown(sessionSecrets.dispose);
+    await pumpSettings(tester, sessionSecrets: sessionSecrets);
+    expect(find.byKey(const Key('desktop_settings_session_secrets')), findsNothing);
+
+    sessionSecrets.value = const SessionOnlySecrets(keyringRefused: false, detail: 'noService');
+    await tester.pumpAndSettle();
+    expect(find.text('Secrets kept for this session only'), findsOneWidget);
+    expect(find.textContaining('Install gnome-keyring or KWallet to keep them'), findsOneWidget);
+    expect(find.text('Folders on this computer'), findsOneWidget);
+
+    sessionSecrets.value = const SessionOnlySecrets(keyringRefused: true, detail: 'Failed to unlock the keyring');
+    await tester.pumpAndSettle();
+    expect(find.textContaining('The keyring refused them'), findsOneWidget);
   });
 
   testWidgets('twice the text size still fits', (tester) async {
