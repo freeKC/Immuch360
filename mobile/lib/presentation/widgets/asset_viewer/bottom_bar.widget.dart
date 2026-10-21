@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/actions/delete.action.dart';
 import 'package:immich_mobile/presentation/actions/edit_asset.action.dart';
 import 'package:immich_mobile/presentation/actions/restore.action.dart';
+import 'package:immich_mobile/presentation/actions/rotate.action.dart';
 import 'package:immich_mobile/presentation/actions/share.action.dart';
 import 'package:immich_mobile/presentation/actions/upload.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/add_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/ocr_toggle_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -44,15 +47,19 @@ class ViewerBottomBar extends ConsumerWidget {
     final isInTrash = ref.watch(timelineServiceProvider).origin == TimelineOrigin.trash;
 
     final originalTheme = context.themeData;
+    // A TV hides the row of actions: its rotation comes first in the bar, where OK from the photo lands
+    final tvRotate = ref.watch(tvModeProvider) && !isInTrash && canRotateInViewer(ref, asset);
 
     final actions = <Widget>[
       ..._actionColumnButtons(context, ref, const [RestoreAction(source: .viewer), ShareAction(source: .viewer)]),
 
       if (!isInLockedView) ...[
         if (!isInTrash) ...[
-          ..._actionColumnButtons(context, ref, const [
-            UploadAction(source: .viewer, showProgress: true),
-            EditAssetAction(source: .viewer),
+          ..._actionColumnButtons(context, ref, [
+            const UploadAction(source: .viewer, showProgress: true),
+            // A computer has the rotation in the top bar (ViewerTopAppBar)
+            if (!CurrentPlatform.isDesktop) const RotateAction(source: .viewer),
+            const EditAssetAction(source: .viewer),
           ]),
           if (asset.hasRemote) ImmichColorOverride(color: null, child: AddActionButton(originalTheme: originalTheme)),
         ],
@@ -94,6 +101,7 @@ class ViewerBottomBar extends ConsumerWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          if (tvRotate) TvRotateButton(asset: asset),
                           if (asset.isImage) OcrToggleButton(asset: asset),
                           if (asset.isVideo) VideoControls(videoPlayerName: asset.id),
                           if (!isViewOnly)

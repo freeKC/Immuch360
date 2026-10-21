@@ -21,6 +21,7 @@ import 'package:immich_mobile/presentation/widgets/images/progressive_image.widg
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/is_motion_video_playing.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provider.dart';
@@ -336,7 +337,7 @@ class _AssetPageState extends ConsumerState<AssetPage> {
     });
   }
 
-  double _getImageHeight(double maxWidth, double maxHeight, BaseAsset? asset) {
+  double _getImageHeight(double maxWidth, double maxHeight, BaseAsset? asset, int quarterTurns) {
     final sb = _viewController?.scaleBoundaries;
     if (sb != null) {
       return sb.childSize.height * sb.initialScale;
@@ -346,7 +347,8 @@ class _AssetPageState extends ConsumerState<AssetPage> {
       return maxHeight;
     }
 
-    final r = asset.width! / asset.height!;
+    // A photo turned by the one-key rotation is as high as it is wide
+    final r = quarterTurns.isOdd ? asset.height! / asset.width! : asset.width! / asset.height!;
     return math.min(maxWidth / r, maxHeight);
   }
 
@@ -362,6 +364,7 @@ class _AssetPageState extends ConsumerState<AssetPage> {
     required bool isPlayingMotionVideo,
     required String? localFilePath,
     required Size? remoteThumbnailSize,
+    required int quarterTurns,
   }) {
     final size = context.sizeData;
     final imageProvider = getFullImageProvider(
@@ -378,6 +381,7 @@ class _AssetPageState extends ConsumerState<AssetPage> {
           key: Key(asset.heroTag),
           index: widget.index,
           imageProvider: provider,
+          quarterTurns: quarterTurns,
           heroAttributes: heroAttributes,
           loadingBuilder: (context, progress, index) => const Center(child: ImmichLoadingIndicator()),
           gaplessPlayback: true,
@@ -464,9 +468,20 @@ class _AssetPageState extends ConsumerState<AssetPage> {
 
     final isCurrent = currentAsset != null && currentAsset.refersToSameAsset(displayAsset);
 
+    // The one-key rotation (view_rotation.provider.dart): none for anything but a flat photo, whatever is kept for it
+    final quarterTurns = ref.watch(displayQuarterTurnsProvider(displayAsset));
+    // The details sit under the photo: once turned, its height is known after the next layout
+    ref.listen(displayQuarterTurnsProvider(displayAsset), (_, _) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    });
+
     final viewportWidth = MediaQuery.widthOf(context);
     final viewportHeight = MediaQuery.heightOf(context);
-    final imageHeight = _getImageHeight(viewportWidth, viewportHeight, displayAsset);
+    final imageHeight = _getImageHeight(viewportWidth, viewportHeight, displayAsset, quarterTurns);
 
     final detailsOffset = (viewportHeight + imageHeight - kMinInteractiveDimension) / 2;
     final snapTarget = viewportHeight / 3;
@@ -500,9 +515,11 @@ class _AssetPageState extends ConsumerState<AssetPage> {
                     isPlayingMotionVideo: isPlayingMotionVideo,
                     localFilePath: viewIntentFilePath,
                     remoteThumbnailSize: thumbnailSize,
+                    quarterTurns: quarterTurns,
                   ),
                 ),
-                if (showingOcr && displayAsset.width != null && displayAsset.height != null)
+                // The text boxes are those of the picture as the server holds it: not drawn over a turned one
+                if (showingOcr && quarterTurns == 0 && displayAsset.width != null && displayAsset.height != null)
                   Positioned.fill(
                     child: OcrOverlay(
                       asset: displayAsset,

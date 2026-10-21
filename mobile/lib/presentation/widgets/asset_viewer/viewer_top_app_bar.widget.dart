@@ -16,6 +16,7 @@ import 'package:immich_mobile/presentation/actions/action.widget.dart';
 import 'package:immich_mobile/presentation/actions/favorite.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/motion_photo_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_kebab_menu.widget.dart';
@@ -25,6 +26,7 @@ import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
@@ -118,6 +120,11 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // Immuch360 Desktop: the window in full screen (lib/desktop/window/full_screen.dart)
     final fullScreenButton = CurrentPlatform.isDesktop ? const DesktopFullScreenButton() : null;
 
+    // The one-key rotation: here on a computer, and in the read only mode of a phone, whose bottom row is hidden. A TV
+    // has it in its bottom bar, a phone otherwise in the bottom row (see RotateAction).
+    final hasTopRotate = CurrentPlatform.isDesktop || (ref.watch(readonlyModeProvider) && !ref.watch(tvModeProvider));
+    final rotateButton = hasTopRotate && canRotateInViewer(ref, asset) ? ViewerRotateIconButton(asset: asset) : null;
+
     final actions = <Widget>[
       if (asset.isMotionPhoto) const MotionPhotoActionButton(iconOnly: true),
       if (album != null && album.isActivityEnabled && album.isShared)
@@ -181,6 +188,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                   panoramaButton != null ||
                                   spatialButton != null ||
                                   view3dButton != null ||
+                                  rotateButton != null ||
                                   fullScreenButton != null)
                           ? ImmichColorOverride(
                               color: Colors.white,
@@ -194,6 +202,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                     ?view3dButton,
                                     ?panoramaButton,
                                     ?spatialButton,
+                                    ?rotateButton,
                                     ?fullScreenButton,
                                     if (!isViewOnly) ...(isInLockedView ? lockedViewActions : actions),
                                   ],

@@ -18,11 +18,13 @@ import 'package:immich_mobile/presentation/widgets/action_buttons/download_statu
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_page.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_preloader.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_stack.provider.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_bottom_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/cast.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
@@ -398,6 +400,14 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
       }
       return KeyEventResult.handled;
     }
+    final rotation = isRemoteRotateClockwise(event)
+        ? 1
+        : isRemoteRotateCounterClockwise(event)
+        ? -1
+        : 0;
+    if (rotation != 0 && video == null) {
+      return _rotate(rotation, press: press);
+    }
     if (remoteNextItemKeys.contains(key) || remotePreviousItemKeys.contains(key)) {
       if (press) {
         _onTapNavigate(remoteNextItemKeys.contains(key) ? 1 : -1);
@@ -461,6 +471,20 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
       return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;
+  }
+
+  /// The one-key rotation of the photo on screen (the yellow and blue keys of a remote, R and Shift R): nothing for a
+  /// photo that does not turn, a 360° one among others, whose keys go on as if unread. Presses only: a held key does
+  /// not spin the photo.
+  KeyEventResult _rotate(int delta, {required bool press}) {
+    final asset = ref.read(assetViewerProvider).currentAsset;
+    if (asset == null || ref.read(rotationModeProvider(asset)) == RotationMode.none) {
+      return KeyEventResult.ignored;
+    }
+    if (press) {
+      rotateAssetFromWidget(ref, asset, delta);
+    }
+    return KeyEventResult.handled;
   }
 
   bool _isPlaying(AutoDisposeStateNotifierProvider<VideoPlayerNotifier, VideoPlayerState> video) {
@@ -624,6 +648,15 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
                   itemBuilder: (context, index) =>
                       AssetPage(index: index, heroOffset: _heroOffset, onTapNavigate: _onTapNavigate),
                 ),
+              ),
+            ),
+            // While the server saves a rotation of the photo on screen, controls shown or not
+            Positioned(
+              top: context.padding.top,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                child: RotationProgressBar(asset: ref.watch(assetViewerProvider.select((s) => s.currentAsset))),
               ),
             ),
             // Immuch360 Desktop: previous and next for the mouse, which cannot swipe (desktop/window/hover_chevrons.dart)
