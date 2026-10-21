@@ -182,8 +182,21 @@ jobs:
             mobile/build/app/outputs/flutter-apk/Immuch360-*.apk
             mobile/build/app/outputs/flutter-apk/Immuch360-*.aab
 
+  release:
+    name: GitHub Release
+    # Only once the Kotlin unit tests passed too: a failing test keeps the APKs of a tag off the release
+    needs: [unit-tests, android]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      # Where the build job had them, so that the list of files below stays the build's own
+      - name: Download the APKs
+        uses: actions/download-artifact@v4
+        with:
+          name: apks
+          path: mobile/build/app/outputs/flutter-apk
+
       - name: GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: |
