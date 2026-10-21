@@ -5,9 +5,12 @@ import 'package:immich_mobile/utils/debug_print.dart';
 /// The folder of the libsmb2 texts among the assets of the vendored dart_smb2 (mobile/packages/dart_smb2/libsmb2)
 const libsmb2LicenseAssets = 'packages/dart_smb2/libsmb2';
 
-/// The libsmb2 entry when its texts cannot be read (a build without the assets of dart_smb2): the licence, and where the
-/// notice and the corresponding source are, rather than a licence page that fails as a whole
+/// The libsmb2 entry when its texts cannot be read (a build without the assets of dart_smb2): the copyright, the licence,
+/// and where the notice and the corresponding source are, rather than a licence page that fails as a whole. The years
+/// are those of the files built into the library (lib/ and include/ of libsmb2 at 595d128b4d11), as in NOTICE.
 const libsmb2FallbackLicense =
+    'Copyright (C) 2016-2025 Ronnie Sahlberg and the libsmb2 contributors.\n'
+    '\n'
     'libsmb2 (https://github.com/sahlberg/libsmb2), the library Immuch360 uses to open SMB shares, is under the GNU '
     'Lesser General Public License, version 2.1 or (at your option) any later version '
     '(https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html).\n'

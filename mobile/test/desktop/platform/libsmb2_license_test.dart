@@ -62,6 +62,7 @@ void main() {
     expect(entries, hasLength(1));
     expect(entries.single.packages, ['libsmb2']);
     final text = _paragraphs(entries.single).join('\n');
+    expect(_paragraphs(entries.single).first, 'Copyright (C) 2016-2025 Ronnie Sahlberg and the libsmb2 contributors.');
     expect(text, contains('GNU Lesser General Public License, version 2.1 or (at your option) any later version'));
     expect(text, contains('https://github.com/sahlberg/libsmb2'));
     expect(text, contains('Immuch360-libsmb2-sources.tar.gz'));
