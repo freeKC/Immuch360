@@ -246,6 +246,22 @@ workflows:
           xcode-project build-ipa --workspace ios/Runner.xcworkspace --scheme Runner --config Release \
             --archive-xcargs="-skipMacroValidation -skipPackagePluginValidation" \
             --export-options-plist=/Users/builder/export_options.plist
+      # The IPA sent to TestFlight comes from a new xcodebuild archive, not from the app checked above: the same four
+      # libsmb2 files must be in it too
+      - name: libsmb2 notice, licence and sources in the IPA
+        script: |
+          set -euo pipefail
+          IPA=$(ls mobile/build/ios/ipa/*.ipa | head -1)
+          LISTING=$(mktemp)
+          unzip -l "$IPA" > "$LISTING"
+          ASSETS='Payload/[^/]+[.]app/Frameworks/App[.]framework/flutter_assets/packages/dart_smb2/libsmb2'
+          for NAME in NOTICE COPYING LICENCE-LGPL-2.1.txt Immuch360-libsmb2-sources.tar.gz; do
+            PATTERN="$ASSETS/$(printf '%s' "$NAME" | sed 's/[.]/[.]/g')"
+            grep -qE " $PATTERN\$" "$LISTING" || { echo "no $NAME of libsmb2 in $IPA"; exit 1; }
+          done
+          SOURCES=$(grep -oE "$ASSETS/Immuch360-libsmb2-sources[.]tar[.]gz\$" "$LISTING" | head -1)
+          unzip -p "$IPA" "$SOURCES" | cmp - mobile/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
+          echo "$IPA holds the four libsmb2 files under ${SOURCES%/*}"
     artifacts:
       - mobile/build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
