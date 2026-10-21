@@ -193,6 +193,28 @@ class VideoSourceService {
     return int.tryParse(response.headers['content-length'] ?? '');
   }
 
+  /// The refusal of the decoder check when the 360° player would get nothing it decodes from [source], the choice of
+  /// [serverSource] for the server video [videoId]: the device cannot decode the original ([probe]), the source is the
+  /// original, or the transcoded stream when the server transcoded nothing (so the original again: under the default
+  /// transcode policy of the server an H.264 file is never transcoded, whatever its size), and there is no stream to
+  /// fall back to. Asked whatever the policy, unlike [serverSource]. Null when it would play, or may: no probe, no
+  /// verdict, a decodable original, a smaller stream.
+  Future<DecodeVerdict?> refusedServerStream({
+    required String videoId,
+    required SphericalProbe? probe,
+    required ChosenVideoSource source,
+  }) async {
+    if (source.fallbackUrl != null) {
+      return null;
+    }
+    final verdict = await this.verdict(probe);
+    if (verdict == null || verdict.supported) {
+      return null;
+    }
+    final playsOriginal = source.url == serverOriginalVideoUrl(videoId) || await transcodeIsOriginal(videoId);
+    return playsOriginal ? verdict : null;
+  }
+
   /// Which file of the server video [videoId] plays under [policy] (see [chooseVideoSource]), with [probe], what its
   /// file declares, checked against the decoders of the device. Before it switches to the transcoded stream, it makes
   /// sure the server has one (see [transcodeIsOriginal]): otherwise the original plays, with a word that the device
@@ -279,12 +301,17 @@ final videoDecodersProvider = FutureProvider.autoDispose<List<DecoderInfo>>(
   (ref) => ref.watch(videoDecoderApiProvider).listDecoders(),
 );
 
-/// Translated message of the native 360° and Spatial 2.5D players when they switch to the transcoded stream by
-/// themselves, the device being unable to decode the original, under the key they read (VideoDecoders.LABEL_SWITCHED
-/// on Android). "{codec}", "{width}" and "{height}" stay as they are: the players fill them in from the track they
-/// could not decode.
+/// Translated messages of the native 360° and Spatial 2.5D players about the decoders, under the keys they read
+/// (VideoDecoders.LABEL_SWITCHED and the others on Android): the switch to the transcoded stream when the device cannot
+/// decode the original, the original that plays anyway with nothing to switch to, and the errors of a decoder that
+/// refused the video or gave no picture, and of a video that does not load. "{codec}", "{width}" and "{height}" stay
+/// as they are: the players fill them in from the track they could not decode.
 Map<String, String> videoSourceLabels(Translations t) => {
   'sourceSwitched': t.video_source_switched(codec: '{codec}', width: '{width}', height: '{height}'),
+  'sourceUndecodable': t.video_source_undecodable(codec: '{codec}', width: '{width}', height: '{height}'),
+  'errorDecoder': t.video_error_decoder(codec: '{codec}', width: '{width}', height: '{height}'),
+  'errorNoFrame': t.video_error_no_frame(codec: '{codec}', width: '{width}', height: '{height}'),
+  'errorStalled': t.video_error_stalled,
 };
 
 extension VideoSourceNoticeMessage on VideoSourceNotice {

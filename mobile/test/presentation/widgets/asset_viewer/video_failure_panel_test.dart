@@ -4,6 +4,7 @@ import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
@@ -108,5 +109,45 @@ void main() {
 
     expect(describe(t, error, probe: probe57k, verdict: accepted).cause, error.message);
     expect(describe(t, const VideoPlaybackFailure(VideoFailureKind.error, '  ')).cause, isNull);
+  });
+
+  group('the 360° player of a video beyond the decoders', () {
+    Future<Future<bool>> openDialog(WidgetTester tester) async {
+      late Future<bool> answer;
+      await tester.pumpConsumerWidget(
+        Builder(
+          builder: (context) => TextButton(
+            onPressed: () => answer = confirmUndecodableVideo(context, probe57k, refused),
+            child: const Text('open'),
+          ),
+        ),
+      );
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+      return answer;
+    }
+
+    testWidgets('says why and how the server can help, Close focused', (tester) async {
+      final answer = await openDialog(tester);
+
+      expect(find.byKey(const Key('undecodable_video_dialog')), findsOneWidget);
+      expect(find.textContaining('H.264 5760 x 2880 is beyond the video decoders'), findsOneWidget);
+      expect(find.textContaining('Transcode videos'), findsOneWidget);
+      final close = find.widgetWithText(TextButton, StaticTranslations.instance.close);
+      expect(Focus.of(tester.element(find.descendant(of: close, matching: find.byType(Text)))).hasFocus, isTrue);
+
+      await tester.tap(close);
+      await tester.pumpAndSettle();
+      expect(await answer, isFalse);
+    });
+
+    testWidgets('Play still opens it', (tester) async {
+      final answer = await openDialog(tester);
+
+      await tester.tap(find.widgetWithText(TextButton, StaticTranslations.instance.play));
+      await tester.pumpAndSettle();
+
+      expect(await answer, isTrue);
+    });
   });
 }

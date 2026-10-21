@@ -624,6 +624,21 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         return;
       }
     }
+    // A share has no smaller stream: a file beyond the decoders of the device opens no player that would load forever
+    // unless the user still wants to try
+    if (plan == null && mounted) {
+      final probe = _info?.probe;
+      final verdict = await ref.read(videoSourceServiceProvider).verdict(probe);
+      if (verdict != null && !verdict.supported) {
+        _log.warning('$_name is beyond the decoders of this device: ${verdict.reason}');
+        if (!mounted || !await confirmUndecodableVideo(context, probe, verdict, fromServer: false)) {
+          return;
+        }
+      }
+    }
+    if (!mounted) {
+      return;
+    }
     final opened = await openSphericalVideoUrl(
       context,
       ref,

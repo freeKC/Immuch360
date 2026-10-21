@@ -12,8 +12,10 @@ class StreamingLoadControlTest {
   }
 
   @Test
-  fun `never takes less than the Media3 default`() {
-    assertEquals(StreamingLoadControl.MIN_TARGET_BUFFER_BYTES, StreamingLoadControl.targetBufferBytes(192 * mib))
+  fun `takes half of the small heap of a TV, less than the Media3 default which would fill it`() {
+    // The Google TV emulator gives 128 MiB, TVs with largeHeap 192 to 256 MiB; Media3 buffers about 137 MiB
+    assertEquals((64 * mib).toInt(), StreamingLoadControl.targetBufferBytes(128 * mib))
+    assertEquals((96 * mib).toInt(), StreamingLoadControl.targetBufferBytes(192 * mib))
   }
 
   @Test

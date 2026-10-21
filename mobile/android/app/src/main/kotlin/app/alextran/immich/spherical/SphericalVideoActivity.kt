@@ -36,6 +36,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import androidx.media3.common.util.Size
+import androidx.media3.common.util.StuckPlayerException
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
 import androidx.media3.datasource.DefaultDataSource
@@ -509,7 +510,7 @@ class SphericalVideoActivity : ComponentActivity() {
       updateBackCallback()
     })
     playerView.setErrorMessageProvider(ErrorMessageProvider<PlaybackException> { error ->
-      Pair.create(error.errorCode, errorMessage)
+      Pair.create(error.errorCode, errorMessageFor(error) ?: errorMessage)
     })
 
     if (savedInstanceState != null) {
@@ -1084,6 +1085,9 @@ class SphericalVideoActivity : ComponentActivity() {
     val codec = VideoDecoders.codecName(format.sampleMimeType)
     Log.w(TAG, "$codec ${format.width}x${format.height} is above what this device decodes: ${verdict.reason}")
     if (!switchToFallback("the device cannot decode the original")) {
+      // Nothing to switch to: it plays anyway, the decoders may do better than they tell, but the user knows why if not
+      VideoDecoders.decoderLabel(labels, VideoDecoders.LABEL_UNDECODABLE, codec, format.width, format.height)
+        ?.let { showToast(it, Toast.LENGTH_LONG) }
       return
     }
     val message = VideoDecoders.decoderLabel(labels, VideoDecoders.LABEL_SWITCHED, codec, format.width, format.height)
@@ -1093,6 +1097,42 @@ class SphericalVideoActivity : ComponentActivity() {
       Log.i(TAG, "No label from Flutter for the switch to the transcoded stream")
     }
   }
+
+  /**
+   * What the error view says for [error], from the labels Flutter sent, rather than the generic "Unable to play
+   * video": a decoder that refused the video, a decoder that took it but gave no picture (the buffer full, nothing
+   * played: what Media3's stuck buffering check reports), or a video that does not load. Null for any other error, and
+   * without the label.
+   */
+  private fun errorMessageFor(error: PlaybackException): String? {
+    val format = player?.videoFormat
+    val codec = VideoDecoders.codecName(format?.sampleMimeType)
+    val width = format?.width ?: 0
+    val height = format?.height ?: 0
+    val stuck = error.cause as? StuckPlayerException
+    val key =
+      when {
+        isDecoderError(error) || error.errorCode == PlaybackException.ERROR_CODE_DECODING_FAILED ->
+          VideoDecoders.LABEL_ERROR_DECODER
+        stuck != null && format != null && decoderGotMedia(stuck) -> VideoDecoders.LABEL_ERROR_NO_FRAME
+        stuck != null || error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT ->
+          VideoDecoders.LABEL_ERROR_STALLED
+        else -> return null
+      }
+    Log.w(TAG, "Error shown as $key: ${error.errorCodeName}, $codec ${width}x$height, ${stuck?.message ?: error.message}")
+    if (key == VideoDecoders.LABEL_ERROR_STALLED) {
+      return labels[key]?.takeIf { it.isNotBlank() }
+    }
+    return if (width > 0 && height > 0) VideoDecoders.decoderLabel(labels, key, codec, width, height) else null
+  }
+
+  /**
+   * Whether the decoder had media enough to give a picture when the buffering got stuck: the loading stopped (the
+   * buffer is full), or more than what the playback waits for is buffered ahead
+   */
+  private fun decoderGotMedia(stuck: StuckPlayerException): Boolean =
+    stuck.stuckType == StuckPlayerException.STUCK_BUFFERING_NOT_LOADING ||
+      (player?.totalBufferedDuration ?: 0L) >= StreamingLoadControl.BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
 
   /**
    * Plays the transcoded stream in place of the original, from where it stopped, once. False when there is none, when
