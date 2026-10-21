@@ -9,7 +9,45 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 part 'video_player_provider.freezed.dart';
 
-enum VideoPlaybackStatus { paused, playing, buffering, completed }
+enum VideoPlaybackStatus {
+  paused,
+  playing,
+  buffering,
+  completed,
+
+  /// The video does not play: the native player reported an error, or nothing played for
+  /// [VideoPlayerNotifier.stallTimeout] while it loaded (see [VideoPlayerNotifier.failure]). Not playing: the remote
+  /// goes to the next item, play tries again (see [VideoPlayerNotifier.retry]).
+  failed,
+}
+
+/// Why a video is [VideoPlaybackStatus.failed]
+enum VideoFailureKind {
+  /// The native player reported an error: a decoder that refused the video, a file it could not read
+  error,
+
+  /// Nothing played for [VideoPlayerNotifier.stallTimeout] while the video loaded: a network or a server too slow for
+  /// its bit rate, or a decoder that never gave a frame. It clears by itself when the video plays after all.
+  stalled,
+}
+
+/// Why a video does not play: its [kind], and the native player's own [message] for an error (technical, not
+/// translated: for the logs and as the last resort of the failure panel)
+class VideoPlaybackFailure {
+  const VideoPlaybackFailure(this.kind, [this.message]);
+
+  final VideoFailureKind kind;
+  final String? message;
+
+  @override
+  bool operator ==(Object other) => other is VideoPlaybackFailure && other.kind == kind && other.message == message;
+
+  @override
+  int get hashCode => Object.hash(kind, message);
+
+  @override
+  String toString() => 'VideoPlaybackFailure($kind, $message)';
+}
 
 @freezed
 abstract class VideoPlayerState with _$VideoPlayerState {
@@ -36,11 +74,18 @@ final videoPlayerProvider = StateNotifierProvider.autoDispose.family<VideoPlayer
 class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   static final _log = Logger('VideoPlayerNotifier');
 
+  /// How long a video may load, or stall once it played, before it counts as failed: the 360° player of Android
+  /// gives up later (30 s, with Media3's own stuck buffering check), the flat players had no limit at all
+  static const stallTimeout = Duration(seconds: 20);
+
   VideoPlayerNotifier() : super(_defaultState);
 
   NativeVideoPlayerController? _controller;
   Timer? _bufferingTimer;
   Timer? _seekTimer;
+  // Runs while the status is buffering, see [stallTimeout]
+  Timer? _stallTimer;
+  VideoPlaybackFailure? _failure;
   VideoPlaybackStatus? _holdStatus;
 
   // Set while the video plays in an external player (the native 360° player): see [suspendForExternalPlayer]
@@ -57,10 +102,31 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   /// Whether [suspendForExternalPlayer] stopped this player
   bool get isSuspendedForExternalPlayer => _suspended;
 
+  /// Why the video does not play while the status is [VideoPlaybackStatus.failed], null otherwise
+  VideoPlaybackFailure? get failure => _failure;
+
+  /// Every status change goes through here: the stall check runs while the status is buffering, and a failure lasts
+  /// only as long as the failed status
+  @override
+  @protected
+  set state(VideoPlayerState value) {
+    super.state = value;
+    if (value.status != VideoPlaybackStatus.failed) {
+      _failure = null;
+    }
+    if (value.status != VideoPlaybackStatus.buffering) {
+      _stallTimer?.cancel();
+      _stallTimer = null;
+    } else {
+      _stallTimer ??= Timer(stallTimeout, _onStalled);
+    }
+  }
+
   @override
   void dispose() {
     _bufferingTimer?.cancel();
     _seekTimer?.cancel();
+    _stallTimer?.cancel();
     unawaited(_keepScreenOn(false));
     _controller = null;
 
@@ -79,12 +145,51 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
     _ready = false;
     _playOnForeground = false;
+    if (state.status == VideoPlaybackStatus.failed) {
+      // Loading again: the spinner, and a new stall check, from now on
+      state = state.copyWith(status: VideoPlaybackStatus.buffering);
+    }
     _startBufferingTimer();
     try {
       await _controller?.loadVideoSource(source);
     } catch (e) {
       _log.severe('Error loading video source: $e');
     }
+  }
+
+  /// Loads the video again and plays it: what play does on a video that failed
+  Future<void> retry() async {
+    final source = _controller?.videoSource;
+    if (source == null || _suspended) {
+      return;
+    }
+    await load(source);
+    await play();
+  }
+
+  /// The native player reported an error ([message]): the video fails until it is loaded again
+  void onNativeError(String message) {
+    if (!mounted || _suspended) {
+      return;
+    }
+    _fail(VideoPlaybackFailure(VideoFailureKind.error, message));
+  }
+
+  void _onStalled() {
+    _stallTimer = null;
+    if (!mounted || state.status != VideoPlaybackStatus.buffering) {
+      return;
+    }
+    _log.warning('Nothing played for ${stallTimeout.inSeconds} s: ${_controller?.videoSource?.path ?? 'no source'}');
+    _fail(const VideoPlaybackFailure(VideoFailureKind.stalled));
+  }
+
+  void _fail(VideoPlaybackFailure failure) {
+    _bufferingTimer?.cancel();
+    unawaited(_keepScreenOn(false));
+    // Before the state: its listeners read the failure with the status
+    _failure = failure;
+    state = state.copyWith(status: VideoPlaybackStatus.failed);
   }
 
   Future<void> pause() async {
@@ -105,6 +210,10 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
   Future<void> play() async {
     if (_controller == null || _suspended) {
+      return;
+    }
+    if (state.status == VideoPlaybackStatus.failed) {
+      await retry();
       return;
     }
 
@@ -266,6 +375,8 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
         unawaited(pause());
       case VideoPlaybackStatus.completed:
         unawaited(restart());
+      case VideoPlaybackStatus.failed:
+        unawaited(retry());
     }
   }
 
@@ -327,7 +438,8 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     state = state.copyWith(
       position: Duration(milliseconds: playbackInfo.position),
       duration: Duration(milliseconds: videoInfo.duration),
-      status: _mapStatus(playbackInfo.status),
+      // A player in error stays failed until it is loaded again; a stall ends here
+      status: _failedOnError ? VideoPlaybackStatus.failed : _mapStatus(playbackInfo.status),
     );
 
     _ready = true;
@@ -357,14 +469,16 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
       _startBufferingTimer();
     }
 
-    state = state.copyWith(
-      position: position,
-      status: state.status == VideoPlaybackStatus.buffering ? VideoPlaybackStatus.playing : state.status,
-    );
+    // It moves: the buffering, or the stall, is over
+    final moving =
+        state.status == VideoPlaybackStatus.buffering ||
+        (state.status == VideoPlaybackStatus.failed && !_failedOnError);
+    state = state.copyWith(position: position, status: moving ? VideoPlaybackStatus.playing : state.status);
   }
 
   void onNativeStatusChanged() {
-    if (!mounted) {
+    // The plugin reports the status of its own calls (play, pause, stop), which do not lift an error
+    if (!mounted || _failedOnError) {
       return;
     }
 
@@ -410,11 +524,13 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   void _startBufferingTimer() {
     _bufferingTimer?.cancel();
     _bufferingTimer = Timer(const Duration(seconds: 1), () {
-      if (mounted && state.status != VideoPlaybackStatus.completed) {
+      if (mounted && state.status != VideoPlaybackStatus.completed && state.status != VideoPlaybackStatus.failed) {
         state = state.copyWith(status: VideoPlaybackStatus.buffering);
       }
     });
   }
+
+  bool get _failedOnError => _failure?.kind == VideoFailureKind.error;
 
   static VideoPlaybackStatus _mapStatus(PlaybackStatus status) => switch (status) {
     PlaybackStatus.playing => VideoPlaybackStatus.playing,

@@ -36,6 +36,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import androidx.media3.common.util.Size
+import androidx.media3.common.util.StuckPlayerException
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
 import androidx.media3.datasource.DefaultDataSource
@@ -46,6 +47,7 @@ import androidx.media3.exoplayer.video.VideoFrameMetadataListener
 import androidx.media3.exoplayer.video.spherical.SphericalGLSurfaceView
 import androidx.media3.ui.PlayerView
 import app.alextran.immich.R
+import app.alextran.immich.core.AppHealth
 import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.BufferingIndicator
 import app.alextran.immich.core.DualFisheyeEffect
@@ -61,6 +63,7 @@ import app.alextran.immich.core.raw.RawProjection
 import app.alextran.immich.core.raw.RawStitchException
 import app.alextran.immich.core.raw.RawTrack
 import app.alextran.immich.core.raw.TwoLensPlayback
+import app.alextran.immich.tv.isLowRamDevice
 import app.alextran.immich.tv.isTelevision
 import java.lang.reflect.Field
 import kotlin.math.min
@@ -382,6 +385,9 @@ class SphericalVideoActivity : ComponentActivity() {
   /** The video track of the URL that plays was checked against the decoders of the device */
   private var decoderChecked = false
 
+  /** What the player saw of the video, for the report of a failure (see [reportFailure]); one per player */
+  private var playbackStats: PlaybackStats? = null
+
   /** Flutter sent a rawProjection: a raw 360° video, drawn as a mono full sphere whatever happens */
   private var rawJsonPresent = false
 
@@ -470,18 +476,20 @@ class SphericalVideoActivity : ComponentActivity() {
         // The ladder replaces the fallback of other videos: a lens player shows the error once it has nothing left
         val projection = rawProjection ?: return
         val url = intent.getStringExtra(EXTRA_URL) ?: return
-        if (isDecoderError(error)) {
-          replan(RawPlaybackPlanner.afterDecoderFailure(plan, projection, url, fallbackUrl))
-        } else {
-          // A read error of a split pair keeps the lens of the opened file first; any other failure (a container the
-          // extractor refuses, a timeout) plays the transcoded streams, once, like the switch of other videos
-          val oneFile = if (isSourceError(error)) RawPlaybackPlanner.afterSourceError(plan, projection, url) else null
-          replan(oneFile ?: RawPlaybackPlanner.afterSourceFailure(plan, projection, url, fallbackUrl))
-        }
+        val replanned =
+          if (isDecoderError(error)) {
+            replan(RawPlaybackPlanner.afterDecoderFailure(plan, projection, url, fallbackUrl))
+          } else {
+            // A read error of a split pair keeps the lens of the opened file first; any other failure (a container the
+            // extractor refuses, a timeout) plays the transcoded streams, once, like the switch of other videos
+            val oneFile = if (isSourceError(error)) RawPlaybackPlanner.afterSourceError(plan, projection, url) else null
+            replan(oneFile ?: RawPlaybackPlanner.afterSourceFailure(plan, projection, url, fallbackUrl))
+          }
+        if (!replanned) reportFailure(error)
         return
       }
       // PlayerView shows the error while the player stays in error: the transcoded stream gets its chance first
-      switchToFallback("the original failed (${error.errorCodeName})")
+      if (!switchToFallback("the original failed (${error.errorCodeName})")) reportFailure(error)
     }
   }
 
@@ -509,7 +517,7 @@ class SphericalVideoActivity : ComponentActivity() {
       updateBackCallback()
     })
     playerView.setErrorMessageProvider(ErrorMessageProvider<PlaybackException> { error ->
-      Pair.create(error.errorCode, errorMessage)
+      Pair.create(error.errorCode, errorMessageFor(error) ?: errorMessage)
     })
 
     if (savedInstanceState != null) {
@@ -758,6 +766,7 @@ class SphericalVideoActivity : ComponentActivity() {
     player = (lens?.player ?: builder.build())
       .also {
         it.addListener(playerListener)
+        it.addAnalyticsListener(PlaybackStats().also { stats -> playbackStats = stats })
         // The language picked last, and the track picked for this video before a stop
         audioTracks.attach(it)
         bufferingIndicator.attach(it)
@@ -1084,6 +1093,9 @@ class SphericalVideoActivity : ComponentActivity() {
     val codec = VideoDecoders.codecName(format.sampleMimeType)
     Log.w(TAG, "$codec ${format.width}x${format.height} is above what this device decodes: ${verdict.reason}")
     if (!switchToFallback("the device cannot decode the original")) {
+      // Nothing to switch to: it plays anyway, the decoders may do better than they tell, but the user knows why if not
+      VideoDecoders.decoderLabel(labels, VideoDecoders.LABEL_UNDECODABLE, codec, format.width, format.height)
+        ?.let { showToast(it, Toast.LENGTH_LONG) }
       return
     }
     val message = VideoDecoders.decoderLabel(labels, VideoDecoders.LABEL_SWITCHED, codec, format.width, format.height)
@@ -1093,6 +1105,93 @@ class SphericalVideoActivity : ComponentActivity() {
       Log.i(TAG, "No label from Flutter for the switch to the transcoded stream")
     }
   }
+
+  /**
+   * What the error view says for [error], from the labels Flutter sent, rather than the generic "Unable to play
+   * video": a decoder that refused the video, a decoder that took it but gave no picture (the buffer full, nothing
+   * played: what Media3's stuck buffering check reports), or a video that does not load. Null for any other error, and
+   * without the label.
+   */
+  private fun errorMessageFor(error: PlaybackException): String? {
+    val format = player?.videoFormat
+    val codec = VideoDecoders.codecName(format?.sampleMimeType)
+    val width = format?.width ?: 0
+    val height = format?.height ?: 0
+    val stuck = error.cause as? StuckPlayerException
+    val key =
+      when {
+        isDecoderError(error) || error.errorCode == PlaybackException.ERROR_CODE_DECODING_FAILED ->
+          VideoDecoders.LABEL_ERROR_DECODER
+        stuck != null && format != null && decoderGotMedia(stuck) -> VideoDecoders.LABEL_ERROR_NO_FRAME
+        stuck != null || error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT ->
+          VideoDecoders.LABEL_ERROR_STALLED
+        else -> return null
+      }
+    Log.w(TAG, "Error shown as $key: ${error.errorCodeName}, $codec ${width}x$height, ${stuck?.message ?: error.message}")
+    if (key == VideoDecoders.LABEL_ERROR_STALLED) {
+      return labels[key]?.takeIf { it.isNotBlank() }
+    }
+    return if (width > 0 && height > 0) VideoDecoders.decoderLabel(labels, key, codec, width, height) else null
+  }
+
+  /**
+   * Writes the error the user sees to the Logs page, with what the player saw of the video and what the device is:
+   * logcat alone kept it before, out of reach of a TV user. Not the URL, which may hold a token.
+   */
+  private fun reportFailure(error: PlaybackException) {
+    val current = player
+    val url = playbackUrl()
+    val format = current?.videoFormat
+    val video =
+      format?.let {
+        val rate = if (it.bitrate > 0) ", ${PlaybackReport.megabits(it.bitrate.toLong())} Mbit/s" else ""
+        val fps = if (it.frameRate > 0) " at ${it.frameRate} fps" else ""
+        "${VideoDecoders.codecName(it.sampleMimeType)} ${it.width} x ${it.height}$fps$rate"
+      }
+    val heap = Runtime.getRuntime().maxMemory()
+    val streamed = url != null && StreamingLoadControl.isStreamed(url)
+    val soc =
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) ", SoC ${Build.SOC_MANUFACTURER} ${Build.SOC_MODEL}" else ""
+    val text =
+      PlaybackReport.describe(
+        title = intent.getStringExtra(EXTRA_TITLE),
+        source = sourceOf(url),
+        error =
+          error.errorCodeName +
+            (error.cause?.let { " (${it.javaClass.simpleName}: ${PlaybackReport.withoutUrls("${it.message}")})" } ?: ""),
+        video = video,
+        stats = playbackStats,
+        bufferedMs = current?.totalBufferedDuration ?: 0L,
+        heapBytes = heap,
+        bufferTargetBytes = if (streamed) StreamingLoadControl.targetBufferBytes(heap) else null,
+        device =
+          "${Build.MANUFACTURER} ${Build.MODEL}$soc, Android ${Build.VERSION.RELEASE} " +
+            "(API ${Build.VERSION.SDK_INT}), TV: $television, low memory: ${isLowRamDevice(this)}",
+      )
+    AppHealth.report("video", text)
+  }
+
+  /** Where [url], the URL that plays, comes from, in words for the report of a failure */
+  private fun sourceOf(url: String?): String =
+    when {
+      url == null -> "no URL"
+      plan.mode == RawMode.LENSES -> "its two lens streams"
+      playingFallback -> "the server transcoded stream, after the original failed"
+      url.startsWith("http://127.0.0.1") || url.startsWith("http://localhost") ->
+        "a network share, through the media bridge"
+      url.contains("/video/playback") -> "the server transcoded stream"
+      url.contains("/original") -> "the server original"
+      StreamingLoadControl.isStreamed(url) -> "a network URL"
+      else -> "a file on the device"
+    }
+
+  /**
+   * Whether the decoder had media enough to give a picture when the buffering got stuck: the loading stopped (the
+   * buffer is full), or more than what the playback waits for is buffered ahead
+   */
+  private fun decoderGotMedia(stuck: StuckPlayerException): Boolean =
+    stuck.stuckType == StuckPlayerException.STUCK_BUFFERING_NOT_LOADING ||
+      (player?.totalBufferedDuration ?: 0L) >= StreamingLoadControl.BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
 
   /**
    * Plays the transcoded stream in place of the original, from where it stopped, once. False when there is none, when

@@ -25,6 +25,24 @@ internal fun isTelevision(context: Context): Boolean =
 internal fun isTelevision(hasLeanback: Boolean, uiModeType: Int, isHorizonOs: Boolean): Boolean =
   !isHorizonOs && (hasLeanback || uiModeType == Configuration.UI_MODE_TYPE_TELEVISION)
 
-/** What the system tells of the device class, not the memory pressure of the moment */
-internal fun isLowRamDevice(context: Context): Boolean =
-  (context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).isLowRamDevice
+/**
+ * Whether the device is short of memory for the large pictures of the TV layout (the sharp texture of a 360° photo,
+ * 134 MB): what the system tells of the device class (ActivityManager.isLowRamDevice, which makers set mostly on 1 GB
+ * devices), or [LOW_RAM_TOTAL_BYTES] of memory or less, as most TVs and boxes have without the flag. Not the memory
+ * pressure of the moment.
+ */
+internal fun isLowRamDevice(context: Context): Boolean {
+  val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+  val memory = ActivityManager.MemoryInfo().also(activityManager::getMemoryInfo)
+  return isLowRamDevice(activityManager.isLowRamDevice, memory.totalMem)
+}
+
+/** Pure part of [isLowRamDevice], unit tested: [totalMemBytes] as MemoryInfo.totalMem tells it, 0 when unknown */
+internal fun isLowRamDevice(lowRamFlag: Boolean, totalMemBytes: Long): Boolean =
+  lowRamFlag || totalMemBytes in 1..LOW_RAM_TOTAL_BYTES
+
+/**
+ * The memory of a 3 GB device as the system tells it (about 2.8 to 3.1 GB once the kernel and the GPU took their
+ * part), below a 4 GB one (3.6 GB and more)
+ */
+internal const val LOW_RAM_TOTAL_BYTES = 3_400_000_000L

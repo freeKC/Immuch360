@@ -39,7 +39,9 @@ import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/deep_link.service.dart';
 import 'package:immich_mobile/theme/dynamic_theme.dart';
 import 'package:immich_mobile/theme/theme_data.dart';
+import 'package:immich_mobile/utils/app_health.dart';
 import 'package:immich_mobile/utils/bootstrap.dart';
+import 'package:immich_mobile/utils/cache/custom_image_cache.dart';
 import 'package:immich_mobile/utils/cache/widgets_binding.dart';
 import 'package:immich_mobile/utils/debug_print.dart';
 import 'package:immich_mobile/utils/licenses.dart';
@@ -80,6 +82,12 @@ Future<void> runImmich({Future<void> Function()? beforeStart}) async {
     await migrateDatabaseIfNeeded(dataController.db, PlatformApis.nativeSync(), PlatformApis.permission());
     // Before the first frame, so that the first screen is already laid out for the remote on a TV
     final tvDevice = await readTvDeviceInfo();
+    final imageCache = PaintingBinding.instance.imageCache;
+    if (tvDevice.isTelevision && imageCache is CustomImageCache) {
+      imageCache.limitForTelevision();
+    }
+    // The stalls of the main thread and why the app ended last time, to the Logs page
+    unawaited(AppHealthReports.listen());
 
     runApp(
       ProviderScope(

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
@@ -9,6 +10,7 @@ import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_viewer.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/spherical_probe.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
@@ -81,7 +83,12 @@ void main() {
     await context.dispose();
   });
 
-  Future<VideoSource?> pumpViewer(WidgetTester tester, BaseAsset asset, {AppConfig? appConfig}) async {
+  Future<VideoSource?> pumpViewer(
+    WidgetTester tester,
+    BaseAsset asset, {
+    AppConfig? appConfig,
+    List<Override> overrides = const [],
+  }) async {
     await tester.pumpTestWidget(
       context,
       NativeVideoViewer(asset: asset, image: const SizedBox()),
@@ -91,6 +98,7 @@ void main() {
         // Overridden where the viewer reads it: its scope is below the one of the app
         videoSourceServiceProvider.overrideWithValue(VideoSourceService(decoderApi)),
         if (appConfig != null) appConfigProvider.overrideWithValue(appConfig),
+        ...overrides,
       ],
       expectSettle: false,
     );
@@ -172,6 +180,63 @@ void main() {
       );
 
       expect(source?.path, endsWith('/assets/${serverOnly.id}/video/playback'));
+    });
+  });
+
+  group('a video that does not play', () {
+    final serverOnly = RemoteAssetFactory.create(type: .video);
+
+    setUp(() {
+      when(() => context.service.asset.service.getAsset(serverOnly)).thenAnswer((_) async => serverOnly);
+    });
+
+    VideoPlayerNotifier playerOf(WidgetTester tester) => ProviderScope.containerOf(
+      tester.element(find.byType(NativeVideoViewer)),
+    ).read(videoPlayerProvider(serverOnly.id).notifier);
+
+    testWidgets('says why in place of the spinner, the decoders of the device when the file is beyond them', (
+      tester,
+    ) async {
+      const probe = SphericalProbe(codec: 'avc1', codedWidth: 5760, codedHeight: 2880, frameRate: 30);
+      final verdict = DecodeVerdict(supported: false, hardware: true, maxWidth: 4096, maxHeight: 2304);
+      await pumpViewer(
+        tester,
+        serverOnly,
+        overrides: [
+          videoDecodeDetailsProvider.overrideWith(
+            (ref, asset) async => (probe: probe, verdict: verdict, bitRate: null),
+          ),
+        ],
+      );
+      expect(find.byKey(const Key('video_failure_panel')), findsNothing);
+
+      playerOf(tester).onNativeError('Decoder init failed');
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byKey(const Key('video_failure_panel')), findsOneWidget);
+      expect(find.text('This video cannot be played'), findsOneWidget);
+      expect(find.textContaining('H.264 5760 x 2880 is beyond the video decoders of this device'), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator).hitTestable(), findsNothing);
+    });
+
+    testWidgets('goes away when the video loads again', (tester) async {
+      await pumpViewer(
+        tester,
+        serverOnly,
+        overrides: [
+          videoDecodeDetailsProvider.overrideWith((ref, asset) async => (probe: null, verdict: null, bitRate: null)),
+        ],
+      );
+      final player = playerOf(tester);
+      player.onNativeError('Source error');
+      await tester.pump();
+      expect(find.byKey(const Key('video_failure_panel')), findsOneWidget);
+
+      await player.load(VideoSource(path: 'https://server/v', type: .network, headers: const {}));
+      await tester.pump();
+
+      expect(find.byKey(const Key('video_failure_panel')), findsNothing);
     });
   });
 

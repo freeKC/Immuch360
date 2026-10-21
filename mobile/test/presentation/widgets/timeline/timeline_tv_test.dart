@@ -81,6 +81,7 @@ void main() {
     List<BaseAsset>? assets,
   }) async {
     final shown = assets ?? panoramas(count);
+    final localized = inTabShell || tvMode;
     if (tvMode) {
       // A Google TV at 1920 x 1080 and 320 dpi: 960 x 540 logical pixels
       tester.view
@@ -142,15 +143,16 @@ void main() {
           routerConfig: router.config(),
           // As main.dart does
           builder: (context, child) => tvMode ? TvShell(child: child!) : child!,
-          // The labels of the tabs come through EasyLocalization
-          localizationsDelegates: inTabShell ? context.localizationDelegates : null,
-          supportedLocales: inTabShell ? context.supportedLocales : const [Locale('en', 'US')],
-          locale: inTabShell ? context.locale : null,
+          // The labels of the tabs and the dates of the headers come through EasyLocalization: on a TV the headers of
+          // the rows further down are built as the remote scrolls to them
+          localizationsDelegates: localized ? context.localizationDelegates : null,
+          supportedLocales: localized ? context.supportedLocales : const [Locale('en', 'US')],
+          locale: localized ? context.locale : null,
         ),
       ),
     );
     await tester.pumpWidget(
-      inTabShell
+      localized
           ? EasyLocalization(
               supportedLocales: locales.values.toList(),
               path: translationsPath,
@@ -245,6 +247,45 @@ void main() {
       await expectArrowsKeepFocusInsideMargins(tester);
     });
 
+    testWidgets('a held arrow moves at most one row every 100 ms, a press always moves', (tester) async {
+      await pumpTimeline(tester, tvMode: true, count: 240);
+      Focus.of(tester.element(tiles().first)).requestFocus();
+      await tester.pumpAndSettle();
+      var moves = 0;
+      var focused = FocusManager.instance.primaryFocus;
+      void countMove() {
+        final now = FocusManager.instance.primaryFocus;
+        if (now != focused) {
+          moves++;
+          focused = now;
+        }
+      }
+
+      // Held one second: the press, then repeats every 50 ms as a remote sends them
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      countMove();
+      for (var repeat = 0; repeat < 20; repeat++) {
+        await tester.pump(const Duration(milliseconds: 50));
+        await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowDown);
+        await tester.pump();
+        countMove();
+      }
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+
+      expect(moves, inInclusiveRange(10, 12), reason: 'the press and every other repeat, not 21 rows');
+
+      // Presses right after each other all move
+      moves = 0;
+      for (var press = 0; press < 3; press++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+        await tester.pump();
+        countMove();
+      }
+      expect(moves, 3);
+    });
+
     testWidgets('in the Photos tab too, where the empty bottom bar of the tab shell takes the bottom padding away', (
       tester,
     ) async {
@@ -302,16 +343,17 @@ void main() {
   });
 
   group('a photo of the server', () {
-    testWidgets('on a TV: the preview of the server, decoded at twice the tile and drawn smaller', (tester) async {
+    testWidgets('on a TV: the preview of the server, decoded at 1.5 times the tile and drawn smaller', (tester) async {
       await pumpTimeline(tester, tvMode: true, assets: serverPanoramas(12));
 
       final physical = tester.getSize(tiles().first) * 2;
       final provider = firstServerThumbnail(tester);
       expect(provider.url, contains('size=preview'), reason: 'the thumbnail of the server is smaller than the tile');
       expect(provider.url, isNot(contains('size=thumbnail')));
-      // Decoded to cover a square box, aspect kept: a 2:1 photo at most 1024 px on its long side
-      expect(provider.decodeSize, Size.square((1024 / 2).floorToDouble()));
-      expect(provider.decodeSize!.height, greaterThan(physical.height * 1.5), reason: 'larger than the tile');
+      // Decoded to cover a square box, aspect kept: a 2:1 photo within 1024 px on its long side
+      expect(provider.decodeSize!.height, closeTo((physical.height * 1.5).ceilToDouble(), 1));
+      expect(provider.decodeSize!.height, lessThanOrEqualTo(1024 / 2));
+      expect(provider.decodeSize!.height, greaterThan(physical.height), reason: 'larger than the tile');
     });
 
     testWidgets('on a phone: the thumbnail of the server, decoded at the size of the tile', (tester) async {
@@ -328,12 +370,13 @@ void main() {
   group('tvPreviewDecodeSize', () {
     LocalAsset photo(int? width, int? height) => LocalAssetStub.image1.copyWith(width: width, height: height);
 
-    test('twice the tile on the short side, at most 1024 px on the long side', () {
+    test('1.5 times the tile on the short side, at most 1024 px on the long side', () {
       const tile = Size.square(286);
-      expect(tvPreviewDecodeSize(photo(4000, 3000), tile), const Size.square(572), reason: '763 x 572');
-      expect(tvPreviewDecodeSize(photo(null, null), tile), const Size.square(572));
-      expect(tvPreviewDecodeSize(photo(5760, 2880), tile), const Size.square(512), reason: '1024 x 512');
-      expect(tvPreviewDecodeSize(photo(3000, 4500), tile), const Size.square(572), reason: '572 x 858, upright');
+      expect(tvPreviewDecodeSize(photo(4000, 3000), tile), const Size.square(429), reason: '572 x 429');
+      expect(tvPreviewDecodeSize(photo(null, null), tile), const Size.square(429));
+      expect(tvPreviewDecodeSize(photo(5760, 2880), tile), const Size.square(429), reason: '858 x 429');
+      expect(tvPreviewDecodeSize(photo(3000, 4500), tile), const Size.square(429), reason: '429 x 644, upright');
+      expect(tvPreviewDecodeSize(photo(8000, 2000), tile), const Size.square(256), reason: '1024 x 256, a panorama');
     });
   });
 

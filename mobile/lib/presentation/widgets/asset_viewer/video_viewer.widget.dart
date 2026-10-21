@@ -12,6 +12,7 @@ import 'package:immich_mobile/domain/services/apple_spatial/apple_spatial.servic
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/is_motion_video_playing.provider.dart';
@@ -73,6 +74,9 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   bool _shouldPlayOnForeground = true;
   // What to tell the user about the file chosen for a server video, once the video is the one on screen
   VideoSourceNotice? _sourceNotice;
+  // Where the video plays from, for the logs, and whether that is the server, for the failure panel
+  String _sourceLabel = 'no source yet';
+  bool _fromServer = false;
 
   VideoPlayerNotifier get _notifier => ref.read(videoPlayerProvider(widget.asset.id).notifier);
 
@@ -81,6 +85,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     videoSource = _createSource();
+    ref.listenManual(videoPlayerProvider(widget.asset.id).select((s) => s.status), _onStatus);
     if (CurrentPlatform.isDesktop) {
       ref.listenManual(externalPlayerClosedProvider, (_, _) => unawaited(_onExternalPlayerClosed()));
     }
@@ -167,6 +172,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
           throw Exception('No file found for the video');
         }
 
+        _sourceLabel = 'the file given to the viewer';
         return await VideoSource.init(
           path: CurrentPlatform.isAndroid ? file.uri.toString() : file.path,
           type: VideoSourceType.file,
@@ -188,6 +194,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
         // Pass a file:// URI so Android's Uri.parse doesn't
         // interpret characters like '#' as fragment identifiers.
         if (file != null) {
+          _sourceLabel = 'the copy on the device';
           return await VideoSource.init(
             path: CurrentPlatform.isAndroid ? file.uri.toString() : file.path,
             type: VideoSourceType.file,
@@ -221,6 +228,9 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
         return null;
       }
       _sourceNotice = source.notice;
+      _fromServer = true;
+      _sourceLabel = source.url.endsWith('/original') ? 'the server original' : 'the server transcoded stream';
+      _log.info('${videoAsset.name} plays from $_sourceLabel under $policy');
 
       return await VideoSource.init(
         path: source.url,
@@ -340,7 +350,55 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     _notifier.onNativeStatusChanged();
   }
 
+  /// The native player could not play the video: the viewer says why instead of loading forever. The message goes
+  /// back to null, so that the same error after a retry is heard again.
+  void _onPlaybackError() {
+    final controller = _controller;
+    final message = controller?.onError.value;
+    if (!mounted || controller == null || message == null) {
+      return;
+    }
+    scheduleMicrotask(() => controller.onError.value = null);
+    _notifier.onNativeError(message);
+  }
+
+  void _onStatus(VideoPlaybackStatus? previous, VideoPlaybackStatus status) {
+    if (status != VideoPlaybackStatus.failed || previous == VideoPlaybackStatus.failed) {
+      return;
+    }
+    final failure = _notifier.failure;
+    final why = failure?.kind == VideoFailureKind.stalled
+        ? 'nothing played for ${VideoPlayerNotifier.stallTimeout.inSeconds} s'
+        : failure?.message;
+    _log.warning('${widget.asset.name} does not play from $_sourceLabel: $why');
+    unawaited(_logFile());
+  }
+
+  /// What the file of a video that does not play is, and what the decoders of the device say of it, for the Logs page:
+  /// the panel shows the same, but a TV user may only be able to share the logs
+  Future<void> _logFile() async {
+    final asset = widget.asset;
+    try {
+      final probes = ref.read(sphericalProbeServiceProvider);
+      final sources = ref.read(videoSourceServiceProvider);
+      final probe = await probes.probe(asset);
+      final verdict = await sources.verdict(probe);
+      final file = probe == null
+          ? 'unknown file'
+          : '${probe.codecs ?? probe.codec} ${probe.codedWidth} x ${probe.codedHeight} at ${probe.frameRate} fps, '
+                '${probe.videoBitRate ?? probe.declaredBitRate ?? probe.mediaBitRate} bit/s';
+      final decoders = verdict == null
+          ? 'no decoder verdict'
+          : 'decodes here: ${verdict.supported}, hardware: ${verdict.hardware}, '
+                'largest ${verdict.maxWidth} x ${verdict.maxHeight}, ${verdict.reason ?? 'no reason given'}';
+      _log.info('${asset.name}: $file; $decoders');
+    } catch (error) {
+      _log.info('No file details for ${asset.name}: $error');
+    }
+  }
+
   void _removeListeners() {
+    _controller?.onError.removeListener(_onPlaybackError);
     _controller?.onPlaybackPositionChanged.removeListener(_onPlaybackPositionChanged);
     _controller?.onPlaybackStatusChanged.removeListener(_onPlaybackStatusChanged);
     _controller?.onPlaybackReady.removeListener(_onPlaybackReady);
@@ -384,6 +442,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     nc.onPlaybackStatusChanged.addListener(_onPlaybackStatusChanged);
     nc.onPlaybackReady.addListener(_onPlaybackReady);
     nc.onPlaybackEnded.addListener(_onPlaybackEnded);
+    nc.onError.addListener(_onPlaybackError);
 
     _controller = nc;
 
@@ -396,6 +455,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   Widget build(BuildContext context) {
     final isCasting = ref.watch(castProvider.select((c) => c.isCasting));
     final status = ref.watch(videoPlayerProvider(widget.asset.id).select((v) => v.status));
+    final failure = status == VideoPlaybackStatus.failed ? _notifier.failure : null;
     // https://github.com/flutter/flutter/issues/97499: iOS platform views are only disposed in frames containing platform views, or on
     // the first frame after a platform view disappears. Animating this view away uses those disappearing frames. Instead, forcibly remove
     // the view from the tree when we start a route transition, which has the side effect of properly ordering the `dispose`
@@ -428,6 +488,10 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
                 child: const CircularProgressIndicator(),
               ),
             ),
+            if (status == VideoPlaybackStatus.failed && failure != null)
+              Positioned.fill(
+                child: VideoFailurePanel(asset: widget.asset, failure: failure, fromServer: _fromServer),
+              ),
           ],
         ],
       ),

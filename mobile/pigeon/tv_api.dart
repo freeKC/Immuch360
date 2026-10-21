@@ -13,7 +13,8 @@ import 'package:pigeon/pigeon.dart';
   ),
 )
 /// [isTelevision]: Android TV or Google TV (the leanback feature, or the television UI mode of boxes that do not
-/// declare it), never a Meta Quest. [isLowRamDevice]: what ActivityManager.isLowRamDevice tells.
+/// declare it), never a Meta Quest. [isLowRamDevice]: what ActivityManager.isLowRamDevice tells, or 3 GB of memory or
+/// less, as most TVs have without that flag.
 class TvDeviceInfo {
   const TvDeviceInfo({required this.isTelevision, required this.isLowRamDevice});
 

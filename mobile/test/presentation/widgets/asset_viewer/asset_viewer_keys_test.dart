@@ -352,6 +352,25 @@ void main() {
     expect(container.read(assetViewerJumpProvider).currentIndex, 1);
   });
 
+  testWidgets('a video that does not play lets left and right go to the next asset, as a paused one', (tester) async {
+    final video = LocalAssetStub.image1.copyWith(id: 'video1', type: AssetType.video, durationMs: 120000);
+    final calls = <String>[];
+    final container = await pumpViewer(
+      tester,
+      [video, ...photos],
+      tvMode: false,
+      overrides: [videoPlayerProvider(video.id).overrideWith((ref) => _FakePlayer(calls))],
+    );
+
+    container.read(videoPlayerProvider(video.id).notifier).onNativeError('Decoder init failed');
+    await press(tester, LogicalKeyboardKey.arrowRight);
+
+    expect(calls, isEmpty, reason: 'no seek in a video that does not play');
+    expect(container.read(assetViewerJumpProvider).currentIndex, 1);
+    // The viewer probes the file of the failed video for the logs: its time limit runs out here
+    await tester.pump(const Duration(seconds: 6));
+  });
+
   testWidgets('info opens the details', (tester) async {
     await pumpViewer(tester, photos);
     final events = <Event>[];

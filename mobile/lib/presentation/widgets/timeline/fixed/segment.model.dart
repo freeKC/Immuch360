@@ -123,21 +123,25 @@ double _longAspect(BaseAsset asset) {
 
 /// The size to decode the preview of the server to, for [asset] in a tile of [tile] physical pixels, in the remote
 /// control layout: the thumbnail of the server, about 250 px on its short side, was stretched up in a tile of 286 px.
-/// The preview (1440 px by default) is decoded to cover a square of twice the tile's side, as the device thumbnails
-/// are asked (see [tvThumbnailDecodeSize]): Android shrinks it by skipping pixels too when the factor is not a power of
-/// two. At most 1024 px on the long side: a 2:1 photo comes 1024 x 512.
+/// The preview (1440 px by default) is decoded to cover a square of 1.5 times the tile's side
+/// ([_tvPreviewOversampling]), drawn smaller with mipmaps like the device thumbnails (see [tvThumbnailDecodeSize]). At
+/// most 1024 px on the long side.
 ///
-/// Memory: at most 1024 x 640 px (a tile of 320 px), 2.6 MB a tile in the image cache of the thumbnails, about 40
-/// tiles in its 100 MB; a 4:3 photo in a tile of 286 px takes 763 x 572 px, 1.7 MB. A preview weighs some hundred KB
-/// on the network against some ten for a thumbnail.
+/// Memory: a 4:3 photo in a tile of 286 px takes 572 x 429 px, 1 MB, a 2:1 one 858 x 429 px, 1.5 MB. The grid of a
+/// 1080p TV keeps some 70 tiles alive (a screen above and below the one shown, see the timeline's cache extent): 70 to
+/// 100 MB, where twice the tile and two screens took 190 to 340 MB, more than a TV of 2 GB spares. A preview weighs some
+/// hundred KB on the network against some ten for a thumbnail.
 @visibleForTesting
 Size tvPreviewDecodeSize(BaseAsset asset, Size tile) {
-  final side = (_tvOversampling * math.max(tile.width, tile.height)).ceilToDouble();
+  final side = (_tvPreviewOversampling * math.max(tile.width, tile.height)).ceilToDouble();
   return Size.square(math.min(side, (_maxPreviewDecodeSide / _longAspect(asset)).floorToDouble()));
 }
 
 /// How many times the tile the thumbnails of a TV are decoded, see [tvThumbnailDecodeSize]
 const _tvOversampling = 2.0;
+
+/// How many times the tile the previews of the server are decoded on a TV, see [tvPreviewDecodeSize]
+const _tvPreviewOversampling = 1.5;
 
 const _maxThumbnailSide = 768.0;
 
