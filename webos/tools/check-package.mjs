@@ -6,7 +6,9 @@
 // An .ipk is an ar archive (debian-binary, control.tar.gz, data.tar.gz). The check reads it with node alone and
 // fails when the app or its service is not where webOS looks for them, when appinfo.json does not name Immuch360,
 // when the version of the .ipk name, of appinfo.json and of the service differ, when development files of the service
-// went in, or when the package grew past 10 MB. --list writes every file and its size, to compare two builds.
+// went in, when the licences are missing (the AGPL of Immuch360 and the MIT notice of immich-tv-webos, which must be
+// in every copy, see tools/licence-files.mjs), or when the package grew past 10 MB. --list writes every file and its
+// size, to compare two builds.
 
 import {readFileSync, readdirSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
@@ -84,6 +86,19 @@ const need = (path) => {
 const appinfoBytes = need(`${appDir}appinfo.json`);
 for (const file of ['index.html', 'main.js', 'main.css', 'icon.png', 'icon-large.png', 'i18n/fr.json', 'i18n/de.json']) need(appDir + file);
 for (const file of ['service.js', 'services.json', 'package.json']) need(serviceDir + file);
+const licenceText = (file, ...phrases) => {
+	const bytes = need(appDir + file);
+	if (!bytes) return;
+	const text = bytes.toString('utf8');
+	for (const phrase of phrases) if (!text.includes(phrase)) problems.push(`${file} does not say "${phrase}"`);
+};
+licenceText('LICENSE.txt', 'GNU Affero General Public License', 'https://github.com/freeKC/Immuch360', 'immich-tv-webos');
+licenceText('LICENSE-AGPL-3.0.txt', 'GNU AFFERO GENERAL PUBLIC LICENSE', 'Version 3, 19 November 2007');
+licenceText(
+	'LICENSE-immich-tv-webos.txt',
+	'Copyright (c) 2026 Quentin Jean-Amans',
+	'The above copyright notice and this permission notice shall be included in all'
+);
 for (const path of Object.keys(data)) {
 	if (path.startsWith(serviceDir) && /(^|\/)(dev|test)\.js$/.test(path)) problems.push(`development file in the service: ${path}`);
 }

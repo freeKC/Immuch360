@@ -25,6 +25,8 @@ The history of immich-tv-webos is not imported (one squashed commit keeps the hi
   (`PUT /api/assets/{id}/edits`) for the user's own photos, else in the inherited `rotationStore`; the pictures carry
   the asset's thumbhash as their cache key (`c`), as in Immich's web app.
 - The 360° badge of the tiles, the 360° flag read from the timeline and from the asset details (`src/api`).
+- The `.ipk` carries the licences (`tools/licence-files.mjs`): the AGPL of Immuch360 and the MIT notice of
+  immich-tv-webos.
 - The About page with the diagnostics and their QR code (`src/immuch360/diagnostics`), in the navigation rail.
 - The welcome page shows the Immuch360 icon and tagline.
 - Tests: `test/unit` (node test runner) for the new layers; the inherited jest tests kept, adjusted where a text
