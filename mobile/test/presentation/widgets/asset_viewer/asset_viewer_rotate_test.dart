@@ -1,8 +1,9 @@
 // The one-key rotation in the asset viewer: R and Shift R of a keyboard, the yellow and blue keys of a remote, the
 // Rotate button of the bottom row on a phone, the one of the bottom bar on a TV (on the right of the OCR toggle, never
-// where OK from the photo lands, so that a double OK turns nothing; once reached each OK turns again and the focus
-// stays), the one of the top bar on a computer. Nothing of it for a video or a photo viewed in 360°, whose keys go on
-// as if unread; and R typed into a text field stays a letter.
+// where OK from the photo lands, so that a double OK turns nothing; once reached each OK turns again as it is released
+// and the focus stays, and a held OK opens the details without a turn), the one of the top bar on a computer. Nothing
+// of it for a video or a photo viewed in 360°, whose keys go on as if unread; and R typed into a text field stays a
+// letter.
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -13,11 +14,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/data/store.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/events.model.dart';
 import 'package:immich_mobile/domain/models/ocr.model.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
+import 'package:immich_mobile/domain/utils/event_stream.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/ocr_toggle_button.widget.dart';
@@ -254,6 +257,42 @@ void main() {
     // The colour keys from there too
     await press(tester, LogicalKeyboardKey.colorF3Blue);
     expect(turnsOf(container, photo), 1);
+  });
+
+  testWidgets('on a TV OK turns the photo as it is released from Rotate, and held it opens the details, no turn', (
+    tester,
+  ) async {
+    final container = await pumpViewer(tester, photo, tvMode: true);
+    final events = <Event>[];
+    final subscription = EventStream.shared.listen<Event>(events.add);
+    addTearDown(subscription.cancel);
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    expect(rotateHasFocus(), isTrue);
+
+    // A short OK: nothing while the key is down, one turn as it comes up
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(turnsOf(container, photo), 0, reason: 'Rotate waits for the release');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+    await settle(tester);
+    expect(turnsOf(container, photo), 1);
+    expect(rotateHasFocus(), isTrue);
+    expect(events.whereType<ViewerShowDetailsEvent>(), isEmpty);
+
+    // Held as a remote holds it, repeats every 50 ms from 500 ms on: the details open at 700 ms and nothing turns,
+    // neither as the key goes down, nor with its repeats, nor as it comes up
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+    await tester.pump(const Duration(milliseconds: 500));
+    for (var held = 500; held < 1000; held += 50) {
+      await tester.sendKeyRepeatEvent(LogicalKeyboardKey.select);
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(events.whereType<ViewerShowDetailsEvent>(), hasLength(1));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+    await settle(tester);
+    expect(turnsOf(container, photo), 1, reason: 'a held OK turns nothing');
+    expect(events.whereType<ViewerShowDetailsEvent>(), hasLength(1));
+    expect(events.whereType<ViewerHideDetailsEvent>(), isEmpty);
   });
 
   testWidgets('on a TV OK lands on the OCR toggle, and Rotate on its right is one Right away', (tester) async {

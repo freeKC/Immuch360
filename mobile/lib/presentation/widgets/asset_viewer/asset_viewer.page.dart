@@ -155,6 +155,10 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// no plain OK of the viewer
   bool _okHoldOnButton = false;
 
+  /// The TV Rotate button when the press of [_okHold] began on it: unlike the other buttons it acts on the release, so
+  /// that a held OK opens the details without turning the photo first (see [_onTvOk])
+  FocusNode? _okHoldOnRotate;
+
   /// The details opened under a held OK: the rest of that press, its repeats and its release, goes nowhere rather than
   /// to the row of the details that has the focus now
   bool _dropHeldOk = false;
@@ -541,26 +545,34 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// OK with the remote control layout, on the viewer itself ([onViewer]) or on a button of the bars. Most remotes of
   /// Google TV have no info key and the menu of the top bar is hidden there (view only), so OK held
   /// [remoteOkHoldForDetails] opens the details. On the viewer a shorter press is a plain OK on its release (see
-  /// [_onOk]); a button is pressed once, as the key goes down, as everywhere else. The repeats of a held key change
-  /// nothing: Flutter's select shortcut takes them too, and play and pause flipped twenty times a second under a held
-  /// OK, a failed video reloading every other time, while the details never opened.
+  /// [_onOk]); a button is pressed once, as the key goes down, as everywhere else, but Rotate: it turns the photo on
+  /// the release of a shorter press only, so that a held OK opens the details without a turn on the server first. The
+  /// repeats of a held key change nothing: Flutter's select shortcut takes them too, and play and pause flipped twenty
+  /// times a second under a held OK, a failed video reloading every other time, while the details never opened.
   KeyEventResult _onTvOk(KeyEvent event, {required bool onViewer}) {
     switch (event) {
       case KeyDownEvent():
         _okHold?.cancel();
         _okHoldOnButton = !onViewer;
+        final focused = FocusManager.instance.primaryFocus;
+        _okHoldOnRotate = !onViewer && focused != null && isTvRotateFocus(focused) ? focused : null;
         _okHold = Timer(remoteOkHoldForDetails, _onOkHeld);
-        return onViewer ? KeyEventResult.handled : KeyEventResult.ignored;
+        return onViewer || _okHoldOnRotate != null ? KeyEventResult.handled : KeyEventResult.ignored;
       case KeyUpEvent():
         final hold = _okHold;
+        final rotate = _okHoldOnRotate;
         _okHold = null;
+        _okHoldOnRotate = null;
         if (hold != null && hold.isActive) {
           hold.cancel();
           if (!_okHoldOnButton) {
             _onOk();
+          } else if (rotate != null && rotate.hasPrimaryFocus && rotate.context != null) {
+            // The press of the button itself, the one a tap makes
+            Actions.maybeInvoke(rotate.context!, const ActivateIntent());
           }
         }
-        return onViewer ? KeyEventResult.handled : KeyEventResult.ignored;
+        return onViewer || rotate != null ? KeyEventResult.handled : KeyEventResult.ignored;
       case KeyRepeatEvent():
         return KeyEventResult.handled;
     }
@@ -571,6 +583,7 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// over them. Not when a button of the bars opened a page or a dialog of its own as the key went down.
   void _onOkHeld() {
     _okHold = null;
+    _okHoldOnRotate = null;
     if (!mounted || !(ModalRoute.of(context)?.isCurrent ?? true)) {
       return;
     }

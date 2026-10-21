@@ -35,8 +35,9 @@ class ViewerRotateIconButton extends ConsumerWidget {
 
 /// The rotation in the bottom bar of a TV, on the right of the OCR toggle: OK from the photo never lands on it, so that
 /// a double OK on a household TV cannot turn a photo, on the server for one of the user. Right from the OCR toggle (or
-/// Down from the photo when the bar has nothing else) reaches it, then each OK turns the photo again and the focus
-/// stays. The yellow and blue keys of the remote turn it from anywhere.
+/// Down from the photo when the bar has nothing else) reaches it, then each OK turns the photo again as it is released
+/// and the focus stays; held, OK opens the details and turns nothing (see AssetViewer). The yellow and blue keys of the
+/// remote turn it from anywhere.
 class TvRotateButton extends ConsumerWidget {
   const TvRotateButton({super.key, required this.asset});
 
