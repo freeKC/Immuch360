@@ -18,12 +18,13 @@ desktop pre-release tag, so its release job writes to the repository. With --rel
 "contents: write" is its one write access (the top may also give no permission at all, "permissions: {}"), and it may
 run on the push of desktop-v* tags and by hand (workflow_dispatch) only: no pull request, no branch.
 
-.github/workflows/immuch360-webos.yml, the LG webOS app, is held to the same rules as a release workflow on its own tags:
---tag-prefix webos-v.
+.github/workflows/immuch360-webos.yml, which builds the LG webOS app, is held to the rules of the desktop workflow, and
+.github/workflows/immuch360-webos-release.yml to those of a release workflow on its own tags: --tag-prefix webos-v.
 
   check_workflow.py             exit 1 on any finding
   check_workflow.py --release   the release workflow
-  check_workflow.py --release --workflow .github/workflows/immuch360-webos.yml --tag-prefix webos-v
+  check_workflow.py --workflow .github/workflows/immuch360-webos.yml
+  check_workflow.py --release --workflow .github/workflows/immuch360-webos-release.yml --tag-prefix webos-v
 
 --workflow and --mise point at other files (the tests use fixtures). The YAML is read line by line on purpose: no
 third party module is needed on the runners.

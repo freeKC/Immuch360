@@ -53,6 +53,6 @@ jobs:
           if ! gh release view "$TAG" --repo "$REPO" > /dev/null 2>&1; then
             gh release create "$TAG" --repo "$REPO" --verify-tag --prerelease \
               --title "Immuch360 for LG webOS $VERSION (preview)" \
-              --notes "Preview of the Immuch360 app for LG webOS TVs (webOS 4.0 and later), built on immich-tv-webos 1.7.0 by Quentin Jean-Amans. Install it on a TV in Developer Mode: see webos/README.md."
+              --notes "Preview of the Immuch360 app for LG webOS TVs (webOS 4.0 and later). Install it on a TV in Developer Mode: see https://github.com/$REPO/tree/$TAG/webos#install-on-a-tv-in-developer-mode. Built on Immich TV for webOS by Seeky91 (https://github.com/Seeky91/immich-tv-webos), MIT. Source of this build: https://github.com/$REPO/tree/$TAG/webos (AGPL-3.0)."
           fi
           gh release upload "$TAG" --repo "$REPO" --clobber release/*.ipk release/SHA256SUMS.txt
