@@ -557,10 +557,12 @@ class PanoramaBadge extends ConsumerWidget {
 }
 
 /// Image the panorama viewer shows for an asset, at most [size] on screen: the thumbnail, then the preview, then the
-/// original when the provider gets there. Tests replace it.
+/// original when the provider gets there. Never edited: a sphere is not turned, cropped or mirrored, and an edit made
+/// on the server while the photo was viewed flat (the one-key rotation, the editor) must not reach it. Tests replace
+/// it.
 final panoramaImageProvider = Provider<ImageProvider Function(BaseAsset asset, Size size)>(
   (_) =>
-      (asset, size) => getFullImageProvider(asset, size: size),
+      (asset, size) => getFullImageProvider(asset, size: size, edited: false),
 );
 
 /// Client of the request for the GPano tags of a panorama: the app's shared client, with its native SSL setup. Tests
@@ -847,7 +849,8 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   String get _name => widget.asset?.name ?? widget.source!.name;
 
   // Partial spheres and initial views: the server copies the GPano tags into the preview's XMP (same source as web);
-  // a photo only on the device has them in its file, and so does a photo that is no asset
+  // a photo only on the device has them in its file, and so does a photo that is no asset. The unedited preview, as
+  // the sphere shows (see panoramaImageProvider).
   Future<void> _loadGPano() async {
     final source = widget.source;
     final remoteId = widget.asset?.remoteId;
@@ -857,7 +860,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
         : remoteId != null
         ? await fetchGPano(
             ref.read(panoramaGPanoClientProvider),
-            Uri.parse(getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.preview)),
+            Uri.parse(getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.preview, edited: false)),
           )
         : localId != null
         ? await _readLocalGPano(localId)

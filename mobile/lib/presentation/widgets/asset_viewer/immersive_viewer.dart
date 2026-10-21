@@ -72,7 +72,9 @@ final _log = Logger('ImmersiveViewer');
 final immersiveGPanoClientProvider = Provider<http.Client>((_) => NetworkRepository.client);
 
 /// URL on the server loaded by the immersive viewer, or null for an asset that is not on the server.
-/// Photos: the original (the viewer shows the preview first and keeps it if the original fails).
+/// Photos: the original (the viewer shows the preview first and keeps it if the original fails), unedited, and so is
+/// the preview the viewer derives from it: a sphere is not turned, cropped or mirrored, whatever was edited on the
+/// server while the photo was viewed flat (the one-key rotation, the editor).
 /// Videos: the original, the server transcode defaulting to 720p H.264, too blurry for 360°; the resolver plays the
 /// transcoded stream instead when the user chose it (see [ImmersiveAssetResolver.resolve]). The viewer falls back to
 /// the transcoded stream by itself when the headset cannot decode the original, or when the original cannot stream or
@@ -83,7 +85,7 @@ String? immersiveMediaUrl(BaseAsset asset) {
     return null;
   }
   if (!asset.isVideo) {
-    return getOriginalUrlForRemoteId(remoteId);
+    return getOriginalUrlForRemoteId(remoteId, edited: false);
   }
   return '${Store.get(StoreKey.serverEndpoint)}/assets/${_immersiveVideoId(asset, remoteId)}/original';
 }
@@ -473,7 +475,7 @@ class ImmersiveAssetResolver {
     if (needsGPanoCrop && remoteUrl != null && remoteId != null) {
       final gpano = await fetchGPano(
         _gpanoClient,
-        Uri.parse(getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.preview)),
+        Uri.parse(getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.preview, edited: false)),
       );
       gpanoCrop = gpano?.crop;
     } else if (needsGPanoCrop && localFile != null) {
