@@ -62,6 +62,22 @@ void main() {
     expect(await sut.readRange('/DCIM/DJI_001/DJI_20261021143100_0002_D.MP4', 0, 0), isEmpty);
   });
 
+  test('reads more than the bridge reads at once in several reads', () async {
+    const size = DocumentTreeFileSystem.maxBridgeRead * 2 + 100;
+    api.files['/DCIM/big.MP4'] = bytes(size);
+    api.maxRead = DocumentTreeFileSystem.maxBridgeRead;
+
+    final read = await sut.readRange('/DCIM/big.MP4', 50, size);
+
+    expect(read.length, size - 50);
+    expect(read.sublist(0, 4), bytes(54).sublist(50));
+    expect(api.reads.map((read) => read.$3), [
+      DocumentTreeFileSystem.maxBridgeRead,
+      DocumentTreeFileSystem.maxBridgeRead,
+      100,
+    ]);
+  });
+
   test('stats a file and the folder picked', () async {
     final file = await sut.stat('/DCIM/DJI_001/DJI_20261021143000_0001_D.JPG');
     expect((file.path, file.size, file.isDirectory), ('/DCIM/DJI_001/DJI_20261021143000_0001_D.JPG', 300, false));

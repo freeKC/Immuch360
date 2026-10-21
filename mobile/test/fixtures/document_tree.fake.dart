@@ -33,6 +33,9 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
   bool pickGivesFolder = true;
   bool unplugged = false;
 
+  /// The most bytes one read gives, as the Kotlin side caps them
+  int? maxRead;
+
   final listed = <String?>[];
   final reads = <(String, int, int)>[];
   final copies = <({String path, String name, String mimeType, String album, int takenAtMs})>[];
@@ -102,7 +105,8 @@ class FakeDocumentTreeApi extends Fake implements DocumentTreeApi {
     }
     final bytes = files[documentId]!;
     final start = math.min(offset, bytes.length);
-    return Uint8List.sublistView(bytes, start, math.min(bytes.length, start + length));
+    final wanted = math.min(length, maxRead ?? length);
+    return Uint8List.sublistView(bytes, start, math.min(bytes.length, start + wanted));
   }
 
   @override

@@ -6,6 +6,9 @@
 // Paths are the names of the folders from the one picked ("/DCIM/DJI_001/DJI_0001.JPG"); the ids the provider gives
 // are learned from the listings (an MTP id means nothing once the device is plugged in again, a name does).
 
+import 'dart:math' as math;
+import 'dart:typed_data';
+
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/exif_head.dart';
@@ -69,8 +72,28 @@ class DocumentTreeFileSystem implements NetworkFileSystem, NetworkThumbnailSourc
     if (id == null) {
       throw NetworkFileSystemException('$path is a folder');
     }
-    return _call(() => _api.read(treeUri, id, offset, length));
+    if (length <= maxBridgeRead) {
+      return _call(() => _api.read(treeUri, id, offset, length));
+    }
+    // The bridge reads at most 8 MB at once (a whole moov box may be asked): the rest in more reads
+    final bytes = BytesBuilder(copy: false);
+    var position = offset;
+    var remaining = length;
+    while (remaining > 0) {
+      final wanted = math.min(remaining, maxBridgeRead);
+      final chunk = await _call(() => _api.read(treeUri, id, position, wanted));
+      bytes.add(chunk);
+      position += chunk.length;
+      remaining -= chunk.length;
+      if (chunk.length < wanted) {
+        break;
+      }
+    }
+    return bytes.takeBytes();
   }
+
+  /// The most bytes the bridge reads at once (DocumentTreePlugin's MAX_READ)
+  static const maxBridgeRead = 8 * 1024 * 1024;
 
   /// The thumbnail of a photo from its EXIF (see [parseExifThumbnail]), else the one the provider makes, else none: the
   /// tile then decodes the photo, or takes a frame of the video
