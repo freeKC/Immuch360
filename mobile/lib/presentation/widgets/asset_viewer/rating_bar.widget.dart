@@ -13,6 +13,9 @@ class RatingBar extends StatefulWidget {
   final Widget? itemBuilder;
   final double starPadding;
 
+  /// The stars only: no tap, no drag, no Clear
+  final bool readOnly;
+
   const RatingBar({
     super.key,
     this.initialRating = 0.0,
@@ -24,6 +27,7 @@ class RatingBar extends StatefulWidget {
     this.onClearRating,
     this.itemBuilder,
     this.starPadding = 4.0,
+    this.readOnly = false,
   });
 
   @override
@@ -98,8 +102,10 @@ class _RatingBarState extends State<RatingBar> {
           offset: Offset(isRTL ? visualAlignmentOffset : -visualAlignmentOffset, 0),
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTapDown: (details) => _updateRating(details.localPosition, isRTL, isTap: true),
-            onPanUpdate: (details) => _updateRating(details.localPosition, isRTL, isTap: false),
+            onTapDown: widget.readOnly ? null : (details) => _updateRating(details.localPosition, isRTL, isTap: true),
+            onPanUpdate: widget.readOnly
+                ? null
+                : (details) => _updateRating(details.localPosition, isRTL, isTap: false),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
@@ -119,7 +125,7 @@ class _RatingBarState extends State<RatingBar> {
             ),
           ),
         ),
-        if (_currentRating > 0)
+        if (_currentRating > 0 && !widget.readOnly)
           Padding(
             padding: const EdgeInsets.only(top: 12.0),
             child: GestureDetector(

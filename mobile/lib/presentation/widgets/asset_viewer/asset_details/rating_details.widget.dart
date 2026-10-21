@@ -8,6 +8,7 @@ import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rating_bar.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/action.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 
 class RatingDetails extends ConsumerWidget {
   final ExifInfo? exifInfo;
@@ -36,6 +37,8 @@ class RatingDetails extends ConsumerWidget {
             style: context.textTheme.labelLarge?.copyWith(color: context.colorScheme.onSurfaceSecondary),
           ),
           RatingBar(
+            // Shown, not changed, with the remote control layout
+            readOnly: ref.watch(tvModeProvider),
             initialRating: exifInfo?.rating?.toDouble() ?? 0,
             filledColor: context.themeData.colorScheme.primary,
             unfilledColor: context.themeData.colorScheme.onSurface.withAlpha(100),

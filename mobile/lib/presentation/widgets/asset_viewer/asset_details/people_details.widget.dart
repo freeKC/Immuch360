@@ -12,6 +12,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/people/person_edit_name_modal.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/image_url_builder.dart';
@@ -30,6 +31,8 @@ class PeopleDetails extends ConsumerWidget {
     }
 
     final people = ref.watch(Store.people.forAsset(asset.id));
+    // No "Add a name" with the remote control layout: the details are read only there
+    final readOnly = ref.watch(tvModeProvider);
 
     return people.when(
       data: (people) {
@@ -67,13 +70,15 @@ class PeopleDetails extends ConsumerWidget {
                           ContextHelper(context).pop();
                           unawaited(context.pushRoute(PersonRoute(person: person)));
                         },
-                        onNameTap: () => showDialog(
-                          context: context,
-                          useRootNavigator: false,
-                          builder: (BuildContext context) {
-                            return PersonNameEditForm(person: person);
-                          },
-                        ),
+                        onNameTap: readOnly
+                            ? null
+                            : () => showDialog(
+                                context: context,
+                                useRootNavigator: false,
+                                builder: (BuildContext context) {
+                                  return PersonNameEditForm(person: person);
+                                },
+                              ),
                       ),
                   ],
                 ),
@@ -128,7 +133,9 @@ class _Avatar extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            if (person.name.isEmpty)
+            if (person.name.isEmpty && onNameTap == null)
+              const SizedBox.shrink()
+            else if (person.name.isEmpty)
               GestureDetector(
                 onTap: () => onNameTap?.call(),
                 child: Text(

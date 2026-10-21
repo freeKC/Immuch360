@@ -12,19 +12,51 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/pe
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/rating_details.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/technical_details.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 
-class AssetDetails extends ConsumerWidget {
+/// The details of an asset, under it in the viewer. With the remote control layout they are read only (no field to
+/// type in, no pencil: see the rows) and the focus goes to their first row as they open, so that Down goes through
+/// them from the top.
+class AssetDetails extends ConsumerStatefulWidget {
   final BaseAsset asset;
   final double minHeight;
 
   const AssetDetails({super.key, required this.asset, required this.minHeight});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AssetDetails> createState() => _AssetDetailsState();
+}
+
+class _AssetDetailsState extends ConsumerState<AssetDetails> {
+  /// Around the rows, to find the first one that takes the focus
+  final _rowsFocus = FocusNode(debugLabel: 'Asset details', canRequestFocus: false, skipTraversal: true);
+
+  @override
+  void initState() {
+    super.initState();
+    if (ref.read(tvModeProvider)) {
+      // The rows are laid out from the next frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _rowsFocus.traversalDescendants.firstOrNull?.requestFocus();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _rowsFocus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final asset = widget.asset;
     final exifInfo = ref.watch(assetExifProvider(asset)).valueOrNull;
 
     return Container(
-      constraints: BoxConstraints(minHeight: minHeight),
+      constraints: BoxConstraints(minHeight: widget.minHeight),
       decoration: BoxDecoration(
         color: context.colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -39,20 +71,23 @@ class AssetDetails extends ConsumerWidget {
       ),
       child: SafeArea(
         top: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const DragHandle(),
-            DateTimeDetails(asset: asset, exifInfo: exifInfo),
-            AssetOwnerDetails(asset: asset),
-            SheetAssetDescription(asset: asset, exifInfo: exifInfo),
-            PeopleDetails(asset: asset),
-            LocationDetails(asset: asset, exifInfo: exifInfo),
-            TechnicalDetails(asset: asset, exifInfo: exifInfo),
-            RatingDetails(exifInfo: exifInfo),
-            AppearsInDetails(asset: asset),
-            SizedBox(height: context.padding.bottom + 48),
-          ],
+        child: Focus(
+          focusNode: _rowsFocus,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DragHandle(),
+              DateTimeDetails(asset: asset, exifInfo: exifInfo),
+              AssetOwnerDetails(asset: asset),
+              SheetAssetDescription(asset: asset, exifInfo: exifInfo),
+              PeopleDetails(asset: asset),
+              LocationDetails(asset: asset, exifInfo: exifInfo),
+              TechnicalDetails(asset: asset, exifInfo: exifInfo),
+              RatingDetails(exifInfo: exifInfo),
+              AppearsInDetails(asset: asset),
+              SizedBox(height: context.padding.bottom + 48),
+            ],
+          ),
         ),
       ),
     );

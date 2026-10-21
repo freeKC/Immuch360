@@ -8,6 +8,7 @@ import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/presentation/actions/edit_datetime.action.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/sheet_tile.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/utils/timezone.dart';
 
 const _kSeparator = '  •  ';
@@ -22,7 +23,10 @@ class DateTimeDetails extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asset = this.asset;
     final exifInfo = this.exifInfo;
-    final editDateTime = const EditDateTimeAction(source: .viewer).create(context, ref);
+    // No pencil with the remote control layout: the details are read only there
+    final editDateTime = ref.watch(tvModeProvider)
+        ? null
+        : const EditDateTimeAction(source: .viewer).create(context, ref);
 
     return Column(
       children: [
