@@ -1,95 +1,97 @@
 <p align="center">
-  <img src="assets/icon-source.png" width="128" alt="Immich TV icon">
+  <img src="assets/icon-source.png" width="128" alt="Immuch360 icon">
 </p>
 
-<h1 align="center">Immich TV</h1>
+<h1 align="center">Immuch360 for LG webOS TVs</h1>
 
-<p align="center">
-  Your self-hosted <a href="https://immich.app/">Immich</a> photo and video library on your LG TV,<br>
-  built to be browsed from the couch with the remote.
-</p>
+<p align="center">Your media. Any screen. Every perspective.</p>
 
-<p align="center">
-  <a href="https://github.com/Seeky91/immich-tv-webos/releases/latest"><img src="https://img.shields.io/github/v/release/Seeky91/immich-tv-webos?label=release" alt="Latest release"></a>
-  <a href="https://github.com/Seeky91/immich-tv-webos/releases"><img src="https://img.shields.io/github/downloads/Seeky91/immich-tv-webos/total?label=downloads" alt="Downloads"></a>
-  <img src="https://img.shields.io/badge/webOS-4.0%2B-a50034" alt="webOS 4.0+">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/Seeky91/immich-tv-webos" alt="MIT license"></a>
-</p>
+Immuch360 is an unofficial fork of [Immich](https://immich.app). This folder is its app for LG TVs running webOS: an
+Immich viewer for the remote control, with the 360° photos on a sphere you turn with the arrows. It is a preview: the
+first builds are for testers.
 
-<p align="center">
-  <b><a href="https://repo.webosbrew.org/apps/com.seeky91.immichtv">Get it from the webOS Homebrew Channel</a></b>
-</p>
+It is built on **[immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) 1.7.0 by Quentin Jean-Amans** (MIT), which
+did the hard part of an Immich app for LG TVs: the timeline, the albums, places, search, the slideshow, the sign in with
+a phone, the Back key of every firmware, and a build that runs on webOS 4.0 and later (LG TVs from 2018). Thank you.
+Its licence is kept in [LICENSE](LICENSE); what this folder changed is listed in [UPSTREAM.md](UPSTREAM.md).
 
-<p align="center">
-  <img src="assets/screenshots/album.jpg" width="100%" alt="An album's day-by-day photo grid, with the date scrubber on the right">
-</p>
+Immuch360 is not affiliated with Immich, nor with LG.
 
-## ✨ Features
+## What it adds to immich-tv-webos
 
-- 🖼️ **Timeline** — your whole library, day by day, in a justified grid that keeps every photo's shape. A date scrubber on the right jumps straight to any month or year.
-- 🔍 **Full-screen viewer** — date, time and place at a glance, controls that fade away to leave the photo alone, and a rotate button for sideways shots (a local viewing preference: nothing is written to your server).
-- 🎞️ **Slideshow** — from any photo, album or place: crossfades, shuffle, adjustable interval, and the TV screen saver stays away while it runs.
-- 📁 **Albums and places** — every album, and every city your photos were taken in, each with its own timeline.
-- 🔎 **Search** — Immich smart search ("street market", "dog on the beach") and the people Immich recognized.
-- ▶️ **Videos** — playback with TV-friendly controls.
-- 📱 **Sign in with your phone** — scan a QR code and type your credentials on your phone instead of with the remote. Pairing stays on your home network, and your password is used for one login and never stored.
-- 👥 **Several accounts** — add servers or family members and switch between them.
-- 🎮 **Made for the remote** — every screen works with the arrow keys; the Magic Remote pointer and scroll wheel work too.
+| You want to | Immuch360 on webOS | immich-tv-webos 1.7.0 |
+|---|---|---|
+| Look around a 360° photo | It opens on a sphere: the arrows turn the view (faster the longer you hold them), the channel keys zoom, the Magic Remote drags it | Shown flat |
+| Find the 360° photos and videos | A "360°" badge on their tiles | No badge |
+| See a VR180 or 3D photo | Half sphere for VR180, the left eye for 3D, with a 360°/180° and a 3D button | Shown flat |
+| See a 360° photo the server does not flag | "View as 360°" in the photo's controls, kept on the TV | Not available |
+| Read the app in your language | The texts it shares with the Immuch360 app come in its 89 locales and follow the language of the TV; the few texts only the TV app has are in English for now | English |
+| Leave a playing video with the remote | Left and Right go to the previous or next item, even while it plays; a video alone seeks 10 s | Same while the bar is hidden |
+| Watch a film without the date over it | The top bar of a video hides with the controls, 5 s after the last key | Always shown |
+| Look closer at a photo | Zoom with the channel keys or the zoom buttons, then move with the arrows; Back zooms out | Not available |
+| Send a useful bug report | About page: TV model, webOS and Chromium versions, WebGL, video decoders, a video-in-WebGL test, all in a QR code | Not available |
 
-## 📸 Screenshots
+360° videos play flat for now, with a message: whether LG TVs hand video frames to WebGL is what the video test of the
+About page finds out.
 
-<table>
-  <tr>
-    <td width="50%"><img src="assets/screenshots/timeline.jpg" alt="Timeline grouped by day"></td>
-    <td width="50%"><img src="assets/screenshots/viewer.jpg" alt="Full-screen viewer with date, place and actions"></td>
-  </tr>
-  <tr>
-    <td><img src="assets/screenshots/albums.jpg" alt="Albums"></td>
-    <td><img src="assets/screenshots/places.jpg" alt="Places"></td>
-  </tr>
-  <tr>
-    <td><img src="assets/screenshots/search.jpg" alt="Smart search results and people"></td>
-    <td><img src="assets/screenshots/slideshow.jpg" alt="Slideshow controls"></td>
-  </tr>
-  <tr>
-    <td><img src="assets/screenshots/welcome.jpg" alt="Welcome screen"></td>
-    <td><img src="assets/screenshots/phone-sign-in.jpg" alt="Sign in with your phone"></td>
-  </tr>
-</table>
+Not on a TV: uploads and editing, the phone's own media, network shares, Plex and Tapo cameras (planned through the
+app's JS service), Cast, the gyroscope.
 
-Captured on an LG OLED TV with the public [Immich demo](https://demo.immich.app).
+## Install on a TV in Developer Mode
 
-## 📥 Installation
+You need an LG TV with webOS 4.0 or later, on the same network as your computer, and an LG developer account (free).
 
-You need an LG TV running **webOS 4.0 or newer** (2018 models onward) and an Immich server the TV can reach.
+1. On the TV, install **Developer Mode** from the LG Content Store, sign in with your LG developer account, turn
+   **Dev Mode Status** on and let the TV restart. Note the TV's IP address and the **passphrase** the app shows.
+2. On the computer, install the webOS CLI (Node.js 18 or later): `npm install -g @webos-tools/cli`
+3. Register the TV: `ares-setup-device` (add a device, its IP address, port 9922, user `prisoner`), then
+   `ares-novacom --device <name> --getkey` and type the passphrase.
+4. Download `com.aprogsys.immuch360_<version>_all.ipk` from the
+   [webOS pre-releases](https://github.com/freeKC/Immuch360/releases) (tags `webos-v...`), check it against
+   `SHA256SUMS.txt`, then:
 
-### Homebrew Channel (recommended)
+   ```bash
+   ares-install --device <name> com.aprogsys.immuch360_<version>_all.ipk
+   ares-launch --device <name> com.aprogsys.immuch360
+   ```
 
-1. Install the [webOS Homebrew Channel](https://www.webosbrew.org/) on your TV — see its [install guide](https://www.webosbrew.org/pages/install.html).
-2. Open it, find **[Immich TV](https://repo.webosbrew.org/apps/com.seeky91.immichtv)** and install it.
-3. Launch Immich TV from your TV's apps, then sign in with your phone, your email and password, or an API key.
+5. Sign in with your phone (scan the QR code), with your email and password, or with an API key.
 
-New versions show up in the Homebrew Channel.
+Developer Mode keeps installed apps for 50 hours; the Developer Mode app extends the session. The
+[webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) of webosbrew installs an `.ipk` on a TV in Developer
+Mode without the command line.
 
-### Manual install (.ipk)
+Immuch360 uses its own app id, `com.aprogsys.immuch360`, so it installs next to Immich TV (`com.seeky91.immichtv`):
+both can be compared on the same TV.
 
-With your TV in [Developer Mode](https://webostv.developer.lge.com/develop/getting-started/developer-mode-app) and registered with the [webOS CLI](https://webostv.developer.lge.com/develop/tools/cli-installation/), download the `.ipk` from the [latest release](https://github.com/Seeky91/immich-tv-webos/releases/latest) and run:
+## Remote control
 
-```bash
-ares-install com.seeky91.immichtv_<version>_all.ipk
-ares-launch com.seeky91.immichtv
-```
+The keys follow the Android TV app of Immuch360 (`mobile/lib/presentation/widgets/tv/remote_keys.dart`); the map is
+in [src/immuch360/keys.ts](src/immuch360/keys.ts).
 
-## 🛟 Troubleshooting
+| Key | webOS code | In lists | Photo | 360° photo | Video |
+|---|---|---|---|---|---|
+| Arrows | 37 to 40 | move the focus | Left and Right: previous, next; zoomed in: move | turn the view while held | Left and Right: previous, next (alone: 10 s); Up, Down: controls |
+| OK | 13 | open | show or hide the controls | controls, zoom button focused | controls |
+| Back | 461, 1536, 8, 10009, 27 | back | zoom out, then close | close | close the controls, then the video |
+| Channel up, down | 33, 34 | | zoom in, out | zoom in, out | |
+| Play, Pause, Play/Pause | 415, 19, 179 | | | | play, pause, toggle |
+| Rewind, Fast forward | 412, 417 | | | | 10 s back, forward |
+| Stop | 413 | | | | close the video |
+| Previous, Next track | 177, 176 | | previous, next | previous, next | previous, next |
+| Magic Remote | pointer, wheel | point and click | | drag with OK held, wheel zooms | |
 
-### "Couldn't reach the server… (CORS)"
+1536 is Back on recent firmwares, but the wheel of the Magic Remote sends it too (with the key "Unidentified"): that
+pair is not Back. 8 is Back on a few firmwares, except while typing.
 
-The app runs from a `file://` origin and calls the Immich API cross-origin, and Immich sends no CORS headers by default. Whether that matters depends on your TV's firmware:
+## "Couldn't reach the server (CORS)"
 
-- **webOS 10 and newer** let installed apps skip CORS: it just works, no server change needed.
-- **Older firmwares** enforce CORS like any browser. Immich logs the request as `200 OK`, but the TV drops the response and the sign-in screen shows the error above. This applies to every sign-in method, phone sign-in included: only the login itself goes through the TV's local service, the photos don't.
+From the README of immich-tv-webos, by Quentin Jean-Amans:
 
-Allow the app's requests on the reverse proxy in front of Immich. With nginx:
+The app runs from a `file://` origin and calls the Immich API cross-origin, and Immich sends no CORS headers by
+default. On webOS 25 (webOS "10") and later, installed apps skip CORS: it works with no server change. Older firmwares
+enforce CORS like any browser: Immich logs the request as `200 OK`, but the TV drops the answer. Allow the app's
+requests on the reverse proxy in front of Immich, for example with nginx:
 
 ```nginx
 add_header Access-Control-Allow-Origin  "*" always;
@@ -101,83 +103,34 @@ if ($request_method = OPTIONS) {
 }
 ```
 
-The same directives work with Caddy, Traefik or any other proxy. The app authenticates with `Authorization` / `x-api-key` headers and uses no cookies, so a wildcard origin is safe here. If your proxy also sends `Cross-Origin-Resource-Policy` or `Cross-Origin-Opener-Policy` headers, remove them for Immich.
+The app authenticates with `Authorization` or `x-api-key` headers and uses no cookies, so a wildcard origin is safe
+here. The 360° sphere also reads the preview of the photo with `fetch` (WebGL only takes pixels the page may read): the
+same headers cover it.
 
-`appinfo.json` ships `vendorExtension.allowCrossDomain: true` as a hint to LG's web runtime. The stronger `trustLevel: "netcast"` flag that some webOS apps use to skip CORS is deliberately **not** shipped: it disables `window.PalmServiceBridge` and breaks the on-screen keyboard on webOS 10.
+## Build from source
 
-### Photos look soft on a 4K TV
-
-Full-screen photos use the previews Immich generates, 1440 pixels on their short side by default. Recent 4K TVs draw apps in 4K, where that leaves landscape photos slightly upscaled. An Immich admin can raise **Administration → Settings → Image Settings → Preview Settings → Resolution** to **4K**, then run **Generate Thumbnails** on **All** assets from **Administration → Job Queues**. It takes more server storage, applies to the Immich web app too, and larger previews take a little longer to load on older TVs.
-
-## 🛠️ Building from source
-
-### Prerequisites
-
-- **[Node.js](https://nodejs.org/)** 18 or 20
-- **[Enact CLI](https://enactjs.com/docs/developer-tools/cli/)** — `npm install -g @enact/cli`
-- **[webOS CLI (ares)](https://webostv.developer.lge.com/develop/tools/cli-installation/)** — `npm install -g @webos-tools/cli@3.2.3`
-  > Pin `3.2.3`: version `3.2.4` ships a rimraf 6 regression that breaks `ares-package`.
-
-### Setup
+Node.js 24 (`.nvmrc`). The Enact and webOS command line tools are pinned in `package.json`; nothing is installed
+globally.
 
 ```bash
-git clone https://github.com/Seeky91/immich-tv-webos.git
-cd immich-tv-webos
-npm install
+cd webos
+npm ci
+npm run test-unit    # node tests of the Immuch360 layers (360° rules, keys, texts, Immich client)
+npm test             # the jest tests inherited from immich-tv-webos
+npm run typecheck
+npm run ipk          # build/com.aprogsys.immuch360_<version>_all.ipk, then checks its content
+npm run set-version -- 0.1.0   # the version of appinfo.json and of the service
 ```
 
-### Develop
+`npm run ipk` reads the texts from `../i18n/*.json` (the keys the code asks for, see `tools/build-i18n.mjs`). The texts
+only the TV app has are in `i18n/en.json` of this folder, keys `webos_*`, until they move to the fork's `i18n/en.json`
+for Weblate.
 
-```bash
-npm run serve      # dev server with hot reload
-```
+The CI workflow `.github/workflows/immuch360-webos.yml` builds the `.ipk` on every manual run and, on a `webos-v<x.y.z>`
+tag, publishes it as a pre-release with `SHA256SUMS.txt`.
 
-The dev server runs from `http://localhost`, so the cross-origin rules above still apply. There is no bundled proxy — either configure CORS on your Immich server, or launch Chrome with `--disable-web-security --user-data-dir=/tmp/immich-dev` for local testing.
+## Licence
 
-### Quality gates
-
-```bash
-npm run lint       # ESLint (CI treats warnings as errors)
-npm run typecheck  # tsc --noEmit — must pass before committing
-npm run test       # unit tests
-npm run test-service # phone sign-in service tests
-npm run test-tools # build tooling tests (legacy CSS lowering)
-```
-
-### Package & deploy
-
-```bash
-npm run pack-p     # production build (Enact pack + legacy transpile pass)
-make pack          # build the .ipk
-make install       # deploy it to a TV registered as "lg-tv"
-make launch        # launch the app
-make inspect       # open remote devtools
-```
-
-### Architecture
-
-Immich TV is a layered, dependency-injected React app built with [Enact](https://enactjs.com/) and [Sandstone](https://enactjs.com/docs/modules/sandstone/):
-
-- **`src/domain/`** — a `PhotoRepository` interface and a `RepositoryContext` provider. Hooks depend on this abstraction, never on HTTP directly.
-- **`src/api/`** — the concrete `ImmichRepository`, the HTTP client, and the Immich response types.
-- **`src/hooks/`** — [TanStack Query](https://tanstack.com/query) wrappers for data (assets, albums, search, people, accounts) plus webOS UI hooks (D-pad keys, layout, media viewer).
-- **`src/views/` & `src/components/`** — the TV UI, navigated entirely through the webOS Spotlight (D-pad) focus system.
-- **`service/`** — a small webOS JS service (Node, zero dependencies, plain ES5 so it runs on webOS 4's Node 0.12) bundled in the `.ipk` that powers phone sign-in: it serves the pairing page over the local network and performs the Immich login from the TV. The app talks to it over the Luna bus; run `node service/dev.js` to develop against it in a desktop browser, and `npm run test-service` for its test suite.
-
-The production bundle is post-processed by `tools/transpile-legacy.mjs`, which re-targets it to Chromium 53 (webOS 4) with esbuild and checks that the result parses. Enact's Babel pass skips `node_modules`, so dependencies shipping modern syntax (e.g. `??=`) would otherwise reach the bundle untransformed and fail to parse on older webOS engines, leaving a black screen. The same step lowers the stylesheet with `tools/legacy-css.mjs` (newer color syntax, logical properties and selectors) and fails the build if anything Chromium 53 cannot parse is left; `src/polyfills.ts` covers the missing runtime APIs.
-
-## ⚖️ Disclaimer
-
-Immich TV is an unofficial, third-party client. It is not affiliated with or endorsed by the Immich project. Provided as-is for personal use on LG Smart TVs.
-
-## 📄 License
-
-MIT © [Quentin Jean-Amans](https://github.com/Seeky91). See [LICENSE](LICENSE).
-
-## 💸 Support
-
-If Immich TV is useful to you, you can leave a tip in Bitcoin — entirely optional, the project is and will remain free and open-source.
-
-```
-bc1qvxczfmurlglff6zmkgysnxy2yglvwspalcd373
-```
+This folder is part of Immuch360, under the GNU AGPL v3 (see [../LICENSE](../LICENSE)), and includes code of
+immich-tv-webos under the MIT licence ([LICENSE](LICENSE), [LICENSE.md](LICENSE.md)). Third party packages:
+[THIRD_PARTY.md](THIRD_PARTY.md).
