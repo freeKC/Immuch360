@@ -43,6 +43,7 @@ import 'package:immich_mobile/theme/theme_data.dart';
 import 'package:immich_mobile/utils/bootstrap.dart';
 import 'package:immich_mobile/utils/cache/widgets_binding.dart';
 import 'package:immich_mobile/utils/debug_print.dart';
+import 'package:immich_mobile/utils/libsmb2_license.dart';
 import 'package:immich_mobile/utils/licenses.dart';
 import 'package:immich_mobile/utils/migration.dart';
 import 'package:immich_mobile/wm_executor.dart';
@@ -146,6 +147,8 @@ Future<void> initApp() async {
       yield LicenseEntryWithLineBreaks([license.key], license.value);
     }
   });
+  // libsmb2, the native library of the SMB shares (lib/utils/libsmb2_license.dart)
+  LicenseRegistry.addLicense(libsmb2Licenses);
 }
 
 class ImmichApp extends ConsumerStatefulWidget {

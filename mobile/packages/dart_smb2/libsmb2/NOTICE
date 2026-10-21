@@ -1,0 +1,171 @@
+libsmb2: the SMB2/3 client library Immuch360 uses to open SMB shares
+
+Immuch360 carries libsmb2 as a separate shared library that the dart_smb2
+package loads at run time: libsmb2.so on Android and Linux, libsmb2.dll on
+Windows, libsmb2.framework on iOS and macOS.
+
+Copyright (C) 2016-2025 Ronnie Sahlberg and the libsmb2 contributors (Brian
+Dodge, André Guilherme, Primary Data Inc. and others, as each source file
+names them). https://github.com/sahlberg/libsmb2
+
+License: GNU Lesser General Public License, version 2.1 or (at your option)
+any later version (LGPL-2.1-or-later). Its text follows this notice and is in
+LICENCE-LGPL-2.1.txt. libsmb2's own COPYING file, next to it, says which parts
+of libsmb2 are under which licence.
+
+WHICH LIBSMB2 THIS IS
+
+Every build of Immuch360 carries libsmb2 at upstream commit
+595d128b4d11a88a335eee961689a157e4f76cd3 (master of 14 August 2026, marked
+6.1.0+git20260814), changed by the patches of libsmb2-scripts 0.1.3 at commit
+f0688e739ec56842981e455cf8eba4a34e7682e7
+(https://github.com/ales-drnz/libsmb2-scripts):
+
+- Android, iOS, macOS and Windows: the binaries of release libsmb2-r8 of
+https://github.com/ales-drnz/dart_smb2, which dart_smb2 0.1.3 downloads and
+checks by their SHA-256.
+
+- Linux: a library Immuch360 builds from the same sources on Ubuntu 22.04, so
+that it runs with glibc 2.25 or later (.github/desktop/libsmb2/build_linux.sh
+in the Immuch360 repository).
+
+CHANGES TO LIBSMB2
+
+libsmb2-scripts (Alessandro Di Ronza) changes libsmb2 with these patches,
+applied at build time from its folder patches/libsmb2:
+
+- patch_nterror_reporting: records the NT status of a failed stat, truncate or
+create.
+
+- patch_poll_eintr: the synchronous calls retry poll() when a signal
+interrupts it.
+
+- patch_socket_close_guard: the read loop stops when a callback closed the
+context.
+
+- patch_sync_open_cb_data_leak: the synchronous smb2_open() frees its callback
+data.
+
+- patch_timeout_caller_frees: a request that times out is not freed when its
+caller owns it.
+
+- patch_utimes: adds smb2_utimes and smb2_utimes_async, which set the access
+and modification times of a file.
+
+- Windows only: patch_windows_csprng (random bytes from BCryptGenRandom),
+patch_windows_dcerpc_interface (renames a structure member that is a reserved
+word on Windows), patch_windows_headers and patch_windows_sockets (headers and
+socket handles for llvm-mingw).
+
+The library also holds smb2_wrapper.c of libsmb2-scripts, under the BSD
+3-Clause licence of Alessandro Di Ronza, the licence of dart_smb2 that the
+dart_smb2 entry shows.
+
+Immuch360 itself does not change libsmb2: its Linux library is the same
+sources compiled again.
+
+WHERE THE SOURCE IS
+
+The corresponding source of every libsmb2 binary in Immuch360 is:
+
+- libsmb2 at commit 595d128b4d11a88a335eee961689a157e4f76cd3:
+https://github.com/sahlberg/libsmb2/archive/595d128b4d11a88a335eee961689a157e4f76cd3.tar.gz
+(SHA-256 b4e3fe3890655dce283a39caf47a0a4adf1e0a5ab1a6a33235e5cabcdb336249);
+
+- libsmb2-scripts at commit f0688e739ec56842981e455cf8eba4a34e7682e7, with the
+patches, the configuration header and the build script of each system:
+https://github.com/ales-drnz/libsmb2-scripts/tree/f0688e739ec56842981e455cf8eba4a34e7682e7
+
+Each release of Immuch360 Desktop also carries both, with the Linux build
+script of Immuch360, in its file
+Immuch360-Desktop-<version>-libsmb2-sources.tar.gz on
+https://github.com/freeKC/Immuch360/releases, its SHA-256 in SHA256SUMS.txt.
+
+YOUR RIGHTS
+
+You may replace this library with your own build of libsmb2, for example one
+made from these sources with your changes. Immuch360 uses libsmb2 through its
+C functions only and loads it by name at run time: the desktop app takes the
+file in its own folder (lib/libsmb2.so on Linux, libsmb2.dll on Windows,
+Contents/Frameworks/libsmb2.framework on macOS). Immuch360 is free software
+itself (GNU AGPL version 3, https://github.com/freeKC/Immuch360), so the
+phone, TV and Quest apps can be built again from their source with another
+libsmb2.
+
+OTHER NOTICES INSIDE LIBSMB2
+
+The DCE/RPC code that libsmb2 builds in for the list of shares
+(libdcerpc/dcerpc.c and libdcerpc/dcerpc-srvsvc.c) is under the BSD 2-Clause
+licence:
+
+Copyright (C) 2018 by Ronnie Sahlberg <ronniesahlberg@gmail.com>
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+lib/md4c.c is derived from the RSA Data Security, Inc. MD4 Message-Digest
+Algorithm:
+
+Copyright (C) 1990-2, RSA Data Security, Inc. All rights reserved.
+
+License to copy and use this software is granted provided that it is
+identified as the "RSA Data Security, Inc. MD4 Message-Digest Algorithm" in
+all material mentioning or referencing this software or this function.
+
+License is also granted to make and use derivative works provided that such
+works are identified as "derived from the RSA Data Security, Inc. MD4
+Message-Digest Algorithm" in all material mentioning or referencing the
+derived work.
+
+RSA Data Security, Inc. makes no representations concerning either the
+merchantability of this software or the suitability of this software for any
+particular purpose. It is provided "as is" without express or implied
+warranty of any kind.
+
+These notices must be retained in any copies of any part of this
+documentation and/or software.
+
+include/smb2/smb2-ioctl.h:
+
+Copyright 2025 Ronnie Sahlberg <ronniesahberg@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+lib/md5.c (Colin Plumb, 1993), lib/aes_reference.c and
+include/portable-endian.h are in the public domain. The
+SHA and HMAC code (lib/sha1.c, lib/sha224-256.c, lib/sha384-512.c, lib/usha.c,
+lib/hmac.c) comes from RFC 4634, and lib/hmac-md5.c from RFC 2104.

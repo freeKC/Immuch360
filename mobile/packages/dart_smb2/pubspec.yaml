@@ -34,6 +34,9 @@ dev_dependencies:
   test: ^1.25.6
 
 flutter:
+  # Immuch360 (IMMUCH360-NOTE.md): the notice and licence texts of libsmb2, shown on the app's licence page
+  assets:
+    - libsmb2/
   plugin:
     platforms:
       android:
