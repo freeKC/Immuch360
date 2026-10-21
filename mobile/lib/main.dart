@@ -29,7 +29,6 @@ import 'package:immich_mobile/providers/app_life_cycle.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/share_intent_upload.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
-import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
@@ -313,7 +312,7 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         locale: context.locale,
-        themeMode: ref.watch(appConfigProvider.select((config) => config.theme.mode)),
+        themeMode: ref.watch(appThemeModeProvider),
         darkTheme: getThemeData(colorScheme: immichTheme.dark, locale: context.locale, tvMode: tvMode),
         theme: getThemeData(colorScheme: immichTheme.light, locale: context.locale, tvMode: tvMode),
         builder: (context, child) {
