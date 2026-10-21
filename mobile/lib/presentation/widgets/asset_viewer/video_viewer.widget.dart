@@ -22,6 +22,7 @@ import 'package:immich_mobile/providers/cast.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
@@ -364,7 +365,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     }
 
     // Grab refs to prevent reading after dispose
-    final loopVideo = widget.loopOverride ?? ref.read(appConfigProvider).viewer.loopVideo;
+    final loopVideo = widget.loopOverride ?? ref.read<bool>(loopVideoProvider);
     final localNotifier = _notifier;
 
     await localNotifier.load(source);

@@ -20,6 +20,8 @@ enum SettingsKey<T> {
 
   // Viewer
   viewerLoopVideo<bool>(),
+  // The Looping setting of a TV, see ViewerConfig.loopVideoOnTv
+  viewerLoopVideoOnTv<bool>(),
   viewerLoadOriginalVideo<bool>(),
   viewerAutoPlayVideo<bool>(),
   viewerTapToNavigate<bool>(),

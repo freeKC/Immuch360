@@ -8,6 +8,10 @@ part 'viewer_config.freezed.dart';
 abstract class ViewerConfig with _$ViewerConfig {
   const factory ViewerConfig({
     @Default(true) bool loopVideo,
+
+    /// The Looping setting of a TV (Android TV, Google TV), off by default: a film ends there, and left and right go to
+    /// the next item. Its own key, so that the default of the phones stays on (see loopVideoProvider).
+    @Default(false) bool loopVideoOnTv,
     @Default(false) bool loadOriginalVideo,
     @Default(true) bool autoPlayVideo,
     @Default(false) bool tapToNavigate,
