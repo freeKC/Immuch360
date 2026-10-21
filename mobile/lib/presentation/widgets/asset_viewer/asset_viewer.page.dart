@@ -163,6 +163,30 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// to the row of the details that has the focus now
   bool _dropHeldOk = false;
 
+  /// The sideways thumbstick pushes of a Meta Quest controller, one "page" call per push (see QuestStickPaging.kt):
+  /// taken natively, the scrollables of the page would compete for them as pointer scrolls
+  static const _stickChannel = MethodChannel('immuch360/quest_stick');
+
+  void _setStickPaging(bool enabled) {
+    if (!CurrentPlatform.isAndroid) {
+      return;
+    }
+    _stickChannel.setMethodCallHandler(enabled ? _onStickPage : null);
+    // An engine without MainActivity has no such channel: no thumbstick paging there
+    _stickChannel.invokeMethod<void>('setPaging', enabled).ignore();
+  }
+
+  /// A push to the right goes to the next asset, to the left to the previous one; a zoomed photo stays
+  Future<void> _onStickPage(MethodCall call) async {
+    if (call.method != 'page' || !mounted || ref.read(assetViewerProvider).isZoomed) {
+      return;
+    }
+    final step = call.arguments;
+    if (step is int && step != 0) {
+      _onTapNavigate(step.sign);
+    }
+  }
+
   void _onTapNavigate(int direction) {
     final page = _pageController.page?.toInt();
     if (page == null) {
@@ -242,6 +266,7 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     FocusManager.instance.addEarlyKeyEventHandler(_onEarlyKey);
 
     WidgetsBinding.instance.addPostFrameCallback(_onAssetInit);
+    _setStickPaging(true);
 
     final assetViewer = ref.read(assetViewerProvider);
     unawaited(_setSystemUIMode(assetViewer.showingControls, assetViewer.showingDetails));
@@ -249,6 +274,7 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
 
   @override
   void dispose() {
+    _setStickPaging(false);
     _jump._detach(this);
     _topBarFocus.removeListener(_onBarsFocus);
     _bottomBarFocus.removeListener(_onBarsFocus);

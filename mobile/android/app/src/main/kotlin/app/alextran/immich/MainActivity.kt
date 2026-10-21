@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.ext.SdkExtensions
+import android.view.MotionEvent
 import app.alextran.immich.background.BackgroundEngineLock
 import app.alextran.immich.background.BackgroundWorkerApiImpl
 import app.alextran.immich.background.BackgroundWorkerFgHostApi
@@ -55,6 +56,9 @@ import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 
 class MainActivity : FlutterFragmentActivity() {
+  // Previous and next of the asset viewer by the thumbstick of a Meta Quest controller
+  private var stickPaging: QuestStickPaging? = null
+
   override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
     registerPlugins(this, flutterEngine)
@@ -72,6 +76,7 @@ class MainActivity : FlutterFragmentActivity() {
     TvApi.setUp(messenger, TvApiImpl(this))
     // The scanner of "Connect a TV or computer": it opens activities, so it needs this one
     QrScanApi.setUp(messenger, QrScanApiImpl(this))
+    stickPaging = QuestStickPaging(messenger)
     // Live view of the Tapo cameras: a platform view and the API that feeds it
     val cameraLiveViews = CameraLiveViewFactory(messenger)
     flutterEngine.platformViewsController.registry.registerViewFactory(CameraLiveViewFactory.VIEW_TYPE, cameraLiveViews)
@@ -112,6 +117,8 @@ class MainActivity : FlutterFragmentActivity() {
     DjiLinkApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     DjiLinkController.detachEvents()
     AppHealth.detach()
+    stickPaging?.dispose()
+    stickPaging = null
     super.cleanUpFlutterEngine(flutterEngine)
   }
 
@@ -125,12 +132,13 @@ class MainActivity : FlutterFragmentActivity() {
 
   /**
    * A gamepad moved: the DJI link page draws the sticks it reads. The event is only looked at, never consumed, and
-   * nothing leaves the device because of it (see DjiLinkController.onMotionEvent).
+   * nothing leaves the device because of it (see DjiLinkController.onMotionEvent). A sideways push of the thumbstick of
+   * a Meta Quest controller pages the asset viewer while it asks for it (see QuestStickPaging), which then takes it.
    */
-  override fun dispatchGenericMotionEvent(event: android.view.MotionEvent): Boolean {
+  override fun dispatchGenericMotionEvent(event: MotionEvent): Boolean {
     // Only a page that is open reads the sticks; no event ever creates the link's owner
     DjiLinkController.existing()?.onMotionEvent(event)
-    return super.dispatchGenericMotionEvent(event)
+    return stickPaging?.onGenericMotion(event) == true || super.dispatchGenericMotionEvent(event)
   }
 
   override fun onNewIntent(intent: Intent) {
