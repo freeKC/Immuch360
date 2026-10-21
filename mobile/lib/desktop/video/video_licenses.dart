@@ -14,6 +14,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
+import 'package:immich_mobile/utils/debug_print.dart';
 import 'package:path/path.dart' as p;
 
 /// The libmpv releases of https://github.com/freeKC/Immuch360 the desktop builds take their libraries from, as pinned
@@ -57,8 +58,20 @@ String videoLicensesFolder(VideoLicenseSystem system, String executable) => swit
 };
 
 /// The entries from [folder]: libmpv with its Source paragraph, its notice, its build information and the LGPL and
-/// GPL texts, then one entry per library of licenses/libmpv with its own texts, and on Windows ANGLE and SwiftShader
+/// GPL texts, then one entry per library of licenses/libmpv with its own texts, and on Windows ANGLE and SwiftShader.
+/// A folder or a file that cannot be read ends the entries there, logged: those already read stay, rather than a
+/// licence page that fails as a whole.
 Stream<LicenseEntry> videoLicenseEntries(Directory folder, VideoLicenseSystem system) async* {
+  try {
+    await for (final entry in _videoLicenseEntries(folder, system)) {
+      yield entry;
+    }
+  } catch (error) {
+    dPrint(() => 'video licence texts: $error');
+  }
+}
+
+Stream<LicenseEntry> _videoLicenseEntries(Directory folder, VideoLicenseSystem system) async* {
   if (!folder.existsSync()) {
     return;
   }

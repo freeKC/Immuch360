@@ -38,6 +38,50 @@ const _macosFolder = {
 
 List<String> _paragraphs(LicenseEntry entry) => entry.paragraphs.map((paragraph) => paragraph.text).toList();
 
+/// A folder whose listing fails, as one the user cannot read does
+class _UnreadableDirectory extends Fake implements Directory {
+  @override
+  final String path;
+
+  _UnreadableDirectory(this.path);
+
+  @override
+  bool existsSync() => true;
+
+  @override
+  List<FileSystemEntity> listSync({bool recursive = false, bool followLinks = true}) =>
+      throw FileSystemException('Directory listing failed', path, const OSError('Permission denied', 13));
+}
+
+/// A file whose read fails, as one the user cannot read does
+class _UnreadableFile extends Fake implements File {
+  @override
+  final String path;
+
+  _UnreadableFile(this.path);
+
+  @override
+  bool existsSync() => true;
+
+  @override
+  Future<Uint8List> readAsBytes() async =>
+      throw FileSystemException('Cannot open file', path, const OSError('Permission denied', 13));
+}
+
+/// The licence folder as written, but for [unreadable], a folder or a file of it that cannot be read
+final class _Unreadable extends IOOverrides {
+  final String unreadable;
+
+  _Unreadable(this.unreadable);
+
+  @override
+  Directory createDirectory(String path) =>
+      p.basename(path) == unreadable ? _UnreadableDirectory(path) : super.createDirectory(path);
+
+  @override
+  File createFile(String path) => p.basename(path) == unreadable ? _UnreadableFile(path) : super.createFile(path);
+}
+
 void main() {
   late Directory root;
   late Directory licenses;
@@ -119,6 +163,37 @@ void main() {
       expect(libmpv.join('\n'), isNot(contains(windowsLibmpvRelease)));
     },
   );
+
+  test('a folder or a file that cannot be read ends the entries there, those already read stay, and the page does '
+      'not fail', () async {
+    write(_windowsFolder);
+    final logs = <String?>[];
+    final original = debugPrint;
+    debugPrint = (message, {wrapWidth}) => logs.add(message);
+    final List<LicenseEntry> listed;
+    final List<LicenseEntry> read;
+    try {
+      // The libraries of licenses/libmpv cannot be listed: the libmpv entry, read before, stays
+      listed = await IOOverrides.runWithIOOverrides(
+        () => videoLicenseEntries(licenses, VideoLicenseSystem.windows).toList(),
+        _Unreadable('libmpv'),
+      );
+      // NOTICES.md cannot be read: nothing was read before it
+      read = await IOOverrides.runWithIOOverrides(
+        () => videoLicenseEntries(licenses, VideoLicenseSystem.windows).toList(),
+        _Unreadable('NOTICES.md'),
+      );
+    } finally {
+      debugPrint = original;
+    }
+
+    expect(listed.map((entry) => entry.packages.first), ['libmpv']);
+    expect(_paragraphs(listed.single), contains('BUILDINFO.txt:'));
+    expect(read, isEmpty);
+    expect(logs, hasLength(2));
+    expect(logs.first, contains('Directory listing failed'));
+    expect(logs.last, contains('Cannot open file'));
+  });
 
   test('no licence folder, as in a build run from its build folder: no entry', () async {
     expect(await videoLicenseEntries(licenses, VideoLicenseSystem.windows).toList(), isEmpty);
