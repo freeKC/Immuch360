@@ -87,6 +87,32 @@ class AssetApiRepository extends ApiRepository {
     }
   }
 
+  /// Whether the server has read the metadata of the asset [id] already, and found a place in them: what the place
+  /// step of the videos of a drone waits for (see VideoLocationService). Null when the server has no such asset (400
+  /// or 404); any other failure is thrown. The server makes the exif of an upload with its file size only, and fills
+  /// the frame size and the dates once it has read the file.
+  Future<({bool extracted, bool hasLocation})?> placeState(String id) async {
+    final AssetResponseDto asset;
+    try {
+      asset = await checkNull(_api.getAssetInfo(id));
+    } on ApiException catch (error) {
+      if (error.code == 400 || error.code == 404) {
+        return null;
+      }
+      rethrow;
+    }
+    final exif = asset.exifInfo.orElse(null);
+    if (exif == null) {
+      return (extracted: false, hasLocation: false);
+    }
+    final extracted =
+        exif.exifImageWidth.orElse(null) != null ||
+        exif.exifImageHeight.orElse(null) != null ||
+        exif.dateTimeOriginal.orElse(null) != null;
+    final hasLocation = exif.latitude.orElse(null) != null && exif.longitude.orElse(null) != null;
+    return (extracted: extracted, hasLocation: hasLocation);
+  }
+
   Future<void> updateDescription(String assetId, String description) {
     return _api.updateAsset(assetId, UpdateAssetDto(description: Optional.present(description)));
   }
