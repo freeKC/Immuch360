@@ -9,22 +9,28 @@ merge base with the phone branch, restricted to mobile/android and mobile/ios, m
 a push to the desktop branch, a pull request or a merge of a phone release. An upstream sync reaches the desktop
 through the phone branch; an upstream-sync/* branch is not checked here (the workflow skips it).
 
+A phone change that reaches a branch before the phone branch has it (a lot merged into a release branch first) is
+listed in phone-projects-exempt.json: the path, the blob it is exempt at (git rev-parse HEAD:<path>) and a one line
+reason. The same path with any other content is flagged again; an entry can go once the phone branch holds the file.
+
   check_phone_projects.py [--phone-ref origin/immuch360]   exit 1 when a phone project file differs
   check_phone_projects.py --worktree                       the working tree instead of HEAD, untracked files
                                                            included (before a commit)
   check_phone_projects.py --changed-from FILE              check a list of changed paths instead (one per line)
 
-Only read-only git commands are run (merge-base, diff).
+Only read-only git commands are run (merge-base, diff, ls-tree, hash-object without -w).
 """
 from __future__ import annotations
 
 import argparse
+import json
 import pathlib
 import re
 import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
+EXEMPTIONS = pathlib.Path(__file__).resolve().parent / 'phone-projects-exempt.json'
 PHONE_PROJECTS = ('mobile/android/', 'mobile/ios/')
 VENDORED_NATIVE = re.compile(r'^mobile/packages/[^/]+/(android|ios|darwin)/')
 
@@ -35,6 +41,42 @@ def is_phone_project(path: str) -> bool:
 
 def phone_project_changes(paths) -> list:
     return sorted({p.strip() for p in paths if is_phone_project(p.strip())})
+
+
+def load_exemptions(path: pathlib.Path) -> dict:
+    """{path: {'blob': sha, 'reason': text}} from the exemption file, empty when there is none"""
+    if not path.exists():
+        return {}
+    entries = json.loads(path.read_text(encoding='utf-8'))
+    for name, entry in entries.items():
+        if not entry.get('blob') or not entry.get('reason'):
+            raise ValueError(f'{path.name}: {name} needs a blob and a reason')
+    return entries
+
+
+def blobs(root: pathlib.Path, paths: list, worktree: bool) -> dict:
+    """The blob of each path that exists: in HEAD, or in the working tree with [worktree]"""
+    if not paths:
+        return {}
+    if not worktree:
+        out = subprocess.run(['git', '-C', str(root), 'ls-tree', 'HEAD', '--', *paths],
+                             check=True, capture_output=True, text=True).stdout
+        return {line.split('\t', 1)[1]: line.split()[2] for line in out.splitlines()}
+    present = [p for p in paths if (root / p).is_file()]
+    if not present:
+        return {}
+    out = subprocess.run(['git', '-C', str(root), 'hash-object', '--', *present],
+                         check=True, capture_output=True, text=True).stdout
+    return dict(zip(present, out.split()))
+
+
+def split_exempt(root: pathlib.Path, changed: list, exemptions: dict, worktree: bool) -> tuple:
+    """The changed paths that are not exempt, and the exempt ones with their reason. A path is exempt only at the
+    blob its entry names."""
+    found = blobs(root, [p for p in changed if p in exemptions], worktree)
+    exempt = [(p, exemptions[p]['reason']) for p in changed if p in found and found[p] == exemptions[p]['blob']]
+    names = {p for p, _ in exempt}
+    return [p for p in changed if p not in names], exempt
 
 
 def changed_since_phone_branch(root: pathlib.Path, phone_ref: str, worktree: bool) -> list:
@@ -57,6 +99,8 @@ def main(argv=None) -> int:
     parser.add_argument('--worktree', action='store_true', help='check the working tree instead of HEAD')
     parser.add_argument('--changed-from', type=pathlib.Path, help='a file listing changed paths, one per line')
     parser.add_argument('--root', type=pathlib.Path, default=ROOT, help='repository root')
+    parser.add_argument('--exemptions', type=pathlib.Path, default=EXEMPTIONS,
+                        help='the phone changes allowed here, path, blob and reason')
     args = parser.parse_args(argv)
 
     if args.changed_from:
@@ -69,13 +113,22 @@ def main(argv=None) -> int:
             print(f'{args.phone_ref} must be in the clone (fetch-depth 0 in the workflow)')
             return 2
     changed = phone_project_changes(paths)
+    try:
+        changed, exempt = split_exempt(args.root, changed, load_exemptions(args.exemptions),
+                                       args.worktree or args.changed_from is not None)
+    except (ValueError, subprocess.CalledProcessError) as error:
+        print(f'exemptions: {error}')
+        return 2
+    for path, reason in exempt:
+        print(f'exempt: {path} ({reason})')
     for path in changed:
         print(f'changed: {path}')
     if changed:
         print('The desktop work changed the phone projects: nothing under mobile/android or mobile/ios, nor the '
               'android, ios and darwin folders of the vendored packages, may differ from the phone branch')
         return 1
-    print('mobile/android, mobile/ios and the native code of the vendored packages as on the phone branch')
+    print('mobile/android, mobile/ios and the native code of the vendored packages as on the phone branch'
+          + (f', apart from {len(exempt)} exempt files' if exempt else ''))
     return 0
 
 

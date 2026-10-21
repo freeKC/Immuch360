@@ -1,0 +1,58 @@
+{
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
+    "blob": "462ad55f592632c9c6d25febb341bb0a96640f46",
+    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/core/AppHealth.kt": {
+    "blob": "72007f2819b19ef23c3dffaadaad85110bb1285f",
+    "reason": "TV lot (c05b57812, e66574872): main thread stalls and why the phone app ended, written to the Logs page"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/core/StreamingLoadControl.kt": {
+    "blob": "3c4323c73e77d28f0e8f39f4d072e189aae224d9",
+    "reason": "TV lot (5e7bf8e27): buffering of the 360 video player of the phone app"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/core/VideoDecoders.kt": {
+    "blob": "349b4d8510907714215d1935668829c4e4d69775",
+    "reason": "TV lot (5e7bf8e27): no 360 player for a stream the device cannot decode"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/PlaybackReport.kt": {
+    "blob": "98bf447a264a700196aa94270c45916032417769",
+    "reason": "TV lot (e66574872): a 360 video the phone app cannot play is written to the Logs page"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/SphericalVideoActivity.kt": {
+    "blob": "c4e4575617bebb49a5239f93c69d095a20112ff5",
+    "reason": "TV lot (5e7bf8e27, e66574872, cced20e83): the 360 video player of the phone app and its error view"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/tv/TvDevice.kt": {
+    "blob": "055398fba0f6e62f24f2fe0a0edc2511a9f1428c",
+    "reason": "TV lot (f5055f1e2): less image memory on a TV, 3 GB counts as low memory"
+  },
+  "mobile/android/app/src/main/res/drawable-television/background.png": {
+    "blob": "e815fd621f1968ac104bc8b687d1d19a818d00a8",
+    "reason": "TV lot (651962690): dark launch background of the app on a TV"
+  },
+  "mobile/android/app/src/main/res/values-television-v31/styles.xml": {
+    "blob": "439e233a038a6eb09eec03874e02a4aedff2dcfa",
+    "reason": "TV lot (651962690): dark launch theme of the app on a TV, Android 12 and later"
+  },
+  "mobile/android/app/src/main/res/values-television/styles.xml": {
+    "blob": "0357130537edf1cbd07ecb03d5dda0b1a6c87264",
+    "reason": "TV lot (651962690): dark launch theme of the app on a TV"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/core/AppHealthTest.kt": {
+    "blob": "18b6fbf88948bc64016d8427f23ad469a5da38a0",
+    "reason": "TV lot (c05b57812): unit tests of AppHealth, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/core/StreamingLoadControlTest.kt": {
+    "blob": "bea2b1026f5d95e732ec62044b7b79ca91a67ad8",
+    "reason": "TV lot (5e7bf8e27): unit tests of StreamingLoadControl, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/PlaybackReportTest.kt": {
+    "blob": "29ccb659b150adfc6305a4fc930eda5e266bec43",
+    "reason": "TV lot (e66574872): unit tests of PlaybackReport, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/tv/TvDeviceTest.kt": {
+    "blob": "7d5062fb96cb57fd92eb50b09e47368ed84de5bb",
+    "reason": "TV lot (f5055f1e2): unit tests of TvDevice, run by the Kotlin unit tests job"
+  }
+}
