@@ -4,31 +4,49 @@ name: Immuch360 webOS
 # made by the webOS command line tools (@webos-tools/cli, pinned in webos/package.json), checked by
 # webos/tools/check-package.mjs and uploaded as an artifact with SHA256SUMS.txt and the list of its files.
 #
-# Run by hand (gh workflow run immuch360-webos.yml --ref <branch>, or the REST API) it builds the version of
-# webos/webos-meta/appinfo.json, or the one given. On the push of a webos-v<x.y.z> tag it builds that version and
-# publishes the .ipk and SHA256SUMS.txt as a GitHub pre-release of the tag: the only job that writes, with
-# "contents: write" and the token of the run. .github/desktop/check_workflow.py holds this file to the rules of the
-# release workflows (pinned runners and actions, no secret, no kept token, its own tags only).
+# It runs on every push and pull request that touches webos/, the fork's i18n/ (the app reads its texts there) or
+# these workflows, by hand (the version of webos/webos-meta/appinfo.json, or the one given), and from
+# immuch360-webos-release.yml on a webos-v<x.y.z> tag, which publishes the .ipk. Read only, no secret, no kept token:
+# .github/desktop/check_workflow.py holds it to that, as it does the desktop workflows.
 
 on:
+  # Branches only: a webos-v* tag builds through immuch360-webos-release.yml
   push:
-    tags: ['webos-v*']
+    branches: ['**']
+    paths: ['webos/**', 'i18n/**', '.github/workflows/immuch360-webos*.yml', '.github/desktop/check_workflow.py']
+  pull_request:
+    paths: ['webos/**', 'i18n/**', '.github/workflows/immuch360-webos*.yml', '.github/desktop/check_workflow.py']
   workflow_dispatch:
     inputs:
       version:
         description: 'Version of the build, three numbers (0.1.0); empty for the one of webos/webos-meta/appinfo.json'
         required: false
         default: ''
+  # immuch360-webos-release.yml, on a webos-v* tag; the permissions below stay read only
+  workflow_call:
+    inputs:
+      version:
+        description: 'Version of the build; empty for the tag (webos-v0.1.0 is 0.1.0) or appinfo.json'
+        type: string
+        required: false
+        default: ''
+    outputs:
+      version:
+        description: The version of the build, which names the .ipk
+        value: ${{ jobs.build.outputs.version }}
 
-permissions: {}
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     name: Build the .ipk
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    permissions:
-      contents: read
     outputs:
       version: ${{ steps.version.outputs.version }}
     defaults:
@@ -39,9 +57,12 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: This workflow pinned, on webos-v* tags only
+      - name: These workflows pinned, without secrets, the release on webos-v* tags only
         working-directory: .
-        run: python3 .github/desktop/check_workflow.py --release --workflow .github/workflows/immuch360-webos.yml --tag-prefix webos-v
+        run: |
+          python3 .github/desktop/check_workflow.py --workflow .github/workflows/immuch360-webos.yml
+          python3 .github/desktop/check_workflow.py --release --workflow .github/workflows/immuch360-webos-release.yml \
+            --tag-prefix webos-v
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -57,7 +78,7 @@ jobs:
           REF_NAME: ${{ github.ref_name }}
           REF_TYPE: ${{ github.ref_type }}
         run: |
-          if [ "$REF_TYPE" = tag ]; then
+          if [ "$REF_TYPE" = tag ] && [ "${REF_NAME#webos-v}" != "$REF_NAME" ]; then
             version="${REF_NAME#webos-v}"
           elif [ -n "$INPUT_VERSION" ]; then
             version="$INPUT_VERSION"
@@ -101,33 +122,3 @@ jobs:
             webos/build/SHA256SUMS.txt
             webos/build/ipk-files.json
           if-no-files-found: error
-
-  release:
-    name: Publish the pre-release
-    needs: build
-    if: startsWith(github.ref, 'refs/tags/webos-v')
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: Immuch360-webOS-${{ needs.build.outputs.version }}
-          path: release
-
-      # A pre-release, created when the tag has none; notes written by hand are never replaced
-      - name: Attach the .ipk and SHA256SUMS.txt to the pre-release of the tag
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          TAG: ${{ github.ref_name }}
-          VERSION: ${{ needs.build.outputs.version }}
-        run: |
-          (cd release && sha256sum --check SHA256SUMS.txt)
-          if ! gh release view "$TAG" --repo "$REPO" > /dev/null 2>&1; then
-            gh release create "$TAG" --repo "$REPO" --verify-tag --prerelease \
-              --title "Immuch360 for LG webOS $VERSION (preview)" \
-              --notes "Preview of the Immuch360 app for LG webOS TVs (webOS 4.0 and later), built on immich-tv-webos 1.7.0 by Quentin Jean-Amans. Install it on a TV in Developer Mode: see webos/README.md."
-          fi
-          gh release upload "$TAG" --repo "$REPO" --clobber release/*.ipk release/SHA256SUMS.txt

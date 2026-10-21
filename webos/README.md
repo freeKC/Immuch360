@@ -126,8 +126,9 @@ npm run set-version -- 0.1.0   # the version of appinfo.json and of the service
 only the TV app has are in `i18n/en.json` of this folder, keys `webos_*`, until they move to the fork's `i18n/en.json`
 for Weblate.
 
-The CI workflow `.github/workflows/immuch360-webos.yml` builds the `.ipk` on every manual run and, on a `webos-v<x.y.z>`
-tag, publishes it as a pre-release with `SHA256SUMS.txt`.
+The CI workflow `.github/workflows/immuch360-webos.yml` tests and builds the `.ipk` on every push that touches `webos/`
+or `i18n/`, and by hand; `.github/workflows/immuch360-webos-release.yml` builds it from a `webos-v<x.y.z>` tag and
+publishes it as a pre-release with `SHA256SUMS.txt`.
 
 ## Licence
 
