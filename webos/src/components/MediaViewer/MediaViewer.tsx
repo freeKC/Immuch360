@@ -169,21 +169,24 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	}, [isVideo, assetId]);
 
 	// Immuch360: once a second until the video starts, whether the TV gave up on it (a media error), or whether it still
-	// shows nothing 20 s after it opened while nobody paused it
+	// shows nothing 20 s after it opened while nobody paused it. The check goes on after the message: a video that starts
+	// late (a slow server, a large original) takes the message away.
 	useEffect(() => {
 		if (!isVideo || !assetId) return undefined;
 		const opened = Date.now();
+		let failed = false;
 		const timer = window.setInterval(() => {
 			const api = playerApiRef.current;
 			if (!api) return;
 			const state = api.getMediaState();
 			if ((state.currentTime ?? 0) > 0) {
 				window.clearInterval(timer);
+				if (failed) setVideoFailure((current) => (current === assetId ? null : current));
 				return;
 			}
 			const stalled = Date.now() - opened >= VIDEO_STALL_MS && state.paused === false;
-			if (api.getVideoNode()?.error || stalled) {
-				window.clearInterval(timer);
+			if (!failed && (api.getVideoNode()?.error || stalled)) {
+				failed = true;
 				setVideoFailure(assetId);
 			}
 		}, 1000);
