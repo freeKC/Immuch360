@@ -249,13 +249,13 @@ void main() {
         expect(existing['name'], 'Desktop build 5');
         expect(existing['body'], 'Notes written by hand');
         expect(run.output, contains('replaced: Immuch360-Desktop-$label-windows-x64.zip'));
-        expect(github.assetNames(existing), hasLength(9));
+        expect(github.assetNames(existing), hasLength(10));
         final sums = github.assetText(existing, 'SHA256SUMS.txt');
         expect(sums, contains('${line('Immuch360-Desktop-$label-windows-x64.zip', 'zip')}\n'));
         expect(sums, contains('${line('Notes.pdf', 'pdf')}\n'));
         expect(sums, contains('${line('Older.txt', 'older')}\n'));
         expect(sums, isNot(contains('old zip')));
-        expect('\n'.allMatches(sums), hasLength(8));
+        expect('\n'.allMatches(sums), hasLength(9));
       });
 
       test('the notes of the owner replace those of a release, the files stay', () async {
