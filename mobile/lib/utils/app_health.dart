@@ -6,8 +6,9 @@ import 'package:logging/logging.dart';
 
 /// What Android tells of the app's health (AppHealth.kt): the stalls of the main thread, which also runs Dart, with
 /// its stack and the memory at that moment, and why the app ended the last times (not responding, a crash, the low
-/// memory killer). Written to the Logs page at warning level, where a TV user can read them; logcat alone had them
-/// before, or nothing. A stall gets the state of the image cache of the moment it is written, the first suspect.
+/// memory killer), and the videos the 360° player could not play, with what it saw of them. Written to the Logs page
+/// at warning level, where a TV user can read them; logcat alone had them before, or nothing. A stall gets the state of
+/// the image cache of the moment it is written, the first suspect.
 class AppHealthReports {
   AppHealthReports._();
 
@@ -34,7 +35,7 @@ class AppHealthReports {
     }
   }
 
-  /// Writes [report], a map of its kind ("stall" or "exit") and its text, to the logs
+  /// Writes [report], a map of its kind ("stall", "exit" or "video") and its text, to the logs
   @visibleForTesting
   static void write(Object? report) {
     if (report is! Map) {

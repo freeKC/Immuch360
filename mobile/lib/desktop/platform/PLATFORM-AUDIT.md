@@ -113,7 +113,7 @@ the gate is per desktop and is noted.
 | `lib/services/foreground_upload.service.dart:495` | iOS cloud download | right |
 | `lib/services/foreground_upload.service.dart:587` | iOS cloud id | right |
 | `lib/services/foreground_upload.service.dart:639` | iOS deletes its temporary copies | right, and needed: the computers upload the original files in place, never to be deleted |
-| `lib/utils/app_health.dart:19` | Android health reports (main thread stalls, exit reasons) | right: Android only, the computers listen to nothing |
+| `lib/utils/app_health.dart:20` | Android health reports (main thread stalls, exit reasons) | right: Android only, the computers listen to nothing |
 | `lib/utils/migration.dart:60` | Android date migration | right |
 | `lib/widgets/asset_viewer/detail_panel/exif_map.dart:48` | Android map link | hidden: no map on the computers (G1) |
 | `lib/widgets/asset_viewer/detail_panel/exif_map.dart:57` | iOS map link | hidden |

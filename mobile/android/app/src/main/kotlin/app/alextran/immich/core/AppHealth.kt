@@ -28,8 +28,10 @@ import kotlin.concurrent.withLock
  * - why the process ended the last times (Android 11 and later): an ANR with the main thread of its trace, a crash,
  *   the low memory killer. Each end is reported once.
  *
+ * Other parts of the app report through [report] too: the 360° player, a video it cannot play.
+ *
  * Flutter takes the reports on [CHANNEL]: "takeReports" gives those made so far, then each new one comes as "report",
- * a map of its kind ("stall" or "exit") and its text.
+ * a map of its kind ("stall", "exit" or "video") and its text.
  */
 object AppHealth {
   private const val TAG = "AppHealth"
@@ -87,7 +89,11 @@ object AppHealth {
     }
   }
 
-  private fun report(kind: String, text: String) {
+  /**
+   * Sends [text] to the Logs page as a report of [kind] ("stall", "exit", or "video" for a video the 360° player
+   * cannot play), kept until Flutter takes it; also to logcat. Any thread.
+   */
+  fun report(kind: String, text: String) {
     Log.w(TAG, text)
     main.post {
       val report = mapOf("kind" to kind, "text" to text)

@@ -32,6 +32,14 @@ void main() {
     expect(records.single.message, 'The app ended on 2026-10-21 12:03:04: not responding (ANR)');
   });
 
+  test('writes a video the 360 player could not play as it comes', () async {
+    AppHealthReports.write({'kind': 'video', 'text': 'The 360° player cannot play VID.mp4 from the server original'});
+    await pumpEventQueue();
+
+    expect(records.single.level, Level.WARNING);
+    expect(records.single.message, 'The 360° player cannot play VID.mp4 from the server original');
+  });
+
   test('ignores what is not a report', () async {
     AppHealthReports.write('text');
     AppHealthReports.write({'kind': 'stall'});
