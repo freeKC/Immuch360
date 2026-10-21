@@ -36,6 +36,9 @@ class _FilterBottomSheetScaffoldState extends State<FilterBottomSheetScaffold> {
   final _applyFocus = FocusNode(debugLabel: 'TV filter apply');
   FocusNode? _lastContentFocus;
 
+  /// The traversal policy of the content in the rail layout
+  late final _contentPolicy = _ContentTraversalPolicy(() => widget.onSearch == null ? _clearFocus : _applyFocus);
+
   @override
   void initState() {
     super.initState();
@@ -123,6 +126,7 @@ class _FilterBottomSheetScaffoldState extends State<FilterBottomSheetScaffold> {
                 children: [
                   Expanded(
                     child: FocusTraversalGroup(
+                      policy: _contentPolicy,
                       child: Focus(focusNode: _content, onKeyEvent: _onContentKey, child: widget.child),
                     ),
                   ),
@@ -165,5 +169,28 @@ class _FilterBottomSheetScaffoldState extends State<FilterBottomSheetScaffold> {
         ],
       ),
     );
+  }
+}
+
+/// The content of the rail layout moves Right to Apply (Clear when there is no Apply) for the moves that never reach
+/// [_FilterBottomSheetScaffoldState._onContentKey]: TvShell moves the focus of a radio button through this policy
+/// before the sheet sees the key. The nearest button on the right was then Clear for the upper choices, and OK there
+/// cleared the filter instead of applying the choice.
+class _ContentTraversalPolicy extends ReadingOrderTraversalPolicy {
+  _ContentTraversalPolicy(this._railTarget);
+
+  final FocusNode Function() _railTarget;
+
+  @override
+  bool inDirection(FocusNode currentNode, TraversalDirection direction) {
+    if (direction != TraversalDirection.right) {
+      return super.inDirection(currentNode, direction);
+    }
+    final target = _railTarget();
+    if (!target.canRequestFocus || target.context == null) {
+      return super.inDirection(currentNode, direction);
+    }
+    target.requestFocus();
+    return true;
   }
 }

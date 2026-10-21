@@ -145,7 +145,7 @@ void main() {
       // TvShell moves the focus for a radio button before the sheet sees the key: a focus scope around the content
       // kept it on the choices
       await press(tester, LogicalKeyboardKey.arrowRight);
-      expect(focused()?.debugLabel, anyOf('TV filter clear', 'TV filter apply'));
+      expect(focused()?.debugLabel, 'TV filter apply');
 
       await press(tester, LogicalKeyboardKey.arrowLeft);
       expect(focused(), image);
@@ -184,6 +184,23 @@ void main() {
       expect(picked, isEmpty, reason: 'a move is no choice');
     });
 
+    testWidgets('Media Type: Right from every choice goes to Apply, never to the nearer Clear', (tester) async {
+      final picked = <AssetType>[];
+      await open(
+        tester,
+        pageSheet('Select media type', MediaTypePicker(onSelect: picked.add, filter: AssetType.other)),
+      );
+      for (final choice in ['All', 'Image', 'Video']) {
+        focusOf(tester, choice).requestFocus();
+        await tester.pumpAndSettle();
+        await press(tester, LogicalKeyboardKey.arrowRight);
+        expect(focused()?.debugLabel, 'TV filter apply', reason: choice);
+        await press(tester, LogicalKeyboardKey.arrowLeft);
+        expect(focused(), focusOf(tester, choice));
+      }
+      expect(picked, isEmpty);
+    });
+
     testWidgets('Display options: whole on screen, Right from an option reaches Apply, Left comes back', (
       tester,
     ) async {
@@ -220,6 +237,12 @@ void main() {
       expect(focused()?.debugLabel, 'TV filter apply');
       await press(tester, LogicalKeyboardKey.arrowLeft);
       expect(focused(), focusOf(tester, '5 stars'));
+
+      // From the top too, where Clear is the nearer button
+      focusOf(tester, 'Unrated').requestFocus();
+      await tester.pumpAndSettle();
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focused()?.debugLabel, 'TV filter apply');
       expect(picked, isEmpty, reason: 'a move is no choice');
     });
   });
@@ -385,6 +408,12 @@ void main() {
       expect(focused()?.debugLabel, 'TV filter clear');
       await press(tester, LogicalKeyboardKey.arrowLeft);
       expect(focusedLabel(), rows.last);
+
+      // A radio choice goes to Clear as well, the sheet having no Apply
+      focusOf(tester, rows.first).requestFocus();
+      await tester.pumpAndSettle();
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(focused()?.debugLabel, 'TV filter clear');
       expect(selected, isEmpty, reason: 'a move is no choice');
     });
 
