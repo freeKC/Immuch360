@@ -50,6 +50,9 @@ class MainActivity : FlutterFragmentActivity() {
   override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
     registerPlugins(this, flutterEngine)
+    // The DJI drone page: folders picked in the system picker (a drone, a controller or a card over USB), for the
+    // engine of the app UI only: the background engines never open the page
+    flutterEngine.plugins.add(DocumentTreePlugin())
     // Only the engine of the app UI hears when the 360° and Spatial 2.5D players close, not the background engines
     SphericalVideoApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     SpatialVideoApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
@@ -121,8 +124,6 @@ class MainActivity : FlutterFragmentActivity() {
       VideoDecoderApi.setUp(messenger, VideoDecoderApiImpl())
 
       flutterEngine.plugins.add(ViewIntentPlugin())
-      // The DJI drone page: folders picked in the system picker (a drone, a controller or a card over USB)
-      flutterEngine.plugins.add(DocumentTreePlugin())
       flutterEngine.plugins.add(backgroundEngineLockImpl)
       flutterEngine.plugins.add(nativeSyncApiImpl)
       flutterEngine.plugins.add(permissionApiImpl)
