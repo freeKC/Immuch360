@@ -7,7 +7,6 @@ import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
-import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 
 import '../../../widget_tester_extensions.dart';
 
