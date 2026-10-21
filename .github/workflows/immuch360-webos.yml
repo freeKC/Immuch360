@@ -108,9 +108,13 @@ jobs:
       - name: The .ipk, built and checked
         run: npm run ipk
 
+      # ares-package names it com.aprogsys.immuch360_<version>_all.ipk; the release offers Immuch360-webOS-<version>.ipk
       - name: SHA256SUMS.txt
         working-directory: webos/build
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
+          mv -- com.aprogsys.immuch360_*_all.ipk "Immuch360-webOS-$VERSION.ipk"
           sha256sum -- *.ipk > SHA256SUMS.txt
           cat SHA256SUMS.txt
 

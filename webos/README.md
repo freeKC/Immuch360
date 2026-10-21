@@ -49,18 +49,20 @@ You need an LG TV with webOS 4.0 or later, on the same network as your computer,
 2. On the computer, install the webOS CLI (Node.js 18 or later): `npm install -g @webos-tools/cli`
 3. Register the TV: `ares-setup-device` (add a device, its IP address, port 9922, user `prisoner`), then
    `ares-novacom --device <name> --getkey` and type the passphrase.
-4. Download `com.aprogsys.immuch360_<version>_all.ipk` from the
+4. Download `Immuch360-webOS-<version>.ipk` from the
    [webOS pre-releases](https://github.com/freeKC/Immuch360/releases) (tags `webos-v...`), check it against
    `SHA256SUMS.txt`, then:
 
    ```bash
-   ares-install --device <name> com.aprogsys.immuch360_<version>_all.ipk
+   ares-install --device <name> Immuch360-webOS-<version>.ipk
    ares-launch --device <name> com.aprogsys.immuch360
    ```
 
 5. Sign in with your phone (scan the QR code), with your email and password, or with an API key.
 
-Developer Mode keeps installed apps for 50 hours; the Developer Mode app extends the session. The
+A Developer Mode session lasts 1000 hours (it used to be 50); its EXTEND button, or
+`ares-launch --device <name> com.palmdts.devmode -p extend=true`, renews it. When it expires, the TV removes the apps
+installed this way. The
 [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) of webosbrew installs an `.ipk` on a TV in Developer
 Mode without the command line.
 
