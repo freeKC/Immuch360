@@ -23,7 +23,11 @@ and videos, each extension with a one line description. This script turns that l
       (its MimeType= made from the list), the icons and the MIME types of the raw camera files, staged in <out>/stage,
       then the .deb and the .rpm made from it by nFPM: <out>/Immuch360-Desktop-<label>-linux-amd64.deb and
       <out>/Immuch360-Desktop-<label>-linux-x86_64.rpm. The bundle loses libdartjni.so (Android only, it needs a Java
-      runtime), and patchelf replaces the build folder in the RUNPATH of its libraries by $ORIGIN
+      runtime), and patchelf replaces the build folder in the RUNPATH of its libraries by $ORIGIN. When the bundle has
+      lib/libsmb2.so (dart_smb2, LGPL-2.1-or-later), its notice and licence go into the copyright file of the .deb
+      and into /usr/share/licenses/immuch360/libsmb2/ of the .rpm (mobile/packages/dart_smb2/libsmb2), and the bundle
+      must hold its corresponding source, data/flutter_assets/packages/dart_smb2/libsmb2/
+      Immuch360-libsmb2-sources.tar.gz, which `mise //mobile:codegen` packs before the build
   desktop_installers.py versions --label LABEL
       the version of the Linux packages for a label of desktop_version.py
 
@@ -160,6 +164,13 @@ RPM_DEPENDS = [
 # Built by the jni package whenever a JDK is found, for Android only: it needs the libjvm.so of a Java runtime, as
 # dartjni.dll does on Windows (windows_bundle.py leaves that one out too)
 LINUX_LEFT_OUT = ('libdartjni.so',)
+# libsmb2 (LGPL-2.1-or-later), the library of the SMB shares that dart_smb2 bundles as lib/libsmb2.so: its notice and
+# licence texts, also shown on the licence page of the app (mobile/packages/dart_smb2/IMMUCH360-NOTE.md)
+LIBSMB2_NOTICES = ROOT / 'mobile' / 'packages' / 'dart_smb2' / 'libsmb2'
+LIBSMB2_TEXTS = ('NOTICE', 'COPYING', 'LICENCE-LGPL-2.1.txt')
+LIBSMB2_LICENSES = 'usr/share/licenses/immuch360/libsmb2'
+# Its corresponding source, an asset of the app that the code generation packs and NOTICE names
+LIBSMB2_SOURCES = 'data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz'
 ICON_SIZES = (16, 32, 64, 128, 256, 512)
 
 
@@ -489,6 +500,8 @@ def nfpm_config(stage: pathlib.Path, label: str) -> dict:
     contents += [file(f'usr/share/icons/hicolor/{size}x{size}/apps/{APP_ID}.png') for size in ICON_SIZES]
     contents.append(file('usr/share/doc/immuch360/copyright', packager='deb'))
     contents.append(file('usr/share/licenses/immuch360/LICENSE', packager='rpm', kind='license'))
+    if (stage / LIBSMB2_LICENSES).is_dir():
+        contents += [file(f'{LIBSMB2_LICENSES}/{name}', packager='rpm', kind='license') for name in LIBSMB2_TEXTS]
     return {
         'name': 'immuch360',
         'arch': 'amd64',
@@ -539,9 +552,23 @@ def stage_linux(args, types: dict) -> pathlib.Path:
     write(f'usr/share/applications/{APP_ID}.desktop', desktop_entry(types))
     write(f'usr/share/mime/packages/{APP_ID}.xml', mime_package(types))
     licence = (ROOT / 'LICENSE').read_text(encoding='utf-8')
-    write('usr/share/doc/immuch360/copyright',
-          f'{APP_NAME}, {HOMEPAGE}\nA fork of Immich, https://github.com/immich-app/immich\n'
-          'Copyright: the Immuch360 and Immich contributors\nLicense: AGPL-3.0-only\n\n' + licence)
+    copyright_text = (f'{APP_NAME}, {HOMEPAGE}\nA fork of Immich, https://github.com/immich-app/immich\n'
+                      'Copyright: the Immuch360 and Immich contributors\nLicense: AGPL-3.0-only\n\n' + licence)
+    if (app / 'lib' / 'libsmb2.so').is_file():
+        missing = [name for name in LIBSMB2_TEXTS if not (LIBSMB2_NOTICES / name).is_file()]
+        if missing:
+            raise Problem(f'the notice and licence of libsmb2 must travel with lib/libsmb2.so, not found in '
+                          f'{LIBSMB2_NOTICES}: {", ".join(missing)}')
+        if not (app / LIBSMB2_SOURCES).is_file():
+            raise Problem(f'the corresponding source of libsmb2 must travel with lib/libsmb2.so, not in the bundle: '
+                          f'{LIBSMB2_SOURCES} (mise //mobile:codegen packs it before flutter build linux)')
+        texts = {name: (LIBSMB2_NOTICES / name).read_text(encoding='utf-8') for name in LIBSMB2_TEXTS}
+        copyright_text += ('\n' + '-' * 78 + '\n\n/opt/immuch360/lib/libsmb2.so, the library of the SMB shares\n'
+                           'License: LGPL-2.1-or-later\n\n' + texts['NOTICE'] + '\n' + texts['LICENCE-LGPL-2.1.txt'])
+        for name, text in texts.items():
+            write(f'{LIBSMB2_LICENSES}/{name}', text)
+        print('notice and licence of libsmb2 added to the copyright file and the licences of the .rpm')
+    write('usr/share/doc/immuch360/copyright', copyright_text)
     write('usr/share/licenses/immuch360/LICENSE', licence)
     for size in ICON_SIZES:
         target = stage / 'usr' / 'share' / 'icons' / 'hicolor' / f'{size}x{size}' / 'apps' / f'{APP_ID}.png'

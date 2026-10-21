@@ -226,6 +226,18 @@ workflows:
           export PATH="$HOME/.local/bin:$PATH"
           cd mobile
           mise exec -- flutter build ios --release --no-codesign --build-name="$APP_VERSION" --build-number="$PROJECT_BUILD_NUMBER"
+      # libsmb2 (dart_smb2, LGPL-2.1-or-later) travels with its notice, licence texts and corresponding source, assets of
+      # the package; the code generation packed the sources (.github/desktop/libsmb2/pack_sources.py)
+      - name: libsmb2 notice, licence and sources in the app
+        script: |
+          set -euo pipefail
+          APP=$(ls -d mobile/build/ios/iphoneos/*.app | head -1)
+          ASSETS="$APP/Frameworks/App.framework/flutter_assets/packages/dart_smb2/libsmb2"
+          for NAME in NOTICE COPYING LICENCE-LGPL-2.1.txt Immuch360-libsmb2-sources.tar.gz; do
+            [ -f "$ASSETS/$NAME" ] || { echo "no $NAME of libsmb2 in $APP"; exit 1; }
+          done
+          cmp "$ASSETS/Immuch360-libsmb2-sources.tar.gz" mobile/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
+          shasum -a 256 "$ASSETS/Immuch360-libsmb2-sources.tar.gz"
       - name: Signed archive and IPA
         script: |
           set -euxo pipefail
@@ -234,6 +246,22 @@ workflows:
           xcode-project build-ipa --workspace ios/Runner.xcworkspace --scheme Runner --config Release \
             --archive-xcargs="-skipMacroValidation -skipPackagePluginValidation" \
             --export-options-plist=/Users/builder/export_options.plist
+      # The IPA sent to TestFlight comes from a new xcodebuild archive, not from the app checked above: the same four
+      # libsmb2 files must be in it too
+      - name: libsmb2 notice, licence and sources in the IPA
+        script: |
+          set -euo pipefail
+          IPA=$(ls mobile/build/ios/ipa/*.ipa | head -1)
+          LISTING=$(mktemp)
+          unzip -l "$IPA" > "$LISTING"
+          ASSETS='Payload/[^/]+[.]app/Frameworks/App[.]framework/flutter_assets/packages/dart_smb2/libsmb2'
+          for NAME in NOTICE COPYING LICENCE-LGPL-2.1.txt Immuch360-libsmb2-sources.tar.gz; do
+            PATTERN="$ASSETS/$(printf '%s' "$NAME" | sed 's/[.]/[.]/g')"
+            grep -qE " $PATTERN\$" "$LISTING" || { echo "no $NAME of libsmb2 in $IPA"; exit 1; }
+          done
+          SOURCES=$(grep -oE "$ASSETS/Immuch360-libsmb2-sources[.]tar[.]gz\$" "$LISTING" | head -1)
+          unzip -p "$IPA" "$SOURCES" | cmp - mobile/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
+          echo "$IPA holds the four libsmb2 files under ${SOURCES%/*}"
     artifacts:
       - mobile/build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log

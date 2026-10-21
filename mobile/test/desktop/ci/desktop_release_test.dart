@@ -162,11 +162,12 @@ void main() {
     'Immuch360-Desktop-$label-linux-x86_64.rpm': 'rpm',
     'Immuch360-Desktop-$label-macos.zip': 'app',
     'Immuch360-Desktop-$label-macos.dmg': 'dmg',
+    'Immuch360-Desktop-$label-libsmb2-sources.tar.gz': 'sources',
   };
   String line(String name, String text) => '${sha256.convert(utf8.encode(text))}  $name';
 
   group('desktop_release.py', () {
-    test('a dry run checks the six files of a build and writes their SHA256SUMS.txt', () {
+    test('a dry run checks the seven files of a build and writes their SHA256SUMS.txt', () {
       final root = tree(files);
       final paths = [for (final name in files.keys) p.join(root.path, name)];
       final sums = p.join(root.path, 'sums.txt');
@@ -226,7 +227,7 @@ void main() {
         expect(created['target_commitish'], 'abc1234');
         expect(created['body'], contains('The release notes follow.'));
         expect(github.assetNames(created), containsAll([...files.keys, 'SHA256SUMS.txt']));
-        expect(github.assetNames(created), hasLength(7));
+        expect(github.assetNames(created), hasLength(8));
         final sums = github.assetText(created, 'SHA256SUMS.txt');
         for (final entry in files.entries) {
           expect(sums, contains('${line(entry.key, entry.value)}\n'));
@@ -248,13 +249,13 @@ void main() {
         expect(existing['name'], 'Desktop build 5');
         expect(existing['body'], 'Notes written by hand');
         expect(run.output, contains('replaced: Immuch360-Desktop-$label-windows-x64.zip'));
-        expect(github.assetNames(existing), hasLength(9));
+        expect(github.assetNames(existing), hasLength(10));
         final sums = github.assetText(existing, 'SHA256SUMS.txt');
         expect(sums, contains('${line('Immuch360-Desktop-$label-windows-x64.zip', 'zip')}\n'));
         expect(sums, contains('${line('Notes.pdf', 'pdf')}\n'));
         expect(sums, contains('${line('Older.txt', 'older')}\n'));
         expect(sums, isNot(contains('old zip')));
-        expect('\n'.allMatches(sums), hasLength(8));
+        expect('\n'.allMatches(sums), hasLength(9));
       });
 
       test('the notes of the owner replace those of a release, the files stay', () async {

@@ -71,3 +71,6 @@ lib/generated/
 
 # Flutter widget previews cache
 .widget_preview/
+
+# Immuch360: the sources of libsmb2, packed by mise //mobile:codegen (.github/desktop/libsmb2/pack_sources.py)
+packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz

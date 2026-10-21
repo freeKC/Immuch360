@@ -84,4 +84,4 @@ Code, comments, commit messages and pull requests are in English. Issues are wel
 
 ## Contact
 
-The [issues](https://github.com/freeKC/Immuch360/issues) are the place for questions, reports and ideas. The repository has no Discussions page and no chat server for now.
+The [issues](https://github.com/freeKC/Immuch360/issues) are for defects, something that does not work as it should, and for feature requests, each with its template. The [Discussions](https://github.com/freeKC/Immuch360/discussions) are for questions and for test reports, above all from the platforms that are new and checked by few people so far (the Linux and macOS desktop, the TV, the Quest): what you tried, on which device, and what happened, even when everything worked. There is no chat server for now.

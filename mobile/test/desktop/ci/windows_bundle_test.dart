@@ -346,6 +346,47 @@ void main() {
       });
     });
 
+    group('the licence of libsmb2', () {
+      const texts = ['licenses/libsmb2/NOTICE', 'licenses/libsmb2/COPYING', 'licenses/libsmb2/LICENCE-LGPL-2.1.txt'];
+      // The corresponding source, an asset of the app that mise //mobile:codegen packs before the build
+      const sources = 'data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz';
+      String folderText(String name) => File(path('dist/Immuch360 Desktop/$name')).readAsStringSync();
+
+      test('travels with libsmb2.dll: its notice and licence texts in licenses/libsmb2/', () {
+        writeBuild();
+        writePe('Release/libsmb2.dll', fakePe(imports: _kernel));
+        writeFiles(root, {'Release/$sources': 'the sources of libsmb2'});
+        final run = bundle();
+        expect(run.exitCode, 0, reason: '$run');
+        expect(bundled(), containsAll([...texts, sources]));
+        expect(folderText('licenses/libsmb2/LICENCE-LGPL-2.1.txt'), contains('GNU LESSER GENERAL PUBLIC LICENSE'));
+        expect(folderText('licenses/libsmb2/NOTICE'), contains('595d128b4d11a88a335eee961689a157e4f76cd3'));
+        expect(folderText('BUILD-INFO.txt'), contains('licenses/libsmb2/NOTICE'));
+      });
+
+      test('stops when they are missing, and is not added without libsmb2.dll', () {
+        writeBuild();
+        expect(bundle().exitCode, 0);
+        expect(bundled(), isNot(contains('licenses/libsmb2/NOTICE')));
+        writePe('Release/libsmb2.dll', fakePe(imports: _kernel));
+        writeFiles(root, {'Release/$sources': 'the sources of libsmb2'});
+        final run = bundle(extra: ['--libsmb2-notices', path('none')]);
+        expect(run.exitCode, 2, reason: '$run');
+        expect(run.output, contains('the notice and licence of libsmb2 must travel with it'));
+      });
+
+      test('stops when the archive of its sources is not among the assets, as in a build made before the code '
+          'generation packed it', () {
+        writeBuild();
+        writePe('Release/libsmb2.dll', fakePe(imports: _kernel));
+        final run = bundle();
+        expect(run.exitCode, 2, reason: '$run');
+        expect(run.output, contains('the corresponding source of libsmb2 must travel with it'));
+        expect(run.output, contains(sources));
+        expect(File(path('dist/Immuch360-Desktop-test-windows-x64.zip')).existsSync(), isFalse);
+      });
+    });
+
     test('stops on a redistributable folder without the runtime or on a folder that is not a build', () {
       writeBuild();
       File(path('CRT/vcruntime140_1.dll')).deleteSync();

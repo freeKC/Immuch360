@@ -4,13 +4,14 @@ name: Immuch360 Desktop
 # pull requests and the upstream sync branches; the Android release workflow (immuch360-release.yml) is not touched.
 #
 # Jobs:
-#   codegen        the generated Dart once for every job (Windows and macOS need neither Java nor node), and the
-#                  version numbers of the desktop builds (.github/desktop/desktop_version.py)
+#   codegen        the generated Dart once for every job (Windows and macOS need neither Java nor node), with the
+#                  archive of the sources of libsmb2 that every build carries, and the version numbers of the desktop
+#                  builds (.github/desktop/desktop_version.py)
 #   gates          the checks that keep the phones as they are and the desktop code in its place, without Flutter
 #   test           analyze, the whole mobile suite (test/desktop included) and the Android and iOS plugin lists
-#   linux          the Linux build on the oldest supported Ubuntu (for its glibc), with libsmb2 built there too, the
-#                  video tests on the system's libmpv, its .deb and .rpm (nFPM), and the build playing a video on a
-#                  virtual screen (Xvfb)
+#   linux          the Linux build on the oldest supported Ubuntu (for its glibc), with libsmb2 built there too from
+#                  the archive of its sources, the video tests on the system's libmpv, its .deb and .rpm (nFPM), and the
+#                  build playing a video on a virtual screen (Xvfb)
 #   linux-packages each package installed in a clean container of a distribution, its libraries checked, and the
 #                  installed app playing a video there
 #   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
@@ -19,7 +20,8 @@ name: Immuch360 Desktop
 #   windows        desktop tests on a real Windows, the release build, the ZIP and the installer (Inno Setup) for the
 #                  owner as artifacts named Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
 #                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE)
-#   packages       the six files of the build together with their SHA-256, as a release gets them
+#   packages       the seven files of the build (the six packages and the libsmb2 sources) together with their
+#                  SHA-256, as a release gets them
 #   upstream-sync  on upstream-sync/* branches, next to the test and linux jobs: the sync checklist of design 8.4
 #                  point 7 in the run summary. An upstream sync reaches the desktop branch through the phone branch;
 #                  an upstream-sync/* branch is made from the desktop branch to see the effect of a sync before it lands.
@@ -95,11 +97,17 @@ jobs:
           mise //mobile:install:ci
           mise //mobile:codegen
 
-      # Every file the code generation wrote, whatever its pattern: the untracked files of lib, generated and test
+      # Every file the code generation wrote, whatever its pattern: the untracked files of lib, generated and test, and
+      # the archive of the sources of libsmb2 (.github/desktop/libsmb2/pack_sources.py), an asset of dart_smb2 that every
+      # job builds into the app and the linux job builds libsmb2 from
       - name: Pack the generated Dart
         working-directory: mobile
         run: |
-          git ls-files --others -- lib generated test | grep -v '/\.dart_tool/' > "$RUNNER_TEMP/generated-dart.txt"
+          sources=packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
+          [ -f "$sources" ] || { echo "::error::the code generation wrote no $sources"; exit 1; }
+          echo "$sources: SHA-256 $(sha256sum "$sources" | cut -d' ' -f1)"
+          { git ls-files --others -- lib generated test | grep -v '/\.dart_tool/'; echo "$sources"; } \
+            > "$RUNNER_TEMP/generated-dart.txt"
           tar -cf generated-dart.tar -T "$RUNNER_TEMP/generated-dart.txt"
           echo "$(wc -l < "$RUNNER_TEMP/generated-dart.txt") generated files"
 
@@ -219,14 +227,14 @@ jobs:
       # window of flutter_web_auth_2), patchelf for the RUNPATH of the libraries in the .deb and the .rpm, the headers
       # of libmpv for media_kit_video (libmpv-dev, which brings libmpv1, the libmpv of Ubuntu 22.04, for the video tests
       # and the start below; the app links none: mobile/packages/media_kit_video/IMMUCH360-NOTE.md, patch 8), and the
-      # virtual screen of that start with its captures (Xvfb, xwd, ImageMagick), sqlite3 to read the app's log, and gdb
-      # and xwininfo to tell what a start that does not get on was doing
+      # virtual screen of that start with its captures (Xvfb, xwd, ImageMagick), sqlite3 to read the app's log, gdb
+      # and xwininfo to tell what a start that does not get on was doing, and rpm2cpio and cpio to open the .rpm
       - name: Linux build packages
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev \
             libsecret-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev patchelf libmpv-dev xvfb xauth x11-apps \
-            x11-utils imagemagick sqlite3 gdb
+            x11-utils imagemagick sqlite3 gdb rpm2cpio cpio
 
       - name: Install mise
         uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
@@ -242,11 +250,34 @@ jobs:
           name: generated-dart
           path: mobile
 
+      - name: Generated files
+        working-directory: mobile
+        run: tar -xf generated-dart.tar && rm generated-dart.tar
+
       # dart_smb2 downloads a libsmb2.so built on glibc 2.38, which Ubuntu 22.04 and Debian 12 do not have: the same
-      # sources are built here on 22.04 and bundled instead (mobile/packages/dart_smb2/IMMUCH360-NOTE.md). The script
-      # checks the commits, the exported functions against the release's library, and the glibc it asks for
-      - name: libsmb2 built on Ubuntu 22.04
-        run: bash .github/desktop/libsmb2/build_linux.sh "$RUNNER_TEMP/libsmb2"
+      # sources are built here on 22.04 and bundled instead (mobile/packages/dart_smb2/IMMUCH360-NOTE.md). libsmb2 is
+      # under the LGPL: the script builds it offline from the archive of its sources that the code generation packed,
+      # the asset every build of the app carries, and checks the exported functions against the release's library and
+      # the glibc it asks for. The same archive is a file of every release
+      - name: libsmb2 built on Ubuntu 22.04 from the archive of its sources
+        id: libsmb2
+        env:
+          LABEL: ${{ needs.codegen.outputs.label }}
+        run: |
+          asset=mobile/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
+          bash .github/desktop/libsmb2/build_linux.sh "$RUNNER_TEMP/libsmb2" "$asset"
+          sources="$RUNNER_TEMP/libsmb2-sources/Immuch360-Desktop-$LABEL-libsmb2-sources.tar.gz"
+          mkdir -p "$(dirname "$sources")"
+          cp "$asset" "$sources"
+          echo "sources=$sources" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the libsmb2 sources
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: ${{ steps.libsmb2.outputs.sources }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
 
       - name: Build
         working-directory: mobile
@@ -254,7 +285,6 @@ jobs:
           BUILD_NUMBER: ${{ needs.codegen.outputs.build_number }}
           IMMUCH360_LIBSMB2: ${{ runner.temp }}/libsmb2/libsmb2.so
         run: |
-          tar -xf generated-dart.tar && rm generated-dart.tar
           mise exec -- flutter pub get --enforce-lockfile
           mise exec -- flutter build linux --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
 
@@ -278,6 +308,53 @@ jobs:
             --nfpm "$RUNNER_TEMP/nfpm"
           echo "deb=dist/Immuch360-Desktop-$LABEL-linux-amd64.deb" >> "$GITHUB_OUTPUT"
           echo "rpm=dist/Immuch360-Desktop-$LABEL-linux-x86_64.rpm" >> "$GITHUB_OUTPUT"
+
+      # libsmb2 (dart_smb2, LGPL-2.1-or-later) in the .deb as a user installs it: the library, the notice and the LGPL
+      # in the copyright file, and the assets of the package with the archive of its sources, byte for byte the release
+      # file
+      - name: libsmb2, its notice and its sources in the .deb
+        env:
+          DEB: ${{ steps.packages.outputs.deb }}
+          SOURCES: ${{ steps.libsmb2.outputs.sources }}
+        run: |
+          dpkg-deb --fsys-tarfile "$DEB" > "$RUNNER_TEMP/deb.tar"
+          tar -tf "$RUNNER_TEMP/deb.tar" > "$RUNNER_TEMP/deb.txt"
+          assets=./opt/immuch360/data/flutter_assets/packages/dart_smb2/libsmb2
+          for file in ./opt/immuch360/lib/libsmb2.so "$assets/NOTICE" "$assets/COPYING" "$assets/LICENCE-LGPL-2.1.txt" \
+            "$assets/Immuch360-libsmb2-sources.tar.gz"; do
+            grep -qxF "$file" "$RUNNER_TEMP/deb.txt" || { echo "::error::no $file in the .deb"; exit 1; }
+          done
+          tar -xOf "$RUNNER_TEMP/deb.tar" "$assets/Immuch360-libsmb2-sources.tar.gz" | cmp - "$SOURCES" \
+            || { echo "::error::the libsmb2 sources in the .deb are not the release file"; exit 1; }
+          tar -xOf "$RUNNER_TEMP/deb.tar" ./usr/share/doc/immuch360/copyright > "$RUNNER_TEMP/copyright"
+          grep -q '^License: LGPL-2.1-or-later' "$RUNNER_TEMP/copyright" \
+            || { echo "::error::no libsmb2 section in the copyright file of the .deb"; exit 1; }
+          echo "the .deb holds libsmb2.so, its notice and licence texts, and the sources"
+          sha256sum "$SOURCES"
+
+      # The same in the .rpm, which nFPM makes from the same staged folder: the library, the assets of the package with
+      # the archive of its sources, byte for byte the release file, and the notice and licence texts of
+      # /usr/share/licenses
+      - name: libsmb2, its notice and its sources in the .rpm
+        env:
+          RPM: ${{ steps.packages.outputs.rpm }}
+          SOURCES: ${{ steps.libsmb2.outputs.sources }}
+        run: |
+          # The rpm2cpio of Ubuntu 22.04 exits 1 on the .rpm of nFPM though it writes the whole payload: cpio, which fails
+          # on an archive cut short, and the checks below judge it
+          rpm2cpio "$RPM" > "$RUNNER_TEMP/rpm.cpio" || true
+          cpio -t --quiet < "$RUNNER_TEMP/rpm.cpio" > "$RUNNER_TEMP/rpm-files.txt"
+          sed -e 's|^\./|/|' -e 's|^\([^/]\)|/\1|' "$RUNNER_TEMP/rpm-files.txt" > "$RUNNER_TEMP/rpm.txt"
+          assets=/opt/immuch360/data/flutter_assets/packages/dart_smb2/libsmb2
+          licences=/usr/share/licenses/immuch360/libsmb2
+          for file in /opt/immuch360/lib/libsmb2.so "$assets/NOTICE" "$assets/COPYING" "$assets/LICENCE-LGPL-2.1.txt" \
+            "$assets/Immuch360-libsmb2-sources.tar.gz" "$licences/NOTICE" "$licences/COPYING" \
+            "$licences/LICENCE-LGPL-2.1.txt"; do
+            grep -qxF "$file" "$RUNNER_TEMP/rpm.txt" || { echo "::error::no $file in the .rpm"; exit 1; }
+          done
+          cpio -i --quiet --to-stdout "*$assets/Immuch360-libsmb2-sources.tar.gz" < "$RUNNER_TEMP/rpm.cpio" \
+            | cmp - "$SOURCES" || { echo "::error::the libsmb2 sources in the .rpm are not the release file"; exit 1; }
+          echo "the .rpm holds libsmb2.so, its notice and licence texts, and the sources"
 
       - name: Upload the .deb
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -481,6 +558,33 @@ jobs:
             --info "file version=$FILE_VERSION" --info "commit=$GITHUB_SHA" --info "built by=$RUN_URL"
           echo "zip=$zip" >> "$GITHUB_OUTPUT"
 
+      # libsmb2 (dart_smb2, LGPL-2.1-or-later) in the ZIP as a user unzips it: the DLL, its notice and licence texts in
+      # licenses/libsmb2, and the assets of the package with the archive of its sources, byte for byte the asset packed
+      # by the code generation, the release file of the linux job
+      - name: libsmb2, its notice and its sources in the ZIP
+        env:
+          ZIP: ${{ steps.bundle.outputs.zip }}
+        run: |
+          python - "$ZIP" mobile/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz <<'PY'
+          import hashlib, pathlib, sys, zipfile
+          archive, sources = sys.argv[1], pathlib.Path(sys.argv[2])
+          top = 'Immuch360 Desktop/'
+          assets = top + 'data/flutter_assets/packages/dart_smb2/libsmb2/'
+          wanted = [top + 'libsmb2.dll'] + [folder + name for folder in (top + 'licenses/libsmb2/', assets)
+                                            for name in ('NOTICE', 'COPYING', 'LICENCE-LGPL-2.1.txt')]
+          wanted.append(assets + 'Immuch360-libsmb2-sources.tar.gz')
+          with zipfile.ZipFile(archive) as bundle:
+              names = set(bundle.namelist())
+              missing = [name for name in wanted if name not in names]
+              if missing:
+                  sys.exit('::error::not in the ZIP: ' + ', '.join(missing))
+              packed = bundle.read(assets + 'Immuch360-libsmb2-sources.tar.gz')
+          if packed != sources.read_bytes():
+              sys.exit('::error::the libsmb2 sources in the ZIP are not the archive packed')
+          print('the ZIP holds libsmb2.dll, its notice and licence texts, and the sources')
+          print(hashlib.sha256(packed).hexdigest())
+          PY
+
       # The installer of the same folder as the ZIP (Inno Setup 6 of the runner image): for one user or for every
       # user of the PC, "Open with" for the types of .github/desktop/file-associations.json, an uninstaller
       - name: Installer
@@ -680,6 +784,32 @@ jobs:
           echo "notices: ${notices#"$app/"}"
           ls "$(dirname "$notices")"
 
+      # libsmb2 (dart_smb2, LGPL-2.1-or-later) in the app with its notice and licence texts and the archive of its
+      # sources, assets of the package (mobile/packages/dart_smb2/libsmb2) that the licence page of the app shows. The
+      # sources are packed again on this Mac, as Codemagic packs them for the iOS build: the files must be the same
+      - name: libsmb2, its licence and its sources in the app
+        run: |
+          app="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
+          sources=mobile/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz
+          [ -d "$app/Contents/Frameworks/libsmb2.framework" ] || { echo "::error::no libsmb2.framework in the app"; exit 1; }
+          texts="$app/Contents/Frameworks/App.framework/Resources/flutter_assets/packages/dart_smb2/libsmb2"
+          for name in NOTICE COPYING LICENCE-LGPL-2.1.txt Immuch360-libsmb2-sources.tar.gz; do
+            [ -f "$texts/$name" ] || { echo "::error::no $name of libsmb2 in the app"; exit 1; }
+          done
+          cmp "$texts/Immuch360-libsmb2-sources.tar.gz" "$sources" \
+            || { echo "::error::the libsmb2 sources in the app are not the archive packed"; exit 1; }
+          ls -l "$texts"
+          python3 .github/desktop/libsmb2/pack_sources.py "$RUNNER_TEMP/packed-on-macos.tar.gz"
+          if cmp -s "$RUNNER_TEMP/packed-on-macos.tar.gz" "$sources"; then
+            echo "packed on macOS: the same file"
+          elif [ "$(gzip -dc "$RUNNER_TEMP/packed-on-macos.tar.gz" | shasum -a 256)" = \
+            "$(gzip -dc "$sources" | shasum -a 256)" ]; then
+            echo "::notice::packed on macOS: the same tar, compressed to other bytes by the zlib of this Mac"
+          else
+            echo "::error::the sources packed on macOS differ from those packed on Linux"
+            exit 1
+          fi
+
       # Nobody on the project has a Mac: the runner starts the app three times, without a server, with what a user would
       # give it, and with the self check of lib/desktop/window/self_check.dart (IMMUCH360_SELF_CHECK), which writes
       # what it found to a JSON file. First the folder of a photo and a video made here (make_test_media.swift) on the
@@ -816,7 +946,7 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
-  # The six files of the build in one place with their SHA-256, as immuch360-desktop-release.yml attaches them to a
+  # The seven files of the build in one place with their SHA-256, as immuch360-desktop-release.yml attaches them to a
   # release: a file missing or added shows on every run, not on the day of a release
   packages:
     name: Package files and checksums

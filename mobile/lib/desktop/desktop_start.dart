@@ -4,6 +4,7 @@
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
+import 'package:immich_mobile/desktop/video/video_licenses.dart';
 import 'package:immich_mobile/desktop/window/single_instance.dart';
 import 'package:immich_mobile/desktop/window/window_setup.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -18,5 +19,7 @@ Future<void> startDesktop(List<String> args) async {
   }
   listenForLaterStarts();
   setUpDesktopVideo();
+  // The video player's native libraries on the licence page, from the texts the app carries (Windows and macOS)
+  registerVideoLicenses();
   await setUpDesktopWindow();
 }

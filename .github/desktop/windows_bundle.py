@@ -22,11 +22,16 @@ in build/windows/<arch>/libmpv, holds the same DLL with BUILDINFO.txt and licens
 Any other libmpv-2.dll, media-kit's archive of 2024 by default, has no corresponding source the fork can give, so a ZIP
 for a release (--public, or a version info that is a release label such as 3.3.0-rc.0-20 or 3.3.0-rc.0-desktop.4,
 which desktop_version.py gives a release tag only) is refused with it, unless the owner decides otherwise with
---accept-2024-libmpv.
+--accept-2024-libmpv. libsmb2.dll, the library of the SMB shares (dart_smb2, LGPL-2.1-or-later), travels with its
+notice (copyright, build, where its source is) and licence texts in licenses/libsmb2/ (--libsmb2-notices, by default
+mobile/packages/dart_smb2/libsmb2), and with its corresponding source: the folder must hold the archive its NOTICE
+names, data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz, which `mise //mobile:codegen`
+packs before the build (.github/desktop/libsmb2/pack_sources.py); a folder without it is refused.
 
   windows_bundle.py --release DIR --out DIR [--name "Immuch360 Desktop"] [--arch x64] [--crt-dir DIR]
                     [--system-dir DIR] [--zip FILE] [--symbols DIR] [--info KEY=VALUE ...]
                     [--file-version A.B.C.D] [--notices DIR] [--libmpv DIR] [--public] [--accept-2024-libmpv]
+                    [--libsmb2-notices DIR]
   windows_bundle.py --imports FILE ...      print the imports of PE files as JSON
 
 --crt-dir defaults to the newest Microsoft.VC*.CRT folder of the Visual Studio found by vswhere (Windows only);
@@ -69,6 +74,12 @@ VIDEO_FILES = ('libmpv-2.dll', 'libegl.dll', 'libglesv2.dll', 'vk_swiftshader.dl
 NOTICES_DIR = ROOT / 'mobile' / 'packages' / 'media_kit_video' / 'windows'
 LICENCE_TEXTS = ('NOTICES.md', 'licenses/LGPL-3.0.txt', 'licenses/GPL-3.0.txt', 'licenses/Apache-2.0.txt',
                  'licenses/ANGLE-BSD-3-Clause.txt')
+# libsmb2 (LGPL-2.1-or-later), which dart_smb2 bundles as libsmb2.dll: its notice and licence texts, also shown on the
+# licence page of the app (mobile/packages/dart_smb2/IMMUCH360-NOTE.md)
+LIBSMB2_NOTICES_DIR = ROOT / 'mobile' / 'packages' / 'dart_smb2' / 'libsmb2'
+LIBSMB2_TEXTS = ('NOTICE', 'COPYING', 'LICENCE-LGPL-2.1.txt')
+# Its corresponding source, an asset of the app that the code generation packs and NOTICE names
+LIBSMB2_SOURCES = 'data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz'
 # The label desktop_version.py gives a build of a release tag (3.3.0-rc.0-20) or of a desktop pre-release tag
 # (3.3.0-rc.0-desktop.4); every other build has its commit after it. The build number fits a Windows version field (at
 # most 65535, five digits) and the commit has seven characters or more, so the label of a version without a pre-release
@@ -260,6 +271,17 @@ def copy_notices(folder: pathlib.Path, notices: pathlib.Path, fork: pathlib.Path
     return missing
 
 
+def copy_libsmb2_notices(folder: pathlib.Path, notices: pathlib.Path) -> list:
+    """Copies the notice and the licence texts of libsmb2 into licenses/libsmb2/; the names it could not find."""
+    missing = [str(notices / name) for name in LIBSMB2_TEXTS if not (notices / name).is_file()]
+    if not missing:
+        target = folder / 'licenses' / 'libsmb2'
+        target.mkdir(parents=True, exist_ok=True)
+        for name in LIBSMB2_TEXTS:
+            shutil.copy2(notices / name, target / name)
+    return missing
+
+
 def write_zip(folder: pathlib.Path, zip_path: pathlib.Path) -> str:
     zip_path.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
@@ -337,6 +359,18 @@ def bundle(args) -> int:
             notes.append("libmpv-2.dll: not a build of the fork's workflow (media-kit's archive of 2024-10-21 unless")
             notes.append('replaced); licenses/NOTICES.md says where its sources are.')
         print('licences of the video player copied to licenses/' + (" with those of the fork's libmpv" if fork else ''))
+    if 'libsmb2.dll' in names:
+        missing = copy_libsmb2_notices(folder, args.libsmb2_notices)
+        if missing:
+            print('the notice and licence of libsmb2 must travel with it, not found: ' + ', '.join(missing))
+            return 2
+        if not (folder / LIBSMB2_SOURCES).is_file():
+            print(f'the corresponding source of libsmb2 must travel with it, not in the folder: {LIBSMB2_SOURCES} '
+                  '(mise //mobile:codegen packs it before flutter build windows)')
+            return 2
+        notes.append('libsmb2.dll (SMB shares): GNU LGPL 2.1 or later; licenses/libsmb2/NOTICE says where its sources')
+        notes.append('are, with the licence texts next to it.')
+        print('notice and licence of libsmb2 copied to licenses/libsmb2/')
 
     info = ['Immuch360 Desktop'] + [line.replace('=', ': ', 1) for line in args.info] + [
         '',
@@ -385,6 +419,8 @@ def main(argv=None) -> int:
     parser.add_argument('--file-version', help='the version each executable must carry, A.B.C.D (3.3.0.20)')
     parser.add_argument('--notices', type=pathlib.Path, default=NOTICES_DIR,
                         help='the folder of NOTICES.md and licenses/ of the video player')
+    parser.add_argument('--libsmb2-notices', type=pathlib.Path, default=LIBSMB2_NOTICES_DIR,
+                        help='the folder of the notice and licence texts of libsmb2')
     parser.add_argument('--libmpv', type=pathlib.Path,
                         help='the extracted libmpv archive of the build (default build/windows/<arch>/libmpv)')
     parser.add_argument('--public', action='store_true', help='the ZIP is for a release, whatever its version')
