@@ -200,6 +200,29 @@ void main() {
       expect(entries.any((entry) => entry.flagged), isFalse);
     });
 
+    test('lists the 2:1 spheres of DJI drones by the code of their camera', () async {
+      Future<RemoteAssetEntityData> photo(String make, String model, {int width = 8192, int height = 4096}) =>
+          newAsset(make: make, model: model, width: 1000, height: 1000, exifWidth: width, exifHeight: height);
+      // Mini 4 Pro, Mavic 3 (Hasselblad), Air 2S in lower case with spaces, Mini 3 Pro within 1 percent of 2:1
+      final mini4 = await photo('DJI', 'FC8482');
+      final mavic3 = await photo('Hasselblad', 'L2D-20c');
+      final air2s = await photo(' dji ', ' fc3411 ');
+      final mini3 = await photo('DJI', 'FC3582', height: 4100);
+      // Not listed: a 4:3 Neo 2 photo, a 2:1 Canon, the Hasselblad code under the DJI make, the handheld cameras, codes
+      // of another shape
+      await photo('DJI', 'FC9470', width: 4000, height: 3000);
+      await photo('Canon', 'EOS R5');
+      await photo('DJI', 'L2D-20c');
+      await photo('DJI', 'PP-101');
+      await photo('DJI', 'AC004');
+      await photo('DJI', 'FC12345');
+      await photo('DJI', 'FC123A4');
+      await photo('DJI', 'FC8282 Air3');
+      await photo('Hasselblad', 'L2D-2xc');
+
+      expect(await listedIds(), unorderedEquals([mini4.id, mavic3.id, air2s.id, mini3.id]));
+    });
+
     test('lists a forced asset by its server id, in slices', () async {
       final first = await newAsset();
       final second = await newAsset(withExif: false, ownerId: partnerId);

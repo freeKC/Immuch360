@@ -347,6 +347,36 @@ void main() {
       expect(phone?.is360, isFalse);
       expect(files.readsOf('/DJI_0001.JPG'), 1, reason: 'the EXIF is in the head read for the GPano tags');
     });
+
+    test('a 2:1 photo of a DJI drone is an untagged sphere, with its frame size, and costs no read more', () async {
+      final droneXmp = ascii.encode('<rdf:Description xmlns:drone-dji="http://www.dji.com/drone-dji/1.0/"/>');
+      Uint8List jpeg(String make, String model, int width, int height, {List<int> xmp = const []}) =>
+          Uint8List.fromList([
+            ...insta360PhotoHead(make: make, model: model, pixelWidth: width, pixelHeight: height),
+            ...xmp,
+            ...List.filled(1024, 0),
+          ]);
+
+      final mavic = await detect(
+        NetworkMediaService(),
+        '/DJI_0042.JPG',
+        bytes: jpeg('Hasselblad', 'L2D-20c', 8192, 4096),
+      );
+      final enterprise = await detect(
+        NetworkMediaService(),
+        '/DJI_0043.JPG',
+        bytes: jpeg('DJI Ltd', 'M3E', 8000, 4000, xmp: droneXmp),
+      );
+      final flat = await detect(NetworkMediaService(), '/DJI_0044.JPG', bytes: jpeg('DJI Ltd', 'M3E', 8000, 4000));
+
+      expect(mavic?.is360, isTrue);
+      expect(mavic?.isUntaggedSphere, isTrue);
+      expect((mavic?.frameWidth, mavic?.frameHeight), (8192, 4096));
+      expect(enterprise?.isUntaggedSphere, isTrue);
+      expect(flat?.is360, isFalse);
+      expect(flat?.isUntaggedSphere, isFalse);
+      expect(files.readsOf('/DJI_0043.JPG'), 1, reason: 'the XMP is in the head read for the GPano tags');
+    });
   });
 
   group('cache', () {

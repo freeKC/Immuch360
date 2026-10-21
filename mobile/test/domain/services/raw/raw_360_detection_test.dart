@@ -179,6 +179,93 @@ void main() {
     });
   });
 
+  group('drone spheres', () {
+    test('a 2:1 photo of a DJI drone camera is a sphere, the other frames and cameras are not', () {
+      for (final (make, model, width, height, expected) in [
+        // Mini 4 Pro, stitched in the aircraft
+        ('DJI', 'FC8482', 8192, 4096, true),
+        // Neo 2: its 4:3 and 16:9 photos
+        ('DJI', 'FC9470', 4000, 3000, false),
+        ('DJI', 'FC9470', 4000, 2250, false),
+        // A sphere stitched by hand from Neo 2 shots keeps the first shot's EXIF
+        ('DJI', 'FC9470', 12000, 6000, true),
+        // Mini 3 Pro, within 1 percent of 2:1
+        ('DJI', 'FC3582', 8192, 4100, true),
+        ('dji ', ' fc3411 ', 8192, 4096, true),
+        // Mavic 3 wide camera, by Hasselblad
+        ('Hasselblad', 'L2D-20c', 8192, 4096, true),
+        ('Hasselblad', 'L3D-100c', 8192, 4096, true),
+        // The Hasselblad code under the DJI make is no drone camera of the list
+        ('DJI', 'L2D-20c', 8192, 4096, false),
+        // Osmo Pocket 3 and Osmo Action 4: handheld cameras, not drones
+        ('DJI', 'PP-101', 8192, 4096, false),
+        ('DJI', 'AC004', 8192, 4096, false),
+        // Avata 360, by the existing "oq" rule
+        ('DJI', 'OQ001E', 7776, 3888, true),
+        // A made up model string stays flat
+        ('DJI', 'Mavic 3', 8000, 4000, false),
+        // Not a camera code: five digits, a digit after a letter, something else after the code
+        ('DJI', 'FC12345', 8192, 4096, false),
+        ('DJI', 'FC123A4', 8192, 4096, false),
+        ('DJI', 'FC8282 Air3', 8192, 4096, false),
+        ('Canon', 'FC8482', 8192, 4096, false),
+      ]) {
+        expect(
+          isEquirectCameraPhoto(name: 'DJI_0001.JPG', make: make, model: model, width: width, height: height),
+          expected,
+          reason: '$make $model $width x $height',
+        );
+      }
+    });
+
+    test('a DJI photo whose XMP declares the drone-dji namespace is a drone photo', () {
+      expect(
+        isEquirectCameraPhoto(name: 'DJI_0001.JPG', make: 'DJI', model: 'M3E', width: 8000, height: 4000),
+        isFalse,
+      );
+      expect(
+        isEquirectCameraPhoto(
+          name: 'DJI_0001.JPG',
+          make: 'DJI',
+          model: 'M3E',
+          width: 8000,
+          height: 4000,
+          hasDroneXmp: true,
+        ),
+        isTrue,
+      );
+      // Another make with the namespace is not taken
+      expect(
+        isEquirectCameraPhoto(
+          name: 'IMG_0001.JPG',
+          make: 'Canon',
+          model: 'EOS R5',
+          width: 8000,
+          height: 4000,
+          hasDroneXmp: true,
+        ),
+        isFalse,
+      );
+    });
+
+    test('hasDroneDjiXmp finds the namespace in the head of a file', () {
+      final xmp =
+          '<x:xmpmeta><rdf:Description xmlns:drone-dji="http://www.dji.com/drone-dji/1.0/" '
+          'drone-dji:GimbalPitchDegree="-90.0"/></x:xmpmeta>';
+      final head = Uint8List.fromList([0xff, 0xd8, ...List.filled(300, 0x20), ...xmp.codeUnits]);
+      expect(hasDroneDjiXmp(head), isTrue);
+      expect(hasDroneDjiXmp(Uint8List.fromList([0xff, 0xd8, ...'<x:xmpmeta/>'.codeUnits])), isFalse);
+      expect(hasDroneDjiXmp(Uint8List(0)), isFalse);
+    });
+
+    test('isDroneCamera tells the drone cameras whatever the frame', () {
+      expect(isDroneCamera(make: 'DJI', model: 'FC9470'), isTrue);
+      expect(isDroneCamera(make: 'Hasselblad', model: 'L1D-20c'), isTrue);
+      expect(isDroneCamera(make: 'DJI', model: 'Osmo 360'), isFalse);
+      expect(isDroneCamera(make: null, model: 'FC9470'), isFalse);
+    });
+  });
+
   test('isSideBySideFrame tells two squares side by side, null while the frame is unknown', () {
     expect(isSideBySideFrame(5760, 2880), isTrue);
     expect(isSideBySideFrame(1024, 512), isTrue);

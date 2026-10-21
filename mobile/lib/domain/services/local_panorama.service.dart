@@ -5,7 +5,7 @@
 // app stitches itself, are 360° too: an Insta360 photo named .insp or ending with the trailer of the camera, a video
 // named .insv, .360 (GoPro) or .osv (DJI), whose layout is settled when it opens (see raw_360_detection.dart). So are
 // the equirect photos a 360° camera stitched itself without GPano tags: a GoPro .36p, or a 2:1 photo whose EXIF names
-// a 360° camera (see isEquirectCameraPhoto).
+// a 360° camera or a DJI drone (see isEquirectCameraPhoto).
 //
 // Reading a file costs a 128 KiB window or two, but there may be thousands of them: only the assets whose shape or
 // name hints at 360° are read (see isLocalPanoramaCandidate), the newest first, a few hundred per run, and what was
@@ -39,7 +39,7 @@ class LocalPanoramaRecord {
   });
 
   /// The rules the scan reads the files with now, see [version]
-  static const currentVersion = 2;
+  static const currentVersion = 3;
 
   /// Whether the file declares a 360° projection, is a raw file of a 360° camera the app stitches, or an equirect photo
   /// a 360° camera stitched itself
@@ -57,8 +57,9 @@ class LocalPanoramaRecord {
 
   /// The rules the file was read with: 0 for the records written before the raw files of Insta360 cameras were told,
   /// 1 since, 2 since the raw videos of every camera are told by their name and the equirect photos of 360° cameras
-  /// by their name or their EXIF. A record of older rules is read again once when the current ones may tell otherwise
-  /// of its file (see [LocalPanoramaService.scan]).
+  /// by their name or their EXIF, 3 since the spheres of DJI drones are told by their EXIF or their XMP (see
+  /// isDroneCamera). A record of older rules is read again once when the current ones may tell otherwise of its file
+  /// (see [LocalPanoramaService.scan]).
   final int version;
 
   /// The record as kept in the store: a small JSON object, the half sphere left out when the file does not say, the raw
@@ -110,7 +111,7 @@ class LocalPanoramaRecord {
 /// named .insp is one, a photo found flat may end with the trailer of the camera. Version 2 tells a raw video by its
 /// name, whatever its frame (a split recording or two tracks were flat in version 1, a GoPro .360 or a DJI .osv
 /// unknown), and the equirect photos of 360° cameras without GPano tags: named .36p, or 2:1 with the EXIF of such a
-/// camera. Any other file reads the same.
+/// camera. Version 3 tells the spheres of DJI drones, 2:1 photos found flat before. Any other file reads the same.
 bool _mayReadOtherwise(LocalAsset asset, LocalPanoramaRecord record) {
   if (record.version >= LocalPanoramaRecord.currentVersion) {
     return false;
@@ -211,7 +212,8 @@ bool _isHalfSphereCrop(GPanoTags tags) {
 /// it is named otherwise than .insp and its trailer says the camera stitched it, which makes it an equirect photo (see
 /// [isInsta360StitchedPhoto]). Else one whose EXIF names a 360° camera and whose frame is 2:1 is an equirect photo the
 /// camera stitched itself (see [isEquirectCameraPhoto]), its frame of [width] x [height] (the size the device gives) or
-/// else the one its EXIF gives. Errors of [read] are not caught.
+/// else the one its EXIF gives; a DJI photo whose XMP declares the drone-dji namespace counts as a drone's (see
+/// [hasDroneDjiXmp]). Errors of [read] are not caught.
 Future<LocalPanoramaProbe> probeLocalPanoramaPhoto(
   ByteRangeReader read,
   int length, {
@@ -227,13 +229,16 @@ Future<LocalPanoramaProbe> probeLocalPanoramaPhoto(
     // Raw by its trailer only: one the camera stitched itself keeps the trailer, and is a 360° photo as it is
     return !isRawPhotoName(name) && await isInsta360StitchedPhoto(read, length) ? _cameraEquirect : _raw360;
   }
-  final exif = parseExifHead(await read(0, exifHeadLength));
+  final head = await read(0, droneXmpWindow);
+  final exif = parseExifHead(head);
   final isCameraEquirect = isEquirectCameraPhoto(
     name: name,
     make: exif?.make,
     model: exif?.model,
     width: width ?? exif?.pixelWidth,
     height: height ?? exif?.pixelHeight,
+    // Only read through for a DJI photo that the rest does not tell
+    hasDroneXmp: (exif?.make?.toLowerCase().contains('dji') ?? false) && hasDroneDjiXmp(head),
   );
   return isCameraEquirect ? _cameraEquirect : _flat;
 }
