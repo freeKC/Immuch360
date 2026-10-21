@@ -144,10 +144,20 @@ const _kParamTypeOverrides = <String, String>{
   // players give the digits alone
   'video_decoders_max.height': 'String',
   'video_decoders_max.width': 'String',
+  'video_error_decoder.height': 'String',
+  'video_error_decoder.width': 'String',
+  'video_error_no_frame.height': 'String',
+  'video_error_no_frame.width': 'String',
+  'video_failed_beyond_decoders.height': 'String',
+  'video_failed_beyond_decoders.maxHeight': 'String',
+  'video_failed_beyond_decoders.maxWidth': 'String',
+  'video_failed_beyond_decoders.width': 'String',
   'video_source_original_forced.height': 'String',
   'video_source_original_forced.width': 'String',
   'video_source_switched.height': 'String',
   'video_source_switched.width': 'String',
+  'video_source_undecodable.height': 'String',
+  'video_source_undecodable.width': 'String',
 };
 
 final _usedParamTypeOverrides = <String>{};

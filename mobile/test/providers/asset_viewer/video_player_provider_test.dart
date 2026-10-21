@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fake_async/fake_async.dart';
 import 'package:flutter/widgets.dart' show AppLifecycleState;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
@@ -232,6 +233,145 @@ void main() {
 
       verifyNever(() => controller.seekTo(any()));
       verifyNever(controller.play);
+    });
+  });
+
+  group('when the video does not play', () {
+    /// The plugin reports [status] for one of its own calls
+    void reportStatus(PlaybackStatus status, {int position = 0}) {
+      final playbackInfo = _MockPlaybackInfo();
+      when(() => playbackInfo.status).thenReturn(status);
+      when(() => playbackInfo.position).thenReturn(position);
+      when(() => controller.playbackInfo).thenReturn(playbackInfo);
+      player.onNativeStatusChanged();
+    }
+
+    void reportPosition(int position) {
+      final playbackInfo = _MockPlaybackInfo();
+      when(() => playbackInfo.status).thenReturn(PlaybackStatus.playing);
+      when(() => playbackInfo.position).thenReturn(position);
+      when(() => controller.playbackInfo).thenReturn(playbackInfo);
+      player.onNativePositionChanged();
+    }
+
+    setUp(() => when(() => controller.videoSource).thenReturn(serverSource));
+
+    test('fails on an error of the native player, which counts as not playing', () async {
+      await player.load(serverSource);
+
+      player.onNativeError('Decoder init failed: c2.android.avc.decoder');
+
+      expect(player.state.status, VideoPlaybackStatus.failed);
+      expect(
+        player.failure,
+        const VideoPlaybackFailure(VideoFailureKind.error, 'Decoder init failed: c2.android.avc.decoder'),
+      );
+    });
+
+    test('stays failed whatever the plugin reports of its own calls, until it is loaded again', () async {
+      await player.load(serverSource);
+      player.onNativeError('Source error');
+
+      reportStatus(PlaybackStatus.paused);
+      expect(player.state.status, VideoPlaybackStatus.failed);
+      reportStatus(PlaybackStatus.playing);
+      expect(player.state.status, VideoPlaybackStatus.failed);
+
+      await player.load(serverSource);
+      expect(player.state.status, VideoPlaybackStatus.buffering, reason: 'the spinner while it loads again');
+      expect(player.failure, isNull);
+    });
+
+    test('play loads the video again and plays it', () async {
+      await player.load(serverSource);
+      player.onNativeError('Source error');
+      clearInteractions(controller);
+
+      await player.play();
+
+      verifyInOrder([() => controller.loadVideoSource(serverSource), controller.play]);
+      expect(player.state.status, isNot(VideoPlaybackStatus.failed));
+    });
+
+    test('toggle loads it again too', () async {
+      await player.load(serverSource);
+      player.onNativeError('Source error');
+      clearInteractions(controller);
+
+      player.toggle();
+      await pumpEventQueue();
+
+      verifyInOrder([() => controller.loadVideoSource(serverSource), controller.play]);
+    });
+
+    test('nothing is heard while an external player has the video', () async {
+      await player.suspendForExternalPlayer();
+
+      player.onNativeError('Stopped');
+
+      expect(player.state.status, isNot(VideoPlaybackStatus.failed));
+    });
+
+    test('fails when nothing played for the stall timeout while it loads', () {
+      fakeAsync((async) {
+        unawaited(player.load(serverSource));
+        async.elapse(const Duration(seconds: 1));
+        expect(player.state.status, VideoPlaybackStatus.buffering);
+
+        async.elapse(VideoPlayerNotifier.stallTimeout - const Duration(milliseconds: 100));
+        expect(player.state.status, VideoPlaybackStatus.buffering);
+
+        async.elapse(const Duration(milliseconds: 200));
+        expect(player.state.status, VideoPlaybackStatus.failed);
+        expect(player.failure, const VideoPlaybackFailure(VideoFailureKind.stalled));
+        player.dispose();
+      });
+    });
+
+    test('a stall ends by itself when the video plays after all', () {
+      fakeAsync((async) {
+        unawaited(player.load(serverSource));
+        async.elapse(const Duration(seconds: 1) + VideoPlayerNotifier.stallTimeout + const Duration(seconds: 1));
+        expect(player.state.status, VideoPlaybackStatus.failed);
+
+        reportPosition(500);
+
+        expect(player.state.status, VideoPlaybackStatus.playing);
+        expect(player.failure, isNull);
+        player.dispose();
+      });
+    });
+
+    test('a video that buffers a while and then plays again does not fail', () {
+      fakeAsync((async) {
+        unawaited(player.load(serverSource));
+        async.elapse(const Duration(seconds: 1));
+        for (var i = 1; i <= 6; i++) {
+          async.elapse(const Duration(seconds: 10));
+          // The native player reports its position every few milliseconds while it plays
+          reportPosition(i * 1000);
+          reportPosition(i * 1000 + 10);
+          expect(player.state.status, VideoPlaybackStatus.playing);
+          // The position stands still again: buffering after 1 s
+          async.elapse(const Duration(seconds: 2));
+          expect(player.state.status, VideoPlaybackStatus.buffering);
+        }
+        player.dispose();
+      });
+    });
+
+    test('a paused video never stalls', () {
+      fakeAsync((async) {
+        unawaited(player.load(serverSource));
+        async.elapse(const Duration(seconds: 2));
+        unawaited(player.pause());
+        reportStatus(PlaybackStatus.paused);
+
+        async.elapse(VideoPlayerNotifier.stallTimeout * 2);
+
+        expect(player.state.status, VideoPlaybackStatus.paused);
+        player.dispose();
+      });
     });
   });
 

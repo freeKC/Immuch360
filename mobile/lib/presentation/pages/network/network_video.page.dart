@@ -402,6 +402,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     controller.onPlaybackEnded.addListener(_onPlaybackEnded);
     controller.onError.addListener(_onPlayerError);
     _controller = controller;
+    ref.listenManual(videoPlayerProvider(_playerKey).select((v) => v.status), _onFailure);
     unawaited(_loadVideo());
   }
 
@@ -470,11 +471,25 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   }
 
   void _onPlayerError() {
-    final error = _controller?.onError.value;
-    if (error != null && mounted) {
+    final controller = _controller;
+    final error = controller?.onError.value;
+    if (controller != null && error != null && mounted) {
       _log.warning('Could not play $_name: $error');
       setState(() => _playerError = error);
+      // Failed, not playing: the remote goes to the next file. Back to null, so that the same error after Retry is
+      // heard again
+      _notifier.onNativeError(error);
+      scheduleMicrotask(() => controller.onError.value = null);
     }
+  }
+
+  /// Nothing played for [VideoPlayerNotifier.stallTimeout]: the page says so, with Retry, instead of "Buffering"
+  void _onFailure(VideoPlaybackStatus? previous, VideoPlaybackStatus status) {
+    if (status != VideoPlaybackStatus.failed || _notifier.failure?.kind != VideoFailureKind.stalled || !mounted) {
+      return;
+    }
+    _log.warning('Nothing of $_name played for ${VideoPlayerNotifier.stallTimeout.inSeconds} s');
+    setState(() => _playerError = context.t.video_error_stalled);
   }
 
   /// How the 360° viewers show the video: what it declares, else guesses from its frame size and its name
