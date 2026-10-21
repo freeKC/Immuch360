@@ -1,0 +1,27 @@
+{
+  "id": "7f1c2b8e-0d4f-4d1e-9a51-2a5b7c3e9f10",
+  "type": "IMAGE",
+  "originalFileName": "IMG_20240615_101000_00_042.jpg",
+  "originalMimeType": "image/jpeg",
+  "fileCreatedAt": "2024-06-15T08:10:00.000Z",
+  "localDateTime": "2024-06-15T10:10:00.000Z",
+  "duration": null,
+  "visibility": "timeline",
+  "ownerId": "0b6a4e1c-3f2d-4c8b-9e7a-5d1f2a3b4c5d",
+  "thumbhash": "1QcSHQRnh493V4dIh4eXh1h4kJUI",
+  "livePhotoVideoId": null,
+  "isTrashed": false,
+  "isEdited": false,
+  "width": 11904,
+  "height": 5952,
+  "exifInfo": {
+    "make": "Arashi Vision",
+    "model": "Insta360 X4",
+    "exifImageWidth": 11904,
+    "exifImageHeight": 5952,
+    "fileSizeInByte": 18734512,
+    "projectionType": "EQUIRECTANGULAR",
+    "city": "Annecy",
+    "country": "France"
+  }
+}

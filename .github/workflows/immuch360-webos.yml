@@ -1,0 +1,128 @@
+name: Immuch360 webOS
+
+# The app for LG webOS TVs (webos/, built on immich-tv-webos 1.7.0, see webos/UPSTREAM.md): its tests, then the .ipk
+# made by the webOS command line tools (@webos-tools/cli, pinned in webos/package.json), checked by
+# webos/tools/check-package.mjs and uploaded as an artifact with SHA256SUMS.txt and the list of its files.
+#
+# It runs on every push and pull request that touches webos/, the fork's i18n/ (the app reads its texts there) or
+# these workflows, by hand (the version of webos/webos-meta/appinfo.json, or the one given), and from
+# immuch360-webos-release.yml on a webos-v<x.y.z> tag, which publishes the .ipk. Read only, no secret, no kept token:
+# .github/desktop/check_workflow.py holds it to that, as it does the desktop workflows.
+
+on:
+  # Branches only: a webos-v* tag builds through immuch360-webos-release.yml
+  push:
+    branches: ['**']
+    paths: ['webos/**', 'i18n/**', '.github/workflows/immuch360-webos*.yml', '.github/desktop/check_workflow.py']
+  pull_request:
+    paths: ['webos/**', 'i18n/**', '.github/workflows/immuch360-webos*.yml', '.github/desktop/check_workflow.py']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version of the build, three numbers (0.1.0); empty for the one of webos/webos-meta/appinfo.json'
+        required: false
+        default: ''
+  # immuch360-webos-release.yml, on a webos-v* tag; the permissions below stay read only
+  workflow_call:
+    inputs:
+      version:
+        description: 'Version of the build; empty for the tag (webos-v0.1.0 is 0.1.0) or appinfo.json'
+        type: string
+        required: false
+        default: ''
+    outputs:
+      version:
+        description: The version of the build, which names the .ipk
+        value: ${{ jobs.build.outputs.version }}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build the .ipk
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    defaults:
+      run:
+        working-directory: webos
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: These workflows pinned, without secrets, the release on webos-v* tags only
+        working-directory: .
+        run: |
+          python3 .github/desktop/check_workflow.py --workflow .github/workflows/immuch360-webos.yml
+          python3 .github/desktop/check_workflow.py --release --workflow .github/workflows/immuch360-webos-release.yml \
+            --tag-prefix webos-v
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: webos/.nvmrc
+          cache: npm
+          cache-dependency-path: webos/package-lock.json
+
+      # The tag gives the version (webos-v0.1.0 is 0.1.0), else the input, else appinfo.json
+      - name: The version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+        run: |
+          if [ "$REF_TYPE" = tag ] && [ "${REF_NAME#webos-v}" != "$REF_NAME" ]; then
+            version="${REF_NAME#webos-v}"
+          elif [ -n "$INPUT_VERSION" ]; then
+            version="$INPUT_VERSION"
+          else
+            version="$(node -p "require('./webos-meta/appinfo.json').version")"
+          fi
+          node tools/set-version.mjs "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Tests of the Immuch360 layers (node test runner)
+        run: npm run test-unit
+
+      - name: Tests inherited from immich-tv-webos (jest)
+        run: npm test -- --maxWorkers=2
+
+      - name: Tests of the build tools and of the phone sign-in service
+        run: |
+          npm run test-tools
+          npm run test-service
+
+      - name: Types
+        run: npm run typecheck
+
+      - name: The .ipk, built and checked
+        run: npm run ipk
+
+      # ares-package names it com.aprogsys.immuch360_<version>_all.ipk; the release offers Immuch360-webOS-<version>.ipk
+      - name: SHA256SUMS.txt
+        working-directory: webos/build
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          mv -- com.aprogsys.immuch360_*_all.ipk "Immuch360-webOS-$VERSION.ipk"
+          sha256sum -- *.ipk > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Immuch360-webOS-${{ steps.version.outputs.version }}
+          path: |
+            webos/build/*.ipk
+            webos/build/SHA256SUMS.txt
+            webos/build/ipk-files.json
+          if-no-files-found: error

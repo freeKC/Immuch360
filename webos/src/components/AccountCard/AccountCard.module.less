@@ -1,0 +1,72 @@
+@import '../../styles/_mixins.less';
+
+.card {
+	width: 12rem;
+	min-height: 12rem;
+	background: @surface;
+	border-radius: 0.75rem;
+	padding: 1.25rem 0.75rem;
+	text-align: center;
+	color: inherit;
+	border: none;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	box-sizing: border-box;
+	transition: transform 0.15s ease-out;
+
+	.spottable-card-focus();
+}
+
+// Current account: accent inset edge, distinct from the white outer focus ring.
+.active {
+	box-shadow: inset 0 0 0 4px @accent;
+
+	&:focus {
+		box-shadow: inset 0 0 0 4px @accent, 0 0 0 @focus-ring-width @focus-ring;
+	}
+}
+
+.badge {
+	position: absolute;
+	top: 0.5rem;
+	right: 0.5rem;
+	background: rgba(255, 255, 255, 0.12);
+	color: @text-muted;
+	font-size: 0.55rem;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	padding: 0.1rem 0.4rem;
+	border-radius: 0.2rem;
+}
+
+.avatar {
+	width: 4rem;
+	height: 4rem;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
+	font-size: 1.5rem;
+	margin: 0 auto 0.75rem;
+	color: white;
+}
+
+.label {
+	font-size: 0.9rem;
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.host {
+	font-size: 0.7rem;
+	color: @text-subtle;
+	margin-top: 0.25rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

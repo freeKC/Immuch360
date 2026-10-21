@@ -1,0 +1,20 @@
+{
+	"id": "com.aprogsys.immuch360",
+	"version": "0.1.0",
+	"vendor": "Immuch360",
+	"vendorurl": "https://github.com/freeKC/Immuch360",
+	"type": "web",
+	"main": "index.html",
+	"title": "Immuch360",
+	"appDescription": "Your media. Any screen. Every perspective.",
+	"icon": "icon.png",
+	"miniicon": "icon-mini.png",
+	"largeIcon": "icon-large.png",
+	"splashBackground": "splash.png",
+	"bgColor": "#131313",
+	"uiRevision": 2,
+	"disableBackHistoryAPI": true,
+	"vendorExtension": {
+		"allowCrossDomain": true
+	}
+}

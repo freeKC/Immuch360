@@ -1,0 +1,52 @@
+@import '../../styles/_theme.less';
+
+.slideshow {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: #000;
+	z-index: 1100;
+}
+
+.layer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	opacity: 0;
+	transition: opacity 800ms ease-in-out;
+}
+
+.front {
+	opacity: 1;
+}
+
+// Quarter turns lay the image out in a screen-rotated box centered on the screen, then rotate it.
+.quarterTurn {
+	top: 50%;
+	left: 50%;
+	width: 100vh;
+	height: 100vw;
+	margin-top: -50vw;
+	margin-left: -50vh;
+}
+
+.message {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	right: 0;
+	text-align: center;
+	color: @text-muted;
+	font-size: var(--font-body);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.layer {
+		transition: none;
+	}
+}

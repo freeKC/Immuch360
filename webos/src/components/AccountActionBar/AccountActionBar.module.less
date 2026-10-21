@@ -1,0 +1,14 @@
+@import '../../styles/_theme.less';
+
+.bar {
+	margin-top: 2rem;
+	padding: 0.9rem 1.2rem;
+	background: @surface;
+	border-radius: 0.6rem;
+	display: flex;
+	width: fit-content;
+}
+
+.bar > * + * {
+	margin-left: 0.75rem;
+}

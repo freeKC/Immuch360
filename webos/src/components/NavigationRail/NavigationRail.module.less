@@ -1,0 +1,91 @@
+@import '../../styles/_mixins.less';
+
+// No z-index here on purpose: flex items with z-index != auto create a stacking context
+// (per CSS spec) regardless of `position`, which would trap the rail at z-index 10 in the
+// root context. Without it the rail paints in normal document order, leaving MediaViewer
+// (position:fixed z-index:1000 inside ViewContainer) free to overlay it.
+// Width is fixed (no focus-driven expand): animating `width` reflows the whole grid on
+// every frame, which stutters on TV hardware. Authored px are 4K-space (postcss-ri),
+// so 360px renders 180 CSS px at FHD — keep in sync with SIDEBAR_WIDTH (constants.ts).
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+  width: 360px;
+  min-width: 360px;
+  height: 100%;
+  // Transparent so the rail shares the layout backdrop; the hairline is the only separator.
+  background: transparent;
+  border-right: 1px solid @hairline;
+  padding: @page-inset-top 32px 48px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 0 0 8px;
+  padding: 14px 0;
+  border-radius: @radius-card;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: @text-subtle;
+  box-sizing: border-box;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  .spottable-fill-focus();
+}
+
+.navItem.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: @text;
+
+  &:focus {
+    background: @focus-bg;
+    color: @focus-text;
+  }
+}
+
+// Fixed icon column so glyphs stay vertically aligned across items.
+.iconContainer {
+  display: block;
+  text-align: center;
+  width: 96px;
+  min-width: 96px;
+  overflow: visible;
+}
+
+// The bare letter only has body-text line-height, which squashes the gradient into a
+// stripe; the circle matches the tiny Sandstone Icon footprint of the sibling items.
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1;
+  color: white;
+}
+
+.label {
+  margin-left: 12px;
+  font-size: var(--font-body);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.spacer { flex: 1; }
+
+.divider {
+  width: calc(100% - 64px);
+  height: 1px;
+  background: @hairline;
+  margin: 8px 32px 24px;
+}

@@ -1,0 +1,302 @@
+import {APIClient} from './client';
+import {ImmichRepository} from './ImmichRepository';
+import {AuthMethod, type ApiKeyConfig, type UserCredentialsConfig} from './types';
+
+const apiKeyConfig: ApiKeyConfig = {
+	method: AuthMethod.API_KEY,
+	baseUrl: 'https://immich.example.com',
+	apiKey: 'test-api-key',
+};
+
+const userCredentialsConfig: UserCredentialsConfig = {
+	method: AuthMethod.USER_CREDENTIALS,
+	baseUrl: 'https://immich.example.com',
+	email: 'u@example.com',
+	accessToken: 'test-session-token',
+};
+
+const repoWithFetch = (fetch: jest.Mock) => new ImmichRepository({fetch} as unknown as APIClient);
+
+describe('ImmichRepository timeline endpoints', () => {
+	test('getBuckets requests the main timeline with explicit visibility filters', async () => {
+		const fetch = jest.fn().mockResolvedValue([{timeBucket: '2026-03-01', count: 2}]);
+		const buckets = await repoWithFetch(fetch).getBuckets();
+		// Without visibility=timeline the server defaults to ('archive','timeline') and
+		// archived assets leak into the TV timeline.
+		expect(fetch).toHaveBeenCalledWith('/timeline/buckets?visibility=timeline&withPartners=true&withStacked=true');
+		expect(buckets).toEqual([{timeBucket: '2026-03-01', count: 2}]);
+	});
+
+	test('getBucketAssets fetches one month with the same filters and forwards the abort signal', async () => {
+		const fetch = jest.fn().mockResolvedValue({
+			id: ['march'],
+			isImage: [true],
+			ratio: [1.5],
+			fileCreatedAt: ['2026-03-14T10:00:00.000Z'],
+			duration: [null],
+		});
+		const controller = new AbortController();
+
+		const assets = await repoWithFetch(fetch).getBucketAssets('2026-03-01', undefined, controller.signal);
+
+		expect(fetch).toHaveBeenCalledWith('/timeline/bucket?timeBucket=2026-03-01&visibility=timeline&withPartners=true&withStacked=true', {
+			signal: controller.signal,
+		});
+		expect(assets).toEqual([
+			{id: 'march', type: 'IMAGE', ratio: 1.5, localDateTime: '2026-03-14T10:00:00.000Z', durationSeconds: null},
+		]);
+	});
+
+	test('album and person scopes use the web client filters for that page', async () => {
+		const fetch = jest.fn().mockResolvedValueOnce([]).mockResolvedValueOnce({id: [], isImage: [], ratio: [], fileCreatedAt: [], duration: []});
+		const repo = repoWithFetch(fetch);
+		await repo.getBuckets({albumId: 'al1', order: 'asc'});
+		await repo.getBucketAssets('2026-03-01', {personId: 'p1'});
+		// Albums stay unfiltered (archived assets show inside albums) and honor the album order.
+		expect(fetch).toHaveBeenNthCalledWith(1, '/timeline/buckets?albumId=al1&order=asc');
+		expect(fetch).toHaveBeenNthCalledWith(2, '/timeline/bucket?timeBucket=2026-03-01&personId=p1&visibility=timeline', {signal: undefined});
+	});
+
+	test('getBucketAssets reconstructs localDateTime from localOffsetHours', async () => {
+		const fetch = jest.fn().mockResolvedValue({
+			id: ['night-shot'],
+			isImage: [true],
+			ratio: [1],
+			// Taken 2026-03-01 00:30 local (UTC+1) = 2026-02-28 23:30 UTC: the server puts it in
+			// the March bucket, so day grouping must land on March 1st too.
+			fileCreatedAt: ['2026-02-28T23:30:00.000Z'],
+			localOffsetHours: [1],
+			duration: [null],
+		});
+
+		const assets = await repoWithFetch(fetch).getBucketAssets('2026-03-01');
+
+		expect(assets[0]?.localDateTime).toBe('2026-03-01T00:30:00.000Z');
+	});
+
+	test('treats zone-less v3 timestamps as UTC whatever the TV timezone', async () => {
+		const fetch = jest.fn().mockResolvedValue({
+			id: ['late', 'zoned'],
+			isImage: [true, true],
+			ratio: [1, 1],
+			fileCreatedAt: ['2026-08-21T00:14:11', '2026-08-21T00:14:11.000+00:00'],
+			localOffsetHours: [0, 0],
+			duration: [null, null],
+		});
+		const assets = await repoWithFetch(fetch).getBucketAssets('2026-08-01');
+		expect(assets.map((a) => a.localDateTime)).toEqual(['2026-08-21T00:14:11.000Z', '2026-08-21T00:14:11.000Z']);
+	});
+
+	test('getBucketAssets falls back to a localDateTime column on older servers', async () => {
+		const fetch = jest.fn().mockResolvedValue({
+			id: ['legacy'],
+			isImage: [false],
+			ratio: [1.78],
+			fileCreatedAt: ['2026-02-28T23:30:00.000Z'],
+			localDateTime: ['2026-03-01T00:30:00.000Z'],
+			duration: [4000],
+		});
+
+		const assets = await repoWithFetch(fetch).getBucketAssets('2026-03-01');
+
+		expect(assets[0]).toEqual({id: 'legacy', type: 'VIDEO', ratio: 1.78, localDateTime: '2026-03-01T00:30:00.000Z', durationSeconds: 4});
+	});
+
+	test('reconstructs localDateTime byte-identically to toISOString across offset kinds', async () => {
+		// The hand-rolled getUTC* formatter must stay byte-identical to the native toISOString it
+		// replaced across whole, fractional, negative, and boundary-crossing offsets.
+		const fileCreatedAt = [
+			'2026-03-15T12:00:00.123Z',
+			'2026-03-01T02:00:00.000Z',
+			'2026-03-01T03:30:45.007Z', // -8h crosses back to Feb 28
+			'2026-12-31T23:30:00.999Z', // +2h crosses the year boundary
+		];
+		const localOffsetHours = [2, 5.5, -8, 2];
+		const fetch = jest.fn().mockResolvedValue({
+			id: ['a', 'b', 'c', 'd'],
+			isImage: [true, true, true, true],
+			ratio: [1, 1, 1, 1],
+			fileCreatedAt,
+			localOffsetHours,
+			duration: [null, null, null, null],
+		});
+
+		const assets = await repoWithFetch(fetch).getBucketAssets('2026-03-01');
+
+		assets.forEach((asset, i) => {
+			const reference = new Date(new Date(fileCreatedAt[i]!).getTime() + localOffsetHours[i]! * 3600 * 1000).toISOString();
+			expect(asset.localDateTime).toBe(reference);
+		});
+		expect(assets[2]?.localDateTime).toBe('2026-02-28T19:30:45.007Z');
+		expect(assets[3]?.localDateTime).toBe('2027-01-01T01:30:00.999Z');
+	});
+});
+
+describe('ImmichRepository.getPlaces', () => {
+	test('maps /search/cities assets to places sorted by city name', async () => {
+		const fetch = jest.fn().mockResolvedValue([
+			{id: 'asset-paris', exifInfo: {city: 'Paris', country: 'France'}},
+			{id: 'asset-aegina', exifInfo: {city: 'Aegina', country: 'Greece'}},
+			{id: 'asset-no-city', exifInfo: {}},
+		]);
+		const places = await repoWithFetch(fetch).getPlaces();
+		expect(fetch).toHaveBeenCalledWith('/search/cities');
+		expect(places).toEqual([
+			{city: 'Aegina', country: 'Greece', thumbnailAssetId: 'asset-aegina'},
+			{city: 'Paris', country: 'France', thumbnailAssetId: 'asset-paris'},
+		]);
+	});
+
+	test('returns empty list on non-array response', async () => {
+		const fetch = jest.fn().mockResolvedValue({error: 'unexpected'});
+		await expect(repoWithFetch(fetch).getPlaces()).resolves.toEqual([]);
+	});
+});
+
+describe('ImmichRepository.searchByCity', () => {
+	test('walks metadata search pages until nextPage is null', async () => {
+		const item = (id: string) => ({id, type: 'IMAGE', fileCreatedAt: '2026-03-01T00:00:00.000Z', duration: null, width: 2, height: 1});
+		const fetch = jest
+			.fn()
+			.mockResolvedValueOnce({assets: {items: [item('a')], nextPage: '2'}})
+			.mockResolvedValueOnce({assets: {items: [item('b')], nextPage: null}});
+		const assets = await repoWithFetch(fetch).searchByCity('Paris');
+		expect(assets.map((a) => a.id)).toEqual(['a', 'b']);
+		expect(JSON.parse(fetch.mock.calls[1][1].body)).toEqual({city: 'Paris', page: 2, size: 1000});
+	});
+
+	test('POSTs a city metadata search and maps items to timeline assets', async () => {
+		const fetch = jest.fn().mockResolvedValue({
+			assets: {
+				items: [
+					{id: 'a1', type: 'IMAGE', fileCreatedAt: '2025-09-19T11:18:30.838Z', duration: null, width: 200, height: 100},
+					{id: 'a2', type: 'VIDEO', fileCreatedAt: '2025-09-19T11:20:00.000Z', duration: 4000, exifInfo: {exifImageWidth: 100, exifImageHeight: 200}},
+					{id: 'a3', type: 'VIDEO', fileCreatedAt: '2025-09-19T11:21:00.000Z', duration: 2000, visibility: 'hidden'},
+				],
+			},
+		});
+		const assets = await repoWithFetch(fetch).searchByCity('Paris');
+		expect(fetch).toHaveBeenCalledWith('/search/metadata', {
+			method: 'POST',
+			body: JSON.stringify({city: 'Paris', page: 1, size: 1000}),
+		});
+		expect(assets).toEqual([
+			{id: 'a1', type: 'IMAGE', ratio: 2, localDateTime: '2025-09-19T11:18:30.838Z', durationSeconds: null},
+			{id: 'a2', type: 'VIDEO', ratio: 0.5, localDateTime: '2025-09-19T11:20:00.000Z', durationSeconds: 4},
+		]);
+	});
+});
+
+describe('ImmichRepository.searchRandomImages', () => {
+	test('filters random images by album, or by timeline visibility for the library and people', async () => {
+		const fetch = jest.fn().mockResolvedValue([{id: 'r1', type: 'IMAGE', fileCreatedAt: '2026-03-01T00:00:00.000Z', duration: null, width: 3, height: 2}]);
+		const repo = repoWithFetch(fetch);
+		const assets = await repo.searchRandomImages({albumId: 'al1'}, 50);
+		await repo.searchRandomImages({personId: 'p1'}, 50);
+		await repo.searchRandomImages({}, 50);
+		expect(assets).toEqual([{id: 'r1', type: 'IMAGE', ratio: 1.5, localDateTime: '2026-03-01T00:00:00.000Z', durationSeconds: null}]);
+		expect(fetch.mock.calls.map(([, init]) => JSON.parse(init.body))).toEqual([
+			{albumIds: ['al1'], type: 'IMAGE', size: 50},
+			{visibility: 'timeline', personIds: ['p1'], type: 'IMAGE', size: 50},
+			{visibility: 'timeline', type: 'IMAGE', size: 50},
+		]);
+	});
+});
+
+describe('ImmichRepository image URLs', () => {
+	test('request the edited rendition so Immich v3 crops/rotations show on the TV', () => {
+		const repo = new ImmichRepository(new APIClient(apiKeyConfig));
+		expect(repo.thumbnailUrl('a1')).toBe(
+			'https://immich.example.com/api/assets/a1/thumbnail?size=thumbnail&edited=true&apiKey=test-api-key',
+		);
+		expect(repo.previewUrl('a1')).toBe(
+			'https://immich.example.com/api/assets/a1/thumbnail?size=preview&edited=true&apiKey=test-api-key',
+		);
+	});
+});
+
+describe('ImmichRepository.videoPlaybackUrl', () => {
+	test('returns Immich /video/playback URL with apiKey query param (API_KEY auth)', () => {
+		const repo = new ImmichRepository(new APIClient(apiKeyConfig));
+		expect(repo.videoPlaybackUrl('asset-id-42')).toBe(
+			'https://immich.example.com/api/assets/asset-id-42/video/playback?apiKey=test-api-key',
+		);
+	});
+
+	test('returns Immich /video/playback URL with sessionKey query param (USER_CREDENTIALS auth)', () => {
+		const repo = new ImmichRepository(new APIClient(userCredentialsConfig));
+		expect(repo.videoPlaybackUrl('asset-id-42')).toBe(
+			'https://immich.example.com/api/assets/asset-id-42/video/playback?sessionKey=test-session-token',
+		);
+	});
+});
+
+// Immuch360: the cache key of the pictures, and the edits of the one-key rotation
+describe('ImmichRepository picture keys', () => {
+	test('the pictures of an asset seen in a timeline carry its thumbhash, as the web app sends it', async () => {
+		const client = new APIClient(apiKeyConfig);
+		const repo = new ImmichRepository(client);
+		jest.spyOn(client, 'fetch').mockResolvedValue({
+			id: ['a1', 'a2'],
+			isImage: [true, true],
+			ratio: [1, 1],
+			fileCreatedAt: ['2026-03-14T10:00:00.000Z', '2026-03-14T11:00:00.000Z'],
+			duration: [null, null],
+			thumbhash: ['ab+c/d==', null],
+		});
+		await repo.getBucketAssets('2026-03-01');
+		expect(repo.previewUrl('a1')).toBe(
+			'https://immich.example.com/api/assets/a1/thumbnail?size=preview&edited=true&c=ab%2Bc%2Fd%3D%3D&apiKey=test-api-key',
+		);
+		expect(repo.thumbnailUrl('a2')).toBe('https://immich.example.com/api/assets/a2/thumbnail?size=thumbnail&edited=true&apiKey=test-api-key');
+	});
+
+	test('the key a turn gave an asset comes first, and a key can be asked for directly', () => {
+		const repo = new ImmichRepository(new APIClient(apiKeyConfig));
+		repo.setPictureKey('a1', 'new');
+		expect(repo.pictureKey('a1')).toBe('new');
+		expect(repo.fullsizeUrl('a1')).toBe('https://immich.example.com/api/assets/a1/thumbnail?size=fullsize&edited=true&c=new&apiKey=test-api-key');
+		expect(repo.previewUrl('a1', 'other')).toBe('https://immich.example.com/api/assets/a1/thumbnail?size=preview&edited=true&c=other&apiKey=test-api-key');
+	});
+});
+
+describe('ImmichRepository edits', () => {
+	test('reads the edits without their ids, and refuses a kind it does not know', async () => {
+		const fetch = jest
+			.fn()
+			.mockResolvedValueOnce({assetId: 'a1', edits: [{id: 'e1', action: 'rotate', parameters: {angle: 90}}]})
+			.mockResolvedValueOnce({assetId: 'a1', edits: [{id: 'e2', action: 'blur', parameters: {}}]});
+		const repo = repoWithFetch(fetch);
+		await expect(repo.getAssetEdits('a1')).resolves.toEqual([{action: 'rotate', parameters: {angle: 90}}]);
+		await expect(repo.getAssetEdits('a1')).resolves.toBeNull();
+		expect(fetch).toHaveBeenCalledWith('/assets/a1/edits');
+	});
+
+	test('puts the whole list, or deletes the edits for an empty one', async () => {
+		const fetch = jest.fn().mockResolvedValue({});
+		const repo = repoWithFetch(fetch);
+		await repo.replaceAssetEdits('a1', [{action: 'rotate', parameters: {angle: 180}}]);
+		await repo.replaceAssetEdits('a1', []);
+		expect(fetch).toHaveBeenNthCalledWith(1, '/assets/a1/edits', {
+			method: 'PUT',
+			body: JSON.stringify({edits: [{action: 'rotate', parameters: {angle: 180}}]}),
+		});
+		expect(fetch).toHaveBeenNthCalledWith(2, '/assets/a1/edits', {method: 'DELETE'});
+	});
+
+	test('the user and the version of the server, asked once', async () => {
+		const fetch = jest.fn((endpoint: string) => Promise.resolve(endpoint === '/users/me' ? {id: 'u1'} : {major: 3, minor: 2, patch: 4}));
+		const repo = repoWithFetch(fetch as unknown as jest.Mock);
+		await expect(repo.getRotationContext()).resolves.toEqual({userId: 'u1', serverVersion: {major: 3, minor: 2, patch: 4}});
+		await repo.getRotationContext();
+		expect(fetch).toHaveBeenCalledTimes(2);
+	});
+
+	test('a part the server does not give is null, and is asked again next time', async () => {
+		const fetch = jest.fn((endpoint: string) => (endpoint === '/users/me' ? Promise.reject(new Error('403')) : Promise.resolve({major: 3, minor: 0, patch: 0})));
+		const repo = repoWithFetch(fetch as unknown as jest.Mock);
+		await expect(repo.getRotationContext()).resolves.toEqual({userId: null, serverVersion: {major: 3, minor: 0, patch: 0}});
+		await repo.getRotationContext();
+		expect(fetch).toHaveBeenCalledTimes(4);
+	});
+});

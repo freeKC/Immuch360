@@ -1,0 +1,40 @@
+// Immuch360: the details panel of the viewer, in the dark palette, inside the 5% overscan margin of a TV; lengths in
+// 4K-space px like the rest of the LESS
+@import '../../styles/_theme.less';
+
+.panel {
+	position: absolute;
+	top: @page-inset-top;
+	right: @page-inset-x;
+	bottom: 320px;
+	width: 1120px;
+	padding: 64px 72px;
+	box-sizing: border-box;
+	overflow: hidden;
+	background: @scrim;
+	border-radius: @radius-card;
+	color: @text;
+	z-index: 3;
+	pointer-events: none;
+}
+
+.title {
+	font-size: var(--font-heading);
+	font-weight: 600;
+	margin-bottom: 48px;
+}
+
+.row {
+	margin-bottom: 36px;
+}
+
+.label {
+	color: @text-muted;
+	font-size: var(--font-caption);
+}
+
+.value {
+	font-size: var(--font-body);
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}

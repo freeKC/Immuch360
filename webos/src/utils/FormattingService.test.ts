@@ -1,0 +1,44 @@
+import {formatAssetDateTime, formatCount, formatDuration, toDurationSeconds} from './FormattingService';
+
+describe('toDurationSeconds', () => {
+	it('parses legacy "H:MM:SS.mmm" strings (Immich < v3)', () => {
+		expect(toDurationSeconds('0:01:46.786')).toBeCloseTo(106.786);
+		expect(toDurationSeconds('1:02:03.000')).toBeCloseTo(3723);
+	});
+
+	it('converts millisecond numbers (Immich v3+)', () => {
+		expect(toDurationSeconds(106786)).toBeCloseTo(106.786);
+		expect(toDurationSeconds(0)).toBe(0);
+	});
+
+	it('returns null for null, undefined and malformed strings', () => {
+		expect(toDurationSeconds(null)).toBeNull();
+		expect(toDurationSeconds(undefined)).toBeNull();
+		expect(toDurationSeconds('not-a-duration')).toBeNull();
+	});
+});
+
+describe('formatDuration', () => {
+	it('formats sub-hour durations as M:SS', () => {
+		expect(formatDuration(106.786)).toBe('1:46');
+		expect(formatDuration(9)).toBe('0:09');
+	});
+
+	it('formats hour-plus durations as H:MM:SS', () => {
+		expect(formatDuration(3723)).toBe('1:02:03');
+	});
+});
+
+describe('formatAssetDateTime', () => {
+	test('formats the wall-clock fields regardless of the TV timezone', () => {
+		expect(formatAssetDateTime('2016-08-30T23:49:37.000Z')).toEqual({date: 'Tuesday, Aug 30, 2016', time: '23:49'});
+	});
+});
+
+describe('formatCount', () => {
+	it('pluralizes and groups thousands', () => {
+		expect(formatCount(1, 'item')).toBe('1 item');
+		expect(formatCount(0, 'album')).toBe('0 albums');
+		expect(formatCount(1234, 'item')).toBe('1,234 items');
+	});
+});

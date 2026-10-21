@@ -1,0 +1,53 @@
+@import '../../styles/_mixins.less';
+
+.wrap {
+	color: @text;
+}
+
+.heading {
+	font-size: 1.4rem;
+	margin: 0 0 1.5rem;
+	font-weight: 600;
+}
+
+.grid {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.grid > * {
+	margin: 0 1rem 1rem 0;
+}
+
+.addTile {
+	width: 12rem;
+	min-height: 12rem;
+	border-radius: 0.75rem;
+	box-sizing: border-box;
+	border: 2px solid @hairline;
+	background: transparent;
+	color: @text-muted;
+	font-size: 0.9rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	transition: transform 0.15s ease-out;
+
+	.spottable-card-focus();
+}
+
+.addTile > * + * {
+	margin-top: 0.75rem;
+}
+
+.addIcon {
+	width: 4rem;
+	height: 4rem;
+	border-radius: 50%;
+	background: @surface;
+	color: @text;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

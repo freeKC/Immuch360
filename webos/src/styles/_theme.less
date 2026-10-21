@@ -1,0 +1,36 @@
+// Shared design tokens (compile-time). Lengths are 4K-space px like the rest of the LESS
+// (postcss-ri halves them at FHD).
+// CSS ships untranspiled: no flex `gap` (Cr84+), `aspect-ratio` (Cr88+) or `inset` (Cr87+),
+// which webOS 5/6 (Chromium 68/79) silently drop.
+
+// Surfaces: near-neutral so photos keep their own colors.
+// Immuch360: the dark palette of the fork (mobile/lib/theme/theme_data.dart and color_scheme.dart): surface #131313,
+// containers #0E0E0E to #2E2E2E, text #E2E2E2, primary #ACCBFA. The app is dark only on a TV.
+@bg-top: #1b1b1b;
+@bg-bottom: #131313;
+@surface: #1f1f1f;
+@surface-raised: #2e2e2e;
+@hairline: rgba(255, 255, 255, 0.08);
+@scrim: rgba(14, 14, 14, 0.72);
+
+// Text
+@text: #e2e2e2;
+@text-muted: rgba(255, 255, 255, 0.64);
+@text-subtle: rgba(255, 255, 255, 0.42);
+
+// Focus follows Sandstone's own (light fill, dark content) so custom controls match its Buttons.
+@focus-bg: #e6e6e6;
+@focus-text: #1c1e22;
+@focus-ring: #ffffff;
+@focus-ring-width: 6px;
+@focus-scale: 1.04;
+
+// Single accent, for "current/selected" states only (never focus).
+@accent: #accbfa;
+
+@radius-thumb: 8px;
+@radius-card: 16px;
+@radius-pill: 999px;
+
+@page-inset-x: 72px;
+@page-inset-top: 56px;

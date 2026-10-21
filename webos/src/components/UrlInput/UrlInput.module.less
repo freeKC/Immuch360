@@ -1,0 +1,45 @@
+@import '../../styles/_theme.less';
+
+.wrap {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+// flex `gap` is Chrome 84+ (dropped on webOS 6 / Cr79) — use margins instead.
+.wrap > * + * {
+	margin-top: 0.5rem;
+}
+
+.chips {
+	display: inline-flex;
+	flex-wrap: nowrap;
+	border-radius: 0.4rem;
+	background: rgba(255, 255, 255, 0.04);
+	padding: 0.15rem;
+}
+
+.chips > * + * {
+	margin-left: 0.1rem;
+}
+
+.chip {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 1.7rem;
+	padding: 0 0.6rem;
+	color: rgba(255, 255, 255, 0.72);
+	border-radius: 0.3rem;
+	font-size: 0.7rem;
+	font-family: inherit;
+	letter-spacing: 0.02em;
+	user-select: none;
+	transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.chip:focus {
+	background: @focus-bg;
+	color: @focus-text;
+	outline: none;
+}

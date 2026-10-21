@@ -18,8 +18,13 @@ desktop pre-release tag, so its release job writes to the repository. With --rel
 "contents: write" is its one write access (the top may also give no permission at all, "permissions: {}"), and it may
 run on the push of desktop-v* tags and by hand (workflow_dispatch) only: no pull request, no branch.
 
+.github/workflows/immuch360-webos.yml, which builds the LG webOS app, is held to the rules of the desktop workflow, and
+.github/workflows/immuch360-webos-release.yml to those of a release workflow on its own tags: --tag-prefix webos-v.
+
   check_workflow.py             exit 1 on any finding
   check_workflow.py --release   the release workflow
+  check_workflow.py --workflow .github/workflows/immuch360-webos.yml
+  check_workflow.py --release --workflow .github/workflows/immuch360-webos-release.yml --tag-prefix webos-v
 
 --workflow and --mise point at other files (the tests use fixtures). The YAML is read line by line on purpose: no
 third party module is needed on the runners.
@@ -39,17 +44,17 @@ MISE_FLUTTER = re.compile(r'^\[tools\."aqua:flutter/flutter"\]\s*\n\s*version\s*
 RELEASE_EVENTS = ('push', 'workflow_dispatch')
 
 
-def release_triggers(workflow: str) -> list:
-    """The release workflow runs on desktop-v* tags and by hand only"""
+def release_triggers(workflow: str, tag_prefix: str = 'desktop-v') -> list:
+    """The release workflow runs on its tags (desktop-v*) and by hand only"""
     block = re.search(r'^on:[ \t]*\n((?:[ \t]+.*\n|[ \t]*\n)+)', workflow, re.MULTILINE)
     if not block:
         return ['the triggers ("on:") are not a block of events']
     found = []
     for event in re.findall(r'^  ([\w-]+):', block.group(1), re.MULTILINE):
         if event not in RELEASE_EVENTS:
-            found.append(f'the release workflow runs on {event}: desktop-v* tags and workflow_dispatch only')
+            found.append(f'the release workflow runs on {event}: {tag_prefix}* tags and workflow_dispatch only')
     if re.search(r'^\s+(?:branches|branches-ignore|paths|paths-ignore|tags-ignore)\s*:', block.group(1), re.MULTILINE):
-        found.append('the release workflow runs on branches or paths: desktop-v* tags and workflow_dispatch only')
+        found.append(f'the release workflow runs on branches or paths: {tag_prefix}* tags and workflow_dispatch only')
     tags = re.search(r'^\s+tags:[ \t]*(\[.*\])?[ \t]*\n((?:\s+-.*\n)*)', block.group(1), re.MULTILINE)
     patterns = []
     if tags:
@@ -57,12 +62,12 @@ def release_triggers(workflow: str) -> list:
     if re.search(r'^  push:', block.group(1), re.MULTILINE) and not patterns:
         found.append('the release workflow runs on push without a tag filter')
     for pattern in patterns:
-        if not pattern.startswith('desktop-v'):
-            found.append(f'the release workflow runs on the tags {pattern}: desktop-v* only')
+        if not pattern.startswith(tag_prefix):
+            found.append(f'the release workflow runs on the tags {pattern}: {tag_prefix}* only')
     return found
 
 
-def findings(workflow: str, mise: str, release: bool = False) -> list:
+def findings(workflow: str, mise: str, release: bool = False, tag_prefix: str = 'desktop-v') -> list:
     found = []
     lines = workflow.splitlines()
     for number, line in enumerate(lines, 1):
@@ -112,7 +117,7 @@ def findings(workflow: str, mise: str, release: bool = False) -> list:
                 continue
             found.append(f'line {number}: a write access ({line.strip()})')
     if release:
-        found += release_triggers(workflow)
+        found += release_triggers(workflow, tag_prefix)
     return found
 
 
@@ -121,17 +126,18 @@ def main(argv=None) -> int:
     parser.add_argument('--workflow', type=pathlib.Path)
     parser.add_argument('--mise', type=pathlib.Path, default=ROOT / 'mobile' / 'mise.toml')
     parser.add_argument('--release', action='store_true', help='the release workflow, which may write the contents')
+    parser.add_argument('--tag-prefix', default='desktop-v', help='the tags a release workflow runs on (desktop-v)')
     args = parser.parse_args(argv)
     workflow = args.workflow or ROOT / '.github' / 'workflows' / (
         'immuch360-desktop-release.yml' if args.release else 'immuch360-desktop.yml')
 
-    found = findings(workflow.read_text(encoding='utf-8'), args.mise.read_text(encoding='utf-8'), args.release)
+    found = findings(workflow.read_text(encoding='utf-8'), args.mise.read_text(encoding='utf-8'), args.release, args.tag_prefix)
     for line in found:
         print(f'{workflow.name}: {line}')
     if found:
         return 1
     if args.release:
-        print(f'{workflow.name}: runners and actions pinned, no secret, desktop-v* tags and workflow_dispatch only, '
+        print(f'{workflow.name}: runners and actions pinned, no secret, {args.tag_prefix}* tags and workflow_dispatch only, '
               'contents its only write access')
     else:
         print(f'{workflow.name}: runners, actions and Xcode pinned, Flutter as in mise.toml, read-only, no secret')
