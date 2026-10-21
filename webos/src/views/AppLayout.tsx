@@ -6,6 +6,7 @@ import MainPanel from './MainPanel';
 import AlbumsPanel from './AlbumsPanel';
 import PlacesPanel from './PlacesPanel';
 import SearchPanel from './SearchPanel';
+import DiagnosticsPanel from '../immuch360/diagnostics/DiagnosticsPanel';
 import type {View} from '../types/navigation';
 import css from './AppLayout.module.less';
 
@@ -59,6 +60,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({onOpenAccount, accountLetter, acco
 				{activeView === 'search' && (
 					<div className={css.panelActive}>
 						<SearchPanel contentWidth={contentWidth} />
+					</div>
+				)}
+				{activeView === 'about' && (
+					<div className={css.panelActive}>
+						<DiagnosticsPanel />
 					</div>
 				)}
 			</ViewContainer>

@@ -1,0 +1,92 @@
+// Immuch360: the About page; lengths in 4K-space px like the rest of the LESS
+@import '../../styles/_theme.less';
+
+.scroller {
+	width: 100%;
+	height: 100%;
+}
+
+.page {
+	padding: @page-inset-top @page-inset-x 96px;
+	color: @text;
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 48px;
+}
+
+.title {
+	font-size: var(--font-display);
+	font-weight: 700;
+}
+
+.subtitle {
+	margin-top: 8px;
+	color: @text-muted;
+	font-size: var(--font-caption);
+}
+
+.columns {
+	display: flex;
+	align-items: flex-start;
+}
+
+.table {
+	flex: 1;
+	min-width: 0;
+	margin-right: 64px;
+}
+
+.row {
+	display: flex;
+	padding: 12px 24px;
+	border-radius: @radius-thumb;
+	font-size: var(--font-caption);
+
+	&:focus {
+		background: @surface-raised;
+		outline: none;
+	}
+}
+
+.label {
+	flex: 0 0 520px;
+	color: @text-muted;
+}
+
+.value {
+	flex: 1;
+	min-width: 0;
+	word-wrap: break-word;
+}
+
+.actions {
+	margin: 32px 0 16px;
+}
+
+.credit {
+	margin: 8px 24px;
+	color: @text-subtle;
+	font-size: var(--font-caption);
+}
+
+.qrColumn {
+	flex: 0 0 720px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.qr {
+	width: 640px;
+	height: 640px;
+}
+
+.qrHint {
+	margin-top: 24px;
+	color: @text-muted;
+	font-size: var(--font-caption);
+	text-align: center;
+}

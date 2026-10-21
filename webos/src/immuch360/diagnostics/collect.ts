@@ -1,0 +1,203 @@
+// Immuch360: what the diagnostics page reports about the TV, the app and the server, to paste into a bug report.
+// The first checks of a real LG TV listed in the webOS analysis of 21 October 2026: the model and webOS version, the
+// Chromium engine, WebGL 1 and 2 and MAX_TEXTURE_SIZE, whether video frames reach WebGL (the 360° videos), and what
+// the video decoders take.
+
+import LS2Request from '@enact/webos/LS2Request';
+import type {PhotoRepository} from '../../domain/PhotoRepository';
+import {currentLocale, localeLoadError, t} from '../i18n';
+import {SphereRenderer, getWebGL, webglInfo} from '../sphere/SphereRenderer';
+
+export interface DiagnosticsLine {
+	label: string;
+	value: string;
+}
+
+/** The base this app was built on, kept in webos/UPSTREAM.md */
+export const BASE_VERSION = '1.7.0';
+
+function readLocalJson(path: string): Promise<Record<string, unknown> | null> {
+	return new Promise((resolve) => {
+		try {
+			const request = new XMLHttpRequest();
+			request.open('GET', path, true);
+			request.timeout = 2000;
+			request.onload = () => {
+				try {
+					resolve(JSON.parse(request.responseText) as Record<string, unknown>);
+				} catch {
+					resolve(null);
+				}
+			};
+			request.onerror = () => resolve(null);
+			request.ontimeout = () => resolve(null);
+			request.send();
+		} catch {
+			resolve(null);
+		}
+	});
+}
+
+const hasLuna = () => typeof (window as {WebOSServiceBridge?: unknown}).WebOSServiceBridge === 'function';
+
+function systemInfo(): Promise<Record<string, unknown> | null> {
+	if (!hasLuna()) return Promise.resolve(null);
+	return new Promise((resolve) => {
+		new LS2Request().send({
+			service: 'luna://com.webos.service.tv.systemproperty',
+			method: 'getSystemInfo',
+			parameters: {keys: ['modelName', 'firmwareVersion', 'UHD', 'sdkVersion', 'boardType']},
+			timeout: 3000,
+			onSuccess: (response: Record<string, unknown>) => resolve(response),
+			onFailure: () => resolve(null),
+			onTimeout: () => resolve(null),
+		});
+	});
+}
+
+// What webOS tells the page itself (PalmSystem on older engines, webOSSystem on newer ones)
+function deviceInfo(): Record<string, unknown> | null {
+	const w = window as {webOSSystem?: {deviceInfo?: string}; PalmSystem?: {deviceInfo?: string}};
+	const raw = w.webOSSystem?.deviceInfo ?? w.PalmSystem?.deviceInfo;
+	if (!raw) return null;
+	try {
+		return JSON.parse(raw) as Record<string, unknown>;
+	} catch {
+		return null;
+	}
+}
+
+const CODECS: {name: string; contentType: string; width: number; height: number; bitrate: number}[] = [
+	{name: 'H.264 4K', contentType: 'video/mp4; codecs="avc1.640033"', width: 3840, height: 2160, bitrate: 40000000},
+	{name: 'H.264 5.7K', contentType: 'video/mp4; codecs="avc1.640034"', width: 5760, height: 2880, bitrate: 100000000},
+	{name: 'HEVC 4K', contentType: 'video/mp4; codecs="hvc1.1.6.L153.B0"', width: 3840, height: 2160, bitrate: 40000000},
+	{name: 'HEVC 5.7K', contentType: 'video/mp4; codecs="hvc1.1.6.L183.B0"', width: 5760, height: 2880, bitrate: 100000000},
+	{name: 'HEVC 10 bit 4K', contentType: 'video/mp4; codecs="hvc1.2.4.L153.B0"', width: 3840, height: 2160, bitrate: 40000000},
+	{name: 'AV1 4K', contentType: 'video/mp4; codecs="av01.0.12M.08"', width: 3840, height: 2160, bitrate: 40000000},
+	{name: 'VP9 4K', contentType: 'video/webm; codecs="vp09.00.51.08"', width: 3840, height: 2160, bitrate: 40000000},
+];
+
+interface DecodingInfo {
+	supported: boolean;
+	smooth: boolean;
+	powerEfficient: boolean;
+}
+
+async function decoderLines(): Promise<DiagnosticsLine[]> {
+	const capabilities = (navigator as {mediaCapabilities?: {decodingInfo: (config: unknown) => Promise<DecodingInfo>}}).mediaCapabilities;
+	const video = document.createElement('video');
+	const lines: DiagnosticsLine[] = [];
+	for (const codec of CODECS) {
+		const canPlay = video.canPlayType(codec.contentType) || 'no';
+		let verdict = `canPlayType ${canPlay}`;
+		if (capabilities) {
+			try {
+				const info = await capabilities.decodingInfo({
+					type: 'file',
+					video: {contentType: codec.contentType, width: codec.width, height: codec.height, bitrate: codec.bitrate, framerate: 30},
+				});
+				verdict += `, ${info.supported ? 'supported' : 'not supported'}${info.smooth ? ', smooth' : ''}${info.powerEfficient ? ', hardware' : ''}`;
+			} catch (error) {
+				verdict += `, decodingInfo: ${error instanceof Error ? error.message : String(error)}`;
+			}
+		}
+		lines.push({label: codec.name, value: verdict});
+	}
+	return lines;
+}
+
+/** Everything but the video test, which takes a few seconds (probeVideoTexture) */
+export async function collectDiagnostics(repository: PhotoRepository | null): Promise<DiagnosticsLine[]> {
+	const [appinfo, system, serverVersion] = await Promise.all([
+		readLocalJson('appinfo.json'),
+		systemInfo(),
+		repository ? repository.getServerVersion() : Promise.resolve(null),
+	]);
+	const device = deviceInfo();
+	const gl = webglInfo();
+	const engine = /Chrome\/([\d.]+)/.exec(navigator.userAgent);
+	const lines: DiagnosticsLine[] = [
+		{label: 'Immuch360', value: `${String(appinfo?.version ?? '?')} (${String(appinfo?.id ?? '?')})`},
+		{label: 'immich-tv-webos', value: BASE_VERSION},
+		{label: 'TV', value: [system?.modelName ?? device?.modelName, system?.UHD === 'true' || system?.UHD === true ? 'UHD' : null].filter(Boolean).join(', ') || '?'},
+		{label: 'webOS', value: String(system?.sdkVersion ?? device?.platformVersion ?? '?')},
+		{label: 'Firmware', value: String(system?.firmwareVersion ?? '?')},
+		{label: 'Chromium', value: engine ? engine[1]! : '?'},
+		{label: 'User agent', value: navigator.userAgent},
+		{label: 'Screen', value: `${window.innerWidth} x ${window.innerHeight}, ${window.devicePixelRatio || 1} px/px, screen ${window.screen.width} x ${window.screen.height}`},
+		{label: 'Language', value: `${navigator.language} → ${currentLocale()}${localeLoadError() ? ` (${localeLoadError()})` : ''}`},
+		{label: 'WebGL', value: `1: ${gl.webgl1 ? 'yes' : 'no'}, 2: ${gl.webgl2 ? 'yes' : 'no'}, MAX_TEXTURE_SIZE ${gl.maxTextureSize ?? '?'}`},
+		{label: 'GPU', value: gl.renderer ?? '?'},
+		{label: 'WebAssembly', value: typeof WebAssembly === 'object' ? 'yes' : 'no'},
+		{label: 'Server', value: repository ? `${repository.serverUrl()}, ${serverVersion ?? '?'}` : '?'},
+	];
+	return lines.concat(await decoderLines());
+}
+
+/**
+ * Plays the app's tiny magenta video, draws a frame of it into WebGL and reads the pixel back: on TVs that show
+ * videos on a hardware plane under the page, the frame comes back black and 360° videos can only play flat.
+ */
+export function probeVideoTexture(timeoutMs = 8000): Promise<string> {
+	return new Promise((resolve) => {
+		const video = document.createElement('video');
+		const canvas = document.createElement('canvas');
+		canvas.width = 64;
+		canvas.height = 32;
+		let renderer: SphereRenderer | null = null;
+		let done = false;
+		const finish = (result: string) => {
+			if (done) return;
+			done = true;
+			window.clearTimeout(timer);
+			video.pause();
+			video.removeAttribute('src');
+			video.load();
+			if (video.parentNode) video.parentNode.removeChild(video);
+			renderer?.dispose();
+			resolve(result);
+		};
+		const timer = window.setTimeout(() => finish(`timeout (${video.readyState})`), timeoutMs);
+		try {
+			const gl = getWebGL(canvas);
+			if (!gl) {
+				finish('no WebGL');
+				return;
+			}
+			renderer = new SphereRenderer(canvas, gl);
+		} catch (error) {
+			finish(error instanceof Error ? error.message : String(error));
+			return;
+		}
+		video.muted = true;
+		video.loop = true;
+		video.setAttribute('playsinline', '');
+		video.style.cssText = 'position:fixed;right:0;bottom:0;width:2px;height:2px;opacity:0.01;pointer-events:none';
+		video.addEventListener('error', () => finish(`video error ${video.error?.code ?? '?'}`));
+		video.addEventListener('playing', () => {
+			window.setTimeout(() => {
+				try {
+					renderer!.setFrame(video, video.videoWidth || 256, video.videoHeight || 128);
+					renderer!.setSetup({eye: {left: 0, top: 0, width: 1, height: 1}, crop: {left: 0, top: 0, width: 1, height: 1}});
+					renderer!.draw({yaw: 0, pitch: 0, fov: 60, sharp: false});
+					const [r, g, b] = renderer!.centrePixel();
+					finish(r + g + b > 60 ? `${t('webos_diagnostics_video_texture_ok')} (${r}, ${g}, ${b})` : t('webos_diagnostics_video_texture_black'));
+				} catch (error) {
+					finish(error instanceof Error ? error.message : String(error));
+				}
+			}, 500);
+		});
+		video.src = 'probe.mp4';
+		document.body.appendChild(video);
+		const played = video.play() as Promise<void> | undefined;
+		if (played && typeof played.catch === 'function') played.catch((error: unknown) => finish(`play: ${error instanceof Error ? error.message : String(error)}`));
+	});
+}
+
+/** The page as text for the QR code, without the user agent (the Chromium line says the same in less room) */
+export function diagnosticsText(lines: DiagnosticsLine[]): string {
+	return lines
+		.filter((line) => line.label !== 'User agent')
+		.map((line) => `${line.label}: ${line.value}`)
+		.join('\n');
+}

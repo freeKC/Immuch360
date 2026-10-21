@@ -4,6 +4,7 @@ import {createSpotlightContainer, SpottableButton} from '../../utils/spotlight';
 import {NAVIGATION_RAIL_ID} from '../../utils/constants';
 import type {View} from '../../types/navigation';
 import css from './NavigationRail.module.less';
+import {i18nKey, t} from '../../immuch360/i18n';
 
 interface NavigationRailProps {
 	activeView: View;
@@ -13,11 +14,13 @@ interface NavigationRailProps {
 	accountGradient: string;
 }
 
+// Immuch360: labels from the fork's i18n/ files
 const NAV_ITEMS: {view: View; icon: string; label: string}[] = [
-	{view: 'photos', icon: 'picture', label: 'Photos'},
-	{view: 'albums', icon: 'folder', label: 'Albums'},
-	{view: 'places', icon: 'location', label: 'Places'},
-	{view: 'search', icon: 'search', label: 'Search'},
+	{view: 'photos', icon: 'picture', label: i18nKey('photos')},
+	{view: 'albums', icon: 'folder', label: i18nKey('albums')},
+	{view: 'places', icon: 'location', label: i18nKey('places')},
+	{view: 'search', icon: 'search', label: i18nKey('search')},
+	{view: 'about', icon: 'info', label: i18nKey('about')},
 ];
 
 const RailContainer = createSpotlightContainer({enterTo: 'last-focused'});
@@ -42,7 +45,7 @@ export const NavigationRail: React.FC<NavigationRailProps> = React.memo(({active
 					<div className={css.iconContainer}>
 						<Icon size="tiny">{icon}</Icon>
 					</div>
-					<span className={css.label}>{label}</span>
+					<span className={css.label}>{t(label)}</span>
 				</SpottableButton>
 			))}
 			<div className={css.spacer} />
@@ -53,7 +56,7 @@ export const NavigationRail: React.FC<NavigationRailProps> = React.memo(({active
 						{accountLetter}
 					</span>
 				</div>
-				<span className={css.label}>Account</span>
+				<span className={css.label}>{t('account')}</span>
 			</SpottableButton>
 		</RailContainer>
 	);
