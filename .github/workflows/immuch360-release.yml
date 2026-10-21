@@ -2,18 +2,88 @@ name: Immuch360 Android release
 
 # Builds the signed Android APKs of the fork and attaches them to a GitHub Release.
 # Triggered by pushing a tag like v3.3.0-1, or manually.
+# The Kotlin unit tests of the app (phone flavour, debug) run with every build, and alone on every push of a branch
+# that changes mobile/android (the path filter does not apply to tags).
 
 on:
   push:
     tags: ['v*']
+    branches: ['**']
+    paths: ['mobile/android/**']
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
+  unit-tests:
+    name: Kotlin unit tests (phone debug)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Install mise
+        uses: jdx/mise-action@v2
+        with:
+          install: false
+          cache: true
+
+      - name: Install toolchains (Flutter 3.47.2, Java 21, OpenAPI generator)
+        env:
+          MISE_YES: '1'
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        run: |
+          mise install node java "npm:@openapitools/openapi-generator-cli"
+          cd mobile && mise install
+          mise exec -- flutter --version
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          # The same SDK and NDK as the build job below: the test task builds the Flutter part of the debug app first,
+          # the Rust core included (its build hooks)
+          packages: 'platforms;android-36 build-tools;36.0.0 ndk;28.2.13676358'
+
+      - name: Same NDK for the build hooks and Gradle
+        run: |
+          ndk="$ANDROID_HOME/ndk/28.2.13676358"
+          test -x "$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang"
+          { echo "ANDROID_NDK_HOME=$ndk"; echo "ANDROID_NDK_ROOT=$ndk"; echo "ANDROID_NDK=$ndk"; } >> "$GITHUB_ENV"
+
+      - name: Flutter dependencies and code generation
+        env:
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        run: |
+          mise //mobile:install:ci
+          mise //mobile:codegen
+
+      - name: Kotlin unit tests
+        working-directory: mobile
+        env:
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        run: |
+          # The Gradle wrapper script and local.properties are written by the Flutter tool, not kept in git
+          mise exec -- flutter build apk --config-only
+          # One ABI is enough to compile and run the JVM tests
+          cd android && mise exec -- ./gradlew :app:testPhoneDebugUnitTest -Ptarget-platform=android-x64 --console=plain
+
+      - name: Test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kotlin-unit-tests
+          path: mobile/build/app/reports/tests/testPhoneDebugUnitTest/
+          if-no-files-found: ignore
+
   android:
     name: Build and sign Android APKs
+    # Not on the push of a branch: that push runs the unit tests only
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
