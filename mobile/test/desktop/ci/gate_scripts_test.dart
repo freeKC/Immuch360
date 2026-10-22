@@ -72,6 +72,26 @@ jobs:
           GH_TOKEN: \${{ github.token }}
 ''';
 
+/// The job of a release workflow that signs the Windows files, with the credentials of the signing account in the env
+/// of the step that signs
+const _signJob = r'''
+  sign-windows:
+    needs: build
+    runs-on: windows-2022
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Sign
+        env:
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        run: python .github/desktop/windows_sign.py bundle
+''';
+
 const _mise = '''
 [tools]
 java = "21.0.2"
@@ -688,6 +708,44 @@ abstract class SyncEvents {
         expect(release(_releaseWorkflow.replaceFirst(RegExp(r'checkout@\w+ # v7.0.1'), 'checkout@v7')).exitCode, 1);
         expect(release(_releaseWorkflow.replaceFirst('persist-credentials: false', 'fetch-depth: 0')).exitCode, 1);
         expect(release(_releaseWorkflow.replaceFirst('permissions: {}\n', '')).exitCode, 1);
+      });
+
+      test('lets the credentials of the signing account into the steps of sign-windows that run a command only', () {
+        const signed = '$_releaseWorkflow$_signJob';
+        final run = release(signed);
+        expect(run.exitCode, 0, reason: '$run');
+        expect(run.output, contains('no secret but the signing credentials in the run steps of sign-windows'));
+        // Never in the workflow that builds pull request code
+        expect(check(signed).exitCode, 1);
+
+        const sign = '        run: python .github/desktop/windows_sign.py bundle';
+        const action = '        uses: azure/artifact-signing-action@c7ab2a863ab5f9a846ddb8265964877ef296ee82 # v2.0.0';
+        const tenant = 'AZURE_TENANT_ID: \${{ secrets.AZURE_TENANT_ID }}\n';
+        const readOnly = '    permissions:\n      contents: read\n    steps:';
+        for (final (workflow, message) in [
+          // Another secret, or a credential under another name
+          (signed.replaceFirst('secrets.AZURE_TENANT_ID', 'secrets.RELEASE_TOKEN'), 'line 35: a secret'),
+          (signed.replaceFirst('AZURE_CLIENT_ID: \${{', 'GH_TOKEN: \${{'), 'line 36: a secret'),
+          // Another job, the env of the job, a step that uses an action
+          (signed.replaceFirst('  sign-windows:', '  sign:'), 'line 35: a secret'),
+          (
+            signed
+                .replaceFirst('          $tenant', '')
+                .replaceFirst(readOnly, readOnly.replaceFirst('    steps:', '    env:\n      $tenant    steps:')),
+            'line 30: a secret',
+          ),
+          (signed.replaceFirst(sign, action), 'line 35: a secret'),
+          // The job that holds the secrets may not write
+          (
+            signed.replaceFirst(readOnly, readOnly.replaceFirst('read', 'write')),
+            'the sign-windows job holds secrets and may not write',
+          ),
+        ]) {
+          expect(workflow, isNot(signed));
+          final refused = release(workflow);
+          expect(refused.exitCode, 1, reason: '$refused');
+          expect(refused.output, contains(message));
+        }
       });
     });
   }, skip: skipCiScripts);

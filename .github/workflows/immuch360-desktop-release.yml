@@ -2,21 +2,35 @@ name: Immuch360 Desktop release
 
 # On the push of a desktop pre-release tag, desktop-v<version>-<n> for desktop build n (desktop-v3.3.0-rc.0-5), the
 # packages of Immuch360 Desktop are built from the tag by immuch360-desktop.yml, called here with its own read-only
-# permissions, then attached to the GitHub release of the tag: the Windows ZIP and installer, the Linux .deb and .rpm,
-# the macOS ZIP and DMG, the sources of the libsmb2 library the Linux packages carry (LGPL), and SHA256SUMS.txt for every
-# file of the release. .github/desktop/desktop_release.py attaches
+# permissions, the Windows files are signed, then all are attached to the GitHub release of the tag: the Windows ZIP
+# and installer, the Linux .deb and .rpm, the macOS ZIP and DMG, the sources of the libsmb2 library the Linux packages
+# carry (LGPL), and SHA256SUMS.txt for every file of the release. .github/desktop/desktop_release.py attaches
 # them, here with the token of the run as on the owner's computer with the owner's token, so that both ways give the
 # same release: it creates the release, as a pre-release, when the tag has none, and never replaces notes written by
-# hand. Run by hand on a desktop-v* tag (gh workflow run immuch360-desktop-release.yml --ref <tag>), it builds and
-# attaches them again; on a branch it builds them and lists what it would attach.
+# hand. Run by hand on a desktop-v* tag (gh workflow run immuch360-desktop-release.yml --ref <tag>), it builds, signs
+# and attaches them again; on a branch it builds and signs them and lists what it would attach.
 #
-# This is the one desktop workflow that writes to the repository: its release job only, with "contents: write", on
-# desktop-v* tags and by hand, never on a pull request; .github/desktop/check_workflow.py --release holds it to that.
+# The sign-windows job signs the Windows files with Azure Artifact Signing (formerly Trusted Signing), publisher
+# APROGSYS: every .exe and .dll of the ZIP that has no signature yet, then the installer, made again from the signed
+# folder so that Inno Setup signs its uninstaller too (.github/desktop/windows_sign.py). The signed ZIP and installer
+# replace the artifacts of the build under the same names, and the release job checks that it attaches those.
+# Run by hand with sign_test, the workflow builds and signs, keeps the signed files as artifacts of the run, and skips
+# the release job: no release is created or touched, whatever the ref.
+#
+# This is the one desktop workflow that writes to the repository, its release job only, with "contents: write", and
+# the one that holds secrets, its sign-windows job only, which reads the repository and gets the three credentials of
+# the signing account in the steps that sign; it runs on desktop-v* tags and by hand, never on a pull request.
+# .github/desktop/check_workflow.py --release holds it to that.
 
 on:
   push:
     tags: ['desktop-v*']
   workflow_dispatch:
+    inputs:
+      sign_test:
+        description: Build and sign only, the signed Windows files kept as artifacts of the run; no release is touched
+        type: boolean
+        default: false
 
 permissions: {}
 
@@ -27,9 +41,112 @@ jobs:
     permissions:
       contents: read
 
+  sign-windows:
+    name: Sign the Windows files
+    needs: build
+    runs-on: windows-2022
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    outputs:
+      zip_sha256: ${{ steps.check.outputs.zip_sha256 }}
+      setup_sha256: ${{ steps.check.outputs.setup_sha256 }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      LABEL: ${{ needs.build.outputs.label }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: Immuch360-Desktop-*-windows-x64*
+          merge-multiple: true
+          skip-decompress: true
+          path: unsigned
+
+      - name: The two Windows files of the build
+        run: |
+          ls -l unsigned
+          for file in "unsigned/Immuch360-Desktop-$LABEL-windows-x64.zip" \
+                      "unsigned/Immuch360-Desktop-$LABEL-windows-x64-setup.exe"; do
+            [ -f "$file" ] || { echo "::error::no $file"; exit 1; }
+          done
+
+      # signtool and the Artifact Signing client from nuget.org, at the versions of azure/artifact-signing-action
+      # v2.0.0, checked by their SHA-256. The action itself signs a list of files, while Inno Setup must call a command
+      # to sign the uninstaller it makes, hence the same tools called directly
+      - name: Signing tools
+        run: python .github/desktop/windows_sign.py tools --dir "$RUNNER_TEMP/signing"
+
+      - name: Sign the program and its DLLs, and write the ZIP again
+        id: bundle
+        env:
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        run: |
+          python .github/desktop/windows_sign.py bundle --tools "$RUNNER_TEMP/signing" \
+            --zip "unsigned/Immuch360-Desktop-$LABEL-windows-x64.zip" --work "$RUNNER_TEMP/work" --out signed \
+            --github-output
+
+      # The installer of the signed folder, as the build made it from the unsigned one, its uninstaller and itself
+      # signed by Inno Setup through windows_sign.py sign
+      - name: Make the installer again, signed
+        env:
+          FOLDER: ${{ steps.bundle.outputs.folder }}
+          FILE_VERSION: ${{ steps.bundle.outputs.file_version }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        run: |
+          python .github/desktop/desktop_installers.py windows --bundle "$FOLDER" --label "$LABEL" \
+            --file-version "$FILE_VERSION" --out signed --sign-with "$RUNNER_TEMP/signing"
+
+      - name: The log of signtool
+        if: always()
+        run: cat "$RUNNER_TEMP/signing/sign.log" 2>/dev/null || echo "no signing log"
+
+      # signtool verify /pa on every .exe and .dll of the ZIP and on the installer, then a silent installation for the
+      # current user: its uninstaller signed, its files those of the ZIP, byte for byte
+      - name: Check the signatures
+        id: check
+        run: |
+          python .github/desktop/windows_sign.py check --tools "$RUNNER_TEMP/signing" \
+            --zip "signed/Immuch360-Desktop-$LABEL-windows-x64.zip" \
+            --setup "signed/Immuch360-Desktop-$LABEL-windows-x64-setup.exe" \
+            --install-dir "$RUNNER_TEMP/installed" --github-output
+
+      # In place of the artifacts of the build, under the same names (with "archive: false" the artifact is the file
+      # and the name it is replaced by must be given)
+      - name: Upload the signed ZIP
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Immuch360-Desktop-${{ env.LABEL }}-windows-x64.zip
+          path: signed/Immuch360-Desktop-${{ env.LABEL }}-windows-x64.zip
+          archive: false
+          overwrite: true
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Upload the signed installer
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Immuch360-Desktop-${{ env.LABEL }}-windows-x64-setup.exe
+          path: signed/Immuch360-Desktop-${{ env.LABEL }}-windows-x64-setup.exe
+          archive: false
+          overwrite: true
+          retention-days: 14
+          if-no-files-found: error
+
   release:
     name: Attach the packages to the release
-    needs: build
+    needs: [build, sign-windows]
+    # A sign test never reaches a release
+    if: ${{ !inputs.sign_test }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
@@ -46,6 +163,17 @@ jobs:
           # Each artifact is one file uploaded as it is: kept whole, the two ZIPs too, under its own name
           skip-decompress: true
           path: release
+
+      # The Windows files are the ones the sign-windows job signed and checked, so SHA256SUMS.txt is that of them
+      - name: The signed Windows files
+        env:
+          LABEL: ${{ needs.build.outputs.label }}
+          ZIP_SHA256: ${{ needs.sign-windows.outputs.zip_sha256 }}
+          SETUP_SHA256: ${{ needs.sign-windows.outputs.setup_sha256 }}
+        run: |
+          echo "$ZIP_SHA256  release/Immuch360-Desktop-$LABEL-windows-x64.zip" > "$RUNNER_TEMP/signed.sha256"
+          echo "$SETUP_SHA256  release/Immuch360-Desktop-$LABEL-windows-x64-setup.exe" >> "$RUNNER_TEMP/signed.sha256"
+          sha256sum -c "$RUNNER_TEMP/signed.sha256"
 
       # The seven files of the build, all there and nothing else, before anything is attached
       - name: The files of the build

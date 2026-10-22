@@ -351,7 +351,7 @@ What the app can read and play, for the reader who wants the whole extent. Each 
 
 ### Windows
 
-1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.7-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) (with `SHA256SUMS.txt` to check it) and open it. The files are not signed yet: Windows SmartScreen may show "Windows protected your PC", choose "More info" then "Run anyway".
+1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.7-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) (with `SHA256SUMS.txt` to check it) and open it. Build 7 is not signed: Windows SmartScreen may show "Windows protected your PC", choose "More info" then "Run anyway". From the next desktop build, the installer and the ZIP are signed; Windows shows APROGSYS as the publisher.
 2. Choose "Install for me only" (no administrator rights) or "Install for all users", then the language of the installer, the one of Windows already selected.
 3. Start Immuch360 Desktop from the Start menu. Photos and videos get it in "Open with" (right click a file, Open with); it never makes itself their default program. The first start of a new build can take up to a minute while Windows scans the files.
 4. Windows 10 or 11, 64 bit. To update, open the installer of the next build: your sign in, folders and settings stay. The ZIP of the same release is the same program as a folder, to unzip anywhere and start `immuch360.exe` from it.
