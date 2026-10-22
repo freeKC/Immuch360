@@ -96,7 +96,7 @@ void main() {
       );
       expect(card, findsOneWidget);
       expect(find.text('Connect a TV or computer'), findsOneWidget);
-      expect(find.text('Sign in your TV, headset or computer by scanning the code it shows'), findsOneWidget);
+      expect(find.text('Sign your TV, headset or computer in by scanning the code it shows'), findsOneWidget);
     });
 
     testWidgets('not without a server: connecting one comes first', (tester) async {
@@ -190,6 +190,25 @@ void main() {
       expect(find.widgetWithText(TextButton, 'Enter a code instead'), findsOneWidget);
     });
 
+    testWidgets('a link of a screen opens the scanner, and gives its address to Enter a code', (tester) async {
+      phoneScreen(tester);
+      final scanner = _FakeScanner(QrScanResult(status: QrScanStatus.cancelled));
+      await pump(
+        tester,
+        const ConnectScreenPage(linkedAddress: '192.168.1.23:8361'),
+        overrides: [
+          pairedScreensProvider.overrideWith(() => _Screens([])),
+          qrScanApiProvider.overrideWithValue(scanner),
+        ],
+      );
+      // The scanner at once: the link itself made the phone say nothing to the screen
+      expect(scanner.prompts, ['Scan the code on the TV or computer']);
+      expect(
+        find.text('Opened from the screen at 192.168.1.23:8361. Scan the code it shows, or enter that code instead.'),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('a code of the LG webOS app is told apart', (tester) async {
       phoneScreen(tester);
       await pump(
@@ -217,81 +236,31 @@ void main() {
       app: '3.3.0',
     );
 
-    Future<String?> Function() open(WidgetTester tester, {int headers = 0, bool away = false, bool link = false}) {
-      String? answer;
-      var done = false;
-      return () async {
-        await pump(
-          tester,
-          Builder(
-            builder: (context) => Scaffold(
-              body: Center(
-                child: TextButton(
-                  onPressed: () async {
-                    answer = await showPairingConfirmSheet(
-                      context,
-                      device: device,
-                      server: 'photos.example.com',
-                      user: 'Fred',
-                      headerCount: headers,
-                      notOnPhoneNetwork: away,
-                      fromDeepLink: link,
-                    );
-                    done = true;
-                  },
-                  child: const Text('open'),
-                ),
-              ),
-            ),
-          ),
-        );
-        await tester.tap(find.text('open'));
-        await tester.pumpAndSettle();
-        return done ? answer : null;
-      };
-    }
-
-    testWidgets('asks before anything is created, with the cascade', (tester) async {
-      phoneScreen(tester);
-      await open(tester, headers: 2)();
-      expect(find.text('Sign in Living room TV?'), findsOneWidget);
-      expect(find.text('Living room TV will be signed in to photos.example.com as Fred.'), findsOneWidget);
-      expect(find.textContaining('It stays signed in while this phone is.'), findsOneWidget);
-      expect(find.text('2 custom headers go along'), findsOneWidget);
-      expect(find.text('This screen is not on the network of your phone.'), findsNothing);
-      expect(find.text('Only continue if this device shows a code right now.'), findsNothing);
-    });
-
-    testWidgets('warns of a screen off the phone network and of a code that came by a link', (tester) async {
-      phoneScreen(tester);
-      await open(tester, away: true, link: true)();
-      expect(find.text('This screen is not on the network of your phone.'), findsOneWidget);
-      expect(find.text('Only continue if this device shows a code right now.'), findsOneWidget);
-      expect(find.textContaining('custom header'), findsNothing);
-    });
-
-    testWidgets('gives the name the user typed, nothing on Cancel', (tester) async {
-      phoneScreen(tester);
-      String? answer;
-      var closed = false;
+    /// Opens the sheet; gives what it answered once closed
+    Future<void> open(
+      WidgetTester tester,
+      void Function(PairingConfirmChoice?) answered, {
+      List<String> headers = const [],
+      bool away = false,
+    }) async {
       await pump(
         tester,
         Builder(
           builder: (context) => Scaffold(
             body: Center(
               child: TextButton(
-                onPressed: () async {
-                  answer = await showPairingConfirmSheet(
+                onPressed: () async => answered(
+                  await showPairingConfirmSheet(
                     context,
                     device: device,
+                    address: '192.168.1.23',
+                    check: '048213',
                     server: 'photos.example.com',
                     user: 'Fred',
-                    headerCount: 0,
-                    notOnPhoneNetwork: false,
-                    fromDeepLink: false,
-                  );
-                  closed = true;
-                },
+                    headerNames: headers,
+                    notOnPhoneNetwork: away,
+                  ),
+                ),
                 child: const Text('open'),
               ),
             ),
@@ -300,19 +269,83 @@ void main() {
       );
       await tester.tap(find.text('open'));
       await tester.pumpAndSettle();
-      await tester.enterText(find.byKey(const Key('pairing_confirm_name')), '  Lounge   TV ');
+    }
+
+    testWidgets('asks before anything is created: what, where, the number to check, the cascade', (tester) async {
+      phoneScreen(tester);
+      await open(tester, (_) {});
+      expect(find.text('Sign Living room TV in?'), findsOneWidget);
+      expect(find.text('TV at 192.168.1.23'), findsOneWidget);
+      expect(find.text('Check that the screen shows the same number. Cancel if it does not.'), findsOneWidget);
+      expect(find.text('048 213'), findsOneWidget);
+      expect(find.text('Living room TV will be signed in to photos.example.com as Fred.'), findsOneWidget);
+      expect(find.textContaining('It stays signed in while this phone is.'), findsOneWidget);
+      expect(find.byKey(const Key('pairing_confirm_headers')), findsNothing);
+      expect(find.text('This screen is not on the network of your phone.'), findsNothing);
+    });
+
+    testWidgets('names the custom headers, which the user may keep on the phone', (tester) async {
+      phoneScreen(tester);
+      PairingConfirmChoice? choice;
+      await open(tester, (value) => choice = value, headers: ['CF-Access-Client-Id', 'CF-Access-Client-Secret']);
+      expect(find.text('Send the 2 custom headers of this phone'), findsOneWidget);
+      expect(
+        find.text(
+          'CF-Access-Client-Id, CF-Access-Client-Secret. They often hold the secrets of a proxy: only send them to a '
+          'screen of yours.',
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const Key('pairing_confirm_headers')));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const Key('pairing_confirm_button')));
+      await tester.tap(find.byKey(const Key('pairing_confirm_button')));
+      await tester.pumpAndSettle();
+      expect(choice?.sendHeaders, isFalse);
+      expect(choice?.label, 'Living room TV');
+    });
+
+    testWidgets('warns of a screen off the phone network', (tester) async {
+      phoneScreen(tester);
+      await open(tester, (_) {}, away: true);
+      expect(find.text('This screen is not on the network of your phone.'), findsOneWidget);
+    });
+
+    testWidgets('gives the name the user typed, nothing on Cancel', (tester) async {
+      phoneScreen(tester);
+      PairingConfirmChoice? choice;
+      var closed = false;
+      await open(tester, (value) {
+        choice = value;
+        closed = true;
+      });
+      await tester.enterText(find.byKey(const Key('pairing_confirm_name')), '  Lounge \u202E  TV ');
+      await tester.ensureVisible(find.byKey(const Key('pairing_confirm_button')));
       await tester.tap(find.byKey(const Key('pairing_confirm_button')));
       await tester.pumpAndSettle();
       expect(closed, isTrue);
-      expect(answer, 'Lounge TV');
+      expect(choice?.label, 'Lounge TV');
+      expect(choice?.sendHeaders, isTrue);
 
       closed = false;
       await tester.tap(find.text('open'));
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Cancel'));
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
       expect(closed, isTrue);
-      expect(answer, isNull);
+      expect(choice, isNull);
+    });
+  });
+
+  group('a link of a screen', () {
+    test('gives the address, or nothing on a big screen', () async {
+      final link = Uri.parse(
+        'immuch360://pair?u=${Uri.encodeComponent('http://192.168.1.23:8361/p#1.AAECAwQFBgc.AQIDBAUGBwgJCgsMDQ4PEA')}',
+      );
+      expect(await pairingLinkAddress(link, isBigScreen: () async => false), '192.168.1.23:8361');
+      expect(await pairingLinkAddress(link, isBigScreen: () async => true), isNull);
+      expect(await pairingLinkAddress(Uri.parse('immuch360://pair?u=x'), isBigScreen: () async => false), isNull);
     });
   });
 }

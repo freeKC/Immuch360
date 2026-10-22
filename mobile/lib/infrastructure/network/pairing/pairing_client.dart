@@ -76,17 +76,23 @@ String? _shortText(Object? value) {
   if (value is! String) {
     return null;
   }
-  final text = value.replaceAll(RegExp(r'[\x00-\x1f\x7f]'), ' ').trim();
-  return text.length > 64 ? text.substring(0, 64) : text;
+  final text = cleanPairingText(value);
+  return text.length > 64 ? text.substring(0, 64).trimRight() : text;
 }
 
 /// A hello the screen answered and proved: the channel of the rest of the pairing
 class PairingHello {
-  const PairingHello({required this.target, required this.channel, required this.device});
+  const PairingHello({required this.target, required this.channel, required this.device, required this.check});
 
   final PairingTarget target;
   final PairingChannel channel;
   final PairingScreenDevice device;
+
+  /// The six digits the screen shows for this hello (pairingCheckNumber)
+  final String check;
+
+  @override
+  String toString() => 'PairingHello(${target.mode.wire})';
 }
 
 /// What GET /p/info tells: the current code's id (not secret), null while the screen's codes are paused
@@ -106,7 +112,7 @@ class PairingHttpClient {
   PairingHttpClient({
     HttpClient Function()? createClient,
     this.connectTimeout = const Duration(seconds: 5),
-    this.answerTimeout = const Duration(seconds: 25),
+    this.answerTimeout = const Duration(seconds: 35),
     Random? random,
     @visibleForTesting Uri Function(String host, int port)? addressOf,
   }) : _createClient = createClient ?? _bareClient,
@@ -194,7 +200,21 @@ class PairingHttpClient {
       target: target,
       channel: PairingChannel(transcript: transcript, keys: keys, sends: PairingDirection.up, random: _random),
       device: PairingScreenDevice.fromJson(device),
+      check: pairingCheckNumber(confirmKey: keys.confirm, transcript: transcript),
     );
+  }
+
+  /// Tells the screen of [hello] that its user cancelled, so that its panel no longer waits for this phone; sealed
+  /// like a session, so that nobody else can send it. Best effort: throws [PairingException].
+  Future<void> cancel(PairingHello hello) async {
+    final answer = await _request(
+      'POST',
+      _addressOf(hello.target.host, hello.target.port).replace(path: '/p/${hello.target.id}/session'),
+      hello.channel.seal({'v': pairingProtocolVersion, 'cancel': true}),
+    );
+    if (answer.status != HttpStatus.ok) {
+      throw PairingException(_failureOf(answer));
+    }
   }
 
   /// Seals [payload] for the screen of [hello] and gives its sealed answer, opened; [PairingFailure.lost] when no

@@ -29,7 +29,7 @@ class PairingSignInResult {
   const PairingSignInResult({
     required this.answer,
     required this.signedIn,
-    this.wrongPassword = false,
+    this.retry = false,
     this.notice = ScreenPairingNotice.signInFailed,
     this.detail,
   });
@@ -38,8 +38,9 @@ class PairingSignInResult {
   final Map<String, Object?> answer;
   final bool signedIn;
 
-  /// The browser page's email or password was refused: the code stays for another try
-  final bool wrongPassword;
+  /// The browser page may try again (a wrong email or password, a server address that does not answer or takes OAuth
+  /// only): the code stays for another try
+  final bool retry;
 
   /// What the panel says under the next code when the sign in failed
   final ScreenPairingNotice notice;
@@ -337,6 +338,13 @@ class PairingServer {
         _recordFailure(client);
         await _json(response, HttpStatus.badRequest, {'v': pairingProtocolVersion, 'error': 'rejected'});
         return route;
+      case SealedUnknown():
+        _recordFailure(client);
+        await _json(response, HttpStatus.badRequest, {'v': pairingProtocolVersion, 'error': 'invalid'});
+        return route;
+      case SealedCancelled(:final hello):
+        await _json(response, HttpStatus.ok, hello.channel.seal({'v': pairingProtocolVersion, 'status': 'cancelled'}));
+        return '$route cancelled';
       case SealedBusy():
         await _json(response, HttpStatus.conflict, {'v': pairingProtocolVersion, 'error': 'busy'});
         return route;
@@ -349,13 +357,19 @@ class PairingServer {
           result = const PairingSignInResult(answer: {'status': 'failed'}, signedIn: false);
         }
         final answer = {'v': pairingProtocolVersion, ...result.answer};
-        if (result.wrongPassword) {
-          final left = _session.finish(id: id, signedIn: false, wrongPassword: true, notice: result.notice);
+        if (result.retry) {
+          final left = _session.finish(
+            id: id,
+            signedIn: false,
+            retry: true,
+            notice: result.notice,
+            detail: result.detail,
+          );
           answer['triesLeft'] = left ?? 0;
         }
         // The answer goes out before the panel moves on: the phone keeps the session only once it has it
         await _json(response, HttpStatus.ok, hello.channel.seal(answer));
-        if (!result.wrongPassword) {
+        if (!result.retry) {
           _session.finish(id: id, signedIn: result.signedIn, notice: result.notice, detail: result.detail);
         }
         return '$route ${result.answer['status']}';

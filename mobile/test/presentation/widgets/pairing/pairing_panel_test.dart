@@ -21,6 +21,7 @@ ScreenPairingView _view({
   ScreenPairingPhase phase = ScreenPairingPhase.waiting,
   ScreenPairingProblem problem = ScreenPairingProblem.none,
   ScreenPairingNotice notice = ScreenPairingNotice.none,
+  List<String> checks = const [],
 }) => ScreenPairingView(
   phase: phase,
   kind: kind,
@@ -33,6 +34,7 @@ ScreenPairingView _view({
   notice: notice,
   noticeDetail: 'photos.example.com',
   port: 8361,
+  checks: checks,
 );
 
 void main() {
@@ -125,6 +127,24 @@ void main() {
     expect(find.text('Too many attempts: here is a new code.'), findsOneWidget);
     await pumpPanel(tester, _view(notice: ScreenPairingNotice.serverUnreachable));
     expect(find.text("Can't reach photos.example.com from here. Here is a new code."), findsOneWidget);
+  });
+
+  testWidgets('the number the phone shows, and every phone that said hello, still on the half screen', (tester) async {
+    tvScreen(tester);
+    await pumpPanel(tester, _view(phase: ScreenPairingPhase.confirmOnPhone, checks: ['048213']));
+    expect(find.text('Check that your phone shows'), findsOneWidget);
+    expect(find.text('048 213'), findsOneWidget);
+    expect(tester.getRect(find.textContaining('http://192.168.1.23:8361/p')).bottom, lessThanOrEqualTo(474));
+
+    await pumpPanel(tester, _view(phase: ScreenPairingPhase.confirmOnPhone, checks: ['048213', '930100']));
+    expect(find.text('Several devices are signing in. Your phone shows one of these numbers:'), findsOneWidget);
+    expect(find.byKey(const Key('pairing_checks')), findsOneWidget);
+    expect(find.textContaining('930 100'), findsOneWidget);
+    expect(tester.getRect(find.textContaining('http://192.168.1.23:8361/p')).bottom, lessThanOrEqualTo(474));
+
+    // No number while nobody waits on a phone
+    await pumpPanel(tester, _view(checks: ['048213']));
+    expect(find.byKey(const Key('pairing_checks')), findsNothing);
   });
 
   testWidgets('paused: no code, and a button for a new one', (tester) async {

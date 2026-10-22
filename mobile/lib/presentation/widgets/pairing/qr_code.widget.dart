@@ -14,9 +14,22 @@ class QrCodeView extends StatelessWidget {
   final double size;
   final String? semanticLabel;
 
+  // The panel rebuilds every second for its countdown: the last matrix is kept, not encoded again each time
+  static ({String data, QrMatrix matrix})? _last;
+
+  static QrMatrix _matrixOf(String data) {
+    final last = _last;
+    if (last != null && last.data == data) {
+      return last.matrix;
+    }
+    final matrix = QrMatrix.encode(utf8.encode(data));
+    _last = (data: data, matrix: matrix);
+    return matrix;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final matrix = QrMatrix.encode(utf8.encode(data));
+    final matrix = _matrixOf(data);
     return Semantics(
       label: semanticLabel,
       image: true,

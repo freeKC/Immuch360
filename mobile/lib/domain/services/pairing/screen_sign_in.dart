@@ -1,12 +1,14 @@
 // What a big screen does with what arrives sealed on its pairing listener: the session a phone made for it, or the
 // server, email and password of the browser page. It applies the phone's custom headers, tries the server addresses
-// in order within a time the phone waits for, checks the token with the server, and answers how it went. A failed
-// attempt leaves the screen as it was: its headers, its name, no token.
+// in order within a time the phone waits for (only a ping, which changes nothing), makes the first that answers the
+// app's server, checks the token with the server, and answers how it went. A failed attempt leaves the screen as it
+// was: its headers, its name, its server address, no token.
 //
 // Nothing here goes to the logs but the outcome: never the token, the password, a header value or an address.
 
 import 'dart:async';
 
+import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/pairing/phone_pairing.service.dart';
 import 'package:immich_mobile/domain/services/pairing/screen_pairing_session.dart';
 import 'package:immich_mobile/infrastructure/network/pairing/pairing_server.dart';
@@ -19,24 +21,32 @@ enum PasswordSignInOutcome { signedIn, wrongCredentials, failed }
 
 /// What the screen had before an attempt, put back when it fails
 class ScreenSignInSnapshot {
-  const ScreenSignInSnapshot({required this.headers, required this.label});
+  const ScreenSignInSnapshot({required this.headers, required this.label, this.serverUrl, this.serverEndpoint});
   final Map<String, String> headers;
   final String? label;
+
+  /// StoreKey.serverUrl and StoreKey.serverEndpoint: the login form fills its address from them
+  final String? serverUrl;
+  final String? serverEndpoint;
 }
 
 /// The app's side of a sign in, replaced by a fake in the tests
 abstract interface class ScreenSignInActions {
   Future<ScreenSignInSnapshot> snapshot();
 
-  /// Puts [snapshot] back and forgets any token the attempt saved
+  /// Puts [snapshot] back (the server address too) and forgets any token the attempt saved
   Future<void> restore(ScreenSignInSnapshot snapshot);
   Future<void> setCustomHeaders(Map<String, String> headers);
 
   /// The name of this screen in its device headers (StoreKey.pairingScreenLabel)
   Future<void> setLabel(String label);
 
-  /// Whether [endpoint] answers as an Immich server within [timeout]; it becomes the app's server when it does
-  Future<bool> tryServer(String endpoint, Duration timeout);
+  /// The API address of [endpoint] when it answers as an Immich server within [timeout], else null. Changes nothing:
+  /// an address that answers after its time cannot become the server under the next one.
+  Future<String?> tryServer(String endpoint, Duration timeout);
+
+  /// Makes [apiUrl], an address [tryServer] gave, the app's server
+  Future<void> useServer(String apiUrl);
 
   /// Saves [token] and checks it with the server (/users/me): false when the server refused it
   Future<bool> useToken(String token);
@@ -64,7 +74,7 @@ class ScreenSignIn implements PairingSignIn {
   ScreenSignIn(
     this._actions, {
     this.perServer = const Duration(seconds: 6),
-    this.budget = const Duration(seconds: 17),
+    this.budget = const Duration(seconds: 12),
     DateTime Function()? clock,
   }) : _clock = clock ?? DateTime.now;
 
@@ -73,7 +83,8 @@ class ScreenSignIn implements PairingSignIn {
   /// How long one address may take to answer
   final Duration perServer;
 
-  /// How long all of them may take: the phone gives up after 25 s and deletes the session
+  /// How long all of them may take: with the check of the token (up to 7 s) and the settings, well within the 35 s
+  /// after which the phone gives up and deletes the session
   final Duration budget;
   final DateTime Function() _clock;
 
@@ -113,7 +124,8 @@ class ScreenSignIn implements PairingSignIn {
         await _actions.setLabel(label);
       }
       final tried = await _reach(endpoints.take(maxEndpoints).toList());
-      if (tried.reached == null) {
+      final reached = tried.reached;
+      if (reached == null) {
         await _actions.restore(snapshot);
         _log.info('Pairing: no address of the server answered (${tried.count} tried)');
         return PairingSignInResult(
@@ -123,6 +135,7 @@ class ScreenSignIn implements PairingSignIn {
           detail: _hostOf(server ?? endpoints.first),
         );
       }
+      await _actions.useServer(reached);
       if (!await _actions.useToken(token)) {
         await _actions.restore(snapshot);
         _log.info('Pairing: the server refused the session of the phone');
@@ -146,32 +159,38 @@ class ScreenSignIn implements PairingSignIn {
     final email = credentials['email'];
     final password = credentials['password'];
     if (server == null || email is! String || password is! String || email.length > 320 || password.length > 1024) {
-      return const PairingSignInResult(answer: {'status': 'invalid'}, signedIn: false, wrongPassword: true);
+      return const PairingSignInResult(answer: {'status': 'invalid'}, signedIn: false, retry: true);
     }
     final snapshot = await _actions.snapshot();
     try {
       final tried = await _reach([server]);
-      if (tried.reached == null) {
+      final reached = tried.reached;
+      // A typo in the address: the page may correct it with the same code, as for a wrong password
+      if (reached == null) {
         await _actions.restore(snapshot);
         return PairingSignInResult(
           answer: const {'status': 'serverUnreachable', 'tried': 1},
           signedIn: false,
+          retry: true,
           notice: ScreenPairingNotice.serverUnreachable,
           detail: _hostOf(server),
         );
       }
+      await _actions.useServer(reached);
       final options = await _actions.loginOptions();
       if (!options.passwordLogin) {
         await _actions.restore(snapshot);
         return PairingSignInResult(
           answer: {'status': 'oauthOnly', 'provider': options.oauthProvider ?? 'OAuth'},
           signedIn: false,
+          retry: true,
         );
       }
       switch (await _actions.login(email.trim(), password)) {
         case PasswordSignInOutcome.wrongCredentials:
           _log.info('Pairing: the browser page gave a wrong email or password');
-          return const PairingSignInResult(answer: {'status': 'badCredentials'}, signedIn: false, wrongPassword: true);
+          await _actions.restore(snapshot);
+          return const PairingSignInResult(answer: {'status': 'badCredentials'}, signedIn: false, retry: true);
         case PasswordSignInOutcome.failed:
           await _actions.restore(snapshot);
           return const PairingSignInResult(answer: {'status': 'failed'}, signedIn: false);
@@ -188,7 +207,7 @@ class ScreenSignIn implements PairingSignIn {
     return const PairingSignInResult(answer: {'status': 'signedIn'}, signedIn: true);
   }
 
-  /// The first of [endpoints] that answers, within [perServer] each and [budget] in all
+  /// The API address of the first of [endpoints] that answers, within [perServer] each and [budget] in all
   Future<({String? reached, int count})> _reach(List<String> endpoints) async {
     final start = _clock();
     var count = 0;
@@ -199,9 +218,9 @@ class ScreenSignIn implements PairingSignIn {
       }
       count++;
       final timeout = left < perServer ? left : perServer;
-      final reached = await _actions.tryServer(endpoint, timeout).timeout(timeout, onTimeout: () => false);
-      if (reached) {
-        return (reached: endpoint, count: count);
+      final reached = await _actions.tryServer(endpoint, timeout).timeout(timeout, onTimeout: () => null);
+      if (reached != null) {
+        return (reached: reached, count: count);
       }
     }
     return (reached: null, count: count);
@@ -224,7 +243,7 @@ class ScreenSignIn implements PairingSignIn {
     if (value is! String) {
       return null;
     }
-    final text = value.replaceAll(RegExp(r'[\x00-\x1f\x7f]'), ' ').trim();
+    final text = cleanPairingText(value);
     if (text.isEmpty) {
       return null;
     }

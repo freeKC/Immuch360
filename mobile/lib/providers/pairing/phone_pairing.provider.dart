@@ -25,9 +25,20 @@ final _log = Logger('PhonePairing');
 
 final qrScanApiProvider = Provider<QrScanApi>((_) => QrScanApi());
 
-/// A big screen's code that came by the immuch360://pair link while the Connect page shows: the page takes it from
-/// here, since the router does not open the page over itself
+/// The address of a big screen ("192.168.1.23:8361") that came by an immuch360://pair link while the Connect page
+/// shows: the page takes it from here, since the router does not open the page over itself
 final pendingPairingLinkProvider = StateProvider<String?>((_) => null);
+
+/// The address ("192.168.1.23:8361") of the screen an immuch360://pair link names, for the Connect page; null when it
+/// names none, or when this device is a big screen ([isBigScreen]), which is signed in rather than signing in. The
+/// link never makes the app talk to that address: the Connect page scans the code on the screen, or asks for it.
+Future<String?> pairingLinkAddress(Uri uri, {required Future<bool> Function() isBigScreen}) async {
+  final address = parsePairingLink(uri.toString());
+  if (address == null || await isBigScreen()) {
+    return null;
+  }
+  return '${address.host}:${address.port}';
+}
 
 /// The sessions of the phone's account through the app's API client (its cookie, headers and certificate)
 class AppPairingSessions implements PairingSessions {
@@ -87,11 +98,14 @@ final phonePairingServiceProvider = Provider<PhonePairingService>(
 final phonePairingAccountProvider = Provider<Future<PhonePairingAccount> Function()>((ref) {
   return () async {
     final user = ref.read(currentUserProvider);
+    final server = Store.tryGet(StoreKey.serverUrl);
+    // The address the phone uses now first (at home the local one), the server's own address last, so that a screen
+    // that cannot reach the first ones still finds the server
     final endpoints = <String>[
-      ...{for (final url in ApiService.getServerUrls()) url},
+      ...{...ApiService.getServerUrls(), ?server},
     ];
     return PhonePairingAccount(
-      server: Store.tryGet(StoreKey.serverUrl) ?? endpoints.firstOrNull ?? '',
+      server: server ?? endpoints.firstOrNull ?? '',
       endpoints: endpoints,
       headers: ApiService.getRequestHeaders(),
       userName: user?.name ?? '',

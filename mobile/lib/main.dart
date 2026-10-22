@@ -32,6 +32,7 @@ import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
+import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/theme.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
@@ -233,13 +234,15 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
     final isColdStart = currentRouteName == null || currentRouteName == SplashScreenRoute.name;
 
     PageRouteInfo? route;
-    // The code of a big screen, from the browser page it serves (sign in with your phone)
+    // The address of a big screen, from the browser page it serves (sign in with your phone): the Connect page scans
+    // its code; a big screen itself ignores the link
     if (deepLink.uri.scheme == 'immuch360' && deepLink.uri.host == 'pair') {
-      if (currentRouteName == ConnectScreenRoute.name) {
-        ref.read(pendingPairingLinkProvider.notifier).state = deepLink.uri.toString();
+      final address = await pairingLinkAddress(deepLink.uri, isBigScreen: () => isBigScreenNow(ref));
+      if (address != null && currentRouteName == ConnectScreenRoute.name) {
+        ref.read(pendingPairingLinkProvider.notifier).state = address;
         return DeepLink.none;
       }
-      route = ConnectScreenRoute(scanned: deepLink.uri.toString(), fromDeepLink: true);
+      route = address == null ? null : ConnectScreenRoute(linkedAddress: address);
     } else if (deepLink.uri.scheme == "immich") {
       route = await deepLinkHandler.handleScheme(deepLink, ref);
     } else if (deepLink.uri.host == "my.immich.app") {

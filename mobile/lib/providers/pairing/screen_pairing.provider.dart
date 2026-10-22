@@ -1,8 +1,8 @@
 // "Sign in with your phone" on a big screen (a TV, the Quest window, a computer): the listener and its announcement,
 // for as long as the pairing panel shows (pairing_panel.widget.dart). It starts when the panel shows, and stops when
-// the panel goes, when the app goes to the background or its window is hidden, when the codes pause (no phone for 10
-// minutes) and once a phone signed the screen in. On a computer it follows the public network rule of the share of
-// the computer: no listening on a network Windows calls public.
+// the panel goes, when the app goes to the background or its window is hidden, when the codes pause (no phone for
+// about 10 minutes) and once a phone signed the screen in. On a computer it follows the public network rule of the
+// share of the computer: no listening on a network Windows calls public.
 
 import 'dart:async';
 import 'dart:isolate';
@@ -65,6 +65,7 @@ class ScreenPairingView {
     this.problem = ScreenPairingProblem.none,
     this.port,
     this.signedIn,
+    this.checks = const [],
   });
 
   final ScreenPairingPhase phase;
@@ -88,6 +89,9 @@ class ScreenPairingView {
   /// Who signed the screen in, once it is
   final ScreenSignedIn? signedIn;
 
+  /// The check numbers of the phones that said hello and wait for their user (pairingCheckNumber)
+  final List<String> checks;
+
   ScreenPairingView copyWith({
     ScreenPairingPhase? phase,
     ScreenPairingProblem? problem,
@@ -106,6 +110,7 @@ class ScreenPairingView {
     problem: problem ?? this.problem,
     port: port ?? this.port,
     signedIn: signedIn ?? this.signedIn,
+    checks: checks,
   );
 
   @override
@@ -291,7 +296,7 @@ class ScreenPairingController extends Notifier<ScreenPairingView> {
   /// "Show a new code", after the codes paused or a problem: the listener starts again
   Future<void> showNewCode() => _start();
 
-  /// What the session tells after five unused codes, without waiting ten minutes
+  /// What the session tells after the unused codes, without waiting ten minutes
   @visibleForTesting
   void debugPause() =>
       _onSession(const ScreenPairingState(phase: ScreenPairingPhase.paused), state.kind, state.port ?? 0);
@@ -444,6 +449,7 @@ class ScreenPairingController extends Notifier<ScreenPairingView> {
       notice: sessionState.notice,
       noticeDetail: sessionState.noticeDetail,
       port: port,
+      checks: sessionState.checks,
     );
   }
 
@@ -492,3 +498,11 @@ final isBigScreenProvider = Provider.autoDispose<bool>((ref) {
   }
   return ref.watch(isHorizonOsProvider).value ?? false;
 });
+
+/// [isBigScreenProvider] once the Quest check is done, for a link that comes at a cold start
+Future<bool> isBigScreenNow(WidgetRef ref) async {
+  if (CurrentPlatform.isDesktop || ref.read(tvModeProvider)) {
+    return true;
+  }
+  return ref.read(isHorizonOsProvider.future).catchError((Object _) => false);
+}

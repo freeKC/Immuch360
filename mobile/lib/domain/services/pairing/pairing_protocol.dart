@@ -16,6 +16,8 @@
 //   confirm    = HMAC-SHA256(K_confirm, "screen" || transcript || the device bytes the screen sent)
 //   AEAD       = AES-256-GCM, 12 byte random nonce, associated data transcript || 0x01 (phone to screen, K_up) or
 //                transcript || 0x02 (screen to phone, K_down)
+//   check      = the first four bytes of HMAC-SHA256(K_confirm, "check" || transcript), big endian, modulo 10^6: the six
+//                digits both sides show, never sent
 // test/fixtures/pairing/vectors.json holds known answers, made apart from this code (make_vectors.py).
 
 import 'dart:convert';
@@ -146,6 +148,19 @@ String? normalizePairingCode(String typed) {
   return code;
 }
 
+// Format characters (bidi overrides and isolates, zero width ones), surrogates and private use: dropped
+final _invisibleCharacters = RegExp(r'[\p{Cf}\p{Cs}\p{Co}]', unicode: true);
+// Controls and line or paragraph separators: a space
+final _breakingCharacters = RegExp(r'[\p{Cc}\p{Zl}\p{Zp}]', unicode: true);
+
+/// A name a device gives itself or the user types, on one line and as it reads: no control, no format character (a
+/// right to left override could make "VT moor gniviL" read as another name), spaces collapsed
+String cleanPairingText(String text) => text
+    .replaceAll(_invisibleCharacters, '')
+    .replaceAll(_breakingCharacters, ' ')
+    .replaceAll(RegExp(r'\s+'), ' ')
+    .trim();
+
 /// The code as the screen shows it, in two groups of five: "K7M2Q 9XRTH"
 String formatPairingCode(String code) =>
     code.length == pairingCodeLength ? '${code.substring(0, 5)} ${code.substring(5)}' : code;
@@ -206,6 +221,24 @@ String buildPairingTypedUrl({required String host, required int port}) => 'http:
   final hasPort = RegExp(r'^http://[0-9.]+:[0-9]{1,5}(/|$)').hasMatch(text);
   final port = hasPort ? uri.port : pairingDefaultPort;
   return port < 1 || port > 65535 ? null : (host: uri.host, port: port);
+}
+
+/// The address of the screen an `immuch360://pair?u=<address>` link names (the "Open it" link of the browser page a
+/// screen serves), null for anything else. A secret in the link is never used: a link may come from anywhere, so the
+/// phone scans the code on the screen, or asks for the code it shows, before it says anything to that address.
+({String host, int port})? parsePairingLink(String link) {
+  final Uri uri;
+  try {
+    uri = Uri.parse(link.trim());
+  } on FormatException {
+    return null;
+  }
+  final inner = uri.scheme == 'immuch360' && uri.host == 'pair' ? uri.queryParameters['u'] : null;
+  if (inner == null) {
+    return null;
+  }
+  final fragment = inner.indexOf('#');
+  return parsePairingAddress(fragment < 0 ? inner : inner.substring(0, fragment));
 }
 
 /// What a scanned text turned out to be
@@ -421,6 +454,19 @@ PairingKeys derivePairingKeys({required List<int> shared, required List<int> sec
 /// What the screen sends to prove it knows the secret, over the device bytes it sent
 Uint8List pairingConfirm({required List<int> confirmKey, required List<int> transcript, required List<int> device}) =>
     _hmac(confirmKey, [...utf8.encode('screen'), ...transcript, ...device]);
+
+/// The six digits the phone and the screen both show once a hello is done, so that the user sees that the phone talks
+/// to the screen in front of them: HMAC-SHA256(K_confirm, "check" || transcript), its first four bytes as a big
+/// endian number, modulo a million. Only a device that knows the secret and took this very hello can show it.
+String pairingCheckNumber({required List<int> confirmKey, required List<int> transcript}) {
+  final mac = _hmac(confirmKey, [...utf8.encode('check'), ...transcript]);
+  final value = ((mac[0] << 24) | (mac[1] << 16) | (mac[2] << 8) | mac[3]) % 1000000;
+  return value.toString().padLeft(6, '0');
+}
+
+/// The check number as both sides show it: "482 913"
+String formatPairingCheckNumber(String digits) =>
+    digits.length == 6 ? '${digits.substring(0, 3)} ${digits.substring(3)}' : digits;
 
 /// Compares in a time that does not depend on where [a] and [b] differ
 bool pairingSameBytes(List<int> a, List<int> b) {

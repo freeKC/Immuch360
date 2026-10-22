@@ -44,6 +44,8 @@ def vector(name, mode, client, secret, phone_hex, screen_hex, pairing_id, device
     keys = {info: hmac.new(prk, info.encode() + b'\x01', hashlib.sha256).digest() for info in ('confirm', 'up', 'down')}
     device_bytes = json.dumps(device, separators=(',', ':'), sort_keys=True, ensure_ascii=False).encode()
     confirm = hmac.new(keys['confirm'], b'screen' + transcript + device_bytes, hashlib.sha256).digest()
+    check_mac = hmac.new(keys['confirm'], b'check' + transcript, hashlib.sha256).digest()
+    check = '%06d' % (int.from_bytes(check_mac[:4], 'big') % 1000000)
     up_bytes = json.dumps(up, separators=(',', ':')).encode()
     down_bytes = json.dumps(down, separators=(',', ':')).encode()
     sealed_up = AESGCM(keys['up']).encrypt(nonce_up, up_bytes, transcript + b'\x01')
@@ -66,6 +68,7 @@ def vector(name, mode, client, secret, phone_hex, screen_hex, pairing_id, device
         'kDown': b64(keys['down']),
         'device': b64(device_bytes),
         'confirm': b64(confirm),
+        'check': check,
         'nonceUp': b64(nonce_up),
         'plainUp': b64(up_bytes),
         'sealedUp': b64(sealed_up),

@@ -73,7 +73,7 @@ void main() {
     return outcome!;
   }
 
-  test('a code lives two minutes, then the next one replaces it and the old one is dead', () {
+  test('a code nobody scans shows 90 s, then the next one replaces it and the old one is dead', () {
     fakeAsync((async) {
       session = make(async)..start();
       final first = session.currentCode!;
@@ -81,8 +81,10 @@ void main() {
       expect(first.code, hasLength(pairingCodeLength));
       expect(first.secret, hasLength(pairingSecretBytes));
       expect(pairingDecodeBase64(first.id), hasLength(pairingIdBytes));
+      expect(first.expiresAt, start.add(ScreenPairingSession.quietLifetime));
+      expect(first.deadline, start.add(ScreenPairingSession.codeLifetime));
 
-      async.elapse(const Duration(seconds: 119));
+      async.elapse(const Duration(seconds: 89));
       expect(session.currentCode, same(first));
       async.elapse(const Duration(seconds: 1));
       final second = session.currentCode!;
@@ -156,17 +158,98 @@ void main() {
     });
   });
 
-  test('a hello holds the code for a minute more, then it rotates', () {
+  test('a hello keeps the code to two minutes after it showed, and says so to the panel', () {
     fakeAsync((async) {
       session = make(async)..start();
       final code = session.currentCode!;
-      async.elapse(const Duration(seconds: 100));
+      final states = <ScreenPairingState>[];
+      session.states.listen(states.add);
+      async.elapse(const Duration(seconds: 85));
       expect(hello(async, _Phone(PairingMode.qr)), isA<HelloAccepted>());
-      async.elapse(const Duration(seconds: 59));
+      async.flushMicrotasks();
+      // The countdown of the panel follows: the new end comes with the state
+      expect(states.last.code, same(code));
+      expect(states.last.phase, ScreenPairingPhase.confirmOnPhone);
+      expect(code.expiresAt, code.deadline);
+      async.elapse(const Duration(seconds: 34));
       expect(session.currentCode, same(code));
       async.elapse(const Duration(seconds: 1));
       expect(session.currentCode, isNot(same(code)));
       expect(session.state.phase, ScreenPairingPhase.waiting);
+    });
+  });
+
+  test('chained hellos never keep a code past its two minutes', () {
+    fakeAsync((async) {
+      session = make(async)..start();
+      final code = session.currentCode!;
+      // Three hellos, each without the secret: only the id of the code, which GET /p/info gives anyone on the network
+      async.elapse(const Duration(seconds: 89));
+      expect(hello(async, _Phone(PairingMode.qr)), isA<HelloAccepted>());
+      async.elapse(const Duration(seconds: 20));
+      expect(hello(async, _Phone(PairingMode.qr)), isA<HelloAccepted>());
+      async.elapse(const Duration(seconds: 10));
+      final last = _Phone(PairingMode.qr);
+      expect(last.accept(code.id, (hello(async, last) as HelloAccepted).response, code.secret), isTrue);
+      expect(code.expiresAt, code.deadline);
+      async.elapse(const Duration(seconds: 1));
+      // 120 s: the code is gone, whatever hello came last, and a sealed message of that hello finds nothing
+      expect(session.currentCode, isNot(same(code)));
+      expect(hello(async, _Phone(PairingMode.qr), id: code.id), isA<HelloGone>());
+      expect(
+        session.open(id: code.id, envelope: last.channel!.seal({'v': 1, 'token': 't'}), client: PairingClient.app),
+        isA<SealedGone>(),
+      );
+    });
+  });
+
+  test('each hello of a phone gets the check number its phone shows; a cancel takes it off', () {
+    fakeAsync((async) {
+      session = make(async)..start();
+      final code = session.currentCode!;
+      final first = _Phone(PairingMode.qr);
+      final second = _Phone(PairingMode.qr);
+      final page = _Phone(PairingMode.qr, client: PairingClient.web);
+      first.accept(code.id, (hello(async, first) as HelloAccepted).response, code.secret);
+      second.accept(code.id, (hello(async, second) as HelloAccepted).response, code.secret);
+      page.accept(code.id, (hello(async, page) as HelloAccepted).response, code.secret);
+      String check(_Phone phone) =>
+          pairingCheckNumber(confirmKey: phone.channel!.keys.confirm, transcript: phone.channel!.transcript);
+      // The browser page shows no number: only the phones' count
+      expect(session.state.checks, [check(first), check(second)]);
+      expect(session.state.checks.first, matches(RegExp(r'^[0-9]{6}$')));
+
+      final cancelled = session.open(
+        id: code.id,
+        envelope: first.channel!.seal({'v': 1, 'cancel': true}),
+        client: PairingClient.app,
+      );
+      expect(cancelled, isA<SealedCancelled>());
+      expect(session.state.checks, [check(second)]);
+      expect(session.state.phase, ScreenPairingPhase.confirmOnPhone);
+      expect(session.currentCode, same(code));
+      expect(code.isUsed, isFalse);
+      // A cancelled hello takes nothing more
+      expect(
+        session.open(id: code.id, envelope: first.channel!.seal({'v': 1, 'token': 't'}), client: PairingClient.app),
+        isA<SealedUnknown>(),
+      );
+      expect(
+        session.open(id: code.id, envelope: second.channel!.seal({'v': 1, 'token': 't'}), client: PairingClient.app),
+        isA<SealedOpened>(),
+      );
+    });
+  });
+
+  test('the last phone that cancels brings the panel back to waiting', () {
+    fakeAsync((async) {
+      session = make(async)..start();
+      final code = session.currentCode!;
+      final phone = _Phone(PairingMode.qr);
+      phone.accept(code.id, (hello(async, phone) as HelloAccepted).response, code.secret);
+      session.open(id: code.id, envelope: phone.channel!.seal({'v': 1, 'cancel': true}), client: PairingClient.app);
+      expect(session.state.phase, ScreenPairingPhase.waiting);
+      expect(session.state.checks, isEmpty);
     });
   });
 
@@ -245,10 +328,19 @@ void main() {
     });
   });
 
-  test('an envelope of an unknown hello, or of the other client, burns the code too', () {
+  test('an envelope of no hello, or of the other client, is refused and leaves the code alone', () {
     fakeAsync((async) {
       session = make(async)..start();
-      var code = session.currentCode!;
+      final code = session.currentCode!;
+      // Without any hello: what anyone who read the id of GET /p/info could send
+      expect(
+        session.open(
+          id: code.id,
+          envelope: const {'v': 1, 'h': 'AAAAAAAAAAA', 'n': 'AAAA', 'c': 'AAAA'},
+          client: PairingClient.app,
+        ),
+        isA<SealedUnknown>(),
+      );
       final phone = _Phone(PairingMode.qr);
       phone.accept(code.id, (hello(async, phone) as HelloAccepted).response, code.secret);
       expect(
@@ -260,15 +352,19 @@ void main() {
           },
           client: PairingClient.app,
         ),
-        isA<SealedRejected>(),
+        isA<SealedUnknown>(),
       );
-
-      code = session.currentCode!;
-      final app = _Phone(PairingMode.qr);
-      app.accept(code.id, (hello(async, app) as HelloAccepted).response, code.secret);
       expect(
-        session.open(id: code.id, envelope: app.channel!.seal({'v': 1}), client: PairingClient.web),
-        isA<SealedRejected>(),
+        session.open(id: code.id, envelope: phone.channel!.seal({'v': 1}), client: PairingClient.web),
+        isA<SealedUnknown>(),
+      );
+      expect(session.currentCode, same(code));
+      expect(code.isUsed, isFalse);
+      expect(session.state.notice, ScreenPairingNotice.none);
+      // The phone that said hello still signs the screen in
+      expect(
+        session.open(id: code.id, envelope: phone.channel!.seal({'v': 1, 'token': 't'}), client: PairingClient.app),
+        isA<SealedOpened>(),
       );
     });
   });
@@ -284,15 +380,34 @@ void main() {
           session.open(id: code.id, envelope: page.channel!.seal({'v': 1}), client: PairingClient.web),
           isA<SealedOpened>(),
         );
-        expect(session.finish(id: code.id, signedIn: false, wrongPassword: true), left);
+        expect(session.finish(id: code.id, signedIn: false, retry: true), left);
         expect(session.currentCode, same(code));
       }
       expect(
         session.open(id: code.id, envelope: page.channel!.seal({'v': 1}), client: PairingClient.web),
         isA<SealedOpened>(),
       );
-      expect(session.finish(id: code.id, signedIn: false, wrongPassword: true), 0);
+      expect(session.finish(id: code.id, signedIn: false, retry: true), 0);
       expect(code.isUsed, isTrue);
+      expect(session.currentCode, isNot(same(code)));
+    });
+  });
+
+  test('the browser page gets no further try once the code is past its deadline', () {
+    fakeAsync((async) {
+      session = make(async)..start();
+      final code = session.currentCode!;
+      final page = _Phone(PairingMode.qr, client: PairingClient.web);
+      page.accept(code.id, (hello(async, page) as HelloAccepted).response, code.secret);
+      async.elapse(const Duration(seconds: 115));
+      expect(
+        session.open(id: code.id, envelope: page.channel!.seal({'v': 1}), client: PairingClient.web),
+        isA<SealedOpened>(),
+      );
+      // The sign in took the screen past the two minutes: the code waits for its end, then goes
+      async.elapse(const Duration(seconds: 10));
+      expect(session.currentCode, same(code));
+      expect(session.finish(id: code.id, signedIn: false, retry: true), 0);
       expect(session.currentCode, isNot(same(code)));
     });
   });
@@ -321,10 +436,10 @@ void main() {
     fakeAsync((async) {
       session = make(async)..start();
       final code = session.currentCode!;
-      async.elapse(const Duration(seconds: 110));
+      async.elapse(const Duration(seconds: 85));
       final phone = _Phone(PairingMode.qr);
       phone.accept(code.id, (hello(async, phone) as HelloAccepted).response, code.secret);
-      async.elapse(const Duration(seconds: 55));
+      async.elapse(const Duration(seconds: 30));
       session.open(id: code.id, envelope: phone.channel!.seal({'v': 1}), client: PairingClient.app);
       async.elapse(const Duration(seconds: 20));
       expect(session.currentCode, same(code));
@@ -333,12 +448,12 @@ void main() {
     });
   });
 
-  test('five codes without a hello pause the session until it starts again', () {
+  test('codes nobody used pause the session until it starts again', () {
     fakeAsync((async) {
       session = make(async)..start();
-      async.elapse(ScreenPairingSession.codeLifetime * 4);
+      async.elapse(ScreenPairingSession.quietLifetime * (ScreenPairingSession.idleCodes - 1));
       expect(session.state.phase, ScreenPairingPhase.waiting);
-      async.elapse(ScreenPairingSession.codeLifetime);
+      async.elapse(ScreenPairingSession.quietLifetime);
       expect(session.state.phase, ScreenPairingPhase.paused);
       expect(session.currentCode, isNull);
       session.start();
@@ -347,12 +462,24 @@ void main() {
     });
   });
 
-  test('a hello counts as use: the idle count starts again', () {
+  test('a hello alone is not use, so that it cannot keep the screen listening; a message is', () {
     fakeAsync((async) {
       session = make(async)..start();
-      async.elapse(ScreenPairingSession.codeLifetime * 4);
-      expect(hello(async, _Phone(PairingMode.qr)), isA<HelloAccepted>());
-      async.elapse(ScreenPairingSession.codeLifetime * 4);
+      // A hello on every code: the pause comes all the same
+      for (var i = 0; i < ScreenPairingSession.idleCodes; i++) {
+        expect(hello(async, _Phone(PairingMode.qr)), isA<HelloAccepted>());
+        async.elapse(ScreenPairingSession.codeLifetime);
+      }
+      expect(session.state.phase, ScreenPairingPhase.paused);
+
+      session.start();
+      async.elapse(ScreenPairingSession.quietLifetime * (ScreenPairingSession.idleCodes - 2));
+      final code = session.currentCode!;
+      final phone = _Phone(PairingMode.qr);
+      phone.accept(code.id, (hello(async, phone) as HelloAccepted).response, code.secret);
+      session.open(id: code.id, envelope: phone.channel!.seal({'v': 1, 'cancel': true}), client: PairingClient.app);
+      async.elapse(ScreenPairingSession.codeLifetime);
+      async.elapse(ScreenPairingSession.quietLifetime * (ScreenPairingSession.idleCodes - 2));
       expect(session.state.phase, ScreenPairingPhase.waiting);
     });
   });

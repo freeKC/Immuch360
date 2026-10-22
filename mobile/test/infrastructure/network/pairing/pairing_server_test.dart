@@ -34,7 +34,7 @@ class _FakeSignIn implements PairingSignIn {
     return PairingSignInResult(
       answer: {'status': right ? 'signedIn' : 'badCredentials'},
       signedIn: right,
-      wrongPassword: !right,
+      retry: !right,
     );
   }
 }
@@ -255,6 +255,36 @@ void main() {
       expect((await send('POST', '/p/${code.id}/session', json: sealed)).status, HttpStatus.gone);
     });
 
+    test('a message that names no hello is refused without burning the code', () async {
+      final code = session.currentCode!;
+      // Only the id, which GET /p/info gives: no hello, no key
+      final answer = await send(
+        'POST',
+        '/p/${code.id}/session',
+        json: {'v': 1, 'h': 'AAAAAAAAAAA', 'n': 'AAAAAAAAAAAAAAAA', 'c': pairingBase64(Uint8List(40))},
+      );
+      expect(answer.status, HttpStatus.badRequest);
+      expect(answer.json['error'], 'invalid');
+      expect(session.currentCode, same(code));
+      // The phone that says hello next still signs the screen in
+      final channel = await hello();
+      final signedIn = await send('POST', '/p/${code.id}/session', json: channel.seal({'v': 1, 'token': _token}));
+      expect(channel.open(signedIn.json)!['status'], 'signedIn');
+    });
+
+    test('a phone that cancels frees the screen, sealed', () async {
+      final code = session.currentCode!;
+      final channel = await hello();
+      expect(session.state.checks, hasLength(1));
+      final answer = await send('POST', '/p/${code.id}/session', json: channel.seal({'v': 1, 'cancel': true}));
+      expect(answer.status, HttpStatus.ok);
+      expect(channel.open(answer.json), {'v': 1, 'status': 'cancelled'});
+      expect(session.state.phase, ScreenPairingPhase.waiting);
+      expect(session.state.checks, isEmpty);
+      expect(signIn.sessions, isEmpty);
+      expect(session.currentCode, same(code));
+    });
+
     test('the browser page gets three tries at the password', () async {
       final code = session.currentCode!;
       final channel = await hello(client: PairingClient.web);
@@ -275,12 +305,13 @@ void main() {
       expect(session.currentCode!.id, isNot(code.id));
     });
 
-    test('a session posted to the login of the page, or the other way round, is rejected', () async {
+    test('a session posted to the login of the page, or the other way round, is refused', () async {
       final code = session.currentCode!;
       final channel = await hello();
       final answer = await send('POST', '/p/${code.id}/login', json: channel.seal({'v': 1, 'password': 'right'}));
       expect(answer.status, HttpStatus.badRequest);
       expect(signIn.logins, isEmpty);
+      expect(session.currentCode, same(code));
     });
   });
 

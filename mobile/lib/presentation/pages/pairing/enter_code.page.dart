@@ -1,6 +1,7 @@
 // "Enter a code instead": the screens that wait for a phone nearby (DNS-SD, _immuch360-pair._tcp), or the address
 // shown under the code, and the 10 symbols of the code. The natural path on the Quest, whose window no phone camera
-// can see, and when the camera is refused. Pops the target of the pairing; the Connect page runs it as a scanned one.
+// can see, when the camera is refused, and after a link of a screen (its address filled in). Pops the target of the
+// pairing; the Connect page runs it as a scanned one.
 
 import 'dart:async';
 
@@ -13,6 +14,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/network_discovery_probes.dart';
 import 'package:immich_mobile/infrastructure/network/pairing/pairing_client.dart';
+import 'package:immich_mobile/presentation/widgets/pairing/pairing_confirm.sheet.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_ui/immich_ui.dart';
 
@@ -30,7 +32,10 @@ class _FoundScreen {
 
 @RoutePage()
 class EnterCodePage extends ConsumerStatefulWidget {
-  const EnterCodePage({super.key});
+  const EnterCodePage({super.key, this.address});
+
+  /// The address of the screen a link named ("192.168.1.23:8361"), filled in
+  final String? address;
 
   @override
   ConsumerState<EnterCodePage> createState() => _EnterCodePageState();
@@ -49,6 +54,7 @@ class _EnterCodePageState extends ConsumerState<EnterCodePage> {
   @override
   void initState() {
     super.initState();
+    _address.text = widget.address ?? '';
     // Looked for as long as the page shows, two minutes at most: the life of a code
     _discovery = bonsoirBrowse(
       pairingServiceType,
@@ -73,7 +79,7 @@ class _EnterCodePageState extends ConsumerState<EnterCodePage> {
       return;
     }
     final screen = _FoundScreen(
-      name: service.name,
+      name: cleanPairingText(service.name),
       host: host,
       port: service.port,
       kind: PairingScreenKind.fromWire(service.attributes['kind']),
@@ -83,8 +89,13 @@ class _EnterCodePageState extends ConsumerState<EnterCodePage> {
     }
     setState(() {
       _found.add(screen);
-      // The one screen found is the one
-      _selected ??= screen.key;
+      // The one screen found is the one, unless a link named another
+      final linked = widget.address;
+      if (linked == null) {
+        _selected ??= screen.key;
+      } else if (screen.key == linked) {
+        _selected = screen.key;
+      }
     });
   }
 
@@ -102,7 +113,7 @@ class _EnterCodePageState extends ConsumerState<EnterCodePage> {
       address = parsePairingAddress(_address.text);
     }
     if (address == null) {
-      return setState(() => _error = t.pairing_err_not_a_code);
+      return setState(() => _error = t.pairing_err_bad_address);
     }
     setState(() {
       _busy = true;
@@ -123,7 +134,7 @@ class _EnterCodePageState extends ConsumerState<EnterCodePage> {
         setState(
           () => _error = error.failure == PairingFailure.unreachable
               ? t.pairing_err_unreachable(address: address!.host)
-              : t.pairing_err_not_a_code,
+              : t.pairing_err_screen_answer,
         );
       }
     } finally {
@@ -159,11 +170,7 @@ class _EnterCodePageState extends ConsumerState<EnterCodePage> {
                       value: screen.key,
                       title: Text(screen.name),
                       subtitle: Text(screen.host),
-                      secondary: Icon(switch (screen.kind) {
-                        PairingScreenKind.tv => Icons.tv_rounded,
-                        PairingScreenKind.headset => Icons.view_in_ar_rounded,
-                        PairingScreenKind.computer => Icons.computer_rounded,
-                      }),
+                      secondary: Icon(pairingKindIcon(screen.kind)),
                     ),
                 ],
               ),

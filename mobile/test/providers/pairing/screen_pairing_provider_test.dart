@@ -34,7 +34,9 @@ class _App implements ScreenSignInActions {
   @override
   Future<void> setLabel(String label) => Store.put(StoreKey.pairingScreenLabel, label);
   @override
-  Future<bool> tryServer(String endpoint, Duration timeout) async => true;
+  Future<String?> tryServer(String endpoint, Duration timeout) async => endpoint;
+  @override
+  Future<void> useServer(String apiUrl) async {}
   @override
   Future<bool> useToken(String token) async {
     tokens.add(token);
@@ -141,6 +143,7 @@ void main() {
     await settle();
     final shown = view();
     expect(shown.phase, ScreenPairingPhase.waiting);
+    expect(shown.expiresAt!.difference(shown.startedAt!), const Duration(seconds: 90));
     expect(shown.qrText, startsWith('http://10.0.0.5:8361/p#1.'));
     expect(shown.typedUrl, 'http://10.0.0.5:8361/p');
     expect(shown.code, matches(RegExp(r'^[A-Z2-9]{5} [A-Z2-9]{5}$')));
@@ -229,6 +232,9 @@ void main() {
     final hello = await phone.hello(scan);
     await settle();
     expect(view().phase, ScreenPairingPhase.confirmOnPhone);
+    // The panel shows the number the phone shows, and the code now lives to its two minutes
+    expect(view().checks, [hello.check]);
+    expect(view().expiresAt!.difference(view().startedAt!), const Duration(seconds: 120));
 
     final result = await phone.signIn(
       hello,

@@ -87,8 +87,11 @@ enum PhonePairingStatus {
   /// The screen refused the message: its code was used up meanwhile
   rejected,
 
-  /// The code expired or was used meanwhile
+  /// The code expired meanwhile
   expired,
+
+  /// Another phone used the code meanwhile: the screen is signed in
+  used,
 
   serverTooOld,
   phoneOffline,
@@ -121,9 +124,10 @@ String pairingSessionOs(PairingScreenDevice device) => switch (device.os) {
 
 const maxLabelLength = 40;
 
-/// The name the user may give a screen: one line, at most [maxLabelLength] characters; null when nothing is left
+/// The name the user may give a screen: one line, at most [maxLabelLength] characters, no control nor format
+/// character; null when nothing is left
 String? cleanPairingLabel(String typed) {
-  final label = typed.replaceAll(RegExp(r'[\x00-\x1f\x7f]'), ' ').replaceAll(RegExp(r'\s+'), ' ').trim();
+  final label = cleanPairingText(typed);
   if (label.isEmpty) {
     return null;
   }
@@ -145,11 +149,24 @@ class PhonePairingService {
   /// The id of the code a screen shows now, for a code typed with the address on the screen
   Future<PairingScreenInfo> info({required String host, required int port}) => _client.info(host: host, port: port);
 
-  /// Signs the screen of [hello] in as [label] with a new session of [account]
+  /// Tells the screen of [hello] that the user cancelled; never throws
+  Future<void> cancel(PairingHello hello) async {
+    try {
+      await _client.cancel(hello);
+    } catch (error) {
+      _log.fine('Pairing: the screen did not hear the cancel: ${error.runtimeType}');
+    }
+  }
+
+  /// Signs the screen of [hello] in as [label] with a new session of [account], with its custom headers when
+  /// [sendHeaders]. [onSession] hears of the session before it leaves the phone, so that a session the phone never
+  /// hears back about (the app killed meanwhile) is still listed, and can be signed out.
   Future<PhonePairingResult> signIn(
     PairingHello hello, {
     required String label,
     required PhonePairingAccount account,
+    bool sendHeaders = true,
+    Future<void> Function(String sessionId, String label)? onSession,
   }) async {
     final name = cleanPairingLabel(label) ?? cleanPairingLabel(hello.device.label) ?? 'TV';
     final ({String id, String token}) session;
@@ -168,10 +185,11 @@ class PhonePairingService {
 
     Map<String, Object?> answer;
     try {
+      await onSession?.call(session.id, name);
       answer = await _client.send(hello, {
         'server': account.server,
         'endpoints': account.endpoints,
-        if (account.headers.isNotEmpty) 'headers': account.headers,
+        if (sendHeaders && account.headers.isNotEmpty) 'headers': account.headers,
         'token': session.token,
         'sessionId': session.id,
         'label': name,
@@ -179,14 +197,19 @@ class PhonePairingService {
         'phone': account.phoneName,
         'issuedAt': _clock().toUtc().toIso8601String(),
       });
-    } on PairingException catch (error) {
+    } catch (error) {
       await _forget(session.id);
+      if (error is! PairingException) {
+        _log.warning('Pairing: the session could not go to the screen: ${error.runtimeType}, it is deleted');
+        return const PhonePairingResult(status: PhonePairingStatus.lost);
+      }
       _log.info('Pairing: the screen did not sign in (${error.failure.name}), its session is deleted');
       return PhonePairingResult(
         status: switch (error.failure) {
           PairingFailure.busy => PhonePairingStatus.busy,
           PairingFailure.rejected => PhonePairingStatus.rejected,
-          PairingFailure.expired || PairingFailure.used => PhonePairingStatus.expired,
+          PairingFailure.expired => PhonePairingStatus.expired,
+          PairingFailure.used => PhonePairingStatus.used,
           _ => PhonePairingStatus.lost,
         },
       );

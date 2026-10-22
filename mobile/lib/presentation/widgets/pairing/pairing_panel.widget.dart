@@ -28,6 +28,7 @@ import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
+import 'package:immich_mobile/services/widget.service.dart';
 import 'package:immich_mobile/utils/provider_utils.dart';
 import 'package:immich_mobile/utils/url_helper.dart';
 import 'package:immich_mobile/widgets/common/immich_toast.dart';
@@ -213,6 +214,30 @@ class PairingPanelContent extends StatelessWidget {
         const SizedBox(height: ImmichSpacing.xs),
         Text(status, key: const Key('pairing_status'), style: theme.bodyMedium, textAlign: TextAlign.center),
       ],
+      // The number each phone that said hello shows too: the user checks it, and a second number tells that another
+      // device is signing in
+      if (view.phase == ScreenPairingPhase.confirmOnPhone && view.checks.isNotEmpty) ...[
+        Text(
+          view.checks.length == 1 ? t.pairing_screen_check : t.pairing_screen_checks,
+          style: small,
+          textAlign: TextAlign.center,
+        ),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            view.checks.map(formatPairingCheckNumber).join('   '),
+            key: const Key('pairing_checks'),
+            maxLines: 1,
+            style: TextStyle(
+              fontFamily: 'GoogleSansCode',
+              fontSize: headset ? 32 : 24,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1,
+              color: scheme.primary,
+            ),
+          ),
+        ),
+      ],
     ];
     return Column(
       key: const Key('pairing_panel'),
@@ -327,18 +352,25 @@ class AppScreenSignInActions implements ScreenSignInActions {
   Future<ScreenSignInSnapshot> snapshot() async => ScreenSignInSnapshot(
     headers: Map.of(SettingsRepository.instance.appConfig.network.customHeaders),
     label: Store.tryGet(StoreKey.pairingScreenLabel),
+    serverUrl: Store.tryGet(StoreKey.serverUrl),
+    serverEndpoint: Store.tryGet(StoreKey.serverEndpoint),
   );
 
   @override
   Future<void> restore(ScreenSignInSnapshot snapshot) async {
-    await SettingsRepository.instance.write(.networkCustomHeaders, snapshot.headers);
-    final label = snapshot.label;
-    if (label == null) {
-      await Store.delete(StoreKey.pairingScreenLabel);
-    } else {
-      await Store.put(StoreKey.pairingScreenLabel, label);
-    }
+    // The token first: the Store's cache also follows the database through a stream, whose later events then no
+    // longer hold it
     await Store.delete(StoreKey.accessToken);
+    // The home screen widget got the token with the sign in
+    await _ref.read(widgetServiceProvider).clearCredentials();
+    await SettingsRepository.instance.write(.networkCustomHeaders, snapshot.headers);
+    Future<void> put(StoreKey<String> key, String? value) => value == null ? Store.delete(key) : Store.put(key, value);
+    await put(StoreKey.pairingScreenLabel, snapshot.label);
+    // The server the attempt named goes too: the login form fills its address from these at the next start
+    await put(StoreKey.serverUrl, snapshot.serverUrl);
+    await put(StoreKey.serverEndpoint, snapshot.serverEndpoint);
+    _api.setEndpoint(snapshot.serverEndpoint ?? '');
+    await _api.setDeviceInfoHeader();
     await _api.updateHeaders();
   }
 
@@ -352,8 +384,8 @@ class AppScreenSignInActions implements ScreenSignInActions {
   Future<void> setLabel(String label) => Store.put(StoreKey.pairingScreenLabel, label);
 
   @override
-  Future<bool> tryServer(String endpoint, Duration timeout) async {
-    // A ping first, which changes nothing: an address that answers late cannot become the server under the next one
+  Future<String?> tryServer(String endpoint, Duration timeout) async {
+    // A ping only, which changes nothing: an address that answers late cannot become the server under the next one
     final url = normalizeServerUrl(endpoint);
     final candidates = url.endsWith('/api') ? [url] : ['$url/api', url];
     String? reached;
@@ -373,15 +405,16 @@ class AppScreenSignInActions implements ScreenSignInActions {
         // Another candidate, or the next address
       }
     }
-    if (reached == null) {
-      return false;
-    }
-    try {
-      await _ref.read(authProvider.notifier).validateServerUrl(reached);
-      return true;
-    } catch (_) {
-      return false;
-    }
+    return reached;
+  }
+
+  @override
+  Future<void> useServer(String apiUrl) async {
+    // What validateServerUrl does once the address answered, without asking the server again
+    _api.setEndpoint(apiUrl);
+    await Store.put(StoreKey.serverEndpoint, apiUrl);
+    await _api.setDeviceInfoHeader();
+    await Store.put(StoreKey.serverUrl, apiUrl);
   }
 
   @override

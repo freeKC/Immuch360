@@ -48,6 +48,7 @@ void main() {
           device: _b64(vector['device']),
         );
         expect(pairingBase64(confirm), vector['confirm']);
+        expect(pairingCheckNumber(confirmKey: keys.confirm, transcript: transcript), vector['check']);
 
         final sealedUp = pairingSeal(
           keys: keys,
@@ -335,6 +336,48 @@ void main() {
       expect(parsePairingAddress('https://192.168.1.23:8361/p'), isNull);
       expect(parsePairingAddress('192.168.1.23:8361/other'), isNull);
       expect(parsePairingAddress(''), isNull);
+    });
+  });
+
+  group('a link of a screen', () {
+    test('gives its address only, never a secret', () {
+      const page = 'http://192.168.1.23:8361/p';
+      expect(parsePairingLink('immuch360://pair?u=${Uri.encodeComponent(page)}'), (host: '192.168.1.23', port: 8361));
+      // An old link, or a forged one, with the secret of a code: the address alone is kept
+      const withSecret = '$page#1.AAECAwQFBgc.AQIDBAUGBwgJCgsMDQ4PEA';
+      expect(parsePairingLink('immuch360://pair?u=${Uri.encodeComponent(withSecret)}'), (
+        host: '192.168.1.23',
+        port: 8361,
+      ));
+    });
+
+    test('refuses anything else', () {
+      expect(parsePairingLink('immuch360://pair'), isNull);
+      expect(parsePairingLink('immuch360://other?u=192.168.1.23:8361'), isNull);
+      expect(parsePairingLink('immich://pair?u=192.168.1.23:8361'), isNull);
+      expect(parsePairingLink('immuch360://pair?u=${Uri.encodeComponent('http://8.8.8.8:8361/p')}'), isNull);
+      expect(parsePairingLink('immuch360://pair?u=${Uri.encodeComponent('http://evil.example/p')}'), isNull);
+    });
+  });
+
+  group('the check number', () {
+    test('six digits, the same on both sides, another for another hello', () {
+      final transcript = Uint8List.fromList(List.generate(32, (i) => i));
+      final key = Uint8List.fromList(List.generate(32, (i) => 255 - i));
+      final check = pairingCheckNumber(confirmKey: key, transcript: transcript);
+      expect(check, matches(RegExp(r'^[0-9]{6}$')));
+      expect(pairingCheckNumber(confirmKey: key, transcript: transcript), check);
+      expect(pairingCheckNumber(confirmKey: key, transcript: Uint8List(32)), isNot(check));
+      expect(formatPairingCheckNumber('048213'), '048 213');
+    });
+  });
+
+  group('names', () {
+    test('lose controls, bidi overrides and zero width characters', () {
+      expect(cleanPairingText('Living\u202Eroom TV'), 'Livingroom TV');
+      expect(cleanPairingText('\u2067Lounge\u2069 \u200BTV\uFEFF'), 'Lounge TV');
+      expect(cleanPairingText('Line\none\u2028two\ttab\u0085'), 'Line one two tab');
+      expect(cleanPairingText('  Fred’s PC été  '), 'Fred’s PC été');
     });
   });
 

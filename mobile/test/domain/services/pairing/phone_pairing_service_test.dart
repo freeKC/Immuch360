@@ -136,6 +136,40 @@ void main() {
     expect(payload.keys, isNot(contains('password')));
   });
 
+  test('the phone and the screen show the same check number', () async {
+    final hello = await phone.hello(scanned());
+    expect(hello.check, matches(RegExp(r'^[0-9]{6}$')));
+    expect(screen.state.checks, [hello.check]);
+    final other = await phone.hello(scanned());
+    expect(screen.state.checks, [hello.check, other.check]);
+    expect(other.check, isNot(hello.check));
+  });
+
+  test('a cancel frees the screen; nothing is created on the server', () async {
+    final hello = await phone.hello(scanned());
+    await phone.cancel(hello);
+    expect(screen.state.phase, ScreenPairingPhase.waiting);
+    expect(screen.state.checks, isEmpty);
+    expect(immich.created, isEmpty);
+    // A cancel that does not arrive is no error
+    await server.stop();
+    await phone.cancel(hello);
+  });
+
+  test('the custom headers stay on the phone when the user says so; the session is listed first', () async {
+    final listed = <String>[];
+    final result = await phone.signIn(
+      await phone.hello(scanned()),
+      label: 'TV',
+      account: _account,
+      sendHeaders: false,
+      onSession: (id, name) async => listed.add('$id $name'),
+    );
+    expect(result.signedIn, isTrue);
+    expect(screenSignIn.payloads.single.keys, isNot(contains('headers')));
+    expect(listed, ['session-1 TV']);
+  });
+
   test('the screen cannot reach the server: the session is deleted at once', () async {
     screenSignIn.answer = {'status': 'serverUnreachable', 'tried': 2};
     final result = await phone.signIn(await phone.hello(scanned()), label: 'TV', account: _account);
@@ -198,7 +232,7 @@ void main() {
     final second = await phone.hello(scanned());
     expect((await phone.signIn(first, label: 'TV', account: _account)).signedIn, isTrue);
     final again = await phone.signIn(second, label: 'TV', account: _account);
-    expect(again.status, PhonePairingStatus.expired);
+    expect(again.status, PhonePairingStatus.used);
     expect(immich.deleted, ['session-2']);
     expect(screenSignIn.payloads, hasLength(1));
   });
