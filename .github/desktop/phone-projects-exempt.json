@@ -1,7 +1,15 @@
 {
+  "mobile/android/app/build.gradle": {
+    "blob": "cab83818e74e24aeed52f7da9720fd8738f496f8",
+    "reason": "Sign in with your phone (feat-qr-pairing): ZXing Android Embedded, the QR code scanner of Connect a TV or computer, without Google Play services"
+  },
+  "mobile/android/app/src/main/AndroidManifest.xml": {
+    "blob": "1daa174387bec642c65846c6f312e7175f4212de",
+    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
-    "blob": "29e0d6c0d644f53cad73d9aa76653e334c6213d1",
-    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only"
+    "blob": "8638d90dfa93ffb3eb5cd1e6133ad57190d63faa",
+    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only; sign in with your phone (feat-qr-pairing): the QR code scanner registered with this activity"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/AppHealth.kt": {
     "blob": "72007f2819b19ef23c3dffaadaad85110bb1285f",
@@ -18,6 +26,10 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/documenttree/DocumentTreePlugin.kt": {
     "blob": "10ee08ac7cacbf75e3f340ee57dd86769453fea0",
     "reason": "DJI import (feat-dji-import, 30e76a894, 4f82d5fb6, e5693a92e): folders picked in the system picker (a drone, a controller or a card over USB) listed and read for the DJI drone page of the phone app"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/pairing/QrScanApiImpl.kt": {
+    "blob": "4160d9b38ad4d34bee69d961b8977a0183762914",
+    "reason": "Sign in with your phone (feat-qr-pairing): the Pigeon QrScanApi of the phones, ZXing with the camera permission asked first"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/PlaybackReport.kt": {
     "blob": "98bf447a264a700196aa94270c45916032417769",
@@ -55,6 +67,10 @@
     "blob": "00eb864c380c04d835a08b4a85d1501e69a95341",
     "reason": "DJI import (e5693a92e): unit tests of the read planning of DocumentTreePlugin, run by the Kotlin unit tests job"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/pairing/QrScanApiImplTest.kt": {
+    "blob": "f13cc58645385059ee7207014b069f28729db001",
+    "reason": "Sign in with your phone (feat-qr-pairing): unit tests of the scanner result mapping, run by the Kotlin unit tests job"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/PlaybackReportTest.kt": {
     "blob": "29ccb659b150adfc6305a4fc930eda5e266bec43",
     "reason": "TV lot (e66574872): unit tests of PlaybackReport, run by the Kotlin unit tests job"
@@ -62,5 +78,25 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/tv/TvDeviceTest.kt": {
     "blob": "7d5062fb96cb57fd92eb50b09e47368ed84de5bb",
     "reason": "TV lot (f5055f1e2): unit tests of TvDevice, run by the Kotlin unit tests job"
+  },
+  "mobile/android/gradle/libs.versions.toml": {
+    "blob": "b93d8883a77bc94b88382aad3f8ae9fa3e298c71",
+    "reason": "Sign in with your phone (feat-qr-pairing): the version of ZXing Android Embedded"
+  },
+  "mobile/ios/Runner/AppDelegate.swift": {
+    "blob": "ba0fe5bc0c22c8318dd674a0814413fb00280fed",
+    "reason": "Sign in with your phone (feat-qr-pairing): the QR code scanner registered in the app engine only"
+  },
+  "mobile/ios/Runner/Core/QrScanApiImpl.swift": {
+    "blob": "8efc97ee5ddd93efe4502ab9d6a95418bd8aaa2b",
+    "reason": "Sign in with your phone (feat-qr-pairing): the Pigeon QrScanApi of iOS, the camera permission asked first"
+  },
+  "mobile/ios/Runner/Core/QrScanViewController.swift": {
+    "blob": "c2015df387f86a2ee889e6d3638ea7c2130bf8d0",
+    "reason": "Sign in with your phone (feat-qr-pairing): the AVFoundation QR code scanner of iOS"
+  },
+  "mobile/ios/Runner/Info.plist": {
+    "blob": "f0c92b00fba8546a9c0e4fa6193116b733213477",
+    "reason": "Sign in with your phone (feat-qr-pairing): the scanner in the camera text, _immuch360-pair._tcp in the Bonjour services, the local network text, the immuch360 URL scheme"
   }
 }
