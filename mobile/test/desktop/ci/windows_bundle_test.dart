@@ -387,6 +387,33 @@ void main() {
       });
     });
 
+    group('the licence of libfacedetection', () {
+      String folderText(String name) => File(path('dist/Immuch360 Desktop/$name')).readAsStringSync();
+
+      test('travels with the face detector DLLs of the head tracker, in licenses/libfacedetection/', () {
+        writeBuild();
+        writePe('Release/immuch_head_tracker.dll', fakePe(imports: ['ole32.dll', ..._runtime, ..._kernel]));
+        writePe('Release/immuch_head_tracker_detect.dll', fakePe(imports: [..._runtime, ..._kernel]));
+        writePe('Release/immuch_head_tracker_detect_avx2.dll', fakePe(imports: [..._runtime, ..._kernel]));
+        writeFiles(root, {'System32/ole32.dll': ''});
+        final run = bundle();
+        expect(run.exitCode, 0, reason: '$run');
+        expect(bundled(), contains('licenses/libfacedetection/LICENSE'));
+        expect(folderText('licenses/libfacedetection/LICENSE'), contains('License Agreement For libfacedetection'));
+        expect(folderText('BUILD-INFO.txt'), contains('licenses/libfacedetection/LICENSE'));
+      });
+
+      test('stops when it is missing, and is not added without a detector DLL', () {
+        writeBuild();
+        expect(bundle().exitCode, 0);
+        expect(bundled(), isNot(contains('licenses/libfacedetection/LICENSE')));
+        writePe('Release/immuch_head_tracker_detect.dll', fakePe(imports: [..._runtime, ..._kernel]));
+        final run = bundle(extra: ['--libfacedetection', path('none')]);
+        expect(run.exitCode, 2, reason: '$run');
+        expect(run.output, contains('the licence of libfacedetection must travel with the face detector'));
+      });
+    });
+
     test('stops on a redistributable folder without the runtime or on a folder that is not a build', () {
       writeBuild();
       File(path('CRT/vcruntime140_1.dll')).deleteSync();

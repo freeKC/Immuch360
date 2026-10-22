@@ -3,6 +3,7 @@
 
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
+import 'package:immich_mobile/desktop/spatial/head_tracker_licenses.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/video_licenses.dart';
 import 'package:immich_mobile/desktop/window/single_instance.dart';
@@ -21,5 +22,7 @@ Future<void> startDesktop(List<String> args) async {
   setUpDesktopVideo();
   // The video player's native libraries on the licence page, from the texts the app carries (Windows and macOS)
   registerVideoLicenses();
+  // The face detector of the head tracking on Windows (libfacedetection)
+  registerHeadTrackerLicenses();
   await setUpDesktopWindow();
 }
