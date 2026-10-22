@@ -1,10 +1,12 @@
 // The live view of a camera (Tapo design 3.8). On Android and the Quest a platform view (CameraLiveView.kt) plays the
 // RTSP stream of the camera with Media3; it gets the address and the camera account through CameraLiveApi.setSource,
 // never through the creation parameters of the view, and reports its state through CameraLiveEvents. The sub stream
-// (SD) on a phone, the main one (HD) in full screen and on the Quest. On iPhone and iPad the live view comes later:
-// AVPlayer has no RTSP. On a computer, DesktopCameraLiveView (lib/desktop/video/camera_live_view.dart) plays the same
-// stream through libmpv and reports the same states; where libmpv is missing (Linux and macOS until their video
-// libraries come) the live view is announced for later.
+// (SD) on a phone, the main one (HD) in full screen and on the Quest. On iPhone and iPad, where AVPlayer has no RTSP,
+// Dart pulls the stream and makes a live HLS playlist of it on the local media bridge, which the platform view
+// (CameraLiveView.swift) plays without ever getting the account (CameraLiveHlsController). On a computer,
+// DesktopCameraLiveView (lib/desktop/video/camera_live_view.dart) plays the same stream through libmpv and reports the
+// same states; where libmpv is missing (Linux and macOS until their video libraries come) the live view is announced
+// for later.
 //
 // A platform view never takes the focus (a remote would get stuck in it): it sits in an ExcludeFocus, and its buttons
 // are Flutter buttons above it.
@@ -23,12 +25,13 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/tapo/rtsp_probe.dart';
 import 'package:immich_mobile/platform/camera_live_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/camera/camera_live_hls.dart';
 import 'package:immich_mobile/providers/tapo/tapo_camera.provider.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('CameraLiveView');
 
-/// The type of the platform view, CameraLiveViewFactory.VIEW_TYPE in Kotlin
+/// The type of the platform view, CameraLiveViewFactory.VIEW_TYPE in Kotlin and viewType in Swift
 const cameraLiveViewType = 'immuch/camera_live';
 
 /// The RTSP address of a stream of the camera at [host], without the account: Kotlin puts it in
@@ -65,6 +68,9 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
   StreamSubscription<CameraLiveEvent>? _events;
   bool _stopped = false;
 
+  /// iPhone and iPad: the live playlist made in Dart and its player
+  CameraLiveHlsController? _hls;
+
   late final CameraLiveApi _api = ref.read(cameraLiveApiProvider);
   late final CameraLiveEventsHub _hub = ref.read(cameraLiveEventsProvider);
 
@@ -79,7 +85,17 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
       return;
     }
     _viewId = viewId;
-    _events = _hub.of(viewId).listen((event) => widget.onEvent?.call(event));
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      final hls = _hls = CameraLiveHlsController(
+        viewId: viewId,
+        api: _api,
+        startStream: ref.read(cameraLiveHlsProvider),
+        onEvent: (event) => widget.onEvent?.call(event),
+      );
+      _events = _hub.of(viewId).listen(hls.onPlayerEvent);
+    } else {
+      _events = _hub.of(viewId).listen((event) => widget.onEvent?.call(event));
+    }
     _play();
   }
 
@@ -89,6 +105,14 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
       return;
     }
     _stopped = false;
+    final hls = _hls;
+    if (hls != null) {
+      // The playlist comes with the muting of the view
+      hls
+        ..setMuted(widget.muted)
+        ..play(host: widget.host, port: widget.port, user: widget.user, password: widget.password, hd: widget.hd);
+      return;
+    }
     // Called from didUpdateWidget too, while the tile builds: it hears of the new state once that is over
     scheduleMicrotask(() {
       if (mounted) {
@@ -117,6 +141,11 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
       return;
     }
     _stopped = true;
+    final hls = _hls;
+    if (hls != null) {
+      hls.stop();
+      return;
+    }
     unawaited(_call(() => _api.stop(viewId)));
   }
 
@@ -140,6 +169,8 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
         oldWidget.user != widget.user ||
         oldWidget.password != widget.password) {
       _play();
+    } else if (oldWidget.muted != widget.muted && _hls != null) {
+      _hls!.setMuted(widget.muted);
     } else if (oldWidget.muted != widget.muted && _viewId != null) {
       final viewId = _viewId!;
       unawaited(_call(() => _api.setMuted(viewId, widget.muted)));
@@ -164,7 +195,13 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _stop();
+    // The page is going too: the live playlist stops without telling it
+    final hls = _hls;
+    if (hls != null) {
+      hls.dispose();
+    } else {
+      _stop();
+    }
     unawaited(_events?.cancel());
     final viewId = _viewId;
     if (viewId != null) {
@@ -175,9 +212,19 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
 
   @override
   Widget build(BuildContext context) {
-    final view = ref.read(cameraLivePlatformViewProvider)?.call(_created) ?? _androidView();
+    final view =
+        ref.read(cameraLivePlatformViewProvider)?.call(_created) ??
+        (defaultTargetPlatform == TargetPlatform.iOS ? _iosView() : _androidView());
     return ExcludeFocus(child: IgnorePointer(child: view));
   }
+
+  /// No creation parameters: the playlist comes through setSource
+  Widget _iosView() => UiKitView(
+    viewType: cameraLiveViewType,
+    layoutDirection: TextDirection.ltr,
+    hitTestBehavior: PlatformViewHitTestBehavior.transparent,
+    onPlatformViewCreated: _created,
+  );
 
   Widget _androidView() => PlatformViewLink(
     viewType: cameraLiveViewType,
@@ -247,9 +294,6 @@ class _CameraLiveTileState extends State<CameraLiveTile> {
     if (CurrentPlatform.isDesktop && !DesktopCameraLiveView.available) {
       return _Message(key: const Key('camera_live_later'), text: context.t.desktop_tapo_live_later);
     }
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return _Message(key: const Key('camera_live_later'), text: context.t.camera_live_later_on_ios);
-    }
     final password = widget.password;
     if (widget.user.isEmpty || password == null || password.isEmpty) {
       return _Message(key: const Key('camera_live_needs_account'), text: context.t.camera_live_needs_account);
@@ -258,6 +302,8 @@ class _CameraLiveTileState extends State<CameraLiveTile> {
     final failed = _event.state == CameraLiveState.failed;
     final line = switch (_event.state) {
       CameraLiveState.connecting || CameraLiveState.buffering => context.t.camera_live_connecting,
+      // An H.265 camera on iPhone and iPad: its own message, the SD stream may still be H.264
+      CameraLiveState.failed when _event.error == cameraLiveH265 => context.t.camera_live_h265_later_on_ios,
       CameraLiveState.failed => context.t.camera_live_failed(error: _event.error ?? ''),
       CameraLiveState.idle || CameraLiveState.playing => null,
     };

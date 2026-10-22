@@ -22,6 +22,7 @@ import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/tapo_camera.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
+import 'package:immich_mobile/infrastructure/tapo/tapo_live_hls.dart';
 import 'package:immich_mobile/platform/camera_live_api.g.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
@@ -191,6 +192,69 @@ class FakeCameraLiveApi extends Mock implements CameraLiveApi {
   Future<void> stop(int viewId) async => stops.add(viewId);
 }
 
+/// The live playlist of the iPhone and iPad live view, held by the test: [ready] gives its address, [refuse] fails
+/// its start, [lose] ends it
+class FakeLiveHls implements LiveHlsStream {
+  FakeLiveHls(this.path, this.user, this.password, {required this.withAudio, this.hasAudio = true});
+
+  final String path;
+  final String user;
+  final String password;
+  final bool withAudio;
+  final _start = Completer<Uri>();
+  final _ended = Completer<String>();
+  bool stopped = false;
+
+  @override
+  bool hasAudio;
+
+  static final address = Uri.parse('http://127.0.0.1:4321/0123456789abcdef0123456789abcdef/live-test/live.m3u8');
+
+  @override
+  Future<Uri> start() => _start.future;
+
+  void ready() => _start.complete(address);
+
+  void refuse(Object error) => _start.completeError(error);
+
+  void lose(String reason) => _ended.complete(reason);
+
+  @override
+  Future<String> get ended => _ended.future;
+
+  @override
+  Future<void> stop() async {
+    stopped = true;
+    if (!_start.isCompleted) {
+      _start.completeError(const TapoCameraException(TapoErrorKind.cancelled));
+    }
+  }
+}
+
+/// Makes [FakeLiveHls] streams, ready at once unless [autoReady] is off
+class FakeLiveHlsStarter {
+  FakeLiveHlsStarter({this.autoReady = true});
+
+  bool autoReady;
+  final List<FakeLiveHls> streams = [];
+
+  LiveHlsStream call({
+    required String host,
+    required int port,
+    required String path,
+    required String user,
+    required String password,
+    required bool withAudio,
+  }) {
+    final stream = FakeLiveHls(path, user, password, withAudio: withAudio, hasAudio: withAudio);
+    streams.add(stream);
+    if (autoReady) {
+      stream.ready();
+    }
+    return stream;
+  }
+}
+
 /// A stand in for the platform view: created at once with [cameraViewId]
 const cameraViewId = 7;
 
@@ -268,6 +332,8 @@ class CameraTestStorage {
 List<Override> cameraOverrides({
   FakeTapoRecordings? recordings,
   FakeCameraLiveApi? live,
+  FakeLiveHlsStarter? liveHls,
+  bool realPlatformView = false,
   TapoCameraTester? tester,
   TapoCertificateReader? certificateReader,
   List<DiscoveredServer> found = const [],
@@ -279,7 +345,8 @@ List<Override> cameraOverrides({
       (ref, id) async => await ref.watch(tapoCameraHasCloudPasswordProvider(id).future) ? recordings : null,
     ),
   cameraLiveApiProvider.overrideWithValue(live ?? FakeCameraLiveApi()),
-  cameraLivePlatformViewProvider.overrideWithValue(fakeCameraPlatformView),
+  cameraLiveHlsProvider.overrideWithValue((liveHls ?? FakeLiveHlsStarter()).call),
+  if (!realPlatformView) cameraLivePlatformViewProvider.overrideWithValue(fakeCameraPlatformView),
   tapoCameraTesterProvider.overrideWithValue(tester ?? (request) async => const TapoTestResult()),
   tapoCertificateReaderProvider.overrideWithValue(certificateReader ?? (host) async => null),
   tapoRefusalsForgetterProvider.overrideWithValue(forgetRefusals ?? (_) {}),

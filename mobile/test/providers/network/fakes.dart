@@ -93,6 +93,14 @@ class FakeMediaBridge implements MediaBridge {
   @override
   Uri urlFor(String sourceId, String path) => Uri.parse('http://127.0.0.1:1234/token/$sourceId$path');
 
+  final Map<String, GeneratedMedia> generated = {};
+
+  @override
+  void registerGenerated(String id, GeneratedMedia media) => generated[id] = media;
+
+  @override
+  void unregisterGenerated(String id) => generated.remove(id);
+
   @override
   Future<void> stop() async => stopped = true;
 }

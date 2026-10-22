@@ -240,8 +240,12 @@
     "reason": "Sign in with your phone (feat-qr-pairing): the version of ZXing Android Embedded"
   },
   "mobile/ios/Runner/AppDelegate.swift": {
-    "blob": "ba0fe5bc0c22c8318dd674a0814413fb00280fed",
-    "reason": "Sign in with your phone (feat-qr-pairing): the QR code scanner registered in the app engine only"
+    "blob": "66372fde3853c5a8901c28ddeed003773173a549",
+    "reason": "Sign in with your phone (feat-qr-pairing): the QR code scanner registered in the app engine only; iOS Tapo live view (feat-ios-tapo-live): the live view platform view and CameraLiveApi registered in registerPlugins"
+  },
+  "mobile/ios/Runner/Core/CameraLiveView.swift": {
+    "blob": "e265c7122756fff980e6c7e887c3810ed7b89610",
+    "reason": "iOS Tapo live view (feat-ios-tapo-live): the AVPlayer platform view that plays the live playlist Dart makes of a camera stream"
   },
   "mobile/ios/Runner/Core/QrScanApiImpl.swift": {
     "blob": "8efc97ee5ddd93efe4502ab9d6a95418bd8aaa2b",

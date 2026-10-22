@@ -7,6 +7,10 @@
 // stops as soon as the client goes away or asks for another part of the file. What is read ahead is bounded for the
 // whole bridge. Only the stat results are kept, for a minute, so that a HEAD followed by a GET, or several players
 // opening the same file, do not ask the share twice.
+//
+// Next to the shares, the bridge serves media the app makes in memory (registerGenerated): the live playlist and the
+// segments of a camera for AVPlayer on iPhone and iPad. Those are never cached by the client nor by the bridge, and
+// are answered from memory, Range included.
 
 import 'dart:async';
 import 'dart:collection';
@@ -66,6 +70,7 @@ class LocalMediaBridge implements MediaBridge {
   final String _token;
   final _StatCache _stats;
   final Map<String, NetworkFileSystem> _fileSystems = {};
+  final Map<String, GeneratedMedia> _generated = {};
   HttpServer? _server;
   Future<void>? _starting;
 
@@ -130,6 +135,12 @@ class LocalMediaBridge implements MediaBridge {
     }
   }
 
+  @override
+  void registerGenerated(String id, GeneratedMedia media) => _generated[id] = media;
+
+  @override
+  void unregisterGenerated(String id) => _generated.remove(id);
+
   /// Throws a [StateError] when the bridge was never started. When it stopped since, the URL is on its last port,
   /// which the next [start] tries to listen on again.
   @override
@@ -189,16 +200,20 @@ class LocalMediaBridge implements MediaBridge {
   }
 
   Future<void> _answer(HttpRequest request, HttpResponse response) async {
-    final target = _target(request.uri);
-    if (target == null) {
+    final generated = _generatedTarget(request.uri);
+    final target = generated == null ? _target(request.uri) : null;
+    if (generated == null && target == null) {
       return _fail(response, HttpStatus.notFound, 'Not found');
     }
     if (request.method != 'GET' && request.method != 'HEAD') {
       response.headers.set(HttpHeaders.allowHeader, 'GET, HEAD');
       return _fail(response, HttpStatus.methodNotAllowed, 'Only GET and HEAD are served');
     }
+    if (generated != null) {
+      return _answerGenerated(request, response, generated.$1, generated.$2);
+    }
 
-    final (fileSystem, path) = target;
+    final (fileSystem, path) = target!;
     final NetworkEntry entry;
     try {
       entry = await _stats.get(fileSystem, path);
@@ -272,6 +287,60 @@ class LocalMediaBridge implements MediaBridge {
       await response.addStream(_read(reader, first));
     }
     await response.close();
+  }
+
+  /// A file of generated media, from memory: never cached, a range when one is asked
+  Future<void> _answerGenerated(HttpRequest request, HttpResponse response, GeneratedMedia media, String name) async {
+    final file = media.file(name);
+    if (file == null) {
+      return _fail(response, HttpStatus.notFound, 'Not found');
+    }
+    final bytes = file.bytes;
+    var start = 0;
+    var end = bytes.length;
+    final headers = response.headers
+      ..set(HttpHeaders.contentTypeHeader, file.contentType)
+      ..set(HttpHeaders.cacheControlHeader, 'no-cache')
+      ..set(HttpHeaders.acceptRangesHeader, 'bytes');
+    final rangeHeader = request.headers.value(HttpHeaders.rangeHeader);
+    if (rangeHeader != null) {
+      final asked = parseSingleByteRange(rangeHeader, bytes.length);
+      if (asked != null && asked.start >= asked.end) {
+        headers.set(HttpHeaders.contentRangeHeader, 'bytes */${bytes.length}');
+        return _fail(response, HttpStatus.requestedRangeNotSatisfiable, 'Range not satisfiable');
+      }
+      if (asked != null) {
+        start = asked.start;
+        end = asked.end;
+        response.statusCode = HttpStatus.partialContent;
+        headers.set(HttpHeaders.contentRangeHeader, 'bytes $start-${end - 1}/${bytes.length}');
+      }
+    }
+    response.contentLength = end - start;
+    if (request.method == 'GET') {
+      response.add(Uint8List.sublistView(bytes, start, end));
+    }
+    await response.close();
+  }
+
+  /// The generated media and the file name a request URL names, null when it names none
+  (GeneratedMedia, String)? _generatedTarget(Uri uri) {
+    if (_generated.isEmpty) {
+      return null;
+    }
+    final List<String> segments;
+    try {
+      segments = uri.pathSegments;
+    } on ArgumentError {
+      return null;
+    } on FormatException {
+      return null;
+    }
+    if (segments.length != 3 || !_isToken(segments[0])) {
+      return null;
+    }
+    final media = _generated[segments[1]];
+    return media == null ? null : (media, segments[2]);
   }
 
   /// The file system and the path a request URL names, null when the token or the source is wrong

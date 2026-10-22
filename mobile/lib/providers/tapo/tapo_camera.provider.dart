@@ -12,7 +12,9 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
 import 'package:immich_mobile/domain/services/tapo_camera.dart';
 import 'package:immich_mobile/infrastructure/tapo/tapo_control_client.dart';
+import 'package:immich_mobile/infrastructure/tapo/tapo_live_hls.dart';
 import 'package:immich_mobile/platform/camera_live_api.g.dart';
+import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:logging/logging.dart';
@@ -145,8 +147,8 @@ final tapoCameraCacheBytesProvider = FutureProvider.autoDispose.family<int, Stri
   return recordings == null ? 0 : recordings.cacheBytes();
 });
 
-// The live view on Android (and on the Quest): the API that tells a platform view what to play, and the states the
-// views report
+// The live view on Android, the Quest, iPhone and iPad: the API that tells a platform view what to play, the states
+// the views report, and on iPhone and iPad the live playlist made in Dart
 
 /// One state of a live view
 typedef CameraLiveEvent = ({CameraLiveState state, String? error, bool hasAudio});
@@ -157,14 +159,14 @@ final cameraLiveApiProvider = Provider<CameraLiveApi>((_) => CameraLiveApi());
 /// The tests give a stand in: a platform view needs the engine.
 final cameraLivePlatformViewProvider = Provider<Widget Function(ValueChanged<int> onCreated)?>((_) => null);
 
-/// The states of the live views, by view id; set up on first use, Android only
+/// The states of the live views, by view id; set up on first use, on the phones
 class CameraLiveEventsHub implements CameraLiveEvents {
   final Map<int, StreamController<CameraLiveEvent>> _views = {};
   bool _registered = false;
 
   /// The states of the view [viewId], until [release]
   Stream<CameraLiveEvent> of(int viewId) {
-    if (!_registered && !kIsWeb && Platform.isAndroid) {
+    if (!_registered && !kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
       _registered = true;
       CameraLiveEvents.setUp(this);
     }
@@ -179,3 +181,24 @@ class CameraLiveEventsHub implements CameraLiveEvents {
 }
 
 final cameraLiveEventsProvider = Provider<CameraLiveEventsHub>((_) => CameraLiveEventsHub());
+
+/// Makes the live playlist of a camera on the media bridge, for the live view on iPhone and iPad; the tests give fakes
+final cameraLiveHlsProvider = Provider<LiveHlsStarter>((ref) {
+  final bridge = ref.watch(mediaBridgeProvider);
+  return ({
+    required String host,
+    required int port,
+    required String path,
+    required String user,
+    required String password,
+    required bool withAudio,
+  }) => TapoLiveHls(
+    bridge: bridge,
+    host: host,
+    port: port,
+    path: path,
+    user: user,
+    password: password,
+    withAudio: withAudio,
+  );
+});

@@ -96,7 +96,7 @@ the gate is per desktop and is noted.
 | `lib/providers/permission.provider.dart:13` | initial notification permission state | right: notifications hidden on the computers |
 | `lib/providers/raw/raw_video.provider.dart:43` | two stream raw playback on iOS | wired (phase 2d): the computers are neither, and play two streams where libmpv loaded (`CurrentPlatform.isDesktop` term of the same expression, the 360° route stacks them or falls back) |
 | `lib/providers/raw/raw_video.provider.dart:45` | two stream raw playback on Android and Quest | wired (phase 2d): idem |
-| `lib/providers/tapo/tapo_camera.provider.dart:167` | Android live view events | right: the computers' live view (`DesktopCameraLiveView`, `lib/desktop/video/camera_live_view.dart`) reports its states itself |
+| `lib/providers/tapo/tapo_camera.provider.dart:167` | Android and iOS live view events | right: the computers' live view (`DesktopCameraLiveView`, `lib/desktop/video/camera_live_view.dart`) reports its states itself |
 | `lib/providers/view_intent/view_intent_handler.provider.dart:18` | Android view intents, else the stub | right: the computers replace the provider (desktopOverrides) with DesktopOpenFilesHandler, which opens the files given to the program |
 | `lib/repositories/asset_media.repository.dart:41` | Android trash support | right |
 | `lib/repositories/asset_media.repository.dart:51` | Android trash, else photo_manager delete | wired (G1): `DesktopAssetMediaRepository`, a root override, deletes nothing until the system trash (phase 4) |
