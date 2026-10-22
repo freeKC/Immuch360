@@ -17,35 +17,9 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 add_compile_definitions(_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR)
 
 # ------------------------------------------------------------------------------
-# Immuch360: archives are checked by SHA-256 rather than MD5, which no longer protects against a crafted file.
-function(download_and_verify url sha256 locationForArchive)
-  # Check if the archive exists.
-  if(EXISTS "${locationForArchive}")
-    file(SHA256 "${locationForArchive}" ARCHIVE_SHA256)
-
-    # If SHA-256 doesn't match, delete the archive to download again.
-    if(NOT sha256 STREQUAL ARCHIVE_SHA256)
-      file(REMOVE "${locationForArchive}")
-      message(STATUS "SHA-256 mismatch. File deleted.")
-    endif()
-  endif()
-
-  # Download the archive if it doesn't exist.
-  if(NOT EXISTS "${locationForArchive}")
-    message(STATUS "Downloading archive from ${url}...")
-    file(DOWNLOAD "${url}" "${locationForArchive}")
-    message(STATUS "Downloaded archive to ${locationForArchive}.")
-
-    # Verify SHA-256 of the newly downloaded file.
-    file(SHA256 "${locationForArchive}" ARCHIVE_SHA256)
-
-    if(sha256 STREQUAL ARCHIVE_SHA256)
-      message(STATUS "${locationForArchive} Verification successful.")
-    else()
-      message(FATAL_ERROR "${locationForArchive} Integrity check failed, please try to re-build project again.")
-    endif()
-  endif()
-endfunction()
+# Immuch360: archives are checked by SHA-256 rather than MD5, which no longer protects against a crafted file, and a
+# failed download is tried again after a pause (download_and_verify.cmake).
+include("${CMAKE_CURRENT_LIST_DIR}/download_and_verify.cmake")
 
 function(check_directory_exists_and_not_empty dir result_var)
   # Check if the directory exists

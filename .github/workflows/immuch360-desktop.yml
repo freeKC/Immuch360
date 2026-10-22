@@ -421,7 +421,9 @@ jobs:
   # dependencies the package declares, then every library the ELF files need must be found, libmpv and libsmb2 among
   # them, the desktop entry must be valid, the MIME types of the raw camera files registered, and the installed app
   # must play a short video on a virtual screen with the distribution's libmpv (check_package.sh --video). The oldest
-  # and newest Ubuntu LTS, Debian stable, Fedora 40 and the newest Fedora.
+  # and newest Ubuntu LTS, Debian stable, Fedora 40 and the newest Fedora. On Fedora the H.264 clip needs Cisco's
+  # openh264, which the check installs first; when Cisco's repository cannot be reached from the runner, the H.264
+  # clip is played for information only and the same picture in Theora is the one that must play, with a warning.
   # The packages are checked once uploaded, even when a later step of the linux job failed (its tests, its video start)
   linux-packages:
     name: Linux package on ${{ matrix.image }}
@@ -468,9 +470,23 @@ jobs:
         run: |
           file=$(cd dist && ls ./*."$PACKAGE")
           mkdir -p video-smoke
-          docker run --rm -v "$PWD/dist:/pkgs:ro" -v "$PWD/.github/desktop/packaging/linux:/check:ro" \
-            -v "$PWD/mobile/test/fixtures/video:/clips:ro" -v "$PWD/video-smoke:/out" "$IMAGE" \
-            sh /check/check_package.sh "/pkgs/${file#./}" --video /clips/flat-6s.mp4 /out
+          # The core of a crash of the app is written in the container (/tmp/core.<pid>), where video_smoke.sh prints
+          # its stack; the runner's own handler (apport) keeps nothing of a process in a container
+          echo '/tmp/core.%p' | sudo tee /proc/sys/kernel/core_pattern
+          status=0
+          docker run --rm --ulimit core=-1 -v "$PWD/dist:/pkgs:ro" \
+            -v "$PWD/.github/desktop/packaging/linux:/check:ro" -v "$PWD/mobile/test/fixtures/video:/clips:ro" \
+            -v "$PWD/video-smoke:/out" "$IMAGE" \
+            sh /check/check_package.sh "/pkgs/${file#./}" --video /clips/flat-6s.mp4 /out /clips/flat-6s-theora.mkv \
+            | tee "$RUNNER_TEMP/check.log" || status=$?
+          no_h264='H.264 not available in this container (openh264 repository unreachable), Theora clip used'
+          if grep -qF "$no_h264" "$RUNNER_TEMP/check.log"; then
+            echo "::warning title=$IMAGE::$no_h264"
+          fi
+          if grep -q 'crashed.*: made once more' "$RUNNER_TEMP/check.log"; then
+            echo "::warning title=$IMAGE::a start of the app crashed and was made once more (its stack is in the log)"
+          fi
+          exit "$status"
 
       - name: Upload the video start
         if: always()

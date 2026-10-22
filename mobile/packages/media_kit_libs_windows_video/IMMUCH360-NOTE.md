@@ -18,6 +18,14 @@ What differs from upstream, to apply again when a newer commit is copied here:
 - `windows/CMakeLists.txt`: every archive is checked by SHA-256 instead of MD5 (`download_and_verify`), with the
   SHA-256 of the 2024 libmpv archives (x64 `e23701df...a007`, arm64 `d445d02a...33ae`) and of `ANGLE.7z`
   (`cc5911bb...5f9a`), whose MD5 matched upstream's when they were computed (2026-10-08).
+- `windows/download_and_verify.cmake` (new, included by `windows/CMakeLists.txt` in place of upstream's function): a
+  failed download is tried again. Upstream downloads once and stops the configure when the MD5 differs, so one error of
+  the server (it stopped the Windows job of the desktop workflow on 2026-10-21, "Integrity check failed") failed the
+  build. Each attempt downloads to `<archive>.part`, checks the transfer status and the SHA-256, and only an archive
+  with the right SHA-256 takes the archive's name; 4 attempts, 10 seconds of pause doubled after each
+  (`IMMUCH360_DOWNLOAD_ATTEMPTS` and `IMMUCH360_DOWNLOAD_PAUSE`, CMake or environment variables). The address may be
+  a list, gone through in turn, for an archive that has a second source (none has one yet: the fork's libmpv is only
+  on its GitHub release). Tested by `mobile/test/desktop/ci/windows_libs_download_test.dart` through `cmake -P`.
 - `windows/CMakeLists.txt`: the switch `IMMUCH360_LIBMPV_FROM_CI`, on by default since desktop build 4 (release
   `libmpv-windows-20261009-3`, pinned by its SHA-256). Off: the 2024 archive of
   `media-kit/libmpv-win32-video-cmake`. On: the archive of a `libmpv-windows-*` release of `freeKC/Immuch360`, built by
