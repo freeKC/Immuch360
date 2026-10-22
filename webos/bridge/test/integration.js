@@ -17,7 +17,9 @@ const results = [];
 
 function get(url, headers, limit) {
 	return new Promise((resolve, reject) => {
-		const req = http.get(url, {headers: headers || {}}, (res) => {
+		// http.get(url, options, callback) needs Node 10.9: the TVs' Node 8 takes one options object
+		const options = Object.assign(require('url').parse(url), {headers: headers || {}});
+		const req = http.get(options, (res) => {
 			const parts = [];
 			let size = 0;
 			res.on('data', (d) => {

@@ -7,6 +7,7 @@ import AlbumsPanel from './AlbumsPanel';
 import PlacesPanel from './PlacesPanel';
 import SearchPanel from './SearchPanel';
 import DiagnosticsPanel from '../immuch360/diagnostics/DiagnosticsPanel';
+import SourcesPanel from '../immuch360/sources/SourcesPanel';
 import type {View} from '../types/navigation';
 import css from './AppLayout.module.less';
 
@@ -60,6 +61,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({onOpenAccount, accountLetter, acco
 				{activeView === 'search' && (
 					<div className={css.panelActive}>
 						<SearchPanel contentWidth={contentWidth} />
+					</div>
+				)}
+				{activeView === 'sources' && (
+					<div className={css.panelActive}>
+						<SourcesPanel contentWidth={contentWidth} />
 					</div>
 				)}
 				{activeView === 'about' && (
