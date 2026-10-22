@@ -10,6 +10,7 @@ var http = require('http');
 var pairing = require('./lib/pairing');
 var immich = require('./lib/immich');
 var serverLib = require('./lib/server');
+var bridgeHost = require('./lib/bridge-host');
 
 var tests = [];
 function test(name, fn) {
@@ -227,6 +228,163 @@ test('GET / serves the sign-in page', function () {
 			});
 		}
 	);
+});
+
+/* ── bridge-host.js (Immuch360: the Luna side of the media bridge) ── */
+
+function fakeBridgeModule(log) {
+	return {
+		createBridge: function () {
+			var running = false;
+			var idle = 0;
+			return {
+				start: function (host) {
+					running = true;
+					log.push('start ' + host);
+					return Promise.resolve({port: 1234, token: 'tok', host: host, node: 'v12.21.0', smb: true});
+				},
+				stop: function () {
+					running = false;
+					log.push('stop');
+				},
+				isRunning: function () {
+					return running;
+				},
+				setSources: function (list) {
+					log.push('sources ' + list.length);
+					return {count: list.length, refused: []};
+				},
+				status: function () {
+					return {running: running, sources: 1};
+				},
+				control: function (op, args) {
+					if (op === 'fail') {
+						var error = new Error('nope');
+						error.code = 'x';
+						return Promise.reject(error);
+					}
+					return Promise.resolve({echo: op, args: args});
+				},
+				setPlexClientId: function (id) {
+					log.push('client ' + id);
+				},
+				touch: function () {
+					idle = 0;
+				},
+				idleMs: function () {
+					return idle;
+				},
+				setIdle: function (ms) {
+					idle = ms;
+				}
+			};
+		}
+	};
+}
+
+test('bridge host: methods, activity held while it runs, released at stop', function () {
+	var log = [];
+	var host = bridgeHost.createHost({
+		nodeVersion: '12.21.0',
+		load: function () {
+			return fakeBridgeModule(log);
+		},
+		hold: function () {
+			log.push('hold');
+		},
+		release: function () {
+			log.push('release');
+		}
+	});
+	return host
+		.handle('bridgeStart', {clientId: 'client-1234567890'})
+		.then(function (res) {
+			assert.strictEqual(res.returnValue, true);
+			assert.strictEqual(res.port, 1234);
+			assert.strictEqual(res.token, 'tok');
+			return host.handle('bridgeSetSources', {sources: [{id: 'a'}, {id: 'b'}]});
+		})
+		.then(function (res) {
+			assert.strictEqual(res.count, 2);
+			return host.handle('bridgeCall', {op: 'discover', args: {kind: 'dlna'}});
+		})
+		.then(function (res) {
+			assert.strictEqual(res.returnValue, true);
+			assert.strictEqual(res.echo, 'discover');
+			return host.handle('bridgeCall', {op: 'fail'}).then(
+				function () {
+					throw new Error('should fail');
+				},
+				function (err) {
+					assert.strictEqual(err.code, 'x');
+				}
+			);
+		})
+		.then(function () {
+			return host.handle('bridgeStop', {});
+		})
+		.then(function () {
+			assert.deepEqual(log, ['client client-1234567890', 'start 127.0.0.1', 'hold', 'sources 2', 'stop', 'release']);
+			host.stop();
+		});
+});
+
+test('bridge host: refused on the Node of webOS 4, which keeps the phone sign in only', function () {
+	var loaded = false;
+	var host = bridgeHost.createHost({
+		nodeVersion: '0.12.2',
+		load: function () {
+			loaded = true;
+		},
+		hold: function () {},
+		release: function () {}
+	});
+	return host.handle('bridgeStart', {}).then(
+		function () {
+			throw new Error('should be refused');
+		},
+		function (err) {
+			assert.strictEqual(err.code, 'needs_webos5');
+			assert.strictEqual(loaded, false);
+		}
+	);
+});
+
+test('bridge host: a bridge left idle stops and releases its activity', function () {
+	var log = [];
+	var module_ = fakeBridgeModule(log);
+	var made = null;
+	var host = bridgeHost.createHost({
+		nodeVersion: '8.12.0',
+		load: function () {
+			return {
+				createBridge: function () {
+					made = module_.createBridge();
+					return made;
+				}
+			};
+		},
+		hold: function () {
+			log.push('hold');
+		},
+		release: function () {
+			log.push('release');
+		},
+		idleMs: 50,
+		watchEveryMs: 20
+	});
+	return host
+		.handle('bridgeStart', {lan: true})
+		.then(function () {
+			made.setIdle(1000);
+			return new Promise(function (resolve) {
+				setTimeout(resolve, 80);
+			});
+		})
+		.then(function () {
+			assert.deepEqual(log, ['start 0.0.0.0', 'hold', 'stop', 'release']);
+			host.stop();
+		});
 });
 
 /* ── runner ── */
