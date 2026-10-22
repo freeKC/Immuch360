@@ -28,10 +28,7 @@ class HeadCamera {
 }
 
 /// "IR" as a word, or infrared, Windows Hello, depth: the names infrared and depth sensors go by
-final _infraredName = RegExp(
-  r'(^|[^a-z0-9])ir([^a-z0-9]|$)|infra.?red|windows hello|\bdepth\b',
-  caseSensitive: false,
-);
+final _infraredName = RegExp(r'(^|[^a-z0-9])ir([^a-z0-9]|$)|infra.?red|windows hello|\bdepth\b', caseSensitive: false);
 
 /// Whether a camera's name says it is an infrared (or depth) camera
 bool looksInfrared(String name) => _infraredName.hasMatch(name);
@@ -55,12 +52,7 @@ List<HeadCamera> parseHeadCameras(String json) {
   }
   return [
     for (final item in list)
-      if (item is Map &&
-          item['id'] is String &&
-          (item['id'] as String).isNotEmpty)
-        HeadCamera(
-          id: item['id'] as String,
-          name: item['name'] is String ? item['name'] as String : '',
-        ),
+      if (item is Map && item['id'] is String && (item['id'] as String).isNotEmpty)
+        HeadCamera(id: item['id'] as String, name: item['name'] is String ? item['name'] as String : ''),
   ];
 }

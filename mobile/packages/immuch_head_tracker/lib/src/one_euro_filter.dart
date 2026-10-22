@@ -11,11 +11,7 @@ import 'dart:math' as math;
 /// [minCutoff] is the cutoff in Hz when the signal does not move, [beta] how fast the cutoff rises with the speed (in
 /// units of the signal per second), [derivativeCutoff] the cutoff in Hz of the low pass filter applied to the speed.
 class OneEuroFilter {
-  OneEuroFilter({
-    this.minCutoff = 1.0,
-    this.beta = 0.02,
-    this.derivativeCutoff = 1.0,
-  });
+  OneEuroFilter({this.minCutoff = 1.0, this.beta = 0.02, this.derivativeCutoff = 1.0});
 
   final double minCutoff;
   final double beta;

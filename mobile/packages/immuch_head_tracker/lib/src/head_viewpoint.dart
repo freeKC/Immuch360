@@ -107,10 +107,7 @@ class HeadViewpoint {
       _foundSinceNanos = now;
       _lostSinceNanos = -1;
     }
-    _target = (centreViewpoint + (headX - _centre) * sensitivity).clamp(
-      minViewpoint,
-      maxViewpoint,
-    );
+    _target = (centreViewpoint + (headX - _centre) * sensitivity).clamp(minViewpoint, maxViewpoint);
   }
 
   void onLost(int now) {
@@ -133,11 +130,7 @@ class HeadViewpoint {
   /// The viewpoint at [now], in the clock of the samples
   double valueAt(int now) {
     if (_lostSinceNanos >= 0) {
-      return _mix(
-        _lostFrom,
-        centreViewpoint,
-        _smoothStep(_float(now - _lostSinceNanos) / _lostEaseNanos),
-      );
+      return _mix(_lostFrom, centreViewpoint, _smoothStep(_float(now - _lostSinceNanos) / _lostEaseNanos));
     }
     if (_foundSinceNanos >= 0) {
       // The elapsed time as a 32 bit float, as the Kotlin class has it: a few nanoseconds before the end of the ease it
@@ -165,6 +158,5 @@ class HeadViewpoint {
     return x * x * (3 - 2 * x);
   }
 
-  static double _mix(double from, double to, double t) =>
-      from + (to - from) * t;
+  static double _mix(double from, double to, double t) => from + (to - from) * t;
 }

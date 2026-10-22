@@ -86,10 +86,7 @@ class HeadTrackerException implements Exception {
 
   /// The exception of a negative status of ht_api.h
   factory HeadTrackerException.fromStatus(int status, {int hresult = 0}) =>
-      HeadTrackerException(
-        HeadTrackerStatus.errorOf(status) ?? HeadTrackerError.failed,
-        hresult: hresult,
-      );
+      HeadTrackerException(HeadTrackerStatus.errorOf(status) ?? HeadTrackerError.failed, hresult: hresult);
 
   final HeadTrackerError error;
   final int hresult;

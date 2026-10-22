@@ -19,13 +19,11 @@ class HeadTracker {
   HeadTracker._(this._native);
 
   /// The tracker of the app's own DLL on Windows; null on the other systems, which have no tracker yet
-  static HeadTracker? windows() =>
-      Platform.isWindows ? HeadTracker.load() : null;
+  static HeadTracker? windows() => Platform.isWindows ? HeadTracker.load() : null;
 
   /// The tracker of the library at [library] (the tests give a build folder, or a gcc build on Linux); throws when it
   /// cannot be loaded
-  factory HeadTracker.load([String? library]) =>
-      HeadTracker._(NativeHeadTracker(library));
+  factory HeadTracker.load([String? library]) => HeadTracker._(NativeHeadTracker(library));
 
   final NativeHeadTracker _native;
 
@@ -49,17 +47,10 @@ class HeadTracker {
   /// Starts tracking with [camera]. Returns at once: the camera opens on the tracker's thread, and an error to open it
   /// (accessDenied, cameraBusy, noCamera) comes as an error of [HeadTrackingSession.samples]. Throws
   /// [HeadTrackerException] for an error found before (noMediaFoundation, noDetector).
-  HeadTrackingSession start(
-    HeadCamera camera, {
-    HeadTrackerOptions options = const HeadTrackerOptions(),
-  }) {
+  HeadTrackingSession start(HeadCamera camera, {HeadTrackerOptions options = const HeadTrackerOptions()}) {
     final session = HeadTrackingSession._(_native);
     try {
-      session._handle = _native.openCamera(
-        camera.id,
-        options,
-        session._callable.nativeFunction,
-      );
+      session._handle = _native.openCamera(camera.id, options, session._callable.nativeFunction);
     } catch (_) {
       session._callable.close();
       rethrow;
@@ -68,15 +59,12 @@ class HeadTracker {
   }
 
   /// A video file read frame by frame, for the tests: the same source reader setup and luma path as a camera
-  HeadFileReader openFile(
-    String path, {
-    HeadTrackerOptions options = const HeadTrackerOptions(),
-  }) => HeadFileReader._(_native, _native.openFile(path, options));
+  HeadFileReader openFile(String path, {HeadTrackerOptions options = const HeadTrackerOptions()}) =>
+      HeadFileReader._(_native, _native.openFile(path, options));
 
   /// A tracker fed with grey frames, for the tests
-  HeadFrameProcessor openFrames({
-    HeadTrackerOptions options = const HeadTrackerOptions(),
-  }) => HeadFrameProcessor._(_native, _native.openFrames(options));
+  HeadFrameProcessor openFrames({HeadTrackerOptions options = const HeadTrackerOptions()}) =>
+      HeadFrameProcessor._(_native, _native.openFrames(options));
 }
 
 /// A camera being tracked. [samples] gives each analysed frame (15 a second by default); an error that stops the
@@ -148,10 +136,7 @@ class HeadTrackingSession {
       return;
     }
     if (read.status < 0) {
-      _error = HeadTrackerException.fromStatus(
-        read.status,
-        hresult: _testLatest == null ? info().hresult : 0,
-      );
+      _error = HeadTrackerException.fromStatus(read.status, hresult: _testLatest == null ? info().hresult : 0);
       _samples.addError(_error!);
       return;
     }
@@ -182,9 +167,8 @@ class HeadTrackingSession {
 }
 
 // Static, so that the closure sent to the isolate holds the path and the address only
-Future<void> _closeInBackground(String library, int address) => Isolate.run(
-  () => NativeHeadTracker(library).close(Pointer<Void>.fromAddress(address)),
-);
+Future<void> _closeInBackground(String library, int address) =>
+    Isolate.run(() => NativeHeadTracker(library).close(Pointer<Void>.fromAddress(address)));
 
 /// A video file read one analysed frame at a time, at the file's own timestamps
 class HeadFileReader {
@@ -216,13 +200,7 @@ class HeadFrameProcessor {
   int _capacity = 0;
 
   /// Analyses [grey], [width] x [height] pixels, rows [stride] bytes apart (the width by default), seen at [timeNs]
-  HeadSample process(
-    Uint8List grey,
-    int width,
-    int height,
-    int timeNs, {
-    int? stride,
-  }) {
+  HeadSample process(Uint8List grey, int width, int height, int timeNs, {int? stride}) {
     if (grey.length > _capacity) {
       if (_buffer != nullptr) {
         calloc.free(_buffer);
@@ -231,14 +209,7 @@ class HeadFrameProcessor {
       _capacity = grey.length;
     }
     _buffer.asTypedList(grey.length).setAll(0, grey);
-    return _native.processFrame(
-      _handle,
-      _buffer,
-      width,
-      height,
-      stride ?? width,
-      timeNs,
-    );
+    return _native.processFrame(_handle, _buffer, width, height, stride ?? width, timeNs);
   }
 
   HeadTrackerInfo info() => _native.info(_handle);

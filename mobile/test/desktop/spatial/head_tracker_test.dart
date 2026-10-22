@@ -271,7 +271,7 @@ void main() {
       expect(sizeOf<HtSample>(), 80);
       expect(sizeOf<HtInfo>(), 32);
       expect(headTrackerApiVersion, 1);
-      final header = File(p.join(_package, 'src', 'ht_api.h')).readAsStringSync();
+      final header = File(p.join(_package, 'src', 'ht_api.h')).readAsStringSync().replaceAll('\r\n', '\n');
       expect(header, contains('#define HT_API_VERSION $headTrackerApiVersion\n'));
       for (final (name, value) in [
         ('HT_E_ACCESS_DENIED', HeadTrackerStatus.accessDenied),
@@ -298,7 +298,7 @@ void main() {
     final folder = p.join(_package, 'third_party', 'libfacedetection');
 
     test('is the pinned commit, file for file', () {
-      final readme = File(p.join(folder, 'README.md')).readAsStringSync();
+      final readme = File(p.join(folder, 'README.md')).readAsStringSync().replaceAll('\r\n', '\n');
       expect(readme, contains('commit `$libfacedetectionCommit`'));
       final pins = {
         for (final match in RegExp(r'^\| `([^`]+)`[^|]*\| `([0-9a-f]{40})` \|$', multiLine: true).allMatches(readme))

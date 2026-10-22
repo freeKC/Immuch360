@@ -103,24 +103,11 @@ typedef _OpenCamera =
       Pointer<NativeFunction<HtSampleCallbackNative>> callback,
       Pointer<Int32> status,
     );
-typedef _OpenFileNative =
-    Pointer<Void> Function(
-      Pointer<Utf8> path,
-      Pointer<HtOptions> options,
-      Pointer<Int32> status,
-    );
-typedef _OpenFile =
-    Pointer<Void> Function(
-      Pointer<Utf8> path,
-      Pointer<HtOptions> options,
-      Pointer<Int32> status,
-    );
-typedef _OpenFramesNative =
-    Pointer<Void> Function(Pointer<HtOptions> options, Pointer<Int32> status);
-typedef _OpenFrames =
-    Pointer<Void> Function(Pointer<HtOptions> options, Pointer<Int32> status);
-typedef _NextNative =
-    Int32 Function(Pointer<Void> tracker, Pointer<HtSample> sample);
+typedef _OpenFileNative = Pointer<Void> Function(Pointer<Utf8> path, Pointer<HtOptions> options, Pointer<Int32> status);
+typedef _OpenFile = Pointer<Void> Function(Pointer<Utf8> path, Pointer<HtOptions> options, Pointer<Int32> status);
+typedef _OpenFramesNative = Pointer<Void> Function(Pointer<HtOptions> options, Pointer<Int32> status);
+typedef _OpenFrames = Pointer<Void> Function(Pointer<HtOptions> options, Pointer<Int32> status);
+typedef _NextNative = Int32 Function(Pointer<Void> tracker, Pointer<HtSample> sample);
 typedef _Next = int Function(Pointer<Void> tracker, Pointer<HtSample> sample);
 typedef _ProcessNative =
     Int32 Function(
@@ -142,8 +129,7 @@ typedef _Process =
       int timeNs,
       Pointer<HtSample> sample,
     );
-typedef _InfoNative =
-    Int32 Function(Pointer<Void> tracker, Pointer<HtInfo> info);
+typedef _InfoNative = Int32 Function(Pointer<Void> tracker, Pointer<HtInfo> info);
 typedef _Info = int Function(Pointer<Void> tracker, Pointer<HtInfo> info);
 typedef _CloseNative = Void Function(Pointer<Void> tracker);
 typedef _Close = void Function(Pointer<Void> tracker);
@@ -152,44 +138,29 @@ typedef _Close = void Function(Pointer<Void> tracker);
 /// (the tests give the build folder, or on Linux a gcc build of test_native).
 class NativeHeadTracker {
   NativeHeadTracker([String? library])
-    : this._(
-        DynamicLibrary.open(library ?? defaultLibrary),
-        library ?? defaultLibrary,
-      );
+    : this._(DynamicLibrary.open(library ?? defaultLibrary), library ?? defaultLibrary);
 
   NativeHeadTracker._(DynamicLibrary dll, this.path)
     : _version = dll.lookupFunction<_VersionNative, _Version>('ht_api_version'),
       _now = dll.lookupFunction<_NowNative, _Now>('ht_now_us'),
       _cpuAvx2 = dll.lookupFunction<_VersionNative, _Version>('ht_cpu_avx2'),
       _list = dll.lookupFunction<_ListNative, _List>('ht_list_cameras'),
-      _openCamera = dll.lookupFunction<_OpenCameraNative, _OpenCamera>(
-        'ht_open_camera',
-      ),
-      _openFile = dll.lookupFunction<_OpenFileNative, _OpenFile>(
-        'ht_open_file',
-      ),
-      _openFrames = dll.lookupFunction<_OpenFramesNative, _OpenFrames>(
-        'ht_open_frames',
-      ),
+      _openCamera = dll.lookupFunction<_OpenCameraNative, _OpenCamera>('ht_open_camera'),
+      _openFile = dll.lookupFunction<_OpenFileNative, _OpenFile>('ht_open_file'),
+      _openFrames = dll.lookupFunction<_OpenFramesNative, _OpenFrames>('ht_open_frames'),
       _next = dll.lookupFunction<_NextNative, _Next>('ht_next'),
-      _process = dll.lookupFunction<_ProcessNative, _Process>(
-        'ht_process_frame',
-      ),
+      _process = dll.lookupFunction<_ProcessNative, _Process>('ht_process_frame'),
       _latest = dll.lookupFunction<_NextNative, _Next>('ht_latest'),
       _info = dll.lookupFunction<_InfoNative, _Info>('ht_info'),
       _close = dll.lookupFunction<_CloseNative, _Close>('ht_close') {
     final version = _version();
     if (version != headTrackerApiVersion) {
-      throw StateError(
-        '$path has the interface version $version, this binding $headTrackerApiVersion',
-      );
+      throw StateError('$path has the interface version $version, this binding $headTrackerApiVersion');
     }
   }
 
   /// The DLL Flutter bundles next to the executable
-  static String get defaultLibrary => Platform.isWindows
-      ? 'immuch_head_tracker.dll'
-      : 'libimmuch_head_tracker.so';
+  static String get defaultLibrary => Platform.isWindows ? 'immuch_head_tracker.dll' : 'libimmuch_head_tracker.so';
 
   final String path;
   final _Version _version;
@@ -220,9 +191,7 @@ class NativeHeadTracker {
           throw HeadTrackerException.fromStatus(length);
         }
         if (length <= capacity) {
-          return parseHeadCameras(
-            utf8.decode(out.asTypedList(length), allowMalformed: true),
-          );
+          return parseHeadCameras(utf8.decode(out.asTypedList(length), allowMalformed: true));
         }
         capacity = length;
       } finally {
@@ -245,56 +214,36 @@ class NativeHeadTracker {
     }
   });
 
-  Pointer<Void> openFile(String path, HeadTrackerOptions options) =>
-      _withOptions(options, (nativeOptions, status) {
-        final text = path.toNativeUtf8(allocator: calloc);
-        try {
-          return _openFile(text, nativeOptions, status);
-        } finally {
-          calloc.free(text);
-        }
-      });
+  Pointer<Void> openFile(String path, HeadTrackerOptions options) => _withOptions(options, (nativeOptions, status) {
+    final text = path.toNativeUtf8(allocator: calloc);
+    try {
+      return _openFile(text, nativeOptions, status);
+    } finally {
+      calloc.free(text);
+    }
+  });
 
-  Pointer<Void> openFrames(HeadTrackerOptions options) => _withOptions(
-    options,
-    (nativeOptions, status) => _openFrames(nativeOptions, status),
-  );
+  Pointer<Void> openFrames(HeadTrackerOptions options) =>
+      _withOptions(options, (nativeOptions, status) => _openFrames(nativeOptions, status));
 
   /// The next analysed frame of a file, null at its end
   HeadSample? next(Pointer<Void> tracker) => _withSample((sample) {
     final result = _next(tracker, sample);
     if (result < 0) {
-      throw HeadTrackerException.fromStatus(
-        result,
-        hresult: info(tracker).hresult,
-      );
+      throw HeadTrackerException.fromStatus(result, hresult: info(tracker).hresult);
     }
     return result == 1;
   });
 
   /// Analyses one grey frame (or the luma plane of a YUV frame) given in [grey] at [timeNs]
-  HeadSample processFrame(
-    Pointer<Void> tracker,
-    Pointer<Uint8> grey,
-    int width,
-    int height,
-    int stride,
-    int timeNs,
-  ) => _withSample((sample) {
-    final result = _process(
-      tracker,
-      grey,
-      width,
-      height,
-      stride,
-      timeNs,
-      sample,
-    );
-    if (result < 0) {
-      throw HeadTrackerException.fromStatus(result);
-    }
-    return true;
-  })!;
+  HeadSample processFrame(Pointer<Void> tracker, Pointer<Uint8> grey, int width, int height, int stride, int timeNs) =>
+      _withSample((sample) {
+        final result = _process(tracker, grey, width, height, stride, timeNs, sample);
+        if (result < 0) {
+          throw HeadTrackerException.fromStatus(result);
+        }
+        return true;
+      })!;
 
   /// The newest sample of a tracker, null before the first. [status] of the sample is kept: an error of a camera
   /// arrives as a sample whose status is negative.
@@ -316,14 +265,8 @@ class NativeHeadTracker {
       _info(tracker, info);
       final fourcc = info.ref.nativeFourcc;
       return HeadTrackerInfo(
-        detector: info.ref.detector == 2
-            ? FaceDetectorBuild.avx2
-            : FaceDetectorBuild.plain,
-        framing:
-            AutoFramingState.values[info.ref.framing.clamp(
-              0,
-              AutoFramingState.values.length - 1,
-            )],
+        detector: info.ref.detector == 2 ? FaceDetectorBuild.avx2 : FaceDetectorBuild.plain,
+        framing: AutoFramingState.values[info.ref.framing.clamp(0, AutoFramingState.values.length - 1)],
         width: info.ref.width,
         height: info.ref.height,
         fpsNumerator: info.ref.fpsNumerator,
@@ -341,8 +284,7 @@ class NativeHeadTracker {
 
   Pointer<Void> _withOptions(
     HeadTrackerOptions options,
-    Pointer<Void> Function(Pointer<HtOptions> options, Pointer<Int32> status)
-    open,
+    Pointer<Void> Function(Pointer<HtOptions> options, Pointer<Int32> status) open,
   ) {
     final nativeOptions = calloc<HtOptions>();
     final status = calloc<Int32>();
@@ -358,9 +300,7 @@ class NativeHeadTracker {
         ..reserved = 0;
       final tracker = open(nativeOptions, status);
       if (tracker == nullptr) {
-        throw HeadTrackerException.fromStatus(
-          status.value == 0 ? HeadTrackerStatus.failed : status.value,
-        );
+        throw HeadTrackerException.fromStatus(status.value == 0 ? HeadTrackerStatus.failed : status.value);
       }
       return tracker;
     } finally {
@@ -405,9 +345,7 @@ String fourccText(int fourcc) {
   if (fourcc == 0) {
     return '';
   }
-  final codes = [
-    for (var shift = 0; shift < 32; shift += 8) (fourcc >> shift) & 0xFF,
-  ];
+  final codes = [for (var shift = 0; shift < 32; shift += 8) (fourcc >> shift) & 0xFF];
   if (codes.every((code) => code >= 0x20 && code < 0x7F)) {
     return String.fromCharCodes(codes).trimRight();
   }

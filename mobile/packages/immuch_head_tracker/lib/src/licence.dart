@@ -10,8 +10,7 @@ import 'package:flutter/foundation.dart';
 const libfacedetectionCommit = 'acf7b254121927e7dced30e233a2e03119f28ea2';
 
 /// third_party/libfacedetection/LICENSE
-const libfacedetectionLicense =
-    '''By downloading, copying, installing or using the software you agree to this license.
+const libfacedetectionLicense = '''By downloading, copying, installing or using the software you agree to this license.
 If you do not agree to this license, do not download, install,
 copy or use the software.
 
