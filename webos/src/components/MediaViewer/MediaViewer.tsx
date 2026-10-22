@@ -84,7 +84,10 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	// Immuch360: the video that did not play (an error, or nothing after 20 s): a message replaces the endless spinner
 	const [videoFailure, setVideoFailure] = useState<string | null>(null);
 	const videoFailed = isVideo && !!asset && videoFailure === asset.id;
-	const details = useAssetDetails(asset?.id, !!asset && (detailsOpen || zoomedPast2x || videoFailed || (!isVideo && (flagged || forced || looksEquirect(asset.ratio)))));
+	const details = useAssetDetails(
+		asset?.id,
+		!!asset && (detailsOpen || zoomedPast2x || videoFailed || (!isVideo && (flagged || forced || looksEquirect(asset.ratio) || repository.detailsForEveryPhoto === true)))
+	);
 	const [sphereFailure, setSphereFailure] = useState<{assetId: string; reason: string} | null>(null);
 	const sphereFailed = !!asset && sphereFailure?.assetId === asset.id;
 	const wants360 =

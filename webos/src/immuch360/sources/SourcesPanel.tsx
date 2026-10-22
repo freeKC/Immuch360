@@ -2,7 +2,7 @@
 // servers found on the network, and the pages that add them. Everything goes through the media bridge of the app's JS
 // service (webOS 5 and later; SMB from webOS 22).
 
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import Scroller from '@enact/sandstone/Scroller';
 import Spotlight from '@enact/spotlight';
 import {createSpotlightContainer} from '../../utils/spotlight';
@@ -67,8 +67,15 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 		};
 	}, [client, info, version]);
 
+	// Back on the home of the page from one of its screens: the focus comes back into it. Opened from the rail, the
+	// focus stays on the rail, as for the other pages.
+	const leftHome = useRef(false);
 	useEffect(() => {
-		if (screen.kind !== 'home') return undefined;
+		if (screen.kind !== 'home') {
+			leftHome.current = true;
+			return undefined;
+		}
+		if (!leftHome.current) return undefined;
 		const raf = requestAnimationFrame(() => Spotlight.focus(HOME_ID));
 		return () => cancelAnimationFrame(raf);
 	}, [screen.kind]);

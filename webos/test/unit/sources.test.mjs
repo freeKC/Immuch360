@@ -177,6 +177,7 @@ describe('the repository of a folder', () => {
 		assert.equal(details.width, 6080);
 		assert.equal(details.model, 'RICOH THETA Z1');
 		assert.deepEqual(await repo.getRotationContext(), {userId: null, serverVersion: null});
+		assert.equal(repo.detailsForEveryPhoto, true);
 		assert.equal((await repo.fetchPreviewBytes(repo.assets[0].id)).byteLength, 4);
 		const shuffled = await repo.searchRandomImages({}, 10);
 		assert.deepEqual(shuffled.map((a) => a.id), [repo.assets[0].id]);

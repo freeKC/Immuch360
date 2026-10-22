@@ -44,6 +44,8 @@ interface Options {
 
 export class SourceRepository implements PhotoRepository {
 	readonly assets: TimelineAsset[];
+	// The listing of SMB and WebDAV tells no size: the head of each photo opened says whether it is a 360° photo
+	readonly detailsForEveryPhoto = true;
 	private files = new Map<string, ListedFile>();
 	private keys = new Map<string, string>();
 	private info: BridgeInfo;
