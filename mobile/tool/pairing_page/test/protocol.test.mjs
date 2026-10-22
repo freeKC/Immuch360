@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 import {
   agree,
+  checkNumberOf,
   confirmOf,
   deriveKeys,
   fromBase64,
@@ -44,6 +45,7 @@ for (const vector of vectors) {
     assert.equal(toBase64(keys.up), vector.kUp);
     assert.equal(toBase64(keys.down), vector.kDown);
     assert.equal(toBase64(confirmOf({ confirmKey: keys.confirm, transcript: th, device: fromBase64(vector.device) })), vector.confirm);
+    assert.equal(checkNumberOf({ confirmKey: keys.confirm, transcript: th }), vector.check);
 
     const sealedUp = seal({ keys, transcript: th, direction: UP, nonce: fromBase64(vector.nonceUp), plain: fromBase64(vector.plainUp) });
     assert.equal(toBase64(sealedUp), vector.sealedUp);

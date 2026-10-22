@@ -2,17 +2,20 @@
 // camera and lands here. The page runs the same hello as the app (protocol.js), checks that it talks to the screen
 // that shows this code, and sends the server address, the email and the password sealed with the pairing key. The
 // screen signs in itself with them and forgets the password. Served by the screen with a strict
-// Content-Security-Policy: no inline script or style, no other origin.
+// Content-Security-Policy: no inline script or style, no other origin. Every text goes in with textContent.
+//
+// The "Open it" link hands the app the screen's address only, never the secret of the code: the app scans the code
+// on the screen itself, so that a link from anywhere else cannot make it sign a device in.
 
 import { hello, normalizeCode, parseFragment, utf8, VERSION } from './protocol.js';
 
 // English, replaced by the screen's own language from /p/info
 const DEFAULTS = {
-  pairing_web_title_tv: 'Sign in your TV',
-  pairing_web_title_headset: 'Sign in your headset',
-  pairing_web_title_computer: 'Sign in your computer',
+  pairing_web_title_tv: 'Sign your TV in',
+  pairing_web_title_headset: 'Sign your headset in',
+  pairing_web_title_computer: 'Sign your computer in',
   pairing_web_intro:
-    'Your password goes encrypted straight to the screen over your home network. It is used once to sign in and never stored.',
+    'Your password is encrypted on your home network and used once to sign the screen in. The screen does not keep it.',
   pairing_web_code: 'Code shown on the screen',
   pairing_web_connect: 'Sign in',
   pairing_web_connecting: 'Signing in…',
@@ -20,7 +23,7 @@ const DEFAULTS = {
   pairing_web_open_app: 'Immuch360 on this phone? Open it',
   pairing_web_prefer_app: 'Safer and faster: use Immuch360 on your phone.',
   pairing_web_get_app: 'Get Immuch360',
-  pairing_web_oauth: 'Your server signs in with {provider}: install Immuch360 on your phone to sign in this screen.',
+  pairing_web_oauth: 'Your server signs in with {provider}: install Immuch360 on your phone to sign this screen in.',
   pairing_web_bad_credentials: 'Wrong email or password.',
   pairing_web_lost: 'Lost contact with the screen. Nothing was signed in: try again.',
   pairing_web_expired: 'This code expired. Scan the new code on the screen.',
@@ -80,7 +83,7 @@ function showError(message) {
 async function main() {
   // The secret of the QR code, then out of the address bar and the history
   const fragment = parseFragment(window.location.hash);
-  const openLink = fragment ? `immuch360://pair?u=${encodeURIComponent(window.location.href)}` : null;
+  const openLink = `immuch360://pair?u=${encodeURIComponent(window.location.origin + window.location.pathname)}`;
   if (window.location.hash) {
     window.history.replaceState(null, '', window.location.pathname);
   }
@@ -111,11 +114,9 @@ async function main() {
   $('get-app').textContent = text('pairing_web_get_app');
   $('get-app').href = STORE_LINK;
   show($('code-field'), !fragment);
-  if (openLink) {
-    $('open-app').textContent = text('pairing_web_open_app');
-    $('open-app').href = openLink;
-    show($('open-app'), true);
-  }
+  $('open-app').textContent = text('pairing_web_open_app');
+  $('open-app').href = openLink;
+  show($('open-app'), true);
 
   let channel = null;
   const form = $('form');
@@ -188,7 +189,9 @@ async function main() {
     }
     if (answer.status !== 200) {
       channel = null;
-      showError(text(answer.status === 400 ? 'pairing_web_wrong_code' : answer.status === 410 ? 'pairing_web_expired' : 'pairing_web_lost'));
+      // 400 rejected: the code is used up, a new one shows on the screen; anything else: no trusted answer
+      const used = answer.status === 410 || (answer.status === 400 && answer.json && answer.json.error === 'rejected');
+      showError(text(used ? 'pairing_web_expired' : 'pairing_web_lost'));
       return;
     }
     const result = channel.openAnswer(answer.json);
@@ -198,25 +201,22 @@ async function main() {
       return;
     }
     $('password').value = '';
+    // A wrong password or server address keeps the code for another try, up to three
+    if (result.triesLeft === 0) {
+      channel = null;
+    }
     switch (result.status) {
       case 'signedIn':
         show(form, false);
         show($('success'), true);
         return;
       case 'badCredentials':
-        if (!result.triesLeft) {
-          channel = null;
-          showError(text('pairing_web_expired'));
-        } else {
-          showError(text('pairing_web_bad_credentials'));
-        }
+        showError(text(result.triesLeft ? 'pairing_web_bad_credentials' : 'pairing_web_expired'));
         return;
       case 'oauthOnly':
-        channel = null;
         showError(text('pairing_web_oauth', { provider: result.provider || 'OAuth' }));
         return;
       case 'serverUnreachable':
-        channel = null;
         showError(text('pairing_web_server_unreachable'));
         return;
       default:

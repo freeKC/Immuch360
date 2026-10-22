@@ -99,6 +99,13 @@ export function confirmOf({ confirmKey, transcript: th, device }) {
   return hmac(sha256, confirmKey, concat(utf8('screen'), th, device));
 }
 
+/** The six digits the screen and the app show once a hello is done (pairingCheckNumber in Dart) */
+export function checkNumberOf({ confirmKey, transcript: th }) {
+  const mac = hmac(sha256, confirmKey, concat(utf8('check'), th));
+  const value = ((mac[0] << 24) >>> 0) + (mac[1] << 16) + (mac[2] << 8) + mac[3];
+  return String(value % 1000000).padStart(6, '0');
+}
+
 export function sameBytes(a, b) {
   if (a.length !== b.length) {
     return false;

@@ -31,3 +31,15 @@ test('no inline script or style, which the policy of the screen would block', ()
   assert.ok(!/style=/.test(html));
   assert.ok(!/<style/.test(html));
 });
+
+test('every text goes in as text, and the Open it link carries no secret', () => {
+  const source = readFileSync(join(here, '..', 'src', 'app.js'), 'utf8');
+  for (const sink of ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) {
+    assert.ok(!source.includes(sink), `app.js uses ${sink}`);
+  }
+  // The link names the page (origin and path), never the fragment with the secret of the code
+  assert.ok(/immuch360:\/\/pair\?u=\$\{encodeURIComponent\(window\.location\.origin \+ window\.location\.pathname\)\}/.test(source));
+  assert.ok(!/encodeURIComponent\(window\.location\.href\)/.test(source));
+  const html = readFileSync(join(committed, 'index.html'), 'utf8');
+  assert.ok(!/autocomplete="current-password"/.test(html), 'the browser would offer to save the password');
+});

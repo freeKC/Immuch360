@@ -12,14 +12,15 @@
     <main class="card">
       <h1 id="title">Immuch360</h1>
       <p id="device" class="device"></p>
-      <form id="form" autocomplete="on" novalidate>
+      <form id="form" autocomplete="off" novalidate>
         <p id="intro" class="sub"></p>
         <label id="server-label" for="server"></label>
         <input id="server" type="url" placeholder="https://photos.example.com" autocapitalize="off" autocorrect="off" spellcheck="false" required />
         <label id="email-label" for="email"></label>
         <input id="email" type="email" autocomplete="username" autocapitalize="off" spellcheck="false" required />
         <label id="password-label" for="password"></label>
-        <input id="password" type="password" autocomplete="current-password" required />
+        <!-- Not saved by the browser: the address of a screen is not a site, and another device may take it later -->
+        <input id="password" type="password" autocomplete="off" required />
         <div id="code-field" hidden>
           <label id="code-label" for="code"></label>
           <input id="code" class="code" placeholder="K7M2Q 9XRTH" autocapitalize="characters" autocorrect="off" autocomplete="off" spellcheck="false" maxlength="12" />
