@@ -8,6 +8,7 @@
 
 import 'dart:async';
 
+import 'package:immich_mobile/domain/services/pairing/big_screen_headers.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/infrastructure/network/pairing/pairing_client.dart';
 import 'package:logging/logging.dart';
@@ -111,9 +112,6 @@ class PhonePairingResult {
   @override
   String toString() => 'PhonePairingResult(${status.name})';
 }
-
-/// The name the session gets on the server, "Immuch360 on Living room TV": what the web app shows in Authorized devices
-String pairingSessionName(String label) => 'Immuch360 on $label';
 
 /// The deviceOS the web app has an icon for, from what the screen said
 String pairingSessionOs(PairingScreenDevice device) => switch (device.os) {

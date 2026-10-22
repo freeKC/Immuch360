@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/services/pairing/big_screen_headers.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/pairing/phone_pairing.service.dart';
 import 'package:immich_mobile/domain/services/pairing/screen_pairing_session.dart';
