@@ -233,8 +233,6 @@ class PairingTarget extends PairingScan {
   /// The bytes mixed into the keys
   Uint8List get secretBytes => secret ?? Uint8List.fromList(utf8.encode(code!));
 
-  Uri get baseUri => Uri(scheme: 'http', host: host, port: port);
-
   PairingTarget withCode(String normalizedCode) => PairingTarget(host: host, port: port, id: id, code: normalizedCode);
 
   // Never the secret nor the code: this ends up in logs
