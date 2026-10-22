@@ -10,7 +10,8 @@ package app.alextran.immich.djilink
  * unit tests long before any question of authority is answered, and because having one place for it means a capture
  * can correct one table instead of a scattering of shifts.
  *
- * [axisOrder] is a candidate, not a fact. The notes do not establish which channel carries which axis.
+ * [axisOrder] is empty: the notes do not establish which channel carries which axis, so no axis is assigned to any
+ * channel until a capture of the remote's own sticks shows it. A body built today carries neutral on every channel.
  */
 object ChannelMap {
   const val NEUTRAL = 1024
@@ -30,21 +31,32 @@ object ChannelMap {
   const val MODE_MIDDLE = 1
 
   /**
-   * Which of the first four channels carries which axis. A candidate order: it is what a reading of the native
-   * builder suggests, it has never been seen on a wire, and it is the first thing a capture must confirm.
+   * Which channel carries which axis, by channel index. Unassigned: it is filled from a capture of the remote's own
+   * sticks moved one at a time, with that capture named beside it, and never from a reading of anyone's code.
    */
-  val axisOrder: List<Axis> = listOf(Axis.ROLL, Axis.PITCH, Axis.THROTTLE, Axis.YAW)
+  val axisOrder: Map<Int, Axis> = emptyMap()
 
   fun toChannel(input: Double): Int {
     val value = (NEUTRAL + SPAN * input.coerceIn(-1.0, 1.0)).toInt()
     return value.coerceIn(MINIMUM, MAXIMUM)
   }
 
-  /** The 13 byte body for one reading, every channel the order does not name left at neutral */
-  fun body(sample: StickSample, focus: Boolean = true, modeSwitch: Int = MODE_MIDDLE): ByteArray {
+  /**
+   * The 13 byte body for one reading, every channel [order] does not name left at neutral. The tests hand in an
+   * order of their own to check the packing; the default order names nothing.
+   */
+  fun body(
+    sample: StickSample,
+    focus: Boolean = true,
+    modeSwitch: Int = MODE_MIDDLE,
+    order: Map<Int, Axis> = axisOrder,
+  ): ByteArray {
     val out = ByteArray(BODY_SIZE)
     val values = IntArray(channelBitOffsets.size) { NEUTRAL }
-    axisOrder.forEachIndexed { index, axis -> values[index] = toChannel(sample.axis(axis)) }
+    for ((channel, axis) in order) {
+      require(channel in values.indices) { "no channel $channel in the body" }
+      values[channel] = toChannel(sample.axis(axis))
+    }
     channelBitOffsets.forEachIndexed { index, offset -> writeBits(out, offset, 11, values[index]) }
     if (focus) {
       writeBits(out, FOCUS_BIT, 1, 1)

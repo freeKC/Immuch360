@@ -6,7 +6,9 @@ package app.alextran.immich.djilink
  * This is what makes the parser answerable: a session recorded once on a cable can be replayed on a phone, on an
  * emulator or in a unit test, and it goes through the very decoders the live path uses. The index says which bytes
  * came in and when, so the inbound stream is replayed on its own; without an index every byte is treated as inbound,
- * which the caller is told.
+ * which the caller is told. An open marker in the index restarts the parsers, as a new descriptor does live, so two
+ * sessions of one capture are never glued together. The checksum parameters are arguments, so that a seed the live
+ * page voted for can be tried on the same bytes.
  */
 object CaptureReplay {
   data class Result(
@@ -22,6 +24,9 @@ object CaptureReplay {
     val video: List<VideoChannelCounters>,
     val probe: VideoProbeReport,
     val usedIndex: Boolean,
+    val crc: CrcReport,
+    /** Open markers met in the index, each one a new stream */
+    val opens: Int,
   )
 
   /** Reads an index written by [CaptureSnapshot.indexCsv]; a line that does not parse is skipped */
@@ -34,23 +39,26 @@ object CaptureReplay {
       }
       val offset = cells[0].trim().toLongOrNull() ?: return@mapNotNull null
       val length = cells[1].trim().toIntOrNull() ?: return@mapNotNull null
-      val direction = when (cells[2].trim()) {
-        "in" -> CaptureDirection.IN
-        "out" -> CaptureDirection.OUT
-        else -> return@mapNotNull null
-      }
+      val direction = CaptureDirection.ofWord(cells[2].trim()) ?: return@mapNotNull null
       val monotonic = cells[3].trim().toLongOrNull() ?: return@mapNotNull null
       val wall = cells[4].trim().toLongOrNull() ?: return@mapNotNull null
       CaptureEntry(offset, length, direction, monotonic, wall)
     }
     .toList()
 
-  fun replay(bytes: ByteArray, index: List<CaptureEntry>? = null): Result {
+  fun replay(
+    bytes: ByteArray,
+    index: List<CaptureEntry>? = null,
+    headerCrc: CrcParams = CrcSets.HEADER_CRC8,
+    frameCrc: CrcParams = CrcSets.FRAME_CRC16,
+  ): Result {
     val decoder = EnvelopeDecoder()
-    val router = FrameRouter()
+    val router = FrameRouter(headerCrc = headerCrc, frameCrc = frameCrc)
     var reads = 0
     var replayed = 0L
-    val inbound = index?.filter { it.direction == CaptureDirection.IN }
+    var opens = 0
+    val inbound = index?.filter { it.direction == CaptureDirection.IN || it.direction == CaptureDirection.OPEN }
+      ?.takeIf { entries -> entries.any { it.direction == CaptureDirection.IN } }
     if (inbound.isNullOrEmpty()) {
       var at = 0
       while (at < bytes.size) {
@@ -65,6 +73,12 @@ object CaptureReplay {
       }
     } else {
       for (entry in inbound) {
+        if (entry.direction == CaptureDirection.OPEN) {
+          opens += 1
+          decoder.reset()
+          router.restartStreams()
+          continue
+        }
         val from = entry.offset.toInt()
         if (from < 0 || from >= bytes.size) {
           continue
@@ -91,6 +105,8 @@ object CaptureReplay {
       video = router.video.channels(),
       probe = router.probe.report(),
       usedIndex = !inbound.isNullOrEmpty(),
+      crc = router.crcReport(),
+      opens = opens,
     )
   }
 }

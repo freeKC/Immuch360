@@ -17,8 +17,12 @@ interface AccessoryStreams {
   fun close()
 }
 
-/** Result of the one byte liveness probe: whether the call returned, and how long the call itself took */
-data class ProbeResult(val ok: Boolean, val callMs: Long, val error: String? = null)
+/**
+ * Result of the one byte liveness probe: whether the call returned, and how long the call itself took. [blocked] is a
+ * write that did not return before the timeout, which says the remote is not reading our endpoint: the writer thread
+ * is still inside that call, so the next probe could only queue behind it.
+ */
+data class ProbeResult(val ok: Boolean, val callMs: Long, val error: String? = null, val blocked: Boolean = false)
 
 /**
  * The descriptor of an open accessory: a reader thread, a bounded writer queue and the one byte liveness probe.
@@ -33,13 +37,15 @@ data class ProbeResult(val ok: Boolean, val callMs: Long, val error: String? = n
  * waiting for the host to collect them, so a probe whose call takes a long time says that the remote is not reading
  * our endpoint. That is why [ProbeResult.callMs] exists and why the page shows it.
  *
- * Nothing in stage 1 writes anything but the probe byte, whose value carries no meaning.
+ * Nothing in stage 1 writes anything but the probe byte, whose value carries no meaning, and [send] refuses every
+ * byte while [DjiLinkBuild.SEND_ENABLED] is false: the build switch stands in front of the cable itself, not only in
+ * front of a caller that remembers to ask.
  */
 class AoaTransport(
   private val streams: AccessoryStreams,
   private val onBytes: (ByteArray, Int) -> Unit,
   private val onWrite: (ByteArray, Boolean) -> Unit = { _, _ -> },
-  private val onEnded: (String) -> Unit = {},
+  private val onEnded: (LinkReason) -> Unit = {},
   private val queueSize: Int = 64,
   /** Where a failure goes; the tests hand in a logger of their own so that no Android class is needed */
   private val log: (String) -> Unit = { Log.d(TAG, it) },
@@ -61,19 +67,38 @@ class AoaTransport(
   private var reader: Thread? = null
   private var writer: Thread? = null
 
+  // Written by the reader and writer threads, read by the page: volatile so that the page sees them move
+  @Volatile
   var bytesRead = 0L
     private set
+
+  @Volatile
   var reads = 0L
     private set
+
+  @Volatile
   var bytesWritten = 0L
     private set
+
+  @Volatile
   var writes = 0L
     private set
+
+  @Volatile
   var readErrors = 0L
     private set
+
+  @Volatile
   var writeErrors = 0L
     private set
+
+  @Volatile
   var queueRejections = 0L
+    private set
+
+  /** Bytes a caller handed to [send] while the build switch was off; none of them reached the cable */
+  @Volatile
+  var sendRefusals = 0L
     private set
 
   fun start() {
@@ -99,15 +124,31 @@ class AoaTransport(
       queueRejections += 1
       return ProbeResult(ok = false, callMs = 0, error = "the writer queue is full")
     }
-    val result = reply.poll(timeoutMs, TimeUnit.MILLISECONDS)
-    return result ?: ProbeResult(ok = false, callMs = timeoutMs, error = "the write did not return in time")
+    val result = try {
+      reply.poll(timeoutMs, TimeUnit.MILLISECONDS)
+    } catch (interrupted: InterruptedException) {
+      // The page closed while this probe waited: an answer, never an exception on a thread nobody catches
+      Thread.currentThread().interrupt()
+      return ProbeResult(ok = false, callMs = 0, error = "interrupted")
+    }
+    return result ?: ProbeResult(
+      ok = false,
+      callMs = timeoutMs,
+      error = "the write did not return in time",
+      blocked = true,
+    )
   }
 
   /**
    * Hands bytes to the writer queue. No caller in stage 1 uses it: the send path of the later stages goes through
-   * here so that every byte sent is counted and written into the capture in one place.
+   * here so that every byte sent is counted and written into the capture in one place. While the build switch is off
+   * it refuses everything and counts the refusal, whoever the caller is.
    */
   fun send(bytes: ByteArray): Boolean {
+    if (!DjiLinkBuild.SEND_ENABLED) {
+      sendRefusals += 1
+      return false
+    }
     if (!running.get()) {
       return false
     }
@@ -118,7 +159,7 @@ class AoaTransport(
     return accepted
   }
 
-  fun stop(reason: String) {
+  fun stop(reason: LinkReason) {
     if (!running.compareAndSet(true, false)) {
       return
     }
@@ -141,7 +182,7 @@ class AoaTransport(
       try {
         val count = streams.input.read(buffer)
         if (count < 0) {
-          stop("the accessory stream ended")
+          stop(LinkReason.STREAM_ENDED)
           return
         }
         consecutive = 0
@@ -158,7 +199,7 @@ class AoaTransport(
         consecutive += 1
         log("read failed ($consecutive): ${error.javaClass.simpleName}")
         if (consecutive >= MAX_CONSECUTIVE_ERRORS) {
-          stop("$MAX_CONSECUTIVE_ERRORS reads in a row failed")
+          stop(LinkReason.READS_FAILED)
           return
         }
       }
@@ -191,7 +232,7 @@ class AoaTransport(
       val callMs = (System.nanoTime() - startedNs) / 1_000_000
       job.reply?.offer(ProbeResult(ok = error == null, callMs = callMs, error = error))
       if (consecutive >= MAX_CONSECUTIVE_ERRORS) {
-        stop("$MAX_CONSECUTIVE_ERRORS writes in a row failed")
+        stop(LinkReason.WRITES_FAILED)
         return
       }
     }

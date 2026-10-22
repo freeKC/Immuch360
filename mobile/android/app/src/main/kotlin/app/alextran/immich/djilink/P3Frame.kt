@@ -75,7 +75,7 @@ object DeviceTypes {
   const val BROADCAST = 31
 }
 
-/** Command sets this work names; an unnamed set is shown as its number and counted */
+/** The few command set numbers this code refers to, with our own names; the page shows every set as its number */
 object CommandSets {
   const val COMMON = 0
   const val SPECIAL = 1
@@ -83,9 +83,6 @@ object CommandSets {
   const val FLIGHT_CONTROLLER = 3
   const val GIMBAL = 4
   const val REMOTE_CONTROLLER = 6
-  const val OSD = 9
-  const val BATTERY = 12
-  const val SMART_BATTERY = 13
 }
 
 data class P3Counters(
@@ -102,8 +99,16 @@ data class P3Counters(
 /**
  * A streaming decoder for control frames. One decoder per control channel: the bytes of one channel are one stream,
  * and a frame can straddle two envelopes.
+ *
+ * The checksum parameters are constructor parameters, because the notes leave open whether every product family uses
+ * the same seeds. Every header that fails at a magic byte, and every frame whose header verified and whose body did
+ * not, votes for the seed that would have verified it ([headerSeeds], [frameSeeds]): noise spreads its votes, real
+ * frames with other seeds pile them on one value.
  */
-class P3Decoder {
+class P3Decoder(
+  val headerParams: CrcParams = CrcSets.HEADER_CRC8,
+  val frameParams: CrcParams = CrcSets.FRAME_CRC16,
+) {
   companion object {
     const val MAGIC = 0x55
     const val MIN_SIZE = 13
@@ -111,9 +116,6 @@ class P3Decoder {
     /** The length field is ten bits wide */
     const val MAX_SIZE = 1023
     const val DEFAULT_VERSION = 1
-
-    private val headerCrc = Crc(CrcSets.HEADER_CRC8)
-    private val frameCrc = Crc(CrcSets.FRAME_CRC16)
 
     /**
      * Builds a frame with both checksums in place. Nothing in stage 1 sends one; the builder exists so that the
@@ -133,7 +135,11 @@ class P3Decoder {
       commandId: Int,
       body: ByteArray = ByteArray(0),
       version: Int = DEFAULT_VERSION,
+      headerParams: CrcParams = CrcSets.HEADER_CRC8,
+      frameParams: CrcParams = CrcSets.FRAME_CRC16,
     ): ByteArray {
+      val headerCrc = Crc(headerParams)
+      val frameCrc = Crc(frameParams)
       val total = MIN_SIZE + body.size
       require(total <= MAX_SIZE) { "frame of $total bytes above the ten bit length" }
       require(version in 0..63) { "version outside six bits" }
@@ -184,6 +190,8 @@ class P3Decoder {
     }
   }
 
+  private val headerCrc = Crc(headerParams)
+  private val frameCrc = Crc(frameParams)
   private var buffer = ByteArray(4 * 1024)
   private var head = 0
   private var tail = 0
@@ -191,6 +199,12 @@ class P3Decoder {
 
   var counters = P3Counters()
     private set
+
+  /** Seeds that would have verified the headers that failed */
+  val headerSeeds = SeedTally()
+
+  /** Seeds that would have verified the frames whose header verified and whose frame checksum failed */
+  val frameSeeds = SeedTally()
 
   val buffered: Int get() = tail - head
 
@@ -215,6 +229,7 @@ class P3Decoder {
     return drain()
   }
 
+  /** A new stream: the buffer goes, the counters and the seed votes stay */
   fun reset() {
     head = 0
     tail = 0
@@ -237,6 +252,7 @@ class P3Decoder {
       }
       if (!headerCrc.verify(buffer, head, 4)) {
         counters = counters.copy(headerCrcFailures = counters.headerCrcFailures + 1)
+        headerSeeds.vote(headerCrc.seedFor(buffer, head, 4))
         skip(1)
         continue
       }
@@ -252,6 +268,7 @@ class P3Decoder {
       }
       if (!frameCrc.verify(buffer, head, total)) {
         counters = counters.copy(frameCrcFailures = counters.frameCrcFailures + 1)
+        frameSeeds.vote(frameCrc.seedFor(buffer, head, total))
         // Four bytes, as the controller application does: past the magic and the header it already read
         skip(4)
         continue

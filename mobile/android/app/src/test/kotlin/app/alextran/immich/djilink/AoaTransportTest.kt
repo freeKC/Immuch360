@@ -77,7 +77,7 @@ class AoaTransportTest {
     assertEquals("hello", seen.toString())
     assertEquals(5L, transport.bytesRead)
     assertEquals(1L, transport.reads)
-    transport.stop("the test is over")
+    transport.stop(LinkReason.PAGE_CLOSED)
     assertFalse(transport.isRunning)
   }
 
@@ -92,7 +92,7 @@ class AoaTransportTest {
     assertEquals(1, written.size())
     assertEquals(1L, transport.writes)
     assertEquals(1L, transport.bytesWritten)
-    transport.stop("the test is over")
+    transport.stop(LinkReason.PAGE_CLOSED)
   }
 
   @Test
@@ -118,6 +118,75 @@ class AoaTransportTest {
     assertEquals(AoaTransport.MAX_CONSECUTIVE_ERRORS.toLong(), transport.writeErrors)
   }
 
+  /** A remote that never collects our transfers: the write call does not return */
+  private class BlockingOutput : OutputStream() {
+    private val release = CountDownLatch(1)
+
+    override fun write(byte: Int) {
+      release.await(5, TimeUnit.SECONDS)
+    }
+
+    override fun write(bytes: ByteArray, offset: Int, length: Int) {
+      release.await(5, TimeUnit.SECONDS)
+    }
+
+    override fun close() {
+      release.countDown()
+    }
+  }
+
+  @Test
+  fun aProbeWhoseWriteDoesNotReturnIsReportedAsBlocked() {
+    val output = BlockingOutput()
+    val transport = AoaTransport(streams = Pipes(SilentInput(), output), onBytes = { _, _ -> }, log = {})
+    transport.start()
+    val result = transport.probe(timeoutMs = 100)
+    assertFalse(result.ok)
+    assertTrue(result.blocked)
+    transport.stop(LinkReason.PAGE_CLOSED)
+  }
+
+  @Test
+  fun aProbeInterruptedWhileItWaitsReturnsAnAnswer() {
+    val transport = AoaTransport(streams = Pipes(SilentInput(), BlockingOutput()), onBytes = { _, _ -> }, log = {})
+    transport.start()
+    var result: ProbeResult? = null
+    var thrown: Throwable? = null
+    val prober = Thread {
+      try {
+        result = transport.probe(timeoutMs = 10_000)
+      } catch (error: Throwable) {
+        thrown = error
+      }
+    }
+    prober.start()
+    Thread.sleep(200)
+    // What closing the page does to the probe thread
+    prober.interrupt()
+    prober.join(2_000)
+    assertFalse(prober.isAlive)
+    assertEquals(null, thrown)
+    assertFalse(result!!.ok)
+    assertFalse(result!!.blocked)
+    assertEquals("interrupted", result!!.error)
+    transport.stop(LinkReason.PAGE_CLOSED)
+  }
+
+  @Test
+  fun sendRefusesEveryByteWhileTheBuildSwitchIsOff() {
+    val output = FailingOutput(failures = 0)
+    val transport = AoaTransport(streams = Pipes(SilentInput(), output), onBytes = { _, _ -> }, log = {})
+    transport.start()
+    assertFalse(DjiLinkBuild.SEND_ENABLED)
+    assertFalse(transport.send(byteArrayOf(0x55, 0x0D, 0x04)))
+    assertFalse(transport.send(ByteArray(13)))
+    Thread.sleep(300)
+    assertEquals(0, output.attempts.get())
+    assertEquals(0L, transport.writes)
+    assertEquals(2L, transport.sendRefusals)
+    transport.stop(LinkReason.PAGE_CLOSED)
+  }
+
   @Test
   fun theTransportWritesNothingOnItsOwn() {
     val output = FailingOutput(failures = 0)
@@ -126,6 +195,6 @@ class AoaTransportTest {
     Thread.sleep(300)
     assertEquals(0, output.attempts.get())
     assertEquals(0L, transport.writes)
-    transport.stop("the test is over")
+    transport.stop(LinkReason.PAGE_CLOSED)
   }
 }

@@ -7,7 +7,7 @@ package app.alextran.immich.djilink
  * give the conversion from a float to a channel value, but they do not establish which channel is which axis, and the
  * only place that order appears is a set of structure offsets with no call site. Turning an offset into an axis name
  * would be a guess with an aircraft at the other end, so the order lives in one place ([ChannelMap.axisOrder]), is
- * marked as a candidate, and is the only thing a capture has to correct.
+ * empty, and is filled only from a capture.
  */
 enum class Axis {
   /** Up is a climb */

@@ -1,6 +1,7 @@
 package app.alextran.immich.djilink
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -84,6 +85,71 @@ class CaptureTest {
     assertEquals(1, result.telemetry.size)
     assertEquals(67, result.telemetry[0].commandId)
     assertEquals(ProbeVerdict.START_CODES_SEEN, result.probe.verdict)
+  }
+
+  @Test
+  fun theRingIsAllocatedByTheFirstStartAndFreedByAClearAtRest() {
+    val capture = CaptureRing(capacityBytes = CaptureRing.MIN_CAPACITY)
+    assertFalse(capture.allocated)
+    assertEquals(0, capture.snapshot().bytes.size)
+    capture.start()
+    assertTrue(capture.allocated)
+    capture.record(CaptureDirection.IN, byteArrayOf(1))
+    capture.stop()
+    assertTrue("a stopped capture keeps its bytes for the export", capture.allocated)
+    assertEquals(1, capture.snapshot().bytes.size)
+    capture.clear()
+    assertFalse(capture.allocated)
+  }
+
+  @Test
+  fun opensAndClosesAreMarkersInTheIndex() {
+    val capture = ring()
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, byteArrayOf(1, 2))
+    capture.mark(CaptureDirection.CLOSE)
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, byteArrayOf(3))
+    val snapshot = capture.snapshot()
+    assertEquals(3, snapshot.bytes.size)
+    assertEquals(
+      listOf("open", "in", "close", "open", "in"),
+      snapshot.entries.map { it.direction.word },
+    )
+    assertEquals(2L, snapshot.entries[2].offset)
+    assertEquals(0, snapshot.entries[2].length)
+    val csv = snapshot.indexCsv()
+    assertTrue(csv.contains(",open,"))
+    assertTrue(csv.contains(",close,"))
+    assertEquals(snapshot.entries, CaptureReplay.parseIndex(csv))
+  }
+
+  @Test
+  fun aReplayRestartsTheParsersAtEachOpen() {
+    val capture = ring()
+    val frame = EnvelopeDecoder.encode(
+      Channels.CONTROL_PRIMARY,
+      P3Decoder.build(
+        senderType = DeviceTypes.REMOTE_CONTROLLER,
+        receiverType = DeviceTypes.APPLICATION,
+        sequence = 1,
+        commandSet = CommandSets.REMOTE_CONTROLLER,
+        commandId = 5,
+        body = ByteArray(6),
+      ),
+    )
+    // The first session ends in the middle of a frame; the second starts with a whole one
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, frame, 0, frame.size - 5)
+    capture.mark(CaptureDirection.CLOSE)
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, frame)
+    val snapshot = capture.snapshot()
+    val result = CaptureReplay.replay(snapshot.bytes, CaptureReplay.parseIndex(snapshot.indexCsv()))
+    assertEquals(2, result.opens)
+    assertEquals(1L, result.envelopes.frames)
+    assertEquals(1L, result.control.frames)
+    assertEquals(0L, result.envelopes.unknownChannelFrames)
   }
 
   @Test

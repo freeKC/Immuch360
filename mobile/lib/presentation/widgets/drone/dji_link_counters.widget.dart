@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
 /// A label and a value on one line, the shape every block of this page uses
@@ -63,7 +64,7 @@ class DjiLinkChannelsTable extends StatelessWidget {
         for (final channel in channels)
           TableRow(
             children: [
-              _cell(context, '${channel.channel} ${channel.role}'),
+              _cell(context, '${channel.channel} ${djiLinkRoleText(t, channel.role)}'),
               _cell(context, '${channel.envelopes}'),
               _cell(context, formatHumanReadableBytes(channel.bytes, 1)),
               _cell(context, '${channel.largestPayload}'),
@@ -97,6 +98,7 @@ class DjiLinkCountersBlock extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DjiLinkFact(t.dji_link_counter_unknown_channels, '${counters.unknownChannelFrames}'),
+        DjiLinkFact(t.dji_link_counter_false_syncs, '${counters.unknownChannelRejections}'),
         DjiLinkFact(t.dji_link_counter_resync, '${counters.resynchronisations}'),
         DjiLinkFact(t.dji_link_counter_discarded, '${counters.discardedBytes}'),
         DjiLinkFact(t.dji_link_counter_oversize, '${counters.oversizeRejections}'),
@@ -106,6 +108,41 @@ class DjiLinkCountersBlock extends StatelessWidget {
         DjiLinkFact(t.dji_link_counter_encryption, '${counters.unsupportedEncryption}'),
         DjiLinkFact(t.dji_link_counter_unknown_pairs, '${counters.unknownPairs}'),
         DjiLinkFact(t.dji_link_counter_ambiguous_side, '${counters.ambiguousSideFrames}'),
+      ],
+    );
+  }
+}
+
+/// The checksum parameters in use, and the seed the failures point to. On noise the votes spread over many values;
+/// real frames whose seed differs from the notes pile them on one, which a replay of the capture can then try.
+class DjiLinkCrcBlock extends StatelessWidget {
+  const DjiLinkCrcBlock({super.key, required this.crc});
+
+  final DjiLinkCrc crc;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    String candidate(int? seed, int votes, int total, int digits) => seed == null
+        ? t.dji_link_crc_no_votes
+        : t.dji_link_crc_votes(seed: '0x${seed.toRadixString(16).padLeft(digits, '0')}', votes: votes, total: total);
+    return Column(
+      key: const Key('dji_link_crc'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DjiLinkFact(t.dji_link_crc_parameters, '${crc.headerParameters} ${crc.frameParameters}'),
+        DjiLinkFact(
+          t.dji_link_crc_header_candidate,
+          candidate(crc.headerSeedCandidate, crc.headerSeedVotes, crc.headerFailuresVoting, 2),
+        ),
+        DjiLinkFact(
+          t.dji_link_crc_frame_candidate,
+          candidate(crc.frameSeedCandidate, crc.frameSeedVotes, crc.frameFailuresVoting, 4),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(t.dji_link_crc_note, style: context.textTheme.bodySmall),
+        ),
       ],
     );
   }

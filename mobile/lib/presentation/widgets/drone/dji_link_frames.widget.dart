@@ -24,7 +24,7 @@ class DjiLinkFramesList extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 2),
             child: Text(
-              _line(frame),
+              _line(context.t, frame),
               style: context.textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -34,11 +34,23 @@ class DjiLinkFramesList extends StatelessWidget {
     );
   }
 
-  String _line(DjiLinkFrame frame) {
-    final kind = frame.isAcknowledgement ? 'ack' : 'req';
-    final encryption = frame.encryption == 0 ? '' : ' encrypted:${frame.encryption}';
-    return 'ch${frame.channel} set ${frame.commandSet} id ${frame.commandId} $kind a${frame.ackPolicy} '
-        'from ${frame.senderType} to ${frame.receiverType} seq ${frame.sequence} len ${frame.length}'
-        '$encryption ${frame.preview}';
+  String _line(Translations t, DjiLinkFrame frame) {
+    // Identifiers as plain digits: a number handed over as such gets the grouping of the locale, and a channel
+    // written 22,345 is not the channel the notes and the capture call 22345
+    final line = t.dji_link_frame_line(
+      channel: '${frame.channel}',
+      commandSet: '${frame.commandSet}',
+      commandId: '${frame.commandId}',
+      kind: frame.isAcknowledgement ? t.dji_link_frame_ack : t.dji_link_frame_request,
+      ack: '${frame.ackPolicy}',
+      from: '${frame.senderType}',
+      to: '${frame.receiverType}',
+      sequence: '${frame.sequence}',
+      frameLength: '${frame.length}',
+    );
+    if (frame.encryption != 0) {
+      return '$line, ${t.dji_link_frame_encrypted(value: frame.encryption)}';
+    }
+    return frame.preview.isEmpty ? line : '$line: ${frame.preview}';
   }
 }

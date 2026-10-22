@@ -32,6 +32,37 @@ enum DjiLinkState {
   unsupportedProtocol,
 }
 
+/// Why the link is in its state. The page turns each one into a sentence of its own language.
+enum DjiLinkReason {
+  noAccessoryFeature,
+  noUsbService,
+  looking,
+  nothingListed,
+  listed,
+
+  /// A fresh plug: the system chooser may be on screen, so the permission is asked after a short wait
+  waitingForChooser,
+  permissionAsked,
+  permissionRequestFailed,
+
+  /// Asked again only by the retry button or a new plug
+  permissionRefused,
+  openFailed,
+  opened,
+  probeReturns,
+  probesFailed,
+
+  /// A probe write did not return: the remote is not reading this endpoint, and probing stopped
+  writeBlocked,
+  detached,
+  streamEnded,
+  readsFailed,
+  writesFailed,
+  pageClosed,
+  framesParse,
+  aircraftFrames,
+}
+
 /// Whether a hardware profile can do something. [supported] is impossible to reach without an observation on named
 /// hardware, so a fresh profile is [unknown] everywhere.
 enum DjiLinkSupport { unknown, unsupported, supported }
@@ -137,6 +168,7 @@ class DjiLinkCounters {
     required this.discardedBytes,
     required this.resynchronisations,
     required this.unknownChannelFrames,
+    required this.unknownChannelRejections,
     required this.oversizeRejections,
     required this.incompleteTimeouts,
     required this.controlFrames,
@@ -158,6 +190,9 @@ class DjiLinkCounters {
   final int discardedBytes;
   final int resynchronisations;
   final int unknownChannelFrames;
+
+  /// Headers on an undescribed channel met while resynchronising, refused as a likely false sync
+  final int unknownChannelRejections;
   final int oversizeRejections;
   final int incompleteTimeouts;
   final int controlFrames;
@@ -206,7 +241,6 @@ class DjiLinkPair {
     required this.count,
     required this.lastLength,
     required this.lastSeenMs,
-    this.setName,
     this.messageName,
   });
 
@@ -215,8 +249,33 @@ class DjiLinkPair {
   final int count;
   final int lastLength;
   final int lastSeenMs;
-  final String? setName;
+
+  /// Only once a capture of owned hardware has shown what the message carries; null until then
   final String? messageName;
+}
+
+/// The checksum parameters in use, and the seeds the checksum failures vote for. On noise the votes spread; real
+/// frames whose seed differs from the notes pile their votes on one value, which a replay can then try.
+class DjiLinkCrc {
+  const DjiLinkCrc({
+    required this.headerParameters,
+    required this.frameParameters,
+    required this.headerSeedVotes,
+    required this.headerFailuresVoting,
+    required this.frameSeedVotes,
+    required this.frameFailuresVoting,
+    this.headerSeedCandidate,
+    this.frameSeedCandidate,
+  });
+
+  final String headerParameters;
+  final String frameParameters;
+  final int? headerSeedCandidate;
+  final int headerSeedVotes;
+  final int headerFailuresVoting;
+  final int? frameSeedCandidate;
+  final int frameSeedVotes;
+  final int frameFailuresVoting;
 }
 
 class DjiLinkFrame {
@@ -387,6 +446,7 @@ class DjiLinkExport {
     this.headerPath,
     this.sha256,
     this.error,
+    this.headerOnly = false,
   });
 
   final bool ok;
@@ -396,6 +456,9 @@ class DjiLinkExport {
   final String? headerPath;
   final String? sha256;
   final String? error;
+
+  /// Nothing was captured, so only the header with this device and its USB environment was written
+  final bool headerOnly;
 }
 
 class DjiLinkReplayResult {
@@ -404,7 +467,9 @@ class DjiLinkReplayResult {
     required this.readsReplayed,
     required this.bytesReplayed,
     required this.usedIndex,
+    required this.opens,
     this.error,
+    this.crc,
     this.counters,
     this.channels,
     this.frames,
@@ -416,7 +481,11 @@ class DjiLinkReplayResult {
   final int readsReplayed;
   final int bytesReplayed;
   final bool usedIndex;
+
+  /// Open markers met in the index; each one restarted the parsers
+  final int opens;
   final String? error;
+  final DjiLinkCrc? crc;
   final DjiLinkCounters? counters;
   final List<DjiLinkChannel>? channels;
   final List<DjiLinkFrame>? frames;
@@ -429,6 +498,9 @@ class DjiLinkSnapshot {
   const DjiLinkSnapshot({
     required this.state,
     required this.probesSent,
+    required this.probesHalted,
+    required this.opens,
+    required this.crc,
     required this.probeFailures,
     required this.consecutiveProbeFailures,
     required this.lastProbeCallMs,
@@ -447,6 +519,7 @@ class DjiLinkSnapshot {
     required this.video,
     required this.capture,
     required this.sticks,
+    this.reason,
     this.detail,
     this.accessory,
     this.profile,
@@ -456,6 +529,9 @@ class DjiLinkSnapshot {
   });
 
   final DjiLinkState state;
+  final DjiLinkReason? reason;
+
+  /// One technical word that goes with [reason], such as the name of an exception; null most of the time
   final String? detail;
   final DjiLinkAccessory? accessory;
   final DjiLinkProfile? profile;
@@ -466,6 +542,12 @@ class DjiLinkSnapshot {
   final int probesSent;
   final int probeFailures;
   final int consecutiveProbeFailures;
+
+  /// A probe write blocked, so no further probe is queued on this descriptor
+  final bool probesHalted;
+
+  /// Descriptors opened since the page started
+  final int opens;
 
   /// How long the last probe call itself took: a long call says the remote is not reading our endpoint
   final int lastProbeCallMs;
@@ -480,6 +562,7 @@ class DjiLinkSnapshot {
   final bool aircraftLinked;
   final int? chargeCurrentMicroAmps;
   final DjiLinkCounters counters;
+  final DjiLinkCrc crc;
   final List<DjiLinkChannel> channels;
   final List<DjiLinkPair> pairs;
   final List<DjiLinkFrame> frames;
@@ -511,13 +594,15 @@ abstract class DjiLinkApi {
 
   void clearCapture();
 
-  /// Writes the capture to the downloads folder: the bytes, the boundaries and the header with the digest
+  /// Writes the capture to the downloads folder: the bytes, the boundaries and the header with the digest. With
+  /// nothing captured, the header alone.
   @async
   DjiLinkExport exportCapture(DjiLinkExportNotes notes);
 
-  /// Reads a capture file back through the same codecs, with no hardware
+  /// Reads a capture file back through the same codecs, with no hardware. A seed given for either checksum replaces
+  /// the one of the notes, so that a candidate the live page voted for can be tried on the same bytes.
   @async
-  DjiLinkReplayResult replayCapture(String path);
+  DjiLinkReplayResult replayCapture(String path, int? headerCrcSeed, int? frameCrcSeed);
 }
 
 @FlutterApi()

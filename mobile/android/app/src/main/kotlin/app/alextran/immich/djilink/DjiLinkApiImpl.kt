@@ -33,9 +33,10 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
     }
   }
 
-  private val controller = DjiLinkController.of(context)
-  private val worker = Executors.newSingleThreadExecutor { runnable ->
-    Thread(runnable, "DjiLinkWork").apply { isDaemon = true }
+  // Made on the first call of the page, not when the engine starts: a pilot who never opens the page holds nothing
+  private val controller by lazy { DjiLinkController.of(context) }
+  private val worker by lazy {
+    Executors.newSingleThreadExecutor { runnable -> Thread(runnable, "DjiLinkWork").apply { isDaemon = true } }
   }
 
   override fun readEnvironment(): DjiLinkEnvironment {
@@ -94,15 +95,21 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
             headerPath = result.headerPath,
             sha256 = result.sha256,
             error = result.error,
+            headerOnly = result.headerOnly,
           )
         )
       )
     }
   }
 
-  override fun replayCapture(path: String, callback: (Result<DjiLinkReplayResult>) -> Unit) {
+  override fun replayCapture(
+    path: String,
+    headerCrcSeed: Long?,
+    frameCrcSeed: Long?,
+    callback: (Result<DjiLinkReplayResult>) -> Unit,
+  ) {
     worker.execute {
-      val replayed = runCatching { controller.replay(path) }
+      val replayed = runCatching { controller.replay(path, headerCrcSeed?.toInt(), frameCrcSeed?.toInt()) }
       val failure = replayed.exceptionOrNull()
       if (failure != null) {
         callback(
@@ -113,6 +120,7 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
               bytesReplayed = 0,
               usedIndex = false,
               error = failure.message ?: failure.javaClass.simpleName,
+              opens = 0,
               counters = null,
               channels = null,
               frames = null,
@@ -131,7 +139,9 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
             readsReplayed = result.readsReplayed.toLong(),
             bytesReplayed = result.bytesReplayed,
             usedIndex = result.usedIndex,
+            opens = result.opens.toLong(),
             error = null,
+            crc = result.crc.toPigeon(),
             counters = DjiLinkCounters(
               envelopeFrames = result.envelopes.frames,
               envelopeBytes = result.envelopes.frameBytes,
@@ -139,6 +149,7 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
               discardedBytes = result.envelopes.discardedBytes + result.control.discardedBytes,
               resynchronisations = result.envelopes.resynchronisations + result.control.resynchronisations,
               unknownChannelFrames = result.envelopes.unknownChannelFrames,
+              unknownChannelRejections = result.envelopes.unknownChannelRejections,
               oversizeRejections = result.envelopes.oversizeRejections,
               incompleteTimeouts = result.envelopes.incompleteTimeouts,
               controlFrames = result.control.frames,

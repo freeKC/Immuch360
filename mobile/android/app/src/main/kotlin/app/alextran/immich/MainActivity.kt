@@ -116,7 +116,8 @@ class MainActivity : FlutterFragmentActivity() {
    * nothing leaves the device because of it (see DjiLinkController.onMotionEvent).
    */
   override fun dispatchGenericMotionEvent(event: android.view.MotionEvent): Boolean {
-    DjiLinkController.of(this).onMotionEvent(event)
+    // Only a page that is open reads the sticks; no event ever creates the link's owner
+    DjiLinkController.existing()?.onMotionEvent(event)
     return super.dispatchGenericMotionEvent(event)
   }
 

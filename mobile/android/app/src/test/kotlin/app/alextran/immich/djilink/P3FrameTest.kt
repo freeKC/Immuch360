@@ -139,7 +139,7 @@ class P3FrameTest {
       senderType = DeviceTypes.BATTERY,
       receiverType = DeviceTypes.APPLICATION,
       sequence = 11,
-      commandSet = CommandSets.SMART_BATTERY,
+      commandSet = 13,
       commandId = 2,
       body = ByteArray(30) { it.toByte() },
     )

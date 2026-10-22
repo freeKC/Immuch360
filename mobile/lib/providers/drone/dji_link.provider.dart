@@ -173,7 +173,9 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
       final result = await _api.exportCapture(notes);
       state = state.copyWith(exporting: false, export: result);
       // The Logs page keeps a copy, so that a session that goes wrong still says where its evidence went
-      if (result.ok) {
+      if (result.ok && result.headerOnly) {
+        _log.info('DJI link header exported with nothing captured: ${result.headerPath}');
+      } else if (result.ok) {
         _log.info('DJI link capture exported: ${result.bytes} bytes, ${result.binPath}, sha256 ${result.sha256}');
       } else {
         _log.warning('DJI link capture not exported: ${result.error}');
@@ -184,11 +186,12 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
     }
   }
 
-  /// A saved capture back through the same codecs, with no hardware
-  Future<void> replay(String path) async {
+  /// A saved capture back through the same codecs, with no hardware. A seed given for either checksum replaces the
+  /// one of the notes, typically the candidate the live page showed.
+  Future<void> replay(String path, {int? headerCrcSeed, int? frameCrcSeed}) async {
     state = state.copyWith(clearReplay: true, clearError: true);
     try {
-      final result = await _api.replayCapture(path);
+      final result = await _api.replayCapture(path, headerCrcSeed, frameCrcSeed);
       state = state.copyWith(replay: result);
       _log.info('DJI link capture replayed: ${result.bytesReplayed} bytes, ${result.readsReplayed} reads');
     } catch (error, stackTrace) {

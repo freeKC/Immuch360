@@ -10,6 +10,11 @@ package app.alextran.immich.djilink
  * completes, and never looks for the sync pattern inside a payload whose length it already trusts. It validates the
  * length against [MAX_PAYLOAD] before it trusts a header, bounds how long it waits for an incomplete frame, and counts
  * everything it throws away, because on this hardware a counter is the only evidence available.
+ *
+ * A frame on a channel the notes do not describe is kept and counted, but only while the decoder is in sync, that is
+ * when the previous frame ended exactly where this header starts, or at the very start of a stream. Right after bytes
+ * were thrown away, a header must name a known channel: a false sync pattern with a plausible length would otherwise
+ * swallow the genuine frames behind it.
  */
 data class EnvelopeFrame(val channel: Int, val payload: ByteArray) {
   override fun equals(other: Any?): Boolean =
@@ -27,6 +32,8 @@ data class EnvelopeCounters(
   val unknownChannelFrames: Long = 0,
   val oversizeRejections: Long = 0,
   val incompleteTimeouts: Long = 0,
+  /** Headers on an undescribed channel met while resynchronising, refused as a likely false sync */
+  val unknownChannelRejections: Long = 0,
 )
 
 class EnvelopeDecoder(
@@ -73,7 +80,10 @@ class EnvelopeDecoder(
   /** When the first wait for the frame being assembled started, null while nothing is pending */
   private var pendingSince: Long? = null
 
-  /** True while bytes are being thrown away looking for a sync pattern, so that one run counts as one resynchronisation */
+  /**
+   * True while bytes are being thrown away looking for a sync pattern, so that one run counts as one
+   * resynchronisation. False means in sync: the next header starts where the previous frame ended.
+   */
   private var resynchronising = false
 
   var counters = EnvelopeCounters()
@@ -95,12 +105,19 @@ class EnvelopeDecoder(
   /** Frames the buffered bytes already complete, and the incomplete frame timeout when nothing arrives */
   fun pump(): List<EnvelopeFrame> = drain()
 
-  /** The buffer is never kept across a reconnect: a new descriptor starts a new stream */
+  /**
+   * The buffer is never kept across a reconnect: a new descriptor starts a new stream, in sync. The counters are
+   * kept, so that they describe the whole page session as the capture does; [clearCounters] starts them again.
+   */
   fun reset() {
     head = 0
     tail = 0
     pendingSince = null
     resynchronising = false
+  }
+
+  fun clearCounters() {
+    counters = EnvelopeCounters()
   }
 
   private fun drain(): List<EnvelopeFrame> {
@@ -122,6 +139,11 @@ class EnvelopeDecoder(
       }
       val channel = u16(head + 2)
       val payloadLength = u32(head + 4)
+      if (resynchronising && !Channels.isKnown(channel)) {
+        counters = counters.copy(unknownChannelRejections = counters.unknownChannelRejections + 1)
+        skipOneByte()
+        continue
+      }
       if (payloadLength > maxPayload) {
         counters = counters.copy(oversizeRejections = counters.oversizeRejections + 1)
         skipOneByte()

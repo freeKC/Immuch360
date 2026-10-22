@@ -189,7 +189,9 @@ class ProfileRegistry(seed: List<DeviceProfile> = starting) {
     return profiles.getOrPut(id) {
       DeviceProfile(
         id = id,
-        label = "Unknown DJI accessory: " + listOfNotNull(identity.manufacturer, identity.model).joinToString(" "),
+        // Whatever is on the port, DJI or not: the label claims nothing beyond the strings that were read
+        label = "Accessory not described yet: " +
+          listOfNotNull(identity.manufacturer, identity.model).joinToString(" ").ifBlank { "no strings" },
         accessoryManufacturer = identity.manufacturer,
         accessoryModel = identity.model,
         accessoryDescription = identity.description,

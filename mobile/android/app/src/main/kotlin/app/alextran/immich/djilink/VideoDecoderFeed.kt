@@ -16,9 +16,9 @@ import java.util.concurrent.atomic.AtomicBoolean
  * it arrives. The configuration asks for low latency when the device says it has it, and falls back to a plain codec
  * when a vendor key is refused.
  *
- * Stage 1 never starts it: [feed] is only reached once the probe has seen start codes and a later stage has decided
- * what an access unit is. What stage 1 does use is [lastError] and the counters, which say whether a decoder could be
- * created on this device at all.
+ * Stage 1 never creates it: nothing instantiates this class yet, so it reports nothing on the page. It is written now
+ * so that the later stage that has decided what an access unit is finds the low latency configuration and its
+ * fallback in one place; [lastError] and the counters will then say whether a decoder could be created at all.
  */
 class VideoDecoderFeed(private val onFrameRendered: (Long) -> Unit = {}) {
   companion object {

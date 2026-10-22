@@ -77,6 +77,41 @@ class EnvelopeTest {
   }
 
   @Test
+  fun anUnknownChannelRightAfterAFrameIsStillKept() {
+    val frames = decoder.offer(frame(Channels.CONTROL_PRIMARY, byteArrayOf(1)) + frame(40000, byteArrayOf(2, 3)))
+    assertEquals(2, frames.size)
+    assertEquals(40000, frames[1].channel)
+    assertEquals(1L, decoder.counters.unknownChannelFrames)
+    assertEquals(0L, decoder.counters.unknownChannelRejections)
+  }
+
+  @Test
+  fun aFalseSyncOnAnUnknownChannelAfterNoiseSwallowsNothing() {
+    // Three bytes of noise, then a sync pattern with an undescribed channel and a plausible length of 1000, then fifty
+    // genuine control frames. Trusting that header would hold the next thousand bytes as one payload.
+    val noise = byteArrayOf(0x13, 0x37, 0x42)
+    val falseHeader = byteArrayOf(0x55, 0xCC.toByte(), 0x34, 0x12, 0xE8.toByte(), 0x03, 0x00, 0x00)
+    val genuine = (0 until 50).fold(ByteArray(0)) { all, index ->
+      all + frame(Channels.CONTROL_PRIMARY, ByteArray(20) { (index + it).toByte() })
+    }
+    val frames = decoder.offer(noise + falseHeader + genuine)
+    assertEquals(50, frames.size)
+    assertTrue(frames.all { it.channel == Channels.CONTROL_PRIMARY && it.payload.size == 20 })
+    assertEquals(1L, decoder.counters.unknownChannelRejections)
+    assertEquals(0L, decoder.counters.unknownChannelFrames)
+    assertEquals((noise.size + falseHeader.size).toLong(), decoder.counters.discardedBytes)
+  }
+
+  @Test
+  fun aResetKeepsTheCountersAndClearingStartsThemAgain() {
+    decoder.offer(frame(Channels.CONTROL_PRIMARY, byteArrayOf(1)))
+    decoder.reset()
+    assertEquals(1L, decoder.counters.frames)
+    decoder.clearCounters()
+    assertEquals(0L, decoder.counters.frames)
+  }
+
+  @Test
   fun anIncompleteFrameIsHeldThenCompleted() {
     val bytes = frame(Channels.CONTROL_PRIMARY, ByteArray(100) { 7 })
     assertEquals(0, decoder.offer(bytes, 0, 50).size)

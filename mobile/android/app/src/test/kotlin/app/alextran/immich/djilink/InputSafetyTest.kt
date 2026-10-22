@@ -44,9 +44,13 @@ class InputSafetyTest {
       now += 500
       assertFalse(safety.evaluate(held(now), emptySet(), now).armed)
     }
-    safety.requestControl()
+    safety.requestControl(now)
     now += 100
-    safety.evaluate(held(now), emptySet(), now)
+    // The first reading after the button starts the hold; it does not arm
+    assertFalse(safety.evaluate(held(now), emptySet(), now).armed)
+    assertEquals(InputSafety.ARM_HOLD_MS, safety.armingCountdownMs(now))
+    val justBefore = now + InputSafety.ARM_HOLD_MS - 1
+    assertFalse(safety.evaluate(held(justBefore), emptySet(), justBefore).armed)
     val afterHold = now + InputSafety.ARM_HOLD_MS
     val decision = safety.evaluate(held(afterHold), emptySet(), afterHold)
     assertTrue(decision.armed)
@@ -55,9 +59,92 @@ class InputSafetyTest {
   }
 
   @Test
+  fun triggersHeldBeforeTheButtonCountForNothing() {
+    var now = 0L
+    // The triggers held for longer than the hold, with no button
+    while (now <= InputSafety.ARM_HOLD_MS + 500) {
+      assertFalse(safety.evaluate(held(now), emptySet(), now).armed)
+      assertEquals(null, safety.armingCountdownMs(now))
+      now += 10
+    }
+    safety.requestControl(now)
+    now += 10
+    assertFalse("the reading right after the button must not arm", safety.evaluate(held(now), emptySet(), now).armed)
+    val buttonPlusHold = now + InputSafety.ARM_HOLD_MS
+    while (now < buttonPlusHold) {
+      now += 10
+      val armed = safety.evaluate(held(now), emptySet(), now).armed
+      assertEquals(now >= buttonPlusHold, armed)
+    }
+  }
+
+  @Test
+  fun aDeadManTripNeedsTheButtonAgain() {
+    var now = 0L
+    safety.requestControl(now)
+    safety.evaluate(held(now), emptySet(), now)
+    now += InputSafety.ARM_HOLD_MS
+    assertTrue(safety.evaluate(held(now), emptySet(), now).armed)
+    now += 20
+    assertFalse(safety.evaluate(held(now), setOf(DeadManSignal.HEADSET_REMOVED), now).armed)
+    assertFalse(safety.controlRequested)
+    // The headset is back on and the triggers never left: holding them as long as anyone likes arms nothing
+    val until = now + 3 * InputSafety.ARM_HOLD_MS
+    while (now < until) {
+      now += 20
+      assertFalse(safety.evaluate(held(now), emptySet(), now).armed)
+    }
+    // The button again, then the full hold
+    safety.requestControl(now)
+    now += 20
+    safety.evaluate(held(now), emptySet(), now)
+    now += InputSafety.ARM_HOLD_MS
+    assertTrue(safety.evaluate(held(now), emptySet(), now).armed)
+  }
+
+  @Test
+  fun aReleaseDuringTheHoldNeedsTheButtonAgain() {
+    var now = 0L
+    safety.requestControl(now)
+    safety.evaluate(held(now), emptySet(), now)
+    now += InputSafety.ARM_HOLD_MS / 2
+    safety.evaluate(StickSample(triggersHeld = false, atMs = now), emptySet(), now)
+    assertFalse(safety.controlRequested)
+    now += 20
+    safety.evaluate(held(now), emptySet(), now)
+    now += InputSafety.ARM_HOLD_MS
+    assertFalse(safety.evaluate(held(now), emptySet(), now).armed)
+  }
+
+  @Test
+  fun theButtonMayComeBeforeTheTriggersAreSqueezed() {
+    var now = 0L
+    safety.requestControl(now)
+    // Released at first: the press stands while the pilot reaches for the triggers
+    now += 300
+    safety.evaluate(StickSample(triggersHeld = false, atMs = now), emptySet(), now)
+    assertTrue(safety.controlRequested)
+    now += 300
+    safety.evaluate(held(now), emptySet(), now)
+    now += InputSafety.ARM_HOLD_MS
+    assertTrue(safety.evaluate(held(now), emptySet(), now).armed)
+  }
+
+  @Test
+  fun aButtonPressWithNoHoldLapses() {
+    var now = 0L
+    safety.requestControl(now)
+    now += InputSafety.REQUEST_WINDOW_MS + 1
+    safety.evaluate(held(now), emptySet(), now)
+    assertFalse(safety.controlRequested)
+    now += InputSafety.ARM_HOLD_MS
+    assertFalse(safety.evaluate(held(now), emptySet(), now).armed)
+  }
+
+  @Test
   fun releasingATriggerDisarmsAtOnceAndReturnsToNeutral() {
     var now = 0L
-    safety.requestControl()
+    safety.requestControl(now)
     safety.evaluate(held(now), emptySet(), now)
     now += InputSafety.ARM_HOLD_MS
     assertTrue(safety.evaluate(held(now), emptySet(), now).armed)
@@ -73,8 +160,8 @@ class InputSafetyTest {
   fun everyDeadManSignalNeutralises() {
     for (signal in DeadManSignal.entries) {
       val fresh = InputSafety()
-      fresh.requestControl()
       var now = 0L
+      fresh.requestControl(now)
       fresh.evaluate(held(now), emptySet(), now)
       now += InputSafety.ARM_HOLD_MS
       assertTrue(fresh.evaluate(held(now), emptySet(), now).armed)
@@ -89,7 +176,7 @@ class InputSafetyTest {
   @Test
   fun nothingMaySendWhileTheBuildSwitchIsOff() {
     var now = 0L
-    safety.requestControl()
+    safety.requestControl(now)
     safety.evaluate(held(now), emptySet(), now)
     now += InputSafety.ARM_HOLD_MS
     val decision = safety.evaluate(held(now), emptySet(), now)
@@ -100,7 +187,7 @@ class InputSafetyTest {
   @Test
   fun theArmingCountdownRunsDown() {
     var now = 1000L
-    safety.requestControl()
+    safety.requestControl(now)
     safety.evaluate(held(now), emptySet(), now)
     assertEquals(InputSafety.ARM_HOLD_MS, safety.armingCountdownMs(now))
     now += 500

@@ -3,75 +3,30 @@ package app.alextran.immich.djilink
 /**
  * What arrives from the aircraft, as identifiers.
  *
- * The command set and command id of the usual pushes are known statically (p2/protocol.md, section 7). Their field
- * layouts and units are not established for any aircraft this app has met, and the message model classes were not
- * part of what was read, so there is no field decoder here at all. Each message is shown as its identifier, its
- * observed length, how often it arrives and a bounded preview of its first bytes.
- *
- * A field decoder is added one message at a time, and only when a capture plus a side by side reading of the numbers
- * the DJI application shows at the same moment has established the offset and the unit. Nothing invents a unit.
+ * A message is its command set and command id, two numbers of the frame header (p2/protocol.md, section 4). Nothing
+ * here gives either number a name or a meaning: a message is named only once a capture of hardware this project owns
+ * has shown what it carries, beside the numbers the DJI application shows at the same moment, and that observation is
+ * recorded with the name. Until then the page shows the numbers, how often they arrive, their length and a bounded
+ * preview of their first bytes, and no field of any body is read.
  */
-object TelemetryNames {
-  /** Pushes of the flight controller set that the notes name; the name is the controller application's own */
-  val flightController: Map<Int, String> = mapOf(
-    9 to "fly forbid status push",
-    50 to "deform status push",
-    62 to "limit update request push",
-    66 to "unlimited areas push",
-    67 to "common OSD push, the main flight state message",
-    68 to "home point push",
-    69 to "GPS signal to noise ratio push",
-    81 to "smart battery push",
-    83 to "avoidance parameters push",
-    85 to "limit state push",
-    86 to "LED status push",
-    97 to "activation request push",
-    99 to "onboard receive push",
-    103 to "power parameters",
-    106 to "avoidance push",
-    108 to "RTK location push",
-    173 to "installation error push",
-    182 to "fault injection push",
-    185 to "redundancy status push",
-    206 to "forbid data information push",
-    215 to "flight record push",
-    218 to "detection push",
-    238 to "return to home countdown push",
-    251 to "parameters by hash push",
-  )
+data class CataloguedMessage(
+  val commandSet: Int,
+  val commandId: Int,
+  /** Our own name for what the capture showed */
+  val name: String,
+  /** The observation that named it: a capture identifier, its date and the hardware it was taken on */
+  val observation: String,
+)
 
-  val commandSets: Map<Int, String> = mapOf(
-    CommandSets.COMMON to "common",
-    CommandSets.SPECIAL to "special",
-    CommandSets.CAMERA to "camera",
-    CommandSets.FLIGHT_CONTROLLER to "flight controller",
-    CommandSets.GIMBAL to "gimbal",
-    5 to "centre board",
-    CommandSets.REMOTE_CONTROLLER to "remote controller",
-    7 to "wifi",
-    8 to "video encoder board",
-    CommandSets.OSD to "OSD",
-    10 to "vision",
-    11 to "simulator",
-    CommandSets.BATTERY to "battery",
-    CommandSets.SMART_BATTERY to "smart battery",
-    15 to "RTK",
-    17 to "ADS-B",
-    21 to "glasses",
-    24 to "4G module",
-    25 to "onboard SDK",
-    31 to "flight",
-    32 to "narrow band",
-    34 to "second flight controller",
-    35 to "smart function",
-    36 to "perception",
-    60 to "payload SDK",
-  )
+object MessageCatalogue {
+  /** Empty until a capture names a message; see [CataloguedMessage.observation] */
+  private val entries: Map<Int, CataloguedMessage> = emptyMap()
 
-  fun commandSetName(set: Int): String? = commandSets[set]
+  private fun key(set: Int, id: Int): Int = (set shl 8) or id
 
-  fun messageName(set: Int, id: Int): String? =
-    if (set == CommandSets.FLIGHT_CONTROLLER) flightController[id] else null
+  fun named(set: Int, id: Int): CataloguedMessage? = entries[key(set, id)]
+
+  fun isNamed(set: Int, id: Int): Boolean = entries.containsKey(key(set, id))
 }
 
 /** One identifier as it was seen on this link, with no field read from the body */
@@ -119,7 +74,7 @@ class TelemetryTable(private val previewBytes: Int = 16) {
       TelemetryMessage(
         commandSet = row.set,
         commandId = row.id,
-        name = TelemetryNames.messageName(row.set, row.id),
+        name = MessageCatalogue.named(row.set, row.id)?.name,
         count = row.count,
         lastLength = row.lastLength,
         firstSeenMs = row.firstSeenMs,

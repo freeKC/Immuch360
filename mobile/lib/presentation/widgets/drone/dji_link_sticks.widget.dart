@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
 
 class DjiLinkSticksDisplay extends StatelessWidget {
   const DjiLinkSticksDisplay({super.key, required this.sticks});
@@ -26,15 +27,15 @@ class DjiLinkSticksDisplay extends StatelessWidget {
         else
           Row(
             children: [
-              _Pad(horizontal: sticks.yaw, vertical: sticks.throttle, label: 'yaw / throttle'),
+              _Pad(horizontal: sticks.yaw, vertical: sticks.throttle, label: t.dji_link_sticks_yaw_throttle),
               const SizedBox(width: 16),
-              _Pad(horizontal: sticks.roll, vertical: sticks.pitch, label: 'roll / pitch'),
+              _Pad(horizontal: sticks.roll, vertical: sticks.pitch, label: t.dji_link_sticks_roll_pitch),
             ],
           ),
         const SizedBox(height: 8),
         if (sticks.reasons.isNotEmpty)
           Text(
-            t.dji_link_sticks_neutral(reasons: sticks.reasons.join(', ')),
+            t.dji_link_sticks_neutral(reasons: sticks.reasons.map((r) => djiLinkSignalText(t, r)).join(', ')),
             style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.error),
           ),
       ],

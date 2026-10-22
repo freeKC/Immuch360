@@ -40,13 +40,18 @@ DjiLinkEnvironment _environment({bool accessoryFeature = true, bool djiInstalled
   chargeCurrentMicroAmps: -250000,
 );
 
-DjiLinkCounters _counters({int unknownChannelFrames = 0, int headerCrcFailures = 0}) => DjiLinkCounters(
+DjiLinkCounters _counters({
+  int unknownChannelFrames = 0,
+  int unknownChannelRejections = 0,
+  int headerCrcFailures = 0,
+}) => DjiLinkCounters(
   envelopeFrames: 12,
   envelopeBytes: 4096,
   payloadBytes: 3900,
   discardedBytes: 7,
   resynchronisations: 1,
   unknownChannelFrames: unknownChannelFrames,
+  unknownChannelRejections: unknownChannelRejections,
   oversizeRejections: 0,
   incompleteTimeouts: 0,
   controlFrames: 9,
@@ -76,10 +81,24 @@ DjiLinkSticks _sticks({int? sampleAgeMs, List<String> reasons = const []}) => Dj
   sampleAgeMs: sampleAgeMs,
 );
 
+DjiLinkCrc _crc({int? headerSeedCandidate, int headerSeedVotes = 0, int headerFailuresVoting = 0}) => DjiLinkCrc(
+  headerParameters: 'crc8-r8c-77',
+  frameParameters: 'crc16-r8408-3692',
+  headerSeedCandidate: headerSeedCandidate,
+  headerSeedVotes: headerSeedVotes,
+  headerFailuresVoting: headerFailuresVoting,
+  frameSeedVotes: 0,
+  frameFailuresVoting: 0,
+);
+
 DjiLinkSnapshot _snapshot({
   DjiLinkState state = DjiLinkState.accessoryOpen,
+  DjiLinkReason? reason,
   String? detail,
   DjiLinkAccessory? accessory,
+  DjiLinkProfile? profile,
+  bool probesHalted = false,
+  DjiLinkCrc? crc,
   int? firstByteMs,
   int captureBytes = 0,
   List<DjiLinkFrame> frames = const [],
@@ -89,8 +108,13 @@ DjiLinkSnapshot _snapshot({
   DjiLinkSticks? sticks,
 }) => DjiLinkSnapshot(
   state: state,
+  reason: reason,
   detail: detail,
   accessory: accessory,
+  profile: profile,
+  probesHalted: probesHalted,
+  opens: 1,
+  crc: crc ?? _crc(),
   firstByteMs: firstByteMs,
   probesSent: 3,
   probeFailures: 1,
@@ -243,33 +267,78 @@ void main() {
     final api = _FakeApi(
       snapshot: _snapshot(
         state: DjiLinkState.linkUsable,
-        detail: 'the liveness probe returns; nothing has answered yet',
+        reason: DjiLinkReason.probeReturns,
         accessory: DjiLinkAccessory(manufacturer: 'DJI', model: 'com.dji.logiclink', description: ' RC'),
       ),
     );
 
     await pumpPage(tester, api);
 
-    expect(find.text('linkUsable'), findsOneWidget);
+    expect(find.text('Link takes bytes'), findsOneWidget);
     expect(find.text('never'), findsOneWidget);
-    expect(find.text('the liveness probe returns; nothing has answered yet'), findsOneWidget);
+    expect(find.text('The liveness probe returns. Nothing has answered yet.'), findsOneWidget);
     expect(find.textContaining('com.dji.logiclink'), findsOneWidget);
     expect(find.textContaining('Nothing is written for the first 20 seconds'), findsOneWidget);
   });
 
   testWidgets('a refused permission is a state of its own, with the banner still there', (tester) async {
-    final api = _FakeApi(snapshot: _snapshot(state: DjiLinkState.permissionDenied));
+    final api = _FakeApi(
+      snapshot: _snapshot(state: DjiLinkState.permissionDenied, reason: DjiLinkReason.permissionRefused),
+    );
 
     await pumpPage(tester, api);
 
-    expect(find.text('permissionDenied'), findsOneWidget);
+    expect(find.text('USB permission refused'), findsOneWidget);
+    expect(find.textContaining('It is asked again only when you tap Try again'), findsOneWidget);
     expect(find.byKey(const Key('dji_link_safety')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('dji_link_retry')));
+    await tester.pumpAndSettle();
+    expect(api.retries, 1);
+  });
+
+  testWidgets('a technical word from the native side follows the sentence of the reason', (tester) async {
+    final api = _FakeApi(
+      snapshot: _snapshot(
+        state: DjiLinkState.permissionDenied,
+        reason: DjiLinkReason.permissionRequestFailed,
+        detail: 'SecurityException',
+      ),
+    );
+
+    await pumpPage(tester, api);
+
+    expect(find.text('The USB permission could not be asked for. (SecurityException)'), findsOneWidget);
+  });
+
+  testWidgets('an accessory nobody has described is named by its strings, and a blocked probe is said', (tester) async {
+    final api = _FakeApi(
+      snapshot: _snapshot(
+        state: DjiLinkState.accessoryOpen,
+        reason: DjiLinkReason.writeBlocked,
+        probesHalted: true,
+        accessory: DjiLinkAccessory(manufacturer: 'Acme', model: 'Bridge'),
+        profile: DjiLinkProfile(
+          id: 'observed-acme-bridge-none',
+          label: 'Accessory not described yet: Acme Bridge',
+          capabilities: [DjiLinkCapability(name: 'VIDEO_DECODE', support: DjiLinkSupport.unknown)],
+        ),
+      ),
+    );
+
+    await pumpPage(tester, api);
+
+    expect(find.text('Accessory not described yet: Acme Bridge'), findsOneWidget);
+    expect(find.text('Decode the video'), findsOneWidget);
+    expect(find.byKey(const Key('dji_link_probes_halted')), findsOneWidget);
+    expect(find.textContaining('Probing stopped; reading goes on.'), findsOneWidget);
   });
 
   testWidgets('counters, channels and frames are shown as they are', (tester) async {
     final api = _FakeApi(
       snapshot: _snapshot(
-        counters: _counters(unknownChannelFrames: 2, headerCrcFailures: 5),
+        counters: _counters(unknownChannelFrames: 2, unknownChannelRejections: 3, headerCrcFailures: 5),
+        crc: _crc(headerSeedCandidate: 0x21, headerSeedVotes: 5, headerFailuresVoting: 6),
         channels: [
           DjiLinkChannel(
             channel: 22345,
@@ -305,7 +374,6 @@ void main() {
             lastLength: 20,
             ratePerSecond: 10,
             preview: '01 02 03',
-            name: 'common OSD push, the main flight state message',
           ),
         ],
       ),
@@ -318,19 +386,46 @@ void main() {
     expect(find.textContaining('22345 control'), findsOneWidget);
     expect(find.text('Header checksum failures'), findsOneWidget);
     expect(find.text('5'), findsWidgets);
-    expect(find.textContaining('set 3 id 67'), findsWidgets);
-    expect(find.textContaining('common OSD push'), findsOneWidget);
-    expect(find.textContaining('No field of a message is read'), findsOneWidget);
+    expect(find.text('False sync patterns refused on an undescribed channel'), findsOneWidget);
+    expect(find.text('3'), findsWidgets);
+    expect(find.text('set 3 id 67'), findsOneWidget, reason: 'a telemetry row is its numbers, with no name');
+    expect(find.textContaining('channel 22345, set 3 id 67, request'), findsOneWidget);
+    expect(find.textContaining('no field of a message is read'), findsOneWidget);
+    expect(find.byKey(const Key('dji_link_crc')), findsOneWidget);
+    expect(find.text('crc8-r8c-77 crc16-r8408-3692'), findsOneWidget);
+    expect(find.text('0x21, 5 of 6 failures'), findsOneWidget);
   });
 
-  testWidgets('the export is refused while nothing was captured, and shows where it went afterwards', (tester) async {
+  testWidgets('with nothing captured the export writes the header alone and says so', (tester) async {
+    final api = _FakeApi(snapshot: _snapshot(captureBytes: 0))
+      ..exportResult = DjiLinkExport(
+        ok: true,
+        bytes: 0,
+        headerPath: '/storage/emulated/0/Android/data/app/files/dji-link/dji-link-20261022-120000.json',
+        sha256: 'e3b0c4',
+        headerOnly: true,
+      );
+
+    await pumpPage(tester, api);
+
+    expect(find.byKey(const Key('dji_link_capture_privacy')), findsOneWidget);
+    final exportButton = find.byKey(const Key('dji_link_capture_export'));
+    expect(tester.widget<FilledButton>(exportButton).onPressed, isNotNull);
+    await tester.tap(exportButton);
+    await tester.pumpAndSettle();
+
+    expect(api.exports, hasLength(1));
+    expect(find.byKey(const Key('dji_link_capture_header_only')), findsOneWidget);
+    expect(find.textContaining('dji-link-20261022-120000.json'), findsOneWidget);
+    expect(find.byKey(const Key('dji_link_capture_exported')), findsNothing);
+  });
+
+  testWidgets('a capture is exported with the note and shows where it went', (tester) async {
     final api = _FakeApi(snapshot: _snapshot(captureBytes: 0));
 
     await pumpPage(tester, api);
 
     final exportButton = find.byKey(const Key('dji_link_capture_export'));
-    expect(tester.widget<FilledButton>(exportButton).onPressed, isNull);
-
     api.snapshotValue = _snapshot(captureBytes: 4096);
     await tester.tap(find.byKey(const Key('dji_link_capture_start')));
     await tester.pumpAndSettle();
@@ -352,12 +447,12 @@ void main() {
 
     final listener = await pumpPage(tester, api);
     expect(listener, isNotNull);
-    expect(find.text('accessoryOpen'), findsOneWidget);
+    expect(find.text('Accessory open'), findsOneWidget);
 
     listener!.snapshotChanged(_snapshot(state: DjiLinkState.aircraftLinked, firstByteMs: 120));
     await tester.pumpAndSettle();
 
-    expect(find.text('aircraftLinked'), findsOneWidget);
+    expect(find.text('Aircraft frames arrive'), findsOneWidget);
     expect(find.text('120 ms'), findsOneWidget);
   });
 
@@ -370,7 +465,8 @@ void main() {
 
     expect(find.byKey(const Key('dji_link_sticks')), findsOneWidget);
     expect(find.textContaining('the send path is off in this build'), findsOneWidget);
-    expect(find.textContaining('LINK_NOT_LINKED'), findsOneWidget);
+    expect(find.text('Held at neutral: no aircraft link, triggers released'), findsOneWidget);
+    expect(find.text('Yaw and throttle'), findsOneWidget);
   });
 
   group('the tile of the Network shares page', () {

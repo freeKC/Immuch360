@@ -10,6 +10,12 @@ package app.alextran.immich.djilink
  * Any one of the signals below returns the sticks to neutral, drops authority and says why. No single signal is
  * trusted to be enough: the viewer of this same application has already been seen to go deaf after an idle period
  * with its own activity flag still saying it was fine.
+ *
+ * Arming has an order, and the order is enforced: first the "take control" button on the panel, then both triggers
+ * held for [InputSafety.ARM_HOLD_MS] counted from the first reading after that button. Triggers held before the
+ * button count for nothing. Any disarm, any dead man signal and any release of the triggers while holding or armed
+ * cancels the button press: arming again starts from the button. A button press whose hold has not started within
+ * [InputSafety.REQUEST_WINDOW_MS] lapses.
  */
 enum class DeadManSignal {
   /** The controller reports inactive, its entity is gone, or it became a hand */
@@ -65,24 +71,36 @@ class InputSafety(
     const val MAX_SAMPLE_AGE_MS = 100L
     const val MIN_SEND_INTERVAL_MS = 20L
     const val ARM_HOLD_MS = 2_000L
+
+    /** How long a "take control" press waits for the triggers before it lapses */
+    const val REQUEST_WINDOW_MS = 5_000L
   }
 
-  private var takeControlRequested = false
+  /** When the panel button was pressed, null when no press is standing */
+  private var requestedAtMs: Long? = null
   private var triggersHeldSinceMs: Long? = null
   private var lastSendMs: Long? = null
 
   var armed = false
     private set
 
-  /** The pilot pressed "take control" on the panel. The triggers still have to be held afterwards. */
-  fun requestControl() {
-    takeControlRequested = true
+  /** Whether a "take control" press is standing and waiting for the triggers */
+  val controlRequested: Boolean get() = requestedAtMs != null
+
+  /**
+   * The pilot pressed "take control" on the panel. The triggers have to be held afterwards, from the next reading on:
+   * a hold already under way when the button is pressed starts again from zero.
+   */
+  fun requestControl(nowMs: Long) {
+    requestedAtMs = nowMs
+    triggersHeldSinceMs = null
+    armed = false
   }
 
-  /** Instant, and needs no confirmation */
+  /** Instant, and needs no confirmation. The next arming starts from the panel button again. */
   fun disarm() {
     armed = false
-    takeControlRequested = false
+    requestedAtMs = null
     triggersHeldSinceMs = null
   }
 
@@ -104,22 +122,28 @@ class InputSafety(
     if (sample == null || nowMs - sample.atMs > maxSampleAgeMs) {
       reasons.add(DeadManSignal.SAMPLE_TOO_OLD)
     }
-    val triggers = sample?.triggersHeld == true
+    // A release the caller already knows about counts as much as one the sample shows
+    val triggers = sample?.triggersHeld == true && DeadManSignal.TRIGGERS_RELEASED !in signals
     if (!triggers) {
       reasons.add(DeadManSignal.TRIGGERS_RELEASED)
-      triggersHeldSinceMs = null
-      armed = false
-    } else if (reasons.isEmpty()) {
-      val since = triggersHeldSinceMs ?: nowMs.also { triggersHeldSinceMs = it }
-      if (takeControlRequested && nowMs - since >= armHoldMs) {
-        armed = true
-      }
-    } else {
-      triggersHeldSinceMs = null
-      armed = false
     }
-    if (reasons.isNotEmpty()) {
-      armed = false
+    val tripped = reasons.any { it != DeadManSignal.TRIGGERS_RELEASED }
+    val requestedAt = requestedAtMs
+    when {
+      // A dead man signal: everything stops, and the button press goes with it
+      tripped -> disarm()
+      // Released while holding or armed: the same. Released while waiting for the hold after the button: nothing yet.
+      !triggers -> if (armed || triggersHeldSinceMs != null) disarm()
+      // Held, but no standing button press: no timer runs, whatever the triggers do
+      requestedAt == null -> triggersHeldSinceMs = null
+      // A press whose hold never started in time lapses
+      triggersHeldSinceMs == null && nowMs - requestedAt > REQUEST_WINDOW_MS -> disarm()
+      else -> {
+        val since = triggersHeldSinceMs ?: nowMs.also { triggersHeldSinceMs = it }
+        if (nowMs - since >= armHoldMs) {
+          armed = true
+        }
+      }
     }
     val neutral = reasons.isNotEmpty() || !armed
     return SafetyDecision(

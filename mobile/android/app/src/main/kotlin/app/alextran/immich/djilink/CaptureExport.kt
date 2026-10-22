@@ -3,8 +3,10 @@ package app.alextran.immich.djilink
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 import java.io.File
 import java.io.IOException
 import org.json.JSONArray
@@ -18,6 +20,12 @@ import org.json.JSONObject
  *   boundary is what a reassembly question needs;
  * - `<id>.json`, the header: the device, the build, the USB environment, the accessory strings, the profile, every
  *   counter at the moment of the export, what the pilot typed about the bench, and the digest of the bytes.
+ *
+ * When nothing was captured, the header alone is written: "nothing ever opened" is a result too, and the environment
+ * that produced it is what explains it.
+ *
+ * Android 10 and later take the files into the shared downloads; Android 8 and 9 have no downloads collection for an
+ * application, so the files go to the application's own folder on the shared storage, whose path the page shows.
  *
  * Nothing is uploaded anywhere. A capture holds serial numbers and possibly a position, so it stays on the device and
  * on the pilot's own computer, and it is never committed to the fork.
@@ -33,6 +41,8 @@ object CaptureExport {
     val headerPath: String? = null,
     val sha256: String? = null,
     val error: String? = null,
+    /** True when only the header was written, because nothing was captured */
+    val headerOnly: Boolean = false,
   )
 
   fun write(
@@ -45,11 +55,16 @@ object CaptureExport {
     notes: Map<String, String?>,
     id: String = "dji-link-" + android.text.format.DateFormat.format("yyyyMMdd-HHmmss", System.currentTimeMillis()),
   ): Result {
-    if (snapshot.bytes.isEmpty()) {
-      return Result(ok = false, bytes = 0, error = "nothing was captured")
-    }
     val digest = snapshot.sha256()
     val header = headerJson(id, snapshot, digest, environment, identity, profile, link, notes)
+    if (snapshot.bytes.isEmpty() && snapshot.entries.isEmpty()) {
+      return try {
+        val json = writeFile(context, "$id.json", "application/json", header.toByteArray())
+        Result(ok = true, bytes = 0, headerPath = json, sha256 = digest, headerOnly = true)
+      } catch (error: Throwable) {
+        Result(ok = false, bytes = 0, error = error.message ?: error.javaClass.simpleName)
+      }
+    }
     return try {
       val bin = writeFile(context, "$id.bin", "application/octet-stream", snapshot.bytes)
       val index = writeFile(context, "$id.idx.csv", "text/csv", snapshot.indexCsv().toByteArray())
@@ -67,7 +82,15 @@ object CaptureExport {
     }
   }
 
-  private fun writeFile(context: Context, name: String, mime: String, bytes: ByteArray): String {
+  private fun writeFile(context: Context, name: String, mime: String, bytes: ByteArray): String =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      writeDownloads(context, name, mime, bytes)
+    } else {
+      writeOwnFolder(context, name, bytes)
+    }
+
+  @RequiresApi(Build.VERSION_CODES.Q)
+  private fun writeDownloads(context: Context, name: String, mime: String, bytes: ByteArray): String {
     val resolver = context.contentResolver
     val values = ContentValues().apply {
       put(MediaStore.MediaColumns.DISPLAY_NAME, name)
@@ -76,14 +99,8 @@ object CaptureExport {
       put(MediaStore.MediaColumns.IS_PENDING, 1)
     }
     val collection: Uri = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-    val target = resolver.insert(collection, values)
-    if (target == null) {
-      // A device whose downloads collection refuses the insert still has a folder of its own
-      val folder = File(context.getExternalFilesDir(null), "dji-link").apply { mkdirs() }
-      val file = File(folder, name)
-      file.writeBytes(bytes)
-      return file.absolutePath
-    }
+    // A device whose downloads collection refuses the insert still has a folder of its own
+    val target = resolver.insert(collection, values) ?: return writeOwnFolder(context, name, bytes)
     var done = false
     try {
       (resolver.openOutputStream(target) ?: throw IOException("$name cannot be written")).use { it.write(bytes) }
@@ -95,6 +112,15 @@ object CaptureExport {
         runCatching { resolver.delete(target, null, null) }
       }
     }
+  }
+
+  /** The application's own folder on the shared storage, which needs no permission on any version */
+  private fun writeOwnFolder(context: Context, name: String, bytes: ByteArray): String {
+    val base = context.getExternalFilesDir(null) ?: context.filesDir
+    val folder = File(base, "dji-link").apply { mkdirs() }
+    val file = File(folder, name)
+    file.writeBytes(bytes)
+    return file.absolutePath
   }
 
   fun headerJson(
@@ -115,6 +141,7 @@ object CaptureExport {
     root.put("totalBytes", snapshot.totalBytes)
     root.put("droppedBytes", snapshot.droppedBytes)
     root.put("records", snapshot.entries.size)
+    root.put("headerOnly", snapshot.bytes.isEmpty() && snapshot.entries.isEmpty())
     root.put("formatNotes", "store/m2/dji-2026-10-21/p2/protocol.md")
     root.put("sendPathEnabled", DjiLinkBuild.SEND_ENABLED)
     root.put(

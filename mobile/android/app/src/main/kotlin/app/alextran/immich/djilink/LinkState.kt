@@ -61,25 +61,71 @@ data class AccessoryIdentity(
   val uri: String?,
 )
 
-/** Everything the diagnostics page shows about the link itself */
-data class LinkSnapshot(
-  val state: LinkState = LinkState.ABSENT,
-  val accessory: AccessoryIdentity? = null,
-  val profileId: String? = null,
-  val profileLabel: String? = null,
-  /** Why the state is what it is, in one line, for the page and the log */
-  val detail: String? = null,
-  val openedAtMs: Long? = null,
-  /** Time between the open and the first byte read, null while no byte has arrived */
-  val firstByteMs: Long? = null,
-  val probesSent: Long = 0,
-  val probeFailures: Long = 0,
-  val consecutiveProbeFailures: Int = 0,
-  val lastProbeCallMs: Long = 0,
-  val bytesRead: Long = 0,
-  val bytesWritten: Long = 0,
-  val reads: Long = 0,
-  val writes: Long = 0,
-  val attempts: Long = 0,
-  val chargeCurrentMicroAmps: Int? = null,
-)
+/**
+ * Why the link is in its state, as a code the page turns into a sentence of its own language. The log keeps the
+ * English name; [LinkEvents.onState] can add one technical word to it, such as the name of an exception.
+ */
+enum class LinkReason {
+  /** The device declares no USB accessory feature and has no accessory device node */
+  NO_ACCESSORY_FEATURE,
+
+  /** The device has no USB service at all */
+  NO_USB_SERVICE,
+
+  /** The page is looking for an accessory */
+  LOOKING,
+
+  /** The accessory list is empty */
+  NOTHING_LISTED,
+
+  /** An accessory is listed and its strings were read */
+  LISTED,
+
+  /** An accessory appeared while the system chooser may be on screen; the permission is asked after a grace period */
+  WAITING_FOR_CHOOSER,
+
+  /** The permission dialog is up */
+  PERMISSION_ASKED,
+
+  /** The permission could not even be asked for */
+  PERMISSION_REQUEST_FAILED,
+
+  /** The pilot refused the permission; it is asked again only by the retry button or a new plug */
+  PERMISSION_REFUSED,
+
+  /** The permission is held and the open returned nothing: another application may hold the accessory */
+  OPEN_FAILED,
+
+  /** A descriptor is held and nothing has been written */
+  OPENED,
+
+  /** The liveness probe returns; nothing has answered yet */
+  PROBE_RETURNS,
+
+  /** Several probes in a row failed while nothing was read */
+  PROBES_FAILED,
+
+  /** A probe write did not return: the remote is not reading this endpoint, and probing stopped */
+  WRITE_BLOCKED,
+
+  /** The accessory was unplugged */
+  DETACHED,
+
+  /** The accessory stream ended */
+  STREAM_ENDED,
+
+  /** Reads failed too many times in a row */
+  READS_FAILED,
+
+  /** Writes failed too many times in a row */
+  WRITES_FAILED,
+
+  /** The page was closed */
+  PAGE_CLOSED,
+
+  /** Control frames arrive and parse */
+  FRAMES_PARSE,
+
+  /** Frames from the aircraft side arrive */
+  AIRCRAFT_FRAMES,
+}

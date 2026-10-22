@@ -35,6 +35,9 @@ class DjiLinkController private constructor(private val context: Context) : Link
         instance ?: DjiLinkController(context.applicationContext).also { instance = it }
       }
 
+    /** The controller if the page ever made one, never creating it: a motion event or a plug must not allocate */
+    fun existing(): DjiLinkController? = instance
+
     private var events: DjiLinkEvents? = null
 
     fun attachEvents(messenger: BinaryMessenger) {
@@ -64,7 +67,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
 
   private var environment: UsbEnvironmentReport = UsbEnvironment.read(context)
   private var state: LinkState = LinkState.ABSENT
-  private var detail: String? = null
+  private var reason: LinkReason = LinkReason.LOOKING
+
+  /** One technical word that goes with [reason], such as the name of an exception */
+  private var argument: String? = null
   private var identity: AccessoryIdentity? = null
   private var profile: DeviceProfile? = null
   private var started = false
@@ -80,14 +86,19 @@ class DjiLinkController private constructor(private val context: Context) : Link
     return environment
   }
 
+  /** Whether the page is open and the link is being looked after */
+  val isStarted: Boolean get() = started
+
   fun start() {
     if (started) {
       return
     }
     started = true
     environment = UsbEnvironment.read(context)
+    // A new page session: the counters start again; within the session they cover every descriptor
     synchronized(gate) {
       decoder.reset()
+      decoder.clearCounters()
       router.reset()
     }
     manager.start()
@@ -110,6 +121,13 @@ class DjiLinkController private constructor(private val context: Context) : Link
       return
     }
     manager.retryNow()
+  }
+
+  /** The pilot picked this application in the system chooser of a plug; nothing happens unless the page is open */
+  fun onAttachEntry() {
+    if (started) {
+      manager.onAttachEntry()
+    }
   }
 
   fun startCapture() {
@@ -147,11 +165,17 @@ class DjiLinkController private constructor(private val context: Context) : Link
     return result
   }
 
-  /** A saved capture back through the same codecs. No hardware is touched and the live counters are left alone. */
-  fun replay(path: String): CaptureReplay.Result = CaptureReplay.replay(
-    bytes = java.io.File(path).readBytes(),
-    index = runCatching { CaptureReplay.parseIndex(java.io.File(indexPathOf(path)).readText()) }.getOrNull(),
-  )
+  /**
+   * A saved capture back through the same codecs. No hardware is touched and the live counters are left alone. A seed
+   * other than the notes' can be given for either checksum, typically the candidate the live page voted for.
+   */
+  fun replay(path: String, headerSeed: Int? = null, frameSeed: Int? = null): CaptureReplay.Result =
+    CaptureReplay.replay(
+      bytes = java.io.File(path).readBytes(),
+      index = runCatching { CaptureReplay.parseIndex(java.io.File(indexPathOf(path)).readText()) }.getOrNull(),
+      headerCrc = headerSeed?.let { CrcSets.header(it) } ?: CrcSets.HEADER_CRC8,
+      frameCrc = frameSeed?.let { CrcSets.frame(it) } ?: CrcSets.FRAME_CRC16,
+    )
 
   fun indexPathOf(binPath: String): String = binPath.removeSuffix(".bin") + ".idx.csv"
 
@@ -160,6 +184,9 @@ class DjiLinkController private constructor(private val context: Context) : Link
    * safety rules are evaluated anyway so that they are exercised long before anything could be sent.
    */
   fun onMotionEvent(event: MotionEvent): Boolean {
+    if (!started) {
+      return false
+    }
     val source = event.source
     val fromGamepad = (source and InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK ||
       (source and InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD
@@ -196,16 +223,28 @@ class DjiLinkController private constructor(private val context: Context) : Link
     lastDecisionArmed = decision.armed
   }
 
-  override fun onState(state: LinkState, detail: String?) {
+  override fun onState(state: LinkState, reason: LinkReason, argument: String?) {
     this.state = state
-    this.detail = detail
-    if (state == LinkState.ACCESSORY_OPEN) {
-      // A new descriptor is a new stream: no parser buffer and no counter survives a reconnect
-      synchronized(gate) {
-        decoder.reset()
-        router.reset()
-      }
+    this.reason = reason
+    this.argument = argument
+    markDirty()
+  }
+
+  /**
+   * A new descriptor is a new stream: no parser buffer survives it, and the capture marks where it started. Called
+   * before the reader thread exists, so the first byte of the remote is counted in full.
+   */
+  override fun onOpened() {
+    synchronized(gate) {
+      decoder.reset()
+      router.restartStreams()
+      capture.mark(CaptureDirection.OPEN)
     }
+    markDirty()
+  }
+
+  override fun onClosed(reason: LinkReason) {
+    synchronized(gate) { capture.mark(CaptureDirection.CLOSE) }
     markDirty()
   }
 
@@ -229,10 +268,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
     }
     // Frames parsed is a claim the transport cannot make, so it is made here and nowhere else
     if (frames > 0 && state == LinkState.LINK_USABLE) {
-      handler.post { manager.publish(LinkState.CONTROLLER_IDENTIFIED, "control frames arrive and parse") }
+      handler.post { manager.publish(LinkState.CONTROLLER_IDENTIFIED, LinkReason.FRAMES_PARSE) }
     }
     if (linked && state == LinkState.CONTROLLER_IDENTIFIED) {
-      handler.post { manager.publish(LinkState.AIRCRAFT_LINKED, "frames from the aircraft side arrive") }
+      handler.post { manager.publish(LinkState.AIRCRAFT_LINKED, LinkReason.AIRCRAFT_FRAMES) }
     }
     markDirty()
   }
@@ -269,16 +308,21 @@ class DjiLinkController private constructor(private val context: Context) : Link
     val envelope = decoder.counters
     val control = router.controlCounters()
     val routed = router.counters
+    val crc = router.crcReport()
     return linkedMapOf(
       "state" to state.name,
-      "detail" to detail,
+      "reason" to reason.name,
+      "reasonArgument" to argument,
       "attempts" to manager.attempts,
+      "opens" to manager.opens,
       "openedAtWallMs" to manager.openedAtMs,
       "firstByteMs" to manager.firstByteMs,
       "probesSent" to manager.probesSent,
       "probeFailures" to manager.probeFailures,
       "lastProbeCallMs" to manager.lastProbeCallMs,
+      "probesHalted" to manager.probesHalted,
       "quietWindowMs" to AoaAccessoryManager.QUIET_AFTER_OPEN_MS,
+      "sendRefusals" to (manager.transport?.sendRefusals ?: 0),
       "bytesRead" to (manager.transport?.bytesRead ?: 0),
       "bytesWritten" to (manager.transport?.bytesWritten ?: 0),
       "reads" to (manager.transport?.reads ?: 0),
@@ -288,6 +332,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       "envelopeDiscardedBytes" to envelope.discardedBytes,
       "envelopeResynchronisations" to envelope.resynchronisations,
       "envelopeUnknownChannelFrames" to envelope.unknownChannelFrames,
+      "envelopeUnknownChannelRejections" to envelope.unknownChannelRejections,
       "envelopeOversizeRejections" to envelope.oversizeRejections,
       "envelopeIncompleteTimeouts" to envelope.incompleteTimeouts,
       "controlFrames" to control.frames,
@@ -298,7 +343,11 @@ class DjiLinkController private constructor(private val context: Context) : Link
       "aircraftSideFrames" to routed.aircraftSideFrames,
       "controllerSideFrames" to routed.controllerSideFrames,
       "channelsSeen" to router.channelCounters().joinToString(" ") { "${it.channel}:${it.envelopes}" },
-      "crcParameters" to "${CrcSets.HEADER_CRC8.label} ${CrcSets.FRAME_CRC16.label}",
+      "crcParameters" to "${crc.headerParameters} ${crc.frameParameters}",
+      "headerSeedCandidate" to crc.headerSeedCandidate?.let { "0x%02x".format(it) },
+      "headerSeedVotes" to "${crc.headerSeedVotes} of ${crc.headerFailuresVoting}",
+      "frameSeedCandidate" to crc.frameSeedCandidate?.let { "0x%04x".format(it) },
+      "frameSeedVotes" to "${crc.frameSeedVotes} of ${crc.frameFailuresVoting}",
     )
   }
 
@@ -340,7 +389,8 @@ class DjiLinkController private constructor(private val context: Context) : Link
     val latest = sticks.latest()
     return DjiLinkSnapshot(
       state = state.toPigeon(),
-      detail = detail,
+      reason = reason.toPigeon(),
+      detail = argument,
       accessory = identity?.let {
         DjiLinkAccessory(
           manufacturer = it.manufacturer,
@@ -375,6 +425,8 @@ class DjiLinkController private constructor(private val context: Context) : Link
       probeFailures = manager.probeFailures,
       consecutiveProbeFailures = manager.consecutiveProbeFailures.toLong(),
       lastProbeCallMs = manager.lastProbeCallMs,
+      probesHalted = manager.probesHalted,
+      opens = manager.opens,
       bytesRead = manager.transport?.bytesRead ?: 0,
       bytesWritten = manager.transport?.bytesWritten ?: 0,
       reads = manager.transport?.reads ?: 0,
@@ -390,6 +442,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
         discardedBytes = envelope.discardedBytes + control.discardedBytes,
         resynchronisations = envelope.resynchronisations + control.resynchronisations,
         unknownChannelFrames = envelope.unknownChannelFrames,
+        unknownChannelRejections = envelope.unknownChannelRejections,
         oversizeRejections = envelope.oversizeRejections,
         incompleteTimeouts = envelope.incompleteTimeouts,
         controlFrames = control.frames,
@@ -404,6 +457,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
         ambiguousSideFrames = routed.ambiguousSideFrames,
         keepAliveExceptions = routed.keepAliveExceptions,
       ),
+      crc = router.crcReport().toPigeon(),
       channels = router.channelCounters().map { it.toPigeon(router.cameraChannels.cameraOfChannel(it.channel)) },
       pairs = router.pairCounters().map { it.toPigeon() },
       frames = router.frames().map { it.toPigeon() },
@@ -473,6 +527,41 @@ private fun LinkState.toPigeon(): DjiLinkState = when (this) {
   LinkState.UNSUPPORTED_PROTOCOL -> DjiLinkState.UNSUPPORTED_PROTOCOL
 }
 
+private fun LinkReason.toPigeon(): DjiLinkReason = when (this) {
+  LinkReason.NO_ACCESSORY_FEATURE -> DjiLinkReason.NO_ACCESSORY_FEATURE
+  LinkReason.NO_USB_SERVICE -> DjiLinkReason.NO_USB_SERVICE
+  LinkReason.LOOKING -> DjiLinkReason.LOOKING
+  LinkReason.NOTHING_LISTED -> DjiLinkReason.NOTHING_LISTED
+  LinkReason.LISTED -> DjiLinkReason.LISTED
+  LinkReason.WAITING_FOR_CHOOSER -> DjiLinkReason.WAITING_FOR_CHOOSER
+  LinkReason.PERMISSION_ASKED -> DjiLinkReason.PERMISSION_ASKED
+  LinkReason.PERMISSION_REQUEST_FAILED -> DjiLinkReason.PERMISSION_REQUEST_FAILED
+  LinkReason.PERMISSION_REFUSED -> DjiLinkReason.PERMISSION_REFUSED
+  LinkReason.OPEN_FAILED -> DjiLinkReason.OPEN_FAILED
+  LinkReason.OPENED -> DjiLinkReason.OPENED
+  LinkReason.PROBE_RETURNS -> DjiLinkReason.PROBE_RETURNS
+  LinkReason.PROBES_FAILED -> DjiLinkReason.PROBES_FAILED
+  LinkReason.WRITE_BLOCKED -> DjiLinkReason.WRITE_BLOCKED
+  LinkReason.DETACHED -> DjiLinkReason.DETACHED
+  LinkReason.STREAM_ENDED -> DjiLinkReason.STREAM_ENDED
+  LinkReason.READS_FAILED -> DjiLinkReason.READS_FAILED
+  LinkReason.WRITES_FAILED -> DjiLinkReason.WRITES_FAILED
+  LinkReason.PAGE_CLOSED -> DjiLinkReason.PAGE_CLOSED
+  LinkReason.FRAMES_PARSE -> DjiLinkReason.FRAMES_PARSE
+  LinkReason.AIRCRAFT_FRAMES -> DjiLinkReason.AIRCRAFT_FRAMES
+}
+
+internal fun CrcReport.toPigeon(): DjiLinkCrc = DjiLinkCrc(
+  headerParameters = headerParameters,
+  frameParameters = frameParameters,
+  headerSeedCandidate = headerSeedCandidate?.toLong(),
+  headerSeedVotes = headerSeedVotes,
+  headerFailuresVoting = headerFailuresVoting,
+  frameSeedCandidate = frameSeedCandidate?.toLong(),
+  frameSeedVotes = frameSeedVotes,
+  frameFailuresVoting = frameFailuresVoting,
+)
+
 private fun ChannelCounters.toPigeon(cameraType: Int?): DjiLinkChannel = DjiLinkChannel(
   channel = channel.toLong(),
   role = role.name.lowercase(),
@@ -490,7 +579,6 @@ private fun PairCounters.toPigeon(): DjiLinkPair = DjiLinkPair(
   count = count,
   lastLength = lastLength.toLong(),
   lastSeenMs = lastSeenMs,
-  setName = setName,
   messageName = messageName,
 )
 

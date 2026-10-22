@@ -17,6 +17,7 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_link_counters.widge
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_frames.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_safety.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_sticks.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
@@ -106,8 +107,8 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DjiLinkFact('${environment.deviceManufacturer} ${environment.deviceModel}', environment.androidRelease),
-        DjiLinkFact('build', environment.buildFingerprint),
-        DjiLinkFact('app', '${environment.appVersion} ${environment.flavour}'),
+        DjiLinkFact(t.dji_link_environment_build, environment.buildFingerprint),
+        DjiLinkFact(t.dji_link_environment_app, '${environment.appVersion} ${environment.flavour}'),
         DjiLinkFact(
           t.dji_link_environment_accessory_feature,
           environment.hasAccessoryFeature ? t.dji_link_present : t.dji_link_absent,
@@ -129,8 +130,11 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
         DjiLinkFact(
           t.dji_link_environment_usb_state,
           environment.usbStateKnown
-              ? 'connected ${_onOff(environment.usbConnected)}, configured ${_onOff(environment.usbConfigured)}, '
-                    'accessory ${_onOff(environment.usbAccessoryMode)}'
+              ? t.dji_link_environment_usb_state_value(
+                  connected: _onOff(environment.usbConnected),
+                  configured: _onOff(environment.usbConfigured),
+                  accessory: _onOff(environment.usbAccessoryMode),
+                )
               : t.dji_link_absent,
         ),
         DjiLinkFact(t.dji_link_environment_dji_app, _onOff(environment.djiApplicationInstalled)),
@@ -161,8 +165,9 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
       key: const Key('dji_link_link'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DjiLinkFact(t.dji_link_state, snapshot.state.name, highlight: true),
-        if (snapshot.detail case final String detail) Text(detail, style: context.textTheme.bodySmall),
+        DjiLinkFact(t.dji_link_state, djiLinkStateText(t, snapshot.state), highlight: true),
+        if (_reason(snapshot) case final String reason)
+          Text(reason, key: const Key('dji_link_reason'), style: context.textTheme.bodySmall),
         DjiLinkFact(
           t.dji_link_accessory,
           accessory == null
@@ -174,7 +179,10 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
                   accessory.version ?? '-',
                 ].join(' | '),
         ),
-        DjiLinkFact(t.dji_link_profile, profile?.label ?? t.dji_link_support_unknown),
+        DjiLinkFact(
+          t.dji_link_profile,
+          profile == null ? t.dji_link_support_unknown : djiLinkProfileText(t, profile, accessory),
+        ),
         DjiLinkFact(
           t.dji_link_first_byte,
           snapshot.firstByteMs == null ? t.dji_link_never : '${snapshot.firstByteMs} ms',
@@ -182,13 +190,29 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
         ),
         DjiLinkFact(
           t.dji_link_probes,
-          '${snapshot.probesSent} sent, ${snapshot.probeFailures} failed, '
-          '${snapshot.consecutiveProbeFailures} in a row',
+          t.dji_link_probes_value(
+            sent: snapshot.probesSent,
+            failed: snapshot.probeFailures,
+            row: snapshot.consecutiveProbeFailures,
+          ),
         ),
         DjiLinkFact(t.dji_link_probe_call, '${snapshot.lastProbeCallMs} ms'),
-        DjiLinkFact(t.dji_link_read, '${formatHumanReadableBytes(snapshot.bytesRead, 1)} in ${snapshot.reads} reads'),
-        DjiLinkFact(t.dji_link_written, '${snapshot.bytesWritten} bytes in ${snapshot.writes} writes'),
+        if (snapshot.probesHalted)
+          Text(
+            t.dji_link_probes_halted,
+            key: const Key('dji_link_probes_halted'),
+            style: context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
+          ),
+        DjiLinkFact(
+          t.dji_link_read,
+          t.dji_link_read_value(bytes: formatHumanReadableBytes(snapshot.bytesRead, 1), reads: snapshot.reads),
+        ),
+        DjiLinkFact(
+          t.dji_link_written,
+          t.dji_link_written_value(bytes: snapshot.bytesWritten, writes: snapshot.writes),
+        ),
         DjiLinkFact(t.dji_link_attempts, '${snapshot.attempts}'),
+        DjiLinkFact(t.dji_link_opens, '${snapshot.opens}'),
         Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Text(
@@ -200,7 +224,10 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
           const SizedBox(height: 6),
           Text(t.dji_link_capabilities, style: context.textTheme.labelMedium),
           for (final capability in profile.capabilities)
-            DjiLinkFact(capability.name, _support(capability.support) + (capability.provenance ?? '')),
+            DjiLinkFact(
+              djiLinkCapabilityText(t, capability.name),
+              [_support(capability.support), ?capability.provenance].join(' '),
+            ),
         ],
         const SizedBox(height: 6),
         OutlinedButton(
@@ -210,6 +237,16 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
         ),
       ],
     );
+  }
+
+  /// The sentence for the reason of the state, with the one technical word the native side may add to it
+  String? _reason(DjiLinkSnapshot snapshot) {
+    final reason = snapshot.reason;
+    if (reason == null) {
+      return snapshot.detail;
+    }
+    final sentence = djiLinkReasonText(context.t, reason);
+    return snapshot.detail == null ? sentence : '$sentence (${snapshot.detail})';
   }
 
   String _support(DjiLinkSupport support) => switch (support) {
@@ -231,6 +268,9 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
         Text(t.dji_link_counters, style: context.textTheme.labelMedium),
         DjiLinkCountersBlock(counters: snapshot.counters),
         const SizedBox(height: 8),
+        Text(t.dji_link_crc, style: context.textTheme.labelMedium),
+        DjiLinkCrcBlock(crc: snapshot.crc),
+        const SizedBox(height: 8),
         Text(t.dji_link_frame_list, style: context.textTheme.labelMedium),
         DjiLinkFramesList(frames: snapshot.frames),
       ],
@@ -251,8 +291,12 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
         else
           for (final row in rows)
             DjiLinkFact(
-              'set ${row.commandSet} id ${row.commandId} ${row.name ?? ''}',
-              '${row.count} x ${row.lastLength} B, ${row.ratePerSecond.toStringAsFixed(1)}/s ${row.preview}',
+              [
+                t.dji_link_message_id(commandSet: '${row.commandSet}', commandId: '${row.commandId}'),
+                ?row.name,
+              ].join(' '),
+              '${t.dji_link_telemetry_rate(count: row.count, bodyLength: '${row.lastLength}', rate: row.ratePerSecond.toStringAsFixed(1))} '
+              '${row.preview}',
             ),
       ],
     );
@@ -275,9 +319,9 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
       children: [
         Text(verdict, style: context.textTheme.bodySmall),
         const SizedBox(height: 4),
-        DjiLinkFact('payloads', '${video.payloads}'),
-        DjiLinkFact('start codes', '${video.startCodesSeen}'),
-        DjiLinkFact('unit types', video.unitTypes.isEmpty ? '-' : video.unitTypes),
+        DjiLinkFact(t.dji_link_video_payloads, '${video.payloads}'),
+        DjiLinkFact(t.dji_link_video_start_codes, '${video.startCodesSeen}'),
+        DjiLinkFact(t.dji_link_video_unit_types, video.unitTypes.isEmpty ? '-' : video.unitTypes),
         for (final channel in video.channels)
           DjiLinkFact(
             '${t.dji_link_channel} ${channel.channel}',
@@ -310,6 +354,14 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
               dropped: formatHumanReadableBytes(capture.droppedBytes, 1),
             ),
           ),
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            t.dji_link_capture_privacy,
+            key: const Key('dji_link_capture_privacy'),
+            style: context.textTheme.bodySmall,
+          ),
+        ),
         const SizedBox(height: 6),
         TextField(
           key: const Key('dji_link_capture_notes'),
@@ -333,7 +385,9 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
             ),
             FilledButton(
               key: const Key('dji_link_capture_export'),
-              onPressed: (capture?.totalBytes ?? 0) == 0 || state.exporting
+              // Nothing captured still exports the header: "nothing ever opened" is a result, and the device and its
+              // USB environment are what explain it
+              onPressed: state.exporting
                   ? null
                   : () => unawaited(
                       _notifier.exportCapture(DjiLinkExportNotes(note: _notes.text.isEmpty ? null : _notes.text)),
@@ -347,7 +401,15 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
             ),
           ],
         ),
-        if (export != null && export.ok) ...[
+        if (export != null && export.ok && export.headerOnly) ...[
+          const SizedBox(height: 6),
+          Text(
+            t.dji_link_capture_header_only(path: export.headerPath ?? ''),
+            key: const Key('dji_link_capture_header_only'),
+            style: context.textTheme.bodySmall,
+          ),
+        ],
+        if (export != null && export.ok && !export.headerOnly) ...[
           const SizedBox(height: 6),
           Text(
             t.dji_link_capture_exported(path: export.binPath ?? ''),

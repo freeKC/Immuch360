@@ -6,17 +6,11 @@ package app.alextran.immich.djilink
  * Reception, demultiplexing, assembly and rendering are four separate steps here on purpose. This class is the first
  * one: a payload on a video channel is a fragment, it is not a picture, and nothing claims it is. The counters are
  * what makes latency measurable later instead of promised now.
+ *
+ * Only the size and the arrival time of a fragment are kept. The bytes themselves are in the capture when the pilot
+ * records one; holding the last payloads here as well would keep megabytes nobody reads.
  */
-data class VideoFragment(val channel: Int, val size: Int, val arrivedMs: Long, val bytes: ByteArray?) {
-  override fun equals(other: Any?): Boolean =
-    other is VideoFragment &&
-      other.channel == channel &&
-      other.size == size &&
-      other.arrivedMs == arrivedMs &&
-      (other.bytes?.contentEquals(bytes) ?: (bytes == null))
-
-  override fun hashCode(): Int = (31 * (31 * channel + size) + arrivedMs.hashCode()) * 31 + (bytes?.size ?: 0)
-}
+data class VideoFragment(val channel: Int, val size: Int, val arrivedMs: Long)
 
 data class VideoChannelCounters(
   val channel: Int,
@@ -25,7 +19,10 @@ data class VideoChannelCounters(
   val largestFragment: Int = 0,
   val firstArrivalMs: Long = 0,
   val lastArrivalMs: Long = 0,
-  /** Arrivals more than [VideoFragments.GAP_MS] apart, which is all a gap can honestly mean without a sequence number */
+  /**
+   * Arrivals more than [VideoFragments.GAP_MS] apart, which is all a gap can honestly mean without a sequence
+   * number
+   */
   val gaps: Long = 0,
   val longestGapMs: Long = 0,
 )
@@ -52,7 +49,7 @@ class VideoFragments(private val keepPerChannel: Int = 64) {
       gaps = (previous?.gaps ?: 0) + if (previous != null && gap > GAP_MS) 1 else 0,
       longestGapMs = maxOf(previous?.longestGapMs ?: 0, if (previous != null) gap else 0),
     )
-    val fragment = VideoFragment(channel, payload.size, nowMs, payload)
+    val fragment = VideoFragment(channel, payload.size, nowMs)
     val queue = recent.getOrPut(channel) { ArrayDeque() }
     queue.addLast(fragment)
     while (queue.size > keepPerChannel) {

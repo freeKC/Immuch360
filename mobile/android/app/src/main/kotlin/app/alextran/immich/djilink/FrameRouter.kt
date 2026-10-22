@@ -43,11 +43,26 @@ data class ChannelCounters(
 data class PairCounters(
   val commandSet: Int,
   val commandId: Int,
-  val setName: String?,
+  /** Only from [MessageCatalogue], which names a message once a capture has shown what it carries */
   val messageName: String?,
   val count: Long,
   val lastLength: Int,
   val lastSeenMs: Long,
+)
+
+/**
+ * The checksum parameters in use and the seeds the failures vote for. A candidate with many votes and no verified
+ * frame is the sign of a product family whose seeds differ from the notes; a replay with that seed settles it.
+ */
+data class CrcReport(
+  val headerParameters: String,
+  val frameParameters: String,
+  val headerSeedCandidate: Int?,
+  val headerSeedVotes: Long,
+  val headerFailuresVoting: Long,
+  val frameSeedCandidate: Int?,
+  val frameSeedVotes: Long,
+  val frameFailuresVoting: Long,
 )
 
 /** One parsed frame as the frame list shows it, newest first, bounded */
@@ -84,6 +99,9 @@ class FrameRouter(
   /** Command id of the common set keep alive message, which does not prove an aircraft. Not established yet. */
   private val keepAliveCommandId: Int? = null,
   private val frameLines: Int = 200,
+  /** Checksum parameters of every control channel decoder; the notes' set unless a replay asks for another */
+  private val headerCrc: CrcParams = CrcSets.HEADER_CRC8,
+  private val frameCrc: CrcParams = CrcSets.FRAME_CRC16,
 ) {
   companion object {
     /** Without a frame from the aircraft side for this long, the aircraft is considered lost */
@@ -140,7 +158,7 @@ class FrameRouter(
   }
 
   private fun routeControl(envelope: EnvelopeFrame, nowMs: Long) {
-    val decoder = decoders.getOrPut(envelope.channel) { P3Decoder() }
+    val decoder = decoders.getOrPut(envelope.channel) { P3Decoder(headerCrc, frameCrc) }
     for (frame in decoder.offer(envelope.payload)) {
       onControlFrame(envelope.channel, frame, nowMs)
     }
@@ -148,12 +166,11 @@ class FrameRouter(
 
   private fun onControlFrame(channel: Int, frame: P3Frame, nowMs: Long) {
     val key = (frame.commandSet shl 8) or frame.commandId
-    val name = TelemetryNames.messageName(frame.commandSet, frame.commandId)
+    val name = MessageCatalogue.named(frame.commandSet, frame.commandId)?.name
     val previous = pairs[key]
     pairs[key] = PairCounters(
       commandSet = frame.commandSet,
       commandId = frame.commandId,
-      setName = TelemetryNames.commandSetName(frame.commandSet),
       messageName = name,
       count = (previous?.count ?: 0) + 1,
       lastLength = frame.body.size,
@@ -230,7 +247,39 @@ class FrameRouter(
     )
   }
 
-  /** A new descriptor is a new stream: no decoder buffer and no counter survives a reconnect */
+  /** The seeds the checksum failures of every control channel vote for */
+  fun crcReport(): CrcReport {
+    val headers = SeedTally()
+    val frames = SeedTally()
+    for (decoder in decoders.values) {
+      headers.add(decoder.headerSeeds)
+      frames.add(decoder.frameSeeds)
+    }
+    val header = headers.top()
+    val frame = frames.top()
+    return CrcReport(
+      headerParameters = headerCrc.label,
+      frameParameters = frameCrc.label,
+      headerSeedCandidate = header?.first,
+      headerSeedVotes = header?.second ?: 0,
+      headerFailuresVoting = headers.total,
+      frameSeedCandidate = frame?.first,
+      frameSeedVotes = frame?.second ?: 0,
+      frameFailuresVoting = frames.total,
+    )
+  }
+
+  /**
+   * A new descriptor is a new stream: no parser buffer survives it, and the aircraft has to show itself again. The
+   * counters stay, so that they cover the whole page session as the capture does.
+   */
+  fun restartStreams() {
+    decoders.values.forEach { it.reset() }
+    controllerSeenMs = null
+    aircraftSeenMs = null
+  }
+
+  /** A new page session: nothing survives */
   fun reset() {
     decoders.clear()
     channels.clear()

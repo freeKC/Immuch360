@@ -31,10 +31,73 @@ class FrameRouterTest {
     val pairs = router.pairCounters()
     assertEquals(2, pairs.size)
     assertEquals(2L, pairs.first { it.commandId == 67 }.count)
-    assertEquals("common OSD push, the main flight state message", pairs.first { it.commandId == 67 }.messageName)
-    assertNull(pairs.first { it.commandId == 254 }.messageName)
-    assertEquals(1L, router.counters.unknownPairs)
-    assertEquals(2L, router.counters.knownPairs)
+    // No message is named until a capture of owned hardware shows what it carries: every pair is a pair of numbers
+    assertTrue(pairs.all { it.messageName == null })
+    assertEquals(3L, router.counters.unknownPairs)
+    assertEquals(0L, router.counters.knownPairs)
+    assertTrue(router.telemetry.messages().all { it.name == null })
+  }
+
+  @Test
+  fun aNewStreamKeepsTheCountersAndForgetsTheAircraft() {
+    router.route(control(DeviceTypes.FLIGHT_CONTROLLER, CommandSets.FLIGHT_CONTROLLER, 67), 1000)
+    // Half a frame of the old descriptor is left in the decoder of the control channel
+    val half = P3Decoder.build(
+      senderType = DeviceTypes.FLIGHT_CONTROLLER,
+      receiverType = DeviceTypes.APPLICATION,
+      sequence = 2,
+      commandSet = CommandSets.FLIGHT_CONTROLLER,
+      commandId = 68,
+      body = ByteArray(10),
+    ).copyOf(9)
+    router.route(EnvelopeFrame(Channels.CONTROL_PRIMARY, half), 1001)
+    router.restartStreams()
+    assertFalse(router.aircraftLinked(1002))
+    router.route(control(DeviceTypes.FLIGHT_CONTROLLER, CommandSets.FLIGHT_CONTROLLER, 69), 1100)
+    assertEquals(2L, router.counters.controlFrames)
+    assertEquals(0L, router.controlCounters().headerCrcFailures + router.controlCounters().frameCrcFailures)
+    assertTrue(router.aircraftLinked(1100))
+  }
+
+  @Test
+  fun theChecksumReportNamesTheSeedRealFramesVoteFor() {
+    repeat(5) { index ->
+      val built = P3Decoder.build(
+        senderType = DeviceTypes.REMOTE_CONTROLLER,
+        receiverType = DeviceTypes.APPLICATION,
+        sequence = index + 1,
+        commandSet = CommandSets.REMOTE_CONTROLLER,
+        commandId = 1,
+        body = ByteArray(4),
+        headerParams = CrcSets.header(0x21),
+      )
+      router.route(EnvelopeFrame(Channels.CONTROL_PRIMARY, built), index.toLong())
+    }
+    val report = router.crcReport()
+    assertEquals(CrcSets.HEADER_CRC8.label, report.headerParameters)
+    assertEquals(0x21, report.headerSeedCandidate)
+    assertTrue(report.headerSeedVotes >= 5)
+    assertEquals(0L, router.counters.controlFrames)
+
+    val replayed = FrameRouter(headerCrc = CrcSets.header(0x21))
+    repeat(5) { index ->
+      replayed.route(
+        EnvelopeFrame(
+          Channels.CONTROL_PRIMARY,
+          P3Decoder.build(
+            senderType = DeviceTypes.REMOTE_CONTROLLER,
+            receiverType = DeviceTypes.APPLICATION,
+            sequence = index + 1,
+            commandSet = CommandSets.REMOTE_CONTROLLER,
+            commandId = 1,
+            body = ByteArray(4),
+            headerParams = CrcSets.header(0x21),
+          ),
+        ),
+        index.toLong(),
+      )
+    }
+    assertEquals(5L, replayed.counters.controlFrames)
   }
 
   @Test

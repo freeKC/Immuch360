@@ -1,6 +1,7 @@
 package app.alextran.immich.djilink
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
@@ -25,20 +26,32 @@ class ChannelMapTest {
     assertEquals(1024, ChannelMap.toChannel(0.001))
   }
 
+  /** An order made up for the test only: the packing is checked, not which axis is which */
+  private val testOrder = mapOf(0 to Axis.THROTTLE, 1 to Axis.YAW, 2 to Axis.PITCH, 3 to Axis.ROLL)
+
   @Test
   fun aBodyIsThirteenBytesAndTheChannelsReadBackOut() {
     val sample = StickSample(throttle = 1.0, yaw = -1.0, pitch = 0.5, roll = 0.0)
-    val body = ChannelMap.body(sample)
+    val body = ChannelMap.body(sample, order = testOrder)
     assertEquals(ChannelMap.BODY_SIZE, body.size)
-    ChannelMap.axisOrder.forEachIndexed { index, axis ->
-      assertEquals(ChannelMap.toChannel(sample.axis(axis)), ChannelMap.readChannel(body, index))
+    for ((channel, axis) in testOrder) {
+      assertEquals(ChannelMap.toChannel(sample.axis(axis)), ChannelMap.readChannel(body, channel))
     }
   }
 
   @Test
   fun theChannelsTheOrderDoesNotNameStayNeutral() {
-    val body = ChannelMap.body(StickSample(throttle = 1.0))
-    for (channel in ChannelMap.axisOrder.size until ChannelMap.channelBitOffsets.size) {
+    val body = ChannelMap.body(StickSample(throttle = 1.0), order = testOrder)
+    for (channel in testOrder.size until ChannelMap.channelBitOffsets.size) {
+      assertEquals(ChannelMap.NEUTRAL, ChannelMap.readChannel(body, channel))
+    }
+  }
+
+  @Test
+  fun noAxisIsAssignedUntilACaptureShowsIt() {
+    assertTrue(ChannelMap.axisOrder.isEmpty())
+    val body = ChannelMap.body(StickSample(throttle = 1.0, yaw = -1.0, pitch = 1.0, roll = -1.0))
+    for (channel in ChannelMap.channelBitOffsets.indices) {
       assertEquals(ChannelMap.NEUTRAL, ChannelMap.readChannel(body, channel))
     }
   }
