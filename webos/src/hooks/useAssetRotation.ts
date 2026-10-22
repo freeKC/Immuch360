@@ -1,7 +1,7 @@
 import {useCallback, useSyncExternalStore} from 'react';
 import {useRepository} from '../domain/RepositoryContext';
 import type {Rotation} from '../utils/rotationStore';
-import type {RotationNotice} from '../immuch360/rotation/controller';
+import type {RotationNotice, RotationPhase} from '../immuch360/rotation/controller';
 import {rotationControllerFor} from '../immuch360/rotation/server';
 
 export interface AssetRotation {
@@ -11,6 +11,8 @@ export interface AssetRotation {
 	rotate: (quarterTurns?: unknown) => void;
 	/** What the viewer says about the last turn of this photo */
 	notice: RotationNotice | null;
+	/** Where the turn of this photo stands: 'turning' while the viewer shows that it works */
+	phase: RotationPhase;
 }
 
 // Immuch360: the one-key rotation of the photo shown: kept on the server as an edit for the user's own photos on a
@@ -30,5 +32,6 @@ export const useAssetRotation = (assetId: string | undefined): AssetRotation => 
 		rotation: (assetId ? controller.displayTurns(assetId) * 90 : 0) as Rotation,
 		rotate,
 		notice: assetId ? controller.notice(assetId) : null,
+		phase: assetId ? controller.phase(assetId) : 'idle',
 	};
 };

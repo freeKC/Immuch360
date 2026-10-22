@@ -2215,6 +2215,7 @@
   "rotate_kept_on_device": "The rotation is kept on this device only",
   "rotate_key": "Rotate key",
   "rotate_saving": "Saving the rotation",
+  "rotate_saving_wait": "Saving the rotation, please wait ({seconds} s)",
   "running": "Running",
   "save": "Save",
   "saved": "Saved",

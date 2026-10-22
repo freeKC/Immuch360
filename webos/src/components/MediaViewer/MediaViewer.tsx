@@ -13,6 +13,7 @@ import {isForced360, setForced360, setSphereChoice, sphereChoice, type SphereCho
 import {isEquirectangularProjection, isShownAs360, nextStereoLayout, type SphereView as ResolvedSphereView, type StereoLayout} from '../../immuch360/sphere/rules';
 import {SphereView, type SphereViewHandle} from '../../immuch360/sphere/SphereView';
 import {AssetDetailsPanel} from '../../immuch360/details/AssetDetailsPanel';
+import {RotationIndicator} from '../../immuch360/rotation/RotationIndicator';
 import {FULLSIZE_FROM_SCALE, wantsFullsize} from '../../immuch360/photoSize';
 import {MediaControls, ACTION_BAR_SPOTLIGHT_ID, type ViewerAction} from './MediaControls';
 import {VideoPlayer, VideoPlayerApi} from './VideoPlayer';
@@ -108,7 +109,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const sphereRef = useRef<SphereViewHandle>(null);
 
 	const [actionBarFocused, setActionBarFocused] = useState(false);
-	const {rotation, rotate, notice: rotationNotice} = useAssetRotation(isVideo || show360 ? undefined : asset?.id);
+	const {rotation, rotate, notice: rotationNotice, phase: rotationPhase} = useAssetRotation(isVideo || show360 ? undefined : asset?.id);
 	const {zoom, zoomed, zoomIn: photoZoomIn, zoomOut: photoZoomOut, reset: resetZoom, pan, style: zoomStyle} = usePhotoZoom(isVideo || show360 ? undefined : asset?.id);
 	if (zoomedPast2x !== zoom.scale > FULLSIZE_FROM_SCALE) setZoomedPast2x(zoom.scale > FULLSIZE_FROM_SCALE);
 	const sharp = !isVideo && !show360 && wantsFullsize(zoom.scale, details?.width, details?.height);
@@ -463,6 +464,8 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 				notice={notice}
 				onActionBarFocusChange={setActionBarFocused}
 			/>
+			{/* Immuch360: from a yellow or blue press until the turned picture is shown, over the photo, out of the way of the keys */}
+			<RotationIndicator active={rotationPhase === 'turning'} />
 			{detailsOpen && <AssetDetailsPanel asset={asset} details={details} />}
 		</ViewerContainer>
 	);
