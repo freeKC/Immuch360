@@ -97,14 +97,16 @@ jobs:
       - name: Tests inherited from immich-tv-webos (jest)
         run: npm test -- --maxWorkers=2
 
-      - name: Tests of the build tools and of the phone sign-in service
+      - name: Tests of the build tools, of the phone sign-in service and of the media bridge
         run: |
           npm run test-tools
           npm run test-service
+          npm run test-bridge
 
       - name: Types
         run: npm run typecheck
 
+      # npm run ipk first bundles the media bridge of the service (tools/build-bridge.mjs --check loads both bundles)
       - name: The .ipk, built and checked
         run: npm run ipk
 

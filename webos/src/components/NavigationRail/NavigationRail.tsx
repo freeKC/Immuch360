@@ -20,6 +20,7 @@ const NAV_ITEMS: {view: View; icon: string; label: string}[] = [
 	{view: 'albums', icon: 'folder', label: i18nKey('albums')},
 	{view: 'places', icon: 'location', label: i18nKey('places')},
 	{view: 'search', icon: 'search', label: i18nKey('search')},
+	{view: 'sources', icon: 'network', label: i18nKey('network_shares')},
 	{view: 'about', icon: 'info', label: i18nKey('about')},
 ];
 

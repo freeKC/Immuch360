@@ -33,12 +33,42 @@ Immuch360 is not affiliated with Immich, nor with LG.
 | Read the name, size and camera of a photo or video | Info (or the details button) opens a panel that stays as you move to the next item; Back closes it | Date and place only |
 | Turn a sideways photo | One key, as on Android TV: yellow turns it 90° clockwise, blue counterclockwise (R and Shift R on a keyboard). Your own photos are turned through Immich's photo editor (Immich 2.6 and later), so they show turned everywhere; the others are turned on this TV only | A button in the photo's controls, kept on the TV |
 | Send a useful bug report | About page: TV model, webOS and Chromium versions, WebGL, video decoders, a video-in-WebGL test, all in a QR code | Not available |
+| See the photos and videos of a NAS or a computer | "Network shares": SMB (webOS 22 and later), WebDAV and DLNA shares, found on the network or typed in; their 360° photos turn on the sphere on every webOS from 5 | Not available |
+| Watch a Plex library | Plex Media Server: found on the network, signed in with a code on plex.tv/link; photos at the TV's size, videos played as they are or converted by Plex | Not available |
+| Watch a Tapo camera | Its live view, video only for now; the recordings of its memory card come later | Not available |
 
 360° videos play flat for now, with a message: whether LG TVs hand video frames to WebGL is what the video test of the
 About page finds out.
 
-Not on a TV: uploads and the photo editor (only its quarter turn is here), the phone's own media, network shares, Plex and Tapo cameras (planned through the
-app's JS service), Cast, the gyroscope.
+Not on a TV: uploads and the photo editor (only its quarter turn is here), the phone's own media, the recordings of Tapo
+cameras and their sound (planned), Cast, the gyroscope.
+
+## Network shares, Plex and cameras
+
+The "Network shares" page of the rail reads the photos and videos of the home network, as the phone app does. It needs
+webOS 5 (2020 TVs) or later; SMB needs webOS 22 (2022 TVs) or later. A webOS 4 TV keeps the Immich features only.
+
+| Source | How to add it | What the TV shows |
+|---|---|---|
+| SMB share (Windows, Samba on a NAS) | Add a share, SMB: the server's address, "Choose a share" lists its shares, a user and a password | the folders, photos (with the small picture the camera wrote in each JPEG) and videos |
+| WebDAV (Nextcloud, Synology and others) | Add a share, WebDAV: the server, the path of its WebDAV address, HTTPS or not, a user and a password | the same |
+| DLNA media server (Jellyfin, minidlna, a NAS, a TV box) | Pick it under "Found on the network", or type its description address | the server's folders and pictures; its videos go straight to the TV's player |
+| Plex Media Server | Add a Plex server: one found on the network without a Plex account is added as it is; for the others, "Sign in with Plex" shows a code to type on plex.tv/link with a phone (or scan the QR code), then the servers of the account | the libraries and folders; photos made at the TV's size by Plex; a video the TV cannot play is converted by Plex (HLS) |
+| Tapo camera | Add a camera: its address and the camera account (Tapo app, camera settings, Advanced Settings, Camera Account) | the live view, HD or SD, video only |
+
+The photos and videos open in the same viewer as Immich's: 360° photos by their GPano tags or their camera, zoom, the
+one-key turn (kept on the TV), the slideshow. HEIC photos do not decode on a TV: their tile says so.
+
+How it works: the app's JS service runs a small web server on the TV itself (`127.0.0.1`, a random port, a random
+token in every address), the media bridge. The page gives it the sources over the Luna bus; their passwords and tokens
+stay in the service's memory and never appear in an address the TV's player sees. It reads SMB, WebDAV, DLNA and Plex
+for the page and the player, with byte ranges (seeking works) and the header WebGL needs for 360° photos, and turns the
+camera's RTSP stream into fragmented MP4 for the page's Media Source (a remux: the TV decodes it in hardware), with an
+HLS playlist where Media Source refuses it. The sources are kept on the TV where the Immich sign ins are
+(`localStorage`). A Plex token only goes to the server whose `plex.direct` certificate it was given with.
+
+Not yet: the recordings of the cameras' memory card (they need the camera's own encrypted protocol, ported once it has
+met a real camera), the cameras' sound (G.711, which Media Source does not play), H.265 cameras in the live view.
 
 ## Install on a TV in Developer Mode
 
@@ -138,12 +168,19 @@ globally.
 ```bash
 cd webos
 npm ci
-npm run test-unit    # node tests of the Immuch360 layers (360° rules, keys, texts, Immich client)
+npm run test-unit    # node tests of the Immuch360 layers (360° rules, keys, texts, Immich client, sources)
+npm run test-bridge  # node tests of the media bridge of the service, against local fake servers
+npm run bridge       # service/bridge/base.js and smb.js (npm run ipk does it)
 npm test             # the jest tests inherited from immich-tv-webos
 npm run typecheck
 npm run ipk          # build/com.aprogsys.immuch360_<version>_all.ipk, then checks its content
 npm run set-version -- 0.1.0   # the version of appinfo.json and of the service
 ```
+
+The media bridge (`bridge/`) is plain JavaScript for the Node of the TVs: `base.js` is built for Node 8 (webOS 5 and 6),
+`smb.js` for Node 12 (webOS 22) and loaded only there. `bridge/test/integration.js` runs the built bundles against real
+servers (Samba with signing and SMB3 encryption, rclone's WebDAV, minidlna, Plex Media Server, a camera shaped RTSP
+server) inside the `node:8.12.0`, `12.21.0`, `16.19.1` and `20.12.2` images, on the build host of the fork.
 
 `npm run ipk` reads the texts from `../i18n/*.json` (the keys the code asks for, see `tools/build-i18n.mjs`). The texts
 only the TV app has are the `webos_*` keys of the fork's `i18n/en.json`, translated with the others at a release; until

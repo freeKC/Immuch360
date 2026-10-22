@@ -27,6 +27,9 @@ export interface PhotoRepository {
 
 	// Immuch360: the 360° viewer and the diagnostics page
 	getAssetDetails(assetId: string): Promise<AssetDetails>;
+	// Immuch360: the details of every photo opened are read (a network share: its listing tells no size, so a 360°
+	// photo is only known by the GPano tags of its head); Immich tells the 360° flag in its timeline instead
+	readonly detailsForEveryPhoto?: boolean;
 	fetchPreviewBytes(assetId: string, signal?: AbortSignal): Promise<ArrayBuffer>;
 	getServerVersion(): Promise<string | null>;
 	serverUrl(): string;

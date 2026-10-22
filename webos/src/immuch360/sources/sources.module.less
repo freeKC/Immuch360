@@ -1,0 +1,221 @@
+@import '../../styles/_mixins.less';
+
+.scroller {
+	height: 100%;
+}
+
+.page {
+	padding: @page-inset-top @page-inset-x 96px;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	margin-bottom: 40px;
+}
+
+.headerText {
+	flex: 1;
+	min-width: 0;
+	margin-left: 16px;
+}
+
+.title {
+	display: block;
+	font-size: var(--font-display);
+	font-weight: 600;
+	color: @text;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.subtitle {
+	display: block;
+	margin-top: 8px;
+	font-size: var(--font-caption);
+	color: @text-subtle;
+}
+
+.section {
+	margin: 48px 0 24px;
+	font-size: var(--font-body);
+	font-weight: 600;
+	color: @text-muted;
+}
+
+.notice {
+	margin: 24px 0;
+	font-size: var(--font-body);
+	color: @text-muted;
+	max-width: 2400px;
+}
+
+.error {
+	.notice();
+	color: #f2b8b5;
+}
+
+@columns: 5;
+@column-gap: 32px;
+@row-gap: 40px;
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(@columns, minmax(0, 1fr));
+	column-gap: @column-gap;
+	row-gap: @row-gap;
+}
+
+@supports not (display: grid) {
+	.grid {
+		display: flex;
+		flex-wrap: wrap;
+		margin: 0 -@column-gap -@row-gap 0;
+
+		> * {
+			width: calc(100% / @columns - @column-gap);
+			margin: 0 @column-gap @row-gap 0;
+		}
+	}
+}
+
+.tile {
+	display: block;
+	cursor: pointer;
+	transition: transform 0.15s ease-out;
+
+	&:focus {
+		outline: none;
+		transform: scale(@focus-scale);
+	}
+}
+
+// padding-top keeps the cover at 4:3 (aspect-ratio is Chrome 88+)
+.tileCover {
+	position: relative;
+	padding-top: 75%;
+	border-radius: @radius-card;
+	background: @surface-raised;
+
+	.tile:focus & {
+		.focus-ring();
+	}
+}
+
+.tileIcon {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: 0;
+	transform: translate(-50%, -50%);
+	color: @text-muted;
+}
+
+.tileTitle {
+	margin-top: 16px;
+	font-size: var(--font-body);
+	font-weight: 600;
+	color: @text;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.tileSecondary {
+	margin-top: 4px;
+	font-size: var(--font-caption);
+	color: @text-subtle;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.form {
+	max-width: 2600px;
+}
+
+.field {
+	margin-bottom: 28px;
+}
+
+.label {
+	display: block;
+	margin-bottom: 8px;
+	font-size: var(--font-caption);
+	color: @text-muted;
+}
+
+.row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.row > * + * {
+	margin-left: 24px;
+}
+
+.buttons {
+	margin-top: 32px;
+}
+
+.pinBox {
+	display: flex;
+	align-items: center;
+	margin: 32px 0;
+}
+
+.pinCode {
+	margin-left: 64px;
+	font-size: 160px;
+	font-weight: 700;
+	letter-spacing: 24px;
+	color: @text;
+}
+
+.qr {
+	width: 360px;
+	height: 360px;
+}
+
+.live {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 50;
+	background: #000;
+}
+
+.liveVideo {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.liveBar {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 48px @page-inset-x;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+}
+
+.liveTitle {
+	font-size: var(--font-title, 48px);
+	font-weight: 600;
+	color: @text;
+	margin-bottom: 8px;
+}
+
+.liveStatus {
+	font-size: var(--font-caption);
+	color: @text-muted;
+	margin-bottom: 16px;
+}
