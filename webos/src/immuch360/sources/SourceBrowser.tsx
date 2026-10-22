@@ -22,6 +22,8 @@ import type {BridgeInfo, Listing, SourceConfig} from './types';
 import css from './sources.module.less';
 
 const BROWSER_ID = 'source-browser';
+// The first tile of a folder takes the focus when it opens, rather than the button that removes the source
+const FIRST_TILE_ID = 'source-browser-first';
 const Container = createSpotlightContainer({enterTo: 'last-focused'});
 
 interface Folder {
@@ -58,8 +60,8 @@ const MediaGrid: React.FC<{
 		[info, source, listing.files]
 	);
 	const groups = useMemo<DayGroup[]>(
-		() => [{timeBucket: `folder:${folder.ref}`, label: folder.name, assets: repository.assets, count: repository.assets.length}],
-		[repository, folder]
+		() => [{timeBucket: `folder:${folder.ref}`, label: source.name, assets: repository.assets, count: repository.assets.length}],
+		[repository, folder, source.name]
 	);
 	return (
 		<RepositoryProvider repository={repository}>
@@ -110,7 +112,9 @@ export const SourceBrowser: React.FC<SourceBrowserProps> = ({client, info, versi
 
 	useEffect(() => {
 		if (showMedia) return undefined;
-		const raf = requestAnimationFrame(() => Spotlight.focus(BROWSER_ID));
+		const raf = requestAnimationFrame(() => {
+			if (!Spotlight.focus(FIRST_TILE_ID)) Spotlight.focus(BROWSER_ID);
+		});
 		return () => cancelAnimationFrame(raf);
 	}, [showMedia, folder.ref, query.isLoading]);
 
@@ -172,9 +176,16 @@ export const SourceBrowser: React.FC<SourceBrowserProps> = ({client, info, versi
 				{listing && listing.folders.length === 0 && listing.files.length === 0 && <div className={css.notice}>{t('network_share_empty_folder')}</div>}
 				{listing && listing.folders.length > 0 && (
 					<div className={css.grid}>
-						{listing.files.length > 0 && <SourceTile icon="picture" title={t('webos_folder_media', {count: listing.files.length})} value="" onSelect={openMedia} />}
-						{listing.folders.map((f) => (
-							<SourceTile key={f.ref} icon={folder.ref === '' && source.kind === 'plex' ? kindIcon('plex') : 'folder'} title={f.name} value={f.ref} onSelect={openFolder} />
+						{listing.files.length > 0 && <SourceTile icon="picture" title={t('webos_folder_media', {count: listing.files.length})} value="" onSelect={openMedia} spotlightId={FIRST_TILE_ID} />}
+						{listing.folders.map((f, index) => (
+							<SourceTile
+								key={f.ref}
+								icon={folder.ref === '' && source.kind === 'plex' ? kindIcon('plex') : 'folder'}
+								title={f.name}
+								value={f.ref}
+								onSelect={openFolder}
+								spotlightId={index === 0 && listing.files.length === 0 ? FIRST_TILE_ID : undefined}
+							/>
 						))}
 					</div>
 				)}
