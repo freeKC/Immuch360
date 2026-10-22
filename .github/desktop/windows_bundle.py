@@ -30,7 +30,8 @@ packs before the build (.github/desktop/libsmb2/pack_sources.py); a folder witho
 the head tracker, libfacedetection (3-clause BSD, built into immuch_head_tracker_detect.dll and
 immuch_head_tracker_detect_avx2.dll), travels with its LICENSE in licenses/libfacedetection/ (--libfacedetection, by
 default mobile/packages/immuch_head_tracker/third_party/libfacedetection); a folder with a detector DLL and without it
-is refused.
+is refused, as is an immuch_head_tracker.dll that imports Media Foundation (it loads it at run time, so that it loads
+on a Windows N edition without the Media Feature Pack).
 
   windows_bundle.py --release DIR --out DIR [--name "Immuch360 Desktop"] [--arch x64] [--crt-dir DIR]
                     [--system-dir DIR] [--zip FILE] [--symbols DIR] [--info KEY=VALUE ...]
@@ -87,6 +88,11 @@ LIBSMB2_SOURCES = 'data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libs
 # libfacedetection (BSD-3-Clause), built into the two face detector DLLs of immuch_head_tracker: its licence asks for
 # the copyright, the conditions and the disclaimer with a binary distribution (also on the licence page of the app)
 FACE_DETECTOR_FILES = ('immuch_head_tracker_detect.dll', 'immuch_head_tracker_detect_avx2.dll')
+# The head tracker loads Media Foundation at run time (ht_windows.cpp): a DLL that imported it would not load at all on
+# a Windows N edition without the Media Feature Pack, and the page would say "Head tracking could not start" instead of
+# naming the pack. Its imports are held to that.
+HEAD_TRACKER = 'immuch_head_tracker.dll'
+MEDIA_FOUNDATION = re.compile(r'(?i)^(mfplat|mfreadwrite|mf|mfcore|mfsensorgroup|evr)\.dll$')
 LIBFACEDETECTION_DIR = ROOT / 'mobile' / 'packages' / 'immuch_head_tracker' / 'third_party' / 'libfacedetection'
 # The lines of BUILD-INFO.txt about the signature. The CI build is not signed; the release workflow signs it with
 # windows_sign.py, which replaces these lines by its own
@@ -232,6 +238,9 @@ def check(folder: pathlib.Path, arch: str, crt: dict, system: set, copied: list)
             problems.append(f'{relative}: built for {info["machine"]}, the folder is {arch}')
         for name, how in [(n, '') for n in info['imports']] + [(n, ' (delay loaded)') for n in info['delay_imports']]:
             lower = name.lower()
+            if path.name.lower() == HEAD_TRACKER and MEDIA_FOUNDATION.match(lower):
+                problems.append(f'{relative}: imports {name}{how}; Media Foundation must be loaded at run time, '
+                                'so that the head tracker loads on a Windows N edition without the Media Feature Pack')
             if DEBUG_RUNTIME.match(lower):
                 problems.append(f'{relative}: imports {name}{how}, a debug runtime that cannot be shipped (debug build?)')
             elif lower in present or API_SET.match(lower):

@@ -186,6 +186,34 @@ void main() {
       }
     });
 
+    test('the default prefers the screen side or a USB webcam to a virtual or a rear camera', () {
+      const usb = HeadCamera(id: 'usb', name: 'HD Webcam C270');
+      const front = HeadCamera(id: 'front', name: 'Integrated Camera', panel: HeadCameraPanel.front);
+      const rear = HeadCamera(id: 'rear', name: 'Microsoft Camera', panel: HeadCameraPanel.back);
+      const obs = HeadCamera(id: 'obs', name: 'Camera', virtualCamera: true);
+      const broadcast = HeadCamera(id: 'nv', name: 'NVIDIA Broadcast');
+      const surfaceRear = HeadCamera(id: 'sr', name: 'Microsoft Camera Rear');
+      const grey = HeadCamera(id: 'grey', name: 'Integrated Camera', greyOnly: true);
+      expect(defaultHeadCamera([rear, obs, front, usb]), front);
+      expect(defaultHeadCamera([rear, obs, usb, front]), usb, reason: 'the order of Windows among the best');
+      expect(defaultHeadCamera([rear, obs]), obs);
+      expect(defaultHeadCamera([surfaceRear, broadcast]), broadcast);
+      expect(defaultHeadCamera([rear]), rear, reason: 'a rear camera rather than none');
+      expect(defaultHeadCamera([grey, rear]), rear, reason: 'grey formats: infrared, whatever the name');
+      expect(defaultHeadCamera([front, usb], except: {'front'}), usb);
+      expect(grey.infrared, isTrue);
+      expect(front.asGreyOnly().infrared, isTrue);
+      for (final name in ['OBS Virtual Camera', 'Windows Virtual Camera', 'NVIDIA Broadcast', 'DroidCam Source 3']) {
+        expect(looksVirtual(name), isTrue, reason: name);
+      }
+      for (final name in ['Integrated Camera', 'Logitech BRIO', 'HD Webcam C270', 'USB2.0 FHD UVC WebCam']) {
+        expect(looksVirtual(name), isFalse, reason: name);
+        expect(looksRear(name), isFalse, reason: name);
+      }
+      expect(looksRear('Microsoft Camera Rear'), isTrue);
+      expect(looksRear('Microsoft Camera Front'), isFalse);
+    });
+
     test('the list of ht_list_cameras', () {
       final cameras = parseHeadCameras(
         r'[{"id":"\\\\?\\usb#vid_0c45&pid_6366#a","name":"USB2.0 FHD UVC WebCam"},'
@@ -195,7 +223,20 @@ void main() {
       expect(cameras.map((camera) => camera.name), ['USB2.0 FHD UVC WebCam', 'USB2.0 IR UVC WebCam', '']);
       expect(cameras.first.id, r'\\?\usb#vid_0c45&pid_6366#a');
       expect(cameras[1].infrared, isTrue);
+      expect(cameras.first.panel, HeadCameraPanel.unknown, reason: 'a list of the first version');
       expect(parseHeadCameras('[]'), isEmpty);
+      final placed = parseHeadCameras(
+        '[{"id":"a","name":"Integrated Camera","panel":"front","virtual":false},'
+        '{"id":"b","name":"Camera","panel":"back","virtual":false},'
+        '{"id":"c","name":"Phone","panel":"unknown","virtual":true},{"id":"d","name":"Top","panel":"top"}]',
+      );
+      expect(placed.map((camera) => (camera.panel, camera.virtualCamera)), [
+        (HeadCameraPanel.front, false),
+        (HeadCameraPanel.back, false),
+        (HeadCameraPanel.unknown, true),
+        (HeadCameraPanel.other, false),
+      ]);
+      expect(defaultHeadCamera(placed)?.id, 'a');
     });
   });
 
@@ -203,6 +244,8 @@ void main() {
     test('map to errors', () {
       expect(HeadTrackerStatus.errorOf(0), isNull);
       expect(HeadTrackerStatus.errorOf(1), isNull);
+      expect(HeadTrackerStatus.errorOf(-11), HeadTrackerError.greyOnly);
+      expect(HeadTrackerStatus.errorOf(-99), HeadTrackerError.failed);
       expect(HeadTrackerStatus.errorOf(-1), HeadTrackerError.accessDenied);
       expect(HeadTrackerStatus.errorOf(-2), HeadTrackerError.noMediaFoundation);
       expect(HeadTrackerStatus.errorOf(-3), HeadTrackerError.noCamera);
@@ -270,7 +313,7 @@ void main() {
       expect(sizeOf<HtOptions>(), 32);
       expect(sizeOf<HtSample>(), 80);
       expect(sizeOf<HtInfo>(), 32);
-      expect(headTrackerApiVersion, 1);
+      expect(headTrackerApiVersion, 2);
       final header = File(p.join(_package, 'src', 'ht_api.h')).readAsStringSync().replaceAll('\r\n', '\n');
       expect(header, contains('#define HT_API_VERSION $headTrackerApiVersion\n'));
       for (final (name, value) in [
@@ -284,9 +327,12 @@ void main() {
         ('HT_E_FORMAT', HeadTrackerStatus.format),
         ('HT_E_ARGUMENT', HeadTrackerStatus.argument),
         ('HT_E_FAILED', HeadTrackerStatus.failed),
+        ('HT_E_GREY_ONLY', HeadTrackerStatus.greyOnly),
       ]) {
         expect(header, contains('#define $name ($value)\n'), reason: name);
       }
+      expect(header, contains('#define HT_FLAG_COLOUR_ONLY ${HeadTrackerOptions.colourOnlyFlag}\n'));
+      expect(header, contains('  int32_t flags;\n} HtOptions;'));
       for (final (index, name) in ['UNKNOWN', 'ABSENT', 'TURNED_OFF', 'OFF', 'STUCK_ON'].indexed) {
         expect(header, contains('#define HT_FRAMING_$name $index\n'));
         expect(AutoFramingState.values[index].name.toUpperCase(), name.replaceAll('_', ''));

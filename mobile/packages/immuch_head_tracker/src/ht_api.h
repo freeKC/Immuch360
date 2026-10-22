@@ -28,7 +28,7 @@
 #define HT_API HT_EXPORT
 #endif
 
-#define HT_API_VERSION 1
+#define HT_API_VERSION 2
 
 // Status codes: 0 or more is success, every error is negative
 #define HT_OK 0
@@ -53,6 +53,13 @@
 #define HT_E_ARGUMENT (-9)
 // Anything else; ht_info gives the HRESULT
 #define HT_E_FAILED (-10)
+// HT_FLAG_COLOUR_ONLY was asked for and the camera gives grey pictures only (L8, L16, Y800: an infrared camera,
+// whatever its name says). Found before the camera streams: its emitters never light.
+#define HT_E_GREY_ONLY (-11)
+
+// The flags of HtOptions: refuse a camera whose native formats are all grey (HT_E_GREY_ONLY), for a camera the
+// caller took by default rather than one the user picked
+#define HT_FLAG_COLOUR_ONLY 1
 
 // The detector builds
 #define HT_DETECTOR_AUTO 0
@@ -92,7 +99,8 @@ typedef struct HtOptions {
   int32_t width;
   int32_t height;
   int32_t fps;
-  int32_t reserved;
+  // HT_FLAG_*
+  int32_t flags;
 } HtOptions;
 
 // One analysed frame. Positions are normalised to the frame: x from 0 (left of the image as the camera delivers it,
@@ -150,9 +158,12 @@ HT_API int64_t ht_now_us(void);
 // 1 when the AVX2 build of the detector can run here (AVX2, FMA, BMI1, BMI2 and an OS that saves the AVX state)
 HT_API int32_t ht_cpu_avx2(void);
 
-// The video cameras as JSON, [{"id": symbolic link, "name": friendly name}, ...], written to json (UTF-8, no NUL
-// added). Returns the length of the JSON, which may be more than capacity (call again with a larger buffer), or an
-// error. Opens no camera.
+// The video cameras as JSON, [{"id": symbolic link, "name": friendly name, "panel": where the device is, "virtual":
+// whether it is a virtual camera}, ...], written to json (UTF-8, no NUL added). "panel" is the panel of the ACPI
+// physical location (DEVPKEY_Device_PhysicalDeviceLocation), "front" for the screen side of a laptop or tablet, "back",
+// "top", "bottom", "left", "right", or "unknown" (a USB webcam has none). "virtual" is true for a camera of the
+// virtual camera API (MFCreateVirtualCamera: OBS, Phone Link). Returns the length of the JSON, which may be more than
+// capacity (call again with a larger buffer), or an error. Opens no camera: only the device properties are read.
 HT_API int32_t ht_list_cameras(char* json, int32_t capacity);
 
 // Starts tracking with the camera whose id ht_list_cameras gave. Returns at once: the camera opens on the capture

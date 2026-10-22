@@ -24,8 +24,9 @@ apply_standard_settings(${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "immuch_head_tracker")
 target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
 target_include_directories(${PROJECT_NAME} PRIVATE "${HEAD_TRACKER_SOURCES}")
-# mfplat, mfreadwrite and mf are loaded at run time (ht_windows.cpp); mfuuid holds the GUIDs of their headers only
-target_link_libraries(${PROJECT_NAME} PRIVATE ole32 mfuuid)
+# mfplat, mfreadwrite and mf are loaded at run time (ht_windows.cpp); mfuuid holds the GUIDs of their headers only.
+# cfgmgr32 reads where a camera sits (its panel), and is part of every Windows edition.
+target_link_libraries(${PROJECT_NAME} PRIVATE ole32 mfuuid cfgmgr32)
 
 # libfacedetection is third party code: its own warnings are not the app's, so it does not get the app's /W4 /WX
 function(add_face_detector TARGET BUILD)

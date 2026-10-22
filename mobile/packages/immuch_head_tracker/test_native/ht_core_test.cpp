@@ -251,6 +251,15 @@ int main(int argc, char** argv) {
   memset(&bad, 0, sizeof(bad));
   bad.detect_every = -1;
   CHECK(ht_open_frames(&bad, &status) == nullptr && status == HT_E_ARGUMENT);
+  // The colour only flag is the one flag there is: it passes, any other bit is refused
+  HtOptions flags;
+  memset(&flags, 0, sizeof(flags));
+  flags.flags = HT_FLAG_COLOUR_ONLY;
+  HtOptions kept;
+  CHECK(ht::NormaliseOptions(&flags, &kept) && kept.flags == HT_FLAG_COLOUR_ONLY);
+  flags.flags = 2;
+  CHECK(!ht::NormaliseOptions(&flags, &kept));
+  CHECK(ht_open_frames(&flags, &status) == nullptr && status == HT_E_ARGUMENT);
 
   if (argc == 4) {
     const int32_t width = atoi(argv[2]);

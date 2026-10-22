@@ -11,7 +11,7 @@ import 'package:immuch_head_tracker/src/head_camera.dart';
 import 'package:immuch_head_tracker/src/head_sample.dart';
 
 /// The version of ht_api.h this binding was written for (HT_API_VERSION)
-const headTrackerApiVersion = 1;
+const headTrackerApiVersion = 2;
 
 final class HtOptions extends Struct {
   @Int32()
@@ -28,8 +28,10 @@ final class HtOptions extends Struct {
   external int height;
   @Int32()
   external int fps;
+
+  /// HT_FLAG_*
   @Int32()
-  external int reserved;
+  external int flags;
 }
 
 final class HtSample extends Struct {
@@ -297,7 +299,7 @@ class NativeHeadTracker {
         ..width = options.width
         ..height = options.height
         ..fps = options.fps
-        ..reserved = 0;
+        ..flags = options.colourOnly ? HeadTrackerOptions.colourOnlyFlag : 0;
       final tracker = open(nativeOptions, status);
       if (tracker == nullptr) {
         throw HeadTrackerException.fromStatus(status.value == 0 ? HeadTrackerStatus.failed : status.value);

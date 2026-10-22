@@ -257,7 +257,7 @@ bool NormaliseOptions(const HtOptions* given, HtOptions* options) {
   if (o.detector < HT_DETECTOR_AUTO || o.detector > HT_DETECTOR_AVX2 || o.detect_every < 1 ||
       o.detect_every > 30 || o.min_score < 1 || o.min_score > 100 || o.detect_long_side < 32 ||
       o.detect_long_side > 640 || o.width < 16 || o.height < 16 || o.width > 8192 || o.height > 8192 || o.fps < 1 ||
-      o.fps > 240) {
+      o.fps > 240 || (o.flags & ~HT_FLAG_COLOUR_ONLY) != 0) {
     return false;
   }
   *options = o;

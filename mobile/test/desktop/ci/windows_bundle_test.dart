@@ -403,6 +403,21 @@ void main() {
         expect(folderText('BUILD-INFO.txt'), contains('licenses/libfacedetection/LICENSE'));
       });
 
+      test('stops on a head tracker that imports Media Foundation, which it must load at run time', () {
+        writeBuild();
+        writePe(
+          'Release/immuch_head_tracker.dll',
+          fakePe(imports: ['mfplat.dll', 'ole32.dll', ..._runtime, ..._kernel]),
+        );
+        writeFiles(root, {'System32/ole32.dll': '', 'System32/mfplat.dll': ''});
+        final run = bundle();
+        expect(run.exitCode, 1, reason: '$run');
+        expect(
+          run.output,
+          contains('immuch_head_tracker.dll: imports mfplat.dll; Media Foundation must be loaded at run'),
+        );
+      });
+
       test('stops when it is missing, and is not added without a detector DLL', () {
         writeBuild();
         expect(bundle().exitCode, 0);

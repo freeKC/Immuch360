@@ -195,6 +195,14 @@ void main() {
       ? 'no head tracker library: build the app for Windows first, set IMMUCH360_BUILD_DIR, or set '
             'IMMUCH360_HEAD_TRACKER_LIBRARY'
       : null;
+  // The desktop workflow names the build it tests: a build folder without the DLLs fails, rather than every test
+  // below being skipped without a word
+  final build = Platform.environment['IMMUCH360_BUILD_DIR'];
+  if (library == null && Platform.isWindows && build != null && build.isNotEmpty) {
+    test('the head tracker DLL is in IMMUCH360_BUILD_DIR', () {
+      fail('IMMUCH360_BUILD_DIR is $build, which holds no immuch_head_tracker.dll');
+    });
+  }
 
   test('the library loads and tells what it runs with', () {
     final tracker = HeadTracker.load(library);

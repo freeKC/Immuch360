@@ -45,6 +45,10 @@ enum HeadTrackerError {
 
   /// Anything else (see [HeadTrackerException.hresult])
   failed,
+
+  /// [HeadTrackerOptions.colourOnly] was asked for and the camera gives grey pictures only: an infrared camera, whatever
+  /// its name. Found before it streams.
+  greyOnly,
 }
 
 /// The Settings page where camera access for desktop apps is turned on, for the button of the privacy message
@@ -63,6 +67,7 @@ abstract final class HeadTrackerStatus {
   static const format = -8;
   static const argument = -9;
   static const failed = -10;
+  static const greyOnly = -11;
 
   /// The error of a negative status, null for success
   static HeadTrackerError? errorOf(int status) => switch (status) {
@@ -76,6 +81,7 @@ abstract final class HeadTrackerStatus {
     noAvx2 => HeadTrackerError.noAvx2,
     format => HeadTrackerError.format,
     argument => HeadTrackerError.argument,
+    greyOnly => HeadTrackerError.greyOnly,
     _ => HeadTrackerError.failed,
   };
 }
@@ -187,7 +193,11 @@ class HeadTrackerOptions {
     this.width = 0,
     this.height = 0,
     this.fps = 0,
+    this.colourOnly = false,
   });
+
+  /// HT_FLAG_COLOUR_ONLY of ht_api.h
+  static const colourOnlyFlag = 1;
 
   final FaceDetectorBuild detector;
 
@@ -204,6 +214,10 @@ class HeadTrackerOptions {
   final int width;
   final int height;
   final int fps;
+
+  /// Refuse a camera whose formats are all grey ([HeadTrackerError.greyOnly]): for a camera taken by default, never for
+  /// one the user picked
+  final bool colourOnly;
 }
 
 /// What a tracker runs with

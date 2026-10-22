@@ -76,7 +76,8 @@ class HeadTrackingSession {
     : _native = native,
       _testLatest = null,
       _testNowUs = null,
-      _testInfo = null {
+      _testInfo = null,
+      _testOnClose = null {
     _callable = NativeCallable<HtSampleCallbackNative>.listener(signal);
   }
 
@@ -86,10 +87,12 @@ class HeadTrackingSession {
     required ({HeadSample sample, int status})? Function() latest,
     int Function()? nowUs,
     HeadTrackerInfo Function()? info,
+    Future<void> Function()? onClose,
   }) : _native = null,
        _testLatest = latest,
        _testNowUs = nowUs,
-       _testInfo = info;
+       _testInfo = info,
+       _testOnClose = onClose;
 
   final NativeHeadTracker? _native;
   late final NativeCallable<HtSampleCallbackNative> _callable;
@@ -97,6 +100,9 @@ class HeadTrackingSession {
   final ({HeadSample sample, int status})? Function()? _testLatest;
   final int Function()? _testNowUs;
   final HeadTrackerInfo Function()? _testInfo;
+
+  /// The release of the camera in the tests: a close that takes its time
+  final Future<void> Function()? _testOnClose;
 
   final _samples = StreamController<HeadSample>.broadcast();
   HeadSample? _latest;
@@ -161,6 +167,7 @@ class HeadTrackingSession {
       if (native != null) {
         _callable.close();
       }
+      await _testOnClose?.call();
       await _samples.close();
     }();
   }

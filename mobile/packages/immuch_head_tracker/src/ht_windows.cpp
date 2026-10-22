@@ -12,11 +12,14 @@
 // written to disk.
 
 #include <windows.h>
+#include <cfgmgr32.h>
 #include <mfapi.h>
 #include <mferror.h>
 #include <mfidl.h>
 #include <mfreadwrite.h>
 #include <string.h>
+#include <wchar.h>
+#include <wctype.h>
 
 #include <atomic>
 #include <chrono>
@@ -59,6 +62,13 @@ constexpr DWORD kAllStreams = static_cast<DWORD>(MF_SOURCE_READER_ALL_STREAMS);
 // as a video camera all the same is left out of the default choice by its name (lib/src/head_camera.dart).
 const GUID kVidcapCategory = {0x77f0ae69, 0xc3bd, 0x4509, {0x94, 0x1d, 0x46, 0x7e, 0x4d, 0x24, 0x89, 0x9e}};
 const GUID kKsCategoryVideoCamera = {0xe5323777, 0xf976, 0x4f5b, {0x9b, 0x55, 0xb9, 0x46, 0x99, 0xc4, 0x6e, 0x44}};
+
+// DEVPKEY_Device_InstanceId and DEVPKEY_Device_PhysicalDeviceLocation of devpkey.h, written out here: the header
+// defines them only in a file that includes initguid.h before it. A wrong key would only leave the panel unknown.
+const DEVPROPKEY kDeviceInstanceId = {
+    {0x78c34fc8, 0x104a, 0x4aca, {0x9e, 0xa4, 0x52, 0x4d, 0x52, 0x99, 0x6e, 0x57}}, 256};
+const DEVPROPKEY kPhysicalDeviceLocation = {
+    {0x540b947e, 0x8b40, 0x45bc, {0xa8, 0xa2, 0x6a, 0x0b, 0x89, 0x4c, 0xbd, 0xa2}}, 9};
 
 // The extended camera controls of ksmedia.h, written out here so that the kernel streaming headers are not needed
 const GUID kKsPropertySetExtendedCameraControl = {
@@ -314,6 +324,118 @@ std::string DeviceString(IMFActivate* device, const GUID& key) {
   std::string text = Utf8(value);
   CoTaskMemFree(value);
   return text;
+}
+
+// The subtypes of grey pictures, an infrared camera's: L8, L16 and D16 (D3DFORMAT codes) and the FOURCC codes Y800,
+// "Y8  ", GREY and "Y16 ", all on the base GUID of the video subtypes (XXXXXXXX-0000-0010-8000-00AA00389B71)
+bool IsGreySubtype(const GUID& subtype) {
+  static const BYTE kBaseTail[8] = {0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71};
+  if (subtype.Data2 != 0x0000 || subtype.Data3 != 0x0010 || memcmp(subtype.Data4, kBaseTail, sizeof(kBaseTail)) != 0) {
+    return false;
+  }
+  switch (subtype.Data1) {
+    case 50:          // L8
+    case 80:          // D16
+    case 81:          // L16
+    case 0x30303859:  // Y800
+    case 0x20203859:  // Y8
+    case 0x59455247:  // GREY
+    case 0x20363159:  // Y16
+      return true;
+    default:
+      return false;
+  }
+}
+
+// Whether every native format of the reader's video stream is grey: an infrared camera, whatever its name. Reading the
+// formats does not start the stream.
+bool GreyOnly(IMFSourceReader* reader) {
+  int types = 0;
+  for (DWORD index = 0;; index++) {
+    IMFMediaType* type = nullptr;
+    if (FAILED(reader->GetNativeMediaType(kFirstVideoStream, index, &type))) {
+      break;
+    }
+    GUID subtype = {};
+    const bool grey = SUCCEEDED(type->GetGUID(MF_MT_SUBTYPE, &subtype)) && IsGreySubtype(subtype);
+    type->Release();
+    if (!grey) {
+      return false;
+    }
+    types++;
+  }
+  return types > 0;
+}
+
+// The device instance of a camera's symbolic link, empty when Windows does not say
+std::wstring DeviceInstance(const std::wstring& link) {
+  WCHAR instance[MAX_DEVICE_ID_LEN + 1] = {};
+  DEVPROPTYPE type = 0;
+  ULONG size = static_cast<ULONG>(sizeof(instance));
+  if (link.empty() ||
+      CM_Get_Device_Interface_PropertyW(link.c_str(), &kDeviceInstanceId, &type, reinterpret_cast<PBYTE>(instance),
+                                        &size, 0) != CR_SUCCESS ||
+      type != DEVPROP_TYPE_STRING) {
+    return std::wstring();
+  }
+  instance[MAX_DEVICE_ID_LEN] = L'\0';
+  return std::wstring(instance);
+}
+
+// The panel of the ACPI physical location of the camera's device or of its parents (the _PLD buffer, bits 67 to 69):
+// "front" is the screen side of a laptop or tablet. A USB webcam has none.
+const char* CameraPanel(const std::wstring& instance) {
+  DEVINST node = 0;
+  if (instance.empty() ||
+      CM_Locate_DevNodeW(&node, const_cast<DEVINSTID_W>(instance.c_str()), CM_LOCATE_DEVNODE_NORMAL) != CR_SUCCESS) {
+    return "unknown";
+  }
+  // The camera's node, then the USB device or the ACPI node above it, which may hold the location instead
+  for (int level = 0; level < 3; level++) {
+    BYTE location[256] = {};
+    DEVPROPTYPE type = 0;
+    ULONG size = static_cast<ULONG>(sizeof(location));
+    if (CM_Get_DevNode_PropertyW(node, &kPhysicalDeviceLocation, &type, location, &size, 0) == CR_SUCCESS &&
+        type == DEVPROP_TYPE_BINARY && size >= 9) {
+      switch ((location[8] >> 3) & 0x7) {
+        case 0:
+          return "top";
+        case 1:
+          return "bottom";
+        case 2:
+          return "left";
+        case 3:
+          return "right";
+        case 4:
+          return "front";
+        case 5:
+          return "back";
+        default:
+          return "unknown";
+      }
+    }
+    DEVINST parent = 0;
+    if (CM_Get_Parent(&parent, node, 0) != CR_SUCCESS) {
+      break;
+    }
+    node = parent;
+  }
+  return "unknown";
+}
+
+// A camera of the virtual camera API (MFCreateVirtualCamera: OBS, Phone Link): a software device of the VCAMDEVAPI
+// enumerator
+bool IsVirtualCamera(const std::wstring& link, const std::wstring& instance) {
+  for (const std::wstring* text : {&link, &instance}) {
+    std::wstring upper(*text);
+    for (auto& c : upper) {
+      c = static_cast<wchar_t>(towupper(c));
+    }
+    if (upper.find(L"VCAMDEVAPI") != std::wstring::npos) {
+      return true;
+    }
+  }
+  return false;
 }
 
 // The subtypes whose luma the tracker reads straight from the buffer: offset of the first luma byte and the step
@@ -721,6 +843,11 @@ void RunCamera(std::shared_ptr<CameraState> state) {
         hr = reader->SetStreamSelection(kFirstVideoStream, TRUE);
       }
     }
+    if (SUCCEEDED(hr) && status == HT_OK && !from_file && (state->options.flags & HT_FLAG_COLOUR_ONLY) != 0 &&
+        GreyOnly(reader)) {
+      // An infrared camera taken by default: refused before it streams, so that its emitters never light
+      status = HT_E_GREY_ONLY;
+    }
     if (SUCCEEDED(hr) && status == HT_OK && !from_file) {
       hr = ChooseCameraFormat(reader, state->options);
     }
@@ -813,7 +940,9 @@ void RunCamera(std::shared_ptr<CameraState> state) {
         state->shared->info.framing = framing;
       }
     }
-    if (framing_turned_off && source != nullptr && status == HT_OK) {
+    // Automatic framing given back whenever the tracker turned it off and the camera is still there: after a stop, and
+    // after an error of the stream (a format the reader refuses) as well; a camera that went away keeps nothing
+    if (framing_turned_off && source != nullptr && status != HT_E_DEVICE_LOST) {
       RestoreAutoFraming(source);
     }
     SafeRelease(&reader);
@@ -978,10 +1107,17 @@ int32_t ListCameras(std::string* json) {
     if (i > 0) {
       json->push_back(',');
     }
+    const std::string link = DeviceString(devices[i], MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK);
+    const std::wstring wide_link = Wide(link);
+    const std::wstring instance = DeviceInstance(wide_link);
     json->append("{\"id\":");
-    AppendJsonString(json, DeviceString(devices[i], MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK));
+    AppendJsonString(json, link);
     json->append(",\"name\":");
     AppendJsonString(json, DeviceString(devices[i], MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME));
+    json->append(",\"panel\":");
+    AppendJsonString(json, CameraPanel(instance));
+    json->append(",\"virtual\":");
+    json->append(IsVirtualCamera(wide_link, instance) ? "true" : "false");
     json->push_back('}');
   }
   json->push_back(']');
