@@ -140,9 +140,10 @@ List<(int, Uint8List)> interleaveByTime(
   int audioTimestamp = 160000,
 }) {
   int timestampOf(Uint8List packet) => (packet[4] << 24) | (packet[5] << 16) | (packet[6] << 8) | packet[7];
+  // By time, the video first at the same time, each track in its own order
   final timed = [
-    for (final packet in video) ((timestampOf(packet) - videoTimestamp) / 90000, 0, packet),
-    for (final packet in audio) ((timestampOf(packet) - audioTimestamp) / 8000, 2, packet),
-  ]..sort((a, b) => a.$1.compareTo(b.$1));
-  return [for (final (_, channel, packet) in timed) (channel, packet)];
+    for (var i = 0; i < video.length; i++) ((timestampOf(video[i]) - videoTimestamp) / 90000, 0, i, video[i]),
+    for (var i = 0; i < audio.length; i++) ((timestampOf(audio[i]) - audioTimestamp) / 8000, 2, i, audio[i]),
+  ]..sort((a, b) => a.$1 != b.$1 ? a.$1.compareTo(b.$1) : (a.$2 != b.$2 ? a.$2 - b.$2 : a.$3 - b.$3));
+  return [for (final (_, channel, _, packet) in timed) (channel, packet)];
 }
