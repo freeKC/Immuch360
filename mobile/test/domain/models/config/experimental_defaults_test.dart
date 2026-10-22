@@ -18,6 +18,20 @@ void main() {
     });
   });
 
+  group('DJI link diagnostics (experimental)', () {
+    test('is on by default', () {
+      expect(const AppConfig().djiLinkEnabled, isTrue);
+      expect(defaultConfig.read(SettingsKey.djiLinkEnabled), isTrue);
+    });
+
+    test('a stored off wins over the default', () {
+      final config = AppConfig.fromEntries({SettingsKey.djiLinkEnabled: false});
+
+      expect(config.djiLinkEnabled, isFalse);
+      expect(config.write(SettingsKey.djiLinkEnabled, true).djiLinkEnabled, isTrue);
+    });
+  });
+
   group('Spatial 2.5D (experimental)', () {
     test('is on by default', () {
       expect(const AppConfig().viewer.spatial25d, isTrue);

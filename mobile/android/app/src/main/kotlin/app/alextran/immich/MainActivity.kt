@@ -17,6 +17,9 @@ import app.alextran.immich.core.AppHealth
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.ImmichPlugin
 import app.alextran.immich.core.NetworkApiPlugin
+import app.alextran.immich.djilink.DjiLinkApi
+import app.alextran.immich.djilink.DjiLinkApiImpl
+import app.alextran.immich.djilink.DjiLinkController
 import app.alextran.immich.documenttree.DocumentTreePlugin
 import me.albemala.native_video_player.NativeVideoPlayerPlugin
 import app.alextran.immich.images.LocalImageApi
@@ -69,6 +72,10 @@ class MainActivity : FlutterFragmentActivity() {
     CameraLiveApi.setUp(messenger, CameraLiveApiImpl(cameraLiveViews))
     // The stalls of the main thread and why the app ended last time, for the Logs page
     AppHealth.attach(this, messenger)
+    // DJI link diagnostics: a DJI remote controller plugged in as a USB accessory, read and counted. Nothing is sent
+    // to an aircraft from here; the page is where the pilot sees what arrives.
+    DjiLinkApi.setUp(messenger, DjiLinkApiImpl(this))
+    DjiLinkController.attachEvents(messenger)
   }
 
   override fun onResume() {
@@ -90,6 +97,8 @@ class MainActivity : FlutterFragmentActivity() {
     // The TV dialog must not keep this activity once it is gone
     TvApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     CameraLiveApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
+    DjiLinkApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
+    DjiLinkController.detachEvents()
     AppHealth.detach()
     super.cleanUpFlutterEngine(flutterEngine)
   }
@@ -100,6 +109,15 @@ class MainActivity : FlutterFragmentActivity() {
       PhoneShareService.stop(this)
     }
     super.onDestroy()
+  }
+
+  /**
+   * A gamepad moved: the DJI link page draws the sticks it reads. The event is only looked at, never consumed, and
+   * nothing leaves the device because of it (see DjiLinkController.onMotionEvent).
+   */
+  override fun dispatchGenericMotionEvent(event: android.view.MotionEvent): Boolean {
+    DjiLinkController.of(this).onMotionEvent(event)
+    return super.dispatchGenericMotionEvent(event)
   }
 
   override fun onNewIntent(intent: Intent) {

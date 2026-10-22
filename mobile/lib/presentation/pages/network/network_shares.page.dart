@@ -7,6 +7,7 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/phone_share.page.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/drone_import_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -109,6 +110,7 @@ class NetworkSharesPage extends ConsumerWidget {
                   children: [
                     const PhoneShareTile(),
                     const DroneImportTile(),
+                    const DjiLinkTile(),
                     Expanded(child: _NoShares(onAdd: add)),
                   ],
                 )
@@ -117,6 +119,7 @@ class NetworkSharesPage extends ConsumerWidget {
                   children: [
                     const PhoneShareTile(),
                     const DroneImportTile(),
+                    const DjiLinkTile(),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
                       child: Text(
