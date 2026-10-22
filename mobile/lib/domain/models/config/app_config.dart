@@ -49,6 +49,9 @@ abstract class AppConfig with _$AppConfig {
     @Default(false) bool uploadTagSpheres,
     // The DJI drone page, experimental but on by default from build 27: Settings, Advanced turns it off
     @Default(true) bool djiImportEnabled,
+    // The DJI link diagnostics page, experimental and on by default like the other experimental switches: Settings,
+    // Advanced turns it off. Nothing on that page sends anything to an aircraft.
+    @Default(true) bool djiLinkEnabled,
   }) = _AppConfig;
 
   T read<T>(SettingsKey<T> key) =>
@@ -105,6 +108,7 @@ abstract class AppConfig with _$AppConfig {
             .featureMessageSeenRelease => featureMessage.seenRelease,
             .uploadTagSpheres => uploadTagSpheres,
             .djiImportEnabled => djiImportEnabled,
+            .djiLinkEnabled => djiLinkEnabled,
           })
           as T;
 
@@ -167,6 +171,7 @@ abstract class AppConfig with _$AppConfig {
       .featureMessageSeenRelease => copyWith(featureMessage: featureMessage.copyWith(seenRelease: value as SemVer)),
       .uploadTagSpheres => copyWith(uploadTagSpheres: value as bool),
       .djiImportEnabled => copyWith(djiImportEnabled: value as bool),
+      .djiLinkEnabled => copyWith(djiLinkEnabled: value as bool),
     };
   }
 }

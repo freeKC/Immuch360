@@ -226,7 +226,6 @@
   "camera_live_failed": "პირდაპირი ხედი ვერ დაიწყო: {error}",
   "camera_live_full_screen": "სრული ეკრანი",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "პირდაპირი ხედი iPhone-სა და iPad-ზე მომდევნო ვერსიაში გამოჩნდება. ჩანაწერები აქ უკვე იკვრება.",
   "camera_live_needs_account": "პირდაპირი ხედის სანახავად დაამატეთ კამერის ანგარიში.",
   "camera_live_no_sound": "ამ მოწყობილობაზე ხმა არ არის",
   "camera_live_sd": "SD",

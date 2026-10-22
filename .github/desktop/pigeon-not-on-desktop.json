@@ -1,6 +1,8 @@
 {
-  "CameraLiveApi": "Tapo live view, phase 2 of the desktop plan: until then the camera page offers the live view on Android only (hasLive in camera.page.dart)",
+  "CameraLiveApi": "Tapo live view of the phones (Android, the Quest, iPhone and iPad): the computers play the stream through libmpv in DesktopCameraLiveView (lib/desktop/video/camera_live_view.dart) and never call it",
+  "DjiLinkApi": "DJI link diagnostics, Android phones and the Meta Quest build only: djiLinkSupportedProvider answers false off Android, so the page and its tile never show on the computers",
   "DocumentTreeApi": "DJI drone page, Android phones only: droneImportSupportedProvider answers false off Android, so the page and its tile never show on the computers",
   "ImmersiveApi": "Meta Quest immersive viewer: isHorizonOsProvider answers false off Android before calling it",
+  "QrScanApi": "QR code scanner of Connect a TV or computer (sign in with your phone), phones and tablets only: the Settings card and the Connect page are not offered on the big screens (isBigScreenProvider is true on every computer), which are signed in, not signing in",
   "TvApi": "Android TV: readTvDeviceInfo answers \"not a TV\" off Android before calling it"
 }

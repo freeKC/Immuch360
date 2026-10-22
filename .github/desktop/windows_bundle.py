@@ -88,6 +88,12 @@ LIBSMB2_SOURCES = 'data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libs
 # the copyright, the conditions and the disclaimer with a binary distribution (also on the licence page of the app)
 FACE_DETECTOR_FILES = ('immuch_head_tracker_detect.dll', 'immuch_head_tracker_detect_avx2.dll')
 LIBFACEDETECTION_DIR = ROOT / 'mobile' / 'packages' / 'immuch_head_tracker' / 'third_party' / 'libfacedetection'
+# The lines of BUILD-INFO.txt about the signature. The CI build is not signed; the release workflow signs it with
+# windows_sign.py, which replaces these lines by its own
+UNSIGNED_NOTE = (
+    'This build is not signed: Windows SmartScreen may ask for a confirmation at the first start, and Smart App',
+    'Control, where it is on, blocks it.',
+)
 # The label desktop_version.py gives a build of a release tag (3.3.0-rc.0-20) or of a desktop pre-release tag
 # (3.3.0-rc.0-desktop.4); every other build has its commit after it. The build number fits a Windows version field (at
 # most 65535, five digits) and the commit has seven characters or more, so the label of a version without a pre-release
@@ -402,8 +408,7 @@ def bundle(args) -> int:
     info = ['Immuch360 Desktop'] + [line.replace('=', ': ', 1) for line in args.info] + [
         '',
         'Start immuch360.exe from this folder and keep the folder whole: the program needs the files next to it.',
-        'This build is not signed: Windows SmartScreen may ask for a confirmation at the first start, and Smart App',
-        'Control, where it is on, blocks it.',
+        *UNSIGNED_NOTE,
     ] + notes
     (folder / 'BUILD-INFO.txt').write_text('\r\n'.join(info) + '\r\n', encoding='utf-8')
 

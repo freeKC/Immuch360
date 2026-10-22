@@ -738,7 +738,6 @@
   "camera_live_failed": "Die Live-Ansicht ist nicht gestartet: {error}",
   "camera_live_full_screen": "Vollbild",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Die Live-Ansicht kommt in einer späteren Version auf iPhone und iPad. Die Aufnahmen lassen sich hier schon abspielen.",
   "camera_live_needs_account": "Füge das Kamerakonto hinzu, um die Live-Ansicht zu sehen.",
   "camera_live_no_sound": "Kein Ton auf diesem Gerät",
   "camera_live_sd": "SD",

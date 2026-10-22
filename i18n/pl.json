@@ -738,7 +738,6 @@
   "camera_live_failed": "Podgląd na żywo się nie uruchomił: {error}",
   "camera_live_full_screen": "Pełny ekran",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Podgląd na żywo pojawi się na iPhonie i iPadzie w późniejszej wersji. Nagrania można tu już odtwarzać.",
   "camera_live_needs_account": "Dodaj konto kamery, aby zobaczyć podgląd na żywo.",
   "camera_live_no_sound": "Brak dźwięku na tym urządzeniu",
   "camera_live_sd": "SD",

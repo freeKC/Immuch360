@@ -5,6 +5,16 @@
 
 const pairing = require('./lib/pairing');
 const serverLib = require('./lib/server');
+const bridgeHost = require('./lib/bridge-host');
+
+// Immuch360: the media bridge, from its bundle (npm run bridge), behind the same methods as on the Luna bus
+const bridge = bridgeHost.createHost({
+	nodeVersion: process.versions.node,
+	load: () => require('./bridge/base.js'),
+	hold: () => {},
+	release: () => {},
+	log: (text) => console.log('[bridge-dev] ' + text)
+});
 
 const basePort = Number(process.argv[2]) || 8788;
 
@@ -22,6 +32,27 @@ function controlRoutes(req, res, pathname) {
 	if (req.method === 'OPTIONS') {
 		res.writeHead(204, CORS_HEADERS);
 		res.end();
+		return true;
+	}
+	if (req.method === 'POST' && pathname.indexOf('/bridge/') === 0) {
+		const method = pathname.slice('/bridge/'.length);
+		if (bridgeHost.METHODS.indexOf(method) < 0) return false;
+		serverLib.readBody(req).then(function (raw) {
+			let params = {};
+			try {
+				params = JSON.parse(raw) || {};
+			} catch (e) {
+				// No parameters
+			}
+			bridge.handle(method, params).then(
+				function (result) {
+					serverLib.sendJson(res, 200, result, CORS_HEADERS);
+				},
+				function (err) {
+					serverLib.sendJson(res, 200, {returnValue: false, errorText: err.message, errorCode: err.code || null}, CORS_HEADERS);
+				}
+			);
+		});
 		return true;
 	}
 	if (req.method !== 'POST' || pathname.indexOf('/pairing/') !== 0) return false;

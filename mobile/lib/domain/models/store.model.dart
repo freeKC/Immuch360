@@ -77,6 +77,19 @@ enum StoreKey<T> {
   /// and date of a file of a share, the latest last
   viewRotations<String>._(5026),
 
+  /// The name of this big screen (a TV, the Quest window, a computer) on the server: the one the user confirmed on the
+  /// phone that signed it in, else the name of the device. Its session is named "Immuch360 on" and that name, and the
+  /// big screens send it in their device headers so that the server keeps that name (sign in with your phone)
+  pairingScreenLabel<String>._(5027),
+
+  /// The phone that signed this big screen in, for the line "Signed in as ... with ..." of the account dialog;
+  /// removed at the sign out
+  pairingSignedInBy<String>._(5028),
+
+  /// The TVs and computers this phone signed in ("Connected by this phone"): a JSON list of {sessionId, label, kind,
+  /// os, at}. Never a token: the sessions are the server's, this list only names them; removed at the sign out
+  pairedScreens<String>._(5029),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

@@ -11,8 +11,9 @@ Immuch360 ni programu huria na ya chanzo wazi ya kutafuta, kuvinjari, kucheza na
 
 - **Inafanya nini?** Inaonyesha picha na video zako kama albamu na kuzicheza kwenye kitazamaji kinachofaa kila faili: bapa, kama tufe unaloweza kuzunguka ndani yake, katika 3D, kwenye kifaa cha kichwa.
 - **Midia gani?** Picha na video bapa, panorama, picha na video za 360°, VR180, 3D ya stereo, picha za spatial za Apple, tufe za 360° za droni za DJI, na faili ghafi za kamera za 360° (Insta360, GoPro MAX, DJI Osmo 360), zinazoshonwa na programu.
-- **Kwenye vifaa gani?** Simu na kompyuta kibao za Android, iPhone na iPad, Android TV na Google TV, televisheni za LG zenye webOS (programu tofauti, build ya kwanza ya majaribio), Meta Quest 2, Pro, 3 na 3S, Windows (toleo la awali), na Linux na macOS kama majaribio ya mapema.
+- **Kwenye vifaa gani?** Simu na kompyuta kibao za Android, iPhone na iPad, Android TV na Google TV, televisheni za LG zenye webOS (programu tofauti, katika build za majaribio), Meta Quest 2, Pro, 3 na 3S, Windows (toleo la awali), na Linux na macOS kama majaribio ya mapema.
 - **Je, ninahitaji seva au akaunti?** Hapana. Immuch360 inafanya kazi yenyewe na midia ya kifaa chako. Seva ya Immich, NAS, seva ya midia au seva ya Plex ni chaguo unazoziongeza unapozihitaji.
+- **Ninawezaje kuingia kwenye televisheni, kifaa cha kichwa au kompyuta?** Kwa simu yako: changanua msimbo wa QR unaoonyeshwa na ukurasa wake wa kuingia, au andika msimbo wake, thibitisha, na inafunguka kwenye maktaba yako ya Immich ndani ya sekunde chache, bila kuandika chochote kwa kidhibiti cha mbali.
 
 <p align="center">
   <sub>Tawi lisilo rasmi la programu ya simu ya Immich. Halihusiani na Immich au FUTO. Jina linasomwa kama "I am much 360".</sub>
@@ -22,13 +23,13 @@ Immuch360 ni programu huria na ya chanzo wazi ya kutafuta, kuvinjari, kucheza na
 
 | Jukwaa | Mahali pa kuipata | Hali tarehe 22 Oktoba 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** simu na kompyuta kibao | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kwenye Google Play (build 25; build 26 inakaguliwa), build 27 kwenye GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone na iPad** | App Store | toleo 3.3.1 (build 24) linasubiri ukaguzi wa Apple tangu 14 Oktoba; [jijenge mwenyewe](../docs/immuch360/build.md) wakati huo huo |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV na Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 27 kwenye GitHub: mandhari meusi kwa chaguo-msingi, Kushoto na Kulia wakati wa video, ujumbe wazi video isipoweza kuchezwa; orodha ya televisheni inakaguliwa na Google |
-| **Televisheni za LG** zenye webOS 4.0 na zaidi | [build ya majaribio ya .ipk](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0) | build ya majaribio 0.1.0 ya tarehe 21 Oktoba, ya kusakinishwa katika [Developer Mode](#lg-tvs-webos); bado haijaendeshwa kwenye televisheni halisi ya LG |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 na 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | kwenye Horizon Store (build 23; build 25 inakaguliwa), build 27 kwenye GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Kisakinishi au ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | desktop build 7, toleo la awali: picha, video bapa na za 360°, hifadhi, Plex, kamera, faili zinazofunguliwa na programu, picha zinazozungushwa kwa kitufe kimoja, kiolesura katika lugha 89 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS na Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | matoleo ya awali: kwenye Linux picha, picha za 360° na video bapa (video za 360° zinachezwa bapa); kwenye macOS vivyo hivyo, imekaguliwa tu kwenye Mac ya CI ya mradi, haijasainiwa |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** simu na kompyuta kibao | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | kwenye Google Play (build 25; build 28 imetumwa kwa ukaguzi wa Google), build 28 kwenye GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone na iPad** | App Store | toleo 3.3.1 (build 27) linasubiri ukaguzi wa Apple, limetumwa tena tarehe 22 Oktoba; [ijenge mwenyewe](../docs/immuch360/build.md) wakati huo huo |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV na Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 28 kwenye GitHub: [kuingia kwa simu yako](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) kwa kuchanganua msimbo wa QR; orodha ya televisheni inakaguliwa na Google |
+| **Televisheni za LG** zenye webOS 4.0 na zaidi | [build ya majaribio ya .ipk](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) | build ya majaribio 0.2.0, ya kusakinishwa katika [Developer Mode](#lg-tvs-webos): hifadhi za mtandao, Plex na mtazamo wa moja kwa moja wa Tapo; 0.1.0 iliendeshwa kwenye televisheni ya LG ya mjaribu, 0.2.0 bado haijaendeshwa kwenye televisheni halisi |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 na 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | kwenye Horizon Store (build 25; build 28 imewasilishwa kwa Meta), build 28 kwenye GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Kisakinishi au ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | desktop build 8, toleo la awali lililosainiwa: picha, video bapa na za 360°, hifadhi, Plex, kamera, kuingia kwa simu yako, picha zinazozungushwa kwa kitufe kimoja, kiolesura katika lugha 89 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS na Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | matoleo ya awali: kwenye Linux picha, picha za 360° na video bapa (video za 360° zinachezwa bapa); kwenye macOS vivyo hivyo, imekaguliwa tu kwenye Mac ya CI ya mradi, haijasainiwa |
 
 *Hali zinasasishwa kwa kila toleo; maelezo, build kwa build, yapo kwenye [Hali ya toleo](../docs/immuch360/release-status.md).*
 
@@ -48,11 +49,13 @@ Immuch360 ni programu huria na ya chanzo wazi ya kutafuta, kuvinjari, kucheza na
   - [Tumia faili zako mwenyewe, bila akaunti](#use-your-own-files-without-an-account)
   - [Fikia midia ya NAS, kompyuta au seva ya midia](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
   - [Tafuta maktaba yako ya Immich](#find-your-immich-library)
+  - [Ingia kwenye televisheni, kifaa cha kichwa au kompyuta kwa simu yako](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Zama kwenye uzoefu wa Meta Quest](#go-immersive-on-meta-quest)
   - [Tazama kwenye televisheni na kwenye kompyuta](#watch-on-the-tv-and-on-the-computer)
   - [Immuch360 kwenye televisheni ya LG (webOS)](#immuch360-on-an-lg-tv-webos)
   - [Kamera, Plex na faili ghafi za kamera](#cameras-plex-and-raw-camera-files)
   - [Picha na video za droni yako ya DJI kwenye seva yako ya Immich](#your-dji-drones-photos-and-videos-on-your-immich-server)
+  - [Uchunguzi wa kiungo cha DJI (wa majaribio)](#dji-link-diagnostics-experimental)
 - [Vifaa na mifumo](#devices-and-systems)
 - [Vipengele vya kina](#advanced-features)
 - [Nyaraka za kiufundi](#technical-documentation)
@@ -159,9 +162,28 @@ Ukiwa na seva ya [Immich](https://github.com/immich-app/immich), Immuch360 ni pr
 2. Kwenye Settings, Asset Viewer, Videos, "Chanzo cha video" huchagua asili wakati kifaa hiki kinaidekodi, asili kila wakati, au mkondo uliobadilishwa kila wakati.
 3. Ili kuonyesha picha ya 360° kwa mtu asiye na programu, ishiriki kwa kiungo cha kushiriki cha Immich: programu ya wavuti ya Immich inaionyesha kama tufe kwenye kivinjari chao.
 
-Build ya sasa, build 27, inategemea Immich `main` ya tarehe 10 Oktoba 2026 (toleo 3.3.0-rc.0) na ilijaribiwa dhidi ya seva ya Immich 3.2.4 na seva iliyojengwa kutoka Immich `main` ileile. Tafadhali ripoti matatizo kwenye [Issues](https://github.com/freeKC/Immuch360/issues), si kwa mradi wa Immich.
+Build ya sasa, build 28, inategemea Immich `main` ya tarehe 10 Oktoba 2026 (toleo 3.3.0-rc.0) na ilijaribiwa dhidi ya seva iliyojengwa kutoka Immich `main` ileile; build 27 ilijaribiwa pia dhidi ya seva ya Immich 3.2.4. Tafadhali ripoti matatizo kwenye [Issues](https://github.com/freeKC/Immuch360/issues), si kwa mradi wa Immich.
 
 Zaidi: [kila kitu kingine ni Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [ikilinganishwa na programu ya Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+
+<a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
+### Ingia kwenye televisheni, kifaa cha kichwa au kompyuta kwa simu yako
+
+Kuandika anwani ya seva, barua pepe na nenosiri kwa kidhibiti cha mbali cha televisheni, au ndani ya kifaa cha kichwa, huchukua dakika kadhaa. Ukiwa na Immuch360 kwenye simu yako, iliyoingia kwenye seva yako ya Immich, televisheni, Meta Quest au kompyuta inaingia ndani ya sekunde chache: skrini kubwa inaonyesha msimbo wa QR, simu inauchanganua, unathibitisha, na skrini inafunguka kwenye maktaba yako. Kwa programu ya simu, nenosiri lako linabaki kwenye simu. Programu ya Immich haina kitu kama hiki.
+
+<p align="center">
+  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Televisheni inaonyesha msimbo wa QR kwenye ukurasa wake wa kuingia, na simu iliyoshikiliwa mbele yake inachanganua msimbo huo huo">
+</p>
+
+1. Kwenye skrini kubwa (Android TV na Google TV, dirisha la Meta Quest, Windows, Linux au macOS), chagua "Unganisha kwenye seva ya Immich": ukurasa wa kuingia unaonyesha "Ingia kwa simu yako", msimbo wa QR na msimbo wa herufi 10, kando ya fomu ya seva.
+2. Kwenye simu, iliyoingia kwenye seva yako: Mipangilio, "Unganisha televisheni au kompyuta", kisha "Changanua msimbo". Kwenye Meta Quest, ambayo skrini yake haiwezi kuchanganuliwa na simu, chagua "Weka msimbo badala yake" na uandike msimbo unaoonyeshwa na kifaa cha kichwa.
+3. Simu inauliza "Ingiza (skrini)?" na kuonyesha nambari ya tarakimu sita: hakikisha skrini inaonyesha nambari ileile, kisha gusa Ingia. Skrini inafunguka kwenye rekodi yako ya matukio.
+
+Jinsi inavyobaki salama: simu na skrini lazima ziwe kwenye mtandao uleule wa nyumbani, na msimbo unadumu dakika mbili kwa zaidi na unafanya kazi mara moja tu. Simu inaomba seva yako kipindi kipya kwa skrini hiyo, kilichopewa jina lake ("Immuch360 kwenye televisheni ya sebuleni"), na kukituma kwa skrini kikiwa kimesimbwa, kwa hivyo nenosiri lako halitoki kamwe kwenye simu. "Unganisha televisheni au kompyuta" huorodhesha skrini ambazo simu hii imeziingiza, kila moja ikiwa na Toka, na Immich huziorodhesha katika Mipangilio ya akaunti, Vifaa vilivyoidhinishwa, ambapo unaweza pia kuzibatilisha. Simu ikitoka kwenye akaunti, nazo hutoka pia.
+
+Upande wa simu unafanya kazi kwenye Android sasa, na kwenye iPhone na iPad kuanzia toleo lijalo la iOS. Bila Immuch360 kwenye simu, changanua msimbo kwa kamera ya simu: ukurasa unaotolewa na skrini unafunguka kwenye kivinjari, kwa barua pepe yako na nenosiri lako, vilivyosimbwa na kutumika mara moja. Televisheni za LG huingia kwa msimbo wao wa QR wenyewe, kwenye kivinjari cha simu; kuanzia build 28 kichanganuzi cha programu ya simu kinautambua na kufungua ukurasa huo.
+
+Zaidi: [kuingia kwa simu yako](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [skrini zinatuma na kuhifadhi nini](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
 
 <a id="go-immersive-on-meta-quest"></a>
 ### Zama kwenye uzoefu wa Meta Quest
@@ -175,7 +197,7 @@ Kwenye Meta Quest, programu ileile inafanya kazi kama dirisha lenye maktaba yako
 </p>
 
 1. Sakinisha programu kutoka [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), au sakinisha kwa mkono APK ya build mpya zaidi, tazama [Sakinisha](#meta-quest).
-2. Kwenye ukurasa wa kukaribisha, gusa "Tumia bila seva" kwa picha na video za kifaa cha kichwa chenyewe, au "Unganisha kwenye seva ya Immich" ili kuingia na seva yako.
+2. Kwenye ukurasa wa kukaribisha, gusa "Tumia bila seva" kwa picha na video za kifaa cha kichwa chenyewe, au "Unganisha kwenye seva ya Immich": andika msimbo unaoonyeshwa na kifaa cha kichwa kwenye Immuch360 kwenye simu yako ([kuingia kwa simu yako](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), au ingia kwa anwani ya seva yako, barua pepe na nenosiri.
 3. Fungua picha au video ya 360° na bonyeza 360°: mtazamo wa kuzamisha unafunguka. B au Y, au kitufe cha Rudi cha paneli ya taarifa, kinarudisha dirisha.
 
 Zaidi: [ndani ya kifaa cha kichwa cha Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [kifaa cha kichwa: kodeki, duka na ruhusa](../docs/immuch360/platform-support.md#meta-quest).
@@ -190,8 +212,8 @@ Programu ileile ya Android inafanya kazi kwenye Android TV na Google TV, kwa man
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Kicheza video cha Immuch360 Desktop kwenye Windows: video ya barabara ikicheza ndani ya dirisha, pamoja na kitufe cha kusitisha, upau wa muda, Shiriki na Pakia kwenye Immich">
 </p>
 
-1. Kwenye televisheni: sakinisha APK kwa adb (tazama [Sakinisha](#android-tv-and-google-tv)); kwenye ukurasa wa kukaribisha, chagua "Ongeza hifadhi ya mtandao au seva ya midia" kwa hifadhi, seva ya Plex au kamera, "Tumia bila seva", au "Unganisha kwenye seva ya Immich".
-2. Kwenye kompyuta ya Windows: sakinisha toleo la awali au fungua ZIP yake na anzisha `immuch360.exe` (tazama [Sakinisha](#windows)); kuanzia desktop build 5, "Tumia bila seva" kwenye ukurasa wa kukaribisha inafungua uchaguzi wa folda zako, na "Unganisha kwenye seva ya Immich" ukurasa wa kuingia. Picha, video au folda inayofunguliwa na programu, au kudondoshwa kwenye dirisha lake, inafunguka papo hapo, ile ya 360° kwenye mtazamo wake wa 360°; faili kadhaa zinafunguka pamoja kwenye ukurasa mmoja.
+1. Kwenye televisheni: sakinisha APK kwa adb (tazama [Sakinisha](#android-tv-and-google-tv)); kwenye ukurasa wa kukaribisha, chagua "Ongeza hifadhi ya mtandao au seva ya midia" kwa hifadhi, seva ya Plex au kamera, "Tumia bila seva", au "Unganisha kwenye seva ya Immich", ambao ukurasa wake unaingiza televisheni unapochanganua msimbo wake wa QR kwa simu yako (tazama [Kuingia kwa simu yako](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
+2. Kwenye kompyuta ya Windows: sakinisha toleo la awali au fungua ZIP yake na anzisha `immuch360.exe` (tazama [Sakinisha](#windows)); kuanzia desktop build 5, "Tumia bila seva" kwenye ukurasa wa kukaribisha inafungua uchaguzi wa folda zako, na "Unganisha kwenye seva ya Immich" ukurasa wa kuingia, pamoja na msimbo wake wa QR kwa simu yako. Picha, video au folda inayofunguliwa na programu, au kudondoshwa kwenye dirisha lake, inafunguka papo hapo, ile ya 360° kwenye mtazamo wake wa 360°; faili kadhaa zinafunguka pamoja kwenye ukurasa mmoja.
 3. Kwenye kitazamaji, vitufe vya kucheza na kusitisha, kurudisha nyuma, kusogeza mbele, iliyotangulia na inayofuata za kidhibiti cha mbali hufanya kazi, na vivyo hivyo vitufe vya kibodi kwenye kompyuta (nafasi, J na L, F kwa skrini nzima). Kwenye televisheni, OK wakati wa video huonyesha vidhibiti huku kucheza na kusitisha kukiwa kumechaguliwa, vikifuatiwa na vitufe vya -10 s na +10 s, na OK ya pili husitisha; vidhibiti na tarehe hujificha sekunde 5 baada ya kitufe cha mwisho. Video hazijirudii tena kwenye televisheni, isipokuwa ukiwasha Settings, Asset Viewer, Videos, Looping.
 4. Kwenye televisheni, kitufe cha Menu, kitufe cha Info au OK ikishikiliwa hufungua maelezo ya picha au video, ya kusoma tu: tarehe, mahali, kamera, kodeki, ukubwa na kasi biti. Video ambayo televisheni haiwezi kuidekodi inasema hivyo, pamoja na kodeki yake, ukubwa wake na kikomo cha videkoda za televisheni, badala ya kupakia bila mwisho; video ya 360° inayozidi uwezo wa videkoda huuliza kabla ya kufungua kicheza cha 360°, na sababu imeandikwa kwenye ukurasa wa Logs kwenye menyu ya wasifu.
 
@@ -200,7 +222,7 @@ Zaidi: [tazama kwenye televisheni yako](../docs/immuch360/user-guide.md#watch-on
 <a id="immuch360-on-an-lg-tv-webos"></a>
 ### Immuch360 kwenye televisheni ya LG (webOS)
 
-Immuch360 inapatikana pia kama programu ya Immich kwa televisheni za LG webOS: programu tofauti kwa televisheni za LG zenye webOS 4.0 na zaidi (tangu 2018), inayoendeshwa kwa kidhibiti cha mbali, inayoonyesha seva yako ya Immich na kuweka picha zako za 360° kwenye tufe unalozungusha kwa vishale. Programu za Immich zenyewe hazisakiniki kwenye televisheni ya LG. Imejengwa juu ya [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) ya Seeky91, iliyoleta rekodi ya matukio, albamu, watu, maeneo, utafutaji, onyesho la slaidi na kuingia kwa simu; shukrani kwa Seeky91. Toleo 0.1.0 ni build ya majaribio: bado haijaendeshwa kwenye televisheni halisi ya LG, inasakinishwa katika Developer Mode tu, na kila ripoti kwenye [Issues](https://github.com/freeKC/Immuch360/issues) inasaidia.
+Immuch360 inapatikana pia kama programu ya Immich kwa televisheni za LG webOS: programu tofauti kwa televisheni za LG zenye webOS 4.0 na zaidi (tangu 2018), inayoendeshwa kwa kidhibiti cha mbali, inayoonyesha seva yako ya Immich na kuweka picha zako za 360° kwenye tufe unalozungusha kwa vishale. Programu za Immich zenyewe hazisakiniki kwenye televisheni ya LG. Imejengwa juu ya [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) ya Seeky91, iliyoleta rekodi ya matukio, albamu, watu, maeneo, utafutaji, onyesho la slaidi na kuingia kwa simu; shukrani kwa Seeky91. Build ya majaribio 0.2.0 inaongeza hifadhi za mtandao, Plex na mtazamo wa moja kwa moja wa kamera za Tapo. Toleo 0.1.0 liliendeshwa kwenye televisheni ya LG ya mjaribu (webOS 22); 0.2.0 bado haijaendeshwa kwenye televisheni halisi. Inasakinishwa katika Developer Mode tu, na kila ripoti kwenye [Issues](https://github.com/freeKC/Immuch360/issues) inasaidia.
 
 <p align="center">
   <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
@@ -210,15 +232,18 @@ Immuch360 inapatikana pia kama programu ya Immich kwa televisheni za LG webOS: p
 2. Ingia kwa simu yako (changanua msimbo wa QR), kwa barua pepe yako na nenosiri lako, au kwa ufunguo wa API.
 3. Vinjari kwa vishale na OK. Kwenye kitazamaji, Kushoto na Kulia huenda kwenye picha au video iliyotangulia au inayofuata, hata video ikiwa inacheza; vidhibiti hujificha sekunde 5 baada ya kitufe cha mwisho; Info hufungua maelezo; vitufe vya chaneli hukuza; kiashiria na gurudumu la Magic Remote hufanya kazi.
 4. Picha ya 360° hufunguka kwenye tufe unalozungusha kwa vishale; "Tazama kama 360°" inashughulikia picha ya 2:1 ambayo seva haijaitambulisha; picha ya VR180 inaonekana kwenye nusu tufe na picha ya 3D kwa jicho moja. Vitufe vya njano na bluu huzungusha picha bapa.
+5. Kuanzia 0.2.0, ukishaingia, "Hifadhi za mtandao" kwenye upau wa pembeni wa programu: ongeza hifadhi ya SMB, WebDAV au DLNA, seva ya Plex (iliyoingia kwa msimbo kwenye plex.tv/link) au kamera ya Tapo. Picha zake zinafunguka kwenye kitazamaji kilekile, picha za 360° kwenye tufe.
 
-Haimo kwenye build hii: video za 360° kwenye tufe (zinachezwa bapa, pamoja na ujumbe), hifadhi za mtandao, Plex na kamera za Tapo (zimepangwa), upakiaji. Video isipocheza, ujumbe unaeleza muundo na ukubwa wake badala ya alama ya kupakia isiyoisha. Kwenye webOS kabla ya 25, reverse proxy iliyo mbele ya Immich lazima itume vichwa vya CORS; programu inavieleza inapokutana na tatizo hilo.
+Hifadhi, Plex na kamera zinahitaji webOS 5 (televisheni za 2020) au mpya zaidi, na SMB webOS 22 (televisheni za 2022) au mpya zaidi. Zinapita kupitia huduma ya programu yenyewe kwenye televisheni, inayozisoma kwa ajili ya programu, na zimekaguliwa dhidi ya seva halisi kwenye mashine ya kujenga ya mradi, bado si kwenye televisheni. Mtazamo wa moja kwa moja wa kamera ni video tu.
+
+Bado haipo: rekodi za kamera (si kabla ya Desemba 2026) na sauti yao, video za 360° kwenye tufe (zinachezwa bapa, pamoja na ujumbe), upakiaji. Video isipocheza, ujumbe unaeleza muundo na ukubwa wake badala ya alama ya kupakia isiyoisha. Kwenye webOS kabla ya 25, reverse proxy iliyo mbele ya Immich lazima itume vichwa vya CORS; programu inavieleza inapokutana na tatizo hilo.
 
 Zaidi: [programu ya webOS: usakinishaji, vitufe vya kidhibiti cha mbali, vichwa vya CORS](../webos/README.md).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 ### Kamera, Plex na faili ghafi za kamera
 
-- **Kamera za Tapo**: kamera inaongezwa karibu na hifadhi za mtandao. Programu inaionyesha moja kwa moja (Android, Android TV, Quest na Windows) na kuorodhesha rekodi za kadi yake ya kumbukumbu siku baada ya siku kwenye jukwaa lolote; kipande kinapatikana kutoka kamera, kinacheza kama video yoyote na kinaweza kutumwa kwa Immich. Programu inazungumza na kamera kwenye mtandao wako tu, kamwe na seva za TP-Link.
+- **Kamera za Tapo**: kamera inaongezwa karibu na hifadhi za mtandao. Programu inaionyesha moja kwa moja (Android, Android TV, Quest, Windows na, video tu, televisheni za LG kuanzia programu ya webOS 0.2.0; iPhone na iPad kuanzia toleo lijalo la iOS) na kuorodhesha rekodi za kadi yake ya kumbukumbu siku baada ya siku kwenye jukwaa lolote; kipande kinapatikana kutoka kamera, kinacheza kama video yoyote na kinaweza kutumwa kwa Immich. Programu inazungumza na kamera kwenye mtandao wako tu, kamwe na seva za TP-Link.
 - **Plex Media Server, bila plex.tv**: programu inajiunga na seva yako moja kwa moja, kwa tokeni unayoiweka mara moja, na kusoma faili asili za maktaba zako moja kwa moja, hivyo 360° inabaki 360°, nyumbani na, kupitia usafirishaji wa bandari yako, nje ya nyumba.
 - **Faili ghafi za kamera za 360°**: Picha ghafi za .insp na video za .insv za kamera za Insta360 (lenzi moja au mbili, katika njia moja, njia mbili au faili mbili), faili za .360 za GoPro MAX na faili za .osv za DJI Osmo 360 zinashonwa na programu wakati zinachezwa, pamoja na urekebishaji ulioandikwa kwenye faili, bila chochote cha kusakinisha popote. Kwenye Android, zichezee kutoka hifadhi, kompyuta au seva yako, kwa sababu albamu ya simu haiorodheshi faili ghafi; seva ya Immich inapokea .insp na .insv tu.
 
@@ -240,6 +265,20 @@ Ingiza picha na video za droni ya DJI kupitia USB, moja kwa moja kwenye seva yak
 
 Tufe za 360° za droni za DJI (Mini, Air, Mavic na nyingine, zinazotambuliwa kutokana na kamera yao) zinaonekana kama 360° kwenye Immuch360 hata bila lebo za 360°. Immich inahitaji lebo hizo: chaguo la upakiaji "Tag drone spheres as 360° for Immich", lililozimwa kwa chaguo-msingi, hutuma picha bila kuibadilisha pamoja na faili ndogo ya .xmp kando yake, ili Immich nayo iionyeshe kama tufe. Neo 2 haina hali ya tufe wala ya panorama: picha na video zake ni bapa. Simu iliporekodi sauti ya klipu ya Neo 2, sauti hiyo iko kwenye faili tofauti ya .m4a: ukurasa unaiwekea klipu alama, na Immich inaipokea bila sauti (ipakue kwa DJI Fly ili kubaki na sauti). Kadi yoyote ya kamera yenye folda ya DCIM inafanya kazi vivyo hivyo kwenye kisomaji cha kadi. Hakuna kinachotumwa kwa DJI.
 
+<a id="dji-link-diagnostics-experimental"></a>
+### Uchunguzi wa kiungo cha DJI (wa majaribio)
+
+Lengo la muda mrefu ni video ya droni ya DJI ndani ya Meta Quest, kupitia kidhibiti cha mbali cha droni yenyewe kilichochomekwa kwenye kifaa cha kichwa. Hakuna anayejua bado kama Quest inaweza kusoma kidhibiti cha mbali cha DJI kupitia kebo yake. Ukurasa wa kiungo cha DJI ni hatua ya kwanza, chombo kwenye Meta Quest na kwenye simu na kompyuta kibao za Android: unaonyesha kama kifaa kinaweza kusoma kidhibiti cha mbali, kinachowasili, na huhifadhi data iliyonaswa.
+
+Inasikiliza tu. Hakuna amri inayotumwa kamwe kwa kidhibiti cha mbali wala kwa droni: baiti moja ambayo ukurasa huandika kila sekunde, kuanzia sekunde 20 baada ya kidhibiti cha mbali kufunguliwa, inaonyesha tu kama kidhibiti cha mbali kinapokea data, na haibebi amri yoyote.
+
+1. Mipangilio, Mahiri, "Uchunguzi wa kiungo cha DJI (wa majaribio)" umewashwa kwa chaguo-msingi (kamwe kwenye televisheni); kigae cha "Kiungo cha DJI" kipo katika Maktaba, Hifadhi za mtandao.
+2. Fungua ukurasa huo na usome ilani ya usalama. Sehemu ya kwanza inasema kama kifaa hiki kinaweza kusoma kifaa cha ziada cha USB hata kidogo; kama hakiwezi, hilo pia ni jibu.
+3. Gusa "Anza kunasa", kisha chomeka kidhibiti cha mbali kwa kebo yake, droni ikiwa imezimwa. Android ikiuliza ni programu gani inapaswa kukifungua, chagua Immuch360 bila "Kila wakati", jambo ambalo lingechukua kidhibiti cha mbali kutoka kwa DJI Fly.
+4. Fuatilia hali ("Kifaa cha ziada kimefunguliwa", "Kiungo kinapokea baiti", "Fremu za kidhibiti zinawasili") na vihesabu, kisha "Hamisha data iliyonaswa": faili tatu katika `Download/Immuch360/dji-link`.
+
+Bado haijakutana na kidhibiti cha mbali halisi. Jaribio kwa kidhibiti cha mbali cha DJI, kwanza RC-N3 pamoja na Neo 2, linakaribishwa: weka hali na vihesabu ambavyo ukurasa unaonyesha kwenye [Issues](https://github.com/freeKC/Immuch360/issues), na uhifadhi faili zilizohamishwa kwako mwenyewe, kama ukurasa unavyosema, kwa kuwa zina nambari ya mfululizo ya kidhibiti cha mbali.
+
 <a id="devices-and-systems"></a>
 ## Vifaa na mifumo
 
@@ -248,6 +287,7 @@ Msingi mmoja wa kodi kwa mazingira sita, na programu tofauti kwa televisheni za 
 | Uwezo | Android | iPhone, iPad | Android TV | LG webOS | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|
 | Albamu, picha, utafutaji kwa seva ya Immich | ✅ | ✅ | ✅ kitazamaji | ✅ kitazamaji | ✅ |
+| Kuingia kwa simu yako (msimbo wa QR) | ✅ huchanganua msimbo | 🔜 toleo lijalo la iOS | ✅ | ✅ kwenye kivinjari cha simu | ✅ msimbo huandikwa kwenye simu |
 | Bila seva: midia yake ya kifaa | ✅ | ✅ | hifadhi tu | ❌ | ✅ |
 | Picha na video bapa | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Zungusha picha kwa kitufe kimoja | ✅ | ✅ | ✅ vitufe vya rangi | ✅ vitufe vya rangi | ✅ dirisha |
@@ -257,13 +297,14 @@ Msingi mmoja wa kodi kwa mazingira sita, na programu tofauti kwa televisheni za 
 | Spatial 2.5D (kufuatilia kichwa) | ✅ ya majaribio | ✅ ya majaribio | ❌ | ❌ | ❌ |
 | Picha za spatial za Apple | ✅ jicho moja | ✅ jicho moja | ✅ jicho moja | ❌ | ✅ 3D |
 | Faili ghafi za Insta360, GoPro na DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
-| Hifadhi za SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Kamera za Tapo: rekodi | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Kamera za Tapo: mtazamo wa moja kwa moja | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Hifadhi za SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ SMB kuanzia webOS 22, WebDAV na DLNA kuanzia webOS 5 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ kuanzia webOS 5 | ✅ |
+| Kamera za Tapo: rekodi | ✅ | ✅ | ✅ | 🔜 si kabla ya Desemba 2026 | ✅ |
+| Kamera za Tapo: mtazamo wa moja kwa moja | ✅ | 🔜 toleo lijalo la iOS | ✅ | ✅ video tu, kuanzia webOS 5 | ✅ |
 | Shiriki kifaa hiki kwenye mtandao | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Pakia kwenye Immich kutoka hifadhi na kifaa | ✅ | ✅ | ❌ | ❌ | ✅ |
 | Ingiza kutoka droni ya DJI au kadi kupitia USB (ya majaribio) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Uchunguzi wa kiungo cha DJI (wa majaribio) | ✅ | ❌ | ❌ | ❌ | ✅ |
 | Mandhari meusi | kama mfumo | kama mfumo | ✅ kwa chaguo-msingi | ✅ mandhari pekee | kama mfumo |
 | Kiingizo | kugusa, jairoskopu | kugusa, jairoskopu | kidhibiti cha mbali; Kushoto na Kulia pia wakati wa video, Menu kwa maelezo | kidhibiti cha mbali, Magic Remote | vidhibiti, mikono |
 | Mahali pa kuipata | Google Play, APK | App Store (inakaguliwa) | APK, Google Play (inakaguliwa) | build ya majaribio ya .ipk, Developer Mode | Horizon Store, APK |
@@ -271,13 +312,14 @@ Msingi mmoja wa kodi kwa mazingira sita, na programu tofauti kwa televisheni za 
 | Uwezo | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
 | Albamu, picha, utafutaji kwa seva ya Immich | ✅ | 🔧 CI | 🔧 CI |
+| Kuingia kwa simu yako (msimbo wa QR) | ✅ | 🔧 CI | 🔧 CI |
 | Bila seva: midia yake ya kifaa | ✅ folda | ✅ folda | ✅ folda |
 | Picha na video bapa | ✅ | ✅ | ✅ |
 | Zungusha picha kwa kitufe kimoja | ✅ | ✅ | ✅ |
 | Picha za 360° kama tufe | ✅ | ✅ | 🔧 CI |
 | Video za 360° | ✅ | bapa tu | bapa tu |
 | 3D na VR180 | ✅ jicho moja | picha jicho moja, video bapa | picha jicho moja, video bapa |
-| Spatial 2.5D (kufuatilia kichwa) | 🔜 | ❌ | ❌ |
+| Spatial 2.5D (kufuatilia kichwa) | 🔜 inaendelezwa | ❌ | ❌ |
 | Picha za spatial za Apple | ✅ jicho moja | 🔧 CI | 🔧 CI |
 | Faili ghafi za Insta360, GoPro na DJI | ✅ | 🔧 CI picha, video bapa | 🔧 CI picha, video bapa |
 | Hifadhi za SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
@@ -287,18 +329,19 @@ Msingi mmoja wa kodi kwa mazingira sita, na programu tofauti kwa televisheni za 
 | Shiriki kifaa hiki kwenye mtandao | ✅ | ❌ | ❌ |
 | Pakia kwenye Immich kutoka hifadhi na kifaa | ✅ | 🔧 CI | 🔧 CI |
 | Ingiza kutoka droni ya DJI au kadi kupitia USB (ya majaribio) | ❌ | ❌ | ❌ |
+| Uchunguzi wa kiungo cha DJI (wa majaribio) | ❌ | ❌ | ❌ |
 | Mandhari meusi | kama mfumo | kama mfumo | kama mfumo |
 | Kiingizo | kipanya, kibodi | kipanya, kibodi | kipanya, kibodi, padi ya kugusa |
-| Mahali pa kuipata | kisakinishi au ZIP (toleo la awali) | .deb, .rpm (toleo la awali) | DMG au ZIP (toleo la awali lisilosainiwa) |
+| Mahali pa kuipata | kisakinishi au ZIP (toleo la awali lililosainiwa) | .deb, .rpm (toleo la awali) | DMG au ZIP (toleo la awali lisilosainiwa) |
 
-✅ ndani ya programu kwenye jukwaa hilo · ❌ haipatikani huko · 🔜 imepangwa · 🔧 CI ndani ya chanzo, imejengwa na kuanzishwa na CI ya mradi kwenye mfumo huo, bado haijakaguliwa huko kwa seva, hifadhi au kamera halisi · bapa tu: video inachezwa bapa, pamoja na ujumbe, kwa sababu kionyeshi cha video za 360° cha kompyuta kipo kwenye Windows tu, na kwenye televisheni za LG bado kunahitajika kupima kama webOS inakabidhi fremu za video kwa tufe. "Jicho moja" inamaanisha faili ya 3D inaonyesha jicho lake la kushoto kwenye skrini bapa. Safu ya LG webOS ni programu tofauti, ambayo build yake ya majaribio 0.1.0 inapita majaribio yake kwenye CI ya mradi na bado haijaendeshwa kwenye televisheni. Si kila ✅ imekaguliwa kwenye kifaa halisi bado: kilichokaguliwa wapi, na kinachosalia kuthibitishwa, kipo kwenye [Vipengele](../docs/immuch360/features.md), [Msaada wa jukwaa](../docs/immuch360/platform-support.md) na [Utangamanifu](../docs/immuch360/compatibility.md).
+✅ ndani ya programu kwenye jukwaa hilo · ❌ haipatikani huko · 🔜 imepangwa · 🔧 CI ndani ya chanzo, imejengwa na kuanzishwa na CI ya mradi kwenye mfumo huo, bado haijakaguliwa huko kwa seva, hifadhi au kamera halisi · bapa tu: video inachezwa bapa, pamoja na ujumbe, kwa sababu kionyeshi cha video za 360° cha kompyuta kipo kwenye Windows tu, na kwenye televisheni za LG bado kunahitajika kupima kama webOS inakabidhi fremu za video kwa tufe. "Jicho moja" inamaanisha faili ya 3D inaonyesha jicho lake la kushoto kwenye skrini bapa. Safu ya LG webOS ni programu tofauti, build ya majaribio 0.2.0: 0.1.0 iliendeshwa kwenye televisheni ya LG ya mjaribu, wakati hifadhi, Plex na kamera za 0.2.0 zimekaguliwa dhidi ya seva halisi kwenye mashine ya kujenga ya mradi, bado si kwenye televisheni. Si kila ✅ imekaguliwa kwenye kifaa halisi bado: kilichokaguliwa wapi, na kinachosalia kuthibitishwa, kipo kwenye [Vipengele](../docs/immuch360/features.md), [Msaada wa jukwaa](../docs/immuch360/platform-support.md) na [Utangamanifu](../docs/immuch360/compatibility.md).
 
 - **Simu na kompyuta kibao za Android**: programu kamili, kugusa na jairoskopu, chanzo kila kimoja.
-- **iPhone na iPad**: programu kamili; kicheza video cha 360° kina kucheza na kusitisha tu, mtazamo wa moja kwa moja wa Tapo utakuja baadaye, na utafutaji wa DLNA hutuma maombi ya unicast hadi Apple itoe ruhusa ya multicast.
-- **Android TV na Google TV**: APK ileile, inayoendeshwa na kidhibiti cha mbali, yenye mandhari meusi kwa chaguo-msingi; kitazamaji: hifadhi rudufu, upakiaji na kihariri vimefichwa na maelezo ni ya kusoma tu, lakini picha bado huzungushwa kwa kitufe kimoja. Kila kichujio cha utafutaji kinafanya kazi kwa kidhibiti cha mbali: Mahali na Kamera hufungua chaguo zao kwenye orodha, kichujio cha tarehe kinaonyesha chaguo zake zote, na paneli za chaguo za Lebo, Mahali, Tarehe, Aina ya midia, Ukadiriaji wa nyota na Chaguo za onyesho huweka Futa na Tekeleza kando ya chaguo, hatua moja ya Kulia zaidi, kwenye sehemu kubwa ya urefu wa skrini. Gridi ya picha inatumia kumbukumbu ndogo zaidi ya picha, na kishale kikishikiliwa huisogeza si zaidi ya takriban safu 10 kwa sekunde. Imekaguliwa kwenye kiigaji cha Google TV; jaribio la kwanza kwenye Android TV halisi, tarehe 21 Oktoba, lilisababisha mabadiliko ya televisheni ya build 27, ambayo bado hayajajaribiwa kwenye televisheni halisi.
-- **Televisheni za LG zenye webOS 4.0 na zaidi**: programu tofauti kwa kidhibiti cha mbali na Magic Remote, iliyojengwa juu ya [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): kitazamaji cha Immich chenye picha za 360° kwenye tufe, picha inayozungushwa kwa kitufe kimoja, mandhari meusi na lugha 89 za programu (maandishi machache ya programu ya televisheni yenyewe yako kwa Kiingereza kwa sasa); bado hakuna hifadhi, Plex wala kamera, video za 360° bapa. Build ya majaribio 0.1.0, imekaguliwa kwa majaribio yake kwenye CI ya mradi, bado si kwenye televisheni.
+- **iPhone na iPad**: programu kamili; kicheza video cha 360° kina kucheza na kusitisha tu, mtazamo wa moja kwa moja wa Tapo na upande wa simu wa kuingia kwa simu yako vinakuja na toleo lijalo la iOS, na utafutaji wa DLNA hutuma maombi ya unicast hadi Apple itoe ruhusa ya multicast.
+- **Android TV na Google TV**: APK ileile, inayoendeshwa na kidhibiti cha mbali, yenye mandhari meusi kwa chaguo-msingi; kitazamaji: hifadhi rudufu, upakiaji na kihariri vimefichwa na maelezo ni ya kusoma tu, lakini picha bado huzungushwa kwa kitufe kimoja. Kila kichujio cha utafutaji kinafanya kazi kwa kidhibiti cha mbali: Mahali na Kamera hufungua chaguo zao kwenye orodha, kichujio cha tarehe kinaonyesha chaguo zake zote, na paneli za chaguo za Lebo, Mahali, Tarehe, Aina ya midia, Ukadiriaji wa nyota na Chaguo za onyesho huweka Futa na Tekeleza kando ya chaguo, hatua moja ya Kulia zaidi, kwenye sehemu kubwa ya urefu wa skrini. Gridi ya picha inatumia kumbukumbu ndogo zaidi ya picha, na kishale kikishikiliwa huisogeza si zaidi ya takriban safu 10 kwa sekunde. Kuanzia build 28 inaingia kutoka kwa simu, kwa msimbo wake wa QR au msimbo wake mfupi (imejaribiwa kati ya viigaji viwili kwa msimbo ulioandikwa, bado si kwa kamera). Imekaguliwa kwenye kiigaji cha Google TV; jaribio la kwanza kwenye Android TV halisi, tarehe 21 Oktoba, lilisababisha mabadiliko ya televisheni ya build 27, ambayo bado hayajajaribiwa kwenye televisheni halisi.
+- **Televisheni za LG zenye webOS 4.0 na zaidi**: programu tofauti kwa kidhibiti cha mbali na Magic Remote, iliyojengwa juu ya [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): kitazamaji cha Immich chenye picha za 360° kwenye tufe, picha inayozungushwa kwa kitufe kimoja, mandhari meusi na lugha 89 za programu (maandishi machache ya programu ya televisheni yenyewe yako kwa Kiingereza kwa sasa); kuanzia 0.2.0 hifadhi za mtandao, Plex na mtazamo wa moja kwa moja wa kamera za Tapo, kupitia huduma yake yenyewe kwenye televisheni (webOS 5 na zaidi, SMB kuanzia webOS 22); video za 360° bapa. Toleo 0.1.0 liliendeshwa kwenye televisheni ya LG ya mjaribu (webOS 22); 0.2.0 imekaguliwa kwa majaribio yake na dhidi ya seva halisi kwenye mashine ya kujenga ya mradi, bado si kwenye televisheni.
 - **Meta Quest 2, Pro, 3 na 3S**: programu kama dirisha, pamoja na mtazamo wa kuzamisha; HEVC ni kodeki salama, H.264 inasimama karibu 4096x2304 kwenye Quest 3; Quest 3 pekee imejaribiwa, Quest 2, Quest Pro na Quest 3S hazijajaribiwa bado.
-- **Windows 10 na 11**: toleo la awali, lenye folda badala ya albamu, kicheza video chake chenyewe (libmpv) kwa video bapa na za 360°, faili ghafi zinazoshonwa na chip ya michoro, faili na folda zinazofunguliwa na programu au kudondoshwa kwenye dirisha, kisakinishi au ZIP.
+- **Windows 10 na 11**: toleo la awali, lenye folda badala ya albamu, kicheza video chake chenyewe (libmpv) kwa video bapa na za 360°, faili ghafi zinazoshonwa na chip ya michoro, faili na folda zinazofunguliwa na programu au kudondoshwa kwenye dirisha, kisakinishi au ZIP, vilivyosainiwa na APROGSYS.
 - **Linux**: .deb na .rpm zilizojengwa na CI ya mradi, zimesakinishwa na kukaguliwa kwenye Ubuntu 22.04 na 24.04, Debian 12 na Fedora 40 na 44; picha, picha za 360° na video bapa kupitia libmpv ya mfumo (video za 360°, 3D na ghafi zinachezwa bapa pamoja na ujumbe), zinazochorwa kwa njia ya maunzi hata kwenye vipindi vya X11 kuanzia desktop build 7; hifadhi za SMB kuanzia Ubuntu 22.04 na Debian 12; bila keyring (GNOME Keyring au KWallet) programu haigandi tena kwa sekunde 25 inapoanzishwa mara ya kwanza: inahifadhi manenosiri kwa kipindi hicho tu na inasema hivyo kwenye mipangilio yake; bado haijaendeshwa kwenye PC halisi ya Linux, tu chini ya WSLg na ndani ya kontena.
 - **macOS**: DMG na ZIP zilizojengwa na CI ya mradi, za ulimwengu wote, hazijasainiwa (Gatekeeper inauliza mara moja); programu inaanza, inafungua faili na folda inazopewa, ikiwemo kutoka Finder, inahifadhi siri zake kwenye keychain ya kuingia na inacheza video bapa kwa libmpv yake yenyewe, yote yamekaguliwa tu kwenye Mac ya CI ya mradi; hakuna kilichoendeshwa kwenye Mac halisi bado.
 
@@ -315,7 +358,7 @@ Kile programu inachoweza kusoma na kucheza, kwa msomaji anayetaka ukubwa wote. M
 - **Usomaji kwa mahitaji**: daraja la ndani linahudumia vicheza kwa safu za baiti na tokeni kwa kila kipindi; vizuizi vikubwa, usomaji wa mbele na muunganisho hadi sita wa SMB kwa wakati mmoja; vijipicha kutoka fremu ya video kila moja; hakuna kinachonakiliwa kwenye kifaa.
 - **Maunzi**: videkoda vya maunzi hutumika popote vilipo, pamoja na mipaka yake iliyopimwa (kikomo cha H.264 cha Quest 3, lenzi mbili za 2048x2048 kwa upeo kwa videkoda vya programu); kwenye Windows mtazamo wa 360° unachorwa na chip ya michoro kutoka kila fremu iliyodekodiwa, ukubwa wa fremu unapimwa kwenye kompyuta kila moja, chip iliyoambatanishwa au ya pekee hugunduliwa.
 - **Mambo mahususi kwa jukwaa**: jairoskopu na kicheza cha Spatial 2.5D kwenye simu; mtazamo wa kuzamisha, vidhibiti na mikono kwenye Quest; mpangilio wa kidhibiti cha mbali, kidirisha cha kibodi na bango la televisheni kwenye Android TV; kwenye kompyuta, kipanya na kibodi, skrini nzima, dirisha moja, faili na folda zinazofunguliwa na programu au kudondoshwa kwenye dirisha lake, zinazosomwa kama faili za folda zako, picha za HEIC, AVIF na TIFF, na picha ghafi za kamera za folda wakati Windows ina kisimbuzi kwa ajili yake, na ulinzi wa data wa Windows kwa manenosiri na tokeni.
-- **Faragha kwa ujenzi**: hakuna akaunti, hakuna wingu, hakuna uchanganuzi; manenosiri na tokeni kwenye hifadhi salama ya kifaa; kamera ya kicheza cha Spatial inatumika kwenye kifaa tu; hifadhi, Plex na kamera zinafikiwa kwenye mtandao wako tu.
+- **Faragha kwa ujenzi**: hakuna akaunti, hakuna wingu, hakuna uchanganuzi; manenosiri na tokeni kwenye hifadhi salama ya kifaa; skrini iliyoingizwa kutoka kwa simu inapata kipindi chake yenyewe, kinachotumwa kikiwa kimesimbwa kwenye mtandao wa nyumbani, kamwe si nenosiri; kamera ya kicheza cha Spatial na ya kichanganuzi cha msimbo inatumika kwenye kifaa tu; hifadhi, Plex na kamera zinafikiwa kwenye mtandao wako tu.
 
 <a id="technical-documentation"></a>
 ## Nyaraka za kiufundi
@@ -357,7 +400,7 @@ Kile programu inachoweza kusoma na kucheza, kwa msomaji anayetaka ukubwa wote. M
 
 1. Unahitaji televisheni ya LG yenye webOS 4.0 au zaidi, kompyuta kwenye mtandao uleule na akaunti ya bure ya msanidi programu wa LG. Kwenye televisheni, sakinisha Developer Mode kutoka LG Content Store, ingia, washa Dev Mode Status na uache televisheni ijiwashe upya; andika anwani yake ya IP na kaulisiri ambayo programu inaonyesha.
 2. Kwenye kompyuta, sakinisha webOS CLI (Node.js 18 au zaidi): `npm install -g @webos-tools/cli`, kisha sajili televisheni kwa `ares-setup-device` (anwani yake ya IP, mlango 9922, mtumiaji `prisoner`) na `ares-novacom --device <name> --getkey`, inayouliza kaulisiri.
-3. Pakua `Immuch360-webOS-0.1.0.ipk` kutoka [toleo la awali la webOS](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0), ilinganishe na `SHA256SUMS.txt`, kisha endesha `ares-install --device <name> Immuch360-webOS-0.1.0.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) ya webosbrew hufanya vivyo hivyo bila mstari wa amri.
+3. Pakua `Immuch360-webOS-0.2.0.ipk` kutoka [toleo la awali la webOS](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0), ilinganishe na `SHA256SUMS.txt`, kisha endesha `ares-install --device <name> Immuch360-webOS-0.2.0.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) ya webosbrew hufanya vivyo hivyo bila mstari wa amri.
 4. Kipindi cha Developer Mode hudumu saa 1000 na kitufe cha EXTEND cha programu ya Developer Mode hukifanya upya; kinapoisha, televisheni huondoa programu zilizosakinishwa kwa njia hii. Maelezo yapo kwenye [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
 
 <a id="meta-quest"></a>
@@ -370,23 +413,23 @@ Kile programu inachoweza kusoma na kucheza, kwa msomaji anayetaka ukubwa wote. M
 <a id="windows"></a>
 ### Windows
 
-1. Pakua `Immuch360-Desktop-3.3.0-rc.0-desktop.7-windows-x64-setup.exe` kutoka [toleo la awali la desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) (pamoja na `SHA256SUMS.txt` ili kuikagua) na uifungue. Faili hazijasainiwa bado: Windows SmartScreen inaweza kuonyesha "Windows protected your PC", chagua "More info" kisha "Run anyway".
+1. Pakua `Immuch360-Desktop-3.3.0-rc.0-desktop.8-windows-x64-setup.exe` kutoka [toleo la awali la desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) (pamoja na `SHA256SUMS.txt` ili kuikagua) na uifungue. Kisakinishi na ZIP vimesainiwa; Windows inaonyesha APROGSYS kama mchapishaji. Wakati mchapishaji bado ni mgeni kwa SmartScreen, inaweza bado kuuliza mara moja: "More info", kisha "Run anyway".
 2. Chagua "Sakinisha kwa ajili yangu tu" (hakuna haki za msimamizi) au "Sakinisha kwa watumiaji wote", kisha lugha ya kisakinishi, ile ya Windows iliyochaguliwa tayari.
 3. Anzisha Immuch360 Desktop kutoka menyu ya Kuanza. Picha na video zinaipata kwenye "Fungua na" (bonyeza kulia kwenye faili, Fungua na); haijifanyi kamwe kuwa programu yao chaguomsingi. Uanzishaji wa kwanza wa build mpya unaweza kuchukua hadi dakika moja wakati Windows inachunguza faili.
 4. Windows 10 au 11, biti 64. Ili kusasisha, fungua kisakinishi cha build inayofuata: kuingia, folda na mipangilio yako zinabaki. ZIP ya toleo lilelile ni programu ileile kama folda, kufunguliwa popote na kuanzisha `immuch360.exe` kutoka humo.
 
 ### Linux
 
-Kwenye Ubuntu 22.04 au toleo jipya zaidi na Debian 12 au toleo jipya zaidi: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-amd64.deb`; kwenye Fedora 40 au toleo jipya zaidi: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-x86_64.rpm`, zote kutoka [toleo la awali la desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7). Kisha anzisha Immuch360 Desktop kutoka programu zako. Toleo la awali: folda za kompyuta, picha na picha za 360° kama tufe, na video bapa kupitia libmpv ya mfumo, ambayo kifurushi kinaisakinisha (video za 360°, 3D na ghafi zinachezwa bapa, pamoja na ujumbe); hifadhi za SMB zinafanya kazi kuanzia Ubuntu 22.04 na Debian 12. Kwenye Fedora, video za kamera zinahitaji FFmpeg ya RPM Fusion. Bila GNOME Keyring au KWallet, manenosiri huhifadhiwa kwa kipindi hicho tu, na mipangilio ya programu inasema hivyo.
+Kwenye Ubuntu 22.04 au toleo jipya zaidi na Debian 12 au toleo jipya zaidi: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-amd64.deb`; kwenye Fedora 40 au toleo jipya zaidi: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-x86_64.rpm`, zote kutoka [toleo la awali la desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8). Kisha anzisha Immuch360 Desktop kutoka programu zako. Toleo la awali: folda za kompyuta, picha na picha za 360° kama tufe, na video bapa kupitia libmpv ya mfumo, ambayo kifurushi kinaisakinisha (video za 360°, 3D na ghafi zinachezwa bapa, pamoja na ujumbe); hifadhi za SMB zinafanya kazi kuanzia Ubuntu 22.04 na Debian 12. Kwenye Fedora, video za kamera zinahitaji FFmpeg ya RPM Fusion. Bila GNOME Keyring au KWallet, manenosiri huhifadhiwa kwa kipindi hicho tu, na mipangilio ya programu inasema hivyo.
 
 ### macOS
 
-Fungua `Immuch360-Desktop-3.3.0-rc.0-desktop.7-macos.dmg` kutoka [toleo la awali la desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) na uvute programu hadi Applications (Apple silicon na Intel, macOS 12 au toleo jipya zaidi). Haijasainiwa wala kuthibitishwa bado: bonyeza ukishikilia Control na uchague Open kwenye macOS 14 na zilizotangulia, au chagua "Open Anyway" kwenye System Settings, Privacy & Security kwenye macOS 15 na zinazofuata. Hakuna yeyote anayefanya kazi kwenye mradi anayemiliki Mac: programu imeendeshwa tu kwenye Mac ya CI ya mradi, ambapo inafungua faili na folda na kucheza video bapa kwa libmpv yake yenyewe; ufikiaji wake wa mtandao haujajaribiwa. Taarifa zinakaribishwa.
+Fungua `Immuch360-Desktop-3.3.0-rc.0-desktop.8-macos.dmg` kutoka [toleo la awali la desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) na uvute programu hadi Applications (Apple silicon na Intel, macOS 12 au toleo jipya zaidi). Haijasainiwa wala kuthibitishwa bado: bonyeza ukishikilia Control na uchague Open kwenye macOS 14 na zilizotangulia, au chagua "Open Anyway" kwenye System Settings, Privacy & Security kwenye macOS 15 na zinazofuata. Hakuna yeyote anayefanya kazi kwenye mradi anayemiliki Mac: programu imeendeshwa tu kwenye Mac ya CI ya mradi, ambapo inafungua faili na folda na kucheza video bapa kwa libmpv yake yenyewe; ufikiaji wake wa mtandao haujajaribiwa. Taarifa zinakaribishwa.
 
 <a id="privacy"></a>
 ## Faragha
 
-Hakuna kinachofika kwa msanidi programu: hakuna akaunti, hakuna uchanganuzi, hakuna huduma ya kuripoti kuvunjika, hakuna matangazo. Programu inazungumza tu na seva unazochagua (seva yako ya Immich, hifadhi zako, seva yako ya Plex, kamera zako) na, bila seva, na chochote kabisa. Manenosiri na tokeni zinabaki kwenye hifadhi salama ya kifaa. Kamera ya kicheza cha Spatial 2.5D inatumika kwenye kifaa tu; picha zake kamwe hazihifadhiwi na kamwe hazitumwi popote. Sera kamili ipo kwenye [PRIVACY.md](../PRIVACY.md), na maelezo kwa kila chanzo kwenye [mwongozo wa mtumiaji](../docs/immuch360/user-guide.md#privacy).
+Hakuna kinachofika kwa msanidi programu: hakuna akaunti, hakuna uchanganuzi, hakuna huduma ya kuripoti kuvunjika, hakuna matangazo. Programu inazungumza tu na seva unazochagua (seva yako ya Immich, hifadhi zako, seva yako ya Plex, kamera zako) na, bila seva, na chochote kabisa. Manenosiri na tokeni zinabaki kwenye hifadhi salama ya kifaa. Kamera inatumika kwenye kifaa tu, na kicheza cha Spatial 2.5D na kuchanganua msimbo wa skrini unayoiingiza; picha zake kamwe hazihifadhiwi na kamwe hazitumwi popote. Skrini iliyoingizwa kutoka kwa simu yako inapata kipindi chake yenyewe, kinachotumwa kikiwa kimesimbwa kwenye mtandao wako wa nyumbani, kamwe si nenosiri lako. Sera kamili ipo kwenye [PRIVACY.md](../PRIVACY.md), na maelezo kwa kila chanzo kwenye [mwongozo wa mtumiaji](../docs/immuch360/user-guide.md#privacy).
 
 <a id="the-project"></a>
 ## Mradi
@@ -402,13 +445,13 @@ Picha za simu za ukurasa huu zilipigwa kwenye build ya Android ndani ya kiigaji,
 
 Kile ambacho bado hakijafanywa, kinachowezekana zaidi kwanza. Hakuna hapa ambacho ni ahadi, na maoni kwenye [kifuatiliaji cha masuala](https://github.com/freeKC/Immuch360/issues) yanasaidia kuamua kipi kinakuja kwanza.
 
-- **Maduka**: Google Play (build 26 inakaguliwa, kisha build 27; orodha ya televisheni inakaguliwa), App Store (toleo 3.3.1 linakaguliwa tangu 14 Oktoba), Meta Horizon Store (build 25 inakaguliwa).
-- **Kompyuta**: kujaribu kila kazi kwa mkono kwenye PC ya Windows; kisha kionyeshi cha video za 360° kwenye Linux na macOS, jaribio kwenye Mac halisi na PC halisi ya Linux; kisha build iliyosainiwa na masasisho ya moja kwa moja; kisha Spatial 2.5D kwa kamera ya wavuti.
-- **Televisheni**: jaribio la build 27 kwenye Android TV halisi; programu ya LG webOS kwenye televisheni halisi ya LG, kisha video zake za 360° kwenye tufe na hifadhi za mtandao, Plex na kamera za Tapo; msimbo wa QR wa kuoanisha televisheni au kompyuta na simu, skrini kubwa ikiuonyesha na simu ikiuchanganua.
-- **Simu na kompyuta kibao**: upau wa muda kwenye kicheza video cha 360° cha iOS, iliyotangulia na inayofuata kwenye vicheza vya 360° vya simu, chaguo la njia ya sauti kwenye kicheza bapa, mtazamo wa moja kwa moja wa Tapo kwenye iPhone na iPad.
+- **Maduka**: Google Play (build 28 inakaguliwa; orodha ya televisheni inakaguliwa), App Store (toleo 3.3.1 linakaguliwa, kisha toleo 3.3.2 pamoja na build 28), Meta Horizon Store (build 28 inakaguliwa).
+- **Kompyuta**: kujaribu kila kazi kwa mkono kwenye PC ya Windows, ikiwemo kuingia kwa simu yako; Spatial 2.5D kwa kamera ya wavuti kwenye Windows, inaendelezwa kwa ajili ya Novemba 2026; kisha kionyeshi cha video za 360° kwenye Linux na macOS, jaribio kwenye Mac halisi na PC halisi ya Linux; kisha masasisho ya kiotomatiki na programu ya macOS iliyosainiwa.
+- **Televisheni**: jaribio la build 27 na 28 kwenye Android TV halisi, ikiwemo kuingia kwa simu yako; webOS 0.2.0 kwenye televisheni halisi ya LG, pamoja na hifadhi zake, Plex na mtazamo wa moja kwa moja; kisha video za 360° kwenye tufe, sauti ya kamera na rekodi zao (si kabla ya Desemba 2026).
+- **Simu na kompyuta kibao**: mtazamo wa moja kwa moja wa Tapo na kuingia kwa skrini kubwa kwenye iPhone na iPad pamoja na toleo lijalo la iOS; upau wa muda kwenye kicheza video cha 360° cha iOS, iliyotangulia na inayofuata kwenye vicheza vya 360° vya simu, chaguo la njia ya sauti kwenye kicheza bapa.
 - **Midia ya kuzamisha**: .dng za fisheye mbili, kusawazisha video za GoPro na DJI kutoka data zao za mwendo, video za spatial katika 3D kwenye Quest ikiwa videkoda vyake vinaruhusu, iliyotangulia na inayofuata kati ya picha za spatial kwenye kifaa cha kichwa.
 - **Vyanzo**: kusogeza kidole kati ya faili za folda ya hifadhi, uthibitishaji wa Digest kwa WebDAV, msimbo wa QR wa kuleta tokeni ya Plex kutoka kompyuta, IPv6 kwa Plex, rekodi za Tapo za H.265, njia kwenye skrini ya mwanzo ya televisheni.
-- **Droni**: jaribio kwa DJI Neo 2 halisi, kisha sauti iliyorekodiwa na simu kuunganishwa kwenye klipu yake; mtazamo wa moja kwa moja na udhibiti wa kamera ya droni vimeachwa kwa baadaye.
+- **Droni**: jaribio kwa DJI Neo 2 halisi, kisha sauti iliyorekodiwa na simu kuunganishwa kwenye klipu yake; ukurasa wa kiungo cha DJI pamoja na kidhibiti cha mbali halisi, hatua ya kwanza kuelekea video ya droni ndani ya Meta Quest. Hakuna kinachotuma amri kwa droni kilichopangwa kabla ya majaribio hayo.
 - **Upstream**: pull request ndogo kwa Immich kwa sehemu ambazo watunzaji wanataka, kuanzia na kitazamaji cha picha za 360°.
 
 Orodha kamili, pamoja na ukaguzi wa kifaa unaosalia kwa kila kipengele, ipo kwenye [Hali ya toleo](../docs/immuch360/release-status.md#roadmap).

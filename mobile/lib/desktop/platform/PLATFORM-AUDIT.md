@@ -72,12 +72,14 @@ the gate is per desktop and is noted.
 | `lib/presentation/pages/asset_troubleshoot.page.dart:134` | iOS cloud details | right |
 | `lib/presentation/pages/network/phone_share.page.dart:80` | iOS foreground notice | right |
 | `lib/presentation/pages/network/phone_share.page.dart:95` | phone share tile on phones only | wired (G1): shown on the computers once computerShareAvailable is true (LAN) |
+| `lib/presentation/pages/pairing/connect_screen.page.dart:201` | iOS local network hint of an unreachable screen (sign in with your phone, October 2026) | hidden: the computers are big screens, which never show Connect a TV or computer (isBigScreenProvider) |
 | `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:534` | iOS immersive mode with details | harmless: SystemChrome goes through an optional channel that the desktop embedders ignore |
 | `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:610` | iOS scroll physics, else clamping | right: clamping on the computers |
 | `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:619` | gradient under the status bar, not on iOS | right |
 | `lib/presentation/widgets/asset_viewer/panorama_viewer.widget.dart:58` | 360 video player on phones only | wired (phase 2c): true on the computers where libmpv loaded, the 360° route of DesktopSphericalVideoApi plays it |
 | `lib/presentation/widgets/asset_viewer/video_viewer.widget.dart:150` | Android file URI, else path | right: a path; the video placeholder stands for the player (G1) until phase 2 |
 | `lib/presentation/widgets/asset_viewer/video_viewer.widget.dart:171` | idem | right |
+| `lib/presentation/widgets/drone/dji_link_tile.widget.dart:19` | DJI link page on Android phones, tablets and the headset only (October 2026, not in build 20) | hidden: the computers take the not Android branch, so neither the Settings row nor the tile shows, and DjiLinkApi is never called |
 | `lib/presentation/widgets/drone/drone_import_tile.widget.dart:19` | DJI drone page on Android phones only (October 2026, not in build 20) | hidden: the computers take the not Android branch, so neither the Settings row nor the tile shows, and DocumentTreeApi is never called |
 | `lib/presentation/widgets/map/map.widget.dart:90` | Android map style | hidden: no map on the computers (deviceFeaturesProvider.maps) |
 | `lib/presentation/widgets/map/map.widget.dart:106` | iOS map style | hidden |
@@ -94,7 +96,7 @@ the gate is per desktop and is noted.
 | `lib/providers/permission.provider.dart:13` | initial notification permission state | right: notifications hidden on the computers |
 | `lib/providers/raw/raw_video.provider.dart:43` | two stream raw playback on iOS | wired (phase 2d): the computers are neither, and play two streams where libmpv loaded (`CurrentPlatform.isDesktop` term of the same expression, the 360° route stacks them or falls back) |
 | `lib/providers/raw/raw_video.provider.dart:45` | two stream raw playback on Android and Quest | wired (phase 2d): idem |
-| `lib/providers/tapo/tapo_camera.provider.dart:167` | Android live view events | right: the computers' live view (`DesktopCameraLiveView`, `lib/desktop/video/camera_live_view.dart`) reports its states itself |
+| `lib/providers/tapo/tapo_camera.provider.dart:167` | Android and iOS live view events | right: the computers' live view (`DesktopCameraLiveView`, `lib/desktop/video/camera_live_view.dart`) reports its states itself |
 | `lib/providers/view_intent/view_intent_handler.provider.dart:18` | Android view intents, else the stub | right: the computers replace the provider (desktopOverrides) with DesktopOpenFilesHandler, which opens the files given to the program |
 | `lib/repositories/asset_media.repository.dart:41` | Android trash support | right |
 | `lib/repositories/asset_media.repository.dart:51` | Android trash, else photo_manager delete | wired (G1): `DesktopAssetMediaRepository`, a root override, deletes nothing until the system trash (phase 4) |
@@ -123,7 +125,7 @@ the gate is per desktop and is noted.
 | `lib/widgets/common/mesmerizing_sliver_app_bar.dart:55` | iOS back icon | right |
 | `lib/widgets/common/person_sliver_app_bar.dart:79` | iOS back icon | right |
 | `lib/widgets/common/remote_album_sliver_app_bar.dart:74` | iOS back icon | right |
-| `lib/widgets/forms/login/login_form.dart:260` | Android media management | right |
+| `lib/widgets/forms/login/sign_in_completion.dart:49` | Android media management (moved from the login form, sign in with your phone) | right |
 | `lib/widgets/settings/advanced_settings.dart:49` | Android 12 check | right |
 | `lib/widgets/settings/backup_settings/backup_settings.dart:29` | Android background options | right; the computers show desktop_backup_while_open instead of the cellular options (G1) |
 | `lib/widgets/settings/beta_sync_settings/sync_status_and_actions.dart:184` | iOS cloud ids | right |

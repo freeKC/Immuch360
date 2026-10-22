@@ -11,8 +11,9 @@ Immuch360 estas senpaga kaj malfermkoda apo por trovi, foliumi, ludi kaj esplori
 
 - **Kion ĝi faras?** Ĝi montras viajn fotojn kaj videojn kiel galerio kaj ludas ilin en la spektilo taŭga por ĉiu dosiero: plata, kiel sfero, kiun vi rigardas ĉirkaŭe, en 3D, en kasko.
 - **Kiujn memeaĵojn?** Platajn fotojn kaj videojn, panoramojn, 360°-ajn fotojn kaj videojn, VR180, stereoskopan 3D, Apple-spacajn fotojn, la 360°-ajn sferojn de DJI-dronoj, kaj la krudajn dosierojn de 360°-kameraoj (Insta360, GoPro MAX, DJI Osmo 360), kunkudritajn de la apo.
-- **Sur kiuj aparatoj?** Android-telefonoj kaj tabulkomputiloj, iPhone kaj iPad, Android TV kaj Google TV, LG-televidiloj kun webOS (aparta apo, unua testa konstruo), Meta Quest 2, Pro, 3 kaj 3S, Windows (antaŭeldono), kaj Linux kaj macOS kiel fruaj antaŭeldonoj.
+- **Sur kiuj aparatoj?** Android-telefonoj kaj tabulkomputiloj, iPhone kaj iPad, Android TV kaj Google TV, LG-televidiloj kun webOS (aparta apo, en testaj konstruoj), Meta Quest 2, Pro, 3 kaj 3S, Windows (antaŭeldono), kaj Linux kaj macOS kiel fruaj antaŭeldonoj.
 - **Ĉu mi bezonas servilon aŭ konton?** Ne. Immuch360 funkcias sola kun la memeaĵoj de via aparato. Immich-servilo, NAS, aŭdvida servilo aŭ Plex-servilo estas opcioj, kiujn vi aldonas kiam vi volas.
+- **Kiel mi ensalutigas televidilon, kaskon aŭ komputilon?** Per via telefono: skanu la QR-kodon, kiun montras ĝia ensaluta paĝo, aŭ tajpu ĝian kodon, konfirmu, kaj ĝi malfermiĝas ĉe via Immich-biblioteko en kelkaj sekundoj, sen tajpi ion ajn per teleregilo.
 
 <p align="center">
   <sub>Neoficiala forko de la Immich-poŝtelefona apo. Ne rilata al Immich nek al FUTO. La nomo sonas kiel la angla esprimo "I am much 360" (mi estas multe 360).</sub>
@@ -22,13 +23,13 @@ Immuch360 estas senpaga kaj malfermkoda apo por trovi, foliumi, ludi kaj esplori
 
 | Platformo | Kie akiri ĝin | Stato je la 22-a de oktobro 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonoj kaj tabulkomputiloj | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | en Google Play (konstruo 25; konstruo 26 en revizio), konstruo 27 en GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone kaj iPad** | App Store | versio 3.3.1 (konstruo 24) atendanta la revizion de Apple ekde la 14-a de oktobro; dume [konstruu ĝin mem](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV kaj Google TV** | [APK](#android-tv-and-google-tv) · Google Play | konstruo 27 en GitHub: malhela temo defaŭlte, Maldekstren kaj Dekstren dum video, klara mesaĝo kiam video ne povas ludi; la TV-listigo estas sub la revizio de Google |
-| **LG-televidiloj** kun webOS 4.0 kaj pli nova | [.ipk testa konstruo](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0) | testa konstruo 0.1.0 de la 21-a de oktobro, instalebla en [Developer Mode](#lg-tvs-webos); ankoraŭ ne lanĉita sur reala LG-televidilo |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 kaj 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | en la Horizon Store (konstruo 23; konstruo 25 en revizio), konstruo 27 en GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalilo aŭ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | labortabla konstruo 7, antaŭeldono: fotoj, plataj kaj 360°-aj videoj, kunhavigoj, Plex, kameraoj, dosieroj malfermitaj per la programo, fotoj turnitaj per unu klavo, la interfaco en 89 lingvoj |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS kaj Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | antaŭeldonoj: sur Linux fotoj, 360°-fotoj kaj plataj videoj (360°-videoj ludas plate); sur macOS same, kontrolita nur sur la CI-Mac de la projekto, nesubskribita |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonoj kaj tabulkomputiloj | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | en Google Play (konstruo 25; konstruo 28 sendita por la revizio de Google), konstruo 28 en GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone kaj iPad** | App Store | versio 3.3.1 (konstruo 27) atendanta la revizion de Apple, resendita la 22-an de oktobro; dume [konstruu ĝin mem](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV kaj Google TV** | [APK](#android-tv-and-google-tv) · Google Play | konstruo 28 en GitHub: [ensaluto per via telefono](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) per skano de QR-kodo; la TV-listigo estas sub la revizio de Google |
+| **LG-televidiloj** kun webOS 4.0 kaj pli nova | [.ipk testa konstruo](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) | testa konstruo 0.2.0, instalebla en [Developer Mode](#lg-tvs-webos): retaj kunhavigoj, Plex kaj la Tapo-viva vido; 0.1.0 funkciis sur LG-televidilo de testanto, 0.2.0 ankoraŭ ne sur reala televidilo |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 kaj 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | en la Horizon Store (konstruo 25; konstruo 28 sendita al Meta), konstruo 28 en GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Instalilo aŭ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | labortabla konstruo 8, subskribita antaŭeldono: fotoj, plataj kaj 360°-aj videoj, kunhavigoj, Plex, kameraoj, ensaluto per via telefono, fotoj turnitaj per unu klavo, la interfaco en 89 lingvoj |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS kaj Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | antaŭeldonoj: sur Linux fotoj, 360°-fotoj kaj plataj videoj (360°-videoj ludas plate); sur macOS same, kontrolita nur sur la CI-Mac de la projekto, nesubskribita |
 
 *La statusoj estas ĝisdatigitaj je ĉiu eldono; la detaloj, konstruo post konstruo, estas en [Statuso de eldonoj](../docs/immuch360/release-status.md).*
 
@@ -48,11 +49,13 @@ Immuch360 estas senpaga kaj malfermkoda apo por trovi, foliumi, ludi kaj esplori
   - [Uzi viajn proprajn dosierojn, sen konto](#use-your-own-files-without-an-account)
   - [Atingi la memeaĵojn de NAS, komputilo aŭ aŭdvida servilo](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
   - [Trovi vian Immich-bibliotekon](#find-your-immich-library)
+  - [Ensalutigi televidilon, kaskon aŭ komputilon per via telefono](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Mergiĝi sur Meta Quest](#go-immersive-on-meta-quest)
   - [Spekti sur la televidilo kaj sur la komputilo](#watch-on-the-tv-and-on-the-computer)
   - [Immuch360 sur LG-televidilo (webOS)](#immuch360-on-an-lg-tv-webos)
   - [Kameraoj, Plex kaj krudaj kameraaj dosieroj](#cameras-plex-and-raw-camera-files)
   - [La fotoj kaj videoj de via DJI-drono sur via Immich-servilo](#your-dji-drones-photos-and-videos-on-your-immich-server)
+  - [Diagnozo de DJI-ligo (eksperimenta)](#dji-link-diagnostics-experimental)
 - [Aparatoj kaj sistemoj](#devices-and-systems)
 - [Progresintaj funkcioj](#advanced-features)
 - [Teknika dokumentaro](#technical-documentation)
@@ -159,9 +162,28 @@ Kun [Immich](https://github.com/immich-app/immich)-servilo, Immuch360 estas la I
 2. En Agordoj, Dosiera spektilo, Videoj, "Videofonto" elektas la originalon kiam ĉi tiu aparato deĉifras ĝin, ĉiam la originalon, aŭ ĉiam la transkoditan fluon.
 3. Por montri 360°-foton al iu, kiu ne havas la apon, kunhavigu ĝin per Immich-kunhavigita ligilo: la Immich-retapo montras ĝin kiel sfero en ties retumilo.
 
-La nuna konstruo, konstruo 27, baziĝas sur Immich `main` de la 10-a de oktobro 2026 (versio 3.3.0-rc.0) kaj estis testita kontraŭ Immich 3.2.4-servilo kaj servilo konstruita el tiu sama Immich `main`. Bonvolu raporti problemojn en [Issues](https://github.com/freeKC/Immuch360/issues), ne al la Immich-projekto.
+La nuna konstruo, konstruo 28, baziĝas sur Immich `main` de la 10-a de oktobro 2026 (versio 3.3.0-rc.0) kaj estis testita kontraŭ servilo konstruita el tiu sama Immich `main`; konstruo 27 estis ankaŭ testita kontraŭ Immich 3.2.4-servilo. Bonvolu raporti problemojn en [Issues](https://github.com/freeKC/Immuch360/issues), ne al la Immich-projekto.
 
 Pli: [ĉio alia estas Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [komparo kun la Immich-apo](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+
+<a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
+### Ensalutigi televidilon, kaskon aŭ komputilon per via telefono
+
+Tajpi servilan adreson, retpoŝtadreson kaj pasvorton per televida teleregilo, aŭ en kasko, daŭras minutojn. Kun Immuch360 sur via telefono, ensalutinta al via Immich-servilo, televidilo, Meta Quest aŭ komputilo estas ensalutigita en kelkaj sekundoj: la granda ekrano montras QR-kodon, la telefono skanas ĝin, vi konfirmas, kaj la ekrano malfermiĝas ĉe via biblioteko. Kun la telefona apo, via pasvorto restas en la telefono. La Immich-apo havas nenion similan.
+
+<p align="center">
+  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Televidilo montras QR-kodon sur sia ensaluta paĝo, kaj telefono tenata antaŭ ĝi skanas la saman kodon">
+</p>
+
+1. Sur la granda ekrano (Android TV kaj Google TV, la fenestro de Meta Quest, Windows, Linux aŭ macOS), elektu "Konektiĝi al Immich-servilo": la ensaluta paĝo montras "Ensaluti per via telefono", QR-kodon kaj 10-signan kodon, apud la servila formularo.
+2. Sur la telefono, ensalutinta al via servilo: Agordoj, "Konekti televidilon aŭ komputilon", poste "Skani la kodon". En Meta Quest, kies ekranon telefono ne povas skani, elektu "Anstataŭe tajpi kodon" kaj tajpu la kodon, kiun la kasko montras.
+3. La telefono demandas "Ensalutigi (la ekranon)?" kaj montras sesciferan nombron: kontrolu, ke la ekrano montras la saman, poste tuŝetu Ensaluti. La ekrano malfermiĝas ĉe via templinio.
+
+Kiel ĝi restas sekura: la telefono kaj la ekrano devas esti en la sama hejma reto, kaj la kodo validas maksimume du minutojn kaj funkcias nur unufoje. La telefono petas vian servilon pri nova seanco por tiu ekrano, nomita laŭ ĝi ("Immuch360 on Salona televidilo"), kaj sendas ĝin ĉifrita al la ekrano, tiel ke via pasvorto neniam forlasas la telefonon. "Konekti televidilon aŭ komputilon" listigas la ekranojn, kiujn ĉi tiu telefono ensalutigis, ĉiun kun Elsaluti, kaj Immich listigas ilin en Agordoj pri konto, Aprobitaj aparatoj, kie vi ankaŭ povas revoki ilin. Elsalutigi la telefonon elsalutigas ankaŭ ilin.
+
+La telefona parto funkcias nun sur Android, kaj sur iPhone kaj iPad ekde la venonta iOS-eldono. Sen Immuch360 sur la telefono, skanu la kodon per la kamerao de la telefono: paĝo servata de la ekrano malfermiĝas en la retumilo, por via retpoŝtadreso kaj pasvorto, ĉifritaj kaj uzataj unufoje. LG-televidiloj ensalutas per propra QR-kodo, en la retumilo de la telefono; ekde konstruo 28 la skanilo de la telefona apo rekonas ĝin kaj malfermas tiun paĝon.
+
+Pli: [ensaluti per via telefono](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [kion la ekranoj sendas kaj konservas](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
 
 <a id="go-immersive-on-meta-quest"></a>
 ### Mergiĝi sur Meta Quest
@@ -175,7 +197,7 @@ Sur Meta Quest la sama apo funkcias kiel fenestro kun via tuta biblioteko, kaj �
 </p>
 
 1. Instalu la apon el la [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), aŭ flanke ŝarĝu la APK de pli nova konstruo, vidu [Instali](#meta-quest).
-2. Sur la bonveniga paĝo, tuŝetu "Uzi sen servilo" por la propraj fotoj kaj videoj de la kasko, aŭ "Konektiĝi al Immich-servilo" por ensaluti per via servilo.
+2. Sur la bonveniga paĝo, tuŝetu "Uzi sen servilo" por la propraj fotoj kaj videoj de la kasko, aŭ "Konektiĝi al Immich-servilo": tajpu la kodon, kiun la kasko montras, en Immuch360 sur via telefono ([ensaluti per via telefono](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), aŭ ensalutu per via servila adreso, retpoŝtadreso kaj pasvorto.
 3. Malfermu 360°-foton aŭ videon kaj premu 360°: la merga vido malfermiĝas. B aŭ Y, aŭ la butono Reen de la informa panelo, revenigas la fenestron.
 
 Pli: [en la kasko Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [la kasko: kodekoj, vendejo kaj permesoj](../docs/immuch360/platform-support.md#meta-quest).
@@ -190,8 +212,8 @@ La sama Android-apo funkcias sur Android TV kaj Google TV, kun malhela temo ekde
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="La videoludilo de Immuch360 Desktop sur Windows: video de strato ludanta en la fenestro, kun la butono Paŭzigi, la tempobreto, Kunhavigi kaj Alŝuti al Immich">
 </p>
 
-1. Sur televidilo: instalu la APK per adb (vidu [Instali](#android-tv-and-google-tv)); sur la bonveniga paĝo, elektu "Aldoni retan kunhavigon aŭ aŭdvidan servilon" por kunhavigo, Plex-servilo aŭ kamerao, "Uzi sen servilo", aŭ "Konektiĝi al Immich-servilo".
-2. Sur Windows-komputilo: instalu la antaŭeldonon aŭ elpaku ĝin kaj lanĉu `immuch360.exe` (vidu [Instali](#windows)); ekde labortabla konstruo 5, "Uzi sen servilo" sur la bonveniga paĝo malfermas la elekton de viaj dosierujoj, kaj "Konektiĝi al Immich-servilo" la ensalutan paĝon. Foto, video aŭ dosierujo malfermita per la programo, aŭ faligita sur ĝia fenestro, malfermiĝas tuj, 360°-a en sia 360°-spektilo; pluraj dosieroj malfermiĝas kune sur unu paĝo.
+1. Sur televidilo: instalu la APK per adb (vidu [Instali](#android-tv-and-google-tv)); sur la bonveniga paĝo, elektu "Aldoni retan kunhavigon aŭ aŭdvidan servilon" por kunhavigo, Plex-servilo aŭ kamerao, "Uzi sen servilo", aŭ "Konektiĝi al Immich-servilo", kies paĝo ensalutigas la televidilon kiam vi skanas ĝian QR-kodon per via telefono (vidu [Ensaluti per via telefono](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
+2. Sur Windows-komputilo: instalu la antaŭeldonon aŭ elpaku ĝin kaj lanĉu `immuch360.exe` (vidu [Instali](#windows)); ekde labortabla konstruo 5, "Uzi sen servilo" sur la bonveniga paĝo malfermas la elekton de viaj dosierujoj, kaj "Konektiĝi al Immich-servilo" la ensalutan paĝon, kun ĝia QR-kodo por via telefono. Foto, video aŭ dosierujo malfermita per la programo, aŭ faligita sur ĝia fenestro, malfermiĝas tuj, 360°-a en sia 360°-spektilo; pluraj dosieroj malfermiĝas kune sur unu paĝo.
 3. En spektilo, la klavoj ludi kaj paŭzigi, retroiri, antaŭeniri, antaŭa kaj sekva de la teleregilo funkcias, kaj same la klavaraj klavoj sur komputilo (Spaceto, J kaj L, F por tutekrano). Sur televidilo, OK dum video montras la regilojn kun ludi kaj paŭzigi elektita, sekvata de la butonoj -10 s kaj +10 s, kaj dua OK paŭzigas; la regiloj kaj la dato kaŝiĝas 5 s post la lasta klavo. Videoj ne plu ripetiĝas sur televidilo, krom se vi ŝaltas Agordoj, Dosiera spektilo, Videoj, Ripetado.
 4. Sur televidilo, la klavo Menu, la klavo Info aŭ OK tenata premita malfermas la detalojn de la foto aŭ video, nur por legado: dato, loko, kamerao, kodeko, grandeco kaj bitrapido. Video, kiun la televidilo ne povas deĉifri, diras tion, kun sia kodeko, sia grandeco kaj la limo de la deĉifriloj de la televidilo, anstataŭ ŝargiĝi senfine; 360°-video preter la deĉifriloj demandas antaŭ ol malfermi la 360°-ludilon, kaj la kialo estas skribita sur la paĝo Logs de la profila menuo.
 
@@ -200,7 +222,7 @@ Pli: [spekti sur via televidilo](../docs/immuch360/user-guide.md#watch-on-your-t
 <a id="immuch360-on-an-lg-tv-webos"></a>
 ### Immuch360 sur LG-televidilo (webOS)
 
-Immuch360 ekzistas ankaŭ kiel Immich-apo por LG webOS-televidiloj: aparta apo por LG-televidiloj kun webOS 4.0 kaj pli nova (ekde 2018), regata per la teleregilo, kiu montras vian Immich-servilon kaj metas viajn 360°-fotojn sur sferon, kiun vi turnas per la sagoj. La propraj apoj de Immich ne instaliĝas sur LG-televidilo. Ĝi estas konstruita sur [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) de Seeky91, kiu alportis la templinion, la albumojn, la homojn, la lokojn, la serĉon, la bildoprezenton kaj la ensaluton per telefono; dankon al Seeky91. Versio 0.1.0 estas testa konstruo: ĝi ankoraŭ ne funkciis sur reala LG-televidilo, ĝi instaliĝas nur en Developer Mode, kaj ĉiu raporto en [Issues](https://github.com/freeKC/Immuch360/issues) helpas.
+Immuch360 ekzistas ankaŭ kiel Immich-apo por LG webOS-televidiloj: aparta apo por LG-televidiloj kun webOS 4.0 kaj pli nova (ekde 2018), regata per la teleregilo, kiu montras vian Immich-servilon kaj metas viajn 360°-fotojn sur sferon, kiun vi turnas per la sagoj. La propraj apoj de Immich ne instaliĝas sur LG-televidilo. Ĝi estas konstruita sur [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) de Seeky91, kiu alportis la templinion, la albumojn, la homojn, la lokojn, la serĉon, la bildoprezenton kaj la ensaluton per telefono; dankon al Seeky91. Testa konstruo 0.2.0 aldonas la retajn kunhavigojn, Plex kaj la vivan vidon de Tapo-kameraoj. Versio 0.1.0 funkciis sur LG-televidilo de testanto (webOS 22); 0.2.0 ankoraŭ ne funkciis sur reala televidilo. Ĝi instaliĝas nur en Developer Mode, kaj ĉiu raporto en [Issues](https://github.com/freeKC/Immuch360/issues) helpas.
 
 <p align="center">
   <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
@@ -210,15 +232,18 @@ Immuch360 ekzistas ankaŭ kiel Immich-apo por LG webOS-televidiloj: aparta apo p
 2. Ensalutu per via telefono (skanu la QR-kodon), per via retpoŝtadreso kaj pasvorto, aŭ per API-ŝlosilo.
 3. Foliumu per la sagoj kaj OK. En la spektilo, Maldekstren kaj Dekstren iras al la antaŭa aŭ sekva foto aŭ video, ankaŭ dum video ludas; la regiloj kaŝiĝas 5 s post la lasta klavo; Info malfermas la detalojn; la kanalaj klavoj zomas; la montrilo kaj la rado de Magic Remote funkcias.
 4. 360°-foto malfermiĝas sur sfero, kiun vi turnas per la sagoj; "Vidi kiel 360°" kovras 2:1-foton, kiun la servilo ne markas; VR180-foto aperas sur duonsfero kaj 3D-foto kun unu okulo. La flava kaj la blua klavoj turnas platan foton.
+5. Ekde 0.2.0, post ensaluto, "Retaj kunhavigoj" en la flanka strio de la apo: aldonu SMB-, WebDAV- aŭ DLNA-kunhavigon, Plex-servilon (ensalutigitan per kodo ĉe plex.tv/link) aŭ Tapo-kameraon. Iliaj fotoj malfermiĝas en la sama spektilo, 360°-fotoj sur la sfero.
 
-Ne en ĉi tiu konstruo: 360°-videoj sur la sfero (ili ludas plate, kun mesaĝo), retaj kunhavigoj, Plex kaj Tapo-kameraoj (planataj), alŝutoj. Kiam video ne ludas, mesaĝo donas ĝian formaton kaj grandecon anstataŭ senfina ŝargindikilo. Sur webOS antaŭ 25, la inversa prokurilo antaŭ Immich devas sendi CORS-kapojn; la apo klarigas ilin kiam ĝi renkontas la problemon.
+La kunhavigoj, Plex kaj la kameraoj bezonas webOS 5 (televidiloj de 2020) aŭ pli novan, kaj SMB webOS 22 (televidiloj de 2022) aŭ pli novan. Ili venas tra la propra servo de la apo sur la televidilo, kiu legas ilin por la apo, kaj estis kontrolitaj kontraŭ realaj serviloj sur la konstrua maŝino de la projekto, ankoraŭ ne sur televidilo. La viva vido de kamerao estas nur bildo, sen sono.
+
+Ankoraŭ ne: la registraĵoj de la kameraoj (ne antaŭ decembro 2026) kaj ilia sono, 360°-videoj sur la sfero (ili ludas plate, kun mesaĝo), alŝutoj. Kiam video ne ludas, mesaĝo donas ĝian formaton kaj grandecon anstataŭ senfina ŝargindikilo. Sur webOS antaŭ 25, la inversa prokurilo antaŭ Immich devas sendi CORS-kapojn; la apo klarigas ilin kiam ĝi renkontas la problemon.
 
 Pli: [la webOS-apo: instalado, teleregilaj klavoj, CORS-kapoj](../webos/README.md).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 ### Kameraoj, Plex kaj krudaj kameraaj dosieroj
 
-- **Tapo-kameraoj**: kamerao estas aldonata apud la retaj kunhavigoj. La apo montras ĝin viva (Android, Android TV, la Quest kaj Windows) kaj listigas la registraĵojn de ĝia memorkarto tagon post tago sur ĉiu platformo; klipo estas prenata de la kamerao, ludas kiel ajna video kaj povas esti sendita al Immich. La apo parolas kun la kamerao nur en via reto, neniam kun la serviloj de TP-Link.
+- **Tapo-kameraoj**: kamerao estas aldonata apud la retaj kunhavigoj. La apo montras ĝin viva (Android, Android TV, la Quest, Windows kaj, nur bildo, LG-televidiloj ekde webOS 0.2.0; iPhone kaj iPad ekde la venonta iOS-eldono) kaj listigas la registraĵojn de ĝia memorkarto tagon post tago sur ĉiu platformo; klipo estas prenata de la kamerao, ludas kiel ajna video kaj povas esti sendita al Immich. La apo parolas kun la kamerao nur en via reto, neniam kun la serviloj de TP-Link.
 - **Plex Media Server, sen plex.tv**: la apo paras kun via servilo rekte, per ĵetono, kiun vi algluas unufoje, kaj legas la originalajn dosierojn de viaj bibliotekoj vive, do 360° restas 360°, hejme kaj, per via pordotransplasigo, ekster hejmo.
 - **Krudaj dosieroj de 360°-kameraoj**: la krudaj .insp-fotoj kaj .insv-videoj de Insta360-kameraoj (unu aŭ du lensoj, en unu trako, du trakoj aŭ du dosieroj), la .360-dosieroj de la GoPro MAX kaj la .osv-dosieroj de la DJI Osmo 360 estas kunkudritaj de la apo dum ili ludas, kun la kalibrado skribita en la dosiero, kun nenio instalenda ie ajn. Sur Android, ludu ilin el kunhavigo, komputilo aŭ via servilo, ĉar la galerio de la telefono ne listigas krudajn dosierojn; la Immich-servilo akceptas nur .insp kaj .insv.
 
@@ -240,6 +265,20 @@ Importu la fotojn kaj videojn de DJI-drono per USB, rekte al via Immich-servilo:
 
 La 360°-aj sferoj de DJI-dronoj (Mini, Air, Mavic kaj aliaj, rekonataj laŭ ilia kamerao) aperas kiel 360° en Immuch360 eĉ sen 360°-etikedoj. Immich bezonas tiujn etikedojn: la alŝuta opcio "Marki dronajn sferojn kiel 360° por Immich", malŝaltita defaŭlte, sendas la foton senŝanĝe kun malgranda .xmp-dosiero apude, por ke ankaŭ Immich montru ĝin kiel sferon. La Neo 2 ne havas sferan aŭ panoraman reĝimon: ĝiaj fotoj kaj videoj estas plataj. Kiam la telefono registris la sonon de Neo 2-klipo, tiu sono estas en aparta .m4a-dosiero: la paĝo markas la klipon, kaj Immich ricevas ĝin sen sono (elŝutu ĝin per DJI Fly por konservi la sonon). Ĉiu fotila karto kun dosierujo DCIM funkcias same en kartlegilo. Nenio estas sendata al DJI.
 
+<a id="dji-link-diagnostics-experimental"></a>
+### Diagnozo de DJI-ligo (eksperimenta)
+
+La longtempa celo estas la video de DJI-drono en la Meta Quest, per la propra regilo de la drono konektita al la kasko. Neniu scias ankoraŭ, ĉu Quest povas legi DJI-regilon per ĝia kablo. La paĝo DJI-ligo estas la unua paŝo, mezurilo sur la Meta Quest kaj sur Android-telefonoj kaj tabulkomputiloj: ĝi montras, ĉu la aparato povas legi la regilon kaj kio alvenas, kaj konservas kaptaĵon de tio.
+
+Ĝi nur aŭskultas. Neniu komando iam estas sendita al la regilo aŭ al la drono: la unu bajto, kiun la paĝo skribas ĉiun sekundon, ekde 20 sekundoj post kiam la regilo malfermiĝas, nur indikas, ĉu la regilo akceptas datumojn, kaj portas neniun komandon.
+
+1. Agordoj, Progresintaj: "Diagnozo de DJI-ligo (eksperimenta)" estas defaŭlte ŝaltita (neniam sur televidilo); la kahelo "DJI-ligo" estas en Biblioteko, Retaj kunhavigoj.
+2. Malfermu ĝin kaj legu la sekurecan avizon. La unua bloko diras, ĉu ĉi tiu aparato entute povas legi USB-akcesoraĵon; se ne, ankaŭ tio estas respondo.
+3. Tuŝetu "Komenci la kaptadon", poste konektu la regilon per ĝia kablo, kun la drono malŝaltita. Se Android demandas, kiu apo malfermu ĝin, elektu Immuch360 sen "Ĉiam", kio forprenus la regilon de DJI Fly.
+4. Observu la staton ("Akcesoraĵo malfermita", "La ligo akceptas bajtojn", "Kadroj de la regilo alvenas") kaj la nombrilojn, poste "Eksporti la kaptaĵon": tri dosieroj en `Download/Immuch360/dji-link`.
+
+Ĝi ankoraŭ ne renkontis realan regilon. Testo kun DJI-regilo, unue RC-N3 kun Neo 2, estas bonvena: afiŝu la statojn kaj nombrilojn, kiujn la paĝo montras, en [Issues](https://github.com/freeKC/Immuch360/issues), kaj tenu la eksportitajn dosierojn por vi mem, kiel la paĝo diras, ĉar ili enhavas la serian numeron de la regilo.
+
 <a id="devices-and-systems"></a>
 ## Aparatoj kaj sistemoj
 
@@ -248,6 +287,7 @@ Unu fontkodbazo por ses medioj, kaj aparta apo por LG-televidiloj. Kion ĉiu hav
 | Kapablo | Android | iPhone, iPad | Android TV | LG webOS | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|
 | Galerio, albumoj, serĉo per Immich-servilo | ✅ | ✅ | ✅ spektilo | ✅ spektilo | ✅ |
+| Ensaluti per via telefono (QR-kodo) | ✅ skanas la kodon | 🔜 venonta iOS-eldono | ✅ | ✅ en la retumilo de la telefono | ✅ kodo tajpita sur la telefono |
 | Sen servilo: la propraj memeaĵoj de la aparato | ✅ | ✅ | nur kunhavigoj | ❌ | ✅ |
 | Plataj fotoj kaj videoj | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Turni foton per unu klavo | ✅ | ✅ | ✅ koloraj klavoj | ✅ koloraj klavoj | ✅ fenestro |
@@ -257,13 +297,14 @@ Unu fontkodbazo por ses medioj, kaj aparta apo por LG-televidiloj. Kion ĉiu hav
 | Spaca 2.5D (kapsekvado) | ✅ eksperimenta | ✅ eksperimenta | ❌ | ❌ | ❌ |
 | Apple-spacaj fotoj | ✅ unu okulo | ✅ unu okulo | ✅ unu okulo | ❌ | ✅ 3D |
 | Krudaj Insta360-, GoPro- kaj DJI-dosieroj | ✅ | ✅ | ✅ | ❌ | ✅ |
-| SMB-, WebDAV-, DLNA-kunhavigoj | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Tapo-kameraoj: registraĵoj | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Tapo-kameraoj: viva vido | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| SMB-, WebDAV-, DLNA-kunhavigoj | ✅ | ✅ | ✅ | ✅ SMB ekde webOS 22, WebDAV kaj DLNA ekde webOS 5 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ ekde webOS 5 | ✅ |
+| Tapo-kameraoj: registraĵoj | ✅ | ✅ | ✅ | 🔜 ne antaŭ decembro 2026 | ✅ |
+| Tapo-kameraoj: viva vido | ✅ | 🔜 venonta iOS-eldono | ✅ | ✅ nur bildo, ekde webOS 5 | ✅ |
 | Kunhavigi ĉi tiun aparaton en la reto | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Alŝuti al Immich el kunhavigoj kaj la aparato | ✅ | ✅ | ❌ | ❌ | ✅ |
 | Importi el DJI-drono aŭ karto per USB (eksperimenta) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Diagnozo de DJI-ligo (eksperimenta) | ✅ | ❌ | ❌ | ❌ | ✅ |
 | Malhela temo | kiel la sistemo | kiel la sistemo | ✅ defaŭlte | ✅ sola temo | kiel la sistemo |
 | Enigo | tuŝo, giroskopo | tuŝo, giroskopo | teleregilo; Maldekstren kaj Dekstren ankaŭ dum video, Menu por la detaloj | teleregilo, Magic Remote | regiloj, manoj |
 | Kie akiri ĝin | Google Play, APK | App Store (en revizio) | APK, Google Play (en revizio) | .ipk testa konstruo, Developer Mode | Horizon Store, APK |
@@ -271,13 +312,14 @@ Unu fontkodbazo por ses medioj, kaj aparta apo por LG-televidiloj. Kion ĉiu hav
 | Kapablo | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
 | Galerio, albumoj, serĉo per Immich-servilo | ✅ | 🔧 CI | 🔧 CI |
+| Ensaluti per via telefono (QR-kodo) | ✅ | 🔧 CI | 🔧 CI |
 | Sen servilo: la propraj memeaĵoj de la aparato | ✅ dosierujoj | ✅ dosierujoj | ✅ dosierujoj |
 | Plataj fotoj kaj videoj | ✅ | ✅ | ✅ |
 | Turni foton per unu klavo | ✅ | ✅ | ✅ |
 | 360°-fotoj kiel sfero | ✅ | ✅ | 🔧 CI |
 | 360°-videoj | ✅ | nur plate | nur plate |
 | 3D kaj VR180 | ✅ unu okulo | fotoj unu okulo, videoj plate | fotoj unu okulo, videoj plate |
-| Spaca 2.5D (kapsekvado) | 🔜 | ❌ | ❌ |
+| Spaca 2.5D (kapsekvado) | 🔜 en evoluigo | ❌ | ❌ |
 | Apple-spacaj fotoj | ✅ unu okulo | 🔧 CI | 🔧 CI |
 | Krudaj Insta360-, GoPro- kaj DJI-dosieroj | ✅ | 🔧 CI fotoj, videoj plate | 🔧 CI fotoj, videoj plate |
 | SMB-, WebDAV-, DLNA-kunhavigoj | ✅ | 🔧 CI | 🔧 CI |
@@ -287,18 +329,19 @@ Unu fontkodbazo por ses medioj, kaj aparta apo por LG-televidiloj. Kion ĉiu hav
 | Kunhavigi ĉi tiun aparaton en la reto | ✅ | ❌ | ❌ |
 | Alŝuti al Immich el kunhavigoj kaj la aparato | ✅ | 🔧 CI | 🔧 CI |
 | Importi el DJI-drono aŭ karto per USB (eksperimenta) | ❌ | ❌ | ❌ |
+| Diagnozo de DJI-ligo (eksperimenta) | ❌ | ❌ | ❌ |
 | Malhela temo | kiel la sistemo | kiel la sistemo | kiel la sistemo |
 | Enigo | muso, klavaro | muso, klavaro | muso, klavaro, tuŝplato |
-| Kie akiri ĝin | instalilo aŭ ZIP (antaŭeldono) | .deb, .rpm (antaŭeldono) | DMG aŭ ZIP (nesubskribita antaŭeldono) |
+| Kie akiri ĝin | instalilo aŭ ZIP (subskribita antaŭeldono) | .deb, .rpm (antaŭeldono) | DMG aŭ ZIP (nesubskribita antaŭeldono) |
 
-✅ en la apo sur tiu platformo · ❌ ne proponata tie · 🔜 planata · 🔧 CI en la fontkodo, konstruata kaj lanĉata de la CI de la projekto sur tiu sistemo, ankoraŭ ne kontrolita tie kun reala servilo, kunhavigo aŭ kamerao · nur plate: la video ludas plate, kun mesaĝo, ĉar la 360°-videobildigilo de la komputiloj funkcias nur sur Windows, kaj sur LG-televidiloj ankoraŭ restas mezuri, ĉu webOS transdonas la videokadrojn al la sfero. "Unu okulo" signifas, ke 3D-dosiero montras sian maldekstran okulon sur plata ekrano. La kolumno LG webOS estas aparta apo, kies testa konstruo 0.1.0 trapasas siajn testojn ĉe la CI de la projekto kaj ankoraŭ ne funkciis sur televidilo. Ne ĉiu ✅ estis kontrolita sur reala aparato ankoraŭ: kio estis kontrolita kie, kaj kio restas por konfirmi, estas en [Funkcioj](../docs/immuch360/features.md), [Subteno de platformoj](../docs/immuch360/platform-support.md) kaj [Kongrueco](../docs/immuch360/compatibility.md).
+✅ en la apo sur tiu platformo · ❌ ne proponata tie · 🔜 planata · 🔧 CI en la fontkodo, konstruata kaj lanĉata de la CI de la projekto sur tiu sistemo, ankoraŭ ne kontrolita tie kun reala servilo, kunhavigo aŭ kamerao · nur plate: la video ludas plate, kun mesaĝo, ĉar la 360°-videobildigilo de la komputiloj funkcias nur sur Windows, kaj sur LG-televidiloj ankoraŭ restas mezuri, ĉu webOS transdonas la videokadrojn al la sfero. "Unu okulo" signifas, ke 3D-dosiero montras sian maldekstran okulon sur plata ekrano. La kolumno LG webOS estas aparta apo, testa konstruo 0.2.0: 0.1.0 funkciis sur LG-televidilo de testanto, dum la kunhavigoj, Plex kaj la kameraoj de 0.2.0 estis kontrolitaj kontraŭ realaj serviloj sur la konstrua maŝino de la projekto, ankoraŭ ne sur televidilo. Ne ĉiu ✅ estis kontrolita sur reala aparato ankoraŭ: kio estis kontrolita kie, kaj kio restas por konfirmi, estas en [Funkcioj](../docs/immuch360/features.md), [Subteno de platformoj](../docs/immuch360/platform-support.md) kaj [Kongrueco](../docs/immuch360/compatibility.md).
 
 - **Android-telefonoj kaj tabulkomputiloj**: la kompleta apo, tuŝo kaj giroskopo, ĉiu fonto.
-- **iPhone kaj iPad**: la kompleta apo; la 360°-videoludilo havas nur ludi kaj paŭzigi, la Tapo-viva vido venas poste, kaj la DLNA-serĉo sendas unikastajn petojn ĝis Apple donas la multikastan rajtigon.
-- **Android TV kaj Google TV**: la sama APK, regata de la teleregilo, malhela defaŭlte; spektilo: savkopio, alŝutoj kaj la redaktilo estas kaŝitaj kaj la detaloj estas nur por legado, sed foto ankoraŭ turniĝas per unu klavo. Ĉiu serĉfiltrilo funkcias per la teleregilo: Loko kaj Kamerao malfermas siajn elektojn en listo, la datfiltrilo montras ĉiujn siajn elektojn, kaj la folioj Etikedoj, Loko, Dato, Memeaĵa tipo, Stelpoentado kaj Montraj opcioj metas Viŝi kaj Apliki apud la elektoj, unu Dekstren for, sur la plejparto de la ekranalto. La fotokrado uzas malpli da bildmemoro, kaj tenata sago movas ĝin maksimume ĉirkaŭ 10 vicojn sekunde. Kontrolita sur la Google TV-emulilo; unua testo sur reala Android TV, la 21-an de oktobro, kondukis al la televidaj ŝanĝoj de konstruo 27, kiuj ankoraŭ ne estis provitaj sur reala televidilo.
-- **LG-televidiloj kun webOS 4.0 kaj pli nova**: aparta apo por la teleregilo kaj la Magic Remote, konstruita sur [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): Immich-spektilo kun la 360°-fotoj sur sfero, foto turnata per unu klavo, malhela temo kaj la 89 lingvoj de la apo (la malmultaj tekstoj de la televida apo mem en la angla nuntempe); ankoraŭ neniuj kunhavigoj, Plex aŭ kameraoj, 360°-videoj plate. Testa konstruo 0.1.0, kontrolita per siaj testoj ĉe la CI de la projekto, ankoraŭ ne sur televidilo.
+- **iPhone kaj iPad**: la kompleta apo; la 360°-videoludilo havas nur ludi kaj paŭzigi, la Tapo-viva vido kaj la telefona parto de la ensaluto per via telefono venos kun la venonta iOS-eldono, kaj la DLNA-serĉo sendas unikastajn petojn ĝis Apple donas la multikastan rajtigon.
+- **Android TV kaj Google TV**: la sama APK, regata de la teleregilo, malhela defaŭlte; spektilo: savkopio, alŝutoj kaj la redaktilo estas kaŝitaj kaj la detaloj estas nur por legado, sed foto ankoraŭ turniĝas per unu klavo. Ĉiu serĉfiltrilo funkcias per la teleregilo: Loko kaj Kamerao malfermas siajn elektojn en listo, la datfiltrilo montras ĉiujn siajn elektojn, kaj la folioj Etikedoj, Loko, Dato, Memeaĵa tipo, Stelpoentado kaj Montraj opcioj metas Viŝi kaj Apliki apud la elektoj, unu Dekstren for, sur la plejparto de la ekranalto. La fotokrado uzas malpli da bildmemoro, kaj tenata sago movas ĝin maksimume ĉirkaŭ 10 vicojn sekunde. Ekde konstruo 28 ĝi ensalutas de telefono, per sia QR-kodo aŭ sia mallonga kodo (provita inter du emuliloj kun tajpita kodo, ankoraŭ ne per kamerao). Kontrolita sur la Google TV-emulilo; unua testo sur reala Android TV, la 21-an de oktobro, kondukis al la televidaj ŝanĝoj de konstruo 27, kiuj ankoraŭ ne estis provitaj sur reala televidilo.
+- **LG-televidiloj kun webOS 4.0 kaj pli nova**: aparta apo por la teleregilo kaj la Magic Remote, konstruita sur [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): Immich-spektilo kun la 360°-fotoj sur sfero, foto turnata per unu klavo, malhela temo kaj la 89 lingvoj de la apo (la malmultaj tekstoj de la televida apo mem en la angla nuntempe); ekde 0.2.0 la retaj kunhavigoj, Plex kaj la viva vido de Tapo-kameraoj, tra sia propra servo sur la televidilo (webOS 5 kaj pli nova, SMB ekde webOS 22); 360°-videoj plate. Versio 0.1.0 funkciis sur LG-televidilo de testanto (webOS 22); 0.2.0 estis kontrolita per siaj testoj kaj kontraŭ realaj serviloj sur la konstrua maŝino de la projekto, ankoraŭ ne sur televidilo.
 - **Meta Quest 2, Pro, 3 kaj 3S**: la apo kiel fenestro, plus la merga vido; HEVC estas la sekura kodeko, H.264 haltas ĉirkaŭ 4096x2304 sur la Quest 3; nur la Quest 3 estas testita, la Quest 2, Quest Pro kaj Quest 3S ankoraŭ ne estas testitaj.
-- **Windows 10 kaj 11**: antaŭeldono, kun dosierujoj anstataŭ galerio, propra videoludilo (libmpv) por plataj kaj 360°-aj videoj, krudaj dosieroj kunkudritaj sur la grafika blato, dosieroj kaj dosierujoj malfermitaj per la programo aŭ faligitaj sur la fenestro, instalilo aŭ ZIP.
+- **Windows 10 kaj 11**: antaŭeldono, kun dosierujoj anstataŭ galerio, propra videoludilo (libmpv) por plataj kaj 360°-aj videoj, krudaj dosieroj kunkudritaj sur la grafika blato, dosieroj kaj dosierujoj malfermitaj per la programo aŭ faligitaj sur la fenestro, instalilo aŭ ZIP, subskribitaj de APROGSYS.
 - **Linux**: .deb kaj .rpm konstruitaj de la CI de la projekto, instalitaj kaj kontrolitaj sur Ubuntu 22.04 kaj 24.04, Debian 12 kaj Fedora 40 kaj 44; fotoj, 360°-fotoj kaj plataj videoj per la libmpv de la sistemo (360°-, 3D- kaj krudaj videoj ludas plate kun mesaĝo), desegnitaj per la aparatara vojo ankaŭ en X11-seancoj ekde labortabla konstruo 7; SMB-kunhavigoj ekde Ubuntu 22.04 kaj Debian 12; sen ŝlosilaro (GNOME Keyring aŭ KWallet) la apo ne plu frostiĝas dum 25 s ĉe sia unua lanĉo: ĝi konservas la pasvortojn nur por la seanco kaj diras tion en siaj agordoj; ankoraŭ ne lanĉita sur reala Linux-komputilo, nur sub WSLg kaj en ujoj.
 - **macOS**: DMG kaj ZIP konstruitaj de la CI de la projekto, universalaj, nesubskribitaj (Gatekeeper demandas unufoje); ĝi lanĉiĝas, malfermas la dosierojn kaj dosierujojn donitajn al ĝi, ankaŭ el Finder, konservas siajn sekretojn en la ensaluta ŝlosilaro kaj ludas platajn videojn per sia propra libmpv, ĉio kontrolita nur sur la CI-Mac de la projekto; nenio ankoraŭ funkciis sur reala Mac.
 
@@ -315,7 +358,7 @@ Kion la apo povas legi kaj ludi, por la leganto, kiu volas la tutan amplekson. �
 - **Legado laŭpete**: loka ponto servas la ludilojn per bajtintervaloj kaj ĵetono po seanco; grandaj blokoj, legado-antaŭen kaj ĝis ses paralelaj SMB-konektoj; bildetoj el kadro de ĉiu video; nenio kopiata al la aparato.
 - **Aparataro**: aparataraj deĉifriloj uzataj kie ajn ili ekzistas, kun iliaj mezuritaj limoj (la H.264-plafono de la Quest 3, maksimume du 2048x2048-lensoj por programaraj deĉifriloj); sur Windows la 360°-vido desegnita de la grafika blato el ĉiu deĉifrita kadro, la kadrograndeco mezurita sur ĉiu komputilo, la integrita aŭ diligenta blato detektita.
 - **Platformaj detaloj**: la giroskopo kaj la Spatial 2.5D-ludilo sur telefonoj; la merga vido, la regiloj kaj la manoj sur la Quest; la teleregila aranĝo, la klavardialogo kaj la televida rubando sur Android TV; sur la komputilo, muso kaj klavaro, tutekrano, unu sola fenestro, dosieroj kaj dosierujoj malfermitaj per la programo aŭ faligitaj sur ĝia fenestro, legataj kiel la dosieroj de viaj dosierujoj, HEIC-, AVIF-, TIFF- kaj krudaj kameraaj fotoj de la dosierujoj kiam Windows havas deĉifrilon por ili, kaj la datumprotekto de Windows por pasvortoj kaj ĵetonoj.
-- **Privateco per konstruo**: neniu konto, neniu nubo, neniu analitiko; pasvortoj kaj ĵetonoj en la sekura konservejo de la aparato; la kamerao de la Spaca ludilo uzata nur sur la aparato; kunhavigoj, Plex kaj kameraoj atingataj nur en via reto.
+- **Privateco per konstruo**: neniu konto, neniu nubo, neniu analitiko; pasvortoj kaj ĵetonoj en la sekura konservejo de la aparato; ekrano ensalutigita de telefono ricevas propran seancon, senditan ĉifrita en la hejma reto, neniam la pasvorton; la kamerao de la Spaca ludilo kaj de la kodskanilo uzata nur sur la aparato; kunhavigoj, Plex kaj kameraoj atingataj nur en via reto.
 
 <a id="technical-documentation"></a>
 ## Teknika dokumentaro
@@ -357,7 +400,7 @@ Kion la apo povas legi kaj ludi, por la leganto, kiu volas la tutan amplekson. �
 
 1. Vi bezonas LG-televidilon kun webOS 4.0 aŭ pli nova, komputilon en la sama reto kaj senpagan LG-programistan konton. Sur la televidilo, instalu Developer Mode el la LG Content Store, ensalutu, ŝaltu Dev Mode Status kaj lasu la televidilon rekomenci; notu ĝian IP-adreson kaj la pasfrazon, kiun la apo montras.
 2. Sur la komputilo, instalu la webOS CLI (Node.js 18 aŭ pli nova): `npm install -g @webos-tools/cli`, poste registru la televidilon per `ares-setup-device` (ĝia IP-adreso, pordo 9922, uzanto `prisoner`) kaj `ares-novacom --device <name> --getkey`, kiu petas la pasfrazon.
-3. Elŝutu `Immuch360-webOS-0.1.0.ipk` el la [webOS-antaŭeldono](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0), kontrolu ĝin kontraŭ `SHA256SUMS.txt`, poste `ares-install --device <name> Immuch360-webOS-0.1.0.ipk`. La [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) de webosbrew faras la samon sen komandlinio.
+3. Elŝutu `Immuch360-webOS-0.2.0.ipk` el la [webOS-antaŭeldono](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0), kontrolu ĝin kontraŭ `SHA256SUMS.txt`, poste `ares-install --device <name> Immuch360-webOS-0.2.0.ipk`. La [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) de webosbrew faras la samon sen komandlinio.
 4. Seanco de Developer Mode daŭras 1000 horojn kaj la butono EXTEND de la apo Developer Mode renovigas ĝin; kiam ĝi eksvalidiĝas, la televidilo forigas la apojn instalitajn tiel. La detaloj estas en [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
 
 <a id="meta-quest"></a>
@@ -370,23 +413,23 @@ Kion la apo povas legi kaj ludi, por la leganto, kiu volas la tutan amplekson. �
 <a id="windows"></a>
 ### Windows
 
-1. Elŝutu `Immuch360-Desktop-3.3.0-rc.0-desktop.7-windows-x64-setup.exe` el la [labortabla antaŭeldono](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) (kun `SHA256SUMS.txt` por kontroli ĝin) kaj malfermu ĝin. La dosieroj ankoraŭ ne estas subskribitaj: Windows SmartScreen povas montri "Windows protected your PC", elektu "More info" poste "Run anyway".
+1. Elŝutu `Immuch360-Desktop-3.3.0-rc.0-desktop.8-windows-x64-setup.exe` el la [labortabla antaŭeldono](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) (kun `SHA256SUMS.txt` por kontroli ĝin) kaj malfermu ĝin. La instalilo kaj la ZIP estas subskribitaj; Windows montras APROGSYS kiel eldoninton. Dum la eldoninto estas nova por SmartScreen, ĝi eble ankoraŭ demandos unufoje: "More info", poste "Run anyway".
 2. Elektu "Install for me only" (sen administrantaj rajtoj) aŭ "Install for all users", poste la lingvon de la instalilo, tiun de Windows jam elektitan.
 3. Lanĉu Immuch360 Desktop el la menuo Start. Fotoj kaj videoj ricevas ĝin en "Open with" (dekstre klaku dosieron, Open with); ĝi neniam iĝas ilia defaŭlta programo. La unua lanĉo de nova konstruo povas daŭri ĝis unu minuton, dum Windows skanas la dosierojn.
 4. Windows 10 aŭ 11, 64-bita. Por ĝisdatigi, malfermu la instalilon de la sekva konstruo: via ensaluto, dosierujoj kaj agordoj restas. La ZIP de la sama eldono estas la sama programo kiel dosierujo, por elpaki ie ajn kaj lanĉi `immuch360.exe` el ĝi.
 
 ### Linux
 
-Sur Ubuntu 22.04 aŭ pli nova kaj Debian 12 aŭ pli nova: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-amd64.deb`; sur Fedora 40 aŭ pli nova: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-x86_64.rpm`, ambaŭ el la [labortabla antaŭeldono](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7). Poste lanĉu Immuch360 Desktop el viaj aplikaĵoj. Antaŭeldono: la dosierujoj de la komputilo, fotoj kaj 360°-fotoj kiel sfero, kaj plataj videoj per la libmpv de la sistemo, kiun la pakaĵo instalas (360°-, 3D- kaj krudaj videoj ludas plate, kun mesaĝo); SMB-kunhavigoj funkcias ekde Ubuntu 22.04 kaj Debian 12. Sur Fedora, kameraaj videoj bezonas la FFmpeg de RPM Fusion. Sen GNOME Keyring aŭ KWallet, la pasvortoj estas konservataj nur por la seanco, kaj la agordoj de la apo diras tion.
+Sur Ubuntu 22.04 aŭ pli nova kaj Debian 12 aŭ pli nova: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-amd64.deb`; sur Fedora 40 aŭ pli nova: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-x86_64.rpm`, ambaŭ el la [labortabla antaŭeldono](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8). Poste lanĉu Immuch360 Desktop el viaj aplikaĵoj. Antaŭeldono: la dosierujoj de la komputilo, fotoj kaj 360°-fotoj kiel sfero, kaj plataj videoj per la libmpv de la sistemo, kiun la pakaĵo instalas (360°-, 3D- kaj krudaj videoj ludas plate, kun mesaĝo); SMB-kunhavigoj funkcias ekde Ubuntu 22.04 kaj Debian 12. Sur Fedora, kameraaj videoj bezonas la FFmpeg de RPM Fusion. Sen GNOME Keyring aŭ KWallet, la pasvortoj estas konservataj nur por la seanco, kaj la agordoj de la apo diras tion.
 
 ### macOS
 
-Malfermu `Immuch360-Desktop-3.3.0-rc.0-desktop.7-macos.dmg` el la [labortabla antaŭeldono](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) kaj trenu la apon al Applications (Apple-silicio kaj Intel, macOS 12 aŭ pli nova). Ĝi ankoraŭ ne estas subskribita nek notarigita: klaku ĝin tenante la klavon Control kaj elektu Open sur macOS 14 kaj pli malnova, aŭ elektu "Open Anyway" en System Settings, Privacy & Security sur macOS 15 kaj pli nova. Neniu laboranta por la projekto havas Mac-on: la apo funkciis nur sur la CI-Mac de la projekto, kie ĝi malfermas dosierojn kaj dosierujojn kaj ludas platajn videojn per sia propra libmpv; ĝia reta aliro ne estis provita. Raportoj estas bonvenaj.
+Malfermu `Immuch360-Desktop-3.3.0-rc.0-desktop.8-macos.dmg` el la [labortabla antaŭeldono](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) kaj trenu la apon al Applications (Apple-silicio kaj Intel, macOS 12 aŭ pli nova). Ĝi ankoraŭ ne estas subskribita nek notarigita: klaku ĝin tenante la klavon Control kaj elektu Open sur macOS 14 kaj pli malnova, aŭ elektu "Open Anyway" en System Settings, Privacy & Security sur macOS 15 kaj pli nova. Neniu laboranta por la projekto havas Mac-on: la apo funkciis nur sur la CI-Mac de la projekto, kie ĝi malfermas dosierojn kaj dosierujojn kaj ludas platajn videojn per sia propra libmpv; ĝia reta aliro ne estis provita. Raportoj estas bonvenaj.
 
 <a id="privacy"></a>
 ## Privateco
 
-Nenio iras al la programisto: neniu konto, neniu analitiko, neniu kraŝ-raporta servo, neniu reklamado. La apo parolas nur kun la serviloj, kiujn vi elektas (via Immich-servilo, viaj kunhavigoj, via Plex-servilo, viaj kameraoj) kaj, sen servilo, kun nenio entute. Pasvortoj kaj ĵetonoj restas en la sekura konservejo de la aparato. La kamerao de la Spaca 2.5D-ludilo estas uzata nur sur la aparato; ĝiaj bildoj neniam konserviĝas kaj neniam sendiĝas ien ajn. La plena politiko estas en [PRIVACY.md](../PRIVACY.md), kaj la detaloj po fonto en la [uzula gvidilo](../docs/immuch360/user-guide.md#privacy).
+Nenio iras al la programisto: neniu konto, neniu analitiko, neniu kraŝ-raporta servo, neniu reklamado. La apo parolas nur kun la serviloj, kiujn vi elektas (via Immich-servilo, viaj kunhavigoj, via Plex-servilo, viaj kameraoj) kaj, sen servilo, kun nenio entute. Pasvortoj kaj ĵetonoj restas en la sekura konservejo de la aparato. La kamerao estas uzata nur sur la aparato, de la Spaca 2.5D-ludilo kaj por skani la kodon de ekrano, kiun vi ensalutigas; ĝiaj bildoj neniam konserviĝas kaj neniam sendiĝas ien ajn. Ekrano ensalutigita de via telefono ricevas propran seancon, senditan ĉifrita en via hejma reto, neniam vian pasvorton. La plena politiko estas en [PRIVACY.md](../PRIVACY.md), kaj la detaloj po fonto en la [uzula gvidilo](../docs/immuch360/user-guide.md#privacy).
 
 <a id="the-project"></a>
 ## La projekto
@@ -402,13 +445,13 @@ La telefonaj ekrankopioj de ĉi tiu paĝo estis prenitaj sur la Android-konstruo
 
 Kio ankoraŭ ne estas farita, la plej verŝajna unue. Nenio ĉi tie estas promeso, kaj komentoj en la [cimspurilo](https://github.com/freeKC/Immuch360/issues) helpas decidi, kio venos unue.
 
-- **La vendejoj**: Google Play (konstruo 26 en revizio, poste konstruo 27; la TV-listigo en revizio), la App Store (versio 3.3.1 en revizio ekde la 14-a de oktobro), la Meta Horizon Store (konstruo 25 en revizio).
-- **Komputiloj**: la mana testo de ĉiu funkcio sur Windows-komputilo; poste la 360°-videobildigilo sur Linux kaj macOS, testo sur reala Mac kaj sur reala Linux-komputilo; poste subskribita konstruo kaj aŭtomataj ĝisdatigoj; poste Spaca 2.5D per la retkamerao.
-- **Televidiloj**: testo de konstruo 27 sur reala Android TV; la LG webOS-apo sur reala LG-televidilo, poste ĝiaj 360°-videoj sur la sfero kaj la retaj kunhavigoj, Plex kaj Tapo-kameraoj; QR-kodo por parigi televidilon aŭ komputilon kun telefono, dum la granda ekrano montras ĝin kaj la telefono skanas ĝin.
-- **Telefonoj kaj tabulkomputiloj**: tempobreto en la iOS 360°-videoludilo, antaŭa kaj sekva en la 360°-ludiloj de telefonoj, la elekto de sonspuro en la plata ludilo, la Tapo-viva vido sur iPhone kaj iPad.
+- **La vendejoj**: Google Play (konstruo 28 en revizio; la TV-listigo en revizio), la App Store (versio 3.3.1 en revizio, poste versio 3.3.2 kun konstruo 28), la Meta Horizon Store (konstruo 28 en revizio).
+- **Komputiloj**: la mana testo de ĉiu funkcio sur Windows-komputilo, inkluzive de la ensaluto per via telefono; Spaca 2.5D per la retkamerao sur Windows, en evoluigo por novembro 2026; poste la 360°-videobildigilo sur Linux kaj macOS, testo sur reala Mac kaj sur reala Linux-komputilo; poste aŭtomataj ĝisdatigoj kaj subskribita macOS-apo.
+- **Televidiloj**: testo de konstruoj 27 kaj 28 sur reala Android TV, inkluzive de la ensaluto per via telefono; webOS 0.2.0 sur reala LG-televidilo, kun ĝiaj kunhavigoj, Plex kaj viva vido; poste la 360°-videoj sur la sfero, la sono de la kameraoj kaj iliaj registraĵoj (ne antaŭ decembro 2026).
+- **Telefonoj kaj tabulkomputiloj**: la Tapo-viva vido kaj la ensalutigo de grandaj ekranoj sur iPhone kaj iPad kun la venonta iOS-eldono; tempobreto en la iOS 360°-videoludilo, antaŭa kaj sekva en la 360°-ludiloj de telefonoj, la elekto de sonspuro en la plata ludilo.
 - **Mergaj memeaĵoj**: duobla fiŝokula .dng, ebenigo de GoPro- kaj DJI-videoj el iliaj propraj movdatumoj, spacaj videoj en 3D sur la Quest se ĝiaj deĉifriloj permesas tion, antaŭa kaj sekva inter spacaj fotoj en la kasko.
 - **Fontoj**: svingado inter la dosieroj de kunhavigita dosierujo, Digest-aŭtentigo por WebDAV, QR-kodo por alporti la Plex-ĵetonon de la komputilo, IPv6 por Plex, H.265-Tapo-registraĵoj, kanaloj sur la hejma ekrano de la televidilo.
-- **Dronoj**: testo kun reala DJI Neo 2, poste la sono registrita de la telefono kunfandita en ĝian klipon; la viva vido kaj la regado de la kamerao de la drono restas por poste.
+- **Dronoj**: testo kun reala DJI Neo 2, poste la sono registrita de la telefono kunfandita en ĝian klipon; la paĝo DJI-ligo kun reala regilo, la unua paŝo al la video de drono en la Meta Quest. Nenio, kio sendas komandon al drono, estas planata antaŭ tiuj testoj.
 - **Kontraŭflue (upstream)**: malgrandaj tirpetoj al Immich por la partoj, kiujn la prizorgantoj volas, komencante per la 360°-fotomontrilo.
 
 La plena listo, kun la aparataj kontroloj ankoraŭ pritraktendaj por ĉiu funkcio, estas en [Statuso de eldonoj](../docs/immuch360/release-status.md#roadmap).

@@ -47,6 +47,20 @@ Uint8List _virtualBytes(int start, int end) {
   return bytes;
 }
 
+final _playlistBytes = Uint8List.fromList(ascii.encode('#EXTM3U\n#EXT-X-VERSION:7\n'));
+
+// Generated media held in memory, telling what the bridge asked of it
+class _MemoryMedia implements GeneratedMedia {
+  final files = <String, GeneratedFile>{};
+  final asked = <String>[];
+
+  @override
+  GeneratedFile? file(String name) {
+    asked.add(name);
+    return files[name];
+  }
+}
+
 // A share held in memory, counting what the bridge asks of it
 class _MemoryShare implements NetworkFileSystem {
   _MemoryShare(String id) : source = NetworkSource(id: id, type: NetworkSourceType.smb, name: 'Share $id', host: 'nas');
@@ -577,6 +591,72 @@ void main() {
       final changed = await _send(url, range: 'bytes=0-9', ifRange: HttpDate.format(DateTime.utc(2020)));
       expect(changed.status, HttpStatus.ok);
       expect(changed.body, photo);
+    });
+  });
+
+  group('generated media', () {
+    late _MemoryMedia live;
+
+    setUp(() {
+      live = _MemoryMedia()
+        ..files['live.m3u8'] = GeneratedFile(_playlistBytes, 'application/vnd.apple.mpegurl')
+        ..files['seg3.m4s'] = GeneratedFile(clip, 'video/mp4');
+      bridge.registerGenerated('a1b2c3d4e5f6a7b8c9d0e1f2', live);
+    });
+
+    test('serves the playlist and the segments from memory, never cached', () async {
+      final playlist = await _send(bridge.urlFor('a1b2c3d4e5f6a7b8c9d0e1f2', 'live.m3u8'));
+      expect(playlist.status, HttpStatus.ok);
+      expect(playlist.body, _playlistBytes);
+      expect(playlist.header(HttpHeaders.contentTypeHeader), 'application/vnd.apple.mpegurl');
+      expect(playlist.header(HttpHeaders.cacheControlHeader), 'no-cache');
+      expect(playlist.header(HttpHeaders.contentLengthHeader), '${_playlistBytes.length}');
+
+      final segment = await _send(bridge.urlFor('a1b2c3d4e5f6a7b8c9d0e1f2', 'seg3.m4s'));
+      expect(segment.body, clip);
+      expect(segment.header(HttpHeaders.contentTypeHeader), 'video/mp4');
+      expect(live.asked, ['live.m3u8', 'seg3.m4s']);
+    });
+
+    test('answers ranges and HEAD from memory', () async {
+      final url = bridge.urlFor('a1b2c3d4e5f6a7b8c9d0e1f2', 'seg3.m4s');
+      final part = await _send(url, range: 'bytes=0-1');
+      expect(part.status, HttpStatus.partialContent);
+      expect(part.body, clip.sublist(0, 2));
+      expect(part.header(HttpHeaders.contentRangeHeader), 'bytes 0-1/${clip.length}');
+      final tail = await _send(url, range: 'bytes=-10');
+      expect(tail.body, clip.sublist(clip.length - 10));
+      expect((await _send(url, range: 'bytes=${clip.length}-')).status, HttpStatus.requestedRangeNotSatisfiable);
+
+      final head = await _send(url, method: 'HEAD');
+      expect(head.status, HttpStatus.ok);
+      expect(head.body, isEmpty);
+      expect(head.header(HttpHeaders.contentLengthHeader), '${clip.length}');
+    });
+
+    test('a file the media does not have, a wrong token, another method', () async {
+      final url = bridge.urlFor('a1b2c3d4e5f6a7b8c9d0e1f2', 'seg9.m4s');
+      expect((await _send(url)).status, HttpStatus.notFound);
+      final playlist = bridge.urlFor('a1b2c3d4e5f6a7b8c9d0e1f2', 'live.m3u8');
+      expect((await _send(_withToken(playlist, 'A' * 32))).status, HttpStatus.notFound);
+      expect((await _send(playlist, method: 'POST')).status, HttpStatus.methodNotAllowed);
+      expect(live.asked, isNot(contains('live.m3u8')), reason: 'nothing asked for a refused request');
+      // Deeper paths are no file of generated media
+      final deeper = playlist.replace(pathSegments: [...playlist.pathSegments.take(2), 'sub', 'live.m3u8']);
+      expect((await _send(deeper)).status, HttpStatus.notFound);
+    });
+
+    test('nothing once unregistered; the shares are still served', () async {
+      bridge.unregisterGenerated('a1b2c3d4e5f6a7b8c9d0e1f2');
+      expect((await _send(bridge.urlFor('a1b2c3d4e5f6a7b8c9d0e1f2', 'live.m3u8'))).status, HttpStatus.notFound);
+      expect((await _send(bridge.urlFor('nas1', '/photo.jpg'))).body, photo);
+    });
+
+    test('still served after the bridge listens again', () async {
+      final url = bridge.urlFor('a1b2c3d4e5f6a7b8c9d0e1f2', 'live.m3u8');
+      await bridge.stop();
+      await bridge.start();
+      expect((await _send(url)).body, _playlistBytes);
     });
   });
 

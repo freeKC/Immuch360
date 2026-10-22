@@ -738,7 +738,6 @@
   "camera_live_failed": "La visualització en directe no s'ha iniciat: {error}",
   "camera_live_full_screen": "Pantalla completa",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "La visualització en directe arribarà a l'iPhone i l'iPad en una versió posterior. Els enregistraments ja es reprodueixen aquí.",
   "camera_live_needs_account": "Afegeix el compte de la càmera per veure la visualització en directe.",
   "camera_live_no_sound": "Sense so en aquest dispositiu",
   "camera_live_sd": "SD",

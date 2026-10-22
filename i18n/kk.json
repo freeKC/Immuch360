@@ -76,7 +76,6 @@
   "camera_live_failed": "Тікелей көрініс басталмады: {error}",
   "camera_live_full_screen": "Толық экран",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Тікелей көрініс iPhone мен iPad құрылғыларына кейінгі нұсқада келеді. Жазбалар мұнда қазірдің өзінде ойнатылады.",
   "camera_live_needs_account": "Тікелей көріністі көру үшін камера тіркелгісін қосыңыз.",
   "camera_live_no_sound": "Осы құрылғыда дыбыс жоқ",
   "camera_live_sd": "SD",

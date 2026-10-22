@@ -737,7 +737,6 @@
   "camera_live_failed": "实时画面未能启动：{error}",
   "camera_live_full_screen": "全屏",
   "camera_live_hd": "高清",
-  "camera_live_later_on_ios": "实时画面将在以后的版本中登陆 iPhone 和 iPad。录像现在已可在此播放。",
   "camera_live_needs_account": "添加摄像头账号以查看实时画面。",
   "camera_live_no_sound": "此设备上没有声音",
   "camera_live_sd": "标清",

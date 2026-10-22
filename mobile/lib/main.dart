@@ -31,6 +31,8 @@ import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
+import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
+import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/theme.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
@@ -47,6 +49,7 @@ import 'package:immich_mobile/utils/debug_print.dart';
 import 'package:immich_mobile/utils/libsmb2_license.dart';
 import 'package:immich_mobile/utils/licenses.dart';
 import 'package:immich_mobile/utils/migration.dart';
+import 'package:immich_mobile/utils/pairing_licenses.dart';
 import 'package:immich_mobile/wm_executor.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -156,6 +159,8 @@ Future<void> initApp() async {
   });
   // libsmb2, the native library of the SMB shares (lib/utils/libsmb2_license.dart)
   LicenseRegistry.addLicense(libsmb2Licenses);
+  // The noble libraries of the browser page of the big screens, ZXing on Android (lib/utils/pairing_licenses.dart)
+  LicenseRegistry.addLicense(pairingLicenses);
 }
 
 class ImmichApp extends ConsumerStatefulWidget {
@@ -229,7 +234,16 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
     final isColdStart = currentRouteName == null || currentRouteName == SplashScreenRoute.name;
 
     PageRouteInfo? route;
-    if (deepLink.uri.scheme == "immich") {
+    // The address of a big screen, from the browser page it serves (sign in with your phone): the Connect page scans
+    // its code; a big screen itself ignores the link
+    if (deepLink.uri.scheme == 'immuch360' && deepLink.uri.host == 'pair') {
+      final address = await pairingLinkAddress(deepLink.uri, isBigScreen: () => isBigScreenNow(ref));
+      if (address != null && currentRouteName == ConnectScreenRoute.name) {
+        ref.read(pendingPairingLinkProvider.notifier).state = address;
+        return DeepLink.none;
+      }
+      route = address == null ? null : ConnectScreenRoute(linkedAddress: address);
+    } else if (deepLink.uri.scheme == "immich") {
       route = await deepLinkHandler.handleScheme(deepLink, ref);
     } else if (deepLink.uri.host == "my.immich.app") {
       route = await deepLinkHandler.handleMyImmichApp(deepLink, ref);

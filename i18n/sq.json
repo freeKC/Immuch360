@@ -727,7 +727,6 @@
   "camera_live_failed": "Pamja e drejtpërdrejtë nuk nisi: {error}",
   "camera_live_full_screen": "Ekran i plotë",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Pamja e drejtpërdrejtë vjen në iPhone dhe iPad në një version të mëvonshëm. Regjistrimet luhen tashmë këtu.",
   "camera_live_needs_account": "Shtoni llogarinë e kamerës për të parë pamjen e drejtpërdrejtë.",
   "camera_live_no_sound": "Nuk ka zë në këtë pajisje",
   "camera_live_sd": "SD",

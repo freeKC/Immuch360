@@ -738,7 +738,6 @@
   "camera_live_failed": "Canlı görüntü başlamadı: {error}",
   "camera_live_full_screen": "Tam ekran",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Canlı görüntü iPhone ve iPad'e daha sonraki bir sürümde gelecek. Kayıtlar burada şimdiden oynatılabiliyor.",
   "camera_live_needs_account": "Canlı görüntüyü görmek için kamera hesabını ekleyin.",
   "camera_live_no_sound": "Bu cihazda ses yok",
   "camera_live_sd": "SD",

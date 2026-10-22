@@ -11,8 +11,9 @@ Immuch360 er frjálst og opið forrit til að finna, skoða, spila og kanna mynd
 
 - **Hvað gerir það?** Það sýnir myndirnar þínar og myndskeiðin þín sem myndasafn og spilar þau í þeim skoðara sem passar við hverja skrá: flatt, sem kúlu sem þú skoðar í kringum þig, í 3D, í höfuðtæki.
 - **Hvaða efni?** Flatar myndir og myndskeið, víðmyndir, 360° myndir og myndskeið, VR180, stereóskópísk 3D-myndskeið, rýmismyndir frá Apple, 360° kúlur úr DJI drónum, og óunnar skrár úr 360° myndavélum (Insta360, GoPro MAX, DJI Osmo 360), saumaðar saman af forritinu.
-- **Á hvaða tækjum?** Android símum og spjaldtölvum, iPhone og iPad, Android TV og Google TV, LG sjónvörpum með webOS (sérstakt forrit, fyrsta prófunarbuild), Meta Quest 2, Pro, 3 og 3S, Windows (forskoðun), og Linux og macOS sem frumstigs forskoðanir.
+- **Á hvaða tækjum?** Android símum og spjaldtölvum, iPhone og iPad, Android TV og Google TV, LG sjónvörpum með webOS (sérstakt forrit, í prófunarbuildum), Meta Quest 2, Pro, 3 og 3S, Windows (forskoðun), og Linux og macOS sem frumstigs forskoðanir.
 - **Þarf ég vélþjón eða reikning?** Nei. Immuch360 virkar sjálfstætt með efninu á tækinu þínu. Immich vélþjónn, NAS-tæki, miðlaþjónn eða Plex vélþjónn eru valkostir sem þú bætir við þegar þú vilt.
+- **Hvernig skrái ég sjónvarp, höfuðtæki eða tölvu inn?** Með símanum þínum: skannaðu QR-kóðann sem innskráningarsíða tækisins sýnir, eða sláðu inn kóðann þess, staðfestu, og tækið opnast á Immich safninu þínu á nokkrum sekúndum, án þess að slá neitt inn með fjarstýringu.
 
 <p align="center">
   <sub>Óopinber grein af Immich farsímaforritinu. Ekki tengt Immich eða FUTO. Nafnið má lesa sem „I am much 360“.</sub>
@@ -22,13 +23,13 @@ Immuch360 er frjálst og opið forrit til að finna, skoða, spila og kanna mynd
 
 | Kerfi | Hvar á að sækja það | Staða 22. október 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** símar og spjaldtölvur | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | á Google Play (build 25; build 26 í yfirferð), build 27 á GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | útgáfa 3.3.1 (build 24) hefur beðið eftir yfirferð Apple síðan 14. október; [byggðu forritið](../docs/immuch360/build.md) á meðan |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 27 á GitHub: dökkt þema sjálfgefið, Vinstri og Hægri meðan myndskeið spilast, skýr skilaboð þegar myndskeið getur ekki spilast; sjónvarpsskráningin er í yfirferð hjá Google |
-| **LG sjónvörp** með webOS 4.0 og nýrra | [.ipk prófunarbuild](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0) | prófunarbuild 0.1.0 frá 21. október, til uppsetningar í [Developer Mode](#lg-tvs-webos); ekki enn keyrt á raunverulegu LG sjónvarpi |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | á Horizon Store (build 23; build 25 í yfirferð), build 27 á GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Uppsetningarforrit eða ZIP-skrá](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | desktop build 7, forskoðunarútgáfa: myndir, flöt og 360° myndskeið, deildir, Plex, myndavélar, skrár opnaðar með forritinu, myndum snúið með einum takka, viðmótið á 89 tungumálum |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS og Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | forskoðanir: á Linux myndir, 360° myndir og flöt myndskeið (360° myndskeið spilast flöt); á macOS það sama, aðeins staðfest á Mac-vél CI verkefnisins, óundirritað |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** símar og spjaldtölvur | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | á Google Play (build 25; build 28 sent í yfirferð hjá Google), build 28 á GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone og iPad** | App Store | útgáfa 3.3.1 (build 27) bíður eftir yfirferð Apple, send aftur 22. október; [byggðu forritið](../docs/immuch360/build.md) á meðan |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV og Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 28 á GitHub: [innskráning með símanum](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) með því að skanna QR-kóða; sjónvarpsskráningin er í yfirferð hjá Google |
+| **LG sjónvörp** með webOS 4.0 og nýrra | [.ipk prófunarbuild](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) | prófunarbuild 0.2.0, til uppsetningar í [Developer Mode](#lg-tvs-webos): netdeildir, Plex og beint streymi Tapo; 0.1.0 keyrði á LG sjónvarpi prófanda, 0.2.0 ekki enn á raunverulegu sjónvarpi |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 og 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | á Horizon Store (build 25; build 28 sent til Meta), build 28 á GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Uppsetningarforrit eða ZIP-skrá](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | desktop build 8, undirrituð forskoðunarútgáfa: myndir, flöt og 360° myndskeið, deildir, Plex, myndavélar, innskráning með símanum, myndum snúið með einum takka, viðmótið á 89 tungumálum |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS og Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | forskoðanir: á Linux myndir, 360° myndir og flöt myndskeið (360° myndskeið spilast flöt); á macOS það sama, aðeins staðfest á Mac-vél CI verkefnisins, óundirritað |
 
 *Stöðurnar eru uppfærðar við hverja útgáfu; nánari upplýsingar, fyrir hvert build, eru í [Stöðu útgáfu](../docs/immuch360/release-status.md).*
 
@@ -48,11 +49,13 @@ Immuch360 er frjálst og opið forrit til að finna, skoða, spila og kanna mynd
   - [Nota þínar eigin skrár, án reiknings](#use-your-own-files-without-an-account)
   - [Ná í efni á NAS, tölvu eða miðlaþjóni](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
   - [Finna Immich safnið þitt](#find-your-immich-library)
+  - [Skrá sjónvarp, höfuðtæki eða tölvu inn með símanum](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Fara á kaf í Meta Quest](#go-immersive-on-meta-quest)
   - [Horfa á sjónvarpinu og tölvunni](#watch-on-the-tv-and-on-the-computer)
   - [Immuch360 á LG sjónvarpi (webOS)](#immuch360-on-an-lg-tv-webos)
   - [Myndavélar, Plex og óunnar myndavélaskrár](#cameras-plex-and-raw-camera-files)
   - [Myndir og myndskeið DJI drónans þíns á Immich vélþjóninum þínum](#your-dji-drones-photos-and-videos-on-your-immich-server)
+  - [Greining á DJI tengingu (tilraun)](#dji-link-diagnostics-experimental)
 - [Tæki og stýrikerfi](#devices-and-systems)
 - [Ítarlegri eiginleikar](#advanced-features)
 - [Tæknileg skjöl](#technical-documentation)
@@ -159,9 +162,28 @@ Með [Immich](https://github.com/immich-app/immich) vélþjóni er Immuch360 Imm
 2. Í Stillingum, Skráarskoðun, Myndskeið, velur „Uppruni myndskeiðs“ upprunalegu skrána þegar þetta tæki afkóðar hana, alltaf upprunalegu skrána, eða alltaf umkóðaða streymið.
 3. Til að sýna 360° mynd einhverjum sem er ekki með forritið, deildu henni með Immich deilitengli: Immich vefforritið sýnir hana sem kúlu í vafranum hjá viðkomandi.
 
-Núverandi build, build 27, byggir á Immich `main` frá 10. október 2026 (útgáfa 3.3.0-rc.0) og var prófað gegn Immich 3.2.4 vélþjóni og vélþjóni byggðum úr sama Immich `main`. Vinsamlegast tilkynntu vandamál í [Issues](https://github.com/freeKC/Immuch360/issues), ekki til Immich verkefnisins.
+Núverandi build, build 28, byggir á Immich `main` frá 10. október 2026 (útgáfa 3.3.0-rc.0) og var prófað gegn vélþjóni byggðum úr sama Immich `main`; build 27 var einnig prófað gegn Immich 3.2.4 vélþjóni. Vinsamlegast tilkynntu vandamál í [Issues](https://github.com/freeKC/Immuch360/issues), ekki til Immich verkefnisins.
 
 Meira: [allt annað er Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [í samanburði við Immich forritið](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+
+<a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
+### Skrá sjónvarp, höfuðtæki eða tölvu inn með símanum
+
+Að slá inn vistfang vélþjóns, netfang og lykilorð með sjónvarpsfjarstýringu, eða í höfuðtæki, tekur mínútur. Með Immuch360 á símanum þínum, innskráðu á Immich vélþjóninn þinn, er sjónvarp, Meta Quest eða tölva skráð inn á nokkrum sekúndum: stóri skjárinn sýnir QR-kóða, síminn skannar hann, þú staðfestir, og skjárinn opnast á safninu þínu. Með símaforritinu helst lykilorðið þitt á símanum. Immich forritið hefur ekkert sambærilegt.
+
+<p align="center">
+  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Sjónvarp sýnir QR-kóða á innskráningarsíðu sinni, og sími sem haldið er fyrir framan það skannar sama kóðann">
+</p>
+
+1. Á stóra skjánum (Android TV og Google TV, Meta Quest glugganum, Windows, Linux eða macOS), veldu „Tengjast Immich-vélþjóni“: innskráningarsíðan sýnir „Skráðu þig inn með símanum“, QR-kóða og 10 stafa kóða, við hliðina á vélþjónsforminu.
+2. Á símanum, innskráðum á vélþjóninn þinn: Stillingar, „Tengja sjónvarp eða tölvu“, síðan „Skanna kóðann“. Í Meta Quest, þar sem sími getur ekki skannað skjáinn, veldu „Slá inn kóða í staðinn“ og sláðu inn kóðann sem höfuðtækið sýnir.
+3. Síminn spyr „Skrá (skjáinn) inn?“ og sýnir sex stafa tölu: athugaðu að skjárinn sýni sömu tölu, ýttu síðan á Skrá inn. Skjárinn opnast á tímalínunni þinni.
+
+Hvernig þetta helst öruggt: síminn og skjárinn verða að vera á sama heimaneti, og kóðinn gildir í mesta lagi tvær mínútur og virkar aðeins einu sinni. Síminn biður vélþjóninn þinn um nýja setu fyrir þann skjá, nefnda eftir honum („Immuch360 á sjónvarpinu í stofunni“), og sendir hana dulkóðaða til skjásins, svo lykilorðið þitt fer aldrei af símanum. „Tengja sjónvarp eða tölvu“ sýnir skjáina sem þessi sími skráði inn, hvern með Skrá út, og Immich sýnir þá í Aðgangsstillingum, Leyfð tæki, þar sem þú getur líka afturkallað þá. Ef síminn er skráður út eru þeir líka skráðir út.
+
+Símahliðin keyrir á Android núna, og á iPhone og iPad frá næstu iOS útgáfu. Án Immuch360 á símanum, skannaðu kóðann með myndavél símans: síða sem skjárinn þjónar opnast í vafranum, fyrir netfangið þitt og lykilorðið, dulkóðuð og notuð einu sinni. LG sjónvörp skrá sig inn með eigin QR-kóða, í vafra símans; frá build 28 þekkir skanni símaforritsins hann og opnar þá síðu.
+
+Meira: [innskráning með símanum](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [hvað skjáirnir senda og geyma](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
 
 <a id="go-immersive-on-meta-quest"></a>
 ### Fara á kaf í Meta Quest
@@ -175,7 +197,7 @@ Meira: [allt annað er Immich](../docs/immuch360/user-guide.md#everything-else-i
 </p>
 
 1. Settu forritið upp úr [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), eða settu upp APK-skrá nýrrar útgáfu handvirkt, sjá [Uppsetning](#meta-quest).
-2. Á upphafssíðunni, ýttu á „Nota án vélþjóns“ fyrir eigin myndir og myndskeið höfuðtækisins, eða „Tengjast Immich-vélþjóni“ til að skrá þig inn með vélþjóninum þínum.
+2. Á upphafssíðunni, ýttu á „Nota án vélþjóns“ fyrir eigin myndir og myndskeið höfuðtækisins, eða „Tengjast Immich-vélþjóni“: sláðu inn kóðann sem höfuðtækið sýnir í Immuch360 á símanum þínum ([innskráning með símanum](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), eða skráðu þig inn með vistfangi vélþjónsins, netfangi og lykilorði.
 3. Opnaðu 360° mynd eða myndskeið og ýttu á 360°: umlykjandi sýnin opnast. B eða Y, eða takkinn Til baka á upplýsingaspjaldinu, færir gluggann til baka.
 
 Meira: [í Meta Quest höfuðtækinu](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [höfuðtækið: kóðekar, verslun og heimildir](../docs/immuch360/platform-support.md#meta-quest).
@@ -190,8 +212,8 @@ Sama Android forritið keyrir á Android TV og Google TV, með dökku þema frá
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Myndskeiðsspilari Immuch360 Desktop á Windows: myndskeið af götu að spilast í glugganum, með hlé-takkanum, tímastikunni, Deila og Hlaða upp í Immich">
 </p>
 
-1. Á sjónvarpi: settu upp APK-skrána með adb (sjá [Uppsetning](#android-tv-and-google-tv)); á upphafssíðunni, veldu „Bæta við netdeilingu eða miðlaþjóni“ fyrir deild, Plex vélþjón eða myndavél, „Nota án vélþjóns“, eða „Tengjast Immich-vélþjóni“.
-2. Á Windows tölvu: settu upp forskoðunarútgáfuna eða afþjappaðu hana og ræstu `immuch360.exe` (sjá [Uppsetning](#windows)); frá desktop build 5 opnar „Nota án vélþjóns“ á upphafssíðunni valið á möppunum þínum, og „Tengjast Immich-vélþjóni“ innskráningarsíðuna. Mynd, myndskeið eða mappa sem opnuð er með forritinu, eða sleppt á gluggann þess, opnast samstundis, 360° skrá í 360° sýn sinni; nokkrar skrár opnast saman á einni síðu.
+1. Á sjónvarpi: settu upp APK-skrána með adb (sjá [Uppsetning](#android-tv-and-google-tv)); á upphafssíðunni, veldu „Bæta við netdeilingu eða miðlaþjóni“ fyrir deild, Plex vélþjón eða myndavél, „Nota án vélþjóns“, eða „Tengjast Immich-vélþjóni“, en síða þess skráir sjónvarpið inn þegar þú skannar QR-kóðann hennar með símanum (sjá [Innskráning með símanum](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
+2. Á Windows tölvu: settu upp forskoðunarútgáfuna eða afþjappaðu hana og ræstu `immuch360.exe` (sjá [Uppsetning](#windows)); frá desktop build 5 opnar „Nota án vélþjóns“ á upphafssíðunni valið á möppunum þínum, og „Tengjast Immich-vélþjóni“ innskráningarsíðuna, með QR-kóða hennar fyrir símann þinn. Mynd, myndskeið eða mappa sem opnuð er með forritinu, eða sleppt á gluggann þess, opnast samstundis, 360° skrá í 360° sýn sinni; nokkrar skrár opnast saman á einni síðu.
 3. Í skoðara virka spilun og hlé, til baka, áfram, fyrri og næsta takkar fjarstýringarinnar, og sömuleiðis lyklaborðstakkarnir í tölvu (Bilslá, J og L, F fyrir heilskjá). Á sjónvarpi sýnir OK meðan myndskeið spilast stýringarnar með spilun og hlé valið, og á eftir því hnappana -10 s og +10 s, og annað OK gerir hlé; stýringarnar og dagsetningin hverfa 5 s eftir síðasta takka. Myndskeið endurtaka sig ekki lengur á sjónvarpi, nema þú kveikir á Stillingar, Eignaskoðari, Myndskeið, Endurtekning.
 4. Á sjónvarpi opnar Menu takkinn, Info takkinn eða OK sem haldið er niðri upplýsingar myndarinnar eða myndskeiðsins, aðeins til lestrar: dagsetning, staður, myndavél, kóðunarsnið, stærð og bitahraði. Myndskeið sem sjónvarpið getur ekki afkóðað segir frá því, með kóðunarsniði sínu, stærð og takmörkum afkóðara sjónvarpsins, í stað þess að hlaðast endalaust; 360° myndskeið sem fer yfir mörk afkóðaranna spyr áður en 360° spilarinn er opnaður, og ástæðan er skráð á Logs síðu prófílvalmyndarinnar.
 
@@ -200,7 +222,7 @@ Meira: [horfa á sjónvarpinu þínu](../docs/immuch360/user-guide.md#watch-on-y
 <a id="immuch360-on-an-lg-tv-webos"></a>
 ### Immuch360 á LG sjónvarpi (webOS)
 
-Immuch360 kemur einnig sem Immich forrit fyrir LG webOS sjónvörp: sérstakt forrit fyrir LG sjónvörp með webOS 4.0 og nýrra (frá 2018), stýrt með fjarstýringunni, sem sýnir Immich vélþjóninn þinn og setur 360° myndirnar þínar á kúlu sem þú snýrð með örvunum. Eigin forrit Immich er ekki hægt að setja upp á LG sjónvarpi. Það er byggt á [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) eftir Seeky91, sem færði tímalínuna, albúmin, fólk, staði, leit, skyggnusýninguna og innskráningu með síma; þakkir til Seeky91. Útgáfa 0.1.0 er prófunarbuild: hún hefur ekki enn keyrt á raunverulegu LG sjónvarpi, hún setst aðeins upp í Developer Mode, og hver tilkynning í [Issues](https://github.com/freeKC/Immuch360/issues) hjálpar.
+Immuch360 kemur einnig sem Immich forrit fyrir LG webOS sjónvörp: sérstakt forrit fyrir LG sjónvörp með webOS 4.0 og nýrra (frá 2018), stýrt með fjarstýringunni, sem sýnir Immich vélþjóninn þinn og setur 360° myndirnar þínar á kúlu sem þú snýrð með örvunum. Eigin forrit Immich er ekki hægt að setja upp á LG sjónvarpi. Það er byggt á [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) eftir Seeky91, sem færði tímalínuna, albúmin, fólk, staði, leit, skyggnusýninguna og innskráningu með síma; þakkir til Seeky91. Prófunarbuild 0.2.0 bætir við netdeildum, Plex og beinu streymi Tapo myndavéla. Útgáfa 0.1.0 keyrði á LG sjónvarpi prófanda (webOS 22); 0.2.0 hefur ekki enn keyrt á raunverulegu sjónvarpi. Það setst aðeins upp í Developer Mode, og hver tilkynning í [Issues](https://github.com/freeKC/Immuch360/issues) hjálpar.
 
 <p align="center">
   <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
@@ -210,15 +232,18 @@ Immuch360 kemur einnig sem Immich forrit fyrir LG webOS sjónvörp: sérstakt fo
 2. Skráðu þig inn með símanum þínum (skannaðu QR-kóðann), með netfangi og lykilorði, eða með API-lykli.
 3. Flettu með örvunum og OK. Í skoðaranum fara Vinstri og Hægri í fyrri eða næstu mynd eða myndskeið, líka meðan myndskeið spilast; stýringarnar hverfa 5 s eftir síðasta takka; Info opnar upplýsingarnar; rásatakkarnir þysja; bendill og hjól Magic Remote virka.
 4. 360° mynd opnast á kúlu sem þú snýrð með örvunum; „Skoða sem 360°“ nær yfir 2:1 mynd sem vélþjónninn merkir ekki; VR180 mynd birtist á hálfkúlu og 3D mynd með einu auga. Gulu og bláu takkarnir snúa flatri mynd.
+5. Frá 0.2.0, eftir innskráningu, „Netdeildir“ í hliðarstiku forritsins: bættu við SMB, WebDAV eða DLNA deild, Plex vélþjóni (innskráður með kóða á plex.tv/link) eða Tapo myndavél. Myndir þeirra opnast í sama skoðara, 360° myndir á kúlunni.
 
-Ekki í þessu build: 360° myndskeið á kúlunni (þau spilast flöt, með skilaboðum), netdeildir, Plex og Tapo myndavélar (áætlað), upphleðslur. Þegar myndskeið spilast ekki, gefa skilaboð upp snið þess og stærð í stað endalauss hleðslutákns. Á webOS fyrir útgáfu 25 verður öfugi milliþjónninn (reverse proxy) fyrir framan Immich að senda CORS hausa; forritið útskýrir þá þegar það rekst á vandann.
+Deildirnar, Plex og myndavélarnar þurfa webOS 5 (sjónvörp frá 2020) eða nýrra, og SMB webOS 22 (sjónvörp frá 2022) eða nýrra. Þær koma í gegnum eigin þjónustu forritsins á sjónvarpinu, sem les þær fyrir forritið, og voru staðfestar gegn raunverulegum vélþjónum á byggingarvél verkefnisins, ekki enn á sjónvarpi. Beint streymi myndavélar er aðeins myndskeið, án hljóðs.
+
+Ekki enn: upptökur myndavélanna (ekki fyrr en í desember 2026) og hljóð þeirra, 360° myndskeið á kúlunni (þau spilast flöt, með skilaboðum), upphleðslur. Þegar myndskeið spilast ekki, gefa skilaboð upp snið þess og stærð í stað endalauss hleðslutákns. Á webOS fyrir útgáfu 25 verður öfugi milliþjónninn (reverse proxy) fyrir framan Immich að senda CORS hausa; forritið útskýrir þá þegar það rekst á vandann.
 
 Meira: [webOS forritið: uppsetning, takkar fjarstýringarinnar, CORS hausar](../webos/README.md).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 ### Myndavélar, Plex og óunnar myndavélaskrár
 
-- **Tapo myndavélar**: myndavél er bætt við hjá netdeildunum. Forritið sýnir hana í beinni (Android, Android TV, Quest og Windows) og birtir upptökur af minniskorti hennar dag fyrir dag á öllum kerfum; brot er sótt úr myndavélinni, spilast eins og hvert annað myndskeið og má senda til Immich. Forritið talar aðeins við myndavélina á netinu þínu, aldrei við vélþjóna TP-Link.
+- **Tapo myndavélar**: myndavél er bætt við hjá netdeildunum. Forritið sýnir hana í beinni (Android, Android TV, Quest, Windows og, aðeins myndskeið, LG sjónvörp frá webOS 0.2.0; iPhone og iPad frá næstu iOS útgáfu) og birtir upptökur af minniskorti hennar dag fyrir dag á öllum kerfum; brot er sótt úr myndavélinni, spilast eins og hvert annað myndskeið og má senda til Immich. Forritið talar aðeins við myndavélina á netinu þínu, aldrei við vélþjóna TP-Link.
 - **Plex Media Server, án plex.tv**: forritið pörast beint við vélþjóninn þinn, með tóki sem þú límir inn einu sinni, og lesur upprunalegu skrár safnanna þinna í beinni, svo 360° er áfram 360°, heima og, með framsendingu gáttar þinnar, að heiman.
 - **Óunnar skrár úr 360° myndavélum**: óunnar .insp myndir og .insv myndskeið úr Insta360 myndavélum (ein eða tvær linsur, á einni rás, tveimur rásum eða í tveimur skrám), .360 skrár úr GoPro MAX og .osv skrár úr DJI Osmo 360 eru saumaðar saman af forritinu meðan þau spilast, með kvörðunina skrifaða í skránni, án þess að neitt þurfi að setja upp neins staðar. Á Android, spilaðu þær úr deilingu, tölvu eða vélþjóninum þínum, því myndasafn símans sýnir ekki óunnar skrár; Immich vélþjónninn tekur aðeins á móti .insp og .insv.
 
@@ -240,6 +265,20 @@ Fluttu inn myndir og myndskeið DJI dróna yfir USB, beint á Immich vélþjóni
 
 360° kúlur DJI dróna (Mini, Air, Mavic og fleiri, greindar út frá myndavélinni) birtast sem 360° í Immuch360 jafnvel án 360° merkja. Immich þarf þessi merki: upphleðsluvalkosturinn „Merkja drónakúlur sem 360° fyrir Immich“, sjálfgefið óvirkur, sendir myndina óbreytta með lítilli .xmp skrá við hliðina, svo Immich sýni hana líka sem kúlu. Neo 2 hefur engan kúlu- eða víðmyndarham: myndir hans og myndskeið eru flöt. Þegar síminn tók upp hljóð Neo 2 myndbúts er það hljóð í sérstakri .m4a skrá: síðan merkir bútinn, og Immich fær hann án hljóðs (sæktu hann með DJI Fly til að halda hljóðinu). Hvaða myndavélarkort sem er með DCIM möppu virkar eins í kortalesara. Ekkert er sent til DJI.
 
+<a id="dji-link-diagnostics-experimental"></a>
+### Greining á DJI tengingu (tilraun)
+
+Langtímamarkmiðið er myndskeið DJI dróna í Meta Quest, í gegnum eigin fjarstýringu drónans tengda við höfuðtækið. Enginn veit enn hvort Quest getur lesið DJI fjarstýringu um snúru. DJI tengingarsíðan er fyrsta skrefið, mælitæki á Meta Quest og á Android símum og spjaldtölvum: hún sýnir hvort tækið getur lesið fjarstýringuna, hvað berst, og geymir skráningu af því.
+
+Hún hlustar aðeins. Engin skipun er nokkurn tíma send til fjarstýringarinnar eða drónans: eina bætið sem síðan skrifar á hverri sekúndu, frá 20 sekúndum eftir að fjarstýringin opnast, segir aðeins til um hvort fjarstýringin tekur við gögnum, og ber enga skipun.
+
+1. Í Stillingum, Ítarlegt er sjálfgefið kveikt á „Greining á DJI tengingu (tilraun)“ (aldrei á sjónvarpi); reiturinn „DJI tenging“ er í Safn, Netdeildir.
+2. Opnaðu hana og lestu öryggistilkynninguna. Fyrsti hlutinn segir hvort þetta tæki geti yfirleitt lesið USB aukabúnað; ef það getur það ekki, er það líka svar.
+3. Ýttu á „Hefja skráningu“, tengdu síðan fjarstýringuna með snúrunni hennar, með slökkt á drónanum. Ef Android spyr hvaða forrit eigi að opna hana, veldu Immuch360 án „Alltaf“, sem myndi taka fjarstýringuna frá DJI Fly.
+4. Fylgstu með stöðunni („Aukabúnaður opinn“, „Tengingin tekur við bætum“, „Rammar fjarstýringar berast“) og teljurunum, síðan „Flytja út skráninguna“: þrjár skrár í `Download/Immuch360/dji-link`.
+
+Hún hefur ekki enn verið prófuð með raunverulegri fjarstýringu. Prófun með DJI fjarstýringu, fyrst RC-N3 með Neo 2, er vel þegin: birtu stöðurnar og teljarana sem síðan sýnir í [Issues](https://github.com/freeKC/Immuch360/issues), og haltu útfluttu skránum fyrir þig, eins og síðan segir, því þær innihalda raðnúmer fjarstýringarinnar.
+
 <a id="devices-and-systems"></a>
 ## Tæki og stýrikerfi
 
@@ -248,6 +287,7 @@ Einn grunnkóði, sex umhverfi, og sérstakt forrit fyrir LG sjónvörp. Það s
 | Eiginleiki | Android | iPhone, iPad | Android TV | LG webOS | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|
 | Myndasafn, albúm, leit með Immich vélþjóni | ✅ | ✅ | ✅ skoðari | ✅ skoðari | ✅ |
+| Innskráning með símanum (QR-kóði) | ✅ skannar kóðann | 🔜 næsta iOS útgáfa | ✅ | ✅ í vafra símans | ✅ kóði sleginn inn á símanum |
 | Án vélþjóns: eigið efni tækisins | ✅ | ✅ | aðeins deildir | ❌ | ✅ |
 | Flatar myndir og myndskeið | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Snúa mynd með einum takka | ✅ | ✅ | ✅ litatakkar | ✅ litatakkar | ✅ gluggi |
@@ -257,13 +297,14 @@ Einn grunnkóði, sex umhverfi, og sérstakt forrit fyrir LG sjónvörp. Það s
 | Spatial 2.5D (höfuðrakning) | ✅ tilraun | ✅ tilraun | ❌ | ❌ | ❌ |
 | Rýmismyndir frá Apple | ✅ eitt auga | ✅ eitt auga | ✅ eitt auga | ❌ | ✅ 3D |
 | Óunnar skrár úr Insta360, GoPro og DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
-| SMB, WebDAV, DLNA deildir | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Tapo myndavélar: upptökur | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Tapo myndavélar: beint streymi | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| SMB, WebDAV, DLNA deildir | ✅ | ✅ | ✅ | ✅ SMB frá webOS 22, WebDAV og DLNA frá webOS 5 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ frá webOS 5 | ✅ |
+| Tapo myndavélar: upptökur | ✅ | ✅ | ✅ | 🔜 ekki fyrr en í desember 2026 | ✅ |
+| Tapo myndavélar: beint streymi | ✅ | 🔜 næsta iOS útgáfa | ✅ | ✅ aðeins myndskeið, frá webOS 5 | ✅ |
 | Deila þessu tæki á netinu | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Hlaða upp í Immich úr deildum og af tækinu | ✅ | ✅ | ❌ | ❌ | ✅ |
 | Innflutningur úr DJI dróna eða korti yfir USB (tilraun) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Greining á DJI tengingu (tilraun) | ✅ | ❌ | ❌ | ❌ | ✅ |
 | Dökkt þema | eins og kerfið | eins og kerfið | ✅ sjálfgefið | ✅ eina þemað | eins og kerfið |
 | Inntak | snerting, snúðsjá | snerting, snúðsjá | fjarstýring; Vinstri og Hægri líka meðan myndskeið spilast, Menu fyrir upplýsingar | fjarstýring, Magic Remote | stýripinnar, hendur |
 | Hvar má fá það | Google Play, APK | App Store (í yfirferð) | APK, Google Play (í yfirferð) | .ipk prófunarbuild, Developer Mode | Horizon Store, APK |
@@ -271,13 +312,14 @@ Einn grunnkóði, sex umhverfi, og sérstakt forrit fyrir LG sjónvörp. Það s
 | Eiginleiki | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
 | Myndasafn, albúm, leit með Immich vélþjóni | ✅ | 🔧 CI | 🔧 CI |
+| Innskráning með símanum (QR-kóði) | ✅ | 🔧 CI | 🔧 CI |
 | Án vélþjóns: eigið efni tækisins | ✅ möppur | ✅ möppur | ✅ möppur |
 | Flatar myndir og myndskeið | ✅ | ✅ | ✅ |
 | Snúa mynd með einum takka | ✅ | ✅ | ✅ |
 | 360° myndir sem kúla | ✅ | ✅ | 🔧 CI |
 | 360° myndskeið | ✅ | aðeins flatt | aðeins flatt |
 | 3D og VR180 | ✅ eitt auga | myndir eitt auga, myndskeið flöt | myndir eitt auga, myndskeið flöt |
-| Spatial 2.5D (höfuðrakning) | 🔜 | ❌ | ❌ |
+| Spatial 2.5D (höfuðrakning) | 🔜 í þróun | ❌ | ❌ |
 | Rýmismyndir frá Apple | ✅ eitt auga | 🔧 CI | 🔧 CI |
 | Óunnar skrár úr Insta360, GoPro og DJI | ✅ | 🔧 CI myndir, myndskeið flöt | 🔧 CI myndir, myndskeið flöt |
 | SMB, WebDAV, DLNA deildir | ✅ | 🔧 CI | 🔧 CI |
@@ -287,18 +329,19 @@ Einn grunnkóði, sex umhverfi, og sérstakt forrit fyrir LG sjónvörp. Það s
 | Deila þessu tæki á netinu | ✅ | ❌ | ❌ |
 | Hlaða upp í Immich úr deildum og af tækinu | ✅ | 🔧 CI | 🔧 CI |
 | Innflutningur úr DJI dróna eða korti yfir USB (tilraun) | ❌ | ❌ | ❌ |
+| Greining á DJI tengingu (tilraun) | ❌ | ❌ | ❌ |
 | Dökkt þema | eins og kerfið | eins og kerfið | eins og kerfið |
 | Inntak | mús, lyklaborð | mús, lyklaborð | mús, lyklaborð, snertiflötur |
-| Hvar má fá það | uppsetningarforrit eða ZIP-skrá (forskoðun) | .deb, .rpm (forskoðun) | DMG eða ZIP-skrá (óundirrituð forskoðun) |
+| Hvar má fá það | uppsetningarforrit eða ZIP-skrá (undirrituð forskoðun) | .deb, .rpm (forskoðun) | DMG eða ZIP-skrá (óundirrituð forskoðun) |
 
-✅ í forritinu á því kerfi · ❌ ekki í boði þar · 🔜 áætlað · 🔧 CI í grunnkóðanum, byggt og ræst af CI-kerfi verkefnisins á því kerfi, en ekki enn staðfest þar með raunverulegum vélþjóni, deild eða myndavél · aðeins flatt: myndskeiðið spilast flatt, með skilaboðum, því 360° myndskeiðabirtir tölvanna er aðeins til á Windows, og á LG sjónvörpum á enn eftir að mæla hvort webOS afhendir myndramma myndskeiðsins til kúlunnar. „Eitt auga“ þýðir að 3D skrá sýnir vinstra augað á flötum skjá. LG webOS dálkurinn er sérstakt forrit, þar sem prófunarbuild 0.1.0 stenst prófanir sínar á CI verkefnisins og hefur ekki enn keyrt á sjónvarpi. Ekki hefur hvert ✅ verið staðfest á raunverulegu tæki enn: hvað var prófað hvar, og hvað er eftir að staðfesta, er í [eiginleikum](../docs/immuch360/features.md), [stuðningi við kerfi](../docs/immuch360/platform-support.md) og [samhæfni](../docs/immuch360/compatibility.md).
+✅ í forritinu á því kerfi · ❌ ekki í boði þar · 🔜 áætlað · 🔧 CI í grunnkóðanum, byggt og ræst af CI-kerfi verkefnisins á því kerfi, en ekki enn staðfest þar með raunverulegum vélþjóni, deild eða myndavél · aðeins flatt: myndskeiðið spilast flatt, með skilaboðum, því 360° myndskeiðabirtir tölvanna er aðeins til á Windows, og á LG sjónvörpum á enn eftir að mæla hvort webOS afhendir myndramma myndskeiðsins til kúlunnar. „Eitt auga“ þýðir að 3D skrá sýnir vinstra augað á flötum skjá. LG webOS dálkurinn er sérstakt forrit, prófunarbuild 0.2.0: 0.1.0 keyrði á LG sjónvarpi prófanda, en deildir, Plex og myndavélar 0.2.0 voru staðfestar gegn raunverulegum vélþjónum á byggingarvél verkefnisins, ekki enn á sjónvarpi. Ekki hefur hvert ✅ verið staðfest á raunverulegu tæki enn: hvað var prófað hvar, og hvað er eftir að staðfesta, er í [eiginleikum](../docs/immuch360/features.md), [stuðningi við kerfi](../docs/immuch360/platform-support.md) og [samhæfni](../docs/immuch360/compatibility.md).
 
 - **Android símar og spjaldtölvur**: fullkomið forritið, snerting og skynjari, allar uppsprettur.
-- **iPhone og iPad**: fullkomið forritið; 360° myndskeiðsspilarinn hefur aðeins spilun og hlé, Tapo beina streymið kemur síðar, og DLNA leitin sendir einvarpsfyrirspurnir þar til Apple veitir margvarpsheimildina.
-- **Android TV og Google TV**: sama APK-skráin, stýrt með fjarstýringunni, dökk sjálfgefið; skoðari: öryggisafritun, upphleðslur og ritillinn eru falin og upplýsingarnar eru aðeins til lestrar, en mynd snýst samt með einum takka. Hver leitarsía virkar með fjarstýringunni: Staðsetning og Myndavél opna valkosti sína í lista, dagsetningarsían sýnir alla valkosti sína, og blöðin Merki, Staðsetning, Dagsetning, Gerð miðils, Stjörnugjöf og Birtingarvalkostir setja Hreinsa og Nota við hlið valkostanna, einu Hægri frá, á stærstum hluta skjáhæðarinnar. Myndanetið notar minna myndminni, og ör sem haldið er niðri færir það í mesta lagi um 10 raðir á sekúndu. Prófað á Google TV eftirgervlinum; fyrsta prófun á raunverulegu Android TV, 21. október, leiddi til sjónvarpsbreytinga build 27, sem hafa ekki enn verið reyndar á raunverulegu sjónvarpi.
-- **LG sjónvörp með webOS 4.0 og nýrra**: sérstakt forrit fyrir fjarstýringuna og Magic Remote, byggt á [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): Immich skoðari með 360° myndirnar á kúlu, myndum snúið með einum takka, dökkt þema og 89 tungumál forritsins (fáir textar sjónvarpsforritsins sjálfs á ensku í bili); engar deildir, Plex eða myndavélar enn, 360° myndskeið flöt. Prófunarbuild 0.1.0, staðfest með prófunum sínum á CI verkefnisins, ekki enn á sjónvarpi.
+- **iPhone og iPad**: fullkomið forritið; 360° myndskeiðsspilarinn hefur aðeins spilun og hlé, Tapo beina streymið og símahlið innskráningar með símanum koma með næstu iOS útgáfu, og DLNA leitin sendir einvarpsfyrirspurnir þar til Apple veitir margvarpsheimildina.
+- **Android TV og Google TV**: sama APK-skráin, stýrt með fjarstýringunni, dökk sjálfgefið; skoðari: öryggisafritun, upphleðslur og ritillinn eru falin og upplýsingarnar eru aðeins til lestrar, en mynd snýst samt með einum takka. Hver leitarsía virkar með fjarstýringunni: Staðsetning og Myndavél opna valkosti sína í lista, dagsetningarsían sýnir alla valkosti sína, og blöðin Merki, Staðsetning, Dagsetning, Gerð miðils, Stjörnugjöf og Birtingarvalkostir setja Hreinsa og Nota við hlið valkostanna, einu Hægri frá, á stærstum hluta skjáhæðarinnar. Myndanetið notar minna myndminni, og ör sem haldið er niðri færir það í mesta lagi um 10 raðir á sekúndu. Frá build 28 skráir það sig inn úr síma, með QR-kóða sínum eða stutta kóðanum (prófað milli tveggja eftirgervla með innslegnum kóða, ekki enn með myndavél). Prófað á Google TV eftirgervlinum; fyrsta prófun á raunverulegu Android TV, 21. október, leiddi til sjónvarpsbreytinga build 27, sem hafa ekki enn verið reyndar á raunverulegu sjónvarpi.
+- **LG sjónvörp með webOS 4.0 og nýrra**: sérstakt forrit fyrir fjarstýringuna og Magic Remote, byggt á [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): Immich skoðari með 360° myndirnar á kúlu, myndum snúið með einum takka, dökkt þema og 89 tungumál forritsins (fáir textar sjónvarpsforritsins sjálfs á ensku í bili); frá 0.2.0 netdeildir, Plex og beint streymi Tapo myndavéla, í gegnum eigin þjónustu þess á sjónvarpinu (webOS 5 og nýrra, SMB frá webOS 22); 360° myndskeið flöt. Útgáfa 0.1.0 keyrði á LG sjónvarpi prófanda (webOS 22); 0.2.0 var staðfest með prófunum sínum og gegn raunverulegum vélþjónum á byggingarvél verkefnisins, ekki enn á sjónvarpi.
 - **Meta Quest 2, Pro, 3 og 3S**: forritið sem gluggi, auk umlykjandi sýnarinnar; HEVC er öruggi kóðekinn, H.264 stoppar í kringum 4096x2304 á Quest 3; aðeins Quest 3 hefur verið prófaður, Quest 2, Quest Pro og Quest 3S eru ekki prófaðir ennþá.
-- **Windows 10 og 11**: forskoðunarútgáfa, með möppum í stað myndasafns, eigin myndskeiðsspilara (libmpv) fyrir flöt og 360° myndskeið, óunnar skrár saumaðar saman á skjákortinu, skrár og möppur opnaðar með forritinu eða sleppt á gluggann, uppsetningarforrit eða ZIP-skrá.
+- **Windows 10 og 11**: forskoðunarútgáfa, með möppum í stað myndasafns, eigin myndskeiðsspilara (libmpv) fyrir flöt og 360° myndskeið, óunnar skrár saumaðar saman á skjákortinu, skrár og möppur opnaðar með forritinu eða sleppt á gluggann, uppsetningarforrit eða ZIP-skrá, undirritað af APROGSYS.
 - **Linux**: .deb pakki og .rpm pakki byggðir af CI verkefnisins, settir upp og staðfestir á Ubuntu 22.04 og 24.04, Debian 12 og Fedora 40 og 44; myndir, 360° myndir og flöt myndskeið í gegnum libmpv kerfisins (360°, 3D og óunnin myndskeið spilast flöt með skilaboðum), teiknuð um vélbúnaðarleiðina líka í X11 setum frá desktop build 7; SMB deildir frá Ubuntu 22.04 og Debian 12; án lyklakippu (GNOME Keyring eða KWallet) frýs forritið ekki lengur í 25 s við fyrstu ræsingu: það geymir lykilorðin aðeins fyrir setuna og segir frá því í stillingum sínum; ekki enn keyrt á raunverulegri Linux tölvu, aðeins undir WSLg og í gámum.
 - **macOS**: DMG og ZIP-skrá byggðar af CI verkefnisins, alhliða (universal), óundirritaðar (Gatekeeper spyr einu sinni); forritið ræsist, opnar skrár og möppur sem því eru gefnar, líka úr Finder, geymir leyndarmál sín í innskráningarlyklakippunni og spilar flöt myndskeið með eigin libmpv, allt aðeins staðfest á Mac-vél CI verkefnisins; ekkert hefur enn keyrt á raunverulegri Mac-tölvu.
 
@@ -315,7 +358,7 @@ Einn grunnkóði, sex umhverfi, og sérstakt forrit fyrir LG sjónvörp. Það s
 - **Lestur eftir þörfum**: staðbundin brú þjónar spilurunum með bætabilum og token fyrir hverja setu; stórir blokkir, lestur fram í tímann og allt að sex SMB-tengingar samhliða; smámyndir úr ramma hvers myndskeiðs; engu afritað á tækið.
 - **Vélbúnaður**: vélbúnaðarafkóðarar notaðir hvar sem þeir eru til, með mældum mörkum þeirra (H.264 þakið á Quest 3, tvær 2048x2048 linsur í mesta lagi fyrir hugbúnaðarafkóðara); á Windows er 360° sýnin teiknuð af skjákortinu út frá hverjum afkóðuðum ramma, rammastærðin mæld á hverri tölvu, innbyggða eða sérstaka skjákortið greint.
 - **Sérkenni vettvanga**: skynjarinn og Spatial 2.5D spilarinn í símum; umlykjandi sýnin, stýripinnarnir og hendurnar á Quest; skipulag fjarstýringarinnar, lyklaborðsglugginn og borði sjónvarpsins á Android TV; í tölvu, mús og lyklaborð, heilskjár, einn gluggi, skrár og möppur opnaðar með forritinu eða sleppt á gluggann hans, lesnar eins og skrár í möppunum þínum, HEIC, AVIF, TIFF og óunnar myndavélamyndir úr möppunum þegar Windows hefur afkóðara fyrir þær, og gagnavernd Windows fyrir lykilorð og token.
-- **Persónuvernd frá grunni**: enginn reikningur, engin skýjaþjónusta, engin greiningargögn; lykilorð og token í öruggri geymslu tækisins; myndavél Spatial spilarans notuð aðeins á tækinu sjálfu; deildir, Plex og myndavélar aðeins nálgast á netinu þínu.
+- **Persónuvernd frá grunni**: enginn reikningur, engin skýjaþjónusta, engin greiningargögn; lykilorð og token í öruggri geymslu tækisins; skjár sem skráður er inn úr síma fær eigin setu, senda dulkóðaða á heimanetinu, aldrei lykilorðið; myndavél Spatial spilarans og kóðaskannans notuð aðeins á tækinu sjálfu; deildir, Plex og myndavélar aðeins nálgast á netinu þínu.
 
 <a id="technical-documentation"></a>
 ## Tæknileg skjöl
@@ -357,7 +400,7 @@ Einn grunnkóði, sex umhverfi, og sérstakt forrit fyrir LG sjónvörp. Það s
 
 1. Þú þarft LG sjónvarp með webOS 4.0 eða nýrra, tölvu á sama neti og ókeypis LG forritarareikning. Í sjónvarpinu skaltu setja upp Developer Mode úr LG Content Store, skrá þig inn, kveikja á Dev Mode Status og leyfa sjónvarpinu að endurræsa sig; skrifaðu niður IP-vistfang þess og lykilfrasann sem forritið sýnir.
 2. Í tölvunni skaltu setja upp webOS CLI (Node.js 18 eða nýrra): `npm install -g @webos-tools/cli`, skrá síðan sjónvarpið með `ares-setup-device` (IP-vistfang þess, gátt 9922, notandi `prisoner`) og `ares-novacom --device <name> --getkey`, sem biður um lykilfrasann.
-3. Sæktu `Immuch360-webOS-0.1.0.ipk` úr [webOS forskoðunarútgáfunni](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0), athugaðu hana gegn `SHA256SUMS.txt`, keyrðu síðan `ares-install --device <name> Immuch360-webOS-0.1.0.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) frá webosbrew gerir það sama án skipanalínu.
+3. Sæktu `Immuch360-webOS-0.2.0.ipk` úr [webOS forskoðunarútgáfunni](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0), athugaðu hana gegn `SHA256SUMS.txt`, keyrðu síðan `ares-install --device <name> Immuch360-webOS-0.2.0.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) frá webosbrew gerir það sama án skipanalínu.
 4. Developer Mode seta varir í 1000 klukkustundir og EXTEND hnappurinn í Developer Mode forritinu endurnýjar hana; þegar hún rennur út fjarlægir sjónvarpið forritin sem sett voru upp á þennan hátt. Nánari upplýsingar eru í [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
 
 <a id="meta-quest"></a>
@@ -370,23 +413,23 @@ Einn grunnkóði, sex umhverfi, og sérstakt forrit fyrir LG sjónvörp. Það s
 <a id="windows"></a>
 ### Windows
 
-1. Náðu í `Immuch360-Desktop-3.3.0-rc.0-desktop.7-windows-x64-setup.exe` frá [forskoðunarútgáfu fyrir tölvur](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) (með `SHA256SUMS.txt` til að athuga hana) og opnaðu hana. Skrárnar eru ekki undirritaðar ennþá: Windows SmartScreen getur birt „Windows protected your PC“, veldu „More info“ og síðan „Run anyway“.
+1. Náðu í `Immuch360-Desktop-3.3.0-rc.0-desktop.8-windows-x64-setup.exe` frá [forskoðunarútgáfu fyrir tölvur](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) (með `SHA256SUMS.txt` til að athuga hana) og opnaðu hana. Uppsetningarforritið og ZIP-skráin eru undirrituð; Windows sýnir APROGSYS sem útgefanda. Meðan útgefandinn er nýr fyrir SmartScreen getur það samt spurt einu sinni: „More info“, síðan „Run anyway“.
 2. Veldu „Install for me only“ (engin stjórnandaréttindi) eða „Install for all users“, og síðan tungumál uppsetningarforritsins, sem er þegar stillt á tungumál Windows.
 3. Ræstu Immuch360 Desktop úr Start-valmyndinni. Myndir og myndskeið fá það skráð undir „Opna með“ (hægrismelltu á skrá, Opna með); það gerir sig sjálft aldrei að sjálfgefna forritinu fyrir þau. Fyrsta ræsing nýrrar útgáfu getur tekið upp undir mínútu meðan Windows skannar skrárnar.
 4. Windows 10 eða 11, 64 bita. Til að uppfæra, opnaðu uppsetningarforrit næstu útgáfu: innskráningin þín, möppurnar og stillingarnar varðveitast. ZIP-skráin fyrir sömu útgáfu er sama forritið sem mappa, til að afþjappa hvar sem er og ræsa `immuch360.exe` úr henni.
 
 ### Linux
 
-Á Ubuntu 22.04 eða nýrra og Debian 12 eða nýrra: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-amd64.deb`; á Fedora 40 eða nýrra: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-x86_64.rpm`, bæði úr [forskoðunarútgáfu fyrir tölvur](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7). Ræstu síðan Immuch360 Desktop úr forritunum þínum. Forskoðun: möppur tölvunnar, myndir og 360° myndir sem kúla, og flöt myndskeið í gegnum libmpv kerfisins, sem pakkinn setur upp (360°, 3D og óunnin myndskeið spilast flöt, með skilaboðum); SMB deildir virka frá Ubuntu 22.04 og Debian 12. Á Fedora þurfa myndavélamyndskeið FFmpeg frá RPM Fusion. Án GNOME Keyring eða KWallet eru lykilorðin aðeins geymd fyrir setuna, og stillingar forritsins segja frá því.
+Á Ubuntu 22.04 eða nýrra og Debian 12 eða nýrra: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-amd64.deb`; á Fedora 40 eða nýrra: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-x86_64.rpm`, bæði úr [forskoðunarútgáfu fyrir tölvur](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8). Ræstu síðan Immuch360 Desktop úr forritunum þínum. Forskoðun: möppur tölvunnar, myndir og 360° myndir sem kúla, og flöt myndskeið í gegnum libmpv kerfisins, sem pakkinn setur upp (360°, 3D og óunnin myndskeið spilast flöt, með skilaboðum); SMB deildir virka frá Ubuntu 22.04 og Debian 12. Á Fedora þurfa myndavélamyndskeið FFmpeg frá RPM Fusion. Án GNOME Keyring eða KWallet eru lykilorðin aðeins geymd fyrir setuna, og stillingar forritsins segja frá því.
 
 ### macOS
 
-Opnaðu `Immuch360-Desktop-3.3.0-rc.0-desktop.7-macos.dmg` úr [forskoðunarútgáfu fyrir tölvur](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) og dragðu forritið í Applications (Apple silicon og Intel, macOS 12 eða nýrra). Það er ekki undirritað né staðfest af Apple ennþá: haltu niðri Control og smelltu á það, og veldu Opna á macOS 14 og eldri, eða veldu „Open Anyway“ í System Settings, Privacy & Security á macOS 15 og nýrri. Enginn sem vinnur að verkefninu á Mac-tölvu: forritið hefur aðeins verið keyrt á CI Mac-vél verkefnisins, þar sem það opnar skrár og möppur og spilar flöt myndskeið með eigin libmpv; netaðgangur þess hefur ekki verið reyndur. Ábendingar eru vel þegnar.
+Opnaðu `Immuch360-Desktop-3.3.0-rc.0-desktop.8-macos.dmg` úr [forskoðunarútgáfu fyrir tölvur](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) og dragðu forritið í Applications (Apple silicon og Intel, macOS 12 eða nýrra). Það er ekki undirritað né staðfest af Apple ennþá: haltu niðri Control og smelltu á það, og veldu Opna á macOS 14 og eldri, eða veldu „Open Anyway“ í System Settings, Privacy & Security á macOS 15 og nýrri. Enginn sem vinnur að verkefninu á Mac-tölvu: forritið hefur aðeins verið keyrt á CI Mac-vél verkefnisins, þar sem það opnar skrár og möppur og spilar flöt myndskeið með eigin libmpv; netaðgangur þess hefur ekki verið reyndur. Ábendingar eru vel þegnar.
 
 <a id="privacy"></a>
 ## Persónuvernd
 
-Engin gögn fara til þróandans: enginn reikningur, engin greiningargögn, engin hrunatilkynningaþjónusta, engar auglýsingar. Forritið talar aðeins við þá vélþjóna sem þú velur (Immich vélþjóninn þinn, deildirnar þínar, Plex vélþjóninn þinn, myndavélarnar þínar) og, án vélþjóns, við nákvæmlega engan. Lykilorð og token haldast í öruggri geymslu tækisins. Myndavél Spatial 2.5D spilarans er aðeins notuð á tækinu sjálfu; myndir hennar eru aldrei vistaðar og aldrei sendar neitt. Öll stefnan er í [PRIVACY.md](../PRIVACY.md), og nánari upplýsingar fyrir hverja uppsprettu í [notendahandbókinni](../docs/immuch360/user-guide.md#privacy).
+Engin gögn fara til þróandans: enginn reikningur, engin greiningargögn, engin hrunatilkynningaþjónusta, engar auglýsingar. Forritið talar aðeins við þá vélþjóna sem þú velur (Immich vélþjóninn þinn, deildirnar þínar, Plex vélþjóninn þinn, myndavélarnar þínar) og, án vélþjóns, við nákvæmlega engan. Lykilorð og token haldast í öruggri geymslu tækisins. Myndavélin er aðeins notuð á tækinu sjálfu, af Spatial 2.5D spilaranum og til að skanna kóða skjás sem þú skráir inn; myndir hennar eru aldrei vistaðar og aldrei sendar neitt. Skjár sem skráður er inn úr símanum þínum fær eigin setu, senda dulkóðaða á heimanetinu þínu, aldrei lykilorðið þitt. Öll stefnan er í [PRIVACY.md](../PRIVACY.md), og nánari upplýsingar fyrir hverja uppsprettu í [notendahandbókinni](../docs/immuch360/user-guide.md#privacy).
 
 <a id="the-project"></a>
 ## Verkefnið
@@ -402,13 +445,13 @@ Símaskjámyndirnar á þessari síðu voru teknar á Android útgáfunni í eft
 
 Það sem er ekki enn búið, það líklegasta fyrst. Ekkert hér er loforð, og ábendingar á [verkbeiðnalistanum](https://github.com/freeKC/Immuch360/issues) hjálpa til við að ákveða hvað kemur fyrst.
 
-- **Verslanirnar**: Google Play (build 26 í yfirferð, síðan build 27; sjónvarpsskráningin í yfirferð), App Store (útgáfa 3.3.1 í yfirferð síðan 14. október), Meta Horizon Store (build 25 í yfirferð).
-- **Tölvur**: handvirk prófun hverrar virkni á Windows tölvu; síðan 360° myndskeiðsbirtirinn á Linux og macOS, prófun á raunverulegri Mac-tölvu og raunverulegri Linux tölvu; síðan undirrituð útgáfa og sjálfvirkar uppfærslur; síðan Spatial 2.5D með vefmyndavélinni.
-- **Sjónvörp**: prófun á build 27 á raunverulegu Android TV; LG webOS forritið á raunverulegu LG sjónvarpi, síðan 360° myndskeið þess á kúlunni og netdeildir, Plex og Tapo myndavélar; QR-kóði til að para sjónvarp eða tölvu við síma, þar sem stóri skjárinn sýnir hann og síminn skannar hann.
-- **Símar og spjaldtölvur**: tímastika í iOS 360° myndskeiðsspilaranum, fyrri og næsta í 360° spilurum síma, val á hljóðrás í flata spilaranum, Tapo beina streymið á iPhone og iPad.
+- **Verslanirnar**: Google Play (build 28 í yfirferð; sjónvarpsskráningin í yfirferð), App Store (útgáfa 3.3.1 í yfirferð, síðan útgáfa 3.3.2 með build 28), Meta Horizon Store (build 28 í yfirferð).
+- **Tölvur**: handvirk prófun hverrar virkni á Windows tölvu, innskráning með símanum meðtalin; Spatial 2.5D með vefmyndavélinni á Windows, í þróun fyrir nóvember 2026; síðan 360° myndskeiðsbirtirinn á Linux og macOS, prófun á raunverulegri Mac-tölvu og raunverulegri Linux tölvu; síðan sjálfvirkar uppfærslur og undirritað macOS forrit.
+- **Sjónvörp**: prófun á build 27 og 28 á raunverulegu Android TV, innskráning með símanum meðtalin; webOS 0.2.0 á raunverulegu LG sjónvarpi, með deildum sínum, Plex og beinu streymi; síðan 360° myndskeiðin á kúlunni, hljóð myndavélanna og upptökur þeirra (ekki fyrr en í desember 2026).
+- **Símar og spjaldtölvur**: Tapo beina streymið og innskráning stórra skjáa á iPhone og iPad með næstu iOS útgáfu; tímastika í iOS 360° myndskeiðsspilaranum, fyrri og næsta í 360° spilurum síma, val á hljóðrás í flata spilaranum.
 - **Umlykjandi efni**: tvöfaldar fisheye .dng skrár, jöfnun GoPro og DJI myndskeiða út frá eigin hreyfigögnum þeirra, rýmismyndskeið í 3D á Quest ef afkóðarar þess leyfa það, fyrri og næsta milli rýmismynda í höfuðtækinu.
 - **Uppsprettur**: að strjúka milli skráa í deildarmöppu, Digest auðkenning fyrir WebDAV, QR kóði til að færa Plex tókann frá tölvunni, IPv6 fyrir Plex, H.265 Tapo upptökur, rásir á upphafsskjá sjónvarpsins.
-- **Drónar**: prófun með raunverulegum DJI Neo 2, síðan hljóðið sem síminn tók upp sameinað við myndbútinn; beint streymi og stjórnun myndavélar drónans bíða seinni tíma.
+- **Drónar**: prófun með raunverulegum DJI Neo 2, síðan hljóðið sem síminn tók upp sameinað við myndbútinn; DJI tengingarsíðan með raunverulegri fjarstýringu, fyrsta skrefið í átt að myndskeiði dróna í Meta Quest. Ekkert sem sendir skipun til dróna er áætlað fyrir þær prófanir.
 - **Upstream**: litlar pull requests til Immich fyrir þá hluta sem viðhaldsaðilarnir vilja, byrjað á 360° myndskoðaranum.
 
 Allur listinn, með þeim tækjaprófunum sem enn eru óloknar fyrir hvern eiginleika, er í [Stöðu útgáfu](../docs/immuch360/release-status.md#roadmap).

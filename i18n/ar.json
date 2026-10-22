@@ -727,7 +727,6 @@
   "camera_live_failed": "لم يبدأ العرض المباشر: {error}",
   "camera_live_full_screen": "ملء الشاشة",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "سيصل العرض المباشر إلى iPhone وiPad في إصدار لاحق. التسجيلات تعمل هنا بالفعل.",
   "camera_live_needs_account": "أضف حساب الكاميرا لمشاهدة العرض المباشر.",
   "camera_live_no_sound": "لا يوجد صوت على هذا الجهاز",
   "camera_live_sd": "SD",

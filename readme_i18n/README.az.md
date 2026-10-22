@@ -11,8 +11,9 @@ Immuch360 fotolarınızı və videolarınızı tapmaq, gözdən keçirmək, oxut
 
 - **Tətbiq nə edir?** O, fotolarınızı və videolarınızı qalereya kimi göstərir və hər faylı ona uyğun görüntüləyicidə oxudur: düz, ətrafına baxdığınız kürə şəklində, 3D-də, başlıqda.
 - **Hansı media?** Düz fotolar və videolar, panoramalar, 360° fotolar və videolar, VR180, stereoskopik 3D, Apple fəza fotoları, DJI dronlarının 360° kürələri və tətbiq tərəfindən birləşdirilən 360° kameraların (Insta360, GoPro MAX, DJI Osmo 360) RAW faylları.
-- **Hansı cihazlarda?** Android telefonlar və planşetlər, iPhone və iPad, Android TV və Google TV, webOS ilə LG televizorları (ayrıca tətbiq, ilk test build), Meta Quest 2, Pro, 3 və 3S, Windows (sınaq versiyası), Linux və macOS isə erkən sınaq versiyaları kimi.
+- **Hansı cihazlarda?** Android telefonlar və planşetlər, iPhone və iPad, Android TV və Google TV, webOS ilə LG televizorları (ayrıca tətbiq, test build-lərində), Meta Quest 2, Pro, 3 və 3S, Windows (sınaq versiyası), Linux və macOS isə erkən sınaq versiyaları kimi.
 - **Server və ya hesaba ehtiyacım var?** Xeyr. Immuch360 cihazınızın media fayllarıyla tək başına işləyir. Immich serveri, NAS, media serveri və ya Plex serveri istədiyiniz zaman əlavə edə biləcəyiniz seçimlərdir.
+- **Televizora, başlığa və ya kompüterə necə daxil olum?** Telefonunuzla: onun giriş səhifəsinin göstərdiyi QR kodu skan edin və ya kodunu yazın, təsdiqləyin və o, saniyələr içində Immich kitabxananızda açılır, pultla heç nə yazmadan.
 
 <p align="center">
   <sub>Immich mobil tətbiqinin qeyri-rəsmi forku. Immich və ya FUTO ilə əlaqəsi yoxdur. Ad «I am much 360» kimi oxunur.</sub>
@@ -22,13 +23,13 @@ Immuch360 fotolarınızı və videolarınızı tapmaq, gözdən keçirmək, oxut
 
 | Platforma | Haradan əldə etmək olar | 22 oktyabr 2026 tarixinə status |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonlar və planşetlər | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play-də (build 25; build 26 baxılır), build 27 GitHub-da |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone və iPad** | App Store | versiya 3.3.1 (build 24) 14 oktyabrdan bəri Apple-ın baxışını gözləyir; bu vaxt ərzində [özünüz build edin](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV və Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 27 GitHub-da: standart olaraq tünd tema, video zamanı Sol və Sağ, video oxudula bilmədikdə aydın mesaj; TV siyahısı Google-un baxışındadır |
-| **LG televizorları** webOS 4.0 və daha yenisi ilə | [.ipk test build](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0) | 21 oktyabr tarixli test build 0.1.0, [Developer Mode](#lg-tvs-webos)-da quraşdırmaq üçün; hələ real LG televizorunda işə salınmayıb |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 və 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store-da (build 23; build 25 baxılır), build 27 GitHub-da |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Quraşdırıcı və ya ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | masaüstü build 7, sınaq versiyası: fotolar, düz və 360° videolar, paylaşımlar, Plex, kameralar, proqramla açılan fayllar, bir düymə ilə döndərilən fotolar, 89 dildə interfeys |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS və Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | sınaq versiyaları: Linux-da fotolar, 360° fotolar və düz videolar (360° videolar düz oxudulur); macOS-da da eyni, yalnız layihənin CI Mac-ında yoxlanılıb, imzasız |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonlar və planşetlər | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play-də (build 25; build 28 Google-un baxışına göndərilib), build 28 GitHub-da |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone və iPad** | App Store | versiya 3.3.1 (build 27) Apple-ın baxışını gözləyir, 22 oktyabrda yenidən göndərilib; bu vaxt ərzində [özünüz build edin](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV və Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 28 GitHub-da: QR kodu skan edərək [telefonunuzla daxil olun](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone); TV siyahısı Google-un baxışındadır |
+| **LG televizorları** webOS 4.0 və daha yenisi ilə | [.ipk test build](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) | test build 0.2.0, [Developer Mode](#lg-tvs-webos)-da quraşdırmaq üçün: şəbəkə paylaşımları, Plex və Tapo canlı baxışı; 0.1.0 bir testçinin LG televizorunda işləyib, 0.2.0 hələ real televizorda yox |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 və 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store-da (build 25; build 28 Meta-ya təqdim olunub), build 28 GitHub-da |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Quraşdırıcı və ya ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | masaüstü build 8, imzalanmış sınaq versiyası: fotolar, düz və 360° videolar, paylaşımlar, Plex, kameralar, telefonunuzla giriş, bir düymə ilə döndərilən fotolar, 89 dildə interfeys |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS və Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | sınaq versiyaları: Linux-da fotolar, 360° fotolar və düz videolar (360° videolar düz oxudulur); macOS-da da eyni, yalnız layihənin CI Mac-ında yoxlanılıb, imzasız |
 
 *Statuslar hər versiyada yenilənir; build-build ətraflı məlumat [Versiya statusu](../docs/immuch360/release-status.md) səhifəsindədir.*
 
@@ -48,11 +49,13 @@ Immuch360 fotolarınızı və videolarınızı tapmaq, gözdən keçirmək, oxut
   - [Hesabsız öz fayllarınızı istifadə edin](#use-your-own-files-without-an-account)
   - [NAS-ın, kompüterin və ya media serverinin medialarına çatın](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
   - [Immich kitabxananızı tapın](#find-your-immich-library)
+  - [Televizora, başlığa və ya kompüterə telefonunuzla daxil olun](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Meta Quest-də immersivə keçin](#go-immersive-on-meta-quest)
   - [Televizorda və kompüterdə baxın](#watch-on-the-tv-and-on-the-computer)
   - [LG televizorunda Immuch360 (webOS)](#immuch360-on-an-lg-tv-webos)
   - [Kameralar, Plex və RAW kamera faylları](#cameras-plex-and-raw-camera-files)
   - [DJI dronunuzun fotoları və videoları Immich serverinizdə](#your-dji-drones-photos-and-videos-on-your-immich-server)
+  - [DJI bağlantı diaqnostikası (eksperimental)](#dji-link-diagnostics-experimental)
 - [Cihazlar və sistemlər](#devices-and-systems)
 - [Qabaqcıl funksiyalar](#advanced-features)
 - [Texniki sənədləşmə](#technical-documentation)
@@ -159,9 +162,28 @@ Pleyerlər lazım olan baytları tətbiq daxilindəki körpü vasitəsilə bayt 
 2. Tənzimləmələr, Fayl görüntüləyicisi, Videolar bölməsində «Video mənbəyi» cihaz onu deşifrə edərsə orijinalı, həmişə orijinalı, ya da həmişə transkod edilmiş axını seçir.
 3. 360° fotonu tətbiqi olmayan birisinə göstərmək üçün onu Immich paylaşım linki ilə paylaşın: Immich veb tətbiqi onu brauzerində kürə kimi göstərir.
 
-Hazırkı build, build 27, Immich-in 10 oktyabr 2026 tarixli `main` budağına (versiya 3.3.0-rc.0) əsaslanır və Immich 3.2.4 serverinə, həmçinin həmin `main` budağından build edilmiş serverə qarşı test edilib. Problemləri Immich layihəsinə yox, [Issues](https://github.com/freeKC/Immuch360/issues) bölməsinə bildirin.
+Hazırkı build, build 28, Immich-in 10 oktyabr 2026 tarixli `main` budağına (versiya 3.3.0-rc.0) əsaslanır və həmin Immich `main` budağından build edilmiş serverə qarşı test edilib; build 27 həmçinin Immich 3.2.4 serverinə qarşı test edilib. Problemləri Immich layihəsinə yox, [Issues](https://github.com/freeKC/Immuch360/issues) bölməsinə bildirin.
 
 Ətraflı: [qalan hər şey Immich-dir](../docs/immuch360/user-guide.md#everything-else-is-immich), [Immich tətbiqi ilə müqayisə](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+
+<a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
+### Televizora, başlığa və ya kompüterə telefonunuzla daxil olun
+
+Televizor pultu ilə və ya başlıqda server ünvanı, e-poçt və şifrə yazmaq dəqiqələr çəkir. Telefonunuzda Immich serverinizə daxil olmuş Immuch360 ilə televizor, Meta Quest və ya kompüter saniyələr içində daxil olur: böyük ekran QR kod göstərir, telefon onu skan edir, siz təsdiqləyirsiniz və ekran kitabxananızda açılır. Telefon tətbiqi ilə şifrəniz telefonda qalır. Immich tətbiqində buna bənzər heç nə yoxdur.
+
+<p align="center">
+  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Televizor giriş səhifəsində QR kod göstərir, qarşısında tutulan telefon isə eyni kodu skan edir">
+</p>
+
+1. Böyük ekranda (Android TV və Google TV, Meta Quest pəncərəsi, Windows, Linux və ya macOS) "Immich serverinə qoşul"u seçin: giriş səhifəsi server formasının yanında "Telefonunuzla daxil olun", QR kod və 10 simvollu kod göstərir.
+2. Serverinizə daxil olmuş telefonda: Ayarlar, "Televizor və ya kompüter qoşun", sonra "Kodu skan edin". Ekranını telefonun skan edə bilmədiyi Meta Quest-də "Bunun əvəzinə kod daxil edin"i seçin və başlığın göstərdiyi kodu yazın.
+3. Telefon "(Ekran) daxil edilsin?" deyə soruşur və altı rəqəmli ədəd göstərir: ekranın eyni ədədi göstərdiyini yoxlayın, sonra Daxil ol düyməsinə toxunun. Ekran xronoloji lentinizdə açılır.
+
+Necə təhlükəsiz qalır: telefon və ekran eyni ev şəbəkəsində olmalıdır, kod ən çox iki dəqiqə etibarlıdır və bir dəfə işləyir. Telefon serverinizdən həmin ekran üçün onun adını daşıyan yeni seans istəyir ("Qonaq otağı TV-sində Immuch360") və onu ekrana şifrələnmiş şəkildə göndərir, beləliklə şifrəniz heç vaxt telefondan çıxmır. "Televizor və ya kompüter qoşun" bu telefonun daxil etdiyi ekranları hər birinin yanında Çıxış düyməsi ilə siyahılayır, Immich isə onları Hesab Parametrləri, İcazəli cihazlar bölməsində göstərir, orada onları ləğv edə də bilərsiniz. Telefondan çıxış etdikdə onlardan da çıxış edilir.
+
+Telefon tərəfi indi Android-də, iPhone və iPad-də isə növbəti iOS buraxılışından işləyir. Telefonda Immuch360 yoxdursa, kodu telefonun kamerası ilə skan edin: brauzerdə ekranın təqdim etdiyi səhifə açılır, e-poçtunuz və şifrəniz üçün, şifrələnmiş və bir dəfə istifadə olunan. LG televizorları öz QR kodu ilə, telefonun brauzerində daxil olur; build 28-dən etibarən telefon tətbiqinin skaneri onu tanıyır və həmin səhifəni açır.
+
+Ətraflı: [telefonunuzla daxil olun](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [ekranların nə göndərdiyi və saxladığı](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
 
 <a id="go-immersive-on-meta-quest"></a>
 ### Meta Quest-də immersivə keçin
@@ -175,7 +197,7 @@ Meta Quest-də eyni tətbiq bütün kitabxananızla pəncərə şəklində işl�
 </p>
 
 1. Tətbiqi [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)dan quraşdırın, ya da daha yeni build-in APK-sını əl ilə yükləyin, bax [Quraşdırma](#meta-quest).
-2. Salamlama səhifəsində başlığın öz foto və videoları üçün "Serversiz istifadə et"ə, ya da serverinizlə daxil olmaq üçün "Immich serverinə qoşul"a toxunun.
+2. Salamlama səhifəsində başlığın öz foto və videoları üçün "Serversiz istifadə et"ə, ya da "Immich serverinə qoşul"a toxunun: başlığın göstərdiyi kodu telefonunuzdakı Immuch360-a yazın ([telefonunuzla daxil olun](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), ya da server ünvanınız, e-poçtunuz və şifrənizlə daxil olun.
 3. 360° foto və ya video açın və 360°-ə basın: immersiv görünüş açılır. B və ya Y, ya da məlumat panelinin Geri düyməsi pəncərəni geri qaytarır.
 
 Ətraflı: [Meta Quest başlığında](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [başlıq: kodeklər, mağaza və icazələr](../docs/immuch360/platform-support.md#meta-quest).
@@ -190,8 +212,8 @@ Eyni Android tətbiqi Android TV və Google TV-də ilk başlanğıcdan tünd tem
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Windows-da Immuch360 Desktop-un video pleyeri: pəncərədə oxudulan bir küçə videosu, fasilə düyməsi, vaxt zolağı, Paylaş və Immich-ə yüklə">
 </p>
 
-1. Televizorda: adb ilə APK-nı quraşdırın (bax: [Quraşdırma](#android-tv-and-google-tv)); salamlama səhifəsində paylaşım, Plex server və ya kamera üçün "Şəbəkə paylaşımı və ya media server əlavə et"i, "Serversiz istifadə et"i, ya da "Immich serverinə qoşul"u seçin.
-2. Windows kompüterində: sınaq versiyasını quraşdırın və ya arxivdən çıxarın və `immuch360.exe`-ni başladın (bax: [Quraşdırma](#windows)); masaüstü build 5-dən etibarən, salamlama səhifəsindəki "Serversiz istifadə et" qovluqlarınızın seçimini açır, "Immich serverinə qoşul" isə giriş səhifəsini. Proqramla açılan və ya onun pəncərəsinə sürüklənən bir foto, video və ya qovluq dərhal açılır, 360° olanı isə öz 360° görünüşündə; bir neçə fayl isə birlikdə bir səhifədə açılır.
+1. Televizorda: adb ilə APK-nı quraşdırın (bax: [Quraşdırma](#android-tv-and-google-tv)); salamlama səhifəsində paylaşım, Plex server və ya kamera üçün "Şəbəkə paylaşımı və ya media server əlavə et"i, "Serversiz istifadə et"i, ya da "Immich serverinə qoşul"u seçin; sonuncunun səhifəsi onun QR kodunu telefonunuzla skan etdikdə televizoru daxil edir (bax: [Telefonunuzla daxil olun](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
+2. Windows kompüterində: sınaq versiyasını quraşdırın və ya arxivdən çıxarın və `immuch360.exe`-ni başladın (bax: [Quraşdırma](#windows)); masaüstü build 5-dən etibarən, salamlama səhifəsindəki "Serversiz istifadə et" qovluqlarınızın seçimini açır, "Immich serverinə qoşul" isə telefonunuz üçün QR kodu olan giriş səhifəsini. Proqramla açılan və ya onun pəncərəsinə sürüklənən bir foto, video və ya qovluq dərhal açılır, 360° olanı isə öz 360° görünüşündə; bir neçə fayl isə birlikdə bir səhifədə açılır.
 3. Görüntüləyicidə pultun oxut və fasilə, geri sürmə, irəli sürmə, əvvəlki və növbəti düymələri işləyir, kompüterdə isə klaviatura düymələri eləcə işləyir (Boşluq, J və L, tam ekran üçün F). Televizorda video zamanı OK idarəetmə elementlərini oxut və fasilə seçilmiş halda göstərir, ardınca -10 s və +10 s düymələri gəlir, ikinci OK isə fasilə verir; idarəetmə elementləri və tarix son düymədən 5 s sonra gizlənir. Televizorda videolar artıq təkrarlanmır, əgər Settings, Asset Viewer, Videos, Looping seçimini yandırmasanız.
 4. Televizorda Menu düyməsi, Info düyməsi və ya basılı saxlanılan OK foto və ya videonun təfərrüatlarını yalnız oxumaq üçün açır: tarix, yer, kamera, kodek, ölçü və bit sürəti. Televizorun deşifrə edə bilmədiyi video sonsuz yüklənmək əvəzinə bunu öz kodeki, ölçüsü və televizor dekoderlərinin limiti ilə bildirir; dekoderlərin imkanını aşan 360° video 360° pleyeri açmazdan əvvəl soruşur, səbəb isə profil menyusunun Logs səhifəsində yazılır.
 
@@ -200,7 +222,7 @@ Eyni Android tətbiqi Android TV və Google TV-də ilk başlanğıcdan tünd tem
 <a id="immuch360-on-an-lg-tv-webos"></a>
 ### LG televizorunda Immuch360 (webOS)
 
-Immuch360 LG webOS televizorları üçün Immich tətbiqi kimi də gəlir: webOS 4.0 və daha yenisi olan (2018-dən) LG televizorları üçün ayrıca tətbiq, pultla idarə olunur, Immich serverinizi göstərir və 360° fotolarınızı ox düymələri ilə döndərdiyiniz kürəyə yerləşdirir. Immich-in öz tətbiqləri LG televizorunda quraşdırılmır. O, Seeky91-in [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) layihəsi üzərində qurulub, bu layihə xronoloji lenti, albomları, insanları, yerləri, axtarışı, slayd şousunu və telefonla girişi gətirib; Seeky91-ə təşəkkürlər. Versiya 0.1.0 test build-dir: hələ real LG televizorunda işə salınmayıb, yalnız Developer Mode-da quraşdırılır və [Issues](https://github.com/freeKC/Immuch360/issues) bölməsindəki hər hesabat kömək edir.
+Immuch360 LG webOS televizorları üçün Immich tətbiqi kimi də gəlir: webOS 4.0 və daha yenisi olan (2018-dən) LG televizorları üçün ayrıca tətbiq, pultla idarə olunur, Immich serverinizi göstərir və 360° fotolarınızı ox düymələri ilə döndərdiyiniz kürəyə yerləşdirir. Immich-in öz tətbiqləri LG televizorunda quraşdırılmır. O, Seeky91-in [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) layihəsi üzərində qurulub, bu layihə xronoloji lenti, albomları, insanları, yerləri, axtarışı, slayd şousunu və telefonla girişi gətirib; Seeky91-ə təşəkkürlər. Test build 0.2.0 şəbəkə paylaşımlarını, Plex-i və Tapo kameralarının canlı baxışını əlavə edir. Versiya 0.1.0 bir testçinin LG televizorunda (webOS 22) işləyib; 0.2.0 hələ real televizorda işə salınmayıb. O, yalnız Developer Mode-da quraşdırılır və [Issues](https://github.com/freeKC/Immuch360/issues) bölməsindəki hər hesabat kömək edir.
 
 <p align="center">
   <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
@@ -210,15 +232,18 @@ Immuch360 LG webOS televizorları üçün Immich tətbiqi kimi də gəlir: webOS
 2. Telefonunuzla (QR kodu skan edin), e-poçt və parolunuzla, ya da API açarı ilə daxil olun.
 3. Ox düymələri və OK ilə gəzin. Görüntüləyicidə Sol və Sağ, video oxunarkən də, əvvəlki və ya növbəti foto və ya videoya keçir; idarəetmə elementləri son düymədən 5 s sonra gizlənir; Info təfərrüatları açır; kanal düymələri yaxınlaşdırır; Magic Remote göstəricisi və təkəri işləyir.
 4. 360° foto ox düymələri ilə döndərdiyiniz kürədə açılır; «360° kimi bax» serverin işarələmədiyi 2:1 fotonu əhatə edir; VR180 foto yarımkürədə, 3D foto isə bir gözlə göstərilir. Sarı və mavi düymələr düz fotonu döndərir.
+5. 0.2.0-dan etibarən, daxil olduqdan sonra tətbiqin yan panelində "Şəbəkə paylaşımları": SMB, WebDAV və ya DLNA paylaşımı, Plex server (plex.tv/link-də kodla daxil olunur) və ya Tapo kamerası əlavə edin. Onların fotoları eyni görüntüləyicidə, 360° fotolar isə kürədə açılır.
 
-Bu build-də olmayanlar: kürədə 360° videolar (onlar mesajla düz oxudulur), şəbəkə paylaşımları, Plex və Tapo kameraları (planlaşdırılır), yükləmələr. Video oxudulmadıqda, sonsuz fırlanan göstərici əvəzinə mesaj onun formatını və ölçüsünü bildirir. 25-dən əvvəlki webOS-da Immich-in qarşısındakı əks proksi CORS başlıqlarını göndərməlidir; tətbiq bu problemlə qarşılaşdıqda onları izah edir.
+Paylaşımlar, Plex və kameralar üçün webOS 5 (2020 televizorları) və ya daha yenisi, SMB üçün isə webOS 22 (2022 televizorları) və ya daha yenisi lazımdır. Onlar tətbiqin televizordakı öz xidməti vasitəsilə gəlir, həmin xidmət onları tətbiq üçün oxuyur, və layihənin build hostunda real serverlərə qarşı yoxlanılıb, hələ televizorda yox. Kameranın canlı baxışı yalnız videodur.
+
+Hələ yox: kameraların yazıları (dekabr 2026-dan əvvəl yox) və onların səsi, kürədə 360° videolar (onlar mesajla düz oxudulur), yükləmələr. Video oxudulmadıqda, sonsuz fırlanan göstərici əvəzinə mesaj onun formatını və ölçüsünü bildirir. 25-dən əvvəlki webOS-da Immich-in qarşısındakı əks proksi CORS başlıqlarını göndərməlidir; tətbiq bu problemlə qarşılaşdıqda onları izah edir.
 
 Ətraflı: [webOS tətbiqi: quraşdırma, pult düymələri, CORS başlıqları](../webos/README.md).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 ### Kameralar, Plex və RAW kamera faylları
 
-- **Tapo kameraları**: kamera şəbəkə paylaşımlarının yanında əlavə olunur. Tətbiq onu canlı göstərir (Android, Android TV, Quest və Windows) və bütün platformalarda yaddaş kartındaki yazıları gün-gün siyahılayır; klip kameradan alınır, hər hansı video kimi oxudulur və Immich-ə göndərilə bilər. Tətbiq kamera ilə yalnız şəbəkənizdə danışır, heç vaxt TP-Link serverləri ilə yox.
+- **Tapo kameraları**: kamera şəbəkə paylaşımlarının yanında əlavə olunur. Tətbiq onu canlı göstərir (Android, Android TV, Quest, Windows və, yalnız video, webOS 0.2.0-dan etibarən LG televizorları; iPhone və iPad növbəti iOS buraxılışından) və bütün platformalarda yaddaş kartındakı yazıları gün-gün siyahılayır; klip kameradan alınır, hər hansı video kimi oxudulur və Immich-ə göndərilə bilər. Tətbiq kamera ilə yalnız şəbəkənizdə danışır, heç vaxt TP-Link serverləri ilə yox.
 - **Plex Media Server, plex.tv olmadan**: tətbiq birbaşa serverinizlə eşləşir, bir dəfə yapıştırdığınız bir token ilə və kitabxanalarınızın orijinal fayllarını canlı oxuyur, beləliklə 360° həmişə 360° olaraq qalır, evdə və port yönləndirməniz vasitəsilə evdən kənarda da.
 - **360° kameralarının RAW faylları**: Insta360 kameralarının (bir və ya iki linza, bir trekdə, iki trekdə və ya iki faylda) emal olunmamış .insp fotoları və .insv videoları, GoPro MAX-ın .360 faylları və DJI Osmo 360-ın .osv faylları oxudularkən tətbiq tərəfindən birləşdirilir, kalibrasiya fayl daxilində yazılıdır, heç nəyi heç yerə qurmağa ehtiyac yoxdur. Android-də onları paylaşımdan, kompüterdən və ya serverinizdən oxudun, çünki telefonun qalereyası RAW faylları siyahıya almır; Immich serveri yalnız .insp və .insv qəbul edir.
 
@@ -240,6 +265,20 @@ DJI dronunun fotolarını və videolarını USB üzərindən birbaşa Immich ser
 
 DJI dronlarının 360° kürələri (Mini, Air, Mavic və digərləri, kameralarına görə tanınır) Immuch360-da 360° etiketləri olmadan da 360° kimi göstərilir. Immich-ə bu etiketlər lazımdır: standart olaraq söndürülmüş "Dron kürələrini Immich üçün 360° kimi etiketlə" yükləmə seçimi fotonu dəyişmədən yanında kiçik .xmp faylı ilə göndərir ki, Immich də onu kürə kimi göstərsin. Neo 2-nin kürə və ya panorama rejimi yoxdur: onun fotoları və videoları düzdür. Telefon Neo 2 klipinin səsini yazdıqda, həmin səs ayrıca .m4a faylındadır: səhifə klipi işarələyir, Immich isə onu səssiz qəbul edir (səsi saxlamaq üçün onu DJI Fly ilə yükləyin). DCIM qovluğu olan istənilən kamera kartı kart oxuyucusunda eyni şəkildə işləyir. DJI-yə heç nə göndərilmir.
 
+<a id="dji-link-diagnostics-experimental"></a>
+### DJI bağlantı diaqnostikası (eksperimental)
+
+Uzunmüddətli məqsəd DJI dronunun videosunu Meta Quest-də göstərməkdir, dronun başlığa qoşulmuş öz pultu vasitəsilə. Quest-in DJI pultunu kabel üzərindən oxuya bilib-bilmədiyini hələ heç kim bilmir. DJI bağlantı səhifəsi ilk addımdır, Meta Quest-də və Android telefon və planşetlərdə ölçü aləti: o, cihazın pultu oxuya bilib-bilmədiyini, nəyin gəldiyini göstərir və bunun qeydini saxlayır.
+
+O, yalnız dinləyir. Pulta və ya drona heç vaxt heç bir komanda göndərilmir: səhifənin pult açıldıqdan 20 saniyə sonra başlayaraq hər saniyə yazdığı tək bayt yalnız pultun data qəbul edib-etmədiyini göstərir və heç bir komanda daşımır.
+
+1. Ayarlar, Qabaqcıl, "DJI bağlantı diaqnostikası (eksperimental)" standart olaraq yanılıdır (televizorda heç vaxt); "DJI bağlantısı" plitəsi Kitabxana, Şəbəkə paylaşımları bölməsindədir.
+2. Onu açın və təhlükəsizlik xəbərdarlığını oxuyun. Birinci blok bu cihazın ümumiyyətlə USB aksesuarını oxuya bilib-bilmədiyini bildirir; bacarmırsa, bu da bir cavabdır.
+3. "Qeydi başlat"a toxunun, sonra pultu kabeli ilə qoşun, dron sönülü olsun. Android onu hansı tətbiqin açmalı olduğunu soruşsa, "Həmişə" olmadan Immuch360-ı seçin, çünki o, pultu DJI Fly-dan alardı.
+4. Vəziyyəti ("Aksesuar açıqdır", "Bağlantı bayt qəbul edir", "Pult kadrları gəlir") və sayğacları izləyin, sonra "Qeydi ixrac et": `Download/Immuch360/dji-link` qovluğunda üç fayl.
+
+Səhifə hələ real pultla qarşılaşmayıb. DJI pultu ilə test, ilk növbədə Neo 2 ilə RC-N3, xoş qarşılanır: səhifənin göstərdiyi vəziyyətləri və sayğacları [Issues](https://github.com/freeKC/Immuch360/issues) bölməsində paylaşın, ixrac edilmiş faylları isə səhifənin dediyi kimi özünüzdə saxlayın, çünki onlarda pultun seriya nömrəsi var.
+
 <a id="devices-and-systems"></a>
 ## Cihazlar və sistemlər
 
@@ -248,6 +287,7 @@ Altı mühit üçün bir kod bazası və LG televizorları üçün ayrıca tətb
 | Funksiya | Android | iPhone, iPad | Android TV | LG webOS | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|
 | Immich serveri ilə qalereya, albomlar, axtarış | ✅ | ✅ | ✅ görüntüləyici | ✅ görüntüləyici | ✅ |
+| Telefonunuzla giriş (QR kod) | ✅ kodu skan edir | 🔜 növbəti iOS buraxılışı | ✅ | ✅ telefonun brauzerində | ✅ kod telefonda yazılır |
 | Serversiz: cihazın öz mediaları | ✅ | ✅ | yalnız paylaşımlar | ❌ | ✅ |
 | Düz fotolar və videolar | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Fotonu bir düymə ilə döndərmə | ✅ | ✅ | ✅ rəngli düymələr | ✅ rəngli düymələr | ✅ pəncərə |
@@ -257,13 +297,14 @@ Altı mühit üçün bir kod bazası və LG televizorları üçün ayrıca tətb
 | Spatial 2.5D (baş izləmə) | ✅ eksperimental | ✅ eksperimental | ❌ | ❌ | ❌ |
 | Apple fəza fotoları | ✅ bir göz | ✅ bir göz | ✅ bir göz | ❌ | ✅ 3D |
 | RAW Insta360, GoPro və DJI faylları | ✅ | ✅ | ✅ | ❌ | ✅ |
-| SMB, WebDAV, DLNA paylaşımları | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Tapo kameraları: yazılar | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Tapo kameraları: canlı baxış | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| SMB, WebDAV, DLNA paylaşımları | ✅ | ✅ | ✅ | ✅ SMB webOS 22-dən, WebDAV və DLNA webOS 5-dən | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ webOS 5-dən | ✅ |
+| Tapo kameraları: yazılar | ✅ | ✅ | ✅ | 🔜 dekabr 2026-dan əvvəl yox | ✅ |
+| Tapo kameraları: canlı baxış | ✅ | 🔜 növbəti iOS buraxılışı | ✅ | ✅ yalnız video, webOS 5-dən | ✅ |
 | Bu cihazı şəbəkədə paylaşın | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Paylaşımlardan və cihazdan Immich-ə yükləmə | ✅ | ✅ | ❌ | ❌ | ✅ |
 | USB üzərindən DJI dronundan və ya kartdan idxal (eksperimental) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| DJI bağlantı diaqnostikası (eksperimental) | ✅ | ❌ | ❌ | ❌ | ✅ |
 | Tünd tema | sistemə görə | sistemə görə | ✅ standart olaraq | ✅ yeganə tema | sistemə görə |
 | Giriş | toxunma, giroskop | toxunma, giroskop | pult; video zamanı da Sol və Sağ, təfərrüatlar üçün Menu | pult, Magic Remote | nizamlayıcılar, əllər |
 | Haradan əldə etmək olar | Google Play, APK | App Store (baxılır) | APK, Google Play (baxılır) | .ipk test build, Developer Mode | Horizon Store, APK |
@@ -271,13 +312,14 @@ Altı mühit üçün bir kod bazası və LG televizorları üçün ayrıca tətb
 | Funksiya | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
 | Immich serveri ilə qalereya, albomlar, axtarış | ✅ | 🔧 CI | 🔧 CI |
+| Telefonunuzla giriş (QR kod) | ✅ | 🔧 CI | 🔧 CI |
 | Serversiz: cihazın öz mediaları | ✅ qovluqlar | ✅ qovluqlar | ✅ qovluqlar |
 | Düz fotolar və videolar | ✅ | ✅ | ✅ |
 | Fotonu bir düymə ilə döndərmə | ✅ | ✅ | ✅ |
 | Kürə kimi 360° fotolar | ✅ | ✅ | 🔧 CI |
 | 360° videolar | ✅ | yalnız düz | yalnız düz |
 | 3D və VR180 | ✅ bir göz | fotolar bir göz, videolar düz | fotolar bir göz, videolar düz |
-| Spatial 2.5D (baş izləmə) | 🔜 | ❌ | ❌ |
+| Spatial 2.5D (baş izləmə) | 🔜 hazırlanır | ❌ | ❌ |
 | Apple fəza fotoları | ✅ bir göz | 🔧 CI | 🔧 CI |
 | RAW Insta360, GoPro və DJI faylları | ✅ | 🔧 CI fotolar, videolar düz | 🔧 CI fotolar, videolar düz |
 | SMB, WebDAV, DLNA paylaşımları | ✅ | 🔧 CI | 🔧 CI |
@@ -287,18 +329,19 @@ Altı mühit üçün bir kod bazası və LG televizorları üçün ayrıca tətb
 | Bu cihazı şəbəkədə paylaşın | ✅ | ❌ | ❌ |
 | Paylaşımlardan və cihazdan Immich-ə yükləmə | ✅ | 🔧 CI | 🔧 CI |
 | USB üzərindən DJI dronundan və ya kartdan idxal (eksperimental) | ❌ | ❌ | ❌ |
+| DJI bağlantı diaqnostikası (eksperimental) | ❌ | ❌ | ❌ |
 | Tünd tema | sistemə görə | sistemə görə | sistemə görə |
 | Giriş | siçan, klaviatura | siçan, klaviatura | siçan, klaviatura, trekpad |
-| Haradan əldə etmək olar | quraşdırıcı və ya ZIP (sınaq versiyası) | .deb, .rpm (sınaq versiyası) | DMG və ya ZIP (imzasız sınaq versiyası) |
+| Haradan əldə etmək olar | quraşdırıcı və ya ZIP (imzalanmış sınaq versiyası) | .deb, .rpm (sınaq versiyası) | DMG və ya ZIP (imzasız sınaq versiyası) |
 
-✅ bu platformada tətbiqdə var · ❌ burada təklif olunmur · 🔜 planlaşdırılır · 🔧 CI mənbə kodda var, həmin sistemdə layihənin CI-si tərəfindən build edilir və başladılır, orada hələ real server, paylaşım və ya kamera ilə yoxlanılmayıb · yalnız düz: video mesajla düz oxudulur, çünki kompüterlərin 360° video render mühərriki yalnız Windows üçündür, LG televizorlarında isə webOS-un video kadrlarını kürəyə ötürüb-ötürmədiyi hələ ölçülməlidir. «Bir göz» o deməkdir ki, 3D fayl düz ekranda sol gözünü göstərir. LG webOS sütunu ayrıca tətbiqdir, onun test build 0.1.0-ı layihənin CI-sində testlərindən keçir və hələ televizorda işə salınmayıb. Hər ✅ hələ real cihazda yoxlanılmayıb: harada nəyin yoxlanıldığı və nəyin təsdiqlənməli olduğu [Funksiyalar](../docs/immuch360/features.md), [Platforma dəstəyi](../docs/immuch360/platform-support.md) və [Uyğunluq](../docs/immuch360/compatibility.md) səhifələrindədir.
+✅ bu platformada tətbiqdə var · ❌ burada təklif olunmur · 🔜 planlaşdırılır · 🔧 CI mənbə kodda var, həmin sistemdə layihənin CI-si tərəfindən build edilir və başladılır, orada hələ real server, paylaşım və ya kamera ilə yoxlanılmayıb · yalnız düz: video mesajla düz oxudulur, çünki kompüterlərin 360° video render mühərriki yalnız Windows üçündür, LG televizorlarında isə webOS-un video kadrlarını kürəyə ötürüb-ötürmədiyi hələ ölçülməlidir. «Bir göz» o deməkdir ki, 3D fayl düz ekranda sol gözünü göstərir. LG webOS sütunu ayrıca tətbiqdir, test build 0.2.0: 0.1.0 bir testçinin LG televizorunda işləyib, 0.2.0-ın paylaşımları, Plex-i və kameraları isə layihənin build hostunda real serverlərə qarşı yoxlanılıb, hələ televizorda yox. Hər ✅ hələ real cihazda yoxlanılmayıb: harada nəyin yoxlanıldığı və nəyin təsdiqlənməli olduğu [Funksiyalar](../docs/immuch360/features.md), [Platforma dəstəyi](../docs/immuch360/platform-support.md) və [Uyğunluq](../docs/immuch360/compatibility.md) səhifələrindədir.
 
 - **Android telefonlar və planşetlər**: tam tətbiq, toxunma və giroskop, bütün mənbələr.
-- **iPhone və iPad**: tam tətbiq; 360° video pleyerində yalnız oxutma və fasilə var, Tapo canlı baxışı sonra gələcək və DLNA axtarışı Apple multicast icazəsi verənə qədər unicast sorğuları göndərir.
-- **Android TV və Google TV**: pultla idarə olunan eyni APK, standart olaraq tünd; görüntüləyici: ehtiyat nüsxə, yükləmələr və redaktor gizlədilib, təfərrüatlar yalnız oxumaq üçündür, lakin foto yenə də bir düymə ilə döndərilir. Hər axtarış filtri pultla işləyir: Məkan və Kamera seçimlərini siyahıda açır, tarix filtri bütün seçimlərini göstərir, Etiketlər, Məkan, Tarix, Media növü, Ulduz reytinqi və Görünüş seçim vərəqləri isə Təmizlə və Tətbiq et düymələrini seçimlərin yanına, bir Sağ uzaqlığında, ekran hündürlüyünün böyük hissəsində yerləşdirir. Foto şəbəkəsi daha az şəkil yaddaşı istifadə edir, basılı saxlanılan ox düyməsi isə onu saniyədə ən çox təxminən 10 sətir hərəkət etdirir. Google TV emulyatorunda yoxlanılıb; 21 oktyabrda real Android TV-də ilk test build 27-nin TV dəyişikliklərinə səbəb olub, bu dəyişikliklər hələ real televizorda sınanmayıb.
-- **webOS 4.0 və daha yenisi olan LG televizorları**: pult və Magic Remote üçün ayrıca tətbiq, [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) üzərində qurulub: 360° fotoları kürədə göstərən Immich görüntüləyicisi, bir düymə ilə döndərilən foto, tünd tema və tətbiqin 89 dili (TV tətbiqinin özünün az sayda mətni hələlik ingiliscədir); hələ paylaşımlar, Plex və kameralar yoxdur, 360° videolar düz. Test build 0.1.0, layihənin CI-sində öz testləri ilə yoxlanılıb, hələ televizorda yox.
+- **iPhone və iPad**: tam tətbiq; 360° video pleyerində yalnız oxutma və fasilə var, Tapo canlı baxışı və telefonla girişin telefon tərəfi növbəti iOS buraxılışı ilə gəlir, DLNA axtarışı isə Apple multicast icazəsi verənə qədər unicast sorğuları göndərir.
+- **Android TV və Google TV**: pultla idarə olunan eyni APK, standart olaraq tünd; görüntüləyici: ehtiyat nüsxə, yükləmələr və redaktor gizlədilib, təfərrüatlar yalnız oxumaq üçündür, lakin foto yenə də bir düymə ilə döndərilir. Hər axtarış filtri pultla işləyir: Məkan və Kamera seçimlərini siyahıda açır, tarix filtri bütün seçimlərini göstərir, Etiketlər, Məkan, Tarix, Media növü, Ulduz reytinqi və Görünüş seçim vərəqləri isə Təmizlə və Tətbiq et düymələrini seçimlərin yanına, bir Sağ uzaqlığında, ekran hündürlüyünün böyük hissəsində yerləşdirir. Foto şəbəkəsi daha az şəkil yaddaşı istifadə edir, basılı saxlanılan ox düyməsi isə onu saniyədə ən çox təxminən 10 sətir hərəkət etdirir. Build 28-dən etibarən telefondan, QR kodu və ya qısa kodu ilə daxil olur (iki emulyator arasında kod yazılaraq sınanıb, hələ kamera ilə yox). Google TV emulyatorunda yoxlanılıb; 21 oktyabrda real Android TV-də ilk test build 27-nin TV dəyişikliklərinə səbəb olub, bu dəyişikliklər hələ real televizorda sınanmayıb.
+- **webOS 4.0 və daha yenisi olan LG televizorları**: pult və Magic Remote üçün ayrıca tətbiq, [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) üzərində qurulub: 360° fotoları kürədə göstərən Immich görüntüləyicisi, bir düymə ilə döndərilən foto, tünd tema və tətbiqin 89 dili (TV tətbiqinin özünün az sayda mətni hələlik ingiliscədir); 0.2.0-dan etibarən televizordakı öz xidməti vasitəsilə şəbəkə paylaşımları, Plex və Tapo kameralarının canlı baxışı (webOS 5 və daha yenisi, SMB webOS 22-dən); 360° videolar düz. Versiya 0.1.0 bir testçinin LG televizorunda (webOS 22) işləyib; 0.2.0 öz testləri ilə və layihənin build hostunda real serverlərə qarşı yoxlanılıb, hələ televizorda yox.
 - **Meta Quest 2, Pro, 3 və 3S**: tətbiq pəncərə şəklində, üstəlik immersiv görünüş; HEVC təhlükəsiz kodekdir, H.264 isə Quest 3-də təxminən 4096x2304-də dayanır; yalnız Quest 3 test edilib, Quest 2, Quest Pro və Quest 3S hələ test edilməyib.
-- **Windows 10 və 11**: sınaq versiyası, qalereya əvəzinə qovluqlarla, düz və 360° videolar üçün öz video pleyeri (libmpv), qrafik çipdə birləşdirilən RAW fayllar, proqramla açılan və ya pəncərəyə sürüklənən fayllar və qovluqlar, quraşdırıcı və ya ZIP.
+- **Windows 10 və 11**: sınaq versiyası, qalereya əvəzinə qovluqlarla, düz və 360° videolar üçün öz video pleyeri (libmpv), qrafik çipdə birləşdirilən RAW fayllar, proqramla açılan və ya pəncərəyə sürüklənən fayllar və qovluqlar, APROGSYS tərəfindən imzalanmış quraşdırıcı və ya ZIP.
 - **Linux**: layihənin CI-si tərəfindən build edilən .deb və .rpm, Ubuntu 22.04 və 24.04, Debian 12, Fedora 40 və 44-də quraşdırılıb və yoxlanılıb; sistemin libmpv-i vasitəsilə fotolar, 360° fotolar və düz videolar (360°, 3D və RAW videolar mesajla düz oxudulur), masaüstü build 7-dən X11 seanslarında da aparat yolu ilə çəkilir; SMB paylaşımları Ubuntu 22.04 və Debian 12-dən başlayaraq; açar dəstəsi (GNOME Keyring və ya KWallet) olmadan tətbiq ilk başlanğıcda artıq 25 s donmur: parolları yalnız seans üçün saxlayır və bunu ayarlarında bildirir; hələ real Linux PC-də işə salınmayıb, yalnız WSLg altında və konteynerlərdə.
 - **macOS**: layihənin CI-si tərəfindən build edilən DMG və ZIP, universal, imzasız (Gatekeeper bir dəfə soruşur); tətbiq başlayır, ona verilən faylları və qovluqları, Finder-dən gələnlər də daxil olmaqla, açır, sirlərini giriş açar zəncirində saxlayır və düz videoları öz libmpv-i ilə oxudur, bunların hamısı yalnız layihənin CI Mac-ında yoxlanılıb; real Mac-da hələ heç nə işə salınmayıb.
 
@@ -315,7 +358,7 @@ Tətbiqin oxuya və oxuda biləcəyi hər şey, bütün əhatə dairəsini istə
 - **Tələb olunan zaman oxuma**: pleyerlərə bayt aralıqları və sessiya başına bir token verən yerli körpü; böyük bloklar, əvvəlcədən oxuma və paralel olaraq altıya qədər SMB bağlantısı; hər videonun bir kadrından alınan miniatürlər; cihaza heç nə kopyalanmır.
 - **Avadanlıq**: harada varsa, ölçülmüş limitləri ilə (Quest 3-ün H.264 həddi, proqram dekoderləri üçün maksimum iki 2048x2048 linza) istifadə edilən aparat dekoderləri; Windows-da hər deşifrə edilmiş kadrdan qrafik çip tərəfindən çəkilən 360° görünüş, hər kompüterdə ölçülən kadr ölçüsü, aşkar edilən inteqrasiya edilmiş və ya ayrıca çip.
 - **Platforma xüsusiyyətləri**: telefonlarda jiroskop və Spatial 2.5D pleyeri; Quest-də immersiv görünüş, nizamlayıcılar və əllər; Android TV-də pultun düzülüşü, klaviatura dialoqu və televizor banneri; kompüterdə isə siçan və klaviatura, tam ekran, bir pəncərə, proqramla açılan və ya onun pəncərəsinə sürüklənən fayllar və qovluqlar qovluqlarınızın faylları kimi oxunur, Windows onlar üçün dekoderə malik olduqda qovluqların HEIC, AVIF, TIFF və kamera RAW fotoları və şifrələr və tokenlər üçün Windows data mühafizəsi.
-- **Quruluşca məxfilik**: heç bir hesab, heç bir bulud, heç bir analitika; cihazın təhlükəsiz saxlama yerində şifrələr və tokenlər; yalnız cihazda istifadə edilən Spatial pleyerin kamerası; yalnız şəbəkənizdə çatılan paylaşımlar, Plex və kameralar.
+- **Quruluşca məxfilik**: heç bir hesab, heç bir bulud, heç bir analitika; cihazın təhlükəsiz saxlama yerində şifrələr və tokenlər; telefondan daxil edilən ekran ev şəbəkəsində şifrələnmiş şəkildə göndərilən öz seansını alır, heç vaxt şifrəni yox; Spatial pleyerin və kod skanerinin kamerası yalnız cihazda istifadə olunur; paylaşımlar, Plex və kameralara yalnız şəbəkənizdə çatılır.
 
 <a id="technical-documentation"></a>
 ## Texniki sənədləşmə
@@ -357,7 +400,7 @@ Tətbiqin oxuya və oxuda biləcəyi hər şey, bütün əhatə dairəsini istə
 
 1. Sizə webOS 4.0 və ya daha yenisi olan LG televizoru, eyni şəbəkədə kompüter və pulsuz LG tərtibatçı hesabı lazımdır. Televizorda LG Content Store-dan Developer Mode tətbiqini quraşdırın, daxil olun, Dev Mode Status-u yandırın və televizorun yenidən başlamasına icazə verin; onun IP ünvanını və tətbiqin göstərdiyi parol ifadəsini qeyd edin.
 2. Kompüterdə webOS CLI-ı quraşdırın (Node.js 18 və ya daha yenisi): `npm install -g @webos-tools/cli`, sonra televizoru `ares-setup-device` (onun IP ünvanı, port 9922, istifadəçi `prisoner`) və parol ifadəsini soruşan `ares-novacom --device <name> --getkey` ilə qeydiyyatdan keçirin.
-3. `Immuch360-webOS-0.1.0.ipk` faylını [webOS ilkin buraxılışından](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0) yükləyin, onu `SHA256SUMS.txt` ilə yoxlayın, sonra `ares-install --device <name> Immuch360-webOS-0.1.0.ipk`. webosbrew-un [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) tətbiqi eyni işi komanda sətri olmadan görür.
+3. `Immuch360-webOS-0.2.0.ipk` faylını [webOS ilkin buraxılışından](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) yükləyin, onu `SHA256SUMS.txt` ilə yoxlayın, sonra `ares-install --device <name> Immuch360-webOS-0.2.0.ipk`. webosbrew-un [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) tətbiqi eyni işi komanda sətri olmadan görür.
 4. Developer Mode seansı 1000 saat davam edir və Developer Mode tətbiqinin EXTEND düyməsi onu yeniləyir; müddət bitdikdə televizor bu yolla quraşdırılmış tətbiqləri silir. Təfərrüatlar [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode) səhifəsindədir.
 
 <a id="meta-quest"></a>
@@ -370,23 +413,23 @@ Tətbiqin oxuya və oxuda biləcəyi hər şey, bütün əhatə dairəsini istə
 <a id="windows"></a>
 ### Windows
 
-1. `Immuch360-Desktop-3.3.0-rc.0-desktop.7-windows-x64-setup.exe`-ni [masaüstü ilkin buraxılışı](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7)ndan yükləyin (yoxlamaq üçün `SHA256SUMS.txt` ilə) və açın. Fayllar hələ imzalanmayıb: Windows SmartScreen "Windows protected your PC" göstərə bilər, "More info", sonra "Run anyway" seçin.
+1. `Immuch360-Desktop-3.3.0-rc.0-desktop.8-windows-x64-setup.exe`-ni [masaüstü ilkin buraxılışı](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8)ndan yükləyin (yoxlamaq üçün `SHA256SUMS.txt` ilə) və açın. Quraşdırıcı və ZIP imzalanıb; Windows naşir kimi APROGSYS-i göstərir. Naşir SmartScreen üçün yeni olduğu müddətdə, o yenə də bir dəfə soruşa bilər: "More info", sonra "Run anyway".
 2. "Install for me only"i (administrator hüquqları olmadan) və ya "Install for all users"i, sonra Windows-un artıq seçdiyi ilə eyni olan quraşdırıcı dilini seçin.
 3. Immuch360 Desktop-u Start menyusundan başladın. Fotolar və videolar onu "Open with" siyahısında tapır (bir faylın üzərinə sağ klik edin, Open with); o, özünü heç vaxt onların defolt proqramı etmir. Yeni build-in ilk başlaması Windows faylları skan edərkən bir dəqiqəyə qədər çəkə bilər.
 4. Windows 10 və ya 11, 64 bit. Yeniləmək üçün növbəti build-in quraşdırıcısını açın: girişiniz, qovluqlarınız və tənzimləmələriniz qalır. Eyni buraxılışın ZIP-i qovluq şəklində olan eyni proqramdır, onu istənilən yerdə arxivdən çıxarıb içindən `immuch360.exe`-ni başlada bilərsiniz.
 
 ### Linux
 
-Ubuntu 22.04 və ya daha yenisində və Debian 12 və ya daha yenisində: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-amd64.deb`; Fedora 40 və ya daha yenisində: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-x86_64.rpm`, hər ikisi [masaüstü ilkin buraxılışı](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7)ndan. Sonra Immuch360 Desktop-u tətbiqlərinizdən başladın. Sınaq versiyası: kompüterin qovluqları, fotolar və kürə şəklində 360° fotolar, paketin quraşdırdığı sistem libmpv-i vasitəsilə düz videolar (360°, 3D və RAW videolar mesajla düz oxudulur); SMB paylaşımları Ubuntu 22.04 və Debian 12-dən başlayaraq işləyir. Fedora-da kamera videoları üçün RPM Fusion-un FFmpeg-i lazımdır. GNOME Keyring və ya KWallet olmadan parollar yalnız seans üçün saxlanılır və tətbiqin ayarları bunu bildirir.
+Ubuntu 22.04 və ya daha yenisində və Debian 12 və ya daha yenisində: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-amd64.deb`; Fedora 40 və ya daha yenisində: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-x86_64.rpm`, hər ikisi [masaüstü ilkin buraxılışı](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8)ndan. Sonra Immuch360 Desktop-u tətbiqlərinizdən başladın. Sınaq versiyası: kompüterin qovluqları, fotolar və kürə şəklində 360° fotolar, paketin quraşdırdığı sistem libmpv-i vasitəsilə düz videolar (360°, 3D və RAW videolar mesajla düz oxudulur); SMB paylaşımları Ubuntu 22.04 və Debian 12-dən başlayaraq işləyir. Fedora-da kamera videoları üçün RPM Fusion-un FFmpeg-i lazımdır. GNOME Keyring və ya KWallet olmadan parollar yalnız seans üçün saxlanılır və tətbiqin ayarları bunu bildirir.
 
 ### macOS
 
-`Immuch360-Desktop-3.3.0-rc.0-desktop.7-macos.dmg`-ni [masaüstü ilkin buraxılışı](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7)ndan açın və tətbiqi Applications-a sürükləyin (Apple silicon və Intel, macOS 12 və ya daha yenisi). Hələ imzalanmayıb və notarlaşdırılmayıb: ona Control ilə klik edin və macOS 14 və ondan əvvəlkilərdə Open seçin, ya da macOS 15 və ondan sonrakılarda System Settings, Privacy & Security-də "Open Anyway"i seçin. Layihə üzərində işləyən heç kimin Mac-ı yoxdur: tətbiq yalnız layihənin CI Mac-ında işə salınıb, orada faylları və qovluqları açır və düz videoları öz libmpv-i ilə oxudur; şəbəkə girişi sınanmayıb. Rəylər xoş qarşılanır.
+`Immuch360-Desktop-3.3.0-rc.0-desktop.8-macos.dmg`-ni [masaüstü ilkin buraxılışı](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8)ndan açın və tətbiqi Applications-a sürükləyin (Apple silicon və Intel, macOS 12 və ya daha yenisi). Hələ imzalanmayıb və notarlaşdırılmayıb: ona Control ilə klik edin və macOS 14 və ondan əvvəlkilərdə Open seçin, ya da macOS 15 və ondan sonrakılarda System Settings, Privacy & Security-də "Open Anyway"i seçin. Layihə üzərində işləyən heç kimin Mac-ı yoxdur: tətbiq yalnız layihənin CI Mac-ında işə salınıb, orada faylları və qovluqları açır və düz videoları öz libmpv-i ilə oxudur; şəbəkə girişi sınanmayıb. Rəylər xoş qarşılanır.
 
 <a id="privacy"></a>
 ## Məxfilik
 
-Heç nə tərtibatçıya getmir: heç bir hesab, heç bir analitika, heç bir çökmə hesabatı xidməti, heç bir reklam. Tətbiq yalnız seçdiyiniz serverlərlə (Immich serveriniz, paylaşımlarınız, Plex serveriniz, kameralarınız) danışır və serversiz halda heç nə ilə danışmır. Şifrələr və tokenlər cihazın təhlükəsiz saxlama yerində qalır. Spatial 2.5D pleyerinin kamerası yalnız cihazda istifadə olunur; onun görüntüləri heç vaxt saxlanılmır və heç yerə göndərilmir. Tam siyasət [PRIVACY.md](../PRIVACY.md) faylındadır, mənbə üzrə təfərrüatlar isə [istifadəçi bələdçisindədir](../docs/immuch360/user-guide.md#privacy).
+Heç nə tərtibatçıya getmir: heç bir hesab, heç bir analitika, heç bir çökmə hesabatı xidməti, heç bir reklam. Tətbiq yalnız seçdiyiniz serverlərlə (Immich serveriniz, paylaşımlarınız, Plex serveriniz, kameralarınız) danışır və serversiz halda heç nə ilə danışmır. Şifrələr və tokenlər cihazın təhlükəsiz saxlama yerində qalır. Kamera yalnız cihazda, Spatial 2.5D pleyeri tərəfindən və daxil etdiyiniz ekranın kodunu skan etmək üçün istifadə olunur; onun görüntüləri heç vaxt saxlanılmır və heç yerə göndərilmir. Telefonunuzdan daxil edilən ekran ev şəbəkənizdə şifrələnmiş şəkildə göndərilən öz seansını alır, heç vaxt şifrənizi yox. Tam siyasət [PRIVACY.md](../PRIVACY.md) faylındadır, mənbə üzrə təfərrüatlar isə [istifadəçi bələdçisindədir](../docs/immuch360/user-guide.md#privacy).
 
 <a id="the-project"></a>
 ## Layihə
@@ -402,13 +445,13 @@ Bu səhifənin telefon şəkilləri Android build-də emulyatorda, televizor ş�
 
 Hələ hazır olmayanlar, ən ehtimallısı əvvəl. Burada heç nə vəd deyil, [problem izləyicisindəki](https://github.com/freeKC/Immuch360/issues) rəylər isə nəyin əvvəl gələcəyinə qərar verməyə kömək edir.
 
-- **Mağazalar**: Google Play (build 26 baxılır, sonra build 27; TV siyahısı baxılır), App Store (versiya 3.3.1 14 oktyabrdan bəri baxılır), Meta Horizon Store (build 25 baxılır).
-- **Kompüterlər**: Windows PC-də hər funksiyanın əl ilə testi; sonra Linux və macOS-da 360° video render mühərriki, əsl Mac-da və əsl Linux PC-də test; sonra imzalanmış build və avtomatik yeniləmələr; sonra veb kamera ilə Spatial 2.5D.
-- **Televizorlar**: real Android TV-də build 27-nin testi; real LG televizorunda LG webOS tətbiqi, sonra onun kürədə 360° videoları və şəbəkə paylaşımları, Plex və Tapo kameraları; televizoru və ya kompüteri telefonla cütləşdirmək üçün QR kod, böyük ekran onu göstərir, telefon isə skan edir.
-- **Telefonlar və planşetlər**: iOS 360° video pleyerində vaxt zolağı, telefonların 360° pleyerlərində əvvəlki və növbəti, düz pleyerdə audio trek seçimi, iPhone və iPad-də Tapo canlı baxışı.
+- **Mağazalar**: Google Play (build 28 baxılır; TV siyahısı baxılır), App Store (versiya 3.3.1 baxılır, sonra build 28 ilə versiya 3.3.2), Meta Horizon Store (build 28 baxılır).
+- **Kompüterlər**: Windows PC-də hər funksiyanın, telefonla giriş də daxil olmaqla, əl ilə testi; Windows-da veb kamera ilə Spatial 2.5D, noyabr 2026 üçün hazırlanır; sonra Linux və macOS-da 360° video render mühərriki, əsl Mac-da və əsl Linux PC-də test; sonra avtomatik yeniləmələr və imzalanmış macOS tətbiqi.
+- **Televizorlar**: real Android TV-də build 27 və 28-in testi, telefonla giriş də daxil olmaqla; real LG televizorunda webOS 0.2.0, paylaşımları, Plex-i və canlı baxışı ilə; sonra kürədə 360° videolar, kameraların səsi və onların yazıları (dekabr 2026-dan əvvəl yox).
+- **Telefonlar və planşetlər**: növbəti iOS buraxılışı ilə iPhone və iPad-də Tapo canlı baxışı və böyük ekranlara giriş; iOS 360° video pleyerində vaxt zolağı, telefonların 360° pleyerlərində əvvəlki və növbəti, düz pleyerdə audio trek seçimi.
 - **İmmersiv media**: ikiqat fisheye .dng, GoPro və DJI videolarının öz hərəkət datalarından səviyyələndirilməsi, dekoderləri icazə verərsə Quest-də 3D fəza videoları, başlıqda fəza fotoları arasında əvvəlki və növbəti.
 - **Mənbələr**: paylaşım qovluğunun faylları arasında sürüşdürmə, WebDAV üçün Digest autentifikasiyası, Plex tokenini kompüterdən gətirmək üçün QR kod, Plex üçün IPv6, H.265 Tapo yazıları, TV əsas ekranında kanallar.
-- **Dronlar**: real DJI Neo 2 ilə test, sonra telefonun yazdığı səsin klipinə birləşdirilməsi; canlı baxış və dronun kamerasının idarə edilməsi sonraya saxlanılır.
+- **Dronlar**: real DJI Neo 2 ilə test, sonra telefonun yazdığı səsin klipinə birləşdirilməsi; real pultla DJI bağlantı səhifəsi, Meta Quest-də dron videosuna doğru ilk addım. Bu testlərdən əvvəl drona komanda göndərən heç nə planlaşdırılmır.
 - **Upstream**: 360° foto görüntüləyicisindən başlayaraq, saxlayıcıların istədiyi hissələr üçün Immich-ə kiçik pull request-lər.
 
 Hər funksiya üçün hələ gözləyən cihaz yoxlamaları ilə tam siyahı [Versiya statusu](../docs/immuch360/release-status.md#roadmap) səhifəsindədir.

@@ -737,7 +737,6 @@
   "camera_live_failed": "התצוגה החיה לא התחילה: {error}",
   "camera_live_full_screen": "מסך מלא",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "התצוגה החיה תגיע ל-iPhone ול-iPad בגרסה מאוחרת יותר. ההקלטות כבר מתנגנות כאן.",
   "camera_live_needs_account": "הוסיפו את חשבון המצלמה כדי לראות את התצוגה החיה.",
   "camera_live_no_sound": "אין קול במכשיר הזה",
   "camera_live_sd": "SD",

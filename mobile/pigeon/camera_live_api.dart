@@ -1,13 +1,17 @@
 import 'package:pigeon/pigeon.dart';
 
-// Android only: the live view of the Tapo cameras, a platform view ("immuch/camera_live") that plays the RTSP stream of
-// a camera with Media3. The credentials of the camera account go through setSource, never through the creation
-// parameters of the view.
+// The live view of the Tapo cameras, a platform view ("immuch/camera_live"). On Android and the Quest it plays the RTSP
+// stream of a camera with Media3; the credentials of the camera account go through setSource, never through the
+// creation parameters of the view. On iPhone and iPad it plays with AVPlayer the live playlist that Dart makes of the
+// stream on the local media bridge (isHls, no account: the camera account never leaves Dart).
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/platform/camera_live_api.g.dart',
     kotlinOut: 'android/app/src/main/kotlin/app/alextran/immich/camera/CameraLive.g.kt',
     kotlinOptions: KotlinOptions(package: 'app.alextran.immich.camera'),
+    swiftOut: 'ios/Runner/Core/CameraLive.g.swift',
+    // PigeonError is already declared by Messages.g.swift in the same Runner target
+    swiftOptions: SwiftOptions(includeErrorClass: false),
     dartOptions: DartOptions(),
     dartPackageName: 'immich_mobile',
   ),
@@ -17,12 +21,14 @@ enum CameraLiveState { idle, connecting, playing, buffering, failed }
 class CameraLiveSource {
   const CameraLiveSource({required this.url, this.username, this.password, required this.isHls});
 
-  /// rtsp://host:port/path without credentials, or the bridge URL of a live playlist
+  /// rtsp://host:port/path without credentials (Android), or the bridge URL of a live playlist (iOS)
   final String url;
+
+  /// The camera account of an RTSP address; none with a playlist
   final String? username;
   final String? password;
 
-  /// A live playlist of the bridge rather than RTSP; always false until the live view through HLS comes
+  /// A live playlist of the bridge rather than RTSP: what iPhone and iPad play, Android plays RTSP only
   final bool isHls;
 }
 

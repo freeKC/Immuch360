@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:immich_mobile/desktop/platform/desktop_device.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/pairing/big_screen_headers.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
@@ -51,7 +52,7 @@ class ApiService {
   final _log = Logger("ApiService");
 
   Future<void> updateHeaders() async {
-    await NetworkRepository.setHeaders(getRequestHeaders(), getServerUrls());
+    await NetworkRepository.setHeaders(getNativeHeaders(), getServerUrls());
     _apiClient.client = NetworkRepository.client;
   }
 
@@ -157,6 +158,12 @@ class ApiService {
   Future<void> setDeviceInfoHeader() async {
     final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
 
+    // A big screen named by the phone that signed it in, or by its own device name (sign in with your phone)
+    final bigScreen = getDeviceHeaders();
+    if (bigScreen.isNotEmpty) {
+      bigScreen.forEach(authenticationApi.apiClient.addDefaultHeader);
+      return;
+    }
     if (Platform.isIOS) {
       final iosInfo = await deviceInfoPlugin.iosInfo;
       authenticationApi.apiClient.addDefaultHeader('deviceModel', iosInfo.utsname.machine);
@@ -196,6 +203,17 @@ class ApiService {
   static Map<String, String> getRequestHeaders() {
     return SettingsRepository.instance.appConfig.network.customHeaders;
   }
+
+  /// The device headers of a big screen with a name (StoreKey.pairingScreenLabel), for every stack: the server names
+  /// the session after them (big_screen_headers.dart). None on the phones.
+  static Map<String, String> getDeviceHeaders() => bigScreenDeviceHeaders(
+    label: Store.tryGet(StoreKey.pairingScreenLabel),
+    os: CurrentPlatform.isDesktop ? desktopDeviceType() : 'Android',
+  );
+
+  /// What the native clients (and the computers' stack) add to every request: the custom headers, and a big screen's
+  /// device headers
+  static Map<String, String> getNativeHeaders() => {...getDeviceHeaders(), ...getRequestHeaders()};
 
   ApiClient get apiClient => _apiClient;
 }

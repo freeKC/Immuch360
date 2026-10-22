@@ -28,8 +28,8 @@ describe('NavigationRail', () => {
 		const buttons = screen.getAllByRole('button');
 		const rail = buttons[0]?.closest(`#${NAVIGATION_RAIL_ID}`);
 		expect(rail).not.toBeNull();
-		// Immuch360: Photos, Albums, Places, Search, About, Account
-		expect(buttons).toHaveLength(6);
+		// Immuch360: Photos, Albums, Places, Search, Network shares, About, Account
+		expect(buttons).toHaveLength(7);
 		buttons.forEach(button => expect(button.classList.contains(spottableClass)).toBe(true));
 	});
 

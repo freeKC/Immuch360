@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Immuch360</title>
+    <link rel="stylesheet" href="/p/app.css" />
+  </head>
+  <body>
+    <main class="card">
+      <h1 id="title">Immuch360</h1>
+      <p id="device" class="device"></p>
+      <form id="form" autocomplete="off" novalidate>
+        <p id="intro" class="sub"></p>
+        <label id="server-label" for="server"></label>
+        <input id="server" type="url" placeholder="https://photos.example.com" autocapitalize="off" autocorrect="off" spellcheck="false" required />
+        <label id="email-label" for="email"></label>
+        <input id="email" type="email" autocomplete="username" autocapitalize="off" spellcheck="false" required />
+        <label id="password-label" for="password"></label>
+        <!-- Not saved by the browser: the address of a screen is not a site, and another device may take it later -->
+        <input id="password" type="password" autocomplete="off" required />
+        <div id="code-field" hidden>
+          <label id="code-label" for="code"></label>
+          <input id="code" class="code" placeholder="K7M2Q 9XRTH" autocapitalize="characters" autocorrect="off" autocomplete="off" spellcheck="false" maxlength="12" />
+        </div>
+        <button id="submit" type="submit"></button>
+        <p id="error" class="error" role="alert" hidden></p>
+        <p id="prefer" class="hint"></p>
+        <p class="links">
+          <a id="open-app" hidden></a>
+          <a id="get-app" rel="noreferrer noopener" target="_blank"></a>
+        </p>
+      </form>
+      <div id="success" class="success" hidden>
+        <div class="check" aria-hidden="true">✓</div>
+        <p id="done" class="sub"></p>
+      </div>
+    </main>
+    <script src="/p/app.js"></script>
+  </body>
+</html>

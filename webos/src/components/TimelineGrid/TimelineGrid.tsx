@@ -84,7 +84,7 @@ const DayGroupContent: React.FC<DayGroupContentProps> = React.memo(({group, layo
 	);
 	return (
 		<>
-			<DateHeader timeBucket={group.timeBucket} />
+			<DateHeader timeBucket={group.timeBucket} label={group.label} />
 			<div className={css.assetsGrid} style={layout ? {height: layout.totalHeight} : undefined}>
 				{group.assets.slice(firstCard, endCard).map((asset, offset) => (
 					<AssetCard key={asset.id} asset={asset} onSelect={onSelect} style={cardStyles?.[firstCard + offset]} />

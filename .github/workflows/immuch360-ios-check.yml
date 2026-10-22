@@ -1,0 +1,97 @@
+name: Immuch360 iOS compile check
+
+# Compiles the iOS app on a GitHub macOS runner, without signing, before the one Codemagic build of a release, whose
+# macOS minutes are paid: the same "flutter build ios --release --no-codesign" as the ios-testflight workflow of
+# codemagic.yaml, after the same code generation and Metal toolchain steps, so that a Swift, pod or Xcode error shows
+# here first and costs no second paid build. The repository is public, so the minutes of this runner cost nothing.
+# Runs on the push of a release branch (release-*) that changes the iOS side, and by hand. It builds code that may come
+# from branches, so it reads the repository only, keeps no token in the checkout and uses no secret, under the rules of
+# .github/desktop/check_workflow.py (check_workflow.py --workflow .github/workflows/immuch360-ios-check.yml).
+
+on:
+  push:
+    branches: ['release-*']
+    paths:
+      - 'mobile/ios/**'
+      - 'mobile/pubspec.yaml'
+      - 'mobile/pubspec.lock'
+      - 'mobile/packages/**/ios/**'
+      - 'codemagic.yaml'
+      - '.github/workflows/immuch360-ios-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MISE_YES: '1'
+  MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+
+jobs:
+  ios:
+    name: iOS release build without signing
+    runs-on: macos-15
+    timeout-minutes: 120
+    env:
+      # One Xcode, named here, as in the macOS job of immuch360-desktop.yml (Codemagic takes its newest stable one)
+      XCODE_VERSION: '26.3'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Xcode with the iOS 26 SDK
+        run: |
+          xcode="/Applications/Xcode_$XCODE_VERSION.app"
+          if [ ! -d "$xcode" ]; then
+            echo "::error::No Xcode $XCODE_VERSION on this runner image: set XCODE_VERSION to one its readme lists"
+            ls /Applications | grep "^Xcode" || true
+            exit 1
+          fi
+          sudo xcode-select -s "$xcode/Contents/Developer"
+          xcodebuild -version
+          sdk=$(xcrun --sdk iphoneos --show-sdk-version)
+          echo "$xcode, iOS SDK $sdk"
+          if [ "${sdk%%.*}" -lt 26 ]; then
+            echo "::error::$xcode has the iOS $sdk SDK, not 26 or later"
+            exit 1
+          fi
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install toolchains (Flutter 3.47.2, Java 21, OpenAPI generator)
+        run: |
+          mise install node java "npm:@openapitools/openapi-generator-cli"
+          cd mobile && mise install
+          mise exec -- flutter --version
+
+      - name: Flutter dependencies and code generation
+        run: |
+          mise //mobile:install:ci
+          mise //mobile:codegen
+
+      - name: Metal toolchain for Xcode 26 (compiles the Spatial shaders)
+        run: xcodebuild -downloadComponent MetalToolchain
+
+      - name: iOS release build without signing
+        working-directory: mobile
+        run: mise exec -- flutter build ios --release --no-codesign
+
+      # As the paid build checks it: libsmb2 (dart_smb2, LGPL-2.1-or-later) travels with its notice, licence texts and
+      # corresponding source
+      - name: libsmb2 notice, licence and sources in the app
+        run: |
+          app=$(ls -d mobile/build/ios/iphoneos/*.app | head -1)
+          assets="$app/Frameworks/App.framework/flutter_assets/packages/dart_smb2/libsmb2"
+          for name in NOTICE COPYING LICENCE-LGPL-2.1.txt Immuch360-libsmb2-sources.tar.gz; do
+            [ -f "$assets/$name" ] || { echo "::error::no $name of libsmb2 in $app"; exit 1; }
+          done
+          echo "built: $app ($(du -sh "$app" | cut -f1))"

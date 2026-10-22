@@ -737,7 +737,6 @@
   "camera_live_failed": "Tampilan langsung tidak dimulai: {error}",
   "camera_live_full_screen": "Layar penuh",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Tampilan langsung akan hadir di iPhone dan iPad pada versi berikutnya. Rekaman sudah dapat diputar di sini.",
   "camera_live_needs_account": "Tambahkan akun kamera untuk melihat tampilan langsung.",
   "camera_live_no_sound": "Tidak ada suara di perangkat ini",
   "camera_live_sd": "SD",

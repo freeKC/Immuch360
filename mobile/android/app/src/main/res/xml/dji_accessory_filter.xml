@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Which USB accessories bring up the DJI link entry. Matching is exact on the attributes that are present, so the
+     first entry catches any DJI accessory, whatever its model string is, and the three others are the identity
+     strings the format notes list (store/m2/dji-2026-10-21/p2/protocol.md, section 2.2). An accessory nobody has
+     described still reaches the page and is logged as a profile of its own rather than ignored. -->
+<resources>
+  <usb-accessory manufacturer="DJI" />
+  <usb-accessory manufacturer="DJI" model="com.dji.logiclink" />
+  <usb-accessory manufacturer="DJI" model="WM160" />
+  <usb-accessory manufacturer="DJI" model="com.dji.link" />
+</resources>

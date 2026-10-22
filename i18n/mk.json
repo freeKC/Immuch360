@@ -190,7 +190,6 @@
   "camera_live_failed": "Сликата во живо не започна: {error}",
   "camera_live_full_screen": "Цел екран",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Сликата во живо доаѓа на iPhone и iPad во подоцнежна верзија. Снимките веќе се репродуцираат тука.",
   "camera_live_needs_account": "Додајте ја сметката на камерата за да ја гледате сликата во живо.",
   "camera_live_no_sound": "Нема звук на овој уред",
   "camera_live_sd": "SD",

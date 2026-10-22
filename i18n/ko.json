@@ -736,7 +736,6 @@
   "camera_live_failed": "실시간 화면이 시작되지 않았습니다: {error}",
   "camera_live_full_screen": "전체 화면",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "실시간 화면은 이후 버전에서 iPhone과 iPad에 제공됩니다. 녹화는 이미 여기에서 재생됩니다.",
   "camera_live_needs_account": "실시간 화면을 보려면 카메라 계정을 추가하세요.",
   "camera_live_no_sound": "이 기기에서는 소리가 없습니다",
   "camera_live_sd": "SD",

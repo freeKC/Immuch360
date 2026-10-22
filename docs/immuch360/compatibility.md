@@ -13,7 +13,7 @@ Immuch360 is a gallery, and it is also a free media player: it plays what the of
   - iPhone, iPad: same, except the MKV and AVI files of a share, which iOS does not open (on a server they play transcoded).
   - Meta Quest: in the window.
   - Android TV, Google TV: as on phones; from build 27 Left and Right go to the previous or next item, also while a video plays, OK shows the controls and a second OK pauses, the rewind and fast forward keys and the buttons of the controls jump 10 s, and a video that cannot play says why.
-  - LG webOS TVs (the webOS app): the server's stream, played by the TV; Left and Right go to the previous or next item, the controls hide 5 s after the last key, and a video the TV cannot play gets a message.
+  - LG webOS TVs (the webOS app): the server's stream, played by the TV, and from webOS 0.2.0 the videos of shares and Plex servers, played as they are when the TV can, else transcoded by Plex; Left and Right go to the previous or next item, the controls hide 5 s after the last key, and a video the TV cannot play gets a message.
   - Windows (from desktop build 2): the libmpv player, from every source of the second list; Enter pauses, left and right or J and L jump 10 s.
   - Linux (from desktop build 6): the same player with the libmpv of the system, drawn by the graphics chip, on X11 sessions too from desktop build 7; on Fedora, camera videos need the FFmpeg of RPM Fusion.
   - macOS (from desktop build 6): the same player with the project's libmpv inside the app; run on the CI's Mac only.
@@ -81,10 +81,11 @@ Immuch360 is a gallery, and it is also a free media player: it plays what the of
   - Windows (from desktop build 3): from desktop build 5, two players, one per lens, decoded by the graphics chip (a DJI Osmo 360 file at 25 frames a second on the dedicated chip of the test laptop); then both lenses side by side in one player when the computer keeps up (measured on its own playback; on the test laptop, an X3 pair on its dedicated chip only), the only way for a GoPro .360; otherwise the phones' steps: one lens, the transcoded stream, the camera's low resolution LRV copy, the video unstitched.
 - **Tapo camera live view (from build 20)**
   - Android phones: Media3 RTSP player: SD on the page, HD in full screen, sound button.
-  - iPhone, iPad: not yet: a card says it comes later.
+  - iPhone, iPad: from version 3.3.2, built from build 28: the stream turned into a live HLS playlist on the device and played by AVPlayer, a few seconds behind the camera, with its sound; until then a card says it comes later.
   - Meta Quest: in the window, in HD.
   - Android TV, Google TV: as on phones.
   - Windows (from desktop build 3): the libmpv player, SD on the page, HD in full screen, sound button.
+  - LG webOS TVs (from webOS 0.2.0): video only, HD or SD, remuxed by the service of the app for the Media Source of the TV, with an HLS playlist where Media Source refuses it.
 - **Tapo camera recordings (from build 20)**
   - Android phones: fetched from the memory card into an H.264 video with its sound, then played with seeking.
   - iPhone, iPad: same.
@@ -103,8 +104,9 @@ On Windows, the Immuch360 Desktop preview shows the photos, flat and 360°, raw 
 - **A NAS or a computer**: SMB and WebDAV shares, and from build 19 DLNA media servers, found on the network, read live (an SMB video over up to six connections), nothing copied; from build 15 the files you pick can be sent to your Immich account.
 - **Another phone (from build 19)**: "Share this phone on the network" on that phone: the headset, or any WebDAV client of the network, reads its albums, months and 360° media.
 - **A Plex Media Server (from build 20)**: its photo, movie and TV show libraries by folder, the original files read live over HTTPS checked against the server's own certificate, at home or through the address outside home, on every platform; see [Plex Media Server, without plex.tv](user-guide.md#plex-media-server-without-plextv).
-- **A Tapo camera (from build 20)**: the live view with the camera account (Android, Android TV, the Quest, and Windows from desktop build 3), and the recordings of its memory card with the TP-Link account password (every platform), on the local network only; see [Tapo cameras](user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **A Tapo camera (from build 20)**: the live view with the camera account (Android, Android TV, the Quest, Windows from desktop build 3, LG TVs from webOS 0.2.0, video only, and iPhone and iPad from version 3.3.2), and the recordings of its memory card with the TP-Link account password (every platform), on the local network only; see [Tapo cameras](user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **The folders of a computer (desktop preview)**: the folders you choose in Immuch360 Desktop, read in place of a phone's gallery; a Windows computer can also share them with the headset, see [On a Windows computer](user-guide.md#on-a-windows-computer-immuch360-desktop-preview).
+- **A DJI remote controller (from build 28, experimental, the Meta Quest and Android phones and tablets)**: read over its cable by the DJI link page, receive only, to learn what it sends; no media from it yet, see [DJI link](user-guide.md#dji-link-diagnostics-experimental).
 - **A DJI drone, its controller or a card (from build 27, Android phones and tablets, experimental)**: plugged into the phone with a USB-C cable and read through the folder picker of the system, as a USB drive or a device in File transfer mode; the photos and videos by day, sent to your Immich account or kept in the gallery of the phone; see [DJI drones](user-guide.md#dji-drones-photos-and-videos-over-usb-experimental).
 
 ## Compared with the Immich app
@@ -128,13 +130,14 @@ On Windows, the Immuch360 Desktop preview shows the photos, flat and 360°, raw 
 | SMB and WebDAV shares found on the network and played live, nothing downloaded | ❌ | ✅ every viewer, phones and Quest |
 | DLNA media servers as a share type | ❌ | ✅ from build 19 |
 | Send the files of a share to Immich; device files sent by hand counted as backed up | ❌ device files only | ✅ from build 15 |
+| Sign a TV, a headset or a computer in from the phone, by a QR code or a short code, with a session of its own and no password typed on the remote | ❌ the server address, the email and the password typed on each device | ✅ from build 28: Android TV, the Quest window, Windows, Linux and macOS, signed in from Android now and from iPhone and iPad with version 3.3.2 |
 | Import from a DJI drone or a card over USB, its videos placed on the map from their flight data | ❌ the phone's gallery only, where the copies of DJI Fly arrive without the place of a Neo 2 video | ✅ from build 27, Android phones and tablets, experimental |
 | Share this phone on the network, for the headset | ❌ | ✅ from build 19, Android and iOS |
 | Plex Media Server libraries played from the original files, at home and away, without plex.tv | ❌ | ✅ from build 20, every viewer, on phones, tablets, the Quest and TVs |
-| Tapo cameras: the live view, and the recordings of the memory card sent to Immich when you choose | ❌ | ✅ from build 20: recordings everywhere, live on Android, Android TV, the Quest and, from desktop build 3, Windows |
+| Tapo cameras: the live view, and the recordings of the memory card sent to Immich when you choose | ❌ | ✅ from build 20: recordings everywhere, live on Android, Android TV, the Quest, from desktop build 3 Windows, from webOS 0.2.0 LG TVs (video only), and on iPhone and iPad from version 3.3.2 |
 | Android TV and Google TV, driven by the remote, in the same APK | ❌ not a TV app | ✅ from build 20, dark by default from build 27 |
-| LG webOS TVs | ❌ no TV app | ✅ a first test build of an app of its own (webOS 0.1.0), built on Immich TV for webOS by Seeky91 |
-| The same app on a computer | ❌ phones and tablets only | ✅ preview on Windows: photos, flat and 360° videos (desktop build 7); early previews on Linux and macOS: photos and flat videos |
+| LG webOS TVs | ❌ no TV app | ✅ test builds of an app of its own (webOS 0.2.0, with shares, Plex and the Tapo live view), built on Immich TV for webOS by Seeky91 |
+| The same app on a computer | ❌ phones and tablets only | ✅ preview on Windows: photos, flat and 360° videos (desktop build 8, signed); early previews on Linux and macOS: photos and flat videos |
 | Raw Insta360 .insp photos and single track .insv videos | ❌ flat | ✅ from build 16 |
 | Raw videos with one lens per track or per file (Insta360 X4, X4 Air, X5, X6, X3 pairs, GoPro .360, DJI .osv) | ❌ flat or wrong | ✅ from build 18 |
 | Dual fisheye .dng | ❌ flat | ❌ not yet |
@@ -166,7 +169,7 @@ On Windows, the Immuch360 Desktop preview shows the photos, flat and 360°, raw 
 - **Plex Media Server**: checked from a computer against a real Plex Media Server 1.42.1 (pairing, folders, byte ranges, thumbnails, the address outside home); not yet checked on a device.
 - **Tapo cameras**: checked against a simulated camera; not yet checked with a real camera.
 - **Android TV and Google TV**: checked by automated tests, and on the Google TV emulator in builds 21 and 22 (login, timeline, albums, a flat photo, a video, the 360° sphere viewer and video player, the 360° list, an SMB share, the add menu, the share form, Settings and the remote navigation, but not the Plex and Tapo pages); of the TV fixes of build 23, only the bottom margin of the Photos tab was seen on the emulator; the search filters, the search type and the album sort of build 26 were run there with the remote, and so were the videos, the dark theme, the details, the filters and the rotation of build 27; build 25 or 26 ran once on a real Android TV on 21 October 2026, whose reports led to build 27; build 27 not yet checked on a real TV.
-- **LG webOS TVs**: the unit tests of its own layers, the tests it inherits from Immich TV for webOS and the check of its package run in the CI; not run on a real LG TV nor in LG's simulator yet.
+- **LG webOS TVs**: the unit tests of its own layers, the tests it inherits from Immich TV for webOS and the check of its package run in the CI; version 0.1.0 ran on a tester's LG TV (webOS 22); the shares, Plex and cameras of 0.2.0 were run against real servers on the project's build host and in a browser, not on a TV yet.
 - **The same app on a Windows computer**: desktop build 3 passed 855 of its 863 automated desktop tests on Windows (8 skipped by design) and the whole test suite of the app; on a Windows 11 PC it started, opened a saved session on an Immich server, synced, played a video and closed cleanly, and its 360° player was run with synthetic 4K, 5.7K and 8K clips on both graphics chips of a laptop with no crash. Desktop build 4 is covered by the project's CI (the desktop tests on Windows and the whole test suite of the app), and was started, played a 1080p video and closed cleanly by hand; desktop builds 5 and 6 are built and tested by the same CI. The test of each function by hand, with real 360° files and a real Tapo camera, is still to do. Linux ran under WSLg and in the CI's containers only, macOS on the CI's Mac only.
 - **Raw Insta360 .insp photos and single track .insv videos**: photos checked against Insta360 Studio exports of X3 files, videos on an Android emulator with a low resolution X3 file; not run on an iPhone yet.
 - **Raw videos with one lens per track or per file**: parsers and stitching checked on real X4, X3 pair, GoPro MAX and Osmo 360 files; playback is the device test of builds 18 and 19. A real Osmo 360 file was played on Windows in two players (the NVIDIA chip of the test laptop, 25 frames a second, no frame dropped; not in 360° on the Intel chip, the PC being short of memory) and, on an Android 15 emulator, was listed from a WebDAV share but could not play, the emulator having no 10 bit HEVC decoder.
@@ -195,7 +198,7 @@ On Windows, the Immuch360 Desktop preview shows the photos, flat and 360°, raw 
   - What Immuch360 does: the same app, made for the remote (from build 20).
 - **Immich TV for webOS**
   - What they run into: a good Immich app for LG TVs, by Seeky91, which shows 360° photos flat.
-  - What Immuch360 does: its webOS app is built on it and adds the 360° sphere, the 360° badge, "View as 360°", the keys of the Android TV app and the languages of Immuch360 (a first test build).
+  - What Immuch360 does: its webOS app is built on it and adds the 360° sphere, the 360° badge, "View as 360°", the keys of the Android TV app, the languages of Immuch360 and, from 0.2.0, the network shares, Plex and the Tapo live view (test builds).
 - **DJI Fly and its album**
   - What they run into: the clips of a DJI Neo 2 reach the phone's album, then Immich, without their place, which sits in the flight data file the drone writes beside each video; the spheres of most DJI drones show flat in Immich.
   - What Immuch360 does: reads the drone or its card over USB, sends the originals to Immich and places each video on the map from its flight data (from build 27, Android, experimental).
@@ -218,6 +221,9 @@ What each function was checked on, gathered in one place from the sections of th
 | iPhone 14 | 360° photos as a sphere, the gyroscope and 360° videos |
 | Meta Quest 3 | Build 25, with its welcome page, by hand on 18 October 2026; the immersive view (the controls of build 14, adjusted in build 16 after a user's feedback); 3D 360° photos and videos with the same samples; the mode without a server; an SMB share of a Freebox Server; the H.264 limit of its decoder, measured on the headset (about 4096x2304); Insta360 X4 8K HEVC videos, played by a user; the headset captures |
 | Android emulator | VR180 with synthetic media; the mode without a server; Samba and WebDAV test servers; the files of a Samba share sent to an Immich 3.2 server; the server videos and the video decoders; a single track raw video (a low resolution X3 file); the phone captures; from build 27, a phone emulator for the DJI drone page, with synthetic CC0 files in a folder of its storage (a drone sphere with its five source shots, a 4000x3000 photo, a 10 second video with its .LRF, .m4a and .SRT, an .OSV) |
+| Google TV emulator with a phone emulator | Build 28: sign in with your phone, the QR code read from a screenshot of the TV and the code typed on the phone, the number on both sides, Cancel, Sign out from either side, the browser page, against an Immich 3.3.0-rc.0 server; the sign-in page of the TV typed with Gboard after a fix of the release |
+| Windows 11 PC | Desktop build 8 (a CI build of its sources): the sign-in page, its address field kept through a resize of the window, the panel of sign in with your phone saying it is off on a public network |
+| A tester's LG TV (50NANO763QA, webOS 22) | webOS 0.1.0, on 22 October 2026, with an Immich 3.3.5 server: photos and 360° photos and videos, the 4K and 5.7K codecs, WebGL 1 and 2; the report led to 0.1.1 |
 | Google TV emulator | Builds 21 and 22: the login, the timeline, the albums, a flat photo, a video, the 360° sphere viewer and the 360° video player, the 360° list, an SMB share, the add menu with its network share, Plex and camera choices, the share form, Settings and the remote navigation fixes, but not the Plex and Tapo pages themselves; build 23: the bottom margin of the Photos tab, its other TV fixes being covered by automated tests; build 24: the welcome page with the remote; build 26: the search filters (People, Media Type, Display options, Star Rating, Tags, Camera, Location, quick date), the search type and the album sort with the remote; build 27: the videos with the remote (Left and Right while a video plays, the controls hiding after 5 seconds, no loop), the dark first start on a TV set to light, the Location, Camera and date filters and the sheets with Clear and Apply beside the choices, the details with the Menu key and a held OK, the message of a 5.7K H.264 360° video beyond the decoders of the emulator, a held arrow over 1000 photos without a freeze, and the one-key rotation against an Immich server; the TV captures |
 | A real Android TV (model not recorded) | Build 25 or 26, on 21 October 2026, by the owner: photos and 360° photos went well; a video playing in a loop that Left and Right could not leave, the controls over the picture, 360° videos that never played, white pages and one freeze while photos scrolled, which led to the TV fixes of build 27 |
 | Windows 11 laptop with an Intel UHD chip and an NVIDIA RTX 4060 Laptop | Desktop build 3 passed 855 of its 863 automated desktop tests (8 skipped by design) and the whole test suite of the app, and started, opened a saved session on an Immich server, synced, played a video and closed cleanly; desktop build 4, whose tests run in the project's CI, was started, played a 1080p video and closed cleanly by hand; the 360° player with synthetic 4K, 5.7K and 8K clips on both graphics chips; raw two lens videos from synthetic clips and real X3 and X4 files; the measurements of [the desktop 360° video renderer](desktop-360-video-renderer.md); the Windows captures; with CI builds of 13 October 2026 and CC0 media, files opened from the command line (before a session and with a saved one), by second starts and by drops sent to the window by a test script (360° photos and a 360° video opened in their 360° view, a flat photo and "View as 360°" on it, folders and files of two folders on the page of opened files, several starts at once with a file each on one page) |
@@ -230,13 +236,14 @@ What each function was checked on, gathered in one place from the sections of th
 
 | Server or source | What was checked against it |
 |---|---|
-| Immich 3.2.4 | Build 22, on the Immich base of the current build 27: login, timeline, albums, 360° photos and videos, video playback and uploads, with no API error |
+| Immich 3.2.4 | Build 22, on the Immich base of the current build 28: login, timeline, albums, 360° photos and videos, video playback and uploads, with no API error |
 | Immich `main` of 10 October 2026 (3.3.0-rc.0) | The same checks, on a server built from the Immich `main` the current build is based on; from build 27, the one-key rotation through the photo editor (an edit saved and removed, from the Google TV emulator) and the uploads of the DJI drone page (a sphere flagged 360° by its sidecar with its bytes unchanged, a video placed from its .SRT) |
 | Immich 3.2 | The files of a Samba share sent to the server, from an Android emulator |
 | Freebox Server | SMB shares on a Galaxy S24+ and a Quest 3, read over one connection (4.5 MB/s) and six (19 MB/s); its disks want the user name `freebox` and no password |
 | Samba and WebDAV test servers | SMB and WebDAV shares on an Android emulator |
 | minidlna and Gerbera | DLNA media servers, in Docker |
 | Plex Media Server 1.42.1 | From a computer: the pairing, the folders, the byte ranges of a video, the thumbnails, a wrong token and the address outside home; photo and TV show libraries against a simulated server only |
+| The build host of the project (Linux, Docker) | webOS 0.2.0: the media bridge of the TV app against Samba (default settings, signing required, SMB 3 encryption), rclone's WebDAV, minidlna, an unclaimed Plex Media Server 1.43.5 and a camera shaped RTSP server (mediamtx), on the four Node versions of LG TVs (8, 12, 16 and 20) and in a headless Chromium; the iOS Tapo live playlist against the same kind of RTSP server, decoded by ffmpeg without an error, the sound included |
 | A simulated Tapo camera | The protocol, written from captures of a C510W with firmware 1.3.4 (the V4 login of mid 2026), checked against a simulated camera in the app's tests; on Windows, the live view against a test RTSP server that signs in the way the cameras do (Digest), cut and refused on purpose |
 
 ### Not checked on a device yet
@@ -248,8 +255,10 @@ What each function was checked on, gathered in one place from the sections of th
 - **DLNA**: discovery on a real network, and Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest, see [DLNA media servers](user-guide.md#dlna-media-servers).
 - **Apple spatial photos and videos**: the headset view and real iPhone files, see [Apple spatial photos and videos](user-guide.md#apple-spatial-photos-and-videos).
 - **Meta Quest 2, Quest Pro and Quest 3S**: not tested, see [Meta Quest](platform-support.md#meta-quest).
-- **Android TV and Google TV**: build 27 not on a real TV (build 25 or 26 ran once on one), and the Plex and Tapo pages not even on the emulator, see [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
-- **LG webOS TVs**: not on a real LG TV, nor in LG's simulator, see [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **Sign in with your phone**: a real camera scan, a headset, a computer signed in that way, and an iPhone, see [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+- **DJI link**: no real DJI remote controller yet, in a Quest or on a phone, see [DJI link](user-guide.md#dji-link-diagnostics-experimental).
+- **Android TV and Google TV**: builds 27 and 28 not on a real TV (build 25 or 26 ran once on one), and the Plex and Tapo pages not even on the emulator, see [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
+- **LG webOS TVs**: webOS 0.2.0 not on a real LG TV, nor in LG's simulator (0.1.0 ran on one), see [LG webOS TVs](platform-support.md#lg-webos-tvs).
 - **DJI drones**: no real drone, USB drive or device in File transfer mode yet, see [DJI drones](user-guide.md#dji-drones-photos-and-videos-over-usb-experimental).
 - **One-key rotation**: not by hand on a phone, an iPhone, a Quest or a computer, see [Turn a photo with one key](user-guide.md#turn-a-photo-with-one-key).
 - **Spatial 2.5D**: not on an iPhone, see [Spatial 2.5D](user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental).
@@ -312,7 +321,7 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 ### Tapo cameras
 
 - Not checked with a real camera yet: [Tapo cameras](user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
-- Live view on Android phones and tablets, Android TV, the Quest and Windows, not on iPhone and iPad yet; two HD and two SD streams at most at once per camera, and Tapo Care, the memory card and an RTSP or ONVIF recorder cannot all run at once: [Tapo cameras](user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- Live view on Android phones and tablets, Android TV, the Quest, Windows and, video only, LG TVs from webOS 0.2.0; on iPhone and iPad from version 3.3.2, a few seconds behind the camera; two HD and two SD streams at most at once per camera, and Tapo Care, the memory card and an RTSP or ONVIF recorder cannot all run at once: [Tapo cameras](user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - Battery cameras and cameras behind a Tapo hub are not supported: [Tapo cameras](user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - Recordings: one download at a time per camera, H.265 recordings not converted yet, no thumbnail for continuous recordings, and a clip plays once it is fully fetched: [Tapo cameras](user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - Passwords: each wrong one counts, and the camera locks for a while after a few: [Tapo cameras](user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
@@ -398,8 +407,8 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 
 ### LG webOS TVs
 
-- A first test build of an app of its own, for webOS 4.0 and later, installed in Developer Mode; not run on a real LG TV yet: [LG webOS TVs](platform-support.md#lg-webos-tvs).
-- A viewer of an Immich server only: no uploads, no photo editor apart from the quarter turn, no network shares, Plex or Tapo cameras, no Cast: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- Test builds of an app of its own, for webOS 4.0 and later, installed in Developer Mode; 0.1.0 ran on a tester's LG TV, 0.2.0 not on a real TV yet: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- A viewer: of an Immich server, and from 0.2.0 of SMB shares (webOS 22 and later), WebDAV and DLNA shares, Plex servers and the live view of Tapo cameras, video only (webOS 5 and later); no uploads, no photo editor apart from the quarter turn, no camera recordings yet (not before December 2026), no mode without a server, no Cast: [LG webOS TVs](platform-support.md#lg-webos-tvs).
 - 360° videos play flat for now; 360° photos turn on a WebGL sphere: [LG webOS TVs](platform-support.md#lg-webos-tvs).
 - On webOS before 25, the reverse proxy in front of Immich must send CORS headers: [Install it on an LG TV](platform-support.md#install-it-on-an-lg-tv).
 - The texts only the TV app has are in English until the next webOS release: [Known issues](known-issues.md#lg-webos-tvs).
@@ -414,7 +423,7 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 - Two lens raw videos play in two players from desktop build 5 (checked on a dedicated chip with Osmo 360, X4 and X3 files), and stacked in one player only when the computer keeps up: [Not there yet](user-guide.md#not-there-yet).
 - 3D on the screen only, the left eye; no gyroscope and no headset view: [Not there yet](user-guide.md#not-there-yet).
 - No Spatial 2.5D, map, Places, OAuth sign in, Google Cast or notifications yet: [Not there yet](user-guide.md#not-there-yet).
-- No signed build and no automatic updates yet; the installer since desktop build 5: [Install it on a computer](user-guide.md#install-it-on-a-computer-windows-linux-and-macos).
+- No automatic updates yet; the installer since desktop build 5, signed by APROGSYS with the ZIP from desktop build 7; sign in with your phone off on a network Windows marks as public: [Install it on a computer](user-guide.md#install-it-on-a-computer-windows-linux-and-macos).
 - The first start of a new build is slow, 8K HEVC needs a dedicated graphics chip, videos are drawn at most 1440 lines high, flat or in the 360° player, and a file being played cannot be renamed, moved or deleted: [Known problems](user-guide.md#known-problems).
 - The libmpv workflow builds an arm64 archive too, but there is no Windows on ARM app yet: [Windows](platform-support.md#windows).
 - A folder opened with the program or dropped on its window shows its own photos and videos, not those of its subfolders, at most 5000, without the files OneDrive keeps online only; files opened that way stay out of your folders (from desktop build 5): [Use it on a computer](user-guide.md#use-it-on-a-computer).
@@ -428,4 +437,4 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 - Linux: without a secret service the app keeps its secrets for the session only (from desktop build 7 without the waits of 25 seconds of earlier builds); the graphics chip draws the videos on X11 sessions from desktop build 7, checked in the CI only; on Fedora, camera videos need the FFmpeg of RPM Fusion: [Linux](user-guide.md#linux).
 - Linux has run under WSLg and in the CI's containers only, macOS on the CI's Mac only; on both, the Immich server gallery, the shares, Plex, the Tapo cameras, Apple spatial photos and the upload to Immich are in the sources and built by the CI, not checked there yet; the macOS app is not signed nor notarized: [Known issues](known-issues.md#macos-and-linux).
 
-Last updated: 22 October 2026 (build 27, desktop build 7, webOS 0.1.0)
+Last updated: 22 October 2026 (build 28, desktop build 8, webOS 0.2.0)

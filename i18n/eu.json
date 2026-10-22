@@ -723,7 +723,6 @@
   "camera_live_failed": "Zuzeneko ikuspegia ez da abiarazi: {error}",
   "camera_live_full_screen": "Pantaila osoa",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Zuzeneko ikuspegia geroko bertsio batean iritsiko da iPhone eta iPadera. Grabazioak hemen erreproduzitzen dira dagoeneko.",
   "camera_live_needs_account": "Gehitu kamera-kontua zuzeneko ikuspegia ikusteko.",
   "camera_live_no_sound": "Soinurik ez gailu honetan",
   "camera_live_sd": "SD",

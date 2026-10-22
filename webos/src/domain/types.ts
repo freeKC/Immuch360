@@ -12,6 +12,8 @@ export interface TimelineAsset {
 	country?: string | null;
 	// Immuch360: the server's 360° flag ("EQUIRECTANGULAR"), see src/immuch360/sphere/rules.ts
 	projectionType?: string | null;
+	// Immuch360: the name of a file of a network share, shown by the viewer above its date
+	fileName?: string | null;
 }
 
 // Immuch360: what the 360° viewer needs to know of an asset beyond the timeline (GET /api/assets/{id})
@@ -43,6 +45,8 @@ export interface DayGroup {
 	timeBucket: string;
 	assets: TimelineAsset[];
 	count: number;
+	// Immuch360: the heading of a group that is no day (a folder of a network share)
+	label?: string;
 }
 
 export interface Album {

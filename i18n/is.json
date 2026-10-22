@@ -735,7 +735,6 @@
   "camera_live_failed": "Bein mynd fór ekki í gang: {error}",
   "camera_live_full_screen": "Heilskjár",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Bein mynd kemur í iPhone og iPad í síðari útgáfu. Upptökurnar spilast þegar hér.",
   "camera_live_needs_account": "Bættu við myndavélaraðganginum til að sjá beina mynd.",
   "camera_live_no_sound": "Ekkert hljóð á þessu tæki",
   "camera_live_sd": "SD",

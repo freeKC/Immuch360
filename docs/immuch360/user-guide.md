@@ -25,6 +25,8 @@ This guide covers every function of Immuch360, for your ordinary photos and vide
 - **"My 360° video stutters, or plays a blurry copy."** See [Video details and decoders](#video-details-decoders-and-why-a-video-stutters).
 - **"A video loads forever, or does not play on my TV."** See [When a video does not play](#when-a-video-does-not-play).
 - **"I want my 360° photos and my Immich library on my Windows PC, with the photos and videos of its folders, my NAS and my Plex server, and the PC shared with my headset."** See [On a Windows computer](#on-a-windows-computer-immuch360-desktop-preview) (a preview: photos and flat videos, and from desktop build 3 360°, 3D, VR180 and raw 360° videos and the Tapo live view).
+- **"Typing my server address and password with a TV remote, or in the headset, takes ages."** See [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+- **"I want my DJI drone's video in my Quest one day, and I can help test."** See [DJI link diagnostics](#dji-link-diagnostics-experimental).
 - **"Do I keep what the Immich app does?"** Yes, with two small changes, see [Everything else is Immich](#everything-else-is-immich).
 
 When a feature is recent, the text says from which build it is there. The GitHub release always has the newest build, the stores follow later: see [Where to get it](release-status.md#where-to-get-it).
@@ -40,11 +42,13 @@ When a feature is recent, the text says from which build it is there. The GitHub
 - [Share this phone on the network](#share-this-phone-on-the-network)
 - [Tapo cameras: live view and the recordings of the memory card](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
 - [DJI drones: photos and videos over USB (experimental)](#dji-drones-photos-and-videos-over-usb-experimental)
+- [DJI link diagnostics (experimental)](#dji-link-diagnostics-experimental)
 - [Raw 360° camera files, without the camera's app](#raw-360-camera-files-without-the-cameras-app)
 - [3D and VR180 photos and videos](#3d-and-vr180-photos-and-videos)
 - [Depth on a flat screen: Spatial 2.5D (experimental)](#depth-on-a-flat-screen-spatial-25d-experimental)
 - [Apple spatial photos and videos](#apple-spatial-photos-and-videos)
 - [In the Meta Quest 3 headset](#in-the-meta-quest-3-headset)
+- [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
 - [Watch on your TV (Android TV and Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
 - [Find your 360° shots: the 360° list](#find-your-360-shots-the-360-list)
 - [Video details, decoders and why a video stutters](#video-details-decoders-and-why-a-video-stutters)
@@ -359,7 +363,7 @@ From there it is a WebDAV share like any other: 360° detection, raw files, the 
 
 You have Tapo cameras at home, and you want to see the garden camera and last night's clips next to your photos without opening the Tapo app, and keep a clip in Immich. The Immich app has nothing for cameras, and the Tapo app is a separate app, signed in to your TP-Link account, with the clips apart from your photos.
 
-From build 20 Immuch360 adds a Tapo camera next to the network shares. It shows the camera live on Android phones and tablets, Android TV and the Meta Quest, and on every platform the recordings of its memory card, day by day: a clip is fetched from the camera, then plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link, and never changes anything on the camera.
+From build 20 Immuch360 adds a Tapo camera next to the network shares. It shows the camera live on Android phones and tablets, Android TV and the Meta Quest (and on Windows, iPhone and iPad and LG TVs, see below), and on every platform the recordings of its memory card, day by day: a clip is fetched from the camera, then plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link, and never changes anything on the camera.
 
 ### Add a camera
 
@@ -380,7 +384,7 @@ From build 20 Immuch360 adds a Tapo camera next to the network shares. It shows 
 3. A phone shows SD on the page and HD in full screen; the Quest shows HD. Back leaves full screen first.
 4. Below the picture come the model and firmware and the memory card, such as "Memory card: (used) used of (total)" or "No memory card".
 
-On iPhone and iPad the live view says "The live view comes to iPhone and iPad in a later version. The recordings play here already." Without the camera account the page says "Add the camera account to see the live view."
+On iPhone and iPad, the live view comes with the next iOS release (3.3.2, made from build 28, not public yet): the app turns the stream of the camera into a live HLS playlist on the device, played by the system player a few seconds behind the camera, with its sound, and an H.265 camera says so in its tile ("SD" may still play). Until that release, the live view says "The live view comes to iPhone and iPad in a later version. The recordings play here already." On LG TVs, from webOS 0.2.0, the live view is video only, see [LG webOS TVs](platform-support.md#lg-webos-tvs). Without the camera account the page says "Add the camera account to see the live view."
 
 ### Play and keep the recordings
 
@@ -403,7 +407,7 @@ When the camera no longer answers at its address, its page looks for it on the n
 ### Limits
 
 - **Not yet checked on a device**: build 20 has not run with a real camera yet. The protocol was written from captures of a C510W with firmware 1.3.4 (the V4 login of mid 2026), and the app was checked against a simulated camera in its tests. Reports are welcome, with the model and firmware that "Test the camera" shows and the lines of [Logs](troubleshooting.md#logs).
-- **Live view**: on Android phones and tablets, Android TV, the Quest and, from desktop build 3, Windows, not on iPhone and iPad yet. The limits of TP-Link apply: two HD and two SD streams at most at once per camera, the Tapo app included, and Tapo Care, the memory card and a recorder that uses RTSP or ONVIF cannot all run at once.
+- **Live view**: on Android phones and tablets, Android TV, the Quest, from desktop build 3 Windows, and from webOS 0.2.0 LG TVs, video only; on iPhone and iPad from the next iOS release, a few seconds behind the camera. The limits of TP-Link apply: two HD and two SD streams at most at once per camera, the Tapo app included, and Tapo Care, the memory card and a recorder that uses RTSP or ONVIF cannot all run at once.
 - **Cameras**: battery cameras and cameras behind a Tapo hub are not supported.
 - **Recordings**: one download at a time per camera. While the Tapo app browses the memory card, the app tries again after 4, 8 and 12 seconds, then says "The camera is busy with another viewer, such as the Tapo app. Try again in a minute." Recordings in H.265 are not converted yet ("This recording is in H.265, which this version cannot convert yet."), continuous recordings have no thumbnail, and a clip plays once it is fully fetched.
 - **Passwords**: each wrong password counts, and after a few the camera locks for a while ("The camera is locked after too many wrong passwords. Try again in N minutes."). The app never tries a refused password again by itself: only "Test the camera" or Retry ask the camera again. When the camera takes the password for its settings but not for its videos, turn Third-Party Compatibility off and on again in the Tapo app, then restart the camera.
@@ -452,6 +456,36 @@ Select files, then "Keep on the device": they go into the gallery of the phone, 
 - QuickTransfer, the Wi-Fi copy of DJI Fly, is not supported.
 - A card from another camera in a USB-C card reader is read the same way, and so is a phone, or a DJI RC 2, in File transfer mode (neither tried yet).
 - More facts and limits: [DJI drones and the DJI Neo 2](compatibility.md#dji-drones-and-the-dji-neo-2).
+
+## DJI link diagnostics (experimental)
+
+You fly a DJI drone and own a Meta Quest, and you would like the drone's video in the headset. DJI Fly runs on a phone, not in a Quest, and nobody knows yet whether a Quest can read a DJI remote controller over its cable at all. From build 28, the DJI link page is the first step of that work, and only an instrument: on the Meta Quest and on Android phones and tablets, it shows whether the device can read a remote plugged in with a cable, what the remote sends, and keeps a capture of it that you can export.
+
+It only listens. Nothing on the page can move a drone: no command is ever sent to the remote or the aircraft. The only bytes it writes are one byte a second, from 20 seconds after the remote opens, which tells whether the remote takes data and carries no command; the page counts them on screen. It is not a DJI product and is not approved by DJI.
+
+### Open the page
+
+1. Settings, Advanced, "DJI link diagnostics (experimental)" is on by default on Android phones and tablets and on the Meta Quest; it is not offered on a TV, on iPhone and iPad, or on a computer. Turned off, it hides the tile.
+2. Library, Network shares, "DJI link" ("Read a DJI remote controller plugged in with a cable").
+3. The page starts with a safety notice, "You are the pilot", which stays on the page: the remote keeps authority at all times, first runs on a bench with the propellers removed, the rules of the open category (visual line of sight, an observer beside you in a headset), the zone rules and Remote ID.
+
+### Read a remote
+
+1. The first block describes this device: its USB accessory feature, the accessory device node, the adb setting, whether DJI Fly is installed, and the charge current. Without a USB accessory feature the page says "This device declares no USB accessory feature and has no accessory device node.": no app can read a remote over the cable on that device, which is an answer too.
+2. Tap "Start the capture", then plug in the remote, switched on, with its cable, the drone off.
+3. If Android asks which app should open it, choose Immuch360 and do not tick "Always", which would take the remote away from DJI Fly. Otherwise the page asks for the USB permission itself, once; after Deny it asks again only on "Try again" or when the remote is plugged in again.
+4. The state goes "No accessory", "Accessory listed", "Waiting for the USB permission", "Accessory open", "Link takes bytes", then, if the remote speaks, "Remote frames arrive" or "Aircraft frames arrive". "Accessory open" only means the cable gave a handle, not a DJI connection.
+5. Below come the strings the remote gives (manufacturer, model, description, version), the time to the first byte ("never" is an answer), the probes sent, the bytes read and written, then the frames per channel and the counters of the decoder.
+
+### Export the capture
+
+Type a line in the capture field (the cable, the port, the remote, the aircraft), then "Export the capture". Three files go to `Download/Immuch360/dji-link`: the bytes, an index of the reads and writes with two clocks, and a header with this device, its USB environment, the strings of the remote, every counter and your line. "The header of an export holds the serial number of the remote, and a capture may hold the position of the aircraft. Keep the files to yourself."
+
+### Limits
+
+- It has not met a real remote yet: the RC-N3 and the Neo 2 are the first targets, and whether a Quest offers the USB accessory mode at all is the first question. Screenshots of the page and the states and counters it shows with your remote are welcome in [Issues](https://github.com/freeKC/Immuch360/issues).
+- No video, telemetry or stick input is decoded yet: a message is named only once a capture of real hardware shows what it carries. The sticks drawn on the page come from a Bluetooth game pad, and nothing leaves the device.
+- One app at a time can hold a USB accessory: close DJI Fly, or clear its defaults, before plugging in.
 
 ## Raw 360° camera files, without the camera's app
 
@@ -583,7 +617,7 @@ The media come from your Immich server, the headset itself, a NAS, a media serve
 ### Open the immersive view
 
 1. Install the app on the headset from the [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), or sideload the APK of a newer build, see [Install](platform-support.md#install-on-the-headset).
-2. On the welcome page (from build 24), choose "Use without a server" for the headset's own photos and videos, or "Connect to an Immich server" to log in with your server. Up to build 23, the login page comes first, with "Use without a server" under it.
+2. On the welcome page (from build 24), choose "Use without a server" for the headset's own photos and videos, or "Connect to an Immich server" to log in with your server; from build 28, type the code that page shows in Immuch360 on your phone instead, see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone). Up to build 23, the login page comes first, with "Use without a server" under it.
 3. Open a 360° photo or video in the viewer, from the timeline, the 360° list, an album or a share folder.
 4. Press the 360° button, or "View as 360°" in the ⋮ menu. On the headset they open the immersive view directly, instead of the sphere viewer of phones.
 5. Look around by turning your head.
@@ -652,6 +686,54 @@ Turn it with the right thumbstick (or the Turn button of the info panel) until i
 - **Playback position on phones**: the 360° video players of phones do not hand their playback position back to the flat player when they close; the Spatial player and the immersive view do.
 - **More**: the codecs the headset decodes, the store, the permissions and the APK size are in [Meta Quest 3](platform-support.md#meta-quest).
 
+## Sign in a TV, a headset or a computer with your phone
+
+Signing in on a TV means typing a server address, an email and a password with the arrows of a remote, one letter at a time, and in a headset on a floating keyboard. From build 28, Immuch360 on your phone does it for them: the big screen shows a QR code and a short code, the phone scans it, you check a number and confirm, and the screen opens on your Immich library. Your password stays on the phone. The Immich app has no such pairing.
+
+It works on the sign-in page of Android TV and Google TV, the Meta Quest window, Windows, Linux and macOS. The phone that signs them in is an Android phone or tablet now, and an iPhone or an iPad from the next iOS release. LG TVs have a way of their own, see [LG webOS TVs](platform-support.md#lg-webos-tvs).
+
+### On the big screen
+
+1. On the welcome page, choose "Connect to an Immich server". Beside the server form ("Or type the server address"), the page shows "Sign in with your phone", a QR code, a code of 10 characters in two groups of five, the two steps for the phone and the line "Your phone must be on the same Wi-Fi as this TV" (or this headset, or this computer).
+2. The code changes when its bar runs out ("New code in N s"). After a while without a phone it pauses ("No phone came for a while: the code is paused."), and "Show a new code" brings it back.
+3. In a Meta Quest the code comes first and large, and the QR code smaller under it: a phone cannot scan the screen of a headset, so you type the code in the phone ("With passthrough on, take your phone and enter this code in Immuch360.").
+4. In a computer window too narrow for both, a "Sign in with your phone" button opens the same panel in a dialog. On Windows, sign in with your phone is off on a network that Windows marks as public ("Mark this network as private in the Windows settings, or type the server address."), and the firewall of a computer may need to allow the port the page names.
+
+### On the phone
+
+1. Sign in to your Immich server on the phone first. In Settings (the profile menu, then Settings), "Connect a TV or computer" is the first entry: "Sign your TV, headset or computer in by scanning the code it shows". On a phone without a server, the welcome page has a "Connect a TV or computer" link that says to connect the phone first.
+2. Tap "Scan the code" and point the camera at the QR code ("Scan the code on the TV or computer"); allow the camera the first time.
+3. Or tap "Enter a code instead": the screens found nearby are listed under "Screens nearby"; tap yours, or type the address shown under the code on the screen ("Address of the screen", such as 192.168.1.23:8361), then the 10 characters ("Code shown on the screen").
+4. A sheet asks "Sign (the screen) in?", with its kind and address ("TV at 192.168.1.23"), the account it gets ("(the screen) will be signed in to (server) as (you)"), a name you can change ("Name of the device") and a number of six digits: "Check that the screen shows the same number. Cancel if it does not." The screen shows that number under "Confirm on your phone…".
+5. Tap Sign in. The phone says "(the screen) is signed in", and the screen opens on your timeline; its account dialog says "Signed in as (you) with (your phone)".
+6. When your phone sends custom headers to your server, for a proxy, the sheet names them, never their values, under a switch, off at first: "They often hold the secrets of a proxy: only send them to a screen of yours."
+
+### Without Immuch360 on the phone
+
+The camera app of any phone reads the QR code and opens a page served by the screen in the browser; the screen also gives its address ("No Immuch360 on your phone? Scan with its camera, or visit (address), to sign in with your email and password."). Type the server address, your email and your password, then Sign in: "Your password is encrypted on your home network and used once to sign the screen in. The screen does not keep it." Three wrong passwords change the code. An account that signs in with OAuth cannot use that page: it says to install Immuch360 on the phone.
+
+### The screens this phone signed in
+
+- Settings, "Connect a TV or computer", "Connected by this phone": each screen with the day it was connected ("Connected (date)") and Sign out, which asks "Sign (the screen) out? It goes back to its sign-in page."
+- Immich lists them too, in Account settings, Authorized devices, as "Immuch360 on (the name of the screen)", where the web app signs them out as well.
+- Signing the phone out signs out the screens it connected; its account dialog says how many first.
+- A screen whose session is gone goes back to its sign-in page at its next request to the server, or when the app comes back to the front.
+
+### How it stays safe
+
+- **Your home network only**: the screen listens for a phone only while its sign-in page shows a code, only on a private network address, and stops when a screen is signed in, when the code pauses and when the app goes to the background.
+- **A code that lasts two minutes at most and works once**, with a few tries; after them the screen shows a new code.
+- **No password on the network**: the code you scan or type holds a secret that never travels; the phone and the screen use it to agree on a key only they know. The phone asks your server for a new session for that screen, a session of its own named after it, and sends it to the screen encrypted with that key. Your password never leaves the phone, and the screen never gets the session of the phone.
+- **The number to check**, the same on both sides, proves that the phone talks to the screen in front of you, not to another device of the network.
+- **Revocable**: each screen has a session of its own, which you sign out from the phone or in Immich without touching the others.
+
+### Limits
+
+- The phone and the screen must be on the same network, not a guest Wi-Fi that keeps devices apart: "Can't reach the screen at (address). Your phone and the screen must be on the same Wi-Fi, not a guest network."
+- The screen must reach your server at the address the phone uses. Otherwise the phone says "(the screen) can't reach (server). Add an address it can reach in Settings, Networking on this phone, or type one on the screen."
+- Your Immich server must be able to sign in other devices: "Your Immich server can't sign in other devices: update it, or type the address on the screen."
+- **Checked** between a Google TV emulator and a phone emulator against an Immich server: the QR code read from a screenshot of the TV, the code typed, the number on both sides, Cancel, Sign out from the phone and from the TV, the browser page with wrong and right passwords. Not tried yet: a scan with a real camera, the Quest, a computer signed in that way (only the sign-in page of Windows was seen on a PC, where the network was public), and an iPhone or an iPad.
+
 ## Watch on your TV (Android TV and Google TV)
 
 You want the 360° photos and videos, your albums and the videos of your NAS or Plex server on the big screen, for the family on the sofa, with the TV remote. The Immich mobile app is not a TV app: a user who installed it on a TV found that it works with a mouse, not with the remote ([discussion #1614](https://github.com/immich-app/immich/discussions/1614)), and the Immich team has no plans for an official TV app ([discussion #13748](https://github.com/immich-app/immich/discussions/13748)).
@@ -665,7 +747,7 @@ To install the app on a TV, see [Install it on the TV](platform-support.md#insta
 ### First start
 
 1. From build 27 the app is dark from its launch screen on, even when the TV is set to light; on a TV, Settings, Preferences, Theme has one "Dark mode" switch, and turned off it makes the app light. From build 24 the app opens on the welcome page with the frame on "Use without a server". The down arrow moves it to "Add a network share or a media server", then to "Connect to an Immich server", and OK opens the choice it is on. Up to build 23, the login page comes first, with "Use without a server" under the form.
-2. "Connect to an Immich server" opens the login page with the frame on the server address. Sign in as on a phone: the arrows move a frame from field to field (from build 23 it passes above the label of a filled field rather than across it), and OK on a field ("Press OK to type") opens the keyboard of the TV in a dialog, for the server address, the email and the password. Back, under the address, or the Back key of the remote returns to the welcome page.
+2. "Connect to an Immich server" opens the login page with the frame on the server address. From build 28 the fastest way is the QR code beside the form: scan it with Immuch360 on your phone, see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone). Or sign in as on a phone: the arrows move a frame from field to field (from build 23 it passes above the label of a filled field rather than across it), and OK on a field ("Press OK to type") opens the keyboard of the TV in a dialog, for the server address, the email and the password. Back, under the address, or the Back key of the remote returns to the welcome page.
 3. "Use without a server": a TV has no photos of its own, so the Photos tab says "This TV has no photos or videos of its own: open a network share from the Library." with a Network shares button. "Add a network share or a media server" goes straight to the Network shares page. Add a share, a Plex server or a camera there, as on a phone (see [Network shares](#network-shares-a-nas-a-computer-or-a-media-server)).
 
 ### Move around with the remote
@@ -796,7 +878,7 @@ Everything the official Immich mobile app does is here: backup, timeline, albums
 
 To show a 360° photo to someone who does not have the app, share it with an Immich shared link: the Immich web app shows a 360° photo as a sphere in their browser.
 
-The current build, build 27 (version 3.3.0-rc.0, build number 3030025), is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0, not a stable release yet). Build 22, on the same Immich base, was tested against an Immich 3.2.4 server and against a server built from that same Immich `main`: login, timeline, albums, 360° photos and videos, video playback and uploads, with no API error. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project. For the full documentation of Immich itself, see [immich.app](https://immich.app).
+The current build, build 28 (version 3.3.0-rc.0, build number 3030026), is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0, not a stable release yet). Build 22, on the same Immich base, was tested against an Immich 3.2.4 server and against a server built from that same Immich `main`: login, timeline, albums, 360° photos and videos, video playback and uploads, with no API error. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project. For the full documentation of Immich itself, see [immich.app](https://immich.app).
 
 ## On a Windows computer: Immuch360 Desktop (preview)
 
@@ -806,7 +888,7 @@ On a computer, Immich offers its web app in a browser. **What Immuch360 Desktop 
 
 This is a preview: photos and flat videos work from desktop build 2, and from desktop build 3 the 360° video player (360°, 3D, VR180 and raw 360° videos) and the live view of Tapo cameras; the steps below that need build 3 say so. Since 9 October 2026 the desktop sources are in the main branch of the fork, `immuch360`, so phones, headsets, TVs and computers ship from the same sources. The phone, tablet, Quest and TV apps do not change with it and keep the name Immuch360.
 
-To download and install the preview, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos): the installer or the ZIP of desktop build 7, with packages for Linux and macOS, early previews.
+To download and install the preview, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos): the installer or the ZIP of desktop build 8, signed, with packages for Linux and macOS, early previews.
 
 ### What the preview does
 
@@ -823,6 +905,7 @@ To download and install the preview, see [Install it on a computer](#install-it-
 - **Files**: downloads from the server go into a folder you choose, Share opens the Windows share panel, and the Logs page has "Save logs to a file".
 - **Photo formats**: in your folders, HEIC, AVIF, TIFF and camera raw photos (DNG, CR2, NEF, ARW) show when Windows has a decoder for them; otherwise they show as a tile that names the format.
 - **Open with and drag and drop** (from desktop build 5): a photo or a video opened with the program ("Open with", a file dropped on `immuch360.exe`, a path given on its command line) or dropped on its window opens in the viewer, a 360° one in its 360° view at once; several files, or a folder, open on a page of their own; a second start hands its files to the window already open. See step 3 of [Use it on a computer](#use-it-on-a-computer).
+- **Sign in with your phone** (from desktop build 8): the sign-in page shows a QR code for Immuch360 on your phone, see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
 - **Spatial 2.5D**: its button shows on Windows, and says that Spatial 2.5D comes to Immuch360 Desktop in a later version.
 
 ### Use it on a computer
@@ -867,19 +950,19 @@ When it is the decoding of a server video that does not keep up, not the drawing
 - **Mouse and keyboard** in place of touch and the gyroscope.
 - **One video player for every source**: libmpv plays the videos of the server, the folders, the shares and Plex alike, and its flat player already has the audio track menu that the flat player of phones does not have yet.
 - **360° videos in the window** (from desktop build 3): the 360° player is a page of the app, not a separate native player, with a time bar, 10 second jumps and the sound button. Raw videos with one lens per track or per file play in two players from desktop build 5, as phones run two decoders (desktop builds 3 and 4 stacked them side by side in one player); the phones' fallback steps are the same, with the stack and the camera's LRV copy added.
-- **The Tapo live view** (from desktop build 3) plays on the computer as on Android, while iPhones and iPads do not have it yet.
+- **The Tapo live view** (from desktop build 3) plays on the computer as on Android; iPhones and iPads get it with the next iOS release.
 
 ### Not there yet
 
 - **Two lens raw videos on a laptop**: in desktop builds 3 and 4 the test laptop stacked an X3 pair (two 2880x2880 H.264 files) at 30 frames a second on its NVIDIA chip only, and an X4 file (two 3840x3840 HEVC tracks) played one lens on both chips. From desktop build 5 they play in two players: on the NVIDIA chip, a DJI Osmo 360 file (two 3840x3840 HEVC 10 bit tracks at 25 frames a second), an X4 file (two 3840x3840 HEVC tracks at 30) and an X3 pair played with no frame dropped. The first time a file at 30 frames a second opens, the player may still say "it may not play smoothly on this device", until the computer has measured it. Not checked yet in the app: the Intel chip, where the flat viewer alone took 2.5 GB of shared GPU memory for the Osmo 360 file and the test stopped for lack of memory on the PC (two players outside the app dropped 2 to 3 frames of 300 there).
 - **3D on the screen only**: a 3D video shows its left eye, as on phones; there is no gyroscope and no headset view on the computer. To watch in true 3D, share the computer with a Meta Quest.
-- **Spatial 2.5D**, later with the webcam; the **map** and the Places view; **signing in with OAuth** (sign in with an email and a password instead); **Google Cast**; **notifications**.
-- **A signed build and automatic updates**: the installer (from desktop build 5) and the ZIP are not signed, and the next build is installed by hand.
+- **Spatial 2.5D**, with the webcam, in development for November 2026; the **map** and the Places view; **signing in with OAuth** (sign in with an email and a password instead); **Google Cast**; **notifications**.
+- **Automatic updates**: the next build is installed by hand. The installer and the ZIP are signed from desktop build 7, see [Windows](#windows).
 - **Linux and macOS**: from desktop build 5 they have packages, early previews: the photos of your folders and 360° photos, and from desktop build 6 flat videos; 360°, 3D, VR180 and raw videos play flat, and the macOS app has only run on the project's CI, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos).
 
 ### Known problems
 
-- **The first start of a new build is slow**: from 10 seconds to about a minute before the window shows, most likely while Microsoft Defender scans the new files, which are not signed yet. Wait for the window rather than starting the app again; the next starts take a second or two.
+- **The first start of a new build is slow**: from 10 seconds to about a minute before the window shows, most likely while Microsoft Defender scans the new files. Wait for the window rather than starting the app again; the next starts take a second or two.
 - **8K HEVC videos need a dedicated graphics chip, and 360° videos run better on one**: on the test laptop, the integrated Intel UHD chip showed about half the frames of an 8K HEVC video, while the dedicated NVIDIA chip played 8K HEVC and 5.7K H.264 with no dropped frame; the 360° player is smooth on the NVIDIA chip and slower on the Intel one, see [360° videos and the graphics chip](#360-videos-and-the-graphics-chip). Windows runs the app on the integrated chip unless told otherwise: in the Windows settings, System, Display, Graphics, add `immuch360.exe` and choose "High performance", then start the app again. On the integrated chip, a flat 5.7K H.264 video, which its decoder refuses, is decoded by the processor without a lost frame.
 - **Flat videos are drawn at most 1440 lines high**, then scaled to the window: on a 4K screen in full screen, a 4K or 8K video is a little softer than in a dedicated video player. This keeps an 8K video within the graphics power of a laptop. The 360° player reads the whole frame, or the smaller size its measure chose, and draws its view at most 1440 lines high too.
 - **While a video of your folders plays in the app, or while the headset reads a file from the shared computer** (a video it plays, a photo it downloads), Windows cannot rename, move or delete that file and says it is open in Immuch360 Desktop: close the video, or stop the playback in the headset, first. Backups do not hold your files that way: a file can be renamed, moved or deleted while it is uploaded.
@@ -890,7 +973,7 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 
 ## Install it on a computer: Windows, Linux and macOS
 
-Immuch360 Desktop comes as desktop pre-releases on the [Releases](https://github.com/freeKC/Immuch360/releases) page of GitHub; the current one is [desktop build 7](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7). From desktop build 7, each desktop pre-release has seven files (six in desktop builds 5 and 6), with `SHA256SUMS.txt` to check them:
+Immuch360 Desktop comes as desktop pre-releases on the [Releases](https://github.com/freeKC/Immuch360/releases) page of GitHub; the current one is [desktop build 8](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8). From desktop build 7, each desktop pre-release has seven files (six in desktop builds 5 and 6), with `SHA256SUMS.txt` to check them:
 
 | Computer | File | What it is |
 |---|---|---|
@@ -906,7 +989,7 @@ Your sign in, your folders and your settings stay in your profile on the compute
 
 ### Windows
 
-1. **Open the installer.** Its files are not signed yet, so Windows SmartScreen may say "Windows protected your PC": choose "More info", then "Run anyway". Where Smart App Control is on, it blocks unsigned programs.
+1. **Open the installer.** The installer is signed from desktop build 7, and the program it installs from desktop build 8; Windows shows APROGSYS as the publisher. While the publisher is new to SmartScreen, it may still say "Windows protected your PC" once: choose "More info", then "Run anyway". Smart App Control lets a signed program run; it blocked the unsigned builds before desktop build 7.
 2. **For you, or for every user of the PC.** "Install for me only", the recommended choice, needs no administrator rights and installs the program in your profile; "Install for all users" installs it in Program Files and asks for an administrator. Then comes the language of the installer: the one of Windows is already selected, and the list has every language of Inno Setup.
 3. **Start it** from the Start menu, "Immuch360 Desktop"; a desktop shortcut is made when you tick it.
 4. **Open with**: the installer offers the app for photos (JPEG, PNG, HEIC, HEIF, AVIF, WebP, TIFF, DNG, Insta360 .insp) and videos (MP4, MOV, M4V, MKV, WebM, Insta360 .insv, GoPro .360, DJI .osv). Right click a file, then Open with, Immuch360 Desktop. It never makes itself the default program of a type: to open a type with it on a double click, choose it in Open with, "Choose another app", with "Always", or in Settings, Apps, Default apps, Immuch360 Desktop. Windows itself decides two cases: a type that no other program opens (often .osv and .360) opens with Immuch360 Desktop on a double click, since it is the only program offered, and a type whose program you never chose as the default (Insta360 Studio for .insp and .insv, for example) makes Windows ask once which program to use.
@@ -961,14 +1044,16 @@ What it does on Linux, from desktop build 6: the welcome page; without a server,
 - **Plex** (from build 20): the token stays in the secure storage of the device and is sent only to your own server, in a request header over HTTPS; the app never contacts plex.tv.
 - **Tapo cameras** (from build 20): the TP-Link account password and the camera account password stay in the secure storage of the device; the app talks to the camera on the local network only, never to the servers of TP-Link; fetched clips stay in the cache of the app and are deleted with the camera.
 - **TV**: whether the device is a TV is read on the device; nothing is sent.
+- **Sign in with your phone** (from build 28): the big screen listens on your home network only while its sign-in page shows a code; the phone asks your server for a session of its own for that screen and sends it encrypted, never your password; the camera of the phone reads the code on the device, and its images are never stored or sent. The list "Connected by this phone" stays on the phone.
+- **DJI link** (from build 28): the page reads the remote plugged into the device and keeps its capture on the device until you export it; nothing is sent anywhere, and nothing is sent to the remote but the one byte check described in [DJI link diagnostics](#dji-link-diagnostics-experimental).
 - **One-key rotation** (from build 27): the turn of a photo you own goes to your Immich server, as an edit of its photo editor; the others stay on the device.
 - **DJI drones** (from build 27): the app reads only the folder you pick, keeps its read grant and the list "Used before" on the phone, and sends the files only to your Immich server; nothing goes to DJI.
 - **The Logs page** (from build 27): why a video did not play, a stalled app and why it last ended stay in the app's log on the device until you share them.
 - **Phone share**: local network only, with a user name and password, over plain HTTP (see [Share this phone on the network](#share-this-phone-on-the-network)).
-- **Camera**: used only by the Spatial 2.5D player, on the device; the images are never stored and never sent anywhere.
+- **Camera**: used only by the Spatial 2.5D player and, from build 28, to scan the code of a screen you sign in, on the device; the images are never stored and never sent anywhere.
 - **On a computer** (Immuch360 Desktop, a preview): the app reads only the folders you choose, keeps its index, thumbnails and cache on the computer, and stores passwords and tokens with the data protection of Windows, for your Windows account only, in the keyring of your session on Linux (in memory for the session when there is none, from desktop build 7), and in your login keychain on macOS. The computer share follows the rules of the phone share, and does not start on a network Windows marks as public, or whose type it cannot tell, unless you say so.
 - **The video player on a computer** (from desktop build 2): the videos of your server reach it through the app, so the player never holds your session token, and what it reads ahead stays in memory, not on the disk. It opens only the file it is given: a file of a folder or a share that is in fact a playlist or a stream description does not make it connect anywhere else. From desktop build 3, the address of each video is given to the player in memory only, never through a temporary file (the link the app makes for a video of the server or a share holds a key of that session, which sat on the disk for a few seconds at each open in desktop build 2), and that key never shows in the log; the live view of a Tapo camera gives the camera account to the player the same way, never in a file or a log line, and talks to the camera on the local network only; the measures of the 360° player and of the decoders (the graphics chip, the format of the video, the frames per second, never a file name) stay in the app's folder on the computer.
 
 The full policy is in [PRIVACY.md](../../PRIVACY.md).
 
-Last updated: 22 October 2026 (build 27, desktop build 7, webOS 0.1.0)
+Last updated: 22 October 2026 (build 28, desktop build 8, webOS 0.2.0)

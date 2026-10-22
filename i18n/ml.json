@@ -719,7 +719,6 @@
   "camera_live_failed": "തത്സമയ കാഴ്ച ആരംഭിച്ചില്ല: {error}",
   "camera_live_full_screen": "പൂർണ്ണ സ്‌ക്രീൻ",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "തത്സമയ കാഴ്ച പിന്നീടുള്ള പതിപ്പിൽ iPhone, iPad എന്നിവയിൽ വരും. റെക്കോർഡിംഗുകൾ ഇവിടെ ഇതിനകം പ്ലേ ചെയ്യുന്നു.",
   "camera_live_needs_account": "തത്സമയ കാഴ്ച കാണാൻ ക്യാമറ അക്കൗണ്ട് ചേർക്കുക.",
   "camera_live_no_sound": "ഈ ഉപകരണത്തിൽ ശബ്ദമില്ല",
   "camera_live_sd": "SD",

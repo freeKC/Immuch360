@@ -7,6 +7,9 @@
 ;   FileVersion   the four numbers of the file version of immuch360.exe (3.3.0.23)
 ;   Associations  the [Registry] entries made from .github/desktop/file-associations.json: "Open with" and the
 ;                 Default apps settings offer the app for those photos and videos; it never becomes their default
+;   SignToolName  (optional) the sign tool given with /S<name>=<command>: Inno Setup signs the uninstaller and the
+;                 installer with it. The release workflow gives it (desktop_installers.py windows --sign-with), on a
+;                 folder whose program and DLLs .github/desktop/windows_sign.py signed already
 ;
 ; One installer for both ways: for every user of the PC in Program Files (administrator rights), or for the current
 ; user only in %LOCALAPPDATA%\Programs (no rights needed, the default). A first dialog asks; /ALLUSERS and /CURRENTUSER
@@ -65,6 +68,10 @@ ShowLanguageDialog=yes
 LanguageDetectionMethod=uilanguage
 Compression=lzma2/max
 SolidCompression=yes
+#ifdef SignToolName
+SignTool={#SignToolName}
+SignedUninstaller=yes
+#endif
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

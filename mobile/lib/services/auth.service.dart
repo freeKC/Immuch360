@@ -66,7 +66,7 @@ class AuthService {
     try {
       final urls = ApiService.getServerUrls();
       urls.add(url);
-      await NetworkRepository.setHeaders(ApiService.getRequestHeaders(), urls);
+      await NetworkRepository.setHeaders(ApiService.getNativeHeaders(), urls);
       final uri = Uri.parse('$url/users/me');
       final response = await NetworkRepository.client.get(uri);
       if (response.statusCode == 200) {
@@ -120,6 +120,9 @@ class AuthService {
       _authRepository.clearLocalData(),
       Store.delete(StoreKey.currentUser),
       Store.delete(StoreKey.accessToken),
+      // Sign in with your phone: the screens this phone connected went with its session, and this screen's phone too
+      Store.delete(StoreKey.pairedScreens),
+      Store.delete(StoreKey.pairingSignedInBy),
       SettingsRepository.instance.clear(const [
         .networkAutoEndpointSwitching,
         .networkPreferredWifiName,

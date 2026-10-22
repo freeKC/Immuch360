@@ -374,7 +374,8 @@ class SplashScreenPageState extends ConsumerState<SplashScreenPage> {
                 }
               },
               onError: (exception) {
-                log.severe('Failed to update auth info with access token: $accessToken');
+                // Never the token itself: a screen whose session was revoked would write it to the log
+                log.severe('Failed to update auth info with the stored access token: ${exception.runtimeType}');
                 if (!mounted) {
                   return;
                 }

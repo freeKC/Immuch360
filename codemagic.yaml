@@ -178,7 +178,7 @@ workflows:
         MISE_YES: "1"
         MISE_TRUSTED_CONFIG_PATHS: "/Users/builder/clone"
         BUNDLE_ID: com.aprogsys.immuch360
-        APP_VERSION: "3.3.1"
+        APP_VERSION: "3.3.2"
       groups:
         - apple_signing
     scripts:

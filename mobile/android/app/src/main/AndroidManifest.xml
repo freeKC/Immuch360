@@ -38,6 +38,12 @@
   <uses-permission android:name="android.permission.CAMERA" />
   <uses-feature android:name="android.hardware.camera.front" android:required="false" />
   <uses-feature android:name="android.hardware.camera" android:required="false" />
+  <!-- DJI link diagnostics: a DJI remote controller plugged into this device is a USB accessory, this device is the
+       peripheral. Neither feature is required: a required feature would hide the app from every device without it,
+       in the Horizon Store as well as in Google Play. -->
+  <uses-feature android:name="android.hardware.usb.accessory" android:required="false" />
+  <uses-feature android:name="android.hardware.usb.host" android:required="false" />
+
   <!-- Android TV and Google TV: the remote is the only input there, and Google Play lists the app on a TV only when
        none of these is required. The location features are implied by the location permissions of the Wi-Fi name
        based server switching, which a TV without GPS does not need. -->
@@ -165,6 +171,14 @@
         <data android:scheme="immich" />
       </intent-filter>
 
+      <!-- immuch360://pair?u=...: the code of a big screen, from its browser page (sign in with your phone) -->
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="immuch360" android:host="pair" />
+      </intent-filter>
+
       <!-- my.immich.app deep link -->
       <intent-filter android:autoVerify="true">
         <action android:name="android.intent.action.VIEW" />
@@ -227,6 +241,24 @@
       </intent-filter>
     </activity>
 
+    <!-- DJI link diagnostics: the entry Android offers when a DJI accessory is plugged in. Shipped disabled and
+         enabled only while the diagnostics switch is on (DjiLinkApiImpl.setAttachEntryEnabled), so the app never
+         appears in the chooser of a user who did not ask for it and never competes with DJI Fly for a cable. -->
+    <activity
+      android:name=".djilink.DjiLinkAttachActivity"
+      android:enabled="false"
+      android:exported="true"
+      android:excludeFromRecents="true"
+      android:noHistory="true"
+      android:theme="@android:style/Theme.NoDisplay">
+      <intent-filter>
+        <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+      </intent-filter>
+      <meta-data
+        android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+        android:resource="@xml/dji_accessory_filter" />
+    </activity>
+
     <activity
       android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
       android:exported="true">
@@ -267,6 +299,13 @@
         android:resource="@xml/memory_widget" />
     </receiver>
 
+    <!-- The QR code scanner of ZXing (sign in with your phone): it follows the rotation of the phone or tablet rather
+      than its landscape default -->
+    <activity
+      android:name="com.journeyapps.barcodescanner.CaptureActivity"
+      android:screenOrientation="fullUser"
+      tools:replace="screenOrientation" />
+
     <activity android:name=".widget.configure.RandomConfigure"
       android:exported="true"
       android:theme="@style/Theme.Material3.DayNight.NoActionBar">
@@ -279,6 +318,9 @@
 
 
   <queries>
+    <!-- Only to say on the DJI link page whether the DJI application is installed: one application at a time can
+         hold a USB accessory, so its presence explains an accessory that never opens -->
+    <package android:name="dji.go.v5" />
     <intent>
       <action android:name="android.intent.action.VIEW" />
       <data android:scheme="https" />

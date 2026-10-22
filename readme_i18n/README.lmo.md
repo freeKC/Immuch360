@@ -11,8 +11,9 @@ Immuch360 l'è ona app liberа e open source per trovà, sfoglià, fà vedè e e
 
 - **Cosa la fa?** La fa vedè i tò foto e video come ona galeria e la fa vedè in del visualizador che va ben per ogni file: plan, come ona sfera che te giri dent, in 3D, in del visor.
 - **Quaj media?** Foto e video plan, panoramà, foto e video a 360°, VR180, 3D stereoscopich, foto spaziaj Apple, i sfer a 360° di dron DJI, e i file original di camere a 360° (Insta360, GoPro MAX, DJI Osmo 360), cusii insema de l'app.
-- **Su quaj dispositiv?** Telefon e tablet Android, iPhone e iPad, Android TV e Google TV, i TV LG cont webOS (ona app a part, prima compilazion de prova), Meta Quest 2, Pro, 3 e 3S, Windows (anteprima), e Linux e macOS in anteprima prematura.
+- **Su quaj dispositiv?** Telefon e tablet Android, iPhone e iPad, Android TV e Google TV, i TV LG cont webOS (ona app a part, in compilazion de prova), Meta Quest 2, Pro, 3 e 3S, Windows (anteprima), e Linux e macOS in anteprima prematura.
 - **Serv on server o on account?** Nò. Immuch360 la funziona de per lee cont i media del tò dispositiv. On server Immich, on NAS, on server multimedial o on server Plex hinn opzion che te gionte quand te voeuret.
+- **Come se fa el login su on TV, on visor o on computer?** Col tò telefon: scansiona el codes QR che la soa pagina de login la fa vedè, o scriv el soeu codes, conferma, e in quaj second el se derva su la tò biblioteca Immich, senza scriv nagott col telecomand.
 
 <p align="center">
   <sub>Fork no oficial de l'app mobil Immich. Minga ligaa a Immich o a FUTO. El nom se lesg come «I am much 360».</sub>
@@ -22,13 +23,13 @@ Immuch360 l'è ona app liberа e open source per trovà, sfoglià, fà vedè e e
 
 | Piattaforma | Indove trovall | Stat al 22 de otober 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon e tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | su Google Play (compilazion 25; compilazion 26 in revision), compilazion 27 su GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone e iPad** | App Store | version 3.3.1 (compilazion 24) ch'la speta la revision de Apple dal 14 de otober; intant [fala de ti](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV e Google TV** | [APK](#android-tv-and-google-tv) · Google Play | compilazion 27 su GitHub: tema scur de default, Sinistra e Destra intant che va on video, on messagg ciar quand on video el pò minga andà; la lista per el TV l'è in revision de Google |
-| **TV LG** cont webOS 4.0 e pussee recent | [compilazion de prova .ipk](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0) | compilazion de prova 0.1.0 del 21 de otober, de installà in [Developer Mode](#lg-tvs-webos); minga faa andà ancamò su on TV LG vero |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 e 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | sul Horizon Store (compilazion 23; compilazion 25 in revision), compilazion 27 su GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installador o ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | compilazion desktop 7, in anteprima: foto, video plan e a 360°, condivision, Plex, camere, file dervii col program, foto girade con on tast, l'interfacia in 89 lengue |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS e Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | in anteprima: su Linux foto, foto a 360° e video plan (i video a 360° van plan); su macOS l'istess, controllaa domà sul Mac del CI del progett, minga firmaa |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefon e tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | su Google Play (compilazion 25; compilazion 28 mandada a la revision de Google), compilazion 28 su GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone e iPad** | App Store | version 3.3.1 (compilazion 27) ch'la speta la revision de Apple, mandada de noeuv el 22 de otober; intant [fala de ti](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV e Google TV** | [APK](#android-tv-and-google-tv) · Google Play | compilazion 28 su GitHub: [login col tò telefon](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) scansionand on codes QR; la lista per el TV l'è in revision de Google |
+| **TV LG** cont webOS 4.0 e pussee recent | [compilazion de prova .ipk](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) | compilazion de prova 0.2.0, de installà in [Developer Mode](#lg-tvs-webos): condivision de ret, Plex e la vista in diretta Tapo; la 0.1.0 l'è andada sul TV LG de on tester, la 0.2.0 minga ancamò su on TV vero |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 e 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | sul Horizon Store (compilazion 25; compilazion 28 mandada a Meta), compilazion 28 su GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installador o ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | compilazion desktop 8, anteprima firmada: foto, video plan e a 360°, condivision, Plex, camere, login col tò telefon, foto girade con on tast, l'interfacia in 89 lengue |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS e Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | in anteprima: su Linux foto, foto a 360° e video plan (i video a 360° van plan); su macOS l'istess, controllaa domà sul Mac del CI del progett, minga firmaa |
 
 *I stat hinn aggiornaa a ogni release; i detaj, compilazion per compilazion, hinn in [Stat de la release](../docs/immuch360/release-status.md).*
 
@@ -48,11 +49,13 @@ Immuch360 l'è ona app liberа e open source per trovà, sfoglià, fà vedè e e
   - [Dovra i tò file, senza account](#use-your-own-files-without-an-account)
   - [Rivà ai media de on NAS, on computer o on server multimedial](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
   - [Trova la tò biblioteca Immich](#find-your-immich-library)
+  - [Fa el login su on TV, on visor o on computer col tò telefon](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Va immersiv sul Meta Quest](#go-immersive-on-meta-quest)
   - [Varda sul TV e sul computer](#watch-on-the-tv-and-on-the-computer)
   - [Immuch360 su on TV LG (webOS)](#immuch360-on-an-lg-tv-webos)
   - [Camere, Plex e file original de camera](#cameras-plex-and-raw-camera-files)
   - [I foto e i video del tò dron DJI sul tò server Immich](#your-dji-drones-photos-and-videos-on-your-immich-server)
+  - [Diagnostica del colegament DJI (esperimental)](#dji-link-diagnostics-experimental)
 - [Dispositiv e sistemi](#devices-and-systems)
 - [Funzion avanzaa](#advanced-features)
 - [Documentazion tecnica](#technical-documentation)
@@ -159,9 +162,28 @@ Con on server [Immich](https://github.com/immich-app/immich), Immuch360 l'è l'a
 2. In Settings, Asset Viewer, Videos, «Sorgent del video» la sceglia l'original quand sto dispositiv chì el decodifica, semper l'original, o semper el flux transcodificaa.
 3. Per fa vedè ona foto a 360° a on quaivun che gh'ha minga l'app, condividela con on link condivis Immich: l'app web Immich la fa vedè come ona sfera in del soeu navigador.
 
-La compilazion attual, la compilazion 27, l'è basaa sul `main` de Immich del 10 de otober 2026 (version 3.3.0-rc.0) e l'è staa testaa contra on server Immich 3.2.4 e on server compilaa del medemm `main` de Immich. Per piasè segnala i problema in [Issues](https://github.com/freeKC/Immuch360/issues), minga al progett Immich.
+La compilazion attual, la compilazion 28, l'è basaa sul `main` de Immich del 10 de otober 2026 (version 3.3.0-rc.0) e l'è staa testaa contra on server compilaa del medemm `main` de Immich; la compilazion 27 l'è staa testaa anca contra on server Immich 3.2.4. Per piasè segnala i problema in [Issues](https://github.com/freeKC/Immuch360/issues), minga al progett Immich.
 
 Pussee: [tutt el rest l'è Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [in paragon cont l'app Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+
+<a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
+### Fa el login su on TV, on visor o on computer col tò telefon
+
+Scriv l'indirizz d'on server, ona email e ona password col telecomand del TV, o in d'on visor, el porta via di minut. Con Immuch360 sul tò telefon, conetuu al tò server Immich, on TV, on Meta Quest o on computer el fa el login in quaj second: el schermo grand el fa vedè on codes QR, el telefon el le scansiona, ti te confermet, e el schermo el se derva su la tò biblioteca. Con l'app del telefon, la tò password la resta sul telefon. L'app Immich la gh'ha nagott de compagn.
+
+<p align="center">
+  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="On TV el fa vedè on codes QR su la soa pagina de login, e on telefon tegnuu denanz el scansiona el medemm codes">
+</p>
+
+1. Sul schermo grand (Android TV e Google TV, la fenestra del Meta Quest, Windows, Linux o macOS), selezionna «Conètes a on server Immich»: la pagina de login la fa vedè «Login col tò telefon», on codes QR e on codes de 10 caratter, a fianch del modul del server.
+2. Sul telefon, conetuu al tò server: Setting, «Conètes a on TV o computer», poeu «Scansiona el codes». In d'on Meta Quest, che el soeu schermo el pò minga vess scansionaa d'on telefon, selezionna «Scriv on codes invece» e scriv el codes che el visor el fa vedè.
+3. El telefon el domanda «Fa el login de (el schermo)?» e el fa vedè on numer de ses cifre: controlla che el schermo el faga vedè el medemm, poeu tocca Login. El schermo el se derva su la tò timeline.
+
+Come la resta sicura: el telefon e el schermo hann de vess su la medema ret de cà, e el codes el dura al massim dò minut e el funziona ona voeulta sola. El telefon el domanda al tò server ona session noeuva per quel schermo, cont el so nom («Immuch360 sul TV del salott»), e el la manda al schermo criptada, inscì la tò password la va mai foeura del telefon. «Conètes a on TV o computer» el lista i schermi che quel telefon chì l'ha conetuu, ognun cont Logout, e Immich el i lista in Setting de l'account, Dispositiv autorizaa, indove te podet anca revocai. Fa el logout del telefon el fa el logout anca di schermi.
+
+La part del telefon la va adess su Android, e su iPhone e iPad de la pròssima release iOS. Senza Immuch360 sul telefon, scansiona el codes con la camera del telefon: ona pagina servida del schermo la se derva in del navigador, per la tò email e la tò password, criptade e dovraa ona voeulta sola. I TV LG fan el login cont on codes QR soeu, in del navigador del telefon; de la compilazion 28 el scanner de l'app del telefon el le riconoss e el derva quella pagina.
+
+Pussee: [login col tò telefon](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [quell che i schermi manden e tegnen](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
 
 <a id="go-immersive-on-meta-quest"></a>
 ### Va immersiv sul Meta Quest
@@ -175,7 +197,7 @@ Sul Meta Quest la medemma app la gira come ona fenestra con tutta la tò bibliot
 </p>
 
 1. Installa l'app del [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), o carega l'APK d'ona compilazion pussee nova a man, varda [Installazion](#meta-quest).
-2. Su la pagina de benvegnuda, tocca «Dovra senza server» per i foto e video propri del visor, o «Conètes a on server Immich» per fa el login cont el tò server.
+2. Su la pagina de benvegnuda, tocca «Dovra senza server» per i foto e video propri del visor, o «Conètes a on server Immich»: scriv el codes che el visor el fa vedè in Immuch360 sul tò telefon ([login col tò telefon](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), o fa el login cont l'indirizz del tò server, email e password.
 3. Derv ona foto o on video a 360° e tocca 360°: la vista immersiva se dervi. B o Y, o el boton Indree del panell informazion, la fa tornà la fenestra.
 
 Pussee: [in del visor Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [el visor: codec, negozi e permess](../docs/immuch360/platform-support.md#meta-quest).
@@ -190,8 +212,8 @@ La medemma app Android la gira sul Android TV e sul Google TV, cont el tema scur
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="El lettor video de Immuch360 Desktop su Windows: on video d'ona via ch'el va in la fenestra, col boton pausa, la barra del temp, Condividi e Carega su Immich">
 </p>
 
-1. Su on TV: installa l'APK cont adb (varda [Installazion](#android-tv-and-google-tv)); su la pagina de benvegnuda, selezionna «Giontà ona condivision de ret o on server multimedial» per ona condivision, on server Plex o ona camera, «Dovra senza server», o «Conètes a on server Immich».
-2. Su on computer Windows: installa l'anteprima o decomprimela e fa partì `immuch360.exe` (varda [Installazion](#windows)); de la compilazion desktop 5, «Dovra senza server» su la pagina de benvegnuda la dervi la sernida di tò cartell, e «Conètes a on server Immich» la pagina de login. Ona foto, on video o ona cartella dervii con l'app, o lassaa andà su la soeu fenestra, se dervi subit, quella a 360° in la soeu vista 360°; pussee file se derven insema in d'ona pagina.
+1. Su on TV: installa l'APK cont adb (varda [Installazion](#android-tv-and-google-tv)); su la pagina de benvegnuda, selezionna «Giontà ona condivision de ret o on server multimedial» per ona condivision, on server Plex o ona camera, «Dovra senza server», o «Conètes a on server Immich», che la soa pagina la fa el login del TV quand te scansionet el soeu codes QR col tò telefon (varda [Login col tò telefon](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
+2. Su on computer Windows: installa l'anteprima o decomprimela e fa partì `immuch360.exe` (varda [Installazion](#windows)); de la compilazion desktop 5, «Dovra senza server» su la pagina de benvegnuda la dervi la sernida di tò cartell, e «Conètes a on server Immich» la pagina de login, cont el soeu codes QR per el tò telefon. Ona foto, on video o ona cartella dervii con l'app, o lassaa andà su la soeu fenestra, se dervi subit, quella a 360° in la soeu vista 360°; pussee file se derven insema in d'ona pagina.
 3. In del visualizador, funzionen i tasc del telecomand per fa partì e fermà, scorr indree, scorr denanz, denanz e indree, e funzionen anca i tasc de la tastera sul computer (Spazi, J e L, F per el schermo intero). Sul TV, OK intant che va on video el fa vedè i comand con fa partì e fermà selezionaa, seguii di boton -10 s e +10 s, e on segond OK el ferma; i comand e la data se scondenn 5 s dopo l'ultim tast. I video van pu a ripetizion sul TV, a manch che te impizzet Setting, Asset Viewer, Videos, Looping.
 4. Sul TV, el tast Menu, el tast Info o OK tegnuu schisciaa el dervi i detaj de la foto o del video, domà de legg: data, post, camera, codec, dimension e bit rate. On video che el TV el pò minga decodificà el le dis, cont el soeu codec, la soa dimension e el limit di decodificador del TV, invece de caregà per semper; on video a 360° oltra el limit di decodificador el domanda prima de dervì el lettor 360°, e la reson la vegn scrivuda in la pagina Logs del menù del profil.
 
@@ -200,7 +222,7 @@ Pussee: [varda sul tò TV](../docs/immuch360/user-guide.md#watch-on-your-tv-andr
 <a id="immuch360-on-an-lg-tv-webos"></a>
 ### Immuch360 su on TV LG (webOS)
 
-Immuch360 la ven anca come app Immich per i TV LG webOS: ona app a part per i TV LG cont webOS 4.0 e pussee recent (del 2018), cumandada del telecomand, che la fa vedè el tò server Immich e la mett i tò foto a 360° su ona sfera che te giret cont i frecc. I app de Immich istess se installen minga su on TV LG. L'è costruida su [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) de Seeky91, che l'ha portaa la timeline, i album, i personn, i post, la ricerca, la presentazion e el login col telefon; grazie a Seeky91. La version 0.1.0 l'è ona compilazion de prova: l'è minga andada ancamò su on TV LG vero, la se installa domà in Developer Mode, e ogni segnalazion in [Issues](https://github.com/freeKC/Immuch360/issues) la giutta.
+Immuch360 la ven anca come app Immich per i TV LG webOS: ona app a part per i TV LG cont webOS 4.0 e pussee recent (del 2018), cumandada del telecomand, che la fa vedè el tò server Immich e la mett i tò foto a 360° su ona sfera che te giret cont i frecc. I app de Immich istess se installen minga su on TV LG. L'è costruida su [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) de Seeky91, che l'ha portaa la timeline, i album, i personn, i post, la ricerca, la presentazion e el login col telefon; grazie a Seeky91. La compilazion de prova 0.2.0 la gionta i condivision de ret, Plex e la vista in diretta di camere Tapo. La version 0.1.0 l'è andada sul TV LG de on tester (webOS 22); la 0.2.0 l'è minga andada ancamò su on TV vero. La se installa domà in Developer Mode, e ogni segnalazion in [Issues](https://github.com/freeKC/Immuch360/issues) la giutta.
 
 <p align="center">
   <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
@@ -210,15 +232,18 @@ Immuch360 la ven anca come app Immich per i TV LG webOS: ona app a part per i TV
 2. Fa el login col tò telefon (scansiona el codes QR), con la tò email e password, o con ona ciav API.
 3. Sfoglia cont i frecc e OK. In del visualizador, Sinistra e Destra van a la foto o al video de prima o de dopo, anca intant che va on video; i comand se scondenn 5 s dopo l'ultim tast; Info el dervi i detaj; i tast di canaj fann el zoom; el pontador e la rodella del Magic Remote funzionen.
 4. Ona foto a 360° la se dervi su ona sfera che te giret cont i frecc; «Varda 'me 360°» el va ben anca per ona foto 2:1 che el server el segna minga; ona foto VR180 la se ved su mezza sfera e ona foto 3D cont on oeugg. I tast giald e bloeu giren ona foto plana.
+5. De la 0.2.0, dopo el login, «Condivision de ret» in la barra laterala de l'app: gionta ona condivision SMB, WebDAV o DLNA, on server Plex (conetuu cont on codes su plex.tv/link) o ona camera Tapo. I soeu foto se derven in del medemm visualizador, i foto a 360° su la sfera.
 
-Minga in sta compilazion chì: i video a 360° su la sfera (van plan, con on messagg), i condivision de ret, Plex e i camere Tapo (pianificaa), i caregament. Quand on video el va minga, on messagg el dis el so format e la soa dimension invece d'ona roeuda che la gira per semper. Su webOS prima del 25, el reverse proxy denanz a Immich el gh'ha de mandà i header CORS; l'app la i spiega quand la troeuva el problema.
+I condivision, Plex e i camere gh'hann besogn de webOS 5 (TV del 2020) o pussee recent, e SMB de webOS 22 (TV del 2022) o pussee recent. Riven attravers el servizi de l'app istessa sul TV, che el i legg per l'app, e hinn staa controllaa contra server veri su la macchina de compilazion del progett, minga ancamò su on TV. La vista in diretta d'ona camera l'è domà video.
+
+Minga ancamò: i registrazion di camere (minga prima de dicember 2026) e el soeu son, i video a 360° su la sfera (van plan, con on messagg), i caregament. Quand on video el va minga, on messagg el dis el so format e la soa dimension invece d'ona roeuda che la gira per semper. Su webOS prima del 25, el reverse proxy denanz a Immich el gh'ha de mandà i header CORS; l'app la i spiega quand la troeuva el problema.
 
 Pussee: [l'app webOS: installazion, tasc del telecomand, header CORS](../webos/README.md).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 ### Camere, Plex e file original de camera
 
-- **Camere Tapo**: ona camera se gionta a fianch de i condivision de ret. L'app la fa vedè in diretta (Android, Android TV, el Quest e Windows) e la lista i registrazion de la soeu card de memoria dì per dì su tucc i piattaforme; on clip se recupera de la camera, el se fa vedè come on qualsessia video e el pò vegnì mandaa a Immich. L'app la parla con la camera domà sula tò ret, mai cont i server de TP-Link.
+- **Camere Tapo**: ona camera se gionta a fianch de i condivision de ret. L'app la fa vedè in diretta (Android, Android TV, el Quest, Windows e, domà video, i TV LG de webOS 0.2.0; iPhone e iPad de la pròssima release iOS) e la lista i registrazion de la soeu card de memoria dì per dì su tucc i piattaforme; on clip se recupera de la camera, el se fa vedè come on qualsessia video e el pò vegnì mandaa a Immich. L'app la parla con la camera domà sula tò ret, mai cont i server de TP-Link.
 - **Plex Media Server, senza plex.tv**: l'app la se cuppia diretament cont el tò server, con on token che te ataccat ona vòlta, e la legg in diretta i file original de i tò biblioteche, insci el 360° el resta 360°, a cà e, traverso el port forwarding, foeura de cà.
 - **File original di camere a 360°**: i foto .insp e i video .insv original di camere Insta360 (ona o dò lent, in on trasi, duu trasi o duu file), i file .360 del GoPro MAX e i file .osv del DJI Osmo 360 hinn cusii insema de l'app intant che se fann vedè, con la calibrazion scrivuda sul file, senza nagott de installà in nissun pòst. Su Android, fa vedè i file de ona condivision, on computer o el tò server, perché la galeria del telefon la fa minga vedè i file original; el server Immich el ciapa domà .insp e .insv.
 
@@ -240,6 +265,20 @@ Importa i foto e i video d'on dron DJI per USB, dritt sul tò server Immich: tac
 
 I sfer a 360° di dron DJI (Mini, Air, Mavic e alter, reconossuu de la soa camera) se veden come 360° in Immuch360 anca senza tag 360°. Immich el gh'ha besogn de quij tag lì: l'opzion de caregament «Segna i sfer di dron come 360° per Immich», smorzada de default, la manda la foto senza cambiala con on piccol file .xmp a fianch, insci Immich el la fa vedè anca lu come ona sfera. El Neo 2 el gh'ha minga ona modalità sfera o panoramà: i soeu foto e video hinn plan. Quand el telefon l'ha registraa el son d'on clip del Neo 2, quel son lì l'è in d'on file .m4a a part: la pagina la segna el clip, e Immich el le riceve senza son (scarighel con DJI Fly per tegnì el son). Ogni scheda de camera con ona cartella DCIM la funziona istess in d'on lettor de scheed. Nient el vegn mandaa a DJI.
 
+<a id="dji-link-diagnostics-experimental"></a>
+### Diagnostica del colegament DJI (esperimental)
+
+L'obietiv a long termin l'è el video d'on dron DJI in del Meta Quest, attravers el radiocomand del dron istess tacaa al visor. Nissun el sa ancamò se on Quest el pò legg on radiocomand DJI per el soeu cavo. La pagina del colegament DJI l'è el primm pass, on strument sul Meta Quest e sui telefon e tablet Android: la fa vedè se el dispositiv el pò legg el radiocomand, quell che riva, e la ten ona cattura.
+
+La scolta domà. Nissun comand el ven mai mandaa al radiocomand o al dron: l'unich byte che la pagina la scriv ogni second, de 20 second dopo che el radiocomand el s'è dervii, el dis domà se el radiocomand el ciapa di dà, e el porta nissun comand.
+
+1. Setting, Avanzaa, «Diagnostica del colegament DJI (esperimental)» l'è impizzaa de default (mai su on TV); el riquader «Colegament DJI» l'è in Biblioteca, Condivision de ret.
+2. Dervila e legg l'avis de sicurezza. El primm blocch el dis se sto dispositiv chì el pò legg on accessori USB, prima de tutt; se el pò minga, anca quella l'è ona risposta.
+3. Tocca «Comincia la cattura», poeu taca el radiocomand cont el soeu cavo, col dron smorzaa. Se Android el domanda che app la gh'ha de dervill, selezionna Immuch360 senza «Semper», che el portaria via el radiocomand a DJI Fly.
+4. Varda el stat («Accessori dervii», «El colegament el ciapa byte», «Riven i trame del radiocomand») e i contador, poeu «Esporta la cattura»: trii file in `Download/Immuch360/dji-link`.
+
+La gh'ha minga ancamò trovaa on radiocomand vero. On test cont on radiocomand DJI, prima on RC-N3 cont on Neo 2, l'è benvegnuu: publica i stat e i contador che la pagina la fa vedè in [Issues](https://github.com/freeKC/Immuch360/issues), e tegn per ti i file esportaa, come la dis la pagina, perché gh'hann dent el numer de serie del radiocomand.
+
 <a id="devices-and-systems"></a>
 ## Dispositiv e sistemi
 
@@ -248,6 +287,7 @@ Ona sola base de codes per ses ambient, e ona app a part per i TV LG. Quell che 
 | Capacità | Android | iPhone, iPad | Android TV | LG webOS | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|
 | Galeria, album, ricerca con on server Immich | ✅ | ✅ | ✅ visualizador | ✅ visualizador | ✅ |
+| Login col tò telefon (codes QR) | ✅ el scansiona el codes | 🔜 pròssima release iOS | ✅ | ✅ in del navigador del telefon | ✅ codes scritt sul telefon |
 | Senza server: i media propri del dispositiv | ✅ | ✅ | domà condivision | ❌ | ✅ |
 | Foto e video plan | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Girà ona foto con on tast | ✅ | ✅ | ✅ tast coloraa | ✅ tast coloraa | ✅ fenestra |
@@ -257,13 +297,14 @@ Ona sola base de codes per ses ambient, e ona app a part per i TV LG. Quell che 
 | Spatial 2.5D (tracciament de la testa) | ✅ esperimental | ✅ esperimental | ❌ | ❌ | ❌ |
 | Foto spaziaj Apple | ✅ on oeugg | ✅ on oeugg | ✅ on oeugg | ❌ | ✅ 3D |
 | File original Insta360, GoPro e DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
-| Condivision SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Camere Tapo: registrazion | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Camere Tapo: vista in diretta | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Condivision SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ SMB de webOS 22, WebDAV e DLNA de webOS 5 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ de webOS 5 | ✅ |
+| Camere Tapo: registrazion | ✅ | ✅ | ✅ | 🔜 minga prima de dicember 2026 | ✅ |
+| Camere Tapo: vista in diretta | ✅ | 🔜 pròssima release iOS | ✅ | ✅ domà video, de webOS 5 | ✅ |
 | Condividi sto dispositiv in la ret | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Carega su Immich de condivision e del dispositiv | ✅ | ✅ | ❌ | ❌ | ✅ |
 | Import d'on dron DJI o d'ona scheda per USB (esperimental) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Diagnostica del colegament DJI (esperimental) | ✅ | ❌ | ❌ | ❌ | ✅ |
 | Tema scur | come el sistema | come el sistema | ✅ de default | ✅ unich tema | come el sistema |
 | Input | tocch, giroscopi | tocch, giroscopi | telecomand; Sinistra e Destra anca intant che va on video, Menu per i detaj | telecomand, Magic Remote | controller, man |
 | Indove se troeuva | Google Play, APK | App Store (in revision) | APK, Google Play (in revision) | compilazion de prova .ipk, Developer Mode | Horizon Store, APK |
@@ -271,13 +312,14 @@ Ona sola base de codes per ses ambient, e ona app a part per i TV LG. Quell che 
 | Capacità | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
 | Galeria, album, ricerca con on server Immich | ✅ | 🔧 CI | 🔧 CI |
+| Login col tò telefon (codes QR) | ✅ | 🔧 CI | 🔧 CI |
 | Senza server: i media propri del dispositiv | ✅ cartell | ✅ cartell | ✅ cartell |
 | Foto e video plan | ✅ | ✅ | ✅ |
 | Girà ona foto con on tast | ✅ | ✅ | ✅ |
 | Foto a 360° come sfera | ✅ | ✅ | 🔧 CI |
 | Video a 360° | ✅ | domà plan | domà plan |
 | 3D e VR180 | ✅ on oeugg | foto on oeugg, video plan | foto on oeugg, video plan |
-| Spatial 2.5D (tracciament de la testa) | 🔜 | ❌ | ❌ |
+| Spatial 2.5D (tracciament de la testa) | 🔜 in svilupp | ❌ | ❌ |
 | Foto spaziaj Apple | ✅ on oeugg | 🔧 CI | 🔧 CI |
 | File original Insta360, GoPro e DJI | ✅ | 🔧 CI foto, video plan | 🔧 CI foto, video plan |
 | Condivision SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
@@ -287,18 +329,19 @@ Ona sola base de codes per ses ambient, e ona app a part per i TV LG. Quell che 
 | Condividi sto dispositiv in la ret | ✅ | ❌ | ❌ |
 | Carega su Immich de condivision e del dispositiv | ✅ | 🔧 CI | 🔧 CI |
 | Import d'on dron DJI o d'ona scheda per USB (esperimental) | ❌ | ❌ | ❌ |
+| Diagnostica del colegament DJI (esperimental) | ❌ | ❌ | ❌ |
 | Tema scur | come el sistema | come el sistema | come el sistema |
 | Input | mouse, tastera | mouse, tastera | mouse, tastera, trackpad |
-| Indove se troeuva | installador o ZIP (anteprima) | .deb, .rpm (anteprima) | DMG o ZIP (anteprima minga firmada) |
+| Indove se troeuva | installador o ZIP (anteprima firmada) | .deb, .rpm (anteprima) | DMG o ZIP (anteprima minga firmada) |
 
-✅ in l'app su quella piattaforma · ❌ minga offrii lì · 🔜 pianificaa · 🔧 CI in di sorgent, compilaa e faa partì del CI del progett su quel sistema, ma minga controllaa ancamò lì con on server, ona condivision o ona camera vera · domà plan: el video el va plan, con on messagg, perché el renderer video a 360° di computer el gh'è domà su Windows, e sui TV LG gh'è ancamò de misurà se webOS el passa i fotogramma del video a la sfera. «On oeugg» el voeur dì che on file 3D el fa vedè el soeu oeugg sinistro sul schermo plan. La colonna LG webOS l'è ona app a part, che la soa compilazion de prova 0.1.0 la passa i soeu test sul CI del progett e l'è minga andada ancamò su on TV. Minga tucc i ✅ hinn giamò testaa su on dispositiv real: quell che l'è staa testaa e indove, e quell che resta de confermà, l'è in [Funzion](../docs/immuch360/features.md), [Supporto piattaforma](../docs/immuch360/platform-support.md) e [Compatibilità](../docs/immuch360/compatibility.md).
+✅ in l'app su quella piattaforma · ❌ minga offrii lì · 🔜 pianificaa · 🔧 CI in di sorgent, compilaa e faa partì del CI del progett su quel sistema, ma minga controllaa ancamò lì con on server, ona condivision o ona camera vera · domà plan: el video el va plan, con on messagg, perché el renderer video a 360° di computer el gh'è domà su Windows, e sui TV LG gh'è ancamò de misurà se webOS el passa i fotogramma del video a la sfera. «On oeugg» el voeur dì che on file 3D el fa vedè el soeu oeugg sinistro sul schermo plan. La colonna LG webOS l'è ona app a part, compilazion de prova 0.2.0: la 0.1.0 l'è andada sul TV LG de on tester, intant che i condivision, Plex e i camere de la 0.2.0 hinn staa controllaa contra server veri su la macchina de compilazion del progett, minga ancamò su on TV. Minga tucc i ✅ hinn giamò testaa su on dispositiv real: quell che l'è staa testaa e indove, e quell che resta de confermà, l'è in [Funzion](../docs/immuch360/features.md), [Supporto piattaforma](../docs/immuch360/platform-support.md) e [Compatibilità](../docs/immuch360/compatibility.md).
 
 - **Telefon e tablet Android**: l'app completa, tocch e giroscopi, tucc i sorgent.
-- **iPhone e iPad**: l'app completa; el lettor video a 360° gh'ha domà fa partì e fermà, la vista in diretta de Tapo la rivarà pussee tard, e la ricerca DLNA la manda richieste unicast fin a quand Apple la darà el permess multicast.
-- **Android TV e Google TV**: el medemm APK, cumandaa del telecomand, scur de default; domà visualizador: backup, caregament e l'editor hinn scondii e i detaj hinn domà de legg, ma ona foto la se gira ancamò con on tast. Ogni filter de ricerca el funziona col telecomand: Post e Camera derven i soeu scelte in d'ona lista, el filter de la data el fa vedè tucc i soeu scelte, e i foeuj de opzion Tag, Post, Data, Tipo de media, Stell e Visualizazion metten Scancella e Aplica a fianch di scelte, on Destra pussee in là, su la pussee part de l'altezza del schermo. La grija di foto la dovra manch memoria de imagin, e ona frecia tegnuda schisciada la la moeuv al massim circa 10 righ al second. Testaa sul emulador Google TV; on primm test su on Android TV vero, el 21 de otober, l'ha portaa ai cambiament TV de la compilazion 27, che hinn minga staa provaa ancamò su on TV vero.
-- **TV LG cont webOS 4.0 e pussee recent**: ona app a part per el telecomand e el Magic Remote, costruida su [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): on visualizador Immich cont i foto a 360° su ona sfera, ona foto girada con on tast, on tema scur e i 89 lengue de l'app (i pocch test de l'app TV istessa per adess in inglés); ancamò nissuna condivision, Plex o camera, video a 360° plan. Compilazion de prova 0.1.0, controllada di soeu test sul CI del progett, minga ancamò su on TV.
+- **iPhone e iPad**: l'app completa; el lettor video a 360° gh'ha domà fa partì e fermà, la vista in diretta de Tapo e la part del telefon del login col tò telefon rivaran con la pròssima release iOS, e la ricerca DLNA la manda richieste unicast fin a quand Apple la darà el permess multicast.
+- **Android TV e Google TV**: el medemm APK, cumandaa del telecomand, scur de default; domà visualizador: backup, caregament e l'editor hinn scondii e i detaj hinn domà de legg, ma ona foto la se gira ancamò con on tast. Ogni filter de ricerca el funziona col telecomand: Post e Camera derven i soeu scelte in d'ona lista, el filter de la data el fa vedè tucc i soeu scelte, e i foeuj de opzion Tag, Post, Data, Tipo de media, Stell e Visualizazion metten Scancella e Aplica a fianch di scelte, on Destra pussee in là, su la pussee part de l'altezza del schermo. La grija di foto la dovra manch memoria de imagin, e ona frecia tegnuda schisciada la la moeuv al massim circa 10 righ al second. De la compilazion 28 el fa el login d'on telefon, col soeu codes QR o col soeu codes curt (provaa tra dò emulador cont el codes scritt, minga ancamò cont ona camera). Testaa sul emulador Google TV; on primm test su on Android TV vero, el 21 de otober, l'ha portaa ai cambiament TV de la compilazion 27, che hinn minga staa provaa ancamò su on TV vero.
+- **TV LG cont webOS 4.0 e pussee recent**: ona app a part per el telecomand e el Magic Remote, costruida su [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): on visualizador Immich cont i foto a 360° su ona sfera, ona foto girada con on tast, on tema scur e i 89 lengue de l'app (i pocch test de l'app TV istessa per adess in inglés); de la 0.2.0 i condivision de ret, Plex e la vista in diretta di camere Tapo, attravers el soeu servizi sul TV (webOS 5 e pussee recent, SMB de webOS 22); video a 360° plan. La version 0.1.0 l'è andada sul TV LG de on tester (webOS 22); la 0.2.0 l'è staa controllada di soeu test e contra server veri su la macchina de compilazion del progett, minga ancamò su on TV.
 - **Meta Quest 2, Pro, 3 e 3S**: l'app come fenestra, pù la vista immersiva; HEVC l'è el codec sicur, H.264 el se ferma vers 4096x2304 sul Quest 3; domà el Quest 3 l'è staa testaa, el Quest 2, el Quest Pro e el Quest 3S hinn minga testaa ancamò.
-- **Windows 10 e 11**: in anteprima, con cartell invece d'ona galeria, on lettor video tutt per lee (libmpv) per video plan e a 360°, file original cusii sul chip grafich, file e cartell dervii con l'app o lassaa andà su la fenestra, on installador o on ZIP.
+- **Windows 10 e 11**: in anteprima, con cartell invece d'ona galeria, on lettor video tutt per lee (libmpv) per video plan e a 360°, file original cusii sul chip grafich, file e cartell dervii con l'app o lassaa andà su la fenestra, on installador o on ZIP, firmaa de APROGSYS.
 - **Linux**: on .deb e on .rpm compilaa del CI del progett, installaa e controllaa su Ubuntu 22.04 e 24.04, Debian 12 e Fedora 40 e 44; foto, foto a 360° e video plan cont la libmpv del sistema (i video a 360°, 3D e original van plan con on messagg), disegnaa per la strada hardware anca in di session X11 de la compilazion desktop 7; condivision SMB de Ubuntu 22.04 e Debian 12 in sù; senza on keyring (GNOME Keyring o KWallet) l'app la se bloca pu per 25 s a la prima partenza: la tegn i password domà per la session e la le dis in di soeu setting; minga faa andà ancamò su on PC Linux vero, domà sota WSLg e in di container.
 - **macOS**: on DMG e on ZIP compilaa del CI del progett, universaj, minga firmaa (Gatekeeper el domanda ona voeulta); l'app la parti, la derva i file e i cartell che ghe vegnen daa, anca de Finder, la tegn i soeu segrett in del login keychain e la fa andà i video plan con la soa libmpv, tusscoss controllaa domà sul Mac del CI del progett; nagott l'è andaa ancamò su on Mac vero.
 
@@ -315,7 +358,7 @@ Quell che l'app la pò legg e fa vedè, per chi voeur savè tutt. Ogni linea l'�
 - **Lettura a richiesta**: on bridge locale el serv i lettor con di raze de byte e on token per ogni session; blocch grand, lettura anticipada e fin a ses conession SMB in parallel; miniadure d'on fotogramma de ogni video; nagott copiaa sul dispositiv.
 - **Hardware**: decodificador hardware dovraa indove gh'hinn, con i soeu limit misuraa (el limit H.264 sul Quest 3, dò lent 2048x2048 al massim per i decodificador software); su Windows la vista 360° l'è tiraa del chip grafich de ogni fotogramma decodificaa, la dimension del fotogramma l'è misurada su ogni computer, el chip integraa o dedicaa l'è rilevaa.
 - **Specificità de piattaforma**: el giroscopio e el lettor Spatial 2.5D sui telefon; la vista immersiva, controller e man sul Quest; la disposizion del telecomand, el dialogh de la tastera e el banner sul Android TV; sul computer, mouse e tastera, a tutt schermo, ona fenestra sola, file e cartell dervii con l'app o lassaa andà su la soeu fenestra, lezuu come i file di tò cartell, foto HEIC, AVIF, TIFF e foto original de camera di cartell, quand Windows el gh'ha on decodificador per lor, e la protezion di dato de Windows per password e token.
-- **Privacy de costruzion**: nissun account, nissun cloud, nissuna analytics; password e token in del archivi sicur del dispositiv; la camera del lettor Spatial l'è dovraa domà sul dispositiv; condivision, Plex e camere rivaa domà sula tò ret.
+- **Privacy de costruzion**: nissun account, nissun cloud, nissuna analytics; password e token in del archivi sicur del dispositiv; on schermo conetuu d'on telefon el ricev ona session soa, mandada criptada su la ret de cà, mai la password; la camera del lettor Spatial e del scanner de codes l'è dovraa domà sul dispositiv; condivision, Plex e camere rivaa domà sula tò ret.
 
 <a id="technical-documentation"></a>
 ## Documentazion tecnica
@@ -357,7 +400,7 @@ Quell che l'app la pò legg e fa vedè, per chi voeur savè tutt. Ogni linea l'�
 
 1. Te gh'hee besogn d'on TV LG cont webOS 4.0 o pussee recent, on computer in la medemma ret e on account svilupador LG gratis. Sul TV, installa Developer Mode del LG Content Store, fa el login, impizza Dev Mode Status e lassa che el TV el se rinvia; segna el soeu indirizz IP e la passphrase che l'app la fa vedè.
 2. Sul computer, installa el webOS CLI (Node.js 18 o pussee recent): `npm install -g @webos-tools/cli`, poeu registra el TV con `ares-setup-device` (el soeu indirizz IP, porta 9922, utent `prisoner`) e `ares-novacom --device <name> --getkey`, che el domanda la passphrase.
-3. Scarega `Immuch360-webOS-0.1.0.ipk` de la [pre-release webOS](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0), controllel contra `SHA256SUMS.txt`, poeu `ares-install --device <name> Immuch360-webOS-0.1.0.ipk`. El [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) de webosbrew el fa l'istess senza riga de comand.
+3. Scarega `Immuch360-webOS-0.2.0.ipk` de la [pre-release webOS](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0), controllel contra `SHA256SUMS.txt`, poeu `ares-install --device <name> Immuch360-webOS-0.2.0.ipk`. El [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) de webosbrew el fa l'istess senza riga de comand.
 4. Ona session Developer Mode la dura 1000 or, e el boton EXTEND de l'app Developer Mode la rinnova; quand la scad, el TV el tira via i app installaa insci. I detaj hinn in [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
 
 <a id="meta-quest"></a>
@@ -370,23 +413,23 @@ Quell che l'app la pò legg e fa vedè, per chi voeur savè tutt. Ogni linea l'�
 <a id="windows"></a>
 ### Windows
 
-1. Scarega `Immuch360-Desktop-3.3.0-rc.0-desktop.7-windows-x64-setup.exe` de la [pre-release del desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) (cont `SHA256SUMS.txt` per verificall) e dervel. I file hinn minga firmaa ancamò: Windows SmartScreen el pò fa vedè «Windows protected your PC», selezionna «More info» poeu «Run anyway».
+1. Scarega `Immuch360-Desktop-3.3.0-rc.0-desktop.8-windows-x64-setup.exe` de la [pre-release del desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) (cont `SHA256SUMS.txt` per verificall) e dervel. L'installador e el ZIP hinn firmaa; Windows el fa vedè APROGSYS come editor. Fin a quand l'editor l'è noeuv per SmartScreen, el pò domandà ancamò ona voeulta: «More info», poeu «Run anyway».
 2. Selezionna «Install for me only» (nissun diritt de aministrador) o «Install for all users», poeu la lengua del installador, quella de Windows già selezionada.
 3. Fa partì Immuch360 Desktop del menù Start. Foto e video troeuven l'app in «Open with» (clicca destro su on file, Open with); la se fa mai vegnì automatica per lor. La prima partenza d'ona compilazion nova la pò tœu fin a on minut, intant che Windows el scansiona i file.
 4. Windows 10 o 11, 64 bit. Per fa l'aggiornament, derv l'installador de la compilazion seguenta: el tò login, cartell e setting resten. El ZIP de la medemma release l'è la medemma app come cartella, per decomprimela indove te voeuret e fa partì `immuch360.exe` de lì.
 
 ### Linux
 
-Su Ubuntu 22.04 o pussee recent e Debian 12 o pussee recent: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-amd64.deb`; su Fedora 40 o pussee recent: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-x86_64.rpm`, tutt dò de la [pre-release del desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7). Poeu fa partì Immuch360 Desktop di tò applicazion. In anteprima: i cartell del computer, foto e foto a 360° come sfera, e video plan cont la libmpv del sistema, che el pachett el installa (i video a 360°, 3D e original van plan, con on messagg); i condivision SMB funzionen de Ubuntu 22.04 e Debian 12 in sù. Su Fedora, i video di camere gh'hann besogn del FFmpeg de RPM Fusion. Senza GNOME Keyring o KWallet, i password vegnen tegnuu domà per la session, e i setting de l'app la disen.
+Su Ubuntu 22.04 o pussee recent e Debian 12 o pussee recent: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-amd64.deb`; su Fedora 40 o pussee recent: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-x86_64.rpm`, tutt dò de la [pre-release del desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8). Poeu fa partì Immuch360 Desktop di tò applicazion. In anteprima: i cartell del computer, foto e foto a 360° come sfera, e video plan cont la libmpv del sistema, che el pachett el installa (i video a 360°, 3D e original van plan, con on messagg); i condivision SMB funzionen de Ubuntu 22.04 e Debian 12 in sù. Su Fedora, i video di camere gh'hann besogn del FFmpeg de RPM Fusion. Senza GNOME Keyring o KWallet, i password vegnen tegnuu domà per la session, e i setting de l'app la disen.
 
 ### macOS
 
-Derv `Immuch360-Desktop-3.3.0-rc.0-desktop.7-macos.dmg` de la [pre-release del desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) e tira l'app in Applications (Apple silicon e Intel, macOS 12 o pussee recent). L'è ancamò minga firmada né notarizada: fa Control-clic su l'app e selezionna Open su macOS 14 e prima, o selezionna «Open Anyway» in System Settings, Privacy & Security su macOS 15 e pussee recent. Nissun in del progett gh'ha on Mac: l'app l'è andada domà sul Mac del CI del progett, indove la derva file e cartell e la fa andà i video plan con la soa libmpv; l'accesso a la ret l'è minga staa provaa. I segnalazion hinn benvegnuu.
+Derv `Immuch360-Desktop-3.3.0-rc.0-desktop.8-macos.dmg` de la [pre-release del desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) e tira l'app in Applications (Apple silicon e Intel, macOS 12 o pussee recent). L'è ancamò minga firmada né notarizada: fa Control-clic su l'app e selezionna Open su macOS 14 e prima, o selezionna «Open Anyway» in System Settings, Privacy & Security su macOS 15 e pussee recent. Nissun in del progett gh'ha on Mac: l'app l'è andada domà sul Mac del CI del progett, indove la derva file e cartell e la fa andà i video plan con la soa libmpv; l'accesso a la ret l'è minga staa provaa. I segnalazion hinn benvegnuu.
 
 <a id="privacy"></a>
 ## Privacy
 
-Nagott va al sviluppador: nissun account, nissuna analytics, nissun servizi de segnalazion di crash, nissuna pubblicità. L'app la parla domà cont i server che te sceglet (el tò server Immich, i tò condivision, el tò server Plex, i tò camere) e, senza server, cont nagott de nagott. Password e token resten in del archivi sicur del dispositiv. La camera del lettor Spatial 2.5D l'è dovraa domà sul dispositiv; i soeu imagin hinn mai salvaa e mai mandaa in nissun pòst. La politica completa l'è in [PRIVACY.md](../PRIVACY.md), e i detaj per sorgent in la [guida de l'utent](../docs/immuch360/user-guide.md#privacy).
+Nagott va al sviluppador: nissun account, nissuna analytics, nissun servizi de segnalazion di crash, nissuna pubblicità. L'app la parla domà cont i server che te sceglet (el tò server Immich, i tò condivision, el tò server Plex, i tò camere) e, senza server, cont nagott de nagott. Password e token resten in del archivi sicur del dispositiv. La camera l'è dovraa domà sul dispositiv, del lettor Spatial 2.5D e per scansionà el codes d'on schermo che te fet el login; i soeu imagin hinn mai salvaa e mai mandaa in nissun pòst. On schermo conetuu del tò telefon el ricev ona session soa, mandada criptada su la tò ret de cà, mai la tò password. La politica completa l'è in [PRIVACY.md](../PRIVACY.md), e i detaj per sorgent in la [guida de l'utent](../docs/immuch360/user-guide.md#privacy).
 
 <a id="the-project"></a>
 ## El progett
@@ -402,13 +445,13 @@ I cattur del telefon de sta pagina chì hinn stai ciapaa sula compilazion Androi
 
 Quell che l'è anmò minga fà, el pussee probabil prima. Nient de chì l'è ona promessa, e i comment sul [tracker di segnalazion](https://github.com/freeKC/Immuch360/issues) giutten a decid cosa el ven prima.
 
-- **I negozi**: Google Play (compilazion 26 in revision, poeu compilazion 27; la lista del TV in revision), l'App Store (version 3.3.1 in revision dal 14 de otober), el Meta Horizon Store (compilazion 25 in revision).
-- **Computer**: el test de ogni funzion a man su on PC Windows; poeu el renderer video a 360° su Linux e macOS, on test su on Mac vero e su on PC Linux vero; poeu ona compilazion firmada e aggiornament automatich; poeu Spatial 2.5D con la webcam.
-- **TV**: on test de la compilazion 27 su on Android TV vero; l'app LG webOS su on TV LG vero, poeu i soeu video a 360° su la sfera e i condivision de ret, Plex e camere Tapo; on codes QR per accoppià on TV o on computer con on telefon, el schermo grand el le fa vedè e el telefon el le scansiona.
-- **Telefon e tablet**: ona barra del temp in del lettor video 360° iOS, denanz e indree in di lettor 360° di telefon, la sernida del trasi audio in del lettor plan, la vista in diretta Tapo su iPhone e iPad.
+- **I negozi**: Google Play (compilazion 28 in revision; la lista del TV in revision), l'App Store (version 3.3.1 in revision, poeu version 3.3.2 cont la compilazion 28), el Meta Horizon Store (compilazion 28 in revision).
+- **Computer**: el test de ogni funzion a man su on PC Windows, login col tò telefon compres; Spatial 2.5D con la webcam su Windows, in svilupp per november 2026; poeu el renderer video a 360° su Linux e macOS, on test su on Mac vero e su on PC Linux vero; poeu aggiornament automatich e ona app macOS firmada.
+- **TV**: on test di compilazion 27 e 28 su on Android TV vero, login col tò telefon compres; webOS 0.2.0 su on TV LG vero, cont i soeu condivision, Plex e vista in diretta; poeu i video a 360° su la sfera, el son di camere e i soeu registrazion (minga prima de dicember 2026).
+- **Telefon e tablet**: la vista in diretta Tapo e el login di schermi grand su iPhone e iPad con la pròssima release iOS; ona barra del temp in del lettor video 360° iOS, denanz e indree in di lettor 360° di telefon, la sernida del trasi audio in del lettor plan.
 - **Media immersiv**: .dng fisheye dubi, livellament di video GoPro e DJI di soeu dà de moviment, video spaziaj in 3D sul Quest se i soeu decodificador el permetten, denanz e indree tra foto spaziaj in del visor.
 - **Sorgent**: swipe tra i file d'ona cartella condivisa, autenticazion Digest per WebDAV, on codes QR per portà el token Plex del computer, IPv6 per Plex, registrazion Tapo in H.265, canaj sula schermada principal del TV.
-- **Dron**: on test con on DJI Neo 2 vero, poeu el son registraa del telefon miss dent in del soeu clip; la vista in diretta e el comand de la camera del dron hinn lassaa per dopo.
+- **Dron**: on test con on DJI Neo 2 vero, poeu el son registraa del telefon miss dent in del soeu clip; la pagina del colegament DJI cont on radiocomand vero, el primm pass vers el video d'on dron in del Meta Quest. Nagott che el manda on comand a on dron l'è pianificaa prima de sti test chì.
 - **Upstream**: piccole pull request a Immich per i part che i manutentor voeuren, a partì del visualizador de foto a 360°.
 
 La lista completa, con i verifiche sul dispositiv ancamò de fa per ogni funzion, l'è in [Stat de la release](../docs/immuch360/release-status.md#roadmap).

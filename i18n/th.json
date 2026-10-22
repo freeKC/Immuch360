@@ -729,7 +729,6 @@
   "camera_live_failed": "ภาพสดไม่เริ่มทำงาน: {error}",
   "camera_live_full_screen": "เต็มหน้าจอ",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "ภาพสดจะมาถึง iPhone และ iPad ในเวอร์ชันถัดไป การบันทึกเล่นได้ที่นี่แล้ว",
   "camera_live_needs_account": "เพิ่มบัญชีกล้องเพื่อดูภาพสด",
   "camera_live_no_sound": "ไม่มีเสียงบนอุปกรณ์นี้",
   "camera_live_sd": "SD",

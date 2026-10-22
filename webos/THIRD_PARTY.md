@@ -14,6 +14,18 @@ the bundle with its licence.
 | qrcode-generator | 2.0.4 | MIT | QR codes of the phone sign in and of the About page |
 | prop-types, classnames | 15.8.1, 2.5.1 | MIT | used by Enact |
 
+The JS service carries a media bridge (`service/bridge/`, built by `tools/build-bridge.mjs`). Its `base.js` holds
+only the code of Immuch360. Its `smb.js`, loaded on webOS 22 and later, bundles these packages, whose licence texts go
+into the `.ipk` as `service/bridge/LICENSES.txt`:
+
+| Package | Version | Licence | In the service |
+|---|---|---|---|
+| @winlinux/smb2 | 1.1.0 | MIT (a fork of node-smb2, MIT) | the SMB 2 and 3 client, vendored in `bridge/vendor` |
+| @winlinux/auth | 1.1.0 | MIT | its NTLM sign in, vendored in `bridge/vendor` (the optional Kerberos addon left out) |
+| des.js | 1.1.0 | MIT | DES for NTLM |
+| hash-wasm | 4.12.0 | MIT | MD4 for NTLM (OpenSSL 3 dropped it) |
+| inherits, minimalistic-assert | 2.0.4, 1.0.1 | ISC | used by des.js |
+
 Fonts that come with Sandstone, in `dist/node_modules/@enact/sandstone/fonts`:
 
 | Font | Licence |

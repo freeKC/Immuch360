@@ -738,7 +738,6 @@
   "camera_live_failed": "Hình ảnh trực tiếp không khởi động được: {error}",
   "camera_live_full_screen": "Toàn màn hình",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Hình ảnh trực tiếp sẽ có trên iPhone và iPad trong một phiên bản sau. Các bản ghi đã phát được ở đây.",
   "camera_live_needs_account": "Thêm tài khoản camera để xem hình ảnh trực tiếp.",
   "camera_live_no_sound": "Không có âm thanh trên thiết bị này",
   "camera_live_sd": "SD",

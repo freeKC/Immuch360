@@ -15,6 +15,7 @@ import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dar
 import 'package:immich_mobile/providers/infrastructure/memory.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/pairing/paired_screen_check.provider.dart';
 import 'package:immich_mobile/providers/permission.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/providers/websocket.provider.dart';
@@ -112,6 +113,8 @@ class AppLifeCycleNotifier extends StateNotifier<AppLifeCycleEnum> {
       _log.info("Using server URL: $endpoint");
 
       await _ref.read(serverInfoProvider.notifier).getServerVersion();
+      // A big screen a phone signed in: back to its sign-in page if the phone signed it out meanwhile
+      unawaited(_ref.read(pairedScreenCheckProvider).check());
     }
 
     if (!_shouldContinueOperation()) {

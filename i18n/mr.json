@@ -685,7 +685,6 @@
   "camera_live_failed": "थेट दृश्य सुरू झाले नाही: {error}",
   "camera_live_full_screen": "पूर्ण स्क्रीन",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "थेट दृश्य नंतरच्या आवृत्तीत iPhone आणि iPad वर येईल. रेकॉर्डिंग येथे आधीच चालतात.",
   "camera_live_needs_account": "थेट दृश्य पाहण्यासाठी कॅमेरा खाते जोडा.",
   "camera_live_no_sound": "या डिव्हाइसवर आवाज नाही",
   "camera_live_sd": "SD",

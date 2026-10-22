@@ -721,7 +721,6 @@
   "camera_live_failed": "Η ζωντανή εικόνα δεν ξεκίνησε: {error}",
   "camera_live_full_screen": "Πλήρης οθόνη",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Η ζωντανή εικόνα έρχεται σε iPhone και iPad σε μεταγενέστερη έκδοση. Οι εγγραφές αναπαράγονται ήδη εδώ.",
   "camera_live_needs_account": "Προσθέστε τον λογαριασμό κάμερας για να δείτε τη ζωντανή εικόνα.",
   "camera_live_no_sound": "Χωρίς ήχο σε αυτή τη συσκευή",
   "camera_live_sd": "SD",

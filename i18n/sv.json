@@ -738,7 +738,6 @@
   "camera_live_failed": "Livebilden startade inte: {error}",
   "camera_live_full_screen": "Helskärm",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Livebilden kommer till iPhone och iPad i en senare version. Inspelningarna spelas redan upp här.",
   "camera_live_needs_account": "Lägg till kamerakontot för att se livebilden.",
   "camera_live_no_sound": "Inget ljud på den här enheten",
   "camera_live_sd": "SD",

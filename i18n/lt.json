@@ -735,7 +735,6 @@
   "camera_live_failed": "Tiesioginis vaizdas nepasileido: {error}",
   "camera_live_full_screen": "Visas ekranas",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Tiesioginis vaizdas „iPhone“ ir „iPad“ įrenginiuose atsiras vėlesnėje versijoje. Įrašai čia jau leidžiami.",
   "camera_live_needs_account": "Pridėkite kameros paskyrą, kad matytumėte tiesioginį vaizdą.",
   "camera_live_no_sound": "Šiame įrenginyje garso nėra",
   "camera_live_sd": "SD",

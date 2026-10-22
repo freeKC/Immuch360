@@ -727,7 +727,6 @@
   "camera_live_failed": "The live view did not start: {error}",
   "camera_live_full_screen": "Full screen",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "The live view comes to iPhone and iPad in a later version. The recordings play here already.",
   "camera_live_needs_account": "Add the camera account to see the live view.",
   "camera_live_no_sound": "No sound on this device",
   "camera_live_sd": "SD",

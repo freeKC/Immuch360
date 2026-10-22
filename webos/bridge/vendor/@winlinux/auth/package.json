@@ -1,0 +1,58 @@
+{
+  "name": "@winlinux/auth",
+  "version": "1.1.0",
+  "description": "Basic, NTLM, Kerberos, Negotiate and CredSSP authentication for the winlinux WinRM and SMB2 clients.",
+  "keywords": [
+    "windows",
+    "ntlm",
+    "kerberos",
+    "spnego",
+    "negotiate",
+    "credssp",
+    "gssapi",
+    "winrm",
+    "smb"
+  ],
+  "homepage": "https://github.com/sanjay3290/winlinux/tree/main/packages/auth#readme",
+  "bugs": {
+    "url": "https://github.com/sanjay3290/winlinux/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanjay3290/winlinux.git",
+    "directory": "packages/auth"
+  },
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": "./dist/src/index.js",
+    "./auth": "./dist/src/auth/index.js"
+  },
+  "files": [
+    "dist/src",
+    "!dist/**/*.map"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node --test \"dist/test/**/*.test.js\"",
+    "test:integration": "npm run build --prefix ../smb2 && npm run build --prefix ../krb-session-key && tsc -p tsconfig.integration.json && node dist-integration/test/integration/run.js"
+  },
+  "dependencies": {
+    "des.js": "^1.1.0",
+    "hash-wasm": "^4.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "~5.7.0"
+  },
+  "optionalDependencies": {
+    "@winlinux/krb-session-key": "1.1.0",
+    "kerberos": "^7.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

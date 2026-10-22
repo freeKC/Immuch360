@@ -75,7 +75,6 @@
   "camera_live_failed": "प्रत्यक्ष दृश्य सुरु भएन: {error}",
   "camera_live_full_screen": "पूर्ण स्क्रिन",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "प्रत्यक्ष दृश्य पछिको संस्करणमा iPhone र iPad मा आउनेछ। रेकर्डिङहरू यहाँ पहिले नै चल्छन्।",
   "camera_live_needs_account": "प्रत्यक्ष दृश्य हेर्न क्यामेरा खाता थप्नुहोस्।",
   "camera_live_no_sound": "यो उपकरणमा आवाज छैन",
   "camera_live_sd": "SD",

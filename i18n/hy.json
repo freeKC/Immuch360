@@ -91,7 +91,6 @@
   "camera_live_failed": "Ուղիղ դիտումը չսկսվեց՝ {error}",
   "camera_live_full_screen": "Լիաէկրան",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Ուղիղ դիտումը iPhone-ին և iPad-ին կհասնի ավելի ուշ տարբերակում։ Տեսագրություններն արդեն նվագարկվում են այստեղ։",
   "camera_live_needs_account": "Ավելացրեք տեսախցիկի հաշիվը՝ ուղիղ դիտումը տեսնելու համար։",
   "camera_live_no_sound": "Այս սարքում ձայն չկա",
   "camera_live_sd": "SD",

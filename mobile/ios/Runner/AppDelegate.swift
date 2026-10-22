@@ -22,6 +22,8 @@ import native_video_player
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
     let messenger = engineBridge.applicationRegistrar.messenger()
     AppDelegate.registerPlugins(with: engineBridge.pluginRegistry, messenger: messenger)
+    // The scanner of "Connect a TV or computer" shows a view controller: the app's engine only, not the background ones
+    QrScanApiSetup.setUp(binaryMessenger: messenger, api: QrScanApiImpl())
   }
 
   public static func registerPlugins(with registry: FlutterPluginRegistry, messenger: FlutterBinaryMessenger) {
@@ -43,6 +45,13 @@ import native_video_player
     VideoThumbnailApiSetup.setUp(binaryMessenger: messenger, api: VideoThumbnailApiImpl())
     VideoDecoderApiSetup.setUp(binaryMessenger: messenger, api: VideoDecoderApiImpl())
     PhoneShareApiSetup.setUp(binaryMessenger: messenger, api: PhoneShareApiImpl())
+    // The live view of the Tapo cameras: the platform view and what Flutter asks of it
+    let cameraLiveViews = CameraLiveViewFactory(messenger: messenger)
+    registry.registrar(forPlugin: "CameraLiveViewFactory")?.register(
+      cameraLiveViews,
+      withId: CameraLiveViewFactory.viewType
+    )
+    CameraLiveApiSetup.setUp(binaryMessenger: messenger, api: CameraLiveApiImpl(views: cameraLiveViews))
   }
 
   public static func cancelPlugins(with engine: FlutterEngine) {

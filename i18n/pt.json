@@ -738,7 +738,6 @@
   "camera_live_failed": "A visualização em direto não arrancou: {error}",
   "camera_live_full_screen": "Ecrã inteiro",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "A visualização em direto chega ao iPhone e iPad numa versão posterior. As gravações já são reproduzidas aqui.",
   "camera_live_needs_account": "Adicione a conta da câmara para ver a visualização em direto.",
   "camera_live_no_sound": "Sem som neste dispositivo",
   "camera_live_sd": "SD",

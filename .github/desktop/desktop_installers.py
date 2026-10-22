@@ -16,8 +16,11 @@ and videos, each extension with a one line description. This script turns that l
       Default apps settings. The default program of an extension (the default value of its key) is never written:
       Windows offers the app in "Open with" and in the settings, and only the user makes it the default.
   desktop_installers.py windows --bundle DIR --label LABEL --file-version A.B.C.D --out DIR [--iscc FILE]
+                                [--sign-with DIR]
       those lines, then Inno Setup 6 on the folder that windows_bundle.py made for the ZIP, so that the installer and
-      the ZIP carry the same files: <out>/Immuch360-Desktop-<label>-windows-x64-setup.exe
+      the ZIP carry the same files: <out>/Immuch360-Desktop-<label>-windows-x64-setup.exe. With --sign-with, the tools
+      folder of windows_sign.py, Inno Setup signs the uninstaller and the installer through windows_sign.py sign (the
+      release workflow, on the folder windows_sign.py bundle signed)
   desktop_installers.py linux --bundle DIR --label LABEL --out DIR [--nfpm FILE] [--patchelf FILE] [--stage-only]
       the bundle of `flutter build linux` under /opt/immuch360 with the launcher /usr/bin/immuch360, the desktop entry
       (its MimeType= made from the list), the icons and the MIME types of the raw camera files, staged in <out>/stage,
@@ -57,6 +60,8 @@ LINUX_TEMPLATES = HERE / 'packaging' / 'linux'
 ICONS = ROOT / 'mobile' / 'macos' / 'Runner' / 'Assets.xcassets' / 'AppIcon.appiconset'
 
 APP_NAME = 'Immuch360 Desktop'
+# The name of the sign tool given to Inno Setup (/S<name>=<command>), which immuch360.iss uses when SignToolName is set
+SIGN_TOOL = 'immuch360sign'
 APP_ID = 'com.aprogsys.immuch360'
 EXE = 'immuch360.exe'
 PROG_ID = 'Immuch360.{}'
@@ -418,7 +423,15 @@ def windows(args, types: dict) -> int:
     name = f'Immuch360-Desktop-{args.label}-windows-x64-setup'
     command = [iscc, '/Qp', f'/DSourceDir={args.bundle.resolve()}', f'/DAppLabel={args.label}',
                f'/DFileVersion={args.file_version}', f'/DAssociations={associations.resolve()}',
-               f'/O{args.out.resolve()}', f'/F{name}', str(ISS)]
+               f'/O{args.out.resolve()}', f'/F{name}']
+    if args.sign_with:
+        if not (args.sign_with / 'signing.json').is_file():
+            raise Problem(f'{args.sign_with} has no signing.json: run windows_sign.py tools --dir {args.sign_with}')
+        # Inno Setup runs the command for each file it signs, $f standing for the quoted file and $q for a quote
+        script = HERE / 'windows_sign.py'
+        command += [f'/S{SIGN_TOOL}=$q{sys.executable}$q $q{script}$q sign --tools $q{args.sign_with.resolve()}$q $f',
+                    f'/DSignToolName={SIGN_TOOL}']
+    command.append(str(ISS))
     print(' '.join(command))
     if args.dry_run:
         return 0
@@ -627,6 +640,7 @@ def main(argv=None) -> int:
     win.add_argument('--file-version', required=True)
     win.add_argument('--out', type=pathlib.Path, required=True)
     win.add_argument('--iscc', help='ISCC.exe of Inno Setup 6')
+    win.add_argument('--sign-with', type=pathlib.Path, help='the tools folder of windows_sign.py: sign the installer')
     win.add_argument('--dry-run', action='store_true', help='print the compiler command only')
     lin = commands.add_parser('linux', help='the .deb and the .rpm')
     lin.add_argument('--bundle', type=pathlib.Path, required=True, help='build/linux/x64/release/bundle')
