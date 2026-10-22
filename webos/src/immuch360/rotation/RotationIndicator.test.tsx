@@ -27,6 +27,14 @@ test('says at once that the turn is saved, then how long it has been waiting', (
 	expect(text()).toBe(`Saving the rotation, please wait (${ROTATION_WAIT_SHOWN_FROM_S + 9} s)`);
 });
 
+test('the count each second is not read aloud', () => {
+	render(<RotationIndicator active />);
+	const label = () => screen.getByText(/Saving the rotation/);
+	expect(label().getAttribute('aria-hidden')).toBeNull();
+	wait(ROTATION_WAIT_SHOWN_FROM_S * 1000);
+	expect(label().getAttribute('aria-hidden')).toBe('true');
+});
+
 test('goes away when the turned picture is shown, and counts again from the next turn', () => {
 	const {rerender} = render(<RotationIndicator active />);
 	wait(5000);

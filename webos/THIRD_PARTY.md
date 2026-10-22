@@ -30,5 +30,6 @@ Build tools, not shipped: @enact/cli 7.3.4 (Apache-2.0), @webos-tools/cli 3.2.6 
 (Apache-2.0).
 
 Assets made for this app: the icons and the splash screen come from the Immuch360 launcher icon
-(`mobile/android/app/src/main/res/drawable-xxxhdpi/ic_launcher_foreground.png`); `webos-meta/probe.mp4` is a two second
-magenta clip generated with ffmpeg for the video test of the About page.
+(`mobile/android/app/src/main/res/drawable-xxxhdpi/ic_launcher_foreground.png`);
+`src/immuch360/diagnostics/probe.mp4` is a two second magenta clip generated with ffmpeg for the video test of the About
+page.

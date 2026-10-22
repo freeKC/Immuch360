@@ -345,6 +345,20 @@ describe('the phase of a turn, which the viewer shows', () => {
 		assert.equal(controller.phase(ASSET), 'idle');
 	});
 
+	test('a new press after a failure takes the message away while it is saved', async () => {
+		const {controller, state, timers} = setup({failWith: Object.assign(new Error('Network error'), {status: undefined})});
+		controller.rotate(ASSET, 1);
+		await timers.advance(DEBOUNCE_MS);
+		assert.equal(controller.notice(ASSET), 'failed');
+		state.failWith = undefined;
+		controller.rotate(ASSET, 1);
+		assert.equal(controller.notice(ASSET), null);
+		assert.equal(controller.phase(ASSET), 'turning');
+		await timers.advance(DEBOUNCE_MS + 1000);
+		assert.equal(controller.phase(ASSET), 'shown');
+		assert.equal(controller.notice(ASSET), null);
+	});
+
 	test('a picture the server does not make in time ends the turning when the photo is asked for afresh', async () => {
 		const {controller, timers} = setup({neverReady: true});
 		controller.rotate(ASSET, 1);

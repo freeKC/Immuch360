@@ -154,6 +154,8 @@ export class RotationController {
 			session = undefined;
 		}
 		if (!session) session = this.start(assetId);
+		// A new turn is being saved: the message of the last one would contradict the viewer's "saving" pill
+		this.clearNotice(assetId);
 		session.pending += quarterTurns;
 		this.clearTimer(session, 'expiry');
 		this.clearTimer(session, 'debounce');
@@ -308,6 +310,13 @@ export class RotationController {
 		}, NOTICE_MS);
 		this.notices.set(assetId, {kind, handle});
 		this.publish();
+	}
+
+	private clearNotice(assetId: string): void {
+		const notice = this.notices.get(assetId);
+		if (!notice) return;
+		this.timers.clear(notice.handle);
+		this.notices.delete(assetId);
 	}
 
 	private end(session: Session): void {

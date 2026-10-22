@@ -19,11 +19,15 @@ const Working: React.FC = () => {
 		const timer = window.setInterval(() => setSeconds((count) => count + 1), 1000);
 		return () => window.clearInterval(timer);
 	}, []);
-	const text = seconds >= ROTATION_WAIT_SHOWN_FROM_S ? t('rotate_saving_wait', {seconds}) : t('rotate_saving');
+	const counting = seconds >= ROTATION_WAIT_SHOWN_FROM_S;
+	const text = counting ? t('rotate_saving_wait', {seconds}) : t('rotate_saving');
+	// Audio Guidance reads "Saving the rotation" once; the count that follows each second is for the eyes only
 	return (
 		<div className={css.indicator} role="status" aria-live="polite">
 			<span className={css.spinner} aria-hidden="true" />
-			<span className={css.text}>{text}</span>
+			<span className={css.text} aria-hidden={counting ? 'true' : undefined}>
+				{text}
+			</span>
 		</div>
 	);
 };

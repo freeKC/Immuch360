@@ -465,7 +465,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 				onActionBarFocusChange={setActionBarFocused}
 			/>
 			{/* Immuch360: from a yellow or blue press until the turned picture is shown, over the photo, out of the way of the keys */}
-			<RotationIndicator active={rotationPhase === 'turning'} />
+			<RotationIndicator key={asset?.id} active={rotationPhase === 'turning'} />
 			{detailsOpen && <AssetDetailsPanel asset={asset} details={details} />}
 		</ViewerContainer>
 	);
