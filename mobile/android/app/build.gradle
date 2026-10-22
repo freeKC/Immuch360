@@ -154,6 +154,9 @@ dependencies {
   implementation libs.meta.spatial.sdk.toolkit
   implementation libs.meta.spatial.sdk.vr
 
+  // The QR code scanner of "Connect a TV or computer" (sign in with your phone): ZXing, without Google Play services
+  implementation libs.zxing.android.embedded
+
   testImplementation libs.junit
 }
 

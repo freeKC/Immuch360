@@ -22,6 +22,8 @@ import me.albemala.native_video_player.NativeVideoPlayerPlugin
 import app.alextran.immich.images.LocalImageApi
 import app.alextran.immich.immersive.ImmersiveApi
 import app.alextran.immich.immersive.ImmersiveApiImpl
+import app.alextran.immich.pairing.QrScanApi
+import app.alextran.immich.pairing.QrScanApiImpl
 import app.alextran.immich.images.LocalImagesImpl
 import app.alextran.immich.images.RemoteImageApi
 import app.alextran.immich.images.RemoteImagesImpl
@@ -63,6 +65,8 @@ class MainActivity : FlutterFragmentActivity() {
     val messenger = flutterEngine.dartExecutor.binaryMessenger
     // TV detection and the native text dialog of the remote control layout: they need this activity
     TvApi.setUp(messenger, TvApiImpl(this))
+    // The scanner of "Connect a TV or computer": it opens activities, so it needs this one
+    QrScanApi.setUp(messenger, QrScanApiImpl(this))
     // Live view of the Tapo cameras: a platform view and the API that feeds it
     val cameraLiveViews = CameraLiveViewFactory(messenger)
     flutterEngine.platformViewsController.registry.registerViewFactory(CameraLiveViewFactory.VIEW_TYPE, cameraLiveViews)
@@ -89,6 +93,7 @@ class MainActivity : FlutterFragmentActivity() {
     PhoneShareApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     // The TV dialog must not keep this activity once it is gone
     TvApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
+    QrScanApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     CameraLiveApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     AppHealth.detach()
     super.cleanUpFlutterEngine(flutterEngine)
