@@ -7,7 +7,8 @@
 // fails when the app or its service is not where webOS looks for them, when appinfo.json does not name Immuch360,
 // when the version of the .ipk name, of appinfo.json and of the service differ, when development files of the service
 // went in, when the licences are missing (the AGPL of Immuch360 and the MIT notice of immich-tv-webos, which must be
-// in every copy, see tools/licence-files.mjs), or when the package grew past 10 MB. --list writes every file and its
+// in every copy, see tools/licence-files.mjs), when the media bridge of the service or the notices of the third party
+// code in it are missing (tools/build-bridge.mjs), or when the package grew past 10 MB. --list writes every file and its
 // size, to compare two builds.
 
 import {readFileSync, readdirSync, writeFileSync} from 'node:fs';
@@ -85,7 +86,15 @@ const need = (path) => {
 
 const appinfoBytes = need(`${appDir}appinfo.json`);
 for (const file of ['index.html', 'main.js', 'main.css', 'icon.png', 'icon-large.png', 'i18n/fr.json', 'i18n/de.json']) need(appDir + file);
-for (const file of ['service.js', 'services.json', 'package.json']) need(serviceDir + file);
+for (const file of ['service.js', 'services.json', 'package.json', 'lib/bridge-host.js', 'bridge/base.js', 'bridge/smb.js']) need(serviceDir + file);
+// Immuch360: the SMB bundle carries MIT and ISC code, whose notices must go with it
+const bridgeLicences = need(`${serviceDir}bridge/LICENSES.txt`);
+if (bridgeLicences) {
+	const text = bridgeLicences.toString('utf8');
+	for (const name of ['@winlinux/smb2', '@winlinux/auth', 'des.js', 'hash-wasm', 'Permission is hereby granted']) {
+		if (!text.includes(name)) problems.push(`bridge/LICENSES.txt does not name ${name}`);
+	}
+}
 const licenceText = (file, ...phrases) => {
 	const bytes = need(appDir + file);
 	if (!bytes) return;
