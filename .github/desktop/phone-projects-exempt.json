@@ -20,7 +20,7 @@
     "reason": "TV lot (5e7bf8e27): no 360 player for a stream the device cannot decode"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/AoaAccessoryManager.kt": {
-    "blob": "2a598d677ae11d8163d8316eba441cbf3e93705c",
+    "blob": "c936684d491cdc8665adbe8634f13a02695e170d",
     "reason": "DJI link (feat-dji-link, 12ccff821): the accessory list, the permission, the open and the retries of the USB link, with the reference timings as named constants"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/AoaTransport.kt": {
@@ -56,7 +56,7 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the hardware profiles, where a capability cannot claim support without an observation"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkApiImpl.kt": {
-    "blob": "19c9323748f3a0b7af688f192de3827c9ef0d1b6",
+    "blob": "12c45dde5d78b6f4dfe1a90a21e470ebc257c8fb",
     "reason": "DJI link (feat-dji-link, 12ccff821): what Flutter asks of the link, and the switch of the accessory attached entry"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkAttachActivity.kt": {

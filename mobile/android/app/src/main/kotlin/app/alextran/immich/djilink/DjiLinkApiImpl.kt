@@ -50,6 +50,9 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
 
   override fun stop() {
     controller.stop()
+    // The entry lives as long as the page does. A pilot who left the page is a pilot who is not offered this
+    // application when a cable is plugged in.
+    setAttachEntryEnabled(context, false)
   }
 
   override fun retry() {

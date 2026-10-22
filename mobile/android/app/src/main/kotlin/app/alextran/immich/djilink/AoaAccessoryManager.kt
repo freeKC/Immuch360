@@ -203,7 +203,11 @@ class AoaAccessoryManager(
           "description=${candidate.description} version=${candidate.version}",
       )
     }
-    val candidate = list.first()
+    // The platform documents at most one entry, and the reference application only ever reads the first. The whole
+    // list is read here, and a DJI accessory anywhere in it is preferred over whatever came first, so that a device
+    // that does list more than one still reaches the right end of the cable.
+    val candidate = list.firstOrNull { it.manufacturer.equals(ProfileRegistry.MANUFACTURER, ignoreCase = true) }
+      ?: list.first()
     val read = AccessoryIdentity(
       manufacturer = candidate.manufacturer,
       model = candidate.model,
