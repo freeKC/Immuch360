@@ -123,7 +123,7 @@ the gate is per desktop and is noted.
 | `lib/widgets/common/mesmerizing_sliver_app_bar.dart:55` | iOS back icon | right |
 | `lib/widgets/common/person_sliver_app_bar.dart:79` | iOS back icon | right |
 | `lib/widgets/common/remote_album_sliver_app_bar.dart:74` | iOS back icon | right |
-| `lib/widgets/forms/login/login_form.dart:260` | Android media management | right |
+| `lib/widgets/forms/login/sign_in_completion.dart:49` | Android media management (moved from the login form, sign in with your phone) | right |
 | `lib/widgets/settings/advanced_settings.dart:49` | Android 12 check | right |
 | `lib/widgets/settings/backup_settings/backup_settings.dart:29` | Android background options | right; the computers show desktop_backup_while_open instead of the cellular options (G1) |
 | `lib/widgets/settings/beta_sync_settings/sync_status_and_actions.dart:184` | iOS cloud ids | right |
