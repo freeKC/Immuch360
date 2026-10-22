@@ -11,6 +11,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/video_decoders.page.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/drone_import_tile.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
@@ -46,6 +47,13 @@ class AdvancedSettings extends HookConsumerWidget {
     useValueChanged(
       djiImport.value,
       (_, _) => unawaited(ref.read(settingsProvider).write(.djiImportEnabled, djiImport.value)),
+    );
+    // The DJI link page: a DJI remote controller plugged in as a USB accessory, on Android phones and in the headset
+    final djiLinkSupported = ref.watch(djiLinkSupportedProvider);
+    final djiLink = useState(ref.watch(appConfigProvider).djiLinkEnabled);
+    useValueChanged(
+      djiLink.value,
+      (_, _) => unawaited(ref.read(settingsProvider).write(.djiLinkEnabled, djiLink.value)),
     );
 
     final logLevel = Level.LEVELS[levelId.value].name;
@@ -143,6 +151,13 @@ class AdvancedSettings extends HookConsumerWidget {
           valueNotifier: djiImport,
           title: context.t.dji_import_setting_title,
           subtitle: context.t.dji_import_setting_subtitle,
+        ),
+      if (djiLinkSupported)
+        SettingsSwitchListTile(
+          key: const Key('advanced_settings_dji_link'),
+          valueNotifier: djiLink,
+          title: context.t.dji_link_setting_title,
+          subtitle: context.t.dji_link_setting_subtitle,
         ),
       const CustomProxyHeaderSettings(),
       const SslClientCertSettings(),

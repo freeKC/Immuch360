@@ -4,12 +4,12 @@
     "reason": "Sign in with your phone (feat-qr-pairing): ZXing Android Embedded, the QR code scanner of Connect a TV or computer, without Google Play services"
   },
   "mobile/android/app/src/main/AndroidManifest.xml": {
-    "blob": "1daa174387bec642c65846c6f312e7175f4212de",
-    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity"
+    "blob": "2e471ec78be42aa1226a4ae55427d9d868f39e15",
+    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
-    "blob": "8638d90dfa93ffb3eb5cd1e6133ad57190d63faa",
-    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only; sign in with your phone (feat-qr-pairing): the QR code scanner registered with this activity"
+    "blob": "de2f7bc86ca0229b960620a9a049b7f3deb507fb",
+    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only; DJI link (feat-dji-link, 12ccff821): the link page of the headset and of the phone is registered in the app engine only, and a gamepad event is handed to the page that draws the sticks; fix round of 22 October: a gamepad event reaches only a link page that is open and never creates its owner; sign in with your phone (feat-qr-pairing): the QR code scanner registered with this activity"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/AppHealth.kt": {
     "blob": "72007f2819b19ef23c3dffaadaad85110bb1285f",
@@ -22,6 +22,110 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/VideoDecoders.kt": {
     "blob": "349b4d8510907714215d1935668829c4e4d69775",
     "reason": "TV lot (5e7bf8e27): no 360 player for a stream the device cannot decode"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/AoaAccessoryManager.kt": {
+    "blob": "eace987924dd35c6776eadcb09a2857942524e2e",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the accessory list, the permission, the open and the retries of the USB link, with the reference timings as named constants; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/AoaTransport.kt": {
+    "blob": "d9e03c43cab559ae7e5174a7abaf5ec1c6be06a9",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the reader thread, the bounded writer queue and the one byte liveness probe of the USB link; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/CaptureExport.kt": {
+    "blob": "6c5c92771dc6fd3011819c1652d879024562cd3b",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the three files of an exported capture: the bytes, the boundaries and the header with the digest; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/CaptureReplay.kt": {
+    "blob": "4908b20cbb76785f4b7e6967c9439c7df4d9a39a",
+    "reason": "DJI link (feat-dji-link, 12ccff821): a saved capture back through the same codecs, with no hardware; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/CaptureRing.kt": {
+    "blob": "86cab28ae66856ff2345f74a3cc48cd90c2e0253",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the bounded capture ring and its index of read and write boundaries; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/ChannelMap.kt": {
+    "blob": "6a4cbdbfeb8d440690ab9bb93cd1edfc96c924aa",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the stick values packed into the body of a control frame; nothing sends one at this stage; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/Channels.kt": {
+    "blob": "7598c78723f94fa7b7828b6ac14af97b33dabe95",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the channels of the accessory stream and the role of each"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/Crc.kt": {
+    "blob": "49f9b4d9e068a0b2cb391df6f9ae173019195140",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the two checksums of a control frame, built from a parameter set; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DeviceProfile.kt": {
+    "blob": "ffdca85c0592287d4a5d8899e8a9e9108b74af82",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the hardware profiles, where a capability cannot claim support without an observation; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkApiImpl.kt": {
+    "blob": "c318b82c08d744b49697f7e5f8a5278a9bcacd2b",
+    "reason": "DJI link (feat-dji-link, 12ccff821): what Flutter asks of the link, and the switch of the accessory attached entry; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkAttachActivity.kt": {
+    "blob": "f687f7bfe02090f3b0ce87c222e2694cb6fdea1a",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the accessory attached entry, which only brings the application forward; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkController.kt": {
+    "blob": "c6ad86a026f22f6e8686ed62b64fe1a8a7f1265d",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the process scoped owner of the link, the codecs, the capture and the safety rules; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/Envelope.kt": {
+    "blob": "e61d1feb19efa2be8c3c98d8c1557b2ead9dd470",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the streaming decoder of the envelope that carries every unit of the accessory stream; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/FrameRouter.kt": {
+    "blob": "26150bf2e1d96df54382c143170779b6853606a4",
+    "reason": "DJI link (feat-dji-link, 12ccff821): where a decoded unit goes, the counters and the liveness rules; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/InputSafety.kt": {
+    "blob": "b7f3af2c8ec9e2ce2133c7a9f81fdaca3b33c0f9",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the arming gate and the dead man rules, written before the first byte they guard exists; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/LinkState.kt": {
+    "blob": "44da48610686ccb5956807ff5bcdda66f17644df",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the states of the link and what was read of the accessory; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/P3Frame.kt": {
+    "blob": "fe7581351813edd4714d81848f008d2d36c73760",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the control frame codec with both checksums and the sequence counter; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/PermissionPolicy.kt": {
+    "blob": "1f5d62b946d2a35edb567b89f8b89f0a007a7203",
+    "reason": "DJI link (feat-dji-link, fix round of 22 October): when the USB permission may be asked for, one dialog at a time, a refusal asked again only by the pilot or a new plug, the system chooser left alone first"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/ProbeWorker.kt": {
+    "blob": "1d4d2dd734fc8ba5b3908c3cc6e8827dff20d82b",
+    "reason": "DJI link (feat-dji-link, fix round of 22 October): the liveness probe thread, opened and closed with each page session so that a second visit probes again"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/QuestInputAdapter.kt": {
+    "blob": "3d45c768afea68c07740ca8c76440b18444b71de",
+    "reason": "DJI link (feat-dji-link, 12ccff821): one way of reading sticks whatever the hardware, with the gamepad implementation"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/StickModel.kt": {
+    "blob": "b5c4cf64dc27cb6f7bf14f281e5fae5621ac3b43",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the sticks as this application reads them, with our own axis names; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/Telemetry.kt": {
+    "blob": "6fb27f4210484599bca3613c599d2edd2ea626de",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the telemetry identifiers, with no field of a body read; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/UsbEnvironment.kt": {
+    "blob": "7de07ba28c4b85b93a1d30e4dac80c5e7b4fe215",
+    "reason": "DJI link (feat-dji-link, 12ccff821): what the device itself says it can do about a USB accessory"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoDecoderFeed.kt": {
+    "blob": "1d30e710997cd06b5822821b5fbfc612fd556dd6",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the hardware decoder fed by hand, asleep until a later stage wakes it; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoFragments.kt": {
+    "blob": "d7cc9d55f02c4d0641d466c0f7f7f1c3595df57e",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the video payloads kept as fragments with their counters; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoProbe.kt": {
+    "blob": "860d9b72eec0217ac6286dbd43179b13a9846044",
+    "reason": "DJI link (feat-dji-link, 12ccff821): what a video payload looks like, with no codec named"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/documenttree/DocumentTreePlugin.kt": {
     "blob": "10ee08ac7cacbf75e3f340ee57dd86769453fea0",
@@ -55,6 +159,10 @@
     "blob": "0357130537edf1cbd07ecb03d5dda0b1a6c87264",
     "reason": "TV lot (651962690): dark launch theme of the app on a TV"
   },
+  "mobile/android/app/src/main/res/xml/dji_accessory_filter.xml": {
+    "blob": "7f0505a21455f9ccfed4142d68fed0dd7b116e21",
+    "reason": "DJI link (feat-dji-link, 12ccff821): which USB accessories bring up the link entry: any DJI accessory, plus the three identity strings of the format notes"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/AppHealthTest.kt": {
     "blob": "18b6fbf88948bc64016d8427f23ad469a5da38a0",
     "reason": "TV lot (c05b57812): unit tests of AppHealth, run by the Kotlin unit tests job"
@@ -62,6 +170,54 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/StreamingLoadControlTest.kt": {
     "blob": "bea2b1026f5d95e732ec62044b7b79ca91a67ad8",
     "reason": "TV lot (5e7bf8e27): unit tests of StreamingLoadControl, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/AoaTransportTest.kt": {
+    "blob": "fc693faed6937c2eb4d0d6845eacf34c2596b4b4",
+    "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the transport on a pair of pipes, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/CaptureTest.kt": {
+    "blob": "9bd074c5f48a00b798379e1da9de914b714eda51",
+    "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the capture ring and of the replay, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/ChannelMapTest.kt": {
+    "blob": "39d4c051c48f5be0b7e37ec79fe79ffb7b8de942",
+    "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the stick packing, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/CrcTest.kt": {
+    "blob": "f6fa9069be32a195d51736e41df1ee71759bd0e4",
+    "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the two checksums against the published vectors, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/EnvelopeTest.kt": {
+    "blob": "bf4b5cf21606d3dbd0c2209bf59e50b58163cb41",
+    "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the envelope decoder, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/FrameRouterTest.kt": {
+    "blob": "8942e44e9a6f4b45a46e985f8edb97e6e52a267b",
+    "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the router and its liveness rules, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/InputSafetyTest.kt": {
+    "blob": "769a46e5250d514922e28987098120045c727db9",
+    "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the arming gate and the dead man rules, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/P3FrameTest.kt": {
+    "blob": "de607c160b2d584d9c7904373457c5491d23cf55",
+    "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the control frame codec, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/PermissionPolicyTest.kt": {
+    "blob": "0c20b870f6991802edcee27778444c294d376aa8",
+    "reason": "DJI link (feat-dji-link, fix round of 22 October): unit tests of the permission rules, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/ProbeWorkerTest.kt": {
+    "blob": "e0940eec27fc784407ad2b9e72570985b4c6033a",
+    "reason": "DJI link (feat-dji-link, fix round of 22 October): unit tests of the probe thread across page sessions, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/ProfileRegistryTest.kt": {
+    "blob": "e48ef540e6cd3f11274c7a0c6b2153c286d75be6",
+    "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the hardware profiles, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/VideoProbeTest.kt": {
+    "blob": "2186abd36cef9ff7d859a8874e595382219c418e",
+    "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the start code probe and the fragment counters, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/documenttree/DocumentTreeReadsTest.kt": {
     "blob": "00eb864c380c04d835a08b4a85d1501e69a95341",

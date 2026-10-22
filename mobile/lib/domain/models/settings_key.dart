@@ -94,7 +94,11 @@ enum SettingsKey<T> {
 
   // Settings, Advanced, "DJI drones (experimental)", on by default: the DJI drone page of the Network shares (Android
   // phones)
-  djiImportEnabled<bool>();
+  djiImportEnabled<bool>(),
+
+  // Settings, Advanced, "DJI link diagnostics (experimental)", on by default: the DJI link page that reads a DJI
+  // remote controller plugged in as a USB accessory (Android phones and the Meta Quest build, not the TV layout)
+  djiLinkEnabled<bool>();
 
   final ValueCodec<T>? _codecOverride;
 

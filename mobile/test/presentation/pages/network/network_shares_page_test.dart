@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -14,6 +15,7 @@ import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
@@ -87,6 +89,9 @@ void main() {
       overrides: [
         storeServiceProvider.overrideWithValue(store),
         secureStorageServiceProvider.overrideWithValue(secureStorage),
+        // The settings as a fresh install has them: the DJI link tile reads its switch there on Android, and these
+        // tests never initialise the settings repository
+        appConfigProvider.overrideWithValue(const AppConfig()),
         if (tvMode) tvModeProvider.overrideWithValue(true),
       ],
     );

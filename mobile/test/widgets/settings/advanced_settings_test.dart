@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/pages/video_decoders.page.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/drone_import_tile.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/widgets/settings/advanced_settings.dart';
@@ -100,6 +101,55 @@ void main() {
       );
 
       expect(find.byKey(const Key('advanced_settings_dji_import')), findsNothing);
+    });
+  });
+
+  group('DJI link diagnostics (experimental)', () {
+    final linkSwitch = find.descendant(
+      of: find.byKey(const Key('advanced_settings_dji_link')),
+      matching: find.byType(SwitchListTile),
+    );
+
+    /// The page on a device that offers the DJI link page: an Android phone, tablet or headset, not a TV
+    Future<void> pumpWhereSupported(WidgetTester tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [djiLinkSupportedProvider.overrideWithValue(true)],
+      );
+      await tester.scrollUntilVisible(linkSwitch, 100, scrollable: find.byType(Scrollable).first);
+    }
+
+    testWidgets('reads on by default', (tester) async {
+      await pumpWhereSupported(tester);
+
+      expect(find.text('DJI link diagnostics (experimental)'), findsOneWidget);
+      expect(tester.widget<SwitchListTile>(linkSwitch).value, isTrue);
+      expect(SettingsRepository.instance.appConfig.djiLinkEnabled, isTrue);
+    });
+
+    testWidgets('turns off and on again', (tester) async {
+      await pumpWhereSupported(tester);
+
+      await tester.tap(linkSwitch);
+      await tester.pumpAndSettle();
+      expect(tester.widget<SwitchListTile>(linkSwitch).value, isFalse);
+      expect(SettingsRepository.instance.appConfig.djiLinkEnabled, isFalse);
+
+      await tester.tap(linkSwitch);
+      await tester.pumpAndSettle();
+      expect(tester.widget<SwitchListTile>(linkSwitch).value, isTrue);
+      expect(SettingsRepository.instance.appConfig.djiLinkEnabled, isTrue);
+    });
+
+    testWidgets('is not offered on a device that has no cable to a remote controller', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [djiLinkSupportedProvider.overrideWithValue(false)],
+      );
+
+      expect(find.byKey(const Key('advanced_settings_dji_link')), findsNothing);
     });
   });
 }
