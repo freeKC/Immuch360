@@ -84,6 +84,10 @@ Mehr: [die Viewer und der Videoplayer](../docs/immuch360/user-guide.md#watch-you
 
 Drehe ein Foto mit einem Druck um 90°, ohne einen Editor zu öffnen: eine Schaltfläche, eine Taste der Tastatur oder eine Farbtaste der TV-Fernbedienung, auf jeder Plattform. Die Immich-App dreht ein Foto in ihrem Editor; Immuch360 tut es mit einer Taste, und für deine eigenen Fotos auf einem Immich-Server ab 2.6 geht es über denselben Editor des Servers, sodass die Web-App und deine anderen Geräte sie gedreht zeigen. Jedes andere Foto wird nur auf diesem Gerät gedreht. 360°-, 180°- und 3D-Fotos drehen sich nie, damit die immersiven Ansichten waagerecht bleiben.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefone, Tablets und das Meta-Quest-Fenster**: Öffne das Foto und tippe in der unteren Leiste auf Drehen, vor Bearbeiten, um es im Uhrzeigersinn zu drehen; langes Drücken dreht es in die andere Richtung. Mit einer Tastatur R und Shift+R.
 2. **Android TV und Google TV**: Die gelbe Taste der Fernbedienung dreht das Foto im Uhrzeigersinn und die blaue gegen den Uhrzeigersinn, egal wo der Fokus im Viewer liegt. Auf einer Fernbedienung ohne Farbtasten drücke Unten: Die Leiste unter dem Foto erscheint mit ausgewähltem Drehen (einmal Rechts entfernt, wenn das Foto eine Textschaltfläche hat), und jedes OK dreht das Foto.
 3. **LG-Fernseher (webOS)**: Gelb und Blau wie auf Android TV, R und Shift+R auf einer Tastatur, oder die Drehen-Schaltfläche in den Bedienelementen des Fotos.
@@ -198,6 +202,10 @@ Mehr: [auf deinem Fernseher ansehen](../docs/immuch360/user-guide.md#watch-on-yo
 
 Immuch360 gibt es auch als Immich-App für LG-webOS-Fernseher: eine eigene App für LG-Fernseher mit webOS 4.0 und neuer (ab 2018), mit der Fernbedienung gesteuert, die deinen Immich-Server zeigt und deine 360°-Fotos auf eine Kugel legt, die du mit den Pfeilen drehst. Die eigenen Apps von Immich lassen sich nicht auf einem LG-Fernseher installieren. Sie baut auf [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) von Seeky91 auf, das die Zeitleiste, die Alben, Personen, Orte, die Suche, die Diashow und die Anmeldung mit einem Telefon mitbrachte; Dank an Seeky91. Version 0.1.0 ist ein Testbuild: Sie ist noch nicht auf einem echten LG-Fernseher gelaufen, sie lässt sich nur im Developer Mode installieren, und jede Meldung unter [Issues](https://github.com/freeKC/Immuch360/issues) hilft.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Installiere sie auf einem Fernseher im Developer Mode, siehe [Installation](#lg-tvs-webos). Sie hat eine eigene App-ID und lässt sich daher neben Immich TV von Seeky91 installieren.
 2. Melde dich mit deinem Telefon an (scanne den QR-Code), mit deiner E-Mail und deinem Passwort oder mit einem API-Schlüssel.
 3. Navigiere mit den Pfeilen und OK. Im Viewer gehen Links und Rechts zum vorherigen oder nächsten Foto oder Video, auch während ein Video läuft; die Bedienelemente verschwinden 5 s nach der letzten Taste; Info öffnet die Details; die Kanaltasten zoomen; der Zeiger und das Rad der Magic Remote funktionieren.
@@ -220,6 +228,10 @@ Mehr: [Tapo-Kameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-
 ### Die Fotos und Videos deiner DJI-Drohne auf deinem Immich-Server
 
 Importiere die Fotos und Videos einer DJI-Drohne über USB, direkt auf deinen Immich-Server: Schliesse die Drohne, ihre Fernsteuerung oder ein Kartenlesegerät an ein Android-Telefon an, wähle die neuen Dateien aus und sende sie, mit den Videos anhand der Flugdaten der Drohne auf der Karte platziert und den 360°-Kugeln der Drohne als 360° angezeigt. Die Immich-App sichert nur, was schon in der Galerie des Telefons ist, und der Immich-Server kann den Ort eines DJI-Neo-2-Videos noch nicht lesen. Diese Seite ist experimentell, nur auf Android-Telefonen und -Tablets, und wurde noch nicht mit einer echten Drohne ausprobiert.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Schalte in Einstellungen, Erweitert «DJI-Drohnen (experimentell)» ein. Eine Kachel «DJI-Drohne» erscheint in Bibliothek, Netzwerkfreigaben.
 2. Schliesse die Drohne (eine Neo 2 kann ausgeschaltet bleiben), ihre Fernsteuerung oder ein Kartenlesegerät mit einem USB-C-Datenkabel an das Telefon an. Tippe auf der Seite DJI-Drohne auf «Drohne oder Karte wählen», wähle sie im Seitenmenü der Auswahl, öffne ihren DCIM-Ordner oder behalte das ganze Laufwerk, dann «Diesen Ordner verwenden» und Zulassen.

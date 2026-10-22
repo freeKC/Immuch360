@@ -84,6 +84,10 @@ Pli: [la spektiloj kaj la videoludilo](../docs/immuch360/user-guide.md#watch-you
 
 Turnu foton je 90° per unu premo, sen malfermi redaktilon: butono, klavo de la klavaro aŭ kolora klavo de la televida teleregilo, sur ĉiu platformo. La Immich-apo turnas foton en sia redaktilo; Immuch360 faras tion per unu klavo, kaj por viaj propraj fotoj sur Immich-servilo 2.6 aŭ pli nova ĝi trairas tiun saman redaktilon de la servilo, tiel ke la retapo kaj viaj aliaj aparatoj montras ilin turnitaj. Ĉiu alia foto estas turnata nur sur ĉi tiu aparato. 360°-, 180°- kaj 3D-fotoj neniam turniĝas, por ke la mergaj vidoj restu horizontalaj.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefonoj, tabulkomputiloj kaj la fenestro de Meta Quest**: malfermu la foton kaj tuŝetu Turni en la malsupra vico, antaŭ Redakti, por turni ĝin dekstrume; longa premo turnas ĝin en la alia direkto. Per klavaro, R kaj Shift+R.
 2. **Android TV kaj Google TV**: la flava klavo de la teleregilo turnas la foton dekstrume kaj la blua klavo maldekstrume, kie ajn estas la fokuso en la spektilo. Sur teleregilo sen koloraj klavoj, premu Malsupren: la breto sub la foto aperas kun Turni elektita (unu Dekstren for, kiam la foto havas tekstan butonon), kaj ĉiu OK turnas la foton.
 3. **LG-televidiloj (webOS)**: flava kaj blua kiel sur Android TV, R kaj Shift+R sur klavaro, aŭ la turna butono de la regiloj de la foto.
@@ -198,6 +202,10 @@ Pli: [spekti sur via televidilo](../docs/immuch360/user-guide.md#watch-on-your-t
 
 Immuch360 ekzistas ankaŭ kiel Immich-apo por LG webOS-televidiloj: aparta apo por LG-televidiloj kun webOS 4.0 kaj pli nova (ekde 2018), regata per la teleregilo, kiu montras vian Immich-servilon kaj metas viajn 360°-fotojn sur sferon, kiun vi turnas per la sagoj. La propraj apoj de Immich ne instaliĝas sur LG-televidilo. Ĝi estas konstruita sur [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) de Seeky91, kiu alportis la templinion, la albumojn, la homojn, la lokojn, la serĉon, la bildoprezenton kaj la ensaluton per telefono; dankon al Seeky91. Versio 0.1.0 estas testa konstruo: ĝi ankoraŭ ne funkciis sur reala LG-televidilo, ĝi instaliĝas nur en Developer Mode, kaj ĉiu raporto en [Issues](https://github.com/freeKC/Immuch360/issues) helpas.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Instalu ĝin sur televidilo en Developer Mode, vidu [Instali](#lg-tvs-webos). Ĝi havas propran apo-identigilon, do ĝi instaliĝas apud Immich TV de Seeky91.
 2. Ensalutu per via telefono (skanu la QR-kodon), per via retpoŝtadreso kaj pasvorto, aŭ per API-ŝlosilo.
 3. Foliumu per la sagoj kaj OK. En la spektilo, Maldekstren kaj Dekstren iras al la antaŭa aŭ sekva foto aŭ video, ankaŭ dum video ludas; la regiloj kaŝiĝas 5 s post la lasta klavo; Info malfermas la detalojn; la kanalaj klavoj zomas; la montrilo kaj la rado de Magic Remote funkcias.
@@ -220,6 +228,10 @@ Pli: [Tapo-kameraoj](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-
 ### La fotoj kaj videoj de via DJI-drono sur via Immich-servilo
 
 Importu la fotojn kaj videojn de DJI-drono per USB, rekte al via Immich-servilo: konektu la dronon, ĝian regilon aŭ kartlegilon al Android-telefono, elektu la novajn dosierojn kaj sendu ilin, kun la videoj lokitaj sur la mapo laŭ la flugdatumoj de la drono kaj la 360°-aj sferoj de la drono montrataj kiel 360°. La Immich-apo savkopias nur tion, kio jam estas en la galerio de la telefono, kaj la Immich-servilo ankoraŭ ne povas legi la lokon de DJI Neo 2-video. Ĉi tiu paĝo estas eksperimenta, nur sur Android-telefonoj kaj tabulkomputiloj, kaj ankoraŭ ne estis provita kun reala drono.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. En Agordoj, Progresintaj, ŝaltu "DJI-dronoj (eksperimenta)". Kahelo "DJI-drono" aperas en Biblioteko, Retaj kunhavigoj.
 2. Konektu la dronon (Neo 2 povas resti malŝaltita), ĝian regilon aŭ kartlegilon al la telefono per USB-C-datumkablo. Sur la paĝo DJI-drono, tuŝetu "Elekti la dronon aŭ la karton", elektu ĝin en la flanka menuo de la elektilo, malfermu ĝian dosierujon DCIM aŭ gardu la tutan diskon, poste "Uzi ĉi tiun dosierujon" kaj Permesi.

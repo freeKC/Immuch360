@@ -84,6 +84,10 @@ Részletek: [a nézegetők és a videólejátszó](../docs/immuch360/user-guide.
 
 Forgasson el egy fényképet 90°-kal egyetlen gombnyomással, szerkesztő megnyitása nélkül: egy gombbal, egy billentyűvel vagy a tévé távirányítójának egy színes gombjával, minden platformon. Az Immich alkalmazás a szerkesztőjében forgatja el a fényképet; az Immuch360 ezt egyetlen gombbal teszi, és a saját fényképei esetén egy 2.6-os vagy újabb Immich szerveren ugyanazon a szerveroldali szerkesztőn keresztül, így a webalkalmazás és a többi eszköze is elforgatva mutatja őket. Minden más fénykép csak ezen az eszközön fordul el. A 360°-os, 180°-os és 3D fényképek soha nem fordulnak el, így az immerzív nézetek vízszintesek maradnak.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefonok, táblagépek és a Meta Quest ablak**: nyissa meg a fényképet, és koppintson az alsó sorban a Szerkesztés előtti Forgatás gombra az óramutató járásával megegyező irányú forgatáshoz; hosszú nyomással a másik irányba fordul. Billentyűzettel R és Shift+R.
 2. **Android TV és Google TV**: a távirányító sárga gombja az óramutató járásával megegyezően, a kék gomb azzal ellentétesen forgatja el a fényképet, bárhol is van a fókusz a nézegetőben. Színes gombok nélküli távirányítón nyomja meg a Le gombot: megjelenik a fénykép alatti sáv, rajta a Forgatás kijelölve (egy Jobbra lépésnyire, ha a fényképnek van szöveges gombja), és minden OK elforgatja a fényképet.
 3. **LG tévék (webOS)**: a sárga és a kék gomb, mint Android TV-n, R és Shift+R billentyűzeten, vagy a fénykép vezérlőinek forgatás gombja.
@@ -198,6 +202,10 @@ Részletek: [nézze a tévén](../docs/immuch360/user-guide.md#watch-on-your-tv-
 
 Az Immuch360 LG webOS tévékhez készült Immich alkalmazásként is elérhető: egy külön alkalmazás a webOS 4.0 vagy újabb rendszerű (2018-tól) LG tévékhez, távirányítóval vezérelve, amely az Immich szerverét mutatja, és a 360°-os fényképeit egy gömbre helyezi, amelyet a nyilakkal forgathat. Az Immich saját alkalmazásai nem telepíthetők LG tévére. Seeky91 [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) projektjére épül, amely az idővonalat, az albumokat, a személyeket, a helyeket, a keresést, a diavetítést és a telefonos bejelentkezést hozta; köszönet Seeky91-nek. A 0.1.0 verzió egy teszt build: valódi LG tévén még nem futott, csak Developer Mode módban telepíthető, és minden bejelentés segít az [Issues](https://github.com/freeKC/Immuch360/issues) oldalon.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Telepítse egy Developer Mode módban lévő tévére, lásd: [Telepítés](#lg-tvs-webos). Saját alkalmazásazonosítója van, így Seeky91 Immich TV alkalmazása mellé települ.
 2. Jelentkezzen be a telefonjával (olvassa be a QR-kódot), az e-mail-címével és jelszavával, vagy egy API-kulccsal.
 3. Böngésszen a nyilakkal és az OK gombbal. A nézegetőben a Bal és a Jobb gomb az előző vagy a következő fényképre vagy videóra lép, videó lejátszása közben is; a vezérlők 5 s-mal az utolsó gombnyomás után eltűnnek; az Info megnyitja a részleteket; a csatornagombok nagyítanak; a Magic Remote mutatója és görgője működik.
@@ -220,6 +228,10 @@ Részletek: [Tapo kamerák](../docs/immuch360/user-guide.md#tapo-cameras-live-vi
 ### DJI drónja fényképei és videói az Immich szerverén
 
 Importálja egy DJI drón fényképeit és videóit USB-n keresztül, közvetlenül az Immich szerverére: csatlakoztassa a drónt, a vezérlőjét vagy egy kártyaolvasót egy Android telefonhoz, válassza ki az új fájlokat, és küldje el őket; a videók a drón repülési adatai alapján kerülnek a térképre, a drón 360°-os gömbjei pedig 360°-osként jelennek meg. Az Immich alkalmazás csak azt menti, ami már a telefon galériájában van, és az Immich szerver egy DJI Neo 2 videó helyét még nem tudja kiolvasni. Ez az oldal kísérleti, csak Android telefonokon és táblagépeken érhető el, és valódi drónnal még nem próbálták ki.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. A Beállítások, Speciális menüben kapcsolja be a „DJI drónok (kísérleti)” opciót. Megjelenik egy „DJI drón” csempe a Könyvtár, Hálózati megosztások részben.
 2. Csatlakoztassa a drónt (egy Neo 2 kikapcsolva maradhat), a vezérlőjét vagy egy kártyaolvasót a telefonhoz egy USB-C adatkábellel. A DJI drón oldalon koppintson a „Drón vagy kártya kiválasztása” gombra, válassza ki a választó oldalsó menüjében, nyissa meg a DCIM mappáját, vagy tartsa meg a teljes meghajtót, majd „Mappa használata” és Engedélyezés.

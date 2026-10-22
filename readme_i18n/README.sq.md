@@ -84,6 +84,10 @@ Më shumë: [shikuesit dhe luajtësi i videove](../docs/immuch360/user-guide.md#
 
 Rrotulloni një foto 90° me një shtypje, pa hapur një redaktues: me një buton, një tast të tastierës ose një tast me ngjyrë të telekomandës së TV-së, në çdo platformë. Aplikacioni Immich e rrotullon një foto në redaktuesin e tij; Immuch360 e bën me një tast, dhe për fotot tuaja në një server Immich 2.6 ose më të ri kalon përmes të njëjtit redaktues të serverit, kështu që aplikacioni web dhe pajisjet tuaja të tjera i tregojnë të rrotulluara. Çdo foto tjetër rrotullohet vetëm në këtë pajisje. Fotot 360°, 180° dhe 3D nuk rrotullohen kurrë, që pamjet përfshirëse të mbeten horizontale.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefonat, tabletat dhe dritarja e Meta Quest**: hapni foton dhe prekni Rrotullo në rreshtin e poshtëm, para Modifiko, për ta rrotulluar në drejtim orar; një shtypje e gjatë e rrotullon në drejtimin tjetër. Me një tastierë, R dhe Shift+R.
 2. **Android TV dhe Google TV**: tasti i verdhë i telekomandës e rrotullon foton në drejtim orar dhe tasti blu në drejtim kundërorar, kudo që të jetë fokusi në shikues. Në një telekomandë pa taste me ngjyrë, shtypni Poshtë: shiriti nën foto shfaqet me Rrotullo të zgjedhur (një Djathtas më tej kur fotoja ka një buton me tekst), dhe çdo OK e rrotullon foton.
 3. **Televizorët LG (webOS)**: tastet e verdhë dhe blu si në Android TV, R dhe Shift+R në një tastierë, ose butoni i rrotullimit te kontrollet e fotos.
@@ -198,6 +202,10 @@ Më shumë: [shikoni në TV-në tuaj](../docs/immuch360/user-guide.md#watch-on-y
 
 Immuch360 vjen edhe si aplikacion Immich për televizorët LG me webOS: një aplikacion më vete për televizorët LG me webOS 4.0 e më të ri (që nga 2018), i drejtuar nga telekomanda, që tregon serverin tuaj Immich dhe vendos fotot tuaja 360° në një sferë që e rrotulloni me shigjetat. Aplikacionet e vetë Immich nuk instalohen në një TV LG. Është ndërtuar mbi [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) nga Seeky91, i cili solli rendin kohor, albumet, njerëzit, vendet, kërkimin, shfaqjen e diapozitivëve dhe hyrjen me telefon; falënderime për Seeky91. Versioni 0.1.0 është një build testimi: nuk është nisur akoma në një TV real LG, instalohet vetëm në Developer Mode, dhe çdo raportim në [Issues](https://github.com/freeKC/Immuch360/issues) ndihmon.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Instalojeni në një TV në Developer Mode, shihni [Instalimi](#lg-tvs-webos). Ka ID-në e vet të aplikacionit, kështu që instalohet krahas Immich TV të Seeky91.
 2. Hyni me telefonin tuaj (skanoni kodin QR), me email-in dhe fjalëkalimin tuaj, ose me një çelës API.
 3. Shfletoni me shigjetat dhe OK. Në shikues, Majtas dhe Djathtas shkojnë te fotoja ose videoja e mëparshme ose tjetra, edhe ndërsa luhet një video; kontrollet fshihen 5 s pas tastit të fundit; Info hap detajet; tastet e kanaleve zmadhojnë dhe zvogëlojnë; treguesi dhe rrota e Magic Remote funksionojnë.
@@ -220,6 +228,10 @@ Më shumë: [kamerat Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-vie
 ### Fotot dhe videot e dronit tuaj DJI në serverin tuaj Immich
 
 Importoni fotot dhe videot e një droni DJI përmes USB, drejtpërdrejt në serverin tuaj Immich: lidhni dronin, kontrolluesin e tij ose një lexues kartash me një telefon Android, zgjidhni skedarët e rinj dhe dërgojini, me videot të vendosura në hartë nga të dhënat e fluturimit të dronit dhe sferat 360° të dronit të shfaqura si 360°. Aplikacioni Immich rezervon vetëm atë që është tashmë në galerinë e telefonit, dhe serveri Immich ende nuk mund të lexojë vendin e një videoje DJI Neo 2. Kjo faqe është eksperimentale, vetëm në telefonat dhe tabletat Android, dhe nuk është provuar akoma me një dron real.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Te Cilësimet, Të avancuara, aktivizoni "Dronët DJI (eksperimentale)". Një pllakë "Dron DJI" shfaqet te Biblioteka, Ndarjet e rrjetit.
 2. Lidhni dronin (një Neo 2 mund të mbetet i fikur), kontrolluesin e tij ose një lexues kartash me telefonin me një kabllo të dhënash USB-C. Në faqen e dronit DJI, prekni "Zgjidh dronin ose kartën", zgjidheni në menynë anësore të zgjedhësit, hapni dosjen e tij DCIM ose mbani të gjithë diskun, pastaj "Përdor këtë dosje" dhe Lejo.

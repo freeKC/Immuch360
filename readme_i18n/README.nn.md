@@ -84,6 +84,10 @@ Meir: [visarane og videospelaren](../docs/immuch360/user-guide.md#watch-your-pho
 
 Roter eit bilete 90° med eitt trykk, utan å opne eit redigeringsprogram: ein knapp, ein tast på tastaturet eller ein fargetast på TV-fjernkontrollen, på alle plattformer. Immich-appen snur eit bilete i redigeringsverktøyet sitt; Immuch360 gjer det med éin tast, og for dine eigne bilete på ein Immich-tenar 2.6 eller nyare går det gjennom det same redigeringsverktøyet på tenaren, slik at nettappen og dei andre einingane dine viser dei snudde. Alle andre bilete blir berre snudde på denne eininga. 360°-, 180°- og 3D-bilete blir aldri snudde, slik at dei immersive visingane held seg i vater.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefonar, tablettar og Meta Quest-vindauget**: opne biletet og trykk på Roter i den nedste rada, før Rediger, for å snu det med klokka; eit langt trykk snur det den andre vegen. Med eit tastatur, R og Shift+R.
 2. **Android TV og Google TV**: den gule tasten på fjernkontrollen snur biletet med klokka og den blå tasten mot klokka, uansett kvar fokuset er i visaren. På ein fjernkontroll utan fargetastar, trykk Ned: linja under biletet kjem fram med Roter valt (eitt Høgre unna når biletet har ein tekstknapp), og kvart OK snur biletet.
 3. **LG-TV-ar (webOS)**: gul og blå som på Android TV, R og Shift+R på eit tastatur, eller snuknappen i kontrollane til biletet.
@@ -198,6 +202,10 @@ Meir: [sjå på TV-en din](../docs/immuch360/user-guide.md#watch-on-your-tv-andr
 
 Immuch360 finst også som ein Immich-app for LG webOS-TV-ar: ein eigen app for LG-TV-ar med webOS 4.0 og nyare (frå 2018), styrt med fjernkontrollen, som viser Immich-tenaren din og legg 360°-bileta dine på ei kule du snur med pilene. Immich sine eigne appar kan ikkje installerast på ein LG-TV. Han er bygd på [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) av Seeky91, som kom med tidslinja, albuma, personar, stader, søk, lysbildeframvisinga og innlogginga med ein telefon; takk til Seeky91. Versjon 0.1.0 er ein test-build: han har ikkje køyrt på ein ekte LG-TV enno, han kan berre installerast i Developer Mode, og kvar rapport i [Issues](https://github.com/freeKC/Immuch360/issues) hjelper.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Installer han på ein TV i Developer Mode, sjå [Installering](#lg-tvs-webos). Han har sin eigen app-id, så han blir installert ved sida av Immich TV av Seeky91.
 2. Logg inn med telefonen din (skann QR-koden), med e-post og passord, eller med ein API-nøkkel.
 3. Bla med pilene og OK. I visaren går Venstre og Høgre til førre eller neste bilete eller video, også medan ein video spelar; kontrollane forsvinn 5 s etter siste tastetrykk; Info opnar detaljane; kanaltastane zoomar; peikaren og hjulet på Magic Remote fungerer.
@@ -220,6 +228,10 @@ Meir: [Tapo-kamera](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-t
 ### Bileta og videoane frå DJI-dronen din på Immich-tenaren din
 
 Importer bileta og videoane frå ein DJI-drone over USB, rett til Immich-tenaren din: kopla dronen, kontrollaren hans eller ein kortlesar til ein Android-telefon, vel dei nye filene og send dei, med videoane plasserte på kartet ut frå flydata til dronen og 360°-kulene til dronen viste som 360°. Immich-appen tek berre sikkerheitskopi av det som allereie er i galleriet til telefonen, og Immich-tenaren kan enno ikkje lese staden til ein DJI Neo 2-video. Denne sida er eksperimentell, berre på Android-telefonar og -tablettar, og har ikkje vore prøvd med ein ekte drone enno.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. I Innstillingar, Avansert, slå på «DJI-dronar (eksperimentelt)». Ei «DJI-drone»-flis kjem fram i Bibliotek, Nettverksdelingar.
 2. Kopla dronen (ein Neo 2 kan vere avslått), kontrollaren hans eller ein kortlesar til telefonen med ein USB-C-datakabel. På DJI-drone-sida, trykk på «Vel dronen eller kortet», vel han i sidemenyen til veljaren, opne DCIM-mappa hans eller ta heile lagringseininga, deretter «Bruk denne mappa» og Tillat.

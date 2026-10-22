@@ -84,6 +84,10 @@ Mo moa: [ol vyua mo video pleia](../docs/immuch360/user-guide.md#watch-your-phot
 
 Tanem wan foto 90° wetem wan pres nomo, wetaot blong openem wan edita: wan baten, wan ki blong kiboad o wan kala ki blong rimot blong TV, long evri platfom. Immich app i tanem wan foto insaed long edita blong hem; Immuch360 i mekem wetem wan ki, mo blong ol foto blong yu wan long wan Immich server 2.6 o niufala, hem i pas tru long sem edita blong server ia, taswe web app mo ol narafala divaes blong yu oli soem olgeta we oli tanem finis. Eni narafala foto i tanem long divaes ia nomo. Ol 360°, 180° mo 3D foto oli neva tanem, blong ol imesiv vyu oli stap stret.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Fon, tablet mo windo blong Meta Quest**: openem foto mo tajem Tanem long ro long botom, bifo Edit, blong tanem i go olsem klok; sapos yu presem longtaem, i tanem i go long narasaed. Wetem wan kiboad, R mo Shift+R.
 2. **Android TV mo Google TV**: yelo ki blong rimot i tanem foto olsem klok mo blu ki i tanem agensem klok, nomata wea fokas i stap long vyua. Long wan rimot we i no gat kala ki, presem Daon: ba aninit long foto i soem wetem Tanem we i jusum finis (wan Raet moa sapos foto i gat wan baten wetem tekis), mo evri OK i tanem foto.
 3. **LG TV (webOS)**: yelo mo blu olsem long Android TV, R mo Shift+R long wan kiboad, o baten blong tanem long ol kontrol blong foto.
@@ -198,6 +202,10 @@ Mo moa: [lukluk long TV blong yu](../docs/immuch360/user-guide.md#watch-on-your-
 
 Immuch360 i kam tu olsem wan Immich app blong LG webOS TV: wan narafala app blong ol LG TV wetem webOS 4.0 mo niufala (stat long 2018), we rimot i draevem, we i soem Immich server blong yu mo i putum ol 360° foto blong yu long wan sfia we yu tanem wetem ol ero. Ol app blong Immich hem wan oli no save instol long wan LG TV. Oli bildim app ia long [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) blong Seeky91, we i karem taemlaen, ol albam, ol man, ol ples, sij, slaedsoh mo login wetem wan fon; tankiu long Seeky91. Version 0.1.0 hem i wan test build: i no ron yet long wan trufala LG TV, i instol long Developer Mode nomo, mo evri ripot long [Issues](https://github.com/freeKC/Immuch360/issues) i halpem.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Instolem long wan TV long Developer Mode, luk [Instolem](#lg-tvs-webos). Hem i gat app id blong hem wan, taswe i instol saed long Immich TV blong Seeky91.
 2. Login wetem fon blong yu (skanem QR kod), wetem imel mo paswod blong yu, o wetem wan API ki.
 3. Braos wetem ol ero mo OK. Long vyua, Lef mo Raet i go long foto o video bifo o nekis, tu taem wan video i plei; ol kontrol oli haed 5 s afta las ki; Info i openem ol ditel; ol ki blong janel oli zum; poenta mo wil blong Magic Remote oli wok.
@@ -220,6 +228,10 @@ Mo moa: [Tapo kamera](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and
 ### Ol foto mo video blong DJI dron blong yu long Immich server blong yu
 
 Tekem ol foto mo video blong wan DJI dron tru USB, stret i go long Immich server blong yu: plagem dron, kontrola blong hem o wan kad rida long wan Android fon, jusum ol niu fael mo sendem olgeta, wetem ol video we app i putum long map from flaet data blong dron, mo ol 360° sfia blong dron oli soem olsem 360°. Immich app i bakap nomo wanem we i stap finis long laebri blong fon, mo Immich server i no save ridim yet ples blong wan DJI Neo 2 video. Pej ia i eksperimentol, long Android fon mo tablet nomo, mo oli no traem yet wetem wan trufala dron.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Long Seting, Advans, tanem on "DJI dron (eksperimentol)". Wan "DJI dron" tael i kamaot long Laebri, Netwok sea.
 2. Plagem dron (wan Neo 2 i save stap of), kontrola blong hem o wan kad rida long fon wetem wan USB-C data kebol. Long DJI dron pej, tajem "Jusum dron o kad", jusum hem long saed menu blong pika, openem DCIM folda blong hem o kipim ful draev, afta "Yusum folda ia" mo Alaodem.

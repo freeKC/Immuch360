@@ -46,4 +46,5 @@ Every capture here is a real capture of the app, cut to the app's own window or 
 
 * `hero-2026-10.jpg`, 1536 x 1024, JPEG quality 88: the opening banner, artwork made on 12 October 2026 from the previous banner (`banner-2026-10.png`) and the logo, with the headline of the README. It shows no screen of the app.
 * `banner-2026-10.png`: the previous banner artwork, kept for reference.
+* `lg-tv-webos.png`, `dji-drone-import.png` and `rotate-one-key.png`, 1152 x 648, PNG with 256 colours: illustrations made on 22 October 2026 for the sections "Immuch360 on an LG TV (webOS)", "Your DJI drone's photos and videos on your Immich server" and "Turn a photo with one key", in the palette of the hero. They show no screen of the app: the TV, the phones, the drone and the photo tiles are drawn, without any brand, logo, text or person.
 * `logos/`: the platform logos, see `logos/SOURCES.md`.

@@ -84,6 +84,10 @@ Immuch360 首先係一個圖庫同埋普通相片影片嘅播放器。時間軸�
 
 㩒一下就可以將相片轉 90°，唔使開編輯器：喺每個平台都可以用一個按鈕、鍵盤上面一個鍵，或者電視遙控器嘅彩色鍵。Immich app 要喺編輯器入面先轉到相；Immuch360 一個鍵就搞掂，而如果係你自己放喺 Immich 2.6 或以上伺服器嘅相片，就會經伺服器同一個編輯器去轉，所以網頁版 app 同你其他裝置都會見到轉咗嘅相。其他相片就淨係喺呢部裝置上面轉。360°、180° 同 3D 相片永遠都唔會轉，等沉浸式畫面一直保持水平。
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **電話、平板同 Meta Quest 視窗**：打開相片，㩒底部嗰行喺「編輯」前面嘅「旋轉」，就會順時針轉；長㩒就會轉返另一個方向。用鍵盤就係 R 同 Shift+R。
 2. **Android TV 同 Google TV**：無論焦點喺檢視器邊度，遙控器嘅黃色鍵都會將相片順時針轉，藍色鍵就逆時針轉。如果遙控器冇彩色鍵，就㩒向下：相片下面嗰條列會出現，已經揀咗「旋轉」（如果相片有文字按鈕，就要再㩒一下向右），之後每㩒一次 OK 相片就轉一次。
 3. **LG 電視（webOS）**：黃色同藍色鍵同 Android TV 一樣，鍵盤就用 R 同 Shift+R，又或者用相片控制項入面嘅旋轉按鈕。
@@ -198,6 +202,10 @@ Immuch360 唔使帳戶，又唔使伺服器。由 build 24 開始，app 會打�
 
 Immuch360 亦都有一個畀 LG webOS 電視用嘅 Immich app：一個獨立嘅 app，畀行 webOS 4.0 或以上嘅 LG 電視（2018 年起）用，用遙控器操作，顯示你嘅 Immich 伺服器，仲會將你嘅 360° 相片放喺一個可以用方向鍵轉嘅球體上面。Immich 自己嘅 app 冇得裝落 LG 電視。佢係基於 Seeky91 嘅 [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) 整嘅，呢個專案帶嚟咗時間軸、相簿、人物、地點、搜尋、幻燈片同用電話登入；多謝 Seeky91。0.1.0 版本係一個測試 build：仲未喺真嘅 LG 電視上面行過，淨係可以喺 Developer Mode 安裝，喺 [Issues](https://github.com/freeKC/Immuch360/issues) 入面嘅每一個報告都幫到手。
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. 喺開咗 Developer Mode 嘅電視上面安裝，詳見[安裝](#lg-tvs-webos)。佢有自己嘅 app ID，所以可以同 Seeky91 嘅 Immich TV 一齊裝。
 2. 用你部電話登入（掃 QR code），或者用電郵同密碼，或者用 API 金鑰。
 3. 用方向鍵同 OK 瀏覽。喺檢視器入面，左右鍵會去上一個或者下一個相片或影片，播緊影片嗰陣都得；控制項會喺最後一次㩒鍵之後 5 s 收埋；Info 打開詳情；轉台鍵用嚟縮放；Magic Remote 嘅指標同滾輪都用得。
@@ -220,6 +228,10 @@ Immuch360 亦都有一個畀 LG webOS 電視用嘅 Immich app：一個獨立嘅 
 ### 將你部 DJI 無人機嘅相片同影片放上你嘅 Immich 伺服器
 
 用 USB 匯入 DJI 無人機嘅相片同影片，直接送上你嘅 Immich 伺服器：將無人機、佢嘅遙控器或者讀卡器插落 Android 電話，揀新檔案再傳送，影片會根據無人機嘅飛行數據放上地圖，無人機嘅 360° 球體相就會以 360° 顯示。Immich app 淨係會備份電話相簿入面已經有嘅嘢，而 Immich 伺服器暫時仲未讀到 DJI Neo 2 影片嘅地點。呢個頁面係實驗性嘅，淨係喺 Android 電話同平板用得，仲未用真嘅無人機試過。
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. 喺「設定」、「進階」入面，開咗「DJI 無人機（實驗性）」。「媒體庫」、「網絡共享」入面會出現一個「DJI 無人機」方格。
 2. 用一條 USB-C 數據線將無人機（Neo 2 可以唔使開機）、佢嘅遙控器或者讀卡器插落電話。喺「DJI 無人機」頁面，㩒「揀無人機或者記憶卡」，喺選擇器嘅側邊選單揀佢，打開佢嘅 DCIM 資料夾或者保留成個磁碟，然後㩒「使用呢個資料夾」同「允許」。

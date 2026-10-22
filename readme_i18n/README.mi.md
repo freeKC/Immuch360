@@ -84,6 +84,10 @@ Ko Immuch360 i te tuatahi he whare whakaahua, he kaiwhakatangi mō ngā whakaahu
 
 Hurihia tētahi whakaahua 90° ki te pēhi kotahi, me te kore e whakatuwhera i tētahi ētita: he pātene, he pātene papapātuhi, he pātene tae rānei o te pou whakahau o te pouaka whakaata, i ia pūhara. Ka hurihia e te taupānga Immich tētahi whakaahua i roto i tōna ētita; ka pērā a Immuch360 ki te pātene kotahi, ā, mō āu ake whakaahua i runga i tētahi tūmau Immich 2.6, tērā hōu ake rānei, ka haere mā taua ētita tūmau anō, nā reira ka whakaatu te taupānga tukutuku me ōu taputapu kē atu i aua whakaahua kua hurihia. Ko ētahi atu whakaahua ka hurihia i runga i tēnei taputapu anake. Kāore rawa ngā whakaahua 360°, 180° me te 3D e hurihia, kia noho tika tonu ai ngā tirohanga rukuhanga.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Waea pūkoro, papapātuhi me te matapihi Meta Quest**: whakatuwheratia te whakaahua, ā, pāwhiritia Hurihia i te rārangi o raro, i mua i Whakatika, kia hurihia ki te ahunga o te karaka; mā te pēhi roa ka huri ki tērā atu taha. Mā te papapātuhi, ko R me Shift+R.
 2. **Android TV me Google TV**: ka hurihia e te pātene kōwhai o te pou whakahau te whakaahua ki te ahunga o te karaka, ā, e te pātene kikorangi ki te ahunga kōaro, ahakoa kei hea te arotahi i te kaimātakitaki. I runga i tētahi pou whakahau kāore he pātene tae, pēhia Raro: ka puta te pae i raro i te whakaahua me Hurihia kua tīpakohia (kotahi Matau te tawhiti ina whai pātene kupu te whakaahua), ā, ka hurihia te whakaahua e ia OK.
 3. **Pouaka whakaata LG (webOS)**: kōwhai me kikorangi pērā i Android TV, R me Shift+R i runga i te papapātuhi, te pātene huri rānei o ngā mana whakahaere o te whakaahua.
@@ -198,6 +202,10 @@ Ka rere te taupānga Android kotahi i runga i Android TV me Google TV, i roto i 
 
 He taupānga Immich anō a Immuch360 mō ngā pouaka whakaata LG webOS: he taupānga motuhake mō ngā pouaka whakaata LG me webOS 4.0, tērā hōu ake rānei (mai i 2018), e whakahaerehia ana e te pou whakahau, e whakaatu ana i tō tūmau Immich, ā, e whakatakoto ana i āu whakaahua 360° ki runga i tētahi porotaka ka hurihia e koe ki ngā pere. Kāore ngā taupānga ake a Immich e whakaurua ki tētahi pouaka whakaata LG. I hangaia ki runga i [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) nā Seeky91, nāna i kawe mai te rārangi wā, ngā kohinga, ngā tāngata, ngā wāhi, te rapu, te whakaatu whakaahua aunoa me te takiuru mā te waea pūkoro; ngā mihi ki a Seeky91. He hanganga whakamātau te putanga 0.1.0: kāore anō kia whakahaerehia i runga i tētahi pouaka whakaata LG pono, ka whakaurua i te Developer Mode anake, ā, ka āwhina ia pūrongo i [Issues](https://github.com/freeKC/Immuch360/issues).
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Whakaurua ki tētahi pouaka whakaata i te Developer Mode, tirohia [Whakauru](#lg-tvs-webos). Kei a ia tōna ake tautuhi taupānga, nā reira ka whakaurua i te taha o Immich TV nā Seeky91.
 2. Takiuru mā tō waea pūkoro (matawaihia te waehere QR), mā tō īmēra me tō kupuhipa, mā tētahi kī API rānei.
 3. Tirotiro mā ngā pere me OK. I te kaimātakitaki, ka haere a Mauī me Matau ki te whakaahua, kiriata rānei o mua, e whai ake rānei, i te wā anō e whakatangihia ana tētahi kiriata; ka huna ngā mana whakahaere 5 s i muri i te pātene whakamutunga; ka whakatuwhera a Info i ngā taipitopito; ka topa ngā pātene hongere; ka mahi te tohu me te wīra o te Magic Remote.
@@ -220,6 +228,10 @@ Kāore i roto i tēnei hanganga: ngā kiriata 360° ki runga i te porotaka (ka p
 ### Ngā whakaahua me ngā kiriata o tō wakarererangi DJI i tō tūmau Immich
 
 Kawea mai ngā whakaahua me ngā kiriata o tētahi wakarererangi DJI mā te USB, tōtika ki tō tūmau Immich: honoa te wakarererangi, tōna pūrere whakahaere, tētahi kaipānui kāri rānei ki tētahi waea pūkoro Android, kōwhiria ngā kōnae hōu, tukuna atu, ā, ka whakatakotoria ngā kiriata ki te mahere mai i ngā raraunga rere o te wakarererangi, ka whakaatuhia ngā porotaka 360° o te wakarererangi hei 360°. Ka tārua noa te taupānga Immich i ngā mea kua noho kē ki te whare whakaahua o te waea, ā, kāore anō e taea e te tūmau Immich te pānui i te wāhi o tētahi kiriata DJI Neo 2. He whakamātautau tēnei whārangi, i runga anake i ngā waea pūkoro me ngā papapātuhi Android, ā, kāore anō kia whakamātauria ki tētahi wakarererangi pono.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. I Ngā tautuhinga, Matatau, whakakāngia "Wakarererangi DJI (whakamātautau)". Ka puta he taera "Wakarererangi DJI" i Kohinga, Ngā tiritiri whatunga.
 2. Honoa te wakarererangi (ka taea e te Neo 2 te noho weto), tōna pūrere whakahaere, tētahi kaipānui kāri rānei ki te waea pūkoro mā tētahi taura raraunga USB-C. I te whārangi wakarererangi DJI, pāwhiritia "Kōwhiria te wakarererangi, te kāri rānei", kōwhiria i te tahua taha o te kaikōwhiri, whakatuwheratia tōna kōpaki DCIM, waiho rānei te puku katoa, kātahi ko "Whakamahia tēnei kōpaki" me Whakaae.

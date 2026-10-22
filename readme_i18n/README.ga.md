@@ -84,6 +84,10 @@ Tuilleadh: [na hamharcóirí agus an seinnteoir físeáin](../docs/immuch360/use
 
 Rothlaigh grianghraf 90° le brú amháin, gan eagarthóir a oscailt: cnaipe, eochair den mhéarchlár nó eochair dhaite de chianrialtán na teilifíse, ar gach ardán. Casann an aip Immich grianghraf ina heagarthóir; déanann Immuch360 é le heochair amháin, agus do do ghrianghraif féin ar fhreastalaí Immich 2.6 nó níos nuaí téann sé tríd an eagarthóir céanna sin ar an bhfreastalaí, ionas go dtaispeánann an aip ghréasáin agus do ghléasanna eile casta iad. Ní chastar aon ghrianghraf eile ach ar an ngléas seo. Ní chasann grianghraif 360°, 180° ná 3D riamh, ionas go bhfanann na hamhairc thumthacha ar leibhéal.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Fóin, táibléid agus fuinneog an Meta Quest**: oscail an grianghraf agus tapáil Rothlaigh sa ró íochtair, roimh Cuir in Eagar, chun é a chasadh deiseal; casann brú fada an treo eile é. Le méarchlár, R agus Shift+R.
 2. **Android TV agus Google TV**: casann eochair bhuí an chianrialtáin an grianghraf deiseal agus an eochair ghorm tuathal, cibé áit a bhfuil an fócas san amharcóir. Ar chianrialtán gan eochracha daite, brúigh Síos: taispeántar an barra faoin ngrianghraf le Rothlaigh roghnaithe (brú amháin ar Deas uaidh nuair atá cnaipe téacs ag an ngrianghraf), agus casann gach OK an grianghraf.
 3. **Teilifíseáin LG (webOS)**: buí agus gorm mar ar Android TV, R agus Shift+R ar mhéarchlár, nó cnaipe casta rialuithe an ghrianghraif.
@@ -198,6 +202,10 @@ Tuilleadh: [féach ar do theilifís](../docs/immuch360/user-guide.md#watch-on-yo
 
 Tagann Immuch360 freisin mar aip Immich do theilifíseáin LG webOS: aip ar leith do theilifíseáin LG le webOS 4.0 agus níos nuaí (ó 2018), á rialú ag an gcianrialtán, a thaispeánann d'fhreastalaí Immich agus a chuireann do ghrianghraif 360° ar sféar a chasann tú leis na saighdeáin. Ní shuiteálann aipeanna Immich féin ar theilifís LG. Tá sí tógtha ar [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) le Seeky91, a thug an amlíne, na halbaim, daoine, áiteanna, cuardach, an taispeántas sleamhnán agus an logáil isteach le fón; buíochas le Seeky91. Is tógáil tástála é leagan 0.1.0: níor ritheadh fós é ar theilifís LG fíor, ní shuiteálann sé ach i Developer Mode, agus cabhraíonn gach tuairisc in [Issues](https://github.com/freeKC/Immuch360/issues).
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Suiteáil í ar theilifís i Developer Mode, féach [Suiteáil](#lg-tvs-webos). Tá a haitheantas aipe féin aici, mar sin suiteálann sí in aice le Immich TV le Seeky91.
 2. Logáil isteach le d'fhón (scan an cód QR), le do ríomhphost agus do phasfhocal, nó le heochair API.
 3. Brabhsáil leis na saighdeáin agus OK. San amharcóir, téann Clé agus Deas chuig an ngrianghraf nó an físeán roimhe nó ina dhiaidh, le linn físeáin freisin; imíonn na rialuithe 5 s tar éis na heochrach deiridh; osclaíonn Info na sonraí; zúmálann na heochracha cainéil; oibríonn pointeoir agus roth an Magic Remote.
@@ -220,6 +228,10 @@ Tuilleadh: [ceamaraí Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-vi
 ### Grianghraif agus físeáin do dhróin DJI ar d'fhreastalaí Immich
 
 Iompórtáil grianghraif agus físeáin dróin DJI thar USB, díreach chuig d'fhreastalaí Immich: ceangail an drón, a rialtóir nó léitheoir cártaí le fón Android, roghnaigh na comhaid nua agus seol iad, leis na físeáin curtha ar an léarscáil ó shonraí eitilte an dróin agus sféir 360° an dróin taispeánta mar 360°. Ní dhéanann an aip Immich cúltaca ach ar a bhfuil i ngailearaí an fhóin cheana, agus ní féidir le freastalaí Immich áit físeáin DJI Neo 2 a léamh fós. Tá an leathanach seo turgnamhach, ar fhóin agus táibléid Android amháin, agus níor trialadh fós é le drón fíor.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. In Socruithe, Ardleibhéil, cas air “Dróin DJI (turgnamhach)”. Feictear tíl “Drón DJI” i Leabharlann, Comhroinnt líonra.
 2. Ceangail an drón (is féidir le Neo 2 fanacht múchta), a rialtóir nó léitheoir cártaí leis an bhfón le cábla sonraí USB-C. Ar leathanach Drón DJI, tapáil “Roghnaigh an drón nó an cárta”, roghnaigh é i roghchlár taoibh an roghnóra, oscail a fhillteán DCIM nó coinnigh an tiomántán ar fad, ansin “Úsáid an fillteán seo” agus Ceadaigh.

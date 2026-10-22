@@ -84,6 +84,10 @@ Rohkem: [vaaturid ja videopleier](../docs/immuch360/user-guide.md#watch-your-pho
 
 Pööra fotot 90° ühe vajutusega, ilma redaktorit avamata: nupp, klaviatuuri klahv või teleripuldi värviline klahv, igal platvormil. Immich'i rakendus pöörab fotot oma redaktoris; Immuch360 teeb seda ühe klahviga ning sinu enda fotode puhul Immich 2.6 või uuemas serveris kasutab see sedasama serveri redaktorit, nii et veebirakendus ja sinu teised seadmed näitavad neid pööratuna. Iga muu foto pööratakse ainult selles seadmes. 360°, 180° ja 3D fotosid ei pöörata kunagi, et kaasahaaravad vaated jääksid loodi.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefonid, tahvelarvutid ja Meta Questi aken**: ava foto ja puuduta alumises reas, enne nuppu Muuda, nuppu Pööra, et seda päripäeva pöörata; pikk vajutus pöörab teistpidi. Klaviatuuriga R ja Shift+R.
 2. **Android TV ja Google TV**: puldi kollane klahv pöörab fotot päripäeva ja sinine klahv vastupäeva, ükskõik kus fookus vaaturis on. Ilma värviliste klahvideta puldil vajuta Alla: foto all ilmub riba, kus Pööra on valitud (ühe Parem-vajutuse kaugusel, kui fotol on tekstinupp), ja iga OK pöörab fotot.
 3. **LG telerid (webOS)**: kollane ja sinine nagu Android TV-l, R ja Shift+R klaviatuuril, või foto juhtnuppude pööramisnupp.
@@ -198,6 +202,10 @@ Rohkem: [vaata oma telerist](../docs/immuch360/user-guide.md#watch-on-your-tv-an
 
 Immuch360 on saadaval ka Immich'i rakendusena LG webOS teleritele: eraldi rakendus LG teleritele, millel on webOS 4.0 või uuem (alates 2018), mida juhitakse puldiga, mis näitab sinu Immich-serverit ja paneb sinu 360° fotod kerale, mida pöörad nooleklahvidega. Immich'i enda rakendused LG telerisse ei paigaldu. See põhineb Seeky91 projektil [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos), mis tõi kaasa ajajoone, albumid, inimesed, kohad, otsingu, slaidiesitluse ja telefoniga sisselogimise; tänu Seeky91-le. Versioon 0.1.0 on testbuild: see ei ole veel päris LG teleril töötanud, paigaldub ainult režiimis Developer Mode, ja iga teade lehel [Probleemid](https://github.com/freeKC/Immuch360/issues) aitab.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Paigalda see telerisse režiimis Developer Mode, vaata [Paigaldamine](#lg-tvs-webos). Sellel on oma rakenduse ID, nii et see paigaldub Seeky91 rakenduse Immich TV kõrvale.
 2. Logi sisse oma telefoniga (skanni QR-kood), e-posti ja parooliga või API-võtmega.
 3. Sirvi nooleklahvide ja OK-ga. Vaaturis viivad Vasak ja Parem eelmisele või järgmisele fotole või videole, ka video esitamise ajal; juhtnupud peituvad 5 s pärast viimast klahvivajutust; Info avab üksikasjad; kanaliklahvid suumivad; Magic Remote'i kursor ja ratas töötavad.
@@ -220,6 +228,10 @@ Rohkem: [Tapo kaamerad](../docs/immuch360/user-guide.md#tapo-cameras-live-view-a
 ### Sinu DJI drooni fotod ja videod sinu Immich-serveris
 
 Impordi DJI drooni fotod ja videod USB kaudu otse oma Immich-serverisse: ühenda droon, selle kaugjuhtimispult või kaardilugeja Androidi telefoniga, vali uued failid ja saada need ära, kusjuures videod paigutatakse kaardile drooni lennuandmete põhjal ja drooni 360° kerad näidatakse 360°-na. Immich'i rakendus varundab ainult seda, mis on juba telefoni galeriis, ja Immich-server ei oska veel lugeda DJI Neo 2 video asukohta. See leht on katseline, ainult Androidi telefonides ja tahvelarvutites, ja seda ei ole veel päris drooniga proovitud.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Seadetes, Täpsemad valikud, lülita sisse "DJI droonid (katseline)". Jaotisesse Kogu, Võrgujaod ilmub paan "DJI droon".
 2. Ühenda droon (Neo 2 võib jääda välja lülitatuks), selle kaugjuhtimispult või kaardilugeja telefoniga USB-C andmekaabli abil. DJI drooni lehel puuduta "Vali droon või kaart", vali see valija külgmenüüs, ava selle kaust DCIM või jäta kogu ketas, seejärel "Kasuta seda kausta" ja Luba.

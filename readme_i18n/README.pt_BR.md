@@ -84,6 +84,10 @@ Mais: [os visualizadores e o reprodutor de vídeo](../docs/immuch360/user-guide.
 
 Gire uma foto 90° com um único toque, sem abrir um editor: um botão, uma tecla do teclado ou uma tecla colorida do controle remoto da TV, em todas as plataformas. O app Immich gira uma foto no editor dele; o Immuch360 faz isso com uma tecla e, para as suas próprias fotos em um servidor Immich 2.6 ou mais recente, passa por esse mesmo editor do servidor, para que o app web e os seus outros dispositivos as mostrem giradas. Qualquer outra foto é girada apenas neste dispositivo. Fotos 360°, 180° e 3D nunca giram, para que as vistas imersivas continuem niveladas.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Celulares, tablets e a janela do Meta Quest**: abra a foto e toque em Girar na fileira de baixo, antes de Editar, para girá-la no sentido horário; um toque longo gira no outro sentido. Com um teclado, R e Shift+R.
 2. **Android TV e Google TV**: a tecla amarela do controle remoto gira a foto no sentido horário e a tecla azul no sentido anti-horário, onde quer que esteja o foco no visualizador. Em um controle remoto sem teclas coloridas, pressione Baixo: a barra sob a foto aparece com Girar selecionado (a uma Direita de distância quando a foto tem um botão de texto), e cada OK gira a foto.
 3. **TVs LG (webOS)**: amarela e azul como no Android TV, R e Shift+R em um teclado, ou o botão de girar nos controles da foto.
@@ -198,6 +202,10 @@ Mais: [veja na sua TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android-
 
 O Immuch360 também existe como app Immich para TVs LG com webOS: um app separado para TVs LG com webOS 4.0 ou mais recente (desde 2018), comandado pelo controle remoto, que mostra seu servidor Immich e coloca suas fotos 360° em uma esfera que você gira com as setas. Os próprios apps do Immich não instalam em uma TV LG. Ele é baseado em [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) de Seeky91, que trouxe a linha do tempo, os álbuns, as pessoas, os lugares, a busca, a apresentação e o login com um celular; obrigado a Seeky91. A versão 0.1.0 é uma build de teste: ainda não rodou em uma TV LG real, só instala no Developer Mode, e cada relato em [Issues](https://github.com/freeKC/Immuch360/issues) ajuda.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Instale-o em uma TV no Developer Mode, veja [Instalar](#lg-tvs-webos). Ele tem o seu próprio id de app, por isso é instalado ao lado do Immich TV de Seeky91.
 2. Faça login com o seu celular (escaneie o código QR), com o seu e-mail e senha, ou com uma chave de API.
 3. Navegue com as setas e OK. No visualizador, Esquerda e Direita vão para a foto ou o vídeo anterior ou seguinte, também durante a reprodução de um vídeo; os controles somem 5 s depois da última tecla; Info abre os detalhes; as teclas de canal dão zoom; o ponteiro e a roda do Magic Remote funcionam.
@@ -220,6 +228,10 @@ Mais: [câmeras Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and
 ### As fotos e vídeos do seu drone DJI no seu servidor Immich
 
 Importe as fotos e os vídeos de um drone DJI por USB, direto para o seu servidor Immich: conecte o drone, o controle dele ou um leitor de cartões a um celular Android, escolha os arquivos novos e envie, com os vídeos posicionados no mapa a partir dos dados de voo do drone e as esferas 360° do drone mostradas como 360°. O app Immich faz backup apenas do que já está na galeria do celular, e o servidor Immich ainda não consegue ler o local de um vídeo do DJI Neo 2. Esta página é experimental, apenas em celulares e tablets Android, e ainda não foi testada com um drone real.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Em Configurações, Avançado, ative "Drones DJI (experimental)". Um bloco "Drone DJI" aparece em Biblioteca, Compartilhamentos de rede.
 2. Conecte o drone (um Neo 2 pode ficar desligado), o controle dele ou um leitor de cartões ao celular com um cabo de dados USB-C. Na página Drone DJI, toque em "Escolher o drone ou o cartão", escolha-o no menu lateral do seletor, abra a pasta DCIM dele ou mantenha a unidade inteira, depois "Usar esta pasta" e Permitir.

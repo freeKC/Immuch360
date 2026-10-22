@@ -84,6 +84,10 @@ Meira: [skoðararnir og myndskeiðsspilarinn](../docs/immuch360/user-guide.md#wa
 
 Snúðu mynd um 90° með einni ýtingu, án þess að opna ritil: hnappur, takki á lyklaborðinu eða litatakki á fjarstýringu sjónvarpsins, á öllum kerfum. Immich forritið snýr mynd í ritlinum sínum; Immuch360 gerir það með einum takka, og fyrir þínar eigin myndir á Immich vélþjóni 2.6 eða nýrri fer það í gegnum sama ritil vélþjónsins, svo vefforritið og hin tækin þín sýna þær snúnar. Öllum öðrum myndum er aðeins snúið á þessu tæki. 360°, 180° og 3D myndum er aldrei snúið, svo umlykjandi sýnirnar haldist láréttar.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Símar, spjaldtölvur og Meta Quest glugginn**: opnaðu myndina og ýttu á Snúa í neðstu röðinni, á undan Breyta, til að snúa henni réttsælis; löng ýting snýr henni hina leiðina. Með lyklaborði, R og Shift+R.
 2. **Android TV og Google TV**: guli takki fjarstýringarinnar snýr myndinni réttsælis og blái takkinn rangsælis, hvar sem fókusinn er í skoðaranum. Á fjarstýringu án litatakka skaltu ýta á Niður: stikan undir myndinni birtist með Snúa valið (einu Hægri frá þegar myndin hefur textahnapp), og hvert OK snýr myndinni.
 3. **LG sjónvörp (webOS)**: gulur og blár eins og á Android TV, R og Shift+R á lyklaborði, eða snúningshnappurinn í stýringum myndarinnar.
@@ -198,6 +202,10 @@ Meira: [horfa á sjónvarpinu þínu](../docs/immuch360/user-guide.md#watch-on-y
 
 Immuch360 kemur einnig sem Immich forrit fyrir LG webOS sjónvörp: sérstakt forrit fyrir LG sjónvörp með webOS 4.0 og nýrra (frá 2018), stýrt með fjarstýringunni, sem sýnir Immich vélþjóninn þinn og setur 360° myndirnar þínar á kúlu sem þú snýrð með örvunum. Eigin forrit Immich er ekki hægt að setja upp á LG sjónvarpi. Það er byggt á [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) eftir Seeky91, sem færði tímalínuna, albúmin, fólk, staði, leit, skyggnusýninguna og innskráningu með síma; þakkir til Seeky91. Útgáfa 0.1.0 er prófunarbuild: hún hefur ekki enn keyrt á raunverulegu LG sjónvarpi, hún setst aðeins upp í Developer Mode, og hver tilkynning í [Issues](https://github.com/freeKC/Immuch360/issues) hjálpar.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Settu það upp á sjónvarpi í Developer Mode, sjá [Uppsetning](#lg-tvs-webos). Það hefur sitt eigið forritsauðkenni, svo það setst upp við hliðina á Immich TV eftir Seeky91.
 2. Skráðu þig inn með símanum þínum (skannaðu QR-kóðann), með netfangi og lykilorði, eða með API-lykli.
 3. Flettu með örvunum og OK. Í skoðaranum fara Vinstri og Hægri í fyrri eða næstu mynd eða myndskeið, líka meðan myndskeið spilast; stýringarnar hverfa 5 s eftir síðasta takka; Info opnar upplýsingarnar; rásatakkarnir þysja; bendill og hjól Magic Remote virka.
@@ -220,6 +228,10 @@ Meira: [Tapo myndavélar](../docs/immuch360/user-guide.md#tapo-cameras-live-view
 ### Myndir og myndskeið DJI drónans þíns á Immich vélþjóninum þínum
 
 Fluttu inn myndir og myndskeið DJI dróna yfir USB, beint á Immich vélþjóninn þinn: tengdu drónann, stjórntæki hans eða kortalesara við Android síma, veldu nýju skrárnar og sendu þær, þar sem myndskeiðin eru staðsett á kortinu út frá flugupplýsingum drónans og 360° kúlur drónans birtast sem 360°. Immich forritið tekur aðeins öryggisafrit af því sem er þegar í myndasafni símans, og Immich vélþjónninn getur ekki enn lesið staðsetningu DJI Neo 2 myndskeiðs. Þessi síða er tilraun, aðeins á Android símum og spjaldtölvum, og hefur ekki enn verið reynd með raunverulegum dróna.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Í Stillingum, Ítarlegt, kveiktu á „DJI drónar (tilraun)“. Reitur merktur „DJI dróni“ birtist í Safn, Netdeildir.
 2. Tengdu drónann (Neo 2 má vera slökktur), stjórntæki hans eða kortalesara við símann með USB-C gagnasnúru. Á DJI dróna síðunni skaltu ýta á „Velja drónann eða kortið“, velja það í hliðarvalmynd veljarans, opna DCIM möppuna þess eða halda öllu drifinu, síðan „Nota þessa möppu“ og Leyfa.

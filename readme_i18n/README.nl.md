@@ -84,6 +84,10 @@ Meer: [de viewers en de videospeler](../docs/immuch360/user-guide.md#watch-your-
 
 Draai een foto 90° met één druk, zonder een editor te openen: een knop, een toets van het toetsenbord of een kleurtoets van de tv-afstandsbediening, op elk platform. De Immich-app draait een foto in zijn editor; Immuch360 doet het met één toets, en voor je eigen foto's op een Immich-server 2.6 of nieuwer gaat het via diezelfde editor van de server, zodat de webapp en je andere toestellen ze gedraaid tonen. Elke andere foto wordt alleen op dit toestel gedraaid. 360°-, 180°- en 3D-foto's draaien nooit, zodat de immersieve weergaven waterpas blijven.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefoons, tablets en het Meta Quest-venster**: open de foto en tik op Draaien in de onderste rij, vóór Bewerken, om hem met de klok mee te draaien; lang drukken draait hem de andere kant op. Met een toetsenbord: R en Shift+R.
 2. **Android TV en Google TV**: de gele toets van de afstandsbediening draait de foto met de klok mee en de blauwe toets tegen de klok in, waar de focus in de viewer ook staat. Op een afstandsbediening zonder kleurtoetsen druk je op Omlaag: de balk onder de foto verschijnt met Draaien geselecteerd (één keer Rechts verder als de foto een tekstknop heeft), en elke OK draait de foto.
 3. **LG-tv's (webOS)**: geel en blauw zoals op Android TV, R en Shift+R op een toetsenbord, of de draaiknop in de bediening van de foto.
@@ -198,6 +202,10 @@ Meer: [bekijk op je tv](../docs/immuch360/user-guide.md#watch-on-your-tv-android
 
 Immuch360 is er ook als Immich-app voor LG webOS-tv's: een aparte app voor LG-tv's met webOS 4.0 en later (vanaf 2018), bediend met de afstandsbediening, die je Immich-server toont en je 360°-foto's op een bol zet die je met de pijlen draait. De eigen apps van Immich zijn niet te installeren op een LG-tv. De app is gebouwd op [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) van Seeky91, dat de tijdlijn, de albums, personen, plaatsen, zoeken, de diavoorstelling en inloggen met een telefoon meebracht; dank aan Seeky91. Versie 0.1.0 is een testbuild: ze heeft nog niet op een echte LG-tv gedraaid, ze is alleen in Developer Mode te installeren, en elke melding in [Issues](https://github.com/freeKC/Immuch360/issues) helpt.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Installeer de app op een tv in Developer Mode, zie [Installeren](#lg-tvs-webos). Ze heeft een eigen app-id, dus ze installeert naast Immich TV van Seeky91.
 2. Log in met je telefoon (scan de QR-code), met je e-mailadres en wachtwoord, of met een API-sleutel.
 3. Blader met de pijlen en OK. In de viewer gaan Links en Rechts naar de vorige of volgende foto of video, ook terwijl een video speelt; de bediening verdwijnt 5 s na de laatste toets; Info opent de details; de kanaaltoetsen zoomen; de aanwijzer en het wieltje van de Magic Remote werken.
@@ -220,6 +228,10 @@ Meer: [Tapo-camera's](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and
 ### De foto's en video's van je DJI-drone op je Immich-server
 
 Importeer de foto's en video's van een DJI-drone via USB, rechtstreeks naar je Immich-server: sluit de drone, de controller of een kaartlezer aan op een Android-telefoon, kies de nieuwe bestanden en verstuur ze, met de video's op de kaart geplaatst op basis van de vluchtgegevens van de drone en de 360°-bollen van de drone getoond als 360°. De Immich-app maakt alleen een back-up van wat al in de galerij van de telefoon staat, en de Immich-server kan de plaats van een DJI Neo 2-video nog niet lezen. Deze pagina is experimenteel, alleen op Android-telefoons en -tablets, en is nog niet geprobeerd met een echte drone.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Zet in Instellingen, Geavanceerd "DJI-drones (experimenteel)" aan. Er verschijnt een tegel "DJI-drone" in Bibliotheek, Netwerkshares.
 2. Sluit de drone (een Neo 2 mag uit blijven), de controller of een kaartlezer aan op de telefoon met een USB-C-datakabel. Tik op de pagina DJI-drone op "Kies de drone of de kaart", kies hem in het zijmenu van de kiezer, open de DCIM-map of houd de hele schijf, en dan "Deze map gebruiken" en Toestaan.

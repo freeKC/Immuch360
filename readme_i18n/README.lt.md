@@ -84,6 +84,10 @@ Daugiau: [žiūryklės ir vaizdo grotuvas](../docs/immuch360/user-guide.md#watch
 
 Pasukite nuotrauką 90° vienu paspaudimu, neatverdami redaktoriaus: mygtuku, klaviatūros klavišu arba televizoriaus nuotolinio valdymo pulto spalvotu mygtuku, visose platformose. Immich programa nuotrauką pasuka savo redaktoriuje; Immuch360 tai daro vienu klavišu, o jūsų pačių nuotraukos Immich 2.6 ar naujesniame serveryje pasukamos per tą patį serverio redaktorių, todėl žiniatinklio programa ir kiti jūsų įrenginiai jas rodo pasuktas. Bet kuri kita nuotrauka pasukama tik šiame įrenginyje. 360°, 180° ir 3D nuotraukos niekada nepasukamos, kad įtraukiantys vaizdai liktų lygūs.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefonai, planšetės ir Meta Quest langas**: atverkite nuotrauką ir apatinėje eilutėje, prieš Redaguoti, bakstelėkite Pasukti, kad ją pasuktumėte pagal laikrodžio rodyklę; ilgas paspaudimas pasuka į kitą pusę. Su klaviatūra: R ir Shift+R.
 2. **Android TV ir Google TV**: geltonas pulto mygtukas pasuka nuotrauką pagal laikrodžio rodyklę, o mėlynas prieš laikrodžio rodyklę, kad ir kur žiūryklėje būtų židinys. Pulte be spalvotų mygtukų spauskite žemyn: po nuotrauka pasirodo juosta su pažymėtu Pasukti (iki jo lieka vienas paspaudimas dešinėn, kai nuotrauka turi teksto mygtuką), ir kiekvienas OK pasuka nuotrauką.
 3. **LG televizoriai (webOS)**: geltonas ir mėlynas mygtukai kaip Android TV, R ir Shift+R klaviatūroje arba nuotraukos valdiklių pasukimo mygtukas.
@@ -198,6 +202,10 @@ Daugiau: [žiūrėkite savo televizoriuje](../docs/immuch360/user-guide.md#watch
 
 Immuch360 taip pat yra Immich programa LG webOS televizoriams: atskira programa LG televizoriams su webOS 4.0 ir naujesne (nuo 2018 m.), valdoma nuotolinio valdymo pultu, kuri rodo jūsų Immich serverį ir pateikia jūsų 360° nuotraukas ant sferos, kurią sukate rodyklėmis. Pačios Immich programos LG televizoriuje neįdiegiamos. Ji sukurta remiantis Seeky91 projektu [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos), kuris atnešė laiko juostą, albumus, žmones, vietas, paiešką, skaidrių peržiūrą ir prisijungimą telefonu; ačiū Seeky91. Versija 0.1.0 yra bandomasis build: ji dar nebuvo paleista realiame LG televizoriuje, diegiama tik Developer Mode režimu, ir kiekvienas pranešimas [Issues](https://github.com/freeKC/Immuch360/issues) padeda.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Įdiekite ją televizoriuje Developer Mode režimu, žr. [Įdiegimas](#lg-tvs-webos). Ji turi savo programos ID, todėl diegiama šalia Seeky91 Immich TV.
 2. Prisijunkite telefonu (nuskaitykite QR kodą), el. paštu ir slaptažodžiu arba API raktu.
 3. Naršykite rodyklėmis ir OK. Žiūryklėje kairė ir dešinė rodyklės pereina prie ankstesnės ar kitos nuotraukos ar vaizdo įrašo, taip pat ir vaizdo įrašo metu; valdikliai pasislepia praėjus 5 s po paskutinio paspaudimo; Info atveria detales; kanalų mygtukai keičia mastelį; veikia Magic Remote žymeklis ir ratukas.
@@ -220,6 +228,10 @@ Daugiau: [Tapo kameros](../docs/immuch360/user-guide.md#tapo-cameras-live-view-a
 ### Jūsų DJI drono nuotraukos ir vaizdo įrašai jūsų Immich serveryje
 
 Importuokite DJI drono nuotraukas ir vaizdo įrašus per USB tiesiai į savo Immich serverį: prijunkite droną, jo valdiklį arba kortelių skaitytuvą prie Android telefono, pasirinkite naujus failus ir išsiųskite juos; vaizdo įrašai padedami žemėlapyje pagal drono skrydžio duomenis, o drono 360° sferos rodomos kaip 360°. Immich programa sukuria atsarginę kopiją tik to, kas jau yra telefono galerijoje, o Immich serveris kol kas negali nuskaityti DJI Neo 2 vaizdo įrašo vietos. Šis puslapis yra eksperimentinis, veikia tik Android telefonuose ir planšetėse ir dar nebuvo išbandytas su realiu dronu.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Skiltyje Nustatymai, Papildomai įjunkite „DJI dronai (eksperimentinis)“. Skiltyje Biblioteka, Tinklo bendrinimai atsiranda plytelė „DJI dronas“.
 2. Prijunkite droną (Neo 2 gali likti išjungtas), jo valdiklį arba kortelių skaitytuvą prie telefono USB-C duomenų kabeliu. DJI drono puslapyje bakstelėkite „Pasirinkti droną arba kortelę“, pasirinkite jį parinkiklio šoniniame meniu, atverkite jo DCIM aplanką arba palikite visą diską, tada „Naudoti šį aplanką“ ir Leisti.

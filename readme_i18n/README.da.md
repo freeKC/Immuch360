@@ -84,6 +84,10 @@ Mere: [fremviserne og videoafspilleren](../docs/immuch360/user-guide.md#watch-yo
 
 Drej et foto 90° med ét tryk, uden at åbne en editor: en knap, en tast på tastaturet eller en farvetast på tv'ets fjernbetjening, på alle platforme. Immich-appen drejer et foto i sin editor; Immuch360 gør det med én tast, og for dine egne fotos på en Immich-server 2.6 eller nyere går det gennem den samme editor på serveren, så webappen og dine andre enheder viser dem drejet. Alle andre fotos drejes kun på denne enhed. 360°-, 180°- og 3D-fotos drejes aldrig, så de immersive visninger forbliver i vater.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefoner, tablets og Meta Quest-vinduet**: åbn fotoet og tryk på Roter i den nederste række, før Rediger, for at dreje det med uret; et langt tryk drejer det den anden vej. Med et tastatur R og Shift+R.
 2. **Android TV og Google TV**: fjernbetjeningens gule tast drejer fotoet med uret og den blå tast mod uret, uanset hvor fokus er i fremviseren. På en fjernbetjening uden farvetaster trykker du Ned: bjælken under fotoet vises med Roter valgt (et tryk på Højre derfra, når fotoet har en tekstknap), og hvert OK drejer fotoet.
 3. **LG-tv (webOS)**: gul og blå som på Android TV, R og Shift+R på et tastatur, eller drejeknappen i fotoets kontroller.
@@ -198,6 +202,10 @@ Mere: [se på dit tv](../docs/immuch360/user-guide.md#watch-on-your-tv-android-t
 
 Immuch360 findes også som en Immich-app til LG webOS-tv: en separat app til LG-tv med webOS 4.0 og nyere (fra 2018), styret med fjernbetjeningen, som viser din Immich-server og lægger dine 360°-fotos på en kugle, du drejer med pilene. Immichs egne apps kan ikke installeres på et LG-tv. Den er bygget på [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) af Seeky91, som bragte tidslinjen, albummerne, personer, steder, søgning, diasshowet og login med en telefon; tak til Seeky91. Version 0.1.0 er en test-build: den har endnu ikke kørt på et rigtigt LG-tv, den installeres kun i Developer Mode, og hver rapport i [Issues](https://github.com/freeKC/Immuch360/issues) hjælper.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Installér den på et tv i Developer Mode, se [Installation](#lg-tvs-webos). Den har sit eget app-id, så den installeres ved siden af Immich TV af Seeky91.
 2. Log ind med din telefon (scan QR-koden), med din e-mail og dit kodeord, eller med en API-nøgle.
 3. Gennemse med pilene og OK. I fremviseren går Venstre og Højre til forrige eller næste foto eller video, også mens en video afspilles; kontrollerne skjules 5 s efter den sidste tast; Info åbner detaljerne; kanaltasterne zoomer; Magic Remote-markøren og -hjulet virker.
@@ -220,6 +228,10 @@ Mere: [Tapo-kameraer](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and
 ### Din DJI-drones fotos og videoer på din Immich-server
 
 Importér fotos og videoer fra en DJI-drone over USB, direkte til din Immich-server: tilslut dronen, dens controller eller en kortlæser til en Android-telefon, vælg de nye filer og send dem, med videoerne placeret på kortet ud fra dronens flydata og dronens 360°-kugler vist som 360°. Immich-appen sikkerhedskopierer kun det, der allerede er i telefonens galleri, og Immich-serveren kan endnu ikke læse stedet for en DJI Neo 2-video. Denne side er eksperimentel, kun på Android-telefoner og -tablets, og er endnu ikke afprøvet med en rigtig drone.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Slå »DJI-droner (eksperimentel)« til i Indstillinger, Avanceret. En »DJI-drone«-flise vises i Bibliotek, Netværksdelinger.
 2. Tilslut dronen (en Neo 2 kan forblive slukket), dens controller eller en kortlæser til telefonen med et USB-C-datakabel. På siden DJI-drone trykker du på »Vælg dronen eller kortet«, vælger den i vælgerens sidemenu, åbner dens DCIM-mappe eller beholder hele drevet, derefter »Brug denne mappe« og Tillad.

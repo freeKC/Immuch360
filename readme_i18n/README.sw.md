@@ -84,6 +84,10 @@ Zaidi: [vitazamaji na kicheza video](../docs/immuch360/user-guide.md#watch-your-
 
 Zungusha picha kwa 90° kwa kubonyeza mara moja, bila kufungua kihariri: kitufe kwenye skrini, kitufe cha kibodi au kitufe cha rangi cha kidhibiti cha mbali cha televisheni, kwenye kila jukwaa. Programu ya Immich huzungusha picha ndani ya kihariri chake; Immuch360 hufanya hivyo kwa kitufe kimoja, na kwa picha zako mwenyewe kwenye seva ya Immich 2.6 au toleo jipya zaidi hupitia kihariri hichohicho cha seva, hivyo programu ya wavuti na vifaa vyako vingine vinazionyesha zikiwa zimezungushwa. Picha nyingine yoyote huzungushwa kwenye kifaa hiki tu. Picha za 360°, 180° na 3D hazizungushwi kamwe, ili mitazamo ya kuzamisha ibaki imenyooka.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Simu, kompyuta kibao na dirisha la Meta Quest**: fungua picha na gusa Rotate kwenye safu ya chini, kabla ya Edit, ili kuizungusha kisaa; kubonyeza kwa muda mrefu huizungusha upande mwingine. Kwa kibodi, R na Shift+R.
 2. **Android TV na Google TV**: kitufe cha njano cha kidhibiti cha mbali huzungusha picha kisaa na kitufe cha bluu kinyume cha saa, popote ulipo uteuzi ndani ya kitazamaji. Kwenye kidhibiti cha mbali kisicho na vitufe vya rangi, bonyeza Chini: upau ulio chini ya picha unaonekana ukiwa umechagua Rotate (hatua moja ya Kulia zaidi picha ikiwa na kitufe cha maandishi), na kila OK huzungusha picha.
 3. **Televisheni za LG (webOS)**: njano na bluu kama kwenye Android TV, R na Shift+R kwenye kibodi, au kitufe cha kuzungusha kwenye vidhibiti vya picha.
@@ -198,6 +202,10 @@ Zaidi: [tazama kwenye televisheni yako](../docs/immuch360/user-guide.md#watch-on
 
 Immuch360 inapatikana pia kama programu ya Immich kwa televisheni za LG webOS: programu tofauti kwa televisheni za LG zenye webOS 4.0 na zaidi (tangu 2018), inayoendeshwa kwa kidhibiti cha mbali, inayoonyesha seva yako ya Immich na kuweka picha zako za 360° kwenye tufe unalozungusha kwa vishale. Programu za Immich zenyewe hazisakiniki kwenye televisheni ya LG. Imejengwa juu ya [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) ya Seeky91, iliyoleta rekodi ya matukio, albamu, watu, maeneo, utafutaji, onyesho la slaidi na kuingia kwa simu; shukrani kwa Seeky91. Toleo 0.1.0 ni build ya majaribio: bado haijaendeshwa kwenye televisheni halisi ya LG, inasakinishwa katika Developer Mode tu, na kila ripoti kwenye [Issues](https://github.com/freeKC/Immuch360/issues) inasaidia.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Isakinishe kwenye televisheni iliyo katika Developer Mode, tazama [Sakinisha](#lg-tvs-webos). Ina kitambulisho chake cha programu, hivyo inasakinishwa kando ya Immich TV ya Seeky91.
 2. Ingia kwa simu yako (changanua msimbo wa QR), kwa barua pepe yako na nenosiri lako, au kwa ufunguo wa API.
 3. Vinjari kwa vishale na OK. Kwenye kitazamaji, Kushoto na Kulia huenda kwenye picha au video iliyotangulia au inayofuata, hata video ikiwa inacheza; vidhibiti hujificha sekunde 5 baada ya kitufe cha mwisho; Info hufungua maelezo; vitufe vya chaneli hukuza; kiashiria na gurudumu la Magic Remote hufanya kazi.
@@ -220,6 +228,10 @@ Zaidi: [kamera za Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-a
 ### Picha na video za droni yako ya DJI kwenye seva yako ya Immich
 
 Ingiza picha na video za droni ya DJI kupitia USB, moja kwa moja kwenye seva yako ya Immich: chomeka droni, kidhibiti chake au kisomaji cha kadi kwenye simu ya Android, chagua faili mpya na uzitume, huku video zikiwekwa kwenye ramani kutokana na data ya safari ya droni na tufe za 360° za droni zikionyeshwa kama 360°. Programu ya Immich huhifadhi nakala rudufu ya kile kilicho tayari kwenye albamu ya simu tu, na seva ya Immich bado haiwezi kusoma mahali pa video ya DJI Neo 2. Ukurasa huu ni wa majaribio, upo kwenye simu na kompyuta kibao za Android tu, na bado haujajaribiwa kwa droni halisi.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Kwenye Settings, Advanced, washa "DJI drones (experimental)". Kigae cha "DJI drone" kinaonekana kwenye Maktaba, Hifadhi za mtandao.
 2. Chomeka droni (Neo 2 inaweza kubaki imezimwa), kidhibiti chake au kisomaji cha kadi kwenye simu kwa kebo ya data ya USB-C. Kwenye ukurasa wa DJI drone, gusa "Choose the drone or the card", ichague kwenye menyu ya pembeni ya kichaguzi, fungua folda yake ya DCIM au acha hifadhi nzima, kisha "Tumia folda hii" na Ruhusu.

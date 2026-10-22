@@ -84,6 +84,10 @@ Gehiago: [bistaratzaileak eta bideo-erreproduktorea](../docs/immuch360/user-guid
 
 Biratu argazki bat 90° sakatze bakar batekin, editorerik ireki gabe: botoi bat, teklatuko tekla bat edo telebistako urrutiko agintearen kolore-tekla bat, plataforma guztietan. Immich aplikazioak bere editorean biratzen du argazkia; Immuch360-k tekla bakarrarekin egiten du, eta Immich 2.6 edo berriagoko zerbitzari batean dauden zure argazkientzat zerbitzariaren editore beretik pasatzen da, beraz web-aplikazioak eta zure beste gailuek biratuta erakusten dituzte. Beste edozein argazki gailu honetan bakarrik biratzen da. 360°, 180° eta 3D argazkiak ez dira inoiz biratzen, murgiltze-ikuspegiak horizontalean egon daitezen.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefonoak, tabletak eta Meta Quest-en leihoa**: ireki argazkia eta sakatu Biratu beheko errenkadan, Editatu baino lehen, erlojuaren orratzen noranzkoan biratzeko; sakatze luze batek beste noranzkoan biratzen du. Teklatu batekin, R eta Shift+R.
 2. **Android TV eta Google TV**: urrutiko agintearen tekla horiak erlojuaren orratzen noranzkoan biratzen du argazkia eta tekla urdinak kontrako noranzkoan, bistaratzailean fokua edonon dagoela ere. Kolore-teklarik gabeko urrutiko aginte batean, sakatu Behera: argazkiaren azpiko barra agertzen da Biratu hautatuta duela (Eskuina sakatze bakar batera, argazkiak testu-botoi bat duenean), eta OK bakoitzak argazkia biratzen du.
 3. **LG telebistak (webOS)**: horia eta urdina Android TV-n bezala, R eta Shift+R teklatu batean, edo argazkiaren kontroletako biratze-botoia.
@@ -198,6 +202,10 @@ Gehiago: [ikusi zure telebistan](../docs/immuch360/user-guide.md#watch-on-your-t
 
 Immuch360 LG webOS telebistetarako Immich aplikazio gisa ere badator: webOS 4.0 edo berriagoa duten LG telebistetarako aparteko aplikazio bat (2018tik aurrera), urrutiko agintearekin gidatua, zure Immich zerbitzaria erakusten duena eta zure 360° argazkiak geziekin biratzen duzun esfera batean jartzen dituena. Immich-en aplikazio propioak ez dira LG telebista batean instalatzen. Seeky91-en [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) proiektuaren gainean eraikita dago, kronologia, albumak, pertsonak, lekuak, bilaketa, diapositibak eta telefono bidezko saio-hasiera ekarri zituena; eskerrik asko Seeky91-i. 0.1.0 bertsioa proba-eraikuntza bat da: oraindik ez da benetako LG telebista batean exekutatu, Developer Mode moduan bakarrik instalatzen da, eta [Issues](https://github.com/freeKC/Immuch360/issues) ataleko txosten bakoitzak laguntzen du.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Instalatu telebista batean Developer Mode moduan, ikus [Instalatu](#lg-tvs-webos). Bere aplikazio-IDa du, beraz Seeky91-en Immich TV-ren ondoan instalatzen da.
 2. Hasi saioa zure telefonoarekin (eskaneatu QR kodea), zure eposta eta pasahitzarekin, edo API gako batekin.
 3. Arakatu geziekin eta OK-rekin. Bistaratzailean, Ezkerrak eta Eskuinak aurreko edo hurrengo argazki edo bideora eramaten dute, bideo bat erreproduzitzen ari den bitartean ere; kontrolak azken teklatik 5 s-ra ezkutatzen dira; Info-k xehetasunak irekitzen ditu; kanal-teklek zooma egiten dute; Magic Remote-ren erakusleak eta gurpilak funtzionatzen dute.
@@ -220,6 +228,10 @@ Gehiago: [Tapo kamerak](../docs/immuch360/user-guide.md#tapo-cameras-live-view-a
 ### Zure DJI dronearen argazki eta bideoak zure Immich zerbitzarian
 
 Inportatu DJI drone baten argazki eta bideoak USB bidez, zuzenean zure Immich zerbitzarira: konektatu dronea, bere kontrolagailua edo txartel-irakurgailu bat Android telefono batera, aukeratu fitxategi berriak eta bidali, bideoak mapan kokatuta dronearen hegaldi-datuetatik abiatuta eta dronearen 360° esferak 360° gisa erakutsita. Immich aplikazioak telefonoaren galerian dagoeneko dagoenaren babeskopia bakarrik egiten du, eta Immich zerbitzariak oraindik ezin du DJI Neo 2 bideo baten kokapena irakurri. Orri hau esperimentala da, Android telefono eta tabletetan bakarrik, eta oraindik ez da benetako drone batekin probatu.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Ezarpenak, Aurreratua atalean, aktibatu "DJI droneak (esperimentala)". "DJI dronea" lauza bat agertzen da Liburutegia, Sareko partekatzeak atalean.
 2. Konektatu dronea (Neo 2 bat itzalita gera daiteke), bere kontrolagailua edo txartel-irakurgailu bat telefonora USB-C datu-kable batekin. DJI dronearen orrian, sakatu "Aukeratu dronea edo txartela", aukeratu hautatzailearen alboko menuan, ireki bere DCIM karpeta edo utzi unitate osoa, ondoren "Erabili karpeta hau" eta Baimendu.

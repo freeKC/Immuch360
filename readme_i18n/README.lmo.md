@@ -84,6 +84,10 @@ Pussee: [i visualizador e el lettor video](../docs/immuch360/user-guide.md#watch
 
 Gira ona foto de 90° con ona sola pressada, senza dervì on editor: on boton, on tast de la tastera o on tast coloraa del telecomand del TV, su ogni piattaforma. L'app Immich la gira ona foto in del soeu editor; Immuch360 la le fa con on tast, e per i tò foto su on server Immich 2.6 o pussee recent la passa per el medemm editor del server, insci l'app web e i alter tò dispositiv i fann vedè girade. Ogni altra foto la vegn girada domà su sto dispositiv chì. I foto a 360°, 180° e 3D se giren mai, perché i viste immersive resten drizze.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefon, tablet e la fenestra del Meta Quest**: derv la foto e tocca Rotate in la riga de sota, prima de Edit, per girala in del vers di lancett; ona pressada longa la gira de l'altra part. Cont ona tastera, R e Shift+R.
 2. **Android TV e Google TV**: el tast giald del telecomand el gira la foto in del vers di lancett e el tast bloeu in del vers contrari, indove che sia el focus in del visualizador. Su on telecomand senza tast coloraa, schiscia Sota: la barra sota la foto la se fa vedè con Rotate selezionaa (on Destra pussee in là quand la foto la gh'ha on boton de test), e ogni OK el gira la foto.
 3. **TV LG (webOS)**: giald e bloeu come sul Android TV, R e Shift+R su ona tastera, o el boton de girà in di comand de la foto.
@@ -198,6 +202,10 @@ Pussee: [varda sul tò TV](../docs/immuch360/user-guide.md#watch-on-your-tv-andr
 
 Immuch360 la ven anca come app Immich per i TV LG webOS: ona app a part per i TV LG cont webOS 4.0 e pussee recent (del 2018), cumandada del telecomand, che la fa vedè el tò server Immich e la mett i tò foto a 360° su ona sfera che te giret cont i frecc. I app de Immich istess se installen minga su on TV LG. L'è costruida su [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) de Seeky91, che l'ha portaa la timeline, i album, i personn, i post, la ricerca, la presentazion e el login col telefon; grazie a Seeky91. La version 0.1.0 l'è ona compilazion de prova: l'è minga andada ancamò su on TV LG vero, la se installa domà in Developer Mode, e ogni segnalazion in [Issues](https://github.com/freeKC/Immuch360/issues) la giutta.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Installela su on TV in Developer Mode, varda [Installazion](#lg-tvs-webos). La gh'ha el soeu app id, insci la se installa a fianch de Immich TV de Seeky91.
 2. Fa el login col tò telefon (scansiona el codes QR), con la tò email e password, o con ona ciav API.
 3. Sfoglia cont i frecc e OK. In del visualizador, Sinistra e Destra van a la foto o al video de prima o de dopo, anca intant che va on video; i comand se scondenn 5 s dopo l'ultim tast; Info el dervi i detaj; i tast di canaj fann el zoom; el pontador e la rodella del Magic Remote funzionen.
@@ -220,6 +228,10 @@ Pussee: [camere Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and
 ### I foto e i video del tò dron DJI sul tò server Immich
 
 Importa i foto e i video d'on dron DJI per USB, dritt sul tò server Immich: taca el dron, el soeu radiocomand o on lettor de scheed a on telefon Android, sceglie i file noeuv e mandei; i video vegnen miss su la mappa grazie ai dà de vol del dron e i sfer a 360° del dron se veden come 360°. L'app Immich la salva domà quell che l'è giamò in la galeria del telefon, e el server Immich el pò minga ancamò legg el post d'on video DJI Neo 2. Sta pagina chì l'è esperimental, domà su telefon e tablet Android, e l'è minga staa provada ancamò con on dron vero.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. In Setting, Avanzaa, impizza «Dron DJI (esperimental)». On riquader «Dron DJI» el compar in Biblioteca, Condivision de ret.
 2. Taca el dron (on Neo 2 el pò restà smorzaa), el soeu radiocomand o on lettor de scheed al telefon con on cavo de dà USB-C. In la pagina Dron DJI, tocca «Sceglie el dron o la scheda», sceglel in del menù de fianch del selettor, derv la soa cartella DCIM o tegn tutt el disch, poeu «Dovra sta cartella» e Permett.

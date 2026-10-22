@@ -84,6 +84,10 @@ Máis información: [os visores e o reprodutor de vídeo](../docs/immuch360/user
 
 Xira unha foto 90° cunha soa pulsación, sen abrir un editor: un botón, unha tecla do teclado ou unha tecla de cor do mando do televisor, en todas as plataformas. A aplicación Immich xira unha foto no seu editor; Immuch360 faino cunha tecla, e para as túas propias fotos nun servidor Immich 2.6 ou posterior pasa por ese mesmo editor do servidor, así que a aplicación web e os teus outros dispositivos móstranas xiradas. Calquera outra foto xírase só neste dispositivo. As fotos 360°, 180° e 3D nunca xiran, para que as vistas inmersivas sigan niveladas.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Teléfonos, tabletas e a xanela do Meta Quest**: abre a foto e toca Xirar na fila inferior, antes de Editar, para xirala no sentido das agullas do reloxo; unha pulsación longa xíraa no outro sentido. Cun teclado, R e Shift+R.
 2. **Android TV e Google TV**: a tecla amarela do mando xira a foto no sentido das agullas do reloxo e a azul no sentido contrario, estea onde estea o foco no visor. Nun mando sen teclas de cor, preme Abaixo: a barra baixo a foto aparece con Xirar seleccionado (a unha pulsación de Dereita cando a foto ten un botón de texto), e cada OK xira a foto.
 3. **Televisores LG (webOS)**: amarela e azul como en Android TV, R e Shift+R nun teclado, ou o botón de xirar dos controis da foto.
@@ -198,6 +202,10 @@ Máis información: [mira na túa televisión](../docs/immuch360/user-guide.md#w
 
 Immuch360 tamén se ofrece como aplicación de Immich para televisores LG webOS: unha aplicación á parte para televisores LG con webOS 4.0 e posteriores (desde 2018), controlada co mando, que mostra o teu servidor Immich e pon as túas fotos 360° nunha esfera que xiras coas frechas. As propias aplicacións de Immich non se instalan nun televisor LG. Está construída sobre [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) de Seeky91, que achegou a cronoloxía, os álbums, as persoas, os lugares, a busca, a presentación e o inicio de sesión cun teléfono; grazas a Seeky91. A versión 0.1.0 é unha build de proba: aínda non se executou nun televisor LG real, só se instala en Developer Mode, e cada informe en [Issues](https://github.com/freeKC/Immuch360/issues) axuda.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Instálaa nun televisor en Developer Mode, consulta [Instalar](#lg-tvs-webos). Ten o seu propio identificador de aplicación, así que se instala xunto a Immich TV de Seeky91.
 2. Inicia sesión co teu teléfono (escanea o código QR), co teu correo e contrasinal, ou cunha clave API.
 3. Navega coas frechas e OK. No visor, Esquerda e Dereita pasan á foto ou vídeo anterior ou seguinte, tamén mentres se reproduce un vídeo; os controis ocúltanse 5 s despois da última tecla; Info abre os detalles; as teclas de canle fan zoom; o punteiro e a roda do Magic Remote funcionan.
@@ -220,6 +228,10 @@ Máis información: [cámaras Tapo](../docs/immuch360/user-guide.md#tapo-cameras
 ### As fotos e vídeos do teu dron DJI no teu servidor Immich
 
 Importa as fotos e vídeos dun dron DJI por USB, directamente ao teu servidor Immich: conecta o dron, o seu radiocontrol ou un lector de tarxetas a un teléfono Android, escolle os ficheiros novos e envíaos, cos vídeos situados no mapa a partir dos datos de voo do dron e as esferas 360° do dron mostradas como 360°. A aplicación Immich só fai copia de seguridade do que xa está na galería do teléfono, e o servidor Immich aínda non sabe ler o lugar dun vídeo do DJI Neo 2. Esta páxina é experimental, só en teléfonos e tabletas Android, e aínda non se probou cun dron real.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. En Axustes, Avanzado, activa "Drons DJI (experimental)". Aparece un mosaico "Dron DJI" en Biblioteca, Recursos compartidos de rede.
 2. Conecta o dron (un Neo 2 pode quedar apagado), o seu radiocontrol ou un lector de tarxetas ao teléfono cun cable USB-C de datos. Na páxina Dron DJI, toca "Escoller o dron ou a tarxeta", escólleo no menú lateral do selector, abre o seu cartafol DCIM ou mantén a unidade enteira, e logo "Usar este cartafol" e Permitir.

@@ -84,6 +84,10 @@ Lagi: [pemapar dan pemain video](../docs/immuch360/user-guide.md#watch-your-phot
 
 Putar foto 90° dengan satu tekanan, tanpa membuka penyunting: butang, kekunci papan kekunci atau kekunci berwarna pada alat kawalan jauh TV, pada setiap platform. Aplikasi Immich memutar foto dalam penyuntingnya; Immuch360 melakukannya dengan satu kekunci, dan untuk foto anda sendiri pada pelayan Immich 2.6 atau lebih baharu ia melalui penyunting pelayan yang sama itu, jadi aplikasi web dan peranti anda yang lain memaparkannya dalam keadaan diputar. Foto lain hanya diputar pada peranti ini. Foto 360°, 180° dan 3D tidak pernah diputar, supaya paparan mendalam kekal mendatar.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefon, tablet dan tetingkap Meta Quest**: buka foto dan ketik Putar pada baris bawah, sebelum Edit, untuk memutarnya ikut arah jam; tekan lama untuk memutarnya ke arah sebaliknya. Dengan papan kekunci, R dan Shift+R.
 2. **Android TV dan Google TV**: kekunci kuning pada alat kawalan jauh memutar foto ikut arah jam dan kekunci biru lawan arah jam, di mana pun fokus berada dalam pemapar. Pada alat kawalan jauh tanpa kekunci berwarna, tekan Bawah: bar di bawah foto muncul dengan Putar dipilih (satu Kanan lagi apabila foto mempunyai butang teks), dan setiap OK memutar foto.
 3. **TV LG (webOS)**: kuning dan biru seperti pada Android TV, R dan Shift+R pada papan kekunci, atau butang putar dalam kawalan foto.
@@ -198,6 +202,10 @@ Lagi: [tonton pada TV anda](../docs/immuch360/user-guide.md#watch-on-your-tv-and
 
 Immuch360 juga hadir sebagai aplikasi Immich untuk TV LG webOS: aplikasi berasingan untuk TV LG dengan webOS 4.0 dan ke atas (sejak 2018), dikawal oleh alat kawalan jauh, yang memaparkan pelayan Immich anda dan meletakkan foto 360° anda pada sfera yang anda putar dengan anak panah. Aplikasi Immich sendiri tidak boleh dipasang pada TV LG. Ia dibina atas [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) oleh Seeky91, yang membawakan garis masa, album, orang, tempat, carian, tayangan slaid dan log masuk dengan telefon; terima kasih kepada Seeky91. Versi 0.1.0 ialah binaan ujian: ia belum dijalankan pada TV LG sebenar, ia hanya boleh dipasang dalam Developer Mode, dan setiap laporan dalam [Issues](https://github.com/freeKC/Immuch360/issues) membantu.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Pasangnya pada TV dalam Developer Mode, lihat [Pasang](#lg-tvs-webos). Ia mempunyai id aplikasinya sendiri, jadi ia dipasang bersebelahan Immich TV oleh Seeky91.
 2. Log masuk dengan telefon anda (imbas kod QR), dengan e-mel dan kata laluan anda, atau dengan kunci API.
 3. Layari dengan anak panah dan OK. Dalam pemapar, Kiri dan Kanan pergi ke foto atau video sebelumnya atau seterusnya, juga semasa video dimainkan; kawalan disembunyikan 5 saat selepas kekunci terakhir; Info membuka butiran; kekunci saluran mengezum; penuding dan roda Magic Remote berfungsi.
@@ -220,6 +228,10 @@ Lagi: [kamera Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-t
 ### Foto dan video dron DJI anda pada pelayan Immich anda
 
 Import foto dan video dron DJI melalui USB, terus ke pelayan Immich anda: sambungkan dron, pengawalnya atau pembaca kad ke telefon Android, pilih fail baharu dan hantar, dengan video diletakkan pada peta daripada data penerbangan dron dan sfera 360° dron dipaparkan sebagai 360°. Aplikasi Immich hanya menyandarkan apa yang sudah ada dalam galeri telefon, dan pelayan Immich belum dapat membaca tempat video DJI Neo 2. Halaman ini eksperimental, pada telefon dan tablet Android sahaja, dan belum dicuba dengan dron sebenar.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Dalam Tetapan, Lanjutan, hidupkan "Dron DJI (eksperimental)". Jubin "Dron DJI" muncul dalam Pustaka, Perkongsian rangkaian.
 2. Sambungkan dron (Neo 2 boleh kekal dimatikan), pengawalnya atau pembaca kad ke telefon dengan kabel data USB-C. Pada halaman Dron DJI, ketik "Pilih dron atau kad", pilihnya dalam menu sisi pemilih, buka folder DCIM-nya atau kekalkan keseluruhan pemacu, kemudian "Guna folder ini" dan Benarkan.

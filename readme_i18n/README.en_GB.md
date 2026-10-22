@@ -84,6 +84,10 @@ More: [the viewers and the video player](../docs/immuch360/user-guide.md#watch-y
 
 Rotate a photo 90° with one press, without opening an editor: a button, a key of the keyboard or a colour key of the TV remote, on every platform. The Immich app turns a photo in its editor; Immuch360 does it with one key, and for your own photos on an Immich server 2.6 or later it goes through that same server editor, so the web app and your other devices show them turned. Any other photo is turned on this device only. 360°, 180° and 3D photos never turn, so the immersive views stay level.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Phones, tablets and the Meta Quest window**: open the photo and tap Rotate in the bottom row, before Edit, to turn it clockwise; a long press turns it the other way. With a keyboard, R and Shift+R.
 2. **Android TV and Google TV**: the yellow key of the remote turns the photo clockwise and the blue key anticlockwise, wherever the focus is in the viewer. On a remote without colour keys, press Down: the bar under the photo shows with Rotate selected (one Right away when the photo has a text button), and each OK turns the photo.
 3. **LG TVs (webOS)**: yellow and blue as on Android TV, R and Shift+R on a keyboard, or the turn button of the photo's controls.
@@ -198,6 +202,10 @@ More: [watch on your TV](../docs/immuch360/user-guide.md#watch-on-your-tv-androi
 
 Immuch360 also comes as an Immich app for LG webOS TVs: a separate app for LG TVs with webOS 4.0 and later (from 2018), driven by the remote, that shows your Immich server and puts your 360° photos on a sphere you turn with the arrows. Immich's own apps do not install on an LG TV. It is built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) by Seeky91, which brought the timeline, the albums, people, places, search, the slideshow and the sign in with a phone; thanks to Seeky91. Version 0.1.0 is a test build: it has not run on a real LG TV yet, it installs in Developer Mode only, and every report in [Issues](https://github.com/freeKC/Immuch360/issues) helps.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Install it on a TV in Developer Mode, see [Install](#lg-tvs-webos). It has its own app id, so it installs next to Immich TV by Seeky91.
 2. Sign in with your phone (scan the QR code), with your email and password, or with an API key.
 3. Browse with the arrows and OK. In the viewer, Left and Right go to the previous or next photo or video, also while a video plays; the controls hide 5 s after the last key; Info opens the details; the channel keys zoom; the Magic Remote pointer and wheel work.
@@ -220,6 +228,10 @@ More: [Tapo cameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-
 ### Your DJI drone's photos and videos on your Immich server
 
 Import the photos and videos of a DJI drone over USB, straight to your Immich server: plug the drone, its controller or a card reader into an Android phone, pick the new files and send them, with the videos placed on the map from the drone's flight data and the drone's 360° spheres shown as 360°. The Immich app backs up only what is already in the phone's gallery, and the Immich server cannot read the place of a DJI Neo 2 video yet. This page is experimental, on Android phones and tablets only, and has not been tried with a real drone yet.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. In Settings, Advanced, turn on "DJI drones (experimental)". A "DJI drone" tile appears in Library, Network shares.
 2. Plug the drone (a Neo 2 can stay off), its controller or a card reader into the phone with a USB-C data cable. On the DJI drone page, tap "Choose the drone or the card", choose it in the side menu of the picker, open its DCIM folder or keep the whole drive, then "Use this folder" and Allow.

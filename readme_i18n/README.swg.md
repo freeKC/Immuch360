@@ -84,6 +84,10 @@ Meh: [die Player ond dr Videoplayer](../docs/immuch360/user-guide.md#watch-your-
 
 Dreh a Foto mit oim Druck om 90°, ohne en Editor aufzmacha: mit am Knopf, ara Tast auf dr Tastatur odr ara Farbtast auf dr Fernbedienong vom Fernseher, auf jeder Plattform. D Immich-App dreht a Foto en ihrem Editor; Immuch360 machts mit oiner Tast, ond für deine eigene Fotos auf am Immich-Server 2.6 odr neuer gohts durch genau den Editor vom Server, so dass d Web-App ond deine andere Geräte se gdreht aazeiget. Jedes andere Foto wird bloß auf dem Gerät gdreht. 360°-, 180°- ond 3D-Fotos werdet nia gdreht, damit die immersive Aasichta grad bleibet.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Handys, Tablets ond 's Meta-Quest-Fenster**: mach 's Foto auf ond tipp en dr untere Zeil auf Drehen, vor Bearbeiten, zom's em Uhrzeigersinn dreha; a langer Druck dreht's andersrom. Mit ara Tastatur: R ond Shift+R.
 2. **Android TV ond Google TV**: die gelbe Tast von dr Fernbedienong dreht 's Foto em Uhrzeigersinn ond die blaue gega da Uhrzeigersinn, egal wo dr Fokus em Player isch. Auf ara Fernbedienong ohne Farbtasta drück Nonter: d Leischt onter em Foto kommt mit Drehen ausgwählt (oimol Rechts weiter, wenn 's Foto an Textknopf hot), ond jedes OK dreht 's Foto.
 3. **LG-Fernseher (webOS)**: gelb ond blau wie auf Android TV, R ond Shift+R auf ara Tastatur, odr dr Drehknopf bei de Steuerelement vom Foto.
@@ -198,6 +202,10 @@ Meh: [auf deim Fernseher aaguaga](../docs/immuch360/user-guide.md#watch-on-your-
 
 Immuch360 gibt's au als Immich-App für LG-webOS-Fernseher: a eigene App für LG-Fernseher mit webOS 4.0 ond neuer (ab 2018), gstuert mit dr Fernbedienong, wo dein Immich-Server zeigt ond deine 360°-Fotos auf a Kugel legt, wo du mit de Pfeil drehsch. Die eigene Apps von Immich lassed sich net auf am LG-Fernseher installiera. Se isch auf [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) von Seeky91 baut, wo dr Zeitstrahl, d Albe, d Leit, d Ort, d Suach, d Diashow ond 's Aamelda mit am Handy mitbrocht hot; Danke an Seeky91. Version 0.1.0 isch a Test-Build: se isch no net auf am echta LG-Fernseher gloffa, se lässt sich bloß em Developer Mode installiera, ond jede Meldong en [Issues](https://github.com/freeKC/Immuch360/issues) hilft.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Installier se auf am Fernseher em Developer Mode, guck [Installiera](#lg-tvs-webos). Se hot a eigene App-ID, drom lässt se sich neba Immich TV von Seeky91 installiera.
 2. Meld di mit deim Handy a (scann da QR-Code), mit deiner E-Mail ond deim Passwort, odr mit am API-Schlüssel.
 3. Stöber mit de Pfeil ond OK. Em Player ganget Links ond Rechts zom vorherige odr nächste Foto odr Video, au während a Video lauft; d Steuerelement verschwindet 5 s noch dr letzta Tast; Info macht d Details auf; d Kanaltasta zoomet; dr Zeiger ond 's Rädle von dr Magic Remote funktioniera.
@@ -220,6 +228,10 @@ Meh: [Tapo-Kameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-t
 ### Die Fotos ond Videos von deiner DJI-Drohne auf deim Immich-Server
 
 Importier d Fotos ond Videos von ara DJI-Drohne über USB, direkt auf dein Immich-Server: steck d Drohne, ihr Controller odr an Kartaleser an a Android-Handy, wähl die neue Datatroa aus ond schick se; d Videos werdet dabei aus de Flugdata von dr Drohne auf d Kart gsetzt ond d 360°-Kugla von dr Drohne als 360° zeigt. D Immich-App sichert bloß des, was scho en dr Galerie vom Handy isch, ond dr Immich-Server ka da Ort von am DJI-Neo-2-Video no net lesa. Die Seit isch experimentell, gibt's bloß auf Android-Handys ond Tablets, ond isch no net mit ara echta Drohne probiert worda.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. En de Einstellunga, Erweitert, schalt „DJI-Drohna (experimentell)“ ei. A Kachel „DJI-Drohne“ taucht en Bibliothek, Netzwerkfreigaba auf.
 2. Steck d Drohne (a Neo 2 ka aus bleiba), ihr Controller odr an Kartaleser mit am USB-C-Datakabel ans Handy. Auf dr Seit DJI-Drohne tipp auf „Drohne odr Kart wähla“, wähl se em Seitamenü vom Auswahldialog, mach ihrn DCIM-Ordner auf odr nemm 's ganze Laufwerk, dann „Diesen Ordner verwenden“ ond Zulassen.

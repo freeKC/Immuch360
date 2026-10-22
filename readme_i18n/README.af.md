@@ -84,6 +84,10 @@ Meer: [die kykers en die videospeler](../docs/immuch360/user-guide.md#watch-your
 
 Draai 'n foto 90° met een druk, sonder om 'n redigeerder oop te maak: 'n knoppie, 'n sleutel van die sleutelbord of 'n kleursleutel van die TV-afstandbeheer, op elke platform. Die Immich-app draai 'n foto in sy redigeerder; Immuch360 doen dit met een sleutel, en vir jou eie foto's op 'n Immich-bediener 2.6 of later gaan dit deur daardie selfde bediener-redigeerder, sodat die web-app en jou ander toestelle hulle gedraai wys. Enige ander foto word net op hierdie toestel gedraai. 360°-, 180°- en 3D-foto's draai nooit nie, sodat die omringende aansigte gelyk bly.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Fone, tablette en die Meta Quest-venster**: open die foto en tik op Draai in die onderste ry, voor Wysig, om dit kloksgewys te draai; 'n lang druk draai dit die ander kant toe. Met 'n sleutelbord, R en Shift+R.
 2. **Android TV en Google TV**: die geel sleutel van die afstandbeheer draai die foto kloksgewys en die blou sleutel antikloksgewys, waar die fokus ook al in die kyker is. Op 'n afstandbeheer sonder kleursleutels, druk Af: die balk onder die foto verskyn met Draai gekies (een keer Regs verder wanneer die foto 'n teksknoppie het), en elke OK draai die foto.
 3. **LG-TV's (webOS)**: geel en blou soos op Android TV, R en Shift+R op 'n sleutelbord, of die draaiknoppie van die foto se kontroles.
@@ -198,6 +202,10 @@ Meer: [kyk op jou TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android-t
 
 Immuch360 kom ook as 'n Immich-app vir LG webOS-TV's: 'n aparte app vir LG-TV's met webOS 4.0 en later (van 2018 af), gedryf deur die afstandbeheer, wat jou Immich-bediener wys en jou 360°-foto's op 'n bol sit wat jy met die pyle draai. Immich se eie apps installeer nie op 'n LG-TV nie. Dit is gebou op [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) deur Seeky91, wat die tydlyn, die albums, mense, plekke, soek, die skyfievertoning en die aanmelding met 'n foon gebring het; dankie aan Seeky91. Weergawe 0.1.0 is 'n toets-build: dit het nog nie op 'n werklike LG-TV geloop nie, dit installeer net in Developer Mode, en elke verslag in [Issues](https://github.com/freeKC/Immuch360/issues) help.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Installeer dit op 'n TV in Developer Mode, sien [Installeer](#lg-tvs-webos). Dit het sy eie app-id, dus installeer dit langs Immich TV van Seeky91.
 2. Meld aan met jou foon (skandeer die QR-kode), met jou e-pos en wagwoord, of met 'n API-sleutel.
 3. Blaai met die pyle en OK. In die kyker gaan Links en Regs na die vorige of volgende foto of video, ook terwyl 'n video speel; die kontroles verdwyn 5 s na die laaste sleutel; Info open die besonderhede; die kanaalsleutels zoem; die wyser en die wiel van die Magic Remote werk.
@@ -220,6 +228,10 @@ Meer: [Tapo-kameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-
 ### Jou DJI-hommeltuig se foto's en video's op jou Immich-bediener
 
 Voer die foto's en video's van 'n DJI-hommeltuig oor USB in, reguit na jou Immich-bediener: prop die hommeltuig, sy beheerder of 'n kaartleser in 'n Android-foon, kies die nuwe lêers en stuur hulle, met die video's op die kaart geplaas uit die hommeltuig se vlugdata en die hommeltuig se 360°-bolle as 360° gewys. Die Immich-app rugsteun net wat reeds in die foon se galery is, en die Immich-bediener kan nog nie die plek van 'n DJI Neo 2-video lees nie. Hierdie blad is eksperimenteel, net op Android-fone en -tablette, en is nog nie met 'n werklike hommeltuig probeer nie.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Skakel in Instellings, Gevorderd, "DJI-hommeltuie (eksperimenteel)" aan. 'n "DJI-hommeltuig"-teël verskyn in Biblioteek, Netwerkdeelplekke.
 2. Prop die hommeltuig ('n Neo 2 kan af bly), sy beheerder of 'n kaartleser met 'n USB-C-datakabel in die foon. Tik op die DJI-hommeltuigblad op "Kies die hommeltuig of die kaart", kies dit in die kantkieslys van die kieser, open sy DCIM-vouer of hou die hele skyf, dan "Gebruik hierdie vouer" en Laat toe.

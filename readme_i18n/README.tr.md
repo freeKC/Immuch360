@@ -84,6 +84,10 @@ Daha fazlası: [görüntüleyiciler ve video oynatıcı](../docs/immuch360/user-
 
 Bir fotoğrafı bir düzenleyici açmadan, tek basışla 90° döndürün: her platformda bir düğme, klavyenin bir tuşu veya TV kumandasının renkli bir tuşu. Immich uygulaması bir fotoğrafı düzenleyicisinde döndürür; Immuch360 bunu tek tuşla yapar ve Immich 2.6 veya üzeri bir sunucudaki kendi fotoğraflarınız için aynı sunucu düzenleyicisinden geçer, böylece web uygulaması ve diğer cihazlarınız da onları döndürülmüş gösterir. Diğer her fotoğraf yalnızca bu cihazda döndürülür. 360°, 180° ve 3D fotoğraflar hiçbir zaman dönmez, böylece sürükleyici görünümler yatay kalır.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefonlar, tabletler ve Meta Quest penceresi**: fotoğrafı açın ve saat yönünde döndürmek için alt sırada, Düzenle'den önce gelen Döndür'e dokunun; uzun basış ters yönde döndürür. Klavyeyle R ve Shift+R.
 2. **Android TV ve Google TV**: odak görüntüleyicide nerede olursa olsun, kumandanın sarı tuşu fotoğrafı saat yönünde, mavi tuşu saat yönünün tersine döndürür. Renkli tuşları olmayan bir kumandada Aşağı'ya basın: fotoğrafın altındaki çubuk Döndür seçili olarak görünür (fotoğrafın bir metin düğmesi varsa bir Sağ ötede) ve her OK fotoğrafı döndürür.
 3. **LG TV'ler (webOS)**: Android TV'deki gibi sarı ve mavi, klavyede R ve Shift+R veya fotoğraf kontrollerindeki döndürme düğmesi.
@@ -198,6 +202,10 @@ Daha fazlası: [TV'nizde izleyin](../docs/immuch360/user-guide.md#watch-on-your-
 
 Immuch360, LG webOS TV'ler için bir Immich uygulaması olarak da gelir: webOS 4.0 ve sonrasına sahip LG TV'ler (2018'den itibaren) için ayrı bir uygulamadır, uzaktan kumandayla yönetilir, Immich sunucunuzu gösterir ve 360° fotoğraflarınızı oklarla çevirdiğiniz bir küreye yerleştirir. Immich'in kendi uygulamaları bir LG TV'ye kurulmaz. Seeky91'in [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) projesi üzerine kuruludur; zaman çizelgesini, albümleri, kişileri, yerleri, aramayı, slayt gösterisini ve telefonla girişi o proje getirdi; Seeky91'e teşekkürler. Sürüm 0.1.0 bir test build'idir: henüz gerçek bir LG TV'de çalışmadı, yalnızca Developer Mode içinde kurulur ve [Issues](https://github.com/freeKC/Immuch360/issues) sayfasındaki her bildirim yardımcı olur.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Developer Mode'daki bir TV'ye kurun, bkz. [Kurulum](#lg-tvs-webos). Kendi uygulama kimliği olduğundan Seeky91'in Immich TV'sinin yanına kurulur.
 2. Telefonunuzla (QR kodunu tarayın), e-posta adresiniz ve parolanızla veya bir API anahtarıyla giriş yapın.
 3. Oklar ve OK ile göz atın. Görüntüleyicide Sol ve Sağ, bir video oynarken de önceki veya sonraki fotoğrafa ya da videoya geçer; kontroller son tuştan 5 s sonra gizlenir; Info ayrıntıları açar; kanal tuşları yakınlaştırır; Magic Remote işaretçisi ve tekerleği çalışır.
@@ -220,6 +228,10 @@ Daha fazlası: [Tapo kameraları](../docs/immuch360/user-guide.md#tapo-cameras-l
 ### DJI dronunuzun fotoğrafları ve videoları Immich sunucunuzda
 
 Bir DJI dronunun fotoğraflarını ve videolarını USB üzerinden doğrudan Immich sunucunuza aktarın: dronu, kumandasını veya bir kart okuyucuyu bir Android telefona takın, yeni dosyaları seçip gönderin; videolar dronun uçuş verilerinden haritaya yerleştirilir ve dronun 360° küreleri 360° olarak gösterilir. Immich uygulaması yalnızca telefonun galerisinde zaten bulunanı yedekler ve Immich sunucusu henüz bir DJI Neo 2 videosunun konumunu okuyamaz. Bu sayfa deneyseldir, yalnızca Android telefon ve tabletlerde bulunur ve henüz gerçek bir dronla denenmedi.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Ayarlar, Gelişmiş bölümünde "DJI dronları (deneysel)" seçeneğini açın. Kitaplık, Ağ paylaşımları içinde bir "DJI dronu" kutucuğu belirir.
 2. Dronu (bir Neo 2 kapalı kalabilir), kumandasını veya bir kart okuyucuyu bir USB-C veri kablosuyla telefona takın. DJI dronu sayfasında "Dronu veya kartı seçin" düğmesine dokunun, seçicinin yan menüsünde onu seçin, DCIM klasörünü açın veya tüm sürücüyü bırakın, ardından "Bu klasörü kullan" ve İzin ver.

@@ -84,6 +84,10 @@ Thêm: [các trình xem và trình phát video](../docs/immuch360/user-guide.md#
 
 Xoay ảnh 90° chỉ với một lần nhấn, không cần mở trình chỉnh sửa: một nút, một phím trên bàn phím hoặc một phím màu trên bộ điều khiển TV, trên mọi nền tảng. Ứng dụng Immich xoay ảnh trong trình chỉnh sửa của nó; Immuch360 làm việc đó bằng một phím, và với ảnh của chính bạn trên máy chủ Immich 2.6 trở lên, việc xoay đi qua chính trình chỉnh sửa đó của máy chủ, nhờ vậy ứng dụng web và các thiết bị khác của bạn cũng hiển thị ảnh đã xoay. Mọi ảnh khác chỉ được xoay trên thiết bị này. Ảnh 360°, 180° và 3D không bao giờ bị xoay, để các chế độ xem đắm chìm luôn nằm ngang bằng.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Điện thoại, máy tính bảng và cửa sổ Meta Quest**: mở ảnh và nhấn Xoay ở hàng dưới cùng, trước Chỉnh sửa, để xoay theo chiều kim đồng hồ; nhấn giữ sẽ xoay theo chiều ngược lại. Với bàn phím, dùng R và Shift+R.
 2. **Android TV và Google TV**: phím vàng của bộ điều khiển xoay ảnh theo chiều kim đồng hồ và phím xanh lam xoay ngược chiều kim đồng hồ, bất kể tiêu điểm đang ở đâu trong trình xem. Trên bộ điều khiển không có phím màu, nhấn Xuống: thanh bên dưới ảnh hiện ra với Xoay được chọn (cách một lần nhấn Phải khi ảnh có nút văn bản), và mỗi lần nhấn OK sẽ xoay ảnh.
 3. **TV LG (webOS)**: phím vàng và xanh lam như trên Android TV, R và Shift+R trên bàn phím, hoặc nút xoay trong các nút điều khiển của ảnh.
@@ -198,6 +202,10 @@ Thêm: [xem trên TV của bạn](../docs/immuch360/user-guide.md#watch-on-your-
 
 Immuch360 cũng có dạng một ứng dụng Immich cho TV LG webOS: một ứng dụng riêng cho TV LG chạy webOS 4.0 trở lên (từ năm 2018), vận hành bằng bộ điều khiển, hiển thị máy chủ Immich của bạn và đặt các ảnh 360° của bạn lên một hình cầu mà bạn xoay bằng các phím mũi tên. Các ứng dụng của chính Immich không cài được trên TV LG. Ứng dụng được xây dựng dựa trên [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) của Seeky91, dự án đã mang lại dòng thời gian, album, mọi người, địa điểm, tìm kiếm, trình chiếu và đăng nhập bằng điện thoại; xin cảm ơn Seeky91. Phiên bản 0.1.0 là một bản dựng kiểm thử: nó chưa chạy trên TV LG thật, chỉ cài được ở Developer Mode, và mọi báo cáo trong [Issues](https://github.com/freeKC/Immuch360/issues) đều hữu ích.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Cài đặt ứng dụng trên một TV ở Developer Mode, xem [Cài đặt](#lg-tvs-webos). Ứng dụng có mã định danh riêng, nên được cài bên cạnh Immich TV của Seeky91.
 2. Đăng nhập bằng điện thoại của bạn (quét mã QR), bằng email và mật khẩu, hoặc bằng khóa API.
 3. Duyệt bằng các phím mũi tên và OK. Trong trình xem, Trái và Phải chuyển sang ảnh hoặc video trước hoặc tiếp theo, kể cả khi video đang phát; các nút điều khiển ẩn đi 5 s sau lần nhấn phím cuối cùng; Info mở chi tiết; các phím chuyển kênh dùng để thu phóng; con trỏ và bánh xe của Magic Remote đều hoạt động.
@@ -220,6 +228,10 @@ Thêm: [camera Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-
 ### Ảnh và video từ drone DJI của bạn trên máy chủ Immich của bạn
 
 Nhập ảnh và video từ drone DJI qua USB, thẳng lên máy chủ Immich của bạn: cắm drone, bộ điều khiển của nó hoặc đầu đọc thẻ vào điện thoại Android, chọn các tệp mới và gửi đi, với video được đặt lên bản đồ nhờ dữ liệu bay của drone và các hình cầu 360° của drone được hiển thị dạng 360°. Ứng dụng Immich chỉ sao lưu những gì đã có trong thư viện ảnh của điện thoại, và máy chủ Immich chưa đọc được địa điểm của video DJI Neo 2. Trang này đang ở dạng thử nghiệm, chỉ có trên điện thoại và máy tính bảng Android, và chưa được thử với drone thật.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Trong Cài đặt, Nâng cao, bật "Drone DJI (thử nghiệm)". Một ô "Drone DJI" xuất hiện trong Thư viện, Chia sẻ mạng.
 2. Cắm drone (Neo 2 có thể vẫn tắt), bộ điều khiển của nó hoặc đầu đọc thẻ vào điện thoại bằng cáp dữ liệu USB-C. Trên trang Drone DJI, nhấn "Chọn drone hoặc thẻ", chọn nó trong menu bên của trình chọn, mở thư mục DCIM của nó hoặc giữ cả ổ, rồi nhấn "Sử dụng thư mục này" và Cho phép.

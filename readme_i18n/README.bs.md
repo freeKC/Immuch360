@@ -84,6 +84,10 @@ Više: [preglednici i reproduktor videa](../docs/immuch360/user-guide.md#watch-y
 
 Okrenite fotografiju za 90° jednim pritiskom, bez otvaranja uređivača: dugmetom, tasterom na tastaturi ili tasterom u boji na TV daljinskom upravljaču, na svakoj platformi. Immich aplikacija okreće fotografiju u svom uređivaču; Immuch360 to radi jednim tasterom, a za vaše vlastite fotografije na Immich serveru 2.6 ili novijem prolazi kroz taj isti uređivač na serveru, pa ih web aplikacija i vaši drugi uređaji prikazuju okrenute. Svaka druga fotografija okreće se samo na ovom uređaju. 360°, 180° i 3D fotografije se nikad ne okreću, tako da imerzivni prikazi ostaju vodoravni.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefoni, tableti i prozor na Meta Questu**: otvorite fotografiju i dodirnite Rotate u donjem redu, ispred Edit, da je okrenete u smjeru kazaljke na satu; dugi pritisak je okreće u drugom smjeru. Na tastaturi, R i Shift+R.
 2. **Android TV i Google TV**: žuti taster daljinskog upravljača okreće fotografiju u smjeru kazaljke na satu, a plavi taster suprotno od smjera kazaljke na satu, gdje god da je fokus u pregledniku. Na daljinskom upravljaču bez tastera u boji pritisnite dolje: traka ispod fotografije pojavljuje se s odabranim Rotate (jedan korak udesno kada fotografija ima tekstualno dugme), i svaki OK okreće fotografiju.
 3. **LG televizori (webOS)**: žuti i plavi taster kao na Android TV-u, R i Shift+R na tastaturi, ili dugme za okretanje u kontrolama fotografije.
@@ -198,6 +202,10 @@ Više: [pregledajte na vašem TV-u](../docs/immuch360/user-guide.md#watch-on-you
 
 Immuch360 dolazi i kao Immich aplikacija za LG webOS televizore: zasebna aplikacija za LG televizore sa webOS 4.0 i novijim (od 2018.), upravljana daljinskim upravljačem, koja prikazuje vaš Immich server i stavlja vaše 360° fotografije na sferu koju okrećete strelicama. Immichove vlastite aplikacije ne mogu se instalirati na LG televizor. Izgrađena je na [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) od Seeky91, koji je donio vremensku liniju, albume, osobe, mjesta, pretragu, prikaz slajdova i prijavu telefonom; hvala Seeky91. Verzija 0.1.0 je testni build: još nije pokrenuta na stvarnom LG televizoru, instalira se samo u Developer Mode, i svaki izvještaj u [Issues](https://github.com/freeKC/Immuch360/issues) pomaže.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Instalirajte je na televizor u Developer Mode, vidi [Instalacija](#lg-tvs-webos). Ima vlastiti app id, pa se instalira pored aplikacije Immich TV od Seeky91.
 2. Prijavite se telefonom (skenirajte QR kod), e-mailom i lozinkom, ili API ključem.
 3. Pregledajte strelicama i tasterom OK. U pregledniku lijevo i desno idu na prethodnu ili sljedeću fotografiju ili video zapis, i dok se video reproducira; kontrole se skrivaju 5 s nakon posljednjeg tastera; Info otvara detalje; tasteri za kanale zumiraju; pokazivač i točkić Magic Remote upravljača rade.
@@ -220,6 +228,10 @@ Više: [Tapo kamere](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-
 ### Fotografije i video zapisi vašeg DJI drona na vašem Immich serveru
 
 Uvezite fotografije i video zapise DJI drona preko USB-a, direktno na vaš Immich server: priključite dron, njegov kontroler ili čitač kartica na Android telefon, izaberite nove datoteke i pošaljite ih, s video zapisima postavljenim na mapu na osnovu podataka o letu drona i 360° sferama drona prikazanim kao 360°. Immich aplikacija pravi sigurnosnu kopiju samo onoga što je već u galeriji telefona, a Immich server još ne može pročitati mjesto video zapisa sa DJI Neo 2. Ova stranica je eksperimentalna, samo na Android telefonima i tabletima, i još nije isprobana sa stvarnim dronom.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. U Postavkama, Napredno, uključite "DJI drones (experimental)". Pločica "DJI drone" pojavljuje se u Biblioteka, Mrežni dijeljeni resursi.
 2. Priključite dron (Neo 2 može ostati isključen), njegov kontroler ili čitač kartica na telefon USB-C kablom za podatke. Na stranici DJI drona dodirnite "Choose the drone or the card", izaberite ga u bočnom meniju birača, otvorite njegovu DCIM fasciklu ili zadržite cijeli disk, zatim "Use this folder" i Allow.

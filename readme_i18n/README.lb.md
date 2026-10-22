@@ -84,6 +84,10 @@ Méi: [d'Viewers an den Videoplayer](../docs/immuch360/user-guide.md#watch-your-
 
 Dréi eng Foto mat engem eenzegen Drock ëm 90°, ouni en Editeur opzemaachen: e Knäppchen, eng Tast vun der Tastatur oder eng Faarftast vun der TV-Fernsteierung, op all Plattform. D'Immich-App dréint eng Foto an hirem Editeur; Immuch360 mécht et mat enger Tast, a fir deng eege Fotoen op engem Immich-Server 2.6 oder méi nei geet et duerch dee selwechte Server-Editeur, sou datt d'Web-App an deng aner Apparater se gedréint weisen. All aner Foto gëtt nëmmen op dësem Apparat gedréint. 360°-, 180°- a 3D-Fotoe ginn ni gedréint, fir datt déi immersiv Usiichten waagerecht bleiwen.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Handys, Tablets an d'Meta-Quest-Fënster**: maach d'Foto op a tipp op Rotate an der ënneschter Rei, virun Edit, fir se mat dem Auerzeiger ze dréinen; e laangen Drock dréint se an déi aner Richtung. Mat enger Tastatur, R a Shift+R.
 2. **Android TV a Google TV**: déi giel Tast vun der Fernsteierung dréint d'Foto mat dem Auerzeiger an déi blo Tast géint den Auerzeiger, egal wou de Fokus am Viewer ass. Op enger Fernsteierung ouni Faarftasten, dréck Erof: d'Leescht ënner der Foto erschéngt mat Rotate ausgewielt (eemol Riets méi wäit, wann d'Foto en Textknäppchen huet), an all OK dréint d'Foto.
 3. **LG-Fernseher (webOS)**: giel a blo wéi op Android TV, R a Shift+R op enger Tastatur, oder den Dréiknäppchen an de Steierelementer vun der Foto.
@@ -198,6 +202,10 @@ Méi: [op dengem Fernseh kucken](../docs/immuch360/user-guide.md#watch-on-your-t
 
 Immuch360 gëtt et och als Immich-App fir LG-webOS-Fernseher: eng separat App fir LG-Fernseher mat webOS 4.0 a méi nei (vun 2018 un), mat der Fernsteierung bedéngt, déi däin Immich-Server weist an deng 360°-Fotoen op eng Kugel leet, déi s du mat de Pfeile dréins. Déi eege Immich-Appen installéiere sech net op engem LG-Fernseh. Si baut op [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) vum Seeky91 op, dat d'Zäitlinn, d'Albumen, d'Leit, d'Plazen, d'Sich, d'Diashow an d'Umeldung mam Handy matbruecht huet; Merci dem Seeky91. D'Versioun 0.1.0 ass en Test-Build: si ass nach net op engem richtege LG-Fernseh gelaf, si installéiert sech nëmmen am Developer Mode, an all Rapport an den [Issues](https://github.com/freeKC/Immuch360/issues) hëlleft.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Installéier se op engem Fernseh am Developer Mode, kuck [Installéieren](#lg-tvs-webos). Si huet hir eege App-ID, dofir installéiert se sech nieft Immich TV vum Seeky91.
 2. Mell dech mat dengem Handy un (scann de QR-Code), mat denger E-Mail an dengem Passwuert, oder mat engem API-Schlëssel.
 3. Duerchsich mat de Pfeilen an OK. Am Viewer gi Lénks a Riets op déi vireg oder nächst Foto oder Video, och während e Video leeft; d'Steierelementer verschwannen 5 s no der leschter Tast; Info mécht d'Detailer op; d'Kanaltaste zoomen; de Pointer an d'Rad vun der Magic Remote funktionnéieren.
@@ -220,6 +228,10 @@ Méi: [Tapo-Kameraen](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and
 ### D'Fotoen a Videoe vun denger DJI-Drohn op dengem Immich-Server
 
 Importéier d'Fotoen a Videoe vun enger DJI-Drohn iwwer USB, direkt op däin Immich-Server: steck d'Drohn, hire Controller oder e Kaartelieser un en Android-Handy, wiel déi nei Dateien aus a schéck se; d'Videoe ginn duerch d'Fluchdate vun der Drohn op der Kaart plazéiert an d'360°-Kugele vun der Drohn ginn als 360° gewisen. D'Immich-App séchert nëmmen dat, wat schonn an der Galerie vum Handy ass, an den Immich-Server kann d'Plaz vun engem DJI-Neo-2-Video nach net liesen. Dës Säit ass experimentell, nëmmen op Android-Handys an -Tablets, a gouf nach net mat enger richteger Drohn probéiert.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. An den Astellungen, Erweidert, schalt „DJI-Drohnen (experimentell)“ un. Eng Kachel „DJI-Drohn“ erschéngt an der Bibliothéik, Netzwierkfreigaben.
 2. Steck d'Drohn (eng Neo 2 ka aus bleiwen), hire Controller oder e Kaartelieser mat engem USB-C-Datekabel un den Handy. Op der Säit DJI-Drohn, tipp op „D'Drohn oder d'Kaart auswielen“, wiel se am Säitemenü vum Auswieler, maach hiren DCIM-Dossier op oder behal dat ganzt Lafwierk, dann „Dësen Dossier benotzen“ an Erlaben.

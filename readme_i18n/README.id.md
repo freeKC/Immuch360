@@ -84,6 +84,10 @@ Selengkapnya: [penampil dan pemutar video](../docs/immuch360/user-guide.md#watch
 
 Rotasi foto 90° dengan sekali tekan, tanpa membuka editor: sebuah tombol di layar, sebuah tombol papan ketik, atau tombol warna pada remote TV, di semua platform. Aplikasi Immich merotasi foto di editornya; Immuch360 melakukannya dengan satu tombol, dan untuk foto milik Anda sendiri di server Immich 2.6 atau yang lebih baru, rotasi melewati editor server yang sama, sehingga aplikasi web dan perangkat Anda yang lain menampilkannya dalam keadaan terotasi. Foto lainnya hanya dirotasi di perangkat ini. Foto 360°, 180°, dan 3D tidak pernah dirotasi, agar tampilan imersif tetap lurus.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Ponsel, tablet, dan jendela Meta Quest**: buka foto dan ketuk Rotasi di baris bawah, sebelum Edit, untuk merotasinya searah jarum jam; tekan lama untuk merotasinya ke arah sebaliknya. Dengan papan ketik, R dan Shift+R.
 2. **Android TV dan Google TV**: tombol kuning pada remote merotasi foto searah jarum jam dan tombol biru berlawanan arah jarum jam, di mana pun fokus berada di penampil. Pada remote tanpa tombol warna, tekan Bawah: bilah di bawah foto muncul dengan Rotasi terpilih (satu kali Kanan lagi jika foto memiliki tombol teks), dan setiap OK merotasi foto.
 3. **TV LG (webOS)**: kuning dan biru seperti di Android TV, R dan Shift+R di papan ketik, atau tombol rotasi pada kontrol foto.
@@ -198,6 +202,10 @@ Selengkapnya: [menonton di TV Anda](../docs/immuch360/user-guide.md#watch-on-you
 
 Immuch360 juga hadir sebagai aplikasi Immich untuk TV LG webOS: aplikasi terpisah untuk TV LG dengan webOS 4.0 dan yang lebih baru (sejak 2018), dikendalikan dengan remote, yang menampilkan server Immich Anda dan menempatkan foto 360° Anda pada bola yang Anda putar dengan tombol arah. Aplikasi Immich sendiri tidak dapat dipasang di TV LG. Aplikasi ini dibangun di atas [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) oleh Seeky91, yang menghadirkan linimasa, album, orang, tempat, pencarian, tayangan slide, dan masuk dengan ponsel; terima kasih kepada Seeky91. Versi 0.1.0 adalah build uji: belum pernah dijalankan di TV LG sungguhan, hanya dapat dipasang dalam Developer Mode, dan setiap laporan di [Issues](https://github.com/freeKC/Immuch360/issues) sangat membantu.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Pasang di TV dalam Developer Mode, lihat [Instalasi](#lg-tvs-webos). Aplikasi ini memiliki id aplikasi sendiri, sehingga terpasang berdampingan dengan Immich TV buatan Seeky91.
 2. Masuk dengan ponsel Anda (pindai kode QR), dengan email dan kata sandi, atau dengan kunci API.
 3. Jelajahi dengan tombol arah dan OK. Di penampil, Kiri dan Kanan berpindah ke foto atau video sebelumnya atau berikutnya, juga saat video diputar; kontrol tersembunyi 5 s setelah tombol terakhir; Info membuka detail; tombol saluran memperbesar; penunjuk dan roda Magic Remote berfungsi.
@@ -220,6 +228,10 @@ Selengkapnya: [kamera Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-vi
 ### Foto dan video drone DJI Anda di server Immich Anda
 
 Impor foto dan video drone DJI melalui USB, langsung ke server Immich Anda: colokkan drone, pengendalinya, atau pembaca kartu ke ponsel Android, pilih berkas baru, lalu kirim, dengan video ditempatkan di peta dari data penerbangan drone dan bola 360° drone ditampilkan sebagai 360°. Aplikasi Immich hanya mencadangkan apa yang sudah ada di galeri ponsel, dan server Immich belum dapat membaca lokasi video DJI Neo 2. Halaman ini eksperimental, hanya di ponsel dan tablet Android, dan belum dicoba dengan drone sungguhan.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Di Pengaturan, Lanjutan, aktifkan "Drone DJI (eksperimental)". Ubin "Drone DJI" muncul di Pustaka, Berbagi jaringan.
 2. Colokkan drone (Neo 2 boleh tetap mati), pengendalinya, atau pembaca kartu ke ponsel dengan kabel data USB-C. Di halaman Drone DJI, ketuk "Pilih drone atau kartu", pilih perangkat itu di menu samping pemilih, buka folder DCIM-nya atau gunakan seluruh drive, lalu "Gunakan folder ini" dan Izinkan.

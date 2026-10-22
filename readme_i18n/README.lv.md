@@ -84,6 +84,10 @@ Vairāk: [skatītāji un video atskaņotājs](../docs/immuch360/user-guide.md#wa
 
 Pagrieziet foto par 90° ar vienu nospiedienu, neatverot redaktoru: ar pogu, klaviatūras taustiņu vai televizora tālvadības pults krāsaino taustiņu, visās platformās. Immich lietotne pagriež foto savā redaktorā; Immuch360 to dara ar vienu taustiņu, un jūsu pašu foto Immich 2.6 vai jaunākā serverī tiek pagriezti caur to pašu servera redaktoru, tāpēc tīmekļa lietotne un jūsu citas ierīces tos rāda pagrieztus. Jebkurš cits foto tiek pagriezts tikai šajā ierīcē. 360°, 180° un 3D foto nekad netiek pagriezti, lai iespaidīgie skati paliktu līmenī.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Tālruņi, planšetes un Meta Quest logs**: atveriet foto un apakšējā rindā pirms Rediģēt pieskarieties Pagriezt, lai to pagrieztu pulksteņrādītāja virzienā; ilgs nospiediens pagriež uz otru pusi. Ar klaviatūru: R un Shift+R.
 2. **Android TV un Google TV**: tālvadības pults dzeltenais taustiņš pagriež foto pulksteņrādītāja virzienā, bet zilais pretēji pulksteņrādītāja virzienam, lai kur skatītājā būtu fokuss. Tālvadības pultī bez krāsainajiem taustiņiem nospiediet uz leju: zem foto parādās josla ar atlasītu Pagriezt (vienu nospiedienu pa labi tālāk, ja foto ir teksta poga), un katrs OK pagriež foto.
 3. **LG televizori (webOS)**: dzeltenais un zilais kā Android TV, R un Shift+R uz klaviatūras, vai foto vadīklu pagriešanas poga.
@@ -198,6 +202,10 @@ Vairāk: [skatīšanās televizorā](../docs/immuch360/user-guide.md#watch-on-yo
 
 Immuch360 ir pieejama arī kā Immich lietotne LG webOS televizoriem: atsevišķa lietotne LG televizoriem ar webOS 4.0 un jaunāku (no 2018. gada), vadāma ar tālvadības pulti, kas rāda jūsu Immich serveri un novieto jūsu 360° foto uz lodes, ko grozāt ar bultiņām. Pašas Immich lietotnes LG televizorā neinstalējas. Tā ir veidota uz Seeky91 projekta [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) pamata, kas ieviesa laika skalu, albumus, cilvēkus, vietas, meklēšanu, slaidrādi un pieteikšanos ar tālruni; paldies Seeky91. Versija 0.1.0 ir testa build: tā vēl nav palaista īstā LG televizorā, instalējas tikai Developer Mode režīmā, un katrs ziņojums sadaļā [Issues](https://github.com/freeKC/Immuch360/issues) palīdz.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Instalējiet to televizorā Developer Mode režīmā, skatiet [Instalēšana](#lg-tvs-webos). Tai ir savs lietotnes ID, tāpēc tā instalējas blakus Seeky91 Immich TV.
 2. Piesakieties ar tālruni (noskenējiet QR kodu), ar e-pastu un paroli vai ar API atslēgu.
 3. Pārlūkojiet ar bultiņām un OK. Skatītājā pa kreisi un pa labi pāriet uz iepriekšējo vai nākamo foto vai video, arī video atskaņošanas laikā; vadīklas paslēpjas 5 s pēc pēdējā taustiņa; Info atver detaļas; kanālu taustiņi tuvina un tālina; darbojas Magic Remote rādītājs un ritenītis.
@@ -220,6 +228,10 @@ Vairāk: [Tapo kameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-a
 ### Jūsu DJI drona foto un video jūsu Immich serverī
 
 Importējiet DJI drona foto un video caur USB tieši uz savu Immich serveri: pievienojiet dronu, tā vadības pulti vai karšu lasītāju Android tālrunim, izvēlieties jaunos failus un nosūtiet tos; video tiek novietoti kartē pēc drona lidojuma datiem, un drona 360° lodes tiek rādītas kā 360°. Immich lietotne dublē tikai to, kas jau ir tālruņa galerijā, un Immich serveris vēl nevar nolasīt DJI Neo 2 video atrašanās vietu. Šī lapa ir eksperimentāla, tikai Android tālruņos un planšetēs, un vēl nav izmēģināta ar īstu dronu.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Sadaļā Iestatījumi, Papildu ieslēdziet "DJI droni (eksperimentāls)". Sadaļā Bibliotēka, Tīkla koplietojumi parādās flīze "DJI drons".
 2. Pievienojiet dronu (Neo 2 var palikt izslēgts), tā vadības pulti vai karšu lasītāju tālrunim ar USB-C datu kabeli. DJI drona lapā pieskarieties "Izvēlēties dronu vai karti", izvēlieties to atlasītāja sānu izvēlnē, atveriet tā DCIM mapi vai paturiet visu disku, tad "Izmantot šo mapi" un Atļaut.

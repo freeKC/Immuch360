@@ -84,6 +84,10 @@ Immuch360 首先是一个普通照片和视频的图库与播放器。时间线�
 
 按一下即可将照片旋转 90°，无需打开编辑器：在所有平台上，都可以使用按钮、键盘按键或电视遥控器的彩色键。Immich 应用要在编辑器中旋转照片；Immuch360 只需一个键，而对于您自己存放在 Immich 2.6 或更高版本服务器上的照片，旋转会经由服务器上的同一个编辑器完成，因此网页应用和您的其他设备也会显示旋转后的照片。其他照片只在本设备上旋转。360°、180° 和 3D 照片永远不会被旋转，从而让沉浸式视图始终保持水平。
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **手机、平板和 Meta Quest 窗口**：打开照片，点按底部一行中位于“编辑”之前的“旋转”，即可顺时针旋转；长按则向另一个方向旋转。使用键盘时按 R 和 Shift+R。
 2. **Android TV 和 Google TV**：无论焦点位于查看器的哪个位置，遥控器的黄色键都会将照片顺时针旋转，蓝色键则逆时针旋转。如果遥控器没有彩色键，请按下方向键：照片下方会出现操作栏，并已选中“旋转”（如果照片带有文字按钮，则需再按一次右键），每按一次 OK 键，照片就旋转一次。
 3. **LG 电视（webOS）**：黄色键和蓝色键的作用与 Android TV 上相同，键盘上用 R 和 Shift+R，也可以使用照片控件中的旋转按钮。
@@ -198,6 +202,10 @@ Immuch360 既不需要账户，也不需要服务器。从 build 24 起，应用
 
 Immuch360 还提供适用于 LG webOS 电视的 Immich 应用：这是一个独立应用，适用于搭载 webOS 4.0 及更高版本的 LG 电视（2018 年起），用遥控器操作，显示您的 Immich 服务器，并把您的 360° 照片呈现在一个可用方向键转动的球体上。Immich 自己的应用无法安装到 LG 电视上。它基于 Seeky91 的 [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) 构建，该项目带来了时间线、相册、人物、地点、搜索、幻灯片放映以及用手机登录；感谢 Seeky91。版本 0.1.0 是测试 build：尚未在真实的 LG 电视上运行过，只能在 Developer Mode 下安装，在 [Issues](https://github.com/freeKC/Immuch360/issues) 中提交的每一份报告都很有帮助。
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. 在处于 Developer Mode 的电视上安装，见[安装](#lg-tvs-webos)。它有自己的应用 ID，因此可以与 Seeky91 的 Immich TV 并存安装。
 2. 用手机登录（扫描二维码），或使用电子邮件和密码，或使用 API 密钥登录。
 3. 用方向键和 OK 键浏览。在查看器中，左右键可切换到上一个或下一个照片或视频，视频播放时也可以；控件会在最后一次按键 5 s 后隐藏；Info 键打开详细信息；频道键用于缩放；Magic Remote 的指针和滚轮均可使用。
@@ -220,6 +228,10 @@ Immuch360 还提供适用于 LG webOS 电视的 Immich 应用：这是一个独�
 ### DJI 无人机的照片和视频，直接存入您的 Immich 服务器
 
 通过 USB 导入 DJI 无人机的照片和视频，直接存入您的 Immich 服务器：将无人机、其遥控器或读卡器连接到 Android 手机，选择新文件并发送，视频会根据无人机的飞行数据标注到地图上，无人机拍摄的 360° 球形全景会以 360° 显示。Immich 应用只备份手机图库中已有的内容，而 Immich 服务器目前还无法读取 DJI Neo 2 视频的拍摄地点。此页面为实验性功能，仅适用于 Android 手机和平板，且尚未用真实的无人机试过。
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. 在设置、高级中，打开“DJI 无人机（实验性）”。资源库、网络共享中会出现一个“DJI 无人机”磁贴。
 2. 用 USB-C 数据线将无人机（Neo 2 可以保持关机）、其遥控器或读卡器连接到手机。在“DJI 无人机”页面上，点按“选择无人机或存储卡”，在选择器的侧边菜单中选中它，打开其 DCIM 文件夹或保留整个驱动器，然后点按“使用此文件夹”并选择“允许”。

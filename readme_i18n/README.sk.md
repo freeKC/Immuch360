@@ -84,6 +84,10 @@ Viac: [prehliadače a videoprehrávač](../docs/immuch360/user-guide.md#watch-yo
 
 Otočte fotku o 90° jedným stlačením, bez otvárania editora: tlačidlom, klávesom na klávesnici alebo farebným tlačidlom diaľkového ovládania televízora, na každej platforme. Aplikácia Immich otáča fotku vo svojom editore; Immuch360 to robí jedným klávesom a pri vašich vlastných fotkách na serveri Immich 2.6 alebo novšom používa ten istý editor servera, takže webová aplikácia a vaše ďalšie zariadenia ich zobrazia otočené. Každá iná fotka sa otočí len na tomto zariadení. Fotky 360°, 180° a 3D sa nikdy neotáčajú, aby imerzívne zobrazenia zostali vodorovné.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefóny, tablety a okno Meta Quest**: otvorte fotku a ťuknite na Otočiť v dolnom rade, pred Upraviť, aby ste ju otočili v smere hodinových ručičiek; dlhé stlačenie ju otočí opačným smerom. S klávesnicou R a Shift+R.
 2. **Android TV a Google TV**: žlté tlačidlo diaľkového ovládania otočí fotku v smere hodinových ručičiek a modré proti smeru hodinových ručičiek, nech je fokus v prehliadači kdekoľvek. Na diaľkovom ovládaní bez farebných tlačidiel stlačte Dole: zobrazí sa lišta pod fotkou s vybraným Otočiť (o jedno stlačenie Vpravo ďalej, keď má fotka textové tlačidlo) a každé OK fotku otočí.
 3. **Televízory LG (webOS)**: žlté a modré tlačidlo ako na Android TV, R a Shift+R na klávesnici alebo tlačidlo otočenia v ovládacích prvkoch fotky.
@@ -198,6 +202,10 @@ Viac: [pozeranie na televízore](../docs/immuch360/user-guide.md#watch-on-your-t
 
 Immuch360 existuje aj ako aplikácia Immich pre televízory LG s webOS: samostatná aplikácia pre televízory LG s webOS 4.0 a novším (od roku 2018), ovládaná diaľkovým ovládaním, ktorá zobrazuje váš server Immich a umiestňuje vaše fotky 360° na guľu, ktorú otáčate šípkami. Vlastné aplikácie Immich sa na televízor LG nenainštalujú. Je postavená na [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) od Seeky91, ktorá priniesla časovú os, albumy, ľudí, miesta, vyhľadávanie, prezentáciu a prihlásenie cez telefón; ďakujeme Seeky91. Verzia 0.1.0 je testovací build: zatiaľ nebežala na skutočnom televízore LG, inštaluje sa len v režime Developer Mode a každé hlásenie v [Issues](https://github.com/freeKC/Immuch360/issues) pomáha.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Nainštalujte ju na televízor v režime Developer Mode, pozri [Inštalácia](#lg-tvs-webos). Má vlastné ID aplikácie, takže sa nainštaluje vedľa Immich TV od Seeky91.
 2. Prihláste sa telefónom (naskenujte QR kód), e-mailom a heslom alebo kľúčom API.
 3. Prechádzajte šípkami a OK. V prehliadači Vľavo a Vpravo prejdú na predchádzajúcu alebo ďalšiu fotku či video, aj počas prehrávania videa; ovládacie prvky sa skryjú 5 s po poslednom stlačení; Info otvorí podrobnosti; tlačidlá kanálov približujú; ukazovateľ a koliesko Magic Remote fungujú.
@@ -220,6 +228,10 @@ Viac: [kamery Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-t
 ### Fotky a videá z vášho dronu DJI na vašom serveri Immich
 
 Importujte fotky a videá z dronu DJI cez USB priamo na váš server Immich: pripojte dron, jeho ovládač alebo čítačku kariet k telefónu s Androidom, vyberte nové súbory a odošlite ich; videá sa umiestnia na mapu podľa letových údajov dronu a 360° gule dronu sa zobrazia ako 360°. Aplikácia Immich zálohuje len to, čo už je v galérii telefónu, a server Immich zatiaľ nevie prečítať miesto videa z DJI Neo 2. Táto stránka je experimentálna, len na telefónoch a tabletoch s Androidom, a zatiaľ nebola vyskúšaná so skutočným dronom.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. V Nastaveniach, Pokročilé, zapnite „DJI drony (experimentálne)“. V Knižnica, Sieťové úložiská sa objaví dlaždica „Dron DJI“.
 2. Pripojte dron (Neo 2 môže zostať vypnutý), jeho ovládač alebo čítačku kariet k telefónu dátovým káblom USB-C. Na stránke dronu DJI ťuknite na „Vybrať dron alebo kartu“, vyberte ho v bočnej ponuke výberu súborov, otvorte jeho priečinok DCIM alebo ponechajte celú jednotku, potom „Použiť tento priečinok“ a Povoliť.

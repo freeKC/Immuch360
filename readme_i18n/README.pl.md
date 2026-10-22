@@ -84,6 +84,10 @@ Więcej: [przeglądarki i odtwarzacz wideo](../docs/immuch360/user-guide.md#watc
 
 Obróć zdjęcie o 90° jednym naciśnięciem, bez otwierania edytora: przyciskiem, klawiszem na klawiaturze lub kolorowym przyciskiem pilota telewizora, na każdej platformie. Aplikacja Immich obraca zdjęcie w swoim edytorze; Immuch360 robi to jednym klawiszem, a w przypadku Twoich własnych zdjęć na serwerze Immich 2.6 lub nowszym korzysta z tego samego edytora serwera, dzięki czemu aplikacja webowa i Twoje inne urządzenia pokazują je obrócone. Każde inne zdjęcie jest obracane tylko na tym urządzeniu. Zdjęcia 360°, 180° i 3D nigdy się nie obracają, aby widoki immersyjne pozostały wypoziomowane.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefony, tablety i okno Meta Quest**: otwórz zdjęcie i stuknij Obróć w dolnym rzędzie, przed Edytuj, aby obrócić je zgodnie z ruchem wskazówek zegara; długie naciśnięcie obraca je w drugą stronę. Na klawiaturze R i Shift+R.
 2. **Android TV i Google TV**: żółty przycisk pilota obraca zdjęcie zgodnie z ruchem wskazówek zegara, a niebieski przeciwnie, niezależnie od tego, gdzie w przeglądarce jest fokus. Na pilocie bez kolorowych przycisków naciśnij W dół: pasek pod zdjęciem pojawia się z zaznaczonym Obróć (jedno Prawo dalej, gdy zdjęcie ma przycisk tekstowy), a każde OK obraca zdjęcie.
 3. **Telewizory LG (webOS)**: żółty i niebieski jak na Android TV, R i Shift+R na klawiaturze albo przycisk obracania wśród elementów sterujących zdjęcia.
@@ -198,6 +202,10 @@ Więcej: [oglądaj na swoim telewizorze](../docs/immuch360/user-guide.md#watch-o
 
 Immuch360 jest dostępny także jako aplikacja Immich dla telewizorów LG z webOS: osobna aplikacja dla telewizorów LG z webOS 4.0 i nowszym (od 2018 roku), obsługiwana pilotem, która pokazuje Twój serwer Immich i umieszcza Twoje zdjęcia 360° na sferze obracanej strzałkami. Własne aplikacje Immich nie instalują się na telewizorze LG. Jest zbudowana na [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) autorstwa Seeky91, który wniósł oś czasu, albumy, osoby, miejsca, wyszukiwanie, pokaz slajdów i logowanie telefonem; dzięki, Seeky91. Wersja 0.1.0 jest kompilacją testową: nie była jeszcze uruchamiana na prawdziwym telewizorze LG, instaluje się tylko w Developer Mode, a każde zgłoszenie w [Issues](https://github.com/freeKC/Immuch360/issues) pomaga.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Zainstaluj ją na telewizorze w Developer Mode, zobacz [Instalacja](#lg-tvs-webos). Ma własny identyfikator aplikacji, więc instaluje się obok Immich TV autorstwa Seeky91.
 2. Zaloguj się telefonem (zeskanuj kod QR), adresem e-mail i hasłem albo kluczem API.
 3. Przeglądaj strzałkami i OK. W przeglądarce Lewo i Prawo przechodzą do poprzedniego lub następnego zdjęcia lub filmu, także podczas odtwarzania filmu; elementy sterujące znikają 5 s po ostatnim naciśnięciu; Info otwiera szczegóły; przyciski kanałów powiększają; działają wskaźnik i kółko Magic Remote.
@@ -220,6 +228,10 @@ Więcej: [kamery Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-an
 ### Zdjęcia i filmy z Twojego drona DJI na Twoim serwerze Immich
 
 Importuj zdjęcia i filmy z drona DJI przez USB, prosto na swój serwer Immich: podłącz drona, jego kontroler lub czytnik kart do telefonu z Androidem, wybierz nowe pliki i wyślij je; filmy trafiają na mapę dzięki danym lotu drona, a sfery 360° drona są pokazywane jako 360°. Aplikacja Immich tworzy kopię zapasową tylko tego, co już jest w galerii telefonu, a serwer Immich nie potrafi jeszcze odczytać miejsca filmu z DJI Neo 2. Ta strona jest eksperymentalna, działa tylko na telefonach i tabletach z Androidem i nie była jeszcze wypróbowana z prawdziwym dronem.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. W Ustawieniach, Zaawansowane włącz „Drony DJI (eksperymentalne)”. W Biblioteka, Udziały sieciowe pojawi się kafelek „Dron DJI”.
 2. Podłącz drona (Neo 2 może pozostać wyłączony), jego kontroler lub czytnik kart do telefonu kablem USB-C do transmisji danych. Na stronie Dron DJI stuknij „Wybierz drona lub kartę”, wybierz go w menu bocznym selektora, otwórz jego folder DCIM albo zostaw cały nośnik, a potem „Użyj tego folderu” i Zezwól.

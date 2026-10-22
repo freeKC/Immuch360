@@ -84,6 +84,10 @@ Lisää: [katselimet ja videosoitin](../docs/immuch360/user-guide.md#watch-your-
 
 Käännä kuvaa 90° yhdellä painalluksella avaamatta editoria: painikkeella, näppäimistön näppäimellä tai television kaukosäätimen värinäppäimellä, kaikilla alustoilla. Immich-sovellus kääntää kuvan editorissaan; Immuch360 tekee sen yhdellä näppäimellä, ja omille kuvillesi Immich 2.6 -palvelimella tai uudemmalla se käyttää samaa palvelimen editoria, joten verkkosovellus ja muut laitteesi näyttävät ne käännettyinä. Kaikki muut kuvat käännetään vain tällä laitteella. 360°-, 180°- ja 3D-kuvia ei koskaan käännetä, jotta immersiiviset näkymät pysyvät suorassa.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Puhelimet, tabletit ja Meta Questin ikkuna**: avaa kuva ja napauta alarivillä Käännä, ennen Muokkaa-painiketta, kääntääksesi sen myötäpäivään; pitkä painallus kääntää toiseen suuntaan. Näppäimistöllä R ja Shift+R.
 2. **Android TV ja Google TV**: kaukosäätimen keltainen näppäin kääntää kuvaa myötäpäivään ja sininen vastapäivään, missä tahansa kohdistus katselimessa onkin. Kaukosäätimellä, jossa ei ole värinäppäimiä, paina Alas: kuvan alle tulee palkki, jossa Käännä on valittuna (yhden Oikea-painalluksen päässä, kun kuvalla on tekstipainike), ja jokainen OK kääntää kuvaa.
 3. **LG-televisiot (webOS)**: keltainen ja sininen kuten Android TV:llä, R ja Shift+R näppäimistöllä, tai kuvan ohjainten kääntöpainike.
@@ -198,6 +202,10 @@ Lisää: [katso televisiollasi](../docs/immuch360/user-guide.md#watch-on-your-tv
 
 Immuch360 on saatavana myös Immich-sovelluksena LG:n webOS-televisioille: erillinen sovellus LG-televisioille, joissa on webOS 4.0 tai uudempi (vuodesta 2018), kaukosäätimellä ohjattava, joka näyttää Immich-palvelimesi ja asettaa 360°-kuvasi palloon, jota käännät nuolilla. Immichin omat sovellukset eivät asennu LG-televisioon. Se perustuu Seeky91:n projektiin [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos), joka toi aikajanan, albumit, ihmiset, paikat, haun, diaesityksen ja puhelimella kirjautumisen; kiitos Seeky91:lle. Versio 0.1.0 on testibuild: sitä ei ole vielä ajettu oikealla LG-televisiolla, se asentuu vain tilassa Developer Mode, ja jokainen raportti [Issues](https://github.com/freeKC/Immuch360/issues)-sivulla auttaa.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Asenna se televisioon tilassa Developer Mode, katso [Asennus](#lg-tvs-webos). Sillä on oma sovellustunnuksensa, joten se asentuu Seeky91:n Immich TV:n rinnalle.
 2. Kirjaudu sisään puhelimellasi (skannaa QR-koodi), sähköpostilla ja salasanalla tai API-avaimella.
 3. Selaa nuolilla ja OK:lla. Katselimessa Vasen ja Oikea siirtyvät edelliseen tai seuraavaan kuvaan tai videoon, myös videon toiston aikana; ohjaimet piiloutuvat 5 s viimeisen näppäinpainalluksen jälkeen; Info avaa tiedot; kanavanäppäimet zoomaavat; Magic Remoten osoitin ja rulla toimivat.
@@ -220,6 +228,10 @@ Lisää: [Tapo-kamerat](../docs/immuch360/user-guide.md#tapo-cameras-live-view-a
 ### DJI-droonisi kuvat ja videot Immich-palvelimellesi
 
 Tuo DJI-droonin kuvat ja videot USB:n kautta suoraan Immich-palvelimellesi: kytke drooni, sen ohjain tai kortinlukija Android-puhelimeen, valitse uudet tiedostot ja lähetä ne, jolloin videot sijoitetaan kartalle droonin lentotietojen perusteella ja droonin 360°-pallot näytetään 360°-kuvina. Immich-sovellus varmuuskopioi vain sen, mikä on jo puhelimen galleriassa, eikä Immich-palvelin osaa vielä lukea DJI Neo 2 -videon sijaintia. Tämä sivu on kokeellinen, vain Android-puhelimilla ja -tableteilla, eikä sitä ole vielä kokeiltu oikealla droonilla.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Ota kohdassa Asetukset, Edistyneet käyttöön "DJI-droonit (kokeellinen)". Kohtaan Kirjasto, Verkkojaot ilmestyy "DJI-drooni"-ruutu.
 2. Kytke drooni (Neo 2 voi olla sammutettuna), sen ohjain tai kortinlukija puhelimeen USB-C-datakaapelilla. Napauta DJI-droonin sivulla "Valitse drooni tai kortti", valitse se valitsimen sivuvalikosta, avaa sen DCIM-kansio tai pidä koko asema, sitten "Käytä tätä kansiota" ja Salli.

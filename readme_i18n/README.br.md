@@ -84,6 +84,10 @@ Muioc'h: [ar gwelerioù hag ar c'hoarier video](../docs/immuch360/user-guide.md#
 
 Treiñ ur skeudenn 90° gant ur bouezadenn hepken, hep digeriñ un embanner: ur bouton, un douchenn eus ar c'hlavier pe un douchenn liv eus pellrener ar skinwel, war pep platform. Arload Immich a dro ur skeudenn en e embanner; Immuch360 a ra se gant un douchenn, ha evit ho skeudennoù deoc'h war ur servijer Immich 2.6 pe nevesoc'h ez a dre ar memes embanner servijer, evel-se an arload web hag ho trevnadoù all a ziskouez anezho troet. Pep skeudenn all a vez troet war an trevnad-mañ hepken. Ar skeudennoù 360°, 180° ha 3D na dreont biskoazh, evel-se e chom ar gweloù immersiv a-blaen.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Pellgomzerioù, tablezennoù ha prenestr ar Meta Quest**: digorit ar skeudenn ha pouezit war Rotate er renk traoñ, a-raok Edit, evit he zreiñ gant roud ar bizied; ur bouezadenn hir a dro anezhi en tu all. Gant ur c'hlavier, R ha Shift+R.
 2. **Android TV ha Google TV**: an douchenn velen eus ar pellrener a dro ar skeudenn gant roud ar bizied hag an douchenn c'hlas a-enep roud ar bizied, ne vern pelec'h emañ ar fokus er gweler. War ur pellrener hep touchoù liv, pouezit war Traoñ: ar varrenn dindan ar skeudenn a zeu war wel gant Rotate dibabet (ur wech Dehou pelloc'h pa'z eus ur bouton testenn gant ar skeudenn), ha pep OK a dro ar skeudenn.
 3. **Skinwelioù LG (webOS)**: melen ha glas evel war Android TV, R ha Shift+R war ur c'hlavier, pe bouton treiñ kontrolloù ar skeudenn.
@@ -198,6 +202,10 @@ Muioc'h: [sellet war ho skinwel](../docs/immuch360/user-guide.md#watch-on-your-t
 
 Immuch360 a zeu ivez evel un arload Immich evit skinwelioù LG webOS: un arload a-ziforc'h evit skinwelioù LG gant webOS 4.0 ha nevesoc'h (adalek 2018), renet gant ar pellrener, a ziskouez ho servijer Immich hag a laka ho skeudennoù 360° war ur sferenn a droit gant ar biroù. Ne c'haller ket staliañ arloadoù Immich e-unan war ur skinwel LG. Savet eo war [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) gant Seeky91, en deus degaset al linenn-amzer, an albumoù, an dud, al lec'hioù, an enklask, an diskouezadeg skeudennoù hag ar c'hennaskañ gant ur pellgomzer; trugarez da Seeky91. Ar stumm 0.1.0 a zo ur savadur amprouiñ: n'eo ket bet loc'het c'hoazh war ur skinwel LG gwirion, ne vez staliet nemet e Developer Mode, ha pep danevell e [Kudennoù](https://github.com/freeKC/Immuch360/issues) a sikour.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Staliit anezhañ war ur skinwel e Developer Mode, gwelet [Staliañ](#lg-tvs-webos). Un app id dezhañ e-unan en deus, evel-se e vez staliet e-kichen Immich TV gant Seeky91.
 2. Kevreit gant ho pellgomzer (skanit ar c'hod QR), gant ho chomlec'h postel hag ho ker-tremen, pe gant un alc'hwez API.
 3. Merdeit gant ar biroù hag OK. Er gweler, Kleiz ha Dehou a ya d'ar skeudenn pe d'ar video kent pe da-heul, ivez e-pad ma c'hoari ur video; ar c'hontrolloù en em guzh 5 s goude an douchenn ziwezhañ; Info a zigor ar munudoù; touchoù ar chadennoù a ra zoum; poenter ha rodell ar Magic Remote a labour.
@@ -220,6 +228,10 @@ Muioc'h: [kameraoù Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view
 ### Skeudennoù ha videoioù ho tron DJI war ho servijer Immich
 
 Enporzhiit skeudennoù ha videoioù un dron DJI dre USB, war-eeun d'ho servijer Immich: kevreit an dron, e bellrener pe ul lenner kartennoù ouzh ur pellgomzer Android, dibabit ar restroù nevez ha kasit anezho, gant ar videoioù lakaet war ar gartenn diwar roadennoù nij an dron ha sferennoù 360° an dron diskouezet evel 360°. Arload Immich ne ra gwared nemet eus ar pezh a zo e galeri ar pellgomzer dija, ha servijer Immich ne c'hell ket lenn c'hoazh lec'h ur video DJI Neo 2. Arnodel eo ar bajenn-mañ, war ar pellgomzerioù hag an tablezennoù Android hepken, ha n'eo ket bet amprouet c'hoazh gant un dron gwirion.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. En Arventennoù, Araokaet, gweredekait "DJI drones (experimental)". Ur garrezenn "DJI drone" a zeu war wel e Levraoueg, Rannadennoù rouedad.
 2. Kevreit an dron (un Neo 2 a c'hell chom lazhet), e bellrener pe ul lenner kartennoù ouzh ar pellgomzer gant ur fun roadennoù USB-C. War ar bajenn DJI drone, pouezit war "Choose the drone or the card", dibabit anezhañ e lañser kostez an dibaber, digorit e deuliad DCIM pe mirit ar bladenn a-bezh, ha neuze "Use this folder" hag Allow.

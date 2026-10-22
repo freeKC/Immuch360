@@ -84,6 +84,10 @@ Lagi: [pemapar nga pemaing video](../docs/immuch360/user-guide.md#watch-your-pho
 
 Pusing gambo 90° nga satu tekan, tanpo bukak penyunting: butang, kekunci papan kekunci ke kekunci warna kat remote TV, kat satiap platform. Aplikasi Immich pusing gambo dale penyunting dio; Immuch360 buat dio nga satu kekunci, nga untuk gambo demo sendiri kat server Immich 2.6 ke hok lagi baru dio lalu penyunting server hok samo tu, jadi aplikasi web nga peranti demo hok lain tunjuk gambo tu doh dipusing. Gambo lain dipusing kat peranti ni jah. Gambo 360°, 180° nga 3D tak sekali-kali dipusing, supayo pandanga immersif kekal lurus.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefon, tablet nga tetingkap Meta Quest**: bukak gambo tu nga ketuk Putar kat baris bawoh, sebelum Sunting, untuk pusing dio ikut arah jam; tekan lamo pusing dio arah lain. Nga papan kekunci, R nga Shift+R.
 2. **Android TV nga Google TV**: kekunci kuning kat remote pusing gambo ikut arah jam nga kekunci biru lawan arah jam, kat mano-mano pun fokus dale pemapar. Kat remote hok takdok kekunci warna, tekan Bawoh: bar bawoh gambo keluar nga Putar doh dipilih (satu Kane lagi bilo gambo tu ado butang teks), nga tiap OK pusing gambo tu.
 3. **TV LG (webOS)**: kuning nga biru macam kat Android TV, R nga Shift+R kat papan kekunci, ke butang pusing dale kawala gambo tu.
@@ -198,6 +202,10 @@ Lagi: [tengok kat TV demo](../docs/immuch360/user-guide.md#watch-on-your-tv-andr
 
 Immuch360 ado jugok sebagai aplikasi Immich untuk TV LG webOS: aplikasi asing untuk TV LG nga webOS 4.0 ke hok lagi baru (dari 2018), dikawal remote, hok tunjuk server Immich demo nga letak gambo 360° demo kat sfera hok demo pusing nga anak panah. Aplikasi Immich sendiri tak leh pasang kat TV LG. Dio dibina atas [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) dek Seeky91, hok bawok garis maso, album, orang, tempat, carian, tayanga slaid nga log masuk nga telefon; terimo kasih ko Seeky91. Versi 0.1.0 ialah build uji: dio belum jale kat TV LG sebenar lagi, dio pasang dale Developer Mode jah, nga satiap lapora dale [Issues](https://github.com/freeKC/Immuch360/issues) tolong.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Pasang dio kat TV dale Developer Mode, tengok [Pasang](#lg-tvs-webos). Dio ado ID aplikasi dio sendiri, jadi dio pasang sebeloh Immich TV dek Seeky91.
 2. Log masuk nga telefon demo (imbas kod QR), nga e-mel nga kato lalue demo, ke nga kunci API.
 3. Selak nga anak panah nga OK. Dale pemapar, Kiri nga Kane pi ko gambo ke video sebelum ke seteruh, jugok maso video tengoh maing; kawala sorok 5 s lepah kekunci terakhir; Info bukak perincia; kekunci saluran zoom; penunjuk nga roda Magic Remote jale.
@@ -220,6 +228,10 @@ Lagi: [kamera Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-t
 ### Gambo nga video dron DJI demo kat server Immich demo
 
 Import gambo nga video dron DJI lalu USB, terus ko server Immich demo: cucuk dron, alat kawala dio ke pembaco kad ko telefon Android, pilih fail baru nga hanta dio, nga video diletak kat peta dari data terbang dron nga sfera 360° dron ditunjuk sebagai 360°. Aplikasi Immich sandar apo hok doh ado dale galeri telefon jah, nga server Immich belum leh baco tempat video DJI Neo 2 lagi. Muko ni eksperimen, kat telefon nga tablet Android jah, nga belum dicubo nga dron sebenar lagi.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Dale Tetapa, Lanju, hidupke "Dron DJI (eksperimen)". Jubin "Dron DJI" keluar dale Pustako, Kongsi rangkaie.
 2. Cucuk dron (Neo 2 leh kekal tutup), alat kawala dio ke pembaco kad ko telefon nga kabel data USB-C. Kat muko dron DJI, ketuk "Pilih dron ke kad", pilih dio dale menu tepi pemilih, bukak folder DCIM dio ke simpan seluruh pemacu, lepah tu "Guno folder ni" nga Bena.

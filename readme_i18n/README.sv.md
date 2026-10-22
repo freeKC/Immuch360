@@ -84,6 +84,10 @@ Mer: [visarna och videospelaren](../docs/immuch360/user-guide.md#watch-your-phot
 
 Rotera ett foto 90° med ett enda tryck, utan att öppna en redigerare: en knapp, en tangent på tangentbordet eller en färgknapp på TV:ns fjärrkontroll, på alla plattformar. Immich-appen vrider ett foto i sin redigerare; Immuch360 gör det med en tangent, och för dina egna foton på en Immich-server 2.6 eller senare går det via samma redigerare på servern, så att webbappen och dina andra enheter visar dem vridna. Alla andra foton vrids bara på den här enheten. 360°-, 180°- och 3D-foton vrids aldrig, så att de immersiva vyerna förblir i våg.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefoner, surfplattor och Meta Quest-fönstret**: öppna fotot och tryck på Rotera i den nedre raden, före Redigera, för att vrida det medurs; ett långt tryck vrider det åt andra hållet. Med ett tangentbord, R och Shift+R.
 2. **Android TV och Google TV**: fjärrkontrollens gula knapp vrider fotot medurs och den blå knappen moturs, var fokus än befinner sig i visaren. På en fjärrkontroll utan färgknappar, tryck Ned: fältet under fotot visas med Rotera markerat (ett steg åt Höger bort när fotot har en textknapp), och varje OK vrider fotot.
 3. **LG-TV (webOS)**: gul och blå som på Android TV, R och Shift+R på ett tangentbord, eller vridknappen bland fotots kontroller.
@@ -198,6 +202,10 @@ Mer: [titta på din TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android
 
 Immuch360 finns också som en Immich-app för LG webOS-TV: en separat app för LG-TV med webOS 4.0 och senare (från 2018), styrd med fjärrkontrollen, som visar din Immich-server och lägger dina 360°-foton på en sfär som du vrider med pilarna. Immichs egna appar går inte att installera på en LG-TV. Den bygger på [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) av Seeky91, som stod för tidslinjen, albumen, personer, platser, sökningen, bildspelet och inloggningen med en telefon; tack till Seeky91. Version 0.1.0 är ett testbygge: den har ännu inte körts på en riktig LG-TV, den installeras bara i Developer Mode, och varje rapport i [Issues](https://github.com/freeKC/Immuch360/issues) hjälper.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Installera den på en TV i Developer Mode, se [Installera](#lg-tvs-webos). Den har ett eget app-id, så den installeras bredvid Immich TV av Seeky91.
 2. Logga in med din telefon (skanna QR-koden), med din e-postadress och ditt lösenord, eller med en API-nyckel.
 3. Bläddra med pilarna och OK. I visaren går Vänster och Höger till föregående eller nästa foto eller video, även medan en video spelas; kontrollerna döljs 5 s efter den senaste knapptryckningen; Info öppnar detaljerna; kanalknapparna zoomar; Magic Remote-pekaren och hjulet fungerar.
@@ -220,6 +228,10 @@ Mer: [Tapo-kameror](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-t
 ### Din DJI-drönares foton och videor på din Immich-server
 
 Importera foton och videor från en DJI-drönare via USB, direkt till din Immich-server: anslut drönaren, dess fjärrkontroll eller en kortläsare till en Android-telefon, välj de nya filerna och skicka dem, med videorna placerade på kartan utifrån drönarens flygdata och drönarens 360°-sfärer visade som 360°. Immich-appen säkerhetskopierar bara det som redan finns i telefonens galleri, och Immich-servern kan ännu inte läsa platsen för en video från DJI Neo 2. Den här sidan är experimentell, finns bara på Android-telefoner och surfplattor, och har ännu inte provats med en riktig drönare.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. I Inställningar, Avancerat, slå på "DJI-drönare (experimentell)". En ruta "DJI-drönare" visas i Bibliotek, Nätverksresurser.
 2. Anslut drönaren (en Neo 2 kan vara avstängd), dess fjärrkontroll eller en kortläsare till telefonen med en USB-C-datakabel. På sidan DJI-drönare, tryck på "Välj drönaren eller kortet", välj den i väljarens sidomeny, öppna dess DCIM-mapp eller behåll hela enheten, sedan "Använd den här mappen" och Tillåt.

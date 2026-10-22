@@ -84,6 +84,10 @@ Mer: [fremviserne og videospilleren](../docs/immuch360/user-guide.md#watch-your-
 
 Roter et bilde 90° med ett trykk, uten å åpne et redigeringsverktøy: en knapp, en tast på tastaturet eller en fargetast på TV-fjernkontrollen, på alle plattformer. Immich-appen roterer et bilde i redigeringsverktøyet sitt; Immuch360 gjør det med én tast, og for dine egne bilder på en Immich-server 2.6 eller nyere går det gjennom det samme redigeringsverktøyet på serveren, slik at nettappen og de andre enhetene dine viser dem rotert. Alle andre bilder roteres bare på denne enheten. 360°-, 180°- og 3D-bilder roteres aldri, så de immersive visningene forblir i vater.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefoner, tabletter og Meta Quest-vinduet**: åpne bildet og trykk på Roter i den nederste raden, foran Rediger, for å rotere det med klokken; et langt trykk roterer det den andre veien. Med et tastatur, R og Shift+R.
 2. **Android TV og Google TV**: den gule tasten på fjernkontrollen roterer bildet med klokken og den blå tasten mot klokken, uansett hvor fokuset er i fremviseren. På en fjernkontroll uten fargetaster trykker du Ned: linjen under bildet vises med Roter valgt (ett trykk på Høyre unna når bildet har en tekstknapp), og hvert OK roterer bildet.
 3. **LG-TV-er (webOS)**: gul og blå som på Android TV, R og Shift+R på et tastatur, eller rotasjonsknappen i bildets kontroller.
@@ -198,6 +202,10 @@ Mer: [se på TV-en din](../docs/immuch360/user-guide.md#watch-on-your-tv-android
 
 Immuch360 finnes også som en Immich-app for LG webOS-TV-er: en egen app for LG-TV-er med webOS 4.0 og nyere (fra 2018), styrt med fjernkontrollen, som viser Immich-serveren din og legger 360°-bildene dine på en kule du snur med pilene. Immichs egne apper kan ikke installeres på en LG-TV. Den er bygget på [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) av Seeky91, som bidro med tidslinjen, albumene, personer, steder, søk, lysbildefremvisningen og innlogging med en telefon; takk til Seeky91. Versjon 0.1.0 er en testbuild: den har ikke kjørt på en ekte LG-TV ennå, den kan bare installeres i Developer Mode, og hver rapport i [Issues](https://github.com/freeKC/Immuch360/issues) hjelper.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Installer den på en TV i Developer Mode, se [Installer](#lg-tvs-webos). Den har sin egen app-id, så den installeres ved siden av Immich TV fra Seeky91.
 2. Logg inn med telefonen din (skann QR-koden), med e-post og passord, eller med en API-nøkkel.
 3. Bla med pilene og OK. I fremviseren går Venstre og Høyre til forrige eller neste bilde eller video, også mens en video spilles av; kontrollene skjules 5 s etter siste tastetrykk; Info åpner detaljene; kanaltastene zoomer; pekeren og hjulet på Magic Remote fungerer.
@@ -220,6 +228,10 @@ Mer: [Tapo-kameraer](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-
 ### Bildene og videoene fra DJI-dronen din på Immich-serveren din
 
 Importer bildene og videoene fra en DJI-drone over USB, rett til Immich-serveren din: koble dronen, kontrolleren eller en kortleser til en Android-telefon, velg de nye filene og send dem, med videoene plassert på kartet ut fra dronens flydata og dronens 360°-kuler vist som 360°. Immich-appen sikkerhetskopierer bare det som allerede ligger i telefonens galleri, og Immich-serveren kan ennå ikke lese stedet for en DJI Neo 2-video. Denne siden er eksperimentell, kun på Android-telefoner og -tabletter, og er ikke prøvd med en ekte drone ennå.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Slå på "DJI-droner (eksperimentell)" i Innstillinger, Avansert. En "DJI-drone"-flis dukker opp i Bibliotek, Nettverksdelinger.
 2. Koble dronen (en Neo 2 kan være avslått), kontrolleren eller en kortleser til telefonen med en USB-C-datakabel. På DJI-drone-siden trykker du på "Velg dronen eller kortet", velger den i sidemenyen i velgeren, åpner DCIM-mappen eller beholder hele stasjonen, og deretter "Bruk denne mappen" og Tillat.

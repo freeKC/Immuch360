@@ -84,6 +84,10 @@ Batafsil: [ko‘ruvchilar va video pleer](../docs/immuch360/user-guide.md#watch-
 
 Fotosuratni muharrirni ochmasdan, bir bosishda 90° ga buring: har bir platformada tugma, klaviatura tugmasi yoki televizor pultining rangli tugmasi bilan. Immich ilovasi fotosuratni o‘z muharririda buradi; Immuch360 buni bitta tugma bilan qiladi, Immich 2.6 yoki undan keyingi serverdagi o‘z fotosuratlaringiz uchun esa burish o‘sha server muharriri orqali o‘tadi, shuning uchun veb-ilova va boshqa qurilmalaringiz ham ularni burilgan holda ko‘rsatadi. Boshqa har qanday fotosurat faqat shu qurilmada buriladi. 360°, 180° va 3D fotosuratlar hech qachon burilmaydi, shunda immersiv ko‘rinishlar tekis turadi.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telefonlar, planshetlar va Meta Quest oynasi**: fotosuratni oching va uni soat yo‘nalishida burish uchun pastki qatorda Tahrirlash'dan oldingi Burish tugmasiga teging; uzoq bosish uni teskari tomonga buradi. Klaviatura bilan R va Shift+R.
 2. **Android TV va Google TV**: ko‘ruvchida fokus qayerda bo‘lishidan qat‘i nazar, pultning sariq tugmasi fotosuratni soat yo‘nalishida, ko‘k tugmasi esa soat yo‘nalishiga teskari buradi. Rangli tugmalari bo‘lmagan pultda Pastga bosing: fotosurat ostidagi panel Burish tanlangan holda chiqadi (fotosuratda matnli tugma bo‘lsa, bir marta O‘ngga bosish narida), va har bir OK fotosuratni buradi.
 3. **LG televizorlari (webOS)**: Android TV'dagi kabi sariq va ko‘k, klaviaturada R va Shift+R yoki fotosurat boshqaruvlaridagi burish tugmasi.
@@ -198,6 +202,10 @@ Batafsil: [televizoringizda tomosha qiling](../docs/immuch360/user-guide.md#watc
 
 Immuch360 LG webOS televizorlari uchun Immich ilovasi sifatida ham mavjud: webOS 4.0 va undan keyingi versiyali LG televizorlari (2018-yildan) uchun alohida ilova, pult bilan boshqariladi, Immich serveringizni ko‘rsatadi va 360° fotosuratlaringizni o‘qlar bilan aylantiradigan sferaga joylashtiradi. Immich'ning o‘z ilovalari LG televizoriga o‘rnatilmaydi. U Seeky91'ning [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) loyihasi asosida qurilgan, vaqt chizig‘i, albomlar, odamlar, joylar, qidiruv, slayd-shou va telefon orqali kirish aynan undan kelgan; Seeky91'ga rahmat. 0.1.0 versiyasi test build: u hali haqiqiy LG televizorida ishlamagan, faqat Developer Mode'da o‘rnatiladi va [Issues](https://github.com/freeKC/Immuch360/issues) sahifasidagi har bir xabar yordam beradi.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Uni Developer Mode'dagi televizorga o‘rnating, qarang: [O‘rnatish](#lg-tvs-webos). Uning o‘z ilova identifikatori bor, shuning uchun u Seeky91'ning Immich TV ilovasi yoniga o‘rnatiladi.
 2. Telefoningiz bilan (QR kodni skanerlang), elektron pochta va parolingiz bilan yoki API kaliti bilan kiring.
 3. O‘qlar va OK bilan ko‘zdan kechiring. Ko‘ruvchida Chap va O‘ng, video ijro etilayotganda ham, oldingi yoki keyingi fotosurat yoki videoga o‘tadi; boshqaruvlar oxirgi tugmadan 5 s o‘tib yashirinadi; Info tafsilotlarni ochadi; kanal tugmalari kattalashtiradi; Magic Remote ko‘rsatkichi va g‘ildiragi ishlaydi.
@@ -220,6 +228,10 @@ Batafsil: [Tapo kameralari](../docs/immuch360/user-guide.md#tapo-cameras-live-vi
 ### DJI droningizning fotosurat va videolari Immich serveringizda
 
 DJI dronining fotosurat va videolarini USB orqali to‘g‘ridan-to‘g‘ri Immich serveringizga import qiling: dron, uning pulti yoki karta o‘quvchini Android telefonga ulang, yangi fayllarni tanlang va yuboring; videolar dronning parvoz ma‘lumotlari bo‘yicha xaritaga joylashtiriladi, dronning 360° sferalari esa 360° sifatida ko‘rsatiladi. Immich ilovasi faqat telefon galereyasida allaqachon bor narsalarning zaxira nusxasini oladi, Immich server esa hali DJI Neo 2 videosining joyini o‘qiy olmaydi. Bu sahifa tajribaviy, faqat Android telefon va planshetlarida mavjud va hali haqiqiy dron bilan sinab ko‘rilmagan.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Sozlamalar, Kengaytirilgan bo‘limida "DJI dronlari (tajribaviy)" ni yoqing. Kutubxona, Tarmoq ulashmalari ichida "DJI droni" plitkasi paydo bo‘ladi.
 2. Dronni (Neo 2 o‘chiq qolishi mumkin), uning pultini yoki karta o‘quvchini USB-C ma‘lumot kabeli bilan telefonga ulang. DJI droni sahifasida "Dron yoki kartani tanlang" tugmasiga teging, tanlash oynasining yon menyusida uni tanlang, uning DCIM papkasini oching yoki butun diskni qoldiring, so‘ngra "Shu papkadan foydalanish" va Ruxsat berish.

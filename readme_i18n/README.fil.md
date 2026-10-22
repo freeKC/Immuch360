@@ -84,6 +84,10 @@ Higit pa: [mga viewer at ang video player](../docs/immuch360/user-guide.md#watch
 
 Iikot ang isang larawan nang 90° sa isang pindot, nang hindi nagbubukas ng editor: isang button, isang key ng keyboard, o isang color key ng remote ng TV, sa bawat platform. Iniikot ng Immich app ang larawan sa editor nito; ginagawa ito ng Immuch360 gamit ang isang key, at para sa sarili mong mga larawan sa Immich server 2.6 o mas bago, dumadaan ito sa parehong editor ng server, kaya nakaikot din ang mga ito sa web app at sa iba mo pang device. Ang iba pang larawan ay iniikot lamang sa device na ito. Hindi kailanman iniikot ang mga 360°, 180° at 3D na larawan, para manatiling pantay ang mga immersive view.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Mga phone, tablet at ang window ng Meta Quest**: buksan ang larawan at pindutin ang Rotate sa ibabang hilera, bago ang I-edit, para iikot ito nang clockwise; iniikot ito ng long press sa kabilang direksyon. Gamit ang keyboard, R at Shift+R.
 2. **Android TV at Google TV**: iniikot ng dilaw na key ng remote ang larawan nang clockwise at ng asul na key nang counterclockwise, saanman naroroon ang focus sa viewer. Sa remote na walang color key, pindutin ang Down: lalabas ang bar sa ilalim ng larawan na naka-select ang Rotate (isang Right ang layo kapag may text button ang larawan), at iniikot ng bawat OK ang larawan.
 3. **Mga LG TV (webOS)**: dilaw at asul tulad sa Android TV, R at Shift+R sa keyboard, o ang rotate button sa mga control ng larawan.
@@ -198,6 +202,10 @@ Higit pa: [panoorin sa iyong TV](../docs/immuch360/user-guide.md#watch-on-your-t
 
 Mayroon ding Immuch360 bilang Immich app para sa mga LG webOS TV: isang hiwalay na app para sa mga LG TV na may webOS 4.0 at mas bago (mula 2018), kinokontrol ng remote, na nagpapakita ng iyong Immich server at inilalagay ang iyong mga 360° na larawan sa isang sphere na iniikot mo gamit ang mga arrow. Hindi nai-install ang sariling mga app ng Immich sa isang LG TV. Binuo ito sa [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) ni Seeky91, na nagdala ng timeline, mga album, mga tao, mga lugar, search, slideshow at pag-sign in gamit ang telepono; salamat kay Seeky91. Ang bersyon 0.1.0 ay isang test build: hindi pa ito napapatakbo sa tunay na LG TV, sa Developer Mode lamang ito nai-install, at nakatutulong ang bawat report sa [Issues](https://github.com/freeKC/Immuch360/issues).
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. I-install ito sa isang TV na naka-Developer Mode, tingnan ang [I-install](#lg-tvs-webos). May sarili itong app id, kaya nai-install ito katabi ng Immich TV ni Seeky91.
 2. Mag-sign in gamit ang iyong telepono (i-scan ang QR code), gamit ang iyong email at password, o gamit ang isang API key.
 3. Mag-browse gamit ang mga arrow at OK. Sa viewer, pumupunta ang Left at Right sa nakaraan o susunod na larawan o video, kahit habang nagpe-play ang video; nagtatago ang mga control 5 s pagkatapos ng huling key; binubuksan ng Info ang mga detalye; nag-zoom ang mga channel key; gumagana ang pointer at wheel ng Magic Remote.
@@ -220,6 +228,10 @@ Higit pa: [mga Tapo camera](../docs/immuch360/user-guide.md#tapo-cameras-live-vi
 ### Ang mga larawan at video ng iyong DJI drone sa iyong Immich server
 
 I-import ang mga larawan at video ng isang DJI drone sa USB, diretso sa iyong Immich server: isaksak ang drone, ang controller nito o isang card reader sa isang Android phone, piliin ang mga bagong file at ipadala ang mga ito, na nakalagay sa mapa ang mga video batay sa flight data ng drone at ipinapakita bilang 360° ang mga 360° na sphere ng drone. Bina-back up lamang ng Immich app ang nasa gallery na ng telepono, at hindi pa kayang basahin ng Immich server ang lokasyon ng isang DJI Neo 2 na video. Eksperimental ang page na ito, sa mga Android phone at tablet lamang, at hindi pa nasusubukan gamit ang tunay na drone.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Sa Settings, Advanced, i-on ang "DJI drones (experimental)". Lalabas ang tile na "DJI drone" sa Library, Mga network share.
 2. Isaksak ang drone (puwedeng manatiling naka-off ang Neo 2), ang controller nito o isang card reader sa telepono gamit ang USB-C data cable. Sa DJI drone page, pindutin ang "Choose the drone or the card", piliin ito sa side menu ng picker, buksan ang DCIM folder nito o panatilihin ang buong drive, pagkatapos ang "Gamitin ang folder na ito" at Payagan.

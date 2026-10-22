@@ -84,6 +84,10 @@ Més informació: [els visualitzadors i el reproductor de vídeo](../docs/immuch
 
 Gira una foto 90° amb una sola pulsació, sense obrir cap editor: un botó, una tecla del teclat o una tecla de color del comandament del televisor, a totes les plataformes. L'aplicació Immich gira una foto al seu editor; Immuch360 ho fa amb una sola tecla, i per a les teves pròpies fotos en un servidor Immich 2.6 o posterior passa per aquest mateix editor del servidor, de manera que l'aplicació web i els teus altres dispositius les mostren girades. Qualsevol altra foto es gira només en aquest dispositiu. Les fotos 360°, 180° i 3D no giren mai, perquè les vistes immersives quedin anivellades.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Telèfons, tauletes i la finestra de Meta Quest**: obre la foto i toca Rotate a la fila inferior, abans d'Edita, per girar-la en el sentit de les agulles del rellotge; una pulsació llarga la gira en l'altre sentit. Amb un teclat, R i Shift+R.
 2. **Android TV i Google TV**: la tecla groga del comandament gira la foto en el sentit de les agulles del rellotge i la blava en sentit contrari, sigui on sigui el focus al visualitzador. En un comandament sense tecles de color, prem Avall: apareix la barra de sota la foto amb Rotate seleccionat (a un pas cap a la dreta quan la foto té un botó de text), i cada OK gira la foto.
 3. **Televisors LG (webOS)**: la groga i la blava com a Android TV, R i Shift+R en un teclat, o el botó de girar dels controls de la foto.
@@ -198,6 +202,10 @@ Més informació: [mira-ho al teu televisor](../docs/immuch360/user-guide.md#wat
 
 Immuch360 també es presenta com a aplicació Immich per a televisors LG webOS: una aplicació a part per a televisors LG amb webOS 4.0 o posterior (des del 2018), controlada amb el comandament, que mostra el teu servidor Immich i posa les teves fotos 360° en una esfera que gires amb les fletxes. Les aplicacions pròpies d'Immich no s'instal·len en un televisor LG. Està construïda sobre [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) de Seeky91, que va aportar la línia de temps, els àlbums, les persones, els llocs, la cerca, la presentació de diapositives i l'inici de sessió amb un telèfon; gràcies a Seeky91. La versió 0.1.0 és una compilació de prova: encara no s'ha executat en un televisor LG real, només s'instal·la en Developer Mode, i qualsevol informe a [Issues](https://github.com/freeKC/Immuch360/issues) ajuda.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Instal·la-la en un televisor en Developer Mode, consulta [Instal·lació](#lg-tvs-webos). Té el seu propi app id, de manera que s'instal·la al costat d'Immich TV de Seeky91.
 2. Inicia la sessió amb el telèfon (escaneja el codi QR), amb el correu electrònic i la contrasenya, o amb una clau API.
 3. Navega amb les fletxes i OK. Al visualitzador, Esquerra i Dreta passen a la foto o el vídeo anterior o següent, també mentre es reprodueix un vídeo; els controls s'amaguen 5 s després de l'última tecla; Info obre els detalls; les tecles de canal fan zoom; el punter i la roda del Magic Remote funcionen.
@@ -220,6 +228,10 @@ Més informació: [càmeres Tapo](../docs/immuch360/user-guide.md#tapo-cameras-l
 ### Les fotos i els vídeos del teu dron DJI al teu servidor Immich
 
 Importa les fotos i els vídeos d'un dron DJI per USB, directament al teu servidor Immich: connecta el dron, el seu comandament o un lector de targetes a un telèfon Android, tria els fitxers nous i envia'ls, amb els vídeos situats al mapa a partir de les dades de vol del dron i les esferes 360° del dron mostrades com a 360°. L'aplicació Immich només fa còpia de seguretat del que ja és a la galeria del telèfon, i el servidor Immich encara no pot llegir la ubicació d'un vídeo d'un DJI Neo 2. Aquesta pàgina és experimental, només a telèfons i tauletes Android, i encara no s'ha provat amb un dron real.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. A Configuració, Avançat, activa "DJI drones (experimental)". Apareix una fitxa "DJI drone" a Biblioteca, Recursos compartits de xarxa.
 2. Connecta el dron (un Neo 2 pot estar apagat), el seu comandament o un lector de targetes al telèfon amb un cable de dades USB-C. A la pàgina del dron DJI, toca "Choose the drone or the card", tria'l al menú lateral del selector, obre la seva carpeta DCIM o conserva tota la unitat, i després "Use this folder" i Allow.

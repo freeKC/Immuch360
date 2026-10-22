@@ -84,6 +84,10 @@ Ugar: [imeskanen d umeskan n tvidyutin](../docs/immuch360/user-guide.md#watch-yo
 
 Zzi tawlaft s 90° s yiwen usiti, war ma teldiḍ amaẓrag: taqeffalt, taqeffalt n klavye neɣ taqeffalt s yini n tlikumand n TV, ɣef yal tagrumma. Asnas Immich yettezzi tawlaft deg umaẓrag-is; Immuch360 yexdem-it s yiwet n tqeffalt, yerna i tiwlafin-ik ɣef uqeddac Immich 2.6 neɣ win i d-iteddun, ad iɛeddi s umaẓrag-nni n uqeddac, akken asnas web d yibenkan-ik nniḍen ad ten-sken ttwazzint. Ayen nniḍen n twlafin ttezzint ɣef ibenk-agi kan. Tiwlafin n 360°, 180° d 3D ur ttezzint ara, akken timuɣliwin timirsifin ad qqiment d tusridin.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Tilifunen, tablitin d ṭṭaq n Meta Quest**: ldi tawlaft sinna sit ɣef Zzi deg yizirig n wadda, uqbel Ẓreg, akken ad tezzi ɣer tama n tsegnatin n temrilt; asiti aɣezfan yettezzi-tt ɣer tama nniḍen. S klavye, R d Shift+R.
 2. **Android TV d Google TV**: taqeffalt tawraɣt n tlikumand tettezzi tawlaft ɣer tama n tsegnatin n temrilt, taqeffalt tanilit mgal-asent, anda yella uskan deg umeskan. Ɣef tlikumand war tiqeffalen s yini, sit ɣef Adda: afeggag ddaw twlaft ad d-iban s Zzi yettwafernen (yiwen Ayeffus ma yella tawlaft tesɛa taqeffalt n uḍris), yerna yal OK yettezzi tawlaft.
 3. **Tiliẓriyin LG (webOS)**: tawraɣt d tanilit am ɣef Android TV, R d Shift+R ɣef klavye, neɣ taqeffalt n tuzzya gar tqeffalin n twlaft.
@@ -198,6 +202,10 @@ Ugar: [wali ɣef TV-ik](../docs/immuch360/user-guide.md#watch-on-your-tv-android
 
 Immuch360 yella daɣen d asnas Immich i tiliẓriyin LG webOS: asnas weḥd-s i tiliẓriyin LG s webOS 4.0 d wid i d-iteddun (seg 2018), yettwasewjed s tlikumand, yesskan-ed aqeddac-ik Immich yerna yesserset tiwlafin-ik n 360° ɣef tkuret i tettezziḍ s yiqeffalen n tanila. Isnasen n Immich s yiman-nsen ur ttwasebdaden ara ɣef tiliẓri LG. Yebna ɣef [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) n Seeky91, i d-yewwin umuɣ azemani, albumat, imdanen, imukan, anadi, askan n tugniwin akked tuqqna s tilifun; tanemmirt i Seeky91. Version 0.1.0 d build n tirmit: urɛad yeddi ɣef tiliẓri LG n tidet, yettwasebded deg Developer Mode kan, yerna yal aneqqis deg [Issues](https://github.com/freeKC/Immuch360/issues) yettɛawan.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Sebded-it ɣef TV deg Developer Mode, wali [Sebded](#lg-tvs-webos). Ɣur-s asulay-is n usnas, daymi yettwasebded ɣer tama n Immich TV n Seeky91.
 2. Qqen s tilifun-ik (ḍegger tangalt QR), s imayl-ik d wawal-ik uffir, neɣ s tsarut API.
 3. Inig s yiqeffalen n tanila d OK. Deg umeskan, Azelmaḍ d Ayeffus ddun ɣer twlaft neɣ tvidyut n uqbel neɣ n zdat, ula mi ara teddu tvidyut; tiqeffalen n usefrek ffrent 5 s seld taqeffalt taneggarut; Info yeldi talqayt; tiqeffalen n canawat ssimɣurent; taneqqiḍt d tirect n Magic Remote xeddment.
@@ -220,6 +228,10 @@ Ugar: [tkamirawin Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-a
 ### Tiwlafin d tividyutin n udrun-ik DJI ɣef uqeddac-ik Immich
 
 Kter tiwlafin d tividyutin n udrun DJI s USB, srid ɣer uqeddac-ik Immich: qqen adrun, tilikumand-is neɣ ameɣri n tkarḍiwin ɣer tilifun Android, fren ifuyla imaynuten sinna azen-iten, s tividyutin yettwasersen ɣef tkarḍa n tmurt seg yisefka n wafug n udrun, akked tikurin n 360° n udrun yettbanen d 360°. Asnas Immich yeḥraz kan ayen yellan yakan deg ugraw n tilifun, yerna aqeddac Immich urɛad yezmir ad yeqqar adig n tvidyut n DJI Neo 2. Asebter-agi d alugen, ɣef tilifunen d tablitin Android kan, yerna urɛad yettwarmes s udrun n tidet.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Deg Iɣewwaren, Leqqayen, rmed "Idrunen DJI (alugen)". Aferdis "Adrun DJI" ad d-iban deg Tamkarḍit, Ifuyla n uẓeṭṭa.
 2. Qqen adrun (Neo 2 yezmer ad yeqqim yensa), tilikumand-is neɣ ameɣri n tkarḍiwin ɣer tilifun s ukabel n yisefka USB-C. Deg usebter Adrun DJI, sit ɣef "Fren adrun neɣ takarḍa", fren-it deg wumuɣ n tama n umefran, ldi akaram-is DCIM neɣ eǧǧ aḍebsi meṛṛa, sinna "Seqdec akaram-agi" d Sireg.

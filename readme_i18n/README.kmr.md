@@ -84,6 +84,10 @@ Zêdetir: [dîtinvan û lîstikvanê vîdyoyê](../docs/immuch360/user-guide.md#
 
 Wêneyekê bi yek pêlêkirinê 90° bizivirîne, bêyî ku sererastkerekê vekî: bişkokek, bişkokeke klavyeyê an bişkokeke rengîn a telekomandaya TV, li ser her platformê. Sepana Immich wêneyekê di sererastkera xwe de dizivirîne; Immuch360 vê bi yek bişkokê dike, û ji bo wêneyên te yên li ser servereke Immich 2.6 an paşîtir ew di heman sererastkera serverê re derbas dibe, ji ber vê yekê sepana web û cîhazên te yên din wan zivirandî nîşan didin. Her wêneyeke din tenê li ser vê cîhazê tê zivirandin. Wêneyên 360°, 180° û 3D qet nazivirin, da ku dîmenên dorhêlî rast bimînin.
 
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
+</p>
+
 1. **Têlefon, tablet û pencereya Meta Quest**: wêneyê veke û di rêza jêrîn de, berî Sererast bike, li Bizivirîne bixe da ku wê bi aliyê saetê bizivirînî; pêlêkirineke dirêj wê bi aliyê din dizivirîne. Bi klavyeyekê, R û Shift+R.
 2. **Android TV û Google TV**: bişkoka zer a telekomandayê wêneyê bi aliyê saetê dizivirîne û bişkoka şîn berevajî aliyê saetê, li her derê ku fokûs di dîtinvanê de be. Li ser telekomandayeke bêyî bişkokên rengîn, Jêr bixe: darika di bin wêneyê de bi Bizivirîne hilbijartî xuya dibe (dema ku wêne bişkokeke nivîsê hebe, yek Rast dûrtir), û her OK wêneyê dizivirîne.
 3. **Televizyonên LG (webOS)**: zer û şîn wekî li ser Android TV, R û Shift+R li ser klavyeyekê, an bişkoka zivirandinê ya kontrolên wêneyê.
@@ -198,6 +202,10 @@ Zêdetir: [li ser televizyona xwe temaşe bike](../docs/immuch360/user-guide.md#
 
 Immuch360 wekî sepaneke Immich ji bo televizyonên LG webOS jî tê: sepaneke cuda ji bo televizyonên LG bi webOS 4.0 û paşîtir (ji 2018an ve), ku bi telekomandayê tê rêvebirin, servera te ya Immich nîşan dide û wêneyên te yên 360° li ser gogeke ku tu bi tîran dizivirînî datîne. Sepanên fermî yên Immich li ser televizyoneke LG saz nabin. Ew li ser [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) ya Seeky91 hatiye avakirin, ku xeta demê, albûm, kes, cih, lêgerîn, pêşandana slaytan û têketina bi têlefonê anî; spas ji Seeky91 re. Guhertoya 0.1.0 çêkirineke ceribandinê ye: hê li ser televizyoneke LG ya rastîn nehatiye xebitandin, tenê di Developer Mode de saz dibe, û her ragihandinek di [Pirsgirêk](https://github.com/freeKC/Immuch360/issues) de alîkar e.
 
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+</p>
+
 1. Wê li ser televizyonekê di Developer Mode de saz bike, li [Saz bike](#lg-tvs-webos) binêre. Nasnameya wê ya sepanê ya taybet heye, ji ber vê yekê ew li kêleka Immich TV ya Seeky91 saz dibe.
 2. Bi têlefona xwe têkeve (koda QR skan bike), bi îmêl û şîfreya xwe, an bi mifteyeke API.
 3. Bi tîran û OK bigere. Di dîtinvanê de, Çep û Rast diçin wêne an vîdyoya berê an ya din, her wiha dema ku vîdyoyek dilîze; kontrol 5 s piştî bişkoka dawîn winda dibin; Info hûragahiyan vedike; bişkokên kanalê mezin dikin; nîşanker û çerxa Magic Remote dixebitin.
@@ -220,6 +228,10 @@ Zêdetir: [kameraên Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-vie
 ### Wêne û vîdyoyên drona xwe ya DJI li ser servera xwe ya Immich
 
 Wêne û vîdyoyên droneke DJI bi USB rasterast bo servera xwe ya Immich bîne: dronê, kontrolkera wê an xwînerek kartê bi têlefoneke Android ve girê bide, pelên nû hilbijêre û wan bişîne; vîdyo ji daneyên firînê yên dronê li ser nexşeyê têne danîn û gogên 360° yên dronê wekî 360° xuya dibin. Sepana Immich tenê tiştê ku berê di galerîya têlefonê de ye backup dike, û servera Immich hê nikare cihê vîdyoyeke DJI Neo 2 bixwîne. Ev rûpel ceribandinî ye, tenê li ser têlefon û tabletên Android, û hê bi droneke rastîn nehatiye ceribandin.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+</p>
 
 1. Di Mîhengan de, Pêşketî, «Dronên DJI (ceribandinî)» vêxe. Hêmaneke «Drona DJI» di Kitêbxane, Parvekirinên torê de xuya dibe.
 2. Dronê (Neo 2 dikare girtî bimîne), kontrolkera wê an xwînerek kartê bi kabloyeke daneyê ya USB-C bi têlefonê ve girê bide. Li ser rûpela Drona DJI, li «Dronê an kartê hilbijêre» bixe, wê di menûya alî ya hilbijêrê de hilbijêre, peldanka wê ya DCIM veke an tevahiya ajokerê bihêle, paşê «Vê peldankê bi kar bîne» û Destûr bide.
