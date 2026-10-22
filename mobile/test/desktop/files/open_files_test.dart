@@ -368,9 +368,11 @@ void main() {
       for (final route in captured.single as List<PageRouteInfo<dynamic>>) route.routeName,
     ];
 
+    // The handler stats the files it is given: on a busy Windows runner ten turns of the event loop were not always
+    // enough for that (four failures in a full run of test/desktop), so the wait is in time as well
     Future<void> settle() async {
       for (var i = 0; i < 10; i++) {
-        await Future<void>.delayed(Duration.zero);
+        await Future<void>.delayed(const Duration(milliseconds: 20));
       }
     }
 
