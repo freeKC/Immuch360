@@ -21,7 +21,9 @@ const PAGE = 300;
 const MAX_CHILDREN = 10000;
 const HASH = /^[0-9a-f]{32}$/;
 
-const PRODUCT = {'X-Plex-Product': 'Immuch360', 'X-Plex-Platform': 'webOS', 'X-Plex-Device': 'LG TV', 'X-Plex-Device-Name': 'Immuch360 on LG TV'};
+// The server picks the profile of its transcoder by platform: "Chrome" gets the Web profile (H.264 and AAC in HLS), which
+// LG TVs play; an unknown platform gets none, and the transcoder answers 400
+const PRODUCT = {'X-Plex-Product': 'Immuch360', 'X-Plex-Platform': 'Chrome', 'X-Plex-Device': 'LG TV', 'X-Plex-Device-Name': 'Immuch360 on LG TV'};
 
 // The paths of a server the bridge forwards for the player (the media, their pictures, the HLS transcoder)
 const FORWARDED = [/^\/library\/parts\//, /^\/library\/metadata\/\d+\/(thumb|art)\b/, /^\/photo\/:\/transcode\b/, /^\/video\/:\/transcode\/universal\//];
@@ -258,9 +260,10 @@ function photoPath(url, width, height) {
 	);
 }
 
-/** The path of the HLS transcode of an item (H.264 and AAC at most 1080p), for a video the TV does not play as it is */
-function hlsPath(ratingKey, session, clientId) {
-	const query = [
+/** The query of the HLS transcode of an item, for a video the TV does not play as it is */
+function hlsQuery(ratingKey, session, clientId) {
+	return [
+		'hasMDE=1',
 		'path=' + encodeURIComponent('/library/metadata/' + ratingKey),
 		'mediaIndex=0',
 		'partIndex=0',
@@ -275,12 +278,33 @@ function hlsPath(ratingKey, session, clientId) {
 		'audioBoost=100',
 		'location=lan',
 		'session=' + encodeURIComponent(session),
+		'X-Plex-Session-Identifier=' + encodeURIComponent(session),
 		'X-Plex-Client-Identifier=' + encodeURIComponent(clientId || 'immuch360-webos'),
 		'X-Plex-Product=Immuch360',
-		'X-Plex-Platform=Chrome',
-		'X-Plex-Client-Profile-Extra=' + encodeURIComponent('add-limitation(scope=videoCodec&scopeName=*&type=upperBound&name=video.height&value=1080)')
-	];
-	return '/video/:/transcode/universal/start.m3u8?' + query.join('&');
+		'X-Plex-Platform=Chrome'
+	].join('&');
+}
+
+/** The path of the HLS playlist of a transcode, once its decision was asked (startHls) */
+function hlsPath(ratingKey, session, clientId) {
+	return '/video/:/transcode/universal/start.m3u8?' + hlsQuery(ratingKey, session, clientId);
+}
+
+const hlsSessions = {};
+
+/**
+ * Asks the server's decision for a transcode (recent servers refuse start.m3u8 without it), after stopping the
+ * previous transcode of this source: resolves with the path of the playlist
+ */
+function startHls(source, ratingKey, session, clientId) {
+	const previous = hlsSessions[source.id];
+	hlsSessions[source.id] = session;
+	const stop = previous
+		? call(source, '/video/:/transcode/universal/stop?session=' + encodeURIComponent(previous), {clientId: clientId}).then((res) => res.resume(), () => null)
+		: Promise.resolve();
+	return stop
+		.then(() => getJson(source, '/video/:/transcode/universal/decision?' + hlsQuery(ratingKey, session, clientId), {clientId: clientId}))
+		.then(() => hlsPath(ratingKey, session, clientId));
 }
 
 /** Whether the TV plays the file of a listing as it is (else the HLS transcode is used) */
@@ -381,6 +405,7 @@ module.exports = {
 	isForwardable,
 	photoPath,
 	hlsPath,
+	startHls,
 	playsDirectly,
 	parseGdmAnswer,
 	discover,

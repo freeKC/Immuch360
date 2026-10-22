@@ -428,9 +428,10 @@ function createBridge(options) {
 				if (name === 'hls') {
 					if (source.kind !== 'plex' || !/^\d+$/.test(String(q.k || ''))) throw Object.assign(new Error('No transcode here'), {status: 400});
 					const session = crypto.randomBytes(8).toString('hex');
-					res.writeHead(302, Object.assign({Location: '/' + token + '/px/' + source.id + plex.hlsPath(q.k, session, plexClientId())}, httpx.CORS));
-					res.end();
-					return null;
+					return plex.startHls(source, q.k, session, plexClientId()).then((playlist) => {
+						res.writeHead(302, Object.assign({Location: '/' + token + '/px/' + source.id + playlist}, httpx.CORS));
+						res.end();
+					});
 				}
 				throw Object.assign(new Error('No such route'), {status: 404});
 			})

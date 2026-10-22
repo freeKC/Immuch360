@@ -84,7 +84,23 @@ function plexHandler(seen) {
 			}
 			return;
 		}
+		if (url.indexOf('/video/:/transcode/universal/decision') === 0) {
+			seen.decided = (seen.decided || []).concat([/session=([0-9a-f]+)/.exec(url)[1]]);
+			assert.strictEqual(req.headers['x-plex-platform'], 'Chrome');
+			return json(res, {MediaContainer: {generalDecisionCode: 1001}});
+		}
+		if (url.indexOf('/video/:/transcode/universal/stop') === 0) {
+			seen.stopped = (seen.stopped || []).concat([/session=([0-9a-f]+)/.exec(url)[1]]);
+			res.writeHead(200);
+			res.end();
+			return;
+		}
 		if (url.indexOf('/video/:/transcode/universal/start.m3u8') === 0) {
+			if (!(seen.decided || []).includes(/session=([0-9a-f]+)/.exec(url)[1])) {
+				res.writeHead(400);
+				res.end();
+				return;
+			}
 			res.writeHead(200, {'Content-Type': 'application/vnd.apple.mpegurl'});
 			res.end('#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=2000000\nsession/abc/base/index.m3u8\n');
 			return;
@@ -123,7 +139,7 @@ test('what the bridge forwards and how it decides to transcode', () => {
 	assert.ok(plex.playsDirectly({name: 'a.mkv', container: 'mkv', videoCodec: 'h264', audioCodec: 'aac'}));
 	assert.ok(!plex.playsDirectly({name: 'a.avi', container: 'avi', videoCodec: 'mpeg4', audioCodec: 'mp3'}));
 	assert.ok(!plex.playsDirectly({name: 'a.mkv', container: 'mkv', videoCodec: 'h264', audioCodec: 'dts'}));
-	assert.match(plex.hlsPath('123', 'sess', 'client12345'), /^\/video\/:\/transcode\/universal\/start\.m3u8\?path=%2Flibrary%2Fmetadata%2F123&.*session=sess/);
+	assert.match(plex.hlsPath('123', 'sess', 'client12345'), /^\/video\/:\/transcode\/universal\/start\.m3u8\?hasMDE=1&path=%2Flibrary%2Fmetadata%2F123&.*session=sess/);
 	assert.strictEqual(plex.photoPath('/library/metadata/1/thumb/2', 360, 360), '/photo/:/transcode?width=360&height=360&minSize=1&upscale=0&url=%2Flibrary%2Fmetadata%2F1%2Fthumb%2F2');
 });
 
@@ -175,6 +191,11 @@ test('the bridge lists a Plex server without a certificate, without a token', as
 	const media = await fetchRaw(next.href);
 	assert.strictEqual(media.status, 200);
 	assert.match(media.body.toString(), /00000\.ts/);
+	// A second transcode of the same server stops the first one
+	const second = await fetchRaw(`${b.base}/hls?s=px&k=102`);
+	assert.strictEqual(second.status, 302);
+	assert.strictEqual(seen.stopped.length, 1);
+	assert.strictEqual(seen.stopped[0], seen.decided[0]);
 	const refused = await fetchJson(`${b.base}/px/px/:/prefs`);
 	assert.strictEqual(refused.status, 403);
 });
