@@ -155,8 +155,16 @@ VideoOutput::VideoOutput(int64_t handle,
 
 VideoOutput::~VideoOutput() {
   destroyed_ = true;
-  // Immuch360: no draw of a pair is asked for any more (patch 7)
+  // Immuch360: no draw of a pair is asked for any more (patch 7), nor a
+  // settling run of the Spatial passes (patch 11)
   pair_timer_.reset();
+  std::unique_ptr<PairTimer> settle_timer;
+  {
+    std::lock_guard<std::mutex> lock(settle_mutex_);
+    settle_timer = std::move(settle_timer_);
+  }
+  // Joined here: what it posted runs before the cleanup posted below
+  settle_timer.reset();
   auto promise = std::promise<void>();
   // Runs on the thread pool once every task posted before it has run, so
   // that no |Render| or |Resize| reaches the objects freed here.
@@ -177,9 +185,14 @@ VideoOutput::~VideoOutput() {
     if (projection_renderer_ != nullptr && surface_manager_ != nullptr) {
       surface_manager_->MakeCurrent(true);
       projection_renderer_->Release();
+      // Immuch360: the Spatial passes too (patch 11)
+      if (spatial_renderer_ != nullptr) {
+        spatial_renderer_->Release();
+      }
       surface_manager_->MakeCurrent(false);
     }
     projection_renderer_.reset();
+    spatial_renderer_.reset();
     // Free (call destructor) |ANGLESurfaceManager| through the thread
     // pool. This will ensure synchronized EGL or ANGLE usage & won't
     // conflict with |Render| or |CheckAndResize| of other
@@ -333,7 +346,7 @@ void VideoOutput::CheckAndResize() {
   if (const auto projection = CurrentProjection();
       projection != nullptr && surface_manager_ != nullptr) {
     int32_t width = 1, height = 1;
-    projection->OutputSize(&width, &height);
+    OutputSizeOf(*projection, &width, &height);
     required_width = width;
     required_height = height;
   }
@@ -620,6 +633,12 @@ void Keep(std::vector<double>& times, double value) {
   }
 }
 
+int64_t SteadyNs() {
+  return std::chrono::duration_cast<std::chrono::nanoseconds>(
+             std::chrono::steady_clock::now().time_since_epoch())
+      .count();
+}
+
 }  // namespace
 
 std::shared_ptr<const ProjectionSetup> VideoOutput::CurrentProjection() {
@@ -683,13 +702,27 @@ void VideoOutput::DrawProjection(const ProjectionSetup& setup) {
   ProjectionView view;
   uint64_t generation = 0;
   bool probe = false;
+  // Immuch360: the Spatial passes draw the output instead of the view (patch
+  // 11)
+  const bool spatial =
+      setup.spatial.has_value() && spatial_renderer_ != nullptr;
+  float viewpoint = 0.5f;
+  bool show_disparity = false;
   {
     std::lock_guard<std::mutex> lock(projection_mutex_);
     view = view_;
     generation = view_generation_;
     probe = projection_counters_.probe_requested;
+    viewpoint = viewpoint_;
+    show_disparity = spatial_debug_;
   }
-  if (!frame_wanted && generation == drawn_generation_ && !probe) {
+  const auto now_ns = SteadyNs();
+  // A paused video settles its disparity a few more times (SpatialRenderer.kt)
+  const bool settle = spatial && spatial_renderer_->SettleDue(now_ns);
+  if (!frame_wanted && generation == drawn_generation_ && !probe && !settle) {
+    if (spatial) {
+      ArmSettle();
+    }
     return;
   }
   const auto width = surface_manager_->width();
@@ -736,8 +769,25 @@ void VideoOutput::DrawProjection(const ProjectionSetup& setup) {
     mpv_ms = MillisecondsSince(mpv_start);
   }
   const auto view_start = std::chrono::steady_clock::now();
-  const bool drawn =
-      !drew_flat && projection_renderer_->DrawView(setup, view, width, height);
+  bool drawn = false;
+  if (!drew_flat && spatial) {
+    if (projection_renderer_->has_frame()) {
+      SpatialRenderer::Input input;
+      input.frame_texture = projection_renderer_->frame_texture();
+      input.frame_width = projection_renderer_->frame_width();
+      input.frame_height = projection_renderer_->frame_height();
+      input.new_frame = drew_frame;
+      input.viewpoint = viewpoint;
+      input.view = view;
+      input.show_disparity = show_disparity;
+      input.width = static_cast<int32_t>(width);
+      input.height = static_cast<int32_t>(height);
+      input.now_ns = now_ns;
+      drawn = spatial_renderer_->Draw(*setup.spatial, input);
+    }
+  } else if (!drew_flat) {
+    drawn = projection_renderer_->DrawView(setup, view, width, height);
+  }
   // mpv's frame and the view, finished outside the lock: a GPU that idles
   // between the draws of a paused video took 14 to 16 ms to finish each one
   // on the RTX 4060 (2026-10-09), all of it while Flutter's raster thread
@@ -746,9 +796,18 @@ void VideoOutput::DrawProjection(const ProjectionSetup& setup) {
   const auto view_ms = MillisecondsSince(view_start);
   bool read = false;
   uint32_t pixels[5] = {0, 0, 0, 0, 0};
+  std::vector<uint32_t> row;
   if (drawn && probe) {
     projection_renderer_->ReadProbe(width, height, pixels);
+    if (spatial) {
+      spatial_renderer_->ReadRow(static_cast<int32_t>(width),
+                                 static_cast<int32_t>(height), &row);
+    }
     read = true;
+  }
+  SpatialCounters spatial_counters;
+  if (spatial) {
+    spatial_counters = spatial_renderer_->TakeCounters();
   }
   surface_manager_->MakeCurrent(false);
   const auto locked_start = std::chrono::steady_clock::now();
@@ -761,6 +820,19 @@ void VideoOutput::DrawProjection(const ProjectionSetup& setup) {
   {
     std::lock_guard<std::mutex> lock(projection_mutex_);
     auto& counters = projection_counters_;
+    if (spatial) {
+      counters.spatial = spatial_counters;
+      counters.spatial_draws += spatial_counters.draws;
+      counters.disparity_runs += spatial_counters.disparity_runs;
+      counters.settle_runs += spatial_counters.settle_runs;
+      counters.quality_changes += spatial_counters.quality_changes;
+      counters.drawn_width = static_cast<int32_t>(width);
+      counters.drawn_height = static_cast<int32_t>(height);
+      if (read) {
+        counters.probe_row = std::move(row);
+        counters.probe_row_ready = true;
+      }
+    }
     if (drawn) {
       if (drew_frame) {
         counters.frames++;
@@ -779,6 +851,9 @@ void VideoOutput::DrawProjection(const ProjectionSetup& setup) {
     counters.frame_width = projection_renderer_->frame_width();
     counters.frame_height = projection_renderer_->frame_height();
     counters.error = projection_renderer_->error();
+    if (spatial && !spatial_renderer_->error().empty()) {
+      counters.error = spatial_renderer_->error();
+    }
     if (read) {
       std::copy(pixels, pixels + 5, counters.probe);
       counters.probe_ready = true;
@@ -791,6 +866,9 @@ void VideoOutput::DrawProjection(const ProjectionSetup& setup) {
     } catch (...) {
       // The texture may be unregistered meanwhile, as in |Render|.
     }
+  }
+  if (spatial) {
+    ArmSettle();
   }
   // No mpv_render_context_report_swap here (design 2.11 asked whether swaps
   // should be reported): once a swap is reported, vo_libmpv waits for the
@@ -827,11 +905,18 @@ flutter::EncodableMap VideoOutput::SetProjection(
         std::lock_guard<std::mutex> lock(projection_mutex_);
         projection_ = nullptr;
       }
-      if (projection_renderer_ != nullptr) {
+      if (projection_renderer_ != nullptr || spatial_renderer_ != nullptr) {
         surface_manager_->MakeCurrent(true);
-        projection_renderer_->Release();
+        if (projection_renderer_ != nullptr) {
+          projection_renderer_->Release();
+        }
+        // Immuch360: the Spatial passes too (patch 11)
+        if (spatial_renderer_ != nullptr) {
+          spatial_renderer_->Release();
+        }
         surface_manager_->MakeCurrent(false);
         projection_renderer_.reset();
+        spatial_renderer_.reset();
       }
       surface_manager_->SetDoubleBuffered(false);
       CheckAndResize();
@@ -851,14 +936,32 @@ flutter::EncodableMap VideoOutput::SetProjection(
     // video flat with its message, rather than a view that stays black while
     // the video plays (the draws would only count as failed)
     // A secondary player of a pair draws no view: no pass to compile
-    const auto ready =
-        projection_renderer_->Prepare(surface_manager_->client_version()) &&
-        (setup->secondary || projection_renderer_->PrepareProgram(setup->kind));
+    // Immuch360: the Spatial passes draw the output instead of the view: theirs
+    // are compiled instead, all of them, the disparity pass's loops included,
+    // and a refusal is the projection's (patch 11)
+    const auto client_version = surface_manager_->client_version();
+    auto ready = projection_renderer_->Prepare(client_version) &&
+                 (setup->secondary || setup->spatial.has_value() ||
+                  projection_renderer_->PrepareProgram(setup->kind));
+    auto reason = projection_renderer_->error();
+    if (ready && setup->spatial.has_value()) {
+      if (spatial_renderer_ == nullptr) {
+        spatial_renderer_ = std::make_unique<SpatialRenderer>();
+      }
+      ready = spatial_renderer_->Prepare(client_version) &&
+              spatial_renderer_->PreparePrograms();
+      reason = spatial_renderer_->error();
+    } else if (ready && spatial_renderer_ != nullptr) {
+      spatial_renderer_->Release();
+      spatial_renderer_.reset();
+    }
     surface_manager_->MakeCurrent(false);
     result[flutter::EncodableValue("glRenderer")] =
         flutter::EncodableValue(projection_renderer_->gl_renderer());
+    result[flutter::EncodableValue("spatial")] =
+        flutter::EncodableValue(setup->spatial.has_value());
     if (!ready) {
-      fail(projection_renderer_->error());
+      fail(reason);
       if (CurrentProjection() != nullptr) {
         // Without its renderer a projection still on would leave the texture
         // as it is: the player is flat again, as before its first projection
@@ -866,8 +969,12 @@ flutter::EncodableMap VideoOutput::SetProjection(
       } else {
         surface_manager_->MakeCurrent(true);
         projection_renderer_->Release();
+        if (spatial_renderer_ != nullptr) {
+          spatial_renderer_->Release();
+        }
         surface_manager_->MakeCurrent(false);
         projection_renderer_.reset();
+        spatial_renderer_.reset();
       }
       return;
     }
@@ -911,7 +1018,7 @@ flutter::EncodableMap VideoOutput::SetProjection(
       DrawProjection(*projection);
     }
     int32_t width = 1, height = 1;
-    projection->OutputSize(&width, &height);
+    OutputSizeOf(*projection, &width, &height);
     result[flutter::EncodableValue("ok")] = flutter::EncodableValue(true);
     result[flutter::EncodableValue("outputWidth")] =
         flutter::EncodableValue(width);
@@ -952,6 +1059,129 @@ void VideoOutput::PostRedraw() {
       DrawProjection(*projection);
     }
   });
+}
+
+// Immuch360: the Spatial passes (IMMUCH360-NOTE.md, patch 11).
+
+void VideoOutput::OutputSizeOf(const ProjectionSetup& setup,
+                               int32_t* width,
+                               int32_t* height) {
+  setup.OutputSize(width, height);
+  if (setup.spatial.has_value() && setup.spatial->projection == 0) {
+    const auto [video_width, video_height] = VideoParamsSize();
+    SpatialRenderer::OutputSize(*setup.spatial, video_width, video_height,
+                                *width, *height, width, height);
+  }
+}
+
+void VideoOutput::SetViewpoint(float viewpoint) {
+  {
+    std::lock_guard<std::mutex> lock(projection_mutex_);
+    viewpoint_ = std::clamp(viewpoint, 0.0f, 1.0f);
+    view_generation_++;
+    if (projection_ == nullptr || !projection_->spatial.has_value()) {
+      return;
+    }
+  }
+  PostRedraw();
+}
+
+void VideoOutput::SetSpatialDebug(bool disparity_map) {
+  {
+    std::lock_guard<std::mutex> lock(projection_mutex_);
+    spatial_debug_ = disparity_map;
+    view_generation_++;
+    if (projection_ == nullptr || !projection_->spatial.has_value()) {
+      return;
+    }
+  }
+  PostRedraw();
+}
+
+void VideoOutput::ArmSettle() {
+  if (spatial_renderer_ == nullptr) {
+    return;
+  }
+  const auto next = spatial_renderer_->NextSettleNs();
+  if (next <= 0) {
+    return;
+  }
+  std::lock_guard<std::mutex> lock(settle_mutex_);
+  if (destroyed_) {
+    return;
+  }
+  if (settle_timer_ == nullptr) {
+    settle_timer_ = std::make_unique<PairTimer>([this]() { PostSettleDraw(); });
+  }
+  settle_timer_->Arm(std::chrono::steady_clock::time_point(
+      std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+          std::chrono::nanoseconds(next))));
+}
+
+void VideoOutput::PostSettleDraw() {
+  thread_pool_ref_->Post([this]() {
+    if (destroyed_ || !texture_id_ || surface_manager_ == nullptr ||
+        device_lost_) {
+      return;
+    }
+    if (const auto projection = CurrentProjection()) {
+      if (projection->spatial.has_value()) {
+        DrawProjection(*projection);
+      }
+    }
+  });
+}
+
+flutter::EncodableMap VideoOutput::SpatialStats(bool probe) {
+  auto map = ProjectionStats(probe);
+  std::lock_guard<std::mutex> lock(projection_mutex_);
+  auto& counters = projection_counters_;
+  const auto& spatial = counters.spatial;
+  const auto value = [&map](const char* key, flutter::EncodableValue v) {
+    map[flutter::EncodableValue(key)] = std::move(v);
+  };
+  value("spatial", flutter::EncodableValue(projection_ != nullptr &&
+                                           projection_->spatial.has_value()));
+  value("stereo", flutter::EncodableValue(spatial.stereo));
+  value("quality", flutter::EncodableValue(spatial.quality));
+  value("renderFps", flutter::EncodableValue(
+                         static_cast<double>(spatial.render_fps)));
+  value("disparityFps", flutter::EncodableValue(
+                            static_cast<double>(spatial.disparity_fps)));
+  value("renderMs",
+        flutter::EncodableValue(static_cast<double>(spatial.render_ms)));
+  value("disparityWidth", flutter::EncodableValue(spatial.disparity_width));
+  value("disparityHeight", flutter::EncodableValue(spatial.disparity_height));
+  value("eyeWidth", flutter::EncodableValue(spatial.eye_width));
+  value("eyeHeight", flutter::EncodableValue(spatial.eye_height));
+  value("viewpoint",
+        flutter::EncodableValue(static_cast<double>(spatial.viewpoint)));
+  value("gpuTimer", flutter::EncodableValue(spatial.gpu_timer));
+  value("halfFloatMaps", flutter::EncodableValue(spatial.half_float_maps));
+  value("spatialDraws", flutter::EncodableValue(counters.spatial_draws));
+  value("disparityRuns", flutter::EncodableValue(counters.disparity_runs));
+  value("settleRuns", flutter::EncodableValue(counters.settle_runs));
+  value("qualityChanges", flutter::EncodableValue(counters.quality_changes));
+  value("drawnWidth", flutter::EncodableValue(counters.drawn_width));
+  value("drawnHeight", flutter::EncodableValue(counters.drawn_height));
+  value("showDisparity", flutter::EncodableValue(spatial_debug_));
+  value("requestedViewpoint",
+        flutter::EncodableValue(static_cast<double>(viewpoint_)));
+  if (counters.probe_row_ready) {
+    flutter::EncodableList pixels;
+    pixels.reserve(counters.probe_row.size());
+    for (const auto pixel : counters.probe_row) {
+      pixels.push_back(flutter::EncodableValue(static_cast<int64_t>(pixel)));
+    }
+    value("probeRow", flutter::EncodableValue(pixels));
+    counters.probe_row_ready = false;
+    counters.probe_row.clear();
+  }
+  counters.spatial_draws = 0;
+  counters.disparity_runs = 0;
+  counters.settle_runs = 0;
+  counters.quality_changes = 0;
+  return map;
 }
 
 flutter::EncodableMap VideoOutput::ProjectionStats(bool probe) {
@@ -1054,12 +1284,6 @@ flutter::EncodableMap VideoOutput::ProjectionStats(bool probe) {
 // primary's time.
 
 namespace {
-
-int64_t SteadyNs() {
-  return std::chrono::duration_cast<std::chrono::nanoseconds>(
-             std::chrono::steady_clock::now().time_since_epoch())
-      .count();
-}
 
 // The shortest wait of a frame for its partner's, in seconds; the longest is
 // three quarters of a frame

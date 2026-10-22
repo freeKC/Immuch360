@@ -158,7 +158,7 @@ or `deviceFeaturesProvider` so that the phones run exactly as before:
 | `lib/presentation/pages/local_album.page.dart`, `lib/pages/backup/backup_album_selection.page.dart` | `FoldersEntry`: the way to the folders page, the banner while no folder is chosen |
 | `lib/widgets/common/local_album_sliver_app_bar.dart`, `lib/presentation/widgets/panorama_360/panorama_360_filter_bar.widget.dart` | "On this computer" instead of "On this device" |
 | `lib/presentation/widgets/camera/camera_live_view.widget.dart` | `DesktopCameraLiveView` (media_kit, `lib/desktop/video/camera_live_view.dart`) instead of the Android view, with the same states; the live view announced for later where libmpv is missing |
-| `lib/presentation/widgets/asset_viewer/spatial_viewer.dart` | Spatial 2.5D announced for later instead of "not available on this device" |
+| `lib/presentation/widgets/asset_viewer/spatial_viewer.dart` | Spatial 2.5D announced for later instead of "not available on this device"; on Windows the passes exist in renderer C (media_kit_video, patch 11: `SpatialOutput`), and the viewer keeps this message until the Spatial route uses them |
 | `lib/widgets/forms/login/login_form.dart` | OAuth through `deviceFeaturesProvider.oauth`, with a line saying so |
 | `lib/presentation/widgets/local_session/local_session_permission_banner.dart` | `FoldersBanner` instead of the gallery permission |
 | `lib/widgets/settings/ssl_client_cert_settings.dart` | `importClientCertificate` from a file instead of the system picker |

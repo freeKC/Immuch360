@@ -23,8 +23,27 @@
 
 #include <cstdint>
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
+
+// Immuch360: what Dart asks of the Spatial passes (IMMUCH360-NOTE.md, patch
+// 11; lib/src/spatial_output.dart), the fields of the phones'
+// SpatialRenderer.kt that their player sets.
+struct SpatialSetup {
+  // Where the two eyes are in the frame, SpatialRenderer.kt's EyeLayout: 0 side
+  // by side, 1 top and bottom, 2 side by side with the right eye first, 3 top
+  // and bottom with the right eye first, 4 one picture (nothing to match)
+  int32_t layout = 0;
+  // 0 a flat picture per eye, 1 an equirectangular image per eye
+  int32_t projection = 0;
+  // An equirectangular eye covers the front half of the sphere (VR180)
+  bool half_sphere = false;
+  // The tier of the disparity, 0 LOW, 1 MEDIUM, 2 HIGH, and whether the
+  // adaptive rule may change it
+  int32_t quality = 1;
+  bool adaptive = true;
+};
 
 // What a player shows through renderer C, as Dart gives it
 // (lib/src/projection_output.dart).
@@ -56,6 +75,9 @@ struct ProjectionSetup {
   int32_t output_width = 1;
   int32_t output_height = 1;
   int32_t max_output_height = 1440;
+  // Immuch360: the Spatial passes draw the output instead of the view (patch
+  // 11); the frame is drawn into the intermediate texture as for kind 0
+  std::optional<SpatialSetup> spatial;
 
   // The output size once capped, each side at least 1 and even
   void OutputSize(int32_t* width, int32_t* height) const;
@@ -128,6 +150,10 @@ class ProjectionRenderer {
 
   const std::string& error() const { return error_; }
   const std::string& gl_renderer() const { return gl_renderer_; }
+
+  // Immuch360: the matrix uViewToSphere of |view|, column major, which the
+  // Spatial passes give renderer C's equirectangular pass too (patch 11).
+  static void ViewToSphere(const ProjectionView& view, float columns[9]);
 
  private:
   GLuint Program(int32_t kind);
