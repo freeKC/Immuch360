@@ -25,6 +25,7 @@ import 'package:immich_mobile/infrastructure/repositories/settings.repository.da
 import 'package:immich_mobile/presentation/widgets/pairing/qr_code.widget.dart';
 import 'package:immich_mobile/providers/api.provider.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
+import 'package:immich_mobile/providers/pairing/paired_screen_check.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
@@ -85,6 +86,9 @@ class _PairingPanelState extends ConsumerState<PairingPanel> {
         toastType: ToastType.success,
         gravity: ToastGravity.TOP,
       );
+    }
+    if (signedIn?.phone != null) {
+      ref.read(pairedScreenCheckProvider).afterPairing();
     }
     await completeSignIn(context, ref);
   }
