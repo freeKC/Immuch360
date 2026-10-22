@@ -286,9 +286,10 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
   /// The card of the first time shows: what the webcam is for, and whether to use it
   bool _askCamera = false;
 
-  /// The steps down the measure took, and why the last one
+  /// The steps down the measure took, and why the last one; the verdicts of the measure, for the tests
   int _stepDowns = 0;
   String? _stepDownReason;
+  final _measures = <String>[];
 
   /// The user went to the camera settings from the privacy message: the webcam is tried again on the way back, once
   /// the window lost the focus to them and got it back
@@ -349,6 +350,10 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
   /// How many times the measure of the frames took the passes a step down
   @visibleForTesting
   int get stepDowns => _stepDowns;
+
+  /// Each verdict of the measure of the frames, with what it measured
+  @visibleForTesting
+  List<String> get measures => List.unmodifiable(_measures);
 
   /// Whether the card of the first time asks about the webcam
   @visibleForTesting
@@ -563,6 +568,7 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
       return;
     }
     _log.info('Spatial measure: $sample, ${verdict.name}');
+    _measures.add('${verdict.name}: $sample');
     switch (verdict) {
       case ProbeVerdict.keep:
         return;

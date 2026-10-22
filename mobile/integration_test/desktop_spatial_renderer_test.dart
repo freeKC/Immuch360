@@ -17,8 +17,8 @@
 // the plugin must follow the head the right way (a face on the right of the picture sends it under 0.3, toward the
 // left camera; on the left, over 0.7), toward the left camera within the clip's first second and toward the right one
 // within its third, in the clip's own time (the face on the right at 1 s, on the left at 3 s); WARP being far too slow
-// for the clip's 15 frames a second, the route's measure of the frames must take the passes a step down and then hold
-// LOW (or play flat); and the webcam must be released, its capture thread ended, when the route goes.
+// for the clip's 15 frames a second, the route's measure of the frames must take the passes a step down, mpv then
+// drawing the frame smaller; and the webcam must be released, its capture thread ended, when the route goes.
 // Run in the Windows job of the desktop workflow, after the build:
 //   flutter test integration_test/desktop_spatial_renderer_test.dart -d windows
 //   IMMUCH360_SPATIAL_CLIP   another clip of the same pattern (default: the fixture, from the app's folder)
@@ -409,19 +409,30 @@ void main() {
     expect(lowest, lessThan(0.3), reason: 'the plugin got the viewpoints');
     expect(highest, greaterThan(0.7));
 
-    // WARP draws a frame in 100 to 200 ms, the clip has 15 a second: the measure steps the passes down
+    // WARP draws a frame in 100 to 200 ms, the clip has 15 a second: the measure steps the passes down, and the plugin
+    // then draws mpv's frame smaller than the clip's 1280 x 360 (once the frames keep up, the measure keeps that step)
     final measure = Stopwatch()..start();
-    while (measure.elapsed < const Duration(seconds: 20) && !(page.output?.forcedLow ?? false) && page.drawing) {
+    var frameWidth = 0;
+    while (measure.elapsed < const Duration(seconds: 20) && page.drawing) {
+      final stats = await output?.stats(reader: #test);
+      if (stats != null && stats.draws.frameWidth > 0) {
+        frameWidth = stats.draws.frameWidth;
+      }
+      if (page.stepDowns >= 1 && frameWidth > 0 && frameWidth < 1280) {
+        break;
+      }
       await Future<void>.delayed(const Duration(milliseconds: 250));
     }
     // ignore: avoid_print
     print(
       'Spatial measure on WARP: ${page.stepDowns} step(s) down, frame share '
-      '${page.output == null ? '-' : SpatialPluginOutput.flatFrameScales[page.output!.flatStep]}, LOW held '
-      '${page.output?.forcedLow}, drawing ${page.drawing}',
+      '${page.output == null ? '-' : SpatialPluginOutput.flatFrameScales[page.output!.flatStep]}, frame $frameWidth '
+      'wide, LOW held ${page.output?.forcedLow}, drawing ${page.drawing}; verdicts: ${page.measures.join('; ')}',
     );
-    expect(page.stepDowns, greaterThanOrEqualTo(1), reason: 'the frame made smaller');
-    expect((page.output?.forcedLow ?? false) || !page.drawing, isTrue, reason: 'then LOW held, or flat');
+    expect(page.stepDowns, greaterThanOrEqualTo(1), reason: 'the measure took the passes a step down');
+    if (page.drawing) {
+      expect(frameWidth, inExclusiveRange(0, 1280), reason: 'mpv draws the frame smaller');
+    }
 
     final tracking = page.tracking;
     expect(tracking.cameraOpen, isTrue);
