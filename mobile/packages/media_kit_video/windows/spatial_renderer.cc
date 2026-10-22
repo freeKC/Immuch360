@@ -937,7 +937,6 @@ bool SpatialRenderer::Draw(const SpatialSetup& setup, const Input& input) {
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_STENCIL_TEST);
   glDisable(GL_CULL_FACE);
-  glDisable(GL_DITHER);
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
   // A settling run asked for that this draw cannot make (no eyes, no maps)
@@ -1075,7 +1074,7 @@ int64_t SpatialRenderer::NextSettleNs() const {
 void SpatialRenderer::ReadRow(int32_t width,
                               int32_t height,
                               std::vector<uint32_t>* row) {
-  row->assign(std::max(1, width), 0u);
+  row->assign(static_cast<size_t>(std::max(1, width)), 0u);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glReadPixels(0, height / 2, std::max(1, width), 1, GL_RGBA,
                GL_UNSIGNED_BYTE, row->data());
