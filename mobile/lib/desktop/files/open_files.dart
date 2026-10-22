@@ -168,14 +168,18 @@ Future<void> untilTabShell(AppRouter router) =>
 /// the viewer, and a 360° one in its 360° view at once, with the projection it declares; several, or a folder, open on
 /// the page of opened files ([OpenedFilesRoute]).
 class DesktopOpenFilesHandler implements ViewIntentHandler {
+  /// [folderCheck] tells whether a path given alone is a folder, [isFolder] by default: the file system answers it on
+  /// a thread of its own, some turns of the event loop later, which the tests wait for
   DesktopOpenFilesHandler(
     this._ref, {
     OpenedPathsReader? read,
     Future<void> Function(AppRouter router)? whenAppShown,
     Future<void> Function()? nextFrame,
+    Future<bool> Function(String path)? folderCheck,
   }) : _read = read ?? readOpenedPaths,
        _whenAppShown = whenAppShown ?? untilTabShell,
-       _nextFrame = nextFrame ?? _endOfFrame {
+       _nextFrame = nextFrame ?? _endOfFrame,
+       _isFolder = folderCheck ?? isFolder {
     // The session starts after the app: a server session once its token is checked, a session without a server at once
     _ref.listen(authProvider.select((state) => state.isAuthenticated), (_, isAuthenticated) {
       if (isAuthenticated) {
@@ -193,6 +197,7 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
   final OpenedPathsReader _read;
   final Future<void> Function(AppRouter router) _whenAppShown;
   final Future<void> Function() _nextFrame;
+  final Future<bool> Function(String path) _isFolder;
 
   // The latest batch given before a session was open, all the files of the starts that came together
   List<String>? _deferred;
@@ -263,7 +268,7 @@ class DesktopOpenFilesHandler implements ViewIntentHandler {
     opening.ignore();
     // Read meanwhile; shown once the session has put the pages of the app in place
     await _whenAppShown(router);
-    if (paths.length > 1 || await isFolder(paths.single)) {
+    if (paths.length > 1 || await _isFolder(paths.single)) {
       _log.info('Opening ${paths.length} paths as a page of their own');
       await router.replaceAll([
         const TabShellRoute(),

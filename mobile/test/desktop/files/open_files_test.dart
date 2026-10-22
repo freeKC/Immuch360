@@ -148,8 +148,20 @@ final _handlerProvider = Provider<DesktopOpenFilesHandler>(
     read: (paths) async => _reads(paths),
     whenAppShown: (_) async {},
     nextFrame: () async {},
+    folderCheck: _checkFolder,
   ),
 );
+
+// The folder checks the handlers wait for, until the file system answers them
+final _folderChecks = <Future<bool>>{};
+
+/// [isFolder] as the program asks it, kept among [_folderChecks] until the file system answers: on a thread of its own,
+/// after as many turns of the event loop as the load of the machine makes it take
+Future<bool> _checkFolder(String path) {
+  final check = isFolder(path);
+  _folderChecks.add(check);
+  return check.whenComplete(() => _folderChecks.remove(check));
+}
 
 // What the tests give the handler to read, by path; a path not listed holds no photo or video
 var _readable = <String, OpenedFile>{};
@@ -316,6 +328,18 @@ void main() {
     late Directory directory;
     late Duration together;
 
+    // Until the handler has opened all it can: the batches come and open within a few turns of the event loop, except
+    // that one path given alone waits for the file system to tell whether it is a folder; waited for, then a few turns
+    // again, until no check is left
+    Future<void> settle() async {
+      do {
+        await Future.wait(List.of(_folderChecks));
+        for (var i = 0; i < 10; i++) {
+          await Future<void>.delayed(Duration.zero);
+        }
+      } while (_folderChecks.isNotEmpty);
+    }
+
     setUpAll(() {
       registerFallbackValue(<PageRouteInfo<dynamic>>[]);
       registerFallbackValue(<BaseAsset>[]);
@@ -349,7 +373,9 @@ void main() {
       handler = container.read(_handlerProvider)..init();
     });
 
-    tearDown(() {
+    tearDown(() async {
+      // Nothing a test started is still opened in the next one
+      await settle();
       container.dispose();
       DesktopOpenRequests.reset();
       DesktopOpenRequests.together = together;
@@ -367,12 +393,6 @@ void main() {
     List<String> routesOf(List<dynamic> captured) => [
       for (final route in captured.single as List<PageRouteInfo<dynamic>>) route.routeName,
     ];
-
-    Future<void> settle() async {
-      for (var i = 0; i < 10; i++) {
-        await Future<void>.delayed(Duration.zero);
-      }
-    }
 
     test('keeps the files given before a session, and opens them once one is open', () async {
       final photo = file('IMG_1.jpg');
@@ -538,6 +558,7 @@ void main() {
           return _reads(paths);
         },
         whenAppShown: (_) async {},
+        folderCheck: _checkFolder,
       )..init();
 
       DesktopOpenRequests.add([first]);
@@ -560,6 +581,7 @@ void main() {
         container.read(_refProvider),
         read: (paths) async => _reads(paths),
         whenAppShown: (_) => shown.future,
+        folderCheck: _checkFolder,
       )..init();
       await container.read(localSessionProvider.notifier).enter();
 
