@@ -53,8 +53,9 @@ class RtspSession {
     bool withAudio = true,
     Duration timeout = const Duration(seconds: 8),
     Duration? keepAlive,
-    TapoSocketConnector connect = _connect,
+    TapoSocketConnector? connect,
   }) async {
+    connect ??= _connect;
     final uri = 'rtsp://${host.contains(':') ? '[$host]' : host}:$port$path';
     var connection = await _RtspStreamConnection.open(host, port, timeout, connect);
     try {
