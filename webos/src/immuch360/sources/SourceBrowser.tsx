@@ -114,6 +114,19 @@ export const SourceBrowser: React.FC<SourceBrowserProps> = ({client, info, versi
 		return () => cancelAnimationFrame(raf);
 	}, [showMedia, folder.ref, query.isLoading]);
 
+	const toggleRemove = useCallback(() => setConfirmRemove((on) => !on), []);
+	const openMedia = useCallback(() => setMediaOpen(true), []);
+	const refetch = query.refetch;
+	const retry = useCallback(() => void refetch(), [refetch]);
+	const folders = listing?.folders;
+	const openFolder = useCallback(
+		(ref: string) => {
+			const target = folders?.find((f) => f.ref === ref);
+			if (target) setStack((current) => current.concat([{ref: target.ref, name: target.name}]));
+		},
+		[folders]
+	);
+
 	const remove = useCallback(() => {
 		sourceStore().remove(source.id);
 		onClose();
@@ -135,7 +148,7 @@ export const SourceBrowser: React.FC<SourceBrowserProps> = ({client, info, versi
 						{stack.length > 1 && <span className={css.subtitle}>{source.name}</span>}
 					</div>
 					{stack.length === 1 && (
-						<Button size="small" icon="trash" onClick={() => setConfirmRemove(!confirmRemove)}>
+						<Button size="small" icon="trash" onClick={toggleRemove}>
 							{t('network_share_remove')}
 						</Button>
 					)}
@@ -145,7 +158,7 @@ export const SourceBrowser: React.FC<SourceBrowserProps> = ({client, info, versi
 						<div className={css.notice}>{removeText}</div>
 						<div className={css.row}>
 							<Button onClick={remove}>{t('remove')}</Button>
-							<Button onClick={() => setConfirmRemove(false)}>{t('cancel')}</Button>
+							<Button onClick={toggleRemove}>{t('cancel')}</Button>
 						</div>
 					</div>
 				)}
@@ -153,15 +166,15 @@ export const SourceBrowser: React.FC<SourceBrowserProps> = ({client, info, versi
 				{query.error && (
 					<div>
 						<div className={css.error}>{sourceErrorText(query.error, source.kind, source.host || source.address)}</div>
-						<Button onClick={() => void query.refetch()}>{t('retry')}</Button>
+						<Button onClick={retry}>{t('retry')}</Button>
 					</div>
 				)}
 				{listing && listing.folders.length === 0 && listing.files.length === 0 && <div className={css.notice}>{t('network_share_empty_folder')}</div>}
 				{listing && listing.folders.length > 0 && (
 					<div className={css.grid}>
-						{listing.files.length > 0 && <SourceTile icon="picture" title={t('webos_folder_media', {count: listing.files.length})} onClick={() => setMediaOpen(true)} />}
+						{listing.files.length > 0 && <SourceTile icon="picture" title={t('webos_folder_media', {count: listing.files.length})} value="" onSelect={openMedia} />}
 						{listing.folders.map((f) => (
-							<SourceTile key={f.ref} icon={folder.ref === '' && source.kind === 'plex' ? kindIcon('plex') : 'folder'} title={f.name} onClick={() => setStack(stack.concat([{ref: f.ref, name: f.name}]))} />
+							<SourceTile key={f.ref} icon={folder.ref === '' && source.kind === 'plex' ? kindIcon('plex') : 'folder'} title={f.name} value={f.ref} onSelect={openFolder} />
 						))}
 					</div>
 				)}

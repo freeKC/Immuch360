@@ -2,7 +2,7 @@
 // servers found on the network, and the pages that add them. Everything goes through the media bridge of the app's JS
 // service (webOS 5 and later; SMB from webOS 22).
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import Scroller from '@enact/sandstone/Scroller';
 import Spotlight from '@enact/spotlight';
 import {createSpotlightContainer} from '../../utils/spotlight';
@@ -43,8 +43,8 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 	const {client, info, error, version} = useBridge();
 	const sources = useSources();
 	const [screen, setScreen] = useState<Screen>({kind: 'home'});
-	const [discovered, setDiscovered] = useState<DiscoveredServer[]>([]);
-	const [scanning, setScanning] = useState(false);
+	// The servers found for a run of the bridge (its version); a run without them is still looking
+	const [discovery, setDiscovery] = useState<{version: number; servers: DiscoveredServer[]} | null>(null);
 	const [status, setStatus] = useState<{text: string; error: boolean} | null>(null);
 	const home = useCallback(() => setScreen({kind: 'home'}), []);
 
@@ -52,7 +52,6 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 	useEffect(() => {
 		if (!client || !info) return undefined;
 		let cancelled = false;
-		setScanning(true);
 		Promise.all(
 			(['dlna', 'plex'] as const).map((kind) =>
 				client.control<{servers: DiscoveredServer[]}>('discover', {kind, ms: DISCOVERY_MS}).then(
@@ -61,9 +60,7 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 				)
 			)
 		).then((lists) => {
-			if (cancelled) return;
-			setDiscovered(([] as DiscoveredServer[]).concat(...lists));
-			setScanning(false);
+			if (!cancelled) setDiscovery({version, servers: ([] as DiscoveredServer[]).concat(...lists)});
 		});
 		return () => {
 			cancelled = true;
@@ -76,7 +73,21 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 		return () => cancelAnimationFrame(raf);
 	}, [screen.kind]);
 
+	const discovered = useMemo(() => discovery?.servers ?? [], [discovery]);
+	const scanning = !!info && discovery?.version !== version;
+
 	const open = useCallback((source: SourceConfig) => setScreen(source.kind === 'tapo' ? {kind: 'camera', id: source.id} : {kind: 'browse', id: source.id}), []);
+	const openById = useCallback(
+		(id: string) => {
+			const source = sourceStore().get(id);
+			if (source) open(source);
+		},
+		[open]
+	);
+	const addSomething = useCallback((what: string) => {
+		if (what === 'plex') setScreen({kind: 'plex'});
+		else setScreen({kind: 'add', form: what === 'camera' ? 'tapo' : null});
+	}, []);
 
 	const addFound = useCallback(
 		async (server: DiscoveredServer) => {
@@ -99,6 +110,14 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 		[client]
 	);
 
+	const addFoundByKey = useCallback(
+		(key: string) => {
+			const server = discovered.find((s) => `${s.kind}:${s.location || s.address}` === key);
+			if (server) void addFound(server);
+		},
+		[discovered, addFound]
+	);
+
 	const current = screen.kind === 'browse' || screen.kind === 'camera' ? sources.find((s) => s.id === screen.id) ?? null : null;
 
 	if (client && info && screen.kind === 'browse' && current) {
@@ -115,6 +134,7 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 	}
 
 	const found = discovered.filter((server) => !isSaved(server, sources));
+	const foundKey = (server: DiscoveredServer) => `${server.kind}:${server.location || server.address}`;
 	const bridgeProblem = !client ? t('webos_service_unavailable', {error: 'no Luna service'}) : error ? bridgeErrorText(error) : null;
 
 	return (
@@ -134,11 +154,11 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 						{sources.length === 0 && <div className={css.notice}>{t('network_share_no_shares')}</div>}
 						<div className={css.grid}>
 							{sources.map((source) => (
-								<SourceTile key={source.id} icon={kindIcon(source.kind)} title={source.name} secondary={whereOf(source)} onClick={() => open(source)} />
+								<SourceTile key={source.id} icon={kindIcon(source.kind)} title={source.name} secondary={whereOf(source)} value={source.id} onSelect={openById} />
 							))}
-							<SourceTile icon="plus" title={t('network_share_add')} secondary={t('network_add_choose_share')} onClick={() => setScreen({kind: 'add', form: null})} />
-							<SourceTile icon="plus" title={t('plex_server_add')} secondary={t('network_add_choose_plex')} onClick={() => setScreen({kind: 'plex'})} />
-							<SourceTile icon="plus" title={t('camera_add')} secondary={t('network_add_choose_camera')} onClick={() => setScreen({kind: 'add', form: 'tapo'})} />
+							<SourceTile icon="plus" title={t('network_share_add')} secondary={t('network_add_choose_share')} value="share" onSelect={addSomething} />
+							<SourceTile icon="plus" title={t('plex_server_add')} secondary={t('network_add_choose_plex')} value="plex" onSelect={addSomething} />
+							<SourceTile icon="plus" title={t('camera_add')} secondary={t('network_add_choose_camera')} value="camera" onSelect={addSomething} />
 						</div>
 						<div className={css.section}>{t('network_share_scan_title')}</div>
 						{scanning && <div className={css.notice}>{t('network_share_scan_scanning')}</div>}
@@ -147,11 +167,12 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 							<div className={css.grid}>
 								{found.map((server) => (
 									<SourceTile
-										key={`${server.kind}:${server.location || server.address}`}
+										key={foundKey(server)}
 										icon={kindIcon(server.kind)}
 										title={server.name || server.address || server.host || ''}
 										secondary={server.kind === 'dlna' ? t('network_share_scan_type_dlna') : t('network_share_scan_type_plex')}
-										onClick={() => void addFound(server)}
+										value={foundKey(server)}
+										onSelect={addFoundByKey}
 									/>
 								))}
 							</div>

@@ -13,6 +13,7 @@ import {t} from '../i18n';
 import {bridgeUrl} from './bridgeClient';
 import {catchUpTo, concat, mseType, trimRange} from './liveMse';
 import {sourceErrorText} from './messages';
+import {ChoiceButton} from './SourceTile';
 import type {BridgeInfo, SourceConfig} from './types';
 import css from './sources.module.less';
 
@@ -40,8 +41,11 @@ async function readError(response: Response, source: SourceConfig): Promise<stri
 export const CameraLive: React.FC<CameraLiveProps> = ({info, source, onClose}) => {
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const [quality, setQuality] = useState<Quality>('hd');
-	const [state, setState] = useState<State>({kind: 'connecting'});
 	const [attempt, setAttempt] = useState(0);
+	// The state of one run (a quality, an attempt); a run that has said nothing yet is connecting
+	const run = `${quality}:${attempt}`;
+	const [reported, setReported] = useState<{run: string; state: State} | null>(null);
+	const state: State = reported && reported.run === run ? reported.state : {kind: 'connecting'};
 	useWebOSKeys({onBack: onClose});
 
 	useEffect(() => holdScreenSaver(), []);
@@ -57,7 +61,7 @@ export const CameraLive: React.FC<CameraLiveProps> = ({info, source, onClose}) =
 		let stopped = false;
 		const controller = typeof AbortController === 'undefined' ? null : new AbortController();
 		const base = `live/${encodeURIComponent(source.id)}/${quality}`;
-		setState({kind: 'connecting'});
+		const setState = (next: State) => setReported({run, state: next});
 
 		const playHls = () => {
 			if (stopped) return;
@@ -91,7 +95,7 @@ export const CameraLive: React.FC<CameraLiveProps> = ({info, source, onClose}) =
 				const chunk = concat(queue.splice(0, queue.length));
 				try {
 					buffer.appendBuffer(chunk as BufferSource);
-				} catch (error) {
+				} catch {
 					// The buffer is full: drop what is behind the picture and try again
 					if (buffer.buffered.length) buffer.remove(0, Math.max(0, video.currentTime - 2));
 					queue.unshift(chunk);
@@ -142,9 +146,10 @@ export const CameraLive: React.FC<CameraLiveProps> = ({info, source, onClose}) =
 			video.load();
 			if (src.startsWith('blob:')) URL.revokeObjectURL(src);
 		};
-	}, [info, source, quality, attempt]);
+	}, [info, source, quality, run]);
 
 	const retry = useCallback(() => setAttempt((n) => n + 1), []);
+	const chooseQuality = useCallback((value: string) => setQuality(value === 'sd' ? 'sd' : 'hd'), []);
 
 	let statusText = '';
 	if (state.kind === 'connecting') statusText = t('camera_live_connecting');
@@ -158,12 +163,12 @@ export const CameraLive: React.FC<CameraLiveProps> = ({info, source, onClose}) =
 				<div className={css.liveTitle}>{source.name}</div>
 				<div className={css.liveStatus}>{statusText}</div>
 				<div className={css.row}>
-					<Button size="small" selected={quality === 'hd'} onClick={() => setQuality('hd')}>
+					<ChoiceButton value="hd" selected={quality === 'hd'} onSelect={chooseQuality}>
 						{t('camera_live_hd')}
-					</Button>
-					<Button size="small" selected={quality === 'sd'} onClick={() => setQuality('sd')}>
+					</ChoiceButton>
+					<ChoiceButton value="sd" selected={quality === 'sd'} onSelect={chooseQuality}>
 						{t('camera_live_sd')}
-					</Button>
+					</ChoiceButton>
 					{state.kind === 'failed' && (
 						<Button size="small" onClick={retry}>
 							{t('retry')}

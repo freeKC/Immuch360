@@ -12,7 +12,7 @@ import {i18nKey, t} from '../i18n';
 import type {BridgeClient} from './bridgeClient';
 import {webdavUrl} from './addresses';
 import {sourceErrorText} from './messages';
-import {SourceTile, kindIcon} from './SourceTile';
+import {ChoiceButton, SourceTile, kindIcon} from './SourceTile';
 import {newSourceId, sourceStore} from './store';
 import type {DiscoveredServer, SourceConfig, SourceKind} from './types';
 import css from './sources.module.less';
@@ -148,15 +148,25 @@ export const SourceForm: React.FC<SourceFormProps> = ({client, kind: initialKind
 		}
 	}, [client, host, port, user, password]);
 
+	const chooseKind = useCallback((value: string) => setKind(value as FormKind), []);
+	const toggleTls = useCallback(() => setTls((on) => !on), []);
+	const saveFound = useCallback(
+		(location_: string) => {
+			const server = discovered.find((s) => s.kind === 'dlna' && s.location === location_);
+			if (server) void save(build(server));
+		},
+		[discovered, save, build]
+	);
+
 	const dlnaFound = useMemo(() => discovered.filter((server) => server.kind === 'dlna'), [discovered]);
 
 	let body: React.ReactNode;
 	if (!kind) {
 		body = (
 			<div className={css.grid}>
-				<SourceTile icon="files" title={t('network_share_type_smb')} secondary={smbAvailable ? undefined : t('webos_smb_needs_webos22')} onClick={() => setKind('smb')} />
-				<SourceTile icon="files" title={t('network_share_type_webdav')} onClick={() => setKind('webdav')} />
-				<SourceTile icon="dlna" title={t('network_share_type_dlna')} onClick={() => setKind('dlna')} />
+				<SourceTile icon="files" title={t('network_share_type_smb')} secondary={smbAvailable ? undefined : t('webos_smb_needs_webos22')} value="smb" onSelect={chooseKind} />
+				<SourceTile icon="files" title={t('network_share_type_webdav')} value="webdav" onSelect={chooseKind} />
+				<SourceTile icon="dlna" title={t('network_share_type_dlna')} value="dlna" onSelect={chooseKind} />
 			</div>
 		);
 	} else if (kind === 'smb' && !smbAvailable) {
@@ -169,7 +179,7 @@ export const SourceForm: React.FC<SourceFormProps> = ({client, kind: initialKind
 						<div className={css.section}>{t('network_share_scan_title')}</div>
 						<div className={css.grid}>
 							{dlnaFound.map((server) => (
-								<SourceTile key={server.location} icon={kindIcon('dlna')} title={server.name} secondary={server.host} onClick={() => void save(build(server))} />
+								<SourceTile key={server.location} icon={kindIcon('dlna')} title={server.name} secondary={server.host} value={server.location || ''} onSelect={saveFound} />
 							))}
 						</div>
 						<div className={css.notice}>{t('network_share_scan_enter_by_hand')}</div>
@@ -205,9 +215,9 @@ export const SourceForm: React.FC<SourceFormProps> = ({client, kind: initialKind
 							{shares && shares.length > 0 && (
 								<div className={css.row}>
 									{shares.map((name_) => (
-										<Button key={name_} size="small" selected={name_ === share} onClick={() => setShare(name_)}>
+										<ChoiceButton key={name_} value={name_} selected={name_ === share} onSelect={setShare}>
 											{name_}
-										</Button>
+										</ChoiceButton>
 									))}
 								</div>
 							)}
@@ -223,7 +233,7 @@ export const SourceForm: React.FC<SourceFormProps> = ({client, kind: initialKind
 							<FieldRow value={path} onChange={setPath} placeholder="remote.php/dav/files/me" />
 						</Field>
 						<Field label={t('network_share_use_tls')}>
-							<Button size="small" selected={tls} icon={tls ? 'check' : undefined} onClick={() => setTls(!tls)}>
+							<Button size="small" selected={tls} icon={tls ? 'check' : undefined} onClick={toggleTls}>
 								{tls ? 'HTTPS' : 'HTTP'}
 							</Button>
 						</Field>

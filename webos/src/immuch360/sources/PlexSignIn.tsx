@@ -132,6 +132,22 @@ export const PlexSignIn: React.FC<PlexSignInProps> = ({client, discovered, onSav
 		[save]
 	);
 
+	const addDiscoveredByKey = useCallback(
+		(key: string) => {
+			const server = discovered.find((s) => s.kind === 'plex' && (s.machineId || '') + s.address === key);
+			if (server) addDiscovered(server);
+		},
+		[discovered, addDiscovered]
+	);
+	const accountServers = step.kind === 'servers' ? step.servers : null;
+	const addAccountServerByKey = useCallback(
+		(key: string) => {
+			const server = accountServers?.find((s) => s.machineId + s.address === key);
+			if (server) addAccountServer(server);
+		},
+		[accountServers, addAccountServer]
+	);
+
 	let body: React.ReactNode;
 	if (step.kind === 'pin') {
 		body = (
@@ -151,7 +167,7 @@ export const PlexSignIn: React.FC<PlexSignInProps> = ({client, discovered, onSav
 				<div className={css.section}>{t('webos_plex_choose_server')}</div>
 				<div className={css.grid}>
 					{step.servers.map((server) => (
-						<SourceTile key={server.machineId + server.address} icon={kindIcon('plex')} title={server.name} secondary={`${server.address}:${server.port}`} onClick={() => addAccountServer(server)} />
+						<SourceTile key={server.machineId + server.address} icon={kindIcon('plex')} title={server.name} secondary={`${server.address}:${server.port}`} value={server.machineId + server.address} onSelect={addAccountServerByKey} />
 					))}
 				</div>
 			</>
@@ -174,7 +190,8 @@ export const PlexSignIn: React.FC<PlexSignInProps> = ({client, discovered, onSav
 								icon={kindIcon('plex')}
 								title={server.name || server.address || 'Plex'}
 								secondary={server.hash ? t('webos_plex_sign_in') : `${server.address}:${server.port}`}
-								onClick={() => addDiscovered(server)}
+								value={(server.machineId || '') + server.address}
+								onSelect={addDiscoveredByKey}
 							/>
 						))}
 					</div>
