@@ -245,28 +245,51 @@ Ol 360° sfia blong DJI dron (Mini, Air, Mavic mo ol narafala, we app i luksave 
 
 Wan kod bes blong sikis environmen, mo wan narafala app blong ol LG TV. Wanem evriwan i gat tedei:
 
-| Fija | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Laebri, albam, sij wetem wan Immich server | ✅ | ✅ | ✅ vyua | ✅ vyua | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Wetaot wan server: media blong divaes hem wan | ✅ | ✅ | sea nomo | ❌ | ✅ | ✅ folda | ✅ folda | ✅ folda |
-| Flat foto mo video | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Tanem wan foto wetem wan ki | ✅ | ✅ | ✅ kala ki | ✅ kala ki | ✅ windo | ✅ | ✅ | ✅ |
-| 360° foto olsem wan sfia | ✅ | ✅ | ✅ | ✅ | ✅ imesiv | ✅ | ✅ | 🔧 CI |
-| 360° video | ✅ | ✅ no gat ba blong taem | ✅ mesej sapos i no save dikodem | flat nomo | ✅ imesiv | ✅ | flat nomo | flat nomo |
-| 3D mo VR180 | ✅ wan lek | ✅ wan lek | ✅ wan lek | foto wan lek, video flat | ✅ trufala 3D | ✅ wan lek | foto wan lek, video flat | foto wan lek, video flat |
-| Spatial 2.5D (trakim hed) | ✅ eksperimentol | ✅ eksperimentol | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple spatial foto | ✅ wan lek | ✅ wan lek | ✅ wan lek | ❌ | ✅ 3D | ✅ wan lek | 🔧 CI | 🔧 CI |
-| Rao fael blong Insta360, GoPro mo DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI foto, video flat | 🔧 CI foto, video flat |
-| SMB, WebDAV, DLNA sea | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kamera: rikoding | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kamera: laef vyu | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Seaem divaes ia long netwok | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Aplod i go long Immich from sea mo divaes | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tekem from wan DJI dron o wan kad tru USB (eksperimentol) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Dak tim | olsem sistem | olsem sistem | ✅ stret long stat | ✅ tim ia nomo | olsem sistem | olsem sistem | olsem sistem | olsem sistem |
-| Input | tajim, gyroscope | tajim, gyroscope | rimot; Lef mo Raet tu taem wan video i plei, Menu blong ol ditel | rimot, Magic Remote | kontrola, han | maos, kiboad | maos, kiboad | maos, kiboad, trakpad |
-| Wea blong kasem hem | Google Play, APK | App Store (stap long rivyu) | APK, Google Play (stap long rivyu) | .ipk test build, Developer Mode | Horizon Store, APK | Installer o ZIP (privyu) | .deb, .rpm (privyu) | DMG o ZIP (privyu we i no saenem) |
+| Fija | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Laebri, albam, sij wetem wan Immich server | ✅ | ✅ | ✅ vyua | ✅ vyua | ✅ |
+| Wetaot wan server: media blong divaes hem wan | ✅ | ✅ | sea nomo | ❌ | ✅ |
+| Flat foto mo video | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Tanem wan foto wetem wan ki | ✅ | ✅ | ✅ kala ki | ✅ kala ki | ✅ windo |
+| 360° foto olsem wan sfia | ✅ | ✅ | ✅ | ✅ | ✅ imesiv |
+| 360° video | ✅ | ✅ no gat ba blong taem | ✅ mesej sapos i no save dikodem | flat nomo | ✅ imesiv |
+| 3D mo VR180 | ✅ wan lek | ✅ wan lek | ✅ wan lek | foto wan lek, video flat | ✅ trufala 3D |
+| Spatial 2.5D (trakim hed) | ✅ eksperimentol | ✅ eksperimentol | ❌ | ❌ | ❌ |
+| Apple spatial foto | ✅ wan lek | ✅ wan lek | ✅ wan lek | ❌ | ✅ 3D |
+| Rao fael blong Insta360, GoPro mo DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB, WebDAV, DLNA sea | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kamera: rikoding | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kamera: laef vyu | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Seaem divaes ia long netwok | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Aplod i go long Immich from sea mo divaes | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Tekem from wan DJI dron o wan kad tru USB (eksperimentol) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Dak tim | olsem sistem | olsem sistem | ✅ stret long stat | ✅ tim ia nomo | olsem sistem |
+| Input | tajim, gyroscope | tajim, gyroscope | rimot; Lef mo Raet tu taem wan video i plei, Menu blong ol ditel | rimot, Magic Remote | kontrola, han |
+| Wea blong kasem hem | Google Play, APK | App Store (stap long rivyu) | APK, Google Play (stap long rivyu) | .ipk test build, Developer Mode | Horizon Store, APK |
+
+| Fija | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Laebri, albam, sij wetem wan Immich server | ✅ | 🔧 CI | 🔧 CI |
+| Wetaot wan server: media blong divaes hem wan | ✅ folda | ✅ folda | ✅ folda |
+| Flat foto mo video | ✅ | ✅ | ✅ |
+| Tanem wan foto wetem wan ki | ✅ | ✅ | ✅ |
+| 360° foto olsem wan sfia | ✅ | ✅ | 🔧 CI |
+| 360° video | ✅ | flat nomo | flat nomo |
+| 3D mo VR180 | ✅ wan lek | foto wan lek, video flat | foto wan lek, video flat |
+| Spatial 2.5D (trakim hed) | 🔜 | ❌ | ❌ |
+| Apple spatial foto | ✅ wan lek | 🔧 CI | 🔧 CI |
+| Rao fael blong Insta360, GoPro mo DJI | ✅ | 🔧 CI foto, video flat | 🔧 CI foto, video flat |
+| SMB, WebDAV, DLNA sea | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamera: rikoding | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamera: laef vyu | ✅ | 🔧 CI | 🔧 CI |
+| Seaem divaes ia long netwok | ✅ | ❌ | ❌ |
+| Aplod i go long Immich from sea mo divaes | ✅ | 🔧 CI | 🔧 CI |
+| Tekem from wan DJI dron o wan kad tru USB (eksperimentol) | ❌ | ❌ | ❌ |
+| Dak tim | olsem sistem | olsem sistem | olsem sistem |
+| Input | maos, kiboad | maos, kiboad | maos, kiboad, trakpad |
+| Wea blong kasem hem | Installer o ZIP (privyu) | .deb, .rpm (privyu) | DMG o ZIP (privyu we i no saenem) |
 
 ✅ i stap long app long platform ia · ❌ i no stap ofa long hem · 🔜 oli plan blong mekem · 🔧 CI i stap long sos, CI blong projek i buildim mo statem long sistem ia, be oli no jekem yet long ples ia wetem wan trufala server, sea o kamera · flat nomo: video i plei flat, wetem wan mesej, from we enjin blong 360° video long ol kompiuta i blong Windows nomo, mo long ol LG TV oli mas mesarem yet sapos webOS i givim ol frem blong video i go long sfia. "Wan lek" i minim wan 3D fael i soem lef lek blong hem long wan flat skrin. Kolum blong LG webOS i wan narafala app, we test build 0.1.0 blong hem i pasem ol test blong hem long CI blong projek mo i no ron yet long wan TV. I no evri ✅ we oli jekem yet long wan trufala divaes: wanem we oli jekem wea, mo wanem i stap yet blong konfem, i stap long [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) mo [Compatibility](../docs/immuch360/compatibility.md).
 

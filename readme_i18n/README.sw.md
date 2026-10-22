@@ -245,28 +245,51 @@ Tufe za 360° za droni za DJI (Mini, Air, Mavic na nyingine, zinazotambuliwa kut
 
 Msingi mmoja wa kodi kwa mazingira sita, na programu tofauti kwa televisheni za LG. Kile kila moja inacho leo:
 
-| Uwezo | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Albamu, picha, utafutaji kwa seva ya Immich | ✅ | ✅ | ✅ kitazamaji | ✅ kitazamaji | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Bila seva: midia yake ya kifaa | ✅ | ✅ | hifadhi tu | ❌ | ✅ | ✅ folda | ✅ folda | ✅ folda |
-| Picha na video bapa | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Zungusha picha kwa kitufe kimoja | ✅ | ✅ | ✅ vitufe vya rangi | ✅ vitufe vya rangi | ✅ dirisha | ✅ | ✅ | ✅ |
-| Picha za 360° kama tufe | ✅ | ✅ | ✅ | ✅ | ✅ ya kuzamisha | ✅ | ✅ | 🔧 CI |
-| Video za 360° | ✅ | ✅ bila upau wa muda | ✅ ujumbe isipodekodika | bapa tu | ✅ ya kuzamisha | ✅ | bapa tu | bapa tu |
-| 3D na VR180 | ✅ jicho moja | ✅ jicho moja | ✅ jicho moja | picha jicho moja, video bapa | ✅ 3D ya kweli | ✅ jicho moja | picha jicho moja, video bapa | picha jicho moja, video bapa |
-| Spatial 2.5D (kufuatilia kichwa) | ✅ ya majaribio | ✅ ya majaribio | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Picha za spatial za Apple | ✅ jicho moja | ✅ jicho moja | ✅ jicho moja | ❌ | ✅ 3D | ✅ jicho moja | 🔧 CI | 🔧 CI |
-| Faili ghafi za Insta360, GoPro na DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI picha, video bapa | 🔧 CI picha, video bapa |
-| Hifadhi za SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamera za Tapo: rekodi | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamera za Tapo: mtazamo wa moja kwa moja | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Shiriki kifaa hiki kwenye mtandao | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Pakia kwenye Immich kutoka hifadhi na kifaa | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ingiza kutoka droni ya DJI au kadi kupitia USB (ya majaribio) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Mandhari meusi | kama mfumo | kama mfumo | ✅ kwa chaguo-msingi | ✅ mandhari pekee | kama mfumo | kama mfumo | kama mfumo | kama mfumo |
-| Kiingizo | kugusa, jairoskopu | kugusa, jairoskopu | kidhibiti cha mbali; Kushoto na Kulia pia wakati wa video, Menu kwa maelezo | kidhibiti cha mbali, Magic Remote | vidhibiti, mikono | kipanya, kibodi | kipanya, kibodi | kipanya, kibodi, padi ya kugusa |
-| Mahali pa kuipata | Google Play, APK | App Store (inakaguliwa) | APK, Google Play (inakaguliwa) | build ya majaribio ya .ipk, Developer Mode | Horizon Store, APK | kisakinishi au ZIP (toleo la awali) | .deb, .rpm (toleo la awali) | DMG au ZIP (toleo la awali lisilosainiwa) |
+| Uwezo | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Albamu, picha, utafutaji kwa seva ya Immich | ✅ | ✅ | ✅ kitazamaji | ✅ kitazamaji | ✅ |
+| Bila seva: midia yake ya kifaa | ✅ | ✅ | hifadhi tu | ❌ | ✅ |
+| Picha na video bapa | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Zungusha picha kwa kitufe kimoja | ✅ | ✅ | ✅ vitufe vya rangi | ✅ vitufe vya rangi | ✅ dirisha |
+| Picha za 360° kama tufe | ✅ | ✅ | ✅ | ✅ | ✅ ya kuzamisha |
+| Video za 360° | ✅ | ✅ bila upau wa muda | ✅ ujumbe isipodekodika | bapa tu | ✅ ya kuzamisha |
+| 3D na VR180 | ✅ jicho moja | ✅ jicho moja | ✅ jicho moja | picha jicho moja, video bapa | ✅ 3D ya kweli |
+| Spatial 2.5D (kufuatilia kichwa) | ✅ ya majaribio | ✅ ya majaribio | ❌ | ❌ | ❌ |
+| Picha za spatial za Apple | ✅ jicho moja | ✅ jicho moja | ✅ jicho moja | ❌ | ✅ 3D |
+| Faili ghafi za Insta360, GoPro na DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Hifadhi za SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamera za Tapo: rekodi | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamera za Tapo: mtazamo wa moja kwa moja | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Shiriki kifaa hiki kwenye mtandao | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Pakia kwenye Immich kutoka hifadhi na kifaa | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Ingiza kutoka droni ya DJI au kadi kupitia USB (ya majaribio) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Mandhari meusi | kama mfumo | kama mfumo | ✅ kwa chaguo-msingi | ✅ mandhari pekee | kama mfumo |
+| Kiingizo | kugusa, jairoskopu | kugusa, jairoskopu | kidhibiti cha mbali; Kushoto na Kulia pia wakati wa video, Menu kwa maelezo | kidhibiti cha mbali, Magic Remote | vidhibiti, mikono |
+| Mahali pa kuipata | Google Play, APK | App Store (inakaguliwa) | APK, Google Play (inakaguliwa) | build ya majaribio ya .ipk, Developer Mode | Horizon Store, APK |
+
+| Uwezo | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Albamu, picha, utafutaji kwa seva ya Immich | ✅ | 🔧 CI | 🔧 CI |
+| Bila seva: midia yake ya kifaa | ✅ folda | ✅ folda | ✅ folda |
+| Picha na video bapa | ✅ | ✅ | ✅ |
+| Zungusha picha kwa kitufe kimoja | ✅ | ✅ | ✅ |
+| Picha za 360° kama tufe | ✅ | ✅ | 🔧 CI |
+| Video za 360° | ✅ | bapa tu | bapa tu |
+| 3D na VR180 | ✅ jicho moja | picha jicho moja, video bapa | picha jicho moja, video bapa |
+| Spatial 2.5D (kufuatilia kichwa) | 🔜 | ❌ | ❌ |
+| Picha za spatial za Apple | ✅ jicho moja | 🔧 CI | 🔧 CI |
+| Faili ghafi za Insta360, GoPro na DJI | ✅ | 🔧 CI picha, video bapa | 🔧 CI picha, video bapa |
+| Hifadhi za SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Kamera za Tapo: rekodi | ✅ | 🔧 CI | 🔧 CI |
+| Kamera za Tapo: mtazamo wa moja kwa moja | ✅ | 🔧 CI | 🔧 CI |
+| Shiriki kifaa hiki kwenye mtandao | ✅ | ❌ | ❌ |
+| Pakia kwenye Immich kutoka hifadhi na kifaa | ✅ | 🔧 CI | 🔧 CI |
+| Ingiza kutoka droni ya DJI au kadi kupitia USB (ya majaribio) | ❌ | ❌ | ❌ |
+| Mandhari meusi | kama mfumo | kama mfumo | kama mfumo |
+| Kiingizo | kipanya, kibodi | kipanya, kibodi | kipanya, kibodi, padi ya kugusa |
+| Mahali pa kuipata | kisakinishi au ZIP (toleo la awali) | .deb, .rpm (toleo la awali) | DMG au ZIP (toleo la awali lisilosainiwa) |
 
 ✅ ndani ya programu kwenye jukwaa hilo · ❌ haipatikani huko · 🔜 imepangwa · 🔧 CI ndani ya chanzo, imejengwa na kuanzishwa na CI ya mradi kwenye mfumo huo, bado haijakaguliwa huko kwa seva, hifadhi au kamera halisi · bapa tu: video inachezwa bapa, pamoja na ujumbe, kwa sababu kionyeshi cha video za 360° cha kompyuta kipo kwenye Windows tu, na kwenye televisheni za LG bado kunahitajika kupima kama webOS inakabidhi fremu za video kwa tufe. "Jicho moja" inamaanisha faili ya 3D inaonyesha jicho lake la kushoto kwenye skrini bapa. Safu ya LG webOS ni programu tofauti, ambayo build yake ya majaribio 0.1.0 inapita majaribio yake kwenye CI ya mradi na bado haijaendeshwa kwenye televisheni. Si kila ✅ imekaguliwa kwenye kifaa halisi bado: kilichokaguliwa wapi, na kinachosalia kuthibitishwa, kipo kwenye [Vipengele](../docs/immuch360/features.md), [Msaada wa jukwaa](../docs/immuch360/platform-support.md) na [Utangamanifu](../docs/immuch360/compatibility.md).
 

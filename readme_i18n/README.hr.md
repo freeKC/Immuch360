@@ -245,28 +245,51 @@ Uvezite fotografije i videozapise DJI drona preko USB-a, izravno na svoj Immich 
 
 Jedna baza koda, šest okruženja i zasebna aplikacija za LG televizore. Što svako od njih ima danas:
 
-| Mogućnost | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerija, albumi, pretraga s Immich poslužiteljem | ✅ | ✅ | ✅ preglednik | ✅ preglednik | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Bez poslužitelja: vlastiti sadržaj uređaja | ✅ | ✅ | samo dijeljeni resursi | ❌ | ✅ | ✅ mape | ✅ mape | ✅ mape |
-| Ravne fotografije i videozapisi | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Okretanje fotografije jednom tipkom | ✅ | ✅ | ✅ tipke u boji | ✅ tipke u boji | ✅ prozor | ✅ | ✅ | ✅ |
-| 360° fotografije kao sfera | ✅ | ✅ | ✅ | ✅ | ✅ imerzivno | ✅ | ✅ | 🔧 CI |
-| 360° videozapisi | ✅ | ✅ bez vremenske trake | ✅ poruka ako se ne može dekodirati | samo ravno | ✅ imerzivno | ✅ | samo ravno | samo ravno |
-| 3D i VR180 | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | fotografije jedno oko, videozapisi ravno | ✅ pravi 3D | ✅ jedno oko | fotografije jedno oko, videozapisi ravno | fotografije jedno oko, videozapisi ravno |
-| Spatial 2.5D (praćenje glave) | ✅ eksperimentalno | ✅ eksperimentalno | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Appleove prostorne fotografije | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ❌ | ✅ 3D | ✅ jedno oko | 🔧 CI | 🔧 CI |
-| Izvorne datoteke Insta360, GoPro i DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI fotografije, videozapisi ravno | 🔧 CI fotografije, videozapisi ravno |
-| SMB, WebDAV, DLNA dijeljeni resursi | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamere Tapo: snimke | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamere Tapo: prikaz uživo | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Dijeljenje ovog uređaja na mreži | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Prijenos na Immich iz dijeljenih resursa i uređaja | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Uvoz s DJI drona ili kartice preko USB-a (eksperimentalno) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tamna tema | prema sustavu | prema sustavu | ✅ zadano | ✅ jedina tema | prema sustavu | prema sustavu | prema sustavu | prema sustavu |
-| Unos | dodir, žiroskop | dodir, žiroskop | daljinski upravljač; lijevo i desno i tijekom videozapisa, Menu za pojedinosti | daljinski upravljač, Magic Remote | kontroleri, ruke | miš, tipkovnica | miš, tipkovnica | miš, tipkovnica, dodirna pločica |
-| Gdje je nabaviti | Google Play, APK | App Store (na pregledu) | APK, Google Play (na pregledu) | .ipk testni build, Developer Mode | Horizon Store, APK | instalacijski program ili ZIP (preview) | .deb, .rpm (preview) | DMG ili ZIP (nepotpisani preview) |
+| Mogućnost | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerija, albumi, pretraga s Immich poslužiteljem | ✅ | ✅ | ✅ preglednik | ✅ preglednik | ✅ |
+| Bez poslužitelja: vlastiti sadržaj uređaja | ✅ | ✅ | samo dijeljeni resursi | ❌ | ✅ |
+| Ravne fotografije i videozapisi | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Okretanje fotografije jednom tipkom | ✅ | ✅ | ✅ tipke u boji | ✅ tipke u boji | ✅ prozor |
+| 360° fotografije kao sfera | ✅ | ✅ | ✅ | ✅ | ✅ imerzivno |
+| 360° videozapisi | ✅ | ✅ bez vremenske trake | ✅ poruka ako se ne može dekodirati | samo ravno | ✅ imerzivno |
+| 3D i VR180 | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | fotografije jedno oko, videozapisi ravno | ✅ pravi 3D |
+| Spatial 2.5D (praćenje glave) | ✅ eksperimentalno | ✅ eksperimentalno | ❌ | ❌ | ❌ |
+| Appleove prostorne fotografije | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ❌ | ✅ 3D |
+| Izvorne datoteke Insta360, GoPro i DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB, WebDAV, DLNA dijeljeni resursi | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamere Tapo: snimke | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamere Tapo: prikaz uživo | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Dijeljenje ovog uređaja na mreži | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Prijenos na Immich iz dijeljenih resursa i uređaja | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Uvoz s DJI drona ili kartice preko USB-a (eksperimentalno) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tamna tema | prema sustavu | prema sustavu | ✅ zadano | ✅ jedina tema | prema sustavu |
+| Unos | dodir, žiroskop | dodir, žiroskop | daljinski upravljač; lijevo i desno i tijekom videozapisa, Menu za pojedinosti | daljinski upravljač, Magic Remote | kontroleri, ruke |
+| Gdje je nabaviti | Google Play, APK | App Store (na pregledu) | APK, Google Play (na pregledu) | .ipk testni build, Developer Mode | Horizon Store, APK |
+
+| Mogućnost | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerija, albumi, pretraga s Immich poslužiteljem | ✅ | 🔧 CI | 🔧 CI |
+| Bez poslužitelja: vlastiti sadržaj uređaja | ✅ mape | ✅ mape | ✅ mape |
+| Ravne fotografije i videozapisi | ✅ | ✅ | ✅ |
+| Okretanje fotografije jednom tipkom | ✅ | ✅ | ✅ |
+| 360° fotografije kao sfera | ✅ | ✅ | 🔧 CI |
+| 360° videozapisi | ✅ | samo ravno | samo ravno |
+| 3D i VR180 | ✅ jedno oko | fotografije jedno oko, videozapisi ravno | fotografije jedno oko, videozapisi ravno |
+| Spatial 2.5D (praćenje glave) | 🔜 | ❌ | ❌ |
+| Appleove prostorne fotografije | ✅ jedno oko | 🔧 CI | 🔧 CI |
+| Izvorne datoteke Insta360, GoPro i DJI | ✅ | 🔧 CI fotografije, videozapisi ravno | 🔧 CI fotografije, videozapisi ravno |
+| SMB, WebDAV, DLNA dijeljeni resursi | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Kamere Tapo: snimke | ✅ | 🔧 CI | 🔧 CI |
+| Kamere Tapo: prikaz uživo | ✅ | 🔧 CI | 🔧 CI |
+| Dijeljenje ovog uređaja na mreži | ✅ | ❌ | ❌ |
+| Prijenos na Immich iz dijeljenih resursa i uređaja | ✅ | 🔧 CI | 🔧 CI |
+| Uvoz s DJI drona ili kartice preko USB-a (eksperimentalno) | ❌ | ❌ | ❌ |
+| Tamna tema | prema sustavu | prema sustavu | prema sustavu |
+| Unos | miš, tipkovnica | miš, tipkovnica | miš, tipkovnica, dodirna pločica |
+| Gdje je nabaviti | instalacijski program ili ZIP (preview) | .deb, .rpm (preview) | DMG ili ZIP (nepotpisani preview) |
 
 ✅ u aplikaciji na toj platformi · ❌ nije ponuđeno tamo · 🔜 planirano · 🔧 CI u izvornom kodu, izgrađeno i pokrenuto CI-jem projekta na tom sustavu, ondje još nije provjereno sa stvarnim poslužiteljem, dijeljenim resursom ili kamerom · samo ravno: videozapis se reproducira ravno, s porukom, jer iscrtavanje 360° videozapisa na računalima postoji samo na Windowsu, a na LG televizorima tek treba izmjeriti predaje li webOS okvire videozapisa sferi. "Jedno oko" znači da 3D datoteka prikazuje svoje lijevo oko na ravnom zaslonu. Stupac LG webOS je zasebna aplikacija, čiji testni build 0.1.0 prolazi svoje testove na CI-ju projekta i još nije pokrenut na televizoru. Nije svaki ✅ još provjeren na stvarnom uređaju: što je provjereno gdje, i što još treba potvrditi, nalazi se u [Značajkama](../docs/immuch360/features.md), [Podršci za platforme](../docs/immuch360/platform-support.md) i [Kompatibilnosti](../docs/immuch360/compatibility.md).
 

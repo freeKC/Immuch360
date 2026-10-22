@@ -245,28 +245,51 @@ Ang mga 360° sphere ng mga DJI drone (Mini, Air, Mavic at iba pa, nakikilala mu
 
 Isang code base para sa anim na kapaligiran, at isang hiwalay na app para sa mga LG TV. Ano ang mayroon ang bawat isa ngayon:
 
-| Kakayahan | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Gallery, mga album, search gamit ang Immich server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Nang walang server: ang sariling media ng device | ✅ | ✅ | shares lang | ❌ | ✅ | ✅ folders | ✅ folders | ✅ folders |
-| Mga patag na larawan at video | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Ikutin ang isang larawan sa isang pindot | ✅ | ✅ | ✅ mga color key | ✅ mga color key | ✅ window | ✅ | ✅ | ✅ |
-| Mga 360° na larawan bilang sphere | ✅ | ✅ | ✅ | ✅ | ✅ immersive | ✅ | ✅ | 🔧 CI |
-| Mga 360° na video | ✅ | ✅ walang time bar | ✅ mensahe kung hindi ma-decode | patag lang | ✅ immersive | ✅ | patag lang | patag lang |
-| 3D at VR180 | ✅ isang mata | ✅ isang mata | ✅ isang mata | larawan isang mata, video patag | ✅ tunay na 3D | ✅ isang mata | larawan isang mata, video patag | larawan isang mata, video patag |
-| Spatial 2.5D (head tracking) | ✅ eksperimental | ✅ eksperimental | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple spatial photos | ✅ isang mata | ✅ isang mata | ✅ isang mata | ❌ | ✅ 3D | ✅ isang mata | 🔧 CI | 🔧 CI |
-| Raw na Insta360, GoPro at DJI na mga file | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI larawan, video patag | 🔧 CI larawan, video patag |
-| Mga share na SMB, WebDAV at DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Mga Tapo camera: recordings | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Mga Tapo camera: live view | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| I-share ang device na ito sa network | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| I-upload sa Immich mula sa shares at sa device | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Pag-import mula sa isang DJI drone o card sa USB (eksperimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Dark theme | gaya ng sistema | gaya ng sistema | ✅ bilang default | ✅ tanging theme | gaya ng sistema | gaya ng sistema | gaya ng sistema | gaya ng sistema |
-| Input | pagtouch, gyroscope | pagtouch, gyroscope | remote; Left at Right kahit habang may video, Menu para sa mga detalye | remote, Magic Remote | mga controller, kamay | mouse, keyboard | mouse, keyboard | mouse, keyboard, trackpad |
-| Saan ito makukuha | Google Play, APK | App Store (sinusuri) | APK, Google Play (sinusuri) | .ipk test build, Developer Mode | Horizon Store, APK | installer o ZIP (preview) | .deb, .rpm (preview) | DMG o ZIP (preview na hindi naka-sign) |
+| Kakayahan | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Gallery, mga album, search gamit ang Immich server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ |
+| Nang walang server: ang sariling media ng device | ✅ | ✅ | shares lang | ❌ | ✅ |
+| Mga patag na larawan at video | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Ikutin ang isang larawan sa isang pindot | ✅ | ✅ | ✅ mga color key | ✅ mga color key | ✅ window |
+| Mga 360° na larawan bilang sphere | ✅ | ✅ | ✅ | ✅ | ✅ immersive |
+| Mga 360° na video | ✅ | ✅ walang time bar | ✅ mensahe kung hindi ma-decode | patag lang | ✅ immersive |
+| 3D at VR180 | ✅ isang mata | ✅ isang mata | ✅ isang mata | larawan isang mata, video patag | ✅ tunay na 3D |
+| Spatial 2.5D (head tracking) | ✅ eksperimental | ✅ eksperimental | ❌ | ❌ | ❌ |
+| Apple spatial photos | ✅ isang mata | ✅ isang mata | ✅ isang mata | ❌ | ✅ 3D |
+| Raw na Insta360, GoPro at DJI na mga file | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Mga share na SMB, WebDAV at DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Mga Tapo camera: recordings | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Mga Tapo camera: live view | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| I-share ang device na ito sa network | ✅ | ✅ | ❌ | ❌ | ❌ |
+| I-upload sa Immich mula sa shares at sa device | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Pag-import mula sa isang DJI drone o card sa USB (eksperimental) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Dark theme | gaya ng sistema | gaya ng sistema | ✅ bilang default | ✅ tanging theme | gaya ng sistema |
+| Input | pagtouch, gyroscope | pagtouch, gyroscope | remote; Left at Right kahit habang may video, Menu para sa mga detalye | remote, Magic Remote | mga controller, kamay |
+| Saan ito makukuha | Google Play, APK | App Store (sinusuri) | APK, Google Play (sinusuri) | .ipk test build, Developer Mode | Horizon Store, APK |
+
+| Kakayahan | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Gallery, mga album, search gamit ang Immich server | ✅ | 🔧 CI | 🔧 CI |
+| Nang walang server: ang sariling media ng device | ✅ folders | ✅ folders | ✅ folders |
+| Mga patag na larawan at video | ✅ | ✅ | ✅ |
+| Ikutin ang isang larawan sa isang pindot | ✅ | ✅ | ✅ |
+| Mga 360° na larawan bilang sphere | ✅ | ✅ | 🔧 CI |
+| Mga 360° na video | ✅ | patag lang | patag lang |
+| 3D at VR180 | ✅ isang mata | larawan isang mata, video patag | larawan isang mata, video patag |
+| Spatial 2.5D (head tracking) | 🔜 | ❌ | ❌ |
+| Apple spatial photos | ✅ isang mata | 🔧 CI | 🔧 CI |
+| Raw na Insta360, GoPro at DJI na mga file | ✅ | 🔧 CI larawan, video patag | 🔧 CI larawan, video patag |
+| Mga share na SMB, WebDAV at DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Mga Tapo camera: recordings | ✅ | 🔧 CI | 🔧 CI |
+| Mga Tapo camera: live view | ✅ | 🔧 CI | 🔧 CI |
+| I-share ang device na ito sa network | ✅ | ❌ | ❌ |
+| I-upload sa Immich mula sa shares at sa device | ✅ | 🔧 CI | 🔧 CI |
+| Pag-import mula sa isang DJI drone o card sa USB (eksperimental) | ❌ | ❌ | ❌ |
+| Dark theme | gaya ng sistema | gaya ng sistema | gaya ng sistema |
+| Input | mouse, keyboard | mouse, keyboard | mouse, keyboard, trackpad |
+| Saan ito makukuha | installer o ZIP (preview) | .deb, .rpm (preview) | DMG o ZIP (preview na hindi naka-sign) |
 
 ✅ nasa app sa platform na iyon · ❌ hindi inaalok diyan · 🔜 planado · 🔧 CI nasa sources, binuo at sinimulan ng CI ng proyekto sa sistemang iyon, hindi pa nasusuri doon gamit ang totoong server, share o camera · patag lang: ang video ay pinapatugtog nang patag, may kasamang mensahe, dahil ang 360° video renderer ng mga computer ay para sa Windows lang, at sa mga LG TV ay susukatin pa kung ibinibigay ng webOS ang mga video frame sa sphere. Ang "isang mata" ay nangangahulugang ang isang 3D file ay nagpapakita ng kaliwang mata nito sa isang patag na screen. Ang LG webOS na column ay isang hiwalay na app, na ang test build 0.1.0 ay pumapasa sa mga test nito sa CI ng proyekto at hindi pa tumatakbo sa isang TV. Hindi pa lahat ng ✅ nasuri sa isang totoong device: ano ang nasuri saan, at ano ang natitirang kumpirmahin, ay nasa [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md), at [Compatibility](../docs/immuch360/compatibility.md).
 

@@ -245,28 +245,51 @@ A DJI drónok 360°-os gömbjei (Mini, Air, Mavic és mások, a kamerájuk alapj
 
 Egy kódbázis, hat környezet, és egy külön alkalmazás LG tévékhez. Mi van meg ma mindegyikben:
 
-| Képesség | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galéria, albumok, keresés egy Immich szerverrel | ✅ | ✅ | ✅ nézegető | ✅ nézegető | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Szerver nélkül: az eszköz saját médiája | ✅ | ✅ | csak megosztások | ❌ | ✅ | ✅ mappák | ✅ mappák | ✅ mappák |
-| Sík fényképek és videók | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Fénykép elforgatása egyetlen gombbal | ✅ | ✅ | ✅ színes gombok | ✅ színes gombok | ✅ ablak | ✅ | ✅ | ✅ |
-| 360°-os fényképek gömbként | ✅ | ✅ | ✅ | ✅ | ✅ immerzív | ✅ | ✅ | 🔧 CI |
-| 360°-os videók | ✅ | ✅ nincs idősáv | ✅ üzenet, ha nem dekódolható | csak sík | ✅ immerzív | ✅ | csak sík | csak sík |
-| 3D és VR180 | ✅ egy szem | ✅ egy szem | ✅ egy szem | fényképek egy szem, videók sík | ✅ valódi 3D | ✅ egy szem | fényképek egy szem, videók sík | fényképek egy szem, videók sík |
-| Spatial 2.5D (fejkövetés) | ✅ kísérleti | ✅ kísérleti | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple térbeli fényképek | ✅ egy szem | ✅ egy szem | ✅ egy szem | ❌ | ✅ 3D | ✅ egy szem | 🔧 CI | 🔧 CI |
-| Nyers Insta360, GoPro és DJI fájlok | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI fényképek, videók sík | 🔧 CI fényképek, videók sík |
-| SMB, WebDAV, DLNA megosztások | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kamerák: felvételek | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kamerák: élő nézet | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ennek az eszköznek a megosztása a hálózaton | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Feltöltés az Immichbe megosztásokból és az eszközről | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Importálás DJI drónról vagy kártyáról USB-n (kísérleti) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Sötét téma | a rendszer szerint | a rendszer szerint | ✅ alapértelmezett | ✅ az egyetlen téma | a rendszer szerint | a rendszer szerint | a rendszer szerint | a rendszer szerint |
-| Bemenet | érintés, giroszkóp | érintés, giroszkóp | távirányító; Bal és Jobb videó közben is, Menu a részletekhez | távirányító, Magic Remote | kontrollerek, kezek | egér, billentyűzet | egér, billentyűzet | egér, billentyűzet, trackpad |
-| Honnan szerezhető be | Google Play, APK | App Store (felülvizsgálat alatt) | APK, Google Play (felülvizsgálat alatt) | .ipk teszt build, Developer Mode | Horizon Store, APK | telepítő vagy ZIP (preview) | .deb, .rpm (preview) | DMG vagy ZIP (aláíratlan preview) |
+| Képesség | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galéria, albumok, keresés egy Immich szerverrel | ✅ | ✅ | ✅ nézegető | ✅ nézegető | ✅ |
+| Szerver nélkül: az eszköz saját médiája | ✅ | ✅ | csak megosztások | ❌ | ✅ |
+| Sík fényképek és videók | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Fénykép elforgatása egyetlen gombbal | ✅ | ✅ | ✅ színes gombok | ✅ színes gombok | ✅ ablak |
+| 360°-os fényképek gömbként | ✅ | ✅ | ✅ | ✅ | ✅ immerzív |
+| 360°-os videók | ✅ | ✅ nincs idősáv | ✅ üzenet, ha nem dekódolható | csak sík | ✅ immerzív |
+| 3D és VR180 | ✅ egy szem | ✅ egy szem | ✅ egy szem | fényképek egy szem, videók sík | ✅ valódi 3D |
+| Spatial 2.5D (fejkövetés) | ✅ kísérleti | ✅ kísérleti | ❌ | ❌ | ❌ |
+| Apple térbeli fényképek | ✅ egy szem | ✅ egy szem | ✅ egy szem | ❌ | ✅ 3D |
+| Nyers Insta360, GoPro és DJI fájlok | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB, WebDAV, DLNA megosztások | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kamerák: felvételek | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kamerák: élő nézet | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Ennek az eszköznek a megosztása a hálózaton | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Feltöltés az Immichbe megosztásokból és az eszközről | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Importálás DJI drónról vagy kártyáról USB-n (kísérleti) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Sötét téma | a rendszer szerint | a rendszer szerint | ✅ alapértelmezett | ✅ az egyetlen téma | a rendszer szerint |
+| Bemenet | érintés, giroszkóp | érintés, giroszkóp | távirányító; Bal és Jobb videó közben is, Menu a részletekhez | távirányító, Magic Remote | kontrollerek, kezek |
+| Honnan szerezhető be | Google Play, APK | App Store (felülvizsgálat alatt) | APK, Google Play (felülvizsgálat alatt) | .ipk teszt build, Developer Mode | Horizon Store, APK |
+
+| Képesség | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galéria, albumok, keresés egy Immich szerverrel | ✅ | 🔧 CI | 🔧 CI |
+| Szerver nélkül: az eszköz saját médiája | ✅ mappák | ✅ mappák | ✅ mappák |
+| Sík fényképek és videók | ✅ | ✅ | ✅ |
+| Fénykép elforgatása egyetlen gombbal | ✅ | ✅ | ✅ |
+| 360°-os fényképek gömbként | ✅ | ✅ | 🔧 CI |
+| 360°-os videók | ✅ | csak sík | csak sík |
+| 3D és VR180 | ✅ egy szem | fényképek egy szem, videók sík | fényképek egy szem, videók sík |
+| Spatial 2.5D (fejkövetés) | 🔜 | ❌ | ❌ |
+| Apple térbeli fényképek | ✅ egy szem | 🔧 CI | 🔧 CI |
+| Nyers Insta360, GoPro és DJI fájlok | ✅ | 🔧 CI fényképek, videók sík | 🔧 CI fényképek, videók sík |
+| SMB, WebDAV, DLNA megosztások | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamerák: felvételek | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamerák: élő nézet | ✅ | 🔧 CI | 🔧 CI |
+| Ennek az eszköznek a megosztása a hálózaton | ✅ | ❌ | ❌ |
+| Feltöltés az Immichbe megosztásokból és az eszközről | ✅ | 🔧 CI | 🔧 CI |
+| Importálás DJI drónról vagy kártyáról USB-n (kísérleti) | ❌ | ❌ | ❌ |
+| Sötét téma | a rendszer szerint | a rendszer szerint | a rendszer szerint |
+| Bemenet | egér, billentyűzet | egér, billentyűzet | egér, billentyűzet, trackpad |
+| Honnan szerezhető be | telepítő vagy ZIP (preview) | .deb, .rpm (preview) | DMG vagy ZIP (aláíratlan preview) |
 
 ✅ megvan az alkalmazásban azon a platformon · ❌ ott nem elérhető · 🔜 tervezett · 🔧 CI megvan a forráskódban, a projekt CI-je lefordítja és elindítja azon a rendszeren, de ott még nem ellenőrizték valódi szerverrel, megosztással vagy kamerával · csak sík: a videó síkban játszódik le, egy üzenettel, mert a számítógépek 360°-os videómegjelenítője csak Windowson érhető el, LG tévéken pedig még mérni kell, hogy a webOS átadja-e a videókockákat a gömbnek. Az „egy szem” azt jelenti, hogy egy 3D fájl a bal szemét mutatja egy sík képernyőn. Az LG webOS oszlop egy külön alkalmazás, amelynek 0.1.0 teszt buildje átmegy a tesztjein a projekt CI-jén, és tévén még nem futott. Nem minden ✅-t ellenőriztek még valódi eszközön: hogy mit ellenőriztek hol, és mi vár még megerősítésre, az a [Funkciók](../docs/immuch360/features.md), a [Platformtámogatás](../docs/immuch360/platform-support.md) és a [Kompatibilitás](../docs/immuch360/compatibility.md) oldalakon található.
 

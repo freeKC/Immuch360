@@ -245,28 +245,51 @@ Importujte fotografie a videa z dronu DJI přes USB, přímo na váš server Imm
 
 Jeden zdrojový kód pro šest prostředí a samostatná aplikace pro televizory LG. Co každé z nich dnes nabízí:
 
-| Funkce | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerie, alba, vyhledávání se serverem Immich | ✅ | ✅ | ✅ prohlížeč | ✅ prohlížeč | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Bez serveru: vlastní média zařízení | ✅ | ✅ | jen úložiště | ❌ | ✅ | ✅ složky | ✅ složky | ✅ složky |
-| Ploché fotografie a videa | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Otočení fotografie jednou klávesou | ✅ | ✅ | ✅ barevná tlačítka | ✅ barevná tlačítka | ✅ okno | ✅ | ✅ | ✅ |
-| Fotografie 360° jako koule | ✅ | ✅ | ✅ | ✅ | ✅ imerzní | ✅ | ✅ | 🔧 CI |
-| Videa 360° | ✅ | ✅ bez časové osy | ✅ zpráva, pokud nelze dekódovat | jen plochá | ✅ imerzní | ✅ | jen plochá | jen plochá |
-| 3D a VR180 | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | fotografie jedno oko, videa plochá | ✅ skutečné 3D | ✅ jedno oko | fotografie jedno oko, videa plochá | fotografie jedno oko, videa plochá |
-| Prostorové 2.5D (sledování hlavy) | ✅ experimentální | ✅ experimentální | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Prostorové fotografie Apple | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ❌ | ✅ 3D | ✅ jedno oko | 🔧 CI | 🔧 CI |
-| Surové soubory Insta360, GoPro a DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI fotografie, videa plochá | 🔧 CI fotografie, videa plochá |
-| Úložiště SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamery Tapo: nahrávky | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamery Tapo: živý přenos | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Sdílet toto zařízení v síti | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Nahrát do Immich z úložišť a zařízení | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import z dronu DJI nebo karty přes USB (experimentální) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tmavý motiv | podle systému | podle systému | ✅ ve výchozím nastavení | ✅ jediný motiv | podle systému | podle systému | podle systému | podle systému |
-| Vstup | dotyk, gyroskop | dotyk, gyroskop | dálkový ovladač; Vlevo a Vpravo i během videa, Menu pro podrobnosti | dálkový ovladač, Magic Remote | ovladače, ruce | myš, klávesnice | myš, klávesnice | myš, klávesnice, trackpad |
-| Kde to získat | Google Play, APK | App Store (v recenzi) | APK, Google Play (v recenzi) | testovací build .ipk, Developer Mode | Horizon Store, APK | instalátor nebo ZIP (Preview) | .deb, .rpm (Preview) | DMG nebo ZIP (nepodepsaná verze Preview) |
+| Funkce | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerie, alba, vyhledávání se serverem Immich | ✅ | ✅ | ✅ prohlížeč | ✅ prohlížeč | ✅ |
+| Bez serveru: vlastní média zařízení | ✅ | ✅ | jen úložiště | ❌ | ✅ |
+| Ploché fotografie a videa | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Otočení fotografie jednou klávesou | ✅ | ✅ | ✅ barevná tlačítka | ✅ barevná tlačítka | ✅ okno |
+| Fotografie 360° jako koule | ✅ | ✅ | ✅ | ✅ | ✅ imerzní |
+| Videa 360° | ✅ | ✅ bez časové osy | ✅ zpráva, pokud nelze dekódovat | jen plochá | ✅ imerzní |
+| 3D a VR180 | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | fotografie jedno oko, videa plochá | ✅ skutečné 3D |
+| Prostorové 2.5D (sledování hlavy) | ✅ experimentální | ✅ experimentální | ❌ | ❌ | ❌ |
+| Prostorové fotografie Apple | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ❌ | ✅ 3D |
+| Surové soubory Insta360, GoPro a DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Úložiště SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamery Tapo: nahrávky | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamery Tapo: živý přenos | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Sdílet toto zařízení v síti | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Nahrát do Immich z úložišť a zařízení | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import z dronu DJI nebo karty přes USB (experimentální) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tmavý motiv | podle systému | podle systému | ✅ ve výchozím nastavení | ✅ jediný motiv | podle systému |
+| Vstup | dotyk, gyroskop | dotyk, gyroskop | dálkový ovladač; Vlevo a Vpravo i během videa, Menu pro podrobnosti | dálkový ovladač, Magic Remote | ovladače, ruce |
+| Kde to získat | Google Play, APK | App Store (v recenzi) | APK, Google Play (v recenzi) | testovací build .ipk, Developer Mode | Horizon Store, APK |
+
+| Funkce | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerie, alba, vyhledávání se serverem Immich | ✅ | 🔧 CI | 🔧 CI |
+| Bez serveru: vlastní média zařízení | ✅ složky | ✅ složky | ✅ složky |
+| Ploché fotografie a videa | ✅ | ✅ | ✅ |
+| Otočení fotografie jednou klávesou | ✅ | ✅ | ✅ |
+| Fotografie 360° jako koule | ✅ | ✅ | 🔧 CI |
+| Videa 360° | ✅ | jen plochá | jen plochá |
+| 3D a VR180 | ✅ jedno oko | fotografie jedno oko, videa plochá | fotografie jedno oko, videa plochá |
+| Prostorové 2.5D (sledování hlavy) | 🔜 | ❌ | ❌ |
+| Prostorové fotografie Apple | ✅ jedno oko | 🔧 CI | 🔧 CI |
+| Surové soubory Insta360, GoPro a DJI | ✅ | 🔧 CI fotografie, videa plochá | 🔧 CI fotografie, videa plochá |
+| Úložiště SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Kamery Tapo: nahrávky | ✅ | 🔧 CI | 🔧 CI |
+| Kamery Tapo: živý přenos | ✅ | 🔧 CI | 🔧 CI |
+| Sdílet toto zařízení v síti | ✅ | ❌ | ❌ |
+| Nahrát do Immich z úložišť a zařízení | ✅ | 🔧 CI | 🔧 CI |
+| Import z dronu DJI nebo karty přes USB (experimentální) | ❌ | ❌ | ❌ |
+| Tmavý motiv | podle systému | podle systému | podle systému |
+| Vstup | myš, klávesnice | myš, klávesnice | myš, klávesnice, trackpad |
+| Kde to získat | instalátor nebo ZIP (Preview) | .deb, .rpm (Preview) | DMG nebo ZIP (nepodepsaná verze Preview) |
 
 ✅ v aplikaci na dané platformě · ❌ zde není k dispozici · 🔜 plánováno · 🔧 CI ve zdrojových kódech, sestaveno a spuštěno CI projektu na daném systému, ale zatím tam neověřeno se skutečným serverem, úložištěm nebo kamerou · jen plochá: video se přehraje jako ploché, se zprávou, protože renderer videa 360° pro počítače existuje jen pro Windows, a u televizorů LG je teprve třeba změřit, zda webOS předává snímky videa kouli. "Jedno oko" znamená, že soubor 3D zobrazuje na plochém displeji své levé oko. Sloupec LG webOS je samostatná aplikace, jejíž testovací build 0.1.0 prochází svými testy v CI projektu a zatím neběžel na žádném televizoru. Ne každé ✅ bylo již ověřeno na reálném zařízení: co bylo ověřeno kde a co ještě zbývá potvrdit, najdete v [Funkcích](../docs/immuch360/features.md), [Podpoře platforem](../docs/immuch360/platform-support.md) a [Kompatibilitě](../docs/immuch360/compatibility.md).
 

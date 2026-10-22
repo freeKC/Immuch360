@@ -245,28 +245,51 @@ DJI droonide 360° kerad (Mini, Air, Mavic ja teised, tuvastatud nende kaamera j
 
 Üks koodibaas kuue keskkonna jaoks ja eraldi rakendus LG teleritele. Mis igaühel neist täna on:
 
-| Võimalus | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerii, albumid, otsing Immich-serveriga | ✅ | ✅ | ✅ vaatur | ✅ vaatur | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ilma serverita: seadme oma meedia | ✅ | ✅ | ainult jagud | ❌ | ✅ | ✅ kaustad | ✅ kaustad | ✅ kaustad |
-| Lamefotod ja -videod | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Foto pööramine ühe klahviga | ✅ | ✅ | ✅ värvilised klahvid | ✅ värvilised klahvid | ✅ aken | ✅ | ✅ | ✅ |
-| 360° fotod kerana | ✅ | ✅ | ✅ | ✅ | ✅ kaasahaarav | ✅ | ✅ | 🔧 CI |
-| 360° videod | ✅ | ✅ ajariba puudub | ✅ teade, kui ei dekodeeru | ainult lamedalt | ✅ kaasahaarav | ✅ | ainult lamedalt | ainult lamedalt |
-| 3D ja VR180 | ✅ üks silm | ✅ üks silm | ✅ üks silm | fotod üks silm, videod lamedalt | ✅ tõeline 3D | ✅ üks silm | fotod üks silm, videod lamedalt | fotod üks silm, videod lamedalt |
-| Ruumiline 2.5D (pea jälgimine) | ✅ katseline | ✅ katseline | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple'i ruumilised fotod | ✅ üks silm | ✅ üks silm | ✅ üks silm | ❌ | ✅ 3D | ✅ üks silm | 🔧 CI | 🔧 CI |
-| Insta360, GoPro ja DJI toorfailid | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI fotod, videod lamedalt | 🔧 CI fotod, videod lamedalt |
-| SMB, WebDAV, DLNA jagud | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kaamerad: salvestused | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kaamerad: otsevaade | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Jaga seda seadet võrgus | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Laadi Immich'isse üles jagudest ja seadmest | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import DJI droonist või kaardilt USB kaudu (katseline) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tume teema | nagu süsteemis | nagu süsteemis | ✅ vaikimisi | ✅ ainus teema | nagu süsteemis | nagu süsteemis | nagu süsteemis | nagu süsteemis |
-| Sisend | puuteekraan, güroskoop | puuteekraan, güroskoop | pult; Vasak ja Parem ka video ajal, Menu üksikasjade jaoks | pult, Magic Remote | kontrollerid, käed | hiir, klaviatuur | hiir, klaviatuur | hiir, klaviatuur, puuteplaat |
-| Kust saada | Google Play, APK | App Store (ülevaatamisel) | APK, Google Play (ülevaatamisel) | .ipk testbuild, Developer Mode | Horizon Store, APK | paigaldusprogramm või ZIP (eelversioon) | .deb, .rpm (eelversioon) | DMG või ZIP (allkirjastamata eelversioon) |
+| Võimalus | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerii, albumid, otsing Immich-serveriga | ✅ | ✅ | ✅ vaatur | ✅ vaatur | ✅ |
+| Ilma serverita: seadme oma meedia | ✅ | ✅ | ainult jagud | ❌ | ✅ |
+| Lamefotod ja -videod | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Foto pööramine ühe klahviga | ✅ | ✅ | ✅ värvilised klahvid | ✅ värvilised klahvid | ✅ aken |
+| 360° fotod kerana | ✅ | ✅ | ✅ | ✅ | ✅ kaasahaarav |
+| 360° videod | ✅ | ✅ ajariba puudub | ✅ teade, kui ei dekodeeru | ainult lamedalt | ✅ kaasahaarav |
+| 3D ja VR180 | ✅ üks silm | ✅ üks silm | ✅ üks silm | fotod üks silm, videod lamedalt | ✅ tõeline 3D |
+| Ruumiline 2.5D (pea jälgimine) | ✅ katseline | ✅ katseline | ❌ | ❌ | ❌ |
+| Apple'i ruumilised fotod | ✅ üks silm | ✅ üks silm | ✅ üks silm | ❌ | ✅ 3D |
+| Insta360, GoPro ja DJI toorfailid | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB, WebDAV, DLNA jagud | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kaamerad: salvestused | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kaamerad: otsevaade | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Jaga seda seadet võrgus | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Laadi Immich'isse üles jagudest ja seadmest | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import DJI droonist või kaardilt USB kaudu (katseline) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tume teema | nagu süsteemis | nagu süsteemis | ✅ vaikimisi | ✅ ainus teema | nagu süsteemis |
+| Sisend | puuteekraan, güroskoop | puuteekraan, güroskoop | pult; Vasak ja Parem ka video ajal, Menu üksikasjade jaoks | pult, Magic Remote | kontrollerid, käed |
+| Kust saada | Google Play, APK | App Store (ülevaatamisel) | APK, Google Play (ülevaatamisel) | .ipk testbuild, Developer Mode | Horizon Store, APK |
+
+| Võimalus | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerii, albumid, otsing Immich-serveriga | ✅ | 🔧 CI | 🔧 CI |
+| Ilma serverita: seadme oma meedia | ✅ kaustad | ✅ kaustad | ✅ kaustad |
+| Lamefotod ja -videod | ✅ | ✅ | ✅ |
+| Foto pööramine ühe klahviga | ✅ | ✅ | ✅ |
+| 360° fotod kerana | ✅ | ✅ | 🔧 CI |
+| 360° videod | ✅ | ainult lamedalt | ainult lamedalt |
+| 3D ja VR180 | ✅ üks silm | fotod üks silm, videod lamedalt | fotod üks silm, videod lamedalt |
+| Ruumiline 2.5D (pea jälgimine) | 🔜 | ❌ | ❌ |
+| Apple'i ruumilised fotod | ✅ üks silm | 🔧 CI | 🔧 CI |
+| Insta360, GoPro ja DJI toorfailid | ✅ | 🔧 CI fotod, videod lamedalt | 🔧 CI fotod, videod lamedalt |
+| SMB, WebDAV, DLNA jagud | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kaamerad: salvestused | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kaamerad: otsevaade | ✅ | 🔧 CI | 🔧 CI |
+| Jaga seda seadet võrgus | ✅ | ❌ | ❌ |
+| Laadi Immich'isse üles jagudest ja seadmest | ✅ | 🔧 CI | 🔧 CI |
+| Import DJI droonist või kaardilt USB kaudu (katseline) | ❌ | ❌ | ❌ |
+| Tume teema | nagu süsteemis | nagu süsteemis | nagu süsteemis |
+| Sisend | hiir, klaviatuur | hiir, klaviatuur | hiir, klaviatuur, puuteplaat |
+| Kust saada | paigaldusprogramm või ZIP (eelversioon) | .deb, .rpm (eelversioon) | DMG või ZIP (allkirjastamata eelversioon) |
 
 ✅ rakenduses sellel platvormil · ❌ seal ei pakuta · 🔜 planeeritud · 🔧 CI lähtekoodis, projekti CI ehitab ja käivitab selle sellel süsteemil, seal pole seda veel päris serveri, jao ega kaameraga kontrollitud · ainult lamedalt: video mängib lamedalt, teatega, sest arvutite 360° videorenderdaja töötab ainult Windowsil, ja LG teleritel on veel mõõtmata, kas webOS annab videokaadrid kerale edasi. "Üks silm" tähendab, et 3D fail näitab oma vasakut silma lamedal ekraanil. LG webOS veerg on eraldi rakendus, mille testbuild 0.1.0 läbib oma testid projekti CI-s ega ole veel teleril töötanud. Mitte igat ✅ ei ole veel päris seadmel kontrollitud: mis on kontrollitud kus, ja mis on veel kinnitamata, on lehtedel [Funktsioonid](../docs/immuch360/features.md), [Platvormi tugi](../docs/immuch360/platform-support.md) ja [Ühilduvus](../docs/immuch360/compatibility.md).
 

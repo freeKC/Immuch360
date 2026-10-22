@@ -245,28 +245,51 @@ Ko ngā porotaka 360° o ngā wakarererangi DJI (Mini, Air, Mavic me ētahi atu,
 
 Kotahi tūāpapa waehere mō ngā taiao e ono, me tētahi taupānga motuhake mō ngā pouaka whakaata LG. He aha kei a tēnā, kei tēnā i tēnei rā:
 
-| Āheinga | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Whare whakaahua, kohinga, rapu me tētahi tūmau Immich | ✅ | ✅ | ✅ kaimātakitaki | ✅ kaimātakitaki | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Me te kore tūmau: ngā pāpāho ake o te taputapu | ✅ | ✅ | ko ngā tiritiri anake | ❌ | ✅ | ✅ kōpaki | ✅ kōpaki | ✅ kōpaki |
-| Whakaahua me kiriata papatahi | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Huri whakaahua ki te pātene kotahi | ✅ | ✅ | ✅ pātene tae | ✅ pātene tae | ✅ matapihi | ✅ | ✅ | ✅ |
-| Whakaahua 360° hei porotaka | ✅ | ✅ | ✅ | ✅ | ✅ rukuhanga | ✅ | ✅ | 🔧 CI |
-| Kiriata 360° | ✅ | ✅ kāore he pae wā | ✅ he karere ki te kore e taea te wetewete | papatahi anake | ✅ rukuhanga | ✅ | papatahi anake | papatahi anake |
-| 3D me VR180 | ✅ kotahi karu | ✅ kotahi karu | ✅ kotahi karu | whakaahua kotahi karu, kiriata papatahi | ✅ 3D pono | ✅ kotahi karu | whakaahua kotahi karu, kiriata papatahi | whakaahua kotahi karu, kiriata papatahi |
-| Mokowā 2.5D (aru māhunga) | ✅ whakamātautau | ✅ whakamātautau | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Whakaahua mokowā a Apple | ✅ kotahi karu | ✅ kotahi karu | ✅ kotahi karu | ❌ | ✅ 3D | ✅ kotahi karu | 🔧 CI | 🔧 CI |
-| Kōnae mata Insta360, GoPro me DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI whakaahua, kiriata papatahi | 🔧 CI whakaahua, kiriata papatahi |
-| Tiritiri SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kāmera Tapo: hopunga | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kāmera Tapo: tirohanga ora | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tiritiri i tēnei taputapu i te whatunga | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Tukuake ki Immich mai i ngā tiritiri me te taputapu | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kawe mai i tētahi wakarererangi DJI, kāri rānei mā te USB (whakamātautau) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Kaupapa pōuri | pērā i te pūnaha | pērā i te pūnaha | ✅ taunoa | ✅ te kaupapa kotahi anake | pērā i te pūnaha | pērā i te pūnaha | pērā i te pūnaha | pērā i te pūnaha |
-| Whakaurunga | pā, pūhiki-haurangi | pā, pūhiki-haurangi | pou whakahau; Mauī me Matau i te wā o te kiriata anō, Menu mō ngā taipitopito | pou whakahau, Magic Remote | rengarenga, ringaringa | kiore, papapātuhi | kiore, papapātuhi | kiore, papapātuhi, papa pā |
-| Me pēhea te whiwhi | Google Play, APK | App Store (kei te arotakehia) | APK, Google Play (kei te arotakehia) | hanganga whakamātau .ipk, Developer Mode | Horizon Store, APK | kaiwhakauru, ZIP rānei (he whakaaturanga) | .deb, .rpm (he whakaaturanga) | DMG, ZIP rānei (he whakaaturanga kāore i hainatia) |
+| Āheinga | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Whare whakaahua, kohinga, rapu me tētahi tūmau Immich | ✅ | ✅ | ✅ kaimātakitaki | ✅ kaimātakitaki | ✅ |
+| Me te kore tūmau: ngā pāpāho ake o te taputapu | ✅ | ✅ | ko ngā tiritiri anake | ❌ | ✅ |
+| Whakaahua me kiriata papatahi | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Huri whakaahua ki te pātene kotahi | ✅ | ✅ | ✅ pātene tae | ✅ pātene tae | ✅ matapihi |
+| Whakaahua 360° hei porotaka | ✅ | ✅ | ✅ | ✅ | ✅ rukuhanga |
+| Kiriata 360° | ✅ | ✅ kāore he pae wā | ✅ he karere ki te kore e taea te wetewete | papatahi anake | ✅ rukuhanga |
+| 3D me VR180 | ✅ kotahi karu | ✅ kotahi karu | ✅ kotahi karu | whakaahua kotahi karu, kiriata papatahi | ✅ 3D pono |
+| Mokowā 2.5D (aru māhunga) | ✅ whakamātautau | ✅ whakamātautau | ❌ | ❌ | ❌ |
+| Whakaahua mokowā a Apple | ✅ kotahi karu | ✅ kotahi karu | ✅ kotahi karu | ❌ | ✅ 3D |
+| Kōnae mata Insta360, GoPro me DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Tiritiri SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kāmera Tapo: hopunga | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kāmera Tapo: tirohanga ora | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Tiritiri i tēnei taputapu i te whatunga | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Tukuake ki Immich mai i ngā tiritiri me te taputapu | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Kawe mai i tētahi wakarererangi DJI, kāri rānei mā te USB (whakamātautau) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Kaupapa pōuri | pērā i te pūnaha | pērā i te pūnaha | ✅ taunoa | ✅ te kaupapa kotahi anake | pērā i te pūnaha |
+| Whakaurunga | pā, pūhiki-haurangi | pā, pūhiki-haurangi | pou whakahau; Mauī me Matau i te wā o te kiriata anō, Menu mō ngā taipitopito | pou whakahau, Magic Remote | rengarenga, ringaringa |
+| Me pēhea te whiwhi | Google Play, APK | App Store (kei te arotakehia) | APK, Google Play (kei te arotakehia) | hanganga whakamātau .ipk, Developer Mode | Horizon Store, APK |
+
+| Āheinga | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Whare whakaahua, kohinga, rapu me tētahi tūmau Immich | ✅ | 🔧 CI | 🔧 CI |
+| Me te kore tūmau: ngā pāpāho ake o te taputapu | ✅ kōpaki | ✅ kōpaki | ✅ kōpaki |
+| Whakaahua me kiriata papatahi | ✅ | ✅ | ✅ |
+| Huri whakaahua ki te pātene kotahi | ✅ | ✅ | ✅ |
+| Whakaahua 360° hei porotaka | ✅ | ✅ | 🔧 CI |
+| Kiriata 360° | ✅ | papatahi anake | papatahi anake |
+| 3D me VR180 | ✅ kotahi karu | whakaahua kotahi karu, kiriata papatahi | whakaahua kotahi karu, kiriata papatahi |
+| Mokowā 2.5D (aru māhunga) | 🔜 | ❌ | ❌ |
+| Whakaahua mokowā a Apple | ✅ kotahi karu | 🔧 CI | 🔧 CI |
+| Kōnae mata Insta360, GoPro me DJI | ✅ | 🔧 CI whakaahua, kiriata papatahi | 🔧 CI whakaahua, kiriata papatahi |
+| Tiritiri SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Kāmera Tapo: hopunga | ✅ | 🔧 CI | 🔧 CI |
+| Kāmera Tapo: tirohanga ora | ✅ | 🔧 CI | 🔧 CI |
+| Tiritiri i tēnei taputapu i te whatunga | ✅ | ❌ | ❌ |
+| Tukuake ki Immich mai i ngā tiritiri me te taputapu | ✅ | 🔧 CI | 🔧 CI |
+| Kawe mai i tētahi wakarererangi DJI, kāri rānei mā te USB (whakamātautau) | ❌ | ❌ | ❌ |
+| Kaupapa pōuri | pērā i te pūnaha | pērā i te pūnaha | pērā i te pūnaha |
+| Whakaurunga | kiore, papapātuhi | kiore, papapātuhi | kiore, papapātuhi, papa pā |
+| Me pēhea te whiwhi | kaiwhakauru, ZIP rānei (he whakaaturanga) | .deb, .rpm (he whakaaturanga) | DMG, ZIP rānei (he whakaaturanga kāore i hainatia) |
 
 ✅ kei te taupānga i runga i tēnā pūnaha · ❌ kāore e whakaratohia i reira · 🔜 kei te whakaritea · 🔧 CI kei te puna waehere, ka hangaia, ka whakaterea e te CI o te kaupapa i runga i tēnā pūnaha, kāore anō kia tirohia ki tētahi tūmau, tiritiri, kāmera pono rānei i reira · papatahi anake: ka papatahi te whakatangi o te kiriata, me tētahi karere, nā te mea mō Windows anake te kaiwhakaatu kiriata 360° o ngā rorohiko, ā, i runga i ngā pouaka whakaata LG, me ine tonu mēnā ka tukuna e webOS ngā papamata kiriata ki te porotaka. Ko te tikanga o "kotahi karu" he whakaatu te kōnae 3D i tōna karu mauī i runga i te mata papatahi. He taupānga motuhake te tīwae LG webOS, e paahitia ana e tōna hanganga whakamātau 0.1.0 ōna whakamātautau i te CI o te kaupapa, ā, kāore anō kia whakahaerehia i runga i tētahi pouaka whakaata. Ehara i te mea kua tirohia ngā ✅ katoa i runga i tētahi taputapu pono: ko te mea i tirohia, i hea, me te mea e toe ana kia whakaūhia, kei [Ngā āhuatanga](../docs/immuch360/features.md), [Te tautoko pūnaha](../docs/immuch360/platform-support.md), me [Te noho rite](../docs/immuch360/compatibility.md).
 

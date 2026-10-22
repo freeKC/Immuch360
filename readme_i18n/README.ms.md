@@ -245,28 +245,51 @@ Sfera 360° dron DJI (Mini, Air, Mavic dan lain-lain, dikenali daripada kamerany
 
 Satu asas kod untuk enam persekitaran, dan aplikasi berasingan untuk TV LG. Apa yang ada pada setiap satu hari ini:
 
-| Keupayaan | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeri, album, carian dengan pelayan Immich | ✅ | ✅ | ✅ pemapar | ✅ pemapar | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tanpa pelayan: media peranti sendiri | ✅ | ✅ | perkongsian sahaja | ❌ | ✅ | ✅ folder | ✅ folder | ✅ folder |
-| Foto dan video rata | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Putar foto dengan satu kekunci | ✅ | ✅ | ✅ kekunci berwarna | ✅ kekunci berwarna | ✅ tetingkap | ✅ | ✅ | ✅ |
-| Foto 360° sebagai sfera | ✅ | ✅ | ✅ | ✅ | ✅ mendalam | ✅ | ✅ | 🔧 CI |
-| Video 360° | ✅ | ✅ tiada bar masa | ✅ mesej jika tidak dapat dinyahkod | rata sahaja | ✅ mendalam | ✅ | rata sahaja | rata sahaja |
-| 3D dan VR180 | ✅ satu mata | ✅ satu mata | ✅ satu mata | foto satu mata, video rata | ✅ 3D sebenar | ✅ satu mata | foto satu mata, video rata | foto satu mata, video rata |
-| Spatial 2.5D (penjejakan kepala) | ✅ eksperimen | ✅ eksperimen | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Foto spatial Apple | ✅ satu mata | ✅ satu mata | ✅ satu mata | ❌ | ✅ 3D | ✅ satu mata | 🔧 CI | 🔧 CI |
-| Fail mentah Insta360, GoPro dan DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI foto, video rata | 🔧 CI foto, video rata |
-| Perkongsian SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamera Tapo: rakaman | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamera Tapo: paparan langsung | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kongsi peranti ini pada rangkaian | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Muat naik ke Immich daripada perkongsian dan peranti | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import daripada dron DJI atau kad melalui USB (eksperimen) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tema gelap | ikut sistem | ikut sistem | ✅ secara lalai | ✅ satu-satunya tema | ikut sistem | ikut sistem | ikut sistem | ikut sistem |
-| Input | sentuh, giroskop | sentuh, giroskop | alat kawalan jauh; Kiri dan Kanan juga semasa video, Menu untuk butiran | alat kawalan jauh, Magic Remote | pengawal, tangan | tetikus, papan kekunci | tetikus, papan kekunci | tetikus, papan kekunci, pad jejak |
-| Di mana untuk mendapatkannya | Google Play, APK | App Store (dalam semakan) | APK, Google Play (dalam semakan) | binaan ujian .ipk, Developer Mode | Horizon Store, APK | pemasang atau ZIP (pratonton) | .deb, .rpm (pratonton) | DMG atau ZIP (pratonton tidak ditandatangani) |
+| Keupayaan | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galeri, album, carian dengan pelayan Immich | ✅ | ✅ | ✅ pemapar | ✅ pemapar | ✅ |
+| Tanpa pelayan: media peranti sendiri | ✅ | ✅ | perkongsian sahaja | ❌ | ✅ |
+| Foto dan video rata | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Putar foto dengan satu kekunci | ✅ | ✅ | ✅ kekunci berwarna | ✅ kekunci berwarna | ✅ tetingkap |
+| Foto 360° sebagai sfera | ✅ | ✅ | ✅ | ✅ | ✅ mendalam |
+| Video 360° | ✅ | ✅ tiada bar masa | ✅ mesej jika tidak dapat dinyahkod | rata sahaja | ✅ mendalam |
+| 3D dan VR180 | ✅ satu mata | ✅ satu mata | ✅ satu mata | foto satu mata, video rata | ✅ 3D sebenar |
+| Spatial 2.5D (penjejakan kepala) | ✅ eksperimen | ✅ eksperimen | ❌ | ❌ | ❌ |
+| Foto spatial Apple | ✅ satu mata | ✅ satu mata | ✅ satu mata | ❌ | ✅ 3D |
+| Fail mentah Insta360, GoPro dan DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Perkongsian SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamera Tapo: rakaman | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamera Tapo: paparan langsung | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Kongsi peranti ini pada rangkaian | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Muat naik ke Immich daripada perkongsian dan peranti | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import daripada dron DJI atau kad melalui USB (eksperimen) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tema gelap | ikut sistem | ikut sistem | ✅ secara lalai | ✅ satu-satunya tema | ikut sistem |
+| Input | sentuh, giroskop | sentuh, giroskop | alat kawalan jauh; Kiri dan Kanan juga semasa video, Menu untuk butiran | alat kawalan jauh, Magic Remote | pengawal, tangan |
+| Di mana untuk mendapatkannya | Google Play, APK | App Store (dalam semakan) | APK, Google Play (dalam semakan) | binaan ujian .ipk, Developer Mode | Horizon Store, APK |
+
+| Keupayaan | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galeri, album, carian dengan pelayan Immich | ✅ | 🔧 CI | 🔧 CI |
+| Tanpa pelayan: media peranti sendiri | ✅ folder | ✅ folder | ✅ folder |
+| Foto dan video rata | ✅ | ✅ | ✅ |
+| Putar foto dengan satu kekunci | ✅ | ✅ | ✅ |
+| Foto 360° sebagai sfera | ✅ | ✅ | 🔧 CI |
+| Video 360° | ✅ | rata sahaja | rata sahaja |
+| 3D dan VR180 | ✅ satu mata | foto satu mata, video rata | foto satu mata, video rata |
+| Spatial 2.5D (penjejakan kepala) | 🔜 | ❌ | ❌ |
+| Foto spatial Apple | ✅ satu mata | 🔧 CI | 🔧 CI |
+| Fail mentah Insta360, GoPro dan DJI | ✅ | 🔧 CI foto, video rata | 🔧 CI foto, video rata |
+| Perkongsian SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Kamera Tapo: rakaman | ✅ | 🔧 CI | 🔧 CI |
+| Kamera Tapo: paparan langsung | ✅ | 🔧 CI | 🔧 CI |
+| Kongsi peranti ini pada rangkaian | ✅ | ❌ | ❌ |
+| Muat naik ke Immich daripada perkongsian dan peranti | ✅ | 🔧 CI | 🔧 CI |
+| Import daripada dron DJI atau kad melalui USB (eksperimen) | ❌ | ❌ | ❌ |
+| Tema gelap | ikut sistem | ikut sistem | ikut sistem |
+| Input | tetikus, papan kekunci | tetikus, papan kekunci | tetikus, papan kekunci, pad jejak |
+| Di mana untuk mendapatkannya | pemasang atau ZIP (pratonton) | .deb, .rpm (pratonton) | DMG atau ZIP (pratonton tidak ditandatangani) |
 
 ✅ dalam aplikasi pada platform itu · ❌ tidak ditawarkan di sana · 🔜 dirancang · 🔧 CI dalam sumber, dibina dan dimulakan oleh CI projek pada sistem itu, belum disemak dengan pelayan, perkongsian atau kamera sebenar di sana · rata sahaja: video dimainkan secara rata, dengan mesej, kerana enjin pemaparan video 360° komputer hanya untuk Windows, dan pada TV LG sama ada webOS menyerahkan bingkai video kepada sfera masih perlu diukur. "Satu mata" bermaksud fail 3D memaparkan mata kirinya pada skrin rata. Lajur LG webOS ialah aplikasi berasingan, yang binaan ujian 0.1.0nya lulus ujiannya pada CI projek dan belum dijalankan pada TV. Bukan setiap ✅ telah disemak pada peranti sebenar lagi: apa yang telah disemak di mana, dan apa yang masih perlu disahkan, terdapat dalam [Ciri](../docs/immuch360/features.md), [Sokongan platform](../docs/immuch360/platform-support.md) dan [Keserasian](../docs/immuch360/compatibility.md).
 

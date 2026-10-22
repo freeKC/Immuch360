@@ -245,28 +245,51 @@ Sferat 360° të dronëve DJI (Mini, Air, Mavic dhe të tjerë, të njohur nga k
 
 Një bazë kodi e vetme për gjashtë mjedise, dhe një aplikacion më vete për televizorët LG. Çfarë ka secila sot:
 
-| Aftësia | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeri, albume, kërkim me një server Immich | ✅ | ✅ | ✅ shikues | ✅ shikues | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Pa server: mediat e vetë pajisjes | ✅ | ✅ | vetëm ndarje | ❌ | ✅ | ✅ dosje | ✅ dosje | ✅ dosje |
-| Foto dhe video të sheshta | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Rrotullo një foto me një tast | ✅ | ✅ | ✅ tastet me ngjyrë | ✅ tastet me ngjyrë | ✅ dritare | ✅ | ✅ | ✅ |
-| Foto 360° si sferë | ✅ | ✅ | ✅ | ✅ | ✅ përfshirëse | ✅ | ✅ | 🔧 CI |
-| Video 360° | ✅ | ✅ pa shirit kohe | ✅ mesazh nëse nuk dekodohet | vetëm të sheshta | ✅ përfshirëse | ✅ | vetëm të sheshta | vetëm të sheshta |
-| 3D dhe VR180 | ✅ një sy | ✅ një sy | ✅ një sy | foto një sy, video të sheshta | ✅ 3D i vërtetë | ✅ një sy | foto një sy, video të sheshta | foto një sy, video të sheshta |
-| Spatial 2.5D (ndjekja e kokës) | ✅ eksperimentale | ✅ eksperimentale | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Foto hapësinore Apple | ✅ një sy | ✅ një sy | ✅ një sy | ❌ | ✅ 3D | ✅ një sy | 🔧 CI | 🔧 CI |
-| Skedarë bruto Insta360, GoPro dhe DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI foto, video të sheshta | 🔧 CI foto, video të sheshta |
-| Ndarje SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamerat Tapo: regjistrime | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamerat Tapo: pamje e drejtpërdrejtë | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ndaj këtë pajisje në rrjet | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Ngarkim në Immich nga ndarjet dhe pajisja | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import nga një dron DJI ose një kartë përmes USB (eksperimentale) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tema e errët | si sistemi | si sistemi | ✅ si parazgjedhje | ✅ tema e vetme | si sistemi | si sistemi | si sistemi | si sistemi |
-| Hyrja | prekje, gjiroskop | prekje, gjiroskop | telekomandë; Majtas dhe Djathtas edhe gjatë një videoje, Menu për detajet | telekomandë, Magic Remote | kontrollues, duar | mi, tastierë | mi, tastierë | mi, tastierë, trackpad |
-| Ku ta merrni | Google Play, APK | App Store (në shqyrtim) | APK, Google Play (në shqyrtim) | build testimi .ipk, Developer Mode | Horizon Store, APK | instalues ose ZIP (paraprak) | .deb, .rpm (paraprak) | DMG ose ZIP (paraprak i panënshkruar) |
+| Aftësia | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galeri, albume, kërkim me një server Immich | ✅ | ✅ | ✅ shikues | ✅ shikues | ✅ |
+| Pa server: mediat e vetë pajisjes | ✅ | ✅ | vetëm ndarje | ❌ | ✅ |
+| Foto dhe video të sheshta | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Rrotullo një foto me një tast | ✅ | ✅ | ✅ tastet me ngjyrë | ✅ tastet me ngjyrë | ✅ dritare |
+| Foto 360° si sferë | ✅ | ✅ | ✅ | ✅ | ✅ përfshirëse |
+| Video 360° | ✅ | ✅ pa shirit kohe | ✅ mesazh nëse nuk dekodohet | vetëm të sheshta | ✅ përfshirëse |
+| 3D dhe VR180 | ✅ një sy | ✅ një sy | ✅ një sy | foto një sy, video të sheshta | ✅ 3D i vërtetë |
+| Spatial 2.5D (ndjekja e kokës) | ✅ eksperimentale | ✅ eksperimentale | ❌ | ❌ | ❌ |
+| Foto hapësinore Apple | ✅ një sy | ✅ një sy | ✅ një sy | ❌ | ✅ 3D |
+| Skedarë bruto Insta360, GoPro dhe DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Ndarje SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamerat Tapo: regjistrime | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamerat Tapo: pamje e drejtpërdrejtë | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Ndaj këtë pajisje në rrjet | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Ngarkim në Immich nga ndarjet dhe pajisja | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import nga një dron DJI ose një kartë përmes USB (eksperimentale) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tema e errët | si sistemi | si sistemi | ✅ si parazgjedhje | ✅ tema e vetme | si sistemi |
+| Hyrja | prekje, gjiroskop | prekje, gjiroskop | telekomandë; Majtas dhe Djathtas edhe gjatë një videoje, Menu për detajet | telekomandë, Magic Remote | kontrollues, duar |
+| Ku ta merrni | Google Play, APK | App Store (në shqyrtim) | APK, Google Play (në shqyrtim) | build testimi .ipk, Developer Mode | Horizon Store, APK |
+
+| Aftësia | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galeri, albume, kërkim me një server Immich | ✅ | 🔧 CI | 🔧 CI |
+| Pa server: mediat e vetë pajisjes | ✅ dosje | ✅ dosje | ✅ dosje |
+| Foto dhe video të sheshta | ✅ | ✅ | ✅ |
+| Rrotullo një foto me një tast | ✅ | ✅ | ✅ |
+| Foto 360° si sferë | ✅ | ✅ | 🔧 CI |
+| Video 360° | ✅ | vetëm të sheshta | vetëm të sheshta |
+| 3D dhe VR180 | ✅ një sy | foto një sy, video të sheshta | foto një sy, video të sheshta |
+| Spatial 2.5D (ndjekja e kokës) | 🔜 | ❌ | ❌ |
+| Foto hapësinore Apple | ✅ një sy | 🔧 CI | 🔧 CI |
+| Skedarë bruto Insta360, GoPro dhe DJI | ✅ | 🔧 CI foto, video të sheshta | 🔧 CI foto, video të sheshta |
+| Ndarje SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Kamerat Tapo: regjistrime | ✅ | 🔧 CI | 🔧 CI |
+| Kamerat Tapo: pamje e drejtpërdrejtë | ✅ | 🔧 CI | 🔧 CI |
+| Ndaj këtë pajisje në rrjet | ✅ | ❌ | ❌ |
+| Ngarkim në Immich nga ndarjet dhe pajisja | ✅ | 🔧 CI | 🔧 CI |
+| Import nga një dron DJI ose një kartë përmes USB (eksperimentale) | ❌ | ❌ | ❌ |
+| Tema e errët | si sistemi | si sistemi | si sistemi |
+| Hyrja | mi, tastierë | mi, tastierë | mi, tastierë, trackpad |
+| Ku ta merrni | instalues ose ZIP (paraprak) | .deb, .rpm (paraprak) | DMG ose ZIP (paraprak i panënshkruar) |
 
 ✅ në aplikacionin në atë platformë · ❌ nuk ofrohet aty · 🔜 i planifikuar · 🔧 CI në kodin burimor, i ndërtuar dhe i nisur nga CI e projektit në atë sistem, akoma i pakontrolluar aty me një server, ndarje ose kamerë reale · vetëm të sheshta: videoja luhet e sheshtë, me një mesazh, sepse paraqitësi i videove 360° në kompjuterë është vetëm për Windows, dhe në televizorët LG mbetet të matet nëse webOS ia kalon kuadrot e videos sferës. "Një sy" do të thotë se një skedar 3D tregon syrin e majtë në një ekran të sheshtë. Kolona LG webOS është një aplikacion më vete, build-i i testimit 0.1.0 i të cilit kalon testet e tij në CI e projektit dhe nuk është nisur akoma në një TV. Jo çdo ✅ është kontrolluar akoma në një pajisje reale: çfarë është kontrolluar dhe ku, dhe çfarë mbetet për t'u konfirmuar, është në [Veçoritë](../docs/immuch360/features.md), [Mbështetja e platformave](../docs/immuch360/platform-support.md) dhe [Pajtueshmëria](../docs/immuch360/compatibility.md).
 

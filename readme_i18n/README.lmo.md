@@ -245,28 +245,51 @@ I sfer a 360° di dron DJI (Mini, Air, Mavic e alter, reconossuu de la soa camer
 
 Ona sola base de codes per ses ambient, e ona app a part per i TV LG. Quell che gh'ha ogni vun incoeu:
 
-| Capacità | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeria, album, ricerca con on server Immich | ✅ | ✅ | ✅ visualizador | ✅ visualizador | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Senza server: i media propri del dispositiv | ✅ | ✅ | domà condivision | ❌ | ✅ | ✅ cartell | ✅ cartell | ✅ cartell |
-| Foto e video plan | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Girà ona foto con on tast | ✅ | ✅ | ✅ tast coloraa | ✅ tast coloraa | ✅ fenestra | ✅ | ✅ | ✅ |
-| Foto a 360° come sfera | ✅ | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
-| Video a 360° | ✅ | ✅ senza barra del temp | ✅ messagg se minga decodificabil | domà plan | ✅ immersiv | ✅ | domà plan | domà plan |
-| 3D e VR180 | ✅ on oeugg | ✅ on oeugg | ✅ on oeugg | foto on oeugg, video plan | ✅ 3D vera | ✅ on oeugg | foto on oeugg, video plan | foto on oeugg, video plan |
-| Spatial 2.5D (tracciament de la testa) | ✅ esperimental | ✅ esperimental | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Foto spaziaj Apple | ✅ on oeugg | ✅ on oeugg | ✅ on oeugg | ❌ | ✅ 3D | ✅ on oeugg | 🔧 CI | 🔧 CI |
-| File original Insta360, GoPro e DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI foto, video plan | 🔧 CI foto, video plan |
-| Condivision SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Camere Tapo: registrazion | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Camere Tapo: vista in diretta | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Condividi sto dispositiv in la ret | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Carega su Immich de condivision e del dispositiv | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import d'on dron DJI o d'ona scheda per USB (esperimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tema scur | come el sistema | come el sistema | ✅ de default | ✅ unich tema | come el sistema | come el sistema | come el sistema | come el sistema |
-| Input | tocch, giroscopi | tocch, giroscopi | telecomand; Sinistra e Destra anca intant che va on video, Menu per i detaj | telecomand, Magic Remote | controller, man | mouse, tastera | mouse, tastera | mouse, tastera, trackpad |
-| Indove se troeuva | Google Play, APK | App Store (in revision) | APK, Google Play (in revision) | compilazion de prova .ipk, Developer Mode | Horizon Store, APK | installador o ZIP (anteprima) | .deb, .rpm (anteprima) | DMG o ZIP (anteprima minga firmada) |
+| Capacità | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galeria, album, ricerca con on server Immich | ✅ | ✅ | ✅ visualizador | ✅ visualizador | ✅ |
+| Senza server: i media propri del dispositiv | ✅ | ✅ | domà condivision | ❌ | ✅ |
+| Foto e video plan | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Girà ona foto con on tast | ✅ | ✅ | ✅ tast coloraa | ✅ tast coloraa | ✅ fenestra |
+| Foto a 360° come sfera | ✅ | ✅ | ✅ | ✅ | ✅ immersiv |
+| Video a 360° | ✅ | ✅ senza barra del temp | ✅ messagg se minga decodificabil | domà plan | ✅ immersiv |
+| 3D e VR180 | ✅ on oeugg | ✅ on oeugg | ✅ on oeugg | foto on oeugg, video plan | ✅ 3D vera |
+| Spatial 2.5D (tracciament de la testa) | ✅ esperimental | ✅ esperimental | ❌ | ❌ | ❌ |
+| Foto spaziaj Apple | ✅ on oeugg | ✅ on oeugg | ✅ on oeugg | ❌ | ✅ 3D |
+| File original Insta360, GoPro e DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Condivision SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Camere Tapo: registrazion | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Camere Tapo: vista in diretta | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Condividi sto dispositiv in la ret | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Carega su Immich de condivision e del dispositiv | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import d'on dron DJI o d'ona scheda per USB (esperimental) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tema scur | come el sistema | come el sistema | ✅ de default | ✅ unich tema | come el sistema |
+| Input | tocch, giroscopi | tocch, giroscopi | telecomand; Sinistra e Destra anca intant che va on video, Menu per i detaj | telecomand, Magic Remote | controller, man |
+| Indove se troeuva | Google Play, APK | App Store (in revision) | APK, Google Play (in revision) | compilazion de prova .ipk, Developer Mode | Horizon Store, APK |
+
+| Capacità | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galeria, album, ricerca con on server Immich | ✅ | 🔧 CI | 🔧 CI |
+| Senza server: i media propri del dispositiv | ✅ cartell | ✅ cartell | ✅ cartell |
+| Foto e video plan | ✅ | ✅ | ✅ |
+| Girà ona foto con on tast | ✅ | ✅ | ✅ |
+| Foto a 360° come sfera | ✅ | ✅ | 🔧 CI |
+| Video a 360° | ✅ | domà plan | domà plan |
+| 3D e VR180 | ✅ on oeugg | foto on oeugg, video plan | foto on oeugg, video plan |
+| Spatial 2.5D (tracciament de la testa) | 🔜 | ❌ | ❌ |
+| Foto spaziaj Apple | ✅ on oeugg | 🔧 CI | 🔧 CI |
+| File original Insta360, GoPro e DJI | ✅ | 🔧 CI foto, video plan | 🔧 CI foto, video plan |
+| Condivision SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Camere Tapo: registrazion | ✅ | 🔧 CI | 🔧 CI |
+| Camere Tapo: vista in diretta | ✅ | 🔧 CI | 🔧 CI |
+| Condividi sto dispositiv in la ret | ✅ | ❌ | ❌ |
+| Carega su Immich de condivision e del dispositiv | ✅ | 🔧 CI | 🔧 CI |
+| Import d'on dron DJI o d'ona scheda per USB (esperimental) | ❌ | ❌ | ❌ |
+| Tema scur | come el sistema | come el sistema | come el sistema |
+| Input | mouse, tastera | mouse, tastera | mouse, tastera, trackpad |
+| Indove se troeuva | installador o ZIP (anteprima) | .deb, .rpm (anteprima) | DMG o ZIP (anteprima minga firmada) |
 
 ✅ in l'app su quella piattaforma · ❌ minga offrii lì · 🔜 pianificaa · 🔧 CI in di sorgent, compilaa e faa partì del CI del progett su quel sistema, ma minga controllaa ancamò lì con on server, ona condivision o ona camera vera · domà plan: el video el va plan, con on messagg, perché el renderer video a 360° di computer el gh'è domà su Windows, e sui TV LG gh'è ancamò de misurà se webOS el passa i fotogramma del video a la sfera. «On oeugg» el voeur dì che on file 3D el fa vedè el soeu oeugg sinistro sul schermo plan. La colonna LG webOS l'è ona app a part, che la soa compilazion de prova 0.1.0 la passa i soeu test sul CI del progett e l'è minga andada ancamò su on TV. Minga tucc i ✅ hinn giamò testaa su on dispositiv real: quell che l'è staa testaa e indove, e quell che resta de confermà, l'è in [Funzion](../docs/immuch360/features.md), [Supporto piattaforma](../docs/immuch360/platform-support.md) e [Compatibilità](../docs/immuch360/compatibility.md).
 

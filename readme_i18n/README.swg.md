@@ -245,28 +245,51 @@ D 360°-Kugla von DJI-Drohna (Mini, Air, Mavic ond andere, an ihrer Kamera erkan
 
 Oi Codebasis für sechs Umgebunga, ond a eigene App für LG-Fernseher. Was jede heut hot:
 
-| Fähigkeit | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerie, Albe, Suach mit am Immich-Server | ✅ | ✅ | ✅ Player | ✅ Player | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ohne Server: die eigene Mediadatatroa vom Gerät | ✅ | ✅ | bloß Freigaba | ❌ | ✅ | ✅ Ordner | ✅ Ordner | ✅ Ordner |
-| Flache Fotos ond Videos | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| A Foto mit oiner Tast dreha | ✅ | ✅ | ✅ Farbtasta | ✅ Farbtasta | ✅ Fenster | ✅ | ✅ | ✅ |
-| 360°-Fotos als Kugel | ✅ | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
-| 360°-Videos | ✅ | ✅ koi Zeitleischt | ✅ Meldong, wenn net dekodierbar | bloß flach | ✅ immersiv | ✅ | bloß flach | bloß flach |
-| 3D ond VR180 | ✅ a Aug | ✅ a Aug | ✅ a Aug | Fotos a Aug, Videos flach | ✅ echtes 3D | ✅ a Aug | Fotos a Aug, Videos flach | Fotos a Aug, Videos flach |
-| Spatial 2.5D (Kopfverfolgong) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Räumliche Apple-Fotos | ✅ a Aug | ✅ a Aug | ✅ a Aug | ❌ | ✅ 3D | ✅ a Aug | 🔧 CI | 🔧 CI |
-| Rohe Insta360-, GoPro- ond DJI-Datatroa | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI Fotos, Videos flach | 🔧 CI Fotos, Videos flach |
-| SMB-, WebDAV-, DLNA-Freigaba | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-Kameras: Aufnahma | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-Kameras: Liveaasicht | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Des Gerät em Netzwerk freigeba | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Zu Immich hochlada aus Freigaba ond vom Gerät | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import von ara DJI-Drohne odr ara Kart über USB (experimentell) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Dunkles Design | wie 's System | wie 's System | ✅ standardmäßig | ✅ oinzigs Design | wie 's System | wie 's System | wie 's System | wie 's System |
-| Eingab | Touch, Gyroskop | Touch, Gyroskop | Fernbedienong; Links ond Rechts au während am Video, Menu für d Details | Fernbedienong, Magic Remote | Controller, Händ | Maus, Tastatur | Maus, Tastatur | Maus, Tastatur, Trackpad |
-| Wo's z'kriaga isch | Google Play, APK | App Store (em Review) | APK, Google Play (em Review) | .ipk-Test-Build, Developer Mode | Horizon Store, APK | Installer odr ZIP (Preview) | .deb, .rpm (Preview) | DMG odr ZIP (Preview, net signiert) |
+| Fähigkeit | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerie, Albe, Suach mit am Immich-Server | ✅ | ✅ | ✅ Player | ✅ Player | ✅ |
+| Ohne Server: die eigene Mediadatatroa vom Gerät | ✅ | ✅ | bloß Freigaba | ❌ | ✅ |
+| Flache Fotos ond Videos | ✅ | ✅ | ✅ | ✅ | ✅ |
+| A Foto mit oiner Tast dreha | ✅ | ✅ | ✅ Farbtasta | ✅ Farbtasta | ✅ Fenster |
+| 360°-Fotos als Kugel | ✅ | ✅ | ✅ | ✅ | ✅ immersiv |
+| 360°-Videos | ✅ | ✅ koi Zeitleischt | ✅ Meldong, wenn net dekodierbar | bloß flach | ✅ immersiv |
+| 3D ond VR180 | ✅ a Aug | ✅ a Aug | ✅ a Aug | Fotos a Aug, Videos flach | ✅ echtes 3D |
+| Spatial 2.5D (Kopfverfolgong) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | ❌ |
+| Räumliche Apple-Fotos | ✅ a Aug | ✅ a Aug | ✅ a Aug | ❌ | ✅ 3D |
+| Rohe Insta360-, GoPro- ond DJI-Datatroa | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB-, WebDAV-, DLNA-Freigaba | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-Kameras: Aufnahma | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-Kameras: Liveaasicht | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Des Gerät em Netzwerk freigeba | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Zu Immich hochlada aus Freigaba ond vom Gerät | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import von ara DJI-Drohne odr ara Kart über USB (experimentell) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Dunkles Design | wie 's System | wie 's System | ✅ standardmäßig | ✅ oinzigs Design | wie 's System |
+| Eingab | Touch, Gyroskop | Touch, Gyroskop | Fernbedienong; Links ond Rechts au während am Video, Menu für d Details | Fernbedienong, Magic Remote | Controller, Händ |
+| Wo's z'kriaga isch | Google Play, APK | App Store (em Review) | APK, Google Play (em Review) | .ipk-Test-Build, Developer Mode | Horizon Store, APK |
+
+| Fähigkeit | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerie, Albe, Suach mit am Immich-Server | ✅ | 🔧 CI | 🔧 CI |
+| Ohne Server: die eigene Mediadatatroa vom Gerät | ✅ Ordner | ✅ Ordner | ✅ Ordner |
+| Flache Fotos ond Videos | ✅ | ✅ | ✅ |
+| A Foto mit oiner Tast dreha | ✅ | ✅ | ✅ |
+| 360°-Fotos als Kugel | ✅ | ✅ | 🔧 CI |
+| 360°-Videos | ✅ | bloß flach | bloß flach |
+| 3D ond VR180 | ✅ a Aug | Fotos a Aug, Videos flach | Fotos a Aug, Videos flach |
+| Spatial 2.5D (Kopfverfolgong) | 🔜 | ❌ | ❌ |
+| Räumliche Apple-Fotos | ✅ a Aug | 🔧 CI | 🔧 CI |
+| Rohe Insta360-, GoPro- ond DJI-Datatroa | ✅ | 🔧 CI Fotos, Videos flach | 🔧 CI Fotos, Videos flach |
+| SMB-, WebDAV-, DLNA-Freigaba | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-Kameras: Aufnahma | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-Kameras: Liveaasicht | ✅ | 🔧 CI | 🔧 CI |
+| Des Gerät em Netzwerk freigeba | ✅ | ❌ | ❌ |
+| Zu Immich hochlada aus Freigaba ond vom Gerät | ✅ | 🔧 CI | 🔧 CI |
+| Import von ara DJI-Drohne odr ara Kart über USB (experimentell) | ❌ | ❌ | ❌ |
+| Dunkles Design | wie 's System | wie 's System | wie 's System |
+| Eingab | Maus, Tastatur | Maus, Tastatur | Maus, Tastatur, Trackpad |
+| Wo's z'kriaga isch | Installer odr ZIP (Preview) | .deb, .rpm (Preview) | DMG odr ZIP (Preview, net signiert) |
 
 ✅ en dr App auf dera Plattform · ❌ dört net agboda · 🔜 geplant · 🔧 CI em Quellcode, gbaut ond gstartet von dr CI vom Projekt auf dem System, dört aber no net mit am echta Server, ara Freigab odr ara Kamera gprüft · bloß flach: 's Video lauft flach, mit ara Meldong, weil 's dr 360°-Videorenderer von de Computer bloß auf Windows gibt, ond bei LG-Fernseher muss no gmessa werda, ob webOS d Videobilder an d Kugel weitergibt. „A Aug“ heißt, dass a 3D-Datei ihr linkes Aug auf am flache Bildschirm zeigt. D Spalte LG webOS isch a eigene App, deren Test-Build 0.1.0 seine Tests en dr CI vom Projekt bstoht ond no net auf am Fernseher gloffa isch. Net jedes ✅ isch scho auf am echta Gerät gprüft worda: was wo gprüft worda isch, ond was no z' bestätiga isch, stoht en [Funktione](../docs/immuch360/features.md), [Plattformunterstützong](../docs/immuch360/platform-support.md) ond [Kompatibilität](../docs/immuch360/compatibility.md).
 

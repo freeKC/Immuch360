@@ -245,28 +245,51 @@ DJI dronų 360° sferos (Mini, Air, Mavic ir kiti, atpažįstami pagal jų kamer
 
 Viena kodo bazė šešioms aplinkoms ir atskira programa LG televizoriams. Kas kiekvienoje yra šiandien:
 
-| Galimybė | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerija, albumai, paieška su Immich serveriu | ✅ | ✅ | ✅ žiūryklė | ✅ žiūryklė | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Be serverio: įrenginio nuosavi failai | ✅ | ✅ | tik bendrinimai | ❌ | ✅ | ✅ aplankai | ✅ aplankai | ✅ aplankai |
-| Plokšti nuotraukos ir vaizdo įrašai | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Nuotraukos pasukimas vienu klavišu | ✅ | ✅ | ✅ spalvoti mygtukai | ✅ spalvoti mygtukai | ✅ langas | ✅ | ✅ | ✅ |
-| 360° nuotraukos kaip sfera | ✅ | ✅ | ✅ | ✅ | ✅ panardinantis | ✅ | ✅ | 🔧 CI |
-| 360° vaizdo įrašai | ✅ | ✅ be laiko juostos | ✅ pranešimas, jei nedekoduojama | tik plokšti | ✅ panardinantis | ✅ | tik plokšti | tik plokšti |
-| 3D ir VR180 | ✅ viena akis | ✅ viena akis | ✅ viena akis | nuotraukos viena akimi, vaizdo įrašai plokšti | ✅ tikras 3D | ✅ viena akis | nuotraukos viena akimi, vaizdo įrašai plokšti | nuotraukos viena akimi, vaizdo įrašai plokšti |
-| Spatial 2.5D (galvos sekimas) | ✅ eksperimentinis | ✅ eksperimentinis | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple erdvinės nuotraukos | ✅ viena akis | ✅ viena akis | ✅ viena akis | ❌ | ✅ 3D | ✅ viena akis | 🔧 CI | 🔧 CI |
-| Neapdoroti Insta360, GoPro ir DJI failai | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI nuotraukos, vaizdo įrašai plokšti | 🔧 CI nuotraukos, vaizdo įrašai plokšti |
-| SMB, WebDAV, DLNA bendrinimai | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kameros: įrašai | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kameros: tiesioginis vaizdas | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Bendrinti šį įrenginį tinkle | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Įkėlimas į Immich iš bendrinimų ir įrenginio | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Importas iš DJI drono ar kortelės per USB (eksperimentinis) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tamsi tema | kaip sistemoje | kaip sistemoje | ✅ pagal numatymą | ✅ vienintelė tema | kaip sistemoje | kaip sistemoje | kaip sistemoje | kaip sistemoje |
-| Įvestis | prisilietimas, giroskopas | prisilietimas, giroskopas | nuotolinis valdymo pultas; kairė ir dešinė rodyklės ir vaizdo įrašo metu, Menu detalėms | nuotolinis valdymo pultas, Magic Remote | valdikliai, rankos | pelė, klaviatūra | pelė, klaviatūra | pelė, klaviatūra, jutiklinis kilimėlis |
-| Kur gauti | Google Play, APK | App Store (tikrinama) | APK, Google Play (tikrinama) | .ipk bandomasis build, Developer Mode | Horizon Store, APK | diegimo programa arba ZIP (peržiūra) | .deb, .rpm (peržiūra) | DMG arba ZIP (nepasirašyta peržiūra) |
+| Galimybė | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerija, albumai, paieška su Immich serveriu | ✅ | ✅ | ✅ žiūryklė | ✅ žiūryklė | ✅ |
+| Be serverio: įrenginio nuosavi failai | ✅ | ✅ | tik bendrinimai | ❌ | ✅ |
+| Plokšti nuotraukos ir vaizdo įrašai | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Nuotraukos pasukimas vienu klavišu | ✅ | ✅ | ✅ spalvoti mygtukai | ✅ spalvoti mygtukai | ✅ langas |
+| 360° nuotraukos kaip sfera | ✅ | ✅ | ✅ | ✅ | ✅ panardinantis |
+| 360° vaizdo įrašai | ✅ | ✅ be laiko juostos | ✅ pranešimas, jei nedekoduojama | tik plokšti | ✅ panardinantis |
+| 3D ir VR180 | ✅ viena akis | ✅ viena akis | ✅ viena akis | nuotraukos viena akimi, vaizdo įrašai plokšti | ✅ tikras 3D |
+| Spatial 2.5D (galvos sekimas) | ✅ eksperimentinis | ✅ eksperimentinis | ❌ | ❌ | ❌ |
+| Apple erdvinės nuotraukos | ✅ viena akis | ✅ viena akis | ✅ viena akis | ❌ | ✅ 3D |
+| Neapdoroti Insta360, GoPro ir DJI failai | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB, WebDAV, DLNA bendrinimai | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kameros: įrašai | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kameros: tiesioginis vaizdas | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Bendrinti šį įrenginį tinkle | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Įkėlimas į Immich iš bendrinimų ir įrenginio | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Importas iš DJI drono ar kortelės per USB (eksperimentinis) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tamsi tema | kaip sistemoje | kaip sistemoje | ✅ pagal numatymą | ✅ vienintelė tema | kaip sistemoje |
+| Įvestis | prisilietimas, giroskopas | prisilietimas, giroskopas | nuotolinis valdymo pultas; kairė ir dešinė rodyklės ir vaizdo įrašo metu, Menu detalėms | nuotolinis valdymo pultas, Magic Remote | valdikliai, rankos |
+| Kur gauti | Google Play, APK | App Store (tikrinama) | APK, Google Play (tikrinama) | .ipk bandomasis build, Developer Mode | Horizon Store, APK |
+
+| Galimybė | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerija, albumai, paieška su Immich serveriu | ✅ | 🔧 CI | 🔧 CI |
+| Be serverio: įrenginio nuosavi failai | ✅ aplankai | ✅ aplankai | ✅ aplankai |
+| Plokšti nuotraukos ir vaizdo įrašai | ✅ | ✅ | ✅ |
+| Nuotraukos pasukimas vienu klavišu | ✅ | ✅ | ✅ |
+| 360° nuotraukos kaip sfera | ✅ | ✅ | 🔧 CI |
+| 360° vaizdo įrašai | ✅ | tik plokšti | tik plokšti |
+| 3D ir VR180 | ✅ viena akis | nuotraukos viena akimi, vaizdo įrašai plokšti | nuotraukos viena akimi, vaizdo įrašai plokšti |
+| Spatial 2.5D (galvos sekimas) | 🔜 | ❌ | ❌ |
+| Apple erdvinės nuotraukos | ✅ viena akis | 🔧 CI | 🔧 CI |
+| Neapdoroti Insta360, GoPro ir DJI failai | ✅ | 🔧 CI nuotraukos, vaizdo įrašai plokšti | 🔧 CI nuotraukos, vaizdo įrašai plokšti |
+| SMB, WebDAV, DLNA bendrinimai | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameros: įrašai | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameros: tiesioginis vaizdas | ✅ | 🔧 CI | 🔧 CI |
+| Bendrinti šį įrenginį tinkle | ✅ | ❌ | ❌ |
+| Įkėlimas į Immich iš bendrinimų ir įrenginio | ✅ | 🔧 CI | 🔧 CI |
+| Importas iš DJI drono ar kortelės per USB (eksperimentinis) | ❌ | ❌ | ❌ |
+| Tamsi tema | kaip sistemoje | kaip sistemoje | kaip sistemoje |
+| Įvestis | pelė, klaviatūra | pelė, klaviatūra | pelė, klaviatūra, jutiklinis kilimėlis |
+| Kur gauti | diegimo programa arba ZIP (peržiūra) | .deb, .rpm (peržiūra) | DMG arba ZIP (nepasirašyta peržiūra) |
 
 ✅ programoje toje platformoje · ❌ nesiūloma joje · 🔜 planuojama · 🔧 CI šaltinio kode, sukurta ir paleista projekto CI toje sistemoje, ten dar nepatikrinta su realiu serveriu, bendrinimu ar kamera · tik plokšti: vaizdo įrašas rodomas plokščias, su pranešimu, nes kompiuterių 360° vaizdo atvaizdavimo variklis veikia tik Windows, o LG televizoriuose dar reikia išmatuoti, ar webOS perduoda vaizdo kadrus sferai. „Viena akis“ reiškia, kad 3D failas rodo savo kairę akį plokščiame ekrane. LG webOS stulpelis yra atskira programa, kurios bandomasis build 0.1.0 praeina savo testus projekto CI ir dar nebuvo paleistas televizoriuje. Ne kiekvienas ✅ jau patikrintas realiame įrenginyje: kas patikrinta ir kur, ir kas liko patvirtinti, yra [Funkcijose](../docs/immuch360/features.md), [Platformų palaikyme](../docs/immuch360/platform-support.md) ir [Suderinamume](../docs/immuch360/compatibility.md).
 

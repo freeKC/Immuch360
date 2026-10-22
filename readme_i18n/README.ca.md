@@ -245,28 +245,51 @@ Les esferes 360° dels drons DJI (Mini, Air, Mavic i altres, reconegudes per la 
 
 Una sola base de codi per a sis entorns, i una aplicació a part per als televisors LG. Això és el que té cadascun avui:
 
-| Capacitat | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeria, àlbums, cerca amb un servidor Immich | ✅ | ✅ | ✅ visualitzador | ✅ visualitzador | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Sense servidor: el contingut propi del dispositiu | ✅ | ✅ | només recursos compartits | ❌ | ✅ | ✅ carpetes | ✅ carpetes | ✅ carpetes |
-| Fotos i vídeos plans | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Girar una foto amb una sola tecla | ✅ | ✅ | ✅ tecles de color | ✅ tecles de color | ✅ finestra | ✅ | ✅ | ✅ |
-| Fotos 360° com a esfera | ✅ | ✅ | ✅ | ✅ | ✅ immersiu | ✅ | ✅ | 🔧 CI |
-| Vídeos 360° | ✅ | ✅ sense barra de temps | ✅ missatge si no es pot descodificar | només en pla | ✅ immersiu | ✅ | només en pla | només en pla |
-| 3D i VR180 | ✅ un ull | ✅ un ull | ✅ un ull | fotos un ull, vídeos en pla | ✅ 3D real | ✅ un ull | fotos un ull, vídeos en pla | fotos un ull, vídeos en pla |
-| Espacial 2.5D (seguiment del cap) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Fotos espacials d'Apple | ✅ un ull | ✅ un ull | ✅ un ull | ❌ | ✅ 3D | ✅ un ull | 🔧 CI | 🔧 CI |
-| Fitxers en brut d'Insta360, GoPro i DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI fotos, vídeos en pla | 🔧 CI fotos, vídeos en pla |
-| Recursos compartits SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Càmeres Tapo: enregistraments | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Càmeres Tapo: visualització en directe | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Compartir aquest dispositiu a la xarxa | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Pujar a l'Immich des dels recursos compartits i el dispositiu | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Importar des d'un dron DJI o una targeta per USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tema fosc | com el sistema | com el sistema | ✅ per defecte | ✅ únic tema | com el sistema | com el sistema | com el sistema | com el sistema |
-| Entrada | tàctil, giroscopi | tàctil, giroscopi | comandament; Esquerra i Dreta també durant un vídeo, Menu per als detalls | comandament, Magic Remote | comandaments, mans | ratolí, teclat | ratolí, teclat | ratolí, teclat, ratolí tàctil |
-| On obtenir-ho | Google Play, APK | App Store (en revisió) | APK, Google Play (en revisió) | compilació de prova .ipk, Developer Mode | Horizon Store, APK | instal·lador o ZIP (versió prèvia) | .deb, .rpm (versió prèvia) | DMG o ZIP (versió prèvia sense signar) |
+| Capacitat | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galeria, àlbums, cerca amb un servidor Immich | ✅ | ✅ | ✅ visualitzador | ✅ visualitzador | ✅ |
+| Sense servidor: el contingut propi del dispositiu | ✅ | ✅ | només recursos compartits | ❌ | ✅ |
+| Fotos i vídeos plans | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Girar una foto amb una sola tecla | ✅ | ✅ | ✅ tecles de color | ✅ tecles de color | ✅ finestra |
+| Fotos 360° com a esfera | ✅ | ✅ | ✅ | ✅ | ✅ immersiu |
+| Vídeos 360° | ✅ | ✅ sense barra de temps | ✅ missatge si no es pot descodificar | només en pla | ✅ immersiu |
+| 3D i VR180 | ✅ un ull | ✅ un ull | ✅ un ull | fotos un ull, vídeos en pla | ✅ 3D real |
+| Espacial 2.5D (seguiment del cap) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ |
+| Fotos espacials d'Apple | ✅ un ull | ✅ un ull | ✅ un ull | ❌ | ✅ 3D |
+| Fitxers en brut d'Insta360, GoPro i DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Recursos compartits SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Càmeres Tapo: enregistraments | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Càmeres Tapo: visualització en directe | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Compartir aquest dispositiu a la xarxa | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Pujar a l'Immich des dels recursos compartits i el dispositiu | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Importar des d'un dron DJI o una targeta per USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tema fosc | com el sistema | com el sistema | ✅ per defecte | ✅ únic tema | com el sistema |
+| Entrada | tàctil, giroscopi | tàctil, giroscopi | comandament; Esquerra i Dreta també durant un vídeo, Menu per als detalls | comandament, Magic Remote | comandaments, mans |
+| On obtenir-ho | Google Play, APK | App Store (en revisió) | APK, Google Play (en revisió) | compilació de prova .ipk, Developer Mode | Horizon Store, APK |
+
+| Capacitat | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galeria, àlbums, cerca amb un servidor Immich | ✅ | 🔧 CI | 🔧 CI |
+| Sense servidor: el contingut propi del dispositiu | ✅ carpetes | ✅ carpetes | ✅ carpetes |
+| Fotos i vídeos plans | ✅ | ✅ | ✅ |
+| Girar una foto amb una sola tecla | ✅ | ✅ | ✅ |
+| Fotos 360° com a esfera | ✅ | ✅ | 🔧 CI |
+| Vídeos 360° | ✅ | només en pla | només en pla |
+| 3D i VR180 | ✅ un ull | fotos un ull, vídeos en pla | fotos un ull, vídeos en pla |
+| Espacial 2.5D (seguiment del cap) | 🔜 | ❌ | ❌ |
+| Fotos espacials d'Apple | ✅ un ull | 🔧 CI | 🔧 CI |
+| Fitxers en brut d'Insta360, GoPro i DJI | ✅ | 🔧 CI fotos, vídeos en pla | 🔧 CI fotos, vídeos en pla |
+| Recursos compartits SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Càmeres Tapo: enregistraments | ✅ | 🔧 CI | 🔧 CI |
+| Càmeres Tapo: visualització en directe | ✅ | 🔧 CI | 🔧 CI |
+| Compartir aquest dispositiu a la xarxa | ✅ | ❌ | ❌ |
+| Pujar a l'Immich des dels recursos compartits i el dispositiu | ✅ | 🔧 CI | 🔧 CI |
+| Importar des d'un dron DJI o una targeta per USB (experimental) | ❌ | ❌ | ❌ |
+| Tema fosc | com el sistema | com el sistema | com el sistema |
+| Entrada | ratolí, teclat | ratolí, teclat | ratolí, teclat, ratolí tàctil |
+| On obtenir-ho | instal·lador o ZIP (versió prèvia) | .deb, .rpm (versió prèvia) | DMG o ZIP (versió prèvia sense signar) |
 
 ✅ a l'aplicació en aquesta plataforma · ❌ no s'hi ofereix · 🔜 previst · 🔧 CI al codi font, compilat i engegat per la CI del projecte en aquest sistema, però encara no comprovat allà amb un servidor, un recurs compartit o una càmera reals · només en pla: el vídeo es reprodueix en pla, amb un missatge, perquè el renderitzador de vídeo 360° dels ordinadors només existeix a Windows, i als televisors LG encara cal mesurar si webOS lliura els fotogrames del vídeo a l'esfera. "Un ull" vol dir que un fitxer 3D mostra l'ull esquerre en una pantalla plana. La columna LG webOS és una aplicació a part, la compilació de prova 0.1.0 de la qual supera les seves proves a la CI del projecte i encara no s'ha executat en cap televisor. No totes les ✅ s'han comprovat encara en un dispositiu real: què s'ha comprovat i on, i què queda per confirmar, és a [Funcionalitats](../docs/immuch360/features.md), [Compatibilitat de plataformes](../docs/immuch360/platform-support.md) i [Compatibilitat](../docs/immuch360/compatibility.md).
 

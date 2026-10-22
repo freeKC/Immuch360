@@ -245,28 +245,51 @@ Sfery 360° z dronów DJI (Mini, Air, Mavic i innych, rozpoznawanych po kamerze)
 
 Jedna baza kodu dla sześciu środowisk i osobna aplikacja dla telewizorów LG. Co każde z nich ma dzisiaj:
 
-| Funkcja | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeria, albumy, wyszukiwanie z serwerem Immich | ✅ | ✅ | ✅ przeglądarka | ✅ przeglądarka | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Bez serwera: własne media urządzenia | ✅ | ✅ | tylko udziały | ❌ | ✅ | ✅ foldery | ✅ foldery | ✅ foldery |
-| Zdjęcia i filmy płaskie | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Obrót zdjęcia jednym klawiszem | ✅ | ✅ | ✅ kolorowe przyciski | ✅ kolorowe przyciski | ✅ okno | ✅ | ✅ | ✅ |
-| Zdjęcia 360° jako sfera | ✅ | ✅ | ✅ | ✅ | ✅ immersyjnie | ✅ | ✅ | 🔧 CI |
-| Filmy 360° | ✅ | ✅ brak paska czasu | ✅ komunikat, jeśli nie da się zdekodować | tylko płasko | ✅ immersyjnie | ✅ | tylko płasko | tylko płasko |
-| 3D i VR180 | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | zdjęcia jedno oko, filmy płasko | ✅ prawdziwe 3D | ✅ jedno oko | zdjęcia jedno oko, filmy płasko | zdjęcia jedno oko, filmy płasko |
-| Spatial 2.5D (śledzenie głowy) | ✅ eksperymentalne | ✅ eksperymentalne | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Zdjęcia przestrzenne Apple | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ❌ | ✅ 3D | ✅ jedno oko | 🔧 CI | 🔧 CI |
-| Surowe pliki Insta360, GoPro i DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI zdjęcia, filmy płasko | 🔧 CI zdjęcia, filmy płasko |
-| Udziały SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamery Tapo: nagrania | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamery Tapo: podgląd na żywo | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Udostępnij to urządzenie w sieci | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Przesyłanie do Immich z udziałów i urządzenia | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import z drona DJI lub karty przez USB (eksperymentalny) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Ciemny motyw | jak system | jak system | ✅ domyślnie | ✅ jedyny motyw | jak system | jak system | jak system | jak system |
-| Sterowanie | dotyk, żyroskop | dotyk, żyroskop | pilot; Lewo i Prawo także podczas filmu, Menu dla szczegółów | pilot, Magic Remote | kontrolery, ręce | mysz, klawiatura | mysz, klawiatura | mysz, klawiatura, gładzik |
-| Gdzie ją pobrać | Google Play, APK | App Store (w weryfikacji) | APK, Google Play (w weryfikacji) | kompilacja testowa .ipk, Developer Mode | Horizon Store, APK | instalator lub ZIP (wersja zapoznawcza) | .deb, .rpm (wersja zapoznawcza) | DMG lub ZIP (wersja zapoznawcza bez podpisu) |
+| Funkcja | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galeria, albumy, wyszukiwanie z serwerem Immich | ✅ | ✅ | ✅ przeglądarka | ✅ przeglądarka | ✅ |
+| Bez serwera: własne media urządzenia | ✅ | ✅ | tylko udziały | ❌ | ✅ |
+| Zdjęcia i filmy płaskie | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Obrót zdjęcia jednym klawiszem | ✅ | ✅ | ✅ kolorowe przyciski | ✅ kolorowe przyciski | ✅ okno |
+| Zdjęcia 360° jako sfera | ✅ | ✅ | ✅ | ✅ | ✅ immersyjnie |
+| Filmy 360° | ✅ | ✅ brak paska czasu | ✅ komunikat, jeśli nie da się zdekodować | tylko płasko | ✅ immersyjnie |
+| 3D i VR180 | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | zdjęcia jedno oko, filmy płasko | ✅ prawdziwe 3D |
+| Spatial 2.5D (śledzenie głowy) | ✅ eksperymentalne | ✅ eksperymentalne | ❌ | ❌ | ❌ |
+| Zdjęcia przestrzenne Apple | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ❌ | ✅ 3D |
+| Surowe pliki Insta360, GoPro i DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Udziały SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamery Tapo: nagrania | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamery Tapo: podgląd na żywo | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Udostępnij to urządzenie w sieci | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Przesyłanie do Immich z udziałów i urządzenia | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import z drona DJI lub karty przez USB (eksperymentalny) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Ciemny motyw | jak system | jak system | ✅ domyślnie | ✅ jedyny motyw | jak system |
+| Sterowanie | dotyk, żyroskop | dotyk, żyroskop | pilot; Lewo i Prawo także podczas filmu, Menu dla szczegółów | pilot, Magic Remote | kontrolery, ręce |
+| Gdzie ją pobrać | Google Play, APK | App Store (w weryfikacji) | APK, Google Play (w weryfikacji) | kompilacja testowa .ipk, Developer Mode | Horizon Store, APK |
+
+| Funkcja | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galeria, albumy, wyszukiwanie z serwerem Immich | ✅ | 🔧 CI | 🔧 CI |
+| Bez serwera: własne media urządzenia | ✅ foldery | ✅ foldery | ✅ foldery |
+| Zdjęcia i filmy płaskie | ✅ | ✅ | ✅ |
+| Obrót zdjęcia jednym klawiszem | ✅ | ✅ | ✅ |
+| Zdjęcia 360° jako sfera | ✅ | ✅ | 🔧 CI |
+| Filmy 360° | ✅ | tylko płasko | tylko płasko |
+| 3D i VR180 | ✅ jedno oko | zdjęcia jedno oko, filmy płasko | zdjęcia jedno oko, filmy płasko |
+| Spatial 2.5D (śledzenie głowy) | 🔜 | ❌ | ❌ |
+| Zdjęcia przestrzenne Apple | ✅ jedno oko | 🔧 CI | 🔧 CI |
+| Surowe pliki Insta360, GoPro i DJI | ✅ | 🔧 CI zdjęcia, filmy płasko | 🔧 CI zdjęcia, filmy płasko |
+| Udziały SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Kamery Tapo: nagrania | ✅ | 🔧 CI | 🔧 CI |
+| Kamery Tapo: podgląd na żywo | ✅ | 🔧 CI | 🔧 CI |
+| Udostępnij to urządzenie w sieci | ✅ | ❌ | ❌ |
+| Przesyłanie do Immich z udziałów i urządzenia | ✅ | 🔧 CI | 🔧 CI |
+| Import z drona DJI lub karty przez USB (eksperymentalny) | ❌ | ❌ | ❌ |
+| Ciemny motyw | jak system | jak system | jak system |
+| Sterowanie | mysz, klawiatura | mysz, klawiatura | mysz, klawiatura, gładzik |
+| Gdzie ją pobrać | instalator lub ZIP (wersja zapoznawcza) | .deb, .rpm (wersja zapoznawcza) | DMG lub ZIP (wersja zapoznawcza bez podpisu) |
 
 ✅ w aplikacji na tej platformie · ❌ niedostępne tam · 🔜 planowane · 🔧 CI w kodzie źródłowym, zbudowane i uruchomione przez CI projektu na tym systemie, jeszcze niesprawdzone tam z prawdziwym serwerem, udziałem ani kamerą · tylko płasko: film jest odtwarzany płasko, z komunikatem, bo renderer filmów 360° na komputerach działa tylko na Windows, a na telewizorach LG trzeba jeszcze zmierzyć, czy webOS przekazuje klatki wideo do sfery. „Jedno oko” znaczy, że plik 3D pokazuje swoje lewe oko na płaskim ekranie. Kolumna LG webOS to osobna aplikacja, której kompilacja testowa 0.1.0 przechodzi swoje testy na CI projektu i nie była jeszcze uruchamiana na telewizorze. Nie każde ✅ zostało jeszcze sprawdzone na prawdziwym urządzeniu: co sprawdzono i gdzie, oraz co pozostaje do potwierdzenia, znajduje się w [Funkcjach](../docs/immuch360/features.md), [Wsparciu platform](../docs/immuch360/platform-support.md) i [Zgodności](../docs/immuch360/compatibility.md).
 

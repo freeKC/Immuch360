@@ -245,28 +245,51 @@ Bola 360° dari drone DJI (Mini, Air, Mavic, dan lainnya, dikenali dari kamerany
 
 Satu basis kode, enam lingkungan, dan aplikasi terpisah untuk TV LG. Apa yang dimiliki masing-masing saat ini:
 
-| Kemampuan | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeri, album, pencarian dengan server Immich | ✅ | ✅ | ✅ penampil | ✅ penampil | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tanpa server: media milik perangkat sendiri | ✅ | ✅ | hanya berbagi | ❌ | ✅ | ✅ folder | ✅ folder | ✅ folder |
-| Foto dan video datar | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Rotasi foto dengan satu tombol | ✅ | ✅ | ✅ tombol warna | ✅ tombol warna | ✅ jendela | ✅ | ✅ | ✅ |
-| Foto 360° sebagai bola | ✅ | ✅ | ✅ | ✅ | ✅ imersif | ✅ | ✅ | 🔧 CI |
-| Video 360° | ✅ | ✅ tanpa bilah waktu | ✅ pesan jika tidak dapat didekode | hanya datar | ✅ imersif | ✅ | hanya datar | hanya datar |
-| 3D dan VR180 | ✅ satu mata | ✅ satu mata | ✅ satu mata | foto satu mata, video datar | ✅ 3D sejati | ✅ satu mata | foto satu mata, video datar | foto satu mata, video datar |
-| Spasial 2.5D (pelacakan kepala) | ✅ eksperimental | ✅ eksperimental | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Foto spasial Apple | ✅ satu mata | ✅ satu mata | ✅ satu mata | ❌ | ✅ 3D | ✅ satu mata | 🔧 CI | 🔧 CI |
-| Berkas mentah Insta360, GoPro, dan DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI foto, video datar | 🔧 CI foto, video datar |
-| Berbagi SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamera Tapo: rekaman | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamera Tapo: tampilan langsung | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Membagikan perangkat ini di jaringan | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Unggah ke Immich dari berbagi dan perangkat | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Impor dari drone DJI atau kartu melalui USB (eksperimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tema gelap | mengikuti sistem | mengikuti sistem | ✅ bawaan | ✅ satu-satunya tema | mengikuti sistem | mengikuti sistem | mengikuti sistem | mengikuti sistem |
-| Input | sentuhan, giroskop | sentuhan, giroskop | remote; Kiri dan Kanan juga saat video diputar, Menu untuk detail | remote, Magic Remote | kontroler, tangan | mouse, papan ketik | mouse, papan ketik | mouse, papan ketik, trackpad |
-| Tempat mendapatkannya | Google Play, APK | App Store (sedang ditinjau) | APK, Google Play (sedang ditinjau) | build uji .ipk, Developer Mode | Horizon Store, APK | installer atau ZIP (pratinjau) | .deb, .rpm (pratinjau) | DMG atau ZIP (pratinjau tanpa tanda tangan) |
+| Kemampuan | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galeri, album, pencarian dengan server Immich | ✅ | ✅ | ✅ penampil | ✅ penampil | ✅ |
+| Tanpa server: media milik perangkat sendiri | ✅ | ✅ | hanya berbagi | ❌ | ✅ |
+| Foto dan video datar | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Rotasi foto dengan satu tombol | ✅ | ✅ | ✅ tombol warna | ✅ tombol warna | ✅ jendela |
+| Foto 360° sebagai bola | ✅ | ✅ | ✅ | ✅ | ✅ imersif |
+| Video 360° | ✅ | ✅ tanpa bilah waktu | ✅ pesan jika tidak dapat didekode | hanya datar | ✅ imersif |
+| 3D dan VR180 | ✅ satu mata | ✅ satu mata | ✅ satu mata | foto satu mata, video datar | ✅ 3D sejati |
+| Spasial 2.5D (pelacakan kepala) | ✅ eksperimental | ✅ eksperimental | ❌ | ❌ | ❌ |
+| Foto spasial Apple | ✅ satu mata | ✅ satu mata | ✅ satu mata | ❌ | ✅ 3D |
+| Berkas mentah Insta360, GoPro, dan DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Berbagi SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamera Tapo: rekaman | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamera Tapo: tampilan langsung | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Membagikan perangkat ini di jaringan | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Unggah ke Immich dari berbagi dan perangkat | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Impor dari drone DJI atau kartu melalui USB (eksperimental) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tema gelap | mengikuti sistem | mengikuti sistem | ✅ bawaan | ✅ satu-satunya tema | mengikuti sistem |
+| Input | sentuhan, giroskop | sentuhan, giroskop | remote; Kiri dan Kanan juga saat video diputar, Menu untuk detail | remote, Magic Remote | kontroler, tangan |
+| Tempat mendapatkannya | Google Play, APK | App Store (sedang ditinjau) | APK, Google Play (sedang ditinjau) | build uji .ipk, Developer Mode | Horizon Store, APK |
+
+| Kemampuan | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galeri, album, pencarian dengan server Immich | ✅ | 🔧 CI | 🔧 CI |
+| Tanpa server: media milik perangkat sendiri | ✅ folder | ✅ folder | ✅ folder |
+| Foto dan video datar | ✅ | ✅ | ✅ |
+| Rotasi foto dengan satu tombol | ✅ | ✅ | ✅ |
+| Foto 360° sebagai bola | ✅ | ✅ | 🔧 CI |
+| Video 360° | ✅ | hanya datar | hanya datar |
+| 3D dan VR180 | ✅ satu mata | foto satu mata, video datar | foto satu mata, video datar |
+| Spasial 2.5D (pelacakan kepala) | 🔜 | ❌ | ❌ |
+| Foto spasial Apple | ✅ satu mata | 🔧 CI | 🔧 CI |
+| Berkas mentah Insta360, GoPro, dan DJI | ✅ | 🔧 CI foto, video datar | 🔧 CI foto, video datar |
+| Berbagi SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Kamera Tapo: rekaman | ✅ | 🔧 CI | 🔧 CI |
+| Kamera Tapo: tampilan langsung | ✅ | 🔧 CI | 🔧 CI |
+| Membagikan perangkat ini di jaringan | ✅ | ❌ | ❌ |
+| Unggah ke Immich dari berbagi dan perangkat | ✅ | 🔧 CI | 🔧 CI |
+| Impor dari drone DJI atau kartu melalui USB (eksperimental) | ❌ | ❌ | ❌ |
+| Tema gelap | mengikuti sistem | mengikuti sistem | mengikuti sistem |
+| Input | mouse, papan ketik | mouse, papan ketik | mouse, papan ketik, trackpad |
+| Tempat mendapatkannya | installer atau ZIP (pratinjau) | .deb, .rpm (pratinjau) | DMG atau ZIP (pratinjau tanpa tanda tangan) |
 
 ✅ ada di aplikasi pada platform tersebut · ❌ tidak ditawarkan di sana · 🔜 direncanakan · 🔧 CI ada di dalam sumber, dibangun dan dijalankan oleh CI proyek pada sistem tersebut, tetapi belum diperiksa di sana dengan server, berbagi, atau kamera sungguhan · hanya datar: video diputar datar, dengan sebuah pesan, karena perender video 360° untuk komputer hanya ada di Windows, dan di TV LG masih perlu diukur apakah webOS menyerahkan frame video ke bola. "Satu mata" berarti berkas 3D menampilkan mata kirinya di layar datar. Kolom LG webOS adalah aplikasi terpisah, yang build uji 0.1.0-nya lulus pengujiannya di CI proyek dan belum dijalankan di TV. Belum semua ✅ diperiksa pada perangkat nyata: apa yang diperiksa dan di mana, serta apa yang masih perlu dipastikan, ada di [Fitur](../docs/immuch360/features.md), [Dukungan platform](../docs/immuch360/platform-support.md), dan [Kompatibilitas](../docs/immuch360/compatibility.md).
 

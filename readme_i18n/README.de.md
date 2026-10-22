@@ -245,28 +245,51 @@ Die 360°-Kugeln von DJI-Drohnen (Mini, Air, Mavic und andere, an ihrer Kamera e
 
 Eine Codebasis für sechs Umgebungen und eine eigene App für LG-Fernseher. Was jede heute bietet:
 
-| Fähigkeit | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerie, Alben, Suche mit einem Immich-Server | ✅ | ✅ | ✅ Player | ✅ Player | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ohne Server: die eigenen Medien des Geräts | ✅ | ✅ | nur Freigaben | ❌ | ✅ | ✅ Ordner | ✅ Ordner | ✅ Ordner |
-| Flache Fotos und Videos | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Ein Foto mit einer Taste drehen | ✅ | ✅ | ✅ Farbtasten | ✅ Farbtasten | ✅ Fenster | ✅ | ✅ | ✅ |
-| 360°-Fotos als Kugel | ✅ | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
-| 360°-Videos | ✅ | ✅ keine Zeitleiste | ✅ Hinweis, wenn nicht dekodierbar | nur flach | ✅ immersiv | ✅ | nur flach | nur flach |
-| 3D und VR180 | ✅ ein Auge | ✅ ein Auge | ✅ ein Auge | Fotos ein Auge, Videos flach | ✅ echtes 3D | ✅ ein Auge | Fotos ein Auge, Videos flach | Fotos ein Auge, Videos flach |
-| Spatial 2.5D (Kopfverfolgung) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Räumliche Apple-Fotos | ✅ ein Auge | ✅ ein Auge | ✅ ein Auge | ❌ | ✅ 3D | ✅ ein Auge | 🔧 CI | 🔧 CI |
-| Rohe Insta360-, GoPro- und DJI-Dateien | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI Fotos, Videos flach | 🔧 CI Fotos, Videos flach |
-| SMB-, WebDAV-, DLNA-Freigaben | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-Kameras: Aufnahmen | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-Kameras: Live-Ansicht | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Dieses Gerät im Netzwerk freigeben | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Auf Immich hochladen aus Freigaben und vom Gerät | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import von einer DJI-Drohne oder einer Karte über USB (experimentell) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Dunkles Design | wie das System | wie das System | ✅ standardmäßig | ✅ einziges Design | wie das System | wie das System | wie das System | wie das System |
-| Eingabe | Touch, Gyroskop | Touch, Gyroskop | Fernbedienung; Links und Rechts auch während eines Videos, Menu für die Details | Fernbedienung, Magic Remote | Controller, Hände | Maus, Tastatur | Maus, Tastatur | Maus, Tastatur, Trackpad |
-| Wo es die App gibt | Google Play, APK | App Store (in Prüfung) | APK, Google Play (in Prüfung) | .ipk-Testbuild, Developer Mode | Horizon Store, APK | Installationsprogramm oder ZIP (Vorschau) | .deb, .rpm (Vorschau) | DMG oder ZIP (unsignierte Vorschau) |
+| Fähigkeit | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerie, Alben, Suche mit einem Immich-Server | ✅ | ✅ | ✅ Player | ✅ Player | ✅ |
+| Ohne Server: die eigenen Medien des Geräts | ✅ | ✅ | nur Freigaben | ❌ | ✅ |
+| Flache Fotos und Videos | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Ein Foto mit einer Taste drehen | ✅ | ✅ | ✅ Farbtasten | ✅ Farbtasten | ✅ Fenster |
+| 360°-Fotos als Kugel | ✅ | ✅ | ✅ | ✅ | ✅ immersiv |
+| 360°-Videos | ✅ | ✅ keine Zeitleiste | ✅ Hinweis, wenn nicht dekodierbar | nur flach | ✅ immersiv |
+| 3D und VR180 | ✅ ein Auge | ✅ ein Auge | ✅ ein Auge | Fotos ein Auge, Videos flach | ✅ echtes 3D |
+| Spatial 2.5D (Kopfverfolgung) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | ❌ |
+| Räumliche Apple-Fotos | ✅ ein Auge | ✅ ein Auge | ✅ ein Auge | ❌ | ✅ 3D |
+| Rohe Insta360-, GoPro- und DJI-Dateien | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB-, WebDAV-, DLNA-Freigaben | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-Kameras: Aufnahmen | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-Kameras: Live-Ansicht | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Dieses Gerät im Netzwerk freigeben | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Auf Immich hochladen aus Freigaben und vom Gerät | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import von einer DJI-Drohne oder einer Karte über USB (experimentell) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Dunkles Design | wie das System | wie das System | ✅ standardmäßig | ✅ einziges Design | wie das System |
+| Eingabe | Touch, Gyroskop | Touch, Gyroskop | Fernbedienung; Links und Rechts auch während eines Videos, Menu für die Details | Fernbedienung, Magic Remote | Controller, Hände |
+| Wo es die App gibt | Google Play, APK | App Store (in Prüfung) | APK, Google Play (in Prüfung) | .ipk-Testbuild, Developer Mode | Horizon Store, APK |
+
+| Fähigkeit | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerie, Alben, Suche mit einem Immich-Server | ✅ | 🔧 CI | 🔧 CI |
+| Ohne Server: die eigenen Medien des Geräts | ✅ Ordner | ✅ Ordner | ✅ Ordner |
+| Flache Fotos und Videos | ✅ | ✅ | ✅ |
+| Ein Foto mit einer Taste drehen | ✅ | ✅ | ✅ |
+| 360°-Fotos als Kugel | ✅ | ✅ | 🔧 CI |
+| 360°-Videos | ✅ | nur flach | nur flach |
+| 3D und VR180 | ✅ ein Auge | Fotos ein Auge, Videos flach | Fotos ein Auge, Videos flach |
+| Spatial 2.5D (Kopfverfolgung) | 🔜 | ❌ | ❌ |
+| Räumliche Apple-Fotos | ✅ ein Auge | 🔧 CI | 🔧 CI |
+| Rohe Insta360-, GoPro- und DJI-Dateien | ✅ | 🔧 CI Fotos, Videos flach | 🔧 CI Fotos, Videos flach |
+| SMB-, WebDAV-, DLNA-Freigaben | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-Kameras: Aufnahmen | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-Kameras: Live-Ansicht | ✅ | 🔧 CI | 🔧 CI |
+| Dieses Gerät im Netzwerk freigeben | ✅ | ❌ | ❌ |
+| Auf Immich hochladen aus Freigaben und vom Gerät | ✅ | 🔧 CI | 🔧 CI |
+| Import von einer DJI-Drohne oder einer Karte über USB (experimentell) | ❌ | ❌ | ❌ |
+| Dunkles Design | wie das System | wie das System | wie das System |
+| Eingabe | Maus, Tastatur | Maus, Tastatur | Maus, Tastatur, Trackpad |
+| Wo es die App gibt | Installationsprogramm oder ZIP (Vorschau) | .deb, .rpm (Vorschau) | DMG oder ZIP (unsignierte Vorschau) |
 
 ✅ in der App auf dieser Plattform · ❌ dort nicht angeboten · 🔜 geplant · 🔧 CI im Quellcode, von der CI des Projekts auf diesem System gebaut und gestartet, dort aber noch nicht mit einem echten Server, einer Freigabe oder einer Kamera geprüft · nur flach: das Video läuft flach, mit einem Hinweis, weil es den 360°-Videorenderer der Computer nur unter Windows gibt, und auf LG-Fernsehern muss noch gemessen werden, ob webOS die Videobilder an die Kugel weitergibt. „Ein Auge“ bedeutet, dass eine 3D-Datei ihr linkes Auge auf einem flachen Bildschirm zeigt. Die Spalte LG webOS ist eine eigene App, deren Testbuild 0.1.0 seine Tests auf der CI des Projekts besteht und noch nicht auf einem Fernseher gelaufen ist. Nicht jedes ✅ wurde schon auf einem echten Gerät geprüft: was wo geprüft wurde und was noch zu bestätigen ist, steht in [Funktionen](../docs/immuch360/features.md), [Plattformunterstützung](../docs/immuch360/platform-support.md) und [Kompatibilität](../docs/immuch360/compatibility.md).
 

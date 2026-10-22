@@ -245,28 +245,51 @@ Tikurin n 360° n yidrunen DJI (Mini, Air, Mavic d wiyaḍ, yettwassnen seg tkam
 
 Yiwen uɣbalu n tengalt i sețța n yiseɣẓanen, d usnas weḥd-s i tiliẓriyin LG. Ayen yesɛa yal yiwen ass-a:
 
-| Tamahilt | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Agraw, albumat, anadi s uqeddac Immich | ✅ | ✅ | ✅ ameskan | ✅ ameskan | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| War aqeddac: ayla n ibenk s yiman-is | ✅ | ✅ | ifuyla n uẓeṭṭa kan | ❌ | ✅ | ✅ ikaramen | ✅ ikaramen | ✅ ikaramen |
-| Tiwlafin d tividyutin tizeddigin | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Zzi tawlaft s yiwet n tqeffalt | ✅ | ✅ | ✅ tiqeffalen s yini | ✅ tiqeffalen s yini | ✅ ṭṭaq | ✅ | ✅ | ✅ |
-| Tiwlafin n 360° d takuret | ✅ | ✅ | ✅ | ✅ | ✅ imirsif | ✅ | ✅ | 🔧 CI |
-| Tividyutin n 360° | ✅ | ✅ war afeggag n wakud | ✅ izen ma ur tettwaɣer ara | tizeddigin kan | ✅ imirsif | ✅ | tizeddigin kan | tizeddigin kan |
-| 3D d VR180 | ✅ ṭiṭ yiwet | ✅ ṭiṭ yiwet | ✅ ṭiṭ yiwet | tiwlafin ṭiṭ yiwet, tividyutin tizeddigin | ✅ 3D n tidet | ✅ ṭiṭ yiwet | tiwlafin ṭiṭ yiwet, tividyutin tizeddigin | tiwlafin ṭiṭ yiwet, tividyutin tizeddigin |
-| Spatial 2.5D (aḍfar n uqerru) | ✅ alugen | ✅ alugen | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Tiwlafin Apple n wemkan | ✅ ṭiṭ yiwet | ✅ ṭiṭ yiwet | ✅ ṭiṭ yiwet | ❌ | ✅ 3D | ✅ ṭiṭ yiwet | 🔧 CI | 🔧 CI |
-| Ifuyla raw n Insta360, GoPro d DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI tiwlafin, tividyutin tizeddigin | 🔧 CI tiwlafin, tividyutin tizeddigin |
-| Ifuyla n uẓeṭṭa SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tkamirawin Tapo: tuṭṭfiwin | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tkamirawin Tapo: tamuɣli srid | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Sbeṭṭu ibenk-agi ɣef uẓeṭṭa | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Sali ɣer Immich seg ifuyla n uẓeṭṭa d ibenk | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Aktar seg udrun DJI neɣ seg tkarḍa s USB (alugen) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Asentel ubrik | am unagraw | am unagraw | ✅ s wudem amezwer | ✅ asentel asuf | am unagraw | am unagraw | am unagraw | am unagraw |
-| Unuddam | asit, gyroscope | asit, gyroscope | tilikumand; Azelmaḍ d Ayeffus ula deg tvidyut, Menu i telqayt | tilikumand, Magic Remote | ikontrolaren, ifassen | ajerdiw, klavye | ajerdiw, klavye | ajerdiw, klavye, trackpad |
-| Anda ara t-id-tafeḍ | Google Play, APK | App Store (deg usenqed) | APK, Google Play (deg usenqed) | .ipk build n tirmit, Developer Mode | Horizon Store, APK | asebded neɣ ZIP (version n usenqed) | .deb, .rpm (version n usenqed) | DMG neɣ ZIP (version n usenqed ur yettwaxtam ara) |
+| Tamahilt | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Agraw, albumat, anadi s uqeddac Immich | ✅ | ✅ | ✅ ameskan | ✅ ameskan | ✅ |
+| War aqeddac: ayla n ibenk s yiman-is | ✅ | ✅ | ifuyla n uẓeṭṭa kan | ❌ | ✅ |
+| Tiwlafin d tividyutin tizeddigin | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Zzi tawlaft s yiwet n tqeffalt | ✅ | ✅ | ✅ tiqeffalen s yini | ✅ tiqeffalen s yini | ✅ ṭṭaq |
+| Tiwlafin n 360° d takuret | ✅ | ✅ | ✅ | ✅ | ✅ imirsif |
+| Tividyutin n 360° | ✅ | ✅ war afeggag n wakud | ✅ izen ma ur tettwaɣer ara | tizeddigin kan | ✅ imirsif |
+| 3D d VR180 | ✅ ṭiṭ yiwet | ✅ ṭiṭ yiwet | ✅ ṭiṭ yiwet | tiwlafin ṭiṭ yiwet, tividyutin tizeddigin | ✅ 3D n tidet |
+| Spatial 2.5D (aḍfar n uqerru) | ✅ alugen | ✅ alugen | ❌ | ❌ | ❌ |
+| Tiwlafin Apple n wemkan | ✅ ṭiṭ yiwet | ✅ ṭiṭ yiwet | ✅ ṭiṭ yiwet | ❌ | ✅ 3D |
+| Ifuyla raw n Insta360, GoPro d DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Ifuyla n uẓeṭṭa SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tkamirawin Tapo: tuṭṭfiwin | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tkamirawin Tapo: tamuɣli srid | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Sbeṭṭu ibenk-agi ɣef uẓeṭṭa | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Sali ɣer Immich seg ifuyla n uẓeṭṭa d ibenk | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Aktar seg udrun DJI neɣ seg tkarḍa s USB (alugen) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Asentel ubrik | am unagraw | am unagraw | ✅ s wudem amezwer | ✅ asentel asuf | am unagraw |
+| Unuddam | asit, gyroscope | asit, gyroscope | tilikumand; Azelmaḍ d Ayeffus ula deg tvidyut, Menu i telqayt | tilikumand, Magic Remote | ikontrolaren, ifassen |
+| Anda ara t-id-tafeḍ | Google Play, APK | App Store (deg usenqed) | APK, Google Play (deg usenqed) | .ipk build n tirmit, Developer Mode | Horizon Store, APK |
+
+| Tamahilt | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Agraw, albumat, anadi s uqeddac Immich | ✅ | 🔧 CI | 🔧 CI |
+| War aqeddac: ayla n ibenk s yiman-is | ✅ ikaramen | ✅ ikaramen | ✅ ikaramen |
+| Tiwlafin d tividyutin tizeddigin | ✅ | ✅ | ✅ |
+| Zzi tawlaft s yiwet n tqeffalt | ✅ | ✅ | ✅ |
+| Tiwlafin n 360° d takuret | ✅ | ✅ | 🔧 CI |
+| Tividyutin n 360° | ✅ | tizeddigin kan | tizeddigin kan |
+| 3D d VR180 | ✅ ṭiṭ yiwet | tiwlafin ṭiṭ yiwet, tividyutin tizeddigin | tiwlafin ṭiṭ yiwet, tividyutin tizeddigin |
+| Spatial 2.5D (aḍfar n uqerru) | 🔜 | ❌ | ❌ |
+| Tiwlafin Apple n wemkan | ✅ ṭiṭ yiwet | 🔧 CI | 🔧 CI |
+| Ifuyla raw n Insta360, GoPro d DJI | ✅ | 🔧 CI tiwlafin, tividyutin tizeddigin | 🔧 CI tiwlafin, tividyutin tizeddigin |
+| Ifuyla n uẓeṭṭa SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tkamirawin Tapo: tuṭṭfiwin | ✅ | 🔧 CI | 🔧 CI |
+| Tkamirawin Tapo: tamuɣli srid | ✅ | 🔧 CI | 🔧 CI |
+| Sbeṭṭu ibenk-agi ɣef uẓeṭṭa | ✅ | ❌ | ❌ |
+| Sali ɣer Immich seg ifuyla n uẓeṭṭa d ibenk | ✅ | 🔧 CI | 🔧 CI |
+| Aktar seg udrun DJI neɣ seg tkarḍa s USB (alugen) | ❌ | ❌ | ❌ |
+| Asentel ubrik | am unagraw | am unagraw | am unagraw |
+| Unuddam | ajerdiw, klavye | ajerdiw, klavye | ajerdiw, klavye, trackpad |
+| Anda ara t-id-tafeḍ | asebded neɣ ZIP (version n usenqed) | .deb, .rpm (version n usenqed) | DMG neɣ ZIP (version n usenqed ur yettwaxtam ara) |
 
 ✅ deg usnas ɣef useɣẓan-nni · ❌ ur-yețțunefk ara dinna · 🔜 yettwasmizwer · 🔧 CI deg yiɣbula, yebna yerna yebda sɣur CI n usenfaṛ ɣef useɣẓan-nni, maca urɛad yețwasenqed dinna s uqeddac, s ifuyla n uẓeṭṭa neɣ s tkamirat n tidet · tizeddigin kan: tavidyut tettwaurar d tazeddigt, s yizen, acku ameskan n tividyutin n 360° n yiselkimen yella kan ɣef Windows, yerna ɣef tiliẓriyin LG mazal ad nektil ma yella webOS yettak tugniwin n tvidyut i tkuret. "Ṭiṭ yiwet" yeqqar-ed belli afaylu 3D yesskan-ed ṭiṭ-is n uzelmaḍ ɣef ugdil azeddig. Tagejdit LG webOS d asnas weḥd-s, ma d build-is n tirmit 0.1.0 iɛedda tirmiyin-is ɣef CI n usenfaṛ, urɛad yeddi ɣef TV. Mačči yal ✅ yețwasenqed ɣef ibenk n tidet: ayen yețwasenqden anida, akked wayen i d-yeqqimen a t-nesenqed, yella deg [Timahilin](../docs/immuch360/features.md), [Tallalt n iseɣẓanen](../docs/immuch360/platform-support.md) akked [Ammtawi](../docs/immuch360/compatibility.md).
 

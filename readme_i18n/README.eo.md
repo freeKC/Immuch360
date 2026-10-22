@@ -245,28 +245,51 @@ La 360°-aj sferoj de DJI-dronoj (Mini, Air, Mavic kaj aliaj, rekonataj laŭ ili
 
 Unu fontkodbazo por ses medioj, kaj aparta apo por LG-televidiloj. Kion ĉiu havas hodiaŭ:
 
-| Kapablo | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerio, albumoj, serĉo per Immich-servilo | ✅ | ✅ | ✅ spektilo | ✅ spektilo | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Sen servilo: la propraj memeaĵoj de la aparato | ✅ | ✅ | nur kunhavigoj | ❌ | ✅ | ✅ dosierujoj | ✅ dosierujoj | ✅ dosierujoj |
-| Plataj fotoj kaj videoj | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Turni foton per unu klavo | ✅ | ✅ | ✅ koloraj klavoj | ✅ koloraj klavoj | ✅ fenestro | ✅ | ✅ | ✅ |
-| 360°-fotoj kiel sfero | ✅ | ✅ | ✅ | ✅ | ✅ merga | ✅ | ✅ | 🔧 CI |
-| 360°-videoj | ✅ | ✅ sen tempobreto | ✅ mesaĝo se ne deĉifrebla | nur plate | ✅ merga | ✅ | nur plate | nur plate |
-| 3D kaj VR180 | ✅ unu okulo | ✅ unu okulo | ✅ unu okulo | fotoj unu okulo, videoj plate | ✅ vera 3D | ✅ unu okulo | fotoj unu okulo, videoj plate | fotoj unu okulo, videoj plate |
-| Spaca 2.5D (kapsekvado) | ✅ eksperimenta | ✅ eksperimenta | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple-spacaj fotoj | ✅ unu okulo | ✅ unu okulo | ✅ unu okulo | ❌ | ✅ 3D | ✅ unu okulo | 🔧 CI | 🔧 CI |
-| Krudaj Insta360-, GoPro- kaj DJI-dosieroj | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI fotoj, videoj plate | 🔧 CI fotoj, videoj plate |
-| SMB-, WebDAV-, DLNA-kunhavigoj | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kameraoj: registraĵoj | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kameraoj: viva vido | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kunhavigi ĉi tiun aparaton en la reto | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Alŝuti al Immich el kunhavigoj kaj la aparato | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Importi el DJI-drono aŭ karto per USB (eksperimenta) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Malhela temo | kiel la sistemo | kiel la sistemo | ✅ defaŭlte | ✅ sola temo | kiel la sistemo | kiel la sistemo | kiel la sistemo | kiel la sistemo |
-| Enigo | tuŝo, giroskopo | tuŝo, giroskopo | teleregilo; Maldekstren kaj Dekstren ankaŭ dum video, Menu por la detaloj | teleregilo, Magic Remote | regiloj, manoj | muso, klavaro | muso, klavaro | muso, klavaro, tuŝplato |
-| Kie akiri ĝin | Google Play, APK | App Store (en revizio) | APK, Google Play (en revizio) | .ipk testa konstruo, Developer Mode | Horizon Store, APK | instalilo aŭ ZIP (antaŭeldono) | .deb, .rpm (antaŭeldono) | DMG aŭ ZIP (nesubskribita antaŭeldono) |
+| Kapablo | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerio, albumoj, serĉo per Immich-servilo | ✅ | ✅ | ✅ spektilo | ✅ spektilo | ✅ |
+| Sen servilo: la propraj memeaĵoj de la aparato | ✅ | ✅ | nur kunhavigoj | ❌ | ✅ |
+| Plataj fotoj kaj videoj | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Turni foton per unu klavo | ✅ | ✅ | ✅ koloraj klavoj | ✅ koloraj klavoj | ✅ fenestro |
+| 360°-fotoj kiel sfero | ✅ | ✅ | ✅ | ✅ | ✅ merga |
+| 360°-videoj | ✅ | ✅ sen tempobreto | ✅ mesaĝo se ne deĉifrebla | nur plate | ✅ merga |
+| 3D kaj VR180 | ✅ unu okulo | ✅ unu okulo | ✅ unu okulo | fotoj unu okulo, videoj plate | ✅ vera 3D |
+| Spaca 2.5D (kapsekvado) | ✅ eksperimenta | ✅ eksperimenta | ❌ | ❌ | ❌ |
+| Apple-spacaj fotoj | ✅ unu okulo | ✅ unu okulo | ✅ unu okulo | ❌ | ✅ 3D |
+| Krudaj Insta360-, GoPro- kaj DJI-dosieroj | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB-, WebDAV-, DLNA-kunhavigoj | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-kameraoj: registraĵoj | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-kameraoj: viva vido | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Kunhavigi ĉi tiun aparaton en la reto | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Alŝuti al Immich el kunhavigoj kaj la aparato | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Importi el DJI-drono aŭ karto per USB (eksperimenta) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Malhela temo | kiel la sistemo | kiel la sistemo | ✅ defaŭlte | ✅ sola temo | kiel la sistemo |
+| Enigo | tuŝo, giroskopo | tuŝo, giroskopo | teleregilo; Maldekstren kaj Dekstren ankaŭ dum video, Menu por la detaloj | teleregilo, Magic Remote | regiloj, manoj |
+| Kie akiri ĝin | Google Play, APK | App Store (en revizio) | APK, Google Play (en revizio) | .ipk testa konstruo, Developer Mode | Horizon Store, APK |
+
+| Kapablo | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerio, albumoj, serĉo per Immich-servilo | ✅ | 🔧 CI | 🔧 CI |
+| Sen servilo: la propraj memeaĵoj de la aparato | ✅ dosierujoj | ✅ dosierujoj | ✅ dosierujoj |
+| Plataj fotoj kaj videoj | ✅ | ✅ | ✅ |
+| Turni foton per unu klavo | ✅ | ✅ | ✅ |
+| 360°-fotoj kiel sfero | ✅ | ✅ | 🔧 CI |
+| 360°-videoj | ✅ | nur plate | nur plate |
+| 3D kaj VR180 | ✅ unu okulo | fotoj unu okulo, videoj plate | fotoj unu okulo, videoj plate |
+| Spaca 2.5D (kapsekvado) | 🔜 | ❌ | ❌ |
+| Apple-spacaj fotoj | ✅ unu okulo | 🔧 CI | 🔧 CI |
+| Krudaj Insta360-, GoPro- kaj DJI-dosieroj | ✅ | 🔧 CI fotoj, videoj plate | 🔧 CI fotoj, videoj plate |
+| SMB-, WebDAV-, DLNA-kunhavigoj | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kameraoj: registraĵoj | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kameraoj: viva vido | ✅ | 🔧 CI | 🔧 CI |
+| Kunhavigi ĉi tiun aparaton en la reto | ✅ | ❌ | ❌ |
+| Alŝuti al Immich el kunhavigoj kaj la aparato | ✅ | 🔧 CI | 🔧 CI |
+| Importi el DJI-drono aŭ karto per USB (eksperimenta) | ❌ | ❌ | ❌ |
+| Malhela temo | kiel la sistemo | kiel la sistemo | kiel la sistemo |
+| Enigo | muso, klavaro | muso, klavaro | muso, klavaro, tuŝplato |
+| Kie akiri ĝin | instalilo aŭ ZIP (antaŭeldono) | .deb, .rpm (antaŭeldono) | DMG aŭ ZIP (nesubskribita antaŭeldono) |
 
 ✅ en la apo sur tiu platformo · ❌ ne proponata tie · 🔜 planata · 🔧 CI en la fontkodo, konstruata kaj lanĉata de la CI de la projekto sur tiu sistemo, ankoraŭ ne kontrolita tie kun reala servilo, kunhavigo aŭ kamerao · nur plate: la video ludas plate, kun mesaĝo, ĉar la 360°-videobildigilo de la komputiloj funkcias nur sur Windows, kaj sur LG-televidiloj ankoraŭ restas mezuri, ĉu webOS transdonas la videokadrojn al la sfero. "Unu okulo" signifas, ke 3D-dosiero montras sian maldekstran okulon sur plata ekrano. La kolumno LG webOS estas aparta apo, kies testa konstruo 0.1.0 trapasas siajn testojn ĉe la CI de la projekto kaj ankoraŭ ne funkciis sur televidilo. Ne ĉiu ✅ estis kontrolita sur reala aparato ankoraŭ: kio estis kontrolita kie, kaj kio restas por konfirmi, estas en [Funkcioj](../docs/immuch360/features.md), [Subteno de platformoj](../docs/immuch360/platform-support.md) kaj [Kongrueco](../docs/immuch360/compatibility.md).
 

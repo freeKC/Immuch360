@@ -245,28 +245,51 @@ De 360°-bollen van DJI-drones (Mini, Air, Mavic en andere, herkend aan hun came
 
 Eén codebase voor zes omgevingen, en een aparte app voor LG-tv's. Wat elk ervan vandaag heeft:
 
-| Mogelijkheid | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerij, albums, zoeken met een Immich-server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Zonder server: de eigen media van het toestel | ✅ | ✅ | alleen shares | ❌ | ✅ | ✅ mappen | ✅ mappen | ✅ mappen |
-| Vlakke foto's en video's | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Een foto draaien met één toets | ✅ | ✅ | ✅ kleurtoetsen | ✅ kleurtoetsen | ✅ venster | ✅ | ✅ | ✅ |
-| 360°-foto's als bol | ✅ | ✅ | ✅ | ✅ | ✅ immersief | ✅ | ✅ | 🔧 CI |
-| 360°-video's | ✅ | ✅ geen tijdbalk | ✅ melding als niet decodeerbaar | alleen vlak | ✅ immersief | ✅ | alleen vlak | alleen vlak |
-| 3D en VR180 | ✅ één oog | ✅ één oog | ✅ één oog | foto's één oog, video's vlak | ✅ echte 3D | ✅ één oog | foto's één oog, video's vlak | foto's één oog, video's vlak |
-| Spatial 2.5D (hoofdtracking) | ✅ experimenteel | ✅ experimenteel | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple spatial-foto's | ✅ één oog | ✅ één oog | ✅ één oog | ❌ | ✅ 3D | ✅ één oog | 🔧 CI | 🔧 CI |
-| Ruwe Insta360-, GoPro- en DJI-bestanden | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI foto's, video's vlak | 🔧 CI foto's, video's vlak |
-| SMB-, WebDAV-, DLNA-shares | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-camera's: opnamen | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-camera's: live weergave | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Dit toestel delen op het netwerk | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Uploaden naar Immich vanuit shares en het toestel | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Importeren van een DJI-drone of een kaart via USB (experimenteel) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Donker thema | zoals het systeem | zoals het systeem | ✅ standaard | ✅ enige thema | zoals het systeem | zoals het systeem | zoals het systeem | zoals het systeem |
-| Invoer | aanraking, gyroscoop | aanraking, gyroscoop | afstandsbediening; Links en Rechts ook tijdens een video, Menu voor de details | afstandsbediening, Magic Remote | controllers, handen | muis, toetsenbord | muis, toetsenbord | muis, toetsenbord, trackpad |
-| Waar je de app krijgt | Google Play, APK | App Store (in beoordeling) | APK, Google Play (in beoordeling) | .ipk-testbuild, Developer Mode | Horizon Store, APK | installatieprogramma of ZIP (preview) | .deb, .rpm (preview) | DMG of ZIP (niet-ondertekende preview) |
+| Mogelijkheid | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerij, albums, zoeken met een Immich-server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ |
+| Zonder server: de eigen media van het toestel | ✅ | ✅ | alleen shares | ❌ | ✅ |
+| Vlakke foto's en video's | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Een foto draaien met één toets | ✅ | ✅ | ✅ kleurtoetsen | ✅ kleurtoetsen | ✅ venster |
+| 360°-foto's als bol | ✅ | ✅ | ✅ | ✅ | ✅ immersief |
+| 360°-video's | ✅ | ✅ geen tijdbalk | ✅ melding als niet decodeerbaar | alleen vlak | ✅ immersief |
+| 3D en VR180 | ✅ één oog | ✅ één oog | ✅ één oog | foto's één oog, video's vlak | ✅ echte 3D |
+| Spatial 2.5D (hoofdtracking) | ✅ experimenteel | ✅ experimenteel | ❌ | ❌ | ❌ |
+| Apple spatial-foto's | ✅ één oog | ✅ één oog | ✅ één oog | ❌ | ✅ 3D |
+| Ruwe Insta360-, GoPro- en DJI-bestanden | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB-, WebDAV-, DLNA-shares | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-camera's: opnamen | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-camera's: live weergave | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Dit toestel delen op het netwerk | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Uploaden naar Immich vanuit shares en het toestel | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Importeren van een DJI-drone of een kaart via USB (experimenteel) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Donker thema | zoals het systeem | zoals het systeem | ✅ standaard | ✅ enige thema | zoals het systeem |
+| Invoer | aanraking, gyroscoop | aanraking, gyroscoop | afstandsbediening; Links en Rechts ook tijdens een video, Menu voor de details | afstandsbediening, Magic Remote | controllers, handen |
+| Waar je de app krijgt | Google Play, APK | App Store (in beoordeling) | APK, Google Play (in beoordeling) | .ipk-testbuild, Developer Mode | Horizon Store, APK |
+
+| Mogelijkheid | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerij, albums, zoeken met een Immich-server | ✅ | 🔧 CI | 🔧 CI |
+| Zonder server: de eigen media van het toestel | ✅ mappen | ✅ mappen | ✅ mappen |
+| Vlakke foto's en video's | ✅ | ✅ | ✅ |
+| Een foto draaien met één toets | ✅ | ✅ | ✅ |
+| 360°-foto's als bol | ✅ | ✅ | 🔧 CI |
+| 360°-video's | ✅ | alleen vlak | alleen vlak |
+| 3D en VR180 | ✅ één oog | foto's één oog, video's vlak | foto's één oog, video's vlak |
+| Spatial 2.5D (hoofdtracking) | 🔜 | ❌ | ❌ |
+| Apple spatial-foto's | ✅ één oog | 🔧 CI | 🔧 CI |
+| Ruwe Insta360-, GoPro- en DJI-bestanden | ✅ | 🔧 CI foto's, video's vlak | 🔧 CI foto's, video's vlak |
+| SMB-, WebDAV-, DLNA-shares | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-camera's: opnamen | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-camera's: live weergave | ✅ | 🔧 CI | 🔧 CI |
+| Dit toestel delen op het netwerk | ✅ | ❌ | ❌ |
+| Uploaden naar Immich vanuit shares en het toestel | ✅ | 🔧 CI | 🔧 CI |
+| Importeren van een DJI-drone of een kaart via USB (experimenteel) | ❌ | ❌ | ❌ |
+| Donker thema | zoals het systeem | zoals het systeem | zoals het systeem |
+| Invoer | muis, toetsenbord | muis, toetsenbord | muis, toetsenbord, trackpad |
+| Waar je de app krijgt | installatieprogramma of ZIP (preview) | .deb, .rpm (preview) | DMG of ZIP (niet-ondertekende preview) |
 
 ✅ in de app op dat platform · ❌ daar niet beschikbaar · 🔜 gepland · 🔧 CI in de broncode, gebouwd en gestart door de CI van het project op dat systeem, daar nog niet gecontroleerd met een echte server, share of camera · alleen vlak: de video speelt vlak af, met een melding, omdat de 360°-videorenderer van de computers alleen op Windows bestaat, en op LG-tv's moet nog worden gemeten of webOS de videobeelden aan de bol doorgeeft. "Één oog" betekent dat een 3D-bestand zijn linkeroog op een plat scherm toont. De kolom LG webOS is een aparte app, waarvan testbuild 0.1.0 zijn tests op de CI van het project doorstaat en nog niet op een tv heeft gedraaid. Niet elke ✅ is al op een echt toestel gecontroleerd: wat waar is gecontroleerd, en wat nog moet worden bevestigd, staat in [Features](../docs/immuch360/features.md), [Platformondersteuning](../docs/immuch360/platform-support.md) en [Compatibiliteit](../docs/immuch360/compatibility.md).
 

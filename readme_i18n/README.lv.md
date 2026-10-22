@@ -245,28 +245,51 @@ DJI dronu 360° lodes (Mini, Air, Mavic un citi, atpazīti pēc to kameras) Immu
 
 Viena koda bāze sešām vidēm un atsevišķa lietotne LG televizoriem. Kas katrā ir šodien:
 
-| Iespēja | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerija, albumi, meklēšana ar Immich serveri | ✅ | ✅ | ✅ skatītājs | ✅ skatītājs | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Bez servera: ierīces pašas media | ✅ | ✅ | tikai koplietojumi | ❌ | ✅ | ✅ mapes | ✅ mapes | ✅ mapes |
-| Plakani foto un video | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Foto pagriešana ar vienu taustiņu | ✅ | ✅ | ✅ krāsainie taustiņi | ✅ krāsainie taustiņi | ✅ logs | ✅ | ✅ | ✅ |
-| 360° foto kā lode | ✅ | ✅ | ✅ | ✅ | ✅ iespaidīgi | ✅ | ✅ | 🔧 CI |
-| 360° video | ✅ | ✅ nav laika joslas | ✅ paziņojums, ja nav atkodējams | tikai plakani | ✅ iespaidīgi | ✅ | tikai plakani | tikai plakani |
-| 3D un VR180 | ✅ viena acs | ✅ viena acs | ✅ viena acs | foto viena acs, video plakani | ✅ patiess 3D | ✅ viena acs | foto viena acs, video plakani | foto viena acs, video plakani |
-| Spatial 2.5D (galvas sekošana) | ✅ eksperimentāls | ✅ eksperimentāls | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple spatial foto | ✅ viena acs | ✅ viena acs | ✅ viena acs | ❌ | ✅ 3D | ✅ viena acs | 🔧 CI | 🔧 CI |
-| Insta360, GoPro un DJI oriģinālie faili | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI foto, video plakani | 🔧 CI foto, video plakani |
-| SMB, WebDAV, DLNA koplietojumi | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kameras: ieraksti | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kameras: tiešraide | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Koplietot šo ierīci tīklā | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Augšupielāde uz Immich no koplietojumiem un ierīces | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Imports no DJI drona vai kartes caur USB (eksperimentāls) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tumšais motīvs | kā sistēmā | kā sistēmā | ✅ pēc noklusējuma | ✅ vienīgais motīvs | kā sistēmā | kā sistēmā | kā sistēmā | kā sistēmā |
-| Ievade | pieskāriens, žiroskops | pieskāriens, žiroskops | tālvadības pults; pa kreisi un pa labi arī video laikā, Menu detaļām | tālvadības pults, Magic Remote | kontrolieri, rokas | pele, klaviatūra | pele, klaviatūra | pele, klaviatūra, skārienpaliktnis |
-| Kur to iegūt | Google Play, APK | App Store (pārbaudē) | APK, Google Play (pārbaudē) | .ipk testa build, Developer Mode | Horizon Store, APK | instalators vai ZIP (priekšskatījums) | .deb, .rpm (priekšskatījums) | DMG vai ZIP (neparakstīts priekšskatījums) |
+| Iespēja | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerija, albumi, meklēšana ar Immich serveri | ✅ | ✅ | ✅ skatītājs | ✅ skatītājs | ✅ |
+| Bez servera: ierīces pašas media | ✅ | ✅ | tikai koplietojumi | ❌ | ✅ |
+| Plakani foto un video | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Foto pagriešana ar vienu taustiņu | ✅ | ✅ | ✅ krāsainie taustiņi | ✅ krāsainie taustiņi | ✅ logs |
+| 360° foto kā lode | ✅ | ✅ | ✅ | ✅ | ✅ iespaidīgi |
+| 360° video | ✅ | ✅ nav laika joslas | ✅ paziņojums, ja nav atkodējams | tikai plakani | ✅ iespaidīgi |
+| 3D un VR180 | ✅ viena acs | ✅ viena acs | ✅ viena acs | foto viena acs, video plakani | ✅ patiess 3D |
+| Spatial 2.5D (galvas sekošana) | ✅ eksperimentāls | ✅ eksperimentāls | ❌ | ❌ | ❌ |
+| Apple spatial foto | ✅ viena acs | ✅ viena acs | ✅ viena acs | ❌ | ✅ 3D |
+| Insta360, GoPro un DJI oriģinālie faili | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB, WebDAV, DLNA koplietojumi | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kameras: ieraksti | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kameras: tiešraide | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Koplietot šo ierīci tīklā | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Augšupielāde uz Immich no koplietojumiem un ierīces | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Imports no DJI drona vai kartes caur USB (eksperimentāls) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tumšais motīvs | kā sistēmā | kā sistēmā | ✅ pēc noklusējuma | ✅ vienīgais motīvs | kā sistēmā |
+| Ievade | pieskāriens, žiroskops | pieskāriens, žiroskops | tālvadības pults; pa kreisi un pa labi arī video laikā, Menu detaļām | tālvadības pults, Magic Remote | kontrolieri, rokas |
+| Kur to iegūt | Google Play, APK | App Store (pārbaudē) | APK, Google Play (pārbaudē) | .ipk testa build, Developer Mode | Horizon Store, APK |
+
+| Iespēja | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerija, albumi, meklēšana ar Immich serveri | ✅ | 🔧 CI | 🔧 CI |
+| Bez servera: ierīces pašas media | ✅ mapes | ✅ mapes | ✅ mapes |
+| Plakani foto un video | ✅ | ✅ | ✅ |
+| Foto pagriešana ar vienu taustiņu | ✅ | ✅ | ✅ |
+| 360° foto kā lode | ✅ | ✅ | 🔧 CI |
+| 360° video | ✅ | tikai plakani | tikai plakani |
+| 3D un VR180 | ✅ viena acs | foto viena acs, video plakani | foto viena acs, video plakani |
+| Spatial 2.5D (galvas sekošana) | 🔜 | ❌ | ❌ |
+| Apple spatial foto | ✅ viena acs | 🔧 CI | 🔧 CI |
+| Insta360, GoPro un DJI oriģinālie faili | ✅ | 🔧 CI foto, video plakani | 🔧 CI foto, video plakani |
+| SMB, WebDAV, DLNA koplietojumi | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameras: ieraksti | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameras: tiešraide | ✅ | 🔧 CI | 🔧 CI |
+| Koplietot šo ierīci tīklā | ✅ | ❌ | ❌ |
+| Augšupielāde uz Immich no koplietojumiem un ierīces | ✅ | 🔧 CI | 🔧 CI |
+| Imports no DJI drona vai kartes caur USB (eksperimentāls) | ❌ | ❌ | ❌ |
+| Tumšais motīvs | kā sistēmā | kā sistēmā | kā sistēmā |
+| Ievade | pele, klaviatūra | pele, klaviatūra | pele, klaviatūra, skārienpaliktnis |
+| Kur to iegūt | instalators vai ZIP (priekšskatījums) | .deb, .rpm (priekšskatījums) | DMG vai ZIP (neparakstīts priekšskatījums) |
 
 ✅ lietotnē šajā platformā · ❌ tur netiek piedāvāts · 🔜 plānots · 🔧 CI pirmkodā, projekta CI uzbūvēts un palaists šajā sistēmā, tur vēl nav pārbaudīts ar īstu serveri, koplietojumu vai kameru · tikai plakani: video atskaņojas plakani, ar paziņojumu, jo datoru 360° video renderētājs darbojas tikai Windows, bet LG televizoros vēl jāizmēra, vai webOS nodod video kadrus lodei. "Viena acs" nozīmē, ka 3D fails rāda savas kreisās acs attēlu plakanā ekrānā. LG webOS kolonna ir atsevišķa lietotne, kuras testa build 0.1.0 iztur savus testus projekta CI un vēl nav palaists televizorā. Ne katrs ✅ vēl ir pārbaudīts reālā ierīcē: kas kur pārbaudīts un kas vēl jāapstiprina, ir [Funkcijās](../docs/immuch360/features.md), [Platformas atbalstā](../docs/immuch360/platform-support.md) un [Saderībā](../docs/immuch360/compatibility.md).
 

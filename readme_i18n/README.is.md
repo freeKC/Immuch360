@@ -245,28 +245,51 @@ Fluttu inn myndir og myndskeið DJI dróna yfir USB, beint á Immich vélþjóni
 
 Einn grunnkóði, sex umhverfi, og sérstakt forrit fyrir LG sjónvörp. Það sem hvert þeirra hefur í dag:
 
-| Eiginleiki | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Myndasafn, albúm, leit með Immich vélþjóni | ✅ | ✅ | ✅ skoðari | ✅ skoðari | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Án vélþjóns: eigið efni tækisins | ✅ | ✅ | aðeins deildir | ❌ | ✅ | ✅ möppur | ✅ möppur | ✅ möppur |
-| Flatar myndir og myndskeið | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Snúa mynd með einum takka | ✅ | ✅ | ✅ litatakkar | ✅ litatakkar | ✅ gluggi | ✅ | ✅ | ✅ |
-| 360° myndir sem kúla | ✅ | ✅ | ✅ | ✅ | ✅ umlykjandi | ✅ | ✅ | 🔧 CI |
-| 360° myndskeið | ✅ | ✅ engin tímastika | ✅ skilaboð ef ekki afkóðanlegt | aðeins flatt | ✅ umlykjandi | ✅ | aðeins flatt | aðeins flatt |
-| 3D og VR180 | ✅ eitt auga | ✅ eitt auga | ✅ eitt auga | myndir eitt auga, myndskeið flöt | ✅ fullt 3D | ✅ eitt auga | myndir eitt auga, myndskeið flöt | myndir eitt auga, myndskeið flöt |
-| Spatial 2.5D (höfuðrakning) | ✅ tilraun | ✅ tilraun | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Rýmismyndir frá Apple | ✅ eitt auga | ✅ eitt auga | ✅ eitt auga | ❌ | ✅ 3D | ✅ eitt auga | 🔧 CI | 🔧 CI |
-| Óunnar skrár úr Insta360, GoPro og DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI myndir, myndskeið flöt | 🔧 CI myndir, myndskeið flöt |
-| SMB, WebDAV, DLNA deildir | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo myndavélar: upptökur | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo myndavélar: beint streymi | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Deila þessu tæki á netinu | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Hlaða upp í Immich úr deildum og af tækinu | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Innflutningur úr DJI dróna eða korti yfir USB (tilraun) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Dökkt þema | eins og kerfið | eins og kerfið | ✅ sjálfgefið | ✅ eina þemað | eins og kerfið | eins og kerfið | eins og kerfið | eins og kerfið |
-| Inntak | snerting, snúðsjá | snerting, snúðsjá | fjarstýring; Vinstri og Hægri líka meðan myndskeið spilast, Menu fyrir upplýsingar | fjarstýring, Magic Remote | stýripinnar, hendur | mús, lyklaborð | mús, lyklaborð | mús, lyklaborð, snertiflötur |
-| Hvar má fá það | Google Play, APK | App Store (í yfirferð) | APK, Google Play (í yfirferð) | .ipk prófunarbuild, Developer Mode | Horizon Store, APK | uppsetningarforrit eða ZIP-skrá (forskoðun) | .deb, .rpm (forskoðun) | DMG eða ZIP-skrá (óundirrituð forskoðun) |
+| Eiginleiki | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Myndasafn, albúm, leit með Immich vélþjóni | ✅ | ✅ | ✅ skoðari | ✅ skoðari | ✅ |
+| Án vélþjóns: eigið efni tækisins | ✅ | ✅ | aðeins deildir | ❌ | ✅ |
+| Flatar myndir og myndskeið | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Snúa mynd með einum takka | ✅ | ✅ | ✅ litatakkar | ✅ litatakkar | ✅ gluggi |
+| 360° myndir sem kúla | ✅ | ✅ | ✅ | ✅ | ✅ umlykjandi |
+| 360° myndskeið | ✅ | ✅ engin tímastika | ✅ skilaboð ef ekki afkóðanlegt | aðeins flatt | ✅ umlykjandi |
+| 3D og VR180 | ✅ eitt auga | ✅ eitt auga | ✅ eitt auga | myndir eitt auga, myndskeið flöt | ✅ fullt 3D |
+| Spatial 2.5D (höfuðrakning) | ✅ tilraun | ✅ tilraun | ❌ | ❌ | ❌ |
+| Rýmismyndir frá Apple | ✅ eitt auga | ✅ eitt auga | ✅ eitt auga | ❌ | ✅ 3D |
+| Óunnar skrár úr Insta360, GoPro og DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB, WebDAV, DLNA deildir | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo myndavélar: upptökur | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo myndavélar: beint streymi | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Deila þessu tæki á netinu | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Hlaða upp í Immich úr deildum og af tækinu | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Innflutningur úr DJI dróna eða korti yfir USB (tilraun) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Dökkt þema | eins og kerfið | eins og kerfið | ✅ sjálfgefið | ✅ eina þemað | eins og kerfið |
+| Inntak | snerting, snúðsjá | snerting, snúðsjá | fjarstýring; Vinstri og Hægri líka meðan myndskeið spilast, Menu fyrir upplýsingar | fjarstýring, Magic Remote | stýripinnar, hendur |
+| Hvar má fá það | Google Play, APK | App Store (í yfirferð) | APK, Google Play (í yfirferð) | .ipk prófunarbuild, Developer Mode | Horizon Store, APK |
+
+| Eiginleiki | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Myndasafn, albúm, leit með Immich vélþjóni | ✅ | 🔧 CI | 🔧 CI |
+| Án vélþjóns: eigið efni tækisins | ✅ möppur | ✅ möppur | ✅ möppur |
+| Flatar myndir og myndskeið | ✅ | ✅ | ✅ |
+| Snúa mynd með einum takka | ✅ | ✅ | ✅ |
+| 360° myndir sem kúla | ✅ | ✅ | 🔧 CI |
+| 360° myndskeið | ✅ | aðeins flatt | aðeins flatt |
+| 3D og VR180 | ✅ eitt auga | myndir eitt auga, myndskeið flöt | myndir eitt auga, myndskeið flöt |
+| Spatial 2.5D (höfuðrakning) | 🔜 | ❌ | ❌ |
+| Rýmismyndir frá Apple | ✅ eitt auga | 🔧 CI | 🔧 CI |
+| Óunnar skrár úr Insta360, GoPro og DJI | ✅ | 🔧 CI myndir, myndskeið flöt | 🔧 CI myndir, myndskeið flöt |
+| SMB, WebDAV, DLNA deildir | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo myndavélar: upptökur | ✅ | 🔧 CI | 🔧 CI |
+| Tapo myndavélar: beint streymi | ✅ | 🔧 CI | 🔧 CI |
+| Deila þessu tæki á netinu | ✅ | ❌ | ❌ |
+| Hlaða upp í Immich úr deildum og af tækinu | ✅ | 🔧 CI | 🔧 CI |
+| Innflutningur úr DJI dróna eða korti yfir USB (tilraun) | ❌ | ❌ | ❌ |
+| Dökkt þema | eins og kerfið | eins og kerfið | eins og kerfið |
+| Inntak | mús, lyklaborð | mús, lyklaborð | mús, lyklaborð, snertiflötur |
+| Hvar má fá það | uppsetningarforrit eða ZIP-skrá (forskoðun) | .deb, .rpm (forskoðun) | DMG eða ZIP-skrá (óundirrituð forskoðun) |
 
 ✅ í forritinu á því kerfi · ❌ ekki í boði þar · 🔜 áætlað · 🔧 CI í grunnkóðanum, byggt og ræst af CI-kerfi verkefnisins á því kerfi, en ekki enn staðfest þar með raunverulegum vélþjóni, deild eða myndavél · aðeins flatt: myndskeiðið spilast flatt, með skilaboðum, því 360° myndskeiðabirtir tölvanna er aðeins til á Windows, og á LG sjónvörpum á enn eftir að mæla hvort webOS afhendir myndramma myndskeiðsins til kúlunnar. „Eitt auga“ þýðir að 3D skrá sýnir vinstra augað á flötum skjá. LG webOS dálkurinn er sérstakt forrit, þar sem prófunarbuild 0.1.0 stenst prófanir sínar á CI verkefnisins og hefur ekki enn keyrt á sjónvarpi. Ekki hefur hvert ✅ verið staðfest á raunverulegu tæki enn: hvað var prófað hvar, og hvað er eftir að staðfesta, er í [eiginleikum](../docs/immuch360/features.md), [stuðningi við kerfi](../docs/immuch360/platform-support.md) og [samhæfni](../docs/immuch360/compatibility.md).
 

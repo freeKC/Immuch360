@@ -245,28 +245,51 @@ DJI dronlarının 360° küreleri (Mini, Air, Mavic ve diğerleri, kameralarınd
 
 Altı ortam için tek bir kod tabanı ve LG TV'ler için ayrı bir uygulama. Her birinin bugün sahip olduğu özellikler:
 
-| Yetenek | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Bir Immich sunucusuyla galeri, albümler, arama | ✅ | ✅ | ✅ görüntüleyici | ✅ görüntüleyici | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Sunucu olmadan: cihazın kendi medyası | ✅ | ✅ | yalnızca paylaşımlar | ❌ | ✅ | ✅ klasörler | ✅ klasörler | ✅ klasörler |
-| Düz fotoğraflar ve videolar | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Bir fotoğrafı tek tuşla döndürme | ✅ | ✅ | ✅ renkli tuşlar | ✅ renkli tuşlar | ✅ pencere | ✅ | ✅ | ✅ |
-| Küre olarak 360° fotoğraflar | ✅ | ✅ | ✅ | ✅ | ✅ sürükleyici | ✅ | ✅ | 🔧 CI |
-| 360° videolar | ✅ | ✅ zaman çubuğu yok | ✅ çözülemezse mesaj | yalnızca düz | ✅ sürükleyici | ✅ | yalnızca düz | yalnızca düz |
-| 3D ve VR180 | ✅ tek göz | ✅ tek göz | ✅ tek göz | fotoğraflar tek göz, videolar düz | ✅ gerçek 3D | ✅ tek göz | fotoğraflar tek göz, videolar düz | fotoğraflar tek göz, videolar düz |
-| Uzamsal 2.5D (baş takibi) | ✅ deneysel | ✅ deneysel | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple uzamsal fotoğraflar | ✅ tek göz | ✅ tek göz | ✅ tek göz | ❌ | ✅ 3D | ✅ tek göz | 🔧 CI | 🔧 CI |
-| Ham Insta360, GoPro ve DJI dosyaları | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI fotoğraflar, videolar düz | 🔧 CI fotoğraflar, videolar düz |
-| SMB, WebDAV, DLNA paylaşımları | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kameraları: kayıtlar | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kameraları: canlı görüntü | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Bu cihazı ağda paylaş | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Paylaşımlardan ve cihazdan Immich'e yükle | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| USB üzerinden bir DJI dronundan veya karttan içe aktarma (deneysel) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Koyu tema | sistemdeki gibi | sistemdeki gibi | ✅ varsayılan | ✅ tek tema | sistemdeki gibi | sistemdeki gibi | sistemdeki gibi | sistemdeki gibi |
-| Girdi | dokunma, jiroskop | dokunma, jiroskop | uzaktan kumanda; video sırasında da Sol ve Sağ, ayrıntılar için Menu | uzaktan kumanda, Magic Remote | kumandalar, eller | fare, klavye | fare, klavye | fare, klavye, dokunmatik yüzey |
-| Nereden edinilir | Google Play, APK | App Store (incelemede) | APK, Google Play (incelemede) | .ipk test build'i, Developer Mode | Horizon Store, APK | yükleyici veya ZIP (önizleme) | .deb, .rpm (önizleme) | DMG veya ZIP (imzasız önizleme) |
+| Yetenek | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Bir Immich sunucusuyla galeri, albümler, arama | ✅ | ✅ | ✅ görüntüleyici | ✅ görüntüleyici | ✅ |
+| Sunucu olmadan: cihazın kendi medyası | ✅ | ✅ | yalnızca paylaşımlar | ❌ | ✅ |
+| Düz fotoğraflar ve videolar | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Bir fotoğrafı tek tuşla döndürme | ✅ | ✅ | ✅ renkli tuşlar | ✅ renkli tuşlar | ✅ pencere |
+| Küre olarak 360° fotoğraflar | ✅ | ✅ | ✅ | ✅ | ✅ sürükleyici |
+| 360° videolar | ✅ | ✅ zaman çubuğu yok | ✅ çözülemezse mesaj | yalnızca düz | ✅ sürükleyici |
+| 3D ve VR180 | ✅ tek göz | ✅ tek göz | ✅ tek göz | fotoğraflar tek göz, videolar düz | ✅ gerçek 3D |
+| Uzamsal 2.5D (baş takibi) | ✅ deneysel | ✅ deneysel | ❌ | ❌ | ❌ |
+| Apple uzamsal fotoğraflar | ✅ tek göz | ✅ tek göz | ✅ tek göz | ❌ | ✅ 3D |
+| Ham Insta360, GoPro ve DJI dosyaları | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB, WebDAV, DLNA paylaşımları | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kameraları: kayıtlar | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kameraları: canlı görüntü | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Bu cihazı ağda paylaş | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Paylaşımlardan ve cihazdan Immich'e yükle | ✅ | ✅ | ❌ | ❌ | ✅ |
+| USB üzerinden bir DJI dronundan veya karttan içe aktarma (deneysel) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Koyu tema | sistemdeki gibi | sistemdeki gibi | ✅ varsayılan | ✅ tek tema | sistemdeki gibi |
+| Girdi | dokunma, jiroskop | dokunma, jiroskop | uzaktan kumanda; video sırasında da Sol ve Sağ, ayrıntılar için Menu | uzaktan kumanda, Magic Remote | kumandalar, eller |
+| Nereden edinilir | Google Play, APK | App Store (incelemede) | APK, Google Play (incelemede) | .ipk test build'i, Developer Mode | Horizon Store, APK |
+
+| Yetenek | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Bir Immich sunucusuyla galeri, albümler, arama | ✅ | 🔧 CI | 🔧 CI |
+| Sunucu olmadan: cihazın kendi medyası | ✅ klasörler | ✅ klasörler | ✅ klasörler |
+| Düz fotoğraflar ve videolar | ✅ | ✅ | ✅ |
+| Bir fotoğrafı tek tuşla döndürme | ✅ | ✅ | ✅ |
+| Küre olarak 360° fotoğraflar | ✅ | ✅ | 🔧 CI |
+| 360° videolar | ✅ | yalnızca düz | yalnızca düz |
+| 3D ve VR180 | ✅ tek göz | fotoğraflar tek göz, videolar düz | fotoğraflar tek göz, videolar düz |
+| Uzamsal 2.5D (baş takibi) | 🔜 | ❌ | ❌ |
+| Apple uzamsal fotoğraflar | ✅ tek göz | 🔧 CI | 🔧 CI |
+| Ham Insta360, GoPro ve DJI dosyaları | ✅ | 🔧 CI fotoğraflar, videolar düz | 🔧 CI fotoğraflar, videolar düz |
+| SMB, WebDAV, DLNA paylaşımları | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameraları: kayıtlar | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameraları: canlı görüntü | ✅ | 🔧 CI | 🔧 CI |
+| Bu cihazı ağda paylaş | ✅ | ❌ | ❌ |
+| Paylaşımlardan ve cihazdan Immich'e yükle | ✅ | 🔧 CI | 🔧 CI |
+| USB üzerinden bir DJI dronundan veya karttan içe aktarma (deneysel) | ❌ | ❌ | ❌ |
+| Koyu tema | sistemdeki gibi | sistemdeki gibi | sistemdeki gibi |
+| Girdi | fare, klavye | fare, klavye | fare, klavye, dokunmatik yüzey |
+| Nereden edinilir | yükleyici veya ZIP (önizleme) | .deb, .rpm (önizleme) | DMG veya ZIP (imzasız önizleme) |
 
 ✅ o platformdaki uygulamada var · ❌ orada sunulmuyor · 🔜 planlanıyor · 🔧 CI kaynaklarda var, projenin CI'si tarafından o sistemde derlenip başlatıldı, orada henüz gerçek bir sunucu, paylaşım veya kamerayla denenmedi · yalnızca düz: video bir mesajla düz oynar, çünkü bilgisayarların 360° video oluşturucusu yalnızca Windows'ta bulunur ve LG TV'lerde webOS'un video karelerini küreye aktarıp aktarmadığı henüz ölçülecek. "Tek göz", bir 3D dosyanın düz bir ekranda sol gözünü gösterdiği anlamına gelir. LG webOS sütunu ayrı bir uygulamadır; test build'i 0.1.0 projenin CI'sinde testlerini geçer ve henüz bir TV'de çalışmadı. Her ✅ henüz gerçek bir cihazda denenmiş değildir: nerede ne denendiği ve neyin doğrulanmayı beklediği [Özellikler](../docs/immuch360/features.md), [Platform desteği](../docs/immuch360/platform-support.md) ve [Uyumluluk](../docs/immuch360/compatibility.md) sayfalarındadır.
 

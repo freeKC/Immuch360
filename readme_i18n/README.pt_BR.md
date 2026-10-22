@@ -245,28 +245,51 @@ As esferas 360° dos drones DJI (Mini, Air, Mavic e outros, reconhecidos pela c�
 
 Uma única base de código para seis ambientes, e um app separado para TVs LG. O que cada um tem hoje:
 
-| Capacidade | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeria, álbuns, busca com um servidor Immich | ✅ | ✅ | ✅ visualizador | ✅ visualizador | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Sem servidor: a mídia própria do dispositivo | ✅ | ✅ | só compartilhamentos | ❌ | ✅ | ✅ pastas | ✅ pastas | ✅ pastas |
-| Fotos e vídeos planos | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Girar uma foto com uma tecla | ✅ | ✅ | ✅ teclas coloridas | ✅ teclas coloridas | ✅ janela | ✅ | ✅ | ✅ |
-| Fotos 360° como esfera | ✅ | ✅ | ✅ | ✅ | ✅ imersivo | ✅ | ✅ | 🔧 CI |
-| Vídeos 360° | ✅ | ✅ sem barra de tempo | ✅ mensagem se não decodificável | só plano | ✅ imersivo | ✅ | só plano | só plano |
-| 3D e VR180 | ✅ um olho | ✅ um olho | ✅ um olho | fotos um olho, vídeos planos | ✅ 3D real | ✅ um olho | fotos um olho, vídeos planos | fotos um olho, vídeos planos |
-| Espacial 2.5D (rastreamento de cabeça) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Fotos espaciais da Apple | ✅ um olho | ✅ um olho | ✅ um olho | ❌ | ✅ 3D | ✅ um olho | 🔧 CI | 🔧 CI |
-| Arquivos brutos Insta360, GoPro e DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI fotos, vídeos planos | 🔧 CI fotos, vídeos planos |
-| Compartilhamentos SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Câmeras Tapo: gravações | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Câmeras Tapo: visualização em tempo real | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Compartilhar este dispositivo na rede | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Enviar para o Immich a partir de compartilhamentos e do dispositivo | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Importar de um drone DJI ou de um cartão por USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tema escuro | como o sistema | como o sistema | ✅ por padrão | ✅ tema único | como o sistema | como o sistema | como o sistema | como o sistema |
-| Entrada | toque, giroscópio | toque, giroscópio | controle remoto; Esquerda e Direita também durante um vídeo, Menu para os detalhes | controle remoto, Magic Remote | controles, mãos | mouse, teclado | mouse, teclado | mouse, teclado, trackpad |
-| Onde obter | Google Play, APK | App Store (em revisão) | APK, Google Play (em revisão) | build de teste .ipk, Developer Mode | Horizon Store, APK | instalador ou ZIP (prévia) | .deb, .rpm (prévia) | DMG ou ZIP (prévia sem assinatura) |
+| Capacidade | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galeria, álbuns, busca com um servidor Immich | ✅ | ✅ | ✅ visualizador | ✅ visualizador | ✅ |
+| Sem servidor: a mídia própria do dispositivo | ✅ | ✅ | só compartilhamentos | ❌ | ✅ |
+| Fotos e vídeos planos | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Girar uma foto com uma tecla | ✅ | ✅ | ✅ teclas coloridas | ✅ teclas coloridas | ✅ janela |
+| Fotos 360° como esfera | ✅ | ✅ | ✅ | ✅ | ✅ imersivo |
+| Vídeos 360° | ✅ | ✅ sem barra de tempo | ✅ mensagem se não decodificável | só plano | ✅ imersivo |
+| 3D e VR180 | ✅ um olho | ✅ um olho | ✅ um olho | fotos um olho, vídeos planos | ✅ 3D real |
+| Espacial 2.5D (rastreamento de cabeça) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ |
+| Fotos espaciais da Apple | ✅ um olho | ✅ um olho | ✅ um olho | ❌ | ✅ 3D |
+| Arquivos brutos Insta360, GoPro e DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Compartilhamentos SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Câmeras Tapo: gravações | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Câmeras Tapo: visualização em tempo real | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Compartilhar este dispositivo na rede | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Enviar para o Immich a partir de compartilhamentos e do dispositivo | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Importar de um drone DJI ou de um cartão por USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tema escuro | como o sistema | como o sistema | ✅ por padrão | ✅ tema único | como o sistema |
+| Entrada | toque, giroscópio | toque, giroscópio | controle remoto; Esquerda e Direita também durante um vídeo, Menu para os detalhes | controle remoto, Magic Remote | controles, mãos |
+| Onde obter | Google Play, APK | App Store (em revisão) | APK, Google Play (em revisão) | build de teste .ipk, Developer Mode | Horizon Store, APK |
+
+| Capacidade | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galeria, álbuns, busca com um servidor Immich | ✅ | 🔧 CI | 🔧 CI |
+| Sem servidor: a mídia própria do dispositivo | ✅ pastas | ✅ pastas | ✅ pastas |
+| Fotos e vídeos planos | ✅ | ✅ | ✅ |
+| Girar uma foto com uma tecla | ✅ | ✅ | ✅ |
+| Fotos 360° como esfera | ✅ | ✅ | 🔧 CI |
+| Vídeos 360° | ✅ | só plano | só plano |
+| 3D e VR180 | ✅ um olho | fotos um olho, vídeos planos | fotos um olho, vídeos planos |
+| Espacial 2.5D (rastreamento de cabeça) | 🔜 | ❌ | ❌ |
+| Fotos espaciais da Apple | ✅ um olho | 🔧 CI | 🔧 CI |
+| Arquivos brutos Insta360, GoPro e DJI | ✅ | 🔧 CI fotos, vídeos planos | 🔧 CI fotos, vídeos planos |
+| Compartilhamentos SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Câmeras Tapo: gravações | ✅ | 🔧 CI | 🔧 CI |
+| Câmeras Tapo: visualização em tempo real | ✅ | 🔧 CI | 🔧 CI |
+| Compartilhar este dispositivo na rede | ✅ | ❌ | ❌ |
+| Enviar para o Immich a partir de compartilhamentos e do dispositivo | ✅ | 🔧 CI | 🔧 CI |
+| Importar de um drone DJI ou de um cartão por USB (experimental) | ❌ | ❌ | ❌ |
+| Tema escuro | como o sistema | como o sistema | como o sistema |
+| Entrada | mouse, teclado | mouse, teclado | mouse, teclado, trackpad |
+| Onde obter | instalador ou ZIP (prévia) | .deb, .rpm (prévia) | DMG ou ZIP (prévia sem assinatura) |
 
 ✅ no app nessa plataforma · ❌ não oferecido ali · 🔜 planejado · 🔧 CI nas fontes, compilado e iniciado pela CI do projeto nesse sistema, ainda não verificado ali com um servidor, compartilhamento ou câmera reais · só plano: o vídeo é reproduzido plano, com uma mensagem, porque o renderizador de vídeo 360° dos computadores existe só no Windows, e nas TVs LG ainda falta medir se o webOS entrega os quadros de vídeo à esfera. "Um olho" significa que um arquivo 3D mostra seu olho esquerdo em uma tela plana. A coluna LG webOS é um app separado, cuja build de teste 0.1.0 passa nos seus testes na CI do projeto e ainda não rodou em uma TV. Nem todo ✅ foi verificado em um dispositivo real ainda: o que foi verificado e onde, e o que falta confirmar, está em [Recursos](../docs/immuch360/features.md), [Suporte de plataforma](../docs/immuch360/platform-support.md) e [Compatibilidade](../docs/immuch360/compatibility.md).
 

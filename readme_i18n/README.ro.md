@@ -245,28 +245,51 @@ Sferele 360° ale dronelor DJI (Mini, Air, Mavic și altele, recunoscute după c
 
 O bază de cod pentru șase medii și o aplicație separată pentru televizoarele LG. Ce are fiecare astăzi:
 
-| Capacitate | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerie, albume, căutare cu un server Immich | ✅ | ✅ | ✅ vizualizator | ✅ vizualizator | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Fără server: conținutul propriu al dispozitivului | ✅ | ✅ | numai partajări | ❌ | ✅ | ✅ dosare | ✅ dosare | ✅ dosare |
-| Fotografii și videoclipuri plate | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Rotirea unei fotografii cu o singură tastă | ✅ | ✅ | ✅ taste colorate | ✅ taste colorate | ✅ fereastră | ✅ | ✅ | ✅ |
-| Fotografii 360° ca sferă | ✅ | ✅ | ✅ | ✅ | ✅ imersiv | ✅ | ✅ | 🔧 CI |
-| Videoclipuri 360° | ✅ | ✅ fără bară de timp | ✅ mesaj dacă nu poate fi decodat | doar plat | ✅ imersiv | ✅ | doar plat | doar plat |
-| 3D și VR180 | ✅ un ochi | ✅ un ochi | ✅ un ochi | fotografii un ochi, videoclipuri plate | ✅ 3D real | ✅ un ochi | fotografii un ochi, videoclipuri plate | fotografii un ochi, videoclipuri plate |
-| Spatial 2.5D (urmărirea capului) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Fotografii spațiale Apple | ✅ un ochi | ✅ un ochi | ✅ un ochi | ❌ | ✅ 3D | ✅ un ochi | 🔧 CI | 🔧 CI |
-| Fișiere brute Insta360, GoPro și DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI fotografii, videoclipuri plate | 🔧 CI fotografii, videoclipuri plate |
-| Partajări SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Camere Tapo: înregistrări | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Camere Tapo: vizualizare live | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Partajați acest dispozitiv în rețea | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Încărcare în Immich din partajări și din dispozitiv | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import de pe o dronă DJI sau de pe un card prin USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Temă întunecată | ca sistemul | ca sistemul | ✅ implicit | ✅ singura temă | ca sistemul | ca sistemul | ca sistemul | ca sistemul |
-| Intrare | tactil, giroscop | tactil, giroscop | telecomandă; Stânga și Dreapta și în timpul unui videoclip, Menu pentru detalii | telecomandă, Magic Remote | controlere, mâini | mouse, tastatură | mouse, tastatură | mouse, tastatură, trackpad |
-| De unde o obțineți | Google Play, APK | App Store (în verificare) | APK, Google Play (în verificare) | build de test .ipk, Developer Mode | Horizon Store, APK | instalator sau ZIP (previzualizare) | .deb, .rpm (previzualizare) | DMG sau ZIP (previzualizare nesemnată) |
+| Capacitate | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerie, albume, căutare cu un server Immich | ✅ | ✅ | ✅ vizualizator | ✅ vizualizator | ✅ |
+| Fără server: conținutul propriu al dispozitivului | ✅ | ✅ | numai partajări | ❌ | ✅ |
+| Fotografii și videoclipuri plate | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Rotirea unei fotografii cu o singură tastă | ✅ | ✅ | ✅ taste colorate | ✅ taste colorate | ✅ fereastră |
+| Fotografii 360° ca sferă | ✅ | ✅ | ✅ | ✅ | ✅ imersiv |
+| Videoclipuri 360° | ✅ | ✅ fără bară de timp | ✅ mesaj dacă nu poate fi decodat | doar plat | ✅ imersiv |
+| 3D și VR180 | ✅ un ochi | ✅ un ochi | ✅ un ochi | fotografii un ochi, videoclipuri plate | ✅ 3D real |
+| Spatial 2.5D (urmărirea capului) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ |
+| Fotografii spațiale Apple | ✅ un ochi | ✅ un ochi | ✅ un ochi | ❌ | ✅ 3D |
+| Fișiere brute Insta360, GoPro și DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Partajări SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Camere Tapo: înregistrări | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Camere Tapo: vizualizare live | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Partajați acest dispozitiv în rețea | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Încărcare în Immich din partajări și din dispozitiv | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import de pe o dronă DJI sau de pe un card prin USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Temă întunecată | ca sistemul | ca sistemul | ✅ implicit | ✅ singura temă | ca sistemul |
+| Intrare | tactil, giroscop | tactil, giroscop | telecomandă; Stânga și Dreapta și în timpul unui videoclip, Menu pentru detalii | telecomandă, Magic Remote | controlere, mâini |
+| De unde o obțineți | Google Play, APK | App Store (în verificare) | APK, Google Play (în verificare) | build de test .ipk, Developer Mode | Horizon Store, APK |
+
+| Capacitate | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerie, albume, căutare cu un server Immich | ✅ | 🔧 CI | 🔧 CI |
+| Fără server: conținutul propriu al dispozitivului | ✅ dosare | ✅ dosare | ✅ dosare |
+| Fotografii și videoclipuri plate | ✅ | ✅ | ✅ |
+| Rotirea unei fotografii cu o singură tastă | ✅ | ✅ | ✅ |
+| Fotografii 360° ca sferă | ✅ | ✅ | 🔧 CI |
+| Videoclipuri 360° | ✅ | doar plat | doar plat |
+| 3D și VR180 | ✅ un ochi | fotografii un ochi, videoclipuri plate | fotografii un ochi, videoclipuri plate |
+| Spatial 2.5D (urmărirea capului) | 🔜 | ❌ | ❌ |
+| Fotografii spațiale Apple | ✅ un ochi | 🔧 CI | 🔧 CI |
+| Fișiere brute Insta360, GoPro și DJI | ✅ | 🔧 CI fotografii, videoclipuri plate | 🔧 CI fotografii, videoclipuri plate |
+| Partajări SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Camere Tapo: înregistrări | ✅ | 🔧 CI | 🔧 CI |
+| Camere Tapo: vizualizare live | ✅ | 🔧 CI | 🔧 CI |
+| Partajați acest dispozitiv în rețea | ✅ | ❌ | ❌ |
+| Încărcare în Immich din partajări și din dispozitiv | ✅ | 🔧 CI | 🔧 CI |
+| Import de pe o dronă DJI sau de pe un card prin USB (experimental) | ❌ | ❌ | ❌ |
+| Temă întunecată | ca sistemul | ca sistemul | ca sistemul |
+| Intrare | mouse, tastatură | mouse, tastatură | mouse, tastatură, trackpad |
+| De unde o obțineți | instalator sau ZIP (previzualizare) | .deb, .rpm (previzualizare) | DMG sau ZIP (previzualizare nesemnată) |
 
 ✅ în aplicație pe acea platformă · ❌ neoferit acolo · 🔜 planificat · 🔧 CI în codul sursă, construit și pornit de CI-ul proiectului pe acel sistem, neverificat încă acolo cu un server, o partajare sau o cameră reală · doar plat: videoclipul se redă plat, cu un mesaj, deoarece randarea video 360° a computerelor există doar pe Windows, iar pe televizoarele LG rămâne de măsurat dacă webOS transmite cadrele video către sferă. "Un ochi" înseamnă că un fișier 3D arată ochiul stâng pe un ecran plat. Coloana LG webOS este o aplicație separată, al cărei build de test 0.1.0 își trece testele pe CI-ul proiectului și nu a rulat încă pe un televizor. Nu fiecare ✅ a fost verificat pe un dispozitiv real: ce a fost verificat unde, și ce rămâne de confirmat, se află în [Funcții](../docs/immuch360/features.md), [Suportul platformelor](../docs/immuch360/platform-support.md) și [Compatibilitate](../docs/immuch360/compatibility.md).
 

@@ -245,28 +245,51 @@ Sfera 360° dron DJI (Mini, Air, Mavic nga lain, dikenali dari kamera dio) tunju
 
 Satu kod asas untuk enam persekitara, nga aplikasi asing untuk TV LG. Apo hok tiap satu ado hari ni:
 
-| Keboleha | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeri, album, carian nga server Immich | ✅ | ✅ | ✅ pemapar | ✅ pemapar | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tanpo server: media peranti sendiri | ✅ | ✅ | kongsi jah | ❌ | ✅ | ✅ folder | ✅ folder | ✅ folder |
-| Gambo nga video rato | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Pusing gambo nga satu kekunci | ✅ | ✅ | ✅ kekunci warna | ✅ kekunci warna | ✅ tetingkap | ✅ | ✅ | ✅ |
-| Gambo 360° sebagai sfera | ✅ | ✅ | ✅ | ✅ | ✅ immersif | ✅ | ✅ | 🔧 CI |
-| Video 360° | ✅ | ✅ takdok bar maso | ✅ mesej kalu tak leh nyahkod | rato jah | ✅ immersif | ✅ | rato jah | rato jah |
-| 3D nga VR180 | ✅ satu mato | ✅ satu mato | ✅ satu mato | gambo satu mato, video rato | ✅ 3D sebenar | ✅ satu mato | gambo satu mato, video rato | gambo satu mato, video rato |
-| Spatial 2.5D (jejak kepalo) | ✅ eksperimen | ✅ eksperimen | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Gambo spatial Apple | ✅ satu mato | ✅ satu mato | ✅ satu mato | ❌ | ✅ 3D | ✅ satu mato | 🔧 CI | 🔧 CI |
-| Fail mentah Insta360, GoPro nga DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI gambo, video rato | 🔧 CI gambo, video rato |
-| Kongsi SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamera Tapo: rekoda | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamera Tapo: pandanga live | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kongsi peranti ni kat rangkaie | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Muat naik ko Immich dari kongsi nga peranti | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import dari dron DJI ke kad lalu USB (eksperimen) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tema gelap | ikut sistem | ikut sistem | ✅ secaro lalai | ✅ tema satu-satunyo | ikut sistem | ikut sistem | ikut sistem | ikut sistem |
-| Input | sentuh, giroskop | sentuh, giroskop | remote; Kiri nga Kane jugok maso video, Menu untuk perincia | remote, Magic Remote | kawala, tangan | tetikuh, papan kekunci | tetikuh, papan kekunci | tetikuh, papan kekunci, pad sentuh |
-| Mano nok dapat | Google Play, APK | App Store (tengoh disemak) | APK, Google Play (tengoh disemak) | build uji .ipk, Developer Mode | Horizon Store, APK | pemasang ke ZIP (pratonton) | .deb, .rpm (pratonton) | DMG ke ZIP (pratonton tak bertandatangan) |
+| Keboleha | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galeri, album, carian nga server Immich | ✅ | ✅ | ✅ pemapar | ✅ pemapar | ✅ |
+| Tanpo server: media peranti sendiri | ✅ | ✅ | kongsi jah | ❌ | ✅ |
+| Gambo nga video rato | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Pusing gambo nga satu kekunci | ✅ | ✅ | ✅ kekunci warna | ✅ kekunci warna | ✅ tetingkap |
+| Gambo 360° sebagai sfera | ✅ | ✅ | ✅ | ✅ | ✅ immersif |
+| Video 360° | ✅ | ✅ takdok bar maso | ✅ mesej kalu tak leh nyahkod | rato jah | ✅ immersif |
+| 3D nga VR180 | ✅ satu mato | ✅ satu mato | ✅ satu mato | gambo satu mato, video rato | ✅ 3D sebenar |
+| Spatial 2.5D (jejak kepalo) | ✅ eksperimen | ✅ eksperimen | ❌ | ❌ | ❌ |
+| Gambo spatial Apple | ✅ satu mato | ✅ satu mato | ✅ satu mato | ❌ | ✅ 3D |
+| Fail mentah Insta360, GoPro nga DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Kongsi SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamera Tapo: rekoda | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamera Tapo: pandanga live | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Kongsi peranti ni kat rangkaie | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Muat naik ko Immich dari kongsi nga peranti | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import dari dron DJI ke kad lalu USB (eksperimen) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tema gelap | ikut sistem | ikut sistem | ✅ secaro lalai | ✅ tema satu-satunyo | ikut sistem |
+| Input | sentuh, giroskop | sentuh, giroskop | remote; Kiri nga Kane jugok maso video, Menu untuk perincia | remote, Magic Remote | kawala, tangan |
+| Mano nok dapat | Google Play, APK | App Store (tengoh disemak) | APK, Google Play (tengoh disemak) | build uji .ipk, Developer Mode | Horizon Store, APK |
+
+| Keboleha | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galeri, album, carian nga server Immich | ✅ | 🔧 CI | 🔧 CI |
+| Tanpo server: media peranti sendiri | ✅ folder | ✅ folder | ✅ folder |
+| Gambo nga video rato | ✅ | ✅ | ✅ |
+| Pusing gambo nga satu kekunci | ✅ | ✅ | ✅ |
+| Gambo 360° sebagai sfera | ✅ | ✅ | 🔧 CI |
+| Video 360° | ✅ | rato jah | rato jah |
+| 3D nga VR180 | ✅ satu mato | gambo satu mato, video rato | gambo satu mato, video rato |
+| Spatial 2.5D (jejak kepalo) | 🔜 | ❌ | ❌ |
+| Gambo spatial Apple | ✅ satu mato | 🔧 CI | 🔧 CI |
+| Fail mentah Insta360, GoPro nga DJI | ✅ | 🔧 CI gambo, video rato | 🔧 CI gambo, video rato |
+| Kongsi SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Kamera Tapo: rekoda | ✅ | 🔧 CI | 🔧 CI |
+| Kamera Tapo: pandanga live | ✅ | 🔧 CI | 🔧 CI |
+| Kongsi peranti ni kat rangkaie | ✅ | ❌ | ❌ |
+| Muat naik ko Immich dari kongsi nga peranti | ✅ | 🔧 CI | 🔧 CI |
+| Import dari dron DJI ke kad lalu USB (eksperimen) | ❌ | ❌ | ❌ |
+| Tema gelap | ikut sistem | ikut sistem | ikut sistem |
+| Input | tetikuh, papan kekunci | tetikuh, papan kekunci | tetikuh, papan kekunci, pad sentuh |
+| Mano nok dapat | pemasang ke ZIP (pratonton) | .deb, .rpm (pratonton) | DMG ke ZIP (pratonton tak bertandatangan) |
 
 ✅ dale aplikasi kat platform tu · ❌ tak ado kat situ · 🔜 dirancang · 🔧 CI dale sumber, dibuat nga dihidupka dek CI projek kat sistem tu, belum disemak nga server, kongsi ke kamera sebenar kat situ lagi · rato jah: video maing rato, nga mesej, sebab perender video 360° komputer untuk Windows jah, nga kat TV LG samo ado webOS bui bingkai video ko sfera masih belum diukur. "Satu mato" maksudnyo fail 3D tunjuk mato kiri dio kat skrin rato. Lajur LG webOS ialah aplikasi asing, hok build uji 0.1.0 dio lulus uji dio kat CI projek nga belum jale kat TV lagi. Bukan satiap ✅ doh disemak kat peranti sebenar lagi: apo hok disemak kat mano, nga apo hok tingga nok disahka, ado dale [Ciri](../docs/immuch360/features.md), [Sokonga platform](../docs/immuch360/platform-support.md) nga [Keserasia](../docs/immuch360/compatibility.md).
 

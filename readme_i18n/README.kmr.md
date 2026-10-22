@@ -245,28 +245,51 @@ Gogên 360° yên dronên DJI (Mini, Air, Mavic û yên din, ku ji kameraya wan 
 
 Yek bingeha kodê ji bo şeş hawîrdoran, û sepaneke cuda ji bo televizyonên LG. Îro her yek çi heye:
 
-| Jêhatîbûn | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerî, albûm, lêgerîn bi servereke Immich | ✅ | ✅ | ✅ dîtinvan | ✅ dîtinvan | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Bêyî server: medyaya cîhazê bi xwe | ✅ | ✅ | tenê parvekirin | ❌ | ✅ | ✅ peldank | ✅ peldank | ✅ peldank |
-| Wêne û vîdyoyên sade | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Wêneyekê bi yek bişkokê bizivirîne | ✅ | ✅ | ✅ bişkokên rengîn | ✅ bişkokên rengîn | ✅ pencere | ✅ | ✅ | ✅ |
-| Wêneyên 360° wekî gog | ✅ | ✅ | ✅ | ✅ | ✅ dorhêlî | ✅ | ✅ | 🔧 CI |
-| Vîdyoyên 360° | ✅ | ✅ bêyî xeta demê | ✅ peyam heke nikare kod veke | tenê sade | ✅ dorhêlî | ✅ | tenê sade | tenê sade |
-| 3D û VR180 | ✅ yek çav | ✅ yek çav | ✅ yek çav | wêne yek çav, vîdyo sade | ✅ 3D rastîn | ✅ yek çav | wêne yek çav, vîdyo sade | wêne yek çav, vîdyo sade |
-| Spatial 2.5D (şopandina serî) | ✅ ceribandinî | ✅ ceribandinî | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Wêneyên Apple Spatial | ✅ yek çav | ✅ yek çav | ✅ yek çav | ❌ | ✅ 3D | ✅ yek çav | 🔧 CI | 🔧 CI |
-| Pelên xav ên Insta360, GoPro û DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI wêne, vîdyo sade | 🔧 CI wêne, vîdyo sade |
-| Parvekirinên SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kameraên Tapo: tomar | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kameraên Tapo: dîtina zindî | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Vê cîhazê li ser torê parve bike | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Ji parvekirin û cîhazê ber bi Immich ve bar bike | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Anîn ji droneke DJI an kartekê bi USB (ceribandinî) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tema tarî | wekî pergalê | wekî pergalê | ✅ bi awayê pêşbijartî | ✅ tema yekane | wekî pergalê | wekî pergalê | wekî pergalê | wekî pergalê |
-| Têketin | pêlêdan, jîroskop | pêlêdan, jîroskop | telekomanda; Çep û Rast di dema vîdyoyekê de jî, Menu ji bo hûragahiyan | telekomanda, Magic Remote | kontrolker, dest | mişk, klavye | mişk, klavye | mişk, klavye, trackpad |
-| Ji ku tê wergirtin | Google Play, APK | App Store (di nirxandinê de) | APK, Google Play (di nirxandinê de) | çêkirina ceribandinê ya .ipk, Developer Mode | Horizon Store, APK | sazker an ZIP (pêşdîtin) | .deb, .rpm (pêşdîtin) | DMG an ZIP (pêşdîtina bê îmze) |
+| Jêhatîbûn | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerî, albûm, lêgerîn bi servereke Immich | ✅ | ✅ | ✅ dîtinvan | ✅ dîtinvan | ✅ |
+| Bêyî server: medyaya cîhazê bi xwe | ✅ | ✅ | tenê parvekirin | ❌ | ✅ |
+| Wêne û vîdyoyên sade | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Wêneyekê bi yek bişkokê bizivirîne | ✅ | ✅ | ✅ bişkokên rengîn | ✅ bişkokên rengîn | ✅ pencere |
+| Wêneyên 360° wekî gog | ✅ | ✅ | ✅ | ✅ | ✅ dorhêlî |
+| Vîdyoyên 360° | ✅ | ✅ bêyî xeta demê | ✅ peyam heke nikare kod veke | tenê sade | ✅ dorhêlî |
+| 3D û VR180 | ✅ yek çav | ✅ yek çav | ✅ yek çav | wêne yek çav, vîdyo sade | ✅ 3D rastîn |
+| Spatial 2.5D (şopandina serî) | ✅ ceribandinî | ✅ ceribandinî | ❌ | ❌ | ❌ |
+| Wêneyên Apple Spatial | ✅ yek çav | ✅ yek çav | ✅ yek çav | ❌ | ✅ 3D |
+| Pelên xav ên Insta360, GoPro û DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Parvekirinên SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kameraên Tapo: tomar | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kameraên Tapo: dîtina zindî | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Vê cîhazê li ser torê parve bike | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Ji parvekirin û cîhazê ber bi Immich ve bar bike | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Anîn ji droneke DJI an kartekê bi USB (ceribandinî) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tema tarî | wekî pergalê | wekî pergalê | ✅ bi awayê pêşbijartî | ✅ tema yekane | wekî pergalê |
+| Têketin | pêlêdan, jîroskop | pêlêdan, jîroskop | telekomanda; Çep û Rast di dema vîdyoyekê de jî, Menu ji bo hûragahiyan | telekomanda, Magic Remote | kontrolker, dest |
+| Ji ku tê wergirtin | Google Play, APK | App Store (di nirxandinê de) | APK, Google Play (di nirxandinê de) | çêkirina ceribandinê ya .ipk, Developer Mode | Horizon Store, APK |
+
+| Jêhatîbûn | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerî, albûm, lêgerîn bi servereke Immich | ✅ | 🔧 CI | 🔧 CI |
+| Bêyî server: medyaya cîhazê bi xwe | ✅ peldank | ✅ peldank | ✅ peldank |
+| Wêne û vîdyoyên sade | ✅ | ✅ | ✅ |
+| Wêneyekê bi yek bişkokê bizivirîne | ✅ | ✅ | ✅ |
+| Wêneyên 360° wekî gog | ✅ | ✅ | 🔧 CI |
+| Vîdyoyên 360° | ✅ | tenê sade | tenê sade |
+| 3D û VR180 | ✅ yek çav | wêne yek çav, vîdyo sade | wêne yek çav, vîdyo sade |
+| Spatial 2.5D (şopandina serî) | 🔜 | ❌ | ❌ |
+| Wêneyên Apple Spatial | ✅ yek çav | 🔧 CI | 🔧 CI |
+| Pelên xav ên Insta360, GoPro û DJI | ✅ | 🔧 CI wêne, vîdyo sade | 🔧 CI wêne, vîdyo sade |
+| Parvekirinên SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Kameraên Tapo: tomar | ✅ | 🔧 CI | 🔧 CI |
+| Kameraên Tapo: dîtina zindî | ✅ | 🔧 CI | 🔧 CI |
+| Vê cîhazê li ser torê parve bike | ✅ | ❌ | ❌ |
+| Ji parvekirin û cîhazê ber bi Immich ve bar bike | ✅ | 🔧 CI | 🔧 CI |
+| Anîn ji droneke DJI an kartekê bi USB (ceribandinî) | ❌ | ❌ | ❌ |
+| Tema tarî | wekî pergalê | wekî pergalê | wekî pergalê |
+| Têketin | mişk, klavye | mişk, klavye | mişk, klavye, trackpad |
+| Ji ku tê wergirtin | sazker an ZIP (pêşdîtin) | .deb, .rpm (pêşdîtin) | DMG an ZIP (pêşdîtina bê îmze) |
 
 ✅ li ser wê platformê di sepanê de · ❌ li wir nayê pêşkêşkirin · 🔜 plankirî · 🔧 CI di çavkaniyê de ye, ji hêla CI ya projeyê ve li ser wê pergalê hatiye çêkirin û destpêkirin, hê li wir bi serverek, parvekirinek an kamerayeke rastîn nehatiye kontrolkirin · tenê sade: vîdyo bi peyamekê sade tê lîstin, ji ber ku nîşandêra vîdyoyên 360° ya komputeran tenê li ser Windows heye, û li ser televizyonên LG hê divê were pîvandin ka webOS kareyên vîdyoyê dide gogê an na. «Yek çav» tê wateya ku pelek 3D çavê xwe yê çepê li ser ekraneke sade nîşan dide. Stûna LG webOS sepaneke cuda ye, ku çêkirina wê ya ceribandinê 0.1.0 ceribandinên xwe li ser CI ya projeyê derbas dike û hê li ser televizyonekê nehatiye xebitandin. Ne her ✅ hê li ser cîhazeke rastîn hatiye kontrolkirin: çi li ku hatiye kontrolkirin û çi hê maye ku were piştrastkirin, di [Taybetmendî](../docs/immuch360/features.md), [Piştgiriya platformê](../docs/immuch360/platform-support.md) û [Lihevhatî](../docs/immuch360/compatibility.md) de ye.
 

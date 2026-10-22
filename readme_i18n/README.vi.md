@@ -245,28 +245,51 @@ Các hình cầu 360° của drone DJI (Mini, Air, Mavic và các dòng khác, �
 
 Một mã nguồn duy nhất cho sáu môi trường, và một ứng dụng riêng cho TV LG. Mỗi môi trường có gì ngày hôm nay:
 
-| Khả năng | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Thư viện, album, tìm kiếm với máy chủ Immich | ✅ | ✅ | ✅ trình xem | ✅ trình xem | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Không cần máy chủ: nội dung riêng của thiết bị | ✅ | ✅ | chỉ chia sẻ mạng | ❌ | ✅ | ✅ thư mục | ✅ thư mục | ✅ thư mục |
-| Ảnh và video dạng phẳng | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Xoay ảnh bằng một phím | ✅ | ✅ | ✅ phím màu | ✅ phím màu | ✅ cửa sổ | ✅ | ✅ | ✅ |
-| Ảnh 360° dạng hình cầu | ✅ | ✅ | ✅ | ✅ | ✅ đắm chìm | ✅ | ✅ | 🔧 CI |
-| Video 360° | ✅ | ✅ không thanh thời gian | ✅ thông báo nếu không giải mã được | chỉ phẳng | ✅ đắm chìm | ✅ | chỉ phẳng | chỉ phẳng |
-| 3D và VR180 | ✅ một mắt | ✅ một mắt | ✅ một mắt | ảnh một mắt, video phẳng | ✅ 3D thật | ✅ một mắt | ảnh một mắt, video phẳng | ảnh một mắt, video phẳng |
-| Spatial 2.5D (theo dõi đầu) | ✅ thử nghiệm | ✅ thử nghiệm | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Ảnh không gian của Apple | ✅ một mắt | ✅ một mắt | ✅ một mắt | ❌ | ✅ 3D | ✅ một mắt | 🔧 CI | 🔧 CI |
-| Tệp thô Insta360, GoPro và DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI ảnh, video phẳng | 🔧 CI ảnh, video phẳng |
-| Chia sẻ SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Camera Tapo: bản ghi | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Camera Tapo: xem trực tiếp | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Chia sẻ thiết bị này trên mạng | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Tải lên Immich từ chia sẻ mạng và thiết bị | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Nhập từ drone DJI hoặc thẻ nhớ qua USB (thử nghiệm) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Giao diện tối | theo hệ thống | theo hệ thống | ✅ mặc định | ✅ giao diện duy nhất | theo hệ thống | theo hệ thống | theo hệ thống | theo hệ thống |
-| Đầu vào | chạm, con quay hồi chuyển | chạm, con quay hồi chuyển | bộ điều khiển; Trái và Phải cả khi phát video, Menu để xem chi tiết | bộ điều khiển, Magic Remote | tay cầm, tay | chuột, bàn phím | chuột, bàn phím | chuột, bàn phím, bàn di chuột |
-| Lấy ở đâu | Google Play, APK | App Store (đang được duyệt) | APK, Google Play (đang được duyệt) | bản dựng kiểm thử .ipk, Developer Mode | Horizon Store, APK | bộ cài đặt hoặc ZIP (bản xem trước) | .deb, .rpm (bản xem trước) | DMG hoặc ZIP (bản xem trước chưa ký số) |
+| Khả năng | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Thư viện, album, tìm kiếm với máy chủ Immich | ✅ | ✅ | ✅ trình xem | ✅ trình xem | ✅ |
+| Không cần máy chủ: nội dung riêng của thiết bị | ✅ | ✅ | chỉ chia sẻ mạng | ❌ | ✅ |
+| Ảnh và video dạng phẳng | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Xoay ảnh bằng một phím | ✅ | ✅ | ✅ phím màu | ✅ phím màu | ✅ cửa sổ |
+| Ảnh 360° dạng hình cầu | ✅ | ✅ | ✅ | ✅ | ✅ đắm chìm |
+| Video 360° | ✅ | ✅ không thanh thời gian | ✅ thông báo nếu không giải mã được | chỉ phẳng | ✅ đắm chìm |
+| 3D và VR180 | ✅ một mắt | ✅ một mắt | ✅ một mắt | ảnh một mắt, video phẳng | ✅ 3D thật |
+| Spatial 2.5D (theo dõi đầu) | ✅ thử nghiệm | ✅ thử nghiệm | ❌ | ❌ | ❌ |
+| Ảnh không gian của Apple | ✅ một mắt | ✅ một mắt | ✅ một mắt | ❌ | ✅ 3D |
+| Tệp thô Insta360, GoPro và DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Chia sẻ SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Camera Tapo: bản ghi | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Camera Tapo: xem trực tiếp | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Chia sẻ thiết bị này trên mạng | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Tải lên Immich từ chia sẻ mạng và thiết bị | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Nhập từ drone DJI hoặc thẻ nhớ qua USB (thử nghiệm) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Giao diện tối | theo hệ thống | theo hệ thống | ✅ mặc định | ✅ giao diện duy nhất | theo hệ thống |
+| Đầu vào | chạm, con quay hồi chuyển | chạm, con quay hồi chuyển | bộ điều khiển; Trái và Phải cả khi phát video, Menu để xem chi tiết | bộ điều khiển, Magic Remote | tay cầm, tay |
+| Lấy ở đâu | Google Play, APK | App Store (đang được duyệt) | APK, Google Play (đang được duyệt) | bản dựng kiểm thử .ipk, Developer Mode | Horizon Store, APK |
+
+| Khả năng | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Thư viện, album, tìm kiếm với máy chủ Immich | ✅ | 🔧 CI | 🔧 CI |
+| Không cần máy chủ: nội dung riêng của thiết bị | ✅ thư mục | ✅ thư mục | ✅ thư mục |
+| Ảnh và video dạng phẳng | ✅ | ✅ | ✅ |
+| Xoay ảnh bằng một phím | ✅ | ✅ | ✅ |
+| Ảnh 360° dạng hình cầu | ✅ | ✅ | 🔧 CI |
+| Video 360° | ✅ | chỉ phẳng | chỉ phẳng |
+| 3D và VR180 | ✅ một mắt | ảnh một mắt, video phẳng | ảnh một mắt, video phẳng |
+| Spatial 2.5D (theo dõi đầu) | 🔜 | ❌ | ❌ |
+| Ảnh không gian của Apple | ✅ một mắt | 🔧 CI | 🔧 CI |
+| Tệp thô Insta360, GoPro và DJI | ✅ | 🔧 CI ảnh, video phẳng | 🔧 CI ảnh, video phẳng |
+| Chia sẻ SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Camera Tapo: bản ghi | ✅ | 🔧 CI | 🔧 CI |
+| Camera Tapo: xem trực tiếp | ✅ | 🔧 CI | 🔧 CI |
+| Chia sẻ thiết bị này trên mạng | ✅ | ❌ | ❌ |
+| Tải lên Immich từ chia sẻ mạng và thiết bị | ✅ | 🔧 CI | 🔧 CI |
+| Nhập từ drone DJI hoặc thẻ nhớ qua USB (thử nghiệm) | ❌ | ❌ | ❌ |
+| Giao diện tối | theo hệ thống | theo hệ thống | theo hệ thống |
+| Đầu vào | chuột, bàn phím | chuột, bàn phím | chuột, bàn phím, bàn di chuột |
+| Lấy ở đâu | bộ cài đặt hoặc ZIP (bản xem trước) | .deb, .rpm (bản xem trước) | DMG hoặc ZIP (bản xem trước chưa ký số) |
 
 ✅ có trong ứng dụng trên nền tảng đó · ❌ không có ở đó · 🔜 đang dự kiến · 🔧 CI có trong mã nguồn, được CI của dự án xây dựng và khởi chạy trên hệ thống đó, nhưng chưa được kiểm tra ở đó với máy chủ, chia sẻ mạng hay camera thật · chỉ phẳng: video phát dạng phẳng, kèm một thông báo, vì trình kết xuất video 360° của máy tính chỉ có trên Windows, và trên TV LG, việc webOS có chuyển khung hình video cho hình cầu hay không vẫn còn phải đo. "Một mắt" có nghĩa là một tệp 3D chỉ hiển thị mắt trái của nó trên màn hình phẳng. Cột LG webOS là một ứng dụng riêng, bản dựng kiểm thử 0.1.0 của nó vượt qua các bài kiểm thử trên CI của dự án và chưa chạy trên TV nào. Không phải mọi ✅ đều đã được kiểm tra trên thiết bị thật: những gì đã được kiểm tra ở đâu, và những gì còn cần xác nhận, có trong [Tính năng](../docs/immuch360/features.md), [Hỗ trợ nền tảng](../docs/immuch360/platform-support.md) và [Khả năng tương thích](../docs/immuch360/compatibility.md).
 

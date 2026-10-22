@@ -245,28 +245,51 @@ DJI droneen 360° esferak (Mini, Air, Mavic eta beste batzuk, beren kameraren bi
 
 Kode-base bakarra sei ingurunetarako, eta aparteko aplikazio bat LG telebistetarako. Bakoitzak gaur zer duen:
 
-| Gaitasuna | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeria, albumak, bilaketa Immich zerbitzari batekin | ✅ | ✅ | ✅ bistaratzailea | ✅ bistaratzailea | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Zerbitzaririk gabe: gailuaren bere edukiak | ✅ | ✅ | partekatzeak bakarrik | ❌ | ✅ | ✅ karpetak | ✅ karpetak | ✅ karpetak |
-| Argazki eta bideo lauak | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Biratu argazki bat tekla bakarrarekin | ✅ | ✅ | ✅ kolore-teklak | ✅ kolore-teklak | ✅ leihoa | ✅ | ✅ | ✅ |
-| 360° argazkiak esfera gisa | ✅ | ✅ | ✅ | ✅ | ✅ murgiltzailea | ✅ | ✅ | 🔧 CI |
-| 360° bideoak | ✅ | ✅ denbora-barra gabe | ✅ mezua deskodetu ezin bada | lau bakarrik | ✅ murgiltzailea | ✅ | lau bakarrik | lau bakarrik |
-| 3D eta VR180 | ✅ begi bat | ✅ begi bat | ✅ begi bat | argazkiak begi bat, bideoak lau | ✅ 3D osoa | ✅ begi bat | argazkiak begi bat, bideoak lau | argazkiak begi bat, bideoak lau |
-| Spatial 2.5D (buru-jarraipena) | ✅ esperimentala | ✅ esperimentala | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple-ren argazki espazialak | ✅ begi bat | ✅ begi bat | ✅ begi bat | ❌ | ✅ 3D | ✅ begi bat | 🔧 CI | 🔧 CI |
-| Insta360, GoPro eta DJI fitxategi gordinak | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI argazkiak, bideoak lau | 🔧 CI argazkiak, bideoak lau |
-| SMB, WebDAV, DLNA partekatzeak | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kamerak: grabazioak | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kamerak: zuzeneko ikuspegia | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Partekatu gailu hau sarean | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Partekatzeetatik eta gailutik Immich-era igo | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| DJI drone edo txartel batetik inportatu USB bidez (esperimentala) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Gai iluna | sistemaren arabera | sistemaren arabera | ✅ lehenespenez | ✅ gai bakarra | sistemaren arabera | sistemaren arabera | sistemaren arabera | sistemaren arabera |
-| Sarrera | ukipena, giroskopioa | ukipena, giroskopioa | urrutiko agintea; Ezkerra eta Eskuina bideo batean zehar ere, Menu xehetasunetarako | urrutiko agintea, Magic Remote | kontrolagailuak, eskuak | sagua, teklatua | sagua, teklatua | sagua, teklatua, ukipen-panela |
-| Non eskuratu | Google Play, APK | App Store (berrikuspenean) | APK, Google Play (berrikuspenean) | .ipk proba-eraikuntza, Developer Mode | Horizon Store, APK | instalatzailea edo ZIP (aurrebista) | .deb, .rpm (aurrebista) | DMG edo ZIP (sinatu gabeko aurrebista) |
+| Gaitasuna | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galeria, albumak, bilaketa Immich zerbitzari batekin | ✅ | ✅ | ✅ bistaratzailea | ✅ bistaratzailea | ✅ |
+| Zerbitzaririk gabe: gailuaren bere edukiak | ✅ | ✅ | partekatzeak bakarrik | ❌ | ✅ |
+| Argazki eta bideo lauak | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Biratu argazki bat tekla bakarrarekin | ✅ | ✅ | ✅ kolore-teklak | ✅ kolore-teklak | ✅ leihoa |
+| 360° argazkiak esfera gisa | ✅ | ✅ | ✅ | ✅ | ✅ murgiltzailea |
+| 360° bideoak | ✅ | ✅ denbora-barra gabe | ✅ mezua deskodetu ezin bada | lau bakarrik | ✅ murgiltzailea |
+| 3D eta VR180 | ✅ begi bat | ✅ begi bat | ✅ begi bat | argazkiak begi bat, bideoak lau | ✅ 3D osoa |
+| Spatial 2.5D (buru-jarraipena) | ✅ esperimentala | ✅ esperimentala | ❌ | ❌ | ❌ |
+| Apple-ren argazki espazialak | ✅ begi bat | ✅ begi bat | ✅ begi bat | ❌ | ✅ 3D |
+| Insta360, GoPro eta DJI fitxategi gordinak | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB, WebDAV, DLNA partekatzeak | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kamerak: grabazioak | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kamerak: zuzeneko ikuspegia | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Partekatu gailu hau sarean | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Partekatzeetatik eta gailutik Immich-era igo | ✅ | ✅ | ❌ | ❌ | ✅ |
+| DJI drone edo txartel batetik inportatu USB bidez (esperimentala) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Gai iluna | sistemaren arabera | sistemaren arabera | ✅ lehenespenez | ✅ gai bakarra | sistemaren arabera |
+| Sarrera | ukipena, giroskopioa | ukipena, giroskopioa | urrutiko agintea; Ezkerra eta Eskuina bideo batean zehar ere, Menu xehetasunetarako | urrutiko agintea, Magic Remote | kontrolagailuak, eskuak |
+| Non eskuratu | Google Play, APK | App Store (berrikuspenean) | APK, Google Play (berrikuspenean) | .ipk proba-eraikuntza, Developer Mode | Horizon Store, APK |
+
+| Gaitasuna | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galeria, albumak, bilaketa Immich zerbitzari batekin | ✅ | 🔧 CI | 🔧 CI |
+| Zerbitzaririk gabe: gailuaren bere edukiak | ✅ karpetak | ✅ karpetak | ✅ karpetak |
+| Argazki eta bideo lauak | ✅ | ✅ | ✅ |
+| Biratu argazki bat tekla bakarrarekin | ✅ | ✅ | ✅ |
+| 360° argazkiak esfera gisa | ✅ | ✅ | 🔧 CI |
+| 360° bideoak | ✅ | lau bakarrik | lau bakarrik |
+| 3D eta VR180 | ✅ begi bat | argazkiak begi bat, bideoak lau | argazkiak begi bat, bideoak lau |
+| Spatial 2.5D (buru-jarraipena) | 🔜 | ❌ | ❌ |
+| Apple-ren argazki espazialak | ✅ begi bat | 🔧 CI | 🔧 CI |
+| Insta360, GoPro eta DJI fitxategi gordinak | ✅ | 🔧 CI argazkiak, bideoak lau | 🔧 CI argazkiak, bideoak lau |
+| SMB, WebDAV, DLNA partekatzeak | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamerak: grabazioak | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kamerak: zuzeneko ikuspegia | ✅ | 🔧 CI | 🔧 CI |
+| Partekatu gailu hau sarean | ✅ | ❌ | ❌ |
+| Partekatzeetatik eta gailutik Immich-era igo | ✅ | 🔧 CI | 🔧 CI |
+| DJI drone edo txartel batetik inportatu USB bidez (esperimentala) | ❌ | ❌ | ❌ |
+| Gai iluna | sistemaren arabera | sistemaren arabera | sistemaren arabera |
+| Sarrera | sagua, teklatua | sagua, teklatua | sagua, teklatua, ukipen-panela |
+| Non eskuratu | instalatzailea edo ZIP (aurrebista) | .deb, .rpm (aurrebista) | DMG edo ZIP (sinatu gabeko aurrebista) |
 
 ✅ plataforma horretako aplikazioan · ❌ ez da hor eskaintzen · 🔜 aurreikusita · 🔧 CI iturburuetan, proiektuaren CIak sistema horretan eraiki eta abiarazia, baina oraindik han benetako zerbitzari, partekatze edo kamera batekin egiaztatu gabe · lau bakarrik: bideoa lau erreproduzitzen da, mezu batekin, ordenagailuen 360° bideo-errendatzailea Windows-en bakarrik dagoelako, eta LG telebistetan oraindik neurtzeke dago webOS-ek bideo-fotogramak esferari ematen dizkion ala ez. "Begi bat" esan nahi du 3D fitxategi batek bere ezkerreko begia erakusten duela pantaila lau batean. LG webOS zutabea aparteko aplikazio bat da, eta bere 0.1.0 proba-eraikuntzak proiektuaren CIko probak gainditzen ditu, baina oraindik ez da telebista batean exekutatu. Ez da ✅ bakoitza benetako gailu batean egiaztatu oraindik: non egiaztatu den, eta zer geratzen den berresteko, [Ezaugarriak](../docs/immuch360/features.md), [Plataformen euskarria](../docs/immuch360/platform-support.md) eta [Bateragarritasuna](../docs/immuch360/compatibility.md) orrietan dago.
 

@@ -245,28 +245,51 @@ Importer bildene og videoene fra en DJI-drone over USB, rett til Immich-serveren
 
 Én kodebase for seks miljøer, og en egen app for LG-TV-er. Hva hver av dem har i dag:
 
-| Funksjon | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galleri, album, søk med en Immich-server | ✅ | ✅ | ✅ fremviser | ✅ fremviser | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Uten server: enhetens egne medier | ✅ | ✅ | kun delinger | ❌ | ✅ | ✅ mapper | ✅ mapper | ✅ mapper |
-| Flate bilder og videoer | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Roter et bilde med én tast | ✅ | ✅ | ✅ fargetaster | ✅ fargetaster | ✅ vindu | ✅ | ✅ | ✅ |
-| 360°-bilder som en kule | ✅ | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
-| 360°-videoer | ✅ | ✅ ingen tidslinje | ✅ melding hvis ikke dekodbar | kun flatt | ✅ immersiv | ✅ | kun flatt | kun flatt |
-| 3D og VR180 | ✅ ett øye | ✅ ett øye | ✅ ett øye | bilder ett øye, videoer flate | ✅ ekte 3D | ✅ ett øye | bilder ett øye, videoer flate | bilder ett øye, videoer flate |
-| Spatial 2.5D (hodesporing) | ✅ eksperimentell | ✅ eksperimentell | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple spatial-bilder | ✅ ett øye | ✅ ett øye | ✅ ett øye | ❌ | ✅ 3D | ✅ ett øye | 🔧 CI | 🔧 CI |
-| Rå Insta360-, GoPro- og DJI-filer | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI bilder, videoer flate | 🔧 CI bilder, videoer flate |
-| SMB-, WebDAV-, DLNA-delinger | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kameraer: opptak | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kameraer: direktevisning | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Del denne enheten på nettverket | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Last opp til Immich fra delinger og enheten | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import fra en DJI-drone eller et kort over USB (eksperimentell) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Mørkt tema | som systemet | som systemet | ✅ som standard | ✅ eneste tema | som systemet | som systemet | som systemet | som systemet |
-| Inndata | berøring, gyroskop | berøring, gyroskop | fjernkontroll; Venstre og Høyre også under en video, Menu for detaljene | fjernkontroll, Magic Remote | kontrollere, hender | mus, tastatur | mus, tastatur | mus, tastatur, styreflate |
-| Hvor du får den | Google Play, APK | App Store (under vurdering) | APK, Google Play (under vurdering) | .ipk-testbuild, Developer Mode | Horizon Store, APK | installasjonsprogram eller ZIP (forhåndsvisning) | .deb, .rpm (forhåndsvisning) | DMG eller ZIP (usignert forhåndsvisning) |
+| Funksjon | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galleri, album, søk med en Immich-server | ✅ | ✅ | ✅ fremviser | ✅ fremviser | ✅ |
+| Uten server: enhetens egne medier | ✅ | ✅ | kun delinger | ❌ | ✅ |
+| Flate bilder og videoer | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Roter et bilde med én tast | ✅ | ✅ | ✅ fargetaster | ✅ fargetaster | ✅ vindu |
+| 360°-bilder som en kule | ✅ | ✅ | ✅ | ✅ | ✅ immersiv |
+| 360°-videoer | ✅ | ✅ ingen tidslinje | ✅ melding hvis ikke dekodbar | kun flatt | ✅ immersiv |
+| 3D og VR180 | ✅ ett øye | ✅ ett øye | ✅ ett øye | bilder ett øye, videoer flate | ✅ ekte 3D |
+| Spatial 2.5D (hodesporing) | ✅ eksperimentell | ✅ eksperimentell | ❌ | ❌ | ❌ |
+| Apple spatial-bilder | ✅ ett øye | ✅ ett øye | ✅ ett øye | ❌ | ✅ 3D |
+| Rå Insta360-, GoPro- og DJI-filer | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB-, WebDAV-, DLNA-delinger | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-kameraer: opptak | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-kameraer: direktevisning | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Del denne enheten på nettverket | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Last opp til Immich fra delinger og enheten | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import fra en DJI-drone eller et kort over USB (eksperimentell) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Mørkt tema | som systemet | som systemet | ✅ som standard | ✅ eneste tema | som systemet |
+| Inndata | berøring, gyroskop | berøring, gyroskop | fjernkontroll; Venstre og Høyre også under en video, Menu for detaljene | fjernkontroll, Magic Remote | kontrollere, hender |
+| Hvor du får den | Google Play, APK | App Store (under vurdering) | APK, Google Play (under vurdering) | .ipk-testbuild, Developer Mode | Horizon Store, APK |
+
+| Funksjon | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galleri, album, søk med en Immich-server | ✅ | 🔧 CI | 🔧 CI |
+| Uten server: enhetens egne medier | ✅ mapper | ✅ mapper | ✅ mapper |
+| Flate bilder og videoer | ✅ | ✅ | ✅ |
+| Roter et bilde med én tast | ✅ | ✅ | ✅ |
+| 360°-bilder som en kule | ✅ | ✅ | 🔧 CI |
+| 360°-videoer | ✅ | kun flatt | kun flatt |
+| 3D og VR180 | ✅ ett øye | bilder ett øye, videoer flate | bilder ett øye, videoer flate |
+| Spatial 2.5D (hodesporing) | 🔜 | ❌ | ❌ |
+| Apple spatial-bilder | ✅ ett øye | 🔧 CI | 🔧 CI |
+| Rå Insta360-, GoPro- og DJI-filer | ✅ | 🔧 CI bilder, videoer flate | 🔧 CI bilder, videoer flate |
+| SMB-, WebDAV-, DLNA-delinger | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kameraer: opptak | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kameraer: direktevisning | ✅ | 🔧 CI | 🔧 CI |
+| Del denne enheten på nettverket | ✅ | ❌ | ❌ |
+| Last opp til Immich fra delinger og enheten | ✅ | 🔧 CI | 🔧 CI |
+| Import fra en DJI-drone eller et kort over USB (eksperimentell) | ❌ | ❌ | ❌ |
+| Mørkt tema | som systemet | som systemet | som systemet |
+| Inndata | mus, tastatur | mus, tastatur | mus, tastatur, styreflate |
+| Hvor du får den | installasjonsprogram eller ZIP (forhåndsvisning) | .deb, .rpm (forhåndsvisning) | DMG eller ZIP (usignert forhåndsvisning) |
 
 ✅ i appen på den plattformen · ❌ ikke tilbudt der · 🔜 planlagt · 🔧 CI i kildekoden, bygget og startet av prosjektets CI på det systemet, ikke sjekket med en ekte server, deling eller kamera der ennå · kun flatt: videoen spilles av flatt, med en melding, fordi 360°-videogjengivelsen på datamaskiner bare finnes på Windows, og på LG-TV-er gjenstår det å måle om webOS gir videobildene videre til kulen. "Ett øye" betyr at en 3D-fil viser sitt venstre øye på en flat skjerm. LG webOS-kolonnen er en egen app, der testbuild 0.1.0 består testene sine på prosjektets CI og ikke har kjørt på en TV ennå. Ikke hver ✅ er sjekket på en ekte enhet ennå: hva som er sjekket hvor, og hva som gjenstår å bekrefte, finnes i [Funksjoner](../docs/immuch360/features.md), [Plattformstøtte](../docs/immuch360/platform-support.md) og [Kompatibilitet](../docs/immuch360/compatibility.md).
 

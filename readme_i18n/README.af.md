@@ -245,28 +245,51 @@ Die 360°-bolle van DJI-hommeltuie (Mini, Air, Mavic en ander, herken aan hul ka
 
 Een kodebasis vir ses omgewings, en 'n aparte app vir LG-TV's. Wat elkeen vandag het:
 
-| Vermoë | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galery, albums, soek met 'n Immich-bediener | ✅ | ✅ | ✅ kyker | ✅ kyker | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Sonder 'n bediener: die toestel se eie media | ✅ | ✅ | net deelplekke | ❌ | ✅ | ✅ vouers | ✅ vouers | ✅ vouers |
-| Plat foto's en video's | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Draai 'n foto met een sleutel | ✅ | ✅ | ✅ kleursleutels | ✅ kleursleutels | ✅ venster | ✅ | ✅ | ✅ |
-| 360°-foto's as 'n bol | ✅ | ✅ | ✅ | ✅ | ✅ omringend | ✅ | ✅ | 🔧 CI |
-| 360°-video's | ✅ | ✅ geen tydbalk | ✅ boodskap as nie dekodeerbaar nie | net plat | ✅ omringend | ✅ | net plat | net plat |
-| 3D en VR180 | ✅ een oog | ✅ een oog | ✅ een oog | foto's een oog, video's plat | ✅ ware 3D | ✅ een oog | foto's een oog, video's plat | foto's een oog, video's plat |
-| Spatial 2.5D (kopvolging) | ✅ eksperimenteel | ✅ eksperimenteel | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple spatial-foto's | ✅ een oog | ✅ een oog | ✅ een oog | ❌ | ✅ 3D | ✅ een oog | 🔧 CI | 🔧 CI |
-| Rou Insta360-, GoPro- en DJI-lêers | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI foto's, video's plat | 🔧 CI foto's, video's plat |
-| SMB-, WebDAV-, DLNA-deelplekke | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kameras: opnames | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kameras: lewendige aansig | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Deel hierdie toestel op die netwerk | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Laai op na Immich vanaf deelplekke en die toestel | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Importeer vanaf 'n DJI-hommeltuig of 'n kaart oor USB (eksperimenteel) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Donker tema | soos die stelsel | soos die stelsel | ✅ by verstek | ✅ enigste tema | soos die stelsel | soos die stelsel | soos die stelsel | soos die stelsel |
-| Invoer | aanraking, giroskoop | aanraking, giroskoop | afstandbeheer; Links en Regs ook tydens 'n video, Menu vir die besonderhede | afstandbeheer, Magic Remote | beheertoestelle, hande | muis, sleutelbord | muis, sleutelbord | muis, sleutelbord, raakblad |
-| Waar om dit te kry | Google Play, APK | App Store (in beoordeling) | APK, Google Play (in beoordeling) | .ipk-toets-build, Developer Mode | Horizon Store, APK | installeerder of ZIP (voorskou) | .deb, .rpm (voorskou) | DMG of ZIP (ongetekende voorskou) |
+| Vermoë | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galery, albums, soek met 'n Immich-bediener | ✅ | ✅ | ✅ kyker | ✅ kyker | ✅ |
+| Sonder 'n bediener: die toestel se eie media | ✅ | ✅ | net deelplekke | ❌ | ✅ |
+| Plat foto's en video's | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Draai 'n foto met een sleutel | ✅ | ✅ | ✅ kleursleutels | ✅ kleursleutels | ✅ venster |
+| 360°-foto's as 'n bol | ✅ | ✅ | ✅ | ✅ | ✅ omringend |
+| 360°-video's | ✅ | ✅ geen tydbalk | ✅ boodskap as nie dekodeerbaar nie | net plat | ✅ omringend |
+| 3D en VR180 | ✅ een oog | ✅ een oog | ✅ een oog | foto's een oog, video's plat | ✅ ware 3D |
+| Spatial 2.5D (kopvolging) | ✅ eksperimenteel | ✅ eksperimenteel | ❌ | ❌ | ❌ |
+| Apple spatial-foto's | ✅ een oog | ✅ een oog | ✅ een oog | ❌ | ✅ 3D |
+| Rou Insta360-, GoPro- en DJI-lêers | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB-, WebDAV-, DLNA-deelplekke | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-kameras: opnames | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-kameras: lewendige aansig | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Deel hierdie toestel op die netwerk | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Laai op na Immich vanaf deelplekke en die toestel | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Importeer vanaf 'n DJI-hommeltuig of 'n kaart oor USB (eksperimenteel) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Donker tema | soos die stelsel | soos die stelsel | ✅ by verstek | ✅ enigste tema | soos die stelsel |
+| Invoer | aanraking, giroskoop | aanraking, giroskoop | afstandbeheer; Links en Regs ook tydens 'n video, Menu vir die besonderhede | afstandbeheer, Magic Remote | beheertoestelle, hande |
+| Waar om dit te kry | Google Play, APK | App Store (in beoordeling) | APK, Google Play (in beoordeling) | .ipk-toets-build, Developer Mode | Horizon Store, APK |
+
+| Vermoë | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galery, albums, soek met 'n Immich-bediener | ✅ | 🔧 CI | 🔧 CI |
+| Sonder 'n bediener: die toestel se eie media | ✅ vouers | ✅ vouers | ✅ vouers |
+| Plat foto's en video's | ✅ | ✅ | ✅ |
+| Draai 'n foto met een sleutel | ✅ | ✅ | ✅ |
+| 360°-foto's as 'n bol | ✅ | ✅ | 🔧 CI |
+| 360°-video's | ✅ | net plat | net plat |
+| 3D en VR180 | ✅ een oog | foto's een oog, video's plat | foto's een oog, video's plat |
+| Spatial 2.5D (kopvolging) | 🔜 | ❌ | ❌ |
+| Apple spatial-foto's | ✅ een oog | 🔧 CI | 🔧 CI |
+| Rou Insta360-, GoPro- en DJI-lêers | ✅ | 🔧 CI foto's, video's plat | 🔧 CI foto's, video's plat |
+| SMB-, WebDAV-, DLNA-deelplekke | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kameras: opnames | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kameras: lewendige aansig | ✅ | 🔧 CI | 🔧 CI |
+| Deel hierdie toestel op die netwerk | ✅ | ❌ | ❌ |
+| Laai op na Immich vanaf deelplekke en die toestel | ✅ | 🔧 CI | 🔧 CI |
+| Importeer vanaf 'n DJI-hommeltuig of 'n kaart oor USB (eksperimenteel) | ❌ | ❌ | ❌ |
+| Donker tema | soos die stelsel | soos die stelsel | soos die stelsel |
+| Invoer | muis, sleutelbord | muis, sleutelbord | muis, sleutelbord, raakblad |
+| Waar om dit te kry | installeerder of ZIP (voorskou) | .deb, .rpm (voorskou) | DMG of ZIP (ongetekende voorskou) |
 
 ✅ in die app op dié platform · ❌ nie daar aangebied nie · 🔜 beplan · 🔧 CI in die bronne, gebou en begin deur die projek se CI op daardie stelsel, nog nie daar met 'n werklike bediener, deelplek of kamera getoets nie · net plat: die video speel plat, met 'n boodskap, omdat die 360°-videoweergawer van die rekenaars net vir Windows is, en op LG-TV's moet nog gemeet word of webOS videorame aan die bol oorhandig. "Een oog" beteken 'n 3D-lêer wys sy linkeroog op 'n plat skerm. Die LG webOS-kolom is 'n aparte app, waarvan toets-build 0.1.0 sy toetse op die projek se CI slaag en nog nie op 'n TV geloop het nie. Nie elke ✅ is al op 'n werklike toestel getoets nie: wat waar getoets is, en wat nog bevestig moet word, is in [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) en [Compatibility](../docs/immuch360/compatibility.md).
 

@@ -245,28 +245,51 @@ DJI-drönarnas 360°-sfärer (Mini, Air, Mavic och andra, igenkända utifrån si
 
 En kodbas för sex miljöer, och en separat app för LG-TV. Vad varje miljö har idag:
 
-| Funktion | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galleri, album, sökning med en Immich-server | ✅ | ✅ | ✅ visare | ✅ visare | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Utan server: enhetens eget innehåll | ✅ | ✅ | endast resurser | ❌ | ✅ | ✅ mappar | ✅ mappar | ✅ mappar |
-| Platta foton och videor | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Vrid ett foto med en tangent | ✅ | ✅ | ✅ färgknappar | ✅ färgknappar | ✅ fönster | ✅ | ✅ | ✅ |
-| 360°-foton som en sfär | ✅ | ✅ | ✅ | ✅ | ✅ immersivt | ✅ | ✅ | 🔧 CI |
-| 360°-videor | ✅ | ✅ ingen förloppslinje | ✅ meddelande om den inte kan avkodas | endast platt | ✅ immersivt | ✅ | endast platt | endast platt |
-| 3D och VR180 | ✅ ett öga | ✅ ett öga | ✅ ett öga | foton ett öga, videor platta | ✅ äkta 3D | ✅ ett öga | foton ett öga, videor platta | foton ett öga, videor platta |
-| Spatial 2.5D (huvudspårning) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple-spatiala foton | ✅ ett öga | ✅ ett öga | ✅ ett öga | ❌ | ✅ 3D | ✅ ett öga | 🔧 CI | 🔧 CI |
-| Råa Insta360-, GoPro- och DJI-filer | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI foton, videor platta | 🔧 CI foton, videor platta |
-| SMB-, WebDAV- och DLNA-resurser | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kameror: inspelningar | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kameror: livevisning | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Dela denna enhet på nätverket | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Ladda upp till Immich från resurser och enheten | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import från en DJI-drönare eller ett kort via USB (experimentell) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Mörkt tema | som systemet | som systemet | ✅ som standard | ✅ enda temat | som systemet | som systemet | som systemet | som systemet |
-| Inmatning | touch, gyroskop | touch, gyroskop | fjärrkontroll; Vänster och Höger även under en video, Menu för detaljerna | fjärrkontroll, Magic Remote | handkontroller, händer | mus, tangentbord | mus, tangentbord | mus, tangentbord, styrplatta |
-| Var du hittar den | Google Play, APK | App Store (under granskning) | APK, Google Play (under granskning) | .ipk-testbygge, Developer Mode | Horizon Store, APK | installationsprogram eller ZIP (förhandsversion) | .deb, .rpm (förhandsversion) | DMG eller ZIP (osignerad förhandsversion) |
+| Funktion | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galleri, album, sökning med en Immich-server | ✅ | ✅ | ✅ visare | ✅ visare | ✅ |
+| Utan server: enhetens eget innehåll | ✅ | ✅ | endast resurser | ❌ | ✅ |
+| Platta foton och videor | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Vrid ett foto med en tangent | ✅ | ✅ | ✅ färgknappar | ✅ färgknappar | ✅ fönster |
+| 360°-foton som en sfär | ✅ | ✅ | ✅ | ✅ | ✅ immersivt |
+| 360°-videor | ✅ | ✅ ingen förloppslinje | ✅ meddelande om den inte kan avkodas | endast platt | ✅ immersivt |
+| 3D och VR180 | ✅ ett öga | ✅ ett öga | ✅ ett öga | foton ett öga, videor platta | ✅ äkta 3D |
+| Spatial 2.5D (huvudspårning) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | ❌ |
+| Apple-spatiala foton | ✅ ett öga | ✅ ett öga | ✅ ett öga | ❌ | ✅ 3D |
+| Råa Insta360-, GoPro- och DJI-filer | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB-, WebDAV- och DLNA-resurser | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-kameror: inspelningar | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-kameror: livevisning | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Dela denna enhet på nätverket | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Ladda upp till Immich från resurser och enheten | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import från en DJI-drönare eller ett kort via USB (experimentell) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Mörkt tema | som systemet | som systemet | ✅ som standard | ✅ enda temat | som systemet |
+| Inmatning | touch, gyroskop | touch, gyroskop | fjärrkontroll; Vänster och Höger även under en video, Menu för detaljerna | fjärrkontroll, Magic Remote | handkontroller, händer |
+| Var du hittar den | Google Play, APK | App Store (under granskning) | APK, Google Play (under granskning) | .ipk-testbygge, Developer Mode | Horizon Store, APK |
+
+| Funktion | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galleri, album, sökning med en Immich-server | ✅ | 🔧 CI | 🔧 CI |
+| Utan server: enhetens eget innehåll | ✅ mappar | ✅ mappar | ✅ mappar |
+| Platta foton och videor | ✅ | ✅ | ✅ |
+| Vrid ett foto med en tangent | ✅ | ✅ | ✅ |
+| 360°-foton som en sfär | ✅ | ✅ | 🔧 CI |
+| 360°-videor | ✅ | endast platt | endast platt |
+| 3D och VR180 | ✅ ett öga | foton ett öga, videor platta | foton ett öga, videor platta |
+| Spatial 2.5D (huvudspårning) | 🔜 | ❌ | ❌ |
+| Apple-spatiala foton | ✅ ett öga | 🔧 CI | 🔧 CI |
+| Råa Insta360-, GoPro- och DJI-filer | ✅ | 🔧 CI foton, videor platta | 🔧 CI foton, videor platta |
+| SMB-, WebDAV- och DLNA-resurser | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kameror: inspelningar | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kameror: livevisning | ✅ | 🔧 CI | 🔧 CI |
+| Dela denna enhet på nätverket | ✅ | ❌ | ❌ |
+| Ladda upp till Immich från resurser och enheten | ✅ | 🔧 CI | 🔧 CI |
+| Import från en DJI-drönare eller ett kort via USB (experimentell) | ❌ | ❌ | ❌ |
+| Mörkt tema | som systemet | som systemet | som systemet |
+| Inmatning | mus, tangentbord | mus, tangentbord | mus, tangentbord, styrplatta |
+| Var du hittar den | installationsprogram eller ZIP (förhandsversion) | .deb, .rpm (förhandsversion) | DMG eller ZIP (osignerad förhandsversion) |
 
 ✅ i appen på den plattformen · ❌ erbjuds inte där · 🔜 planerat · 🔧 CI i källkoden, byggt och startat av projektets CI på det systemet, ännu inte kontrollerat där med en riktig server, resurs eller kamera · endast platt: videon spelas platt, med ett meddelande, eftersom datorernas 360°-videorenderare bara finns på Windows, och på LG-TV återstår det att mäta om webOS lämnar över videobildrutor till sfären. "Ett öga" betyder att en 3D-fil visar sitt vänstra öga på en platt skärm. Kolumnen LG webOS är en separat app, vars testbygge 0.1.0 klarar sina tester i projektets CI och ännu inte har körts på en TV. Inte alla ✅ har kontrollerats på en riktig enhet än: vad som har kontrollerats var, och vad som återstår att bekräfta, finns i [Funktioner](../docs/immuch360/features.md), [Plattformsstöd](../docs/immuch360/platform-support.md) och [Kompatibilitet](../docs/immuch360/compatibility.md).
 

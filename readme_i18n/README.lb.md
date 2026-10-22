@@ -245,28 +245,51 @@ D'360°-Kugele vun DJI-Drohnen (Mini, Air, Mavic an aner, erkannt un hirer Kamer
 
 Eng eenzeg Codebasis fir sechs Ëmfeld, an eng separat App fir LG-Fernseher. Wat jiddereen haut huet:
 
-| Fonktioun | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerie, Albumen, Sich mat engem Immich-Server | ✅ | ✅ | ✅ Viewer | ✅ Viewer | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ouni Server: déi eegen Medien vum Apparat | ✅ | ✅ | nëmme Freigaben | ❌ | ✅ | ✅ Dossieren | ✅ Dossieren | ✅ Dossieren |
-| Flaach Fotoen a Videoen | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Eng Foto mat enger Tast dréinen | ✅ | ✅ | ✅ Faarftasten | ✅ Faarftasten | ✅ Fënster | ✅ | ✅ | ✅ |
-| 360°-Fotoen als Kugel | ✅ | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
-| 360°-Videoen | ✅ | ✅ keng Zäitlinn | ✅ Hiweis, wann net dekodéierbar | nëmme flaach | ✅ immersiv | ✅ | nëmme flaach | nëmme flaach |
-| 3D a VR180 | ✅ ee Aa | ✅ ee Aa | ✅ ee Aa | Fotoen ee Aa, Videoe flaach | ✅ richteg 3D | ✅ ee Aa | Fotoen ee Aa, Videoe flaach | Fotoen ee Aa, Videoe flaach |
-| Spatial 2.5D (Kapp-Tracking) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple-Raumfotoen | ✅ ee Aa | ✅ ee Aa | ✅ ee Aa | ❌ | ✅ 3D | ✅ ee Aa | 🔧 CI | 🔧 CI |
-| Rau Insta360-, GoPro- a DJI-Dateien | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI Fotoen, Videoe flaach | 🔧 CI Fotoen, Videoe flaach |
-| SMB-, WebDAV-, DLNA-Freigaben | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-Kameraen: Opnamen | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-Kameraen: Live-View | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Dëse Apparat am Netzwierk deelen | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Op Immich eroplueden vu Freigaben a vum Apparat | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import vun enger DJI-Drohn oder enger Kaart iwwer USB (experimentell) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Donkelt Theema | wéi de System | wéi de System | ✅ als Standard | ✅ eenzegt Theema | wéi de System | wéi de System | wéi de System | wéi de System |
-| Entrée | Touch, Gyroskop | Touch, Gyroskop | Fernsteierung; Lénks a Riets och während engem Video, Menu fir d'Detailer | Fernsteierung, Magic Remote | Controller, Hänn | Maus, Tastatur | Maus, Tastatur | Maus, Tastatur, Trackpad |
-| Wou een et kritt | Google Play, APK | App Store (am Review) | APK, Google Play (am Review) | .ipk-Test-Build, Developer Mode | Horizon Store, APK | Installer oder ZIP (Preview) | .deb, .rpm (Preview) | DMG oder ZIP (net signéierte Preview) |
+| Fonktioun | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerie, Albumen, Sich mat engem Immich-Server | ✅ | ✅ | ✅ Viewer | ✅ Viewer | ✅ |
+| Ouni Server: déi eegen Medien vum Apparat | ✅ | ✅ | nëmme Freigaben | ❌ | ✅ |
+| Flaach Fotoen a Videoen | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Eng Foto mat enger Tast dréinen | ✅ | ✅ | ✅ Faarftasten | ✅ Faarftasten | ✅ Fënster |
+| 360°-Fotoen als Kugel | ✅ | ✅ | ✅ | ✅ | ✅ immersiv |
+| 360°-Videoen | ✅ | ✅ keng Zäitlinn | ✅ Hiweis, wann net dekodéierbar | nëmme flaach | ✅ immersiv |
+| 3D a VR180 | ✅ ee Aa | ✅ ee Aa | ✅ ee Aa | Fotoen ee Aa, Videoe flaach | ✅ richteg 3D |
+| Spatial 2.5D (Kapp-Tracking) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | ❌ |
+| Apple-Raumfotoen | ✅ ee Aa | ✅ ee Aa | ✅ ee Aa | ❌ | ✅ 3D |
+| Rau Insta360-, GoPro- a DJI-Dateien | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB-, WebDAV-, DLNA-Freigaben | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-Kameraen: Opnamen | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-Kameraen: Live-View | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Dëse Apparat am Netzwierk deelen | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Op Immich eroplueden vu Freigaben a vum Apparat | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import vun enger DJI-Drohn oder enger Kaart iwwer USB (experimentell) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Donkelt Theema | wéi de System | wéi de System | ✅ als Standard | ✅ eenzegt Theema | wéi de System |
+| Entrée | Touch, Gyroskop | Touch, Gyroskop | Fernsteierung; Lénks a Riets och während engem Video, Menu fir d'Detailer | Fernsteierung, Magic Remote | Controller, Hänn |
+| Wou een et kritt | Google Play, APK | App Store (am Review) | APK, Google Play (am Review) | .ipk-Test-Build, Developer Mode | Horizon Store, APK |
+
+| Fonktioun | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerie, Albumen, Sich mat engem Immich-Server | ✅ | 🔧 CI | 🔧 CI |
+| Ouni Server: déi eegen Medien vum Apparat | ✅ Dossieren | ✅ Dossieren | ✅ Dossieren |
+| Flaach Fotoen a Videoen | ✅ | ✅ | ✅ |
+| Eng Foto mat enger Tast dréinen | ✅ | ✅ | ✅ |
+| 360°-Fotoen als Kugel | ✅ | ✅ | 🔧 CI |
+| 360°-Videoen | ✅ | nëmme flaach | nëmme flaach |
+| 3D a VR180 | ✅ ee Aa | Fotoen ee Aa, Videoe flaach | Fotoen ee Aa, Videoe flaach |
+| Spatial 2.5D (Kapp-Tracking) | 🔜 | ❌ | ❌ |
+| Apple-Raumfotoen | ✅ ee Aa | 🔧 CI | 🔧 CI |
+| Rau Insta360-, GoPro- a DJI-Dateien | ✅ | 🔧 CI Fotoen, Videoe flaach | 🔧 CI Fotoen, Videoe flaach |
+| SMB-, WebDAV-, DLNA-Freigaben | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-Kameraen: Opnamen | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-Kameraen: Live-View | ✅ | 🔧 CI | 🔧 CI |
+| Dëse Apparat am Netzwierk deelen | ✅ | ❌ | ❌ |
+| Op Immich eroplueden vu Freigaben a vum Apparat | ✅ | 🔧 CI | 🔧 CI |
+| Import vun enger DJI-Drohn oder enger Kaart iwwer USB (experimentell) | ❌ | ❌ | ❌ |
+| Donkelt Theema | wéi de System | wéi de System | wéi de System |
+| Entrée | Maus, Tastatur | Maus, Tastatur | Maus, Tastatur, Trackpad |
+| Wou een et kritt | Installer oder ZIP (Preview) | .deb, .rpm (Preview) | DMG oder ZIP (net signéierte Preview) |
 
 ✅ an der App op där Plattform · ❌ do net ugebueden · 🔜 geplangt · 🔧 CI am Quellcode, vun der CI vum Projet op dësem System gebaut a gestart, do awer nach net mat engem richtege Server, enger Freigab oder enger Kamera getest · nëmme flaach: de Video leeft flaach, mat engem Hiweis, well et den 360°-Video-Renderer vun de Computeren nëmmen op Windows gëtt, an op LG-Fernseher muss nach gemooss ginn, ob webOS d'Videobiller un d'Kugel weiderginn kann. „Ee Aa“ heescht, datt eng 3D-Datei hiert lénkt Aa op engem flaache Bildschierm weist. D'LG-webOS-Kolonn ass eng separat App, där hiren Test-Build 0.1.0 seng Tester op der CI vum Projet besteet an nach net op engem Fernseh gelaf ass. Net all ✅ gouf schonn op engem richtege Apparat getest: wat wou getest gouf, a wat nach ze confirméiere bleift, steet an de [Funktiounen](../docs/immuch360/features.md), der [Plattformënnerstëtzung](../docs/immuch360/platform-support.md) an der [Kompatibilitéit](../docs/immuch360/compatibility.md).
 

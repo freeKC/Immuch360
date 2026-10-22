@@ -245,28 +245,51 @@ Sferennoù 360° an dronoù DJI (Mini, Air, Mavic hag all, anavezet diwar o c'ha
 
 Ur gwrizienn god hepken evit c'hwec'h endro, hag un arload a-ziforc'h evit ar skinwelioù LG. Petra a zo gant pep hini hiziv:
 
-| Keweriusted | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galeri, albumoù, enklask gant ur servijer Immich | ✅ | ✅ | ✅ gweler | ✅ gweler | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Hep servijer: restroù an trevnad e-unan | ✅ | ✅ | rannadennoù hepken | ❌ | ✅ | ✅ teuliadoù | ✅ teuliadoù | ✅ teuliadoù |
-| Skeudennoù ha videoioù plat | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Treiñ ur skeudenn gant un douchenn | ✅ | ✅ | ✅ touchoù liv | ✅ touchoù liv | ✅ prenestr | ✅ | ✅ | ✅ |
-| Skeudennoù 360° evel ur sferenn | ✅ | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
-| Videoioù 360° | ✅ | ✅ barrenn-amzer ebet | ✅ kemennadenn ma ne c'haller ket dirgodañ | plat hepken | ✅ immersiv | ✅ | plat hepken | plat hepken |
-| 3D ha VR180 | ✅ ul lagad | ✅ ul lagad | ✅ ul lagad | skeudennoù ul lagad, videoioù plat | ✅ 3D gwirion | ✅ ul lagad | skeudennoù ul lagad, videoioù plat | skeudennoù ul lagad, videoioù plat |
-| Spasial 2.5D (heuliañ ar penn) | ✅ arnodel | ✅ arnodel | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Skeudennoù spasial Apple | ✅ ul lagad | ✅ ul lagad | ✅ ul lagad | ❌ | ✅ 3D | ✅ ul lagad | 🔧 CI | 🔧 CI |
-| Restroù brut Insta360, GoPro ha DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI skeudennoù, videoioù plat | 🔧 CI skeudennoù, videoioù plat |
-| Rannadennoù SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kameraoù Tapo: enrolladennoù | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kameraoù Tapo: gwel war-eeun | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Rannañ an trevnad-mañ war ar rouedad | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Pellgas da Immich diwar rannadennoù hag an trevnad | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Enporzhiañ diwar un dron DJI pe ur gartenn dre USB (arnodel) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tem teñval | evel ar reizhiad | evel ar reizhiad | ✅ dre ziouer | ✅ an tem nemetañ | evel ar reizhiad | evel ar reizhiad | evel ar reizhiad | evel ar reizhiad |
-| Enankad | stok, jiroskop | stok, jiroskop | pellrener; Kleiz ha Dehou e-pad ur video ivez, Menu evit ar munudoù | pellrener, Magic Remote | manelloù, daouarn | logodenn, klavier | logodenn, klavier | logodenn, klavier, pavez-stok |
-| Pelec'h e kaout | Google Play, APK | App Store (war adwel) | APK, Google Play (war adwel) | savadur amprouiñ .ipk, Developer Mode | Horizon Store, APK | installer pe ZIP (rakwel) | .deb, .rpm (rakwel) | DMG pe ZIP (rakwel hep siell) |
+| Keweriusted | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galeri, albumoù, enklask gant ur servijer Immich | ✅ | ✅ | ✅ gweler | ✅ gweler | ✅ |
+| Hep servijer: restroù an trevnad e-unan | ✅ | ✅ | rannadennoù hepken | ❌ | ✅ |
+| Skeudennoù ha videoioù plat | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Treiñ ur skeudenn gant un douchenn | ✅ | ✅ | ✅ touchoù liv | ✅ touchoù liv | ✅ prenestr |
+| Skeudennoù 360° evel ur sferenn | ✅ | ✅ | ✅ | ✅ | ✅ immersiv |
+| Videoioù 360° | ✅ | ✅ barrenn-amzer ebet | ✅ kemennadenn ma ne c'haller ket dirgodañ | plat hepken | ✅ immersiv |
+| 3D ha VR180 | ✅ ul lagad | ✅ ul lagad | ✅ ul lagad | skeudennoù ul lagad, videoioù plat | ✅ 3D gwirion |
+| Spasial 2.5D (heuliañ ar penn) | ✅ arnodel | ✅ arnodel | ❌ | ❌ | ❌ |
+| Skeudennoù spasial Apple | ✅ ul lagad | ✅ ul lagad | ✅ ul lagad | ❌ | ✅ 3D |
+| Restroù brut Insta360, GoPro ha DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Rannadennoù SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kameraoù Tapo: enrolladennoù | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kameraoù Tapo: gwel war-eeun | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Rannañ an trevnad-mañ war ar rouedad | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Pellgas da Immich diwar rannadennoù hag an trevnad | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Enporzhiañ diwar un dron DJI pe ur gartenn dre USB (arnodel) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tem teñval | evel ar reizhiad | evel ar reizhiad | ✅ dre ziouer | ✅ an tem nemetañ | evel ar reizhiad |
+| Enankad | stok, jiroskop | stok, jiroskop | pellrener; Kleiz ha Dehou e-pad ur video ivez, Menu evit ar munudoù | pellrener, Magic Remote | manelloù, daouarn |
+| Pelec'h e kaout | Google Play, APK | App Store (war adwel) | APK, Google Play (war adwel) | savadur amprouiñ .ipk, Developer Mode | Horizon Store, APK |
+
+| Keweriusted | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galeri, albumoù, enklask gant ur servijer Immich | ✅ | 🔧 CI | 🔧 CI |
+| Hep servijer: restroù an trevnad e-unan | ✅ teuliadoù | ✅ teuliadoù | ✅ teuliadoù |
+| Skeudennoù ha videoioù plat | ✅ | ✅ | ✅ |
+| Treiñ ur skeudenn gant un douchenn | ✅ | ✅ | ✅ |
+| Skeudennoù 360° evel ur sferenn | ✅ | ✅ | 🔧 CI |
+| Videoioù 360° | ✅ | plat hepken | plat hepken |
+| 3D ha VR180 | ✅ ul lagad | skeudennoù ul lagad, videoioù plat | skeudennoù ul lagad, videoioù plat |
+| Spasial 2.5D (heuliañ ar penn) | 🔜 | ❌ | ❌ |
+| Skeudennoù spasial Apple | ✅ ul lagad | 🔧 CI | 🔧 CI |
+| Restroù brut Insta360, GoPro ha DJI | ✅ | 🔧 CI skeudennoù, videoioù plat | 🔧 CI skeudennoù, videoioù plat |
+| Rannadennoù SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Kameraoù Tapo: enrolladennoù | ✅ | 🔧 CI | 🔧 CI |
+| Kameraoù Tapo: gwel war-eeun | ✅ | 🔧 CI | 🔧 CI |
+| Rannañ an trevnad-mañ war ar rouedad | ✅ | ❌ | ❌ |
+| Pellgas da Immich diwar rannadennoù hag an trevnad | ✅ | 🔧 CI | 🔧 CI |
+| Enporzhiañ diwar un dron DJI pe ur gartenn dre USB (arnodel) | ❌ | ❌ | ❌ |
+| Tem teñval | evel ar reizhiad | evel ar reizhiad | evel ar reizhiad |
+| Enankad | logodenn, klavier | logodenn, klavier | logodenn, klavier, pavez-stok |
+| Pelec'h e kaout | installer pe ZIP (rakwel) | .deb, .rpm (rakwel) | DMG pe ZIP (rakwel hep siell) |
 
 ✅ en arload war ar platform-se · ❌ ne vez ket kinniget eno · 🔜 steuñvet · 🔧 CI er mammennoù, savet ha loc'het gant CI ar raktres war ar reizhiad-se, n'eo ket bet gwiriet eno c'hoazh gant ur servijer, ur rannadenn pe ur c'hamera gwirion · plat hepken: ar video a vez lennet plat, gant ur gemennadenn, rak keflusker skeudenniñ video 360° an urzhiataerioù n'eus anezhañ nemet war Windows, ha war ar skinwelioù LG e chom da vuzuliañ hag-eñ e ro webOS skeudennoù ar video d'ar sferenn. "Ul lagad" a dalv e ziskouez ur restr 3D e lagad kleiz war ur skramm plat. Ar bann LG webOS a zo un arload a-ziforc'h, ma tremen e savadur amprouiñ 0.1.0 e amprouoù war CI ar raktres ha n'eo ket bet loc'het c'hoazh war ur skinwel. N'eo ket bet amprouet pep ✅ war un trevnad gwirion c'hoazh: petra zo bet amprouet ha pelec'h, ha petra a chom da gadarnaat, zo e [Perzhioù](../docs/immuch360/features.md), [Skor ar reizhiadoù](../docs/immuch360/platform-support.md) ha [Keverlec'hded](../docs/immuch360/compatibility.md).
 

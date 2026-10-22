@@ -245,28 +245,51 @@ DJI-droonien 360°-pallot (Mini, Air, Mavic ja muut, tunnistettuina kamerastaan)
 
 Yksi koodikanta kuudelle ympäristölle ja erillinen sovellus LG-televisioille. Mitä kullakin on tänään:
 
-| Ominaisuus | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galleria, albumit, haku Immich-palvelimella | ✅ | ✅ | ✅ katselin | ✅ katselin | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ilman palvelinta: laitteen oma media | ✅ | ✅ | vain jaot | ❌ | ✅ | ✅ kansiot | ✅ kansiot | ✅ kansiot |
-| Litteät kuvat ja videot | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Kuvan kääntö yhdellä näppäimellä | ✅ | ✅ | ✅ värinäppäimet | ✅ värinäppäimet | ✅ ikkuna | ✅ | ✅ | ✅ |
-| 360°-kuvat pallona | ✅ | ✅ | ✅ | ✅ | ✅ immersiivinen | ✅ | ✅ | 🔧 CI |
-| 360°-videot | ✅ | ✅ ei aikapalkkia | ✅ ilmoitus, jos ei dekoodattavissa | vain litteänä | ✅ immersiivinen | ✅ | vain litteänä | vain litteänä |
-| 3D ja VR180 | ✅ yksi silmä | ✅ yksi silmä | ✅ yksi silmä | kuvat yksi silmä, videot litteinä | ✅ todellinen 3D | ✅ yksi silmä | kuvat yksi silmä, videot litteinä | kuvat yksi silmä, videot litteinä |
-| Spatial 2.5D (pään seuranta) | ✅ kokeellinen | ✅ kokeellinen | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Applen spatial-kuvat | ✅ yksi silmä | ✅ yksi silmä | ✅ yksi silmä | ❌ | ✅ 3D | ✅ yksi silmä | 🔧 CI | 🔧 CI |
-| Insta360-, GoPro- ja DJI-raakatiedostot | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI kuvat, videot litteinä | 🔧 CI kuvat, videot litteinä |
-| SMB-, WebDAV-, DLNA-jaot | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kamerat: tallenteet | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kamerat: suora kuva | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Jaa tämä laite verkossa | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Lähetä Immichiin jaoista ja laitteesta | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tuonti DJI-droonista tai kortilta USB:n kautta (kokeellinen) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tumma teema | järjestelmän mukaan | järjestelmän mukaan | ✅ oletuksena | ✅ ainoa teema | järjestelmän mukaan | järjestelmän mukaan | järjestelmän mukaan | järjestelmän mukaan |
-| Syöte | kosketus, gyroskooppi | kosketus, gyroskooppi | kaukosäädin; Vasen ja Oikea myös videon aikana, Menu tietoja varten | kaukosäädin, Magic Remote | ohjaimet, kädet | hiiri, näppäimistö | hiiri, näppäimistö | hiiri, näppäimistö, ohjauslevy |
-| Mistä sen saa | Google Play, APK | App Store (tarkastuksessa) | APK, Google Play (tarkastuksessa) | .ipk-testibuild, Developer Mode | Horizon Store, APK | asennusohjelma tai ZIP (esikatselu) | .deb, .rpm (esikatselu) | DMG tai ZIP (allekirjoittamaton esikatselu) |
+| Ominaisuus | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galleria, albumit, haku Immich-palvelimella | ✅ | ✅ | ✅ katselin | ✅ katselin | ✅ |
+| Ilman palvelinta: laitteen oma media | ✅ | ✅ | vain jaot | ❌ | ✅ |
+| Litteät kuvat ja videot | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Kuvan kääntö yhdellä näppäimellä | ✅ | ✅ | ✅ värinäppäimet | ✅ värinäppäimet | ✅ ikkuna |
+| 360°-kuvat pallona | ✅ | ✅ | ✅ | ✅ | ✅ immersiivinen |
+| 360°-videot | ✅ | ✅ ei aikapalkkia | ✅ ilmoitus, jos ei dekoodattavissa | vain litteänä | ✅ immersiivinen |
+| 3D ja VR180 | ✅ yksi silmä | ✅ yksi silmä | ✅ yksi silmä | kuvat yksi silmä, videot litteinä | ✅ todellinen 3D |
+| Spatial 2.5D (pään seuranta) | ✅ kokeellinen | ✅ kokeellinen | ❌ | ❌ | ❌ |
+| Applen spatial-kuvat | ✅ yksi silmä | ✅ yksi silmä | ✅ yksi silmä | ❌ | ✅ 3D |
+| Insta360-, GoPro- ja DJI-raakatiedostot | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB-, WebDAV-, DLNA-jaot | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-kamerat: tallenteet | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-kamerat: suora kuva | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Jaa tämä laite verkossa | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Lähetä Immichiin jaoista ja laitteesta | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Tuonti DJI-droonista tai kortilta USB:n kautta (kokeellinen) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tumma teema | järjestelmän mukaan | järjestelmän mukaan | ✅ oletuksena | ✅ ainoa teema | järjestelmän mukaan |
+| Syöte | kosketus, gyroskooppi | kosketus, gyroskooppi | kaukosäädin; Vasen ja Oikea myös videon aikana, Menu tietoja varten | kaukosäädin, Magic Remote | ohjaimet, kädet |
+| Mistä sen saa | Google Play, APK | App Store (tarkastuksessa) | APK, Google Play (tarkastuksessa) | .ipk-testibuild, Developer Mode | Horizon Store, APK |
+
+| Ominaisuus | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galleria, albumit, haku Immich-palvelimella | ✅ | 🔧 CI | 🔧 CI |
+| Ilman palvelinta: laitteen oma media | ✅ kansiot | ✅ kansiot | ✅ kansiot |
+| Litteät kuvat ja videot | ✅ | ✅ | ✅ |
+| Kuvan kääntö yhdellä näppäimellä | ✅ | ✅ | ✅ |
+| 360°-kuvat pallona | ✅ | ✅ | 🔧 CI |
+| 360°-videot | ✅ | vain litteänä | vain litteänä |
+| 3D ja VR180 | ✅ yksi silmä | kuvat yksi silmä, videot litteinä | kuvat yksi silmä, videot litteinä |
+| Spatial 2.5D (pään seuranta) | 🔜 | ❌ | ❌ |
+| Applen spatial-kuvat | ✅ yksi silmä | 🔧 CI | 🔧 CI |
+| Insta360-, GoPro- ja DJI-raakatiedostot | ✅ | 🔧 CI kuvat, videot litteinä | 🔧 CI kuvat, videot litteinä |
+| SMB-, WebDAV-, DLNA-jaot | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kamerat: tallenteet | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kamerat: suora kuva | ✅ | 🔧 CI | 🔧 CI |
+| Jaa tämä laite verkossa | ✅ | ❌ | ❌ |
+| Lähetä Immichiin jaoista ja laitteesta | ✅ | 🔧 CI | 🔧 CI |
+| Tuonti DJI-droonista tai kortilta USB:n kautta (kokeellinen) | ❌ | ❌ | ❌ |
+| Tumma teema | järjestelmän mukaan | järjestelmän mukaan | järjestelmän mukaan |
+| Syöte | hiiri, näppäimistö | hiiri, näppäimistö | hiiri, näppäimistö, ohjauslevy |
+| Mistä sen saa | asennusohjelma tai ZIP (esikatselu) | .deb, .rpm (esikatselu) | DMG tai ZIP (allekirjoittamaton esikatselu) |
 
 ✅ sovelluksessa tällä alustalla · ❌ ei tarjota sillä · 🔜 suunnitteilla · 🔧 CI lähdekoodissa, projektin CI rakentaa ja käynnistää sen tällä järjestelmällä, mutta sitä ei ole vielä tarkistettu siellä oikealla palvelimella, jaolla tai kameralla · vain litteänä: video toistuu litteänä ilmoituksen kera, koska tietokoneiden 360°-videorenderöijä on vain Windowsilla, ja LG-televisioissa on vielä mittaamatta, antaako webOS videokuvat pallolle. "Yksi silmä" tarkoittaa, että 3D-tiedosto näyttää vasemman silmän litteällä näytöllä. LG webOS -sarake on erillinen sovellus, jonka testibuild 0.1.0 läpäisee testinsä projektin CI:ssä eikä ole vielä toiminut televisiossa. Jokaista ✅-merkintää ei ole vielä tarkistettu oikealla laitteella: mitä on tarkistettu missä, ja mitä pitää vielä vahvistaa, löytyy sivuilta [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) ja [Compatibility](../docs/immuch360/compatibility.md).
 

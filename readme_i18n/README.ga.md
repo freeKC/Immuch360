@@ -245,28 +245,51 @@ Taispeántar sféir 360° na ndrón DJI (Mini, Air, Mavic agus eile, aitheanta �
 
 Bunchód amháin do shé thimpeallacht, agus aip ar leith do theilifíseáin LG. Seo atá ag gach ceann inniu:
 
-| Cumas | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Gailearaí, ailbhéim, cuardach le freastalaí Immich | ✅ | ✅ | ✅ amharcóir | ✅ amharcóir | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Gan freastalaí: meáin féin an ghléis | ✅ | ✅ | comhroinnt amháin | ❌ | ✅ | ✅ fillteáin | ✅ fillteáin | ✅ fillteáin |
-| Grianghraif agus físeáin chothroma | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Cas grianghraf le heochair amháin | ✅ | ✅ | ✅ eochracha daite | ✅ eochracha daite | ✅ fuinneog | ✅ | ✅ | ✅ |
-| Grianghraif 360° mar sféar | ✅ | ✅ | ✅ | ✅ | ✅ tumthach | ✅ | ✅ | 🔧 CI |
-| Físeáin 360° | ✅ | ✅ gan barra ama | ✅ teachtaireacht mura féidir díchódú | cothrom amháin | ✅ tumthach | ✅ | cothrom amháin | cothrom amháin |
-| 3D agus VR180 | ✅ súil amháin | ✅ súil amháin | ✅ súil amháin | grianghraif súil amháin, físeáin chothroma | ✅ 3D cheart | ✅ súil amháin | grianghraif súil amháin, físeáin chothroma | grianghraif súil amháin, físeáin chothroma |
-| Spásúil 2.5D (rianú cinn) | ✅ turgnamhach | ✅ turgnamhach | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Grianghraif spásúla Apple | ✅ súil amháin | ✅ súil amháin | ✅ súil amháin | ❌ | ✅ 3D | ✅ súil amháin | 🔧 CI | 🔧 CI |
-| Comhaid amha Insta360, GoPro agus DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI grianghraif, físeáin chothroma | 🔧 CI grianghraif, físeáin chothroma |
-| Comhroinnt SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ceamaraí Tapo: taifeadtaí | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ceamaraí Tapo: amharc beo | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Comhroinn an gléas seo ar an líonra | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Uaslódáil chuig Immich ó chomhroinnt agus ón ghléas | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Iompórtáil ó dhrón DJI nó ó chárta thar USB (turgnamhach) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Téama dorcha | mar an córas | mar an córas | ✅ de réir réamhshocraithe | ✅ an t-aon téama | mar an córas | mar an córas | mar an córas | mar an córas |
-| Ionchur | tadhall, gíreascóp | tadhall, gíreascóp | cianrialtán; Clé agus Deas le linn físeáin freisin, Menu do na sonraí | cianrialtán, Magic Remote | rialtóirí, lámha | luch, méarchlár | luch, méarchlár | luch, méarchlár, ceap tadhaill |
-| Cá bhfaighidh tú í | Google Play, APK | App Store (faoi athbhreithniú) | APK, Google Play (faoi athbhreithniú) | tógáil tástála .ipk, Developer Mode | Horizon Store, APK | suiteálaí nó ZIP (réamhamharc) | .deb, .rpm (réamhamharc) | DMG nó ZIP (réamhamharc gan síniú) |
+| Cumas | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Gailearaí, ailbhéim, cuardach le freastalaí Immich | ✅ | ✅ | ✅ amharcóir | ✅ amharcóir | ✅ |
+| Gan freastalaí: meáin féin an ghléis | ✅ | ✅ | comhroinnt amháin | ❌ | ✅ |
+| Grianghraif agus físeáin chothroma | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Cas grianghraf le heochair amháin | ✅ | ✅ | ✅ eochracha daite | ✅ eochracha daite | ✅ fuinneog |
+| Grianghraif 360° mar sféar | ✅ | ✅ | ✅ | ✅ | ✅ tumthach |
+| Físeáin 360° | ✅ | ✅ gan barra ama | ✅ teachtaireacht mura féidir díchódú | cothrom amháin | ✅ tumthach |
+| 3D agus VR180 | ✅ súil amháin | ✅ súil amháin | ✅ súil amháin | grianghraif súil amháin, físeáin chothroma | ✅ 3D cheart |
+| Spásúil 2.5D (rianú cinn) | ✅ turgnamhach | ✅ turgnamhach | ❌ | ❌ | ❌ |
+| Grianghraif spásúla Apple | ✅ súil amháin | ✅ súil amháin | ✅ súil amháin | ❌ | ✅ 3D |
+| Comhaid amha Insta360, GoPro agus DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Comhroinnt SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Ceamaraí Tapo: taifeadtaí | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Ceamaraí Tapo: amharc beo | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Comhroinn an gléas seo ar an líonra | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Uaslódáil chuig Immich ó chomhroinnt agus ón ghléas | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Iompórtáil ó dhrón DJI nó ó chárta thar USB (turgnamhach) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Téama dorcha | mar an córas | mar an córas | ✅ de réir réamhshocraithe | ✅ an t-aon téama | mar an córas |
+| Ionchur | tadhall, gíreascóp | tadhall, gíreascóp | cianrialtán; Clé agus Deas le linn físeáin freisin, Menu do na sonraí | cianrialtán, Magic Remote | rialtóirí, lámha |
+| Cá bhfaighidh tú í | Google Play, APK | App Store (faoi athbhreithniú) | APK, Google Play (faoi athbhreithniú) | tógáil tástála .ipk, Developer Mode | Horizon Store, APK |
+
+| Cumas | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Gailearaí, ailbhéim, cuardach le freastalaí Immich | ✅ | 🔧 CI | 🔧 CI |
+| Gan freastalaí: meáin féin an ghléis | ✅ fillteáin | ✅ fillteáin | ✅ fillteáin |
+| Grianghraif agus físeáin chothroma | ✅ | ✅ | ✅ |
+| Cas grianghraf le heochair amháin | ✅ | ✅ | ✅ |
+| Grianghraif 360° mar sféar | ✅ | ✅ | 🔧 CI |
+| Físeáin 360° | ✅ | cothrom amháin | cothrom amháin |
+| 3D agus VR180 | ✅ súil amháin | grianghraif súil amháin, físeáin chothroma | grianghraif súil amháin, físeáin chothroma |
+| Spásúil 2.5D (rianú cinn) | 🔜 | ❌ | ❌ |
+| Grianghraif spásúla Apple | ✅ súil amháin | 🔧 CI | 🔧 CI |
+| Comhaid amha Insta360, GoPro agus DJI | ✅ | 🔧 CI grianghraif, físeáin chothroma | 🔧 CI grianghraif, físeáin chothroma |
+| Comhroinnt SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Ceamaraí Tapo: taifeadtaí | ✅ | 🔧 CI | 🔧 CI |
+| Ceamaraí Tapo: amharc beo | ✅ | 🔧 CI | 🔧 CI |
+| Comhroinn an gléas seo ar an líonra | ✅ | ❌ | ❌ |
+| Uaslódáil chuig Immich ó chomhroinnt agus ón ghléas | ✅ | 🔧 CI | 🔧 CI |
+| Iompórtáil ó dhrón DJI nó ó chárta thar USB (turgnamhach) | ❌ | ❌ | ❌ |
+| Téama dorcha | mar an córas | mar an córas | mar an córas |
+| Ionchur | luch, méarchlár | luch, méarchlár | luch, méarchlár, ceap tadhaill |
+| Cá bhfaighidh tú í | suiteálaí nó ZIP (réamhamharc) | .deb, .rpm (réamhamharc) | DMG nó ZIP (réamhamharc gan síniú) |
 
 ✅ san aip ar an ardán sin · ❌ nach dtugtar ann · 🔜 pleanáilte · 🔧 CI sna foinsí, tógtha agus tosaithe ag CI an tionscadail ar an gcóras sin, gan seiceáil fós ansin le freastalaí, comhroinnt ná ceamara fíor · cothrom amháin: seinntear an físeán cothrom, le teachtaireacht, mar nach bhfuil rindreálaí físeáin 360° na ríomhairí ann ach ar Windows, agus ar theilifíseáin LG tá sé fós le tomhas an dtugann webOS frámaí físe don sféar. Ciallaíonn "súil amháin" go dtaispeánann comhad 3D a shúil chlé ar scáileán cothrom. Is aip ar leith atá i gcolún LG webOS: éiríonn lena tógáil tástála 0.1.0 ina tástálacha ar CI an tionscadail, agus níor ritheadh fós ar theilifís í. Níor seiceáladh gach ✅ ar ghléas fíor fós: cad a seiceáladh agus cén áit, agus cad atá fágtha le dearbhú, tá siad in [Gnéithe](../docs/immuch360/features.md), [Tacaíocht ardáin](../docs/immuch360/platform-support.md) agus [Comhoiriúnacht](../docs/immuch360/compatibility.md).
 

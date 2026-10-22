@@ -245,28 +245,51 @@ Importujte fotky a videá z dronu DJI cez USB priamo na váš server Immich: pri
 
 Jedna kódová základňa, šesť prostredí a samostatná aplikácia pre televízory LG. Čo má každé z nich dnes:
 
-| Funkcia | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galéria, albumy, vyhľadávanie so serverom Immich | ✅ | ✅ | ✅ prehliadač | ✅ prehliadač | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Bez servera: vlastné médiá zariadenia | ✅ | ✅ | len úložiská | ❌ | ✅ | ✅ priečinky | ✅ priečinky | ✅ priečinky |
-| Ploché fotky a videá | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Otočenie fotky jedným klávesom | ✅ | ✅ | ✅ farebné tlačidlá | ✅ farebné tlačidlá | ✅ okno | ✅ | ✅ | ✅ |
-| Fotky 360° ako guľa | ✅ | ✅ | ✅ | ✅ | ✅ imerzívne | ✅ | ✅ | 🔧 CI |
-| Videá 360° | ✅ | ✅ bez časovej lišty | ✅ správa, ak sa nedá dekódovať | len ploché | ✅ imerzívne | ✅ | len ploché | len ploché |
-| 3D a VR180 | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | fotky jedno oko, videá ploché | ✅ skutočné 3D | ✅ jedno oko | fotky jedno oko, videá ploché | fotky jedno oko, videá ploché |
-| Spatial 2.5D (sledovanie hlavy) | ✅ experimentálne | ✅ experimentálne | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Priestorové fotky Apple | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ❌ | ✅ 3D | ✅ jedno oko | 🔧 CI | 🔧 CI |
-| RAW súbory Insta360, GoPro a DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI fotky, videá ploché | 🔧 CI fotky, videá ploché |
-| Úložiská SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamery Tapo: záznamy | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Kamery Tapo: živý prenos | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Zdieľanie tohto zariadenia v sieti | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Nahrávanie do Immich z úložísk a zariadenia | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import z dronu DJI alebo karty cez USB (experimentálne) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Tmavá téma | podľa systému | podľa systému | ✅ predvolene | ✅ jediná téma | podľa systému | podľa systému | podľa systému | podľa systému |
-| Vstup | dotyk, gyroskop | dotyk, gyroskop | diaľkové ovládanie; Vľavo a Vpravo aj počas videa, Menu pre podrobnosti | diaľkové ovládanie, Magic Remote | ovládače, ruky | myš, klávesnica | myš, klávesnica | myš, klávesnica, trackpad |
-| Kde ho získať | Google Play, APK | App Store (v recenzii) | APK, Google Play (v recenzii) | testovací build .ipk, Developer Mode | Horizon Store, APK | inštalátor alebo ZIP (náhľad) | .deb, .rpm (náhľad) | DMG alebo ZIP (nepodpísaný náhľad) |
+| Funkcia | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galéria, albumy, vyhľadávanie so serverom Immich | ✅ | ✅ | ✅ prehliadač | ✅ prehliadač | ✅ |
+| Bez servera: vlastné médiá zariadenia | ✅ | ✅ | len úložiská | ❌ | ✅ |
+| Ploché fotky a videá | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Otočenie fotky jedným klávesom | ✅ | ✅ | ✅ farebné tlačidlá | ✅ farebné tlačidlá | ✅ okno |
+| Fotky 360° ako guľa | ✅ | ✅ | ✅ | ✅ | ✅ imerzívne |
+| Videá 360° | ✅ | ✅ bez časovej lišty | ✅ správa, ak sa nedá dekódovať | len ploché | ✅ imerzívne |
+| 3D a VR180 | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | fotky jedno oko, videá ploché | ✅ skutočné 3D |
+| Spatial 2.5D (sledovanie hlavy) | ✅ experimentálne | ✅ experimentálne | ❌ | ❌ | ❌ |
+| Priestorové fotky Apple | ✅ jedno oko | ✅ jedno oko | ✅ jedno oko | ❌ | ✅ 3D |
+| RAW súbory Insta360, GoPro a DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Úložiská SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamery Tapo: záznamy | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Kamery Tapo: živý prenos | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Zdieľanie tohto zariadenia v sieti | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Nahrávanie do Immich z úložísk a zariadenia | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import z dronu DJI alebo karty cez USB (experimentálne) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Tmavá téma | podľa systému | podľa systému | ✅ predvolene | ✅ jediná téma | podľa systému |
+| Vstup | dotyk, gyroskop | dotyk, gyroskop | diaľkové ovládanie; Vľavo a Vpravo aj počas videa, Menu pre podrobnosti | diaľkové ovládanie, Magic Remote | ovládače, ruky |
+| Kde ho získať | Google Play, APK | App Store (v recenzii) | APK, Google Play (v recenzii) | testovací build .ipk, Developer Mode | Horizon Store, APK |
+
+| Funkcia | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galéria, albumy, vyhľadávanie so serverom Immich | ✅ | 🔧 CI | 🔧 CI |
+| Bez servera: vlastné médiá zariadenia | ✅ priečinky | ✅ priečinky | ✅ priečinky |
+| Ploché fotky a videá | ✅ | ✅ | ✅ |
+| Otočenie fotky jedným klávesom | ✅ | ✅ | ✅ |
+| Fotky 360° ako guľa | ✅ | ✅ | 🔧 CI |
+| Videá 360° | ✅ | len ploché | len ploché |
+| 3D a VR180 | ✅ jedno oko | fotky jedno oko, videá ploché | fotky jedno oko, videá ploché |
+| Spatial 2.5D (sledovanie hlavy) | 🔜 | ❌ | ❌ |
+| Priestorové fotky Apple | ✅ jedno oko | 🔧 CI | 🔧 CI |
+| RAW súbory Insta360, GoPro a DJI | ✅ | 🔧 CI fotky, videá ploché | 🔧 CI fotky, videá ploché |
+| Úložiská SMB, WebDAV, DLNA | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Kamery Tapo: záznamy | ✅ | 🔧 CI | 🔧 CI |
+| Kamery Tapo: živý prenos | ✅ | 🔧 CI | 🔧 CI |
+| Zdieľanie tohto zariadenia v sieti | ✅ | ❌ | ❌ |
+| Nahrávanie do Immich z úložísk a zariadenia | ✅ | 🔧 CI | 🔧 CI |
+| Import z dronu DJI alebo karty cez USB (experimentálne) | ❌ | ❌ | ❌ |
+| Tmavá téma | podľa systému | podľa systému | podľa systému |
+| Vstup | myš, klávesnica | myš, klávesnica | myš, klávesnica, trackpad |
+| Kde ho získať | inštalátor alebo ZIP (náhľad) | .deb, .rpm (náhľad) | DMG alebo ZIP (nepodpísaný náhľad) |
 
 ✅ v aplikácii na tejto platforme · ❌ tam neponúkané · 🔜 plánované · 🔧 CI v zdrojovom kóde, zostavené a spustené CI projektu na tomto systéme, tam ešte neoverené so skutočným serverom, úložiskom ani kamerou · len ploché: video sa prehrá ploché, so správou, pretože 360° video renderer počítačov je len pre Windows, a na televízoroch LG ešte treba zmerať, či webOS odovzdáva snímky videa guli. „Jedno oko“ znamená, že 3D súbor zobrazuje svoje ľavé oko na plochej obrazovke. Stĺpec LG webOS je samostatná aplikácia, ktorej testovací build 0.1.0 prechádza svojimi testami v CI projektu a zatiaľ nebežal na televízore. Nie každé ✅ bolo už overené na skutočnom zariadení: kde čo bolo overené a čo ešte zostáva potvrdiť, je v [Funkciách](../docs/immuch360/features.md), [Podpore platforiem](../docs/immuch360/platform-support.md) a [Kompatibilite](../docs/immuch360/compatibility.md).
 

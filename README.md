@@ -233,28 +233,51 @@ The 360° spheres of DJI drones (Mini, Air, Mavic and others, recognised from th
 
 One code base for six environments, and a separate app for LG TVs. What each one has today:
 
-| Capability | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Without a server: the device's own media | ✅ | ✅ | shares only | ❌ | ✅ | ✅ folders | ✅ folders | ✅ folders |
-| Flat photos and videos | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Rotate a photo with one key | ✅ | ✅ | ✅ colour keys | ✅ colour keys | ✅ window | ✅ | ✅ | ✅ |
-| 360° photos as a sphere | ✅ | ✅ | ✅ | ✅ | ✅ immersive | ✅ | ✅ | 🔧 CI |
-| 360° videos | ✅ | ✅ no time bar | ✅ message if not decodable | flat only | ✅ immersive | ✅ | flat only | flat only |
-| 3D and VR180 | ✅ one eye | ✅ one eye | ✅ one eye | photos one eye, videos flat | ✅ true 3D | ✅ one eye | photos one eye, videos flat | photos one eye, videos flat |
-| Spatial 2.5D (head tracking) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple spatial photos | ✅ one eye | ✅ one eye | ✅ one eye | ❌ | ✅ 3D | ✅ one eye | 🔧 CI | 🔧 CI |
-| Raw Insta360, GoPro and DJI files | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI photos, videos flat | 🔧 CI photos, videos flat |
-| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo cameras: recordings | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo cameras: live view | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Share this device on the network | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Upload to Immich from shares and the device | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import from a DJI drone or a card over USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Dark theme | as the system | as the system | ✅ by default | ✅ only theme | as the system | as the system | as the system | as the system |
-| Input | touch, gyroscope | touch, gyroscope | remote; Left and Right also during a video, Menu for the details | remote, Magic Remote | controllers, hands | mouse, keyboard | mouse, keyboard | mouse, keyboard, trackpad |
-| Where to get it | Google Play, APK | App Store (in review) | APK, Google Play (in review) | .ipk test build, Developer Mode | Horizon Store, APK | installer or ZIP (preview) | .deb, .rpm (preview) | DMG or ZIP (unsigned preview) |
+| Capability | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ |
+| Without a server: the device's own media | ✅ | ✅ | shares only | ❌ | ✅ |
+| Flat photos and videos | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Rotate a photo with one key | ✅ | ✅ | ✅ colour keys | ✅ colour keys | ✅ window |
+| 360° photos as a sphere | ✅ | ✅ | ✅ | ✅ | ✅ immersive |
+| 360° videos | ✅ | ✅ no time bar | ✅ message if not decodable | flat only | ✅ immersive |
+| 3D and VR180 | ✅ one eye | ✅ one eye | ✅ one eye | photos one eye, videos flat | ✅ true 3D |
+| Spatial 2.5D (head tracking) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ |
+| Apple spatial photos | ✅ one eye | ✅ one eye | ✅ one eye | ❌ | ✅ 3D |
+| Raw Insta360, GoPro and DJI files | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo cameras: recordings | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo cameras: live view | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Share this device on the network | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Upload to Immich from shares and the device | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import from a DJI drone or a card over USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Dark theme | as the system | as the system | ✅ by default | ✅ only theme | as the system |
+| Input | touch, gyroscope | touch, gyroscope | remote; Left and Right also during a video, Menu for the details | remote, Magic Remote | controllers, hands |
+| Where to get it | Google Play, APK | App Store (in review) | APK, Google Play (in review) | .ipk test build, Developer Mode | Horizon Store, APK |
+
+| Capability | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Gallery, albums, search with an Immich server | ✅ | 🔧 CI | 🔧 CI |
+| Without a server: the device's own media | ✅ folders | ✅ folders | ✅ folders |
+| Flat photos and videos | ✅ | ✅ | ✅ |
+| Rotate a photo with one key | ✅ | ✅ | ✅ |
+| 360° photos as a sphere | ✅ | ✅ | 🔧 CI |
+| 360° videos | ✅ | flat only | flat only |
+| 3D and VR180 | ✅ one eye | photos one eye, videos flat | photos one eye, videos flat |
+| Spatial 2.5D (head tracking) | 🔜 | ❌ | ❌ |
+| Apple spatial photos | ✅ one eye | 🔧 CI | 🔧 CI |
+| Raw Insta360, GoPro and DJI files | ✅ | 🔧 CI photos, videos flat | 🔧 CI photos, videos flat |
+| SMB, WebDAV, DLNA shares | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo cameras: recordings | ✅ | 🔧 CI | 🔧 CI |
+| Tapo cameras: live view | ✅ | 🔧 CI | 🔧 CI |
+| Share this device on the network | ✅ | ❌ | ❌ |
+| Upload to Immich from shares and the device | ✅ | 🔧 CI | 🔧 CI |
+| Import from a DJI drone or a card over USB (experimental) | ❌ | ❌ | ❌ |
+| Dark theme | as the system | as the system | as the system |
+| Input | mouse, keyboard | mouse, keyboard | mouse, keyboard, trackpad |
+| Where to get it | installer or ZIP (preview) | .deb, .rpm (preview) | DMG or ZIP (unsigned preview) |
 
 ✅ in the app on that platform · ❌ not offered there · 🔜 planned · 🔧 CI in the sources, built and started by the project's CI on that system, not checked with a real server, share or camera there yet · flat only: the video plays flat, with a message, because the 360° video renderer of the computers is Windows only, and on LG TVs whether webOS hands video frames to the sphere is still to be measured. "One eye" means a 3D file shows its left eye on a flat screen. The LG webOS column is a separate app, whose test build 0.1.0 passes its tests on the project's CI and has not run on a TV yet. Not every ✅ has been checked on a real device yet: what was checked where, and what remains to confirm, is in [Features](docs/immuch360/features.md), [Platform support](docs/immuch360/platform-support.md) and [Compatibility](docs/immuch360/compatibility.md).
 

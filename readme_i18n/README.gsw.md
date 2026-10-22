@@ -245,28 +245,51 @@ D 360°-Kugle vo DJI-Drohne (Mini, Air, Mavic und anderi, a ihrere Kamera erkenn
 
 Ei Codebasis für sächs Umgäbige, und e separati App für LG-Fernseh. Was jedi hüt hät:
 
-| Fähigkeit | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galerie, Albene, Sueche mit emne Immich-Server | ✅ | ✅ | ✅ Viewer | ✅ Viewer | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Ohni Server: d eigete Medie vom Grät | ✅ | ✅ | nur Freigabe | ❌ | ✅ | ✅ Ordner | ✅ Ordner | ✅ Ordner |
-| Flachi Foto und Video | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Es Foto mit einere Taste dräie | ✅ | ✅ | ✅ Farbtaste | ✅ Farbtaste | ✅ Fänschter | ✅ | ✅ | ✅ |
-| 360°-Foto als Kugle | ✅ | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
-| 360°-Video | ✅ | ✅ kei Ziitleischte | ✅ Meldig, wänn nöd dekodierbar | nur flach | ✅ immersiv | ✅ | nur flach | nur flach |
-| 3D und VR180 | ✅ es Oug | ✅ es Oug | ✅ es Oug | Foto es Oug, Video flach | ✅ echts 3D | ✅ es Oug | Foto es Oug, Video flach | Foto es Oug, Video flach |
-| Spatial 2.5D (Chopf-Tracking) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple-Spatial-Foto | ✅ es Oug | ✅ es Oug | ✅ es Oug | ❌ | ✅ 3D | ✅ es Oug | 🔧 CI | 🔧 CI |
-| Rohi Insta360-, GoPro- und DJI-Dateie | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI Foto, Video flach | 🔧 CI Foto, Video flach |
-| SMB-, WebDAV-, DLNA-Freigabe | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-Kameras: Ufnahme | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-Kameras: Live-Aasicht | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Das Grät im Netzwerk freigeh | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Uf Immich ufelade vo Freigabe und em Grät | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import vo ere DJI-Drohne oder ere Charte über USB (experimentell) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Dunkels Design | wie s System | wie s System | ✅ standardmässig | ✅ einzigs Design | wie s System | wie s System | wie s System | wie s System |
-| Iigab | Touch, Gyroskop | Touch, Gyroskop | Fernbedienig; Links und Rächts au während emne Video, Menu für d Detail | Fernbedienig, Magic Remote | Controller, Händ | Mus, Tastatur | Mus, Tastatur | Mus, Tastatur, Trackpad |
-| Wo du si überchunsch | Google Play, APK | App Store (in Prüefig) | APK, Google Play (in Prüefig) | .ipk-Test-Build, Developer Mode | Horizon Store, APK | Installer oder ZIP (Vorschau) | .deb, .rpm (Vorschau) | DMG oder ZIP (nöd signierti Vorschau) |
+| Fähigkeit | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galerie, Albene, Sueche mit emne Immich-Server | ✅ | ✅ | ✅ Viewer | ✅ Viewer | ✅ |
+| Ohni Server: d eigete Medie vom Grät | ✅ | ✅ | nur Freigabe | ❌ | ✅ |
+| Flachi Foto und Video | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Es Foto mit einere Taste dräie | ✅ | ✅ | ✅ Farbtaste | ✅ Farbtaste | ✅ Fänschter |
+| 360°-Foto als Kugle | ✅ | ✅ | ✅ | ✅ | ✅ immersiv |
+| 360°-Video | ✅ | ✅ kei Ziitleischte | ✅ Meldig, wänn nöd dekodierbar | nur flach | ✅ immersiv |
+| 3D und VR180 | ✅ es Oug | ✅ es Oug | ✅ es Oug | Foto es Oug, Video flach | ✅ echts 3D |
+| Spatial 2.5D (Chopf-Tracking) | ✅ experimentell | ✅ experimentell | ❌ | ❌ | ❌ |
+| Apple-Spatial-Foto | ✅ es Oug | ✅ es Oug | ✅ es Oug | ❌ | ✅ 3D |
+| Rohi Insta360-, GoPro- und DJI-Dateie | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB-, WebDAV-, DLNA-Freigabe | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-Kameras: Ufnahme | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-Kameras: Live-Aasicht | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Das Grät im Netzwerk freigeh | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Uf Immich ufelade vo Freigabe und em Grät | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import vo ere DJI-Drohne oder ere Charte über USB (experimentell) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Dunkels Design | wie s System | wie s System | ✅ standardmässig | ✅ einzigs Design | wie s System |
+| Iigab | Touch, Gyroskop | Touch, Gyroskop | Fernbedienig; Links und Rächts au während emne Video, Menu für d Detail | Fernbedienig, Magic Remote | Controller, Händ |
+| Wo du si überchunsch | Google Play, APK | App Store (in Prüefig) | APK, Google Play (in Prüefig) | .ipk-Test-Build, Developer Mode | Horizon Store, APK |
+
+| Fähigkeit | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galerie, Albene, Sueche mit emne Immich-Server | ✅ | 🔧 CI | 🔧 CI |
+| Ohni Server: d eigete Medie vom Grät | ✅ Ordner | ✅ Ordner | ✅ Ordner |
+| Flachi Foto und Video | ✅ | ✅ | ✅ |
+| Es Foto mit einere Taste dräie | ✅ | ✅ | ✅ |
+| 360°-Foto als Kugle | ✅ | ✅ | 🔧 CI |
+| 360°-Video | ✅ | nur flach | nur flach |
+| 3D und VR180 | ✅ es Oug | Foto es Oug, Video flach | Foto es Oug, Video flach |
+| Spatial 2.5D (Chopf-Tracking) | 🔜 | ❌ | ❌ |
+| Apple-Spatial-Foto | ✅ es Oug | 🔧 CI | 🔧 CI |
+| Rohi Insta360-, GoPro- und DJI-Dateie | ✅ | 🔧 CI Foto, Video flach | 🔧 CI Foto, Video flach |
+| SMB-, WebDAV-, DLNA-Freigabe | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-Kameras: Ufnahme | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-Kameras: Live-Aasicht | ✅ | 🔧 CI | 🔧 CI |
+| Das Grät im Netzwerk freigeh | ✅ | ❌ | ❌ |
+| Uf Immich ufelade vo Freigabe und em Grät | ✅ | 🔧 CI | 🔧 CI |
+| Import vo ere DJI-Drohne oder ere Charte über USB (experimentell) | ❌ | ❌ | ❌ |
+| Dunkels Design | wie s System | wie s System | wie s System |
+| Iigab | Mus, Tastatur | Mus, Tastatur | Mus, Tastatur, Trackpad |
+| Wo du si überchunsch | Installer oder ZIP (Vorschau) | .deb, .rpm (Vorschau) | DMG oder ZIP (nöd signierti Vorschau) |
 
 ✅ i de App uf dere Plattform · ❌ nöd dört aagboten · 🔜 plant · 🔧 CI im Quällcode, vo de Projekt-CI uf däm System buillt und gstartet, aber dört na nöd mit emne echte Server, ere echte Freigabe oder ere echte Kamera gprüeft · nur flach: s Video lauft flach, mit ere Meldig, will de 360°-Video-Renderer vo de Computer nur uf Windows lauft, und uf LG-Fernseh mues na gmässe wärde, ob webOS d Videobilder a d Kugle wiitergit. «Es Oug» bedütet, dass e 3D-Datei ihres linke Oug uf emne flache Bildschirm zeigt. D Spalte LG webOS isch e separati App, dere ihre Test-Build 0.1.0 sini Tests uf de Projekt-CI bstaht und na nie uf emne Fernseh gloffe isch. Nöd jedes ✅ isch scho uf emne echte Grät gprüeft: was wo gprüeft isch, und was na z bestätige blibt, isch i de [Funktione](../docs/immuch360/features.md), [Plattform-Unterstützig](../docs/immuch360/platform-support.md) und [Kompatibilität](../docs/immuch360/compatibility.md).
 

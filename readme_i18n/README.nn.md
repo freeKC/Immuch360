@@ -245,28 +245,51 @@ Importer bileta og videoane frå ein DJI-drone over USB, rett til Immich-tenaren
 
 Éin kodebase for seks miljø, og ein eigen app for LG-TV-ar. Kva kvar av dei har i dag:
 
-| Funksjon | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Galleri, album, søk med Immich-tenar | ✅ | ✅ | ✅ visar | ✅ visar | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Utan tenar: eininga sine eigne media | ✅ | ✅ | berre delingar | ❌ | ✅ | ✅ mapper | ✅ mapper | ✅ mapper |
-| Flate bilete og videoar | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Snu eit bilete med éin tast | ✅ | ✅ | ✅ fargetastar | ✅ fargetastar | ✅ vindauge | ✅ | ✅ | ✅ |
-| 360°-bilete som ei kule | ✅ | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
-| 360°-videoar | ✅ | ✅ ingen tidslinje | ✅ melding om han ikkje kan dekodast | berre flatt | ✅ immersiv | ✅ | berre flatt | berre flatt |
-| 3D og VR180 | ✅ eitt auge | ✅ eitt auge | ✅ eitt auge | bilete eitt auge, videoar flate | ✅ ekte 3D | ✅ eitt auge | bilete eitt auge, videoar flate | bilete eitt auge, videoar flate |
-| Spatial 2.5D (hovudfølging) | ✅ eksperimentell | ✅ eksperimentell | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Romlege Apple-bilete | ✅ eitt auge | ✅ eitt auge | ✅ eitt auge | ❌ | ✅ 3D | ✅ eitt auge | 🔧 CI | 🔧 CI |
-| Råfiler frå Insta360, GoPro og DJI | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI bilete, videoar flate | 🔧 CI bilete, videoar flate |
-| SMB-, WebDAV-, DLNA-delingar | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kamera: opptak | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo-kamera: direktevising | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Del eininga på nettverket | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Last opp til Immich frå delingar og eininga | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Import frå ein DJI-drone eller eit kort over USB (eksperimentelt) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Mørkt tema | som systemet | som systemet | ✅ som standard | ✅ einaste tema | som systemet | som systemet | som systemet | som systemet |
-| Inndata | berøring, gyroskop | berøring, gyroskop | fjernkontroll; Venstre og Høgre også under ein video, Menu for detaljane | fjernkontroll, Magic Remote | kontrollerar, hender | mus, tastatur | mus, tastatur | mus, tastatur, styreflate |
-| Kvar du får han | Google Play, APK | App Store (under vurdering) | APK, Google Play (under vurdering) | .ipk test-build, Developer Mode | Horizon Store, APK | installasjonsprogram eller ZIP (førehandsvising) | .deb, .rpm (førehandsvising) | DMG eller ZIP (usignert førehandsvising) |
+| Funksjon | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Galleri, album, søk med Immich-tenar | ✅ | ✅ | ✅ visar | ✅ visar | ✅ |
+| Utan tenar: eininga sine eigne media | ✅ | ✅ | berre delingar | ❌ | ✅ |
+| Flate bilete og videoar | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Snu eit bilete med éin tast | ✅ | ✅ | ✅ fargetastar | ✅ fargetastar | ✅ vindauge |
+| 360°-bilete som ei kule | ✅ | ✅ | ✅ | ✅ | ✅ immersiv |
+| 360°-videoar | ✅ | ✅ ingen tidslinje | ✅ melding om han ikkje kan dekodast | berre flatt | ✅ immersiv |
+| 3D og VR180 | ✅ eitt auge | ✅ eitt auge | ✅ eitt auge | bilete eitt auge, videoar flate | ✅ ekte 3D |
+| Spatial 2.5D (hovudfølging) | ✅ eksperimentell | ✅ eksperimentell | ❌ | ❌ | ❌ |
+| Romlege Apple-bilete | ✅ eitt auge | ✅ eitt auge | ✅ eitt auge | ❌ | ✅ 3D |
+| Råfiler frå Insta360, GoPro og DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB-, WebDAV-, DLNA-delingar | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-kamera: opptak | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo-kamera: direktevising | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Del eininga på nettverket | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Last opp til Immich frå delingar og eininga | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Import frå ein DJI-drone eller eit kort over USB (eksperimentelt) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Mørkt tema | som systemet | som systemet | ✅ som standard | ✅ einaste tema | som systemet |
+| Inndata | berøring, gyroskop | berøring, gyroskop | fjernkontroll; Venstre og Høgre også under ein video, Menu for detaljane | fjernkontroll, Magic Remote | kontrollerar, hender |
+| Kvar du får han | Google Play, APK | App Store (under vurdering) | APK, Google Play (under vurdering) | .ipk test-build, Developer Mode | Horizon Store, APK |
+
+| Funksjon | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Galleri, album, søk med Immich-tenar | ✅ | 🔧 CI | 🔧 CI |
+| Utan tenar: eininga sine eigne media | ✅ mapper | ✅ mapper | ✅ mapper |
+| Flate bilete og videoar | ✅ | ✅ | ✅ |
+| Snu eit bilete med éin tast | ✅ | ✅ | ✅ |
+| 360°-bilete som ei kule | ✅ | ✅ | 🔧 CI |
+| 360°-videoar | ✅ | berre flatt | berre flatt |
+| 3D og VR180 | ✅ eitt auge | bilete eitt auge, videoar flate | bilete eitt auge, videoar flate |
+| Spatial 2.5D (hovudfølging) | 🔜 | ❌ | ❌ |
+| Romlege Apple-bilete | ✅ eitt auge | 🔧 CI | 🔧 CI |
+| Råfiler frå Insta360, GoPro og DJI | ✅ | 🔧 CI bilete, videoar flate | 🔧 CI bilete, videoar flate |
+| SMB-, WebDAV-, DLNA-delingar | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kamera: opptak | ✅ | 🔧 CI | 🔧 CI |
+| Tapo-kamera: direktevising | ✅ | 🔧 CI | 🔧 CI |
+| Del eininga på nettverket | ✅ | ❌ | ❌ |
+| Last opp til Immich frå delingar og eininga | ✅ | 🔧 CI | 🔧 CI |
+| Import frå ein DJI-drone eller eit kort over USB (eksperimentelt) | ❌ | ❌ | ❌ |
+| Mørkt tema | som systemet | som systemet | som systemet |
+| Inndata | mus, tastatur | mus, tastatur | mus, tastatur, styreflate |
+| Kvar du får han | installasjonsprogram eller ZIP (førehandsvising) | .deb, .rpm (førehandsvising) | DMG eller ZIP (usignert førehandsvising) |
 
 ✅ i appen på den plattforma · ❌ ikkje tilbode der · 🔜 planlagt · 🔧 CI i kjeldekoden, bygd og starta av CI-en til prosjektet på det systemet, ikkje sjekka med ein ekte tenar, ei ekte deling eller eit ekte kamera der enno · berre flatt: videoen blir spela av flatt, med ei melding, fordi 360°-videogjengjevinga til datamaskinane berre finst på Windows, og på LG-TV-ar står det enno att å måle om webOS gir videorammene vidare til kula. «Eitt auge» betyr at ei 3D-fil viser det venstre auget på ein flat skjerm. LG webOS-kolonnen er ein eigen app, der test-build 0.1.0 består testane sine på CI-en til prosjektet og ikkje har køyrt på ein TV enno. Ikkje alle ✅ er sjekka på ei ekte eining enno: kva som var sjekka kor, og kva som står igjen å stadfeste, er i [Funksjonar](../docs/immuch360/features.md), [Plattformstøtte](../docs/immuch360/platform-support.md) og [Kompatibilitet](../docs/immuch360/compatibility.md).
 

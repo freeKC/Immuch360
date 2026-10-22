@@ -245,28 +245,51 @@ DJI dronlarining 360° sferalari (Mini, Air, Mavic va boshqalar, kamerasi bo‘y
 
 Oltita muhit uchun bitta kod bazasi va LG televizorlari uchun alohida ilova. Har birida bugun nima borligi:
 
-| Imkoniyat | Android | iPhone, iPad | Android TV | LG webOS | Quest | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Immich server bilan galereya, albomlar, qidiruv | ✅ | ✅ | ✅ ko‘ruvchi | ✅ ko‘ruvchi | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Serversiz: qurilmaning o‘z mediasi | ✅ | ✅ | faqat ulashmalar | ❌ | ✅ | ✅ papkalar | ✅ papkalar | ✅ papkalar |
-| Tekis fotosuratlar va videolar | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Fotosuratni bitta tugma bilan burish | ✅ | ✅ | ✅ rangli tugmalar | ✅ rangli tugmalar | ✅ oyna | ✅ | ✅ | ✅ |
-| 360° fotosuratlar sfera sifatida | ✅ | ✅ | ✅ | ✅ | ✅ immersiv | ✅ | ✅ | 🔧 CI |
-| 360° videolar | ✅ | ✅ vaqt chizig‘isiz | ✅ dekodlanmasa xabar | faqat tekis | ✅ immersiv | ✅ | faqat tekis | faqat tekis |
-| 3D va VR180 | ✅ bitta ko‘z | ✅ bitta ko‘z | ✅ bitta ko‘z | fotosuratlar bitta ko‘z, videolar tekis | ✅ haqiqiy 3D | ✅ bitta ko‘z | fotosuratlar bitta ko‘z, videolar tekis | fotosuratlar bitta ko‘z, videolar tekis |
-| Spatial 2.5D (bosh kuzatuvi) | ✅ tajribaviy | ✅ tajribaviy | ❌ | ❌ | ❌ | 🔜 | ❌ | ❌ |
-| Apple fazoviy fotosuratlari | ✅ bitta ko‘z | ✅ bitta ko‘z | ✅ bitta ko‘z | ❌ | ✅ 3D | ✅ bitta ko‘z | 🔧 CI | 🔧 CI |
-| Xom Insta360, GoPro va DJI fayllari | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 🔧 CI fotosuratlar, videolar tekis | 🔧 CI fotosuratlar, videolar tekis |
-| SMB, WebDAV, DLNA ulashmalari | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kameralari: yozuvlar | ✅ | ✅ | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Tapo kameralari: jonli ko‘rinish | ✅ | 🔜 | ✅ | 🔜 | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| Bu qurilmani tarmoqda ulashish | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Ulashmalar va qurilmadan Immich'ga yuklash | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | 🔧 CI | 🔧 CI |
-| DJI dronidan yoki kartadan USB orqali import (tajribaviy) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Qorong‘i mavzu | tizimga ko‘ra | tizimga ko‘ra | ✅ sukut bo‘yicha | ✅ yagona mavzu | tizimga ko‘ra | tizimga ko‘ra | tizimga ko‘ra | tizimga ko‘ra |
-| Kiritish | teginish, giroskop | teginish, giroskop | pult; Chap va O‘ng video paytida ham, tafsilotlar uchun Menu | pult, Magic Remote | qo‘l boshqaruvchilari, qo‘llar | sichqoncha, klaviatura | sichqoncha, klaviatura | sichqoncha, klaviatura, trekpad |
-| Qayerdan olish mumkin | Google Play, APK | App Store (ko‘rib chiqilmoqda) | APK, Google Play (ko‘rib chiqilmoqda) | .ipk test build, Developer Mode | Horizon Store, APK | o‘rnatuvchi yoki ZIP (sinov versiyasi) | .deb, .rpm (sinov versiyasi) | DMG yoki ZIP (imzosiz sinov versiyasi) |
+| Imkoniyat | Android | iPhone, iPad | Android TV | LG webOS | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Immich server bilan galereya, albomlar, qidiruv | ✅ | ✅ | ✅ ko‘ruvchi | ✅ ko‘ruvchi | ✅ |
+| Serversiz: qurilmaning o‘z mediasi | ✅ | ✅ | faqat ulashmalar | ❌ | ✅ |
+| Tekis fotosuratlar va videolar | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Fotosuratni bitta tugma bilan burish | ✅ | ✅ | ✅ rangli tugmalar | ✅ rangli tugmalar | ✅ oyna |
+| 360° fotosuratlar sfera sifatida | ✅ | ✅ | ✅ | ✅ | ✅ immersiv |
+| 360° videolar | ✅ | ✅ vaqt chizig‘isiz | ✅ dekodlanmasa xabar | faqat tekis | ✅ immersiv |
+| 3D va VR180 | ✅ bitta ko‘z | ✅ bitta ko‘z | ✅ bitta ko‘z | fotosuratlar bitta ko‘z, videolar tekis | ✅ haqiqiy 3D |
+| Spatial 2.5D (bosh kuzatuvi) | ✅ tajribaviy | ✅ tajribaviy | ❌ | ❌ | ❌ |
+| Apple fazoviy fotosuratlari | ✅ bitta ko‘z | ✅ bitta ko‘z | ✅ bitta ko‘z | ❌ | ✅ 3D |
+| Xom Insta360, GoPro va DJI fayllari | ✅ | ✅ | ✅ | ❌ | ✅ |
+| SMB, WebDAV, DLNA ulashmalari | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kameralari: yozuvlar | ✅ | ✅ | ✅ | 🔜 | ✅ |
+| Tapo kameralari: jonli ko‘rinish | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| Bu qurilmani tarmoqda ulashish | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Ulashmalar va qurilmadan Immich'ga yuklash | ✅ | ✅ | ❌ | ❌ | ✅ |
+| DJI dronidan yoki kartadan USB orqali import (tajribaviy) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Qorong‘i mavzu | tizimga ko‘ra | tizimga ko‘ra | ✅ sukut bo‘yicha | ✅ yagona mavzu | tizimga ko‘ra |
+| Kiritish | teginish, giroskop | teginish, giroskop | pult; Chap va O‘ng video paytida ham, tafsilotlar uchun Menu | pult, Magic Remote | qo‘l boshqaruvchilari, qo‘llar |
+| Qayerdan olish mumkin | Google Play, APK | App Store (ko‘rib chiqilmoqda) | APK, Google Play (ko‘rib chiqilmoqda) | .ipk test build, Developer Mode | Horizon Store, APK |
+
+| Imkoniyat | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Immich server bilan galereya, albomlar, qidiruv | ✅ | 🔧 CI | 🔧 CI |
+| Serversiz: qurilmaning o‘z mediasi | ✅ papkalar | ✅ papkalar | ✅ papkalar |
+| Tekis fotosuratlar va videolar | ✅ | ✅ | ✅ |
+| Fotosuratni bitta tugma bilan burish | ✅ | ✅ | ✅ |
+| 360° fotosuratlar sfera sifatida | ✅ | ✅ | 🔧 CI |
+| 360° videolar | ✅ | faqat tekis | faqat tekis |
+| 3D va VR180 | ✅ bitta ko‘z | fotosuratlar bitta ko‘z, videolar tekis | fotosuratlar bitta ko‘z, videolar tekis |
+| Spatial 2.5D (bosh kuzatuvi) | 🔜 | ❌ | ❌ |
+| Apple fazoviy fotosuratlari | ✅ bitta ko‘z | 🔧 CI | 🔧 CI |
+| Xom Insta360, GoPro va DJI fayllari | ✅ | 🔧 CI fotosuratlar, videolar tekis | 🔧 CI fotosuratlar, videolar tekis |
+| SMB, WebDAV, DLNA ulashmalari | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameralari: yozuvlar | ✅ | 🔧 CI | 🔧 CI |
+| Tapo kameralari: jonli ko‘rinish | ✅ | 🔧 CI | 🔧 CI |
+| Bu qurilmani tarmoqda ulashish | ✅ | ❌ | ❌ |
+| Ulashmalar va qurilmadan Immich'ga yuklash | ✅ | 🔧 CI | 🔧 CI |
+| DJI dronidan yoki kartadan USB orqali import (tajribaviy) | ❌ | ❌ | ❌ |
+| Qorong‘i mavzu | tizimga ko‘ra | tizimga ko‘ra | tizimga ko‘ra |
+| Kiritish | sichqoncha, klaviatura | sichqoncha, klaviatura | sichqoncha, klaviatura, trekpad |
+| Qayerdan olish mumkin | o‘rnatuvchi yoki ZIP (sinov versiyasi) | .deb, .rpm (sinov versiyasi) | DMG yoki ZIP (imzosiz sinov versiyasi) |
 
 ✅ bu platformada ilovada mavjud · ❌ u yerda taklif etilmaydi · 🔜 rejalashtirilgan · 🔧 CI manba kodida bor, loyihaning CI tizimi uni shu tizimda yig‘ib ishga tushirgan, lekin u yerda hali haqiqiy server, ulashma yoki kamera bilan tekshirilmagan · faqat tekis: video xabar bilan tekis ijro etiladi, chunki kompyuterlarning 360° video renderlash moduli faqat Windows'da bor, LG televizorlarida esa webOS video kadrlarini sferaga uzatadimi yoki yo‘qmi, hali o‘lchanishi kerak. "Bitta ko‘z" degani, 3D fayl tekis ekranda chap ko‘zini ko‘rsatadi. LG webOS ustuni alohida ilova bo‘lib, uning 0.1.0 test build'i loyihaning CI tizimida o‘z testlaridan o‘tadi va hali televizorda ishlamagan. Har bir ✅ hali haqiqiy qurilmada tekshirilgan emas: qayerda nima tekshirilgani va yana nimani tasdiqlash kerakligi [Imkoniyatlar](../docs/immuch360/features.md), [Platforma qo‘llovi](../docs/immuch360/platform-support.md) va [Muvofiqlik](../docs/immuch360/compatibility.md) sahifalarida berilgan.
 
