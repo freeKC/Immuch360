@@ -188,6 +188,7 @@ flutter:
   assets:
     - assets/
     - assets/feature_message/
+    - assets/pairing/
   fonts:
     - family: GoogleSans
       fonts:

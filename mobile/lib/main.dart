@@ -47,6 +47,7 @@ import 'package:immich_mobile/utils/debug_print.dart';
 import 'package:immich_mobile/utils/libsmb2_license.dart';
 import 'package:immich_mobile/utils/licenses.dart';
 import 'package:immich_mobile/utils/migration.dart';
+import 'package:immich_mobile/utils/pairing_licenses.dart';
 import 'package:immich_mobile/wm_executor.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -156,6 +157,8 @@ Future<void> initApp() async {
   });
   // libsmb2, the native library of the SMB shares (lib/utils/libsmb2_license.dart)
   LicenseRegistry.addLicense(libsmb2Licenses);
+  // The noble libraries of the browser page of the big screens, ZXing on Android (lib/utils/pairing_licenses.dart)
+  LicenseRegistry.addLicense(pairingLicenses);
 }
 
 class ImmichApp extends ConsumerStatefulWidget {
