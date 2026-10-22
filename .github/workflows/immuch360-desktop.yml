@@ -377,8 +377,11 @@ jobs:
         run: |
           file=$(cd dist && ls ./*."$PACKAGE")
           mkdir -p video-smoke
+          # The core of a crash of the app is written in the container (/tmp/core.<pid>), where video_smoke.sh prints
+          # its stack; the runner's own handler (apport) keeps nothing of a process in a container
+          echo '/tmp/core.%p' | sudo tee /proc/sys/kernel/core_pattern
           status=0
-          docker run --rm -v "$PWD/dist:/pkgs:ro" \
+          docker run --rm --ulimit core=-1 -v "$PWD/dist:/pkgs:ro" \
             -v "$PWD/.github/desktop/packaging/linux:/check:ro" -v "$PWD/mobile/test/fixtures/video:/clips:ro" \
             -v "$PWD/video-smoke:/out" "$IMAGE" \
             sh /check/check_package.sh "/pkgs/${file#./}" --video /clips/flat-6s.mp4 /out /clips/flat-6s-theora.mkv \
@@ -386,6 +389,9 @@ jobs:
           no_h264='H.264 not available in this container (openh264 repository unreachable), Theora clip used'
           if grep -qF "$no_h264" "$RUNNER_TEMP/check.log"; then
             echo "::warning title=$IMAGE::$no_h264"
+          fi
+          if grep -q 'crashed.*: made once more' "$RUNNER_TEMP/check.log"; then
+            echo "::warning title=$IMAGE::a start of the app crashed and was made once more (its stack is in the log)"
           fi
           exit "$status"
 
