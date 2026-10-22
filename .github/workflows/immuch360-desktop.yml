@@ -19,7 +19,8 @@ name: Immuch360 Desktop
 #                  runner (a folder and a video on the command line, the keychain, five seconds of libmpv)
 #   windows        desktop tests on a real Windows, the release build, the ZIP and the installer (Inno Setup) for the
 #                  owner as artifacts named Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
-#                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE)
+#                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE, the head
+#                  tracker on a recorded clip through Media Foundation)
 #   packages       the seven files of the build (the six packages and the libsmb2 sources) together with their
 #                  SHA-256, as a release gets them
 #   upstream-sync  on upstream-sync/* branches, next to the test and linux jobs: the sync checklist of design 8.4
@@ -205,7 +206,8 @@ jobs:
         working-directory: mobile
         run: |
           mise exec -- dart format --output=none --set-exit-if-changed lib/desktop lib/main_desktop.dart \
-            test/desktop integration_test/desktop_smoke_test.dart packages/flutter_secure_storage_windows
+            test/desktop integration_test/desktop_smoke_test.dart packages/flutter_secure_storage_windows \
+            packages/immuch_head_tracker/lib
 
       # The whole suite: the phone regression gate, test/desktop included
       - name: Tests
@@ -601,6 +603,28 @@ jobs:
           print(hashlib.sha256(packed).hexdigest())
           PY
 
+      # The head tracker of Spatial 2.5D (immuch_head_tracker): its DLL, the two builds of the face detector, and the
+      # licence of libfacedetection (BSD-3-Clause) that the detector builds carry
+      - name: The head tracker and the licence of its face detector in the ZIP
+        env:
+          ZIP: ${{ steps.bundle.outputs.zip }}
+        run: |
+          python - "$ZIP" mobile/packages/immuch_head_tracker/third_party/libfacedetection/LICENSE <<'PY'
+          import pathlib, sys, zipfile
+          archive, licence = sys.argv[1], pathlib.Path(sys.argv[2])
+          top = 'Immuch360 Desktop/'
+          wanted = [top + name for name in ('immuch_head_tracker.dll', 'immuch_head_tracker_detect.dll',
+                                            'immuch_head_tracker_detect_avx2.dll', 'licenses/libfacedetection/LICENSE')]
+          with zipfile.ZipFile(archive) as bundle:
+              missing = [name for name in wanted if name not in bundle.namelist()]
+              if missing:
+                  sys.exit('::error::not in the ZIP: ' + ', '.join(missing))
+              packed = bundle.read(top + 'licenses/libfacedetection/LICENSE')
+          if packed.replace(b'\r\n', b'\n') != licence.read_bytes().replace(b'\r\n', b'\n'):
+              sys.exit('::error::licenses/libfacedetection/LICENSE in the ZIP is not the vendored LICENSE')
+          print('the ZIP holds the head tracker, both face detector builds and the licence of libfacedetection')
+          PY
+
       # The installer of the same folder as the ZIP (Inno Setup 6 of the runner image): for one user or for every
       # user of the PC, "Open with" for the types of .github/desktop/file-associations.json, an uninstaller
       - name: Installer
@@ -651,21 +675,44 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
+      # The head tracker's test opens a recorded clip through Media Foundation, the same reader as a webcam. Windows
+      # Server has Media Foundation as a feature the runner image does not install: added here, without the restart it
+      # asks for; the test says so if the clip still does not open.
+      - name: Media Foundation for the head tracker test
+        shell: pwsh
+        run: |
+          $files = 'mfplat.dll', 'mfreadwrite.dll', 'mf.dll', 'msmpeg2vdec.dll'
+          $missing = $files | Where-Object { -not (Test-Path (Join-Path $env:SystemRoot "System32\$_")) }
+          if ($missing) {
+            Write-Host "Not in System32: $($missing -join ', '); adding the Server-Media-Foundation feature"
+            try {
+              $result = Install-WindowsFeature Server-Media-Foundation
+              Write-Host "Success: $($result.Success), restart needed: $($result.RestartNeeded), exit code: $($result.ExitCode)"
+            } catch {
+              Write-Host "::warning::Server-Media-Foundation could not be added: $_"
+            }
+          }
+          foreach ($file in $files) {
+            Write-Host "$file in System32: $(Test-Path (Join-Path $env:SystemRoot "System32\$file"))"
+          }
+
       # The desktop tests of the first step skip what needs the DLLs of a build (libmpv, ANGLE, the decoder probe),
       # which did not exist yet. Run here on the build itself, after the ZIP was made from it, so that the libmpv the
       # ZIP ships is the one checked: FFmpeg's answer to a camera's Digest challenge with the percent-encoded account,
       # no account or rtsp:// address in mpv's lines (camera_live_libmpv_test), the references a file may not open
       # (mpv_references_test), the app's player on a path and through the media bridge (desktop_player_libmpv_test),
       # the GLSL of renderer C compiled and drawn by ANGLE (plugin_shaders_windows_test: the hosted runners have no GPU,
-      # so ANGLE's Direct3D 11 device is Windows' Basic Render Driver, which draws in software). The tests that need a
-      # GPU's video decoder or mpv drawing into ANGLE (decoder_probe_windows_test, libmpv_probe_test) stay on the PC.
-      - name: Desktop tests on the build (libmpv, ANGLE)
+      # so ANGLE's Direct3D 11 device is Windows' Basic Render Driver, which draws in software), the head tracker on the
+      # recorded clip, both builds of its face detector (head_tracker_windows_test). The tests that need a GPU's video
+      # decoder, mpv drawing into ANGLE or a webcam (decoder_probe_windows_test, libmpv_probe_test) stay on the PC.
+      - name: Desktop tests on the build (libmpv, ANGLE, head tracker)
         working-directory: mobile
         env:
           IMMUCH360_BUILD_DIR: build/windows/x64/runner/Release
         run: |
           flutter test test/desktop/video/camera_live_libmpv_test.dart test/desktop/video/mpv_references_test.dart \
-            test/desktop/video/desktop_player_libmpv_test.dart test/desktop/video/plugin_shaders_windows_test.dart
+            test/desktop/video/desktop_player_libmpv_test.dart test/desktop/video/plugin_shaders_windows_test.dart \
+            test/desktop/spatial/head_tracker_windows_test.dart
 
   macos:
     name: macOS build, ZIP and DMG

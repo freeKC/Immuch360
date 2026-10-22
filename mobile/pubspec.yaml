@@ -104,6 +104,10 @@ dependencies:
   # package; its plugin declares windows only, used under lib/desktop/ only
   immuch_desktop_video:
     path: packages/immuch_desktop_video
+  # Immuch360 Desktop: the webcam head tracker of Spatial 2.5D on Windows (Media Foundation and libfacedetection,
+  # through dart:ffi), the fork's own package; its plugin declares windows only, used under lib/desktop/ only
+  immuch_head_tracker:
+    path: packages/immuch_head_tracker
   # Immuch360 Desktop: the thumbhash decoder of the computers, pure Dart, used under lib/desktop/ only. The phones
   # decode thumbhashes in the native core (native/), whose buffer the computers could not free with malloc.free on
   # Windows (another heap)

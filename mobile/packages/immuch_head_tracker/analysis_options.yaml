@@ -1,0 +1,5 @@
+# The formatter settings of the app (mobile/analysis_options.yaml) without its include of flutter_lints, which this
+# package cannot resolve without a pub get of its own: the format gate of the desktop workflow formats the package
+# from mobile/, where the app's options would otherwise be dropped and the page width fall back to 80.
+formatter:
+  page_width: 120
