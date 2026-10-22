@@ -62,5 +62,13 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/tv/TvDeviceTest.kt": {
     "blob": "7d5062fb96cb57fd92eb50b09e47368ed84de5bb",
     "reason": "TV lot (f5055f1e2): unit tests of TvDevice, run by the Kotlin unit tests job"
+  },
+  "mobile/ios/Runner/AppDelegate.swift": {
+    "blob": "c0fc66452def5e610c78d517e95502b09293c000",
+    "reason": "iOS Tapo live view (feat-ios-tapo-live): the live view platform view and CameraLiveApi registered in registerPlugins"
+  },
+  "mobile/ios/Runner/Core/CameraLiveView.swift": {
+    "blob": "e265c7122756fff980e6c7e887c3810ed7b89610",
+    "reason": "iOS Tapo live view (feat-ios-tapo-live): the AVPlayer platform view that plays the live playlist Dart makes of a camera stream"
   }
 }
