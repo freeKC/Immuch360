@@ -1,0 +1,56 @@
+{
+  "name": "@winlinux/smb2",
+  "version": "1.1.0",
+  "description": "SMB 2 and 3 file-share client for Node.js (a fork of node-smb2): signing, encryption, share listing and pluggable authentication.",
+  "keywords": [
+    "smb",
+    "smb2",
+    "smb3",
+    "cifs",
+    "file-share",
+    "windows",
+    "samba"
+  ],
+  "homepage": "https://github.com/sanjay3290/winlinux/tree/main/packages/smb2#readme",
+  "bugs": {
+    "url": "https://github.com/sanjay3290/winlinux/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanjay3290/winlinux.git",
+    "directory": "packages/smb2"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.map"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.test.json && node --test dist-test/test/unit/*.test.js dist-test/test/mock/*.test.js",
+    "test:live": "tsc -p tsconfig.test.json && node --test dist-test/test/live/*.test.js",
+    "capture:live": "tsc -p tsconfig.test.json && node dist-test/test/live/capture.js",
+    "test:live:windows": "tsc -p tsconfig.test.json && node dist-test/test/live/windows-live.js"
+  },
+  "devDependencies": {
+    "js-md4": "^0.3.2",
+    "@types/node": "^22.7.0",
+    "typescript": "~5.6.3",
+    "@winlinux/auth": "^1.1.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

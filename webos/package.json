@@ -8,7 +8,8 @@
 		"serve": "npm run i18n && enact serve",
 		"pack": "npm run i18n && enact pack",
 		"pack-p": "npm run i18n && enact pack -p && node tools/transpile-legacy.mjs && node tools/prune-ilib.mjs && node tools/build-i18n.mjs --dist dist && node tools/licence-files.mjs dist",
-		"ipk": "npm run pack-p && ares-package dist/ service/ -o ./build/ -n -e \"*dev.js\" -e \"*test.js\" && node tools/check-package.mjs build --list build/ipk-files.json",
+		"ipk": "npm run bridge -- --check && npm run pack-p && ares-package dist/ service/ -o ./build/ -n -e \"*dev.js\" -e \"*test.js\" && node tools/check-package.mjs build --list build/ipk-files.json",
+		"bridge": "node tools/build-bridge.mjs",
 		"set-version": "node tools/set-version.mjs",
 		"i18n": "node tools/build-i18n.mjs",
 		"check-package": "node tools/check-package.mjs build --list build/ipk-files.json",
@@ -21,6 +22,7 @@
 		"test-watch": "enact test --watch",
 		"test-unit": "npm run i18n && node --import ./tools/ts-hooks.mjs --test \"test/unit/*.test.mjs\"",
 		"test-service": "node service/test.js",
+		"test-bridge": "node --test \"bridge/test/*.test.js\"",
 		"test-tools": "node --test tools/legacy-css.test.mjs tools/build-i18n.test.mjs"
 	},
 	"license": "AGPL-3.0-only",
@@ -103,8 +105,10 @@
 		"@types/react-dom": "^18.2.0",
 		"@webos-tools/cli": "3.2.6",
 		"baseline-browser-mapping": "^2.9.14",
+		"des.js": "1.1.0",
 		"esbuild": "^0.28.0",
 		"eslint-config-enact-proxy": "^1.0.7",
+		"hash-wasm": "4.12.0",
 		"typescript": "^5.9.3"
 	},
 	"private": true,

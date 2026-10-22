@@ -16,3 +16,8 @@ npm-debug.log
 
 # Immuch360: written by tools/build-i18n.mjs at each build
 src/immuch360/i18n/generated
+
+# Immuch360: the media bridge, built from bridge/ by tools/build-bridge.mjs
+service/bridge
+# The vendored packages of the bridge keep their published dist folders
+!/bridge/vendor/@winlinux/*/dist/
