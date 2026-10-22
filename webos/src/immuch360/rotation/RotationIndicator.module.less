@@ -1,0 +1,59 @@
+// Immuch360: the pill the viewer shows while a turn is saved (RotationIndicator.tsx). 4K-space lengths, halved at FHD,
+// like the rest of the LESS; the colours of the viewer's position pill (MediaChrome.module.less).
+@import '../../styles/_theme.less';
+
+.indicator {
+	position: absolute;
+	top: 72px;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
+	padding: 12px 32px 12px 24px;
+	border-radius: @radius-pill;
+	background: @scrim;
+	color: rgba(255, 255, 255, 0.85);
+	font-size: var(--font-caption);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	// Above the chrome, never in the way of the pointer of the Magic Remote, never focused
+	z-index: 1;
+	pointer-events: none;
+	animation: rotation-indicator-in 200ms ease-out;
+}
+
+.spinner {
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	margin-right: 20px;
+	border: 5px solid rgba(255, 255, 255, 0.24);
+	border-top-color: @accent;
+	border-radius: 50%;
+	animation: rotation-indicator-spin 900ms linear infinite;
+}
+
+@keyframes rotation-indicator-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes rotation-indicator-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+// Reduce Motion (Chromium 74+): the pill appears at once and its ring stays still; the text says it all
+@media (prefers-reduced-motion: reduce) {
+	.indicator,
+	.spinner {
+		animation: none;
+	}
+}

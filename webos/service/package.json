@@ -1,6 +1,6 @@
 {
 	"name": "com.aprogsys.immuch360.service",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "LAN pairing service for phone sign-in (Immuch360, from immich-tv-webos)",
 	"main": "service.js",
 	"engines": {

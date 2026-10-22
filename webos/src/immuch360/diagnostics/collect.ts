@@ -7,6 +7,11 @@ import LS2Request from '@enact/webos/LS2Request';
 import type {PhotoRepository} from '../../domain/PhotoRepository';
 import {currentLocale, localeLoadError, t} from '../i18n';
 import {SphereRenderer, getWebGL, webglInfo} from '../sphere/SphereRenderer';
+// The clip of the video test goes through the bundler, which copies it into the package: enact pack copies from
+// webos-meta/ only the files appinfo.json names (the icons, the splash), so the clip that sat there never reached the
+// TV, and the test said "video error 4" (MEDIA_ERR_SRC_NOT_SUPPORTED, the answer to a file that is not there) on every
+// TV, those that play 360° videos included. tools/check-package.mjs now checks that it is in the .ipk.
+import probeClip from './probe.mp4';
 
 export interface DiagnosticsLine {
 	label: string;
@@ -134,9 +139,25 @@ export async function collectDiagnostics(repository: PhotoRepository | null): Pr
 	return lines.concat(await decoderLines());
 }
 
+// The names of the codes of MediaError, for the line of a clip that did not play
+const MEDIA_ERRORS: Record<number, string> = {
+	1: 'MEDIA_ERR_ABORTED',
+	2: 'MEDIA_ERR_NETWORK',
+	3: 'MEDIA_ERR_DECODE',
+	4: 'MEDIA_ERR_SRC_NOT_SUPPORTED',
+};
+
+/** Why the clip did not play, as the video element says it: "video error 4 MEDIA_ERR_SRC_NOT_SUPPORTED: <message>" */
+export function videoErrorReason(error: {code?: number; message?: string} | null | undefined): string {
+	const code = error?.code;
+	const name = code !== undefined ? MEDIA_ERRORS[code] : undefined;
+	return `video error ${code ?? '?'}${name ? ` ${name}` : ''}${error?.message ? `: ${error.message}` : ''}`;
+}
+
 /**
- * Plays the app's tiny magenta video, draws a frame of it into WebGL and reads the pixel back: on TVs that show
- * videos on a hardware plane under the page, the frame comes back black and 360° videos can only play flat.
+ * Plays the app's tiny magenta video (H.264 Constrained Baseline, 256 x 128, 2 s), draws a frame of it into WebGL and
+ * reads the pixel back: on TVs that show videos on a hardware plane under the page, the frame comes back black and 360°
+ * videos can only play flat. A clip that does not play tests nothing: the line says so, with the reason.
  */
 export function probeVideoTexture(timeoutMs = 8000): Promise<string> {
 	return new Promise((resolve) => {
@@ -157,7 +178,8 @@ export function probeVideoTexture(timeoutMs = 8000): Promise<string> {
 			renderer?.dispose();
 			resolve(result);
 		};
-		const timer = window.setTimeout(() => finish(`timeout (${video.readyState})`), timeoutMs);
+		const untested = (reason: string) => finish(t('webos_diagnostics_video_texture_untested', {reason}));
+		const timer = window.setTimeout(() => untested(`timeout, readyState ${video.readyState}`), timeoutMs);
 		try {
 			const gl = getWebGL(canvas);
 			if (!gl) {
@@ -173,7 +195,7 @@ export function probeVideoTexture(timeoutMs = 8000): Promise<string> {
 		video.loop = true;
 		video.setAttribute('playsinline', '');
 		video.style.cssText = 'position:fixed;right:0;bottom:0;width:2px;height:2px;opacity:0.01;pointer-events:none';
-		video.addEventListener('error', () => finish(`video error ${video.error?.code ?? '?'}`));
+		video.addEventListener('error', () => untested(videoErrorReason(video.error)));
 		video.addEventListener('playing', () => {
 			window.setTimeout(() => {
 				try {
@@ -187,10 +209,10 @@ export function probeVideoTexture(timeoutMs = 8000): Promise<string> {
 				}
 			}, 500);
 		});
-		video.src = 'probe.mp4';
+		video.src = probeClip;
 		document.body.appendChild(video);
 		const played = video.play() as Promise<void> | undefined;
-		if (played && typeof played.catch === 'function') played.catch((error: unknown) => finish(`play: ${error instanceof Error ? error.message : String(error)}`));
+		if (played && typeof played.catch === 'function') played.catch((error: unknown) => untested(`play: ${error instanceof Error ? error.message : String(error)}`));
 	});
 }
 

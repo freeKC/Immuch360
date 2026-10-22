@@ -3,7 +3,8 @@
 
 import {test, describe} from 'node:test';
 import assert from 'node:assert/strict';
-import {DEBOUNCE_MS, NOTICE_MS, PICTURE_WAIT_MS, RotationController} from '../../src/immuch360/rotation/controller.ts';
+import {setImmediate} from 'node:timers';
+import {DEBOUNCE_MS, NOTICE_MS, PICTURE_WAIT_MS, SESSION_LIFETIME_MS, RotationController} from '../../src/immuch360/rotation/controller.ts';
 import {rotationMode, takesEdits} from '../../src/immuch360/rotation/mode.ts';
 
 const settle = async () => {
@@ -57,6 +58,13 @@ function fakeServer(options = {}) {
 		shown: [],
 	};
 	let pendingJob = null;
+	// holdPicture: the turned picture loads until state.releasePicture() (a slow server or network)
+	let heldPicture = null;
+	state.releasePicture = () => {
+		const release = heldPicture;
+		heldPicture = null;
+		release?.();
+	};
 	const server = {
 		context: async () => ({userId: ME, serverVersion: state.version}),
 		asset: async () => {
@@ -84,6 +92,7 @@ function fakeServer(options = {}) {
 		},
 		pictureKey: () => state.key,
 		showPicture: async (_id, key) => {
+			if (options.holdPicture) await new Promise((resolve) => (heldPicture = resolve));
 			state.shown.push(key);
 			state.key = key;
 		},
@@ -265,6 +274,107 @@ test('a request that fails otherwise brings the photo back, with a message', asy
 	assert.deepEqual(device.all, {});
 	assert.equal(controller.displayTurns(ASSET), 0);
 	assert.equal(controller.notice(ASSET), 'failed');
+});
+
+describe('the phase of a turn, which the viewer shows', () => {
+	test('turning from the press until the turned picture is shown, then shown, then idle when the session ends', async () => {
+		const {controller, state, timers} = setup({holdPicture: true});
+		assert.equal(controller.phase(ASSET), 'idle');
+		controller.rotate(ASSET, 1);
+		assert.equal(controller.phase(ASSET), 'turning');
+		await timers.advance(DEBOUNCE_MS);
+		assert.equal(state.requests.length, 1);
+		assert.equal(controller.phase(ASSET), 'turning');
+		// The server made the picture; it loads
+		await timers.advance(1000);
+		assert.deepEqual(state.shown, []);
+		assert.equal(controller.phase(ASSET), 'turning');
+		let heard = 0;
+		controller.subscribe(() => heard++);
+		state.releasePicture();
+		await timers.advance(0);
+		assert.deepEqual(state.shown, ['T1']);
+		assert.equal(controller.phase(ASSET), 'shown');
+		assert.ok(heard > 0, 'the viewer hears the end of the turning');
+		await timers.advance(SESSION_LIFETIME_MS);
+		assert.equal(controller.phase(ASSET), 'idle');
+	});
+
+	test('a press on a photo already turned is turning again until its own picture is shown', async () => {
+		const {controller, timers} = setup();
+		controller.rotate(ASSET, 1);
+		await timers.advance(DEBOUNCE_MS + 1000);
+		assert.equal(controller.phase(ASSET), 'shown');
+		controller.rotate(ASSET, -1);
+		assert.equal(controller.phase(ASSET), 'turning');
+		await timers.advance(DEBOUNCE_MS + 1000);
+		assert.equal(controller.phase(ASSET), 'shown');
+	});
+
+	test('presses that undo each other end the turning without a request', async () => {
+		const {controller, state, timers} = setup();
+		controller.rotate(ASSET, 1);
+		controller.rotate(ASSET, -1);
+		assert.equal(controller.phase(ASSET), 'turning');
+		await timers.advance(DEBOUNCE_MS);
+		assert.deepEqual(state.requests, []);
+		assert.equal(controller.phase(ASSET), 'shown');
+	});
+
+	test('a turn kept on the TV: turning until the notice, then the next turns are drawn at once, never turning', async () => {
+		const {controller, timers} = setup({ownerId: 'someone-else'});
+		controller.rotate(ASSET, 1);
+		assert.equal(controller.phase(ASSET), 'turning');
+		await timers.advance(DEBOUNCE_MS);
+		assert.equal(controller.phase(ASSET), 'notice');
+		await timers.advance(NOTICE_MS);
+		assert.equal(controller.phase(ASSET), 'idle');
+		controller.rotate(ASSET, 1);
+		assert.equal(controller.phase(ASSET), 'idle');
+		assert.equal(controller.displayTurns(ASSET), 2);
+	});
+
+	test('a request that fails: turning, then the notice, then idle', async () => {
+		const {controller, timers} = setup({failWith: Object.assign(new Error('Network error'), {status: undefined})});
+		controller.rotate(ASSET, 1);
+		assert.equal(controller.phase(ASSET), 'turning');
+		await timers.advance(DEBOUNCE_MS);
+		assert.equal(controller.phase(ASSET), 'notice');
+		assert.equal(controller.notice(ASSET), 'failed');
+		await timers.advance(NOTICE_MS);
+		assert.equal(controller.phase(ASSET), 'idle');
+	});
+
+	test('a new press after a failure takes the message away while it is saved', async () => {
+		const {controller, state, timers} = setup({failWith: Object.assign(new Error('Network error'), {status: undefined})});
+		controller.rotate(ASSET, 1);
+		await timers.advance(DEBOUNCE_MS);
+		assert.equal(controller.notice(ASSET), 'failed');
+		state.failWith = undefined;
+		controller.rotate(ASSET, 1);
+		assert.equal(controller.notice(ASSET), null);
+		assert.equal(controller.phase(ASSET), 'turning');
+		await timers.advance(DEBOUNCE_MS + 1000);
+		assert.equal(controller.phase(ASSET), 'shown');
+		assert.equal(controller.notice(ASSET), null);
+	});
+
+	test('a picture the server does not make in time ends the turning when the photo is asked for afresh', async () => {
+		const {controller, timers} = setup({neverReady: true});
+		controller.rotate(ASSET, 1);
+		await timers.advance(DEBOUNCE_MS + PICTURE_WAIT_MS - 1000);
+		assert.equal(controller.phase(ASSET), 'turning');
+		await timers.advance(5000);
+		assert.equal(controller.phase(ASSET), 'idle');
+	});
+
+	test('the phase is per photo', async () => {
+		const {controller, timers} = setup();
+		controller.rotate(ASSET, 1);
+		assert.equal(controller.phase(ASSET), 'turning');
+		assert.equal(controller.phase('asset-2'), 'idle');
+		await timers.advance(DEBOUNCE_MS + 1000);
+	});
 });
 
 test('listeners hear every change of what the viewer draws', async () => {

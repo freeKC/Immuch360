@@ -45,6 +45,13 @@ export interface Timers {
 /** What the viewer says after a turn: kept on this TV only, or not saved */
 export type RotationNotice = 'keptOnDevice' | 'failed';
 
+/**
+ * Where the turn of a photo stands, for the viewer: 'turning' from the press until the server's turned picture is
+ * shown (the viewer shows that it works), 'notice' while it says that the turn stays on this TV or was not saved,
+ * 'shown' once the turned picture took the place of the photo (while the session lasts), 'idle' otherwise.
+ */
+export type RotationPhase = 'idle' | 'turning' | 'shown' | 'notice';
+
 /** How long the presses gather before a request */
 export const DEBOUNCE_MS = 700;
 /** How long an idle session lasts after its last request */
@@ -121,6 +128,13 @@ export class RotationController {
 		return !!session && (session.saving || session.debounce !== undefined) && session.mode !== 'device';
 	}
 
+	/** Where the turn of the photo stands; a turn kept on this TV is drawn at once and never 'turning' */
+	phase(assetId: string): RotationPhase {
+		if (this.isSaving(assetId)) return 'turning';
+		if (this.notices.has(assetId)) return 'notice';
+		return this.sessions.has(assetId) ? 'shown' : 'idle';
+	}
+
 	/** What the viewer says about the last turn of the photo, null when nothing */
 	notice(assetId: string): RotationNotice | null {
 		return this.notices.get(assetId)?.kind ?? null;
@@ -140,6 +154,8 @@ export class RotationController {
 			session = undefined;
 		}
 		if (!session) session = this.start(assetId);
+		// A new turn is being saved: the message of the last one would contradict the viewer's "saving" pill
+		this.clearNotice(assetId);
 		session.pending += quarterTurns;
 		this.clearTimer(session, 'expiry');
 		this.clearTimer(session, 'debounce');
@@ -294,6 +310,13 @@ export class RotationController {
 		}, NOTICE_MS);
 		this.notices.set(assetId, {kind, handle});
 		this.publish();
+	}
+
+	private clearNotice(assetId: string): void {
+		const notice = this.notices.get(assetId);
+		if (!notice) return;
+		this.timers.clear(notice.handle);
+		this.notices.delete(assetId);
 	}
 
 	private end(session: Session): void {

@@ -13,6 +13,7 @@
 // instead). So the build fails on any t() whose first argument is neither a quoted key nor a plain name (label,
 // item.label, NAMES[layout]) in a file that holds its keys through i18nKey('key').
 
+import {Buffer} from 'node:buffer';
 import {mkdirSync, readFileSync, readdirSync, statSync, writeFileSync} from 'node:fs';
 import {dirname, join, relative} from 'node:path';
 import {fileURLToPath} from 'node:url';
