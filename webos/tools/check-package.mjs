@@ -6,7 +6,7 @@
 // An .ipk is an ar archive (debian-binary, control.tar.gz, data.tar.gz). The check reads it with node alone and
 // fails when the app or its service is not where webOS looks for them, when appinfo.json does not name Immuch360,
 // when the version of the .ipk name, of appinfo.json and of the service differ, when development files of the service
-// went in, when the licences are missing (the AGPL of Immuch360 and the MIT notice of immich-tv-webos, which must be
+// went in, when the clip of the video test of the diagnostics page is missing, when the licences are missing (the AGPL of Immuch360 and the MIT notice of immich-tv-webos, which must be
 // in every copy, see tools/licence-files.mjs), or when the package grew past 10 MB. --list writes every file and its
 // size, to compare two builds.
 
@@ -36,20 +36,20 @@ const ipk = readFileSync(join(dir, ipkName));
 // ar: "!<arch>\n", then 60 byte headers (name 16, size at 48, 10 digits) and their data, padded to even offsets
 function arMembers(buffer) {
 	if (buffer.toString('latin1', 0, 8) !== '!<arch>\n') fail(`${ipkName} is not an ar archive`);
-	const members = {};
+	const found = {};
 	let offset = 8;
 	while (offset + 60 <= buffer.length) {
 		const name = buffer.toString('latin1', offset, offset + 16).trim().replace(/\/$/, '');
 		const size = parseInt(buffer.toString('latin1', offset + 48, offset + 58).trim(), 10);
-		members[name] = buffer.subarray(offset + 60, offset + 60 + size);
+		found[name] = buffer.subarray(offset + 60, offset + 60 + size);
 		offset += 60 + size + (size % 2);
 	}
-	return members;
+	return found;
 }
 
 // tar (ustar): 512 byte headers, name 100 + prefix 155, size in octal, type flag
 function tarFiles(buffer) {
-	const files = {};
+	const found = {};
 	let offset = 0;
 	let longName = null;
 	while (offset + 512 <= buffer.length) {
@@ -61,12 +61,12 @@ function tarFiles(buffer) {
 		const prefix = field(345, 155);
 		let name = longName ?? (prefix ? `${prefix}/${field(0, 100)}` : field(0, 100));
 		longName = null;
-		const data = buffer.subarray(offset + 512, offset + 512 + size);
-		if (type === 'L') longName = data.toString('latin1').replace(/\0.*$/s, '');
-		else if (type === '0' || type === '\0') files[name.replace(/^\.\//, '')] = data;
+		const content = buffer.subarray(offset + 512, offset + 512 + size);
+		if (type === 'L') longName = content.toString('latin1').replace(/\0.*$/s, '');
+		else if (type === '0' || type === '\0') found[name.replace(/^\.\//, '')] = content;
 		offset += 512 + Math.ceil(size / 512) * 512;
 	}
-	return files;
+	return found;
 }
 
 const members = arMembers(ipk);
@@ -86,6 +86,10 @@ const need = (path) => {
 const appinfoBytes = need(`${appDir}appinfo.json`);
 for (const file of ['index.html', 'main.js', 'main.css', 'icon.png', 'icon-large.png', 'i18n/fr.json', 'i18n/de.json']) need(appDir + file);
 for (const file of ['service.js', 'services.json', 'package.json']) need(serviceDir + file);
+// The clip of the video test of the diagnostics page, which the bundler copies (0.1.0 shipped without it)
+if (!Object.keys(data).some((path) => path.startsWith(appDir) && /(^|\/)probe[^/]*\.mp4$/.test(path))) {
+	problems.push('missing the clip of the video test of the diagnostics page (probe.mp4)');
+}
 const licenceText = (file, ...phrases) => {
 	const bytes = need(appDir + file);
 	if (!bytes) return;

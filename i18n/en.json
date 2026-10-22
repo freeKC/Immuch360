@@ -2823,6 +2823,7 @@
   "webos_diagnostics_video_texture": "Video frames in WebGL",
   "webos_diagnostics_video_texture_black": "black (360° videos would play flat)",
   "webos_diagnostics_video_texture_ok": "yes",
+  "webos_diagnostics_video_texture_untested": "not tested: the test clip did not play ({reason})",
   "webos_enter_url_and_api_key": "Please enter both URL and API key",
   "webos_error_access_denied": "Access denied.",
   "webos_error_cors": "Couldn't reach the server. Verify the URL and that your Immich server allows requests from this app (CORS).",
