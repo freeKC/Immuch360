@@ -15,7 +15,7 @@ AZURE_CLIENT_SECRET), which the client reads from the environment; this script n
       commands below read. --packages takes the two .nupkg files from a folder instead of nuget.org.
   windows_sign.py bundle --tools DIR --zip FILE --work DIR --out DIR [--github-output]
       unzips the ZIP of windows_bundle.py into the work folder, signs every .exe and .dll there that has no valid
-      signature yet (the Visual C++ runtime keeps the signature of Microsoft), checks each of them, writes in
+      signature yet (the DLLs Microsoft or Google signed keep their signature), checks each of them, writes in
       BUILD-INFO.txt that the build is signed, and writes the ZIP again in <out>, under its name, with the same entries
       in the same order. The signed folder stays in the work folder: desktop_installers.py windows --sign-with DIR
       makes the installer from it, and Inno Setup signs the uninstaller and the installer through the command below.
@@ -28,7 +28,8 @@ AZURE_CLIENT_SECRET), which the client reads from the environment; this script n
   windows_sign.py check --tools DIR --zip FILE --setup FILE [--install-dir DIR] [--github-output]
       the files of a release: every .exe and .dll of the ZIP with a valid signature, immuch360.exe and the installer
       signed by APROGSYS; with --install-dir, a silent installation there for the current user, whose uninstaller
-      must be signed by APROGSYS and whose files must be those of the ZIP, byte for byte
+      must be signed by APROGSYS and whose files must be those of the ZIP, byte for byte, next to the three files of
+      the uninstaller (unins000.exe, .dat and .msg)
 
 --github-output writes the results for the next steps (bundle: folder, file_version; check: zip_sha256,
 setup_sha256), and check writes a table in the run summary. signing.json names the signtool command; the tests point
@@ -85,7 +86,7 @@ EXCLUDED_CREDENTIALS = [
 # What BUILD-INFO.txt says in place of UNSIGNED_NOTE once the folder is signed
 SIGNED_NOTE = (
     f'This build is signed: immuch360.exe, the DLLs of the app and the installer show {PUBLISHER} as their publisher',
-    '(file properties, Digital Signatures); the Visual C++ runtime DLLs keep the signature of Microsoft.',
+    '(file properties, Digital Signatures); the DLLs that Microsoft or Google signed keep their signature.',
 )
 PE_SUFFIXES = ('.exe', '.dll')
 EXE = 'immuch360.exe'
@@ -443,7 +444,8 @@ def check(args) -> int:
             for name in sorted(zipped - present):
                 problems.append(f'installed: {name} of the ZIP is missing')
             for name in sorted(present - zipped):
-                if not re.match(r'^unins\d{3}\.(exe|dat)$', name, re.IGNORECASE):
+                # The uninstaller, its log and its messages, which Inno Setup writes next to the program
+                if not re.match(r'^unins\d{3}\.(exe|dat|msg)$', name, re.IGNORECASE):
                     problems.append(f'installed: {name} is not in the ZIP')
             for name in sorted(zipped & present):
                 if sha256(folder / name) != sha256(installed / name):
