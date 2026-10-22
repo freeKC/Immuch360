@@ -6,6 +6,11 @@
 // chosen, closed when the page closes, when the window is minimised and when tracking is turned off; an error never
 // starts it again by itself (the user turns tracking on again, or comes back from the camera settings). The pictures
 // never reach Dart: only the position of the face comes out of the native code, one sample per analysed frame.
+//
+// A start waits for the release of the previous webcam session (its capture thread ends in a background isolate), so
+// that a quick minimise and restore, or the mouse then the head again, never finds the webcam still held by this app
+// (which the page would call busy). A webcam taken by default is opened as colour only: one whose formats are all grey
+// (an infrared camera with a plain name) is refused before it streams, marked infrared, and the next one is taken.
 
 import 'dart:async';
 
@@ -20,8 +25,9 @@ abstract class SpatialHeadSource {
   /// The video cameras, without opening any. Throws [HeadTrackerException] (noMediaFoundation).
   Future<List<HeadCamera>> cameras();
 
-  /// Starts tracking with [camera]; an error to open it comes on the session's samples
-  HeadTrackingSession start(HeadCamera camera);
+  /// Starts tracking with [camera]; an error to open it comes on the session's samples. [colourOnly]: a camera taken by
+  /// default, refused when its formats are all grey (HeadTrackerError.greyOnly)
+  HeadTrackingSession start(HeadCamera camera, {bool colourOnly = false});
 }
 
 /// [SpatialHeadSource] over immuch_head_tracker.dll
@@ -45,7 +51,8 @@ class NativeSpatialHeadSource implements SpatialHeadSource {
   Future<List<HeadCamera>> cameras() => _tracker.cameras();
 
   @override
-  HeadTrackingSession start(HeadCamera camera) => _tracker.start(camera);
+  HeadTrackingSession start(HeadCamera camera, {bool colourOnly = false}) =>
+      _tracker.start(camera, options: HeadTrackerOptions(colourOnly: colourOnly));
 }
 
 /// What keeps head tracking from running, as the page says it
@@ -76,6 +83,8 @@ SpatialTrackingProblem spatialProblemOf(HeadTrackerError error) => switch (error
   HeadTrackerError.noCamera => SpatialTrackingProblem.noCamera,
   HeadTrackerError.cameraBusy => SpatialTrackingProblem.cameraBusy,
   HeadTrackerError.deviceLost => SpatialTrackingProblem.cameraLost,
+  // Only a camera the user picked reaches the page this way, and it is opened without the check: never shown
+  HeadTrackerError.greyOnly => SpatialTrackingProblem.noCamera,
   _ => SpatialTrackingProblem.failed,
 };
 
@@ -122,7 +131,17 @@ class SpatialHeadTracking extends ChangeNotifier {
 
   List<HeadCamera>? _cameras;
   HeadCamera? _camera;
+
+  /// The webcam in use was taken by default (not chosen): a grey only refusal moves on to the next one
+  bool _cameraByDefault = false;
+
+  /// The cameras refused as grey only, by id: marked infrared in the list, never taken by default again
+  final _greyOnly = <String>{};
   HeadTrackingSession? _session;
+
+  /// The release of the sessions closed last, until it is done: a start or a listing waits for it
+  Future<void>? _closing;
+  bool _reversed = false;
   StreamSubscription<HeadSample>? _subscription;
   SpatialTrackingState _state = SpatialTrackingState.off;
   SpatialTrackingProblem? _problem;
@@ -135,8 +154,33 @@ class SpatialHeadTracking extends ChangeNotifier {
   int _generation = 0;
   bool _disposed = false;
 
-  /// The webcams listed when tracking started first, null before
-  List<HeadCamera>? get cameras => _cameras;
+  /// The webcams listed when tracking started first, null before; a camera found grey only is marked infrared
+  List<HeadCamera>? get cameras {
+    final cameras = _cameras;
+    if (cameras == null || _greyOnly.isEmpty) {
+      return cameras;
+    }
+    return List.unmodifiable([
+      for (final camera in cameras) _greyOnly.contains(camera.id) ? camera.asGreyOnly() : camera,
+    ]);
+  }
+
+  /// Done once every webcam session closed so far has released its camera (its light off)
+  Future<void> get released => _closing ?? Future<void>.value();
+
+  /// The head's direction reversed, for a webcam whose own software mirrors its pictures: a head moving to the user's
+  /// right then shows on the right of the frame. The next face sets the centre again.
+  bool get reversed => _reversed;
+
+  set reversed(bool value) {
+    if (value == _reversed) {
+      return;
+    }
+    _reversed = value;
+    _viewpoint.recenter();
+    _filter.reset();
+    notifyListeners();
+  }
 
   /// The webcam in use or last used
   HeadCamera? get camera => _camera;
@@ -200,6 +244,12 @@ class SpatialHeadTracking extends ChangeNotifier {
       _fail(SpatialTrackingProblem.failed, 'no head tracker on this computer');
       return;
     }
+    // The previous session's capture thread may still hold the webcam: opened again before it let go, the webcam
+    // would answer that it is busy
+    await _waitForRelease();
+    if (generation != _generation || _disposed) {
+      return;
+    }
     List<HeadCamera> cameras;
     try {
       // Listed again at each start: a webcam plugged in or taken out since the last one counts
@@ -220,15 +270,17 @@ class SpatialHeadTracking extends ChangeNotifier {
       return;
     }
     _cameras = List.unmodifiable(cameras);
-    final chosen = cameras.where((camera) => camera.id == cameraId).firstOrNull ?? defaultHeadCamera(cameras);
+    final picked = cameras.where((camera) => camera.id == cameraId).firstOrNull;
+    final chosen = picked ?? defaultHeadCamera(this.cameras!, except: _greyOnly);
     if (chosen == null) {
       _fail(SpatialTrackingProblem.noCamera, 'no webcam: ${cameras.length} camera(s), infrared only');
       return;
     }
     _camera = chosen;
+    _cameraByDefault = picked == null;
     final HeadTrackingSession session;
     try {
-      session = source.start(chosen);
+      session = source.start(chosen, colourOnly: _cameraByDefault);
     } on HeadTrackerException catch (error) {
       _fail(spatialProblemOf(error.error), 'the webcam did not start: $error');
       return;
@@ -259,6 +311,10 @@ class SpatialHeadTracking extends ChangeNotifier {
     if (source == null || _disposed) {
       return;
     }
+    await _waitForRelease();
+    if (_disposed) {
+      return;
+    }
     try {
       final cameras = await source.cameras();
       if (!_disposed) {
@@ -287,7 +343,34 @@ class SpatialHeadTracking extends ChangeNotifier {
     _setState(_problem != null ? SpatialTrackingState.failed : SpatialTrackingState.off);
     if (session != null) {
       _log.info('Webcam closed');
+      final previous = _closing;
+      final closing = _release(previous, session);
+      _closing = closing;
+      await closing;
+      if (identical(_closing, closing)) {
+        _closing = null;
+      }
+    }
+  }
+
+  /// [session] released after [previous], whatever either answers
+  static Future<void> _release(Future<void>? previous, HeadTrackingSession session) async {
+    try {
+      await previous;
+    } catch (_) {
+      // Logged by its own stop
+    }
+    try {
       await session.close();
+    } catch (error) {
+      _log.warning('The webcam session did not close cleanly: $error');
+    }
+  }
+
+  Future<void> _waitForRelease() async {
+    final closing = _closing;
+    if (closing != null) {
+      await closing;
     }
   }
 
@@ -314,7 +397,9 @@ class SpatialHeadTracking extends ChangeNotifier {
       return;
     }
     _latest = sample;
-    _viewpoint.onSample(sample, _filter.add(sample));
+    final filtered = _filter.add(sample);
+    // Reversed: the mirror image of the head's position about the middle of the frame
+    _viewpoint.onSample(sample, filtered == null || !_reversed ? filtered : -filtered);
     _checkFraming(session, sample);
     onSample?.call();
     if (sample.lost != _faceLost) {
@@ -362,8 +447,26 @@ class SpatialHeadTracking extends ChangeNotifier {
     if (!identical(session, _session) || _disposed) {
       return;
     }
+    final camera = _camera;
+    if (error is HeadTrackerException &&
+        error.error == HeadTrackerError.greyOnly &&
+        camera != null &&
+        _cameraByDefault) {
+      // An infrared camera under a plain name, refused before it streamed: marked, and the next camera taken
+      _log.info('$camera gives grey pictures only: not taken by default');
+      _greyOnly.add(camera.id);
+      unawaited(_startNext());
+      return;
+    }
     final problem = error is HeadTrackerException ? spatialProblemOf(error.error) : SpatialTrackingProblem.failed;
     _fail(problem, 'the webcam stopped: $error');
+  }
+
+  Future<void> _startNext() async {
+    await stop();
+    if (!_disposed) {
+      await start();
+    }
   }
 
   /// [problem] stops tracking; the webcam is released, and nothing starts it again but the user

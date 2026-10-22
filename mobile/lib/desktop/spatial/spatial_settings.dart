@@ -1,6 +1,8 @@
 // What the Spatial 2.5D player of the computers keeps from one video to the next: what moves the viewpoint (the head
-// through the webcam, the mouse, or the slider and the arrow keys alone), the head sensitivity, and the webcam picked
-// in its menu. A small JSON file next to the app's other desktop settings (desktop_spatial.json in the application
+// through the webcam, the mouse, or the slider and the arrow keys alone), the head sensitivity, the webcam picked in its
+// menu, whether the head's direction is reversed (a webcam whose own software mirrors its pictures), and whether the
+// user agreed to the webcam: Windows asks nothing before a desktop app opens it, so the page says what it is for and
+// asks once, before the first time. A small JSON file next to the app's other desktop settings (desktop_spatial.json in the application
 // support folder), as the 360° renderer keeps its choice (sphere_renderer.dart). Nothing of the camera's pictures is
 // ever written: only these choices.
 
@@ -34,6 +36,8 @@ class DesktopSpatialSettings {
     this.source = SpatialViewpointSource.head,
     this.sensitivity = HeadViewpoint.desktopSensitivity,
     this.cameraId,
+    this.cameraAgreed = false,
+    this.reverseHead = false,
   });
 
   final SpatialViewpointSource source;
@@ -45,14 +49,34 @@ class DesktopSpatialSettings {
   /// The symbolic link of the webcam picked in the menu, null for the default one (never an infrared camera)
   final String? cameraId;
 
-  DesktopSpatialSettings copyWith({SpatialViewpointSource? source, double? sensitivity, String? cameraId}) =>
-      DesktopSpatialSettings(
-        source: source ?? this.source,
-        sensitivity: sensitivity ?? this.sensitivity,
-        cameraId: cameraId ?? this.cameraId,
-      );
+  /// The user chose the webcam: "Use the webcam" on the card of the first time, or head tracking in the menu. Until
+  /// then the page asks before it opens the webcam.
+  final bool cameraAgreed;
 
-  Map<String, Object?> toJson() => {'source': source.name, 'sensitivity': sensitivity, 'camera': ?cameraId};
+  /// The head's direction reversed (troubleshooting, for a webcam that mirrors its own pictures)
+  final bool reverseHead;
+
+  DesktopSpatialSettings copyWith({
+    SpatialViewpointSource? source,
+    double? sensitivity,
+    String? cameraId,
+    bool? cameraAgreed,
+    bool? reverseHead,
+  }) => DesktopSpatialSettings(
+    source: source ?? this.source,
+    sensitivity: sensitivity ?? this.sensitivity,
+    cameraId: cameraId ?? this.cameraId,
+    cameraAgreed: cameraAgreed ?? this.cameraAgreed,
+    reverseHead: reverseHead ?? this.reverseHead,
+  );
+
+  Map<String, Object?> toJson() => {
+    'source': source.name,
+    'sensitivity': sensitivity,
+    'camera': ?cameraId,
+    'cameraAgreed': cameraAgreed,
+    'reverseHead': reverseHead,
+  };
 
   /// The settings of [json]; anything missing or out of range takes its default
   factory DesktopSpatialSettings.fromJson(Object? json) {
@@ -68,6 +92,8 @@ class DesktopSpatialSettings {
           ? sensitivity.toDouble().clamp(HeadViewpoint.minSensitivity, HeadViewpoint.maxSensitivity)
           : HeadViewpoint.desktopSensitivity,
       cameraId: camera is String && camera.isNotEmpty ? camera : null,
+      cameraAgreed: json['cameraAgreed'] == true,
+      reverseHead: json['reverseHead'] == true,
     );
   }
 
@@ -76,14 +102,17 @@ class DesktopSpatialSettings {
       other is DesktopSpatialSettings &&
       other.source == source &&
       other.sensitivity == sensitivity &&
-      other.cameraId == cameraId;
+      other.cameraId == cameraId &&
+      other.cameraAgreed == cameraAgreed &&
+      other.reverseHead == reverseHead;
 
   @override
-  int get hashCode => Object.hash(source, sensitivity, cameraId);
+  int get hashCode => Object.hash(source, sensitivity, cameraId, cameraAgreed, reverseHead);
 
   @override
   String toString() =>
-      'DesktopSpatialSettings(${source.name}, sensitivity $sensitivity, camera ${cameraId ?? 'default'})';
+      'DesktopSpatialSettings(${source.name}, sensitivity $sensitivity, camera ${cameraId ?? 'default'}'
+      '${cameraAgreed ? ', webcam agreed' : ''}${reverseHead ? ', head reversed' : ''})';
 }
 
 /// Where [DesktopSpatialSettings] are kept, see the top of this file

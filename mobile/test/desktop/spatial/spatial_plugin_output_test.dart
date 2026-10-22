@@ -1,8 +1,11 @@
 // The Spatial passes of one player (lib/desktop/spatial/spatial_plugin_output.dart) over a fake plugin: attached with
 // mpv's frame kept at the video's shape, at the plugin's default frame for a flat video and at renderer C's start tier
 // of the GPU for a 360° one; the viewpoint and the view go to the plugin at most once per frame, the newest, and a
-// call that fails is not sent again at each frame; a new look is a new setup of the same passes; the window's size is
-// merged while a border is dragged; detach turns them off and gives mpv its letterbox back.
+// call that fails is not sent again at each frame, nor a viewpoint within the dead band of the one sent; a new look is
+// a new setup of the same passes; the window's size is merged while a border is dragged; detach turns them off and
+// gives mpv its letterbox back. The frame of a flat video is what its eyes use once its size is known; the steps down
+// make it smaller (renderer C's tiers for a 360° video), then hold the disparity at LOW; each reader of the figures gets
+// every draw.
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,6 +22,7 @@ class _Channel implements SpatialChannel {
   final calls = <String>[];
   bool failViewpoints = false;
   String glRenderer = _nvidia;
+  SpatialStats? stats_;
 
   @override
   Future<ProjectionResult> enable(int handle, SpatialSetup setup) async {
@@ -52,8 +56,19 @@ class _Channel implements SpatialChannel {
   Future<bool> setDebug(int handle, {required bool disparityMap}) async => true;
 
   @override
-  Future<SpatialStats?> stats(int handle, {bool probe = false}) async => null;
+  Future<SpatialStats?> stats(int handle, {bool probe = false}) async => stats_;
 }
+
+SpatialStats _stats({int frames = 0, List<double> frameMs = const []}) => SpatialStats.fromMap({
+  'enabled': true,
+  'spatial': true,
+  'stereo': true,
+  'quality': 1,
+  'frames': frames,
+  'frameMs': frameMs,
+  'frameWidth': 1920,
+  'frameHeight': 1080,
+});
 
 void main() {
   late _Channel channel;
@@ -154,6 +169,123 @@ void main() {
     expect(channel.setups.length - before, 1, reason: 'merged');
     expect((channel.setups.last.outputWidth, channel.setups.last.outputHeight), (1500, 800));
     expect(mpv.where((value) => value.startsWith('keepaspect')), ['keepaspect=no'], reason: 'nothing of mpv');
+    await output.dispose();
+  });
+
+  test('the frame of a flat video is what its eyes use, never more than the plugin default', () {
+    ({int maxFrameWidth, int maxFramePixels}) cap(
+      int width,
+      int height, {
+      SpatialLayout layout = SpatialLayout.sideBySide,
+      Size box = const Size(1920, 1080),
+      double scale = 1,
+    }) => spatialFlatFrameCap(
+      layout: layout,
+      outputSize: box,
+      maxOutputHeight: 1440,
+      videoWidth: width,
+      videoHeight: height,
+      scale: scale,
+    );
+    // Half side by side 4K: each eye has 1920 columns for 1920 shown, so the frame stays whole on a 1080p screen
+    expect(cap(3840, 2160), (maxFrameWidth: 3840, maxFramePixels: 3840 * 2160));
+    // ... and two thirds of it in a 1280 x 720 window
+    expect(cap(3840, 2160, box: const Size(1280, 720)), (maxFrameWidth: 2560, maxFramePixels: 2560 * 1440));
+    // Full side by side: two 1920 x 1080 eyes, then two 4K eyes read at 1920 x 1080
+    expect(cap(3840, 1080), (maxFrameWidth: 3840, maxFramePixels: 3840 * 1080));
+    expect(cap(7680, 2160), (maxFrameWidth: 3840, maxFramePixels: 3840 * 1080));
+    // Full top and bottom
+    expect(cap(1920, 2160, layout: SpatialLayout.topBottom), (maxFrameWidth: 1920, maxFramePixels: 1920 * 2160));
+    // A window taller than the output's lines: the eyes at most 1920 x 1080
+    expect(cap(7680, 2160, box: const Size(3840, 2160)), (maxFrameWidth: 3840, maxFramePixels: 3840 * 1080));
+    // The steps down
+    expect(cap(3840, 1080, scale: 0.75), (maxFrameWidth: 2880, maxFramePixels: 2880 * 810));
+    expect(cap(3840, 1080, scale: 0.5), (maxFrameWidth: 1920, maxFramePixels: 1920 * 540));
+    // Before the size is known: twice the window's width, four eyes of its pixels, at most the default
+    expect(
+      spatialFlatFrameCap(layout: SpatialLayout.sideBySide, outputSize: const Size(1280, 720), maxOutputHeight: 1440),
+      (maxFrameWidth: 2560, maxFramePixels: 4 * 1280 * 720),
+    );
+    expect(
+      spatialFlatFrameCap(layout: SpatialLayout.sideBySide, outputSize: const Size(2560, 1440), maxOutputHeight: 1440),
+      (maxFrameWidth: 3840, maxFramePixels: 3840 * 2160),
+    );
+  });
+
+  testWidgets('the size of the video sets the frame; the steps down shrink it, then hold the disparity at LOW', (
+    tester,
+  ) async {
+    make();
+    await output.attach(look: const SpatialLook(), outputSize: const Size(1920, 1080));
+    expect(await output.setLook(const SpatialLook(), videoSize: const Size(7680, 2160)), isTrue);
+    expect((channel.setups.last.maxFrameWidth, channel.setups.last.maxFramePixels), (3840, 3840 * 1080));
+    expect(channel.setups.last.quality, SpatialQuality.medium);
+    expect(channel.setups.last.adaptiveQuality, isTrue);
+    expect(output.canStepDown, isTrue);
+    expect(await output.stepDown(), SpatialStepDown.frame);
+    expect(channel.setups.last.maxFrameWidth, 2880);
+    expect(await output.stepDown(), SpatialStepDown.frame);
+    expect(channel.setups.last.maxFrameWidth, 1920);
+    expect(await output.stepDown(), SpatialStepDown.lowQuality);
+    expect(channel.setups.last.quality, SpatialQuality.low);
+    expect(channel.setups.last.adaptiveQuality, isFalse);
+    expect(channel.setups.last.maxFrameWidth, 1920, reason: 'the frame stays at its last step');
+    expect(output.canStepDown, isFalse);
+    expect(await output.stepDown(), isNull);
+    // A new file is measured afresh
+    await output.attach(look: const SpatialLook(), outputSize: const Size(1920, 1080));
+    expect(output.flatStep, 0);
+    expect(output.forcedLow, isFalse);
+    expect(channel.setups.last.quality, SpatialQuality.medium);
+    await output.dispose();
+  });
+
+  testWidgets("a 360° video steps down renderer C's tiers, then holds LOW", (tester) async {
+    make();
+    await output.attach(
+      look: const SpatialLook(projection: SpatialProjection.equirect),
+      outputSize: const Size(1280, 720),
+    );
+    expect(output.frameTier, PluginTier.full);
+    expect(await output.stepDown(), SpatialStepDown.frame);
+    expect(channel.setups.last.maxFrameWidth, PluginTier.w4096.maxFrameWidth);
+    expect(await output.stepDown(), SpatialStepDown.frame);
+    expect(channel.setups.last.maxFrameWidth, PluginTier.w2880.maxFrameWidth);
+    expect(await output.stepDown(), SpatialStepDown.lowQuality);
+    expect(await output.stepDown(), isNull);
+    await output.dispose();
+  });
+
+  testWidgets('a head at rest sends nothing: a viewpoint within the dead band of the one sent stays here', (
+    tester,
+  ) async {
+    make();
+    await output.attach(look: const SpatialLook(), outputSize: const Size(1280, 720));
+    expect(output.sentViewpoint, 0.5);
+    output.setViewpoint(0.5015);
+    await tester.pump();
+    output.setViewpoint(0.4987);
+    await tester.pump();
+    expect(channel.viewpoints, isEmpty);
+    output.setViewpoint(0.5025);
+    await tester.pump();
+    expect(channel.viewpoints, [0.5025]);
+    expect(output.sentViewpoint, 0.5025);
+    await output.dispose();
+  });
+
+  testWidgets('each reader of the figures gets every draw from its first read on', (tester) async {
+    make();
+    await output.attach(look: const SpatialLook(), outputSize: const Size(1280, 720));
+    channel.stats_ = _stats(frames: 3, frameMs: const [10, 12, 11]);
+    expect((await output.stats(reader: #a))!.draws.frames, 3);
+    expect((await output.stats(reader: #b))!.draws.frames, 3);
+    final a = (await output.stats(reader: #a))!.draws;
+    expect(a.frames, 6, reason: "its own read and the other reader's");
+    expect(a.frameMs, [10, 12, 11, 10, 12, 11]);
+    expect((await output.stats(reader: #b))!.draws.frames, 6);
+    expect((await output.stats())!.draws.frames, 3, reason: 'a new reader starts from its first read');
+    expect((await output.stats())!.spatial, isTrue);
     await output.dispose();
   });
 }

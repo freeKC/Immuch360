@@ -2,8 +2,9 @@
 // 180 degrees, the audio track, Recenter, the head sensitivity while the head is tracked, the slider from the left eye
 // to the right one when it is not, the disparity map for troubleshooting) and those of the 360° player of the
 // computers (close, title, full screen, play, 10 s back and forward, the time bar, mute), plus the menu of what moves
-// the viewpoint: head tracking, "Follow the mouse", and the webcams. They show and hide as the 360° player's do
-// (SphericalControlsVisibility).
+// the viewpoint: head tracking, "Follow the mouse", the webcams, and "Reverse head direction" for a webcam whose own
+// software mirrors its pictures. They show and hide as the 360° player's do (SphericalControlsVisibility). And the card
+// of the first time, which says what the webcam is for before the page opens it (SpatialCameraIntro).
 
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_settings.dart';
@@ -34,6 +35,62 @@ String _eyeLayoutLabel(Translations t, mkv.SpatialLayout layout) => switch (layo
   mkv.SpatialLayout.topBottomSwapped => t.spatial_layout_top_bottom_swapped,
   mkv.SpatialLayout.none => t.spatial_layout_none,
 };
+
+/// The card of the first time: Windows asks nothing before a desktop app opens the webcam, so the page says what the
+/// webcam is for and that its pictures stay in memory, and asks, before it opens it
+class SpatialCameraIntro extends StatelessWidget {
+  const SpatialCameraIntro({super.key, required this.onUseWebcam, required this.onFollowMouse});
+
+  final VoidCallback onUseWebcam;
+  final VoidCallback onFollowMouse;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 460),
+        child: Card(
+          key: const Key('spatial_camera_intro'),
+          color: Colors.black87,
+          margin: const EdgeInsets.all(24),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.videocam_outlined, color: Colors.white70),
+                const SizedBox(height: 12),
+                Semantics(
+                  liveRegion: true,
+                  child: Text(t.desktop_spatial_camera_intro, style: const TextStyle(color: Colors.white)),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  alignment: WrapAlignment.end,
+                  spacing: 8,
+                  children: [
+                    TextButton(
+                      key: const Key('spatial_camera_intro_mouse'),
+                      onPressed: onFollowMouse,
+                      child: Text(t.desktop_spatial_follow_mouse),
+                    ),
+                    FilledButton(
+                      key: const Key('spatial_camera_intro_use'),
+                      onPressed: onUseWebcam,
+                      child: Text(t.desktop_spatial_use_camera),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 /// What the layout button says: "Auto: Side by side" tells what Auto picked, as on the phones
 String spatialLayoutButtonLabel(Translations t, SpatialStereoLayout layout, mkv.SpatialLayout auto) =>
@@ -88,6 +145,8 @@ class SpatialControlsModel {
     required this.onViewpointEnd,
     required this.onRecenter,
     required this.onDisparity,
+    this.reversed = false,
+    this.onReversed,
   });
 
   final String title;
@@ -141,6 +200,10 @@ class SpatialControlsModel {
   final VoidCallback onViewpointEnd;
   final VoidCallback onRecenter;
   final VoidCallback onDisparity;
+
+  /// The head's direction reversed (a webcam that mirrors its own pictures)
+  final bool reversed;
+  final ValueChanged<bool>? onReversed;
 }
 
 /// What the head tracking menu holds
@@ -160,6 +223,10 @@ class _CameraChoice extends _SourceItem {
 
 class _DisparityChoice extends _SourceItem {
   const _DisparityChoice();
+}
+
+class _ReverseChoice extends _SourceItem {
+  const _ReverseChoice();
 }
 
 /// The overlay of the controls, see the top of this file
@@ -354,6 +421,8 @@ class SpatialControls extends StatelessWidget {
             model.onCamera(camera);
           case _DisparityChoice():
             model.onDisparity();
+          case _ReverseChoice():
+            model.onReversed?.call(!model.reversed);
         }
       },
       itemBuilder: (context) => [
@@ -377,6 +446,14 @@ class SpatialControls extends StatelessWidget {
               value: _CameraChoice(camera),
               checked: camera == model.camera && model.source == SpatialViewpointSource.head,
               child: Text(spatialCameraLabel(t, camera)),
+            ),
+          // For a webcam whose own software mirrors its pictures: the depth would move the wrong way
+          if (model.onReversed != null)
+            CheckedPopupMenuItem(
+              key: const Key('spatial_reverse_head'),
+              value: const _ReverseChoice(),
+              checked: model.reversed,
+              child: Text(t.desktop_spatial_reverse_head),
             ),
         ],
         if (model.debug) ...[

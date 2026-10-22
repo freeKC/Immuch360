@@ -14,8 +14,11 @@
 // Then the Spatial route of the app (lib/desktop/spatial/spatial_player_route.dart) on the same clip, its head followed
 // through the head tracker's webcam path on the recorded painted head (test/fixtures/video/painted-head-12s.mp4, played
 // at its own pace by the tracker's "file:" test camera, as the runner has no webcam): the viewpoint the route sends to
-// the plugin must swing toward each camera as the head moves (p under 0.3, then over 0.7, as in the clip's ground
-// truth), and the webcam must be released when the route goes.
+// the plugin must follow the head the right way (a face on the right of the picture sends it under 0.3, toward the
+// left camera; on the left, over 0.7), first toward the left camera and about two seconds later toward the right one,
+// as in the clip's ground truth (the face on the right at 1 s, on the left at 3 s); WARP being far too slow for the
+// clip's 15 frames a second, the route's measure of the frames must take the passes a step down and then hold LOW (or
+// play flat); and the webcam must be released, its capture thread ended, when the route goes.
 // Run in the Windows job of the desktop workflow, after the build:
 //   flutter test integration_test/desktop_spatial_renderer_test.dart -d windows
 //   IMMUCH360_SPATIAL_CLIP   another clip of the same pattern (default: the fixture, from the app's folder)
@@ -60,7 +63,8 @@ class _RecordedHead implements SpatialHeadSource {
   Future<List<HeadCamera>> cameras() async => [HeadCamera(id: 'file:$_clip', name: 'Recorded head')];
 
   @override
-  HeadTrackingSession start(HeadCamera camera) => _tracker.start(camera);
+  HeadTrackingSession start(HeadCamera camera, {bool colourOnly = false}) =>
+      _tracker.start(camera, options: HeadTrackerOptions(colourOnly: colourOnly));
 }
 
 int _red(int pixel) => pixel & 0xff;
@@ -328,8 +332,11 @@ void main() {
                     return output = controller == null ? null : SpatialPluginOutput.forController(controller);
                   },
                   headSource: () => _RecordedHead(tracker!, head),
-                  loadSettings: () async => const DesktopSpatialSettings(),
+                  loadSettings: () async => const DesktopSpatialSettings(cameraAgreed: true),
                   saveSettings: (_) async {},
+                  // A shorter measure than the app's 5 s, so that its steps come within the test
+                  probeWindow: const Duration(milliseconds: 2500),
+                  probeInterval: const Duration(milliseconds: 500),
                 ),
               ),
             ),
@@ -343,8 +350,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
     }
     final page = tester.state<DesktopSpatialPlayerPageState>(route);
+    // The 4 s clip loops, so that the frames are measured as long as the test watches
+    await page.controller.setLoop(true);
     final watch = Stopwatch()..start();
+    // Each reading: the time since the first face, where the face was in the picture, the viewpoint sent last
+    final readings = <({double seconds, double faceX, double sent})>[];
     final requested = <double>[];
+    Duration? firstFace;
     var faces = 0;
     var lastSequence = -1;
     while (watch.elapsed < const Duration(seconds: 9)) {
@@ -354,33 +366,72 @@ void main() {
         lastSequence = sample.sequence;
         if (sample.hasFace) {
           faces++;
+          firstFace ??= watch.elapsed;
         }
       }
-      final stats = await output?.stats();
+      final sent = output?.sentViewpoint;
+      final since = firstFace;
+      if (sample != null && sample.hasFace && sent != null && since != null) {
+        readings.add((seconds: (watch.elapsed - since).inMilliseconds / 1000, faceX: sample.faceX, sent: sent));
+      }
+      // The figures through a reader of their own: the route's measure keeps all of its draws
+      final stats = await output?.stats(reader: #test);
       if (stats != null && stats.spatial) {
         requested.add(stats.requestedViewpoint);
       }
     }
-    final low = requested.isEmpty ? double.nan : requested.reduce(math.min);
-    final high = requested.isEmpty ? double.nan : requested.reduce(math.max);
+    final low = readings.where((reading) => reading.sent < 0.3).firstOrNull;
+    final high = readings.where((reading) => reading.sent > 0.7).firstOrNull;
+    final lowest = requested.isEmpty ? double.nan : requested.reduce(math.min);
+    final highest = requested.isEmpty ? double.nan : requested.reduce(math.max);
     // ignore: avoid_print
     print(
       'Spatial route: webcam ${page.tracking.camera}, problem ${page.tracking.problem}, $faces faces seen, '
-      '${requested.length} stats, viewpoint from ${low.toStringAsFixed(2)} to ${high.toStringAsFixed(2)}, '
-      'drawing ${page.drawing}',
+      '${readings.length} readings, first under 0.3 at ${low?.seconds} s, first over 0.7 at ${high?.seconds} s, '
+      'the plugin asked for ${lowest.toStringAsFixed(2)} to ${highest.toStringAsFixed(2)}, drawing ${page.drawing}, '
+      '${page.stepDowns} step(s) down',
     );
     expect(page.tracking.problem, isNull, reason: 'the recorded head plays through the capture thread');
     expect(page.drawing, isTrue, reason: 'the passes draw the route');
     expect(faces, greaterThan(20), reason: 'the face found on the way');
-    expect(low, lessThan(0.3), reason: 'the head moves to the left of the picture: toward the left camera');
-    expect(high, greaterThan(0.7), reason: 'then to the right: toward the right camera');
+    expect(low, isNotNull, reason: 'the face on the right of the picture: toward the left camera');
+    expect(high, isNotNull, reason: 'then on the left: toward the right camera');
+    expect(low!.seconds, lessThan(high!.seconds), reason: 'left camera first (1 s in the clip), then right (3 s)');
+    expect(high.seconds - low.seconds, inInclusiveRange(1.0, 3.2), reason: 'about two seconds apart');
+    // The sign held end to end: every reading far to one side sent the viewpoint the matching way
+    for (final reading in readings) {
+      if (reading.faceX > 0.75) {
+        expect(reading.sent, lessThan(0.5), reason: 'face at ${reading.faceX} after ${reading.seconds} s');
+      } else if (reading.faceX < 0.25) {
+        expect(reading.sent, greaterThan(0.5), reason: 'face at ${reading.faceX} after ${reading.seconds} s');
+      }
+    }
+    expect(lowest, lessThan(0.3), reason: 'the plugin got the viewpoints');
+    expect(highest, greaterThan(0.7));
+
+    // WARP draws a frame in 100 to 200 ms, the clip has 15 a second: the measure steps the passes down
+    final measure = Stopwatch()..start();
+    while (measure.elapsed < const Duration(seconds: 20) && !(page.output?.forcedLow ?? false) && page.drawing) {
+      await Future<void>.delayed(const Duration(milliseconds: 250));
+    }
+    // ignore: avoid_print
+    print(
+      'Spatial measure on WARP: ${page.stepDowns} step(s) down, frame share '
+      '${page.output == null ? '-' : SpatialPluginOutput.flatFrameScales[page.output!.flatStep]}, LOW held '
+      '${page.output?.forcedLow}, drawing ${page.drawing}',
+    );
+    expect(page.stepDowns, greaterThanOrEqualTo(1), reason: 'the frame made smaller');
+    expect((page.output?.forcedLow ?? false) || !page.drawing, isTrue, reason: 'then LOW held, or flat');
 
     final tracking = page.tracking;
     expect(tracking.cameraOpen, isTrue);
     await tester.pumpWidget(const SizedBox());
-    for (var i = 0; i < 30; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+    // The native close in its background isolate: the capture thread ends and the webcam is let go
+    await tracking.released.timeout(const Duration(seconds: 10));
+    expect(tracking.cameraOpen, isFalse, reason: 'the webcam is released when the route goes');
+    for (var i = 0; i < 5; i++) {
       await tester.pump(const Duration(milliseconds: 100));
     }
-    expect(tracking.cameraOpen, isFalse, reason: 'the webcam is released when the route goes');
   }, timeout: const Timeout(Duration(minutes: 3)));
 }

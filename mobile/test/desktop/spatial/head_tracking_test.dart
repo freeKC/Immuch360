@@ -3,7 +3,9 @@
 // webcam; the samples move the viewpoint the phones' way (the first face sets the centre, a head moving to the user's
 // right moves it toward the right camera); a face lost long enough offers the slider; each error of the webcam is a
 // problem, releases it and is never retried by itself; a stop while the webcams are listed opens none; automatic
-// framing is read from the tracker. And the Spatial settings file (spatial_settings.dart).
+// framing is read from the tracker; a start waits for the webcam the previous session still holds; a default webcam
+// whose formats are all grey is skipped; the head's direction can be reversed. And the Spatial settings file
+// (spatial_settings.dart).
 
 import 'dart:async';
 import 'dart:io';
@@ -32,13 +34,28 @@ HeadSample sample(int sequence, {double faceX = double.nan, HeadFaceState? state
   faces: faceX.isNaN ? 0 : 1,
 );
 
-/// A webcam session driven by the test: [push] gives a sample, [fail] the error that stops the camera
+/// A webcam session driven by the test: [push] gives a sample, [fail] the error that stops the camera. Its close waits
+/// for [release] when one is given: the capture thread still holds the webcam meanwhile.
 class FakeHeadSession {
-  FakeHeadSession(this.camera) {
-    session = HeadTrackingSession.forTesting(latest: () => _latest, nowUs: () => nowUs, info: () => info);
+  FakeHeadSession(this.camera, {this.colourOnly = false, Future<void> Function()? release}) {
+    session = HeadTrackingSession.forTesting(
+      latest: () => _latest,
+      nowUs: () => nowUs,
+      info: () => info,
+      onClose: () async {
+        closing = true;
+        await release?.call();
+        released = true;
+      },
+    );
   }
 
   final HeadCamera camera;
+  final bool colourOnly;
+
+  /// The close began; the webcam was let go
+  bool closing = false;
+  bool released = false;
   late final HeadTrackingSession session;
   ({HeadSample sample, int status})? _latest;
   int nowUs = 0;
@@ -65,7 +82,8 @@ class FakeHeadSession {
   }
 }
 
-/// The webcams of the test, and the sessions opened on them
+/// The webcams of the test, and the sessions opened on them. Like a real webcam, one still held by a session that is
+/// closing refuses to open again (busy); [greyOnly] cameras refuse a colour only open, before they stream.
 class FakeHeadSource implements SpatialHeadSource {
   FakeHeadSource({this.list = const [_webcam]});
 
@@ -73,8 +91,15 @@ class FakeHeadSource implements SpatialHeadSource {
   Exception? listError;
   Exception? startError;
   Completer<void>? holdList;
+
+  /// The release of the webcam by a closing session waits for this
+  Completer<void>? holdRelease;
+  Set<String> greyOnly = const {};
   int listings = 0;
   final sessions = <FakeHeadSession>[];
+
+  /// Opens refused because the previous session still held the webcam
+  int busy = 0;
 
   FakeHeadSession get last => sessions.last;
 
@@ -90,13 +115,22 @@ class FakeHeadSource implements SpatialHeadSource {
   }
 
   @override
-  HeadTrackingSession start(HeadCamera camera) {
+  HeadTrackingSession start(HeadCamera camera, {bool colourOnly = false}) {
     final error = startError;
     if (error != null) {
       throw error;
     }
-    final fake = FakeHeadSession(camera);
+    final held = sessions.any((session) => session.closing && !session.released);
+    // Read when the session closes: the test may hold the release after the session opened
+    final fake = FakeHeadSession(camera, colourOnly: colourOnly, release: () async => holdRelease?.future);
     sessions.add(fake);
+    if (held) {
+      // The capture thread of the previous session has not let the webcam go
+      busy++;
+      scheduleMicrotask(() => fake.fail(HeadTrackerStatus.cameraBusy));
+    } else if (colourOnly && greyOnly.contains(camera.id)) {
+      scheduleMicrotask(() => fake.fail(HeadTrackerStatus.greyOnly));
+    }
     return fake.session;
   }
 }
@@ -272,6 +306,79 @@ void main() {
       expect(tracking.info()?.nativeFourcc, 'MJPG');
     });
 
+    test('a start waits for the webcam the previous session still holds', () async {
+      source.holdRelease = Completer<void>();
+      await tracking.start();
+      final first = source.last;
+      final stopping = tracking.stop();
+      await settle();
+      expect(first.closing, isTrue);
+      expect(first.released, isFalse, reason: 'the capture thread still holds the webcam');
+      // Minimised and restored at once: the second start waits rather than finding the webcam busy
+      final starting = tracking.start();
+      await settle();
+      expect(source.sessions, hasLength(1));
+      expect(tracking.state, SpatialTrackingState.starting);
+      source.holdRelease!.complete();
+      await stopping;
+      await starting;
+      await settle();
+      expect(source.sessions, hasLength(2));
+      expect(source.busy, 0);
+      expect(tracking.problem, isNull);
+      expect(tracking.state, SpatialTrackingState.running);
+      // The listing for the menu waits as well
+      source.holdRelease = Completer<void>();
+      final again = tracking.stop();
+      final listings = source.listings;
+      final listing = tracking.refreshCameras();
+      await settle();
+      expect(source.listings, listings);
+      source.holdRelease!.complete();
+      await again;
+      await listing;
+      expect(source.listings, listings + 1);
+      await tracking.released;
+    });
+
+    test('a default webcam whose formats are all grey is skipped, and marked infrared', () async {
+      const plain = HeadCamera(id: r'\\?\usb#vid_0004', name: 'Integrated Camera');
+      source
+        ..list = const [plain, _webcam]
+        ..greyOnly = {plain.id};
+      await tracking.start();
+      for (var i = 0; i < 5; i++) {
+        await settle();
+      }
+      await tracking.released;
+      await settle();
+      expect(source.sessions.map((session) => (session.camera, session.colourOnly)), [(plain, true), (_webcam, true)]);
+      expect(source.sessions.first.session.isClosed, isTrue);
+      expect(tracking.camera, _webcam);
+      expect(tracking.problem, isNull);
+      expect(tracking.state, SpatialTrackingState.running);
+      expect(tracking.cameras!.first.infrared, isTrue, reason: 'the menu says it');
+      await tracking.stop();
+      // Picked by the user, it opens without the check, as it is
+      await tracking.start(cameraId: plain.id);
+      expect(source.last.camera, plain);
+      expect(source.last.colourOnly, isFalse);
+    });
+
+    test("reversed, a head moving to the user's right moves the viewpoint toward the left camera", () async {
+      await tracking.start();
+      final webcam = source.last;
+      tracking.reversed = true;
+      for (var i = 1; i <= 10; i++) {
+        webcam.push(sample(i, faceX: 0.5));
+      }
+      for (var i = 11; i <= 60; i++) {
+        webcam.push(sample(i, faceX: 0.45));
+      }
+      await settle();
+      expect(tracking.viewpointNow(), closeTo(0.5 - 0.05 * 3, 0.01));
+    });
+
     test('lists the webcams for the menu without opening any', () async {
       await tracking.refreshCameras();
       expect(tracking.cameras, [_infrared, _webcam, _external]);
@@ -307,15 +414,32 @@ void main() {
       expect(settings.source, SpatialViewpointSource.head);
       expect(settings.sensitivity, 3.0);
       expect(settings.cameraId, isNull);
+      expect(settings.cameraAgreed, isFalse, reason: 'the page asks before it opens the webcam the first time');
+      expect(settings.reverseHead, isFalse);
     });
 
     test('keeps the choices in a file, and reads them back in a new session', () async {
-      const chosen = DesktopSpatialSettings(source: SpatialViewpointSource.mouse, sensitivity: 2.4, cameraId: 'cam');
+      const chosen = DesktopSpatialSettings(
+        source: SpatialViewpointSource.mouse,
+        sensitivity: 2.4,
+        cameraId: 'cam',
+        cameraAgreed: true,
+        reverseHead: true,
+      );
       await DesktopSpatialSettingsStore.save(chosen);
       DesktopSpatialSettingsStore.forget();
       expect(await DesktopSpatialSettingsStore.load(), chosen);
       final text = File('${folder.path}/${DesktopSpatialSettingsStore.fileName}').readAsStringSync();
-      expect(text, '{"source":"mouse","sensitivity":2.4,"camera":"cam"}');
+      expect(
+        text,
+        '{"source":"mouse","sensitivity":2.4,"camera":"cam","cameraAgreed":true,"reverseHead":true}',
+        reason: 'the choices only, never a picture',
+      );
+      // A file of the first version: the webcam not agreed to yet, the head not reversed
+      expect(
+        DesktopSpatialSettings.fromJson(const {'source': 'head', 'sensitivity': 3.0}),
+        const DesktopSpatialSettings(),
+      );
     });
 
     test('a damaged or odd file gives the defaults, a sensitivity out of range is kept within it', () async {

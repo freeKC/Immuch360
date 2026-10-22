@@ -387,24 +387,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     return '${info.version}+${info.buildNumber}';
   }
 
-  static Future<double?> _mpvFramesPerSecond(PlaybackEngine engine) async {
-    final native = engine.videoController?.player.platform;
-    if (native is! NativePlayer) {
-      return null;
-    }
-    for (final name in const ['container-fps', 'estimated-vf-fps']) {
-      final value = double.tryParse(await native.getProperty(name));
-      if (value != null && value > 0) {
-        return value;
-      }
-    }
-    return null;
-  }
+  static Future<double?> _mpvFramesPerSecond(PlaybackEngine engine) => mpvVideoFramesPerSecond(engine);
 
-  static Future<String?> _mpvHwdec(PlaybackEngine engine) async {
-    final native = engine.videoController?.player.platform;
-    return native is NativePlayer ? native.getProperty('hwdec-current') : null;
-  }
+  static Future<String?> _mpvHwdec(PlaybackEngine engine) => mpvHwdecCurrent(engine);
 
   @override
   void didChangeDependencies() {
@@ -1639,4 +1624,31 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
             ),
     );
   }
+}
+
+/// The frame rate of the video [engine] plays, as mpv knows it (the container's, else its estimate); null when unknown
+Future<double?> mpvVideoFramesPerSecond(PlaybackEngine engine) async {
+  final native = engine.videoController?.player.platform;
+  if (native is! NativePlayer) {
+    return null;
+  }
+  for (final name in const ['container-fps', 'estimated-vf-fps']) {
+    final value = double.tryParse(await native.getProperty(name));
+    if (value != null && value > 0) {
+      return value;
+    }
+  }
+  return null;
+}
+
+/// The decoder mpv uses for [engine]'s video: "no" for software, "d3d11va", "d3d11va-copy", ...
+Future<String?> mpvHwdecCurrent(PlaybackEngine engine) async {
+  final native = engine.videoController?.player.platform;
+  return native is NativePlayer ? native.getProperty('hwdec-current') : null;
+}
+
+/// An mpv property of [engine]'s player, empty when it has none
+Future<String> mpvProperty(PlaybackEngine engine, String name) async {
+  final native = engine.videoController?.player.platform;
+  return native is NativePlayer ? native.getProperty(name) : '';
 }

@@ -10,10 +10,19 @@
 // ("Follow the mouse", for a computer without a webcam), or from the slider and the arrow keys alone. The slider and
 // the keys also take over from the head or the mouse, until Recenter (R) gives the viewpoint back to them.
 // The webcam runs only while this page shows with head tracking chosen: it closes when the page closes, when the
-// window is minimised (and opens again when it comes back), and when tracking is turned off. Camera access turned off
-// for desktop apps gives the privacy message with the button of the Windows settings; the webcam is then not tried
-// again until the user comes back from those settings or turns tracking on again. With the system's reduced motion the
-// page opens on the slider. A 360° or VR180 stereo video turns with a drag, as in the 360° player.
+// window is minimised, when Windows is locked or its display is off (session_presence.dart; the window is then only
+// inactive), and opens again when they come back; it closes when tracking is turned off. Windows asks nothing before a
+// desktop app opens the webcam: the first time, the page says what the webcam is for and asks ("Use the webcam" or
+// "Follow the mouse") before it opens it. Camera access turned off for desktop apps gives the privacy message with the
+// button of the Windows settings; the webcam is then not tried again until the user comes back from those settings or
+// turns tracking on again. With the system's reduced motion the page opens on the slider. A 360° or VR180 stereo video
+// turns with a drag, as in the 360° player.
+//
+// The passes' own adaptive tier sees the GPU time of the passes only, not mpv drawing the frame nor the decoder. The
+// page measures what the 360° player measures (render/renderer_probe.dart: the frames drawn against the video's rate
+// over the first seconds of playback): a shortfall the decoder causes plays the server's transcoded stream when there
+// is one; otherwise the passes step down (a smaller frame for mpv, then the disparity held at LOW) and are measured
+// again; at the lowest step, below 0.6 of the rate, the video plays flat with the message.
 // On close, whoever opened it hears where the video was, whether it played, and the layout and projection shown last
 // (the SpatialVideoEvents of the phones), and externalPlayerClosedProvider lets the viewer behind take its video back.
 //
@@ -21,7 +30,9 @@
 // dropped, the server's videos go through the bridge, as in the 360° player.
 
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -31,6 +42,7 @@ import 'package:immich_mobile/desktop/spatial/head_tracking.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_controls.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_plugin_output.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_settings.dart';
+import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
@@ -38,10 +50,13 @@ import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
 import 'package:immich_mobile/desktop/video/projection_params.dart';
+import 'package:immich_mobile/desktop/video/render/renderer_probe.dart';
 import 'package:immich_mobile/desktop/video/spherical_controls.dart';
-import 'package:immich_mobile/desktop/video/spherical_player_route.dart' show sphericalVideoSource;
+import 'package:immich_mobile/desktop/video/spherical_player_route.dart'
+    show mpvHwdecCurrent, mpvProperty, mpvVideoFramesPerSecond, sphericalVideoSource;
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
+import 'package:immich_mobile/desktop/window/session_presence.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
@@ -120,6 +135,13 @@ class SpatialPlayerDependencies {
     this.saveSettings,
     this.openUri,
     this.statsInterval,
+    this.framesPerSecond,
+    this.hwdecCurrent,
+    this.readMpv,
+    this.memoryMB,
+    this.probeWindow,
+    this.probeInterval,
+    this.away,
   });
 
   final PlayerPool? pool;
@@ -136,6 +158,21 @@ class SpatialPlayerDependencies {
 
   /// How often the troubleshooting figures are read
   final Duration? statsInterval;
+
+  /// The video's frame rate, mpv's decoder in use and an mpv property of a player (the measure of the frames)
+  final Future<double?> Function(PlaybackEngine engine)? framesPerSecond;
+  final Future<String?> Function(PlaybackEngine engine)? hwdecCurrent;
+  final Future<String> Function(PlaybackEngine engine, String name)? readMpv;
+
+  /// The process's memory in MiB, for the measure
+  final int? Function()? memoryMB;
+
+  /// The playback measured before a verdict, and how often the counts are read (RendererProbeLimits by default)
+  final Duration? probeWindow;
+  final Duration? probeInterval;
+
+  /// True while nobody can be in front of the computer (Windows locked, display off): the webcam closes
+  final ValueListenable<bool>? away;
 }
 
 /// The eye layout the passes draw for [selected], the user's or the viewer's choice. Auto, which the phones resolve
@@ -210,6 +247,8 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
   late final MediaKitVideoPlayerController _controller;
   late final ExternalPlayerClosed _closedSignal;
   late final SpatialHeadTracking _tracking;
+  late final RendererProbe _probe;
+  late final ValueListenable<bool> _away;
   final _visibility = SphericalControlsVisibility();
   final _rootFocus = FocusNode(debugLabel: 'Spatial video');
 
@@ -240,8 +279,16 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
   /// A frame is asked for the head's viewpoint: at each sample, and at each frame while the viewpoint eases
   bool _headFrameScheduled = false;
 
-  /// The window was minimised while the webcam ran: it opens again when the window comes back
+  /// The window was minimised, or Windows locked, while the webcam ran or was about to: it opens again when they come
+  /// back
   bool _resumeTracking = false;
+
+  /// The card of the first time shows: what the webcam is for, and whether to use it
+  bool _askCamera = false;
+
+  /// The steps down the measure took, and why the last one
+  int _stepDowns = 0;
+  String? _stepDownReason;
 
   /// The user went to the camera settings from the privacy message: the webcam is tried again on the way back, once
   /// the window lost the focus to them and got it back
@@ -295,6 +342,18 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
   @visibleForTesting
   SpatialStereoLayout get layout => _layout;
 
+  /// The passes of the player, null while none is attached
+  @visibleForTesting
+  SpatialPluginOutput? get output => _output;
+
+  /// How many times the measure of the frames took the passes a step down
+  @visibleForTesting
+  int get stepDowns => _stepDowns;
+
+  /// Whether the card of the first time asks about the webcam
+  @visibleForTesting
+  bool get askingCamera => _askCamera;
+
   @override
   void initState() {
     super.initState();
@@ -307,6 +366,23 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
     _tracking
       ..addListener(_onTracking)
       ..onSample = _scheduleHeadFrame;
+    _away = _deps.away ?? DesktopSessionPresence.instance.away;
+    _away.addListener(_onAway);
+    _probe = RendererProbe(
+      stats: () async => (await _output?.stats(reader: _probeReader))?.draws,
+      targetFramesPerSecond: () async {
+        final engine = _outputEngine;
+        return engine == null ? null : (_deps.framesPerSecond ?? mpvVideoFramesPerSecond)(engine);
+      },
+      memoryMB: _deps.memoryMB ?? () => ProcessInfo.currentRss ~/ (1 << 20),
+      measuring: () =>
+          _ready &&
+          _drawing &&
+          _controller.onPlaybackStatusChanged.value == PlaybackStatus.playing &&
+          !_controller.buffering.value,
+      window: _deps.probeWindow ?? RendererProbeLimits.window,
+      interval: _deps.probeInterval ?? RendererProbeLimits.interval,
+    );
     _controller = MediaKitVideoPlayerController(
       pool: _deps.pool ?? desktopPlayerPool,
       resolve: _deps.resolve ?? desktopAppVideoResolver(ref),
@@ -337,13 +413,17 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
       return;
     }
     _settingsLoaded = true;
-    _tracking.sensitivity = _settings.sensitivity;
+    _tracking
+      ..sensitivity = _settings.sensitivity
+      ..reversed = _settings.reverseHead;
     // Head coupled motion bothers some people: with the system's reduced motion the page opens on the slider
     _source = desktopReducedMotion(context) && _settings.source != SpatialViewpointSource.manual
         ? SpatialViewpointSource.manual
         : _settings.source;
+    // Windows asks nothing before a desktop app opens the webcam: the first time, the page asks
+    _askCamera = _source == SpatialViewpointSource.head && !_settings.cameraAgreed;
     setState(() {});
-    if (_source == SpatialViewpointSource.head) {
+    if (_source == SpatialViewpointSource.head && !_askCamera) {
       unawaited(_startTracking());
     } else {
       // For the webcam menu: listed, none opened
@@ -360,9 +440,52 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
     if (!mounted || _closed) {
       return;
     }
+    if (!_present) {
+      // Minimised, locked or the display off (the settings were still being read when it happened): opened when the
+      // window and the session come back
+      _resumeTracking = true;
+      return;
+    }
     _dismissedProblem = null;
     _framingDismissed = false;
     await _tracking.start(cameraId: _settings.cameraId);
+  }
+
+  /// Whether someone can see the page: the window neither minimised nor hidden, Windows neither locked nor with its
+  /// display off
+  bool get _present {
+    final state = WidgetsBinding.instance.lifecycleState;
+    return state != AppLifecycleState.hidden &&
+        state != AppLifecycleState.paused &&
+        state != AppLifecycleState.detached &&
+        !_away.value;
+  }
+
+  /// Windows locked or its display off: the webcam closes, and opens again when they come back
+  void _onAway() {
+    if (_closed || !mounted) {
+      return;
+    }
+    if (_away.value) {
+      if (_tracking.cameraOpen || _tracking.state == SpatialTrackingState.starting) {
+        _resumeTracking = true;
+        unawaited(_tracking.stop());
+      }
+    } else if (_resumeTracking && _source == SpatialViewpointSource.head && _present) {
+      _resumeTracking = false;
+      unawaited(_startTracking());
+    }
+  }
+
+  /// The answer to the card of the first time
+  Future<void> _answerCamera({required bool useWebcam}) async {
+    setState(() => _askCamera = false);
+    if (useWebcam) {
+      await _saveSettings(_settings.copyWith(cameraAgreed: true, source: SpatialViewpointSource.head));
+      await _startTracking();
+    } else {
+      await _setSource(SpatialViewpointSource.mouse);
+    }
   }
 
   @override
@@ -421,6 +544,103 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
     setState(() => _drawing = true);
   }
 
+  static const _probeReader = #probe;
+  static const _panelReader = #panel;
+
+  void _startProbe() {
+    final output = _output;
+    if (output == null || !output.attached || _flat || _closed) {
+      return;
+    }
+    _probe.start(lowestTier: !output.canStepDown, onResult: _onProbe);
+  }
+
+  /// What the measure of the frames found (see the top of this file)
+  Future<void> _onProbe(ProbeVerdict verdict, ProbeSample sample) async {
+    final output = _output;
+    final engine = _outputEngine;
+    if (output == null || !output.attached || !mounted || _flat || _closed) {
+      return;
+    }
+    _log.info('Spatial measure: $sample, ${verdict.name}');
+    switch (verdict) {
+      case ProbeVerdict.keep:
+        return;
+      case ProbeVerdict.refused:
+        _log.warning('The Spatial passes draw nothing: ${sample.error ?? 'no error given'}');
+        await output.detach();
+        _showFlat('the passes draw nothing');
+        return;
+      case ProbeVerdict.stepDown || ProbeVerdict.fail:
+        String? hwdec;
+        try {
+          hwdec = engine == null ? null : await (_deps.hwdecCurrent ?? mpvHwdecCurrent)(engine);
+        } catch (_) {
+          // Only for the decoder's share of the shortfall
+        }
+        if (!mounted || !identical(output, _output)) {
+          return;
+        }
+        if (decodeLimited(sample, hwdec: hwdec) && await _playTranscodedInstead(engine, sample, hwdec)) {
+          return;
+        }
+        final reason = '${sample.framesPerSecond.toStringAsFixed(1)} of ${sample.targetFramesPerSecond} fps';
+        final step = await output.stepDown();
+        if (!mounted || !identical(output, _output)) {
+          return;
+        }
+        if (step == null) {
+          if (verdict == ProbeVerdict.fail) {
+            await output.detach();
+            _showFlat('too slow at the lowest step: $reason');
+          }
+          return;
+        }
+        _stepDowns++;
+        _stepDownReason = '${step.name}: $reason';
+        _log.info('Spatial passes a step down (${step.name}) after $reason');
+        setState(() {});
+        _startProbe();
+    }
+  }
+
+  /// The decoder does not keep up with the original: the server's transcoded stream from where the video is, with the
+  /// phones' message, as the 360° player does. False when there is none or it plays already.
+  Future<bool> _playTranscodedInstead(PlaybackEngine? engine, ProbeSample sample, String? hwdec) async {
+    final fallback = widget.args.fallbackUrl;
+    if (fallback == null || _usingFallback) {
+      return false;
+    }
+    _usingFallback = true;
+    var codec = '?';
+    try {
+      final name = engine == null
+          ? ''
+          : (await (_deps.readMpv ?? mpvProperty)(engine, 'current-tracks/video/codec')).trim();
+      final mime = mimeOfMpvCodec(name);
+      codec = mime != null ? videoCodecLabel(mime) : (name.isEmpty ? '?' : name.toUpperCase());
+    } catch (_) {
+      // Only for the message
+    }
+    if (!mounted) {
+      return true;
+    }
+    _log.info('The decoding of the original does not keep up ($sample, hwdec ${hwdec ?? '?'}): transcoded stream');
+    final info = _controller.videoInfo;
+    _probe.stop();
+    _ready = false;
+    setState(
+      () => _notice = context.t.video_source_switched(
+        codec: codec,
+        width: '${info?.width ?? '?'}',
+        height: '${info?.height ?? '?'}',
+      ),
+    );
+    final position = Duration(milliseconds: _controller.onPlaybackPositionChanged.value);
+    unawaited(_controller.loadVideoSource(sphericalVideoSource(fallback), startAt: position));
+    return true;
+  }
+
   static SpatialPluginOutput? _outputForEngine(PlaybackEngine engine) {
     final videoController = engine.videoController;
     return videoController == null
@@ -441,6 +661,7 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
 
   void _showFlat(String reason) {
     _log.info('The Spatial passes do not draw here ($reason): the video plays as it is');
+    _probe.stop();
     _flat = true;
     _drawing = false;
     if (mounted) {
@@ -482,6 +703,16 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
   void _scheduleHeadFrame() {
     if (_headFrameScheduled || !mounted || _closed) {
       return;
+    }
+    if (_manualHold || _draggingViewpoint || _source != SpatialViewpointSource.head) {
+      return;
+    }
+    if (!_tracking.isAnimating()) {
+      // A head at rest jitters by a few thousandths: no frame is asked for a change the plugin would not draw
+      final now = _tracking.viewpointNow();
+      if (now != null && (now - _viewpoint).abs() < SpatialPluginOutput.viewpointDeadBand) {
+        return;
+      }
     }
     _headFrameScheduled = true;
     SchedulerBinding.instance.scheduleFrameCallback((_) {
@@ -559,7 +790,10 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
     }
     _source = source;
     _manualHold = false;
+    _askCamera = false;
     if (source == SpatialViewpointSource.head) {
+      // Chosen in the menu: the webcam is the user's choice
+      _settings = _settings.copyWith(cameraAgreed: true);
       unawaited(_startTracking());
     } else {
       await _tracking.stop();
@@ -572,8 +806,15 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
     await _saveSettings(_settings.copyWith(source: source));
   }
 
+  Future<void> _setReversed(bool reversed) async {
+    _tracking.reversed = reversed;
+    setState(() {});
+    await _saveSettings(_settings.copyWith(reverseHead: reversed));
+  }
+
   Future<void> _chooseCamera(HeadCamera camera) async {
-    _settings = _settings.copyWith(cameraId: camera.id);
+    _askCamera = false;
+    _settings = _settings.copyWith(cameraId: camera.id, cameraAgreed: true);
     if (_source != SpatialViewpointSource.head || _tracking.camera != camera || !_tracking.cameraOpen) {
       _source = SpatialViewpointSource.head;
       _manualHold = false;
@@ -581,6 +822,9 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
       unawaited(_startTracking());
     }
     await _saveSettings(_settings.copyWith(source: SpatialViewpointSource.head));
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _setSensitivity(double value) {
@@ -651,10 +895,16 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
       return;
     }
     _ready = true;
-    // The frame shape is known: Auto may pick another layout than the one guessed without it
+    // The frame shape is known: Auto may pick another layout than the one guessed without it, and the frame mpv draws
+    // into takes the size the eyes use; then the frames are measured
     final output = _output;
     if (output != null && output.attached) {
-      unawaited(output.setLook(_look()));
+      final info = _controller.videoInfo;
+      final size = info == null || info.width <= 0 || info.height <= 0
+          ? null
+          : Size(info.width.toDouble(), info.height.toDouble());
+      unawaited(output.setLook(_look(), videoSize: size));
+      _startProbe();
     }
     if (widget.args.autoplay) {
       unawaited(_controller.play());
@@ -687,6 +937,7 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
       // As the phones' players: the server's transcoded stream when the original cannot be played here
       _usingFallback = true;
       _ready = false;
+      _probe.stop();
       setState(() => _notice = context.t.desktop_video_360_transcoded);
       final position = Duration(milliseconds: _controller.onPlaybackPositionChanged.value);
       unawaited(_controller.loadVideoSource(sphericalVideoSource(fallback), startAt: position));
@@ -713,7 +964,7 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
   }
 
   Future<void> _readStats() async {
-    final stats = await _output?.stats();
+    final stats = await _output?.stats(reader: _panelReader);
     if (mounted && stats != null) {
       setState(() => _stats = stats);
     }
@@ -895,6 +1146,8 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _away.removeListener(_onAway);
+    _probe.stop();
     // The page hears nothing more of the tracking before the webcam closes below
     _tracking
       ..removeListener(_onTracking)
@@ -1052,6 +1305,8 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
                       onCoverage: _toggleCoverage,
                       onSource: (source) => unawaited(_setSource(source)),
                       onCamera: (camera) => unawaited(_chooseCamera(camera)),
+                      reversed: _tracking.reversed,
+                      onReversed: (reversed) => unawaited(_setReversed(reversed)),
                       onSensitivity: _setSensitivity,
                       onSensitivityEnd: () => unawaited(_saveSensitivity()),
                       onViewpointStart: () => setState(() => _draggingViewpoint = true),
@@ -1080,6 +1335,11 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
                       ),
                     ),
                   if (debug) Positioned(top: 64, left: 12, child: _debugOverlay()),
+                  if (_askCamera)
+                    SpatialCameraIntro(
+                      onUseWebcam: () => unawaited(_answerCamera(useWebcam: true)),
+                      onFollowMouse: () => unawaited(_answerCamera(useWebcam: false)),
+                    ),
                   SpatialMessages(
                     messages: [
                       ?_trackingMessage(t),
@@ -1115,6 +1375,16 @@ class DesktopSpatialPlayerPageState extends ConsumerState<DesktopSpatialPlayerPa
         );
     } else {
       lines.add(_drawing ? 'passes: no figure yet' : 'passes: off');
+    }
+    final output = _output;
+    if (stats != null && output != null) {
+      final step = output.look.projection == mkv.SpatialProjection.equirect
+          ? 'tier ${output.frameTier?.name ?? 'default'}'
+          : 'share ${SpatialPluginOutput.flatFrameScales[output.flatStep]}';
+      lines.add(
+        'frame ${stats.draws.frameWidth} x ${stats.draws.frameHeight} ($step${output.forcedLow ? ', LOW held' : ''}), '
+        '$_stepDowns step(s) down${_stepDownReason == null ? '' : ', last $_stepDownReason'}',
+      );
     }
     lines.add('viewpoint ${fixed(_viewpoint)} (${_source.name}${_manualHold ? ', held' : ''})');
     if (sample != null) {

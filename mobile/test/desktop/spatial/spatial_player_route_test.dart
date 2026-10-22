@@ -5,7 +5,11 @@
 // the Windows settings, and the webcam is tried again once the user comes back from them, never in a loop; the arrow
 // keys and the slider take the viewpoint over until R recenters; "Follow the mouse" closes the webcam and follows the
 // pointer; reduced motion opens on the slider; the layout menu changes the passes; closing tells the opener where the
-// video was and what was shown; refused passes play the video as it is with a message.
+// video was and what was shown; refused passes play the video as it is with a message. The first time, a card asks
+// before the webcam opens; the webcam stays closed while the window is minimised or Windows locked, even when that
+// happens before it opened, and a quick minimise and restore waits for the webcam's release; frames that do not keep up
+// take the passes a step down, then flat, or to the transcoded stream when the decoder is short; the head's direction
+// can be reversed from the menu.
 
 import 'dart:async';
 
@@ -117,11 +121,15 @@ void main() {
   Future<void> pumpLauncher(
     WidgetTester tester,
     SpatialPlayerArgs args, {
-    DesktopSpatialSettings settings = const DesktopSpatialSettings(),
+    DesktopSpatialSettings settings = const DesktopSpatialSettings(cameraAgreed: true),
     List<HeadCamera>? cameras,
     Exception? listError,
     String? refuse,
     bool reducedMotion = false,
+    Future<void>? settingsHeld,
+    ValueNotifier<bool>? away,
+    String? hwdec,
+    Duration? probeWindow,
   }) async {
     tester.view.physicalSize = const Size(1600, 900);
     tester.view.devicePixelRatio = 1;
@@ -142,13 +150,23 @@ void main() {
         channel: channel,
       ),
       headSource: () => webcams,
-      loadSettings: () async => settings,
+      loadSettings: () async {
+        await settingsHeld;
+        return settings;
+      },
       saveSettings: (value) async => saved.add(value),
       openUri: (uri) async {
         opened.add(uri);
         return true;
       },
       statsInterval: const Duration(milliseconds: 200),
+      framesPerSecond: (_) async => 30,
+      hwdecCurrent: (_) async => hwdec ?? 'd3d11va',
+      readMpv: (_, name) async => name == 'current-tracks/video/codec' ? 'hevc' : '',
+      memoryMB: () => 400,
+      probeWindow: probeWindow ?? const Duration(seconds: 1),
+      probeInterval: const Duration(milliseconds: 250),
+      away: away ?? ValueNotifier(false),
     );
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -261,7 +279,13 @@ void main() {
     expect(setup.layout, mkv.SpatialLayout.topBottom);
     expect(setup.projection, mkv.SpatialProjection.flat);
     expect((setup.outputWidth, setup.outputHeight), (1600, 900), reason: 'the window, in physical pixels');
-    expect((setup.maxFrameWidth, setup.maxFramePixels), (3840, 3840 * 2160), reason: 'two eyes of 1920 x 1080');
+    expect(
+      (setup.maxFrameWidth, setup.maxFramePixels),
+      (3200, 4 * 1600 * 900),
+      reason: 'before the size is known: as if the eyes were squeezed in the window',
+    );
+    // The frame known (1920 x 1080, two squeezed eyes shown at 1600 x 900): no more than it is
+    expect((channel.setups.last.maxFrameWidth, channel.setups.last.maxFramePixels), (1920, 1920 * 1080));
     expect(page(tester).drawing, isTrue);
     expect(find.text('stereo.mp4'), findsOneWidget);
     await close(tester);
@@ -359,7 +383,10 @@ void main() {
 
   testWidgets('without a webcam, says so and offers the slider', (tester) async {
     await pumpLauncher(tester, sbs, cameras: const []);
-    expect(find.text('No webcam found: the slider, the arrow keys or the mouse move the viewpoint.'), findsOneWidget);
+    expect(
+      find.text('No webcam found: the slider, the arrow keys, or Follow the mouse in the menu move the viewpoint.'),
+      findsOneWidget,
+    );
     expect(find.byKey(const Key('spatial_viewpoint')), findsOneWidget);
     expect(webcams.sessions, isEmpty);
     await close(tester);
@@ -538,6 +565,178 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
     }
     expect(channel.debug, [true]);
+    await close(tester);
+  });
+
+  testWidgets('the first time, a card says what the webcam is for and asks before it opens', (tester) async {
+    await pumpLauncher(tester, sbs, settings: const DesktopSpatialSettings());
+    expect(page(tester).askingCamera, isTrue);
+    expect(webcams.sessions, isEmpty, reason: 'nothing opens before the answer');
+    expect(find.byKey(const Key('spatial_camera_intro')), findsOneWidget);
+    expect(find.textContaining('Its pictures stay in memory'), findsOneWidget);
+    expect(find.byKey(const Key('spatial_viewpoint')), findsOneWidget, reason: 'the slider meanwhile');
+    await tester.tap(find.byKey(const Key('spatial_camera_intro_use')));
+    await tester.pump();
+    await tester.pump();
+    expect(webcams.sessions, hasLength(1));
+    expect(page(tester).tracking.cameraOpen, isTrue);
+    expect(find.byKey(const Key('spatial_camera_intro')), findsNothing);
+    expect(saved.last.cameraAgreed, isTrue);
+    expect(saved.last.source, SpatialViewpointSource.head);
+    await close(tester);
+  });
+
+  testWidgets('the card of the first time can follow the mouse instead', (tester) async {
+    await pumpLauncher(tester, sbs, settings: const DesktopSpatialSettings());
+    await tester.tap(find.byKey(const Key('spatial_camera_intro_mouse')));
+    await tester.pump();
+    await tester.pump();
+    expect(webcams.sessions, isEmpty);
+    expect(page(tester).source, SpatialViewpointSource.mouse);
+    expect(saved.last.source, SpatialViewpointSource.mouse);
+    expect(saved.last.cameraAgreed, isFalse);
+    expect(find.byKey(const Key('spatial_camera_intro')), findsNothing);
+    await close(tester);
+  });
+
+  testWidgets('minimised while the settings were read, the webcam waits for the window to come back', (tester) async {
+    final held = Completer<void>();
+    await pumpLauncher(tester, sbs, settingsHeld: held.future);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    held.complete();
+    await tester.pump();
+    await tester.pump();
+    expect(webcams.sessions, isEmpty, reason: 'never opened while minimised');
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pump();
+    await tester.pump();
+    expect(webcams.sessions, hasLength(1));
+    expect(page(tester).tracking.cameraOpen, isTrue);
+    await close(tester);
+  });
+
+  testWidgets('Windows locked or its display off closes the webcam, which opens again when it comes back', (
+    tester,
+  ) async {
+    final away = ValueNotifier(false);
+    await pumpLauncher(tester, sbs, away: away);
+    final first = webcams.last;
+    // Locked: the window only goes inactive
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    away.value = true;
+    await tester.pump();
+    expect(first.session.isClosed, isTrue, reason: 'the light goes off');
+    expect(find.byKey(const Key('spatial_camera_on')), findsNothing);
+    // A focus change while locked opens nothing
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    await tester.pump();
+    expect(webcams.sessions, hasLength(1));
+    away.value = false;
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pump();
+    await tester.pump();
+    expect(webcams.sessions, hasLength(2));
+    expect(page(tester).tracking.cameraOpen, isTrue);
+    await close(tester);
+  });
+
+  testWidgets('a quick minimise and restore waits for the webcam to be released, and finds it free', (tester) async {
+    await pumpLauncher(tester, sbs);
+    webcams.holdRelease = Completer<void>();
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    await tester.pump();
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pump();
+    await tester.pump();
+    expect(webcams.sessions, hasLength(1), reason: 'the capture thread still holds the webcam');
+    webcams.holdRelease!.complete();
+    await tester.pump();
+    await tester.pump();
+    await tester.pump();
+    expect(webcams.sessions, hasLength(2));
+    expect(webcams.busy, 0);
+    expect(page(tester).tracking.problem, isNull);
+    expect(find.text('Another app is using the webcam: the slider moves the viewpoint.'), findsNothing);
+    expect(page(tester).tracking.cameraOpen, isTrue);
+    await close(tester);
+  });
+
+  testWidgets('frames that do not keep up take the passes a step down, then LOW, then flat', (tester) async {
+    await pumpLauncher(tester, sbs, settings: const DesktopSpatialSettings(source: SpatialViewpointSource.manual));
+    // 2 frames drawn every 250 ms, 40 ms each: 8 frames a second of 30, the drawing's fault
+    channel.stats_ = mkv.SpatialStats.fromMap(const {
+      'enabled': true,
+      'spatial': true,
+      'stereo': true,
+      'quality': 1,
+      'frames': 2,
+      'frameMs': [40.0, 40.0],
+    });
+    final widths = <int>[];
+    for (var i = 0; i < 40 && channel.calls.where((call) => call.startsWith('disable')).isEmpty; i++) {
+      await tester.pump(const Duration(milliseconds: 250));
+      widths.add(channel.setups.last.maxFrameWidth);
+    }
+    expect(widths.toSet().toList(), [1920, 1440, 960], reason: 'the frame the eyes use, three quarters, half');
+    expect(channel.setups.last.quality, mkv.SpatialQuality.low);
+    expect(channel.setups.last.adaptiveQuality, isFalse);
+    expect(page(tester).stepDowns, 3);
+    expect(channel.calls.last, startsWith('disable'), reason: 'below 0.6 of the rate at the lowest step: flat');
+    expect(page(tester).drawing, isFalse);
+    expect(find.text('This computer cannot draw the depth of this video: it plays flat.'), findsOneWidget);
+    await close(tester);
+  });
+
+  testWidgets('a decoder that falls short plays the transcoded stream from where the video was', (tester) async {
+    await pumpLauncher(
+      tester,
+      const SpatialPlayerArgs(
+        url: '/videos/stereo.mp4',
+        title: 'stereo.mp4',
+        layout: SpatialStereoLayout.sideBySide,
+        fallbackUrl: '/videos/stereo-transcoded.mp4',
+      ),
+      settings: const DesktopSpatialSettings(source: SpatialViewpointSource.manual),
+      hwdec: 'no',
+    );
+    channel.stats_ = mkv.SpatialStats.fromMap(const {
+      'enabled': true,
+      'spatial': true,
+      'frames': 4,
+      'frameMs': [5.0, 5.0, 5.0, 5.0],
+    });
+    final engine = players.made.single;
+    bool transcoded() => engine.calls.any((call) => call.startsWith('open /videos/stereo-transcoded.mp4'));
+    for (var i = 0; i < 12 && !transcoded(); i++) {
+      await tester.pump(const Duration(milliseconds: 250));
+    }
+    expect(transcoded(), isTrue);
+    expect(page(tester).stepDowns, 0, reason: 'a smaller frame does not help a decoder');
+    await tester.pump(const Duration(milliseconds: 250));
+    expect(
+      find.text('Playing the transcoded stream: the original (HEVC 1920 x 1080) exceeds what this device decodes'),
+      findsOneWidget,
+    );
+    await close(tester);
+  });
+
+  testWidgets('the head direction can be reversed from the menu, and is kept', (tester) async {
+    await pumpLauncher(tester, sbs);
+    await showControls(tester);
+    await tester.tap(find.byKey(const Key('spatial_source')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('spatial_reverse_head')));
+    await tester.pumpAndSettle();
+    expect(page(tester).tracking.reversed, isTrue);
+    expect(saved.last.reverseHead, isTrue);
+    await faces(tester, 0.5, from: 1);
+    await faces(tester, 0.42, from: 31);
+    expect(channel.viewpoints.last, closeTo(0.5 - 0.08 * 3, 0.02), reason: 'the other way');
     await close(tester);
   });
 
