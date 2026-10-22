@@ -22,7 +22,7 @@
 		"test-watch": "enact test --watch",
 		"test-unit": "npm run i18n && node --import ./tools/ts-hooks.mjs --test \"test/unit/*.test.mjs\"",
 		"test-service": "node service/test.js",
-		"test-bridge": "node --test \"bridge/test/*.test.js\"",
+		"test-bridge": "node --test \"bridge/test/*.test.cjs\"",
 		"test-tools": "node --test tools/legacy-css.test.mjs tools/build-i18n.test.mjs"
 	},
 	"license": "AGPL-3.0-only",
