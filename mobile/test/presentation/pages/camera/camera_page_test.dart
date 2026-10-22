@@ -128,12 +128,15 @@ void main() {
     expect(live.sources, isEmpty);
   });
 
-  testWidgets('tells that the live view comes later on iPhone and iPad', (tester) async {
+  testWidgets('plays the live playlist on iPhone and iPad, the recordings below', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     try {
       await pump(tester);
-      expect(find.byKey(const Key('camera_live_later')), findsOneWidget);
-      expect(live.sources, isEmpty);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('camera_live_later')), findsNothing);
+      expect(live.sources.single.$2.isHls, isTrue);
+      expect(live.sources.single.$2.password, isNull);
+      expect(find.byKey(const Key('camera_day_2026-09-18')), findsOneWidget);
     } finally {
       debugDefaultTargetPlatformOverride = null;
     }
