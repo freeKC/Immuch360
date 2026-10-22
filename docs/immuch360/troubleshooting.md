@@ -92,7 +92,7 @@ When the server ignores HTTP Range requests on the original and the MP4 index (m
 
 ### The window takes a long time to show
 
-**The first start of a new build is slow**: from 10 seconds to about a minute before the window shows, most likely while Microsoft Defender scans the new files, which are not signed yet. Wait for the window rather than starting the app again; the next starts take a second or two.
+**The first start of a new build is slow**: from 10 seconds to about a minute before the window shows, most likely while Microsoft Defender scans the new files. Wait for the window rather than starting the app again; the next starts take a second or two.
 
 ### A file opened with the program does not show
 
@@ -149,6 +149,29 @@ IMMUCH360_SELF_CHECK="$HOME/immuch360-check.json" IMMUCH360_SELF_CHECK_VIDEO="$H
   "/Applications/Immuch360 Desktop.app/Contents/MacOS/Immuch360 Desktop" > "$HOME/immuch360-check.log" 2>&1
 ```
 
+## Sign in with your phone
+
+### The phone does not find or reach the screen
+
+"Can't reach the screen at (address). Your phone and the screen must be on the same Wi-Fi, not a guest network.": put both on the same network. A guest Wi-Fi, or a router that keeps its devices apart, stops the phone from reaching the screen. "No screen found nearby. Type the address shown under the code on the screen.": the list of nearby screens needs multicast; type the address shown under the code, such as 192.168.1.23:8361.
+
+### The screen says the sign in is off, or the phone cannot reach a computer
+
+- **"Sign in with your phone is off on public networks."** (Windows): mark the network as private in the Windows settings (Network and internet, the properties of the network, Private network), or type the server address.
+- **"If your phone can't reach this computer, allow port (port) in its firewall."**: the firewall of the computer may block the phone; allow that port for Immuch360 Desktop, or type the server address.
+- **"Not connected to a local network: type the server address instead."**: the screen has no private network address, so no phone can reach it.
+
+### The code or the sign in fails
+
+- **"This code expired. Scan the new code on the screen."**: a code lasts two minutes at most; scan the one the screen shows now.
+- **"The code doesn't match. Check it on the screen and try again."**, **"Too many tries on this code. Wait for the next code on the screen."**: type the code again, or wait for the next one.
+- **"(the screen) can't reach (server)."**: the screen cannot reach your server at the address the phone uses (an address that works only on the phone, through a VPN for example). Add an address the screen can reach in Settings, Networking on the phone, or type one on the screen.
+- **"Your Immich server can't sign in other devices: update it, or type the address on the screen."**: the server is too old for the sessions the phone asks for.
+- **"This LG TV signs in through your browser."**: the code comes from the LG webOS app; Open shows its sign-in page in the browser of the phone.
+- **"The screen did not answer as expected. Update Immuch360 on both devices, then try again."**: the phone and the screen run builds that do not speak the same version of the sign in.
+
+See [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+
 ## Tapo cameras
 
 ### "The camera is busy with another viewer, such as the Tapo app. Try again in a minute."
@@ -173,10 +196,11 @@ Each wrong password counts, and after a few the camera locks for a while. The ap
 - **"The Plex server refused this token."**, or "Paste a new token" on the folder page: get a new token as [Add a Plex server](user-guide.md#add-a-plex-server) says.
 - **"Your Plex server cannot be reached from outside your home network."**: turn on Remote Access with a port forwarding in Plex, or type the public address of the server. See [Away from home](user-guide.md#away-from-home).
 - **"This address answers without a Plex certificate."**: claim the server in Plex, or add it as an SMB, WebDAV or DLNA share. See [Plex Media Server](user-guide.md#plex-media-server-without-plextv).
-- **"Windows protected your PC"**: the files and the installer are not signed yet; choose "More info", then "Run anyway". See [Install it on a computer](user-guide.md#windows).
+- **"Windows protected your PC"**: from desktop build 7 the files are signed by APROGSYS, but SmartScreen may still ask once while the publisher is new to it; choose "More info", then "Run anyway". The builds before desktop build 7 are not signed. See [Install it on a computer](user-guide.md#windows).
 - **"Immuch360 Desktop" cannot be opened, or Apple cannot check it** (macOS): the app is not signed with an Apple Developer ID nor notarized yet; Control click it and choose Open (macOS 14 and earlier), or choose "Open Anyway" in System Settings, Privacy & Security (macOS 15 and later). See [macOS](user-guide.md#macos).
 - **SMB shares do not open on Ubuntu 22.04 or Debian 12** (Linux, desktop build 5): the SMB library of desktop build 5 needed glibc 2.38; the library of desktop build 6 and later needs glibc 2.25 at most, so install desktop build 7 (SMB on Linux is not checked with a real share yet). See [Linux](user-guide.md#linux).
 - **"Videos need the libmpv library, which this computer does not have"** (Linux): install the package the message names, see [Videos do not play](#videos-do-not-play).
+- **"No USB accessory on this device"** (DJI link): the device offers no USB accessory mode, so no app can read a DJI remote controller over its cable there; that is a result of the test, see [DJI link diagnostics](user-guide.md#dji-link-diagnostics-experimental).
 - **The picture does not face you in the headset**: turn it with the right thumbstick or the Turn button, and post the angle shown in an issue with your camera model. See [If the picture does not face you](user-guide.md#if-the-picture-does-not-face-you).
 
-Last updated: 22 October 2026 (build 27, desktop build 7, webOS 0.1.0)
+Last updated: 22 October 2026 (build 28, desktop build 8, webOS 0.2.0)

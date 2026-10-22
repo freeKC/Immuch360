@@ -14,6 +14,8 @@ Immuch360 is a free and open source fork of the Immich mobile app, for phones an
 - **Upload from a share.** When you are connected to a server, you can pick files of a share and send them to your Immich server. The app streams them from the share to the server, without a copy on the device. It only does so when you ask.
 - **Share this phone on the network.** When you turn it on, the phone serves its photos and videos, read only, to the devices of your local network that give the user name and password the app generated, such as your headset. It is off at every start of the app. It stops with its switch, with Stop, after an hour without any request, and when the app is closed. On iPhone and iPad it pauses while the app is in the background.
 - **A TV.** On Android TV and Google TV the app works as on a phone, with the remote; it stores the same data on the TV.
+- **Sign in with your phone.** A TV, a headset or a computer can be signed in from a phone that is signed in to your server. While its sign-in page shows a code, the screen listens on your home network, on its private address only. The phone reads the code with its camera, or as you type it, asks your server for a new session for that screen, and sends it to the screen encrypted with a key made from the code; your password is not sent. The screen gives its name to your server as the name of that session, which your server lists among your devices. Without the app on the phone, a page served by the screen, in the browser of the phone, sends your email and password to the screen, encrypted the same way; the screen uses them once to sign in and does not keep them.
+- **DJI drones and remote controllers (Android, experimental).** The DJI drone page reads only the drone, controller or card folder you pick, and sends the files you choose to your Immich server. The DJI link page reads a DJI remote controller plugged into the device, and writes nothing to it but a one byte check each second, which carries no command; what it captures stays on the device until you export it to the Download folder. Nothing is sent to DJI or to the developer.
 - **A computer.** On Windows (and the Linux and macOS previews) the app shows the photos and videos of the folders you choose, and of the shares, media servers, cameras and server you add. Nothing is read outside the chosen folders. A file opened with the program, or dropped on its window, is read in place. The app's data lives in the application data folders of your user account; on Linux the secrets are kept in the keyring of the session.
 - **The Meta Quest headset.** The immersive view downloads a photo from your server to the headset for display and deletes it once decoded. Videos and the files of shares are read as they play. A raw camera photo is stitched into a temporary picture, described below.
 - **Reading your files.** To find 360° photos and videos, raw camera files and Apple spatial photos, the app reads the start of the files, on the device, on your server or on a share. Raw camera files are stitched on the device. The results stay on the device.
@@ -36,6 +38,8 @@ Everything below stays on the device and is never sent to the developer.
 - **Lens calibrations**: the lens calibration of each Insta360 camera met in a raw file, with the serial number and model of the camera, in a small file of the app's support folder. A file without its own calibration then uses the one of the same camera.
 - **Stitched pictures (headset)**: a raw photo opened in the immersive view is stitched into a PNG picture in the app's cache. The four most recent are kept and older ones are deleted. The system may also empty the cache at any time.
 - **Spatial photos**: for each photo read, whether it is an Apple spatial photo and the details of its two views, by its id on your server or on the device, in the app's database, 2,000 entries at most. A photo is read once.
+- **Screens signed in by this phone**: the name, kind, system, date and session id of each TV, headset or computer the phone signed in, in the app's database, to list them and sign them out; never their session token. On such a screen: the name it was given and the name of the phone that signed it in.
+- **DJI link captures**: the bytes a DJI remote controller sent, kept in memory while the page captures; an export writes them to `Download/Immuch360/dji-link`, with a header that holds the serial number of the remote and may hold the position of the aircraft. You delete them as any other file.
 - **Settings**: your settings and the choices you make in the viewers, such as View as 360°, the 3D layout or 360° or 180°, in the app's database.
 - **Logs**: the app's log lines, in its database. At each start, only the last 2,000 are kept. They can hold the addresses of your server and shares, the names of files and folders, and the local addresses of the devices that used the phone share. Passwords are not written to them. The Logs page has a button that shares them as a text file with the app you pick, a button that clears them, and a copy button on each line. The page "Video decoders of this device" has a Copy button that puts the list of decoders and the system version on the clipboard. On Android, parts of the app also write to the system log, which stays on the device and is read with developer tools (adb).
 
@@ -56,17 +60,19 @@ The shares and the phone share work on your network, with the protection of thei
 - **What the phone share serves and announces.** It serves, read only, the albums of the phone, every photo and video by month, and the 360° files the app found, with their own names and the information the files hold. Files stored only in iCloud are left out. While it is on, the phone announces itself on the local network with "Immuch360 on" and the name of the phone, the user name of the share and the identifier of the install, so that your headset can find it. On Android, its notification shows the address and the user name, never the password.
 - **Your Immich server.** The connection is encrypted when the server address starts with https://. With http://, it is not.
 - **Upload from a share.** The files go from the share to the app, then from the app to your Immich server, each step with the protection described above.
+- **Sign in with your phone.** The screen answers only devices of its local network, and only while it shows a code; it is announced on the network (DNS-SD) with its name and its kind, never with the code. The session sent to it, or the email and password of the browser page, travel encrypted with a key that only the phone and the screen can make from the code.
 
 ## Permissions
 
 - **Photos and videos**: to back them up, to show the photos and videos of the device, and to serve them with the phone share.
 - **Notifications**: backup progress, and on Android the notification of the phone share, asked on Android 13 and later when you turn the share on.
-- **Network access**: your server, your shares and the phone share.
+- **Network access**: your server, your shares, the phone share and sign in with your phone.
+- **USB** (Android, experimental): the drone, controller or card you plug in and pick, and a DJI remote controller on the DJI link page, after you allow it.
 - **Local network** (iPhone and iPad): to reach a server on your network, to cast, to find and read shares and media servers, and to share the phone with your headset.
 - **Wi-Fi multicast** (Android): to find shares, media servers and the phone share with Bonjour (mDNS) and SSDP.
 - **Foreground services** (Android): the background upload service, and the phone share service. The phone share service keeps the share running with the screen off, shows a notification with the address, the user name and a Stop button, and keeps the Wi-Fi and the processor awake while it runs.
 - **Location**: only to read the name of the current Wi-Fi network when you restrict backup to a given network.
-- **Camera**: only for the Spatial 2.5D mode, see Camera below.
+- **Camera**: for the Spatial 2.5D mode, and to scan the code of a screen you sign in, see Camera below.
 - **Face ID or fingerprint**: to open the locked folder, if you use it.
 - **Motion sensors**: to turn a 360° photo as you move the device, read on the device only.
 - **Hand tracking** (Meta Quest): to use the immersive view with your hands.
@@ -76,7 +82,7 @@ The permissions that need your consent are asked when a feature first needs them
 
 ## Camera
 
-The front camera is used only while the experimental Spatial 2.5D mode is active, to follow the position of your head so the video can show depth. The images are processed on the device, are never stored, and are never sent to your server or anywhere else. The permission is asked when you first use the mode, and you can revoke it at any time in the system settings.
+The camera is used only while the experimental Spatial 2.5D mode is active, where the front camera follows the position of your head so the video can show depth, and while you scan the code of a TV, a headset or a computer to sign it in. The images are processed on the device, are never stored, and are never sent to your server or anywhere else. The permission is asked when you first use the mode, and you can revoke it at any time in the system settings.
 
 ## Third parties
 
@@ -92,8 +98,10 @@ Questions about this policy: open an issue at https://github.com/freeKC/Immuch36
 
 ## Changes
 
+22 October 2026: added sign in with your phone (the camera used to scan a code, the listener of the screen, the session sent to it, the list of screens), the DJI drone and DJI link pages, and the USB permission.
+
 13 October 2026: added Android TV and Google TV, the Quest 2, Pro and 3S, the Windows app and the Linux and macOS previews, Plex media servers, Tapo cameras, and the secure storage on Windows and Linux.
 
 6 October 2026: added the mode without a server, network shares, upload from a share, Share this phone on the network, raw camera files, Apple spatial photos, the data stored on the device, the data on your network and the new permissions. The camera and Face ID permissions now say what they are used for in this app. The previous version, of 30 September 2026, covered the server mode only.
 
-Last updated: 13 October 2026.
+Last updated: 22 October 2026.

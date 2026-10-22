@@ -38,7 +38,8 @@ Each line links to the section that explains it. The limits by design, such as t
 ## iPhone and iPad
 
 - **The 360° video player has play and pause only**, no time bar yet: [360° photos and videos](user-guide.md#play-a-360-video).
-- **No Tapo live view yet**; the recordings play: [Tapo cameras](user-guide.md#watch-it-live).
+- **No Tapo live view in the published builds yet**: it comes with version 3.3.2, built from build 28, a few seconds behind the camera; the recordings play: [Tapo cameras](user-guide.md#watch-it-live).
+- **The phone does not sign in big screens yet**: "Connect a TV or computer" comes with version 3.3.2 too. Its scanner and the live view were compiled on a GitHub macOS runner and have not run on an iPhone yet: [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
 - **The DLNA, Plex and Tapo searches send unicast requests only** until Apple grants the multicast entitlement, and some servers do not answer them (minidlna on Linux): [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
 - **The MKV and AVI files of a share do not open**: [Formats and sources](compatibility.md#formats-and-sources-by-platform).
 - **The photos stored only in iCloud** are skipped by the 360° scan until they are downloaded: [Without a server](user-guide.md#without-a-server-or-an-account).
@@ -46,10 +47,11 @@ Each line links to the section that explains it. The limits by design, such as t
 - **Raw files have not run on an iPhone yet**: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
 - **The iPhone side of the phone share has not run on an iPhone yet**: [Share this phone](user-guide.md#share-this-phone-on-the-network).
 - **Spatial 2.5D is checked on a Galaxy S24+ only**, and iPhone feedback is welcome: [Spatial 2.5D](user-guide.md#formats-privacy-and-limits).
-- **No App Store version yet**: version 3.3.1, with build 24, has been waiting for Apple's review since 14 October 2026: [Release status](release-status.md).
+- **No App Store version yet**: version 3.3.1, sent again with build 27 on 22 October 2026, waits for Apple's review, first sent on 14 October 2026: [Release status](release-status.md).
 
 ## Android TV and Google TV
 
+- **Sign in with your phone was not tried with a real camera** (from build 28): between two emulators, the QR code was read from a screenshot of the TV and the code typed on the phone: [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
 - **Build 27 has not run on a real TV yet**: the first run on a real Android TV, on 21 October 2026 with build 25 or 26, found five problems (a video playing in a loop that Left and Right could not leave, the controls over the picture, 360° videos that never played, white pages, one freeze while photos scrolled), which build 27 answers; those answers were checked on the Google TV emulator and by widget tests. Still to confirm on a TV: the direction in which the arrows turn a 360° video, the keyboard of the TV (Gboard) in the text dialog, the OK key of infrared remotes, a held OK on the remote of the TV, the margins and the banner on the TV home screen: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 - **A 360° video beyond the decoders of the TV still does not play**: from build 27 the app says so instead of loading forever, names the cause and the largest size the TV decodes, and asks before it opens the 360° player; the server's transcoded stream, or a smaller export, is the way to watch it: [When a video does not play](user-guide.md#when-a-video-does-not-play).
 - **The freeze seen once while photos scrolled is not explained yet**: build 27 uses less image memory on a TV and holds a held arrow to about 10 rows a second, and writes a stalled app (no answer for 3 seconds) and why the app last ended to the Logs page; a report with those lines helps: [Logs](troubleshooting.md#logs).
@@ -67,12 +69,13 @@ Each line links to the section that explains it. The limits by design, such as t
 
 ## LG webOS TVs
 
-- **Not run on a real LG TV yet**, nor in LG's simulator: webOS 0.1.0 is a first test build, whose tests and package checks run in the project's CI; reports from testers with a TV in Developer Mode are welcome: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **webOS 0.2.0 has not run on a real LG TV yet**, nor in LG's simulator: version 0.1.0 ran on a tester's LG TV (webOS 22); the shares, Plex and the cameras of 0.2.0 were checked against real servers on the project's build host and in a browser. To confirm on a TV: whether its player reads the media bridge of the app on 127.0.0.1, the live view through Media Source and its HLS fallback, the discovery of servers from the service of the app, and the load of SMB 3 encryption on the processor of the TV. Reports from testers with a TV in Developer Mode are welcome: [LG webOS TVs](platform-support.md#lg-webos-tvs).
 - **360° videos play flat**, with a message: whether a TV hands video frames to WebGL is what the video test of its About page finds out. 360° photos turn on the sphere: [LG webOS TVs](platform-support.md#lg-webos-tvs).
 - **The texts only the TV app has are in English** until the next webOS release; the texts it shares with the Immuch360 app come in its 89 languages: [LG webOS TVs](platform-support.md#lg-webos-tvs).
 - **On webOS before 25 the server needs CORS headers**: the reverse proxy in front of Immich must send them, and the app explains them when it meets the problem: [Install it on an LG TV](platform-support.md#install-it-on-an-lg-tv).
-- **Not on an LG TV**: uploads, the photo editor (only its quarter turn is there), the network shares, Plex, the Tapo cameras and Cast: [LG webOS TVs](platform-support.md#lg-webos-tvs).
-- **A photo turned on the TV** keeps its former thumbnail in the grid until the grid draws it again (scroll away and back), and no indicator shows while the turn is saved on the server: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **Not on an LG TV**: uploads, the photo editor (only its quarter turn is there), the recordings of the Tapo cameras (not before December 2026) and their sound, H.265 cameras in the live view, the mode without a server, and Cast. HEIC photos of a share do not decode on a TV, and their tile says so: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **The shares, Plex and the cameras need webOS 5 or later**, and SMB webOS 22 or later; a TV with webOS 4 keeps the Immich features only: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **A photo turned on the TV** keeps its former thumbnail in the grid until the grid draws it again (scroll away and back); from 0.1.1, "Saving the rotation" shows while the turn is saved on the server: [LG webOS TVs](platform-support.md#lg-webos-tvs).
 - **Only through Developer Mode**: the app is not in the LG Content Store, and the TV removes it when the 1000 hours of a Developer Mode session run out, unless the session is renewed: [Install it on an LG TV](platform-support.md#install-it-on-an-lg-tv).
 
 ## Meta Quest
@@ -89,13 +92,15 @@ Each line links to the section that explains it. The limits by design, such as t
 - **A partial panorama is spread over the full sphere** in the immersive view, unless its GPano crop covers about half the width and the whole height: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
 - **The initial view the camera recorded (GPano) is not used** by the immersive view: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
 - **No audio track choice in the immersive view**: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
-- **The store version is build 23**, without the welcome page, until Meta approves version 3, with build 25 (in review since 18 October 2026): [Release status](release-status.md).
+- **The store version is build 25**, until Meta approves version 4, with build 28: [Release status](release-status.md).
+- **Sign in with your phone and the DJI link page have not run in a headset yet** (from build 28). Whether a Quest offers the USB accessory mode a DJI remote controller needs is the first question the DJI link page answers: [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [DJI link](user-guide.md#dji-link-diagnostics-experimental).
 
 ## Windows
 
 - **A preview**: the test of each function by hand on a Windows PC, with real files, both screens and a real camera, is still to do: [On a Windows computer](user-guide.md#on-a-windows-computer-immuch360-desktop-preview).
 - **The Tapo live view is not checked with a real camera yet**: [Known problems](#known-problems).
 - **No Windows on ARM app yet**: the libmpv workflow builds an arm64 archive, but no app ZIP for it is made: [Windows](platform-support.md#windows).
+- **Sign in with your phone is off on a network that Windows marks as public**, and no computer was signed in that way yet; on the test PC only the sign-in page was seen (from desktop build 8): [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
 - **Opening files from File Explorer by hand is not checked yet** (from desktop build 5): the command line, later starts (one at a time, or several at once with a file each, as File Explorer makes them) and drops sent to the window by a test script were checked on the test laptop, and the window came to the front for those starts; the "Open with" menu and a drag with the mouse were not: [Use it on a computer](user-guide.md#use-it-on-a-computer).
 - **What to do when something goes wrong**: [Troubleshooting](troubleshooting.md#windows).
 
@@ -103,14 +108,14 @@ Each line links to the section that explains it. The limits by design, such as t
 
 - **Two lens raw videos on a laptop**: in desktop builds 3 and 4 the test laptop stacked an X3 pair (two 2880x2880 H.264 files) at 30 frames a second on its NVIDIA chip only, and an X4 file (two 3840x3840 HEVC tracks) played one lens on both chips. From desktop build 5 they play in two players: on the NVIDIA chip, a DJI Osmo 360 file (two 3840x3840 HEVC 10 bit tracks at 25 frames a second), an X4 file (two 3840x3840 HEVC tracks at 30) and an X3 pair played with no frame dropped. The first time a file at 30 frames a second opens, the player may still say "it may not play smoothly on this device", until the computer has measured it. Not checked yet in the app: the Intel chip, where the flat viewer alone took 2.5 GB of shared GPU memory for the Osmo 360 file and the test stopped for lack of memory on the PC (two players outside the app dropped 2 to 3 frames of 300 there).
 - **3D on the screen only**: a 3D video shows its left eye, as on phones; there is no gyroscope and no headset view on the computer. To watch in true 3D, share the computer with a Meta Quest.
-- **Spatial 2.5D**, later with the webcam; the **map** and the Places view; **signing in with OAuth** (sign in with an email and a password instead); **Google Cast**; **notifications**.
-- **A signed build and automatic updates**: the installer (from desktop build 5) and the ZIP are not signed, and the next build is installed by hand.
+- **Spatial 2.5D**, with the webcam, in development for November 2026; the **map** and the Places view; **signing in with OAuth** (sign in with an email and a password instead); **Google Cast**; **notifications**.
+- **Automatic updates**: the next build is installed by hand. The installer and the ZIP are signed from desktop build 7: [Windows](platform-support.md#windows).
 - **Linux and macOS**: from desktop build 5 they have packages, early previews: see [macOS and Linux](#macos-and-linux).
 
 ### Known problems
 
 - **After the installer, Windows may ask which program opens a .insp or .insv file**: the installer offers Immuch360 Desktop in "Open with" and never makes it a default program, but when the program of a type was never chosen as the default by you (Insta360 Studio for .insp and .insv, for example), Windows asks once at the next double click; and a type that no other program opens (often .osv and .360) opens with Immuch360 Desktop, the only program offered. Choose "Always" with the program you want, or change it in Settings, Apps, Default apps.
-- **The first start of a new build is slow**: from 10 seconds to about a minute before the window shows, most likely while Microsoft Defender scans the new files, which are not signed yet. Wait for the window rather than starting the app again; the next starts take a second or two.
+- **The first start of a new build is slow**: from 10 seconds to about a minute before the window shows, most likely while Microsoft Defender scans the new files. Wait for the window rather than starting the app again; the next starts take a second or two.
 - **8K HEVC videos need a dedicated graphics chip, and 360° videos run better on one**: on the test laptop, the integrated Intel UHD chip showed about half the frames of an 8K HEVC video, while the dedicated NVIDIA chip played 8K HEVC and 5.7K H.264 with no dropped frame; the 360° player is smooth on the NVIDIA chip and slower on the Intel one, see [360° videos and the graphics chip](user-guide.md#360-videos-and-the-graphics-chip). Windows runs the app on the integrated chip unless told otherwise: in the Windows settings, System, Display, Graphics, add `immuch360.exe` and choose "High performance", then start the app again. On the integrated chip, a flat 5.7K H.264 video, which its decoder refuses, is decoded by the processor without a lost frame.
 - **Flat videos are drawn at most 1440 lines high**, then scaled to the window: on a 4K screen in full screen, a 4K or 8K video is a little softer than in a dedicated video player. This keeps an 8K video within the graphics power of a laptop. The 360° player reads the whole frame, or the smaller size its measure chose, and draws its view at most 1440 lines high too.
 - **While a video of your folders plays in the app, or while the headset reads a file from the shared computer** (a video it plays, a photo it downloads), Windows cannot rename, move or delete that file and says it is open in Immuch360 Desktop: close the video, or stop the playback in the headset, first. Backups do not hold your files that way: a file can be renamed, moved or deleted while it is uploaded.
@@ -142,11 +147,14 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 - **DLNA** on a real network, with Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest: [DLNA media servers](user-guide.md#dlna-media-servers).
 - **Apple spatial photos in the headset**, and real iPhone photos and videos: [Apple spatial photos and videos](user-guide.md#not-checked-on-a-device-yet).
 - **The Quest 2, Quest Pro and Quest 3S**: [Meta Quest](platform-support.md#meta-quest).
-- **Build 27 on a real Android TV or Google TV**, and the Plex and Tapo pages on a TV: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
-- **A real LG TV**: [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **Sign in with your phone** with a real camera, in a headset, on a computer and from an iPhone: [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+- **A real DJI remote controller on the DJI link page**, in a Quest and on a phone: [DJI link](user-guide.md#dji-link-diagnostics-experimental).
+- **The Tapo live view on an iPhone or an iPad**, with version 3.3.2: [Tapo cameras](user-guide.md#watch-it-live).
+- **Builds 27 and 28 on a real Android TV or Google TV**, and the Plex and Tapo pages on a TV: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
+- **webOS 0.2.0 on a real LG TV**, its shares, Plex and live view (0.1.0 ran on one): [LG webOS TVs](platform-support.md#lg-webos-tvs).
 - **A real DJI drone**, a USB drive or card reader, and a device in File transfer mode: [DJI drones](user-guide.md#dji-drones-photos-and-videos-over-usb-experimental).
 - **The one-key rotation on a phone, an iPhone, a Quest and a computer**: it ran on the Google TV emulator against an Immich server, and the other platforms are covered by widget tests: [Turn a photo with one key](user-guide.md#turn-a-photo-with-one-key).
 - **A real Linux PC and a real Mac**: [macOS and Linux](platform-support.md#macos-and-linux).
 - **Everything checked so far**, device by device and server by server: [Servers and devices checked](compatibility.md#servers-and-devices-checked).
 
-Last updated: 22 October 2026 (build 27, desktop build 7, webOS 0.1.0)
+Last updated: 22 October 2026 (build 28, desktop build 8, webOS 0.2.0)
