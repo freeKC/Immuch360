@@ -45,13 +45,8 @@ Future<TapoLiveProbe> probeTapoRtsp(
     await connection.send('OPTIONS', uri, const {});
     var answer = await connection.send('DESCRIBE', uri, const {'Accept': 'application/sdp'});
     if (answer.status == 401) {
-      final authorization = _authorization(
-        answer.headers['www-authenticate'] ?? const [],
-        'DESCRIBE',
-        uri,
-        user,
-        password,
-      );
+      final authorization = RtspDigest.of(answer.headers['www-authenticate'] ?? const [])
+          ?.authorization('DESCRIBE', uri, user, password);
       if (authorization == null) {
         throw const TapoCameraException(TapoErrorKind.unsupported, detail: 'RTSP authentication');
       }
@@ -75,71 +70,175 @@ Future<TapoLiveProbe> probeTapoRtsp(
 
 Future<Socket> _connect(String host, int port, Duration timeout) => Socket.connect(host, port, timeout: timeout);
 
-/// The video and audio codecs an SDP announces ("H264", "PCMA"): the encoding of the rtpmap of the first payload type
-/// of each media, or the static payload type (0 PCMU, 8 PCMA)
+/// The video and audio codecs an SDP announces ("H264", "PCMA"): the encoding of the first payload type of the first
+/// media of each kind, from its rtpmap or its static payload type (0 PCMU, 8 PCMA)
 TapoLiveProbe parseSdpCodecs(String sdp) {
-  String? video;
-  String? audio;
+  final tracks = parseSdp(sdp).tracks;
+  String? codec(String kind) => tracks.where((track) => track.media == kind).firstOrNull?.encoding;
+  return TapoLiveProbe(video: codec('video'), audio: codec('audio'));
+}
+
+/// What an SDP announces: the aggregate control of the session, and a track per media
+class RtspSdp {
+  const RtspSdp({this.control = '', this.tracks = const []});
+
+  /// The session level `a=control`, empty when none (the request URL or the Content-Base is the aggregate one)
+  final String control;
+  final List<RtspTrack> tracks;
+}
+
+/// One media of an SDP, with its first payload type
+class RtspTrack {
+  const RtspTrack({
+    required this.media,
+    required this.payloadType,
+    this.encoding,
+    this.clockRate = 0,
+    this.channels = 1,
+    this.control = '',
+    this.fmtp = const {},
+  });
+
+  /// "video" or "audio"
+  final String media;
+  final int payloadType;
+
+  /// The encoding in upper case ("H264", "H265", "PCMA"), null when the SDP does not tell
+  final String? encoding;
+
+  /// The RTP clock, in Hz
+  final int clockRate;
+  final int channels;
+
+  /// The `a=control` of the media, relative to the aggregate URL or absolute
+  final String control;
+
+  /// The parameters of its `a=fmtp`, names in lower case
+  final Map<String, String> fmtp;
+}
+
+/// Reads an SDP: each media with its first payload type, the rtpmap and fmtp of that payload type, its control
+RtspSdp parseSdp(String sdp) {
+  var sessionControl = '';
+  final tracks = <RtspTrack>[];
   String? media;
-  List<String> payloads = const [];
-  final maps = <String, String>{};
-  final firsts = <String, String>{};
+  var payload = -1;
+  String? encoding;
+  var clockRate = 0;
+  var channels = 1;
+  var control = '';
+  var fmtp = <String, String>{};
+  void flush() {
+    final kind = media;
+    if (kind == null) {
+      return;
+    }
+    // The static payload types of RFC 3551 the cameras use
+    if (encoding == null && (payload == 0 || payload == 8)) {
+      encoding = payload == 0 ? 'PCMU' : 'PCMA';
+      clockRate = 8000;
+    }
+    tracks.add(
+      RtspTrack(
+        media: kind,
+        payloadType: payload,
+        encoding: encoding,
+        clockRate: clockRate,
+        channels: channels,
+        control: control,
+        fmtp: fmtp,
+      ),
+    );
+  }
+
   for (final raw in const LineSplitter().convert(sdp)) {
     final line = raw.trim();
     if (line.startsWith('m=')) {
+      flush();
       final fields = line.substring(2).split(' ');
       media = fields.first;
-      payloads = fields.length > 3 ? fields.sublist(3) : const [];
-      if (payloads.isNotEmpty) {
-        firsts.putIfAbsent(media, () => payloads.first);
+      payload = int.tryParse(fields.elementAtOrNull(3) ?? '') ?? -1;
+      encoding = null;
+      clockRate = 0;
+      channels = 1;
+      control = '';
+      fmtp = {};
+    } else if (line.startsWith('a=control:')) {
+      if (media == null) {
+        sessionControl = line.substring(10).trim();
+      } else {
+        control = line.substring(10).trim();
       }
-    } else if (line.startsWith('a=rtpmap:') && media != null) {
+    } else if (media != null && line.startsWith('a=rtpmap:')) {
       final rest = line.substring(9);
       final space = rest.indexOf(' ');
-      if (space > 0) {
-        maps['$media/${rest.substring(0, space)}'] = rest.substring(space + 1).split('/').first.toUpperCase();
+      if (space > 0 && int.tryParse(rest.substring(0, space)) == payload) {
+        final fields = rest.substring(space + 1).trim().split('/');
+        encoding = fields.first.toUpperCase();
+        clockRate = int.tryParse(fields.elementAtOrNull(1) ?? '') ?? 0;
+        channels = int.tryParse(fields.elementAtOrNull(2) ?? '') ?? 1;
+      }
+    } else if (media != null && line.startsWith('a=fmtp:')) {
+      final rest = line.substring(7);
+      final space = rest.indexOf(' ');
+      if (space > 0 && int.tryParse(rest.substring(0, space)) == payload) {
+        for (final pair in rest.substring(space + 1).split(';')) {
+          final equals = pair.indexOf('=');
+          if (equals > 0) {
+            fmtp[pair.substring(0, equals).trim().toLowerCase()] = pair.substring(equals + 1).trim();
+          }
+        }
       }
     }
   }
-  String? codec(String kind) {
-    final payload = firsts[kind];
-    if (payload == null) {
-      return null;
-    }
-    return maps['$kind/$payload'] ?? const {'0': 'PCMU', '8': 'PCMA'}[payload];
-  }
-
-  video = codec('video');
-  audio = codec('audio');
-  return TapoLiveProbe(video: video, audio: audio);
+  flush();
+  return RtspSdp(control: sessionControl, tracks: tracks);
 }
 
-/// The Authorization of the first Digest challenge (MD5, with or without qop auth), null without one
-String? _authorization(List<String> challenges, String method, String uri, String user, String password) {
-  for (final challenge in challenges) {
-    if (!challenge.toLowerCase().startsWith('digest')) {
-      continue;
+/// The first Digest challenge of an answer (MD5, with or without qop auth), which answers each next request of the
+/// connection with the next nonce count. Never Basic: see the top of this file.
+class RtspDigest {
+  RtspDigest._(this._realm, this._nonce, this._opaque, this._qop);
+
+  /// The Digest challenge among [challenges] (the WWW-Authenticate values), null without one
+  static RtspDigest? of(List<String> challenges) {
+    for (final challenge in challenges) {
+      if (!challenge.toLowerCase().startsWith('digest')) {
+        continue;
+      }
+      final params = <String, String>{
+        for (final match in RegExp(r'(\w+)\s*=\s*(?:"([^"]*)"|([^,\s]+))').allMatches(challenge.substring(6)))
+          match.group(1)!.toLowerCase(): match.group(2) ?? match.group(3)!,
+      };
+      final realm = params['realm'];
+      final nonce = params['nonce'];
+      if (realm == null || nonce == null) {
+        continue;
+      }
+      final qop = params['qop']?.split(',').map((value) => value.trim()).contains('auth') ?? false;
+      return RtspDigest._(realm, nonce, params['opaque'], qop);
     }
-    final params = <String, String>{
-      for (final match in RegExp(r'(\w+)\s*=\s*(?:"([^"]*)"|([^,\s]+))').allMatches(challenge.substring(6)))
-        match.group(1)!.toLowerCase(): match.group(2) ?? match.group(3)!,
-    };
-    final realm = params['realm'];
-    final nonce = params['nonce'];
-    if (realm == null || nonce == null) {
-      continue;
-    }
-    final ha1 = md5Hex('$user:$realm:$password');
-    final ha2 = md5Hex('$method:$uri');
-    final qop = params['qop']?.split(',').map((value) => value.trim()).contains('auth') ?? false;
-    final cnonce = hexOf(randomBytes(8));
-    final response = qop ? md5Hex('$ha1:$nonce:00000001:$cnonce:auth:$ha2') : md5Hex('$ha1:$nonce:$ha2');
-    final opaque = params['opaque'];
-    return 'Digest username="$user", realm="$realm", nonce="$nonce", uri="$uri", response="$response"'
-        '${opaque == null ? '' : ', opaque="$opaque"'}'
-        '${qop ? ', qop=auth, nc=00000001, cnonce="$cnonce"' : ''}';
+    return null;
   }
-  return null;
+
+  final String _realm;
+  final String _nonce;
+  final String? _opaque;
+  final bool _qop;
+  int _count = 0;
+
+  /// The Authorization header of [method] on [uri] with the account [user] and [password]
+  String authorization(String method, String uri, String user, String password) {
+    final ha1 = md5Hex('$user:$_realm:$password');
+    final ha2 = md5Hex('$method:$uri');
+    final count = (++_count).toRadixString(16).padLeft(8, '0');
+    final cnonce = hexOf(randomBytes(8));
+    final response = _qop ? md5Hex('$ha1:$_nonce:$count:$cnonce:auth:$ha2') : md5Hex('$ha1:$_nonce:$ha2');
+    final opaque = _opaque;
+    return 'Digest username="$user", realm="$_realm", nonce="$_nonce", uri="$uri", response="$response"'
+        '${opaque == null ? '' : ', opaque="$opaque"'}'
+        '${_qop ? ', qop=auth, nc=$count, cnonce="$cnonce"' : ''}';
+  }
 }
 
 class _RtspConnection {
