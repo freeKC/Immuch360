@@ -43,6 +43,13 @@ import native_video_player
     VideoThumbnailApiSetup.setUp(binaryMessenger: messenger, api: VideoThumbnailApiImpl())
     VideoDecoderApiSetup.setUp(binaryMessenger: messenger, api: VideoDecoderApiImpl())
     PhoneShareApiSetup.setUp(binaryMessenger: messenger, api: PhoneShareApiImpl())
+    // The live view of the Tapo cameras: the platform view and what Flutter asks of it
+    let cameraLiveViews = CameraLiveViewFactory(messenger: messenger)
+    registry.registrar(forPlugin: "CameraLiveViewFactory")?.register(
+      cameraLiveViews,
+      withId: CameraLiveViewFactory.viewType
+    )
+    CameraLiveApiSetup.setUp(binaryMessenger: messenger, api: CameraLiveApiImpl(views: cameraLiveViews))
   }
 
   public static func cancelPlugins(with engine: FlutterEngine) {
