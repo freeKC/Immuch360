@@ -11,6 +11,11 @@
 //   eyes blended where they are) would make half red (the edges themselves blend both eyes, as on the phones);
 // - the disparity map shows the square brighter than the mid grey background;
 // - the same frame as a VR180 eye shows the picture ahead and black behind, through renderer C's view.
+// Then the Spatial route of the app (lib/desktop/spatial/spatial_player_route.dart) on the same clip, its head followed
+// through the head tracker's webcam path on the recorded painted head (test/fixtures/video/painted-head-12s.mp4, played
+// at its own pace by the tracker's "file:" test camera, as the runner has no webcam): the viewpoint the route sends to
+// the plugin must swing toward each camera as the head moves (p under 0.3, then over 0.7, as in the clip's ground
+// truth), and the webcam must be released when the route goes.
 // Run in the Windows job of the desktop workflow, after the build:
 //   flutter test integration_test/desktop_spatial_renderer_test.dart -d windows
 //   IMMUCH360_SPATIAL_CLIP   another clip of the same pattern (default: the fixture, from the app's folder)
@@ -18,8 +23,19 @@
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/desktop/spatial/head_tracking.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_player_route.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_plugin_output.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_settings.dart';
+import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
+import 'package:immich_mobile/generated/codegen_loader.g.dart';
+import 'package:immich_mobile/platform/spatial_video_api.g.dart' show SpatialStereoLayout;
+import 'package:immuch_head_tracker/immuch_head_tracker.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -31,6 +47,20 @@ String _clip() {
     return given;
   }
   return p.absolute(p.join('test', 'fixtures', 'video', 'spatial-sbs-dots-4s.mp4'));
+}
+
+/// The webcam of the route: the recorded head, played at its own pace through the tracker's capture thread
+class _RecordedHead implements SpatialHeadSource {
+  _RecordedHead(this._tracker, this._clip);
+
+  final HeadTracker _tracker;
+  final String _clip;
+
+  @override
+  Future<List<HeadCamera>> cameras() async => [HeadCamera(id: 'file:$_clip', name: 'Recorded head')];
+
+  @override
+  HeadTrackingSession start(HeadCamera camera) => _tracker.start(camera);
 }
 
 int _red(int pixel) => pixel & 0xff;
@@ -260,4 +290,87 @@ void main() {
       await player.dispose();
     }
   }, timeout: const Timeout(Duration(minutes: 5)));
+  testWidgets('the Spatial route follows a recorded head through the webcam path', (tester) async {
+    final clip = _clip();
+    final head = p.absolute(p.join('test', 'fixtures', 'video', 'painted-head-12s.mp4'));
+    expect(File(head).existsSync(), isTrue, reason: 'the recorded head $head');
+    MediaKit.ensureInitialized();
+    desktopVideoAvailable = true;
+    await EasyLocalization.ensureInitialized();
+    final tracker = HeadTracker.windows();
+    expect(tracker, isNotNull, reason: 'the head tracker DLL next to the app');
+    SpatialPluginOutput? output;
+    await tester.pumpWidget(
+      ProviderScope(
+        child: EasyLocalization(
+          supportedLocales: locales.values.toList(),
+          path: translationsPath,
+          startLocale: locales.values.first,
+          fallbackLocale: locales.values.first,
+          saveLocale: false,
+          useFallbackTranslations: true,
+          assetLoader: const CodegenLoader(),
+          child: Builder(
+            builder: (context) => MaterialApp(
+              debugShowCheckedModeBanner: false,
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              home: DesktopSpatialPlayerPage(
+                args: SpatialPlayerArgs(url: clip, title: 'dots', layout: SpatialStereoLayout.sideBySide),
+                dependencies: SpatialPlayerDependencies(
+                  resolve: (source) async => source.path,
+                  outputFor: (engine) {
+                    final controller = engine.videoController;
+                    return output = controller == null ? null : SpatialPluginOutput.forController(controller);
+                  },
+                  headSource: () => _RecordedHead(tracker!, head),
+                  loadSettings: () async => const DesktopSpatialSettings(),
+                  saveSettings: (_) async {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    final page = tester.state<DesktopSpatialPlayerPageState>(find.byType(DesktopSpatialPlayerPage));
+    final watch = Stopwatch()..start();
+    final requested = <double>[];
+    var faces = 0;
+    var lastSequence = -1;
+    while (watch.elapsed < const Duration(seconds: 9)) {
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      final sample = page.tracking.latest;
+      if (sample != null && sample.sequence != lastSequence) {
+        lastSequence = sample.sequence;
+        if (sample.hasFace) {
+          faces++;
+        }
+      }
+      final stats = await output?.stats();
+      if (stats != null && stats.spatial) {
+        requested.add(stats.requestedViewpoint);
+      }
+    }
+    final low = requested.isEmpty ? double.nan : requested.reduce(math.min);
+    final high = requested.isEmpty ? double.nan : requested.reduce(math.max);
+    // ignore: avoid_print
+    print(
+      'Spatial route: webcam ${page.tracking.camera}, problem ${page.tracking.problem}, $faces faces seen, '
+      '${requested.length} stats, viewpoint from ${low.toStringAsFixed(2)} to ${high.toStringAsFixed(2)}, '
+      'drawing ${page.drawing}',
+    );
+    expect(page.tracking.problem, isNull, reason: 'the recorded head plays through the capture thread');
+    expect(page.drawing, isTrue, reason: 'the passes draw the route');
+    expect(faces, greaterThan(20), reason: 'the face found on the way');
+    expect(low, lessThan(0.3), reason: 'the head moves to the left of the picture: toward the left camera');
+    expect(high, greaterThan(0.7), reason: 'then to the right: toward the right camera');
+
+    final tracking = page.tracking;
+    expect(tracking.cameraOpen, isTrue);
+    await tester.pumpWidget(const SizedBox());
+    await Future<void>.delayed(const Duration(seconds: 3));
+    expect(tracking.cameraOpen, isFalse, reason: 'the webcam is released when the route goes');
+  }, timeout: const Timeout(Duration(minutes: 3)));
 }
