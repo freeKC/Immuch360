@@ -12,6 +12,7 @@ import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart'
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/settings/advanced_settings.dart';
 import 'package:immich_mobile/widgets/settings/asset_list_settings/asset_list_settings.dart';
@@ -158,6 +159,18 @@ class _MobileLayout extends ConsumerWidget {
           onTap: () => context.pushRoute(const LoginRoute()),
         ),
       );
+    } else if (!ref.watch(isBigScreenProvider)) {
+      // A phone or a tablet with a server signs the big screens in (sign in with your phone)
+      settings.insert(
+        0,
+        SettingsCard(
+          key: const Key('settings_pairing'),
+          icon: Icons.qr_code_scanner_rounded,
+          title: context.t.pairing_connect_title,
+          subtitle: context.t.pairing_connect_subtitle,
+          onTap: () => context.pushRoute(ConnectScreenRoute()),
+        ),
+      );
     }
     settings.add(
       SettingsCard(
@@ -194,6 +207,15 @@ class _TabletLayout extends HookConsumerWidget {
                     title: Text(context.t.local_session_connect_server),
                     leading: const Icon(Icons.login_rounded),
                     onTap: () => context.pushRoute(const LoginRoute()),
+                  ),
+                )
+              else if (!ref.watch(isBigScreenProvider))
+                SliverToBoxAdapter(
+                  child: ListTile(
+                    key: const Key('settings_pairing'),
+                    title: Text(context.t.pairing_connect_title),
+                    leading: const Icon(Icons.qr_code_scanner_rounded),
+                    onTap: () => context.pushRoute(ConnectScreenRoute()),
                   ),
                 ),
               ...sections.map(

@@ -232,7 +232,10 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
     final isColdStart = currentRouteName == null || currentRouteName == SplashScreenRoute.name;
 
     PageRouteInfo? route;
-    if (deepLink.uri.scheme == "immich") {
+    // The code of a big screen, from the browser page it serves (sign in with your phone)
+    if (deepLink.uri.scheme == 'immuch360' && deepLink.uri.host == 'pair') {
+      route = ConnectScreenRoute(scanned: deepLink.uri.toString(), fromDeepLink: true);
+    } else if (deepLink.uri.scheme == "immich") {
       route = await deepLinkHandler.handleScheme(deepLink, ref);
     } else if (deepLink.uri.host == "my.immich.app") {
       route = await deepLinkHandler.handleMyImmichApp(deepLink, ref);

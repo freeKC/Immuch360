@@ -74,6 +74,8 @@ import 'package:immich_mobile/presentation/pages/network/network_shares.page.dar
 import 'package:immich_mobile/presentation/pages/network/network_video.page.dart';
 import 'package:immich_mobile/presentation/pages/network/phone_share.page.dart';
 import 'package:immich_mobile/presentation/pages/network/plex_server_edit.page.dart';
+import 'package:immich_mobile/presentation/pages/pairing/connect_screen.page.dart';
+import 'package:immich_mobile/presentation/pages/pairing/enter_code.page.dart';
 import 'package:immich_mobile/presentation/pages/panorama_360.page.dart';
 import 'package:immich_mobile/presentation/pages/partner_detail.page.dart';
 import 'package:immich_mobile/presentation/pages/people_collection.page.dart';
@@ -237,6 +239,9 @@ class AppRouter extends RootStackRouter {
     // Share this phone on the network (phones only)
     AutoRoute(page: PhoneShareRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: DroneImportRoute.page, guards: [_authGuard, _duplicateGuard]),
+    // Connect a TV or computer: a phone signs a big screen in (sign in with your phone)
+    AutoRoute(page: ConnectScreenRoute.page, guards: [_authGuard, _duplicateGuard]),
+    AutoRoute(page: EnterCodeRoute.page, guards: [_authGuard, _duplicateGuard]),
     // Immuch360 Desktop: the folders of the library on a computer. Registered there only, so that the phone builds,
     // where the condition is a constant, leave out the folders page and the folder library behind it
     if (CurrentPlatform.isDesktop) AutoRoute(page: FoldersRoute.page, guards: [_duplicateGuard]),

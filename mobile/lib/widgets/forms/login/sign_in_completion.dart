@@ -90,7 +90,10 @@ Future<void> _askManageMediaPermission(BuildContext context, WidgetRef ref) asyn
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(context.t.cancel, style: TextStyle(fontWeight: FontWeight.w600, color: context.primaryColor)),
+            child: Text(
+              context.t.cancel,
+              style: TextStyle(fontWeight: FontWeight.w600, color: context.primaryColor),
+            ),
           ),
           TextButton(
             onPressed: () {
