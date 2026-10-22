@@ -19,6 +19,7 @@ import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/device_features.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/oauth.provider.dart';
+import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/provider_utils.dart';
@@ -75,6 +76,8 @@ class LoginForm extends HookConsumerWidget {
     final tvMode = ref.watch(tvModeProvider);
     // Not checked on a computer yet: the localhost redirect the desktop needs must be accepted by the server
     final hasOauth = ref.watch(deviceFeaturesProvider.select((features) => features.oauth));
+    // A big screen shows the pairing panel beside the form: OAuth is a scan away on a phone
+    final bigScreen = ref.watch(isBigScreenProvider);
     final passwordEntryFocus = useFocusNode(debugLabel: 'Password entry');
     // Kept across the builds of the form, whose key changes at each one: a new entry would lose the focus
     final emailEntryFocus = useFocusNode(debugLabel: 'Email entry');
@@ -467,7 +470,9 @@ class LoginForm extends HookConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: ImmichSpacing.md),
                     child: Text(
-                      tvMode
+                      bigScreen
+                          ? context.t.tv_oauth_use_phone(provider: oAuthButtonLabel.value)
+                          : tvMode
                           ? context.t.tv_oauth_unavailable(provider: oAuthButtonLabel.value)
                           : context.t.desktop_oauth_unavailable(provider: oAuthButtonLabel.value),
                       textAlign: TextAlign.center,
