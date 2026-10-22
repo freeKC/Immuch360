@@ -288,15 +288,13 @@ class ScreenPairingController extends Notifier<ScreenPairingView> {
     }
   }
 
-  /// "Show a new code", after the codes paused or a problem
-  Future<void> showNewCode() async {
-    final session = _session;
-    if (session != null && _server != null) {
-      session.start();
-      return;
-    }
-    await _start();
-  }
+  /// "Show a new code", after the codes paused or a problem: the listener starts again
+  Future<void> showNewCode() => _start();
+
+  /// What the session tells after five unused codes, without waiting ten minutes
+  @visibleForTesting
+  void debugPause() =>
+      _onSession(const ScreenPairingState(phase: ScreenPairingPhase.paused), state.kind, state.port ?? 0);
 
   void _onLifecycle(AppLifecycleState lifecycle) {
     switch (lifecycle) {
@@ -424,6 +422,13 @@ class ScreenPairingController extends Notifier<ScreenPairingView> {
       _generation++;
       unawaited(_bringDown());
       state = ScreenPairingView(kind: kind, phase: ScreenPairingPhase.signedIn, signedIn: signedIn);
+      return;
+    }
+    if (sessionState.phase == ScreenPairingPhase.paused) {
+      // Ten minutes without a phone: nothing listens nor is announced until "Show a new code"
+      _generation++;
+      unawaited(_bringDown());
+      state = ScreenPairingView(kind: kind, phase: ScreenPairingPhase.paused);
       return;
     }
     state = ScreenPairingView(

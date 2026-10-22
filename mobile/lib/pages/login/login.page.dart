@@ -150,9 +150,7 @@ class _BigScreenLogin extends StatelessWidget {
   static Future<void> _openPanel(BuildContext context) => showDialog<void>(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      content: SingleChildScrollView(
-        child: PairingPanel(compact: true, onSignedIn: () => Navigator.of(dialogContext).pop()),
-      ),
+      content: const SingleChildScrollView(child: PairingPanel(compact: true)),
       actions: [TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: Text(context.t.close))],
     ),
   );

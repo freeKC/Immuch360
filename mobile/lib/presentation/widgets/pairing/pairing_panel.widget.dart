@@ -35,14 +35,12 @@ import 'package:immich_mobile/widgets/forms/login/sign_in_completion.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:openapi/api.dart';
 
-/// See the top of this file. [compact] for a narrow window: a smaller code, no steps.
+/// See the top of this file. [compact] for a narrow window: a smaller code, no steps. In a dialog too: the timeline
+/// replaces the sign-in page and the dialog with it.
 class PairingPanel extends ConsumerStatefulWidget {
-  const PairingPanel({super.key, this.compact = false, this.onSignedIn});
+  const PairingPanel({super.key, this.compact = false});
 
   final bool compact;
-
-  /// Called before the timeline replaces the sign-in page, for a dialog that holds the panel to close
-  final VoidCallback? onSignedIn;
 
   @override
   ConsumerState<PairingPanel> createState() => _PairingPanelState();
@@ -87,7 +85,6 @@ class _PairingPanelState extends ConsumerState<PairingPanel> {
         gravity: ToastGravity.TOP,
       );
     }
-    widget.onSignedIn?.call();
     await completeSignIn(context, ref);
   }
 

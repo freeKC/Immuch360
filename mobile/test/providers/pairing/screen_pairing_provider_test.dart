@@ -196,6 +196,24 @@ void main() {
     await controller().hide();
   });
 
+  test('codes nobody used pause it: nothing listens until Show a new code', () async {
+    await controller().show(_App());
+    await settle();
+    final port = view().port!;
+    // The session's own pause, as after five unused codes
+    container.read(screenPairingProvider.notifier).debugPause();
+    await settle();
+    expect(view().phase, ScreenPairingPhase.paused);
+    expect(await listening(port), isFalse);
+    expect(announcementsStopped, 1);
+
+    await controller().showNewCode();
+    await settle();
+    expect(view().phase, ScreenPairingPhase.waiting);
+    expect(await listening(view().port!), isTrue);
+    await controller().hide();
+  });
+
   test('a phone signs the screen in: the listener and the announcement stop', () async {
     final app = _App();
     await controller().show(app);
