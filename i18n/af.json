@@ -224,7 +224,6 @@
   "camera_live_failed": "Die regstreekse beeld het nie begin nie: {error}",
   "camera_live_full_screen": "Volskerm",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Die regstreekse beeld kom in 'n latere weergawe na iPhone en iPad. Die opnames speel reeds hier.",
   "camera_live_needs_account": "Voeg die kamerarekening by om die regstreekse beeld te sien.",
   "camera_live_no_sound": "Geen klank op hierdie toestel nie",
   "camera_live_sd": "SD",

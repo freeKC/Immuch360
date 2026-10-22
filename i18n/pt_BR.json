@@ -736,7 +736,6 @@
   "camera_live_failed": "A visualização ao vivo não iniciou: {error}",
   "camera_live_full_screen": "Tela cheia",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "A visualização ao vivo chega ao iPhone e iPad em uma versão futura. As gravações já são reproduzidas aqui.",
   "camera_live_needs_account": "Adicione a conta da câmera para ver a visualização ao vivo.",
   "camera_live_no_sound": "Sem som neste dispositivo",
   "camera_live_sd": "SD",

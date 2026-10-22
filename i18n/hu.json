@@ -738,7 +738,6 @@
   "camera_live_failed": "Az élő kép nem indult el: {error}",
   "camera_live_full_screen": "Teljes képernyő",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Az élő kép egy későbbi verzióban érkezik iPhone-ra és iPadre. A felvételek itt már lejátszhatók.",
   "camera_live_needs_account": "Adja hozzá a kamerafiókot az élő kép megtekintéséhez.",
   "camera_live_no_sound": "Nincs hang ezen az eszközön",
   "camera_live_sd": "SD",

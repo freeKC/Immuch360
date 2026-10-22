@@ -738,7 +738,6 @@
   "camera_live_failed": "Slika v živo se ni zagnala: {error}",
   "camera_live_full_screen": "Celozaslonski način",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Slika v živo pride na iPhone in iPad v poznejši različici. Posnetki se tukaj že predvajajo.",
   "camera_live_needs_account": "Dodajte račun kamere, da vidite sliko v živo.",
   "camera_live_no_sound": "V tej napravi ni zvoka",
   "camera_live_sd": "SD",

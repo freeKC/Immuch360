@@ -737,7 +737,6 @@
   "camera_live_failed": "Изображението на живо не стартира: {error}",
   "camera_live_full_screen": "Цял екран",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Изображението на живо ще дойде на iPhone и iPad в по-късна версия. Записите вече се възпроизвеждат тук.",
   "camera_live_needs_account": "Добавете акаунта на камерата, за да виждате изображението на живо.",
   "camera_live_no_sound": "Няма звук на това устройство",
   "camera_live_sd": "SD",

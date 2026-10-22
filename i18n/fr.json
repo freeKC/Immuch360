@@ -738,7 +738,6 @@
   "camera_live_failed": "La vue en direct n'a pas démarré : {error}",
   "camera_live_full_screen": "Plein écran",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "La vue en direct arrivera sur iPhone et iPad dans une version ultérieure. Les enregistrements se lisent déjà ici.",
   "camera_live_needs_account": "Ajoutez le compte de la caméra pour voir la vue en direct.",
   "camera_live_no_sound": "Pas de son sur cet appareil",
   "camera_live_sd": "SD",

@@ -727,7 +727,6 @@
   "camera_live_failed": "Прямий ефір не запустився: {error}",
   "camera_live_full_screen": "Повноекранний режим",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Прямий ефір з'явиться на iPhone та iPad в одній із наступних версій. Записи вже відтворюються тут.",
   "camera_live_needs_account": "Додайте обліковий запис камери, щоб дивитися прямий ефір.",
   "camera_live_no_sound": "Немає звуку на цьому пристрої",
   "camera_live_sd": "SD",

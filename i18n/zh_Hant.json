@@ -725,7 +725,6 @@
   "camera_live_failed": "即時畫面未能啟動：{error}",
   "camera_live_full_screen": "全螢幕",
   "camera_live_hd": "高畫質",
-  "camera_live_later_on_ios": "即時畫面將在之後的版本中支援 iPhone 和 iPad。錄影現在已可在此播放。",
   "camera_live_needs_account": "新增攝影機帳號以觀看即時畫面。",
   "camera_live_no_sound": "此裝置上沒有聲音",
   "camera_live_sd": "標準畫質",

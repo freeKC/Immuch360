@@ -738,7 +738,6 @@
   "camera_live_failed": "Živý obraz se nespustil: {error}",
   "camera_live_full_screen": "Celá obrazovka",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Živý obraz přijde na iPhone a iPad v pozdější verzi. Záznamy se zde již přehrávají.",
   "camera_live_needs_account": "Pro zobrazení živého obrazu přidejte účet kamery.",
   "camera_live_no_sound": "V tomto zařízení není zvuk",
   "camera_live_sd": "SD",

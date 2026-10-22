@@ -685,7 +685,6 @@
   "camera_live_failed": "Tiešraides attēls netika palaists: {error}",
   "camera_live_full_screen": "Pilnekrāns",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Tiešraides attēls iPhone un iPad ierīcēs būs pieejams vēlākā versijā. Ierakstus šeit jau var atskaņot.",
   "camera_live_needs_account": "Pievienojiet kameras kontu, lai redzētu tiešraides attēlu.",
   "camera_live_no_sound": "Šajā ierīcē nav skaņas",
   "camera_live_sd": "SD",

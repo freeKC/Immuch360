@@ -738,7 +738,6 @@
   "camera_live_failed": "La visione dal vivo non è partita: {error}",
   "camera_live_full_screen": "Schermo intero",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "La visione dal vivo arriverà su iPhone e iPad in una versione successiva. Le registrazioni si riproducono già qui.",
   "camera_live_needs_account": "Aggiungi l'account videocamera per vedere la visione dal vivo.",
   "camera_live_no_sound": "Nessun audio su questo dispositivo",
   "camera_live_sd": "SD",

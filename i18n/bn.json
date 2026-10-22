@@ -727,7 +727,6 @@
   "camera_live_failed": "লাইভ ভিউ শুরু হয়নি: {error}",
   "camera_live_full_screen": "পূর্ণ স্ক্রিন",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "লাইভ ভিউ পরের কোনো সংস্করণে iPhone ও iPad-এ আসবে। রেকর্ডিং এখানে ইতিমধ্যে চলে।",
   "camera_live_needs_account": "লাইভ ভিউ দেখতে ক্যামেরা অ্যাকাউন্ট যোগ করুন।",
   "camera_live_no_sound": "এই ডিভাইসে শব্দ নেই",
   "camera_live_sd": "SD",

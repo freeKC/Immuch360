@@ -738,7 +738,6 @@
   "camera_live_failed": "Het livebeeld is niet gestart: {error}",
   "camera_live_full_screen": "Volledig scherm",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Het livebeeld komt in een latere versie naar iPhone en iPad. De opnames spelen hier al af.",
   "camera_live_needs_account": "Voeg het camera-account toe om het livebeeld te zien.",
   "camera_live_no_sound": "Geen geluid op dit apparaat",
   "camera_live_sd": "SD",

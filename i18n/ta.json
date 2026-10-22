@@ -680,7 +680,6 @@
   "camera_live_failed": "நேரலைக் காட்சி தொடங்கவில்லை: {error}",
   "camera_live_full_screen": "முழுத்திரை",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "நேரலைக் காட்சி பிந்தைய பதிப்பில் iPhone மற்றும் iPad க்கு வரும். பதிவுகள் ஏற்கனவே இங்கே இயங்குகின்றன.",
   "camera_live_needs_account": "நேரலைக் காட்சியைப் பார்க்க கேமரா கணக்கைச் சேர்க்கவும்.",
   "camera_live_no_sound": "இந்தச் சாதனத்தில் ஒலி இல்லை",
   "camera_live_sd": "SD",

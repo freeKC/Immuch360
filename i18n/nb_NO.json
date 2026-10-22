@@ -738,7 +738,6 @@
   "camera_live_failed": "Direktebildet startet ikke: {error}",
   "camera_live_full_screen": "Fullskjerm",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Direktebildet kommer til iPhone og iPad i en senere versjon. Opptakene spilles allerede av her.",
   "camera_live_needs_account": "Legg til kamerakontoen for å se direktebildet.",
   "camera_live_no_sound": "Ingen lyd på denne enheten",
   "camera_live_sd": "SD",

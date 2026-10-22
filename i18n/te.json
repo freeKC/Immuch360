@@ -496,7 +496,6 @@
   "camera_live_failed": "లైవ్ వీక్షణ ప్రారంభం కాలేదు: {error}",
   "camera_live_full_screen": "పూర్తి స్క్రీన్",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "లైవ్ వీక్షణ తర్వాతి వెర్షన్‌లో iPhone మరియు iPad కు వస్తుంది. రికార్డింగ్‌లు ఇక్కడ ఇప్పటికే ప్లే అవుతాయి.",
   "camera_live_needs_account": "లైవ్ వీక్షణను చూడటానికి కెమెరా ఖాతాను జోడించండి.",
   "camera_live_no_sound": "ఈ పరికరంలో ధ్వని లేదు",
   "camera_live_sd": "SD",

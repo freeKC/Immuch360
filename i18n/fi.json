@@ -690,7 +690,6 @@
   "camera_live_failed": "Suora kuva ei käynnistynyt: {error}",
   "camera_live_full_screen": "Koko näyttö",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Suora kuva tulee iPhonelle ja iPadille myöhemmässä versiossa. Tallenteet toistuvat täällä jo nyt.",
   "camera_live_needs_account": "Lisää kameratili nähdäksesi suoran kuvan.",
   "camera_live_no_sound": "Ei ääntä tällä laitteella",
   "camera_live_sd": "SD",

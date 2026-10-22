@@ -737,7 +737,6 @@
   "camera_live_failed": "ライブ映像を開始できませんでした: {error}",
   "camera_live_full_screen": "全画面表示",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "ライブ映像は今後のバージョンで iPhone と iPad に対応します。録画はすでにここで再生できます。",
   "camera_live_needs_account": "ライブ映像を見るにはカメラアカウントを追加してください。",
   "camera_live_no_sound": "このデバイスでは音声がありません",
   "camera_live_sd": "SD",

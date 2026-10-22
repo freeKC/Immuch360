@@ -215,7 +215,6 @@
   "camera_live_failed": "Шууд дүрс эхэлсэнгүй: {error}",
   "camera_live_full_screen": "Бүтэн дэлгэц",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Шууд дүрс iPhone болон iPad дээр дараагийн хувилбарт ирнэ. Бичлэгүүд энд аль хэдийн тоглогдож байна.",
   "camera_live_needs_account": "Шууд дүрсийг үзэхийн тулд камерын бүртгэлийг нэмнэ үү.",
   "camera_live_no_sound": "Энэ төхөөрөмж дээр дуу алга",
   "camera_live_sd": "SD",

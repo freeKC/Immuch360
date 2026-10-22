@@ -734,7 +734,6 @@
   "camera_live_failed": "Vizualizarea live nu a pornit: {error}",
   "camera_live_full_screen": "Ecran complet",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Vizualizarea live va veni pe iPhone și iPad într-o versiune ulterioară. Înregistrările se redau deja aici.",
   "camera_live_needs_account": "Adăugați contul camerei pentru a vedea vizualizarea live.",
   "camera_live_no_sound": "Fără sunet pe acest dispozitiv",
   "camera_live_sd": "SD",

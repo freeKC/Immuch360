@@ -730,7 +730,6 @@
   "camera_live_failed": "Prikaz uživo nije pokrenut: {error}",
   "camera_live_full_screen": "Ceo ekran",
   "camera_live_hd": "HD",
-  "camera_live_later_on_ios": "Prikaz uživo stiže na iPhone i iPad u kasnijoj verziji. Snimci se ovde već reprodukuju.",
   "camera_live_needs_account": "Dodajte nalog kamere da biste videli prikaz uživo.",
   "camera_live_no_sound": "Nema zvuka na ovom uređaju",
   "camera_live_sd": "SD",
