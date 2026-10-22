@@ -85,8 +85,30 @@ abstract class MediaBridge {
 
   void unregister(String sourceId);
 
-  /// The bridge URL of a file of a registered source, valid while the app runs
+  /// The bridge URL of a file of a registered source, valid while the app runs; also of a file of generated media,
+  /// with its id
   Uri urlFor(String sourceId, String path);
 
+  /// Serves the files [media] makes in memory under [id] (random, never a source id), until [unregisterGenerated]:
+  /// the live playlist of a camera on iPhone and iPad
+  void registerGenerated(String id, GeneratedMedia media);
+
+  void unregisterGenerated(String id);
+
   Future<void> stop();
+}
+
+/// Files the app makes in memory, that the bridge serves next to the shares
+abstract class GeneratedMedia {
+  /// The file [name] (one path segment), null when there is none (or no longer)
+  GeneratedFile? file(String name);
+}
+
+class GeneratedFile {
+  const GeneratedFile(this.bytes, this.contentType);
+
+  final Uint8List bytes;
+
+  /// Without parameters ("application/vnd.apple.mpegurl", "video/mp4")
+  final String contentType;
 }
