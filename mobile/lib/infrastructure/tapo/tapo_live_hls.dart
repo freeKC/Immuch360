@@ -48,14 +48,15 @@ abstract class LiveHlsStream {
 }
 
 /// Makes the live playlist of the stream at [path] of the camera at [host]
-typedef LiveHlsStarter = LiveHlsStream Function({
-  required String host,
-  required int port,
-  required String path,
-  required String user,
-  required String password,
-  required bool withAudio,
-});
+typedef LiveHlsStarter =
+    LiveHlsStream Function({
+      required String host,
+      required int port,
+      required String path,
+      required String user,
+      required String password,
+      required bool withAudio,
+    });
 
 class TapoLiveHls implements LiveHlsStream, GeneratedMedia {
   TapoLiveHls({

@@ -45,8 +45,9 @@ Future<TapoLiveProbe> probeTapoRtsp(
     await connection.send('OPTIONS', uri, const {});
     var answer = await connection.send('DESCRIBE', uri, const {'Accept': 'application/sdp'});
     if (answer.status == 401) {
-      final authorization = RtspDigest.of(answer.headers['www-authenticate'] ?? const [])
-          ?.authorization('DESCRIBE', uri, user, password);
+      final authorization = RtspDigest.of(
+        answer.headers['www-authenticate'] ?? const [],
+      )?.authorization('DESCRIBE', uri, user, password);
       if (authorization == null) {
         throw const TapoCameraException(TapoErrorKind.unsupported, detail: 'RTSP authentication');
       }
