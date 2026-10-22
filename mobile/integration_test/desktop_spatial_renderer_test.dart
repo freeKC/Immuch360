@@ -286,6 +286,9 @@ void main() {
         // ignore: avoid_print
         print('mpv: $line');
       }
+      // The tree goes while this test runs, so that its focus changes are done before the next test's binding state
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 100));
       await logSubscription.cancel();
       await player.dispose();
     }
@@ -334,7 +337,12 @@ void main() {
         ),
       ),
     );
-    final page = tester.state<DesktopSpatialPlayerPageState>(find.byType(DesktopSpatialPlayerPage));
+    // EasyLocalization loads the texts before it builds the page
+    final route = find.byType(DesktopSpatialPlayerPage);
+    for (var i = 0; i < 100 && route.evaluate().isEmpty; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    final page = tester.state<DesktopSpatialPlayerPageState>(route);
     final watch = Stopwatch()..start();
     final requested = <double>[];
     var faces = 0;
@@ -370,7 +378,9 @@ void main() {
     final tracking = page.tracking;
     expect(tracking.cameraOpen, isTrue);
     await tester.pumpWidget(const SizedBox());
-    await Future<void>.delayed(const Duration(seconds: 3));
+    for (var i = 0; i < 30; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
     expect(tracking.cameraOpen, isFalse, reason: 'the webcam is released when the route goes');
   }, timeout: const Timeout(Duration(minutes: 3)));
 }
