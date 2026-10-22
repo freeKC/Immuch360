@@ -54,13 +54,14 @@ class ScriptRun {
   String toString() => 'exit $exitCode\n$output';
 }
 
-/// Runs the script [name] of .github/desktop with [arguments]; stdout and stderr together
-ScriptRun runCiScript(String name, List<String> arguments) {
+/// Runs the script [name] of .github/desktop with [arguments]; stdout and stderr together. [environment] adds to the
+/// variables of the test.
+ScriptRun runCiScript(String name, List<String> arguments, {Map<String, String> environment = const {}}) {
   final command = python!;
   final result = Process.runSync(
     command.first,
     [...command.skip(1), p.join(ciScriptsDir, name), ...arguments],
-    environment: const {'PYTHONDONTWRITEBYTECODE': '1', 'PYTHONIOENCODING': 'utf-8'},
+    environment: {'PYTHONDONTWRITEBYTECODE': '1', 'PYTHONIOENCODING': 'utf-8', ...environment},
   );
   return ScriptRun(result.exitCode, '${result.stdout}${result.stderr}');
 }
