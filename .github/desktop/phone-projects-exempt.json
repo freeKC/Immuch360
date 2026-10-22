@@ -64,7 +64,7 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the accessory attached entry, which only brings the application forward"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkController.kt": {
-    "blob": "9148de76046f515747e5983cb601dc01d5bcc6e2",
+    "blob": "0763a5c0b9c4eba7af5a79e969b4d3faa4da527c",
     "reason": "DJI link (feat-dji-link, 12ccff821): the process scoped owner of the link, the codecs, the capture and the safety rules"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/Envelope.kt": {

@@ -47,6 +47,13 @@ class DjiLinkController private constructor(private val context: Context) : Link
   }
 
   private val handler = Handler(Looper.getMainLooper())
+
+  /**
+   * The reader thread fills the decoder, the router and the capture while the main thread builds the answer the page
+   * shows. One lock around both sides, because a table being sorted while a frame is counted into it is how a
+   * diagnostics page crashes in front of a pilot.
+   */
+  private val gate = Any()
   private val profiles = ProfileRegistry()
   private val decoder = EnvelopeDecoder()
   private val router = FrameRouter()
@@ -79,8 +86,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
     }
     started = true
     environment = UsbEnvironment.read(context)
-    decoder.reset()
-    router.reset()
+    synchronized(gate) {
+      decoder.reset()
+      router.reset()
+    }
     manager.start()
     markDirty()
   }
@@ -114,19 +123,24 @@ class DjiLinkController private constructor(private val context: Context) : Link
   }
 
   fun clearCapture() {
-    capture.clear()
+    synchronized(gate) { capture.clear() }
     markDirty()
   }
 
   fun exportCapture(notes: Map<String, String?>): CaptureExport.Result {
-    val snapshot = capture.snapshot()
+    val snapshot: CaptureSnapshot
+    val facts: Map<String, Any?>
+    synchronized(gate) {
+      snapshot = capture.snapshot()
+      facts = linkFacts()
+    }
     val result = CaptureExport.write(
       context = context,
       snapshot = snapshot,
       environment = environment,
       identity = identity,
       profile = profile,
-      link = linkFacts(),
+      link = facts,
       notes = notes,
     )
     Log.i(TAG, "capture exported: ok=${result.ok} bytes=${result.bytes} sha256=${result.sha256}")
@@ -186,8 +200,11 @@ class DjiLinkController private constructor(private val context: Context) : Link
     this.state = state
     this.detail = detail
     if (state == LinkState.ACCESSORY_OPEN) {
-      decoder.reset()
-      router.reset()
+      // A new descriptor is a new stream: no parser buffer and no counter survives a reconnect
+      synchronized(gate) {
+        decoder.reset()
+        router.reset()
+      }
     }
     markDirty()
   }
@@ -200,22 +217,28 @@ class DjiLinkController private constructor(private val context: Context) : Link
 
   override fun onBytes(data: ByteArray, length: Int) {
     val nowMs = SystemClock.elapsedRealtime()
-    capture.record(CaptureDirection.IN, data, 0, length)
-    for (envelope in decoder.offer(data, 0, length)) {
-      router.route(envelope, nowMs)
+    val frames: Long
+    val linked: Boolean
+    synchronized(gate) {
+      capture.record(CaptureDirection.IN, data, 0, length)
+      for (envelope in decoder.offer(data, 0, length)) {
+        router.route(envelope, nowMs)
+      }
+      frames = router.counters.controlFrames
+      linked = router.aircraftLinked(nowMs)
     }
     // Frames parsed is a claim the transport cannot make, so it is made here and nowhere else
-    if (router.counters.controlFrames > 0 && state == LinkState.LINK_USABLE) {
+    if (frames > 0 && state == LinkState.LINK_USABLE) {
       handler.post { manager.publish(LinkState.CONTROLLER_IDENTIFIED, "control frames arrive and parse") }
     }
-    if (router.aircraftLinked(nowMs) && state == LinkState.CONTROLLER_IDENTIFIED) {
+    if (linked && state == LinkState.CONTROLLER_IDENTIFIED) {
       handler.post { manager.publish(LinkState.AIRCRAFT_LINKED, "frames from the aircraft side arrive") }
     }
     markDirty()
   }
 
   override fun onWrite(data: ByteArray, isProbe: Boolean) {
-    capture.record(CaptureDirection.OUT, data)
+    synchronized(gate) { capture.record(CaptureDirection.OUT, data) }
     markDirty()
   }
 
@@ -306,7 +329,9 @@ class DjiLinkController private constructor(private val context: Context) : Link
     )
   }
 
-  fun snapshot(): DjiLinkSnapshot {
+  fun snapshot(): DjiLinkSnapshot = synchronized(gate) { buildSnapshot() }
+
+  private fun buildSnapshot(): DjiLinkSnapshot {
     val nowMs = SystemClock.elapsedRealtime()
     val envelope = decoder.counters
     val control = router.controlCounters()
