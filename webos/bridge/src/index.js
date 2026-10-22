@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 // The media bridge of the webOS app: a small HTTP server in the app's JS service, on 127.0.0.1, behind a random token
 // in the path. The page lists the folders of a share and the TV's player reads the media through it; the passwords
 // and tokens of the sources stay in the service (they arrive over Luna, setSources). Every answer carries the CORS

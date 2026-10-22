@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 // Shared pieces of the bridge tests: local servers standing in for the sources, and a client of the bridge.
 
 const http = require('http');

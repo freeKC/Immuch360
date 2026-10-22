@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 // What the head of a JPEG file tells, read from its first bytes (64 KiB hold it for nearly every camera): the small
 // picture the camera wrote in its EXIF block (a thumbnail for the grid, so that the TV does not decode 12 MP
 // originals), the picture size, the camera, the orientation, and whether XMP marks it as a 360° photo (GPano).

@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 const test = require('node:test');
 const assert = require('node:assert');
 const webdav = require('../src/webdav');

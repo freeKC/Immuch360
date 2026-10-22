@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 // WebDAV (Nextcloud, Synology, rclone and others): PROPFIND with Depth 1 lists a folder, GET with a Range header reads
 // a file. Authentication is Basic, sent with every request (HTTPS when the address says so). Redirects are followed on
 // the same host only, so that the password never leaves it. As mobile/lib/infrastructure/network/webdav_file_system.dart.

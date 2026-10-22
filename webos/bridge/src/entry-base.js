@@ -1,4 +1,5 @@
 'use strict';
+/* global __dirname */
 // Entry of the base bundle (service/bridge/base.js, Node 8 and later): the bridge, with SMB loaded on demand from the
 // second bundle next to it (service/bridge/smb.js, Node 12 and later).
 

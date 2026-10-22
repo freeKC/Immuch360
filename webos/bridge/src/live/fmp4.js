@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 // Fragmented MP4 (ISO BMFF) for Media Source Extensions and for HLS: an init segment (ftyp and moov with one H.264
 // track), then one moof and mdat per frame. A remux only: the TV's hardware decodes the video.
 

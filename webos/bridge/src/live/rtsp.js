@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 // An RTSP client for camera streams: TCP interleaved transport (no UDP port to open on the TV), Digest or Basic
 // authentication, DESCRIBE, SETUP of the video track, PLAY, and GET_PARAMETER every 25 s to keep the session. The RTP
 // packets of the video come out through onRtp(packet). Core modules only, from Node 8.

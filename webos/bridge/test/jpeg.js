@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 // Builds small JPEG files for the tests: an EXIF block (camera, orientation, size, a thumbnail in IFD1), an optional
 // XMP block with GPano, a SOF0 with the picture size, and padding standing in for the picture data.
 

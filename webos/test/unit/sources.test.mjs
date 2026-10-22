@@ -1,6 +1,7 @@
 // The network sources of the TV app (src/immuch360/sources/): the store kept on the TV, the client of the media
 // bridge (start, sources, restart after the service went away), the repository that feeds the Immich screens with the
 // files of a share, the texts of the errors and the rules of the live view. The Luna transport and fetch are fakes.
+/* global setImmediate */
 
 import {test, describe} from 'node:test';
 import assert from 'node:assert/strict';

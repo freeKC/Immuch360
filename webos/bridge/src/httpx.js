@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 // HTTP helpers of the bridge: requests to the sources, and the answers to the page and to the TV's player. Every
 // answer to the page carries Access-Control-Allow-Origin, so that fetch reads it and WebGL takes its pixels.
 

@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer, __dirname */
 // Integration test of the bundled bridge (service/bridge/base.js and smb.js) against real servers: run on the build
 // host inside the Node images of the TVs (8.12.0, 12.21.0, 16.19.1, 20.12.2), on the Docker network of the fixtures
 // (a WebDAV server, minidlna, an unclaimed Plex Media Server, three Samba setups, mediamtx with camera shaped streams).

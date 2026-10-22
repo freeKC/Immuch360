@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 // The live view of a camera: one RTSP session per camera and quality, shared by its viewers, made into fragmented
 // MP4. A viewer through Media Source Extensions gets the init segment, the frames from the last key frame, then every
 // new frame (stream.mp4); the HLS fallback gets a sliding playlist of segments of one GOP each (index.m3u8). The

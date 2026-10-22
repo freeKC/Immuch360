@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 const test = require('node:test');
 const assert = require('node:assert');
 const dgram = require('node:dgram');

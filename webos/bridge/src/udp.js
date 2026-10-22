@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 // UDP searches of the local network, for DLNA (SSDP) and Plex (GDM): the request goes to the multicast group and by
 // broadcast from one socket, and to every host of the TV's /24 from another (a TV that refuses the multicast send, or
 // a router that drops broadcasts between Wi-Fi clients, still finds the servers). The answers come back to the ports

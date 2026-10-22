@@ -1,4 +1,5 @@
 'use strict';
+/* global Buffer */
 // H.264 over RTP (RFC 6184): single NAL units, STAP-A and FU-A, gathered into access units by RTP timestamp; and what
 // the sequence parameter set tells (picture size, the codec string MSE asks for). Core JavaScript, no BigInt.
 
