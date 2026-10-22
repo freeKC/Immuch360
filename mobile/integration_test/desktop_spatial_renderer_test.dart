@@ -15,10 +15,10 @@
 // through the head tracker's webcam path on the recorded painted head (test/fixtures/video/painted-head-12s.mp4, played
 // at its own pace by the tracker's "file:" test camera, as the runner has no webcam): the viewpoint the route sends to
 // the plugin must follow the head the right way (a face on the right of the picture sends it under 0.3, toward the
-// left camera; on the left, over 0.7), first toward the left camera and about two seconds later toward the right one,
-// as in the clip's ground truth (the face on the right at 1 s, on the left at 3 s); WARP being far too slow for the
-// clip's 15 frames a second, the route's measure of the frames must take the passes a step down and then hold LOW (or
-// play flat); and the webcam must be released, its capture thread ended, when the route goes.
+// left camera; on the left, over 0.7), toward the left camera within the clip's first second and toward the right one
+// within its third, in the clip's own time (the face on the right at 1 s, on the left at 3 s); WARP being far too slow
+// for the clip's 15 frames a second, the route's measure of the frames must take the passes a step down and then hold
+// LOW (or play flat); and the webcam must be released, its capture thread ended, when the route goes.
 // Run in the Windows job of the desktop workflow, after the build:
 //   flutter test integration_test/desktop_spatial_renderer_test.dart -d windows
 //   IMMUCH360_SPATIAL_CLIP   another clip of the same pattern (default: the fixture, from the app's folder)
@@ -353,10 +353,12 @@ void main() {
     // The 4 s clip loops, so that the frames are measured as long as the test watches
     await page.controller.setLoop(true);
     final watch = Stopwatch()..start();
-    // Each reading: the time since the first face, where the face was in the picture, the viewpoint sent last
+    // The clip's own time of a sample: the tracker analyses one frame in two (the default of HtOptions) of the 15 fps
+    // clip. A loaded runner plays it slower than real time, which the time of the test would count.
+    double clipSeconds(HeadSample sample) => (sample.sequence - 1) * 2 / 15;
+    // Each reading: the clip's time of the newest sample, where the face was in the picture, the viewpoint sent last
     final readings = <({double seconds, double faceX, double sent})>[];
     final requested = <double>[];
-    Duration? firstFace;
     var faces = 0;
     var lastSequence = -1;
     while (watch.elapsed < const Duration(seconds: 9)) {
@@ -366,13 +368,11 @@ void main() {
         lastSequence = sample.sequence;
         if (sample.hasFace) {
           faces++;
-          firstFace ??= watch.elapsed;
         }
       }
       final sent = output?.sentViewpoint;
-      final since = firstFace;
-      if (sample != null && sample.hasFace && sent != null && since != null) {
-        readings.add((seconds: (watch.elapsed - since).inMilliseconds / 1000, faceX: sample.faceX, sent: sent));
+      if (sample != null && sample.hasFace && sent != null) {
+        readings.add((seconds: clipSeconds(sample), faceX: sample.faceX, sent: sent));
       }
       // The figures through a reader of their own: the route's measure keeps all of its draws
       final stats = await output?.stats(reader: #test);
@@ -396,8 +396,8 @@ void main() {
     expect(faces, greaterThan(20), reason: 'the face found on the way');
     expect(low, isNotNull, reason: 'the face on the right of the picture: toward the left camera');
     expect(high, isNotNull, reason: 'then on the left: toward the right camera');
-    expect(low!.seconds, lessThan(high!.seconds), reason: 'left camera first (1 s in the clip), then right (3 s)');
-    expect(high.seconds - low.seconds, inInclusiveRange(1.0, 3.2), reason: 'about two seconds apart');
+    expect(low!.seconds, inInclusiveRange(0.1, 1.5), reason: 'toward the left camera as the face goes right (1 s)');
+    expect(high!.seconds, inInclusiveRange(1.9, 3.7), reason: 'toward the right camera as it goes left (3 s)');
     // The sign held end to end: every reading far to one side sent the viewpoint the matching way
     for (final reading in readings) {
       if (reading.faceX > 0.75) {
