@@ -29,6 +29,13 @@ The history of immich-tv-webos is not imported (one squashed commit keeps the hi
   immich-tv-webos.
 - The About page with the diagnostics and their QR code (`src/immuch360/diagnostics`), in the navigation rail.
 - The welcome page shows the Immuch360 icon and tagline.
+- Network shares, Plex and Tapo cameras: the JS service is also a media bridge (`bridge/`, bundled into
+  `service/bridge/` by `tools/build-bridge.mjs`; `service/lib/bridge-host.js` and five Luna methods in `service.js`,
+  the same over HTTP in `service/dev.js`), the "Network shares" page of the rail (`src/immuch360/sources`), and a few
+  lines in inherited files: the rail item (`NavigationRail`, its test counts seven buttons), the route
+  (`views/AppLayout.tsx`, `types/navigation.ts`), a `label` of a group that is no day (`domain/types.ts`,
+  `DateHeader`, `TimelineGrid`) and the file name of a share's file over its date (`MediaInfo`). The service's
+  `package.json` and `services.json` say what it does now.
 - Tests: `test/unit` (node test runner) for the new layers; the inherited jest tests kept, adjusted where a text
   changed.
 - `README.md`, `LICENSE.md`, `THIRD_PARTY.md` and this file; the inherited `LICENSE` is kept unchanged. The inherited
