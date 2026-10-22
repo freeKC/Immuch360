@@ -16,7 +16,8 @@ abstract class ViewerConfig with _$ViewerConfig {
     @Default(true) bool autoPlayVideo,
     @Default(false) bool tapToNavigate,
 
-    /// Experimental Spatial 2.5D player for stereoscopic videos on phones, off by default
+    /// Experimental Spatial 2.5D player for stereoscopic videos on phones, on by default (Settings, Asset Viewer,
+    /// Videos turns it off)
     @Default(true) bool spatial25d,
 
     /// Which file of a server video the players load, null until the user picks one in the settings: the source then

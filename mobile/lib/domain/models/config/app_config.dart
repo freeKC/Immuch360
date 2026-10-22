@@ -47,7 +47,8 @@ abstract class AppConfig with _$AppConfig {
     @Default(FeatureMessageConfig()) FeatureMessageConfig featureMessage,
     // Stored by name, like the others: older builds skip them
     @Default(false) bool uploadTagSpheres,
-    @Default(false) bool djiImportEnabled,
+    // The DJI drone page, experimental but on by default from build 27: Settings, Advanced turns it off
+    @Default(true) bool djiImportEnabled,
   }) = _AppConfig;
 
   T read<T>(SettingsKey<T> key) =>

@@ -1,6 +1,6 @@
 // The "DJI drone" tile of the Network shares page, under "Share this phone on the network": opens the DJI drone page.
-// Shown on Android phones and tablets only (not the Quest build, not the TV layout), once Settings, Advanced, "DJI
-// drones (experimental)" is on.
+// Shown on Android phones and tablets only (not the Quest build, not the TV layout), while Settings, Advanced, "DJI
+// drones (experimental)" is on, as it is by default.
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';

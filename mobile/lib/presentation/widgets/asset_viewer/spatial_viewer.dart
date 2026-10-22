@@ -1,4 +1,4 @@
-// Spatial 2.5D (experimental, off by default): stereoscopic videos open in a native full screen player that turns the
+// Spatial 2.5D (experimental, on by default): stereoscopic videos open in a native full screen player that turns the
 // two eyes into depth and follows the head of the user with the front camera, on the device only. SpatialVideoActivity
 // on Android, SpatialVideoViewController on iOS, never on a Meta Quest. The viewer's own player stays as it is, and
 // takes the video back where the Spatial player left it.

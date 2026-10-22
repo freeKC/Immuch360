@@ -92,7 +92,8 @@ enum SettingsKey<T> {
   // show them as 360° (see NetworkUploadOptions.tagSpheres)
   uploadTagSpheres<bool>(),
 
-  // Settings, Advanced, "DJI drones (experimental)": the DJI drone page of the Network shares (Android phones)
+  // Settings, Advanced, "DJI drones (experimental)", on by default: the DJI drone page of the Network shares (Android
+  // phones)
   djiImportEnabled<bool>();
 
   final ValueCodec<T>? _codecOverride;
