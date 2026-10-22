@@ -11,8 +11,9 @@ Immuch360 on ilmainen ja avoimen lähdekoodin sovellus, jolla löydät, selaat, 
 
 - **Mitä se tekee?** Se näyttää kuvasi ja videosi galleriana ja toistaa ne kullekin tiedostolle sopivassa katselimessa: litteänä, pallona jonka sisällä katsot ympärillesi, 3D:ssä, laseissa.
 - **Mikä media?** Litteät kuvat ja videot, panoraamat, 360°-kuvat ja -videot, VR180, stereoskooppinen 3D, Applen spatial-kuvat, DJI-droonien 360°-pallot ja 360°-kameroiden raakatiedostot (Insta360, GoPro MAX, DJI Osmo 360), jotka sovellus yhdistää.
-- **Millä laitteilla?** Android-puhelimet ja -tabletit, iPhone ja iPad, Android TV ja Google TV, webOS-käyttöiset LG-televisiot (erillinen sovellus, ensimmäinen testibuild), Meta Quest 2, Pro, 3 ja 3S, Windows (esikatselu), sekä Linux ja macOS varhaisina esikatseluversioina.
+- **Millä laitteilla?** Android-puhelimet ja -tabletit, iPhone ja iPad, Android TV ja Google TV, webOS-käyttöiset LG-televisiot (erillinen sovellus, testibuildeina), Meta Quest 2, Pro, 3 ja 3S, Windows (esikatselu), sekä Linux ja macOS varhaisina esikatseluversioina.
 - **Tarvitsenko palvelimen tai tilin?** Ei. Immuch360 toimii itsenäisesti laitteesi median kanssa. Immich-palvelin, NAS, mediapalvelin tai Plex-palvelin ovat valinnaisia, kun haluat ne.
+- **Miten kirjaudun televisioon, laseihin tai tietokoneeseen?** Puhelimellasi: skannaa QR-koodi, jonka sen kirjautumissivu näyttää, tai kirjoita sen koodi, vahvista, ja Immich-kirjastosi avautuu sekunneissa, ilman että kaukosäätimellä tarvitsee kirjoittaa mitään.
 
 <p align="center">
   <sub>Immich-mobiilisovelluksen epävirallinen haara. Ei liity Immichiin tai FUTOon. Nimi lausutaan kuin "I am much 360".</sub>
@@ -22,13 +23,13 @@ Immuch360 on ilmainen ja avoimen lähdekoodin sovellus, jolla löydät, selaat, 
 
 | Alusta | Mistä sen saa | Tilanne 22. lokakuuta 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-puhelimet ja -tabletit | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Playssa (build 25; build 26 tarkastuksessa), build 27 GitHubissa |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ja iPad** | App Store | versio 3.3.1 (build 24) odottaa Applen tarkastusta 14. lokakuuta alkaen; [rakenna se itse](../docs/immuch360/build.md) sitä odotellessa |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 27 GitHubissa: tumma teema oletuksena, Vasen ja Oikea videon aikana, selkeä ilmoitus, kun videota ei voi toistaa; TV-listaus on Googlen tarkastuksessa |
-| **LG-televisiot**, webOS 4.0 tai uudempi | [.ipk-testibuild](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0) | testibuild 0.1.0 21. lokakuuta, asennetaan tilassa [Developer Mode](#lg-tvs-webos); ei vielä ajettu oikealla LG-televisiolla |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Storessa (build 23; build 25 tarkastuksessa), build 27 GitHubissa |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Asennusohjelma tai ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | desktop-build 7, esikatseluversio: kuvat, litteät ja 360°-videot, jaot, Plex, kamerat, ohjelmalla avatut tiedostot, kuvien kääntö yhdellä näppäimellä, käyttöliittymä 89 kielellä |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ja Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) | esikatseluversiot: Linuxilla kuvat, 360°-kuvat ja litteät videot (360°-videot toistuvat litteinä); macOS:lla sama, tarkistettu vain projektin CI-Macilla, allekirjoittamaton |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android**-puhelimet ja -tabletit | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Playssa (build 25; build 28 lähetetty Googlen tarkastukseen), build 28 GitHubissa |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ja iPad** | App Store | versio 3.3.1 (build 27) odottaa Applen tarkastusta, lähetetty uudelleen 22. lokakuuta; [rakenna se itse](../docs/immuch360/build.md) sitä odotellessa |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ja Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 28 GitHubissa: [kirjaudu puhelimellasi](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) skannaamalla QR-koodi; TV-listaus on Googlen tarkastuksessa |
+| **LG-televisiot**, webOS 4.0 tai uudempi | [.ipk-testibuild](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) | testibuild 0.2.0, asennetaan tilassa [Developer Mode](#lg-tvs-webos): verkkojaot, Plex ja Tapo-suora kuva; 0.1.0 toimi testaajan LG-televisiossa, 0.2.0 ei vielä oikeassa televisiossa |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ja 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Storessa (build 25; build 28 lähetetty Metalle), build 28 GitHubissa |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Asennusohjelma tai ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | desktop-build 8, allekirjoitettu esikatseluversio: kuvat, litteät ja 360°-videot, jaot, Plex, kamerat, kirjautuminen puhelimella, kuvien kääntö yhdellä näppäimellä, käyttöliittymä 89 kielellä |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ja Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | esikatseluversiot: Linuxilla kuvat, 360°-kuvat ja litteät videot (360°-videot toistuvat litteinä); macOS:lla sama, tarkistettu vain projektin CI-Macilla, allekirjoittamaton |
 
 *Tilat päivitetään joka julkaisussa; tarkemmat tiedot, build builditasolla, löytyvät sivulta [Release status](../docs/immuch360/release-status.md).*
 
@@ -48,11 +49,13 @@ Immuch360 on ilmainen ja avoimen lähdekoodin sovellus, jolla löydät, selaat, 
   - [Käytä omia tiedostojasi, ilman tiliä](#use-your-own-files-without-an-account)
   - [Käytä NASin, tietokoneen tai mediapalvelimen mediaa](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
   - [Löydä Immich-kirjastosi](#find-your-immich-library)
+  - [Kirjaudu televisioon, laseihin tai tietokoneeseen puhelimellasi](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
   - [Siirry immersiiviseen tilaan Meta Questilla](#go-immersive-on-meta-quest)
   - [Katso televisiolla ja tietokoneella](#watch-on-the-tv-and-on-the-computer)
   - [Immuch360 LG-televisiossa (webOS)](#immuch360-on-an-lg-tv-webos)
   - [Kamerat, Plex ja kameroiden raakatiedostot](#cameras-plex-and-raw-camera-files)
   - [DJI-droonisi kuvat ja videot Immich-palvelimellesi](#your-dji-drones-photos-and-videos-on-your-immich-server)
+  - [DJI-yhteyden diagnostiikka (kokeellinen)](#dji-link-diagnostics-experimental)
 - [Laitteet ja järjestelmät](#devices-and-systems)
 - [Lisäominaisuudet](#advanced-features)
 - [Tekninen dokumentaatio](#technical-documentation)
@@ -159,9 +162,28 @@ Lisää: [verkkojaot](../docs/immuch360/user-guide.md#network-shares-a-nas-a-com
 2. Asetuksissa, Asset Viewer, Videos, "Videon lähde" valitsee alkuperäisen, kun laite dekoodaa sen, aina alkuperäisen, tai aina transkoodatun striimin.
 3. Näyttääksesi 360°-kuvan jollekulle, jolla ei ole sovellusta, jaa se Immichin jaetulla linkillä: Immichin verkkosovellus näyttää sen pallona heidän selaimessaan.
 
-Nykyinen build, build 27, perustuu Immichin `main`-haaraan 10. lokakuuta 2026 (versio 3.3.0-rc.0) ja on testattu Immich 3.2.4 -palvelinta vastaan sekä palvelinta, joka on rakennettu samasta Immichin `main`-haarasta. Ilmoita ongelmista [Issues](https://github.com/freeKC/Immuch360/issues)-sivulla, ei Immich-projektille.
+Nykyinen build, build 28, perustuu Immichin `main`-haaraan 10. lokakuuta 2026 (versio 3.3.0-rc.0) ja on testattu palvelinta vastaan, joka on rakennettu samasta Immichin `main`-haarasta; build 27 testattiin myös Immich 3.2.4 -palvelinta vastaan. Ilmoita ongelmista [Issues](https://github.com/freeKC/Immuch360/issues)-sivulla, ei Immich-projektille.
 
 Lisää: [kaikki muu on Immichiä](../docs/immuch360/user-guide.md#everything-else-is-immich), [vertailu Immich-sovellukseen](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+
+<a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
+### Kirjaudu televisioon, laseihin tai tietokoneeseen puhelimellasi
+
+Palvelimen osoitteen, sähköpostin ja salasanan kirjoittaminen television kaukosäätimellä tai lasit päässä vie minuutteja. Kun Immuch360 on puhelimessasi ja kirjautuneena Immich-palvelimellesi, televisio, Meta Quest tai tietokone kirjautuu sekunneissa: iso näyttö näyttää QR-koodin, puhelin skannaa sen, sinä vahvistat, ja näyttö avautuu kirjastoosi. Puhelinsovellusta käytettäessä salasanasi pysyy puhelimessa. Immich-sovelluksessa ei ole mitään vastaavaa.
+
+<p align="center">
+  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Televisio näyttää QR-koodin kirjautumissivullaan, ja sen edessä pidetty puhelin skannaa saman koodin">
+</p>
+
+1. Valitse isolla näytöllä (Android TV ja Google TV, Meta Questin ikkuna, Windows, Linux tai macOS) "Yhdistä Immich-palvelimeen": kirjautumissivu näyttää palvelinlomakkeen vieressä "Kirjaudu puhelimellasi", QR-koodin ja 10-merkkisen koodin.
+2. Puhelimessa, joka on kirjautunut palvelimellesi: Asetukset, "Yhdistä televisio tai tietokone", sitten "Skannaa koodi". Meta Questissa, jonka näyttöä puhelin ei voi skannata, valitse "Syötä koodi sen sijaan" ja kirjoita koodi, jonka lasit näyttävät.
+3. Puhelin kysyy "Kirjataanko (näyttö) sisään?" ja näyttää kuusinumeroisen luvun: tarkista, että näyttö näyttää saman luvun, ja napauta sitten Kirjaudu. Näyttö avautuu aikajanallesi.
+
+Miksi se on turvallista: puhelimen ja näytön täytyy olla samassa kotiverkossa, ja koodi on voimassa enintään kaksi minuuttia ja toimii kerran. Puhelin pyytää palvelimeltasi uuden istunnon kyseiselle näytölle, sen mukaan nimettynä ("Immuch360 olohuoneen televisiossa"), ja lähettää sen näytölle salattuna, joten salasanasi ei koskaan poistu puhelimesta. "Yhdistä televisio tai tietokone" listaa näytöt, joihin tämä puhelin on kirjautunut, kukin Kirjaudu ulos -painikkeen kera, ja Immich listaa ne kohdassa Tilin asetukset, Valtuutetut laitteet, jossa voit myös perua ne. Puhelimen uloskirjautuminen kirjaa ulos myös ne.
+
+Puhelimen osa toimii nyt Androidilla, ja iPhonella ja iPadilla seuraavasta iOS-julkaisusta alkaen. Ilman Immuch360:aa puhelimessa skannaa koodi puhelimen kameralla: näytön tarjoama sivu avautuu selaimessa sähköpostiasi ja salasanaasi varten, salattuna ja kertakäyttöisenä. LG-televisiot kirjautuvat omalla QR-koodillaan puhelimen selaimessa; buildista 28 alkaen puhelinsovelluksen skanneri tunnistaa sen ja avaa kyseisen sivun.
+
+Lisää: [kirjaudu puhelimellasi](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [mitä näytöt lähettävät ja säilyttävät](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
 
 <a id="go-immersive-on-meta-quest"></a>
 ### Siirry immersiiviseen tilaan Meta Questilla
@@ -175,7 +197,7 @@ Meta Questilla sama sovellus toimii ikkunana koko kirjastonasi, ja sen 360°-pai
 </p>
 
 1. Asenna sovellus [Horizon Storesta](https://www.meta.com/experiences/immuch360/1384208401440714/), tai lataa uudemman buildin APK sivulatauksena, katso [Asennus](#meta-quest).
-2. Napauta tervetulosivulla "Käytä ilman palvelinta" laseidesi omia kuvia ja videoita varten, tai "Yhdistä Immich-palvelimeen" kirjautuaksesi sisään palvelimellasi.
+2. Napauta tervetulosivulla "Käytä ilman palvelinta" laseidesi omia kuvia ja videoita varten, tai "Yhdistä Immich-palvelimeen": kirjoita lasien näyttämä koodi puhelimesi Immuch360:een ([kirjaudu puhelimellasi](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), tai kirjaudu palvelimesi osoitteella, sähköpostilla ja salasanalla.
 3. Avaa 360°-kuva tai -video ja paina 360°: immersiivinen näkymä avautuu. B tai Y, tai tietopaneelin Takaisin-painike, tuo ikkunan takaisin.
 
 Lisää: [Meta Quest -laseissa](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [laseilla: koodekit, kauppa ja luvat](../docs/immuch360/platform-support.md#meta-quest).
@@ -190,8 +212,8 @@ Sama Android-sovellus toimii Android TV:llä ja Google TV:llä, tummalla teemall
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Immuch360 Desktopin videosoitin Windowsissa: katu-video toistuu ikkunassa, taukopainikkeen, aikapalkin, Jaa- ja Lähetä Immichiin -painikkeiden kanssa">
 </p>
 
-1. Televisiolla: asenna APK adb:llä (katso [Asennus](#android-tv-and-google-tv)); valitse tervetulosivulla "Lisää verkkojako tai mediapalvelin" jakoa, Plex-palvelinta tai kameraa varten, "Käytä ilman palvelinta", tai "Yhdistä Immich-palvelimeen".
-2. Windows-tietokoneella: asenna esikatseluversio tai pura se ja käynnistä `immuch360.exe` (katso [Asennus](#windows)); desktop-buildista 5 lähtien "Käytä ilman palvelinta" tervetulosivulla avaa kansioidesi valinnan, ja "Yhdistä Immich-palvelimeen" kirjautumissivun. Ohjelmalla avattu tai sen ikkunaan pudotettu kuva, video tai kansio avautuu välittömästi, 360°-tiedosto omassa 360°-näkymässään; useita tiedostoja avautuu yhdessä samalle sivulle.
+1. Televisiolla: asenna APK adb:llä (katso [Asennus](#android-tv-and-google-tv)); valitse tervetulosivulla "Lisää verkkojako tai mediapalvelin" jakoa, Plex-palvelinta tai kameraa varten, "Käytä ilman palvelinta", tai "Yhdistä Immich-palvelimeen", jonka sivu kirjaa television sisään, kun skannaat sen QR-koodin puhelimellasi (katso [Kirjaudu puhelimellasi](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
+2. Windows-tietokoneella: asenna esikatseluversio tai pura se ja käynnistä `immuch360.exe` (katso [Asennus](#windows)); desktop-buildista 5 lähtien "Käytä ilman palvelinta" tervetulosivulla avaa kansioidesi valinnan, ja "Yhdistä Immich-palvelimeen" kirjautumissivun, jossa on QR-koodi puhelintasi varten. Ohjelmalla avattu tai sen ikkunaan pudotettu kuva, video tai kansio avautuu välittömästi, 360°-tiedosto omassa 360°-näkymässään; useita tiedostoja avautuu yhdessä samalle sivulle.
 3. Katselimessa kaukosäätimen toisto ja tauko, kelaus taakse, kelaus eteen, edellinen ja seuraava -painikkeet toimivat, ja samoin tietokoneen näppäimistön näppäimet (Space, J ja L, F koko näytölle). Televisiolla OK videon aikana näyttää ohjaimet toisto ja tauko valittuna, ja niiden jälkeen painikkeet -10 s ja +10 s, ja toinen OK pysäyttää videon tauolle; ohjaimet ja päivämäärä piiloutuvat 5 s viimeisen näppäinpainalluksen jälkeen. Videot eivät enää toistu silmukkana televisiolla, ellet ota käyttöön kohtaa Asetukset, Katselin, Videot, Silmukkatoisto.
 4. Televisiolla Menu-näppäin, Info-näppäin tai pohjassa pidetty OK avaa kuvan tai videon tiedot vain luku -tilassa: päivämäärä, paikka, kamera, koodekki, koko ja bittinopeus. Video, jota televisio ei pysty dekoodaamaan, kertoo sen koodekkinsa, kokonsa ja television dekooderien rajan kera sen sijaan, että latautuisi loputtomiin; 360°-video, joka ylittää dekooderien rajan, kysyy ennen 360°-soittimen avaamista, ja syy kirjataan profiilivalikon Lokit-sivulle.
 
@@ -200,7 +222,7 @@ Lisää: [katso televisiollasi](../docs/immuch360/user-guide.md#watch-on-your-tv
 <a id="immuch360-on-an-lg-tv-webos"></a>
 ### Immuch360 LG-televisiossa (webOS)
 
-Immuch360 on saatavana myös Immich-sovelluksena LG:n webOS-televisioille: erillinen sovellus LG-televisioille, joissa on webOS 4.0 tai uudempi (vuodesta 2018), kaukosäätimellä ohjattava, joka näyttää Immich-palvelimesi ja asettaa 360°-kuvasi palloon, jota käännät nuolilla. Immichin omat sovellukset eivät asennu LG-televisioon. Se perustuu Seeky91:n projektiin [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos), joka toi aikajanan, albumit, ihmiset, paikat, haun, diaesityksen ja puhelimella kirjautumisen; kiitos Seeky91:lle. Versio 0.1.0 on testibuild: sitä ei ole vielä ajettu oikealla LG-televisiolla, se asentuu vain tilassa Developer Mode, ja jokainen raportti [Issues](https://github.com/freeKC/Immuch360/issues)-sivulla auttaa.
+Immuch360 on saatavana myös Immich-sovelluksena LG:n webOS-televisioille: erillinen sovellus LG-televisioille, joissa on webOS 4.0 tai uudempi (vuodesta 2018), kaukosäätimellä ohjattava, joka näyttää Immich-palvelimesi ja asettaa 360°-kuvasi palloon, jota käännät nuolilla. Immichin omat sovellukset eivät asennu LG-televisioon. Se perustuu Seeky91:n projektiin [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos), joka toi aikajanan, albumit, ihmiset, paikat, haun, diaesityksen ja puhelimella kirjautumisen; kiitos Seeky91:lle. Testibuild 0.2.0 lisää verkkojaot, Plexin ja Tapo-kameroiden suoran kuvan. Versio 0.1.0 toimi testaajan LG-televisiossa (webOS 22); 0.2.0:aa ei ole vielä ajettu oikeassa televisiossa. Se asentuu vain tilassa Developer Mode, ja jokainen raportti [Issues](https://github.com/freeKC/Immuch360/issues)-sivulla auttaa.
 
 <p align="center">
   <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
@@ -210,15 +232,18 @@ Immuch360 on saatavana myös Immich-sovelluksena LG:n webOS-televisioille: erill
 2. Kirjaudu sisään puhelimellasi (skannaa QR-koodi), sähköpostilla ja salasanalla tai API-avaimella.
 3. Selaa nuolilla ja OK:lla. Katselimessa Vasen ja Oikea siirtyvät edelliseen tai seuraavaan kuvaan tai videoon, myös videon toiston aikana; ohjaimet piiloutuvat 5 s viimeisen näppäinpainalluksen jälkeen; Info avaa tiedot; kanavanäppäimet zoomaavat; Magic Remoten osoitin ja rulla toimivat.
 4. 360°-kuva avautuu palloon, jota käännät nuolilla; "Näytä 360°-näkymänä" kattaa 2:1-kuvan, jota palvelin ei ole merkinnyt; VR180-kuva näkyy puolipallolla ja 3D-kuva yhdellä silmällä. Keltainen ja sininen näppäin kääntävät litteää kuvaa.
+5. Versiosta 0.2.0 alkaen, kirjautumisen jälkeen, "Verkkojaot" sovelluksen sivupalkissa: lisää SMB-, WebDAV- tai DLNA-jako, Plex-palvelin (kirjautuminen koodilla osoitteessa plex.tv/link) tai Tapo-kamera. Niiden kuvat avautuvat samaan katselimeen, 360°-kuvat pallolle.
 
-Ei tässä buildissa: 360°-videot pallolla (ne toistuvat litteinä, ilmoituksen kera), verkkojaot, Plex ja Tapo-kamerat (suunnitteilla), lähetykset. Kun video ei toistu, ilmoitus kertoo sen muodon ja koon loputtoman latauskuvakkeen sijaan. webOS 25:tä vanhemmissa Immichin edessä olevan käänteisen välityspalvelimen täytyy lähettää CORS-otsakkeet; sovellus selittää ne, kun se kohtaa ongelman.
+Jaot, Plex ja kamerat vaativat webOS 5:n (vuoden 2020 televisiot) tai uudemman, ja SMB webOS 22:n (vuoden 2022 televisiot) tai uudemman. Ne kulkevat sovelluksen oman televisiossa toimivan palvelun kautta, joka lukee ne sovellukselle, ja ne on tarkistettu oikeita palvelimia vastaan projektin build-koneella, ei vielä televisiossa. Kameran suora kuva on pelkkää videota.
+
+Ei vielä: kameroiden tallenteet (ei ennen joulukuuta 2026) ja niiden ääni, 360°-videot pallolla (ne toistuvat litteinä, ilmoituksen kera), lähetykset. Kun video ei toistu, ilmoitus kertoo sen muodon ja koon loputtoman latauskuvakkeen sijaan. webOS 25:tä vanhemmissa Immichin edessä olevan käänteisen välityspalvelimen täytyy lähettää CORS-otsakkeet; sovellus selittää ne, kun se kohtaa ongelman.
 
 Lisää: [webOS-sovellus: asennus, kaukosäätimen näppäimet, CORS-otsakkeet](../webos/README.md).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 ### Kamerat, Plex ja kameroiden raakatiedostot
 
-- **Tapo-kamerat**: kamera lisätään verkkojakojen rinnalle. Sovellus näyttää sen suorana (Android, Android TV, Quest ja Windows) ja listaa muistikortin tallenteet päivä kerrallaan kaikilla alustoilla; klipsi haetaan kamerasta, toistuu kuin mikä tahansa video ja voidaan lähettää Immichiin. Sovellus puhuu kameralle vain omassa verkossasi, ei koskaan TP-Linkin palvelimille.
+- **Tapo-kamerat**: kamera lisätään verkkojakojen rinnalle. Sovellus näyttää sen suorana (Android, Android TV, Quest, Windows ja, pelkkä video, LG-televisiot webOS 0.2.0:sta alkaen; iPhone ja iPad seuraavasta iOS-julkaisusta alkaen) ja listaa muistikortin tallenteet päivä kerrallaan kaikilla alustoilla; klipsi haetaan kamerasta, toistuu kuin mikä tahansa video ja voidaan lähettää Immichiin. Sovellus puhuu kameralle vain omassa verkossasi, ei koskaan TP-Linkin palvelimille.
 - **Plex Media Server, ilman plex.tv:tä**: sovellus muodostaa parin palvelimesi kanssa suoraan, kertakäyttöisellä liitettävällä tunnuksella, ja lukee kirjastojesi alkuperäiset tiedostot suorana, niin että 360° pysyy 360°:na, kotona ja, porttiohjauksesi ansiosta, kodin ulkopuolella.
 - **Raa'at 360°-kameratiedostot**: Insta360-kameroiden raa'at .insp-kuvat ja .insv-videot (yksi tai kaksi linssiä, yhdessä radassa, kahdessa radassa tai kahdessa tiedostossa), GoPro MAXin .360-tiedostot ja DJI Osmo 360:n .osv-tiedostot yhdistää sovellus toiston aikana, kalibrointitiedot kirjoitettuna tiedostoon, eikä mitään tarvitse asentaa minnekään. Androidilla toista niitä jaosta, tietokoneelta tai palvelimeltasi, koska puhelimen galleria ei listaa raakatiedostoja; Immich-palvelin ottaa vastaan vain .insp- ja .insv-tiedostot.
 
@@ -240,6 +265,20 @@ Tuo DJI-droonin kuvat ja videot USB:n kautta suoraan Immich-palvelimellesi: kytk
 
 DJI-droonien 360°-pallot (Mini, Air, Mavic ja muut, tunnistettuina kamerastaan) näkyvät Immuch360:ssa 360°-kuvina myös ilman 360°-tunnisteita. Immich tarvitsee nuo tunnisteet: lähetysvalinta "Merkitse droonien pallot 360°-kuviksi Immichille", oletuksena pois päältä, lähettää kuvan muuttamattomana pienen .xmp-tiedoston kanssa, jotta myös Immich näyttää sen pallona. Neo 2:ssa ei ole pallo- tai panoraamatilaa: sen kuvat ja videot ovat litteitä. Kun puhelin on tallentanut Neo 2 -leikkeen äänen, se ääni on erillisessä .m4a-tiedostossa: sivu merkitsee leikkeen, ja Immich saa sen ilman ääntä (lataa se DJI Flylla säilyttääksesi äänen). Mikä tahansa kameran muistikortti, jossa on DCIM-kansio, toimii samoin kortinlukijassa. DJI:lle ei lähetetä mitään.
 
+<a id="dji-link-diagnostics-experimental"></a>
+### DJI-yhteyden diagnostiikka (kokeellinen)
+
+Pitkän aikavälin tavoite on DJI-droonin video Meta Questissa, droonin oman ohjaimen kautta laseihin kytkettynä. Kukaan ei vielä tiedä, pystyykö Quest lukemaan DJI-ohjainta kaapelin kautta. DJI-yhteyden sivu on ensimmäinen askel, mittausväline Meta Questissa sekä Android-puhelimissa ja -tableteissa: se näyttää, pystyykö laite lukemaan ohjainta, mitä saapuu, ja tallentaa siitä kaappauksen.
+
+Se vain kuuntelee. Ohjaimelle tai droonille ei koskaan lähetetä komentoja: ainoa tavu, jonka sivu kirjoittaa joka sekunti 20 sekunnin kuluttua ohjaimen avaamisesta, kertoo vain, ottaako ohjain vastaan dataa, eikä sisällä komentoa.
+
+1. Asetukset, Edistyneet, "DJI-yhteyden diagnostiikka (kokeellinen)" on oletuksena käytössä (ei koskaan televisiossa); "DJI-yhteys"-ruutu on kohdassa Kirjasto, Verkkojaot.
+2. Avaa se ja lue turvallisuusilmoitus. Ensimmäinen lohko kertoo, pystyykö tämä laite ylipäätään lukemaan USB-lisälaitetta; jos ei pysty, sekin on vastaus.
+3. Napauta "Aloita kaappaus" ja kytke sitten ohjain kaapelilla, drooni sammutettuna. Jos Android kysyy, minkä sovelluksen pitäisi avata se, valitse Immuch360 ilman "Aina"-valintaa, joka veisi ohjaimen DJI Flyltä.
+4. Seuraa tilaa ("Lisälaite auki", "Yhteys ottaa tavuja vastaan", "Ohjaimen kehyksiä saapuu") ja laskureita, sitten "Vie kaappaus": kolme tiedostoa kansiossa `Download/Immuch360/dji-link`.
+
+Sitä ei ole vielä kokeiltu oikealla ohjaimella. Testi DJI-ohjaimella, ensin RC-N3 ja Neo 2, on tervetullut: julkaise sivun näyttämät tilat ja laskurit [Issues](https://github.com/freeKC/Immuch360/issues)-sivulla ja pidä viedyt tiedostot itselläsi, kuten sivu sanoo, koska ne sisältävät ohjaimen sarjanumeron.
+
 <a id="devices-and-systems"></a>
 ## Laitteet ja järjestelmät
 
@@ -248,6 +287,7 @@ Yksi koodikanta kuudelle ympäristölle ja erillinen sovellus LG-televisioille. 
 | Ominaisuus | Android | iPhone, iPad | Android TV | LG webOS | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|
 | Galleria, albumit, haku Immich-palvelimella | ✅ | ✅ | ✅ katselin | ✅ katselin | ✅ |
+| Kirjautuminen puhelimella (QR-koodi) | ✅ skannaa koodin | 🔜 seuraava iOS-julkaisu | ✅ | ✅ puhelimen selaimessa | ✅ koodi kirjoitetaan puhelimeen |
 | Ilman palvelinta: laitteen oma media | ✅ | ✅ | vain jaot | ❌ | ✅ |
 | Litteät kuvat ja videot | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Kuvan kääntö yhdellä näppäimellä | ✅ | ✅ | ✅ värinäppäimet | ✅ värinäppäimet | ✅ ikkuna |
@@ -257,13 +297,14 @@ Yksi koodikanta kuudelle ympäristölle ja erillinen sovellus LG-televisioille. 
 | Spatial 2.5D (pään seuranta) | ✅ kokeellinen | ✅ kokeellinen | ❌ | ❌ | ❌ |
 | Applen spatial-kuvat | ✅ yksi silmä | ✅ yksi silmä | ✅ yksi silmä | ❌ | ✅ 3D |
 | Insta360-, GoPro- ja DJI-raakatiedostot | ✅ | ✅ | ✅ | ❌ | ✅ |
-| SMB-, WebDAV-, DLNA-jaot | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Plex Media Server | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Tapo-kamerat: tallenteet | ✅ | ✅ | ✅ | 🔜 | ✅ |
-| Tapo-kamerat: suora kuva | ✅ | 🔜 | ✅ | 🔜 | ✅ |
+| SMB-, WebDAV-, DLNA-jaot | ✅ | ✅ | ✅ | ✅ SMB webOS 22:sta, WebDAV ja DLNA webOS 5:stä | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ webOS 5:stä alkaen | ✅ |
+| Tapo-kamerat: tallenteet | ✅ | ✅ | ✅ | 🔜 ei ennen joulukuuta 2026 | ✅ |
+| Tapo-kamerat: suora kuva | ✅ | 🔜 seuraava iOS-julkaisu | ✅ | ✅ vain video, webOS 5:stä alkaen | ✅ |
 | Jaa tämä laite verkossa | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Lähetä Immichiin jaoista ja laitteesta | ✅ | ✅ | ❌ | ❌ | ✅ |
 | Tuonti DJI-droonista tai kortilta USB:n kautta (kokeellinen) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| DJI-yhteyden diagnostiikka (kokeellinen) | ✅ | ❌ | ❌ | ❌ | ✅ |
 | Tumma teema | järjestelmän mukaan | järjestelmän mukaan | ✅ oletuksena | ✅ ainoa teema | järjestelmän mukaan |
 | Syöte | kosketus, gyroskooppi | kosketus, gyroskooppi | kaukosäädin; Vasen ja Oikea myös videon aikana, Menu tietoja varten | kaukosäädin, Magic Remote | ohjaimet, kädet |
 | Mistä sen saa | Google Play, APK | App Store (tarkastuksessa) | APK, Google Play (tarkastuksessa) | .ipk-testibuild, Developer Mode | Horizon Store, APK |
@@ -271,13 +312,14 @@ Yksi koodikanta kuudelle ympäristölle ja erillinen sovellus LG-televisioille. 
 | Ominaisuus | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
 | Galleria, albumit, haku Immich-palvelimella | ✅ | 🔧 CI | 🔧 CI |
+| Kirjautuminen puhelimella (QR-koodi) | ✅ | 🔧 CI | 🔧 CI |
 | Ilman palvelinta: laitteen oma media | ✅ kansiot | ✅ kansiot | ✅ kansiot |
 | Litteät kuvat ja videot | ✅ | ✅ | ✅ |
 | Kuvan kääntö yhdellä näppäimellä | ✅ | ✅ | ✅ |
 | 360°-kuvat pallona | ✅ | ✅ | 🔧 CI |
 | 360°-videot | ✅ | vain litteänä | vain litteänä |
 | 3D ja VR180 | ✅ yksi silmä | kuvat yksi silmä, videot litteinä | kuvat yksi silmä, videot litteinä |
-| Spatial 2.5D (pään seuranta) | 🔜 | ❌ | ❌ |
+| Spatial 2.5D (pään seuranta) | 🔜 kehitteillä | ❌ | ❌ |
 | Applen spatial-kuvat | ✅ yksi silmä | 🔧 CI | 🔧 CI |
 | Insta360-, GoPro- ja DJI-raakatiedostot | ✅ | 🔧 CI kuvat, videot litteinä | 🔧 CI kuvat, videot litteinä |
 | SMB-, WebDAV-, DLNA-jaot | ✅ | 🔧 CI | 🔧 CI |
@@ -287,18 +329,19 @@ Yksi koodikanta kuudelle ympäristölle ja erillinen sovellus LG-televisioille. 
 | Jaa tämä laite verkossa | ✅ | ❌ | ❌ |
 | Lähetä Immichiin jaoista ja laitteesta | ✅ | 🔧 CI | 🔧 CI |
 | Tuonti DJI-droonista tai kortilta USB:n kautta (kokeellinen) | ❌ | ❌ | ❌ |
+| DJI-yhteyden diagnostiikka (kokeellinen) | ❌ | ❌ | ❌ |
 | Tumma teema | järjestelmän mukaan | järjestelmän mukaan | järjestelmän mukaan |
 | Syöte | hiiri, näppäimistö | hiiri, näppäimistö | hiiri, näppäimistö, ohjauslevy |
-| Mistä sen saa | asennusohjelma tai ZIP (esikatselu) | .deb, .rpm (esikatselu) | DMG tai ZIP (allekirjoittamaton esikatselu) |
+| Mistä sen saa | asennusohjelma tai ZIP (allekirjoitettu esikatselu) | .deb, .rpm (esikatselu) | DMG tai ZIP (allekirjoittamaton esikatselu) |
 
-✅ sovelluksessa tällä alustalla · ❌ ei tarjota sillä · 🔜 suunnitteilla · 🔧 CI lähdekoodissa, projektin CI rakentaa ja käynnistää sen tällä järjestelmällä, mutta sitä ei ole vielä tarkistettu siellä oikealla palvelimella, jaolla tai kameralla · vain litteänä: video toistuu litteänä ilmoituksen kera, koska tietokoneiden 360°-videorenderöijä on vain Windowsilla, ja LG-televisioissa on vielä mittaamatta, antaako webOS videokuvat pallolle. "Yksi silmä" tarkoittaa, että 3D-tiedosto näyttää vasemman silmän litteällä näytöllä. LG webOS -sarake on erillinen sovellus, jonka testibuild 0.1.0 läpäisee testinsä projektin CI:ssä eikä ole vielä toiminut televisiossa. Jokaista ✅-merkintää ei ole vielä tarkistettu oikealla laitteella: mitä on tarkistettu missä, ja mitä pitää vielä vahvistaa, löytyy sivuilta [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) ja [Compatibility](../docs/immuch360/compatibility.md).
+✅ sovelluksessa tällä alustalla · ❌ ei tarjota sillä · 🔜 suunnitteilla · 🔧 CI lähdekoodissa, projektin CI rakentaa ja käynnistää sen tällä järjestelmällä, mutta sitä ei ole vielä tarkistettu siellä oikealla palvelimella, jaolla tai kameralla · vain litteänä: video toistuu litteänä ilmoituksen kera, koska tietokoneiden 360°-videorenderöijä on vain Windowsilla, ja LG-televisioissa on vielä mittaamatta, antaako webOS videokuvat pallolle. "Yksi silmä" tarkoittaa, että 3D-tiedosto näyttää vasemman silmän litteällä näytöllä. LG webOS -sarake on erillinen sovellus, testibuild 0.2.0: 0.1.0 toimi testaajan LG-televisiossa, kun taas 0.2.0:n jaot, Plex ja kamerat on tarkistettu oikeita palvelimia vastaan projektin build-koneella, ei vielä televisiossa. Jokaista ✅-merkintää ei ole vielä tarkistettu oikealla laitteella: mitä on tarkistettu missä, ja mitä pitää vielä vahvistaa, löytyy sivuilta [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) ja [Compatibility](../docs/immuch360/compatibility.md).
 
 - **Android-puhelimet ja -tabletit**: täydellinen sovellus, kosketus ja gyroskooppi, kaikki lähteet.
-- **iPhone ja iPad**: täydellinen sovellus; 360°-videosoittimessa on vain toisto ja tauko, Tapo-suora kuva tulee myöhemmin, ja DLNA-haku lähettää unicast-pyyntöjä kunnes Apple myöntää multicast-oikeuden.
-- **Android TV ja Google TV**: sama APK, kaukosäätimen ohjaamana, oletuksena tumma; katselin: varmuuskopiointi, lähetykset ja editori on piilotettu ja tiedot ovat vain luku -tilassa, mutta kuvan voi silti kääntää yhdellä näppäimellä. Jokainen hakusuodatin toimii kaukosäätimellä: Sijainti ja Kamera avaavat valintansa luettelona, päivämääräsuodatin näyttää kaikki valintansa, ja Tunnisteet-, Sijainti-, Päivämäärä-, Mediatyyppi-, Tähtiluokitus- ja Näyttöasetukset-paneelit tuovat Tyhjennä- ja Käytä-painikkeet valintojen viereen, yhden Oikea-painalluksen päähän, suurimmalle osalle näytön korkeutta. Kuvaruudukko käyttää vähemmän kuvamuistia, ja pohjassa pidetty nuoli liikuttaa sitä enintään noin 10 riviä sekunnissa. Tarkistettu Google TV -emulaattorilla; ensimmäinen testi oikealla Android TV:llä 21. lokakuuta johti buildin 27 TV-muutoksiin, joita ei ole vielä kokeiltu oikealla televisiolla.
-- **LG-televisiot, webOS 4.0 tai uudempi**: erillinen sovellus kaukosäätimelle ja Magic Remotelle, rakennettu projektin [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) pohjalle: Immich-katselin, jossa 360°-kuvat ovat pallolla, kuvan kääntö yhdellä näppäimellä, tumma teema ja sovelluksen 89 kieltä (TV-sovelluksen omat harvat tekstit toistaiseksi englanniksi); ei vielä jakoja, Plexiä eikä kameroita, 360°-videot litteinä. Testibuild 0.1.0, tarkistettu testeillään projektin CI:ssä, ei vielä televisiossa.
+- **iPhone ja iPad**: täydellinen sovellus; 360°-videosoittimessa on vain toisto ja tauko, Tapo-suora kuva ja puhelimella kirjautumisen puhelinpuoli tulevat seuraavassa iOS-julkaisussa, ja DLNA-haku lähettää unicast-pyyntöjä kunnes Apple myöntää multicast-oikeuden.
+- **Android TV ja Google TV**: sama APK, kaukosäätimen ohjaamana, oletuksena tumma; katselin: varmuuskopiointi, lähetykset ja editori on piilotettu ja tiedot ovat vain luku -tilassa, mutta kuvan voi silti kääntää yhdellä näppäimellä. Jokainen hakusuodatin toimii kaukosäätimellä: Sijainti ja Kamera avaavat valintansa luettelona, päivämääräsuodatin näyttää kaikki valintansa, ja Tunnisteet-, Sijainti-, Päivämäärä-, Mediatyyppi-, Tähtiluokitus- ja Näyttöasetukset-paneelit tuovat Tyhjennä- ja Käytä-painikkeet valintojen viereen, yhden Oikea-painalluksen päähän, suurimmalle osalle näytön korkeutta. Kuvaruudukko käyttää vähemmän kuvamuistia, ja pohjassa pidetty nuoli liikuttaa sitä enintään noin 10 riviä sekunnissa. Buildista 28 alkaen se kirjautuu puhelimesta QR-koodillaan tai lyhyellä koodillaan (kokeiltu kahden emulaattorin välillä kirjoitetulla koodilla, ei vielä kameralla). Tarkistettu Google TV -emulaattorilla; ensimmäinen testi oikealla Android TV:llä 21. lokakuuta johti buildin 27 TV-muutoksiin, joita ei ole vielä kokeiltu oikealla televisiolla.
+- **LG-televisiot, webOS 4.0 tai uudempi**: erillinen sovellus kaukosäätimelle ja Magic Remotelle, rakennettu projektin [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) pohjalle: Immich-katselin, jossa 360°-kuvat ovat pallolla, kuvan kääntö yhdellä näppäimellä, tumma teema ja sovelluksen 89 kieltä (TV-sovelluksen omat harvat tekstit toistaiseksi englanniksi); versiosta 0.2.0 alkaen verkkojaot, Plex ja Tapo-kameroiden suora kuva oman televisiossa toimivan palvelun kautta (webOS 5 ja uudempi, SMB webOS 22:sta alkaen); 360°-videot litteinä. Versio 0.1.0 toimi testaajan LG-televisiossa (webOS 22); 0.2.0 on tarkistettu testeillään ja oikeita palvelimia vastaan projektin build-koneella, ei vielä televisiossa.
 - **Meta Quest 2, Pro, 3 ja 3S**: sovellus ikkunana, sekä immersiivinen näkymä; HEVC on turvallinen koodekki, H.264 pysähtyy noin 4096x2304:ään Quest 3:lla; vain Quest 3 on testattu, Quest 2:ta, Quest Prota ja Quest 3S:ää ei ole vielä testattu.
-- **Windows 10 ja 11**: esikatseluversio, jossa on kansiot gallerian sijaan, oma videosoitin (libmpv) litteille ja 360°-videoille, näytönohjaimella yhdistetyt raakatiedostot, ohjelmalla avatut tai ikkunaan pudotetut tiedostot ja kansiot, asennusohjelma tai ZIP.
+- **Windows 10 ja 11**: esikatseluversio, jossa on kansiot gallerian sijaan, oma videosoitin (libmpv) litteille ja 360°-videoille, näytönohjaimella yhdistetyt raakatiedostot, ohjelmalla avatut tai ikkunaan pudotetut tiedostot ja kansiot, asennusohjelma tai ZIP, APROGSYS:n allekirjoittamana.
 - **Linux**: projektin CI:n rakentamat .deb ja .rpm, asennettu ja tarkistettu Ubuntu 22.04:llä ja 24.04:llä, Debian 12:lla sekä Fedora 40:llä ja 44:llä; kuvat, 360°-kuvat ja litteät videot järjestelmän libmpv:n kautta (360°-, 3D- ja raakavideot toistuvat litteinä ilmoituksen kera), desktop-build 7:stä alkaen piirrettynä laitteistopolkua myös X11-istunnoissa; SMB-jaot Ubuntu 22.04:stä ja Debian 12:sta alkaen; ilman avainnippua (GNOME Keyring tai KWallet) sovellus ei enää jumitu 25 s ensimmäisessä käynnistyksessä: se säilyttää salasanat vain istunnon ajan ja kertoo sen asetuksissaan; ei vielä ajettu oikealla Linux-tietokoneella, vain WSLg:ssä ja konteissa.
 - **macOS**: projektin CI:n rakentamat DMG ja ZIP, universaalit, allekirjoittamattomat (Gatekeeper kysyy kerran); sovellus käynnistyy, avaa sille annetut tiedostot ja kansiot, myös Finderista, säilyttää salaisuutensa kirjautumisavainnipussa ja toistaa litteät videot omalla libmpv:llään, kaikki tarkistettu vain projektin CI-Macilla; mitään ei ole vielä ajettu oikealla Macilla.
 
@@ -315,7 +358,7 @@ Mitä sovellus osaa lukea ja toistaa, lukijalle, joka haluaa koko laajuuden. Kuk
 - **Lukeminen tarpeen mukaan**: paikallinen silta palvelee soittimia tavuväleillä ja istuntokohtaisella tunnuksella; isot lohkot, ennakkoluku ja jopa kuusi rinnakkaista SMB-yhteyttä; pienoiskuvat yhdestä videon kuvasta; mitään ei kopioida laitteelle.
 - **Laitteisto**: laitteistodekooderit käytössä aina kun niitä on, mitattujen rajojensa kanssa (Quest 3:n H.264-katto, enintään kaksi 2048x2048-linssiä ohjelmistodekoodereille); Windowsissa 360°-näkymän piirtää näytönohjain joka dekoodatusta kuvasta, kuvakoko mitattuna joka tietokoneella, integroitu tai erillinen piiri tunnistettuna.
 - **Alustakohtaiset ominaisuudet**: gyroskooppi ja Spatial 2.5D -soitin puhelimissa; immersiivinen näkymä, ohjaimet ja kädet Questilla; kaukosäätimen asettelu, näppäimistön valintaikkuna ja TV-banneri Android TV:llä; tietokoneella hiiri ja näppäimistö, koko näyttö, yksi ikkuna, ohjelmalla avatut tai sen ikkunaan pudotetut tiedostot ja kansiot, luettuna kuin kansioidesi tiedostot, kansioiden HEIC-, AVIF-, TIFF- ja RAW-valokuvat kun Windowsilla on niille dekooderi, sekä Windowsin tietosuoja salasanoille ja tunnuksille.
-- **Yksityisyys rakenteesta lähtien**: ei tiliä, ei pilveä, ei analytiikkaa; salasanat ja tunnukset laitteen suojatussa tallennustilassa; Spatial-soittimen kamera käytössä vain laitteella; jaot, Plex ja kamerat tavoitettavissa vain omassa verkossasi.
+- **Yksityisyys rakenteesta lähtien**: ei tiliä, ei pilveä, ei analytiikkaa; salasanat ja tunnukset laitteen suojatussa tallennustilassa; puhelimesta kirjattu näyttö saa oman istuntonsa, joka lähetetään salattuna kotiverkossa, ei koskaan salasanaa; Spatial-soittimen ja koodinlukijan kamera käytössä vain laitteella; jaot, Plex ja kamerat tavoitettavissa vain omassa verkossasi.
 
 <a id="technical-documentation"></a>
 ## Tekninen dokumentaatio
@@ -357,7 +400,7 @@ Mitä sovellus osaa lukea ja toistaa, lukijalle, joka haluaa koko laajuuden. Kuk
 
 1. Tarvitset LG-television, jossa on webOS 4.0 tai uudempi, tietokoneen samassa verkossa ja ilmaisen LG-kehittäjätilin. Asenna televisioon Developer Mode LG Content Storesta, kirjaudu sisään, kytke Dev Mode Status päälle ja anna television käynnistyä uudelleen; kirjoita muistiin sen IP-osoite ja sovelluksen näyttämä tunnuslause.
 2. Asenna tietokoneelle webOS CLI (Node.js 18 tai uudempi): `npm install -g @webos-tools/cli`, rekisteröi sitten televisio komennolla `ares-setup-device` (sen IP-osoite, portti 9922, käyttäjä `prisoner`) ja komennolla `ares-novacom --device <name> --getkey`, joka kysyy tunnuslausetta.
-3. Lataa `Immuch360-webOS-0.1.0.ipk` [webOS-esijulkaisusta](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.1.0), tarkista se tiedostolla `SHA256SUMS.txt`, sitten `ares-install --device <name> Immuch360-webOS-0.1.0.ipk`. webosbrew'n [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) tekee saman ilman komentoriviä.
+3. Lataa `Immuch360-webOS-0.2.0.ipk` [webOS-esijulkaisusta](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0), tarkista se tiedostolla `SHA256SUMS.txt`, sitten `ares-install --device <name> Immuch360-webOS-0.2.0.ipk`. webosbrew'n [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) tekee saman ilman komentoriviä.
 4. Developer Mode -istunto kestää 1000 tuntia, ja Developer Mode -sovelluksen EXTEND-painike uusii sen; kun se vanhenee, televisio poistaa tällä tavalla asennetut sovellukset. Yksityiskohdat ovat tiedostossa [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
 
 <a id="meta-quest"></a>
@@ -370,23 +413,23 @@ Mitä sovellus osaa lukea ja toistaa, lukijalle, joka haluaa koko laajuuden. Kuk
 <a id="windows"></a>
 ### Windows
 
-1. Lataa `Immuch360-Desktop-3.3.0-rc.0-desktop.7-windows-x64-setup.exe` [desktop-esijulkaisusta](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) (ja `SHA256SUMS.txt` sen tarkistamiseen) ja avaa se. Tiedostoja ei ole vielä allekirjoitettu: Windows SmartScreen saattaa näyttää "Windows suojasi tietokoneesi", valitse "Lisätietoja" ja sitten "Suorita joka tapauksessa".
+1. Lataa `Immuch360-Desktop-3.3.0-rc.0-desktop.8-windows-x64-setup.exe` [desktop-esijulkaisusta](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) (ja `SHA256SUMS.txt` sen tarkistamiseen) ja avaa se. Asennusohjelma ja ZIP on allekirjoitettu; Windows näyttää julkaisijaksi APROGSYS. Niin kauan kuin julkaisija on SmartScreenille uusi, se saattaa vielä kysyä kerran: "Lisätietoja", sitten "Suorita joka tapauksessa".
 2. Valitse "Install for me only" (ei vaadi järjestelmänvalvojan oikeuksia) tai "Install for all users", sitten asennusohjelman kieli, se joka on jo valittuna Windowsille.
 3. Käynnistä Immuch360 Desktop Käynnistä-valikosta. Kuvat ja videot saavat sen kohtaan "Avaa ohjelmalla" (napsauta tiedostoa hiiren kakkospainikkeella, Avaa ohjelmalla); se ei koskaan tee itseään niiden oletusohjelmaksi. Uuden buildin ensimmäinen käynnistys voi kestää minuutin, kun Windows skannaa tiedostot.
 4. Windows 10 tai 11, 64-bittinen. Päivittääksesi avaa seuraavan buildin asennusohjelma: kirjautumisesi, kansiosi ja asetuksesi pysyvät. Saman julkaisun ZIP on samaa ohjelmaa kansiona, joka voidaan purkaa minne tahansa ja käynnistää siitä `immuch360.exe`.
 
 ### Linux
 
-Ubuntu 22.04:ssa tai uudemmassa ja Debian 12:ssa tai uudemmassa: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-amd64.deb`; Fedora 40:ssa tai uudemmassa: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.7-linux-x86_64.rpm`, molemmat [desktop-esijulkaisusta](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7). Käynnistä sitten Immuch360 Desktop sovelluksistasi. Esikatseluversio: tietokoneen kansiot, kuvat ja 360°-kuvat pallona sekä litteät videot järjestelmän libmpv:n kautta, jonka paketti asentaa (360°-, 3D- ja raakavideot toistuvat litteinä, ilmoituksen kera); SMB-jaot toimivat Ubuntu 22.04:stä ja Debian 12:sta alkaen. Fedoralla kameravideot tarvitsevat RPM Fusionin FFmpegin. Ilman GNOME Keyringiä tai KWalletia salasanat säilytetään vain istunnon ajan, ja sovelluksen asetukset kertovat sen.
+Ubuntu 22.04:ssa tai uudemmassa ja Debian 12:ssa tai uudemmassa: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-amd64.deb`; Fedora 40:ssa tai uudemmassa: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-x86_64.rpm`, molemmat [desktop-esijulkaisusta](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8). Käynnistä sitten Immuch360 Desktop sovelluksistasi. Esikatseluversio: tietokoneen kansiot, kuvat ja 360°-kuvat pallona sekä litteät videot järjestelmän libmpv:n kautta, jonka paketti asentaa (360°-, 3D- ja raakavideot toistuvat litteinä, ilmoituksen kera); SMB-jaot toimivat Ubuntu 22.04:stä ja Debian 12:sta alkaen. Fedoralla kameravideot tarvitsevat RPM Fusionin FFmpegin. Ilman GNOME Keyringiä tai KWalletia salasanat säilytetään vain istunnon ajan, ja sovelluksen asetukset kertovat sen.
 
 ### macOS
 
-Avaa `Immuch360-Desktop-3.3.0-rc.0-desktop.7-macos.dmg` [desktop-esijulkaisusta](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-7) ja vedä sovellus Applications-kansioon (Apple Silicon ja Intel, macOS 12 tai uudempi). Sitä ei ole vielä allekirjoitettu eikä notarisoitu: Control-napsauta sitä ja valitse Open macOS 14:ssä ja vanhemmissa, tai valitse "Open Anyway" kohdasta System Settings, Privacy & Security macOS 15:ssä ja uudemmissa. Kukaan projektissa ei omista Macia: sovellusta on ajettu vain projektin CI-Macilla, jossa se avaa tiedostoja ja kansioita ja toistaa litteitä videoita omalla libmpv:llään; sen verkkoyhteyttä ei ole kokeiltu. Raportit ovat tervetulleita.
+Avaa `Immuch360-Desktop-3.3.0-rc.0-desktop.8-macos.dmg` [desktop-esijulkaisusta](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) ja vedä sovellus Applications-kansioon (Apple Silicon ja Intel, macOS 12 tai uudempi). Sitä ei ole vielä allekirjoitettu eikä notarisoitu: Control-napsauta sitä ja valitse Open macOS 14:ssä ja vanhemmissa, tai valitse "Open Anyway" kohdasta System Settings, Privacy & Security macOS 15:ssä ja uudemmissa. Kukaan projektissa ei omista Macia: sovellusta on ajettu vain projektin CI-Macilla, jossa se avaa tiedostoja ja kansioita ja toistaa litteitä videoita omalla libmpv:llään; sen verkkoyhteyttä ei ole kokeiltu. Raportit ovat tervetulleita.
 
 <a id="privacy"></a>
 ## Yksityisyys
 
-Mikään ei mene kehittäjälle: ei tiliä, ei analytiikkaa, ei kaatumisraportointipalvelua, ei mainoksia. Sovellus puhuu vain palvelimille, jotka itse valitset (Immich-palvelimesi, jakosi, Plex-palvelimesi, kamerasi), ja, ilman palvelinta, ei kenellekään. Salasanat ja tunnukset pysyvät laitteen suojatussa tallennustilassa. Spatial 2.5D -soittimen kamera on käytössä vain laitteella; sen kuvia ei koskaan tallenneta eikä lähetetä minnekään. Täydelliset tiedot löytyvät sivulta [PRIVACY.md](../PRIVACY.md), ja yksityiskohdat lähteittäin [käyttöoppaasta](../docs/immuch360/user-guide.md#privacy).
+Mikään ei mene kehittäjälle: ei tiliä, ei analytiikkaa, ei kaatumisraportointipalvelua, ei mainoksia. Sovellus puhuu vain palvelimille, jotka itse valitset (Immich-palvelimesi, jakosi, Plex-palvelimesi, kamerasi), ja, ilman palvelinta, ei kenellekään. Salasanat ja tunnukset pysyvät laitteen suojatussa tallennustilassa. Kameraa käytetään vain laitteella, Spatial 2.5D -soittimessa ja sisään kirjattavan näytön koodin skannaamiseen; sen kuvia ei koskaan tallenneta eikä lähetetä minnekään. Puhelimestasi kirjattu näyttö saa oman istuntonsa, joka lähetetään salattuna kotiverkossasi, ei koskaan salasanaasi. Täydelliset tiedot löytyvät sivulta [PRIVACY.md](../PRIVACY.md), ja yksityiskohdat lähteittäin [käyttöoppaasta](../docs/immuch360/user-guide.md#privacy).
 
 <a id="the-project"></a>
 ## Projekti
@@ -402,13 +445,13 @@ Tämän sivun puhelinkuvat otettiin Android-buildilla emulaattorissa, TV-kuvat G
 
 Mitä ei ole vielä tehty, todennäköisimmät ensin. Mikään tässä ei ole lupaus, ja palaute [vikaseurannassa](https://github.com/freeKC/Immuch360/issues) auttaa päättämään, mikä tulee ensin.
 
-- **Kaupat**: Google Play (build 26 tarkastuksessa, sitten build 27; TV-listaus tarkastuksessa), App Store (versio 3.3.1 tarkastuksessa 14. lokakuuta alkaen), Meta Horizon Store (build 25 tarkastuksessa).
-- **Tietokoneet**: joka toiminnon käsin testaus Windows-tietokoneella; sitten 360°-videorenderöijä Linuxilla ja macOS:lla, testi oikealla Macilla ja oikealla Linux-tietokoneella; sitten allekirjoitettu build ja automaattiset päivitykset; sitten Spatial 2.5D web-kameralla.
-- **Televisiot**: buildin 27 testi oikealla Android TV:llä; LG webOS -sovellus oikealla LG-televisiolla, sitten sen 360°-videot pallolla sekä verkkojaot, Plex ja Tapo-kamerat; QR-koodi television tai tietokoneen yhdistämiseksi puhelimeen niin, että iso näyttö näyttää sen ja puhelin skannaa sen.
-- **Puhelimet ja tabletit**: aikapalkki iOS:n 360°-videosoittimessa, edellinen ja seuraava puhelinten 360°-soittimissa, äänirata-valinta litteässä soittimessa, Tapo-suora kuva iPhonella ja iPadilla.
+- **Kaupat**: Google Play (build 28 tarkastuksessa; TV-listaus tarkastuksessa), App Store (versio 3.3.1 tarkastuksessa, sitten versio 3.3.2 buildilla 28), Meta Horizon Store (build 28 tarkastuksessa).
+- **Tietokoneet**: joka toiminnon käsin testaus Windows-tietokoneella, kirjautuminen puhelimella mukaan lukien; Spatial 2.5D web-kameralla Windowsilla, kehitteillä marraskuuksi 2026; sitten 360°-videorenderöijä Linuxilla ja macOS:lla, testi oikealla Macilla ja oikealla Linux-tietokoneella; sitten automaattiset päivitykset ja allekirjoitettu macOS-sovellus.
+- **Televisiot**: buildien 27 ja 28 testi oikealla Android TV:llä, kirjautuminen puhelimella mukaan lukien; webOS 0.2.0 oikealla LG-televisiolla, mukana jaot, Plex ja suora kuva; sitten 360°-videot pallolla, kameroiden ääni ja niiden tallenteet (ei ennen joulukuuta 2026).
+- **Puhelimet ja tabletit**: Tapo-suora kuva ja isojen näyttöjen kirjautuminen iPhonella ja iPadilla seuraavassa iOS-julkaisussa; aikapalkki iOS:n 360°-videosoittimessa, edellinen ja seuraava puhelinten 360°-soittimissa, äänirata-valinta litteässä soittimessa.
 - **Immersiivinen media**: dual fisheye .dng, GoPro- ja DJI-videoiden tasoitus omasta liikedatasta, spatial-videot 3D:ssä Questilla, jos sen dekooderit sen sallivat, edellinen ja seuraava spatial-kuvien välillä laseissa.
 - **Lähteet**: pyyhkäisy jakokansion tiedostojen välillä, Digest-todennus WebDAV:lle, QR-koodi Plex-tunnuksen tuomiseksi tietokoneelta, IPv6 Plexille, H.265 Tapo-tallenteet, kanavat TV:n kotinäytöllä.
-- **Droonit**: testi oikealla DJI Neo 2:lla, sitten puhelimen tallentaman äänen yhdistäminen leikkeeseen; droonin kameran suora kuva ja ohjaus jäävät myöhemmäksi.
+- **Droonit**: testi oikealla DJI Neo 2:lla, sitten puhelimen tallentaman äänen yhdistäminen leikkeeseen; DJI-yhteyden sivu oikealla ohjaimella, ensimmäinen askel kohti droonin videota Meta Questissa. Mitään, mikä lähettäisi droonille komennon, ei ole suunniteltu ennen näitä testejä.
 - **Upstream**: pieniä pull requesteja Immichiin niistä osista, joita ylläpitäjät haluavat, alkaen 360°-kuvakatselimesta.
 
 Täydellinen lista, jokaisen ominaisuuden vielä odottavien laitetarkistusten kanssa, löytyy sivulta [Release status](../docs/immuch360/release-status.md#roadmap).
