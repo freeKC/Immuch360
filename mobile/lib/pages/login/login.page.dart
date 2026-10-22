@@ -78,7 +78,7 @@ class LoginPage extends HookConsumerWidget {
 
 /// The sign-in page of a big screen: the pairing panel beside the address form when the window is wide enough (a TV,
 /// the Quest window, most computer windows), else a button above the form that opens it
-class _BigScreenLogin extends StatelessWidget {
+class _BigScreenLogin extends HookWidget {
   const _BigScreenLogin();
 
   /// The narrowest window that holds the panel and the form side by side
@@ -86,6 +86,9 @@ class _BigScreenLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // One form in both layouts: a window resized across [wideLayout] moves it with what was typed, rather than making
+    // a new, empty one
+    final form = useMemoized(() => GlobalKey(debugLabel: 'Login form'));
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < wideLayout) {
@@ -103,7 +106,7 @@ class _BigScreenLogin extends StatelessWidget {
                   ),
                 ),
               ),
-              Expanded(child: LoginForm()),
+              Expanded(child: LoginForm(key: form)),
             ],
           );
         }
@@ -136,7 +139,11 @@ class _BigScreenLogin extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: MediaQuery.removePadding(context: context, removeTop: true, child: LoginForm()),
+                    child: MediaQuery.removePadding(
+                      context: context,
+                      removeTop: true,
+                      child: LoginForm(key: form),
+                    ),
                   ),
                 ],
               ),

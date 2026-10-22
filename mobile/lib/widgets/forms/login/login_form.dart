@@ -70,7 +70,10 @@ class LoginForm extends HookConsumerWidget {
     final oAuthButtonLabel = useState<String>('OAuth');
     final serverInfo = ref.watch(serverInfoProvider);
     final warningMessage = useState<String?>(null);
-    final loginFormKey = GlobalKey<FormState>();
+    // One key for the life of the form: a new one at each build would remount the form, and a text dialog of the TV
+    // still open would lose what it returns (the keyboard changes the insets of the window, which rebuilds the
+    // page of a big screen)
+    final loginFormKey = useMemoized(GlobalKey<FormState>.new);
     final ValueNotifier<String?> serverEndpoint = useState<String?>(null);
     // The remote control layout (Android TV): the fields are typed in through the native text dialog
     final tvMode = ref.watch(tvModeProvider);
@@ -79,7 +82,7 @@ class LoginForm extends HookConsumerWidget {
     // A big screen shows the pairing panel beside the form: OAuth is a scan away on a phone
     final bigScreen = ref.watch(isBigScreenProvider);
     final passwordEntryFocus = useFocusNode(debugLabel: 'Password entry');
-    // Kept across the builds of the form, whose key changes at each one: a new entry would lose the focus
+    // One focus node for the life of the form: a new one at each build would lose the focus
     final emailEntryFocus = useFocusNode(debugLabel: 'Email entry');
 
     Future<void> checkVersionMismatch() async {

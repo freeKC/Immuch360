@@ -2,6 +2,8 @@
 // email and the password are typed in the native text dialog, and OAuth, which opens a web page, is replaced by a line
 // that says so. A computer has the same line until OAuth is checked there.
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -250,6 +252,33 @@ void main() {
     }
   });
 
+  testWidgets('a big screen window keeps the typed address through its changes of size, in both layouts', (
+    tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    tester.view
+      ..physicalSize = const Size(1280, 800)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    try {
+      await pumpLoginForm(tester, tvMode: false, page: true);
+      expect(find.byKey(const Key('pairing_open_panel')), findsNothing, reason: 'the panel beside the form');
+      await tester.enterText(find.byType(TextFormField).first, 'https://photos.example.org');
+      await tester.pump();
+
+      // Narrower, then under the width of the two columns (a Quest window can get there, not a computer one: the
+      // button that opens the panel), then wide again
+      for (final width in [1000.0, 640.0, 1280.0]) {
+        tester.view.physicalSize = Size(width, 800);
+        await tester.pumpAndSettle();
+        expect(find.byKey(const Key('pairing_open_panel')), width < 720 ? findsOneWidget : findsNothing);
+        expect(find.text('https://photos.example.org'), findsOneWidget, reason: 'at $width pixels');
+      }
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
   testWidgets('out of the remote control layout the fields are typed in and OAuth is a button', (tester) async {
     await pumpLoginForm(tester, tvMode: false);
     expect(find.text('Press OK to type'), findsNothing);
@@ -362,6 +391,63 @@ void main() {
       expect(find.textContaining('Your server version is not compatible'), findsOneWidget);
       expect(focusedIn(entryOf(ImmichEmailInput)), isTrue, reason: 'not Logs, the item focused before the address');
       expect(focusedIn(logs), isFalse);
+    });
+
+    // The TV keyboard of the native text dialog changes the insets of the window while the dialog is open, which
+    // rebuilds the page around the form: what the dialog returns must still reach the field (build 28 lost it)
+    for (final keyboard in [false, true]) {
+      testWidgets(
+        'the address typed in the dialog reaches the field${keyboard ? ', the keyboard showing meanwhile' : ''}',
+        (tester) async {
+          tvScreen(tester);
+          final answer = Completer<String?>();
+          when(() => tvApi.editText(any())).thenAnswer((_) => answer.future);
+          await pumpLoginForm(tester, tvMode: true, page: true, tvShell: true);
+          expect(focusedIn(entryOf(ImmichURLInput)), isTrue);
+
+          await tester.sendKeyEvent(LogicalKeyboardKey.select);
+          await tester.pump();
+          verify(() => tvApi.editText(any())).called(1);
+          if (keyboard) {
+            tester.view.viewInsets = const FakeViewPadding(bottom: 700);
+            await tester.pump();
+          }
+          answer.complete('https://photos.example.org');
+          await tester.pumpAndSettle();
+          if (keyboard) {
+            tester.view.resetViewInsets();
+            await tester.pumpAndSettle();
+          }
+
+          expect(find.text('https://photos.example.org'), findsWidgets);
+          expect(entryOf(ImmichEmailInput), findsOneWidget);
+        },
+      );
+    }
+
+    testWidgets('the email typed in the dialog reaches the field, the keyboard showing meanwhile', (tester) async {
+      tvScreen(tester);
+      final email = Completer<String?>();
+      when(() => tvApi.editText(any())).thenAnswer((invocation) {
+        final request = invocation.positionalArguments.single as TvTextRequest;
+        return request.kind == TvTextKind.url ? Future.value('https://photos.example.org') : email.future;
+      });
+      await pumpLoginForm(tester, tvMode: true, page: true, tvShell: true);
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.pumpAndSettle();
+      expect(focusedIn(entryOf(ImmichEmailInput)), isTrue);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.pump();
+      tester.view.viewInsets = const FakeViewPadding(bottom: 700);
+      await tester.pump();
+      email.complete('user@example.org');
+      await tester.pumpAndSettle();
+      tester.view.resetViewInsets();
+      await tester.pumpAndSettle();
+
+      expect(find.text('user@example.org'), findsOneWidget);
+      expect(focusedIn(entryOf(ImmichPasswordInput)), isTrue, reason: 'then the password');
     });
 
     testWidgets('a phone keeps its layout: the logo a fifth of the height down', (tester) async {
