@@ -221,13 +221,8 @@ void main() {
     expect(entryOf(ImmichEmailInput), findsOneWidget);
     expect(find.widgetWithText(ImmichTextButton, 'Sign in with SSO'), findsNothing);
     expect(find.text('Sign in with SSO'), findsNothing);
-    expect(
-      find.text(
-        'Signing in with Sign in with SSO opens a web page, which this TV cannot do. Sign in with an email and a '
-        'password instead.',
-      ),
-      findsOneWidget,
-    );
+    // The pairing panel beside the form signs the TV in with a phone, OAuth included
+    expect(find.text('Sign in with SSO needs a browser: sign in with your phone instead.'), findsOneWidget);
     expect(focusedIn(entryOf(ImmichEmailInput)), isTrue, reason: 'the email first');
 
     await tester.sendKeyEvent(LogicalKeyboardKey.select);
@@ -239,7 +234,7 @@ void main() {
     expect(focusedIn(entryOf(ImmichPasswordInput)), isTrue, reason: 'then the password');
   });
 
-  testWidgets('a computer says that OAuth is not there yet, instead of its button', (tester) async {
+  testWidgets('a computer points to the phone for OAuth, instead of its button', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.windows;
     try {
       await pumpLoginForm(tester, tvMode: false);
@@ -248,13 +243,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.widgetWithText(ImmichTextButton, 'Sign in with SSO'), findsNothing);
-      expect(
-        find.text(
-          'Signing in with Sign in with SSO is not available in Immuch360 Desktop yet. Sign in with an email and a '
-          'password instead.',
-        ),
-        findsOneWidget,
-      );
+      expect(find.text('Sign in with SSO needs a browser: sign in with your phone instead.'), findsOneWidget);
       expect(find.byType(ImmichEmailInput), findsOneWidget);
     } finally {
       debugDefaultTargetPlatformOverride = null;

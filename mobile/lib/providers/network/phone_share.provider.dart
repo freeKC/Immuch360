@@ -269,10 +269,15 @@ Future<String> phoneShareDeviceName() async {
   return 'phone';
 }
 
-/// Announces the share with bonsoir; gives what stops the announcement
-Future<Future<void> Function()> bonsoirAdvertise(String name, int port, Map<String, String> attributes) async {
+/// Announces the share (or another service of the app: [type]) with bonsoir; gives what stops the announcement
+Future<Future<void> Function()> bonsoirAdvertise(
+  String name,
+  int port,
+  Map<String, String> attributes, {
+  String type = phoneShareServiceType,
+}) async {
   final broadcast = BonsoirBroadcast(
-    service: BonsoirService(name: name, type: phoneShareServiceType, port: port, attributes: attributes),
+    service: BonsoirService(name: name, type: type, port: port, attributes: attributes),
     printLogs: false,
   );
   try {

@@ -429,11 +429,12 @@ abstract class SyncEvents {
       expect(run.exitCode, 0, reason: '$run');
     });
 
+    // Files no entry of phone-projects-exempt.json names: an exempt one at its blob passes, as it should
     test('fails on a file under mobile/android or mobile/ios, and names it', () {
-      final run = check(['mobile/lib/main.dart', 'mobile/android/app/build.gradle', 'mobile/ios/Runner/Info.plist']);
+      final run = check(['mobile/lib/main.dart', 'mobile/android/build.gradle', 'mobile/ios/Podfile']);
       expect(run.exitCode, 1, reason: '$run');
-      expect(run.output, contains('changed: mobile/android/app/build.gradle'));
-      expect(run.output, contains('changed: mobile/ios/Runner/Info.plist'));
+      expect(run.output, contains('changed: mobile/android/build.gradle'));
+      expect(run.output, contains('changed: mobile/ios/Podfile'));
     });
 
     test('counts the native code of a vendored package, not its Dart side', () {

@@ -1,0 +1,16 @@
+{
+  "name": "immuch360-pairing-page",
+  "private": true,
+  "description": "The page a big screen serves to sign it in from a phone's browser (sign in with your phone). Built into mobile/assets/pairing.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@noble/ciphers": "2.4.0",
+    "@noble/curves": "2.4.0",
+    "@noble/hashes": "2.4.0",
+    "esbuild": "0.28.2"
+  }
+}

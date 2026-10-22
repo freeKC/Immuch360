@@ -72,6 +72,7 @@ the gate is per desktop and is noted.
 | `lib/presentation/pages/asset_troubleshoot.page.dart:134` | iOS cloud details | right |
 | `lib/presentation/pages/network/phone_share.page.dart:80` | iOS foreground notice | right |
 | `lib/presentation/pages/network/phone_share.page.dart:95` | phone share tile on phones only | wired (G1): shown on the computers once computerShareAvailable is true (LAN) |
+| `lib/presentation/pages/pairing/connect_screen.page.dart:201` | iOS local network hint of an unreachable screen (sign in with your phone, October 2026) | hidden: the computers are big screens, which never show Connect a TV or computer (isBigScreenProvider) |
 | `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:534` | iOS immersive mode with details | harmless: SystemChrome goes through an optional channel that the desktop embedders ignore |
 | `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:610` | iOS scroll physics, else clamping | right: clamping on the computers |
 | `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:619` | gradient under the status bar, not on iOS | right |
@@ -123,7 +124,7 @@ the gate is per desktop and is noted.
 | `lib/widgets/common/mesmerizing_sliver_app_bar.dart:55` | iOS back icon | right |
 | `lib/widgets/common/person_sliver_app_bar.dart:79` | iOS back icon | right |
 | `lib/widgets/common/remote_album_sliver_app_bar.dart:74` | iOS back icon | right |
-| `lib/widgets/forms/login/login_form.dart:260` | Android media management | right |
+| `lib/widgets/forms/login/sign_in_completion.dart:49` | Android media management (moved from the login form, sign in with your phone) | right |
 | `lib/widgets/settings/advanced_settings.dart:49` | Android 12 check | right |
 | `lib/widgets/settings/backup_settings/backup_settings.dart:29` | Android background options | right; the computers show desktop_backup_while_open instead of the cellular options (G1) |
 | `lib/widgets/settings/beta_sync_settings/sync_status_and_actions.dart:184` | iOS cloud ids | right |

@@ -4,6 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/models/server_info/server_disk_info.model.dart';
@@ -14,6 +16,7 @@ import 'package:immich_mobile/providers/backup/backup_server.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
+import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/providers/websocket.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -127,9 +130,13 @@ class ImmichAppBarDialog extends HookConsumerWidget {
             showDialog(
               context: context,
               builder: (BuildContext ctx) {
+                // The screens this phone signed in go with its session (sign in with your phone)
+                final paired = ref.read(pairedScreensProvider).length;
                 return ConfirmDialog(
                   title: context.t.app_bar_signout_dialog_title,
-                  content: context.t.app_bar_signout_dialog_content,
+                  content: paired == 0
+                      ? context.t.app_bar_signout_dialog_content
+                      : '${context.t.app_bar_signout_dialog_content}\n\n${context.t.pairing_signout_warning(count: paired)}',
                   ok: context.t.yes,
                   onOk: () async {
                     isLoggingOut.value = true;
@@ -303,6 +310,17 @@ class ImmichAppBarDialog extends HookConsumerWidget {
                     children: [
                       if (hasServer) ...[
                         const AppBarProfileInfoBox(),
+                        // A big screen a phone signed in says which one
+                        if (Store.tryGet(StoreKey.pairingSignedInBy) case final phone?)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8, left: 16, right: 16),
+                            child: Text(
+                              context.t.pairing_screen_signed_in_with(user: user?.name ?? '', phone: phone),
+                              key: const Key('app_bar_paired_by'),
+                              style: context.textTheme.bodySmall,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         Divider(thickness: 4, color: context.colorScheme.surfaceContainer),
                         buildStorageInformation(),
                         Divider(thickness: 4, color: context.colorScheme.surfaceContainer),

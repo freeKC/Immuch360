@@ -1001,9 +1001,15 @@ class WindowsShareAnnouncer {
 
 /// Announces the share of this computer through dnsapi, on the network it listens on only; gives what stops the
 /// announcement. What phone_share.provider.dart's bonsoirAdvertise does on the phones.
-Future<Future<void> Function()> windowsShareAdvertise(String name, int port, Map<String, String> attributes) async {
+Future<Future<void> Function()> windowsShareAdvertise(
+  String name,
+  int port,
+  Map<String, String> attributes, {
+  String type = phoneShareServiceType,
+}) async {
   final announcer = WindowsShareAnnouncer(
     name: name,
+    type: type,
     port: port,
     attributes: attributes,
     networkChanges: Connectivity().onConnectivityChanged.map<void>((_) {}),

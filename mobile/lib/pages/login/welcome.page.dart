@@ -14,6 +14,7 @@ import 'package:immich_mobile/providers/feature_message.provider.dart';
 import 'package:immich_mobile/providers/gallery_permission.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/common/immich_logo.dart';
@@ -37,6 +38,8 @@ class WelcomePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tvMode = ref.watch(tvModeProvider);
+    // A TV, the Quest window and a computer are signed in by a phone too; a phone signs them in
+    final bigScreen = ref.watch(isBigScreenProvider);
     // One session start at a time: a second tap while the permission dialog shows would start another
     final starting = useRef(false);
 
@@ -104,7 +107,9 @@ class WelcomePage extends HookConsumerWidget {
         emphasis: _Emphasis.outlined,
         icon: Icons.login_rounded,
         title: context.t.welcome_server_title,
-        description: context.t.local_session_connect_server_subtitle,
+        description: bigScreen
+            ? context.t.welcome_server_description_big_screen
+            : context.t.local_session_connect_server_subtitle,
         onTap: () => unawaited(context.pushRoute(const LoginRoute())),
       ),
     ];
@@ -127,7 +132,17 @@ class WelcomePage extends HookConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   spacing: ImmichSpacing.md,
-                  children: choices,
+                  children: [
+                    ...choices,
+                    // A phone signs the big screens in once it has a server: the way there
+                    if (!bigScreen)
+                      TextButton.icon(
+                        key: const Key('welcome_pairing'),
+                        icon: const Icon(Icons.qr_code_scanner_rounded),
+                        label: Text(context.t.pairing_welcome_link),
+                        onPressed: () => unawaited(_explainPairing(context)),
+                      ),
+                  ],
                 ),
               );
               const padding = ImmichSpacing.lg;
@@ -165,6 +180,28 @@ class WelcomePage extends HookConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+/// What a phone needs to sign a TV or a computer in: a server first, then the scan
+Future<void> _explainPairing(BuildContext context) async {
+  final connect = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      icon: const Icon(Icons.qr_code_scanner_rounded),
+      title: Text(context.t.pairing_connect_title),
+      content: Text(context.t.pairing_welcome_explainer),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: Text(context.t.cancel)),
+        FilledButton(
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          child: Text(context.t.welcome_server_title),
+        ),
+      ],
+    ),
+  );
+  if (connect == true && context.mounted) {
+    unawaited(context.pushRoute(const LoginRoute()));
   }
 }
 

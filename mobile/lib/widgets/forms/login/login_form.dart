@@ -10,26 +10,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/domain/models/store.model.dart';
-import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
-import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
-import 'package:immich_mobile/providers/background_sync.provider.dart';
-import 'package:immich_mobile/providers/feature_message.provider.dart';
-import 'package:immich_mobile/providers/gallery_permission.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/device_features.provider.dart';
-import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/oauth.provider.dart';
+import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
-import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
-import 'package:immich_mobile/providers/websocket.provider.dart';
-import 'package:immich_mobile/repositories/permission.repository.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/provider_utils.dart';
 import 'package:immich_mobile/utils/semver.dart';
@@ -38,6 +29,7 @@ import 'package:immich_mobile/utils/version_compatibility.dart';
 import 'package:immich_mobile/widgets/common/immich_logo.dart';
 import 'package:immich_mobile/widgets/common/immich_title_text.dart';
 import 'package:immich_mobile/widgets/common/immich_toast.dart';
+import 'package:immich_mobile/widgets/forms/login/sign_in_completion.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:logging/logging.dart';
 import 'package:openapi/api.dart';
@@ -84,6 +76,8 @@ class LoginForm extends HookConsumerWidget {
     final tvMode = ref.watch(tvModeProvider);
     // Not checked on a computer yet: the localhost redirect the desktop needs must be accepted by the server
     final hasOauth = ref.watch(deviceFeaturesProvider.select((features) => features.oauth));
+    // A big screen shows the pairing panel beside the form: OAuth is a scan away on a phone
+    final bigScreen = ref.watch(isBigScreenProvider);
     final passwordEntryFocus = useFocusNode(debugLabel: 'Password entry');
     // Kept across the builds of the form, whose key changes at each one: a new entry would lose the focus
     final emailEntryFocus = useFocusNode(debugLabel: 'Email entry');
@@ -193,73 +187,6 @@ class LoginForm extends HookConsumerWidget {
       serverEndpointController.text = 'http://10.1.15.216:2283/api';
     }
 
-    Future<void> handleSyncFlow() async {
-      final backgroundManager = ref.read(backgroundSyncProvider);
-      final viewIntentHandler = ref.read(viewIntentHandlerProvider);
-
-      await backgroundManager.syncLocal(full: true);
-      await backgroundManager.syncRemote();
-      await viewIntentHandler.flushDeferredViewIntent();
-      await backgroundManager.hashAssets();
-
-      if (SettingsRepository.instance.appConfig.backup.syncAlbums) {
-        await backgroundManager.syncLinkedAlbum();
-      }
-    }
-
-    Future<void> getManageMediaPermission() async {
-      final hasPermission = await ref.read(permissionRepositoryProvider).hasManageMediaPermission();
-      if (!context.mounted) {
-        return;
-      }
-
-      if (!hasPermission) {
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
-              elevation: 5,
-              title: Text(
-                context.t.manage_media_access_title,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: context.primaryColor),
-              ),
-              content: SingleChildScrollView(
-                child: ListBody(
-                  children: [
-                    Text(context.t.manage_media_access_subtitle, style: const TextStyle(fontSize: 14)),
-                    const SizedBox(height: 4),
-                    Text(context.t.manage_media_access_rationale, style: const TextStyle(fontSize: 12)),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(
-                    context.t.cancel,
-                    style: TextStyle(fontWeight: FontWeight.w600, color: context.primaryColor),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    unawaited(ref.read(permissionRepositoryProvider).requestManageMediaPermission());
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    context.t.manage_media_access_settings,
-                    style: TextStyle(fontWeight: FontWeight.w600, color: context.primaryColor),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    }
-
-    bool isSyncRemoteDeletionsMode() => Platform.isAndroid && Store.get(StoreKey.manageLocalMediaAndroid, false);
-
     Future<void> login() async {
       TextInput.finishAutofillContext();
 
@@ -277,23 +204,7 @@ class LoginForm extends HookConsumerWidget {
           unawaited(context.pushRoute(const ChangePasswordRoute()));
           passwordController.clear();
         } else {
-          await ref.read(galleryPermissionNotifier.notifier).requestGalleryPermission();
-          if (isSyncRemoteDeletionsMode()) {
-            await getManageMediaPermission();
-          }
-          unawaited(handleSyncFlow());
-          if (!context.mounted) {
-            return;
-          }
-
-          ref.read(websocketProvider.notifier).connect();
-          unawaited(ref.read(featureMessageServiceProvider).markSeen());
-          await ref.read(localSessionProvider.notifier).leave();
-          if (!context.mounted) {
-            return;
-          }
-
-          unawaited(context.router.replaceAll([const TabShellRoute()]));
+          await completeSignIn(context, ref);
           return;
         }
       } catch (error) {
@@ -393,22 +304,7 @@ class LoginForm extends HookConsumerWidget {
               .saveAuthInfo(accessToken: loginResponseDto.accessToken);
 
           if (isSuccess && context.mounted) {
-            await ref.read(galleryPermissionNotifier.notifier).requestGalleryPermission();
-            if (isSyncRemoteDeletionsMode()) {
-              await getManageMediaPermission();
-            }
-            unawaited(handleSyncFlow());
-            if (!context.mounted) {
-              return;
-            }
-
-            unawaited(ref.read(featureMessageServiceProvider).markSeen());
-            await ref.read(localSessionProvider.notifier).leave();
-            if (!context.mounted) {
-              return;
-            }
-
-            unawaited(context.router.replaceAll([const TabShellRoute()]));
+            await completeSignIn(context, ref, connectWebsocket: false);
             return;
           }
         } catch (error, stack) {
@@ -574,7 +470,9 @@ class LoginForm extends HookConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: ImmichSpacing.md),
                     child: Text(
-                      tvMode
+                      bigScreen
+                          ? context.t.tv_oauth_use_phone(provider: oAuthButtonLabel.value)
+                          : tvMode
                           ? context.t.tv_oauth_unavailable(provider: oAuthButtonLabel.value)
                           : context.t.desktop_oauth_unavailable(provider: oAuthButtonLabel.value),
                       textAlign: TextAlign.center,

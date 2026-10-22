@@ -165,6 +165,14 @@
         <data android:scheme="immich" />
       </intent-filter>
 
+      <!-- immuch360://pair?u=...: the code of a big screen, from its browser page (sign in with your phone) -->
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="immuch360" android:host="pair" />
+      </intent-filter>
+
       <!-- my.immich.app deep link -->
       <intent-filter android:autoVerify="true">
         <action android:name="android.intent.action.VIEW" />
@@ -266,6 +274,13 @@
         android:name="android.appwidget.provider"
         android:resource="@xml/memory_widget" />
     </receiver>
+
+    <!-- The QR code scanner of ZXing (sign in with your phone): it follows the rotation of the phone or tablet rather
+      than its landscape default -->
+    <activity
+      android:name="com.journeyapps.barcodescanner.CaptureActivity"
+      android:screenOrientation="fullUser"
+      tools:replace="screenOrientation" />
 
     <activity android:name=".widget.configure.RandomConfigure"
       android:exported="true"

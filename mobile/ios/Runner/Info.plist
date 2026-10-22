@@ -103,6 +103,16 @@
 					<string>immich</string>
 				</array>
 			</dict>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>Sign in with your phone</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>immuch360</string>
+				</array>
+			</dict>
 		</array>
 		<key>CFBundleVersion</key>
 		<string>4</string>
@@ -132,13 +142,14 @@
 			<string>_webdavs._tcp</string>
 			<string>_http._tcp</string>
 			<string>_https._tcp</string>
+			<string>_immuch360-pair._tcp</string>
 		</array>
 		<key>NSCameraUsageDescription</key>
-		<string>The front camera tracks the position of your head for the Spatial 2.5D video mode. The images stay on the device and are never stored or sent.</string>
+		<string>The front camera tracks the position of your head for the Spatial 2.5D video mode, and the camera scans the code a TV or computer shows to sign it in. The images stay on the device and are never stored or sent.</string>
 		<key>NSFaceIDUsageDescription</key>
 		<string>We need to use FaceID to allow access to your locked folder</string>
 		<key>NSLocalNetworkUsageDescription</key>
-		<string>Immuch360 uses the local network to reach your server by its address, to cast, to find network shares, media servers and cameras (SMB, WebDAV, DLNA, Plex, Tapo), to show your cameras, and to share this phone's photos with your headset.</string>
+		<string>Immuch360 uses the local network to reach your server by its address, to cast, to find network shares, media servers and cameras (SMB, WebDAV, DLNA, Plex, Tapo), to show your cameras, to share this phone's photos with your headset, and to sign in your TV or computer.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>We require this permission to access the local WiFi name for background upload mechanism</string>
 		<key>NSLocationUsageDescription</key>

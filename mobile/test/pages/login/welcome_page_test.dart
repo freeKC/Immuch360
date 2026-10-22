@@ -262,6 +262,37 @@ void main() {
     expect(focusedIn(withoutServer), isFalse);
   });
 
+  testWidgets('a phone points the way to sign in a TV or a computer: a server first', (tester) async {
+    phoneScreen(tester);
+    await pumpWelcome(tester);
+    final link = find.byKey(const Key('welcome_pairing'));
+    expect(link, findsOneWidget);
+    expect(tester.getRect(link).top, greaterThan(tester.getRect(server).bottom));
+
+    // Under the choices, scrolled to on a short phone
+    await tester.ensureVisible(link);
+    await tester.pumpAndSettle();
+    await tester.tap(link);
+    await tester.pumpAndSettle();
+    expect(
+      find.text('First connect this phone to your Immich server. Then scan the code your TV or computer shows.'),
+      findsOneWidget,
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Connect to an Immich server'));
+    await tester.pumpAndSettle();
+    expect(find.text('login'), findsOneWidget);
+  });
+
+  testWidgets('a TV says that a phone signs it in, and has no link to sign another one in', (tester) async {
+    tvScreen(tester);
+    await pumpWelcome(tester, tvMode: true);
+    expect(
+      find.descendant(of: server, matching: find.text('Sign in with your phone, or type the address')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('welcome_pairing')), findsNothing);
+  });
+
   testWidgets('"Use without a server" opens the photos and videos of this device', (tester) async {
     final container = await pumpWelcome(tester);
 
