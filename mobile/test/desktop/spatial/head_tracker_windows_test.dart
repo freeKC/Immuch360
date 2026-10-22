@@ -16,6 +16,7 @@
 // IMMUCH360_BUILD_DIR may name another folder holding the DLLs; IMMUCH360_HEAD_TRACKER_LIBRARY names the tracker's
 // library itself (libimmuch_head_tracker.so of test_native/run.sh on Linux).
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -282,6 +283,116 @@ void main() {
     if (runs.length == 2) {
       _compareBuilds(runs[FaceDetectorBuild.plain]!, runs[FaceDetectorBuild.avx2]!);
     }
+  }, skip: skip);
+
+  // The capture thread, the samples it posts across threads to the session, and the end of a camera, with the clip
+  // played at its own pace through the camera path (the camera id "file:<path>" of ht_api.h, for the tests)
+  HeadCamera clipCamera() => HeadCamera(id: 'file:${File(_clip).absolute.path}', name: 'recorded clip');
+
+  HeadTrackingSession? startClip(HeadTracker tracker) {
+    try {
+      return tracker.start(clipCamera(), options: const HeadTrackerOptions(detectEvery: 1));
+    } on HeadTrackerException catch (error) {
+      if (!Platform.isWindows && error.error == HeadTrackerError.noMediaFoundation) {
+        return null;
+      }
+      rethrow;
+    }
+  }
+
+  test('a camera session on the clip: samples in order, then the end of the camera', () async {
+    final tracker = HeadTracker.load(library);
+    final session = startClip(tracker);
+    if (session == null) {
+      markTestSkipped('no Media Foundation here: the camera path is Windows only');
+      return;
+    }
+    final samples = <HeadSample>[];
+    final ended = Completer<Object>();
+    session.samples.listen(
+      samples.add,
+      onError: ended.complete,
+      onDone: () {
+        if (!ended.isCompleted) {
+          ended.complete('closed');
+        }
+      },
+    );
+    final watch = Stopwatch()..start();
+    final end = await ended.future.timeout(const Duration(seconds: 40));
+    watch.stop();
+    expect(end, isA<HeadTrackerException>().having((e) => e.error, 'error', HeadTrackerError.deviceLost));
+    expect(session.error?.error, HeadTrackerError.deviceLost);
+    final info = session.info();
+    expect(info.nativeFourcc, 'H264');
+    expect((info.width, info.height), (_width, _height));
+    await session.close();
+
+    // Paced as a camera: about the 12 s of the clip, each frame stamped with the clock of the session
+    expect(watch.elapsed, greaterThan(const Duration(seconds: 10)));
+    expect(samples.length, greaterThan(150), reason: 'samples given');
+    var faces = 0;
+    var holding = 0;
+    for (var i = 0; i < samples.length; i++) {
+      final sample = samples[i];
+      if (i > 0) {
+        expect(sample.sequence, greaterThan(samples[i - 1].sequence));
+        expect(sample.timeUs, greaterThanOrEqualTo(samples[i - 1].timeUs));
+      }
+      final truth = _truthX(sample.sequence - 1);
+      if (truth == null) {
+        expect(sample.hasFace, isFalse, reason: 'frame ${sample.sequence - 1} is in the gap');
+        continue;
+      }
+      holding++;
+      if (sample.hasFace) {
+        faces++;
+        expect((sample.faceX - truth).abs(), lessThan(0.03), reason: 'frame ${sample.sequence - 1}');
+      }
+    }
+    expect(faces * 100, greaterThanOrEqualTo(holding * 95));
+    final span = samples.last.timeUs - samples.first.timeUs;
+    expect(span, greaterThan(9000000));
+    expect(session.nowUs(), greaterThanOrEqualTo(samples.last.timeUs));
+    // ignore: avoid_print
+    print(
+      'camera path: ${samples.length} samples in ${watch.elapsed}, faces $faces of $holding, ${info.detector.name}',
+    );
+  }, skip: skip);
+
+  test('closing a camera session while it streams releases it at once, and nothing follows', () async {
+    final tracker = HeadTracker.load(library);
+    final session = startClip(tracker);
+    if (session == null) {
+      markTestSkipped('no Media Foundation here: the camera path is Windows only');
+      return;
+    }
+    var events = 0;
+    final firstFive = Completer<void>();
+    session.samples.listen(
+      (sample) {
+        events++;
+        if (events == 5 && !firstFive.isCompleted) {
+          firstFive.complete();
+        }
+      },
+      onError: (Object error) {
+        if (!firstFive.isCompleted) {
+          firstFive.completeError(error);
+        }
+      },
+    );
+    await firstFive.future.timeout(const Duration(seconds: 20));
+    final watch = Stopwatch()..start();
+    await session.close();
+    watch.stop();
+    final atClose = events;
+    expect(watch.elapsed, lessThan(const Duration(seconds: 3)));
+    expect(session.isClosed, isTrue);
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    expect(events, atClose);
+    // ignore: avoid_print
+    print('closed after $atClose samples in ${watch.elapsedMilliseconds} ms');
   }, skip: skip);
 
   test('no camera is opened by listing them, and a missing one is an error of the session', () async {

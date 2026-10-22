@@ -667,43 +667,53 @@ void RunCamera(std::shared_ptr<CameraState> state) {
   IMFAttributes* attributes = nullptr;
   bool framing_checked = false;
   bool framing_turned_off = false;
+  LONGLONG first_timestamp = -1;
+  int64_t started_us = 0;
+  // "file:<path>": a video file played at its own pace through the whole camera path, for the tests (no camera on the
+  // build machines); the camera ids of ht_list_cameras are symbolic links, never such a name
+  const bool from_file = state->id.compare(0, 5, L"file:") == 0;
   {
     MfScope started(mf);
     hr = started.result();
     if (SUCCEEDED(hr)) {
-      hr = EnumerateCameras(mf, &devices, &count);
-    }
-    if (SUCCEEDED(hr)) {
-      IMFActivate* chosen = nullptr;
-      for (UINT32 i = 0; i < count && chosen == nullptr; i++) {
-        WCHAR* link = nullptr;
-        UINT32 length = 0;
-        if (SUCCEEDED(devices[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, &link,
-                                                       &length))) {
-          if (_wcsicmp(link, state->id.c_str()) == 0) {
-            chosen = devices[i];
-          }
-          CoTaskMemFree(link);
-        }
-      }
-      if (chosen == nullptr) {
-        status = HT_E_NO_CAMERA;
-      } else {
-        hr = chosen->ActivateObject(IID_PPV_ARGS(&source));
-      }
-    }
-    FreeDevices(devices, count);
-    devices = nullptr;
-    if (SUCCEEDED(hr) && status == HT_OK) {
-      std::lock_guard<std::mutex> lock(state->source_mutex);
-      state->source = source;
-      source->AddRef();
-    }
-    if (SUCCEEDED(hr) && status == HT_OK) {
       hr = ReaderAttributes(mf, &attributes);
     }
-    if (SUCCEEDED(hr) && status == HT_OK) {
-      hr = mf->reader_from_source(source, attributes, &reader);
+    if (SUCCEEDED(hr) && from_file) {
+      hr = mf->reader_from_url(state->id.c_str() + 5, attributes, &reader);
+      if (hr == kFileNotFound || hr == kPathNotFound) {
+        status = HT_E_NO_CAMERA;
+      }
+    } else if (SUCCEEDED(hr)) {
+      hr = EnumerateCameras(mf, &devices, &count);
+      if (SUCCEEDED(hr)) {
+        IMFActivate* chosen = nullptr;
+        for (UINT32 i = 0; i < count && chosen == nullptr; i++) {
+          WCHAR* link = nullptr;
+          UINT32 length = 0;
+          if (SUCCEEDED(devices[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, &link,
+                                                         &length))) {
+            if (_wcsicmp(link, state->id.c_str()) == 0) {
+              chosen = devices[i];
+            }
+            CoTaskMemFree(link);
+          }
+        }
+        if (chosen == nullptr) {
+          status = HT_E_NO_CAMERA;
+        } else {
+          hr = chosen->ActivateObject(IID_PPV_ARGS(&source));
+        }
+      }
+      FreeDevices(devices, count);
+      devices = nullptr;
+      if (SUCCEEDED(hr) && status == HT_OK) {
+        std::lock_guard<std::mutex> lock(state->source_mutex);
+        state->source = source;
+        source->AddRef();
+      }
+      if (SUCCEEDED(hr) && status == HT_OK) {
+        hr = mf->reader_from_source(source, attributes, &reader);
+      }
     }
     if (SUCCEEDED(hr) && status == HT_OK) {
       hr = reader->SetStreamSelection(kAllStreams, FALSE);
@@ -711,7 +721,7 @@ void RunCamera(std::shared_ptr<CameraState> state) {
         hr = reader->SetStreamSelection(kFirstVideoStream, TRUE);
       }
     }
-    if (SUCCEEDED(hr) && status == HT_OK) {
+    if (SUCCEEDED(hr) && status == HT_OK && !from_file) {
       hr = ChooseCameraFormat(reader, state->options);
     }
     if (SUCCEEDED(hr) && status == HT_OK) {
@@ -775,6 +785,17 @@ void RunCamera(std::shared_ptr<CameraState> state) {
         continue;
       }
       streaming = true;
+      if (from_file) {
+        // The file's frames at their own times, as a camera would deliver them
+        if (first_timestamp < 0) {
+          first_timestamp = timestamp;
+          started_us = NowUs();
+        }
+        const int64_t due = started_us + (timestamp - first_timestamp) / 10;
+        for (int64_t wait = due - NowUs(); wait > 0 && !state->stop.load(); wait = due - NowUs()) {
+          std::this_thread::sleep_for(std::chrono::microseconds(wait < 20000 ? wait : 20000));
+        }
+      }
       const int64_t now = NowUs();
       if (state->core->CountFrame()) {
         HtSample out;
@@ -785,7 +806,7 @@ void RunCamera(std::shared_ptr<CameraState> state) {
         }
       }
       sample->Release();
-      if (!framing_checked) {
+      if (!framing_checked && source != nullptr) {
         framing_checked = true;
         const int32_t framing = TurnOffAutoFraming(source, &framing_turned_off);
         std::lock_guard<std::mutex> lock(state->shared->mutex);

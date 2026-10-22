@@ -28,8 +28,10 @@ Three DLLs with a C interface (`src/ht_api.h`), called through `dart:ffi`; the p
     edition without the Media Feature Pack) gives `noMediaFoundation`: Media Foundation is loaded at run time, never
     imported, so the DLL loads everywhere; a camera taken by another app gives `cameraBusy`, a camera unplugged while
     streaming `deviceLost`.
-  - A file source (`ht_open_file`, `ht_next`), the same reader setup and luma path on a video file, and a raw frame
-    entry point (`ht_open_frames`, `ht_process_frame`), for the tests. The app's pages never use them.
+  - A file source (`ht_open_file`, `ht_next`), the same reader setup and luma path on a video file, a raw frame
+    entry point (`ht_open_frames`, `ht_process_frame`), and a camera id `file:<path>` that plays a video file at its
+    own pace through the capture thread, for the tests. The app's pages never use them: the camera menu lists the
+    symbolic links of `ht_list_cameras` only.
 - `immuch_head_tracker_detect.dll` and `immuch_head_tracker_detect_avx2.dll`: libfacedetection
   (`third_party/libfacedetection`, 3-clause BSD, pinned commit, the network's weights compiled in) behind
   `src/face_detect.h`. The library chooses its SIMD code at compile time, so it is built twice; the tracker checks the

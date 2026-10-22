@@ -157,7 +157,9 @@ HT_API int32_t ht_list_cameras(char* json, int32_t capacity);
 
 // Starts tracking with the camera whose id ht_list_cameras gave. Returns at once: the camera opens on the capture
 // thread, and an error to open it comes through the callback (and ht_latest's status). Returns null and sets *status
-// for an error found before that (no Media Foundation, no detector, bad arguments).
+// for an error found before that (no Media Foundation, no detector, bad arguments). For the tests, an id
+// "file:<path>" plays a video file at its own pace through the same thread, as a camera would deliver it; its end
+// stops the session with HT_E_DEVICE_LOST.
 HT_API void* ht_open_camera(const char* id_utf8, const HtOptions* options, HtSampleCallback callback, int32_t* status);
 
 // Opens a video file for the tests. Null and *status on error.
