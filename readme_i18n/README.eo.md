@@ -233,7 +233,7 @@ Importu la fotojn kaj videojn de DJI-drono per USB, rekte al via Immich-servilo:
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. En Agordoj, Progresintaj, ŝaltu "DJI-dronoj (eksperimenta)". Kahelo "DJI-drono" aperas en Biblioteko, Retaj kunhavigoj.
+1. Kahelo "DJI-drono" estas en Biblioteko, Retaj kunhavigoj: "DJI-dronoj (eksperimenta)" estas defaŭlte ŝaltita en Agordoj, Progresintaj. Malŝaltu ĝin tie por kaŝi la kahelon.
 2. Konektu la dronon (Neo 2 povas resti malŝaltita), ĝian regilon aŭ kartlegilon al la telefono per USB-C-datumkablo. Sur la paĝo DJI-drono, tuŝetu "Elekti la dronon aŭ la karton", elektu ĝin en la flanka menuo de la elektilo, malfermu ĝian dosierujon DCIM aŭ gardu la tutan diskon, poste "Uzi ĉi tiun dosierujon" kaj Permesi.
 3. La paĝo listigas la fotojn kaj videojn laŭ tago, sen la flankaj dosieroj .LRF, .SRT, .THM kaj .m4a. Tuŝetu "Elekti ĉiujn novajn", poste "Alŝuti al Immich"; la dosieroj senditaj antaŭe portas nuban markon kaj estas preterlasataj. "Konservi sur la aparato" anstataŭe kopias la dosierojn al la galerio de la telefono, en la albumon "Immuch360 import".
 4. Por ke video aperu sur la mapo, ŝaltu Video Subtitles en DJI Fly (videa reĝimo, Settings, Camera) antaŭ ol flugi: la drono tiam skribas .SRT-dosieron apud ĉiu video, la apo legas la lokon el ĝi kaj metas ĝin sur vian servilon post la alŝuto, kiam Immich trovis neniun.

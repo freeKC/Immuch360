@@ -233,7 +233,7 @@ Ingiza picha na video za droni ya DJI kupitia USB, moja kwa moja kwenye seva yak
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Kwenye Settings, Advanced, washa "DJI drones (experimental)". Kigae cha "DJI drone" kinaonekana kwenye Maktaba, Hifadhi za mtandao.
+1. Kigae cha "DJI drone" kipo kwenye Maktaba, Hifadhi za mtandao: "DJI drones (experimental)" imewashwa kwa chaguomsingi kwenye Settings, Advanced. Izime hapo ili kuficha kigae.
 2. Chomeka droni (Neo 2 inaweza kubaki imezimwa), kidhibiti chake au kisomaji cha kadi kwenye simu kwa kebo ya data ya USB-C. Kwenye ukurasa wa DJI drone, gusa "Choose the drone or the card", ichague kwenye menyu ya pembeni ya kichaguzi, fungua folda yake ya DCIM au acha hifadhi nzima, kisha "Tumia folda hii" na Ruhusu.
 3. Ukurasa unaorodhesha picha na video kwa siku, bila faili saidizi za .LRF, .SRT, .THM na .m4a. Gusa "Select all new", kisha "Pakia kwenye Immich"; faili zilizotumwa awali zina alama ya wingu na zinarukwa. "Keep on the device" badala yake hunakili faili kwenye albamu ya simu, katika albamu "Immuch360 import".
 4. Ili video iwekwe kwenye ramani, washa Video Subtitles kwenye DJI Fly (hali ya video, Settings, Camera) kabla ya kurusha droni: droni kisha huandika faili ya .SRT kando ya kila video, programu husoma mahali kutoka humo na kupaweka kwenye seva yako baada ya kupakia, wakati Immich haikupata mahali.

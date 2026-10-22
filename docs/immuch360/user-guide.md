@@ -417,9 +417,9 @@ Your drone's videos reach Immich through the album of DJI Fly, but a DJI Neo 2 v
 
 From build 27, on Android phones and tablets, Immuch360 reads the drone, its controller or a card over a USB-C cable, lists their photos and videos, and sends the originals to your Immich server, each video placed on the map from its flight data. The Immich app backs up the phone's gallery only. This page is experimental: it ran on an Android emulator with synthetic files, not with a real drone yet, and reports are welcome in [Issues](https://github.com/freeKC/Immuch360/issues).
 
-### Turn it on and plug in the drone
+### Find the page and plug in the drone
 
-1. Settings, Advanced, turn on "DJI drones (experimental)". A "DJI drone" tile appears in the Library tab, Network shares, under "Share this phone on the network". It is not offered on the Quest, on a TV, on iPhone and iPad, or on a computer.
+1. Open the Library tab, then Network shares: the "DJI drone" tile is under "Share this phone on the network". The setting "DJI drones (experimental)" in Settings, Advanced is on by default; turn it off there to hide the tile. It is not offered on the Quest, on a TV, on iPhone and iPad, or on a computer.
 2. For the place of your videos: in DJI Fly, in video mode, Settings, Camera, turn **Video Subtitles** on before the flight. Without it a Neo 2 video has no place the app can read.
 3. Plug the drone, its controller or a card reader into the phone with a USB-C data cable. A Neo 2 can stay off.
 4. Open "DJI drone", then "Choose the drone or the card". The folder picker of Android opens: open its side menu, choose the drone, the controller or the card, then its DCIM folder or the whole drive, "Use this folder", "Allow". The next time the drone is under "Used before", which opens it without the picker while it is plugged in; Forget removes it.

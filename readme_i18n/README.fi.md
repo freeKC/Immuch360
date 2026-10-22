@@ -233,7 +233,7 @@ Tuo DJI-droonin kuvat ja videot USB:n kautta suoraan Immich-palvelimellesi: kytk
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Ota kohdassa Asetukset, Edistyneet käyttöön "DJI-droonit (kokeellinen)". Kohtaan Kirjasto, Verkkojaot ilmestyy "DJI-drooni"-ruutu.
+1. Kohdassa Kirjasto, Verkkojaot on "DJI-drooni"-ruutu: "DJI-droonit (kokeellinen)" on oletuksena käytössä kohdassa Asetukset, Edistyneet. Piilota ruutu poistamalla se siellä käytöstä.
 2. Kytke drooni (Neo 2 voi olla sammutettuna), sen ohjain tai kortinlukija puhelimeen USB-C-datakaapelilla. Napauta DJI-droonin sivulla "Valitse drooni tai kortti", valitse se valitsimen sivuvalikosta, avaa sen DCIM-kansio tai pidä koko asema, sitten "Käytä tätä kansiota" ja Salli.
 3. Sivu listaa kuvat ja videot päivittäin ilman .LRF-, .SRT-, .THM- ja .m4a-sivutiedostoja. Napauta "Valitse kaikki uudet", sitten "Lähetä Immichiin"; aiemmin lähetetyissä tiedostoissa on pilvimerkki ja ne ohitetaan. "Säilytä laitteella" kopioi tiedostot sen sijaan puhelimen galleriaan, albumiin "Immuch360 import".
 4. Jotta video päätyisi kartalle, ota DJI Flyssa käyttöön videotekstitys (videotila, Asetukset, Kamera) ennen lentoa: drooni kirjoittaa silloin .SRT-tiedoston jokaisen videon viereen, sovellus lukee sijainnin siitä ja asettaa sen palvelimellesi lähetyksen jälkeen, jos Immich ei löytänyt sitä.

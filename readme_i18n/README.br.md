@@ -233,7 +233,7 @@ Enporzhiit skeudennoù ha videoioù un dron DJI dre USB, war-eeun d'ho servijer 
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. En Arventennoù, Araokaet, gweredekait "DJI drones (experimental)". Ur garrezenn "DJI drone" a zeu war wel e Levraoueg, Rannadennoù rouedad.
+1. Ur garrezenn "DJI drone" a zo e Levraoueg, Rannadennoù rouedad: "DJI drones (experimental)" a zo gweredekaet dre ziouer en Arventennoù, Araokaet. Diweredekait anezhañ eno evit kuzhat ar garrezenn.
 2. Kevreit an dron (un Neo 2 a c'hell chom lazhet), e bellrener pe ul lenner kartennoù ouzh ar pellgomzer gant ur fun roadennoù USB-C. War ar bajenn DJI drone, pouezit war "Choose the drone or the card", dibabit anezhañ e lañser kostez an dibaber, digorit e deuliad DCIM pe mirit ar bladenn a-bezh, ha neuze "Use this folder" hag Allow.
 3. Ar bajenn a ziskouez ar skeudennoù hag ar videoioù deiz ha deiz, hep ar restroù-kostez .LRF, .SRT, .THM ha .m4a. Pouezit war "Select all new", ha neuze "Upload to Immich"; ar restroù kaset a-raok o deus ur merk koumoul hag a vez lammet. "Keep on the device" a eil ar restroù e galeri ar pellgomzer kentoc'h, en album "Immuch360 import".
 4. Evit ma vo lakaet ur video war ar gartenn, gweredekait Video Subtitles e DJI Fly (mod video, Settings, Camera) a-raok nijal: an dron a skriv neuze ur restr .SRT e-kichen pep video, an arload a lenn al lec'h ennañ hag e laka war ho servijer goude ar pellgas, pa n'en deus kavet hini ebet Immich.

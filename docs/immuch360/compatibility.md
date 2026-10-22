@@ -322,7 +322,7 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 
 ### DJI drones and the DJI Neo 2
 
-- Experimental, on Android phones and tablets only, behind Settings, Advanced, "DJI drones (experimental)"; not in the Quest build, not with the remote control layout of a TV, not on iPhone, iPad or computers: [DJI drones](user-guide.md#dji-drones-photos-and-videos-over-usb-experimental).
+- Experimental, on Android phones and tablets only, on by default (Settings, Advanced, "DJI drones (experimental)" turns it off); not in the Quest build, not with the remote control layout of a TV, not on iPhone, iPad or computers: [DJI drones](user-guide.md#dji-drones-photos-and-videos-over-usb-experimental).
 - Not checked with a real drone yet: an Android phone emulator with synthetic files stood in for it, so a USB drive, a device in File transfer mode (MTP) and an unplug in the middle of a large file are untested: [DJI drones](user-guide.md#dji-drones-photos-and-videos-over-usb-experimental).
 - What the app knows of the DJI Neo 2, from DJI's specifications and manual and from owners' reports, not checked on the drone yet:
   - No panorama or sphere mode: its photos are JPEG files of 12 MP, 4000x3000 (4:3) or 4000x2250 (16:9), without RAW; the recognition of drone spheres serves the other DJI drones, and spheres stitched by hand from Neo 2 shots.

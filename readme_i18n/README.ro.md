@@ -233,7 +233,7 @@ Importați fotografiile și videoclipurile unei drone DJI prin USB, direct pe se
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. În Setări, Avansat, activați "Drone DJI (experimental)". O dală "Dronă DJI" apare în Librărie, Partajări de rețea.
+1. O dală "Dronă DJI" se află în Librărie, Partajări de rețea: "Drone DJI (experimental)" este activat implicit în Setări, Avansat. Dezactivați-l acolo pentru a ascunde dala.
 2. Conectați drona (un Neo 2 poate rămâne oprit), controlerul ei sau un cititor de carduri la telefon cu un cablu de date USB-C. Pe pagina Dronă DJI, atingeți "Alegeți drona sau cardul", alegeți-o în meniul lateral al selectorului, deschideți dosarul ei DCIM sau păstrați întreaga unitate, apoi "Folosiți acest dosar" și Permiteți.
 3. Pagina listează fotografiile și videoclipurile pe zile, fără fișierele însoțitoare .LRF, .SRT, .THM și .m4a. Atingeți "Selectați toate cele noi", apoi "Încarcă în Immich"; fișierele trimise anterior poartă un semn de nor și sunt omise. "Păstrați pe dispozitiv" copiază în schimb fișierele în galeria telefonului, în albumul "Immuch360 import".
 4. Pentru ca un videoclip să ajungă pe hartă, activați Subtitrări video în DJI Fly (modul video, Setări, Cameră) înainte de zbor: drona scrie atunci un fișier .SRT lângă fiecare videoclip, aplicația citește locul din el și îl setează pe serverul dvs. după încărcare, atunci când Immich nu a găsit niciunul.

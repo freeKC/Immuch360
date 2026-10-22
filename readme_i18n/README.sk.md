@@ -233,7 +233,7 @@ Importujte fotky a videá z dronu DJI cez USB priamo na váš server Immich: pri
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. V Nastaveniach, Pokročilé, zapnite „DJI drony (experimentálne)“. V Knižnica, Sieťové úložiská sa objaví dlaždica „Dron DJI“.
+1. V Knižnica, Sieťové úložiská je dlaždica „Dron DJI“: nastavenie „DJI drony (experimentálne)“ je v Nastaveniach, Pokročilé predvolene zapnuté. Ak chcete dlaždicu skryť, vypnite ho tam.
 2. Pripojte dron (Neo 2 môže zostať vypnutý), jeho ovládač alebo čítačku kariet k telefónu dátovým káblom USB-C. Na stránke dronu DJI ťuknite na „Vybrať dron alebo kartu“, vyberte ho v bočnej ponuke výberu súborov, otvorte jeho priečinok DCIM alebo ponechajte celú jednotku, potom „Použiť tento priečinok“ a Povoliť.
 3. Stránka zobrazí fotky a videá podľa dní, bez vedľajších súborov .LRF, .SRT, .THM a .m4a. Ťuknite na „Vybrať všetky nové“, potom na „Nahrať do Immich“; súbory odoslané skôr majú značku obláčika a preskočia sa. „Ponechať v zariadení“ namiesto toho skopíruje súbory do galérie telefónu, do albumu „Immuch360 import“.
 4. Aby sa video objavilo na mape, pred letom zapnite Video Subtitles v DJI Fly (režim videa, Settings, Camera): dron potom zapíše súbor .SRT vedľa každého videa, aplikácia z neho prečíta miesto a po nahratí ho nastaví na vašom serveri, ak Immich žiadne nenašiel.

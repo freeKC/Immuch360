@@ -233,7 +233,7 @@ Impordi DJI drooni fotod ja videod USB kaudu otse oma Immich-serverisse: ühenda
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Seadetes, Täpsemad valikud, lülita sisse "DJI droonid (katseline)". Jaotisesse Kogu, Võrgujaod ilmub paan "DJI droon".
+1. Jaotises Kogu, Võrgujaod on paan "DJI droon": "DJI droonid (katseline)" on Seadetes, Täpsemad valikud vaikimisi sisse lülitatud. Paani peitmiseks lülita see seal välja.
 2. Ühenda droon (Neo 2 võib jääda välja lülitatuks), selle kaugjuhtimispult või kaardilugeja telefoniga USB-C andmekaabli abil. DJI drooni lehel puuduta "Vali droon või kaart", vali see valija külgmenüüs, ava selle kaust DCIM või jäta kogu ketas, seejärel "Kasuta seda kausta" ja Luba.
 3. Leht loetleb fotod ja videod päevade kaupa, ilma .LRF, .SRT, .THM ja .m4a kõrvalfailideta. Puuduta "Vali kõik uued", seejärel "Laadi Immich'isse üles"; varem saadetud failidel on pilvemärk ja need jäetakse vahele. "Hoia seadmes" kopeerib failid hoopis telefoni galeriisse, albumisse "Immuch360 import".
 4. Et video jõuaks kaardile, lülita enne lendamist DJI Fly rakenduses sisse videosubtiitrid (videorežiimis Settings, Camera, Video Subtitles): droon kirjutab siis iga video kõrvale .SRT faili, rakendus loeb sealt asukoha ja määrab selle pärast üleslaadimist sinu serveris, kui Immich ise ühtegi ei leidnud.

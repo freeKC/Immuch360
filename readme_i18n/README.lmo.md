@@ -233,7 +233,7 @@ Importa i foto e i video d'on dron DJI per USB, dritt sul tò server Immich: tac
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. In Setting, Avanzaa, impizza «Dron DJI (esperimental)». On riquader «Dron DJI» el compar in Biblioteca, Condivision de ret.
+1. On riquader «Dron DJI» l'è in Biblioteca, Condivision de ret: «Dron DJI (esperimental)» l'è impizzaa de default in Setting, Avanzaa. Smorzel lì per scond el riquader.
 2. Taca el dron (on Neo 2 el pò restà smorzaa), el soeu radiocomand o on lettor de scheed al telefon con on cavo de dà USB-C. In la pagina Dron DJI, tocca «Sceglie el dron o la scheda», sceglel in del menù de fianch del selettor, derv la soa cartella DCIM o tegn tutt el disch, poeu «Dovra sta cartella» e Permett.
 3. La pagina la lista i foto e i video per dì, senza i file de contorna .LRF, .SRT, .THM e .m4a. Tocca «Selezionna tucc i noeuv», poeu «Carega su Immich»; i file mandaa prima gh'hann on segn de nivola e vegnen saltaa. «Tegn sul dispositiv» invece el copia i file in la galeria del telefon, in l'album «Immuch360 import».
 4. Perché on video el vaga su la mappa, impizza Video Subtitles in DJI Fly (modalità video, Settings, Camera) prima de volà: allora el dron el scriv on file .SRT a fianch de ogni video, l'app la legg el post de lì e la le mett sul tò server dopo el caregament, quand Immich l'ha trovaa nient.

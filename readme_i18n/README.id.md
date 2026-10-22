@@ -233,7 +233,7 @@ Impor foto dan video drone DJI melalui USB, langsung ke server Immich Anda: colo
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Di Pengaturan, Lanjutan, aktifkan "Drone DJI (eksperimental)". Ubin "Drone DJI" muncul di Pustaka, Berbagi jaringan.
+1. Ubin "Drone DJI" ada di Pustaka, Berbagi jaringan: "Drone DJI (eksperimental)" aktif secara default di Pengaturan, Lanjutan. Nonaktifkan di sana untuk menyembunyikan ubin.
 2. Colokkan drone (Neo 2 boleh tetap mati), pengendalinya, atau pembaca kartu ke ponsel dengan kabel data USB-C. Di halaman Drone DJI, ketuk "Pilih drone atau kartu", pilih perangkat itu di menu samping pemilih, buka folder DCIM-nya atau gunakan seluruh drive, lalu "Gunakan folder ini" dan Izinkan.
 3. Halaman ini menampilkan foto dan video per hari, tanpa berkas pendamping .LRF, .SRT, .THM, dan .m4a. Ketuk "Pilih semua yang baru", lalu "Unggah ke Immich"; berkas yang sudah dikirim sebelumnya diberi tanda awan dan dilewati. "Simpan di perangkat" justru menyalin berkas ke galeri ponsel, di album "Immuch360 import".
 4. Agar video muncul di peta, aktifkan Video Subtitles (subtitle video) di DJI Fly (mode video, Pengaturan, Kamera) sebelum terbang: drone kemudian menulis berkas .SRT di samping setiap video, aplikasi membaca lokasi darinya dan menetapkannya di server Anda setelah unggahan, jika Immich tidak menemukannya.

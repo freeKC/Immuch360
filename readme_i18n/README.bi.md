@@ -233,7 +233,7 @@ Tekem ol foto mo video blong wan DJI dron tru USB, stret i go long Immich server
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Long Seting, Advans, tanem on "DJI dron (eksperimentol)". Wan "DJI dron" tael i kamaot long Laebri, Netwok sea.
+1. Wan "DJI dron" tael i stap long Laebri, Netwok sea: "DJI dron (eksperimentol)" i on finis long Seting, Advans. Tanem i of long ples ia blong haedem tael.
 2. Plagem dron (wan Neo 2 i save stap of), kontrola blong hem o wan kad rida long fon wetem wan USB-C data kebol. Long DJI dron pej, tajem "Jusum dron o kad", jusum hem long saed menu blong pika, openem DCIM folda blong hem o kipim ful draev, afta "Yusum folda ia" mo Alaodem.
 3. Pej i soem ol foto mo video long evri dei, wetaot ol saed fael .LRF, .SRT, .THM mo .m4a. Tajem "Jusum evri niu", afta "Aplod long Immich"; ol fael we oli sendem bifo oli gat wan klaod mak mo app i livim olgeta. "Kipim long divaes" i kopi ol fael i go long laebri blong fon, long albam "Immuch360 import".
 4. Blong wan video i go long map, tanem on Video Subtitles long DJI Fly (video mod, Settings, Camera) bifo yu flae: dron bambae i raetem wan .SRT fael saed long evri video, app i ridim ples from hem mo i putum long server blong yu afta aplod, sapos Immich i no faenem wan ples.

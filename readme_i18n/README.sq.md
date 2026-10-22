@@ -233,7 +233,7 @@ Importoni fotot dhe videot e një droni DJI përmes USB, drejtpërdrejt në serv
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Te Cilësimet, Të avancuara, aktivizoni "Dronët DJI (eksperimentale)". Një pllakë "Dron DJI" shfaqet te Biblioteka, Ndarjet e rrjetit.
+1. Një pllakë "Dron DJI" gjendet te Biblioteka, Ndarjet e rrjetit: "Dronët DJI (eksperimentale)" është aktiv si parazgjedhje te Cilësimet, Të avancuara. Çaktivizojeni atje për ta fshehur pllakën.
 2. Lidhni dronin (një Neo 2 mund të mbetet i fikur), kontrolluesin e tij ose një lexues kartash me telefonin me një kabllo të dhënash USB-C. Në faqen e dronit DJI, prekni "Zgjidh dronin ose kartën", zgjidheni në menynë anësore të zgjedhësit, hapni dosjen e tij DCIM ose mbani të gjithë diskun, pastaj "Përdor këtë dosje" dhe Lejo.
 3. Faqja liston fotot dhe videot sipas ditës, pa skedarët anësorë .LRF, .SRT, .THM dhe .m4a. Prekni "Zgjidh të gjithë të rinjtë", pastaj "Ngarko në Immich"; skedarët e dërguar më parë mbajnë një shenjë reje dhe anashkalohen. "Mbaj në pajisje" në vend të kësaj kopjon skedarët në galerinë e telefonit, në albumin "Immuch360 import".
 4. Që një video të dalë në hartë, aktivizoni Video Subtitles në DJI Fly (modaliteti video, Settings, Camera) para se të fluturoni: droni pastaj shkruan një skedar .SRT pranë çdo videoje, aplikacioni lexon vendin prej tij dhe e vendos në serverin tuaj pas ngarkimit, kur Immich nuk ka gjetur asnjë.

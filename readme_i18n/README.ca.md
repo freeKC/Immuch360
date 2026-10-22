@@ -233,7 +233,7 @@ Importa les fotos i els vídeos d'un dron DJI per USB, directament al teu servid
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. A Configuració, Avançat, activa "DJI drones (experimental)". Apareix una fitxa "DJI drone" a Biblioteca, Recursos compartits de xarxa.
+1. Hi ha una fitxa "DJI drone" a Biblioteca, Recursos compartits de xarxa: "DJI drones (experimental)" està activat per defecte a Configuració, Avançat. Desactiva-ho allà per amagar la fitxa.
 2. Connecta el dron (un Neo 2 pot estar apagat), el seu comandament o un lector de targetes al telèfon amb un cable de dades USB-C. A la pàgina del dron DJI, toca "Choose the drone or the card", tria'l al menú lateral del selector, obre la seva carpeta DCIM o conserva tota la unitat, i després "Use this folder" i Allow.
 3. La pàgina llista les fotos i els vídeos per dia, sense els fitxers auxiliars .LRF, .SRT, .THM i .m4a. Toca "Select all new" i després "Upload to Immich"; els fitxers enviats abans porten una marca de núvol i s'ometen. "Keep on the device" copia en canvi els fitxers a la galeria del telèfon, a l'àlbum "Immuch360 import".
 4. Perquè un vídeo aparegui al mapa, activa Video Subtitles a DJI Fly (mode vídeo, Settings, Camera) abans de volar: llavors el dron escriu un fitxer .SRT al costat de cada vídeo, l'aplicació en llegeix la ubicació i l'assigna al teu servidor després de la pujada, quan Immich no n'ha trobat cap.

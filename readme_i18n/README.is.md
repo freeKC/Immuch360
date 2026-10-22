@@ -233,7 +233,7 @@ Fluttu inn myndir og myndskeið DJI dróna yfir USB, beint á Immich vélþjóni
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Í Stillingum, Ítarlegt, kveiktu á „DJI drónar (tilraun)“. Reitur merktur „DJI dróni“ birtist í Safn, Netdeildir.
+1. Reitur merktur „DJI dróni“ er í Safn, Netdeildir: sjálfgefið er kveikt á „DJI drónar (tilraun)“ í Stillingum, Ítarlegt. Slökktu á því þar til að fela reitinn.
 2. Tengdu drónann (Neo 2 má vera slökktur), stjórntæki hans eða kortalesara við símann með USB-C gagnasnúru. Á DJI dróna síðunni skaltu ýta á „Velja drónann eða kortið“, velja það í hliðarvalmynd veljarans, opna DCIM möppuna þess eða halda öllu drifinu, síðan „Nota þessa möppu“ og Leyfa.
 3. Síðan sýnir myndirnar og myndskeiðin eftir dögum, án .LRF, .SRT, .THM og .m4a hliðarskránna. Ýttu á „Velja allt nýtt“, síðan „Hlaða upp í Immich“; skrár sem voru sendar áður bera skýjamerki og er sleppt. „Geyma á tækinu“ afritar skrárnar í staðinn í myndasafn símans, í albúmið „Immuch360 import“.
 4. Til að myndskeið lendi á kortinu skaltu kveikja á Video Subtitles (myndskeiðstextum) í DJI Fly (myndskeiðshamur, Settings, Camera) áður en þú flýgur: dróninn skrifar þá .SRT skrá við hliðina á hverju myndskeiði, forritið les staðsetninguna úr henni og setur hana á vélþjóninn þinn eftir upphleðsluna, þegar Immich fann enga.

@@ -233,7 +233,7 @@ Importe as fotos e os vídeos de um drone DJI por USB, direto para o seu servido
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Em Configurações, Avançado, ative "Drones DJI (experimental)". Um bloco "Drone DJI" aparece em Biblioteca, Compartilhamentos de rede.
+1. Um bloco "Drone DJI" fica em Biblioteca, Compartilhamentos de rede: "Drones DJI (experimental)" vem ativado por padrão em Configurações, Avançado. Desative-o lá para ocultar o bloco.
 2. Conecte o drone (um Neo 2 pode ficar desligado), o controle dele ou um leitor de cartões ao celular com um cabo de dados USB-C. Na página Drone DJI, toque em "Escolher o drone ou o cartão", escolha-o no menu lateral do seletor, abra a pasta DCIM dele ou mantenha a unidade inteira, depois "Usar esta pasta" e Permitir.
 3. A página lista as fotos e os vídeos por dia, sem os arquivos auxiliares .LRF, .SRT, .THM e .m4a. Toque em "Selecionar todos os novos" e depois em "Enviar para o Immich"; os arquivos enviados antes têm uma marca de nuvem e são ignorados. "Manter no dispositivo" copia os arquivos para a galeria do celular em vez disso, no álbum "Immuch360 import".
 4. Para um vídeo aparecer no mapa, ative as Legendas de vídeo no DJI Fly (modo de vídeo, Configurações, Câmera) antes de voar: o drone então grava um arquivo .SRT ao lado de cada vídeo, o app lê o local dele e o define no seu servidor depois do envio, quando o Immich não encontrou nenhum.

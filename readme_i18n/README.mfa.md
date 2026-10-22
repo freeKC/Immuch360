@@ -233,7 +233,7 @@ Import gambo nga video dron DJI lalu USB, terus ko server Immich demo: cucuk dro
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Dale Tetapa, Lanju, hidupke "Dron DJI (eksperimen)". Jubin "Dron DJI" keluar dale Pustako, Kongsi rangkaie.
+1. Jubin "Dron DJI" ado dale Pustako, Kongsi rangkaie: "Dron DJI (eksperimen)" doh hidup sejak mulo dale Tetapa, Lanju. Matike dio situ kalu nok sorok jubin tu.
 2. Cucuk dron (Neo 2 leh kekal tutup), alat kawala dio ke pembaco kad ko telefon nga kabel data USB-C. Kat muko dron DJI, ketuk "Pilih dron ke kad", pilih dio dale menu tepi pemilih, bukak folder DCIM dio ke simpan seluruh pemacu, lepah tu "Guno folder ni" nga Bena.
 3. Muko tu senarai gambo nga video ikut hari, tanpo fail sampinga .LRF, .SRT, .THM nga .m4a. Ketuk "Pilih sumo hok baru", lepah tu "Muat naik ko Immich"; fail hok doh dihanta dulu ado tando awan nga dilangkau. "Simpan kat peranti" salin fail ko galeri telefon pulok, dale album "Immuch360 import".
 4. Supayo video masuk peta, hidupke Video Subtitles dale DJI Fly (mod video, Settings, Camera) sebelum demo terbang: dron lepah tu tulih fail .SRT sebeloh tiap video, aplikasi baco tempat dari dio nga letak kat server demo lepah muat naik, bilo Immich tak jumpo.

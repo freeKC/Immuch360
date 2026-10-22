@@ -22,7 +22,7 @@ State on 22 October 2026: build 27 (version 3.3.0-rc.0, build number 3030025) fo
 
 - **Shipped**: in the public builds, and run on a device or on an emulator of that platform.
 - **Shipped, not checked on a device**: in the builds, but covered by automated tests only, checked on a computer against a real server, or run on another platform only.
-- **Experimental**: shipped behind a setting that says so.
+- **Experimental**: shipped with a setting that says so, on by default; turning it off hides the function.
 - **Preview**: Immuch360 Desktop on Windows and Linux. The whole desktop app is a preview, and on Linux an early one.
 - **Run on the CI only**: macOS, where the app was started and checked by the project's CI on its Mac runner, never on a real Mac.
 - **Builds on CI only**: the code is there and compiles on the project's CI, but it was not checked on that system yet.
@@ -54,7 +54,7 @@ A store copy can be older than the build described here: check the build number 
 - `yes`: inherited from Immich, or there from the first build, and in use.
 - `yes (b16)`: shipped from build 16 and run on that kind of device or its emulator.
 - `untested (b19)`: in the builds from build 19, with no recorded run on that kind of device.
-- `experimental (b5)`: shipped from build 5 behind an experimental setting.
+- `experimental (b5)`: shipped from build 5 with an experimental setting, on by default.
 - `preview (d3)`: in Immuch360 Desktop from desktop build 3; on Linux, also run there (under WSLg or in the CI's containers).
 - `CI run (d6)`: in the macOS app from desktop build 6, and run by the self check on the CI's Mac, never on a real Mac.
 - `CI build only`: in the sources and built by the CI, not checked on that system yet (on Linux the CI also starts the app, without a real server, share or camera).
@@ -192,7 +192,7 @@ The marks follow the levels above: `yes` is shipped, `untested` is shipped but n
 
 ### DJI drones over USB (b27, experimental)
 
-- **Where**: Settings, Advanced, "DJI drones (experimental)", off by default, on Android phones and tablets only (not in the Quest build, not with the remote control layout); then the "DJI drone" tile of Network shares, under "Share this phone on the network".
+- **Where**: the "DJI drone" tile of Network shares, under "Share this phone on the network", on Android phones and tablets only (not in the Quest build, not with the remote control layout). Settings, Advanced, "DJI drones (experimental)" is on by default (`djiImportEnabled`); turned off, it hides the tile.
 - **Plug in**: a drone, its controller or a card reader on a USB-C cable ("A Neo 2 can stay off"), then "Choose the drone or the card": the folder picker of the system, which reaches a USB drive or a card (`ExternalStorageProvider`) and a device in File transfer mode (`MtpDocumentsProvider`, a DJI RC 2 or another phone) with no permission; "Used before" keeps the last five folders, with their read grant, and Forget gives the grant back. A small Kotlin bridge (`documenttree/DocumentTreePlugin.kt`, Pigeon `DocumentTreeApi`) lists and reads, at a position on a USB drive, from the start only on a device that cannot seek; the folder becomes a source of the share browser (`DocumentTreeFileSystem`), so its tiles, viewers, media bridge, "Upload to Immich" and "Sent to Immich earlier" are those of the shares.
 - **The page**: photos and videos by day; the .LRF, .LRV, .SRT, .THM and .m4a files attached to their video and never listed (a video tile takes its frame from the .LRF); a sphere with its source shots of `PANORAMA/` behind a "+N" chip; a crossed speaker on a clip whose sound the phone recorded apart ("The sound of this clip was recorded by the phone and is in a separate file..."); "Not accepted by Immich" on .osv, .360 and .36p files; a note when a device in File transfer mode was still sending its list, with Refresh.
 - **Upload to Immich**: "Select all new" (the source shots and the refused files left out), then the upload sheet: the count and the size, "Tag drone spheres as 360° for Immich" (off by default: the photo goes unchanged with a GPano XMP sidecar, `gpano_sidecar.dart`), "Videos with flight data are placed on the map", a warning above 500 MB on mobile data; the screen stays on, files go one at a time, and the summary counts the spheres tagged, the videos placed, the places still waiting, the files already on the server, in the Immich trash or refused. The place of a video comes from the first position of its .SRT (`dji_srt.dart`, read once, in steps), set through the bulk update of the API when the server found none, after polling the asset for up to 90 seconds; a place not set yet is kept and set when a share or the page opens again (`video_location.service.dart`). A file is "Sent to Immich earlier" by its name and size whatever the cable or reader (the DJI name holds the date), a file in the Immich trash gets a bin mark, and an unplugged drone stops only its own upload ("The drone or card was unplugged").

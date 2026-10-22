@@ -233,7 +233,7 @@ Importējiet DJI drona foto un video caur USB tieši uz savu Immich serveri: pie
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Sadaļā Iestatījumi, Papildu ieslēdziet "DJI droni (eksperimentāls)". Sadaļā Bibliotēka, Tīkla koplietojumi parādās flīze "DJI drons".
+1. Sadaļā Bibliotēka, Tīkla koplietojumi ir flīze "DJI drons": "DJI droni (eksperimentāls)" sadaļā Iestatījumi, Papildu pēc noklusējuma ir ieslēgts. Lai paslēptu flīzi, izslēdziet to tur.
 2. Pievienojiet dronu (Neo 2 var palikt izslēgts), tā vadības pulti vai karšu lasītāju tālrunim ar USB-C datu kabeli. DJI drona lapā pieskarieties "Izvēlēties dronu vai karti", izvēlieties to atlasītāja sānu izvēlnē, atveriet tā DCIM mapi vai paturiet visu disku, tad "Izmantot šo mapi" un Atļaut.
 3. Lapa uzskaita foto un video pa dienām, bez .LRF, .SRT, .THM un .m4a palīgfailiem. Pieskarieties "Atlasīt visus jaunos", tad "Augšupielādēt uz Immich"; iepriekš nosūtītie faili ir ar mākoņa zīmi un tiek izlaisti. "Paturēt ierīcē" tā vietā kopē failus uz tālruņa galeriju, albumā "Immuch360 import".
 4. Lai video nonāktu kartē, pirms lidojuma ieslēdziet Video Subtitles lietotnē DJI Fly (video režīms, Settings, Camera): tad drons blakus katram video ieraksta .SRT failu, lietotne no tā nolasa vietu un pēc augšupielādes iestata to jūsu serverī, ja Immich to nav atradis.

@@ -233,7 +233,7 @@ Importéier d'Fotoen a Videoe vun enger DJI-Drohn iwwer USB, direkt op däin Imm
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. An den Astellungen, Erweidert, schalt „DJI-Drohnen (experimentell)“ un. Eng Kachel „DJI-Drohn“ erschéngt an der Bibliothéik, Netzwierkfreigaben.
+1. Eng Kachel „DJI-Drohn“ ass an der Bibliothéik, Netzwierkfreigaben: „DJI-Drohnen (experimentell)“ ass an den Astellungen, Erweidert standardméisseg ugeschalt. Schalt et do aus, fir d'Kachel ze verstoppen.
 2. Steck d'Drohn (eng Neo 2 ka aus bleiwen), hire Controller oder e Kaartelieser mat engem USB-C-Datekabel un den Handy. Op der Säit DJI-Drohn, tipp op „D'Drohn oder d'Kaart auswielen“, wiel se am Säitemenü vum Auswieler, maach hiren DCIM-Dossier op oder behal dat ganzt Lafwierk, dann „Dësen Dossier benotzen“ an Erlaben.
 3. D'Säit lëscht d'Fotoen a Videoen no Dag op, ouni d'Niewendateien .LRF, .SRT, .THM a .m4a. Tipp op „All nei auswielen“, dann „Op Immich eroplueden“; déi virdru geschéckten Dateien droen e Wollekenzeechen a ginn iwwersprong. „Um Apparat behalen“ kopéiert d'Dateien amplaz an d'Galerie vum Handy, an den Album „Immuch360 import“.
 4. Fir datt e Video op der Kaart landt, schalt virum Fluch Video Subtitles an DJI Fly un (Videomodus, Settings, Camera): d'Drohn schreift dann eng .SRT-Datei nieft all Video, d'App liest d'Plaz doraus a setzt se no dem Eroplueden op dengem Server, wann Immich keng fonnt huet.

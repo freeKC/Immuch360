@@ -233,7 +233,7 @@ Importer bileta og videoane frå ein DJI-drone over USB, rett til Immich-tenaren
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. I Innstillingar, Avansert, slå på «DJI-dronar (eksperimentelt)». Ei «DJI-drone»-flis kjem fram i Bibliotek, Nettverksdelingar.
+1. Ei «DJI-drone»-flis ligg i Bibliotek, Nettverksdelingar: «DJI-dronar (eksperimentelt)» er slått på som standard i Innstillingar, Avansert. Slå det av der for å gøyme flisa.
 2. Kopla dronen (ein Neo 2 kan vere avslått), kontrollaren hans eller ein kortlesar til telefonen med ein USB-C-datakabel. På DJI-drone-sida, trykk på «Vel dronen eller kortet», vel han i sidemenyen til veljaren, opne DCIM-mappa hans eller ta heile lagringseininga, deretter «Bruk denne mappa» og Tillat.
 3. Sida listar bileta og videoane dag for dag, utan sidefilene .LRF, .SRT, .THM og .m4a. Trykk på «Vel alle nye», deretter «Last opp til Immich»; filene som er sende før, har eit skymerke og blir hoppa over. «Behald på eininga» kopierer i staden filene til galleriet til telefonen, i albumet «Immuch360 import».
 4. For at ein video skal hamne på kartet, slå på Video Subtitles i DJI Fly (videomodus, Settings, Camera) før du flyg: dronen skriv då ei .SRT-fil ved sida av kvar video, appen les staden frå ho og set han på tenaren din etter opplastinga, når Immich ikkje fann nokon.

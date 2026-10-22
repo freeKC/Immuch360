@@ -233,7 +233,7 @@ Kter tiwlafin d tividyutin n udrun DJI s USB, srid ɣer uqeddac-ik Immich: qqen 
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Deg Iɣewwaren, Leqqayen, rmed "Idrunen DJI (alugen)". Aferdis "Adrun DJI" ad d-iban deg Tamkarḍit, Ifuyla n uẓeṭṭa.
+1. Aferdis "Adrun DJI" yella deg Tamkarḍit, Ifuyla n uẓeṭṭa: "Idrunen DJI (alugen)" yermed s wudem amezwer deg Iɣewwaren, Leqqayen. Sens-it dinna akken ad teffreḍ aferdis.
 2. Qqen adrun (Neo 2 yezmer ad yeqqim yensa), tilikumand-is neɣ ameɣri n tkarḍiwin ɣer tilifun s ukabel n yisefka USB-C. Deg usebter Adrun DJI, sit ɣef "Fren adrun neɣ takarḍa", fren-it deg wumuɣ n tama n umefran, ldi akaram-is DCIM neɣ eǧǧ aḍebsi meṛṛa, sinna "Seqdec akaram-agi" d Sireg.
 3. Asebter yesskan-d tiwlafin d tividyutin s wass, war ifuyla n tama .LRF, .SRT, .THM d .m4a. Sit ɣef "Fren akk imaynuten", sinna "Sali ɣer Immich"; ifuyla yettwaznen uqbel sɛan tacreḍt n usigna yerna ttwazeglen. "Eǧǧ-it ɣef ibenk" yesneɣlay ifuyla ɣer ugraw n tilifun deg wadeg n waya, deg walbum "Immuch360 import".
 4. Akken ad teqqim tvidyut ɣef tkarḍa n tmurt, rmed iduzwilen n tvidyut (Video Subtitles) deg DJI Fly (askar n tvidyut, Iɣewwaren, Takamirat) uqbel ad tafgeḍ: adrun ad yaru afaylu .SRT ɣer tama n yal tavidyut, asnas ad d-yeqqar seg-s adig sinna ad t-yesbadu ɣef uqeddac-ik seld asali, ma yella Immich ur d-yufi ara adig.

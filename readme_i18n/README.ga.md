@@ -233,7 +233,7 @@ Iompórtáil grianghraif agus físeáin dróin DJI thar USB, díreach chuig d'fh
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. In Socruithe, Ardleibhéil, cas air “Dróin DJI (turgnamhach)”. Feictear tíl “Drón DJI” i Leabharlann, Comhroinnt líonra.
+1. Tá tíl “Drón DJI” i Leabharlann, Comhroinnt líonra: tá “Dróin DJI (turgnamhach)” casta air de réir réamhshocraithe i Socruithe, Ardleibhéil. Cas as ansin é chun an tíl a cheilt.
 2. Ceangail an drón (is féidir le Neo 2 fanacht múchta), a rialtóir nó léitheoir cártaí leis an bhfón le cábla sonraí USB-C. Ar leathanach Drón DJI, tapáil “Roghnaigh an drón nó an cárta”, roghnaigh é i roghchlár taoibh an roghnóra, oscail a fhillteán DCIM nó coinnigh an tiomántán ar fad, ansin “Úsáid an fillteán seo” agus Ceadaigh.
 3. Liostaíonn an leathanach na grianghraif agus na físeáin de réir lae, gan na comhaid taoibh .LRF, .SRT, .THM agus .m4a. Tapáil “Roghnaigh gach ceann nua”, ansin “Uaslódáil chuig Immich”; tá marc scamaill ar na comhaid a seoladh roimhe agus fágtar ar lár iad. Cóipeálann “Coinnigh ar an ngléas” na comhaid chuig gailearaí an fhóin ina ionad sin, san albam “Immuch360 import”.
 4. Chun go dtiocfaidh físeán ar an léarscáil, cas air Video Subtitles in DJI Fly (mód físe, Socruithe, Ceamara) sula n-eitlíonn tú: scríobhann an drón ansin comhad .SRT in aice le gach físeán, léann an aip an áit uaidh agus socraíonn sí í ar d'fhreastalaí tar éis na huaslódála, nuair nár aimsigh Immich ceann.

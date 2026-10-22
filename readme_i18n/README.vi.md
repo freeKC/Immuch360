@@ -233,7 +233,7 @@ Nhập ảnh và video từ drone DJI qua USB, thẳng lên máy chủ Immich c�
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Trong Cài đặt, Nâng cao, bật "Drone DJI (thử nghiệm)". Một ô "Drone DJI" xuất hiện trong Thư viện, Chia sẻ mạng.
+1. Có một ô "Drone DJI" trong Thư viện, Chia sẻ mạng: "Drone DJI (thử nghiệm)" được bật theo mặc định trong Cài đặt, Nâng cao. Tắt tùy chọn này ở đó để ẩn ô.
 2. Cắm drone (Neo 2 có thể vẫn tắt), bộ điều khiển của nó hoặc đầu đọc thẻ vào điện thoại bằng cáp dữ liệu USB-C. Trên trang Drone DJI, nhấn "Chọn drone hoặc thẻ", chọn nó trong menu bên của trình chọn, mở thư mục DCIM của nó hoặc giữ cả ổ, rồi nhấn "Sử dụng thư mục này" và Cho phép.
 3. Trang liệt kê ảnh và video theo ngày, không kèm các tệp phụ .LRF, .SRT, .THM và .m4a. Nhấn "Chọn tất cả tệp mới", rồi "Tải lên Immich"; các tệp đã gửi trước đó mang dấu đám mây và được bỏ qua. "Giữ trên thiết bị" thì sao chép các tệp vào thư viện ảnh của điện thoại, trong album "Immuch360 import".
 4. Để video hiện trên bản đồ, hãy bật phụ đề video (Video Subtitles) trong DJI Fly (chế độ video, Cài đặt, Máy ảnh) trước khi bay: khi đó drone sẽ ghi một tệp .SRT bên cạnh mỗi video, ứng dụng đọc địa điểm từ tệp đó và đặt nó trên máy chủ của bạn sau khi tải lên, nếu Immich không tìm thấy địa điểm nào.

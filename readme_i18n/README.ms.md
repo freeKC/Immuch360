@@ -233,7 +233,7 @@ Import foto dan video dron DJI melalui USB, terus ke pelayan Immich anda: sambun
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Dalam Tetapan, Lanjutan, hidupkan "Dron DJI (eksperimental)". Jubin "Dron DJI" muncul dalam Pustaka, Perkongsian rangkaian.
+1. Jubin "Dron DJI" ada dalam Pustaka, Perkongsian rangkaian: "Dron DJI (eksperimental)" dihidupkan secara lalai dalam Tetapan, Lanjutan. Matikan di situ untuk menyembunyikan jubin.
 2. Sambungkan dron (Neo 2 boleh kekal dimatikan), pengawalnya atau pembaca kad ke telefon dengan kabel data USB-C. Pada halaman Dron DJI, ketik "Pilih dron atau kad", pilihnya dalam menu sisi pemilih, buka folder DCIM-nya atau kekalkan keseluruhan pemacu, kemudian "Guna folder ini" dan Benarkan.
 3. Halaman menyenaraikan foto dan video mengikut hari, tanpa fail sampingan .LRF, .SRT, .THM dan .m4a. Ketik "Pilih semua yang baharu", kemudian "Muat naik ke Immich"; fail yang dihantar sebelum ini membawa tanda awan dan dilangkau. "Simpan pada peranti" sebaliknya menyalin fail ke galeri telefon, dalam album "Immuch360 import".
 4. Supaya video muncul pada peta, hidupkan Video Subtitles dalam DJI Fly (mod video, Tetapan, Kamera) sebelum anda terbang: dron kemudian menulis fail .SRT di sebelah setiap video, aplikasi membaca tempat daripadanya dan menetapkannya pada pelayan anda selepas muat naik, apabila Immich tidak menemui sebarang tempat.

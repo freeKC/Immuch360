@@ -233,7 +233,7 @@ Bir DJI dronunun fotoğraflarını ve videolarını USB üzerinden doğrudan Imm
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Ayarlar, Gelişmiş bölümünde "DJI dronları (deneysel)" seçeneğini açın. Kitaplık, Ağ paylaşımları içinde bir "DJI dronu" kutucuğu belirir.
+1. Kitaplık, Ağ paylaşımları içinde bir "DJI dronu" kutucuğu bulunur: Ayarlar, Gelişmiş bölümündeki "DJI dronları (deneysel)" seçeneği varsayılan olarak açıktır. Kutucuğu gizlemek için onu orada kapatın.
 2. Dronu (bir Neo 2 kapalı kalabilir), kumandasını veya bir kart okuyucuyu bir USB-C veri kablosuyla telefona takın. DJI dronu sayfasında "Dronu veya kartı seçin" düğmesine dokunun, seçicinin yan menüsünde onu seçin, DCIM klasörünü açın veya tüm sürücüyü bırakın, ardından "Bu klasörü kullan" ve İzin ver.
 3. Sayfa fotoğrafları ve videoları gün gün, .LRF, .SRT, .THM ve .m4a yan dosyaları olmadan listeler. "Tüm yenileri seç" düğmesine, ardından "Immich'e yükle" düğmesine dokunun; daha önce gönderilen dosyalar bir bulut işareti taşır ve atlanır. "Cihazda tut" ise dosyaları telefonun galerisine, "Immuch360 import" albümüne kopyalar.
 4. Bir videonun haritaya düşmesi için uçmadan önce DJI Fly'da (video modu, Settings, Camera) Video Subtitles'ı açın: dron böylece her videonun yanına bir .SRT dosyası yazar, uygulama konumu buradan okur ve Immich bir konum bulamadığında yüklemeden sonra bunu sunucunuzda ayarlar.

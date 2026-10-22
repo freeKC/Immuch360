@@ -233,7 +233,7 @@ Importier d Foto und Video vo ere DJI-Drohne über USB, direkt uf dis Immich-Ser
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. I de Iistellige, Erwiitert, schalt «DJI-Drohne (experimentell)» ii. E Kachle «DJI-Drohne» erschiint i Bibliothek, Netzwerkfreigabe.
+1. E Kachle «DJI-Drohne» isch i Bibliothek, Netzwerkfreigabe: «DJI-Drohne (experimentell)» isch i de Iistellige, Erwiitert standardmässig iigschaltet. Schalt s dört uus, zum d Kachle verstecke.
 2. Steck d Drohne (e Neo 2 cha uus bliibe), ihri Fernsteuerig oder en Charteläser mit emne USB-C-Datechabel as Handy. Uf de Siite DJI-Drohne tippsch uf «Drohne oder Charte wähle», wählsch si im Siitemenü vom Uswahl-Dialog, machsch ihre DCIM-Ordner uf oder bhaltsch s ganze Laufwerk, dänn «Diesen Ordner verwenden» und Zulassen.
 3. D Siite listet d Foto und Video nach Tag, ohni d Näbedateie .LRF, .SRT, .THM und .m4a. Tipp uf «Alli neue uswähle», dänn «Uf Immich ufelade»; d Dateie, wo scho gschickt worde sind, händ es Wolkezeiche und wärded übersprunge. «Uf em Grät bhalte» kopiert d Dateie stattdesse i d Galerie vom Handy, is Album «Immuch360 import».
 4. Damit es Video uf de Charte landet, schalt i DJI Fly Video-Untertitel ii (Videomodus, Iistellige, Kamera), bevor du flügsch: d Drohne schriibt dänn e .SRT-Datei näbe jedes Video, d App list de Ort drus und setzt ihn nach em Ufelade uf dim Server, wänn Immich kein gfunde hät.

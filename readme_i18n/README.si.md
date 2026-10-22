@@ -233,7 +233,7 @@ DJI ඩ්‍රෝනයක ඡායාරූප සහ වීඩියෝ USB
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Settings, Advanced හි, "DJI drones (experimental)" සක්‍රිය කරන්න. පුස්තකාලය, ජාල බෙදාගැනීම් හි "DJI drone" ටයිලයක් දිස් වේ.
+1. Library, Network shares හි "DJI drone" ටයිලයක් ඇත: Settings, Advanced හි "DJI drones (experimental)" පෙරනිමියෙන් සක්‍රියයි. ටයිලය සැඟවීමට එය එහිදී අක්‍රිය කරන්න.
 2. ඩ්‍රෝනය (Neo 2 එකක් අක්‍රියව තිබිය හැක), එහි පාලකය හෝ කාඩ් කියවනයක් USB-C දත්ත කේබලයකින් දුරකථනයට සම්බන්ධ කරන්න. DJI drone පිටුවේ, "Choose the drone or the card" තට්ටු කර, picker හි පැති මෙනුවෙන් එය තෝරා, එහි DCIM ෆෝල්ඩරය විවෘත කරන්න හෝ සම්පූර්ණ drive එක තබාගන්න, ඉන්පසු "Use this folder" සහ Allow තට්ටු කරන්න.
 3. පිටුව ඡායාරූප සහ වීඩියෝ දිනය අනුව ලැයිස්තුගත කරයි, .LRF, .SRT, .THM සහ .m4a පැති ගොනු නොමැතිව. "Select all new" තට්ටු කරන්න, ඉන්පසු "Upload to Immich"; කලින් යැවූ ගොනු වලාකුළු ලකුණක් දරන අතර මඟ හැරේ. "Keep on the device" ඒ වෙනුවට ගොනු දුරකථනයේ ගැලරියට, "Immuch360 import" ඇල්බමයට පිටපත් කරයි.
 4. වීඩියෝවක් සිතියම මත තැබීමට, පියාසර කිරීමට පෙර DJI Fly හි Video Subtitles සක්‍රිය කරන්න (වීඩියෝ ප්‍රකාරය, Settings, Camera): එවිට ඩ්‍රෝනය සෑම වීඩියෝවක් අසලම .SRT ගොනුවක් ලියයි, යෙදුම එයින් ස්ථානය කියවා, Immich ස්ථානයක් සොයා නොගත් විට, උඩුගත කිරීමෙන් පසු එය ඔබේ සේවාදායකයේ සකසයි.

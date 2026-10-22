@@ -233,7 +233,7 @@ Importuokite DJI drono nuotraukas ir vaizdo įrašus per USB tiesiai į savo Imm
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Skiltyje Nustatymai, Papildomai įjunkite „DJI dronai (eksperimentinis)“. Skiltyje Biblioteka, Tinklo bendrinimai atsiranda plytelė „DJI dronas“.
+1. Skiltyje Biblioteka, Tinklo bendrinimai yra plytelė „DJI dronas“: „DJI dronai (eksperimentinis)“ skiltyje Nustatymai, Papildomai įjungtas pagal numatytuosius nustatymus. Norėdami paslėpti plytelę, ten jį išjunkite.
 2. Prijunkite droną (Neo 2 gali likti išjungtas), jo valdiklį arba kortelių skaitytuvą prie telefono USB-C duomenų kabeliu. DJI drono puslapyje bakstelėkite „Pasirinkti droną arba kortelę“, pasirinkite jį parinkiklio šoniniame meniu, atverkite jo DCIM aplanką arba palikite visą diską, tada „Naudoti šį aplanką“ ir Leisti.
 3. Puslapis išvardija nuotraukas ir vaizdo įrašus pagal dieną, be pagalbinių .LRF, .SRT, .THM ir .m4a failų. Bakstelėkite „Pasirinkti visus naujus“, tada „Įkelti į Immich“; anksčiau išsiųsti failai pažymėti debesies ženklu ir praleidžiami. „Laikyti įrenginyje“ vietoj to nukopijuoja failus į telefono galeriją, albume „Immuch360 import“.
 4. Kad vaizdo įrašas atsidurtų žemėlapyje, prieš skrisdami įjunkite Video Subtitles programoje DJI Fly (vaizdo režimas, Settings, Camera): tada dronas šalia kiekvieno vaizdo įrašo įrašo .SRT failą, programa iš jo nuskaito vietą ir po įkėlimo nustato ją jūsų serveryje, jei Immich jos nerado.

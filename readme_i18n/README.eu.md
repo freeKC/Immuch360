@@ -233,7 +233,7 @@ Inportatu DJI drone baten argazki eta bideoak USB bidez, zuzenean zure Immich ze
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Ezarpenak, Aurreratua atalean, aktibatu "DJI droneak (esperimentala)". "DJI dronea" lauza bat agertzen da Liburutegia, Sareko partekatzeak atalean.
+1. "DJI dronea" lauza bat dago Liburutegia, Sareko partekatzeak atalean: "DJI droneak (esperimentala)" lehenespenez aktibatuta dago Ezarpenak, Aurreratua atalean. Desaktibatu bertan lauza ezkutatzeko.
 2. Konektatu dronea (Neo 2 bat itzalita gera daiteke), bere kontrolagailua edo txartel-irakurgailu bat telefonora USB-C datu-kable batekin. DJI dronearen orrian, sakatu "Aukeratu dronea edo txartela", aukeratu hautatzailearen alboko menuan, ireki bere DCIM karpeta edo utzi unitate osoa, ondoren "Erabili karpeta hau" eta Baimendu.
 3. Orriak argazki eta bideoak egunka zerrendatzen ditu, .LRF, .SRT, .THM eta .m4a fitxategi osagarririk gabe. Sakatu "Hautatu berri guztiak", ondoren "Immich-era igo"; lehenago bidalitako fitxategiek hodei-ikur bat daramate eta saltatu egiten dira. "Gorde gailuan" aukerak, ordea, fitxategiak telefonoaren galeriara kopiatzen ditu, "Immuch360 import" albumean.
 4. Bideo bat mapan agertzeko, aktibatu bideo-azpitituluak DJI Fly-n (bideo moduan, Settings, Camera, Video Subtitles) hegan egin aurretik: droneak orduan .SRT fitxategi bat idazten du bideo bakoitzaren ondoan, aplikazioak kokapena handik irakurtzen du eta zure zerbitzarian ezartzen du igoeraren ondoren, Immich-ek bat ere aurkitu ez duenean.

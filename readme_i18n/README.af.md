@@ -233,7 +233,7 @@ Voer die foto's en video's van 'n DJI-hommeltuig oor USB in, reguit na jou Immic
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Skakel in Instellings, Gevorderd, "DJI-hommeltuie (eksperimenteel)" aan. 'n "DJI-hommeltuig"-teël verskyn in Biblioteek, Netwerkdeelplekke.
+1. 'n "DJI-hommeltuig"-teël is in Biblioteek, Netwerkdeelplekke: "DJI-hommeltuie (eksperimenteel)" is by verstek aan in Instellings, Gevorderd. Skakel dit daar af om die teël te versteek.
 2. Prop die hommeltuig ('n Neo 2 kan af bly), sy beheerder of 'n kaartleser met 'n USB-C-datakabel in die foon. Tik op die DJI-hommeltuigblad op "Kies die hommeltuig of die kaart", kies dit in die kantkieslys van die kieser, open sy DCIM-vouer of hou die hele skyf, dan "Gebruik hierdie vouer" en Laat toe.
 3. Die blad lys die foto's en video's per dag, sonder die .LRF-, .SRT-, .THM- en .m4a-bylêers. Tik op "Kies alle nuwes", dan "Laai op na Immich"; die lêers wat voorheen gestuur is, dra 'n wolkmerk en word oorgeslaan. "Hou op die toestel" kopieer die lêers eerder na die foon se galery, in die album "Immuch360 import".
 4. Vir 'n video om op die kaart te beland, skakel Video Subtitles in DJI Fly aan (videomodus, Settings, Camera) voordat jy vlieg: die hommeltuig skryf dan 'n .SRT-lêer langs elke video, die app lees die plek daaruit en stel dit op jou bediener na die oplaai, wanneer Immich self geen plek gevind het nie.

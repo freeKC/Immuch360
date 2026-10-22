@@ -233,7 +233,7 @@ Uvozite fotografije in videoposnetke drona DJI prek USB neposredno na svoj stre�
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. V Nastavitvah, Napredno, vklopite «Droni DJI (poskusno)». V Knjižnica, Omrežne skupne rabe se prikaže ploščica «Dron DJI».
+1. V Knjižnica, Omrežne skupne rabe je ploščica «Dron DJI»: nastavitev «Droni DJI (poskusno)» je v Nastavitvah, Napredno privzeto vklopljena. Če želite ploščico skriti, jo tam izklopite.
 2. Priključite dron (Neo 2 lahko ostane izklopljen), njegov krmilnik ali bralnik kartic na telefon s podatkovnim kablom USB-C. Na strani drona DJI se dotaknite «Izberi dron ali kartico», izberite ga v stranskem meniju izbirnika, odprite njegovo mapo DCIM ali obdržite celoten pogon, nato «Uporabi to mapo» in Dovoli.
 3. Stran navede fotografije in videoposnetke po dnevih, brez spremnih datotek .LRF, .SRT, .THM in .m4a. Dotaknite se «Izberi vse nove», nato «Naloži v Immich»; datoteke, poslane prej, imajo oznako oblaka in so preskočene. «Obdrži na napravi» namesto tega kopira datoteke v galerijo telefona, v album «Immuch360 import».
 4. Da se videoposnetek znajde na zemljevidu, pred letom vklopite Video Subtitles v DJI Fly (način videa, Settings, Camera): dron nato zapiše datoteko .SRT poleg vsakega videoposnetka, aplikacija iz nje prebere kraj in ga po nalaganju nastavi na vašem strežniku, kadar ga Immich ni našel.

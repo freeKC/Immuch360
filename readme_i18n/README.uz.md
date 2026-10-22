@@ -233,7 +233,7 @@ DJI dronining fotosurat va videolarini USB orqali to‘g‘ridan-to‘g‘ri Imm
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Sozlamalar, Kengaytirilgan bo‘limida "DJI dronlari (tajribaviy)" ni yoqing. Kutubxona, Tarmoq ulashmalari ichida "DJI droni" plitkasi paydo bo‘ladi.
+1. Kutubxona, Tarmoq ulashmalari ichida "DJI droni" plitkasi bor: Sozlamalar, Kengaytirilgan bo‘limidagi "DJI dronlari (tajribaviy)" sukut bo‘yicha yoqilgan. Plitkani yashirish uchun uni o‘sha yerda o‘chiring.
 2. Dronni (Neo 2 o‘chiq qolishi mumkin), uning pultini yoki karta o‘quvchini USB-C ma‘lumot kabeli bilan telefonga ulang. DJI droni sahifasida "Dron yoki kartani tanlang" tugmasiga teging, tanlash oynasining yon menyusida uni tanlang, uning DCIM papkasini oching yoki butun diskni qoldiring, so‘ngra "Shu papkadan foydalanish" va Ruxsat berish.
 3. Sahifa fotosurat va videolarni kunlar bo‘yicha, .LRF, .SRT, .THM va .m4a yordamchi fayllarisiz ko‘rsatadi. "Barcha yangilarini tanlash", so‘ngra "Immich'ga yuklash" tugmasiga teging; avval yuborilgan fayllarda bulut belgisi bo‘ladi va ular o‘tkazib yuboriladi. "Qurilmada saqlash" esa fayllarni telefon galereyasidagi "Immuch360 import" albomiga nusxalaydi.
 4. Video xaritaga tushishi uchun parvozdan oldin DJI Fly'da (video rejimi, Settings, Camera) Video Subtitles'ni yoqing: shunda dron har bir video yoniga .SRT fayl yozadi, ilova joyni undan o‘qiydi va Immich joy topmagan bo‘lsa, yuklashdan keyin uni serveringizda o‘rnatadi.

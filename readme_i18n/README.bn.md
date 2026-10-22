@@ -233,7 +233,7 @@ Immuch360 LG webOS টিভির জন্য একটি Immich অ্যা
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Settings, Advanced-এ "DJI drones (experimental)" চালু করুন। Library, Network shares-এ একটি "DJI drone" টাইল দেখা যায়।
+1. Library, Network shares-এ একটি "DJI drone" টাইল আছে: Settings, Advanced-এ "DJI drones (experimental)" ডিফল্টভাবে চালু থাকে। টাইলটি লুকাতে সেখানে এটি বন্ধ করুন।
 2. ড্রোন (একটি Neo 2 বন্ধ থাকতে পারে), তার কন্ট্রোলার বা একটি কার্ড রিডার একটি USB-C ডেটা কেবল দিয়ে ফোনে লাগান। DJI ড্রোন পেজে "Choose the drone or the card"-এ ট্যাপ করুন, পিকারের সাইড মেনুতে সেটি বেছে নিন, তার DCIM ফোল্ডার খুলুন বা পুরো ড্রাইভটি রাখুন, তারপর "Use this folder" এবং Allow।
 3. পেজটি ছবি ও ভিডিও দিন অনুযায়ী তালিকায় দেখায়, .LRF, .SRT, .THM ও .m4a সাইড ফাইল ছাড়া। "Select all new"-এ ট্যাপ করুন, তারপর "Upload to Immich"; আগে পাঠানো ফাইলে একটি ক্লাউড চিহ্ন থাকে এবং সেগুলো বাদ দেওয়া হয়। "Keep on the device" এর বদলে ফাইলগুলো ফোনের গ্যালারিতে, "Immuch360 import" অ্যালবামে কপি করে।
 4. একটি ভিডিও ম্যাপে বসাতে, ওড়ানোর আগে DJI Fly-এ (ভিডিও মোড, Settings, Camera) Video Subtitles চালু করুন: তখন ড্রোন প্রতিটি ভিডিওর পাশে একটি .SRT ফাইল লেখে, অ্যাপটি তা থেকে স্থান পড়ে এবং আপলোডের পরে আপনার সার্ভারে তা সেট করে, যদি Immich কোনো স্থান না পেয়ে থাকে।

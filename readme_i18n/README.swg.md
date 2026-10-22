@@ -233,7 +233,7 @@ Importier d Fotos ond Videos von ara DJI-Drohne über USB, direkt auf dein Immic
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. En de Einstellunga, Erweitert, schalt „DJI-Drohna (experimentell)“ ei. A Kachel „DJI-Drohne“ taucht en Bibliothek, Netzwerkfreigaba auf.
+1. A Kachel „DJI-Drohne“ isch en Bibliothek, Netzwerkfreigaba: „DJI-Drohna (experimentell)“ isch en de Einstellunga, Erweitert standardmäßig eigschaltet. Schalt’s dort aus, wenn d’ Kachel verschwenda soll.
 2. Steck d Drohne (a Neo 2 ka aus bleiba), ihr Controller odr an Kartaleser mit am USB-C-Datakabel ans Handy. Auf dr Seit DJI-Drohne tipp auf „Drohne odr Kart wähla“, wähl se em Seitamenü vom Auswahldialog, mach ihrn DCIM-Ordner auf odr nemm 's ganze Laufwerk, dann „Diesen Ordner verwenden“ ond Zulassen.
 3. D Seit listet d Fotos ond Videos noch Tag auf, ohne die .LRF-, .SRT-, .THM- ond .m4a-Beidatatroa. Tipp auf „Alle neue auswähla“, dann „Zu Immich hochlada“; Datatroa, wo scho vorher gschickt worda send, hend a Wolka-Zeicha ond werdet übersprunga. „Auf em Gerät bhalta“ kopiert d Datatroa stattdessa en d Galerie vom Handy, ens Album „Immuch360 import“.
 4. Damit a Video auf dr Kart landet, schalt vor em Fliega Video Subtitles en DJI Fly ei (Videomodus, Settings, Camera): d Drohne schreibt dann a .SRT-Datei neba jedes Video, d App liest dr Ort draus ond setzt ihn noch em Hochlada auf deim Server, wenn Immich koin gfonda hot.

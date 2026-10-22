@@ -233,7 +233,7 @@ Kawea mai ngā whakaahua me ngā kiriata o tētahi wakarererangi DJI mā te USB,
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. I Ngā tautuhinga, Matatau, whakakāngia "Wakarererangi DJI (whakamātautau)". Ka puta he taera "Wakarererangi DJI" i Kohinga, Ngā tiritiri whatunga.
+1. Kei Kohinga, Ngā tiritiri whatunga he taera "Wakarererangi DJI": kua whakakāngia a "Wakarererangi DJI (whakamātautau)" hei tautuhinga taunoa i Ngā tautuhinga, Matatau. Whakawetongia i reira hei huna i te taera.
 2. Honoa te wakarererangi (ka taea e te Neo 2 te noho weto), tōna pūrere whakahaere, tētahi kaipānui kāri rānei ki te waea pūkoro mā tētahi taura raraunga USB-C. I te whārangi wakarererangi DJI, pāwhiritia "Kōwhiria te wakarererangi, te kāri rānei", kōwhiria i te tahua taha o te kaikōwhiri, whakatuwheratia tōna kōpaki DCIM, waiho rānei te puku katoa, kātahi ko "Whakamahia tēnei kōpaki" me Whakaae.
 3. Ka whakarārangitia e te whārangi ngā whakaahua me ngā kiriata i ia rā, kāore he kōnae āpiti .LRF, .SRT, .THM me .m4a. Pāwhiritia "Tīpakohia ngā mea hōu katoa", kātahi ko "Tukuake ki Immich"; ko ngā kōnae i tukuna i mua he tohu kapua tō rātou, ā, ka peke atu. Ka kape kē a "Puritia ki te taputapu" i ngā kōnae ki te whare whakaahua o te waea, ki te kohinga "Immuch360 import".
 4. Kia tau ai tētahi kiriata ki te mahere, whakakāngia te Video Subtitles i DJI Fly (aratau kiriata, Settings, Camera) i mua i tō rere: ka tuhi te wakarererangi i tētahi kōnae .SRT i te taha o ia kiriata, ka pānui te taupānga i te wāhi mai i taua kōnae, ā, ka tautuhi i tō tūmau i muri i te tukuake, ina kāore i kitea e Immich.

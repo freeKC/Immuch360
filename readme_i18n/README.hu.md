@@ -233,7 +233,7 @@ Importálja egy DJI drón fényképeit és videóit USB-n keresztül, közvetlen
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. A Beállítások, Speciális menüben kapcsolja be a „DJI drónok (kísérleti)” opciót. Megjelenik egy „DJI drón” csempe a Könyvtár, Hálózati megosztások részben.
+1. A Könyvtár, Hálózati megosztások részben egy „DJI drón” csempe található: a „DJI drónok (kísérleti)” opció alapértelmezés szerint be van kapcsolva a Beállítások, Speciális menüben. A csempe elrejtéséhez kapcsolja ki ott.
 2. Csatlakoztassa a drónt (egy Neo 2 kikapcsolva maradhat), a vezérlőjét vagy egy kártyaolvasót a telefonhoz egy USB-C adatkábellel. A DJI drón oldalon koppintson a „Drón vagy kártya kiválasztása” gombra, válassza ki a választó oldalsó menüjében, nyissa meg a DCIM mappáját, vagy tartsa meg a teljes meghajtót, majd „Mappa használata” és Engedélyezés.
 3. Az oldal naponként listázza a fényképeket és videókat, a .LRF, .SRT, .THM és .m4a kísérőfájlok nélkül. Koppintson az „Összes új kijelölése”, majd a „Feltöltés az Immichbe” gombra; a korábban elküldött fájlokon felhőjel látható, és kimaradnak. A „Megtartás az eszközön” ehelyett a telefon galériájába másolja a fájlokat, az „Immuch360 import” albumba.
 4. Ahhoz, hogy egy videó a térképre kerüljön, repülés előtt kapcsolja be a DJI Fly alkalmazásban a videofeliratokat (Video Subtitles; videómód, Beállítások, Kamera): a drón ekkor minden videó mellé ír egy .SRT fájlt, az alkalmazás kiolvassa belőle a helyet, és a feltöltés után beállítja a szerverén, ha az Immich nem talált ilyet.

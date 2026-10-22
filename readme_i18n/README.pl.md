@@ -233,7 +233,7 @@ Importuj zdjęcia i filmy z drona DJI przez USB, prosto na swój serwer Immich: 
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. W Ustawieniach, Zaawansowane włącz „Drony DJI (eksperymentalne)”. W Biblioteka, Udziały sieciowe pojawi się kafelek „Dron DJI”.
+1. W Biblioteka, Udziały sieciowe jest kafelek „Dron DJI”: ustawienie „Drony DJI (eksperymentalne)” jest domyślnie włączone w Ustawieniach, Zaawansowane. Wyłącz je tam, aby ukryć kafelek.
 2. Podłącz drona (Neo 2 może pozostać wyłączony), jego kontroler lub czytnik kart do telefonu kablem USB-C do transmisji danych. Na stronie Dron DJI stuknij „Wybierz drona lub kartę”, wybierz go w menu bocznym selektora, otwórz jego folder DCIM albo zostaw cały nośnik, a potem „Użyj tego folderu” i Zezwól.
 3. Strona wyświetla zdjęcia i filmy dzień po dniu, bez plików pomocniczych .LRF, .SRT, .THM i .m4a. Stuknij „Zaznacz wszystkie nowe”, a potem „Prześlij do Immich”; pliki wysłane wcześniej mają znak chmurki i są pomijane. „Zachowaj na urządzeniu” kopiuje zamiast tego pliki do galerii telefonu, do albumu „Immuch360 import”.
 4. Aby film trafił na mapę, przed lotem włącz Napisy wideo w DJI Fly (tryb wideo, Ustawienia, Kamera): dron zapisuje wtedy plik .SRT obok każdego filmu, aplikacja odczytuje z niego miejsce i ustawia je na Twoim serwerze po przesłaniu, jeśli Immich żadnego nie znalazł.

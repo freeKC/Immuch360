@@ -233,7 +233,7 @@ Wêne û vîdyoyên droneke DJI bi USB rasterast bo servera xwe ya Immich bîne:
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
-1. Di Mîhengan de, Pêşketî, «Dronên DJI (ceribandinî)» vêxe. Hêmaneke «Drona DJI» di Kitêbxane, Parvekirinên torê de xuya dibe.
+1. Hêmaneke «Drona DJI» di Kitêbxane, Parvekirinên torê de heye: «Dronên DJI (ceribandinî)» di Mîhengan de, Pêşketî, bi awayê standard vêxistî ye. Ji bo veşartina hêmanê, li wir wê vemirîne.
 2. Dronê (Neo 2 dikare girtî bimîne), kontrolkera wê an xwînerek kartê bi kabloyeke daneyê ya USB-C bi têlefonê ve girê bide. Li ser rûpela Drona DJI, li «Dronê an kartê hilbijêre» bixe, wê di menûya alî ya hilbijêrê de hilbijêre, peldanka wê ya DCIM veke an tevahiya ajokerê bihêle, paşê «Vê peldankê bi kar bîne» û Destûr bide.
 3. Rûpel wêne û vîdyoyan rojê bi roj rêz dike, bêyî pelên alîkar ên .LRF, .SRT, .THM û .m4a. Li «Hemû yên nû hilbijêre» bixe, paşê «Li Immich bar bike»; pelên ku berê hatine şandin nîşaneyeke ewr hildigirin û têne derbaskirin. «Li ser cîhazê bihêle» li şûna wê pelan di galerîya têlefonê de kopî dike, di albûma «Immuch360 import» de.
 4. Ji bo ku vîdyoyek li ser nexşeyê cih bigire, berî firînê di DJI Fly de Video Subtitles vêxe (moda vîdyoyê, Settings, Camera): wê demê dron li kêleka her vîdyoyê pelek .SRT dinivîse, sepan cih jê dixwîne û piştî barkirinê li ser servera te datîne, dema ku Immich tu cih nedîtibe.
