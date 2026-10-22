@@ -537,6 +537,17 @@ void main() {
       expect(find.text('DJI drone'), findsOneWidget);
     });
 
+    testWidgets('shows on an Android phone with the default settings, untouched', (tester) async {
+      final defaults = [
+        appConfigProvider.overrideWithValue(const AppConfig()),
+        isHorizonOsProvider.overrideWith((_) async => false),
+        tvModeProvider.overrideWithValue(false),
+      ];
+
+      expect(await shownOnAndroid(tester, defaults), isTrue);
+      expect(find.text('DJI drone'), findsOneWidget);
+    });
+
     testWidgets('is hidden on an Android phone with the setting off', (tester) async {
       expect(await shownOnAndroid(tester, android(enabled: false)), isFalse);
     });

@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/pages/video_decoders.page.dart';
+import 'package:immich_mobile/presentation/widgets/drone/drone_import_tile.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/widgets/settings/advanced_settings.dart';
 
@@ -49,5 +52,54 @@ void main() {
 
     expect(find.byType(VideoDecodersPage), findsOneWidget);
     expect(find.text('c2.qti.hevc.decoder'), findsOneWidget);
+  });
+
+  group('DJI drones (experimental)', () {
+    final djiSwitch = find.descendant(
+      of: find.byKey(const Key('advanced_settings_dji_import')),
+      matching: find.byType(SwitchListTile),
+    );
+
+    /// The page on a device that offers the DJI drone page: an Android phone or tablet, not the Quest build or a TV
+    Future<void> pumpOnPhone(WidgetTester tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [droneImportSupportedProvider.overrideWithValue(true)],
+      );
+      await tester.scrollUntilVisible(djiSwitch, 100, scrollable: find.byType(Scrollable).first);
+    }
+
+    testWidgets('reads on by default', (tester) async {
+      await pumpOnPhone(tester);
+
+      expect(find.text('DJI drones (experimental)'), findsOneWidget);
+      expect(tester.widget<SwitchListTile>(djiSwitch).value, isTrue);
+      expect(SettingsRepository.instance.appConfig.djiImportEnabled, isTrue);
+    });
+
+    testWidgets('turns off and on again', (tester) async {
+      await pumpOnPhone(tester);
+
+      await tester.tap(djiSwitch);
+      await tester.pumpAndSettle();
+      expect(tester.widget<SwitchListTile>(djiSwitch).value, isFalse);
+      expect(SettingsRepository.instance.appConfig.djiImportEnabled, isFalse);
+
+      await tester.tap(djiSwitch);
+      await tester.pumpAndSettle();
+      expect(tester.widget<SwitchListTile>(djiSwitch).value, isTrue);
+      expect(SettingsRepository.instance.appConfig.djiImportEnabled, isTrue);
+    });
+
+    testWidgets('is not offered where the DJI drone page is not', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [droneImportSupportedProvider.overrideWithValue(false)],
+      );
+
+      expect(find.byKey(const Key('advanced_settings_dji_import')), findsNothing);
+    });
   });
 }

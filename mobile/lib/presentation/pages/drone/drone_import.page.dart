@@ -1,8 +1,8 @@
-// The DJI drone page of the Network shares (Android phones, behind Settings, Advanced, "DJI drones (experimental)"):
-// the photos and videos of a drone, its controller or a card plugged into the phone, picked in the system picker. By
-// day, the newest first, with the proxies, the flight data and the sound recorded apart attached to their video, and
-// the source shots of a sphere grouped with it. "Upload to Immich" sends them as from a share, "Keep on the device"
-// copies them into the gallery.
+// The DJI drone page of the Network shares (Android phones, Settings, Advanced, "DJI drones (experimental)", on by
+// default): the photos and videos of a drone, its controller or a card plugged into the phone, picked in the system
+// picker. By day, the newest first, with the proxies, the flight data and the sound recorded apart attached to their
+// video, and the source shots of a sphere grouped with it. "Upload to Immich" sends them as from a share, "Keep on the
+// device" copies them into the gallery.
 
 import 'dart:async';
 
