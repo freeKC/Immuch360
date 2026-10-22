@@ -6,6 +6,7 @@ import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
 import 'package:immich_mobile/desktop/spatial/head_tracker_licenses.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/video_licenses.dart';
+import 'package:immich_mobile/desktop/window/session_presence.dart';
 import 'package:immich_mobile/desktop/window/single_instance.dart';
 import 'package:immich_mobile/desktop/window/window_setup.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -19,6 +20,8 @@ Future<void> startDesktop(List<String> args) async {
     LinuxSecretStorage.install();
   }
   listenForLaterStarts();
+  // Windows locked or its display off, for the Spatial page's webcam (read from the start, so that no message waits)
+  DesktopSessionPresence.instance.listen();
   setUpDesktopVideo();
   // The video player's native libraries on the licence page, from the texts the app carries (Windows and macOS)
   registerVideoLicenses();

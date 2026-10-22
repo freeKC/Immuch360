@@ -2,13 +2,30 @@
 
 #include <flutter/standard_method_codec.h>
 #include <shellapi.h>
+#include <wtsapi32.h>
 
+#include <cstring>
 #include <optional>
 #include <string>
 
 #include "app_identity.h"
 #include "flutter/generated_plugin_registrant.h"
 #include "utils.h"
+
+namespace {
+
+// GUID_CONSOLE_DISPLAY_STATE (winnt.h), written out: the header declares it
+// for a library that defines it. Its notification gives 0 for a display off,
+// 1 on and 2 dimmed, at once when registered and at each change.
+constexpr GUID kConsoleDisplayState = {
+    0x6fe69556,
+    0x704a,
+    0x47a0,
+    {0x8f, 0x24, 0xc2, 0x8d, 0x93, 0x6f, 0xda, 0x47}};
+
+constexpr char kSessionChannel[] = "immuch360/session";
+
+}  // namespace
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -62,6 +79,17 @@ bool FlutterWindow::OnCreate() {
         std::make_unique<flutter::EncodableValue>(std::move(early_hand_overs_)));
     early_hand_overs_.clear();
   }
+  // The session locked and the display off, for the Spatial page's webcam:
+  // the channel first, since the display's state comes at once
+  session_channel_ =
+      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+          flutter_controller_->engine()->messenger(), kSessionChannel,
+          &flutter::StandardMethodCodec::GetInstance());
+  session_notification_ =
+      ::WTSRegisterSessionNotification(GetHandle(), NOTIFY_FOR_THIS_SESSION) !=
+      FALSE;
+  display_notification_ = ::RegisterPowerSettingNotification(
+      GetHandle(), &kConsoleDisplayState, DEVICE_NOTIFY_WINDOW_HANDLE);
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
   // Files dropped on the window open as a later start's do (OnDropFiles). The
   // Flutter view, a child window, takes no drop itself: Windows hands a drop on
@@ -81,6 +109,15 @@ bool FlutterWindow::OnCreate() {
 }
 
 void FlutterWindow::OnDestroy() {
+  if (session_notification_) {
+    ::WTSUnRegisterSessionNotification(GetHandle());
+    session_notification_ = false;
+  }
+  if (display_notification_ != nullptr) {
+    ::UnregisterPowerSettingNotification(display_notification_);
+    display_notification_ = nullptr;
+  }
+  session_channel_ = nullptr;
   instance_channel_ = nullptr;
   if (flutter_controller_) {
     flutter_controller_ = nullptr;
@@ -118,6 +155,26 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
     case WM_DROPFILES:
       OnDropFiles(reinterpret_cast<HDROP>(wparam));
       return 0;
+    case WM_WTSSESSION_CHANGE:
+      if (wparam == WTS_SESSION_LOCK) {
+        SendPresence("locked");
+      } else if (wparam == WTS_SESSION_UNLOCK) {
+        SendPresence("unlocked");
+      }
+      break;
+    case WM_POWERBROADCAST:
+      if (wparam == PBT_POWERSETTINGCHANGE && lparam != 0) {
+        const auto* setting =
+            reinterpret_cast<const POWERBROADCAST_SETTING*>(lparam);
+        if (setting->PowerSetting == kConsoleDisplayState &&
+            setting->DataLength >= sizeof(DWORD)) {
+          DWORD state = 0;
+          memcpy(&state, setting->Data, sizeof(state));
+          SendPresence(state == 0 ? "displayOff" : "displayOn");
+        }
+        return TRUE;
+      }
+      break;
   }
 
   return Win32Window::MessageHandler(hwnd, message, wparam, lparam);
@@ -178,5 +235,11 @@ void FlutterWindow::OnDropFiles(HDROP drop) {
     instance_channel_->InvokeMethod(
         "openFiles",
         std::make_unique<flutter::EncodableValue>(std::move(paths)));
+  }
+}
+
+void FlutterWindow::SendPresence(const char* message) {
+  if (session_channel_) {
+    session_channel_->InvokeMethod(message, nullptr);
   }
 }

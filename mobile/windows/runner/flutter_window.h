@@ -37,6 +37,14 @@ class FlutterWindow : public Win32Window {
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
       instance_channel_;
 
+  // Tells Dart when the session locks or unlocks and when the display goes
+  // off or on (lib/desktop/window/session_presence.dart): the Spatial page
+  // closes the webcam while nobody can be in front of the computer.
+  std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
+      session_channel_;
+  HPOWERNOTIFY display_notification_ = nullptr;
+  bool session_notification_ = false;
+
   // The files of later starts handled before that channel was made, sent on
   // it once it is (OnCreate).
   flutter::EncodableList early_hand_overs_;
@@ -48,6 +56,9 @@ class FlutterWindow : public Win32Window {
   // Hands the files and folders dropped on the window to Dart, on the channel
   // of the later starts.
   void OnDropFiles(HDROP drop);
+
+  // Sends one of "locked", "unlocked", "displayOff", "displayOn" to Dart.
+  void SendPresence(const char* message);
 };
 
 #endif  // RUNNER_FLUTTER_WINDOW_H_
