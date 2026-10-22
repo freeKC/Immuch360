@@ -31,6 +31,7 @@ import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
+import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/theme.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
@@ -234,6 +235,10 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
     PageRouteInfo? route;
     // The code of a big screen, from the browser page it serves (sign in with your phone)
     if (deepLink.uri.scheme == 'immuch360' && deepLink.uri.host == 'pair') {
+      if (currentRouteName == ConnectScreenRoute.name) {
+        ref.read(pendingPairingLinkProvider.notifier).state = deepLink.uri.toString();
+        return DeepLink.none;
+      }
       route = ConnectScreenRoute(scanned: deepLink.uri.toString(), fromDeepLink: true);
     } else if (deepLink.uri.scheme == "immich") {
       route = await deepLinkHandler.handleScheme(deepLink, ref);

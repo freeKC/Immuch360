@@ -289,6 +289,13 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
 
   @override
   Widget build(BuildContext context) {
+    // A link that came while the page shows
+    ref.listen(pendingPairingLinkProvider, (_, link) {
+      if (link != null) {
+        ref.read(pendingPairingLinkProvider.notifier).state = null;
+        unawaited(_handleText(link, fromDeepLink: true));
+      }
+    });
     final t = context.t;
     final screens = ref.watch(pairedScreensProvider);
     final theme = context.textTheme;

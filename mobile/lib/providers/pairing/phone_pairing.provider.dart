@@ -25,6 +25,10 @@ final _log = Logger('PhonePairing');
 
 final qrScanApiProvider = Provider<QrScanApi>((_) => QrScanApi());
 
+/// A big screen's code that came by the immuch360://pair link while the Connect page shows: the page takes it from
+/// here, since the router does not open the page over itself
+final pendingPairingLinkProvider = StateProvider<String?>((_) => null);
+
 /// The sessions of the phone's account through the app's API client (its cookie, headers and certificate)
 class AppPairingSessions implements PairingSessions {
   const AppPairingSessions(this._api);
