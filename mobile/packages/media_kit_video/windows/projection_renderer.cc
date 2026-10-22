@@ -70,6 +70,26 @@ bool ProjectionSetup::SameFrameLayout(const ProjectionSetup& other) const {
          secondary == other.secondary;
 }
 
+void ProjectionRenderer::ViewToSphere(const ProjectionView& view,
+                                      float columns[9]) {
+  // A ray of the view to the sphere: pitched up about x, then turned about
+  // y (the yaw to the right), so that the centre of the view looks at
+  // longitude |yaw| and latitude |pitch|, as the photo sphere does
+  const auto yaw = view.yaw * kPi / 180.0;
+  const auto pitch = std::clamp(view.pitch, -90.0f, 90.0f) * kPi / 180.0;
+  const auto cy = std::cos(yaw), sy = std::sin(yaw);
+  const auto cp = std::cos(pitch), sp = std::sin(pitch);
+  // Rows of Ry(yaw) * Rx(pitch)
+  const double rows[9] = {
+      cy, -sy * sp, sy * cp,  //
+      0,  cp,       sp,       //
+      -sy, -cy * sp, cy * cp,
+  };
+  for (int i = 0; i < 9; i++) {
+    columns[i] = static_cast<float>(rows[(i % 3) * 3 + i / 3]);
+  }
+}
+
 bool ProjectionRenderer::Prepare(int32_t client_version) {
   if (prepared_) {
     return true;
@@ -259,23 +279,8 @@ void ProjectionRenderer::SetUniforms(GLuint program,
     return glGetUniformLocation(program, name);
   };
   glUniform1i(location("uSource"), 0);
-  // A ray of the view to the sphere: pitched up about x, then turned about
-  // y (the yaw to the right), so that the centre of the view looks at
-  // longitude |yaw| and latitude |pitch|, as the photo sphere does
-  const auto yaw = view.yaw * kPi / 180.0;
-  const auto pitch = std::clamp(view.pitch, -90.0f, 90.0f) * kPi / 180.0;
-  const auto cy = std::cos(yaw), sy = std::sin(yaw);
-  const auto cp = std::cos(pitch), sp = std::sin(pitch);
-  // Rows of Ry(yaw) * Rx(pitch)
-  const double rows[9] = {
-      cy, -sy * sp, sy * cp,  //
-      0,  cp,       sp,       //
-      -sy, -cy * sp, cy * cp,
-  };
   GLfloat columns[9];
-  for (int i = 0; i < 9; i++) {
-    columns[i] = static_cast<GLfloat>(rows[(i % 3) * 3 + i / 3]);
-  }
+  ViewToSphere(view, columns);
   glUniformMatrix3fv(location("uViewToSphere"), 1, GL_FALSE, columns);
   const auto fov = std::clamp(view.fov, 1.0f, 170.0f) * kPi / 180.0;
   const auto tan_half = std::tan(fov / 2.0);

@@ -65,6 +65,17 @@ class VideoOutputManager {
                   int64_t partner,
                   std::function<void(flutter::EncodableMap)> done);
 
+  // Immuch360: the viewpoint of the Spatial passes (IMMUCH360-NOTE.md, patch
+  // 11), 0 the left camera, 1 the right one, and their disparity map shown
+  // instead of the view. Called on the platform thread as |SetView|, without
+  // waiting; false when the player has no video output.
+  bool SetViewpoint(int64_t handle, float viewpoint);
+  bool SetSpatialDebug(int64_t handle, bool disparity_map);
+
+  // Immuch360: |VideoOutput::SpatialStats|, null without a video output.
+  std::optional<flutter::EncodableMap> SpatialStats(int64_t handle,
+                                                    bool probe);
+
   ~VideoOutputManager();
 
  private:

@@ -206,8 +206,8 @@ jobs:
         working-directory: mobile
         run: |
           mise exec -- dart format --output=none --set-exit-if-changed lib/desktop lib/main_desktop.dart \
-            test/desktop integration_test/desktop_smoke_test.dart packages/flutter_secure_storage_windows \
-            packages/immuch_head_tracker/lib
+            test/desktop integration_test/desktop_smoke_test.dart integration_test/desktop_spatial_renderer_test.dart \
+            packages/flutter_secure_storage_windows packages/immuch_head_tracker/lib
 
       # The whole suite: the phone regression gate, test/desktop included
       - name: Tests
@@ -702,7 +702,8 @@ jobs:
       # no account or rtsp:// address in mpv's lines (camera_live_libmpv_test), the references a file may not open
       # (mpv_references_test), the app's player on a path and through the media bridge (desktop_player_libmpv_test),
       # the GLSL of renderer C compiled and drawn by ANGLE (plugin_shaders_windows_test: the hosted runners have no GPU,
-      # so ANGLE's Direct3D 11 device is Windows' Basic Render Driver, which draws in software), the head tracker on the
+      # so ANGLE's Direct3D 11 device is Windows' Basic Render Driver, which draws in software), the Spatial passes of
+      # renderer C compiled and run on a random dot stereo pair (spatial_shaders_windows_test), the head tracker on the
       # recorded clip, both builds of its face detector (head_tracker_windows_test). The tests that need a GPU's video
       # decoder, mpv drawing into ANGLE or a webcam (decoder_probe_windows_test, libmpv_probe_test) stay on the PC.
       - name: Desktop tests on the build (libmpv, ANGLE, head tracker)
@@ -712,7 +713,17 @@ jobs:
         run: |
           flutter test test/desktop/video/camera_live_libmpv_test.dart test/desktop/video/mpv_references_test.dart \
             test/desktop/video/desktop_player_libmpv_test.dart test/desktop/video/plugin_shaders_windows_test.dart \
-            test/desktop/spatial/head_tracker_windows_test.dart
+            test/desktop/video/spatial_shaders_windows_test.dart test/desktop/spatial/head_tracker_windows_test.dart
+
+      # The Spatial passes of renderer C in a built app (mobile/packages/media_kit_video/IMMUCH360-NOTE.md, patch 11): a
+      # side by side clip of random dots plays through them in the plugin, on the runner's WARP, and its disparity, its
+      # settling once paused, three viewpoints, the disparity map and a VR180 view are checked through SpatialStats and
+      # its probe (desktop_spatial_renderer_test). flutter test builds the test as a debug app and runs it in a window.
+      # Run after a failed test above too, once the release build is made
+      - name: The Spatial passes on a stereo clip (WARP)
+        if: ${{ !cancelled() && steps.bundle.outcome == 'success' }}
+        working-directory: mobile
+        run: flutter test integration_test/desktop_spatial_renderer_test.dart -d windows
 
   macos:
     name: macOS build, ZIP and DMG

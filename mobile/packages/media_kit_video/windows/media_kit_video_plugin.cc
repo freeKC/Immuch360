@@ -133,6 +133,35 @@ ProjectionSetup ToProjectionSetup(const flutter::EncodableMap& arguments) {
   return setup;
 }
 
+// Immuch360: the projection of the Spatial passes (IMMUCH360-NOTE.md, patch
+// 11): renderer C's frame, as for an equirectangular projection, and the
+// passes' setup. The eye and the crop of the projection are not read by them.
+ProjectionSetup ToSpatialSetup(const flutter::EncodableMap& arguments) {
+  ProjectionSetup setup;
+  setup.kind = 0;
+  setup.max_frame_width = static_cast<int32_t>(
+      ToInt64(Find(arguments, "maxFrameWidth"), 3840));
+  setup.max_frame_pixels =
+      ToInt64(Find(arguments, "maxFramePixels"), 3840LL * 2160LL);
+  setup.output_width =
+      static_cast<int32_t>(ToInt64(Find(arguments, "outputWidth"), 1));
+  setup.output_height =
+      static_cast<int32_t>(ToInt64(Find(arguments, "outputHeight"), 1));
+  setup.max_output_height = static_cast<int32_t>(
+      ToInt64(Find(arguments, "maxOutputHeight"), setup.max_output_height));
+  SpatialSetup spatial;
+  spatial.layout = static_cast<int32_t>(
+      std::clamp<int64_t>(ToInt64(Find(arguments, "layout"), 0), 0, 4));
+  spatial.projection = static_cast<int32_t>(
+      std::clamp<int64_t>(ToInt64(Find(arguments, "projection"), 0), 0, 1));
+  spatial.half_sphere = ToBool(Find(arguments, "halfSphere"), false);
+  spatial.quality = static_cast<int32_t>(
+      std::clamp<int64_t>(ToInt64(Find(arguments, "quality"), 1), 0, 2));
+  spatial.adaptive = ToBool(Find(arguments, "adaptive"), true);
+  setup.spatial = spatial;
+  return setup;
+}
+
 }  // namespace
 
 MediaKitVideoPlugin* MediaKitVideoPlugin::instance_ = nullptr;
@@ -373,6 +402,57 @@ void MediaKitVideoPlugin::HandleMethodCall(
     const auto& arguments =
         std::get<flutter::EncodableMap>(*method_call.arguments());
     const auto stats = video_output_manager_->ProjectionStats(
+        ToInt64(Find(arguments, "handle"), 0),
+        ToBool(Find(arguments, "probe"), false));
+    if (stats.has_value()) {
+      result->Success(flutter::EncodableValue(stats.value()));
+    } else {
+      result->Success(flutter::EncodableValue(std::monostate{}));
+    }
+  } else if (method_call.method_name().compare(
+                 "VideoOutputManager.SetSpatial") == 0) {
+    // Immuch360: the Spatial passes on or off (IMMUCH360-NOTE.md, patch 11),
+    // through the projection of renderer C; answered as SetProjection
+    const auto& arguments =
+        std::get<flutter::EncodableMap>(*method_call.arguments());
+    const auto handle = ToInt64(Find(arguments, "handle"), 0);
+    std::optional<ProjectionSetup> setup;
+    if (ToBool(Find(arguments, "enabled"), false)) {
+      setup = ToSpatialSetup(arguments);
+      if (const auto viewpoint = Find(arguments, "viewpoint")) {
+        video_output_manager_->SetViewpoint(
+            handle, static_cast<float>(ToDouble(viewpoint, 0.5)));
+      }
+    }
+    std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>> reply =
+        std::move(result);
+    video_output_manager_->SetProjection(
+        handle, setup, [this, reply](flutter::EncodableMap answer) {
+          RunOnMainThread([reply, answer]() {
+            reply->Success(flutter::EncodableValue(answer));
+          });
+        });
+  } else if (method_call.method_name().compare(
+                 "VideoOutputManager.SetViewpoint") == 0) {
+    const auto& arguments =
+        std::get<flutter::EncodableMap>(*method_call.arguments());
+    const auto known = video_output_manager_->SetViewpoint(
+        ToInt64(Find(arguments, "handle"), 0),
+        static_cast<float>(ToDouble(Find(arguments, "viewpoint"), 0.5)));
+    result->Success(flutter::EncodableValue(known));
+  } else if (method_call.method_name().compare(
+                 "VideoOutputManager.SetSpatialDebug") == 0) {
+    const auto& arguments =
+        std::get<flutter::EncodableMap>(*method_call.arguments());
+    const auto known = video_output_manager_->SetSpatialDebug(
+        ToInt64(Find(arguments, "handle"), 0),
+        ToBool(Find(arguments, "disparityMap"), false));
+    result->Success(flutter::EncodableValue(known));
+  } else if (method_call.method_name().compare(
+                 "VideoOutputManager.SpatialStats") == 0) {
+    const auto& arguments =
+        std::get<flutter::EncodableMap>(*method_call.arguments());
+    const auto stats = video_output_manager_->SpatialStats(
         ToInt64(Find(arguments, "handle"), 0),
         ToBool(Find(arguments, "probe"), false));
     if (stats.has_value()) {

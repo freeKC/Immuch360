@@ -211,5 +211,42 @@ Patches:
    checked on this PC too, under Xvfb (llvmpipe) and under WSLg on X11 and Wayland (D3D12 on an Intel GPU), where the
    former code failed with 0x3002 on X11.
 
+11. Windows, the Spatial 2.5D passes in renderer C (`windows/spatial_renderer.{h,cc}`, `windows/spatial_shaders.h`,
+   `windows/projection_renderer.{h,cc}`, `windows/video_output.{h,cc}`, `windows/video_output_manager.{h,cc}`,
+   `windows/media_kit_video_plugin.cc`, `windows/CMakeLists.txt`, `lib/src/spatial_output.dart`, exported by
+   `lib/media_kit_video.dart`). The Spatial 2.5D player of the phones (a stereo video seen from a viewpoint between its
+   two cameras, which the head of the person in front of the screen moves) on Windows, where decision DP1 of
+   2026-10-09 put it: a projection may carry a Spatial setup (`VideoOutputManager.SetSpatial`: where the eyes are, in
+   the order of the phones' EyeLayout, a flat or an equirectangular eye, VR180, the tier and whether the adaptive rule
+   may change it). mpv then draws each frame into renderer C's intermediate texture, as for a 360 video, and the passes
+   of the phones' `SpatialRenderer.kt` draw the output from it: each eye into its own texture (the flat eye pass of
+   `SpatialShaders.kt` reading the intermediate texture as a `sampler2D`; an equirectangular eye through renderer C's
+   own pass, with a main that writes in the alpha whether a VR180 eye covers the direction), both eyes in grey at the
+   disparity size, the 7 x 7 block matching both ways, the left right check and the temporal blend with the previous
+   map of a ping pong pair, the blur, and the synthesis at the viewpoint. The GLSL bodies are the text of
+   `SpatialShaders.kt` but for the eye's sampler: `mobile/test/desktop/video/spatial_shaders_parity_test.dart` fails
+   when one differs, and when a constant or a tier of `SpatialRenderer.kt` differs in the C++. Every texture keeps its
+   first row at the top, as renderer C's do (the phones keep it at the bottom); the passes after the eyes work along
+   the rows and do not notice. The tiers (LOW 320 x 180 every 4 new frames without the check, MEDIUM 480 x 270 every
+   2, HIGH 640 x 360 every frame), the adaptive rule (down after a second over 12 ms, up after 5 seconds under 6 ms, a
+   tier left for slowness out of reach for a minute; the GPU time from `GL_EXT_disjoint_timer_query` when ANGLE lists
+   it, else one draw in 15 timed on the CPU around `glFinish`) and the settling (four more estimations once the eyes
+   have not changed for 100 ms) are those of `SpatialRenderer.kt`; the plugin draws on events rather than at the
+   screen's rate, so the settling runs are asked for by a timer of their own (`PairTimer`), at most every 16 ms. A flat
+   output takes the shape of one eye as it shows (a squeezed stereo frame shows its eyes at the frame's shape) inside
+   the box Dart gives; an equirectangular output is the view (`SetView`, as for a 360 video). The viewpoint
+   (`VideoOutputManager.SetViewpoint`) and the disparity map shown instead of the view (`SetSpatialDebug`) are kept and
+   merged as views are, and a paused video is redrawn from the frame kept without mpv; `SpatialStats` adds to
+   `ProjectionStats` the figures of the passes' last second, the tier, the sizes of the eyes and maps, the counts since
+   the last read (draws, estimations, settling runs, tier changes) and, with the probe, the middle row of the output.
+   Every program is compiled when the setup is set, the disparity pass's loops included: a driver that refuses one
+   refuses the setup with the shader's log, and the player is flat. Checked without a window by
+   `mobile/test/desktop/video/spatial_shaders_windows_test.dart` (the programs in ANGLE's ES 3.0, the disparity of a
+   random dot pair found to a pixel both ways, the view at p = 0, 1 and 0.5, the eyes' orientation and VR180 alpha;
+   it also runs on Mesa with `IMMUCH360_GLES=mesa`), and in a built app on the hosted runner by
+   `mobile/integration_test/desktop_spatial_renderer_test.dart` (a side by side clip through the plugin, its settling,
+   three viewpoints of the paused frame, the disparity map and a VR180 view through `SpatialStats` and its probe). Not
+   measured yet on a GPU, nor driven by the head tracker.
+
 Not done yet (plan 20-plan-desktop.md, 2.2): the D3D11 device on the adapter Flutter uses, only if spike 6 shows a
 mismatch on a hybrid GPU machine.
