@@ -12,7 +12,8 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	padding: 32px 0 8px @page-inset-x;
+	// Immuch360: the people ribbon stops at LG's safe area on the right (20 CSS px), as the pages do on the other sides
+	padding: 32px var(--overscan) 8px @page-inset-x;
 	min-width: 0;
 }
 
