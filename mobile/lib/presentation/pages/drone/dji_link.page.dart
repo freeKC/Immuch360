@@ -463,7 +463,7 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
             onPressed: flowing ? () => unawaited(_relay.openFlightView(djiFlightViewLabels(t))) : null,
           ),
           Text(t.dji_link_flight_view_note, style: context.textTheme.bodySmall),
-          if (relay.flightViewFailed)
+          if (relay.flightViewFailed || (snapshot?.flightViewFailed ?? false))
             Text(
               t.dji_link_flight_view_failed,
               key: const Key('dji_link_flight_view_failed'),

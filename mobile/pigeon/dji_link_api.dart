@@ -1107,6 +1107,7 @@ class DjiLinkSnapshot {
     this.boundProfileId,
     this.relaySending,
     this.relayReceiving,
+    this.flightViewFailed = false,
   });
 
   final DjiLinkState state;
@@ -1171,6 +1172,9 @@ class DjiLinkSnapshot {
 
   /// "Receive from a phone"; null until this device tried to receive
   final DjiRelayReceiving? relayReceiving;
+
+  /// The last flight view could not set its scene up and went back to the window
+  final bool flightViewFailed;
 }
 
 @HostApi()

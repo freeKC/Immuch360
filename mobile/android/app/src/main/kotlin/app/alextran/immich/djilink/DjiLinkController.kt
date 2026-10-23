@@ -118,6 +118,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
   /** The receiver of a phone's relay, and the detector of the stream it receives */
   private val receiverDetector = CodecDetector()
   private val receiver = RelayReceiver(ReceiverEvents(), clockNs = { SystemClock.elapsedRealtimeNanos() })
+  @Volatile
   private var receiverWifiLock: WifiManager.WifiLock? = null
   private val shownHistory = ArrayDeque<LongArray>()
 
@@ -570,7 +571,13 @@ class DjiLinkController private constructor(private val context: Context) : Link
 
     override fun onDisconnected() = markDirty()
 
-    override fun onChanged() = markDirty()
+    override fun onChanged() {
+      // A wrong code, another version or a phone that did not prove the code ends the reception: the lock goes with it
+      if (!receiver.active) {
+        releaseReceiverWifiLock()
+      }
+      markDirty()
+    }
 
     override fun shownPer10s(): Int {
       val nowNs = SystemClock.elapsedRealtimeNanos()
@@ -614,8 +621,8 @@ class DjiLinkController private constructor(private val context: Context) : Link
   }
 
   private fun releaseReceiverWifiLock() {
-    receiverWifiLock?.let { lock -> runCatching { if (lock.isHeld) lock.release() } }
-    receiverWifiLock = null
+    val lock = synchronized(this) { receiverWifiLock.also { receiverWifiLock = null } } ?: return
+    runCatching { if (lock.isHeld) lock.release() }
   }
 
   // The flight view (Horizon OS)
@@ -1275,6 +1282,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       } else {
         received.toPigeon(stats)
       },
+      flightViewFailed = DjiFlightViewActivity.lastFailed,
       lastAccessory = lastAccessory?.toPigeon(),
       lastAccessoryAtMs = session.lastAccessoryAtWallMs,
       boundProfileId = bindings.boundTo(AccessoryStrings.of(identity ?: lastAccessory)),
