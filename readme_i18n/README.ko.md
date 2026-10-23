@@ -283,9 +283,9 @@ See what your DJI drone sees on your Android phone, without DJI Fly and without 
 2. Turn on the drone and the remote, close DJI Fly, then open the DJI link tile and read the safety notice.
 3. Tap "Start the capture", then plug in the remote with its cable. If Android asks which app should open it, choose Immuch360 without "Always", which would take the remote away from DJI Fly; if it asks for a USB mode, choose charging only.
 4. The state reads "Accessory open", then "Remote frames arrive", and the video follows within a few seconds. The button on the picture shows it full screen, and the "Flight and battery" section gives the numbers of the remote and the drone.
-5. "Export the capture" writes three files to `Download/Immuch360/dji-link`; "Play a capture" plays an export again on the page, without the remote, to see how well a phone or a headset decodes the drone's video.
+5. "Export the capture" writes three files to `Download/Immuch360/dji-link`; "Play a capture" plays an export again on the page, without the remote, to see how well a device decodes the drone's video.
 
-The drone's photos and videos cannot be reached through the remote, which does not open the drone's storage: copy them from the drone itself over USB or from its card, as in [the section above](#your-dji-drones-photos-and-videos-on-your-immich-server). On a Meta Quest the page is there and plays a capture, but the drone's live video does not reach the headset yet. Keep the exported files to yourself, as the page says, since they hold the serial number of the remote; a report in [Issues](https://github.com/freeKC/Immuch360/issues) with the states and counters the page shows helps, above all with other DJI remotes.
+The drone's photos and videos cannot be reached through the remote, which does not open the drone's storage: copy them from the drone itself over USB or from its card, as in [the section above](#your-dji-drones-photos-and-videos-on-your-immich-server). On a Meta Quest the page is there too, but the drone's live video does not reach the headset yet. Keep the exported files to yourself, as the page says, since they hold the serial number of the remote; a report in [Issues](https://github.com/freeKC/Immuch360/issues) with the states and counters the page shows helps, above all with other DJI remotes.
 
 <a id="devices-and-systems"></a>
 ## 기기와 시스템
@@ -312,7 +312,7 @@ One code base for six environments, and a separate app for LG TVs, with a first 
 | 이 기기를 네트워크에 공유 | ✅ | ✅ | ❌ | ❌ | ❌ |
 | 공유와 기기에서 Immich로 업로드 | ✅ | ✅ | ❌ | ❌ | ✅ |
 | USB로 DJI 드론이나 카드에서 가져오기(실험적) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| DJI link: the drone's live video (experimental) | ✅ with an RC-N3 | ❌ | ❌ | ❌ | replay of a capture; live 🔜 |
+| DJI link: the drone's live video (experimental) | ✅ with an RC-N3 | ❌ | ❌ | ❌ | diagnostics; live 🔜 |
 | 어두운 테마 | 시스템 설정 따름 | 시스템 설정 따름 | ✅ 기본값 | ✅ 유일한 테마 | 시스템 설정 따름 |
 | Input | touch, gyroscope | touch, gyroscope | remote; Left and Right also during a video and on its time bar, Menu for the details | remote, Magic Remote | controllers, hands |
 | 받는 곳 | Google Play, APK | App Store(심사 중) | APK, Google Play(심사 중) | .ipk 테스트 build, Developer Mode | Horizon Store, APK |
