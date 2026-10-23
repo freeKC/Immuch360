@@ -4,8 +4,8 @@
     "reason": "Sign in with your phone (feat-qr-pairing): ZXing Android Embedded, the QR code scanner of Connect a TV or computer, without Google Play services"
   },
   "mobile/android/app/src/main/AndroidManifest.xml": {
-    "blob": "2e471ec78be42aa1226a4ae55427d9d868f39e15",
-    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed"
+    "blob": "e05defbecaf8b1de8340bbb262be6bb0d5fad27d",
+    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
     "blob": "bf08ab021ab06e1f512d3902501108361943ae5d",
@@ -44,8 +44,8 @@
     "reason": "DJI link stage 2 (feat-dji-link-2): the captures the page can play: exports, the replay folder, files chosen in the picker; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/CapturePlayer.kt": {
-    "blob": "0a9447b286a295df5f011173a4f255996d410935",
-    "reason": "DJI link stage 2 (feat-dji-link-2): a capture played in real time through the same pipeline as the cable; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
+    "blob": "63ca65df0914cb28e46fa92bd310ff46ba13d561",
+    "reason": "DJI link stage 2 (feat-dji-link-2): a capture played in real time through the same pipeline as the cable; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): Play in a loop"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/CaptureReplay.kt": {
     "blob": "2f08fc57e2b35b0d2f1eb00b5ca6ac763acb1c24",
@@ -63,6 +63,10 @@
     "blob": "7598c78723f94fa7b7828b6ac14af97b33dabe95",
     "reason": "DJI link (feat-dji-link, 12ccff821): the channels of the accessory stream and the role of each"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/ClockOffset.kt": {
+    "blob": "6c1358d814429138abf6c85a6ecd8c4f376e8414",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the clock offset of the phone on the headset, from the pings"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/Crc.kt": {
     "blob": "49f9b4d9e068a0b2cb391df6f9ae173019195140",
     "reason": "DJI link (feat-dji-link, 12ccff821): the two checksums of a control frame, built from a parameter set; fix round of 22 October: the review findings of stage 1"
@@ -75,21 +79,29 @@
     "blob": "831d45a0843fa4be2ba5110405a9b3b469c8a5ea",
     "reason": "DJI link (feat-dji-link, 12ccff821): the hardware profiles, where a capability cannot claim support without an observation; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the RC-N3 and Neo 2 profile supported for six capabilities with the provenance of the 23 October capture, its stream description seed, and the pilot binding; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiFlightViewActivity.kt": {
+    "blob": "52f65ff2a41c3bcfd938300fd591db369aa3cc87",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the flight view of the Quest: video panel, flight panel, controls of the view only"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkApiImpl.kt": {
-    "blob": "0e54229253222d1ce33bce4daaf38aaf559a6496",
-    "reason": "DJI link (feat-dji-link, 12ccff821): what Flutter asks of the link, and the switch of the accessory attached entry; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): decoder choice, captures to play, the picker, profile binding and the plugged accessory list; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
+    "blob": "5877a16b687d4a0f5470c181f77c61abeb1a8ac6",
+    "reason": "DJI link (feat-dji-link, 12ccff821): what Flutter asks of the link, and the switch of the accessory attached entry; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): decoder choice, captures to play, the picker, profile binding and the plugged accessory list; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): the host methods of the relay, the receiver and the flight view"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkAttachActivity.kt": {
     "blob": "f687f7bfe02090f3b0ce87c222e2694cb6fdea1a",
     "reason": "DJI link (feat-dji-link, 12ccff821): the accessory attached entry, which only brings the application forward; fix round of 22 October: the review findings of stage 1"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkController.kt": {
-    "blob": "2e8390dfcc1da1631aaa17fc8cf3791cc1fae4c0",
-    "reason": "DJI link (feat-dji-link, 12ccff821): the process scoped owner of the link, the codecs, the capture and the safety rules; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the video pipeline, the capture player, the session log and the states that follow the picture; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
+    "blob": "7b55f667e73790944e2f17e88c84b9d440936965",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the process scoped owner of the link, the codecs, the capture and the safety rules; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the video pipeline, the capture player, the session log and the states that follow the picture; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): owners, the relay, the receiver, the flight view and their snapshot"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkRelayService.kt": {
+    "blob": "69fa63c236546199561425b99299469effcc1373",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the foreground service that keeps the phone sending with its screen locked"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkVideoView.kt": {
-    "blob": "2471aa272e33c9dd581a67c3f357a8ea1bd18b05",
-    "reason": "DJI link stage 2 (feat-dji-link-2): the platform view the decoder renders into"
+    "blob": "c3378e848a14a4c856ae89eee5bf64170e456e60",
+    "reason": "DJI link stage 2 (feat-dji-link-2): the platform view the decoder renders into; DJI link stage 2b (feat-dji-link-3): the surface id of the flight view"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkVideoViewFactory.kt": {
     "blob": "fc73f5e2b80af60142f66884ea3de5decd298d3c",
@@ -111,6 +123,10 @@
     "blob": "b7f3af2c8ec9e2ce2133c7a9f81fdaca3b33c0f9",
     "reason": "DJI link (feat-dji-link, 12ccff821): the arming gate and the dead man rules, written before the first byte they guard exists; fix round of 22 October: the review findings of stage 1"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/LinkOwners.kt": {
+    "blob": "1f81c5a3e4d5d4eac0e0e9b425a6b2d07de8ed56",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the owners of the link: page, relay, flight view"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/LinkState.kt": {
     "blob": "b3554fd31bb8c0383a17c1240ac1b3394a2f7bbb",
     "reason": "DJI link (feat-dji-link, 12ccff821): the states of the link and what was read of the accessory; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the reason for video ready"
@@ -120,8 +136,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the control frame codec with both checksums and the sequence counter; fix round of 22 October: the review findings of stage 1"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/ParameterSetStore.kt": {
-    "blob": "4fd208b971387d8059cb3af3c89ee0e6212007f7",
-    "reason": "DJI link stage 2 (feat-dji-link-2): the stream description: session, cache per accessory strings, profile seed"
+    "blob": "a14c7241049260d848bb4fb6861401a50708715f",
+    "reason": "DJI link stage 2 (feat-dji-link-2): the stream description: session, cache per accessory strings, profile seed; DJI link stage 2b (feat-dji-link-3): a description relayed by a phone with its source"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/PermissionPolicy.kt": {
     "blob": "1f5d62b946d2a35edb567b89f8b89f0a007a7203",
@@ -135,6 +151,30 @@
     "blob": "3d45c768afea68c07740ca8c76440b18444b71de",
     "reason": "DJI link (feat-dji-link, 12ccff821): one way of reading sticks whatever the hardware, with the gamepad implementation"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayHeadset.kt": {
+    "blob": "8fe40530a23940541d65458eff69c2dfc329324d",
+    "reason": "DJI link stage 2b (feat-dji-link-3): one headset on the phone: its bounded queue and its writer"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayLatency.kt": {
+    "blob": "d5ad42fc5b6eca696f523c811637930e1a311adf",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the latency windows of the headset"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayReceiver.kt": {
+    "blob": "815091cd11a5dd0104eee0ea637162b4fe4ced75",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the headset side of the relay, with its reconnection"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayServer.kt": {
+    "blob": "57672a834d1e48f66e3c0e2e53668258bb6c9919",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the phone side of the relay: who may connect, the handshake, the headsets, the 10 Hz tick"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayTelemetry.kt": {
+    "blob": "f00766065e7688368755b88e12a181b6ea39f96b",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the telemetry record of the relay, built and read with the JSON element API"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayWire.kt": {
+    "blob": "0523c46b9b2dc31399f1039b19c68cce33f271a8",
+    "reason": "DJI link stage 2b (feat-dji-link-3): relay protocol 1: records, limits, proofs"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/SessionLog.kt": {
     "blob": "85574ccac3fb491b1f4a573d208df9cd96f45faa",
     "reason": "DJI link stage 2 (feat-dji-link-2): the last accessory strings and every open, kept for the export after the unplug"
@@ -142,6 +182,10 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/StickModel.kt": {
     "blob": "b5c4cf64dc27cb6f7bf14f281e5fae5621ac3b43",
     "reason": "DJI link (feat-dji-link, 12ccff821): the sticks as this application reads them, with our own axis names; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/TeeSink.kt": {
+    "blob": "d8dc0f8435c28830179cbb95e66879d7e4f7e5a0",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the tee between the phone decoder and the relay"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/Telemetry.kt": {
     "blob": "42e380d408cfcd9b541f727370e29d260b04f226",
@@ -156,16 +200,16 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): what the device itself says it can do about a USB accessory"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoDecoderFeed.kt": {
-    "blob": "b120a502563134f5dc15cd40231dd2a327133335",
-    "reason": "DJI link (feat-dji-link, 12ccff821): the hardware decoder fed by hand, asleep until a later stage wakes it; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the decoder rewritten: selection, configuration chain, software fallback, flush on backlog, surface switching, statistics; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
+    "blob": "4d4b485f1a5334ac5cafdf398fde2d4fb1d56743",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the hardware decoder fed by hand, asleep until a later stage wakes it; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the decoder rewritten: selection, configuration chain, software fallback, flush on backlog, surface switching, statistics; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): the operating rate on Qualcomm decoders, pictures shown per second"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoFragments.kt": {
     "blob": "d7cc9d55f02c4d0641d466c0f7f7f1c3595df57e",
     "reason": "DJI link (feat-dji-link, 12ccff821): the video payloads kept as fragments with their counters; fix round of 22 October: the review findings of stage 1"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoPipeline.kt": {
-    "blob": "857bbe113f4376f39ba3e070af3f57463d5cfde4",
-    "reason": "DJI link stage 2 (feat-dji-link-2): the glue between the router and the decoder, with the counters of the video panel; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
+    "blob": "57f266afa91ba519253cbe3621251f5b999e22fd",
+    "reason": "DJI link stage 2 (feat-dji-link-2): the glue between the router and the decoder, with the counters of the video panel; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): a new stream told to the sink, decoded and shown per second"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoProbe.kt": {
     "blob": "a41cf9cfaa8ab805a649275f05ad593872126c9c",
@@ -195,6 +239,10 @@
     "blob": "e815fd621f1968ac104bc8b687d1d19a818d00a8",
     "reason": "TV lot (651962690): dark launch background of the app on a TV"
   },
+  "mobile/android/app/src/main/res/layout/dji_flight_panel.xml": {
+    "blob": "8fe660f3b2f3d91fa3e958aefb1bb4c446a6bcec",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the flight panel of the Quest flight view"
+  },
   "mobile/android/app/src/main/res/values-television-v31/styles.xml": {
     "blob": "439e233a038a6eb09eec03874e02a4aedff2dcfa",
     "reason": "TV lot (651962690): dark launch theme of the app on a TV, Android 12 and later"
@@ -203,9 +251,17 @@
     "blob": "0357130537edf1cbd07ecb03d5dda0b1a6c87264",
     "reason": "TV lot (651962690): dark launch theme of the app on a TV"
   },
+  "mobile/android/app/src/main/res/values/dji_flight.xml": {
+    "blob": "a60e9399b1fd5254085dc801368f62750f878d99",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the panel ids of the Quest flight view"
+  },
   "mobile/android/app/src/main/res/xml/dji_accessory_filter.xml": {
     "blob": "7f0505a21455f9ccfed4142d68fed0dd7b116e21",
     "reason": "DJI link (feat-dji-link, 12ccff821): which USB accessories bring up the link entry: any DJI accessory, plus the three identity strings of the format notes"
+  },
+  "mobile/android/app/src/quest/AndroidManifest.xml": {
+    "blob": "aa0594a5212975f49c0b582ae60ecd08f1bb730c",
+    "reason": "DJI link stage 2b (feat-dji-link-3): no relay service on the headset, passthrough declared not required for the flight view"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/AppHealthTest.kt": {
     "blob": "18b6fbf88948bc64016d8427f23ad469a5da38a0",
@@ -243,6 +299,10 @@
     "blob": "39d4c051c48f5be0b7e37ec79fe79ffb7b8de942",
     "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the stick packing, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/ClockOffsetTest.kt": {
+    "blob": "0ce54ed368f9d0887cd0272c79b38f02710baa1b",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/CodecDetectionTest.kt": {
     "blob": "6257b2129c6ac0c08dfb37e4038bc33a66435f57",
     "reason": "DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job"
@@ -267,6 +327,10 @@
     "blob": "2188d90bb45323abcfa825c7303cf8463da9b342",
     "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the envelope decoder, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/FlightViewControlsTest.kt": {
+    "blob": "faaf8d84d7867c79a4ddcd45fb4b75f78148578b",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/FrameRouterTest.kt": {
     "blob": "774ec9467312ac48f06f174dc275e3c1b999f17d",
     "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the router and its liveness rules, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job"
@@ -282,6 +346,10 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/InputSafetyTest.kt": {
     "blob": "769a46e5250d514922e28987098120045c727db9",
     "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the arming gate and the dead man rules, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/LinkOwnersTest.kt": {
+    "blob": "24e6d274caedd495d41778e2579bfb5e2d3e7768",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/P3FrameTest.kt": {
     "blob": "de607c160b2d584d9c7904373457c5491d23cf55",
@@ -306,6 +374,46 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/ProfileRegistryTest.kt": {
     "blob": "8ea101da4ad98f8cb7096f392343b07cbfbfa7fc",
     "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the hardware profiles, run by the Kotlin unit tests job; DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayHandshakeTest.kt": {
+    "blob": "4435627b9d218f46f09f72bbece97c7d58a75dc7",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayHeadsetQueueTest.kt": {
+    "blob": "687c1d85e28b1d1169d1a0fdf28eeebec71ae00c",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayLatencyTest.kt": {
+    "blob": "53f569010296f91280611ca65521d5d27f897a56",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayLoopbackCaptureTest.kt": {
+    "blob": "6ea0d9151cbef423901e6ba97463db7aaef2c6e1",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the relay on the real capture, skipped where the capture is absent"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayParametersTest.kt": {
+    "blob": "ab6f158b4ddbda416458c36d2aeb8b3ce0739bae",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayReceiverStateTest.kt": {
+    "blob": "cbb152acc539b9506532c037569ebd2a799545d3",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayTelemetryTest.kt": {
+    "blob": "4c5f1e641f0e01ca5d287c0bf0b7f4ce74687754",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayTestPeers.kt": {
+    "blob": "684865bec44d718d1056f9245a93ff2e320ed485",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayWireTest.kt": {
+    "blob": "78bd1222e006c875ad8a34cd9ff7ae1fa3928886",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/TeeSinkTest.kt": {
+    "blob": "871f0cce7462d33c82afc908544f8ea76f0e5e87",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/TelemetryDecoderTest.kt": {
     "blob": "a080814d1090615270fc2ef5888d093c99643d5d",
@@ -334,6 +442,14 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/tv/TvDeviceTest.kt": {
     "blob": "7d5062fb96cb57fd92eb50b09e47368ed84de5bb",
     "reason": "TV lot (f5055f1e2): unit tests of TvDevice, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/resources/djilink/make_relay_vectors.py": {
+    "blob": "a207ef5f97f9fb60d1ef1666380b3ed65ae07091",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the generator of the known answers of the relay proofs"
+  },
+  "mobile/android/app/src/test/resources/djilink/relay-vectors.json": {
+    "blob": "4969998066e4be13fee1b40f17d983edc8df4e3b",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the known answers of the relay proofs"
   },
   "mobile/android/gradle/libs.versions.toml": {
     "blob": "b93d8883a77bc94b88382aad3f8ae9fa3e298c71",
