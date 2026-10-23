@@ -12,6 +12,7 @@ class CaptureTest {
 
   private fun ring(capacity: Int = CaptureRing.MIN_CAPACITY) = CaptureRing(
     capacityBytes = capacity,
+    headBytes = 0,
     monotonicNs = { monotonic += 1_000_000; monotonic },
     wallMs = { wall += 1; wall },
   ).also { it.start() }
@@ -158,5 +159,192 @@ class CaptureTest {
     val result = CaptureReplay.replay(bytes, emptyList())
     assertEquals(1L, result.envelopes.frames)
     assertEquals(false, result.usedIndex)
+  }
+
+  @Test
+  fun theHeadKeepsTheFirstBytesOfASessionAndAGapMarkerSaysWhatTheTailLost() {
+    val capture = CaptureRing(
+      capacityBytes = CaptureRing.MIN_CAPACITY,
+      headBytes = 1000,
+      monotonicNs = { monotonic += 1_000_000; monotonic },
+      wallMs = { wall += 1; wall },
+    )
+    capture.start(accessoryOpen = false)
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, ByteArray(600) { 1 })
+    // Does not fit what is left of the head: the head closes, this and the rest of the session go to the tail
+    capture.record(CaptureDirection.IN, ByteArray(600) { 2 })
+    repeat(8) { capture.record(CaptureDirection.IN, ByteArray(16 * 1024) { 3 }) }
+    val snapshot = capture.snapshot()
+    assertEquals(600 + CaptureRing.MIN_CAPACITY, snapshot.bytes.size)
+    assertEquals(1.toByte(), snapshot.bytes[599])
+    assertEquals(3.toByte(), snapshot.bytes[600])
+    assertEquals(listOf("open", "in", "gap"), snapshot.entries.take(3).map { it.direction.word })
+    val gap = snapshot.entries[2]
+    assertEquals(600L, gap.offset)
+    val tailWritten = 600L + 8 * 16 * 1024
+    assertEquals(tailWritten - CaptureRing.MIN_CAPACITY, gap.skippedBytes)
+    assertEquals(600L + 600 + 8 * 16 * 1024, snapshot.totalBytes)
+    val csv = snapshot.indexCsv()
+    assertTrue(csv.contains("600,${gap.skippedBytes},gap,"))
+    val parsed = CaptureReplay.parseIndex(csv)
+    assertEquals(snapshot.entries, parsed)
+    // Every record of the tail is rebased after the head
+    assertTrue(snapshot.entries.drop(3).all { it.offset >= 600 })
+  }
+
+  @Test
+  fun anAccessoryAlreadyOpenStartsTheHeadAtOnce() {
+    val capture = CaptureRing(capacityBytes = CaptureRing.MIN_CAPACITY, headBytes = 100)
+    capture.start(accessoryOpen = true)
+    capture.record(CaptureDirection.IN, ByteArray(80) { 5 })
+    capture.record(CaptureDirection.IN, ByteArray(80) { 6 })
+    val snapshot = capture.snapshot()
+    // Nothing was lost, so head and tail follow each other with no gap marker
+    assertEquals(160, snapshot.bytes.size)
+    assertEquals(listOf(0L, 80L), snapshot.entries.map { it.offset })
+    assertEquals(CaptureRing.DEFAULT_HEAD, CaptureRing().capacityOfHead)
+    assertEquals(16 * 1024 * 1024, CaptureRing().capacityOfRing)
+  }
+
+  @Test
+  fun aReplayRestartsItsParsersAtTheGap() {
+    val capture = CaptureRing(
+      capacityBytes = CaptureRing.MIN_CAPACITY,
+      headBytes = 1000,
+      monotonicNs = { monotonic += 1_000_000; monotonic },
+      wallMs = { wall += 1; wall },
+    )
+    capture.start(accessoryOpen = false)
+    capture.mark(CaptureDirection.OPEN)
+    fun control(sequence: Int, body: Int) = EnvelopeDecoder.encode(
+      Channels.CONTROL_PRIMARY,
+      P3Decoder.build(
+        senderType = DeviceTypes.REMOTE_CONTROLLER,
+        receiverType = DeviceTypes.APPLICATION,
+        sequence = sequence,
+        commandSet = 0,
+        commandId = 119,
+        body = ByteArray(body),
+      ),
+    )
+    capture.record(CaptureDirection.IN, control(1, 4))
+    // The head ends inside a frame: without a restart its header would swallow the bytes after the gap
+    capture.record(CaptureDirection.IN, control(2, 100).copyOf(20))
+    repeat(31) { index ->
+      capture.record(CaptureDirection.IN, EnvelopeDecoder.encode(22346, ByteArray(4080) { (index + 7).toByte() }))
+    }
+    val snapshot = capture.snapshot()
+    val result = CaptureReplay.replay(snapshot.bytes, CaptureReplay.parseIndex(snapshot.indexCsv()))
+    assertEquals(1, result.gaps)
+    assertEquals(1, result.opens)
+    assertEquals(1L, result.control.frames)
+    assertTrue(result.envelopes.frames >= 15)
+    assertEquals(0L, result.envelopes.unknownChannelFrames)
+  }
+
+  @Test
+  fun theSessionLogKeepsTheLastAccessoryAndEveryOpenAfterAClose() {
+    val log = SessionLog()
+    val identity = AccessoryIdentity("DJI", "model", "remote", "1.0", "serial", null)
+    log.onIdentity(identity, 900)
+    log.onOpened(1000)
+    log.onRead(100, 1050)
+    log.onRead(50, 1060)
+    log.onWritten(1)
+    log.onClosed("DETACHED", 2000)
+    log.onIdentity(null, 2001)
+    log.onOpened(5000)
+    assertEquals(identity, log.lastAccessory)
+    assertEquals(900L, log.lastAccessoryAtWallMs)
+    val opens = log.opens()
+    assertEquals(2, opens.size)
+    val first = opens[0]
+    assertEquals(50L, first.firstByteAfterMs)
+    assertEquals(150L, first.bytesRead)
+    assertEquals(2L, first.reads)
+    assertEquals(1L, first.bytesWritten)
+    assertEquals(2000L, first.closedAtWallMs)
+    assertEquals("DETACHED", first.closeReason)
+    assertEquals(null, opens[1].firstByteAfterMs)
+    repeat(30) { log.onOpened(6000L + it) }
+    assertEquals(SessionLog.MAX_OPENS, log.opens().size)
+  }
+
+  private fun ringWithHead(headBytes: Int = 1000) = CaptureRing(
+    capacityBytes = CaptureRing.MIN_CAPACITY,
+    headBytes = headBytes,
+    monotonicNs = { monotonic += 1_000_000; monotonic },
+    wallMs = { wall += 1; wall },
+  )
+
+  private fun remoteFrame(sequence: Int) = EnvelopeDecoder.encode(
+    Channels.CONTROL_PRIMARY,
+    P3Decoder.build(
+      senderType = DeviceTypes.REMOTE_CONTROLLER,
+      receiverType = DeviceTypes.APPLICATION,
+      sequence = sequence,
+      commandSet = CommandSets.REMOTE_CONTROLLER,
+      commandId = 5,
+      body = ByteArray(6),
+    ),
+  )
+
+  @Test
+  fun aClearDuringASessionKeepsTheTwoSessionsInTheirOrder() {
+    // Owner test 5.3: Clear tapped with the remote plugged, then an unplug and a plug
+    val capture = ringWithHead()
+    capture.start(accessoryOpen = false)
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, ByteArray(100) { 1 })
+    capture.clear()
+    val first = remoteFrame(1)
+    val second = remoteFrame(2)
+    capture.record(CaptureDirection.IN, first)
+    capture.mark(CaptureDirection.CLOSE)
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, second)
+    val snapshot = capture.snapshot()
+    assertEquals(listOf("in", "close", "open", "in"), snapshot.entries.map { it.direction.word })
+    // The end of the first session comes before the open of the second, in the bytes as in the index
+    assertEquals(first.toList() + second.toList(), snapshot.bytes.toList())
+    assertEquals(first.size.toLong(), snapshot.entries[2].offset)
+    val result = CaptureReplay.replay(snapshot.bytes, CaptureReplay.parseIndex(snapshot.indexCsv()))
+    assertEquals(1, result.opens)
+    assertEquals(2L, result.control.frames)
+  }
+
+  @Test
+  fun aClearWithTheAccessoryOpenStartsTheHeadAtOnce() {
+    val capture = ringWithHead()
+    capture.start(accessoryOpen = true)
+    capture.record(CaptureDirection.IN, ByteArray(100) { 1 })
+    capture.clear(accessoryOpen = true)
+    capture.record(CaptureDirection.IN, ByteArray(50) { 2 })
+    capture.mark(CaptureDirection.CLOSE)
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, ByteArray(70) { 3 })
+    // Past what is left of the head: the rest of the second session goes to the tail, after it
+    capture.record(CaptureDirection.IN, ByteArray(900) { 4 })
+    val snapshot = capture.snapshot()
+    assertEquals(listOf("in", "close", "open", "in", "in"), snapshot.entries.map { it.direction.word })
+    assertEquals(listOf(0L, 50L, 50L, 50L, 120L), snapshot.entries.map { it.offset })
+    assertEquals(50 + 70 + 900, snapshot.bytes.size)
+    assertEquals(2.toByte(), snapshot.bytes[49])
+    assertEquals(3.toByte(), snapshot.bytes[50])
+    assertEquals(4.toByte(), snapshot.bytes[120])
+    assertEquals(50L + 70 + 900, snapshot.totalBytes)
+  }
+
+  @Test
+  fun aClearWithNothingOpenWaitsForTheNextOpenAsBefore() {
+    val capture = ringWithHead()
+    capture.start(accessoryOpen = false)
+    capture.clear()
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, ByteArray(10) { 5 })
+    val snapshot = capture.snapshot()
+    assertEquals(listOf("open", "in"), snapshot.entries.map { it.direction.word })
+    assertEquals(10, snapshot.bytes.size)
   }
 }

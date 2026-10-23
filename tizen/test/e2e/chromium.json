@@ -1,0 +1,41 @@
+{
+	"about": "The engines of the end to end test, closest obtainable to the Chromium of Samsung TVs: the last Chromium snapshot before the branch point of 69 (Tizen 5.5, 2020 TVs), 76 (Tizen 6.0, 2021) and 94 (Tizen 7.0, 2023), from chromium-browser-snapshots, and a Chrome for Testing (which has H.264, as TVs do). Each was checked against the MD5 its storage publishes on 23 October 2026; the SHA256 here is checked after every download and every cache restore (chromium.mjs).",
+	"engines": [
+		{
+			"label": "69",
+			"tizen": "5.5",
+			"version": "69.0.3497.0",
+			"url": "https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/576753/chrome-linux.zip",
+			"size": 106966081,
+			"sha256": "d5e70bff740347cdefec5a462632e007a6dfac4c82370d44d0ed51eb13d263c0",
+			"binary": "chrome-linux/chrome"
+		},
+		{
+			"label": "76",
+			"tizen": "6.0",
+			"version": "76.0.3809.0",
+			"url": "https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/664981/chrome-linux.zip",
+			"size": 362677227,
+			"sha256": "b1e30c4dec8a451f8fe10d1f2d3c71e491d0333425f32247fe5c80a0a354303d",
+			"binary": "chrome-linux/chrome"
+		},
+		{
+			"label": "94",
+			"tizen": "7.0",
+			"version": "94.0.4606.0",
+			"url": "https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/911494/chrome-linux.zip",
+			"size": 148578802,
+			"sha256": "25264b328b50589ecae6ed7d87575a34cd9b92ac71b9bc843bacab9562736a02",
+			"binary": "chrome-linux/chrome"
+		},
+		{
+			"label": "cft",
+			"tizen": "none (a current Chrome, with H.264)",
+			"version": "156.0.8078.47",
+			"url": "https://storage.googleapis.com/chrome-for-testing-public/156.0.8078.47/linux64/chrome-linux64.zip",
+			"size": 200206486,
+			"sha256": "e6c94490f0b6b337225aeb2d2a5034858516b7017356980ba94f5176d8774a50",
+			"binary": "chrome-linux64/chrome"
+		}
+	]
+}

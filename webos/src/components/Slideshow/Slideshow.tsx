@@ -5,6 +5,8 @@ import {useAutoHideControls} from '../../hooks/useAutoHideControls';
 import {SLIDESHOW_INTERVALS_S, useSlideshowSettings} from '../../hooks/useSlideshowSettings';
 import {useWebOSKeys} from '../../hooks/useWebOSKeys';
 import {getRotation} from '../../utils/rotationStore';
+import {holdScreenSaver} from '../../utils/screenSaver';
+import {remoteAction, type RemoteAction} from '../../immuch360/keys';
 import {MediaInfo} from '../MediaInfo/MediaInfo';
 import {RoundButton} from '../RoundButton';
 import {createSpotlightContainer, forceFocus} from '../../utils/spotlight';
@@ -31,7 +33,9 @@ interface Stage {
 const SLIDESHOW_SPOTLIGHT_ID = 'slideshow';
 const PLAY_BUTTON_SPOTLIGHT_ID = 'slideshow-play';
 const MAX_BROKEN_SKIPS = 5;
-const PLAY_PAUSE_KEYCODES = new Set([415, 19, 179]);
+// Immuch360: Play, Pause and Play/Pause each pause or resume the slideshow, read through the key map of src/immuch360/
+// keys.ts: LG's 415, 19 and 179 as before, and Samsung's 10252, the one Play/Pause key of its Smart Remote
+const TOGGLES_SLIDESHOW: RemoteAction[] = ['play', 'pause', 'playPause'];
 
 const Container = createSpotlightContainer({enterTo: 'default-element'});
 const swallowKey = () => {};
@@ -154,8 +158,10 @@ export const Slideshow: React.FC<SlideshowProps> = ({start, source, onExit}) => 
 		return () => window.clearTimeout(timer);
 	}, [current, paused, stage.incoming, settings.intervalSeconds, playlist, repository, advance, retryTick]);
 
-	// Immuch360: no veto of the screen saver here any more: appinfo.json asks webOS for the Type 3 screen saver of
-	// gallery apps (screenSaverProperties, useGalleryMode), which dims the screen after 30 minutes instead
+	// Immuch360: on webOS no veto of the screen saver any more: appinfo.json asks for the Type 3 screen saver of gallery
+	// apps (screenSaverProperties, useGalleryMode), which dims the screen after 30 minutes instead. A Samsung TV turns
+	// its screen saver off through AppCommon while the slideshow plays (holdScreenSaver does nothing on webOS)
+	useEffect(() => holdScreenSaver(), []);
 
 	const handleExit = useCallback(() => onExit(current), [onExit, current]);
 	const handleNext = useCallback(() => void advance(() => playlist.next()), [advance, playlist]);
@@ -184,7 +190,8 @@ export const Slideshow: React.FC<SlideshowProps> = ({start, source, onExit}) => 
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
-			if (!PLAY_PAUSE_KEYCODES.has(event.keyCode)) return;
+			const action = remoteAction(event);
+			if (!action || TOGGLES_SLIDESHOW.indexOf(action) < 0) return;
 			event.preventDefault();
 			togglePaused();
 		};

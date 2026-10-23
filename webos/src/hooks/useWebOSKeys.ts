@@ -1,6 +1,8 @@
 import {useEffect} from 'react';
 import {platformBack} from '@enact/webos/application';
 import LS2Request from '@enact/webos/LS2Request';
+import {features} from '../platform/features';
+import {exitTizenApp} from '../platform/tizen';
 
 interface UseWebOSKeysOptions {
 	onBack?: () => void;
@@ -67,18 +69,20 @@ function fireTopBack(): boolean {
 
 // Immuch360: the Back of a page itself, used when no layer of it took the key: a rail page other than Photos goes
 // back to Photos (LG's self checklist, item 37: Back moves to the previous screen). One at a time, the last set wins.
+// webOS only (features().railBackToPhotos): a Samsung TV closes the app from any page of the rail.
 let rootBack: (() => void) | null = null;
 
 // Immuch360: an open Sandstone popup (the language list, the text entry of an Input, a dialog) lives in the floating
 // layer of the ThemeDecorator, holds the focus, and closes itself on the keyup of Back. Its keydown must not close the
-// page under it nor reach the TV, where WAM would add its own exit popup over the list. The tooltips of the focused
-// buttons live in the same layer but leave the focus on their button: they must not hold Back.
+// page under it (the sign in form, and what was typed) nor, on webOS, reach the TV, where WAM would add its own exit
+// popup over the list. The tooltips of the focused buttons live in the same layer but leave the focus on their button:
+// they must not hold Back. Both TVs: LG's lot for its store, the Samsung lot for the keyboard popup of the sign in form.
 export const FLOATING_LAYER_ID = 'floatLayer';
 
 // The Magic Remote pointer can leave the focus on the body while a popup is open: a popup is then a Spotlight container
-// in the layer (Sandstone's Popup, which also holds the Dropdown list and the Input's text entry) or a dialog; a tooltip
-// is neither (its text only, aria-hidden)
-const POPUP_IN_LAYER = '[data-spotlight-container], [role="dialog"], [aria-modal="true"]';
+// in the layer (Sandstone's Popup, which also holds the Dropdown list and the Input's text entry), an alert or a dialog;
+// a tooltip is none of them (its text only, aria-hidden)
+const POPUP_IN_LAYER = '[data-spotlight-container], [role="alert"], [role="dialog"], [aria-modal="true"]';
 
 function popupOpen(): boolean {
 	if (typeof document === 'undefined') return false;
@@ -158,12 +162,22 @@ export function exitToPlatform(): boolean {
 	return true;
 }
 
+// Immuch360: Samsung's Back. On a Samsung TV, Back on the first screen closes the app, as Samsung's own apps do; webOS
+// asks with its own dialog instead (exitToPlatform). Not while a text is typed (the Samsung keyboard closes itself);
+// an open popup holds Back before this is reached (popupOpen).
+const SAMSUNG_BACK_KEYCODE = 10009;
+
+function exitsTheApp(event: KeyboardEvent): boolean {
+	return event.keyCode === SAMSUNG_BACK_KEYCODE && features().exitOnRootBack && !isEditingText(event.target);
+}
+
 let bridgeInstalled = false;
 
 // Installs the global Back key listener once per app. On webOS, WAM dispatches the remote
 // Back as a DOM keydown event on window (we verified this via ares-inspect on a real TV).
 // The app consumes every Back: an open popup closes on keyup, else the top layer closes, else the page goes back to
-// Photos, else (an entry page) the app hands the key to the platform with platformBack().
+// Photos (webOS), else (an entry page) the app hands the key to the platform with platformBack().
+// Immuch360: a Samsung TV does nothing by itself there, so the app closes itself (exitsTheApp).
 function ensureBridgeInstalled(): void {
 	if (bridgeInstalled || typeof window === 'undefined') return;
 	bridgeInstalled = true;
@@ -174,8 +188,9 @@ function ensureBridgeInstalled(): void {
 			if (!isBackKey(event)) return;
 			if (event.keyCode === BACKSPACE_KEYCODE && isEditingText(event.target)) return;
 			if (popupOpen()) {
-				// Sandstone closes the popup on keyup; nothing else may act on this press
-				event.preventDefault();
+				// Sandstone closes the popup on keyup; nothing else may act on this press. On webOS the TV must not
+				// see it either; a Samsung TV does nothing with Back by itself, and the press is left as it is there.
+				if (webOSSystem()) event.preventDefault();
 				return;
 			}
 			// stopImmediatePropagation (not stopPropagation) so sibling window-level listeners
@@ -186,7 +201,7 @@ function ensureBridgeInstalled(): void {
 				event.stopImmediatePropagation();
 				return;
 			}
-			if (rootBack) {
+			if (rootBack && features().railBackToPhotos) {
 				rootBack();
 				event.preventDefault();
 				event.stopImmediatePropagation();
@@ -195,6 +210,9 @@ function ensureBridgeInstalled(): void {
 			if (exitToPlatform()) {
 				event.preventDefault();
 				event.stopImmediatePropagation();
+			} else if (exitsTheApp(event)) {
+				event.preventDefault();
+				exitTizenApp();
 			}
 		},
 		{capture: true}

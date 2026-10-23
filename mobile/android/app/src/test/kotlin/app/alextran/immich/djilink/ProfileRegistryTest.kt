@@ -9,10 +9,10 @@ import org.junit.Test
 /** A profile is a label. It never grants a capability, and a capability never claims support without an observation. */
 class ProfileRegistryTest {
   @Test
-  fun everyStartingProfileIsUnknownEverywhere() {
+  fun everyStartingProfileButTheObservedOneIsUnknownEverywhere() {
     val registry = ProfileRegistry()
     assertTrue(registry.all().isNotEmpty())
-    for (profile in registry.all()) {
+    for (profile in registry.all().filter { it.id != ProfileRegistry.RC_N3_NEO2 }) {
       for (capability in Capability.entries) {
         assertEquals(Support.UNKNOWN, profile.support(capability))
       }
@@ -59,21 +59,24 @@ class ProfileRegistryTest {
   }
 
   @Test
-  fun supportedCannotBeExpressedWithoutAnObservation() {
+  fun supportedCannotBeExpressedWithoutAnObservationOnADevice() {
     assertThrows(IllegalArgumentException::class.java) { CapabilityState(Support.SUPPORTED) }
-    val state = CapabilityState(
-      Support.SUPPORTED,
-      Provenance(
-        observationId = "HC-03",
-        date = "2026-10-22",
-        deviceModel = "Quest 3",
-        deviceOs = "Horizon OS",
-        controller = "RC-N3",
-        aircraft = "Neo 2",
-        captureSha256 = null,
-        observed = "the accessory opened and the probe kept returning for two minutes",
-      ),
+    val provenance = Provenance(
+      observationId = "HC-03",
+      date = "2026-10-22",
+      deviceModel = "Quest 3",
+      deviceOs = "Horizon OS",
+      controller = "RC-N3",
+      aircraft = "Neo 2",
+      captureSha256 = null,
+      observed = "the accessory opened and the probe kept returning for two minutes",
     )
+    // An observation made on no device (an offline decode) cannot carry a support either
+    assertThrows(IllegalArgumentException::class.java) { CapabilityState(Support.SUPPORTED, provenance) }
+    val quest = ObservedDevice(manufacturer = "Oculus", model = "Quest 3", flavour = "quest", name = "Meta Quest 3")
+    val state = CapabilityState(Support.SUPPORTED, provenance.copy(device = quest))
     assertEquals(Support.SUPPORTED, state.support)
+    assertEquals(Support.SUPPORTED, state.on(RunningDevice("Oculus", "Quest 3", "quest")))
+    assertEquals(Support.UNKNOWN, state.on(RunningDevice("Oculus", "Quest 3", "phone")))
   }
 }

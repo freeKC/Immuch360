@@ -6,6 +6,7 @@ import {NAVIGATION_RAIL_ID} from '../../utils/constants';
 import type {View} from '../../types/navigation';
 import css from './NavigationRail.module.less';
 import {i18nKey, t} from '../../immuch360/i18n';
+import {features} from '../../platform/features';
 
 interface NavigationRailProps {
 	activeView: View;
@@ -33,10 +34,14 @@ const RailContainer = createSpotlightContainer({enterTo: 'last-focused'});
 const withMarqueeOnFocus = MarqueeController as unknown as (config: {marqueeOnFocus: boolean}, wrapped: typeof SpottableButton) => typeof SpottableButton;
 const RailItem = withMarqueeOnFocus({marqueeOnFocus: true}, SpottableButton);
 
+// Immuch360: a Samsung TV has no "Network shares" item: the media bridge that reads them runs in the webOS service
+const navItems = () => (features().sources ? NAV_ITEMS : NAV_ITEMS.filter(({view}) => view !== 'sources'));
+
 export const NavigationRail: React.FC<NavigationRailProps> = React.memo(({activeView, onNavigate, onOpenAccount, accountLetter, accountGradient}) => {
+	const items = useMemo(() => navItems(), []);
 	const navHandlers = useMemo(
-		() => Object.fromEntries(NAV_ITEMS.map(({view}) => [view, () => onNavigate(view)])),
-		[onNavigate]
+		() => Object.fromEntries(items.map(({view}) => [view, () => onNavigate(view)])),
+		[items, onNavigate]
 	);
 
 	return (
@@ -44,7 +49,7 @@ export const NavigationRail: React.FC<NavigationRailProps> = React.memo(({active
 		// an account switch Enact registers the new rail in render before removing the old one;
 		// sharing a Spotlight ID lets the old rail's cleanup unregister the replacement.
 		<RailContainer className={css.rail} id={NAVIGATION_RAIL_ID}>
-			{NAV_ITEMS.map(({view, icon, label}) => (
+			{items.map(({view, icon, label}) => (
 				<RailItem
 					key={view}
 					data-view={view}

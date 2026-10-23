@@ -198,6 +198,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * sphere. Null for any other media, and ignored for a video.
      */
     val stereoPairJson: String? = null,
+    /**
+     * The "Reverse thumbstick turn" setting when the app opened the viewer: the right thumbstick then turns the sphere
+     * the other way (see [ImmersiveControls.snapTurnDegrees]). A previous or next media keeps the value of its opening.
+     */
+    val reverseThumbstickTurn: Boolean = false,
   ) {
     /** A raw 360° video, drawn as a mono 360° video whatever the 3D layout and the field of view say. */
     val isRawVideo: Boolean
@@ -1091,10 +1096,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
         ImmersiveControls.Action.PREVIOUS -> navigate(-1, fromThumbstick = true)
         ImmersiveControls.Action.NEXT -> navigate(1, fromThumbstick = true)
-        ImmersiveControls.Action.TURN_LEFT ->
-          if (isStereoPhoto) placeStereoQuad() else turnFromThumbstick(-SNAP_TURN_DEGREES)
+        ImmersiveControls.Action.TURN_LEFT,
         ImmersiveControls.Action.TURN_RIGHT ->
-          if (isStereoPhoto) placeStereoQuad() else turnFromThumbstick(SNAP_TURN_DEGREES)
+          if (isStereoPhoto) {
+            placeStereoQuad()
+          } else {
+            val reversed = request?.reverseThumbstickTurn == true
+            turnFromThumbstick(ImmersiveControls.snapTurnDegrees(action, SNAP_TURN_DEGREES, reversed))
+          }
         ImmersiveControls.Action.STICK_UP ->
           when {
             isVideo -> seekFromThumbstick(1)
@@ -1249,6 +1258,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         fallbackUrl = fallbackUrl,
         rawProjection = rawProjection,
         stereoPairJson = stereoPair,
+        reverseThumbstickTurn = current.reverseThumbstickTurn,
       )
     // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
     val quiet = navigationQuiet && !infoVisible
@@ -2973,6 +2983,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val EXTRA_RAW_PROJECTION = "app.alextran.immich.immersive.RAW_PROJECTION"
     /** The JSON of the two eyes of an Apple spatial photo, absent for any other media; put by ImmersiveApiImpl.open */
     internal const val EXTRA_STEREO_PAIR = "app.alextran.immich.immersive.STEREO_PAIR"
+    private const val EXTRA_REVERSE_THUMBSTICK_TURN = "app.alextran.immich.immersive.REVERSE_THUMBSTICK_TURN"
     /** The media shown, in the saved state of a recreation, with the same keys as the extras of [intent]. */
     private const val STATE_REQUEST = "app.alextran.immich.immersive.REQUEST"
     /** The 3D or 2D choice and the angular width of the spatial photo shown, in the saved state of a recreation. */
@@ -3116,6 +3127,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       openingId: Long,
       fallbackUrl: String?,
       rawProjection: String?,
+      reverseThumbstickTurn: Boolean,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -3131,6 +3143,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           openingId = openingId,
           fallbackUrl = fallbackUrl,
           rawProjection = rawProjection,
+          reverseThumbstickTurn = reverseThumbstickTurn,
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -3155,6 +3168,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putString(EXTRA_FALLBACK_URL, media.fallbackUrl)
         putString(EXTRA_RAW_PROJECTION, media.rawProjection)
         putString(EXTRA_STEREO_PAIR, media.stereoPairJson)
+        putBoolean(EXTRA_REVERSE_THUMBSTICK_TURN, media.reverseThumbstickTurn)
       }
     }
 
@@ -3185,6 +3199,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         fallbackUrl = extras.getString(EXTRA_FALLBACK_URL)?.takeIf { it.isNotBlank() },
         rawProjection = extras.getString(EXTRA_RAW_PROJECTION)?.takeIf { it.isNotBlank() },
         stereoPairJson = extras.getString(EXTRA_STEREO_PAIR)?.takeIf { it.isNotBlank() },
+        reverseThumbstickTurn = extras.getBoolean(EXTRA_REVERSE_THUMBSTICK_TURN, false),
       )
     }
 

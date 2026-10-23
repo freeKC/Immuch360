@@ -1,0 +1,279 @@
+name: Immuch360 Tizen
+
+# The app for Samsung TVs (Tizen 5.5 and later): the webOS bundle (webos/, see webos/UPSTREAM.md) packaged by the
+# tizen/ shell. Its tests, the package folder (tizen/tools/build-wgt.mjs), the end to end test on the Chromium builds
+# closest to the engines of Samsung TVs (tizen/test/e2e), then the .wgt signed by the Tizen command line tools with a
+# throwaway certificate made in the job (tizen/tools/install-cli.sh, package-ci.sh), checked by check-wgt.mjs and
+# uploaded with SHA256SUMS.txt and the list of its files. That signature only proves the official tools accept the
+# package: every install on a Samsung TV is re-signed by the tester with his own Samsung certificate.
+#
+# It runs on every push and pull request that touches tizen/, what of webos/ makes the bundle, the fork's i18n/ and
+# LICENSE or these workflows, by hand (the version of tizen/config.xml, or the one given), and from
+# immuch360-tizen-release.yml on a tizen-v<x.y.z> tag, which publishes the .wgt. Read only, no secret, no kept token:
+# .github/desktop/check_workflow.py holds it to that. Nothing of the Tizen SDK goes into an artifact (Samsung's TV SDK
+# licence forbids passing it on); its installer is only cached, and checked by its SHA256 after every restore.
+
+on:
+  # Branches only: a tizen-v* tag builds through immuch360-tizen-release.yml
+  push:
+    branches: ['**']
+    paths:
+      - 'tizen/**'
+      # All of webos/ goes into the bundle or builds it (src, bridge, resources, tools, the licences, the version of
+      # webos-meta), but for the JS service, the store pictures and the notes, which only the webOS app has
+      - 'webos/**'
+      - '!webos/service/**'
+      - '!webos/assets/**'
+      - '!webos/**/*.md'
+      - 'LICENSE'
+      - 'i18n/**'
+      - '.github/workflows/immuch360-tizen*.yml'
+      - '.github/desktop/check_workflow.py'
+  pull_request:
+    paths:
+      - 'tizen/**'
+      # All of webos/ goes into the bundle or builds it (src, bridge, resources, tools, the licences, the version of
+      # webos-meta), but for the JS service, the store pictures and the notes, which only the webOS app has
+      - 'webos/**'
+      - '!webos/service/**'
+      - '!webos/assets/**'
+      - '!webos/**/*.md'
+      - 'LICENSE'
+      - 'i18n/**'
+      - '.github/workflows/immuch360-tizen*.yml'
+      - '.github/desktop/check_workflow.py'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version of the build, three numbers (0.1.0); empty for the one of tizen/config.xml'
+        required: false
+        default: ''
+  # immuch360-tizen-release.yml, on a tizen-v* tag; the permissions below stay read only
+  workflow_call:
+    inputs:
+      version:
+        description: 'Version of the build; empty for the tag (tizen-v0.1.0 is 0.1.0) or tizen/config.xml'
+        type: string
+        required: false
+        default: ''
+    outputs:
+      version:
+        description: The version of the build, which names the .wgt
+        value: ${{ jobs.build.outputs.version }}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Tests and the package folder
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    defaults:
+      run:
+        working-directory: webos
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: These workflows pinned, without secrets, the release on tizen-v* tags only
+        working-directory: .
+        run: |
+          python3 .github/desktop/check_workflow.py --workflow .github/workflows/immuch360-tizen.yml
+          python3 .github/desktop/check_workflow.py --release --workflow .github/workflows/immuch360-tizen-release.yml \
+            --tag-prefix tizen-v
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: webos/.nvmrc
+          cache: npm
+          cache-dependency-path: webos/package-lock.json
+
+      # The tag gives the version (tizen-v0.1.0 is 0.1.0), else the input, else tizen/config.xml
+      - name: The version
+        id: version
+        working-directory: .
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+        run: |
+          if [ "$REF_TYPE" = tag ] && [ "${REF_NAME#tizen-v}" != "$REF_NAME" ]; then
+            version="${REF_NAME#tizen-v}"
+          elif [ -n "$INPUT_VERSION" ]; then
+            version="$INPUT_VERSION"
+          else
+            version="$(node tizen/tools/build-wgt.mjs --print-version)"
+          fi
+          node -e "import('./tizen/tools/build-wgt.mjs').then((m) => m.checkVersion(process.argv[1]))" "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Dependencies
+        run: npm ci --no-audit --no-fund
+
+      # The Samsung app is the webOS bundle: the tests of its code run here too
+      - name: Tests of the Immuch360 layers and of the platform layer (node test runner)
+        run: npm run test-unit
+
+      - name: Tests inherited from immich-tv-webos and of the components (jest)
+        run: npm test -- --maxWorkers=2
+
+      - name: Tests of the build tools, of the webOS ones and of tizen/tools
+        run: |
+          npm run test-tools
+          node --test ../tizen/test/*.test.mjs
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Types
+        run: npm run typecheck
+
+      - name: The bundle (as for webOS) and the package folder
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          npm run pack-p
+          node ../tizen/tools/build-wgt.mjs --dist dist --version "$VERSION" --out ../tizen/build/wgt
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tizen-wgt-folder
+          path: tizen/build/wgt
+          if-no-files-found: error
+          retention-days: 7
+
+  e2e:
+    name: End to end, Chromium ${{ matrix.chromium }}
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # The last snapshots before the branch points of 69 (Tizen 5.5), 76 (6.0) and 94 (7.0), and a current Chrome
+        chromium: ['69', '76', '94', 'cft']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: webos/.nvmrc
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: tizen-wgt-folder
+          path: tizen/build/wgt
+
+      - name: The engine pinned in chromium.json
+        id: engine
+        env:
+          LABEL: ${{ matrix.chromium }}
+        run: |
+          sha=$(node -p "require('./tizen/test/e2e/chromium.json').engines.find((e) => e.label === process.env.LABEL).sha256")
+          echo "folder=$HOME/.cache/immuch360-chromium/$LABEL-${sha:0:12}" >> "$GITHUB_OUTPUT"
+          echo "key=immuch360-chromium-$LABEL-$sha" >> "$GITHUB_OUTPUT"
+
+      # The zip only; chromium.mjs checks its size and SHA256 after the restore and fetches it again when they differ
+      - name: Restore the engine
+        id: cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.engine.outputs.folder }}/engine.zip
+          key: ${{ steps.engine.outputs.key }}
+
+      - name: Download, check and unpack the engine
+        id: chrome
+        env:
+          LABEL: ${{ matrix.chromium }}
+        run: echo "binary=$(node tizen/test/e2e/chromium.mjs "$LABEL" "$HOME/.cache/immuch360-chromium")" >> "$GITHUB_OUTPUT"
+
+      - name: Keep the engine
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.engine.outputs.folder }}/engine.zip
+          key: ${{ steps.engine.outputs.key }}
+
+      # Against the fake Immich server of tizen/test/e2e/server.mjs; a Chromium that does not start fails with the reason
+      - name: End to end test
+        env:
+          CHROME: ${{ steps.chrome.outputs.binary }}
+          LABEL: ${{ matrix.chromium }}
+        run: node tizen/test/e2e/run.mjs --chrome "$CHROME" --label "$LABEL" --wgt tizen/build/wgt --out "tizen/build/e2e/$LABEL"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: tizen-e2e-${{ matrix.chromium }}
+          path: tizen/build/e2e/${{ matrix.chromium }}
+          if-no-files-found: warn
+          retention-days: 14
+
+  package:
+    name: The .wgt, signed by the Tizen tools
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      VERSION: ${{ needs.build.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: webos/.nvmrc
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: tizen-wgt-folder
+          path: tizen/build/wgt
+
+      # The installer only, under its SHA256; install-cli.sh checks it again after the restore
+      - name: Restore the Tizen CLI installer
+        id: cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/tizen-cli/web-cli_Tizen_SDK_10.0_ubuntu-64.bin
+          key: tizen-cli-65d2a569cbf0351dca4b94254f2c642d49195ac4964e08a76b4eaabc9ce4bed0
+
+      - name: Install the Tizen command line tools
+        run: bash tizen/tools/install-cli.sh "$HOME/tizen-studio"
+
+      - name: Keep the installer
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/tizen-cli/web-cli_Tizen_SDK_10.0_ubuntu-64.bin
+          key: tizen-cli-65d2a569cbf0351dca4b94254f2c642d49195ac4964e08a76b4eaabc9ce4bed0
+
+      - name: Sign the package folder with a throwaway certificate
+        run: bash tizen/tools/package-ci.sh tizen/build/wgt tizen/build/out "$HOME/tizen-studio"
+
+      - name: The .wgt checked, SHA256SUMS.txt
+        working-directory: tizen/build/out
+        run: |
+          mv -- Immuch360.wgt "Immuch360-Tizen-$VERSION.wgt"
+          node ../../tools/check-wgt.mjs "Immuch360-Tizen-$VERSION.wgt" --version "$VERSION" --list wgt-files.json
+          sha256sum -- *.wgt > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Immuch360-Tizen-${{ needs.build.outputs.version }}
+          path: |
+            tizen/build/out/*.wgt
+            tizen/build/out/SHA256SUMS.txt
+            tizen/build/out/wgt-files.json
+          if-no-files-found: error

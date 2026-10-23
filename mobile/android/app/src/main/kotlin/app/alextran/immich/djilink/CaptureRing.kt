@@ -15,12 +15,18 @@ enum class CaptureDirection {
 
   /** A marker with no bytes: the descriptor was closed here */
   CLOSE,
+
+  /**
+   * A marker with no bytes between the head and the tail of a capture: the bytes of the session in between were not
+   * kept, and the length column of the index says how many. A replay restarts its parsers here, as at an open.
+   */
+  GAP,
   ;
 
   /** The word of the index file */
   val word: String get() = name.lowercase()
 
-  val isMarker: Boolean get() = this == OPEN || this == CLOSE
+  val isMarker: Boolean get() = this == OPEN || this == CLOSE || this == GAP
 
   companion object {
     fun ofWord(word: String): CaptureDirection? = entries.firstOrNull { it.word == word }
@@ -39,6 +45,8 @@ data class CaptureEntry(
   val direction: CaptureDirection,
   val monotonicNs: Long,
   val wallMs: Long,
+  /** For a [CaptureDirection.GAP] marker only: the bytes of the session not kept there */
+  val skippedBytes: Long = 0,
 )
 
 data class CaptureSnapshot(
@@ -63,7 +71,7 @@ data class CaptureSnapshot(
     val out = StringBuilder("offset,length,direction,monotonic_ns,wall_ms\n")
     for (entry in entries) {
       out.append(entry.offset).append(',')
-        .append(entry.length).append(',')
+        .append(if (entry.direction == CaptureDirection.GAP) entry.skippedBytes else entry.length.toLong()).append(',')
         .append(entry.direction.word).append(',')
         .append(entry.monotonicNs).append(',')
         .append(entry.wallMs).append('\n')
@@ -73,29 +81,53 @@ data class CaptureSnapshot(
 }
 
 /**
- * The evidence machine: a bounded ring of raw bytes with a parallel index of read and write boundaries.
+ * The evidence machine: a head and a tail of raw bytes with a parallel index of read and write boundaries.
  *
  * Nothing about a DJI link can be settled from a screenshot, so a session produces a file: the bytes, the boundaries
  * with two clocks, and a header saying on which device, which build and which hardware they were taken. That is the
  * observation sheet of the study, filled by the app rather than by hand.
  *
- * The ring is allocated when a capture starts, never before: a pilot who never records holds no buffer at all.
+ * The head keeps the first [headBytes] of a session: from the first open after the capture starts, or from the start
+ * when an accessory is already open. That is where the link up sequence is, which a long session would otherwise push
+ * out. The tail is a ring of the last [capacityBytes]. A record that does not fit what is left of the head closes the
+ * head and goes to the tail. The export writes the head, then the tail, with a [CaptureDirection.GAP] marker between
+ * them when bytes were not kept.
+ *
+ * Both are allocated when a capture starts, never before: a pilot who never records holds no buffer at all.
  */
 class CaptureRing(
   capacityBytes: Int = DEFAULT_CAPACITY,
+  headBytes: Int = DEFAULT_HEAD,
   private val monotonicNs: () -> Long = { System.nanoTime() },
   private val wallMs: () -> Long = { System.currentTimeMillis() },
 ) {
   companion object {
-    const val DEFAULT_CAPACITY = 8 * 1024 * 1024
+    /** The tail: 16 MiB, 10 to 25 s of a session at the rates of the 23 October 2026 capture */
+    const val DEFAULT_CAPACITY = 16 * 1024 * 1024
+
+    /** The head: 4 MiB, 3 to 6 s of a session, enough for the link up sequence */
+    const val DEFAULT_HEAD = 4 * 1024 * 1024
     const val MAX_CAPACITY = 64 * 1024 * 1024
     const val MIN_CAPACITY = 64 * 1024
   }
 
   private val capacity = capacityBytes.coerceIn(MIN_CAPACITY, MAX_CAPACITY)
+  private val headCapacity = headBytes.coerceIn(0, MAX_CAPACITY)
   private var ring: ByteArray? = null
+  private var head: ByteArray? = null
+  private var headLength = 0
+  private val headEntries = ArrayList<CaptureEntry>()
 
-  /** Bytes written into the ring since the start, which is also the offset of the next byte */
+  /** The head takes records now */
+  private var headOpen = false
+
+  /** The head is waiting for the first open of the capture */
+  private var headWaiting = false
+
+  /** The head is full or was never wanted: everything goes to the tail */
+  private var headClosed = false
+
+  /** Bytes written into the tail since the start, which is also the offset of the next byte there */
   private var written = 0L
   private var dropped = 0L
   private val entries = ArrayDeque<CaptureEntry>()
@@ -104,17 +136,26 @@ class CaptureRing(
     private set
 
   val capacityOfRing: Int get() = capacity
-  val totalBytes: Long get() = written
+  val capacityOfHead: Int get() = headCapacity
+  val totalBytes: Long get() = headLength + written
   val droppedBytes: Long get() = dropped
-  val records: Int get() = entries.size
+  val records: Int get() = headEntries.size + entries.size
 
-  /** Whether the buffer is allocated, which is from the first [start] to a [clear] while not recording */
+  /** Whether the buffers are allocated, which is from the first [start] to a [clear] while not recording */
   val allocated: Boolean get() = ring != null
 
+  /** Starts recording; [accessoryOpen] says a session is already under way, so the head starts with the next record */
   @Synchronized
-  fun start() {
+  fun start(accessoryOpen: Boolean = false) {
     if (ring == null) {
       ring = ByteArray(capacity)
+    }
+    if (headCapacity > 0 && head == null && !headClosed && headLength == 0 && written == 0L) {
+      head = ByteArray(headCapacity)
+      headOpen = accessoryOpen
+      headWaiting = !accessoryOpen
+    } else if (headCapacity == 0) {
+      headClosed = true
     }
     recording = true
   }
@@ -124,22 +165,55 @@ class CaptureRing(
     recording = false
   }
 
-  /** Forgets every byte; the buffer itself goes too unless a capture is running */
+  /**
+   * Forgets every byte; the buffers themselves go too unless a capture is running. A clear while recording starts a
+   * new head the way [start] does: at once when [accessoryOpen] says a session is under way, so that the bytes that
+   * keep coming are not put in the tail before the head of a later session, otherwise with the next open.
+   */
   @Synchronized
-  fun clear() {
+  fun clear(accessoryOpen: Boolean = false) {
     written = 0
     dropped = 0
     entries.clear()
+    headEntries.clear()
+    headLength = 0
+    headClosed = false
+    headOpen = false
+    headWaiting = false
     if (!recording) {
       ring = null
+      head = null
+    } else if (headCapacity > 0) {
+      head = head ?: ByteArray(headCapacity)
+      headOpen = accessoryOpen
+      headWaiting = !accessoryOpen
+    } else {
+      headClosed = true
     }
   }
 
   /** An open or a close, written into the index at the current offset while a capture runs */
   @Synchronized
   fun mark(direction: CaptureDirection) {
-    require(direction.isMarker) { "only an open or a close is a marker" }
+    require(direction == CaptureDirection.OPEN || direction == CaptureDirection.CLOSE) {
+      "only an open or a close is marked live"
+    }
     if (!recording) {
+      return
+    }
+    if (direction == CaptureDirection.OPEN && headWaiting) {
+      headWaiting = false
+      // The head opens with this session only if nothing was recorded since the start or the clear. Bytes already in
+      // the tail belong to a session that was under way: a head opened now would come before them in the export, and a
+      // replay would glue the two sessions. The new session then follows them in the tail, after its open marker.
+      if (written == 0L && entries.isEmpty()) {
+        headOpen = true
+      } else {
+        headClosed = true
+      }
+    }
+    if (headOpen && !headClosed) {
+      headEntries.add(CaptureEntry(headLength.toLong(), 0, direction, monotonicNs(), wallMs()))
       return
     }
     entries.addLast(CaptureEntry(written, 0, direction, monotonicNs(), wallMs()))
@@ -151,6 +225,18 @@ class CaptureRing(
     val ring = ring
     if (!recording || ring == null || length <= 0) {
       return
+    }
+    val headBuffer = head
+    if (headOpen && !headClosed && headBuffer != null) {
+      if (headLength + length <= headCapacity) {
+        headEntries.add(CaptureEntry(headLength.toLong(), length, direction, monotonicNs(), wallMs()))
+        data.copyInto(headBuffer, headLength, offset, offset + length)
+        headLength += length
+        return
+      }
+      // The first record that does not fit closes the head; it and the rest of the session go to the tail
+      headClosed = true
+      headOpen = false
     }
     val entry = CaptureEntry(
       offset = written,
@@ -184,32 +270,50 @@ class CaptureRing(
 
   @Synchronized
   fun snapshot(): CaptureSnapshot {
-    val ring = ring ?: return CaptureSnapshot(ByteArray(0), emptyList(), totalBytes = written, droppedBytes = dropped)
+    val ring = ring ?: return CaptureSnapshot(ByteArray(0), emptyList(), totalBytes = totalBytes, droppedBytes = dropped)
     val size = minOf(written, capacity.toLong()).toInt()
-    val bytes = ByteArray(size)
+    val bytes = ByteArray(headLength + size)
+    head?.copyInto(bytes, 0, 0, headLength)
     val first = written - size
     val start = (first % capacity).toInt()
     val firstPart = minOf(size, capacity - start)
-    ring.copyInto(bytes, 0, start, start + firstPart)
+    ring.copyInto(bytes, headLength, start, start + firstPart)
     if (firstPart < size) {
-      ring.copyInto(bytes, firstPart, 0, size - firstPart)
+      ring.copyInto(bytes, headLength + firstPart, 0, size - firstPart)
+    }
+    val kept = ArrayList<CaptureEntry>(headEntries.size + entries.size + 1)
+    kept.addAll(headEntries)
+    // The tail bytes before its window were not kept: with a head in front, a gap marker says how many
+    if (first > 0 && headEntries.isNotEmpty()) {
+      val anchor = entries.firstOrNull()
+      kept.add(
+        CaptureEntry(
+          offset = headLength.toLong(),
+          length = 0,
+          direction = CaptureDirection.GAP,
+          monotonicNs = anchor?.monotonicNs ?: monotonicNs(),
+          wallMs = anchor?.wallMs ?: wallMs(),
+          skippedBytes = first,
+        )
+      )
     }
     // A record that straddles the start of the window is kept with the part of it that is still there
-    val kept = entries.mapNotNull { entry ->
+    for (entry in entries) {
       val end = entry.offset + entry.length
       if (!inWindow(entry, first)) {
-        null
-      } else {
-        val from = maxOf(entry.offset, first)
+        continue
+      }
+      val from = maxOf(entry.offset, first)
+      kept.add(
         CaptureEntry(
-          offset = from - first,
+          offset = headLength + (from - first),
           length = (end - from).toInt(),
           direction = entry.direction,
           monotonicNs = entry.monotonicNs,
           wallMs = entry.wallMs,
         )
-      }
+      )
     }
-    return CaptureSnapshot(bytes = bytes, entries = kept, totalBytes = written, droppedBytes = dropped)
+    return CaptureSnapshot(bytes = bytes, entries = kept, totalBytes = totalBytes, droppedBytes = dropped)
   }
 }

@@ -141,7 +141,8 @@ class ImmersiveRequest {
 
 /// Opens [request] in the immersive viewer through [api], a video from [startPosition], with the controls labelled
 /// with [stereoLabels] (see [sphereViewerLabels]), as the opening [openingId] (see [ImmersiveSession.start]), which
-/// the viewer sends back with its events. This starts the viewer: a media found for previous or next is shown with
+/// the viewer sends back with its events. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting, which the
+/// viewer keeps for previous and next. This starts the viewer: a media found for previous or next is shown with
 /// [showImmersiveRequest] instead.
 Future<void> openImmersiveRequest(
   ImmersiveApi api,
@@ -149,6 +150,7 @@ Future<void> openImmersiveRequest(
   required Map<String, String> stereoLabels,
   required int openingId,
   Duration startPosition = Duration.zero,
+  bool reverseThumbstickTurn = false,
 }) => api.open(
   request.url,
   request.headers,
@@ -162,6 +164,7 @@ Future<void> openImmersiveRequest(
   request.fallbackUrl,
   request.rawProjection,
   request.stereoPair,
+  reverseThumbstickTurn,
 );
 
 /// Shows [request] in place of the media of the immersive viewer that asked for another one with [requestId] (see
@@ -380,6 +383,7 @@ class ImmersiveAssetResolver {
     required this._gpanoClient,
     required this._videoSources,
     this.videoSourcePolicy = VideoSourcePolicy.preferOriginalWithinDecoder,
+    this.reverseThumbstickTurn = false,
     this.raw,
     this.exifOf,
   });
@@ -396,6 +400,7 @@ class ImmersiveAssetResolver {
       gpanoClient: ref.read(immersiveGPanoClientProvider),
       videoSources: ref.read(videoSourceServiceProvider),
       videoSourcePolicy: ref.read(appConfigProvider).viewer.immersiveVideoSourcePolicy,
+      reverseThumbstickTurn: ref.read(appConfigProvider).viewer.reverseThumbstickTurn,
       raw: RawImmersiveMedia.read(ref),
       exifOf: (asset) => assets.watchExif(asset).first,
     );
@@ -418,6 +423,9 @@ class ImmersiveAssetResolver {
 
   /// Which file of a server video plays, as the settings said when the viewer opened
   final VideoSourcePolicy videoSourcePolicy;
+
+  /// Whether the right thumbstick of the viewer turns the other way, as the settings said when the viewer opened
+  final bool reverseThumbstickTurn;
 
   final StorageRepository _storage;
   final SphericalProbeService _probeService;
@@ -627,6 +635,7 @@ class ImmersiveAssetResolver {
         stereoLabels: stereoLabels,
         openingId: openingId,
         startPosition: startPosition,
+        reverseThumbstickTurn: reverseThumbstickTurn,
       );
 }
 
@@ -761,6 +770,7 @@ Future<void> openImmersiveUrl(
   // Read before the first await: the page may be gone by then
   final api = ref.read(immersiveApiProvider);
   final session = ref.read(immersiveSessionProvider);
+  final reverseThumbstickTurn = ref.read(appConfigProvider).viewer.reverseThumbstickTurn;
   await player?.suspendForExternalPlayer();
   final openingId = session.start(navigator);
   try {
@@ -770,6 +780,7 @@ Future<void> openImmersiveUrl(
       stereoLabels: stereoLabels,
       openingId: openingId,
       startPosition: startPosition,
+      reverseThumbstickTurn: reverseThumbstickTurn,
     );
   } catch (_) {
     session.cancel(openingId);

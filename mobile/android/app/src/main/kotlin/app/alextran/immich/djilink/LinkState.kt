@@ -32,7 +32,7 @@ enum class LinkState {
   /** Frames from the aircraft side arrived and parsed */
   AIRCRAFT_LINKED,
 
-  /** Video fragments assembled into something a decoder accepted */
+  /** Video fragments assembled into pictures that came out of the decoder in the last two seconds */
   VIDEO_READY,
 
   /** At least one telemetry message decoded with an established layout */
@@ -128,4 +128,7 @@ enum class LinkReason {
 
   /** Frames from the aircraft side arrive */
   AIRCRAFT_FRAMES,
+
+  /** Pictures came out of the decoder in the last two seconds */
+  VIDEO_DECODED,
 }

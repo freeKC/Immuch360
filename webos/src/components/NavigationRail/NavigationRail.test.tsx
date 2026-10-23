@@ -33,6 +33,23 @@ describe('NavigationRail', () => {
 		buttons.forEach(button => expect(button.classList.contains(spottableClass)).toBe(true));
 	});
 
+	// Immuch360: the Samsung version does not read shares yet (src/platform/features.ts)
+	test('has no Network shares item on a Samsung TV', () => {
+		(window as {tizen?: unknown}).tizen = {application: {}};
+		try {
+			render(
+				<NavigationRail activeView="photos" onNavigate={() => {}} onOpenAccount={() => {}} accountLetter="Q" accountGradient="#123456" />
+			);
+			const buttons = screen.getAllByRole('button');
+			// Photos, Albums, Places, Search, About, Account
+			expect(buttons).toHaveLength(6);
+			expect(screen.queryByText('Network shares')).toBeNull();
+			expect(screen.getByText('About')).not.toBeNull();
+		} finally {
+			delete (window as {tizen?: unknown}).tizen;
+		}
+	});
+
 	test('keeps the replacement rail focusable when an account switch remounts the layout', () => {
 		const accountLayout = (account: string) => (
 			<div key={account}>

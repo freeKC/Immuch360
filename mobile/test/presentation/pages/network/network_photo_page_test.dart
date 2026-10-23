@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
@@ -24,6 +25,7 @@ import 'package:immich_mobile/presentation/pages/network/network_browser.page.da
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 
 import '../../../fixtures/raw/insta360.stub.dart';
@@ -59,6 +61,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? fallbackUrl,
     String? rawProjection,
     String? stereoPair,
+    bool reverseThumbstickTurn,
   ) async {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);
@@ -153,6 +156,7 @@ void main() {
         overrideConnections((ref) => FakeConnections(ref, share, baseUrl: server.baseUrl)),
         isHorizonOsProvider.overrideWith((ref) async => immersiveApi != null),
         if (immersiveApi != null) immersiveApiProvider.overrideWithValue(immersiveApi),
+        appConfigProvider.overrideWithValue(const AppConfig()),
         // A fresh cache per test
         networkMediaServiceProvider.overrideWith((ref) => NetworkMediaService()),
       ],

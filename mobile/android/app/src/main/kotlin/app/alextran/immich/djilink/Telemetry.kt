@@ -3,26 +3,46 @@ package app.alextran.immich.djilink
 /**
  * What arrives from the aircraft, as identifiers.
  *
- * A message is its command set and command id, two numbers of the frame header (p2/protocol.md, section 4). Nothing
- * here gives either number a name or a meaning: a message is named only once a capture of hardware this project owns
- * has shown what it carries, beside the numbers the DJI application shows at the same moment, and that observation is
- * recorded with the name. Until then the page shows the numbers, how often they arrive, their length and a bounded
- * preview of their first bytes, and no field of any body is read.
+ * A message is its command set and command id, two numbers of the frame header (p2/protocol.md, section 4). A message
+ * is named only once a capture of hardware this project owns has shown what it carries, and that observation is
+ * recorded with the name ([CataloguedMessage.observation]). The names are ours, as codes the page words in its own
+ * language. Every other pair stays numbers: how often it arrives, its length and a bounded preview of its first
+ * bytes. The fields of the named messages are read by [TelemetryDecoder], and only from bodies of the observed length.
  */
 data class CataloguedMessage(
   val commandSet: Int,
   val commandId: Int,
-  /** Our own name for what the capture showed */
+  /** Our own name for what the capture showed, as a code the page words */
   val name: String,
   /** The observation that named it: a capture identifier, its date and the hardware it was taken on */
   val observation: String,
 )
 
 object MessageCatalogue {
-  /** Empty until a capture names a message; see [CataloguedMessage.observation] */
-  private val entries: Map<Int, CataloguedMessage> = emptyMap()
+  /** The capture that named the messages below: its identifier, its digest, the date and the hardware */
+  const val OBSERVATION_20261023 =
+    "dji-link-20261023-102731 (SHA-256 8541e5d3395f12ac16e42d5fb86465f57ce7efb37ee8166a00c2260a742141bc), " +
+      "2026-10-23, DJI RC-N3 and Neo 2 with the Digital Transceiver, Samsung SM-S926B"
+
+  /**
+   * The pairs the 23 October 2026 capture explains (p2/capture-2026-10-23.md, sections 3.8 and 5): named where a public
+   * layout of that pair and the capture agree, or where the capture alone shows what the field is.
+   */
+  private val entries: Map<Int, CataloguedMessage> = listOf(
+    CataloguedMessage(3, 67, TelemetryCodes.FLIGHT_DATA, OBSERVATION_20261023),
+    CataloguedMessage(4, 5, TelemetryCodes.GIMBAL, OBSERVATION_20261023),
+    CataloguedMessage(13, 2, TelemetryCodes.BATTERY, OBSERVATION_20261023),
+    CataloguedMessage(6, 30, TelemetryCodes.REMOTE_BATTERY, OBSERVATION_20261023),
+    CataloguedMessage(9, 8, TelemetryCodes.SIGNAL, OBSERVATION_20261023),
+    CataloguedMessage(9, 54, TelemetryCodes.LIVE_RATE, OBSERVATION_20261023),
+    CataloguedMessage(35, 178, TelemetryCodes.AIRCRAFT_CLOCK, OBSERVATION_20261023),
+    CataloguedMessage(33, 6, TelemetryCodes.MODULE_STATUS, OBSERVATION_20261023),
+    CataloguedMessage(33, 8, TelemetryCodes.MODULE_STATUS, OBSERVATION_20261023),
+  ).associateBy { key(it.commandSet, it.commandId) }
 
   private fun key(set: Int, id: Int): Int = (set shl 8) or id
+
+  fun all(): List<CataloguedMessage> = entries.values.toList()
 
   fun named(set: Int, id: Int): CataloguedMessage? = entries[key(set, id)]
 

@@ -68,8 +68,54 @@ void main() {
     );
 
     expect(spatialSwitch, findsNothing);
-    expect(find.byType(SwitchListTile), findsNWidgets(2), reason: 'the other video settings stay');
+    expect(find.byType(SwitchListTile), findsNWidgets(3), reason: 'the other video settings stay');
     expect(find.text('Video source'), findsOneWidget);
+  });
+
+  group('reverse thumbstick turn', () {
+    final reverseSwitch = find.widgetWithText(SwitchListTile, 'Reverse thumbstick turn');
+
+    testWidgets('offered on a Meta Quest, off by default', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const VideoViewerSettings(),
+        overrides: [isHorizonOsProvider.overrideWith((ref) => true)],
+      );
+
+      expect(reverseSwitch, findsOneWidget);
+      expect(
+        find.text('The right thumbstick of the immersive viewer turns photos and videos the other way'),
+        findsOneWidget,
+      );
+      expect(tester.widget<SwitchListTile>(reverseSwitch).value, isFalse);
+      expect(SettingsRepository.instance.appConfig.viewer.reverseThumbstickTurn, isFalse);
+    });
+
+    testWidgets('turned on and off', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const VideoViewerSettings(),
+        overrides: [isHorizonOsProvider.overrideWith((ref) => true)],
+      );
+
+      await tester.tap(reverseSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.reverseThumbstickTurn, isTrue);
+
+      await tester.tap(reverseSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.reverseThumbstickTurn, isFalse);
+    });
+
+    testWidgets('left out on a phone, which has no thumbstick', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const VideoViewerSettings(),
+        overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
+      );
+
+      expect(reverseSwitch, findsNothing);
+    });
   });
 
   group('looping', () {

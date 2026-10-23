@@ -15,6 +15,11 @@ package app.alextran.immich.djilink
  * when the previous frame ended exactly where this header starts, or at the very start of a stream. Right after bytes
  * were thrown away, a header must name a known channel: a false sync pattern with a plausible length would otherwise
  * swallow the genuine frames behind it.
+ *
+ * Padding: the capture of 23 October 2026 (RC-N3 and Neo 2, p2/capture-2026-10-23.md, section 2) shows every control
+ * envelope followed by zero bytes up to the next multiple of [EnvelopeDecoder.PAD_BLOCK] bytes counted from the
+ * envelope's first byte, and video envelopes not padded. Those zeros are consumed in sync and counted as padding, never
+ * as a discard; a non zero byte ends the expected padding early and is parsed as usual.
  */
 data class EnvelopeFrame(val channel: Int, val payload: ByteArray) {
   override fun equals(other: Any?): Boolean =
@@ -34,6 +39,10 @@ data class EnvelopeCounters(
   val incompleteTimeouts: Long = 0,
   /** Headers on an undescribed channel met while resynchronising, refused as a likely false sync */
   val unknownChannelRejections: Long = 0,
+  /** Zero bytes after a control envelope up to the next multiple of [EnvelopeDecoder.PAD_BLOCK], consumed in sync */
+  val paddingBytes: Long = 0,
+  /** Expected padding that a non zero byte ended early; that byte was parsed as usual */
+  val paddingCutShort: Long = 0,
 )
 
 class EnvelopeDecoder(
@@ -54,6 +63,16 @@ class EnvelopeDecoder(
      * grows its buffer; a bounded wait is ours, so that one bad length cannot stall the stream for ever.
      */
     const val INCOMPLETE_TIMEOUT_MS = 2_000L
+
+    /**
+     * After a control envelope, zero bytes up to the next multiple of this many bytes are padding. Observed on every
+     * control envelope of the 23 October 2026 capture (one USB transfer per control envelope, padded to the packet
+     * size of a high speed bulk endpoint); a video envelope is never padded.
+     */
+    const val PAD_BLOCK = 512
+
+    /** How many padding bytes follow a control envelope of [total] bytes, header included */
+    fun paddingAfter(total: Long): Int = ((PAD_BLOCK - (total % PAD_BLOCK)) % PAD_BLOCK).toInt()
 
     /** Encodes one frame; used by the replay tests and by any later stage that sends */
     fun encode(channel: Int, payload: ByteArray): ByteArray {
@@ -86,6 +105,9 @@ class EnvelopeDecoder(
    */
   private var resynchronising = false
 
+  /** Padding bytes still expected after the last control envelope; zero after a video envelope */
+  private var paddingExpected = 0
+
   var counters = EnvelopeCounters()
     private set
 
@@ -114,6 +136,7 @@ class EnvelopeDecoder(
     tail = 0
     pendingSince = null
     resynchronising = false
+    paddingExpected = 0
   }
 
   fun clearCounters() {
@@ -124,6 +147,13 @@ class EnvelopeDecoder(
     val frames = mutableListOf<EnvelopeFrame>()
     while (true) {
       val available = tail - head
+      if (available <= 0) {
+        break
+      }
+      if (paddingExpected > 0) {
+        consumePadding()
+        continue
+      }
       if (available < 2) {
         break
       }
@@ -160,6 +190,7 @@ class EnvelopeDecoder(
       head += total
       pendingSince = null
       resynchronising = false
+      paddingExpected = if (Channels.role(channel) == ChannelRole.CONTROL) paddingAfter(total.toLong()) else 0
       counters = counters.copy(
         frames = counters.frames + 1,
         frameBytes = counters.frameBytes + total,
@@ -171,6 +202,25 @@ class EnvelopeDecoder(
     }
     compact()
     return frames
+  }
+
+  /**
+   * Zero bytes while padding is expected, in sync; the first non zero byte ends the padding early and is left for the
+   * header parser. Padding may span reads: what is still expected carries over to the next offer.
+   */
+  private fun consumePadding() {
+    if (buffer[head].toInt() != 0) {
+      paddingExpected = 0
+      counters = counters.copy(paddingCutShort = counters.paddingCutShort + 1)
+      return
+    }
+    var run = 0
+    while (run < paddingExpected && head + run < tail && buffer[head + run].toInt() == 0) {
+      run += 1
+    }
+    head += run
+    paddingExpected -= run
+    counters = counters.copy(paddingBytes = counters.paddingBytes + run)
   }
 
   /** True when the frame being waited for has been pending longer than the bound, which also skips one byte */

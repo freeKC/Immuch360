@@ -3,13 +3,19 @@ package app.alextran.immich.djilink
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
+import android.hardware.usb.UsbManager
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * What Flutter asks of the link. Every call is a question about what is there, or a capture control. None of them can
- * move an aircraft: there is no method here that sends anything, and the transport writes nothing but its own one
- * byte liveness probe.
+ * What Flutter asks of the link. Every call is a question about what is there, a capture control, a capture to play
+ * or a choice of the page (the decoder, the hardware profile). None of them can move an aircraft: there is no method
+ * here that sends anything, and the transport writes nothing but its own one byte liveness probe.
  */
 class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
   companion object {
@@ -33,8 +39,11 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
     }
   }
 
-  // Made on the first call of the page, not when the engine starts: a pilot who never opens the page holds nothing
+  // Made on the first call of the page, not when the engine starts: a pilot who never opens the page holds nothing.
+  // The import page lists the plugged accessories without it.
   private val controller by lazy { DjiLinkController.of(context) }
+  private val main = Handler(Looper.getMainLooper())
+  private val pickerRequests = AtomicInteger()
   private val worker by lazy {
     Executors.newSingleThreadExecutor { runnable -> Thread(runnable, "DjiLinkWork").apply { isDaemon = true } }
   }
@@ -163,6 +172,7 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
               controllerSideFrames = result.router.controllerSideFrames,
               ambiguousSideFrames = result.router.ambiguousSideFrames,
               keepAliveExceptions = result.router.keepAliveExceptions,
+              paddingBytes = result.envelopes.paddingBytes,
             ),
             channels = result.channels.map {
               DjiLinkChannel(
@@ -204,11 +214,7 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
               )
             },
             video = DjiLinkVideo(
-              verdict = when (result.probe.verdict) {
-                ProbeVerdict.NO_DATA -> DjiLinkProbeVerdict.NO_DATA
-                ProbeVerdict.NO_START_CODES -> DjiLinkProbeVerdict.NO_START_CODES
-                ProbeVerdict.START_CODES_SEEN -> DjiLinkProbeVerdict.START_CODES_SEEN
-              },
+              verdict = result.probe.verdict.toPigeon(),
               payloads = result.probe.payloads,
               payloadsStartingWithStartCode = result.probe.payloadsStartingWithStartCode,
               startCodesSeen = result.probe.startCodesSeen,
@@ -231,4 +237,93 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
       )
     }
   }
+
+  override fun setDecoderChoice(choice: DjiLinkDecoderChoice) {
+    controller.setDecoderChoice(
+      when (choice) {
+        DjiLinkDecoderChoice.AUTOMATIC -> DecoderChoice.AUTOMATIC
+        DjiLinkDecoderChoice.HARDWARE -> DecoderChoice.HARDWARE
+        DjiLinkDecoderChoice.SOFTWARE -> DecoderChoice.SOFTWARE
+      }
+    )
+  }
+
+  override fun listCaptures(callback: (Result<List<DjiLinkCaptureFile>>) -> Unit) {
+    worker.execute {
+      val files = runCatching { controller.listCaptures() }.getOrDefault(emptyList())
+      callback(Result.success(files.map { it.toPigeon() }))
+    }
+  }
+
+  /**
+   * The system picker with several files at once; the .bin and the .idx.csv of one capture are paired by their names.
+   * The picker belongs to the activity that made this bridge, the app's own.
+   */
+  override fun chooseCaptureFiles(callback: (Result<DjiLinkCaptureFile?>) -> Unit) {
+    val activity = context as? ComponentActivity
+    if (activity == null) {
+      callback(Result.success(null))
+      return
+    }
+    main.post {
+      val key = "djilink-capture-files-${pickerRequests.incrementAndGet()}"
+      lateinit var launcher: androidx.activity.result.ActivityResultLauncher<Array<String>>
+      launcher = activity.activityResultRegistry.register(key, ActivityResultContracts.OpenMultipleDocuments()) { uris ->
+        launcher.unregister()
+        worker.execute {
+          val chosen = runCatching { CaptureFiles.pairChosen(context, uris) }.getOrNull()
+          callback(Result.success(chosen?.toPigeon()))
+        }
+      }
+      runCatching { launcher.launch(arrayOf("*/*")) }.onFailure {
+        launcher.unregister()
+        callback(Result.success(null))
+      }
+    }
+  }
+
+  override fun playCapture(binUri: String, indexUri: String, startAtMs: Long, callback: (Result<String?>) -> Unit) {
+    // The page session of the request, read on the main thread where the page closes: if it closes while the files
+    // are read on the worker, the capture is not played
+    val session = controller.pageSession
+    worker.execute {
+      val outcome = runCatching { controller.playCapture(binUri, indexUri, startAtMs, session = session) }
+        .getOrElse { "unreadable" }
+      callback(Result.success(outcome))
+    }
+  }
+
+  override fun stopPlayback() {
+    controller.stopPlayback()
+  }
+
+  override fun bindProfile(profileId: String?) {
+    controller.bindProfile(profileId)
+  }
+
+  override fun profiles(): List<DjiLinkProfile> =
+    controller.bindableProfiles().map { it.toPigeon(controller.runningDevice) }
+
+  /** The accessory list of the system: strings only, no serial, no permission, nothing opened, no link owner made */
+  override fun pluggedAccessories(): List<DjiLinkPluggedAccessory> {
+    val usb = context.getSystemService(Context.USB_SERVICE) as? UsbManager ?: return emptyList()
+    val listed = runCatching { usb.accessoryList?.toList() ?: emptyList() }.getOrDefault(emptyList())
+    return listed.map {
+      DjiLinkPluggedAccessory(
+        manufacturer = it.manufacturer,
+        model = it.model,
+        description = it.description,
+        version = it.version,
+      )
+    }
+  }
 }
+
+private fun CaptureFile.toPigeon(): DjiLinkCaptureFile = DjiLinkCaptureFile(
+  name = name,
+  binUri = binUri,
+  indexUri = indexUri,
+  bytes = bytes,
+  modifiedMs = modifiedMs,
+  origin = origin,
+)
