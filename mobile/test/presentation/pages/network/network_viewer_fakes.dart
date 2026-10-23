@@ -143,13 +143,15 @@ Uint8List fakePhoto([String xmp = '']) =>
 const equirectangularXmp = '<rdf:Description GPano:ProjectionType="equirectangular"/>';
 
 /// Pumps [home] under a real router where the network browser route renders the real page, and the photo and video
-/// routes the real page when in [pages], else a stub telling where they were opened. Returns the router.
+/// routes the real page when in [pages], else a stub telling where they were opened. Returns the router. [builder]
+/// wraps the navigator, as the TV shell does in the app.
 Future<RootStackRouter> pumpNetworkRouter(
   WidgetTester tester, {
   required Widget home,
   required List<Override> overrides,
   Map<String, Widget Function(RouteData data)> pages = const {},
   bool settle = true,
+  TransitionBuilder? builder,
 }) async {
   final router = RootStackRouter.build(
     routes: [
@@ -231,6 +233,7 @@ Future<RootStackRouter> pumpNetworkRouter(
             supportedLocales: context.supportedLocales,
             locale: context.locale,
             routerConfig: router.config(),
+            builder: builder,
           ),
         ),
       ),

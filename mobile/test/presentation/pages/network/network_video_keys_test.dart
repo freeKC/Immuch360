@@ -28,6 +28,7 @@ import 'package:immich_mobile/presentation/pages/network/network_browser.page.da
 import 'package:immich_mobile/presentation/pages/network/network_video.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_controls.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -159,6 +160,8 @@ void main() {
       tester,
       // Opened from a folder, so that its app bar has a Back button
       home: pushed || realNeighbours ? const Scaffold(body: Text('folder')) : page,
+      // The remote control layout around the navigator, as in the app
+      builder: tvMode ? (context, child) => TvShell(child: child!) : null,
       pages: {
         if (pushed) NetworkVideoRoute.name: (_) => page,
         // The next video in the real page, as the app opens it

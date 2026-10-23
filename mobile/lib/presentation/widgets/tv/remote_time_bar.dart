@@ -8,11 +8,11 @@ import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 /// The time bar of a video, in the controls of the asset viewer and of the video page of a share.
 ///
 /// On a phone or a computer, the plain slider. With the remote control layout ([tvMode]) the bar is a stop of the
-/// remote of its own, under the buttons: Down from them takes the focus there, shown by a ring. Left and right then
-/// move the video by [remoteSeekStep] per press, and faster while held (see [remoteSeekHoldStep]): the video waits
-/// ([onHold]) until the key is released ([onRelease]). OK plays or pauses ([onToggle]), Up goes back to the buttons.
-/// The slider itself never takes the focus there, since a focused slider keeps the arrows for good (Flutter issue
-/// 54984): the bar takes the keys in its place.
+/// remote of its own, under the buttons: Down from them takes the focus there, framed by the ring of the TV shell
+/// (TvFocusRing) like any other control. Left and right then move the video by [remoteSeekStep] per press, and faster
+/// while held (see [remoteSeekHoldStep]): the video waits ([onHold]) until the key is released ([onRelease]). OK plays
+/// or pauses ([onToggle]), Up goes back to the buttons. The slider itself never takes the focus there, since a focused
+/// slider keeps the arrows for good (Flutter issue 54984): the bar takes the keys in its place.
 class VideoTimeBar extends StatefulWidget {
   const VideoTimeBar({
     super.key,
@@ -46,8 +46,6 @@ class VideoTimeBar extends StatefulWidget {
 }
 
 class _VideoTimeBarState extends State<VideoTimeBar> {
-  bool _focused = false;
-
   /// The repeats of the arrow held, 0 while none is
   int _repeats = 0;
 
@@ -133,20 +131,13 @@ class _VideoTimeBarState extends State<VideoTimeBar> {
         }
         _repeats = 0;
         _target = null;
-        setState(() => _focused = focused);
       },
-      child: DecoratedBox(
+      // Room for the focus ring around the slider
+      child: Padding(
         key: const Key('video_time_bar'),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
-          border: Border.all(color: _focused ? Colors.white : Colors.transparent, width: 2),
-          color: _focused ? Colors.white24 : Colors.transparent,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          // The bar takes the keys, never the slider
-          child: ExcludeFocus(child: slider),
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        // The bar takes the keys, never the slider
+        child: ExcludeFocus(child: slider),
       ),
     );
   }
