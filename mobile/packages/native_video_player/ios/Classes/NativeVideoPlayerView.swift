@@ -5,7 +5,7 @@ class NativeVideoPlayerView: UIView {
     private let playerLayer: AVPlayerLayer
 
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) - use init(frame:) instead")
+        fatalError("init(coder:) is not used, init(frame:) is")
     }
 
     init(

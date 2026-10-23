@@ -5,7 +5,10 @@ stays the one of upstream Immich and an upstream bump shows in a merge.
 
 Left out: `example/`, `screenshots/`, `test/`, `scripts/`, `.github/`, the README (its links), and the dev
 dependencies of `pubspec.yaml` (build_runner, json_serializable, very_good_analysis: the generated `*.g.dart` files
-are in `lib/`). `pubspec.yaml`: `publish_to: none`, version `1.3.1+immuch360`. The iOS side is unchanged.
+are in `lib/`). `pubspec.yaml`: `publish_to: none`, version `1.3.1+immuch360`. The code is unchanged but for
+punctuation (the headers of the two generated files and one `fatalError` message of
+`ios/Classes/NativeVideoPlayerView.swift` had a spaced hyphen, the fork's texts having none) and for the patch below;
+the iOS side has no other change.
 
 What differs from upstream, to apply again when a newer commit is copied here (every change is marked `Immuch360`):
 
