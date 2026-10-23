@@ -61,10 +61,12 @@ class _EnterCodePageState extends ConsumerState<EnterCodePage> {
     super.initState();
     _address.text = widget.address ?? '';
     // Looked for as long as the page shows, two minutes at most: the life of a code
-    _discovery = ref.read(pairingBrowseProvider)(
-      pairingServiceType,
-      Future.any([_browsing.future, Future<void>.delayed(const Duration(minutes: 2))]),
-    ).listen((service) => unawaited(_add(service)), onError: (Object _) {});
+    _discovery = ref
+        .read(pairingBrowseProvider)(
+          pairingServiceType,
+          Future.any([_browsing.future, Future<void>.delayed(const Duration(minutes: 2))]),
+        )
+        .listen((service) => unawaited(_add(service)), onError: (Object _) {});
   }
 
   @override

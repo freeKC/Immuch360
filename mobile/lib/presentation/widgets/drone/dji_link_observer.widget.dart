@@ -5,6 +5,9 @@
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/platform/dji_link_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_latency.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_receive.widget.dart';
 
 class DjiLinkObserverNote extends StatelessWidget {
   const DjiLinkObserverNote({super.key});
@@ -37,6 +40,47 @@ class DjiLinkObserverNote extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(t.dji_link_observer_watching, key: const Key('dji_link_observer_watching'), style: style),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Over the picture of the full screen route of a device that receives from a phone: where the picture comes from, the
+/// red line once it stopped, watching only and the observer note. Nothing hides it there, as nothing hides the strip of
+/// the flight view.
+class DjiLinkReceiveStrip extends StatelessWidget {
+  const DjiLinkReceiveStrip({super.key, required this.receiving});
+
+  final DjiRelayReceiving receiving;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    final small = context.textTheme.bodySmall;
+    final stale = djiLinkStaleLine(t, receiving);
+    return DecoratedBox(
+      key: const Key('dji_link_receive_strip'),
+      decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.6), borderRadius: BorderRadius.circular(8)),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              djiRelayReceiveStateText(t, receiving),
+              style: small?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+            ),
+            if (stale != null)
+              Text(
+                stale,
+                key: const Key('dji_link_receive_strip_stale'),
+                style: small?.copyWith(color: const Color(0xFFFF6B6B), fontWeight: FontWeight.w700),
+              ),
+            Text(t.dji_link_observer_watching, style: small?.copyWith(color: Colors.white)),
+            Text(t.dji_link_observer_note, style: small?.copyWith(color: const Color(0xFFFF6B6B))),
           ],
         ),
       ),

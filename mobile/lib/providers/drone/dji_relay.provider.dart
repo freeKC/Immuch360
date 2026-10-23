@@ -299,6 +299,10 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     return made;
   }
 
+  /// Whether a start or a connect may go on after an await: the page that asked for it is still shown. A page that
+  /// closed meanwhile has stopped the link already, and nothing would stop a relay or a receiver started after it.
+  bool _stillWanted(int generation) => generation == _generation && _pageVisible;
+
   /// "Send to a headset" on: the relay listens, the service keeps it alive, the phone is announced
   Future<void> startSending() async {
     if (state.sending || state.starting) {
@@ -309,12 +313,24 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     // The notification of the service, without waiting for the answer: the relay works without it
     unawaited(_environment.askNotifications().catchError((Object error) => _log.fine('Notifications: $error')));
     final code = await _codeToSend();
+    if (!_stillWanted(generation)) {
+      _abandonStart(generation);
+      return;
+    }
     final deviceName = await _environment.deviceName();
+    if (!_stillWanted(generation)) {
+      _abandonStart(generation);
+      return;
+    }
     String? installId;
     try {
       installId = await _environment.installId();
     } catch (error) {
       _log.fine('No install id: $error');
+    }
+    if (!_stillWanted(generation)) {
+      _abandonStart(generation);
+      return;
     }
     final t = StaticTranslations.instance;
     int port;
@@ -351,7 +367,11 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     await _applyScreen();
     if (installId != null) {
       try {
-        final stop = await _environment.advertise(phoneShareServiceName(deviceName), port, djiRelayAttributes(installId));
+        final stop = await _environment.advertise(
+          phoneShareServiceName(deviceName),
+          port,
+          djiRelayAttributes(installId),
+        );
         if (generation != _generation) {
           await stop();
           return;
@@ -362,6 +382,14 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
         // No multicast here: a headset types the address the page shows
         _log.info('The phone could not be announced: $error');
       }
+    }
+  }
+
+  /// A start the page left before the relay was asked for: nothing was started, the switch is off again
+  void _abandonStart(int generation) {
+    _log.info('The page closed before the relay started: not started');
+    if (generation == _generation) {
+      state = state.copyWith(starting: false, sending: false);
     }
   }
 
@@ -491,7 +519,13 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     }
     String? outcome;
     try {
-      outcome = await _api.connectRelay(phone.host, phone.port, code, phone.id, await _environment.deviceName());
+      final headsetName = await _environment.deviceName();
+      if (!_pageVisible) {
+        // The page closed while the name was read: a receiver that no page shows is never started
+        _log.info('The page closed before the receiver started: not started');
+        return;
+      }
+      outcome = await _api.connectRelay(phone.host, phone.port, code, phone.id, headsetName);
     } catch (error) {
       _log.warning('The receiver did not start: $error');
       outcome = 'badHost';

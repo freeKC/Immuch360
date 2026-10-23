@@ -415,7 +415,7 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
       key: const Key('dji_link_video'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DjiLinkVideoPanel(decode: snapshot?.videoDecode),
+        DjiLinkVideoPanel(decode: snapshot?.videoDecode, relayStopped: djiLinkRelayPictureStopped(snapshot)),
         const SizedBox(height: 8),
         Text(verdict, key: const Key('dji_link_video_verdict'), style: context.textTheme.bodySmall),
         if (video != null) ...[
@@ -444,7 +444,8 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
     final decode = snapshot?.videoDecode;
     final horizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
     final relay = ref.watch(djiRelayProvider);
-    final flowing = receiving != null && receiving.state == DjiRelayReceiveState.receiving && djiLinkPictureFlows(decode);
+    final flowing =
+        receiving != null && receiving.state == DjiRelayReceiveState.receiving && djiLinkPictureFlows(decode);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -490,6 +491,10 @@ Map<String, String> djiFlightViewLabels(Translations t) => {
   'noSource': t.dji_link_flight_view_no_source,
   'lost': t.dji_link_flight_view_lost,
   'local': t.dji_link_flight_view_local,
+  'ended': t.dji_link_flight_view_ended,
+  'wrongCode': t.dji_link_receive_state_wrong_code,
+  'otherVersion': t.dji_link_receive_state_other_version,
+  'unproven': t.dji_link_receive_state_unproven,
   'noPicture': t.dji_link_flight_view_no_picture,
   'stale': t.dji_link_latency_stale(seconds: '{seconds}'),
   'noValues': t.dji_link_flight_none,

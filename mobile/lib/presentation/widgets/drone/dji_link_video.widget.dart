@@ -17,6 +17,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_counters.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_observer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 
@@ -83,6 +84,20 @@ bool djiLinkPictureFlows(DjiLinkDecode? decode) {
 /// that stopped is never shown as live
 const djiLinkPictureTimeoutMs = 2000;
 
+/// Whether the picture is a phone's relay that does not come any more: the connection is lost, being made again, or
+/// ended (a refused or new code, another version, a phone that did not prove the code). The panel draws black then,
+/// whatever the decoder last said; a capture played here or a remote on the cable owns the picture once they start.
+bool djiLinkRelayPictureStopped(DjiLinkSnapshot? snapshot) {
+  final receiving = snapshot?.relayReceiving;
+  if (snapshot == null || receiving == null) {
+    return false;
+  }
+  if (receiving.state == DjiRelayReceiveState.receiving || receiving.state == DjiRelayReceiveState.idle) {
+    return false;
+  }
+  return !(snapshot.source?.replay ?? false) && !DjiLinkPageState(snapshot: snapshot).linkOpen;
+}
+
 /// The aspect ratio of the stream, 16:9 until a description gave its size
 double djiLinkVideoAspect(DjiLinkDecode? decode) {
   final width = decode?.width;
@@ -94,12 +109,15 @@ double djiLinkVideoAspect(DjiLinkDecode? decode) {
 }
 
 class DjiLinkVideoPanel extends ConsumerWidget {
-  const DjiLinkVideoPanel({super.key, required this.decode, this.showCounters = true});
+  const DjiLinkVideoPanel({super.key, required this.decode, this.showCounters = true, this.relayStopped = false});
 
   final DjiLinkDecode? decode;
 
   /// The counters and the decoder choice under the picture
   final bool showCounters;
+
+  /// The picture is a phone's relay that does not come any more ([djiLinkRelayPictureStopped]): black
+  final bool relayStopped;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -116,7 +134,7 @@ class DjiLinkVideoPanel extends ConsumerWidget {
             fit: StackFit.expand,
             children: [
               const ColoredBox(color: Colors.black),
-              if (djiLinkPictureFlows(decode)) const DjiLinkVideoSurface(),
+              if (djiLinkPictureFlows(decode) && !relayStopped) const DjiLinkVideoSurface(),
               if (decode != null)
                 Positioned(
                   left: 6,
@@ -281,7 +299,10 @@ class DjiLinkFullScreenVideo extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final decode = ref.watch(djiLinkProvider.select((state) => state.snapshot?.videoDecode));
+    final snapshot = ref.watch(djiLinkProvider.select((state) => state.snapshot));
+    final decode = snapshot?.videoDecode;
+    final receiving = snapshot?.relayReceiving;
+    final flows = djiLinkPictureFlows(decode) && !djiLinkRelayPictureStopped(snapshot);
     final t = context.t;
     return Scaffold(
       key: const Key('dji_link_video_full_screen_route'),
@@ -292,7 +313,7 @@ class DjiLinkFullScreenVideo extends ConsumerWidget {
             Center(
               child: AspectRatio(
                 aspectRatio: djiLinkVideoAspect(decode),
-                child: djiLinkPictureFlows(decode) ? const DjiLinkVideoSurface() : const SizedBox.expand(),
+                child: flows ? const DjiLinkVideoSurface() : const SizedBox.expand(),
               ),
             ),
             if (decode != null)
@@ -302,6 +323,20 @@ class DjiLinkFullScreenVideo extends ConsumerWidget {
                 child: Text(
                   djiLinkVideoOverlay(t, decode),
                   style: context.textTheme.labelSmall?.copyWith(color: Colors.white, fontFamily: 'monospace'),
+                ),
+              ),
+            // A device that receives from a phone keeps the state, the stale line and the observer note in sight
+            if (receiving != null && receiving.state != DjiRelayReceiveState.idle)
+              Positioned(
+                left: 12,
+                top: 8,
+                right: 64,
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 560),
+                    child: DjiLinkReceiveStrip(receiving: receiving),
+                  ),
                 ),
               ),
             Positioned(

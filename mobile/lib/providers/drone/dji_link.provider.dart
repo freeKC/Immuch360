@@ -197,9 +197,11 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
   }
 
   /// The page closed: the link stops with it, unless the relay still sends to a headset, which keeps it and keeps
-  /// hearing the native side (the Stop of the notification)
+  /// hearing the native side (the Stop of the notification). A relay still starting may have been started natively
+  /// just before the page closed: the events stay attached for it too.
   Future<void> pageHidden() async {
-    if (_attached && !ref.read(djiRelayProvider).sending) {
+    final relay = ref.read(djiRelayProvider);
+    if (_attached && !relay.sending && !relay.starting) {
       _attached = false;
       ref.read(djiLinkEventsSetUpProvider)(null);
     }

@@ -48,9 +48,7 @@ class DjiLinkSendSection extends ConsumerWidget {
           contentPadding: EdgeInsets.zero,
           title: Text(t.dji_link_relay),
           value: relay.sending || relay.starting,
-          onChanged: relay.starting
-              ? null
-              : (on) => unawaited(on ? notifier.startSending() : notifier.stopSending()),
+          onChanged: relay.starting ? null : (on) => unawaited(on ? notifier.startSending() : notifier.stopSending()),
         ),
         if (relay.startFailed)
           Text(

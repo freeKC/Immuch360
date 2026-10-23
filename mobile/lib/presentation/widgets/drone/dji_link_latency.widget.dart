@@ -1,7 +1,7 @@
 // What a headset shows of the way from the phone (design 9.3): the phone to headset delay split into the phone's part
-// and the network's, this device's own decoding, phone receive to picture here, how far behind the phone's own screen
-// the picture is, and the pictures per second. A picture that stopped is never shown as live: the red line says for
-// how long no new picture came.
+// and the network's, this device's own decoding, phone receive to decoder output here (the display after it is not
+// measured), how far behind the phone's own screen the picture is, and the pictures per second. A picture that stopped
+// is never shown as live: the red line says for how long no new picture came.
 
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -11,6 +11,18 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
 
 /// After this long without a new picture, the red line says so
 const djiLinkStaleLineMs = 500;
+
+/// The red line of a picture that stopped coming while the phone still sends; null while pictures come
+String? djiLinkStaleLine(Translations t, DjiRelayReceiving receiving) {
+  final ago = receiving.lastPictureAgoMs;
+  final pictures = receiving.state == DjiRelayReceiveState.receiving && receiving.units > 0;
+  if (!pictures || (ago != null && ago <= djiLinkStaleLineMs)) {
+    return null;
+  }
+  return ago == null
+      ? t.dji_link_latency_no_picture
+      : t.dji_link_latency_stale(seconds: (ago / 1000).toStringAsFixed(1));
+}
 
 class DjiLinkLatencyBlock extends StatelessWidget {
   const DjiLinkLatencyBlock({super.key, required this.receiving, this.decode});
@@ -25,18 +37,15 @@ class DjiLinkLatencyBlock extends StatelessWidget {
     final decode = this.decode;
     final small = context.textTheme.bodySmall;
     final relay = receiving.relayDelayMedianMs;
-    final ago = receiving.lastPictureAgoMs;
-    final pictures = receiving.state == DjiRelayReceiveState.receiving && receiving.units > 0;
+    final stale = djiLinkStaleLine(t, receiving);
     final decoderName = decode?.decoderName;
     return Column(
       key: const Key('dji_link_latency'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (pictures && (ago == null || ago > djiLinkStaleLineMs))
+        if (stale != null)
           Text(
-            ago == null
-                ? t.dji_link_latency_no_picture
-                : t.dji_link_latency_stale(seconds: (ago / 1000).toStringAsFixed(1)),
+            stale,
             key: const Key('dji_link_latency_stale'),
             style: small?.copyWith(fontWeight: FontWeight.w700, color: context.colorScheme.error),
           ),
