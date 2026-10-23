@@ -962,7 +962,11 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.byKey(const Key('dji_link_playing')), findsNothing, reason: 'a failed playback did not play to its end');
+    expect(
+      find.byKey(const Key('dji_link_playing')),
+      findsNothing,
+      reason: 'a failed playback did not play to its end',
+    );
   });
 
   testWidgets('a capture is not played while a remote holds the cable', (tester) async {

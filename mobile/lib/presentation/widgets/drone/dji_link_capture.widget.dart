@@ -218,10 +218,7 @@ class _DjiLinkPlaySectionState extends ConsumerState<DjiLinkPlaySection> {
       children: [
         Text(t.dji_link_play, style: context.textTheme.labelMedium),
         if (source != null && source.replay)
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: _sourceLine(t, source),
-          ),
+          Padding(padding: const EdgeInsets.only(top: 4), child: _sourceLine(t, source)),
         if (busy)
           Text(t.dji_link_play_busy, key: const Key('dji_link_play_busy'), style: context.textTheme.bodySmall)
         else if (playError != null)
