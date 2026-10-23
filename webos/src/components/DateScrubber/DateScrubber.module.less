@@ -12,7 +12,9 @@
 
 .scrubber {
 	position: relative;
-	width: 100%;
+	// Immuch360: 20 px from the right edge of the screen (LG's safe area); the host keeps its width for the grid math
+	width: auto;
+	margin-right: var(--overscan);
 	height: 100%;
 	box-sizing: border-box;
 	background: transparent;

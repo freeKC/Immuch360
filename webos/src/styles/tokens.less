@@ -10,4 +10,12 @@
 	--font-title:   1.166rem; // 28px @ FHD
 	--font-body:    1rem;     // 24px @ FHD
 	--font-caption: 0.833rem; // 20px @ FHD
+	// Immuch360: LG's safe area (Overscan guide): selectable objects and texts stay 20 px from the edges of the screen
+	--overscan: 0.834rem;     // 20px @ FHD
+}
+
+// Immuch360: the 1280x720 package (resolution 1280x720 in appinfo.json, Enact's "hd" screen type, 16px/rem): 20 CSS px
+// from the edges there too
+.enact-res-hd {
+	--overscan: 1.25rem;      // 20px @ HD
 }

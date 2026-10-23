@@ -18,7 +18,8 @@
   // Transparent so the rail shares the layout backdrop; the hairline is the only separator.
   background: transparent;
   border-right: 1px solid @hairline;
-  padding: @page-inset-top 32px 48px;
+  // Immuch360: the items' focus fill stays within LG's 20 px safe area (--overscan, tokens.less)
+  padding: var(--overscan) 32px var(--overscan) var(--overscan);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -75,7 +76,10 @@
 }
 
 .label {
+  flex: 1;
+  min-width: 0;
   margin-left: 12px;
+  margin-right: 16px;
   font-size: var(--font-body);
   white-space: nowrap;
   pointer-events: none;
