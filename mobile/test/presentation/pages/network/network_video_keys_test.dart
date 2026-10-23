@@ -99,6 +99,8 @@ void main() {
   late StoreService store;
   late MemoryShare share;
   late List<String> calls;
+  // What the page asks of the player of the next video, /b.mp4
+  late List<String> nextCalls;
   late int systemPops;
 
   setUp(() async {
@@ -109,6 +111,7 @@ void main() {
     share = MemoryShare(_source, files: {'/a.jpg': fakePhoto(), '/clip.mp4': video, '/b.mp4': video});
     share.folders['/'] = [share.file('/a.jpg'), share.file('/clip.mp4'), share.file('/b.mp4')];
     calls = [];
+    nextCalls = [];
     _loops.clear();
     systemPops = 0;
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
@@ -142,6 +145,7 @@ void main() {
     bool inFolder = true,
     bool pushed = false,
     bool isTelevision = false,
+    bool realNeighbours = false,
   }) async {
     final entries = share.folders['/']!;
     final folder = NetworkFolderMedia(
@@ -153,8 +157,16 @@ void main() {
     final router = await pumpNetworkRouter(
       tester,
       // Opened from a folder, so that its app bar has a Back button
-      home: pushed ? const Scaffold(body: Text('folder')) : page,
-      pages: {if (pushed) NetworkVideoRoute.name: (_) => page},
+      home: pushed || realNeighbours ? const Scaffold(body: Text('folder')) : page,
+      pages: {
+        if (pushed) NetworkVideoRoute.name: (_) => page,
+        // The next video in the real page, as the app opens it
+        if (realNeighbours)
+          NetworkVideoRoute.name: (data) {
+            final args = data.argsAs<NetworkVideoRouteArgs>();
+            return NetworkVideoPage(key: args.key, sourceId: args.sourceId, path: args.path, folder: args.folder);
+          },
+      },
       settle: false,
       overrides: [
         tvModeProvider.overrideWithValue(tvMode),
@@ -175,10 +187,28 @@ void main() {
             ),
           ),
         ),
+        videoPlayerProvider('network:nas:/b.mp4').overrideWith(
+          (ref) => _FakePlayer(
+            nextCalls,
+            const VideoPlayerState(
+              position: Duration(seconds: 5),
+              duration: Duration(minutes: 3),
+              status: VideoPlaybackStatus.paused,
+            ),
+          ),
+        ),
       ],
     );
     if (pushed) {
       unawaited(router.push(NetworkVideoRoute(sourceId: _source.id, path: '/clip.mp4')));
+    }
+    if (realNeighbours) {
+      // Opened from the grid of the folder, as in the app: the next file replaces this route
+      unawaited(router.push(NetworkVideoRoute(sourceId: _source.id, path: '/clip.mp4', folder: folder)));
+      // Past the transition (the page shows a spinner until a native player is ready: no pumpAndSettle)
+      for (var i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
     }
     for (var i = 0; i < 5; i++) {
       await tester.pump(const Duration(milliseconds: 50));
@@ -221,6 +251,30 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('video nas /b.mp4'), findsOneWidget);
+    expect(calls, isEmpty);
+  });
+
+  testWidgets('on a TV right while it plays opens the next video in a page of its own, whose controls drive its player', (
+    tester,
+  ) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing, realNeighbours: true);
+    final first = tester.state<NetworkVideoPageState>(find.byType(NetworkVideoPage));
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+
+    final next = tester.state<NetworkVideoPageState>(find.byType(NetworkVideoPage));
+    expect(next.widget.path, '/b.mp4');
+    expect(identical(next, first), isFalse, reason: 'a new page, not the old one under the new name');
+    expect((await next.videoSource)?.path, 'http://127.0.0.1:1234/token/nas/b.mp4', reason: 'it loads the next file');
+    expect(find.text('00:05 / 03:00'), findsOneWidget, reason: 'the controls show the player of the next file');
+
+    // OK, then OK on play and pause: the next video plays, the first one is left alone
+    await press(tester, LogicalKeyboardKey.select);
+    await press(tester, LogicalKeyboardKey.select);
+    expect(nextCalls, ['play']);
     expect(calls, isEmpty);
   });
 

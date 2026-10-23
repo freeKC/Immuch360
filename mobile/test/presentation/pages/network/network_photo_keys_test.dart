@@ -19,6 +19,7 @@ import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
+import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
@@ -106,6 +107,55 @@ void main() {
   }
 
   bool hasFocus(WidgetTester tester, Finder finder) => Focus.of(tester.element(finder)).hasPrimaryFocus;
+
+  testWidgets('right opens the next photo of the folder in a page of its own, which shows that photo', (tester) async {
+    share = MemoryShare(_source, files: {'/a.jpg': fakePhoto(), '/b.jpg': fakePhoto()});
+    share.folders['/'] = [share.file('/a.jpg'), share.file('/b.jpg')];
+    final entries = share.folders['/']!;
+    final folder = NetworkFolderMedia(
+      entries: entries,
+      urls: {for (final entry in entries) entry.path: Uri.parse('http://127.0.0.1:1234/token/nas${entry.path}')},
+      index: 0,
+    );
+    final router = await pumpNetworkRouter(
+      tester,
+      home: const Scaffold(body: Text('folder')),
+      pages: {
+        NetworkPhotoRoute.name: (data) {
+          final args = data.argsAs<NetworkPhotoRouteArgs>();
+          return NetworkPhotoPage(key: args.key, sourceId: args.sourceId, path: args.path, folder: args.folder);
+        },
+      },
+      settle: false,
+      overrides: [
+        tvModeProvider.overrideWithValue(true),
+        storeServiceProvider.overrideWithValue(store),
+        overrideConnections((ref) => FakeConnections(ref, share)),
+        isHorizonOsProvider.overrideWith((ref) async => false),
+        networkMediaServiceProvider.overrideWith((ref) => _NoDetection()),
+      ],
+    );
+    unawaited(router.push(NetworkPhotoRoute(sourceId: 'nas', path: '/a.jpg', folder: folder)));
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    final first = tester.state(find.byType(NetworkPhotoPage));
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+
+    expect(tester.widget<NetworkPhotoPage>(find.byType(NetworkPhotoPage)).path, '/b.jpg');
+    expect(identical(tester.state(find.byType(NetworkPhotoPage)), first), isFalse);
+    final shown = tester
+        .widgetList<Image>(find.byType(Image))
+        .map((image) => image.image)
+        .whereType<ResizeImage>()
+        .map((image) => (image.imageProvider as NetworkImage).url)
+        .toList();
+    expect(shown, ['http://127.0.0.1:1234/token/nas/b.jpg'], reason: 'the next photo, not the first one');
+  });
 
   testWidgets('the Back button of the app bar leaves the page, where Back only leaves the app bar', (tester) async {
     await pumpPhoto(tester);
