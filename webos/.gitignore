@@ -9,6 +9,8 @@ coverage
 # production
 build
 dist
+# Immuch360: the 1280x720 package (tools/package-ipk.mjs)
+build-1280x720
 
 # misc
 .DS_Store

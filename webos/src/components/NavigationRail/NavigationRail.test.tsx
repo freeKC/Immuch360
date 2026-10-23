@@ -54,7 +54,7 @@ describe('NavigationRail', () => {
 		render(<NavigationRail activeView="sources" onNavigate={() => {}} onOpenAccount={() => {}} accountLetter="Q" accountGradient="#123456" />);
 		const shares = screen.getByRole('button', {name: /Network shares/});
 		expect(shares.getAttribute('aria-current')).toBe('page');
-		expect(screen.getByRole('button', {name: /Photos/}).getAttribute('aria-current')).toBeNull();
+		expect(screen.getByRole('button', {name: /Photos/}).hasAttribute('aria-current')).toBe(false);
 		const label = shares.querySelector('[data-rail-label]');
 		expect(label?.textContent).toBe('Network shares');
 		// The Marquee wraps its text in its own clipping box

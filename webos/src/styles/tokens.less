@@ -15,7 +15,8 @@
 }
 
 // Immuch360: the 1280x720 package (resolution 1280x720 in appinfo.json, Enact's "hd" screen type, 16px/rem): 20 CSS px
-// from the edges there too
+// from the edges there too, and no text under the 14 px LG gives as the minimum at 1280x720 (20 px at 1920x1080)
 .enact-res-hd {
 	--overscan: 1.25rem;      // 20px @ HD
+	--font-caption: 0.875rem; // 14px @ HD
 }

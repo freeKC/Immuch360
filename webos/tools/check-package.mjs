@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Immuch360: checks the .ipk ares-package made, before it is installed or released.
 //
-//   node tools/check-package.mjs build [--list build/ipk-files.json]
+//   node tools/check-package.mjs build [--list build/ipk-files.json] [--resolution 1280x720]
 //
 // An .ipk is an ar archive (debian-binary, control.tar.gz, data.tar.gz). The check reads it with node alone and
 // fails when the app or its service is not where webOS looks for them, when appinfo.json does not name Immuch360,
@@ -11,13 +11,14 @@
 // the media bridge of the service or the notices of the third party code in it are missing (tools/build-bridge.mjs),
 // when the icons are not the opaque squares LG's store asks for, when the Type 3 screen saver of gallery apps is not
 // declared, when requiredACG does not list exactly the groups of the Luna calls or a Luna service outside it is
-// called (tools/store-rules.mjs), or when the package grew past 10 MB. --list writes every file and its size, to compare two builds.
+// called, or when appinfo.json does not give the resolution of the package (tools/store-rules.mjs), or when the package
+// grew past 10 MB. --list writes every file and its size, to compare two builds.
 
 import {readFileSync, readdirSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {gunzipSync} from 'node:zlib';
 import {createHash} from 'node:crypto';
-import {FORBIDDEN_SERVICES, ICONS, acgProblems, iconProblems, screenSaverProblems, unknownLunaServices} from './store-rules.mjs';
+import {FORBIDDEN_SERVICES, ICONS, acgProblems, iconProblems, resolutionProblems, screenSaverProblems, unknownLunaServices} from './store-rules.mjs';
 
 const APP_ID = 'com.aprogsys.immuch360';
 const SERVICE_ID = `${APP_ID}.service`;
@@ -25,6 +26,9 @@ const MAX_IPK_BYTES = 10 * 1024 * 1024;
 
 const dir = process.argv[2] ?? 'build';
 const listIndex = process.argv.indexOf('--list');
+const resolutionIndex = process.argv.indexOf('--resolution');
+// Immuch360: the resolution the package is for (tools/package-ipk.mjs): 1920x1080 by default, or 1280x720
+const resolution = resolutionIndex > 0 ? process.argv[resolutionIndex + 1] : '1920x1080';
 const problems = [];
 
 function fail(message) {
@@ -128,7 +132,7 @@ if (appinfoBytes) {
 	if (ipkName !== `${APP_ID}_${appinfo.version}_all.ipk`) problems.push(`${ipkName} does not carry the version ${appinfo.version}`);
 	// LG's store rules on the icons and the tile colour (tools/store-rules.mjs)
 	const icons = Object.fromEntries(Object.keys(ICONS).map((name) => [name, data[appDir + name]]).filter(([, bytes]) => bytes));
-	problems.push(...iconProblems(appinfo, icons), ...screenSaverProblems(appinfo), ...acgProblems(appinfo));
+	problems.push(...iconProblems(appinfo, icons), ...screenSaverProblems(appinfo), ...acgProblems(appinfo), ...resolutionProblems(appinfo, resolution));
 }
 const servicePackage = data[`${serviceDir}package.json`];
 if (servicePackage && version && JSON.parse(servicePackage.toString('utf8')).version !== version) {
@@ -154,7 +158,7 @@ const lookbehinds = mainJs ? (mainJs.toString('latin1').match(/\(\?<[=!]/g) ?? [
 const files = Object.keys(data).sort().map((path) => ({path, size: data[path].length}));
 const total = files.reduce((sum, file) => sum + file.size, 0);
 console.log(`[check-package] ${ipkName}: ${ipk.length} bytes, sha256 ${createHash('sha256').update(ipk).digest('hex')}`);
-console.log(`[check-package] ${files.length} files, ${total} bytes unpacked, version ${version}`);
+console.log(`[check-package] ${files.length} files, ${total} bytes unpacked, version ${version}, resolution ${resolution}`);
 for (const file of files.slice().sort((a, b) => b.size - a.size).slice(0, 8)) console.log(`  ${String(file.size).padStart(9)}  ${file.path}`);
 console.log(`[check-package] main.js: ${lookbehinds} lookbehind assertion(s) in regular expressions (Chromium 53 has none)`);
 if (listIndex > 0) {

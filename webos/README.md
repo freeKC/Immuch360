@@ -79,9 +79,9 @@ You need an LG TV with webOS 4.0 or later, on the same network as your computer,
 2. On the computer, install the webOS CLI (Node.js 18 or later): `npm install -g @webos-tools/cli`
 3. Register the TV: `ares-setup-device` (add a device, its IP address, port 9922, user `prisoner`), then
    `ares-novacom --device <name> --getkey` and type the passphrase.
-4. Download `Immuch360-webOS-<version>.ipk` from the
-   [webOS pre-releases](https://github.com/freeKC/Immuch360/releases) (tags `webos-v...`), check it against
-   `SHA256SUMS.txt`, then:
+4. Download `Immuch360-webOS-<version>.ipk` (UHD TVs, 1920x1080), or `Immuch360-webOS-<version>-1280x720.ipk` on a
+   Full HD TV, from the [webOS pre-releases](https://github.com/freeKC/Immuch360/releases) (tags `webos-v...`), check it
+   against `SHA256SUMS.txt`, then:
 
    ```bash
    ares-install --device <name> Immuch360-webOS-<version>.ipk
@@ -173,7 +173,7 @@ npm run test-bridge  # node tests of the media bridge of the service, against lo
 npm run bridge       # service/bridge/base.js and smb.js (npm run ipk does it)
 npm test             # the jest tests inherited from immich-tv-webos
 npm run typecheck
-npm run ipk          # build/com.aprogsys.immuch360_<version>_all.ipk, then checks its content
+npm run ipk          # build/ (1920x1080) and build-1280x720/ com.aprogsys.immuch360_<version>_all.ipk, then checks them
 npm run set-version -- 0.1.0   # the version of appinfo.json and of the service
 ```
 
@@ -186,9 +186,11 @@ server) inside the `node:8.12.0`, `12.21.0`, `16.19.1` and `20.12.2` images, on 
 only the TV app has are the `webos_*` keys of the fork's `i18n/en.json`, translated with the others at a release; until
 then they show in English.
 
-The CI workflow `.github/workflows/immuch360-webos.yml` tests and builds the `.ipk` on every push that touches `webos/`
-or `i18n/`, and by hand; `.github/workflows/immuch360-webos-release.yml` builds it from a `webos-v<x.y.z>` tag and
-publishes it as a pre-release with `SHA256SUMS.txt`.
+The CI workflow `.github/workflows/immuch360-webos.yml` tests and builds the two `.ipk` on every push that touches
+`webos/` or `i18n/`, and by hand; `.github/workflows/immuch360-webos-release.yml` builds them from a `webos-v<x.y.z>` tag
+and publishes them as a pre-release with `SHA256SUMS.txt`. The two packages hold the same app: the 1280x720 one says
+`"resolution": "1280x720"` in its `appinfo.json`, for the Full HD TVs to which LG gives only 1280x720 apps
+(`tools/package-ipk.mjs`).
 
 ## Licence
 

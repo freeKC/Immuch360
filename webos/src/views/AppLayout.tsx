@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import Spotlight from '@enact/spotlight';
-import {NAVIGATION_RAIL_ID, SIDEBAR_WIDTH} from '../utils/constants';
+import {NAVIGATION_RAIL_ID} from '../utils/constants';
+import {contentWidthNow} from '../utils/layout';
 import {useRootBack} from '../hooks/useWebOSKeys';
 import {createSpotlightContainer} from '../utils/spotlight';
 import {NavigationRail} from '../components/NavigationRail/NavigationRail';
@@ -24,7 +25,8 @@ const ViewContainer = createSpotlightContainer({enterTo: 'last-focused'});
 
 const AppLayout: React.FC<AppLayoutProps> = ({onOpenAccount, accountLetter, accountGradient}) => {
 	const [activeView, setActiveView] = useState<View>('photos');
-	const [contentWidth, setContentWidth] = useState(window.innerWidth - SIDEBAR_WIDTH);
+	// Immuch360: the rail's width at this screen type (180 CSS px at 1920x1080, 120 at 1280x720)
+	const [contentWidth, setContentWidth] = useState(() => contentWidthNow());
 
 	// Back on a rail page other than Photos, once no layer of the page took it: Photos, with the focus on its rail item
 	// (the page left may have held the focus). On Photos, the entry page, Back goes to the platform (useWebOSKeys).
@@ -35,7 +37,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({onOpenAccount, accountLetter, acco
 	useRootBack(activeView === 'photos' ? undefined : goPhotos);
 
 	useEffect(() => {
-		const handleResize = () => setContentWidth(window.innerWidth - SIDEBAR_WIDTH);
+		const handleResize = () => setContentWidth(contentWidthNow());
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);

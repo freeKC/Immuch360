@@ -15,12 +15,12 @@ describe('the privacy policy in the app', () => {
 	});
 
 	test('the button opens the layer with the address and its QR code; Close closes it', () => {
-		const {container} = render(<PrivacyPolicyButton />);
+		render(<PrivacyPolicyButton />);
 		expect(screen.queryByRole('dialog')).toBeNull();
 		fireEvent.click(screen.getByText('Privacy policy'));
 		expect(screen.getByRole('dialog')).toBeTruthy();
 		expect(screen.getByText(PRIVACY_POLICY_URL)).toBeTruthy();
-		expect(container.querySelector('canvas')).not.toBeNull();
+		expect(screen.getByRole('dialog').getElementsByTagName('canvas')).toHaveLength(1);
 		fireEvent.click(screen.getByText('Close'));
 		expect(screen.queryByRole('dialog')).toBeNull();
 	});
