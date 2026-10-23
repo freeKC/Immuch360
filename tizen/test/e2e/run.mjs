@@ -15,11 +15,13 @@
 // signs in to that server with E2E_EMAIL and E2E_PASSWORD from the environment (never printed).
 //
 // Steps, each with a screenshot in --out: the sign in page (no Phone tab; server, email and password typed, the
-// keyboard's Done key), the timeline (ChannelDown pages down), a 360° photo (the sphere is drawn, the arrows turn it,
-// ChannelUp zooms), a video (it plays and holds the screen saver where the engine has H.264, else the "could not
-// play" message shows), the rail (no Network shares), the About page (Tizen lines, no policy block, no DUID), a
-// locale file read under the policy, the remote keys asked for, and Back on the first screen closing the app.
-// results.json lists the steps; the exit code is 1 when one failed.
+// keyboard's Done key), Back with the keyboard popup open (it closes the popup, not the form), the timeline
+// (ChannelDown pages down), a 360° photo (the sphere is drawn, the arrows turn it, ChannelUp zooms), a video (it plays
+// and holds the screen saver where the engine has H.264, else the "could not play" message shows), a slideshow (the
+// Play/Pause key of a Samsung remote pauses and resumes it, the screen saver held), the rail (no Network shares), the
+// About page (Tizen lines, no policy block, no DUID), a locale file read under the policy, the remote keys asked for,
+// and Back on the first screen closing the app. An uncaught exception in the page fails the run too, unless
+// KNOWN_EXCEPTIONS names it. results.json lists the steps; the exit code is 1 when one failed.
 
 import {execFileSync, spawn} from 'node:child_process';
 import {cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
@@ -46,7 +48,11 @@ if (!CHROME) {
 	process.exit(2);
 }
 
-const KEY = {enter: 13, left: 37, up: 38, right: 39, down: 40, back: 10009, channelUp: 427, channelDown: 428, imeDone: 65376};
+const KEY = {enter: 13, left: 37, up: 38, right: 39, down: 40, back: 10009, channelUp: 427, channelDown: 428, playPause: 10252, imeDone: 65376};
+// Uncaught exceptions of the page that do not fail the run, each with the reason (none known today)
+const KNOWN_EXCEPTIONS = [];
+// A viewer, a video or a slideshow is open over the timeline
+const OVERLAY_OPEN = `!!document.querySelector('canvas, video[data-immuch360-video], [data-spotlight-id="media-viewer"], [data-spotlight-id="slideshow"]')`;
 const KEY_NAME = {13: 'Enter', 37: 'ArrowLeft', 38: 'ArrowUp', 39: 'ArrowRight', 40: 'ArrowDown'};
 
 mkdirSync(OUT, {recursive: true});
@@ -321,14 +327,45 @@ async function main() {
 			log(`FAIL ${name}: ${message}`);
 			await shot(`fail-${name.replace(/\W+/g, '-')}`).catch(() => {});
 			// A viewer left open would fail the next steps too: Back closes it (never Back on the first screen)
-			for (let i = 0; i < 3; i++) {
-				const open = await evaluate(`!!document.querySelector('canvas, video[data-immuch360-video]')`).catch(() => false);
+			for (let i = 0; i < 4; i++) {
+				const open = await evaluate(OVERLAY_OPEN).catch(() => false);
 				if (!open) break;
 				await key(KEY.back).catch(() => {});
 				await sleep(600);
 			}
 		}
 	};
+
+	// The text of Sandstone's floating layer: the tooltip of the focused or hovered button
+	const floatingText = `(function () { var l = document.getElementById('floatLayer'); return l ? l.textContent.trim() : ''; })()`;
+	// The text a field of the open tab shows, or null
+	const fieldText = (index) => `(function () {
+		var all = document.querySelectorAll('[role="button"][aria-label$="Input field"]');
+		var shown = [];
+		for (var i = 0; i < all.length; i++) {
+			var r = all[i].getBoundingClientRect();
+			if (r.width > 0 && r.height > 0 && r.left >= 0 && r.left < window.innerWidth) shown.push(all[i].textContent.trim());
+		}
+		return shown.length > ${index} ? shown[${index}] : null;
+	})()`;
+	// Back with the keyboard popup of a field open: on a Samsung TV it closes the popup and leaves the form, with what
+	// was typed; the field is then cleared with its clear button for the sign in
+	const backInPopup = async () => {
+		await click(await waitFor(fieldAt(0), 'the server field'));
+		await waitFor(`document.activeElement && document.activeElement.tagName === 'INPUT'`, 'the keyboard of the server field', 10000);
+		await typeText('x');
+		await key(KEY.back);
+		await waitFor(`!document.activeElement || document.activeElement.tagName !== 'INPUT'`, 'Back to close the keyboard popup', 10000);
+		await sleep(400);
+		const form = await evaluate(`[${hasText('API Key')}, ${fieldAt(0)} !== null]`);
+		const result = {formKept: form[0] && form[1], typedKept: (await evaluate(fieldText(0))) === 'x', exits: (await calls()).exits};
+		if (result.formKept && (await evaluate(fieldText(0)))) {
+			await click(await waitFor(centreOf('[aria-label="Clear value"]'), 'the clear button of the server field'));
+			await waitFor(`${fieldText(0)} !== 'x'`, 'the server field to be cleared', 5000);
+		}
+		return result;
+	};
+	let popupBack = null;
 
 	await devtools.send('Page.navigate', {url: pathToFileURL(join(page, 'index.html')).href});
 
@@ -343,6 +380,16 @@ async function main() {
 			const tabs = await evaluate(`[${leafByText('Phone')} !== null, ${leafByText('Email')} !== null, ${leafByText('API Key')} !== null]`);
 			if (tabs[0]) throw new Error('a Phone tab is offered');
 			if (!tabs[1] || !tabs[2]) throw new Error(`the Email and API Key tabs are not both there (${tabs})`);
+			// Reported as a step of its own below; the form is opened again when Back closed it
+			try {
+				popupBack = await backInPopup();
+			} catch (error) {
+				popupBack = {error: error.message};
+			}
+			if (!popupBack.formKept && popupBack.exits === 0 && !(await evaluate(hasText('API Key')))) {
+				await click(await waitFor(leafByText('Add account'), 'the Add account button, to open the form again'));
+				await waitFor(hasText('API Key'), 'the sign in tabs, again');
+			}
 			await typeInto(0, server, 'server');
 			await typeInto(1, email, 'email');
 			await typeInto(2, password, 'password');
@@ -353,6 +400,18 @@ async function main() {
 			await waitFor(`document.querySelectorAll('[data-asset-id]').length > 0`, 'the timeline after Connect', 60000);
 			signedIn = true;
 			return {tabs: 'Email, API Key'};
+		},
+		{needsSignIn: false}
+	);
+
+	await step(
+		'sign in page: Back with the keyboard popup open closes the popup, not the form, nor the app',
+		async () => {
+			if (!popupBack) throw new Error('not run: the sign in page did not open');
+			if (popupBack.error) throw new Error(popupBack.error);
+			if (popupBack.exits !== 0) throw new Error('Back in the popup closed the app');
+			if (!popupBack.formKept) throw new Error('Back in the popup closed the sign in form too');
+			return popupBack;
 		},
 		{needsSignIn: false}
 	);
@@ -449,6 +508,67 @@ async function main() {
 		return {asset: tile, h264: h264 || 'no', outcome, screenSaver: after};
 	});
 
+	await step('slideshow: the Play/Pause key of a Samsung remote (10252) pauses and resumes it, the screen saver held', async () => {
+		// A flat photo: no 360° badge, no duration
+		const tile = await waitFor(`(function () {
+			var tiles = document.querySelectorAll('[data-asset-id]');
+			for (var i = 0; i < tiles.length; i++) {
+				var text = tiles[i].textContent;
+				if (text.indexOf('360°') < 0 && !/\\d+:\\d\\d/.test(text)) return tiles[i].getAttribute('data-asset-id');
+			}
+			return null;
+		})()`, 'a flat photo tile');
+		const callsBefore = (await calls()).screenSaver.length;
+		await click(await waitFor(centreOf(`[data-asset-id="${tile}"]`), 'the photo tile'));
+		await waitFor(`!!document.querySelector('[data-spotlight-id="media-viewer"]')`, 'the viewer', 20000);
+		await sleep(500);
+		// Up shows the controls of a photo (and does nothing more once they show), Down goes into their bar, Right moves
+		// along it until the tooltip of the focused button says Slideshow, OK starts it: as with a remote
+		const barShown = `(function () {
+			var bar = document.querySelector('[data-spotlight-id="media-viewer-actions"]');
+			return !!bar && getComputedStyle(bar).visibility === 'visible' && getComputedStyle(bar.parentNode.parentNode).opacity === '1';
+		})()`;
+		const inBar = `(function () {
+			var bar = document.querySelector('[data-spotlight-id="media-viewer-actions"]');
+			return !!bar && bar.contains(document.activeElement);
+		})()`;
+		await key(KEY.up);
+		await waitFor(barShown, 'the controls of the photo', 10000);
+		await key(KEY.down);
+		await waitFor(inBar, 'the focus in the bar of the controls', 5000);
+		const seen = [];
+		let found = false;
+		for (let i = 0; i < 12 && !found; i++) {
+			const label = await waitFor(floatingText, 'the tooltip of the focused button', 3000).catch(() => '');
+			seen.push(label);
+			if (label === 'Slideshow') found = true;
+			else await key(i < 10 ? KEY.right : KEY.left);
+		}
+		if (!found) throw new Error(`no Slideshow button in the photo controls (tooltips: ${seen.join(', ')})`);
+		await key(KEY.enter);
+		await waitFor(`!!document.querySelector('[data-spotlight-id="slideshow"]')`, 'the slideshow', 10000);
+		const held = (await calls()).screenSaver.slice(callsBefore);
+		if (held[held.length - 1] !== 0) throw new Error(`the screen saver was not turned off for the slideshow (${JSON.stringify(held)})`);
+		// The play and pause button shows the pause icon while the slideshow plays, the play icon while it is paused
+		const icon = `(function () { var b = document.querySelector('[data-spotlight-id="slideshow-play"]'); return b ? b.textContent : null; })()`;
+		const playing = await waitFor(icon, 'the play and pause button of the slideshow');
+		await sleep(300);
+		await key(KEY.playPause);
+		await waitFor(`(function () { var t = ${icon}; return t !== null && t !== ${JSON.stringify(playing)}; })()`, 'the slideshow to pause on 10252', 5000);
+		await shot('04b-slideshow-paused');
+		await key(KEY.playPause);
+		await waitFor(`${icon} === ${JSON.stringify(playing)}`, 'the slideshow to play again on 10252', 5000);
+		// Back closes the slideshow (the screen saver comes back), then the photo it returns to
+		for (let i = 0; i < 4 && (await evaluate(OVERLAY_OPEN)); i++) {
+			await key(KEY.back);
+			await sleep(700);
+		}
+		if (await evaluate(OVERLAY_OPEN)) throw new Error('Back did not close the slideshow and the photo');
+		const after = (await calls()).screenSaver.slice(callsBefore);
+		if (after[after.length - 1] !== 1) throw new Error(`the screen saver did not come back after the slideshow (${JSON.stringify(after)})`);
+		return {asset: tile, screenSaver: after};
+	});
+
 	await step('rail: no Network shares; About page: Tizen lines, what Samsung TVs lack, no policy block, no DUID', async () => {
 		if (await evaluate(leafByText('Network shares'))) throw new Error('the rail offers Network shares');
 		await click(await waitFor(leafByText('About'), 'the About item of the rail'));
@@ -499,7 +619,14 @@ async function main() {
 		return {registered: registered.length};
 	});
 
-	if (exceptions.length) results.push({step: 'uncaught exceptions', ok: true, detail: exceptions.slice(0, 5)});
+	const known = (text) => KNOWN_EXCEPTIONS.some(({pattern}) => pattern.test(text));
+	const unexpected = exceptions.filter((text) => !known(text));
+	results.push({
+		step: 'no uncaught exception in the page',
+		ok: unexpected.length === 0,
+		detail: unexpected.length ? unexpected.slice(0, 5) : exceptions.length ? `${exceptions.length} known` : undefined,
+	});
+	log(`${unexpected.length ? 'FAIL' : 'ok  '} no uncaught exception in the page${unexpected.length ? `: ${JSON.stringify(unexpected.slice(0, 5))}` : ''}`);
 	devtools.close();
 	browser.child.kill('SIGKILL');
 	if (fake) await fake.close();
