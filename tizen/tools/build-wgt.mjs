@@ -6,9 +6,9 @@
 //
 // The bundle npm run pack-p makes for webOS (webos/dist, Chromium 53 syntax) runs as it is on Samsung TVs from Tizen
 // 5.5 (Chromium 69); the app finds the TV at run time (webos/src/platform/). This copies it without what only webOS
-// reads (appinfo.json, its icons and splash), adds tizen/config.xml with the version and tizen/icon.png, and loads
-// Samsung's Product API ($WEBAPIS/webapis/webapis.js, the screen saver, the TV model) before main.js. A plain browser
-// fails to load that script and goes on. The Tizen command line tools then sign the folder into a .wgt
+// reads (appinfo.json, its icons and splash), adds tizen/config.xml with the version and tizen/icon.png, loads
+// Samsung's Product API ($WEBAPIS/webapis/webapis.js, the screen saver, the TV model) before main.js (a plain browser
+// fails to load that script and goes on), and leaves out the font sources Sandstone takes from Google's servers. The Tizen command line tools then sign the folder into a .wgt
 // (tizen/tools/package-ci.sh in CI); tizen/tools/check-wgt.mjs checks the result.
 //
 // Plain Node, built in modules only.
@@ -85,6 +85,26 @@ function filesUnder(dir) {
 	return found;
 }
 
+// A font source on another server: Sandstone names LG's own fonts first, then a Noto Sans Thai file on
+// fonts.gstatic.com, which an LG TV never fetches and a Samsung TV would fetch at every start
+const REMOTE_FONT = /,?\s*url\(\s*["']?https?:\/\/[^)]*\)(\s*format\([^)]*\))?/g;
+
+/**
+ * The stylesheet without the font sources of other servers: the Samsung app asks nothing of Google, and the content
+ * security policy (font-src 'self' data:) would refuse it anyway. Local fonts and those of the package stay; text falls
+ * back to the next font of the stack. Returns the stylesheet and the count of sources taken out.
+ */
+export function withoutRemoteFonts(css) {
+	let removed = 0;
+	const out = css.replace(/@font-face\s*\{[^}]*\}/g, (face) =>
+		face.replace(REMOTE_FONT, () => {
+			removed++;
+			return '';
+		})
+	);
+	return {css: out.replace(/src:\s*,/g, 'src:'), removed};
+}
+
 /** What the folder must hold for the app to start and to carry its licences; [] when all is there */
 export function missingParts(out) {
 	const missing = [];
@@ -109,10 +129,12 @@ export function buildWgt({dist, version, out, template = join(TIZEN, 'config.xml
 	writeFileSync(join(out, 'config.xml'), configXml(readFileSync(template, 'utf8'), version));
 	copyFileSync(icon, join(out, 'icon.png'));
 	writeFileSync(join(out, 'index.html'), withWebapis(readFileSync(join(out, 'index.html'), 'utf8')));
+	const styles = withoutRemoteFonts(readFileSync(join(out, 'main.css'), 'utf8'));
+	writeFileSync(join(out, 'main.css'), styles.css);
 	const missing = missingParts(out);
 	if (missing.length) throw new Error(`the package folder lacks: ${missing.join('; ')}`);
 	const files = filesUnder(out);
-	return {files: files.length, bytes: files.reduce((sum, path) => sum + statSync(path).size, 0)};
+	return {files: files.length, bytes: files.reduce((sum, path) => sum + statSync(path).size, 0), remoteFonts: styles.removed};
 }
 
 function argument(args, name, fallback) {
@@ -130,8 +152,8 @@ function main(args) {
 			return;
 		}
 		const version = argument(args, '--version', '') || fromTemplate;
-		const {files, bytes} = buildWgt({dist, version, out});
-		console.log(`[build-wgt] ${relative(process.cwd(), out) || '.'}: version ${version}, ${files} files, ${bytes} bytes`);
+		const {files, bytes, remoteFonts} = buildWgt({dist, version, out});
+		console.log(`[build-wgt] ${relative(process.cwd(), out) || '.'}: version ${version}, ${files} files, ${bytes} bytes, ${remoteFonts} remote font sources left out`);
 	} catch (error) {
 		console.error(`[build-wgt] FAILED: ${error.message}`);
 		process.exit(1);

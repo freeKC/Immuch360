@@ -10,7 +10,7 @@ import {tmpdir} from 'node:os';
 import {dirname, join, relative} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {crc32, deflateRawSync} from 'node:zlib';
-import {WEBAPIS_TAG, buildWgt, checkVersion, configXml, templateVersion, withWebapis} from '../tools/build-wgt.mjs';
+import {WEBAPIS_TAG, buildWgt, checkVersion, configXml, templateVersion, withWebapis, withoutRemoteFonts} from '../tools/build-wgt.mjs';
 import {APPLICATION_ID, PRIVILEGES, checkWgt, configProblems, zipEntries, zipRead} from '../tools/check-wgt.mjs';
 
 const TIZEN = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -22,6 +22,11 @@ const INDEX_HTML =
 	'<!doctype html><html><head><title>Immuch360</title><link href="./main.css" rel="stylesheet"/></head>' +
 	'<body><div id="root"></div><script defer="defer" src="./main.js"></script></body></html>';
 
+// Two of Sandstone's font faces, as the bundle has them
+const SANDSTONE_FONTS =
+	'@font-face{font-family:Sandstone Miso;font-weight:400;src:local("LG Smart UI AR HE TH Regular"),local("LGSmartUIARHETH-Regular"),url(https://fonts.gstatic.com/s/notosansthai/v13/x.woff2) format("woff2")}' +
+	'@font-face{font-family:Sandstone Museo;src:url(node_modules/@enact/sandstone/fonts/MuseoSans/MuseoSans-Medium.ttf) format("truetype")}body{background:url(data:image/png;base64,AAAA)}';
+
 /** A stand in of webos/dist after npm run pack-p */
 function fakeDist(name, {probe = true, locales = 88} = {}) {
 	const dist = join(scratch, name);
@@ -31,7 +36,7 @@ function fakeDist(name, {probe = true, locales = 88} = {}) {
 	};
 	put('index.html', INDEX_HTML);
 	put('main.js', 'console.log("app");');
-	put('main.css', 'body{}');
+	put('main.css', SANDSTONE_FONTS);
 	put('appinfo.json', '{"id":"com.aprogsys.immuch360"}');
 	for (const icon of ['icon.png', 'icon-large.png', 'icon-mini.png', 'splash.png']) put(icon, `webOS ${icon}`);
 	put('LICENSE.txt', 'GNU Affero General Public License, https://github.com/freeKC/Immuch360, immich-tv-webos');
@@ -126,6 +131,17 @@ describe('build-wgt', () => {
 		assert.throws(() => withWebapis(INDEX_HTML.replace('</body>', `${WEBAPIS_TAG}</body>`)), /after main\.js/);
 	});
 
+	test('no font from Google: the remote sources of the font faces left out, local and packaged fonts kept', () => {
+		const {css, removed} = withoutRemoteFonts(SANDSTONE_FONTS);
+		assert.equal(removed, 1);
+		assert.equal(css.indexOf('gstatic'), -1);
+		assert.ok(css.includes('src:local("LG Smart UI AR HE TH Regular"),local("LGSmartUIARHETH-Regular")}'));
+		assert.ok(css.includes('url(node_modules/@enact/sandstone/fonts/MuseoSans/MuseoSans-Medium.ttf) format("truetype")'));
+		assert.ok(css.includes('url(data:image/png;base64,AAAA)'));
+		// A face whose only source was remote keeps no source at all
+		assert.equal(withoutRemoteFonts('@font-face{font-family:X;src:url("https://example.com/x.woff2") format("woff2")}').css, '@font-face{font-family:X;src:}');
+	});
+
 	test('the folder: webOS files out, config.xml, the Samsung icon, the locales, licences and clip kept', () => {
 		const out = join(scratch, 'wgt-good');
 		const {files} = buildWgt({dist: fakeDist('dist-good'), version: '0.2.1', out});
@@ -133,6 +149,7 @@ describe('build-wgt', () => {
 		assert.deepEqual(readFileSync(join(out, 'icon.png')), readFileSync(join(TIZEN, 'icon.png')));
 		assert.equal(templateVersion(readFileSync(join(out, 'config.xml'), 'utf8')), '0.2.1');
 		assert.ok(readFileSync(join(out, 'index.html'), 'utf8').includes(WEBAPIS_TAG));
+		assert.equal(readFileSync(join(out, 'main.css'), 'utf8').indexOf('gstatic'), -1);
 		for (const kept of ['i18n/l0.json', 'src/immuch360/diagnostics/probe.mp4', 'src/assets/immuch360-icon.png', 'LICENSE-immich-tv-webos.txt', 'node_modules/@enact/sandstone/fonts/Miso/Miso-Regular.ttf']) {
 			assert.ok(existsSync(join(out, kept)), kept);
 		}
@@ -181,6 +198,7 @@ describe('check-wgt', () => {
 			[zipOf(out, SIGNATURES, ['LICENSE-immich-tv-webos.txt']), {}, /missing LICENSE-immich-tv-webos\.txt/],
 			[zipOf(out, SIGNATURES, ['src/immuch360/diagnostics/probe.mp4']), {}, /probe\.mp4/],
 			[zipOf(out, {...SIGNATURES, 'index.html': INDEX_HTML}, ['index.html']), {}, /webapis\.js before main\.js/],
+			[zipOf(out, {...SIGNATURES, 'main.css': SANDSTONE_FONTS}, ['main.css']), {}, /main\.css loads something from another server/],
 		];
 		for (const [zip, options, expected] of cases) {
 			assert.match(checkWgt(zip, options).problems.join('; '), expected);

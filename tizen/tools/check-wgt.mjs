@@ -8,8 +8,9 @@
 // privileges, the access policy, a content security policy without eval), when the version differs from the one given,
 // when the author and distributor signatures are missing (--unsigned for a folder zipped without the Tizen tools),
 // when something only webOS reads went in (appinfo.json, its icons, the JS service), when index.html does not load
-// Samsung's Product API before main.js, when the licences, the locale files or the clip of the video test of the About
-// page are missing, or when the package grew past 20 MB. --list writes every file and its size, to compare builds.
+// Samsung's Product API before main.js, when main.css loads anything from another server, when the licences, the
+// locale files or the clip of the video test of the About page are missing, or when the package grew past 20 MB.
+// --list writes every file and its size, to compare builds.
 
 import {createHash} from 'node:crypto';
 import {readFileSync, writeFileSync} from 'node:fs';
@@ -126,6 +127,8 @@ export function checkWgt(wgt, {version = null, unsigned = false} = {}) {
 		if (tag < 0 || main < 0 || tag > main) problems.push("index.html does not load Samsung's webapis.js before main.js");
 		if (html.split(WEBAPIS_TAG).length > 2) problems.push('index.html loads webapis.js twice');
 	}
+	const styles = text('main.css');
+	if (styles !== null && /url\(\s*["']?https?:/.test(styles)) problems.push('main.css loads something from another server (a font of Google?)');
 	for (const [name, phrases] of Object.entries(LICENCES)) {
 		const content = text(name);
 		if (content === null) problems.push(`missing ${name}`);
