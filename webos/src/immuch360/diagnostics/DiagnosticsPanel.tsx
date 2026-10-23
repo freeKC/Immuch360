@@ -4,6 +4,7 @@ import Scroller from '@enact/sandstone/Scroller';
 import Button from '@enact/sandstone/Button';
 import Dropdown from '@enact/sandstone/Dropdown';
 import {QrCode} from '../../components/QrCode/QrCode';
+import {PRIVACY_POLICY_URL, PrivacyPolicyButton} from '../privacy/PrivacyPolicy';
 import {useRepository} from '../../domain/RepositoryContext';
 import {SpottableDiv} from '../../utils/spotlight';
 import {availableLocales, chosenLocale, localeName, setChosenLocale, t} from '../i18n';
@@ -78,6 +79,12 @@ const DiagnosticsPanel: React.FC = () => {
 						<p className={css.credit}>{t('webos_about_base', {version: BASE_VERSION})}</p>
 						<p className={css.credit}>{t('webos_about_unofficial')}</p>
 						<p className={css.credit}>https://github.com/freeKC/Immuch360</p>
+						<p className={css.credit}>
+							{t('webos_privacy_policy')}: {PRIVACY_POLICY_URL}
+						</p>
+						<div className={css.actions}>
+							<PrivacyPolicyButton />
+						</div>
 					</div>
 					{lines.length > 0 && (
 						<div className={css.qrColumn}>

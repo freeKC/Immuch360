@@ -4,6 +4,7 @@ import Spotlight, {getDirection} from '@enact/spotlight';
 import {AccountGrid} from './AccountGrid';
 import {AuthForm, type AuthFormPayload, type AuthSubmitResult} from '../../components/AuthForm/AuthForm';
 import {createSpotlightContainer} from '../../utils/spotlight';
+import {PrivacyPolicyButton} from '../../immuch360/privacy/PrivacyPolicy';
 import {useWebOSKeys} from '../../hooks/useWebOSKeys';
 import type {Account} from '../../utils/accountsStore';
 import type {PairingDriver, PairedAccountResult} from '../../pairing/types';
@@ -157,6 +158,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 				<Button autoFocus size="large" icon="plus" onClick={goForm} backgroundOpacity="opaque">
 					{t('webos_add_account')}
 				</Button>
+				<PrivacyPolicyButton className={css.privacy} />
 			</div>
 		);
 	}
