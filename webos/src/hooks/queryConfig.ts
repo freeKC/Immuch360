@@ -15,6 +15,11 @@ export const ASSETS_QUERY_CONFIG = {
 	retry: (failureCount: number, error: unknown) => {
 		// Don't retry on 401 (auth error)
 		if (error instanceof APIError && error.status === 401) return false;
+		// Immuch360: a page says why it failed soon after the 15 s of a request (src/api/network.ts): offline or a CORS
+		// refusal do not change with a retry; a timeout gets one more try (a cold smart search can take longer once),
+		// so the message comes after about 31 s (15 + 1 + 15), not 48
+		if (error instanceof APIError && (error.kind === 'offline' || error.kind === 'cors')) return false;
+		if (error instanceof APIError && error.kind === 'timeout') return failureCount < 1;
 		return failureCount < 2;
 	},
 };
