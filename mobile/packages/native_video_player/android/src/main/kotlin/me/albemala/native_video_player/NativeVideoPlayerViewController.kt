@@ -52,11 +52,11 @@ class NativeVideoPlayerViewController(
         api.delegate = this
         player = ExoPlayer.Builder(context).build()
         player.addListener(this)
-        // Immuch360: the audio language the user picked last, for every video
-        NativeVideoPlayerPlugin.preferredAudioLanguage?.invoke()?.let { language ->
-            player.trackSelectionParameters =
-                player.trackSelectionParameters.buildUpon().setPreferredAudioLanguage(language).build()
-        }
+        // Immuch360: the audio language the user picked last, for every video, and no subtitles until asked for
+        player.trackSelectionParameters = VideoTracks.initialParameters(
+            player.trackSelectionParameters,
+            NativeVideoPlayerPlugin.preferredAudioLanguage?.invoke(),
+        )
 
         view = SurfaceView(context)
         view.setBackgroundColor(0)

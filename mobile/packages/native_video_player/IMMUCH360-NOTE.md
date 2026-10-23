@@ -18,10 +18,13 @@ What differs from upstream, to apply again when a newer commit is copied here (e
    - `android/.../VideoTracks.kt` (new): lists the audio and text tracks of `Player.getCurrentTracks()` with their
      group and track indexes, language code and language name (in the locale asked for), name, channels, and the
      selected, default and forced flags; selects one with a `TrackSelectionOverride` (an audio track also becomes the
-     preferred audio language of the player); turns a track type off (subtitles off).
+     preferred audio language of the player); turns a track type off (subtitles off); gives a new player its first
+     parameters (`initialParameters`: the preferred audio language, and the default flag of subtitle tracks ignored,
+     so that subtitles start off but for forced ones and those of the caption settings of the device).
    - `NativeVideoPlayerViewController.kt`: a `SubtitleView` over the picture, inside the aspect ratio frame, styled
-     with the caption settings of the device, fed by `onCues`; `onTracksChanged` tells Dart; each new player prefers
-     `NativeVideoPlayerPlugin.preferredAudioLanguage`, and an audio track picked goes to
+     with the caption settings of the device, fed by `onCues`; `onTracksChanged` tells Dart; each new player starts
+     with `VideoTracks.initialParameters` and `NativeVideoPlayerPlugin.preferredAudioLanguage`, and an audio track
+     picked goes to
      `NativeVideoPlayerPlugin.onAudioLanguageChosen`.
    - `NativeVideoPlayerPlugin.kt`: those two hooks, set by the app (`MainActivity.registerPlugins`), which keeps the
      language with the one of the 360° and Spatial players (`AudioTrackChooser`).

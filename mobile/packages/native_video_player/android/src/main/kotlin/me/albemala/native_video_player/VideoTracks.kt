@@ -5,6 +5,7 @@ import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.Player
 import androidx.media3.common.TrackSelectionOverride
+import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import java.util.Locale
@@ -106,6 +107,23 @@ object VideoTracks {
                     )
                 }
         }
+
+    /**
+     * The track parameters of a new player, from the defaults of the device ([parameters], the caption settings of
+     * the accessibility settings among them): the audio language the user picked last ([audioLanguage], null before
+     * any pick), and subtitles only when asked for.
+     *
+     * Media3 turns on a subtitle track that the file flags as default (Matroska flags a track default when the file
+     * says nothing), which the user never asked for: this player showed no subtitles at all before it drew them. The
+     * default flag of a subtitle track is ignored, so subtitles start off, but for forced ones in the language of the
+     * audio (the lines of a film spoken in another language) and those the caption settings of the device ask for,
+     * until the user picks a track in the subtitle menu ([select]).
+     */
+    fun initialParameters(parameters: TrackSelectionParameters, audioLanguage: String?): TrackSelectionParameters =
+        parameters.buildUpon()
+            .setIgnoredTextSelectionFlags(C.SELECTION_FLAG_DEFAULT)
+            .apply { audioLanguage?.let { setPreferredAudioLanguage(it) } }
+            .build()
 
     /**
      * Plays track [track] of group [group] of [type]: its format, null when the tracks changed since and it is gone.
