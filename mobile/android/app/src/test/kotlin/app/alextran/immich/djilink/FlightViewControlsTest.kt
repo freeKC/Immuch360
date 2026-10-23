@@ -14,13 +14,13 @@ class FlightViewControlsTest {
   fun eachButtonDoesOneThingToTheView() {
     assertEquals(listOf(FlightViewControls.Action.CLOSE), actions(ButtonBits.ButtonB, 0))
     assertEquals(listOf(FlightViewControls.Action.CLOSE), actions(ButtonBits.ButtonY or ButtonBits.ButtonA, 0))
-    assertEquals(listOf(FlightViewControls.Action.TOGGLE_PANEL), actions(ButtonBits.ButtonA, 0))
+    assertEquals(listOf(FlightViewControls.Action.TOGGLE_VALUES), actions(ButtonBits.ButtonA, 0))
     assertEquals(listOf(FlightViewControls.Action.TOGGLE_CURVE), actions(ButtonBits.ButtonX, 0))
     assertEquals(listOf(FlightViewControls.Action.RECENTER), actions(ButtonBits.ButtonThumbRL, 0))
     assertEquals(listOf(FlightViewControls.Action.RECENTER), actions(ButtonBits.ButtonThumbLR, 0))
     assertEquals(listOf(FlightViewControls.Action.WIDER), actions(ButtonBits.ButtonThumbRU, 0))
     assertEquals(listOf(FlightViewControls.Action.NARROWER), actions(ButtonBits.ButtonThumbLD, 0))
-    assertEquals(listOf(FlightViewControls.Action.TOGGLE_PANEL), actions(0, ButtonBits.ButtonMenu))
+    assertEquals(listOf(FlightViewControls.Action.TOGGLE_VALUES), actions(0, ButtonBits.ButtonMenu))
   }
 
   @Test
@@ -40,6 +40,40 @@ class FlightViewControlsTest {
     assertEquals(4.0f, FlightViewControls.WIDTHS_M[index])
     repeat(5) { index = FlightViewControls.nextWidth(index, FlightViewControls.Action.NARROWER) }
     assertEquals(1.6f, FlightViewControls.WIDTHS_M[index])
+  }
+
+  private fun numbers(
+    receiving: Boolean,
+    state: RelayReceiveState,
+    localReplay: Boolean = false,
+    replay: Boolean = false,
+    phoneHasSource: Boolean = true,
+  ) = DjiFlightNumbers(
+    receiving = receiving,
+    localReplay = localReplay,
+    state = state,
+    replay = replay,
+    phoneHasSource = phoneHasSource,
+    replayName = null,
+    lastPictureAgoMs = null,
+    picturesPerSecond = 0.0,
+    receiveToPictureMs = null,
+    values = null,
+  )
+
+  @Test
+  fun theStateLineSaysWhereThePictureComesFromAndWhyItEnded() {
+    val labels = FlightViewControls::stateLabels
+    assertEquals(listOf("live"), labels(numbers(true, RelayReceiveState.RECEIVING)))
+    assertEquals(listOf("replay"), labels(numbers(true, RelayReceiveState.RECEIVING, replay = true)))
+    assertEquals(listOf("noSource"), labels(numbers(true, RelayReceiveState.RECEIVING, phoneHasSource = false)))
+    assertEquals(listOf("lost"), labels(numbers(true, RelayReceiveState.LOST)))
+    assertEquals(listOf("local"), labels(numbers(false, RelayReceiveState.IDLE, localReplay = true)))
+    // A reception that ended on its own is never called a capture played on this headset (stage2b-review.md, 1)
+    assertEquals(listOf("wrongCode", "ended"), labels(numbers(false, RelayReceiveState.WRONG_CODE)))
+    assertEquals(listOf("otherVersion", "ended"), labels(numbers(false, RelayReceiveState.OTHER_VERSION)))
+    assertEquals(listOf("unproven", "ended"), labels(numbers(false, RelayReceiveState.PHONE_UNPROVEN)))
+    assertEquals(listOf("ended"), labels(numbers(false, RelayReceiveState.IDLE)))
   }
 
   @Test

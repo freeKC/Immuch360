@@ -4,4 +4,5 @@
   <item type="id" name="dji_flight_video_flat" />
   <item type="id" name="dji_flight_video_curved" />
   <item type="id" name="dji_flight_panel" />
+  <item type="id" name="dji_flight_strip_panel" />
 </resources>

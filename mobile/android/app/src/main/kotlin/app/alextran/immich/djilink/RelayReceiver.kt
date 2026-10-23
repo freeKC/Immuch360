@@ -119,6 +119,12 @@ class RelayReceiver(
 
     fun onChanged()
 
+    /**
+     * The reception stopped on its own, with no retry: a refused code or a new one on the phone, another version, a
+     * phone that did not prove the code. Called once, after [RelayReceiver.active] became false, before [onChanged].
+     */
+    fun onEnded(state: RelayReceiveState) = Unit
+
     /** Pictures shown here in the last 10 s, for the pings; -1 when unknown */
     fun shownPer10s(): Int = -1
 
@@ -228,18 +234,25 @@ class RelayReceiver(
       }
       val wait: Long = when (outcome) {
         Outcome.WRONG_CODE, Outcome.OTHER_VERSION, Outcome.PHONE_UNPROVEN -> {
-          setStateFor(
-            mine,
-            when (outcome) {
-              Outcome.WRONG_CODE -> RelayReceiveState.WRONG_CODE
-              Outcome.OTHER_VERSION -> RelayReceiveState.OTHER_VERSION
-              else -> RelayReceiveState.PHONE_UNPROVEN
-            },
-          )
-          synchronized(lock) {
-            if (generation == mine) {
+          val ended = when (outcome) {
+            Outcome.WRONG_CODE -> RelayReceiveState.WRONG_CODE
+            Outcome.OTHER_VERSION -> RelayReceiveState.OTHER_VERSION
+            else -> RelayReceiveState.PHONE_UNPROVEN
+          }
+          // The state and the end in one step: whoever hears of it sees a receiver that is no longer active
+          val stillMine = synchronized(lock) {
+            if (generation != mine) {
+              false
+            } else {
+              state = ended
               this.target = null
+              reconnectAtNs = null
+              true
             }
+          }
+          if (stillMine) {
+            runCatching { listener.onEnded(ended) }
+            runCatching { listener.onChanged() }
           }
           return
         }

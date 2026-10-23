@@ -61,6 +61,9 @@ class DjiLinkController private constructor(private val context: Context) : Link
     /** A phone's telemetry older than this no longer says the aircraft or the remote is there */
     private const val STALE_RELAY_MS = 2_000L
 
+    /** A relay with nothing to send and no headset for this long stops by itself, as its notification says */
+    const val RELAY_IDLE_STOP_MS = 10L * 60 * 1000
+
     @Volatile
     private var instance: DjiLinkController? = null
 
@@ -127,6 +130,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
 
   @Volatile
   private var relayPhoneId: String? = null
+  private val relayIdle = RelayIdleWatch(RELAY_IDLE_STOP_MS)
   private val sticks = GamepadStickSource()
   private val safety = InputSafety()
   private val manager = AoaAccessoryManager(context, this, profiles, handler)
@@ -254,6 +258,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
     }
     relay.source = RelaySource.NONE
     feed.shutdown()
+    // The link really ends here, whoever ended it (the page, Stop in the notification, the app swiped away): a pilot
+    // not using the link is never offered this application when a cable is plugged in, and it never competes with the
+    // DJI application. The package manager keeps that setting across process deaths.
+    DjiLinkApiImpl.setAttachEntryEnabled(context, false)
     markDirty()
   }
 
@@ -419,18 +427,36 @@ class DjiLinkController private constructor(private val context: Context) : Link
   /**
    * Starts sending to headsets with [code]: the relay listens, the foreground service keeps the phone sending with the
    * screen locked, and the link is owned by the relay too. Called on a worker thread (the socket is bound there).
-   * Returns the port, or 0 when nothing could listen or this device receives a phone's relay itself.
+   * Returns the port, or 0 when nothing could listen, this device receives a phone's relay itself, or the page that
+   * asked has closed since ([session], read on the main thread when it asked): a relay nobody sees is never started.
    */
-  fun startRelay(code: String, texts: DjiLinkRelayTexts, phoneName: String, phoneId: String?): Int {
+  fun startRelay(
+    code: String,
+    texts: DjiLinkRelayTexts,
+    phoneName: String,
+    phoneId: String?,
+    session: Long = pageSession,
+  ): Int {
     if (receiver.active || RelayWire.normalizeCode(code) != code) {
+      return 0
+    }
+    // Under the page lock, which stop() takes to raise the session: either the relay is owned before the page closes,
+    // and it keeps the link as it should, or it does not start at all
+    val open = synchronized(gate) {
+      if (session != pageSession) {
+        false
+      } else {
+        owners.take(LinkOwner.PAGE)
+        owners.take(LinkOwner.RELAY)
+        true
+      }
+    }
+    if (!open) {
+      Log.i(TAG, "the page closed before the relay started: not started")
       return 0
     }
     relayPhoneName = phoneName
     relayPhoneId = phoneId
-    synchronized(gate) {
-      owners.take(LinkOwner.PAGE)
-      owners.take(LinkOwner.RELAY)
-    }
     relay.source = when {
       player.loaded -> RelaySource.REPLAY
       manager.transport?.isRunning == true -> RelaySource.CABLE
@@ -441,10 +467,32 @@ class DjiLinkController private constructor(private val context: Context) : Link
       stop(LinkOwner.RELAY)
       return 0
     }
-    handler.post { DjiLinkRelayService.start(context, texts) }
+    handler.post {
+      relayIdle.reset()
+      // A relay that cannot keep running in the foreground would go on listening with no notification and no Stop
+      if (relay.isRunning && !DjiLinkRelayService.start(context, texts)) {
+        relayServiceRefused()
+      }
+    }
     scheduleTick()
     markDirty()
     return port
+  }
+
+  /**
+   * Android refused the foreground service of the relay (the app went to the background in between, or the type was
+   * refused): the relay stops at once and Flutter is told, as for Stop in the notification, so that the switch goes
+   * off and the announcement stops.
+   */
+  fun relayServiceRefused() {
+    handler.post {
+      if (!relay.isRunning) {
+        return@post
+      }
+      Log.w(TAG, "the relay service could not run in the foreground: the relay stops")
+      stopRelay()
+      runCatching { events?.relayStopRequested { } }
+    }
   }
 
   /** Stops sending: a bye to every headset; the link stops too when nothing else owns it */
@@ -522,6 +570,30 @@ class DjiLinkController private constructor(private val context: Context) : Link
     markDirty()
   }
 
+  /**
+   * The reception ended on its own (a refused or new code, another version, a phone that did not prove the code): the
+   * receiving pipeline stops as Disconnect stops it, so that the window and the flight view never keep the last
+   * picture with its last frame rate as if it were live. On the main thread; a connect, a capture or a cable that
+   * took the pipeline since then is left alone.
+   */
+  private fun endReception() {
+    val ended = synchronized(gate) {
+      if (receiver.active || player.loaded || manager.transport?.isRunning == true) {
+        false
+      } else {
+        video.newSource()
+        receiverDetector.reset()
+        store.useAccessory(AccessoryStrings.of(identity))
+        store.seed = profile?.streamSeed ?: ProfileRegistry.seed20261023
+        true
+      }
+    }
+    if (ended) {
+      releaseReceiverWifiLock()
+      markDirty()
+    }
+  }
+
   /** Under [gate]: the pipeline starts again for a relayed stream, which has no accessory, no cache and no seed */
   private fun startRelayedSource() {
     video.newSource()
@@ -554,6 +626,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
         if (!receiver.active) {
           return
         }
+        if ((flags and RelayWire.UNIT_BREAK) != 0) {
+          // Units the phone dropped for this device, or a new loop of a played capture: neither is a radio loss
+          video.relayBreak()
+        }
         val fresh = receiverDetector.offer(unit)
         video.onUnit(unit, receiverDetector, fresh, arrivalNs)
       }
@@ -577,6 +653,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
         releaseReceiverWifiLock()
       }
       markDirty()
+    }
+
+    override fun onEnded(state: RelayReceiveState) {
+      handler.post { endReception() }
     }
 
     override fun shownPer10s(): Int {
@@ -670,6 +750,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
     )
     return DjiFlightNumbers(
       receiving = receiving,
+      localReplay = player.loaded,
       state = received.state,
       replay = received.phoneSource == RelaySource.REPLAY.wire,
       phoneHasSource = received.phoneSource != RelaySource.NONE.wire,
@@ -892,10 +973,14 @@ class DjiLinkController private constructor(private val context: Context) : Link
    * keeps the page current while a capture plays or just stopped, on a device whose link never started too.
    */
   private fun onTick() {
-    if (!started && !player.loaded && !receiver.active && !relay.isRunning) {
+    val nowNs = SystemClock.elapsedRealtimeNanos()
+    // A picture out of the decoder in the last 4 s keeps the tick going whatever stopped it, so that the last snapshot
+    // the page gets is never one of a picture that still looks live
+    if (!started && !player.loaded && !receiver.active && !relay.isRunning &&
+      !videoStatistics.outputWithin(nowNs, 2 * VIDEO_READY_WINDOW_NS)
+    ) {
       return
     }
-    val nowNs = SystemClock.elapsedRealtimeNanos()
     val linked: Boolean
     val pictures: Boolean
     val active: Boolean
@@ -922,7 +1007,19 @@ class DjiLinkController private constructor(private val context: Context) : Link
     if (active) {
       markDirty()
     }
+    checkIdleRelay()
     handler.postDelayed(tick, TICK_MS)
+  }
+
+  /** Nothing to send and no headset for 10 minutes: the relay stops by itself and Flutter is told, as for Stop */
+  private fun checkIdleRelay() {
+    val idle = relay.isRunning && relay.source == RelaySource.NONE && relay.headsetCount == 0
+    if (!relayIdle.expired(idle, SystemClock.elapsedRealtime())) {
+      return
+    }
+    Log.i(TAG, "nothing to send and no headset for 10 minutes: the relay stops")
+    stopRelay()
+    runCatching { events?.relayStopRequested { } }
   }
 
   private fun scheduleTick() {
@@ -1662,6 +1759,7 @@ private fun RelayReceiveSnapshot.toPigeon(stats: VideoStats): DjiRelayReceiving 
     receivedPerSecond = numbers.unitsPerSecond,
     decodedPerSecond = stats.decodedPerSecond,
     shownPerSecond = stats.shownPerSecond,
-    lostOnRadio = stats.lostPictures,
+    // What the radio lost, as the phone counts it; this device's own count when no telemetry came yet
+    lostOnRadio = phone?.lostPictures ?: stats.lostPictures,
   )
 }

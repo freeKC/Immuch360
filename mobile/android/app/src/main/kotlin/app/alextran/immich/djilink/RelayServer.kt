@@ -65,9 +65,10 @@ data class RelaySendingSnapshot(
  * service, and what a headset may send is the hello, its pings and its bye; anything else closes that connection.
  *
  * Who may connect: an address of the local network ([RelayWire.isLocalNetworkAddress]) arriving on an interface that
- * is neither mobile data nor a VPN; a headset that proves the code within [helloTimeoutMs]; at most [maxHandshakes]
- * handshakes at once and [maxHeadsets] headsets; [failureLimit] wrong proofs from one address within [failureWindowNs]
- * block it for [blockNs] (the phone share's numbers).
+ * is neither mobile data nor a VPN; a headset that proves the code within [helloTimeoutMs] of its connection (a
+ * deadline the tick enforces, whatever the pace of the bytes); at most [maxHandshakes] handshakes at once, of which
+ * [maxHandshakesPerAddress] from one address, and [maxHeadsets] headsets; [failureLimit] wrong proofs or missed
+ * deadlines from one address within [failureWindowNs] block it for [blockNs] (the phone share's numbers).
  */
 class RelayServer(
   private val clockNs: () -> Long = { System.nanoTime() },
@@ -78,6 +79,7 @@ class RelayServer(
   private val writerStallNs: Long = 3_000_000_000L,
   private val maxHeadsets: Int = 4,
   private val maxHandshakes: Int = 8,
+  private val maxHandshakesPerAddress: Int = 2,
   private val failureLimit: Int = 10,
   private val failureWindowNs: Long = 60_000_000_000L,
   private val blockNs: Long = 60_000_000_000L,
@@ -117,6 +119,12 @@ class RelayServer(
   private val numbers = AtomicInteger()
   private val failures = HashMap<String, ArrayDeque<Long>>()
   private val blockedUntil = HashMap<String, Long>()
+
+  /** A connection between its accept and its welcome, closed by the tick once its deadline passed */
+  private class Handshake(val socket: Socket, val address: String, val startedNs: Long)
+
+  /** The handshakes under way, under [lock] */
+  private val pending = mutableListOf<Handshake>()
 
   @Volatile
   private var serverSocket: ServerSocket? = null
@@ -288,13 +296,18 @@ class RelayServer(
     if (!running) {
       return
     }
+    closeLateHandshakes(nowNs)
     if (nowNs >= nextTelemetryNs) {
       val interval = if (source == RelaySource.NONE) IDLE_TELEMETRY_INTERVAL_NS else TELEMETRY_INTERVAL_NS
       nextTelemetryNs = if (nowNs - nextTelemetryNs > interval) nowNs + interval else nextTelemetryNs + interval
-      val sequence = telemetrySequence++
-      val body = runCatching { telemetry(sequence) }.getOrNull()
-      if (body != null && body.size <= RelayWire.MAX_JSON_BYTES) {
-        synchronized(lock) { headsets.toList() }.forEach { it.queue.offerTelemetry(body, nowNs) }
+      // No body is built for nobody: a relay left on with no headset costs a clock check
+      val receivers = synchronized(lock) { headsets.toList() }
+      if (receivers.isNotEmpty()) {
+        val sequence = telemetrySequence++
+        val body = runCatching { telemetry(sequence) }.getOrNull()
+        if (body != null && body.size <= RelayWire.MAX_JSON_BYTES) {
+          receivers.forEach { it.queue.offerTelemetry(body, nowNs) }
+        }
       }
     }
     val current = synchronized(lock) { headsets.toList() }
@@ -309,11 +322,31 @@ class RelayServer(
     }
   }
 
+  /**
+   * The connections still in their handshake [helloTimeoutMs] after their accept: closed, and counted as a failure of
+   * their address. The read timeout of the handshake applies to each read only; a client that sends a byte now and
+   * then would otherwise hold a handshake for an hour.
+   */
+  private fun closeLateHandshakes(nowNs: Long) {
+    val late = synchronized(lock) {
+      val expired = pending.filter { nowNs - it.startedNs >= helloTimeoutMs * 1_000_000L }
+      pending.removeAll(expired)
+      expired
+    }
+    for (handshake in late) {
+      log("a handshake from ${handshake.address} passed its deadline, closed")
+      fail(handshake.address, nowNs)
+      runCatching { handshake.socket.close() }
+    }
+  }
+
   private fun tickLoop() {
     while (running) {
       val now = clockNs()
       tick(now)
-      val sleepMs = ((nextTelemetryNs - clockNs()) / 1_000_000).coerceIn(5, 50)
+      // With no headset there is nothing to send nor to watch but the handshakes: four times a second is enough
+      val idle = synchronized(lock) { headsets.isEmpty() }
+      val sleepMs = if (idle) 250L else ((nextTelemetryNs - clockNs()) / 1_000_000).coerceIn(5, 50)
       try {
         Thread.sleep(sleepMs)
       } catch (_: InterruptedException) {
@@ -343,6 +376,21 @@ class RelayServer(
       return
     }
     if (handshakes.incrementAndGet() > maxHandshakes) {
+      handshakes.decrementAndGet()
+      runCatching { socket.close() }
+      return
+    }
+    val handshake = Handshake(socket, address, clockNs())
+    val admitted = synchronized(lock) {
+      if (pending.count { it.address == address } >= maxHandshakesPerAddress) {
+        false
+      } else {
+        pending.add(handshake)
+        true
+      }
+    }
+    if (!admitted) {
+      // One headset makes one connection at a time: more at once from one address hold slots the others need
       handshakes.decrementAndGet()
       runCatching { socket.close() }
       return
@@ -445,6 +493,10 @@ class RelayServer(
         if (!running || code != current) {
           throw IOException("stopped during the handshake")
         }
+        if (!pending.remove(handshake)) {
+          // The tick closed it at its deadline meanwhile
+          throw IOException("past the deadline of the handshake")
+        }
         headsets.add(joined)
         // The last description the phone resolved goes first, so that a headset joining mid stream starts at once
         lastResolved?.let { last ->
@@ -474,6 +526,7 @@ class RelayServer(
     } finally {
       if (inHandshake) {
         handshakes.decrementAndGet()
+        synchronized(lock) { pending.remove(handshake) }
       }
       if (reservation) {
         synchronized(lock) { reserved -= 1 }
@@ -589,6 +642,9 @@ class RelayServer(
       unitsDropped = dropped,
     )
   }
+
+  /** Connections in their handshake, for the tests */
+  internal fun handshakesInProgress(): Int = synchronized(lock) { pending.size }
 
   /** Records waiting in every headset's queue, for the tests */
   internal fun queuedRecords(): Int = synchronized(lock) { headsets.sumOf { it.queue.size } }

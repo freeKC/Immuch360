@@ -82,9 +82,13 @@ class RelayHandshakeTest {
   @Test
   fun aFifthHeadsetIsRefusedFull() {
     val port = start()
-    val four = List(4) { TestHeadset(port) }
+    // One after the other, as headsets do: at most two handshakes at once from one address
+    val four = mutableListOf<TestHeadset>()
     try {
-      four.forEach { assertEquals(RelayWire.WELCOME, it.join(code).type) }
+      repeat(4) {
+        val headset = TestHeadset(port).also { four += it }
+        assertEquals(RelayWire.WELCOME, headset.join(code).type)
+      }
       assertTrue(eventually { server.headsetCount == 4 })
       TestHeadset(port).use { fifth ->
         val answer = fifth.join(code)
@@ -93,6 +97,54 @@ class RelayHandshakeTest {
     } finally {
       four.forEach { it.close() }
     }
+  }
+
+  /**
+   * stage2b-review.md, finding 7: the hello is due 5 s after the connection, however slowly its bytes come; the read
+   * timeout alone let a client that sends a byte now and then hold a handshake for an hour
+   */
+  @Test
+  fun aHandshakeThatTricklesIsClosedAtItsDeadlineAndCounted() {
+    val port = start()
+    TestHeadset(port).use { headset ->
+      assertEquals(RelayWire.CHALLENGE, headset.challenge().type)
+      assertEquals(1, server.handshakesInProgress())
+      // Three bytes of a hello header, one at a time: no read waits as long as its timeout
+      repeat(3) {
+        headset.output.write(RelayWire.HELLO)
+        headset.output.flush()
+        Thread.sleep(50)
+      }
+      now.addAndGet(4_900 * ms)
+      server.tick(now.get())
+      assertEquals("not yet", 1, server.handshakesInProgress())
+      now.addAndGet(200 * ms)
+      server.tick(now.get())
+      assertEquals(0, server.handshakesInProgress())
+      assertTrue(headset.closedByPhone())
+    }
+    // Counted with the wrong codes: nine more from this address block it
+    repeat(9) {
+      TestHeadset(port).use { headset -> assertEquals(RelayWire.REFUSED_CODE, reason(headset.join("ABCDEFGHJK"))) }
+    }
+    TestHeadset(port).use { headset -> assertEquals(RelayWire.REFUSED_BLOCKED, reason(headset.read())) }
+  }
+
+  @Test
+  fun aThirdHandshakeAtOnceFromOneAddressIsClosed() {
+    val port = start()
+    TestHeadset(port).use { first ->
+      TestHeadset(port).use { second ->
+        assertEquals(RelayWire.CHALLENGE, first.challenge().type)
+        assertEquals(RelayWire.CHALLENGE, second.challenge().type)
+        TestHeadset(port).use { third -> assertTrue(third.closedByPhone()) }
+        assertEquals(2, server.handshakesInProgress())
+        // The two under way go on
+        first.hello(code)
+        assertEquals(RelayWire.WELCOME, first.read().type)
+      }
+    }
+    assertTrue(eventually { server.handshakesInProgress() == 0 })
   }
 
   @Test

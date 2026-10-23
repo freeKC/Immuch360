@@ -61,12 +61,10 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
   }
 
   override fun stop() {
+    // The entry lives as long as the link does: the page, or the relay that keeps the cable for a headset. The
+    // controller disables it where the link really ends, here or later (Stop in the notification, the app swiped
+    // away), so that a pilot who left the page and sends nothing is not offered this application for a cable.
     controller.stop()
-    // The entry lives as long as the link does: the page, or the relay that keeps the cable for a headset. A pilot who
-    // left the page and sends nothing is a pilot who is not offered this application when a cable is plugged in.
-    if (!controller.isStarted) {
-      setAttachEntryEnabled(context, false)
-    }
   }
 
   override fun retry() {
@@ -306,9 +304,14 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
 
   override fun startRelay(start: DjiRelayStart, callback: (Result<Long>) -> Unit) {
     val texts = DjiLinkRelayTexts(start.notificationTitle, start.notificationText, start.stopLabel, start.channelName)
+    // The page session of the request, read on the main thread where the page closes: a page that closes while the
+    // socket is being bound on the worker leaves no relay behind it
+    val session = controller.pageSession
     // The socket is bound on the worker, never on the main thread
     worker.execute {
-      val port = runCatching { controller.startRelay(start.code, texts, start.phoneName, start.phoneId) }.getOrElse {
+      val port = runCatching {
+        controller.startRelay(start.code, texts, start.phoneName, start.phoneId, session)
+      }.getOrElse {
         Log.w(TAG, "the relay did not start: ${it.javaClass.simpleName}")
         0
       }

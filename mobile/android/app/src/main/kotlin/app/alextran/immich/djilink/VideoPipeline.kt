@@ -390,6 +390,16 @@ class VideoPipeline(
     sink.newStream()
   }
 
+  /**
+   * A unit relayed with BREAK: the phone dropped the units before it for this device, or a played capture began a new
+   * loop. The next picture counter is a first one again, so that neither counts as pictures lost on the radio nor as
+   * an encoder restart. The description stays: the phone sends parameter sets again only before a key unit or when they
+   * change, so the units in between are decoded with the ones already here.
+   */
+  fun relayBreak() {
+    pictureCounter.newStream()
+  }
+
   /** A new source: the decoder stops, the counters start again */
   fun newSource() {
     sink.reset()

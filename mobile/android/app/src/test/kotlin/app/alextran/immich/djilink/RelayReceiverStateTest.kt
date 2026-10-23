@@ -50,6 +50,8 @@ class RelayReceiverStateTest {
       assertNotNull(listener.await("parameters"))
       assertEquals(DescriptionSource.PROFILE, listener.parameters.single().second)
       assertNotNull(listener.await("unit 5"))
+      // The unit after the backlog the phone dropped carries BREAK to the listener, which tells the pipeline
+      assertEquals(listOf(5L), listener.breaks.toList())
       assertNotNull(listener.await("reset"))
       assertTrue(eventually { receiver.snapshot().telemetry != null })
       val snapshot = receiver.snapshot()
@@ -103,6 +105,47 @@ class RelayReceiverStateTest {
       assertTrue(eventually { receiver.state == RelayReceiveState.WRONG_CODE })
       assertNull("no retry", phone.nextConnection(700))
       assertTrue(!receiver.active)
+    }
+  }
+
+  /**
+   * stage2b-review.md, finding 1: the controller resets its picture when it hears of the end, so the end must be heard
+   * once, with the receiver already inactive (a listener that asks [RelayReceiver.active] then gets false), and the
+   * state already the reason.
+   */
+  @Test
+  fun anEndOnItsOwnIsHeardOnceWithTheReceiverInactive() {
+    val newCode = TestPhone {
+      welcome()
+      send(RelayWire.UNIT, unitRecord(0))
+      send(RelayWire.BYE, """{"why":"newCode"}""".toByteArray())
+    }
+    newCode.use {
+      lateinit var receiver: RelayReceiver
+      val ends = java.util.concurrent.CopyOnWriteArrayList<String>()
+      val listener = object : RecordingReceiverListener() {
+        override fun onEnded(state: RelayReceiveState) {
+          ends += "$state active=${receiver.active} state=${receiver.state}"
+        }
+
+        override fun onChanged() {
+          if (receiver.state == RelayReceiveState.WRONG_CODE) {
+            ends += "changed active=${receiver.active}"
+          }
+        }
+      }
+      receiver = receiver(listener)
+      receiver.connect("127.0.0.1", newCode.port, code, null, "Quest 3", "test")
+      assertNotNull(listener.await("unit 0"))
+      assertTrue(eventually { receiver.state == RelayReceiveState.WRONG_CODE && ends.size >= 2 })
+      Thread.sleep(300)
+      assertEquals(
+        listOf("WRONG_CODE active=false state=WRONG_CODE", "changed active=false"),
+        ends.toList(),
+      )
+      // A Disconnect afterwards is not an end on its own
+      receiver.disconnect()
+      assertEquals(2, ends.size)
     }
   }
 

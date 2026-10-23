@@ -160,9 +160,12 @@ class TestPhone(private val script: TestPhone.Connection.() -> Unit) : AutoClose
 }
 
 /** What a receiver's listener saw */
-class RecordingReceiverListener : RelayReceiver.Listener {
+open class RecordingReceiverListener : RelayReceiver.Listener {
   val events = LinkedBlockingQueue<String>()
   val units = mutableListOf<Pair<AccessUnit, RelayUnitHeader>>()
+
+  /** The sequences of the units that came with BREAK */
+  val breaks = java.util.concurrent.CopyOnWriteArrayList<Long>()
   val parameters = mutableListOf<Pair<StreamDescription, DescriptionSource>>()
 
   override fun onConnected(welcome: RelayWelcome) {
@@ -176,6 +179,9 @@ class RecordingReceiverListener : RelayReceiver.Listener {
 
   override fun onUnit(unit: AccessUnit, header: RelayUnitHeader, flags: Int, arrivalNs: Long) {
     synchronized(units) { units += unit to header }
+    if ((flags and RelayWire.UNIT_BREAK) != 0) {
+      breaks += header.sequence
+    }
     events.add("unit ${header.sequence}")
   }
 

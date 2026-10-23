@@ -47,6 +47,8 @@ import kotlin.math.sqrt
 /** What the flight view's panel shows, read from the controller four times a second */
 data class DjiFlightNumbers(
   val receiving: Boolean,
+  /** A capture is played on this headset itself */
+  val localReplay: Boolean,
   val state: RelayReceiveState,
   val replay: Boolean,
   val phoneHasSource: Boolean,
@@ -62,14 +64,15 @@ data class DjiFlightNumbers(
  * reaches the receiver, the phone or the drone: every action changes the view only.
  *
  * - B or Y goes back to the window, and nothing else happens on that update;
- * - A, or the menu gesture of a hand, shows or hides the flight panel;
+ * - A, or the menu gesture of a hand, shows or hides the values panel; the strip under the video (the state of the
+ *   picture, the red stale line, the observer note, watching only) always shows;
  * - X makes the video flat or curved;
  * - either thumbstick left or right puts the video in front of the gaze again (yaw only);
  * - either thumbstick up or down makes the video wider or narrower;
  * - the trigger and the grips do nothing.
  */
 internal object FlightViewControls {
-  enum class Action { CLOSE, TOGGLE_PANEL, TOGGLE_CURVE, RECENTER, WIDER, NARROWER }
+  enum class Action { CLOSE, TOGGLE_VALUES, TOGGLE_CURVE, RECENTER, WIDER, NARROWER }
 
   private val STICK_SIDE = ButtonBits.ButtonThumbLL or ButtonBits.ButtonThumbLR or ButtonBits.ButtonThumbRL or
     ButtonBits.ButtonThumbRR
@@ -86,7 +89,7 @@ internal object FlightViewControls {
     }
     val actions = mutableListOf<Action>()
     if ((controller and ButtonBits.ButtonA) != 0 || (hand and ButtonBits.ButtonMenu) != 0) {
-      actions += Action.TOGGLE_PANEL
+      actions += Action.TOGGLE_VALUES
     }
     if ((controller and ButtonBits.ButtonX) != 0) {
       actions += Action.TOGGLE_CURVE
@@ -113,13 +116,31 @@ internal object FlightViewControls {
   fun staleLine(lastPictureAgoMs: Long?): Boolean = lastPictureAgoMs == null || lastPictureAgoMs > 500
 
   fun hideVideo(lastPictureAgoMs: Long?): Boolean = lastPictureAgoMs == null || lastPictureAgoMs > 2_000
+
+  /**
+   * The labels of the state line, said one after the other. A reception that ended on its own (a refused or new code,
+   * another version, a phone that did not prove the code) gives its reason, then that no picture comes any more;
+   * "local" is only ever said of a capture being played on this headset.
+   */
+  fun stateLabels(numbers: DjiFlightNumbers): List<String> = when {
+    numbers.receiving && numbers.state == RelayReceiveState.RECEIVING && !numbers.phoneHasSource -> listOf("noSource")
+    numbers.receiving && numbers.state == RelayReceiveState.RECEIVING && numbers.replay -> listOf("replay")
+    numbers.receiving && numbers.state == RelayReceiveState.RECEIVING -> listOf("live")
+    numbers.receiving -> listOf("lost")
+    numbers.localReplay -> listOf("local")
+    numbers.state == RelayReceiveState.WRONG_CODE -> listOf("wrongCode", "ended")
+    numbers.state == RelayReceiveState.OTHER_VERSION -> listOf("otherVersion", "ended")
+    numbers.state == RelayReceiveState.PHONE_UNPROVEN -> listOf("unproven", "ended")
+    else -> listOf("ended")
+  }
 }
 
 /**
  * The flight view of the Quest (p2/design-stage2b.md, 8.3): the drone's picture relayed by the phone on a flat (or
- * curved) video panel 2.5 m in front, world locked so that the pilot looks around freely, passthrough around it, and a
- * small flight panel under it. The decoder of the window page renders into the panel's surface through
- * setOutputSurface ([DjiLinkVideoSurfaces]), so going in and out never restarts it.
+ * curved) video panel 2.5 m in front, world locked so that the pilot looks around freely, passthrough around it, a
+ * strip under it that always shows (the state of the picture, the stale line, the observer note, watching only) and
+ * the values panel under the strip, which A shows or hides. The decoder of the window page renders into the video
+ * panel's surface through setOutputSurface ([DjiLinkVideoSurfaces]), so going in and out never restarts it.
  *
  * Watching only: nothing in this activity reaches the receiver, the phone or the drone. The controllers change the
  * view (size, place, curve, panel) and leave it; the remote in the pilot's hands flies the drone.
@@ -138,9 +159,11 @@ class DjiFlightViewActivity : AppSystemActivity() {
     private const val VIDEO_REFERENCE_WIDTH_M = 2.4f
     private const val CURVE_RADIUS_M = 2.5f
     private const val PANEL_WIDTH_M = 1.6f
-    private const val PANEL_HEIGHT_M = 0.45f
+    private const val PANEL_HEIGHT_M = 0.3f
     private const val PANEL_WIDTH_DP = 800f
-    private const val PANEL_HEIGHT_DP = 225f
+    private const val PANEL_HEIGHT_DP = 150f
+    private const val STRIP_HEIGHT_M = 0.22f
+    private const val STRIP_HEIGHT_DP = 110f
     private const val PANEL_GAP_M = 0.06f
     private const val REFRESH_MS = 250L
 
@@ -172,6 +195,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
   private var closing = false
   private var released = false
   private var videoEntity: Entity? = null
+  private var stripEntity: Entity? = null
   private var panelEntity: Entity? = null
   private var curved = false
   private var widthIndex = FlightViewControls.DEFAULT_WIDTH_INDEX
@@ -223,6 +247,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
       runCatching { scene.enablePassthrough(true) }.onFailure { Log.w(TAG, "no passthrough: ${it.message}") }
       runCatching { systemManager.findSystem<LocomotionSystem>().enableLocomotion(false) }
       videoEntity = Entity.create(Panel(videoPanelId()), Transform(), Visible(false))
+      stripEntity = Entity.createPanelEntity(R.id.dji_flight_strip_panel, Transform(), Visible(false))
       panelEntity = Entity.createPanelEntity(R.id.dji_flight_panel, Transform(), Visible(false))
       systemManager.registerSystem(ImmersiveInputSystem(input))
       sceneReady = true
@@ -248,6 +273,18 @@ class DjiFlightViewActivity : AppSystemActivity() {
           height = VIDEO_REFERENCE_WIDTH_M * 9f / 16f,
         )
       },
+      LayoutXMLPanelRegistration(
+        R.id.dji_flight_strip_panel,
+        layoutIdCreator = { R.layout.dji_flight_strip },
+        settingsCreator = {
+          UIPanelSettings(
+            shape = QuadShapeOptions(width = PANEL_WIDTH_M, height = STRIP_HEIGHT_M),
+            style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
+            display = DpDisplayOptions(width = PANEL_WIDTH_DP, height = STRIP_HEIGHT_DP, dpi = 260),
+          )
+        },
+        panelSetupWithRootView = { root, _, _ -> bindStrip(root) },
+      ),
       LayoutXMLPanelRegistration(
         R.id.dji_flight_panel,
         layoutIdCreator = { R.layout.dji_flight_panel },
@@ -282,14 +319,20 @@ class DjiFlightViewActivity : AppSystemActivity() {
       },
     )
 
-  private fun bindPanel(root: View) {
+  /** The strip under the video, which no button hides */
+  private fun bindStrip(root: View) {
     stateText = root.findViewById(R.id.dji_flight_state)
     staleText = root.findViewById(R.id.dji_flight_stale)
+    root.findViewById<TextView>(R.id.dji_flight_observer)?.text = label("observer")
+    root.findViewById<TextView>(R.id.dji_flight_watching)?.text = label("watching")
+    refreshNow()
+  }
+
+  /** The values panel under the strip, which A shows or hides */
+  private fun bindPanel(root: View) {
     valuesText = root.findViewById(R.id.dji_flight_values)
     latencyText = root.findViewById(R.id.dji_flight_latency)
     root.findViewById<TextView>(R.id.dji_flight_fly_note)?.text = label("flyNote")
-    root.findViewById<TextView>(R.id.dji_flight_observer)?.text = label("observer")
-    root.findViewById<TextView>(R.id.dji_flight_watching)?.text = label("watching")
     root.findViewById<TextView>(R.id.dji_flight_hint)?.text = label("hint")
     root.findViewById<TextView>(R.id.dji_flight_back)?.apply {
       text = label("back")
@@ -317,13 +360,8 @@ class DjiFlightViewActivity : AppSystemActivity() {
       return
     }
     val numbers = runCatching { DjiLinkController.of(this).flightViewNumbers() }.getOrNull() ?: return
-    stateText?.text = when {
-      numbers.receiving && numbers.state == RelayReceiveState.RECEIVING && !numbers.phoneHasSource -> label("noSource")
-      numbers.receiving && numbers.state == RelayReceiveState.RECEIVING && numbers.replay ->
-        fill("replay", "name" to (numbers.replayName ?: "-"))
-      numbers.receiving && numbers.state == RelayReceiveState.RECEIVING -> label("live")
-      numbers.receiving -> label("lost")
-      else -> label("local")
+    stateText?.text = FlightViewControls.stateLabels(numbers).joinToString(" ") { key ->
+      if (key == "replay") fill("replay", "name" to (numbers.replayName ?: "-")) else label(key)
     }
     val ago = numbers.lastPictureAgoMs
     staleText?.apply {
@@ -341,6 +379,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
       videoVisible = show
       videoEntity?.setComponent(Visible(show && placed))
     }
+    stripEntity?.setComponent(Visible(placed))
     panelEntity?.setComponent(Visible(panelShown && placed))
   }
 
@@ -393,7 +432,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
     }
   }
 
-  /** The video 2.5 m in front of the head along its yaw, its centre a little below the eyes; the panel under it */
+  /** The video 2.5 m in front of the head along its yaw, its centre below the eyes; the strip, then the panel */
   private fun placeInFront() {
     val head = headPosition ?: Vector3(0f, 1.6f, 0f)
     val forward = headForward ?: Vector3(0f, 0f, 1f)
@@ -416,8 +455,13 @@ class DjiFlightViewActivity : AppSystemActivity() {
     videoEntity?.setComponent(Transform(Pose(position, rotation)))
     videoEntity?.setComponent(Scale(Vector3(scale, scale, 1f)))
     videoEntity?.setComponent(Visible(videoVisible))
+    val videoBottom = position.y - width * 9f / 32f
+    val stripPosition = Vector3(position.x, position.y, position.z)
+    stripPosition.y = videoBottom - PANEL_GAP_M - STRIP_HEIGHT_M / 2f
+    stripEntity?.setComponent(Transform(Pose(stripPosition, rotation)))
+    stripEntity?.setComponent(Visible(true))
     val panelPosition = Vector3(position.x, position.y, position.z)
-    panelPosition.y = position.y - width * 9f / 32f - PANEL_GAP_M - PANEL_HEIGHT_M / 2f
+    panelPosition.y = videoBottom - PANEL_GAP_M - STRIP_HEIGHT_M - PANEL_GAP_M - PANEL_HEIGHT_M / 2f
     panelEntity?.setComponent(Transform(Pose(panelPosition, rotation)))
     panelEntity?.setComponent(Visible(panelShown))
   }
@@ -429,7 +473,8 @@ class DjiFlightViewActivity : AppSystemActivity() {
           close()
           return
         }
-        FlightViewControls.Action.TOGGLE_PANEL -> {
+        FlightViewControls.Action.TOGGLE_VALUES -> {
+          // The values only: the strip with the stale line, the observer note and watching only stays
           panelShown = !panelShown
           panelEntity?.setComponent(Visible(panelShown && placed))
         }

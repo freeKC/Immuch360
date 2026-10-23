@@ -98,6 +98,38 @@ class VideoPipelineTest {
     assertEquals(5L, stats.pictureCounters)
   }
 
+  /**
+   * stage2b-review.md, finding 4: a headset that got the units the phone dropped for it (a gap of up to 300 pictures)
+   * or a new loop of a played capture is told by BREAK; neither is a loss on the radio nor an encoder restart, and the
+   * relayed description stays for the units that follow.
+   */
+  @Test
+  fun aBreakOfTheRelayIsNeitherALossNorARestartAndKeepsTheDescription() {
+    store.useAccessory(null)
+    store.seed = null
+    store.onRelayedDescription(ProfileRegistry.seed20261023!!, DescriptionSource.CACHE)
+    fun unit(counter: Int) =
+      HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(), HevcSamples.suffixSei(counter))
+    feed(unit(10))
+    feed(unit(11))
+    // 288 units dropped on the phone for this headset
+    pipeline.relayBreak()
+    feed(unit(300))
+    feed(unit(301))
+    // A loop of Play in a loop: the counter goes back
+    pipeline.relayBreak()
+    feed(unit(7))
+    var stats = pipeline.stats(clock, 0)
+    assertEquals(0L, stats.lostPictures)
+    assertEquals(0L, stats.encoderRestarts)
+    assertEquals(5, sink.units.size)
+    assertTrue(sink.units.all { it.second.source == DescriptionSource.CACHE })
+    // The same jump without BREAK is what the radio lost
+    feed(unit(20))
+    stats = pipeline.stats(clock, 0)
+    assertEquals(12L, stats.lostPictures)
+  }
+
   @Test
   fun theStateFollowsTheDecoder() {
     repeat(CodecDetector.SIGNATURE_UNITS) {

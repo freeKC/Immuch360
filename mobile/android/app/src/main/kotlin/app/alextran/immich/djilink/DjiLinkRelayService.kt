@@ -40,8 +40,9 @@ data class DjiLinkRelayTexts(
  *
  * The relay itself lives in [DjiLinkController]: the service only keeps the process awake. It never starts by itself
  * ([START_NOT_STICKY]); Stop in the notification stops the relay and tells Flutter, which stops the announcement; the
- * app swiped away stops everything. The Quest flavour removes the service from its manifest (the headset receives, it
- * does not send): there, [start] and [stop] do nothing.
+ * app swiped away stops everything; a service Android refuses to run in the foreground stops the relay too. The Quest
+ * flavour removes the service from its manifest (the headset receives, it does not send): there, [start] and [stop] do
+ * nothing.
  *
  * Nothing here talks to the remote: the service holds no transport, no accessory manager and no USB service.
  */
@@ -69,9 +70,10 @@ class DjiLinkRelayService : Service() {
       createChannel()
       ServiceCompat.startForeground(this, NOTIFICATION_ID, buildNotification(), foregroundType())
     } catch (e: Exception) {
-      // Started from the background (Android 12 and later refuse it) or a refused type: the relay still runs while the
-      // app is in front
+      // Started from the background (Android 12 and later refuse it) or a refused type: a relay left listening with no
+      // notification and no Stop could be frozen with the process, so it stops, and the page's switch goes off
       Log.w(TAG, "The relay cannot run in the foreground", e)
+      DjiLinkController.existing()?.relayServiceRefused()
       stopSelf()
       return START_NOT_STICKY
     }
@@ -202,11 +204,14 @@ class DjiLinkRelayService : Service() {
     @Volatile
     private var declared: Boolean? = null
 
-    /** From the page, while the app is in front, as Android 12 and later require */
-    fun start(context: Context, texts: DjiLinkRelayTexts) {
+    /**
+     * From the page, while the app is in front, as Android 12 and later require. False when Android refused to start
+     * it; a build without the service (the Quest's, which does not send) answers true, there being nothing to start.
+     */
+    fun start(context: Context, texts: DjiLinkRelayTexts): Boolean {
       if (!isDeclared(context)) {
         Log.i(TAG, "No relay service in this build, the relay runs while the app is in front")
-        return
+        return true
       }
       val intent = Intent(context, DjiLinkRelayService::class.java)
         .setAction(ACTION_START)
@@ -214,10 +219,12 @@ class DjiLinkRelayService : Service() {
         .putExtra(EXTRA_TEXT, texts.text)
         .putExtra(EXTRA_STOP_LABEL, texts.stopLabel)
         .putExtra(EXTRA_CHANNEL, texts.channelName)
-      try {
+      return try {
         ContextCompat.startForegroundService(context, intent)
+        true
       } catch (e: Exception) {
         Log.w(TAG, "The relay service did not start", e)
+        false
       }
     }
 

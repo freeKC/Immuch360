@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The strip of the Meta Quest flight view of DJI link, right under the video, which no button hides: the state of
+     the picture and the red "No new picture" line on the left, the observer note and "Watching only" on the right. Its
+     size in dp is set in DjiFlightViewActivity.registerPanels. Every text comes from Flutter. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@drawable/immersive_panel_background"
+  android:orientation="horizontal"
+  android:padding="8dp">
+
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+    <TextView
+      android:id="@+id/dji_flight_state"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:ellipsize="end"
+      android:maxLines="3"
+      android:textColor="#FFE8EEFF"
+      android:textSize="14sp"
+      android:textStyle="bold" />
+
+    <TextView
+      android:id="@+id/dji_flight_stale"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:maxLines="1"
+      android:textColor="#FFFF6B6B"
+      android:textSize="14sp"
+      android:textStyle="bold"
+      android:visibility="gone" />
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_marginStart="12dp"
+    android:layout_weight="1.4"
+    android:orientation="vertical">
+
+    <TextView
+      android:id="@+id/dji_flight_observer"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:ellipsize="end"
+      android:maxLines="3"
+      android:textColor="#FFFF6B6B"
+      android:textSize="12sp" />
+
+    <TextView
+      android:id="@+id/dji_flight_watching"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="2dp"
+      android:ellipsize="end"
+      android:maxLines="2"
+      android:textColor="#FFE8EEFF"
+      android:textSize="12sp" />
+  </LinearLayout>
+</LinearLayout>
