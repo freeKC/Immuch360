@@ -2,8 +2,11 @@
 // controller plugged into this device with a cable sends, and what this device can do about it at all.
 //
 // It is an instrument, not a cockpit. The first section is the rules and cannot be dismissed. Then: what this device
-// can do, where the link stands, what arrives, and the telemetry identifiers, the video probe and the capture. On this
-// device the only byte ever written is the liveness probe of the USB transport, once a second, counted here.
+// can do, where the link stands, the live picture of the drone's camera, the flight and battery values, what arrives,
+// the telemetry identifiers, the capture and the player of a capture, and the sticks. On this device the only byte
+// ever written is the liveness probe of the USB transport, once a second, counted here. A device that cannot be a USB
+// accessory (a headset without the feature) still shows the picture and the values of a capture being played, which
+// measures its decoder with no remote at all.
 
 import 'dart:async';
 
@@ -13,11 +16,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_capture.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_counters.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_flight.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_frames.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_safety.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_sticks.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
@@ -32,9 +38,6 @@ class DjiLinkPage extends ConsumerStatefulWidget {
 class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
   late final DjiLinkNotifier _notifier;
 
-  /// What the pilot types about the bench; it goes into the header of the export beside the bytes
-  final _notes = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -46,7 +49,6 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
   @override
   void dispose() {
     unawaited(_notifier.pageHidden());
-    _notes.dispose();
     super.dispose();
   }
 
@@ -64,11 +66,17 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
           _section(t.dji_link_environment, _environment(state)),
           if (state.transportPossible) ...[
             _section(t.dji_link_link, _link(snapshot, state)),
+            _section(t.dji_link_video, _video(snapshot)),
+            _section(t.dji_link_flight, DjiLinkFlightSection(telemetry: snapshot?.telemetryValues)),
             _section(t.dji_link_traffic, _traffic(snapshot)),
             _section(t.dji_link_telemetry, _telemetry(snapshot)),
-            _section(t.dji_link_video, _video(snapshot)),
-            _section(t.dji_link_capture, _capture(state, snapshot)),
+            _section(t.dji_link_capture, const DjiLinkCaptureSection()),
             _section(t.dji_link_sticks, _sticks(snapshot)),
+          ] else if (state.environment != null) ...[
+            // No cable path here: a capture can still be played, which measures this device's decoder
+            _section(t.dji_link_video, _video(snapshot)),
+            _section(t.dji_link_flight, DjiLinkFlightSection(telemetry: snapshot?.telemetryValues)),
+            _section(t.dji_link_play, const DjiLinkPlaySection()),
           ],
           if (state.error case final String error)
             Padding(
@@ -220,21 +228,69 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
             style: context.textTheme.bodySmall,
           ),
         ),
+        if (snapshot.lastAccessory case final DjiLinkAccessory last)
+          DjiLinkFact(
+            t.dji_link_last_accessory,
+            [last.manufacturer ?? '-', last.model ?? '-', last.description ?? '-', last.version ?? '-'].join(' | '),
+          ),
+        const SizedBox(height: 6),
+        _hardware(snapshot, state),
         if (profile != null) ...[
           const SizedBox(height: 6),
           Text(t.dji_link_capabilities, style: context.textTheme.labelMedium),
           for (final capability in profile.capabilities)
             DjiLinkFact(
               djiLinkCapabilityText(t, capability.name),
-              [_support(capability.support), ?capability.provenance].join(' '),
+              [_support(capability.support), ?_provenance(capability)].join(', '),
             ),
         ],
+        Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: Text(
+            t.dji_link_usb_mode_hint,
+            key: const Key('dji_link_usb_mode_hint'),
+            style: context.textTheme.bodySmall,
+          ),
+        ),
         const SizedBox(height: 6),
         OutlinedButton(
           key: const Key('dji_link_retry'),
           onPressed: () => unawaited(_notifier.retry()),
           child: Text(t.dji_link_retry),
         ),
+      ],
+    );
+  }
+
+  /// "Your hardware": the starting profiles, kept for the accessory strings in use or the last ones seen
+  Widget _hardware(DjiLinkSnapshot snapshot, DjiLinkPageState state) {
+    final t = context.t;
+    final hasStrings = snapshot.accessory != null || snapshot.lastAccessory != null;
+    final bound = snapshot.boundProfileId;
+    final ids = state.profiles.map((profile) => profile.id).toSet();
+    return Column(
+      key: const Key('dji_link_hardware'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(t.dji_link_hardware, style: context.textTheme.labelMedium),
+        if (!hasStrings)
+          Text(t.dji_link_hardware_no_strings, style: context.textTheme.bodySmall)
+        else
+          DropdownButton<String?>(
+            key: const Key('dji_link_hardware_choice'),
+            isExpanded: true,
+            value: ids.contains(bound) ? bound : null,
+            items: [
+              DropdownMenuItem<String?>(value: null, child: Text(t.dji_link_hardware_none)),
+              for (final profile in state.profiles)
+                DropdownMenuItem<String?>(
+                  value: profile.id,
+                  child: Text(djiLinkProfileText(t, profile, null), overflow: TextOverflow.ellipsis),
+                ),
+            ],
+            onChanged: (id) => unawaited(_notifier.bindProfile(id)),
+          ),
+        Text(t.dji_link_hardware_note, style: context.textTheme.bodySmall),
       ],
     );
   }
@@ -254,6 +310,22 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
     DjiLinkSupport.unsupported => context.t.dji_link_support_unsupported,
     DjiLinkSupport.supported => context.t.dji_link_support_supported,
   };
+
+  /// Where an answer comes from. An answer holds on the device and flavour it was verified on, and the native side
+  /// reports it unknown anywhere else (the headset build of the same phone included): the line then names the one
+  /// device it was verified on, so that a phone result is never read as this device's.
+  String? _provenance(DjiLinkCapability capability) {
+    final t = context.t;
+    final device = capability.observedOn;
+    final date = capability.observedDate ?? '-';
+    if (device != null) {
+      return capability.support == DjiLinkSupport.unknown
+          ? t.dji_link_verified_elsewhere(device: device, date: date)
+          : t.dji_link_verified_on(device: device, date: date);
+    }
+    final provenance = capability.provenance;
+    return provenance == null ? null : t.dji_link_observed_offline(observation: provenance);
+  }
 
   Widget _traffic(DjiLinkSnapshot? snapshot) {
     final t = context.t;
@@ -293,7 +365,7 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
             DjiLinkFact(
               [
                 t.dji_link_message_id(commandSet: '${row.commandSet}', commandId: '${row.commandId}'),
-                ?row.name,
+                if (row.name != null) djiLinkMessageName(t, row.name!),
               ].join(' '),
               '${t.dji_link_telemetry_rate(count: row.count, bodyLength: '${row.lastLength}', rate: row.ratePerSecond.toStringAsFixed(1))} '
               '${row.preview}',
@@ -305,121 +377,35 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
   Widget _video(DjiLinkSnapshot? snapshot) {
     final t = context.t;
     final video = snapshot?.video;
-    if (video == null) {
-      return const SizedBox.shrink();
-    }
-    final verdict = switch (video.verdict) {
-      DjiLinkProbeVerdict.noData => t.dji_link_video_verdict_no_data,
+    final verdict = switch (video?.verdict) {
+      null || DjiLinkProbeVerdict.noData => t.dji_link_video_verdict_no_data,
       DjiLinkProbeVerdict.noStartCodes => t.dji_link_video_verdict_no_start_codes,
       DjiLinkProbeVerdict.startCodesSeen => t.dji_link_video_verdict_start_codes,
+      DjiLinkProbeVerdict.h265 => t.dji_link_video_verdict_h265,
+      DjiLinkProbeVerdict.h264 => t.dji_link_video_verdict_h264,
     };
     return Column(
       key: const Key('dji_link_video'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(verdict, style: context.textTheme.bodySmall),
-        const SizedBox(height: 4),
-        DjiLinkFact(t.dji_link_video_payloads, '${video.payloads}'),
-        DjiLinkFact(t.dji_link_video_start_codes, '${video.startCodesSeen}'),
-        DjiLinkFact(t.dji_link_video_unit_types, video.unitTypes.isEmpty ? '-' : video.unitTypes),
-        for (final channel in video.channels)
-          DjiLinkFact(
-            '${t.dji_link_channel} ${channel.channel}',
-            t.dji_link_video_fragments(
-              fragments: channel.fragments,
-              bytes: formatHumanReadableBytes(channel.bytes, 1),
-              largest: channel.largestFragment,
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _capture(DjiLinkPageState state, DjiLinkSnapshot? snapshot) {
-    final t = context.t;
-    final capture = snapshot?.capture;
-    final export = state.export;
-    return Column(
-      key: const Key('dji_link_capture'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (capture == null)
-          Text(t.dji_link_capture_nothing, style: context.textTheme.bodySmall)
-        else
-          DjiLinkFact(
-            t.dji_link_capture,
-            t.dji_link_capture_state(
-              bytes: formatHumanReadableBytes(capture.totalBytes, 1),
-              records: capture.records,
-              dropped: formatHumanReadableBytes(capture.droppedBytes, 1),
-            ),
-          ),
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Text(
-            t.dji_link_capture_privacy,
-            key: const Key('dji_link_capture_privacy'),
-            style: context.textTheme.bodySmall,
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextField(
-          key: const Key('dji_link_capture_notes'),
-          controller: _notes,
-          decoration: InputDecoration(labelText: t.dji_link_capture_note_hint, isDense: true),
-        ),
+        DjiLinkVideoPanel(decode: snapshot?.videoDecode),
         const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            OutlinedButton(
-              key: const Key('dji_link_capture_start'),
-              onPressed: capture?.recording == true ? null : () => unawaited(_notifier.startCapture()),
-              child: Text(t.dji_link_capture_start),
+        Text(verdict, key: const Key('dji_link_video_verdict'), style: context.textTheme.bodySmall),
+        if (video != null) ...[
+          const SizedBox(height: 4),
+          DjiLinkFact(t.dji_link_video_payloads, '${video.payloads}'),
+          DjiLinkFact(t.dji_link_video_start_codes, '${video.startCodesSeen}'),
+          DjiLinkFact(t.dji_link_video_unit_types, video.unitTypes.isEmpty ? '-' : video.unitTypes),
+          for (final channel in video.channels)
+            DjiLinkFact(
+              '${t.dji_link_channel} ${channel.channel}',
+              t.dji_link_video_fragments(
+                fragments: channel.fragments,
+                bytes: formatHumanReadableBytes(channel.bytes, 1),
+                largest: channel.largestFragment,
+              ),
             ),
-            OutlinedButton(
-              key: const Key('dji_link_capture_stop'),
-              onPressed: capture?.recording == true ? () => unawaited(_notifier.stopCapture()) : null,
-              child: Text(t.dji_link_capture_stop),
-            ),
-            FilledButton(
-              key: const Key('dji_link_capture_export'),
-              // Nothing captured still exports the header: "nothing ever opened" is a result, and the device and its
-              // USB environment are what explain it
-              onPressed: state.exporting
-                  ? null
-                  : () => unawaited(
-                      _notifier.exportCapture(DjiLinkExportNotes(note: _notes.text.isEmpty ? null : _notes.text)),
-                    ),
-              child: Text(t.dji_link_capture_export),
-            ),
-            OutlinedButton(
-              key: const Key('dji_link_capture_clear'),
-              onPressed: (capture?.totalBytes ?? 0) == 0 ? null : () => unawaited(_notifier.clearCapture()),
-              child: Text(t.dji_link_capture_clear),
-            ),
-          ],
-        ),
-        if (export != null && export.ok && export.headerOnly) ...[
-          const SizedBox(height: 6),
-          Text(
-            t.dji_link_capture_header_only(path: export.headerPath ?? ''),
-            key: const Key('dji_link_capture_header_only'),
-            style: context.textTheme.bodySmall,
-          ),
         ],
-        if (export != null && export.ok && !export.headerOnly) ...[
-          const SizedBox(height: 6),
-          Text(
-            t.dji_link_capture_exported(path: export.binPath ?? ''),
-            key: const Key('dji_link_capture_exported'),
-            style: context.textTheme.bodySmall,
-          ),
-          Text(t.dji_link_capture_digest(digest: export.sha256 ?? ''), style: context.textTheme.bodySmall),
-        ],
-        if (export != null && !export.ok)
-          Text(export.error ?? '', style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.error)),
       ],
     );
   }

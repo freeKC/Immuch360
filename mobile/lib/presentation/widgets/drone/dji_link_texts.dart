@@ -44,6 +44,7 @@ String djiLinkReasonText(Translations t, DjiLinkReason reason) => switch (reason
   DjiLinkReason.pageClosed => t.dji_link_reason_page_closed,
   DjiLinkReason.framesParse => t.dji_link_reason_frames_parse,
   DjiLinkReason.aircraftFrames => t.dji_link_reason_aircraft_frames,
+  DjiLinkReason.videoDecoded => t.dji_link_reason_video_decoded,
 };
 
 String djiLinkRoleText(Translations t, String role) => switch (role) {
@@ -95,3 +96,77 @@ String djiLinkProfileText(Translations t, DjiLinkProfile profile, DjiLinkAccesso
   }
   return profile.label;
 }
+
+/// The name of a catalogued message, from the code the native side sends; a code this build does not know is shown as
+/// it is
+String djiLinkMessageName(Translations t, String code) => switch (code) {
+  'flightData' => t.dji_link_message_flight_data,
+  'gimbal' => t.dji_link_message_gimbal,
+  'battery' => t.dji_link_message_battery,
+  'remoteBattery' => t.dji_link_message_remote_battery,
+  'signal' => t.dji_link_message_signal,
+  'liveRate' => t.dji_link_message_live_rate,
+  'aircraftClock' => t.dji_link_message_aircraft_clock,
+  'moduleStatus' => t.dji_link_message_module_status,
+  _ => code,
+};
+
+/// The sentence of the video panel for the state of the picture
+String djiLinkVideoStateText(Translations t, DjiLinkDecode decode) => switch (decode.state) {
+  DjiLinkVideoState.waitingForVideo => t.dji_link_video_waiting,
+  DjiLinkVideoState.waitingForDescription => t.dji_link_video_waiting_description,
+  DjiLinkVideoState.building => t.dji_link_video_building,
+  DjiLinkVideoState.decoding => t.dji_link_video_decoding,
+  DjiLinkVideoState.hidden => t.dji_link_video_hidden,
+  DjiLinkVideoState.failed => t.dji_link_video_failed(reason: decode.failure ?? '-'),
+  DjiLinkVideoState.h264NotDecoded => t.dji_link_video_h264,
+};
+
+String djiLinkDescriptionSourceText(Translations t, DjiLinkDescriptionSource source) => switch (source) {
+  DjiLinkDescriptionSource.session => t.dji_link_video_description_session,
+  DjiLinkDescriptionSource.cache => t.dji_link_video_description_cache,
+  DjiLinkDescriptionSource.profile => t.dji_link_video_description_profile,
+  DjiLinkDescriptionSource.none => t.dji_link_video_description_none,
+};
+
+String djiLinkEvidenceText(Translations t, DjiLinkEvidence evidence) => switch (evidence) {
+  DjiLinkEvidence.publicAndCapture => t.dji_link_evidence_public,
+  DjiLinkEvidence.capture => t.dji_link_evidence_capture,
+  DjiLinkEvidence.candidate => t.dji_link_evidence_candidate,
+};
+
+/// Why the decoder moved to software, said under the decoder line
+String? djiLinkSwitchReasonText(Translations t, String? reason) => switch (reason) {
+  'noOutputAfterJoin' => t.dji_link_video_switch_join,
+  'hardwareRetryFailed' => t.dji_link_video_switch_retry,
+  'fatalErrors' => t.dji_link_video_switch_errors,
+  _ => null,
+};
+
+/// The label of a chip of the bench
+String djiLinkBenchText(Translations t, String value) => switch (value) {
+  'original' => t.dji_link_bench_original,
+  'other' => t.dji_link_bench_other,
+  'top' => t.dji_link_bench_top,
+  'bottom' => t.dji_link_bench_bottom,
+  'phone' => t.dji_link_bench_phone,
+  'on' => t.dji_link_bench_on,
+  'off' => t.dji_link_bench_off,
+  'motorsOff' => t.dji_link_bench_motors_off,
+  'propellersOff' => t.dji_link_bench_propellers_off,
+  'flying' => t.dji_link_bench_flying,
+  _ => value,
+};
+
+/// Why a capture did not play
+String djiLinkPlayErrorText(Translations t, String code) => switch (code) {
+  'busy' => t.dji_link_play_busy,
+  'empty' => t.dji_link_play_empty,
+  'notPaired' => t.dji_link_play_not_paired,
+  'damaged' => t.dji_link_play_damaged,
+  'tooLarge' => t.dji_link_play_too_large,
+  _ => t.dji_link_play_unreadable,
+};
+
+/// A number with [digits] decimals, or a dash when there is none
+String djiLinkNumber(double? value, [int digits = 1]) => value == null ? '-' : value.toStringAsFixed(digits);
