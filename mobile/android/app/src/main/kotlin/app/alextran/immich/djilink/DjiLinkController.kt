@@ -214,7 +214,8 @@ class DjiLinkController private constructor(private val context: Context) : Link
   }
 
   fun clearCapture() {
-    synchronized(gate) { capture.clear() }
+    // Under the page lock, as the reader thread records: whether a session is under way cannot change meanwhile
+    synchronized(gate) { capture.clear(accessoryOpen = manager.transport?.isRunning == true) }
     markDirty()
   }
 

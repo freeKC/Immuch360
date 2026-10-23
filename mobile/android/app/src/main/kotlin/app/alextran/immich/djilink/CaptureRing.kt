@@ -165,9 +165,13 @@ class CaptureRing(
     recording = false
   }
 
-  /** Forgets every byte; the buffers themselves go too unless a capture is running */
+  /**
+   * Forgets every byte; the buffers themselves go too unless a capture is running. A clear while recording starts a
+   * new head the way [start] does: at once when [accessoryOpen] says a session is under way, so that the bytes that
+   * keep coming are not put in the tail before the head of a later session, otherwise with the next open.
+   */
   @Synchronized
-  fun clear() {
+  fun clear(accessoryOpen: Boolean = false) {
     written = 0
     dropped = 0
     entries.clear()
@@ -180,9 +184,11 @@ class CaptureRing(
       ring = null
       head = null
     } else if (headCapacity > 0) {
-      // A clear while recording starts a new head with the next open
       head = head ?: ByteArray(headCapacity)
-      headWaiting = true
+      headOpen = accessoryOpen
+      headWaiting = !accessoryOpen
+    } else {
+      headClosed = true
     }
   }
 
@@ -197,7 +203,14 @@ class CaptureRing(
     }
     if (direction == CaptureDirection.OPEN && headWaiting) {
       headWaiting = false
-      headOpen = true
+      // The head opens with this session only if nothing was recorded since the start or the clear. Bytes already in
+      // the tail belong to a session that was under way: a head opened now would come before them in the export, and a
+      // replay would glue the two sessions. The new session then follows them in the tail, after its open marker.
+      if (written == 0L && entries.isEmpty()) {
+        headOpen = true
+      } else {
+        headClosed = true
+      }
     }
     if (headOpen && !headClosed) {
       headEntries.add(CaptureEntry(headLength.toLong(), 0, direction, monotonicNs(), wallMs()))
