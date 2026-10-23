@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/domain/models/config/app_config.dart';
+import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/video_audio_track.dart';
@@ -26,6 +28,7 @@ import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart'
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 
@@ -97,6 +100,9 @@ class _ImmersiveApi extends ImmersiveApi {
 
   /// The stream given with each media opened to fall back to, null for none
   final List<String?> fallbackUrls = [];
+
+  /// The Reverse thumbstick turn setting given with each media opened
+  final List<bool> reverseThumbstickTurns = [];
   Exception? failure;
 
   @override
@@ -113,6 +119,7 @@ class _ImmersiveApi extends ImmersiveApi {
     String? fallbackUrl,
     String? rawProjection,
     String? stereoPair,
+    bool reverseThumbstickTurn,
   ) async {
     openingIds.add(openingId);
     final failure = this.failure;
@@ -122,6 +129,7 @@ class _ImmersiveApi extends ImmersiveApi {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);
     fallbackUrls.add(fallbackUrl);
+    reverseThumbstickTurns.add(reverseThumbstickTurn);
   }
 }
 
@@ -165,7 +173,7 @@ void main() {
     await db.close();
   });
 
-  Future<void> pump(WidgetTester tester) async {
+  Future<void> pump(WidgetTester tester, {AppConfig config = const AppConfig()}) async {
     await tester.pumpConsumerWidget(
       Scaffold(
         body: Consumer(
@@ -181,6 +189,7 @@ void main() {
         sphericalVideoApiProvider.overrideWithValue(sphericalApi),
         spatialVideoApiProvider.overrideWithValue(spatialApi),
         immersiveApiProvider.overrideWithValue(immersiveApi),
+        appConfigProvider.overrideWithValue(config),
       ],
     );
   }
@@ -419,9 +428,27 @@ void main() {
         'coverage': ImmersiveSphereCoverage.half,
       });
       expect(immersiveApi.fallbackUrls, [null], reason: 'a file of a share has nothing to fall back to');
+      expect(immersiveApi.reverseThumbstickTurns, [false], reason: 'the thumbstick turns the usual way by default');
       expect(player.calls, ['suspend']);
       // The session follows this opening: the viewer sends its id back with its events
       expect(ref.read(immersiveSessionProvider).isCurrent(immersiveApi.openingIds.single), isTrue);
+    });
+
+    testWidgets('hands the viewer the Reverse thumbstick turn setting', (tester) async {
+      await pump(tester, config: const AppConfig(viewer: ViewerConfig(reverseThumbstickTurn: true)));
+
+      await openImmersiveUrl(
+        ref,
+        request: const ImmersiveRequest(
+          url: _url,
+          isVideo: false,
+          title: 'trip.jpg',
+          view: (layout: StereoLayout.mono, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full),
+        ),
+        stereoLabels: const {},
+      );
+
+      expect(immersiveApi.reverseThumbstickTurns, [true]);
     });
 
     testWidgets('opens each time as a new opening, the session following the last one only', (tester) async {

@@ -121,7 +121,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
    * JSON calibration of a raw dual fisheye video, which the viewer stitches on the headset; null for an
    * equirectangular media and for a raw photo, which Flutter stitched already. [stereoPair] is the JSON of the two eyes
    * of an Apple spatial photo, null for any other media; it travels as an extra of the intent so that the viewer can
-   * show both eyes on a flat quad.
+   * show both eyes on a flat quad. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting of the app: the
+   * right thumbstick then turns the sphere the other way.
    */
   override fun open(
     url: String,
@@ -136,6 +137,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     fallbackUrl: String?,
     rawProjection: String?,
     stereoPair: String?,
+    reverseThumbstickTurn: Boolean,
   ) {
     if (!isHorizonOsDevice()) {
       throw FlutterError("unsupported", "The immersive viewer needs a Meta Quest headset", null)
@@ -144,7 +146,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
       TAG,
       "open immersive viewer, opening $openingId, video=$isVideo, 3D layout=$stereoLayout, coverage=$coverage, " +
         "start=$startPositionMs ms, fallback=${fallbackUrl != null}, raw=${rawProjection != null}, " +
-        "stereo pair=${stereoPair != null}",
+        "stereo pair=${stereoPair != null}, reverse thumbstick turn=$reverseThumbstickTurn",
     )
     val intent =
       ImmersiveViewerActivity.intent(
@@ -159,6 +161,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         openingId,
         fallbackUrl,
         rawProjection,
+        reverseThumbstickTurn,
       )
     appContext.startActivity(intent.putExtra(ImmersiveViewerActivity.EXTRA_STEREO_PAIR, stereoPair))
   }

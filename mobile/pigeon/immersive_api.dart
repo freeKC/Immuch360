@@ -40,7 +40,9 @@ abstract class ImmersiveApi {
   /// the first frames) or when the original fails; null when there is none or when the user chose to always play
   /// the original. [stereoPair] is null, or the JSON of an Apple spatial photo (docs
   /// 18-design-build19-sources-and-spatial.md section 5.6): the viewer then shows both eyes on a flat quad in front of
-  /// the user instead of a sphere.
+  /// the user instead of a sphere. [reverseThumbstickTurn] is the "Reverse thumbstick turn" setting: false, the right
+  /// thumbstick turns the view the way it is pushed, as in most headset apps; true, the other way. Previous and next
+  /// keep the value of the opening.
   void open(
     String url,
     Map<String, String> headers,
@@ -54,6 +56,7 @@ abstract class ImmersiveApi {
     String? fallbackUrl,
     String? rawProjection,
     String? stereoPair,
+    bool reverseThumbstickTurn,
   );
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified

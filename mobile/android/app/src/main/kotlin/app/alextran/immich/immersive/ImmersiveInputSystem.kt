@@ -203,8 +203,8 @@ internal class ControllerEdges(private val log: (String) -> Unit = {}) {
  * - B or Y goes back to the app, and nothing else happens on that update;
  * - the left thumbstick left or right asks for the previous or the next media, the right thumbstick left or right
  *   turns the view (the way the right thumbstick turns in most headset apps, so that what is behind comes in front
- *   without turning the head), either stick up or down seeks a video or turns a photo; the viewer shows all of them
- *   on its small feedback line, never by bringing the info panel up;
+ *   without turning the head, see [snapTurnDegrees]), either stick up or down seeks a video or turns a photo; the
+ *   viewer shows all of them on its small feedback line, never by bringing the info panel up;
  * - A, X, grip or menu on a controller, and the menu gesture of a hand, show or hide the info panel; an index pinch
  *   (A or X of a hand) only shows a hidden panel, since a pinch on a panel button must not hide the panel it clicks;
  * - the trigger plays or pauses a video while the panel is hidden (on the panel it clicks a button).
@@ -246,5 +246,28 @@ internal object ImmersiveControls {
       actions += Action.PLAY_PAUSE
     }
     return actions
+  }
+
+  /**
+   * The yaw in degrees to add to the sphere of the media for [action]: [stepDegrees] one way or the other for a push
+   * of the right thumbstick to the left ([Action.TURN_LEFT]) or to the right ([Action.TURN_RIGHT]), 0 for any other
+   * action.
+   *
+   * The view turns the way the stick is pushed, as the snap turn of Meta's LocomotionSystem and of most headset apps
+   * does: left turns the view to the left, so the image moves to the right of the user. The viewer turns the sphere
+   * rather than the user, hence a positive yaw for a left push. In the coordinates of the Spatial SDK (left handed,
+   * +x right, +y up, +z forward), Quaternion(0f, yaw, 0f) with a positive yaw takes what was in front of the user
+   * (+z) towards the right (+x): the same view as the LocomotionSystem gives when it turns the view origin by a
+   * negative yaw for a left push. [reversed] (the "Reverse thumbstick turn" setting) turns the other way, as
+   * builds 17 to 28 did.
+   */
+  fun snapTurnDegrees(action: Action, stepDegrees: Float, reversed: Boolean): Float {
+    val viewTurnsLeft =
+      when (action) {
+        Action.TURN_LEFT -> true
+        Action.TURN_RIGHT -> false
+        else -> return 0f
+      }
+    return if (viewTurnsLeft != reversed) stepDegrees else -stepDegrees
   }
 }
