@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useWebOSKeys} from '../../hooks/useWebOSKeys';
+import {useOnline} from '../../hooks/useOnline';
 import {useAutoHideControls} from '../../hooks/useAutoHideControls';
 import {useAssetRotation} from '../../hooks/useAssetRotation';
 import {useAssetDetails} from '../../hooks/useAssetDetails';
@@ -60,6 +61,8 @@ const focusActionBar = () => forceFocus(ACTION_BAR_SPOTLIGHT_ID);
 
 export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, totalCount, currentIndex, position, onClose, onNavigate, onStartSlideshow}) => {
 	const repository = useRepository();
+	// Immuch360: a video that fails while the TV is offline says so, not that the TV cannot play it
+	const online = useOnline();
 	const asset = getAssetAt(currentIndex);
 
 	const handlePrev = useCallback(() => {
@@ -418,6 +421,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	else if (rotationNotice === 'failed') notice = t('rotate_failed');
 	else if (rotationNotice === 'keptOnDevice') notice = t('rotate_kept_on_device');
 	else if (wants360 && sphereFailure) notice = sphereFailure.reason;
+	else if (videoFailed && !online) notice = t('webos_error_offline');
 	else if (videoFailed) {
 		const size = details?.width && details.height ? `${details.width} × ${details.height}` : null;
 		const format = [details?.originalMimeType, size].filter(Boolean).join(', ');

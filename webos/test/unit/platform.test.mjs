@@ -90,11 +90,11 @@ describe('the platform', () => {
 			sources: false,
 			holdScreenSaverForVideo: true,
 			exitOnRootBack: true,
-			backClosesPopupFirst: true,
+			railBackToPhotos: false,
 			pauseVideoWhenHidden: true,
 			fullsizePixelCap: TIZEN_FULLSIZE_MAX_PIXELS,
 		});
-		// webOS keeps its behaviour: every Samsung only answer is off there
+		// webOS keeps its behaviour: every Samsung only answer is off there, and LG's Back to Photos on
 		for (const on of ['webos', 'browser']) {
 			assert.deepEqual(
 				features(on),
@@ -103,7 +103,7 @@ describe('the platform', () => {
 					sources: true,
 					holdScreenSaverForVideo: false,
 					exitOnRootBack: false,
-					backClosesPopupFirst: false,
+					railBackToPhotos: true,
 					pauseVideoWhenHidden: false,
 					fullsizePixelCap: null,
 				},

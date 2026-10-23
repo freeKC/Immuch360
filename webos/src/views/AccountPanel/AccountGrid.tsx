@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import Button from '@enact/sandstone/Button';
 import Icon from '@enact/sandstone/Icon';
 import Spotlight from '@enact/spotlight';
 import {AccountCard} from '../../components/AccountCard/AccountCard';
@@ -16,6 +17,9 @@ interface AccountGridProps {
 	onSetDefault: (id: string | null) => void;
 	onRemove: (id: string) => void;
 	onAdd: () => void;
+	// Immuch360: why the active account did not start; Retry, and OK on its card, start it again
+	startError?: string;
+	onRetry?: () => void;
 }
 
 const GRID_SPOTLIGHT_ID = 'account-grid';
@@ -29,6 +33,8 @@ export const AccountGrid: React.FC<AccountGridProps> = ({
 	onSetDefault,
 	onRemove,
 	onAdd,
+	startError,
+	onRetry,
 }) => {
 	const [focusedId, setFocusedId] = useState<string | null>(activeAccountId);
 
@@ -37,8 +43,8 @@ export const AccountGrid: React.FC<AccountGridProps> = ({
 		[accounts],
 	);
 
-	// Per-card select handler: clicking the active card just refreshes focus;
-	// clicking any other card triggers the switch.
+	// Per-card select handler: clicking the active card just refreshes focus (Immuch360: or starts it again after a
+	// failed start); clicking any other card triggers the switch.
 	const selectHandlers = useMemo(
 		() =>
 			Object.fromEntries(
@@ -47,13 +53,14 @@ export const AccountGrid: React.FC<AccountGridProps> = ({
 					(): void => {
 						if (a.id === activeAccountId) {
 							setFocusedId(a.id);
+							if (startError && onRetry) onRetry();
 						} else {
 							onSwitch(a.id);
 						}
 					},
 				]),
 			),
-		[sorted, activeAccountId, onSwitch],
+		[sorted, activeAccountId, onSwitch, startError, onRetry],
 	);
 
 	const focusHandlers = useMemo(
@@ -71,6 +78,16 @@ export const AccountGrid: React.FC<AccountGridProps> = ({
 
 	return (
 		<GridContainer className={css.wrap} spotlightId={GRID_SPOTLIGHT_ID}>
+			{startError ? (
+				<div className={css.startError} role="alert">
+					<span className={css.startErrorText}>{startError}</span>
+					{onRetry && (
+						<Button size="small" icon="refresh" onClick={onRetry} backgroundOpacity="opaque">
+							{t('retry')}
+						</Button>
+					)}
+				</div>
+			) : null}
 			<h4 className={css.heading}>{t('webos_accounts')}</h4>
 			<div className={css.grid}>
 				{sorted.map(a => (

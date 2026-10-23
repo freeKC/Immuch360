@@ -158,6 +158,9 @@ export const Slideshow: React.FC<SlideshowProps> = ({start, source, onExit}) => 
 		return () => window.clearTimeout(timer);
 	}, [current, paused, stage.incoming, settings.intervalSeconds, playlist, repository, advance, retryTick]);
 
+	// Immuch360: on webOS no veto of the screen saver any more: appinfo.json asks for the Type 3 screen saver of gallery
+	// apps (screenSaverProperties, useGalleryMode), which dims the screen after 30 minutes instead. A Samsung TV turns
+	// its screen saver off through AppCommon while the slideshow plays (holdScreenSaver does nothing on webOS)
 	useEffect(() => holdScreenSaver(), []);
 
 	const handleExit = useCallback(() => onExit(current), [onExit, current]);

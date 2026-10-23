@@ -5,6 +5,7 @@ import {ErrorMessage} from '../ErrorMessage';
 import {FieldRow} from '../FieldRow/FieldRow';
 import {UrlInput} from '../UrlInput/UrlInput';
 import {PairingTab} from './PairingTab';
+import {PrivacyPolicyButton} from '../../immuch360/privacy/PrivacyPolicy';
 import {AuthMethod, type AuthSubmitResult, type AuthFormPayload} from '../../api/types';
 import type {PairingDriver, PairedAccountResult} from '../../pairing/types';
 import css from './AuthForm.module.less';
@@ -54,7 +55,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({initialUrl, onSubmit, onBack,
 
 	const submitCreds = useCallback(() => {
 		if (!url || !email || !password) {
-			setError('Please fill in all fields');
+			setError(t('webos_fill_all_fields'));
 			return;
 		}
 		void submit({method: AuthMethod.USER_CREDENTIALS, baseUrl: url, email, password});
@@ -176,6 +177,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({initialUrl, onSubmit, onBack,
 				</TabLayout>
 
 				<ErrorMessage message={error} className={css.error} />
+				<PrivacyPolicyButton className={css.privacy} />
 			</div>
 		</div>
 	);

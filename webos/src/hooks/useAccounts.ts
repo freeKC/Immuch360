@@ -208,6 +208,11 @@ export const useAccounts = () => {
 		[activate, persist, store],
 	);
 
+	// Immuch360: the start of the active account again, after it failed (no network, server down or slow)
+	const retry = useCallback(() => {
+		if (activeAccountId) void activate(activeAccountId);
+	}, [activate, activeAccountId]);
+
 	const setAsDefault = useCallback(
 		(id: string | null) => {
 			persist(setDefaultInStore(store, id));
@@ -228,6 +233,7 @@ export const useAccounts = () => {
 			removeAccount,
 			switchTo,
 			setAsDefault,
+			retry,
 		}),
 		[
 			store,
@@ -240,6 +246,7 @@ export const useAccounts = () => {
 			removeAccount,
 			switchTo,
 			setAsDefault,
+			retry,
 		],
 	);
 

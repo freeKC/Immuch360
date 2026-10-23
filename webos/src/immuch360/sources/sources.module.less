@@ -203,7 +203,9 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	padding: 48px @page-inset-x;
+	// Immuch360: 72 px at the bottom keep the buttons 24 CSS px from the edge in the 1280x720 package too (LG's safe area
+	// is 20 px; 48 px gave 16 there)
+	padding: 48px @page-inset-x 72px;
 	background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
 }
 

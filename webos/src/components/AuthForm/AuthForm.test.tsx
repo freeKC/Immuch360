@@ -1,6 +1,7 @@
 import React from 'react';
 import {render, screen, fireEvent, waitFor} from '@testing-library/react';
 import {AuthMethod} from '../../api/types';
+import {t} from '../../immuch360/i18n';
 import {AuthForm} from './AuthForm';
 
 // Sandstone primitives don't work in jsdom — mock them.
@@ -111,5 +112,19 @@ describe('AuthForm', () => {
 		fireEvent.change(screen.getByPlaceholderText(/Password/i), {target: {value: 'pw'}});
 		fireEvent.click(screen.getByRole('button', {name: /Connect/i}));
 		expect(await screen.findByText('nope')).toBeTruthy();
+	});
+	// Immuch360: the message of an empty field comes from the app's texts (it was English in every language)
+	test('an empty field asks to fill every field, with the text of the i18n key', async () => {
+		const onSubmit = jest.fn();
+		render(<AuthForm initialUrl="http://x" onSubmit={onSubmit} onBack={() => {}} />);
+		fireEvent.click(screen.getByRole('button', {name: /Connect/i}));
+		expect(await screen.findByText(t('webos_fill_all_fields'))).toBeTruthy();
+		expect(onSubmit).not.toHaveBeenCalled();
+	});
+
+	// Immuch360: the privacy policy under the sign in form (LG's Privacy Guideline)
+	test('the sign in page has the privacy policy button', () => {
+		render(<AuthForm initialUrl="" onSubmit={async () => ({success: true})} />);
+		expect(screen.getByRole('button', {name: /Privacy policy/i})).toBeTruthy();
 	});
 });

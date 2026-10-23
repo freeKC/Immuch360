@@ -214,7 +214,7 @@ export const DateScrubber: React.FC<DateScrubberProps> = React.memo(
 					<div className={css.dateBubble} style={{top: `${bubbleTop}%`}}>
 						{displayBucket ? formatBucketMonth(displayBucket.timeBucket) : ''}
 						{isLoading && <span className={css.status}>{t('webos_loading')}</span>}
-						{hasError && !isLoading && <span className={css.error}>Couldn’t load</span>}
+						{hasError && !isLoading && <span className={css.error}>{t('failed_to_load_assets')}</span>}
 					</div>
 				</SpottableDiv>
 			</div>

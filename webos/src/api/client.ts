@@ -1,14 +1,20 @@
 import {AuthMethod, type AuthConfig} from './types';
+import {BODY_TIMEOUT_MS, classifyFailure, withTimeout, type FailureKind} from './network';
 
 export class APIError extends Error {
 	public status?: number;
+	// Immuch360: why a request without an answer failed (no status then): offline, timeout, cors or unreachable
+	public kind?: FailureKind;
 
-	constructor(message: string, status?: number) {
+	constructor(message: string, status?: number, kind?: FailureKind) {
 		super(message);
 		this.name = 'APIError';
 		this.status = status;
+		this.kind = kind;
 	}
 }
+
+const isAbort = (error: unknown) => error instanceof Error && error.name === 'AbortError';
 
 export class APIClient {
 	private baseUrl: string;
@@ -52,28 +58,53 @@ export class APIClient {
 		return `${this.baseUrl}${path}${sep}${name}=${value}`;
 	}
 
+	// Immuch360: the server's ping, which needs no sign in: what the no-cors probe of a failed request asks for
+	private probeUrl(): string {
+		return `${this.baseUrl}/server/ping`;
+	}
+
+	// Immuch360: the error of a request that got no answer, told apart (src/api/network.ts)
+	private async failure(error: unknown, method: string, url: string): Promise<APIError> {
+		const kind = await classifyFailure(error, this.probeUrl());
+		console.error(`[API] ${method} ${url} failed without an answer (${kind}):`, error);
+		return new APIError(`Network error (${kind}): ${error instanceof Error ? error.message : 'Unknown error'}`, undefined, kind);
+	}
+
+	// Immuch360: every request has 15 s (REQUEST_TIMEOUT_MS) for the server's answer, then BODY_TIMEOUT_MS for its body
+	// (a slow remote link). The 15 s start at fetch(): a request the browser holds behind the six connections of a host
+	// (thumbnails over HTTP/1.1) spends part of them waiting there
 	public async fetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
 		const url = `${this.baseUrl}${endpoint}`;
 		const method = options.method || 'GET';
 
+		let text: string;
 		try {
-			const response = await fetch(url, {
-				...options,
-				headers: {...this.getHeaders(), ...options.headers},
-			});
-			if (!response.ok) {
-				console.error(`[API] ${method} ${url} failed with ${response.status}: ${response.statusText}`);
-				throw new APIError(`API request failed: ${response.statusText}`, response.status);
-			}
-
-			const text = await response.text();
+			text = await withTimeout(
+				async (signal, answered) => {
+					const response = await fetch(url, {
+						...options,
+						signal,
+						headers: {...this.getHeaders(), ...options.headers},
+					});
+					answered();
+					if (!response.ok) {
+						console.error(`[API] ${method} ${url} failed with ${response.status}: ${response.statusText}`);
+						throw new APIError(`API request failed: ${response.statusText}`, response.status);
+					}
+					return response.text();
+				},
+				{signal: options.signal, bodyTimeoutMs: BODY_TIMEOUT_MS},
+			);
+		} catch (error) {
+			if (error instanceof APIError || (isAbort(error) && options.signal?.aborted)) throw error;
+			throw await this.failure(error, method, url);
+		}
+		try {
 			return text ? JSON.parse(text) : ({} as T);
 		} catch (error) {
-			if (error instanceof APIError) {
-				throw error;
-			}
-			console.error(`[API] ${method} ${url} network error:`, error);
-			throw new APIError(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+			// An answer that is not Immich's JSON (a web page at that address): the address is not an Immich server
+			console.error(`[API] ${method} ${url} answered something other than JSON:`, error);
+			throw new APIError(`Not an Immich answer: ${error instanceof Error ? error.message : 'Unknown error'}`, undefined, 'unreachable');
 		}
 	}
 
@@ -102,11 +133,20 @@ export class APIClient {
 	// Immuch360: the bytes of a media URL (credentials in the query, as for <img>), for the WebGL sphere, which needs
 	// pixels of the app's own origin. No header is added, so the request needs no CORS preflight.
 	public async fetchMediaBytes(url: string, signal?: AbortSignal): Promise<ArrayBuffer> {
+		// The 15 s run until the answer comes; a large photo then takes the time its download needs
 		let response: Response;
 		try {
-			response = await fetch(url, {signal});
+			response = await withTimeout(
+				async (timedSignal, answered) => {
+					const answer = await fetch(url, {signal: timedSignal});
+					answered();
+					return answer;
+				},
+				{signal},
+			);
 		} catch (error) {
-			throw new APIError(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+			if (isAbort(error) && signal?.aborted) throw error;
+			throw await this.failure(error, 'GET', url.replace(/(sessionKey|apiKey)=[^&]*/, '$1=…'));
 		}
 		if (!response.ok) throw new APIError(`API request failed: ${response.statusText}`, response.status);
 		return response.arrayBuffer();

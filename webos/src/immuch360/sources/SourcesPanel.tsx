@@ -43,29 +43,34 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 	const {client, info, error, version} = useBridge();
 	const sources = useSources();
 	const [screen, setScreen] = useState<Screen>({kind: 'home'});
-	// The servers found for a run of the bridge (its version); a run without them is still looking
-	const [discovery, setDiscovery] = useState<{version: number; servers: DiscoveredServer[]} | null>(null);
+	// The servers found for a run of the bridge (its version) and a search (request: 0 when the page opened, then one
+	// more for each Scan again); a run or a search without them is still looking
+	const [discovery, setDiscovery] = useState<{version: number; request: number; servers: DiscoveredServer[]} | null>(null);
 	const [status, setStatus] = useState<{text: string; error: boolean} | null>(null);
 	const home = useCallback(() => setScreen({kind: 'home'}), []);
 
-	// The DLNA and Plex servers of the network, looked for each time the page opens
+	// The DLNA and Plex servers of the network, looked for each time the page opens (multicast and broadcast only);
+	// Scan again also asks every address of the local network (the bridge's sweep of the /24), and only then
+	const [scanRequest, setScanRequest] = useState(0);
 	useEffect(() => {
 		if (!client || !info) return undefined;
 		let cancelled = false;
+		const sweep = scanRequest > 0;
 		Promise.all(
 			(['dlna', 'plex'] as const).map((kind) =>
-				client.control<{servers: DiscoveredServer[]}>('discover', {kind, ms: DISCOVERY_MS}).then(
+				client.control<{servers: DiscoveredServer[]}>('discover', {kind, ms: DISCOVERY_MS, sweep}).then(
 					(answer) => answer.servers,
 					() => []
 				)
 			)
 		).then((lists) => {
-			if (!cancelled) setDiscovery({version, servers: ([] as DiscoveredServer[]).concat(...lists)});
+			if (!cancelled) setDiscovery({version, request: scanRequest, servers: ([] as DiscoveredServer[]).concat(...lists)});
 		});
 		return () => {
 			cancelled = true;
 		};
-	}, [client, info, version]);
+	}, [client, info, version, scanRequest]);
+	const scanAgain = useCallback(() => setScanRequest((n) => n + 1), []);
 
 	// Back on the home of the page from one of its screens: the focus comes back into it. Opened from the rail, the
 	// focus stays on the rail, as for the other pages.
@@ -81,7 +86,7 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 	}, [screen.kind]);
 
 	const discovered = useMemo(() => discovery?.servers ?? [], [discovery]);
-	const scanning = !!info && discovery?.version !== version;
+	const scanning = !!info && (discovery?.version !== version || discovery?.request !== scanRequest);
 
 	const open = useCallback((source: SourceConfig) => setScreen(source.kind === 'tapo' ? {kind: 'camera', id: source.id} : {kind: 'browse', id: source.id}), []);
 	const openById = useCallback(
@@ -92,9 +97,10 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 		[open]
 	);
 	const addSomething = useCallback((what: string) => {
-		if (what === 'plex') setScreen({kind: 'plex'});
+		if (what === 'scan') scanAgain();
+		else if (what === 'plex') setScreen({kind: 'plex'});
 		else setScreen({kind: 'add', form: what === 'camera' ? 'tapo' : null});
-	}, []);
+	}, [scanAgain]);
 
 	const addFound = useCallback(
 		async (server: DiscoveredServer) => {
@@ -170,20 +176,19 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 						<div className={css.section}>{t('network_share_scan_title')}</div>
 						{scanning && <div className={css.notice}>{t('network_share_scan_scanning')}</div>}
 						{!scanning && found.length === 0 && <div className={css.notice}>{t('network_share_scan_none_found')}</div>}
-						{found.length > 0 && (
-							<div className={css.grid}>
-								{found.map((server) => (
-									<SourceTile
-										key={foundKey(server)}
-										icon={kindIcon(server.kind)}
-										title={server.name || server.address || server.host || ''}
-										secondary={server.kind === 'dlna' ? t('network_share_scan_type_dlna') : t('network_share_scan_type_plex')}
-										value={foundKey(server)}
-										onSelect={addFoundByKey}
-									/>
-								))}
-							</div>
-						)}
+						<div className={css.grid}>
+							{found.map((server) => (
+								<SourceTile
+									key={foundKey(server)}
+									icon={kindIcon(server.kind)}
+									title={server.name || server.address || server.host || ''}
+									secondary={server.kind === 'dlna' ? t('network_share_scan_type_dlna') : t('network_share_scan_type_plex')}
+									value={foundKey(server)}
+									onSelect={addFoundByKey}
+								/>
+							))}
+							<SourceTile icon="refresh" title={t('network_share_scan_again')} value="scan" onSelect={addSomething} />
+						</div>
 					</>
 				)}
 			</Container>

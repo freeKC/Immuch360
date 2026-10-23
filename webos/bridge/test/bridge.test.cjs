@@ -74,6 +74,30 @@ test('control: a source is tested before it is saved, discovery answers even whe
 	assert.match(preflight.headers['access-control-allow-headers'], /Range/);
 });
 
+// Immuch360: no requests to every address of the /24 unless the page asks for them (Scan again)
+test('discovery sweeps the local /24 only when asked', async (t) => {
+	const udp = require('../src/udp');
+	const real = udp.search;
+	const seen = [];
+	udp.search = (message, port, ms, options) => {
+		seen.push(!!(options && options.sweep));
+		return Promise.resolve([]);
+	};
+	const b = await startBridge([], {});
+	t.after(() => {
+		udp.search = real;
+		b.stop();
+	});
+	await b.bridge.control('discover', {kind: 'plex', ms: 500});
+	await b.bridge.control('discover', {kind: 'dlna', ms: 500});
+	assert.ok(seen.length >= 2);
+	assert.ok(seen.every((sweep) => sweep === false), 'no sweep when the page opens');
+	seen.length = 0;
+	await b.bridge.control('discover', {kind: 'plex', ms: 500, sweep: true});
+	await b.bridge.control('discover', {kind: 'dlna', ms: 500, sweep: true});
+	assert.ok(seen.includes(true), 'the sweep on Scan again');
+});
+
 test('the bridge starts once, and a stopped bridge refuses the old token', async () => {
 	const bridge = createBridge({});
 	const first = await bridge.start();

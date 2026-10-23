@@ -1,0 +1,65 @@
+// Immuch360: the privacy policy layer; lengths in 4K-space px like the rest of the LESS. Four offsets, not `inset`
+// (Chromium 87+), as in AccountPanel.module.less. Above the account overlay (100), the viewer (1000) and the offline
+// notice (1500).
+@import '../../styles/_theme.less';
+
+.layer {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1600;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.8);
+}
+
+.box {
+	display: flex;
+	align-items: center;
+	max-width: 2800px;
+	padding: 96px;
+	border: 1px solid @hairline;
+	border-radius: 0.9rem;
+	background: @bg-top;
+	color: @text;
+}
+
+.text {
+	flex: 1;
+	min-width: 0;
+	margin-right: 96px;
+}
+
+.title {
+	margin: 0 0 32px;
+	font-size: var(--font-heading);
+	font-weight: 600;
+}
+
+.summary {
+	margin: 0 0 24px;
+	color: @text-muted;
+	font-size: var(--font-caption);
+}
+
+.url {
+	margin: 0 0 24px;
+	font-size: var(--font-caption);
+	word-break: break-all;
+}
+
+.hint {
+	margin: 0 0 48px;
+	color: @text-muted;
+	font-size: var(--font-caption);
+}
+
+.qr {
+	flex-shrink: 0;
+	width: 560px;
+	height: 560px;
+	border-radius: 16px;
+}

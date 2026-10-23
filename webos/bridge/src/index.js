@@ -504,8 +504,12 @@ function createBridge(options) {
 		const discovery = opts.discoveryOptions || {};
 		if (op === 'discover') {
 			const ms = Math.min(8000, Math.max(500, Number(a.ms) || 3000));
-			if (a.kind === 'dlna') return dlna.discover(ms, discovery).then((servers) => ({servers: servers}));
-			if (a.kind === 'plex') return plex.discover(ms, discovery).then((servers) => ({servers: servers}));
+			// Immuch360: the requests to every address of the local /24 only when the user asks for them (Scan again of
+			// the Network shares page); each opening of the page asks the multicast groups and the broadcast address
+			// only, so that the TV does not read as a scanner on the network (LG's vulnerability review)
+			const options = Object.assign({}, discovery, {sweep: a.sweep === true && discovery.sweep !== false});
+			if (a.kind === 'dlna') return dlna.discover(ms, options).then((servers) => ({servers: servers}));
+			if (a.kind === 'plex') return plex.discover(ms, options).then((servers) => ({servers: servers}));
 			return Promise.reject(new Error('unknown discovery'));
 		}
 		if (op === 'test') {

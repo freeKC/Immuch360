@@ -9,6 +9,7 @@ import {TimelineGrid, type TimelineGridHandle, type TimelineGridTimeline} from '
 import {QueryStateView} from './QueryStateView';
 import type {DayGroup} from '../domain/types';
 import css from './AssetGridView.module.less';
+import {t} from '../immuch360/i18n';
 
 const Container = createSpotlightContainer({enterTo: 'last-focused'});
 const GridContainer = createSpotlightContainer({enterTo: 'last-focused'});
@@ -75,12 +76,12 @@ export const AssetGridView: React.FC<AssetGridViewProps> = ({
 				</div>
 				{hasContent && (
 					<Button icon="play" size="small" backgroundOpacity="transparent" onClick={startSlideshow}>
-						Slideshow
+						{t('slideshow')}
 					</Button>
 				)}
 			</div>
 			<GridContainer spotlightId={spotlightId} className={css.listContainer}>
-				<QueryStateView isLoading={isLoading} error={error} isEmpty={isEmpty} loadingText="Loading…" emptyText={emptyText}>
+				<QueryStateView isLoading={isLoading} error={error} isEmpty={isEmpty} emptyText={emptyText}>
 					<TimelineGrid ref={gridRef} groups={groups} timeline={timeline} contentWidth={contentWidth} />
 				</QueryStateView>
 			</GridContainer>

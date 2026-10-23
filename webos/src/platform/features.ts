@@ -16,10 +16,11 @@ export interface Features {
 	/** Back on the first screen closes the app, as Samsung's apps do (webOS asks with its own dialog) */
 	exitOnRootBack: boolean;
 	/**
-	 * Back while a popup of Sandstone holds the focus (the text input popup, a list of choices) closes the popup only,
-	 * not the screen under it. Samsung TVs; webOS keeps its behaviour until it is tried on an LG TV.
+	 * Back on a page of the rail other than Photos goes to Photos before it leaves the app (LG's self checklist, item
+	 * 37). webOS; a Samsung TV closes the app from any page of the rail (exitOnRootBack). On both TVs Back with a popup
+	 * open closes the popup only (src/hooks/useWebOSKeys.ts).
 	 */
-	backClosesPopupFirst: boolean;
+	railBackToPhotos: boolean;
 	/**
 	 * The viewer's video pauses when the app is hidden (Samsung: "your application must handle multitasking"). webOS
 	 * suspends a hidden app by itself and keeps its behaviour.
@@ -42,7 +43,7 @@ export function features(on: Platform = platform()): Features {
 			sources: false,
 			holdScreenSaverForVideo: true,
 			exitOnRootBack: true,
-			backClosesPopupFirst: true,
+			railBackToPhotos: false,
 			pauseVideoWhenHidden: true,
 			fullsizePixelCap: TIZEN_FULLSIZE_MAX_PIXELS,
 		};
@@ -53,7 +54,7 @@ export function features(on: Platform = platform()): Features {
 		sources: true,
 		holdScreenSaverForVideo: false,
 		exitOnRootBack: false,
-		backClosesPopupFirst: false,
+		railBackToPhotos: true,
 		pauseVideoWhenHidden: false,
 		fullsizePixelCap: null,
 	};

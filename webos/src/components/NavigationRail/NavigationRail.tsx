@@ -1,5 +1,6 @@
 import React, {useMemo} from 'react';
 import Icon from '@enact/sandstone/Icon';
+import Marquee, {MarqueeController} from '@enact/sandstone/Marquee';
 import {createSpotlightContainer, SpottableButton} from '../../utils/spotlight';
 import {NAVIGATION_RAIL_ID} from '../../utils/constants';
 import type {View} from '../../types/navigation';
@@ -27,6 +28,12 @@ const NAV_ITEMS: {view: View; icon: string; label: string}[] = [
 
 const RailContainer = createSpotlightContainer({enterTo: 'last-focused'});
 
+// Immuch360: a label longer than the rail ("Network shares", and longer ones in other languages) ends with an ellipsis
+// and rolls while its item has the focus (LG's self checklist, item 6: text cut with an ellipsis or rolling)
+// (the typings of MarqueeController leave out the config argument that the hoc takes)
+const withMarqueeOnFocus = MarqueeController as unknown as (config: {marqueeOnFocus: boolean}, wrapped: typeof SpottableButton) => typeof SpottableButton;
+const RailItem = withMarqueeOnFocus({marqueeOnFocus: true}, SpottableButton);
+
 // Immuch360: a Samsung TV has no "Network shares" item: the media bridge that reads them runs in the webOS service
 const navItems = () => (features().sources ? NAV_ITEMS : NAV_ITEMS.filter(({view}) => view !== 'sources'));
 
@@ -43,27 +50,33 @@ export const NavigationRail: React.FC<NavigationRailProps> = React.memo(({active
 		// sharing a Spotlight ID lets the old rail's cleanup unregister the replacement.
 		<RailContainer className={css.rail} id={NAVIGATION_RAIL_ID}>
 			{items.map(({view, icon, label}) => (
-				<SpottableButton
+				<RailItem
 					key={view}
+					data-view={view}
+					aria-current={activeView === view ? 'page' : undefined}
 					className={[css.navItem, activeView === view ? css.active : ''].filter(Boolean).join(' ')}
 					onClick={navHandlers[view]}
 				>
 					<div className={css.iconContainer}>
 						<Icon size="tiny">{icon}</Icon>
 					</div>
-					<span className={css.label}>{t(label)}</span>
-				</SpottableButton>
+					<Marquee className={css.label} marqueeOn="focus" data-rail-label>
+						{t(label)}
+					</Marquee>
+				</RailItem>
 			))}
 			<div className={css.spacer} />
 			<div className={css.divider} />
-			<SpottableButton className={css.navItem} onClick={onOpenAccount}>
+			<RailItem className={css.navItem} onClick={onOpenAccount}>
 				<div className={css.iconContainer}>
 					<span className={css.avatar} style={{background: accountGradient}}>
 						{accountLetter}
 					</span>
 				</div>
-				<span className={css.label}>{t('account')}</span>
-			</SpottableButton>
+				<Marquee className={css.label} marqueeOn="focus">
+					{t('account')}
+				</Marquee>
+			</RailItem>
 		</RailContainer>
 	);
 });

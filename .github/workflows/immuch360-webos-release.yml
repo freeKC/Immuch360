@@ -1,9 +1,9 @@
 name: Immuch360 webOS release
 
-# On the push of a webOS pre-release tag, webos-v<x.y.z> (webos-v0.1.0), the .ipk of the LG webOS app is built from the
-# tag by immuch360-webos.yml, called here with its own read-only permissions, then attached with SHA256SUMS.txt to the
-# GitHub release of the tag, created as a pre-release when the tag has none (notes written by hand are never
-# replaced). Run by hand on a branch, it builds the .ipk and lists what it would attach.
+# On the push of a webOS pre-release tag, webos-v<x.y.z> (webos-v0.1.0), the two .ipk of the LG webOS app (1920x1080 and
+# 1280x720) are built from the tag by immuch360-webos.yml, called here with its own read-only permissions, then attached
+# with SHA256SUMS.txt to the GitHub release of the tag, created as a pre-release when the tag has none (notes written by
+# hand are never replaced). Run by hand on a branch, it builds the two .ipk and lists what it would attach.
 #
 # This is the one webOS workflow that writes to the repository: its release job only, with "contents: write", on
 # webos-v* tags and by hand, never on a pull request; .github/desktop/check_workflow.py --release --tag-prefix webos-v
@@ -24,7 +24,7 @@ jobs:
       contents: read
 
   release:
-    name: Attach the .ipk to the release
+    name: Attach the two .ipk to the release
     needs: build
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -40,6 +40,7 @@ jobs:
         working-directory: release
         run: |
           sha256sum --check SHA256SUMS.txt
+          test "$(ls -- *.ipk | wc -l)" -eq 2
           ls -l
 
       - name: Attach them to the pre-release of the tag
@@ -53,6 +54,6 @@ jobs:
           if ! gh release view "$TAG" --repo "$REPO" > /dev/null 2>&1; then
             gh release create "$TAG" --repo "$REPO" --verify-tag --prerelease \
               --title "Immuch360 for LG webOS $VERSION (preview)" \
-              --notes "Preview of the Immuch360 app for LG webOS TVs (webOS 4.0 and later). Install it on a TV in Developer Mode: see https://github.com/$REPO/tree/$TAG/webos#install-on-a-tv-in-developer-mode. Built on Immich TV for webOS by Seeky91 (https://github.com/Seeky91/immich-tv-webos), MIT. Source of this build: https://github.com/$REPO/tree/$TAG/webos (AGPL-3.0)."
+              --notes "Preview of the Immuch360 app for LG webOS TVs (webOS 4.0 and later): Immuch360-webOS-$VERSION.ipk for 1920x1080 (UHD TVs), Immuch360-webOS-$VERSION-1280x720.ipk for Full HD TVs. Install it on a TV in Developer Mode: see https://github.com/$REPO/tree/$TAG/webos#install-on-a-tv-in-developer-mode. Built on Immich TV for webOS by Seeky91 (https://github.com/Seeky91/immich-tv-webos), MIT. Source of this build: https://github.com/$REPO/tree/$TAG/webos (AGPL-3.0). Not yet tried on a webOS 26 TV, where the TV enforces the permissions the app declares (requiredACG): if a feature fails there, please open an issue."
           fi
           gh release upload "$TAG" --repo "$REPO" --clobber release/*.ipk release/SHA256SUMS.txt

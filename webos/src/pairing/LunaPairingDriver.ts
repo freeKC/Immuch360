@@ -1,7 +1,7 @@
 import LS2Request from '@enact/webos/LS2Request';
 import type {PairingDriver, PairingStartInfo, PairingPollResult} from './types';
 import type {PairingServiceResponse} from './serviceResponse';
-import {parseStartInfo, parsePollResult} from './serviceResponse';
+import {PairingServiceError, parseStartInfo, parsePollResult} from './serviceResponse';
 
 const SERVICE = 'luna://com.aprogsys.immuch360.service';
 const CALL_TIMEOUT_MS = 10000;
@@ -14,8 +14,8 @@ function lunaCall(method: string, parameters: Record<string, unknown>): Promise<
 			parameters,
 			timeout: CALL_TIMEOUT_MS,
 			onSuccess: resolve,
-			onFailure: (res: PairingServiceResponse) => reject(new Error(res.errorText || 'Pairing service call failed')),
-			onTimeout: () => reject(new Error('Pairing service did not respond')),
+			onFailure: (res: PairingServiceResponse) => reject(new PairingServiceError(res.errorText || 'Pairing service call failed', res.errorCode)),
+			onTimeout: () => reject(new PairingServiceError('Pairing service did not respond', 'no_answer')),
 		});
 	});
 }

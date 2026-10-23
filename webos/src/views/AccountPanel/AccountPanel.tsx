@@ -4,6 +4,7 @@ import Spotlight, {getDirection} from '@enact/spotlight';
 import {AccountGrid} from './AccountGrid';
 import {AuthForm, type AuthFormPayload, type AuthSubmitResult} from '../../components/AuthForm/AuthForm';
 import {createSpotlightContainer} from '../../utils/spotlight';
+import {PRIVACY_LAYER_ID, PrivacyPolicyButton} from '../../immuch360/privacy/PrivacyPolicy';
 import {useWebOSKeys} from '../../hooks/useWebOSKeys';
 import type {Account} from '../../utils/accountsStore';
 import type {PairingDriver, PairedAccountResult} from '../../pairing/types';
@@ -30,6 +31,9 @@ interface AccountPanelProps {
 	onAddPairedAccount?: (result: PairedAccountResult) => Promise<AuthSubmitResult>;
 	pairingDriver?: PairingDriver | null;
 	onCloseOverlay?: () => void;
+	// Immuch360: why the active account did not start, and how to start it again
+	startError?: string;
+	onRetry?: () => void;
 }
 
 export const AccountPanel: React.FC<AccountPanelProps> = ({
@@ -44,6 +48,8 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 	onAddPairedAccount,
 	pairingDriver,
 	onCloseOverlay,
+	startError,
+	onRetry,
 }) => {
 	// Both modes start on 'grid'. In first-launch mode 'grid' renders the welcome screen
 	// (since accounts.length === 0 means no cards to draw); the user clicks the CTA
@@ -87,8 +93,8 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 	}, [mode, onAddPairedAccount]);
 
 	// Remote Back semantics: on form, peel back to grid; on grid in overlay mode, close
-	// the overlay. First-launch grid has no back target (root of app) so we leave the key
-	// unhandled and let WAM fall through to its default exit behavior.
+	// the overlay. First-launch grid has no back target (root of app): useWebOSKeys then hands
+	// the key to the platform (webOS.platformBack), as on every entry page.
 	const backHandler = useMemo<(() => void) | undefined>(() => {
 		if (subMode === 'form') return goGrid;
 		if (mode === 'overlay') return onCloseOverlay;
@@ -121,6 +127,9 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 
 			const overlay = document.querySelector<HTMLElement>(`[data-spotlight-id="${OVERLAY_SPOTLIGHT_ID}"]`);
 			if (!overlay || overlay.contains(document.activeElement)) return;
+			// Immuch360: the privacy layer, opened from the sign in form, lies over the overlay at the root of the app:
+			// while it is open the focus belongs to it, never to a control hidden under it
+			if (document.querySelector(`[data-spotlight-id="${PRIVACY_LAYER_ID}"]`)) return;
 
 			Spotlight.setPointerMode(false);
 			Spotlight.focus(OVERLAY_SPOTLIGHT_ID);
@@ -152,6 +161,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 				<Button autoFocus size="large" icon="plus" onClick={goForm} backgroundOpacity="opaque">
 					{t('webos_add_account')}
 				</Button>
+				<PrivacyPolicyButton className={css.privacy} />
 			</div>
 		);
 	}
@@ -175,6 +185,8 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 						onSetDefault={onSetDefault}
 						onRemove={onRemove}
 						onAdd={goForm}
+						startError={startError}
+						onRetry={onRetry}
 					/>
 				) : (
 					<AuthForm

@@ -13,9 +13,13 @@
 .viewContainer {
 	flex: 1;
 	min-width: 0;
-	height: 100%;
 	overflow: hidden;
 	position: relative;
+	// Immuch360: the pages scroll within LG's safe area, so that no row or text sits on the top or bottom 20 px of the
+	// screen: a margin, not a padding, as overflow clips at the padding edge (the viewer and the slideshow are fixed
+	// layers over the whole screen and keep it all)
+	height: calc(100% - 2 * var(--overscan));
+	margin: var(--overscan) 0;
 }
 
 .panelActive {

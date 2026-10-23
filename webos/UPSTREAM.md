@@ -13,7 +13,7 @@ The history of immich-tv-webos is not imported (one squashed commit keeps the hi
 ## What Immuch360 changed
 
 - Name, ids and icons: `com.aprogsys.immuch360`, its service `com.aprogsys.immuch360.service` (webOS wants the service
-  id to start with the app id), the screen saver client name, `appinfo.json`, `Makefile`, the icons and splash.
+  id to start with the app id), `appinfo.json`, `Makefile`, the icons and splash.
 - `package.json`: name, licence, the Enact and webOS command line tools pinned as dev dependencies, our scripts.
 - Texts through the fork's `i18n/` files (`src/immuch360/i18n`, `tools/build-i18n.mjs`; the texts only the TV app has
   are the `webos_*` keys of the fork's `i18n/en.json`); dates and numbers in the language of the TV.
@@ -43,7 +43,8 @@ The history of immich-tv-webos is not imported (one squashed commit keeps the hi
   TV at run time and holds every Tizen call (`detect.ts`, `features.ts`, `tizen.ts`, `tizen-api.d.ts`, `keymap.ts`),
   and a few lines in inherited files branch on it: the Samsung key codes (`immuch360/keys.ts`), Back on the first
   screen closes the app on Samsung TVs (`hooks/useWebOSKeys.ts`), the screen saver through AppCommon
-  (`utils/screenSaver.ts`), the video holds it while it plays on Samsung TVs and pauses when the app is hidden
+  (`utils/screenSaver.ts`, which does nothing on webOS: `appinfo.json` asks for the Type 3 screen saver of gallery
+  apps there), the video holds it while it plays on Samsung TVs and pauses when the app is hidden
   (`MediaViewer/VideoPlayer.tsx`), no "Network shares" item nor Phone tab there (`NavigationRail`,
   `pairing/createPairingDriver.ts`), the address keyboard for the server field (`UrlInput`, `FieldRow`), the start up
   (`index.tsx`). The last errors and policy blocks are kept for the About page (`immuch360/diagnostics/errorLog.ts`).
