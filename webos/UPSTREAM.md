@@ -28,7 +28,9 @@ The history of immich-tv-webos is not imported (one squashed commit keeps the hi
 - The 360° badge of the tiles, the 360° flag read from the timeline and from the asset details (`src/api`).
 - The `.ipk` carries the licences (`tools/licence-files.mjs`): the AGPL of Immuch360 and the MIT notice of
   immich-tv-webos.
-- The About page with the diagnostics and their QR code (`src/immuch360/diagnostics`), in the navigation rail.
+- The About page with the diagnostics and their QR code (`src/immuch360/diagnostics`), in the navigation rail. On
+  Samsung TVs it reads the TV through tizen and webapis and says what Samsung TVs lack; on both, the JS memory and the
+  last errors and policy blocks.
 - The welcome page shows the Immuch360 icon and tagline.
 - Network shares, Plex and Tapo cameras: the JS service is also a media bridge (`bridge/`, bundled into
   `service/bridge/` by `tools/build-bridge.mjs`; `service/lib/bridge-host.js` and five Luna methods in `service.js`,

@@ -1,12 +1,17 @@
 // Immuch360: what the diagnostics page reports about the TV, the app and the server, to paste into a bug report.
 // The first checks of a real LG TV listed in the webOS analysis of 21 October 2026: the model and webOS version, the
 // Chromium engine, WebGL 1 and 2 and MAX_TEXTURE_SIZE, whether video frames reach WebGL (the 360° videos), and what
-// the video decoders take.
+// the video decoders take. On a Samsung TV the same page reads the TV through tizen and webapis (src/platform/tizen.ts)
+// and adds what a real TV must answer first (Tizen design notes of 23 October 2026, section 7). On both: the JS memory
+// and the last errors and policy blocks (errorLog.ts).
 
 import LS2Request from '@enact/webos/LS2Request';
 import type {PhotoRepository} from '../../domain/PhotoRepository';
 import {currentLocale, localeLoadError, t} from '../i18n';
 import {SphereRenderer, getWebGL, webglInfo} from '../sphere/SphereRenderer';
+import {platform} from '../../platform/detect';
+import {probeSmartView, tizenAppInfo, tizenInfo, type TizenInfo} from '../../platform/tizen';
+import {lastErrors} from './errorLog';
 // The clip of the video test goes through the bundler, which copies it into the package: enact pack copies from
 // webos-meta/ only the files appinfo.json names (the icons, the splash), so the clip that sat there never reached the
 // TV, and the test said "video error 4" (MEDIA_ERR_SRC_NOT_SUPPORTED, the answer to a file that is not there) on every
@@ -88,6 +93,17 @@ interface DecodingInfo {
 	powerEfficient: boolean;
 }
 
+// Whether Media Source takes a type (a later player that feeds the video element itself needs it)
+function mediaSource(contentType: string): string | null {
+	const source = (window as {MediaSource?: {isTypeSupported?: (type: string) => boolean}}).MediaSource;
+	if (!source || typeof source.isTypeSupported !== 'function') return null;
+	try {
+		return source.isTypeSupported(contentType) ? 'yes' : 'no';
+	} catch {
+		return null;
+	}
+}
+
 async function decoderLines(): Promise<DiagnosticsLine[]> {
 	const capabilities = (navigator as {mediaCapabilities?: {decodingInfo: (config: unknown) => Promise<DecodingInfo>}}).mediaCapabilities;
 	const video = document.createElement('video');
@@ -95,6 +111,8 @@ async function decoderLines(): Promise<DiagnosticsLine[]> {
 	for (const codec of CODECS) {
 		const canPlay = video.canPlayType(codec.contentType) || 'no';
 		let verdict = `canPlayType ${canPlay}`;
+		const mse = mediaSource(codec.contentType);
+		if (mse) verdict += `, Media Source ${mse}`;
 		if (capabilities) {
 			try {
 				const info = await capabilities.decodingInfo({
@@ -111,22 +129,54 @@ async function decoderLines(): Promise<DiagnosticsLine[]> {
 	return lines;
 }
 
+const yesNo = (flag: boolean | null): string => (flag === null ? '?' : flag ? 'yes' : 'no');
+
+/** The lines of a Samsung TV that stand where webOS has its TV, webOS and Firmware lines */
+export function tizenDeviceLines(info: TizenInfo, smartView: boolean | null): DiagnosticsLine[] {
+	const panel = info.panel8k ? '8K' : info.uhdPanel ? 'UHD' : info.uhdPanel === false ? 'HD' : '?';
+	const secure = typeof window !== 'undefined' && (window as {isSecureContext?: boolean}).isSecureContext === true;
+	const subtle = typeof crypto !== 'undefined' && !!(crypto as {subtle?: unknown}).subtle;
+	return [
+		{label: 'TV', value: info.model ?? '?'},
+		{label: t('webos_diagnostics_tizen'), value: info.tizenVersion ?? '?'},
+		{label: 'Firmware', value: info.firmware ?? '?'},
+		{label: 'Panel', value: `${panel}, HDR ${yesNo(info.hdr)}`},
+		{label: 'AVPlay', value: info.avplay ? 'yes' : 'no'},
+		{label: 'Secure context', value: `${secure ? 'yes' : 'no'}, crypto.subtle ${subtle ? 'yes' : 'no'}`},
+		{label: 'Smart View', value: smartView === null ? '?' : smartView ? 'answers on port 8001' : 'no answer on port 8001'},
+	];
+}
+
+/** The JS memory of the page, where the engine tells it (Chromium's performance.memory) */
+export function heapLine(memory: {usedJSHeapSize?: number; jsHeapSizeLimit?: number} | undefined): string {
+	if (!memory || !memory.jsHeapSizeLimit) return '?';
+	const mb = (bytes: number) => Math.round(bytes / 1048576);
+	return `${mb(memory.usedJSHeapSize ?? 0)} MB used of ${mb(memory.jsHeapSizeLimit)} MB`;
+}
+
 /** Everything but the video test, which takes a few seconds (probeVideoTexture) */
 export async function collectDiagnostics(repository: PhotoRepository | null): Promise<DiagnosticsLine[]> {
-	const [appinfo, system, serverVersion] = await Promise.all([
-		readLocalJson('appinfo.json'),
+	const onTizen = platform() === 'tizen';
+	const [appinfo, system, serverVersion, smartView] = await Promise.all([
+		onTizen ? Promise.resolve<Record<string, unknown> | null>(tizenAppInfo()) : readLocalJson('appinfo.json'),
 		systemInfo(),
 		repository ? repository.getServerVersion() : Promise.resolve(null),
+		onTizen ? probeSmartView() : Promise.resolve(null),
 	]);
 	const device = deviceInfo();
 	const gl = webglInfo();
 	const engine = /Chrome\/([\d.]+)/.exec(navigator.userAgent);
+	const tvLines: DiagnosticsLine[] = onTizen
+		? tizenDeviceLines(tizenInfo(), smartView)
+		: [
+				{label: 'TV', value: [system?.modelName ?? device?.modelName, system?.UHD === 'true' || system?.UHD === true ? 'UHD' : null].filter(Boolean).join(', ') || '?'},
+				{label: 'webOS', value: String(system?.sdkVersion ?? device?.platformVersion ?? '?')},
+				{label: 'Firmware', value: String(system?.firmwareVersion ?? '?')},
+			];
 	const lines: DiagnosticsLine[] = [
 		{label: 'Immuch360', value: `${String(appinfo?.version ?? '?')} (${String(appinfo?.id ?? '?')})`},
 		{label: 'immich-tv-webos', value: BASE_VERSION},
-		{label: 'TV', value: [system?.modelName ?? device?.modelName, system?.UHD === 'true' || system?.UHD === true ? 'UHD' : null].filter(Boolean).join(', ') || '?'},
-		{label: 'webOS', value: String(system?.sdkVersion ?? device?.platformVersion ?? '?')},
-		{label: 'Firmware', value: String(system?.firmwareVersion ?? '?')},
+		...tvLines,
 		{label: 'Chromium', value: engine ? engine[1]! : '?'},
 		{label: 'User agent', value: navigator.userAgent},
 		{label: 'Screen', value: `${window.innerWidth} x ${window.innerHeight}, ${window.devicePixelRatio || 1} px/px, screen ${window.screen.width} x ${window.screen.height}`},
@@ -134,9 +184,13 @@ export async function collectDiagnostics(repository: PhotoRepository | null): Pr
 		{label: 'WebGL', value: `1: ${gl.webgl1 ? 'yes' : 'no'}, 2: ${gl.webgl2 ? 'yes' : 'no'}, MAX_TEXTURE_SIZE ${gl.maxTextureSize ?? '?'}`},
 		{label: 'GPU', value: gl.renderer ?? '?'},
 		{label: 'WebAssembly', value: typeof WebAssembly === 'object' ? 'yes' : 'no'},
+		{label: t('webos_diagnostics_heap'), value: heapLine((performance as {memory?: {usedJSHeapSize?: number; jsHeapSizeLimit?: number}}).memory)},
 		{label: 'Server', value: repository ? `${repository.serverUrl()}, ${serverVersion ?? '?'}` : '?'},
 	];
-	return lines.concat(await decoderLines());
+	const errors = lastErrors();
+	const closing: DiagnosticsLine[] = [{label: t('webos_diagnostics_last_errors'), value: errors.length > 0 ? errors.join(' | ') : 'none'}];
+	if (onTizen) closing.push({label: t('webos_not_on_samsung_title'), value: t('webos_not_on_samsung_body')});
+	return lines.concat(await decoderLines(), closing);
 }
 
 // The names of the codes of MediaError, for the line of a clip that did not play
