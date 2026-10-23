@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show ValueListenable, ValueNotifier;
 import 'package:flutter/widgets.dart' show AppLifecycleState, WidgetsBinding;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -102,6 +103,18 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   /// Whether [suspendForExternalPlayer] stopped this player
   bool get isSuspendedForExternalPlayer => _suspended;
 
+  final _tracksChanged = ValueNotifier(0);
+
+  List<NativeVideoTrack> _lastTracks = const [];
+
+  /// What [tracks] found last for the video loaded: the track menus that show again with the controls start from it,
+  /// rather than without menus until the native player answers
+  List<NativeVideoTrack> get lastTracks => _lastTracks;
+
+  /// Changes when the audio and subtitle tracks of the video may have changed: a native player attached, a video
+  /// loaded, a track picked (see [tracks]); what the track menus of the controls listen to
+  ValueListenable<int> get tracksChanged => _tracksChanged;
+
   /// Why the video does not play while the status is [VideoPlaybackStatus.failed], null otherwise
   VideoPlaybackFailure? get failure => _failure;
 
@@ -129,12 +142,57 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     _stallTimer?.cancel();
     unawaited(_keepScreenOn(false));
     _controller = null;
+    _tracksChanged.dispose();
 
     super.dispose();
   }
 
   void attachController(NativeVideoPlayerController controller) {
     _controller = controller;
+    _tracksChanged.value++;
+  }
+
+  /// The native player reported other tracks: a video loaded, a track picked
+  void onNativeTracksChanged() {
+    if (mounted) {
+      _tracksChanged.value++;
+    }
+  }
+
+  /// The audio and subtitle tracks of the video, their languages named in [locale] (a BCP 47 tag): none before a
+  /// native player is attached, and none where the player does not list them (iOS, and the computers, which have
+  /// their own audio track menu)
+  Future<List<NativeVideoTrack>> tracks({String? locale}) async {
+    final controller = _controller;
+    if (controller == null) {
+      return const [];
+    }
+    try {
+      return _lastTracks = await controller.getTracks(locale: locale);
+    } catch (e) {
+      _log.warning('Error listing the tracks: $e');
+      return const [];
+    }
+  }
+
+  /// Plays [track], one of [tracks]
+  Future<void> selectTrack(NativeVideoTrack track) async {
+    try {
+      if (!(await _controller?.selectTrack(track) ?? true)) {
+        _log.info('The tracks changed before $track was picked');
+      }
+    } catch (e) {
+      _log.severe('Error selecting a track: $e');
+    }
+  }
+
+  /// Plays no track of [type]: subtitles off
+  Future<void> disableTracks(NativeVideoTrackType type) async {
+    try {
+      await _controller?.disableTracks(type);
+    } catch (e) {
+      _log.severe('Error turning the $type tracks off: $e');
+    }
   }
 
   Future<void> load(VideoSource source) async {
@@ -145,6 +203,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
     _ready = false;
     _playOnForeground = false;
+    _lastTracks = const [];
     if (state.status == VideoPlaybackStatus.failed) {
       // Loading again: the spinner, and a new stall check, from now on
       state = state.copyWith(status: VideoPlaybackStatus.buffering);

@@ -1,16 +1,15 @@
-import 'dart:math';
-
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/models/cast/cast_manager_state.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/video_track_buttons.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_time_bar.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/cast.provider.dart';
@@ -22,8 +21,10 @@ import 'package:immich_mobile/widgets/asset_viewer/animated_play_pause.dart';
 ///
 /// On a TV (the remote control layout) they also hide while the video loads, every key of the remote starts the 5 s
 /// again wherever it goes, they show when the video ends, and -10 s and +10 s buttons follow play and pause, for the
-/// remotes without fast forward and rewind: left and right go to the previous or next asset there (see
-/// remoteVideoArrows).
+/// remotes without fast forward and rewind (left and right go to the previous or next asset there, see
+/// remoteVideoArrows); the time bar under them takes the remote: left and right on it seek, faster while held (see
+/// VideoTimeBar). The audio track and subtitle menus follow, for a video that has several audio tracks or subtitles
+/// (VideoTrackButtons, DesktopAudioTrackButton).
 class VideoControls extends ConsumerStatefulWidget {
   final String videoPlayerName;
 
@@ -128,9 +129,7 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
     ref.read(castProvider.notifier).seekTo(target);
   }
 
-  void _onSeek(bool isCasting, double value) {
-    final seekTo = Duration(microseconds: value.toInt());
-
+  void _onSeek(bool isCasting, Duration seekTo) {
     if (isCasting) {
       ref.read(castProvider.notifier).seekTo(seekTo);
       return;
@@ -219,6 +218,9 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
                     onPressed: isLoaded ? () => _seekBy(isCasting, remoteSeekStep) : null,
                   ),
                 ],
+                // The audio tracks and the subtitles of the player of the phones, TVs and headsets
+                if (!CurrentPlatform.isDesktop && !isCasting)
+                  VideoTrackButtons(playerKey: widget.videoPlayerName, shadows: VideoControls._controlShadows),
                 const Spacer(),
                 IgnorePointer(
                   child: Text(
@@ -234,22 +236,14 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
                 const SizedBox(width: 12),
               ],
             ),
-            // On a TV the arrows belong to the viewer and to the buttons: a focused slider would keep them (Flutter
-            // issue 54984)
-            ExcludeFocus(
-              excluding: tvMode,
-              child: Slider(
-                value: min(position.inMicroseconds.toDouble(), duration.inMicroseconds.toDouble()),
-                min: 0,
-                max: max(duration.inMicroseconds.toDouble(), 1),
-                thumbColor: Colors.white,
-                activeColor: Colors.white,
-                inactiveColor: whiteOpacity75,
-                padding: EdgeInsets.zero,
-                onChangeStart: (_) => notifier.hold(),
-                onChangeEnd: (_) => notifier.release(),
-                onChanged: isLoaded ? (value) => _onSeek(isCasting, value) : null,
-              ),
+            VideoTimeBar(
+              position: position,
+              duration: duration,
+              tvMode: tvMode,
+              onHold: notifier.hold,
+              onRelease: notifier.release,
+              onToggle: () => _toggle(isCasting),
+              onSeek: isLoaded ? (position) => _onSeek(isCasting, position) : null,
             ),
           ],
         ),

@@ -1,10 +1,11 @@
 // The video page of a share with a remote control. On a TV left and right go to the previous or next file of the
 // folder whatever the video does (they seek in a file opened on its own), OK shows the controls with play and pause
-// focused, any key brings back the app bar and the controls, which hide 5 s after the last key while the video plays,
-// and Back hides them before it leaves, while the Back button of the app bar leaves at once. Elsewhere OK pauses and
-// plays, left and right seek by 10 s while it plays and go to the previous or next file while it is paused. The media
-// keys work from anywhere on the page. A video that cannot be had shows Retry, which Down and OK reach. A phone keeps
-// Back as before, and its bars hide 5 s after they show while the video plays too.
+// focused, Down from there the time bar, where left and right seek (faster while held), any key brings back the app
+// bar and the controls, which hide 5 s after the last key while the video plays, and Back hides them before it
+// leaves, while the Back button of the app bar leaves at once. Elsewhere OK pauses and plays, left and right seek by
+// 10 s while it plays and go to the previous or next file while it is paused. The media keys work from anywhere on
+// the page. A video that cannot be had shows Retry, which Down and OK reach. A phone keeps Back as before, and its
+// bars hide 5 s after they show while the video plays too.
 
 import 'dart:async';
 
@@ -27,6 +28,7 @@ import 'package:immich_mobile/presentation/pages/network/network_browser.page.da
 import 'package:immich_mobile/presentation/pages/network/network_video.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_controls.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -99,6 +101,8 @@ void main() {
   late StoreService store;
   late MemoryShare share;
   late List<String> calls;
+  // What the page asks of the player of the next video, /b.mp4
+  late List<String> nextCalls;
   late int systemPops;
 
   setUp(() async {
@@ -109,6 +113,7 @@ void main() {
     share = MemoryShare(_source, files: {'/a.jpg': fakePhoto(), '/clip.mp4': video, '/b.mp4': video});
     share.folders['/'] = [share.file('/a.jpg'), share.file('/clip.mp4'), share.file('/b.mp4')];
     calls = [];
+    nextCalls = [];
     _loops.clear();
     systemPops = 0;
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
@@ -142,6 +147,7 @@ void main() {
     bool inFolder = true,
     bool pushed = false,
     bool isTelevision = false,
+    bool realNeighbours = false,
   }) async {
     final entries = share.folders['/']!;
     final folder = NetworkFolderMedia(
@@ -153,8 +159,18 @@ void main() {
     final router = await pumpNetworkRouter(
       tester,
       // Opened from a folder, so that its app bar has a Back button
-      home: pushed ? const Scaffold(body: Text('folder')) : page,
-      pages: {if (pushed) NetworkVideoRoute.name: (_) => page},
+      home: pushed || realNeighbours ? const Scaffold(body: Text('folder')) : page,
+      // The remote control layout around the navigator, as in the app
+      builder: tvMode ? (context, child) => TvShell(child: child!) : null,
+      pages: {
+        if (pushed) NetworkVideoRoute.name: (_) => page,
+        // The next video in the real page, as the app opens it
+        if (realNeighbours)
+          NetworkVideoRoute.name: (data) {
+            final args = data.argsAs<NetworkVideoRouteArgs>();
+            return NetworkVideoPage(key: args.key, sourceId: args.sourceId, path: args.path, folder: args.folder);
+          },
+      },
       settle: false,
       overrides: [
         tvModeProvider.overrideWithValue(tvMode),
@@ -175,10 +191,28 @@ void main() {
             ),
           ),
         ),
+        videoPlayerProvider('network:nas:/b.mp4').overrideWith(
+          (ref) => _FakePlayer(
+            nextCalls,
+            const VideoPlayerState(
+              position: Duration(seconds: 5),
+              duration: Duration(minutes: 3),
+              status: VideoPlaybackStatus.paused,
+            ),
+          ),
+        ),
       ],
     );
     if (pushed) {
       unawaited(router.push(NetworkVideoRoute(sourceId: _source.id, path: '/clip.mp4')));
+    }
+    if (realNeighbours) {
+      // Opened from the grid of the folder, as in the app: the next file replaces this route
+      unawaited(router.push(NetworkVideoRoute(sourceId: _source.id, path: '/clip.mp4', folder: folder)));
+      // Past the transition (the page shows a spinner until a native player is ready: no pumpAndSettle)
+      for (var i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
     }
     for (var i = 0; i < 5; i++) {
       await tester.pump(const Duration(milliseconds: 50));
@@ -223,6 +257,31 @@ void main() {
     expect(find.text('video nas /b.mp4'), findsOneWidget);
     expect(calls, isEmpty);
   });
+
+  testWidgets(
+    'on a TV right while it plays opens the next video in a page of its own, whose controls drive its player',
+    (tester) async {
+      await pumpVideo(tester, status: VideoPlaybackStatus.playing, realNeighbours: true);
+      final first = tester.state<NetworkVideoPageState>(find.byType(NetworkVideoPage));
+
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      for (var i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      final next = tester.state<NetworkVideoPageState>(find.byType(NetworkVideoPage));
+      expect(next.widget.path, '/b.mp4');
+      expect(identical(next, first), isFalse, reason: 'a new page, not the old one under the new name');
+      expect((await next.videoSource)?.path, 'http://127.0.0.1:1234/token/nas/b.mp4', reason: 'it loads the next file');
+      expect(find.text('00:05 / 03:00'), findsOneWidget, reason: 'the controls show the player of the next file');
+
+      // OK, then OK on play and pause: the next video plays, the first one is left alone
+      await press(tester, LogicalKeyboardKey.select);
+      await press(tester, LogicalKeyboardKey.select);
+      expect(nextCalls, ['play']);
+      expect(calls, isEmpty);
+    },
+  );
 
   testWidgets('on a TV left goes to the previous one while it loads', (tester) async {
     await pumpVideo(tester, status: VideoPlaybackStatus.buffering);
@@ -389,6 +448,56 @@ void main() {
 
     await press(tester, LogicalKeyboardKey.mediaPlayPause);
     expect(calls, ['pause']);
+  });
+
+  testWidgets('on a TV Down from play reaches the time bar, where left and right seek and OK pauses', (tester) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing);
+
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    expect(playFocus(tester).hasPrimaryFocus, isTrue);
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'Video time bar');
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    await press(tester, LogicalKeyboardKey.arrowLeft);
+    await press(tester, LogicalKeyboardKey.arrowLeft);
+    expect(calls, ['seek 40', 'seek 30', 'seek 20']);
+    expect(find.byType(NetworkVideoPage), findsOneWidget);
+    expect(
+      find.text('video nas /b.mp4'),
+      findsNothing,
+      reason: 'the arrows seek on the bar, they leave the file no more',
+    );
+
+    // Held, the video waits and plays on once the key is released
+    calls.clear();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pump();
+    expect(calls, ['seek 30', 'pause', 'seek 32', 'seek 34', 'play']);
+
+    await press(tester, LogicalKeyboardKey.select);
+    expect(calls.last, 'pause');
+  });
+
+  testWidgets('on a TV the bars hide 5 s after the last key on the time bar, and right goes to the next file again', (
+    tester,
+  ) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing);
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    expect(calls, ['seek 40']);
+
+    await tester.pump(const Duration(seconds: 5));
+    expect(controlsShown(), isFalse);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'Network video');
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    await tester.pumpAndSettle();
+    expect(find.text('video nas /b.mp4'), findsOneWidget);
   });
 
   testWidgets('on a TV Back hides the controls first, then leaves', (tester) async {

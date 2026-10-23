@@ -66,8 +66,12 @@ class NetworkFolderMedia {
 }
 
 /// The page of the photo or video next to the one at [path] in [folder] ([step] 1 for the next one, -1 for the previous
-/// one), with the folder around it: what the arrows of a remote open from a photo or a paused video. Null at either end
-/// of the folder, and without a folder (a camera clip opens on its own).
+/// one), with the folder around it: what the arrows of a remote open from a photo or a video. Null at either end of the
+/// folder, and without a folder (a camera clip opens on its own).
+///
+/// The pages open it in their own place (replaceRoute). auto_route keys a page by its route name, so the navigator
+/// updates the route in place from one video to the next: the page carries a key of its own file, so that the next
+/// file gets a new page, with its own player, rather than the old page and the old player under the new name.
 PageRouteInfo? networkFolderNeighbourRoute(String sourceId, NetworkFolderMedia? folder, String path, int step) {
   if (folder == null) {
     return null;
@@ -82,10 +86,14 @@ PageRouteInfo? networkFolderNeighbourRoute(String sourceId, NetworkFolderMedia? 
   }
   final entry = entries[next];
   final around = NetworkFolderMedia(entries: entries, urls: folder.urls, index: next);
+  final key = networkFilePageKey(sourceId, entry.path);
   return entry.isVideo
-      ? NetworkVideoRoute(sourceId: sourceId, path: entry.path, folder: around)
-      : NetworkPhotoRoute(sourceId: sourceId, path: entry.path, folder: around);
+      ? NetworkVideoRoute(key: key, sourceId: sourceId, path: entry.path, folder: around)
+      : NetworkPhotoRoute(key: key, sourceId: sourceId, path: entry.path, folder: around);
 }
+
+/// The key of the page of a photo or a video of a share: one page, and one player, per file
+Key networkFilePageKey(String sourceId, String path) => ValueKey('network-file:$sourceId:$path');
 
 /// The folders and the photos and videos of a network share, from [path]: tap a folder to go into it, a photo or a
 /// video to open it. Files of other kinds are left out. A long press on a photo or a video, or the Select button,

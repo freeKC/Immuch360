@@ -324,6 +324,12 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     }
   }
 
+  void _onTracksChanged() {
+    if (mounted) {
+      _notifier.onNativeTracksChanged();
+    }
+  }
+
   void _onPlaybackEnded() {
     if (!mounted) {
       return;
@@ -403,6 +409,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     _controller?.onPlaybackStatusChanged.removeListener(_onPlaybackStatusChanged);
     _controller?.onPlaybackReady.removeListener(_onPlaybackReady);
     _controller?.onPlaybackEnded.removeListener(_onPlaybackEnded);
+    _controller?.onTracksChanged.removeListener(_onTracksChanged);
   }
 
   Future<void> _loadVideo() async {
@@ -443,6 +450,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     nc.onPlaybackReady.addListener(_onPlaybackReady);
     nc.onPlaybackEnded.addListener(_onPlaybackEnded);
     nc.onError.addListener(_onPlaybackError);
+    nc.onTracksChanged.addListener(_onTracksChanged);
 
     _controller = nc;
 

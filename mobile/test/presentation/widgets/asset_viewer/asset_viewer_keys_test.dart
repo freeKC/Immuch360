@@ -2,9 +2,9 @@
 // whatever they do, while a keyboard of a phone seeks through a video that plays; on a TV OK shows the controls of a
 // video with play and pause focused, any key brings them back and they hide 5 s after the last key while it plays;
 // info and Menu open the details, and on a TV so does OK held 700 ms, which then acts on its release (held on play and
-// pause, it presses the button once, never once per repeat); Up from play and pause reaches the top bar at once; the
-// bars never take the focus while hidden, and the viewer takes it back when they hide; on a TV Back leaves the bars
-// before it closes the viewer, and OK on the Back arrow of the top bar closes it.
+// pause or on the time bar, it presses once, never once per repeat); Up from play and pause reaches the top bar at
+// once; the bars never take the focus while hidden, and the viewer takes it back when they hide; on a TV Back leaves
+// the bars before it closes the viewer, and OK on the Back arrow of the top bar closes it.
 
 import 'dart:async';
 
@@ -505,6 +505,43 @@ void main() {
     await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
     await settle(tester);
     expect(events.whereType<ViewerShowDetailsEvent>(), hasLength(1));
+    expect(events.whereType<ViewerHideDetailsEvent>(), isEmpty, reason: 'the rest of the press closes nothing');
+    // The details hold the video as they open (one more pause); the repeats pressed nothing
+    expect(calls, ['play', 'pause', 'pause']);
+    // The timers of the controls run out
+    await tester.pump(const Duration(seconds: 6));
+  });
+
+  testWidgets('on a TV OK held on the time bar plays or pauses once, then opens the details', (tester) async {
+    final calls = <String>[];
+    await pumpVideo(tester, calls, status: VideoPlaybackStatus.paused);
+    final events = <Event>[];
+    final subscription = EventStream.shared.listen<Event>(events.add);
+    addTearDown(subscription.cancel);
+
+    await press(tester, LogicalKeyboardKey.select);
+    expect(playPauseFocused(tester), isTrue);
+    // Down from play and pause: the time bar under the buttons
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    expect(Focus.of(tester.element(find.byKey(const Key('video_time_bar')))).hasPrimaryFocus, isTrue);
+
+    // A short OK on the bar: it plays, and nothing more once the time of a hold is past
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+    await tester.pump(const Duration(seconds: 1));
+    expect(calls, ['play']);
+    expect(events.whereType<ViewerShowDetailsEvent>(), isEmpty);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+    await repeatOk(tester, from: Duration.zero, until: const Duration(milliseconds: 650));
+    expect(calls, ['play', 'pause'], reason: 'one press as the key went down, none for its three repeats');
+    expect(events.whereType<ViewerShowDetailsEvent>(), isEmpty, reason: '650 ms');
+
+    await repeatOk(tester, from: const Duration(milliseconds: 650), until: const Duration(seconds: 1));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+    await settle(tester);
+    expect(events.whereType<ViewerShowDetailsEvent>(), hasLength(1), reason: 'as from any button of the controls');
     expect(events.whereType<ViewerHideDetailsEvent>(), isEmpty, reason: 'the rest of the press closes nothing');
     // The details hold the video as they open (one more pause); the repeats pressed nothing
     expect(calls, ['play', 'pause', 'pause']);

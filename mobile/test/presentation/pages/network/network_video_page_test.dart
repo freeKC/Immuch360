@@ -34,6 +34,7 @@ import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
+import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
 
 import '../../../domain/services/spherical_probe_fixtures.dart';
@@ -321,6 +322,78 @@ void main() {
     expect(find.text('Buffering…'), findsOneWidget, reason: 'no native player gets ready here');
 
     await endRealIo(tester);
+  });
+
+  testWidgets('a file the player does not recognize as a video: a sentence, and what the bridge sent in the logs', (
+    tester,
+  ) async {
+    // The native views made, by id
+    final views = <int>[];
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform_views,
+      (call) async {
+        if (call.method == 'create') {
+          views.add((call.arguments as Map)['id'] as int);
+          return 0;
+        }
+        if (call.method == 'resize') {
+          return {'width': (call.arguments as Map)['width'], 'height': (call.arguments as Map)['height']};
+        }
+        return null;
+      },
+    );
+    // The tests run with the logs off
+    final logs = <String>[];
+    final level = Logger.root.level;
+    Logger.root.level = Level.INFO;
+    final subscription = Logger.root.onRecord.listen((record) => logs.add(record.message));
+    addTearDown(() async {
+      Logger.root.level = level;
+      await subscription.cancel();
+    });
+    await pumpVideoPage(tester, '/holiday.mp4');
+    await pumpUntilDetected(tester);
+    expect(views, isNotEmpty);
+
+    // What Media3 says when no extractor reads the bytes it got
+    const media3 =
+        'None of the available extractors (f, b, b, d, h, l, a, B, d, G, d, a, c, d, b, a, a, a, a, b, a) could read '
+        'the stream.{contentIsMalformed=false, dataType=1} sniff failures: [NoDeclaredBrand, NoDeclaredBrand]';
+    await tester.runAsync(
+      () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+        'me.albemala.native_video_player.api.${views.last}',
+        const StandardMethodCodec().encodeMethodCall(const MethodCall('onError', media3)),
+        (_) {},
+      ),
+    );
+    await pumpRealIo(tester, () => logs.any((line) => line.contains('first bytes sent')));
+
+    expect(find.textContaining('does not recognize it as a video'), findsOneWidget);
+    expect(find.textContaining('extractors'), findsNothing);
+    final head = flat.sublist(0, 16).map((byte) => byte.toRadixString(16).padLeft(2, '0')).join(' ');
+    expect(
+      logs,
+      contains(
+        'The player does not recognize holiday.mp4 as a video: smb share, listed as video/mp4, ${flat.length} bytes, '
+        'first bytes sent: $head',
+      ),
+    );
+
+    await endRealIo(tester);
+  });
+
+  test('the report of a file the player does not recognize tells an empty answer and an unreadable one', () {
+    const entry = NetworkEntry(sourceId: 'nas', path: '/film.mkv', isDirectory: false, size: 0);
+    expect(
+      unrecognizedVideoReport(name: 'film.mkv', shareType: NetworkSourceType.dlna, entry: entry, head: Uint8List(0)),
+      'The player does not recognize film.mkv as a video: dlna share, listed as video/x-matroska, 0 bytes, '
+      'first bytes sent: none',
+    );
+    expect(
+      unrecognizedVideoReport(name: 'film.mkv', shareType: NetworkSourceType.webdav, entry: entry, head: null),
+      endsWith('first bytes sent: not readable'),
+    );
+    expect(isUnrecognizedVideoError('Source error: HTTP 404'), isFalse);
   });
 
   testWidgets('opens a video that declares 360° in the native 360° player, from the media bridge', (tester) async {

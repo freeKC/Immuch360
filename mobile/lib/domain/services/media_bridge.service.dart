@@ -11,6 +11,9 @@
 // Next to the shares, the bridge serves media the app makes in memory (registerGenerated): the live playlist and the
 // segments of a camera for AVPlayer on iPhone and iPad. Those are never cached by the client nor by the bridge, and
 // are answered from memory, Range included.
+//
+// A transport stream with 192 byte packets (M2TS: Blu-ray, AVCHD camcorders, TV recordings), which Media3 cannot
+// read, is served as the 188 byte TS it holds when [LocalMediaBridge.convertM2ts] (see m2ts.dart).
 
 import 'dart:async';
 import 'dart:collection';
@@ -20,6 +23,7 @@ import 'dart:typed_data';
 
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/http_byte_range.dart';
+import 'package:immich_mobile/domain/services/m2ts.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:logging/logging.dart';
 
@@ -35,6 +39,7 @@ class LocalMediaBridge implements MediaBridge {
     int maxBufferedSize = defaultMaxBufferedSize,
     Duration statCacheTtl = const Duration(seconds: 60),
     int statCacheSize = 512,
+    this.convertM2ts = true,
     DateTime Function()? clock,
   }) : assert(minChunkSize > 0 && maxChunkSize >= minChunkSize),
        _token = _randomToken(),
@@ -54,6 +59,14 @@ class LocalMediaBridge implements MediaBridge {
 
   /// Most bytes of a file read ahead of its client
   final int readAheadSize;
+
+  /// Whether a transport stream with 192 byte packets is served as a 188 byte TS, for Media3 (see m2ts.dart): on the
+  /// phones, TVs and headsets. The players of the computers (libmpv) read such files as they are.
+  final bool convertM2ts;
+
+  /// Whether each file of a transport stream name or type has 192 byte packets, by source id and path, the oldest
+  /// first, with the size and the date it was looked at for
+  final _m2tsChecks = <(String, String), ({int size, DateTime? modified, Future<bool> isM2ts})>{};
 
   /// The bytes read ahead and not yet taken by the clients, all files together
   int get bufferedSize => _budget.used;
@@ -124,12 +137,14 @@ class LocalMediaBridge implements MediaBridge {
     final sourceId = fileSystem.source.id;
     _fileSystems[sourceId] = fileSystem;
     _stats.removeSource(sourceId);
+    _m2tsChecks.removeWhere((key, _) => key.$1 == sourceId);
   }
 
   @override
   void unregister(String sourceId) {
     _fileSystems.remove(sourceId);
     _stats.removeSource(sourceId);
+    _m2tsChecks.removeWhere((key, _) => key.$1 == sourceId);
     for (final reader in _bodies.where((reader) => reader.sourceId == sourceId).toList()) {
       reader.stopReadingAhead();
     }
@@ -170,6 +185,7 @@ class LocalMediaBridge implements MediaBridge {
     final server = _server;
     _server = null;
     _stats.clear();
+    _m2tsChecks.clear();
     for (final reader in _bodies.toList()) {
       reader.stopReadingAhead();
     }
@@ -224,9 +240,17 @@ class LocalMediaBridge implements MediaBridge {
       return _fail(response, HttpStatus.notFound, 'Not a file');
     }
 
-    final size = entry.size;
+    final fileSize = entry.size;
     final modified = entry.modified;
     final lastModified = modified == null ? null : HttpDate.format(modified);
+    // An M2TS file goes out as the TS it holds: its size, the ranges and the content type are those of the TS
+    final bool m2ts;
+    try {
+      m2ts = await _isM2ts(fileSystem, path, entry);
+    } catch (error, stackTrace) {
+      return _failForShare(response, fileSystem, path, error, stackTrace);
+    }
+    final size = fileSize == null || !m2ts ? fileSize : tsSizeOfM2ts(fileSize);
     var start = 0;
     var end = size;
     var partial = false;
@@ -250,7 +274,9 @@ class LocalMediaBridge implements MediaBridge {
     _BodyReader? reader;
     Uint8List? first;
     if (request.method == 'GET' && (end == null || start < end)) {
-      final body = reader = _BodyReader(this, fileSystem, path, start, end);
+      // The whole packets of the file that hold the bytes asked of an M2TS file's TS
+      final read = m2ts ? m2tsFileRange(start, end!, fileSize!) : (start: start, end: end);
+      final body = reader = _BodyReader(this, fileSystem, path, read.start, read.end);
       // A client that goes away stops the reading at once, rather than at the next chunk sent
       unawaited(response.done.then<void>((_) => body.close(), onError: (Object _) => body.close()));
       try {
@@ -268,7 +294,7 @@ class LocalMediaBridge implements MediaBridge {
     }
 
     final headers = response.headers;
-    headers.set(HttpHeaders.contentTypeHeader, _contentType(entry));
+    headers.set(HttpHeaders.contentTypeHeader, m2ts ? 'video/mp2t' : _contentType(entry));
     if (lastModified != null) {
       headers.set(HttpHeaders.lastModifiedHeader, lastModified);
     }
@@ -284,9 +310,57 @@ class LocalMediaBridge implements MediaBridge {
       }
     }
     if (reader != null && first != null) {
-      await response.addStream(_read(reader, first));
+      final body = _read(reader, first);
+      if (m2ts) {
+        final toTs = M2tsToTs(skip: start % tsPacketSize, length: end! - start);
+        await response.addStream(body.map(toTs.convert).where((chunk) => chunk.isNotEmpty));
+      } else {
+        await response.addStream(body);
+      }
     }
     await response.close();
+  }
+
+  /// Whether the file at [path] is a transport stream with 192 byte packets, to serve as a 188 byte TS: looked at once
+  /// per file, size and date, only for the names and types of transport streams (see [mayBeM2ts]) and only when
+  /// [convertM2ts]. Throws what the share threw while its head was read.
+  Future<bool> _isM2ts(NetworkFileSystem fileSystem, String path, NetworkEntry entry) {
+    final size = entry.size;
+    if (!convertM2ts || size == null || size < m2tsSniffLength || !mayBeM2ts(entry.extension, _contentType(entry))) {
+      return Future.value(false);
+    }
+    final key = (fileSystem.source.id, path);
+    final cached = _m2tsChecks.remove(key);
+    if (cached != null && cached.size == size && cached.modified == entry.modified) {
+      // Back at the end, the most recently used
+      _m2tsChecks[key] = cached;
+      return cached.isM2ts;
+    }
+    final isM2ts = Future.sync(() async {
+      final head = await fileSystem.readRange(path, 0, m2tsSniffLength);
+      final found = isM2tsHead(head);
+      if (found) {
+        _log.info('${entry.name} has 192 byte packets: served as a 188 byte TS');
+      }
+      return found;
+    });
+    final record = (size: size, modified: entry.modified, isM2ts: isM2ts);
+    _m2tsChecks[key] = record;
+    if (_m2tsChecks.length > 64) {
+      _m2tsChecks.remove(_m2tsChecks.keys.first);
+    }
+    // A failed look is not kept: the next request looks again
+    unawaited(
+      isM2ts.then<void>(
+        (_) {},
+        onError: (Object _) {
+          if (identical(_m2tsChecks[key], record)) {
+            _m2tsChecks.remove(key);
+          }
+        },
+      ),
+    );
+    return isM2ts;
   }
 
   /// A file of generated media, from memory: never cached, a range when one is asked

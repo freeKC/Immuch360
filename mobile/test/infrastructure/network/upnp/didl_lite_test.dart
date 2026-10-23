@@ -156,6 +156,19 @@ void main() {
       expect(object.thumbnailUrl!.path, '/tn.jpg', reason: 'the smallest thumbnail without album art');
     });
 
+    test('a size of 0 or below 0 is no size: the server did not know it, or wrote a large one as a signed number', () {
+      for (final written in ['0', '-1294967296', ' -1 ', '99999999999999999999999']) {
+        final object = _one(
+          _item('Film', _res('http://h/film.mkv', 'video/x-matroska', attributes: ' size="$written"')),
+        );
+        expect(object.original!.size, isNull, reason: 'size="$written"');
+      }
+      final listed = _one(
+        _item('Film', _res('http://h/film.mkv', 'video/x-matroska', attributes: ' size="3000000000"')),
+      );
+      expect(listed.original!.size, 3000000000);
+    });
+
     test('take a converted resource when there is nothing else, and a small picture alone as the file', () {
       final converted = _one(_item('A', _res('http://h/a.jpg', 'image/jpeg', extra: 'DLNA.ORG_CI=1')));
       expect(converted.original!.url.path, '/a.jpg');

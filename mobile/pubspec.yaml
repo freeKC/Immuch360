@@ -174,6 +174,10 @@ dependency_overrides:
     path: packages/media_kit_libs_windows_video
   media_kit_video:
     path: packages/media_kit_video
+  # Copy of immich-app/native_video_player at cdf621bdb7edaf996e118a58a48f6441187d79c6, the git ref of the dependency
+  # (MIT), with an audio and subtitle track API and the subtitles drawn on Android (see its IMMUCH360-NOTE.md)
+  native_video_player:
+    path: packages/native_video_player
   objective_c:
     git:
       url: https://github.com/mertalev/native
