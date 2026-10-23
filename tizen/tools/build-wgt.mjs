@@ -87,7 +87,7 @@ function filesUnder(dir) {
 
 // A font source on another server: Sandstone names LG's own fonts first, then a Noto Sans Thai file on
 // fonts.gstatic.com, which an LG TV never fetches and a Samsung TV would fetch at every start
-const REMOTE_FONT = /,?\s*url\(\s*["']?https?:\/\/[^)]*\)(\s*format\([^)]*\))?/g;
+const REMOTE_FONT = /,?\s*url\(\s*["']?(?:https?:)?\/\/[^)]*\)(\s*format\([^)]*\))?/g;
 
 /**
  * The stylesheet without the font sources of other servers: the Samsung app asks nothing of Google, and the content

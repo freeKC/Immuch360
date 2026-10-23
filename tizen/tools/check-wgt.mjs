@@ -78,6 +78,14 @@ const attribute = (tag, name) => {
 	return found ? found[1] : null;
 };
 
+// Another server in a stylesheet: url(https://...), url(//host/...), and @import of either, quoted or not
+const REMOTE_IN_STYLES = [/url\(\s*["']?(?:https?:)?\/\//i, /@import\s+(?:url\(\s*)?["']?(?:https?:)?\/\//i];
+
+/** Whether a stylesheet loads anything from another server */
+export function remoteInStyles(css) {
+	return REMOTE_IN_STYLES.some((pattern) => pattern.test(css));
+}
+
 /** What is wrong with config.xml; [] when nothing */
 export function configProblems(xml, version) {
 	const problems = [];
@@ -128,7 +136,7 @@ export function checkWgt(wgt, {version = null, unsigned = false} = {}) {
 		if (html.split(WEBAPIS_TAG).length > 2) problems.push('index.html loads webapis.js twice');
 	}
 	const styles = text('main.css');
-	if (styles !== null && /url\(\s*["']?https?:/.test(styles)) problems.push('main.css loads something from another server (a font of Google?)');
+	if (styles !== null && remoteInStyles(styles)) problems.push('main.css loads something from another server (a font of Google?)');
 	for (const [name, phrases] of Object.entries(LICENCES)) {
 		const content = text(name);
 		if (content === null) problems.push(`missing ${name}`);

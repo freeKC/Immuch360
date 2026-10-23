@@ -11,7 +11,7 @@ import {dirname, join, relative} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {crc32, deflateRawSync} from 'node:zlib';
 import {WEBAPIS_TAG, buildWgt, checkVersion, configXml, templateVersion, withWebapis, withoutRemoteFonts} from '../tools/build-wgt.mjs';
-import {APPLICATION_ID, PRIVILEGES, checkWgt, configProblems, zipEntries, zipRead} from '../tools/check-wgt.mjs';
+import {APPLICATION_ID, PRIVILEGES, checkWgt, configProblems, remoteInStyles, zipEntries, zipRead} from '../tools/check-wgt.mjs';
 
 const TIZEN = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TEMPLATE = readFileSync(join(TIZEN, 'config.xml'), 'utf8');
@@ -140,6 +140,8 @@ describe('build-wgt', () => {
 		assert.ok(css.includes('url(data:image/png;base64,AAAA)'));
 		// A face whose only source was remote keeps no source at all
 		assert.equal(withoutRemoteFonts('@font-face{font-family:X;src:url("https://example.com/x.woff2") format("woff2")}').css, '@font-face{font-family:X;src:}');
+		// A source without its scheme is on another server too
+		assert.equal(withoutRemoteFonts("@font-face{font-family:X;src:local(X),url('//example.com/x.woff2')}").css, '@font-face{font-family:X;src:local(X)}');
 	});
 
 	test('the folder: webOS files out, config.xml, the Samsung icon, the locales, licences and clip kept', () => {
@@ -204,6 +206,27 @@ describe('check-wgt', () => {
 			assert.match(checkWgt(zip, options).problems.join('; '), expected);
 		}
 		assert.deepEqual(checkWgt(zipOf(out), {unsigned: true}).problems, []);
+	});
+
+	test('a stylesheet that loads from another server, with or without the scheme, or through @import', () => {
+		for (const css of [
+			'a{background:url(https://example.com/a.png)}',
+			'a{background:url( "HTTP://example.com/a.png")}',
+			"a{background:url('//example.com/a.png')}",
+			'@import "https://example.com/a.css";',
+			"@import url(//example.com/a.css);",
+			'@import url("http://example.com/a.css") screen;',
+		]) {
+			assert.equal(remoteInStyles(css), true, css);
+		}
+		for (const css of [
+			'a{background:url(data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"/>)}',
+			'a{background:url(node_modules/@enact/sandstone/x.png)}',
+			"@import 'local.css';",
+			'a{src:local("LG Smart UI")}',
+		]) {
+			assert.equal(remoteInStyles(css), false, css);
+		}
 	});
 
 	test('config.xml: ids, Tizen 5.5, profile, exactly three privileges, access and policy', () => {
