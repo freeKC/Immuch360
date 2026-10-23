@@ -404,9 +404,11 @@ async function main() {
 		const turn = distance(before, turned);
 		if (turn < 3) throw new Error(`Right did not turn the view (the centre changed by ${turn.toFixed(1)} of 255)`);
 		await shot('03b-360-photo-turned');
-		await key(KEY.channelUp, {repeat: 3, gapMs: 120});
+		// The zoom is read on a wider square, where the lines of the picture move most
+		const wide = await region(960, 540, 512);
+		await key(KEY.channelUp, {repeat: 4, gapMs: 120});
 		await sleep(600);
-		const zoom = distance(turned, await region(960, 540, 256));
+		const zoom = distance(wide, await region(960, 540, 512));
 		if (zoom < 3) throw new Error(`ChannelUp did not zoom the view (the centre changed by ${zoom.toFixed(1)} of 255)`);
 		await shot('03c-360-photo-zoomed');
 		await key(KEY.back);
