@@ -72,22 +72,18 @@ class VideoTracksTest {
     assertEquals(Locale.getDefault(), VideoTracks.displayLocale(""))
   }
 
+  // The language setters of Media3 normalize the code through android.text.TextUtils, which a JVM test does not have:
+  // these tests set no language, the audio language the user picked last is checked on a device
   @Test
   fun startsWithoutTheSubtitlesAFileFlagsAsDefault() {
-    // The defaults of a device whose caption settings ask for French captions
-    val device = TrackSelectionParameters.Builder()
-      .setPreferredTextLanguage("fr")
-      .setPreferredTextRoleFlags(C.ROLE_FLAG_CAPTION)
-      .build()
-    val parameters = VideoTracks.initialParameters(device, audioLanguage = "de")
+    // The defaults of a device whose caption settings ask for captions
+    val device = TrackSelectionParameters.Builder().setPreferredTextRoleFlags(C.ROLE_FLAG_CAPTION).build()
+    val parameters = VideoTracks.initialParameters(device, audioLanguage = null)
     assertEquals(C.SELECTION_FLAG_DEFAULT, parameters.ignoredTextSelectionFlags)
     // Forced subtitles still start, and so do the captions the device asks for
     assertEquals(0, parameters.ignoredTextSelectionFlags and C.SELECTION_FLAG_FORCED)
-    assertEquals(listOf("fr"), parameters.preferredTextLanguages)
     assertEquals(C.ROLE_FLAG_CAPTION, parameters.preferredTextRoleFlags)
     assertFalse(C.TRACK_TYPE_TEXT in parameters.disabledTrackTypes)
-    // The audio language the user picked last
-    assertEquals(listOf("de"), parameters.preferredAudioLanguages)
   }
 
   @Test
