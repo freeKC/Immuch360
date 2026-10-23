@@ -521,6 +521,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     controller.onPlaybackReady.addListener(_onPlaybackReady);
     controller.onPlaybackEnded.addListener(_onPlaybackEnded);
     controller.onError.addListener(_onPlayerError);
+    controller.onTracksChanged.addListener(_onTracksChanged);
     _controller = controller;
     ref.listenManual(videoPlayerProvider(_playerKey).select((v) => v.status), _onFailure);
     unawaited(_loadVideo());
@@ -533,6 +534,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     controller?.onPlaybackReady.removeListener(_onPlaybackReady);
     controller?.onPlaybackEnded.removeListener(_onPlaybackEnded);
     controller?.onError.removeListener(_onPlayerError);
+    controller?.onTracksChanged.removeListener(_onTracksChanged);
   }
 
   Future<void> _loadVideo() async {
@@ -587,6 +589,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   void _onPlaybackStatusChanged() {
     if (mounted) {
       _notifier.onNativeStatusChanged();
+    }
+  }
+
+  void _onTracksChanged() {
+    if (mounted) {
+      _notifier.onNativeTracksChanged();
     }
   }
 

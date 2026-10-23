@@ -14,6 +14,7 @@ import app.alextran.immich.camera.CameraLiveViewFactory
 import app.alextran.immich.connectivity.ConnectivityApi
 import app.alextran.immich.connectivity.ConnectivityApiImpl
 import app.alextran.immich.core.AppHealth
+import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.ImmichPlugin
 import app.alextran.immich.core.NetworkApiPlugin
@@ -135,6 +136,10 @@ class MainActivity : FlutterFragmentActivity() {
     fun registerPlugins(ctx: Context, flutterEngine: FlutterEngine) {
       HttpClientManager.initialize(ctx)
       NativeVideoPlayerPlugin.dataSourceFactory = HttpClientManager::createDataSourceFactory
+      // One audio language for every player: the flat player of the viewers prefers the one picked last, in it or in
+      // the 360° and Spatial players, and a pick in it is remembered for them too
+      NativeVideoPlayerPlugin.preferredAudioLanguage = { AudioTrackChooser.rememberedLanguage(ctx) }
+      NativeVideoPlayerPlugin.onAudioLanguageChosen = { language -> AudioTrackChooser.rememberLanguage(ctx, language) }
       flutterEngine.plugins.add(NetworkApiPlugin())
 
       val messenger = flutterEngine.dartExecutor.binaryMessenger

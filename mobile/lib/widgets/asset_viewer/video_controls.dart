@@ -7,6 +7,7 @@ import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/models/cast/cast_manager_state.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/video_track_buttons.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_time_bar.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
@@ -22,7 +23,8 @@ import 'package:immich_mobile/widgets/asset_viewer/animated_play_pause.dart';
 /// again wherever it goes, they show when the video ends, and -10 s and +10 s buttons follow play and pause, for the
 /// remotes without fast forward and rewind (left and right go to the previous or next asset there, see
 /// remoteVideoArrows); the time bar under them takes the remote: left and right on it seek, faster while held (see
-/// VideoTimeBar).
+/// VideoTimeBar). The audio track and subtitle menus follow, for a video that has several audio tracks or subtitles
+/// (VideoTrackButtons, DesktopAudioTrackButton).
 class VideoControls extends ConsumerStatefulWidget {
   final String videoPlayerName;
 
@@ -216,6 +218,9 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
                     onPressed: isLoaded ? () => _seekBy(isCasting, remoteSeekStep) : null,
                   ),
                 ],
+                // The audio tracks and the subtitles of the player of the phones, TVs and headsets
+                if (!CurrentPlatform.isDesktop && !isCasting)
+                  VideoTrackButtons(playerKey: widget.videoPlayerName, shadows: VideoControls._controlShadows),
                 const Spacer(),
                 IgnorePointer(
                   child: Text(

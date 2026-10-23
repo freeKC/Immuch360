@@ -94,6 +94,11 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   @override
   final onError = ValueNotifier<String?>(null);
 
+  /// The track API of the Android player, never used here: the computers list their audio tracks with [audioTracks]
+  /// (DesktopAudioTrackButton)
+  @override
+  final onTracksChanged = ChangeNotifier();
+
   final _videoController = ValueNotifier<VideoController?>(null);
   final _buffering = ValueNotifier(false);
   final _audioTracks = ValueNotifier<List<DesktopAudioTrack>>(const []);
@@ -313,6 +318,15 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _loop = loop;
     await _engine?.setLoop(loop);
   }
+
+  @override
+  Future<List<NativeVideoTrack>> getTracks({String? locale}) async => const [];
+
+  @override
+  Future<bool> selectTrack(NativeVideoTrack track) async => false;
+
+  @override
+  Future<void> disableTracks(NativeVideoTrackType type) async {}
 
   /// Plays the audio track [id] of [audioTracks], and prefers its language for the next videos
   Future<void> selectAudioTrack(String id) async {

@@ -128,9 +128,22 @@ class AudioTrackChooser(context: Context, private val labels: Map<String, String
 
     /** Whether [format] is the track the file plays by default */
     private fun isDefault(format: Format): Boolean = format.selectionFlags and C.SELECTION_FLAG_DEFAULT != 0
+
+    private fun preferencesOf(context: Context) =
+      context.applicationContext.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+
+    /** The language of the audio track the user picked last, in any player; null before any pick */
+    fun rememberedLanguage(context: Context): String? = preferencesOf(context).getString(KEY_LANGUAGE, null)
+
+    /** Remembers [language] for the next videos; a track without a language leaves them to their own default */
+    fun rememberLanguage(context: Context, language: String?) {
+      preferencesOf(context).edit().apply {
+        if (language == null) remove(KEY_LANGUAGE) else putString(KEY_LANGUAGE, language)
+      }.apply()
+    }
   }
 
-  private val preferences = context.applicationContext.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+  private val context = context.applicationContext
 
   private val displayLocale: Locale =
     labels[LABEL_LOCALE]?.takeIf { it.isNotBlank() }?.let(Locale::forLanguageTag)
@@ -156,7 +169,7 @@ class AudioTrackChooser(context: Context, private val labels: Map<String, String
    * once its tracks are known (see [onTracksChanged]). Call it before the player is prepared.
    */
   fun attach(player: Player) {
-    val language = preferences.getString(KEY_LANGUAGE, null)
+    val language = rememberedLanguage(context)
     if (language != null) {
       player.trackSelectionParameters =
         player.trackSelectionParameters.buildUpon().setPreferredAudioLanguage(language).build()
@@ -230,11 +243,7 @@ class AudioTrackChooser(context: Context, private val labels: Map<String, String
     chosenIndex = index
     choicePending = false
     select(player, option)
-    val language = languageOf(option.format)
-    preferences.edit().apply {
-      // A track without a language leaves the next videos to their own default
-      if (language == null) remove(KEY_LANGUAGE) else putString(KEY_LANGUAGE, language)
-    }.apply()
+    rememberLanguage(context, languageOf(option.format))
   }
 
   private fun select(player: Player, option: Option) {

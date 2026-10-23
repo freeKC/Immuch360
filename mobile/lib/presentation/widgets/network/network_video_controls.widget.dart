@@ -4,6 +4,7 @@ import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/video_track_buttons.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_time_bar.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
@@ -15,7 +16,8 @@ const _shadows = [Shadow(color: Colors.black87, blurRadius: 6, offset: Offset(0,
 /// Play, pause and seek for the player of a video of a network share, the one of [videoPlayerProvider] under
 /// [playerKey]. On a TV -10 s and +10 s buttons follow play and pause, for the remotes without fast forward and rewind
 /// (left and right go to the previous or next file there, see remoteVideoArrows), and the time bar under them takes
-/// the remote: left and right on it seek, faster while held (see VideoTimeBar).
+/// the remote: left and right on it seek, faster while held (see VideoTimeBar). The audio track and subtitle menus
+/// follow, for a video that has several audio tracks or subtitles (VideoTrackButtons, DesktopAudioTrackButton).
 class NetworkVideoControls extends ConsumerWidget {
   const NetworkVideoControls({super.key, required this.playerKey, this.playFocusNode});
 
@@ -76,6 +78,8 @@ class NetworkVideoControls extends ConsumerWidget {
                   onPressed: isLoaded ? () => notifier.seekBy(remoteSeekStep) : null,
                 ),
               ],
+              // The audio tracks and the subtitles of the player of the phones, TVs and headsets
+              if (!CurrentPlatform.isDesktop) VideoTrackButtons(playerKey: playerKey, shadows: _shadows),
               const Spacer(),
               IgnorePointer(
                 child: Text(

@@ -1,0 +1,119 @@
+protocol NativeVideoPlayerApiDelegate: AnyObject {
+    func loadVideoSource(videoSource: VideoSource)
+    func getVideoInfo(completion: @escaping (VideoInfo) -> Void)
+    func getPlaybackPosition() -> Int64
+    func play()
+    func pause()
+    func stop(completion: @escaping () -> Void)
+    func isPlaying() -> Bool
+    func seekTo(position: Int64, completion: @escaping () -> Void)
+    func setPlaybackSpeed(speed: Double)
+    func setVolume(volume: Double)
+    func setLoop(loop: Bool)
+}
+
+let invalidArgumentsFlutterError = FlutterError(
+    code: "invalid_argument", message: "Invalid arguments", details: nil)
+
+class NativeVideoPlayerApi {
+    weak var delegate: NativeVideoPlayerApiDelegate?
+
+    let channel: FlutterMethodChannel
+
+    init(
+        messenger: FlutterBinaryMessenger,
+        viewId: Int64
+    ) {
+        let name = "me.albemala.native_video_player.api.\(viewId)"
+        channel = FlutterMethodChannel(
+            name: name,
+            binaryMessenger: messenger
+        )
+        channel.setMethodCallHandler(handleMethodCall)
+    }
+
+    deinit {
+        channel.setMethodCallHandler(nil)
+    }
+
+    func onPlaybackReady() {
+        channel.invokeMethod("onPlaybackReady", arguments: nil)
+    }
+
+    func onPlaybackEnded() {
+        channel.invokeMethod("onPlaybackEnded", arguments: nil)
+    }
+
+    func onPlaybackPositionChanged(position: Int64) {
+        channel.invokeMethod("onPlaybackPositionChanged", arguments: position)
+    }
+
+    func onError(_ error: Error) {
+        channel.invokeMethod("onError", arguments: error.localizedDescription)
+    }
+
+    private func handleMethodCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        switch call.method {
+        case "loadVideoSource":
+            guard let videoSourceAsMap = call.arguments as? [String: Any] else {
+                result(invalidArgumentsFlutterError)
+                return
+            }
+            guard let videoSource = VideoSource(from: videoSourceAsMap) else {
+                result(invalidArgumentsFlutterError)
+                return
+            }
+            delegate?.loadVideoSource(videoSource: videoSource)
+            result(nil)
+        case "getVideoInfo":
+            delegate?.getVideoInfo { info in result(info.toMap()) }
+        case "getPlaybackPosition":
+            let playbackPosition = delegate?.getPlaybackPosition()
+            result(playbackPosition)
+        case "play":
+            delegate?.play()
+            result(nil)
+        case "pause":
+            delegate?.pause()
+            result(nil)
+        case "stop":
+            delegate?.stop {
+                result(nil)
+            }
+        case "isPlaying":
+            let playing = delegate?.isPlaying()
+            result(playing)
+        case "seekTo":
+            guard let position = call.arguments as? Int64 else {
+                result(invalidArgumentsFlutterError)
+                return
+            }
+            delegate?.seekTo(position: position) {
+                result(nil)
+            }
+        case "setPlaybackSpeed":
+            guard let playbackSpeed = call.arguments as? Double else {
+                result(invalidArgumentsFlutterError)
+                return
+            }
+            delegate?.setPlaybackSpeed(speed: playbackSpeed)
+            result(nil)
+        case "setVolume":
+            guard let volume = call.arguments as? Double else {
+                result(invalidArgumentsFlutterError)
+                return
+            }
+            delegate?.setVolume(volume: volume)
+            result(nil)
+        case "setLoop":
+            guard let loop = call.arguments as? Bool else {
+                result(invalidArgumentsFlutterError)
+                return
+            }
+            delegate?.setLoop(loop: loop)
+            result(nil)
+        default:
+            result(FlutterMethodNotImplemented)
+        }
+    }
+}
