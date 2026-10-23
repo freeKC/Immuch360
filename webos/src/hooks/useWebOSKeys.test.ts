@@ -90,23 +90,23 @@ describe('useWebOSKeys Back without a layer', () => {
 		expect(platformBack).not.toHaveBeenCalled();
 		unmount();
 		// Unmounted (back on Photos): the platform again
-		const again = renderHook(() => useRootBack());
+		const {unmount: unmountAgain} = renderHook(() => useRootBack());
 		expect(pressBack()).toBe(true);
 		expect(platformBack).toHaveBeenCalledTimes(1);
-		again.unmount();
+		unmountAgain();
 	});
 
 	test('a layer (viewer, album, overlay) comes before the page and the platform', () => {
 		const toPhotos = jest.fn();
 		const closeViewer = jest.fn();
-		const page = renderHook(() => useRootBack(toPhotos));
-		const viewer = renderHook(() => useWebOSKeys({onBack: closeViewer}));
+		const {unmount: unmountPage} = renderHook(() => useRootBack(toPhotos));
+		const {unmount: unmountViewer} = renderHook(() => useWebOSKeys({onBack: closeViewer}));
 		expect(pressBack()).toBe(true);
 		expect(closeViewer).toHaveBeenCalledTimes(1);
 		expect(toPhotos).not.toHaveBeenCalled();
 		expect(platformBack).not.toHaveBeenCalled();
-		viewer.unmount();
-		page.unmount();
+		unmountViewer();
+		unmountPage();
 	});
 
 	test('an open Sandstone popup takes the press: nothing else acts, and the TV does not see it', () => {
@@ -116,8 +116,8 @@ describe('useWebOSKeys Back without a layer', () => {
 		document.body.appendChild(layer);
 		const toPhotos = jest.fn();
 		const closeViewer = jest.fn();
-		const page = renderHook(() => useRootBack(toPhotos));
-		const viewer = renderHook(() => useWebOSKeys({onBack: closeViewer}));
+		const {unmount: unmountPage} = renderHook(() => useRootBack(toPhotos));
+		const {unmount: unmountViewer} = renderHook(() => useWebOSKeys({onBack: closeViewer}));
 		expect(pressBack()).toBe(true);
 		expect(closeViewer).not.toHaveBeenCalled();
 		expect(toPhotos).not.toHaveBeenCalled();
@@ -126,7 +126,7 @@ describe('useWebOSKeys Back without a layer', () => {
 		layer.innerHTML = '';
 		expect(pressBack()).toBe(true);
 		expect(closeViewer).toHaveBeenCalledTimes(1);
-		viewer.unmount();
-		page.unmount();
+		unmountViewer();
+		unmountPage();
 	});
 });

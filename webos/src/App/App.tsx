@@ -1,7 +1,7 @@
 import ThemeDecorator from '@enact/sandstone/ThemeDecorator';
 import Panels from '@enact/sandstone/Panels';
 import {QueryCache, QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 
 import {useAccounts} from '../hooks/useAccounts';
 import {useRootBack} from '../hooks/useWebOSKeys';
@@ -33,6 +33,7 @@ const AppBase: React.FC = () => {
 		removeAccount,
 		switchTo,
 		setAsDefault,
+		retry,
 	} = useAccounts();
 
 	const pairingDriver = useMemo(() => createPairingDriver(), []);
@@ -45,6 +46,14 @@ const AppBase: React.FC = () => {
 
 	const openOverlay = useCallback(() => setOverlayOpen(true), []);
 	const closeOverlay = useCallback(() => setOverlayOpen(false), []);
+
+	// Immuch360: a start that failed for want of a network starts again by itself when the network comes back
+	const startFailed = accounts.length > 0 && !repository && !isValidating && !!validationError;
+	useEffect(() => {
+		if (!startFailed) return undefined;
+		window.addEventListener('online', retry);
+		return () => window.removeEventListener('online', retry);
+	}, [startFailed, retry]);
 
 	const activeAccount = accounts.find(a => a.id === activeAccountId) ?? null;
 
@@ -123,12 +132,10 @@ const AppBase: React.FC = () => {
 	}
 
 	if (!repository) {
-		// 401 on boot or validation failed — force account switch/re-auth
+		// 401 on boot or validation failed — force account switch/re-auth. Immuch360: the error of the start is shown
+		// on the page with a Retry (it used to be a toast with nothing to do but pick another account)
 		return (
 			<div className={css.app}>
-				{validationError && (
-					<div className={css.toast}>{validationError}</div>
-				)}
 				<Panels>
 					<AccountPanel
 						mode="overlay"
@@ -141,6 +148,8 @@ const AppBase: React.FC = () => {
 						onAddAccount={handleAddAccount}
 						onAddPairedAccount={handleAddPairedAccount}
 						pairingDriver={pairingDriver}
+						startError={validationError}
+						onRetry={retry}
 					/>
 				</Panels>
 			</div>

@@ -1,5 +1,7 @@
 import {APIError} from '../api/client';
 import {AuthMethod} from '../api/types';
+import {isOnline} from '../api/network';
+import {failureMessage} from '../utils/presentError';
 import {t} from '../immuch360/i18n';
 
 
@@ -9,6 +11,8 @@ export function makeAuthErrorMessage(error: unknown, method: AuthMethod): string
 			return method === AuthMethod.API_KEY ? t('webos_error_invalid_api_key') : t('webos_error_invalid_credentials');
 		}
 		if (error.status) return t('webos_error_server_status', {status: String(error.status)});
+		// Immuch360: no answer from the server: offline, timeout, CORS refused or unreachable (src/api/network.ts)
+		if (error.kind) return failureMessage(error.kind);
 	}
-	return t('webos_error_cors');
+	return failureMessage(isOnline() ? 'unreachable' : 'offline');
 }

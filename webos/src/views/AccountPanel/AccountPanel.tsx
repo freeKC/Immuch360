@@ -30,6 +30,9 @@ interface AccountPanelProps {
 	onAddPairedAccount?: (result: PairedAccountResult) => Promise<AuthSubmitResult>;
 	pairingDriver?: PairingDriver | null;
 	onCloseOverlay?: () => void;
+	// Immuch360: why the active account did not start, and how to start it again
+	startError?: string;
+	onRetry?: () => void;
 }
 
 export const AccountPanel: React.FC<AccountPanelProps> = ({
@@ -44,6 +47,8 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 	onAddPairedAccount,
 	pairingDriver,
 	onCloseOverlay,
+	startError,
+	onRetry,
 }) => {
 	// Both modes start on 'grid'. In first-launch mode 'grid' renders the welcome screen
 	// (since accounts.length === 0 means no cards to draw); the user clicks the CTA
@@ -175,6 +180,8 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 						onSetDefault={onSetDefault}
 						onRemove={onRemove}
 						onAdd={goForm}
+						startError={startError}
+						onRetry={onRetry}
 					/>
 				) : (
 					<AuthForm

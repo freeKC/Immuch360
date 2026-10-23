@@ -4,6 +4,7 @@ import {NAVIGATION_RAIL_ID, SIDEBAR_WIDTH} from '../utils/constants';
 import {useRootBack} from '../hooks/useWebOSKeys';
 import {createSpotlightContainer} from '../utils/spotlight';
 import {NavigationRail} from '../components/NavigationRail/NavigationRail';
+import {OfflineNotice} from '../components/OfflineNotice/OfflineNotice';
 import MainPanel from './MainPanel';
 import AlbumsPanel from './AlbumsPanel';
 import PlacesPanel from './PlacesPanel';
@@ -84,6 +85,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({onOpenAccount, accountLetter, acco
 					</div>
 				)}
 			</ViewContainer>
+			<OfflineNotice />
 		</div>
 	);
 };

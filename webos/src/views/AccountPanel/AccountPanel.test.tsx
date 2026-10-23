@@ -297,4 +297,39 @@ describe('AccountPanel', () => {
 		screen.getByRole('button', {name: /Connect/i});
 		expect(onCloseOverlay).not.toHaveBeenCalled();
 	});
+	// Immuch360: a start that failed (no network, server down or slow) shows why, with a Retry; OK on the active card
+	// starts it again too (it used to do nothing)
+	test('a failed start shows its error with Retry, and OK on the active card retries', () => {
+		const onRetry = jest.fn();
+		const onSwitch = jest.fn();
+		render(
+			<AccountPanel
+				mode="overlay"
+				accounts={[acc]}
+				activeAccountId="a"
+				defaultAccountId={null}
+				{...noopHandlers}
+				onSwitch={onSwitch}
+				onCloseOverlay={undefined}
+				startError="Couldn't reach the server."
+				onRetry={onRetry}
+			/>,
+		);
+		expect(screen.getByRole('alert').textContent).toContain("Couldn't reach the server.");
+		fireEvent.click(screen.getByRole('button', {name: /Retry/i}));
+		expect(onRetry).toHaveBeenCalledTimes(1);
+		fireEvent.click(screen.getByText('me@example.com'));
+		expect(onRetry).toHaveBeenCalledTimes(2);
+		expect(onSwitch).not.toHaveBeenCalled();
+	});
+
+	test('without a failed start, OK on the active card does not retry', () => {
+		const onRetry = jest.fn();
+		render(
+			<AccountPanel mode="overlay" accounts={[acc]} activeAccountId="a" defaultAccountId={null} {...noopHandlers} onRetry={onRetry} />,
+		);
+		expect(screen.queryByRole('alert')).toBeNull();
+		fireEvent.click(screen.getByText('me@example.com'));
+		expect(onRetry).not.toHaveBeenCalled();
+	});
 });

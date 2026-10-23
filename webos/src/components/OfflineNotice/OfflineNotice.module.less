@@ -1,0 +1,24 @@
+// Immuch360: lengths in 4K-space px like the rest of the LESS; above the viewer and the slideshow (z-index 1000),
+// below Sandstone's popups (2000)
+@import '../../styles/_theme.less';
+
+.notice {
+	position: fixed;
+	top: @page-inset-top;
+	right: @page-inset-x;
+	z-index: 1500;
+	display: flex;
+	align-items: center;
+	max-width: 1600px;
+	padding: 20px 32px;
+	border-radius: @radius-card;
+	border-left: 6px solid #f28b82;
+	background: @surface-raised;
+	color: @text;
+	font-size: var(--font-caption);
+	pointer-events: none;
+}
+
+.icon {
+	margin-right: 16px;
+}
