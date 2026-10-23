@@ -163,6 +163,22 @@ class Drift extends $Drift {
   @override
   int get schemaVersion => 35;
 
+  /// ALTER TABLE ADD COLUMN, skipped when [table] already has [column], so that a step can run again on a database
+  /// that went through it once. That happens when a build with an older schema opens a database a newer build migrated:
+  /// its onUpgrade has nothing to do (the version read in the transaction is above its own), then drift writes the
+  /// older version to user_version all the same and leaves the newer columns in place, and the next start of the newer
+  /// build runs the same steps again. A desktop build at 34 started after one at 35 left such a database, on which
+  /// every later start failed with "duplicate column name: group_date"
+  Future<void> _addColumnIfMissing(Migrator m, TableInfo table, GeneratedColumn column) async {
+    final existing = await customSelect(
+      'SELECT 1 FROM pragma_table_info(?) WHERE name = ?',
+      variables: [Variable.withString(table.actualTableName), Variable.withString(column.name)],
+    ).get();
+    if (existing.isEmpty) {
+      await m.addColumn(table, column);
+    }
+  }
+
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (m, from, to) async {
@@ -212,7 +228,7 @@ class Drift extends $Drift {
                 await m.drop(v6.idxRemoteAssetOwnerChecksum);
                 await m.create(v6.idxRemoteAssetOwnerChecksum);
                 // Adds libraryId to remote_asset_entity
-                await m.addColumn(v6.remoteAssetEntity, v6.remoteAssetEntity.libraryId);
+                await _addColumnIfMissing(m, v6.remoteAssetEntity, v6.remoteAssetEntity.libraryId);
                 await m.drop(v6.uQRemoteAssetsOwnerChecksum);
                 await m.create(v6.uQRemoteAssetsOwnerChecksum);
                 await m.drop(v6.uQRemoteAssetsOwnerLibraryChecksum);
@@ -225,15 +241,15 @@ class Drift extends $Drift {
                 await m.create(v8.storeEntity);
               },
               from8To9: (m, v9) async {
-                await m.addColumn(v9.localAlbumEntity, v9.localAlbumEntity.linkedRemoteAlbumId);
+                await _addColumnIfMissing(m, v9.localAlbumEntity, v9.localAlbumEntity.linkedRemoteAlbumId);
               },
               from9To10: (m, v10) async {
                 await m.createTable(v10.authUserEntity);
-                await m.addColumn(v10.userEntity, v10.userEntity.avatarColor);
+                await _addColumnIfMissing(m, v10.userEntity, v10.userEntity.avatarColor);
                 await m.alterTable(TableMigration(v10.userEntity));
               },
               from10To11: (m, v11) async {
-                await m.addColumn(v11.localAlbumAssetEntity, v11.localAlbumAssetEntity.marker_);
+                await _addColumnIfMissing(m, v11.localAlbumAssetEntity, v11.localAlbumAssetEntity.marker_);
               },
               from11To12: (m, v12) async {
                 final localToUTCMapping = {
@@ -260,9 +276,9 @@ class Drift extends $Drift {
                 await m.createIndex(v13.idxTrashedLocalAssetAlbum);
               },
               from13To14: (m, v14) async {
-                await m.addColumn(v14.localAssetEntity, v14.localAssetEntity.adjustmentTime);
-                await m.addColumn(v14.localAssetEntity, v14.localAssetEntity.latitude);
-                await m.addColumn(v14.localAssetEntity, v14.localAssetEntity.longitude);
+                await _addColumnIfMissing(m, v14.localAssetEntity, v14.localAssetEntity.adjustmentTime);
+                await _addColumnIfMissing(m, v14.localAssetEntity, v14.localAssetEntity.latitude);
+                await _addColumnIfMissing(m, v14.localAssetEntity, v14.localAssetEntity.longitude);
               },
               from14To15: (m, v15) async {
                 await m.alterTable(
@@ -275,12 +291,12 @@ class Drift extends $Drift {
               },
               from15To16: (m, v16) async {
                 // Add i_cloud_id to local and remote asset tables
-                await m.addColumn(v16.localAssetEntity, v16.localAssetEntity.iCloudId);
+                await _addColumnIfMissing(m, v16.localAssetEntity, v16.localAssetEntity.iCloudId);
                 await m.createIndex(v16.idxLocalAssetCloudId);
                 await m.createTable(v16.remoteAssetCloudIdEntity);
               },
               from16To17: (m, v17) async {
-                await m.addColumn(v17.remoteAssetEntity, v17.remoteAssetEntity.isEdited);
+                await _addColumnIfMissing(m, v17.remoteAssetEntity, v17.remoteAssetEntity.isEdited);
               },
               from17To18: (m, v18) async {
                 await m.createIndex(v18.idxRemoteAssetCloudId);
@@ -299,12 +315,12 @@ class Drift extends $Drift {
                 await m.createIndex(v19.idxStackPrimaryAssetId);
               },
               from19To20: (m, v20) async {
-                await m.addColumn(v20.assetFaceEntity, v20.assetFaceEntity.isVisible);
-                await m.addColumn(v20.assetFaceEntity, v20.assetFaceEntity.deletedAt);
+                await _addColumnIfMissing(m, v20.assetFaceEntity, v20.assetFaceEntity.isVisible);
+                await _addColumnIfMissing(m, v20.assetFaceEntity, v20.assetFaceEntity.deletedAt);
               },
               from20To21: (m, v21) async {
-                await m.addColumn(v21.localAssetEntity, v21.localAssetEntity.playbackStyle);
-                await m.addColumn(v21.trashedLocalAssetEntity, v21.trashedLocalAssetEntity.playbackStyle);
+                await _addColumnIfMissing(m, v21.localAssetEntity, v21.localAssetEntity.playbackStyle);
+                await _addColumnIfMissing(m, v21.trashedLocalAssetEntity, v21.trashedLocalAssetEntity.playbackStyle);
               },
               from21To22: (m, v22) async {
                 await m.createTable(v22.assetEditEntity);
@@ -347,7 +363,7 @@ class Drift extends $Drift {
                 await m.createIndex(v25.idxAssetFaceVisiblePerson);
               },
               from25To26: (m, v26) async {
-                await m.addColumn(v26.remoteAssetEntity, v26.remoteAssetEntity.uploadedAt);
+                await _addColumnIfMissing(m, v26.remoteAssetEntity, v26.remoteAssetEntity.uploadedAt);
               },
               from26To27: (m, v27) async {
                 await customStatement('ALTER TABLE metadata RENAME TO settings');
@@ -366,7 +382,7 @@ class Drift extends $Drift {
                 await m.createIndex(v31.idxRemoteAssetUploaded);
               },
               from31To32: (m, v32) async {
-                await m.addColumn(v32.localAssetEntity, v32.localAssetEntity.previousChecksum);
+                await _addColumnIfMissing(m, v32.localAssetEntity, v32.localAssetEntity.previousChecksum);
               },
               from32To33: (m, v33) async {
                 // Removed foreign key constraints on asset_face.assetId and asset_face.personId
@@ -376,8 +392,8 @@ class Drift extends $Drift {
                 await _healV33DateTimes(this);
               },
               from34To35: (m, v35) async {
-                await m.addColumn(v35.remoteAssetEntity, v35.remoteAssetEntity.groupDate);
-                await m.addColumn(v35.localAssetEntity, v35.localAssetEntity.groupDate);
+                await _addColumnIfMissing(m, v35.remoteAssetEntity, v35.remoteAssetEntity.groupDate);
+                await _addColumnIfMissing(m, v35.localAssetEntity, v35.localAssetEntity.groupDate);
                 await m.createIndex(v35.idxRemoteAssetGroup);
                 await m.createIndex(v35.idxLocalAssetGroup);
               },

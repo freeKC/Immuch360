@@ -19,7 +19,8 @@ name: Immuch360 Desktop
 #                  runner (a folder and a video on the command line, the keychain, five seconds of libmpv)
 #   windows        desktop tests on a real Windows, the release build, the ZIP and the installer (Inno Setup) for the
 #                  owner as artifacts named Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
-#                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE)
+#                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE), and the app of
+#                  the ZIP started on a database an older build left behind
 #   packages       the seven files of the build (the six packages and the libsmb2 sources) together with their
 #                  SHA-256, as a release gets them
 #   upstream-sync  on upstream-sync/* branches, next to the test and linux jobs: the sync checklist of design 8.4
@@ -670,6 +671,25 @@ jobs:
         run: |
           flutter test test/desktop/video/camera_live_libmpv_test.dart test/desktop/video/mpv_references_test.dart \
             test/desktop/video/desktop_player_libmpv_test.dart test/desktop/video/plugin_shaders_windows_test.dart
+
+      # The app of the ZIP started on a database an older build left behind: the tables and indexes of schema 35 at
+      # user_version 34, as a build at 34 leaves a database a build at 35 had migrated (desktop builds 6 to 8 failed
+      # every start on it with "duplicate column name: group_date"). It must bring the database to 35 and keep running
+      - name: Start on a database left by an older build
+        timeout-minutes: 10
+        run: |
+          python .github/desktop/packaging/windows/start_on_old_database.py \
+            --exe "dist/Immuch360 Desktop/immuch360.exe" \
+            --fixture mobile/test/drift/main/fixtures/desktop_v35_at_user_version_34.sql --out old-database-start
+
+      - name: Upload the start on the old database
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: windows-old-database-start
+          path: old-database-start/
+          retention-days: 14
+          if-no-files-found: ignore
 
   macos:
     name: macOS build, ZIP and DMG
