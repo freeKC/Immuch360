@@ -21,6 +21,7 @@
 	"useGalleryMode": true,
 	"requiredACG": [
 		"activity.operation",
+		"application.launcher",
 		"settings.query",
 		"systemconfig.query"
 	],

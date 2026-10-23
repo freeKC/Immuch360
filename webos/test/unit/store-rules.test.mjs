@@ -103,7 +103,7 @@ describe('the screen saver (F5)', () => {
 
 describe('requiredACG (F6)', () => {
 	test('appinfo.json lists the ACG groups of the Luna methods the app and its service call, exactly', () => {
-		assert.deepEqual(REQUIRED_ACG, ['activity.operation', 'settings.query', 'systemconfig.query']);
+		assert.deepEqual(REQUIRED_ACG, ['activity.operation', 'application.launcher', 'settings.query', 'systemconfig.query']);
 		assert.deepEqual(acgProblems(appinfo), []);
 		assert.deepEqual(appinfo.requiredACG.slice().sort(), REQUIRED_ACG);
 		assert.ok(acgProblems({...appinfo, requiredACG: undefined}).length > 0);
@@ -111,11 +111,12 @@ describe('requiredACG (F6)', () => {
 		assert.ok(acgProblems({...appinfo, requiredACG: [...REQUIRED_ACG, 'database.operation']}).length > 0);
 	});
 
-	test('the page calls only its own service and the system property service; the service, the activity manager', () => {
+	test('the page calls only its own service, the system property service and the application manager; the service, the activity manager', () => {
 		const page = sources(join(WEBOS, 'src'))
 			.map((file) => readFileSync(file, 'utf8'))
 			.join('\n');
-		assert.deepEqual(lunaServices(page), [OWN_SERVICE, 'com.webos.service.tv.systemproperty']);
+		assert.deepEqual(lunaServices(page), [OWN_SERVICE, 'com.webos.applicationManager', 'com.webos.service.tv.systemproperty']);
+		assert.ok(LUNA_CALLS.some((call) => call.service === 'com.webos.applicationManager' && call.method === 'launch' && call.group === 'application.launcher'));
 		assert.deepEqual(unknownLunaServices(page), []);
 		const service = readFileSync(join(WEBOS, 'service', 'service.js'), 'utf8');
 		assert.match(service, /activityManager\.create/);

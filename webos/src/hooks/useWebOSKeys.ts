@@ -1,5 +1,6 @@
 import {useEffect} from 'react';
 import {platformBack} from '@enact/webos/application';
+import LS2Request from '@enact/webos/LS2Request';
 
 interface UseWebOSKeysOptions {
 	onBack?: () => void;
@@ -74,22 +75,86 @@ let rootBack: (() => void) | null = null;
 // buttons live in the same layer but leave the focus on their button: they must not hold Back.
 export const FLOATING_LAYER_ID = 'floatLayer';
 
+// The Magic Remote pointer can leave the focus on the body while a popup is open: a popup is then a Spotlight container
+// in the layer (Sandstone's Popup, which also holds the Dropdown list and the Input's text entry) or a dialog; a tooltip
+// is neither (its text only, aria-hidden)
+const POPUP_IN_LAYER = '[data-spotlight-container], [role="dialog"], [aria-modal="true"]';
+
 function popupOpen(): boolean {
 	if (typeof document === 'undefined') return false;
 	const layer = document.getElementById(FLOATING_LAYER_ID);
+	if (!layer) return false;
 	const focused = document.activeElement;
-	return !!layer && !!focused && focused !== document.body && layer.contains(focused);
+	if (focused && focused !== document.body && layer.contains(focused)) return true;
+	return !!layer.querySelector(POPUP_IN_LAYER);
+}
+
+interface WebOSSystemLike {
+	platformBack?: () => void;
+	deviceInfo?: string;
+}
+
+const webOSSystem = (): WebOSSystemLike | undefined =>
+	(window as {webOSSystem?: WebOSSystemLike}).webOSSystem ?? (window as {PalmSystem?: WebOSSystemLike}).PalmSystem;
+
+/** The Home app of webOS TV, which the Back of an entry page shows on webOS 23 to 25 (to confirm on those TVs) */
+export const HOME_APP_ID = 'com.webos.app.home';
+
+/**
+ * Immuch360: whether the TV runs webOS 23, 24 or 25, where LG's self checklist asks Back on the entry page to show the
+ * Home screen. From the platform version webOS gives the page (8, 9 and 10 for webOS 23, 24 and 25: the SDK table of
+ * LG's FAQ), else from the engine (Chromium 94, 108 and 120 there, 132 on webOS 26: the Web Engine page).
+ */
+export function backShowsHome(): boolean {
+	const raw = typeof window === 'undefined' ? undefined : webOSSystem()?.deviceInfo;
+	if (raw) {
+		try {
+			const major = parseInt(String((JSON.parse(raw) as {platformVersion?: unknown}).platformVersion), 10);
+			if (!isNaN(major)) return major >= 8 && major <= 10;
+		} catch {
+			// The engine then
+		}
+	}
+	const engine = typeof navigator === 'undefined' ? null : /Chrome\/(\d+)/.exec(navigator.userAgent);
+	if (!engine) return false;
+	const major = Number(engine[1]);
+	return major >= 94 && major < 132;
+}
+
+// The Home app through the application manager (ACG group application.launcher, in requiredACG); platformBack() when
+// the TV refuses or does not answer
+function launchHome(): void {
+	let settled = false;
+	const fallBack = () => {
+		if (settled) return;
+		settled = true;
+		console.warn('[back] the Home app did not open: platformBack()');
+		platformBack();
+	};
+	new LS2Request().send({
+		service: 'luna://com.webos.applicationManager',
+		method: 'launch',
+		parameters: {id: HOME_APP_ID},
+		timeout: 3000,
+		onSuccess: () => {
+			settled = true;
+		},
+		onFailure: fallBack,
+		onTimeout: fallBack,
+	});
 }
 
 // Immuch360: Back on an entry page (the welcome page, Photos, the account page of a failed start): with
-// disableBackHistoryAPI the app handles Back itself, and webOS.platformBack() asks the TV for its own default, which
-// LG's Back Button guide gives as the exit popup on webOS 6 and later and the Home screen on webOS 5 and earlier.
-// False when the page does not run on a TV (no webOSSystem or PalmSystem): the key is then left alone.
+// disableBackHistoryAPI the app handles Back itself. LG's two texts differ: the Back Button guide gives
+// webOS.platformBack() as the exit popup on webOS 6 and later (Home on webOS 5 and earlier), the mandatory item of the
+// self checklist asks for the Home screen on webOS 23 to 25 only. So: the Home app on webOS 23 to 25 (backShowsHome),
+// platformBack() elsewhere. False when the page does not run on a TV (no webOSSystem or PalmSystem): the key is then
+// left alone.
 export function exitToPlatform(): boolean {
-	const system = (window as {webOSSystem?: {platformBack?: () => void}; PalmSystem?: {platformBack?: () => void}}).webOSSystem ??
-		(window as {PalmSystem?: {platformBack?: () => void}}).PalmSystem;
+	const system = webOSSystem();
 	if (!system || typeof system.platformBack !== 'function') return false;
-	platformBack();
+	if (backShowsHome()) launchHome();
+	else platformBack();
 	return true;
 }
 

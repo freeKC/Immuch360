@@ -8,7 +8,9 @@
 // * Screensaver guide: a gallery app declares "screenSaverProperties": {"preferredType": 3} and "useGalleryMode": true,
 //   both at the top of appinfo.json.
 // * ACG guide: requiredACG lists the ACG group of every Luna method the app and its service call (mandatory from
-//   webOS 27, March 2027). The groups below are those of the calls the app makes, see LUNA_CALLS.
+//   webOS 27, March 2027). The groups below are those of the calls the app makes, see LUNA_CALLS. On webOS 26 the
+//   field turns ACG enforcement on already ("If the requiredACG field is added to appinfo.json, ACG permissions are
+//   applied"): the app has not run under it yet (a Cloud Test Lab run on webOS 26 is the condition of the next tag).
 // * Supported App Resolution: "resolution": "1280x720" makes the package of Full HD TVs; none means 1920x1080.
 
 /** The icons of webos-meta and the size LG asks for each */
@@ -19,11 +21,13 @@ export const TILE_COLOR = '#131313';
 
 /**
  * Every Luna method the app and its service call, with its ACG group. The page: the TV's model on the About page; Enact
- * reads the audio guidance setting before it speaks an alert. The service: the activity that keeps it alive while the
- * phone sign in or the media bridge run. The app's calls to its own service need no group.
+ * reads the audio guidance setting before it speaks an alert; Back on an entry page opens the Home app on webOS 23 to
+ * 25 (LG's self checklist). The service: the activity that keeps it alive while the phone sign in or the media bridge
+ * run.
  */
 export const LUNA_CALLS = [
 	{service: 'com.webos.service.tv.systemproperty', method: 'getSystemInfo', group: 'systemconfig.query', by: 'src/immuch360/diagnostics/collect.ts'},
+	{service: 'com.webos.applicationManager', method: 'launch', group: 'application.launcher', by: 'src/hooks/useWebOSKeys.ts (webOS 23 to 25 only)'},
 	{service: 'com.webos.settingsservice', method: 'getSystemSettings', group: 'settings.query', by: '@enact/webos (audio guidance)'},
 	{service: 'com.palm.activitymanager', method: 'create, complete', group: 'activity.operation', by: 'service/service.js'},
 ];
@@ -37,7 +41,12 @@ export const UNLISTED_LUNA_CALLS = [
 	{service: 'com.webos.service.tts', method: 'speak', by: '@enact/webos readAlert, only when the audio guidance of the TV is on'},
 ];
 
-/** The app's own service, which its page calls over Luna; no ACG group is needed for it */
+/**
+ * The app's own service, which its page calls over Luna. LG's ACG guide lists no group for it: its API ACG list covers
+ * the public services only, and its example of an app with an in-app service declares only the group of the Luna API
+ * that the service calls. Not a statement of LG's; to confirm under enforcement on webOS 26 (Cloud Test Lab: phone sign
+ * in, a share, no "Denied method call" in the logs).
+ */
 export const OWN_SERVICE = 'com.aprogsys.immuch360.service';
 
 /** requiredACG as appinfo.json must hold it: the groups of LUNA_CALLS, sorted */

@@ -1,5 +1,25 @@
 import {fireEvent, renderHook} from '@testing-library/react';
-import {FLOATING_LAYER_ID, useRootBack, useWebOSKeys} from './useWebOSKeys';
+import {FLOATING_LAYER_ID, HOME_APP_ID, backShowsHome, useRootBack, useWebOSKeys} from './useWebOSKeys';
+
+// Immuch360: the Luna calls of the Home app on webOS 23 to 25, recorded (jsdom has no Luna bus)
+interface MockLunaRequest {
+	service: string;
+	method: string;
+	parameters: unknown;
+	onSuccess?: () => void;
+	onFailure?: () => void;
+	onTimeout?: () => void;
+}
+const mockLunaCalls: MockLunaRequest[] = [];
+jest.mock('@enact/webos/LS2Request', () => ({
+	__esModule: true,
+	default: class {
+		send(request: MockLunaRequest) {
+			mockLunaCalls.push(request);
+			return this;
+		}
+	},
+}));
 
 // Fire a keydown while a single onBack is mounted, and report whether it was treated as Back.
 function firesBack(init: KeyboardEventInit & {keyCode?: number}): boolean {
@@ -133,6 +153,33 @@ describe('useWebOSKeys Back without a layer', () => {
 		unmountViewer();
 		unmountPage();
 	});
+	// The Magic Remote pointer leaves the focus on the body while the language list is open (review R13)
+	test('an open popup holds Back even when the pointer left the focus on the body', () => {
+		const layer = document.createElement('div');
+		layer.id = FLOATING_LAYER_ID;
+		const popup = document.createElement('div');
+		popup.setAttribute('data-spotlight-container', 'true');
+		layer.appendChild(popup);
+		document.body.appendChild(layer);
+		(document.activeElement as HTMLElement | null)?.blur?.();
+		expect(document.activeElement).toBe(document.body);
+		const closeViewer = jest.fn();
+		const {unmount} = renderHook(() => useWebOSKeys({onBack: closeViewer}));
+		expect(pressBack()).toBe(true);
+		expect(closeViewer).not.toHaveBeenCalled();
+		expect(platformBack).not.toHaveBeenCalled();
+		// A dialog in the layer counts too
+		popup.removeAttribute('data-spotlight-container');
+		popup.setAttribute('role', 'dialog');
+		expect(pressBack()).toBe(true);
+		expect(closeViewer).not.toHaveBeenCalled();
+		// Closed: Back acts again
+		layer.innerHTML = '';
+		expect(pressBack()).toBe(true);
+		expect(closeViewer).toHaveBeenCalledTimes(1);
+		unmount();
+	});
+
 	// A tooltip of a focused button (the viewer's controls) sits in the same layer but leaves the focus on its button:
 	// Back still closes the viewer (seen in the headless proof of 23 October 2026: Back stayed held)
 	test('a tooltip in the floating layer does not hold Back', () => {
@@ -149,5 +196,72 @@ describe('useWebOSKeys Back without a layer', () => {
 		expect(closeViewer).toHaveBeenCalledTimes(1);
 		unmount();
 		button.remove();
+	});
+});
+
+// Immuch360: LG's self checklist asks Back on the entry page to show the Home screen on webOS 23 to 25 only; the Back
+// Button guide gives platformBack() (the exit popup) for webOS 6 and later (review R3)
+describe('Back on an entry page per webOS version', () => {
+	const platformBack = jest.fn();
+	const onVersion = (platformVersion?: string) => {
+		(window as {PalmSystem?: unknown}).PalmSystem = {platformBack, deviceInfo: platformVersion ? JSON.stringify({platformVersion}) : undefined};
+	};
+	function pressBack(): boolean {
+		const event = new KeyboardEvent('keydown', {key: 'GoBack', keyCode: 461, bubbles: true, cancelable: true} as KeyboardEventInit);
+		window.dispatchEvent(event);
+		return event.defaultPrevented;
+	}
+
+	beforeEach(() => {
+		platformBack.mockClear();
+		mockLunaCalls.length = 0;
+	});
+	afterEach(() => {
+		delete (window as {PalmSystem?: unknown}).PalmSystem;
+		jest.restoreAllMocks();
+	});
+
+	test.each(['8.0.0', '9.2.1', '10.1.0'])('webOS %s (23 to 25): the Home app, and platformBack() only if it does not open', (version) => {
+		onVersion(version);
+		const {unmount} = renderHook(() => useRootBack());
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+		expect(pressBack()).toBe(true);
+		expect(mockLunaCalls).toHaveLength(1);
+		expect(mockLunaCalls[0]).toMatchObject({service: 'luna://com.webos.applicationManager', method: 'launch', parameters: {id: HOME_APP_ID}});
+		expect(platformBack).not.toHaveBeenCalled();
+		// The TV refused (no such app, or ACG): the platform's own Back
+		mockLunaCalls[0]!.onFailure!();
+		expect(platformBack).toHaveBeenCalledTimes(1);
+		expect(warn).toHaveBeenCalled();
+		// Opened: nothing else
+		expect(pressBack()).toBe(true);
+		mockLunaCalls[1]!.onSuccess!();
+		expect(platformBack).toHaveBeenCalledTimes(1);
+		unmount();
+	});
+
+	test.each(['5.2.0', '6.3.1', '7.3.0', '11.0.0'])('webOS %s: platformBack(), no Luna call', (version) => {
+		onVersion(version);
+		const {unmount} = renderHook(() => useRootBack());
+		expect(pressBack()).toBe(true);
+		expect(platformBack).toHaveBeenCalledTimes(1);
+		expect(mockLunaCalls).toHaveLength(0);
+		unmount();
+	});
+
+	test('without a platform version, the engine tells (Chromium 94 to 120 for webOS 23 to 25)', () => {
+		onVersion();
+		const agent = jest.spyOn(navigator, 'userAgent', 'get');
+		const ua = (chrome: string) => `Mozilla/5.0 (Web0S; Linux/SmartTV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chrome} Safari/537.36 WebAppManager`;
+		agent.mockReturnValue(ua('87.0.4280.88'));
+		expect(backShowsHome()).toBe(false);
+		agent.mockReturnValue(ua('94.0.4606.128'));
+		expect(backShowsHome()).toBe(true);
+		agent.mockReturnValue(ua('108.0.5359.211'));
+		expect(backShowsHome()).toBe(true);
+		agent.mockReturnValue(ua('120.0.6099.270'));
+		expect(backShowsHome()).toBe(true);
+		agent.mockReturnValue(ua('132.0.6834.0'));
+		expect(backShowsHome()).toBe(false);
 	});
 });
