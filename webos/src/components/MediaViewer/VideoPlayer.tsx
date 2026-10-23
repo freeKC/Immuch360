@@ -74,9 +74,10 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailabl
 		[apiRef]
 	);
 
-	// Immuch360: the video pauses when the app is hidden. Samsung: "your application must handle multitasking"; webOS
-	// suspends a hidden app anyway.
+	// Immuch360: on a Samsung TV the video pauses when the app is hidden (Samsung: "your application must handle
+	// multitasking"). webOS suspends a hidden app by itself and keeps its behaviour (features.ts).
 	useEffect(() => {
+		if (!features().pauseVideoWhenHidden) return undefined;
 		const onVisibilityChange = () => {
 			if (document.hidden) ownApi.current?.pause();
 		};

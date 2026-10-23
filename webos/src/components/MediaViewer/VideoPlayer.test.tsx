@@ -1,5 +1,5 @@
-// Immuch360: on a Samsung TV the screen saver stays off while the viewer's video plays, and on every TV the video
-// pauses when the app is hidden (VideoPlayer.tsx)
+// Immuch360: on a Samsung TV the screen saver stays off while the viewer's video plays and the video pauses when the
+// app is hidden; an LG TV keeps its behaviour (VideoPlayer.tsx)
 import React from 'react';
 import {act, render} from '@testing-library/react';
 import {VIDEO_MARK, VideoPlayer} from './VideoPlayer';
@@ -80,19 +80,31 @@ test('an LG TV keeps a playing video awake by itself: no call', () => {
 	expect(setScreenSaver).not.toHaveBeenCalled();
 });
 
-test('the video pauses when the app is hidden, and the viewer still gets the API', () => {
+const hide = (hidden: boolean) => {
+	Object.defineProperty(document, 'hidden', {configurable: true, get: () => hidden});
+	act(() => {
+		document.dispatchEvent(new Event('visibilitychange'));
+	});
+};
+
+test('a Samsung TV: the video pauses when the app is hidden, and the viewer still gets the API', () => {
+	samsung();
 	const apiRef = React.createRef<{pause: () => void}>();
 	render(<VideoPlayer src="clip.mp4" apiRef={apiRef as never} />);
 	expect(typeof apiRef.current?.pause).toBe('function');
 	const pause = jest.spyOn(apiRef.current!, 'pause');
-	Object.defineProperty(document, 'hidden', {configurable: true, get: () => true});
-	act(() => {
-		document.dispatchEvent(new Event('visibilitychange'));
-	});
+	hide(true);
 	expect(pause).toHaveBeenCalledTimes(1);
-	Object.defineProperty(document, 'hidden', {configurable: true, get: () => false});
-	act(() => {
-		document.dispatchEvent(new Event('visibilitychange'));
-	});
+	hide(false);
 	expect(pause).toHaveBeenCalledTimes(1);
+});
+
+test('an LG TV: hiding the app leaves the video to webOS, and the viewer gets the API', () => {
+	const apiRef = React.createRef<{pause: () => void}>();
+	render(<VideoPlayer src="clip.mp4" apiRef={apiRef as never} />);
+	expect(typeof apiRef.current?.pause).toBe('function');
+	const pause = jest.spyOn(apiRef.current!, 'pause');
+	hide(true);
+	hide(false);
+	expect(pause).not.toHaveBeenCalled();
 });

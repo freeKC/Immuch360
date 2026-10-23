@@ -90,10 +90,25 @@ describe('the platform', () => {
 			sources: false,
 			holdScreenSaverForVideo: true,
 			exitOnRootBack: true,
+			backClosesPopupFirst: true,
+			pauseVideoWhenHidden: true,
 			fullsizePixelCap: TIZEN_FULLSIZE_MAX_PIXELS,
 		});
+		// webOS keeps its behaviour: every Samsung only answer is off there
 		for (const on of ['webos', 'browser']) {
-			assert.deepEqual(features(on), {phonePairing: true, sources: true, holdScreenSaverForVideo: false, exitOnRootBack: false, fullsizePixelCap: null}, on);
+			assert.deepEqual(
+				features(on),
+				{
+					phonePairing: true,
+					sources: true,
+					holdScreenSaverForVideo: false,
+					exitOnRootBack: false,
+					backClosesPopupFirst: false,
+					pauseVideoWhenHidden: false,
+					fullsizePixelCap: null,
+				},
+				on
+			);
 		}
 		assert.equal(TIZEN_FULLSIZE_MAX_PIXELS, 4032 * 3024);
 	});

@@ -15,6 +15,16 @@ export interface Features {
 	holdScreenSaverForVideo: boolean;
 	/** Back on the first screen closes the app, as Samsung's apps do (webOS asks with its own dialog) */
 	exitOnRootBack: boolean;
+	/**
+	 * Back while a popup of Sandstone holds the focus (the text input popup, a list of choices) closes the popup only,
+	 * not the screen under it. Samsung TVs; webOS keeps its behaviour until it is tried on an LG TV.
+	 */
+	backClosesPopupFirst: boolean;
+	/**
+	 * The viewer's video pauses when the app is hidden (Samsung: "your application must handle multitasking"). webOS
+	 * suspends a hidden app by itself and keeps its behaviour.
+	 */
+	pauseVideoWhenHidden: boolean;
 	/** The most pixels a full-size picture may have on this TV, null to follow the engine (photoSize.ts) */
 	fullsizePixelCap: number | null;
 }
@@ -27,8 +37,24 @@ export const TIZEN_FULLSIZE_MAX_PIXELS = 12192768;
 
 export function features(on: Platform = platform()): Features {
 	if (on === 'tizen') {
-		return {phonePairing: false, sources: false, holdScreenSaverForVideo: true, exitOnRootBack: true, fullsizePixelCap: TIZEN_FULLSIZE_MAX_PIXELS};
+		return {
+			phonePairing: false,
+			sources: false,
+			holdScreenSaverForVideo: true,
+			exitOnRootBack: true,
+			backClosesPopupFirst: true,
+			pauseVideoWhenHidden: true,
+			fullsizePixelCap: TIZEN_FULLSIZE_MAX_PIXELS,
+		};
 	}
 	// webOS, and a browser in development, where service/dev.js stands in for the service
-	return {phonePairing: true, sources: true, holdScreenSaverForVideo: false, exitOnRootBack: false, fullsizePixelCap: null};
+	return {
+		phonePairing: true,
+		sources: true,
+		holdScreenSaverForVideo: false,
+		exitOnRootBack: false,
+		backClosesPopupFirst: false,
+		pauseVideoWhenHidden: false,
+		fullsizePixelCap: null,
+	};
 }

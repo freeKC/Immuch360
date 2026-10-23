@@ -70,9 +70,13 @@ function fireTopBack(): boolean {
 // of Sandstone is open in the floating layer (a list of choices, the text input popup): Enact closes those on Back.
 const SAMSUNG_BACK_KEYCODE = 10009;
 
-function floatingLayerOpen(): boolean {
+// A popup of Sandstone in the floating layer: it holds the focus, or it is an alert or a dialog. The tooltip of a
+// focused button lives in the same layer but is neither, and does not count.
+function popupOpen(): boolean {
 	const layer = document.getElementById('floatLayer');
-	return !!layer && layer.childElementCount > 0;
+	if (!layer || layer.childElementCount === 0) return false;
+	const focused = document.activeElement;
+	return (!!focused && focused !== document.body && layer.contains(focused)) || !!layer.querySelector('[role="alert"], [role="dialog"]');
 }
 
 function exitsTheApp(event: KeyboardEvent): boolean {
@@ -80,8 +84,14 @@ function exitsTheApp(event: KeyboardEvent): boolean {
 		event.keyCode === SAMSUNG_BACK_KEYCODE &&
 		features().exitOnRootBack &&
 		!isEditingText(event.target) &&
-		!floatingLayerOpen()
+		!popupOpen()
 	);
+}
+
+// On a Samsung TV, Back with a popup open is left to Enact, which closes the popup: the screen's own Back would close
+// the screen under it too (the sign in form, and what was typed). webOS keeps its behaviour (features.ts).
+function leftToThePopup(): boolean {
+	return features().backClosesPopupFirst && popupOpen();
 }
 
 let bridgeInstalled = false;
@@ -101,6 +111,7 @@ function ensureBridgeInstalled(): void {
 		(event: KeyboardEvent) => {
 			if (!isBackKey(event)) return;
 			if (event.keyCode === BACKSPACE_KEYCODE && isEditingText(event.target)) return;
+			if (leftToThePopup()) return;
 			if (fireTopBack()) {
 				event.preventDefault();
 				// stopImmediatePropagation (not stopPropagation) so sibling window-level listeners
