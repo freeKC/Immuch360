@@ -297,7 +297,8 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
     controller.bindProfile(profileId)
   }
 
-  override fun profiles(): List<DjiLinkProfile> = controller.bindableProfiles().map { it.toPigeon() }
+  override fun profiles(): List<DjiLinkProfile> =
+    controller.bindableProfiles().map { it.toPigeon(controller.runningDevice) }
 
   /** The accessory list of the system: strings only, no serial, no permission, nothing opened, no link owner made */
   override fun pluggedAccessories(): List<DjiLinkPluggedAccessory> {

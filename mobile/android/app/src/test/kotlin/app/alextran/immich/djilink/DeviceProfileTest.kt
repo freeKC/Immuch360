@@ -13,9 +13,10 @@ class DeviceProfileTest {
     Capability.LINK_PROBE,
     Capability.LINK_NEGOTIATION,
     Capability.VIDEO_RECEIVE,
-    Capability.VIDEO_DECODE,
     Capability.TELEMETRY_RECEIVE,
   )
+
+  private val s24PlusPhone = RunningDevice(manufacturer = "samsung", model = "SM-S926B", flavour = "phone")
 
   private val identity = AccessoryIdentity(
     manufacturer = "DJI",
@@ -27,21 +28,74 @@ class DeviceProfileTest {
   )
 
   @Test
-  fun theSixObservedCapabilitiesAreSupportedWithTheirProvenance() {
+  fun theFiveObservedCapabilitiesAreSupportedOnThePhoneOfTheCaptureWithTheirProvenance() {
     val profile = ProfileRegistry().byId(ProfileRegistry.RC_N3_NEO2)!!
     for (capability in observed) {
       val state = profile.capabilities.getValue(capability)
       assertEquals("$capability", Support.SUPPORTED, state.support)
+      assertEquals("$capability", Support.SUPPORTED, profile.supportOn(capability, s24PlusPhone))
       val provenance = state.provenance!!
       assertEquals("dji-link-20261023-102731", provenance.observationId)
       assertEquals("2026-10-23", provenance.date)
       assertEquals("8541e5d3395f12ac16e42d5fb86465f57ce7efb37ee8166a00c2260a742141bc", provenance.captureSha256)
       assertTrue(provenance.deviceModel.startsWith("Samsung SM-S926B"))
+      assertEquals("Samsung SM-S926B, phone", provenance.device!!.verifiedOn)
       assertTrue(provenance.observed.isNotBlank())
     }
     for (capability in Capability.entries - observed.toSet()) {
-      assertEquals("$capability", Support.UNKNOWN, profile.support(capability))
+      assertEquals("$capability", Support.UNKNOWN, profile.supportOn(capability, s24PlusPhone))
     }
+  }
+
+  @Test
+  fun videoDecodingIsUnknownEverywhereUntilADeviceDecodes() {
+    // Build 27 decoded nothing on the phone: the 308 pictures were decoded offline, on no device
+    val profile = ProfileRegistry().byId(ProfileRegistry.RC_N3_NEO2)!!
+    val state = profile.capabilities.getValue(Capability.VIDEO_DECODE)
+    assertEquals(Support.UNKNOWN, state.support)
+    assertEquals(Support.UNKNOWN, profile.supportOn(Capability.VIDEO_DECODE, s24PlusPhone))
+    assertNull("an offline decode names no device", state.provenance!!.device)
+    assertTrue(state.provenance!!.observed.contains("offline"))
+  }
+
+  @Test
+  fun anAnswerHoldsOnTheDeviceAndFlavourOfItsObservationOnly() {
+    val profile = ProfileRegistry().byId(ProfileRegistry.RC_N3_NEO2)!!
+    val elsewhere = listOf(
+      // The headset build, on the headset and even on the phone of the capture
+      RunningDevice("Oculus", "Quest 3", "quest"),
+      s24PlusPhone.copy(flavour = "quest"),
+      // Another phone, and another Galaxy S24 model
+      RunningDevice("Google", "Pixel 9", "phone"),
+      s24PlusPhone.copy(model = "SM-S921B"),
+    )
+    for (device in elsewhere) {
+      for (capability in Capability.entries) {
+        assertEquals("$capability on $device", Support.UNKNOWN, profile.supportOn(capability, device))
+      }
+    }
+    // The manufacturer string is compared without its case; the model and the flavour exactly
+    assertEquals(
+      Support.SUPPORTED,
+      profile.supportOn(Capability.ACCESSORY_OPEN, s24PlusPhone.copy(manufacturer = "Samsung")),
+    )
+  }
+
+  @Test
+  fun thePageGetsThisDevicesAnswerAndTheDeviceItWasVerifiedOn() {
+    val profile = ProfileRegistry().byId(ProfileRegistry.RC_N3_NEO2)!!
+    val onPhone = profile.toPigeon(s24PlusPhone).capabilities.associateBy { it.name }
+    val onQuest = profile.toPigeon(RunningDevice("Oculus", "Quest 3", "quest")).capabilities.associateBy { it.name }
+    val open = Capability.ACCESSORY_OPEN.name
+    assertEquals(DjiLinkSupport.SUPPORTED, onPhone.getValue(open).support)
+    assertEquals(DjiLinkSupport.UNKNOWN, onQuest.getValue(open).support)
+    assertEquals("Samsung SM-S926B, phone", onPhone.getValue(open).observedOn)
+    assertEquals("Samsung SM-S926B, phone", onQuest.getValue(open).observedOn)
+    assertEquals("2026-10-23", onQuest.getValue(open).observedDate)
+    val decode = Capability.VIDEO_DECODE.name
+    assertEquals(DjiLinkSupport.UNKNOWN, onPhone.getValue(decode).support)
+    assertNull(onPhone.getValue(decode).observedOn)
+    assertEquals("dji-link-20261023-102731 (2026-10-23)", onPhone.getValue(decode).provenance)
   }
 
   @Test

@@ -766,6 +766,56 @@ void main() {
     expect(api.bindings, ['rc-n3-neo2']);
   });
 
+  testWidgets('a capability answer names the device and flavour it was verified on, and is unknown elsewhere', (
+    tester,
+  ) async {
+    // What the native side sends on a headset: the phone's answers are unknown here, with the phone they hold on
+    final api = _FakeApi(
+      snapshot: _snapshot(
+        accessory: DjiLinkAccessory(manufacturer: 'DJI', model: 'RC-N3 model string'),
+        profile: DjiLinkProfile(
+          id: 'rc-n3-neo2',
+          label: 'DJI RC-N3 with a Neo 2 and the Digital Transceiver',
+          capabilities: [
+            DjiLinkCapability(
+              name: 'ACCESSORY_OPEN',
+              support: DjiLinkSupport.unknown,
+              provenance: 'dji-link-20261023-102731 (2026-10-23)',
+              observedOn: 'Samsung SM-S926B, phone',
+              observedDate: '2026-10-23',
+            ),
+            DjiLinkCapability(
+              name: 'LINK_PROBE',
+              support: DjiLinkSupport.supported,
+              provenance: 'dji-link-20261023-102731 (2026-10-23)',
+              observedOn: 'Samsung SM-S926B, phone',
+              observedDate: '2026-10-23',
+            ),
+            DjiLinkCapability(
+              name: 'VIDEO_DECODE',
+              support: DjiLinkSupport.unknown,
+              provenance: 'dji-link-20261023-102731 (2026-10-23)',
+              observedDate: '2026-10-23',
+            ),
+            DjiLinkCapability(name: 'GIMBAL', support: DjiLinkSupport.unknown),
+          ],
+        ),
+      ),
+    );
+    await pumpPage(tester, api);
+
+    expect(
+      find.text('unknown, not verified on this device, only on Samsung SM-S926B, phone (2026-10-23)'),
+      findsOneWidget,
+    );
+    expect(find.text('supported, verified on Samsung SM-S926B, phone, 2026-10-23'), findsOneWidget);
+    expect(
+      find.text('unknown, observed offline in dji-link-20261023-102731 (2026-10-23), on no device yet'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('observed on'), findsNothing);
+  });
+
   testWidgets('without any accessory strings there is nothing to bind', (tester) async {
     await pumpPage(tester, _FakeApi());
 

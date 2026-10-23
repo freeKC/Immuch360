@@ -241,13 +241,7 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
           for (final capability in profile.capabilities)
             DjiLinkFact(
               djiLinkCapabilityText(t, capability.name),
-              [
-                _support(capability.support),
-                if (capability.observedOn != null)
-                  t.dji_link_observed_on(device: capability.observedOn!, date: capability.observedDate ?? '-')
-                else
-                  ?capability.provenance,
-              ].join(', '),
+              [_support(capability.support), ?_provenance(capability)].join(', '),
             ),
         ],
         Padding(
@@ -316,6 +310,22 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
     DjiLinkSupport.unsupported => context.t.dji_link_support_unsupported,
     DjiLinkSupport.supported => context.t.dji_link_support_supported,
   };
+
+  /// Where an answer comes from. An answer holds on the device and flavour it was verified on, and the native side
+  /// reports it unknown anywhere else (the headset build of the same phone included): the line then names the one
+  /// device it was verified on, so that a phone result is never read as this device's.
+  String? _provenance(DjiLinkCapability capability) {
+    final t = context.t;
+    final device = capability.observedOn;
+    final date = capability.observedDate ?? '-';
+    if (device != null) {
+      return capability.support == DjiLinkSupport.unknown
+          ? t.dji_link_verified_elsewhere(device: device, date: date)
+          : t.dji_link_verified_on(device: device, date: date);
+    }
+    final provenance = capability.provenance;
+    return provenance == null ? null : t.dji_link_observed_offline(observation: provenance);
+  }
 
   Widget _traffic(DjiLinkSnapshot? snapshot) {
     final t = context.t;

@@ -21,6 +21,29 @@ enum class Support {
   SUPPORTED,
 }
 
+/** The device this app runs on, as Build.MANUFACTURER and Build.MODEL read it, and the flavour of the build */
+data class RunningDevice(val manufacturer: String, val model: String, val flavour: String)
+
+/** This device as its environment report reads it */
+val UsbEnvironmentReport.runningDevice: RunningDevice get() = RunningDevice(deviceManufacturer, deviceModel, flavour)
+
+/**
+ * The device an observation was made on, read the same way as [RunningDevice], with the name the page and the export
+ * give it. A phone result says nothing about the headset build, nor about another phone.
+ */
+data class ObservedDevice(
+  val manufacturer: String,
+  val model: String,
+  val flavour: String,
+  val name: String,
+) {
+  /** "Samsung SM-S926B, phone": the device and the flavour the answer holds for */
+  val verifiedOn: String get() = "$name, $flavour"
+
+  fun matches(device: RunningDevice): Boolean =
+    manufacturer.equals(device.manufacturer, ignoreCase = true) && model == device.model && flavour == device.flavour
+}
+
 /**
  * Where a capability answer comes from. A hardware test, on named hardware, with a capture to show for it. Without
  * one, [Support.SUPPORTED] cannot be expressed: [CapabilityState] refuses it.
@@ -28,20 +51,30 @@ enum class Support {
 data class Provenance(
   val observationId: String,
   val date: String,
+  /** Where the observation was made, as a reader names it */
   val deviceModel: String,
   val deviceOs: String,
   val controller: String,
   val aircraft: String,
   val captureSha256: String?,
   val observed: String,
+  /** The device and flavour the answer holds for; null for an observation made on no device, such as an offline decode */
+  val device: ObservedDevice? = null,
 )
 
 data class CapabilityState(val support: Support, val provenance: Provenance? = null) {
   init {
-    require(support != Support.SUPPORTED || provenance != null) {
-      "a capability cannot be supported without an observation to show for it"
+    require(support != Support.SUPPORTED || provenance?.device != null) {
+      "a capability cannot be supported without an observation on a device to show for it"
     }
   }
+
+  /**
+   * The answer on [device]: an observation holds for the device and the flavour it was made on, and for no other. On
+   * any other device, the headset build of the same phone included, the answer is unknown until a capture there exists.
+   */
+  fun on(device: RunningDevice): Support =
+    if (provenance?.device?.matches(device) == true) support else Support.UNKNOWN
 
   companion object {
     val unknown = CapabilityState(Support.UNKNOWN)
@@ -76,8 +109,13 @@ data class DeviceProfile(
   /** The H.265 stream description observed on this hardware, used when the stream gives none ([ParameterSetStore]) */
   val streamSeed: StreamDescription? = null,
 ) {
+  /** The answer as it was observed, on the device of its observation */
   fun support(capability: Capability): Support =
     capabilities[capability]?.support ?: Support.UNKNOWN
+
+  /** The answer on [device], which is unknown anywhere but on the device and flavour of the observation */
+  fun supportOn(capability: Capability, device: RunningDevice): Support =
+    capabilities[capability]?.on(device) ?: Support.UNKNOWN
 }
 
 /**
@@ -104,6 +142,14 @@ class ProfileRegistry(seed: List<DeviceProfile> = starting) {
       StreamDescription.fromHex(SEED_VPS_20261023, SEED_SPS_20261023, SEED_PPS_20261023)
     }
 
+    /** The phone of the capture of 23 October 2026, as its export header reads it (build 27, phone flavour) */
+    val GALAXY_S24_PLUS_PHONE = ObservedDevice(
+      manufacturer = "samsung",
+      model = "SM-S926B",
+      flavour = "phone",
+      name = "Samsung SM-S926B",
+    )
+
     private fun observed20261023(observed: String) = CapabilityState(
       Support.SUPPORTED,
       Provenance(
@@ -115,10 +161,14 @@ class ProfileRegistry(seed: List<DeviceProfile> = starting) {
         aircraft = "Neo 2 with the Digital Transceiver, firmware not recorded",
         captureSha256 = CAPTURE_20261023_SHA256,
         observed = observed,
+        device = GALAXY_S24_PLUS_PHONE,
       ),
     )
 
-    /** What the capture of 23 October 2026 shows the RC-N3 and the Neo 2 doing with a phone that sends nothing */
+    /**
+     * What the capture of 23 October 2026 shows the RC-N3 and the Neo 2 doing with a phone that sends nothing. Each
+     * answer holds on that phone with the phone build only ([CapabilityState.on]).
+     */
     val rcN3Neo2Capabilities: Map<Capability, CapabilityState> =
       Capability.entries.associateWith { CapabilityState.unknown } + mapOf(
         Capability.ACCESSORY_OPEN to observed20261023("two opens, reads on both"),
@@ -127,9 +177,21 @@ class ProfileRegistry(seed: List<DeviceProfile> = starting) {
           "nothing but the one byte probe was written and video and telemetry flowed: none needed",
         ),
         Capability.VIDEO_RECEIVE to observed20261023("29,026 video envelopes on channel 22346 in the session"),
-        Capability.VIDEO_DECODE to observed20261023(
-          "H.265 Main 1920 x 1080, 308 pictures decoded with no error offline; the result on a device joins after " +
-            "the owner test",
+        // Build 27 decoded nothing on the phone: the pictures of the capture were decoded offline, on no device. The
+        // answer stays unknown everywhere until a device decodes the stream (owner test step 1).
+        Capability.VIDEO_DECODE to CapabilityState(
+          Support.UNKNOWN,
+          Provenance(
+            observationId = CAPTURE_20261023,
+            date = "2026-10-23",
+            deviceModel = "no device: the capture decoded offline on the build host with ffmpeg 7.1.5",
+            deviceOs = "Debian 13",
+            controller = "RC-N3, firmware not recorded",
+            aircraft = "Neo 2 with the Digital Transceiver, firmware not recorded",
+            captureSha256 = CAPTURE_20261023_SHA256,
+            observed = "H.265 Main 1920 x 1080, 308 pictures decoded with no error offline; no device has decoded it yet",
+            device = null,
+          ),
         ),
         Capability.TELEMETRY_RECEIVE to observed20261023("21,860 control frames, every checksum verified"),
       )

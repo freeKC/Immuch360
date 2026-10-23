@@ -185,12 +185,15 @@ object CaptureExport {
         .put("version", identity?.version ?: JSONObject.NULL)
         .put("serial", identity?.serial ?: JSONObject.NULL),
     )
+    // Each answer on this device, which is unknown anywhere but on the device and flavour it was verified on
     val capabilities = JSONArray()
     profile?.capabilities?.forEach { (capability, state) ->
       capabilities.put(
         JSONObject()
           .put("capability", capability.name)
-          .put("support", state.support.name)
+          .put("support", state.on(environment.runningDevice).name)
+          .put("verifiedSupport", state.support.name)
+          .put("verifiedOn", state.provenance?.device?.verifiedOn ?: JSONObject.NULL)
           .put("provenance", state.provenance?.observationId ?: JSONObject.NULL)
           .put("observedOn", state.provenance?.deviceModel ?: JSONObject.NULL),
       )

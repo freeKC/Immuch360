@@ -188,12 +188,15 @@ class DjiLinkCapability {
   });
 
   final String name;
+
+  /// The answer on this device: unknown anywhere but on the device and flavour of the observation
   final DjiLinkSupport support;
 
-  /// The observation this answer rests on; null while the answer is unknown
+  /// The observation this answer rests on; null while nothing was observed
   final String? provenance;
 
-  /// The device the observation was made on, so that a phone result is never read as a headset one
+  /// The device and flavour the observation was made on ("Samsung SM-S926B, phone"), so that a phone result is never
+  /// read as a headset one; null for an observation made on no device, such as an offline decode
   final String? observedOn;
   final String? observedDate;
 

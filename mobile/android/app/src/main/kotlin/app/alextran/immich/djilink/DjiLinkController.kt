@@ -216,6 +216,9 @@ class DjiLinkController private constructor(private val context: Context) : Link
   /** The starting profiles, which the pilot can bind the accessory strings to */
   fun bindableProfiles(): List<DeviceProfile> = profiles.bindable()
 
+  /** This device and the flavour of this build, which a capability answer holds for or not */
+  val runningDevice: RunningDevice get() = environment.runningDevice
+
   /**
    * Binds the strings of the accessory on the port, or of the last one seen, to [profileId]; null forgets the binding.
    * It names the hardware and gives the stream description seed; the link does nothing differently.
@@ -725,7 +728,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       reason = reason.toPigeon(),
       detail = argument,
       accessory = identity?.toPigeon(),
-      profile = profile?.toPigeon(),
+      profile = profile?.toPigeon(environment.runningDevice),
       firstByteMs = manager.firstByteMs,
       openSinceMs = manager.openedAtMs?.let { System.currentTimeMillis() - it },
       probesSent = manager.probesSent,
@@ -836,7 +839,11 @@ private fun AccessoryIdentity.toPigeon(): DjiLinkAccessory = DjiLinkAccessory(
   serial = serial,
 )
 
-internal fun DeviceProfile.toPigeon(): DjiLinkProfile = DjiLinkProfile(
+/**
+ * The profile as the page shows it on [device]: each answer holds on the device and flavour of its observation only,
+ * so the same profile reads unknown on the headset build or on another phone, with the device it was verified on.
+ */
+internal fun DeviceProfile.toPigeon(device: RunningDevice): DjiLinkProfile = DjiLinkProfile(
   id = id,
   label = label,
   note = note,
@@ -844,13 +851,13 @@ internal fun DeviceProfile.toPigeon(): DjiLinkProfile = DjiLinkProfile(
     val state = capabilities[capability] ?: CapabilityState.unknown
     DjiLinkCapability(
       name = capability.name,
-      support = when (state.support) {
+      support = when (state.on(device)) {
         Support.UNKNOWN -> DjiLinkSupport.UNKNOWN
         Support.UNSUPPORTED -> DjiLinkSupport.UNSUPPORTED
         Support.SUPPORTED -> DjiLinkSupport.SUPPORTED
       },
       provenance = state.provenance?.let { "${it.observationId} (${it.date})" },
-      observedOn = state.provenance?.deviceModel,
+      observedOn = state.provenance?.device?.verifiedOn,
       observedDate = state.provenance?.date,
       observed = state.provenance?.observed,
     )
