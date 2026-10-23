@@ -17,7 +17,9 @@ import css from './PrivacyPolicy.module.less';
 /** The LG TVs section of the policy, in the repository (its anchor is the heading "LG TVs (webOS)") */
 export const PRIVACY_POLICY_URL = 'https://github.com/freeKC/Immuch360/blob/immuch360/PRIVACY.md#lg-tvs-webos';
 
-const LAYER_ID = 'privacy-policy';
+/** The spotlight id of the layer: a modal trap of the page under it leaves the focus alone while it is open */
+export const PRIVACY_LAYER_ID = 'privacy-policy';
+const LAYER_ID = PRIVACY_LAYER_ID;
 const Layer = createSpotlightContainer();
 let buttons = 0;
 

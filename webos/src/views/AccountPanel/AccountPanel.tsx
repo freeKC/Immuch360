@@ -4,7 +4,7 @@ import Spotlight, {getDirection} from '@enact/spotlight';
 import {AccountGrid} from './AccountGrid';
 import {AuthForm, type AuthFormPayload, type AuthSubmitResult} from '../../components/AuthForm/AuthForm';
 import {createSpotlightContainer} from '../../utils/spotlight';
-import {PrivacyPolicyButton} from '../../immuch360/privacy/PrivacyPolicy';
+import {PRIVACY_LAYER_ID, PrivacyPolicyButton} from '../../immuch360/privacy/PrivacyPolicy';
 import {useWebOSKeys} from '../../hooks/useWebOSKeys';
 import type {Account} from '../../utils/accountsStore';
 import type {PairingDriver, PairedAccountResult} from '../../pairing/types';
@@ -127,6 +127,9 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 
 			const overlay = document.querySelector<HTMLElement>(`[data-spotlight-id="${OVERLAY_SPOTLIGHT_ID}"]`);
 			if (!overlay || overlay.contains(document.activeElement)) return;
+			// Immuch360: the privacy layer, opened from the sign in form, lies over the overlay at the root of the app:
+			// while it is open the focus belongs to it, never to a control hidden under it
+			if (document.querySelector(`[data-spotlight-id="${PRIVACY_LAYER_ID}"]`)) return;
 
 			Spotlight.setPointerMode(false);
 			Spotlight.focus(OVERLAY_SPOTLIGHT_ID);

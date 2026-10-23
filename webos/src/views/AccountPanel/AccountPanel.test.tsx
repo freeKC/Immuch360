@@ -124,6 +124,40 @@ describe('AccountPanel', () => {
 		expect(focus).toHaveBeenCalledWith('account-overlay');
 	});
 
+	// Immuch360: the privacy layer opened from Add account lies over the overlay, portalled to the root of the app
+	test('leaves the focus in the privacy layer, outside the overlay, on a directional key', () => {
+		const focus = jest.spyOn(Spotlight, 'focus');
+
+		render(
+			<AccountPanel
+				mode="overlay"
+				accounts={[acc]}
+				activeAccountId="a"
+				defaultAccountId={null}
+				{...noopHandlers}
+			/>,
+		);
+
+		const layer = document.createElement('div');
+		layer.setAttribute('data-spotlight-id', 'privacy-policy');
+		const close = document.createElement('button');
+		layer.appendChild(close);
+		document.body.appendChild(layer);
+		close.focus();
+		focus.mockClear();
+
+		for (const keyCode of [37, 38, 39, 40]) fireEvent.keyDown(window, {keyCode});
+
+		expect(focus).not.toHaveBeenCalledWith('account-overlay');
+		expect(document.activeElement).toBe(close);
+		layer.remove();
+
+		// Once the layer is gone, the trap works again
+		(document.activeElement as HTMLElement).blur();
+		fireEvent.keyDown(window, {keyCode: 39});
+		expect(focus).toHaveBeenCalledWith('account-overlay');
+	});
+
 	test('keeps dead-space pointer movement from clearing modal focus', () => {
 		const onWindowMouseMove = jest.fn();
 		window.addEventListener('mousemove', onWindowMouseMove);
