@@ -29,8 +29,8 @@ Immuch360は、あなたの写真や動画を見つけ、閲覧し、再生し�
 | **LGテレビ** (webOS 4.0以降) | [.ipkテストビルド](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) | テストビルド0.2.0、[Developer Mode](#lg-tvs-webos)でインストール: ネットワーク共有、Plex、Tapoのライブ映像。0.1.0はテスターのLGテレビで動作しましたが、0.2.0はまだ実機のテレビで動かしていません。LG Content Store向けのバージョンを準備中です |
 | **Samsungテレビ** (Tizen 5.5以降) | [.wgtテストビルド](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.1.0) | 同じテレビアプリのテストビルド0.1.0。ご自身のSamsung証明書で署名し、[Developer mode](#samsung-tvs-tizen)でインストールします。実機のSamsungテレビではまだ動かしていません |
 | <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3、3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Storeで提供中 (ビルド28)、GitHubでビルド29 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [インストーラーまたはZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-9) | デスクトップビルド9、署名付きプレビュー：写真、フラットおよび360°動画、共有、Plex、カメラ、スマートフォンでのログイン、キー1つでの写真の回転、89言語のインターフェース |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOSとLinux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-9) | プレビュー：Linuxでは写真、360°写真、フラット動画に対応 (360°動画はフラットで再生)、macOSも同様ですが、確認はプロジェクトのCIのMacのみで、署名なし |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [インストーラーまたはZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) | デスクトップビルド10、署名付きプレビュー：写真、フラットおよび360°動画、共有、Plex、カメラ、スマートフォンでのログイン、キー1つでの写真の回転、89言語のインターフェース |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOSとLinux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) | プレビュー：Linuxでは写真、360°写真、フラット動画に対応 (360°動画はフラットで再生)、macOSも同様ですが、確認はプロジェクトのCIのMacのみで、署名なし |
 
 *ステータスはリリースごとに更新されます。ビルドごとの詳細は[リリースステータス](../docs/immuch360/release-status.md)に記載されています。*
 
@@ -429,18 +429,18 @@ DJIドローンが見ているものを、DJI Flyもアカウントも使わず�
 <a id="windows"></a>
 ### Windows
 
-1. [デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-9)から`Immuch360-Desktop-3.3.0-rc.0-desktop.9-windows-x64-setup.exe`をダウンロードし (`SHA256SUMS.txt`で確認できます)、開きます。インストーラーとZIPは署名済みで、Windowsには発行元としてAPROGSYSが表示されます。発行元がSmartScreenにとってまだ新しいうちは、一度だけ確認されることがあります。その場合は「詳細情報」、続いて「実行」を選びます。
+1. [デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10)から`Immuch360-Desktop-3.3.0-rc.0-desktop.10-windows-x64-setup.exe`をダウンロードし (`SHA256SUMS.txt`で確認できます)、開きます。インストーラーとZIPは署名済みで、Windowsには発行元としてAPROGSYSが表示されます。発行元がSmartScreenにとってまだ新しいうちは、一度だけ確認されることがあります。その場合は「詳細情報」、続いて「実行」を選びます。
 2. 「Install for me only」(管理者権限不要) または「Install for all users」を選び、続いてインストーラーの言語を選びます。Windowsの言語がすでに選択されています。
 3. スタートメニューからImmuch360 Desktopを起動します。写真や動画は「プログラムから開く」に表示されます (ファイルを右クリックし、プログラムから開く)。既定のプログラムに設定されることはありません。新しいビルドを初めて起動する際は、Windowsがファイルをスキャンするため最大1分ほどかかることがあります。
 4. Windows 10または11、64ビット。更新するには、次のビルドのインストーラーを開きます：ログイン、フォルダー、設定はそのまま保持されます。同じリリースのZIPは同じプログラムをフォルダーの形にしたもので、どこにでも解凍して`immuch360.exe`を起動できます。デスクトップビルド4から8が起動時に「duplicate column name: group_date」で止まっていたコンピューターでも、ビルド9はそのデータベースを開き、データを保持します。
 
 ### Linux
 
-Ubuntu 22.04以降とDebian 12以降では`sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.9-linux-amd64.deb`を、Fedora 40以降では`sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.9-linux-x86_64.rpm`を実行します。どちらも[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-9)にあります。その後、アプリケーション一覧からImmuch360 Desktopを起動します。プレビューです：コンピューターのフォルダー、写真と360°写真の球体表示、そしてパッケージがインストールするシステムのlibmpvによるフラット動画に対応します (360°、3D、RAWの動画はメッセージを表示してフラットで再生)。SMB共有はUbuntu 22.04とDebian 12以降で使えます。Fedoraでは、カメラの動画にRPM FusionのFFmpegが必要です。GNOME KeyringやKWalletがない場合、パスワードはそのセッションの間だけ保持され、アプリの設定にその旨が表示されます。
+Ubuntu 22.04以降とDebian 12以降では`sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.10-linux-amd64.deb`を、Fedora 40以降では`sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.10-linux-x86_64.rpm`を実行します。どちらも[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10)にあります。その後、アプリケーション一覧からImmuch360 Desktopを起動します。プレビューです：コンピューターのフォルダー、写真と360°写真の球体表示、そしてパッケージがインストールするシステムのlibmpvによるフラット動画に対応します (360°、3D、RAWの動画はメッセージを表示してフラットで再生)。SMB共有はUbuntu 22.04とDebian 12以降で使えます。Fedoraでは、カメラの動画にRPM FusionのFFmpegが必要です。GNOME KeyringやKWalletがない場合、パスワードはそのセッションの間だけ保持され、アプリの設定にその旨が表示されます。
 
 ### macOS
 
-[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-9)から`Immuch360-Desktop-3.3.0-rc.0-desktop.9-macos.dmg`を開き、アプリをアプリケーションにドラッグします (Apple SiliconとIntel、macOS 12以降)。まだ署名もノータライズもされていないため、macOS 14以前ではControlキーを押しながらクリックして開くを選び、macOS 15以降ではシステム設定、プライバシーとセキュリティで「このまま開く」を選びます。このプロジェクトに関わる誰もMacを持っていないため、アプリはプロジェクトのCIのMacでしか動かしていません。そこではファイルやフォルダーを開き、独自のlibmpvでフラット動画を再生しますが、ネットワークアクセスは未検証です。報告を歓迎します。
+[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10)から`Immuch360-Desktop-3.3.0-rc.0-desktop.10-macos.dmg`を開き、アプリをアプリケーションにドラッグします (Apple SiliconとIntel、macOS 12以降)。まだ署名もノータライズもされていないため、macOS 14以前ではControlキーを押しながらクリックして開くを選び、macOS 15以降ではシステム設定、プライバシーとセキュリティで「このまま開く」を選びます。このプロジェクトに関わる誰もMacを持っていないため、アプリはプロジェクトのCIのMacでしか動かしていません。そこではファイルやフォルダーを開き、独自のlibmpvでフラット動画を再生しますが、ネットワークアクセスは未検証です。報告を歓迎します。
 
 <a id="privacy"></a>
 ## プライバシー
