@@ -260,12 +260,21 @@ DidlResource? _resourceOf(LiteXmlElement res, Uri base, {required bool hasOthers
     protocol: parts.isEmpty ? '' : parts[0].trim().toLowerCase(),
     mimeType: parts.length < 3 ? '' : parts[2].trim().toLowerCase(),
     dlnaParams: params,
-    size: int.tryParse((res.attributes['size'] ?? '').trim()),
+    size: _listedSize(res.attributes['size']),
     durationMs: parseDidlDuration(res.attributes['duration'] ?? ''),
     width: hasResolution ? width : null,
     height: hasResolution ? height : null,
     hasOtherResources: hasOthers,
   );
+}
+
+/// The size a server wrote for a resource, null when it tells nothing: no size, digits that do not fit, and 0 or less.
+/// Servers write 0 for a size they do not know (a stream, a file being recorded), and some write the size of a file
+/// over 2 GiB as a signed 32 bit number, below 0. Taken as is, such a size made the media bridge serve an empty file;
+/// without one, the size is asked of the server itself (DlnaFileSystem.stat).
+int? _listedSize(String? attribute) {
+  final size = int.tryParse((attribute ?? '').trim());
+  return size != null && size > 0 ? size : null;
 }
 
 /// [text] split on [separator] into [count] parts at most, the last one keeping the separators it holds

@@ -50,6 +50,9 @@ class _FakeDlnaServer {
   /// Leaves the size attribute out of the resources
   bool withoutSizes = false;
 
+  /// Written as the size attribute of every resource in place of its length, when set
+  String? writtenSize;
+
   /// Answers 406 to a read without the DLNA transfer mode header
   bool needsTransferMode = false;
 
@@ -212,7 +215,7 @@ class _FakeDlnaServer {
         );
         continue;
       }
-      final size = withoutSizes ? '' : ' size="${object.bytes!.length}"';
+      final size = withoutSizes ? '' : ' size="${writtenSize ?? object.bytes!.length}"';
       final video = object.mime.startsWith('video/');
       didl.write(
         '<item id="${object.id}" parentID="$id" restricted="1"><dc:title>${escapeXmlText(object.title)}</dc:title>'
@@ -554,6 +557,19 @@ void main() {
       expect(server.gets.single.headers['range'], 'bytes=0-0');
       await fileSystem.stat('/photo.jpg');
       expect(server.gets, hasLength(1), reason: 'the size found is kept');
+    });
+
+    test('asks for the first byte when the server lists a size of 0 or below 0', () async {
+      for (final written in ['0', '-1294967296']) {
+        server.writtenSize = written;
+        final fileSystem = await open();
+
+        final stat = await fileSystem.stat('/photo.jpg');
+
+        expect(stat.size, photo.length, reason: 'size="$written"');
+        expect(server.gets.last.headers['range'], 'bytes=0-0');
+        expect(await fileSystem.readRange('/photo.jpg', 0, 4), photo.sublist(0, 4), reason: 'size="$written"');
+      }
     });
 
     test('takes the length of the whole file from a server that ignores ranges, without reading it', () async {
