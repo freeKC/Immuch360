@@ -149,7 +149,7 @@ requests on the reverse proxy in front of Immich, for example with nginx:
 ```nginx
 add_header Access-Control-Allow-Origin  "*" always;
 add_header Access-Control-Allow-Headers "Authorization, x-api-key, Content-Type" always;
-add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
+add_header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS" always;
 
 if ($request_method = OPTIONS) {
     return 204;
@@ -158,7 +158,8 @@ if ($request_method = OPTIONS) {
 
 The app authenticates with `Authorization` or `x-api-key` headers and uses no cookies, so a wildcard origin is safe
 here. The 360° sphere also reads the preview of the photo with `fetch` (WebGL only takes pixels the page may read): the
-same headers cover it.
+same headers cover it. A turn of a photo (the yellow and blue keys) is saved with `PUT` and `DELETE` on
+`/api/assets/<id>/edits`: without these two methods in `Access-Control-Allow-Methods`, a TV before webOS 25 cannot save it.
 
 ## Build from source
 
