@@ -22,6 +22,8 @@ var service = new Service(SERVICE_ID);
 var session = null;
 var httpServer = null;
 var httpPort = null;
+// Immuch360: the address the phone page listens on, the TV's address on the home network
+var httpHost = null;
 // Immuch360: one activity per user of the service, the phone sign in ('pairing') and the media bridge ('bridge')
 var activities = {};
 
@@ -63,23 +65,39 @@ function teardown() {
 		}
 		httpServer = null;
 		httpPort = null;
+		httpHost = null;
 	}
 }
 
+// Immuch360: the phone page listens on the TV's address on the home network only, not on every address of the TV; a
+// new address (the TV changed networks) starts the server again there. Resolves with that address and the port.
 function ensureServer() {
-	if (httpServer !== null) return Promise.resolve(httpPort);
+	var address = serverLib.lanIp();
+	if (!address) return Promise.reject(new Error('TV has no network address'));
+	if (httpServer !== null && httpHost === address) return Promise.resolve({host: address, port: httpPort});
+	if (httpServer !== null) {
+		try {
+			httpServer.close();
+		} catch (e) {
+			// A server already closed is fine
+		}
+		httpServer = null;
+		httpPort = null;
+		httpHost = null;
+	}
 	var server = serverLib.createPairingServer({
 		getSession: function () {
 			return session;
 		}
 	});
-	return serverLib.listenOnFreePort(server, BASE_PORT, PORT_TRIES).then(function (port) {
+	return serverLib.listenOnFreePort(server, BASE_PORT, PORT_TRIES, address).then(function (port) {
 		server.on('error', function (err) {
 			console.error('[pairing] http server error', err);
 		});
 		httpServer = server;
 		httpPort = port;
-		return port;
+		httpHost = address;
+		return {host: address, port: port};
 	});
 }
 
@@ -91,25 +109,21 @@ service.register('start', function (message) {
 		session = pairing.createSession(now, {suggestedUrl: params.suggestedUrl});
 	}
 	ensureServer().then(
-		function (port) {
-			var url = serverLib.buildPairingUrl(serverLib.lanIp(), port, session);
-			if (!url) {
-				teardown();
-				message.respond({returnValue: false, errorText: 'TV has no network address'});
-				return;
-			}
+		function (listening) {
+			var url = serverLib.buildPairingUrl(listening.host, listening.port, session);
 			holdActivity('pairing');
 			message.respond({
 				returnValue: true,
 				url: url,
 				code: session.code,
-				port: port,
+				port: listening.port,
 				nodeVersion: process.version
 			});
 		},
 		function (err) {
 			teardown();
-			message.respond({returnValue: false, errorText: 'Could not start pairing server: ' + err.message});
+			var text = err && err.message === 'TV has no network address' ? err.message : 'Could not start pairing server: ' + err.message;
+			message.respond({returnValue: false, errorText: text});
 		}
 	);
 });

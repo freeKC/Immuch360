@@ -137,23 +137,32 @@ function createPairingServer(context) {
 	return server;
 }
 
-function listenOnFreePort(server, basePort, tries) {
+// Immuch360: host is the address to listen on; the service gives the TV's address on the home network (lanIp), so the
+// phone page answers there only (LG's vulnerability scan; PRIVACY.md); dev.js keeps every address of the computer.
+function listenOnFreePort(server, basePort, tries, host) {
+	var address = host || '0.0.0.0';
 	return new Promise(function (resolve, reject) {
 		var attempt = 0;
+		// Immuch360: each attempt removes its own listeners: the callback of a listen() that failed used to stay
+		// registered and resolve with the port that was taken when the next one succeeded
 		function tryListen() {
 			var port = basePort + attempt;
-			server.once('error', function (err) {
+			function onError(err) {
+				server.removeListener('listening', onListening);
 				if (err && err.code === 'EADDRINUSE' && attempt + 1 < tries) {
 					attempt += 1;
 					tryListen();
 					return;
 				}
 				reject(err);
-			});
-			server.listen(port, '0.0.0.0', function () {
-				server.removeAllListeners('error');
+			}
+			function onListening() {
+				server.removeListener('error', onError);
 				resolve(port);
-			});
+			}
+			server.once('error', onError);
+			server.once('listening', onListening);
+			server.listen(port, address);
 		}
 		tryListen();
 	});

@@ -230,6 +230,42 @@ test('GET / serves the sign-in page', function () {
 	);
 });
 
+// Immuch360: the phone page listens on the address it is given (the service gives the TV's address on the home
+// network), on the first free port from the base one
+test('pairing server listens on the given address only, on the first free port', function () {
+	var first = serverLib.createPairingServer({getSession: function () { return null; }});
+	var second = serverLib.createPairingServer({getSession: function () { return null; }});
+	var base = 18788 + Math.floor(Math.random() * 500);
+	return serverLib
+		.listenOnFreePort(first, base, 5, '127.0.0.1')
+		.then(function (port) {
+			assert.strictEqual(port, base);
+			assert.strictEqual(first.address().address, '127.0.0.1');
+			return serverLib.listenOnFreePort(second, base, 5, '127.0.0.1');
+		})
+		.then(function (port) {
+			assert.strictEqual(port, base + 1, 'the next port when the first is taken');
+			assert.strictEqual(second.address().address, '127.0.0.1');
+			first.close();
+			second.close();
+		});
+});
+
+test('pairing server: without an address, every address (the computer of dev.js)', function () {
+	var server = serverLib.createPairingServer({getSession: function () { return null; }});
+	return serverLib.listenOnFreePort(server, 19400 + Math.floor(Math.random() * 500), 5).then(function () {
+		assert.strictEqual(server.address().address, '0.0.0.0');
+		server.close();
+	});
+});
+
+test('the service binds the phone page to the TV address of the home network (lanIp)', function () {
+	var source = require('fs').readFileSync(require('path').join(__dirname, 'service.js'), 'utf8');
+	assert.ok(/listenOnFreePort\(server, BASE_PORT, PORT_TRIES, address\)/.test(source));
+	assert.ok(/var address = serverLib\.lanIp\(\);/.test(source));
+	assert.ok(!/0\.0\.0\.0/.test(source));
+});
+
 /* ── bridge-host.js (Immuch360: the Luna side of the media bridge) ── */
 
 function fakeBridgeModule(log) {
