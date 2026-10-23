@@ -13,6 +13,10 @@ class LoadedCapture(val name: String, val bytes: ByteArray, val index: List<Capt
  *
  * The player sends nothing anywhere; it has no handle on a transport. Playing is refused while an accessory is open
  * (one source at a time), and the controller stops it when one opens.
+ *
+ * A capture is a file someone may have damaged or written by hand. Every read is cut to the bytes of the file before
+ * it reaches the parsers, and anything that still goes wrong on the player thread ends the playback with [failure]
+ * set, for the page to say, instead of ending the app.
  */
 class CapturePlayer(
   /** The page lock: the player routes under it, as the reader thread does */
@@ -38,6 +42,11 @@ class CapturePlayer(
 
   @Volatile
   var durationMs = 0L
+    private set
+
+  /** The kind of the error that ended the last playback early, or null when it ended normally or was stopped */
+  @Volatile
+  var failure: String? = null
     private set
 
   @Volatile
@@ -67,9 +76,10 @@ class CapturePlayer(
       decoder.clearCounters()
       router.reset()
       name = capture.name
-      durationMs = (lastNs - firstNs) / 1_000_000
+      durationMs = ((lastNs - firstNs) / 1_000_000).coerceAtLeast(0)
       positionMs = startAtMs.coerceIn(0, durationMs)
     }
+    failure = null
     stopRequested = false
     playing = true
     val worker = Thread({ run(capture, reads, firstNs, startAtMs, onNewStream, onRead, onEnd) }, "DjiLinkPlayer")
@@ -113,11 +123,7 @@ class CapturePlayer(
         if (stopRequested) {
           break
         }
-        val from = entry.offset.toInt()
-        if (from < 0 || from >= capture.bytes.size) {
-          continue
-        }
-        val length = minOf(entry.length, capture.bytes.size - from)
+        val (from, length) = entry.rangeIn(capture.bytes.size) ?: continue
         val nowNs = clockNs()
         synchronized(gate) {
           for (envelope in decoder.offer(capture.bytes, from, length)) {
@@ -129,6 +135,9 @@ class CapturePlayer(
       }
     } catch (_: InterruptedException) {
       // Stopped while waiting for the next read
+    } catch (error: Throwable) {
+      // A damaged capture, or a parser that did not expect what it read: the playback ends and the page says why
+      failure = error.javaClass.simpleName.ifEmpty { "Throwable" }
     } finally {
       playing = false
       onEnd()
@@ -150,6 +159,7 @@ class CapturePlayer(
   /** Stops and forgets the capture: the page goes back to the cable */
   fun unload() {
     stop()
+    failure = null
     synchronized(gate) {
       name = null
       positionMs = 0

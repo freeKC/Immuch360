@@ -687,13 +687,23 @@ class DjiLinkTelemetry {
 
 /// Where the page's video and telemetry come from: the cable, or a capture being played
 class DjiLinkSource {
-  const DjiLinkSource({required this.replay, required this.playing, this.name, this.positionMs, this.durationMs});
+  const DjiLinkSource({
+    required this.replay,
+    required this.playing,
+    this.name,
+    this.positionMs,
+    this.durationMs,
+    this.failure,
+  });
 
   final bool replay;
   final bool playing;
   final String? name;
   final int? positionMs;
   final int? durationMs;
+
+  /// The kind of the error that ended the playback early (a damaged capture), or null
+  final String? failure;
 }
 
 /// A capture that can be played: an export of this app, a pair of files in its replay folder, or chosen in the picker

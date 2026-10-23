@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_counters.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
@@ -183,6 +184,25 @@ class _DjiLinkPlaySectionState extends ConsumerState<DjiLinkPlaySection> {
 
   DjiLinkNotifier get _notifier => ref.read(djiLinkProvider.notifier);
 
+  /// What is playing, what played to its end, or where a damaged capture stopped the playback
+  Widget _sourceLine(Translations t, DjiLinkSource source) {
+    final name = source.name ?? '-';
+    final seconds = ((source.positionMs ?? 0) / 1000).toStringAsFixed(1);
+    final failure = source.failure;
+    if (!source.playing && failure != null) {
+      return Text(
+        t.dji_link_play_failed(name: name, seconds: seconds, kind: failure),
+        key: const Key('dji_link_play_failed'),
+        style: context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700, color: context.colorScheme.error),
+      );
+    }
+    return Text(
+      (source.playing ? t.dji_link_playing : t.dji_link_played)(name: name, seconds: seconds),
+      key: const Key('dji_link_playing'),
+      style: context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
+    );
+  }
+
   int get _startAtMs => ((double.tryParse(_startAt.text.replaceAll(',', '.')) ?? 0) * 1000).round().clamp(0, 1 << 31);
 
   @override
@@ -200,14 +220,7 @@ class _DjiLinkPlaySectionState extends ConsumerState<DjiLinkPlaySection> {
         if (source != null && source.replay)
           Padding(
             padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              (source.playing ? t.dji_link_playing : t.dji_link_played)(
-                name: source.name ?? '-',
-                seconds: ((source.positionMs ?? 0) / 1000).toStringAsFixed(1),
-              ),
-              key: const Key('dji_link_playing'),
-              style: context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
-            ),
+            child: _sourceLine(t, source),
           ),
         if (busy)
           Text(t.dji_link_play_busy, key: const Key('dji_link_play_busy'), style: context.textTheme.bodySmall)

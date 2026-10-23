@@ -836,6 +836,45 @@ void main() {
     expect(api.played.single.$1, 'content://media/external/downloads/101');
   });
 
+  testWidgets('a damaged or oversize capture is refused with its reason, and a failed playback says where it stopped', (
+    tester,
+  ) async {
+    final api = _FakeApi(snapshot: _snapshot(state: DjiLinkState.absent))
+      ..captures = [_export20261023]
+      ..playOutcome = 'damaged';
+    final listener = await pumpPage(tester, api);
+
+    await tester.tap(find.byKey(const Key('dji_link_play_dji-link-20261023-102731')));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('has lines that do not fit its file, so it was not played'), findsOneWidget);
+
+    api.playOutcome = 'tooLarge';
+    await tester.tap(find.byKey(const Key('dji_link_play_dji-link-20261023-102731')));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('larger than 64 MB, so it was not played'), findsOneWidget);
+
+    listener!.snapshotChanged(
+      _snapshot(
+        state: DjiLinkState.absent,
+        source: DjiLinkSource(
+          replay: true,
+          playing: false,
+          name: 'dji-link-20261023-102731',
+          positionMs: 4100,
+          failure: 'IllegalArgumentException',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.text(
+        'dji-link-20261023-102731 stopped at 4.1 s on an error (IllegalArgumentException). The capture may be damaged.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('dji_link_playing')), findsNothing, reason: 'a failed playback did not play to its end');
+  });
+
   testWidgets('a capture is not played while a remote holds the cable', (tester) async {
     final api = _FakeApi(snapshot: _snapshot(state: DjiLinkState.aircraftLinked))..captures = [_export20261023];
     await pumpPage(tester, api);

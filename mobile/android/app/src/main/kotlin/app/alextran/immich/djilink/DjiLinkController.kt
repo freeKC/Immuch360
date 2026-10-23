@@ -235,20 +235,34 @@ class DjiLinkController private constructor(private val context: Context) : Link
 
   /**
    * Plays a capture through the same pipeline as the cable. Refused while an accessory is open. Returns null when it
-   * started, otherwise a code the page words: busy, unreadable, empty.
+   * started, otherwise a code the page words: busy, unreadable, tooLarge, damaged (index lines that do not fit the
+   * file), empty.
    */
   fun playCapture(binUri: String, indexUri: String, startAtMs: Long, name: String? = null): String? {
     if (manager.transport?.isRunning == true) {
       return "busy"
     }
-    val loaded = runCatching {
-      val bytes = CaptureFiles.read(context, binUri)
-      val index = CaptureReplay.parseIndex(String(CaptureFiles.read(context, indexUri)))
-      LoadedCapture(name ?: binUri.substringAfterLast('/').removeSuffix(".bin"), bytes, index)
+    val reading = runCatching {
+      val bytes = CaptureFiles.read(context, binUri, CaptureFiles.MAX_CAPTURE_BYTES)
+      val index = CaptureReplay.readIndex(
+        String(CaptureFiles.read(context, indexUri, CaptureFiles.MAX_INDEX_BYTES)),
+        fileBytes = bytes.size.toLong(),
+      )
+      bytes to index
     }.getOrElse {
       Log.w(TAG, "the capture could not be read: ${it.javaClass.simpleName}")
-      return "unreadable"
+      return if (it is CaptureTooLargeException) "tooLarge" else "unreadable"
     }
+    val (bytes, index) = reading
+    if (index.damaged) {
+      Log.w(
+        TAG,
+        "the index of the capture has ${index.rejectedLines.size} lines that do not fit, the first at line " +
+          "${index.rejectedLines.first()}: not played",
+      )
+      return "damaged"
+    }
+    val loaded = LoadedCapture(name ?: binUri.substringAfterLast('/').removeSuffix(".bin"), bytes, index.entries)
     if (loaded.bytes.isEmpty() || loaded.index.none { it.direction == CaptureDirection.IN }) {
       return "empty"
     }
@@ -268,7 +282,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
       startAtMs = startAtMs,
       onNewStream = { synchronized(gate) { video.newStream() } },
       onRead = { markDirty() },
-      onEnd = { handler.post { markDirty() } },
+      onEnd = {
+        player.failure?.let { Log.w(TAG, "the playback ended on an error: $it") }
+        handler.post { markDirty() }
+      },
     )
     markDirty()
     return null
@@ -802,6 +819,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
         name = player.name,
         positionMs = if (player.loaded) player.positionMs else null,
         durationMs = if (player.loaded) player.durationMs else null,
+        failure = if (player.loaded) player.failure else null,
       ),
       lastAccessory = lastAccessory?.toPigeon(),
       lastAccessoryAtMs = session.lastAccessoryAtWallMs,

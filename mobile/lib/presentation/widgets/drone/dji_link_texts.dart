@@ -163,6 +163,8 @@ String djiLinkPlayErrorText(Translations t, String code) => switch (code) {
   'busy' => t.dji_link_play_busy,
   'empty' => t.dji_link_play_empty,
   'notPaired' => t.dji_link_play_not_paired,
+  'damaged' => t.dji_link_play_damaged,
+  'tooLarge' => t.dji_link_play_too_large,
   _ => t.dji_link_play_unreadable,
 };
 

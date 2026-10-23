@@ -7,7 +7,10 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
+import java.io.InputStream
 
 /** One capture that can be played, as the page lists it */
 data class CaptureFile(
@@ -28,6 +31,12 @@ data class CaptureFile(
  */
 object CaptureFiles {
   const val REPLAY_FOLDER = "dji-link-replay"
+
+  /** The largest .bin played: an export of this app is at most 20 MiB (the head and the tail), so this is not one */
+  const val MAX_CAPTURE_BYTES = 64L * 1024 * 1024
+
+  /** The largest .idx.csv read: one line of about 40 bytes per read of a capture */
+  const val MAX_INDEX_BYTES = 16L * 1024 * 1024
   private const val BIN = ".bin"
   private const val INDEX = ".idx.csv"
 
@@ -127,13 +136,41 @@ object CaptureFiles {
     } ?: 0L
   }.getOrDefault(0L)
 
-  /** The bytes behind a content or file address; a capture is at most a few tens of megabytes */
-  fun read(context: Context, address: String): ByteArray {
+  /**
+   * The bytes behind a content or file address, at most [maxBytes] of them: a larger file is refused with
+   * [CaptureTooLargeException] before it fills the memory, whatever its size claims to be.
+   */
+  fun read(context: Context, address: String, maxBytes: Long): ByteArray {
     val uri = Uri.parse(address)
     if (uri.scheme == "file" || uri.scheme == null) {
-      return File(uri.path ?: address).readBytes()
+      val file = File(uri.path ?: address)
+      if (file.length() > maxBytes) {
+        throw CaptureTooLargeException(maxBytes)
+      }
+      return file.inputStream().use { readAtMost(it, maxBytes) }
     }
-    return context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-      ?: throw java.io.IOException("cannot be read")
+    return context.contentResolver.openInputStream(uri)?.use { readAtMost(it, maxBytes) }
+      ?: throw IOException("cannot be read")
+  }
+}
+
+/** A capture file above the bound of [CaptureFiles.read] */
+class CaptureTooLargeException(val maxBytes: Long) : IOException("larger than $maxBytes bytes")
+
+/** Every byte of [input] up to [maxBytes]; one more and the read stops with [CaptureTooLargeException] */
+fun readAtMost(input: InputStream, maxBytes: Long): ByteArray {
+  val out = ByteArrayOutputStream()
+  val buffer = ByteArray(64 * 1024)
+  var total = 0L
+  while (true) {
+    val count = input.read(buffer)
+    if (count < 0) {
+      return out.toByteArray()
+    }
+    total += count
+    if (total > maxBytes) {
+      throw CaptureTooLargeException(maxBytes)
+    }
+    out.write(buffer, 0, count)
   }
 }
