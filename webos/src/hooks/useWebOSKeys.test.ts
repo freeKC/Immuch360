@@ -112,8 +112,11 @@ describe('useWebOSKeys Back without a layer', () => {
 	test('an open Sandstone popup takes the press: nothing else acts, and the TV does not see it', () => {
 		const layer = document.createElement('div');
 		layer.id = FLOATING_LAYER_ID;
-		layer.appendChild(document.createElement('div'));
+		const item = document.createElement('button');
+		layer.appendChild(item);
 		document.body.appendChild(layer);
+		// A popup holds the focus (the language list, an Input's text entry)
+		item.focus();
 		const toPhotos = jest.fn();
 		const closeViewer = jest.fn();
 		const {unmount: unmountPage} = renderHook(() => useRootBack(toPhotos));
@@ -122,11 +125,29 @@ describe('useWebOSKeys Back without a layer', () => {
 		expect(closeViewer).not.toHaveBeenCalled();
 		expect(toPhotos).not.toHaveBeenCalled();
 		expect(platformBack).not.toHaveBeenCalled();
-		// The popup closed (its node left the layer): Back acts again
+		// The popup closed (its node left the layer, the focus with it): Back acts again
 		layer.innerHTML = '';
+		(document.activeElement as HTMLElement | null)?.blur?.();
 		expect(pressBack()).toBe(true);
 		expect(closeViewer).toHaveBeenCalledTimes(1);
 		unmountViewer();
 		unmountPage();
+	});
+	// A tooltip of a focused button (the viewer's controls) sits in the same layer but leaves the focus on its button:
+	// Back still closes the viewer (seen in the headless proof of 23 October 2026: Back stayed held)
+	test('a tooltip in the floating layer does not hold Back', () => {
+		const layer = document.createElement('div');
+		layer.id = FLOATING_LAYER_ID;
+		layer.appendChild(document.createElement('div'));
+		document.body.appendChild(layer);
+		const button = document.createElement('button');
+		document.body.appendChild(button);
+		button.focus();
+		const closeViewer = jest.fn();
+		const {unmount} = renderHook(() => useWebOSKeys({onBack: closeViewer}));
+		expect(pressBack()).toBe(true);
+		expect(closeViewer).toHaveBeenCalledTimes(1);
+		unmount();
+		button.remove();
 	});
 });

@@ -69,13 +69,16 @@ function fireTopBack(): boolean {
 let rootBack: (() => void) | null = null;
 
 // Immuch360: an open Sandstone popup (the language list, the text entry of an Input, a dialog) lives in the floating
-// layer of the ThemeDecorator and closes itself on the keyup of Back. Its keydown must not close the page under it nor
-// reach the TV, where WAM would add its own exit popup over the list.
+// layer of the ThemeDecorator, holds the focus, and closes itself on the keyup of Back. Its keydown must not close the
+// page under it nor reach the TV, where WAM would add its own exit popup over the list. The tooltips of the focused
+// buttons live in the same layer but leave the focus on their button: they must not hold Back.
 export const FLOATING_LAYER_ID = 'floatLayer';
 
 function popupOpen(): boolean {
-	const layer = typeof document !== 'undefined' ? document.getElementById(FLOATING_LAYER_ID) : null;
-	return !!layer && layer.childElementCount > 0;
+	if (typeof document === 'undefined') return false;
+	const layer = document.getElementById(FLOATING_LAYER_ID);
+	const focused = document.activeElement;
+	return !!layer && !!focused && focused !== document.body && layer.contains(focused);
 }
 
 // Immuch360: Back on an entry page (the welcome page, Photos, the account page of a failed start): with
