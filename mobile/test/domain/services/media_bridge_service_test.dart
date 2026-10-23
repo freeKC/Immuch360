@@ -5,8 +5,11 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/m2ts.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
+
+import 'm2ts_fixtures.dart';
 
 const _minChunk = LocalMediaBridge.defaultMinChunkSize;
 const _maxChunk = LocalMediaBridge.defaultMaxChunkSize;
@@ -591,6 +594,74 @@ void main() {
       final changed = await _send(url, range: 'bytes=0-9', ifRange: HttpDate.format(DateTime.utc(2020)));
       expect(changed.status, HttpStatus.ok);
       expect(changed.body, photo);
+    });
+  });
+
+  group('transport streams with 192 byte packets (M2TS)', () {
+    // 6000 packets: more than one chunk, whose bounds fall inside the packets
+    final ts = tsPackets(6000);
+    final m2ts = m2tsOf(ts);
+
+    setUp(() {
+      share
+        ..files['/film.m2ts'] = m2ts
+        ..files['/clip.mts'] = ts
+        ..files['/recording.mkv'] = m2ts
+        ..mimeTypes['/recording.mkv'] = 'video/vnd.dlna.mpeg-tts';
+    });
+
+    test('served as the 188 byte TS they hold, for Media3', () async {
+      final reply = await _send(bridge.urlFor('nas1', '/film.m2ts'));
+      expect(reply.status, HttpStatus.ok);
+      expect(reply.header(HttpHeaders.contentTypeHeader), 'video/mp2t');
+      expect(reply.header(HttpHeaders.contentLengthHeader), '${ts.length}');
+      expect(reply.header(HttpHeaders.acceptRangesHeader), 'bytes');
+      expect(reply.body, ts);
+
+      // Looked at once
+      final looks = share.reads.where((read) => read.path == '/film.m2ts' && read.length == m2tsSniffLength);
+      await _send(bridge.urlFor('nas1', '/film.m2ts'), range: 'bytes=0-9');
+      expect(looks, hasLength(1));
+    });
+
+    test('with ranges, inside the packets, open and from the end', () async {
+      final url = bridge.urlFor('nas1', '/film.m2ts');
+      for (final (range, start, end) in [
+        ('bytes=0-1', 0, 2),
+        ('bytes=100-1000', 100, 1001),
+        ('bytes=187-188', 187, 189),
+        ('bytes=500000-', 500000, ts.length),
+        ('bytes=-1000', ts.length - 1000, ts.length),
+      ]) {
+        final reply = await _send(url, range: range);
+        expect(reply.status, HttpStatus.partialContent, reason: range);
+        expect(reply.header(HttpHeaders.contentRangeHeader), 'bytes $start-${end - 1}/${ts.length}', reason: range);
+        expect(reply.body, ts.sublist(start, end), reason: range);
+      }
+      final past = await _send(url, range: 'bytes=${ts.length}-');
+      expect(past.status, HttpStatus.requestedRangeNotSatisfiable);
+    });
+
+    test('found by the content type a DLNA server gives too', () async {
+      final reply = await _send(bridge.urlFor('nas1', '/recording.mkv'));
+      expect(reply.header(HttpHeaders.contentTypeHeader), 'video/mp2t');
+      expect(reply.body, ts);
+    });
+
+    test('a TS with 188 byte packets is served as it is', () async {
+      final reply = await _send(bridge.urlFor('nas1', '/clip.mts'));
+      expect(reply.header(HttpHeaders.contentTypeHeader), 'video/mp2t');
+      expect(reply.body, ts);
+    });
+
+    test('as they are on the computers, whose player reads them', () async {
+      final desktop = LocalMediaBridge(convertM2ts: false)..register(share);
+      await desktop.start();
+      addTearDown(desktop.stop);
+
+      final reply = await _send(desktop.urlFor('nas1', '/film.m2ts'));
+      expect(reply.body, m2ts);
+      expect(share.reads.where((read) => read.path == '/film.m2ts' && read.length == m2tsSniffLength), isEmpty);
     });
   });
 
