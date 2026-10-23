@@ -91,6 +91,13 @@
       android:exported="false"
       android:foregroundServiceType="connectedDevice" />
 
+    <!-- DJI link, Send to a headset: keeps the phone relaying the drone's picture to a headset on the Wi-Fi while its
+         screen is locked. Started by the app only, see djilink/DjiLinkRelayService.kt; it sends nothing to the remote -->
+    <service
+      android:name=".djilink.DjiLinkRelayService"
+      android:exported="false"
+      android:foregroundServiceType="connectedDevice" />
+
     <meta-data
       android:name="com.google.firebase.messaging.default_notification_icon"
       android:resource="@drawable/notification_icon" />
@@ -229,6 +236,24 @@
          it as a VR activity; it ignores intents without the app's launch token. -->
     <activity
       android:name=".immersive.ImmersiveViewerActivity"
+      android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+      android:launchMode="singleTask"
+      android:excludeFromRecents="false"
+      android:configChanges="screenSize|screenLayout|orientation|keyboardHidden|keyboard|navigation|uiMode"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="com.oculus.intent.category.VR" />
+        <category android:name="android.intent.category.DEFAULT" />
+      </intent-filter>
+    </activity>
+
+    <!-- DJI link flight view on Meta Quest (Spatial SDK): the drone's picture relayed by a phone, on a video panel
+         in front of the pilot with passthrough around it. Started by the app only, on Horizon OS only; exported like
+         the immersive viewer so that Horizon OS can launch it as a VR activity, and it ignores intents without the
+         app's launch token. Watching only: nothing in it reaches the phone or the drone. -->
+    <activity
+      android:name=".djilink.DjiFlightViewActivity"
       android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
       android:launchMode="singleTask"
       android:excludeFromRecents="false"

@@ -696,7 +696,7 @@ class DjiLinkTelemetry {
   final List<DjiLinkRequestRow> unanswered;
 }
 
-/// Where the page's video and telemetry come from: the cable, or a capture being played
+/// Where the page's video and telemetry come from: the cable, a capture being played, or a phone's relay
 class DjiLinkSource {
   const DjiLinkSource({
     required this.replay,
@@ -705,6 +705,9 @@ class DjiLinkSource {
     this.positionMs,
     this.durationMs,
     this.failure,
+    this.relay = false,
+    this.phoneName,
+    this.loop = false,
   });
 
   final bool replay;
@@ -715,6 +718,196 @@ class DjiLinkSource {
 
   /// The kind of the error that ended the playback early (a damaged capture), or null
   final String? failure;
+
+  /// The picture and the values come from a phone's relay (a headset receiving)
+  final bool relay;
+  final String? phoneName;
+
+  /// The capture being played starts again at its start second when it ends
+  final bool loop;
+}
+
+/// Where a headset stands with the phone it receives from
+enum DjiRelayReceiveState {
+  idle,
+  connecting,
+  checkingCode,
+  receiving,
+
+  /// The connection was lost: trying again
+  lost,
+
+  /// The phone refused the code, or made a new one: the code is asked again
+  wrongCode,
+
+  /// The phone already sends to four headsets: trying again every 10 s
+  full,
+
+  /// Too many wrong codes from this address: trying again every 10 s
+  blocked,
+  otherVersion,
+
+  /// The phone did not prove the code: nothing it sends is shown
+  phoneUnproven,
+
+  /// A remote is open on this device's cable
+  busy,
+}
+
+/// One headset the phone sends to
+class DjiRelayHeadsetRow {
+  const DjiRelayHeadsetRow({
+    required this.address,
+    required this.connectedForMs,
+    required this.droppedUnits,
+    required this.megabitsPerSecond,
+    this.name,
+    this.picturesShownPerSecond,
+    this.relayDelayMs,
+  });
+
+  final String address;
+  final String? name;
+  final int connectedForMs;
+
+  /// From its pings: pictures it showed per second over its last 10 s
+  final double? picturesShownPerSecond;
+
+  /// From its pings: how long after this phone it receives the pictures
+  final double? relayDelayMs;
+  final int droppedUnits;
+  final double megabitsPerSecond;
+}
+
+/// "Send to a headset" on the phone
+class DjiRelaySending {
+  const DjiRelaySending({
+    required this.on,
+    required this.sending,
+    required this.headsets,
+    required this.refusedProofs,
+    required this.unexpectedRecords,
+    required this.wifiLowLatencyHeld,
+    required this.unitsDropped,
+    this.port,
+  });
+
+  final bool on;
+  final int? port;
+
+  /// cable, replay or none
+  final String sending;
+  final List<DjiRelayHeadsetRow> headsets;
+  final int refusedProofs;
+  final int unexpectedRecords;
+  final bool wifiLowLatencyHeld;
+  final int unitsDropped;
+}
+
+/// "Receive from a phone" on a headset, with the latency of the way from the phone, in milliseconds
+class DjiRelayReceiving {
+  const DjiRelayReceiving({
+    required this.state,
+    required this.phoneSource,
+    required this.replay,
+    required this.failures,
+    required this.units,
+    required this.lostOnWifi,
+    required this.receivedPerSecond,
+    required this.decodedPerSecond,
+    required this.shownPerSecond,
+    required this.lostOnRadio,
+    this.phoneName,
+    this.phoneId,
+    this.host,
+    this.port,
+    this.replayName,
+    this.replayPositionMs,
+    this.reconnectInMs,
+    this.relayDelayMedianMs,
+    this.relayDelayP95Ms,
+    this.phoneQueueMedianMs,
+    this.networkMedianMs,
+    this.networkP95Ms,
+    this.clockUncertaintyMs,
+    this.arrivalSpreadMedianMs,
+    this.phoneInProcessMedianMs,
+    this.phoneDecodeMedianMs,
+    this.receiveToPictureMs,
+    this.behindPhoneMs,
+    this.lastPictureAgoMs,
+  });
+
+  final DjiRelayReceiveState state;
+  final String? phoneName;
+  final String? phoneId;
+  final String? host;
+  final int? port;
+
+  /// What the phone sends: cable, replay or none
+  final String phoneSource;
+  final bool replay;
+  final String? replayName;
+  final int? replayPositionMs;
+  final int? reconnectInMs;
+
+  /// Connection attempts that failed in a row
+  final int failures;
+  final int units;
+
+  /// Pictures the phone dropped for this headset because the Wi-Fi could not keep up
+  final int lostOnWifi;
+
+  /// Phone receive time to the record complete here, median and 95th percentile; null while the clocks are measured
+  final double? relayDelayMedianMs;
+  final double? relayDelayP95Ms;
+
+  /// The part of the phone: the last fragment to the start of the write
+  final double? phoneQueueMedianMs;
+
+  /// The part of the network: the start of the write to the record complete here
+  final double? networkMedianMs;
+  final double? networkP95Ms;
+  final double? clockUncertaintyMs;
+  final double? arrivalSpreadMedianMs;
+
+  /// The phone's own in process and decode medians, from its telemetry
+  final double? phoneInProcessMedianMs;
+  final double? phoneDecodeMedianMs;
+
+  /// Relay delay plus this device's in process and decode medians
+  final double? receiveToPictureMs;
+
+  /// How long after the phone's own screen this device shows a picture
+  final double? behindPhoneMs;
+  final int? lastPictureAgoMs;
+  final double receivedPerSecond;
+  final double decodedPerSecond;
+  final double shownPerSecond;
+
+  /// Pictures lost on the radio, from the picture counter, as on the phone
+  final int lostOnRadio;
+}
+
+/// What "Send to a headset" starts with: the code, the names the welcome and the announcement carry, the notification
+class DjiRelayStart {
+  const DjiRelayStart({
+    required this.code,
+    required this.phoneName,
+    required this.notificationTitle,
+    required this.notificationText,
+    required this.stopLabel,
+    required this.channelName,
+    this.phoneId,
+  });
+
+  final String code;
+  final String phoneName;
+  final String? phoneId;
+  final String notificationTitle;
+  final String notificationText;
+  final String stopLabel;
+  final String channelName;
 }
 
 /// A capture that can be played: an export of this app, a pair of files in its replay folder, or chosen in the picker
@@ -912,6 +1105,8 @@ class DjiLinkSnapshot {
     this.lastAccessory,
     this.lastAccessoryAtMs,
     this.boundProfileId,
+    this.relaySending,
+    this.relayReceiving,
   });
 
   final DjiLinkState state;
@@ -970,6 +1165,12 @@ class DjiLinkSnapshot {
 
   /// The profile the pilot bound these accessory strings to, if any
   final String? boundProfileId;
+
+  /// "Send to a headset", on a phone
+  final DjiRelaySending? relaySending;
+
+  /// "Receive from a phone"; null until this device tried to receive
+  final DjiRelayReceiving? relayReceiving;
 }
 
 @HostApi()
@@ -1015,10 +1216,10 @@ abstract class DjiLinkApi {
   @async
   DjiLinkCaptureFile? chooseCaptureFiles();
 
-  /// Plays a capture through the same pipeline as the cable, paced by its index, from [startAtMs]. Null when it
-  /// started; otherwise a code: busy (an accessory is open), unreadable, empty.
+  /// Plays a capture through the same pipeline as the cable, paced by its index, from [startAtMs], again from there
+  /// at each end with [loop]. Null when it started; otherwise a code: busy (an accessory is open), unreadable, empty.
   @async
-  String? playCapture(String binUri, String indexUri, int startAtMs);
+  String? playCapture(String binUri, String indexUri, int startAtMs, bool loop);
 
   void stopPlayback();
 
@@ -1031,9 +1232,35 @@ abstract class DjiLinkApi {
 
   /// The USB accessories the system lists right now, without a permission and without opening anything
   List<DjiLinkPluggedAccessory> pluggedAccessories();
+
+  /// "Send to a headset": the relay listens on the local network (8362, else a free port) and the foreground service
+  /// keeps the phone sending with its screen locked. Returns the port, 0 when it could not start. Nothing a headset
+  /// sends reaches the remote: the relay takes a hello, pings and a bye, and nothing else.
+  @async
+  int startRelay(DjiRelayStart start);
+
+  void stopRelay();
+
+  /// "New code": every headset is told and must prove the new code
+  void setRelayCode(String code);
+
+  /// The text of the notification, with the number of headsets
+  void updateRelayNotification(String text);
+
+  /// "Receive from a phone": null when it started; otherwise badHost, badCode, busy (a remote is open on this
+  /// device's cable) or sending (this device sends to headsets)
+  String? connectRelay(String host, int port, String code, String? phoneId, String headsetName);
+
+  void disconnectRelay();
+
+  /// The flight view of the Quest, with the texts of its panel; false off Horizon OS or while no picture comes
+  bool openFlightView(Map<String, String> labels);
 }
 
 @FlutterApi()
 abstract class DjiLinkEvents {
   void snapshotChanged(DjiLinkSnapshot snapshot);
+
+  /// Stop in the notification of "Send to a headset": the relay stopped, the announcement must stop too
+  void relayStopRequested();
 }

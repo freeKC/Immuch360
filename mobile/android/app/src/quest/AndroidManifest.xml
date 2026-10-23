@@ -27,6 +27,9 @@
   <!-- Share this phone on the network is for phones: the headset is the one that reads the share. WAKE_LOCK stays,
        Media3 and WorkManager declare and use it as well. -->
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" tools:node="remove" />
+  <!-- The flight view of DJI link shows the field around the relayed picture; without passthrough its background is
+       black. Not required: the app installs on a headset without it. -->
+  <uses-feature android:name="com.oculus.feature.PASSTHROUGH" android:required="false" />
 
   <!-- No cleartext HTTP on the headset (the Horizon Store security scan flags it); the exceptions are in
        res/xml/network_security_config.xml of this flavour, which replaces the phone one by resource merging -->
@@ -41,6 +44,9 @@
     <!-- No phone share service on the headset: PhoneShareService.start and stop look the service up in the manifest
          first and do nothing here, so closing the app does not make Android log "Unable to start service" -->
     <service android:name=".phoneshare.PhoneShareService" tools:node="remove" />
+    <!-- No relay to headsets from a headset: DJI link's Send to a headset is for phones, DjiLinkRelayService.start and
+         stop do nothing here -->
+    <service android:name=".djilink.DjiLinkRelayService" tools:node="remove" />
   </application>
 
 </manifest>

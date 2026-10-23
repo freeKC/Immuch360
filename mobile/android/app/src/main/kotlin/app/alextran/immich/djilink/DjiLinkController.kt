@@ -2,6 +2,8 @@ package app.alextran.immich.djilink
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.wifi.WifiManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -28,9 +30,15 @@ class SharedPreferencesStore(context: Context) : KeyValueStore {
  * One owner for the whole link, for the lifetime of the process.
  *
  * It holds the accessory manager, the envelope decoder, the frame router, the capture ring, the video pipeline with
- * its decoder, the player of a saved capture, the stick source and the safety rules, and it is the only place that
- * turns all of that into the one answer the page shows. There is no foreground service: the link belongs to the page
- * that is in front of the pilot.
+ * its decoder, the player of a saved capture, the relay to the headsets and the receiver of a phone's relay, the stick
+ * source and the safety rules, and it is the only place that turns all of that into the one answer the page shows.
+ *
+ * The link has owners ([LinkOwners]): the page in front of the pilot, the relay while it sends (kept alive by
+ * [DjiLinkRelayService]) and the flight view of the Quest while it shows. It starts with the first and stops with the
+ * last, so a pilot who leaves the page while the phone sends to a headset does not cut the headset's picture.
+ *
+ * One source at a time feeds the video pipeline: the cable, a capture being played, or a phone's relay. The relay
+ * forwards the units of the first two only, never a received stream.
  *
  * Nothing here can send a flight command. The only write is the one byte liveness probe of the transport, which is
  * counted on the page, and the send path of the later stages is behind [DjiLinkBuild.SEND_ENABLED], which is false.
@@ -49,6 +57,9 @@ class DjiLinkController private constructor(private val context: Context) : Link
 
     /** VIDEO_READY means a picture came out of the decoder less than this long ago */
     private const val VIDEO_READY_WINDOW_NS = 2_000_000_000L
+
+    /** A phone's telemetry older than this no longer says the aircraft or the remote is there */
+    private const val STALE_RELAY_MS = 2_000L
 
     @Volatile
     private var instance: DjiLinkController? = null
@@ -89,8 +100,32 @@ class DjiLinkController private constructor(private val context: Context) : Link
   private val videoStatistics = VideoStatistics()
   private val feed = VideoDecoderFeed(videoStatistics, onChange = { markDirty() })
   private val store = ParameterSetStore(preferences)
-  private val video = VideoPipeline(store, feed, videoStatistics)
+
+  /** Who keeps the link running; read and changed under [gate] */
+  private val owners = LinkOwners()
+
+  /** The relay to the headsets: the second half of the tee, after the phone's own decoder */
+  private val relay = RelayServer(
+    clockNs = { SystemClock.elapsedRealtimeNanos() },
+    telemetry = { sequence -> relayTelemetryBody(sequence) },
+    welcomeFacts = { RelayWelcomeFacts(relayPhoneName, relayPhoneId, if (player.loaded) player.name else null) },
+    onChange = { markDirty() },
+  )
+  private val tee = TeeSink(feed, relay)
+  private val video = VideoPipeline(store, tee, videoStatistics)
   private val player = CapturePlayer(gate, clockNs = { SystemClock.elapsedRealtimeNanos() })
+
+  /** The receiver of a phone's relay, and the detector of the stream it receives */
+  private val receiverDetector = CodecDetector()
+  private val receiver = RelayReceiver(ReceiverEvents(), clockNs = { SystemClock.elapsedRealtimeNanos() })
+  private var receiverWifiLock: WifiManager.WifiLock? = null
+  private val shownHistory = ArrayDeque<LongArray>()
+
+  @Volatile
+  private var relayPhoneName: String = Build.MODEL ?: "phone"
+
+  @Volatile
+  private var relayPhoneId: String? = null
   private val sticks = GamepadStickSource()
   private val safety = InputSafety()
   private val manager = AoaAccessoryManager(context, this, profiles, handler)
@@ -118,8 +153,9 @@ class DjiLinkController private constructor(private val context: Context) : Link
 
   init {
     router.onVideoUnit = { unit, detector, fresh, nowNs ->
-      // One source at a time: while a capture is played, the cable is closed anyway
-      if (!player.loaded) {
+      // One source at a time: while a capture is played, the cable is closed anyway; a received stream is refused
+      // while the cable is open
+      if (!player.loaded && !receiver.active) {
         video.onUnit(unit, detector, fresh, nowNs)
       }
     }
@@ -144,8 +180,14 @@ class DjiLinkController private constructor(private val context: Context) : Link
   var pageSession = 0L
     private set
 
+  /**
+   * The page opened on a device that can be an accessory: it owns the link from now on. A link the relay kept running
+   * while the page was away is joined as it is, its counters kept.
+   */
   fun start() {
+    synchronized(gate) { owners.take(LinkOwner.PAGE) }
     if (started) {
+      markDirty()
       return
     }
     started = true
@@ -168,11 +210,35 @@ class DjiLinkController private constructor(private val context: Context) : Link
   }
 
   /**
-   * The page closed. A page that never started the link (a device without the accessory feature) may still have played
-   * a capture, so the player and the decoder stop in every case.
+   * [owner] lets go of the link. The page releasing it raises the page session. The link, the player, the receiver and
+   * the decoder stop only when no owner is left: a page that never started the link (a device without the accessory
+   * feature) may still have played a capture, so the player and the decoder stop in that case too.
    */
-  fun stop() {
-    synchronized(gate) { pageSession += 1 }
+  fun stop(owner: LinkOwner = LinkOwner.PAGE) {
+    val last = synchronized(gate) {
+      if (owner == LinkOwner.PAGE) {
+        pageSession += 1
+      }
+      owners.release(owner)
+    }
+    if (!last) {
+      markDirty()
+      return
+    }
+    stopEverything()
+  }
+
+  /** No owner is left, or the app was swiped away: every part of the link stops */
+  private fun stopEverything() {
+    synchronized(gate) { owners.clear() }
+    if (relay.isRunning) {
+      relay.stop(RelayWire.BYE_CLOSING)
+      DjiLinkRelayService.stop(context)
+    }
+    if (receiver.active) {
+      receiver.disconnect()
+    }
+    releaseReceiverWifiLock()
     if (started) {
       started = false
       handler.removeCallbacks(tick)
@@ -183,9 +249,16 @@ class DjiLinkController private constructor(private val context: Context) : Link
     synchronized(gate) {
       video.newSource()
       store.useAccessory(AccessoryStrings.of(identity))
+      store.seed = profile?.streamSeed ?: ProfileRegistry.seed20261023
     }
+    relay.source = RelaySource.NONE
     feed.shutdown()
     markDirty()
+  }
+
+  /** A request of the page on a device whose page never started the link: the page holds it from now on */
+  private fun holdForPage() {
+    synchronized(gate) { owners.take(LinkOwner.PAGE) }
   }
 
   fun retry() {
@@ -258,12 +331,17 @@ class DjiLinkController private constructor(private val context: Context) : Link
     startAtMs: Long,
     name: String? = null,
     session: Long = pageSession,
+    loop: Boolean = false,
   ): String? {
     if (session != pageSession) {
       return "closed"
     }
     if (manager.transport?.isRunning == true) {
       return "busy"
+    }
+    // Playing a local capture ends the reception of a phone's relay: one source at a time
+    if (receiver.active) {
+      disconnectRelay()
     }
     val reading = runCatching {
       val bytes = CaptureFiles.read(context, binUri, CaptureFiles.MAX_CAPTURE_BYTES)
@@ -296,6 +374,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       if (session != pageSession) {
         return "closed"
       }
+      owners.take(LinkOwner.PAGE)
       feed.open()
       video.newSource()
       // A replay neither reads nor writes the cache of a live accessory; its seed is the profile's in use, or the one
@@ -305,6 +384,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       Log.i(TAG, "playing a capture of ${loaded.bytes.size} bytes from $startAtMs ms")
       handler.removeCallbacks(tick)
       handler.postDelayed(tick, TICK_MS)
+      relay.source = RelaySource.REPLAY
       player.play(
         capture = loaded,
         startAtMs = startAtMs,
@@ -314,6 +394,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
           player.failure?.let { Log.w(TAG, "the playback ended on an error: $it") }
           handler.post { markDirty() }
         },
+        loop = loop,
       )
     }
     markDirty()
@@ -328,7 +409,269 @@ class DjiLinkController private constructor(private val context: Context) : Link
       store.useAccessory(AccessoryStrings.of(identity))
       store.seed = profile?.streamSeed ?: ProfileRegistry.seed20261023
     }
+    relay.source = if (manager.transport?.isRunning == true) RelaySource.CABLE else RelaySource.NONE
     markDirty()
+  }
+
+  // The relay to the headsets (phone)
+
+  /**
+   * Starts sending to headsets with [code]: the relay listens, the foreground service keeps the phone sending with the
+   * screen locked, and the link is owned by the relay too. Called on a worker thread (the socket is bound there).
+   * Returns the port, or 0 when nothing could listen or this device receives a phone's relay itself.
+   */
+  fun startRelay(code: String, texts: DjiLinkRelayTexts, phoneName: String, phoneId: String?): Int {
+    if (receiver.active || RelayWire.normalizeCode(code) != code) {
+      return 0
+    }
+    relayPhoneName = phoneName
+    relayPhoneId = phoneId
+    synchronized(gate) {
+      owners.take(LinkOwner.PAGE)
+      owners.take(LinkOwner.RELAY)
+    }
+    relay.source = when {
+      player.loaded -> RelaySource.REPLAY
+      manager.transport?.isRunning == true -> RelaySource.CABLE
+      else -> RelaySource.NONE
+    }
+    val port = runCatching { relay.start(code) }.getOrElse {
+      Log.w(TAG, "the relay could not listen: ${it.javaClass.simpleName}")
+      stop(LinkOwner.RELAY)
+      return 0
+    }
+    handler.post { DjiLinkRelayService.start(context, texts) }
+    scheduleTick()
+    markDirty()
+    return port
+  }
+
+  /** Stops sending: a bye to every headset; the link stops too when nothing else owns it */
+  fun stopRelay() {
+    relay.stop(RelayWire.BYE_STOPPED)
+    DjiLinkRelayService.stop(context)
+    stop(LinkOwner.RELAY)
+  }
+
+  /** "New code": every headset is told and must prove the new one */
+  fun setRelayCode(code: String) {
+    if (RelayWire.normalizeCode(code) == code && relay.isRunning) {
+      relay.setCode(code)
+    }
+  }
+
+  /** Stop in the notification: the relay stops here, and Flutter is told so that it stops the announcement */
+  fun stopRelayFromNotification() {
+    handler.post {
+      stopRelay()
+      runCatching { events?.relayStopRequested { } }
+    }
+  }
+
+  /** The app was swiped away while sending: everything stops */
+  fun onTaskRemoved() {
+    handler.post { stopEverything() }
+  }
+
+  fun updateRelayNotification(text: String) {
+    DjiLinkRelayService.update(text)
+  }
+
+  // The receiver of a phone's relay (headset, or a phone that receives)
+
+  /**
+   * Receives from the phone at [host]:[port]. Null when it started; otherwise badHost (not an IPv4 address of the local
+   * network), badCode, busy (a remote is open on this device's cable) or sending (this device sends to headsets).
+   */
+  fun connectRelay(host: String, port: Int, code: String, phoneId: String?, headsetName: String): String? {
+    if (!RelayWire.isLocalIPv4Literal(host) || port !in 1..65535) {
+      return "badHost"
+    }
+    val normalized = RelayWire.normalizeCode(code) ?: return "badCode"
+    if (manager.transport?.isRunning == true) {
+      receiver.refuseBusy()
+      markDirty()
+      return "busy"
+    }
+    if (relay.isRunning) {
+      return "sending"
+    }
+    holdForPage()
+    if (player.loaded) {
+      player.unload()
+    }
+    synchronized(gate) { startRelayedSource() }
+    relay.source = RelaySource.NONE
+    receiver.connect(host, port, normalized, phoneId, headsetName, environment.appVersion)
+    acquireReceiverWifiLock()
+    scheduleTick()
+    markDirty()
+    return null
+  }
+
+  fun disconnectRelay() {
+    receiver.disconnect()
+    releaseReceiverWifiLock()
+    synchronized(gate) {
+      video.newSource()
+      receiverDetector.reset()
+      store.useAccessory(AccessoryStrings.of(identity))
+      store.seed = profile?.streamSeed ?: ProfileRegistry.seed20261023
+    }
+    markDirty()
+  }
+
+  /** Under [gate]: the pipeline starts again for a relayed stream, which has no accessory, no cache and no seed */
+  private fun startRelayedSource() {
+    video.newSource()
+    receiverDetector.reset()
+    store.useAccessory(null)
+    store.seed = null
+    feed.open()
+    synchronized(shownHistory) { shownHistory.clear() }
+  }
+
+  private inner class ReceiverEvents : RelayReceiver.Listener {
+    override fun onConnected(welcome: RelayWelcome) {
+      synchronized(gate) { startRelayedSource() }
+      markDirty()
+    }
+
+    override fun onParameters(description: StreamDescription, source: DescriptionSource, arrivalNs: Long) {
+      synchronized(gate) {
+        if (!receiver.active) {
+          return
+        }
+        // The relayed parameter sets settle the codec the way in band ones do
+        receiverDetector.offer(RelayWire.annexBUnit(description.configuration(), arrivalNs))
+        store.onRelayedDescription(description, source)
+      }
+    }
+
+    override fun onUnit(unit: AccessUnit, header: RelayUnitHeader, flags: Int, arrivalNs: Long) {
+      synchronized(gate) {
+        if (!receiver.active) {
+          return
+        }
+        val fresh = receiverDetector.offer(unit)
+        video.onUnit(unit, receiverDetector, fresh, arrivalNs)
+      }
+      markDirty()
+    }
+
+    override fun onReset() {
+      synchronized(gate) {
+        if (receiver.active) {
+          startRelayedSource()
+        }
+      }
+      markDirty()
+    }
+
+    override fun onDisconnected() = markDirty()
+
+    override fun onChanged() = markDirty()
+
+    override fun shownPer10s(): Int {
+      val nowNs = SystemClock.elapsedRealtimeNanos()
+      val shown = videoStatistics.numbers(nowNs).shown
+      synchronized(shownHistory) {
+        if (shownHistory.isNotEmpty() && shown < shownHistory.last()[1]) {
+          shownHistory.clear()
+        }
+        shownHistory.addLast(longArrayOf(nowNs, shown))
+        while (shownHistory.size > 1 && nowNs - shownHistory.first()[0] > 10_000_000_000L) {
+          shownHistory.removeFirst()
+        }
+        val first = shownHistory.first()
+        val spanNs = nowNs - first[0]
+        if (spanNs < 1_000_000_000L) {
+          return -1
+        }
+        return ((shown - first[1]) * 10_000_000_000L / spanNs).toInt()
+      }
+    }
+  }
+
+  /** On Horizon OS the app is in front and the display on while a headset is worn: Android honours the lock then */
+  private fun acquireReceiverWifiLock() {
+    if (receiverWifiLock != null) {
+      return
+    }
+    val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager ?: return
+    val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      WifiManager.WIFI_MODE_FULL_LOW_LATENCY
+    } else {
+      @Suppress("DEPRECATION")
+      WifiManager.WIFI_MODE_FULL_HIGH_PERF
+    }
+    receiverWifiLock = runCatching {
+      wifi.createWifiLock(mode, "immuch360:djirelay-receiver").apply {
+        setReferenceCounted(false)
+        acquire()
+      }
+    }.getOrNull()
+  }
+
+  private fun releaseReceiverWifiLock() {
+    receiverWifiLock?.let { lock -> runCatching { if (lock.isHeld) lock.release() } }
+    receiverWifiLock = null
+  }
+
+  // The flight view (Horizon OS)
+
+  /** Opens the flight view; false off Horizon OS, or while no picture comes */
+  fun openFlightView(labels: Map<String, String>): Boolean {
+    if (!app.alextran.immich.immersive.isHorizonOsDevice()) {
+      return false
+    }
+    val nowNs = SystemClock.elapsedRealtimeNanos()
+    if (!videoStatistics.outputWithin(nowNs, VIDEO_READY_WINDOW_NS)) {
+      return false
+    }
+    return runCatching { context.startActivity(DjiFlightViewActivity.intent(context, labels)) }.isSuccess
+  }
+
+  fun flightViewOpened() {
+    synchronized(gate) { owners.take(LinkOwner.FLIGHT_VIEW) }
+    markDirty()
+  }
+
+  fun flightViewClosed() {
+    stop(LinkOwner.FLIGHT_VIEW)
+  }
+
+  /** What the flight view's panel shows, read four times a second on the main thread */
+  fun flightViewNumbers(): DjiFlightNumbers {
+    val nowNs = SystemClock.elapsedRealtimeNanos()
+    val received = receiver.snapshot(nowNs)
+    val receiving = receiver.active
+    val stats: VideoStats
+    val values: TelemetryValues?
+    synchronized(gate) {
+      stats = video.stats(nowNs, 0)
+      values = if (receiving) {
+        received.telemetry?.aged(received.telemetryAgeMs ?: 0)
+      } else {
+        (if (player.loaded) player.router else router).telemetryDecoder.values(nowNs / 1_000_000)
+      }
+    }
+    val receiveToPicture = RelayLatencyNumbers.receiveToPicture(
+      received.latency.relayDelayMedianMs,
+      stats.inProcessMedianMs,
+      stats.decodeMedianMs,
+    )
+    return DjiFlightNumbers(
+      receiving = receiving,
+      state = received.state,
+      replay = received.phoneSource == RelaySource.REPLAY.wire,
+      phoneHasSource = received.phoneSource != RelaySource.NONE.wire,
+      replayName = received.replayName,
+      lastPictureAgoMs = stats.lastOutputAgoMs,
+      picturesPerSecond = stats.picturesPerSecond,
+      receiveToPictureMs = receiveToPicture,
+      values = values,
+    )
   }
 
   private fun boundProfile(): DeviceProfile? {
@@ -438,6 +781,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
         store.seed = profile?.streamSeed ?: ProfileRegistry.seed20261023
       }
     }
+    if (receiver.active) {
+      // A plug ends the reception of a phone's relay: one source at a time
+      disconnectRelay()
+    }
     synchronized(gate) {
       decoder.reset()
       router.restartStreams()
@@ -445,13 +792,26 @@ class DjiLinkController private constructor(private val context: Context) : Link
       capture.mark(CaptureDirection.OPEN)
       session.onOpened(System.currentTimeMillis())
     }
+    setRelaySource(RelaySource.CABLE)
     markDirty()
+  }
+
+  /** A new source for the headsets: their decoders stop and wait for the parameter sets of the new one */
+  private fun setRelaySource(next: RelaySource) {
+    if (relay.source == next) {
+      return
+    }
+    relay.source = next
+    relay.reset()
   }
 
   override fun onClosed(reason: LinkReason) {
     synchronized(gate) {
       capture.mark(CaptureDirection.CLOSE)
       session.onClosed(reason.name, System.currentTimeMillis())
+    }
+    if (!player.loaded) {
+      setRelaySource(RelaySource.NONE)
     }
     markDirty()
   }
@@ -525,7 +885,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
    * keeps the page current while a capture plays or just stopped, on a device whose link never started too.
    */
   private fun onTick() {
-    if (!started && !player.loaded) {
+    if (!started && !player.loaded && !receiver.active && !relay.isRunning) {
       return
     }
     val nowNs = SystemClock.elapsedRealtimeNanos()
@@ -537,7 +897,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       pictures = !player.loaded && videoStatistics.outputWithin(nowNs, VIDEO_READY_WINDOW_NS)
       // A few seconds after the last picture, so that the rates of the panel come down to zero on the page
       active = player.playing || videoStatistics.outputWithin(nowNs, 2 * VIDEO_READY_WINDOW_NS) ||
-        (started && router.counters.envelopes > 0)
+        (started && router.counters.envelopes > 0) || receiver.active || relay.isRunning
     }
     when (state) {
       LinkState.AIRCRAFT_LINKED -> when {
@@ -556,6 +916,42 @@ class DjiLinkController private constructor(private val context: Context) : Link
       markDirty()
     }
     handler.postDelayed(tick, TICK_MS)
+  }
+
+  private fun scheduleTick() {
+    handler.post {
+      handler.removeCallbacks(tick)
+      handler.postDelayed(tick, TICK_MS)
+    }
+  }
+
+  /** The TELEMETRY body of the relay, built on its tick thread: values, link, and this phone's own video numbers */
+  private fun relayTelemetryBody(sequence: Long): ByteArray {
+    val nowNs = SystemClock.elapsedRealtimeNanos()
+    val nowMs = nowNs / 1_000_000
+    val json = synchronized(gate) {
+      val relayed = relay.source
+      val source = if (player.loaded) player.router else router
+      val stats = video.stats(nowNs, source.assemblerCounters().unitsTooLarge)
+      RelayTelemetry.build(
+        phoneNs = nowNs,
+        sequence = sequence,
+        link = RelayLinkFacts(
+          source = relayed.wire,
+          state = RelayTelemetry.stateName(state),
+          aircraft = source.aircraftLinked(nowMs),
+          remote = source.remotePresent(nowMs),
+          replayName = if (player.loaded) player.name else null,
+          replayPositionMs = if (player.loaded) player.positionMs else null,
+          codec = codecName(stats.codec),
+        ),
+        values = if (relayed == RelaySource.NONE) null else source.telemetryDecoder.values(nowMs),
+        phoneVideo = RelayPhoneVideo.of(stats),
+        headsets = relay.headsetCount,
+        unitsDropped = relay.unitsDropped,
+      )
+    }
+    return RelayWire.jsonBody(json)
   }
 
   private fun markDirty() {
@@ -749,7 +1145,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
     // The video and the flight values come from the capture being played, when one is; the traffic stays the cable's
     val source = if (player.loaded) player.router else router
     val probeReport = source.probe.report()
-    val tooLarge = source.assemblerCounters().unitsTooLarge
+    val receiving = receiver.active
+    val tooLarge = if (receiving) 0 else source.assemblerCounters().unitsTooLarge
+    val received = receiver.snapshot(nowNs)
+    val stats = video.stats(nowNs, tooLarge)
     return DjiLinkSnapshot(
       state = state.toPigeon(),
       reason = reason.toPigeon(),
@@ -841,8 +1240,24 @@ class DjiLinkController private constructor(private val context: Context) : Link
         sampleAgeMs = latest?.let { nowMs - it.atMs },
         armingCountdownMs = safety.armingCountdownMs(nowMs),
       ),
-      videoDecode = video.stats(nowNs, tooLarge).toPigeon(),
-      telemetryValues = telemetryPigeon(source, nowMs),
+      videoDecode = stats.toPigeon(),
+      telemetryValues = if (receiving) {
+        received.telemetry?.let { record ->
+          telemetryPigeon(
+            values = record.aged(received.telemetryAgeMs ?: 0),
+            aircraftPresent = record.link.aircraft && (received.telemetryAgeMs ?: Long.MAX_VALUE) < STALE_RELAY_MS,
+            remotePresent = record.link.remote && (received.telemetryAgeMs ?: Long.MAX_VALUE) < STALE_RELAY_MS,
+            unanswered = emptyList(),
+          )
+        }
+      } else {
+        telemetryPigeon(
+          values = source.telemetryDecoder.values(nowMs),
+          aircraftPresent = source.aircraftLinked(nowMs),
+          remotePresent = source.remotePresent(nowMs),
+          unanswered = source.requestRows(),
+        )
+      },
       source = DjiLinkSource(
         replay = player.loaded,
         playing = player.playing,
@@ -850,7 +1265,16 @@ class DjiLinkController private constructor(private val context: Context) : Link
         positionMs = if (player.loaded) player.positionMs else null,
         durationMs = if (player.loaded) player.durationMs else null,
         failure = if (player.loaded) player.failure else null,
+        relay = receiving,
+        phoneName = if (receiving) received.phoneName else null,
+        loop = player.looping,
       ),
+      relaySending = relay.snapshot(nowNs).toPigeon(DjiLinkRelayService.wifiLockHeld),
+      relayReceiving = if (received.state == RelayReceiveState.IDLE && !receiving) {
+        null
+      } else {
+        received.toPigeon(stats)
+      },
       lastAccessory = lastAccessory?.toPigeon(),
       lastAccessoryAtMs = session.lastAccessoryAtWallMs,
       boundProfileId = bindings.boundTo(AccessoryStrings.of(identity ?: lastAccessory)),
@@ -966,13 +1390,17 @@ private fun VideoStats.toPigeon(): DjiLinkDecode = DjiLinkDecode(
   lastOutputAgoMs = lastOutputAgoMs,
 )
 
-private fun telemetryPigeon(router: FrameRouter, nowMs: Long): DjiLinkTelemetry {
-  val values = router.telemetryDecoder.values(nowMs)
+internal fun telemetryPigeon(
+  values: TelemetryValues,
+  aircraftPresent: Boolean,
+  remotePresent: Boolean,
+  unanswered: List<RequestRow>,
+): DjiLinkTelemetry {
   val link = values.link
   val clock = link.aircraftClockMs
   return DjiLinkTelemetry(
-    aircraftPresent = router.aircraftLinked(nowMs),
-    remotePresent = router.remotePresent(nowMs),
+    aircraftPresent = aircraftPresent,
+    remotePresent = remotePresent,
     layoutMismatches = values.layoutMismatches,
     flight = values.flight?.let { timed ->
       val reading = timed.value
@@ -1035,7 +1463,7 @@ private fun telemetryPigeon(router: FrameRouter, nowMs: Long): DjiLinkTelemetry 
     remoteBatteryPercent = values.remoteBatteryPercent?.value?.toLong(),
     remoteBatteryStale = values.remoteBatteryPercent?.stale ?: false,
     remoteBatteryAgeMs = values.remoteBatteryPercent?.ageMs,
-    unanswered = router.requestRows().map {
+    unanswered = unanswered.map {
       DjiLinkRequestRow(
         senderType = it.senderType.toLong(),
         senderIndex = it.senderIndex.toLong(),
@@ -1146,3 +1574,86 @@ private fun TelemetryMessage.toPigeon(): DjiLinkTelemetryRow = DjiLinkTelemetryR
   preview = preview,
   name = name,
 )
+
+internal fun codecName(codec: VideoCodec): String = when (codec) {
+  VideoCodec.H265 -> "h265"
+  VideoCodec.H264 -> "h264"
+  VideoCodec.UNKNOWN -> "unknown"
+}
+
+private fun RelaySendingSnapshot.toPigeon(wifiLowLatencyHeld: Boolean): DjiRelaySending = DjiRelaySending(
+  on = on,
+  port = port?.toLong(),
+  sending = source.wire,
+  headsets = headsets.map {
+    DjiRelayHeadsetRow(
+      address = it.address,
+      name = it.name,
+      connectedForMs = it.connectedForMs,
+      picturesShownPerSecond = it.picturesShownPerSecond,
+      relayDelayMs = it.relayDelayMs,
+      droppedUnits = it.droppedUnits,
+      megabitsPerSecond = it.megabitsPerSecond,
+    )
+  },
+  refusedProofs = refusedProofs,
+  unexpectedRecords = unexpectedRecords,
+  wifiLowLatencyHeld = wifiLowLatencyHeld,
+  unitsDropped = unitsDropped,
+)
+
+private fun RelayReceiveState.toPigeon(): DjiRelayReceiveState = when (this) {
+  RelayReceiveState.IDLE -> DjiRelayReceiveState.IDLE
+  RelayReceiveState.CONNECTING -> DjiRelayReceiveState.CONNECTING
+  RelayReceiveState.CHECKING_CODE -> DjiRelayReceiveState.CHECKING_CODE
+  RelayReceiveState.RECEIVING -> DjiRelayReceiveState.RECEIVING
+  RelayReceiveState.LOST -> DjiRelayReceiveState.LOST
+  RelayReceiveState.WRONG_CODE -> DjiRelayReceiveState.WRONG_CODE
+  RelayReceiveState.FULL -> DjiRelayReceiveState.FULL
+  RelayReceiveState.BLOCKED -> DjiRelayReceiveState.BLOCKED
+  RelayReceiveState.OTHER_VERSION -> DjiRelayReceiveState.OTHER_VERSION
+  RelayReceiveState.PHONE_UNPROVEN -> DjiRelayReceiveState.PHONE_UNPROVEN
+  RelayReceiveState.BUSY -> DjiRelayReceiveState.BUSY
+}
+
+/** The receiver with the latency lines of the window page: [stats] are this device's own decoding numbers */
+private fun RelayReceiveSnapshot.toPigeon(stats: VideoStats): DjiRelayReceiving {
+  val numbers = latency
+  val receiveToPicture = RelayLatencyNumbers.receiveToPicture(
+    numbers.relayDelayMedianMs,
+    stats.inProcessMedianMs,
+    stats.decodeMedianMs,
+  )
+  val phone = telemetry?.phoneVideo
+  return DjiRelayReceiving(
+    state = state.toPigeon(),
+    phoneName = phoneName,
+    phoneId = phoneId,
+    host = host,
+    port = port?.toLong(),
+    phoneSource = phoneSource,
+    replay = phoneSource == RelaySource.REPLAY.wire,
+    replayName = replayName,
+    replayPositionMs = replayPositionMs,
+    reconnectInMs = reconnectInMs,
+    failures = failures.toLong(),
+    units = units,
+    lostOnWifi = lostOnWifi,
+    relayDelayMedianMs = numbers.relayDelayMedianMs,
+    relayDelayP95Ms = numbers.relayDelayP95Ms,
+    phoneQueueMedianMs = numbers.phoneQueueMedianMs,
+    networkMedianMs = numbers.networkMedianMs,
+    networkP95Ms = numbers.networkP95Ms,
+    clockUncertaintyMs = numbers.clockUncertaintyMs,
+    arrivalSpreadMedianMs = numbers.arrivalSpreadMedianMs,
+    phoneInProcessMedianMs = phone?.inProcessMedianMs,
+    phoneDecodeMedianMs = phone?.decodeMedianMs,
+    receiveToPictureMs = receiveToPicture,
+    behindPhoneMs = RelayLatencyNumbers.behindPhone(receiveToPicture, phone?.inProcessMedianMs, phone?.decodeMedianMs),
+    lastPictureAgoMs = stats.lastOutputAgoMs,
+    receivedPerSecond = numbers.unitsPerSecond,
+    decodedPerSecond = stats.decodedPerSecond,
+    shownPerSecond = stats.shownPerSecond,
+    lostOnRadio = stats.lostPictures,
+  )
+}

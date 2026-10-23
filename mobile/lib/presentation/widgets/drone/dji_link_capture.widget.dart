@@ -176,6 +176,9 @@ class DjiLinkPlaySection extends ConsumerStatefulWidget {
 class _DjiLinkPlaySectionState extends ConsumerState<DjiLinkPlaySection> {
   final _startAt = TextEditingController(text: '0');
 
+  /// "Play in a loop": the end starts the playback again at the same second, for a headset receiving it
+  bool _loop = false;
+
   @override
   void dispose() {
     _startAt.dispose();
@@ -240,7 +243,7 @@ class _DjiLinkPlaySectionState extends ConsumerState<DjiLinkPlaySection> {
               key: Key('dji_link_play_${file.name}'),
               tooltip: t.dji_link_play,
               icon: const Icon(Icons.play_arrow_rounded),
-              onPressed: busy ? null : () => unawaited(_notifier.play(file, startAtMs: _startAtMs)),
+              onPressed: busy ? null : () => unawaited(_notifier.play(file, startAtMs: _startAtMs, loop: _loop)),
             ),
           ),
         SizedBox(
@@ -252,6 +255,15 @@ class _DjiLinkPlaySectionState extends ConsumerState<DjiLinkPlaySection> {
             decoration: InputDecoration(labelText: t.dji_link_play_start_at, isDense: true),
           ),
         ),
+        CheckboxListTile(
+          key: const Key('dji_link_play_loop'),
+          contentPadding: EdgeInsets.zero,
+          controlAffinity: ListTileControlAffinity.leading,
+          dense: true,
+          title: Text(t.dji_link_play_loop, style: context.textTheme.bodySmall),
+          value: _loop,
+          onChanged: (value) => setState(() => _loop = value ?? false),
+        ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -259,7 +271,7 @@ class _DjiLinkPlaySectionState extends ConsumerState<DjiLinkPlaySection> {
           children: [
             OutlinedButton(
               key: const Key('dji_link_play_choose'),
-              onPressed: busy ? null : () => unawaited(_notifier.chooseAndPlay(startAtMs: _startAtMs)),
+              onPressed: busy ? null : () => unawaited(_notifier.chooseAndPlay(startAtMs: _startAtMs, loop: _loop)),
               child: Text(t.dji_link_play_choose),
             ),
             OutlinedButton(

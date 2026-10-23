@@ -13,9 +13,11 @@ import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * What Flutter asks of the link. Every call is a question about what is there, a capture control, a capture to play
- * or a choice of the page (the decoder, the hardware profile). None of them can move an aircraft: there is no method
- * here that sends anything, and the transport writes nothing but its own one byte liveness probe.
+ * What Flutter asks of the link. Every call is a question about what is there, a capture control, a capture to play,
+ * a choice of the page (the decoder, the hardware profile), the relay to headsets or the reception of a phone's relay.
+ * None of them can move an aircraft: there is no method here that sends anything to the remote, the transport writes
+ * nothing but its own one byte liveness probe, and the relay carries the picture and the values toward the headsets
+ * only.
  */
 class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
   companion object {
@@ -282,16 +284,56 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
     }
   }
 
-  override fun playCapture(binUri: String, indexUri: String, startAtMs: Long, callback: (Result<String?>) -> Unit) {
+  override fun playCapture(
+    binUri: String,
+    indexUri: String,
+    startAtMs: Long,
+    loop: Boolean,
+    callback: (Result<String?>) -> Unit,
+  ) {
     // The page session of the request, read on the main thread where the page closes: if it closes while the files
     // are read on the worker, the capture is not played
     val session = controller.pageSession
     worker.execute {
-      val outcome = runCatching { controller.playCapture(binUri, indexUri, startAtMs, session = session) }
-        .getOrElse { "unreadable" }
+      val outcome = runCatching {
+        controller.playCapture(binUri, indexUri, startAtMs, session = session, loop = loop)
+      }.getOrElse { "unreadable" }
       callback(Result.success(outcome))
     }
   }
+
+  override fun startRelay(start: DjiRelayStart, callback: (Result<Long>) -> Unit) {
+    val texts = DjiLinkRelayTexts(start.notificationTitle, start.notificationText, start.stopLabel, start.channelName)
+    // The socket is bound on the worker, never on the main thread
+    worker.execute {
+      val port = runCatching { controller.startRelay(start.code, texts, start.phoneName, start.phoneId) }.getOrElse {
+        Log.w(TAG, "the relay did not start: ${it.javaClass.simpleName}")
+        0
+      }
+      callback(Result.success(port.toLong()))
+    }
+  }
+
+  override fun stopRelay() {
+    controller.stopRelay()
+  }
+
+  override fun setRelayCode(code: String) {
+    controller.setRelayCode(code)
+  }
+
+  override fun updateRelayNotification(text: String) {
+    controller.updateRelayNotification(text)
+  }
+
+  override fun connectRelay(host: String, port: Long, code: String, phoneId: String?, headsetName: String): String? =
+    controller.connectRelay(host, port.toInt(), code, phoneId, headsetName)
+
+  override fun disconnectRelay() {
+    controller.disconnectRelay()
+  }
+
+  override fun openFlightView(labels: Map<String, String>): Boolean = controller.openFlightView(labels)
 
   override fun stopPlayback() {
     controller.stopPlayback()

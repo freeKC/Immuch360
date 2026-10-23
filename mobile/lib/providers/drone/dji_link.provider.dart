@@ -7,6 +7,7 @@ import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
+import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('DjiLink');
@@ -195,9 +196,10 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
     }
   }
 
-  /// The page closed: the link belongs to the page, so it stops with it
+  /// The page closed: the link stops with it, unless the relay still sends to a headset, which keeps it and keeps
+  /// hearing the native side (the Stop of the notification)
   Future<void> pageHidden() async {
-    if (_attached) {
+    if (_attached && !ref.read(djiRelayProvider).sending) {
       _attached = false;
       ref.read(djiLinkEventsSetUpProvider)(null);
     }
@@ -313,11 +315,11 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
     }
   }
 
-  /// Plays a capture through the same pipeline as the cable, from [startAtMs]
-  Future<void> play(DjiLinkCaptureFile file, {int startAtMs = 0}) async {
+  /// Plays a capture through the same pipeline as the cable, from [startAtMs], again from there at each end with [loop]
+  Future<void> play(DjiLinkCaptureFile file, {int startAtMs = 0, bool loop = false}) async {
     state = state.copyWith(clearPlayError: true);
     try {
-      final outcome = await _api.playCapture(file.binUri, file.indexUri, startAtMs);
+      final outcome = await _api.playCapture(file.binUri, file.indexUri, startAtMs, loop);
       if (outcome != null) {
         _log.info('The capture ${file.name} did not play: $outcome');
         state = state.copyWith(playError: outcome);
@@ -332,7 +334,7 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
   }
 
   /// The system picker for a .bin and its .idx.csv, then playing them
-  Future<void> chooseAndPlay({int startAtMs = 0}) async {
+  Future<void> chooseAndPlay({int startAtMs = 0, bool loop = false}) async {
     state = state.copyWith(clearPlayError: true);
     try {
       final chosen = await _api.chooseCaptureFiles();
@@ -340,7 +342,7 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
         state = state.copyWith(playError: 'notPaired');
         return;
       }
-      await play(chosen, startAtMs: startAtMs);
+      await play(chosen, startAtMs: startAtMs, loop: loop);
     } catch (error) {
       _log.fine('The picker did not answer: $error');
     }
@@ -373,6 +375,13 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
   @override
   void snapshotChanged(DjiLinkSnapshot snapshot) {
     state = state.copyWith(snapshot: snapshot);
+    ref.read(djiRelayProvider.notifier).onSnapshot(snapshot);
+  }
+
+  /// Stop in the notification of "Send to a headset": the native relay stopped, the announcement stops here
+  @override
+  void relayStopRequested() {
+    unawaited(ref.read(djiRelayProvider.notifier).onStopRequested());
   }
 }
 
@@ -380,5 +389,5 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
 /// that reads a capture file) is the one this notifier talks to
 final djiLinkProvider = NotifierProvider<DjiLinkNotifier, DjiLinkPageState>(
   DjiLinkNotifier.new,
-  dependencies: [djiLinkApiProvider, djiLinkEventsSetUpProvider],
+  dependencies: [djiLinkApiProvider, djiLinkEventsSetUpProvider, djiRelayProvider],
 );

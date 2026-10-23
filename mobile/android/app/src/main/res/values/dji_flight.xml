@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Meta Quest (Horizon OS) flight view of DJI link: DjiFlightViewActivity. Every text comes from Flutter. -->
+<resources>
+  <item type="id" name="dji_flight_video_flat" />
+  <item type="id" name="dji_flight_video_curved" />
+  <item type="id" name="dji_flight_panel" />
+</resources>

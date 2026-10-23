@@ -79,8 +79,9 @@ bool djiLinkPictureFlows(DjiLinkDecode? decode) {
   return decode != null && decode.decoderName != null && ago != null && ago < djiLinkPictureTimeoutMs;
 }
 
-/// After this long without a picture out of the decoder, the panel draws black instead of the platform view
-const djiLinkPictureTimeoutMs = 3000;
+/// After this long without a picture out of the decoder, the panel draws black instead of the platform view: a picture
+/// that stopped is never shown as live
+const djiLinkPictureTimeoutMs = 2000;
 
 /// The aspect ratio of the stream, 16:9 until a description gave its size
 double djiLinkVideoAspect(DjiLinkDecode? decode) {

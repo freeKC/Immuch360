@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Flight panel of the Meta Quest flight view of DJI link, under the video. Its size in dp is set in
+     DjiFlightViewActivity.registerPanels: on the left the state of the picture and the values, on the right the rules
+     (the red DJI Fly line, the observer note, watching only) and the controls. Every text comes from Flutter. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@drawable/immersive_panel_background"
+  android:orientation="horizontal"
+  android:padding="12dp">
+
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+    <TextView
+      android:id="@+id/dji_flight_state"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:textColor="#FFE8EEFF"
+      android:textSize="15sp"
+      android:textStyle="bold" />
+
+    <TextView
+      android:id="@+id/dji_flight_stale"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:maxLines="1"
+      android:textColor="#FFFF6B6B"
+      android:textSize="14sp"
+      android:textStyle="bold"
+      android:visibility="gone" />
+
+    <TextView
+      android:id="@+id/dji_flight_values"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="4dp"
+      android:fontFeatureSettings="tnum"
+      android:maxLines="3"
+      android:textColor="#FFE8EEFF"
+      android:textSize="13sp" />
+
+    <TextView
+      android:id="@+id/dji_flight_latency"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="4dp"
+      android:fontFeatureSettings="tnum"
+      android:maxLines="2"
+      android:textColor="#FFB0B8CC"
+      android:textSize="13sp" />
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_marginStart="16dp"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+    <TextView
+      android:id="@+id/dji_flight_fly_note"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:maxLines="2"
+      android:textColor="#FFFF6B6B"
+      android:textSize="12sp"
+      android:textStyle="bold" />
+
+    <TextView
+      android:id="@+id/dji_flight_observer"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="2dp"
+      android:maxLines="3"
+      android:textColor="#FFFF6B6B"
+      android:textSize="12sp" />
+
+    <TextView
+      android:id="@+id/dji_flight_watching"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="2dp"
+      android:maxLines="2"
+      android:textColor="#FFE8EEFF"
+      android:textSize="12sp" />
+
+    <TextView
+      android:id="@+id/dji_flight_hint"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_marginTop="2dp"
+      android:layout_weight="1"
+      android:ellipsize="end"
+      android:maxLines="3"
+      android:textColor="#FF8A93A8"
+      android:textSize="11sp" />
+
+    <TextView
+      android:id="@+id/dji_flight_back"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end"
+      android:background="@drawable/immersive_panel_background"
+      android:clickable="true"
+      android:focusable="true"
+      android:paddingStart="12dp"
+      android:paddingTop="4dp"
+      android:paddingEnd="12dp"
+      android:paddingBottom="4dp"
+      android:textColor="#FFE8EEFF"
+      android:textSize="14sp"
+      android:textStyle="bold" />
+  </LinearLayout>
+</LinearLayout>
