@@ -1,6 +1,8 @@
 // Immuch360: what the TV offers beyond a web page. On webOS the app's JS service listens on the network (the phone
-// sign in) and reads shares, Plex and cameras (the media bridge); a Samsung TV app is a web page that can only make
-// web requests, so those features are not offered there (design notes of 23 October 2026, section 6).
+// sign in) and reads shares, Plex and cameras (the media bridge). The Samsung version has no such service yet, so those
+// features are not offered there in this version: a Samsung app could reach some of them otherwise (Plex and WebDAV
+// over HTTP, sockets through Samsung's WebAssembly extension, a web service with a partner certificate), which is left
+// for later (design notes of 23 October 2026, section 6).
 
 import {platform, type Platform} from './detect';
 

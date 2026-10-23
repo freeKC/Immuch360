@@ -452,7 +452,7 @@ async function main() {
 	await step('rail: no Network shares; About page: Tizen lines, what Samsung TVs lack, no policy block, no DUID', async () => {
 		if (await evaluate(leafByText('Network shares'))) throw new Error('the rail offers Network shares');
 		await click(await waitFor(leafByText('About'), 'the About item of the rail'));
-		await waitFor(hasText('Not on Samsung TVs'), 'the About page', 30000);
+		await waitFor(hasText('Not yet on Samsung TVs'), 'the About page', 30000);
 		await sleep(1500);
 		// Each line of the page is a label and a value, two spans side by side
 		const lines = await evaluate(`(function () {

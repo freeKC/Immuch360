@@ -33,7 +33,7 @@ describe('NavigationRail', () => {
 		buttons.forEach(button => expect(button.classList.contains(spottableClass)).toBe(true));
 	});
 
-	// Immuch360: a Samsung TV app cannot read shares (src/platform/features.ts)
+	// Immuch360: the Samsung version does not read shares yet (src/platform/features.ts)
 	test('has no Network shares item on a Samsung TV', () => {
 		(window as {tizen?: unknown}).tizen = {application: {}};
 		try {

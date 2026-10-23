@@ -12,7 +12,7 @@ const hasServiceBridge = (): boolean =>
 
 // Returns null when no pairing transport exists (e.g. production build opened
 // in a plain browser): the Phone tab is simply not offered. Immuch360: nor on a Samsung TV,
-// whose app cannot listen for the phone (src/platform/features.ts).
+// whose version does not listen for the phone yet (src/platform/features.ts).
 export function createPairingDriver(): PairingDriver | null {
 	if (!features().phonePairing) return null;
 	if (hasServiceBridge()) return new LunaPairingDriver();

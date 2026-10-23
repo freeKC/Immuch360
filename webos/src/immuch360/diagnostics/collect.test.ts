@@ -124,7 +124,8 @@ describe('on a Samsung TV', () => {
 		expect(text).toContain('Smart View: no answer on port 8001');
 		expect(text).toContain('JS memory: ');
 		expect(text).toContain('Last errors: policy: img-src blocked http://nas/api/assets/a1/thumbnail');
-		expect(text).toContain('Not on Samsung TVs: Sign in with a phone, network shares, Plex and Tapo cameras.');
+		expect(text).toContain('Not yet on Samsung TVs: Sign in with a phone, network shares, Plex and Tapo cameras. On LG TVs these run');
+		expect(text).toContain('which the Samsung version does not have yet.');
 		expect(text).not.toContain('webOS:');
 		expect(text).not.toContain('DUIDSECRET');
 	});
@@ -133,7 +134,7 @@ describe('on a Samsung TV', () => {
 		const text = diagnosticsText(await collectDiagnostics(null));
 		expect(text).toContain('webOS: ?');
 		expect(text).toContain('Last errors: none');
-		expect(text).not.toContain('Not on Samsung TVs');
+		expect(text).not.toContain('on Samsung TVs');
 		expect(text).not.toContain('Tizen:');
 	});
 });
