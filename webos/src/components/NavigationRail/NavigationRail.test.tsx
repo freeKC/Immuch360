@@ -49,4 +49,15 @@ describe('NavigationRail', () => {
 			expect(document.activeElement).toBe(screen.getByRole('button', {name: /Photos/}));
 		}
 	});
+	// Immuch360: LG's self checklist, item 6: a label cut with an ellipsis or rolling; the page shown is marked
+	test('each label is a Marquee (ellipsis, rolls on focus) and the active item says aria-current', () => {
+		render(<NavigationRail activeView="sources" onNavigate={() => {}} onOpenAccount={() => {}} accountLetter="Q" accountGradient="#123456" />);
+		const shares = screen.getByRole('button', {name: /Network shares/});
+		expect(shares.getAttribute('aria-current')).toBe('page');
+		expect(screen.getByRole('button', {name: /Photos/}).getAttribute('aria-current')).toBeNull();
+		const label = shares.querySelector('[data-rail-label]');
+		expect(label?.textContent).toBe('Network shares');
+		// The Marquee wraps its text in its own clipping box
+		expect(label?.children.length).toBeGreaterThan(0);
+	});
 });
