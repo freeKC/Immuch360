@@ -37,6 +37,14 @@ The history of immich-tv-webos is not imported (one squashed commit keeps the hi
   (`views/AppLayout.tsx`, `types/navigation.ts`), a `label` of a group that is no day (`domain/types.ts`,
   `DateHeader`, `TimelineGrid`) and the file name of a share's file over its date (`MediaInfo`). The service's
   `package.json` and `services.json` say what it does now.
+- Samsung TVs (Tizen): the same bundle runs there, packaged by the top level `tizen/` folder. `src/platform/` finds the
+  TV at run time and holds every Tizen call (`detect.ts`, `features.ts`, `tizen.ts`, `tizen-api.d.ts`, `keymap.ts`),
+  and a few lines in inherited files branch on it: the Samsung key codes (`immuch360/keys.ts`), Back on the first
+  screen closes the app on Samsung TVs (`hooks/useWebOSKeys.ts`), the screen saver through AppCommon
+  (`utils/screenSaver.ts`), the video holds it while it plays on Samsung TVs and pauses when the app is hidden
+  (`MediaViewer/VideoPlayer.tsx`), no "Network shares" item nor Phone tab there (`NavigationRail`,
+  `pairing/createPairingDriver.ts`), the address keyboard for the server field (`UrlInput`, `FieldRow`), the start up
+  (`index.tsx`). The last errors and policy blocks are kept for the About page (`immuch360/diagnostics/errorLog.ts`).
 - Tests: `test/unit` (node test runner) for the new layers; the inherited jest tests kept, adjusted where a text
   changed.
 - `README.md`, `LICENSE.md`, `THIRD_PARTY.md` and this file; the inherited `LICENSE` is kept unchanged. The inherited

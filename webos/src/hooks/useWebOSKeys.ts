@@ -1,4 +1,6 @@
 import {useEffect} from 'react';
+import {features} from '../platform/features';
+import {exitTizenApp} from '../platform/tizen';
 
 interface UseWebOSKeysOptions {
 	onBack?: () => void;
@@ -63,6 +65,25 @@ function fireTopBack(): boolean {
 	return true;
 }
 
+// Immuch360: Samsung's Back. On a Samsung TV, Back on the first screen closes the app, as Samsung's own apps do; webOS
+// asks with its own dialog instead. Not while a text is typed (the Samsung keyboard closes itself), nor while a popup
+// of Sandstone is open in the floating layer (a list of choices, the text input popup): Enact closes those on Back.
+const SAMSUNG_BACK_KEYCODE = 10009;
+
+function floatingLayerOpen(): boolean {
+	const layer = document.getElementById('floatLayer');
+	return !!layer && layer.childElementCount > 0;
+}
+
+function exitsTheApp(event: KeyboardEvent): boolean {
+	return (
+		event.keyCode === SAMSUNG_BACK_KEYCODE &&
+		features().exitOnRootBack &&
+		!isEditingText(event.target) &&
+		!floatingLayerOpen()
+	);
+}
+
 let bridgeInstalled = false;
 
 // Installs the global Back key listener once per app. On webOS, WAM dispatches the remote
@@ -70,6 +91,7 @@ let bridgeInstalled = false;
 // If our handler calls preventDefault, WAM suppresses its default "Close app?" dialog and
 // the press is consumed by the app. If no handler is on the back-stack — e.g. we're at the
 // root view — we let WAM proceed and the user exits the app naturally.
+// Immuch360: a Samsung TV does nothing by itself there, so the app closes itself (exitsTheApp).
 function ensureBridgeInstalled(): void {
 	if (bridgeInstalled || typeof window === 'undefined') return;
 	bridgeInstalled = true;
@@ -85,6 +107,9 @@ function ensureBridgeInstalled(): void {
 				// don't all fire the same back action — otherwise an album-and-viewer combo would
 				// pop both layers on a single press.
 				event.stopImmediatePropagation();
+			} else if (exitsTheApp(event)) {
+				event.preventDefault();
+				exitTizenApp();
 			}
 		},
 		{capture: true}

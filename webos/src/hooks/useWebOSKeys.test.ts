@@ -34,3 +34,60 @@ describe('useWebOSKeys Back detection', () => {
 		expect(firesBack({keyCode: 461, key: 'Unidentified'})).toBe(true);
 	});
 });
+
+// Immuch360: on a Samsung TV, Back on the first screen closes the app (src/platform/features.ts)
+describe('Back on the first screen of a Samsung TV', () => {
+	let exits: number;
+
+	beforeEach(() => {
+		exits = 0;
+		(window as {tizen?: unknown}).tizen = {application: {getCurrentApplication: () => ({exit: () => exits++})}};
+	});
+
+	afterEach(() => {
+		delete (window as {tizen?: unknown}).tizen;
+		document.body.innerHTML = '';
+	});
+
+	test('closes the app when no screen takes Back', () => {
+		const {unmount} = renderHook(() => useWebOSKeys({}));
+		fireEvent.keyDown(window, {keyCode: 10009});
+		unmount();
+		expect(exits).toBe(1);
+	});
+
+	test('a screen that takes Back keeps the app open', () => {
+		expect(firesBack({keyCode: 10009})).toBe(true);
+		expect(exits).toBe(0);
+	});
+
+	test('not while a text is typed, nor while a popup is open, nor for another Back code', () => {
+		const {unmount} = renderHook(() => useWebOSKeys({}));
+		const input = document.createElement('input');
+		document.body.appendChild(input);
+		input.focus();
+		fireEvent.keyDown(input, {keyCode: 10009});
+		input.blur();
+		const layer = document.createElement('div');
+		layer.id = 'floatLayer';
+		layer.appendChild(document.createElement('div'));
+		document.body.appendChild(layer);
+		fireEvent.keyDown(window, {keyCode: 10009});
+		layer.innerHTML = '';
+		fireEvent.keyDown(window, {keyCode: 8});
+		fireEvent.keyDown(window, {keyCode: 27});
+		expect(exits).toBe(0);
+		// The popup closed: Back closes the app again
+		fireEvent.keyDown(window, {keyCode: 10009});
+		unmount();
+		expect(exits).toBe(1);
+	});
+
+	test('an LG TV keeps its own dialog', () => {
+		delete (window as {tizen?: unknown}).tizen;
+		const {unmount} = renderHook(() => useWebOSKeys({}));
+		fireEvent.keyDown(window, {keyCode: 10009});
+		unmount();
+		expect(exits).toBe(0);
+	});
+});

@@ -1,4 +1,6 @@
 import LS2Request from '@enact/webos/LS2Request';
+import {isTizen} from '../platform/detect';
+import {holdTizenScreenSaver} from '../platform/tizen';
 
 const SERVICE = 'luna://com.webos.service.tvpower/power';
 const CLIENT_NAME = 'com.aprogsys.immuch360.slideshow';
@@ -8,8 +10,10 @@ const ignore = () => {};
  * Holds off the TV screen saver until the returned release function is called. webOS has no
  * public API for this: tvpower announces each upcoming activation (state 'Active') to
  * subscribers, and replying ack:false vetoes it. Undocumented, so any failure is silent.
+ * Immuch360: a Samsung TV turns it off through AppCommon, holds counted (src/platform/tizen.ts).
  */
 export function holdScreenSaver(): () => void {
+	if (isTizen()) return holdTizenScreenSaver();
 	if (typeof (window as {WebOSServiceBridge?: unknown}).WebOSServiceBridge !== 'function') return ignore;
 	const subscription = new LS2Request().send({
 		service: SERVICE,

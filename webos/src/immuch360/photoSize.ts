@@ -3,6 +3,8 @@
 // photo has so many pixels that a TV could run out of memory decoding it (4 bytes a pixel once decoded: a 48 MP phone
 // photo would take about 195 MB, and a TV closes an app that asks too much without a word).
 
+import {features} from '../platform/features';
+
 /** The zoom from which the full-size picture is asked for */
 export const FULLSIZE_FROM_SCALE = 2;
 
@@ -25,7 +27,9 @@ export function fullsizePixelCap(chromium: number | null): number {
 	return chromium !== null && chromium >= WEBOS_6_CHROMIUM ? FULLSIZE_MAX_PIXELS : FULLSIZE_MAX_PIXELS_BEFORE_WEBOS_6;
 }
 
-const thisTvCap = (): number => fullsizePixelCap(chromiumMajor(typeof navigator === 'undefined' ? null : navigator.userAgent));
+// A Samsung TV has its own cap (src/platform/features.ts: 12 MP, for the 120 MB of an app installed for tests)
+const thisTvCap = (): number =>
+	features().fullsizePixelCap ?? fullsizePixelCap(chromiumMajor(typeof navigator === 'undefined' ? null : navigator.userAgent));
 
 /** Whether a photo zoomed to scale, of that size (null while its details load), shows its full-size picture */
 export function wantsFullsize(scale: number, width: number | null | undefined, height: number | null | undefined, maxPixels: number = thisTvCap()): boolean {
