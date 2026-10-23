@@ -3123,6 +3123,7 @@
   "webos_pairing_preparing": "Preparing phone sign-in…",
   "webos_pairing_rejected": "The server rejected the phone sign-in session. Try again.",
   "webos_pairing_signing_in": "Signing in…",
+  "webos_pairing_start_failed": "The TV could not open the sign in page for the phone. Try again, or use the Email tab.",
   "webos_pairing_step_scan": "2. Scan the code, or visit {url} and enter the code below",
   "webos_pairing_step_sign_in": "3. Sign in to your Immich server",
   "webos_pairing_step_wifi": "1. Connect your phone to the same Wi-Fi as this TV",

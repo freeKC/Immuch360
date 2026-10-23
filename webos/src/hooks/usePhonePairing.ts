@@ -2,6 +2,8 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import type {PairingDriver, PairedAccountResult} from '../pairing/types';
 import type {AuthSubmitResult} from '../api/types';
 import {t} from '../immuch360/i18n';
+import {PairingServiceError} from '../pairing/serviceResponse';
+import {isOnline} from '../api/network';
 
 export type PhonePairingState =
 	| {phase: 'starting'}
@@ -13,6 +15,15 @@ const POLL_INTERVAL_MS = 2000;
 const MAX_CONSECUTIVE_POLL_FAILURES = 5;
 
 const STARTING: PhonePairingState = {phase: 'starting'};
+
+/**
+ * Immuch360: the text of a start that failed. The service's own English goes to the log only: a TV without a network
+ * address says what the rest of the app says offline, any other failure that the phone page could not start.
+ */
+export function startErrorText(error: unknown): string {
+	if (!isOnline() || (error instanceof PairingServiceError && error.code === 'no_address')) return t('webos_error_offline');
+	return t('webos_pairing_start_failed');
+}
 
 // Drives one pairing session for as long as the caller stays mounted: start the
 // service, poll until the phone approves, then hand the result to `onPaired`.
@@ -92,11 +103,8 @@ export const usePhonePairing = (
 				poll();
 			},
 			error => {
-				update({
-					phase: 'error',
-					message: error instanceof Error ? error.message : 'Could not start phone sign-in',
-					atStart: true,
-				});
+				console.warn('[pairing] the phone page did not start:', error);
+				update({phase: 'error', message: startErrorText(error), atStart: true});
 			},
 		);
 

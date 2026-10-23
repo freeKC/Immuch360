@@ -5,14 +5,31 @@ import type {PairingStartInfo, PairingPollResult, PairedAccountResult} from './t
 export interface PairingServiceResponse {
 	returnValue: boolean;
 	errorText?: string;
+	// Immuch360: what failed, for the app's own text (service.js: no_address, listen_failed)
+	errorCode?: string;
 	url?: string;
 	code?: string;
 	state?: string;
 	result?: PairedAccountResult;
 }
 
+/**
+ * Immuch360: a failed call to the pairing service. The message is the service's own English, for the log; code says
+ * what failed, for the text on screen: no_address (the TV has no network address), listen_failed (the phone page could
+ * not start), no_answer (the service did not answer), bad_answer, failed.
+ */
+export class PairingServiceError extends Error {
+	public code: string;
+
+	constructor(message: string, code?: string | null) {
+		super(message);
+		this.name = 'PairingServiceError';
+		this.code = code || 'failed';
+	}
+}
+
 export function parseStartInfo(res: PairingServiceResponse): PairingStartInfo {
-	if (!res.url || !res.code) throw new Error('Pairing service returned no URL');
+	if (!res.url || !res.code) throw new PairingServiceError('Pairing service returned no URL', 'bad_answer');
 	return {url: res.url, code: res.code};
 }
 

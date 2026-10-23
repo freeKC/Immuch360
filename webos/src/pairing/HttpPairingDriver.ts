@@ -1,6 +1,6 @@
 import type {PairingDriver, PairingStartInfo, PairingPollResult} from './types';
 import type {PairingServiceResponse} from './serviceResponse';
-import {parseStartInfo, parsePollResult} from './serviceResponse';
+import {PairingServiceError, parseStartInfo, parsePollResult} from './serviceResponse';
 
 // Desktop-development transport: talks to `node service/dev.js`, which exposes
 // the luna methods as HTTP control routes. Never used on the TV.
@@ -18,7 +18,7 @@ export class HttpPairingDriver implements PairingDriver {
 			body: JSON.stringify(body),
 		});
 		const parsed = (await response.json()) as PairingServiceResponse;
-		if (!parsed.returnValue) throw new Error(parsed.errorText || 'Pairing service call failed');
+		if (!parsed.returnValue) throw new PairingServiceError(parsed.errorText || 'Pairing service call failed', parsed.errorCode);
 		return parsed;
 	}
 

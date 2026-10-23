@@ -1,6 +1,8 @@
 import {act, renderHook} from '@testing-library/react';
 import {usePhonePairing} from './usePhonePairing';
 import type {PairingDriver, PairingPollResult} from '../pairing/types';
+import {PairingServiceError} from '../pairing/serviceResponse';
+import {t} from '../immuch360/i18n';
 
 const INFO = {url: 'http://192.168.1.42:8788/?c=ABCD2345', code: 'ABCD2345'};
 
@@ -83,9 +85,12 @@ test('start failure reports an atStart error; restart tries again', async () => 
 	const driver = new FakeDriver();
 	driver.startError = new Error('no service');
 	const onPaired = jest.fn();
+	const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
 	const {result} = renderHook(() => usePhonePairing(driver, '', onPaired));
 	await flush();
-	expect(result.current.state).toEqual({phase: 'error', message: 'no service', atStart: true});
+	expect(result.current.state).toEqual({phase: 'error', message: t('webos_pairing_start_failed'), atStart: true});
+	expect(warn).toHaveBeenCalled();
+	warn.mockRestore();
 
 	driver.startError = null;
 	act(() => result.current.restart());
@@ -112,4 +117,42 @@ test('unmount cancels the session', async () => {
 	await flush();
 	unmount();
 	expect(driver.cancelCalls).toBe(1);
+});
+
+// Immuch360: the service's English stays in the log, the screen shows the app's texts
+describe('the text of a start that failed', () => {
+	let warn: jest.SpyInstance;
+	beforeEach(() => {
+		warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+	});
+	afterEach(() => warn.mockRestore());
+
+	test('a TV without a network address says it is offline, as the rest of the app does', async () => {
+		const driver = new FakeDriver();
+		driver.startError = new PairingServiceError('TV has no network address', 'no_address');
+		const {result} = renderHook(() => usePhonePairing(driver, '', jest.fn()));
+		await flush();
+		expect(result.current.state).toEqual({phase: 'error', message: t('webos_error_offline'), atStart: true});
+	});
+
+	test('a phone page that could not listen gets its own text, never the raw error', async () => {
+		const driver = new FakeDriver();
+		driver.startError = new PairingServiceError('Could not start pairing server: listen EADDRNOTAVAIL 192.168.1.20', 'listen_failed');
+		const {result} = renderHook(() => usePhonePairing(driver, '', jest.fn()));
+		await flush();
+		const state = result.current.state;
+		expect(state).toEqual({phase: 'error', message: t('webos_pairing_start_failed'), atStart: true});
+		expect(state.phase === 'error' && /EADDRNOTAVAIL/.test(state.message)).toBe(false);
+		expect(warn).toHaveBeenCalledWith('[pairing] the phone page did not start:', driver.startError);
+	});
+
+	test('offline, whatever the service says', async () => {
+		const online = jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+		const driver = new FakeDriver();
+		driver.startError = new PairingServiceError('Pairing service did not respond', 'no_answer');
+		const {result} = renderHook(() => usePhonePairing(driver, '', jest.fn()));
+		await flush();
+		expect(result.current.state).toEqual({phase: 'error', message: t('webos_error_offline'), atStart: true});
+		online.mockRestore();
+	});
 });
