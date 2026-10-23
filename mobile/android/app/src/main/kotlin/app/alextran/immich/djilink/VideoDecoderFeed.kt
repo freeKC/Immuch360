@@ -206,6 +206,10 @@ class VideoDecoderFeed(
   companion object {
     private const val TAG = "DjiLinkDecoder"
     const val MAX_INPUT_SIZE = 1024 * 1024
+    // Qualcomm's public vendor extensions, in the MediaCodec syntax "vendor.<extension>.<parameter>": the extensions
+    // qti-ext-dec-low-latency and qti-ext-dec-picture-order with their parameter "enable" are defined in AOSP,
+    // hardware/qcom/sdm845/media, mm-video-v4l2/vidc/vdec/src/omx_vdec_extensions.hpp, and the same two keys are set
+    // on Qualcomm decoders by Moonlight for Android (MediaCodecHelper.java)
     private const val QTI_LOW_LATENCY = "vendor.qti-ext-dec-low-latency.enable"
     private const val QTI_PICTURE_ORDER = "vendor.qti-ext-dec-picture-order.enable"
     private const val SURFACE_SWITCH_TIMEOUT_MS = 500L
