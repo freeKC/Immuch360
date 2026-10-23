@@ -28,6 +28,18 @@ export const LUNA_CALLS = [
 	{service: 'com.palm.activitymanager', method: 'create, complete', group: 'activity.operation', by: 'service/service.js'},
 ];
 
+/**
+ * Luna methods the bundled Enact may call that have no group in LG's public ACG list, so none can be declared. Enact
+ * handles their failure: if ACG enforcement denies them (webOS 26 lets it be tried), the app goes on.
+ */
+export const UNLISTED_LUNA_CALLS = [
+	{service: 'com.webos.surfacemanager', method: 'getLastInputType', by: '@enact/sandstone ThemeDecorator, once at start (pointer or keys)'},
+	{service: 'com.webos.service.tts', method: 'speak', by: '@enact/webos readAlert, only when the audio guidance of the TV is on'},
+];
+
+/** The app's own service, which its page calls over Luna; no ACG group is needed for it */
+export const OWN_SERVICE = 'com.aprogsys.immuch360.service';
+
 /** requiredACG as appinfo.json must hold it: the groups of LUNA_CALLS, sorted */
 export const REQUIRED_ACG = Array.from(new Set(LUNA_CALLS.map((call) => call.group))).sort();
 
@@ -104,6 +116,19 @@ export function acgProblems(appinfo) {
 		return [`appinfo.json requiredACG is ${JSON.stringify(acg)}, not ${JSON.stringify(REQUIRED_ACG)}`];
 	}
 	return [];
+}
+
+/** The Luna services a text (the bundle, a source file) names in luna:// addresses */
+export function lunaServices(text) {
+	const found = new Set();
+	for (const match of text.matchAll(/luna:\/\/([A-Za-z0-9.]+)/g)) found.add(match[1]);
+	return Array.from(found).sort();
+}
+
+/** Luna services named in a text that requiredACG does not cover and that are not known as unlisted */
+export function unknownLunaServices(text) {
+	const known = new Set([OWN_SERVICE, ...LUNA_CALLS.map((call) => call.service), ...UNLISTED_LUNA_CALLS.map((call) => call.service)]);
+	return lunaServices(text).filter((service) => !known.has(service));
 }
 
 /** The resolution of a package: no field for 1920x1080, "1280x720" for the package of Full HD TVs */

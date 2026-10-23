@@ -19,6 +19,11 @@
 		"preferredType": 3
 	},
 	"useGalleryMode": true,
+	"requiredACG": [
+		"activity.operation",
+		"settings.query",
+		"systemconfig.query"
+	],
 	"vendorExtension": {
 		"allowCrossDomain": true
 	}

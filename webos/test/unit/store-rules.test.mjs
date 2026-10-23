@@ -8,7 +8,20 @@ import {deflateSync} from 'node:zlib';
 import {Buffer} from 'node:buffer';
 import {dirname, join} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {FORBIDDEN_SERVICES, ICONS, TILE_COLOR, iconProblems, pngInfo, screenSaverProblems} from '../../tools/store-rules.mjs';
+import {
+	FORBIDDEN_SERVICES,
+	ICONS,
+	LUNA_CALLS,
+	OWN_SERVICE,
+	REQUIRED_ACG,
+	TILE_COLOR,
+	acgProblems,
+	iconProblems,
+	lunaServices,
+	pngInfo,
+	screenSaverProblems,
+	unknownLunaServices,
+} from '../../tools/store-rules.mjs';
 
 const WEBOS = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const appinfo = JSON.parse(readFileSync(join(WEBOS, 'webos-meta', 'appinfo.json'), 'utf8'));
@@ -85,5 +98,31 @@ describe('the screen saver (F5)', () => {
 			const text = readFileSync(file, 'utf8');
 			for (const service of FORBIDDEN_SERVICES) assert.ok(!text.includes(service), `${file} names ${service}`);
 		}
+	});
+});
+
+describe('requiredACG (F6)', () => {
+	test('appinfo.json lists the ACG groups of the Luna methods the app and its service call, exactly', () => {
+		assert.deepEqual(REQUIRED_ACG, ['activity.operation', 'settings.query', 'systemconfig.query']);
+		assert.deepEqual(acgProblems(appinfo), []);
+		assert.deepEqual(appinfo.requiredACG.slice().sort(), REQUIRED_ACG);
+		assert.ok(acgProblems({...appinfo, requiredACG: undefined}).length > 0);
+		assert.ok(acgProblems({...appinfo, requiredACG: ['systemconfig.query']}).length > 0);
+		assert.ok(acgProblems({...appinfo, requiredACG: [...REQUIRED_ACG, 'database.operation']}).length > 0);
+	});
+
+	test('the page calls only its own service and the system property service; the service, the activity manager', () => {
+		const page = sources(join(WEBOS, 'src'))
+			.map((file) => readFileSync(file, 'utf8'))
+			.join('\n');
+		assert.deepEqual(lunaServices(page), [OWN_SERVICE, 'com.webos.service.tv.systemproperty']);
+		assert.deepEqual(unknownLunaServices(page), []);
+		const service = readFileSync(join(WEBOS, 'service', 'service.js'), 'utf8');
+		assert.match(service, /activityManager\.create/);
+		assert.ok(LUNA_CALLS.some((call) => call.service === 'com.palm.activitymanager' && call.group === 'activity.operation'));
+	});
+
+	test('a Luna service that requiredACG does not cover is found in a bundle', () => {
+		assert.deepEqual(unknownLunaServices('a("luna://com.webos.service.tts");b("luna://com.palm.db/put")'), ['com.palm.db']);
 	});
 });
