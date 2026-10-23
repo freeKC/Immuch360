@@ -11,8 +11,10 @@ import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 /// remote of its own, under the buttons: Down from them takes the focus there, framed by the ring of the TV shell
 /// (TvFocusRing) like any other control. Left and right then move the video by [remoteSeekStep] per press, and faster
 /// while held (see [remoteSeekHoldStep]): the video waits ([onHold]) until the key is released ([onRelease]). OK plays
-/// or pauses ([onToggle]), Up goes back to the buttons. The slider itself never takes the focus there, since a focused
-/// slider keeps the arrows for good (Flutter issue 54984): the bar takes the keys in its place.
+/// or pauses ([onToggle]) as it goes down, like a button of the controls, and its press goes on to the page: held on
+/// the bar of the asset viewer it opens the details, as it does on any button there. Up goes back to the buttons. The
+/// slider itself never takes the focus there, since a focused slider keeps the arrows for good (Flutter issue 54984):
+/// the bar takes the keys in its place.
 class VideoTimeBar extends StatefulWidget {
   const VideoTimeBar({
     super.key,
@@ -52,6 +54,12 @@ class _VideoTimeBarState extends State<VideoTimeBar> {
   /// Where the arrows took the video since the key went down: the position the player reports lags behind
   Duration? _target;
 
+  /// The press of OK, already acted on by the bar as the key went down
+  late final _okDone = <Type, Action<Intent>>{
+    ActivateIntent: DoNothingAction(),
+    ButtonActivateIntent: DoNothingAction(),
+  };
+
   Duration _clamp(Duration position) {
     if (position < Duration.zero) {
       return Duration.zero;
@@ -63,10 +71,13 @@ class _VideoTimeBarState extends State<VideoTimeBar> {
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     final key = event.logicalKey;
     if (remoteOkKeys.contains(key)) {
+      // The key down and up go on to the page, whose timer of a held OK needs both (the asset viewer opens the details
+      // when it is held); the select shortcut of the app then finds the bar's own action, which does nothing (see
+      // build). The repeats stop here: a held key plays or pauses once.
       if (event is KeyDownEvent) {
         widget.onToggle?.call();
       }
-      return KeyEventResult.handled;
+      return event is KeyRepeatEvent ? KeyEventResult.handled : KeyEventResult.ignored;
     }
     final forward = key == LogicalKeyboardKey.arrowRight;
     if (!forward && key != LogicalKeyboardKey.arrowLeft) {
@@ -121,23 +132,28 @@ class _VideoTimeBarState extends State<VideoTimeBar> {
     if (!widget.tvMode) {
       return slider;
     }
-    return Focus(
-      debugLabel: 'Video time bar',
-      onKeyEvent: _onKey,
-      onFocusChange: (focused) {
-        if (!focused && _repeats > 0) {
-          // Left while held (the controls hid): the video goes on
-          widget.onRelease?.call();
-        }
-        _repeats = 0;
-        _target = null;
-      },
-      // Room for the focus ring around the slider
-      child: Padding(
-        key: const Key('video_time_bar'),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        // The bar takes the keys, never the slider
-        child: ExcludeFocus(child: slider),
+    // OK already played or paused as it went down (see _onKey): the select shortcut that it then reaches stops here
+    // rather than leaving the app unhandled
+    return Actions(
+      actions: _okDone,
+      child: Focus(
+        debugLabel: 'Video time bar',
+        onKeyEvent: _onKey,
+        onFocusChange: (focused) {
+          if (!focused && _repeats > 0) {
+            // Left while held (the controls hid): the video goes on
+            widget.onRelease?.call();
+          }
+          _repeats = 0;
+          _target = null;
+        },
+        // Room for the focus ring around the slider
+        child: Padding(
+          key: const Key('video_time_bar'),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          // The bar takes the keys, never the slider
+          child: ExcludeFocus(child: slider),
+        ),
       ),
     );
   }
