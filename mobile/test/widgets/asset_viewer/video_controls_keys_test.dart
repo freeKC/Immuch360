@@ -1,7 +1,7 @@
 // The controls of a video in the asset viewer hide 5 s after they show while it plays. A remote moving between them
 // starts the 5 s again: they never hide under a user who is still using them, and hide 5 s after the last key. On a
-// TV any key starts the 5 s again, they also hide while the video loads, show at its end, and -10 s and +10 s buttons
-// follow play and pause.
+// TV any key starts the 5 s again, they also hide while the video loads, show at its end, -10 s and +10 s buttons
+// follow play and pause, and the time bar under them takes the remote: left and right on it seek.
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +35,12 @@ class _Playing extends VideoPlayerNotifier {
     seeks.add(position);
     state = state.copyWith(position: position);
   }
+
+  @override
+  Future<void> pause() async => state = state.copyWith(status: VideoPlaybackStatus.paused);
+
+  @override
+  Future<void> play() async => state = state.copyWith(status: VideoPlaybackStatus.playing);
 
   void setStatus(VideoPlaybackStatus status, {Duration? position}) =>
       state = state.copyWith(status: status, position: position ?? state.position);
@@ -255,25 +261,61 @@ void main() {
     expect(find.byKey(const Key('video_controls_seek_forward')), findsNothing);
   });
 
-  testWidgets('the seek bar takes no focus on a TV, where the arrows belong to the viewer and the buttons', (
+  testWidgets('on a TV Down from the buttons reaches the time bar, where left and right seek, faster while held', (
     tester,
   ) async {
     await pump(tester, tvMode: true);
+    final player = container.read(videoPlayerProvider('video').notifier) as _Playing;
+    Focus.of(
+      tester.element(find.descendant(of: find.byType(IconButton), matching: find.byType(AnimatedPlayPause))),
+    ).requestFocus();
+    await tester.pump();
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'Video time bar');
     expect(
-      tester
-          .widget<ExcludeFocus>(find.ancestor(of: find.byType(Slider), matching: find.byType(ExcludeFocus)).first)
-          .excluding,
+      tester.widget<ExcludeFocus>(find.ancestor(of: find.byType(Slider), matching: find.byType(ExcludeFocus)).first).excluding,
       isTrue,
+      reason: 'the bar takes the keys, never the slider, which would keep the arrows',
     );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+    await tester.pump();
+    expect(seeks, const [Duration(seconds: 13), Duration(seconds: 23), Duration(seconds: 13)]);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'Video time bar', reason: 'the arrows stay on the bar');
+
+    // Held: the video waits, the steps grow, and it plays on once the key is released
+    seeks.clear();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.arrowRight);
+    for (var i = 0; i < 25; i++) {
+      await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowRight);
+    }
+    await tester.pump();
+    expect(player.state.status, VideoPlaybackStatus.paused, reason: 'held');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pump();
+    expect(seeks.first, const Duration(seconds: 23));
+    expect(seeks[1], const Duration(seconds: 25), reason: '2 s per repeat at first');
+    expect(seeks.last, const Duration(minutes: 1), reason: 'faster after a second, and not past the end');
+    expect(player.state.status, VideoPlaybackStatus.playing);
+
+    // OK plays and pauses, Up goes back to the buttons
+    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    await tester.pump();
+    expect(player.state.status, VideoPlaybackStatus.paused);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    expect(FocusManager.instance.primaryFocus?.debugLabel, isNot('Video time bar'));
   });
 
-  testWidgets('the seek bar takes the focus elsewhere, as before', (tester) async {
+  testWidgets('elsewhere the time bar is the plain slider, which takes the focus as before', (tester) async {
     await pump(tester);
-    expect(
-      tester
-          .widget<ExcludeFocus>(find.ancestor(of: find.byType(Slider), matching: find.byType(ExcludeFocus)).first)
-          .excluding,
-      isFalse,
-    );
+    expect(find.ancestor(of: find.byType(Slider), matching: find.byType(ExcludeFocus)), findsNothing);
+    expect(find.byKey(const Key('video_time_bar')), findsNothing);
   });
 }

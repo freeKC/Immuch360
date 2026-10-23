@@ -120,8 +120,22 @@ bool isRotateLetter(KeyEvent event, {required bool shift, bool? typing}) {
 }
 
 /// How far fast forward and rewind, the -10 s and +10 s buttons, and left and right where they seek (see
-/// [remoteVideoArrows]) move a video
+/// [remoteVideoArrows]) or on the time bar of a TV (VideoTimeBar) move a video
 const remoteSeekStep = Duration(seconds: 10);
+
+/// How far one repeat of left or right held on the time bar of a TV moves a video of [duration], at the repeat
+/// [repeats] (from 1). Android repeats a held key about 20 times a second: 2 s per repeat (40 s per second) for the
+/// first second, then 5 s (100 s per second), and 15 s (300 s per second) after 3 s; as much again for each half hour
+/// of a longer video, so that a film of two hours goes by in about 8 s while a short clip stays under control.
+Duration remoteSeekHoldStep(int repeats, Duration duration) {
+  final seconds = repeats < 20
+      ? 2
+      : repeats < 60
+      ? 5
+      : 15;
+  final scale = max(1, (duration.inSeconds / 1800).ceil());
+  return Duration(seconds: seconds * scale);
+}
 
 /// How long the controls of a video that plays stay on screen after they show or after the last key (on a TV any key,
 /// see [remoteKeyShowsVideoControls])
@@ -140,7 +154,8 @@ enum RemoteVideoArrows {
 /// video is here, for the asset viewer and the video page of a share.
 ///
 /// With the remote control layout ([tvMode]) they go to the previous or next item whatever the video does: it plays,
-/// loads, is paused or ended. Fast forward, rewind and the -10 s and +10 s buttons of the controls seek. Only a video
+/// loads, is paused or ended. Fast forward, rewind, the -10 s and +10 s buttons of the controls and the arrows on their
+/// time bar (Down from the buttons, see VideoTimeBar) seek. Only a video
 /// without [hasNeighbours] (a file opened on its own) seeks with them. This departs from the TV-PC criterion of Google
 /// Play (left and right rewind and fast forward the media that plays), a choice made after a test on a real TV: a
 /// video that loops never let them reach the next item. Back to TV-PC: seek while [playing] here.

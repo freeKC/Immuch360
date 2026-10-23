@@ -75,6 +75,24 @@ void main() {
       expect(remoteSeekStep, const Duration(seconds: 10));
       expect(videoControlsHideAfter, const Duration(seconds: 5));
     });
+
+    test('an arrow held on the time bar of a TV seeks faster the longer it is held, and faster in a long film', () {
+      const clip = Duration(minutes: 3);
+      expect(remoteSeekHoldStep(1, clip), const Duration(seconds: 2));
+      expect(remoteSeekHoldStep(19, clip), const Duration(seconds: 2));
+      expect(remoteSeekHoldStep(20, clip), const Duration(seconds: 5));
+      expect(remoteSeekHoldStep(60, clip), const Duration(seconds: 15));
+      expect(remoteSeekHoldStep(1, const Duration(minutes: 30)), const Duration(seconds: 2));
+      expect(remoteSeekHoldStep(1, const Duration(hours: 2)), const Duration(seconds: 8));
+      expect(remoteSeekHoldStep(100, const Duration(hours: 2)), const Duration(minutes: 1));
+      // At 20 repeats a second, a two hour film from its start to its end in less than 10 s
+      var position = Duration.zero;
+      var repeats = 0;
+      while (position < const Duration(hours: 2)) {
+        position += remoteSeekHoldStep(++repeats, const Duration(hours: 2));
+      }
+      expect(repeats, lessThan(200));
+    });
   });
 
   group('left and right on a video', () {

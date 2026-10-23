@@ -1,10 +1,11 @@
 // The video page of a share with a remote control. On a TV left and right go to the previous or next file of the
 // folder whatever the video does (they seek in a file opened on its own), OK shows the controls with play and pause
-// focused, any key brings back the app bar and the controls, which hide 5 s after the last key while the video plays,
-// and Back hides them before it leaves, while the Back button of the app bar leaves at once. Elsewhere OK pauses and
-// plays, left and right seek by 10 s while it plays and go to the previous or next file while it is paused. The media
-// keys work from anywhere on the page. A video that cannot be had shows Retry, which Down and OK reach. A phone keeps
-// Back as before, and its bars hide 5 s after they show while the video plays too.
+// focused, Down from there the time bar, where left and right seek (faster while held), any key brings back the app
+// bar and the controls, which hide 5 s after the last key while the video plays, and Back hides them before it
+// leaves, while the Back button of the app bar leaves at once. Elsewhere OK pauses and plays, left and right seek by
+// 10 s while it plays and go to the previous or next file while it is paused. The media keys work from anywhere on
+// the page. A video that cannot be had shows Retry, which Down and OK reach. A phone keeps Back as before, and its
+// bars hide 5 s after they show while the video plays too.
 
 import 'dart:async';
 
@@ -443,6 +444,52 @@ void main() {
 
     await press(tester, LogicalKeyboardKey.mediaPlayPause);
     expect(calls, ['pause']);
+  });
+
+  testWidgets('on a TV Down from play reaches the time bar, where left and right seek and OK pauses', (tester) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing);
+
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    expect(playFocus(tester).hasPrimaryFocus, isTrue);
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'Video time bar');
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    await press(tester, LogicalKeyboardKey.arrowLeft);
+    await press(tester, LogicalKeyboardKey.arrowLeft);
+    expect(calls, ['seek 40', 'seek 30', 'seek 20']);
+    expect(find.byType(NetworkVideoPage), findsOneWidget);
+    expect(find.text('video nas /b.mp4'), findsNothing, reason: 'the arrows seek on the bar, they leave the file no more');
+
+    // Held, the video waits and plays on once the key is released
+    calls.clear();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pump();
+    expect(calls, ['seek 30', 'pause', 'seek 32', 'seek 34', 'play']);
+
+    await press(tester, LogicalKeyboardKey.select);
+    expect(calls.last, 'pause');
+  });
+
+  testWidgets('on a TV the bars hide 5 s after the last key on the time bar, and right goes to the next file again', (
+    tester,
+  ) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing);
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    await press(tester, LogicalKeyboardKey.arrowDown);
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    expect(calls, ['seek 40']);
+
+    await tester.pump(const Duration(seconds: 5));
+    expect(controlsShown(), isFalse);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'Network video');
+
+    await press(tester, LogicalKeyboardKey.arrowRight);
+    await tester.pumpAndSettle();
+    expect(find.text('video nas /b.mp4'), findsOneWidget);
   });
 
   testWidgets('on a TV Back hides the controls first, then leaves', (tester) async {
