@@ -54,6 +54,6 @@ jobs:
           if ! gh release view "$TAG" --repo "$REPO" > /dev/null 2>&1; then
             gh release create "$TAG" --repo "$REPO" --verify-tag --prerelease \
               --title "Immuch360 for LG webOS $VERSION (preview)" \
-              --notes "Preview of the Immuch360 app for LG webOS TVs (webOS 4.0 and later): Immuch360-webOS-$VERSION.ipk for 1920x1080 (UHD TVs), Immuch360-webOS-$VERSION-1280x720.ipk for Full HD TVs. Install it on a TV in Developer Mode: see https://github.com/$REPO/tree/$TAG/webos#install-on-a-tv-in-developer-mode. Built on Immich TV for webOS by Seeky91 (https://github.com/Seeky91/immich-tv-webos), MIT. Source of this build: https://github.com/$REPO/tree/$TAG/webos (AGPL-3.0)."
+              --notes "Preview of the Immuch360 app for LG webOS TVs (webOS 4.0 and later): Immuch360-webOS-$VERSION.ipk for 1920x1080 (UHD TVs), Immuch360-webOS-$VERSION-1280x720.ipk for Full HD TVs. Install it on a TV in Developer Mode: see https://github.com/$REPO/tree/$TAG/webos#install-on-a-tv-in-developer-mode. Built on Immich TV for webOS by Seeky91 (https://github.com/Seeky91/immich-tv-webos), MIT. Source of this build: https://github.com/$REPO/tree/$TAG/webos (AGPL-3.0). Not yet tried on a webOS 26 TV, where the TV enforces the permissions the app declares (requiredACG): if a feature fails there, please open an issue."
           fi
           gh release upload "$TAG" --repo "$REPO" --clobber release/*.ipk release/SHA256SUMS.txt

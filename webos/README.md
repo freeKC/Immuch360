@@ -43,6 +43,10 @@ About page finds out.
 Not on a TV: uploads and the photo editor (only its quarter turn is here), the phone's own media, the recordings of Tapo
 cameras and their sound (planned), Cast, the gyroscope.
 
+While the app is open, the TV uses its Gallery picture mode, as LG asks of photo apps: an OLED TV dims the screen, then
+shows its own screen saver after 30 minutes without a key, and an LCD TV may show its screen saver during a long
+slideshow.
+
 ## Network shares, Plex and cameras
 
 The "Network shares" page of the rail reads the photos and videos of the home network, as the phone app does. It needs
@@ -136,6 +140,9 @@ Remote, and a turn is saved.
 
 1536 is Back on recent firmwares, but the wheel of the Magic Remote sends it too (with the key "Unidentified"): that
 pair is not Back. 8 is Back on a few firmwares, except while typing.
+
+Back on Photos, or on the welcome page, leaves the app: webOS 5 and webOS 23 to 25 show their Home screen (LG asks for
+it on 23 to 25), webOS 6, 22 and 26 ask before they close the app.
 
 ## "Couldn't reach the server (CORS)"
 
