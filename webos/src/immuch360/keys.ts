@@ -1,22 +1,23 @@
-// Immuch360: the keys of an LG remote, and what the app does with them on a video.
+// Immuch360: the keys of an LG or Samsung remote, and what the app does with them on a video.
 //
 // The key map of the Flutter app (mobile/lib/presentation/widgets/tv/remote_keys.dart and the TvShell) for the codes
-// webOS sends. Documented in webos/README.md, "Remote control".
+// webOS sends, and those a Samsung TV sends once src/platform/tizen.ts has asked for them (Samsung's "Remote Control"
+// guide). Documented in webos/README.md, "Remote control".
 //
-// | Remote key              | webOS keyCode (key)            | Action                                                     |
-// |-------------------------|--------------------------------|------------------------------------------------------------|
-// | Arrows                  | 37 38 39 40                    | move the focus; viewer: Left and Right previous and next   |
-// | OK                      | 13 (Enter)                     | open; photo: show or hide the controls; video: controls    |
-// | Back                    | 461 (GoBack), 1536, 8, 10009, 27 | close the overlay, then the page (see useWebOSKeys)      |
-// | Channel up and down     | 33 34 (PageUp, PageDown)       | timeline: a page up or down; viewers: zoom by 1.25         |
-// | Play, Pause, Play/Pause | 415, 19, 179                   | play always plays, pause always pauses, the toggle toggles |
-// | Rewind, Fast forward    | 412, 417                       | 10 s back or forward                                       |
-// | Stop                    | 413                            | close the video                                            |
-// | Previous, Next track    | 177, 176                       | previous and next item, where the remote has them          |
-// | Info                    | 457 (and I of a keyboard)      | show or hide the details of the item; Back closes them     |
-// | Yellow                  | 405 (and R of a keyboard)      | photo: turn 90° clockwise                                  |
-// | Blue                    | 406 (and Shift R)              | photo: turn 90° counterclockwise                           |
-// | Red, Green              | 403, 404                       | left free                                                  |
+// | Remote key              | webOS keyCode (key)            | Samsung keyCode | Action                                     |
+// |-------------------------|--------------------------------|-----------------|--------------------------------------------|
+// | Arrows                  | 37 38 39 40                    | same            | move the focus; viewer: previous and next  |
+// | OK                      | 13 (Enter)                     | same            | open; photo: controls; video: controls     |
+// | Back                    | 461 (GoBack), 1536, 8, 10009, 27 | 10009         | close the overlay, then the page           |
+// | Channel up and down     | 33 34 (PageUp, PageDown)       | 427 428         | timeline: a page; viewers: zoom by 1.25    |
+// | Play, Pause, Play/Pause | 415, 19, 179                   | 415, 19, 10252  | play plays, pause pauses, the toggle toggles |
+// | Rewind, Fast forward    | 412, 417                       | same            | 10 s back or forward                       |
+// | Stop                    | 413                            | same            | close the video                            |
+// | Previous, Next track    | 177, 176                       | 10232, 10233    | previous and next item, where the remote has them |
+// | Info                    | 457 (and I of a keyboard)      | same            | the details of the item; Back closes them  |
+// | Yellow                  | 405 (and R of a keyboard)      | same            | photo: turn 90° clockwise                  |
+// | Blue                    | 406 (and Shift R)              | same            | photo: turn 90° counterclockwise           |
+// | Red, Green              | 403, 404                       | same            | left free                                  |
 //
 // The turn keys are those of the Android TV app (isRemoteRotateClockwise of remote_keys.dart). A Magic Remote without
 // colour keys shows them on screen (its ... or 123 button); the turn button of the photo's controls does the same. The
@@ -71,14 +72,19 @@ const BY_CODE: Record<number, RemoteAction> = {
 	27: 'back',
 	33: 'channelUp',
 	34: 'channelDown',
+	427: 'channelUp',
+	428: 'channelDown',
 	415: 'play',
 	19: 'pause',
 	179: 'playPause',
+	10252: 'playPause',
 	412: 'rewind',
 	417: 'fastForward',
 	413: 'stop',
 	177: 'previousTrack',
 	176: 'nextTrack',
+	10232: 'previousTrack',
+	10233: 'nextTrack',
 	457: 'info',
 	403: 'red',
 	404: 'green',
@@ -148,7 +154,7 @@ export function videoArrows(hasNeighbours: boolean): 'navigate' | 'seek' {
 }
 
 // Left, Right and the track keys go to another item and leave the controls as they are, Back goes back, Info opens
-// the details; the volume keys never reach the app on webOS
+// the details; the volume keys never reach the app on webOS, nor on Samsung TVs (src/platform/tizen.ts leaves them out)
 const KEEP_CONTROLS_HIDDEN: RemoteAction[] = ['left', 'right', 'previousTrack', 'nextTrack', 'back', 'info'];
 
 /** Whether a key brings back the controls of a video: any key but those that go elsewhere */

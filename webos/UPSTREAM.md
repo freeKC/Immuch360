@@ -28,7 +28,9 @@ The history of immich-tv-webos is not imported (one squashed commit keeps the hi
 - The 360° badge of the tiles, the 360° flag read from the timeline and from the asset details (`src/api`).
 - The `.ipk` carries the licences (`tools/licence-files.mjs`): the AGPL of Immuch360 and the MIT notice of
   immich-tv-webos.
-- The About page with the diagnostics and their QR code (`src/immuch360/diagnostics`), in the navigation rail.
+- The About page with the diagnostics and their QR code (`src/immuch360/diagnostics`), in the navigation rail. On
+  Samsung TVs it reads the TV through tizen and webapis and says what Samsung TVs lack; on both, the JS memory and the
+  last errors and policy blocks.
 - The welcome page shows the Immuch360 icon and tagline.
 - Network shares, Plex and Tapo cameras: the JS service is also a media bridge (`bridge/`, bundled into
   `service/bridge/` by `tools/build-bridge.mjs`; `service/lib/bridge-host.js` and five Luna methods in `service.js`,
@@ -37,6 +39,14 @@ The history of immich-tv-webos is not imported (one squashed commit keeps the hi
   (`views/AppLayout.tsx`, `types/navigation.ts`), a `label` of a group that is no day (`domain/types.ts`,
   `DateHeader`, `TimelineGrid`) and the file name of a share's file over its date (`MediaInfo`). The service's
   `package.json` and `services.json` say what it does now.
+- Samsung TVs (Tizen): the same bundle runs there, packaged by the top level `tizen/` folder. `src/platform/` finds the
+  TV at run time and holds every Tizen call (`detect.ts`, `features.ts`, `tizen.ts`, `tizen-api.d.ts`, `keymap.ts`),
+  and a few lines in inherited files branch on it: the Samsung key codes (`immuch360/keys.ts`), Back on the first
+  screen closes the app on Samsung TVs (`hooks/useWebOSKeys.ts`), the screen saver through AppCommon
+  (`utils/screenSaver.ts`), the video holds it while it plays on Samsung TVs and pauses when the app is hidden
+  (`MediaViewer/VideoPlayer.tsx`), no "Network shares" item nor Phone tab there (`NavigationRail`,
+  `pairing/createPairingDriver.ts`), the address keyboard for the server field (`UrlInput`, `FieldRow`), the start up
+  (`index.tsx`). The last errors and policy blocks are kept for the About page (`immuch360/diagnostics/errorLog.ts`).
 - Tests: `test/unit` (node test runner) for the new layers; the inherited jest tests kept, adjusted where a text
   changed.
 - `README.md`, `LICENSE.md`, `THIRD_PARTY.md` and this file; the inherited `LICENSE` is kept unchanged. The inherited

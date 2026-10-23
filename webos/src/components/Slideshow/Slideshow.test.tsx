@@ -86,3 +86,29 @@ test('ignores a late preload from the previous playback order', async () => {
 	await load(preloads[0]!);
 	expect(screen.getAllByAltText('').map(image => image.getAttribute('src'))).toEqual(['/preview/b']);
 });
+
+// Immuch360: the remote's Play, Pause and Play/Pause keys pause and resume the slideshow; 10252 is the one Play/Pause
+// key of Samsung's Smart Remote, 415, 19 and 179 those of an LG remote
+test.each([
+	['Samsung Play/Pause', 10252],
+	['LG Play/Pause', 179],
+	['Play', 415],
+	['Pause', 19],
+])('the %s key (%i) pauses the slideshow, and again resumes it', async (_name, keyCode) => {
+	playlist.next.mockResolvedValue(photo('a'));
+	mount();
+	await waitFor(() => expect(preloads).toHaveLength(1));
+	expect(screen.getByRole('button', {name: 'Pause'})).toBeTruthy();
+	fireEvent.keyDown(window, {keyCode});
+	expect(screen.getByRole('button', {name: 'Play'})).toBeTruthy();
+	fireEvent.keyDown(window, {keyCode});
+	expect(screen.getByRole('button', {name: 'Pause'})).toBeTruthy();
+});
+
+test('other keys leave the slideshow playing', async () => {
+	playlist.next.mockResolvedValue(photo('a'));
+	mount();
+	await waitFor(() => expect(preloads).toHaveLength(1));
+	for (const keyCode of [13, 413, 457, 10009]) fireEvent.keyDown(window, {keyCode});
+	expect(screen.getByRole('button', {name: 'Pause'})).toBeTruthy();
+});

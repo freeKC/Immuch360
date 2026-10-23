@@ -1,4 +1,6 @@
 import {useEffect} from 'react';
+import {features} from '../platform/features';
+import {exitTizenApp} from '../platform/tizen';
 
 interface UseWebOSKeysOptions {
 	onBack?: () => void;
@@ -63,6 +65,35 @@ function fireTopBack(): boolean {
 	return true;
 }
 
+// Immuch360: Samsung's Back. On a Samsung TV, Back on the first screen closes the app, as Samsung's own apps do; webOS
+// asks with its own dialog instead. Not while a text is typed (the Samsung keyboard closes itself), nor while a popup
+// of Sandstone is open in the floating layer (a list of choices, the text input popup): Enact closes those on Back.
+const SAMSUNG_BACK_KEYCODE = 10009;
+
+// A popup of Sandstone in the floating layer: it holds the focus, or it is an alert or a dialog. The tooltip of a
+// focused button lives in the same layer but is neither, and does not count.
+function popupOpen(): boolean {
+	const layer = document.getElementById('floatLayer');
+	if (!layer || layer.childElementCount === 0) return false;
+	const focused = document.activeElement;
+	return (!!focused && focused !== document.body && layer.contains(focused)) || !!layer.querySelector('[role="alert"], [role="dialog"]');
+}
+
+function exitsTheApp(event: KeyboardEvent): boolean {
+	return (
+		event.keyCode === SAMSUNG_BACK_KEYCODE &&
+		features().exitOnRootBack &&
+		!isEditingText(event.target) &&
+		!popupOpen()
+	);
+}
+
+// On a Samsung TV, Back with a popup open is left to Enact, which closes the popup: the screen's own Back would close
+// the screen under it too (the sign in form, and what was typed). webOS keeps its behaviour (features.ts).
+function leftToThePopup(): boolean {
+	return features().backClosesPopupFirst && popupOpen();
+}
+
 let bridgeInstalled = false;
 
 // Installs the global Back key listener once per app. On webOS, WAM dispatches the remote
@@ -70,6 +101,7 @@ let bridgeInstalled = false;
 // If our handler calls preventDefault, WAM suppresses its default "Close app?" dialog and
 // the press is consumed by the app. If no handler is on the back-stack — e.g. we're at the
 // root view — we let WAM proceed and the user exits the app naturally.
+// Immuch360: a Samsung TV does nothing by itself there, so the app closes itself (exitsTheApp).
 function ensureBridgeInstalled(): void {
 	if (bridgeInstalled || typeof window === 'undefined') return;
 	bridgeInstalled = true;
@@ -79,12 +111,16 @@ function ensureBridgeInstalled(): void {
 		(event: KeyboardEvent) => {
 			if (!isBackKey(event)) return;
 			if (event.keyCode === BACKSPACE_KEYCODE && isEditingText(event.target)) return;
+			if (leftToThePopup()) return;
 			if (fireTopBack()) {
 				event.preventDefault();
 				// stopImmediatePropagation (not stopPropagation) so sibling window-level listeners
 				// don't all fire the same back action — otherwise an album-and-viewer combo would
 				// pop both layers on a single press.
 				event.stopImmediatePropagation();
+			} else if (exitsTheApp(event)) {
+				event.preventDefault();
+				exitTizenApp();
 			}
 		},
 		{capture: true}

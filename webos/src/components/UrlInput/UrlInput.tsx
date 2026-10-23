@@ -3,6 +3,7 @@ import {SpottableDiv} from '../../utils/spotlight';
 import {FieldRow} from '../FieldRow/FieldRow';
 import css from './UrlInput.module.less';
 import {t} from '../../immuch360/i18n';
+import {isTizen} from '../../platform/detect';
 
 const SHORTCUTS = ['http://', 'https://', '.local', '.com', ':2283', ':30041'] as const;
 
@@ -34,6 +35,8 @@ export const UrlInput: React.FC<UrlInputProps> = ({value, onChange, placeholder,
 				value={value}
 				onChange={onChange}
 				placeholder={placeholder}
+				// Immuch360: the Samsung keyboard shows its address layout for a url field
+				type={isTizen() ? 'url' : undefined}
 				disabled={disabled}
 				autoFocus={autoFocus}
 				clearLabel={t('clear_value')}

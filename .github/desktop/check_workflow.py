@@ -26,11 +26,15 @@ writes holds no secret, the job that holds the secrets cannot write, and the bui
 
 .github/workflows/immuch360-webos.yml, which builds the LG webOS app, is held to the rules of the desktop workflow, and
 .github/workflows/immuch360-webos-release.yml to those of a release workflow on its own tags: --tag-prefix webos-v.
+The Samsung TV app is held to the same: .github/workflows/immuch360-tizen.yml (its package job signs with a throwaway
+certificate made in the job, no secret) and .github/workflows/immuch360-tizen-release.yml with --tag-prefix tizen-v.
 
   check_workflow.py             exit 1 on any finding
   check_workflow.py --release   the release workflow
   check_workflow.py --workflow .github/workflows/immuch360-webos.yml
   check_workflow.py --release --workflow .github/workflows/immuch360-webos-release.yml --tag-prefix webos-v
+  check_workflow.py --workflow .github/workflows/immuch360-tizen.yml
+  check_workflow.py --release --workflow .github/workflows/immuch360-tizen-release.yml --tag-prefix tizen-v
 
 --workflow and --mise point at other files (the tests use fixtures). The YAML is read line by line on purpose: no
 third party module is needed on the runners.

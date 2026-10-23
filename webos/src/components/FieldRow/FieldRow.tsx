@@ -8,7 +8,7 @@ interface FieldRowProps {
 	value: string;
 	onChange: (next: string) => void;
 	placeholder?: string;
-	type?: 'text' | 'password';
+	type?: 'text' | 'password' | 'url';
 	disabled?: boolean;
 	autoFocus?: boolean;
 	clearLabel?: string;
