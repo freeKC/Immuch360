@@ -6,6 +6,7 @@ import {useRepository} from '../../domain/RepositoryContext';
 import type {PhotoRepository} from '../../domain/PhotoRepository';
 import type {Person} from '../../domain/types';
 import css from './PeopleRibbon.module.less';
+import {t} from '../../immuch360/i18n';
 
 interface PeopleRibbonProps {
 	people: Person[];
@@ -31,9 +32,9 @@ const PersonItem: React.FC<PersonItemProps> = ({person, repository, isSelected, 
 			<img
 				src={repository.faceUrl(person.id)}
 				className={css.face}
-				alt={person.name || 'Unknown person'}
+				alt={person.name || t('unknown')}
 			/>
-			<span className={css.name}>{person.name || 'Unknown'}</span>
+			<span className={css.name}>{person.name || t('unknown')}</span>
 		</SpottableDiv>
 	);
 };

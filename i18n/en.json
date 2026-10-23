@@ -3111,6 +3111,7 @@
   "webos_error_sign_in_again": "Please sign in again.",
   "webos_error_timeout": "The server did not answer within {seconds} seconds. Check that it is running and that this TV can reach it, then try again.",
   "webos_error_unreachable": "Couldn't reach the server. Check its address and that it is running, then try again.",
+  "webos_fill_all_fields": "Please fill in all fields",
   "webos_folder_media": "{count, plural, one {# photo or video} other {# photos and videos}}",
   "webos_interval": "Interval",
   "webos_loading": "Loading…",

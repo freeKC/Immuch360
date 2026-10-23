@@ -55,7 +55,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({initialUrl, onSubmit, onBack,
 
 	const submitCreds = useCallback(() => {
 		if (!url || !email || !password) {
-			setError('Please fill in all fields');
+			setError(t('webos_fill_all_fields'));
 			return;
 		}
 		void submit({method: AuthMethod.USER_CREDENTIALS, baseUrl: url, email, password});
