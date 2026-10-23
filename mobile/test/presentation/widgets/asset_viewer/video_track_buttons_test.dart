@@ -11,6 +11,7 @@ import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_track_buttons.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_controls.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/widgets/asset_viewer/animated_play_pause.dart';
@@ -103,6 +104,8 @@ void main() {
               localizationsDelegates: context.localizationDelegates,
               supportedLocales: context.supportedLocales,
               locale: context.locale,
+              // The remote control layout around the navigator, as in the app
+              builder: tvMode ? (context, child) => TvShell(child: child!) : null,
               home: const Scaffold(
                 backgroundColor: Colors.black,
                 body: Align(
@@ -187,18 +190,26 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.select);
     await tester.pumpAndSettle();
     expect(find.text('French, 5.1'), findsOneWidget);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.pump();
+    // The menu opens on the line of the track that plays, English; Down goes to the next line, which OK picks
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.pump();
     await tester.sendKeyEvent(LogicalKeyboardKey.select);
     await tester.pumpAndSettle();
     expect(calls, ['select audio 2']);
+    expect(find.text('French, 5.1'), findsNothing, reason: 'the menu closed');
 
-    // Right again: the subtitles
+    // Right again: the subtitles, Off first, whose menu opens on Off
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
     await tester.pump();
     expect(Focus.of(tester.element(find.byIcon(Icons.subtitles_outlined))).hasPrimaryFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    await tester.pumpAndSettle();
+    expect(Focus.of(tester.element(find.text('Off'))).hasPrimaryFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    await tester.pumpAndSettle();
+    expect(calls, ['select audio 2', 'select text 3']);
   });
 
   testWidgets('the names of the tracks: a track without language or name gets its number, Default only when alone', (

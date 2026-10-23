@@ -100,7 +100,7 @@ class _VideoTrackButtonsState extends ConsumerState<VideoTrackButtons> {
             onSelected: (index) => unawaited(_notifier.selectTrack(audio[index])),
             itemBuilder: (context) => [
               for (final (index, label) in videoTrackLabels(t, audio).indexed)
-                CheckedPopupMenuItem<int>(value: index, checked: audio[index].selected, child: Text(label)),
+                _trackItem(index, label, checked: audio[index].selected),
             ],
           ),
         if (subtitles.isNotEmpty)
@@ -120,14 +120,60 @@ class _VideoTrackButtonsState extends ConsumerState<VideoTrackButtons> {
                   : _notifier.selectTrack(subtitles[index]),
             ),
             itemBuilder: (context) => [
-              CheckedPopupMenuItem<int>(value: -1, checked: !subtitlesOn, child: Text(t.video_subtitles_off)),
+              _trackItem(-1, t.video_subtitles_off, checked: !subtitlesOn),
               for (final (index, label) in videoTrackLabels(t, subtitles).indexed)
-                CheckedPopupMenuItem<int>(value: index, checked: subtitles[index].selected, child: Text(label)),
+                _trackItem(index, label, checked: subtitles[index].selected),
             ],
           ),
       ],
     );
   }
+}
+
+/// A line of a track menu, with a check mark when [checked]; the menu opens with the remote on that line. Not a
+/// CheckedPopupMenuItem: its ListTile is a focus stop of its own under the remote control layout (where controls
+/// without an action stay focusable), so that Down from a line landed on that tile, which OK does not pick, and the
+/// menu stayed open.
+PopupMenuItem<int> _trackItem(int value, String label, {required bool checked}) => PopupMenuItem<int>(
+  value: value,
+  child: _FocusWhenOpen(
+    focus: checked,
+    child: Row(
+      spacing: 12,
+      children: [
+        SizedBox.square(dimension: 24, child: checked ? const Icon(Icons.check, size: 24) : null),
+        Flexible(child: Text(label)),
+      ],
+    ),
+  ),
+);
+
+/// Gives the focus to the menu line around it once it is built, when [focus]: the line of the track that plays
+class _FocusWhenOpen extends StatefulWidget {
+  const _FocusWhenOpen({required this.focus, required this.child});
+
+  final bool focus;
+  final Widget child;
+
+  @override
+  State<_FocusWhenOpen> createState() => _FocusWhenOpenState();
+}
+
+class _FocusWhenOpenState extends State<_FocusWhenOpen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.focus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Focus.maybeOf(context)?.requestFocus();
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 /// The lines of [tracks], all of one kind, in their menu: the name of the language of each, its name in the file when
