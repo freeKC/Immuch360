@@ -1,5 +1,5 @@
 import {AuthMethod, type AuthConfig} from './types';
-import {classifyFailure, withTimeout, type FailureKind} from './network';
+import {BODY_TIMEOUT_MS, classifyFailure, withTimeout, type FailureKind} from './network';
 
 export class APIError extends Error {
 	public status?: number;
@@ -70,7 +70,9 @@ export class APIClient {
 		return new APIError(`Network error (${kind}): ${error instanceof Error ? error.message : 'Unknown error'}`, undefined, kind);
 	}
 
-	// Immuch360: every request has 15 s (REQUEST_TIMEOUT_MS) for its answer and its body
+	// Immuch360: every request has 15 s (REQUEST_TIMEOUT_MS) for the server's answer, then BODY_TIMEOUT_MS for its body
+	// (a slow remote link). The 15 s start at fetch(): a request the browser holds behind the six connections of a host
+	// (thumbnails over HTTP/1.1) spends part of them waiting there
 	public async fetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
 		const url = `${this.baseUrl}${endpoint}`;
 		const method = options.method || 'GET';
@@ -78,19 +80,20 @@ export class APIClient {
 		let text: string;
 		try {
 			text = await withTimeout(
-				async (signal) => {
+				async (signal, answered) => {
 					const response = await fetch(url, {
 						...options,
 						signal,
 						headers: {...this.getHeaders(), ...options.headers},
 					});
+					answered();
 					if (!response.ok) {
 						console.error(`[API] ${method} ${url} failed with ${response.status}: ${response.statusText}`);
 						throw new APIError(`API request failed: ${response.statusText}`, response.status);
 					}
 					return response.text();
 				},
-				{signal: options.signal},
+				{signal: options.signal, bodyTimeoutMs: BODY_TIMEOUT_MS},
 			);
 		} catch (error) {
 			if (error instanceof APIError || (isAbort(error) && options.signal?.aborted)) throw error;

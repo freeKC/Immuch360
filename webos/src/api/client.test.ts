@@ -85,6 +85,38 @@ describe('APIClient requests without an answer', () => {
 		await jest.advanceTimersByTimeAsync(30000);
 		await expect(pending).resolves.toBeInstanceOf(ArrayBuffer);
 	});
+	// R12 of the review: the 15 s are for the answer; a slow body on a remote link has BODY_TIMEOUT_MS
+	test('a JSON answer whose body is slow: the 15 s stop at the answer, the body has 60 s', async () => {
+		jest.useFakeTimers();
+		const answer = (bodyMs: number) =>
+			jest.fn(() =>
+				Promise.resolve({
+					ok: true,
+					status: 200,
+					statusText: 'OK',
+					text: () => new Promise<string>((resolve) => setTimeout(() => resolve('{"months":12}'), bodyMs)),
+				} as unknown as Response)
+			) as typeof fetch;
+		global.fetch = answer(30000);
+		const slow = client().fetch<{months: number}>('/timeline/buckets');
+		await jest.advanceTimersByTimeAsync(30000);
+		await expect(slow).resolves.toEqual({months: 12});
+
+		global.fetch = answer(10 * 60000);
+		const stalled = client()
+			.fetch('/timeline/buckets')
+			.catch((error: unknown) => error);
+		await jest.advanceTimersByTimeAsync(59999);
+		let done = false;
+		void stalled.then(() => {
+			done = true;
+		});
+		await jest.advanceTimersByTimeAsync(0);
+		expect(done).toBe(false);
+		await jest.advanceTimersByTimeAsync(1);
+		expect(await stalled).toMatchObject({name: 'APIError', kind: 'timeout'});
+	});
+
 	test('a web page at the address (not JSON) reads as a server that cannot be reached there', async () => {
 		global.fetch = jest.fn(() => Promise.resolve({ok: true, status: 200, statusText: 'OK', text: () => Promise.resolve('<html>router</html>')} as Response)) as typeof fetch;
 		await expect(client().fetch('/users/me')).rejects.toMatchObject({name: 'APIError', kind: 'unreachable'});

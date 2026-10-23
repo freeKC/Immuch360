@@ -15,6 +15,12 @@ export const REQUEST_TIMEOUT_MS = 15000;
 /** How long the no-cors probe of classifyFailure waits */
 export const PROBE_TIMEOUT_MS = 5000;
 
+/**
+ * How long the body of a JSON answer may take once the answer is in (a month of the timeline on a slow remote link):
+ * the 15 s are for the server to answer, not for the download
+ */
+export const BODY_TIMEOUT_MS = 60000;
+
 export type FailureKind = 'offline' | 'timeout' | 'cors' | 'unreachable';
 
 /** Whether the TV has a network connection, as the browser engine knows it */
@@ -32,21 +38,31 @@ export class TimeoutError extends Error {
 
 /**
  * Runs a request with a time limit. run gets the signal to give fetch, and done, to call once the answer is in when
- * the rest (a large body) may take longer than the limit. Rejects with TimeoutError when the time runs out first; an
- * abort of the caller's own signal rejects as fetch does.
+ * the rest (a large body) may take longer than the limit: the rest then has bodyTimeoutMs when given, no limit
+ * otherwise. Rejects with TimeoutError when the time runs out first; an abort of the caller's own signal rejects as
+ * fetch does.
  */
 export function withTimeout<T>(
 	run: (signal: AbortSignal | undefined, done: () => void) => Promise<T>,
-	options: {timeoutMs?: number; signal?: AbortSignal | null} = {},
+	options: {timeoutMs?: number; bodyTimeoutMs?: number; signal?: AbortSignal | null} = {},
 ): Promise<T> {
 	const timeoutMs = options.timeoutMs ?? REQUEST_TIMEOUT_MS;
 	const outer = options.signal ?? null;
 	const controller = typeof AbortController === 'function' ? new AbortController() : null;
 	let timedOut = false;
+	let settled = false;
 	let timer: ReturnType<typeof setTimeout> | null = null;
-	const done = () => {
+	let arm: (ms: number) => void = () => undefined;
+	const stop = () => {
 		if (timer !== null) clearTimeout(timer);
 		timer = null;
+	};
+	let answered = false;
+	const done = () => {
+		stop();
+		if (answered || settled || timedOut) return;
+		answered = true;
+		if (options.bodyTimeoutMs) arm(options.bodyTimeoutMs);
 	};
 	const onOuterAbort = () => controller?.abort();
 	if (outer) {
@@ -54,18 +70,22 @@ export function withTimeout<T>(
 		else outer.addEventListener('abort', onOuterAbort);
 	}
 	const cleanUp = () => {
-		done();
+		settled = true;
+		stop();
 		if (outer) outer.removeEventListener('abort', onOuterAbort);
 	};
 	return new Promise<T>((resolve, reject) => {
-		timer = setTimeout(() => {
-			timer = null;
-			timedOut = true;
-			controller?.abort();
-			if (outer) outer.removeEventListener('abort', onOuterAbort);
-			// Without AbortController (none on the TVs the app supports, but cheap to cover) the request is left behind
-			reject(new TimeoutError(timeoutMs));
-		}, timeoutMs);
+		arm = (ms: number) => {
+			timer = setTimeout(() => {
+				timer = null;
+				timedOut = true;
+				controller?.abort();
+				if (outer) outer.removeEventListener('abort', onOuterAbort);
+				// Without AbortController (none on the TVs the app supports, but cheap to cover) the request is left behind
+				reject(new TimeoutError(ms));
+			}, ms);
+		};
+		arm(timeoutMs);
 		run(controller ? controller.signal : outer ?? undefined, done).then(
 			(value) => {
 				cleanUp();

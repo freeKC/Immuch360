@@ -45,6 +45,24 @@ describe('every request has a time limit', () => {
 		assert.equal(value, 'body');
 	});
 
+	test('bodyTimeoutMs: once the answer is in, the body has its own limit, from the answer on', async () => {
+		const slowBody = (bodyMs) => (signal, done) =>
+			new Promise((resolve, reject) => {
+				signal.addEventListener('abort', () => reject(new Error('aborted')));
+				setTimeout(() => {
+					done();
+					setTimeout(() => resolve('body'), bodyMs);
+				}, 30);
+			});
+		// The answer at 30 ms, the body 80 ms later: past the 50 ms of the answer, within its own 200 ms
+		assert.equal(await withTimeout(slowBody(80), {timeoutMs: 50, bodyTimeoutMs: 200}), 'body');
+		// A body that takes longer than its limit fails as a timeout, its fetch aborted
+		const started = Date.now();
+		await assert.rejects(withTimeout(slowBody(500), {timeoutMs: 50, bodyTimeoutMs: 60}), TimeoutError);
+		const took = Date.now() - started;
+		assert.ok(took >= 85 && took < 400, `failed after ${took} ms`);
+	});
+
 	test("the caller's own abort reaches the request and is not a timeout", async () => {
 		const outer = new AbortController();
 		const pending = withTimeout(
