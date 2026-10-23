@@ -1,7 +1,11 @@
 package app.alextran.immich.immersive
 
 import app.alextran.immich.immersive.ImmersiveControls.Action
+import com.meta.spatial.core.Quaternion
+import com.meta.spatial.core.Vector3
 import com.meta.spatial.runtime.ButtonBits
+import kotlin.math.cos
+import kotlin.math.sin
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -207,5 +211,64 @@ class ImmersiveInputTest {
         panelVisible = true,
       ),
     )
+  }
+
+  // Turn direction
+
+  private fun turn(action: Action, reversed: Boolean = false): Float =
+    ImmersiveControls.snapTurnDegrees(action, STEP, reversed)
+
+  @Test
+  fun `the right thumbstick turns the view the way it is pushed`() {
+    // The viewer turns the sphere, not the user: a view turning left is a sphere turning by a positive yaw
+    assertEquals(STEP, turn(Action.TURN_LEFT), 0f)
+    assertEquals(-STEP, turn(Action.TURN_RIGHT), 0f)
+  }
+
+  @Test
+  fun `the reverse setting turns the other way, as builds 17 to 28 did`() {
+    assertEquals(-STEP, turn(Action.TURN_LEFT, reversed = true), 0f)
+    assertEquals(STEP, turn(Action.TURN_RIGHT, reversed = true), 0f)
+  }
+
+  @Test
+  fun `only the right thumbstick left and right turn the sphere`() {
+    for (action in Action.entries.filter { it != Action.TURN_LEFT && it != Action.TURN_RIGHT }) {
+      for (reversed in listOf(false, true)) assertEquals("$action", 0f, turn(action, reversed), 0f)
+    }
+  }
+
+  @Test
+  fun `a left push brings what was on the left in front, and the image moves to the right`() {
+    // Spatial SDK coordinates: left handed, +x right, +y up, +z forward; the sphere turns as the viewer sets it
+    val sphere = Quaternion(0f, turn(Action.TURN_LEFT), 0f)
+    val step = Math.toRadians(STEP.toDouble())
+    val onTheLeft = Vector3(-sin(step).toFloat(), 0f, cos(step).toFloat())
+    assertDirection("what was ${STEP.toInt()} degrees on the left", Vector3(0f, 0f, 1f), sphere * onTheLeft)
+    val ahead = sphere * Vector3(0f, 0f, 1f)
+    assertTrue("what was in front goes to the right: $ahead", ahead.x > 0.4f)
+    // A right push brings what was on the right in front
+    val right = Quaternion(0f, turn(Action.TURN_RIGHT), 0f)
+    val onTheRight = Vector3(sin(step).toFloat(), 0f, cos(step).toFloat())
+    assertDirection("what was ${STEP.toInt()} degrees on the right", Vector3(0f, 0f, 1f), right * onTheRight)
+  }
+
+  @Test
+  fun `with the reverse setting a left push brings what was on the right in front`() {
+    val sphere = Quaternion(0f, turn(Action.TURN_LEFT, reversed = true), 0f)
+    val step = Math.toRadians(STEP.toDouble())
+    val onTheRight = Vector3(sin(step).toFloat(), 0f, cos(step).toFloat())
+    assertDirection("what was ${STEP.toInt()} degrees on the right", Vector3(0f, 0f, 1f), sphere * onTheRight)
+  }
+
+  private fun assertDirection(message: String, expected: Vector3, actual: Vector3) {
+    assertEquals("$message, x", expected.x, actual.x, 1e-4f)
+    assertEquals("$message, y", expected.y, actual.y, 1e-4f)
+    assertEquals("$message, z", expected.z, actual.z, 1e-4f)
+  }
+
+  private companion object {
+    /** The snap turn of the viewer */
+    const val STEP = 30f
   }
 }

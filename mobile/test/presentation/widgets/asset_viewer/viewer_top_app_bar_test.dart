@@ -333,7 +333,8 @@ void main() {
     }
 
     when(
-      () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+      () =>
+          immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
     ).thenAnswer(openImmersive);
     previewRequests = [];
     previewXmp = null;
@@ -589,7 +590,21 @@ void main() {
       expect(find.text('panorama ${asset.id}'), findsOneWidget);
       verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
       verifyNever(
-        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       );
     });
 
@@ -910,6 +925,7 @@ void main() {
           any(),
           captureAny(),
           any(),
+          any(),
         ),
       ).captured;
       expect(captured[0], ImmersiveStereoLayout.mono);
@@ -925,7 +941,21 @@ void main() {
 
       expect(find.text(unsupportedMessage), findsOneWidget);
       verifyNever(
-        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       );
     });
   });
@@ -969,6 +999,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -998,6 +1029,7 @@ void main() {
             captureAny(),
             captureAny(),
             captureAny(),
+            any(),
             any(),
             any(),
             any(),
@@ -1042,6 +1074,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
@@ -1065,6 +1098,7 @@ void main() {
           any(),
           any(),
           captureAny(),
+          any(),
           any(),
           any(),
           any(),
@@ -1129,6 +1163,7 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).captured;
         expect(captured, [layout, coverage], reason: asset.name);
@@ -1152,6 +1187,7 @@ void main() {
           captureAny(),
           any(),
           captureAny(),
+          any(),
           any(),
           any(),
           any(),
@@ -1193,6 +1229,7 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).called(1);
         verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
@@ -1222,6 +1259,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
     });
@@ -1240,6 +1278,7 @@ void main() {
           any(),
           true,
           asset.name,
+          any(),
           any(),
           any(),
           any(),
@@ -1290,6 +1329,7 @@ void main() {
             any(),
             any(),
             captureAny(),
+            any(),
             any(),
             any(),
             any(),
@@ -1354,7 +1394,21 @@ void main() {
       tester,
     ) async {
       when(
-        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(
         tester,
@@ -1420,6 +1474,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).called(1);
       expect(file.uri.toString(), startsWith('file:///'));
@@ -1449,6 +1504,7 @@ void main() {
           captureAny(),
           any(),
           captureAny(),
+          any(),
           any(),
           any(),
           any(),
@@ -1512,6 +1568,7 @@ void main() {
             any(),
             any(),
             any(),
+            any(),
           ),
         ).captured;
         expect(captured, [ImmersiveStereoLayout.mono, coverage], reason: '$width x $height');
@@ -1546,6 +1603,7 @@ void main() {
           any(),
           false,
           transient.name,
+          any(),
           any(),
           any(),
           any(),
@@ -1599,6 +1657,7 @@ void main() {
           any(),
           any(),
           any(),
+          any(),
         ),
       ).captured.single;
       expect(startPosition, 12000);
@@ -1615,7 +1674,21 @@ void main() {
       // Stopped before the file is looked for, so that the immersive viewer starts where the video was
       expect(calls, ['suspend', 'resume at 0 paused']);
       verifyNever(
-        () => immersiveApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       );
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
     });
@@ -1652,9 +1725,55 @@ void main() {
       await tester.tap(panoramaButton);
       await tester.pumpAndSettle();
 
+      // The right thumbstick turns the usual way unless the user reversed it
       verify(
-        () =>
-            immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(
+          any(),
+          any(),
+          false,
+          asset.name,
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          false,
+        ),
+      ).called(1);
+    });
+
+    testWidgets('hands the immersive viewer the Reverse thumbstick turn setting', (tester) async {
+      final asset = owned();
+      await pumpTopBar(
+        tester,
+        asset,
+        forcedPanoramas: {asset.id},
+        horizonOs: true,
+        appConfig: const AppConfig(viewer: ViewerConfig(reverseThumbstickTurn: true)),
+      );
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      verify(
+        () => immersiveApi.open(
+          any(),
+          any(),
+          false,
+          asset.name,
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          true,
+        ),
       ).called(1);
     });
 
@@ -1787,8 +1906,21 @@ void main() {
 
       expect(stored(), '["${asset.id}"]');
       verify(
-        () =>
-            immersiveApi.open(any(), any(), false, asset.name, any(), any(), any(), any(), any(), any(), any(), any()),
+        () => immersiveApi.open(
+          any(),
+          any(),
+          false,
+          asset.name,
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name));
     });
@@ -2370,6 +2502,7 @@ void main() {
           captureAny(),
           any(),
           any(),
+          any(),
         ),
       ).captured;
       return (captured[0] as String, captured[1] as String?);
@@ -2692,6 +2825,7 @@ void main() {
           any(),
           any(),
           captureAny(),
+          any(),
         ),
       ).captured;
       // The original the pair was read from, not an edit of it

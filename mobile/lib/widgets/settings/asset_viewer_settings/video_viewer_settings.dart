@@ -25,6 +25,7 @@ class VideoViewerSettings extends HookConsumerWidget {
     // The source picked, null until the user picks one
     final usePickedVideoSource = useState(viewer.videoSource);
     final useSpatial25d = useState(viewer.spatial25d);
+    final useReverseThumbstickTurn = useState(viewer.reverseThumbstickTurn);
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
     // The Spatial 2.5D player is for phones: a Meta Quest has no use for it
     final isPhone = isHorizonOs == false;
@@ -46,6 +47,9 @@ class VideoViewerSettings extends HookConsumerWidget {
     useValueChanged<bool, void>(useSpatial25d.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerSpatial25d, useSpatial25d.value));
     });
+    useValueChanged<bool, void>(useReverseThumbstickTurn.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerReverseThumbstickTurn, useReverseThumbstickTurn.value));
+    });
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,6 +70,13 @@ class VideoViewerSettings extends HookConsumerWidget {
             valueNotifier: useSpatial25d,
             title: context.t.spatial_2_5d_experimental_title,
             subtitle: context.t.spatial_2_5d_experimental_subtitle,
+          ),
+        // The thumbstick of the immersive viewer, which only a Meta Quest has
+        if (isHorizonOs == true)
+          SettingsSwitchListTile(
+            valueNotifier: useReverseThumbstickTurn,
+            title: context.t.setting_immersive_reverse_turn_title,
+            subtitle: context.t.setting_immersive_reverse_turn_subtitle,
           ),
         _VideoSourceSetting(
           value: shownVideoSource,

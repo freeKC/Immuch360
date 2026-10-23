@@ -20,6 +20,10 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// Videos turns it off)
     @Default(true) bool spatial25d,
 
+    /// Meta Quest immersive viewer: the right thumbstick turns 360° photos and videos the other way. Off by default,
+    /// the view then turns the way the stick is pushed, as in most headset apps (Settings, Asset Viewer, Videos)
+    @Default(false) bool reverseThumbstickTurn,
+
     /// Which file of a server video the players load, null until the user picks one in the settings: the source then
     /// follows [loadOriginalVideo], which the choice replaces (see videoSourcePolicy)
     VideoSourcePolicy? videoSource,

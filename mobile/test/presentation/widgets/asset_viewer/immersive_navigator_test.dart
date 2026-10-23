@@ -79,6 +79,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     String? fallbackUrl,
     String? rawProjection,
     String? stereoPair,
+    bool reverseThumbstickTurn,
   ) async => opened.add(url);
 
   @override
