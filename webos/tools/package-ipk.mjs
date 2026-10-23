@@ -3,9 +3,9 @@
 //
 //   node tools/package-ipk.mjs
 //
-// - build/com.aprogsys.immuch360_<version>_all.ipk: dist/ as it is, no "resolution" in appinfo.json, which webOS reads
+// * build/com.aprogsys.immuch360_<version>_all.ipk: dist/ as it is, no "resolution" in appinfo.json, which webOS reads
 //   as 1920x1080: the package of the UHD TVs.
-// - build-1280x720/com.aprogsys.immuch360_<version>_all.ipk: a copy of dist/ (build-1280x720/dist/) whose appinfo.json says
+// * build-1280x720/com.aprogsys.immuch360_<version>_all.ipk: a copy of dist/ (build-1280x720/dist/) whose appinfo.json says
 //   "resolution": "1280x720": the package of the Full HD TVs, and of the UHD ones LG gives only 1280x720 apps (LG staff,
 //   26 May 2025: "All FHD TV models support 1280x720 apps"; LG's Supported App Resolution page recommends submitting
 //   both). The same code runs in both: Enact picks its "hd" screen type from the window, 16 px per rem instead of 24,

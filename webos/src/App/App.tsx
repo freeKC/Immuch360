@@ -132,7 +132,7 @@ const AppBase: React.FC = () => {
 	}
 
 	if (!repository) {
-		// 401 on boot or validation failed — force account switch/re-auth. Immuch360: the error of the start is shown
+		// 401 on boot or validation failed: force account switch/re-auth. Immuch360: the error of the start is shown
 		// on the page with a Retry (it used to be a toast with nothing to do but pick another account)
 		return (
 			<div className={css.app}>

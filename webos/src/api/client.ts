@@ -96,7 +96,13 @@ export class APIClient {
 			if (error instanceof APIError || (isAbort(error) && options.signal?.aborted)) throw error;
 			throw await this.failure(error, method, url);
 		}
-		return text ? JSON.parse(text) : ({} as T);
+		try {
+			return text ? JSON.parse(text) : ({} as T);
+		} catch (error) {
+			// An answer that is not Immich's JSON (a web page at that address): the address is not an Immich server
+			console.error(`[API] ${method} ${url} answered something other than JSON:`, error);
+			throw new APIError(`Not an Immich answer: ${error instanceof Error ? error.message : 'Unknown error'}`, undefined, 'unreachable');
+		}
 	}
 
 	// Immich v3 serves the unedited original (ignoring crops/rotations) unless edited=true.

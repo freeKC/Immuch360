@@ -114,7 +114,7 @@ function ensureBridgeInstalled(): void {
 				return;
 			}
 			// stopImmediatePropagation (not stopPropagation) so sibling window-level listeners
-			// don't all fire the same back action — otherwise an album-and-viewer combo would
+			// don't all fire the same back action; otherwise an album-and-viewer combo would
 			// pop both layers on a single press.
 			if (fireTopBack()) {
 				event.preventDefault();

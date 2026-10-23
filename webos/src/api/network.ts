@@ -1,9 +1,9 @@
 // Immuch360: how a request to the server ends when it gets no answer, so that the TV never waits without an end and
 // says why (LG's self checklist: no lockup; Jellyfin's P2 defect of January 2024 for a vague error).
 //
-// - Every request has REQUEST_TIMEOUT_MS to get its answer (withTimeout): a server whose address drops the packets
+// * Every request has REQUEST_TIMEOUT_MS to get its answer (withTimeout): a server whose address drops the packets
 //   used to leave "Loading…" on screen for minutes.
-// - A request that fails without an answer is told apart (classifyFailure): the TV is offline (navigator.onLine), the
+// * A request that fails without an answer is told apart (classifyFailure): the TV is offline (navigator.onLine), the
 //   server answers but refuses the app's origin (CORS, webOS 5 to 24 apply it to the file:// page), or the server
 //   cannot be reached at all (wrong address, server down). A request in "no-cors" mode tells the last two apart: the
 //   browser lets it reach a server that sends no CORS headers (the answer stays opaque), and it fails like the real

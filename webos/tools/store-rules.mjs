@@ -2,14 +2,14 @@
 // tools/check-package.mjs (on the .ipk) and test/unit/store-rules.test.mjs (on webos-meta/).
 //
 // Sources, read on 23 October 2026 (the LG Apps study of the project):
-// - App Resources and the Icon guide: icon.png 80x80 and largeIcon 130x130, the same drawing, on a tile of iconColor;
+// * App Resources and the Icon guide: icon.png 80x80 and largeIcon 130x130, the same drawing, on a tile of iconColor;
 //   the self checklist 5.0, sheet 2 items 6 to 8: square, not rounded, no transparency, one background colour equal to
 //   the tile colour.
-// - Screensaver guide: a gallery app declares "screenSaverProperties": {"preferredType": 3} and "useGalleryMode": true,
+// * Screensaver guide: a gallery app declares "screenSaverProperties": {"preferredType": 3} and "useGalleryMode": true,
 //   both at the top of appinfo.json.
-// - ACG guide: requiredACG lists the ACG group of every Luna method the app and its service call (mandatory from
+// * ACG guide: requiredACG lists the ACG group of every Luna method the app and its service call (mandatory from
 //   webOS 27, March 2027). The groups below are those of the calls the app makes, see LUNA_CALLS.
-// - Supported App Resolution: "resolution": "1280x720" makes the package of Full HD TVs; none means 1920x1080.
+// * Supported App Resolution: "resolution": "1280x720" makes the package of Full HD TVs; none means 1920x1080.
 
 /** The icons of webos-meta and the size LG asks for each */
 export const ICONS = {'icon.png': 80, 'icon-large.png': 130, 'icon-mini.png': 60};

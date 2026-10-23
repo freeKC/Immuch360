@@ -85,4 +85,8 @@ describe('APIClient requests without an answer', () => {
 		await jest.advanceTimersByTimeAsync(30000);
 		await expect(pending).resolves.toBeInstanceOf(ArrayBuffer);
 	});
+	test('a web page at the address (not JSON) reads as a server that cannot be reached there', async () => {
+		global.fetch = jest.fn(() => Promise.resolve({ok: true, status: 200, statusText: 'OK', text: () => Promise.resolve('<html>router</html>')} as Response)) as typeof fetch;
+		await expect(client().fetch('/users/me')).rejects.toMatchObject({name: 'APIError', kind: 'unreachable'});
+	});
 });

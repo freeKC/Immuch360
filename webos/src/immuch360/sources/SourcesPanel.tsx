@@ -187,7 +187,7 @@ const SourcesPanel: React.FC<RoutePanelProps> = ({contentWidth}) => {
 									onSelect={addFoundByKey}
 								/>
 							))}
-							{!scanning && <SourceTile icon="refresh" title={t('network_share_scan_again')} value="scan" onSelect={addSomething} />}
+							<SourceTile icon="refresh" title={t('network_share_scan_again')} value="scan" onSelect={addSomething} />
 						</div>
 					</>
 				)}
