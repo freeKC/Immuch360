@@ -5,6 +5,7 @@
 //
 // Its own full screen layer rather than Sandstone's Popup, whose centring fails on webOS 6 (see AccountPanel.module.less).
 import React, {useCallback, useEffect, useState} from 'react';
+import {createPortal} from 'react-dom';
 import Button from '@enact/sandstone/Button';
 import Spotlight from '@enact/spotlight';
 import {QrCode} from '../../components/QrCode/QrCode';
@@ -59,6 +60,11 @@ interface PrivacyPolicyButtonProps {
 	className?: string;
 }
 
+// The layer goes to the root of the app (the ThemeDecorator's element, which holds the theme and the resolution classes,
+// so the 1280x720 sizes): a fixed layer inside a page would be held by the page's scroller, which makes its own
+// containing block (seen on the About page)
+const layerHost = (): Element => document.getElementById('root')?.firstElementChild ?? document.body;
+
 /** The button that opens the layer; the focus comes back to it when the layer closes */
 export const PrivacyPolicyButton: React.FC<PrivacyPolicyButtonProps> = ({className}) => {
 	const [open, setOpen] = useState(false);
@@ -76,7 +82,7 @@ export const PrivacyPolicyButton: React.FC<PrivacyPolicyButtonProps> = ({classNa
 			<Button className={className} spotlightId={buttonId} size="small" icon="lock" backgroundOpacity="transparent" onClick={show} data-privacy-button>
 				{t('webos_privacy_policy')}
 			</Button>
-			{open && <PrivacyPolicyLayer onClose={close} />}
+			{open && createPortal(<PrivacyPolicyLayer onClose={close} />, layerHost())}
 		</>
 	);
 };
