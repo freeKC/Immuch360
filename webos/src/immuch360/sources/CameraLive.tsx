@@ -7,7 +7,6 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Button from '@enact/sandstone/Button';
 import Spotlight from '@enact/spotlight';
 import {useWebOSKeys} from '../../hooks/useWebOSKeys';
-import {holdScreenSaver} from '../../utils/screenSaver';
 import {createSpotlightContainer} from '../../utils/spotlight';
 import {t} from '../i18n';
 import {bridgeUrl} from './bridgeClient';
@@ -47,8 +46,6 @@ export const CameraLive: React.FC<CameraLiveProps> = ({info, source, onClose}) =
 	const [reported, setReported] = useState<{run: string; state: State} | null>(null);
 	const state: State = reported && reported.run === run ? reported.state : {kind: 'connecting'};
 	useWebOSKeys({onBack: onClose});
-
-	useEffect(() => holdScreenSaver(), []);
 
 	useEffect(() => {
 		const raf = requestAnimationFrame(() => Spotlight.focus(LIVE_ID));

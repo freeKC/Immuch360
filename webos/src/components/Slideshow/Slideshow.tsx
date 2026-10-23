@@ -5,7 +5,6 @@ import {useAutoHideControls} from '../../hooks/useAutoHideControls';
 import {SLIDESHOW_INTERVALS_S, useSlideshowSettings} from '../../hooks/useSlideshowSettings';
 import {useWebOSKeys} from '../../hooks/useWebOSKeys';
 import {getRotation} from '../../utils/rotationStore';
-import {holdScreenSaver} from '../../utils/screenSaver';
 import {MediaInfo} from '../MediaInfo/MediaInfo';
 import {RoundButton} from '../RoundButton';
 import {createSpotlightContainer, forceFocus} from '../../utils/spotlight';
@@ -155,7 +154,8 @@ export const Slideshow: React.FC<SlideshowProps> = ({start, source, onExit}) => 
 		return () => window.clearTimeout(timer);
 	}, [current, paused, stage.incoming, settings.intervalSeconds, playlist, repository, advance, retryTick]);
 
-	useEffect(() => holdScreenSaver(), []);
+	// Immuch360: no veto of the screen saver here any more: appinfo.json asks webOS for the Type 3 screen saver of
+	// gallery apps (screenSaverProperties, useGalleryMode), which dims the screen after 30 minutes instead
 
 	const handleExit = useCallback(() => onExit(current), [onExit, current]);
 	const handleNext = useCallback(() => void advance(() => playlist.next()), [advance, playlist]);

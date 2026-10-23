@@ -3,12 +3,12 @@
 
 import {test, describe} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync, readdirSync, statSync} from 'node:fs';
 import {deflateSync} from 'node:zlib';
 import {Buffer} from 'node:buffer';
 import {dirname, join} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {ICONS, TILE_COLOR, iconProblems, pngInfo} from '../../tools/store-rules.mjs';
+import {FORBIDDEN_SERVICES, ICONS, TILE_COLOR, iconProblems, pngInfo, screenSaverProblems} from '../../tools/store-rules.mjs';
 
 const WEBOS = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const appinfo = JSON.parse(readFileSync(join(WEBOS, 'webos-meta', 'appinfo.json'), 'utf8'));
@@ -57,5 +57,33 @@ describe('the icons (F1)', () => {
 		assert.ok(problems.some((p) => /iconColor/.test(p)));
 		assert.ok(problems.some((p) => /icon\.png can hold transparency/.test(p)));
 		assert.ok(problems.some((p) => /icon-large\.png is 128x128/.test(p)));
+	});
+});
+
+// Every source file of the app and of its service, tests aside
+function sources(dir) {
+	return readdirSync(dir).flatMap((name) => {
+		const path = join(dir, name);
+		if (statSync(path).isDirectory()) return name === 'node_modules' || name === 'generated' ? [] : sources(path);
+		return /\.(ts|tsx|js|cjs|mjs)$/.test(name) && !/\.test\./.test(name) && name !== 'test.js' ? [path] : [];
+	});
+}
+
+describe('the screen saver (F5)', () => {
+	test('appinfo.json asks for the Type 3 screen saver of gallery apps, both keys at the top', () => {
+		assert.deepEqual(screenSaverProblems(appinfo), []);
+		assert.deepEqual(appinfo.screenSaverProperties, {preferredType: 3});
+		assert.equal(appinfo.useGalleryMode, true);
+		assert.ok(screenSaverProblems({...appinfo, useGalleryMode: undefined}).length > 0);
+		assert.ok(screenSaverProblems({...appinfo, screenSaverProperties: {preferredType: 2}}).length > 0);
+	});
+
+	test('no code calls the undocumented tvpower service any more', () => {
+		const files = [...sources(join(WEBOS, 'src')), ...sources(join(WEBOS, 'service')), ...sources(join(WEBOS, 'bridge', 'src'))];
+		assert.ok(files.length > 50);
+		for (const file of files) {
+			const text = readFileSync(file, 'utf8');
+			for (const service of FORBIDDEN_SERVICES) assert.ok(!text.includes(service), `${file} names ${service}`);
+		}
 	});
 });

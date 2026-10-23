@@ -9,14 +9,14 @@
 // went in, when the clip of the video test of the diagnostics page is missing, when the licences are missing (the AGPL
 // of Immuch360 and the MIT notice of immich-tv-webos, which must be in every copy, see tools/licence-files.mjs), when
 // the media bridge of the service or the notices of the third party code in it are missing (tools/build-bridge.mjs),
-// when the icons are not the opaque squares LG's store asks for (tools/store-rules.mjs), or when the package grew past
-// 10 MB. --list writes every file and its size, to compare two builds.
+// when the icons are not the opaque squares LG's store asks for, when the Type 3 screen saver of gallery apps is not
+// declared or a Luna service outside LG's list is called (tools/store-rules.mjs), or when the package grew past 10 MB. --list writes every file and its size, to compare two builds.
 
 import {readFileSync, readdirSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {gunzipSync} from 'node:zlib';
 import {createHash} from 'node:crypto';
-import {ICONS, iconProblems} from './store-rules.mjs';
+import {FORBIDDEN_SERVICES, ICONS, iconProblems, screenSaverProblems} from './store-rules.mjs';
 
 const APP_ID = 'com.aprogsys.immuch360';
 const SERVICE_ID = `${APP_ID}.service`;
@@ -127,7 +127,7 @@ if (appinfoBytes) {
 	if (ipkName !== `${APP_ID}_${appinfo.version}_all.ipk`) problems.push(`${ipkName} does not carry the version ${appinfo.version}`);
 	// LG's store rules on the icons and the tile colour (tools/store-rules.mjs)
 	const icons = Object.fromEntries(Object.keys(ICONS).map((name) => [name, data[appDir + name]]).filter(([, bytes]) => bytes));
-	problems.push(...iconProblems(appinfo, icons));
+	problems.push(...iconProblems(appinfo, icons), ...screenSaverProblems(appinfo));
 }
 const servicePackage = data[`${serviceDir}package.json`];
 if (servicePackage && version && JSON.parse(servicePackage.toString('utf8')).version !== version) {
@@ -140,6 +140,12 @@ if (!controlText.includes(`Package: ${APP_ID}`)) problems.push('control does not
 if (ipk.length > MAX_IPK_BYTES) problems.push(`${ipk.length} bytes, more than ${MAX_IPK_BYTES}`);
 
 const mainJs = data[`${appDir}main.js`];
+// Luna services outside LG's ACG list must not be called (tools/store-rules.mjs)
+for (const [path, bytes] of Object.entries(data)) {
+	if (!/\.(js|html)$/.test(path)) continue;
+	const text = bytes.toString('latin1');
+	for (const service of FORBIDDEN_SERVICES) if (text.includes(service)) problems.push(`${path} calls ${service}`);
+}
 const lookbehinds = mainJs ? (mainJs.toString('latin1').match(/\(\?<[=!]/g) ?? []).length : 0;
 
 const files = Object.keys(data).sort().map((path) => ({path, size: data[path].length}));

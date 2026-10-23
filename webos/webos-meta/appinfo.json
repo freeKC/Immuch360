@@ -15,6 +15,10 @@
 	"bgColor": "#131313",
 	"uiRevision": 2,
 	"disableBackHistoryAPI": true,
+	"screenSaverProperties": {
+		"preferredType": 3
+	},
+	"useGalleryMode": true,
 	"vendorExtension": {
 		"allowCrossDomain": true
 	}
