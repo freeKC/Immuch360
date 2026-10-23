@@ -1,7 +1,10 @@
 // The audio track and subtitle menus of the flat player of the phones, TVs and headsets: shown for a video with two
 // audio tracks or more, or with subtitles, reached with the remote, and what they ask of the player.
 
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -65,10 +68,17 @@ class _TrackPlayer extends VideoPlayerNotifier {
   final List<String> calls;
   final locales = <String?>[];
 
+  /// Holds the listings until completed, when set: a native player that answers late
+  Completer<void>? gate;
+
+  @override
+  List<NativeVideoTrack> lastTracks = const [];
+
   @override
   Future<List<NativeVideoTrack>> tracks({String? locale}) async {
     locales.add(locale);
-    return listed;
+    await gate?.future;
+    return lastTracks = listed;
   }
 
   @override
@@ -82,7 +92,12 @@ void main() {
   late List<String> calls;
   late _TrackPlayer player;
 
-  Future<void> pump(WidgetTester tester, List<NativeVideoTrack> tracks, {bool tvMode = false}) async {
+  Future<void> pump(
+    WidgetTester tester,
+    List<NativeVideoTrack> tracks, {
+    bool tvMode = false,
+    ValueListenable<bool>? shown,
+  }) async {
     calls = [];
     player = _TrackPlayer(tracks, calls);
     await tester.pumpWidget(
@@ -106,11 +121,20 @@ void main() {
               locale: context.locale,
               // The remote control layout around the navigator, as in the app
               builder: tvMode ? (context, child) => TvShell(child: child!) : null,
-              home: const Scaffold(
+              home: Scaffold(
                 backgroundColor: Colors.black,
-                body: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: NetworkVideoControls(playerKey: 'film'),
+                body: Consumer(
+                  builder: (context, ref, _) {
+                    // The page keeps the player while the controls hide and show again
+                    ref.watch(videoPlayerProvider('film'));
+                    return ValueListenableBuilder<bool>(
+                      valueListenable: shown ?? ValueNotifier(true),
+                      builder: (context, show, _) => Align(
+                        alignment: Alignment.bottomCenter,
+                        child: show ? const NetworkVideoControls(playerKey: 'film') : const SizedBox.shrink(),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -172,6 +196,24 @@ void main() {
     await tester.pumpAndSettle();
     expect(audioMenu, findsOneWidget);
     expect(subtitleMenu, findsNothing);
+  });
+
+  testWidgets('controls that show again have their menus at once, before the native player answers', (tester) async {
+    final shown = ValueNotifier(true);
+    await pump(tester, const [_english, _french, _subtitles], shown: shown);
+    expect(audioMenu, findsOneWidget);
+
+    shown.value = false;
+    await tester.pump();
+    player.gate = Completer<void>();
+    shown.value = true;
+    await tester.pump();
+    expect(audioMenu, findsOneWidget);
+    expect(subtitleMenu, findsOneWidget);
+
+    player.gate!.complete();
+    await tester.pumpAndSettle();
+    expect(audioMenu, findsOneWidget);
   });
 
   testWidgets('on a TV the remote reaches them after +10 s, and OK picks a track', (tester) async {

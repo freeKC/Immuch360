@@ -105,6 +105,12 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
   final _tracksChanged = ValueNotifier(0);
 
+  List<NativeVideoTrack> _lastTracks = const [];
+
+  /// What [tracks] found last for the video loaded: the track menus that show again with the controls start from it,
+  /// rather than without menus until the native player answers
+  List<NativeVideoTrack> get lastTracks => _lastTracks;
+
   /// Changes when the audio and subtitle tracks of the video may have changed: a native player attached, a video
   /// loaded, a track picked (see [tracks]); what the track menus of the controls listen to
   ValueListenable<int> get tracksChanged => _tracksChanged;
@@ -162,7 +168,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
       return const [];
     }
     try {
-      return await controller.getTracks(locale: locale);
+      return _lastTracks = await controller.getTracks(locale: locale);
     } catch (e) {
       _log.warning('Error listing the tracks: $e');
       return const [];
@@ -197,6 +203,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
     _ready = false;
     _playOnForeground = false;
+    _lastTracks = const [];
     if (state.status == VideoPlaybackStatus.failed) {
       // Loading again: the spinner, and a new stall check, from now on
       state = state.copyWith(status: VideoPlaybackStatus.buffering);

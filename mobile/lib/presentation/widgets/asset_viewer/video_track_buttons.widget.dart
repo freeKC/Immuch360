@@ -37,6 +37,13 @@ class _VideoTrackButtonsState extends ConsumerState<VideoTrackButtons> {
   VideoPlayerNotifier get _notifier => ref.read(videoPlayerProvider(widget.playerKey).notifier);
 
   @override
+  void initState() {
+    super.initState();
+    // The controls show again: the menus are there at once, the native player confirms the tracks after
+    _tracks = _notifier.lastTracks;
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _listen();
