@@ -156,4 +156,67 @@ class EnvelopeTest {
     assertEquals(0, decoder.buffered)
     assertEquals(1, decoder.offer(frame(Channels.CONTROL_PRIMARY, byteArrayOf(3))).size)
   }
+
+  @Test
+  fun zerosAfterAControlEnvelopeUpTo512ArePaddingInSync() {
+    val control = frame(Channels.CONTROL_PRIMARY, ByteArray(29) { 0x11 })
+    val padding = ByteArray(EnvelopeDecoder.paddingAfter(control.size.toLong()))
+    assertEquals(512 - 37, padding.size)
+    val frames = decoder.offer(control + padding + frame(22346, byteArrayOf(0, 0, 0, 1)))
+    assertEquals(2, frames.size)
+    assertEquals(padding.size.toLong(), decoder.counters.paddingBytes)
+    assertEquals(0L, decoder.counters.discardedBytes)
+    assertEquals(0L, decoder.counters.resynchronisations)
+  }
+
+  @Test
+  fun paddingSplitOverReadsStaysInSync() {
+    val control = frame(Channels.CONTROL_PRIMARY, ByteArray(100) { 0x22 })
+    val padded = control + ByteArray(512 - control.size) + frame(Channels.CONTROL_PRIMARY, byteArrayOf(5))
+    var count = 0
+    for (at in padded.indices step 7) {
+      count += decoder.offer(padded, at, minOf(7, padded.size - at)).size
+    }
+    assertEquals(2, count)
+    assertEquals((512 - control.size).toLong(), decoder.counters.paddingBytes)
+    assertEquals(0L, decoder.counters.discardedBytes)
+  }
+
+  @Test
+  fun paddingCutShortByTheNextHeaderIsParsedAsUsual() {
+    val control = frame(Channels.CONTROL_PRIMARY, ByteArray(20) { 0x33 })
+    val frames = decoder.offer(control + ByteArray(10) + frame(22346, byteArrayOf(1, 2, 3)))
+    assertEquals(2, frames.size)
+    assertEquals(10L, decoder.counters.paddingBytes)
+    assertEquals(1L, decoder.counters.paddingCutShort)
+    assertEquals(0L, decoder.counters.discardedBytes)
+  }
+
+  @Test
+  fun noPaddingIsExpectedAfterAnEnvelopeOfExactly512Bytes() {
+    val control = frame(Channels.CONTROL_PRIMARY, ByteArray(512 - EnvelopeDecoder.HEADER_SIZE) { 0x44 })
+    assertEquals(0, EnvelopeDecoder.paddingAfter(control.size.toLong()))
+    val frames = decoder.offer(control + ByteArray(3) + frame(22346, byteArrayOf(9)))
+    assertEquals(2, frames.size)
+    assertEquals(0L, decoder.counters.paddingBytes)
+    assertEquals(3L, decoder.counters.discardedBytes)
+  }
+
+  @Test
+  fun zerosAfterAVideoEnvelopeAreStillDiscarded() {
+    val frames = decoder.offer(frame(22346, byteArrayOf(0, 0, 0, 1, 0x46)) + ByteArray(6) + frame(22346, byteArrayOf(7)))
+    assertEquals(2, frames.size)
+    assertEquals(0L, decoder.counters.paddingBytes)
+    assertEquals(6L, decoder.counters.discardedBytes)
+    assertEquals(1L, decoder.counters.resynchronisations)
+  }
+
+  @Test
+  fun zerosBeyondTheExpectedPaddingAreDiscarded() {
+    val control = frame(Channels.CONTROL_PRIMARY, ByteArray(500 - EnvelopeDecoder.HEADER_SIZE))
+    val frames = decoder.offer(control + ByteArray(12 + 5) + frame(22346, byteArrayOf(1)))
+    assertEquals(2, frames.size)
+    assertEquals(12L, decoder.counters.paddingBytes)
+    assertEquals(5L, decoder.counters.discardedBytes)
+  }
 }

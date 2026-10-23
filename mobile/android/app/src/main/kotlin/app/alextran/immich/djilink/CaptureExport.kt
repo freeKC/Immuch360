@@ -27,8 +27,9 @@ import org.json.JSONObject
  * Android 10 and later take the files into the shared downloads; Android 8 and 9 have no downloads collection for an
  * application, so the files go to the application's own folder on the shared storage, whose path the page shows.
  *
- * Nothing is uploaded anywhere. A capture holds serial numbers and possibly a position, so it stays on the device and
- * on the pilot's own computer, and it is never committed to the fork.
+ * Nothing is uploaded anywhere. A capture holds the video of the drone's camera, the serial numbers of the remote and
+ * the aircraft, and possibly a position, so it stays on the device and on the pilot's own computer, and it is never
+ * committed to the fork.
  */
 object CaptureExport {
   const val FOLDER = "Immuch360/dji-link"
@@ -53,10 +54,11 @@ object CaptureExport {
     profile: DeviceProfile?,
     link: Map<String, Any?>,
     notes: Map<String, String?>,
+    extra: Map<String, Any?> = emptyMap(),
     id: String = "dji-link-" + android.text.format.DateFormat.format("yyyyMMdd-HHmmss", System.currentTimeMillis()),
   ): Result {
     val digest = snapshot.sha256()
-    val header = headerJson(id, snapshot, digest, environment, identity, profile, link, notes)
+    val header = headerJson(id, snapshot, digest, environment, identity, profile, link, notes, extra)
     if (snapshot.bytes.isEmpty() && snapshot.entries.isEmpty()) {
       return try {
         val json = writeFile(context, "$id.json", "application/json", header.toByteArray())
@@ -132,6 +134,7 @@ object CaptureExport {
     profile: DeviceProfile?,
     link: Map<String, Any?>,
     notes: Map<String, String?>,
+    extra: Map<String, Any?> = emptyMap(),
   ): String {
     val root = JSONObject()
     root.put("id", id)
@@ -188,7 +191,8 @@ object CaptureExport {
         JSONObject()
           .put("capability", capability.name)
           .put("support", state.support.name)
-          .put("provenance", state.provenance?.observationId ?: JSONObject.NULL),
+          .put("provenance", state.provenance?.observationId ?: JSONObject.NULL)
+          .put("observedOn", state.provenance?.deviceModel ?: JSONObject.NULL),
       )
     }
     root.put(
@@ -205,6 +209,9 @@ object CaptureExport {
     val bench = JSONObject()
     notes.forEach { (key, value) -> bench.put(key, value ?: JSONObject.NULL) }
     root.put("bench", bench)
+    // Stage 2: the last accessory strings and every open of the page session, kept after the unplug, the video and
+    // telemetry summaries and the profile the pilot bound the strings to
+    extra.forEach { (key, value) -> root.put(key, value ?: JSONObject.NULL) }
     return root.toString(2)
   }
 }

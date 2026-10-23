@@ -16,11 +16,14 @@ import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/platform/document_tree_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/drone_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
+import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/drone_import.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
@@ -452,16 +455,73 @@ class _DroneImportPageState extends ConsumerState<DroneImportPage> {
   }
 }
 
-/// Nothing open: how to plug in, the button that opens the picker, and the folders picked before
-class _PlugInView extends StatelessWidget {
+/// Nothing open: how to plug in, the button that opens the picker, and the folders picked before. While it shows, the
+/// accessory list of the system is read every [_remotePollInterval] and when the app comes back, because Android
+/// delivers no broadcast for an accessory to a page that is not its owner: a DJI remote plugged in by mistake gets a card
+/// saying that it holds no photos, with a way to the DJI link page when that switch is on. Reading the list needs no
+/// permission and opens nothing, so it takes the remote from neither the link page nor DJI Fly.
+class _PlugInView extends ConsumerStatefulWidget {
   const _PlugInView({required this.state, required this.notifier});
 
   final DroneImportState state;
   final DroneImportNotifier notifier;
 
   @override
+  ConsumerState<_PlugInView> createState() => _PlugInViewState();
+}
+
+const _remotePollInterval = Duration(seconds: 2);
+
+class _PlugInViewState extends ConsumerState<_PlugInView> with WidgetsBindingObserver {
+  Timer? _poll;
+  bool _remotePlugged = false;
+  bool _asking = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    unawaited(Future.microtask(_lookForRemote));
+    _poll = Timer.periodic(_remotePollInterval, (_) => unawaited(_lookForRemote()));
+  }
+
+  @override
+  void dispose() {
+    _poll?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(_lookForRemote());
+    }
+  }
+
+  Future<void> _lookForRemote() async {
+    if (_asking || !mounted) {
+      return;
+    }
+    _asking = true;
+    try {
+      final listed = await ref.read(djiPluggedAccessoriesProvider)();
+      final plugged = listed.any(_isDjiRemote);
+      if (mounted && plugged != _remotePlugged) {
+        setState(() => _remotePlugged = plugged);
+      }
+    } finally {
+      _asking = false;
+    }
+  }
+
+  static bool _isDjiRemote(DjiLinkPluggedAccessory accessory) => accessory.manufacturer?.trim().toUpperCase() == 'DJI';
+
+  @override
   Widget build(BuildContext context) {
     final t = context.t;
+    final state = widget.state;
+    final notifier = widget.notifier;
     final muted = context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceVariant);
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 24),
@@ -475,6 +535,42 @@ class _PlugInView extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(32, 0, 32, 16),
           child: Text(t.dji_import_choose_help, textAlign: TextAlign.center, style: muted),
         ),
+        if (_remotePlugged)
+          Card(
+            key: const Key('drone_import_remote_plugged'),
+            margin: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.settings_remote_rounded, color: context.primaryColor),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          t.dji_import_remote_plugged,
+                          style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(t.dji_import_remote_no_files, style: context.textTheme.bodyMedium),
+                  if (ref.watch(djiLinkEnabledProvider))
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        key: const Key('drone_import_open_link'),
+                        onPressed: () => unawaited(context.pushRoute(const DjiLinkRoute())),
+                        child: Text(t.dji_import_open_link),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
         Center(
           child: FilledButton.icon(
             key: const Key('drone_import_choose'),

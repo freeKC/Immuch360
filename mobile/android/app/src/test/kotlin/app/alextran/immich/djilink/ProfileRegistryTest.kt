@@ -9,10 +9,10 @@ import org.junit.Test
 /** A profile is a label. It never grants a capability, and a capability never claims support without an observation. */
 class ProfileRegistryTest {
   @Test
-  fun everyStartingProfileIsUnknownEverywhere() {
+  fun everyStartingProfileButTheObservedOneIsUnknownEverywhere() {
     val registry = ProfileRegistry()
     assertTrue(registry.all().isNotEmpty())
-    for (profile in registry.all()) {
+    for (profile in registry.all().filter { it.id != ProfileRegistry.RC_N3_NEO2 }) {
       for (capability in Capability.entries) {
         assertEquals(Support.UNKNOWN, profile.support(capability))
       }

@@ -52,7 +52,9 @@ data class CapabilityState(val support: Support, val provenance: Provenance? = n
  * One product pair (a controller and an aircraft, with its transceiver when it needs one) as this app knows it. The
  * accessory strings are what was read on the wire, not product names: nothing maps a model string to a product yet.
  *
- * Matching an accessory triple selects a label and nothing else. A profile never grants a capability.
+ * Matching an accessory triple, or the pilot binding the strings he sees to a profile, selects a label, the
+ * capabilities observed on that hardware and the stream description seed, and nothing else. A profile never grants
+ * anything to the link: the safety rules do not read it.
  */
 data class DeviceProfile(
   val id: String,
@@ -71,6 +73,8 @@ data class DeviceProfile(
   val note: String? = null,
   val capabilities: Map<Capability, CapabilityState> =
     Capability.entries.associateWith { CapabilityState.unknown },
+  /** The H.265 stream description observed on this hardware, used when the stream gives none ([ParameterSetStore]) */
+  val streamSeed: StreamDescription? = null,
 ) {
   fun support(capability: Capability): Support =
     capabilities[capability]?.support ?: Support.UNKNOWN
@@ -82,9 +86,58 @@ data class DeviceProfile(
  */
 class ProfileRegistry(seed: List<DeviceProfile> = starting) {
   companion object {
+    /** The capture of 23 October 2026, FreeKC's RC-N3 and Neo 2 on a Galaxy S24+ (p2/capture-2026-10-23.md) */
+    const val CAPTURE_20261023 = "dji-link-20261023-102731"
+    const val CAPTURE_20261023_SHA256 = "8541e5d3395f12ac16e42d5fb86465f57ce7efb37ee8166a00c2260a742141bc"
+
+    /**
+     * The VPS, SPS and PPS of that capture, 102 bytes in one envelope on the wire (start codes excluded here): H.265
+     * Main, High tier, level 5, 1920 x 1080, 4:2:0, 8 bit. A stream description, no picture and no serial number: the
+     * only bytes of a capture this repository holds.
+     */
+    const val SEED_VPS_20261023 = "40010c01ffff21600000030000030000030000030096ac0c0000030004000003007940"
+    const val SEED_SPS_20261023 =
+      "42010121600000030000030000030000030096a003c08010e7febbb726b97535010101040000030004000003007820"
+    const val SEED_PPS_20261023 = "4401c17312240890"
+
+    val seed20261023: StreamDescription? by lazy {
+      StreamDescription.fromHex(SEED_VPS_20261023, SEED_SPS_20261023, SEED_PPS_20261023)
+    }
+
+    private fun observed20261023(observed: String) = CapabilityState(
+      Support.SUPPORTED,
+      Provenance(
+        observationId = CAPTURE_20261023,
+        date = "2026-10-23",
+        deviceModel = "Samsung SM-S926B (Galaxy S24+), phone flavour",
+        deviceOs = "Android 16, BP4A.251205.006",
+        controller = "RC-N3, firmware not recorded",
+        aircraft = "Neo 2 with the Digital Transceiver, firmware not recorded",
+        captureSha256 = CAPTURE_20261023_SHA256,
+        observed = observed,
+      ),
+    )
+
+    /** What the capture of 23 October 2026 shows the RC-N3 and the Neo 2 doing with a phone that sends nothing */
+    val rcN3Neo2Capabilities: Map<Capability, CapabilityState> =
+      Capability.entries.associateWith { CapabilityState.unknown } + mapOf(
+        Capability.ACCESSORY_OPEN to observed20261023("two opens, reads on both"),
+        Capability.LINK_PROBE to observed20261023("68 probes, 0 failures"),
+        Capability.LINK_NEGOTIATION to observed20261023(
+          "nothing but the one byte probe was written and video and telemetry flowed: none needed",
+        ),
+        Capability.VIDEO_RECEIVE to observed20261023("29,026 video envelopes on channel 22346 in the session"),
+        Capability.VIDEO_DECODE to observed20261023(
+          "H.265 Main 1920 x 1080, 308 pictures decoded with no error offline; the result on a device joins after " +
+            "the owner test",
+        ),
+        Capability.TELEMETRY_RECEIVE to observed20261023("21,860 control frames, every checksum verified"),
+      )
+
     /** Accessory model strings the format notes list (p2/protocol.md, section 2.2), as identity strings only */
     val KNOWN_MODELS = listOf("com.dji.logiclink", "WM160", "com.dji.link")
     const val MANUFACTURER = "DJI"
+    const val RC_N3_NEO2 = "rc-n3-neo2"
 
     val starting: List<DeviceProfile> = listOf(
       // The three accessory identity strings the format notes list. They are identity strings and nothing maps one of
@@ -111,13 +164,16 @@ class ProfileRegistry(seed: List<DeviceProfile> = starting) {
         note = "an identity string, not a product name; no product is claimed for it",
       ),
       DeviceProfile(
-        id = "rc-n3-neo2",
+        id = RC_N3_NEO2,
         label = "DJI RC-N3 with a Neo 2 and the Digital Transceiver",
         accessoryManufacturer = MANUFACTURER,
         controllerModel = "RC-N3",
         aircraftModel = "Neo 2",
         transceiver = "DJI Digital Transceiver",
-        note = "the hardware this work is written for; nothing about it is verified yet",
+        protocolFamily = "envelope 55 CC, control channel 22345, H.265 video on 22346",
+        note = "observed on 23 October 2026: receive only, video and telemetry with nothing sent but the probe",
+        capabilities = rcN3Neo2Capabilities,
+        streamSeed = seed20261023,
       ),
       DeviceProfile(
         id = "rc-n2-neo2",
@@ -168,11 +224,16 @@ class ProfileRegistry(seed: List<DeviceProfile> = starting) {
 
   fun byId(id: String): DeviceProfile? = profiles[id]
 
+  /** The profiles the pilot can bind accessory strings to: the starting ones, never one made from a port */
+  fun bindable(): List<DeviceProfile> = starting.mapNotNull { profiles[it.id] }
+
   /**
-   * The profile for an accessory triple. A triple that matches nothing is added as a profile of its own, with every
-   * capability unknown and its strings as they were read.
+   * The profile for an accessory triple: the one the pilot bound these strings to first, then the rules below. A triple
+   * that matches nothing is added as a profile of its own, with every capability unknown and its strings as they were
+   * read.
    */
-  fun match(identity: AccessoryIdentity): DeviceProfile {
+  fun match(identity: AccessoryIdentity, boundProfileId: String? = null): DeviceProfile {
+    boundProfileId?.let { bound -> profiles[bound]?.let { return it } }
     val exact = profiles.values.firstOrNull {
       it.accessoryModel != null &&
         it.accessoryModel.equals(identity.model, ignoreCase = false) &&
@@ -198,5 +259,21 @@ class ProfileRegistry(seed: List<DeviceProfile> = starting) {
         note = "made from what was read on the port; nothing is claimed about it",
       )
     }
+  }
+}
+
+/**
+ * The pilot's choice of "Your hardware", kept in the app's preferences against the four accessory strings. It names
+ * the hardware and selects the stream description seed; it changes nothing in what the link does.
+ */
+class ProfileBindings(private val preferences: KeyValueStore) {
+  companion object {
+    const val KEY_PREFIX = "djilink.profileBinding."
+  }
+
+  fun boundTo(strings: AccessoryStrings?): String? = strings?.let { preferences.read(KEY_PREFIX + it.key) }
+
+  fun bind(strings: AccessoryStrings, profileId: String?) {
+    preferences.write(KEY_PREFIX + strings.key, profileId)
   }
 }

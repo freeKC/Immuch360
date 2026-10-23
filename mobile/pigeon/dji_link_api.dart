@@ -61,14 +61,53 @@ enum DjiLinkReason {
   pageClosed,
   framesParse,
   aircraftFrames,
+
+  /// Pictures came out of the decoder in the last two seconds
+  videoDecoded,
 }
 
 /// Whether a hardware profile can do something. [supported] is impossible to reach without an observation on named
 /// hardware, so a fresh profile is [unknown] everywhere.
 enum DjiLinkSupport { unknown, unsupported, supported }
 
-/// What a video payload looks like, with no codec named
-enum DjiLinkProbeVerdict { noData, noStartCodes, startCodesSeen }
+/// What a video payload looks like. A codec is named only once the stream itself showed it: H.265 from its parameter
+/// sets or the delimiter signature of the 23 October 2026 capture, H.264 from its own sequence parameter set.
+enum DjiLinkProbeVerdict { noData, noStartCodes, startCodesSeen, h265, h264 }
+
+/// Where the live picture stands
+enum DjiLinkVideoState {
+  waitingForVideo,
+  waitingForDescription,
+
+  /// Joined a running stream: no key picture yet, the picture builds up
+  building,
+  decoding,
+
+  /// Decoding goes on while no video panel is shown
+  hidden,
+  failed,
+
+  /// H.264 recognised, not decoded in this stage
+  h264NotDecoded,
+}
+
+/// Where the stream description in use came from
+enum DjiLinkDescriptionSource { none, session, cache, profile }
+
+/// The pilot's choice of decoder; automatic is the default
+enum DjiLinkDecoderChoice { automatic, hardware, software }
+
+/// How a telemetry value is known
+enum DjiLinkEvidence {
+  /// A public layout and the 23 October capture agree
+  publicAndCapture,
+
+  /// The capture alone shows what the field is
+  capture,
+
+  /// A reading that fits and was never checked against a reference
+  candidate,
+}
 
 /// What this device can do about a USB accessory, read on the device itself
 class DjiLinkEnvironment {
@@ -139,13 +178,27 @@ class DjiLinkAccessory {
 }
 
 class DjiLinkCapability {
-  const DjiLinkCapability({required this.name, required this.support, this.provenance});
+  const DjiLinkCapability({
+    required this.name,
+    required this.support,
+    this.provenance,
+    this.observedOn,
+    this.observedDate,
+    this.observed,
+  });
 
   final String name;
   final DjiLinkSupport support;
 
   /// The observation this answer rests on; null while the answer is unknown
   final String? provenance;
+
+  /// The device the observation was made on, so that a phone result is never read as a headset one
+  final String? observedOn;
+  final String? observedDate;
+
+  /// One line of what was observed
+  final String? observed;
 }
 
 /// A controller and aircraft pair as this application knows it. Matching an accessory selects a label and nothing
@@ -182,6 +235,7 @@ class DjiLinkCounters {
     required this.controllerSideFrames,
     required this.ambiguousSideFrames,
     required this.keepAliveExceptions,
+    this.paddingBytes = 0,
   });
 
   final int envelopeFrames;
@@ -206,6 +260,9 @@ class DjiLinkCounters {
   final int controllerSideFrames;
   final int ambiguousSideFrames;
   final int keepAliveExceptions;
+
+  /// Zero bytes after control envelopes up to a multiple of 512, consumed in sync: padding, not a discard
+  final int paddingBytes;
 }
 
 class DjiLinkChannel {
@@ -374,6 +431,302 @@ class DjiLinkVideoChannel {
   final int longestGapMs;
 }
 
+/// The video panel: the state, the codec and the stream description, the decoder, and the counters of the path from
+/// the cable to the screen
+class DjiLinkDecode {
+  const DjiLinkDecode({
+    required this.state,
+    required this.codec,
+    required this.descriptionSource,
+    required this.choice,
+    required this.lowLatency,
+    required this.switches,
+    required this.unitsIn,
+    required this.queued,
+    required this.decoded,
+    required this.shown,
+    required this.droppedAtDisplay,
+    required this.overruns,
+    required this.tooLarge,
+    required this.unitsWithoutDescription,
+    required this.errors,
+    required this.picturesPerSecond,
+    required this.megabitsPerSecond,
+    required this.lostPictures,
+    required this.encoderRestarts,
+    required this.keyPictures,
+    this.failure,
+    this.width,
+    this.height,
+    this.profileName,
+    this.highTier,
+    this.levelName,
+    this.decoderName,
+    this.decoderHardware,
+    this.switchReason,
+    this.decodeLastMs,
+    this.decodeMedianMs,
+    this.decodeP95Ms,
+    this.inProcessMedianMs,
+    this.inProcessP95Ms,
+    this.firstPictureMs,
+    this.keyPictureAgoMs,
+    this.lastOutputAgoMs,
+  });
+
+  final DjiLinkVideoState state;
+
+  /// A short code when the decoder failed: no-decoder, configuration-refused, error-<code>
+  final String? failure;
+
+  /// h265, h264 or unknown
+  final String codec;
+  final int? width;
+  final int? height;
+  final String? profileName;
+  final bool? highTier;
+  final String? levelName;
+  final DjiLinkDescriptionSource descriptionSource;
+  final String? decoderName;
+  final bool? decoderHardware;
+  final DjiLinkDecoderChoice choice;
+
+  /// The configuration the decoder accepted asked for low latency
+  final bool lowLatency;
+  final int switches;
+
+  /// Why the last switch to software happened: noOutputAfterJoin, hardwareRetryFailed, fatalErrors
+  final String? switchReason;
+  final int unitsIn;
+  final int queued;
+  final int decoded;
+  final int shown;
+  final int droppedAtDisplay;
+  final int overruns;
+  final int tooLarge;
+  final int unitsWithoutDescription;
+  final int errors;
+  final double picturesPerSecond;
+  final double megabitsPerSecond;
+  final double? decodeLastMs;
+  final double? decodeMedianMs;
+  final double? decodeP95Ms;
+  final double? inProcessMedianMs;
+  final double? inProcessP95Ms;
+  final int? firstPictureMs;
+  final int lostPictures;
+  final int encoderRestarts;
+  final int keyPictures;
+  final int? keyPictureAgoMs;
+  final int? lastOutputAgoMs;
+}
+
+/// The flight data group, read from the link with layouts that fit the 23 October 2026 capture. Not a flight
+/// instrument: nothing here has been compared with DJI Fly yet.
+class DjiLinkFlight {
+  const DjiLinkFlight({
+    required this.ageMs,
+    required this.stale,
+    required this.heightM,
+    required this.speedsMps,
+    required this.pitchDeg,
+    required this.rollDeg,
+    required this.headingDeg,
+    required this.mode,
+    required this.inAir,
+    required this.motorsOn,
+    required this.motorTimeS,
+    required this.satellites,
+    required this.groundHeightM,
+    required this.evidence,
+  });
+
+  final int ageMs;
+  final bool stale;
+  final double heightM;
+  final List<double> speedsMps;
+  final double pitchDeg;
+  final double rollDeg;
+  final double headingDeg;
+  final int mode;
+  final bool inAir;
+  final bool motorsOn;
+  final double motorTimeS;
+  final int satellites;
+  final double groundHeightM;
+  final DjiLinkEvidence evidence;
+}
+
+class DjiLinkBattery {
+  const DjiLinkBattery({
+    required this.ageMs,
+    required this.stale,
+    required this.percent,
+    required this.volts,
+    required this.amps,
+    required this.remainingMah,
+    required this.fullMah,
+    required this.temperatureC,
+    required this.cells,
+    required this.status,
+    required this.evidence,
+  });
+
+  final int ageMs;
+  final bool stale;
+  final int percent;
+  final double volts;
+  final double amps;
+  final int remainingMah;
+  final int fullMah;
+  final double temperatureC;
+  final int cells;
+
+  /// The status bits, hexadecimal
+  final String status;
+  final DjiLinkEvidence evidence;
+}
+
+class DjiLinkGimbal {
+  const DjiLinkGimbal({
+    required this.ageMs,
+    required this.stale,
+    required this.headingDeg,
+    required this.headingFineDeg,
+    required this.angle1Deg,
+    required this.angle2Deg,
+    required this.quaternion,
+    required this.evidence,
+  });
+
+  final int ageMs;
+  final bool stale;
+  final double headingDeg;
+  final double headingFineDeg;
+  final double angle1Deg;
+  final double angle2Deg;
+
+  /// w, x, y, z
+  final List<double> quaternion;
+  final DjiLinkEvidence evidence;
+}
+
+class DjiLinkLinkInfo {
+  const DjiLinkLinkInfo({
+    this.signalAircraftSide,
+    this.signalRemoteSide,
+    this.liveRateMbps,
+    this.aircraftClockMs,
+    this.clockJitterP95Ms,
+    this.clockDriftMs,
+    this.ageMs,
+    this.stale = false,
+  });
+
+  final int? signalAircraftSide;
+  final int? signalRemoteSide;
+  final double? liveRateMbps;
+  final int? aircraftClockMs;
+  final double? clockJitterP95Ms;
+  final double? clockDriftMs;
+
+  /// Age of the aircraft clock, the most frequent of these
+  final int? ageMs;
+  final bool stale;
+}
+
+/// Requests of one sender and pair that wait for an answer this application never gives
+class DjiLinkRequestRow {
+  const DjiLinkRequestRow({
+    required this.senderType,
+    required this.senderIndex,
+    required this.commandSet,
+    required this.commandId,
+    required this.ackPolicy,
+    required this.count,
+    required this.repeats,
+  });
+
+  final int senderType;
+  final int senderIndex;
+  final int commandSet;
+  final int commandId;
+  final int ackPolicy;
+  final int count;
+  final int repeats;
+}
+
+/// The flight and battery section
+class DjiLinkTelemetry {
+  const DjiLinkTelemetry({
+    required this.aircraftPresent,
+    required this.remotePresent,
+    required this.layoutMismatches,
+    required this.unanswered,
+    this.flight,
+    this.battery,
+    this.gimbal,
+    this.link,
+    this.remoteBatteryPercent,
+    this.remoteBatteryStale = false,
+  });
+
+  final bool aircraftPresent;
+  final bool remotePresent;
+  final int layoutMismatches;
+  final DjiLinkFlight? flight;
+  final DjiLinkBattery? battery;
+  final DjiLinkGimbal? gimbal;
+  final DjiLinkLinkInfo? link;
+
+  /// A candidate: the byte that fits, to check against DJI Fly
+  final int? remoteBatteryPercent;
+  final bool remoteBatteryStale;
+  final List<DjiLinkRequestRow> unanswered;
+}
+
+/// Where the page's video and telemetry come from: the cable, or a capture being played
+class DjiLinkSource {
+  const DjiLinkSource({required this.replay, required this.playing, this.name, this.positionMs, this.durationMs});
+
+  final bool replay;
+  final bool playing;
+  final String? name;
+  final int? positionMs;
+  final int? durationMs;
+}
+
+/// A capture that can be played: an export of this app, a pair of files in its replay folder, or chosen in the picker
+class DjiLinkCaptureFile {
+  const DjiLinkCaptureFile({
+    required this.name,
+    required this.binUri,
+    required this.indexUri,
+    required this.bytes,
+    required this.modifiedMs,
+    required this.origin,
+  });
+
+  final String name;
+  final String binUri;
+  final String indexUri;
+  final int bytes;
+  final int modifiedMs;
+
+  /// export, replayFolder or chosen
+  final String origin;
+}
+
+/// A USB accessory as the system lists it: no serial, no permission, nothing opened
+class DjiLinkPluggedAccessory {
+  const DjiLinkPluggedAccessory({this.manufacturer, this.model, this.description, this.version});
+
+  final String? manufacturer;
+  final String? model;
+  final String? description;
+  final String? version;
+}
+
 /// The sticks as the application reads them, and whether anything would be allowed to leave. In stage 1 nothing is:
 /// [sendPathEnabled] is false in every release.
 class DjiLinkSticks {
@@ -416,13 +769,19 @@ class DjiLinkCapture {
     required this.droppedBytes,
     required this.records,
     required this.capacityBytes,
+    this.headBytes = 0,
   });
 
   final bool recording;
   final int totalBytes;
   final int droppedBytes;
   final int records;
+
+  /// The tail: the last bytes of a session
   final int capacityBytes;
+
+  /// The head: the first bytes of a session, kept whatever its length
+  final int headBytes;
 }
 
 /// What the pilot typed about the bench, kept in the exported header beside the bytes
@@ -526,6 +885,12 @@ class DjiLinkSnapshot {
     this.firstByteMs,
     this.openSinceMs,
     this.chargeCurrentMicroAmps,
+    this.videoDecode,
+    this.telemetryValues,
+    this.source,
+    this.lastAccessory,
+    this.lastAccessoryAtMs,
+    this.boundProfileId,
   });
 
   final DjiLinkState state;
@@ -570,6 +935,20 @@ class DjiLinkSnapshot {
   final DjiLinkVideo video;
   final DjiLinkCapture capture;
   final DjiLinkSticks sticks;
+
+  /// The video panel; null before the page session made one
+  final DjiLinkDecode? videoDecode;
+
+  /// The flight and battery section
+  final DjiLinkTelemetry? telemetryValues;
+  final DjiLinkSource? source;
+
+  /// The last accessory strings read on the port, kept after the unplug
+  final DjiLinkAccessory? lastAccessory;
+  final int? lastAccessoryAtMs;
+
+  /// The profile the pilot bound these accessory strings to, if any
+  final String? boundProfileId;
 }
 
 @HostApi()
@@ -603,6 +982,34 @@ abstract class DjiLinkApi {
   /// the one of the notes, so that a candidate the live page voted for can be tried on the same bytes.
   @async
   DjiLinkReplayResult replayCapture(String path, int? headerCrcSeed, int? frameCrcSeed);
+
+  /// Automatic, hardware or software: the running decoder stops and the next picture starts one of that kind
+  void setDecoderChoice(DjiLinkDecoderChoice choice);
+
+  /// The captures this app can play, newest first: its exports and the files of its replay folder
+  @async
+  List<DjiLinkCaptureFile> listCaptures();
+
+  /// The system picker, several files at once: a .bin and its .idx.csv. Null when nothing usable was chosen.
+  @async
+  DjiLinkCaptureFile? chooseCaptureFiles();
+
+  /// Plays a capture through the same pipeline as the cable, paced by its index, from [startAtMs]. Null when it
+  /// started; otherwise a code: busy (an accessory is open), unreadable, empty.
+  @async
+  String? playCapture(String binUri, String indexUri, int startAtMs);
+
+  void stopPlayback();
+
+  /// Binds the accessory strings in use, or the last ones seen, to a starting profile; null forgets the binding.
+  /// It names the hardware and changes nothing in what the link does.
+  void bindProfile(String? profileId);
+
+  /// The profiles the pilot can choose under "Your hardware"
+  List<DjiLinkProfile> profiles();
+
+  /// The USB accessories the system lists right now, without a permission and without opening anything
+  List<DjiLinkPluggedAccessory> pluggedAccessories();
 }
 
 @FlutterApi()

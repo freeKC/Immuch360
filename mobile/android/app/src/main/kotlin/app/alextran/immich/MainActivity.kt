@@ -20,6 +20,7 @@ import app.alextran.immich.core.NetworkApiPlugin
 import app.alextran.immich.djilink.DjiLinkApi
 import app.alextran.immich.djilink.DjiLinkApiImpl
 import app.alextran.immich.djilink.DjiLinkController
+import app.alextran.immich.djilink.DjiLinkVideoViewFactory
 import app.alextran.immich.documenttree.DocumentTreePlugin
 import me.albemala.native_video_player.NativeVideoPlayerPlugin
 import app.alextran.immich.images.LocalImageApi
@@ -80,6 +81,11 @@ class MainActivity : FlutterFragmentActivity() {
     // to an aircraft from here; the page is where the pilot sees what arrives.
     DjiLinkApi.setUp(messenger, DjiLinkApiImpl(this))
     DjiLinkController.attachEvents(messenger)
+    // The live picture of the DJI link page: a platform view the decoder renders into, receive only
+    flutterEngine.platformViewsController.registry.registerViewFactory(
+      DjiLinkVideoViewFactory.VIEW_TYPE,
+      DjiLinkVideoViewFactory(),
+    )
   }
 
   override fun onResume() {

@@ -101,6 +101,7 @@ class DjiLinkCountersBlock extends StatelessWidget {
         DjiLinkFact(t.dji_link_counter_false_syncs, '${counters.unknownChannelRejections}'),
         DjiLinkFact(t.dji_link_counter_resync, '${counters.resynchronisations}'),
         DjiLinkFact(t.dji_link_counter_discarded, '${counters.discardedBytes}'),
+        DjiLinkFact(t.dji_link_counter_padding, '${counters.paddingBytes}'),
         DjiLinkFact(t.dji_link_counter_oversize, '${counters.oversizeRejections}'),
         DjiLinkFact(t.dji_link_counter_timeouts, '${counters.incompleteTimeouts}'),
         DjiLinkFact(t.dji_link_counter_header_crc, '${counters.headerCrcFailures}'),

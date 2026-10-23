@@ -13,11 +13,14 @@ import 'package:immich_mobile/domain/services/network_video_thumbnail.service.da
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/domain/services/video_location.service.dart';
 import 'package:immich_mobile/infrastructure/network/document_tree_file_system.dart';
+import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/platform/document_tree_api.g.dart';
 import 'package:immich_mobile/presentation/pages/drone/drone_import.page.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/drone_import_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
+import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/drone_import.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
@@ -98,6 +101,10 @@ void main() {
   late Directory directory;
   late MockSettingsRepository settings;
 
+  /// The USB accessories the system lists, and how often the page asked
+  var plugged = <DjiLinkPluggedAccessory>[];
+  var accessoryQueries = 0;
+
   Uint8List bytes(int length) => Uint8List(length);
 
   setUp(() {
@@ -125,6 +132,8 @@ void main() {
     events = null;
     records = _MemoryRecords();
     settings = MockSettingsRepository();
+    plugged = [];
+    accessoryQueries = 0;
   });
 
   tearDown(() {
@@ -137,11 +146,16 @@ void main() {
   Finder tileOf(String path) =>
       find.byWidgetPredicate((widget) => widget is NetworkMediaTile && widget.entry.path == path);
 
-  Future<void> pumpPage(WidgetTester tester, {List<RecentTree> recents = const []}) async {
+  Future<void> pumpPage(WidgetTester tester, {List<RecentTree> recents = const [], bool linkEnabled = true}) async {
     await pumpNetworkRouter(
       tester,
       home: const DroneImportPage(),
       overrides: [
+        djiPluggedAccessoriesProvider.overrideWithValue(() async {
+          accessoryQueries += 1;
+          return plugged;
+        }),
+        djiLinkEnabledProvider.overrideWithValue(linkEnabled),
         documentTreeApiProvider.overrideWithValue(api),
         documentTreeEventsSetUpProvider.overrideWithValue((listener) => events = listener),
         droneRecentStoreProvider.overrideWithValue(_MemoryRecents(recents)),
@@ -334,6 +348,62 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Not plugged in'), findsOneWidget);
+  });
+
+  testWidgets('names the drone itself in the plug in text', (tester) async {
+    await pumpPage(tester);
+
+    expect(find.textContaining('Plug the drone itself into this phone with a USB-C data cable.'), findsOneWidget);
+    expect(find.textContaining("use the transceiver's port"), findsOneWidget);
+    expect(find.textContaining('choose the drone or the card, then its DCIM folder'), findsOneWidget);
+    expect(find.byKey(const Key('drone_import_remote_plugged')), findsNothing);
+  });
+
+  testWidgets('a DJI remote plugged in gets a card saying it holds no photos, with the way to DJI link', (
+    tester,
+  ) async {
+    await pumpPage(tester);
+    expect(find.byKey(const Key('drone_import_remote_plugged')), findsNothing);
+
+    plugged = [DjiLinkPluggedAccessory(manufacturer: 'DJI', model: 'model string', description: 'remote')];
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('drone_import_remote_plugged')), findsOneWidget);
+    expect(find.text('A DJI remote is plugged in'), findsOneWidget);
+    expect(find.textContaining('A remote without a screen (RC-N1, RC-N2, RC-N3) holds no photos.'), findsOneWidget);
+    expect(find.byKey(const Key('drone_import_open_link')), findsOneWidget);
+
+    plugged = [];
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('drone_import_remote_plugged')), findsNothing);
+  });
+
+  testWidgets('the way to DJI link shows only with its switch on, and another accessory gets no card', (tester) async {
+    plugged = [DjiLinkPluggedAccessory(manufacturer: 'DJI', model: 'model string')];
+    await pumpPage(tester, linkEnabled: false);
+
+    expect(find.byKey(const Key('drone_import_remote_plugged')), findsOneWidget);
+    expect(find.byKey(const Key('drone_import_open_link')), findsNothing);
+
+    plugged = [DjiLinkPluggedAccessory(manufacturer: 'Acme', model: 'Bridge')];
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('drone_import_remote_plugged')), findsNothing);
+  });
+
+  testWidgets('asks for the accessories only while the plug in view shows', (tester) async {
+    await pumpPage(tester);
+    final atOpen = accessoryQueries;
+    await tester.pump(const Duration(seconds: 4));
+    expect(accessoryQueries, greaterThanOrEqualTo(atOpen + 2));
+
+    await chooseDrone(tester);
+    final withDrone = accessoryQueries;
+    await tester.pump(const Duration(seconds: 6));
+    await tester.pumpAndSettle();
+    expect(accessoryQueries, withDrone, reason: 'no question once a drone is open');
   });
 
   testWidgets('watches the USB devices only while the page is open', (tester) async {
