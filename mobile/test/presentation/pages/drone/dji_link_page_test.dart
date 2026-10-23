@@ -736,10 +736,20 @@ void main() {
     expect(find.text('38 %'), findsOneWidget);
     expect(find.text('6.180 V'), findsOneWidget);
     expect(find.text('-7.256 A'), findsOneWidget);
-    expect(find.text('582 of 1525 mAh'), findsOneWidget);
+    expect(find.text('582 of 1525 mAh (the full capacity is a candidate)'), findsOneWidget);
     expect(find.text('Remote battery (candidate)'), findsOneWidget);
     expect(find.text('aircraft side 90, remote side 90'), findsOneWidget);
     expect(find.text('public layout and the 23 October capture'), findsWidgets);
+    // The labels say no more than the capture of 23 October does (capture-2026-10-23.md, section 5)
+    expect(find.text('Pitch and roll (candidate)'), findsOneWidget);
+    expect(find.text('Signal quality (candidate)'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('dji_link_link_group')),
+        matching: find.text('public message names and the 23 October capture'),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('119, 49 repeated'), findsOneWidget);
     expect(find.byKey(const Key('dji_link_stale')), findsNothing);
 

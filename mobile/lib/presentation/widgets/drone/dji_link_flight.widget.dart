@@ -59,7 +59,7 @@ class DjiLinkFlightSection extends StatelessWidget {
           _Group(
             key: const Key('dji_link_flight_group'),
             title: t.dji_link_flight_group,
-            evidence: flight.evidence,
+            evidence: djiLinkEvidenceText(t, flight.evidence),
             stale: flight.stale,
             ageMs: flight.ageMs,
             facts: [
@@ -82,7 +82,7 @@ class DjiLinkFlightSection extends StatelessWidget {
           _Group(
             key: const Key('dji_link_battery_group'),
             title: t.dji_link_battery,
-            evidence: battery.evidence,
+            evidence: djiLinkEvidenceText(t, battery.evidence),
             stale: battery.stale,
             ageMs: battery.ageMs,
             facts: [
@@ -105,7 +105,9 @@ class DjiLinkFlightSection extends StatelessWidget {
           _Group(
             key: const Key('dji_link_link_group'),
             title: t.dji_link_link_group,
-            evidence: DjiLinkEvidence.capture,
+            // Signal quality and the live view rate take their meaning from public message names; the capture alone
+            // shows a constant 90 for the signal, so that line stays a candidate (capture-2026-10-23.md, 5.4)
+            evidence: t.dji_link_evidence_link,
             stale: link.stale,
             ageMs: link.ageMs,
             facts: [
@@ -126,7 +128,7 @@ class DjiLinkFlightSection extends StatelessWidget {
           _Group(
             key: const Key('dji_link_remote_group'),
             title: t.dji_link_remote_group,
-            evidence: DjiLinkEvidence.candidate,
+            evidence: djiLinkEvidenceText(t, DjiLinkEvidence.candidate),
             stale: telemetry.remoteBatteryStale,
             ageMs: telemetry.remoteBatteryAgeMs,
             facts: [(t.dji_link_remote_battery, '${telemetry.remoteBatteryPercent} %')],
@@ -135,7 +137,7 @@ class DjiLinkFlightSection extends StatelessWidget {
           _Group(
             key: const Key('dji_link_gimbal_group'),
             title: t.dji_link_message_gimbal,
-            evidence: gimbal.evidence,
+            evidence: djiLinkEvidenceText(t, gimbal.evidence),
             stale: gimbal.stale,
             ageMs: gimbal.ageMs,
             facts: [
@@ -176,7 +178,9 @@ class _Group extends StatelessWidget {
   });
 
   final String title;
-  final DjiLinkEvidence evidence;
+
+  /// How the values are known, said under the title
+  final String evidence;
   final bool stale;
 
   /// Null when the age is not known: a stale group then says so without a number of seconds
@@ -198,7 +202,7 @@ class _Group extends StatelessWidget {
           Text(title, style: context.textTheme.labelMedium),
           Text(
             [
-              djiLinkEvidenceText(t, evidence),
+              evidence,
               if (stale)
                 switch (ageMs) {
                   final int age => t.dji_link_stale(seconds: (age / 1000).toStringAsFixed(1)),
