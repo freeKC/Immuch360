@@ -11,7 +11,7 @@ Immuch360は、あなたの写真や動画を見つけ、閲覧し、再生し�
 
 - **何ができる?** 写真や動画をギャラリーとして表示し、ファイルごとに最適なビューアーで再生します。フラット表示、見回せる球体表示、3D表示、ヘッドセットでの表示です。
 - **対応するメディアは?** フラットな写真や動画、パノラマ、360°写真や360°動画、VR180、立体視3D、Appleの空間写真、DJIドローンの360°球体写真、そして360°カメラ (Insta360、GoPro MAX、DJI Osmo 360) のRAWファイルで、アプリがスティッチ処理します。
-- **対応デバイスは?** Androidのスマートフォンとタブレット、iPhoneとiPad、Android TVとGoogle TV、webOS搭載のLGテレビ (別アプリ、テストビルド)、Meta Quest 2、Pro、3、3S、Windows (プレビュー)、そして早期プレビューのLinuxとmacOSです。
+- **On which devices?** Android phones and tablets, iPhone and iPad, Android TV and Google TV, LG TVs with webOS and Samsung TVs with Tizen (a separate TV app, in test builds), Meta Quest 2, Pro, 3 and 3S, Windows (preview), and Linux and macOS as early previews.
 - **サーバーやアカウントは必要?** いいえ。Immuch360はデバイス内のメディアだけで単体で動作します。Immichサーバー、NAS、メディアサーバー、Plexサーバーは、必要になったときに追加できる選択肢です。
 - **テレビ、ヘッドセット、コンピューターにログインするには?** スマートフォンを使います。ログインページに表示されるQRコードを読み取るか、そのコードを入力して確認すれば、数秒でImmichライブラリが開きます。リモコンで文字を入力する必要はありません。
 
@@ -21,15 +21,16 @@ Immuch360は、あなたの写真や動画を見つけ、閲覧し、再生し�
 
 <div align="center">
 
-| プラットフォーム | 入手方法 | 2026 年 10 月 22 日時点の状況 |
+| Platform | Where to get it | Status on 23 October 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** スマートフォンとタブレット | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Playで提供中 (ビルド25、ビルド28はGoogleの審査に提出済み)、GitHubでビルド28 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhoneとiPad** | App Store | バージョン3.3.1 (ビルド27) はAppleの審査待ちで、10月22日に再提出しました。その間は[自分でビルド](../docs/immuch360/build.md)することもできます |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TVとGoogle TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHubでビルド28: QRコードを読み取る[スマートフォンでのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)。TV版の掲載はGoogleの審査中 |
-| **LGテレビ** (webOS 4.0以降) | [.ipkテストビルド](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) | テストビルド0.2.0、[Developer Mode](#lg-tvs-webos)でインストール: ネットワーク共有、Plex、Tapoのライブ映像。0.1.0はテスターのLGテレビで動作しましたが、0.2.0はまだ実機のテレビで動かしていません |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3、3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Storeで提供中 (ビルド25、ビルド28はMetaに提出済み)、GitHubでビルド28 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [インストーラーまたはZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | デスクトップビルド8、署名付きプレビュー：写真、フラットおよび360°動画、共有、Plex、カメラ、スマートフォンでのログイン、キー1つでの写真の回転、89言語のインターフェース |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOSとLinux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8) | プレビュー：Linuxでは写真、360°写真、フラット動画に対応 (360°動画はフラットで再生)、macOSも同様ですが、確認はプロジェクトのCIのMacのみで、署名なし |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 25; build 28 sent for Google's review), build 29 on GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.1 (build 27) waiting for Apple's review, sent again on 22 October, then version 3.3.2 (build 28), in TestFlight for internal testing; [build it yourself](../docs/immuch360/build.md) meanwhile |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 29 on GitHub: [sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) by scanning a QR code, and a [time bar, audio and subtitles](#watch-on-the-tv-and-on-the-computer) for the remote in the video player; the TV listing is under Google's review |
+| **LG TVs** with webOS 4.0 and later | [.ipk test build](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) | test build 0.2.0, to install in [Developer Mode](#lg-tvs-webos): network shares, Plex and the Tapo live view; 0.1.0 ran on a tester's LG TV, 0.2.0 not on a real TV yet; a version for the LG Content Store is in preparation |
+| **Samsung TVs** with Tizen 5.5 and later | [.wgt test build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.1.0) | test build 0.1.0 of the same TV app, to sign with your own Samsung certificate and install in [Developer mode](#samsung-tvs-tizen); not run on a real Samsung TV yet |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store (build 28), build 29 on GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer or ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-9) | desktop build 9, a signed preview: photos, flat and 360° videos, shares, Plex, cameras, sign in with your phone, photos turned with one key, the interface in 89 languages |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-9) | previews: on Linux photos, 360° photos and flat videos (360° videos play flat); on macOS the same, checked on the project's CI Mac only, unsigned |
 
 *ステータスはリリースごとに更新されます。ビルドごとの詳細は[リリースステータス](../docs/immuch360/release-status.md)に記載されています。*
 
@@ -55,7 +56,7 @@ Immuch360は、あなたの写真や動画を見つけ、閲覧し、再生し�
   - [LGテレビ (webOS) でImmuch360を使う](#immuch360-on-an-lg-tv-webos)
   - [カメラ、Plex、カメラのRAWファイル](#cameras-plex-and-raw-camera-files)
   - [DJIドローンの写真と動画をImmichサーバーへ](#your-dji-drones-photos-and-videos-on-your-immich-server)
-  - [DJIリンク診断 (実験的)](#dji-link-diagnostics-experimental)
+  - [Your DJI drone's live video on your phone (experimental)](#your-dji-drones-live-video-on-your-phone-experimental)
 - [デバイスとシステム](#devices-and-systems)
 - [高度な機能](#advanced-features)
 - [技術ドキュメント](#technical-documentation)
@@ -74,11 +75,12 @@ Immuch360は、あなたの写真や動画を見つけ、閲覧し、再生し�
 <a id="watch-your-photos-and-videos"></a>
 ### 写真や動画を見る
 
-Immuch360は、まず普通の写真や動画のためのギャラリーとプレーヤーです。タイムライン、アルバム、お気に入り、メモリー、検索はImmichサーバーと連携して動作し、デバイス自体の写真や動画、コンピューターのフォルダーはサーバーなしでも表示されます。動画はネイティブプレーヤーで再生され、音声、シーク、バッファリング表示に対応し、360°、Spatial、コンピューター用のプレーヤーでは音声トラックも選べます。テレビではリモコンがすべてを操作し、コンピューターではマウスとキーボードが操作します。
+Immuch360 is first a gallery and a player for ordinary photos and videos. The timeline, the albums, the favorites, the memories and the search work with an Immich server; the device's own photos and videos, and the folders of a computer, show without any server. Videos play in a native player with sound, seeking, a buffering indicator and a choice of audio tracks, in the 360°, Spatial and computer players and, from build 29, in the flat player of the Android app, which shows subtitles too. On a TV the remote drives everything; on a computer the mouse and the keyboard do.
 
 1. 写真タブを開きます。サーバーがある場合はサーバーのタイムライン、ない場合はデバイスのタイムラインです。
 2. 写真や動画をタップして開きます。左右にスワイプすると前後に移動し、ピンチまたはダブルタップでズームします。
 3. 動画を上にスワイプすると詳細が表示されます。コーデック、サイズ、フレームレート、ビットレート、このデバイスがデコードできるかどうかです。
+4. On Android phones and TVs, from build 29, a film with several audio languages or with subtitles has an audio button and a subtitles button in its controls: the audio language you pick is kept for the next films, and subtitles stay off until you pick them, except forced ones. The Immich app's Android player has neither.
 
 詳細: [ビューアーと動画プレーヤー](../docs/immuch360/user-guide.md#watch-your-photos-and-videos)、[動画の詳細とデコーダー](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters)。
 
@@ -149,7 +151,7 @@ Immuch360はアカウントもサーバーも必要ありません。ビルド24
 3. 「接続をテスト」をタップし、保存します。共有をタップすると閲覧できます。まずフォルダーが表示され、続いて写真や動画が表示され、360°と認識されたファイルには360°バッジが付きます。
 4. Immichサーバーを接続している場合、フォルダー内のファイルを選択して「Immichにアップロード」をタップすると、サーバーに送信できます。
 
-プレーヤーは、アプリ内部のブリッジを通じてバイト範囲指定で必要なバイトだけを読み込むため、シークが機能し、デバイスには何も保存されません。SMBの動画は最大6つの接続を並列で使って読み込まれ、スムーズに再生されます。
+The players read the bytes they need through a bridge inside the app, with byte ranges, so seeking works and nothing is stored on the device; an SMB video is read over up to six connections in parallel for smooth playback. From build 29, films recorded as M2TS (Blu-ray, AVCHD camcorders, TV recorders) play in the Android app from SMB and WebDAV shares and from DLNA servers that list them as transport streams, and a DLNA server that lists a size of 0 no longer gives an empty video.
 
 詳細: [ネットワーク共有](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server)、[このスマートフォンをネットワークで共有する](../docs/immuch360/user-guide.md#share-this-phone-on-the-network)、[DLNAメディアサーバー](../docs/immuch360/user-guide.md#dlna-media-servers)。
 
@@ -162,7 +164,7 @@ Immuch360はアカウントもサーバーも必要ありません。ビルド24
 2. 設定、アセットビューアー、動画の「動画のソース」で、このデバイスがデコードできる場合は元のファイル、常に元のファイル、常にトランスコード済みストリームのいずれかを選べます。
 3. アプリを持っていない人に360°写真を見せるには、Immichの共有リンクで共有します。Immichウェブアプリがブラウザ上で球体として表示します。
 
-現在のビルド、ビルド28は、2026年10月10日時点のImmichの`main`ブランチ (バージョン3.3.0-rc.0) をベースにしており、同じImmichの`main`からビルドしたサーバーでテストされています。ビルド27はImmich 3.2.4サーバーでもテストされています。問題は、Immichプロジェクトではなく[Issues](https://github.com/freeKC/Immuch360/issues)に報告してください。
+The current build, build 29, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), like build 28, which was tested against a server built from that same Immich `main`; build 27 was also tested against an Immich 3.2.4 server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
 
 詳細: [それ以外はすべてImmichと同じ](../docs/immuch360/user-guide.md#everything-else-is-immich)、[Immichアプリとの比較](../docs/immuch360/compatibility.md#compared-with-the-immich-app)。
 
@@ -199,13 +201,14 @@ Meta Questでは同じアプリがウィンドウとして動作し、ライブ�
 1. [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)からアプリをインストールするか、新しいビルドのAPKをサイドロードします。[インストール](#meta-quest)を参照してください。
 2. ウェルカムページで、ヘッドセット自体の写真や動画には「サーバーなしで使用」を、それ以外は「Immichサーバーに接続」をタップします。ヘッドセットに表示されたコードをスマートフォンのImmuch360で入力するか ([スマートフォンでのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone))、サーバーのアドレス、メールアドレス、パスワードでログインします。
 3. 360°の写真や動画を開いて360°を押すと、イマーシブビューが開きます。BまたはYボタン、あるいは情報パネルの戻るボタンでウィンドウに戻ります。
+4. In the immersive view, push the right thumbstick left or right to turn the view 30° that way. From build 29 it turns the way you push it, as in most headset apps; builds 17 to 28 turned it the other way, and Settings, Asset Viewer, Videos, "Reverse thumbstick turn" brings that direction back.
 
 詳細: [Meta Questヘッドセットで](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset)、[ヘッドセット: コーデック、ストア、権限](../docs/immuch360/platform-support.md#meta-quest)。
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 ### テレビやコンピューターで見る
 
-同じAndroidアプリがAndroid TVとGoogle TVでも動作し、初回起動時からダークテーマで、入力はリモコンのみです。矢印でフォーカスを移動し、OKで開き、戻るで戻ります。ビューアーでは、動画の再生中でも左右キーで前後の写真や動画に移動し、360°の写真や動画では矢印で見回せます。テレビには写真がないため、Immichサーバー、ネットワーク共有、Plexサーバー、カメラを表示します。LGテレビには[専用のアプリ](#immuch360-on-an-lg-tv-webos)があります。Windowsコンピューターでは、Immuch360 Desktopがサーバーなしで選択したフォルダーを読み込み、独自のプレーヤーでフラットおよび360°動画を再生し、同じ共有やサーバーを閲覧でき、自宅ではコンピューターをヘッドセットと共有することもできます。
+The same Android app runs on Android TV and Google TV, in a dark theme from the first start, with the remote as the only input: the arrows move the frame, OK opens, Back goes back; in the viewer Left and Right go to the previous or next photo or video, even while a video plays, and in a 360° photo or video the arrows look around. The TV has no photos of its own, so it shows your Immich server, your network shares, your Plex server and your cameras; LG TVs have [an app of their own](#immuch360-on-an-lg-tv-webos), which Samsung TVs get too, as a first test build. On a Windows computer, Immuch360 Desktop reads the folders you choose with no server at all, plays flat and 360° videos in a player of its own, browses the same shares and servers, and can share the computer with a headset at home.
 
 <p align="center">
   <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Google TVの球体ビューアー: 湖畔の360°パノラマ、左上に閉じるボタン、右上にズームアウト、ズームイン、360°、3Dの各ボタンがあり、リモコンの矢印で操作する">
@@ -214,7 +217,7 @@ Meta Questでは同じアプリがウィンドウとして動作し、ライブ�
 
 1. テレビでは、adbでAPKをインストールします ([インストール](#android-tv-and-google-tv)を参照)。ウェルカムページで、共有、Plexサーバーまたはカメラの場合は「ネットワーク共有またはメディアサーバーを追加」、「サーバーなしで使用」、「Immichサーバーに接続」のいずれかを選びます。「Immichサーバーに接続」のページでは、QRコードをスマートフォンで読み取るとテレビがログインします ([スマートフォンでのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)を参照)。
 2. Windowsコンピューターでは、プレビューをインストールするか、ZIPを解凍して`immuch360.exe`を起動します ([インストール](#windows)を参照)。デスクトップビルド5からは、ウェルカムページの「サーバーなしで使用」がフォルダーの選択画面を開き、「Immichサーバーに接続」がスマートフォン用のQRコード付きのログインページを開きます。プログラムで開いた、またはそのウィンドウにドロップした写真、動画、フォルダーはすぐに開き、360°のものは360°表示で開きます。複数のファイルを同時に開くと、1つのページにまとめて表示されます。
-3. ビューアーでは、リモコンの再生/一時停止、巻き戻し、早送り、前へ、次へのキーが使えます。コンピューターではキーボードのキー (Space、J、L、全画面はF) も同様に使えます。テレビでは、動画の再生中にOKを押すと、再生/一時停止が選択された状態でコントロールが表示され、その後に-10秒と+10秒のボタンが続きます。もう一度OKを押すと一時停止します。コントロールと日付は最後のキー操作から5秒後に隠れます。テレビでは動画がループ再生されなくなりました。ループさせるには、設定、アセットビューアー、動画、動画をループするをオンにします。
+3. In a viewer, the play and pause, rewind, fast forward, previous and next keys of the remote work, and so do the keyboard keys on a computer (Space, J and L, F for full screen). On a TV, OK during a video shows the controls with play and pause selected, and a second OK pauses; the -10 s and +10 s buttons follow, then the audio and subtitles buttons when the film has them. From build 29, Down from play reaches the time bar: Left and Right move 10 s per press, faster while held, and OK plays or pauses. The controls and the date hide 5 s after the last key, and Left and Right then go to the previous or next file; on a share, that file opens in a page of its own, with controls that drive it. Videos no longer loop on a TV, unless you turn on Settings, Asset Viewer, Videos, Looping.
 4. テレビでは、Menuキー、Infoキー、またはOKの長押しで、写真や動画の詳細を読み取り専用で開きます: 日付、場所、カメラ、コーデック、サイズ、ビットレートです。テレビがデコードできない動画は、読み込みを続ける代わりに、そのコーデック、サイズ、テレビのデコーダーの上限を示してその旨を表示します。デコーダーの上限を超える360°動画は、360°プレーヤーを開く前に確認を求め、その理由はプロフィールメニューのログページに記録されます。
 
 詳細: [テレビで見る](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv)、[Windowsコンピューターで](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview)、[プラットフォームサポート](../docs/immuch360/platform-support.md)。
@@ -238,6 +241,10 @@ Immuch360は、LG webOSテレビ向けのImmichアプリとしても提供され
 
 まだ対応していないもの: カメラの録画 (早くても2026年12月) とその音声、球体での360°動画 (メッセージを表示してフラットで再生)、アップロード。動画を再生できないときは、回り続けるスピナーの代わりに、その形式とサイズを示すメッセージが表示されます。webOS 25より前では、Immichの前段にあるリバースプロキシがCORSヘッダーを送信する必要があります。アプリはこの問題を検出するとその内容を説明します。
 
+The next LG version, made for the LG Content Store, is in the sources and not published yet: Back on Photos or on the welcome page leaves the app (to the Home screen on webOS 5 and 23 to 25), Back closes an open popup first, a request that gets no answer within 15 s ends with a message that says why and a Retry button, every page stays inside the safe margins of the screen, the privacy policy opens in the app with a QR code to read [its LG TVs section](../PRIVACY.md#lg-tvs-webos) on a phone, the TV uses its Gallery picture mode as LG asks of photo apps, and a second package suits the Full HD TVs to which LG gives 1280x720 apps. It was checked in a browser that stands in for the TV, not on a TV yet.
+
+Samsung TVs with Tizen 5.5 and later (2020 TVs on) get the same app as a first test build, 0.1.0, which is not on Samsung's store: sign in by typing, the timeline, albums, the viewer and the slideshow, 360° photos on the sphere and a photo turned with one key; not yet the sign in with a phone, the shares, Plex or the cameras, which run in a background service on LG TVs that the Samsung version does not have yet. It has run in the web engines of Tizen 5.5, 6.0 and 7.0 on a computer, never on a Samsung TV: see [Install](#samsung-tvs-tizen), and every report helps.
+
 詳細: [webOSアプリ: インストール、リモコンのキー、CORSヘッダー](../webos/README.md)。
 
 <a id="cameras-plex-and-raw-camera-files"></a>
@@ -252,37 +259,38 @@ Immuch360は、LG webOSテレビ向けのImmichアプリとしても提供され
 <a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
 ### DJIドローンの写真と動画をImmichサーバーへ
 
-DJIドローンの写真と動画をUSB経由でImmichサーバーに直接取り込めます。ドローン、そのコントローラー、またはカードリーダーをAndroidスマートフォンに接続し、新しいファイルを選んで送信します。動画はドローンのフライトデータから地図上に配置され、ドローンの360°球体写真は360°として表示されます。Immichアプリはスマートフォンのギャラリーにすでにあるものしかバックアップせず、ImmichサーバーはまだDJI Neo 2の動画の撮影場所を読み取れません。このページは実験的機能で、Androidのスマートフォンとタブレットのみに対応し、実際のドローンではまだ試していません。
+Import the photos and videos of a DJI drone over USB, straight to your Immich server: plug the drone or a card reader into an Android phone, pick the new files and send them, with the videos placed on the map from the drone's flight data and the drone's 360° spheres shown as 360°. The Immich app backs up only what is already in the phone's gallery, and the Immich server cannot read the place of a DJI Neo 2 video yet. This page is experimental, on Android phones and tablets only, and has not been tried with a real drone yet.
 
 <p align="center">
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
 </p>
 
 1. ライブラリ、ネットワーク共有に「DJIドローン」のタイルがあります。設定、詳細設定の「DJIドローン (実験的)」は既定でオンです。タイルを非表示にするには、そこでオフにします。
-2. ドローン (Neo 2は電源オフのままで構いません)、そのコントローラー、またはカードリーダーを、USB-Cデータケーブルでスマートフォンに接続します。DJIドローンのページで「ドローンまたはカードを選択」をタップし、ピッカーのサイドメニューでそれを選び、DCIMフォルダーを開くかドライブ全体のままにして、「このフォルダを使用」と「許可」をタップします。
+2. Plug the drone (a Neo 2 can stay off) or a card reader into the phone with a USB-C data cable; a DJI remote without a screen (RC-N1, RC-N2, RC-N3) holds no photos. On the DJI drone page, tap "Choose the drone or the card", choose it in the side menu of the picker, open its DCIM folder or keep the whole drive, then "Use this folder" and Allow.
 3. ページには写真と動画が日付ごとに一覧表示され、.LRF、.SRT、.THM、.m4aの付属ファイルは除外されます。「新しいものをすべて選択」をタップし、続いて「Immichにアップロード」をタップします。以前に送信したファイルには雲のマークが付き、スキップされます。「デバイスに保存」を選ぶと、代わりにファイルがスマートフォンのギャラリーの「Immuch360 import」アルバムにコピーされます。
 4. 動画を地図上に配置するには、飛行前にDJI Flyで動画字幕をオンにします (動画モード、設定、カメラ)。するとドローンは各動画の横に.SRTファイルを書き込み、アプリはそこから撮影場所を読み取り、Immichが場所を見つけられなかった場合はアップロード後にサーバーに設定します。
 
 DJIドローン (Mini、Air、Mavicなど、カメラから識別) の360°球体写真は、360°タグがなくてもImmuch360では360°として表示されます。Immichにはそのタグが必要です。アップロードオプション「ドローンの球体写真をImmich向けに360°としてタグ付け」(既定ではオフ) は、写真をそのままにして小さな.xmpファイルを添えて送信するため、Immichでも球体として表示されます。Neo 2には球体モードやパノラマモードがなく、写真も動画もフラットです。スマートフォンがNeo 2のクリップの音声を録音した場合、その音声は別の.m4aファイルにあります。ページはそのクリップに印を付け、Immichは音声なしで受け取ります (音声を残すにはDJI Flyでダウンロードしてください)。DCIMフォルダーのあるカメラのカードであれば、カードリーダーで同じように使えます。DJIには何も送信されません。
 
-<a id="dji-link-diagnostics-experimental"></a>
-### DJIリンク診断 (実験的)
+<a id="your-dji-drones-live-video-on-your-phone-experimental"></a>
+### Your DJI drone's live video on your phone (experimental)
 
-長期的な目標は、ヘッドセットに接続したドローン付属のコントローラーを通じて、DJIドローンの映像をMeta Questで見ることです。QuestがケーブルでDJIのコントローラーを読み取れるかどうかは、まだ誰にも分かりません。DJIリンクのページはその最初の一歩で、Meta QuestとAndroidのスマートフォンやタブレットで動く計測ツールです。デバイスがコントローラーを読み取れるかどうか、何が届くかを表示し、そのキャプチャを保存します。
+See what your DJI drone sees on your Android phone, without DJI Fly and without any account: plug a DJI RC-N3 remote controller into the phone with its cable, and Immuch360 shows the drone's live video, H.265 in 1080p, with the battery of the remote and of the drone, the signal, the gimbal and the flight data, read from the cable. The remote keeps full control of the drone. It was tried on the ground with an RC-N3, a DJI Neo 2 and a Samsung Galaxy S24+; other remotes and drones have not been tried. The flight and battery numbers are not compared with DJI Fly yet: do not fly by them.
 
 このページは受信するだけです。コントローラーやドローンにコマンドを送ることは一切ありません。コントローラーが開いてから20秒後以降、ページが毎秒書き込む1バイトは、コントローラーがデータを受け付けるかどうかを確かめるためだけのもので、コマンドは含みません。
 
 1. 設定、詳細設定の「DJIリンク診断 (実験的)」は既定でオンです (テレビには表示されません)。「DJIリンク」のタイルはライブラリ、ネットワーク共有にあります。
-2. タイルを開き、安全に関する注意を読みます。最初のブロックには、このデバイスがそもそもUSBアクセサリーを読み取れるかどうかが表示されます。読み取れない場合も、それが1つの答えです。
-3. 「キャプチャを開始」をタップしてから、ドローンの電源を切った状態で、コントローラーをケーブルで接続します。どのアプリで開くかAndroidに聞かれたら、「常時」を選ばずにImmuch360を選びます。「常時」を選ぶと、コントローラーがDJI Flyで使えなくなります。
-4. 状態 (「アクセサリーが開いています」、「リンクがバイトを受け付けます」、「コントローラーのフレームが届いています」) とカウンターを確認し、「キャプチャをエクスポート」を選びます。`Download/Immuch360/dji-link`に3つのファイルが保存されます。
+2. Turn on the drone and the remote, close DJI Fly, then open the DJI link tile and read the safety notice.
+3. Tap "Start the capture", then plug in the remote with its cable. If Android asks which app should open it, choose Immuch360 without "Always", which would take the remote away from DJI Fly; if it asks for a USB mode, choose charging only.
+4. The state reads "Accessory open", then "Remote frames arrive", and the video follows within a few seconds. The button on the picture shows it full screen, and the "Flight and battery" section gives the numbers of the remote and the drone.
+5. "Export the capture" writes three files to `Download/Immuch360/dji-link`; "Play a capture" plays an export again on the page, without the remote, to see how well a phone or a headset decodes the drone's video.
 
-まだ実際のコントローラーでは試していません。DJIのコントローラー、まずはRC-N3とNeo 2でのテストを歓迎します。ページに表示された状態とカウンターを[Issues](https://github.com/freeKC/Immuch360/issues)に投稿してください。エクスポートしたファイルには、ページにも書かれているとおりコントローラーのシリアル番号が含まれるため、公開せず手元に保管してください。
+The drone's photos and videos cannot be reached through the remote, which does not open the drone's storage: copy them from the drone itself over USB or from its card, as in [the section above](#your-dji-drones-photos-and-videos-on-your-immich-server). On a Meta Quest the page is there and plays a capture, but the drone's live video does not reach the headset yet. Keep the exported files to yourself, as the page says, since they hold the serial number of the remote; a report in [Issues](https://github.com/freeKC/Immuch360/issues) with the states and counters the page shows helps, above all with other DJI remotes.
 
 <a id="devices-and-systems"></a>
 ## デバイスとシステム
 
-1つのコードベースで6つの環境に対応し、さらにLGテレビ向けの別アプリがあります。それぞれ今できることは次のとおりです:
+One code base for six environments, and a separate app for LG TVs, with a first test build for Samsung TVs. What each one has today:
 
 | 機能 | Android | iPhone、iPad | Android TV | LG webOS | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|
@@ -304,9 +312,9 @@ DJIドローン (Mini、Air、Mavicなど、カメラから識別) の360°球�
 | このデバイスをネットワークで共有 | ✅ | ✅ | ❌ | ❌ | ❌ |
 | 共有やデバイスからImmichにアップロード | ✅ | ✅ | ❌ | ❌ | ✅ |
 | USB経由でDJIドローンやカードから取り込み (実験的) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| DJIリンク診断 (実験的) | ✅ | ❌ | ❌ | ❌ | ✅ |
+| DJI link: the drone's live video (experimental) | ✅ with an RC-N3 | ❌ | ❌ | ❌ | replay of a capture; live 🔜 |
 | ダークテーマ | システムに従う | システムに従う | ✅ 既定 | ✅ 唯一のテーマ | システムに従う |
-| 入力 | タッチ、ジャイロスコープ | タッチ、ジャイロスコープ | リモコン。動画再生中も左右キー、詳細はMenuキー | リモコン、Magic Remote | コントローラー、手 |
+| Input | touch, gyroscope | touch, gyroscope | remote; Left and Right also during a video and on its time bar, Menu for the details | remote, Magic Remote | controllers, hands |
 | 入手先 | Google Play、APK | App Store (審査中) | APK、Google Play (審査中) | .ipkテストビルド、Developer Mode | Horizon Store、APK |
 
 | 機能 | Windows | Linux | macOS |
@@ -329,7 +337,7 @@ DJIドローン (Mini、Air、Mavicなど、カメラから識別) の360°球�
 | このデバイスをネットワークで共有 | ✅ | ❌ | ❌ |
 | 共有やデバイスからImmichにアップロード | ✅ | 🔧 CI | 🔧 CI |
 | USB経由でDJIドローンやカードから取り込み (実験的) | ❌ | ❌ | ❌ |
-| DJIリンク診断 (実験的) | ❌ | ❌ | ❌ |
+| DJI link: the drone's live video (experimental) | ❌ | ❌ | ❌ |
 | ダークテーマ | システムに従う | システムに従う | システムに従う |
 | 入力 | マウス、キーボード | マウス、キーボード | マウス、キーボード、トラックパッド |
 | 入手先 | インストーラーまたはZIP (署名付きプレビュー) | .deb、.rpm (プレビュー) | DMGまたはZIP (署名なしのプレビュー) |
@@ -338,8 +346,9 @@ DJIドローン (Mini、Air、Mavicなど、カメラから識別) の360°球�
 
 - **Androidスマートフォンとタブレット**: 完全版のアプリで、タッチとジャイロスコープに対応し、すべてのソースを使えます。
 - **iPhoneとiPad**: 完全版のアプリです。360°動画プレーヤーは再生と一時停止のみに対応し、Tapoのライブ映像とスマートフォンでのログインのスマートフォン側は次のiOSリリースで対応、DLNA検索はAppleがマルチキャストの権限を許可するまでユニキャストでリクエストを送信します。
-- **Android TVとGoogle TV**: 同じAPKをリモコンで操作し、既定でダークテーマです。ビューアー専用で、バックアップ、アップロード、エディターは表示されず、詳細は読み取り専用ですが、写真はキー1つで回転できます。すべての検索フィルターがリモコンで使えます。場所とカメラは選択肢をリストで開き、日付フィルターはすべての選択肢を表示し、タグ、場所、日付、メディアの種類、星評価、表示オプションのシートは、選択肢の横の右に1つ移動した位置にクリアと適用を置き、画面の高さのほとんどを使います。写真グリッドは画像メモリの使用量を減らし、矢印を押し続けても移動は最大で毎秒約10行です。ビルド28からは、スマートフォンからQRコードまたは短いコードでログインできます (2台のエミュレーター間でコードを入力して試しましたが、カメラではまだ試していません)。Google TVエミュレーターで確認済みです。10月21日に実機のAndroid TVで行った最初のテストを受けてビルド27のTV向け変更が行われましたが、これらはまだ実機のテレビでは試していません。
+- **Android TV and Google TV**: the same APK, driven by the remote, dark by default; a viewer: backup, uploads and the editor are hidden and the details are read only, but a photo still turns with one key. Every search filter works with the remote: Location and Camera open their choices in a list, the date filter shows all its choices, and the Tags, Location, Date, Media Type, Star Rating and Display options sheets put Clear and Apply beside the choices, one Right away, on most of the screen height. The photo grid uses less image memory, and a held arrow moves it at most about 10 rows a second. From build 28 it signs in from a phone, by its QR code or its short code (tried between two emulators with the code typed, not yet with a camera). From build 29 the time bar of a video takes the focus of the remote, films get audio and subtitle menus, and the next file of a share opens with controls of its own. Checked on the Google TV emulator; build 28 ran on a real Android TV on 23 October, and the video problems found there are the fixes of build 29, checked on the emulator, not yet on that TV.
 - **webOS 4.0以降のLGテレビ**: リモコンとMagic Remote向けの別アプリで、[immich-tv-webos](https://github.com/Seeky91/immich-tv-webos)をベースにしています。360°写真を球体に表示するImmichビューアーで、キー1つでの写真の回転、ダークテーマ、アプリの89言語に対応します (TVアプリ自体のわずかなテキストは当面英語)。0.2.0からは、テレビ上の独自サービスを通じてネットワーク共有、Plex、Tapoカメラのライブ映像に対応し (webOS 5以降、SMBはwebOS 22以降)、360°動画はフラットで再生します。バージョン0.1.0はテスターのLGテレビ (webOS 22) で動作しました。0.2.0はテストとプロジェクトのビルドホストでの実際のサーバーに対して確認済みですが、テレビではまだ確認していません。
+- **Samsung TVs with Tizen 5.5 and later**: the LG TV app packaged for Samsung TVs, test build 0.1.0, to sign and install yourself: an Immich viewer for the remote, signed in by typing (the server address, then an email and password or an API key), with the slideshow, the 360° photos on a sphere, a photo turned with one key and an About page that tells what the TV supports; no sign in with a phone, shares, Plex or cameras yet; 360° videos flat. Checked in headless Chromium 69, 76 and 94, the engines of Tizen 5.5, 6.0 and 7.0, against an Immich server; it has not run on a Samsung TV nor on Samsung's emulator.
 - **Meta Quest 2、Pro、3、3S**: ウィンドウとしてのアプリに加え、イマーシブビューに対応します。安全なコーデックはHEVCで、H.264はQuest 3では4096x2304前後が上限です。テスト済みはQuest 3のみで、Quest 2、Quest Pro、Quest 3Sはまだテストしていません。
 - **Windows 10と11**: プレビューで、ギャラリーの代わりにフォルダーを使い、フラットおよび360°動画向けの専用動画プレーヤー (libmpv)、グラフィックチップでスティッチされるRAWファイル、プログラムで開いた、またはウィンドウにドロップしたファイルやフォルダー、APROGSYSが署名したインストーラーまたはZIPがあります。
 - **Linux**: プロジェクトのCIでビルドされた.debと.rpmで、Ubuntu 22.04と24.04、Debian 12、Fedora 40と44でインストールして確認済みです。写真、360°写真、フラット動画はシステムのlibmpvで再生し (360°、3D、RAWの動画はメッセージを表示してフラットで再生)、デスクトップビルド7からはX11セッションでもハードウェア経由で描画します。SMB共有はUbuntu 22.04とDebian 12以降で使えます。キーリング (GNOME KeyringまたはKWallet) がなくても、初回起動時にアプリが25秒間フリーズすることはなくなりました。パスワードはそのセッションの間だけ保持され、設定にその旨が表示されます。実機のLinux PCではまだ動かしておらず、WSLgとコンテナー内でのみ動かしています。
@@ -352,13 +361,13 @@ DJIドローン (Mini、Air、Mavicなど、カメラから識別) の360°球�
 
 - **フォーマット**: フラットな写真や動画 (デバイスがデコードできる形式: MP4、MOV、MKVなど)、正距円筒図法の360°写真や動画、部分的なパノラマ (GPanoクロップ)、VR180、上下または左右の立体視3D (ファイルのst3dボックスから読み取る、またはフレームから推測)、Appleの空間写真 (HEICステレオペア) と空間動画 (MV-HEVC、片目)、Insta360の.inspと.insv、GoProの.360、DJIの.osvのRAWファイル、球体上でトーンマッピングされる10bit HLGおよびPQソース。
 - **投影とメタデータ**: サーバーや共有に対してはレンジリクエストで、GPanoや球面メタデータをファイルから読み取ります。カメラの初期視点を維持し、DJIドローンの球体写真はカメラから識別し、Immichでも認識されるよう任意で.xmpサイドカーを添えます。「360°で表示」の設定はデバイスに記憶され、VR180はファイルまたはファイル名から認識されます。ドローン動画の撮影場所は.SRTフライトログから読み取ります。常に元のファイルを再生するため、変換されたコピーではなくメタデータがそのまま保持されます。90°の回転はImmichのエディター経由で保存するかデバイス上に保持し、イマーシブなファイルには適用しません。
-- **ネイティブ再生**: AndroidとTVはMedia3、iOSはSceneKitとAVFoundation、ヘッドセットはMeta Spatial SDK、Windowsはlibmpvを使用します。デバイスがデコードできる形式に応じて元のファイルかトランスコード済みストリームを選択でき、デバイスの動画デコーダー一覧は設定、高度な設定で確認できます。音声トラックの選択とバッファリング表示にも対応します。
+- **Native playback**: Media3 on Android and the TV, SceneKit and AVFoundation on iOS, the Meta Spatial SDK in the headset, libmpv on Windows; the original or the transcoded stream chosen from what the device decodes; a list of the device's video decoders in Settings, Advanced; the audio track choice, subtitles in the Android player and a buffering indicator.
 - **デバイス上でスティッチされるRAWファイル**: 写真にはFlutterのフラグメントシェーダーを使用し、単一トラックの動画ではプレーヤー内のGPUエフェクトを使用します。トラックまたはファイルごとに1レンズの動画では、2つのハードウェアデコーダーを同時に使い、GPUコンポジタで合成します (AndroidとQuestではOpenGL ES 3、iOSではMetal、Windowsではデスクトップ版ビルド5以降、2つのlibmpvプレーヤーのフレームをアプリがグラフィックチップ上でペアリングします)。カメラ自体のキャリブレーション (Mei、V6、等距離モデル) と加速度センサーの記録も使用します。デバイスが2つのデコーダーを同時に実行できない場合は、1レンズ、トランスコード済みストリーム、カメラのLRVコピー、またはスティッチされていない動画にフォールバックします。
-- **ソース**: デバイスのギャラリー、コンピューターのフォルダー、システムのフォルダーピッカー経由でUSB接続したドローン、そのコントローラー、またはカメラのカード (Android、実験的)、Immichサーバー、SMB 2および3、WebDAV、DLNA/UPnP、サーバー自身の証明書で検証するHTTPS経由のPlex、ローカルネットワーク上のTapoカメラ (HTTPSとRTSP)、Wi-Fi上でWebDAVサーバーとして共有されたスマートフォンやコンピューター。サーバーはBonjour/mDNS、ローカルネットワークスキャン、SSDP、GDM、TP-Linkのディスカバリーで見つけ、アドレスが変わっても追跡します。
+- **Sources**: the device's gallery; the folders of a computer; a drone or a camera card over USB, through the system folder picker (Android, experimental); a DJI RC-N3 remote controller over its cable for the drone's live video (Android, experimental); an Immich server; SMB 2 and 3, WebDAV, DLNA/UPnP; Plex over HTTPS checked against the server's own certificate; Tapo cameras over the local network (HTTPS and RTSP); a phone or a computer shared on the Wi-Fi as a WebDAV server; servers found by Bonjour/mDNS, a local network scan, SSDP, GDM and the TP-Link discovery, and followed when they change address.
 - **オンデマンド読み込み**: ローカルブリッジがバイト範囲とセッションごとのトークンでプレーヤーにデータを提供します。大きなブロック単位の先読みと、最大6つのSMB接続の並列処理に対応し、各動画のフレームからサムネイルを生成し、デバイスには何もコピーされません。
 - **ハードウェア**: 存在する場合は必ずハードウェアデコーダーを使用し、実測した上限に従います (Quest 3のH.264の上限、ソフトウェアデコーダーでは最大2048x2048の2レンズまで)。Windowsでは、デコードされた各フレームから360°ビューをグラフィックチップで描画し、各コンピューターでフレームサイズを計測し、統合型または専用のグラフィックチップを検出します。
 - **プラットフォーム固有の機能**: スマートフォンではジャイロスコープとSpatial 2.5Dプレーヤー、Questではイマーシブビュー、コントローラー、手、Android TVではリモコン用レイアウト、キーボードダイアログ、TVバナーです。コンピューターでは、マウスとキーボード、フルスクリーン、1つのウィンドウに対応し、プログラムで開いた、またはそのウィンドウにドロップしたファイルやフォルダーはフォルダー内のファイルと同じように読み込まれ、Windowsにデコーダーがあればフォルダー内のHEIC、AVIF、TIFF、カメラRAW写真も読み込めるほか、パスワードとトークンにはWindowsのデータ保護が使われます。
-- **設計レベルでのプライバシー**: アカウントなし、クラウドなし、解析なし。パスワードとトークンはデバイスのセキュアストレージに保存されます。スマートフォンからログインした画面には専用のセッションが自宅のネットワーク上で暗号化して送られ、パスワードが送られることはありません。Spatialプレーヤーとコードスキャナーのカメラはデバイス上でのみ使用され、共有、Plex、カメラへのアクセスはあなたのネットワーク内に限られます。
+- **Privacy by construction**: no account, no cloud, no analytics; passwords and tokens in the device's secure storage (on LG and Samsung TVs, which have none for the app, in the app's own storage, not encrypted); a screen signed in from a phone gets a session of its own, sent encrypted on the home network, never the password (an LG TV gets the password from a page in the phone's browser, unencrypted on the home network, and keeps only the session); the camera of the Spatial player and of the code scanner used on the device only; shares, Plex and cameras reached on your network only.
 
 <a id="technical-documentation"></a>
 ## 技術ドキュメント
@@ -403,6 +412,13 @@ DJIドローン (Mini、Air、Mavicなど、カメラから識別) の360°球�
 3. [webOSのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0)から`Immuch360-webOS-0.2.0.ipk`をダウンロードし、`SHA256SUMS.txt`で確認してから、`ares-install --device <name> Immuch360-webOS-0.2.0.ipk`を実行します。webosbrewの[webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop)を使えば、コマンドラインなしで同じことができます。
 4. Developer Modeのセッションは1000時間有効で、Developer ModeアプリのEXTENDボタンで延長できます。期限が切れると、テレビはこの方法でインストールしたアプリを削除します。詳細は[webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode)にあります。
 
+<a id="samsung-tvs-tizen"></a>
+### Samsung TVs (Tizen)
+
+1. You need a Samsung TV with Tizen 5.5 or later (2020 models and later), a computer on the same network and a Samsung account. On the TV: Apps, App Settings, type 12345, turn Developer mode on, enter the IP address of the computer, then restart the TV.
+2. Download `Immuch360-Tizen-0.1.0.wgt` from the [Tizen pre-release](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.1.0) and check it against `SHA256SUMS.txt`. A Samsung TV installs only an app signed for it, so the package must be signed again with a Samsung certificate that lists the DUID of your TV: [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung), a community tool, reads the DUID, signs the package with your Samsung account and installs it; Tizen Studio with the Samsung Certificate Extension does the same by hand.
+3. Open the app and sign in by typing your server address, then your email and password or an API key. About this TV shows what the TV supports, as text and as a QR code: that text, posted in [Issues](https://github.com/freeKC/Immuch360/issues) with what does not work, helps the most.
+
 <a id="meta-quest"></a>
 ### Meta Quest
 
@@ -413,30 +429,30 @@ DJIドローン (Mini、Air、Mavicなど、カメラから識別) の360°球�
 <a id="windows"></a>
 ### Windows
 
-1. [デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8)から`Immuch360-Desktop-3.3.0-rc.0-desktop.8-windows-x64-setup.exe`をダウンロードし (`SHA256SUMS.txt`で確認できます)、開きます。インストーラーとZIPは署名済みで、Windowsには発行元としてAPROGSYSが表示されます。発行元がSmartScreenにとってまだ新しいうちは、一度だけ確認されることがあります。その場合は「詳細情報」、続いて「実行」を選びます。
+1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.9-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-9) (with `SHA256SUMS.txt` to check it) and open it. The installer and the ZIP are signed; Windows shows APROGSYS as the publisher. While the publisher is new to SmartScreen, it may still ask once: "More info", then "Run anyway".
 2. 「Install for me only」(管理者権限不要) または「Install for all users」を選び、続いてインストーラーの言語を選びます。Windowsの言語がすでに選択されています。
 3. スタートメニューからImmuch360 Desktopを起動します。写真や動画は「プログラムから開く」に表示されます (ファイルを右クリックし、プログラムから開く)。既定のプログラムに設定されることはありません。新しいビルドを初めて起動する際は、Windowsがファイルをスキャンするため最大1分ほどかかることがあります。
-4. Windows 10または11、64ビット。更新するには、次のビルドのインストーラーを開きます：ログイン、フォルダー、設定はそのまま保持されます。同じリリースのZIPは同じプログラムをフォルダーの形にしたもので、どこにでも解凍して`immuch360.exe`を起動できます。
+4. Windows 10 or 11, 64 bit. To update, open the installer of the next build: your sign in, folders and settings stay. The ZIP of the same release is the same program as a folder, to unzip anywhere and start `immuch360.exe` from it. On a computer where desktop builds 4 to 8 stopped at the start on "duplicate column name: group_date", build 9 opens that database and keeps your data.
 
 ### Linux
 
-Ubuntu 22.04以降とDebian 12以降では`sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-amd64.deb`を、Fedora 40以降では`sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.8-linux-x86_64.rpm`を実行します。どちらも[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8)にあります。その後、アプリケーション一覧からImmuch360 Desktopを起動します。プレビューです：コンピューターのフォルダー、写真と360°写真の球体表示、そしてパッケージがインストールするシステムのlibmpvによるフラット動画に対応します (360°、3D、RAWの動画はメッセージを表示してフラットで再生)。SMB共有はUbuntu 22.04とDebian 12以降で使えます。Fedoraでは、カメラの動画にRPM FusionのFFmpegが必要です。GNOME KeyringやKWalletがない場合、パスワードはそのセッションの間だけ保持され、アプリの設定にその旨が表示されます。
+On Ubuntu 22.04 or later and Debian 12 or later: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.9-linux-amd64.deb`; on Fedora 40 or later: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.9-linux-x86_64.rpm`, both from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-9). Then start Immuch360 Desktop from your applications. A preview: the folders of the computer, photos and 360° photos as a sphere, and flat videos through the system's libmpv, which the package installs (360°, 3D and raw videos play flat, with a message); SMB shares work from Ubuntu 22.04 and Debian 12 on. On Fedora, camera videos need the FFmpeg of RPM Fusion. Without GNOME Keyring or KWallet, the passwords are kept for the session only, and the settings of the app say so.
 
 ### macOS
 
-[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8)から`Immuch360-Desktop-3.3.0-rc.0-desktop.8-macos.dmg`を開き、アプリをアプリケーションにドラッグします (Apple SiliconとIntel、macOS 12以降)。まだ署名もノータライズもされていないため、macOS 14以前ではControlキーを押しながらクリックして開くを選び、macOS 15以降ではシステム設定、プライバシーとセキュリティで「このまま開く」を選びます。このプロジェクトに関わる誰もMacを持っていないため、アプリはプロジェクトのCIのMacでしか動かしていません。そこではファイルやフォルダーを開き、独自のlibmpvでフラット動画を再生しますが、ネットワークアクセスは未検証です。報告を歓迎します。
+Open `Immuch360-Desktop-3.3.0-rc.0-desktop.9-macos.dmg` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-9) and drag the app to Applications (Apple silicon and Intel, macOS 12 or later). It is not signed nor notarized yet: Control click it and choose Open on macOS 14 and earlier, or choose "Open Anyway" in System Settings, Privacy & Security on macOS 15 and later. Nobody working on the project has a Mac: the app was only run on the project's CI Mac, where it opens files and folders and plays flat videos with its own libmpv; its network access has not been tried. Reports are welcome.
 
 <a id="privacy"></a>
 ## プライバシー
 
-開発者には何も送信されません。アカウントなし、解析なし、クラッシュ報告サービスなし、広告なしです。アプリが通信するのは、あなたが選んだサーバー (Immichサーバー、共有、Plexサーバー、カメラ) のみで、サーバーを使わない場合はどこにも通信しません。パスワードとトークンはデバイスのセキュアストレージに保存されます。カメラはデバイス上でのみ、Spatial 2.5Dプレーヤーと、ログインさせる画面のコードの読み取りに使用され、その映像は保存されることも、どこかに送信されることもありません。スマートフォンからログインした画面には専用のセッションが自宅のネットワーク上で暗号化して送られ、パスワードが送られることはありません。完全なポリシーは[PRIVACY.md](../PRIVACY.md)に、ソースごとの詳細は[ユーザーガイド](../docs/immuch360/user-guide.md#privacy)にあります。
+Nothing goes to the developer: no account, no analytics, no crash reporting service, no advertising. The app talks only to the servers you choose (your Immich server, your shares, your Plex server, your cameras) and, without a server, to nothing at all. Passwords and tokens stay in the secure storage of the device; LG and Samsung TVs have none for the app, so there they stay in the app's own storage, not encrypted. The camera is used on the device only, by the Spatial 2.5D player and to scan the code of a screen you sign in; its images are never stored and never sent anywhere. A screen signed in from your phone gets a session of its own, sent encrypted on your home network, never your password; an LG TV is signed in by a page in the phone's browser, which sends your email and password to the TV unencrypted on your home network, and the TV keeps only the session. The full policy is in [PRIVACY.md](../PRIVACY.md), and the details per source in the [user guide](../docs/immuch360/user-guide.md#privacy).
 
 <a id="the-project"></a>
 ## プロジェクトについて
 
 Immuch360は[Immich](https://github.com/immich-app/immich)モバイルアプリの非公式フォークで、[GNU AGPL v3](../LICENSE)の下で公開されており、ImmichチームやFUTOとの提携や承認は一切ありません。このフォークが存在するのは、モバイルでの360°表示が2024年1月からImmichで要望されながらも公式アプリにはまだ実装されていないためです。今それを提供し、実機でのフィードバックを集め、メンテナーが望むものを小さなプルリクエストとしてImmichに還元していきます。公式アプリが行うことはすべて維持されており、ブランチ、ビルドチェーン、CIについては[自分でビルドする](../docs/immuch360/build.md)で説明しています。
 
-360°写真ビューアーは、dmitry-brazhenko氏によるアップストリームのプルリクエスト[immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)をベースにしており、これ自体はbencefr氏による[#30192](https://github.com/immich-app/immich/pull/30192)のプロトタイプをベースにしています。両氏に感謝します。TVでの検索フィルターのリモコン操作の修正とアルバムの並べ替えは、mlc70氏による[mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1)の作業から始まりました。また、アクションレールと画面の高さの80パーセントを使うフィルターシートは、mlc70氏の[mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3)によるもので、作者情報はそのまま残しています。mlc70氏に感謝します。LG webOSアプリは、Seeky91氏の[immich-tv-webos](https://github.com/Seeky91/immich-tv-webos)をベースにしており、MITライセンスの下、そのフォルダー内に保持しています。Seeky91氏に感謝します。Tapoカメラの実装は、[pytapo](https://github.com/JurajNyiri/pytapo)、[Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control)、[python-kasa](https://github.com/python-kasa/python-kasa)のドキュメントを元に書かれました。Meta QuestのビューはオープンソースではないMeta Spatial SDKに依存しているため、このフォークにのみ残ります。SMB共有はLGPL 2.1以降でライセンスされたlibsmb2を使用しています。ビルド27とデスクトップビルド7からは、各ビルドにその告知、ライセンス文、ソースアーカイブ`Immuch360-libsmb2-sources.tar.gz`が含まれ、このアーカイブは各リリースにも添付されています。WindowsとmacOSのビルドには、プロジェクトがビルドしたlibmpv ([mpv](https://mpv.io)のライブラリ、[FFmpeg](https://ffmpeg.org)を含む) がLGPLの下でライセンスとソースとともに含まれており、アプリのライセンスページ (プロフィールメニューの一番下にあるライセンス) に一覧表示されます。このページで挙げたプラットフォームの詳細と商標については[ライセンスと商標](../docs/immuch360/platform-support.md#license-and-trademarks)に記載されています。
+The 360° photo viewer is based on the upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) by dmitry-brazhenko, itself built on the prototype by bencefr in [#30192](https://github.com/immich-app/immich/pull/30192); thanks to both. The remote control fixes of the search filters and the album sorting on TVs started from the work of mlc70 in [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1), and the action rail and the filter sheets on 80 percent of the screen height come from mlc70's [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3), with their authorship kept; thanks to mlc70. The LG webOS app, also packaged for Samsung TVs, is built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) by Seeky91, under the MIT licence, kept in its folder; thanks to Seeky91. The Tapo cameras were written from what [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) and [python-kasa](https://github.com/python-kasa/python-kasa) document. The Meta Quest view relies on the Meta Spatial SDK, which is not open source, so it stays in this fork. The SMB shares use libsmb2, under the LGPL 2.1 or later: from build 27 and desktop build 7, every build carries its notice, its licence texts and its source archive, `Immuch360-libsmb2-sources.tar.gz`, which is also attached to each release. The Windows and macOS builds carry libmpv (the library of [mpv](https://mpv.io), with [FFmpeg](https://ffmpeg.org)) built by the project, under the LGPL, with its licences and sources, listed on the licence page of the app (Licenses, at the bottom of the profile menu); the details and the trademarks of the platforms named on this page are in [License and trademarks](../docs/immuch360/platform-support.md#license-and-trademarks).
 
 このページのスマートフォンのキャプチャはAndroidビルドをエミュレーターで撮影したもの、テレビのキャプチャはGoogle TVエミュレーターで撮影したもの、Windowsのキャプチャは実機のWindows 11 PCで撮影したもので、いずれも[Poly Haven](https://polyhaven.com)のCC0パノラマを使用しています。ヘッドセットのキャプチャはQuest 3実機で撮影しました。
 
@@ -445,13 +461,13 @@ Immuch360は[Immich](https://github.com/immich-app/immich)モバイルアプリ�
 
 まだ実現していないことを、可能性の高い順に並べています。ここにあるものは約束ではありません。[Issue トラッカー](https://github.com/freeKC/Immuch360/issues) でのフィードバックが、何を優先するかを決める助けになります。
 
-- **各ストア**: Google Play (ビルド28は審査中。TV版の掲載も審査中)、App Store (バージョン3.3.1が審査中、その後ビルド28のバージョン3.3.2)、Meta Horizon Store (ビルド28が審査中)。
+- **The stores**: Google Play (build 28 in review; the TV listing in review), the App Store (version 3.3.1 in review, then version 3.3.2 with build 28), the Meta Horizon Store with build 29, the LG Content Store (the submission is in preparation).
 - **コンピューター**: スマートフォンでのログインを含む、Windows PCでの各機能の手動テスト。Windowsでのウェブカメラを使ったSpatial 2.5D (2026年11月に向けて開発中)。続いてLinuxとmacOSでの360°動画レンダラー、実機のMacと実機のLinux PCでのテスト、その後自動更新と署名付きのmacOSアプリです。
-- **テレビ**: スマートフォンでのログインを含む、実機のAndroid TVでのビルド27と28のテスト。実機のLGテレビでのwebOS 0.2.0のテスト (共有、Plex、ライブ映像を含む)。続いて球体での360°動画、カメラの音声とその録画 (早くても2026年12月) です。
-- **スマートフォンとタブレット**: 次のiOSリリースでのiPhoneとiPadへのTapoライブ映像と大画面のログイン機能、iOSの360°動画プレーヤーへのタイムバーの追加、スマートフォンの360°プレーヤーへの前へ・次への追加、フラットプレーヤーでの音声トラック選択です。
+- **TVs**: build 29 on a real Android TV, its video controls and the sign in with your phone included; webOS 0.2.0 on a real LG TV, with its shares, Plex and live view, then the LG Content Store version; the Samsung test build on a real Samsung TV; then the 360° videos on the sphere, the sound of the cameras and their recordings (not before December 2026).
+- **Phones and tablets**: the Tapo live view and the sign in of big screens on iPhone and iPad with the next iOS release; a time bar in the iOS 360° video player, previous and next in the 360° players of phones, audio track and subtitle menus in the iOS flat player.
 - **イマーシブメディア**: デュアル魚眼の.dng、GoProとDJIの動画を自身のモーションデータから水平化する機能、デコーダーが対応していればQuestで空間動画を3D表示する機能、ヘッドセット内で空間写真を前へ・次へと切り替える機能です。
 - **ソース**: 共有フォルダー内のファイル間をスワイプする機能、WebDAVのダイジェスト認証、コンピューターからPlexトークンを取り込むQRコード、PlexのIPv6対応、H.265のTapo録画、テレビのホーム画面のチャンネルです。
-- **ドローン**: 実機のDJI Neo 2でのテスト、続いてスマートフォンが録音した音声をクリップに統合する機能。実際のコントローラーでのDJIリンクのページのテストで、これはMeta Questでドローンの映像を見るための最初の一歩です。ドローンにコマンドを送る機能は、これらのテストより前には予定していません。
+- **Drones**: a test of the import page with a real DJI Neo 2, then the sound recorded by the phone merged into its clip; the drone's live video relayed from the phone to the Meta Quest. Nothing that sends a command to a drone is planned before those tests.
 - **アップストリーム**：360° 写真ビューアーから始めて、メンテナーが望む部分について Immich に小さなプルリクエストを送ること。
 
 各機能について実機確認がまだ必要なものを含む完全なリストは、[リリースステータス](../docs/immuch360/release-status.md#roadmap)にあります。
