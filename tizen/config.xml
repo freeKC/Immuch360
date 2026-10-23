@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Immuch360 for Samsung TVs (Tizen 5.5 and later). tizen/tools/build-wgt.mjs puts this file next to the webOS bundle
+  (webos/dist) with the version of the build: a tizen-v<x.y.z> tag, else the one given, else the one written here. The
+  Tizen command line tools then sign the folder into a .wgt. The privileges are the least the app uses: the network,
+  the remote keys, the TV model for the About page.
+-->
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
+        id="https://github.com/freeKC/Immuch360/tizen" version="0.1.0" viewmodes="maximized">
+  <tizen:application id="Immuch360T.Immuch360" package="Immuch360T" required_version="5.5"/>
+  <content src="index.html"/>
+  <access origin="*" subdomains="true"/>
+  <icon src="icon.png"/>
+  <name>Immuch360</name>
+  <author href="https://github.com/freeKC/Immuch360">FreeKC</author>
+  <license href="https://www.gnu.org/licenses/agpl-3.0.html">AGPL-3.0-only</license>
+  <feature name="http://tizen.org/feature/screen.size.all"/>
+  <tizen:privilege name="http://tizen.org/privilege/internet"/>
+  <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
+  <tizen:privilege name="http://developer.samsung.com/privilege/productinfo"/>
+  <tizen:profile name="tv-samsung"/>
+  <tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable"
+                 encryption="disable" install-location="auto" hwkey-event="enable"/>
+  <tizen:content-security-policy>default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' * data: blob:; media-src 'self' * data: blob:; connect-src 'self' *; font-src 'self' data:; object-src 'none'</tizen:content-security-policy>
+</widget>
