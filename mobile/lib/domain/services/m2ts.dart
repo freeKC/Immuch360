@@ -54,7 +54,7 @@ int tsSizeOfM2ts(int fileSize) => fileSize ~/ m2tsPacketSize * tsPacketSize;
 /// it holds: the timestamp before each packet left out, then the first [skip] bytes dropped (where the range asked
 /// starts in its first packet) and [length] bytes kept.
 class M2tsToTs {
-  M2tsToTs({required int skip, required int length}) : _skip = skip, _left = length;
+  M2tsToTs({required this._skip, required int length}) : _left = length;
 
   /// Where the next byte of the file is in its packet
   int _offset = 0;

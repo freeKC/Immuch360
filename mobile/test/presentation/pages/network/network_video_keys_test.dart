@@ -258,29 +258,30 @@ void main() {
     expect(calls, isEmpty);
   });
 
-  testWidgets('on a TV right while it plays opens the next video in a page of its own, whose controls drive its player', (
-    tester,
-  ) async {
-    await pumpVideo(tester, status: VideoPlaybackStatus.playing, realNeighbours: true);
-    final first = tester.state<NetworkVideoPageState>(find.byType(NetworkVideoPage));
+  testWidgets(
+    'on a TV right while it plays opens the next video in a page of its own, whose controls drive its player',
+    (tester) async {
+      await pumpVideo(tester, status: VideoPlaybackStatus.playing, realNeighbours: true);
+      final first = tester.state<NetworkVideoPageState>(find.byType(NetworkVideoPage));
 
-    await press(tester, LogicalKeyboardKey.arrowRight);
-    for (var i = 0; i < 5; i++) {
-      await tester.pump(const Duration(milliseconds: 50));
-    }
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      for (var i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
 
-    final next = tester.state<NetworkVideoPageState>(find.byType(NetworkVideoPage));
-    expect(next.widget.path, '/b.mp4');
-    expect(identical(next, first), isFalse, reason: 'a new page, not the old one under the new name');
-    expect((await next.videoSource)?.path, 'http://127.0.0.1:1234/token/nas/b.mp4', reason: 'it loads the next file');
-    expect(find.text('00:05 / 03:00'), findsOneWidget, reason: 'the controls show the player of the next file');
+      final next = tester.state<NetworkVideoPageState>(find.byType(NetworkVideoPage));
+      expect(next.widget.path, '/b.mp4');
+      expect(identical(next, first), isFalse, reason: 'a new page, not the old one under the new name');
+      expect((await next.videoSource)?.path, 'http://127.0.0.1:1234/token/nas/b.mp4', reason: 'it loads the next file');
+      expect(find.text('00:05 / 03:00'), findsOneWidget, reason: 'the controls show the player of the next file');
 
-    // OK, then OK on play and pause: the next video plays, the first one is left alone
-    await press(tester, LogicalKeyboardKey.select);
-    await press(tester, LogicalKeyboardKey.select);
-    expect(nextCalls, ['play']);
-    expect(calls, isEmpty);
-  });
+      // OK, then OK on play and pause: the next video plays, the first one is left alone
+      await press(tester, LogicalKeyboardKey.select);
+      await press(tester, LogicalKeyboardKey.select);
+      expect(nextCalls, ['play']);
+      expect(calls, isEmpty);
+    },
+  );
 
   testWidgets('on a TV left goes to the previous one while it loads', (tester) async {
     await pumpVideo(tester, status: VideoPlaybackStatus.buffering);
@@ -462,7 +463,11 @@ void main() {
     await press(tester, LogicalKeyboardKey.arrowLeft);
     expect(calls, ['seek 40', 'seek 30', 'seek 20']);
     expect(find.byType(NetworkVideoPage), findsOneWidget);
-    expect(find.text('video nas /b.mp4'), findsNothing, reason: 'the arrows seek on the bar, they leave the file no more');
+    expect(
+      find.text('video nas /b.mp4'),
+      findsNothing,
+      reason: 'the arrows seek on the bar, they leave the file no more',
+    );
 
     // Held, the video waits and plays on once the key is released
     calls.clear();

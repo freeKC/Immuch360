@@ -275,7 +275,9 @@ void main() {
     await tester.pump();
     expect(FocusManager.instance.primaryFocus?.debugLabel, 'Video time bar');
     expect(
-      tester.widget<ExcludeFocus>(find.ancestor(of: find.byType(Slider), matching: find.byType(ExcludeFocus)).first).excluding,
+      tester
+          .widget<ExcludeFocus>(find.ancestor(of: find.byType(Slider), matching: find.byType(ExcludeFocus)).first)
+          .excluding,
       isTrue,
       reason: 'the bar takes the keys, never the slider, which would keep the arrows',
     );

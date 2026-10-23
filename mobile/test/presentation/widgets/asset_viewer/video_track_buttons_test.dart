@@ -177,7 +177,12 @@ void main() {
   testWidgets('on a TV the remote reaches them after +10 s, and OK picks a track', (tester) async {
     await pump(tester, const [_english, _french, _subtitles], tvMode: true);
     Focus.of(
-      tester.element(find.descendant(of: find.byKey(const Key('network_video_play_pause')), matching: find.byType(AnimatedPlayPause))),
+      tester.element(
+        find.descendant(
+          of: find.byKey(const Key('network_video_play_pause')),
+          matching: find.byType(AnimatedPlayPause),
+        ),
+      ),
     ).requestFocus();
     await tester.pump();
 

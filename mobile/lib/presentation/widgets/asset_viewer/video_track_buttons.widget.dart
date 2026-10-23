@@ -115,9 +115,7 @@ class _VideoTrackButtonsState extends ConsumerState<VideoTrackButtons> {
               shadows: widget.shadows,
             ),
             onSelected: (index) => unawaited(
-              index < 0
-                  ? _notifier.disableTracks(NativeVideoTrackType.text)
-                  : _notifier.selectTrack(subtitles[index]),
+              index < 0 ? _notifier.disableTracks(NativeVideoTrackType.text) : _notifier.selectTrack(subtitles[index]),
             ),
             itemBuilder: (context) => [
               _trackItem(-1, t.video_subtitles_off, checked: !subtitlesOn),

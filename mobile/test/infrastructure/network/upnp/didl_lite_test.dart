@@ -158,10 +158,14 @@ void main() {
 
     test('a size of 0 or below 0 is no size: the server did not know it, or wrote a large one as a signed number', () {
       for (final written in ['0', '-1294967296', ' -1 ', '99999999999999999999999']) {
-        final object = _one(_item('Film', _res('http://h/film.mkv', 'video/x-matroska', attributes: ' size="$written"')));
+        final object = _one(
+          _item('Film', _res('http://h/film.mkv', 'video/x-matroska', attributes: ' size="$written"')),
+        );
         expect(object.original!.size, isNull, reason: 'size="$written"');
       }
-      final listed = _one(_item('Film', _res('http://h/film.mkv', 'video/x-matroska', attributes: ' size="3000000000"')));
+      final listed = _one(
+        _item('Film', _res('http://h/film.mkv', 'video/x-matroska', attributes: ' size="3000000000"')),
+      );
       expect(listed.original!.size, 3000000000);
     });
 
