@@ -8,7 +8,7 @@
     "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
-    "blob": "77e806b294aef5f6e9d7a288c0a8f2cdd02edece",
+    "blob": "bf08ab021ab06e1f512d3902501108361943ae5d",
     "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only; DJI link (feat-dji-link, 12ccff821): the link page of the headset and of the phone is registered in the app engine only, and a gamepad event is handed to the page that draws the sticks; fix round of 22 October: a gamepad event reaches only a link page that is open and never creates its owner; sign in with your phone (feat-qr-pairing): the QR code scanner registered with this activity; DJI link stage 2 (feat-dji-link-2): the video view of the DJI link page registered with the app engine"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/AppHealth.kt": {
