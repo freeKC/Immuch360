@@ -74,8 +74,14 @@ function sendJson(res, status, body, extraHeaders) {
 	res.end(payload, 'utf8');
 }
 
+// Immuch360: context.onPageEnd(reason), when given, hears that the page has nothing left to do: 'approved' (the sign in
+// is done) or 'failures' (the tenth wrong code); the service then stops it (service.js), dev.js passes none
 function createPairingServer(context) {
 	var now = context.now || Date.now;
+
+	function pageEnd(reason) {
+		if (typeof context.onPageEnd === 'function') context.onPageEnd(reason);
+	}
 
 	function handleApprove(req, res) {
 		readBody(req)
@@ -93,11 +99,14 @@ function createPairingServer(context) {
 				var session = context.getSession();
 				var codeStatus = pairing.checkCode(session, now(), body.code);
 				if (codeStatus !== 'ok') {
+					// Immuch360: the tenth wrong code ends the session: the page stops once this answer is sent
+					var burned = codeStatus === 'bad_code' && pairing.statusOf(session, now()) === 'expired';
 					var message =
-						codeStatus === 'bad_code'
+						codeStatus === 'bad_code' && !burned
 							? "That code doesn't match the one on the TV"
 							: 'This pairing session has expired. Start again on the TV.';
 					sendJson(res, 400, {ok: false, error: message});
+					if (burned) pageEnd('failures');
 					return;
 				}
 				// Authenticate before approval so a bad password leaves the session retryable.
@@ -106,12 +115,13 @@ function createPairingServer(context) {
 						sendJson(res, 401, {ok: false, error: login.error});
 						return;
 					}
-					pairing.markApproved(session, now(), {
+					var approved = pairing.markApproved(session, now(), {
 						baseUrl: immich.normalizeBaseUrl(body.serverUrl),
 						email: String(body.email),
 						accessToken: login.accessToken
 					});
 					sendJson(res, 200, {ok: true});
+					if (approved) pageEnd('approved');
 				});
 			})
 			.catch(function () {

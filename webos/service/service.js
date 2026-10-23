@@ -26,6 +26,11 @@ var httpPort = null;
 var httpHost = null;
 // Immuch360: one activity per user of the service, the phone sign in ('pairing') and the media bridge ('bridge')
 var activities = {};
+// Immuch360: the end of the phone page, armed at each start: the page stops at the end of its session even when the app
+// no longer asks for the status (closed, in the background, or polling given up)
+var endTimer = null;
+// Immuch360: how long an approved sign in waits for the app to take it before it is dropped from memory
+var RESULT_GRACE_MS = 60 * 1000;
 
 function holdActivity(name) {
 	var key = name || 'pairing';
@@ -54,9 +59,15 @@ function releaseActivity(name) {
 	}
 }
 
-function teardown() {
-	session = null;
-	releaseActivity('pairing');
+function clearEndTimer() {
+	if (endTimer !== null) {
+		clearTimeout(endTimer);
+		endTimer = null;
+	}
+}
+
+// Immuch360: the phone page only (the session stays, for the status the app asks next)
+function closePage() {
 	if (httpServer !== null) {
 		try {
 			httpServer.close();
@@ -67,6 +78,33 @@ function teardown() {
 		httpPort = null;
 		httpHost = null;
 	}
+}
+
+function teardown() {
+	clearEndTimer();
+	session = null;
+	releaseActivity('pairing');
+	closePage();
+}
+
+// Immuch360: everything stops at the time given (the end of the session, or the grace of an approved sign in)
+function endAt(time) {
+	clearEndTimer();
+	endTimer = setTimeout(function () {
+		endTimer = null;
+		teardown();
+	}, Math.max(0, time - Date.now()));
+}
+
+// Immuch360: what the phone page reports (lib/server.js): after an approved sign in the page stops and the session
+// waits a minute for the app to take it; after the tenth wrong code everything stops
+function onPageEnd(reason) {
+	if (reason === 'approved') {
+		closePage();
+		endAt(Date.now() + RESULT_GRACE_MS);
+		return;
+	}
+	teardown();
 }
 
 // Immuch360: the phone page listens on the TV's address on the home network only, not on every address of the TV; a
@@ -88,7 +126,8 @@ function ensureServer() {
 	var server = serverLib.createPairingServer({
 		getSession: function () {
 			return session;
-		}
+		},
+		onPageEnd: onPageEnd
 	});
 	return serverLib.listenOnFreePort(server, BASE_PORT, PORT_TRIES, address).then(function (port) {
 		server.on('error', function (err) {
@@ -112,6 +151,7 @@ service.register('start', function (message) {
 		function (listening) {
 			var url = serverLib.buildPairingUrl(listening.host, listening.port, session);
 			holdActivity('pairing');
+			endAt(session.expiresAt);
 			message.respond({
 				returnValue: true,
 				url: url,
@@ -122,8 +162,10 @@ service.register('start', function (message) {
 		},
 		function (err) {
 			teardown();
-			var text = err && err.message === 'TV has no network address' ? err.message : 'Could not start pairing server: ' + err.message;
-			message.respond({returnValue: false, errorText: text});
+			// Immuch360: errorCode for the app, which shows its own text (no_address: the TV is offline); errorText for the log
+			var noAddress = err && err.message === 'TV has no network address';
+			var text = noAddress ? err.message : 'Could not start pairing server: ' + (err && err.message);
+			message.respond({returnValue: false, errorCode: noAddress ? 'no_address' : 'listen_failed', errorText: text});
 		}
 	);
 });

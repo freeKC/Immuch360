@@ -1,5 +1,6 @@
 'use strict';
 /* eslint-disable no-var -- runs on webOS 4.x's Node 0.12.2 (see lib/pairing.js) */
+/* global __dirname */
 
 // Plain-node test suite for the pairing service (no Jest: this code targets
 // the TV's Node, down to 0.12.2 on webOS 4.x, and must stay runnable there).
@@ -264,6 +265,232 @@ test('the service binds the phone page to the TV address of the home network (la
 	assert.ok(/listenOnFreePort\(server, BASE_PORT, PORT_TRIES, address\)/.test(source));
 	assert.ok(/var address = serverLib\.lanIp\(\);/.test(source));
 	assert.ok(!/0\.0\.0\.0/.test(source));
+});
+
+/* ── service.js (Immuch360: the life of the phone page, under a stand-in of webos-service) ── */
+
+var Module = require('module');
+var loadedService = null;
+
+// service.js loaded once, with a stand-in of the TV's webos-service module that records the registered methods and the
+// ActivityManager calls
+function serviceUnderTest() {
+	if (loadedService) return loadedService;
+	var registered = {};
+	var activities = [];
+	function FakeService() {
+		this.activityManager = {
+			create: function (name, callback) {
+				activities.push('create ' + name);
+				callback({name: name});
+			},
+			complete: function (activity) {
+				activities.push('complete ' + activity.name);
+			}
+		};
+	}
+	FakeService.prototype.register = function (name, handler) {
+		registered[name] = handler;
+	};
+	var originalLoad = Module._load;
+	Module._load = function (request) {
+		if (request === 'webos-service') return FakeService;
+		return originalLoad.apply(this, arguments);
+	};
+	try {
+		require('./service.js');
+	} finally {
+		Module._load = originalLoad;
+	}
+	loadedService = {
+		activities: activities,
+		call: function (method, payload) {
+			return new Promise(function (resolve) {
+				registered[method]({payload: payload || {}, respond: resolve});
+			});
+		}
+	};
+	return loadedService;
+}
+
+// The phone page on 127.0.0.1 at a free port, sessions of ttlMs (the real ten minutes when none), for the time of fn
+function withServiceSetup(ttlMs, fn) {
+	var realLanIp = serverLib.lanIp;
+	var realListen = serverLib.listenOnFreePort;
+	var realCreate = pairing.createSession;
+	serverLib.lanIp = function () {
+		return '127.0.0.1';
+	};
+	serverLib.listenOnFreePort = function (server, basePort, tries, host) {
+		return realListen(server, 21000 + Math.floor(Math.random() * 2000), tries, host);
+	};
+	if (ttlMs) {
+		pairing.createSession = function (now, options) {
+			var created = realCreate(now, options);
+			created.expiresAt = now + ttlMs;
+			return created;
+		};
+	}
+	function restore() {
+		serverLib.lanIp = realLanIp;
+		serverLib.listenOnFreePort = realListen;
+		pairing.createSession = realCreate;
+	}
+	var svc = serviceUnderTest();
+	return Promise.resolve()
+		.then(function () {
+			return fn(svc);
+		})
+		.then(
+			function (value) {
+				restore();
+				return svc.call('cancel').then(function () {
+					return value;
+				});
+			},
+			function (err) {
+				restore();
+				return svc.call('cancel').then(function () {
+					throw err;
+				});
+			}
+		);
+}
+
+// The status code of GET / on the phone page, or the error code when nothing listens there
+function pageAnswer(port) {
+	return new Promise(function (resolve) {
+		var req = http.get({host: '127.0.0.1', port: port, path: '/', agent: false}, function (res) {
+			res.resume();
+			resolve(res.statusCode);
+		});
+		req.on('error', function (err) {
+			resolve(err.code);
+		});
+	});
+}
+
+function delay(ms) {
+	return new Promise(function (resolve) {
+		setTimeout(resolve, ms);
+	});
+}
+
+test('service: the phone page stops by itself at the end of its session, with no status call from the app', function () {
+	return withServiceSetup(300, function (svc) {
+		var port = null;
+		var before = svc.activities.length;
+		return svc
+			.call('start')
+			.then(function (res) {
+				assert.strictEqual(res.returnValue, true);
+				port = res.port;
+				return pageAnswer(port);
+			})
+			.then(function (answer) {
+				assert.strictEqual(answer, 200, 'the page answers while the code shows');
+				return delay(600);
+			})
+			.then(function () {
+				return pageAnswer(port);
+			})
+			.then(function (answer) {
+				assert.strictEqual(answer, 'ECONNREFUSED', 'nothing listens once the session ended');
+				assert.deepEqual(svc.activities.slice(before), ['create pairing', 'complete pairing']);
+				return svc.call('status');
+			})
+			.then(function (res) {
+				assert.strictEqual(res.state, 'none', 'the app reads it as expired (serviceResponse.ts)');
+			});
+	});
+});
+
+test('service: the tenth wrong code stops the phone page at once', function () {
+	return withServiceSetup(0, function (svc) {
+		var port = null;
+		var before = svc.activities.length;
+		var answers = [];
+		function wrong(left) {
+			if (left === 0) return Promise.resolve();
+			return postJson(port, '/approve', {code: 'WRONGCOD', serverUrl: 'http://127.0.0.1:9', email: 'q@e.fr', password: 'x'}).then(function (res) {
+				answers.push(res.json.error);
+				return wrong(left - 1);
+			});
+		}
+		return svc
+			.call('start')
+			.then(function (res) {
+				port = res.port;
+				return wrong(pairing.MAX_CODE_FAILURES);
+			})
+			.then(function () {
+				assert.ok(/doesn't match/.test(answers[0]));
+				assert.ok(/expired/.test(answers[answers.length - 1]), 'the tenth answer says the session ended');
+				return delay(50);
+			})
+			.then(function () {
+				return pageAnswer(port);
+			})
+			.then(function (answer) {
+				assert.strictEqual(answer, 'ECONNREFUSED');
+				assert.deepEqual(svc.activities.slice(before), ['create pairing', 'complete pairing']);
+			});
+	});
+});
+
+test('service: after the sign in the phone page stops, and the app still gets the session once', function () {
+	var stub = http.createServer(function (req, res) {
+		res.writeHead(201, {'Content-Type': 'application/json'});
+		res.end(JSON.stringify({accessToken: 'tok456'}));
+	});
+	return new Promise(function (resolve) {
+		stub.listen(0, '127.0.0.1', resolve);
+	}).then(function () {
+		return withServiceSetup(0, function (svc) {
+			var port = null;
+			var before = svc.activities.length;
+			return svc
+				.call('start')
+				.then(function (res) {
+					port = res.port;
+					return postJson(port, '/approve', {code: res.code, serverUrl: 'http://127.0.0.1:' + stub.address().port, email: 'q@e.fr', password: 'secret'});
+				})
+				.then(function (res) {
+					assert.strictEqual(res.json.ok, true);
+					return delay(50);
+				})
+				.then(function () {
+					return pageAnswer(port);
+				})
+				.then(function (answer) {
+					assert.strictEqual(answer, 'ECONNREFUSED', 'the page stops after the sign in');
+					return svc.call('status');
+				})
+				.then(function (res) {
+					assert.strictEqual(res.state, 'approved');
+					assert.strictEqual(res.result.accessToken, 'tok456');
+					assert.deepEqual(svc.activities.slice(before), ['create pairing', 'complete pairing']);
+					return svc.call('status');
+				})
+				.then(function (res) {
+					assert.strictEqual(res.state, 'none', 'the session is given once, then dropped');
+					stub.close();
+				});
+		});
+	});
+});
+
+test('service: a start without a network address says so with a code the app turns into its own text', function () {
+	var realLanIp = serverLib.lanIp;
+	serverLib.lanIp = function () {
+		return null;
+	};
+	var svc = serviceUnderTest();
+	return svc.call('start').then(function (res) {
+		serverLib.lanIp = realLanIp;
+		assert.strictEqual(res.returnValue, false);
+		assert.strictEqual(res.errorCode, 'no_address');
+	});
 });
 
 /* ── bridge-host.js (Immuch360: the Luna side of the media bridge) ── */
