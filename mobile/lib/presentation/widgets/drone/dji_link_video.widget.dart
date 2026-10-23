@@ -208,6 +208,7 @@ class _DjiLinkVideoCounters extends ConsumerWidget {
           ),
         ),
         DjiLinkFact(t.dji_link_video_overruns, '${decode.overruns}'),
+        DjiLinkFact(t.dji_link_video_units_dropped, '${decode.unitsDropped}'),
         DjiLinkFact(t.dji_link_video_too_large, '${decode.tooLarge}'),
         DjiLinkFact(t.dji_link_video_errors, '${decode.errors}'),
         DjiLinkFact(t.dji_link_video_without_description, '${decode.unitsWithoutDescription}'),

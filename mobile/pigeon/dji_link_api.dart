@@ -458,6 +458,7 @@ class DjiLinkDecode {
     required this.lostPictures,
     required this.encoderRestarts,
     required this.keyPictures,
+    this.unitsDropped = 0,
     this.failure,
     this.width,
     this.height,
@@ -506,6 +507,9 @@ class DjiLinkDecode {
   final int shown;
   final int droppedAtDisplay;
   final int overruns;
+
+  /// Pictures the queue in front of the decoder dropped: past its bound, or at a flush when it could not keep up
+  final int unitsDropped;
   final int tooLarge;
   final int unitsWithoutDescription;
   final int errors;

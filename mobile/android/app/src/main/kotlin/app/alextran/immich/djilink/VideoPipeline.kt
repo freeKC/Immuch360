@@ -57,6 +57,8 @@ data class DecoderStatus(
   val startedAtNs: Long? = null,
   /** Whether a key picture was queued since the running codec started */
   val keySinceStart: Boolean = false,
+  /** Units the queue dropped before the decoder since the last new source: past its bound or at a flush */
+  val unitsDropped: Long = 0,
 )
 
 /** The receiving end of the units: the decoder feed, or a test's own */

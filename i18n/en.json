@@ -1388,6 +1388,7 @@
   "dji_link_video_switches": "Switches between hardware and software",
   "dji_link_video_too_large": "Pictures too large to decode",
   "dji_link_video_unit_types": "Unit types",
+  "dji_link_video_units_dropped": "Pictures dropped before the decoder",
   "dji_link_video_verdict_h264": "H.264 video",
   "dji_link_video_verdict_h265": "H.265 video",
   "dji_link_video_verdict_no_data": "No video payload has arrived.",

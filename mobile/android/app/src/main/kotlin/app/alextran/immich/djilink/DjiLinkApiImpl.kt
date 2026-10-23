@@ -283,8 +283,12 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
   }
 
   override fun playCapture(binUri: String, indexUri: String, startAtMs: Long, callback: (Result<String?>) -> Unit) {
+    // The page session of the request, read on the main thread where the page closes: if it closes while the files
+    // are read on the worker, the capture is not played
+    val session = controller.pageSession
     worker.execute {
-      val outcome = runCatching { controller.playCapture(binUri, indexUri, startAtMs) }.getOrElse { "unreadable" }
+      val outcome = runCatching { controller.playCapture(binUri, indexUri, startAtMs, session = session) }
+        .getOrElse { "unreadable" }
       callback(Result.success(outcome))
     }
   }

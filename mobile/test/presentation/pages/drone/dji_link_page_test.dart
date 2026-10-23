@@ -100,6 +100,7 @@ DjiLinkDecode _decode({
   String? switchReason,
   int? keyPictureAgoMs,
   int? lastOutputAgoMs = 40,
+  int unitsDropped = 0,
 }) => DjiLinkDecode(
   state: state,
   failure: failure,
@@ -122,6 +123,7 @@ DjiLinkDecode _decode({
   shown: 300,
   droppedAtDisplay: 20,
   overruns: 0,
+  unitsDropped: unitsDropped,
   tooLarge: 0,
   unitsWithoutDescription: 29,
   errors: 0,
@@ -671,8 +673,12 @@ void main() {
       expect(find.byKey(const Key('dji_link_video_private')), findsOneWidget);
     }
 
-    listener!.snapshotChanged(_snapshot(decode: _decode(switchReason: 'noOutputAfterJoin', keyPictureAgoMs: 2500)));
+    listener!.snapshotChanged(
+      _snapshot(decode: _decode(switchReason: 'noOutputAfterJoin', keyPictureAgoMs: 2500, unitsDropped: 17)),
+    );
     await tester.pumpAndSettle();
+    expect(find.text('Pictures dropped before the decoder'), findsOneWidget);
+    expect(find.text('17'), findsOneWidget, reason: 'the pictures dropped before the decoder are counted on the page');
     expect(find.byKey(const Key('dji_link_video_placeholder')), findsOneWidget);
     expect(find.text('H.265, 1920 x 1080, Main High tier level 5.0'), findsOneWidget);
     expect(find.text('from the capture of 23 October 2026 (RC-N3 with Neo 2)'), findsOneWidget);

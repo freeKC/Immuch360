@@ -136,6 +136,14 @@ class DjiLinkController private constructor(private val context: Context) : Link
   /** Whether the page is open and the link is being looked after */
   val isStarted: Boolean get() = started
 
+  /**
+   * Raised each time the page closes. A capture asked for by a page is played only while this is the number it read
+   * when it asked: a request still on the worker thread when the page closed must not start a decoder nobody stops.
+   */
+  @Volatile
+  var pageSession = 0L
+    private set
+
   fun start() {
     if (started) {
       return
@@ -151,6 +159,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       video.newSource()
       session.newPageSession()
     }
+    feed.open()
     feed.setViewSurface(DjiLinkVideoSurfaces.current())
     manager.start()
     handler.removeCallbacks(tick)
@@ -163,6 +172,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
    * a capture, so the player and the decoder stop in every case.
    */
   fun stop() {
+    synchronized(gate) { pageSession += 1 }
     if (started) {
       started = false
       handler.removeCallbacks(tick)
@@ -239,9 +249,18 @@ class DjiLinkController private constructor(private val context: Context) : Link
   /**
    * Plays a capture through the same pipeline as the cable. Refused while an accessory is open. Returns null when it
    * started, otherwise a code the page words: busy, unreadable, tooLarge, damaged (index lines that do not fit the
-   * file), empty.
+   * file), empty, or closed when the page that asked has closed since ([session], read when it asked).
    */
-  fun playCapture(binUri: String, indexUri: String, startAtMs: Long, name: String? = null): String? {
+  fun playCapture(
+    binUri: String,
+    indexUri: String,
+    startAtMs: Long,
+    name: String? = null,
+    session: Long = pageSession,
+  ): String? {
+    if (session != pageSession) {
+      return "closed"
+    }
     if (manager.transport?.isRunning == true) {
       return "busy"
     }
@@ -270,26 +289,32 @@ class DjiLinkController private constructor(private val context: Context) : Link
       return "empty"
     }
     player.unload()
+    // Checked again under the page lock, which stop() takes to raise the session: either this playback starts before
+    // the page closes, and stop() ends it and shuts the decoder down, or it does not start at all
     synchronized(gate) {
+      if (session != pageSession) {
+        return "closed"
+      }
+      feed.open()
       video.newSource()
       // A replay neither reads nor writes the cache of a live accessory; its seed is the profile's in use, or the one
       // of the only hardware observed so far
       store.useAccessory(null)
       store.seed = boundProfile()?.streamSeed ?: ProfileRegistry.seed20261023
+      Log.i(TAG, "playing a capture of ${loaded.bytes.size} bytes from $startAtMs ms")
+      handler.removeCallbacks(tick)
+      handler.postDelayed(tick, TICK_MS)
+      player.play(
+        capture = loaded,
+        startAtMs = startAtMs,
+        onNewStream = { synchronized(gate) { video.newStream() } },
+        onRead = { markDirty() },
+        onEnd = {
+          player.failure?.let { Log.w(TAG, "the playback ended on an error: $it") }
+          handler.post { markDirty() }
+        },
+      )
     }
-    Log.i(TAG, "playing a capture of ${loaded.bytes.size} bytes from $startAtMs ms")
-    handler.removeCallbacks(tick)
-    handler.postDelayed(tick, TICK_MS)
-    player.play(
-      capture = loaded,
-      startAtMs = startAtMs,
-      onNewStream = { synchronized(gate) { video.newStream() } },
-      onRead = { markDirty() },
-      onEnd = {
-        player.failure?.let { Log.w(TAG, "the playback ended on an error: $it") }
-        handler.post { markDirty() }
-      },
-    )
     markDirty()
     return null
   }
@@ -645,6 +670,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       .put("shown", stats.shown)
       .put("droppedAtDisplay", stats.droppedAtDisplay)
       .put("overruns", stats.overruns)
+      .put("unitsDropped", stats.decoder.unitsDropped)
       .put("tooLarge", stats.tooLarge)
       .put("errors", stats.errors)
       .put("decoderName", stats.decoder.name ?: JSONObject.NULL)
@@ -920,6 +946,7 @@ private fun VideoStats.toPigeon(): DjiLinkDecode = DjiLinkDecode(
   shown = shown,
   droppedAtDisplay = droppedAtDisplay,
   overruns = overruns,
+  unitsDropped = decoder.unitsDropped,
   tooLarge = tooLarge,
   unitsWithoutDescription = unitsWithoutDescription,
   errors = errors,

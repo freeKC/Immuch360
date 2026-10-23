@@ -90,6 +90,99 @@ object HevcDecoders {
 }
 
 /**
+ * The access units waiting for an input buffer of the decoder, and the decoder thread they wake. The threads that
+ * submit (the reader, the player) and the decoder thread share it, so its rules are held under one lock:
+ *
+ * * the producer holds the bound: past [bound] units the oldest ones are dropped and counted, and a flush is asked of
+ *   the decoder thread, which empties what is left. The queue holds whole access units, so a drop never cuts one and
+ *   what stays starts on an access unit boundary. A decoder thread stuck inside a vendor call can no longer make the
+ *   queue grow without end;
+ * * a closed queue takes nothing and makes no worker: after [close], a late unit (a read taken just before the link
+ *   stopped, a capture asked for by a page that has closed since) is dropped instead of making a decoder thread and a
+ *   codec that nothing would shut down, until an explicit [open].
+ *
+ * [W] is the handler of the decoder thread; it is a type parameter so that the rules are unit tested without Android.
+ */
+class DecoderQueue<T : Any, W : Any>(private val bound: Int) {
+  private val lock = Any()
+  private val pending = ArrayDeque<T>()
+  private var overflow = false
+  private var closed = false
+  private var worker: W? = null
+  private var dropped = 0L
+
+  /** Units dropped past the bound or at a flush since the last [clear] */
+  val droppedUnits: Long get() = synchronized(lock) { dropped }
+
+  val size: Int get() = synchronized(lock) { pending.size }
+
+  val isClosed: Boolean get() = synchronized(lock) { closed }
+
+  /** The worker of the last [offer], until [close] */
+  val currentWorker: W? get() = synchronized(lock) { worker }
+
+  /**
+   * Queues [item] and returns the worker to wake, made by [make] when there is none yet. While closed, returns null:
+   * the item is dropped and no worker is made.
+   */
+  fun offer(item: T, make: () -> W): W? = synchronized(lock) {
+    if (closed) {
+      return null
+    }
+    pending.addLast(item)
+    if (pending.size > bound) {
+      while (pending.size > bound) {
+        pending.removeFirst()
+        dropped += 1
+      }
+      overflow = true
+    }
+    worker ?: make().also { worker = it }
+  }
+
+  /** For the decoder thread: true once after an overflow, with the units still waiting dropped and counted */
+  fun takeFlush(): Boolean = synchronized(lock) {
+    if (!overflow) {
+      return false
+    }
+    overflow = false
+    dropped += pending.size
+    pending.clear()
+    true
+  }
+
+  /** The oldest unit, left in the queue until [remove] */
+  fun peek(): T? = synchronized(lock) { pending.firstOrNull() }
+
+  /** Takes [item] out if it is still the oldest unit: the bound, a flush or a reset may have dropped it meanwhile */
+  fun remove(item: T) = synchronized(lock) {
+    if (pending.firstOrNull() === item) {
+      pending.removeFirst()
+    }
+  }
+
+  /** A new source: the waiting units go, and the count of drops starts again */
+  fun clear() = synchronized(lock) {
+    pending.clear()
+    overflow = false
+    dropped = 0
+  }
+
+  /** Nothing is queued and no worker is made until [open]; returns the worker to shut down, which the queue forgets */
+  fun close(): W? = synchronized(lock) {
+    closed = true
+    pending.clear()
+    overflow = false
+    worker.also { worker = null }
+  }
+
+  /** Takes units again: called by the page session that starts the link or plays a capture */
+  fun open() = synchronized(lock) {
+    closed = false
+  }
+}
+
+/**
  * The decoder: a MediaCodec in asynchronous mode on its own "DjiLinkDecoder" thread, fed one access unit per input
  * buffer, rendering into the surface of the video view or, when no view is shown, into a parking surface whose
  * pictures are released unseen.
@@ -120,17 +213,13 @@ class VideoDecoderFeed(
     private const val PARKING_HEIGHT = 1080
   }
 
-  private val lock = Any()
+  /**
+   * Units waiting for an input buffer, and the handler of the decoder thread they wake: the thread is made by the first
+   * unit while the queue is open and ended by [shutdown]
+   */
+  private val queue = DecoderQueue<Pair<AccessUnit, ResolvedDescription>, Handler>(DecoderPolicy.MAX_QUEUED_UNITS)
 
-  /** Units waiting for an input buffer, under [lock] */
-  private val pending = ArrayDeque<Pair<AccessUnit, ResolvedDescription>>()
-  private var overflow = false
-
-  @Volatile
-  private var thread: HandlerThread? = null
-
-  @Volatile
-  private var handler: Handler? = null
+  private val handler: Handler? get() = queue.currentWorker
 
   @Volatile
   private var viewSurface: Surface? = null
@@ -167,22 +256,14 @@ class VideoDecoderFeed(
   private val renderHeld = Runnable { renderHeldNow() }
 
   override fun submit(unit: AccessUnit, description: ResolvedDescription) {
-    val target = ensureThread()
-    synchronized(lock) {
-      pending.addLast(unit to description)
-      // The bound is a constant of the policy; the policy object itself belongs to the decoder thread
-      if (pending.size > DecoderPolicy.MAX_QUEUED_UNITS) {
-        overflow = true
-      }
-    }
+    // The bound is a constant of the policy; the policy object itself belongs to the decoder thread. A closed feed
+    // drops the unit and makes no thread.
+    val target = queue.offer(unit to description, ::makeThread) ?: return
     target.post(drain)
   }
 
   override fun reset() {
-    synchronized(lock) {
-      pending.clear()
-      overflow = false
-    }
+    queue.clear()
     handler?.post {
       releaseCodec()
       policyMade = false
@@ -192,7 +273,12 @@ class VideoDecoderFeed(
     }
   }
 
-  override fun status(): DecoderStatus = currentStatus
+  override fun status(): DecoderStatus = currentStatus.copy(unitsDropped = queue.droppedUnits)
+
+  /** A page session starts the link or plays a capture: units are taken again after a [shutdown] */
+  fun open() {
+    queue.open()
+  }
 
   /** The pilot's choice on the page; the running codec stops and the next unit starts one of that kind */
   fun setChoice(next: DecoderChoice) {
@@ -228,17 +314,14 @@ class VideoDecoderFeed(
     }
   }
 
-  /** The page session ended: the codec, the parking surface and the thread go */
+  /**
+   * The page session ended: the codec, the parking surface and the thread go, and the feed stays closed until [open],
+   * so that a unit still on its way cannot make a thread and a codec again.
+   */
   fun shutdown() {
-    synchronized(lock) {
-      pending.clear()
-      overflow = false
-    }
-    val current = thread ?: return
-    val target = handler
-    thread = null
-    handler = null
-    target?.post {
+    val target = queue.close() ?: return
+    val current = target.looper
+    target.post {
       releaseCodec()
       runCatching { parkingSurface?.release() }
       runCatching { parkingTexture?.release() }
@@ -252,53 +335,35 @@ class VideoDecoderFeed(
     }
   }
 
-  private fun ensureThread(): Handler {
-    handler?.let { return it }
-    synchronized(lock) {
-      handler?.let { return it }
-      val created = HandlerThread("DjiLinkDecoder").also { it.start() }
-      val made = Handler(created.looper)
-      thread = created
-      handler = made
-      return made
-    }
+  /** Called by the queue under its lock, only while it is open: no thread is made after a [shutdown] */
+  private fun makeThread(): Handler {
+    val created = HandlerThread("DjiLinkDecoder").also { it.start() }
+    return Handler(created.looper)
   }
 
   private fun drainNow() {
     while (true) {
-      val flush: Boolean
-      val next: Pair<AccessUnit, ResolvedDescription>?
-      synchronized(lock) {
-        flush = overflow
-        if (flush) {
-          overflow = false
-          pending.clear()
-        }
-        next = pending.firstOrNull()
-      }
-      if (flush) {
+      if (queue.takeFlush()) {
         flushCodec()
         continue
       }
-      if (next == null) {
-        return
-      }
+      val next = queue.peek() ?: return
       val (unit, resolved) = next
       if (failedForSession) {
-        synchronized(lock) { pending.removeFirstOrNull() }
+        queue.remove(next)
         continue
       }
       ensurePolicy(resolved.description)
       if (codec == null || policy.mustReconfigure(configured, resolved.description)) {
         if (!startCodec(resolved.description)) {
-          synchronized(lock) { pending.removeFirstOrNull() }
+          queue.remove(next)
           continue
         }
       }
       if (policy.beforeQueue(unit.isKey) == PolicyAction.SWITCH_TO_HARDWARE) {
         Log.i(TAG, "a key picture: the hardware decoder starts again from it")
         if (!startCodec(resolved.description)) {
-          synchronized(lock) { pending.removeFirstOrNull() }
+          queue.remove(next)
           continue
         }
       }
@@ -306,7 +371,7 @@ class VideoDecoderFeed(
       val index = freeInputs.removeFirstOrNull() ?: return
       // An index announced before a flush or a restart is no longer valid: it is dropped, never the unit
       val buffer = runCatching { current.getInputBuffer(index) }.getOrNull() ?: continue
-      synchronized(lock) { pending.removeFirstOrNull() }
+      queue.remove(next)
       queueUnit(current, index, buffer, unit)
       if (policy.afterQueue(unit.isKey) == PolicyAction.SWITCH_TO_SOFTWARE) {
         Log.i(TAG, "no picture from the hardware decoder: the software decoder takes over (${policy.lastSwitchReason})")
