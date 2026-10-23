@@ -12,7 +12,7 @@ export const OfflineNotice: React.FC = () => {
 	return (
 		<div className={css.notice} role="status" data-offline-notice>
 			<Icon size="small" className={css.icon}>
-				alert02
+				exclamation
 			</Icon>
 			<span>{t('webos_offline_notice')}</span>
 		</div>
