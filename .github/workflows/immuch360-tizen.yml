@@ -7,8 +7,8 @@ name: Immuch360 Tizen
 # uploaded with SHA256SUMS.txt and the list of its files. That signature only proves the official tools accept the
 # package: every install on a Samsung TV is re-signed by the tester with his own Samsung certificate.
 #
-# It runs on every push and pull request that touches tizen/, the webOS sources, tools and tests, the fork's i18n/
-# or these workflows, by hand (the version of tizen/config.xml, or the one given), and from
+# It runs on every push and pull request that touches tizen/, what of webos/ makes the bundle, the fork's i18n/ and
+# LICENSE or these workflows, by hand (the version of tizen/config.xml, or the one given), and from
 # immuch360-tizen-release.yml on a tizen-v<x.y.z> tag, which publishes the .wgt. Read only, no secret, no kept token:
 # .github/desktop/check_workflow.py holds it to that. Nothing of the Tizen SDK goes into an artifact (Samsung's TV SDK
 # licence forbids passing it on); its installer is only cached, and checked by its SHA256 after every restore.
@@ -19,26 +19,26 @@ on:
     branches: ['**']
     paths:
       - 'tizen/**'
-      - 'webos/src/**'
-      - 'webos/tools/**'
-      - 'webos/test/**'
-      - 'webos/package.json'
-      - 'webos/package-lock.json'
-      - 'webos/tsconfig.json'
-      - 'webos/.nvmrc'
+      # All of webos/ goes into the bundle or builds it (src, bridge, resources, tools, the licences, the version of
+      # webos-meta), but for the JS service, the store pictures and the notes, which only the webOS app has
+      - 'webos/**'
+      - '!webos/service/**'
+      - '!webos/assets/**'
+      - '!webos/**/*.md'
+      - 'LICENSE'
       - 'i18n/**'
       - '.github/workflows/immuch360-tizen*.yml'
       - '.github/desktop/check_workflow.py'
   pull_request:
     paths:
       - 'tizen/**'
-      - 'webos/src/**'
-      - 'webos/tools/**'
-      - 'webos/test/**'
-      - 'webos/package.json'
-      - 'webos/package-lock.json'
-      - 'webos/tsconfig.json'
-      - 'webos/.nvmrc'
+      # All of webos/ goes into the bundle or builds it (src, bridge, resources, tools, the licences, the version of
+      # webos-meta), but for the JS service, the store pictures and the notes, which only the webOS app has
+      - 'webos/**'
+      - '!webos/service/**'
+      - '!webos/assets/**'
+      - '!webos/**/*.md'
+      - 'LICENSE'
       - 'i18n/**'
       - '.github/workflows/immuch360-tizen*.yml'
       - '.github/desktop/check_workflow.py'
