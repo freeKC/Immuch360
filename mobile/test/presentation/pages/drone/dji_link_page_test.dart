@@ -99,6 +99,7 @@ DjiLinkDecode _decode({
   DjiLinkDescriptionSource source = DjiLinkDescriptionSource.profile,
   String? switchReason,
   int? keyPictureAgoMs,
+  int? lastOutputAgoMs = 40,
 }) => DjiLinkDecode(
   state: state,
   failure: failure,
@@ -136,6 +137,7 @@ DjiLinkDecode _decode({
   encoderRestarts: 1,
   keyPictures: 1,
   keyPictureAgoMs: keyPictureAgoMs,
+  lastOutputAgoMs: lastOutputAgoMs,
 );
 
 DjiLinkTelemetry _telemetry({bool stale = false}) => DjiLinkTelemetry(
@@ -684,6 +686,20 @@ void main() {
     await tester.tap(find.byKey(const Key('dji_link_video_choice_software')));
     await tester.pumpAndSettle();
     expect(api.choices, [DjiLinkDecoderChoice.software]);
+  });
+
+  testWidgets('the picture is drawn only while pictures come out of the decoder, black otherwise', (tester) async {
+    final api = _FakeApi(snapshot: _snapshot(decode: _decode(lastOutputAgoMs: null)));
+    final listener = await pumpPage(tester, api);
+
+    expect(find.byKey(const Key('dji_link_video_placeholder')), findsNothing);
+    listener!.snapshotChanged(_snapshot(decode: _decode(lastOutputAgoMs: 120)));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_link_video_placeholder')), findsOneWidget);
+    // The stream stopped: no stale picture, and no transparent surface showing what was drawn before
+    listener.snapshotChanged(_snapshot(decode: _decode(lastOutputAgoMs: 5000)));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_link_video_placeholder')), findsNothing);
   });
 
   testWidgets('the full screen route shows the picture alone and Back leaves it', (tester) async {

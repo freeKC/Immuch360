@@ -207,21 +207,24 @@ class VideoDecoderFeed(
   }
 
   /**
-   * The surface of the video view that should show the picture, or null when none is shown. A surface that goes away
-   * is swapped for the parking surface before this returns, because the view destroys it right after.
+   * The surface of the video view that should show the picture, or null when none is shown. The switch is done before
+   * this returns: a view destroys its surface right after telling, whether the picture goes to the parking surface or
+   * to another view that still has one (the panel under a full screen route that closes).
    */
   fun setViewSurface(surface: Surface?) {
     viewSurface = surface
     val target = handler ?: return
-    if (surface == null) {
-      val done = CountDownLatch(1)
-      target.post {
-        switchOutput()
-        done.countDown()
-      }
+    if (target.looper.thread === Thread.currentThread()) {
+      switchOutput()
+      return
+    }
+    val done = CountDownLatch(1)
+    val posted = target.post {
+      switchOutput()
+      done.countDown()
+    }
+    if (posted) {
       runCatching { done.await(SURFACE_SWITCH_TIMEOUT_MS, TimeUnit.MILLISECONDS) }
-    } else {
-      target.post { switchOutput() }
     }
   }
 

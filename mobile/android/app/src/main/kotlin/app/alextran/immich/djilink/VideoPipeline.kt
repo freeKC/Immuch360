@@ -137,6 +137,7 @@ class VideoStatistics {
   private var keyPictures = 0L
   private var lastKeyNs: Long? = null
   private var firstUnitNs: Long? = null
+  private var lastUnitNs: Long? = null
   private var firstPictureNs: Long? = null
   private var lastOutputNs: Long? = null
   private var lastDecodeNs: Long? = null
@@ -152,6 +153,7 @@ class VideoStatistics {
     if (firstUnitNs == null) {
       firstUnitNs = nowNs
     }
+    lastUnitNs = nowNs
     if (unit.isKey) {
       keyPictures += 1
       lastKeyNs = nowNs
@@ -212,6 +214,7 @@ class VideoStatistics {
     keyPictures = 0
     lastKeyNs = null
     firstUnitNs = null
+    lastUnitNs = null
     firstPictureNs = null
     lastOutputNs = null
     lastDecodeNs = null
@@ -239,6 +242,7 @@ class VideoStatistics {
     val keyPictures: Long,
     val keyPictureAgoMs: Long?,
     val lastOutputAgoMs: Long?,
+    val lastUnitAgoMs: Long?,
   )
 
   internal fun numbers(nowNs: Long): Numbers = synchronized(lock) {
@@ -268,6 +272,7 @@ class VideoStatistics {
       keyPictures = keyPictures,
       keyPictureAgoMs = lastKeyNs?.let { (nowNs - it) / 1_000_000 },
       lastOutputAgoMs = lastOutputNs?.let { (nowNs - it) / 1_000_000 },
+      lastUnitAgoMs = lastUnitNs?.let { (nowNs - it) / 1_000_000 },
     )
   }
 
@@ -299,6 +304,9 @@ class VideoPipeline(
   companion object {
     /** The decoder is said to have joined a running stream for this long after its first picture without a key one */
     const val BUILDING_NS = 5_000_000_000L
+
+    /** Without a unit for this long, the video stopped: the panel waits for video again */
+    const val STALLED_MS = 2_000L
   }
 
   val pictureCounter = PictureCounterTracker()
@@ -366,7 +374,7 @@ class VideoPipeline(
     val state = when {
       codec == VideoCodec.H264 -> VideoState.H264_NOT_DECODED
       decoder.failure != null && !decoder.running -> VideoState.FAILED
-      numbers.unitsIn == 0L -> VideoState.WAITING_FOR_VIDEO
+      numbers.unitsIn == 0L || (numbers.lastUnitAgoMs ?: 0L) > STALLED_MS -> VideoState.WAITING_FOR_VIDEO
       lastResolved == null -> VideoState.WAITING_FOR_DESCRIPTION
       decoder.running && decoder.parked && numbers.decoded > 0 -> VideoState.HIDDEN
       decoder.running && !decoder.keySinceStart && building(decoder, nowNs, numbers) -> VideoState.BUILDING

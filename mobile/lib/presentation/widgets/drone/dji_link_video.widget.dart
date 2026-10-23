@@ -71,6 +71,17 @@ String djiLinkVideoOverlay(Translations t, DjiLinkDecode decode) {
   return median == null ? rate : '$rate, ${median.toStringAsFixed(1)} ms';
 }
 
+/// Whether pictures come out of the decoder: the platform view is built only then. A surface with no picture in it is
+/// transparent, and under hybrid composition it shows whatever was drawn there before instead of black; while it is not
+/// built, the decoder renders into its parking surface and moves to the view as soon as the view exists.
+bool djiLinkPictureFlows(DjiLinkDecode? decode) {
+  final ago = decode?.lastOutputAgoMs;
+  return decode != null && decode.decoderName != null && ago != null && ago < djiLinkPictureTimeoutMs;
+}
+
+/// After this long without a picture out of the decoder, the panel draws black instead of the platform view
+const djiLinkPictureTimeoutMs = 3000;
+
 /// The aspect ratio of the stream, 16:9 until a description gave its size
 double djiLinkVideoAspect(DjiLinkDecode? decode) {
   final width = decode?.width;
@@ -104,7 +115,7 @@ class DjiLinkVideoPanel extends ConsumerWidget {
             fit: StackFit.expand,
             children: [
               const ColoredBox(color: Colors.black),
-              const DjiLinkVideoSurface(),
+              if (djiLinkPictureFlows(decode)) const DjiLinkVideoSurface(),
               if (decode != null)
                 Positioned(
                   left: 6,
@@ -277,7 +288,10 @@ class DjiLinkFullScreenVideo extends ConsumerWidget {
         child: Stack(
           children: [
             Center(
-              child: AspectRatio(aspectRatio: djiLinkVideoAspect(decode), child: const DjiLinkVideoSurface()),
+              child: AspectRatio(
+                aspectRatio: djiLinkVideoAspect(decode),
+                child: djiLinkPictureFlows(decode) ? const DjiLinkVideoSurface() : const SizedBox.expand(),
+              ),
             ),
             if (decode != null)
               Positioned(

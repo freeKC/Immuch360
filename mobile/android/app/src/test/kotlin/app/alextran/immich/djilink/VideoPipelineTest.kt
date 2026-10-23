@@ -105,13 +105,29 @@ class VideoPipelineTest {
     }
     sink.status = DecoderStatus(name = "c2.android.hevc.decoder", kind = DecoderKind.SOFTWARE, running = true, parked = false, startedAtNs = clock)
     assertEquals(VideoState.BUILDING, pipeline.stats(clock, 0).state)
+    val started = clock
     pipeline.statistics.onDecoded(10_000_000, clock)
     assertEquals(VideoState.BUILDING, pipeline.stats(clock + 1_000_000_000, 0).state)
-    assertEquals(VideoState.DECODING, pipeline.stats(clock + VideoPipeline.BUILDING_NS, 0).state)
+    // Five more seconds of pictures with no key picture: the picture is built, the panel says decoding
+    while (clock - started < VideoPipeline.BUILDING_NS) {
+      feed(HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice()))
+    }
+    assertEquals(VideoState.DECODING, pipeline.stats(clock, 0).state)
     sink.status = sink.status.copy(parked = true)
     assertEquals(VideoState.HIDDEN, pipeline.stats(clock, 0).state)
     sink.status = DecoderStatus(running = false, failure = "no-decoder")
     assertEquals(VideoState.FAILED, pipeline.stats(clock, 0).state)
+  }
+
+  @Test
+  fun aStreamThatStoppedWaitsForVideoAgain() {
+    repeat(CodecDetector.SIGNATURE_UNITS) {
+      feed(HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(), HevcSamples.suffixSei(it + 1)))
+    }
+    sink.status = DecoderStatus(name = "c2.android.hevc.decoder", running = true, parked = true, startedAtNs = 0)
+    pipeline.statistics.onDecoded(5_000_000, clock)
+    assertEquals(VideoState.HIDDEN, pipeline.stats(clock, 0).state)
+    assertEquals(VideoState.WAITING_FOR_VIDEO, pipeline.stats(clock + 2_001_000_000, 0).state)
   }
 
   @Test
