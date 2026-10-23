@@ -323,7 +323,7 @@ void main() {
     await endRealIo(tester);
   });
 
-  testWidgets('a file the player does not recognise as a video: a sentence, and what the bridge sent in the logs', (
+  testWidgets('a file the player does not recognize as a video: a sentence, and what the bridge sent in the logs', (
     tester,
   ) async {
     // The native views made, by id
@@ -367,13 +367,13 @@ void main() {
     );
     await pumpRealIo(tester, () => logs.any((line) => line.contains('first bytes sent')));
 
-    expect(find.textContaining('does not recognise it as a video'), findsOneWidget);
+    expect(find.textContaining('does not recognize it as a video'), findsOneWidget);
     expect(find.textContaining('extractors'), findsNothing);
     final head = flat.sublist(0, 16).map((byte) => byte.toRadixString(16).padLeft(2, '0')).join(' ');
     expect(
       logs,
       contains(
-        'The player does not recognise holiday.mp4 as a video: smb share, listed as video/mp4, ${flat.length} bytes, '
+        'The player does not recognize holiday.mp4 as a video: smb share, listed as video/mp4, ${flat.length} bytes, '
         'first bytes sent: $head',
       ),
     );
@@ -381,11 +381,11 @@ void main() {
     await endRealIo(tester);
   });
 
-  test('the report of a file the player does not recognise tells an empty answer and an unreadable one', () {
+  test('the report of a file the player does not recognize tells an empty answer and an unreadable one', () {
     const entry = NetworkEntry(sourceId: 'nas', path: '/film.mkv', isDirectory: false, size: 0);
     expect(
       unrecognizedVideoReport(name: 'film.mkv', shareType: NetworkSourceType.dlna, entry: entry, head: Uint8List(0)),
-      'The player does not recognise film.mkv as a video: dlna share, listed as video/x-matroska, 0 bytes, '
+      'The player does not recognize film.mkv as a video: dlna share, listed as video/x-matroska, 0 bytes, '
       'first bytes sent: none',
     );
     expect(

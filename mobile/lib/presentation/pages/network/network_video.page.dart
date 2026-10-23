@@ -51,7 +51,7 @@ typedef _Video = ({NetworkEntry entry, Uri url});
 bool isUnrecognizedVideoError(String error) =>
     error.contains('None of the available extractors') || error.contains('UnrecognizedInputFormat');
 
-/// The line of the logs about a file of a share that the player did not recognise as a video: the kind of share, the
+/// The line of the logs about a file of a share that the player did not recognize as a video: the kind of share, the
 /// type and the size the share gave, and the first bytes the media bridge sent ([head], null when they could not be
 /// read), so that a report tells an HTML page, an empty answer or a format the player lacks apart
 String unrecognizedVideoReport({
@@ -65,7 +65,7 @@ String unrecognizedVideoReport({
       : head.isEmpty
       ? 'none'
       : head.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join(' ');
-  return 'The player does not recognise $name as a video: ${shareType.name} share, listed as '
+  return 'The player does not recognize $name as a video: ${shareType.name} share, listed as '
       '${entry.guessedMimeType}, ${entry.size ?? 'unknown'} bytes, first bytes sent: $bytes';
 }
 
@@ -425,7 +425,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     return (entry: entry, url: url);
   }
 
-  /// Logs what the player got of a file it did not recognise as a video (see [unrecognizedVideoReport])
+  /// Logs what the player got of a file it did not recognize as a video (see [unrecognizedVideoReport])
   Future<void> _logUnrecognized() async {
     // Read before the first await: the page may be gone by then
     final client = ref.read(networkBridgeClientProvider);
