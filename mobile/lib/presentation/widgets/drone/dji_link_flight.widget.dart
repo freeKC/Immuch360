@@ -107,7 +107,7 @@ class DjiLinkFlightSection extends StatelessWidget {
             title: t.dji_link_link_group,
             evidence: DjiLinkEvidence.capture,
             stale: link.stale,
-            ageMs: link.ageMs ?? 0,
+            ageMs: link.ageMs,
             facts: [
               (
                 t.dji_link_signal,
@@ -128,7 +128,7 @@ class DjiLinkFlightSection extends StatelessWidget {
             title: t.dji_link_remote_group,
             evidence: DjiLinkEvidence.candidate,
             stale: telemetry.remoteBatteryStale,
-            ageMs: 0,
+            ageMs: telemetry.remoteBatteryAgeMs,
             facts: [(t.dji_link_remote_battery, '${telemetry.remoteBatteryPercent} %')],
           ),
         if (gimbal != null)
@@ -178,7 +178,9 @@ class _Group extends StatelessWidget {
   final String title;
   final DjiLinkEvidence evidence;
   final bool stale;
-  final int ageMs;
+
+  /// Null when the age is not known: a stale group then says so without a number of seconds
+  final int? ageMs;
   final List<(String, String)> facts;
 
   @override
@@ -197,7 +199,11 @@ class _Group extends StatelessWidget {
           Text(
             [
               djiLinkEvidenceText(t, evidence),
-              if (stale) t.dji_link_stale(seconds: (ageMs / 1000).toStringAsFixed(1)),
+              if (stale)
+                switch (ageMs) {
+                  final int age => t.dji_link_stale(seconds: (age / 1000).toStringAsFixed(1)),
+                  null => t.dji_link_stale_no_age,
+                },
             ].join(', '),
             style: context.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
           ),

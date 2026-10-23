@@ -754,6 +754,30 @@ void main() {
     expect(find.text('No flight data has arrived.'), findsOneWidget);
   });
 
+  testWidgets('a stale remote battery says how old it is, and never "no update for 0.0 s"', (tester) async {
+    DjiLinkTelemetry remoteOnly({int? ageMs}) => DjiLinkTelemetry(
+      aircraftPresent: false,
+      remotePresent: false,
+      layoutMismatches: 0,
+      unanswered: const [],
+      remoteBatteryPercent: 50,
+      remoteBatteryStale: true,
+      remoteBatteryAgeMs: ageMs,
+    );
+    final api = _FakeApi(snapshot: _snapshot(telemetryValues: remoteOnly(ageMs: 6300)));
+    final listener = await pumpPage(tester, api);
+
+    expect(find.byKey(const Key('dji_link_remote_group')), findsOneWidget);
+    expect(find.textContaining('no update for 6.3 s'), findsOneWidget);
+    expect(find.byKey(const Key('dji_link_stale')), findsOneWidget);
+
+    // An age the native side does not know is not shown as zero
+    listener!.snapshotChanged(_snapshot(telemetryValues: remoteOnly()));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('no recent update'), findsOneWidget);
+    expect(find.textContaining('0.0 s'), findsNothing);
+  });
+
   testWidgets('"Your hardware" lists the starting profiles and binds the strings to one', (tester) async {
     final api = _FakeApi(
       snapshot: _snapshot(

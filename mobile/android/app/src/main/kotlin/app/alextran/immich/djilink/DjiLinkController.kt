@@ -1034,6 +1034,7 @@ private fun telemetryPigeon(router: FrameRouter, nowMs: Long): DjiLinkTelemetry 
     ),
     remoteBatteryPercent = values.remoteBatteryPercent?.value?.toLong(),
     remoteBatteryStale = values.remoteBatteryPercent?.stale ?: false,
+    remoteBatteryAgeMs = values.remoteBatteryPercent?.ageMs,
     unanswered = router.requestRows().map {
       DjiLinkRequestRow(
         senderType = it.senderType.toLong(),

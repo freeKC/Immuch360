@@ -676,6 +676,7 @@ class DjiLinkTelemetry {
     this.link,
     this.remoteBatteryPercent,
     this.remoteBatteryStale = false,
+    this.remoteBatteryAgeMs,
   });
 
   final bool aircraftPresent;
@@ -689,6 +690,9 @@ class DjiLinkTelemetry {
   /// A candidate: the byte that fits, to check against DJI Fly
   final int? remoteBatteryPercent;
   final bool remoteBatteryStale;
+
+  /// Milliseconds since the remote battery was last read, as the other groups carry their age
+  final int? remoteBatteryAgeMs;
   final List<DjiLinkRequestRow> unanswered;
 }
 

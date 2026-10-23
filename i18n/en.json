@@ -1302,6 +1302,7 @@
   "dji_link_signal_write_blocked": "the cable does not take bytes",
   "dji_link_speeds": "Speeds (candidate)",
   "dji_link_stale": "no update for {seconds} s",
+  "dji_link_stale_no_age": "no recent update",
   "dji_link_state": "State",
   "dji_link_state_absent": "No accessory",
   "dji_link_state_accessory_detected": "Accessory listed",
