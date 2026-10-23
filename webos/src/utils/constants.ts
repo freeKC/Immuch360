@@ -9,6 +9,9 @@ export const BUCKET_HEADER_MARGIN_PX = 40;
 // Authored 4K-space px, as .rail width in NavigationRail.module.less (360px there = 180 CSS px at FHD, 120 at HD).
 // Immuch360: it was a runtime 180, which no longer matched the rail of the 1280x720 package; ri.scale() it.
 export const RAIL_WIDTH_PX = 360;
+// The rail of the 1280x720 package (Enact's hd screen type): 432 authored px, 144 CSS px, so that the labels of the
+// rail are not all cut at 16 px per rem. Must match the .enact-res-hd .rail width of NavigationRail.module.less.
+export const RAIL_WIDTH_HD_PX = 432;
 export const NAVIGATION_RAIL_ID = 'navigation-rail';
 // Authored 4K-space px (ri.scale(240) renders a 120 CSS px rail at FHD). Must match
 // .scrubberHost width in DateScrubber.module.less — TimelineGrid subtracts it from gridWidth.

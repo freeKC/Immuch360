@@ -24,6 +24,13 @@
   box-sizing: border-box;
 }
 
+// Immuch360: the 1280x720 package (Enact's hd screen type): a rail of 144 CSS px rather than the 120 of the scale, so
+// that its labels fit; keep in sync with RAIL_WIDTH_HD_PX (constants.ts)
+:global(.enact-res-hd) .rail {
+  width: 432px;
+  min-width: 432px;
+}
+
 .navItem {
   display: flex;
   align-items: center;

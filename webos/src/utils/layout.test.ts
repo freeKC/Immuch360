@@ -21,7 +21,7 @@ describe('the width of the pages', () => {
 		expect(at(1920, 1080)).toBe(1740);
 	});
 
-	test('1280x720: the window less a rail of 120 px', () => {
-		expect(at(1280, 720)).toBe(1160);
+	test('1280x720: the window less a rail of 144 px, wider than the scale alone gives (120) so that its labels fit', () => {
+		expect(at(1280, 720)).toBe(1136);
 	});
 });
