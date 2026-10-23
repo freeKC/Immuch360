@@ -18,6 +18,11 @@ import 'package:immich_mobile/presentation/widgets/pairing/pairing_confirm.sheet
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_ui/immich_ui.dart';
 
+/// The services announced nearby under a DNS-SD type, until the future completes; tests replace it
+final pairingBrowseProvider = Provider<Stream<MdnsService> Function(String type, Future<void> until)>(
+  (_) => bonsoirBrowse,
+);
+
 /// A screen announced nearby
 class _FoundScreen {
   const _FoundScreen({required this.name, required this.host, required this.port, required this.kind});
@@ -56,7 +61,7 @@ class _EnterCodePageState extends ConsumerState<EnterCodePage> {
     super.initState();
     _address.text = widget.address ?? '';
     // Looked for as long as the page shows, two minutes at most: the life of a code
-    _discovery = bonsoirBrowse(
+    _discovery = ref.read(pairingBrowseProvider)(
       pairingServiceType,
       Future.any([_browsing.future, Future<void>.delayed(const Duration(minutes: 2))]),
     ).listen((service) => unawaited(_add(service)), onError: (Object _) {});
@@ -74,6 +79,10 @@ class _EnterCodePageState extends ConsumerState<EnterCodePage> {
   }
 
   Future<void> _add(MdnsService service) async {
+    // A phone that sends a drone's picture to headsets (DJI link) announces itself under the same type: not a screen
+    if (service.attributes['kind'] == 'drone') {
+      return;
+    }
     final host = isPrivatePairingIPv4(service.host) ? service.host : await lookupIPv4(service.host);
     if (host == null || !isPrivatePairingIPv4(host) || !mounted) {
       return;
