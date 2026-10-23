@@ -16,7 +16,7 @@
 		application: {
 			getCurrentApplication: function () {
 				return {
-					appInfo: {id: 'Immuch360T.Immuch360'},
+					appInfo: {id: 'Immuch360T.Immuch360', name: 'Immuch360', version: window.__e2eVersion || '0.1.0'},
 					exit: function () {
 						calls.exits += 1;
 					},

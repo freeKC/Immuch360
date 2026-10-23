@@ -22,6 +22,7 @@ export interface TizenApplicationInformation {
 }
 
 export interface TizenApplication {
+	appInfo?: TizenApplicationInformation;
 	exit?: () => void;
 	hide?: () => void;
 }

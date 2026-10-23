@@ -220,6 +220,20 @@ describe('the app and the TV', () => {
 		assert.equal(tizenAppInfo(), null);
 	});
 
+	test('the id and version from the running application when getAppInfo fails or is missing', () => {
+		const running = {appInfo: {id: 'Immuch360T.Immuch360', version: '0.1.2'}, exit: () => {}};
+		const tv = fakeSamsung();
+		tv.tizen.application.getAppInfo = () => {
+			throw new Error('SecurityError');
+		};
+		tv.tizen.application.getCurrentApplication = () => running;
+		assert.deepEqual(tizenAppInfo(), {id: 'Immuch360T.Immuch360', version: '0.1.2'});
+		delete tv.tizen.application.getAppInfo;
+		assert.deepEqual(tizenAppInfo(), {id: 'Immuch360T.Immuch360', version: '0.1.2'});
+		tv.tizen.application.getCurrentApplication = () => ({exit: () => {}});
+		assert.equal(tizenAppInfo(), null);
+	});
+
 	test('model, Tizen version, firmware, panel, HDR and AVPlay', () => {
 		fakeSamsung();
 		assert.deepEqual(tizenInfo(), {

@@ -119,9 +119,13 @@ export function exitTizenApp(): boolean {
 	}
 }
 
-/** The id and version of the installed package (config.xml), null off a Samsung TV */
+/**
+ * The id and version of the installed package (config.xml), null off a Samsung TV. getAppInfo() first, else the
+ * appInfo of the running application, which Samsung gives without asking anything of the app.
+ */
 export function tizenAppInfo(): {id: string; version: string} | null {
-	const info = attempt(() => globals().tizen?.application?.getAppInfo?.());
+	const application = globals().tizen?.application;
+	const info = attempt(() => application?.getAppInfo?.()) ?? attempt(() => application?.getCurrentApplication?.()?.appInfo);
 	if (!info) return null;
 	return {id: String(info.id ?? '?'), version: String(info.version ?? '?')};
 }
