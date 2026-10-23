@@ -9,12 +9,14 @@
 // went in, when the clip of the video test of the diagnostics page is missing, when the licences are missing (the AGPL
 // of Immuch360 and the MIT notice of immich-tv-webos, which must be in every copy, see tools/licence-files.mjs), when
 // the media bridge of the service or the notices of the third party code in it are missing (tools/build-bridge.mjs),
-// or when the package grew past 10 MB. --list writes every file and its size, to compare two builds.
+// when the icons are not the opaque squares LG's store asks for (tools/store-rules.mjs), or when the package grew past
+// 10 MB. --list writes every file and its size, to compare two builds.
 
 import {readFileSync, readdirSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {gunzipSync} from 'node:zlib';
 import {createHash} from 'node:crypto';
+import {ICONS, iconProblems} from './store-rules.mjs';
 
 const APP_ID = 'com.aprogsys.immuch360';
 const SERVICE_ID = `${APP_ID}.service`;
@@ -123,6 +125,9 @@ if (appinfoBytes) {
 	if (appinfo.id !== APP_ID) problems.push(`appinfo.json id ${appinfo.id}, not ${APP_ID}`);
 	if (appinfo.title !== 'Immuch360') problems.push(`appinfo.json title ${appinfo.title}`);
 	if (ipkName !== `${APP_ID}_${appinfo.version}_all.ipk`) problems.push(`${ipkName} does not carry the version ${appinfo.version}`);
+	// LG's store rules on the icons and the tile colour (tools/store-rules.mjs)
+	const icons = Object.fromEntries(Object.keys(ICONS).map((name) => [name, data[appDir + name]]).filter(([, bytes]) => bytes));
+	problems.push(...iconProblems(appinfo, icons));
 }
 const servicePackage = data[`${serviceDir}package.json`];
 if (servicePackage && version && JSON.parse(servicePackage.toString('utf8')).version !== version) {

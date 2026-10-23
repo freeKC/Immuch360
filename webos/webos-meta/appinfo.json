@@ -11,6 +11,7 @@
 	"miniicon": "icon-mini.png",
 	"largeIcon": "icon-large.png",
 	"splashBackground": "splash.png",
+	"iconColor": "#131313",
 	"bgColor": "#131313",
 	"uiRevision": 2,
 	"disableBackHistoryAPI": true,
