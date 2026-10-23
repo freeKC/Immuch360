@@ -156,7 +156,7 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): what the device itself says it can do about a USB accessory"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoDecoderFeed.kt": {
-    "blob": "07dd151de5d4a54d96a8c8e8d93352b798ddce88",
+    "blob": "bfdf67fc5fc02d637f6c722c3f5ebd60c7a29565",
     "reason": "DJI link (feat-dji-link, 12ccff821): the hardware decoder fed by hand, asleep until a later stage wakes it; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the decoder rewritten: selection, configuration chain, software fallback, flush on backlog, surface switching, statistics"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoFragments.kt": {
@@ -164,7 +164,7 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the video payloads kept as fragments with their counters; fix round of 22 October: the review findings of stage 1"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoPipeline.kt": {
-    "blob": "a90584d945e7f3b444e39444ab7181ae62624972",
+    "blob": "04dd84714fbb9c8c04bf31eabbac9c25ae8a1816",
     "reason": "DJI link stage 2 (feat-dji-link-2): the glue between the router and the decoder, with the counters of the video panel"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoProbe.kt": {
@@ -304,7 +304,7 @@
     "reason": "DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/VideoPipelineTest.kt": {
-    "blob": "b0ac09ad5e68c3dc3d428820e018fe7b73ce71a2",
+    "blob": "b4edad720ebec069659ae14b856c7d158c4ea790",
     "reason": "DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/VideoProbeTest.kt": {
