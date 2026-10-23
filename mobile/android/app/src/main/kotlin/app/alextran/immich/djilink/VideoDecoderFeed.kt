@@ -192,9 +192,9 @@ class DecoderQueue<T : Any, W : Any>(private val bound: Int) {
  * [DecoderPolicy] and [DisplayPacer], which are unit tested; this class does what they say and measures.
  *
  * Configuration, tried in this order until the decoder accepts: the stream description as csd-0 with a 1 MiB input
- * size, realtime priority, KEY_LOW_LATENCY when the decoder reports the feature, and the Qualcomm vendor keys on a
- * Qualcomm decoder only; the same without the vendor keys; the plain configuration. Which one was accepted is on the
- * page.
+ * size, realtime priority, KEY_LOW_LATENCY when the decoder reports the feature, and on a Qualcomm decoder only the
+ * Qualcomm vendor keys and the highest operating rate; the same without those; the plain configuration. Which one was
+ * accepted is in the log.
  *
  * Receive only: nothing here has a handle on the transport.
  */
@@ -475,6 +475,9 @@ class VideoDecoderFeed(
       if (level == 0) {
         format.setInteger(QTI_LOW_LATENCY, 1)
         format.setInteger(QTI_PICTURE_ORDER, 1)
+        // Public MediaFormat key: clock the decoder for its highest rate rather than for 30 pictures per second (the
+        // open source ALVR client does the same on the Quest); a decoder that refuses it falls through to level 1
+        format.setInteger(MediaFormat.KEY_OPERATING_RATE, Short.MAX_VALUE.toInt())
         asksLowLatency = true
       }
       val created = runCatching { MediaCodec.createByCodecName(candidate.name) }.getOrNull() ?: return false
@@ -586,7 +589,7 @@ class VideoDecoderFeed(
     }
     heldOutput = null
     if (runCatching { current.releaseOutputBuffer(index, true) }.isSuccess) {
-      statistics.onShown()
+      statistics.onShown(clockNs())
     }
   }
 
@@ -632,7 +635,7 @@ class VideoDecoderFeed(
       when (val decision = pacer.onOutput(now)) {
         DisplayPacer.Decision.RenderNow -> {
           if (runCatching { codec.releaseOutputBuffer(index, true) }.isSuccess) {
-            statistics.onShown()
+            statistics.onShown(clockNs())
           }
         }
         is DisplayPacer.Decision.Hold -> {

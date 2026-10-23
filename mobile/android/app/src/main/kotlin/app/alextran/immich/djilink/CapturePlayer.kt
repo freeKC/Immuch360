@@ -56,9 +56,21 @@ class CapturePlayer(
   /** True from [play] to [stop]: the page shows the played capture's video and telemetry */
   val loaded: Boolean get() = name != null
 
+  /** Whether the playback starts again at its start second when it reaches the end */
+  @Volatile
+  var looping = false
+    private set
+
+  /** Loops played to their end since [play] */
+  @Volatile
+  var loops = 0
+    private set
+
   /**
-   * Starts playing [capture] from [startAtMs]. [onNewStream] is called at the start and at each open or gap marker,
-   * [onRead] after each read, [onEnd] when the last read was played or [stop] was called.
+   * Starts playing [capture] from [startAtMs]. [onNewStream] is called at the start, at each open or gap marker and at
+   * the start of each loop, [onRead] after each read, [onEnd] when the last read was played (of the last loop) or
+   * [stop] was called. With [loop], the end starts the playback again at the same second, through parsers started
+   * again: the first unit of each loop does not continue the last one of the previous loop.
    */
   fun play(
     capture: LoadedCapture,
@@ -66,6 +78,7 @@ class CapturePlayer(
     onNewStream: () -> Unit,
     onRead: () -> Unit,
     onEnd: () -> Unit,
+    loop: Boolean = false,
   ) {
     stop()
     val reads = capture.index.filter { it.direction == CaptureDirection.IN || it.direction.restartsStream }
@@ -81,6 +94,8 @@ class CapturePlayer(
     }
     failure = null
     stopRequested = false
+    looping = loop
+    loops = 0
     playing = true
     val worker = Thread({ run(capture, reads, firstNs, startAtMs, onNewStream, onRead, onEnd) }, "DjiLinkPlayer")
     worker.isDaemon = true
@@ -98,40 +113,25 @@ class CapturePlayer(
     onEnd: () -> Unit,
   ) {
     try {
-      onNewStream()
       val startNs = firstNs + startAtMs * 1_000_000
       val playable = reads.filter { it.direction.restartsStream || it.monotonicNs >= startNs }
       val origin = playable.firstOrNull { it.direction == CaptureDirection.IN }?.monotonicNs ?: startNs
-      val wallStart = clockNs()
-      for (entry in playable) {
-        if (stopRequested) {
-          break
-        }
-        if (entry.direction.restartsStream) {
+      val hasReads = playable.any { it.direction == CaptureDirection.IN }
+      var first = true
+      while (first || (looping && hasReads && !stopRequested)) {
+        if (!first) {
+          // A new loop: the parsers start again, as at an open marker
           synchronized(gate) {
             decoder.reset()
             router.restartStreams()
           }
-          onNewStream()
-          continue
         }
-        val due = wallStart + (entry.monotonicNs - origin)
-        val wait = due - clockNs()
-        if (wait > 0) {
-          sleepNs(wait)
+        first = false
+        onNewStream()
+        playOnce(capture, playable, origin, firstNs, onNewStream, onRead)
+        if (!stopRequested) {
+          loops += 1
         }
-        if (stopRequested) {
-          break
-        }
-        val (from, length) = entry.rangeIn(capture.bytes.size) ?: continue
-        val nowNs = clockNs()
-        synchronized(gate) {
-          for (envelope in decoder.offer(capture.bytes, from, length)) {
-            router.route(envelope, nowNs / 1_000_000, nowNs)
-          }
-          positionMs = (entry.monotonicNs - firstNs) / 1_000_000
-        }
-        onRead()
       }
     } catch (_: InterruptedException) {
       // Stopped while waiting for the next read
@@ -141,6 +141,48 @@ class CapturePlayer(
     } finally {
       playing = false
       onEnd()
+    }
+  }
+
+  /** One pass over [playable], paced by the index clock from [origin] */
+  private fun playOnce(
+    capture: LoadedCapture,
+    playable: List<CaptureEntry>,
+    origin: Long,
+    firstNs: Long,
+    onNewStream: () -> Unit,
+    onRead: () -> Unit,
+  ) {
+    val wallStart = clockNs()
+    for (entry in playable) {
+      if (stopRequested) {
+        break
+      }
+      if (entry.direction.restartsStream) {
+        synchronized(gate) {
+          decoder.reset()
+          router.restartStreams()
+        }
+        onNewStream()
+        continue
+      }
+      val due = wallStart + (entry.monotonicNs - origin)
+      val wait = due - clockNs()
+      if (wait > 0) {
+        sleepNs(wait)
+      }
+      if (stopRequested) {
+        break
+      }
+      val (from, length) = entry.rangeIn(capture.bytes.size) ?: continue
+      val nowNs = clockNs()
+      synchronized(gate) {
+        for (envelope in decoder.offer(capture.bytes, from, length)) {
+          router.route(envelope, nowNs / 1_000_000, nowNs)
+        }
+        positionMs = (entry.monotonicNs - firstNs) / 1_000_000
+      }
+      onRead()
     }
   }
 

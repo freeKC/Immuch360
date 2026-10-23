@@ -69,6 +69,13 @@ interface DecoderSink {
   /** A new source (a replay starts or stops, a page session ends): the codec stops and the queue empties */
   fun reset()
 
+  /**
+   * The next unit does not continue the previous one: a new descriptor of the same remote, a gap of a replay, a new
+   * loop of a played capture. The decoder feed needs nothing (the stream description is resolved again); the relay
+   * marks the next unit it sends with BREAK.
+   */
+  fun newStream() = Unit
+
   fun status(): DecoderStatus
 }
 
@@ -110,6 +117,9 @@ data class VideoStats(
   val keyPictureAgoMs: Long?,
   /** Time since the last picture came out of the decoder; null while none did */
   val lastOutputAgoMs: Long?,
+  /** Pictures out of the decoder, and shown, in the last second */
+  val decodedPerSecond: Double = 0.0,
+  val shownPerSecond: Double = 0.0,
 )
 
 /**
@@ -125,6 +135,8 @@ class VideoStatistics {
 
   private val lock = Any()
   private val arrivals = ArrayDeque<LongArray>()
+  private val decodedTimes = ArrayDeque<Long>()
+  private val shownTimes = ArrayDeque<Long>()
   private val decodeSamples = ArrayDeque<LongArray>()
   private val inProcessSamples = ArrayDeque<LongArray>()
 
@@ -176,6 +188,8 @@ class VideoStatistics {
   /** A picture came out of the decoder, [decodeNs] after its unit was queued (null when that is not known) */
   fun onDecoded(decodeNs: Long?, nowNs: Long) = synchronized(lock) {
     decoded += 1
+    decodedTimes.addLast(nowNs)
+    trimTimes(decodedTimes, nowNs)
     lastOutputNs = nowNs
     if (firstPictureNs == null) {
       firstPictureNs = nowNs
@@ -187,7 +201,11 @@ class VideoStatistics {
     }
   }
 
-  fun onShown() = synchronized(lock) { shown += 1 }
+  fun onShown(nowNs: Long) = synchronized(lock) {
+    shown += 1
+    shownTimes.addLast(nowNs)
+    trimTimes(shownTimes, nowNs)
+  }
 
   fun onDroppedAtDisplay() = synchronized(lock) { droppedAtDisplay += 1 }
 
@@ -203,6 +221,8 @@ class VideoStatistics {
 
   fun reset() = synchronized(lock) {
     arrivals.clear()
+    decodedTimes.clear()
+    shownTimes.clear()
     decodeSamples.clear()
     inProcessSamples.clear()
     unitsIn = 0
@@ -245,12 +265,16 @@ class VideoStatistics {
     val keyPictureAgoMs: Long?,
     val lastOutputAgoMs: Long?,
     val lastUnitAgoMs: Long?,
+    val decodedPerSecond: Double,
+    val shownPerSecond: Double,
   )
 
   internal fun numbers(nowNs: Long): Numbers = synchronized(lock) {
     trim(arrivals, nowNs, RATE_WINDOW_NS)
     trim(decodeSamples, nowNs, DECODE_WINDOW_NS)
     trim(inProcessSamples, nowNs, DECODE_WINDOW_NS)
+    trimTimes(decodedTimes, nowNs)
+    trimTimes(shownTimes, nowNs)
     val bytes = arrivals.sumOf { it[1] }
     val decodes = decodeSamples.map { it[1] }.sorted()
     val inProcess = inProcessSamples.map { it[1] }.sorted()
@@ -275,7 +299,15 @@ class VideoStatistics {
       keyPictureAgoMs = lastKeyNs?.let { (nowNs - it) / 1_000_000 },
       lastOutputAgoMs = lastOutputNs?.let { (nowNs - it) / 1_000_000 },
       lastUnitAgoMs = lastUnitNs?.let { (nowNs - it) / 1_000_000 },
+      decodedPerSecond = decodedTimes.size.toDouble(),
+      shownPerSecond = shownTimes.size.toDouble(),
     )
+  }
+
+  private fun trimTimes(times: ArrayDeque<Long>, nowNs: Long) {
+    while (times.isNotEmpty() && (nowNs - times.first() > RATE_WINDOW_NS || times.size > MAX_SAMPLES)) {
+      times.removeFirst()
+    }
   }
 
   private fun trim(samples: ArrayDeque<LongArray>, nowNs: Long, windowNs: Long) {
@@ -355,6 +387,7 @@ class VideoPipeline(
   fun newStream() {
     store.newSession()
     pictureCounter.newStream()
+    sink.newStream()
   }
 
   /** A new source: the decoder stops, the counters start again */
@@ -417,6 +450,8 @@ class VideoPipeline(
       keyPictures = numbers.keyPictures,
       keyPictureAgoMs = numbers.keyPictureAgoMs,
       lastOutputAgoMs = numbers.lastOutputAgoMs,
+      decodedPerSecond = numbers.decodedPerSecond,
+      shownPerSecond = numbers.shownPerSecond,
     )
   }
 
