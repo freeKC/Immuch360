@@ -58,10 +58,11 @@ export function withTimeout<T>(
 		timer = null;
 	};
 	let answered = false;
+	// Once only: a second call must not lift the limit of the body
 	const done = () => {
-		stop();
 		if (answered || settled || timedOut) return;
 		answered = true;
+		stop();
 		if (options.bodyTimeoutMs) arm(options.bodyTimeoutMs);
 	};
 	const onOuterAbort = () => controller?.abort();

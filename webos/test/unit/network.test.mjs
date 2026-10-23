@@ -63,6 +63,17 @@ describe('every request has a time limit', () => {
 		assert.ok(took >= 85 && took < 400, `failed after ${took} ms`);
 	});
 
+	test('a second done() keeps the limit of the body', async () => {
+		const run = (signal, done) =>
+			new Promise((resolve, reject) => {
+				signal.addEventListener('abort', () => reject(new Error('aborted')));
+				done();
+				setTimeout(done, 10);
+				setTimeout(() => resolve('body'), 500);
+			});
+		await assert.rejects(withTimeout(run, {timeoutMs: 50, bodyTimeoutMs: 60}), TimeoutError);
+	});
+
 	test("the caller's own abort reaches the request and is not a timeout", async () => {
 		const outer = new AbortController();
 		const pending = withTimeout(
