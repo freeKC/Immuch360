@@ -228,11 +228,15 @@ jobs:
       # of libmpv for media_kit_video (libmpv-dev, which brings libmpv1, the libmpv of Ubuntu 22.04, for the video tests
       # and the start below; the app links none: mobile/packages/media_kit_video/IMMUCH360-NOTE.md, patch 8), and the
       # virtual screen of that start with its captures (Xvfb, xwd, ImageMagick), sqlite3 to read the app's log, gdb
-      # and xwininfo to tell what a start that does not get on was doing, and rpm2cpio and cpio to open the .rpm
+      # and xwininfo to tell what a start that does not get on was doing, and rpm2cpio and cpio to open the .rpm.
+      # azure.archive.ubuntu.com, the runner's mirror, served them at 45 kB/s three times on 22 and 23 October 2026 and
+      # the job waited for its timeout: apt_install.sh downloads them in three attempts of 150 s at most, the second and
+      # the third on another mirror, then installs them; the step stops after 10 minutes in any case
       - name: Linux build packages
+        timeout-minutes: 10
         run: |
-          sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev \
+          sudo sh .github/desktop/packaging/linux/apt_install.sh \
+            clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev \
             libsecret-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev patchelf libmpv-dev xvfb xauth x11-apps \
             x11-utils imagemagick sqlite3 gdb rpm2cpio cpio
 

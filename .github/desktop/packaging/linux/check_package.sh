@@ -46,15 +46,16 @@ echo "== $PRETTY_NAME: $(basename "$package")"
 case "$package" in
   *.deb)
     export DEBIAN_FRONTEND=noninteractive
-    apt-get update -qq
-    # The package from the folder, its dependencies from the archive; desktop-file-utils for the check
-    apt-get install -y -qq "$package" desktop-file-utils >/tmp/install.log 2>&1 || { cat /tmp/install.log; exit 1; }
+    # The package from the folder, its dependencies from the archive; desktop-file-utils for the check. apt_install.sh,
+    # next to this script, downloads them in three attempts of a few minutes, on another mirror after a slow one
+    sh "$(dirname "$0")/apt_install.sh" "$package" desktop-file-utils >/tmp/install.log \
+      || { cat /tmp/install.log; exit 1; }
     dpkg -s immuch360 | sed -n 's/^\(Version\|Depends\): /  \1: /p'
     # Debian's and Ubuntu's FFmpeg decode H.264 themselves
     h264=yes
     # gdb for the stacks of a start that crashed or does not get on (video_smoke.sh)
     install_extra() {
-      apt-get install -y -qq xvfb xauth libgl1-mesa-dri x11-apps x11-utils sqlite3 gdb >/tmp/extra.log 2>&1 \
+      sh "$(dirname "$0")/apt_install.sh" xvfb xauth libgl1-mesa-dri x11-apps x11-utils sqlite3 gdb >/tmp/extra.log \
         || { cat /tmp/extra.log; exit 1; }
     }
     video_stack() {
