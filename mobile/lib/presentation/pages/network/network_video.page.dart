@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:async/async.dart';
 import 'package:auto_route/auto_route.dart';
@@ -44,6 +45,30 @@ final _log = Logger('NetworkVideoPage');
 
 /// A video of a share and its media bridge URL
 typedef _Video = ({NetworkEntry entry, Uri url});
+
+/// Whether [error], a message of the native player, says that what it got is no video it knows: Media3's
+/// UnrecognizedInputFormatException, "None of the available extractors (...) could read the stream", whose list of
+/// obfuscated names tells the user nothing
+bool isUnrecognizedVideoError(String error) =>
+    error.contains('None of the available extractors') || error.contains('UnrecognizedInputFormat');
+
+/// The line of the logs about a file of a share that the player did not recognise as a video: the kind of share, the
+/// type and the size the share gave, and the first bytes the media bridge sent ([head], null when they could not be
+/// read), so that a report tells an HTML page, an empty answer or a format the player lacks apart
+String unrecognizedVideoReport({
+  required String name,
+  required NetworkSourceType shareType,
+  required NetworkEntry entry,
+  required Uint8List? head,
+}) {
+  final bytes = head == null
+      ? 'not readable'
+      : head.isEmpty
+      ? 'none'
+      : head.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join(' ');
+  return 'The player does not recognise $name as a video: ${shareType.name} share, listed as '
+      '${entry.guessedMimeType}, ${entry.size ?? 'unknown'} bytes, first bytes sent: $bytes';
+}
 
 /// A video of a network share, played straight from it through the media bridge, with play, pause and seek. A video
 /// whose file declares a 360° projection gets a 360° button, which opens the native 360° player, or the immersive
@@ -91,6 +116,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
 
   /// Reads the file straight from the share, for the plan of a raw video; null until the share is open
   ByteRangeReader? _shareReader;
+
+  /// The kind of share, for the logs; null until the share is open
+  NetworkSourceType? _shareType;
 
   NativeVideoPlayerController? _controller;
   bool _isVideoReady = false;
@@ -390,11 +418,37 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final service = ref.read(networkMediaServiceProvider);
     final client = ref.read(networkBridgeClientProvider);
     final fileSystem = await connections.fileSystem(widget.sourceId);
+    _shareType = fileSystem.source.type;
     final entry = await fileSystem.stat(widget.path);
     final url = await connections.mediaUrl(widget.sourceId, widget.path);
     _shareReader = networkFileReader(fileSystem, widget.path);
     unawaited(_detect(service, entry, httpRangeReader(client, url)));
     return (entry: entry, url: url);
+  }
+
+  /// Logs what the player got of a file it did not recognise as a video (see [unrecognizedVideoReport])
+  Future<void> _logUnrecognized() async {
+    // Read before the first await: the page may be gone by then
+    final client = ref.read(networkBridgeClientProvider);
+    final shareType = _shareType;
+    final _Video video;
+    try {
+      video = await _video;
+    } catch (_) {
+      return;
+    }
+    Uint8List? head;
+    try {
+      head = await httpRangeReader(client, video.url)(0, 16);
+      if (head.length > 16) {
+        head = Uint8List.sublistView(head, 0, 16);
+      }
+    } catch (error) {
+      _log.fine('Could not read the head of $_name: $error');
+    }
+    if (shareType != null) {
+      _log.warning(unrecognizedVideoReport(name: _name, shareType: shareType, entry: video.entry, head: head));
+    }
   }
 
   // Through the media bridge, with range requests, like the players read the file
@@ -541,7 +595,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final error = controller?.onError.value;
     if (controller != null && error != null && mounted) {
       _log.warning('Could not play $_name: $error');
-      setState(() => _playerError = error);
+      // The extractor list of Media3 tells the user nothing: a sentence, and what the player got in the logs
+      final unrecognized = isUnrecognizedVideoError(error);
+      setState(() => _playerError = unrecognized ? context.t.network_video_unrecognized : error);
+      if (unrecognized) {
+        unawaited(_logUnrecognized());
+      }
       // Failed, not playing: the remote goes to the next file. Back to null, so that the same error after Retry is
       // heard again
       _notifier.onNativeError(error);

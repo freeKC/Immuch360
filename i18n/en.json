@@ -1973,6 +1973,7 @@
   "network_upload_selected": "{count} selected",
   "network_upload_sending_file": "Sending {name}",
   "network_upload_sent_before": "Sent to Immich earlier",
+  "network_video_unrecognized": "the player of this device does not recognise it as a video: a format it cannot read, or the share sent something other than the file",
   "networking_settings": "Networking",
   "networking_subtitle": "Manage the server endpoint settings",
   "never": "Never",
