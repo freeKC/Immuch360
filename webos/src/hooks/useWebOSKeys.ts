@@ -1,4 +1,5 @@
 import {useEffect} from 'react';
+import {platformBack} from '@enact/webos/application';
 
 interface UseWebOSKeysOptions {
 	onBack?: () => void;
@@ -63,13 +64,38 @@ function fireTopBack(): boolean {
 	return true;
 }
 
+// Immuch360: the Back of a page itself, used when no layer of it took the key: a rail page other than Photos goes
+// back to Photos (LG's self checklist, item 37: Back moves to the previous screen). One at a time, the last set wins.
+let rootBack: (() => void) | null = null;
+
+// Immuch360: an open Sandstone popup (the language list, the text entry of an Input, a dialog) lives in the floating
+// layer of the ThemeDecorator and closes itself on the keyup of Back. Its keydown must not close the page under it nor
+// reach the TV, where WAM would add its own exit popup over the list.
+export const FLOATING_LAYER_ID = 'floatLayer';
+
+function popupOpen(): boolean {
+	const layer = typeof document !== 'undefined' ? document.getElementById(FLOATING_LAYER_ID) : null;
+	return !!layer && layer.childElementCount > 0;
+}
+
+// Immuch360: Back on an entry page (the welcome page, Photos, the account page of a failed start): with
+// disableBackHistoryAPI the app handles Back itself, and webOS.platformBack() asks the TV for its own default, which
+// LG's Back Button guide gives as the exit popup on webOS 6 and later and the Home screen on webOS 5 and earlier.
+// False when the page does not run on a TV (no webOSSystem or PalmSystem): the key is then left alone.
+export function exitToPlatform(): boolean {
+	const system = (window as {webOSSystem?: {platformBack?: () => void}; PalmSystem?: {platformBack?: () => void}}).webOSSystem ??
+		(window as {PalmSystem?: {platformBack?: () => void}}).PalmSystem;
+	if (!system || typeof system.platformBack !== 'function') return false;
+	platformBack();
+	return true;
+}
+
 let bridgeInstalled = false;
 
 // Installs the global Back key listener once per app. On webOS, WAM dispatches the remote
 // Back as a DOM keydown event on window (we verified this via ares-inspect on a real TV).
-// If our handler calls preventDefault, WAM suppresses its default "Close app?" dialog and
-// the press is consumed by the app. If no handler is on the back-stack — e.g. we're at the
-// root view — we let WAM proceed and the user exits the app naturally.
+// The app consumes every Back: an open popup closes on keyup, else the top layer closes, else the page goes back to
+// Photos, else (an entry page) the app hands the key to the platform with platformBack().
 function ensureBridgeInstalled(): void {
 	if (bridgeInstalled || typeof window === 'undefined') return;
 	bridgeInstalled = true;
@@ -79,17 +105,45 @@ function ensureBridgeInstalled(): void {
 		(event: KeyboardEvent) => {
 			if (!isBackKey(event)) return;
 			if (event.keyCode === BACKSPACE_KEYCODE && isEditingText(event.target)) return;
+			if (popupOpen()) {
+				// Sandstone closes the popup on keyup; nothing else may act on this press
+				event.preventDefault();
+				return;
+			}
+			// stopImmediatePropagation (not stopPropagation) so sibling window-level listeners
+			// don't all fire the same back action — otherwise an album-and-viewer combo would
+			// pop both layers on a single press.
 			if (fireTopBack()) {
 				event.preventDefault();
-				// stopImmediatePropagation (not stopPropagation) so sibling window-level listeners
-				// don't all fire the same back action — otherwise an album-and-viewer combo would
-				// pop both layers on a single press.
+				event.stopImmediatePropagation();
+				return;
+			}
+			if (rootBack) {
+				rootBack();
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				return;
+			}
+			if (exitToPlatform()) {
+				event.preventDefault();
 				event.stopImmediatePropagation();
 			}
 		},
 		{capture: true}
 	);
 }
+
+/** Immuch360: the Back of a page when none of its layers takes it (see rootBack); undefined on an entry page */
+export const useRootBack = (handler?: () => void): void => {
+	useEffect(() => {
+		ensureBridgeInstalled();
+		if (!handler) return undefined;
+		rootBack = handler;
+		return () => {
+			if (rootBack === handler) rootBack = null;
+		};
+	}, [handler]);
+};
 
 export const useWebOSKeys = ({onBack, onArrowLeft, onArrowRight, onArrowUp, onArrowDown}: UseWebOSKeysOptions = {}) => {
 	useEffect(() => {

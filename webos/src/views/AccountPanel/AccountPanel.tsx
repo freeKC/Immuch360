@@ -87,8 +87,8 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 	}, [mode, onAddPairedAccount]);
 
 	// Remote Back semantics: on form, peel back to grid; on grid in overlay mode, close
-	// the overlay. First-launch grid has no back target (root of app) so we leave the key
-	// unhandled and let WAM fall through to its default exit behavior.
+	// the overlay. First-launch grid has no back target (root of app): useWebOSKeys then hands
+	// the key to the platform (webOS.platformBack), as on every entry page.
 	const backHandler = useMemo<(() => void) | undefined>(() => {
 		if (subMode === 'form') return goGrid;
 		if (mode === 'overlay') return onCloseOverlay;

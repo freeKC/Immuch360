@@ -40,6 +40,7 @@ export const NavigationRail: React.FC<NavigationRailProps> = React.memo(({active
 			{NAV_ITEMS.map(({view, icon, label}) => (
 				<SpottableButton
 					key={view}
+					data-view={view}
 					className={[css.navItem, activeView === view ? css.active : ''].filter(Boolean).join(' ')}
 					onClick={navHandlers[view]}
 				>

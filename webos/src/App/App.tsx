@@ -4,6 +4,7 @@ import {QueryCache, QueryClient, QueryClientProvider} from '@tanstack/react-quer
 import React, {useCallback, useMemo, useState} from 'react';
 
 import {useAccounts} from '../hooks/useAccounts';
+import {useRootBack} from '../hooks/useWebOSKeys';
 import {RepositoryProvider} from '../domain/RepositoryContext';
 import {APIError} from '../api/client';
 import AppLayout from '../views/AppLayout';
@@ -35,6 +36,10 @@ const AppBase: React.FC = () => {
 	} = useAccounts();
 
 	const pairingDriver = useMemo(() => createPairingDriver(), []);
+
+	// The Back key listener from the first screen on, the loading screen of the start included: there, as on every
+	// entry page, Back goes to the platform (webOS.platformBack, see useWebOSKeys)
+	useRootBack();
 
 	const [overlayOpen, setOverlayOpen] = useState(false);
 
