@@ -162,11 +162,13 @@ class RelayScreenCodesTest {
   }
 
   @Test
-  fun theScreenCodesSetWhileOffAreKeptForTheNextStart() {
+  fun theScreenCodesGivenAtTheStartReplaceThoseSetWhileOff() {
     server.setScreenCodes(listOf(RelayScreenCode("tv1", tvCode)))
     assertEquals(listOf("tv1"), server.screenCodesKept().map { it.id })
-    val port = start()
-    TestHeadset(port).use { tv -> assertEquals(RelayWire.WELCOME, tv.join(tvCode).type) }
+    // The phone gives its whole list at the start: a TV removed while the relay was off is refused
+    val port = start(emptyList())
+    assertTrue(server.screenCodesKept().isEmpty())
+    TestHeadset(port).use { tv -> assertEquals(RelayWire.REFUSED_CODE, reason(tv.join(tvCode))) }
   }
 
   @Test

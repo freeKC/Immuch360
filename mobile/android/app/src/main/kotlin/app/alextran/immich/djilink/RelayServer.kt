@@ -75,9 +75,9 @@ data class RelaySendingSnapshot(
  * service, and what a headset may send is the hello, its pings and its bye; anything else closes that connection.
  *
  * Who may connect: an address of the local network ([RelayWire.isLocalNetworkAddress]) arriving on an interface that
- * is neither mobile data nor a VPN; a headset that proves the code, or a TV that proves one of the screen codes the pilot
- * added ([setScreenCodes]), within [helloTimeoutMs] of its connection (a
- * deadline the tick enforces, whatever the pace of the bytes); at most [maxHandshakes] handshakes at once, of which
+ * is neither mobile data nor a VPN; a headset that proves the code, or a TV that proves one of the screen codes the
+ * pilot added ([setScreenCodes]), within [helloTimeoutMs] of its connection (a deadline the tick enforces, whatever the
+ * pace of the bytes); at most [maxHandshakes] handshakes at once, of which
  * [maxHandshakesPerAddress] from one address, and [maxHeadsets] headsets; [failureLimit] wrong proofs or missed
  * deadlines from one address within [failureWindowNs] block it for [blockNs] (the phone share's numbers).
  */
@@ -272,8 +272,9 @@ class RelayServer(
 
   /**
    * The TVs the pilot added, each with its own code: a TV whose code was removed is told so (BYE newCode, which its
-   * receiver reads as a refused code) and leaves; the others and the headsets stay. Kept while the relay is off, for
-   * its next start.
+   * receiver reads as a refused code) and leaves; the others and the headsets stay. While the relay is off it only
+   * replaces the list kept: the next [start] takes the list it is given, the phone's whole list, so that a TV removed
+   * meanwhile is never welcomed.
    */
   fun setScreenCodes(next: List<RelayScreenCode>) {
     val kept = validScreenCodes(next)

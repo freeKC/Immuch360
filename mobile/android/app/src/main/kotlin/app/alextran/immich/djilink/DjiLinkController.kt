@@ -648,7 +648,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
     }
     reception.start(ReceptionRecord.Watched(name = null, host = host, port = port))
     relay.source = RelaySource.NONE
-    // A TV says so in its hello, so that the phone's list shows it as a TV; a headset says nothing, as before
+    // A TV says so in its hello, so that the phone's Diagnostics list it as a TV; a headset says nothing, as before
     val kind = if (environment.television) "tv" else null
     receiver.connect(host, port, normalized, phoneId, headsetName, environment.appVersion, kind)
     acquireReceiverWifiLock()
@@ -2158,7 +2158,7 @@ private fun RelayReceiveSnapshot.toPigeon(stats: VideoStats): DjiRelayReceiving 
 }
 
 /**
- * Whether the obstacle sound cannot be heard at this media volume: at zero, unless the device's volume is fixed (an HDMI
- * box, a TV whose sound goes to a sound bar), where the reading says nothing. Pure, unit tested.
+ * Whether the obstacle sound cannot be heard at this media volume: at zero, unless the device's volume is fixed (an
+ * HDMI box, a TV whose sound goes to a sound bar), where the reading says nothing. Pure, unit tested.
  */
 internal fun mediaVolumeSilent(volumeFixed: Boolean, volume: Int): Boolean = !volumeFixed && volume == 0
