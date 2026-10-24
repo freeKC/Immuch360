@@ -44,40 +44,49 @@ class DjiLiveNotice extends StatelessWidget {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 760),
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+            child: Column(
               children: [
-                Row(
-                  children: [
-                    Icon(Icons.warning_amber_rounded, color: context.colorScheme.error, size: 32),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        t.dji_link_safety_title,
-                        style: context.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.warning_amber_rounded, color: context.colorScheme.error, size: 32),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              t.dji_link_safety_title,
+                              style: context.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                if (headset) ...[
-                  Text(t.dji_link_observer_note, key: const Key('dji_live_notice_observer'), style: strong),
-                  const SizedBox(height: 8),
-                  Text(t.dji_link_observer_watching, key: const Key('dji_live_notice_watching'), style: strong),
-                  const SizedBox(height: 8),
-                ],
-                for (final line in lines)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(line, style: body),
+                      const SizedBox(height: 12),
+                      if (headset) ...[
+                        Text(t.dji_link_observer_note, key: const Key('dji_live_notice_observer'), style: strong),
+                        const SizedBox(height: 8),
+                        Text(t.dji_link_observer_watching, key: const Key('dji_live_notice_watching'), style: strong),
+                        const SizedBox(height: 8),
+                      ],
+                      for (final line in lines)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(line, style: body),
+                        ),
+                    ],
                   ),
-                const SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: FilledButton(
-                    key: const Key('dji_live_notice_ok'),
-                    onPressed: () => Navigator.of(context).pop(true),
-                    child: Text(t.dji_live_notice_ok),
+                ),
+                // Always in sight, whatever the height of the window: the notice scrolls above it
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: FilledButton(
+                      key: const Key('dji_live_notice_ok'),
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: Text(t.dji_live_notice_ok),
+                    ),
                   ),
                 ),
               ],

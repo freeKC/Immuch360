@@ -359,7 +359,7 @@ void main() {
     expect(find.byKey(const Key('drone_import_remote_plugged')), findsNothing);
   });
 
-  testWidgets('a DJI remote plugged in gets a card saying it holds no photos, with the way to DJI link', (
+  testWidgets('a DJI remote plugged in gets a card saying it holds no photos, with the way to the live video', (
     tester,
   ) async {
     await pumpPage(tester);

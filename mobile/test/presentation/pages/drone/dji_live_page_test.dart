@@ -105,7 +105,8 @@ void main() {
 
   testWidgets('the safety notice shows once per run of the app, and Back on it leaves the screen', (tester) async {
     final api = phone();
-    await openLive(tester, api, noticeRead: false);
+    // Large enough for the whole notice: on the S24+ in landscape it scrolls above its button
+    await openLive(tester, api, noticeRead: false, size: _large);
     expect(find.byKey(const Key('dji_live_notice')), findsOneWidget);
     expect(find.text('You are the pilot'), findsOneWidget);
     expect(find.text('Not compared with DJI Fly yet: do not fly by these numbers.'), findsOneWidget);
@@ -127,8 +128,13 @@ void main() {
     expect(find.byKey(const Key('dji_live')), findsOneWidget);
   });
 
-  testWidgets('Back on the safety notice leaves the live screen', (tester) async {
+  testWidgets('Back on the safety notice leaves the live screen, whose notice keeps its button in sight', (
+    tester,
+  ) async {
     await openLive(tester, phone(), noticeRead: false);
+    // On the S24+ in landscape the notice scrolls; "I understand" stays on the screen
+    final ok = tester.getRect(find.byKey(const Key('dji_live_notice_ok')));
+    expect(ok.bottom, lessThanOrEqualTo(_s24.height));
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('dji_live_notice')), findsNothing);
@@ -451,8 +457,16 @@ void main() {
     expect(find.text('Drone battery voltage'), findsOneWidget);
     expect(find.text('6.18 V'), findsOneWidget);
     expect(find.textContaining('Height'), findsNothing);
-    expect(find.byKey(const Key('dji_live_to_dji_fly')), findsOneWidget);
     expect(find.byKey(const Key('dji_live_diagnostics')), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('dji_live_to_dji_fly')),
+      100,
+      scrollable: find.descendant(
+        of: find.byKey(const Key('dji_live_advanced_panel')),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    expect(find.byKey(const Key('dji_live_to_dji_fly')), findsOneWidget);
   });
 
   testWidgets('the offer to open on the plug comes once, after a session that showed a picture', (tester) async {
