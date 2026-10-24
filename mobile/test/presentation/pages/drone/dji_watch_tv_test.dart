@@ -170,6 +170,18 @@ void main() {
     return inside;
   }
 
+  /// Scrolls Options until the item of [key] shows: the panel builds its list as it scrolls
+  Future<void> showInOptions(WidgetTester tester, Key key) async {
+    await tester.scrollUntilVisible(
+      find.byKey(key),
+      100,
+      scrollable: find
+          .descendant(of: find.byKey(const Key('dji_watch_tv_options_panel')), matching: find.byType(Scrollable))
+          .first,
+    );
+    await tester.pumpAndSettle();
+  }
+
   /// Opens the page with a phone that knows this TV: announced, its code tried at once, the first picture
   Future<(FakeDjiLinkApi, FakeRelayEnvironment, DjiLinkEvents?)> watching(WidgetTester tester) async {
     final relay = FakeRelayEnvironment();
@@ -337,6 +349,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('dji_watch_tv_hint')), findsNothing);
 
+    // No physical key in the simulator's maps for the colour keys of a remote: they come with one of their own, as the
+    // Android embedder sends them with the scan code of the remote
+    final physical = {
+      LogicalKeyboardKey.colorF0Red: PhysicalKeyboardKey.f21,
+      LogicalKeyboardKey.colorF1Green: PhysicalKeyboardKey.f22,
+      LogicalKeyboardKey.colorF2Yellow: PhysicalKeyboardKey.f23,
+      LogicalKeyboardKey.colorF3Blue: PhysicalKeyboardKey.f24,
+    };
     final connects = api.connects.length;
     for (final key in [
       LogicalKeyboardKey.mediaPlayPause,
@@ -347,7 +367,7 @@ void main() {
       LogicalKeyboardKey.colorF2Yellow,
       LogicalKeyboardKey.colorF3Blue,
     ]) {
-      await tester.sendKeyEvent(key);
+      await tester.sendKeyEvent(key, physicalKey: physical[key]);
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('dji_watch_tv_full')), findsOneWidget, reason: '$key');
       expect(right, findsOneWidget, reason: '$key');
@@ -427,8 +447,7 @@ void main() {
     final (api, _, _) = await watching(tester);
     await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byKey(const Key('dji_watch_stop')));
-    await tester.pumpAndSettle();
+    await showInOptions(tester, const Key('dji_watch_stop'));
     await tester.tap(find.byKey(const Key('dji_watch_stop')));
     await tester.pumpAndSettle();
     expect(api.disconnects, 1);
@@ -542,9 +561,8 @@ void main() {
 
     await tester.tap(find.byKey(const Key('dji_watch_tv_options')));
     await tester.pumpAndSettle();
+    await showInOptions(tester, const Key('dji_watch_tv_new_code'));
     expect(find.text('Phones that had this TV\'s code must add it again.'), findsOneWidget);
-    await tester.ensureVisible(find.byKey(const Key('dji_watch_tv_new_code')));
-    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('dji_watch_tv_new_code')));
     await tester.pumpAndSettle();
     expect(relay.secrets[djiWatchOwnCodeKey], _ownCode);
@@ -570,8 +588,7 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('dji_watch_obstacle_sound')), findsOneWidget);
-    await tester.ensureVisible(find.byKey(const Key('dji_watch_tv_sound_test')));
-    await tester.pumpAndSettle();
+    await showInOptions(tester, const Key('dji_watch_tv_sound_test'));
     await tester.tap(find.byKey(const Key('dji_watch_tv_sound_test')));
     await tester.pumpAndSettle();
     expect(api.obstacleTests, 1);

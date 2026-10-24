@@ -512,6 +512,9 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     final card = relay.ownCodeCardShows && !shows;
     final focusTarget = _phoneToFocus(relay);
     return Focus(
+      // Not a stop of its own: it only hears Menu and Info from the row that has the focus
+      canRequestFocus: false,
+      skipTraversal: true,
       onKeyEvent: _onPhonesKey,
       child: Padding(
         padding: _safe(context),
