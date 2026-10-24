@@ -1,8 +1,8 @@
-// "Send to a headset" on the live screen (p2/design-ux-phone-2026-10-24.md, section 5): one switch, one line saying
-// where sending stands, the code in large letters while it is on, and two folded helps (no Wi-Fi, a headset that does
-// not list the phone). The numbers of each headset, the refused codes and the screen switch stay on the Diagnostics
-// page, on the same relay, so that both places always agree. The headset only watches: nothing it does reaches the
-// remote or the drone.
+// "Send to a headset or a TV" on the live screen (p2/design-ux-phone-2026-10-24.md, section 5): one switch, one line
+// saying where sending stands, the code in large letters while it is on, two folded helps (no Wi-Fi, a headset that
+// does not list the phone), and the TVs added on this phone (p2/design-tv-2026-10-24.md, 2.4). The numbers of each
+// headset, the refused codes and the screen switch stay on the Diagnostics page, on the same relay, so that both places
+// always agree. A headset or a TV only watches: nothing it does reaches the remote or the drone.
 
 import 'dart:async';
 
@@ -12,6 +12,7 @@ import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_relay_tvs.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
@@ -134,6 +135,8 @@ class DjiLiveSendPanel extends ConsumerWidget {
             ],
           ),
         ],
+        const SizedBox(height: 12),
+        const DjiRelayTvsSection(),
         const SizedBox(height: 12),
         Text(
           t.dji_link_observer_note,

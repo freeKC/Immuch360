@@ -11,6 +11,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_counters.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_relay_tvs.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 
@@ -141,6 +142,8 @@ class DjiLinkSendSection extends ConsumerWidget {
             onChanged: (on) => unawaited(notifier.setKeepScreenOn(on)),
           ),
         ],
+        const DjiRelayTvsSection(),
+        const SizedBox(height: 8),
         Text(t.dji_link_relay_not_encrypted, key: const Key('dji_link_relay_not_encrypted'), style: small),
       ],
     );
