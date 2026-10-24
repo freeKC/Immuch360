@@ -2,6 +2,10 @@
 // this screen when the remote is plugged in" (p2/design-ux-phone-2026-10-24.md, 8.4). The live screen opens once the
 // app is past its start (the splash, a sign in), and not a second time when it is already in the stack. Android's own
 // question and the USB permission that comes with its answer are the native side's; nothing here reaches the remote.
+//
+// The decision reads the whole stack of the root router, not the visible route: with the live screen on top, the tab
+// shell under it is not "active" for the router, and a plug answered while the screen was open must not push a second
+// live screen once the pilot leaves the first (review of 24 October 2026, finding 1).
 
 import 'dart:async';
 
@@ -13,6 +17,30 @@ import 'package:immich_mobile/routing/router.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('DjiAttachLaunch');
+
+/// What a plug that brought the app forward does, from the names of the routes in the root router's stack
+enum DjiAttachLaunchStep {
+  /// The live screen is in the stack already, visible or under Diagnostics: the plug is done with
+  done,
+
+  /// The app is still on its splash or a sign in: wait for the router to reach the tabs
+  wait,
+
+  /// The app is past its start and no live screen is open: open one
+  open,
+}
+
+/// The step for a root stack holding the routes named [stack], bottom first. Pure, so that it is tested with a fake
+/// stack.
+DjiAttachLaunchStep djiAttachLaunchStep(Iterable<String> stack) {
+  if (stack.contains(DjiLiveRoute.name)) {
+    return DjiAttachLaunchStep.done;
+  }
+  if (!stack.contains(TabShellRoute.name)) {
+    return DjiAttachLaunchStep.wait;
+  }
+  return DjiAttachLaunchStep.open;
+}
 
 class DjiAttachLaunch {
   DjiAttachLaunch(this._ref);
@@ -50,7 +78,8 @@ class DjiAttachLaunch {
       return;
     }
     final router = _ref.read(appRouterProvider);
-    if (!router.isRouteActive(TabShellRoute.name)) {
+    final step = djiAttachLaunchStep(router.stackData.map((route) => route.name));
+    if (step == DjiAttachLaunchStep.wait) {
       // Still on the splash or a sign in: the router says when the app is in
       if (_waiting == null) {
         _waiting = router;
@@ -58,13 +87,13 @@ class DjiAttachLaunch {
       }
       return;
     }
+    // Opened here or by any other way meanwhile: the plug is answered either way
     _pending = false;
     _waiting?.removeListener(_open);
     _waiting = null;
-    if (router.isRouteActive(DjiLiveRoute.name)) {
-      return;
+    if (step == DjiAttachLaunchStep.open) {
+      unawaited(router.push(const DjiLiveRoute()));
     }
-    unawaited(router.push(const DjiLiveRoute()));
   }
 }
 
