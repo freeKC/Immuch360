@@ -1,4 +1,5 @@
 import {fireEvent, renderHook} from '@testing-library/react';
+import {clearErrorLog, lastErrors} from '../immuch360/diagnostics/errorLog';
 import {FLOATING_LAYER_ID, HOME_APP_ID, backShowsHome, useRootBack, useWebOSKeys} from './useWebOSKeys';
 
 // Immuch360: the Luna calls of the Home app on webOS 23 to 25, recorded (jsdom has no Luna bus)
@@ -7,7 +8,7 @@ interface MockLunaRequest {
 	method: string;
 	parameters: unknown;
 	onSuccess?: () => void;
-	onFailure?: () => void;
+	onFailure?: (response?: {errorCode?: number; errorText?: string}) => void;
 	onTimeout?: () => void;
 }
 const mockLunaCalls: MockLunaRequest[] = [];
@@ -215,6 +216,7 @@ describe('Back on an entry page per webOS version', () => {
 	beforeEach(() => {
 		platformBack.mockClear();
 		mockLunaCalls.length = 0;
+		clearErrorLog();
 	});
 	afterEach(() => {
 		delete (window as {PalmSystem?: unknown}).PalmSystem;
@@ -230,13 +232,46 @@ describe('Back on an entry page per webOS version', () => {
 		expect(mockLunaCalls[0]).toMatchObject({service: 'luna://com.webos.applicationManager', method: 'launch', parameters: {id: HOME_APP_ID}});
 		expect(platformBack).not.toHaveBeenCalled();
 		// The TV refused (no such app, or ACG): the platform's own Back
-		mockLunaCalls[0]!.onFailure!();
+		mockLunaCalls[0]!.onFailure!({errorCode: -1, errorText: 'Denied method call'});
 		expect(platformBack).toHaveBeenCalledTimes(1);
 		expect(warn).toHaveBeenCalled();
-		// Opened: nothing else
+		// About shows why, as a TV has no console at hand
+		expect(lastErrors()[0]).toMatch(/^back: the Home app did not open \(-1 Denied method call; platform \d/);
+		// Opened: nothing else, and no line in About
 		expect(pressBack()).toBe(true);
 		mockLunaCalls[1]!.onSuccess!();
 		expect(platformBack).toHaveBeenCalledTimes(1);
+		expect(lastErrors()).toHaveLength(1);
+		unmount();
+	});
+
+	test('webOS 25: a launch the TV does not answer within 3 s falls back to platformBack(), once, and says so in About', () => {
+		onVersion('10.3.2');
+		const {unmount} = renderHook(() => useRootBack());
+		jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+		expect(pressBack()).toBe(true);
+		mockLunaCalls[0]!.onTimeout!();
+		mockLunaCalls[0]!.onFailure!();
+		expect(platformBack).toHaveBeenCalledTimes(1);
+		expect(lastErrors()).toHaveLength(1);
+		expect(lastErrors()[0]).toMatch(/^back: the Home app did not open \(no answer within 3 s; platform 10\.3\.2, Chromium /);
+		unmount();
+	});
+
+	test('webOS 25 without platformBack() on webOSSystem: the Home app all the same', () => {
+		(window as {PalmSystem?: unknown}).PalmSystem = {deviceInfo: JSON.stringify({platformVersion: '10.3.2'})};
+		const {unmount} = renderHook(() => useRootBack());
+		expect(pressBack()).toBe(true);
+		expect(mockLunaCalls).toHaveLength(1);
+		expect(mockLunaCalls[0]).toMatchObject({method: 'launch', parameters: {id: HOME_APP_ID}});
+		unmount();
+	});
+
+	test('webOS 26 without platformBack(): left to the TV, and About says so', () => {
+		(window as {PalmSystem?: unknown}).PalmSystem = {deviceInfo: JSON.stringify({platformVersion: '11.0.0'})};
+		const {unmount} = renderHook(() => useRootBack());
+		expect(pressBack()).toBe(false);
+		expect(lastErrors()).toEqual(['back: this TV has no platformBack()']);
 		unmount();
 	});
 
@@ -263,6 +298,26 @@ describe('Back on an entry page per webOS version', () => {
 		expect(backShowsHome()).toBe(true);
 		agent.mockReturnValue(ua('132.0.6834.0'));
 		expect(backShowsHome()).toBe(false);
+	});
+
+	test('the engine wins over the platform version (webOS 25 TVs of the Cloud Test Lab, Chromium 120)', () => {
+		const agent = jest.spyOn(navigator, 'userAgent', 'get');
+		const ua = (chrome: string) => `Mozilla/5.0 (Web0S; Linux/SmartTV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chrome} Safari/537.36 WebAppManager`;
+		onVersion('7.3.0');
+		agent.mockReturnValue(ua('120.0.6099.270'));
+		expect(backShowsHome()).toBe(true);
+		onVersion('10.3.2');
+		agent.mockReturnValue(ua('132.0.6834.0'));
+		expect(backShowsHome()).toBe(false);
+	});
+
+	test('platformBack(): nothing in About, which lists errors only', () => {
+		onVersion('6.3.1');
+		const {unmount} = renderHook(() => useRootBack());
+		expect(pressBack()).toBe(true);
+		expect(platformBack).toHaveBeenCalledTimes(1);
+		expect(lastErrors()).toEqual([]);
+		unmount();
 	});
 });
 

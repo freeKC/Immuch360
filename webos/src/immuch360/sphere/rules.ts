@@ -351,6 +351,18 @@ export function remoteTurnSpeed(heldSeconds: number, fieldOfView: number): numbe
 	return (Math.min(40 + 160 * Math.max(heldSeconds, 0), 120) * fieldOfView) / 90;
 }
 
+/**
+ * The turn of one press of an arrow, in degrees, as soon as the key goes down: a short press of a remote lasts about
+ * one or two frames, too little for the turn speed above to show (none at all when the key comes back up before the
+ * second frame, as the webOS Cloud Test Lab sends it). Holding the key then turns at remoteTurnSpeed. Smaller once
+ * zoomed in, as the speed.
+ */
+export const REMOTE_TAP_STEP_DEGREES = 10;
+
+export function remoteTapStep(fieldOfView: number): number {
+	return (REMOTE_TAP_STEP_DEGREES * fieldOfView) / 90;
+}
+
 /** Up and down turn the view a little slower than left and right */
 export const REMOTE_PITCH_FACTOR = 0.75;
 

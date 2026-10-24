@@ -1,6 +1,7 @@
 import {useEffect} from 'react';
 import {platformBack} from '@enact/webos/application';
 import LS2Request from '@enact/webos/LS2Request';
+import {recordError} from '../immuch360/diagnostics/errorLog';
 import {features} from '../platform/features';
 import {exitTizenApp} from '../platform/tizen';
 
@@ -104,35 +105,51 @@ const webOSSystem = (): WebOSSystemLike | undefined =>
 /** The Home app of webOS TV, which the Back of an entry page shows on webOS 23 to 25 (to confirm on those TVs) */
 export const HOME_APP_ID = 'com.webos.app.home';
 
-/**
- * Immuch360: whether the TV runs webOS 23, 24 or 25, where LG's self checklist asks Back on the entry page to show the
- * Home screen. From the platform version webOS gives the page (8, 9 and 10 for webOS 23, 24 and 25: the SDK table of
- * LG's FAQ), else from the engine (Chromium 94, 108 and 120 there, 132 on webOS 26: the Web Engine page).
- */
-export function backShowsHome(): boolean {
+/** What the page knows of the TV: the platform version webOS gives it and the major version of its engine */
+function platformClues(): {platformVersion: string | null; chromium: number | null} {
+	let platformVersion: string | null = null;
 	const raw = typeof window === 'undefined' ? undefined : webOSSystem()?.deviceInfo;
 	if (raw) {
 		try {
-			const major = parseInt(String((JSON.parse(raw) as {platformVersion?: unknown}).platformVersion), 10);
-			if (!isNaN(major)) return major >= 8 && major <= 10;
+			const value = (JSON.parse(raw) as {platformVersion?: unknown}).platformVersion;
+			if (value !== undefined && value !== null && value !== '') platformVersion = String(value);
 		} catch {
-			// The engine then
+			// none
 		}
 	}
 	const engine = typeof navigator === 'undefined' ? null : /Chrome\/(\d+)/.exec(navigator.userAgent);
-	if (!engine) return false;
-	const major = Number(engine[1]);
-	return major >= 94 && major < 132;
+	return {platformVersion, chromium: engine ? Number(engine[1]) : null};
+}
+
+/**
+ * Immuch360: whether the TV runs webOS 23, 24 or 25, where LG's self checklist asks Back on the entry page to show the
+ * Home screen. From the engine first (Chromium 94, 108 and 120 there, 87 on webOS 22, 132 on webOS 26: the Web Engine
+ * page), as webOS 25 TVs of LG's Cloud Test Lab did not take the Home path from the platform version of the page;
+ * else from that version (8, 9 and 10 for webOS 23, 24 and 25: the SDK table of LG's FAQ).
+ */
+export function backShowsHome(): boolean {
+	const {platformVersion, chromium} = platformClues();
+	if (chromium !== null) return chromium >= 94 && chromium < 132;
+	const major = platformVersion === null ? NaN : parseInt(platformVersion, 10);
+	return !isNaN(major) && major >= 8 && major <= 10;
+}
+
+/** The clues of backShowsHome, for the line About keeps when the Home app did not open */
+function cluesText(): string {
+	const {platformVersion, chromium} = platformClues();
+	return `platform ${platformVersion ?? '?'}, Chromium ${chromium ?? '?'}`;
 }
 
 // The Home app through the application manager (ACG group application.launcher, in requiredACG); platformBack() when
-// the TV refuses or does not answer
+// the TV refuses or does not answer. Why it did not open goes to the last errors of About (a TV has no console at hand);
+// an opened Home writes nothing there (seen on webOS 25 TVs of LG's Cloud Test Lab, 24 October 2026)
 function launchHome(): void {
 	let settled = false;
-	const fallBack = () => {
+	const fallBack = (reason: string) => {
 		if (settled) return;
 		settled = true;
-		console.warn('[back] the Home app did not open: platformBack()');
+		console.warn('[back] the Home app did not open: platformBack()', reason);
+		recordError(`back: the Home app did not open (${reason}; ${cluesText()}), platformBack()`);
 		platformBack();
 	};
 	new LS2Request().send({
@@ -143,8 +160,9 @@ function launchHome(): void {
 		onSuccess: () => {
 			settled = true;
 		},
-		onFailure: fallBack,
-		onTimeout: fallBack,
+		onFailure: (response?: {errorCode?: unknown; errorText?: unknown}) =>
+			fallBack([response?.errorCode, response?.errorText].filter((part) => part !== undefined && part !== '').join(' ') || 'refused'),
+		onTimeout: () => fallBack('no answer within 3 s'),
 	});
 }
 
@@ -156,9 +174,17 @@ function launchHome(): void {
 // left alone.
 export function exitToPlatform(): boolean {
 	const system = webOSSystem();
-	if (!system || typeof system.platformBack !== 'function') return false;
-	if (backShowsHome()) launchHome();
-	else platformBack();
+	if (!system) return false;
+	if (backShowsHome()) {
+		launchHome();
+		return true;
+	}
+	if (typeof system.platformBack !== 'function') {
+		// Left to the TV, which then does its own default; About says so (seen nowhere yet, kept to be told)
+		recordError('back: this TV has no platformBack()');
+		return false;
+	}
+	platformBack();
 	return true;
 }
 
