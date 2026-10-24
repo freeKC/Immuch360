@@ -16,6 +16,11 @@ class TeeSink(private val feed: DecoderSink, private val relay: DecoderSink) : D
     guarded { relay.submit(unit, description) }
   }
 
+  /** Only the feed keeps it: the relay keeps its own, from the units it relays */
+  override fun keepKey(unit: AccessUnit, description: ResolvedDescription) {
+    feed.keepKey(unit, description)
+  }
+
   override fun reset() {
     feed.reset()
     guarded { relay.reset() }

@@ -27,6 +27,18 @@ class SharedPreferencesStore(context: Context) : KeyValueStore {
 }
 
 /**
+ * The system build and the install of the app, which [DecoderMemory] keeps its entries against: a system update or a
+ * new install of the app (its last update time changes) gives every decoder its chance again
+ */
+private fun installedBuild(context: Context): String {
+  val installed = runCatching {
+    @Suppress("DEPRECATION")
+    context.packageManager.getPackageInfo(context.packageName, 0).lastUpdateTime
+  }.getOrDefault(0L)
+  return "${Build.FINGERPRINT ?: ""} $installed"
+}
+
+/**
  * One owner for the whole link, for the lifetime of the process.
  *
  * It holds the accessory manager, the envelope decoder, the frame router, the capture ring, the video pipeline with
@@ -101,7 +113,11 @@ class DjiLinkController private constructor(private val context: Context) : Link
   private val router = FrameRouter()
   private val capture = CaptureRing(monotonicNs = { SystemClock.elapsedRealtimeNanos() })
   private val videoStatistics = VideoStatistics()
-  private val feed = VideoDecoderFeed(videoStatistics, onChange = { markDirty() })
+  private val feed = VideoDecoderFeed(
+    videoStatistics,
+    onChange = { markDirty() },
+    memory = DecoderMemory(preferences, installedBuild(context)),
+  )
   private val store = ParameterSetStore(preferences)
 
   /** Who keeps the link running; read and changed under [gate] */
@@ -628,6 +644,11 @@ class DjiLinkController private constructor(private val context: Context) : Link
     override fun onUnit(unit: AccessUnit, header: RelayUnitHeader, flags: Int, arrivalNs: Long) {
       synchronized(gate) {
         if (!receiver.active) {
+          return
+        }
+        if ((flags and RelayWire.UNIT_PRIMER) != 0) {
+          // The phone's last key unit, ahead of the live units: kept to start the decoder from, counted nowhere
+          video.onPrimer(unit, receiverDetector)
           return
         }
         if ((flags and RelayWire.UNIT_BREAK) != 0) {
@@ -1182,6 +1203,9 @@ class DjiLinkController private constructor(private val context: Context) : Link
       .put("decoderKind", stats.decoder.kind?.name ?: JSONObject.NULL)
       .put("lowLatency", stats.decoder.lowLatency)
       .put("switches", stats.decoder.switches)
+      .put("switchReason", stats.decoder.lastSwitchReason?.name ?: JSONObject.NULL)
+      .put("skippedAtStart", JSONArray(stats.decoder.skippedAtStart))
+      .put("primers", stats.decoder.primers)
       .put("decodeMedianMs", stats.decodeMedianMs ?: JSONObject.NULL)
       .put("decodeP95Ms", stats.decodeP95Ms ?: JSONObject.NULL)
       .put("firstPictureMs", stats.firstPictureMs ?: JSONObject.NULL)
@@ -1472,7 +1496,10 @@ private fun VideoStats.toPigeon(): DjiLinkDecode = DjiLinkDecode(
     DecoderPolicy.SwitchReason.NO_OUTPUT_AFTER_JOIN -> "noOutputAfterJoin"
     DecoderPolicy.SwitchReason.HARDWARE_RETRY_FAILED -> "hardwareRetryFailed"
     DecoderPolicy.SwitchReason.FATAL_ERRORS -> "fatalErrors"
-    null -> null
+    DecoderPolicy.SwitchReason.NO_PICTURE_WITH_KEY -> "noPictureWithKey"
+    DecoderPolicy.SwitchReason.NO_PICTURE_NOTHING_LEFT -> "noPictureNothingLeft"
+    // No switch in this session, but it did not start with the first decoder of the order
+    null -> if (decoder.skippedAtStart.isNotEmpty()) "rememberedNoPicture" else null
   },
   unitsIn = unitsIn,
   queued = queued,

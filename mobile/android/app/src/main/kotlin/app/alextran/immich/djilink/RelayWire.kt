@@ -75,6 +75,13 @@ object RelayWire {
   const val UNIT_BREAK = 0x04
   const val UNIT_REPLAY = 0x08
 
+  /**
+   * The last key unit the phone saw, sent once right after the parameter sets to a headset that joins mid stream: an
+   * old picture to start the decoder from, never a live one ([KeyPrimer]). It takes the next sequence number like any
+   * unit. A headset of an earlier build reads it as a key unit.
+   */
+  const val UNIT_PRIMER = 0x10
+
   // The reasons of REFUSED and BYE
   const val REFUSED_CODE = "code"
   const val REFUSED_BLOCKED = "blocked"

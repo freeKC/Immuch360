@@ -194,7 +194,10 @@ class DecoderQueue<T : Any, W : Any>(private val bound: Int) {
  * Configuration, tried in this order until the decoder accepts: the stream description as csd-0 with a 1 MiB input
  * size, realtime priority, KEY_LOW_LATENCY when the decoder reports the feature, and on a Qualcomm decoder only the
  * Qualcomm vendor keys and the highest operating rate; the same without those; the plain configuration. Which one was
- * accepted is in the log.
+ * accepted is in the log. The decoder itself is the one [DecoderPolicy.current] names.
+ *
+ * The first unit a codec takes after a start or a flush is a key picture: the last one seen ([KeyPrimer]) goes first
+ * when the next unit is not one. Its own picture is released unseen.
  *
  * Receive only: nothing here has a handle on the transport.
  */
@@ -202,6 +205,8 @@ class VideoDecoderFeed(
   private val statistics: VideoStatistics,
   private val onChange: () -> Unit = {},
   private val clockNs: () -> Long = { SystemClock.elapsedRealtimeNanos() },
+  /** The decoders that gave no picture on this device; null keeps nothing */
+  private val memory: DecoderMemory? = null,
 ) : DecoderSink {
   companion object {
     private const val TAG = "DjiLinkDecoder"
@@ -234,6 +239,9 @@ class VideoDecoderFeed(
   @Volatile
   private var currentStatus = DecoderStatus()
 
+  /** The last key unit, to start a codec with; kept from the threads that submit, used by the decoder thread */
+  private val primer = KeyPrimer()
+
   // Everything below belongs to the decoder thread
   private var codec: MediaCodec? = null
   private var codecName: String? = null
@@ -256,17 +264,27 @@ class VideoDecoderFeed(
   private var startedAtNs: Long? = null
   private var keySinceStart = false
 
+  /** The presentation time of the kept key unit queued to start the running codec, until its picture comes out */
+  private var primerPts: Long? = null
+  private var primersQueued = 0
+
   private val drain = Runnable { drainNow() }
   private val renderHeld = Runnable { renderHeldNow() }
 
   override fun submit(unit: AccessUnit, description: ResolvedDescription) {
+    primer.keep(unit, description.description)
     // The bound is a constant of the policy; the policy object itself belongs to the decoder thread. A closed feed
     // drops the unit and makes no thread.
     val target = queue.offer(unit to description, ::makeThread) ?: return
     target.post(drain)
   }
 
+  override fun keepKey(unit: AccessUnit, description: ResolvedDescription) {
+    primer.keep(unit, description.description)
+  }
+
   override fun reset() {
+    primer.clear()
     queue.clear()
     handler?.post {
       releaseCodec()
@@ -375,14 +393,70 @@ class VideoDecoderFeed(
       val index = freeInputs.removeFirstOrNull() ?: return
       // An index announced before a flush or a restart is no longer valid: it is dropped, never the unit
       val buffer = runCatching { current.getInputBuffer(index) }.getOrNull() ?: continue
+      val primed = primer.before(unit, resolved.description)
+        ?.let { queuePrimer(current, index, buffer, it, beforeUs = unit.lastArrivalNs / 1_000 - 1) }
+      if (primed != null) {
+        // The unit itself waits for the next input buffer
+        if (primed) {
+          afterQueue(policy.afterQueue(isKey = true, nowNs = clockNs()), resolved.description)
+        }
+        publishStatus()
+        continue
+      }
       queue.remove(next)
       queueUnit(current, index, buffer, unit)
-      if (policy.afterQueue(unit.isKey) == PolicyAction.SWITCH_TO_SOFTWARE) {
-        Log.i(TAG, "no picture from the hardware decoder: the software decoder takes over (${policy.lastSwitchReason})")
-        startCodec(resolved.description)
-      }
+      afterQueue(policy.afterQueue(unit.isKey, clockNs()), resolved.description)
       publishStatus()
     }
+  }
+
+  /** Does what the policy said after a unit went in, and remembers a decoder that gave no picture */
+  private fun afterQueue(action: PolicyAction, description: StreamDescription) {
+    val gaveNothing = policy.takeGaveNoPicture()
+    for (name in gaveNothing) {
+      Log.i(TAG, "decoder $name gave no picture although it had a key picture: remembered on this device")
+      runCatching { memory?.remember(name) }
+    }
+    when (action) {
+      PolicyAction.SWITCH_TO_SOFTWARE, PolicyAction.SWITCH_DECODER -> {
+        Log.i(TAG, "no picture from $codecName: ${policy.current?.name} takes over (${policy.lastSwitchReason})")
+        startCodec(description)
+      }
+      else -> if (gaveNothing.isNotEmpty()) {
+        Log.i(TAG, "no other decoder is left: $codecName stays")
+      }
+    }
+  }
+
+  /**
+   * The kept key unit into [buffer], ahead of the unit waiting: true once queued, false when the codec refused it (the
+   * index is spent), null when it does not fit and the waiting unit takes the buffer
+   */
+  private fun queuePrimer(
+    current: MediaCodec,
+    index: Int,
+    buffer: ByteBuffer,
+    unit: AccessUnit,
+    beforeUs: Long,
+  ): Boolean? {
+    if (buffer.capacity() < unit.size) {
+      return null
+    }
+    buffer.clear()
+    buffer.put(unit.bytes)
+    // Just before the waiting unit, and after everything queued so far
+    val pts = if (lastPtsUs == Long.MIN_VALUE) maxOf(beforeUs, 0) else maxOf(beforeUs, lastPtsUs + 1)
+    val queued = runCatching { current.queueInputBuffer(index, 0, unit.size, pts, MediaCodec.BUFFER_FLAG_KEY_FRAME) }
+    if (queued.isFailure) {
+      // The index is spent either way; the waiting unit goes with the next one
+      statistics.onError()
+      return false
+    }
+    lastPtsUs = pts
+    primerPts = pts
+    primersQueued += 1
+    Log.i(TAG, "the codec starts from the key picture kept from earlier: the next unit is not one")
+    return true
   }
 
   private fun ensurePolicy(description: StreamDescription) {
@@ -390,11 +464,17 @@ class VideoDecoderFeed(
       return
     }
     val candidates = HevcDecoders.list(description.info.codedWidth, description.info.codedHeight)
+    val remembered = memory
     policy = DecoderPolicy(
       choice = choice,
-      hardwareAvailable = candidates.any { it.hardware },
-      softwareAvailable = candidates.any { !it.hardware },
+      candidates = candidates,
+      gaveNoPictureBefore = { name ->
+        remembered != null && runCatching { remembered.gaveNoPicture(name) }.getOrDefault(false)
+      },
     )
+    if (policy.skippedAtStart.isNotEmpty()) {
+      Log.i(TAG, "skipped, no picture on this device before: ${policy.skippedAtStart.joinToString()}")
+    }
     policyMade = true
   }
 
@@ -429,20 +509,16 @@ class VideoDecoderFeed(
     statistics.onQueued(now - unit.lastArrivalNs, now)
   }
 
-  /** Releases whatever runs and starts the decoder of the kind the policy holds; false when none would start */
+  /** Releases whatever runs and starts the decoder the policy holds, or the next ones; false when none would start */
   private fun startCodec(description: StreamDescription): Boolean {
     releaseCodec()
     while (true) {
-      val wanted = policy.kind
-      val candidates = HevcDecoders.list(description.info.codedWidth, description.info.codedHeight)
-        .filter { (it.hardware && wanted == DecoderKind.HARDWARE) || (!it.hardware && wanted == DecoderKind.SOFTWARE) }
-      for (candidate in candidates) {
-        if (configure(candidate, description)) {
-          return true
-        }
+      val candidate = policy.current
+      if (candidate != null && configure(candidate, description)) {
+        return true
       }
-      if (policy.onKindUnavailable() != PolicyAction.SWITCH_TO_SOFTWARE) {
-        failure = if (candidates.isEmpty()) "no-decoder" else "configuration-refused"
+      if (candidate == null || policy.onCandidateRefused() == PolicyAction.FAIL) {
+        failure = if (candidate == null) "no-decoder" else "configuration-refused"
         failedForSession = true
         Log.w(TAG, "no H.265 decoder would start: $failure")
         publishStatus()
@@ -502,6 +578,8 @@ class VideoDecoderFeed(
       failure = null
       startedAtNs = clockNs()
       keySinceStart = false
+      primerPts = null
+      primer.onCodecStarted()
       policy.onStarted()
       Log.i(TAG, "decoder ${candidate.name} started, configuration level $level, low latency $asksLowLatency")
       publishStatus()
@@ -527,6 +605,7 @@ class VideoDecoderFeed(
     pacer.reset()
     startedAtNs = null
     keySinceStart = false
+    primerPts = null
   }
 
   /** Rule 4 of the policy: the codec and the queue are emptied and decoding goes on with the next unit */
@@ -539,8 +618,10 @@ class VideoDecoderFeed(
     heldOutput = null
     handler?.removeCallbacks(renderHeld)
     pacer.reset()
+    primerPts = null
     // In asynchronous mode a flushed codec asks for input again only once it is started again
     runCatching { current.start() }
+    primer.onCodecStarted()
     policy.onFlushed()
     Log.i(TAG, "the decoder could not keep up: flushed")
   }
@@ -606,6 +687,8 @@ class VideoDecoderFeed(
       lastSwitchReason = policy.lastSwitchReason,
       startedAtNs = startedAtNs,
       keySinceStart = keySinceStart,
+      skippedAtStart = policy.skippedAtStart,
+      primers = primersQueued,
     )
   }
 
@@ -620,6 +703,14 @@ class VideoDecoderFeed(
 
     override fun onOutputBufferAvailable(codec: MediaCodec, index: Int, info: MediaCodec.BufferInfo) {
       if (owner != generation) {
+        return
+      }
+      if (primerPts != null && info.presentationTimeUs == primerPts) {
+        // The picture of the kept key unit: proof that the decoder decodes, never shown nor counted as a live picture
+        primerPts = null
+        policy.onOutput()
+        runCatching { codec.releaseOutputBuffer(index, false) }
+        publishStatus()
         return
       }
       val now = clockNs()
@@ -664,7 +755,8 @@ class VideoDecoderFeed(
       val description = configured
       when (policy.onError(error.isRecoverable, error.isTransient)) {
         PolicyAction.NONE -> Unit
-        PolicyAction.RESTART_SAME, PolicyAction.SWITCH_TO_SOFTWARE, PolicyAction.SWITCH_TO_HARDWARE -> {
+        PolicyAction.RESTART_SAME, PolicyAction.SWITCH_TO_SOFTWARE, PolicyAction.SWITCH_TO_HARDWARE,
+        PolicyAction.SWITCH_DECODER -> {
           if (description != null) {
             startCodec(description)
           }

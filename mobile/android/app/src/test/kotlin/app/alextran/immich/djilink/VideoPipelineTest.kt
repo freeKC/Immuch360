@@ -8,11 +8,16 @@ import org.junit.Test
 class VideoPipelineTest {
   private class RecordingSink : DecoderSink {
     val units = mutableListOf<Pair<AccessUnit, ResolvedDescription>>()
+    val kept = mutableListOf<Pair<AccessUnit, ResolvedDescription>>()
     var resets = 0
     var status = DecoderStatus()
 
     override fun submit(unit: AccessUnit, description: ResolvedDescription) {
       units.add(unit to description)
+    }
+
+    override fun keepKey(unit: AccessUnit, description: ResolvedDescription) {
+      kept.add(unit to description)
     }
 
     override fun reset() {
@@ -32,6 +37,34 @@ class VideoPipelineTest {
   private fun feed(unit: AccessUnit) {
     clock += 33_000_000
     pipeline.onUnit(unit, detector, detector.offer(unit), clock)
+  }
+
+  @Test
+  fun aKeyUnitKeptByThePhoneGoesToTheSinkToKeepAndCountsNowhere() {
+    val key = HevcSamples.unitOf(
+      HevcSamples.DELIMITER,
+      HevcSamples.VPS,
+      HevcSamples.SPS,
+      HevcSamples.PPS,
+      HevcSamples.slice(type = 20),
+      HevcSamples.suffixSei(7),
+    )
+    // As on the headset: the phone's parameter sets settle the codec and the description first
+    val sets = ProfileRegistry.seed20261023!!
+    detector.offer(RelayWire.annexBUnit(sets.configuration(), clock))
+    store.onRelayedDescription(sets, DescriptionSource.SESSION)
+    pipeline.onPrimer(key, detector)
+    assertTrue(sink.kept.single().first === key)
+    assertEquals(DescriptionSource.SESSION, sink.kept.single().second.source)
+    assertTrue(sink.units.isEmpty())
+    val stats = pipeline.stats(clock, 0)
+    assertEquals(0L, stats.unitsIn)
+    assertEquals(0L, stats.keyPictures)
+    assertEquals(0L, stats.pictureCounters)
+    // A unit that is not a key picture is never kept
+    val p = HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(), HevcSamples.suffixSei(8))
+    pipeline.onPrimer(p, detector)
+    assertEquals(1, sink.kept.size)
   }
 
   @Test

@@ -137,6 +137,14 @@ class RelayServer(
 
   /** The last description the phone resolved: sent to a headset right after its welcome */
   private var lastResolved: ResolvedDescription? = null
+
+  /** The last key unit seen and its description, under [lock]: sent after the parameter sets to a headset that joins */
+  private var lastKey: KeptKey? = null
+
+  /** Key units sent ahead of the live units to headsets that joined mid stream ([RelayWire.UNIT_PRIMER]) */
+  @Volatile
+  var primersSent = 0L
+    private set
   private var telemetrySequence = 0L
   private var nextTelemetryNs = 0L
   private var droppedOfClosed = 0L
@@ -225,6 +233,12 @@ class RelayServer(
   // The relay half of the tee
 
   override fun submit(unit: AccessUnit, description: ResolvedDescription) {
+    if (unit.isKey) {
+      // Kept even before the relay runs: a headset that joins later starts its decoder from it
+      synchronized(lock) {
+        lastKey = KeptKey(unit, description.description)
+      }
+    }
     val relayed = source
     if (!running || relayed == RelaySource.NONE) {
       return
@@ -260,6 +274,7 @@ class RelayServer(
     val body = RelayWire.jsonBody(buildJsonObject { put("why", "newSource") })
     synchronized(lock) {
       lastResolved = null
+      lastKey = null
       for (headset in headsets) {
         headset.queue.clearForReset()
         headset.lastDescription = null
@@ -396,6 +411,7 @@ class RelayServer(
       return
     }
     var inHandshake = true
+    var primed = false
     var reservation = false
     var headset: RelayHeadset? = null
     try {
@@ -507,13 +523,22 @@ class RelayServer(
             clockNs(),
           )
           joined.lastDescription = last.description
+          // Then the last key unit of these parameter sets: the decoders of the Quest refuse every unit before a key
+          // picture, and the remote sends one only when its encoder starts
+          lastKey?.takeIf { it.description.sameSetsAs(last.description) }?.let { key ->
+            var flags = RelayWire.UNIT_KEY or RelayWire.UNIT_PRIMER
+            if (key.unit.hasParameterSets) flags = flags or RelayWire.UNIT_IN_BAND
+            if (source == RelaySource.REPLAY) flags = flags or RelayWire.UNIT_REPLAY
+            primed = joined.queue.offerUnit(key.unit, flags, breakBefore = false, nowNs = clockNs())
+            primersSent += 1
+          }
         }
       }
       headset = joined
       inHandshake = false
       handshakes.decrementAndGet()
       joined.startWriter()
-      log("headset $number joined from $address")
+      log("headset $number joined from $address" + if (primed) ", the last key picture sent first" else "")
       onChange()
       socket.soTimeout = pingTimeoutMs
       readLoop(joined, input)

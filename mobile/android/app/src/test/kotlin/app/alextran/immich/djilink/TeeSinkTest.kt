@@ -23,6 +23,10 @@ class TeeSinkTest {
       calls += "newStream"
     }
 
+    override fun keepKey(unit: AccessUnit, description: ResolvedDescription) {
+      calls += "keepKey"
+    }
+
     override fun status(): DecoderStatus = DecoderStatus(name = "feed")
   }
 
@@ -49,6 +53,15 @@ class TeeSinkTest {
     assertEquals(listOf("submit", "newStream", "reset"), relay.calls)
     assertSame(feed.units.single().bytes, relay.units.single().bytes)
     assertEquals("feed", tee.status().name)
+  }
+
+  @Test
+  fun aKeptKeyUnitGoesToTheFeedOnlySinceTheRelayKeepsItsOwn() {
+    val feed = Recording()
+    val relay = Recording()
+    TeeSink(feed, relay).keepKey(HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(type = 20)), description)
+    assertEquals(listOf("keepKey"), feed.calls)
+    assertEquals(emptyList<String>(), relay.calls)
   }
 
   @Test

@@ -440,7 +440,10 @@ class RelayReceiver(
       units += 1
       lastUnitNs = arrivalNs
     }
-    latency.onUnit(arrivalNs, header)
+    // A primer is an old picture: its times would read as a delay of the radio
+    if ((record.flags and RelayWire.UNIT_PRIMER) == 0) {
+      latency.onUnit(arrivalNs, header)
+    }
     listener.onUnit(unit, header, record.flags, arrivalNs)
   }
 

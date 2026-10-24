@@ -51,7 +51,7 @@ data class DecoderStatus(
   val failure: String? = null,
   /** True while the decoder renders into a parking surface because no video view is shown */
   val parked: Boolean = true,
-  /** The switch to software of rule 1 or 3, said on the page */
+  /** The last switch of decoder and its rule, said on the page */
   val lastSwitchReason: DecoderPolicy.SwitchReason? = null,
   /** When the running codec was started, on the pipeline clock; null while none runs */
   val startedAtNs: Long? = null,
@@ -59,12 +59,23 @@ data class DecoderStatus(
   val keySinceStart: Boolean = false,
   /** Units the queue dropped before the decoder since the last new source: past its bound or at a flush */
   val unitsDropped: Long = 0,
+  /** Decoders skipped at the start of the session because they gave no picture on this device before */
+  val skippedAtStart: List<String> = emptyList(),
+  /** Times a codec started from a key unit kept from earlier ([KeyPrimer]) */
+  val primers: Int = 0,
 )
 
 /** The receiving end of the units: the decoder feed, or a test's own */
 interface DecoderSink {
   /** Takes one unit and the description to decode it with. Called on the reader thread: must return at once. */
   fun submit(unit: AccessUnit, description: ResolvedDescription)
+
+  /**
+   * A key unit to keep, not to decode now: the one a phone kept and relays ahead of the live units of a headset that
+   * joins mid stream ([RelayWire.UNIT_PRIMER]). A decoder that starts on a unit that is not a key picture starts from
+   * it ([KeyPrimer]).
+   */
+  fun keepKey(unit: AccessUnit, description: ResolvedDescription) = Unit
 
   /** A new source (a replay starts or stops, a page session ends): the codec stops and the queue empties */
   fun reset()
@@ -381,6 +392,18 @@ class VideoPipeline(
     statistics.description = resolved.description
     statistics.descriptionSource = resolved.source
     sink.submit(unit, resolved)
+  }
+
+  /**
+   * A key unit kept by the phone and relayed ahead of the live units ([RelayWire.UNIT_PRIMER]): it goes to the sink to
+   * start a decoder with, and counts nowhere, since it is an old picture rather than one of the stream
+   */
+  fun onPrimer(unit: AccessUnit, detector: CodecDetector) {
+    if (!unit.isKey || detector.codec == VideoCodec.H264) {
+      return
+    }
+    val resolved = store.resolve(detector.showsH265Signature) ?: return
+    sink.keepKey(unit, resolved)
   }
 
   /** A new stream of the same source (a new descriptor, a gap of a replay): the session description is read again */

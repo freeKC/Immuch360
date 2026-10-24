@@ -68,6 +68,63 @@ class RelayParametersTest {
   }
 
   @Test
+  fun aHeadsetJoiningMidStreamGetsTheLastKeyUnitRightAfterTheSets() {
+    server.source = RelaySource.CABLE
+    server.start(code, 0, InetAddress.getLoopbackAddress())
+    // The key unit came before any headset, then P pictures: the headset would never see a key picture
+    val key = keyUnit(1)
+    server.submit(key, session)
+    server.submit(pUnit(2), session)
+    TestHeadset(server.port!!).use {
+      assertEquals(RelayWire.WELCOME, it.join(code).type)
+      assertTrue(eventually { server.headsetCount == 1 })
+      assertEquals(RelayWire.PARAMETERS, it.read().type)
+      val primer = it.read()
+      assertEquals(RelayWire.UNIT, primer.type)
+      assertEquals(RelayWire.UNIT_KEY or RelayWire.UNIT_PRIMER or RelayWire.UNIT_IN_BAND, primer.flags)
+      assertArrayEquals(key.bytes, primer.body.copyOfRange(RelayWire.UNIT_HEADER_BYTES, primer.body.size))
+      assertEquals(0L, RelayWire.parseUnitHeader(primer.body).sequence)
+      // The live units follow with the next sequence numbers, no break and no primer flag
+      server.submit(pUnit(3), session)
+      val live = it.read()
+      assertEquals(RelayWire.UNIT, live.type)
+      assertEquals(0, live.flags)
+      assertEquals(1L, RelayWire.parseUnitHeader(live.body).sequence)
+      assertEquals(1L, server.primersSent)
+    }
+  }
+
+  @Test
+  fun noKeyUnitIsSentFirstForOtherSetsOrAfterANewSource() {
+    server.source = RelaySource.REPLAY
+    server.start(code, 0, InetAddress.getLoopbackAddress())
+    // The key unit belongs to the seed; the description then changed without a key picture
+    server.submit(keyUnit(1), session)
+    server.submit(pUnit(2), other)
+    TestHeadset(server.port!!).use {
+      assertEquals(RelayWire.WELCOME, it.join(code).type)
+      assertTrue(eventually { server.headsetCount == 1 })
+      assertEquals(RelayWire.PARAMETERS, it.read().type)
+      server.submit(pUnit(3), other)
+      val live = it.read()
+      assertEquals(RelayWire.UNIT_REPLAY, live.flags)
+    }
+    assertTrue(eventually { server.headsetCount == 0 })
+    // A new source forgets the key unit of the old one
+    server.submit(keyUnit(4), session)
+    server.reset()
+    server.submit(pUnit(5), session)
+    TestHeadset(server.port!!).use {
+      assertEquals(RelayWire.WELCOME, it.join(code).type)
+      assertTrue(eventually { server.headsetCount == 1 })
+      assertEquals(RelayWire.PARAMETERS, it.read().type)
+      server.submit(pUnit(6), session)
+      assertEquals(RelayWire.UNIT_REPLAY, it.read().flags)
+    }
+    assertEquals(0L, server.primersSent)
+  }
+
+  @Test
   fun parametersComeBeforeEveryKeyPictureAndOnAChangedDescriptionOnly() {
     server.source = RelaySource.CABLE
     joined().use { headset ->
