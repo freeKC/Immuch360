@@ -696,7 +696,7 @@ void main() {
     expect(find.text('set 3 id 67 flight data'), findsOneWidget);
   });
 
-  group('the tile of the Network shares page', () {
+  group('the DJI live video row of the Drone page', () {
     /// The tile on an Android device with the setting [enabled], in the TV layout when [tv]
     List<Override> android({bool enabled = true, bool tv = false}) => [
       appConfigProvider.overrideWithValue(AppConfig(djiLinkEnabled: enabled)),
@@ -730,13 +730,13 @@ void main() {
       expect(find.text('Plug your DJI remote into this phone and see what the drone sees'), findsOneWidget);
     });
 
-    testWidgets('says on a headset that it watches what a phone sends', (tester) async {
+    testWidgets('is offered on a headset too, whose Drone card opens the watch page directly', (tester) async {
       expect(
         await shownOnAndroid(tester, [...android(), isHorizonOsProvider.overrideWith((ref) async => true)]),
         isTrue,
       );
       expect(find.text('DJI live video'), findsOneWidget);
-      expect(find.text("Watch the drone's picture your phone sends"), findsOneWidget);
+      expect(find.text("Watch the drone's picture your phone sends"), findsNothing);
     });
 
     testWidgets('is hidden with the setting off', (tester) async {

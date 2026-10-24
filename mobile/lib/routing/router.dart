@@ -59,6 +59,7 @@ import 'package:immich_mobile/presentation/pages/download_info.page.dart';
 import 'package:immich_mobile/presentation/pages/drone/dji_link.page.dart';
 import 'package:immich_mobile/presentation/pages/drone/dji_live.page.dart';
 import 'package:immich_mobile/presentation/pages/drone/dji_watch.page.dart';
+import 'package:immich_mobile/presentation/pages/drone/drone.page.dart';
 import 'package:immich_mobile/presentation/pages/drone/drone_import.page.dart';
 import 'package:immich_mobile/presentation/pages/edit/edit.page.dart';
 import 'package:immich_mobile/presentation/pages/favorite.page.dart';
@@ -242,6 +243,7 @@ class AppRouter extends RootStackRouter {
     // Share this phone on the network (phones only)
     AutoRoute(page: PhoneShareRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: DroneImportRoute.page, guards: [_authGuard, _duplicateGuard]),
+    AutoRoute(page: DroneRoute.page, guards: [_authGuard, _duplicateGuard]),
     // Connect a TV or computer: a phone signs a big screen in (sign in with your phone)
     AutoRoute(page: ConnectScreenRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: EnterCodeRoute.page, guards: [_authGuard, _duplicateGuard]),

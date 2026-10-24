@@ -440,7 +440,7 @@ void main() {
     await push(tester, listener, fakeSnapshot(relaySending: fakeSending(sending: 'cable')));
     // The name the headset lists
     expect(
-      find.text('On. On the headset, open Immuch360, DJI live video, and pick Immuch360 on Galaxy S24+.'),
+      find.text('On. On the headset, open Immuch360, Library, Drone, and pick Immuch360 on Galaxy S24+.'),
       findsOneWidget,
     );
     await push(

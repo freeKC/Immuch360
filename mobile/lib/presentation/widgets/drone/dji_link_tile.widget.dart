@@ -1,8 +1,8 @@
-// The "DJI live video" tile of the Network shares page: on a phone it opens the live screen, which reads a DJI remote
-// controller plugged into the phone with a cable; on a Meta Quest it opens the watch page, which receives the picture a
-// phone sends. Shown on Android phones and tablets and in the Meta Quest build, not in the TV layout (a television has
-// no cable to a remote controller and no pilot in front of it), while Settings, Advanced, "DJI live video
-// (experimental)" is on, as it is by default.
+// The "DJI live video" row of the Drone page (p2/design-final-2026-10-24.md, 2.4): on a phone it opens the live
+// screen, which reads a DJI remote controller plugged into the phone with a cable. Offered on Android phones and
+// tablets and in the Meta Quest build, not in the TV layout (a television has no cable to a remote controller and no
+// pilot in front of it), while Settings, Advanced, "DJI live video (experimental)" is on, as it is by default. On the
+// Quest the Drone card opens the watch page directly.
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ final djiLinkSupportedProvider = Provider.autoDispose<bool>((ref) {
   return !ref.watch(tvModeProvider);
 }, dependencies: [tvModeProvider]);
 
-/// Whether the DJI link tile shows: supported here, and the setting on
+/// Whether the DJI live video is offered: supported here, and the setting on
 final djiLinkEnabledProvider = Provider.autoDispose<bool>(
   (ref) => ref.watch(djiLinkSupportedProvider) && ref.watch(appConfigProvider.select((c) => c.djiLinkEnabled)),
   dependencies: [djiLinkSupportedProvider, appConfigProvider],
@@ -52,11 +52,7 @@ class DjiLinkTile extends ConsumerWidget {
             context.t.dji_live_title,
             style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
           ),
-          subtitle: Text(
-            headset ? context.t.dji_live_tile_subtitle_headset : context.t.dji_live_tile_subtitle_phone,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
+          subtitle: Text(context.t.dji_live_tile_subtitle_phone, maxLines: 2, overflow: TextOverflow.ellipsis),
           trailing: const Icon(Icons.chevron_right_rounded),
           onTap: () => context.pushRoute(headset ? const DjiWatchRoute() : const DjiLiveRoute()),
         ),
