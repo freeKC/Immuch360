@@ -1,13 +1,16 @@
-// The DJI link page: what the native side sees of a DJI remote controller plugged into this device as a USB accessory.
-// The page asks for a snapshot when it opens and then follows the events; nothing here can send anything to an
-// aircraft, and the only byte the native side ever writes is the liveness probe of the USB transport itself, which the
-// page counts.
+// The DJI live video and its Diagnostics: what the native side sees of a DJI remote controller plugged into this device
+// as a USB accessory. The live screen (or the watch page of a headset) owns the session: it asks for a snapshot when it
+// opens and then follows the events, and Diagnostics shows the same state. Nothing here can send anything to an
+// aircraft, and the only byte the native side ever writes is the liveness probe of the USB transport itself, which
+// Diagnostics counts.
 
 import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('DjiLink');
@@ -28,6 +31,33 @@ final djiPluggedAccessoriesProvider = Provider<Future<List<DjiLinkPluggedAccesso
   },
   dependencies: [djiLinkApiProvider],
 );
+
+/// Tells the native side whether Settings, Advanced, "DJI live video (experimental)" is on: with it off, plugging the
+/// remote never opens the app. An error (no bridge, as in a widget test) is only logged.
+final djiLiveSettingSyncProvider = Provider<Future<void> Function(bool on)>(
+  (ref) => (on) async {
+    try {
+      await ref.read(djiLinkApiProvider).setLiveSettingOn(on);
+    } catch (error) {
+      _log.fine('The setting did not reach the native side: $error');
+    }
+  },
+  dependencies: [djiLinkApiProvider],
+);
+
+/// What the live screen keeps on this install, in the app's store: a live picture was seen once, and the offer to open
+/// the screen on the plug of the remote was answered. Tests replace it.
+class DjiLiveMemory {
+  const DjiLiveMemory({required this.read, required this.write});
+
+  final bool Function(StoreKey<bool> key) read;
+  final Future<void> Function(StoreKey<bool> key, bool value) write;
+}
+
+final djiLiveMemoryProvider = Provider<DjiLiveMemory>((ref) {
+  final store = ref.watch(storeServiceProvider);
+  return DjiLiveMemory(read: (key) => store.tryGet(key) ?? false, write: (key, value) => store.put(key, value));
+});
 
 /// Hands the events of the native side to a listener, null to stop. Tests replace it.
 final djiLinkEventsSetUpProvider = Provider<void Function(DjiLinkEvents? events)>(
@@ -51,6 +81,7 @@ class DjiLinkPageState {
     this.loadingCaptures = false,
     this.playError,
     this.bench = const DjiLinkBench(),
+    this.openOnPlug = false,
   });
 
   /// What this device can do about a USB accessory, read once when the page opens
@@ -86,6 +117,9 @@ class DjiLinkPageState {
   /// What the chips of the capture section say about the bench
   final DjiLinkBench bench;
 
+  /// "Open this screen when the remote is plugged in", as the native side keeps it
+  final bool openOnPlug;
+
   /// Whether this device can be the accessory end of the cable at all. False is an answer, not a failure.
   bool get transportPossible => environment?.transportPossible ?? false;
 
@@ -114,6 +148,7 @@ class DjiLinkPageState {
     bool? loadingCaptures,
     String? playError,
     DjiLinkBench? bench,
+    bool? openOnPlug,
     bool clearError = false,
     bool clearExport = false,
     bool clearReplay = false,
@@ -132,6 +167,7 @@ class DjiLinkPageState {
     loadingCaptures: loadingCaptures ?? this.loadingCaptures,
     playError: clearPlayError ? null : (playError ?? this.playError),
     bench: bench ?? this.bench,
+    openOnPlug: openOnPlug ?? this.openOnPlug,
   );
 }
 
@@ -170,8 +206,10 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
   @override
   DjiLinkPageState build() => const DjiLinkPageState();
 
-  /// The page opened: read what this device can do, then start listening when it can do anything at all
-  Future<void> pageShown() async {
+  /// The live screen or the watch page opened: read what this device can do, then start listening when it can do
+  /// anything at all. With [capture], the capture starts with the link, so that a bug report always holds the head of
+  /// the session.
+  Future<void> pageShown({bool capture = false}) async {
     if (!_attached) {
       _attached = true;
       ref.read(djiLinkEventsSetUpProvider)(this);
@@ -188,6 +226,12 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
         return;
       }
       await start();
+      // A new capture for a new session; a link the relay kept running keeps the capture it has
+      if (capture && state.snapshot?.capture.recording != true) {
+        await _api.clearCapture();
+        await startCapture();
+      }
+      await _loadOpenOnPlug();
       await _loadProfiles();
       await listCaptures();
     } catch (error, stackTrace) {
@@ -196,9 +240,9 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
     }
   }
 
-  /// The page closed: the link stops with it, unless the relay still sends to a headset, which keeps it and keeps
-  /// hearing the native side (the Stop of the notification). A relay still starting may have been started natively
-  /// just before the page closed: the events stay attached for it too.
+  /// The live screen or the watch page closed: the link stops with it, unless the relay still sends to a headset, which
+  /// keeps it and keeps hearing the native side (the Stop of the notification). A relay still starting may have been
+  /// started natively just before the page closed: the events stay attached for it too.
   Future<void> pageHidden() async {
     final relay = ref.read(djiRelayProvider);
     if (_attached && !relay.sending && !relay.starting) {
@@ -275,6 +319,34 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
       state = state.copyWith(exporting: false, error: error.toString());
     }
   }
+
+  /// Diagnostics opened over the live screen: the latest snapshot and lists, without starting or stopping anything
+  Future<void> diagnosticsShown() async {
+    await refresh();
+    await _loadProfiles();
+    await listCaptures();
+  }
+
+  Future<void> _loadOpenOnPlug() async {
+    try {
+      state = state.copyWith(openOnPlug: await _api.openOnPlug());
+    } catch (error) {
+      _log.fine('No answer for opening on the plug: $error');
+    }
+  }
+
+  /// "Open this screen when the remote is plugged in"
+  Future<void> setOpenOnPlug(bool on) async {
+    try {
+      await _api.setOpenOnPlug(on);
+      state = state.copyWith(openOnPlug: on);
+    } catch (error) {
+      _log.fine('Opening on the plug did not change: $error');
+    }
+  }
+
+  /// "Save a capture for a bug report": the capture as it is, with no bench notes (they stay in Diagnostics)
+  Future<void> exportForBugReport() => exportCapture(DjiLinkExportNotes());
 
   Future<void> _loadProfiles() async {
     try {

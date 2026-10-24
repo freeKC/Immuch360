@@ -6,8 +6,10 @@ import 'package:immich_mobile/presentation/pages/video_decoders.page.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/drone_import_tile.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
+import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/widgets/settings/advanced_settings.dart';
 
+import '../../presentation/pages/drone/dji_link_fakes.dart';
 import '../../unit/presentation/presentation_context.dart';
 
 void main() {
@@ -104,18 +106,21 @@ void main() {
     });
   });
 
-  group('DJI link diagnostics (experimental)', () {
+  group('DJI live video (experimental)', () {
     final linkSwitch = find.descendant(
       of: find.byKey(const Key('advanced_settings_dji_link')),
       matching: find.byType(SwitchListTile),
     );
 
-    /// The page on a device that offers the DJI link page: an Android phone, tablet or headset, not a TV
-    Future<void> pumpWhereSupported(WidgetTester tester) async {
+    /// The page on a device that offers the DJI live video: an Android phone, tablet or headset, not a TV
+    Future<void> pumpWhereSupported(WidgetTester tester, {FakeDjiLinkApi? api}) async {
       await tester.pumpTestWidget(
         context,
         const AdvancedSettings(),
-        overrides: [djiLinkSupportedProvider.overrideWithValue(true)],
+        overrides: [
+          djiLinkSupportedProvider.overrideWithValue(true),
+          djiLinkApiProvider.overrideWithValue(api ?? FakeDjiLinkApi()),
+        ],
       );
       await tester.scrollUntilVisible(linkSwitch, 100, scrollable: find.byType(Scrollable).first);
     }
@@ -123,13 +128,14 @@ void main() {
     testWidgets('reads on by default', (tester) async {
       await pumpWhereSupported(tester);
 
-      expect(find.text('DJI link diagnostics (experimental)'), findsOneWidget);
+      expect(find.text('DJI live video (experimental)'), findsOneWidget);
       expect(tester.widget<SwitchListTile>(linkSwitch).value, isTrue);
       expect(SettingsRepository.instance.appConfig.djiLinkEnabled, isTrue);
     });
 
-    testWidgets('turns off and on again', (tester) async {
-      await pumpWhereSupported(tester);
+    testWidgets('turns off and on again, and tells the native side each time', (tester) async {
+      final api = FakeDjiLinkApi();
+      await pumpWhereSupported(tester, api: api);
 
       await tester.tap(linkSwitch);
       await tester.pumpAndSettle();
@@ -140,6 +146,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.widget<SwitchListTile>(linkSwitch).value, isTrue);
       expect(SettingsRepository.instance.appConfig.djiLinkEnabled, isTrue);
+      // With the setting off, plugging the remote never opens the app
+      expect(api.liveSettingSets, [false, true]);
     });
 
     testWidgets('is not offered on a device that has no cable to a remote controller', (tester) async {

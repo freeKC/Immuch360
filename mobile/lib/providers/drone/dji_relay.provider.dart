@@ -10,7 +10,8 @@
 //
 // Receiving (a headset, or a phone that receives): the phones announced with kind=drone on private IPv4 addresses, the
 // code typed once per phone and remembered for its install id, the native receiver, and the fallback to the address
-// the announcement gives after three failed attempts.
+// the announcement gives after three failed attempts. The watch page connects by itself, once per opening, to the last
+// phone it received from when that phone is announced and its code remembered.
 
 import 'dart:async';
 import 'dart:io';
@@ -38,6 +39,9 @@ const djiRelayCodeKey = 'dji_relay_code';
 
 /// The code remembered on a headset for the phone of install id [phoneId]
 String djiRelayRememberedCodeKey(String phoneId) => 'dji_relay_code.$phoneId';
+
+/// The install id of the last phone a headset received from, for the connection the watch page makes by itself
+const djiRelayLastPhoneKey = 'dji_relay_last_phone';
 
 /// The TXT record of a sending phone, under the pairing type: pairing protocol 1, relay protocol 1, kind drone
 Map<String, String> djiRelayAttributes(String installId) => {'v': '1', 'kind': 'drone', 'rv': '1', 'id': installId};
@@ -190,6 +194,8 @@ class DjiRelayState {
     this.connectError,
     this.target,
     this.flightViewFailed = false,
+    this.stoppedRemotely = false,
+    this.phoneName,
   });
 
   /// "Send to a headset" is on
@@ -221,6 +227,12 @@ class DjiRelayState {
   final DjiRelayPhone? target;
   final bool flightViewFailed;
 
+  /// Sending stopped from the notification, or by itself after 10 minutes with nothing to send, since the last start
+  final bool stoppedRemotely;
+
+  /// The name of this phone as the headsets list it, once sending started
+  final String? phoneName;
+
   DjiRelayState copyWith({
     bool? sending,
     bool? starting,
@@ -235,6 +247,8 @@ class DjiRelayState {
     String? connectError,
     DjiRelayPhone? target,
     bool? flightViewFailed,
+    bool? stoppedRemotely,
+    String? phoneName,
     bool clearPort = false,
     bool clearConnectError = false,
     bool clearTarget = false,
@@ -252,6 +266,8 @@ class DjiRelayState {
     connectError: clearConnectError ? null : (connectError ?? this.connectError),
     target: clearTarget ? null : (target ?? this.target),
     flightViewFailed: flightViewFailed ?? this.flightViewFailed,
+    stoppedRemotely: stoppedRemotely ?? this.stoppedRemotely,
+    phoneName: phoneName ?? this.phoneName,
   );
 }
 
@@ -263,8 +279,18 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
   Completer<void>? _browsing;
   StreamSubscription<MdnsService>? _discovery;
   bool _pageVisible = false;
+
+  /// The live screen of the phone is in front: the screen stays on whatever the link does
+  bool _liveShown = false;
   int _headsets = -1;
   bool _fallbackTried = false;
+
+  /// The phone the watch page connects to by itself once it is announced; null once tried, after Stop watching, or
+  /// when the page closed
+  String? _autoConnectId;
+
+  /// The last phone this device received from, as kept in the secure storage
+  String? _lastPhoneId;
 
   /// Bumped by every start and stop, so that a start overtaken by a stop undoes what it made
   int _generation = 0;
@@ -309,7 +335,7 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
       return;
     }
     final generation = ++_generation;
-    state = state.copyWith(starting: true, startFailed: false);
+    state = state.copyWith(starting: true, startFailed: false, stoppedRemotely: false);
     // The notification of the service, without waiting for the answer: the relay works without it
     unawaited(_environment.askNotifications().catchError((Object error) => _log.fine('Notifications: $error')));
     final code = await _codeToSend();
@@ -322,6 +348,7 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
       _abandonStart(generation);
       return;
     }
+    state = state.copyWith(phoneName: deviceName);
     String? installId;
     try {
       installId = await _environment.installId();
@@ -404,9 +431,10 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     await _afterStop();
   }
 
-  /// Stop in the notification: the native side stopped the relay already
+  /// Stop in the notification, or the idle stop: the native side stopped the relay already
   Future<void> onStopRequested() async {
     _generation += 1;
+    state = state.copyWith(stoppedRemotely: true);
     await _afterStop();
   }
 
@@ -454,9 +482,16 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     await _applyScreen();
   }
 
+  /// The live screen of the phone is in front or not: while it is, the screen stays on in every stage
+  Future<void> setLiveScreenShown(bool shown) async {
+    _liveShown = shown;
+    await _applyScreen();
+  }
+
+  /// The one place that decides the wake lock, so that the live screen and the sending rule never fight over it
   Future<void> _applyScreen() async {
     try {
-      await _environment.keepScreenOn(state.sending && state.keepScreenOn && _pageVisible);
+      await _environment.keepScreenOn(_liveShown || (state.sending && state.keepScreenOn && _pageVisible));
     } catch (error) {
       _log.fine('The screen setting did not apply: $error');
     }
@@ -508,6 +543,39 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
         _log.fine('No remembered code: $error');
       }
     }
+    _autoConnect(phone);
+  }
+
+  /// The watch page opened: it connects by itself to the last phone it received from, once, as soon as that phone is
+  /// announced with its code remembered
+  Future<void> armAutoConnect() async {
+    String? last;
+    try {
+      last = await _environment.readSecret(djiRelayLastPhoneKey);
+    } catch (error) {
+      _log.fine('No last phone: $error');
+    }
+    _lastPhoneId = last;
+    _autoConnectId = last;
+    for (final phone in state.phones) {
+      _autoConnect(phone);
+    }
+  }
+
+  /// The watch page closed: no connection by itself any more
+  void disarmAutoConnect() {
+    _autoConnectId = null;
+  }
+
+  void _autoConnect(DjiRelayPhone phone) {
+    final id = phone.id;
+    final code = id == null ? null : state.rememberedCodes[id];
+    if (id == null || id != _autoConnectId || code == null || state.target != null || !_pageVisible) {
+      return;
+    }
+    _autoConnectId = null;
+    _log.info('Connecting by itself to ${phone.name}, the last phone watched');
+    unawaited(connect(phone, code));
   }
 
   /// Connects to [phone] with the code as typed; the code is remembered for the phone's id once the connect started
@@ -547,7 +615,9 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     }
   }
 
+  /// "Stop watching": the receiver stops, and the page does not connect by itself again until it is opened again
   Future<void> disconnect() async {
+    _autoConnectId = null;
     try {
       await _api.disconnectRelay();
     } catch (error) {
@@ -583,6 +653,14 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
       return;
     }
     final id = target.id;
+    if (receiving.state == DjiRelayReceiveState.receiving && id != null && id != _lastPhoneId) {
+      _lastPhoneId = id;
+      unawaited(
+        _environment
+            .writeSecret(djiRelayLastPhoneKey, id)
+            .catchError((Object error) => _log.fine('The last phone was not kept: $error')),
+      );
+    }
     if (receiving.state == DjiRelayReceiveState.wrongCode && id != null && state.rememberedCodes.containsKey(id)) {
       final codes = {...state.rememberedCodes}..remove(id);
       state = state.copyWith(rememberedCodes: codes);

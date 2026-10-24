@@ -90,6 +90,13 @@ enum StoreKey<T> {
   /// os, at}. Never a token: the sessions are the server's, this list only names them; removed at the sign out
   pairedScreens<String>._(5029),
 
+  /// The DJI live video showed a live picture from a remote once on this install: the plug step may then offer to open
+  /// the live screen when the remote is plugged in
+  djiLivePictureSeen<bool>._(5030),
+
+  /// That offer was answered, yes or not now: it is not made again, and the switch stays in Advanced
+  djiLiveOfferAnswered<bool>._(5031),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

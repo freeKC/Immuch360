@@ -27,6 +27,7 @@ import 'package:immich_mobile/pages/common/splash_screen.page.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/app_life_cycle.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/share_intent_upload.provider.dart';
+import 'package:immich_mobile/providers/drone/dji_attach_launch.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -178,6 +179,7 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
         dPrint(() => "[APP STATE] resumed");
         unawaited(ref.read(appStateProvider.notifier).handleAppResume());
         unawaited(ref.read(viewIntentHandlerProvider).onAppResumed());
+        unawaited(ref.read(djiAttachLaunchProvider).check());
       case AppLifecycleState.inactive:
         dPrint(() => "[APP STATE] inactive");
         ref.read(appStateProvider.notifier).handleAppInactivity();
@@ -304,6 +306,8 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
 
     ref.read(viewIntentHandlerProvider).init();
     ref.read(shareIntentUploadProvider.notifier).init();
+    // A DJI remote plugged in after the pilot said yes to "Open this screen when the remote is plugged in"
+    unawaited(ref.read(djiAttachLaunchProvider).check());
     // Meta Quest detection, asked once: 360 media open in the immersive viewer there
     unawaited(ref.read(isHorizonOsProvider.future));
   }

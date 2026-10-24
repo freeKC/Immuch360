@@ -373,6 +373,7 @@ void main() {
     expect(find.text('A DJI remote is plugged in'), findsOneWidget);
     expect(find.textContaining('A remote without a screen (RC-N1, RC-N2, RC-N3) holds no photos.'), findsOneWidget);
     expect(find.byKey(const Key('drone_import_open_link')), findsOneWidget);
+    expect(find.text('See the live video'), findsOneWidget);
 
     plugged = [];
     await tester.pump(const Duration(seconds: 2));
