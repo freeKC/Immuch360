@@ -81,6 +81,15 @@ class TelemetryDecoderTest {
   }
 
   @Test
+  fun theMotorsRunOnlyWithBothBitsSet() {
+    // 0x04 and 0x08 never differ in our captures: one of them alone does not say the motors run
+    assertFalse(TelemetryFields.flight(flightBody().u32(32, 0x00805018L))!!.motorsOn)
+    assertFalse(TelemetryFields.flight(flightBody().u32(32, 0x00805014L))!!.motorsOn)
+    // The frame of the 23 October morning landing where 0x10 was clear: both bits set, the motors run
+    assertTrue(TelemetryFields.flight(flightBody().u32(32, 0x0080510CL))!!.motorsOn)
+  }
+
+  @Test
   fun offsetFortyIsNeverReadAsABattery() {
     decoder.offer(frame(3, 67, flightBody()), 1000)
     val values = decoder.values(1000)

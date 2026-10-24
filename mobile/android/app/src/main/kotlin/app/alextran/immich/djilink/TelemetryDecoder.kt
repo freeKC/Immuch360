@@ -91,8 +91,14 @@ object TelemetryFields {
 
   /** The flight mode number of the automatic landing, the one value of that byte the capture explains */
   const val MODE_AUTOMATIC_LANDING = 12
+  /**
+   * Bits 0x04 and 0x08 of offset 32 are set exactly while the motor time grows and never differ in our captures: the
+   * pair proves the motors running (p2/telemetry-flight-2026-10-24.md, 2.1 and 3.4). Which one alone means in the air
+   * is a guess, so [FlightReading.inAir] keeps bit 0x04 for the record and no screen shows it.
+   */
   const val FLAG_IN_AIR = 0x04L
   const val FLAG_MOTORS_ON = 0x08L
+  const val FLAGS_MOTORS_RUNNING = 0x0CL
 
   fun flight(body: ByteArray): FlightReading? {
     if (body.size != FLIGHT_LENGTH) {
@@ -107,7 +113,7 @@ object TelemetryFields {
       headingDeg = i16(body, 28) / 10.0,
       mode = u8(body, 30),
       inAir = (flags and FLAG_IN_AIR) != 0L,
-      motorsOn = (flags and FLAG_MOTORS_ON) != 0L,
+      motorsOn = (flags and FLAGS_MOTORS_RUNNING) == FLAGS_MOTORS_RUNNING,
       satellites = u8(body, 36),
       groundHeightM = u8(body, 41) / 10.0,
       motorTimeS = u16(body, 42) / 10.0,
