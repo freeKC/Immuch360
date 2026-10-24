@@ -325,7 +325,14 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
     // The socket is bound on the worker, never on the main thread
     worker.execute {
       val port = runCatching {
-        controller.startRelay(start.code, texts, start.phoneName, start.phoneId, session)
+        controller.startRelay(
+          start.code,
+          texts,
+          start.phoneName,
+          start.phoneId,
+          session,
+          start.screenCodes.map { RelayScreenCode(it.id, it.code) },
+        )
       }.getOrElse {
         Log.w(TAG, "the relay did not start: ${it.javaClass.simpleName}")
         0
@@ -340,6 +347,10 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
 
   override fun setRelayCode(code: String) {
     controller.setRelayCode(code)
+  }
+
+  override fun setRelayScreenCodes(codes: List<DjiRelayScreenCode>) {
+    controller.setRelayScreenCodes(codes.map { RelayScreenCode(it.id, it.code) })
   }
 
   override fun updateRelayNotification(text: String) {

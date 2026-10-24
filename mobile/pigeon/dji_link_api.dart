@@ -134,6 +134,7 @@ class DjiLinkEnvironment {
     required this.accessoriesListed,
     required this.transportPossible,
     this.chargeCurrentMicroAmps,
+    this.television = false,
   });
 
   final String deviceManufacturer;
@@ -164,6 +165,9 @@ class DjiLinkEnvironment {
   final int accessoriesListed;
   final bool transportPossible;
   final int? chargeCurrentMicroAmps;
+
+  /// Android TV or Google TV: a receiver of a phone's relay only, never the end of a cable
+  final bool television;
 }
 
 /// The accessory strings as they were read, with nothing renamed
@@ -754,7 +758,7 @@ enum DjiRelayReceiveState {
   busy,
 }
 
-/// One headset the phone sends to
+/// One headset or TV the phone sends to
 class DjiRelayHeadsetRow {
   const DjiRelayHeadsetRow({
     required this.address,
@@ -764,6 +768,8 @@ class DjiRelayHeadsetRow {
     this.name,
     this.picturesShownPerSecond,
     this.relayDelayMs,
+    this.screenCodeId,
+    this.kind,
   });
 
   final String address;
@@ -777,6 +783,20 @@ class DjiRelayHeadsetRow {
   final double? relayDelayMs;
   final int droppedUnits;
   final double megabitsPerSecond;
+
+  /// The id of the TV's own code it proved; null for the phone's own code
+  final String? screenCodeId;
+
+  /// What it says it is: "tv" from a TV of this build, null from a headset
+  final String? kind;
+}
+
+/// A TV added on the phone: the code the TV made and showed, under an opaque id
+class DjiRelayScreenCode {
+  const DjiRelayScreenCode({required this.id, required this.code});
+
+  final String id;
+  final String code;
 }
 
 /// "Send to a headset" on the phone
@@ -899,6 +919,7 @@ class DjiRelayStart {
     required this.stopLabel,
     required this.channelName,
     this.phoneId,
+    this.screenCodes = const [],
   });
 
   final String code;
@@ -908,6 +929,9 @@ class DjiRelayStart {
   final String notificationText;
   final String stopLabel;
   final String channelName;
+
+  /// The TVs added on this phone: a proof of one of their codes is welcomed too
+  final List<DjiRelayScreenCode> screenCodes;
 }
 
 /// A capture that can be played: an export of this app, a pair of files in its replay folder, or chosen in the picker
@@ -1354,6 +1378,9 @@ abstract class DjiLinkApi {
 
   /// "New code": every headset is told and must prove the new code
   void setRelayCode(String code);
+
+  /// The TVs added on this phone, each with its own code; a TV removed is told to leave, the others stay
+  void setRelayScreenCodes(List<DjiRelayScreenCode> codes);
 
   /// The text of the notification, with the number of headsets
   void updateRelayNotification(String text);

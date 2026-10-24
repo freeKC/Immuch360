@@ -404,6 +404,9 @@ class FakeRelayEnvironment {
   int notificationAsks = 0;
   final codes = ['K7M2Q9XRTH', 'ABCDEFGHJK', 'MNPQRSTUVW'];
 
+  /// The ids of the TVs added on the phone, in order
+  final screenIds = ['a1b2c3d4e5f60718', 'b2c3d4e5f6071829', 'c3d4e5f60718293a'];
+
   /// The announcement fails, as on a network without multicast: a headset then types the address
   bool advertiseFails = false;
 
@@ -429,6 +432,8 @@ class FakeRelayEnvironment {
     keepScreenOn: (on) async => screen.add(on),
     askNotifications: () async => notificationAsks += 1,
     newCode: () => codes.removeAt(0),
+    newScreenId: () => screenIds.removeAt(0),
+    nowMs: () => 1792862400000,
   );
 }
 
@@ -574,6 +579,12 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
 
   @override
   Future<void> setRelayCode(String code) async => relayCodes.add(code);
+
+  /// setRelayScreenCodes, in order: the TVs the phone's relay welcomes
+  final relayScreenCodes = <List<DjiRelayScreenCode>>[];
+
+  @override
+  Future<void> setRelayScreenCodes(List<DjiRelayScreenCode> codes) async => relayScreenCodes.add(codes);
 
   @override
   Future<void> updateRelayNotification(String text) async => notifications.add(text);

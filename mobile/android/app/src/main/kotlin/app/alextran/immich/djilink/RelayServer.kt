@@ -32,7 +32,13 @@ data class RelayWelcomeFacts(
   val replayName: String?,
 )
 
-/** One headset as the phone's page shows it */
+/**
+ * A TV the pilot added on the phone (p2/design-tv-2026-10-24.md, 2.4): the code the TV made itself and shows with a QR
+ * code, kept under an opaque id. The relay accepts a proof of it as well as a proof of the phone's own code.
+ */
+data class RelayScreenCode(val id: String, val code: String)
+
+/** One headset or TV as the phone's page shows it */
 data class RelayHeadsetRow(
   val address: String,
   val name: String?,
@@ -43,6 +49,10 @@ data class RelayHeadsetRow(
   val relayDelayMs: Double?,
   val droppedUnits: Long,
   val megabitsPerSecond: Double,
+  /** The id of the screen code it proved; null for the phone's own code (a headset, or a TV that typed it) */
+  val screenCodeId: String? = null,
+  /** What its hello says it is: "tv" from a TV of this build, null otherwise */
+  val kind: String? = null,
 )
 
 data class RelaySendingSnapshot(
@@ -65,7 +75,8 @@ data class RelaySendingSnapshot(
  * service, and what a headset may send is the hello, its pings and its bye; anything else closes that connection.
  *
  * Who may connect: an address of the local network ([RelayWire.isLocalNetworkAddress]) arriving on an interface that
- * is neither mobile data nor a VPN; a headset that proves the code within [helloTimeoutMs] of its connection (a
+ * is neither mobile data nor a VPN; a headset that proves the code, or a TV that proves one of the screen codes the pilot
+ * added ([setScreenCodes]), within [helloTimeoutMs] of its connection (a
  * deadline the tick enforces, whatever the pace of the bytes); at most [maxHandshakes] handshakes at once, of which
  * [maxHandshakesPerAddress] from one address, and [maxHeadsets] headsets; [failureLimit] wrong proofs or missed
  * deadlines from one address within [failureWindowNs] block it for [blockNs] (the phone share's numbers).
@@ -107,10 +118,25 @@ class RelayServer(
       return !RelayWire.isSkippedInterface(name)
     }
 
+    /** The TVs a phone keeps at most */
+    const val MAX_SCREEN_CODES = 8
+
+    /** The screen codes kept: codes of the pairing alphabet under a short id, one per id, [MAX_SCREEN_CODES] at most */
+    fun validScreenCodes(codes: List<RelayScreenCode>): List<RelayScreenCode> = codes
+      .filter { it.id.isNotEmpty() && it.id.length <= 64 && RelayWire.normalizeCode(it.code) == it.code }
+      .distinctBy { it.id }
+      .take(MAX_SCREEN_CODES)
+
+    /** What a hello may say it is: a short lower case word, anything else is dropped */
+    private val KIND = Regex("[a-z]{1,16}")
+
     private fun log(message: String) {
       runCatching { android.util.Log.i(TAG, message) }
     }
   }
+
+  /** The code a connection proved: this phone's own ([screenId] null) or the screen code of [screenId] */
+  internal class ProvedCode(val code: String, val screenId: String?)
 
   private val lock = Any()
   private val headsets = mutableListOf<RelayHeadset>()
@@ -131,6 +157,10 @@ class RelayServer(
 
   @Volatile
   private var code: String? = null
+
+  /** The TVs the pilot added: a proof of one of their codes is welcomed too */
+  @Volatile
+  private var screenCodes: List<RelayScreenCode> = emptyList()
 
   @Volatile
   private var running = false
@@ -169,13 +199,19 @@ class RelayServer(
 
   /**
    * Listens on every interface, on [preferredPort] when it is free, else on any free port; returns the port. Already
-   * running, it only takes the code.
+   * running, it only takes the code and the screen codes.
    */
-  fun start(code: String, preferredPort: Int = RelayWire.DEFAULT_PORT, bindAddress: InetAddress? = null): Int {
+  fun start(
+    code: String,
+    preferredPort: Int = RelayWire.DEFAULT_PORT,
+    bindAddress: InetAddress? = null,
+    screens: List<RelayScreenCode> = emptyList(),
+  ): Int {
     require(RelayWire.normalizeCode(code) == code) { "a code of the pairing alphabet" }
     serverSocket?.let { existing ->
       if (running) {
         setCode(code)
+        setScreenCodes(screens)
         return existing.localPort
       }
     }
@@ -183,6 +219,7 @@ class RelayServer(
     val socket = runCatching { ServerSocket().apply { reuseAddress = true; bind(InetSocketAddress(any, preferredPort)) } }
       .getOrElse { ServerSocket().apply { reuseAddress = true; bind(InetSocketAddress(any, 0)) } }
     this.code = code
+    screenCodes = validScreenCodes(screens)
     serverSocket = socket
     running = true
     nextTelemetryNs = clockNs()
@@ -216,18 +253,73 @@ class RelayServer(
     onChange()
   }
 
-  /** A new code: every headset is told so and leaves; each must prove the new code to come back */
+  /**
+   * A new code: every headset of the old code is told so and leaves; each must prove the new code to come back. The TVs
+   * that proved their own screen code stay.
+   */
   fun setCode(next: String) {
     require(RelayWire.normalizeCode(next) == next) { "a code of the pairing alphabet" }
     if (next == code) {
       return
     }
-    code = next
-    val leaving = synchronized(lock) { headsets.toList() }
+    val leaving = synchronized(lock) {
+      code = next
+      headsets.filter { it.screenCodeId == null }
+    }
+    sayNewCode(leaving)
+    onChange()
+  }
+
+  /**
+   * The TVs the pilot added, each with its own code: a TV whose code was removed is told so (BYE newCode, which its
+   * receiver reads as a refused code) and leaves; the others and the headsets stay. Kept while the relay is off, for
+   * its next start.
+   */
+  fun setScreenCodes(next: List<RelayScreenCode>) {
+    val kept = validScreenCodes(next)
+    val leaving = synchronized(lock) {
+      screenCodes = kept
+      headsets.filter { headset -> headset.screenCodeId != null && kept.none { it.id == headset.screenCodeId } }
+    }
+    sayNewCode(leaving)
+    if (leaving.isNotEmpty()) {
+      log("${leaving.size} screen(s) removed, told to leave")
+    }
+    onChange()
+  }
+
+  /** The screen codes kept now, for the tests */
+  internal fun screenCodesKept(): List<RelayScreenCode> = screenCodes
+
+  private fun sayNewCode(leaving: List<RelayHeadset>) {
+    if (leaving.isEmpty()) {
+      return
+    }
     val body = RelayWire.jsonBody(buildJsonObject { put("why", RelayWire.BYE_NEW_CODE) })
     val now = clockNs()
     leaving.forEach { it.queue.finish(RelayWire.BYE, body, now) }
-    onChange()
+  }
+
+  /**
+   * The code a hello proves: this phone's own first, then each screen code, every one compared in constant time
+   * whatever matched before; null when none matches, which counts one failure whatever the number of codes
+   */
+  internal fun provedCode(
+    own: String,
+    screens: List<RelayScreenCode>,
+    serverNonce: ByteArray,
+    clientNonce: ByteArray,
+    proof: ByteArray,
+  ): ProvedCode? {
+    var found: ProvedCode? = null
+    val candidates = listOf(ProvedCode(own, null)) + screens.map { ProvedCode(it.code, it.id) }
+    for (candidate in candidates) {
+      val expected = RelayWire.proof(candidate.code, RelayWire.ROLE_HEADSET, serverNonce, clientNonce)
+      if (RelayWire.proofMatches(expected, proof) && found == null) {
+        found = candidate
+      }
+    }
+    return found
   }
 
   // The relay half of the tee
@@ -456,8 +548,8 @@ class RelayServer(
         return
       }
       val current = code ?: return
-      val expected = RelayWire.proof(current, RelayWire.ROLE_HEADSET, serverNonce, hello.clientNonce)
-      if (!RelayWire.proofMatches(expected, hello.proof)) {
+      val proved = provedCode(current, screenCodes, serverNonce, hello.clientNonce, hello.proof)
+      if (proved == null) {
         refusedProofs += 1
         fail(address, clockNs())
         refuse(output, RelayWire.REFUSED_CODE)
@@ -480,6 +572,7 @@ class RelayServer(
       val number = numbers.incrementAndGet()
       val name = (hello.json?.get("name") as? JsonPrimitive)?.contentOrNull?.filter { !it.isISOControl() }?.take(64)
       val app = (hello.json?.get("app") as? JsonPrimitive)?.contentOrNull?.filter { !it.isISOControl() }?.take(32)
+      val kind = (hello.json?.get("kind") as? JsonPrimitive)?.contentOrNull?.takeIf { KIND.matches(it) }
       val facts = welcomeFacts()
       val resolved = synchronized(lock) { lastResolved }
       val info = resolved?.description?.info
@@ -501,7 +594,8 @@ class RelayServer(
         put("telemetryHz", 10)
         put("pingMs", 500)
       }
-      val phoneProof = RelayWire.proof(current, RelayWire.ROLE_PHONE, serverNonce, hello.clientNonce)
+      // The phone proves the code this connection proved: a TV checks it with its own code
+      val phoneProof = RelayWire.proof(proved.code, RelayWire.ROLE_PHONE, serverNonce, hello.clientNonce)
       RelayWire.write(output, RelayWire.WELCOME, 0, RelayWire.welcomeBody(phoneProof, welcome.toString()))
       output.flush()
       val joined = RelayHeadset(
@@ -514,11 +608,19 @@ class RelayServer(
         clockNs,
         { gone, why -> forget(gone, why) },
         RelayQueue(queueMaxAgeNs, queueMaxBytes),
+        screenCodeId = proved.screenId,
+        kind = kind,
       )
       synchronized(lock) {
         reserved -= 1
         reservation = false
-        if (!running || code != current) {
+        // The code it proved must still be there: a new own code, or the TV removed, during the handshake
+        val stillValid = if (proved.screenId == null) {
+          code == current
+        } else {
+          screenCodes.any { it.id == proved.screenId && it.code == proved.code }
+        }
+        if (!running || !stillValid) {
           throw IOException("stopped during the handshake")
         }
         if (!pending.remove(handshake)) {
@@ -550,7 +652,8 @@ class RelayServer(
       inHandshake = false
       handshakes.decrementAndGet()
       joined.startWriter()
-      log("headset $number joined from $address" + if (primed) ", the last key picture sent first" else "")
+      val who = if (proved.screenId == null) "headset" else "screen"
+      log("$who $number joined from $address" + if (primed) ", the last key picture sent first" else "")
       onChange()
       socket.soTimeout = pingTimeoutMs
       readLoop(joined, input)
@@ -665,6 +768,8 @@ class RelayServer(
           relayDelayMs = headset.relayDelayMedianUs.takeIf { it >= 0 }?.let { it / 1000.0 },
           droppedUnits = headset.queue.unitsDropped,
           megabitsPerSecond = headset.megabitsPerSecond(nowNs),
+          screenCodeId = headset.screenCodeId,
+          kind = headset.kind,
         )
       }
       dropped = droppedOfClosed + headsets.sumOf { it.queue.unitsDropped }

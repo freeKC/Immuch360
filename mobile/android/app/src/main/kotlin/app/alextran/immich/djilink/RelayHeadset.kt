@@ -225,6 +225,10 @@ class RelayHeadset internal constructor(
   private val clockNs: () -> Long,
   private val onClosed: (RelayHeadset, String) -> Unit,
   val queue: RelayQueue = RelayQueue(),
+  /** The id of the screen code a TV proved; null for the phone's own code */
+  val screenCodeId: String? = null,
+  /** What its hello says it is ("tv"), null when it says nothing */
+  val kind: String? = null,
 ) {
   val connectedAtNs: Long = clockNs()
 

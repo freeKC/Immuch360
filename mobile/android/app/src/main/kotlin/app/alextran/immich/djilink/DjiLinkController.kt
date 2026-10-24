@@ -518,6 +518,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
     phoneName: String,
     phoneId: String?,
     session: Long = pageSession,
+    screens: List<RelayScreenCode> = emptyList(),
   ): Int {
     if (receiver.active || RelayWire.normalizeCode(code) != code) {
       return 0
@@ -544,7 +545,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       manager.transport?.isRunning == true -> RelaySource.CABLE
       else -> RelaySource.NONE
     }
-    val port = runCatching { relay.start(code) }.getOrElse {
+    val port = runCatching { relay.start(code, screens = screens) }.getOrElse {
       Log.w(TAG, "the relay could not listen: ${it.javaClass.simpleName}")
       stop(LinkOwner.RELAY)
       return 0
@@ -589,6 +590,11 @@ class DjiLinkController private constructor(private val context: Context) : Link
     if (RelayWire.normalizeCode(code) == code && relay.isRunning) {
       relay.setCode(code)
     }
+  }
+
+  /** The TVs the pilot added on this phone, each with its own code; a TV removed is told to leave */
+  fun setRelayScreenCodes(screens: List<RelayScreenCode>) {
+    relay.setScreenCodes(screens)
   }
 
   /** Stop in the notification: the relay stops here, and Flutter is told so that it stops the announcement */
@@ -642,7 +648,9 @@ class DjiLinkController private constructor(private val context: Context) : Link
     }
     reception.start(ReceptionRecord.Watched(name = null, host = host, port = port))
     relay.source = RelaySource.NONE
-    receiver.connect(host, port, normalized, phoneId, headsetName, environment.appVersion)
+    // A TV says so in its hello, so that the phone's list shows it as a TV; a headset says nothing, as before
+    val kind = if (environment.television) "tv" else null
+    receiver.connect(host, port, normalized, phoneId, headsetName, environment.appVersion, kind)
     acquireReceiverWifiLock()
     scheduleTick()
     markDirty()
@@ -844,10 +852,15 @@ class DjiLinkController private constructor(private val context: Context) : Link
     }
   }
 
-  /** The obstacle sound follows the media volume: at zero it cannot be heard */
+  /**
+   * The obstacle sound follows the media volume: at zero it cannot be heard. A device whose volume is fixed (most HDMI
+   * boxes, whose volume lives on the TV or the sound bar) cannot tell: no warning there.
+   */
   fun mediaVolumeOff(): Boolean {
     val audio = context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager ?: return false
-    return runCatching { audio.getStreamVolume(AudioManager.STREAM_MUSIC) == 0 }.getOrDefault(false)
+    return runCatching {
+      mediaVolumeSilent(audio.isVolumeFixed, audio.getStreamVolume(AudioManager.STREAM_MUSIC))
+    }.getOrDefault(false)
   }
 
   /** The values of the source in use: a phone's relay, a capture being played, or the cable */
@@ -1551,6 +1564,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       accessoriesListed = it.accessoriesListed.toLong(),
       transportPossible = it.transportPossible,
       chargeCurrentMicroAmps = it.chargeCurrentMicroAmps?.toLong(),
+      television = it.television,
     )
   }
 
@@ -2076,6 +2090,8 @@ private fun RelaySendingSnapshot.toPigeon(wifiLowLatencyHeld: Boolean): DjiRelay
       relayDelayMs = it.relayDelayMs,
       droppedUnits = it.droppedUnits,
       megabitsPerSecond = it.megabitsPerSecond,
+      screenCodeId = it.screenCodeId,
+      kind = it.kind,
     )
   },
   refusedProofs = refusedProofs,
@@ -2140,3 +2156,9 @@ private fun RelayReceiveSnapshot.toPigeon(stats: VideoStats): DjiRelayReceiving 
     lostOnRadio = phone?.lostPictures ?: stats.lostPictures,
   )
 }
+
+/**
+ * Whether the obstacle sound cannot be heard at this media volume: at zero, unless the device's volume is fixed (an HDMI
+ * box, a TV whose sound goes to a sound bar), where the reading says nothing. Pure, unit tested.
+ */
+internal fun mediaVolumeSilent(volumeFixed: Boolean, volume: Int): Boolean = !volumeFixed && volume == 0

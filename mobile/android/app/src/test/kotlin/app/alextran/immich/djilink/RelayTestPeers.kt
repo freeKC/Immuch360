@@ -39,15 +39,16 @@ class TestHeadset(port: Int, private val timeoutMs: Int = 5_000) : AutoCloseable
     return record
   }
 
-  fun hello(code: String, name: String = "Quest 3") {
+  fun hello(code: String, name: String = "Quest 3", kind: String? = null) {
     val proof = RelayWire.proof(code, RelayWire.ROLE_HEADSET, serverNonce, clientNonce)
-    send(RelayWire.HELLO, RelayWire.helloBody(clientNonce, proof, """{"name":"$name","app":"test"}"""))
+    val said = if (kind == null) "" else ",\"kind\":\"$kind\""
+    send(RelayWire.HELLO, RelayWire.helloBody(clientNonce, proof, """{"name":"$name","app":"test"$said}"""))
   }
 
   /** The whole handshake: the record that answers the hello (WELCOME or REFUSED) */
-  fun join(code: String): RelayRecord {
+  fun join(code: String, name: String = "Quest 3", kind: String? = null): RelayRecord {
     challenge()
-    hello(code)
+    hello(code, name, kind)
     return read()
   }
 

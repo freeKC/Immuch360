@@ -142,6 +142,7 @@ class RelayReceiver(
     val phoneId: String?,
     val headsetName: String,
     val appVersion: String,
+    val kind: String?,
   )
 
   private enum class Outcome { LOST, LOST_AFTER_WELCOME, WRONG_CODE, FULL, BLOCKED, OTHER_VERSION, PHONE_UNPROVEN, TIMEOUT }
@@ -183,10 +184,19 @@ class RelayReceiver(
 
   /**
    * Starts receiving from [host]:[port] with [code]; a running connection to another phone or address stops first.
-   * The host must be an IPv4 literal of the local network; the caller checked it.
+   * The host must be an IPv4 literal of the local network; the caller checked it. [kind] goes in the hello when set
+   * ("tv" on a TV, for the phone's list); a headset says nothing, as before.
    */
-  fun connect(host: String, port: Int, code: String, phoneId: String?, headsetName: String, appVersion: String) {
-    val next = Target(host, port, code, phoneId, headsetName, appVersion)
+  fun connect(
+    host: String,
+    port: Int,
+    code: String,
+    phoneId: String?,
+    headsetName: String,
+    appVersion: String,
+    kind: String? = null,
+  ) {
+    val next = Target(host, port, code, phoneId, headsetName, appVersion, kind)
     val mine: Int
     synchronized(lock) {
       generation += 1
@@ -334,6 +344,7 @@ class RelayReceiver(
       val hello = buildJsonObject {
         put("name", target.headsetName)
         put("app", target.appVersion)
+        target.kind?.let { put("kind", it) }
       }
       synchronized(outputLock) {
         RelayWire.write(out, RelayWire.HELLO, 0, RelayWire.helloBody(clientNonce, proof, hello.toString()))
