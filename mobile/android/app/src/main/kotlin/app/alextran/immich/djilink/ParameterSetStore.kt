@@ -75,6 +75,12 @@ class ParameterSetStore(
 ) {
   companion object {
     const val KEY_PREFIX = "djilink.streamDescription."
+
+    /** The last key unit of a remote, with the sets it was decoded with ([onKeyUnit]) */
+    const val KEY_UNIT_PREFIX = "djilink.keyUnit."
+
+    /** A key unit larger than this is not kept (the key pictures of the captures are 12 to 19 KB) */
+    const val MAX_KEY_UNIT_BYTES = 256 * 1024
     private const val FORMAT = "h265-v1"
     private const val SEPARATOR = "|"
   }
@@ -162,7 +168,47 @@ class ParameterSetStore(
   fun forgetCache() {
     val strings = accessory ?: return
     preferences.write(cacheKey(strings), null)
+    preferences.write(keyUnitKey(strings), null)
+  }
+
+  /**
+   * A key unit of the remote's stream, kept for these accessory strings with the sets it was decoded with, so that a
+   * later session that opens the link while the remote already streams (no key picture comes then; the 23 October
+   * capture waited 1 s for one, from an encoder restart) can still start a decoder that waits for a key picture: the
+   * Quest's, through the relay. It is a picture of the drone's camera, kept in the app's own preferences only, and
+   * replaced by the next key picture. A replay keeps nothing.
+   */
+  fun onKeyUnit(unit: AccessUnit, description: StreamDescription) {
+    val strings = accessory ?: return
+    if (!unit.isKey || unit.size > MAX_KEY_UNIT_BYTES) {
+      return
+    }
+    val record = listOf(
+      FORMAT,
+      StreamDescription.hex(description.vps),
+      StreamDescription.hex(description.sps),
+      StreamDescription.hex(description.pps),
+      StreamDescription.hex(unit.bytes),
+    ).joinToString(SEPARATOR)
+    preferences.write(keyUnitKey(strings), record)
+  }
+
+  /** The key unit kept for the current accessory strings, when it was decoded with the sets of [description] */
+  fun keptKeyUnit(description: StreamDescription): AccessUnit? {
+    val strings = accessory ?: return null
+    val cells = preferences.read(keyUnitKey(strings))?.split(SEPARATOR) ?: return null
+    if (cells.size != 5 || cells[0] != FORMAT) {
+      return null
+    }
+    val sets = StreamDescription.fromHex(cells[1], cells[2], cells[3]) ?: return null
+    if (!sets.sameSetsAs(description)) {
+      return null
+    }
+    val bytes = StreamDescription.hexBytes(cells[4]) ?: return null
+    return RelayWire.annexBUnit(bytes, 0).takeIf { it.isKey }
   }
 
   private fun cacheKey(strings: AccessoryStrings): String = KEY_PREFIX + "h265." + strings.key
+
+  private fun keyUnitKey(strings: AccessoryStrings): String = KEY_UNIT_PREFIX + "h265." + strings.key
 }

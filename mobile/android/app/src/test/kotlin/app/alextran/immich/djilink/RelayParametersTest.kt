@@ -95,6 +95,37 @@ class RelayParametersTest {
   }
 
   @Test
+  fun aKeyUnitKeptFromAnEarlierSessionIsSentUntilALiveOneReplacesIt() {
+    server.source = RelaySource.CABLE
+    server.start(code, 0, InetAddress.getLoopbackAddress())
+    val earlier = keyUnit(1)
+    val live = keyUnit(9)
+    server.keepKey(earlier, session)
+    server.submit(pUnit(2), session)
+    TestHeadset(server.port!!).use {
+      assertEquals(RelayWire.WELCOME, it.join(code).type)
+      assertTrue(eventually { server.headsetCount == 1 })
+      assertEquals(RelayWire.PARAMETERS, it.read().type)
+      val primer = it.read()
+      assertEquals(RelayWire.UNIT_KEY or RelayWire.UNIT_PRIMER or RelayWire.UNIT_IN_BAND, primer.flags)
+      assertArrayEquals(earlier.bytes, primer.body.copyOfRange(RelayWire.UNIT_HEADER_BYTES, primer.body.size))
+    }
+    assertTrue(eventually { server.headsetCount == 0 })
+    // A live key picture replaces it, and a later kept one does not replace the live one
+    server.submit(live, session)
+    server.keepKey(earlier, session)
+    server.submit(pUnit(10), session)
+    TestHeadset(server.port!!).use {
+      assertEquals(RelayWire.WELCOME, it.join(code).type)
+      assertTrue(eventually { server.headsetCount == 1 })
+      assertEquals(RelayWire.PARAMETERS, it.read().type)
+      val primer = it.read()
+      assertArrayEquals(live.bytes, primer.body.copyOfRange(RelayWire.UNIT_HEADER_BYTES, primer.body.size))
+    }
+    assertEquals(2L, server.primersSent)
+  }
+
+  @Test
   fun noKeyUnitIsSentFirstForOtherSetsOrAfterANewSource() {
     server.source = RelaySource.REPLAY
     server.start(code, 0, InetAddress.getLoopbackAddress())

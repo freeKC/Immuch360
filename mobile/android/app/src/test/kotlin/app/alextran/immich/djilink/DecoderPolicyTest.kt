@@ -330,7 +330,7 @@ class DecoderPolicyTest {
   }
 
   @Test
-  fun aCodecStartsFromTheKeptKeyPictureWhenTheNextUnitIsNotOne() {
+  fun aCodecThatShowsNothingOnPicturesThatAreNotKeyOnesGetsTheKeptKeyPictureOnce() {
     val seed = ProfileRegistry.seed20261023!!
     val other = StreamDescription(seed.vps, seed.sps, seed.pps + byteArrayOf(0x40), seed.info)
     val key = HevcSamples.unitOf(
@@ -342,29 +342,45 @@ class DecoderPolicyTest {
     )
     val p = HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(), HevcSamples.suffixSei(2))
     val primer = KeyPrimer()
-    // Nothing kept, or a codec already under way: nothing to add
-    primer.onCodecStarted()
-    assertEquals(null, primer.before(p, seed))
     primer.keep(p, seed)
     assertFalse(primer.holds)
     primer.keep(key, seed)
     assertTrue(primer.holds)
-    assertEquals(null, primer.before(p, seed))
-    // A codec starts on a P picture: the kept key unit goes first, once
+    // A codec started on P pictures: nothing for the first eight, then the kept key picture, once
     primer.onCodecStarted()
+    repeat(KeyPrimer.AFTER_UNITS) {
+      assertEquals(null, primer.before(p, seed))
+      primer.onQueued(isKey = false)
+    }
     assertTrue(primer.before(p, seed) === key)
     assertEquals(null, primer.before(p, seed))
-    // A codec that starts on a key picture needs nothing
+    // A decoder that conceals shows a picture first: it never gets the old one
     primer.onCodecStarted()
-    assertEquals(null, primer.before(key, seed))
+    primer.onQueued(isKey = false)
+    primer.onOutput()
+    repeat(20) { primer.onQueued(isKey = false) }
+    assertEquals(null, primer.before(p, seed))
+    // A live key picture since the start: the decoder has its own, rule 6 watches it
+    primer.onCodecStarted()
+    primer.onQueued(isKey = true)
+    repeat(20) { primer.onQueued(isKey = false) }
     assertEquals(null, primer.before(p, seed))
     // Other parameter sets: the kept unit would not decode
     primer.onCodecStarted()
+    repeat(20) { primer.onQueued(isKey = false) }
     assertEquals(null, primer.before(p, other))
+    // Kept only later (the relay's arrives after a few units): it goes in at the next unit
+    val late = KeyPrimer()
+    late.onCodecStarted()
+    repeat(20) { late.onQueued(isKey = false) }
+    assertEquals(null, late.before(p, seed))
+    late.keep(key, seed)
+    assertTrue(late.before(p, seed) === key)
     // A new source forgets it
-    primer.clear()
-    primer.onCodecStarted()
-    assertEquals(null, primer.before(p, seed))
+    late.clear()
+    late.onCodecStarted()
+    repeat(20) { late.onQueued(isKey = false) }
+    assertEquals(null, late.before(p, seed))
   }
 
   @Test

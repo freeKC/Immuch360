@@ -268,6 +268,18 @@ class RelayServer(
     }
   }
 
+  /** A key unit kept from an earlier session of the remote: sent to a joining headset until a live one replaces it */
+  override fun keepKey(unit: AccessUnit, description: ResolvedDescription) {
+    if (!unit.isKey) {
+      return
+    }
+    synchronized(lock) {
+      if (lastKey == null) {
+        lastKey = KeptKey(unit, description.description)
+      }
+    }
+  }
+
   /** A new source: every headset's decoder stops and waits for parameter sets again */
   override fun reset() {
     val now = clockNs()

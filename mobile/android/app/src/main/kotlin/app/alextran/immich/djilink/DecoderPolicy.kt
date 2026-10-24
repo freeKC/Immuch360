@@ -428,19 +428,31 @@ class KeptKey(val unit: AccessUnit, val description: StreamDescription)
  * start() or flush() be a key picture. The Qualcomm H.265 decoders of the Quest 3 hold to it: before a key picture they
  * refuse every unit ("Unsupported input buffer" in the log, no error to the app) and show nothing, while the remote
  * sends a key picture only when its encoder starts. A headset or a page that joins a running stream would wait for
- * the next one, which may never come.
+ * the next one, which may never come. Given a key picture later, even an old one of the same parameter sets, they
+ * decode every unit after it (p2/quest-2026-10-24/fix-decoder.md).
  *
- * So the feed keeps the last key unit it saw (or the one a phone kept and relayed, [RelayWire.UNIT_PRIMER]), and when
- * a codec starts or is flushed and the next unit is not a key picture, the kept one goes first if it was decoded with
- * the same parameter sets. The pictures that follow are predicted from an older picture, so the picture builds up as
- * after a join on a concealing decoder, and the refresh of the stream repairs it.
+ * So the feed keeps the last key unit it saw, or one kept from earlier ([DecoderSink.keepKey]: the one a phone relays
+ * to a headset that joins, or the one a phone kept for its remote from an earlier session). When a codec that started
+ * or was flushed on units that are not key pictures has shown nothing after [AFTER_UNITS] of them, the kept key unit
+ * goes in, once, if it was decoded with the same parameter sets. A decoder that conceals (the Exynos decoder of the
+ * S24+) shows a picture before that and never gets it, so it never shows an old picture; one that waits for a key
+ * picture starts from the kept one, and the picture builds up from it as the refresh of the stream repairs it.
  *
  * [keep] and [clear] come from the threads that submit; the rest belongs to the decoder thread.
  */
-class KeyPrimer {
+class KeyPrimer(private val afterUnits: Int = AFTER_UNITS) {
+  companion object {
+    /** A quarter of a second at 30 pictures per second */
+    const val AFTER_UNITS = 8
+  }
+
   @Volatile
   private var kept: KeptKey? = null
-  private var needsKey = false
+
+  /** A codec started and has shown nothing yet */
+  private var armed = false
+  private var unitsSinceStart = 0
+  private var keySinceStart = false
 
   /** Whether a key unit is kept */
   val holds: Boolean get() = kept != null
@@ -456,22 +468,37 @@ class KeyPrimer {
     kept = null
   }
 
-  /** A codec started or was flushed: its first unit must be a key picture */
+  /** A codec started or was flushed */
   fun onCodecStarted() {
-    needsKey = true
+    armed = true
+    unitsSinceStart = 0
+    keySinceStart = false
+  }
+
+  /** A unit of the stream went into the codec */
+  fun onQueued(isKey: Boolean) {
+    unitsSinceStart += 1
+    if (isKey) {
+      keySinceStart = true
+    }
+  }
+
+  /** A picture came out: the codec decodes, nothing is to be added */
+  fun onOutput() {
+    armed = false
   }
 
   /** Before [unit] goes to a codec: the kept key unit to queue first, or null when none is needed or fits */
   fun before(unit: AccessUnit, description: StreamDescription): AccessUnit? {
-    if (!needsKey) {
-      return null
-    }
-    needsKey = false
-    if (unit.isKey) {
+    if (!armed || unit.isKey || keySinceStart || unitsSinceStart < afterUnits) {
       return null
     }
     val key = kept ?: return null
-    return if (key.description.sameSetsAs(description)) key.unit else null
+    if (!key.description.sameSetsAs(description)) {
+      return null
+    }
+    armed = false
+    return key.unit
   }
 }
 

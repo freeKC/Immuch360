@@ -71,9 +71,9 @@ interface DecoderSink {
   fun submit(unit: AccessUnit, description: ResolvedDescription)
 
   /**
-   * A key unit to keep, not to decode now: the one a phone kept and relays ahead of the live units of a headset that
-   * joins mid stream ([RelayWire.UNIT_PRIMER]). A decoder that starts on a unit that is not a key picture starts from
-   * it ([KeyPrimer]).
+   * A key unit to keep, not to decode now: the one a phone relays ahead of the live units of a headset that joins mid
+   * stream ([RelayWire.UNIT_PRIMER]), or the one kept for the remote from an earlier session. A decoder that waits for
+   * a key picture starts from it ([KeyPrimer]); the relay sends it to a headset that joins.
    */
   fun keepKey(unit: AccessUnit, description: ResolvedDescription) = Unit
 
@@ -366,6 +366,9 @@ class VideoPipeline(
   private var evidence = CodecEvidence.NONE
   private var lastResolved: ResolvedDescription? = null
 
+  /** The key unit kept for the remote from an earlier session was offered to the sink in this stream, or not needed */
+  private var keptKeyOffered = false
+
   /** One unit from the router, with the detector of its stream and the description the unit completed, if any */
   fun onUnit(unit: AccessUnit, detector: CodecDetector, fresh: StreamDescription?, nowNs: Long) {
     val primary = primaryChannel ?: unit.channel.also { primaryChannel = it }
@@ -391,6 +394,15 @@ class VideoPipeline(
     lastResolved = resolved
     statistics.description = resolved.description
     statistics.descriptionSource = resolved.source
+    if (unit.isKey) {
+      store.onKeyUnit(unit, resolved.description)
+      keptKeyOffered = true
+    } else if (!keptKeyOffered) {
+      // A stream joined while the remote already streams: the key unit of an earlier session, for a decoder that
+      // waits for one ([KeyPrimer]) and for a headset that joins ([RelayServer])
+      keptKeyOffered = true
+      store.keptKeyUnit(resolved.description)?.let { sink.keepKey(it, resolved) }
+    }
     sink.submit(unit, resolved)
   }
 
@@ -410,6 +422,7 @@ class VideoPipeline(
   fun newStream() {
     store.newSession()
     pictureCounter.newStream()
+    keptKeyOffered = false
     sink.newStream()
   }
 
@@ -433,6 +446,7 @@ class VideoPipeline(
     codec = VideoCodec.UNKNOWN
     evidence = CodecEvidence.NONE
     lastResolved = null
+    keptKeyOffered = false
   }
 
   fun stats(nowNs: Long, tooLarge: Long): VideoStats {

@@ -61,6 +61,40 @@ class ParameterSetStoreTest {
   }
 
   @Test
+  fun theLastKeyUnitIsKeptPerRemoteWithItsSets() {
+    val key = HevcSamples.unitOf(
+      HevcSamples.DELIMITER,
+      HevcSamples.VPS,
+      HevcSamples.SPS,
+      HevcSamples.PPS,
+      HevcSamples.slice(type = 19),
+    )
+    store.useAccessory(remote)
+    assertNull(store.keptKeyUnit(seed))
+    // A P picture is never kept
+    store.onKeyUnit(HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice()), seed)
+    assertNull(store.keptKeyUnit(seed))
+    store.onKeyUnit(key, seed)
+    val kept = store.keptKeyUnit(seed)!!
+    assertArrayEquals(key.bytes, kept.bytes)
+    assertEquals(key.nalTypes.toList(), kept.nalTypes.toList())
+    // Other sets, another remote, a replay: nothing
+    assertNull(store.keptKeyUnit(other))
+    val again = ParameterSetStore(preferences)
+    again.useAccessory(AccessoryStrings("DJI", "model-b", "remote", "1.0"))
+    assertNull(again.keptKeyUnit(seed))
+    again.useAccessory(null)
+    again.onKeyUnit(key, seed)
+    assertNull(again.keptKeyUnit(seed))
+    // It survives the store, and goes with the cache
+    val later = ParameterSetStore(preferences)
+    later.useAccessory(remote)
+    assertArrayEquals(key.bytes, later.keptKeyUnit(seed)!!.bytes)
+    later.forgetCache()
+    assertNull(later.keptKeyUnit(seed))
+  }
+
+  @Test
   fun aReplayNeitherReadsNorWritesTheCache() {
     store.useAccessory(null)
     store.onSessionDescription(other)

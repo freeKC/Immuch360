@@ -102,11 +102,43 @@ class VideoPipelineTest {
       )
     )
     assertEquals(DescriptionSource.SESSION, sink.units.single().second.source)
-    assertEquals(1, preferences.size)
+    // The description, and the key unit with its sets
+    assertEquals(2, preferences.size)
     val stats = pipeline.stats(clock, 0)
     assertEquals(1920, stats.width)
     assertEquals("5.0", stats.levelName)
     assertEquals(1L, stats.keyPictures)
+  }
+
+  @Test
+  fun aLaterSessionJoinedMidStreamOffersTheKeyUnitOfTheRemoteOnce() {
+    val remote = AccessoryStrings("DJI", "m", "d", "v")
+    store.useAccessory(remote)
+    val key = HevcSamples.unitOf(
+      HevcSamples.DELIMITER,
+      HevcSamples.VPS,
+      HevcSamples.SPS,
+      HevcSamples.PPS,
+      HevcSamples.slice(type = 20),
+      HevcSamples.suffixSei(1),
+    )
+    feed(key)
+    feed(HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(), HevcSamples.suffixSei(2)))
+    // This session had its own key picture: nothing kept from earlier is offered
+    assertTrue(sink.kept.isEmpty())
+    // The next session opens while the remote streams: P pictures and the cached description only
+    pipeline.newSource()
+    store.useAccessory(remote)
+    repeat(3) { feed(HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(), HevcSamples.suffixSei(10 + it))) }
+    assertEquals(3, sink.units.count { it.second.source == DescriptionSource.CACHE })
+    val offered = sink.kept.single()
+    assertTrue(offered.first.isKey)
+    assertTrue(offered.first.bytes.contentEquals(key.bytes))
+    // A replay keeps nothing and is offered nothing
+    pipeline.newSource()
+    store.useAccessory(null)
+    repeat(40) { feed(HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(), HevcSamples.suffixSei(20 + it))) }
+    assertEquals(1, sink.kept.size)
   }
 
   @Test

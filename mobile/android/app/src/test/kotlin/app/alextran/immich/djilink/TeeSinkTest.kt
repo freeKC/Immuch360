@@ -56,12 +56,18 @@ class TeeSinkTest {
   }
 
   @Test
-  fun aKeptKeyUnitGoesToTheFeedOnlySinceTheRelayKeepsItsOwn() {
+  fun aKeptKeyUnitReachesBothAndAThrowingRelayDoesNotStopIt() {
     val feed = Recording()
     val relay = Recording()
-    TeeSink(feed, relay).keepKey(HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(type = 20)), description)
+    val key = HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(type = 20))
+    TeeSink(feed, relay).keepKey(key, description)
     assertEquals(listOf("keepKey"), feed.calls)
-    assertEquals(emptyList<String>(), relay.calls)
+    assertEquals(listOf("keepKey"), relay.calls)
+    val alone = Recording()
+    TeeSink(alone, object : Recording() {
+      override fun keepKey(unit: AccessUnit, description: ResolvedDescription) = throw IllegalStateException("relay")
+    }).keepKey(key, description)
+    assertEquals(listOf("keepKey"), alone.calls)
   }
 
   @Test

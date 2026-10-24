@@ -196,8 +196,8 @@ class DecoderQueue<T : Any, W : Any>(private val bound: Int) {
  * Qualcomm vendor keys and the highest operating rate; the same without those; the plain configuration. Which one was
  * accepted is in the log. The decoder itself is the one [DecoderPolicy.current] names.
  *
- * The first unit a codec takes after a start or a flush is a key picture: the last one seen ([KeyPrimer]) goes first
- * when the next unit is not one. Its own picture is released unseen.
+ * A codec that started on units that are not key pictures and shows nothing gets the last key unit kept
+ * ([KeyPrimer]), as the Qualcomm decoders of the Quest need; its own picture is released unseen.
  *
  * Receive only: nothing here has a handle on the transport.
  */
@@ -405,6 +405,7 @@ class VideoDecoderFeed(
       }
       queue.remove(next)
       queueUnit(current, index, buffer, unit)
+      primer.onQueued(unit.isKey)
       afterQueue(policy.afterQueue(unit.isKey, clockNs()), resolved.description)
       publishStatus()
     }
@@ -455,7 +456,7 @@ class VideoDecoderFeed(
     lastPtsUs = pts
     primerPts = pts
     primersQueued += 1
-    Log.i(TAG, "the codec starts from the key picture kept from earlier: the next unit is not one")
+    Log.i(TAG, "no picture yet and no key picture since the start: the key picture kept from earlier goes in")
     return true
   }
 
@@ -713,6 +714,7 @@ class VideoDecoderFeed(
         publishStatus()
         return
       }
+      primer.onOutput()
       val now = clockNs()
       val decodeNs = queuedAt.remove(info.presentationTimeUs)?.let { now - it }
       statistics.onDecoded(decodeNs, now)
