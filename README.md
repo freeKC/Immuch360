@@ -15,27 +15,6 @@ Flat, 360° and 3D photos and videos from your device, your NAS, your Immich ser
   <sub>Unofficial fork of the Immich mobile app. Not affiliated with Immich or FUTO. The name reads as "I am much 360".</sub>
 </p>
 
-<div align="center">
-
-| Platform | Where to get it | Status on 23 October 2026 |
-|---|---|---|
-| <img src=".github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 25; build 28 sent for Google's review), build 29 on GitHub |
-| <img src=".github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.1 (build 27) waiting for Apple's review, sent again on 22 October, then version 3.3.2 (build 28), in TestFlight for internal testing; [build it yourself](docs/immuch360/build.md) meanwhile |
-| <img src=".github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 29 on GitHub: [sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) by scanning a QR code, and a [time bar, audio and subtitles](#watch-on-the-tv-and-on-the-computer) for the remote in the video player; the TV listing is under Google's review |
-| **LG TVs** with webOS 4.0 and later | [.ipk test build](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) | test build 0.2.0, to install in [Developer Mode](#lg-tvs-webos): network shares, Plex and the Tapo live view; 0.1.0 ran on a tester's LG TV, 0.2.0 not on a real TV yet; a version for the LG Content Store is in preparation |
-| **Samsung TVs** with Tizen 5.5 and later | [.wgt test build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.1.0) | test build 0.1.0 of the same TV app, to sign with your own Samsung certificate and install in [Developer mode](#samsung-tvs-tizen); not run on a real Samsung TV yet |
-| <img src=".github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store (build 28), build 29 on GitHub |
-| <img src=".github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer or ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) | desktop build 10, a signed preview: photos, flat and 360° videos, shares, Plex, cameras, sign in with your phone, photos turned with one key, the interface in 89 languages |
-| <img src=".github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src=".github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) | previews: on Linux photos, 360° photos and flat videos (360° videos play flat); on macOS the same, checked on the project's CI Mac only, unsigned |
-
-*The statuses are updated at each release; the details, build by build, are in [Release status](docs/immuch360/release-status.md).*
-
-</div>
-
-<p align="center">
-  <img src=".github/readme/platforms-2026-10.jpg" width="100%" alt="Four real captures side by side: the sphere viewer on an Android phone, the 360° list on a Google TV, the video player of Immuch360 Desktop on Windows, and a 360° photo all around you in a Meta Quest 3">
-</p>
-
 <details>
 <summary><b>Contents</b></summary>
 
@@ -73,6 +52,96 @@ Flat, 360° and 3D photos and videos from your device, your NAS, your Immich ser
 - **You fly a DJI drone** and want its live picture on your phone without DJI Fly (experimental): [your drone](#see-what-your-drone-sees-on-your-phone).
 
 None of it needs an account, and nothing goes to us: the app talks only to your devices and to the servers you choose.
+
+## Which screens
+
+<div align="center">
+
+| Platform | Where to get it | Status on 24 October 2026 |
+|---|---|---|
+| <img src=".github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 25; build 29 under Google's review, in place of build 28), build 29 on GitHub |
+| <img src=".github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.1 (build 27) waiting for Apple's review since 22 October, then version 3.3.2 (build 28), in TestFlight for internal testing; [build it yourself](docs/immuch360/build.md) meanwhile |
+| <img src=".github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 29 on GitHub: [sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) by scanning a QR code, and a [time bar, audio and subtitles](#on-android-tv-and-google-tv) for the remote in the video player; the TV listing is under Google's review |
+| **LG TVs** with webOS 5.0 and later | [.ipk, version 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (in review) | version 1.0.0, submitted to the LG Content Store on 24 October and waiting for LG's review; until then it installs in [Developer Mode](#lg-tvs-webos). It ran on webOS 25 TVs of LG's Cloud Test Lab |
+| **Samsung TVs** with Tizen 5.5 and later | [.wgt test build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | test build 0.2.0 of the same TV app, to sign with your own Samsung certificate and install in [Developer mode](#samsung-tvs-tizen); 0.1.0 ran on a tester's Samsung TV, and 0.2.0 holds the fixes from that run; not on Samsung's store |
+| <img src=".github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store, build 29 on GitHub |
+| <img src=".github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer or ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) | desktop build 10, a signed preview: photos, flat and 360° videos, shares, Plex, cameras, sign in with your phone, photos turned with one key, the interface in 89 languages |
+| <img src=".github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src=".github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) | previews: on Linux photos, 360° photos and flat videos (360° videos play flat); on macOS the same, checked on the project's CI Mac only, unsigned |
+
+*The statuses are updated at each release; the details, build by build, are in [Release status](docs/immuch360/release-status.md).*
+
+</div>
+
+<p align="center">
+  <img src=".github/readme/platforms-2026-10-24.jpg" width="100%" alt="Seven real captures of Immuch360 in two rows: the sphere viewer on an Android phone, a 360° photo on an iPad, the window of the app in a Meta Quest 3, a 360° photo on a Google TV and on an LG TV, the photo timeline on a Samsung TV, and the video player on Windows. The LG and Samsung captures were taken in a browser that stands in for the TV">
+</p>
+
+<a id="devices-and-systems"></a>
+### What each screen does
+
+One code base for the phones, tablets, Android TV, the Meta Quest and the computers, and a separate TV app for LG TVs, also packaged for Samsung TVs as a test build. What each one has today:
+
+| Capability | Android | iPhone, iPad | Android TV | LG webOS | Samsung Tizen | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ viewer | ✅ |
+| Sign in with your phone (QR code) | ✅ scans the code | 🔜 next iOS release | ✅ | ✅ in the phone's browser | ❌ typed on the TV | ✅ code typed on the phone |
+| Without a server: the device's own media | ✅ | ✅ | shares only | ❌ | ❌ | ✅ |
+| Flat photos and videos | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Rotate a photo with one key | ✅ | ✅ | ✅ colour keys | ✅ colour keys | ✅ | ✅ window |
+| 360° photos as a sphere | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ immersive |
+| 360° videos | ✅ | ✅ no time bar | ✅ message if not decodable | flat only | flat only | ✅ immersive |
+| 3D and VR180 | ✅ one eye | ✅ one eye | ✅ one eye | photos one eye, videos flat | photos one eye, videos flat | ✅ true 3D |
+| Spatial 2.5D (head tracking) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ | ❌ |
+| Apple spatial photos | ✅ one eye | ✅ one eye | ✅ one eye | ❌ | ❌ | ✅ 3D |
+| Raw Insta360, GoPro and DJI files | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ | ✅ SMB from webOS 22 | ❌ | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Tapo cameras: recordings | ✅ | ✅ | ✅ | 🔜 not before December 2026 | ❌ | ✅ |
+| Tapo cameras: live view | ✅ | 🔜 next iOS release | ✅ | ✅ video only | ❌ | ✅ |
+| Share this device on the network | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Upload to Immich from shares and the device | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Import from a DJI drone or a card over USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| The DJI drone's live video (experimental) | ✅ with an RC-N3 | ❌ | ❌ | ❌ | ❌ | diagnostics; live 🔜 |
+| Dark theme | as the system | as the system | ✅ by default | ✅ only theme | ✅ only theme | as the system |
+| Input | touch, gyroscope | touch, gyroscope | remote; Left and Right also during a video and on its time bar, Menu for the details | remote, Magic Remote | remote | controllers, hands |
+| Where to get it | Google Play, APK | App Store (in review) | APK, Google Play (in review) | .ipk, LG Content Store (in review) | .wgt test build, signed by you | Horizon Store, APK |
+
+| Capability | Windows | Linux | macOS |
+|---|:---:|:---:|:---:|
+| Gallery, albums, search with an Immich server | ✅ | 🔧 CI | 🔧 CI |
+| Sign in with your phone (QR code) | ✅ | 🔧 CI | 🔧 CI |
+| Without a server: the device's own media | ✅ folders | ✅ folders | ✅ folders |
+| Flat photos and videos | ✅ | ✅ | ✅ |
+| Rotate a photo with one key | ✅ | ✅ | ✅ |
+| 360° photos as a sphere | ✅ | ✅ | 🔧 CI |
+| 360° videos | ✅ | flat only | flat only |
+| 3D and VR180 | ✅ one eye | photos one eye, videos flat | photos one eye, videos flat |
+| Spatial 2.5D (head tracking) | 🔜 in development | ❌ | ❌ |
+| Apple spatial photos | ✅ one eye | 🔧 CI | 🔧 CI |
+| Raw Insta360, GoPro and DJI files | ✅ | 🔧 CI photos, videos flat | 🔧 CI photos, videos flat |
+| SMB, WebDAV, DLNA shares | ✅ | 🔧 CI | 🔧 CI |
+| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
+| Tapo cameras: recordings | ✅ | 🔧 CI | 🔧 CI |
+| Tapo cameras: live view | ✅ | 🔧 CI | 🔧 CI |
+| Share this device on the network | ✅ | ❌ | ❌ |
+| Upload to Immich from shares and the device | ✅ | 🔧 CI | 🔧 CI |
+| Import from a DJI drone or a card over USB (experimental) | ❌ | ❌ | ❌ |
+| The DJI drone's live video (experimental) | ❌ | ❌ | ❌ |
+| Dark theme | as the system | as the system | as the system |
+| Input | mouse, keyboard | mouse, keyboard | mouse, keyboard, trackpad |
+| Where to get it | installer or ZIP (signed preview) | .deb, .rpm (preview) | DMG or ZIP (unsigned preview) |
+
+✅ in the app on that platform · ❌ not offered there · 🔜 planned · 🔧 CI in the sources, built and started by the project's CI on that system, not checked with a real server, share or camera there yet · flat only: the video plays flat, with a message, because the 360° video renderer of the computers is Windows only, on LG TVs whether webOS hands video frames to the sphere is still to be measured, and on the Samsung TV of a tester the browser gave black frames to the 3D view. "One eye" means a 3D file shows its left eye on a flat screen. The LG and Samsung columns are one separate TV app: LG version 1.0.0, whose shares, Plex and cameras were checked against real servers on the project's build host, not on a TV yet, and Samsung test build 0.2.0. Not every ✅ has been checked on a real device yet: what was checked where, and what remains to confirm, is in [Features](docs/immuch360/features.md), [Platform support](docs/immuch360/platform-support.md) and [Compatibility](docs/immuch360/compatibility.md).
+
+- **Android phones and tablets**: the complete app, touch and gyroscope, every source.
+- **iPhone and iPad**: the complete app; the 360° video player has play and pause only, the Tapo live view and the phone side of the sign in with your phone come with the next iOS release, and the DLNA search sends unicast requests until Apple grants the multicast entitlement.
+- **Android TV and Google TV**: the same APK, driven by the remote, dark by default; a viewer: backup, uploads and the editor are hidden and the details are read only, but a photo still turns with one key. Every search filter works with the remote: Location and Camera open their choices in a list, the date filter shows all its choices, and the Tags, Location, Date, Media Type, Star Rating and Display options sheets put Clear and Apply beside the choices, one Right away, on most of the screen height. The photo grid uses less image memory, and a held arrow moves it at most about 10 rows a second. From build 28 it signs in from a phone, by its QR code or its short code (tried between two emulators with the code typed, not yet with a camera). From build 29 the time bar of a video takes the focus of the remote, films get audio and subtitle menus, and the next file of a share opens with controls of its own. Checked on the Google TV emulator; build 28 ran on a real Android TV on 23 October, and the video problems found there are the fixes of build 29, checked on the emulator, not yet on that TV.
+- **LG TVs with webOS 5.0 and later**: a separate app for the remote and the Magic Remote, built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): an Immich viewer with the 360° photos on a sphere, a photo turned with one key, a dark theme and the 89 languages of the app (the few texts of the TV app itself in English for now); the network shares, Plex and the live view of Tapo cameras, through its own service on the TV (SMB from webOS 22); 360° videos flat. Version 1.0.0, submitted to the LG Content Store on 24 October, ran on webOS 25 TVs of three models in LG's Cloud Test Lab: sign in, the phone sign in page, photos, albums, a video, the 360° view, the slideshow, a search and Back from every page. Version 0.1.0 ran on a tester's LG TV (webOS 22). The shares, Plex and the cameras were checked against real servers on the project's build host, not on a TV yet.
+- **Samsung TVs with Tizen 5.5 and later**: the LG TV app packaged for Samsung TVs, test build 0.2.0, to sign and install yourself: an Immich viewer for the remote, signed in by typing (the server address, then an email and password or an API key), with the slideshow, the 360° photos on a sphere, a photo turned with one key and an About page that tells what the TV supports; no sign in with a phone, shares, Plex or cameras yet; 360° videos flat, with a notice. Version 0.1.0 ran on a tester's Samsung TV on Tizen 9: photos and videos up to 4K played, nothing above 4K decoded, and the browser of the TV gave black frames to the 3D view. Version 0.2.0 holds the fixes from that run (a message for a video above the TV's decoders or one that stalls, 360° videos flat with a notice) and has not run on a TV yet.
+- **Meta Quest 2, Pro, 3 and 3S**: the app as a window, plus the immersive view; HEVC is the safe codec, H.264 stops around 4096x2304 on the Quest 3; only the Quest 3 is tested, the Quest 2, Quest Pro and Quest 3S are not tested yet.
+- **Windows 10 and 11**: a preview, with folders instead of a gallery, a video player of its own (libmpv) for flat and 360° videos, raw files stitched on the graphics chip, files and folders opened with the program or dropped on the window, an installer or a ZIP, signed by APROGSYS.
+- **Linux**: a .deb and an .rpm built by the project's CI, installed and checked on Ubuntu 22.04 and 24.04, Debian 12 and Fedora 40 and 44; photos, 360° photos and flat videos through the system's libmpv (360°, 3D and raw videos play flat with a message), drawn on the hardware path on X11 sessions too from desktop build 7; SMB shares from Ubuntu 22.04 and Debian 12 on; without a keyring (GNOME Keyring or KWallet) the app no longer freezes for 25 s at its first start: it keeps the passwords for the session only and says so in its settings; not run on a real Linux PC yet, only under WSLg and in containers.
+- **macOS**: a DMG and a ZIP built by the project's CI, universal, unsigned (Gatekeeper asks once); it starts, opens the files and folders given to it, Finder included, keeps its secrets in the login keychain and plays flat videos with its own libmpv, all checked on the project's CI Mac only; nothing has run on a real Mac yet.
 
 ## What you can do
 
@@ -279,72 +348,6 @@ It only listens. No command is ever sent to the remote or the drone: the one byt
 5. "Export the capture" writes three files to `Download/Immuch360/dji-link`; "Play a capture" plays an export again on the page, without the remote, to see how well a device decodes the drone's video.
 
 The drone's photos and videos cannot be reached through the remote, which does not open the drone's storage: copy them from the drone itself over USB or from its card, as in [the section above](#your-dji-drones-photos-and-videos-on-your-immich-server). On a Meta Quest the page is there too, but the drone's live video does not reach the headset yet. Keep the exported files to yourself, as the page says, since they hold the serial number of the remote; a report in [Issues](https://github.com/freeKC/Immuch360/issues) with the states and counters the page shows helps, above all with other DJI remotes.
-
-## Devices and systems
-
-One code base for six environments, and a separate app for LG TVs, with a first test build for Samsung TVs. What each one has today:
-
-| Capability | Android | iPhone, iPad | Android TV | LG webOS | Quest |
-|---|:---:|:---:|:---:|:---:|:---:|
-| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ |
-| Sign in with your phone (QR code) | ✅ scans the code | 🔜 next iOS release | ✅ | ✅ in the phone's browser | ✅ code typed on the phone |
-| Without a server: the device's own media | ✅ | ✅ | shares only | ❌ | ✅ |
-| Flat photos and videos | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Rotate a photo with one key | ✅ | ✅ | ✅ colour keys | ✅ colour keys | ✅ window |
-| 360° photos as a sphere | ✅ | ✅ | ✅ | ✅ | ✅ immersive |
-| 360° videos | ✅ | ✅ no time bar | ✅ message if not decodable | flat only | ✅ immersive |
-| 3D and VR180 | ✅ one eye | ✅ one eye | ✅ one eye | photos one eye, videos flat | ✅ true 3D |
-| Spatial 2.5D (head tracking) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ |
-| Apple spatial photos | ✅ one eye | ✅ one eye | ✅ one eye | ❌ | ✅ 3D |
-| Raw Insta360, GoPro and DJI files | ✅ | ✅ | ✅ | ❌ | ✅ |
-| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ | ✅ SMB from webOS 22, WebDAV and DLNA from webOS 5 | ✅ |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ from webOS 5 | ✅ |
-| Tapo cameras: recordings | ✅ | ✅ | ✅ | 🔜 not before December 2026 | ✅ |
-| Tapo cameras: live view | ✅ | 🔜 next iOS release | ✅ | ✅ video only, from webOS 5 | ✅ |
-| Share this device on the network | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Upload to Immich from shares and the device | ✅ | ✅ | ❌ | ❌ | ✅ |
-| Import from a DJI drone or a card over USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| DJI link: the drone's live video (experimental) | ✅ with an RC-N3 | ❌ | ❌ | ❌ | diagnostics; live 🔜 |
-| Dark theme | as the system | as the system | ✅ by default | ✅ only theme | as the system |
-| Input | touch, gyroscope | touch, gyroscope | remote; Left and Right also during a video and on its time bar, Menu for the details | remote, Magic Remote | controllers, hands |
-| Where to get it | Google Play, APK | App Store (in review) | APK, Google Play (in review) | .ipk test build, Developer Mode | Horizon Store, APK |
-
-| Capability | Windows | Linux | macOS |
-|---|:---:|:---:|:---:|
-| Gallery, albums, search with an Immich server | ✅ | 🔧 CI | 🔧 CI |
-| Sign in with your phone (QR code) | ✅ | 🔧 CI | 🔧 CI |
-| Without a server: the device's own media | ✅ folders | ✅ folders | ✅ folders |
-| Flat photos and videos | ✅ | ✅ | ✅ |
-| Rotate a photo with one key | ✅ | ✅ | ✅ |
-| 360° photos as a sphere | ✅ | ✅ | 🔧 CI |
-| 360° videos | ✅ | flat only | flat only |
-| 3D and VR180 | ✅ one eye | photos one eye, videos flat | photos one eye, videos flat |
-| Spatial 2.5D (head tracking) | 🔜 in development | ❌ | ❌ |
-| Apple spatial photos | ✅ one eye | 🔧 CI | 🔧 CI |
-| Raw Insta360, GoPro and DJI files | ✅ | 🔧 CI photos, videos flat | 🔧 CI photos, videos flat |
-| SMB, WebDAV, DLNA shares | ✅ | 🔧 CI | 🔧 CI |
-| Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
-| Tapo cameras: recordings | ✅ | 🔧 CI | 🔧 CI |
-| Tapo cameras: live view | ✅ | 🔧 CI | 🔧 CI |
-| Share this device on the network | ✅ | ❌ | ❌ |
-| Upload to Immich from shares and the device | ✅ | 🔧 CI | 🔧 CI |
-| Import from a DJI drone or a card over USB (experimental) | ❌ | ❌ | ❌ |
-| DJI link: the drone's live video (experimental) | ❌ | ❌ | ❌ |
-| Dark theme | as the system | as the system | as the system |
-| Input | mouse, keyboard | mouse, keyboard | mouse, keyboard, trackpad |
-| Where to get it | installer or ZIP (signed preview) | .deb, .rpm (preview) | DMG or ZIP (unsigned preview) |
-
-✅ in the app on that platform · ❌ not offered there · 🔜 planned · 🔧 CI in the sources, built and started by the project's CI on that system, not checked with a real server, share or camera there yet · flat only: the video plays flat, with a message, because the 360° video renderer of the computers is Windows only, and on LG TVs whether webOS hands video frames to the sphere is still to be measured. "One eye" means a 3D file shows its left eye on a flat screen. The LG webOS column is a separate app, test build 0.2.0: 0.1.0 ran on a tester's LG TV, while the shares, Plex and the cameras of 0.2.0 were checked against real servers on the project's build host, not on a TV yet. Not every ✅ has been checked on a real device yet: what was checked where, and what remains to confirm, is in [Features](docs/immuch360/features.md), [Platform support](docs/immuch360/platform-support.md) and [Compatibility](docs/immuch360/compatibility.md).
-
-- **Android phones and tablets**: the complete app, touch and gyroscope, every source.
-- **iPhone and iPad**: the complete app; the 360° video player has play and pause only, the Tapo live view and the phone side of the sign in with your phone come with the next iOS release, and the DLNA search sends unicast requests until Apple grants the multicast entitlement.
-- **Android TV and Google TV**: the same APK, driven by the remote, dark by default; a viewer: backup, uploads and the editor are hidden and the details are read only, but a photo still turns with one key. Every search filter works with the remote: Location and Camera open their choices in a list, the date filter shows all its choices, and the Tags, Location, Date, Media Type, Star Rating and Display options sheets put Clear and Apply beside the choices, one Right away, on most of the screen height. The photo grid uses less image memory, and a held arrow moves it at most about 10 rows a second. From build 28 it signs in from a phone, by its QR code or its short code (tried between two emulators with the code typed, not yet with a camera). From build 29 the time bar of a video takes the focus of the remote, films get audio and subtitle menus, and the next file of a share opens with controls of its own. Checked on the Google TV emulator; build 28 ran on a real Android TV on 23 October, and the video problems found there are the fixes of build 29, checked on the emulator, not yet on that TV.
-- **LG TVs with webOS 4.0 and later**: a separate app for the remote and the Magic Remote, built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): an Immich viewer with the 360° photos on a sphere, a photo turned with one key, a dark theme and the 89 languages of the app (the few texts of the TV app itself in English for now); from 0.2.0 the network shares, Plex and the live view of Tapo cameras, through its own service on the TV (webOS 5 and later, SMB from webOS 22); 360° videos flat. Version 0.1.0 ran on a tester's LG TV (webOS 22); 0.2.0 was checked by its tests and against real servers on the project's build host, not on a TV yet.
-- **Samsung TVs with Tizen 5.5 and later**: the LG TV app packaged for Samsung TVs, test build 0.1.0, to sign and install yourself: an Immich viewer for the remote, signed in by typing (the server address, then an email and password or an API key), with the slideshow, the 360° photos on a sphere, a photo turned with one key and an About page that tells what the TV supports; no sign in with a phone, shares, Plex or cameras yet; 360° videos flat. Checked in headless Chromium 69, 76 and 94, the engines of Tizen 5.5, 6.0 and 7.0, against an Immich server; it has not run on a Samsung TV nor on Samsung's emulator.
-- **Meta Quest 2, Pro, 3 and 3S**: the app as a window, plus the immersive view; HEVC is the safe codec, H.264 stops around 4096x2304 on the Quest 3; only the Quest 3 is tested, the Quest 2, Quest Pro and Quest 3S are not tested yet.
-- **Windows 10 and 11**: a preview, with folders instead of a gallery, a video player of its own (libmpv) for flat and 360° videos, raw files stitched on the graphics chip, files and folders opened with the program or dropped on the window, an installer or a ZIP, signed by APROGSYS.
-- **Linux**: a .deb and an .rpm built by the project's CI, installed and checked on Ubuntu 22.04 and 24.04, Debian 12 and Fedora 40 and 44; photos, 360° photos and flat videos through the system's libmpv (360°, 3D and raw videos play flat with a message), drawn on the hardware path on X11 sessions too from desktop build 7; SMB shares from Ubuntu 22.04 and Debian 12 on; without a keyring (GNOME Keyring or KWallet) the app no longer freezes for 25 s at its first start: it keeps the passwords for the session only and says so in its settings; not run on a real Linux PC yet, only under WSLg and in containers.
-- **macOS**: a DMG and a ZIP built by the project's CI, universal, unsigned (Gatekeeper asks once); it starts, opens the files and folders given to it, Finder included, keeps its secrets in the login keychain and plays flat videos with its own libmpv, all checked on the project's CI Mac only; nothing has run on a real Mac yet.
 
 ## Advanced features
 
