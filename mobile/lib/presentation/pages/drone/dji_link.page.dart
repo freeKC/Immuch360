@@ -80,7 +80,9 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
             _section(t.dji_link_traffic, _traffic(snapshot)),
             _section(t.dji_link_telemetry, _telemetry(snapshot)),
             _section(t.dji_link_capture, const DjiLinkCaptureSection()),
-            _section(t.dji_link_sticks, _sticks(snapshot)),
+            // Drawn only once a gamepad was read: the one thing here that looks like piloting stays out of sight
+            // otherwise. It is read only, and the send path is off in this build.
+            if (snapshot?.sticks.sampleAgeMs != null) _section(t.dji_link_sticks, _sticks(snapshot)),
           ] else if (state.environment != null) ...[
             // No cable path here (a headset, an emulator): the picture of a phone's relay, or of a capture played here,
             // which measures this device's decoder with no remote at all. The watch page is where a phone is chosen.

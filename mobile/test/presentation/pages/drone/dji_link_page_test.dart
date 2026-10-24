@@ -335,6 +335,16 @@ void main() {
     expect(find.text('Yaw and throttle'), findsOneWidget);
   });
 
+  testWidgets('no sticks section until a gamepad was read', (tester) async {
+    final api = FakeDjiLinkApi(snapshot: fakeSnapshot(sticks: fakeSticks()));
+
+    await pumpPage(tester, api);
+
+    expect(find.byKey(const Key('dji_link_sticks')), findsNothing);
+    expect(find.text('Controller sticks'), findsNothing);
+    expect(find.text('Roll and pitch'), findsNothing);
+  });
+
   testWidgets('the video panel shows each state, the counters, the decoder and where the description came from', (
     tester,
   ) async {
@@ -405,23 +415,32 @@ void main() {
     expect(find.byKey(const Key('dji_link_flight_note')), findsOneWidget);
     expect(find.text('-0.5 m'), findsOneWidget);
     expect(find.text('126.8 °'), findsOneWidget);
-    expect(find.text('12, automatic landing'), findsOneWidget);
+    expect(find.text('12, landing'), findsOneWidget);
     expect(find.text('38.7 s'), findsOneWidget);
-    expect(find.text('Speeds (candidate)'), findsOneWidget);
+    // Each label says how sure its value is (p2/telemetry-flight-2026-10-24.md, section 2)
+    expect(find.text('Height above the take off point (likely)'), findsOneWidget);
+    expect(find.text('Heading (zero not checked against north)'), findsOneWidget);
+    expect(find.text('Flight mode (likely)'), findsOneWidget);
+    expect(find.text('Speeds (guess)'), findsOneWidget);
+    expect(find.text('Satellites (guess)'), findsOneWidget);
+    expect(find.text('Distance below the drone (likely)'), findsOneWidget);
+    // Which motor bit means in the air is a guess no capture settles: no row
+    expect(find.text('In the air'), findsNothing);
     expect(find.text('38 %'), findsOneWidget);
     expect(find.text('6.180 V'), findsOneWidget);
     expect(find.text('-7.256 A'), findsOneWidget);
-    expect(find.text('582 of 1525 mAh (the full capacity is a candidate)'), findsOneWidget);
-    expect(find.text('Remote battery (candidate)'), findsOneWidget);
+    expect(find.text('582 of 1525 mAh (the full capacity is likely)'), findsOneWidget);
+    expect(find.text('Remote battery (likely)'), findsOneWidget);
     expect(find.text('aircraft side 90, remote side 90'), findsOneWidget);
-    expect(find.text('public layout and the 23 October capture'), findsWidgets);
-    // The labels say no more than the capture of 23 October does (capture-2026-10-23.md, section 5)
-    expect(find.text('Pitch and roll (candidate)'), findsOneWidget);
-    expect(find.text('Signal quality (candidate)'), findsOneWidget);
+    // How each group is known: our own captures, nothing else
+    expect(find.text('our captures of 23 and 24 October'), findsWidgets);
+    expect(find.textContaining('public'), findsNothing);
+    expect(find.text('Body tilt, two angles (likely)'), findsOneWidget);
+    expect(find.text('Signal (its scale is not known yet)'), findsOneWidget);
     expect(
       find.descendant(
         of: find.byKey(const Key('dji_link_link_group')),
-        matching: find.text('public message names and the 23 October capture'),
+        matching: find.text('our captures of 23 and 24 October'),
       ),
       findsOneWidget,
     );
