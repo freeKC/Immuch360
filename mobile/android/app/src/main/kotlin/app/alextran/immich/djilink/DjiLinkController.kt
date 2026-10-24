@@ -260,8 +260,9 @@ class DjiLinkController private constructor(private val context: Context) : Link
     feed.shutdown()
     // The link really ends here, whoever ended it (the page, Stop in the notification, the app swiped away): a pilot
     // not using the link is never offered this application when a cable is plugged in, and it never competes with the
-    // DJI application. The package manager keeps that setting across process deaths.
-    DjiLinkApiImpl.setAttachEntryEnabled(context, false)
+    // DJI application, unless he said yes to "Open this screen when the remote is plugged in" (AttachEntryPolicy).
+    // The package manager keeps that setting across process deaths.
+    DjiLinkApiImpl.setAttachEntryEnabled(context, AttachEntryPreferences(preferences).entryEnabled(linkRunning = false))
     markDirty()
   }
 
@@ -278,7 +279,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
     manager.retryNow()
   }
 
-  /** The pilot picked this application in the system chooser of a plug; nothing happens unless the page is open */
+  /**
+   * The pilot picked this application in the system chooser of a plug. An open live screen takes the accessory at once;
+   * otherwise Flutter opens the live screen ([AttachLaunch]), whose link then finds it.
+   */
   fun onAttachEntry() {
     if (started) {
       manager.onAttachEntry()

@@ -266,9 +266,10 @@
       </intent-filter>
     </activity>
 
-    <!-- DJI link diagnostics: the entry Android offers when a DJI accessory is plugged in. Shipped disabled and
-         enabled only while the diagnostics switch is on (DjiLinkApiImpl.setAttachEntryEnabled), so the app never
-         appears in the chooser of a user who did not ask for it and never competes with DJI Fly for a cable. -->
+    <!-- DJI live video: the entry Android offers when a DJI accessory is plugged in. Shipped disabled and enabled
+         only while a link runs or when the user said yes to "Open this screen when the remote is plugged in"
+         (AttachEntryPolicy), so the app never appears in the chooser of a user who did not ask for it and never
+         competes with DJI Fly for a cable. -->
     <activity
       android:name=".djilink.DjiLinkAttachActivity"
       android:enabled="false"

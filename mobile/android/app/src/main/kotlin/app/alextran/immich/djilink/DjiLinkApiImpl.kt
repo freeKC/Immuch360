@@ -25,8 +25,9 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
 
     /**
      * The entry that puts this application in the Android chooser when a DJI accessory is plugged in. It ships
-     * disabled and is only enabled while the diagnostics switch is on, so a pilot who never asked for it never sees
-     * this application offered for a cable, and it never competes with the DJI application on a phone.
+     * disabled and is enabled while a link runs, or when the pilot asked for it ([AttachEntryPolicy]), so a pilot who
+     * never asked for it never sees this application offered for a cable, and it never competes with the DJI
+     * application on a phone.
      */
     fun setAttachEntryEnabled(context: Context, enabled: Boolean) {
       val component = ComponentName(context, DjiLinkAttachActivity::class.java)
@@ -45,6 +46,9 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
   // The import page lists the plugged accessories without it.
   private val controller by lazy { DjiLinkController.of(context) }
   private val main = Handler(Looper.getMainLooper())
+
+  /** The answers that keep the attach entry when no link runs; read without making the controller */
+  private val attachPreferences by lazy { AttachEntryPreferences(SharedPreferencesStore(context)) }
   private val pickerRequests = AtomicInteger()
   private val worker by lazy {
     Executors.newSingleThreadExecutor { runnable -> Thread(runnable, "DjiLinkWork").apply { isDaemon = true } }
@@ -343,6 +347,26 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
   override fun stopPlayback() {
     controller.stopPlayback()
   }
+
+  override fun setOpenOnPlug(on: Boolean) {
+    attachPreferences.openOnPlug = on
+    applyAttachEntry()
+  }
+
+  override fun openOnPlug(): Boolean = attachPreferences.openOnPlug
+
+  override fun setLiveSettingOn(on: Boolean) {
+    attachPreferences.settingOn = on
+    applyAttachEntry()
+  }
+
+  /** The entry follows the two answers at once, unless a link runs, which keeps it until it ends */
+  private fun applyAttachEntry() {
+    val linkRunning = DjiLinkController.existing()?.isStarted == true
+    setAttachEntryEnabled(context, attachPreferences.entryEnabled(linkRunning))
+  }
+
+  override fun takeAttachLaunch(): Boolean = AttachLaunch.take()
 
   override fun bindProfile(profileId: String?) {
     controller.bindProfile(profileId)

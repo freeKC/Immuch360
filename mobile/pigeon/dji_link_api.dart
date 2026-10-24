@@ -1,7 +1,7 @@
 import 'package:pigeon/pigeon.dart';
 
-// Android only (phones and the Meta Quest build): the DJI link diagnostics, behind Settings, Advanced, "DJI link
-// diagnostics (experimental)". The native side opens a DJI remote controller plugged into this device as a USB
+// Android only (phones and the Meta Quest build): the DJI live video and its diagnostics, behind Settings, Advanced,
+// "DJI live video (experimental)". The native side opens a DJI remote controller plugged into this device as a USB
 // accessory, reads what arrives, parses it and counts everything. Nothing on this API sends a flight command: the
 // only bytes written are the one byte liveness probe the USB transport itself needs, which is counted on the page.
 @ConfigurePigeon(
@@ -1259,6 +1259,19 @@ abstract class DjiLinkApi {
 
   /// The flight view of the Quest, with the texts of its panel; false off Horizon OS or while no picture comes
   bool openFlightView(Map<String, String> labels);
+
+  /// "Open this screen when the remote is plugged in", kept by the native side, off by default. With it on and the
+  /// setting on, the entry that puts this application in Android's question for a plugged DJI remote stays enabled
+  /// when the link ends. It decides which application Android offers for the cable, and nothing else.
+  void setOpenOnPlug(bool on);
+
+  bool openOnPlug();
+
+  /// Settings, Advanced, "DJI live video (experimental)": with it off, plugging the remote never opens the app
+  void setLiveSettingOn(bool on);
+
+  /// True once after the plug of a remote brought this application forward through its attach entry
+  bool takeAttachLaunch();
 }
 
 @FlutterApi()
