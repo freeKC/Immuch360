@@ -406,6 +406,7 @@ class MdnsService {
     required this.host,
     required this.port,
     this.attributes = const {},
+    this.lost = false,
   });
 
   final String name;
@@ -417,6 +418,9 @@ class MdnsService {
 
   /// The TXT record
   final Map<String, String> attributes;
+
+  /// The service stopped announcing itself: only its [name] and [type] are known (see [bonsoirBrowse] with lost)
+  final bool lost;
 }
 
 /// The resolved services of one mDNS [type] until [until] completes
@@ -583,8 +587,10 @@ Future<String?> lookupIPv4(String host) async {
 }
 
 /// The resolved services of one type through bonsoir (NSD on Android, the DNS-SD of Apple on iOS). Any failure (no
-/// mDNS on the platform, local network access denied on iOS) ends the stream without an error.
-Stream<MdnsService> bonsoirBrowse(String type, Future<void> until) {
+/// mDNS on the platform, local network access denied on iOS) ends the stream without an error. With [lost], a service
+/// that stops announcing itself comes again with [MdnsService.lost] (its name and type only), so that a list left open
+/// for an hour drops it; without, as before, the stream only grows.
+Stream<MdnsService> bonsoirBrowse(String type, Future<void> until, {bool lost = false}) {
   // bonsoir_windows crashes the app (lib/desktop/network/windows_dns_sd.dart): Windows asks dnsapi itself
   if (CurrentPlatform.isWindows) {
     return windowsDnsSdBrowse(type, until);
@@ -634,6 +640,10 @@ Stream<MdnsService> bonsoirBrowse(String type, Future<void> until) {
               _log.fine('mDNS $type, resolve ${service.name}: $error');
             }),
           );
+        } else if (lost && event.type == BonsoirDiscoveryEventType.discoveryServiceLost) {
+          if (!controller.isClosed) {
+            controller.add(MdnsService(name: service.name, type: service.type, host: '', port: 0, lost: true));
+          }
         } else if (event.type == BonsoirDiscoveryEventType.discoveryServiceResolved) {
           final json = service.toJson();
           final host = json['service.host'] ?? json['service.ip'];

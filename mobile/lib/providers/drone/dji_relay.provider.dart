@@ -12,9 +12,19 @@
 // code typed once per phone and remembered for its install id, the native receiver, and the fallback to the address
 // the announcement gives after three failed attempts. The watch page connects by itself, once per opening, to the last
 // phone it received from when that phone is announced and its code remembered.
+//
+// A TV (p2/design-tv-2026-10-24.md, 2.3 to 2.6): it makes its own code once, in the pairing alphabet, kept on this
+// device only, and shows it with a QR code; the pilot adds it on the phone, whose relay then welcomes a proof of that
+// code as well as of its own. The TV tries its own code on the listed phones it has no code for, one try every 10 s
+// while its page asks for it, 30 at most per opening: six wrong proofs a minute stay under the phone's limit of ten.
+// The phone keeps the TVs it added (eight at most), on this device only, names each from its first connection, and
+// removes them one by one. The wire does not change: a TV proves one code as a headset does, and sends a hello, pings
+// and a bye only.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
@@ -42,6 +52,79 @@ String djiRelayRememberedCodeKey(String phoneId) => 'dji_relay_code.$phoneId';
 
 /// The install id of the last phone a headset received from, for the connection the watch page makes by itself
 const djiRelayLastPhoneKey = 'dji_relay_last_phone';
+
+/// This TV's own code in the secure storage: made once, shown with its QR code for a phone to add
+const djiWatchOwnCodeKey = 'dji_watch_own_code';
+
+/// The install ids of the phones that welcomed this TV's own code, so that a new code forgets them
+const djiWatchOwnCodePhonesKey = 'dji_watch_own_code_phones';
+
+/// The TVs added on this phone, as JSON, in the secure storage
+const djiRelayScreensKey = 'dji_relay_tv_codes';
+
+/// A TV tries its own code on a listed phone at most this often while its page asks for it
+const djiWatchTryEvery = Duration(seconds: 10);
+
+/// The tries of a TV's own code per opening of its page: five minutes at one try every 10 s
+const djiWatchOwnCodeTries = 30;
+
+/// The TVs a phone keeps at most, as its relay does (RelayServer.MAX_SCREEN_CODES)
+const djiRelayMaxScreens = 8;
+
+/// A new opaque id for a TV added on this phone: 16 hexadecimal digits
+String djiRelayNewScreenId([Random? random]) {
+  final source = random ?? Random.secure();
+  return List.generate(16, (_) => source.nextInt(16).toRadixString(16)).join();
+}
+
+int _nowMs() => DateTime.now().millisecondsSinceEpoch;
+
+/// A TV added on this phone: an opaque id, the code the TV made and showed, when it was added, and its name once it
+/// connected
+class DjiRelayScreen {
+  const DjiRelayScreen({required this.id, required this.code, required this.addedMs, this.name});
+
+  final String id;
+  final String code;
+  final int addedMs;
+  final String? name;
+
+  DjiRelayScreen named(String name) => DjiRelayScreen(id: id, code: code, addedMs: addedMs, name: name);
+
+  Map<String, Object?> toJson() => {'id': id, 'code': code, 'added': addedMs, if (name != null) 'name': name};
+
+  /// Null for an entry that is not one of ours: it is dropped, never shown
+  static DjiRelayScreen? fromJson(Object? json) {
+    if (json is! Map) {
+      return null;
+    }
+    final id = json['id'];
+    final code = json['code'];
+    final added = json['added'];
+    final name = json['name'];
+    if (id is! String || id.isEmpty || id.length > 64 || code is! String || added is! int) {
+      return null;
+    }
+    if (normalizePairingCode(code) != code) {
+      return null;
+    }
+    return DjiRelayScreen(id: id, code: code, addedMs: added, name: name is String && name.isNotEmpty ? name : null);
+  }
+}
+
+/// What "Add a TV" gave
+enum DjiRelayAddScreen {
+  added,
+
+  /// This TV is in the list already
+  already,
+
+  /// Eight TVs already: one must be removed first
+  full,
+
+  /// Not a code of the pairing alphabet
+  invalid,
+}
 
 /// The TXT record of a sending phone, under the pairing type: pairing protocol 1, relay protocol 1, kind drone
 Map<String, String> djiRelayAttributes(String installId) => {'v': '1', 'kind': 'drone', 'rv': '1', 'id': installId};
@@ -142,6 +225,8 @@ class DjiRelayEnvironment {
     required this.keepScreenOn,
     required this.askNotifications,
     this.newCode = newPairingCode,
+    this.newScreenId = djiRelayNewScreenId,
+    this.nowMs = _nowMs,
   });
 
   final DjiRelayAdvertise advertise;
@@ -158,12 +243,19 @@ class DjiRelayEnvironment {
   final Future<void> Function(bool on) keepScreenOn;
   final Future<void> Function() askNotifications;
   final String Function() newCode;
+
+  /// The id of a TV added on this phone
+  final String Function() newScreenId;
+
+  /// The clock of the date a TV was added
+  final int Function() nowMs;
 }
 
 final djiRelayEnvironmentProvider = Provider<DjiRelayEnvironment>((ref) {
   return DjiRelayEnvironment(
     advertise: (name, port, attributes) => bonsoirAdvertise(name, port, attributes, type: pairingServiceType),
-    browse: (until) => bonsoirBrowse(pairingServiceType, until),
+    // With the phones that stop announcing themselves: a list left open for an hour drops them
+    browse: (until) => bonsoirBrowse(pairingServiceType, until, lost: true),
     lookup: lookupIPv4,
     localAddresses: djiRelayLocalAddresses,
     deviceName: phoneShareDeviceName,
@@ -196,6 +288,11 @@ class DjiRelayState {
     this.flightViewFailed = false,
     this.stoppedRemotely = false,
     this.phoneName,
+    this.ownCode,
+    this.screens = const [],
+    this.usingOwnCode = false,
+    this.ownCodeRefused = false,
+    this.triesStopped = false,
   });
 
   /// "Send to a headset" is on
@@ -233,6 +330,21 @@ class DjiRelayState {
   /// The name of this phone as the headsets list it, once sending started
   final String? phoneName;
 
+  /// A TV's own code, shown with its QR code for a phone to add; null on a headset and a phone
+  final String? ownCode;
+
+  /// The TVs added on this phone, each with its own code
+  final List<DjiRelayScreen> screens;
+
+  /// The connection under way proves this TV's own code, not a code typed for that phone
+  final bool usingOwnCode;
+
+  /// The phone refused this TV's own code: it does not know this TV yet
+  final bool ownCodeRefused;
+
+  /// The tries of the TV's own code reached [djiWatchOwnCodeTries] in this opening of the page
+  final bool triesStopped;
+
   DjiRelayState copyWith({
     bool? sending,
     bool? starting,
@@ -249,6 +361,11 @@ class DjiRelayState {
     bool? flightViewFailed,
     bool? stoppedRemotely,
     String? phoneName,
+    String? ownCode,
+    List<DjiRelayScreen>? screens,
+    bool? usingOwnCode,
+    bool? ownCodeRefused,
+    bool? triesStopped,
     bool clearPort = false,
     bool clearConnectError = false,
     bool clearTarget = false,
@@ -268,7 +385,32 @@ class DjiRelayState {
     flightViewFailed: flightViewFailed ?? this.flightViewFailed,
     stoppedRemotely: stoppedRemotely ?? this.stoppedRemotely,
     phoneName: phoneName ?? this.phoneName,
+    ownCode: ownCode ?? this.ownCode,
+    screens: screens ?? this.screens,
+    usingOwnCode: usingOwnCode ?? this.usingOwnCode,
+    ownCodeRefused: ownCodeRefused ?? this.ownCodeRefused,
+    triesStopped: triesStopped ?? this.triesStopped,
   );
+
+  /// Whether a TV shows its code card: it has a code, and the phone refused it, or a try of it is under way and not
+  /// welcomed yet, or phones are listed and none has a code here. Not while a picture comes, which the page checks.
+  bool get ownCodeCardShows {
+    final own = ownCode;
+    if (own == null) {
+      return false;
+    }
+    if (ownCodeRefused) {
+      return true;
+    }
+    final target = this.target;
+    if (target != null) {
+      return usingOwnCode && (target.id == null || rememberedCodes[target.id] != own);
+    }
+    if (phones.isEmpty) {
+      return false;
+    }
+    return phones.every((phone) => phone.id == null || !rememberedCodes.containsKey(phone.id));
+  }
 }
 
 class DjiRelayNotifier extends Notifier<DjiRelayState> {
@@ -295,10 +437,24 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
   /// Bumped by every start and stop, so that a start overtaken by a stop undoes what it made
   int _generation = 0;
 
-  @override
-  DjiRelayState build() => const DjiRelayState();
+  /// The tries of a TV's own code: the timer while the page asks for them, the tries made in this opening, and held
+  /// after Stop watching until the page opens again or a phone is chosen
+  Timer? _tries;
+  int _triesMade = 0;
+  bool _triesHeld = false;
 
-  /// The page of the phone opened: the code it would send with, read from the secure storage
+  /// The state of the receiver as the last snapshot said it; a try is made only while no receiver works
+  DjiRelayReceiveState? _receiveState;
+
+  bool _screensLoaded = false;
+
+  @override
+  DjiRelayState build() {
+    ref.onDispose(() => _tries?.cancel());
+    return const DjiRelayState();
+  }
+
+  /// The page of the phone opened: the code it would send with, read from the secure storage, and the TVs added
   Future<void> loadCode() async {
     try {
       final stored = await _environment.readSecret(djiRelayCodeKey);
@@ -308,6 +464,253 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     } catch (error) {
       _log.fine('No relay code: $error');
     }
+    await loadScreens();
+  }
+
+  // The TVs added on this phone
+
+  /// The TVs added on this phone, read once from the secure storage
+  Future<void> loadScreens() async {
+    if (_screensLoaded) {
+      return;
+    }
+    _screensLoaded = true;
+    try {
+      final stored = await _environment.readSecret(djiRelayScreensKey);
+      if (stored == null) {
+        return;
+      }
+      final decoded = jsonDecode(stored);
+      if (decoded is! List) {
+        return;
+      }
+      final screens = [for (final entry in decoded) ?DjiRelayScreen.fromJson(entry)];
+      state = state.copyWith(screens: screens.take(djiRelayMaxScreens).toList());
+    } catch (error) {
+      _log.fine('No TV list: $error');
+    }
+  }
+
+  /// "Add a TV": the code its Drone page shows, scanned or typed; the relay welcomes it at once when it sends
+  Future<DjiRelayAddScreen> addScreen(String typed) async {
+    await loadScreens();
+    final code = normalizePairingCode(typed);
+    if (code == null) {
+      return DjiRelayAddScreen.invalid;
+    }
+    if (state.screens.any((screen) => screen.code == code)) {
+      return DjiRelayAddScreen.already;
+    }
+    if (state.screens.length >= djiRelayMaxScreens) {
+      return DjiRelayAddScreen.full;
+    }
+    final screen = DjiRelayScreen(id: _environment.newScreenId(), code: code, addedMs: _environment.nowMs());
+    state = state.copyWith(screens: [...state.screens, screen]);
+    _log.info('A TV was added: ${state.screens.length} in the list');
+    await _saveScreens();
+    await _pushScreens();
+    return DjiRelayAddScreen.added;
+  }
+
+  /// "Remove": the TV is told to leave at once, and its code is refused from now on
+  Future<void> removeScreen(String id) async {
+    final kept = state.screens.where((screen) => screen.id != id).toList();
+    if (kept.length == state.screens.length) {
+      return;
+    }
+    state = state.copyWith(screens: kept);
+    await _saveScreens();
+    await _pushScreens();
+  }
+
+  List<DjiRelayScreenCode> _screenCodes() => [
+    for (final screen in state.screens) DjiRelayScreenCode(id: screen.id, code: screen.code),
+  ];
+
+  Future<void> _saveScreens() async {
+    try {
+      await _environment.writeSecret(
+        djiRelayScreensKey,
+        jsonEncode([for (final screen in state.screens) screen.toJson()]),
+      );
+    } catch (error) {
+      _log.fine('The TV list was not kept: $error');
+    }
+  }
+
+  /// The relay that sends takes the new list: a TV removed leaves, a TV added is welcomed
+  Future<void> _pushScreens() async {
+    if (!state.sending) {
+      return;
+    }
+    try {
+      await _api.setRelayScreenCodes(_screenCodes());
+    } catch (error) {
+      _log.fine('The TV list did not reach the relay: $error');
+    }
+  }
+
+  /// Each TV takes the name it gave in its first connection
+  void _nameScreens(List<DjiRelayHeadsetRow> rows) {
+    final names = <String, String>{};
+    for (final row in rows) {
+      final id = row.screenCodeId;
+      final name = cleanPairingText(row.name ?? '');
+      if (id != null && name.isNotEmpty) {
+        names[id] = name;
+      }
+    }
+    if (names.isEmpty || !state.screens.any((screen) => screen.name == null && names.containsKey(screen.id))) {
+      return;
+    }
+    state = state.copyWith(
+      screens: [
+        for (final screen in state.screens)
+          if (screen.name == null && names[screen.id] != null) screen.named(names[screen.id]!) else screen,
+      ],
+    );
+    unawaited(_saveScreens());
+  }
+
+  // A TV's own code
+
+  /// The TV's page opened: its own code, made once and kept on this device only, never logged
+  Future<void> loadOwnCode() async {
+    if (state.ownCode != null) {
+      return;
+    }
+    String? stored;
+    try {
+      stored = await _environment.readSecret(djiWatchOwnCodeKey);
+    } catch (error) {
+      _log.fine('No code of this TV: $error');
+    }
+    if (stored != null && normalizePairingCode(stored) == stored) {
+      state = state.copyWith(ownCode: stored);
+      return;
+    }
+    final made = _environment.newCode();
+    try {
+      await _environment.writeSecret(djiWatchOwnCodeKey, made);
+    } catch (error) {
+      _log.fine('The code of this TV was not kept: $error');
+    }
+    state = state.copyWith(ownCode: made);
+  }
+
+  /// "New code for this TV": every phone that knew the old one is forgotten here, and must add the TV again
+  Future<void> newOwnCode() async {
+    final old = state.ownCode;
+    final made = _environment.newCode();
+    try {
+      await _environment.writeSecret(djiWatchOwnCodeKey, made);
+    } catch (error) {
+      _log.fine('The code of this TV was not kept: $error');
+    }
+    final forgotten = [
+      for (final entry in state.rememberedCodes.entries)
+        if (entry.value == old) entry.key,
+    ];
+    final ids = {...forgotten, ...await _ownCodePhones()};
+    for (final id in ids) {
+      try {
+        final remembered = await _environment.readSecret(djiRelayRememberedCodeKey(id));
+        if (remembered == null || remembered == old) {
+          await _environment.deleteSecret(djiRelayRememberedCodeKey(id));
+        }
+      } catch (error) {
+        _log.fine('A code was not forgotten: $error');
+      }
+    }
+    try {
+      await _environment.deleteSecret(djiWatchOwnCodePhonesKey);
+    } catch (error) {
+      _log.fine('The list of phones was not forgotten: $error');
+    }
+    final codes = {...state.rememberedCodes}..removeWhere((id, code) => code == old);
+    state = state.copyWith(ownCode: made, rememberedCodes: codes, ownCodeRefused: false);
+  }
+
+  Future<Set<String>> _ownCodePhones() async {
+    try {
+      final stored = await _environment.readSecret(djiWatchOwnCodePhonesKey);
+      final decoded = stored == null ? null : jsonDecode(stored);
+      return decoded is List ? {...decoded.whereType<String>()} : <String>{};
+    } catch (error) {
+      _log.fine('No list of phones: $error');
+      return <String>{};
+    }
+  }
+
+  /// A phone welcomed this TV's own code: remembered for it, as a typed code is, and listed for a new code to forget
+  Future<void> _rememberOwnCode(String id, String code) async {
+    state = state.copyWith(rememberedCodes: {...state.rememberedCodes, id: code});
+    try {
+      await _environment.writeSecret(djiRelayRememberedCodeKey(id), code);
+      final phones = {...await _ownCodePhones(), id};
+      await _environment.writeSecret(djiWatchOwnCodePhonesKey, jsonEncode(phones.toList()));
+    } catch (error) {
+      _log.fine('The code was not remembered: $error');
+    }
+  }
+
+  /// The TV's page opened: its tries start again from zero
+  void beginOwnCodeTries() {
+    _triesMade = 0;
+    _triesHeld = false;
+    if (state.triesStopped) {
+      state = state.copyWith(triesStopped: false);
+    }
+  }
+
+  /// The TV's page asks for the tries of its own code while it is in front, or stops them
+  void setOwnCodeTries(bool on) {
+    if (!on) {
+      _tries?.cancel();
+      _tries = null;
+      return;
+    }
+    if (_tries != null) {
+      return;
+    }
+    _tries = Timer.periodic(djiWatchTryEvery, (_) => _tryOwnCode());
+    _tryOwnCode();
+  }
+
+  /// A phone chosen on the TV: the tries go on, counted from zero, even after Stop watching or after they stopped
+  void chosenOnTv() => beginOwnCodeTries();
+
+  /// One try of the TV's own code on the next listed phone it has no code for, while no receiver works
+  void _tryOwnCode() {
+    final own = state.ownCode;
+    if (_tries == null || own == null || !_pageVisible || _triesHeld || state.triesStopped) {
+      return;
+    }
+    final working = switch (_receiveState) {
+      null ||
+      DjiRelayReceiveState.idle ||
+      DjiRelayReceiveState.wrongCode ||
+      DjiRelayReceiveState.otherVersion ||
+      DjiRelayReceiveState.phoneUnproven => false,
+      _ => true,
+    };
+    if (working) {
+      return;
+    }
+    final candidates = state.phones
+        .where((phone) => phone.id == null || !state.rememberedCodes.containsKey(phone.id))
+        .toList();
+    if (candidates.isEmpty) {
+      return;
+    }
+    if (_triesMade >= djiWatchOwnCodeTries) {
+      _log.info('This TV stopped trying its code after $_triesMade tries');
+      state = state.copyWith(triesStopped: true);
+      return;
+    }
+    final phone = candidates[_triesMade % candidates.length];
+    _triesMade += 1;
+    unawaited(connect(phone, own));
   }
 
   Future<String> _codeToSend() async {
@@ -359,6 +762,11 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
       _abandonStart(generation);
       return;
     }
+    await loadScreens();
+    if (!_stillWanted(generation)) {
+      _abandonStart(generation);
+      return;
+    }
     final t = StaticTranslations.instance;
     int port;
     try {
@@ -367,6 +775,7 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
           code: code,
           phoneName: deviceName,
           phoneId: installId,
+          screenCodes: _screenCodes(),
           notificationTitle: t.dji_link_relay_notification_title,
           notificationText: t.dji_link_relay_notification_text(count: 0),
           stopLabel: t.dji_link_relay_notification_stop,
@@ -523,6 +932,10 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
   }
 
   Future<void> _found(MdnsService service) async {
+    if (service.lost) {
+      _lost(service);
+      return;
+    }
     final phone = await djiRelayPhoneOf(service, _environment.lookup);
     if (phone == null || _browsing == null) {
       return;
@@ -544,6 +957,20 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
       }
     }
     _autoConnect(phone);
+    // A TV tries its own code at once on the first phone it can: the pilot may have added it already
+    if (_tries != null && _triesMade == 0) {
+      _tryOwnCode();
+    }
+  }
+
+  /// A phone that stopped announcing itself leaves the list, but the one this device receives from or tries to
+  void _lost(MdnsService service) {
+    final name = cleanPairingText(service.name);
+    final target = state.target?.address;
+    final kept = state.phones.where((phone) => phone.name != name || phone.address == target).toList();
+    if (kept.length != state.phones.length) {
+      state = state.copyWith(phones: kept);
+    }
   }
 
   /// The watch page opened: it connects by itself to the last phone it received from, once, as soon as that phone is
@@ -578,13 +1005,17 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     unawaited(connect(phone, code));
   }
 
-  /// Connects to [phone] with the code as typed; the code is remembered for the phone's id once the connect started
+  /// Connects to [phone] with the code as typed; the code is remembered for the phone's id once the connect started.
+  /// A TV's own code is remembered only once the phone welcomed it: a refusal then leaves nothing to forget.
   Future<void> connect(DjiRelayPhone phone, String typedCode) async {
     final code = normalizePairingCode(typedCode);
     if (code == null) {
       state = state.copyWith(connectError: 'badCode');
       return;
     }
+    final own = code == state.ownCode;
+    // A receiver is being started: no try of a TV's own code meanwhile
+    _receiveState = DjiRelayReceiveState.connecting;
     String? outcome;
     try {
       final headsetName = await _environment.deviceName();
@@ -599,13 +1030,20 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
       outcome = 'badHost';
     }
     if (outcome != null) {
+      _receiveState = null;
       state = state.copyWith(connectError: outcome);
       return;
     }
     _fallbackTried = false;
-    state = state.copyWith(target: phone, clearConnectError: true, flightViewFailed: false);
+    state = state.copyWith(
+      target: phone,
+      clearConnectError: true,
+      flightViewFailed: false,
+      usingOwnCode: own,
+      ownCodeRefused: own && state.ownCodeRefused,
+    );
     final id = phone.id;
-    if (id != null) {
+    if (id != null && !own) {
       state = state.copyWith(rememberedCodes: {...state.rememberedCodes, id: code});
       try {
         await _environment.writeSecret(djiRelayRememberedCodeKey(id), code);
@@ -615,14 +1053,47 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     }
   }
 
-  /// "Stop watching": the receiver stops, and the page does not connect by itself again until it is opened again
+  /// "Stop watching": the receiver stops, and the page does not connect by itself again until it is opened again, nor
+  /// does a TV try its code before a phone is chosen
   Future<void> disconnect() async {
     _autoConnectId = null;
+    _triesHeld = true;
+    await _stopReceiving();
+  }
+
+  /// The app went to the background with the watch page in front (a TV's Home): receiving and browsing stop, and
+  /// coming back connects by itself again
+  Future<void> pauseWatching() async {
+    _autoConnectId = null;
+    setOwnCodeTries(false);
+    stopBrowsing();
+    await _stopReceiving();
+  }
+
+  /// Back in front: browsing again, the last phone connected by itself, the tries going on
+  Future<void> resumeWatching({required bool tries}) async {
+    startBrowsing();
+    await armAutoConnect();
+    if (tries) {
+      setOwnCodeTries(true);
+    }
+  }
+
+  /// A TV's page opened: the receiver stopped with the link when the page last closed, so no phone is watched here
+  void forgetTarget() {
+    _receiveState = null;
+    if (state.target != null || state.usingOwnCode || state.ownCodeRefused) {
+      state = state.copyWith(clearTarget: true, usingOwnCode: false, ownCodeRefused: false);
+    }
+  }
+
+  Future<void> _stopReceiving() async {
     try {
       await _api.disconnectRelay();
     } catch (error) {
       _log.fine('The receiver did not stop cleanly: $error');
     }
+    _receiveState = DjiRelayReceiveState.idle;
     state = state.copyWith(clearTarget: true, clearConnectError: true);
   }
 
@@ -639,7 +1110,8 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
   }
 
   /// Every snapshot of the link: the notification follows the number of headsets; a receiver that lost its phone
-  /// three times in a row tries the address the announcement now gives for the same phone; a refused code is forgotten
+  /// three times in a row tries the address the announcement now gives for the same phone; a refused code is forgotten;
+  /// a TV's own code welcomed is remembered, refused is said; a TV added takes the name it gave
   void onSnapshot(DjiLinkSnapshot snapshot) {
     final sending = snapshot.relaySending;
     if (state.sending && sending != null && sending.on && sending.headsets.length != _headsets) {
@@ -647,12 +1119,28 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
       final text = StaticTranslations.instance.dji_link_relay_notification_text(count: _headsets);
       unawaited(_api.updateRelayNotification(text).catchError((Object error) => _log.fine('Notification: $error')));
     }
+    if (sending != null && state.screens.isNotEmpty) {
+      _nameScreens(sending.headsets);
+    }
     final receiving = snapshot.relayReceiving;
+    _receiveState = receiving?.state;
     final target = state.target;
     if (receiving == null || target == null) {
       return;
     }
     final id = target.id;
+    if (receiving.state == DjiRelayReceiveState.receiving) {
+      if (state.ownCodeRefused) {
+        state = state.copyWith(ownCodeRefused: false);
+      }
+      final own = state.ownCode;
+      if (state.usingOwnCode && own != null && id != null && state.rememberedCodes[id] != own) {
+        unawaited(_rememberOwnCode(id, own));
+      }
+    }
+    if (receiving.state == DjiRelayReceiveState.wrongCode && state.usingOwnCode && !state.ownCodeRefused) {
+      state = state.copyWith(ownCodeRefused: true);
+    }
     if (receiving.state == DjiRelayReceiveState.receiving && id != null && id != _lastPhoneId) {
       _lastPhoneId = id;
       unawaited(
