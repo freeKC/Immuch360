@@ -85,4 +85,113 @@ class FlightViewControlsTest {
     assertTrue(FlightViewControls.hideVideo(2_001))
     assertTrue(FlightViewControls.hideVideo(null))
   }
+
+  private fun flight(motorTimeS: Double = 41.6, motorsOn: Boolean = false) = FlightReading(
+    heightM = 0.0,
+    speedsMps = listOf(0.0, 0.0, 0.0),
+    pitchDeg = 0.0,
+    rollDeg = 0.0,
+    headingDeg = -175.6,
+    mode = 6,
+    inAir = motorsOn,
+    motorsOn = motorsOn,
+    satellites = 0,
+    groundHeightM = 0.0,
+    motorTimeS = motorTimeS,
+    flags = 0L,
+  )
+
+  private fun battery(percent: Int = 34) = BatteryReading(
+    voltageV = 6.935,
+    currentA = -0.7,
+    fullMah = 1615,
+    remainingMah = 557,
+    temperatureC = 28.3,
+    cells = 2,
+    percent = percent,
+    status = 0L,
+  )
+
+  private fun values(
+    flightStale: Boolean? = false,
+    batteryStale: Boolean? = false,
+    remote: Int? = 48,
+  ) = TelemetryValues(
+    flight = flightStale?.let { Timed(flight(), 80, it) },
+    gimbal = null,
+    battery = batteryStale?.let { Timed(battery(), 300, it) },
+    remoteBatteryPercent = remote?.let { Timed(it, 500, false) },
+    link = LinkReadings(
+      signalAircraftSide = Timed(90, 100, false),
+      signalRemoteSide = Timed(90, 100, false),
+      liveRateMbps = Timed(5.9, 900, false),
+      aircraftClockMs = null,
+      clockJitterP95Ms = null,
+      clockDriftMs = null,
+    ),
+    layoutMismatches = 0,
+    decoded = emptyMap(),
+  )
+
+  /** The templates Flutter passes for the fields its gate opens: the drone's battery and the motor time */
+  private val gated = mapOf(
+    "droneBattery" to "Drone {value} %",
+    "motorTime" to "Motor time {value}",
+    "noValues" to "No flight data has arrived.",
+    "valuesStale" to "These values are no longer updated",
+  )
+
+  @Test
+  fun theValuesLineShowsTheGatedFieldsOnlyOnOneLine() {
+    assertEquals("Drone 34 %   Motor time 0:41", FlightViewControls.valuesLine(values(), gated))
+    // The remote's battery, the signal and the rate arrive too, but have no template: never shown
+    val line = FlightViewControls.valuesLine(values(), gated)
+    assertFalse(line.contains("48"))
+    assertFalse(line.contains("90"))
+    assertFalse(line.contains("\n"))
+  }
+
+  @Test
+  fun aStaleGroupIsLeftOutAndAllStaleSaysSo() {
+    assertEquals("Motor time 0:41", FlightViewControls.valuesLine(values(batteryStale = true), gated))
+    assertEquals("Drone 34 %", FlightViewControls.valuesLine(values(flightStale = true), gated))
+    assertEquals(
+      "These values are no longer updated",
+      FlightViewControls.valuesLine(values(flightStale = true, batteryStale = true), gated),
+    )
+  }
+
+  @Test
+  fun nothingArrivedForTheGatedFieldsSaysSo() {
+    assertEquals("No flight data has arrived.", FlightViewControls.valuesLine(null, gated))
+    assertEquals(
+      "No flight data has arrived.",
+      FlightViewControls.valuesLine(values(flightStale = null, batteryStale = null), gated),
+    )
+    // Without any template, nothing is shown whatever arrives
+    assertEquals("", FlightViewControls.valuesLine(values(), emptyMap()))
+  }
+
+  @Test
+  fun aGateOpenedLaterNeedsOnlyItsTemplate() {
+    val more = gated + mapOf(
+      "remoteBattery" to "Remote {value} %?",
+      "motors" to "Motors {value}",
+      "heading" to "Heading {value}",
+      "on" to "on",
+      "off" to "off",
+    )
+    assertEquals(
+      "Drone 34 %   Motor time 0:41   Motors off   Heading -175.6   Remote 48 %?",
+      FlightViewControls.valuesLine(values(), more),
+    )
+  }
+
+  @Test
+  fun theMotorTimeIsMinutesAndSeconds() {
+    assertEquals("0:00", FlightViewControls.minutesSeconds(0.0))
+    assertEquals("0:41", FlightViewControls.minutesSeconds(41.6))
+    assertEquals("1:05", FlightViewControls.minutesSeconds(65.0))
+    assertEquals("12:00", FlightViewControls.minutesSeconds(720.9))
+  }
 }

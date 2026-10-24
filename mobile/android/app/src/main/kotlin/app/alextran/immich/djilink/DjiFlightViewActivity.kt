@@ -118,6 +118,65 @@ internal object FlightViewControls {
   fun hideVideo(lastPictureAgoMs: Long?): Boolean = lastPictureAgoMs == null || lastPictureAgoMs > 2_000
 
   /**
+   * The values the panel may show, in this order (p2/design-ux-phone-2026-10-24.md, 6.3). Flutter passes a template
+   * ("Drone {value} %") only for the fields its gate opens, the same gate as the phone's overlay; a field without a
+   * template is never shown, whatever arrives.
+   */
+  val VALUE_FIELDS = listOf(
+    "droneBattery",
+    "motorTime",
+    "motors",
+    "batteryVoltage",
+    "batteryTemperature",
+    "heading",
+    "signal",
+    "linkRate",
+    "remoteBattery",
+  )
+
+  private class FieldValue(val text: String, val stale: Boolean)
+
+  /**
+   * One line: the fields with a template whose group is fresh, three spaces apart. A stale group is left out rather
+   * than shown as current; "valuesStale" when every field that arrived is stale, "noValues" when none arrived.
+   */
+  fun valuesLine(values: TelemetryValues?, labels: Map<String, String>): String {
+    val read = VALUE_FIELDS
+      .filter { !labels[it].isNullOrEmpty() }
+      .mapNotNull { field -> values?.let { fieldValue(it, field, labels) }?.let { field to it } }
+    if (read.isEmpty()) {
+      return labels["noValues"] ?: ""
+    }
+    val fresh = read.filter { !it.second.stale }
+    if (fresh.isEmpty()) {
+      return labels["valuesStale"] ?: ""
+    }
+    return fresh.joinToString("   ") { (field, value) -> (labels[field] ?: "").replace("{value}", value.text) }
+  }
+
+  private fun fieldValue(values: TelemetryValues, field: String, labels: Map<String, String>): FieldValue? =
+    when (field) {
+      "droneBattery" -> values.battery?.let { FieldValue(it.value.percent.toString(), it.stale) }
+      "motorTime" -> values.flight?.let { FieldValue(minutesSeconds(it.value.motorTimeS), it.stale) }
+      "motors" -> values.flight?.let { FieldValue(labels[if (it.value.motorsOn) "on" else "off"] ?: "", it.stale) }
+      "batteryVoltage" -> values.battery?.let { FieldValue(decimals(it.value.voltageV, 2), it.stale) }
+      "batteryTemperature" -> values.battery?.let { FieldValue(decimals(it.value.temperatureC, 1), it.stale) }
+      "heading" -> values.flight?.let { FieldValue(decimals(it.value.headingDeg, 1), it.stale) }
+      "signal" -> values.link.signalRemoteSide?.let { FieldValue(it.value.toString(), it.stale) }
+      "linkRate" -> values.link.liveRateMbps?.let { FieldValue(decimals(it.value, 1), it.stale) }
+      "remoteBattery" -> values.remoteBatteryPercent?.let { FieldValue(it.value.toString(), it.stale) }
+      else -> null
+    }
+
+  /** The motor time as minutes and seconds, as the phone writes it: 41.6 s is 0:41 */
+  fun minutesSeconds(seconds: Double): String {
+    val whole = kotlin.math.floor(seconds).toLong().coerceAtLeast(0L)
+    return "${whole / 60}:${(whole % 60).toString().padStart(2, '0')}"
+  }
+
+  private fun decimals(value: Double, digits: Int): String = String.format(Locale.ROOT, "%.${digits}f", value)
+
+  /**
    * The labels of the state line, said one after the other. A reception that ended on its own (a refused or new code,
    * another version, a phone that did not prove the code) gives its reason, then that no picture comes any more;
    * "local" is only ever said of a capture being played on this headset.
@@ -368,12 +427,9 @@ class DjiFlightViewActivity : AppSystemActivity() {
       visibility = if (FlightViewControls.staleLine(ago)) View.VISIBLE else View.GONE
       text = if (ago == null) label("noPicture") else fill("stale", "seconds" to number(ago / 1000.0))
     }
-    valuesText?.text = valuesLine(numbers.values)
-    latencyText?.text = fill(
-      "latency",
-      "ms" to number(numbers.receiveToPictureMs, 0),
-      "pictures" to number(numbers.picturesPerSecond, 0),
-    )
+    valuesText?.text = FlightViewControls.valuesLine(numbers.values, labels)
+    // The delay from the phone in one short line; the parts of it stay on the Diagnostics page
+    latencyText?.text = numbers.receiveToPictureMs?.let { fill("delay", "ms" to number(it, 0)) } ?: ""
     val show = !FlightViewControls.hideVideo(ago)
     if (show != videoVisible || !placed) {
       videoVisible = show
@@ -381,33 +437,6 @@ class DjiFlightViewActivity : AppSystemActivity() {
     }
     stripEntity?.setComponent(Visible(placed))
     panelEntity?.setComponent(Visible(panelShown && placed))
-  }
-
-  private fun valuesLine(values: TelemetryValues?): String {
-    val flight = values?.flight?.value ?: return label("noValues")
-    val battery = values.battery?.value
-    val lines = mutableListOf(
-      fill(
-        "flight",
-        "heading" to number(flight.headingDeg),
-        "heightMetres" to number(flight.heightM),
-        "speeds" to flight.speedsMps.joinToString(" / ") { number(it) },
-        "mode" to flight.mode.toString(),
-        "motors" to label(if (flight.motorsOn) "on" else "off"),
-      ),
-      fill(
-        "power",
-        "battery" to (battery?.percent?.toString() ?: "-"),
-        "volts" to number(battery?.voltageV, 2),
-        "remote" to (values.remoteBatteryPercent?.value?.toString() ?: "-"),
-        "aircraftSignal" to (values.link.signalAircraftSide?.value?.toString() ?: "-"),
-        "remoteSignal" to (values.link.signalRemoteSide?.value?.toString() ?: "-"),
-      ),
-    )
-    if (values.flight?.stale == true) {
-      lines += label("valuesStale")
-    }
-    return lines.joinToString("\n")
   }
 
   // Frame and input
