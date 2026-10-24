@@ -140,7 +140,7 @@ List<String> djiWatchTvPictureLines(Translations t, DjiLinkDecode? decode, DjiRe
     else
       t.dji_live_tv_decoder_line(
         decoder: name,
-        kind: decode.decoderHardware ? t.dji_live_tv_hardware : t.dji_live_tv_software,
+        kind: decode.decoderHardware == true ? t.dji_live_tv_hardware : t.dji_live_tv_software,
         choice: choice,
       ),
     if (decode != null && name != null)

@@ -436,10 +436,12 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
         final volumeOff = context.t.dji_live_media_volume_off;
         await obstacle.playTest();
         final off = await obstacle.mediaVolumeOff();
-        if (!off || !mounted) {
+        if (!mounted) {
           return;
         }
-        ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(volumeOff)));
+        if (off) {
+          ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(volumeOff)));
+        }
       case 'typeCode':
         await _typeCodeFromOptions();
       case 'newCode':
