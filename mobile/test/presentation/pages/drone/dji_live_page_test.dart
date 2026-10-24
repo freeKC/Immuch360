@@ -446,7 +446,7 @@ void main() {
     expect(find.text('On, but there is nothing to send yet: plug in the remote.'), findsOneWidget);
     // Announced: the addresses stay folded
     expect(find.text('192.168.1.23:8362'), findsNothing);
-    await tester.tap(find.text('The headset does not list this phone?'));
+    await tester.tap(find.text('The headset or the TV does not list this phone?'));
     await tester.pumpAndSettle();
     expect(find.text('192.168.1.23:8362'), findsOneWidget);
     expect(find.text("192.168.43.1:8362 (this phone's hotspot)"), findsOneWidget);
@@ -454,7 +454,7 @@ void main() {
     await push(tester, listener, fakeSnapshot(relaySending: fakeSending(sending: 'cable')));
     // The name the headset lists
     expect(
-      find.text('On. On the headset, open Immuch360, Library, Drone, and pick Immuch360 on Galaxy S24+.'),
+      find.text('On. On the headset or the TV, open Immuch360, Library, Drone, and pick Immuch360 on Galaxy S24+.'),
       findsOneWidget,
     );
     await push(
@@ -476,7 +476,7 @@ void main() {
       ),
     );
     expect(find.text('Watching now: Quest 3'), findsOneWidget);
-    expect(find.text('1 headset watching'), findsOneWidget);
+    expect(find.text('1 screen watching'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('dji_live_send_new_code')));
     await tester.pumpAndSettle();

@@ -1007,7 +1007,7 @@ void main() {
       expect(start.code, 'K7M2Q9XRTH');
       expect(start.phoneName, 'Galaxy S24+');
       expect(start.phoneId, '3f9c0a1b2c3d4e5f');
-      expect(start.notificationTitle, 'DJI live video: sending to headsets');
+      expect(start.notificationTitle, 'DJI live video: sending');
       expect(start.channelName, 'DJI live video, send to a headset');
       expect(relay.secrets['dji_relay_code'], 'K7M2Q9XRTH');
       expect(relay.notificationAsks, 1);
@@ -1063,7 +1063,7 @@ void main() {
       );
       expect(
         api.notifications.last,
-        'Sending the drone\'s picture to 1 headset. With nothing to send and no headset, it stops by itself after '
+        'Sending the drone\'s picture to 1 screen. With nothing to send and no screen, it stops by itself after '
         '10 minutes.',
       );
 
