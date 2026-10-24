@@ -4,7 +4,8 @@ import Scroller from '@enact/sandstone/Scroller';
 import Button from '@enact/sandstone/Button';
 import Dropdown from '@enact/sandstone/Dropdown';
 import {QrCode} from '../../components/QrCode/QrCode';
-import {PRIVACY_POLICY_URL, PrivacyPolicyButton} from '../privacy/PrivacyPolicy';
+import {privacyPolicyUrl, PrivacyPolicyButton} from '../privacy/PrivacyPolicy';
+import {isTizen} from '../../platform/detect';
 import {useRepository} from '../../domain/RepositoryContext';
 import {SpottableDiv} from '../../utils/spotlight';
 import {availableLocales, chosenLocale, localeName, setChosenLocale, t} from '../i18n';
@@ -77,10 +78,10 @@ const DiagnosticsPanel: React.FC = () => {
 							</Button>
 						</div>
 						<p className={css.credit}>{t('webos_about_base', {version: BASE_VERSION})}</p>
-						<p className={css.credit}>{t('webos_about_unofficial')}</p>
+						<p className={css.credit}>{isTizen() ? t('webos_about_unofficial_tizen') : t('webos_about_unofficial')}</p>
 						<p className={css.credit}>https://github.com/freeKC/Immuch360</p>
 						<p className={css.credit}>
-							{t('webos_privacy_policy')}: {PRIVACY_POLICY_URL}
+							{t('webos_privacy_policy')}: {privacyPolicyUrl()}
 						</p>
 						<div className={css.actions}>
 							<PrivacyPolicyButton />

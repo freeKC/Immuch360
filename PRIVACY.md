@@ -1,6 +1,6 @@
 # Privacy policy
 
-Immuch360 is a free and open source fork of the Immich mobile app, for phones and tablets, Android TV and Google TV, the Meta Quest headsets (Quest 2, Quest Pro, Quest 3 and Quest 3S) and Windows computers, with early previews for Linux and macOS, and a separate app for LG TVs with webOS (see [LG TVs (webOS)](#lg-tvs-webos), which says where that app differs). It shows the photos and videos of the device itself, of the network shares, media servers and cameras you add, and of an Immich server that you choose and control. This policy describes what the app does with your data.
+Immuch360 is a free and open source fork of the Immich mobile app, for phones and tablets, Android TV and Google TV, the Meta Quest headsets (Quest 2, Quest Pro, Quest 3 and Quest 3S) and Windows computers, with early previews for Linux and macOS, and a separate app for LG TVs with webOS, also packaged for Samsung TVs with Tizen (see [LG TVs (webOS)](#lg-tvs-webos) and [Samsung TVs (Tizen)](#samsung-tvs-tizen), which say where these apps differ). It shows the photos and videos of the device itself, of the network shares, media servers and cameras you add, and of an Immich server that you choose and control. This policy describes what the app does with your data.
 
 ## What the app does with your data
 
@@ -75,6 +75,17 @@ Immuch360 for LG TVs is a separate app, built on immich-tv-webos. It shows the p
 - **The TV.** The About page reads the model and the software version of the TV to show them, with what the TV can play; its QR code holds the same lines, for you to scan. They stay on the TV.
 - **Not used.** The LG TV app does not use the camera, the microphone, USB devices or your location, and it writes no log file of its own.
 
+## Samsung TVs (Tizen)
+
+Immuch360 for Samsung TVs is the LG TV app (see [LG TVs (webOS)](#lg-tvs-webos)) packaged for Samsung TVs with Tizen. It shows the photos and videos of the Immich server you sign in to. As on the other platforms, nothing goes to the developer: no advertising, no analytics, no crash reporting. Where this section differs from the rest of this policy, this section applies to the Samsung TV app.
+
+- **Stored on the TV.** In the app's own storage on the TV (the local storage of its web page): the address of each server, the email address and the session token or the API key of each account (the password is not kept); your language, your slideshow settings, your 360° view choices, and the turns of photos not saved on the server yet. **None of it is encrypted**: whoever can read the storage of the app on the TV, for example with the developer tools of a TV in Developer Mode, can read these tokens and keys. Signing out of an account on the TV deletes the account and its token or key from the TV; on your server, the session or the API key stays valid until you revoke it there (Account settings). Deleting the app deletes everything.
+- **Your Immich server.** The app sends your session token or API key with each request, and in the address of each photo and video it shows, as Immich's web links do. With a server address in https:// the connection is encrypted; with http:// it is not.
+- **Nothing else on the network.** The Samsung TV app talks only to the Immich servers you add: it loads no file from other servers (fonts included), sends no discovery request on your local network and serves no page to your phone. Signing in with your phone, network shares, Plex servers and Tapo cameras are not in this version of the Samsung TV app.
+- **The TV.** The About page reads the model, the firmware and Tizen versions, the kind of panel, HDR support and what the TV can play, and asks the TV's own Smart View service, on the TV itself (127.0.0.1), whether it answers. These lines stay on the TV; the QR code of the page holds them, for you to scan. The app does not read the unique device identifier (DUID) of the TV nor its advertising identifier. The last errors since the app started are kept in memory only, with the keys of every address hidden, and are shown on the same page.
+- **Privileges.** Internet access (your server), the TV input device (the keys of the remote: arrows, colour, channel and media keys) and the product information (the model and the firmware for the About page). The app also turns the screen saver off while a video or a slideshow plays.
+- **Not used.** The Samsung TV app does not use the camera, the microphone, USB devices, your location or your Samsung account, and it writes no log file of its own.
+
 ## Permissions
 
 - **Photos and videos**: to back them up, to show the photos and videos of the device, and to serve them with the phone share.
@@ -111,6 +122,8 @@ Questions about this policy: open an issue at https://github.com/freeKC/Immuch36
 
 ## Changes
 
+24 October 2026: added Samsung TVs (Tizen): what the Samsung TV app keeps on the TV and that it is not encrypted, that it talks only to your Immich server, what its About page reads from the TV, and its privileges.
+
 23 October 2026: added LG TVs (webOS): what the TV app keeps on the TV and that it is not encrypted, the page of the phone sign in and what it sends unencrypted, the service that reads the shares, the discovery on the local network (each address only on Scan again), the Plex sign in through plex.tv.
 
 22 October 2026: added sign in with your phone (the camera used to scan a code, the listener of the screen, the session sent to it, the list of screens), the DJI drone and DJI link pages, and the USB permission.
@@ -119,4 +132,4 @@ Questions about this policy: open an issue at https://github.com/freeKC/Immuch36
 
 6 October 2026: added the mode without a server, network shares, upload from a share, Share this phone on the network, raw camera files, Apple spatial photos, the data stored on the device, the data on your network and the new permissions. The camera and Face ID permissions now say what they are used for in this app. The previous version, of 30 September 2026, covered the server mode only.
 
-Last updated: 23 October 2026.
+Last updated: 24 October 2026.

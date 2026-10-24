@@ -24,6 +24,19 @@ describe('the messages of a request without an answer', () => {
 		expect(makeAuthErrorMessage(new APIError('x', undefined, 'cors'), AuthMethod.API_KEY)).toBe(cors);
 	});
 
+	test('a Samsung TV gets a CORS message of its own, without webOS in it', () => {
+		(window as {tizen?: unknown}).tizen = {application: {}};
+		try {
+			const cors = presentError(new APIError('x', undefined, 'cors'));
+			expect(cors).toBe(t('webos_error_cors_tizen'));
+			expect(cors).toContain('CORS');
+			expect(cors).not.toContain('webOS');
+		} finally {
+			delete (window as {tizen?: unknown}).tizen;
+		}
+		expect(presentError(new APIError('x', undefined, 'cors'))).toBe(t('webos_error_cors'));
+	});
+
 	test('the CORS message is no longer the answer to every failure', () => {
 		expect(makeAuthErrorMessage(new TypeError('Failed to fetch'), AuthMethod.USER_CREDENTIALS)).toBe(t('webos_error_unreachable'));
 		setOnline(false);

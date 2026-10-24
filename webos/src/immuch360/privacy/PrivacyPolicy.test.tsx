@@ -2,7 +2,7 @@
 // address of the policy and its QR code; Back and Close close it
 import React from 'react';
 import {fireEvent, render, screen} from '@testing-library/react';
-import {PRIVACY_POLICY_URL, PrivacyPolicyButton} from './PrivacyPolicy';
+import {PRIVACY_POLICY_URL, PRIVACY_POLICY_URL_TIZEN, PrivacyPolicyButton, privacyPolicyUrl} from './PrivacyPolicy';
 
 jest.mock('@enact/sandstone/Button', () => ({
 	__esModule: true,
@@ -12,6 +12,21 @@ jest.mock('@enact/sandstone/Button', () => ({
 describe('the privacy policy in the app', () => {
 	test("its address is the LG TVs section of the repository's PRIVACY.md", () => {
 		expect(PRIVACY_POLICY_URL).toBe('https://github.com/freeKC/Immuch360/blob/immuch360/PRIVACY.md#lg-tvs-webos');
+	});
+
+	test('on a Samsung TV it is the Samsung TVs section, in the layer as well', () => {
+		expect(PRIVACY_POLICY_URL_TIZEN).toBe('https://github.com/freeKC/Immuch360/blob/immuch360/PRIVACY.md#samsung-tvs-tizen');
+		expect(privacyPolicyUrl()).toBe(PRIVACY_POLICY_URL);
+		(window as {tizen?: unknown}).tizen = {application: {}};
+		try {
+			expect(privacyPolicyUrl()).toBe(PRIVACY_POLICY_URL_TIZEN);
+			render(<PrivacyPolicyButton />);
+			fireEvent.click(screen.getByText('Privacy policy'));
+			expect(screen.getByText(PRIVACY_POLICY_URL_TIZEN)).toBeTruthy();
+			expect(screen.queryByText(PRIVACY_POLICY_URL)).toBeNull();
+		} finally {
+			delete (window as {tizen?: unknown}).tizen;
+		}
 	});
 
 	test('the button opens the layer with the address and its QR code; Close closes it', () => {

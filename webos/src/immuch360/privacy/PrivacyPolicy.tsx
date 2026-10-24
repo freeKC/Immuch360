@@ -1,6 +1,6 @@
 // Immuch360: the privacy policy, reachable inside the app as LG asks (Privacy Guideline: "Provide Privacy Policy within
 // your app"): a button on the welcome page, on the sign in page and on About opens a layer with the address of the
-// policy's LG TVs section and a QR code of it, to read on a phone. A TV app cannot open a web page by itself without
+// policy's section for the TV the app runs on (LG TVs, or Samsung TVs) and a QR code of it, to read on a phone. A TV app cannot open a web page by itself without
 // another Luna permission, so the code is the way to read it.
 //
 // Its own full screen layer rather than Sandstone's Popup, whose centring fails on webOS 6 (see AccountPanel.module.less).
@@ -11,11 +11,18 @@ import Spotlight from '@enact/spotlight';
 import {QrCode} from '../../components/QrCode/QrCode';
 import {useWebOSKeys} from '../../hooks/useWebOSKeys';
 import {createSpotlightContainer, forceFocus} from '../../utils/spotlight';
+import {isTizen} from '../../platform/detect';
 import {t} from '../i18n';
 import css from './PrivacyPolicy.module.less';
 
 /** The LG TVs section of the policy, in the repository (its anchor is the heading "LG TVs (webOS)") */
 export const PRIVACY_POLICY_URL = 'https://github.com/freeKC/Immuch360/blob/immuch360/PRIVACY.md#lg-tvs-webos';
+
+/** The Samsung TVs section (the heading "Samsung TVs (Tizen)"), the privacy policy URL of the Samsung Seller Office */
+export const PRIVACY_POLICY_URL_TIZEN = 'https://github.com/freeKC/Immuch360/blob/immuch360/PRIVACY.md#samsung-tvs-tizen';
+
+/** The section of the policy for the TV the app runs on */
+export const privacyPolicyUrl = (): string => (isTizen() ? PRIVACY_POLICY_URL_TIZEN : PRIVACY_POLICY_URL);
 
 /** The spotlight id of the layer: a modal trap of the page under it leaves the focus alone while it is open */
 export const PRIVACY_LAYER_ID = 'privacy-policy';
@@ -28,6 +35,7 @@ interface PrivacyPolicyLayerProps {
 }
 
 export const PrivacyPolicyLayer: React.FC<PrivacyPolicyLayerProps> = ({onClose}) => {
+	const url = privacyPolicyUrl();
 	// Back closes the layer first, whatever page is under it
 	useWebOSKeys({onBack: onClose});
 
@@ -45,14 +53,14 @@ export const PrivacyPolicyLayer: React.FC<PrivacyPolicyLayerProps> = ({onClose})
 					</h2>
 					<p className={css.summary}>{t('webos_privacy_summary')}</p>
 					<p className={css.url} data-privacy-url>
-						{PRIVACY_POLICY_URL}
+						{url}
 					</p>
 					<p className={css.hint}>{t('webos_privacy_scan')}</p>
 					<Button size="small" onClick={onClose} backgroundOpacity="opaque">
 						{t('close')}
 					</Button>
 				</div>
-				<QrCode value={PRIVACY_POLICY_URL} className={css.qr} />
+				<QrCode value={url} className={css.qr} />
 			</div>
 		</Layer>
 	);
