@@ -10,7 +10,10 @@ import type {PhotoRepository} from '../../domain/PhotoRepository';
 import {currentLocale, localeLoadError, t} from '../i18n';
 import {SphereRenderer, getWebGL, webglInfo} from '../sphere/SphereRenderer';
 import {platform} from '../../platform/detect';
+import {features} from '../../platform/features';
 import {probeSmartView, tizenAppInfo, tizenInfo, type TizenInfo} from '../../platform/tizen';
+import {decoderCeiling, decoderVerdict, largestDecoded, type DecoderRecord} from '../video/decoders';
+import {knownVideoFrames, recordVideoFrames, sessionDecoders, type VideoFramesVerdict} from '../video/session';
 import {lastErrors} from './errorLog';
 // The clip of the video test goes through the bundler, which copies it into the package: enact pack copies from
 // webos-meta/ only the files appinfo.json names (the icons, the splash), so the clip that sat there never reached the
@@ -77,56 +80,31 @@ function deviceInfo(): Record<string, unknown> | null {
 	}
 }
 
-const CODECS: {name: string; contentType: string; width: number; height: number; bitrate: number}[] = [
-	{name: 'H.264 4K', contentType: 'video/mp4; codecs="avc1.640033"', width: 3840, height: 2160, bitrate: 40000000},
-	{name: 'H.264 5.7K', contentType: 'video/mp4; codecs="avc1.640034"', width: 5760, height: 2880, bitrate: 100000000},
-	{name: 'HEVC 4K', contentType: 'video/mp4; codecs="hvc1.1.6.L153.B0"', width: 3840, height: 2160, bitrate: 40000000},
-	{name: 'HEVC 5.7K', contentType: 'video/mp4; codecs="hvc1.1.6.L183.B0"', width: 5760, height: 2880, bitrate: 100000000},
-	{name: 'HEVC 10 bit 4K', contentType: 'video/mp4; codecs="hvc1.2.4.L153.B0"', width: 3840, height: 2160, bitrate: 40000000},
-	{name: 'AV1 4K', contentType: 'video/mp4; codecs="av01.0.12M.08"', width: 3840, height: 2160, bitrate: 40000000},
-	{name: 'VP9 4K', contentType: 'video/webm; codecs="vp09.00.51.08"', width: 3840, height: 2160, bitrate: 40000000},
-];
-
-interface DecodingInfo {
-	supported: boolean;
-	smooth: boolean;
-	powerEfficient: boolean;
+/**
+ * The line of the largest video the TV decodes: "up to 4K on this TV" where a larger size was refused (the viewer holds
+ * such videos back, src/immuch360/video/limits.ts), "at least" the largest size tested where none was, "not known"
+ * without decodingInfo
+ */
+export function videoReachLine(record: DecoderRecord | null): DiagnosticsLine {
+	const ceiling = decoderCeiling(record);
+	const largest = largestDecoded(record);
+	let value: string;
+	if (ceiling) value = t('webos_diagnostics_videos_up_to', {size: ceiling.size});
+	else if (largest) value = t('webos_diagnostics_videos_at_least', {size: largest});
+	else value = t('webos_diagnostics_videos_unknown');
+	return {label: t('webos_diagnostics_videos'), value};
 }
 
-// Whether Media Source takes a type (a later player that feeds the video element itself needs it)
-function mediaSource(contentType: string): string | null {
-	const source = (window as {MediaSource?: {isTypeSupported?: (type: string) => boolean}}).MediaSource;
-	if (!source || typeof source.isTypeSupported !== 'function') return null;
-	try {
-		return source.isTypeSupported(contentType) ? 'yes' : 'no';
-	} catch {
-		return null;
-	}
-}
-
+// The decoder record of the session (src/immuch360/video/session.ts), asked at the start of the app: the page shows the
+// answers the viewer decides with
 async function decoderLines(): Promise<DiagnosticsLine[]> {
-	const capabilities = (navigator as {mediaCapabilities?: {decodingInfo: (config: unknown) => Promise<DecodingInfo>}}).mediaCapabilities;
-	const video = document.createElement('video');
-	const lines: DiagnosticsLine[] = [];
-	for (const codec of CODECS) {
-		const canPlay = video.canPlayType(codec.contentType) || 'no';
-		let verdict = `canPlayType ${canPlay}`;
-		const mse = mediaSource(codec.contentType);
-		if (mse) verdict += `, Media Source ${mse}`;
-		if (capabilities) {
-			try {
-				const info = await capabilities.decodingInfo({
-					type: 'file',
-					video: {contentType: codec.contentType, width: codec.width, height: codec.height, bitrate: codec.bitrate, framerate: 30},
-				});
-				verdict += `, ${info.supported ? 'supported' : 'not supported'}${info.smooth ? ', smooth' : ''}${info.powerEfficient ? ', hardware' : ''}`;
-			} catch (error) {
-				verdict += `, decodingInfo: ${error instanceof Error ? error.message : String(error)}`;
-			}
-		}
-		lines.push({label: codec.name, value: verdict});
+	let record: DecoderRecord = [];
+	try {
+		record = await sessionDecoders();
+	} catch {
+		// no lines but the reach, "not known"
 	}
-	return lines;
+	return [videoReachLine(record)].concat(record.map((answer) => ({label: answer.probe.name, value: decoderVerdict(answer)})));
 }
 
 const yesNo = (flag: boolean | null): string => (flag === null ? '?' : flag ? 'yes' : 'no');
@@ -211,7 +189,8 @@ export function videoErrorReason(error: {code?: number; message?: string} | null
 /**
  * Plays the app's tiny magenta video (H.264 Constrained Baseline, 256 x 128, 2 s), draws a frame of it into WebGL and
  * reads the pixel back: on TVs that show videos on a hardware plane under the page, the frame comes back black and 360°
- * videos can only play flat. A clip that does not play tests nothing: the line says so, with the reason.
+ * videos can only play flat. A clip that does not play tests nothing: the line says so, with the reason. The verdict is
+ * kept for the session (src/immuch360/video/session.ts), where the viewer reads it.
  */
 export function probeVideoTexture(timeoutMs = 8000): Promise<string> {
 	return new Promise((resolve) => {
@@ -221,7 +200,7 @@ export function probeVideoTexture(timeoutMs = 8000): Promise<string> {
 		canvas.height = 32;
 		let renderer: SphereRenderer | null = null;
 		let done = false;
-		const finish = (result: string) => {
+		const finish = (result: string, verdict?: VideoFramesVerdict) => {
 			if (done) return;
 			done = true;
 			window.clearTimeout(timer);
@@ -230,9 +209,10 @@ export function probeVideoTexture(timeoutMs = 8000): Promise<string> {
 			video.load();
 			if (video.parentNode) video.parentNode.removeChild(video);
 			renderer?.dispose();
+			if (verdict) recordVideoFrames(verdict);
 			resolve(result);
 		};
-		const untested = (reason: string) => finish(t('webos_diagnostics_video_texture_untested', {reason}));
+		const untested = (reason: string) => finish(t('webos_diagnostics_video_texture_untested', {reason}), 'untested');
 		const timer = window.setTimeout(() => untested(`timeout, readyState ${video.readyState}`), timeoutMs);
 		try {
 			const gl = getWebGL(canvas);
@@ -257,7 +237,8 @@ export function probeVideoTexture(timeoutMs = 8000): Promise<string> {
 					renderer!.setSetup({eye: {left: 0, top: 0, width: 1, height: 1}, crop: {left: 0, top: 0, width: 1, height: 1}});
 					renderer!.draw({yaw: 0, pitch: 0, fov: 60, sharp: false});
 					const [r, g, b] = renderer!.centrePixel();
-					finish(r + g + b > 60 ? `${t('webos_diagnostics_video_texture_ok')} (${r}, ${g}, ${b})` : t('webos_diagnostics_video_texture_black'));
+					if (r + g + b > 60) finish(`${t('webos_diagnostics_video_texture_ok')} (${r}, ${g}, ${b})`, 'yes');
+					else finish(t('webos_diagnostics_video_texture_black'), 'black');
 				} catch (error) {
 					finish(error instanceof Error ? error.message : String(error));
 				}
@@ -268,6 +249,32 @@ export function probeVideoTexture(timeoutMs = 8000): Promise<string> {
 		const played = video.play() as Promise<void> | undefined;
 		if (played && typeof played.catch === 'function') played.catch((error: unknown) => untested(`play: ${error instanceof Error ? error.message : String(error)}`));
 	});
+}
+
+/** How long after the start of the app a Samsung TV runs the WebGL video test, once the first pages are in */
+export const VIDEO_FRAMES_TEST_DELAY_MS = 4000;
+
+/** How many times the test at the start waits for a video of the app to close before it gives up for the session */
+export const VIDEO_FRAMES_TEST_TRIES = 30;
+
+/**
+ * Called once at the start of the app: asks the decoder record of the session (a few calls, no video), and on a TV whose
+ * features say so (Samsung) runs the WebGL video test a few seconds later, so that the viewer knows its verdict before
+ * a 360° video opens. The test plays a clip of its own: it waits while a video of the app is on screen (a TV may have
+ * a single decoder for the page), and does not run when the About page already did.
+ */
+export function startVideoChecks(delayMs = VIDEO_FRAMES_TEST_DELAY_MS, tries = VIDEO_FRAMES_TEST_TRIES): void {
+	sessionDecoders().catch(() => undefined);
+	if (!features().probeVideoFramesAtStart) return;
+	const attempt = (left: number) => {
+		if (knownVideoFrames() !== null) return;
+		if (document.querySelector('video')) {
+			if (left > 1) window.setTimeout(() => attempt(left - 1), delayMs);
+			return;
+		}
+		void probeVideoTexture();
+	};
+	window.setTimeout(() => attempt(tries), delayMs);
 }
 
 /** The page as text for the QR code, without the user agent (the Chromium line says the same in less room) */
