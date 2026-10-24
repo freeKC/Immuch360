@@ -47,9 +47,8 @@ class DjiLinkObserverNote extends StatelessWidget {
   }
 }
 
-/// Over the picture of the full screen route of a device that receives from a phone: where the picture comes from, the
-/// red line once it stopped, watching only and the observer note. Nothing hides it there, as nothing hides the strip of
-/// the flight view.
+/// Over the picture of the watch page of a headset: where the picture comes from, the red line once it stopped,
+/// watching only and the observer note. Nothing hides it there, as nothing hides the strip of the flight view.
 class DjiLinkReceiveStrip extends StatelessWidget {
   const DjiLinkReceiveStrip({super.key, required this.receiving});
 

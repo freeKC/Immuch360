@@ -1,9 +1,10 @@
-// The video panel of the DJI link page: the live picture of the drone's camera, decoded on this device from the cable
-// (or from a capture being played), with the counters of the path from the cable to the screen.
+// The video panel of the Diagnostics page: the live picture of the drone's camera, decoded on this device from the
+// cable (or from a capture being played), with the counters of the path from the cable to the screen.
 //
 // The picture is a platform view (DjiLinkVideoView.kt) holding a SurfaceView the decoder renders straight into, the
 // pattern of the camera live view. The native side gives the picture to the most recently created view that still has
-// a surface, so the full screen route and the panel never restart the decoder. Receive only: nothing here sends a byte.
+// a surface, so the live screen, the watch page and this panel never restart the decoder. Receive only: nothing here
+// sends a byte.
 
 import 'dart:async';
 
@@ -17,7 +18,6 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_counters.widget.dart';
-import 'package:immich_mobile/presentation/widgets/drone/dji_link_observer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 
@@ -139,20 +139,9 @@ class DjiLinkVideoPanel extends ConsumerWidget {
                 Positioned(
                   left: 6,
                   bottom: 4,
-                  right: 48,
+                  right: 6,
                   child: Text(djiLinkVideoOverlay(t, decode), key: const Key('dji_link_video_overlay'), style: overlay),
                 ),
-              Positioned(
-                right: 0,
-                top: 0,
-                child: IconButton(
-                  key: const Key('dji_link_video_full_screen'),
-                  tooltip: t.dji_link_video_full_screen,
-                  color: Colors.white,
-                  icon: const Icon(Icons.fullscreen_rounded),
-                  onPressed: () => unawaited(openDjiLinkFullScreen(context)),
-                ),
-              ),
             ],
           ),
         ),
@@ -284,75 +273,6 @@ class _DjiLinkVideoCounters extends ConsumerWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-/// The picture alone on a black screen, pushed on the root navigator; Back leaves
-Future<void> openDjiLinkFullScreen(BuildContext context) => Navigator.of(
-  context,
-  rootNavigator: true,
-).push(MaterialPageRoute<void>(fullscreenDialog: true, builder: (_) => const DjiLinkFullScreenVideo()));
-
-class DjiLinkFullScreenVideo extends ConsumerWidget {
-  const DjiLinkFullScreenVideo({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final snapshot = ref.watch(djiLinkProvider.select((state) => state.snapshot));
-    final decode = snapshot?.videoDecode;
-    final receiving = snapshot?.relayReceiving;
-    final flows = djiLinkPictureFlows(decode) && !djiLinkRelayPictureStopped(snapshot);
-    final t = context.t;
-    return Scaffold(
-      key: const Key('dji_link_video_full_screen_route'),
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Center(
-              child: AspectRatio(
-                aspectRatio: djiLinkVideoAspect(decode),
-                child: flows ? const DjiLinkVideoSurface() : const SizedBox.expand(),
-              ),
-            ),
-            if (decode != null)
-              Positioned(
-                left: 12,
-                bottom: 8,
-                child: Text(
-                  djiLinkVideoOverlay(t, decode),
-                  style: context.textTheme.labelSmall?.copyWith(color: Colors.white, fontFamily: 'monospace'),
-                ),
-              ),
-            // A device that receives from a phone keeps the state, the stale line and the observer note in sight
-            if (receiving != null && receiving.state != DjiRelayReceiveState.idle)
-              Positioned(
-                left: 12,
-                top: 8,
-                right: 64,
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 560),
-                    child: DjiLinkReceiveStrip(receiving: receiving),
-                  ),
-                ),
-              ),
-            Positioned(
-              right: 4,
-              top: 4,
-              child: IconButton(
-                key: const Key('dji_link_video_leave_full_screen'),
-                tooltip: t.dji_link_video_leave_full_screen,
-                color: Colors.white,
-                icon: const Icon(Icons.fullscreen_exit_rounded),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -1,5 +1,6 @@
-// The DJI link page (Settings, Advanced, "DJI link diagnostics (experimental)", on by default): what a DJI remote
-// controller plugged into this device with a cable sends, and what this device can do about it at all.
+// Diagnostics of the DJI live video (Advanced, "Diagnostics", on the live screen of a phone or the watch page of a
+// headset): what a DJI remote controller plugged into this device with a cable sends, and what this device can do
+// about it at all. The live screen or the watch page under it owns the link; this page neither starts nor stops it.
 //
 // It is an instrument, not a cockpit. The first section is the rules and cannot be dismissed. Then: what this device
 // can do, where the link stands, the live picture of the drone's camera, the flight and battery values, what arrives,
@@ -9,9 +10,9 @@
 // measures its decoder with no remote at all.
 //
 // Stage 2b: a phone sends the picture and the values it receives to Immuch360 on a headset of the same network ("Send
-// to a headset"), and a device without the accessory feature receives them ("Receive from a phone"), with the
-// observer note and "Watching only" always on top, the delay from the phone under the picture, and on Horizon OS the
-// flight view. Nothing on either page reaches the remote.
+// to a headset", whole here, on the same relay as the live screen's panel), and a headset shows where its reception
+// stands, the observer note and "Watching only" always on top and the delay from the phone under the picture. Nothing
+// on either page reaches the remote.
 
 import 'dart:async';
 
@@ -34,8 +35,6 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_link_sticks.widget.
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
-import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
-import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
 @RoutePage()
@@ -48,25 +47,14 @@ class DjiLinkPage extends ConsumerStatefulWidget {
 
 class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
   late final DjiLinkNotifier _notifier;
-  late final DjiRelayNotifier _relay;
 
   @override
   void initState() {
     super.initState();
     _notifier = ref.read(djiLinkProvider.notifier);
-    _relay = ref.read(djiRelayProvider.notifier);
-    // After the first frame: reading the environment changes the state, which a build under way must not see
-    unawaited(Future.microtask(_notifier.pageShown));
-    unawaited(Future.microtask(_relay.loadCode));
-    unawaited(Future.microtask(() => _relay.setPageVisible(true)));
-  }
-
-  @override
-  void dispose() {
-    // The relay keeps sending without the page; only the screen is no longer kept on for it
-    unawaited(_relay.setPageVisible(false));
-    unawaited(_notifier.pageHidden());
-    super.dispose();
+    // After the first frame: a change of the state must not reach a build under way. The live screen or the watch page
+    // under this one owns the link: nothing is started here, and nothing stops when this page closes.
+    unawaited(Future.microtask(_notifier.diagnosticsShown));
   }
 
   @override
@@ -78,7 +66,7 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
     final receiving = snapshot?.source?.relay ?? false;
     final sends = state.environment?.flavour == 'phone' && !receiving;
     return Scaffold(
-      appBar: AppBar(title: Text(t.dji_link_title)),
+      appBar: AppBar(title: Text(t.dji_live_diagnostics)),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 32),
         children: [
@@ -95,9 +83,9 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
             _section(t.dji_link_sticks, _sticks(snapshot)),
           ] else if (state.environment != null) ...[
             // No cable path here (a headset, an emulator): the picture of a phone's relay, or of a capture played here,
-            // which measures this device's decoder with no remote at all
+            // which measures this device's decoder with no remote at all. The watch page is where a phone is chosen.
             const DjiLinkObserverNote(),
-            _section(t.dji_link_receive, const DjiLinkReceiveSection()),
+            _section(t.dji_link_receive, _receiving(snapshot)),
             _section(t.dji_link_video, _receivedVideo(snapshot)),
             _section(t.dji_link_flight, DjiLinkFlightSection(telemetry: snapshot?.telemetryValues)),
             _section(t.dji_link_environment, _environment(state)),
@@ -437,15 +425,21 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
     );
   }
 
-  /// The picture of a device that receives or plays: the panel, the delay from the phone, and the flight view button
+  /// Where the reception of a phone's picture stands, read only: the watch page is where a phone is chosen
+  Widget _receiving(DjiLinkSnapshot? snapshot) {
+    final receiving = snapshot?.relayReceiving;
+    return Text(
+      receiving == null ? context.t.dji_link_receive_state_idle : djiRelayReceiveStateText(context.t, receiving),
+      key: const Key('dji_link_receive_state'),
+      style: context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
+    );
+  }
+
+  /// The picture of a device that receives or plays: the panel and the delay from the phone
   Widget _receivedVideo(DjiLinkSnapshot? snapshot) {
     final t = context.t;
     final receiving = snapshot?.relayReceiving;
     final decode = snapshot?.videoDecode;
-    final horizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
-    final relay = ref.watch(djiRelayProvider);
-    final flowing =
-        receiving != null && receiving.state == DjiRelayReceiveState.receiving && djiLinkPictureFlows(decode);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -454,22 +448,6 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
           const SizedBox(height: 8),
           Text(t.dji_link_latency, style: context.textTheme.labelMedium),
           DjiLinkLatencyBlock(receiving: receiving, decode: decode),
-        ],
-        if (horizonOs) ...[
-          const SizedBox(height: 8),
-          FilledButton.icon(
-            key: const Key('dji_link_flight_view_open'),
-            icon: const Icon(Icons.view_in_ar_rounded),
-            label: Text(t.dji_link_flight_view_open),
-            onPressed: flowing ? () => unawaited(_relay.openFlightView(djiFlightViewLabels(t))) : null,
-          ),
-          Text(t.dji_link_flight_view_note, style: context.textTheme.bodySmall),
-          if (relay.flightViewFailed || (snapshot?.flightViewFailed ?? false))
-            Text(
-              t.dji_link_flight_view_failed,
-              key: const Key('dji_link_flight_view_failed'),
-              style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.error),
-            ),
         ],
       ],
     );
@@ -483,42 +461,3 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
     return DjiLinkSticksDisplay(sticks: sticks);
   }
 }
-
-/// The texts of the flight view's panel, with the placeholders the native side fills four times a second
-Map<String, String> djiFlightViewLabels(Translations t) => {
-  'live': t.dji_link_flight_view_live,
-  'replay': t.dji_link_flight_view_replay(name: '{name}'),
-  'noSource': t.dji_link_flight_view_no_source,
-  'lost': t.dji_link_flight_view_lost,
-  'local': t.dji_link_flight_view_local,
-  'ended': t.dji_link_flight_view_ended,
-  'wrongCode': t.dji_link_receive_state_wrong_code,
-  'otherVersion': t.dji_link_receive_state_other_version,
-  'unproven': t.dji_link_receive_state_unproven,
-  'noPicture': t.dji_link_flight_view_no_picture,
-  'stale': t.dji_link_latency_stale(seconds: '{seconds}'),
-  'noValues': t.dji_link_flight_none,
-  'flight': t.dji_link_flight_view_flight(
-    heading: '{heading}',
-    heightMetres: '{heightMetres}',
-    speeds: '{speeds}',
-    mode: '{mode}',
-    motors: '{motors}',
-  ),
-  'power': t.dji_link_flight_view_power(
-    battery: '{battery}',
-    volts: '{volts}',
-    remote: '{remote}',
-    aircraftSignal: '{aircraftSignal}',
-    remoteSignal: '{remoteSignal}',
-  ),
-  'on': t.dji_link_flight_view_on,
-  'off': t.dji_link_flight_view_off,
-  'valuesStale': t.dji_link_flight_view_values_stale,
-  'latency': t.dji_link_flight_view_latency(ms: '{ms}', pictures: '{pictures}'),
-  'flyNote': t.dji_link_flight_view_fly_note,
-  'observer': t.dji_link_observer_note,
-  'watching': t.dji_link_observer_watching,
-  'hint': t.dji_link_flight_view_hint,
-  'back': t.dji_link_flight_view_back,
-};

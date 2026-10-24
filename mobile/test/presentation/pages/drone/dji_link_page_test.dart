@@ -1,8 +1,9 @@
-// The DJI link page: what it shows of a device that cannot read a remote controller at all, of a link that is open,
-// of the counters, of an exported capture, of the live picture and its counters, of the flight and battery values,
-// of "Your hardware" and of a capture being played. The safety banner is there in every one of those states.
-// Stage 2b: "Send to a headset" on a phone and "Receive from a phone" on a headset, with the observer note, the delay
-// from the phone and the flight view button.
+// The Diagnostics page of the DJI live video: what it shows of a device that cannot read a remote controller at all,
+// of a link that is open, of the counters, of an exported capture, of the live picture and its counters, of the flight
+// and battery values, of "Your hardware" and of a capture being played. The safety banner is there in every one of
+// those states. Stage 2b: "Send to a headset" on a phone, and on a headset where its reception stands, with the
+// observer note and the delay from the phone. The live screen or the watch page owns the session under this page: the
+// harness opens it as they would.
 
 import 'dart:async';
 
@@ -64,10 +65,37 @@ void main() {
       // for an animation that only ends once the answers are in
       expectSettle: false,
     );
+    // The live screen or the watch page under Diagnostics owns the session, and the relay sees it in front
+    final container = ProviderScope.containerOf(tester.element(find.byType(DjiLinkPage)));
+    await container.read(djiLinkProvider.notifier).pageShown();
+    await container.read(djiRelayProvider.notifier).loadCode();
+    await container.read(djiRelayProvider.notifier).setPageVisible(true);
     await tester.pump();
     await tester.pumpAndSettle();
     return listener;
   }
+
+  testWidgets('neither starts nor stops the link itself: the live screen or the watch page owns it', (tester) async {
+    final api = FakeDjiLinkApi();
+    await tester.pumpTestWidget(
+      context,
+      const DjiLinkPage(),
+      overrides: [
+        djiLinkApiProvider.overrideWithValue(api),
+        djiLinkEventsSetUpProvider.overrideWithValue((_) {}),
+        djiRelayEnvironmentProvider.overrideWithValue(FakeRelayEnvironment().build()),
+        djiLinkVideoViewBuilderProvider.overrideWithValue(() => const ColoredBox(color: Colors.black)),
+      ],
+      expectSettle: false,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Diagnostics'), findsOneWidget);
+    expect(api.starts, 0);
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
+    expect(api.stops, 0);
+  });
 
   testWidgets('says plainly when this device cannot be a USB accessory, and offers nothing to start', (tester) async {
     final api = FakeDjiLinkApi(environment: fakeEnvironment(accessoryFeature: false));
@@ -294,7 +322,9 @@ void main() {
 
   testWidgets('the sticks are drawn and say why they are held at neutral', (tester) async {
     final api = FakeDjiLinkApi(
-      snapshot: fakeSnapshot(sticks: fakeSticks(sampleAgeMs: 10, reasons: const ['LINK_NOT_LINKED', 'TRIGGERS_RELEASED'])),
+      snapshot: fakeSnapshot(
+        sticks: fakeSticks(sampleAgeMs: 10, reasons: const ['LINK_NOT_LINKED', 'TRIGGERS_RELEASED']),
+      ),
     );
 
     await pumpPage(tester, api);
@@ -366,21 +396,6 @@ void main() {
     listener.snapshotChanged(fakeSnapshot(decode: fakeDecode(lastOutputAgoMs: 5000)));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('dji_link_video_placeholder')), findsNothing);
-  });
-
-  testWidgets('the full screen route shows the picture alone and Back leaves it', (tester) async {
-    final api = FakeDjiLinkApi(snapshot: fakeSnapshot(decode: fakeDecode()));
-    await pumpPage(tester, api);
-
-    await tester.tap(find.byKey(const Key('dji_link_video_full_screen')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('dji_link_video_full_screen_route')), findsOneWidget);
-    expect(find.byKey(const Key('dji_link_video_placeholder')), findsWidgets);
-
-    await tester.tap(find.byKey(const Key('dji_link_video_leave_full_screen')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('dji_link_video_full_screen_route')), findsNothing);
-    expect(find.byKey(const Key('dji_link_video_panel')), findsOneWidget);
   });
 
   testWidgets('the flight and battery values come with their units, how they are known and the note', (tester) async {
@@ -630,7 +645,8 @@ void main() {
   });
 
   testWidgets('a capture is not played while a remote holds the cable', (tester) async {
-    final api = FakeDjiLinkApi(snapshot: fakeSnapshot(state: DjiLinkState.aircraftLinked))..captures = [fakeExport20261023];
+    final api = FakeDjiLinkApi(snapshot: fakeSnapshot(state: DjiLinkState.aircraftLinked))
+      ..captures = [fakeExport20261023];
     await pumpPage(tester, api);
 
     expect(find.byKey(const Key('dji_link_play_busy')), findsOneWidget);
@@ -691,7 +707,17 @@ void main() {
         ]),
         isTrue,
       );
-      expect(find.text('DJI link'), findsOneWidget);
+      expect(find.text('DJI live video'), findsOneWidget);
+      expect(find.text('Plug your DJI remote into this phone and see what the drone sees'), findsOneWidget);
+    });
+
+    testWidgets('says on a headset that it watches what a phone sends', (tester) async {
+      expect(
+        await shownOnAndroid(tester, [...android(), isHorizonOsProvider.overrideWith((ref) async => true)]),
+        isTrue,
+      );
+      expect(find.text('DJI live video'), findsOneWidget);
+      expect(find.text("Watch the drone's picture your phone sends"), findsOneWidget);
     });
 
     testWidgets('is hidden with the setting off', (tester) async {
@@ -726,7 +752,7 @@ void main() {
   group('stage 2b, a headset receiving from a phone', () {
     FakeDjiLinkApi headsetApi() => FakeDjiLinkApi(environment: fakeEnvironment(accessoryFeature: false));
 
-    testWidgets('always shows the observer note and watching only, and lists the sending phones only', (tester) async {
+    testWidgets('always shows the observer note and watching only, and where the reception stands', (tester) async {
       final relay = FakeRelayEnvironment();
       await pumpPage(tester, headsetApi(), relay: relay, horizonOs: true);
 
@@ -743,67 +769,12 @@ void main() {
         find.text('Watching only: nothing on this headset reaches the drone; the remote in your hands flies it.'),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('dji_link_receive_none_found')), findsOneWidget);
+      // The watch page is where a phone is chosen: here the state only, and no flight view button
+      expect(find.byKey(const Key('dji_link_receive_state')), findsOneWidget);
+      expect(find.text('Not receiving.'), findsOneWidget);
+      expect(find.byKey(const Key('dji_link_flight_view_open')), findsNothing);
       // A headset does not send: no "Send to a headset" on the Quest flavour
       expect(find.byKey(const Key('dji_link_send')), findsNothing);
-
-      relay.browsed.add(fakeAnnounced('192.168.1.21', fakeDroneTxt));
-      relay.browsed.add(fakeAnnounced('192.168.1.30', {'v': '1', 'kind': 'headset'}, port: 8361, name: 'Quest 3'));
-      relay.browsed.add(fakeAnnounced('8.8.8.8', {'v': '1', 'kind': 'drone', 'id': 'aaaaaaaaaaaaaaaa'}));
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(const ValueKey('dji_link_receive_phone_192.168.1.21:8362')), findsOneWidget);
-      expect(find.byKey(const ValueKey('dji_link_receive_phone_192.168.1.30:8361')), findsNothing);
-      expect(find.byKey(const ValueKey('dji_link_receive_phone_8.8.8.8:8362')), findsNothing);
-      expect(find.text('Immuch360 on Galaxy S24+'), findsOneWidget);
-    });
-
-    testWidgets('normalises the code, refuses O 0 I 1 L, and connects with host, port and the code', (tester) async {
-      final relay = FakeRelayEnvironment();
-      final api = headsetApi();
-      await pumpPage(tester, api, relay: relay);
-      relay.browsed.add(fakeAnnounced('192.168.1.21', fakeDroneTxt));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byKey(const ValueKey('dji_link_receive_phone_192.168.1.21:8362')));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byKey(const Key('dji_link_receive_code')), 'K7M2Q 9XRT0');
-      await tester.tap(find.byKey(const Key('dji_link_receive_connect')));
-      await tester.pumpAndSettle();
-      expect(api.connects, isEmpty);
-      expect(find.byKey(const Key('dji_link_receive_error')), findsOneWidget);
-      expect(find.textContaining('it never holds O, 0, I, 1 or L'), findsOneWidget);
-
-      await tester.enterText(find.byKey(const Key('dji_link_receive_code')), 'k7m2q-9xrth');
-      await tester.tap(find.byKey(const Key('dji_link_receive_connect')));
-      await tester.pumpAndSettle();
-      expect(api.connects.single, ('192.168.1.21', 8362, 'K7M2Q9XRTH', '3f9c0a1b2c3d4e5f', 'Galaxy S24+'));
-      expect(find.byKey(const Key('dji_link_receive_error')), findsNothing);
-      // Remembered for the phone's install id: typed once per phone
-      expect(relay.secrets['dji_relay_code.3f9c0a1b2c3d4e5f'], 'K7M2Q9XRTH');
-
-      // A typed address, 8362 when no port is written; a public one is refused
-      await tester.enterText(find.byKey(const Key('dji_link_receive_address')), '8.8.8.8');
-      await tester.tap(find.byKey(const Key('dji_link_receive_connect')));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('Type the address the phone shows'), findsOneWidget);
-      await tester.enterText(find.byKey(const Key('dji_link_receive_address')), '10.0.2.2');
-      await tester.tap(find.byKey(const Key('dji_link_receive_connect')));
-      await tester.pumpAndSettle();
-      expect(api.connects.last.$1, '10.0.2.2');
-      expect(api.connects.last.$2, 8362);
-      expect(api.connects.last.$4, isNull);
-    });
-
-    testWidgets('a remembered code fills the field for its phone', (tester) async {
-      final relay = FakeRelayEnvironment()..secrets['dji_relay_code.3f9c0a1b2c3d4e5f'] = 'ABCDEFGHJK';
-      await pumpPage(tester, headsetApi(), relay: relay);
-      relay.browsed.add(fakeAnnounced('192.168.1.21', fakeDroneTxt));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('dji_link_receive_phone_192.168.1.21:8362')));
-      await tester.pumpAndSettle();
-      final field = tester.widget<TextField>(find.byKey(const Key('dji_link_receive_code')));
-      expect(field.controller!.text, 'ABCDE FGHJK');
     });
 
     testWidgets('words every state of the receiver', (tester) async {
@@ -874,41 +845,6 @@ void main() {
       expect(find.byKey(const Key('dji_link_video_placeholder')), findsNothing);
     });
 
-    testWidgets('opens the flight view on Horizon OS only, and only while pictures come', (tester) async {
-      final api = headsetApi();
-      final listener = await pumpPage(tester, api, horizonOs: true);
-      final button = find.byKey(const Key('dji_link_flight_view_open'));
-      expect(button, findsOneWidget);
-      expect(tester.widget<ButtonStyleButton>(button).onPressed, isNull);
-
-      listener!.snapshotChanged(fakeSnapshot(decode: fakeDecode(), relayReceiving: fakeReceiving()));
-      await tester.pumpAndSettle();
-      expect(tester.widget<ButtonStyleButton>(button).onPressed, isNotNull);
-      await tester.tap(button);
-      await tester.pumpAndSettle();
-      final labels = api.flightViews.single;
-      expect(labels['observer'], contains('an observer standing next to you'));
-      expect(labels['watching'], contains('Watching only'));
-      expect(labels['flyNote'], 'Not compared with DJI Fly yet: do not fly by these numbers.');
-      expect(labels['stale'], 'No new picture for {seconds} s');
-      expect(labels['flight'], contains('{heading}'));
-      // A reception that ended on its own says so in the flight view, with its reason (stage2b-review.md, 1)
-      expect(labels['ended'], 'No picture comes any more: B or Y, back to the window.');
-      expect(labels['wrongCode'], 'The code does not match: type it again.');
-      expect(labels['otherVersion'], isNotEmpty);
-      expect(labels['unproven'], isNotEmpty);
-      expect(labels['hint'], contains('A: show or hide the values'));
-      expect(
-        labels['latency'],
-        'Phone receive to decoder output here: about {ms} ms (display not included), '
-        '{pictures} pictures per second',
-      );
-
-      listener.snapshotChanged(fakeSnapshot(decode: fakeDecode(lastOutputAgoMs: 5000), relayReceiving: fakeReceiving()));
-      await tester.pumpAndSettle();
-      expect(tester.widget<ButtonStyleButton>(button).onPressed, isNull);
-    });
-
     testWidgets('a picture of the relay that does not come any more is black, whatever the decoder last said', (
       tester,
     ) async {
@@ -916,7 +852,12 @@ void main() {
       final listener = await pumpPage(tester, headsetApi(), horizonOs: true);
       final receivingSource = DjiLinkSource(replay: false, playing: false, relay: true, phoneName: 'Galaxy S24+');
       listener!.snapshotChanged(
-        fakeSnapshot(state: DjiLinkState.absent, decode: fakeDecode(), relayReceiving: fakeReceiving(), source: receivingSource),
+        fakeSnapshot(
+          state: DjiLinkState.absent,
+          decode: fakeDecode(),
+          relayReceiving: fakeReceiving(),
+          source: receivingSource,
+        ),
       );
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('dji_link_video_placeholder')), findsOneWidget);
@@ -934,8 +875,6 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('dji_link_video_placeholder')), findsNothing);
       expect(find.text('The code does not match: type it again.'), findsOneWidget);
-      final button = find.byKey(const Key('dji_link_flight_view_open'));
-      expect(tester.widget<ButtonStyleButton>(button).onPressed, isNull);
 
       // A lost connection is not live either
       listener.snapshotChanged(
@@ -960,46 +899,6 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('dji_link_video_placeholder')), findsOneWidget);
-    });
-
-    testWidgets('the full screen picture keeps the state, the stale line and the observer note in sight', (
-      tester,
-    ) async {
-      final listener = await pumpPage(tester, headsetApi(), horizonOs: true);
-      listener!.snapshotChanged(fakeSnapshot(decode: fakeDecode(), relayReceiving: fakeReceiving()));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('dji_link_video_full_screen')));
-      await tester.pumpAndSettle();
-
-      final strip = find.byKey(const Key('dji_link_receive_strip'));
-      expect(strip, findsOneWidget);
-      expect(
-        find.descendant(
-          of: strip,
-          matching: find.text('Receiving from Galaxy S24+: a capture, dji-link-20261023-102731 at 4.1 s'),
-        ),
-        findsOneWidget,
-      );
-      expect(find.descendant(of: strip, matching: find.textContaining('Watching only')), findsOneWidget);
-      expect(
-        find.descendant(of: strip, matching: find.textContaining('an observer standing next to you')),
-        findsOneWidget,
-      );
-      expect(find.byKey(const Key('dji_link_receive_strip_stale')), findsNothing);
-
-      listener.snapshotChanged(
-        fakeSnapshot(decode: fakeDecode(lastOutputAgoMs: 900), relayReceiving: fakeReceiving(lastPictureAgoMs: 900)),
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('No new picture for 0.9 s'), findsWidgets);
-      expect(find.byKey(const Key('dji_link_receive_strip_stale')), findsOneWidget);
-    });
-
-    testWidgets('no flight view button off Horizon OS', (tester) async {
-      final listener = await pumpPage(tester, headsetApi());
-      listener!.snapshotChanged(fakeSnapshot(decode: fakeDecode(), relayReceiving: fakeReceiving()));
-      await tester.pumpAndSettle();
-      expect(find.byKey(const Key('dji_link_flight_view_open')), findsNothing);
     });
   });
 
@@ -1198,7 +1097,7 @@ void main() {
       )..captures = [fakeExport20261023];
       final listener = await pumpPage(tester, api);
       expect(find.byKey(const Key('dji_link_send')), findsOneWidget);
-      expect(find.byKey(const Key('dji_link_receive')), findsOneWidget);
+      expect(find.byKey(const Key('dji_link_receive_state')), findsOneWidget);
 
       // Play in a loop
       await tester.tap(find.byKey(const Key('dji_link_play_loop')));

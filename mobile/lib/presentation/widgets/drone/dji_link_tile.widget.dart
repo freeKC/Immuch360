@@ -1,7 +1,8 @@
-// The "DJI link" tile of the Network shares page: opens the DJI link page, which reads a DJI remote controller plugged
-// into this device with a cable. Shown on Android phones and tablets and in the Meta Quest build, not in the TV layout
-// (a television has no cable to a remote controller and no pilot in front of it), while Settings, Advanced, "DJI link
-// diagnostics (experimental)" is on, as it is by default.
+// The "DJI live video" tile of the Network shares page: on a phone it opens the live screen, which reads a DJI remote
+// controller plugged into the phone with a cable; on a Meta Quest it opens the watch page, which receives the picture a
+// phone sends. Shown on Android phones and tablets and in the Meta Quest build, not in the TV layout (a television has
+// no cable to a remote controller and no pilot in front of it), while Settings, Advanced, "DJI live video
+// (experimental)" is on, as it is by default.
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -38,6 +40,7 @@ class DjiLinkTile extends ConsumerWidget {
     if (!ref.watch(djiLinkEnabledProvider)) {
       return const SizedBox.shrink();
     }
+    final headset = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -46,12 +49,16 @@ class DjiLinkTile extends ConsumerWidget {
           contentPadding: const EdgeInsets.only(left: 20, right: 8),
           leading: Icon(Icons.settings_remote_rounded, color: context.primaryColor, size: 28),
           title: Text(
-            context.t.dji_link_title,
+            context.t.dji_live_title,
             style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
           ),
-          subtitle: Text(context.t.dji_link_tile_subtitle, maxLines: 2, overflow: TextOverflow.ellipsis),
+          subtitle: Text(
+            headset ? context.t.dji_live_tile_subtitle_headset : context.t.dji_live_tile_subtitle_phone,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
           trailing: const Icon(Icons.chevron_right_rounded),
-          onTap: () => context.pushRoute(const DjiLinkRoute()),
+          onTap: () => context.pushRoute(headset ? const DjiWatchRoute() : const DjiLiveRoute()),
         ),
         const Divider(height: 1, indent: 20, endIndent: 20),
       ],

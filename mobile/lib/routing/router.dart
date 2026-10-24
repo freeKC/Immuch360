@@ -58,6 +58,7 @@ import 'package:immich_mobile/presentation/pages/dev/media_stat.page.dart';
 import 'package:immich_mobile/presentation/pages/download_info.page.dart';
 import 'package:immich_mobile/presentation/pages/drone/dji_link.page.dart';
 import 'package:immich_mobile/presentation/pages/drone/dji_live.page.dart';
+import 'package:immich_mobile/presentation/pages/drone/dji_watch.page.dart';
 import 'package:immich_mobile/presentation/pages/drone/drone_import.page.dart';
 import 'package:immich_mobile/presentation/pages/edit/edit.page.dart';
 import 'package:immich_mobile/presentation/pages/favorite.page.dart';
@@ -244,9 +245,10 @@ class AppRouter extends RootStackRouter {
     // Connect a TV or computer: a phone signs a big screen in (sign in with your phone)
     AutoRoute(page: ConnectScreenRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: EnterCodeRoute.page, guards: [_authGuard, _duplicateGuard]),
-    // The DJI live video: the live screen of a phone with its remote plugged in, and the Diagnostics page reached from
-    // its Advanced
+    // The DJI live video: the live screen of a phone with its remote plugged in, the watch page of a headset, and the
+    // Diagnostics page reached from their Advanced
     AutoRoute(page: DjiLiveRoute.page, guards: [_authGuard, _duplicateGuard]),
+    AutoRoute(page: DjiWatchRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: DjiLinkRoute.page, guards: [_authGuard, _duplicateGuard]),
     // Immuch360 Desktop: the folders of the library on a computer. Registered there only, so that the phone builds,
     // where the condition is a constant, leave out the folders page and the folder library behind it
