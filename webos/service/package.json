@@ -1,6 +1,6 @@
 {
 	"name": "com.aprogsys.immuch360.service",
-	"version": "0.2.0",
+	"version": "1.0.0",
 	"description": "LAN pairing service for phone sign-in (Immuch360, from immich-tv-webos), and the media bridge of the network shares, Plex servers and cameras",
 	"main": "service.js",
 	"engines": {
