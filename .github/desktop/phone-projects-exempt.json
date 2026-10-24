@@ -56,8 +56,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): a saved capture back through the same codecs, with no hardware; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): a gap marker restarts the parsers like an open, and the replay reports units, frames, telemetry and requests; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/CaptureRing.kt": {
-    "blob": "ac3bfd5f9b62e5d204befe587c9b8f2fac3abf3e",
-    "reason": "DJI link (feat-dji-link, 12ccff821): the bounded capture ring and its index of read and write boundaries; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the first 4 MiB of a session kept as a head beside a 16 MiB tail, with a gap marker between them; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
+    "blob": "bf3d38a7023e08fbef2970edb22d5eaefd3776b0",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the bounded capture ring and its index of read and write boundaries; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the first 4 MiB of a session kept as a head beside a 16 MiB tail, with a gap marker between them; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI live video fix round (feat-dji-ux): a stopped capture started again with no remote open is kept until the next open"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/ChannelMap.kt": {
     "blob": "6a4cbdbfeb8d440690ab9bb93cd1edfc96c924aa",
@@ -200,8 +200,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the telemetry identifiers, with no field of a body read; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the catalogue names the eight pairs the 23 October capture explains"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/TelemetryDecoder.kt": {
-    "blob": "be5106340cb3b8adbed78ca38cd395ffebde7dc0",
-    "reason": "DJI link stage 2 (feat-dji-link-2): the fields of the catalogued pairs, read only from bodies of the observed length; DJI live video (feat-dji-ux): the fine camera heading read as 16 bits"
+    "blob": "1ba2b364a39182b69ccc021e35669e0ba7346c33",
+    "reason": "DJI link stage 2 (feat-dji-link-2): the fields of the catalogued pairs, read only from bodies of the observed length; DJI live video (feat-dji-ux): the fine camera heading read as 16 bits; DJI live video fix round (feat-dji-ux): the motors running read from bits 0x04 and 0x08 together"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/UsbEnvironment.kt": {
     "blob": "7de07ba28c4b85b93a1d30e4dac80c5e7b4fe215",
@@ -304,8 +304,8 @@
     "reason": "DJI link stage 2 fix round (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/CaptureTest.kt": {
-    "blob": "7c37257b3fabf4322d668c893e1a3cace2882686",
-    "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the capture ring and of the replay, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
+    "blob": "ba2f421cb598d3e55cf512aa9d666f1d16b9e3f1",
+    "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the capture ring and of the replay, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI live video fix round (feat-dji-ux): unit tests of the capture kept until a new remote opens"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/CaptureVideoReplayTest.kt": {
     "blob": "1e27a1efcde9e17270eb0497bd5a2ad6f0f39ec8",
@@ -436,8 +436,8 @@
     "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/TelemetryDecoderTest.kt": {
-    "blob": "e3852f28503dd3248a44965f4a92de8bbf37cbac",
-    "reason": "DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job; DJI live video (feat-dji-ux): unit test of a negative fine camera heading"
+    "blob": "10d46094a923a5be4bfad0c1426e1f9794707ac3",
+    "reason": "DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job; DJI live video (feat-dji-ux): unit test of a negative fine camera heading; DJI live video fix round (feat-dji-ux): unit test of the motors read from both bits"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/VideoPipelineTest.kt": {
     "blob": "e63817e379455fc02a9d4a5875b010d1b61295bc",
