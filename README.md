@@ -18,27 +18,28 @@ Flat, 360° and 3D photos and videos from your device, your NAS, your Immich ser
 <details>
 <summary><b>Contents</b></summary>
 
+- [Who it is for](#who-it-is-for)
+- [Which screens](#which-screens), and [what each screen does](#what-each-screen-does)
 - [What you can do](#what-you-can-do)
-  - [Watch your photos and videos](#watch-your-photos-and-videos)
-  - [Turn a photo with one key](#turn-a-photo-with-one-key)
+- [Get it on your device](#get-it-on-your-device)
+- [How to](#how-to)
+  - [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Explore panoramas, 360°, VR180 and 3D](#explore-panoramas-360-vr180-and-3d)
-  - [Use your own files, without an account](#use-your-own-files-without-an-account)
-  - [Reach the media of a NAS, a computer or a media server](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
-  - [Find your Immich library](#find-your-immich-library)
+  - [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): [Android TV and Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
-  - [Go immersive on Meta Quest](#go-immersive-on-meta-quest)
-  - [Watch on the TV and on the computer](#watch-on-the-tv-and-on-the-computer)
-  - [Immuch360 on an LG TV (webOS)](#immuch360-on-an-lg-tv-webos)
-  - [Cameras, Plex and raw camera files](#cameras-plex-and-raw-camera-files)
-  - [Your DJI drone's photos and videos on your Immich server](#your-dji-drones-photos-and-videos-on-your-immich-server)
-  - [Your DJI drone's live video on your phone (experimental)](#your-dji-drones-live-video-on-your-phone-experimental)
-- [Devices and systems](#devices-and-systems)
-- [Advanced features](#advanced-features)
-- [Technical documentation](#technical-documentation)
-- [Install](#install)
+  - [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
+  - [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)
+  - [Keep your Immich library, with more](#keep-your-immich-library-with-more)
+  - [Watch your home cameras on the big screen](#watch-your-home-cameras-on-the-big-screen)
+  - [Your DJI drone (experimental)](#your-dji-drone-experimental): [live video](#see-what-your-drone-sees-on-your-phone), [import](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
+  - [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras)
+  - [Turn a photo with one key](#turn-a-photo-with-one-key)
+  - [Use your computer as the media player](#use-your-computer-as-the-media-player)
+- [Compared with Immich](#compared-with-immich)
 - [Privacy](#privacy)
-- [The project](#the-project)
+- [Licences and credits](#licences-and-credits)
 - [Roadmap](#roadmap)
+- [Documentation](#documentation)
 
 </details>
 
@@ -523,21 +524,24 @@ The 360° photo viewer is based on the upstream pull request [immich-app/immich#
 
 The captures of this page are real captures of the app: the phone ones on the Android build in an emulator, the Android TV ones on the Google TV emulator, the LG and Samsung ones in a browser that stands in for the TV, the Windows ones on a Windows 11 PC and the Meta Quest window in a Quest 3, all with CC0 panoramas from [Poly Haven](https://polyhaven.com); the immersive captures of the headset were taken on a Quest 3 with the author's own media, and the iPad ones on an iPad. The opening image and the pictures of the TV, the sign in, the rotation, the cameras and the drone are illustrations made for the project: they show no screen of the app, no brand and no face. Each image, with its source, date and licence, is listed in [CAPTURES.md](.github/readme/CAPTURES.md).
 
-## Advanced features
+## Roadmap
 
-What the app can read and play, for the reader who wants the whole extent. Each line is detailed in the [user guide](docs/immuch360/user-guide.md) and the [compatibility page](docs/immuch360/compatibility.md).
+What is not done yet, the most likely first. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
 
-- **Formats**: flat photos and videos (what the device decodes: MP4, MOV, MKV and more); equirectangular 360° photos and videos; partial panoramas (GPano crop); VR180; stereoscopic 3D, top and bottom or side by side, read from the file (the st3d box) or guessed from the frame; Apple spatial photos (HEIC stereo pairs) and spatial videos (MV-HEVC, one eye); raw Insta360 .insp and .insv, GoPro .360, DJI .osv; 10 bit HLG and PQ sources tone mapped on the sphere.
-- **Projection and metadata**: GPano and spherical metadata read from the file, with range requests on a server or a share; the initial view of the camera; the spheres of DJI drones recognised from their camera, with an optional .xmp sidecar so that Immich flags them too; "View as 360°" remembered on the device; VR180 recognised from the file or its name; the place of a drone video read from its .SRT flight log; metadata kept intact because the original file is played, never a converted copy; a quarter turn saved through the Immich editor or kept on the device, never on an immersive file.
-- **Native playback**: Media3 on Android and the TV, SceneKit and AVFoundation on iOS, the Meta Spatial SDK in the headset, libmpv on Windows; the original or the transcoded stream chosen from what the device decodes; a list of the device's video decoders in Settings, Advanced; the audio track choice, subtitles in the Android player and a buffering indicator.
-- **Raw files stitched on the device**: a Flutter fragment shader for photos; a GPU effect in the player for single track videos; two hardware decoders at once and a GPU compositor for videos with one lens per track or per file (OpenGL ES 3 on Android and the Quest, Metal on iOS, and on Windows, from desktop build 5, two libmpv players whose frames the app pairs on the graphics chip); the camera's own calibration (Mei, V6 and equidistant models) and accelerometer record; fallbacks to one lens, the transcoded stream, the camera's LRV copy or the unstitched video when the device cannot run two decoders.
-- **Sources**: the device's gallery; the folders of a computer; a drone or a camera card over USB, through the system folder picker (Android, experimental); a DJI RC-N3 remote controller over its cable for the drone's live video (Android, experimental); an Immich server; SMB 2 and 3, WebDAV, DLNA/UPnP; Plex over HTTPS checked against the server's own certificate; Tapo cameras over the local network (HTTPS and RTSP); a phone or a computer shared on the Wi-Fi as a WebDAV server; servers found by Bonjour/mDNS, a local network scan, SSDP, GDM and the TP-Link discovery, and followed when they change address.
-- **On demand reading**: a local bridge serves the players with byte ranges and a per session token; large blocks, read ahead and up to six SMB connections in parallel; thumbnails from a frame of each video; nothing copied to the device.
-- **Hardware**: hardware decoders used wherever they exist, with their measured limits (the Quest 3 H.264 ceiling, two 2048x2048 lenses at most for software decoders); on Windows the 360° view drawn by the graphics chip from each decoded frame, the frame size measured on each computer, the integrated or dedicated chip detected.
-- **Platform specifics**: the gyroscope and the Spatial 2.5D player on phones; the immersive view, controllers and hands on the Quest; the remote layout, the keyboard dialog and the TV banner on Android TV; on the computer, mouse and keyboard, full screen, a single window, files and folders opened with the program or dropped on its window, read like the files of your folders, HEIC, AVIF, TIFF and camera raw photos of the folders when Windows has a decoder for them, and the Windows data protection for passwords and tokens.
-- **Privacy by construction**: no account, no cloud, no analytics; passwords and tokens in the device's secure storage (on LG and Samsung TVs, which have none for the app, in the app's own storage, not encrypted); a screen signed in from a phone gets a session of its own, sent encrypted on the home network, never the password (an LG TV gets the password from a page in the phone's browser, unencrypted on the home network, and keeps only the session); the camera of the Spatial player and of the code scanner used on the device only; shares, Plex and cameras reached on your network only.
+- **The stores**: Google Play (build 29 in review; the TV listing in review), the App Store (version 3.3.1 in review, then version 3.3.2 with build 28), the Meta Horizon Store with the next builds, the LG Content Store (version 1.0.0 in LG's review since 24 October), and later the Samsung store.
+- **Drones**: the next build, with the Drone card and a full screen live view on the phone; the drone's live video relayed from the phone to the Meta Quest, then to Android TV, each once it has been seen working in the headset and on a TV; a test of the import page with a real DJI Neo 2, then the sound recorded by the phone merged into its clip. Nothing that sends a command to a drone is planned before those tests.
+- **TVs**: build 29 on a real Android TV, its video controls and the sign in with your phone included; the shares, Plex and the live view of the LG app on a real LG TV, and webOS 26; Samsung test build 0.2.0 on a real Samsung TV, then the sign in with a phone, the shares, Plex and the cameras on Samsung TVs; then the 360° videos on the sphere of LG TVs, the sound of the cameras and their recordings (not before December 2026).
+- **Cameras**: the Tapo cameras checked with a real camera.
+- **Computers**: the test of each function by hand on a Windows PC, sign in with your phone included; Spatial 2.5D with the webcam on Windows, in development for November 2026; then the 360° video renderer on Linux and macOS, a test on a real Mac and a real Linux PC; then automatic updates and a signed macOS app.
+- **Phones and tablets**: the Tapo live view and the sign in of big screens on iPhone and iPad with the next iOS release; a time bar in the iOS 360° video player, previous and next in the 360° players of phones, audio track and subtitle menus in the iOS flat player.
+- **Immersive media**: dual fisheye .dng, levelling of GoPro and DJI videos from their own motion data, spatial videos in 3D on the Quest if its decoders allow it, previous and next between spatial photos in the headset.
+- **Sources**: swiping between the files of a share folder, Digest authentication for WebDAV, a QR code to bring the Plex token from the computer, IPv6 for Plex, H.265 Tapo recordings, channels on the TV home screen.
+- **Upstream**: small pull requests to Immich for the parts the maintainers want, starting with the 360° photo viewer.
 
-## Technical documentation
+The full list, with the device checks still pending for each feature, is in [Release status](docs/immuch360/release-status.md#roadmap).
+
+<a id="technical-documentation"></a>
+## Documentation
 
 - [Features: the complete inventory and the feature by platform matrix](docs/immuch360/features.md)
 - [User guide: every function, step by step, with its options and messages](docs/immuch360/user-guide.md)
@@ -550,17 +554,21 @@ What the app can read and play, for the reader who wants the whole extent. Each 
 - [Build it yourself: phones, headsets, TVs and computers](docs/immuch360/build.md)
 - [Immuch360 for LG webOS TVs: install in Developer Mode, the remote control keys, the CORS headers](webos/README.md)
 
-## Roadmap
+### Advanced features
 
-What is not done yet, the most likely first. Nothing here is a promise, and feedback on the [issue tracker](https://github.com/freeKC/Immuch360/issues) helps decide what comes first.
+What the app can read and play, for the reader who wants the whole extent. Each line is detailed in the [user guide](docs/immuch360/user-guide.md) and the [compatibility page](docs/immuch360/compatibility.md).
 
-- **The stores**: Google Play (build 28 in review; the TV listing in review), the App Store (version 3.3.1 in review, then version 3.3.2 with build 28), the Meta Horizon Store with build 29, the LG Content Store (the submission is in preparation).
-- **Computers**: the test of each function by hand on a Windows PC, sign in with your phone included; Spatial 2.5D with the webcam on Windows, in development for November 2026; then the 360° video renderer on Linux and macOS, a test on a real Mac and a real Linux PC; then automatic updates and a signed macOS app.
-- **TVs**: build 29 on a real Android TV, its video controls and the sign in with your phone included; webOS 0.2.0 on a real LG TV, with its shares, Plex and live view, then the LG Content Store version; the Samsung test build on a real Samsung TV; then the 360° videos on the sphere, the sound of the cameras and their recordings (not before December 2026).
-- **Phones and tablets**: the Tapo live view and the sign in of big screens on iPhone and iPad with the next iOS release; a time bar in the iOS 360° video player, previous and next in the 360° players of phones, audio track and subtitle menus in the iOS flat player.
-- **Immersive media**: dual fisheye .dng, levelling of GoPro and DJI videos from their own motion data, spatial videos in 3D on the Quest if its decoders allow it, previous and next between spatial photos in the headset.
-- **Sources**: swiping between the files of a share folder, Digest authentication for WebDAV, a QR code to bring the Plex token from the computer, IPv6 for Plex, H.265 Tapo recordings, channels on the TV home screen.
-- **Drones**: a test of the import page with a real DJI Neo 2, then the sound recorded by the phone merged into its clip; the drone's live video relayed from the phone to the Meta Quest. Nothing that sends a command to a drone is planned before those tests.
-- **Upstream**: small pull requests to Immich for the parts the maintainers want, starting with the 360° photo viewer.
+<details>
+<summary><b>Formats, sources, playback and hardware, in detail</b></summary>
 
-The full list, with the device checks still pending for each feature, is in [Release status](docs/immuch360/release-status.md#roadmap).
+- **Formats**: flat photos and videos (what the device decodes: MP4, MOV, MKV and more); equirectangular 360° photos and videos; partial panoramas (GPano crop); VR180; stereoscopic 3D, top and bottom or side by side, read from the file (the st3d box) or guessed from the frame; Apple spatial photos (HEIC stereo pairs) and spatial videos (MV-HEVC, one eye); raw Insta360 .insp and .insv, GoPro .360, DJI .osv; 10 bit HLG and PQ sources tone mapped on the sphere.
+- **Projection and metadata**: GPano and spherical metadata read from the file, with range requests on a server or a share; the initial view of the camera; the spheres of DJI drones recognised from their camera, with an optional .xmp sidecar so that Immich flags them too; "View as 360°" remembered on the device; VR180 recognised from the file or its name; the place of a drone video read from its .SRT flight log; metadata kept intact because the original file is played, never a converted copy; a quarter turn saved through the Immich editor or kept on the device, never on an immersive file.
+- **Native playback**: Media3 on Android and the TV, SceneKit and AVFoundation on iOS, the Meta Spatial SDK in the headset, libmpv on Windows; the original or the transcoded stream chosen from what the device decodes; a list of the device's video decoders in Settings, Advanced; the audio track choice, subtitles in the Android player and a buffering indicator.
+- **Raw files stitched on the device**: a Flutter fragment shader for photos; a GPU effect in the player for single track videos; two hardware decoders at once and a GPU compositor for videos with one lens per track or per file (OpenGL ES 3 on Android and the Quest, Metal on iOS, and on Windows, from desktop build 5, two libmpv players whose frames the app pairs on the graphics chip); the camera's own calibration (Mei, V6 and equidistant models) and accelerometer record; fallbacks to one lens, the transcoded stream, the camera's LRV copy or the unstitched video when the device cannot run two decoders.
+- **Sources**: the device's gallery; the folders of a computer; a drone or a camera card over USB, through the system folder picker (Android, experimental); a DJI RC-N3 remote controller over its cable for the drone's live video (Android, experimental); an Immich server; SMB 2 and 3, WebDAV, DLNA/UPnP; Plex over HTTPS checked against the server's own certificate; Tapo cameras over the local network (HTTPS and RTSP); a phone or a computer shared on the Wi-Fi as a WebDAV server; servers found by Bonjour/mDNS, a local network scan, SSDP, GDM and the TP-Link discovery, and followed when they change address.
+- **On demand reading**: a local bridge serves the players with byte ranges and a per session token; large blocks, read ahead and up to six SMB connections in parallel; thumbnails from a frame of each video; nothing copied to the device.
+- **Hardware**: hardware decoders used wherever they exist, with their measured limits (the Quest 3 H.264 ceiling, two 2048x2048 lenses at most for software decoders); on Windows the 360° view drawn by the graphics chip from each decoded frame, the frame size measured on each computer, the integrated or dedicated chip detected.
+- **Platform specifics**: the gyroscope and the Spatial 2.5D player on phones; the immersive view, controllers and hands on the Quest; the remote layout, the keyboard dialog and the TV banner on Android TV; on the computer, mouse and keyboard, full screen, a single window, files and folders opened with the program or dropped on its window, read like the files of your folders, HEIC, AVIF, TIFF and camera raw photos of the folders when Windows has a decoder for them, and the Windows data protection for passwords and tokens.
+- **Privacy by construction**: no account, no cloud, no analytics; passwords and tokens in the device's secure storage (on LG and Samsung TVs, which have none for the app, in the app's own storage, not encrypted); a screen signed in from a phone gets a session of its own, sent encrypted on the home network, never the password (an LG TV gets the password from a page in the phone's browser, unencrypted on the home network, and keeps only the session); the camera of the Spatial player and of the code scanner used on the device only; shares, Plex and cameras reached on your network only.
+
+</details>
