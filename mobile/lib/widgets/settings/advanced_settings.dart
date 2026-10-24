@@ -53,7 +53,7 @@ class AdvancedSettings extends HookConsumerWidget {
     // The native side is told too: with the setting off, plugging the remote never opens the app.
     final djiLinkSupported = ref.watch(djiLinkSupportedProvider);
     final djiLink = useState(ref.watch(appConfigProvider).djiLinkEnabled);
-    useValueChanged(djiLink.value, (_, _) {
+    useValueChanged<bool, void>(djiLink.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.djiLinkEnabled, djiLink.value));
       unawaited(ref.read(djiLiveSettingSyncProvider)(djiLink.value));
     });
