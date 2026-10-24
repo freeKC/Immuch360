@@ -391,7 +391,7 @@ More: [everything else is Immich](docs/immuch360/user-guide.md#everything-else-i
 ### Watch your home cameras on the big screen
 
 <p align="center">
-  <img src=".github/readme/home-cameras.png" width="720" alt="Illustration, not a capture: in a living room at dusk, a TV on the wall shows four home camera views, a small home camera stands on a shelf and a phone on the table shows one of the views">
+  <img src=".github/readme/home-cameras.png" width="720" alt="Illustration, not a capture: in a living room at dusk, the TV on the wall shows one live view of a garden path from a home camera that stands on the sideboard, and a phone on the table shows the same view.">
 </p>
 <p align="center"><sub>An illustration. The Tapo support has not been checked with a real camera yet.</sub></p>
 
