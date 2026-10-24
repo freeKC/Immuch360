@@ -15,6 +15,7 @@ import {
 	initialViewDirection,
 	leftEyeRect,
 	readGPanoTags,
+	remoteTapStep,
 	remoteTurnSpeed,
 	resolveSphereView,
 	sphereCrop,
@@ -262,7 +263,17 @@ export const SphereView = forwardRef<SphereViewHandle, SphereViewProps>(
 					const now = performance.now();
 					const held = m.held[action];
 					if (held) held.seen = now;
-					else m.held[action] = {since: now, seen: now};
+					else {
+						m.held[action] = {since: now, seen: now};
+						// A press turns at once by a step; a held key goes on turning (tick)
+						const step = remoteTapStep(m.fov);
+						if (action === 'left') m.yaw -= step;
+						else if (action === 'right') m.yaw += step;
+						else if (action === 'up') m.pitch += step * REMOTE_PITCH_FACTOR;
+						else m.pitch -= step * REMOTE_PITCH_FACTOR;
+						m.yaw = wrapYaw(m.yaw);
+						m.pitch = Math.max(-90, Math.min(90, m.pitch));
+					}
 					kick();
 				} else if (action === 'channelUp' || action === 'channelDown') {
 					zoom(action === 'channelUp');

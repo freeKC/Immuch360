@@ -1,6 +1,7 @@
 import {useEffect} from 'react';
 import {platformBack} from '@enact/webos/application';
 import LS2Request from '@enact/webos/LS2Request';
+import {recordError} from '../immuch360/diagnostics/errorLog';
 import {features} from '../platform/features';
 import {exitTizenApp} from '../platform/tizen';
 
@@ -126,13 +127,14 @@ export function backShowsHome(): boolean {
 }
 
 // The Home app through the application manager (ACG group application.launcher, in requiredACG); platformBack() when
-// the TV refuses or does not answer
+// the TV refuses or does not answer. Why it did not open goes to the last errors of About (a TV has no console at hand)
 function launchHome(): void {
 	let settled = false;
-	const fallBack = () => {
+	const fallBack = (reason: string) => {
 		if (settled) return;
 		settled = true;
-		console.warn('[back] the Home app did not open: platformBack()');
+		console.warn('[back] the Home app did not open: platformBack()', reason);
+		recordError(`back: the Home app did not open (${reason}), platformBack()`);
 		platformBack();
 	};
 	new LS2Request().send({
@@ -143,8 +145,9 @@ function launchHome(): void {
 		onSuccess: () => {
 			settled = true;
 		},
-		onFailure: fallBack,
-		onTimeout: fallBack,
+		onFailure: (response?: {errorCode?: unknown; errorText?: unknown}) =>
+			fallBack([response?.errorCode, response?.errorText].filter((part) => part !== undefined && part !== '').join(' ') || 'refused'),
+		onTimeout: () => fallBack('no answer within 3 s'),
 	});
 }
 

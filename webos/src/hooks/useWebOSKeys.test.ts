@@ -1,4 +1,5 @@
 import {fireEvent, renderHook} from '@testing-library/react';
+import {clearErrorLog, lastErrors} from '../immuch360/diagnostics/errorLog';
 import {FLOATING_LAYER_ID, HOME_APP_ID, backShowsHome, useRootBack, useWebOSKeys} from './useWebOSKeys';
 
 // Immuch360: the Luna calls of the Home app on webOS 23 to 25, recorded (jsdom has no Luna bus)
@@ -7,7 +8,7 @@ interface MockLunaRequest {
 	method: string;
 	parameters: unknown;
 	onSuccess?: () => void;
-	onFailure?: () => void;
+	onFailure?: (response?: {errorCode?: number; errorText?: string}) => void;
 	onTimeout?: () => void;
 }
 const mockLunaCalls: MockLunaRequest[] = [];
@@ -215,6 +216,7 @@ describe('Back on an entry page per webOS version', () => {
 	beforeEach(() => {
 		platformBack.mockClear();
 		mockLunaCalls.length = 0;
+		clearErrorLog();
 	});
 	afterEach(() => {
 		delete (window as {PalmSystem?: unknown}).PalmSystem;
@@ -230,13 +232,27 @@ describe('Back on an entry page per webOS version', () => {
 		expect(mockLunaCalls[0]).toMatchObject({service: 'luna://com.webos.applicationManager', method: 'launch', parameters: {id: HOME_APP_ID}});
 		expect(platformBack).not.toHaveBeenCalled();
 		// The TV refused (no such app, or ACG): the platform's own Back
-		mockLunaCalls[0]!.onFailure!();
+		mockLunaCalls[0]!.onFailure!({errorCode: -1, errorText: 'Denied method call'});
 		expect(platformBack).toHaveBeenCalledTimes(1);
 		expect(warn).toHaveBeenCalled();
+		// About shows why, as a TV has no console at hand
+		expect(lastErrors()).toEqual(['back: the Home app did not open (-1 Denied method call), platformBack()']);
 		// Opened: nothing else
 		expect(pressBack()).toBe(true);
 		mockLunaCalls[1]!.onSuccess!();
 		expect(platformBack).toHaveBeenCalledTimes(1);
+		unmount();
+	});
+
+	test('webOS 25: a launch the TV does not answer within 3 s falls back to platformBack(), once, and says so in About', () => {
+		onVersion('10.3.2');
+		const {unmount} = renderHook(() => useRootBack());
+		jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+		expect(pressBack()).toBe(true);
+		mockLunaCalls[0]!.onTimeout!();
+		mockLunaCalls[0]!.onFailure!();
+		expect(platformBack).toHaveBeenCalledTimes(1);
+		expect(lastErrors()).toEqual(['back: the Home app did not open (no answer within 3 s), platformBack()']);
 		unmount();
 	});
 

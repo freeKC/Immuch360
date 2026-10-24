@@ -21,6 +21,7 @@ import {
 	parseGPanoInitialView,
 	readGPanoTags,
 	rect,
+	remoteTapStep,
 	remoteTurnSpeed,
 	resolveSphereView,
 	sphereCrop,
@@ -258,6 +259,12 @@ describe('remote control of the sphere', () => {
 		assert.equal(remoteTurnSpeed(5, 90), 120);
 		assert.equal(remoteTurnSpeed(5, 45), 60);
 		assert.equal(remoteTurnSpeed(-1, 90), 40);
+	});
+
+	test('one press turns at once by 10°, less once zoomed in (a tap shorter than a frame turned nothing)', () => {
+		assert.equal(remoteTapStep(90), 10);
+		assert.equal(remoteTapStep(45), 5);
+		assert.equal(remoteTapStep(115) > 10, true);
 	});
 
 	test('zooms by 1.25 a step, within 15° and 115°', () => {
