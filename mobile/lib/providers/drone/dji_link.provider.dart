@@ -208,7 +208,9 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
 
   /// The live screen or the watch page opened: read what this device can do, then start listening when it can do
   /// anything at all. With [capture], the capture starts with the link, so that a bug report always holds the head of
-  /// the session.
+  /// the session. The capture of the last session is kept until a remote opens (the native side forgets it at that
+  /// open), so that a pilot who comes back to save it after a problem still finds it; with a remote open already, the
+  /// new session is under way and its capture starts fresh at once.
   Future<void> pageShown({bool capture = false}) async {
     if (!_attached) {
       _attached = true;
@@ -228,7 +230,9 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
       await start();
       // A new capture for a new session; a link the relay kept running keeps the capture it has
       if (capture && state.snapshot?.capture.recording != true) {
-        await _api.clearCapture();
+        if (state.linkOpen) {
+          await _api.clearCapture();
+        }
         await startCapture();
       }
       await _loadOpenOnPlug();

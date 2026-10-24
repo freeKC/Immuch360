@@ -141,12 +141,13 @@ void main() {
     expect(find.byKey(const Key('dji_live')), findsNothing);
   });
 
-  testWidgets('the screen starts the link and a fresh capture, and stays on while it is in front', (tester) async {
+  testWidgets('the screen starts the link and the capture, and stays on while it is in front', (tester) async {
     final relay = FakeRelayEnvironment();
     final api = phone();
     await openLive(tester, api, relay: relay);
     expect(api.starts, 1);
-    expect(api.clears, 1);
+    // No remote open yet: the last session's capture stays until one opens, the native side forgets it then
+    expect(api.clears, 0);
     expect(api.captureStarts, 1);
     expect(relay.screen.last, isTrue);
 
@@ -154,6 +155,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(api.stops, 1);
     expect(relay.screen.last, isFalse);
+  });
+
+  testWidgets('with a remote open at once, the capture starts fresh', (tester) async {
+    final api = phone(snapshot: fakeSnapshot(state: DjiLinkState.accessoryOpen));
+    await openLive(tester, api);
+    expect(api.clears, 1);
+    expect(api.captureStarts, 1);
   });
 
   testWidgets('the plug step says what to do, with DJI Fly beside, and checks the cable after 20 s', (tester) async {
