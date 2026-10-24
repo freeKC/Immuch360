@@ -236,12 +236,12 @@ describe('Back on an entry page per webOS version', () => {
 		expect(platformBack).toHaveBeenCalledTimes(1);
 		expect(warn).toHaveBeenCalled();
 		// About shows why, as a TV has no console at hand
-		expect(lastErrors()).toEqual(['back: the Home app did not open (-1 Denied method call), platformBack()']);
-		// Opened: nothing else, and About says so
+		expect(lastErrors()[0]).toMatch(/^back: the Home app did not open \(-1 Denied method call; platform \d/);
+		// Opened: nothing else, and no line in About
 		expect(pressBack()).toBe(true);
 		mockLunaCalls[1]!.onSuccess!();
 		expect(platformBack).toHaveBeenCalledTimes(1);
-		expect(lastErrors()[1]).toBe('back: the Home app opened');
+		expect(lastErrors()).toHaveLength(1);
 		unmount();
 	});
 
@@ -253,7 +253,8 @@ describe('Back on an entry page per webOS version', () => {
 		mockLunaCalls[0]!.onTimeout!();
 		mockLunaCalls[0]!.onFailure!();
 		expect(platformBack).toHaveBeenCalledTimes(1);
-		expect(lastErrors()).toEqual(['back: the Home app did not open (no answer within 3 s), platformBack()']);
+		expect(lastErrors()).toHaveLength(1);
+		expect(lastErrors()[0]).toMatch(/^back: the Home app did not open \(no answer within 3 s; platform 10\.3\.2, Chromium /);
 		unmount();
 	});
 
@@ -310,12 +311,12 @@ describe('Back on an entry page per webOS version', () => {
 		expect(backShowsHome()).toBe(false);
 	});
 
-	test('platformBack(): About keeps the clues of the choice', () => {
+	test('platformBack(): nothing in About, which lists errors only', () => {
 		onVersion('6.3.1');
 		const {unmount} = renderHook(() => useRootBack());
 		expect(pressBack()).toBe(true);
 		expect(platformBack).toHaveBeenCalledTimes(1);
-		expect(lastErrors()[0]).toMatch(/^back: platformBack\(\) \(platform 6\.3\.1, Chromium /);
+		expect(lastErrors()).toEqual([]);
 		unmount();
 	});
 });

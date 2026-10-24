@@ -134,21 +134,22 @@ export function backShowsHome(): boolean {
 	return !isNaN(major) && major >= 8 && major <= 10;
 }
 
-/** The clues of backShowsHome, for the line About keeps */
+/** The clues of backShowsHome, for the line About keeps when the Home app did not open */
 function cluesText(): string {
 	const {platformVersion, chromium} = platformClues();
 	return `platform ${platformVersion ?? '?'}, Chromium ${chromium ?? '?'}`;
 }
 
 // The Home app through the application manager (ACG group application.launcher, in requiredACG); platformBack() when
-// the TV refuses or does not answer. Why it did not open goes to the last errors of About (a TV has no console at hand)
+// the TV refuses or does not answer. Why it did not open goes to the last errors of About (a TV has no console at hand);
+// an opened Home writes nothing there (seen on webOS 25 TVs of LG's Cloud Test Lab, 24 October 2026)
 function launchHome(): void {
 	let settled = false;
 	const fallBack = (reason: string) => {
 		if (settled) return;
 		settled = true;
 		console.warn('[back] the Home app did not open: platformBack()', reason);
-		recordError(`back: the Home app did not open (${reason}), platformBack()`);
+		recordError(`back: the Home app did not open (${reason}; ${cluesText()}), platformBack()`);
 		platformBack();
 	};
 	new LS2Request().send({
@@ -158,7 +159,6 @@ function launchHome(): void {
 		timeout: 3000,
 		onSuccess: () => {
 			settled = true;
-			recordError('back: the Home app opened');
 		},
 		onFailure: (response?: {errorCode?: unknown; errorText?: unknown}) =>
 			fallBack([response?.errorCode, response?.errorText].filter((part) => part !== undefined && part !== '').join(' ') || 'refused'),
@@ -184,7 +184,6 @@ export function exitToPlatform(): boolean {
 		recordError('back: this TV has no platformBack()');
 		return false;
 	}
-	recordError(`back: platformBack() (${cluesText()})`);
 	platformBack();
 	return true;
 }
