@@ -83,13 +83,15 @@ final djiWatchTvNumbersHiddenProvider = StateProvider<bool>((_) => false);
 
 /// The state line of the phones view and the first line of the strip: one sentence in plain words, what to do in it
 /// (design section 5). [longWait]: the phone welcomed this TV more than [djiWatchTvNoPictureLong] ago and no picture
-/// came.
+/// came. [refusedBy]: the phone that refused this TV's own code, which says it does not know this TV yet rather than
+/// ask for a code to type.
 String djiWatchTvStateLine(
   Translations t,
   DjiRelayReceiving receiving, {
   required bool pictureFlows,
   DjiLinkDecode? decode,
   bool longWait = false,
+  String? refusedBy,
 }) {
   final failure = decode?.failure;
   if (failure == 'no-decoder') {
@@ -97,6 +99,9 @@ String djiWatchTvStateLine(
   }
   if (failure == 'configuration-refused' || decode?.switchReason == 'noPictureNothingLeft') {
     return t.dji_live_tv_decoder_refused;
+  }
+  if (receiving.state == DjiRelayReceiveState.wrongCode && refusedBy != null) {
+    return t.dji_live_tv_code_refused(phone: refusedBy);
   }
   final phone = receiving.phoneName ?? receiving.host ?? '-';
   switch (receiving.state) {
@@ -121,6 +126,14 @@ String djiWatchTvStateLine(
 
 /// After this many failed attempts in a row, the state line says what to check (as the headset's page)
 const djiWatchTvStillTryingFailures = 3;
+
+/// The phone ended or refused the connection: a code it does not know (this TV removed there, or a new code), another
+/// version, or a phone that did not prove the code. Nothing comes any more: the full screen view gives way to the
+/// phones view, which shows the card or asks for the code again.
+bool djiWatchTvRefused(DjiRelayReceiveState? state) => switch (state) {
+  DjiRelayReceiveState.wrongCode || DjiRelayReceiveState.otherVersion || DjiRelayReceiveState.phoneUnproven => true,
+  _ => false,
+};
 
 /// The three lines of "Picture and decoder": the decoder with its kind and the choice, the rate and the decode time,
 /// the delay and the reason of the last switch; null lines are left out
@@ -174,8 +187,8 @@ class DjiWatchTvView extends ConsumerStatefulWidget {
   /// "Phone not listed? Type its address"
   final VoidCallback onTypeAddress;
 
-  /// A choice of Options the page carries out: obstacle, sound, testSound, safety, diagnostics, record, typeCode,
-  /// newCode, stop
+  /// A choice of Options the page carries out: obstacle, sound, testSound, safety, diagnostics, record, newCode, stop.
+  /// "Type the phone's code instead" goes to [onTypeCode] with the phone watched, else the row focused last.
   final ValueChanged<String> onMenu;
 
   /// The typed address was not one of a phone of this network
@@ -343,8 +356,12 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     return KeyEventResult.ignored;
   }
 
-  /// Menu and Info on the phones view, from whatever row has the focus
+  /// Menu and Info on the phones view, from whatever row has the focus. A held OK chooses once: its repeats would
+  /// start the connection again at the repeat rate, each a wrong proof on a phone that does not know this TV.
   KeyEventResult _onPhonesKey(FocusNode node, KeyEvent event) {
+    if (event is KeyRepeatEvent && remoteOkKeys.contains(event.logicalKey)) {
+      return KeyEventResult.handled;
+    }
     if (event is KeyDownEvent && _optionsKeys.contains(event.logicalKey)) {
       unawaited(_openOptions());
       return KeyEventResult.handled;
@@ -375,6 +392,11 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     switch (choice) {
       case 'numbers':
         _toggleNumbers();
+      case 'typeCode':
+        final phone = _phoneForCode(ref.read(djiRelayProvider));
+        if (phone != null) {
+          widget.onTypeCode(phone);
+        }
       case 'stop':
         if (_fullScreen) {
           _leaveFullScreen();
@@ -448,6 +470,22 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
         if (_fullScreen) {
           _leaveFullScreen();
         }
+      }
+    });
+    // The phone removed this TV, or refused it: the phones view with the card (or the code asked again), never a black
+    // full screen; the next welcome opens the full screen view again
+    final refusedNow = djiLinkProvider.select((state) => djiWatchTvRefused(state.snapshot?.relayReceiving?.state));
+    ref.listen<bool>(refusedNow, (previous, refused) {
+      if (refused && previous != true) {
+        _enteredFor = null;
+        if (_fullScreen) {
+          _leaveFullScreen();
+        }
+      }
+    });
+    ref.listen<bool>(djiRelayProvider.select((relay) => relay.ownCodeCardShows), (previous, card) {
+      if (card && previous != true && _fullScreen) {
+        _leaveFullScreen();
       }
     });
     final relay = ref.watch(djiRelayProvider);
@@ -603,7 +641,7 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     final small = context.textTheme.bodyMedium;
     final connectError = relay.connectError;
     final error = widget.addressError ?? (connectError == null ? null : djiRelayConnectErrorText(t, connectError));
-    final typeFor = relay.target ?? _focusedPhone ?? relay.phones.firstOrNull;
+    final typeFor = _phoneForCode(relay);
     return ListView(
       key: const Key('dji_watch_phones'),
       children: [
@@ -656,18 +694,28 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     );
   }
 
+  /// The phone "Type the phone's code instead" asks the code of: the phone watched, else the row focused last while it
+  /// is listed, else the first listed
+  DjiRelayPhone? _phoneForCode(DjiRelayState relay) {
+    final focused = _focusedPhone?.address;
+    return relay.target ??
+        relay.phones.where((phone) => phone.address == focused).firstOrNull ??
+        relay.phones.firstOrNull;
+  }
+
+  /// OK on a row with no code here tries this TV's own code: it asks nothing
   String _phoneLine(Translations t, DjiRelayState relay, DjiRelayPhone phone) {
     if (relay.target?.address == phone.address) {
       return t.dji_live_watch_watching;
     }
     final id = phone.id;
-    return id != null && relay.rememberedCodes.containsKey(id) ? t.dji_live_tv_press_ok : t.dji_live_watch_code_needed;
+    return id != null && relay.rememberedCodes.containsKey(id) ? t.dji_live_tv_press_ok : t.dji_live_tv_press_ok_try;
   }
 
   /// "Let this TV watch": this TV's own code in two groups of five and its QR code, for the phone's "Add a TV"
   Widget _codeCard(Translations t, DjiRelayState relay) {
     final code = relay.ownCode!;
-    final refusedBy = relay.ownCodeRefused ? relay.target?.name : null;
+    final refusedBy = relay.ownCodeRefusedBy;
     return Card(
       key: const Key('dji_watch_tv_code_card'),
       margin: EdgeInsets.zero,
@@ -693,10 +741,18 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
                     ),
                   ],
                   const SizedBox(height: 8),
-                  Text(
-                    formatPairingCode(code),
-                    key: const Key('dji_watch_tv_own_code'),
-                    style: const TextStyle(fontFamily: 'GoogleSansCode', fontSize: 40, letterSpacing: 3),
+                  // The two groups on one line beside the QR code, smaller where they would not fit, so that the card
+                  // keeps its height in a 960 by 540 screen
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      formatPairingCode(code),
+                      key: const Key('dji_watch_tv_own_code'),
+                      maxLines: 1,
+                      softWrap: false,
+                      style: const TextStyle(fontFamily: 'GoogleSansCode', fontSize: 40, letterSpacing: 3),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(t.dji_live_tv_code_steps, style: context.textTheme.bodyLarge),
@@ -747,7 +803,14 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     final stale = djiLinkStaleLine(t, active);
     return [
       Text(
-        djiWatchTvStateLine(t, active, pictureFlows: shows, decode: decode, longWait: _longWait),
+        djiWatchTvStateLine(
+          t,
+          active,
+          pictureFlows: shows,
+          decode: decode,
+          longWait: _longWait,
+          refusedBy: relay.usingOwnCode ? relay.ownCodeRefusedBy : null,
+        ),
         key: const Key('dji_watch_state'),
         style: style?.copyWith(fontWeight: FontWeight.w700),
       ),
@@ -839,7 +902,14 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
   }) {
     final line = active == null
         ? t.dji_link_receive_state_idle
-        : djiWatchTvStateLine(t, active, pictureFlows: shows, decode: decode, longWait: _longWait);
+        : djiWatchTvStateLine(
+            t,
+            active,
+            pictureFlows: shows,
+            decode: decode,
+            longWait: _longWait,
+            refusedBy: relay.usingOwnCode ? relay.ownCodeRefusedBy : null,
+          );
     final delay = active?.receiveToPictureMs;
     final stale = active == null ? null : djiLinkStaleLine(t, active);
     const white = TextStyle(color: Colors.white, fontSize: 15);
@@ -1150,7 +1220,9 @@ class DjiWatchTvObstacleBanner extends ConsumerWidget {
 }
 
 /// Options, from the right: each choice closes the panel with its name, which the page carries out; the picture and
-/// decoder lines and the values of Advanced are read only (design 3.6)
+/// decoder lines and the values of Advanced are read only (design 3.6). The panel is built whole, not lazily, and each
+/// read only block is a stop of the remote: the arrows only move between widgets that are built, and a long block with
+/// no stop left the items below it out of reach of a remote without channel keys.
 class DjiWatchTvOptions extends ConsumerWidget {
   const DjiWatchTvOptions({super.key});
 
@@ -1177,112 +1249,127 @@ class DjiWatchTvOptions extends ConsumerWidget {
           height: double.infinity,
           child: SafeArea(
             left: false,
-            child: ListView(
+            child: SingleChildScrollView(
+              key: const Key('dji_watch_tv_options_scroll'),
               padding: const EdgeInsets.fromLTRB(8, 12, 8, 16),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Text(t.dji_live_tv_options, style: context.textTheme.titleLarge),
-                ),
-                ListTile(
-                  key: const Key('dji_watch_tv_numbers'),
-                  autofocus: true,
-                  leading: Icon(hidden ? Icons.visibility_rounded : Icons.visibility_off_rounded),
-                  title: Text(hidden ? t.dji_live_tv_numbers_show : t.dji_live_tv_numbers_hide),
-                  onTap: () => choose('numbers'),
-                ),
-                if (offer == DjiObstacleOffer.test)
-                  SwitchListTile(
-                    key: const Key('dji_watch_obstacle'),
-                    title: Text(t.dji_live_obstacle_test),
-                    value: obstacle.alertOn,
-                    onChanged: (_) => choose('obstacle'),
-                  ),
-                if (obstacle.offered(offer)) ...[
-                  SwitchListTile(
-                    key: const Key('dji_watch_obstacle_sound'),
-                    title: Text(t.dji_live_obstacle_sound),
-                    value: obstacle.soundOn,
-                    onChanged: (_) => choose('sound'),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Text(t.dji_live_tv_options, style: context.textTheme.titleLarge),
                   ),
                   ListTile(
-                    key: const Key('dji_watch_tv_sound_test'),
-                    leading: const Icon(Icons.volume_up_rounded),
-                    title: Text(t.dji_live_obstacle_sound_test),
-                    onTap: () => choose('testSound'),
+                    key: const Key('dji_watch_tv_numbers'),
+                    autofocus: true,
+                    leading: Icon(hidden ? Icons.visibility_rounded : Icons.visibility_off_rounded),
+                    title: Text(hidden ? t.dji_live_tv_numbers_show : t.dji_live_tv_numbers_hide),
+                    onTap: () => choose('numbers'),
                   ),
+                  if (offer == DjiObstacleOffer.test)
+                    SwitchListTile(
+                      key: const Key('dji_watch_obstacle'),
+                      title: Text(t.dji_live_obstacle_test),
+                      value: obstacle.alertOn,
+                      onChanged: (_) => choose('obstacle'),
+                    ),
+                  if (obstacle.offered(offer)) ...[
+                    SwitchListTile(
+                      key: const Key('dji_watch_obstacle_sound'),
+                      title: Text(t.dji_live_obstacle_sound),
+                      value: obstacle.soundOn,
+                      onChanged: (_) => choose('sound'),
+                    ),
+                    ListTile(
+                      key: const Key('dji_watch_tv_sound_test'),
+                      leading: const Icon(Icons.volume_up_rounded),
+                      title: Text(t.dji_live_obstacle_sound_test),
+                      onTap: () => choose('testSound'),
+                    ),
+                  ],
+                  const Divider(),
+                  _ReadOnlyStop(
+                    child: Column(
+                      key: const Key('dji_watch_tv_picture_lines'),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(t.dji_live_tv_picture, style: heading),
+                        for (final line in djiWatchTvPictureLines(t, snapshot?.videoDecode, snapshot?.relayReceiving))
+                          Text(line, style: small),
+                      ],
+                    ),
+                  ),
+                  _ReadOnlyStop(
+                    child: Column(
+                      key: const Key('dji_watch_tv_values'),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(t.dji_live_tv_values, style: heading),
+                        if (values.isEmpty)
+                          Text(t.dji_link_flight_none, style: small)
+                        else
+                          for (final value in values) Text(value.line, style: small),
+                      ],
+                    ),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    key: const Key('dji_watch_tv_safety'),
+                    leading: const Icon(Icons.warning_amber_rounded),
+                    title: Text(t.dji_live_safety_again),
+                    onTap: () => choose('safety'),
+                  ),
+                  ListTile(
+                    key: const Key('dji_watch_tv_diagnostics'),
+                    leading: const Icon(Icons.analytics_outlined),
+                    title: Text(t.dji_live_diagnostics),
+                    onTap: () => choose('diagnostics'),
+                  ),
+                  ListTile(
+                    key: const Key('dji_watch_save_record'),
+                    leading: const Icon(Icons.save_alt_rounded),
+                    title: Text(t.dji_live_watch_save_record),
+                    onTap: () => choose('record'),
+                  ),
+                  ListTile(
+                    key: const Key('dji_watch_tv_options_type_code'),
+                    leading: const Icon(Icons.password_rounded),
+                    title: Text(t.dji_live_tv_type_code),
+                    onTap: () => choose('typeCode'),
+                  ),
+                  ListTile(
+                    key: const Key('dji_watch_tv_new_code'),
+                    leading: const Icon(Icons.refresh_rounded),
+                    title: Text(t.dji_live_tv_code_new),
+                    subtitle: Text(t.dji_live_tv_code_new_note),
+                    onTap: () => choose('newCode'),
+                  ),
+                  if (watching)
+                    ListTile(
+                      key: const Key('dji_watch_stop'),
+                      leading: const Icon(Icons.stop_circle_outlined),
+                      title: Text(t.dji_live_watch_stop),
+                      onTap: () => choose('stop'),
+                    ),
                 ],
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  child: Column(
-                    key: const Key('dji_watch_tv_picture_lines'),
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(t.dji_live_tv_picture, style: heading),
-                      for (final line in djiWatchTvPictureLines(t, snapshot?.videoDecode, snapshot?.relayReceiving))
-                        Text(line, style: small),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  child: Column(
-                    key: const Key('dji_watch_tv_values'),
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(t.dji_live_tv_values, style: heading),
-                      if (values.isEmpty)
-                        Text(t.dji_link_flight_none, style: small)
-                      else
-                        for (final value in values) Text(value.line, style: small),
-                    ],
-                  ),
-                ),
-                const Divider(),
-                ListTile(
-                  key: const Key('dji_watch_tv_safety'),
-                  leading: const Icon(Icons.warning_amber_rounded),
-                  title: Text(t.dji_live_safety_again),
-                  onTap: () => choose('safety'),
-                ),
-                ListTile(
-                  key: const Key('dji_watch_tv_diagnostics'),
-                  leading: const Icon(Icons.analytics_outlined),
-                  title: Text(t.dji_live_diagnostics),
-                  onTap: () => choose('diagnostics'),
-                ),
-                ListTile(
-                  key: const Key('dji_watch_save_record'),
-                  leading: const Icon(Icons.save_alt_rounded),
-                  title: Text(t.dji_live_watch_save_record),
-                  onTap: () => choose('record'),
-                ),
-                ListTile(
-                  key: const Key('dji_watch_tv_options_type_code'),
-                  leading: const Icon(Icons.password_rounded),
-                  title: Text(t.dji_live_tv_type_code),
-                  onTap: () => choose('typeCode'),
-                ),
-                ListTile(
-                  key: const Key('dji_watch_tv_new_code'),
-                  leading: const Icon(Icons.refresh_rounded),
-                  title: Text(t.dji_live_tv_code_new),
-                  subtitle: Text(t.dji_live_tv_code_new_note),
-                  onTap: () => choose('newCode'),
-                ),
-                if (watching)
-                  ListTile(
-                    key: const Key('dji_watch_stop'),
-                    leading: const Icon(Icons.stop_circle_outlined),
-                    title: Text(t.dji_live_watch_stop),
-                    onTap: () => choose('stop'),
-                  ),
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
+}
+
+/// A read only block of Options as one stop of the remote: the arrows bring it into view, and go on below it; OK does
+/// nothing there. The TV's focus ring shows where the focus is.
+class _ReadOnlyStop extends StatelessWidget {
+  const _ReadOnlyStop({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Focus(
+    child: Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), child: child),
+  );
 }

@@ -151,7 +151,8 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
   /// The code dialog is open: a refused code does not open a second one
   bool _asking = false;
 
-  /// The remote control layout: the TV's own code, its tries, the app going to the background and the screen saver
+  /// A TV, or the remote control layout: the TV's own code, its tries, the app going to the background and the screen
+  /// saver. A television keeps it with the layout turned off, as its Drone card, its setting and its hello do.
   late final bool _tv;
 
   /// The app went to the background with this page in front (a TV only)
@@ -166,7 +167,7 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     super.initState();
     _notifier = ref.read(djiLinkProvider.notifier);
     _relay = ref.read(djiRelayProvider.notifier);
-    _tv = ref.read(tvModeProvider);
+    _tv = ref.read(tvModeProvider) || ref.read(tvDeviceProvider).isTelevision;
     if (_tv) {
       WidgetsBinding.instance.addObserver(this);
       _pictureFlows(false);
@@ -273,6 +274,10 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     final id = phone.id;
     final remembered = id == null ? null : relay.rememberedCodes[id];
     if (_tv) {
+      if (_relay.busyWith(phone)) {
+        // Already starting or watching that phone: a held OK, or a second press, starts nothing again
+        return;
+      }
       _relay.chosenOnTv();
       final code = remembered ?? relay.ownCode;
       if (code != null) {
@@ -356,15 +361,6 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     await _watchTyped();
   }
 
-  /// "Type the phone's code instead" from Options: the phone watched, else the only one listed
-  Future<void> _typeCodeFromOptions() async {
-    final relay = ref.read(djiRelayProvider);
-    final phone = relay.target ?? (relay.phones.length == 1 ? relay.phones.single : relay.phones.firstOrNull);
-    if (phone != null) {
-      await _askCodeOnTv(phone);
-    }
-  }
-
   Future<void> _askCode(DjiRelayPhone phone, {bool wrong = false}) async {
     if (_asking) {
       return;
@@ -442,8 +438,6 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
         if (off) {
           ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(volumeOff)));
         }
-      case 'typeCode':
-        await _typeCodeFromOptions();
       case 'newCode':
         await _relay.newOwnCode();
       case 'stop':

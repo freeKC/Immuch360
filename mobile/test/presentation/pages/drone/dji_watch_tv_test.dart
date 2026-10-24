@@ -2,7 +2,10 @@
 // phones view with the focus on a phone row, this TV's own code with its QR code and its tries every 10 s, the full
 // screen view at the first picture with the values on plates, the strip that never hides and the obstacle banner, the
 // keys of the remote, Options, Back, the app going to the background, the screen saver after 10 minutes without a
-// picture, and the one platform view that moves between the two views. Nothing ran on a TV: these are widget tests.
+// picture, and the one platform view that moves between the two views. Since the review of 24 October
+// (p2/review-tv-2026-10-24.md): a refusal in full screen, the notice and Options read by the arrows alone, a held OK,
+// a new code while watching, Stop watching then Home, two phones that refuse, and a TV out of the TV layout. Nothing
+// ran on a TV: these are widget tests.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -94,6 +97,7 @@ void main() {
     FakeDjiLinkApi api, {
     FakeRelayEnvironment? relay,
     bool noticeRead = true,
+    bool tvMode = true,
   }) async {
     DjiLinkEvents? listener;
     await tester.binding.setSurfaceSize(_tv);
@@ -110,7 +114,7 @@ void main() {
         ),
       ),
       overrides: [
-        tvModeProvider.overrideWithValue(true),
+        tvModeProvider.overrideWithValue(tvMode),
         tvDeviceProvider.overrideWithValue(TvDeviceInfo(isTelevision: true, isLowRamDevice: false)),
         tvApiProvider.overrideWithValue(tvApi),
         djiLinkApiProvider.overrideWithValue(api),
@@ -230,6 +234,11 @@ void main() {
       findsOneWidget,
     );
     expect(tester.widget<QrCodeView>(find.byType(QrCodeView)).data, 'IMMUCH360-WATCH:1:$_ownCode');
+    // The two groups on one line beside the QR code, whatever the font
+    expect(
+      tester.getRect(find.byKey(const Key('dji_watch_tv_own_code'))).right,
+      lessThanOrEqualTo(tester.getRect(find.byKey(const Key('dji_watch_tv_qr'))).left),
+    );
     // The TV tried its own code at once: the pilot may have added it already
     expect(api.connects.first, ('192.168.1.21', 8362, _ownCode, _phoneId, 'Galaxy S24+'));
     // Never a typed code first
@@ -562,13 +571,13 @@ void main() {
     await tester.tap(find.byKey(const Key('dji_watch_tv_options')));
     await tester.pumpAndSettle();
     await showInOptions(tester, const Key('dji_watch_tv_new_code'));
-    expect(find.text('Phones that had this TV\'s code must add it again.'), findsOneWidget);
+    expect(find.text('Remove this TV on the phone, then add it again.'), findsOneWidget);
     await tester.tap(find.byKey(const Key('dji_watch_tv_new_code')));
     await tester.pumpAndSettle();
     expect(relay.secrets[djiWatchOwnCodeKey], _ownCode);
     expect(relay.secrets.containsKey('dji_relay_code.$_phoneId'), isFalse);
     expect(relay.secrets.containsKey(djiWatchOwnCodePhonesKey), isFalse);
-    expect(find.text('Code needed'), findsOneWidget);
+    expect(find.text('Press OK to try'), findsOneWidget);
     expect(find.text('K7M2Q 9XRTH'), findsOneWidget);
   });
 
@@ -666,6 +675,243 @@ void main() {
     expect(find.byKey(const Key('dji_link_relay_switch')), findsNothing);
   });
 
+  testWidgets('the phone removes this TV in full screen: back to the phones view with the card, nothing to type', (
+    tester,
+  ) async {
+    final (api, relay, listener) = await watching(tester);
+    expect(find.byKey(const Key('dji_watch_tv_full')), findsOneWidget);
+
+    // Remove on the phone: BYE newCode, which the receiver reads as a refused code
+    await push(tester, listener, refused());
+    expect(find.byKey(const Key('dji_watch_tv_full')), findsNothing);
+    expect(find.byKey(const Key('dji_watch_tv_code_card')), findsOneWidget);
+    expect(find.text('Immuch360 on Galaxy S24+ does not know this TV yet.'), findsOneWidget);
+    expect(find.text('The code does not match: type it again.'), findsNothing);
+    expect(tvApi.requests, isEmpty);
+    // The code the phone no longer knows is forgotten here
+    expect(relay.secrets.containsKey('dji_relay_code.$_phoneId'), isFalse);
+
+    // Added again on the phone: the next try is welcomed, and its first picture opens the full screen view again
+    await tester.pump(djiWatchTryEvery);
+    await tester.pump();
+    expect(api.connects, hasLength(2));
+    expect(api.connects.last.$3, _ownCode);
+    await push(tester, listener, picture());
+    expect(find.byKey(const Key('dji_watch_tv_full')), findsOneWidget);
+    expect(find.byKey(const Key('dji_watch_tv_code_card')), findsNothing);
+  });
+
+  testWidgets('the notice on a TV: the arrows read it to its last line, and only then reach I understand', (
+    tester,
+  ) async {
+    // The obstacle alert on: its line "Information only" comes last
+    memory[StoreKey.djiObstacleAlertOn] = true;
+    await openOnTv(tester, television(), noticeRead: false);
+    final text = find.byKey(const Key('dji_live_notice_text'));
+    final last = find.byKey(const Key('dji_live_notice_last'));
+    final understand = find.byKey(const Key('dji_live_notice_ok'));
+    expect(find.descendant(of: last, matching: find.textContaining('Information only')), findsOneWidget);
+    bool lastInView() => tester.getRect(last).bottom <= tester.getRect(text).bottom + 0.5;
+
+    expect(focused(tester, text), isTrue);
+    expect(lastInView(), isFalse, reason: 'the notice is longer than a 1080p TV, 960 by 540 dp');
+    var presses = 0;
+    var lastSeen = false;
+    while (!focused(tester, understand) && presses < 20) {
+      lastSeen = lastSeen || lastInView();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      presses++;
+    }
+    expect(focused(tester, understand), isTrue);
+    expect(lastSeen, isTrue, reason: 'I understand comes once the last line was in view');
+    expect(presses, greaterThan(1));
+
+    // Up goes back to the text, which OK reads on to the end and leaves for I understand
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pumpAndSettle();
+    expect(focused(tester, text), isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    await tester.pumpAndSettle();
+    expect(focused(tester, understand), isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_live_notice')), findsNothing);
+    expect(find.byKey(const Key('dji_watch')), findsOneWidget);
+  });
+
+  testWidgets('Options by the arrows alone: from Hide the numbers down to Stop watching, every value flowing', (
+    tester,
+  ) async {
+    memory[StoreKey.djiObstacleAlertOn] = true;
+    final (api, _, listener) = await watching(tester);
+    // Every value of Advanced, so that the read only lines are as long as in flight
+    await push(tester, listener, picture(frame: fakeFrame(speedMps: 4.2, distanceBelowM: 3.1, obstacleM: 6.5)));
+    await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
+    await tester.pumpAndSettle();
+    const items = [
+      Key('dji_watch_tv_numbers'),
+      Key('dji_watch_obstacle'),
+      Key('dji_watch_obstacle_sound'),
+      Key('dji_watch_tv_sound_test'),
+      Key('dji_watch_tv_safety'),
+      Key('dji_watch_tv_diagnostics'),
+      Key('dji_watch_save_record'),
+      Key('dji_watch_tv_options_type_code'),
+      Key('dji_watch_tv_new_code'),
+      Key('dji_watch_stop'),
+    ];
+    for (final key in items) {
+      expect(find.byKey(key), findsOneWidget, reason: '$key');
+    }
+    Key? focusedItem() => items.where((key) => focused(tester, find.byKey(key))).firstOrNull;
+    expect(focusedItem(), items.first);
+
+    final reached = [items.first];
+    var lines = false;
+    for (var press = 0; press < 30 && focusedItem() != items.last; press++) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      final item = focusedItem();
+      if (item == null) {
+        // A block of read only lines, in view
+        lines = true;
+        expect(find.byKey(const Key('dji_watch_tv_options_panel')), findsOneWidget);
+      } else if (item != reached.last) {
+        reached.add(item);
+      }
+    }
+    // Each item once, in order, never back to the top
+    expect(reached, items);
+    expect(lines, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    await tester.pumpAndSettle();
+    expect(api.disconnects, 1);
+    expect(find.byKey(const Key('dji_watch_tv_options_panel')), findsNothing);
+  });
+
+  testWidgets('a held OK on a phone row tries once, and a second press while it starts does nothing', (tester) async {
+    final relay = FakeRelayEnvironment();
+    final api = television();
+    final listener = await openOnTv(tester, api, relay: relay);
+    await announce(tester, relay, '192.168.1.21');
+    await push(tester, listener, refused());
+    expect(api.connects, hasLength(1));
+    expect(focused(tester, phoneRow('192.168.1.21')), isTrue);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+    for (var repeat = 0; repeat < 10; repeat++) {
+      await tester.sendKeyRepeatEvent(LogicalKeyboardKey.select);
+    }
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+    await tester.pumpAndSettle();
+    expect(api.connects, hasLength(2));
+
+    // The phone has not answered yet: OK again starts nothing
+    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    await tester.pumpAndSettle();
+    expect(api.connects, hasLength(2));
+  });
+
+  testWidgets('a new code while watching with the old one ends that connection, and the next welcome keeps the new', (
+    tester,
+  ) async {
+    final (api, relay, listener) = await watching(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
+    await tester.pumpAndSettle();
+    await showInOptions(tester, const Key('dji_watch_tv_new_code'));
+    await tester.tap(find.byKey(const Key('dji_watch_tv_new_code')));
+    await tester.pumpAndSettle();
+    expect(api.disconnects, 1);
+    expect(find.byKey(const Key('dji_watch_tv_full')), findsNothing);
+    // The native side says the receiver stopped
+    await push(tester, listener, fakeSnapshot(state: DjiLinkState.unsupportedTransport));
+    expect(relay.secrets[djiWatchOwnCodeKey], 'ABCDEFGHJK');
+    expect(relay.secrets.containsKey('dji_relay_code.$_phoneId'), isFalse);
+    expect(find.text('ABCDE FGHJK'), findsOneWidget);
+
+    // The pilot removes the TV on the phone and adds it again: the next try proves the new code, which is remembered
+    await tester.pump(djiWatchTryEvery);
+    await tester.pump();
+    expect(api.connects.last.$3, 'ABCDEFGHJK');
+    await push(tester, listener, picture());
+    expect(relay.secrets['dji_relay_code.$_phoneId'], 'ABCDEFGHJK');
+    expect(find.byKey(const Key('dji_watch_tv_full')), findsOneWidget);
+  });
+
+  testWidgets('two phones that do not know this TV: the red line names the one that refused, not the one tried', (
+    tester,
+  ) async {
+    final relay = FakeRelayEnvironment();
+    final api = television();
+    final listener = await openOnTv(tester, api, relay: relay);
+    await announce(tester, relay, '192.168.1.21');
+    relay.browsed.add(
+      fakeAnnounced('192.168.1.22', {...fakeDroneTxt, 'id': '0a1b2c3d4e5f6071'}, name: 'Immuch360 on Pixel 9'),
+    );
+    await tester.pumpAndSettle();
+    expect(api.connects.single.$1, '192.168.1.21');
+    await push(tester, listener, refused());
+    expect(find.text('Immuch360 on Galaxy S24+ does not know this TV yet.'), findsOneWidget);
+
+    await tester.pump(djiWatchTryEvery);
+    await tester.pumpAndSettle();
+    expect(api.connects.last.$1, '192.168.1.22');
+    expect(find.text('Immuch360 on Galaxy S24+ does not know this TV yet.'), findsOneWidget);
+    expect(find.text('Immuch360 on Pixel 9 does not know this TV yet.'), findsNothing);
+
+    await push(tester, listener, refused());
+    expect(find.text('Immuch360 on Pixel 9 does not know this TV yet.'), findsOneWidget);
+    expect(find.text('Immuch360 on Galaxy S24+ does not know this TV yet.'), findsNothing);
+  });
+
+  testWidgets('Stop watching holds through Home: back in front, nothing connects until a phone is chosen', (
+    tester,
+  ) async {
+    final relay = FakeRelayEnvironment()
+      ..secrets['dji_relay_code.$_phoneId'] = _ownCode
+      ..secrets[djiWatchOwnCodeKey] = _ownCode
+      ..secrets[djiRelayLastPhoneKey] = _phoneId;
+    final api = television();
+    final listener = await openOnTv(tester, api, relay: relay);
+    await announce(tester, relay, '192.168.1.21');
+    expect(api.connects, hasLength(1));
+    await push(tester, listener, picture());
+    await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
+    await tester.pumpAndSettle();
+    await showInOptions(tester, const Key('dji_watch_stop'));
+    await tester.tap(find.byKey(const Key('dji_watch_stop')));
+    await tester.pumpAndSettle();
+    expect(api.disconnects, 1);
+
+    for (final state in [AppLifecycleState.inactive, AppLifecycleState.hidden, AppLifecycleState.paused]) {
+      tester.binding.handleAppLifecycleStateChanged(state);
+    }
+    await tester.pumpAndSettle();
+    for (final state in [AppLifecycleState.hidden, AppLifecycleState.inactive, AppLifecycleState.resumed]) {
+      tester.binding.handleAppLifecycleStateChanged(state);
+    }
+    await tester.pumpAndSettle();
+    await announce(tester, relay, '192.168.1.21');
+    await tester.pump(const Duration(seconds: 30));
+    await tester.pumpAndSettle();
+    expect(api.connects, hasLength(1));
+
+    // Choosing the phone watches again
+    await tester.tap(phoneRow('192.168.1.21'));
+    await tester.pumpAndSettle();
+    expect(api.connects, hasLength(2));
+  });
+
+  testWidgets('a television with the remote control layout turned off keeps the TV page', (tester) async {
+    final relay = FakeRelayEnvironment();
+    await openOnTv(tester, television(), relay: relay, tvMode: false);
+    expect(find.byKey(const Key('dji_watch_tv_options')), findsOneWidget);
+    expect(find.text('Watching only: nothing on this TV reaches the drone.'), findsOneWidget);
+    await announce(tester, relay, '192.168.1.21');
+    expect(find.byKey(const Key('dji_watch_tv_code_card')), findsOneWidget);
+  });
+
   group('the words of a TV', () {
     testWidgets('every state of the reception, each decode failure', (tester) async {
       late Translations t;
@@ -709,6 +955,16 @@ void main() {
       expect(line(DjiRelayReceiveState.otherVersion), 'The phone runs another version of Immuch360: update both.');
       expect(line(DjiRelayReceiveState.phoneUnproven), 'This phone did not prove the code: nothing it sends is shown.');
       expect(line(DjiRelayReceiveState.wrongCode), 'The code does not match: type it again.');
+      // This TV's own code refused: the phone does not know this TV, there is nothing to type
+      expect(
+        djiWatchTvStateLine(
+          t,
+          fakeReceiving(state: DjiRelayReceiveState.wrongCode),
+          pictureFlows: false,
+          refusedBy: 'Immuch360 on Galaxy S24+',
+        ),
+        'Immuch360 on Galaxy S24+ does not know this TV yet.',
+      );
       expect(
         line(DjiRelayReceiveState.receiving, decode: fakeDecode(failure: 'no-decoder')),
         'This TV has no decoder for the drone\'s video (H.265). The numbers still show.',

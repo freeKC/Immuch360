@@ -291,7 +291,7 @@ class DjiRelayState {
     this.ownCode,
     this.screens = const [],
     this.usingOwnCode = false,
-    this.ownCodeRefused = false,
+    this.ownCodeRefusedBy,
     this.triesStopped = false,
   });
 
@@ -339,8 +339,12 @@ class DjiRelayState {
   /// The connection under way proves this TV's own code, not a code typed for that phone
   final bool usingOwnCode;
 
-  /// The phone refused this TV's own code: it does not know this TV yet
-  final bool ownCodeRefused;
+  /// The name of the phone that refused this TV's own code last: it does not know this TV yet. Kept while the TV tries
+  /// its code on another phone, so that the card names the phone that refused, not the one being tried.
+  final String? ownCodeRefusedBy;
+
+  /// A phone refused this TV's own code
+  bool get ownCodeRefused => ownCodeRefusedBy != null;
 
   /// The tries of the TV's own code reached [djiWatchOwnCodeTries] in this opening of the page
   final bool triesStopped;
@@ -364,11 +368,12 @@ class DjiRelayState {
     String? ownCode,
     List<DjiRelayScreen>? screens,
     bool? usingOwnCode,
-    bool? ownCodeRefused,
+    String? ownCodeRefusedBy,
     bool? triesStopped,
     bool clearPort = false,
     bool clearConnectError = false,
     bool clearTarget = false,
+    bool clearOwnCodeRefused = false,
   }) => DjiRelayState(
     sending: sending ?? this.sending,
     starting: starting ?? this.starting,
@@ -388,7 +393,7 @@ class DjiRelayState {
     ownCode: ownCode ?? this.ownCode,
     screens: screens ?? this.screens,
     usingOwnCode: usingOwnCode ?? this.usingOwnCode,
-    ownCodeRefused: ownCodeRefused ?? this.ownCodeRefused,
+    ownCodeRefusedBy: clearOwnCodeRefused ? null : (ownCodeRefusedBy ?? this.ownCodeRefusedBy),
     triesStopped: triesStopped ?? this.triesStopped,
   );
 
@@ -437,14 +442,23 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
   /// Bumped by every start and stop, so that a start overtaken by a stop undoes what it made
   int _generation = 0;
 
-  /// The tries of a TV's own code: the timer while the page asks for them, the tries made in this opening, and held
-  /// after Stop watching until the page opens again or a phone is chosen
+  /// The tries of a TV's own code: the timer while the page asks for them, and the tries made in this opening
   Timer? _tries;
   int _triesMade = 0;
-  bool _triesHeld = false;
+
+  /// Stop watching was chosen: nothing connects by itself, not even after Home and back, and a TV tries nothing,
+  /// until a phone is chosen or the page opens again
+  bool _stopped = false;
 
   /// The state of the receiver as the last snapshot said it; a try is made only while no receiver works
   DjiRelayReceiveState? _receiveState;
+
+  /// The phone a connect is starting a receiver for, until the native side answered
+  DjiRelayPhone? _starting;
+
+  /// The code the connection to the phone watched proves: the one remembered for that phone once it is welcomed,
+  /// whatever this TV's own code became meanwhile
+  String? _connectionCode;
 
   bool _screensLoaded = false;
 
@@ -598,7 +612,8 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     state = state.copyWith(ownCode: made);
   }
 
-  /// "New code for this TV": every phone that knew the old one is forgotten here, and must add the TV again
+  /// "New code for this TV": every phone that knew the old one is forgotten here, and must remove the TV and add it
+  /// again; a connection that proves the old code ends
   Future<void> newOwnCode() async {
     final old = state.ownCode;
     final made = _environment.newCode();
@@ -628,7 +643,14 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
       _log.fine('The list of phones was not forgotten: $error');
     }
     final codes = {...state.rememberedCodes}..removeWhere((id, code) => code == old);
-    state = state.copyWith(ownCode: made, rememberedCodes: codes, ownCodeRefused: false);
+    final watchingWithOld = state.target != null && state.usingOwnCode;
+    state = state.copyWith(ownCode: made, rememberedCodes: codes, usingOwnCode: false, clearOwnCodeRefused: true);
+    if (watchingWithOld) {
+      // That connection proved the old code, which the phone keeps until the TV is removed there: it ends now, and the
+      // card shows the new code to add
+      _log.info('New code for this TV: the connection with the old one ends');
+      await _stopReceiving();
+    }
   }
 
   Future<Set<String>> _ownCodePhones() async {
@@ -657,7 +679,7 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
   /// The TV's page opened: its tries start again from zero
   void beginOwnCodeTries() {
     _triesMade = 0;
-    _triesHeld = false;
+    _stopped = false;
     if (state.triesStopped) {
       state = state.copyWith(triesStopped: false);
     }
@@ -683,7 +705,7 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
   /// One try of the TV's own code on the next listed phone it has no code for, while no receiver works
   void _tryOwnCode() {
     final own = state.ownCode;
-    if (_tries == null || own == null || !_pageVisible || _triesHeld || state.triesStopped) {
+    if (_tries == null || own == null || !_pageVisible || _stopped || state.triesStopped) {
       return;
     }
     final working = switch (_receiveState) {
@@ -1016,6 +1038,7 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     final own = code == state.ownCode;
     // A receiver is being started: no try of a TV's own code meanwhile
     _receiveState = DjiRelayReceiveState.connecting;
+    _starting = phone;
     String? outcome;
     try {
       final headsetName = await _environment.deviceName();
@@ -1028,6 +1051,10 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     } catch (error) {
       _log.warning('The receiver did not start: $error');
       outcome = 'badHost';
+    } finally {
+      if (identical(_starting, phone)) {
+        _starting = null;
+      }
     }
     if (outcome != null) {
       _receiveState = null;
@@ -1035,12 +1062,15 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
       return;
     }
     _fallbackTried = false;
+    _connectionCode = code;
+    // A typed code clears the red line of a refused own code; a try of the own code on another phone keeps it, with
+    // the name of the phone that refused
     state = state.copyWith(
       target: phone,
       clearConnectError: true,
       flightViewFailed: false,
       usingOwnCode: own,
-      ownCodeRefused: own && state.ownCodeRefused,
+      clearOwnCodeRefused: !own,
     );
     final id = phone.id;
     if (id != null && !own) {
@@ -1054,11 +1084,26 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
   }
 
   /// "Stop watching": the receiver stops, and the page does not connect by itself again until it is opened again, nor
-  /// does a TV try its code before a phone is chosen
+  /// does a TV try its code before a phone is chosen; Home and back on a TV keep it so
   Future<void> disconnect() async {
     _autoConnectId = null;
-    _triesHeld = true;
+    _stopped = true;
     await _stopReceiving();
+  }
+
+  /// A connection to [phone] is starting, its code being checked, or it receives: OK again on its row changes nothing.
+  /// A held OK repeats, and each new hello with a code the phone does not know counts one wrong proof there.
+  bool busyWith(DjiRelayPhone phone) {
+    if (_starting?.address == phone.address) {
+      return true;
+    }
+    if (state.target?.address != phone.address) {
+      return false;
+    }
+    return switch (_receiveState) {
+      DjiRelayReceiveState.connecting || DjiRelayReceiveState.checkingCode || DjiRelayReceiveState.receiving => true,
+      _ => false,
+    };
   }
 
   /// The app went to the background with the watch page in front (a TV's Home): receiving and browsing stop, and
@@ -1070,10 +1115,13 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     await _stopReceiving();
   }
 
-  /// Back in front: browsing again, the last phone connected by itself, the tries going on
+  /// Back in front: browsing again, the last phone connected by itself, the tries going on; after Stop watching
+  /// nothing connects by itself (the tries check it too)
   Future<void> resumeWatching({required bool tries}) async {
     startBrowsing();
-    await armAutoConnect();
+    if (!_stopped) {
+      await armAutoConnect();
+    }
     if (tries) {
       setOwnCodeTries(true);
     }
@@ -1082,8 +1130,9 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
   /// A TV's page opened: the receiver stopped with the link when the page last closed, so no phone is watched here
   void forgetTarget() {
     _receiveState = null;
+    _connectionCode = null;
     if (state.target != null || state.usingOwnCode || state.ownCodeRefused) {
-      state = state.copyWith(clearTarget: true, usingOwnCode: false, ownCodeRefused: false);
+      state = state.copyWith(clearTarget: true, usingOwnCode: false, clearOwnCodeRefused: true);
     }
   }
 
@@ -1094,6 +1143,7 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
       _log.fine('The receiver did not stop cleanly: $error');
     }
     _receiveState = DjiRelayReceiveState.idle;
+    _connectionCode = null;
     state = state.copyWith(clearTarget: true, clearConnectError: true);
   }
 
@@ -1131,15 +1181,18 @@ class DjiRelayNotifier extends Notifier<DjiRelayState> {
     final id = target.id;
     if (receiving.state == DjiRelayReceiveState.receiving) {
       if (state.ownCodeRefused) {
-        state = state.copyWith(ownCodeRefused: false);
+        state = state.copyWith(clearOwnCodeRefused: true);
       }
-      final own = state.ownCode;
-      if (state.usingOwnCode && own != null && id != null && state.rememberedCodes[id] != own) {
-        unawaited(_rememberOwnCode(id, own));
+      // The code this connection proved, not this TV's code of now, which may be newer
+      final used = _connectionCode;
+      if (state.usingOwnCode && used != null && id != null && state.rememberedCodes[id] != used) {
+        unawaited(_rememberOwnCode(id, used));
       }
     }
-    if (receiving.state == DjiRelayReceiveState.wrongCode && state.usingOwnCode && !state.ownCodeRefused) {
-      state = state.copyWith(ownCodeRefused: true);
+    if (receiving.state == DjiRelayReceiveState.wrongCode &&
+        state.usingOwnCode &&
+        state.ownCodeRefusedBy != target.name) {
+      state = state.copyWith(ownCodeRefusedBy: target.name);
     }
     if (receiving.state == DjiRelayReceiveState.receiving && id != null && id != _lastPhoneId) {
       _lastPhoneId = id;

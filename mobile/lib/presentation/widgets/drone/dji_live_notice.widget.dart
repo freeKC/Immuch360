@@ -1,12 +1,14 @@
 // The safety notice of the DJI live video (p2/design-ux-phone-2026-10-24.md, 3.2): once per run of the app, before the
 // first picture, with the rules of the Diagnostics banner word for word. On a headset the observer rule and "Watching
 // only" come first, on a TV the same two rules worded for a TV (p2/design-tv-2026-10-24.md, 7.1). The link starts
-// behind it, so reading it costs no time; Back on it leaves the screen it covers.
+// behind it, so reading it costs no time; Back on it leaves the screen it covers. On a TV the text is one stop of the
+// remote that the arrows scroll, and "I understand" comes after its last line.
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/tv/remote_scroll_area.widget.dart';
 
 /// The notice was read in this run of the app: in memory only, so that it shows again after the app was closed
 final djiLiveNoticeReadProvider = StateProvider<bool>((_) => false);
@@ -56,6 +58,52 @@ class DjiLiveNotice extends StatelessWidget {
       t.dji_link_flight_view_fly_note,
       if (alert) t.dji_live_obstacle_info_only,
     ];
+    final children = [
+      Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, color: context.colorScheme.error, size: 32),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              t.dji_link_safety_title,
+              style: context.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 12),
+      if (tv) ...[
+        Text(t.dji_live_tv_observer, key: const Key('dji_live_notice_observer'), style: strong),
+        const SizedBox(height: 8),
+        Text(t.dji_live_tv_watching, key: const Key('dji_live_notice_watching'), style: strong),
+        const SizedBox(height: 8),
+      ] else if (headset) ...[
+        Text(t.dji_link_observer_note, key: const Key('dji_live_notice_observer'), style: strong),
+        const SizedBox(height: 8),
+        Text(t.dji_link_observer_watching, key: const Key('dji_live_notice_watching'), style: strong),
+        const SizedBox(height: 8),
+      ],
+      for (final (index, line) in lines.indexed)
+        Padding(
+          key: index == lines.length - 1 ? const Key('dji_live_notice_last') : null,
+          padding: const EdgeInsets.only(top: 8),
+          child: Text(line, style: body),
+        ),
+    ];
+    const padding = EdgeInsets.fromLTRB(24, 16, 24, 8);
+    // On a TV the arrows scroll the text, which has no stop of its own: a remote without channel keys reaches its
+    // last lines, then "I understand". Built whole, so that its last line is there to bring into view.
+    final text = tv
+        ? RemoteScrollArea(
+            key: const Key('dji_live_notice_text'),
+            autofocus: true,
+            builder: (_, controller) => SingleChildScrollView(
+              controller: controller,
+              padding: padding,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+            ),
+          )
+        : ListView(padding: padding, children: children);
     return Scaffold(
       key: const Key('dji_live_notice'),
       body: SafeArea(
@@ -64,42 +112,7 @@ class DjiLiveNotice extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 760),
             child: Column(
               children: [
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.warning_amber_rounded, color: context.colorScheme.error, size: 32),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              t.dji_link_safety_title,
-                              style: context.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      if (tv) ...[
-                        Text(t.dji_live_tv_observer, key: const Key('dji_live_notice_observer'), style: strong),
-                        const SizedBox(height: 8),
-                        Text(t.dji_live_tv_watching, key: const Key('dji_live_notice_watching'), style: strong),
-                        const SizedBox(height: 8),
-                      ] else if (headset) ...[
-                        Text(t.dji_link_observer_note, key: const Key('dji_live_notice_observer'), style: strong),
-                        const SizedBox(height: 8),
-                        Text(t.dji_link_observer_watching, key: const Key('dji_live_notice_watching'), style: strong),
-                        const SizedBox(height: 8),
-                      ],
-                      for (final line in lines)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(line, style: body),
-                        ),
-                    ],
-                  ),
-                ),
+                Expanded(child: text),
                 // Always in sight, whatever the height of the window: the notice scrolls above it
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
