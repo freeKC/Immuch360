@@ -1,6 +1,6 @@
 // The "Photos and videos from the drone" row of the Drone page (p2/design-final-2026-10-24.md, 2.4): opens the DJI
-// drone page. Offered on Android phones and tablets only (not the Quest build, not the TV layout), while Settings,
-// Advanced, "DJI drones (experimental)" is on, as it is by default.
+// drone page. Offered on Android phones and tablets only (not the Quest build, not the TV layout, never on a
+// television), while Settings, Advanced, "DJI drones (experimental)" is on, as it is by default.
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -13,18 +13,21 @@ import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
-/// Whether the DJI drone page can be offered here: an Android phone or tablet, not the Quest build, not the TV layout.
-/// Tests replace it.
+/// Whether the DJI drone page can be offered here: an Android phone or tablet, not the Quest build, not the TV layout,
+/// and never a television, whatever its layout setting (p2/design-tv-2026-10-24.md, 2.1). Tests replace it.
 final droneImportSupportedProvider = Provider.autoDispose<bool>((ref) {
   if (!CurrentPlatform.isAndroid) {
     return false;
   }
-  return ref.watch(isHorizonOsProvider).valueOrNull == false && !ref.watch(tvModeProvider);
-});
+  return ref.watch(isHorizonOsProvider).valueOrNull == false &&
+      !ref.watch(tvModeProvider) &&
+      !ref.watch(tvDeviceProvider).isTelevision;
+}, dependencies: [isHorizonOsProvider, tvModeProvider, tvDeviceProvider]);
 
 /// Whether the import from the drone is offered: supported here, and the setting on
 final droneImportEnabledProvider = Provider.autoDispose<bool>(
   (ref) => ref.watch(droneImportSupportedProvider) && ref.watch(appConfigProvider.select((c) => c.djiImportEnabled)),
+  dependencies: [droneImportSupportedProvider, appConfigProvider],
 );
 
 class DroneImportTile extends ConsumerWidget {

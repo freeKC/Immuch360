@@ -17,6 +17,7 @@ import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/repositories/permission.repository.dart';
 import 'package:immich_mobile/services/app_settings.service.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
@@ -49,9 +50,11 @@ class AdvancedSettings extends HookConsumerWidget {
       djiImport.value,
       (_, _) => unawaited(ref.read(settingsProvider).write(.djiImportEnabled, djiImport.value)),
     );
-    // The DJI live video: a DJI remote controller plugged in as a USB accessory, on Android phones and in the headset.
-    // The native side is told too: with the setting off, plugging the remote never opens the app.
+    // The DJI live video: a DJI remote controller plugged in as a USB accessory, on Android phones, and a phone's
+    // relay watched in the headset and on a TV. The native side is told too: with the setting off, plugging the remote
+    // never opens the app.
     final djiLinkSupported = ref.watch(djiLinkSupportedProvider);
+    final television = ref.watch(tvDeviceProvider).isTelevision;
     final djiLink = useState(ref.watch(appConfigProvider).djiLinkEnabled);
     useValueChanged<bool, void>(djiLink.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.djiLinkEnabled, djiLink.value));
@@ -159,7 +162,7 @@ class AdvancedSettings extends HookConsumerWidget {
           key: const Key('advanced_settings_dji_link'),
           valueNotifier: djiLink,
           title: context.t.dji_live_setting_title,
-          subtitle: context.t.dji_live_setting_subtitle,
+          subtitle: television ? context.t.dji_live_setting_subtitle_tv : context.t.dji_live_setting_subtitle,
         ),
       const CustomProxyHeaderSettings(),
       const SslClientCertSettings(),

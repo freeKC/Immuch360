@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/pages/video_decoders.page.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/drone_import_tile.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/widgets/settings/advanced_settings.dart';
 
 import '../../presentation/pages/drone/dji_link_fakes.dart';
@@ -148,6 +150,25 @@ void main() {
       expect(SettingsRepository.instance.appConfig.djiLinkEnabled, isTrue);
       // With the setting off, plugging the remote never opens the app
       expect(api.liveSettingSets, [false, true]);
+    });
+
+    testWidgets('on a TV: on by default with the words of a TV, and no import from a drone', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [
+          tvDeviceProvider.overrideWithValue(TvDeviceInfo(isTelevision: true, isLowRamDevice: false)),
+          tvModeProvider.overrideWithValue(true),
+          djiLinkApiProvider.overrideWithValue(FakeDjiLinkApi()),
+        ],
+      );
+      await tester.scrollUntilVisible(linkSwitch, 100, scrollable: find.byType(Scrollable).first);
+      expect(tester.widget<SwitchListTile>(linkSwitch).value, isTrue);
+      expect(
+        find.text('The live picture of a DJI drone that a phone sends on this Wi-Fi. Nothing here can move the drone.'),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('advanced_settings_dji_import')), findsNothing);
     });
 
     testWidgets('is not offered on a device that has no cable to a remote controller', (tester) async {

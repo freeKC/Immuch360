@@ -182,8 +182,8 @@ class _CollectionCards extends ConsumerWidget {
             if (hasServer && hasMaps) const _PlacesCollectionCard(),
             const _LocalAlbumsCollectionCard(),
             const _NetworkSharesCollectionCard(),
-            // The DJI functions have a place of their own, not under Network shares: hidden on a TV, iOS, a computer,
-            // and when both DJI settings are off
+            // The DJI functions have a place of their own, not under Network shares: hidden on iOS, a computer, and
+            // when both DJI settings are off; a TV watches a phone's relay there
             if (ref.watch(droneCardProvider) != DroneCardTarget.none) const DroneCollectionCard(),
             if (hasServer) const _MemoriesCollectionCard(),
           ],

@@ -1,8 +1,9 @@
 // The "DJI live video" row of the Drone page (p2/design-final-2026-10-24.md, 2.4): on a phone it opens the live
 // screen, which reads a DJI remote controller plugged into the phone with a cable. Offered on Android phones and
-// tablets and in the Meta Quest build, not in the TV layout (a television has no cable to a remote controller and no
-// pilot in front of it), while Settings, Advanced, "DJI live video (experimental)" is on, as it is by default. On the
-// Quest the Drone card opens the watch page directly.
+// tablets, in the Meta Quest build and on Android TV, while Settings, Advanced, "DJI live video (experimental)" is on,
+// as it is by default. The Quest and a TV only watch a phone's relay (p2/design-tv-2026-10-24.md, 2.1): their Drone
+// card opens the watch page directly. A phone switched to the TV layout keeps hiding it: the live screen is built for
+// touch.
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -15,16 +16,23 @@ import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
-/// Whether the DJI link page can be offered here: an Android phone, tablet or headset, not the TV layout. Tests
-/// replace it.
+/// Whether this device only watches a phone's relay: the Meta Quest (Horizon OS) and a television. It never sends,
+/// never takes the cable, and its Drone card opens the watch page directly.
+final djiReceiverOnlyProvider = Provider.autoDispose<bool>(
+  (ref) => (ref.watch(isHorizonOsProvider).valueOrNull ?? false) || ref.watch(tvDeviceProvider).isTelevision,
+  dependencies: [isHorizonOsProvider, tvDeviceProvider],
+);
+
+/// Whether the DJI live video can be offered here: an Android phone, tablet or headset out of the TV layout, or a
+/// television whatever its layout setting. Tests replace it.
 /// The dependencies are declared so that a test, or a part of the app that overrides one of them in a scope of its
 /// own, gets this answer from the same override rather than from the real device.
 final djiLinkSupportedProvider = Provider.autoDispose<bool>((ref) {
   if (!CurrentPlatform.isAndroid) {
     return false;
   }
-  return !ref.watch(tvModeProvider);
-}, dependencies: [tvModeProvider]);
+  return ref.watch(tvDeviceProvider).isTelevision || !ref.watch(tvModeProvider);
+}, dependencies: [tvModeProvider, tvDeviceProvider]);
 
 /// Whether the DJI live video is offered: supported here, and the setting on
 final djiLinkEnabledProvider = Provider.autoDispose<bool>(
@@ -40,7 +48,7 @@ class DjiLinkTile extends ConsumerWidget {
     if (!ref.watch(djiLinkEnabledProvider)) {
       return const SizedBox.shrink();
     }
-    final headset = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
+    final receiverOnly = ref.watch(djiReceiverOnlyProvider);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -54,7 +62,7 @@ class DjiLinkTile extends ConsumerWidget {
           ),
           subtitle: Text(context.t.dji_live_tile_subtitle_phone, maxLines: 2, overflow: TextOverflow.ellipsis),
           trailing: const Icon(Icons.chevron_right_rounded),
-          onTap: () => context.pushRoute(headset ? const DjiWatchRoute() : const DjiLiveRoute()),
+          onTap: () => context.pushRoute(receiverOnly ? const DjiWatchRoute() : const DjiLiveRoute()),
         ),
         const Divider(height: 1, indent: 20, endIndent: 20),
       ],
