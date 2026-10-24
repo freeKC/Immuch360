@@ -7,7 +7,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.graphics.Color
+import android.util.TypedValue
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import app.alextran.immich.MainActivity
 import app.alextran.immich.R
@@ -57,6 +60,8 @@ data class DjiFlightNumbers(
   val picturesPerSecond: Double,
   val receiveToPictureMs: Double?,
   val values: TelemetryValues?,
+  /** What the obstacle alert decided on this device, from the readings the phone relays */
+  val alert: ObstacleDecision = ObstacleDecision.OFF,
 )
 
 /**
@@ -118,55 +123,141 @@ internal object FlightViewControls {
   fun hideVideo(lastPictureAgoMs: Long?): Boolean = lastPictureAgoMs == null || lastPictureAgoMs > 2_000
 
   /**
-   * The values the panel may show, in this order (p2/design-ux-phone-2026-10-24.md, 6.3). Flutter passes a template
-   * ("Drone {value} %") only for the fields its gate opens, the same gate as the phone's overlay; a field without a
-   * template is never shown, whatever arrives.
+   * The two columns beside the video (p2/design-final-2026-10-24.md, 7.2), in this order: the flight values on its
+   * left, the state of the drone on its right, as the phone's two bands. Flutter passes a label and a value template
+   * ("cell.droneBattery.label", "cell.droneBattery.value" = "{value} %") only for the fields its gate lets over the
+   * picture; a field without a template has no cell, whatever arrives.
    */
-  val VALUE_FIELDS = listOf(
+  val LEFT_FIELDS = listOf("height", "verticalSpeed", "distanceHome", "speed")
+  val RIGHT_FIELDS = listOf(
     "droneBattery",
+    "timeLeft",
     "motorTime",
-    "motors",
-    "batteryVoltage",
-    "batteryTemperature",
-    "heading",
-    "signal",
-    "linkRate",
+    "signalBars",
     "remoteBattery",
+    "satellites",
+    "heading",
+    "landing",
   )
 
-  private class FieldValue(val text: String, val stale: Boolean)
+  /** Every field a template may name, the two columns first */
+  val VALUE_FIELDS = LEFT_FIELDS + RIGHT_FIELDS +
+    listOf("motors", "batteryVoltage", "batteryTemperature", "signal", "linkRate", "distanceBelow", "obstacle")
 
-  /**
-   * One line: the fields with a template whose group is fresh, three spaces apart. A stale group is left out rather
-   * than shown as current; "valuesStale" when every field that arrived is stale, "noValues" when none arrived.
-   */
-  fun valuesLine(values: TelemetryValues?, labels: Map<String, String>): String {
-    val read = VALUE_FIELDS
-      .filter { !labels[it].isNullOrEmpty() }
-      .mapNotNull { field -> values?.let { fieldValue(it, field, labels) }?.let { field to it } }
-    if (read.isEmpty()) {
-      return labels["noValues"] ?: ""
+  /** Under this the drone's battery is drawn in amber, with "low" in its label, as on the phone */
+  const val BATTERY_LOW_PERCENT = 20
+
+  /** One value of a column: a small label over a large number */
+  data class Cell(val field: String, val label: String, val value: String, val low: Boolean = false)
+
+  fun cellLabelKey(field: String) = "cell.$field.label"
+
+  fun cellValueKey(field: String) = "cell.$field.value"
+
+  /** The cells of [fields] that have a template and a fresh value, in that order */
+  fun cells(values: TelemetryValues?, labels: Map<String, String>, fields: List<String>): List<Cell> {
+    if (values == null) {
+      return emptyList()
     }
-    val fresh = read.filter { !it.second.stale }
-    if (fresh.isEmpty()) {
-      return labels["valuesStale"] ?: ""
+    return fields.mapNotNull { field ->
+      val template = labels[cellValueKey(field)]
+      val number = if (template.isNullOrEmpty()) null else freshValue(values, field, labels)
+      if (template == null || number == null) {
+        null
+      } else {
+        val battery = values.battery?.takeIf { !it.stale }?.value
+        val low = field == "droneBattery" && battery != null && battery.percent < BATTERY_LOW_PERCENT
+        val label = labels[cellLabelKey(field)] ?: ""
+        Cell(
+          field = field,
+          label = if (low) "$label ${labels["batteryLow"] ?: ""}".trim() else label,
+          value = template.replace("{value}", number),
+          low = low,
+        )
+      }
     }
-    return fresh.joinToString("   ") { (field, value) -> (labels[field] ?: "").replace("{value}", value.text) }
   }
 
-  private fun fieldValue(values: TelemetryValues, field: String, labels: Map<String, String>): FieldValue? =
-    when (field) {
-      "droneBattery" -> values.battery?.let { FieldValue(it.value.percent.toString(), it.stale) }
-      "motorTime" -> values.flight?.let { FieldValue(minutesSeconds(it.value.motorTimeS), it.stale) }
-      "motors" -> values.flight?.let { FieldValue(labels[if (it.value.motorsOn) "on" else "off"] ?: "", it.stale) }
-      "batteryVoltage" -> values.battery?.let { FieldValue(decimals(it.value.voltageV, 2), it.stale) }
-      "batteryTemperature" -> values.battery?.let { FieldValue(decimals(it.value.temperatureC, 1), it.stale) }
-      "heading" -> values.flight?.let { FieldValue(decimals(it.value.headingDeg, 1), it.stale) }
-      "signal" -> values.link.signalRemoteSide?.let { FieldValue(it.value.toString(), it.stale) }
-      "linkRate" -> values.link.liveRateMbps?.let { FieldValue(decimals(it.value, 1), it.stale) }
-      "remoteBattery" -> values.remoteBatteryPercent?.let { FieldValue(it.value.toString(), it.stale) }
+  /** The number of [field] when its group is fresh, in the format of the phone (dji_live_fields.dart) */
+  private fun freshValue(values: TelemetryValues, field: String, labels: Map<String, String>): String? {
+    val flight = values.flight?.takeIf { !it.stale }?.value
+    val battery = values.battery?.takeIf { !it.stale }?.value
+    return when (field) {
+      "droneBattery" -> battery?.percent?.toString()
+      "batteryVoltage" -> battery?.let { decimals(it.voltageV, 2) }
+      "batteryTemperature" -> battery?.let { decimals(it.temperatureC, 1) }
+      "motorTime" -> flight?.let { minutesSeconds(it.motorTimeS) }
+      "motors" -> flight?.let { labels[if (it.motorsOn) "on" else "off"] ?: "" }
+      "heading" -> flight?.let { decimals(it.headingDeg, 0) }
+      "height" -> flight?.let { height(it.heightM) }
+      "verticalSpeed" -> flight?.let { verticalSpeed(it.verticalSpeedMps) }
+      // On the ground the drone holds the last speed it had: none without the motors
+      "speed" -> flight?.takeIf { it.motorsOn }?.let { decimals(it.horizontalSpeedMps, 1) }
+      "satellites" -> flight?.satellites?.toString()
+      // A chip: its template is the word itself
+      "landing" -> flight?.takeIf { it.mode == TelemetryFields.MODE_AUTOMATIC_LANDING }?.let { "" }
+      "signal" -> values.link.signalRemoteSide?.takeIf { !it.stale }?.value?.toString()
+      "linkRate" -> values.link.liveRateMbps?.takeIf { !it.stale }?.value?.let { decimals(it, 1) }
+      "signalBars" -> values.signalBars?.takeIf { !it.stale }?.value?.let { "$it/5" }
+      "remoteBattery" -> values.remoteBatteryPercent?.takeIf { !it.stale }?.value?.toString()
+      "distanceBelow" -> values.rangeBelow?.takeIf { !it.stale }?.value?.distanceM?.let { decimals(it, 2) }
+      "obstacle" -> values.obstacles?.takeIf { !it.stale }?.value?.nearestM?.let { decimals(it, 1) }
+      // No field of our captures gives these yet: nothing reads any byte for them
+      "distanceHome", "timeLeft" -> null
       else -> null
     }
+  }
+
+  /**
+   * How far from the video's centre a column's centre sits, along the video: past its edge at every width. At 4.0 m
+   * that is about 42 degrees from the centre of a flat video. The design's move under the corners at the two widest
+   * sizes is not made: under a video 1.8 to 2.25 m tall, a column 1 m tall would reach below the floor of a pilot who
+   * stands.
+   */
+  fun columnOffsetM(videoWidthM: Float, columnWidthM: Float, gapM: Float): Float =
+    videoWidthM / 2f + gapM + columnWidthM / 2f
+
+  /** One decimal under 100 m, whole metres from there, as the phone */
+  fun height(metres: Double): String = if (kotlin.math.abs(metres) >= 100) decimals(metres, 0) else decimals(metres, 1)
+
+  /** An arrow up while climbing, down while descending, none at 0.0, then the speed without its sign */
+  fun verticalSpeed(metresPerSecond: Double): String {
+    val number = decimals(kotlin.math.abs(metresPerSecond), 1)
+    return when {
+      number == "0.0" -> number
+      metresPerSecond > 0 -> "\u2191 $number"
+      else -> "\u2193 $number"
+    }
+  }
+
+  /**
+   * The banner of the obstacle alert over the video, null when it does not show: the distance or the plain words, then
+   * the side when it is known, or "not confirmed yet" while the gate keeps the alert as a test
+   */
+  fun alertLines(decision: ObstacleDecision, labels: Map<String, String>): Pair<String, String?>? {
+    if (decision.stopped) {
+      return (labels["obstacleStopped"] ?: "") to null
+    }
+    if (!decision.on) {
+      return null
+    }
+    val distance = decision.distanceM
+    val first = if (distance != null) {
+      (labels["obstacleClose"] ?: "").replace("{distance}", decimals(distance, 1))
+    } else {
+      labels["obstacleClosePlain"] ?: ""
+    }
+    val side = when (decision.side) {
+      ObstacleSide.AHEAD -> labels["obstacleAhead"]
+      ObstacleSide.BEHIND -> labels["obstacleBehind"]
+      ObstacleSide.LEFT -> labels["obstacleLeft"]
+      ObstacleSide.RIGHT -> labels["obstacleRight"]
+      ObstacleSide.ABOVE -> labels["obstacleAbove"]
+      null -> null
+    }
+    val second = listOfNotNull(side, labels["obstacleUnconfirmed"]).filter { it.isNotEmpty() }.joinToString("  ")
+    return first to second.ifEmpty { null }
+  }
 
   /** The motor time as minutes and seconds, as the phone writes it: 41.6 s is 0:41 */
   fun minutesSeconds(seconds: Double): String {
@@ -174,7 +265,7 @@ internal object FlightViewControls {
     return "${whole / 60}:${(whole % 60).toString().padStart(2, '0')}"
   }
 
-  private fun decimals(value: Double, digits: Int): String = String.format(Locale.ROOT, "%.${digits}f", value)
+  fun decimals(value: Double, digits: Int): String = String.format(Locale.ROOT, "%.${digits}f", value)
 
   /**
    * The labels of the state line, said one after the other. A reception that ended on its own (a refused or new code,
@@ -224,7 +315,30 @@ class DjiFlightViewActivity : AppSystemActivity() {
     private const val STRIP_HEIGHT_M = 0.22f
     private const val STRIP_HEIGHT_DP = 110f
     private const val PANEL_GAP_M = 0.06f
-    private const val REFRESH_MS = 250L
+
+    /** The two value columns beside the video (p2/design-final-2026-10-24.md, 7.2), 500 dp per metre as the panels */
+    private const val COLUMN_WIDTH_M = 0.36f
+    private const val COLUMN_HEIGHT_M = 1.0f
+    private const val COLUMN_WIDTH_DP = 180f
+    private const val COLUMN_HEIGHT_DP = 500f
+    private const val COLUMN_GAP_M = 0.05f
+
+    /** The obstacle alert above the video */
+    private const val ALERT_WIDTH_M = 1.2f
+    private const val ALERT_HEIGHT_M = 0.16f
+    private const val ALERT_WIDTH_DP = 600f
+    private const val ALERT_HEIGHT_DP = 80f
+
+    /** Labels 18 sp, values 40 sp: about 0.08 m tall at 2.5 m, read at a glance */
+    private const val CELL_LABEL_SP = 18f
+    private const val CELL_VALUE_SP = 40f
+    private const val CELL_GAP_DP = 10
+    private val CELL_LABEL_COLOR = Color.parseColor("#FFB0B8CC")
+    private val CELL_VALUE_COLOR = Color.parseColor("#FFFFFFFF")
+    private val CELL_LOW_COLOR = Color.parseColor("#FFFFB300")
+
+    /** The values follow the drone ten times a second; a text is set only when it changed */
+    private const val REFRESH_MS = 100L
 
     /** Token of the last intent built by [intent], checked in onCreate. Lives as long as the process. */
     @Volatile
@@ -256,6 +370,9 @@ class DjiFlightViewActivity : AppSystemActivity() {
   private var videoEntity: Entity? = null
   private var stripEntity: Entity? = null
   private var panelEntity: Entity? = null
+  private var leftEntity: Entity? = null
+  private var rightEntity: Entity? = null
+  private var alertEntity: Entity? = null
   private var curved = false
   private var widthIndex = FlightViewControls.DEFAULT_WIDTH_INDEX
   private var panelShown = true
@@ -264,12 +381,21 @@ class DjiFlightViewActivity : AppSystemActivity() {
   private var framesWithoutHead = 0
   private var headPosition: Vector3? = null
   private var headForward: Vector3? = null
+
+  /** The head the video was placed from: the columns of a curved video sit on its circle */
+  private var placedHead: Vector3? = null
   private var videoPosition: Vector3? = null
   private var videoDirection: Vector3? = null
   private var stateText: TextView? = null
   private var staleText: TextView? = null
-  private var valuesText: TextView? = null
   private var latencyText: TextView? = null
+  private var leftCells: LinearLayout? = null
+  private var rightCells: LinearLayout? = null
+  private var leftShown: List<FlightViewControls.Cell> = emptyList()
+  private var rightShown: List<FlightViewControls.Cell> = emptyList()
+  private var alertText: TextView? = null
+  private var alertSide: TextView? = null
+  private var alertShown = false
   private val handler = Handler(Looper.getMainLooper())
   private val refresh = object : Runnable {
     override fun run() {
@@ -308,6 +434,9 @@ class DjiFlightViewActivity : AppSystemActivity() {
       videoEntity = Entity.create(Panel(videoPanelId()), Transform(), Visible(false))
       stripEntity = Entity.createPanelEntity(R.id.dji_flight_strip_panel, Transform(), Visible(false))
       panelEntity = Entity.createPanelEntity(R.id.dji_flight_panel, Transform(), Visible(false))
+      leftEntity = Entity.createPanelEntity(R.id.dji_flight_left_panel, Transform(), Visible(false))
+      rightEntity = Entity.createPanelEntity(R.id.dji_flight_right_panel, Transform(), Visible(false))
+      alertEntity = Entity.createPanelEntity(R.id.dji_flight_alert_panel, Transform(), Visible(false))
       systemManager.registerSystem(ImmersiveInputSystem(input))
       sceneReady = true
       handler.post(refresh)
@@ -356,6 +485,44 @@ class DjiFlightViewActivity : AppSystemActivity() {
         },
         panelSetupWithRootView = { root, _, _ -> bindPanel(root) },
       ),
+      columnRegistration(R.id.dji_flight_left_panel) { root -> leftCells = root.findViewById(R.id.dji_flight_cells) },
+      columnRegistration(R.id.dji_flight_right_panel) { root -> rightCells = root.findViewById(R.id.dji_flight_cells) },
+      LayoutXMLPanelRegistration(
+        R.id.dji_flight_alert_panel,
+        layoutIdCreator = { R.layout.dji_flight_alert },
+        settingsCreator = {
+          UIPanelSettings(
+            shape = QuadShapeOptions(width = ALERT_WIDTH_M, height = ALERT_HEIGHT_M),
+            style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
+            display = DpDisplayOptions(width = ALERT_WIDTH_DP, height = ALERT_HEIGHT_DP, dpi = 260),
+          )
+        },
+        panelSetupWithRootView = { root, _, _ ->
+          alertText = root.findViewById(R.id.dji_flight_alert_text)
+          alertSide = root.findViewById(R.id.dji_flight_alert_side)
+          refreshNow()
+        },
+      ),
+    )
+
+  /** A column of values beside the video; its cells are made in [fillColumn] */
+  private fun columnRegistration(id: Int, bind: (View) -> Unit): PanelRegistration =
+    LayoutXMLPanelRegistration(
+      id,
+      layoutIdCreator = { R.layout.dji_flight_column },
+      settingsCreator = {
+        UIPanelSettings(
+          shape = QuadShapeOptions(width = COLUMN_WIDTH_M, height = COLUMN_HEIGHT_M),
+          style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
+          display = DpDisplayOptions(width = COLUMN_WIDTH_DP, height = COLUMN_HEIGHT_DP, dpi = 260),
+        )
+      },
+      panelSetupWithRootView = { root, _, _ ->
+        bind(root)
+        leftShown = emptyList()
+        rightShown = emptyList()
+        refreshNow()
+      },
     )
 
   /** A compositor layer the decoder renders into with no copy; its surface goes to the window page's decoder */
@@ -389,7 +556,6 @@ class DjiFlightViewActivity : AppSystemActivity() {
 
   /** The values panel under the strip, which A shows or hides */
   private fun bindPanel(root: View) {
-    valuesText = root.findViewById(R.id.dji_flight_values)
     latencyText = root.findViewById(R.id.dji_flight_latency)
     root.findViewById<TextView>(R.id.dji_flight_fly_note)?.text = label("flyNote")
     root.findViewById<TextView>(R.id.dji_flight_hint)?.text = label("hint")
@@ -413,23 +579,49 @@ class DjiFlightViewActivity : AppSystemActivity() {
   private fun number(value: Double?, digits: Int = 1): String =
     if (value == null) "-" else String.format(Locale.ROOT, "%.${digits}f", value)
 
-  /** Four times a second, on the main thread: the panel's lines, and the video hidden while no picture comes */
+  /** A text set only when it changed: a value that stays the same never relays out its panel */
+  private fun TextView.show(value: String) {
+    if (text?.toString() != value) {
+      text = value
+    }
+  }
+
+  /**
+   * Ten times a second, on the main thread: the state line, the two columns, the alert above the video, and the video
+   * hidden while no picture comes
+   */
   private fun refreshNow() {
     if (!sceneReady || closing) {
       return
     }
     val numbers = runCatching { DjiLinkController.of(this).flightViewNumbers() }.getOrNull() ?: return
-    stateText?.text = FlightViewControls.stateLabels(numbers).joinToString(" ") { key ->
-      if (key == "replay") fill("replay", "name" to (numbers.replayName ?: "-")) else label(key)
-    }
+    stateText?.show(
+      FlightViewControls.stateLabels(numbers).joinToString(" ") { key ->
+        if (key == "replay") fill("replay", "name" to (numbers.replayName ?: "-")) else label(key)
+      },
+    )
     val ago = numbers.lastPictureAgoMs
     staleText?.apply {
-      visibility = if (FlightViewControls.staleLine(ago)) View.VISIBLE else View.GONE
-      text = if (ago == null) label("noPicture") else fill("stale", "seconds" to number(ago / 1000.0))
+      val stale = FlightViewControls.staleLine(ago)
+      visibility = if (stale) View.VISIBLE else View.GONE
+      show(if (ago == null) label("noPicture") else fill("stale", "seconds" to number(ago / 1000.0)))
     }
-    valuesText?.text = FlightViewControls.valuesLine(numbers.values, labels)
+    val values = numbers.values
+    leftShown =
+      fillColumn(leftCells, leftShown, FlightViewControls.cells(values, labels, FlightViewControls.LEFT_FIELDS))
+    rightShown =
+      fillColumn(rightCells, rightShown, FlightViewControls.cells(values, labels, FlightViewControls.RIGHT_FIELDS))
     // The delay from the phone in one short line; the parts of it stay on the Diagnostics page
-    latencyText?.text = numbers.receiveToPictureMs?.let { fill("delay", "ms" to number(it, 0)) } ?: ""
+    latencyText?.show(numbers.receiveToPictureMs?.let { fill("delay", "ms" to number(it, 0)) } ?: "")
+    val alert = FlightViewControls.alertLines(numbers.alert, labels)
+    if (alert != null) {
+      alertText?.show(alert.first)
+      alertSide?.apply {
+        visibility = if (alert.second == null) View.GONE else View.VISIBLE
+        show(alert.second ?: "")
+      }
+    }
+    alertShown = alert != null
     val show = !FlightViewControls.hideVideo(ago)
     if (show != videoVisible || !placed) {
       videoVisible = show
@@ -437,6 +629,59 @@ class DjiFlightViewActivity : AppSystemActivity() {
     }
     stripEntity?.setComponent(Visible(placed))
     panelEntity?.setComponent(Visible(panelShown && placed))
+    // A hides the columns with the lower panel; the alert and the strip always show
+    leftEntity?.setComponent(Visible(panelShown && placed && leftShown.isNotEmpty()))
+    rightEntity?.setComponent(Visible(panelShown && placed && rightShown.isNotEmpty()))
+    alertEntity?.setComponent(Visible(alertShown && placed))
+  }
+
+  /**
+   * The cells of a column: made again when the fields change (a value that comes or goes), otherwise each value's text
+   * is set only when it changed. Returns what the column shows now.
+   */
+  private fun fillColumn(
+    column: LinearLayout?,
+    shown: List<FlightViewControls.Cell>,
+    cells: List<FlightViewControls.Cell>,
+  ): List<FlightViewControls.Cell> {
+    if (column == null) {
+      return shown
+    }
+    if (cells.map { it.field } != shown.map { it.field } || column.childCount != cells.size * 2) {
+      column.removeAllViews()
+      cells.forEachIndexed { index, _ ->
+        column.addView(
+          TextView(this).apply {
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, CELL_LABEL_SP)
+            setTextColor(CELL_LABEL_COLOR)
+            maxLines = 1
+            if (index > 0) {
+              setPadding(0, (CELL_GAP_DP * resources.displayMetrics.density).toInt(), 0, 0)
+            }
+          },
+        )
+        column.addView(
+          TextView(this).apply {
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, CELL_VALUE_SP)
+            setTextColor(CELL_VALUE_COLOR)
+            typeface = android.graphics.Typeface.DEFAULT_BOLD
+            fontFeatureSettings = "tnum"
+            maxLines = 1
+          },
+        )
+      }
+    }
+    cells.forEachIndexed { index, cell ->
+      (column.getChildAt(index * 2) as? TextView)?.apply {
+        show(cell.label)
+        visibility = if (cell.label.isEmpty()) View.GONE else View.VISIBLE
+      }
+      (column.getChildAt(index * 2 + 1) as? TextView)?.apply {
+        show(cell.value)
+        setTextColor(if (cell.low) CELL_LOW_COLOR else CELL_VALUE_COLOR)
+      }
+    }
+    return cells
   }
 
   // Frame and input
@@ -471,6 +716,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
     position.y = head.y - VIDEO_DROP_M
     videoPosition = position
     videoDirection = direction
+    placedHead = head
     placed = true
     applyPlacement()
   }
@@ -493,6 +739,36 @@ class DjiFlightViewActivity : AppSystemActivity() {
     panelPosition.y = videoBottom - PANEL_GAP_M - STRIP_HEIGHT_M - PANEL_GAP_M - PANEL_HEIGHT_M / 2f
     panelEntity?.setComponent(Transform(Pose(panelPosition, rotation)))
     panelEntity?.setComponent(Visible(panelShown))
+    // The alert above the video's top edge, which A never hides
+    val alertPosition = Vector3(position.x, position.y, position.z)
+    alertPosition.y = position.y + width * 9f / 32f + COLUMN_GAP_M + ALERT_HEIGHT_M / 2f
+    alertEntity?.setComponent(Transform(Pose(alertPosition, rotation)))
+    placeColumns(position, direction, rotation, width)
+  }
+
+  /**
+   * The two columns at the video's edges, centred on its height, turned to face the head: beside a flat video along its
+   * width, on the circle of a curved one past its ends. Which way is right comes from the video's own pose.
+   */
+  private fun placeColumns(position: Vector3, direction: Vector3, rotation: Quaternion, width: Float) {
+    val head = placedHead ?: Vector3(position.x, position.y, position.z) - (direction * VIDEO_DISTANCE_M)
+    val right = Pose(position, rotation).right()
+    val beside = FlightViewControls.columnOffsetM(width, COLUMN_WIDTH_M, COLUMN_GAP_M)
+    for ((entity, sign) in listOf(leftEntity to -1f, rightEntity to 1f)) {
+      val target = entity ?: continue
+      val place = if (curved) {
+        val angle = sign * beside / CURVE_RADIUS_M
+        val around = (direction * kotlin.math.cos(angle)) + (right * kotlin.math.sin(angle))
+        head + (around * VIDEO_DISTANCE_M)
+      } else {
+        position + (right * (sign * beside))
+      }
+      place.y = position.y
+      val facing = place - head
+      val flat = sqrt(facing.x * facing.x + facing.z * facing.z)
+      val look = if (flat < 1e-3f) direction else Vector3(facing.x / flat, 0f, facing.z / flat)
+      target.setComponent(Transform(Pose(place, Quaternion.lookRotation(look))))
+    }
   }
 
   private fun onButtons(controllerBits: Int, handBits: Int) {
@@ -503,9 +779,11 @@ class DjiFlightViewActivity : AppSystemActivity() {
           return
         }
         FlightViewControls.Action.TOGGLE_VALUES -> {
-          // The values only: the strip with the stale line, the observer note and watching only stays
+          // The values only: the strip with the stale line, the observer note and watching only stays, and the alert
           panelShown = !panelShown
           panelEntity?.setComponent(Visible(panelShown && placed))
+          leftEntity?.setComponent(Visible(panelShown && placed && leftShown.isNotEmpty()))
+          rightEntity?.setComponent(Visible(panelShown && placed && rightShown.isNotEmpty()))
         }
         FlightViewControls.Action.TOGGLE_CURVE -> toggleCurve()
         FlightViewControls.Action.RECENTER -> placeInFront()

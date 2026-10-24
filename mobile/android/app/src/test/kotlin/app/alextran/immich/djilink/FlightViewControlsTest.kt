@@ -3,6 +3,7 @@ package app.alextran.immich.djilink
 import com.meta.spatial.runtime.ButtonBits
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -87,18 +88,20 @@ class FlightViewControlsTest {
   }
 
   private fun flight(motorTimeS: Double = 41.6, motorsOn: Boolean = false) = FlightReading(
-    heightM = 0.0,
+    heightM = 12.3,
     speedsMps = listOf(0.0, 0.0, 0.0),
     pitchDeg = 0.0,
     rollDeg = 0.0,
     headingDeg = -175.6,
-    mode = 6,
+    mode = 12,
     inAir = motorsOn,
     motorsOn = motorsOn,
     satellites = 0,
     groundHeightM = 0.0,
     motorTimeS = motorTimeS,
     flags = 0L,
+    verticalSpeedMps = 1.5,
+    horizontalSpeedMps = 4.2,
   )
 
   private fun battery(percent: Int = 34) = BatteryReading(
@@ -116,10 +119,12 @@ class FlightViewControlsTest {
     flightStale: Boolean? = false,
     batteryStale: Boolean? = false,
     remote: Int? = 48,
+    percent: Int = 34,
+    motorsOn: Boolean = false,
   ) = TelemetryValues(
-    flight = flightStale?.let { Timed(flight(), 80, it) },
+    flight = flightStale?.let { Timed(flight(motorsOn = motorsOn), 80, it) },
     gimbal = null,
-    battery = batteryStale?.let { Timed(battery(), 300, it) },
+    battery = batteryStale?.let { Timed(battery(percent), 300, it) },
     remoteBatteryPercent = remote?.let { Timed(it, 500, false) },
     link = LinkReadings(
       signalAircraftSide = Timed(90, 100, false),
@@ -135,56 +140,121 @@ class FlightViewControlsTest {
 
   /** The templates Flutter passes for the fields its gate opens: the drone's battery and the motor time */
   private val gated = mapOf(
-    "droneBattery" to "Drone {value} %",
-    "motorTime" to "Motor time {value}",
-    "noValues" to "No flight data has arrived.",
-    "valuesStale" to "These values are no longer updated",
+    "cell.droneBattery.label" to "Drone battery",
+    "cell.droneBattery.value" to "{value} %",
+    "cell.motorTime.label" to "Motor time",
+    "cell.motorTime.value" to "{value}",
+    "batteryLow" to "low",
+  )
+
+  private fun cells(values: TelemetryValues?, labels: Map<String, String> = gated) =
+    FlightViewControls.cells(values, labels, FlightViewControls.RIGHT_FIELDS).map { "${it.label}|${it.value}" }
+
+  @Test
+  fun theRightColumnShowsTheGatedFieldsOnly() {
+    assertEquals(listOf("Drone battery|34 %", "Motor time|0:41"), cells(values()))
+    // The remote's battery, the signal and the heading arrive too, but have no template: no cell
+    assertTrue(FlightViewControls.cells(values(), gated, FlightViewControls.LEFT_FIELDS).isEmpty())
+  }
+
+  @Test
+  fun aStaleGroupHasNoCellAndNothingArrivedHasNone() {
+    assertEquals(listOf("Motor time|0:41"), cells(values(batteryStale = true)))
+    assertEquals(listOf("Drone battery|34 %"), cells(values(flightStale = true)))
+    assertTrue(cells(values(flightStale = true, batteryStale = true)).isEmpty())
+    assertTrue(cells(null).isEmpty())
+    assertTrue(cells(values(flightStale = null, batteryStale = null)).isEmpty())
+    // Without any template, nothing is shown whatever arrives
+    assertTrue(cells(values(), emptyMap()).isEmpty())
+  }
+
+  @Test
+  fun theDroneBatteryUnderTwentyIsLow() {
+    val low = FlightViewControls.cells(values(percent = 19), gated, FlightViewControls.RIGHT_FIELDS).first()
+    assertTrue(low.low)
+    assertEquals("Drone battery low", low.label)
+    assertFalse(FlightViewControls.cells(values(percent = 20), gated, FlightViewControls.RIGHT_FIELDS).first().low)
+  }
+
+  @Test
+  fun aGateOpenedLaterNeedsOnlyItsTemplates() {
+    val more = gated + mapOf(
+      "cell.height.label" to "Height",
+      "cell.height.value" to "{value} m",
+      "cell.verticalSpeed.label" to "Vertical",
+      "cell.verticalSpeed.value" to "{value} m/s",
+      "cell.speed.label" to "Speed",
+      "cell.speed.value" to "{value} m/s",
+      "cell.remoteBattery.label" to "Remote",
+      "cell.remoteBattery.value" to "{value} %",
+      "cell.heading.label" to "",
+      "cell.heading.value" to "{value}\u00b0",
+      "cell.landing.label" to "",
+      "cell.landing.value" to "Landing",
+    )
+    assertEquals(
+      listOf("Height|12.3 m", "Vertical|\u2191 1.5 m/s", "Speed|4.2 m/s"),
+      FlightViewControls.cells(values(motorsOn = true), more, FlightViewControls.LEFT_FIELDS)
+        .map { "${it.label}|${it.value}" },
+    )
+    assertEquals(
+      listOf("Drone battery|34 %", "Motor time|0:41", "Remote|48 %", "|-176\u00b0", "|Landing"),
+      cells(values(motorsOn = true), more),
+    )
+    // On the ground the drone holds a stale speed: no cell for it
+    assertEquals(
+      listOf("Height|12.3 m", "Vertical|\u2191 1.5 m/s"),
+      FlightViewControls.cells(values(motorsOn = false), more, FlightViewControls.LEFT_FIELDS)
+        .map { "${it.label}|${it.value}" },
+    )
+  }
+
+  @Test
+  fun theFormatsAreThoseOfThePhone() {
+    assertEquals("12.3", FlightViewControls.height(12.34))
+    assertEquals("-0.5", FlightViewControls.height(-0.5))
+    assertEquals("123", FlightViewControls.height(123.4))
+    assertEquals("\u2191 1.2", FlightViewControls.verticalSpeed(1.2))
+    assertEquals("\u2193 0.2", FlightViewControls.verticalSpeed(-0.2))
+    assertEquals("0.0", FlightViewControls.verticalSpeed(0.04))
+    assertEquals("0.0", FlightViewControls.verticalSpeed(-0.04))
+  }
+
+  private val alertLabels = mapOf(
+    "obstacleClose" to "Obstacle close: {distance} m",
+    "obstacleClosePlain" to "Obstacle close",
+    "obstacleStopped" to "Obstacle data stopped: look at the drone.",
+    "obstacleLeft" to "On the left",
+    "obstacleUnconfirmed" to "Not confirmed yet",
   )
 
   @Test
-  fun theValuesLineShowsTheGatedFieldsOnlyOnOneLine() {
-    assertEquals("Drone 34 %   Motor time 0:41", FlightViewControls.valuesLine(values(), gated))
-    // The remote's battery, the signal and the rate arrive too, but have no template: never shown
-    val line = FlightViewControls.valuesLine(values(), gated)
-    assertFalse(line.contains("48"))
-    assertFalse(line.contains("90"))
-    assertFalse(line.contains("\n"))
+  fun theAlertBannerSaysTheDistanceTheSideAndWhenItsDataStopped() {
+    assertNull(FlightViewControls.alertLines(ObstacleDecision.OFF, alertLabels))
+    val on = ObstacleDecision(true, 1.84, null, 400, stopped = false, listening = true)
+    assertEquals("Obstacle close: 1.8 m" to "Not confirmed yet", FlightViewControls.alertLines(on, alertLabels))
+    assertEquals(
+      "Obstacle close: 1.8 m" to "On the left  Not confirmed yet",
+      FlightViewControls.alertLines(on.copy(side = ObstacleSide.LEFT), alertLabels),
+    )
+    assertEquals(
+      "Obstacle close" to null,
+      FlightViewControls.alertLines(on.copy(distanceM = null), alertLabels - "obstacleUnconfirmed"),
+    )
+    assertEquals(
+      "Obstacle data stopped: look at the drone." to null,
+      FlightViewControls.alertLines(ObstacleDecision.OFF.copy(stopped = true), alertLabels),
+    )
   }
 
   @Test
-  fun aStaleGroupIsLeftOutAndAllStaleSaysSo() {
-    assertEquals("Motor time 0:41", FlightViewControls.valuesLine(values(batteryStale = true), gated))
-    assertEquals("Drone 34 %", FlightViewControls.valuesLine(values(flightStale = true), gated))
-    assertEquals(
-      "These values are no longer updated",
-      FlightViewControls.valuesLine(values(flightStale = true, batteryStale = true), gated),
-    )
-  }
-
-  @Test
-  fun nothingArrivedForTheGatedFieldsSaysSo() {
-    assertEquals("No flight data has arrived.", FlightViewControls.valuesLine(null, gated))
-    assertEquals(
-      "No flight data has arrived.",
-      FlightViewControls.valuesLine(values(flightStale = null, batteryStale = null), gated),
-    )
-    // Without any template, nothing is shown whatever arrives
-    assertEquals("", FlightViewControls.valuesLine(values(), emptyMap()))
-  }
-
-  @Test
-  fun aGateOpenedLaterNeedsOnlyItsTemplate() {
-    val more = gated + mapOf(
-      "remoteBattery" to "Remote {value} %?",
-      "motors" to "Motors {value}",
-      "heading" to "Heading {value}",
-      "on" to "on",
-      "off" to "off",
-    )
-    assertEquals(
-      "Drone 34 %   Motor time 0:41   Motors off   Heading -175.6   Remote 48 %?",
-      FlightViewControls.valuesLine(values(), more),
-    )
+  fun theColumnsSitPastTheVideosEdgesAtEveryWidth() {
+    for (width in FlightViewControls.WIDTHS_M) {
+      val offset = FlightViewControls.columnOffsetM(width, 0.36f, 0.05f)
+      assertEquals(width / 2f + 0.23f, offset, 1e-5f)
+      // Within 45 degrees of the centre of a flat video seen from 2.5 m
+      assertTrue(Math.toDegrees(kotlin.math.atan((offset / 2.5f).toDouble())) < 45.0)
+    }
   }
 
   @Test

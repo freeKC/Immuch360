@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- The values panel of the Meta Quest flight view of DJI link, under the strip (dji_flight_strip.xml), shown or hidden
-     with A. Its size in dp is set in DjiFlightViewActivity.registerPanels: on the left the flight values and the
-     latency, on the right the red DJI Fly line, the controls and Back. Every text comes from Flutter. -->
+     with A. Its size in dp is set in DjiFlightViewActivity.registerPanels: on the left the latency (the values are in
+     the two columns beside the video, dji_flight_column.xml), on the right the red DJI Fly line, the controls and Back.
+     Every text comes from Flutter. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
@@ -16,19 +17,9 @@
     android:orientation="vertical">
 
     <TextView
-      android:id="@+id/dji_flight_values"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:fontFeatureSettings="tnum"
-      android:maxLines="3"
-      android:textColor="#FFE8EEFF"
-      android:textSize="13sp" />
-
-    <TextView
       android:id="@+id/dji_flight_latency"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginTop="4dp"
       android:fontFeatureSettings="tnum"
       android:maxLines="2"
       android:textColor="#FFB0B8CC"
