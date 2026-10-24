@@ -23,6 +23,12 @@ export interface PhotoRepository {
 	// Immuch360: the picture of a photo zoomed in past 2x (src/immuch360/photoSize.ts)
 	fullsizeUrl(assetId: string, pictureKey?: string | null): string;
 	videoPlaybackUrl(assetId: string): string;
+	/**
+	 * Immuch360: whether videoPlaybackUrl serves the original file, whose size the details tell, rather than a transcode
+	 * of the server; null when it cannot tell. The viewer asks it only for a video past the TV's decoders
+	 * (src/immuch360/video/limits.ts).
+	 */
+	playsOriginal?(assetId: string, originalSize: number | null): Promise<boolean | null>;
 	faceUrl(personId: string): string;
 
 	// Immuch360: the 360° viewer and the diagnostics page

@@ -1,5 +1,5 @@
 import {AuthMethod, type AuthConfig} from './types';
-import {BODY_TIMEOUT_MS, classifyFailure, withTimeout, type FailureKind} from './network';
+import {BODY_TIMEOUT_MS, PROBE_TIMEOUT_MS, classifyFailure, withTimeout, type FailureKind} from './network';
 
 export class APIError extends Error {
 	public status?: number;
@@ -123,6 +123,27 @@ export class APIClient {
 
 	public getVideoPlaybackUrl(assetId: string): string {
 		return this.buildMediaUrl(`/assets/${assetId}/video/playback`);
+	}
+
+	// Immuch360: the length of a media file as the server announces it to a HEAD request (credentials in the query, as for
+	// <video>, so no CORS preflight), null when it does not say, answers an error, or does not answer within timeoutMs.
+	// Never throws.
+	public async mediaLength(url: string, timeoutMs = PROBE_TIMEOUT_MS): Promise<number | null> {
+		try {
+			const response = await withTimeout(
+				async (signal, answered) => {
+					const answer = await fetch(url, {method: 'HEAD', signal});
+					answered();
+					return answer;
+				},
+				{timeoutMs},
+			);
+			if (!response.ok) return null;
+			const length = Number(response.headers.get('content-length'));
+			return Number.isFinite(length) && length > 0 ? length : null;
+		} catch {
+			return null;
+		}
 	}
 
 	// Immuch360: the server address the account was added with, /api included

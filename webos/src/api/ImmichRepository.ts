@@ -269,6 +269,15 @@ export class ImmichRepository implements PhotoRepository {
 		return this.client.getVideoPlaybackUrl(assetId);
 	}
 
+	// Immuch360: Immich serves the transcode of a video when it made one (a codec its Video transcoding settings do not
+	// accept: by default any but H.264, at 720p), else the original. The length of the file it serves, against the
+	// original's, tells which (an answer without a length, or no answer, tells nothing).
+	public async playsOriginal(assetId: string, originalSize: number | null): Promise<boolean | null> {
+		if (!originalSize) return null;
+		const served = await this.client.mediaLength(this.videoPlaybackUrl(assetId));
+		return served === null ? null : served === originalSize;
+	}
+
 	public faceUrl(personId: string): string {
 		return this.client.getFaceThumbnailUrl(personId);
 	}
