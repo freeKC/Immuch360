@@ -4,8 +4,8 @@
     "reason": "Sign in with your phone (feat-qr-pairing): ZXing Android Embedded, the QR code scanner of Connect a TV or computer, without Google Play services"
   },
   "mobile/android/app/src/main/AndroidManifest.xml": {
-    "blob": "e05defbecaf8b1de8340bbb262be6bb0d5fad27d",
-    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest"
+    "blob": "3afda24f265a6bf0d6e0ea5693b5a73a22e52414",
+    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest; DJI live video (feat-dji-ux): the comment of the accessory attached entry, now kept by the open on plug choice"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
     "blob": "bf08ab021ab06e1f512d3902501108361943ae5d",
@@ -34,6 +34,10 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/AoaTransport.kt": {
     "blob": "d9e03c43cab559ae7e5174a7abaf5ec1c6be06a9",
     "reason": "DJI link (feat-dji-link, 12ccff821): the reader thread, the bounded writer queue and the one byte liveness probe of the USB link; fix round of 22 October: the review findings of stage 1"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/AttachEntry.kt": {
+    "blob": "b5852aac6fa2f004f2305fe9c1a038784dc27c13",
+    "reason": "DJI live video (feat-dji-ux): the attach entry policy, its two kept answers and the launch told to Flutter"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/CaptureExport.kt": {
     "blob": "fe4e1f8a653088953e2430db6a377ce534ac3e28",
@@ -80,20 +84,20 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the hardware profiles, where a capability cannot claim support without an observation; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the RC-N3 and Neo 2 profile supported for six capabilities with the provenance of the 23 October capture, its stream description seed, and the pilot binding; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiFlightViewActivity.kt": {
-    "blob": "4223aaec0573598693ddbccf27fff4ac48198ccf",
-    "reason": "DJI link stage 2b (feat-dji-link-3): the flight view of the Quest: video panel, flight panel, controls of the view only"
+    "blob": "104456e252ce0b75fc06c6e95da4376920926fb5",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the flight view of the Quest: video panel, flight panel, controls of the view only; DJI live video (feat-dji-ux): the values line of the gated values and the short delay line"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkApiImpl.kt": {
-    "blob": "fafeec174c31de5486e047f835afd7d19500a84f",
-    "reason": "DJI link (feat-dji-link, 12ccff821): what Flutter asks of the link, and the switch of the accessory attached entry; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): decoder choice, captures to play, the picker, profile binding and the plugged accessory list; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): the host methods of the relay, the receiver and the flight view"
+    "blob": "5849a76b48b38c78d9509efbb090b9d186accdff",
+    "reason": "DJI link (feat-dji-link, 12ccff821): what Flutter asks of the link, and the switch of the accessory attached entry; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): decoder choice, captures to play, the picker, profile binding and the plugged accessory list; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): the host methods of the relay, the receiver and the flight view; DJI live video (feat-dji-ux): the host methods of the open on plug choice and the attach launch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkAttachActivity.kt": {
-    "blob": "f687f7bfe02090f3b0ce87c222e2694cb6fdea1a",
-    "reason": "DJI link (feat-dji-link, 12ccff821): the accessory attached entry, which only brings the application forward; fix round of 22 October: the review findings of stage 1"
+    "blob": "d859472903349e7e054283ebad094445575b762b",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the accessory attached entry, which only brings the application forward; fix round of 22 October: the review findings of stage 1; DJI live video (feat-dji-ux): the entry marks the launch for the live screen"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkController.kt": {
-    "blob": "c45e4a8896aee23ba46b873193abd0c04396ddce",
-    "reason": "DJI link (feat-dji-link, 12ccff821): the process scoped owner of the link, the codecs, the capture and the safety rules; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the video pipeline, the capture player, the session log and the states that follow the picture; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): owners, the relay, the receiver, the flight view and their snapshot"
+    "blob": "5525d42954cc4493bff3863bbe09fc7a781d722c",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the process scoped owner of the link, the codecs, the capture and the safety rules; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the video pipeline, the capture player, the session log and the states that follow the picture; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): owners, the relay, the receiver, the flight view and their snapshot; DJI live video (feat-dji-ux): the link that ends follows the attach entry policy"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkRelayService.kt": {
     "blob": "5d9c39edca4d9bd8d60af2ea3a40f39c484d0505",
@@ -196,8 +200,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the telemetry identifiers, with no field of a body read; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the catalogue names the eight pairs the 23 October capture explains"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/TelemetryDecoder.kt": {
-    "blob": "5e4e7066c95b67b892e3b2af52ef8e2a82ed84f4",
-    "reason": "DJI link stage 2 (feat-dji-link-2): the fields of the catalogued pairs, read only from bodies of the observed length"
+    "blob": "be5106340cb3b8adbed78ca38cd395ffebde7dc0",
+    "reason": "DJI link stage 2 (feat-dji-link-2): the fields of the catalogued pairs, read only from bodies of the observed length; DJI live video (feat-dji-ux): the fine camera heading read as 16 bits"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/UsbEnvironment.kt": {
     "blob": "7de07ba28c4b85b93a1d30e4dac80c5e7b4fe215",
@@ -287,6 +291,10 @@
     "blob": "fc693faed6937c2eb4d0d6845eacf34c2596b4b4",
     "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the transport on a pair of pipes, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/AttachEntryPolicyTest.kt": {
+    "blob": "a05a20775b94a7ac56efcd3ae7cd34f8d2b8705d",
+    "reason": "DJI live video (feat-dji-ux): unit tests of the attach entry policy, run by the Kotlin unit tests job"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/CaptureJoinTest.kt": {
     "blob": "aba3696722d026b13f4e6544b14c053c36be0545",
     "reason": "DJI link stage 2 (feat-dji-link-2): replay of the real capture, skipped where the capture is absent"
@@ -336,8 +344,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the envelope decoder, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/FlightViewControlsTest.kt": {
-    "blob": "45d21530398ce12972257a4cab58d6544430c33d",
-    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
+    "blob": "3143d98238c7756a4c29a601bff46f4a5ec9380c",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job; DJI live video (feat-dji-ux): unit tests of the values line of the flight view"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/FrameRouterTest.kt": {
     "blob": "774ec9467312ac48f06f174dc275e3c1b999f17d",
@@ -428,8 +436,8 @@
     "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/TelemetryDecoderTest.kt": {
-    "blob": "a080814d1090615270fc2ef5888d093c99643d5d",
-    "reason": "DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job"
+    "blob": "e3852f28503dd3248a44965f4a92de8bbf37cbac",
+    "reason": "DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job; DJI live video (feat-dji-ux): unit test of a negative fine camera heading"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/VideoPipelineTest.kt": {
     "blob": "e63817e379455fc02a9d4a5875b010d1b61295bc",
