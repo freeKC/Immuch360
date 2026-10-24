@@ -130,6 +130,9 @@ class RelayReceiver(
 
     /** Each telemetry record as it arrives; the receiver keeps the last one for the snapshot anyway */
     fun onTelemetry(record: RelayTelemetryRecord) = Unit
+
+    /** Every record after the welcome as it was read, for the reception record of a bug report; on the reader thread */
+    fun onRecord(record: RelayRecord, arrivalNs: Long) = Unit
   }
 
   private class Target(
@@ -373,6 +376,7 @@ class RelayReceiver(
       while (current(mine)) {
         record = RelayWire.read(input, fromPhone = true)
         val arrival = clockNs()
+        listener.onRecord(record, arrival)
         when (record.type) {
           RelayWire.PARAMETERS -> {
             val description = RelayWire.parseParameters(record.body) ?: continue
