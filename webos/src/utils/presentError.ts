@@ -1,12 +1,15 @@
 import {APIError} from '../api/client';
 import {isOnline, REQUEST_TIMEOUT_MS, type FailureKind} from '../api/network';
 import {t} from '../immuch360/i18n';
+import {isTizen} from '../platform/detect';
 
 /** Immuch360: the message of a request that got no answer from the server, by its cause */
 export function failureMessage(kind: FailureKind): string {
 	if (kind === 'offline') return t('webos_error_offline');
 	if (kind === 'timeout') return t('webos_error_timeout', {seconds: String(REQUEST_TIMEOUT_MS / 1000)});
-	if (kind === 'cors') return t('webos_error_cors');
+	// The webOS text names webOS 24 and earlier; a Samsung TV gets its own (whether its access policy lifts CORS is to
+	// be seen on a TV)
+	if (kind === 'cors') return isTizen() ? t('webos_error_cors_tizen') : t('webos_error_cors');
 	return t('webos_error_unreachable');
 }
 
