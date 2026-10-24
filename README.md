@@ -52,7 +52,7 @@ Flat, 360° and 3D photos and videos from your device, your NAS, your Immich ser
 - **You watch your home with Tapo cameras** and want them next to your photos, on the TV too: [home cameras](#watch-your-home-cameras-on-the-big-screen).
 - **You fly a DJI drone** and want its live picture on your phone without DJI Fly (experimental): [your drone](#see-what-your-drone-sees-on-your-phone).
 
-None of it needs an account, and nothing goes to us: the app talks only to your devices and to the servers you choose.
+There is no Immuch360 account to create, and nothing goes to us: the app talks only to your devices and to the servers you choose.
 
 ## Which screens
 
@@ -132,7 +132,7 @@ One code base for the phones, tablets, Android TV, the Meta Quest and the comput
 | Input | mouse, keyboard | mouse, keyboard | mouse, keyboard, trackpad |
 | Where to get it | installer or ZIP (signed preview) | .deb, .rpm (preview) | DMG or ZIP (unsigned preview) |
 
-✅ in the app on that platform · ❌ not offered there · 🔜 planned · 🔧 CI in the sources, built and started by the project's CI on that system, not checked with a real server, share or camera there yet · flat only: the video plays flat, with a message, because the 360° video renderer of the computers is Windows only, on LG TVs whether webOS hands video frames to the sphere is still to be measured, and on the Samsung TV of a tester the browser gave black frames to the 3D view. "One eye" means a 3D file shows its left eye on a flat screen. The LG and Samsung columns are one separate TV app: LG version 1.0.0, whose shares, Plex and cameras were checked against real servers on the project's build host, not on a TV yet, and Samsung test build 0.2.0. Not every ✅ has been checked on a real device yet: what was checked where, and what remains to confirm, is in [Features](docs/immuch360/features.md), [Platform support](docs/immuch360/platform-support.md) and [Compatibility](docs/immuch360/compatibility.md).
+✅ in the app on that platform · ❌ not offered there · 🔜 planned · 🔧 CI in the sources, built and started by the project's CI on that system, not checked with a real server, share or camera there yet · flat only: the video plays flat, with a message, because the 360° video renderer of the computers is Windows only; on LG TVs, whether webOS hands video frames to the sphere is still to be measured; on a tester's Samsung TV, the browser gave black frames to the 3D view. "One eye" means a 3D file shows its left eye on a flat screen. The LG and Samsung columns are one separate TV app: LG version 1.0.0, whose shares, Plex and cameras were checked against real servers on the project's build host, not on a TV yet, and Samsung test build 0.2.0. Not every ✅ has been checked on a real device yet: what was checked where, and what remains to confirm, is in [Features](docs/immuch360/features.md), [Platform support](docs/immuch360/platform-support.md) and [Compatibility](docs/immuch360/compatibility.md).
 
 - **Android phones and tablets**: the complete app, touch and gyroscope, every source.
 - **iPhone and iPad**: the complete app; the 360° video player has play and pause only, the Tapo live view and the phone side of the sign in with your phone come with the next iOS release, and the DLNA search sends unicast requests until Apple grants the multicast entitlement.
@@ -165,7 +165,7 @@ Each line opens its how to below. The full guide, with every option, message and
 <a id="install"></a>
 ## Get it on your device
 
-Each screen has its own way in, from the stores where they have the app, or from the [Releases](https://github.com/freeKC/Immuch360/releases) page meanwhile.
+Take the app from the store of your device where it is published, or from the [Releases](https://github.com/freeKC/Immuch360/releases) page meanwhile.
 
 ### Android phones and tablets
 
@@ -363,7 +363,7 @@ Your videos sit on a NAS, a computer, a media server or Plex. Immuch360 finds th
 1. Open the Library tab, then Network shares, then + and "A network share (NAS, computer, media server)". From build 24, "Add a network share or a media server" on the welcome page opens Network shares directly, without a server.
 2. Tap a server under "Found on the network", or fill the form by hand: type, server name or address, share or path, start folder, user name and password.
 3. Tap "Test the connection", then Save. Tap the share to browse it: folders first, then the photos and videos, with the 360° badge on the files recognised as 360°.
-4. For a Plex server: + and "A Plex Media Server", tap your server under "Found on the network", paste a token once ("How to get it" on the page says where to find it), then "Test the connection" and Save.
+4. For a Plex server: in Network shares, + and "A Plex Media Server", then tap your server under "Found on the network", paste a token once ("How to get it" on the page says where to find it), then "Test the connection" and Save.
 5. With an Immich server connected, select files in a folder and tap "Upload to Immich" to send them to your server.
 
 The players read the bytes they need through a bridge inside the app, with byte ranges, so seeking works and nothing is stored on the device; an SMB video is read over up to six connections in parallel for smooth playback. From build 29, films recorded as M2TS (Blu-ray, AVCHD camcorders, TV recorders) play in the Android app from SMB and WebDAV shares and from DLNA servers that list them as transport streams, and a DLNA server that lists a size of 0 no longer gives an empty video.
@@ -500,7 +500,7 @@ Immuch360 keeps the whole Immich mobile app and adds what is around it. In short
 | **The same** | your Immich server and account: backup, timeline, albums, search, people, memories, sharing and partners, all synced with your server. It installs next to the official app. |
 | **No server needed** | it also runs without a server or an account, on the photos and videos of the device, the folders of a computer, network shares, Plex and cameras. |
 | **360° and immersive** | 360° photos and videos as a sphere, panoramas, VR180 and 3D, an immersive view in a Meta Quest, a 360° badge and a 360° list. 360° viewing in the Immich mobile app has been requested since January 2024 and is not there yet. |
-| **TVs of three makers** | the same app on Android TV and Google TV, and a TV app for LG TVs, also packaged for Samsung TVs as a test build. Immich's own apps do not install on an LG TV. |
+| **On the TV** | the same app on Android TV and Google TV, and a TV app for LG TVs, also packaged for Samsung TVs as a test build. Immich's own apps do not install on an LG TV. |
 | **Sign in with your phone** | a TV, a headset or a computer is signed in when your phone scans its QR code, and your password stays on the phone. The Immich app has nothing like it. |
 | **Shares and Plex** | SMB, WebDAV and DLNA shares and Plex servers, played in place, and their files sent to your server by hand. |
 | **Tapo cameras** | the live view and the recordings of the memory card, next to your photos; not yet checked with a real camera. |
