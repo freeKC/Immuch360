@@ -145,7 +145,80 @@ One code base for the phones, tablets, Android TV, the Meta Quest and the comput
 
 ## What you can do
 
-Each usage below says what you get, then how to do it in a few steps. The full guide, with every option, message and limit, is in the [user guide](docs/immuch360/user-guide.md).
+Each line opens its how to below. The full guide, with every option, message and limit, is in the [user guide](docs/immuch360/user-guide.md).
+
+1. [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server): a gallery and a player, on the device alone or with your Immich server.
+2. [Look around 360° photos and videos, panoramas, VR180 and 3D](#explore-panoramas-360-vr180-and-3d): a sphere you turn with a finger, the phone or the remote.
+3. [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): Android TV and Google TV, LG TVs, and Samsung TVs as a test build.
+4. [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): scan its QR code, confirm, watch.
+5. [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° all around you, 3D in true 3D.
+6. [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): in place, nothing copied.
+7. [Keep your Immich library, with more](#keep-your-immich-library-with-more): the Immich mobile app, plus the immersive viewers and the big screens.
+8. [Watch your Tapo cameras](#watch-your-home-cameras-on-the-big-screen): live, and the recordings of their memory card; not yet checked with a real camera.
+9. [See your DJI drone's live video on your phone](#see-what-your-drone-sees-on-your-phone): through a DJI RC-N3 remote, receive only. *Experimental.*
+10. [Bring a drone's or a camera card's photos and videos to Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): over USB, from an Android phone. *Experimental.*
+11. [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX and DJI Osmo 360, stitched by the app.
+12. [Turn a photo with one key](#turn-a-photo-with-one-key): a button, a key of the keyboard or a colour key of the remote.
+13. [Use your computer as the media player](#use-your-computer-as-the-media-player): your folders, Open with, a file dropped on the window. *Preview.*
+
+<a id="install"></a>
+## Get it on your device
+
+Each screen has its own way in, from the stores where they have the app, or from the [Releases](https://github.com/freeKC/Immuch360/releases) page meanwhile.
+
+### Android phones and tablets
+
+1. [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK of the [Releases](https://github.com/freeKC/Immuch360/releases) page: `Immuch360-v<version>-arm64-v8a-release.apk` for a phone; the universal `Immuch360-v<version>-release.apk` works everywhere.
+2. The app installs next to the official Immich app. The APK from GitHub does not update itself: watch the Releases page; once you have installed the app from a store, take the updates from that store.
+
+### iPhone and iPad
+
+1. The App Store version is waiting for Apple's review. Until it is published, build the app with Xcode on a Mac, see [Build it yourself](docs/immuch360/build.md).
+2. Tap "Use without a server", or "Connect to an Immich server" to sign in with your server; both are on the welcome page from build 24.
+
+### Android TV and Google TV
+
+1. Until Google Play offers the app on TVs, take the universal `Immuch360-v<version>-release.apk` of the [Releases](https://github.com/freeKC/Immuch360/releases) page.
+2. On the TV, turn on the developer options and USB debugging (on a Google TV: Settings, System, About, select "Android TV OS build" seven times, then Settings, System, Developer options; the names vary between TVs).
+3. From a computer on the same network, with adb (Android SDK Platform Tools): `adb connect <address of the TV>`, accept the prompt on the TV, then `adb install -r Immuch360-v<version>-release.apk`.
+4. The app shows among the apps of the TV, with its banner. Install the next release the same way: `-r` keeps the login and the settings.
+
+### LG TVs (webOS)
+
+1. Version 1.0.0 is waiting for LG's review. Until it is on the LG Content Store, it installs in Developer Mode: you need an LG TV with webOS 5.0 or later, a computer on the same network and a free LG developer account. On the TV, install Developer Mode from the LG Content Store, sign in, turn Dev Mode Status on and let the TV restart; note its IP address and the passphrase the app shows.
+2. On the computer, install the webOS CLI (Node.js 18 or later): `npm install -g @webos-tools/cli`, then register the TV with `ares-setup-device` (its IP address, port 9922, user `prisoner`) and `ares-novacom --device <name> --getkey`, which asks for the passphrase.
+3. From the [webOS 1.0.0 pre-release](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0), download `Immuch360-webOS-1.0.0.ipk` for a UHD TV, or `Immuch360-webOS-1.0.0-1280x720.ipk` for a Full HD TV, to which LG gives 1280x720 apps. Check it against `SHA256SUMS.txt`, then `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`. The [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) of webosbrew does the same without the command line.
+4. A Developer Mode session lasts 1000 hours and the EXTEND button of the Developer Mode app renews it; when it expires, the TV removes the apps installed this way. The details are in [webos/README.md](webos/README.md#install-on-a-tv-in-developer-mode).
+5. Once the app is on the LG Content Store, remove the Developer Mode copy and install it from the store.
+
+### Samsung TVs (Tizen)
+
+1. Test build 0.2.0 is not on Samsung's store: you install it yourself. You need a Samsung TV with Tizen 5.5 or later (2020 models and later), a computer on the same network and a Samsung account. On the TV: Apps, App Settings, type 12345, turn Developer mode on, enter the IP address of the computer, then restart the TV.
+2. Download `Immuch360-Tizen-0.2.0.wgt` from the [Tizen pre-release](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) and check it against `SHA256SUMS.txt`. A Samsung TV installs only an app signed for it, so the package must be signed again with a Samsung certificate that lists the DUID of your TV: [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung), a community tool, reads the DUID, signs the package with your Samsung account and installs it; Tizen Studio with the Samsung Certificate Extension does the same by hand.
+3. Open the app and sign in by typing your server address, then your email and password or an API key. About this TV shows what the TV supports, as text and as a QR code: that text, posted in [Issues](https://github.com/freeKC/Immuch360/issues) or [Discussions](https://github.com/freeKC/Immuch360/discussions) with what does not work, helps the most.
+
+### Meta Quest
+
+1. From the [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/): the store version, updated as Meta reviews each submission.
+2. Or sideload the `-quest-release.apk` file of a [release](https://github.com/freeKC/Immuch360/releases) in developer mode with adb or SideQuest: `adb install -r Immuch360-v<version>-quest-release.apk`, then open the Library of the headset, "Unknown sources".
+3. The store version and the GitHub APK are signed with different keys: to switch from one to the other, uninstall the app first, which loses the login, the settings and the list of network shares.
+
+### Windows
+
+1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.10-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) (with `SHA256SUMS.txt` to check it) and open it. The installer and the ZIP are signed; Windows shows APROGSYS as the publisher. While the publisher is new to SmartScreen, it may still ask once: "More info", then "Run anyway".
+2. Choose "Install for me only" (no administrator rights) or "Install for all users", then the language of the installer, the one of Windows already selected.
+3. Start Immuch360 Desktop from the Start menu. Photos and videos get it in "Open with" (right click a file, Open with); it never makes itself their default program. The first start of a new build can take up to a minute while Windows scans the files.
+4. Windows 10 or 11, 64 bit. To update, open the installer of the next build: your sign in, folders and settings stay. The ZIP of the same release is the same program as a folder, to unzip anywhere and start `immuch360.exe` from it. On a computer where desktop builds 4 to 8 stopped at the start on "duplicate column name: group_date", build 9 opens that database and keeps your data.
+
+### Linux
+
+On Ubuntu 22.04 or later and Debian 12 or later: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.10-linux-amd64.deb`; on Fedora 40 or later: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.10-linux-x86_64.rpm`, both from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10). Then start Immuch360 Desktop from your applications. A preview: the folders of the computer, photos and 360° photos as a sphere, and flat videos through the system's libmpv, which the package installs (360°, 3D and raw videos play flat, with a message); SMB shares work from Ubuntu 22.04 and Debian 12 on. On Fedora, camera videos need the FFmpeg of RPM Fusion. Without GNOME Keyring or KWallet, the passwords are kept for the session only, and the settings of the app say so.
+
+### macOS
+
+Open `Immuch360-Desktop-3.3.0-rc.0-desktop.10-macos.dmg` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) and drag the app to Applications (Apple silicon and Intel, macOS 12 or later). It is not signed nor notarized yet: Control click it and choose Open on macOS 14 and earlier, or choose "Open Anyway" in System Settings, Privacy & Security on macOS 15 and later. Nobody working on the project has a Mac: the app was only run on the project's CI Mac, where it opens files and folders and plays flat videos with its own libmpv; its network access has not been tried. Reports are welcome.
+
+## How to
 
 ### Watch your photos and videos
 
@@ -375,59 +448,6 @@ What the app can read and play, for the reader who wants the whole extent. Each 
 - [Release status: builds, stores and what each store has](docs/immuch360/release-status.md)
 - [Build it yourself: phones, headsets, TVs and computers](docs/immuch360/build.md)
 - [Immuch360 for LG webOS TVs: install in Developer Mode, the remote control keys, the CORS headers](webos/README.md)
-
-## Install
-
-### Android phones and tablets
-
-1. [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360), or the APK of the [Releases](https://github.com/freeKC/Immuch360/releases) page: `Immuch360-v<version>-arm64-v8a-release.apk` for a phone; the universal `Immuch360-v<version>-release.apk` works everywhere.
-2. The app installs next to the official Immich app. The APK from GitHub does not update itself: watch the Releases page; once you have installed the app from a store, take the updates from that store.
-
-### iPhone and iPad
-
-1. The App Store version is waiting for Apple's review. Until it is published, build the app with Xcode on a Mac, see [Build it yourself](docs/immuch360/build.md).
-2. Tap "Use without a server", or "Connect to an Immich server" to sign in with your server; both are on the welcome page from build 24.
-
-### Android TV and Google TV
-
-1. Until Google Play offers the app on TVs, take the universal `Immuch360-v<version>-release.apk` of the [Releases](https://github.com/freeKC/Immuch360/releases) page.
-2. On the TV, turn on the developer options and USB debugging (on a Google TV: Settings, System, About, select "Android TV OS build" seven times, then Settings, System, Developer options; the names vary between TVs).
-3. From a computer on the same network, with adb (Android SDK Platform Tools): `adb connect <address of the TV>`, accept the prompt on the TV, then `adb install -r Immuch360-v<version>-release.apk`.
-4. The app shows among the apps of the TV, with its banner. Install the next release the same way: `-r` keeps the login and the settings.
-
-### LG TVs (webOS)
-
-1. You need an LG TV with webOS 4.0 or later, a computer on the same network and a free LG developer account. On the TV, install Developer Mode from the LG Content Store, sign in, turn Dev Mode Status on and let the TV restart; note its IP address and the passphrase the app shows.
-2. On the computer, install the webOS CLI (Node.js 18 or later): `npm install -g @webos-tools/cli`, then register the TV with `ares-setup-device` (its IP address, port 9922, user `prisoner`) and `ares-novacom --device <name> --getkey`, which asks for the passphrase.
-3. Download `Immuch360-webOS-0.2.0.ipk` from the [webOS pre-release](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0), check it against `SHA256SUMS.txt`, then `ares-install --device <name> Immuch360-webOS-0.2.0.ipk`. The [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) of webosbrew does the same without the command line.
-4. A Developer Mode session lasts 1000 hours and the EXTEND button of the Developer Mode app renews it; when it expires, the TV removes the apps installed this way. The details are in [webos/README.md](webos/README.md#install-on-a-tv-in-developer-mode).
-
-### Samsung TVs (Tizen)
-
-1. You need a Samsung TV with Tizen 5.5 or later (2020 models and later), a computer on the same network and a Samsung account. On the TV: Apps, App Settings, type 12345, turn Developer mode on, enter the IP address of the computer, then restart the TV.
-2. Download `Immuch360-Tizen-0.1.0.wgt` from the [Tizen pre-release](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.1.0) and check it against `SHA256SUMS.txt`. A Samsung TV installs only an app signed for it, so the package must be signed again with a Samsung certificate that lists the DUID of your TV: [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung), a community tool, reads the DUID, signs the package with your Samsung account and installs it; Tizen Studio with the Samsung Certificate Extension does the same by hand.
-3. Open the app and sign in by typing your server address, then your email and password or an API key. About this TV shows what the TV supports, as text and as a QR code: that text, posted in [Issues](https://github.com/freeKC/Immuch360/issues) with what does not work, helps the most.
-
-### Meta Quest
-
-1. From the [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/): the store version, updated as Meta reviews each submission.
-2. Or sideload the `-quest-release.apk` file of a [release](https://github.com/freeKC/Immuch360/releases) in developer mode with adb or SideQuest: `adb install -r Immuch360-v<version>-quest-release.apk`, then open the Library of the headset, "Unknown sources".
-3. The store version and the GitHub APK are signed with different keys: to switch from one to the other, uninstall the app first, which loses the login, the settings and the list of network shares.
-
-### Windows
-
-1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.10-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) (with `SHA256SUMS.txt` to check it) and open it. The installer and the ZIP are signed; Windows shows APROGSYS as the publisher. While the publisher is new to SmartScreen, it may still ask once: "More info", then "Run anyway".
-2. Choose "Install for me only" (no administrator rights) or "Install for all users", then the language of the installer, the one of Windows already selected.
-3. Start Immuch360 Desktop from the Start menu. Photos and videos get it in "Open with" (right click a file, Open with); it never makes itself their default program. The first start of a new build can take up to a minute while Windows scans the files.
-4. Windows 10 or 11, 64 bit. To update, open the installer of the next build: your sign in, folders and settings stay. The ZIP of the same release is the same program as a folder, to unzip anywhere and start `immuch360.exe` from it. On a computer where desktop builds 4 to 8 stopped at the start on "duplicate column name: group_date", build 9 opens that database and keeps your data.
-
-### Linux
-
-On Ubuntu 22.04 or later and Debian 12 or later: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.10-linux-amd64.deb`; on Fedora 40 or later: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.10-linux-x86_64.rpm`, both from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10). Then start Immuch360 Desktop from your applications. A preview: the folders of the computer, photos and 360° photos as a sphere, and flat videos through the system's libmpv, which the package installs (360°, 3D and raw videos play flat, with a message); SMB shares work from Ubuntu 22.04 and Debian 12 on. On Fedora, camera videos need the FFmpeg of RPM Fusion. Without GNOME Keyring or KWallet, the passwords are kept for the session only, and the settings of the app say so.
-
-### macOS
-
-Open `Immuch360-Desktop-3.3.0-rc.0-desktop.10-macos.dmg` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) and drag the app to Applications (Apple silicon and Intel, macOS 12 or later). It is not signed nor notarized yet: Control click it and choose Open on macOS 14 and earlier, or choose "Open Anyway" in System Settings, Privacy & Security on macOS 15 and later. Nobody working on the project has a Mac: the app was only run on the project's CI Mac, where it opens files and folders and plays flat videos with its own libmpv; its network access has not been tried. Reports are welcome.
 
 ## Privacy
 
