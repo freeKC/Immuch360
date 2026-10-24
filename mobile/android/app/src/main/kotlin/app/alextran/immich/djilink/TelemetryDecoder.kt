@@ -15,6 +15,13 @@ import kotlin.math.max
  * order is verified, and a position on screen would end up in screenshots), offset 40 (a counter, not the battery a
  * public layout puts there), offset 37 and everything past offset 44.
  *
+ * Read since the second telemetry reading of 24 October 2026 (p2/telemetry-deep-dive-2026-10-24.md, sections 2 to 4),
+ * all likely and none proven, since our captures hold 0.5 s of flight: the height above the take off point (offset
+ * 16), the vertical speed (offset 22, positive down on the wire, turned positive up here), the speed over ground from
+ * the two horizontal components (offsets 18 and 20), offset 41 in centimetres, the distance below of push 10/3 and the
+ * ring of 360 obstacle distances of push 36/8. Which way the obstacle ring turns, and which of its indexes is the nose,
+ * is not known: only its nearest distance is used.
+ *
  * Nothing here is a flight instrument: no value has been compared with DJI Fly yet (checkpoint HC-09).
  */
 enum class TelemetryEvidence {
@@ -29,7 +36,9 @@ enum class TelemetryEvidence {
 }
 
 data class FlightReading(
+  /** Above the take off point, positive up; back to 0 once the motors stop. Not a height above the ground. */
   val heightM: Double,
+  /** Offsets 18, 20 and 22 as they are on the wire, 0.1 m/s each, for Diagnostics */
   val speedsMps: List<Double>,
   val pitchDeg: Double,
   val rollDeg: Double,
@@ -41,6 +50,30 @@ data class FlightReading(
   val groundHeightM: Double,
   val motorTimeS: Double,
   val flags: Long,
+  /** Offset 22 with its sign turned: climbing reads positive */
+  val verticalSpeedMps: Double = 0.0,
+  /** The speed over ground from offsets 18 and 20; it holds a stale value on the ground: read it with the motors */
+  val horizontalSpeedMps: Double = 0.0,
+)
+
+/** Push 10/3 from the remote side: the distance below the drone, only while the motors run */
+data class RangeBelowReading(
+  /** Null when the sensor has no reading (its flag byte is 0 and the distance 0xFFFF) */
+  val distanceM: Double?,
+)
+
+/**
+ * Push 36/8 from sender 18.4: 360 distances around the drone, one per degree in blocks of five, only while the motors
+ * run. A sector that sees nothing reads [TelemetryFields.OBSTACLE_NO_READING], which may also be glass, a thin branch
+ * or Sport mode: never a clear way.
+ */
+data class ObstacleReading(
+  /** The smallest distance of the ring, null when no sector reads anything */
+  val nearestM: Double?,
+  /** The index of that distance: which side it is on is not known yet, so nothing draws it */
+  val nearestIndex: Int?,
+  /** Sectors without a reading */
+  val noReading: Int,
 )
 
 data class GimbalReading(
@@ -86,6 +119,18 @@ object TelemetryFields {
   const val CLOCK_SET = 35
   const val CLOCK_ID = 178
   const val CLOCK_LENGTH = 43
+  const val SIGNAL_BARS_SET = 9
+  const val SIGNAL_BARS_ID = 117
+  const val SIGNAL_BARS_LENGTH = 1
+  const val RANGE_BELOW_SET = 10
+  const val RANGE_BELOW_ID = 3
+  const val RANGE_BELOW_LENGTH = 4
+  const val OBSTACLES_SET = 36
+  const val OBSTACLES_ID = 8
+  const val OBSTACLES_HEADER = 8
+
+  /** The obstacle ring's value for a sector that reads nothing */
+  const val OBSTACLE_NO_READING = 60000
   const val MODULE_SET = 33
   val MODULE_IDS = setOf(6, 8)
 
@@ -108,6 +153,10 @@ object TelemetryFields {
     return FlightReading(
       heightM = i16(body, 16) / 10.0,
       speedsMps = listOf(i16(body, 18) / 10.0, i16(body, 20) / 10.0, i16(body, 22) / 10.0),
+      // Positive down on the wire: 2 in the five flying frames of the 23 October landing, while the height estimate
+      // fell at 0.198 m/s and the range below at 0.216 m/s
+      verticalSpeedMps = -i16(body, 22) / 10.0,
+      horizontalSpeedMps = kotlin.math.hypot(i16(body, 18).toDouble(), i16(body, 20).toDouble()) / 10.0,
       pitchDeg = i16(body, 24) / 10.0,
       rollDeg = i16(body, 26) / 10.0,
       headingDeg = i16(body, 28) / 10.0,
@@ -115,7 +164,8 @@ object TelemetryFields {
       inAir = (flags and FLAG_IN_AIR) != 0L,
       motorsOn = (flags and FLAGS_MOTORS_RUNNING) == FLAGS_MOTORS_RUNNING,
       satellites = u8(body, 36),
-      groundHeightM = u8(body, 41) / 10.0,
+      // Centimetres: 9, 8, 8, 1, 0 against 9.5, 8.6, 4.0, 1.6, 0.4 cm from the range push at the landing
+      groundHeightM = u8(body, 41) / 100.0,
       motorTimeS = u16(body, 42) / 10.0,
       flags = flags,
     )
@@ -154,6 +204,50 @@ object TelemetryFields {
   }
 
   fun remoteBattery(body: ByteArray): Int? = if (body.size == REMOTE_BATTERY_LENGTH) u8(body, 4) else null
+
+  /** 0 to 5: 0 before the drone links, then 3, 4, 5 as the signal settles (p2/telemetry-flight-2026-10-24.md, 3.5) */
+  fun signalBars(body: ByteArray): Int? =
+    if (body.size == SIGNAL_BARS_LENGTH && u8(body, 0) <= 5) u8(body, 0) else null
+
+  /** u16 millimetres, then 1 while the sensor reads and 0 while it does not, then a counter */
+  fun rangeBelow(body: ByteArray): RangeBelowReading? {
+    if (body.size != RANGE_BELOW_LENGTH) {
+      return null
+    }
+    val reading = u8(body, 2) == 1 && u16(body, 0) != 0xFFFF
+    return RangeBelowReading(if (reading) u16(body, 0) / 1000.0 else null)
+  }
+
+  /**
+   * An eight byte header (1, a counter, two u16 distances whose meaning is not settled, the count of values), then that
+   * many u16 distances in millimetres. Any other length is a layout this decoder does not know.
+   */
+  fun obstacles(body: ByteArray): ObstacleReading? {
+    if (body.size < OBSTACLES_HEADER) {
+      return null
+    }
+    val count = u16(body, 6)
+    if (count == 0 || body.size != OBSTACLES_HEADER + 2 * count) {
+      return null
+    }
+    var nearest = Int.MAX_VALUE
+    var nearestIndex = -1
+    var empty = 0
+    for (index in 0 until count) {
+      val value = u16(body, OBSTACLES_HEADER + 2 * index)
+      if (value == OBSTACLE_NO_READING) {
+        empty += 1
+      } else if (value < nearest) {
+        nearest = value
+        nearestIndex = index
+      }
+    }
+    return ObstacleReading(
+      nearestM = if (nearestIndex < 0) null else nearest / 1000.0,
+      nearestIndex = nearestIndex.takeIf { it >= 0 },
+      noReading = empty,
+    )
+  }
 
   /** The low seven bits of the one byte body */
   fun signal(body: ByteArray): Int? = if (body.size == SIGNAL_LENGTH) u8(body, 0) and 0x7F else null
@@ -217,6 +311,10 @@ data class TelemetryValues(
   val layoutMismatches: Long,
   /** Bodies decoded per catalogue code */
   val decoded: Map<String, Long>,
+  /** 9/117 from the remote side, 0 to 5 */
+  val signalBars: Timed<Int>? = null,
+  val rangeBelow: Timed<RangeBelowReading>? = null,
+  val obstacles: Timed<ObstacleReading>? = null,
 )
 
 /**
@@ -244,6 +342,12 @@ class TelemetryDecoder {
     private const val SIGNAL = (TelemetryFields.SIGNAL_SET shl 8) or TelemetryFields.SIGNAL_ID
     private const val LIVE_RATE = (TelemetryFields.LIVE_RATE_SET shl 8) or TelemetryFields.LIVE_RATE_ID
     private const val CLOCK = (TelemetryFields.CLOCK_SET shl 8) or TelemetryFields.CLOCK_ID
+    private const val SIGNAL_BARS = (TelemetryFields.SIGNAL_BARS_SET shl 8) or TelemetryFields.SIGNAL_BARS_ID
+    private const val RANGE_BELOW = (TelemetryFields.RANGE_BELOW_SET shl 8) or TelemetryFields.RANGE_BELOW_ID
+    private const val OBSTACLES = (TelemetryFields.OBSTACLES_SET shl 8) or TelemetryFields.OBSTACLES_ID
+
+    /** The sender of the 50 Hz push and of the obstacle ring, 18.4 in our captures */
+    private const val SENSING_SENDER = 18
     private const val MODULE_6 = (TelemetryFields.MODULE_SET shl 8) or 6
     private const val MODULE_8 = (TelemetryFields.MODULE_SET shl 8) or 8
   }
@@ -287,6 +391,9 @@ class TelemetryDecoder {
   private val signalRemote = Group<Int>()
   private val liveRate = Group<Double>()
   private val clock = Group<Long>()
+  private val signalBars = Group<Int>()
+  private val rangeBelow = Group<RangeBelowReading>()
+  private val obstacles = Group<ObstacleReading>()
   private val decoded = linkedMapOf<String, Long>()
   private val moduleSeconds = linkedMapOf<Int, Int>()
 
@@ -322,6 +429,16 @@ class TelemetryDecoder {
       CLOCK -> read(TelemetryCodes.AIRCRAFT_CLOCK, TelemetryFields.aircraftClock(body)) {
         clock.put(it, nowMs)
         onClock(it, nowMs)
+      }
+      // The remote side only: the same pairs from another sender are not what our captures named
+      SIGNAL_BARS -> if (frame.senderType == SIGNAL_REMOTE_SIDE) {
+        read(TelemetryCodes.SIGNAL_BARS, TelemetryFields.signalBars(body)) { signalBars.put(it, nowMs) }
+      }
+      RANGE_BELOW -> if (frame.senderType == SIGNAL_REMOTE_SIDE) {
+        read(TelemetryCodes.RANGE_BELOW, TelemetryFields.rangeBelow(body)) { rangeBelow.put(it, nowMs) }
+      }
+      OBSTACLES -> if (frame.senderType == SENSING_SENDER) {
+        read(TelemetryCodes.OBSTACLES, TelemetryFields.obstacles(body)) { obstacles.put(it, nowMs) }
       }
       MODULE_6, MODULE_8 -> read(TelemetryCodes.MODULE_STATUS, TelemetryFields.moduleSeconds(body)) {
         moduleSeconds[(frame.senderIndex shl 5) or frame.senderType] = it
@@ -385,6 +502,9 @@ class TelemetryDecoder {
       ),
       layoutMismatches = layoutMismatches,
       decoded = decoded.toMap(),
+      signalBars = signalBars.timed(nowMs),
+      rangeBelow = rangeBelow.timed(nowMs),
+      obstacles = obstacles.timed(nowMs),
     )
   }
 
@@ -392,7 +512,19 @@ class TelemetryDecoder {
   fun moduleSenders(): Int = moduleSeconds.size
 
   fun reset() {
-    listOf(flight, gimbal, battery, remoteBattery, signalAircraft, signalRemote, liveRate, clock).forEach { it.clear() }
+    listOf(
+      flight,
+      gimbal,
+      battery,
+      remoteBattery,
+      signalAircraft,
+      signalRemote,
+      liveRate,
+      clock,
+      signalBars,
+      rangeBelow,
+      obstacles,
+    ).forEach { it.clear() }
     decoded.clear()
     moduleSeconds.clear()
     offsets.clear()
@@ -421,4 +553,7 @@ object TelemetryCodes {
   const val LIVE_RATE = "liveRate"
   const val AIRCRAFT_CLOCK = "aircraftClock"
   const val MODULE_STATUS = "moduleStatus"
+  const val SIGNAL_BARS = "signalBars"
+  const val RANGE_BELOW = "rangeBelow"
+  const val OBSTACLES = "obstacles"
 }

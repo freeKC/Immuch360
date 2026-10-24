@@ -80,6 +80,9 @@ data class RelayTelemetryRecord(
       gimbal = values.gimbal.older(),
       battery = values.battery.older(),
       remoteBatteryPercent = values.remoteBatteryPercent.older(),
+      signalBars = values.signalBars.older(),
+      rangeBelow = values.rangeBelow.older(),
+      obstacles = values.obstacles.older(),
       link = values.link.copy(
         signalAircraftSide = values.link.signalAircraftSide.older(),
         signalRemoteSide = values.link.signalRemoteSide.older(),
@@ -93,8 +96,11 @@ data class RelayTelemetryRecord(
 /**
  * The TELEMETRY record of p2/design-stage2b.md, 4.7: our own names, those of the page's model of stage 2, with each
  * group's age, staleness and evidence. It never carries a position (stage 2 never decodes it), a serial number, a
- * module record or the accessory strings. Built once per tick on the phone and queued to every headset; read back on the
- * headset into the same [TelemetryValues] the phone's decoder gives, so that the flight section draws it unchanged.
+ * module record or the accessory strings. The fields of the second telemetry reading (the vertical and horizontal
+ * speeds, the signal bars, the distance below, the nearest obstacle) are additive: a headset of an earlier build
+ * ignores them, and a record of an earlier phone reads as before, without them. Built once per tick on the phone and
+ * queued to every headset; read back on the headset into the same [TelemetryValues] the phone's decoder gives, so that
+ * the flight section draws it unchanged.
  * Written and read with the JSON element API of kotlinx.serialization, which the JVM unit tests can run.
  */
 object RelayTelemetry {
@@ -144,6 +150,8 @@ object RelayTelemetry {
             put("motorTimeS", reading.motorTimeS)
             put("satellites", reading.satellites)
             put("groundHeightM", reading.groundHeightM)
+            put("verticalSpeedMps", reading.verticalSpeedMps)
+            put("horizontalSpeedMps", reading.horizontalSpeedMps)
             put("evidence", EVIDENCE_PUBLIC_AND_CAPTURE)
           },
         )
@@ -187,6 +195,38 @@ object RelayTelemetry {
           "remoteBattery",
           buildJsonObject {
             put("percent", timed.value)
+            age(timed)
+            put("evidence", EVIDENCE_CANDIDATE)
+          },
+        )
+      }
+      values.signalBars?.let { timed ->
+        put(
+          "signalBars",
+          buildJsonObject {
+            put("bars", timed.value)
+            age(timed)
+            put("evidence", EVIDENCE_CANDIDATE)
+          },
+        )
+      }
+      values.rangeBelow?.let { timed ->
+        put(
+          "rangeBelow",
+          buildJsonObject {
+            put("distanceM", timed.value.distanceM)
+            age(timed)
+            put("evidence", EVIDENCE_CANDIDATE)
+          },
+        )
+      }
+      values.obstacles?.let { timed ->
+        put(
+          "obstacles",
+          buildJsonObject {
+            put("nearestM", timed.value.nearestM)
+            put("nearestIndex", timed.value.nearestIndex)
+            put("noReading", timed.value.noReading)
             age(timed)
             put("evidence", EVIDENCE_CANDIDATE)
           },
@@ -271,6 +311,8 @@ object RelayTelemetry {
                 groundHeightM = flight.double("groundHeightM") ?: 0.0,
                 motorTimeS = flight.double("motorTimeS") ?: 0.0,
                 flags = 0L,
+                verticalSpeedMps = flight.double("verticalSpeedMps") ?: 0.0,
+                horizontalSpeedMps = flight.double("horizontalSpeedMps") ?: 0.0,
               ),
             )
           },
@@ -321,6 +363,20 @@ object RelayTelemetry {
           ),
           layoutMismatches = json.long("layoutMismatches") ?: 0L,
           decoded = emptyMap(),
+          signalBars = json.obj("signalBars")?.let { bars -> bars.long("bars")?.let { timed(bars, it.toInt()) } },
+          rangeBelow = json.obj("rangeBelow")?.let { range ->
+            timed(range, RangeBelowReading(range.double("distanceM")))
+          },
+          obstacles = json.obj("obstacles")?.let { ring ->
+            timed(
+              ring,
+              ObstacleReading(
+                nearestM = ring.double("nearestM"),
+                nearestIndex = ring.long("nearestIndex")?.toInt(),
+                noReading = (ring.long("noReading") ?: 0L).toInt(),
+              ),
+            )
+          },
         ),
         phoneVideo = json.obj("phoneVideo")?.let { video ->
           RelayPhoneVideo(

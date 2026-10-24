@@ -68,8 +68,18 @@ class TelemetryDecoderTest {
     assertTrue(flight.inAir)
     assertTrue(flight.motorsOn)
     assertEquals(0, flight.satellites)
-    assertEquals(0.9, flight.groundHeightM, 1e-9)
+    // Centimetres (p2/telemetry-deep-dive-2026-10-24.md, 4.1): 9 is 0.09 m, not the 0.9 m read before
+    assertEquals(0.09, flight.groundHeightM, 1e-9)
     assertEquals(38.7, flight.motorTimeS, 1e-9)
+    // Offset 22 is positive down on the wire: 0 here, and the two horizontal components give the speed over ground
+    assertEquals(0.0, flight.verticalSpeedMps, 1e-9)
+    assertEquals(kotlin.math.hypot(0.4, 0.4), flight.horizontalSpeedMps, 1e-9)
+  }
+
+  @Test
+  fun theVerticalSpeedReadsPositiveWhileClimbing() {
+    assertEquals(-0.2, TelemetryFields.flight(flightBody().i16(22, 2))!!.verticalSpeedMps, 1e-9)
+    assertEquals(1.5, TelemetryFields.flight(flightBody().i16(22, -15))!!.verticalSpeedMps, 1e-9)
   }
 
   @Test
@@ -220,7 +230,11 @@ class TelemetryDecoderTest {
 
   @Test
   fun everyCataloguedPairIsNamedWithTheCaptureThatNamedIt() {
-    for (pair in listOf(3 to 67, 4 to 5, 13 to 2, 6 to 30, 9 to 8, 9 to 54, 35 to 178, 33 to 6, 33 to 8)) {
+    for (
+      pair in listOf(
+        3 to 67, 4 to 5, 13 to 2, 6 to 30, 9 to 8, 9 to 54, 35 to 178, 33 to 6, 33 to 8, 9 to 117, 10 to 3, 36 to 8,
+      )
+    ) {
       val entry = MessageCatalogue.named(pair.first, pair.second)
       assertNotNull("$pair", entry)
       assertTrue(entry!!.observation.contains("dji-link-20261023-102731"))

@@ -158,6 +158,32 @@ class RelayTelemetryTest {
   }
 
   @Test
+  fun theReadingsOfTheSecondReadingGoToTheHeadsetAndAnEarlierRecordReadsWithoutThem() {
+    val sent = values().copy(
+      signalBars = Timed(5, 700, false),
+      rangeBelow = Timed(RangeBelowReading(0.135), 30, false),
+      obstacles = Timed(ObstacleReading(nearestM = 0.507, nearestIndex = 0, noReading = 0), 40, false),
+    )
+    val json = RelayTelemetry.build(1, 1, link, sent, phoneVideo, 1, 0)
+    val back = RelayTelemetry.parse(json)!!.values
+    assertEquals(sent.signalBars, back.signalBars)
+    assertEquals(sent.rangeBelow, back.rangeBelow)
+    assertEquals(sent.obstacles, back.obstacles)
+    assertEquals(sent.flight!!.value.verticalSpeedMps, back.flight!!.value.verticalSpeedMps, 1e-9)
+    assertEquals(sent.flight!!.value.horizontalSpeedMps, back.flight!!.value.horizontalSpeedMps, 1e-9)
+    // A ring with no reading in any sector keeps its null: nothing near is not a distance of zero
+    val empty = sent.copy(obstacles = Timed(ObstacleReading(null, null, 360), 40, false))
+    assertNull(RelayTelemetry.parse(RelayTelemetry.build(1, 1, link, empty, null, 0, 0))!!.values.obstacles!!.value.nearestM)
+    // The headset ages the ring as the other groups
+    assertTrue(RelayTelemetry.parse(json)!!.aged(TelemetryDecoder.MIN_STALE_MS + 1).obstacles!!.stale)
+    // A record of an earlier phone has none of them
+    val earlier = RelayTelemetry.parse(RelayTelemetry.build(1, 1, link, values(), phoneVideo, 1, 0))!!.values
+    assertNull(earlier.signalBars)
+    assertNull(earlier.rangeBelow)
+    assertNull(earlier.obstacles)
+  }
+
+  @Test
   fun theStateNamesAreThoseOfThePage() {
     assertEquals("videoReady", RelayTelemetry.stateName(LinkState.VIDEO_READY))
     assertEquals("absent", RelayTelemetry.stateName(LinkState.ABSENT))
