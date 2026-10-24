@@ -77,7 +77,7 @@ class DjiLinkFlightSection extends StatelessWidget {
               (t.dji_link_motors, flight.motorsOn ? t.dji_link_bench_on : t.dji_link_bench_off),
               (t.dji_link_motor_time, '${flight.motorTimeS.toStringAsFixed(1)} s'),
               (t.dji_link_satellites, '${flight.satellites}'),
-              (t.dji_link_ground_height, '${flight.groundHeightM.toStringAsFixed(1)} m'),
+              (t.dji_link_ground_height, '${flight.groundHeightM.toStringAsFixed(2)} m'),
             ],
           ),
         if (battery != null)

@@ -3,8 +3,11 @@
 // touch, Back that asks once a picture showed, the cards that say to fly with the remote once the drone was seen, Send
 // to a headset and Advanced from the right, the offer to open on the plug, and the screen kept on.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/presentation/pages/drone/dji_live.page.dart';
@@ -43,11 +46,18 @@ void main() {
     await context.dispose();
   });
 
-  DjiLinkSnapshot live({DjiLinkTelemetry? telemetry, DjiLinkDecode? decode}) => fakeSnapshot(
+  DjiLinkSnapshot live({
+    DjiLiveFrame? frame,
+    DjiLinkTelemetry? telemetry,
+    DjiLinkDecode? decode,
+    int captureBytes = 4096,
+  }) => fakeSnapshot(
     state: DjiLinkState.videoReady,
     reason: DjiLinkReason.videoDecoded,
     decode: decode ?? fakeDecode(),
     telemetryValues: telemetry ?? fakeTelemetry(percent: 34, motorTimeS: 41.6),
+    liveFrame: frame ?? fakeFrame(),
+    captureBytes: captureBytes,
   );
 
   /// Opens the live screen from a page under it, so that Back has somewhere to go; returns the events listener
@@ -255,7 +265,8 @@ void main() {
   testWidgets('the picture fills the screen with Live and the gated values, and nothing in it takes a touch', (
     tester,
   ) async {
-    final listener = await openLive(tester, phone());
+    final api = phone();
+    final listener = await openLive(tester, api);
     await push(tester, listener, live());
 
     expect(find.byKey(const Key('dji_live_placeholder')), findsOneWidget);
@@ -269,8 +280,11 @@ void main() {
     // Behind the gate: the remote's battery, the signal, the heading and the height are not over the picture
     expect(find.text('50 %'), findsNothing);
     expect(find.text('90'), findsNothing);
-    expect(find.textContaining('126.8'), findsNothing);
+    expect(find.textContaining('127'), findsNothing);
     expect(find.textContaining('Height'), findsNothing);
+    expect(find.textContaining('-0.5'), findsNothing);
+    // The frames come ten times a second while this screen is in front
+    expect(api.frameStreams, [true]);
     // A picture was seen on this install: the next sessions may offer to open on the plug
     expect(memory.values[StoreKey.djiLivePictureSeen], isTrue);
 
@@ -290,7 +304,7 @@ void main() {
 
   testWidgets('a stale group disappears, and the picture state follows the decoder', (tester) async {
     final listener = await openLive(tester, phone());
-    await push(tester, listener, live(telemetry: fakeTelemetry(percent: 34, motorTimeS: 41.6, batteryStale: true)));
+    await push(tester, listener, live(frame: fakeFrame(percent: null)));
     expect(find.text('34 %'), findsNothing);
     expect(find.text('0:41'), findsOneWidget);
 
@@ -507,7 +521,7 @@ void main() {
   testWidgets('Advanced: open on the plug, a capture for a bug report, and the values behind the gate', (tester) async {
     final api = phone(djiFly: true);
     final listener = await openLive(tester, api, size: _large);
-    await push(tester, listener, live(telemetry: fakeTelemetry()));
+    await push(tester, listener, live());
     await tester.tap(find.byKey(const Key('dji_live_advanced')));
     await tester.pumpAndSettle();
 
@@ -525,12 +539,29 @@ void main() {
     expect(find.text('Exported to Download/Immuch360/dji-link/dji-link-20261022-120000.bin'), findsOneWidget);
     expect(find.textContaining('Keep the files to yourself.'), findsOneWidget);
 
-    expect(find.text('Remote battery?'), findsOneWidget);
-    expect(find.text('50 %'), findsOneWidget);
     expect(find.text('Heading (zero not checked against north)'), findsOneWidget);
+    expect(find.text('127°'), findsOneWidget);
     expect(find.text('Drone battery voltage'), findsOneWidget);
     expect(find.text('6.18 V'), findsOneWidget);
-    expect(find.textContaining('Height'), findsNothing);
+    // The values our captures only make likely: under "Not confirmed yet", with a question mark
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('dji_live_values_pending')),
+      100,
+      scrollable: find.descendant(
+        of: find.byKey(const Key('dji_live_advanced_panel')),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    expect(find.byKey(const Key('dji_live_values_unconfirmed')), findsOneWidget);
+    expect(find.text('Remote battery?'), findsOneWidget);
+    expect(find.text('50 %'), findsOneWidget);
+    expect(find.text('Height above the take off point?'), findsOneWidget);
+    expect(find.text('-0.5 m'), findsOneWidget);
+    expect(find.text('Vertical speed?'), findsOneWidget);
+    expect(find.text('↓ 0.2 m/s'), findsOneWidget);
+    expect(find.text('Signal bars?'), findsOneWidget);
+    expect(find.text('Height, speeds and distance from home show once our flight captures prove them.'), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_no_dji_warnings')), findsOneWidget);
     expect(find.byKey(const Key('dji_live_diagnostics')), findsOneWidget);
     await tester.scrollUntilVisible(
       find.byKey(const Key('dji_live_to_dji_fly')),
@@ -600,4 +631,206 @@ void main() {
     await tester.pumpAndSettle();
     expect(api.playbackStops, 1);
   });
+
+  testWidgets('a capture for a bug report: nothing written before a remote opened, one file for three taps', (
+    tester,
+  ) async {
+    final api = phone();
+    final listener = await openLive(tester, api, size: _large);
+    await tester.tap(find.byKey(const Key('dji_live_advanced')));
+    await tester.pumpAndSettle();
+
+    // No remote in this session and none kept: nothing is written, and the toast says why
+    await tester.tap(find.byKey(const Key('dji_live_save_capture')));
+    await tester.pumpAndSettle();
+    expect(api.exports, isEmpty);
+    expect(find.text('Nothing to save yet: plug in the remote first.'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+
+    // A session under way: three taps while the first export runs make one native call and one toast
+    await push(tester, listener, live());
+    final gate = Completer<void>();
+    api.exportGate = gate;
+    final notifier = ProviderScope.containerOf(
+      tester.element(find.byKey(const Key('dji_live'))),
+    ).read(djiLinkProvider.notifier);
+    final outcomes = [notifier.exportForBugReport(), notifier.exportForBugReport(), notifier.exportForBugReport()];
+    gate.complete();
+    expect(await Future.wait(outcomes), [
+      DjiLinkExportOutcome.saved,
+      DjiLinkExportOutcome.busy,
+      DjiLinkExportOutcome.busy,
+    ]);
+    expect(api.exports, hasLength(1));
+
+    // Nothing new since: the native side answers repeated, and the toast names the file already saved
+    api.exportGate = null;
+    api.exportResult = DjiLinkExport(
+      ok: true,
+      bytes: 4096,
+      binPath: 'Download/Immuch360/dji-link/dji-link-20261022-120000.bin',
+      headerPath: 'Download/Immuch360/dji-link/dji-link-20261022-120000.json',
+      repeated: true,
+    );
+    await tester.tap(find.byKey(const Key('dji_live_save_capture')));
+    await tester.pumpAndSettle();
+    expect(find.text('Already saved: dji-link-20261022-120000'), findsOneWidget);
+  });
+
+  testWidgets('a saved capture says where it went in a toast', (tester) async {
+    final api = phone();
+    final listener = await openLive(tester, api, size: _large);
+    await push(tester, listener, live());
+    await tester.tap(find.byKey(const Key('dji_live_advanced')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('dji_live_save_capture')));
+    await tester.pumpAndSettle();
+    expect(find.text('Saved in Download/Immuch360/dji-link: dji-link-20261022-120000'), findsOneWidget);
+
+    api.exportResult = DjiLinkExport(ok: false, bytes: 0, error: 'No space left');
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('dji_live_save_capture')));
+    await tester.pumpAndSettle();
+    expect(find.text('The capture could not be saved. Diagnostics says why.'), findsOneWidget);
+  });
+
+  testWidgets('the drone battery under 20 % is amber with its icon, and says low', (tester) async {
+    final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
+    final listener = await openLive(tester, phone());
+    await push(tester, listener, live(frame: fakeFrame(percent: 20)));
+    expect(find.byKey(const Key('dji_live_battery_low')), findsNothing);
+    await push(tester, listener, live(frame: fakeFrame(atMs: 1100, percent: 19)));
+    expect(find.byKey(const Key('dji_live_battery_low')), findsOneWidget);
+    final number = tester.widget<Text>(find.text('19 %'));
+    expect(number.style?.color, const Color(0xFFFFB300));
+    expect(find.bySemanticsLabel('Drone battery 19 % low'), findsOneWidget);
+  });
+
+  testWidgets('ten frames a second change the numbers in place: nothing beside them moves', (tester) async {
+    final listener = await openLive(tester, phone());
+    await push(tester, listener, live());
+    final battery = tester.getRect(find.byKey(const Key('dji_live_cell_droneBattery')));
+    final motorTime = tester.getRect(find.byKey(const Key('dji_live_cell_motorTime')));
+    final picture = tester.getRect(find.byKey(const Key('dji_live_picture_area')));
+    for (var index = 0; index < 20; index++) {
+      listener!.flightChanged(fakeFrame(atMs: 2000 + index * 100, motorTimeS: 41.6 + index * 7, percent: 34 - index));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.text(djiMinutes(41.6 + index * 7)), findsOneWidget);
+      expect(tester.getRect(find.byKey(const Key('dji_live_cell_droneBattery'))), battery);
+      expect(tester.getRect(find.byKey(const Key('dji_live_cell_motorTime'))), motorTime);
+      expect(tester.getRect(find.byKey(const Key('dji_live_picture_area'))), picture);
+    }
+    // A group that stops coming leaves its place empty: the motor time does not move up
+    listener!.flightChanged(fakeFrame(atMs: 5000, percent: null));
+    await tester.pump();
+    expect(find.text('14 %'), findsNothing);
+    expect(tester.getRect(find.byKey(const Key('dji_live_cell_motorTime'))), motorTime);
+    // An older frame (a snapshot built before) is never drawn over a newer one
+    listener.flightChanged(fakeFrame(atMs: 4000, percent: 77));
+    await tester.pump();
+    expect(find.text('77 %'), findsNothing);
+  });
+
+  testWidgets('the obstacle alert is a test the pilot turns on in Advanced, and says it only informs', (tester) async {
+    final api = phone();
+    final listener = await openLive(tester, api, size: _large);
+    await push(tester, listener, live());
+    expect(api.obstacleAlerts.last, (false, true));
+    await tester.tap(find.byKey(const Key('dji_live_advanced')));
+    await tester.pumpAndSettle();
+    final scrollable = find.descendant(
+      of: find.byKey(const Key('dji_live_advanced_panel')),
+      matching: find.byType(Scrollable),
+    );
+    await tester.scrollUntilVisible(find.byKey(const Key('dji_live_obstacle_limits')), 100, scrollable: scrollable);
+    expect(find.text('Obstacle alert, not confirmed yet'), findsOneWidget);
+    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_test'))).value, isFalse);
+    expect(find.byKey(const Key('dji_live_obstacle_sound')), findsNothing);
+    expect(find.byKey(const Key('dji_live_obstacle_info_only')), findsOneWidget);
+    expect(find.textContaining('No alert does not mean the way is clear.'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('dji_live_obstacle_test')));
+    await tester.pumpAndSettle();
+    expect(api.obstacleAlerts.last, (true, true));
+    expect(memory.values[StoreKey.djiObstacleAlertOn], isTrue);
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('dji_live_obstacle_sound_test')),
+      100,
+      scrollable: scrollable,
+    );
+    await tester.tap(find.byKey(const Key('dji_live_obstacle_sound_test')));
+    await tester.pumpAndSettle();
+    expect(api.obstacleTests, 1);
+    expect(find.byKey(const Key('dji_live_media_volume_off')), findsNothing);
+
+    api.volumeOff = true;
+    await tester.tap(find.byKey(const Key('dji_live_obstacle_sound_test')));
+    await tester.pumpAndSettle();
+    expect(find.text('The media volume is off: the obstacle sound cannot be heard.'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('dji_live_obstacle_sound')));
+    await tester.pumpAndSettle();
+    expect(api.obstacleAlerts.last, (true, false));
+    expect(memory.values[StoreKey.djiObstacleSoundOff], isTrue);
+  });
+
+  testWidgets('the obstacle banner over the picture: the distance, not confirmed yet, and a tap goes through it', (
+    tester,
+  ) async {
+    final listener = await openLive(tester, phone());
+    await push(tester, listener, live(frame: fakeFrame(alert: fakeDecision(listening: true))));
+    expect(find.byKey(const Key('dji_live_obstacle_banner')), findsNothing);
+    // Listening: the top view of the drone, never a "clear" sign
+    expect(find.byKey(const Key('dji_live_obstacle_glyph')), findsOneWidget);
+
+    listener!.flightChanged(fakeFrame(atMs: 2000, alert: fakeDecision(on: true, distanceM: 1.84)));
+    await tester.pump();
+    expect(find.text('Obstacle close: 1.8 m'), findsOneWidget);
+    expect(find.text('Not confirmed yet'), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_glyph_on')), findsOneWidget);
+    // No side known yet: no glow on any edge
+    expect(find.byKey(const Key('dji_live_obstacle_glow_left')), findsNothing);
+    // The banner takes no touch: a tap on it reaches nothing
+    await tester.tap(find.byKey(const Key('dji_live_obstacle_banner')), warnIfMissed: false);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_live_leave_dialog')), findsNothing);
+
+    // A side, once a capture names one: the glow on that edge and the side under the distance
+    listener.flightChanged(
+      fakeFrame(atMs: 3000, alert: fakeDecision(on: true, distanceM: 0.9, side: DjiObstacleSide.left)),
+    );
+    await tester.pump();
+    expect(find.byKey(const Key('dji_live_obstacle_glow_left')), findsOneWidget);
+    expect(find.text('On the left  Not confirmed yet'), findsOneWidget);
+
+    // The data stopped while it was on
+    listener.flightChanged(fakeFrame(atMs: 4000, alert: fakeDecision(stopped: true)));
+    await tester.pump();
+    expect(find.text('Obstacle data stopped: look at the drone.'), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_glow_left')), findsNothing);
+  });
+
+  testWidgets('the obstacle banner shows over "No picture" too', (tester) async {
+    final listener = await openLive(tester, phone());
+    await push(tester, listener, live());
+    await push(
+      tester,
+      listener,
+      live(
+        decode: fakeDecode(lastOutputAgoMs: 2500),
+        frame: fakeFrame(atMs: 2000, alert: fakeDecision(on: true, distanceM: 2.5)),
+      ),
+    );
+    expect(cardTitle('No picture'), findsOneWidget);
+    expect(find.text('Obstacle close: 2.5 m'), findsOneWidget);
+  });
+}
+
+/// The motor time as the cells write it
+String djiMinutes(double seconds) {
+  final whole = seconds.floor();
+  return '${whole ~/ 60}:${(whole % 60).toString().padLeft(2, '0')}';
 }

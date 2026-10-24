@@ -1,6 +1,7 @@
-// The gate of the values the DJI live video may show (design section 4, p2/telemetry-flight-2026-10-24.md): proven
-// values over the picture with their label, likely ones in Advanced only with a question mark, guesses nowhere, and a
-// value whose group stopped coming not drawn at all.
+// The gate of the values the DJI live video may show (p2/design-final-2026-10-24.md, 3.2, with the classes of
+// p2/telemetry-deep-dive-2026-10-24.md): proven values over the picture with their label, likely ones in Advanced
+// only under "Not confirmed yet" with a question mark, guesses and unnamed values nowhere, a value whose group stopped
+// coming not drawn at all, and the formats a pilot reads.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,6 +10,17 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_live_fields.dart';
 
 import '../../../unit/presentation/presentation_context.dart';
 import '../../pages/drone/dji_link_fakes.dart';
+
+/// Every row proven and over the picture: the gate of a later build, once the proof flights are in
+final _proven = {
+  for (final entry in djiLiveGates.entries)
+    entry.key: DjiLiveGate(
+      entry.value.evidence == DjiLiveEvidence.none ? DjiLiveEvidence.none : DjiLiveEvidence.proven,
+      entry.value.band == DjiLiveBand.none ? DjiLivePlace.advanced : DjiLivePlace.overlay,
+      band: entry.value.band,
+      drop: entry.value.drop,
+    ),
+};
 
 void main() {
   late PresentationContext context;
@@ -44,6 +56,7 @@ void main() {
       final place = djiLivePlace(field);
       switch (gate.evidence) {
         case DjiLiveEvidence.guess:
+        case DjiLiveEvidence.none:
           expect(place, DjiLivePlace.nowhere, reason: field.name);
         case DjiLiveEvidence.likely:
           expect(place, isNot(DjiLivePlace.overlay), reason: field.name);
@@ -51,72 +64,166 @@ void main() {
           expect(place, gate.place, reason: field.name);
       }
     }
-    // The first build: the drone's battery and the motor time over the picture, nothing else
+    // With today's classes: the drone's battery and the motor time over the picture, nothing else
     expect(
       [for (final field in DjiLiveField.values) if (djiLiveShowsAt(field, DjiLivePlace.overlay)) field],
       [DjiLiveField.droneBattery, DjiLiveField.motorTime],
     );
-    expect(djiLivePlace(DjiLiveField.remoteBattery), DjiLivePlace.advanced);
-    // No row at all for what a pilot would read first and our captures cannot prove yet
-    final names = DjiLiveField.values.map((field) => field.name.toLowerCase()).join(' ');
-    for (final missing in ['height', 'speed', 'satellite', 'position', 'distance']) {
-      expect(names.contains(missing), isFalse, reason: missing);
+    expect(djiLiveBandFields(DjiLiveBand.right), [DjiLiveField.droneBattery, DjiLiveField.motorTime]);
+    expect(djiLiveBandFields(DjiLiveBand.left), isEmpty);
+    // Every value a pilot reads has a row
+    expect(djiLiveGates.keys.toSet(), DjiLiveField.values.toSet());
+    // Likely: in Advanced, under "Not confirmed yet"
+    for (final field in [
+      DjiLiveField.height,
+      DjiLiveField.verticalSpeed,
+      DjiLiveField.speed,
+      DjiLiveField.remoteBattery,
+      DjiLiveField.signalBars,
+      DjiLiveField.distanceBelow,
+      DjiLiveField.obstacle,
+    ]) {
+      expect(djiLivePlace(field), DjiLivePlace.advanced, reason: field.name);
+      expect(djiLiveIsLikely(field), isTrue, reason: field.name);
     }
+    // No source in our captures: nowhere, and the native side reads no byte for them
+    expect(djiLivePlace(DjiLiveField.distanceHome), DjiLivePlace.nowhere);
+    expect(djiLivePlace(DjiLiveField.timeLeft), DjiLivePlace.nowhere);
+    expect(djiLivePlace(DjiLiveField.satellites), DjiLivePlace.nowhere);
+    expect(djiLivePlace(DjiLiveField.landing), DjiLivePlace.nowhere);
+    expect(djiLiveFlightValuesPending(), isTrue);
   });
 
-  test('the motor time is minutes and whole seconds', () {
+  test('the obstacle alert is a test while its data is likely, and proven once its row is', () {
+    expect(djiObstacleOffer(), DjiObstacleOffer.test);
+    expect(djiObstacleOffer(gates: _proven), DjiObstacleOffer.proven);
+    final none = {
+      ...djiLiveGates,
+      DjiLiveField.obstacle: const DjiLiveGate(DjiLiveEvidence.none, DjiLivePlace.overlay),
+    };
+    expect(djiObstacleOffer(gates: none), DjiObstacleOffer.none);
+  });
+
+  test('the formats: minutes and seconds, the height, the vertical speed with its arrow', () {
     expect(djiLiveMinutesSeconds(0), '0:00');
     expect(djiLiveMinutesSeconds(41.6), '0:41');
     expect(djiLiveMinutesSeconds(65), '1:05');
     expect(djiLiveMinutesSeconds(-3), '0:00');
     expect(djiLiveMinutesSeconds(double.nan), '0:00');
+    expect(djiLiveHeight(12.34), '12.3');
+    expect(djiLiveHeight(-0.5), '-0.5');
+    expect(djiLiveHeight(0), '0.0');
+    expect(djiLiveHeight(99.94), '99.9');
+    expect(djiLiveHeight(123.4), '123');
+    expect(djiLiveVerticalSpeed(1.2), '↑ 1.2');
+    expect(djiLiveVerticalSpeed(-0.2), '↓ 0.2');
+    expect(djiLiveVerticalSpeed(0.1), '↑ 0.1');
+    expect(djiLiveVerticalSpeed(0.04), '0.0');
+    expect(djiLiveVerticalSpeed(-0.04), '0.0');
   });
 
   testWidgets('over the picture: the drone battery and the motor time, with their labels', (tester) async {
     final t = await english(tester);
-    expect(shown(djiLiveValues(t, fakeTelemetry(percent: 34, motorTimeS: 41.6), DjiLivePlace.overlay)), [
+    expect(shown(djiLiveValues(t, fakeFrame(), DjiLivePlace.overlay)), [
       ('Drone battery', '34 %'),
       ('Motor time', '0:41'),
     ]);
     expect(djiLiveValues(t, null, DjiLivePlace.overlay), isEmpty);
-    expect(djiLiveValues(t, fakeTelemetry(), DjiLivePlace.nowhere), isEmpty);
+    expect(djiLiveValues(t, fakeFrame(), DjiLivePlace.nowhere), isEmpty);
   });
 
-  testWidgets('a group that stopped coming is not drawn at all', (tester) async {
+  testWidgets('a stale group is not drawn at all', (tester) async {
     final t = await english(tester);
-    expect(shown(djiLiveValues(t, fakeTelemetry(batteryStale: true), DjiLivePlace.overlay)), [('Motor time', '0:38')]);
-    expect(shown(djiLiveValues(t, fakeTelemetry(stale: true), DjiLivePlace.overlay)), [('Drone battery', '38 %')]);
-    expect(djiLiveValues(t, fakeTelemetry(stale: true, batteryStale: true), DjiLivePlace.overlay), isEmpty);
-    final advanced = djiLiveValues(t, fakeTelemetry(remoteBatteryStale: true), DjiLivePlace.advanced);
-    expect(advanced.any((value) => value.field == DjiLiveField.remoteBattery), isFalse);
+    expect(shown(djiLiveValues(t, fakeFrame(percent: null), DjiLivePlace.overlay)), [('Motor time', '0:41')]);
+    expect(shown(djiLiveValues(t, fakeFrame(motorTimeS: null), DjiLivePlace.overlay)), [('Drone battery', '34 %')]);
+    expect(djiLiveValues(t, fakeFrame(percent: null, motorTimeS: null), DjiLivePlace.overlay), isEmpty);
+    final advanced = djiLiveValues(t, fakeFrame(remoteBatteryPercent: null), DjiLivePlace.advanced);
+    expect(advanced.where((value) => value.field == DjiLiveField.remoteBattery), isEmpty);
   });
 
-  testWidgets('Advanced lists every value that shows, a likely one with a question mark in its label', (tester) async {
+  testWidgets('Advanced: the proven values, then the likely ones with their question marks', (tester) async {
     final t = await english(tester);
-    final values = djiLiveValues(t, fakeTelemetry(), DjiLivePlace.advanced);
+    final values = djiLiveValues(
+      t,
+      fakeFrame(motorsOn: true, speedMps: 4.24, distanceBelowM: 0.136, obstacleM: 1.84),
+      DjiLivePlace.advanced,
+    );
     expect(shown(values), [
-      ('Drone battery', '38 %'),
-      ('Motor time', '0:38'),
+      ('Drone battery', '34 %'),
+      ('Motor time', '0:41'),
+      ('Signal bars?', '5/5'),
+      ('Remote battery?', '50 %'),
+      ('Heading (zero not checked against north)', '127°'),
+      ('Height above the take off point?', '-0.5 m'),
+      ('Vertical speed?', '↓ 0.2 m/s'),
+      ('Speed over the ground?', '4.2 m/s'),
+      ('Distance below?', '0.14 m'),
+      ('Nearest obstacle?', '1.8 m'),
       ('Motors', 'On'),
       ('Drone battery voltage', '6.18 V'),
       ('Drone battery temperature', '26.9 °C'),
-      ('Heading (zero not checked against north)', '126.8°'),
       ('Signal (its scale is not known yet)', '90'),
       ('Link rate', '5.9 Mbit/s'),
-      ('Remote battery?', '50 %'),
     ]);
-    for (final value in values) {
-      final likely = djiLiveGates[value.field]!.evidence == DjiLiveEvidence.likely;
-      expect(value.label.endsWith('?'), likely, reason: value.field.name);
-    }
-    expect(values.first.line, 'Drone battery 38 %');
+    // The satellites (a guess) and the landing chip are not there
+    expect(values.where((value) => value.field == DjiLiveField.satellites), isEmpty);
+    expect(values.first.line, 'Drone battery 34 %');
   });
 
-  testWidgets('the flight view of the Quest gets one template per value over the picture', (tester) async {
+  testWidgets('a gate opened later puts each value in its band, with its short label', (tester) async {
+    final t = await english(tester);
+    expect(djiLiveBandFields(DjiLiveBand.left, gates: _proven), [
+      DjiLiveField.height,
+      DjiLiveField.verticalSpeed,
+      DjiLiveField.speed,
+    ]);
+    expect(djiLiveBandFields(DjiLiveBand.right, gates: _proven), [
+      DjiLiveField.droneBattery,
+      DjiLiveField.motorTime,
+      DjiLiveField.signalBars,
+      DjiLiveField.remoteBattery,
+      DjiLiveField.satellites,
+      DjiLiveField.heading,
+      DjiLiveField.landing,
+    ]);
+    final frame = fakeFrame(motorsOn: true, speedMps: 4.2, heightM: 12.3, verticalSpeedMps: 1.2, landing: true);
+    expect(shown(djiLiveValues(t, frame, DjiLivePlace.overlay, gates: _proven)), [
+      ('Drone battery', '34 %'),
+      ('Motor time', '0:41'),
+      ('Signal', '5/5'),
+      ('Remote', '50 %'),
+      ('Satellites', '0'),
+      ('', '127°'),
+      ('', 'Landing'),
+      ('Height', '12.3 m'),
+      ('Vertical', '↑ 1.2 m/s'),
+      ('Speed', '4.2 m/s'),
+    ]);
+    expect(djiLiveFlightValuesPending(gates: _proven), isTrue, reason: 'no field gives the distance from home');
+  });
+
+  testWidgets('the drone battery under 20 % is low', (tester) async {
+    final t = await english(tester);
+    expect(djiLiveBatteryIsLow(fakeFrame(percent: 20)), isFalse);
+    expect(djiLiveBatteryIsLow(fakeFrame(percent: 19)), isTrue);
+    expect(djiLiveBatteryIsLow(fakeFrame(percent: null)), isFalse);
+    expect(djiLiveValues(t, fakeFrame(percent: 19), DjiLivePlace.overlay).first.low, isTrue);
+  });
+
+  testWidgets('the Quest flight view gets a label and a value template for the values over the picture only', (
+    tester,
+  ) async {
     final t = await english(tester);
     expect(djiLiveFlightViewTemplates(t), {
-      'droneBattery': 'Drone battery {value} %',
-      'motorTime': 'Motor time {value}',
+      'cell.droneBattery.label': 'Drone battery',
+      'cell.droneBattery.value': '{value} %',
+      'cell.motorTime.label': 'Motor time',
+      'cell.motorTime.value': '{value}',
     });
+    final later = djiLiveFlightViewTemplates(t, gates: _proven);
+    expect(later['cell.height.value'], '{value} m');
+    expect(later['cell.verticalSpeed.value'], '{value} m/s');
+    expect(later['cell.landing.value'], 'Landing');
+    expect(later.containsKey('cell.distanceHome.value'), isFalse);
   });
 }

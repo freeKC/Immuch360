@@ -21,11 +21,13 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.d
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_advanced.panel.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_fields.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_notice.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_obstacle.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_overlay.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_send.panel.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_stage.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_steps.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
+import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/system_ui.utils.dart';
@@ -86,6 +88,9 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
     unawaited(Future.microtask(_relay.loadCode));
     unawaited(Future.microtask(() => _relay.setPageVisible(true)));
     unawaited(Future.microtask(() => _relay.setLiveScreenShown(true)));
+    // The values ten times a second while this screen is in front, and the obstacle alert as the pilot set it
+    unawaited(Future.microtask(() => _notifier.setFrameStream(true)));
+    unawaited(Future.microtask(() => ref.read(djiObstacleSettingsProvider.notifier).sync()));
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
     WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_noticeOnce()));
   }
@@ -93,7 +98,8 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
   @override
   void dispose() {
     _ticker?.cancel();
-    // The relay keeps sending without the screen; only the screen is no longer kept on for it
+    // The relay keeps sending without the screen; only the screen is no longer kept on for it, and nothing beeps
+    unawaited(_notifier.setFrameStream(false));
     unawaited(_relay.setLiveScreenShown(false));
     unawaited(_relay.setPageVisible(false));
     unawaited(_notifier.pageHidden());
@@ -126,7 +132,7 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
     if (!mounted || ref.read(djiLiveNoticeReadProvider)) {
       return;
     }
-    final read = await showDjiLiveNotice(context, headset: false);
+    final read = await showDjiLiveNotice(context, headset: false, alert: _alertOffered());
     if (!mounted) {
       return;
     }
@@ -223,8 +229,11 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
 
   Future<void> _safetyAgain() async {
     setState(() => _panel = null);
-    await showDjiLiveNotice(context, headset: false);
+    await showDjiLiveNotice(context, headset: false, alert: _alertOffered());
   }
+
+  /// The obstacle alert is offered on this device: the notice then says it never steers or stops the drone
+  bool _alertOffered() => ref.read(djiObstacleSettingsProvider).offered(djiObstacleOffer());
 
   /// Diagnostics turns freely and shows the system bars; the live screen takes landscape again when it comes back
   Future<void> _openDiagnostics() async {
@@ -348,26 +357,14 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
         child: ColoredBox(
           key: const Key('dji_live_picture_area'),
           color: Colors.black,
-          child: showPicture
-              ? const DjiLinkVideoSurface()
-              : card == null
-              ? const SizedBox.expand()
-              : Padding(
-                  padding: EdgeInsets.symmetric(horizontal: banded ? 0 : djiLiveEdgeWidth),
-                  child: Center(
-                    child: DjiLiveStepCard(
-                      stage: stage,
-                      text: card,
-                      // A start that failed starts again; a lost link asks the native side to try at once
-                      onRetry: () => unawaited(
-                        stage == DjiLiveStage.failed ? _notifier.pageShown(capture: true) : _notifier.retry(),
-                      ),
-                      offer: stage == DjiLiveStage.plug && _offerable && !state.openOnPlug,
-                      onOfferYes: () => unawaited(_answerOffer(true)),
-                      onOfferNo: () => unawaited(_answerOffer(false)),
-                    ),
-                  ),
-                ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              _pictureOrCard(stage, state, card, showPicture: showPicture, banded: banded),
+              // The obstacle alert over whatever shows, the picture, "No picture" or a step card: it takes no touch
+              const DjiObstacleLayer(),
+            ],
+          ),
         ),
       ),
       Positioned(
@@ -405,14 +402,46 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
               child: DjiLiveReadout(
                 picture: picture,
                 staleSeconds: ago == null ? null : (ago / 1000).toStringAsFixed(1),
-                values: djiLiveValues(t, snapshot?.telemetryValues, DjiLivePlace.overlay),
                 captureName: capture ? source?.name ?? '-' : null,
                 onStopCapture: () => unawaited(_notifier.stopPlayback()),
+                footer: const DjiObstacleGlyph(),
               ),
             ),
           ),
         ),
       ),
     ];
+  }
+
+  /// The drone's picture, or the step card while it does not show
+  Widget _pictureOrCard(
+    DjiLiveStage stage,
+    DjiLinkPageState state,
+    DjiLiveCardText? card, {
+    required bool showPicture,
+    required bool banded,
+  }) {
+    if (showPicture) {
+      return const DjiLinkVideoSurface();
+    }
+    if (card == null) {
+      return const SizedBox.expand();
+    }
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: banded ? 0 : djiLiveEdgeWidth),
+      child: Center(
+        child: DjiLiveStepCard(
+          stage: stage,
+          text: card,
+          // A start that failed starts again; a lost link asks the native side to try at once
+          onRetry: () => unawaited(
+            stage == DjiLiveStage.failed ? _notifier.pageShown(capture: true) : _notifier.retry(),
+          ),
+          offer: stage == DjiLiveStage.plug && _offerable && !state.openOnPlug,
+          onOfferYes: () => unawaited(_answerOffer(true)),
+          onOfferNo: () => unawaited(_answerOffer(false)),
+        ),
+      ),
+    );
   }
 }

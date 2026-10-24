@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/presentation/pages/drone/dji_watch.page.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.dart';
@@ -31,6 +32,11 @@ void main() {
   tearDown(() async {
     await context.dispose();
   });
+
+  /// What the page keeps on this install, in memory for each test
+  late Map<StoreKey<bool>, bool> memory;
+
+  setUp(() => memory = {});
 
   FakeDjiLinkApi headset() => FakeDjiLinkApi(
     environment: fakeEnvironment(accessoryFeature: false),
@@ -63,6 +69,9 @@ void main() {
         djiLinkEventsSetUpProvider.overrideWithValue((events) => listener = events),
         djiRelayEnvironmentProvider.overrideWithValue((relay ?? FakeRelayEnvironment()).build()),
         djiLiveNoticeReadProvider.overrideWith((ref) => noticeRead),
+        djiLiveMemoryProvider.overrideWithValue(
+          DjiLiveMemory(read: (key) => memory[key] ?? false, write: (key, value) async => memory[key] = value),
+        ),
         isHorizonOsProvider.overrideWith((ref) async => horizonOs),
         djiLinkVideoViewBuilderProvider.overrideWithValue(
           () => const ColoredBox(key: Key('dji_watch_placeholder'), color: Colors.black),
@@ -229,6 +238,7 @@ void main() {
         decode: fakeDecode(),
         relayReceiving: fakeReceiving(phoneSource: 'cable'),
         telemetryValues: fakeTelemetry(percent: 34, motorTimeS: 41.6),
+        liveFrame: fakeFrame(),
       ),
     );
     await tester.pumpAndSettle();
@@ -244,7 +254,14 @@ void main() {
       find.descendant(of: strip, matching: find.textContaining('an observer standing next to you')),
       findsOneWidget,
     );
-    expect(find.text('Drone battery 34 %   Motor time 0:41'), findsOneWidget);
+    // The values under the picture, each a small label over a number, the same gate as the phone's bands
+    final values = find.byKey(const Key('dji_watch_values'));
+    expect(find.descendant(of: values, matching: find.text('Drone battery')), findsOneWidget);
+    expect(find.descendant(of: values, matching: find.text('34 %')), findsOneWidget);
+    expect(find.descendant(of: values, matching: find.text('Motor time')), findsOneWidget);
+    expect(find.descendant(of: values, matching: find.text('0:41')), findsOneWidget);
+    expect(find.descendant(of: values, matching: find.text('50 %')), findsNothing);
+    expect(find.descendant(of: values, matching: find.textContaining('Height')), findsNothing);
     expect(find.text('Delay from the phone: about 24 ms'), findsOneWidget);
     expect(find.byKey(const Key('dji_link_receive_strip_stale')), findsNothing);
 
@@ -279,12 +296,18 @@ void main() {
     await tester.tap(button);
     await tester.pumpAndSettle();
     final labels = api.flightViews.single;
-    expect(labels['droneBattery'], 'Drone battery {value} %');
-    expect(labels['motorTime'], 'Motor time {value}');
+    expect(labels['cell.droneBattery.label'], 'Drone battery');
+    expect(labels['cell.droneBattery.value'], '{value} %');
+    expect(labels['cell.motorTime.label'], 'Motor time');
+    expect(labels['cell.motorTime.value'], '{value}');
     expect(labels['delay'], 'Delay from the phone: about {ms} ms');
-    for (final hidden in ['remoteBattery', 'signal', 'heading', 'flight', 'power', 'latency']) {
-      expect(labels.containsKey(hidden), isFalse, reason: hidden);
+    for (final hidden in ['remoteBattery', 'signal', 'heading', 'height', 'verticalSpeed', 'speed', 'satellites']) {
+      expect(labels.containsKey('cell.$hidden.value'), isFalse, reason: hidden);
     }
+    // The banner of the obstacle alert, said as a test while our captures do not prove its data
+    expect(labels['obstacleClose'], 'Obstacle close: {distance} m');
+    expect(labels['obstacleUnconfirmed'], 'Not confirmed yet');
+    expect(labels['batteryLow'], 'low');
     expect(labels['observer'], contains('an observer standing next to you'));
     expect(labels['watching'], contains('Watching only'));
     expect(labels['flyNote'], 'Not compared with DJI Fly yet: do not fly by these numbers.');
@@ -293,7 +316,7 @@ void main() {
     expect(labels['wrongCode'], 'The code does not match: type it again.');
     expect(labels['noValues'], 'No flight data has arrived.');
     expect(labels['valuesStale'], 'These values are no longer updated');
-    expect(labels['hint'], contains('A: show or hide the values'));
+    expect(labels['hint'], contains('A: show or hide the numbers beside the picture'));
 
     listener.snapshotChanged(fakeSnapshot(decode: fakeDecode(lastOutputAgoMs: 5000), relayReceiving: fakeReceiving()));
     await tester.pumpAndSettle();
@@ -307,12 +330,69 @@ void main() {
     expect(find.byKey(const Key('dji_link_flight_view_open')), findsNothing);
   });
 
-  testWidgets('leaving the page stops receiving with it', (tester) async {
+  testWidgets('leaving the page stops receiving with it, and the frames and the screen kept on with it', (
+    tester,
+  ) async {
+    final relay = FakeRelayEnvironment();
     final api = headset();
-    await openWatch(tester, api);
+    await openWatch(tester, api, relay: relay);
+    expect(api.frameStreams, [true]);
+    expect(relay.screen.last, isTrue);
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('dji_watch')), findsNothing);
     expect(api.stops, 1);
+    expect(api.frameStreams, [true, false]);
+    expect(relay.screen.last, isFalse);
+  });
+
+  Future<void> menu(WidgetTester tester, Key item) async {
+    await tester.tap(find.byKey(const Key('dji_watch_menu')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(item));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('"Save a reception record" writes it and names it, or says nothing was received', (tester) async {
+    final api = headset();
+    await openWatch(tester, api);
+    await menu(tester, const Key('dji_watch_save_record'));
+    expect(api.receptionExports, 1);
+    expect(find.text('Saved in Download/Immuch360/dji-link: dji-relay-20261024-171200'), findsOneWidget);
+
+    api.receptionResult = DjiLinkExport(ok: true, bytes: 0, nothing: true);
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+    await menu(tester, const Key('dji_watch_save_record'));
+    expect(find.text('Nothing received yet: nothing to save.'), findsOneWidget);
+  });
+
+  testWidgets('the obstacle alert is a test the headset turns on in its menu, then its sound', (tester) async {
+    final api = headset();
+    final listener = await openWatch(tester, api);
+    expect(api.obstacleAlerts.last, (false, true));
+    await tester.tap(find.byKey(const Key('dji_watch_menu')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_watch_obstacle_sound')), findsNothing);
+    await tester.tap(find.byKey(const Key('dji_watch_obstacle')));
+    await tester.pumpAndSettle();
+    expect(api.obstacleAlerts.last, (true, true));
+    expect(memory[StoreKey.djiObstacleAlertOn], isTrue);
+    await menu(tester, const Key('dji_watch_obstacle_sound'));
+    expect(api.obstacleAlerts.last, (true, false));
+
+    // What the native side decided shows over the picture, without the glow of the phone
+    listener!.snapshotChanged(
+      fakeSnapshot(
+        decode: fakeDecode(),
+        relayReceiving: fakeReceiving(phoneSource: 'cable'),
+        liveFrame: fakeFrame(alert: fakeDecision(on: true, distanceM: 1.84)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Obstacle close: 1.8 m'), findsOneWidget);
+    expect(find.text('Not confirmed yet'), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_muted')), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_glow_ahead')), findsNothing);
   });
 }

@@ -100,22 +100,33 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
           "note" to notes.note,
         )
       )
-      callback(
-        Result.success(
-          DjiLinkExport(
-            ok = result.ok,
-            bytes = result.bytes,
-            binPath = result.binPath,
-            indexPath = result.indexPath,
-            headerPath = result.headerPath,
-            sha256 = result.sha256,
-            error = result.error,
-            headerOnly = result.headerOnly,
-          )
-        )
-      )
+      callback(Result.success(result.toPigeon()))
     }
   }
+
+  /** On the same worker as the capture's export: two taps never write at once, the second answers "already saved" */
+  override fun exportReception(callback: (Result<DjiLinkExport>) -> Unit) {
+    worker.execute {
+      val result = runCatching { controller.exportReception() }.getOrElse {
+        CaptureExport.Result(ok = false, bytes = 0, error = it.message ?: it.javaClass.simpleName)
+      }
+      callback(Result.success(result.toPigeon()))
+    }
+  }
+
+  override fun setFrameStream(on: Boolean) {
+    controller.setFrameStream(on)
+  }
+
+  override fun setObstacleAlert(offered: Boolean, sound: Boolean) {
+    controller.setObstacleAlert(offered, sound)
+  }
+
+  override fun playObstacleTest() {
+    controller.playObstacleTest()
+  }
+
+  override fun mediaVolumeOff(): Boolean = controller.mediaVolumeOff()
 
   override fun replayCapture(
     path: String,
@@ -389,6 +400,20 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
     }
   }
 }
+
+private fun CaptureExport.Result.toPigeon(): DjiLinkExport = DjiLinkExport(
+  ok = ok,
+  bytes = bytes,
+  binPath = binPath,
+  indexPath = indexPath,
+  headerPath = headerPath,
+  sha256 = sha256,
+  error = error,
+  headerOnly = headerOnly,
+  repeated = repeated,
+  nothing = nothing,
+  controlBinPath = controlBinPath,
+)
 
 private fun CaptureFile.toPigeon(): DjiLinkCaptureFile = DjiLinkCaptureFile(
   name = name,

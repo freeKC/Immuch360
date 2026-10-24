@@ -10,19 +10,23 @@ import 'package:immich_mobile/generated/translations.g.dart';
 /// The notice was read in this run of the app: in memory only, so that it shows again after the app was closed
 final djiLiveNoticeReadProvider = StateProvider<bool>((_) => false);
 
-/// Shows the notice over the current screen; true once "I understand" was tapped, false when Back left it
-Future<bool> showDjiLiveNotice(BuildContext context, {required bool headset}) async {
+/// Shows the notice over the current screen; true once "I understand" was tapped, false when Back left it. With
+/// [alert], the obstacle alert is offered: its "information only" line follows the existing ones.
+Future<bool> showDjiLiveNotice(BuildContext context, {required bool headset, bool alert = false}) async {
   final read = await Navigator.of(context).push<bool>(
-    MaterialPageRoute<bool>(fullscreenDialog: true, builder: (_) => DjiLiveNotice(headset: headset)),
+    MaterialPageRoute<bool>(fullscreenDialog: true, builder: (_) => DjiLiveNotice(headset: headset, alert: alert)),
   );
   return read ?? false;
 }
 
 class DjiLiveNotice extends StatelessWidget {
-  const DjiLiveNotice({super.key, required this.headset});
+  const DjiLiveNotice({super.key, required this.headset, this.alert = false});
 
   /// The observer rule and "Watching only" first
   final bool headset;
+
+  /// The obstacle alert is offered: it says it never steers or stops the drone
+  final bool alert;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +41,7 @@ class DjiLiveNotice extends StatelessWidget {
       t.dji_link_safety_zones,
       t.dji_link_safety_bench,
       t.dji_link_flight_view_fly_note,
+      if (alert) t.dji_live_obstacle_info_only,
     ];
     return Scaffold(
       key: const Key('dji_live_notice'),

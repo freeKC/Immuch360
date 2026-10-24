@@ -1020,6 +1020,9 @@ class DjiLinkExport {
     this.sha256,
     this.error,
     this.headerOnly = false,
+    this.repeated = false,
+    this.nothing = false,
+    this.controlBinPath,
   });
 
   final bool ok;
@@ -1032,6 +1035,106 @@ class DjiLinkExport {
 
   /// Nothing was captured, so only the header with this device and its USB environment was written
   final bool headerOnly;
+
+  /// Nothing new since the last export: no file was written, and the paths are those of the last export
+  final bool repeated;
+
+  /// A reception record with nothing received: no file was written
+  final bool nothing;
+
+  /// Every control frame of the session, beside the bytes of its head and its tail
+  final String? controlBinPath;
+}
+
+/// Where an obstacle is, in a top view with the nose up. No side is known from our captures yet: the alert names one
+/// only once a capture proves which index of the drone's ring is its nose.
+enum DjiObstacleSide { ahead, behind, left, right, above }
+
+/// What the obstacle alert decided (ObstacleAlert on the native side, the same on the phone and the headset). It is
+/// information for the pilot, never an action: nothing here reaches the remote or the drone.
+class DjiObstacleDecision {
+  const DjiObstacleDecision({
+    required this.on,
+    required this.stopped,
+    required this.listening,
+    required this.beepIntervalMs,
+    this.distanceM,
+    this.side,
+  });
+
+  /// The alert shows: something is close on a side other than below
+  final bool on;
+
+  /// The obstacle data stopped while the alert was on: for a few seconds the banner says so, with no sound
+  final bool stopped;
+
+  /// The alert is offered and its data is fresh: the glyph shows, never meaning the way is clear
+  final bool listening;
+
+  /// 0 when silent
+  final int beepIntervalMs;
+  final double? distanceM;
+  final DjiObstacleSide? side;
+}
+
+/// The values a pilot reads, sent ten times a second while a screen with the picture is in front (flightChanged), and
+/// in every snapshot. A value whose group is stale, or never came, is null: nothing draws an old number as current.
+/// Which of them may show, and where, is decided by the gate of dji_live_fields.dart, not here.
+class DjiLiveFrame {
+  const DjiLiveFrame({
+    required this.atMs,
+    required this.alert,
+    this.droneBatteryPercent,
+    this.batteryVolts,
+    this.batteryTemperatureC,
+    this.motorTimeS,
+    this.motorsOn,
+    this.headingDeg,
+    this.heightM,
+    this.verticalSpeedMps,
+    this.speedMps,
+    this.distanceBelowM,
+    this.obstacleM,
+    this.remoteBatteryPercent,
+    this.signal,
+    this.signalBars,
+    this.linkRateMbps,
+    this.satellites,
+    this.landing = false,
+  });
+
+  /// This device's monotonic clock when the frame was built
+  final int atMs;
+  final DjiObstacleDecision alert;
+  final int? droneBatteryPercent;
+  final double? batteryVolts;
+  final double? batteryTemperatureC;
+  final double? motorTimeS;
+  final bool? motorsOn;
+  final double? headingDeg;
+
+  /// Above the take off point, positive up
+  final double? heightM;
+
+  /// Positive climbing
+  final double? verticalSpeedMps;
+
+  /// Over the ground; null while the motors are off, when the drone holds a stale value
+  final double? speedMps;
+
+  /// Only while the motors run; null when the sensor reads nothing
+  final double? distanceBelowM;
+
+  /// The nearest distance of the obstacle ring, only while the motors run; null when no sector reads anything
+  final double? obstacleM;
+  final int? remoteBatteryPercent;
+  final int? signal;
+  final int? signalBars;
+  final double? linkRateMbps;
+  final int? satellites;
+
+  /// Flight mode 12, the automatic landing
+  final bool landing;
 }
 
 class DjiLinkReplayResult {
@@ -1108,6 +1211,7 @@ class DjiLinkSnapshot {
     this.relaySending,
     this.relayReceiving,
     this.flightViewFailed = false,
+    this.liveFrame,
   });
 
   final DjiLinkState state;
@@ -1175,6 +1279,9 @@ class DjiLinkSnapshot {
 
   /// The last flight view could not set its scene up and went back to the window
   final bool flightViewFailed;
+
+  /// The values a pilot reads, as the ten a second frames give them
+  final DjiLiveFrame? liveFrame;
 }
 
 @HostApi()
@@ -1272,6 +1379,25 @@ abstract class DjiLinkApi {
 
   /// True once after the plug of a remote brought this application forward through its attach entry
   bool takeAttachLaunch();
+
+  /// A screen with the picture is in front (the live screen, the watch page) or not: while it is, the values come ten
+  /// times a second in flightChanged, and the obstacle sound may play
+  void setFrameStream(bool on);
+
+  /// Whether the gate offers the obstacle alert, and whether its sound is on. The alert only reads, decides, draws and
+  /// beeps on this device: it never sends anything to the remote or the drone.
+  void setObstacleAlert(bool offered, bool sound);
+
+  /// Three beeps of the obstacle sound, to check the volume before take off
+  void playObstacleTest();
+
+  /// The media volume, which the obstacle sound follows, is at zero
+  bool mediaVolumeOff();
+
+  /// A headset writes what it received from the phone and how it decoded it: the relay records with their times, the
+  /// receiver's and the decoder's counters. Nothing is written when nothing was received.
+  @async
+  DjiLinkExport exportReception();
 }
 
 @FlutterApi()
@@ -1280,4 +1406,7 @@ abstract class DjiLinkEvents {
 
   /// Stop in the notification of "Send to a headset": the relay stopped, the announcement must stop too
   void relayStopRequested();
+
+  /// The values a pilot reads, at most ten times a second and only while setFrameStream is on
+  void flightChanged(DjiLiveFrame frame);
 }

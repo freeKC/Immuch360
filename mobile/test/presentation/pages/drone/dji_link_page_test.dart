@@ -421,7 +421,7 @@ void main() {
     expect(find.text('Height above the take off point (likely)'), findsOneWidget);
     expect(find.text('Heading (zero not checked against north)'), findsOneWidget);
     expect(find.text('Flight mode (likely)'), findsOneWidget);
-    expect(find.text('Speeds (guess)'), findsOneWidget);
+    expect(find.text('Speeds (likely)'), findsOneWidget);
     expect(find.text('Satellites (guess)'), findsOneWidget);
     expect(find.text('Distance below the drone (likely)'), findsOneWidget);
     // Which motor bit means in the air is a guess no capture settles: no row
@@ -1007,7 +1007,8 @@ void main() {
       expect(start.code, 'K7M2Q9XRTH');
       expect(start.phoneName, 'Galaxy S24+');
       expect(start.phoneId, '3f9c0a1b2c3d4e5f');
-      expect(start.notificationTitle, 'DJI link: sending to headsets');
+      expect(start.notificationTitle, 'DJI live video: sending to headsets');
+      expect(start.channelName, 'DJI live video, send to a headset');
       expect(relay.secrets['dji_relay_code'], 'K7M2Q9XRTH');
       expect(relay.notificationAsks, 1);
       expect(find.text('K7M2Q 9XRTH'), findsOneWidget);
@@ -1133,6 +1134,58 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('dji_link_send')), findsNothing);
+    });
+  });
+
+  group('a headset saves what it received', () {
+    testWidgets('the capture section gives way to a sentence and "Save a reception record", with its toast', (
+      tester,
+    ) async {
+      // The Quest lists the accessory feature: the remote is still on the phone
+      final api = FakeDjiLinkApi(environment: fakeEnvironment());
+      await pumpPage(tester, api, horizonOs: true);
+      expect(find.byKey(const Key('dji_link_capture_start')), findsNothing);
+      expect(find.byKey(const Key('dji_link_capture_export')), findsNothing);
+      expect(
+        find.text(
+          'On a headset the remote is on the phone: save the capture there. Here, a reception record says what this '
+          'headset received and how it decoded it.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining('Keep the files to yourself.'), findsWidgets);
+
+      await tester.tap(find.byKey(const Key('dji_link_save_record')));
+      await tester.pumpAndSettle();
+      expect(api.receptionExports, 1);
+      expect(find.text('Saved in Download/Immuch360/dji-link: dji-relay-20261024-171200'), findsWidgets);
+
+      api.receptionResult = DjiLinkExport(
+        ok: true,
+        bytes: 2048,
+        binPath: 'Download/Immuch360/dji-link/dji-relay-20261024-171200.bin',
+        repeated: true,
+      );
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('dji_link_save_record')));
+      await tester.pumpAndSettle();
+      expect(find.text('Already saved: dji-relay-20261024-171200'), findsWidgets);
+    });
+
+    testWidgets('a phone keeps its capture section', (tester) async {
+      await pumpPage(tester, FakeDjiLinkApi(environment: fakeEnvironment(flavour: 'phone')));
+      expect(find.byKey(const Key('dji_link_capture_export')), findsOneWidget);
+      expect(find.byKey(const Key('dji_link_save_record')), findsNothing);
+    });
+
+    testWidgets('a headset without the accessory feature can save it too', (tester) async {
+      final api = FakeDjiLinkApi(environment: fakeEnvironment(accessoryFeature: false));
+      await pumpPage(tester, api, horizonOs: true);
+      api.receptionResult = DjiLinkExport(ok: true, bytes: 0, nothing: true);
+      await tester.tap(find.byKey(const Key('dji_link_save_record')));
+      await tester.pumpAndSettle();
+      expect(find.text('Nothing received yet: nothing to save.'), findsWidgets);
     });
   });
 }

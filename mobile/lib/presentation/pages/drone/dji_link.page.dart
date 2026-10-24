@@ -35,6 +35,7 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_link_sticks.widget.
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
 @RoutePage()
@@ -65,6 +66,7 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
     // "Send to a headset" is for phones, and hidden while this device receives: a received stream is never relayed
     final receiving = snapshot?.source?.relay ?? false;
     final sends = state.environment?.flavour == 'phone' && !receiving;
+    final headset = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
     return Scaffold(
       appBar: AppBar(title: Text(t.dji_live_diagnostics)),
       body: ListView(
@@ -79,7 +81,8 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
             _section(t.dji_link_flight, DjiLinkFlightSection(telemetry: snapshot?.telemetryValues)),
             _section(t.dji_link_traffic, _traffic(snapshot)),
             _section(t.dji_link_telemetry, _telemetry(snapshot)),
-            _section(t.dji_link_capture, const DjiLinkCaptureSection()),
+            // On a headset the remote is on the phone: what this headset received is what a bug report needs here
+            _section(t.dji_link_capture, headset ? const DjiReceptionRecordSection() : const DjiLinkCaptureSection()),
             // Drawn only once a gamepad was read: the one thing here that looks like piloting stays out of sight
             // otherwise. It is read only, and the send path is off in this build.
             if (snapshot?.sticks.sampleAgeMs != null) _section(t.dji_link_sticks, _sticks(snapshot)),
@@ -92,6 +95,7 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
             _section(t.dji_link_flight, DjiLinkFlightSection(telemetry: snapshot?.telemetryValues)),
             _section(t.dji_link_environment, _environment(state)),
             _section(t.dji_link_play, const DjiLinkPlaySection()),
+            if (headset) _section(t.dji_link_capture, const DjiReceptionRecordSection()),
             if (sends) _section(t.dji_link_relay, const DjiLinkSendSection()),
           ] else
             _section(t.dji_link_environment, _environment(state)),

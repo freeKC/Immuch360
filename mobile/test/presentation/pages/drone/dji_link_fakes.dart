@@ -203,6 +203,66 @@ DjiLinkTelemetry fakeTelemetry({
   ],
 );
 
+/// What the obstacle alert decided: off unless said otherwise
+DjiObstacleDecision fakeDecision({
+  bool on = false,
+  bool stopped = false,
+  bool listening = false,
+  double? distanceM,
+  DjiObstacleSide? side,
+}) => DjiObstacleDecision(
+  on: on,
+  stopped: stopped,
+  listening: listening || on,
+  beepIntervalMs: on ? 400 : 0,
+  distanceM: distanceM,
+  side: side,
+);
+
+/// The values a pilot reads, as the native side sends them: those of the 24 October flight (34 %, 0:41) and, for the
+/// values our captures only make likely, those of the 23 October landing. A null is a group that is stale.
+DjiLiveFrame fakeFrame({
+  int atMs = 1000,
+  int? percent = 34,
+  double? motorTimeS = 41.6,
+  bool? motorsOn = false,
+  double? headingDeg = 126.8,
+  double? heightM = -0.5,
+  double? verticalSpeedMps = -0.2,
+  double? speedMps,
+  double? distanceBelowM,
+  double? obstacleM,
+  int? remoteBatteryPercent = 50,
+  int? signal = 90,
+  int? signalBars = 5,
+  double? linkRateMbps = 5.9,
+  double? batteryVolts = 6.18,
+  double? batteryTemperatureC = 26.9,
+  int? satellites = 0,
+  bool landing = false,
+  DjiObstacleDecision? alert,
+}) => DjiLiveFrame(
+  atMs: atMs,
+  alert: alert ?? fakeDecision(),
+  droneBatteryPercent: percent,
+  batteryVolts: batteryVolts,
+  batteryTemperatureC: batteryTemperatureC,
+  motorTimeS: motorTimeS,
+  motorsOn: motorsOn,
+  headingDeg: headingDeg,
+  heightM: heightM,
+  verticalSpeedMps: verticalSpeedMps,
+  speedMps: speedMps,
+  distanceBelowM: distanceBelowM,
+  obstacleM: obstacleM,
+  remoteBatteryPercent: remoteBatteryPercent,
+  signal: signal,
+  signalBars: signalBars,
+  linkRateMbps: linkRateMbps,
+  satellites: satellites,
+  landing: landing,
+);
+
 DjiLinkSnapshot fakeSnapshot({
   DjiLinkState state = DjiLinkState.accessoryOpen,
   DjiLinkReason? reason,
@@ -225,6 +285,7 @@ DjiLinkSnapshot fakeSnapshot({
   String? boundProfileId,
   DjiRelaySending? relaySending,
   DjiRelayReceiving? relayReceiving,
+  DjiLiveFrame? liveFrame,
 }) => DjiLinkSnapshot(
   state: state,
   reason: reason,
@@ -277,6 +338,7 @@ DjiLinkSnapshot fakeSnapshot({
   boundProfileId: boundProfileId,
   relaySending: relaySending,
   relayReceiving: relayReceiving,
+  liveFrame: liveFrame,
 );
 
 DjiRelayReceiving fakeReceiving({
@@ -458,6 +520,7 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
   @override
   Future<DjiLinkExport> exportCapture(DjiLinkExportNotes notes) async {
     exports.add(notes);
+    await exportGate?.future;
     return exportResult;
   }
 
@@ -554,5 +617,43 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
     final launched = attachLaunch;
     attachLaunch = false;
     return launched;
+  }
+
+  /// setFrameStream, in order
+  final frameStreams = <bool>[];
+
+  /// setObstacleAlert, in order: offered, sound
+  final obstacleAlerts = <(bool, bool)>[];
+  int obstacleTests = 0;
+  bool volumeOff = false;
+  int receptionExports = 0;
+  DjiLinkExport receptionResult = DjiLinkExport(
+    ok: true,
+    bytes: 2048,
+    binPath: 'Download/Immuch360/dji-link/dji-relay-20261024-171200.bin',
+    indexPath: 'Download/Immuch360/dji-link/dji-relay-20261024-171200.idx.csv',
+    headerPath: 'Download/Immuch360/dji-link/dji-relay-20261024-171200.json',
+    sha256: 'd4e5f6',
+  );
+
+  /// While set, an export waits for it: three taps can land while the first one runs
+  Completer<void>? exportGate;
+
+  @override
+  Future<void> setFrameStream(bool on) async => frameStreams.add(on);
+
+  @override
+  Future<void> setObstacleAlert(bool offered, bool sound) async => obstacleAlerts.add((offered, sound));
+
+  @override
+  Future<void> playObstacleTest() async => obstacleTests += 1;
+
+  @override
+  Future<bool> mediaVolumeOff() async => volumeOff;
+
+  @override
+  Future<DjiLinkExport> exportReception() async {
+    receptionExports += 1;
+    return receptionResult;
   }
 }

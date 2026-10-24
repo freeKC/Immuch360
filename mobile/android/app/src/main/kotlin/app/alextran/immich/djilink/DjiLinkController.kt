@@ -2,6 +2,7 @@ package app.alextran.immich.djilink
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.media.AudioManager
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Handler
@@ -11,6 +12,10 @@ import android.util.Log
 import android.view.InputDevice
 import android.view.MotionEvent
 import io.flutter.plugin.common.BinaryMessenger
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -73,6 +78,21 @@ class DjiLinkController private constructor(private val context: Context) : Link
     /** A phone's telemetry older than this no longer says the aircraft or the remote is there */
     private const val STALE_RELAY_MS = 2_000L
 
+    /** The values a pilot reads go to Flutter at most this often, while a screen with the picture is in front */
+    private const val FRAME_INTERVAL_MS = 100L
+
+    /** How often the obstacle alert decides and the beep is looked at: finer than a frame, so the beep keeps pace */
+    private const val FRAME_TICK_MS = 50L
+
+    /**
+     * Every control frame of a session, unpadded: 11.5 kB/s on the ground and 19.5 kB/s in flight in our captures, so
+     * 32 MiB hold a whole battery (p2/telemetry-deep-dive-2026-10-24.md, section 8)
+     */
+    const val CONTROL_CAPTURE_BYTES = 32 * 1024 * 1024
+
+    /** A header only export asked again this soon, with nothing new, writes nothing */
+    private const val REPEAT_HEADER_ONLY_MS = 5_000L
+
     /** A relay with nothing to send and no headset for this long stops by itself, as its notification says */
     const val RELAY_IDLE_STOP_MS = 10L * 60 * 1000
 
@@ -112,6 +132,39 @@ class DjiLinkController private constructor(private val context: Context) : Link
   private val decoder = EnvelopeDecoder()
   private val router = FrameRouter()
   private val capture = CaptureRing(monotonicNs = { SystemClock.elapsedRealtimeNanos() })
+
+  /** Every control envelope of the session beside the capture, which the video pushes out of its tail in a minute */
+  private val controlCapture = CaptureRing(
+    capacityBytes = CONTROL_CAPTURE_BYTES,
+    headBytes = 0,
+    monotonicNs = { SystemClock.elapsedRealtimeNanos() },
+  )
+
+  /** What this device received from a phone's relay, for a bug report from a headset */
+  private val reception = ReceptionRecord(monotonicNs = { SystemClock.elapsedRealtimeNanos() })
+  private var receptionPageSession = -1L
+
+  /** The last export and what it covered: a second tap with nothing new writes nothing */
+  private val exports = ExportMemory(REPEAT_HEADER_ONLY_MS)
+  private val receptionExports = ExportMemory(REPEAT_HEADER_ONLY_MS)
+
+  /** The obstacle alert: offered by the gate in Flutter, decided here, its sound played here */
+  private val alert = ObstacleAlert()
+  private val beeper = ToneBeeper()
+  private val tone = ObstacleTone(beeper)
+
+  @Volatile
+  private var obstacleOffered = false
+
+  @Volatile
+  private var obstacleSound = true
+
+  @Volatile
+  private var lastDecision = ObstacleDecision.OFF
+
+  /** A screen with the picture is in front: the frames go to Flutter and the beep may play */
+  private var frameStreamOn = false
+  private val frames = FrameGate<DjiLiveFrame>(FRAME_INTERVAL_MS) { a, b -> a.copy(atMs = 0) == b.copy(atMs = 0) }
   private val videoStatistics = VideoStatistics()
   private val feed = VideoDecoderFeed(
     videoStatistics,
@@ -171,6 +224,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
 
   private val publish = Runnable { publishNow() }
   private val tick = Runnable { onTick() }
+  private val frameTick = Runnable { onFrameTick() }
 
   init {
     router.onVideoUnit = { unit, detector, fresh, nowNs ->
@@ -265,6 +319,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       handler.removeCallbacks(tick)
       manager.stop()
       capture.stop()
+      controlCapture.stop()
     }
     player.unload()
     synchronized(gate) {
@@ -306,18 +361,25 @@ class DjiLinkController private constructor(private val context: Context) : Link
   }
 
   fun startCapture() {
-    capture.start(accessoryOpen = manager.transport?.isRunning == true)
+    val open = manager.transport?.isRunning == true
+    capture.start(accessoryOpen = open)
+    controlCapture.start(accessoryOpen = open)
     markDirty()
   }
 
   fun stopCapture() {
     capture.stop()
+    controlCapture.stop()
     markDirty()
   }
 
   fun clearCapture() {
     // Under the page lock, as the reader thread records: whether a session is under way cannot change meanwhile
-    synchronized(gate) { capture.clear(accessoryOpen = manager.transport?.isRunning == true) }
+    synchronized(gate) {
+      val open = manager.transport?.isRunning == true
+      capture.clear(accessoryOpen = open)
+      controlCapture.clear(accessoryOpen = open)
+    }
     markDirty()
   }
 
@@ -569,7 +631,16 @@ class DjiLinkController private constructor(private val context: Context) : Link
     if (player.loaded) {
       player.unload()
     }
-    synchronized(gate) { startRelayedSource() }
+    synchronized(gate) {
+      startRelayedSource()
+      // A new reception after the page was closed starts a new record; within the page it goes on in the same one
+      if (receptionPageSession != pageSession) {
+        reception.clear()
+        receptionExports.clear()
+        receptionPageSession = pageSession
+      }
+    }
+    reception.start(ReceptionRecord.Watched(name = null, host = host, port = port))
     relay.source = RelaySource.NONE
     receiver.connect(host, port, normalized, phoneId, headsetName, environment.appVersion)
     acquireReceiverWifiLock()
@@ -627,7 +698,13 @@ class DjiLinkController private constructor(private val context: Context) : Link
   private inner class ReceiverEvents : RelayReceiver.Listener {
     override fun onConnected(welcome: RelayWelcome) {
       synchronized(gate) { startRelayedSource() }
+      val target = receiver.snapshot()
+      reception.start(ReceptionRecord.Watched(name = welcome.phoneName, host = target.host, port = target.port))
       markDirty()
+    }
+
+    override fun onRecord(record: RelayRecord, arrivalNs: Long) {
+      reception.record(record)
     }
 
     override fun onParameters(description: StreamDescription, source: DescriptionSource, arrivalNs: Long) {
@@ -677,6 +754,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       if (!receiver.active) {
         releaseReceiverWifiLock()
       }
+      reception.state(receiver.snapshot().state.name)
       markDirty()
     }
 
@@ -728,6 +806,79 @@ class DjiLinkController private constructor(private val context: Context) : Link
   private fun releaseReceiverWifiLock() {
     val lock = synchronized(this) { receiverWifiLock.also { receiverWifiLock = null } } ?: return
     runCatching { if (lock.isHeld) lock.release() }
+  }
+
+  // The values a pilot reads, ten times a second, and the obstacle alert
+
+  /**
+   * A screen with the picture is in front (the live screen, the watch page, and the flight view over the watch page) or
+   * not. While it is, the values go to Flutter at most ten times a second when they change, the obstacle alert decides,
+   * and its beep may play; when it is not, nothing beeps.
+   */
+  fun setFrameStream(on: Boolean) {
+    handler.post {
+      frameStreamOn = on
+      handler.removeCallbacks(frameTick)
+      frames.reset()
+      if (on) {
+        handler.post(frameTick)
+      } else {
+        tone.update(0, soundOn = false, screenShown = false, nowMs = SystemClock.elapsedRealtime())
+        beeper.release()
+        alert.reset()
+        lastDecision = ObstacleDecision.OFF
+      }
+    }
+  }
+
+  /** Whether the gate offers the alert, and whether its sound is on; the alert never acts on the drone */
+  fun setObstacleAlert(offered: Boolean, sound: Boolean) {
+    obstacleOffered = offered
+    obstacleSound = sound
+  }
+
+  /** Three beeps, to check the volume before take off */
+  fun playObstacleTest() {
+    for (index in 0 until ObstacleTone.TEST_BEEPS) {
+      handler.postDelayed({ beeper.beep() }, index * ObstacleTone.TEST_INTERVAL_MS)
+    }
+  }
+
+  /** The obstacle sound follows the media volume: at zero it cannot be heard */
+  fun mediaVolumeOff(): Boolean {
+    val audio = context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager ?: return false
+    return runCatching { audio.getStreamVolume(AudioManager.STREAM_MUSIC) == 0 }.getOrDefault(false)
+  }
+
+  /** The values of the source in use: a phone's relay, a capture being played, or the cable */
+  private fun currentValues(nowNs: Long): TelemetryValues? {
+    val received = if (receiver.active) receiver.snapshot(nowNs) else null
+    return synchronized(gate) {
+      if (received != null) {
+        received.telemetry?.aged(received.telemetryAgeMs ?: 0)
+      } else {
+        (if (player.loaded) player.router else router).telemetryDecoder.values(nowNs / 1_000_000)
+      }
+    }
+  }
+
+  /** On the main thread every 50 ms while a picture screen is in front: the alert, the beep, and the frame */
+  private fun onFrameTick() {
+    if (!frameStreamOn) {
+      return
+    }
+    val nowNs = SystemClock.elapsedRealtimeNanos()
+    val nowMs = nowNs / 1_000_000
+    val values = currentValues(nowNs)
+    val decision = alert.decide(obstacleOffered, obstacleInputOf(values), nowMs)
+    lastDecision = decision
+    tone.update(if (decision.on) decision.beepIntervalMs else 0, obstacleSound, screenShown = true, nowMs = nowMs)
+    // Only a change goes, ten times a second at most: a frame that says the same thing again would redraw nothing
+    val frame = liveFramePigeon(values, decision, nowMs)
+    if (frames.offer(frame, nowMs)) {
+      runCatching { events?.flightChanged(frame) { } }
+    }
+    handler.postDelayed(frameTick, FRAME_TICK_MS)
   }
 
   // The flight view (Horizon OS)
@@ -784,6 +935,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       picturesPerSecond = stats.picturesPerSecond,
       receiveToPictureMs = receiveToPicture,
       values = values,
+      alert = lastDecision,
     )
   }
 
@@ -792,12 +944,25 @@ class DjiLinkController private constructor(private val context: Context) : Link
     return bindings.boundTo(strings)?.let { profiles.byId(it) }
   }
 
+  /**
+   * Writes the capture, its control frames and its header. Called on the one worker of the bridge, so two taps never
+   * write at once; a call with nothing new since the last export (the same bytes, or a header only one a few seconds
+   * ago) writes nothing and answers the last export with [CaptureExport.Result.repeated].
+   */
   fun exportCapture(notes: Map<String, String?>): CaptureExport.Result {
     val snapshot: CaptureSnapshot
+    val control: CaptureSnapshot
     val facts: Map<String, Any?>
     val extra: Map<String, Any?>
+    val key: List<Long>
     synchronized(gate) {
+      key = listOf(capture.totalBytes, capture.records.toLong(), capture.droppedBytes, controlCapture.totalBytes)
+      exports.repeated(key, capture.totalBytes, SystemClock.elapsedRealtime())?.let { last ->
+        Log.i(TAG, "capture export repeated: nothing new since ${last.binPath ?: last.headerPath}")
+        return last
+      }
       snapshot = capture.snapshot()
+      control = controlCapture.snapshot()
       facts = linkFacts()
       extra = exportExtra()
     }
@@ -810,9 +975,128 @@ class DjiLinkController private constructor(private val context: Context) : Link
       link = facts,
       notes = notes,
       extra = extra,
+      control = control,
     )
-    Log.i(TAG, "capture exported: ok=${result.ok} bytes=${result.bytes} sha256=${result.sha256}")
+    synchronized(gate) { exports.remember(key, result, SystemClock.elapsedRealtime()) }
+    Log.i(
+      TAG,
+      "capture exported: ok=${result.ok} bytes=${result.bytes} control=${control.bytes.size} sha256=${result.sha256}",
+    )
     return result
+  }
+
+  /**
+   * A headset's reception record: the relay records it received, every telemetry record, and a header with the
+   * receiver's and the decoder's counters. Nothing is written when nothing was received, or nothing new since the last.
+   */
+  fun exportReception(): CaptureExport.Result {
+    val received = reception.received
+    if (received == 0L) {
+      Log.i(TAG, "reception record: nothing received, nothing written")
+      return CaptureExport.Result(ok = true, bytes = 0, nothing = true)
+    }
+    synchronized(gate) { receptionExports.repeated(listOf(received), received, SystemClock.elapsedRealtime()) }?.let {
+      Log.i(TAG, "reception record repeated: nothing new since ${it.binPath}")
+      return it
+    }
+    val header = receptionHeader()
+    val result = CaptureExport.writeReception(
+      context = context,
+      records = reception.records(),
+      telemetry = reception.telemetryRecords(),
+      header = header,
+    )
+    synchronized(gate) { receptionExports.remember(listOf(received), result, SystemClock.elapsedRealtime()) }
+    Log.i(TAG, "reception record exported: ok=${result.ok} bytes=${result.bytes} records=$received")
+    return result
+  }
+
+  /** The header of a reception record: the record's own part, this device, the receiver and the decoder */
+  private fun receptionHeader(): String {
+    val nowNs = SystemClock.elapsedRealtimeNanos()
+    val received = receiver.snapshot(nowNs)
+    val stats = synchronized(gate) { video.stats(nowNs, 0) }
+    val lastTelemetry = received.telemetry
+    val json = buildJsonObject {
+      reception.header().forEach { (key, value) -> put(key, value) }
+      put("takenAtWallMs", System.currentTimeMillis())
+      put("sendPathEnabled", DjiLinkBuild.SEND_ENABLED)
+      put(
+        "device",
+        buildJsonObject {
+          put("manufacturer", environment.deviceManufacturer)
+          put("model", environment.deviceModel)
+          put("fingerprint", environment.buildFingerprint)
+          put("androidRelease", environment.androidRelease)
+          put("appVersion", environment.appVersion)
+          put("flavour", environment.flavour)
+        },
+      )
+      put(
+        "receiver",
+        buildJsonObject {
+          put("state", received.state.name)
+          put("phoneSource", received.phoneSource)
+          put("failures", received.failures)
+          put("units", received.units)
+          put("lostOnWifi", received.lostOnWifi)
+          put("breaks", received.breaks)
+          put("relayDelayMedianMs", received.latency.relayDelayMedianMs)
+          put("telemetryAgeMs", received.telemetryAgeMs)
+          put("lastUnitAgoMs", received.lastUnitAgoMs)
+          put(
+            "receiveToPictureMs",
+            RelayLatencyNumbers.receiveToPicture(
+              received.latency.relayDelayMedianMs,
+              stats.inProcessMedianMs,
+              stats.decodeMedianMs,
+            ),
+          )
+        },
+      )
+      put(
+        "decoder",
+        buildJsonObject {
+          put("codec", stats.codec.name)
+          put("width", stats.width)
+          put("height", stats.height)
+          put("profile", stats.profileName)
+          put("level", stats.levelName)
+          put("name", stats.decoder.name)
+          put("kind", stats.decoder.kind?.name)
+          put("lowLatency", stats.decoder.lowLatency)
+          put("switches", stats.decoder.switches)
+          put("switchReason", stats.decoder.lastSwitchReason?.name)
+          put("skippedAtStart", JsonArray(stats.decoder.skippedAtStart.map { JsonPrimitive(it.toString()) }))
+          put("units", stats.unitsIn)
+          put("queued", stats.queued)
+          put("decoded", stats.decoded)
+          put("shown", stats.shown)
+          put("errors", stats.errors)
+          put("lostPictures", stats.lostPictures)
+          put("picturesPerSecond", stats.picturesPerSecond)
+          put("decodeMedianMs", stats.decodeMedianMs)
+          put("decodeP95Ms", stats.decodeP95Ms)
+          put("firstPictureMs", stats.firstPictureMs)
+          put("lastOutputAgoMs", stats.lastOutputAgoMs)
+        },
+      )
+      if (lastTelemetry != null) {
+        put(
+          "lastTelemetry",
+          RelayTelemetry.build(
+            phoneNs = lastTelemetry.phoneNs,
+            sequence = lastTelemetry.sequence,
+            link = lastTelemetry.link,
+            values = lastTelemetry.values,
+            phoneVideo = lastTelemetry.phoneVideo,
+            headsets = lastTelemetry.headsets,
+            unitsDropped = lastTelemetry.unitsDropped,
+          ),
+        )
+      }
+    }
+    return json.toString()
   }
 
   /**
@@ -903,6 +1187,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       router.restartStreams()
       video.newStream()
       capture.mark(CaptureDirection.OPEN)
+      controlCapture.mark(CaptureDirection.OPEN)
       session.onOpened(System.currentTimeMillis())
     }
     setRelaySource(RelaySource.CABLE)
@@ -921,6 +1206,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
   override fun onClosed(reason: LinkReason) {
     synchronized(gate) {
       capture.mark(CaptureDirection.CLOSE)
+      controlCapture.mark(CaptureDirection.CLOSE)
       session.onClosed(reason.name, System.currentTimeMillis())
     }
     if (!player.loaded) {
@@ -958,6 +1244,9 @@ class DjiLinkController private constructor(private val context: Context) : Link
       session.onRead(length, System.currentTimeMillis())
       for (envelope in decoder.offer(data, 0, length)) {
         router.route(envelope, nowMs, nowNs)
+        if (Channels.role(envelope.channel) == ChannelRole.CONTROL) {
+          controlCapture.record(CaptureDirection.IN, EnvelopeDecoder.encode(envelope.channel, envelope.payload))
+        }
       }
       frames = router.counters.controlFrames
       linked = router.aircraftLinked(nowMs)
@@ -1408,6 +1697,15 @@ class DjiLinkController private constructor(private val context: Context) : Link
         received.toPigeon(stats)
       },
       flightViewFailed = DjiFlightViewActivity.lastFailed,
+      liveFrame = liveFramePigeon(
+        values = if (receiving) {
+          received.telemetry?.aged(received.telemetryAgeMs ?: 0)
+        } else {
+          source.telemetryDecoder.values(nowMs)
+        },
+        decision = lastDecision,
+        atMs = nowMs,
+      ),
       lastAccessory = lastAccessory?.toPigeon(),
       lastAccessoryAtMs = session.lastAccessoryAtWallMs,
       boundProfileId = bindings.boundTo(AccessoryStrings.of(identity ?: lastAccessory)),
@@ -1524,6 +1822,54 @@ private fun VideoStats.toPigeon(): DjiLinkDecode = DjiLinkDecode(
   keyPictures = keyPictures,
   keyPictureAgoMs = keyPictureAgoMs,
   lastOutputAgoMs = lastOutputAgoMs,
+)
+
+/**
+ * The values a pilot reads, as the gate of dji_live_fields.dart takes them: a group that is stale or never came gives
+ * nulls, never an old number. The speed over ground counts only while the motors run: on the ground the drone holds the
+ * last speed it had (p2/telemetry-deep-dive-2026-10-24.md, 3.1).
+ */
+internal fun liveFramePigeon(values: TelemetryValues?, decision: ObstacleDecision, atMs: Long): DjiLiveFrame {
+  fun <T> Timed<T>?.fresh(): T? = this?.takeIf { !it.stale }?.value
+  val flight = values?.flight.fresh()
+  val battery = values?.battery.fresh()
+  return DjiLiveFrame(
+    atMs = atMs,
+    alert = decision.toPigeon(),
+    droneBatteryPercent = battery?.percent?.toLong(),
+    batteryVolts = battery?.voltageV,
+    batteryTemperatureC = battery?.temperatureC,
+    motorTimeS = flight?.motorTimeS,
+    motorsOn = flight?.motorsOn,
+    headingDeg = flight?.headingDeg,
+    heightM = flight?.heightM,
+    verticalSpeedMps = flight?.verticalSpeedMps,
+    speedMps = flight?.takeIf { it.motorsOn }?.horizontalSpeedMps,
+    distanceBelowM = values?.rangeBelow.fresh()?.distanceM,
+    obstacleM = values?.obstacles.fresh()?.nearestM,
+    remoteBatteryPercent = values?.remoteBatteryPercent.fresh()?.toLong(),
+    signal = values?.link?.signalRemoteSide.fresh()?.toLong(),
+    signalBars = values?.signalBars.fresh()?.toLong(),
+    linkRateMbps = values?.link?.liveRateMbps.fresh(),
+    satellites = flight?.satellites?.toLong(),
+    landing = flight?.mode == TelemetryFields.MODE_AUTOMATIC_LANDING,
+  )
+}
+
+internal fun ObstacleDecision.toPigeon(): DjiObstacleDecision = DjiObstacleDecision(
+  on = on,
+  stopped = stopped,
+  listening = listening,
+  beepIntervalMs = beepIntervalMs.toLong(),
+  distanceM = distanceM,
+  side = when (side) {
+    ObstacleSide.AHEAD -> DjiObstacleSide.AHEAD
+    ObstacleSide.BEHIND -> DjiObstacleSide.BEHIND
+    ObstacleSide.LEFT -> DjiObstacleSide.LEFT
+    ObstacleSide.RIGHT -> DjiObstacleSide.RIGHT
+    ObstacleSide.ABOVE -> DjiObstacleSide.ABOVE
+    null -> null
+  },
 )
 
 internal fun telemetryPigeon(

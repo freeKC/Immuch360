@@ -18,9 +18,12 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_link_capture.widget
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_observer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_receive.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_advanced.panel.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_fields.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_notice.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_obstacle.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
+import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -28,9 +31,13 @@ import 'package:immich_mobile/routing/router.dart';
 /// After this many failed attempts in a row, the state line says what to check
 const djiWatchStillTryingFailures = 3;
 
-/// The texts of the flight view's panel, with the placeholders the native side fills four times a second. Its values
-/// line gets one template per value the gate lets over the picture, the same values as the phone's.
-Map<String, String> djiFlightViewLabels(Translations t) => {
+/// The texts of the flight view, with the placeholders the native side fills ten times a second. Its two columns get a
+/// label and a value template per value the gate lets over the picture, the same values as the phone's bands, and the
+/// banner of the obstacle alert its words, with "Not confirmed yet" while the gate keeps the alert as a test.
+Map<String, String> djiFlightViewLabels(
+  Translations t, {
+  Map<DjiLiveField, DjiLiveGate> gates = djiLiveGates,
+}) => {
   'live': t.dji_link_flight_view_live,
   'replay': t.dji_link_flight_view_replay(name: '{name}'),
   'noSource': t.dji_link_flight_view_no_source,
@@ -43,7 +50,17 @@ Map<String, String> djiFlightViewLabels(Translations t) => {
   'noPicture': t.dji_link_flight_view_no_picture,
   'stale': t.dji_link_latency_stale(seconds: '{seconds}'),
   'noValues': t.dji_link_flight_none,
-  ...djiLiveFlightViewTemplates(t),
+  ...djiLiveFlightViewTemplates(t, gates: gates),
+  'batteryLow': t.dji_live_battery_low,
+  'obstacleClose': t.dji_live_obstacle_close(distance: '{distance}'),
+  'obstacleClosePlain': t.dji_live_obstacle_close_plain,
+  'obstacleStopped': t.dji_live_obstacle_stopped,
+  'obstacleAhead': t.dji_live_obstacle_ahead,
+  'obstacleBehind': t.dji_live_obstacle_behind,
+  'obstacleLeft': t.dji_live_obstacle_left,
+  'obstacleRight': t.dji_live_obstacle_right,
+  'obstacleAbove': t.dji_live_obstacle_above,
+  if (djiObstacleOffer(gates: gates) == DjiObstacleOffer.test) 'obstacleUnconfirmed': t.dji_live_obstacle_unconfirmed,
   'on': t.dji_link_flight_view_on,
   'off': t.dji_link_flight_view_off,
   'valuesStale': t.dji_link_flight_view_values_stale,
@@ -55,10 +72,58 @@ Map<String, String> djiFlightViewLabels(Translations t) => {
   'back': t.dji_link_flight_view_back,
 };
 
-/// The values line of the window, the same gated values as the phone and the flight view
-String? djiWatchValuesLine(Translations t, DjiLinkTelemetry? telemetry) {
-  final values = djiLiveValues(t, telemetry, DjiLivePlace.overlay);
-  return values.isEmpty ? null : values.map((value) => value.line).join('   ');
+/// The values under the picture of the window (p2/design-final-2026-10-24.md, 7.3): the flight values then the state of
+/// the drone, each a small label over a number, the same gate and order as the phone's bands
+class DjiWatchCells extends ConsumerWidget {
+  const DjiWatchCells({super.key, this.gates = djiLiveGates});
+
+  final Map<DjiLiveField, DjiLiveGate> gates;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.t;
+    final frame = ref.watch(djiLiveFrameProvider);
+    final fields = [
+      ...djiLiveBandFields(DjiLiveBand.left, gates: gates),
+      ...djiLiveBandFields(DjiLiveBand.right, gates: gates),
+    ];
+    final small = context.textTheme.labelSmall;
+    final number = context.textTheme.titleMedium?.copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
+    final cells = [
+      for (final field in fields)
+        if (djiLiveFieldValue(t, frame, field) case final String value)
+          (
+            field,
+            djiLiveFieldLabel(t, field, place: DjiLivePlace.overlay, gates: gates),
+            value,
+            field == DjiLiveField.droneBattery && djiLiveBatteryIsLow(frame),
+          ),
+    ];
+    if (cells.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return Wrap(
+      key: const Key('dji_watch_values'),
+      spacing: 20,
+      runSpacing: 8,
+      children: [
+        for (final (field, label, value, low) in cells)
+          Semantics(
+            label: [label, value, if (low) t.dji_live_battery_low].where((part) => part.isNotEmpty).join(' '),
+            excludeSemantics: true,
+            child: Column(
+              key: Key('dji_watch_value_${field.name}'),
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (label.isNotEmpty) Text(label, style: small),
+                Text(value, style: low ? number?.copyWith(color: const Color(0xFFFFB300)) : number),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
 }
 
 @RoutePage()
@@ -85,6 +150,11 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
     _relay = ref.read(djiRelayProvider.notifier);
     // After the first frame, which a change of the providers must not reach
     unawaited(Future.microtask(_notifier.pageShown));
+    // The values ten times a second while this page is in front (and the flight view over it), the obstacle alert as
+    // set here, and the screen kept on
+    unawaited(Future.microtask(() => _notifier.setFrameStream(true)));
+    unawaited(Future.microtask(() => ref.read(djiObstacleSettingsProvider.notifier).sync()));
+    unawaited(Future.microtask(() => _relay.setLiveScreenShown(true)));
     unawaited(
       Future.microtask(() async {
         await _relay.setPageVisible(true);
@@ -99,6 +169,8 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
   void dispose() {
     _relay.disarmAutoConnect();
     _relay.stopBrowsing();
+    unawaited(_notifier.setFrameStream(false));
+    unawaited(_relay.setLiveScreenShown(false));
     unawaited(_relay.setPageVisible(false));
     // Receiving stops with the page, as the link does
     unawaited(_notifier.pageHidden());
@@ -110,7 +182,7 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
     if (!mounted || ref.read(djiLiveNoticeReadProvider)) {
       return;
     }
-    final read = await showDjiLiveNotice(context, headset: true);
+    final read = await showDjiLiveNotice(context, headset: true, alert: _alertOffered());
     if (!mounted) {
       return;
     }
@@ -166,8 +238,27 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
     await _watch(listed ?? DjiRelayPhone(name: typed.host, host: typed.host, port: typed.port));
   }
 
+  /// The obstacle alert is offered on this headset: the notice then says it never steers or stops the drone
+  bool _alertOffered() => ref.read(djiObstacleSettingsProvider).offered(djiObstacleOffer());
+
+  Future<void> _saveRecord() async {
+    final outcome = await _notifier.exportReception();
+    if (!mounted) {
+      return;
+    }
+    showDjiExportToast(context, outcome, ref.read(djiLinkProvider).export, record: true);
+  }
+
   Future<void> _menu(String choice) async {
+    final settings = ref.read(djiObstacleSettingsProvider);
+    final obstacle = ref.read(djiObstacleSettingsProvider.notifier);
     switch (choice) {
+      case 'record':
+        await _saveRecord();
+      case 'obstacle':
+        await obstacle.setAlert(!settings.alertOn);
+      case 'sound':
+        await obstacle.setSound(!settings.soundOn);
       case 'play':
         await showModalBottomSheet<void>(
           context: context,
@@ -177,7 +268,7 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
           ),
         );
       case 'safety':
-        await showDjiLiveNotice(context, headset: true);
+        await showDjiLiveNotice(context, headset: true, alert: _alertOffered());
       case 'diagnostics':
         await context.pushRoute(const DjiLinkRoute());
     }
@@ -196,6 +287,8 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
     final relay = ref.watch(djiRelayProvider);
     final snapshot = ref.watch(djiLinkProvider.select((state) => state.snapshot));
     final horizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
+    final obstacle = ref.watch(djiObstacleSettingsProvider);
+    final offer = djiObstacleOffer();
     final phones = _phones(t, relay);
     final picture = _picture(t, relay, snapshot, horizonOs: horizonOs);
     return Scaffold(
@@ -210,6 +303,25 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
             onSelected: (choice) => unawaited(_menu(choice)),
             itemBuilder: (_) => [
               PopupMenuItem(value: 'play', child: Text(t.dji_live_play_capture)),
+              PopupMenuItem(
+                key: const Key('dji_watch_save_record'),
+                value: 'record',
+                child: Text(t.dji_live_watch_save_record),
+              ),
+              if (offer == DjiObstacleOffer.test)
+                CheckedPopupMenuItem(
+                  key: const Key('dji_watch_obstacle'),
+                  value: 'obstacle',
+                  checked: obstacle.alertOn,
+                  child: Text(t.dji_live_obstacle_test),
+                ),
+              if (obstacle.offered(offer))
+                CheckedPopupMenuItem(
+                  key: const Key('dji_watch_obstacle_sound'),
+                  value: 'sound',
+                  checked: obstacle.soundOn,
+                  child: Text(t.dji_live_obstacle_sound),
+                ),
               PopupMenuItem(value: 'safety', child: Text(t.dji_live_safety_again)),
               PopupMenuItem(value: 'diagnostics', child: Text(t.dji_live_diagnostics)),
             ],
@@ -333,7 +445,6 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
     final shows = djiLinkPictureFlows(decode) && !djiLinkRelayPictureStopped(snapshot);
     final flowing =
         receiving != null && receiving.state == DjiRelayReceiveState.receiving && djiLinkPictureFlows(decode);
-    final values = djiWatchValuesLine(t, snapshot?.telemetryValues);
     final delay = receiving?.receiveToPictureMs;
     final replay = source?.replay ?? false;
     return Column(
@@ -347,6 +458,8 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
             children: [
               const ColoredBox(color: Colors.black),
               if (shows) const DjiLinkVideoSurface(),
+              // The obstacle alert over the picture, without the glow: the picture is small in the window
+              const DjiObstacleLayer(glow: false),
               if (active != null)
                 Positioned(
                   left: 8,
@@ -385,17 +498,7 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
             child: Text(t.dji_link_play_stop),
           ),
         ],
-        if (values != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              values,
-              key: const Key('dji_watch_values'),
-              style: context.textTheme.titleMedium?.copyWith(
-                fontFeatures: const [FontFeature.tabularFigures()],
-              ),
-            ),
-          ),
+        const Padding(padding: EdgeInsets.only(top: 4), child: DjiWatchCells()),
         if (active != null && delay != null)
           Text(t.dji_live_quest_delay(ms: delay.toStringAsFixed(0)), key: const Key('dji_watch_delay'), style: small),
         const SizedBox(height: 12),

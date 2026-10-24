@@ -97,6 +97,12 @@ enum StoreKey<T> {
   /// That offer was answered, yes or not now: it is not made again, and the switch stays in Advanced
   djiLiveOfferAnswered<bool>._(5031),
 
+  /// The pilot turned on the obstacle alert in Advanced while our captures do not prove its data yet: off by default
+  djiObstacleAlertOn<bool>._(5032),
+
+  /// The obstacle sound was turned off in Advanced: it is on by default
+  djiObstacleSoundOff<bool>._(5033),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
+import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:logging/logging.dart';
@@ -64,6 +65,39 @@ final djiLinkEventsSetUpProvider = Provider<void Function(DjiLinkEvents? events)
   (_) =>
       (events) => DjiLinkEvents.setUp(events),
 );
+
+/// What a tap on "Save a capture" or "Save a reception record" gave, for its toast (p2/design-final-2026-10-24.md, 6)
+enum DjiLinkExportOutcome {
+  /// The files were written: the toast names them
+  saved,
+
+  /// Nothing new since the last export: no file was written, the toast names the last one
+  repeated,
+
+  /// Nothing to save yet: no remote opened in this session (the live screen), nothing received (a headset)
+  nothing,
+
+  /// The files could not be written: Diagnostics says why
+  failed,
+
+  /// An export was already under way: this tap did nothing
+  busy,
+}
+
+/// The folder and the name without its extensions of an exported file, for the toast: Download/Immuch360/dji-link and
+/// dji-link-20261024-121915
+(String folder, String name) djiExportName(String path) {
+  final slash = path.lastIndexOf('/');
+  final folder = slash < 0 ? '' : path.substring(0, slash);
+  var name = slash < 0 ? path : path.substring(slash + 1);
+  for (final extension in const ['.idx.csv', '.bin', '.json']) {
+    if (name.endsWith(extension)) {
+      name = name.substring(0, name.length - extension.length);
+      break;
+    }
+  }
+  return (folder, name);
+}
 
 /// Where the page stands
 class DjiLinkPageState {
@@ -216,6 +250,8 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
       _attached = true;
       ref.read(djiLinkEventsSetUpProvider)(this);
     }
+    // A new session: no value of the last one is drawn before its first frame
+    ref.read(djiLiveFrameProvider.notifier).clear();
     state = state.copyWith(reading: true, clearError: true);
     try {
       final environment = await _api.readEnvironment();
@@ -282,9 +318,21 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
 
   Future<void> refresh() async {
     try {
-      state = state.copyWith(snapshot: await _api.snapshot());
+      final snapshot = await _api.snapshot();
+      state = state.copyWith(snapshot: snapshot);
+      ref.read(djiLiveFrameProvider.notifier).offer(snapshot.liveFrame);
     } catch (error) {
       _log.fine('No snapshot of the link: $error');
+    }
+  }
+
+  /// A screen with the picture is in front or not: the values come ten times a second while it is, and the obstacle
+  /// sound may play. An error (no bridge, as in a widget test) is only logged.
+  Future<void> setFrameStream(bool on) async {
+    try {
+      await _api.setFrameStream(on);
+    } catch (error) {
+      _log.fine('The frame stream did not change: $error');
     }
   }
 
@@ -304,23 +352,66 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
     await refresh();
   }
 
-  /// Writes the capture where the pilot can reach it, with what was typed about the bench in its header
-  Future<void> exportCapture(DjiLinkExportNotes notes) async {
+  /// Writes the capture where the pilot can reach it, with what was typed about the bench in its header. One export at
+  /// a time: a tap while one runs does nothing, and the native side answers a tap with nothing new as repeated.
+  Future<DjiLinkExportOutcome> exportCapture(DjiLinkExportNotes notes) async {
+    if (state.exporting) {
+      _log.info('DJI link export asked again while one runs: nothing more done');
+      return DjiLinkExportOutcome.busy;
+    }
     state = state.copyWith(exporting: true, clearError: true, clearExport: true);
     try {
       final result = await _api.exportCapture(notes);
       state = state.copyWith(exporting: false, export: result);
       // The Logs page keeps a copy, so that a session that goes wrong still says where its evidence went
-      if (result.ok && result.headerOnly) {
+      if (result.ok && result.repeated) {
+        _log.info('DJI link capture not written again, nothing new since ${result.binPath ?? result.headerPath}');
+        return DjiLinkExportOutcome.repeated;
+      } else if (result.ok && result.headerOnly) {
         _log.info('DJI link header exported with nothing captured: ${result.headerPath}');
       } else if (result.ok) {
-        _log.info('DJI link capture exported: ${result.bytes} bytes, ${result.binPath}, sha256 ${result.sha256}');
+        _log.info(
+          'DJI link capture exported: ${result.bytes} bytes, ${result.binPath}, sha256 ${result.sha256}, '
+          'control frames ${result.controlBinPath}',
+        );
       } else {
         _log.warning('DJI link capture not exported: ${result.error}');
+        return DjiLinkExportOutcome.failed;
       }
+      return DjiLinkExportOutcome.saved;
     } catch (error, stackTrace) {
       _log.warning('Could not export the DJI link capture', error, stackTrace);
       state = state.copyWith(exporting: false, error: error.toString());
+      return DjiLinkExportOutcome.failed;
+    }
+  }
+
+  /// A headset's reception record: what it received from the phone and how it decoded it. One at a time, nothing
+  /// written when nothing was received or nothing new came since the last one.
+  Future<DjiLinkExportOutcome> exportReception() async {
+    if (state.exporting) {
+      return DjiLinkExportOutcome.busy;
+    }
+    state = state.copyWith(exporting: true, clearError: true, clearExport: true);
+    try {
+      final result = await _api.exportReception();
+      state = state.copyWith(exporting: false, export: result);
+      if (result.ok && result.nothing) {
+        _log.info('DJI reception record: nothing received, nothing written');
+        return DjiLinkExportOutcome.nothing;
+      } else if (result.ok && result.repeated) {
+        _log.info('DJI reception record not written again, nothing new since ${result.binPath}');
+        return DjiLinkExportOutcome.repeated;
+      } else if (result.ok) {
+        _log.info('DJI reception record exported: ${result.bytes} bytes, ${result.binPath}, sha256 ${result.sha256}');
+        return DjiLinkExportOutcome.saved;
+      }
+      _log.warning('DJI reception record not exported: ${result.error}');
+      return DjiLinkExportOutcome.failed;
+    } catch (error, stackTrace) {
+      _log.warning('Could not export the DJI reception record', error, stackTrace);
+      state = state.copyWith(exporting: false, error: error.toString());
+      return DjiLinkExportOutcome.failed;
     }
   }
 
@@ -349,8 +440,20 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
     }
   }
 
-  /// "Save a capture for a bug report": the capture as it is, with no bench notes (they stay in Diagnostics)
-  Future<void> exportForBugReport() => exportCapture(DjiLinkExportNotes());
+  /// "Save a capture for a bug report" on the live screen: the capture as it is, with no bench notes (they stay in
+  /// Diagnostics). With no remote opened in this session and no session kept, nothing is written: the header alone
+  /// would say nothing the pilot can use, and three taps once made three of them.
+  Future<DjiLinkExportOutcome> exportForBugReport() async {
+    if (state.exporting) {
+      return DjiLinkExportOutcome.busy;
+    }
+    final capture = state.snapshot?.capture;
+    if (capture == null || (capture.totalBytes == 0 && capture.records == 0)) {
+      _log.info('DJI link capture: nothing to save yet, no remote opened in this session');
+      return DjiLinkExportOutcome.nothing;
+    }
+    return exportCapture(DjiLinkExportNotes());
+  }
 
   Future<void> _loadProfiles() async {
     try {
@@ -453,7 +556,14 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
   @override
   void snapshotChanged(DjiLinkSnapshot snapshot) {
     state = state.copyWith(snapshot: snapshot);
+    ref.read(djiLiveFrameProvider.notifier).offer(snapshot.liveFrame);
     ref.read(djiRelayProvider.notifier).onSnapshot(snapshot);
+  }
+
+  /// The values a pilot reads, ten times a second: their own provider, so that the page is not rebuilt for them
+  @override
+  void flightChanged(DjiLiveFrame frame) {
+    ref.read(djiLiveFrameProvider.notifier).offer(frame);
   }
 
   /// Stop in the notification of "Send to a headset": the native relay stopped, the announcement stops here
@@ -467,5 +577,5 @@ class DjiLinkNotifier extends Notifier<DjiLinkPageState> implements DjiLinkEvent
 /// that reads a capture file) is the one this notifier talks to
 final djiLinkProvider = NotifierProvider<DjiLinkNotifier, DjiLinkPageState>(
   DjiLinkNotifier.new,
-  dependencies: [djiLinkApiProvider, djiLinkEventsSetUpProvider, djiRelayProvider],
+  dependencies: [djiLinkApiProvider, djiLinkEventsSetUpProvider, djiRelayProvider, djiLiveFrameProvider],
 );
