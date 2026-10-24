@@ -222,7 +222,7 @@ class DjiLiveReadout extends StatelessWidget {
         Expanded(
           child: DjiLiveBandCells(band: DjiLiveBand.right, gates: gates, alignment: Alignment.topLeft),
         ),
-        if (footer != null) footer,
+        ?footer,
       ],
     );
   }

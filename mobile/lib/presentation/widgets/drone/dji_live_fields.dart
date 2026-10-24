@@ -254,7 +254,7 @@ String djiLiveFieldLabel(
 
 /// Every row proven, for the label of a value whose likely label has no key of its own
 final djiLiveProvenGates = <DjiLiveField, DjiLiveGate>{
-  for (final field in DjiLiveField.values) field: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.overlay),
+  for (final field in DjiLiveField.values) field: const DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.overlay),
 };
 
 /// The unit written after the number of [field], the same on the phone and on the Quest
