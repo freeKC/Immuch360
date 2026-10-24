@@ -133,3 +133,41 @@ describe('ImmichRepository with recorded responses', () => {
 		await assert.rejects(repository().getAssetDetails('nope'), (error) => error.name === 'APIError' && error.status === 404);
 	});
 });
+
+describe('the file a video plays (Immich serves its transcode when it made one)', () => {
+	const ORIGINAL = 734003200;
+	let heads;
+
+	beforeEach(() => {
+		heads = [];
+		globalThis.fetch = async (url, options = {}) => {
+			heads.push({url, method: options.method, headers: options.headers});
+			const {pathname} = new URL(url);
+			if (pathname.endsWith('/a-original/video/playback')) return new Response(null, {status: 200, headers: {'content-length': String(ORIGINAL)}});
+			if (pathname.endsWith('/a-transcoded/video/playback')) return new Response(null, {status: 200, headers: {'content-length': '41943040'}});
+			if (pathname.endsWith('/a-silent/video/playback')) return new Response(null, {status: 200});
+			if (pathname.endsWith('/a-broken/video/playback')) throw new TypeError('Failed to fetch');
+			return new Response('', {status: 404});
+		};
+	});
+
+	test('a HEAD of the playback URL, credentials in the query and no header, gives the length the server sends', async () => {
+		const repo = repository();
+		assert.equal(await repo.playsOriginal('a-original', ORIGINAL), true);
+		assert.equal(heads[0].method, 'HEAD');
+		assert.equal(heads[0].url, 'https://photos.example.org/api/assets/a-original/video/playback?apiKey=k3y');
+		assert.equal(heads[0].headers, undefined);
+		assert.equal(await repo.playsOriginal('a-transcoded', ORIGINAL), false);
+		// The stall notice of a heavy original advises Immich's Video transcoding
+		assert.equal(repo.serverTranscodes, true);
+	});
+
+	test('no length, an error, a missing original size: it cannot tell', async () => {
+		const repo = repository();
+		assert.equal(await repo.playsOriginal('a-silent', ORIGINAL), null);
+		assert.equal(await repo.playsOriginal('a-broken', ORIGINAL), null);
+		assert.equal(await repo.playsOriginal('a-missing', ORIGINAL), null);
+		assert.equal(await repo.playsOriginal('a-original', null), null);
+		assert.equal(heads.length, 3);
+	});
+});

@@ -119,6 +119,13 @@ export class SourceRepository implements PhotoRepository {
 		return this.url('file', file);
 	}
 
+	// Immuch360: a share serves the file itself, its size that of the listing; Plex serves its HLS transcode of a file
+	// the TV does not play as it is (videoPlaybackUrl)
+	async playsOriginal(assetId: string): Promise<boolean | null> {
+		const file = this.file(assetId);
+		return !(this.source.kind === 'plex' && file.direct === false && file.ratingKey);
+	}
+
 	faceUrl(): string {
 		return '';
 	}

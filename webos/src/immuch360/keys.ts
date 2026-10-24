@@ -141,7 +141,10 @@ export const SEEK_STEP_SECONDS = 10;
 /** How long the controls of a viewer stay after they show or after the last key */
 export const CONTROLS_HIDE_AFTER_MS = 5000;
 
-/** A video that has not started this long after it opened, without being paused, does not play on this TV */
+/**
+ * A video that has not started this long after its player opened does not play on this TV: it never reached canplay, or
+ * reached it and shows no frame while nobody paused it (src/immuch360/video/limits.ts, videoStart)
+ */
 export const VIDEO_STALL_MS = 20000;
 
 /**

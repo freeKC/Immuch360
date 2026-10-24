@@ -28,6 +28,12 @@ export interface Features {
 	pauseVideoWhenHidden: boolean;
 	/** The most pixels a full-size picture may have on this TV, null to follow the engine (photoSize.ts) */
 	fullsizePixelCap: number | null;
+	/**
+	 * The WebGL video test of the About page also runs once, a few seconds after the start, so that the viewer knows
+	 * before a 360° video opens whether this TV hands video frames to WebGL (src/immuch360/video/session.ts). Samsung,
+	 * whose S90C gives black frames; webOS runs the test on the About page only, as before.
+	 */
+	probeVideoFramesAtStart: boolean;
 }
 
 /**
@@ -46,6 +52,7 @@ export function features(on: Platform = platform()): Features {
 			railBackToPhotos: false,
 			pauseVideoWhenHidden: true,
 			fullsizePixelCap: TIZEN_FULLSIZE_MAX_PIXELS,
+			probeVideoFramesAtStart: true,
 		};
 	}
 	// webOS, and a browser in development, where service/dev.js stands in for the service
@@ -57,5 +64,6 @@ export function features(on: Platform = platform()): Features {
 		railBackToPhotos: true,
 		pauseVideoWhenHidden: false,
 		fullsizePixelCap: null,
+		probeVideoFramesAtStart: false,
 	};
 }

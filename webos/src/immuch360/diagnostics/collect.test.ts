@@ -1,7 +1,9 @@
 // Immuch360: the video test of the diagnostics page. A clip that does not play tests nothing, and the line says so with
 // the reason; one that plays is drawn into WebGL (here a fake) and its colour read back.
-import {collectDiagnostics, diagnosticsText, heapLine, probeVideoTexture, tizenDeviceLines, videoErrorReason} from './collect';
+import {collectDiagnostics, diagnosticsText, heapLine, probeVideoTexture, startVideoChecks, tizenDeviceLines, videoErrorReason, videoReachLine} from './collect';
 import {clearErrorLog, recordError} from './errorLog';
+import {DECODER_PROBES, askDecoders, type DecoderRecord} from '../video/decoders';
+import {knownVideoFrames, resetVideoSession, setKnownDecoders} from '../video/session';
 
 let mockPixel: [number, number, number] = [255, 0, 255];
 jest.mock('@enact/webos/LS2Request', () => jest.fn());
@@ -136,5 +138,76 @@ describe('on a Samsung TV', () => {
 		expect(text).toContain('Last errors: none');
 		expect(text).not.toContain('on Samsung TVs');
 		expect(text).not.toContain('Tizen:');
+	});
+});
+
+// Immuch360: the decoder record of the session (src/immuch360/video/session.ts) on the page, and the WebGL verdict the
+// viewer reads
+const WIDTHS: Record<number, string> = {3840: '4K', 5760: '5.7K'};
+function decoderRecord(takes: (size: string) => boolean): Promise<DecoderRecord> {
+	return askDecoders({
+		canPlayType: () => 'probably',
+		isTypeSupported: () => true,
+		decodingInfo: async (config) => {
+			const ok = takes(WIDTHS[(config as {video: {width: number}}).video.width]!);
+			return {supported: ok, smooth: ok, powerEfficient: ok};
+		},
+	});
+}
+
+describe('what the viewer reads of the page', () => {
+	beforeEach(() => resetVideoSession());
+	afterEach(() => {
+		delete (window as {tizen?: unknown}).tizen;
+		document.querySelectorAll('video').forEach((node) => node.remove());
+	});
+
+	test('the Videos line: up to 4K on a Samsung S90C, at least 5.7K on an LG that takes it, not known without decodingInfo', async () => {
+		const line = (record: DecoderRecord | null) => `${videoReachLine(record).label}: ${videoReachLine(record).value}`;
+		expect(line(await decoderRecord((size) => size === '4K'))).toBe('Videos: up to 4K on this TV');
+		expect(line(await decoderRecord(() => true))).toBe('Videos: at least 5.7K on this TV');
+		expect(line(null)).toBe('Videos: not known on this TV');
+		expect(DECODER_PROBES.map((probe) => probe.name)).toEqual(['H.264 4K', 'H.264 5.7K', 'HEVC 4K', 'HEVC 5.7K', 'HEVC 10 bit 4K', 'AV1 4K', 'VP9 4K']);
+	});
+
+	test('the page shows the record of the session, the Videos line above the codecs', async () => {
+		jest.useRealTimers();
+		setKnownDecoders(await decoderRecord((size) => size === '4K'));
+		const text = diagnosticsText(await collectDiagnostics(null));
+		expect(text).toContain('Videos: up to 4K on this TV\nH.264 4K: canPlayType probably, Media Source yes, supported, smooth, hardware\n');
+		expect(text).toContain('HEVC 5.7K: canPlayType probably, Media Source yes, not supported\n');
+	});
+
+	test('the WebGL test keeps its verdict for the session', async () => {
+		mockPixel = [0, 0, 0];
+		const result = probeVideoTexture();
+		video!.dispatchEvent(new Event('playing'));
+		jest.advanceTimersByTime(500);
+		await result;
+		expect(knownVideoFrames()).toBe('black');
+	});
+
+	test('a Samsung TV runs the WebGL test a few seconds after the start, once no video of the app is on screen', async () => {
+		(window as {tizen?: unknown}).tizen = {application: {}};
+		const playing = document.createElement('video');
+		document.body.appendChild(playing);
+		startVideoChecks(4000, 3);
+		jest.advanceTimersByTime(4000);
+		expect(video).toBeNull();
+		playing.remove();
+		jest.advanceTimersByTime(4000);
+		expect(video).not.toBeNull();
+		mockPixel = [0, 0, 0];
+		video!.dispatchEvent(new Event('playing'));
+		jest.advanceTimersByTime(500);
+		await Promise.resolve();
+		expect(knownVideoFrames()).toBe('black');
+	});
+
+	test('an LG TV does not run it at the start (the About page does)', () => {
+		startVideoChecks(4000, 3);
+		jest.advanceTimersByTime(20000);
+		expect(video).toBeNull();
+		expect(knownVideoFrames()).toBeNull();
 	});
 });

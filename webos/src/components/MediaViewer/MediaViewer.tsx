@@ -1,9 +1,10 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import Button from '@enact/sandstone/Button';
 import {useWebOSKeys} from '../../hooks/useWebOSKeys';
 import {useOnline} from '../../hooks/useOnline';
 import {useAutoHideControls} from '../../hooks/useAutoHideControls';
 import {useAssetRotation} from '../../hooks/useAssetRotation';
-import {useAssetDetails} from '../../hooks/useAssetDetails';
+import {useAssetDetailsQuery} from '../../hooks/useAssetDetails';
 import {usePhotoZoom} from '../../hooks/usePhotoZoom';
 import {useRepository} from '../../domain/RepositoryContext';
 import {createSpotlightContainer, forceFocus, SpottableDiv} from '../../utils/spotlight';
@@ -16,8 +17,22 @@ import {SphereView, type SphereViewHandle} from '../../immuch360/sphere/SphereVi
 import {AssetDetailsPanel} from '../../immuch360/details/AssetDetailsPanel';
 import {RotationIndicator} from '../../immuch360/rotation/RotationIndicator';
 import {FULLSIZE_FROM_SCALE, wantsFullsize} from '../../immuch360/photoSize';
+import {decoderCeiling, exceedsCeiling} from '../../immuch360/video/decoders';
+import {
+	flatVideoNotice,
+	nextStallState,
+	stallNotice,
+	startAdvice,
+	videoBitrateMbps,
+	videoStart,
+	type StallState,
+	type VideoAdvice,
+	type VideoGateInput,
+} from '../../immuch360/video/limits';
+import {holdsFlatVideoNotice} from '../../immuch360/video/session';
+import {usePlaysOriginal, useVideoGate, useVideoSession} from '../../immuch360/video/useVideoGate';
 import {MediaControls, ACTION_BAR_SPOTLIGHT_ID, type ViewerAction} from './MediaControls';
-import {VideoPlayer, VideoPlayerApi} from './VideoPlayer';
+import {VideoPlayer, VideoPlayerApi, viewerVideoElement} from './VideoPlayer';
 import css from './MediaViewer.module.less';
 
 interface MediaViewerProps {
@@ -34,6 +49,14 @@ const VIEWER_SPOTLIGHT_ID = 'media-viewer';
 const STAGE_SPOTLIGHT_ID = 'media-viewer-stage';
 // Immuch360: OK on a 360° photo focuses this button, as the Flutter viewer does on Android TV
 const ZOOM_IN_SPOTLIGHT_ID = 'media-viewer-zoom-in';
+// Immuch360: the Back button under the message of a video that does not play
+const VIDEO_BACK_SPOTLIGHT_ID = 'media-viewer-video-back';
+// readyState from which a video can play (HTMLMediaElement.HAVE_FUTURE_DATA, the canplay event)
+const HAVE_FUTURE_DATA = 3;
+// Immuch360: the duration the player found, once its metadata is in
+const knownDuration = (duration: number | undefined): number | null => (duration !== undefined && Number.isFinite(duration) && duration > 0 ? duration : null);
+// Immuch360: what lightens a heavy original, as a sentence
+const adviceText = (advice: VideoAdvice): string => (advice === 'transcode' ? t('webos_video_advice_transcode') : t('webos_video_advice_wired'));
 // Trap Spotlight inside the viewer so D-pad can't reach the underlying rail/grid (which would
 // trigger NavigationRail's focus-based expand and other surprises).
 const ViewerContainer = createSpotlightContainer({enterTo: 'last-focused'});
@@ -85,13 +108,63 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const toggleDetails = useCallback(() => setDetailsOpen((open) => !open), []);
 	// Immuch360: a flat photo zoomed in past 2x shows its full-size picture, once its size is known to fit a TV
 	const [zoomedPast2x, setZoomedPast2x] = useState(false);
-	// Immuch360: the video that did not play (an error, or nothing after 20 s): a message replaces the endless spinner
-	const [videoFailure, setVideoFailure] = useState<string | null>(null);
-	const videoFailed = isVideo && !!asset && videoFailure === asset.id;
-	const details = useAssetDetails(
+	// Immuch360: the video that did not play (a media error, or not started after 20 s): a message replaces the player.
+	// mediaDuration: the duration the player had found, for the bitrate when the asset does not tell it.
+	const [videoFailure, setVideoFailure] = useState<{assetId: string; kind: 'error' | 'notStarted'; mediaDuration: number | null} | null>(null);
+	const videoFailed = isVideo && !!asset && videoFailure?.assetId === asset.id;
+	// Immuch360: the video that stalled after it started (limits.ts, nextStallState): its notice stays with it, and the
+	// controls show while it stalls (active)
+	const [videoStall, setVideoStall] = useState<{assetId: string; active: boolean; mediaDuration: number | null} | null>(null);
+	const stallSeen = isVideo && !!asset && videoStall?.assetId === asset.id;
+	// Immuch360: what the session knows of the TV's video (src/immuch360/video/session.ts). Where its decoders refused a
+	// size, a video's own size is read before it plays, and one past the ceiling does not start (limits.ts).
+	const {decoders, frames} = useVideoSession();
+	const ceiling = useMemo(() => decoderCeiling(decoders), [decoders]);
+	const sizeBeforePlay = isVideo && !!ceiling;
+	const {details, settled: detailsSettled} = useAssetDetailsQuery(
 		asset?.id,
-		!!asset && (detailsOpen || zoomedPast2x || videoFailed || (!isVideo && (flagged || forced || looksEquirect(asset.ratio) || repository.detailsForEveryPhoto === true)))
+		!!asset &&
+			(detailsOpen || zoomedPast2x || videoFailed || stallSeen || sizeBeforePlay || (!isVideo && (flagged || forced || looksEquirect(asset.ratio) || repository.detailsForEveryPhoto === true)))
 	);
+	let videoSize: VideoGateInput['size'] = null;
+	if (sizeBeforePlay) videoSize = details ? {width: details.width, height: details.height} : detailsSettled ? null : undefined;
+	// Immuch360: whether the server plays the original, asked for a video past the ceiling, one that did not start and one
+	// that stalls (a HEAD request on Immich, src/api/ImmichRepository.ts)
+	const pastCeiling = sizeBeforePlay && !!ceiling && !!details?.width && !!details.height && exceedsCeiling(details.width, details.height, ceiling);
+	const playsOriginal = usePlaysOriginal(repository, isVideo ? asset?.id : undefined, details?.fileSize ?? null, pastCeiling || videoFailed || stallSeen);
+	const gate = useVideoGate(isVideo ? asset?.id : undefined, ceiling, videoSize, playsOriginal);
+	const playerShown = isVideo && gate.kind === 'play' && !videoFailed;
+	// Immuch360: the bitrate of the file, from its size and the asset's duration (else the one the player found)
+	const mediaDuration = (videoFailed ? videoFailure?.mediaDuration : null) ?? (stallSeen ? videoStall?.mediaDuration : null) ?? null;
+	const heavy = {
+		playsOriginal,
+		bitrate: isVideo ? videoBitrateMbps(details?.fileSize, asset?.durationSeconds || mediaDuration) : null,
+		serverTranscodes: repository.serverTranscodes === true,
+	};
+	// Immuch360: why a video does not play, in the middle of the screen with Back, where the player would be
+	let videoMessage: string | null = null;
+	if (isVideo && gate.kind === 'tooLarge') {
+		videoMessage = t('webos_video_too_large', {size: gate.size, width: String(gate.width), height: String(gate.height)});
+	} else if (videoFailed && !online) {
+		videoMessage = t('webos_error_offline');
+	} else if (videoFailed) {
+		const size = details?.width && details.height ? `${details.width} × ${details.height}` : null;
+		const format = [details?.originalMimeType, size].filter(Boolean).join(', ') || t('unknown');
+		videoMessage = videoFailure?.kind === 'notStarted' ? t('webos_video_not_started', {format}) : t('webos_video_cannot_play', {format});
+		// A heavy original can fail to start as it stalls: its bitrate and what lightens it
+		const advice = videoFailure?.kind === 'notStarted' ? startAdvice(heavy) : null;
+		if (advice && heavy.bitrate !== null) videoMessage += ` ${t('webos_video_file_bitrate', {bitrate: heavy.bitrate})} ${adviceText(advice)}`;
+	}
+	// Immuch360: the notice of a video that stalled, which goes on playing: the bitrate of the original and what lightens
+	// it, or only that the link is too slow for a transcode
+	let stallText: string | null = null;
+	if (stallSeen && playerShown) {
+		const stall = stallNotice(heavy);
+		if (stall.kind === 'heavy') stallText = t('webos_video_stalls_heavy', {bitrate: heavy.bitrate ?? 0});
+		else if (stall.kind === 'heavyUnknown') stallText = t('webos_video_stalls_heavy_unknown');
+		else stallText = t('webos_video_stalls_slow_link');
+		if (stall.advice) stallText += ` ${adviceText(stall.advice)}`;
+	}
 	const [sphereFailure, setSphereFailure] = useState<{assetId: string; reason: string} | null>(null);
 	const sphereFailed = !!asset && sphereFailure?.assetId === asset.id;
 	const wants360 =
@@ -163,6 +236,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		setVideoIntro(isVideo && asset ? asset.id : null);
 		// A video that failed is tried again, and checked again, when it is opened again
 		setVideoFailure(null);
+		setVideoStall(null);
 	}
 	const videoControlsOpen = isVideo && videoControlsVisible;
 
@@ -173,32 +247,67 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		return () => window.clearTimeout(timer);
 	}, [isVideo, assetId]);
 
-	// Immuch360: once a second until the video starts, whether the TV gave up on it (a media error), or whether it still
-	// shows nothing 20 s after it opened while nobody paused it. The check goes on after the message: a video that starts
-	// late (a slow server, a large original) takes the message away.
+	// Immuch360: once a second until the video starts, whether the TV gave up on it (a media error), or whether it did not
+	// start within 20 s of the player opening: no canplay, or canplay and still no frame while nobody paused it (limits.ts,
+	// videoStart). Either way the player closes, which ends its loading and frees the TV's decoder, and a message with
+	// Back takes its place; the video is tried again when it is opened again. Once it started, whether it stalls: no
+	// progress for 8 s while nobody paused it (nextStallState) shows a notice, and the video goes on.
 	useEffect(() => {
-		if (!isVideo || !assetId) return undefined;
+		if (!playerShown || !assetId) return undefined;
 		const opened = Date.now();
-		let failed = false;
+		let started = false;
+		let stall: StallState | null = null;
 		const timer = window.setInterval(() => {
 			const api = playerApiRef.current;
 			if (!api) return;
 			const state = api.getMediaState();
-			if ((state.currentTime ?? 0) > 0) {
-				window.clearInterval(timer);
-				if (failed) setVideoFailure((current) => (current === assetId ? null : current));
+			if (started) {
+				const wasStalled = stall?.stalled ?? false;
+				stall = nextStallState(stall, {at: Date.now(), currentTime: state.currentTime ?? 0, paused: state.paused});
+				if (stall.stalled !== wasStalled) setVideoStall({assetId, active: stall.stalled, mediaDuration: knownDuration(state.duration)});
 				return;
 			}
-			const stalled = Date.now() - opened >= VIDEO_STALL_MS && state.paused === false;
-			if (!failed && (api.getVideoNode()?.error || stalled)) {
-				failed = true;
-				setVideoFailure(assetId);
+			const node = viewerVideoElement();
+			const verdict = videoStart(
+				{
+					elapsedMs: Date.now() - opened,
+					currentTime: state.currentTime ?? 0,
+					canPlay: !!node && node.readyState >= HAVE_FUTURE_DATA,
+					paused: state.paused,
+					error: !!api.getVideoNode()?.error,
+				},
+				VIDEO_STALL_MS
+			);
+			if (verdict === 'waiting') return;
+			if (verdict === 'started') {
+				started = true;
+				return;
 			}
+			window.clearInterval(timer);
+			try {
+				api.pause();
+			} catch {
+				// The player closes anyway
+			}
+			setVideoControlsVisible(false);
+			setVideoFailure({assetId, kind: verdict, mediaDuration: knownDuration(state.duration)});
 		}, 1000);
 		return () => window.clearInterval(timer);
-	}, [isVideo, assetId]);
+	}, [playerShown, assetId]);
+
+	// Immuch360: the message of a video that does not play takes the focus, on its Back button; the next video that
+	// plays gives it back to the viewer, as when a video opens
+	const hasVideoMessage = !!videoMessage;
+	const hadVideoMessage = useRef(false);
+	useEffect(() => {
+		if (hasVideoMessage) forceFocus(VIDEO_BACK_SPOTLIGHT_ID);
+		else if (hadVideoMessage.current && isVideo) forceFocus(VIEWER_SPOTLIGHT_ID);
+		hadVideoMessage.current = hasVideoMessage;
+	}, [hasVideoMessage, assetId, isVideo]);
 	// Immuch360: a photo whose turn stays on the TV, or could not be saved, shows the controls with a message about it
-	const chromeVisible = isVideo ? videoControlsOpen || videoIntro === asset?.id || videoFailed : controlsVisible || !!rotationNotice;
+	const chromeVisible = isVideo
+		? videoControlsOpen || videoIntro === asset?.id || hasVideoMessage || (stallSeen && !!videoStall?.active)
+		: controlsVisible || !!rotationNotice;
 
 	// Immuch360: Left and Right go to the neighbours whatever the video does; a video alone in the viewer seeks 10 s
 	const hasNeighbours = totalCount > 1;
@@ -421,18 +530,29 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	else if (rotationNotice === 'failed') notice = t('rotate_failed');
 	else if (rotationNotice === 'keptOnDevice') notice = t('rotate_kept_on_device');
 	else if (wants360 && sphereFailure) notice = sphereFailure.reason;
-	else if (videoFailed && !online) notice = t('webos_error_offline');
-	else if (videoFailed) {
-		const size = details?.width && details.height ? `${details.width} × ${details.height}` : null;
-		const format = [details?.originalMimeType, size].filter(Boolean).join(', ');
-		notice = t('webos_video_cannot_play', {format: format || t('unknown')});
-	} else if (video360) notice = t('webos_360_video_flat');
+	else if (stallText) notice = stallText;
+	else if (video360 && playerShown) {
+		// Immuch360: a 360° video plays flat; where the TV keeps video frames out of WebGL, the first one of the session
+		// says why and the next ones say nothing (limits.ts, flatVideoNotice)
+		const flat = flatVideoNotice(frames, () => holdsFlatVideoNotice(asset.id));
+		if (flat === 'noFrames') notice = t('webos_360_video_flat_no_frames');
+		else if (flat === 'flat') notice = t('webos_360_video_flat');
+	}
 
 	return (
 		<ViewerContainer spotlightId={VIEWER_SPOTLIGHT_ID} spotlightRestrict="self-only" className={css.viewerOverlay}>
 			<div className={css.viewerContent}>
 				{isVideo ? (
-					<VideoPlayer src={mediaUrl} onControlsAvailable={handleVideoControlsAvailable} apiRef={playerApiRef} />
+					videoMessage ? (
+						<div className={css.videoMessage} role="alert">
+							<p className={css.videoMessageText}>{videoMessage}</p>
+							<Button size="small" onClick={onClose} spotlightId={VIDEO_BACK_SPOTLIGHT_ID}>
+								{t('back')}
+							</Button>
+						</div>
+					) : playerShown ? (
+						<VideoPlayer src={mediaUrl} onControlsAvailable={handleVideoControlsAvailable} apiRef={playerApiRef} />
+					) : null
 				) : show360 ? (
 					<SphereView
 						ref={sphereRef}

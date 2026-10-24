@@ -498,11 +498,12 @@ async function main() {
 		}
 		await sleep(500);
 		await shot('04-video');
-		for (let i = 0; i < 3 && (await evaluate(`!!document.querySelector('video[data-immuch360-video]')`)); i++) {
+		// A video that cannot play closes its player and leaves its message in the viewer: Back closes the viewer
+		for (let i = 0; i < 3 && (await evaluate(OVERLAY_OPEN)); i++) {
 			await key(KEY.back);
 			await sleep(600);
 		}
-		if (await evaluate(`!!document.querySelector('video[data-immuch360-video]')`)) throw new Error('Back did not close the video');
+		if (await evaluate(OVERLAY_OPEN)) throw new Error('Back did not close the video');
 		const after = (await calls()).screenSaver.slice(callsBefore);
 		if (h264 && after[after.length - 1] !== 1) throw new Error(`the screen saver did not come back after the video (${JSON.stringify(after)})`);
 		return {asset: tile, h264: h264 || 'no', outcome, screenSaver: after};

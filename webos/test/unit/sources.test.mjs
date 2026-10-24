@@ -170,6 +170,22 @@ describe('the repository of a folder', () => {
 		assert.equal(dlna.videoPlaybackUrl(dlna.assets[0].id), 'http://10.0.0.5:8200/MediaItems/9.mp4');
 	});
 
+	test('the file played is the one listed, its size the one the viewer checks, but for a Plex transcode', async () => {
+		const plexFiles = [
+			{ref: '/library/parts/2/1/file.avi', name: 'v.avi', kind: 'video', mime: null, size: 1, width: 7680, height: 3840, ratingKey: '2', direct: false},
+			{ref: '/library/parts/3/1/file.mp4', name: 'w.mp4', kind: 'video', mime: 'video/mp4', size: 1, width: 7680, height: 3840, ratingKey: '3', direct: true},
+		];
+		const plex = new SourceRepository(info, {id: 'p', kind: 'plex', name: 'Plex'}, plexFiles, {unsupportedCaption: ''});
+		assert.equal(await plex.playsOriginal(plex.assets[0].id), false);
+		assert.equal(await plex.playsOriginal(plex.assets[1].id), true);
+		const smb = new SourceRepository(info, {id: 's', kind: 'smb', name: 'NAS'}, files, {unsupportedCaption: ''});
+		assert.equal(await smb.playsOriginal(smb.assets[1].id), true);
+		const details = await plex.getAssetDetails(plex.assets[1].id);
+		assert.deepEqual([details.width, details.height], [7680, 3840]);
+		// A share has no transcoding to advise: a stall notice tells of a faster link only
+		assert.equal(smb.serverTranscodes, undefined);
+	});
+
 	test('the details of a JPEG come from its head: a GPano photo is a 360° photo; turns stay on the TV', async () => {
 		const fetchFake = async (url) => ({ok: true, status: 200, json: async () => ({width: 6080, height: 3040, make: 'RICOH', model: 'RICOH THETA Z1', projection: 'equirectangular'}), arrayBuffer: async () => new ArrayBuffer(4), url});
 		const repo = new SourceRepository(info, {id: 's', kind: 'webdav', name: 'Cloud'}, files, {unsupportedCaption: '', fetch: fetchFake});

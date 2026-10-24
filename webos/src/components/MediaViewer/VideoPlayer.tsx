@@ -54,6 +54,8 @@ const PLAYER_PROPS = {
 // the media events of this player are told from those of other videos (the test clip of the About page)
 export const VIDEO_MARK = 'data-immuch360-video';
 const fromThisPlayer = (target: EventTarget | null): boolean => target instanceof HTMLVideoElement && target.hasAttribute(VIDEO_MARK);
+/** The video element of the viewer's player, null when none is open: its readyState tells whether it reached canplay */
+export const viewerVideoElement = (): HTMLVideoElement | null => document.querySelector<HTMLVideoElement>(`video[${VIDEO_MARK}]`);
 // The events after which a video no longer plays; 'waiting' (buffering) keeps the screen saver off
 const STOPPED_EVENTS = ['pause', 'ended', 'emptied', 'error'];
 

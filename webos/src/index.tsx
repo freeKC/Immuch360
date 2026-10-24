@@ -6,6 +6,7 @@ import {createRoot, hydrateRoot} from 'react-dom/client';
 import App from './App/App';
 import {loadLocale} from './immuch360/i18n';
 import {startErrorLog} from './immuch360/diagnostics/errorLog';
+import {startVideoChecks} from './immuch360/diagnostics/collect';
 import {isTizen} from './platform/detect';
 import {addTizenKeymap} from './platform/keymap';
 import {registerTizenKeys} from './platform/tizen';
@@ -14,10 +15,12 @@ const appElement = <App />;
 
 if (typeof window !== 'undefined') {
 	// Immuch360: the errors and policy blocks of the About page from the start; the Samsung Back and keyboard keys in
-	// Enact's keymap (harmless on webOS); on a Samsung TV, the remote keys the app uses, asked for before the first render
+	// Enact's keymap (harmless on webOS); on a Samsung TV, the remote keys the app uses, asked for before the first render;
+	// what the TV's video decoders take, and on a Samsung TV whether video frames reach WebGL, known before a video opens
 	startErrorLog();
 	addTizenKeymap();
 	if (isTizen()) registerTizenKeys();
+	startVideoChecks();
 	const rootElement = document.getElementById('root');
 	if (rootElement) {
 		if (ENACT_PACK_ISOMORPHIC) {
