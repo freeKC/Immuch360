@@ -245,3 +245,17 @@ describe('check-wgt', () => {
 		assert.equal(PRIVILEGES.length, 3);
 	});
 });
+
+// The privacy policy URL given to the Samsung Seller Office and shown by the app on a Samsung TV is the anchor of a
+// heading of PRIVACY.md: the heading must stay there, under that name
+describe('privacy policy', () => {
+	test('PRIVACY.md has the Samsung TVs (Tizen) section the app and the Seller Office point to', () => {
+		const policy = readFileSync(join(TIZEN, '..', 'PRIVACY.md'), 'utf8');
+		assert.match(policy, /^## Samsung TVs \(Tizen\)$/m);
+		const anchor = 'Samsung TVs (Tizen)'.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/ /g, '-');
+		assert.equal(anchor, 'samsung-tvs-tizen');
+		const app = readFileSync(join(TIZEN, '..', 'webos', 'src', 'immuch360', 'privacy', 'PrivacyPolicy.tsx'), 'utf8');
+		assert.ok(app.includes(`PRIVACY.md#${anchor}'`), 'PrivacyPolicy.tsx points to the Samsung TVs section');
+		assert.ok(policy.includes('](#samsung-tvs-tizen)'), 'the policy links to its Samsung TVs section');
+	});
+});
