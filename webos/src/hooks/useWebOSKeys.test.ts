@@ -298,6 +298,26 @@ describe('Back on an entry page per webOS version', () => {
 		agent.mockReturnValue(ua('132.0.6834.0'));
 		expect(backShowsHome()).toBe(false);
 	});
+
+	test('the engine wins over the platform version (webOS 25 TVs of the Cloud Test Lab, Chromium 120)', () => {
+		const agent = jest.spyOn(navigator, 'userAgent', 'get');
+		const ua = (chrome: string) => `Mozilla/5.0 (Web0S; Linux/SmartTV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chrome} Safari/537.36 WebAppManager`;
+		onVersion('7.3.0');
+		agent.mockReturnValue(ua('120.0.6099.270'));
+		expect(backShowsHome()).toBe(true);
+		onVersion('10.3.2');
+		agent.mockReturnValue(ua('132.0.6834.0'));
+		expect(backShowsHome()).toBe(false);
+	});
+
+	test('platformBack(): About keeps the clues of the choice', () => {
+		onVersion('6.3.1');
+		const {unmount} = renderHook(() => useRootBack());
+		expect(pressBack()).toBe(true);
+		expect(platformBack).toHaveBeenCalledTimes(1);
+		expect(lastErrors()[0]).toMatch(/^back: platformBack\(\) \(platform 6\.3\.1, Chromium /);
+		unmount();
+	});
 });
 
 // Sandstone's floating layer, where its popups and tooltips go

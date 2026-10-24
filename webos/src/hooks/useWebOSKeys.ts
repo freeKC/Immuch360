@@ -105,25 +105,39 @@ const webOSSystem = (): WebOSSystemLike | undefined =>
 /** The Home app of webOS TV, which the Back of an entry page shows on webOS 23 to 25 (to confirm on those TVs) */
 export const HOME_APP_ID = 'com.webos.app.home';
 
-/**
- * Immuch360: whether the TV runs webOS 23, 24 or 25, where LG's self checklist asks Back on the entry page to show the
- * Home screen. From the platform version webOS gives the page (8, 9 and 10 for webOS 23, 24 and 25: the SDK table of
- * LG's FAQ), else from the engine (Chromium 94, 108 and 120 there, 132 on webOS 26: the Web Engine page).
- */
-export function backShowsHome(): boolean {
+/** What the page knows of the TV: the platform version webOS gives it and the major version of its engine */
+function platformClues(): {platformVersion: string | null; chromium: number | null} {
+	let platformVersion: string | null = null;
 	const raw = typeof window === 'undefined' ? undefined : webOSSystem()?.deviceInfo;
 	if (raw) {
 		try {
-			const major = parseInt(String((JSON.parse(raw) as {platformVersion?: unknown}).platformVersion), 10);
-			if (!isNaN(major)) return major >= 8 && major <= 10;
+			const value = (JSON.parse(raw) as {platformVersion?: unknown}).platformVersion;
+			if (value !== undefined && value !== null && value !== '') platformVersion = String(value);
 		} catch {
-			// The engine then
+			// none
 		}
 	}
 	const engine = typeof navigator === 'undefined' ? null : /Chrome\/(\d+)/.exec(navigator.userAgent);
-	if (!engine) return false;
-	const major = Number(engine[1]);
-	return major >= 94 && major < 132;
+	return {platformVersion, chromium: engine ? Number(engine[1]) : null};
+}
+
+/**
+ * Immuch360: whether the TV runs webOS 23, 24 or 25, where LG's self checklist asks Back on the entry page to show the
+ * Home screen. From the engine first (Chromium 94, 108 and 120 there, 87 on webOS 22, 132 on webOS 26: the Web Engine
+ * page), as webOS 25 TVs of LG's Cloud Test Lab did not take the Home path from the platform version of the page;
+ * else from that version (8, 9 and 10 for webOS 23, 24 and 25: the SDK table of LG's FAQ).
+ */
+export function backShowsHome(): boolean {
+	const {platformVersion, chromium} = platformClues();
+	if (chromium !== null) return chromium >= 94 && chromium < 132;
+	const major = platformVersion === null ? NaN : parseInt(platformVersion, 10);
+	return !isNaN(major) && major >= 8 && major <= 10;
+}
+
+/** The clues of backShowsHome, for the line About keeps */
+function cluesText(): string {
+	const {platformVersion, chromium} = platformClues();
+	return `platform ${platformVersion ?? '?'}, Chromium ${chromium ?? '?'}`;
 }
 
 // The Home app through the application manager (ACG group application.launcher, in requiredACG); platformBack() when
@@ -170,6 +184,7 @@ export function exitToPlatform(): boolean {
 		recordError('back: this TV has no platformBack()');
 		return false;
 	}
+	recordError(`back: platformBack() (${cluesText()})`);
 	platformBack();
 	return true;
 }
