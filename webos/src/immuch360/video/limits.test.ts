@@ -2,7 +2,19 @@
 // a video past the TV's decoders does not start (Samsung S90C), an LG TV that takes 5.7K plays what it played, a video
 // that never gets going stops in a bounded time, and 360° videos say why they play flat where the TV gives black frames.
 import {DECODER_PROBES, askDecoders, decoderCeiling, type DecoderRecord} from './decoders';
-import {VIDEO_CHECK_MAX_MS, flatVideoNotice, videoGate, videoStart} from './limits';
+import {
+	HEAVY_VIDEO_MBPS,
+	VIDEO_CHECK_MAX_MS,
+	VIDEO_STALL_NOTICE_MS,
+	flatVideoNotice,
+	nextStallState,
+	stallNotice,
+	startAdvice,
+	videoBitrateMbps,
+	videoGate,
+	videoStart,
+	type StallState,
+} from './limits';
 import {VIDEO_STALL_MS} from '../keys';
 
 const WIDTHS: Record<number, string> = {3840: '4K', 5760: '5.7K'};
@@ -108,5 +120,94 @@ describe('the notice of a 360° video, which plays flat', () => {
 		expect(flatVideoNotice('untested', never)).toBe('flat');
 		// The session notice is taken only where it is shown
 		expect(never).not.toHaveBeenCalled();
+	});
+});
+
+// DeltaTango69's second report: a DJI clip, 3840 x 2160 at 59.94 fps, H.264, 377 MiB for 24 s, starts and stalls about
+// 10 s in on the S90C; a Gear 360 clip, 3840 x 1920 at 31 Mb/s, plays
+const DJI = {fileSize: 377 * 1048576, duration: 24};
+const GEAR_360 = {fileSize: (31000000 * 24) / 8, duration: 24};
+
+describe('a video that started and stalls', () => {
+	const watch = (samples: [number, number, boolean | undefined][]) => {
+		let state: StallState | null = null;
+		return samples.map(([at, currentTime, paused]) => {
+			state = nextStallState(state, {at, currentTime, paused});
+			return state.stalled;
+		});
+	};
+
+	test('no progress for 8 s while it should play: a stall, until the position moves again', () => {
+		expect(VIDEO_STALL_NOTICE_MS).toBe(8000);
+		const stalled = watch([
+			[0, 9, false],
+			[1000, 10, false],
+			[5000, 10, false],
+			[8999, 10, false],
+			[9000, 10, false],
+			[15000, 10, false],
+			[16000, 10.5, false],
+			[17000, 11, false],
+		]);
+		expect(stalled).toEqual([false, false, false, false, true, true, false, false]);
+	});
+
+	test('a paused video is no stall, and its 8 s count again from the last look while paused', () => {
+		const stalled = watch([
+			[0, 10, false],
+			[1000, 10, true],
+			[30000, 10, true],
+			[31000, 10, false],
+			[37000, 10, false],
+			[38000, 10, false],
+		]);
+		expect(stalled).toEqual([false, false, false, false, false, true]);
+	});
+
+	test('a seek moves the position: the count starts again', () => {
+		expect(watch([[0, 10, false], [7000, 10, false], [7500, 60, false], [14000, 60, false], [15500, 60, false]])).toEqual([false, false, false, false, true]);
+	});
+});
+
+describe('the bitrate of a file', () => {
+	test('from its size and duration: the DJI clip, the Gear 360 clip, a light file', () => {
+		expect(videoBitrateMbps(DJI.fileSize, DJI.duration)).toBe(132);
+		expect(videoBitrateMbps(GEAR_360.fileSize, GEAR_360.duration)).toBe(31);
+		expect(videoBitrateMbps(12000000, 20)).toBe(4.8);
+		expect(videoBitrateMbps(1000, 3600)).toBe(0.1);
+	});
+
+	test('not known without a size or a duration', () => {
+		expect(videoBitrateMbps(null, 24)).toBeNull();
+		expect(videoBitrateMbps(DJI.fileSize, null)).toBeNull();
+		expect(videoBitrateMbps(DJI.fileSize, 0)).toBeNull();
+		expect(videoBitrateMbps(0, 24)).toBeNull();
+		expect(videoBitrateMbps(DJI.fileSize, Number.NaN)).toBeNull();
+	});
+});
+
+describe('what the notices say of a heavy file', () => {
+	const dji = videoBitrateMbps(DJI.fileSize, DJI.duration);
+	const gear = videoBitrateMbps(GEAR_360.fileSize, GEAR_360.duration);
+
+	test('a stall of the original: its bitrate and Immich transcoding; of a share: a faster link', () => {
+		expect(stallNotice({playsOriginal: true, bitrate: dji, serverTranscodes: true})).toEqual({kind: 'heavy', advice: 'transcode'});
+		expect(stallNotice({playsOriginal: true, bitrate: null, serverTranscodes: true})).toEqual({kind: 'heavyUnknown', advice: 'transcode'});
+		expect(stallNotice({playsOriginal: true, bitrate: dji, serverTranscodes: false})).toEqual({kind: 'heavy', advice: 'wired'});
+	});
+
+	test('a stall of a transcode, or before the server said which file it plays: the link only, no advice', () => {
+		expect(stallNotice({playsOriginal: false, bitrate: dji, serverTranscodes: true})).toEqual({kind: 'slowLink', advice: null});
+		expect(stallNotice({playsOriginal: null, bitrate: dji, serverTranscodes: true})).toEqual({kind: 'slowLink', advice: null});
+		expect(stallNotice({playsOriginal: undefined, bitrate: dji, serverTranscodes: true})).toEqual({kind: 'slowLink', advice: null});
+	});
+
+	test('could not start: the advice for an original above 60 Mb/s only', () => {
+		expect(HEAVY_VIDEO_MBPS).toBe(60);
+		expect(startAdvice({playsOriginal: true, bitrate: dji, serverTranscodes: true})).toBe('transcode');
+		expect(startAdvice({playsOriginal: true, bitrate: dji, serverTranscodes: false})).toBe('wired');
+		expect(startAdvice({playsOriginal: true, bitrate: gear, serverTranscodes: true})).toBeNull();
+		expect(startAdvice({playsOriginal: true, bitrate: null, serverTranscodes: true})).toBeNull();
+		expect(startAdvice({playsOriginal: false, bitrate: dji, serverTranscodes: true})).toBeNull();
 	});
 });

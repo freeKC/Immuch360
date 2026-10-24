@@ -27,7 +27,8 @@ jest.mock('./MediaControls', () => ({
 	MediaControls: ({notice}: {notice?: string}) => (notice ? <p data-testid="notice">{notice}</p> : null),
 }));
 // The player hands the viewer an API whose video never gets going, as the S90C did with an 8K video
-const mockPlayerApi = {getMediaState: () => ({currentTime: 0, paused: true}), getVideoNode: () => ({error: null}), pause: jest.fn(), areControlsVisible: () => false};
+let mockMedia: {currentTime: number; paused: boolean; duration?: number} = {currentTime: 0, paused: true};
+const mockPlayerApi = {getMediaState: () => mockMedia, getVideoNode: () => ({error: null}), pause: jest.fn(), areControlsVisible: () => false};
 jest.mock('./VideoPlayer', () => {
 	const {useEffect} = jest.requireActual('react');
 	return {
@@ -48,11 +49,15 @@ jest.mock('../../immuch360/details/AssetDetailsPanel', () => ({AssetDetailsPanel
 
 const photo: TimelineAsset = {id: 'a', type: 'IMAGE', ratio: 1.5, localDateTime: '2026-10-22', durationSeconds: null};
 let playsOriginal: jest.Mock;
+let serverTranscodes: boolean | undefined;
 const repository = {
 	previewUrl: (id: string) => `/preview/${id}`,
 	fullsizeUrl: (id: string) => `/fullsize/${id}`,
 	videoPlaybackUrl: (id: string) => `/video/${id}`,
 	playsOriginal: (...args: unknown[]) => playsOriginal(...args),
+	get serverTranscodes() {
+		return serverTranscodes;
+	},
 } as unknown as PhotoRepository;
 let rotate: jest.Mock;
 let onClose: jest.Mock;
@@ -81,6 +86,8 @@ beforeEach(() => {
 	onClose = jest.fn();
 	playsOriginal = jest.fn(() => Promise.resolve(true));
 	mockDetails = {details: null, settled: false};
+	mockMedia = {currentTime: 0, paused: true};
+	serverTranscodes = true;
 	mockPlayerApi.pause.mockClear();
 	resetVideoSession();
 	(useWebOSKeys as jest.Mock).mockReset();
@@ -182,7 +189,7 @@ describe('a video past the decoders of the TV', () => {
 });
 
 describe('a video that never gets going', () => {
-	test('20 s without canplay: the player closes and the message says the TV could not start it', () => {
+	test('20 s without canplay: the player closes and the message says the TV could not start it', async () => {
 		jest.useFakeTimers();
 		try {
 			mockDetails = details8k;
@@ -198,6 +205,11 @@ describe('a video that never gets going', () => {
 			expect(screen.getByRole('alert').textContent).toContain('The TV could not start this video (video/mp4, 7680 × 3840).');
 			expect(screen.queryByTestId('player')).toBeNull();
 			expect(mockPlayerApi.pause).toHaveBeenCalled();
+			// The server says it plays the original, 734 MB for 30 s: its bitrate and the advice follow
+			await act(async () => {
+				await Promise.resolve();
+			});
+			expect(screen.getByRole('alert').textContent).toContain('This file is 196 Mb/s. Let Immich transcode it');
 		} finally {
 			jest.useRealTimers();
 		}
@@ -225,5 +237,98 @@ describe('360° videos, which play flat', () => {
 		recordVideoFrames('yes');
 		mount({}, other);
 		expect(screen.getByTestId('notice').textContent).toBe('This TV cannot show the 360° view of this video yet: it plays flat.');
+	});
+});
+
+// DeltaTango69's second report: a DJI clip, 3840 x 2160 at 59.94 fps, 377 MiB for 24 s, starts after a while on the
+// S90C and stalls about 10 s in; Immich plays it as the original (its default policy transcodes other codecs only)
+describe('a video that started and stalls', () => {
+	const dji: TimelineAsset = {id: 'dji', type: 'VIDEO', ratio: 16 / 9, localDateTime: '2026-10-24', durationSeconds: 24};
+	const djiDetails = {details: {id: 'dji', type: 'VIDEO', originalMimeType: 'video/mp4', width: 3840, height: 2160, fileSize: 377 * 1048576}, settled: true};
+	const ADVICE = 'Let Immich transcode it (Administration, Settings, Video transcoding, policy Bitrate), or use a faster wired link.';
+	const tick = (seconds: number) => {
+		for (let i = 0; i < seconds; i++) {
+			act(() => {
+				jest.advanceTimersByTime(1000);
+			});
+		}
+	};
+	const flush = () =>
+		act(async () => {
+			await Promise.resolve();
+		});
+
+	beforeEach(() => jest.useFakeTimers());
+	afterEach(() => jest.useRealTimers());
+
+	test('the original, 10 s in: after 8 s without progress the notice gives its bitrate and Immich transcoding, the video goes on', async () => {
+		mockDetails = djiDetails;
+		mount({}, dji);
+		mockMedia = {currentTime: 0.5, paused: false, duration: 24};
+		tick(2);
+		// The position moves to 10 s, then stays there
+		mockMedia = {currentTime: 10, paused: false, duration: 24};
+		tick(1);
+		tick(7);
+		expect(screen.queryByTestId('notice')).toBeNull();
+		tick(1);
+		await flush();
+		expect(playsOriginal).toHaveBeenCalledWith('dji', 377 * 1048576);
+		expect(screen.getByTestId('notice').textContent).toBe(`The video stalls: this file is 132 Mb/s, more than the TV's network link delivers. ${ADVICE}`);
+		expect(screen.getByTestId('player')).toBeTruthy();
+		expect(mockPlayerApi.pause).not.toHaveBeenCalled();
+		// It plays again: the notice stays with the video
+		mockMedia = {currentTime: 11, paused: false, duration: 24};
+		tick(1);
+		expect(screen.getByTestId('notice').textContent).toContain('132 Mb/s');
+	});
+
+	test('a transcode that stalls: only that the link is too slow, no advice', async () => {
+		mockDetails = djiDetails;
+		playsOriginal = jest.fn(() => Promise.resolve(false));
+		mount({}, dji);
+		mockMedia = {currentTime: 3, paused: false};
+		tick(10);
+		await flush();
+		expect(screen.getByTestId('notice').textContent).toBe('The video stalls: the network link to the TV is too slow for it.');
+	});
+
+	test('a share, its duration not known: a heavy file, and a faster link', async () => {
+		serverTranscodes = undefined;
+		mockDetails = {details: {...djiDetails.details, fileSize: 377 * 1048576}, settled: true};
+		mount({}, {...dji, durationSeconds: null});
+		mockMedia = {currentTime: 3, paused: false};
+		tick(10);
+		await flush();
+		expect(screen.getByTestId('notice').textContent).toBe("The video stalls: this is a heavy file, more than the TV's network link delivers. Use a faster wired link.");
+	});
+
+	test('a video paused by the user is no stall', () => {
+		mockDetails = djiDetails;
+		mount({}, dji);
+		mockMedia = {currentTime: 3, paused: false};
+		tick(2);
+		mockMedia = {currentTime: 3, paused: true};
+		tick(30);
+		expect(screen.queryByTestId('notice')).toBeNull();
+		expect(playsOriginal).not.toHaveBeenCalled();
+	});
+
+	test('the heavy original that never starts: "could not start" with its bitrate and the advice', async () => {
+		mockDetails = djiDetails;
+		mount({}, dji);
+		tick(20);
+		await flush();
+		expect(screen.getByRole('alert').textContent).toContain(`The TV could not start this video (video/mp4, 3840 × 2160). This file is 132 Mb/s. ${ADVICE}`);
+	});
+
+	test('a light original that never starts (31 Mb/s): no advice', async () => {
+		mockDetails = {details: {...djiDetails.details, width: 3840, height: 1920, fileSize: (31000000 * 24) / 8}, settled: true};
+		mount({}, dji);
+		tick(20);
+		await flush();
+		const text = screen.getByRole('alert').textContent ?? '';
+		expect(text).toContain('The TV could not start this video (video/mp4, 3840 × 1920).');
+		expect(text).not.toContain('Mb/s');
 	});
 });

@@ -269,6 +269,9 @@ export class ImmichRepository implements PhotoRepository {
 		return this.client.getVideoPlaybackUrl(assetId);
 	}
 
+	// Immuch360: the stall notice of a heavy original advises Immich's Video transcoding (policy Bitrate)
+	public readonly serverTranscodes = true;
+
 	// Immuch360: Immich serves the transcode of a video when it made one (a codec its Video transcoding settings do not
 	// accept: by default any but H.264, at 720p), else the original. The length of the file it serves, against the
 	// original's, tells which (an answer without a length, or no answer, tells nothing).

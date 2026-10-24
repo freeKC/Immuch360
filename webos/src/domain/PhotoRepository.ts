@@ -29,6 +29,8 @@ export interface PhotoRepository {
 	 * (src/immuch360/video/limits.ts).
 	 */
 	playsOriginal?(assetId: string, originalSize: number | null): Promise<boolean | null>;
+	/** Immuch360: the server transcodes a video when its settings say so (Immich's Video transcoding), not a share */
+	readonly serverTranscodes?: boolean;
 	faceUrl(personId: string): string;
 
 	// Immuch360: the 360° viewer and the diagnostics page

@@ -82,3 +82,83 @@ export function flatVideoNotice(frames: VideoFramesVerdict | null, holdsSessionN
 	if (frames === 'black') return holdsSessionNotice() ? 'noFrames' : null;
 	return 'flat';
 }
+
+// 4. A video that started and then stalls keeps playing, with a notice. The S90C started a DJI clip of 131 Mb/s (4K at
+//    59.94 fps, H.264, played as the original since Immich's default policy transcodes only codecs it does not accept)
+//    and froze about 10 s in: the TV decodes it, its network link does not carry it.
+
+/** How long a video that played may show no progress, while nobody paused it, before the stall notice shows */
+export const VIDEO_STALL_NOTICE_MS = 8000;
+
+/** From this bitrate an original that does not start gets the advice of the stall notice too */
+export const HEAVY_VIDEO_MBPS = 60;
+
+/** What the viewer keeps between two looks at a video that started */
+export interface StallState {
+	/** The position at the last look */
+	lastTime: number;
+	/** When the position last moved, or the video was last paused */
+	progressAt: number;
+	stalled: boolean;
+}
+
+export interface PlaybackSample {
+	at: number;
+	currentTime: number;
+	/** The paused flag of the video element, undefined when not known */
+	paused: boolean | undefined;
+}
+
+/**
+ * The next state after a look at a video that started: a position that moved (playback, a seek) clears a stall; a
+ * paused video is no stall and its clock starts again; a video that should play and has not moved for maxMs stalls
+ */
+export function nextStallState(state: StallState | null, sample: PlaybackSample, maxMs = VIDEO_STALL_NOTICE_MS): StallState {
+	if (!state || sample.currentTime !== state.lastTime || sample.paused !== false) {
+		return {lastTime: sample.currentTime, progressAt: sample.at, stalled: false};
+	}
+	return {...state, stalled: sample.at - state.progressAt >= maxMs};
+}
+
+/**
+ * The bitrate of a file in Mb/s from its size in bytes and its duration in seconds, null when either is not known:
+ * whole numbers from 10 Mb/s, one decimal below
+ */
+export function videoBitrateMbps(fileSize: number | null | undefined, durationSeconds: number | null | undefined): number | null {
+	if (!fileSize || !durationSeconds || !(fileSize > 0) || !(durationSeconds > 0) || !Number.isFinite(fileSize / durationSeconds)) return null;
+	const mbps = (fileSize * 8) / durationSeconds / 1000000;
+	return mbps >= 10 ? Math.round(mbps) : Math.max(0.1, Math.round(mbps * 10) / 10);
+}
+
+/** What lightens a heavy original: Immich's transcoding (it transcodes when its policy says so), else a faster link */
+export type VideoAdvice = 'transcode' | 'wired';
+
+export interface StallNotice {
+	/** heavy: the original and its bitrate; heavyUnknown: the original, bitrate not known; slowLink: anything else */
+	kind: 'heavy' | 'heavyUnknown' | 'slowLink';
+	advice: VideoAdvice | null;
+}
+
+export interface HeavyInput {
+	/** Whether the server plays the original (the HEAD check): undefined before it answered, null when it cannot tell */
+	playsOriginal: boolean | null | undefined;
+	bitrate: number | null;
+	/** The server can transcode the video (Immich), not a share */
+	serverTranscodes: boolean;
+}
+
+const adviceFor = (serverTranscodes: boolean): VideoAdvice => (serverTranscodes ? 'transcode' : 'wired');
+
+/**
+ * The notice of a stall: the bitrate and the advice when the server plays the original, which its weight explains;
+ * only that the link is too slow for a transcode, or while the server has not said which file it plays
+ */
+export function stallNotice({playsOriginal, bitrate, serverTranscodes}: HeavyInput): StallNotice {
+	if (playsOriginal !== true) return {kind: 'slowLink', advice: null};
+	return {kind: bitrate === null ? 'heavyUnknown' : 'heavy', advice: adviceFor(serverTranscodes)};
+}
+
+/** The advice added to "could not start": only for an original whose bitrate is known and above HEAVY_VIDEO_MBPS */
+export function startAdvice({playsOriginal, bitrate, serverTranscodes}: HeavyInput): VideoAdvice | null {
+	return playsOriginal === true && bitrate !== null && bitrate > HEAVY_VIDEO_MBPS ? adviceFor(serverTranscodes) : null;
+}

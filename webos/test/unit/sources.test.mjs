@@ -182,6 +182,8 @@ describe('the repository of a folder', () => {
 		assert.equal(await smb.playsOriginal(smb.assets[1].id), true);
 		const details = await plex.getAssetDetails(plex.assets[1].id);
 		assert.deepEqual([details.width, details.height], [7680, 3840]);
+		// A share has no transcoding to advise: a stall notice tells of a faster link only
+		assert.equal(smb.serverTranscodes, undefined);
 	});
 
 	test('the details of a JPEG come from its head: a GPano photo is a 360° photo; turns stay on the TV', async () => {

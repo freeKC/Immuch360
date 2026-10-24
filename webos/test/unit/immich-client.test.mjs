@@ -158,6 +158,8 @@ describe('the file a video plays (Immich serves its transcode when it made one)'
 		assert.equal(heads[0].url, 'https://photos.example.org/api/assets/a-original/video/playback?apiKey=k3y');
 		assert.equal(heads[0].headers, undefined);
 		assert.equal(await repo.playsOriginal('a-transcoded', ORIGINAL), false);
+		// The stall notice of a heavy original advises Immich's Video transcoding
+		assert.equal(repo.serverTranscodes, true);
 	});
 
 	test('no length, an error, a missing original size: it cannot tell', async () => {
