@@ -122,7 +122,9 @@ object TelemetryFields {
     return GimbalReading(
       headingDeg = i16(body, 4) / 10.0,
       clockMs = u32(body, 12),
-      headingFineDeg = i32(body, 16) / 100.0,
+      // A 16 bit value: bytes 18 and 19 are zero in every frame of three captures, so a 32 bit read turned every
+      // negative heading into one above 400 degrees (p2/telemetry-flight-2026-10-24.md, 2.2)
+      headingFineDeg = i16(body, 16) / 100.0,
       angle1Deg = i16(body, 20) / 100.0,
       angle2Deg = i16(body, 22) / 100.0,
       quaternion = listOf(f32(body, 24), f32(body, 28), f32(body, 32), f32(body, 36)).map { it.toDouble() },

@@ -124,6 +124,16 @@ class TelemetryDecoderTest {
   }
 
   @Test
+  fun aNegativeFineHeadingIsReadAsOneAndBytesEighteenAndNineteenAreNotPartOfIt() {
+    // The 24 October 2026 flight capture: -175.59 degrees, bytes 18 and 19 zero, read 479.77 by a 32 bit read
+    val body = ByteArray(50).i16(4, -1756).i16(16, -17559).i16(18, 0)
+    decoder.offer(frame(4, 5, body, senderType = 4), 1000)
+    val gimbal = decoder.values(1000).gimbal!!.value
+    assertEquals(-175.6, gimbal.headingDeg, 1e-9)
+    assertEquals(-175.59, gimbal.headingFineDeg, 1e-9)
+  }
+
+  @Test
   fun theBatteryGivesVoltsAmpsCapacityAndCharge() {
     val body = ByteArray(44)
       .u32(1, 6180)
