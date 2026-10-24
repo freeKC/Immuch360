@@ -698,7 +698,6 @@ void main() {
 
   testWidgets('the drone battery under 20 % is amber with its icon, and says low', (tester) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     final listener = await openLive(tester, phone());
     await push(tester, listener, live(frame: fakeFrame(percent: 20)));
     expect(find.byKey(const Key('dji_live_battery_low')), findsNothing);
@@ -707,6 +706,7 @@ void main() {
     final number = tester.widget<Text>(find.text('19 %'));
     expect(number.style?.color, const Color(0xFFFFB300));
     expect(find.bySemanticsLabel('Drone battery 19 % low'), findsOneWidget);
+    semantics.dispose();
   });
 
   testWidgets('ten frames a second change the numbers in place: nothing beside them moves', (tester) async {
@@ -752,6 +752,9 @@ void main() {
     expect(find.byKey(const Key('dji_live_obstacle_info_only')), findsOneWidget);
     expect(find.textContaining('No alert does not mean the way is clear.'), findsOneWidget);
 
+    // A lazy list builds a little past its end: in the tree is not yet on the screen
+    await tester.ensureVisible(find.byKey(const Key('dji_live_obstacle_test')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('dji_live_obstacle_test')));
     await tester.pumpAndSettle();
     expect(api.obstacleAlerts.last, (true, true));
@@ -761,16 +764,22 @@ void main() {
       100,
       scrollable: scrollable,
     );
+    await tester.ensureVisible(find.byKey(const Key('dji_live_obstacle_sound_test')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('dji_live_obstacle_sound_test')));
     await tester.pumpAndSettle();
     expect(api.obstacleTests, 1);
     expect(find.byKey(const Key('dji_live_media_volume_off')), findsNothing);
 
     api.volumeOff = true;
+    await tester.ensureVisible(find.byKey(const Key('dji_live_obstacle_sound_test')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('dji_live_obstacle_sound_test')));
     await tester.pumpAndSettle();
     expect(find.text('The media volume is off: the obstacle sound cannot be heard.'), findsOneWidget);
 
+    await tester.ensureVisible(find.byKey(const Key('dji_live_obstacle_sound')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('dji_live_obstacle_sound')));
     await tester.pumpAndSettle();
     expect(api.obstacleAlerts.last, (true, false));

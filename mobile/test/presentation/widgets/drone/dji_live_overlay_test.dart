@@ -138,7 +138,6 @@ void main() {
 
   testWidgets('each value says its label and number in one line to a screen reader', (tester) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     await pumpBand(
       tester,
       DjiLiveBand.left,
@@ -148,5 +147,6 @@ void main() {
     expect(find.bySemanticsLabel('Height 12.3 m'), findsOneWidget);
     expect(find.bySemanticsLabel('Vertical ↑ 1.2 m/s'), findsOneWidget);
     expect(find.bySemanticsLabel('Speed 4.2 m/s'), findsOneWidget);
+    semantics.dispose();
   });
 }

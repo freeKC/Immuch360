@@ -578,7 +578,7 @@ void main() {
     });
   });
 
-  group('the DJI drone tile', () {
+  group('the "Photos and videos from the drone" row of the Drone page', () {
     Future<void> pumpTile(WidgetTester tester, List<Override> overrides) => pumpNetworkRouter(
       tester,
       home: const Scaffold(body: Column(children: [DroneImportTile()])),
@@ -605,7 +605,7 @@ void main() {
 
     testWidgets('shows on an Android phone once the setting is on', (tester) async {
       expect(await shownOnAndroid(tester, android()), isTrue);
-      expect(find.text('DJI drone'), findsOneWidget);
+      expect(find.text('Photos and videos from the drone'), findsOneWidget);
     });
 
     testWidgets('shows on an Android phone with the default settings, untouched', (tester) async {
@@ -616,7 +616,7 @@ void main() {
       ];
 
       expect(await shownOnAndroid(tester, defaults), isTrue);
-      expect(find.text('DJI drone'), findsOneWidget);
+      expect(find.text('Photos and videos from the drone'), findsOneWidget);
     });
 
     testWidgets('is hidden on an Android phone with the setting off', (tester) async {
