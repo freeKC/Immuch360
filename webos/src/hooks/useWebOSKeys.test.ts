@@ -237,10 +237,11 @@ describe('Back on an entry page per webOS version', () => {
 		expect(warn).toHaveBeenCalled();
 		// About shows why, as a TV has no console at hand
 		expect(lastErrors()).toEqual(['back: the Home app did not open (-1 Denied method call), platformBack()']);
-		// Opened: nothing else
+		// Opened: nothing else, and About says so
 		expect(pressBack()).toBe(true);
 		mockLunaCalls[1]!.onSuccess!();
 		expect(platformBack).toHaveBeenCalledTimes(1);
+		expect(lastErrors()[1]).toBe('back: the Home app opened');
 		unmount();
 	});
 
@@ -253,6 +254,23 @@ describe('Back on an entry page per webOS version', () => {
 		mockLunaCalls[0]!.onFailure!();
 		expect(platformBack).toHaveBeenCalledTimes(1);
 		expect(lastErrors()).toEqual(['back: the Home app did not open (no answer within 3 s), platformBack()']);
+		unmount();
+	});
+
+	test('webOS 25 without platformBack() on webOSSystem: the Home app all the same', () => {
+		(window as {PalmSystem?: unknown}).PalmSystem = {deviceInfo: JSON.stringify({platformVersion: '10.3.2'})};
+		const {unmount} = renderHook(() => useRootBack());
+		expect(pressBack()).toBe(true);
+		expect(mockLunaCalls).toHaveLength(1);
+		expect(mockLunaCalls[0]).toMatchObject({method: 'launch', parameters: {id: HOME_APP_ID}});
+		unmount();
+	});
+
+	test('webOS 26 without platformBack(): left to the TV, and About says so', () => {
+		(window as {PalmSystem?: unknown}).PalmSystem = {deviceInfo: JSON.stringify({platformVersion: '11.0.0'})};
+		const {unmount} = renderHook(() => useRootBack());
+		expect(pressBack()).toBe(false);
+		expect(lastErrors()).toEqual(['back: this TV has no platformBack()']);
 		unmount();
 	});
 

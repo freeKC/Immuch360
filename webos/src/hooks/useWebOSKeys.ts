@@ -144,6 +144,7 @@ function launchHome(): void {
 		timeout: 3000,
 		onSuccess: () => {
 			settled = true;
+			recordError('back: the Home app opened');
 		},
 		onFailure: (response?: {errorCode?: unknown; errorText?: unknown}) =>
 			fallBack([response?.errorCode, response?.errorText].filter((part) => part !== undefined && part !== '').join(' ') || 'refused'),
@@ -159,9 +160,17 @@ function launchHome(): void {
 // left alone.
 export function exitToPlatform(): boolean {
 	const system = webOSSystem();
-	if (!system || typeof system.platformBack !== 'function') return false;
-	if (backShowsHome()) launchHome();
-	else platformBack();
+	if (!system) return false;
+	if (backShowsHome()) {
+		launchHome();
+		return true;
+	}
+	if (typeof system.platformBack !== 'function') {
+		// Left to the TV, which then does its own default; About says so (seen nowhere yet, kept to be told)
+		recordError('back: this TV has no platformBack()');
+		return false;
+	}
+	platformBack();
 	return true;
 }
 
