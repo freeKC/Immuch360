@@ -220,36 +220,29 @@ Open `Immuch360-Desktop-3.3.0-rc.0-desktop.10-macos.dmg` from the [desktop pre-r
 
 ## How to
 
-### Watch your photos and videos
+Each entry says what you get, then the steps, then the limits. The [user guide](docs/immuch360/user-guide.md) has every option and message.
 
-Immuch360 is first a gallery and a player for ordinary photos and videos. The timeline, the albums, the favorites, the memories and the search work with an Immich server; the device's own photos and videos, and the folders of a computer, show without any server. Videos play in a native player with sound, seeking, a buffering indicator and a choice of audio tracks, in the 360°, Spatial and computer players and, from build 29, in the flat player of the Android app, which shows subtitles too. On a TV the remote drives everything; on a computer the mouse and the keyboard do.
+<a id="watch-your-photos-and-videos"></a>
+<a id="use-your-own-files-without-an-account"></a>
+### Watch your photos and videos, with or without a server
 
-1. Open the Photos tab: the timeline of your server, or of the device without a server.
-2. Tap a photo or a video to open it; swipe left and right to go to the next one, pinch or double tap to zoom.
-3. Swipe up on a video for its details: codec, size, frame rate, bit rate, and whether this device decodes it.
-4. On Android phones and TVs, from build 29, a film with several audio languages or with subtitles has an audio button and a subtitles button in its controls: the audio language you pick is kept for the next films, and subtitles stay off until you pick them, except forced ones. The Immich app's Android player has neither.
+Immuch360 is first a gallery and a player for ordinary photos and videos, and it needs neither an account nor a server. "Use without a server" opens the app on the photos and videos of the device, with every viewer, the 360° list and the network sources, and nothing leaves the device. With an Immich server, the timeline, the albums, the favorites, the memories and the search come from it. Videos play in a native player with sound, seeking, a buffering indicator and a choice of audio tracks, in the 360°, Spatial and computer players and, from build 29, in the flat player of the Android app, which shows subtitles too.
 
-More: [the viewers and the video player](docs/immuch360/user-guide.md#watch-your-photos-and-videos), [video details and decoders](docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
+<img src=".github/readme/b19-library-no-server.png" width="260" alt="The Library tab without a server: the 360° entry at the top, then On this device with two 360° photos, and Network shares with a share named NAS">
 
-### Turn a photo with one key
+1. Open the app. The welcome page shows "Your media. Any screen. Every perspective." and three choices: tap the first one, "Use without a server". A server can be connected later, from Settings or the Library tab.
+2. Allow access to your photos and videos. If you refuse, the app says "The app cannot see the photos of this device", with "Allow access" and "Open the settings".
+3. The Photos tab shows the timeline of the device; Search and Albums stay greyed out, as they come from the server. The Library tab has 360° at the top, then On this device (the albums of the device) and Network shares. The menu at the top right says "This device only": nothing is sent anywhere.
+4. Tap a photo or a video to open it; swipe left and right to go to the next one, pinch or double tap to zoom. Swipe up on a video for its details: codec, size, frame rate, bit rate, and whether this device decodes it.
+5. On Android phones, tablets and TVs, from build 29, a film with several audio languages or with subtitles has an audio button and a subtitles button in its controls: the audio language you pick is kept for the next films, and subtitles stay off until you pick them, except forced ones. The Immich app's Android player has neither.
 
-Rotate a photo 90° with one press, without opening an editor: a button, a key of the keyboard or a colour key of the TV remote, on every platform. The Immich app turns a photo in its editor; Immuch360 does it with one key, and for your own photos on an Immich server 2.6 or later it goes through that same server editor, so the web app and your other devices show them turned. Any other photo is turned on this device only. 360°, 180° and 3D photos never turn, so the immersive views stay level.
+On a computer, the folders you choose play the part of the gallery; on a TV, which has no photos of its own, the network sources do.
 
-<p align="center">
-  <img src=".github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
-</p>
-
-1. **Phones, tablets and the Meta Quest window**: open the photo and tap Rotate in the bottom row, before Edit, to turn it clockwise; a long press turns it the other way. With a keyboard, R and Shift+R.
-2. **Android TV and Google TV**: the yellow key of the remote turns the photo clockwise and the blue key counterclockwise, wherever the focus is in the viewer. On a remote without colour keys, press Down: the bar under the photo shows with Rotate selected (one Right away when the photo has a text button), and each OK turns the photo.
-3. **LG TVs (webOS)**: yellow and blue as on Android TV, R and Shift+R on a keyboard, or the turn button of the photo's controls.
-4. **Windows, Linux and macOS**: R turns clockwise, Shift+R counterclockwise, or the rotate button in the top bar, before full screen.
-5. **Photos of a network share, Plex or a camera**: the rotate button first in the top bar, R and Shift+R, or the yellow and blue keys.
-
-Where the turn is saved: a photo of your own account on Immich 2.6 or later is turned through the server's photo editor, which keeps the original file and makes a turned picture (a thin bar shows while it works; four turns, or one turn back, return to the original). The photos of the device, of a share, of a partner or a shared album, and every photo on an older server are turned on this device only, for that photo, and the file is never changed; the app says so once for an Immich photo. In the Android, iOS and computer apps, a turn kept on the device shows in the viewer, not yet in the thumbnails, the slideshow and the memories. Videos, the locked folder and every 360°, 180° or 3D photo have no Rotate.
+More: [without a server or an account](docs/immuch360/user-guide.md#without-a-server-or-an-account), [the viewers and the video player](docs/immuch360/user-guide.md#watch-your-photos-and-videos), [video details and decoders](docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
 
 ### Explore panoramas, 360°, VR180 and 3D
 
-A 360° photo opens as a sphere you turn with a finger or by moving the phone; a 360° video plays in a spherical player with sound; VR180 files are drawn on a half sphere; stereoscopic 3D files show one eye on a flat screen and both eyes in a headset. Partial panoramas keep their crop, and the picture starts on the view the camera recorded. A file the server does not flag can be viewed as 360° with one tap.
+Immuch360 knows flat photos and videos, panoramas, 360° photos and videos, VR180, stereoscopic 3D, Apple spatial photos and the 360° spheres of DJI drones, and opens each one in the viewer that fits it. A 360° photo opens as a sphere you turn with a finger or by moving the phone; a 360° video plays in a spherical player with sound; VR180 files are drawn on a half sphere; stereoscopic 3D files show one eye on a flat screen and both eyes in a headset. Partial panoramas keep their crop, and the picture starts on the view the camera recorded. A file the server does not flag can be viewed as 360° with one tap.
 
 <p align="center">
   <img src=".github/readme/b19-sphere.jpg" width="260" alt="A 360° photo of a lake shore in the sphere viewer: the close button at the top left, the 360°, 3D layout and gyroscope buttons at the top right">
@@ -265,57 +258,67 @@ On phones and tablets, a stereoscopic video can also gain depth on the flat scre
 
 More: [360° photos and videos](docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D and VR180](docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [Apple spatial photos and videos](docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [the 360° list](docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
 
-### Use your own files, without an account
+<a id="watch-on-the-tv-and-on-the-computer"></a>
+### Watch on the TV with the remote
 
-Immuch360 needs neither an account nor a server. From build 24 the app opens on a welcome page, where "Use without a server" comes first: it opens the app on the photos and videos of the device, with every viewer, the 360° list and the network sources. Nothing leaves the device. A server can be connected later, from Settings or the Library tab, and the server features then appear.
+Your photos on the big screen, with the remote. The TV apps all work the same way: the arrows move the frame, OK opens, Back goes back, and in a 360° photo the arrows look around. A TV has no photos of its own, so it shows your Immich server and, on Android TV and LG TVs, your network shares, your Plex server and your cameras.
 
-<img src=".github/readme/b19-library-no-server.png" width="260" alt="The Library tab without a server: the 360° entry at the top, then On this device with two 360° photos, and Network shares with a share named NAS">
-
-1. Open the app. The welcome page shows "Your media. Any screen. Every perspective." and three choices: tap the first one, "Use without a server". Up to build 23, the login page came first, with "Use without a server" under the form.
-2. Allow access to your photos and videos. If you refuse, the app says "The app cannot see the photos of this device", with "Allow access" and "Open the settings".
-3. The Photos tab shows the timeline of the device. Search and Albums stay greyed out, as they come from the server. The Library tab has 360° at the top, then On this device (the albums of the device) and Network shares.
-4. The menu at the top right says "This device only": the app shows the photos and videos of this device, nothing is sent anywhere.
-
-On a computer, the folders you choose play the part of the gallery; on a TV, which has no photos of its own, the network sources do.
-
-More: [without a server or an account](docs/immuch360/user-guide.md#without-a-server-or-an-account).
-
-### Reach the media of a NAS, a computer or a media server
-
-Your videos sit on a NAS, a computer or a media server. Immuch360 finds the servers of your network by itself, browses them and plays their photos and videos in place, in every viewer of the app, without copying anything: SMB (Samba, Windows shares), WebDAV (Nextcloud, Synology and others) and DLNA media servers (Jellyfin, Emby, minidlna, a NAS, a TV box). A phone can also share its own gallery on the Wi-Fi for a headset or any WebDAV client, and so can a Windows computer.
+- **Android TV and Google TV**: the Android app itself, build 29, from GitHub until Google Play offers it on TVs.
+- **LG TVs with webOS 5.0 and later**: a TV app of its own, version 1.0.0, waiting for LG's review on the LG Content Store.
+- **Samsung TVs with Tizen 5.5 and later**: the same TV app as on LG TVs, test build 0.2.0, which you sign and install yourself.
 
 <p align="center">
-  <img src=".github/readme/b19-add-share.png" width="260" alt="The Add a share page: Name, Server name or address, Port (optional), Share, Choose a share, Start folder (optional), User name, Password, Test the connection, and the result Connected, 2 entries in the start folder">
-  <img src=".github/readme/b19-share-folder.jpg" width="260" alt="A folder of a network share as a grid of thumbnails: 360° photos with the 360° badge and a 360° video with a play mark, the Select button at the top right">
+  <img src=".github/readme/lg-tv-webos.png" width="720" alt="Illustration, not a capture: a large TV in a living room at dusk shows a grid of landscape photos beside a rail of icons, and a remote lies on the coffee table">
 </p>
 
-1. Open the Library tab, then Network shares, then + and "A network share (NAS, computer, media server)". From build 24, "Add a network share or a media server" on the welcome page opens Network shares directly, without a server.
-2. Tap a server under "Found on the network", or fill the form by hand: type, server name or address, share or path, start folder, user name and password.
-3. Tap "Test the connection", then Save. Tap the share to browse it: folders first, then the photos and videos, with the 360° badge on the files recognised as 360°.
-4. With an Immich server connected, select files in a folder and tap "Upload to Immich" to send them to your server.
+#### On Android TV and Google TV
 
-The players read the bytes they need through a bridge inside the app, with byte ranges, so seeking works and nothing is stored on the device; an SMB video is read over up to six connections in parallel for smooth playback. From build 29, films recorded as M2TS (Blu-ray, AVCHD camcorders, TV recorders) play in the Android app from SMB and WebDAV shares and from DLNA servers that list them as transport streams, and a DLNA server that lists a size of 0 no longer gives an empty video.
+The same Android app, in a dark theme from the first start, with the remote as the only input. In the viewer, Left and Right go to the previous or next photo or video, even while a video plays, and in a 360° photo or video the arrows look around.
 
-More: [network shares](docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [share this phone on the network](docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA media servers](docs/immuch360/user-guide.md#dlna-media-servers).
+<p align="center">
+  <img src=".github/readme/tv-b21-sphere.jpg" width="440" alt="The sphere viewer on a Google TV: a 360° panorama of a lake shore, the close button at the top left, the Zoom out, Zoom in, 360° and 3D buttons at the top right, turned with the arrows of the remote">
+</p>
 
-### Find your Immich library
+1. Install the APK with adb, see [Install](#android-tv-and-google-tv). On the welcome page, choose "Add a network share or a media server" for a share, a Plex server or a camera, "Use without a server", or "Connect to an Immich server", whose page signs the TV in when you scan its QR code with your phone (see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
+2. In a viewer, the play and pause, rewind, fast forward, previous and next keys of the remote work. OK during a video shows the controls with play and pause selected, and a second OK pauses; the -10 s and +10 s buttons follow, then the audio and subtitles buttons when the film has them. From build 29, Down from play reaches the time bar: Left and Right move 10 s per press, faster while held, and OK plays or pauses. The controls and the date hide 5 s after the last key, and Left and Right then go to the previous or next file; on a share, that file opens in a page of its own, with controls that drive it. Videos no longer loop on a TV, unless you turn on Settings, Asset Viewer, Videos, Looping.
+3. The Menu key, the Info key or OK held down opens the details of the photo or video, read only: date, place, camera, codec, size and bit rate. A video the TV cannot decode says so, with its codec, its size and the limit of the TV's decoders, instead of loading forever; a 360° video beyond the decoders asks before opening the 360° player, and the reason is written on the Logs page of the profile menu.
 
-With an [Immich](https://github.com/immich-app/immich) server, Immuch360 is the Immich mobile app, with the same server and the same account as the web app: backup, timeline, albums, search, people, memories, sharing, partners, all synced with your server. It installs next to the official app. On top of it: the 360° badge and list, every immersive viewer, the choice between the original file and the server's transcoded stream for each video, the technical details of a video, and the files of a share or of the device sent to your server by hand.
+Build 28 ran on a real Android TV on 23 October; the video fixes of build 29 came from that run and were checked on the Google TV emulator, not yet on that TV.
 
-1. On the welcome page, tap "Connect to an Immich server", then log in with your server address, your email and your password, as in the Immich app; Back returns to the welcome page. Up to build 23 the login page opens directly. Your library, albums and backup settings are those of your account.
-2. In Settings, Asset Viewer, Videos, "Video source" picks the original when this device decodes it, always the original, or always the transcoded stream.
-3. To show a 360° photo to someone who does not have the app, share it with an Immich shared link: the Immich web app shows it as a sphere in their browser.
+<a id="immuch360-on-an-lg-tv-webos"></a>
+#### On an LG TV (webOS)
 
-The current build, build 29, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), like build 28, which was tested against a server built from that same Immich `main`; build 27 was also tested against an Immich 3.2.4 server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
+Immich's own apps do not install on an LG TV. Immuch360 has a TV app of its own for LG TVs with webOS 5.0 and later (2020 TVs on), driven by the remote and the Magic Remote: it shows your Immich server, your network shares, your Plex server and your Tapo cameras, and puts your 360° photos on a sphere you turn with the arrows. It is built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) by Seeky91, which brought the timeline, the albums, people, places, search, the slideshow and the sign in with a phone; thanks to Seeky91. Version 1.0.0 was submitted to the LG Content Store on 24 October and ran on webOS 25 TVs of LG's Cloud Test Lab; until LG approves it, it installs in Developer Mode, and every report in [Issues](https://github.com/freeKC/Immuch360/issues) helps.
 
-More: [everything else is Immich](docs/immuch360/user-guide.md#everything-else-is-immich), [compared with the Immich app](docs/immuch360/compatibility.md#compared-with-the-immich-app).
+1. Install it on a TV in Developer Mode, see [Install](#lg-tvs-webos). It has its own app id, so it installs next to Immich TV by Seeky91.
+2. Sign in with your phone (scan the QR code), with your email and password, or with an API key.
+3. Browse with the arrows and OK. In the viewer, Left and Right go to the previous or next photo or video, also while a video plays; the controls hide 5 s after the last key; Info opens the details; the channel keys zoom; the Magic Remote pointer and wheel work.
+4. A 360° photo opens on a sphere: each press of an arrow turns it by a step, and a held key keeps it turning. "View as 360°" covers a 2:1 photo the server does not flag; a VR180 photo shows on a half sphere and a 3D photo with one eye. The yellow and blue keys turn a flat photo.
+5. Once signed in, "Network shares" in the rail of the app: add an SMB, WebDAV or DLNA share, a Plex server (signed in with a code on plex.tv/link) or a Tapo camera. Their photos open in the same viewer, 360° photos on the sphere.
+
+Version 1.0.0 is made for the LG Content Store: Back leaves the app from Photos or the welcome page the way each webOS version expects, and closes an open popup first; a server that does not answer within 15 s ends with a message that says why and a Retry button; the privacy policy opens in the app, with a QR code to read [its LG TVs section](PRIVACY.md#lg-tvs-webos) on a phone; the TV uses its Gallery picture mode, as LG asks of photo apps; and a second package suits the Full HD TVs to which LG gives 1280x720 apps.
+
+Limits: SMB needs webOS 22 (2022 TVs) or later. The shares, Plex and the cameras come through the app's own service on the TV, which reads them for the app, and were checked against real servers on the project's build host, not on a TV yet. The live view of a camera is video only. Not yet: the recordings of the cameras (not before December 2026) and their sound, 360° videos on the sphere (they play flat, with a message), uploads. On webOS before 25, the reverse proxy in front of Immich must send CORS headers; the app explains them when it meets the problem. webOS 26 has not been tried yet.
+
+#### On a Samsung TV (Tizen)
+
+Samsung TVs with Tizen 5.5 and later (2020 TVs on) get the same TV app as test build 0.2.0, which is not on Samsung's store: sign in by typing, the timeline, albums, the viewer and the slideshow, 360° photos on the sphere and a photo turned with one key. Not yet: the sign in with a phone, the shares, Plex and the cameras, which run in a background service on LG TVs that the Samsung version does not have yet.
+
+1. Sign the package for your TV and install it in Developer mode, see [Install](#samsung-tvs-tizen).
+2. Sign in by typing your server address, then your email and password or an API key.
+3. Browse with the arrows and OK. A 360° photo opens on the sphere; a 360° video plays flat, with a notice the first time, because on a tester's TV the browser of the TV gave black frames to the 3D view.
+4. A video above what the TV's decoders accept says so, with the size the TV can play and the size of the file, instead of loading forever. A video that stalls shows a notice with its bitrate and the way out: let Immich transcode heavy files, or use a faster link. About this TV gives the TV's video ceiling.
+
+Version 0.1.0 ran on a tester's Samsung TV on Tizen 9, and 0.2.0 holds the fixes from that run; 0.2.0 has not run on a TV yet. The text of the About page, posted in [Discussions](https://github.com/freeKC/Immuch360/discussions) or [Issues](https://github.com/freeKC/Immuch360/issues) after a run, helps the most.
+
+More: [watch on your TV](docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [the webOS app: install, remote control keys, CORS headers](webos/README.md), [platform support](docs/immuch360/platform-support.md).
 
 ### Sign in a TV, a headset or a computer with your phone
 
-Typing a server address, an email and a password with a TV remote, or in a headset, takes minutes. With Immuch360 on your phone, signed in to your Immich server, a TV, a Meta Quest or a computer is signed in within seconds: the big screen shows a QR code, the phone scans it, you confirm, and the screen opens on your library. With the phone app, your password stays on the phone. The Immich app has nothing like it.
+**Scan. Sign in. Watch.** Typing a server address, an email and a password with a TV remote, or in a headset, takes minutes. With Immuch360 on your phone, signed in to your Immich server, a TV, a Meta Quest or a computer is signed in within seconds: the big screen shows a QR code, the phone scans it, you confirm, and the screen opens on your library. With the phone app, your password stays on the phone. The Immich app has nothing like it.
 
 <p align="center">
-  <img src=".github/readme/sign-in-with-your-phone.png" width="720" alt="A TV shows a QR code on its sign-in page, and a phone held in front of it scans the same code">
+  <img src=".github/readme/sign-in-with-your-phone.png" width="720" alt="Illustration, not a capture: a TV shows a QR code on its sign-in page, and a phone held in front of it scans the same code">
 </p>
 
 1. On the big screen (Android TV and Google TV, the Meta Quest window, Windows, Linux or macOS), choose "Connect to an Immich server": the sign-in page shows "Sign in with your phone", a QR code and a 10 character code, beside the server form.
@@ -324,11 +327,12 @@ Typing a server address, an email and a password with a TV remote, or in a heads
 
 How it stays safe: the phone and the screen must be on the same home network, and the code lasts two minutes at most and works once. The phone asks your server for a new session for that screen, named after it ("Immuch360 on Living room TV"), and sends it to the screen encrypted, so your password never leaves the phone. "Connect a TV or computer" lists the screens this phone signed in, each with Sign out, and Immich lists them in Account settings, Authorized devices, where you can revoke them too. Signing the phone out signs them out as well.
 
-The phone side runs on Android now, and on iPhone and iPad from the next iOS release. Without Immuch360 on the phone, scan the code with the camera of the phone: a page served by the screen opens in the browser, for your email and password, encrypted and used once. LG TVs sign in with a QR code of their own, in the browser of the phone; from build 28 the scanner of the phone app recognises it and opens that page.
+The phone side runs on Android now, and on iPhone and iPad from the next iOS release. Without Immuch360 on the phone, scan the code with the camera of the phone: a page served by the screen opens in the browser, for your email and password, encrypted and used once. LG TVs sign in with a QR code of their own, in the browser of the phone; from build 28 the scanner of the phone app recognises it and opens that page. Samsung TVs are signed in by typing for now.
 
 More: [sign in with your phone](docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [what the screens send and keep](docs/immuch360/technical-details.md#sign-in-with-your-phone).
 
-### Go immersive on Meta Quest
+<a id="go-immersive-on-meta-quest"></a>
+### Step inside your photos and videos with a Meta Quest
 
 On a Meta Quest the same app runs as a window with your whole library, and its 360° button opens an immersive view where the photo or video is all around you: you look around by turning your head, stereoscopic files are in true 3D, an Apple spatial photo floats in front of you in 3D, and the controllers or your hands drive the time bar, previous and next, and the Turn button that brings what is behind you in front without turning your chair. The media come from your server, the headset itself, a NAS, a media server, a phone or a Plex server, played in place.
 
@@ -345,72 +349,74 @@ On a Meta Quest the same app runs as a window with your whole library, and its 3
 
 More: [in the Meta Quest headset](docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [the headset: codecs, store and permissions](docs/immuch360/platform-support.md#meta-quest).
 
-### Watch on the TV and on the computer
+<a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
+### Play the files of a NAS, a computer, a media server or Plex
 
-The same Android app runs on Android TV and Google TV, in a dark theme from the first start, with the remote as the only input: the arrows move the frame, OK opens, Back goes back; in the viewer Left and Right go to the previous or next photo or video, even while a video plays, and in a 360° photo or video the arrows look around. The TV has no photos of its own, so it shows your Immich server, your network shares, your Plex server and your cameras; LG TVs have [an app of their own](#immuch360-on-an-lg-tv-webos), which Samsung TVs get too, as a first test build. On a Windows computer, Immuch360 Desktop reads the folders you choose with no server at all, plays flat and 360° videos in a player of its own, browses the same shares and servers, and can share the computer with a headset at home.
-
-<p align="center">
-  <img src=".github/readme/tv-b21-sphere.jpg" width="440" alt="The sphere viewer on a Google TV: a 360° panorama of a lake shore, the close button at the top left, the Zoom out, Zoom in, 360° and 3D buttons at the top right, turned with the arrows of the remote">
-  <img src=".github/readme/desktop-b4-video.jpg" width="440" alt="The video player of Immuch360 Desktop on Windows: a video of a street playing in the window, with the pause button, the time bar, Share and Upload to Immich">
-</p>
-
-1. On a TV: install the APK with adb (see [Install](#android-tv-and-google-tv)); on the welcome page, choose "Add a network share or a media server" for a share, a Plex server or a camera, "Use without a server", or "Connect to an Immich server", whose page signs the TV in when you scan its QR code with your phone (see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
-2. On a Windows computer: install the preview or unzip it and start `immuch360.exe` (see [Install](#windows)); from desktop build 5, "Use without a server" on the welcome page opens the choice of your folders, and "Connect to an Immich server" the login page, with its QR code for your phone. A photo, a video or a folder opened with the program, or dropped on its window, opens at once, a 360° one in its 360° view; several files open together on one page.
-3. In a viewer, the play and pause, rewind, fast forward, previous and next keys of the remote work, and so do the keyboard keys on a computer (Space, J and L, F for full screen). On a TV, OK during a video shows the controls with play and pause selected, and a second OK pauses; the -10 s and +10 s buttons follow, then the audio and subtitles buttons when the film has them. From build 29, Down from play reaches the time bar: Left and Right move 10 s per press, faster while held, and OK plays or pauses. The controls and the date hide 5 s after the last key, and Left and Right then go to the previous or next file; on a share, that file opens in a page of its own, with controls that drive it. Videos no longer loop on a TV, unless you turn on Settings, Asset Viewer, Videos, Looping.
-4. On a TV, the Menu key, the Info key or OK held down opens the details of the photo or video, read only: date, place, camera, codec, size and bit rate. A video the TV cannot decode says so, with its codec, its size and the limit of the TV's decoders, instead of loading forever; a 360° video beyond the decoders asks before opening the 360° player, and the reason is written on the Logs page of the profile menu.
-
-More: [watch on your TV](docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [on a Windows computer](docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [platform support](docs/immuch360/platform-support.md).
-
-### Immuch360 on an LG TV (webOS)
-
-Immuch360 also comes as an Immich app for LG webOS TVs: a separate app for LG TVs with webOS 4.0 and later (from 2018), driven by the remote, that shows your Immich server and puts your 360° photos on a sphere you turn with the arrows. Immich's own apps do not install on an LG TV. It is built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) by Seeky91, which brought the timeline, the albums, people, places, search, the slideshow and the sign in with a phone; thanks to Seeky91. Test build 0.2.0 adds the network shares, Plex and the live view of Tapo cameras. Version 0.1.0 ran on a tester's LG TV (webOS 22); 0.2.0 has not run on a real TV yet. It installs in Developer Mode only, and every report in [Issues](https://github.com/freeKC/Immuch360/issues) helps.
+Your videos sit on a NAS, a computer, a media server or Plex. Immuch360 finds the servers of your network by itself, browses them and plays their photos and videos in place, in every viewer of the app, without copying anything: SMB (Samba, Windows shares), WebDAV (Nextcloud, Synology and others) and DLNA media servers (Jellyfin, Emby, minidlna, a NAS, a TV box). A phone can also share its own gallery on the Wi-Fi for a headset or any WebDAV client, and so can a Windows computer.
 
 <p align="center">
-  <img src=".github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
+  <img src=".github/readme/b19-add-share.png" width="260" alt="The Add a share page: Name, Server name or address, Port (optional), Share, Choose a share, Start folder (optional), User name, Password, Test the connection, and the result Connected, 2 entries in the start folder">
+  <img src=".github/readme/b19-share-folder.jpg" width="260" alt="A folder of a network share as a grid of thumbnails: 360° photos with the 360° badge and a 360° video with a play mark, the Select button at the top right">
 </p>
 
-1. Install it on a TV in Developer Mode, see [Install](#lg-tvs-webos). It has its own app id, so it installs next to Immich TV by Seeky91.
-2. Sign in with your phone (scan the QR code), with your email and password, or with an API key.
-3. Browse with the arrows and OK. In the viewer, Left and Right go to the previous or next photo or video, also while a video plays; the controls hide 5 s after the last key; Info opens the details; the channel keys zoom; the Magic Remote pointer and wheel work.
-4. A 360° photo opens on a sphere you turn with the arrows; "View as 360°" covers a 2:1 photo the server does not flag; a VR180 photo shows on a half sphere and a 3D photo with one eye. The yellow and blue keys turn a flat photo.
-5. From 0.2.0, once signed in, "Network shares" in the rail of the app: add an SMB, WebDAV or DLNA share, a Plex server (signed in with a code on plex.tv/link) or a Tapo camera. Their photos open in the same viewer, 360° photos on the sphere.
+1. Open the Library tab, then Network shares, then + and "A network share (NAS, computer, media server)". From build 24, "Add a network share or a media server" on the welcome page opens Network shares directly, without a server.
+2. Tap a server under "Found on the network", or fill the form by hand: type, server name or address, share or path, start folder, user name and password.
+3. Tap "Test the connection", then Save. Tap the share to browse it: folders first, then the photos and videos, with the 360° badge on the files recognised as 360°.
+4. For a Plex server: + and "A Plex Media Server", tap your server under "Found on the network", paste a token once ("How to get it" on the page says where to find it), then "Test the connection" and Save.
+5. With an Immich server connected, select files in a folder and tap "Upload to Immich" to send them to your server.
 
-The shares, Plex and the cameras need webOS 5 (2020 TVs) or later, and SMB webOS 22 (2022 TVs) or later. They come through the app's own service on the TV, which reads them for the app, and were checked against real servers on the project's build host, not on a TV yet. The live view of a camera is video only.
+The players read the bytes they need through a bridge inside the app, with byte ranges, so seeking works and nothing is stored on the device; an SMB video is read over up to six connections in parallel for smooth playback. From build 29, films recorded as M2TS (Blu-ray, AVCHD camcorders, TV recorders) play in the Android app from SMB and WebDAV shares and from DLNA servers that list them as transport streams, and a DLNA server that lists a size of 0 no longer gives an empty video.
 
-Not yet: the recordings of the cameras (not before December 2026) and their sound, 360° videos on the sphere (they play flat, with a message), uploads. When a video does not play, a message gives its format and size instead of an endless spinner. On webOS before 25, the reverse proxy in front of Immich must send CORS headers; the app explains them when it meets the problem.
+**Plex Media Server, without plex.tv**: the app pairs with your server directly, with a token you paste once, and reads the original files of your libraries live, so 360° stays 360°, at home and, through your port forwarding, away from home. On an LG TV, Plex is signed in with a code on plex.tv/link.
 
-The next LG version, made for the LG Content Store, is in the sources and not published yet: Back on Photos or on the welcome page leaves the app (to the Home screen on webOS 5 and 23 to 25), Back closes an open popup first, a request that gets no answer within 15 s ends with a message that says why and a Retry button, every page stays inside the safe margins of the screen, the privacy policy opens in the app with a QR code to read [its LG TVs section](PRIVACY.md#lg-tvs-webos) on a phone, the TV uses its Gallery picture mode as LG asks of photo apps, and a second package suits the Full HD TVs to which LG gives 1280x720 apps. It was checked in a browser that stands in for the TV, not on a TV yet.
+More: [network shares](docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [share this phone on the network](docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA media servers](docs/immuch360/user-guide.md#dlna-media-servers), [Plex Media Server](docs/immuch360/user-guide.md#plex-media-server-without-plextv).
 
-Samsung TVs with Tizen 5.5 and later (2020 TVs on) get the same app as a first test build, 0.1.0, which is not on Samsung's store: sign in by typing, the timeline, albums, the viewer and the slideshow, 360° photos on the sphere and a photo turned with one key; not yet the sign in with a phone, the shares, Plex or the cameras, which run in a background service on LG TVs that the Samsung version does not have yet. It has run in the web engines of Tizen 5.5, 6.0 and 7.0 on a computer, never on a Samsung TV: see [Install](#samsung-tvs-tizen), and every report helps.
+<a id="find-your-immich-library"></a>
+### Keep your Immich library, with more
 
-More: [the webOS app: install, remote control keys, CORS headers](webos/README.md).
+With an [Immich](https://github.com/immich-app/immich) server, Immuch360 is the Immich mobile app, with the same server and the same account as the web app: backup, timeline, albums, search, people, memories, sharing, partners, all synced with your server. It installs next to the official app. On top of it: the 360° badge and list, every immersive viewer, the choice between the original file and the server's transcoded stream for each video, the technical details of a video, and the files of a share or of the device sent to your server by hand.
 
-### Cameras, Plex and raw camera files
+1. On the welcome page, tap "Connect to an Immich server", then log in with your server address, your email and your password, as in the Immich app; Back returns to the welcome page. Up to build 23 the login page opens directly. Your library, albums and backup settings are those of your account.
+2. In Settings, Asset Viewer, Videos, "Video source" picks the original when this device decodes it, always the original, or always the transcoded stream.
+3. To show a 360° photo to someone who does not have the app, share it with an Immich shared link: the Immich web app shows it as a sphere in their browser.
 
-- **Tapo cameras**: a camera is added next to the network shares. The app shows it live (Android, Android TV, the Quest, Windows and, video only, LG TVs from webOS 0.2.0; iPhone and iPad from the next iOS release) and lists the recordings of its memory card day by day on every platform; a clip is fetched from the camera, plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link.
-- **Plex Media Server, without plex.tv**: the app pairs with your server directly, with a token you paste once, and reads the original files of your libraries live, so 360° stays 360°, at home and, through your port forwarding, away from home.
-- **Raw 360° camera files**: the raw .insp photos and .insv videos of Insta360 cameras (one or two lenses, in one track, two tracks or two files), the .360 files of the GoPro MAX and the .osv files of the DJI Osmo 360 are stitched by the app as they play, with the calibration written in the file, with nothing to install anywhere. On Android, play them from a share, a computer or your server, since the gallery of the phone does not list raw files; the Immich server takes .insp and .insv only.
+The current build, build 29, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), like build 28, which was tested against a server built from that same Immich `main`; build 27 was also tested against an Immich 3.2.4 server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
 
-More: [Tapo cameras](docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](docs/immuch360/user-guide.md#plex-media-server-without-plextv), [raw 360° camera files](docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
+What is the same and what Immuch360 adds is in [Compared with Immich](#compared-with-immich).
 
-### Your DJI drone's photos and videos on your Immich server
+More: [everything else is Immich](docs/immuch360/user-guide.md#everything-else-is-immich), [compared with the Immich app](docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
-Import the photos and videos of a DJI drone over USB, straight to your Immich server: plug the drone or a card reader into an Android phone, pick the new files and send them, with the videos placed on the map from the drone's flight data and the drone's 360° spheres shown as 360°. The Immich app backs up only what is already in the phone's gallery, and the Immich server cannot read the place of a DJI Neo 2 video yet. This page is experimental, on Android phones and tablets only, and has not been tried with a real drone yet.
+<a id="cameras-plex-and-raw-camera-files"></a>
+### Watch your home cameras on the big screen
 
 <p align="center">
-  <img src=".github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
+  <img src=".github/readme/home-cameras.png" width="720" alt="Illustration, not a capture: in a living room at dusk, a TV on the wall shows four home camera views, a small home camera stands on a shelf and a phone on the table shows one of the views">
+</p>
+<p align="center"><sub>An illustration. The Tapo support has not been checked with a real camera yet.</sub></p>
+
+Your Tapo cameras of TP-Link, next to your photos, without the Tapo app. The app shows a camera live (Android phones and tablets, Android TV, the Meta Quest, Windows and, video only, LG TVs; iPhone and iPad from the next iOS release) and lists the recordings of its memory card day by day (phones, tablets, Android TV, the Quest and computers). A clip is fetched from the camera, plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link, and never changes anything on the camera.
+
+**Not yet checked with a real camera.** The protocol was written from captures of a C510W with firmware 1.3.4, and the app was checked against a simulated camera only. A report with the model and firmware that "Test the camera" shows helps a lot.
+
+1. In the Tapo app first: create the camera account (settings of the camera, Advanced Settings, Camera Account), used for the live view, and turn on Third-Party Compatibility, under Me, then Tapo Lab.
+2. In Immuch360: Library, Network shares, + and "A Tapo camera". Tap your camera under "Found on the network", or type its address.
+3. Type the password of your TP-Link account for the recordings, the camera account for the live view, or both; then "Test the camera", and Save.
+4. Tap the camera: its live view is at the top of its page, with the sound, SD or HD and Full screen; below it come the days with recordings. Tap a clip to fetch it and play it; its ⋮ menu has "Upload to Immich".
+
+More: [Tapo cameras](docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+
+### Your DJI drone (experimental)
+
+Two pages for a DJI drone, both experimental, on Android: the drone's live video through its remote controller, and its photos and videos brought to Immich over USB. Immuch360 is not a DJI product and is not approved by DJI, and nothing is sent to DJI.
+
+<a id="your-dji-drones-live-video-on-your-phone-experimental"></a>
+#### See what your drone sees, on your phone
+
+<p align="center">
+  <img src=".github/readme/drone-live-phone.png" width="720" alt="Illustration, not a capture: two hands hold a drone remote controller with a phone clipped on top, whose screen shows a live aerial view of a coast, while a small drone flies over the bay at dusk">
 </p>
 
-1. A "DJI drone" tile is in Library, Network shares: "DJI drones (experimental)" is on by default in Settings, Advanced. Turn it off there to hide the tile.
-2. Plug the drone (a Neo 2 can stay off) or a card reader into the phone with a USB-C data cable; a DJI remote without a screen (RC-N1, RC-N2, RC-N3) holds no photos. On the DJI drone page, tap "Choose the drone or the card", choose it in the side menu of the picker, open its DCIM folder or keep the whole drive, then "Use this folder" and Allow.
-3. The page lists the photos and videos by day, without the .LRF, .SRT, .THM and .m4a side files. Tap "Select all new", then "Upload to Immich"; the files sent before carry a cloud mark and are skipped. "Keep on the device" copies the files to the phone's gallery instead, in the album "Immuch360 import".
-4. For a video to land on the map, turn on Video Subtitles in DJI Fly (video mode, Settings, Camera) before you fly: the drone then writes a .SRT file next to each video, the app reads the place from it and sets it on your server after the upload, when Immich found none.
-
-The 360° spheres of DJI drones (Mini, Air, Mavic and others, recognised from their camera) show as 360° in Immuch360 even without 360° tags. Immich needs those tags: the upload option "Tag drone spheres as 360° for Immich", off by default, sends the photo unchanged with a small .xmp file beside it, so that Immich shows it as a sphere too. The Neo 2 has no sphere or panorama mode: its photos and videos are flat. When the phone recorded the sound of a Neo 2 clip, that sound is in a separate .m4a file: the page marks the clip, and Immich receives it without sound (download it with DJI Fly to keep the sound). Any camera card with a DCIM folder works the same way in a card reader. Nothing is sent to DJI.
-
-### Your DJI drone's live video on your phone (experimental)
-
-See what your DJI drone sees on your Android phone, without DJI Fly and without any account: plug a DJI RC-N3 remote controller into the phone with its cable, and Immuch360 shows the drone's live video, H.265 in 1080p, with the battery of the remote and of the drone, the signal, the gimbal and the flight data, read from the cable. The remote keeps full control of the drone. It was tried on the ground with an RC-N3, a DJI Neo 2 and a Samsung Galaxy S24+; other remotes and drones have not been tried. The flight and battery numbers are not compared with DJI Fly yet: do not fly by them.
+See what your DJI drone sees on your Android phone, without DJI Fly and without any account: plug a DJI RC-N3 remote controller into the phone with its cable, and Immuch360 shows the drone's live video, H.265 in 1080p, with the battery of the remote and of the drone, the signal, the gimbal and the flight data, read from the cable. The remote keeps full control of the drone. It was tried with an RC-N3, a DJI Neo 2 and a Samsung Galaxy S24+: on the ground with build 29, and in flight with a test build of the next one. Other remotes and drones have not been tried. The flight and battery numbers are not compared with DJI Fly yet: do not fly by them.
 
 It only listens. No command is ever sent to the remote or the drone: the one byte the page writes each second, from 20 seconds after the remote opens, only tells whether the remote takes data, and carries no command.
 
@@ -420,7 +426,69 @@ It only listens. No command is ever sent to the remote or the drone: the one byt
 4. The state reads "Accessory open", then "Remote frames arrive", and the video follows within a few seconds. The button on the picture shows it full screen, and the "Flight and battery" section gives the numbers of the remote and the drone.
 5. "Export the capture" writes three files to `Download/Immuch360/dji-link`; "Play a capture" plays an export again on the page, without the remote, to see how well a device decodes the drone's video.
 
-The drone's photos and videos cannot be reached through the remote, which does not open the drone's storage: copy them from the drone itself over USB or from its card, as in [the section above](#your-dji-drones-photos-and-videos-on-your-immich-server). On a Meta Quest the page is there too, but the drone's live video does not reach the headset yet. Keep the exported files to yourself, as the page says, since they hold the serial number of the remote; a report in [Issues](https://github.com/freeKC/Immuch360/issues) with the states and counters the page shows helps, above all with other DJI remotes.
+**In the next build** (in test, not published yet): a Drone card in the Library takes the place of the DJI link tile, with "DJI live video", a full screen live view in landscape with the drone's battery and the motor time over the picture, and "Photos and videos from the drone", the import below. The relay of the live video from the phone to a Meta Quest on your home Wi-Fi, to watch only, is planned for the same build, and Android TV is to follow; each comes only once it has been seen working in the headset or on the TV.
+
+The drone's photos and videos cannot be reached through the remote, which does not open the drone's storage: copy them from the drone itself over USB or from its card, as [below](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich). On a Meta Quest, build 29 has the page too, but the drone's live video does not reach the headset yet. Keep the exported files to yourself, as the page says: they hold the serial number of the remote, and a capture holds the drone's video and may hold the position of the aircraft; a report in [Issues](https://github.com/freeKC/Immuch360/issues) with the states and counters the page shows helps, above all with other DJI remotes.
+
+<a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
+#### Bring a drone's or a camera card's photos and videos to Immich
+
+Import the photos and videos of a DJI drone over USB, straight to your Immich server: plug the drone or a card reader into an Android phone, pick the new files and send them, with the videos placed on the map from the drone's flight data and the drone's 360° spheres shown as 360°. The Immich app backs up only what is already in the phone's gallery, and the Immich server cannot read the place of a DJI Neo 2 video yet. This page is experimental, on Android phones and tablets only, and has not been tried with a real drone yet.
+
+<p align="center">
+  <img src=".github/readme/dji-drone-import.png" width="720" alt="Illustration, not a capture: a drone on a terrace table, plugged into a phone by a cable, and its photos and videos going in an arc from the drone to the gallery of the phone">
+</p>
+
+1. A "DJI drone" tile is in Library, Network shares: "DJI drones (experimental)" is on by default in Settings, Advanced. Turn it off there to hide the tile.
+2. Plug the drone (a Neo 2 can stay off) or a card reader into the phone with a USB-C data cable; a DJI remote without a screen (RC-N1, RC-N2, RC-N3) holds no photos. On the DJI drone page, tap "Choose the drone or the card", choose it in the side menu of the picker, open its DCIM folder or keep the whole drive, then "Use this folder" and Allow.
+3. The page lists the photos and videos by day, without the .LRF, .SRT, .THM and .m4a side files. Tap "Select all new", then "Upload to Immich"; the files sent before carry a cloud mark and are skipped. "Keep on the device" copies the files to the phone's gallery instead, in the album "Immuch360 import".
+4. For a video to land on the map, turn on Video Subtitles in DJI Fly (video mode, Settings, Camera) before you fly: the drone then writes a .SRT file next to each video, the app reads the place from it and sets it on your server after the upload, when Immich found none.
+
+The 360° spheres of DJI drones (Mini, Air, Mavic and others, recognised from their camera) show as 360° in Immuch360 even without 360° tags. Immich needs those tags: the upload option "Tag drone spheres as 360° for Immich", off by default, sends the photo unchanged with a small .xmp file beside it, so that Immich shows it as a sphere too. The Neo 2 has no sphere or panorama mode: its photos and videos are flat. When the phone recorded the sound of a Neo 2 clip, that sound is in a separate .m4a file: the page marks the clip, and Immich receives it without sound (download it with DJI Fly to keep the sound). Any camera card with a DCIM folder works the same way in a card reader. Nothing is sent to DJI.
+
+More: [DJI drones over USB](docs/immuch360/user-guide.md#dji-drones-photos-and-videos-over-usb-experimental), [DJI link diagnostics](docs/immuch360/user-guide.md#dji-link-diagnostics-experimental).
+
+### Open the raw files of 360° cameras
+
+The raw .insp photos and .insv videos of Insta360 cameras (one or two lenses, in one track, two tracks or two files), the .360 files of the GoPro MAX and the .osv files of the DJI Osmo 360 are stitched by the app as they play, with the calibration written in the file, with nothing to install anywhere.
+
+1. Put the raw files where the app reads them: an SMB or WebDAV share, your Immich server (it takes .insp and .insv only), or the folders of a computer. The gallery of an Android phone does not list raw files, so a raw file copied to the phone shows neither in its gallery nor in the app.
+2. Keep the two files of a recording made of two files together: the app looks for the other one next to the first.
+3. Open the file and tap 360°. A photo shows "Raw 360° file, stitched by the app" with the source of its calibration; a video is stitched as it plays.
+
+Linux and macOS play raw videos flat, and dual fisheye .dng files show flat for now.
+
+More: [raw 360° camera files](docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
+
+### Turn a photo with one key
+
+Rotate a photo 90° with one press, without opening an editor: a button, a key of the keyboard or a colour key of the TV remote, on every platform. The Immich app turns a photo in its editor; Immuch360 does it with one key, and for your own photos on an Immich server 2.6 or later it goes through that same server editor, so the web app and your other devices show them turned. Any other photo is turned on this device only. 360°, 180° and 3D photos never turn, so the immersive views stay level.
+
+<p align="center">
+  <img src=".github/readme/rotate-one-key.png" width="720" alt="Illustration, not a capture: a phone shows a photo turning a quarter turn clockwise, above a row of round buttons with the rotate button lit">
+</p>
+
+1. **Phones, tablets and the Meta Quest window**: open the photo and tap Rotate in the bottom row, before Edit, to turn it clockwise; a long press turns it the other way. With a keyboard, R and Shift+R.
+2. **Android TV and Google TV**: the yellow key of the remote turns the photo clockwise and the blue key counterclockwise, wherever the focus is in the viewer. On a remote without colour keys, press Down: the bar under the photo shows with Rotate selected (one Right away when the photo has a text button), and each OK turns the photo.
+3. **LG TVs (webOS)**: yellow and blue as on Android TV, R and Shift+R on a keyboard, or the turn button of the photo's controls. Samsung TVs turn a photo with one key too.
+4. **Windows, Linux and macOS**: R turns clockwise, Shift+R counterclockwise, or the rotate button in the top bar, before full screen.
+5. **Photos of a network share, Plex or a camera**: the rotate button first in the top bar, R and Shift+R, or the yellow and blue keys.
+
+Where the turn is saved: a photo of your own account on Immich 2.6 or later is turned through the server's photo editor, which keeps the original file and makes a turned picture (a thin bar shows while it works; four turns, or one turn back, return to the original). The photos of the device, of a share, of a partner or a shared album, and every photo on an older server are turned on this device only, for that photo, and the file is never changed; the app says so once for an Immich photo. In the Android, iOS and computer apps, a turn kept on the device shows in the viewer, not yet in the thumbnails, the slideshow and the memories. Videos, the locked folder and every 360°, 180° or 3D photo have no Rotate.
+
+### Use your computer as the media player
+
+On a Windows computer, Immuch360 Desktop reads the folders you choose with no server at all, plays flat and 360° videos in a player of its own, browses the same shares and servers, and can share the computer with a headset at home. Linux and macOS have it as previews, with 360° videos played flat.
+
+<p align="center">
+  <img src=".github/readme/desktop-b4-video.jpg" width="440" alt="The video player of Immuch360 Desktop on Windows: a video of a street playing in the window, with the pause button, the time bar, Share and Upload to Immich">
+</p>
+
+1. Install the preview, or unzip it and start `immuch360.exe`, see [Install](#windows). On the welcome page, "Use without a server" opens the choice of your folders, and "Connect to an Immich server" the login page, with its QR code for your phone.
+2. A photo, a video or a folder opened with the program, or dropped on its window, opens at once, a 360° one in its 360° view; several files open together on one page. Photos and videos get it in "Open with"; it never makes itself their default program.
+3. In a viewer, the keyboard drives it: Space plays and pauses, J and L go back and forward, F is full screen, and R and Shift+R turn a photo.
+
+More: [on a Windows computer](docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [platform support](docs/immuch360/platform-support.md).
 
 ## Advanced features
 
