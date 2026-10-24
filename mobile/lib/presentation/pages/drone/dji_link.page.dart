@@ -33,9 +33,10 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_link_safety.widget.
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_send.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_sticks.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
-import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
 @RoutePage()
@@ -63,10 +64,13 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
     final t = context.t;
     final state = ref.watch(djiLinkProvider);
     final snapshot = state.snapshot;
-    // "Send to a headset" is for phones, and hidden while this device receives: a received stream is never relayed
+    // "Send to a headset or a TV" is for phones, and hidden while this device receives: a received stream is never
+    // relayed. A TV runs the phone flavour, and only watches.
     final receiving = snapshot?.source?.relay ?? false;
-    final sends = state.environment?.flavour == 'phone' && !receiving;
-    final headset = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
+    final television = ref.watch(tvDeviceProvider).isTelevision;
+    final sends = state.environment?.flavour == 'phone' && !receiving && !television;
+    // The Quest or a TV: what it received is what a bug report needs
+    final headset = ref.watch(djiReceiverOnlyProvider);
     return Scaffold(
       appBar: AppBar(title: Text(t.dji_live_diagnostics)),
       body: ListView(
@@ -87,9 +91,10 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
             // otherwise. It is read only, and the send path is off in this build.
             if (snapshot?.sticks.sampleAgeMs != null) _section(t.dji_link_sticks, _sticks(snapshot)),
           ] else if (state.environment != null) ...[
-            // No cable path here (a headset, an emulator): the picture of a phone's relay, or of a capture played here,
-            // which measures this device's decoder with no remote at all. The watch page is where a phone is chosen.
-            const DjiLinkObserverNote(),
+            // No cable path here (a headset, a TV, an emulator): the picture of a phone's relay, or of a capture played
+            // here, which measures this device's decoder with no remote at all. The watch page is where a phone is
+            // chosen.
+            DjiLinkObserverNote(tv: television),
             _section(t.dji_link_receive, _receiving(snapshot)),
             _section(t.dji_link_video, _receivedVideo(snapshot)),
             _section(t.dji_link_flight, DjiLinkFlightSection(telemetry: snapshot?.telemetryValues)),

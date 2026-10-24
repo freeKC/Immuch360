@@ -3,6 +3,11 @@
 // the flight view of stage 2b. The page connects by itself to the last phone it received from, once per opening. The
 // observer rule and "Watching only" are on top at all times and on the picture; nothing on the headset reaches the
 // remote or the drone.
+//
+// On Android TV and Google TV (p2/design-tv-2026-10-24.md) the same page, with the same session logic, is drawn for the
+// remote by DjiWatchTvView: the phones view, this TV's own code with its QR code for the phone to add, and the full
+// screen view. On a TV the page also stops receiving when the app goes to the background and connects again by itself
+// when it comes back, and lets the screen saver come after 10 minutes without a picture.
 
 import 'dart:async';
 
@@ -14,6 +19,7 @@ import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_capture.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_observer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_receive.widget.dart';
@@ -22,10 +28,12 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_live_advanced.panel
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_fields.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_notice.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_obstacle.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_watch_tv.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
 /// After this many failed attempts in a row, the state line says what to check
@@ -134,7 +142,7 @@ class DjiWatchPage extends ConsumerStatefulWidget {
   ConsumerState<DjiWatchPage> createState() => _DjiWatchPageState();
 }
 
-class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
+class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBindingObserver {
   late final DjiLinkNotifier _notifier;
   late final DjiRelayNotifier _relay;
   final _address = TextEditingController();
@@ -143,11 +151,26 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
   /// The code dialog is open: a refused code does not open a second one
   bool _asking = false;
 
+  /// The remote control layout: the TV's own code, its tries, the app going to the background and the screen saver
+  late final bool _tv;
+
+  /// The app went to the background with this page in front (a TV only)
+  bool _paused = false;
+
+  /// After [djiWatchTvScreenIdle] without a picture, a TV lets its screen saver come
+  Timer? _screenIdle;
+  bool _screenReleased = false;
+
   @override
   void initState() {
     super.initState();
     _notifier = ref.read(djiLinkProvider.notifier);
     _relay = ref.read(djiRelayProvider.notifier);
+    _tv = ref.read(tvModeProvider);
+    if (_tv) {
+      WidgetsBinding.instance.addObserver(this);
+      _pictureFlows(false);
+    }
     // After the first frame, which a change of the providers must not reach
     unawaited(Future.microtask(_notifier.pageShown));
     // The values ten times a second while this page is in front (and the flight view over it), the obstacle alert as
@@ -158,8 +181,17 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
     unawaited(
       Future.microtask(() async {
         await _relay.setPageVisible(true);
+        if (_tv) {
+          // The link stopped with the last opening: no phone is watched any more, and the last one connects by itself
+          _relay.forgetTarget();
+          await _relay.loadOwnCode();
+          _relay.beginOwnCodeTries();
+        }
         _relay.startBrowsing();
         await _relay.armAutoConnect();
+        if (_tv && mounted) {
+          _relay.setOwnCodeTries(true);
+        }
       }),
     );
     WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_noticeOnce()));
@@ -167,6 +199,11 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
 
   @override
   void dispose() {
+    if (_tv) {
+      WidgetsBinding.instance.removeObserver(this);
+      _screenIdle?.cancel();
+      _relay.setOwnCodeTries(false);
+    }
     _relay.disarmAutoConnect();
     _relay.stopBrowsing();
     unawaited(_notifier.setFrameStream(false));
@@ -178,11 +215,47 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
     super.dispose();
   }
 
+  /// A TV: Home or another app in front stops receiving and browsing; back in front, it browses and connects by itself
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!_tv) {
+      return;
+    }
+    if ((state == AppLifecycleState.hidden || state == AppLifecycleState.paused) && !_paused) {
+      _paused = true;
+      unawaited(_relay.pauseWatching());
+    } else if (state == AppLifecycleState.resumed && _paused) {
+      _paused = false;
+      unawaited(_relay.resumeWatching(tries: true));
+    }
+  }
+
+  /// A TV keeps its screen on while pictures come, and lets its screen saver come [djiWatchTvScreenIdle] after the last
+  /// one; the screen is taken again as soon as a picture comes back
+  void _pictureFlows(bool flows) {
+    _screenIdle?.cancel();
+    _screenIdle = null;
+    if (flows) {
+      if (_screenReleased) {
+        _screenReleased = false;
+        unawaited(_relay.setLiveScreenShown(true));
+      }
+      return;
+    }
+    _screenIdle = Timer(djiWatchTvScreenIdle, () {
+      _screenIdle = null;
+      if (mounted) {
+        _screenReleased = true;
+        unawaited(_relay.setLiveScreenShown(false));
+      }
+    });
+  }
+
   Future<void> _noticeOnce() async {
     if (!mounted || ref.read(djiLiveNoticeReadProvider)) {
       return;
     }
-    final read = await showDjiLiveNotice(context, headset: true, alert: _alertOffered());
+    final read = await showDjiLiveNotice(context, headset: true, tv: _tv, alert: _alertOffered());
     if (!mounted) {
       return;
     }
@@ -193,15 +266,103 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
     }
   }
 
-  /// A tap on a phone: its remembered code connects at once, otherwise the code is asked
+  /// A tap on a phone: its remembered code connects at once, otherwise the code is asked. A TV never types first: it
+  /// proves its own code, which the phone knows once the pilot added the TV.
   Future<void> _watch(DjiRelayPhone phone) async {
+    final relay = ref.read(djiRelayProvider);
     final id = phone.id;
-    final remembered = id == null ? null : ref.read(djiRelayProvider).rememberedCodes[id];
+    final remembered = id == null ? null : relay.rememberedCodes[id];
+    if (_tv) {
+      _relay.chosenOnTv();
+      final code = remembered ?? relay.ownCode;
+      if (code != null) {
+        await _relay.connect(phone, code);
+        return;
+      }
+      await _askCodeOnTv(phone);
+      return;
+    }
     if (remembered != null) {
       await _relay.connect(phone, remembered);
       return;
     }
     await _askCode(phone);
+  }
+
+  /// The phone's code typed on a TV, in its native text dialog (the Gboard TV grid or a keyboard): asked again while
+  /// it is not a code of the alphabet, and again with "The code does not match" when the phone refuses it
+  Future<void> _askCodeOnTv(DjiRelayPhone phone, {bool wrong = false}) async {
+    if (_asking) {
+      return;
+    }
+    _asking = true;
+    final t = context.t;
+    try {
+      var title = wrong ? t.dji_link_receive_state_wrong_code : t.dji_live_watch_code_title(phone: phone.name);
+      while (mounted) {
+        final typed = await ref
+            .read(tvApiProvider)
+            .editText(
+              TvTextRequest(
+                title: title,
+                text: '',
+                kind: TvTextKind.text,
+                okLabel: t.dji_live_watch,
+                cancelLabel: t.cancel,
+              ),
+            );
+        if (typed == null || !mounted) {
+          return;
+        }
+        final code = normalizePairingCode(typed);
+        if (code != null) {
+          _relay.chosenOnTv();
+          await _relay.connect(phone, code);
+          return;
+        }
+        title = t.dji_link_receive_code_invalid;
+      }
+    } catch (_) {
+      // No text dialog on this device: the phone's code cannot be typed here, its own code still works
+      return;
+    } finally {
+      _asking = false;
+    }
+  }
+
+  /// "Phone not listed? Type its address", in the TV's native text dialog
+  Future<void> _typeAddressOnTv() async {
+    final t = context.t;
+    final String? typed;
+    try {
+      typed = await ref
+          .read(tvApiProvider)
+          .editText(
+            TvTextRequest(
+              title: t.dji_link_receive_address,
+              text: _address.text,
+              kind: TvTextKind.url,
+              okLabel: t.ok,
+              cancelLabel: t.cancel,
+            ),
+          );
+    } catch (_) {
+      return;
+    }
+    if (typed == null || !mounted) {
+      return;
+    }
+    _address.text = typed;
+    await _watchTyped();
+  }
+
+  /// "Type the phone's code instead" from Options: the phone watched, else the only one listed
+  Future<void> _typeCodeFromOptions() async {
+    final relay = ref.read(djiRelayProvider);
+    final phone = relay.target ?? (relay.phones.length == 1 ? relay.phones.single : relay.phones.firstOrNull);
+    if (phone != null) {
+      await _askCodeOnTv(phone);
+    }
   }
 
   Future<void> _askCode(DjiRelayPhone phone, {bool wrong = false}) async {
@@ -268,22 +429,52 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> {
           ),
         );
       case 'safety':
-        await showDjiLiveNotice(context, headset: true, alert: _alertOffered());
+        await showDjiLiveNotice(context, headset: true, tv: _tv, alert: _alertOffered());
       case 'diagnostics':
         await context.pushRoute(const DjiLinkRoute());
+      case 'testSound':
+        final volumeOff = context.t.dji_live_media_volume_off;
+        await obstacle.playTest();
+        final off = await obstacle.mediaVolumeOff();
+        if (!off || !mounted) {
+          return;
+        }
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(volumeOff)));
+      case 'typeCode':
+        await _typeCodeFromOptions();
+      case 'newCode':
+        await _relay.newOwnCode();
+      case 'stop':
+        await _relay.disconnect();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    // A refused or new code asks for the code again, in the dialog
+    // A refused or new code asks for the code again, in the dialog; a TV whose own code was refused shows its card
     ref.listen(djiLinkProvider.select((state) => state.snapshot?.relayReceiving?.state), (previous, next) {
-      final target = ref.read(djiRelayProvider).target;
-      if (next == DjiRelayReceiveState.wrongCode && previous != next && target != null) {
-        unawaited(_askCode(target, wrong: true));
+      final relay = ref.read(djiRelayProvider);
+      final target = relay.target;
+      if (next == DjiRelayReceiveState.wrongCode && previous != next && target != null && !relay.usingOwnCode) {
+        unawaited(_tv ? _askCodeOnTv(target, wrong: true) : _askCode(target, wrong: true));
       }
     });
+    if (_tv) {
+      ref.listen<bool>(
+        djiLinkProvider.select(
+          (state) => djiLinkPictureFlows(state.snapshot?.videoDecode) && !djiLinkRelayPictureStopped(state.snapshot),
+        ),
+        (_, flows) => _pictureFlows(flows),
+      );
+      return DjiWatchTvView(
+        addressError: _addressError,
+        onWatch: (phone) => unawaited(_watch(phone)),
+        onTypeCode: (phone) => unawaited(_askCodeOnTv(phone)),
+        onTypeAddress: () => unawaited(_typeAddressOnTv()),
+        onMenu: (choice) => unawaited(_menu(choice)),
+      );
+    }
     final relay = ref.watch(djiRelayProvider);
     final snapshot = ref.watch(djiLinkProvider.select((state) => state.snapshot));
     final horizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;

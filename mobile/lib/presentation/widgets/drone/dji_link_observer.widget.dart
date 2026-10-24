@@ -1,6 +1,7 @@
 // The two lines a headset always shows on the DJI link page, never dismissible: in the EU open category, flying with
 // a headset on needs an observer beside the pilot who keeps the drone in sight (Regulation (EU) 2019/947, Article 4
 // and UAS.OPEN.060(4), and EASA's guidance on FPV in the open category), and nothing on the headset reaches the drone.
+// A TV shows the same two rules worded for a TV (p2/design-tv-2026-10-24.md, 7.1).
 
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -10,7 +11,10 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_link_latency.widget
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_receive.widget.dart';
 
 class DjiLinkObserverNote extends StatelessWidget {
-  const DjiLinkObserverNote({super.key});
+  const DjiLinkObserverNote({super.key, this.tv = false});
+
+  /// The rules worded for a TV
+  final bool tv;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,7 @@ class DjiLinkObserverNote extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    t.dji_link_observer_note,
+                    tv ? t.dji_live_tv_observer : t.dji_link_observer_note,
                     key: const Key('dji_link_observer_note'),
                     style: style?.copyWith(fontWeight: FontWeight.w700),
                   ),
@@ -39,7 +43,11 @@ class DjiLinkObserverNote extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 6),
-            Text(t.dji_link_observer_watching, key: const Key('dji_link_observer_watching'), style: style),
+            Text(
+              tv ? t.dji_live_tv_watching : t.dji_link_observer_watching,
+              key: const Key('dji_link_observer_watching'),
+              style: style,
+            ),
           ],
         ),
       ),
