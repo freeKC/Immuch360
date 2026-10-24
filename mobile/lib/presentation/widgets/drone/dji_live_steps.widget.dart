@@ -1,6 +1,8 @@
 // The step cards of the DJI live video (p2/design-ux-phone-2026-10-24.md, 3.4): while no picture shows, the middle of
 // the screen is one card under three dots, Remote, Drone, Picture: a title, one line, at most one button, and after a
 // while a "Nothing yet?" hint. The offer to open the screen when the remote is plugged in sits on the plug step only.
+// Once the drone was seen in a session it may be in the air: a lost cable link or an unplug then says first to look at
+// the drone and fly with the remote, and touching the cable waits for the landing.
 
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -52,7 +54,8 @@ class DjiLiveCardText {
   final List<String> extra;
 }
 
-/// The words of the card of [stage]; null for the stages without a card (the picture, a capture, the first check)
+/// The words of the card of [stage]; null for the stages without a card (the picture, a capture, the first check).
+/// [droneSeen]: the drone answered earlier in this session, so it may be flying now.
 DjiLiveCardText? djiLiveCardText(
   Translations t,
   DjiLiveStage stage, {
@@ -61,11 +64,13 @@ DjiLiveCardText? djiLiveCardText(
   bool untried = false,
   bool remoteAnswers = false,
   bool aircraftPresent = true,
+  bool droneSeen = false,
 }) {
   final slow = djiLiveSlow(stage, seconds);
   final untriedLine = [if (untried) t.dji_live_untried];
   return switch (stage) {
     DjiLiveStage.checking || DjiLiveStage.live || DjiLiveStage.capture => null,
+    DjiLiveStage.failed => DjiLiveCardText(t.dji_live_failed_title, t.dji_live_failed),
     DjiLiveStage.noUsb => DjiLiveCardText(t.dji_live_no_usb_title, t.dji_live_no_usb),
     DjiLiveStage.plug => DjiLiveCardText(t.dji_live_plug_title, t.dji_live_plug, [
       if (djiFly) t.dji_live_dji_fly,
@@ -87,8 +92,14 @@ DjiLiveCardText? djiLiveCardText(
       t.dji_live_no_picture_title,
       aircraftPresent ? t.dji_live_no_picture : t.dji_live_drone_silent,
     ),
-    DjiLiveStage.unplugged => DjiLiveCardText(t.dji_live_unplugged_title, t.dji_live_unplugged),
-    DjiLiveStage.lost => DjiLiveCardText(t.dji_live_lost_title, t.dji_live_lost),
+    DjiLiveStage.unplugged =>
+      droneSeen
+          ? DjiLiveCardText(t.dji_live_unplugged_title, t.dji_live_no_picture, [t.dji_live_unplugged])
+          : DjiLiveCardText(t.dji_live_unplugged_title, t.dji_live_unplugged),
+    DjiLiveStage.lost =>
+      droneSeen
+          ? DjiLiveCardText(t.dji_live_lost_title, t.dji_live_no_picture, [t.dji_live_lost_flying])
+          : DjiLiveCardText(t.dji_live_lost_title, t.dji_live_lost),
     DjiLiveStage.unread => DjiLiveCardText(t.dji_live_unread, t.dji_live_untried),
   };
 }
@@ -108,7 +119,7 @@ class DjiLiveStepCard extends StatelessWidget {
   final DjiLiveStage stage;
   final DjiLiveCardText text;
 
-  /// "Ask again" on a refused permission, "Try again" on a lost link
+  /// "Ask again" on a refused permission, "Try again" on a lost link or a start that failed
   final VoidCallback? onRetry;
 
   /// The offer to open this screen when the remote is plugged in
@@ -122,7 +133,7 @@ class DjiLiveStepCard extends StatelessWidget {
     final white = context.textTheme.bodyMedium?.copyWith(color: Colors.white);
     final retry = switch (stage) {
       DjiLiveStage.refused => t.dji_live_ask_again,
-      DjiLiveStage.lost => t.dji_live_try_again,
+      DjiLiveStage.lost || DjiLiveStage.failed => t.dji_live_try_again,
       _ => null,
     };
     return ConstrainedBox(
@@ -134,7 +145,7 @@ class DjiLiveStepCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (stage != DjiLiveStage.noUsb && stage != DjiLiveStage.noPicture) ...[
+            if (stage != DjiLiveStage.noUsb && stage != DjiLiveStage.noPicture && stage != DjiLiveStage.failed) ...[
               Center(child: DjiLiveDots(filled: djiLiveDots(stage))),
               const SizedBox(height: 16),
             ],

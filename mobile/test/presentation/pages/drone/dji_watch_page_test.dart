@@ -244,7 +244,7 @@ void main() {
       find.descendant(of: strip, matching: find.textContaining('an observer standing next to you')),
       findsOneWidget,
     );
-    expect(find.text('Drone 34 %   Motor time 0:41'), findsOneWidget);
+    expect(find.text('Drone battery 34 %   Motor time 0:41'), findsOneWidget);
     expect(find.text('Delay from the phone: about 24 ms'), findsOneWidget);
     expect(find.byKey(const Key('dji_link_receive_strip_stale')), findsNothing);
 
@@ -279,7 +279,7 @@ void main() {
     await tester.tap(button);
     await tester.pumpAndSettle();
     final labels = api.flightViews.single;
-    expect(labels['droneBattery'], 'Drone {value} %');
+    expect(labels['droneBattery'], 'Drone battery {value} %');
     expect(labels['motorTime'], 'Motor time {value}');
     expect(labels['delay'], 'Delay from the phone: about {ms} ms');
     for (final hidden in ['remoteBattery', 'signal', 'heading', 'flight', 'power', 'latency']) {

@@ -75,6 +75,28 @@ void main() {
     expect(_stage(DjiLinkState.linkLost, reason: DjiLinkReason.readsFailed, hadPicture: true), DjiLiveStage.lost);
   });
 
+  test('a start that failed is a stage of its own, never a black screen with no words', () {
+    // The environment could not be read
+    expect(djiLiveStage(const DjiLinkPageState(error: 'no bridge')), DjiLiveStage.failed);
+    expect(djiLiveStage(const DjiLinkPageState(error: 'no bridge', reading: true)), DjiLiveStage.checking);
+    // The link could not start: the snapshot the capture asked for says nothing was plugged in
+    final notStarted = DjiLinkPageState(
+      environment: fakeEnvironment(flavour: 'phone'),
+      snapshot: fakeSnapshot(state: DjiLinkState.absent, reason: DjiLinkReason.looking),
+      error: 'no bridge',
+    );
+    expect(djiLiveStage(notStarted), DjiLiveStage.failed);
+    // An error while the link listens (an export that failed) is not a failed start
+    expect(djiLiveStage(notStarted.copyWith(listening: true)), DjiLiveStage.plug);
+    // A device with no USB accessory support says so first
+    expect(
+      djiLiveStage(DjiLinkPageState(environment: fakeEnvironment(accessoryFeature: false), error: 'no bridge')),
+      DjiLiveStage.noUsb,
+    );
+    expect(djiLiveDots(DjiLiveStage.failed), 0);
+    expect(djiLiveRemoteOpen(DjiLiveStage.failed), isFalse);
+  });
+
   test('a capture being played is a stage of its own, also where no cable can be read', () {
     final playing = DjiLinkSource(replay: true, playing: true, name: 'dji-link-20261023-102731');
     expect(_stage(DjiLinkState.absent, source: playing), DjiLiveStage.capture);

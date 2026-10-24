@@ -75,7 +75,7 @@ void main() {
   testWidgets('over the picture: the drone battery and the motor time, with their labels', (tester) async {
     final t = await english(tester);
     expect(shown(djiLiveValues(t, fakeTelemetry(percent: 34, motorTimeS: 41.6), DjiLivePlace.overlay)), [
-      ('Drone', '34 %'),
+      ('Drone battery', '34 %'),
       ('Motor time', '0:41'),
     ]);
     expect(djiLiveValues(t, null, DjiLivePlace.overlay), isEmpty);
@@ -85,7 +85,7 @@ void main() {
   testWidgets('a group that stopped coming is not drawn at all', (tester) async {
     final t = await english(tester);
     expect(shown(djiLiveValues(t, fakeTelemetry(batteryStale: true), DjiLivePlace.overlay)), [('Motor time', '0:38')]);
-    expect(shown(djiLiveValues(t, fakeTelemetry(stale: true), DjiLivePlace.overlay)), [('Drone', '38 %')]);
+    expect(shown(djiLiveValues(t, fakeTelemetry(stale: true), DjiLivePlace.overlay)), [('Drone battery', '38 %')]);
     expect(djiLiveValues(t, fakeTelemetry(stale: true, batteryStale: true), DjiLivePlace.overlay), isEmpty);
     final advanced = djiLiveValues(t, fakeTelemetry(remoteBatteryStale: true), DjiLivePlace.advanced);
     expect(advanced.any((value) => value.field == DjiLiveField.remoteBattery), isFalse);
@@ -95,7 +95,7 @@ void main() {
     final t = await english(tester);
     final values = djiLiveValues(t, fakeTelemetry(), DjiLivePlace.advanced);
     expect(shown(values), [
-      ('Drone', '38 %'),
+      ('Drone battery', '38 %'),
       ('Motor time', '0:38'),
       ('Motors', 'On'),
       ('Drone battery voltage', '6.18 V'),
@@ -109,11 +109,14 @@ void main() {
       final likely = djiLiveGates[value.field]!.evidence == DjiLiveEvidence.likely;
       expect(value.label.endsWith('?'), likely, reason: value.field.name);
     }
-    expect(values.first.line, 'Drone 38 %');
+    expect(values.first.line, 'Drone battery 38 %');
   });
 
   testWidgets('the flight view of the Quest gets one template per value over the picture', (tester) async {
     final t = await english(tester);
-    expect(djiLiveFlightViewTemplates(t), {'droneBattery': 'Drone {value} %', 'motorTime': 'Motor time {value}'});
+    expect(djiLiveFlightViewTemplates(t), {
+      'droneBattery': 'Drone battery {value} %',
+      'motorTime': 'Motor time {value}',
+    });
   });
 }

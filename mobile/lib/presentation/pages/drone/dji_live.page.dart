@@ -61,6 +61,9 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
   /// A remote was open, and a live picture showed, earlier in this session
   bool _hadRemote = false;
   bool _hadPicture = false;
+
+  /// The drone answered earlier in this session: it may be in the air, whatever the stage now
+  bool _droneSeen = false;
   int _lostPictures = 0;
   int _lostAt = -100;
   DjiLivePanel? _panel;
@@ -143,6 +146,9 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
     if (djiLiveRemoteOpen(stage)) {
       _hadRemote = true;
     }
+    if (stage == DjiLiveStage.drone || stage == DjiLiveStage.live || stage == DjiLiveStage.noPicture) {
+      _droneSeen = true;
+    }
     if (stage == DjiLiveStage.live) {
       _hadPicture = true;
       if (!_pictureKept) {
@@ -165,13 +171,15 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
     await _memory.write(StoreKey.djiLiveOfferAnswered, true);
   }
 
-  /// Back: a panel closes first; while the picture is live the pilot is asked; otherwise the screen goes at once
+  /// Back: a panel closes first; once a picture showed in this session the pilot is asked, whatever the stage (a
+  /// picture lost in flight, a lost cable link, an unplug: the moments Back is pressed by reflex); before that the
+  /// screen goes at once
   Future<void> _onBack() async {
     if (_panel != null) {
       setState(() => _panel = null);
       return;
     }
-    if (_stage == DjiLiveStage.live && !await _confirmLeave()) {
+    if (_hadPicture && !await _confirmLeave()) {
       return;
     }
     if (mounted) {
@@ -315,7 +323,8 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
     final source = snapshot?.source;
     final capture = stage == DjiLiveStage.capture;
     final showPicture = (stage == DjiLiveStage.live || capture) && djiLinkPictureFlows(decode);
-    final picture = showPicture || stage == DjiLiveStage.noPicture
+    // A capture says so under its name: no Live chip over a picture that is not live
+    final picture = !capture && (showPicture || stage == DjiLiveStage.noPicture)
         ? djiLivePicture(decode, lostRecently: _ticks - _lostAt < 5)
         : DjiLivePicture.none;
     final ago = decode?.lastOutputAgoMs;
@@ -327,6 +336,7 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
       untried: snapshot?.profile != null && snapshot?.profile?.id != 'rc-n3-neo2',
       remoteAnswers: snapshot?.state == DjiLinkState.controllerIdentified,
       aircraftPresent: snapshot?.telemetryValues?.aircraftPresent ?? false,
+      droneSeen: _droneSeen,
     );
     final headsets = relay.sending ? snapshot?.relaySending?.headsets.length ?? 0 : 0;
     return [
@@ -348,7 +358,10 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
                     child: DjiLiveStepCard(
                       stage: stage,
                       text: card,
-                      onRetry: () => unawaited(_notifier.retry()),
+                      // A start that failed starts again; a lost link asks the native side to try at once
+                      onRetry: () => unawaited(
+                        stage == DjiLiveStage.failed ? _notifier.pageShown(capture: true) : _notifier.retry(),
+                      ),
                       offer: stage == DjiLiveStage.plug && _offerable && !state.openOnPlug,
                       onOfferYes: () => unawaited(_answerOffer(true)),
                       onOfferNo: () => unawaited(_answerOffer(false)),

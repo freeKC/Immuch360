@@ -11,6 +11,9 @@ enum DjiLiveStage {
   /// The environment is not read yet
   checking,
 
+  /// Reading the environment or starting the link failed: nothing else would show
+  failed,
+
   /// This device cannot be a USB accessory: no app on it can read a remote over a cable
   noUsb,
 
@@ -57,6 +60,7 @@ enum DjiLiveStage {
 /// How many of the three dots (Remote, Drone, Picture) are filled at [stage]
 int djiLiveDots(DjiLiveStage stage) => switch (stage) {
   DjiLiveStage.checking ||
+  DjiLiveStage.failed ||
   DjiLiveStage.noUsb ||
   DjiLiveStage.plug ||
   DjiLiveStage.unplugged ||
@@ -75,18 +79,23 @@ int djiLiveDots(DjiLiveStage stage) => switch (stage) {
 /// The stage of [state]. [hadRemote]: a remote was open earlier in this session, so that nothing listed now is an
 /// unplug rather than the first plug (the 24 October 2026 session ended on reads failed, then nothing listed).
 /// [hadPicture]: a live picture showed earlier in this session, so that an open link without a picture says the
-/// picture stopped rather than walking the steps again.
+/// picture stopped rather than walking the steps again. A start that failed (the environment could not be read, or
+/// the link could not start) has a stage of its own, so that the screen never stays black with no words.
 DjiLiveStage djiLiveStage(DjiLinkPageState state, {bool hadRemote = false, bool hadPicture = false}) {
   final snapshot = state.snapshot;
   if (snapshot?.source?.replay ?? false) {
     return DjiLiveStage.capture;
   }
+  final failed = state.error != null && !state.reading && !state.listening;
   final environment = state.environment;
   if (environment == null) {
-    return DjiLiveStage.checking;
+    return failed ? DjiLiveStage.failed : DjiLiveStage.checking;
   }
   if (!environment.transportPossible) {
     return DjiLiveStage.noUsb;
+  }
+  if (failed) {
+    return DjiLiveStage.failed;
   }
   if (snapshot == null) {
     return DjiLiveStage.checking;

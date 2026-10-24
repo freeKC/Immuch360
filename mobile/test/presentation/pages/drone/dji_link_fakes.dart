@@ -426,8 +426,16 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
   @override
   Future<DjiLinkEnvironment> readEnvironment() async => environment;
 
+  /// Thrown by [start] while set, as a native side that cannot start
+  Error? startError;
+
   @override
-  Future<void> start() async => starts += 1;
+  Future<void> start() async {
+    starts += 1;
+    if (startError case final Error error) {
+      throw error;
+    }
+  }
 
   @override
   Future<void> stop() async => stops += 1;

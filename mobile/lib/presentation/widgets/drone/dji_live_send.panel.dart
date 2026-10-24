@@ -14,6 +14,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
+import 'package:immich_mobile/providers/network/phone_share.provider.dart';
 
 /// The line under the switch; null while sending starts
 String? djiLiveSendLine(Translations t, DjiRelayState relay, DjiRelaySending? sending) {
@@ -33,7 +34,9 @@ String? djiLiveSendLine(Translations t, DjiRelayState relay, DjiRelaySending? se
   if (sending == null || sending.sending == 'none') {
     return t.dji_live_send_nothing;
   }
-  return t.dji_live_send_waiting(phone: relay.phoneName ?? '-');
+  // The name the headset lists, "Immuch360 on Galaxy S24+", not the bare device name
+  final phoneName = relay.phoneName;
+  return t.dji_live_send_waiting(phone: phoneName == null ? '-' : phoneShareServiceName(phoneName));
 }
 
 class DjiLiveSendPanel extends ConsumerWidget {

@@ -1,7 +1,7 @@
 // The live screen of the DJI live video on a phone (p2/design-ux-phone-2026-10-24.md): the safety notice once per run
 // of the app, a step card for each stage of the link, the picture with the gated values and nothing in it that takes a
-// touch, Back that asks only while the picture is live, Send to a headset and Advanced from the right, the offer to
-// open on the plug, and the screen kept on.
+// touch, Back that asks once a picture showed, the cards that say to fly with the remote once the drone was seen, Send
+// to a headset and Advanced from the right, the offer to open on the plug, and the screen kept on.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -217,8 +217,10 @@ void main() {
     expect(find.byKey(const Key('dji_live_dot_1_on')), findsOneWidget);
     expect(find.byKey(const Key('dji_live_dot_2_off')), findsOneWidget);
 
+    // The drone was found in this session: a lost cable link says first to fly with the remote
     await push(tester, listener, fakeSnapshot(state: DjiLinkState.linkLost, reason: DjiLinkReason.readsFailed));
-    expect(cardTitle('Lost the remote'), findsOneWidget);
+    expect(cardTitle('This phone lost the cable link'), findsOneWidget);
+    expect(find.text('Look at the drone and fly with the remote.'), findsOneWidget);
     await tester.tap(find.byKey(const Key('dji_live_retry')));
     await tester.pumpAndSettle();
     expect(api.retries, 2);
@@ -252,7 +254,7 @@ void main() {
     expect(find.byKey(const Key('dji_live_card_title')), findsNothing);
     expect(find.byKey(const Key('dji_live_picture_live')), findsOneWidget);
     expect(find.text('Live'), findsOneWidget);
-    expect(find.text('Drone'), findsOneWidget);
+    expect(find.text('Drone battery'), findsOneWidget);
     expect(find.text('34 %'), findsOneWidget);
     expect(find.text('Motor time'), findsOneWidget);
     expect(find.text('0:41'), findsOneWidget);
@@ -345,6 +347,66 @@ void main() {
     expect(find.byKey(const Key('dji_live')), findsNothing);
   });
 
+  testWidgets('a lost cable link and an unplug after a picture say to fly with the remote, and Back asks', (
+    tester,
+  ) async {
+    final api = phone();
+    final listener = await openLive(tester, api);
+    await push(tester, listener, live());
+
+    await push(tester, listener, fakeSnapshot(state: DjiLinkState.linkLost, reason: DjiLinkReason.readsFailed));
+    expect(cardTitle('This phone lost the cable link'), findsOneWidget);
+    expect(find.text('Look at the drone and fly with the remote.'), findsOneWidget);
+    expect(
+      find.text('This phone tries again. Once landed, if it lasts, unplug the remote and plug it in again.'),
+      findsOneWidget,
+    );
+    // Never the advice to touch the cable at once while the drone may be flying
+    expect(find.text('Trying again. If it lasts, unplug the remote and plug it in again.'), findsNothing);
+    expect(find.byKey(const Key('dji_live_retry')), findsOneWidget);
+
+    // Back by reflex on that card asks first
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_live_leave_dialog')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('dji_live_stay')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_live')), findsOneWidget);
+
+    await push(tester, listener, fakeSnapshot(state: DjiLinkState.absent, reason: DjiLinkReason.detached));
+    expect(cardTitle('Remote unplugged'), findsOneWidget);
+    expect(find.text('Look at the drone and fly with the remote.'), findsOneWidget);
+    expect(find.text('Plug it in again to go on.'), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_live_leave_dialog')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('dji_live_leave')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_live')), findsNothing);
+  });
+
+  testWidgets('a lost cable link before the drone answered keeps the plain advice', (tester) async {
+    final listener = await openLive(tester, phone());
+    await push(tester, listener, fakeSnapshot(state: DjiLinkState.controllerIdentified));
+    await push(tester, listener, fakeSnapshot(state: DjiLinkState.linkLost, reason: DjiLinkReason.readsFailed));
+    expect(cardTitle('This phone lost the cable link'), findsOneWidget);
+    expect(find.text('Trying again. If it lasts, unplug the remote and plug it in again.'), findsOneWidget);
+    expect(find.text('Look at the drone and fly with the remote.'), findsNothing);
+  });
+
+  testWidgets('a start that failed says so, and Try again starts again', (tester) async {
+    final api = phone()..startError = StateError('no bridge');
+    await openLive(tester, api);
+    expect(cardTitle('The live video could not start'), findsOneWidget);
+    expect(find.text('Try again. If it lasts, Diagnostics, in Advanced, says why.'), findsOneWidget);
+
+    api.startError = null;
+    await tester.tap(find.byKey(const Key('dji_live_retry')));
+    await tester.pumpAndSettle();
+    expect(api.starts, 2);
+    expect(cardTitle('Plug in the remote'), findsOneWidget);
+  });
+
   testWidgets('Send to a headset: one switch, one line, the code while on, the helps folded', (tester) async {
     final relay = FakeRelayEnvironment();
     final api = phone();
@@ -368,7 +430,11 @@ void main() {
     expect(find.text("192.168.43.1:8362 (this phone's hotspot)"), findsOneWidget);
 
     await push(tester, listener, fakeSnapshot(relaySending: fakeSending(sending: 'cable')));
-    expect(find.text('On. On the headset, open Immuch360, DJI live video, and pick Galaxy S24+.'), findsOneWidget);
+    // The name the headset lists
+    expect(
+      find.text('On. On the headset, open Immuch360, DJI live video, and pick Immuch360 on Galaxy S24+.'),
+      findsOneWidget,
+    );
     await push(
       tester,
       listener,
@@ -519,6 +585,9 @@ void main() {
     );
     expect(find.byKey(const Key('dji_live_placeholder')), findsOneWidget);
     expect(find.text('Capture: dji-link-20261023-102731'), findsOneWidget);
+    // A capture is not live: no picture chip over its name
+    expect(find.byKey(const Key('dji_live_picture_live')), findsNothing);
+    expect(find.text('Live'), findsNothing);
     await tester.tap(find.byKey(const Key('dji_live_capture_stop')));
     await tester.pumpAndSettle();
     expect(api.playbackStops, 1);
