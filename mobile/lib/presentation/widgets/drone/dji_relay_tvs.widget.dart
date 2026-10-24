@@ -18,9 +18,10 @@ import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 
-/// What a scanned or typed TV code gave, in words; null when the TV was added or was in the list already
+/// What a scanned or typed TV code gave, in words; null when the TV was added
 String? djiRelayAddScreenText(Translations t, DjiRelayAddScreen outcome) => switch (outcome) {
-  DjiRelayAddScreen.added || DjiRelayAddScreen.already => null,
+  DjiRelayAddScreen.added => null,
+  DjiRelayAddScreen.already => t.dji_live_send_tv_already,
   DjiRelayAddScreen.full => t.dji_live_send_tv_full,
   DjiRelayAddScreen.invalid => t.dji_live_send_tv_not_watch_code,
 };

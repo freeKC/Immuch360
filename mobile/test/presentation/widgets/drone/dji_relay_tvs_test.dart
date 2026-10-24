@@ -1,7 +1,7 @@
-// The TVs of "Send to a headset or a TV" on the phone (p2/design-tv-2026-10-24.md, 2.4 and 8.1 item 9): "Add a TV" scans
-// the code a TV's Drone page shows and the relay welcomes it, the sign in code says where it goes, a typed code is
-// checked, each TV is named from its first connection and "Watching" while it is, Remove tells the relay, eight at
-// most, all kept on this phone only.
+// The TVs of "Send to a headset or a TV" on the phone (p2/design-tv-2026-10-24.md, 2.4 and 8.1 item 9): "Add a TV"
+// scans the code a TV's Drone page shows and the relay welcomes it, the sign in code says where it goes, a typed code
+// is checked, a TV added twice says so, each TV is named from its first connection and "Watching" while it is, Remove
+// tells the relay, eight at most, all kept on this phone only.
 
 import 'dart:convert';
 
@@ -193,6 +193,15 @@ void main() {
     expect(find.text('A TV, not connected yet'), findsNWidgets(8));
     // Not sending: nothing to tell the relay yet, it gets the list when it starts
     expect(api.relayScreenCodes, isEmpty);
+
+    // The same TV again: said, and nothing added
+    await tester.tap(find.byKey(const Key('dji_live_send_tv_type')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('dji_live_send_tv_code')), 'MNPQRSTUVW');
+    await tester.tap(find.byKey(const Key('dji_live_send_tv_dialog_add')));
+    await tester.pumpAndSettle();
+    expect(find.text('This TV is in the list already.'), findsOneWidget);
+    expect(find.text('A TV, not connected yet'), findsNWidgets(8));
 
     await tester.tap(find.byKey(const Key('dji_live_send_tv_type')));
     await tester.pumpAndSettle();

@@ -109,11 +109,18 @@ class DjiLinkSendSection extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      t.dji_link_relay_headset(
-                        name: headset.name ?? '-',
-                        address: headset.address,
-                        duration: djiRelayDuration(headset.connectedForMs),
-                      ),
+                      // A TV says so in its hello, whether it proved its own code or the phone's
+                      headset.kind == 'tv'
+                          ? t.dji_link_relay_headset_tv(
+                              name: headset.name ?? '-',
+                              address: headset.address,
+                              duration: djiRelayDuration(headset.connectedForMs),
+                            )
+                          : t.dji_link_relay_headset(
+                              name: headset.name ?? '-',
+                              address: headset.address,
+                              duration: djiRelayDuration(headset.connectedForMs),
+                            ),
                       style: small?.copyWith(fontWeight: FontWeight.w700),
                     ),
                     Text(

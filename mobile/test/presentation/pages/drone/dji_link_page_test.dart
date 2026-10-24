@@ -1067,6 +1067,28 @@ void main() {
         '10 minutes.',
       );
 
+      // A TV says so in its hello, also one that typed this phone's code
+      listener.snapshotChanged(
+        fakeSnapshot(
+          relaySending: fakeSending(
+            sending: 'replay',
+            headsets: [
+              DjiRelayHeadsetRow(
+                address: '192.168.1.50',
+                name: 'Living room TV',
+                connectedForMs: 5000,
+                droppedUnits: 0,
+                megabitsPerSecond: 5.6,
+                kind: 'tv',
+              ),
+            ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Headsets and TVs'), findsOneWidget);
+      expect(find.text('Living room TV, a TV, 192.168.1.50, connected for 0:05'), findsOneWidget);
+
       await tester.tap(find.byKey(const Key('dji_link_relay_new_code')));
       await tester.pumpAndSettle();
       expect(api.relayCodes, ['ABCDEFGHJK']);
