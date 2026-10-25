@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The values panel of the Meta Quest flight view of DJI link, under the strip (dji_flight_strip.xml), shown or hidden
+     with A. Its size in dp is set in DjiFlightViewActivity.registerPanels: on the left the latency (the values are in
+     the two columns beside the video, dji_flight_column.xml), on the right the red DJI Fly line, the controls and Back.
+     Every text comes from Flutter. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@drawable/immersive_panel_background"
+  android:orientation="horizontal"
+  android:padding="12dp">
+
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+    <TextView
+      android:id="@+id/dji_flight_latency"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:fontFeatureSettings="tnum"
+      android:maxLines="2"
+      android:textColor="#FFB0B8CC"
+      android:textSize="13sp" />
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_marginStart="16dp"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+    <TextView
+      android:id="@+id/dji_flight_fly_note"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:maxLines="2"
+      android:textColor="#FFFF6B6B"
+      android:textSize="12sp"
+      android:textStyle="bold" />
+
+    <TextView
+      android:id="@+id/dji_flight_hint"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_marginTop="2dp"
+      android:layout_weight="1"
+      android:ellipsize="end"
+      android:maxLines="3"
+      android:textColor="#FF8A93A8"
+      android:textSize="11sp" />
+
+    <TextView
+      android:id="@+id/dji_flight_back"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end"
+      android:background="@drawable/immersive_panel_background"
+      android:clickable="true"
+      android:focusable="true"
+      android:paddingStart="12dp"
+      android:paddingTop="4dp"
+      android:paddingEnd="12dp"
+      android:paddingBottom="4dp"
+      android:textColor="#FFE8EEFF"
+      android:textSize="14sp"
+      android:textStyle="bold" />
+  </LinearLayout>
+</LinearLayout>

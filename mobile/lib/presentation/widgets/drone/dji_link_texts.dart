@@ -135,11 +135,14 @@ String djiLinkEvidenceText(Translations t, DjiLinkEvidence evidence) => switch (
   DjiLinkEvidence.candidate => t.dji_link_evidence_candidate,
 };
 
-/// Why the decoder moved to software, said under the decoder line
+/// Why the decoder is not the first of the order, said under the decoder line
 String? djiLinkSwitchReasonText(Translations t, String? reason) => switch (reason) {
   'noOutputAfterJoin' => t.dji_link_video_switch_join,
   'hardwareRetryFailed' => t.dji_link_video_switch_retry,
   'fatalErrors' => t.dji_link_video_switch_errors,
+  'noPictureWithKey' => t.dji_link_video_switch_no_picture,
+  'noPictureNothingLeft' => t.dji_link_video_switch_nothing_left,
+  'rememberedNoPicture' => t.dji_link_video_switch_remembered,
   _ => null,
 };
 

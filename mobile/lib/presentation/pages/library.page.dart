@@ -8,6 +8,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
+import 'package:immich_mobile/presentation/widgets/drone/drone_card.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_album_thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
@@ -181,6 +182,9 @@ class _CollectionCards extends ConsumerWidget {
             if (hasServer && hasMaps) const _PlacesCollectionCard(),
             const _LocalAlbumsCollectionCard(),
             const _NetworkSharesCollectionCard(),
+            // The DJI functions have a place of their own, not under Network shares: hidden on iOS, a computer, and
+            // when both DJI settings are off; a TV watches a phone's relay there
+            if (ref.watch(droneCardProvider) != DroneCardTarget.none) const DroneCollectionCard(),
             if (hasServer) const _MemoriesCollectionCard(),
           ],
         ),

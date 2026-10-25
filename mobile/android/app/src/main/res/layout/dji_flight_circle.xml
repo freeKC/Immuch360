@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The obstacle indicator as a circle around the centre of the video of the Meta Quest flight view
+     (DjiFlightViewActivity), the default shape: a transparent square panel over the middle of the video, the arcs drawn
+     on a circle of radius a quarter of the video's height. Shown only while something is close, never hidden by A.
+     Information only: nothing here reaches the drone. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@android:color/transparent">
+
+  <app.alextran.immich.djilink.ObstacleCircleView
+    android:id="@+id/dji_flight_circle_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alpha="0" />
+</FrameLayout>

@@ -1,6 +1,6 @@
-// The "DJI drone" tile of the Network shares page, under "Share this phone on the network": opens the DJI drone page.
-// Shown on Android phones and tablets only (not the Quest build, not the TV layout), while Settings, Advanced, "DJI
-// drones (experimental)" is on, as it is by default.
+// The "Photos and videos from the drone" row of the Drone page (p2/design-final-2026-10-24.md, 2.4): opens the DJI
+// drone page. Offered on Android phones and tablets only (not the Quest build, not the TV layout, never on a
+// television), while Settings, Advanced, "DJI drones (experimental)" is on, as it is by default.
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -13,18 +13,21 @@ import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
-/// Whether the DJI drone page can be offered here: an Android phone or tablet, not the Quest build, not the TV layout.
-/// Tests replace it.
+/// Whether the DJI drone page can be offered here: an Android phone or tablet, not the Quest build, not the TV layout,
+/// and never a television, whatever its layout setting (p2/design-tv-2026-10-24.md, 2.1). Tests replace it.
 final droneImportSupportedProvider = Provider.autoDispose<bool>((ref) {
   if (!CurrentPlatform.isAndroid) {
     return false;
   }
-  return ref.watch(isHorizonOsProvider).valueOrNull == false && !ref.watch(tvModeProvider);
-});
+  return ref.watch(isHorizonOsProvider).valueOrNull == false &&
+      !ref.watch(tvModeProvider) &&
+      !ref.watch(tvDeviceProvider).isTelevision;
+}, dependencies: [isHorizonOsProvider, tvModeProvider, tvDeviceProvider]);
 
-/// Whether the DJI drone tile shows: supported here, and the setting on
+/// Whether the import from the drone is offered: supported here, and the setting on
 final droneImportEnabledProvider = Provider.autoDispose<bool>(
   (ref) => ref.watch(droneImportSupportedProvider) && ref.watch(appConfigProvider.select((c) => c.djiImportEnabled)),
+  dependencies: [droneImportSupportedProvider, appConfigProvider],
 );
 
 class DroneImportTile extends ConsumerWidget {
@@ -41,9 +44,9 @@ class DroneImportTile extends ConsumerWidget {
         ListTile(
           key: const Key('drone_import_tile'),
           contentPadding: const EdgeInsets.only(left: 20, right: 8),
-          leading: Icon(Icons.flight_rounded, color: context.primaryColor, size: 28),
+          leading: Icon(Icons.photo_library_outlined, color: context.primaryColor, size: 28),
           title: Text(
-            context.t.dji_import_title,
+            context.t.drone_import_row,
             style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
           ),
           subtitle: Text(context.t.dji_import_tile_subtitle, maxLines: 2, overflow: TextOverflow.ellipsis),

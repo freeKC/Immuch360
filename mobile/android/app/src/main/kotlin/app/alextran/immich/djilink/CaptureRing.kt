@@ -127,6 +127,13 @@ class CaptureRing(
   /** The head is full or was never wanted: everything goes to the tail */
   private var headClosed = false
 
+  /**
+   * A stopped capture that holds a session was started again with no remote open: it is kept until the next open, which
+   * forgets it and starts the head. Reopening the live screen with nothing plugged in can then still save the session
+   * that showed a problem; a new remote starts a new capture (review of 24 October 2026, finding 4).
+   */
+  private var clearAtOpen = false
+
   /** Bytes written into the tail since the start, which is also the offset of the next byte there */
   private var written = 0L
   private var dropped = 0L
@@ -144,9 +151,16 @@ class CaptureRing(
   /** Whether the buffers are allocated, which is from the first [start] to a [clear] while not recording */
   val allocated: Boolean get() = ring != null
 
-  /** Starts recording; [accessoryOpen] says a session is already under way, so the head starts with the next record */
+  /**
+   * Starts recording; [accessoryOpen] says a session is already under way, so the head starts with the next record. A
+   * stopped capture that holds bytes is kept: with a remote open it goes on in the tail as before, otherwise until the
+   * next open ([clearAtOpen]).
+   */
   @Synchronized
   fun start(accessoryOpen: Boolean = false) {
+    if (!recording && !accessoryOpen && (headLength > 0 || written > 0L)) {
+      clearAtOpen = true
+    }
     if (ring == null) {
       ring = ByteArray(capacity)
     }
@@ -172,6 +186,7 @@ class CaptureRing(
    */
   @Synchronized
   fun clear(accessoryOpen: Boolean = false) {
+    clearAtOpen = false
     written = 0
     dropped = 0
     entries.clear()
@@ -200,6 +215,10 @@ class CaptureRing(
     }
     if (!recording) {
       return
+    }
+    if (direction == CaptureDirection.OPEN && clearAtOpen) {
+      // A new remote: the kept session goes, and this open starts the head of the new one
+      clear(accessoryOpen = false)
     }
     if (direction == CaptureDirection.OPEN && headWaiting) {
       headWaiting = false

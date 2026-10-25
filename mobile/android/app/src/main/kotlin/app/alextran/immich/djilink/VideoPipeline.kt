@@ -51,7 +51,7 @@ data class DecoderStatus(
   val failure: String? = null,
   /** True while the decoder renders into a parking surface because no video view is shown */
   val parked: Boolean = true,
-  /** The switch to software of rule 1 or 3, said on the page */
+  /** The last switch of decoder and its rule, said on the page */
   val lastSwitchReason: DecoderPolicy.SwitchReason? = null,
   /** When the running codec was started, on the pipeline clock; null while none runs */
   val startedAtNs: Long? = null,
@@ -59,6 +59,18 @@ data class DecoderStatus(
   val keySinceStart: Boolean = false,
   /** Units the queue dropped before the decoder since the last new source: past its bound or at a flush */
   val unitsDropped: Long = 0,
+  /** Decoders skipped at the start of the session because they gave no picture on this device before */
+  val skippedAtStart: List<String> = emptyList(),
+  /** Times a codec started from a key unit kept from earlier ([KeyPrimer]) */
+  val primers: Int = 0,
+  /** The decoder reports FEATURE_LowLatency ([lowLatency] says whether it was asked) */
+  val lowLatencyFeature: Boolean = false,
+  /** The operating rate the decoder accepted at its configuration, null when none was asked */
+  val operatingRate: Int? = null,
+  /** The configuration level the decoder accepted: 0 with the Qualcomm keys, 3 plain */
+  val configurationLevel: Int? = null,
+  /** The display rate asked of the view's surface for a paced reception, null when none was asked */
+  val frameRateAsked: Int? = null,
 )
 
 /** The receiving end of the units: the decoder feed, or a test's own */
@@ -66,8 +78,22 @@ interface DecoderSink {
   /** Takes one unit and the description to decode it with. Called on the reader thread: must return at once. */
   fun submit(unit: AccessUnit, description: ResolvedDescription)
 
+  /**
+   * A key unit to keep, not to decode now: the one a phone relays ahead of the live units of a headset that joins mid
+   * stream ([RelayWire.UNIT_PRIMER]), or the one kept for the remote from an earlier session. A decoder that waits for
+   * a key picture starts from it ([KeyPrimer]); the relay sends it to a headset that joins.
+   */
+  fun keepKey(unit: AccessUnit, description: ResolvedDescription) = Unit
+
   /** A new source (a replay starts or stops, a page session ends): the codec stops and the queue empties */
   fun reset()
+
+  /**
+   * The next unit does not continue the previous one: a new descriptor of the same remote, a gap of a replay, a new
+   * loop of a played capture. The decoder feed needs nothing (the stream description is resolved again); the relay
+   * marks the next unit it sends with BREAK.
+   */
+  fun newStream() = Unit
 
   fun status(): DecoderStatus
 }
@@ -110,6 +136,9 @@ data class VideoStats(
   val keyPictureAgoMs: Long?,
   /** Time since the last picture came out of the decoder; null while none did */
   val lastOutputAgoMs: Long?,
+  /** Pictures out of the decoder, and shown, in the last second */
+  val decodedPerSecond: Double = 0.0,
+  val shownPerSecond: Double = 0.0,
 )
 
 /**
@@ -125,6 +154,8 @@ class VideoStatistics {
 
   private val lock = Any()
   private val arrivals = ArrayDeque<LongArray>()
+  private val decodedTimes = ArrayDeque<Long>()
+  private val shownTimes = ArrayDeque<Long>()
   private val decodeSamples = ArrayDeque<LongArray>()
   private val inProcessSamples = ArrayDeque<LongArray>()
 
@@ -176,6 +207,8 @@ class VideoStatistics {
   /** A picture came out of the decoder, [decodeNs] after its unit was queued (null when that is not known) */
   fun onDecoded(decodeNs: Long?, nowNs: Long) = synchronized(lock) {
     decoded += 1
+    decodedTimes.addLast(nowNs)
+    trimTimes(decodedTimes, nowNs)
     lastOutputNs = nowNs
     if (firstPictureNs == null) {
       firstPictureNs = nowNs
@@ -187,7 +220,11 @@ class VideoStatistics {
     }
   }
 
-  fun onShown() = synchronized(lock) { shown += 1 }
+  fun onShown(nowNs: Long) = synchronized(lock) {
+    shown += 1
+    shownTimes.addLast(nowNs)
+    trimTimes(shownTimes, nowNs)
+  }
 
   fun onDroppedAtDisplay() = synchronized(lock) { droppedAtDisplay += 1 }
 
@@ -203,6 +240,8 @@ class VideoStatistics {
 
   fun reset() = synchronized(lock) {
     arrivals.clear()
+    decodedTimes.clear()
+    shownTimes.clear()
     decodeSamples.clear()
     inProcessSamples.clear()
     unitsIn = 0
@@ -245,12 +284,16 @@ class VideoStatistics {
     val keyPictureAgoMs: Long?,
     val lastOutputAgoMs: Long?,
     val lastUnitAgoMs: Long?,
+    val decodedPerSecond: Double,
+    val shownPerSecond: Double,
   )
 
   internal fun numbers(nowNs: Long): Numbers = synchronized(lock) {
     trim(arrivals, nowNs, RATE_WINDOW_NS)
     trim(decodeSamples, nowNs, DECODE_WINDOW_NS)
     trim(inProcessSamples, nowNs, DECODE_WINDOW_NS)
+    trimTimes(decodedTimes, nowNs)
+    trimTimes(shownTimes, nowNs)
     val bytes = arrivals.sumOf { it[1] }
     val decodes = decodeSamples.map { it[1] }.sorted()
     val inProcess = inProcessSamples.map { it[1] }.sorted()
@@ -275,7 +318,15 @@ class VideoStatistics {
       keyPictureAgoMs = lastKeyNs?.let { (nowNs - it) / 1_000_000 },
       lastOutputAgoMs = lastOutputNs?.let { (nowNs - it) / 1_000_000 },
       lastUnitAgoMs = lastUnitNs?.let { (nowNs - it) / 1_000_000 },
+      decodedPerSecond = decodedTimes.size.toDouble(),
+      shownPerSecond = shownTimes.size.toDouble(),
     )
+  }
+
+  private fun trimTimes(times: ArrayDeque<Long>, nowNs: Long) {
+    while (times.isNotEmpty() && (nowNs - times.first() > RATE_WINDOW_NS || times.size > MAX_SAMPLES)) {
+      times.removeFirst()
+    }
   }
 
   private fun trim(samples: ArrayDeque<LongArray>, nowNs: Long, windowNs: Long) {
@@ -313,6 +364,12 @@ class VideoPipeline(
 
   val pictureCounter = PictureCounterTracker()
 
+  /** The millisecond content clock of the stream, unwrapped; it goes on across an encoder restart */
+  private val contentClock = ContentClockUnwrapper()
+
+  /** Key pictures, encoder restarts and picture rates with their times, for the exports */
+  val facts = StreamFacts()
+
   /** The video channel whose units are decoded: the first one that gave a unit */
   var primaryChannel: Int? = null
     private set
@@ -323,6 +380,9 @@ class VideoPipeline(
   private var evidence = CodecEvidence.NONE
   private var lastResolved: ResolvedDescription? = null
 
+  /** The key unit kept for the remote from an earlier session was offered to the sink in this stream, or not needed */
+  private var keptKeyOffered = false
+
   /** One unit from the router, with the detector of its stream and the description the unit completed, if any */
   fun onUnit(unit: AccessUnit, detector: CodecDetector, fresh: StreamDescription?, nowNs: Long) {
     val primary = primaryChannel ?: unit.channel.also { primaryChannel = it }
@@ -331,7 +391,12 @@ class VideoPipeline(
       return
     }
     statistics.onUnitIn(unit, nowNs)
+    val restarts = pictureCounter.restarts
     unit.pictureCounter?.let { pictureCounter.offer(it) }
+    if (unit.contentMs < 0) {
+      unit.contentClockRaw?.let { unit.contentMs = contentClock.offer(it) }
+    }
+    facts.onUnit(unit, nowNs, pictureCounter.restarts > restarts)
     codec = detector.codec
     evidence = detector.evidence
     if (fresh != null) {
@@ -348,12 +413,47 @@ class VideoPipeline(
     lastResolved = resolved
     statistics.description = resolved.description
     statistics.descriptionSource = resolved.source
+    if (unit.isKey) {
+      store.onKeyUnit(unit, resolved.description)
+      keptKeyOffered = true
+    } else if (!keptKeyOffered) {
+      // A stream joined while the remote already streams: the key unit of an earlier session, for a decoder that
+      // waits for one ([KeyPrimer]) and for a headset that joins ([RelayServer])
+      keptKeyOffered = true
+      store.keptKeyUnit(resolved.description)?.let { sink.keepKey(it, resolved) }
+    }
     sink.submit(unit, resolved)
+  }
+
+  /**
+   * A key unit kept by the phone and relayed ahead of the live units ([RelayWire.UNIT_PRIMER]): it goes to the sink to
+   * start a decoder with, and counts nowhere, since it is an old picture rather than one of the stream
+   */
+  fun onPrimer(unit: AccessUnit, detector: CodecDetector) {
+    if (!unit.isKey || detector.codec == VideoCodec.H264) {
+      return
+    }
+    val resolved = store.resolve(detector.showsH265Signature) ?: return
+    sink.keepKey(unit, resolved)
   }
 
   /** A new stream of the same source (a new descriptor, a gap of a replay): the session description is read again */
   fun newStream() {
     store.newSession()
+    pictureCounter.newStream()
+    contentClock.reset()
+    facts.newStream()
+    keptKeyOffered = false
+    sink.newStream()
+  }
+
+  /**
+   * A unit relayed with BREAK: the phone dropped the units before it for this device, or a played capture began a new
+   * loop. The next picture counter is a first one again, so that neither counts as pictures lost on the radio nor as
+   * an encoder restart. The description stays: the phone sends parameter sets again only before a key unit or when they
+   * change, so the units in between are decoded with the ones already here.
+   */
+  fun relayBreak() {
     pictureCounter.newStream()
   }
 
@@ -362,11 +462,14 @@ class VideoPipeline(
     sink.reset()
     statistics.reset()
     pictureCounter.reset()
+    contentClock.reset()
+    facts.reset()
     primaryChannel = null
     otherChannelUnits = 0
     codec = VideoCodec.UNKNOWN
     evidence = CodecEvidence.NONE
     lastResolved = null
+    keptKeyOffered = false
   }
 
   fun stats(nowNs: Long, tooLarge: Long): VideoStats {
@@ -417,6 +520,8 @@ class VideoPipeline(
       keyPictures = numbers.keyPictures,
       keyPictureAgoMs = numbers.keyPictureAgoMs,
       lastOutputAgoMs = numbers.lastOutputAgoMs,
+      decodedPerSecond = numbers.decodedPerSecond,
+      shownPerSecond = numbers.shownPerSecond,
     )
   }
 

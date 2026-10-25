@@ -186,6 +186,14 @@ void main() {
       expect(find.text('edit new'), findsOneWidget);
     });
 
+    testWidgets('keeps nothing of the drone: its functions are on the Drone card of the Library', (tester) async {
+      await pumpSharesPage(tester, sources: const [smbSource]);
+      expect(find.byKey(const Key('drone_import_tile')), findsNothing);
+      expect(find.byKey(const Key('dji_link_tile')), findsNothing);
+      expect(find.text('DJI live video'), findsNothing);
+      expect(find.text('DJI drone'), findsNothing);
+    });
+
     testWidgets('lists the shares with their address', (tester) async {
       await pumpSharesPage(tester, sources: const [smbSource, webDavSource]);
 

@@ -1,0 +1,40 @@
+{
+  "label": "immuch360 drone relay 1",
+  "vectors": [
+    {
+      "code": "K7M2Q9XRTH",
+      "serverNonce": "d064d58e8cabdbf28f7e70cbe3ba1bbe",
+      "clientNonce": "282df5b57cf38dd1cdf843e15180e520",
+      "headsetProof": "a4cab498df5968d81008a404ce90f4a5bfd1e2b753aa080d046410355247a163",
+      "phoneProof": "0b20528ef43cfa1e9e16aea8936de3e1030f37617e8db810c72e7b76a34fe6a2"
+    },
+    {
+      "code": "ABCDEFGHJK",
+      "serverNonce": "52dba25e33ac54fdab535cb8c68eb21d",
+      "clientNonce": "76811d81b24fd19c7843f1ca1abc2e0d",
+      "headsetProof": "dc05e677c4e2ca9d1462b0c650a67abde5ef9015beb1fddb81b2dc217e47194e",
+      "phoneProof": "d60369127682389f587b6bf28a7e167bdc65c215cfd408c88088c457ccb9a546"
+    },
+    {
+      "code": "2345678922",
+      "serverNonce": "19c464e26640c2e45c8099ecbe83999b",
+      "clientNonce": "a7294116a191ebbf586db41591802f4f",
+      "headsetProof": "3585ab7547370ebd4dd7df919631fe7d087c659ae585153e48e981c325c1441e",
+      "phoneProof": "2f3d7402f5fae9cbf0fef7e9e36ada5813b8fb6fd2d75509ea9554a313448831"
+    },
+    {
+      "code": "ZZZZZZZZZZ",
+      "serverNonce": "cf403bf4228ccd79ff7c71069bdf4e33",
+      "clientNonce": "d51768cf70ffe2a72ed07c1afd48afd6",
+      "headsetProof": "b6f3d83043a82a84ec31699da84475fc9640f19540157b9d4540b93d5943720b",
+      "phoneProof": "3d9e23665bda924804dcab17fbc8295d1a8053cdbe2da040cb2c60dced1ed8d5"
+    },
+    {
+      "code": "MNPQRSTUVW",
+      "serverNonce": "e4867b2cb45dd7f0462ccddf635a34fc",
+      "clientNonce": "060ff294a13f4ffb5da21c438829a7ac",
+      "headsetProof": "112f76fe17cbf1e7a3a5520bf80ffe07ea215873d377267f12fde210c6fc4038",
+      "phoneProof": "a44b592bd4914b2f637d63de74e82be97b63ec0385b9c3edce7c888cfb5070ee"
+    }
+  ]
+}

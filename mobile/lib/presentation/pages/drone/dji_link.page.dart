@@ -1,5 +1,6 @@
-// The DJI link page (Settings, Advanced, "DJI link diagnostics (experimental)", on by default): what a DJI remote
-// controller plugged into this device with a cable sends, and what this device can do about it at all.
+// Diagnostics of the DJI live video (Advanced, "Diagnostics", on the live screen of a phone or the watch page of a
+// headset): what a DJI remote controller plugged into this device with a cable sends, and what this device can do
+// about it at all. The live screen or the watch page under it owns the link; this page neither starts nor stops it.
 //
 // It is an instrument, not a cockpit. The first section is the rules and cannot be dismissed. Then: what this device
 // can do, where the link stands, the live picture of the drone's camera, the flight and battery values, what arrives,
@@ -7,6 +8,11 @@
 // ever written is the liveness probe of the USB transport, once a second, counted here. A device that cannot be a USB
 // accessory (a headset without the feature) still shows the picture and the values of a capture being played, which
 // measures its decoder with no remote at all.
+//
+// Stage 2b: a phone sends the picture and the values it receives to Immuch360 on a headset of the same network ("Send
+// to a headset", whole here, on the same relay as the live screen's panel), and a headset shows where its reception
+// stands, the observer note and "Watching only" always on top and the delay from the phone under the picture. Nothing
+// on either page reaches the remote.
 
 import 'dart:async';
 
@@ -20,11 +26,17 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_link_capture.widget
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_counters.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_flight.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_frames.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_latency.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_observer.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_receive.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_safety.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_send.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_sticks.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
 @RoutePage()
@@ -42,14 +54,9 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
   void initState() {
     super.initState();
     _notifier = ref.read(djiLinkProvider.notifier);
-    // After the first frame: reading the environment changes the state, which a build under way must not see
-    unawaited(Future.microtask(_notifier.pageShown));
-  }
-
-  @override
-  void dispose() {
-    unawaited(_notifier.pageHidden());
-    super.dispose();
+    // After the first frame: a change of the state must not reach a build under way. The live screen or the watch page
+    // under this one owns the link: nothing is started here, and nothing stops when this page closes.
+    unawaited(Future.microtask(_notifier.diagnosticsShown));
   }
 
   @override
@@ -57,27 +64,46 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
     final t = context.t;
     final state = ref.watch(djiLinkProvider);
     final snapshot = state.snapshot;
+    // "Send to a headset or a TV" is for phones, and hidden while this device receives: a received stream is never
+    // relayed. A TV runs the phone flavour, and only watches.
+    final receiving = snapshot?.source?.relay ?? false;
+    final television = ref.watch(tvDeviceProvider).isTelevision;
+    final sends = state.environment?.flavour == 'phone' && !receiving && !television;
+    // The Quest or a TV: what it received is what a bug report needs
+    final headset = ref.watch(djiReceiverOnlyProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(t.dji_link_title)),
+      appBar: AppBar(title: Text(t.dji_live_diagnostics)),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 32),
         children: [
           const DjiLinkSafetyBanner(),
-          _section(t.dji_link_environment, _environment(state)),
           if (state.transportPossible) ...[
+            _section(t.dji_link_environment, _environment(state)),
             _section(t.dji_link_link, _link(snapshot, state)),
+            if (sends) _section(t.dji_link_relay, const DjiLinkSendSection()),
             _section(t.dji_link_video, _video(snapshot)),
             _section(t.dji_link_flight, DjiLinkFlightSection(telemetry: snapshot?.telemetryValues)),
             _section(t.dji_link_traffic, _traffic(snapshot)),
             _section(t.dji_link_telemetry, _telemetry(snapshot)),
-            _section(t.dji_link_capture, const DjiLinkCaptureSection()),
-            _section(t.dji_link_sticks, _sticks(snapshot)),
+            // On a headset the remote is on the phone: what this headset received is what a bug report needs here
+            _section(t.dji_link_capture, headset ? const DjiReceptionRecordSection() : const DjiLinkCaptureSection()),
+            // Drawn only once a gamepad was read: the one thing here that looks like piloting stays out of sight
+            // otherwise. It is read only, and the send path is off in this build.
+            if (snapshot?.sticks.sampleAgeMs != null) _section(t.dji_link_sticks, _sticks(snapshot)),
           ] else if (state.environment != null) ...[
-            // No cable path here: a capture can still be played, which measures this device's decoder
-            _section(t.dji_link_video, _video(snapshot)),
+            // No cable path here (a headset, a TV, an emulator): the picture of a phone's relay, or of a capture played
+            // here, which measures this device's decoder with no remote at all. The watch page is where a phone is
+            // chosen.
+            DjiLinkObserverNote(tv: television),
+            _section(t.dji_link_receive, _receiving(snapshot)),
+            _section(t.dji_link_video, _receivedVideo(snapshot)),
             _section(t.dji_link_flight, DjiLinkFlightSection(telemetry: snapshot?.telemetryValues)),
+            _section(t.dji_link_environment, _environment(state)),
             _section(t.dji_link_play, const DjiLinkPlaySection()),
-          ],
+            if (headset) _section(t.dji_link_capture, const DjiReceptionRecordSection()),
+            if (sends) _section(t.dji_link_relay, const DjiLinkSendSection()),
+          ] else
+            _section(t.dji_link_environment, _environment(state)),
           if (state.error case final String error)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -388,7 +414,7 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
       key: const Key('dji_link_video'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DjiLinkVideoPanel(decode: snapshot?.videoDecode),
+        DjiLinkVideoPanel(decode: snapshot?.videoDecode, relayStopped: djiLinkRelayPictureStopped(snapshot)),
         const SizedBox(height: 8),
         Text(verdict, key: const Key('dji_link_video_verdict'), style: context.textTheme.bodySmall),
         if (video != null) ...[
@@ -405,6 +431,34 @@ class _DjiLinkPageState extends ConsumerState<DjiLinkPage> {
                 largest: channel.largestFragment,
               ),
             ),
+        ],
+      ],
+    );
+  }
+
+  /// Where the reception of a phone's picture stands, read only: the watch page is where a phone is chosen
+  Widget _receiving(DjiLinkSnapshot? snapshot) {
+    final receiving = snapshot?.relayReceiving;
+    return Text(
+      receiving == null ? context.t.dji_link_receive_state_idle : djiRelayReceiveStateText(context.t, receiving),
+      key: const Key('dji_link_receive_state'),
+      style: context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
+    );
+  }
+
+  /// The picture of a device that receives or plays: the panel and the delay from the phone
+  Widget _receivedVideo(DjiLinkSnapshot? snapshot) {
+    final t = context.t;
+    final receiving = snapshot?.relayReceiving;
+    final decode = snapshot?.videoDecode;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _video(snapshot),
+        if (receiving != null && receiving.state != DjiRelayReceiveState.idle) ...[
+          const SizedBox(height: 8),
+          Text(t.dji_link_latency, style: context.textTheme.labelMedium),
+          DjiLinkLatencyBlock(receiving: receiving, decode: decode),
         ],
       ],
     );

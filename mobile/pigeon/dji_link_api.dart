@@ -1,7 +1,7 @@
 import 'package:pigeon/pigeon.dart';
 
-// Android only (phones and the Meta Quest build): the DJI link diagnostics, behind Settings, Advanced, "DJI link
-// diagnostics (experimental)". The native side opens a DJI remote controller plugged into this device as a USB
+// Android only (phones and the Meta Quest build): the DJI live video and its diagnostics, behind Settings, Advanced,
+// "DJI live video (experimental)". The native side opens a DJI remote controller plugged into this device as a USB
 // accessory, reads what arrives, parses it and counts everything. Nothing on this API sends a flight command: the
 // only bytes written are the one byte liveness probe the USB transport itself needs, which is counted on the page.
 @ConfigurePigeon(
@@ -134,6 +134,7 @@ class DjiLinkEnvironment {
     required this.accessoriesListed,
     required this.transportPossible,
     this.chargeCurrentMicroAmps,
+    this.television = false,
   });
 
   final String deviceManufacturer;
@@ -164,6 +165,9 @@ class DjiLinkEnvironment {
   final int accessoriesListed;
   final bool transportPossible;
   final int? chargeCurrentMicroAmps;
+
+  /// Android TV or Google TV: a receiver of a phone's relay only, never the end of a cable
+  final bool television;
 }
 
 /// The accessory strings as they were read, with nothing renamed
@@ -696,7 +700,7 @@ class DjiLinkTelemetry {
   final List<DjiLinkRequestRow> unanswered;
 }
 
-/// Where the page's video and telemetry come from: the cable, or a capture being played
+/// Where the page's video and telemetry come from: the cable, a capture being played, or a phone's relay
 class DjiLinkSource {
   const DjiLinkSource({
     required this.replay,
@@ -705,6 +709,9 @@ class DjiLinkSource {
     this.positionMs,
     this.durationMs,
     this.failure,
+    this.relay = false,
+    this.phoneName,
+    this.loop = false,
   });
 
   final bool replay;
@@ -715,6 +722,311 @@ class DjiLinkSource {
 
   /// The kind of the error that ended the playback early (a damaged capture), or null
   final String? failure;
+
+  /// The picture and the values come from a phone's relay (a headset receiving)
+  final bool relay;
+  final String? phoneName;
+
+  /// The capture being played starts again at its start second when it ends
+  final bool loop;
+}
+
+/// Where a headset stands with the phone it receives from
+enum DjiRelayReceiveState {
+  idle,
+  connecting,
+  checkingCode,
+  receiving,
+
+  /// The connection was lost: trying again
+  lost,
+
+  /// The phone refused the code, or made a new one: the code is asked again
+  wrongCode,
+
+  /// The phone already sends to four headsets: trying again every 10 s
+  full,
+
+  /// Too many wrong codes from this address: trying again every 10 s
+  blocked,
+  otherVersion,
+
+  /// The phone did not prove the code: nothing it sends is shown
+  phoneUnproven,
+
+  /// A remote is open on this device's cable
+  busy,
+}
+
+/// One headset or TV the phone sends to
+class DjiRelayHeadsetRow {
+  const DjiRelayHeadsetRow({
+    required this.address,
+    required this.connectedForMs,
+    required this.droppedUnits,
+    required this.megabitsPerSecond,
+    this.name,
+    this.picturesShownPerSecond,
+    this.relayDelayMs,
+    this.screenCodeId,
+    this.kind,
+    this.queueAgeMs,
+    this.queueMaxAgeMs,
+    this.dropEvents,
+    this.writeStalls,
+    this.writeP95Ms,
+    this.roundTripMs,
+    this.receiverBufferMs,
+    this.receiverFreezes,
+    this.receiverLongestFreezeMs,
+    this.receiverSkips,
+    this.receiverLate,
+  });
+
+  final String address;
+  final String? name;
+  final int connectedForMs;
+
+  /// From its pings: pictures it showed per second over its last 10 s
+  final double? picturesShownPerSecond;
+
+  /// From its pings: how long after this phone it receives the pictures
+  final double? relayDelayMs;
+  final int droppedUnits;
+  final double megabitsPerSecond;
+
+  /// The id of the TV's own code it proved; null for the phone's own code
+  final String? screenCodeId;
+
+  /// What it says it is: "tv" from a TV of this build, null from a headset
+  final String? kind;
+
+  /// The age of the oldest unit queued for it now, and the most it reached; null when nothing waits
+  final double? queueAgeMs;
+  final double? queueMaxAgeMs;
+
+  /// Times the phone dropped units for it, and its writes of a unit that took over 200 ms
+  final int? dropEvents;
+  final int? writeStalls;
+  final double? writeP95Ms;
+
+  /// From its long pings (a receiver of this build): the round trip, its jitter buffer, freezes over 0.3 s, pictures
+  /// it did not show because a newer one was due, units that came late
+  final double? roundTripMs;
+  final double? receiverBufferMs;
+  final int? receiverFreezes;
+  final int? receiverLongestFreezeMs;
+  final int? receiverSkips;
+  final int? receiverLate;
+}
+
+/// A TV added on the phone: the code the TV made and showed, under an opaque id
+class DjiRelayScreenCode {
+  const DjiRelayScreenCode({required this.id, required this.code});
+
+  final String id;
+  final String code;
+}
+
+/// "Send to a headset" on the phone
+class DjiRelaySending {
+  const DjiRelaySending({
+    required this.on,
+    required this.sending,
+    required this.headsets,
+    required this.refusedProofs,
+    required this.unexpectedRecords,
+    required this.wifiLowLatencyHeld,
+    required this.unitsDropped,
+    this.port,
+  });
+
+  final bool on;
+  final int? port;
+
+  /// cable, replay or none
+  final String sending;
+  final List<DjiRelayHeadsetRow> headsets;
+  final int refusedProofs;
+  final int unexpectedRecords;
+  final bool wifiLowLatencyHeld;
+  final int unitsDropped;
+}
+
+/// "Receive from a phone" on a headset, with the latency of the way from the phone, in milliseconds
+class DjiRelayReceiving {
+  const DjiRelayReceiving({
+    required this.state,
+    required this.phoneSource,
+    required this.replay,
+    required this.failures,
+    required this.units,
+    required this.lostOnWifi,
+    required this.receivedPerSecond,
+    required this.decodedPerSecond,
+    required this.shownPerSecond,
+    required this.lostOnRadio,
+    this.phoneName,
+    this.phoneId,
+    this.host,
+    this.port,
+    this.replayName,
+    this.replayPositionMs,
+    this.reconnectInMs,
+    this.relayDelayMedianMs,
+    this.relayDelayP95Ms,
+    this.phoneQueueMedianMs,
+    this.networkMedianMs,
+    this.networkP95Ms,
+    this.clockUncertaintyMs,
+    this.arrivalSpreadMedianMs,
+    this.phoneInProcessMedianMs,
+    this.phoneDecodeMedianMs,
+    this.receiveToPictureMs,
+    this.receiveToPictureNowMs,
+    this.receiveToPictureEstimateMs,
+    this.behindPhoneMs,
+    this.lastPictureAgoMs,
+    this.paced,
+    this.bufferTargetMs,
+    this.bufferNowMs,
+    this.bufferP95Ms,
+    this.lateUnits,
+    this.renderSkips,
+    this.decoderStalls,
+    this.safetyFlushes,
+    this.safetyNetAgoMs,
+    this.freezes,
+    this.longestFreezeMs,
+    this.freezesInSource,
+    this.breaks,
+    this.primers,
+    this.primersUsed,
+    this.network,
+    this.wifiBand,
+    this.wifiLinkMbps,
+    this.wifiRssi,
+    this.refreshHz,
+  });
+
+  final DjiRelayReceiveState state;
+  final String? phoneName;
+  final String? phoneId;
+  final String? host;
+  final int? port;
+
+  /// What the phone sends: cable, replay or none
+  final String phoneSource;
+  final bool replay;
+  final String? replayName;
+  final int? replayPositionMs;
+  final int? reconnectInMs;
+
+  /// Connection attempts that failed in a row
+  final int failures;
+  final int units;
+
+  /// Pictures the phone dropped for this headset because the Wi-Fi could not keep up
+  final int lostOnWifi;
+
+  /// Phone receive time to the record complete here, median and 95th percentile; null while the clocks are measured
+  final double? relayDelayMedianMs;
+  final double? relayDelayP95Ms;
+
+  /// The part of the phone: the last fragment to the start of the write
+  final double? phoneQueueMedianMs;
+
+  /// The part of the network: the start of the write to the record complete here
+  final double? networkMedianMs;
+  final double? networkP95Ms;
+  final double? clockUncertaintyMs;
+  final double? arrivalSpreadMedianMs;
+
+  /// The phone's own in process and decode medians, from its telemetry
+  final double? phoneInProcessMedianMs;
+  final double? phoneDecodeMedianMs;
+
+  /// Phone receive to picture shown here, the jitter buffer included, measured over 10 s; null while the clocks are
+  /// not aligned or no picture was shown for half a second
+  final double? receiveToPictureMs;
+
+  /// The same, the most of the last 2 s: the delay now, spikes included
+  final double? receiveToPictureNowMs;
+
+  /// Before the clocks are aligned: the relay delay plus the in process and decode medians, without the jitter buffer
+  final double? receiveToPictureEstimateMs;
+
+  /// How long after the phone's own screen this device shows a picture
+  final double? behindPhoneMs;
+
+  /// Since the last picture shown here (a relayed stream), or out of the decoder
+  final int? lastPictureAgoMs;
+  final double receivedPerSecond;
+  final double decodedPerSecond;
+  final double shownPerSecond;
+
+  /// Pictures lost on the radio, from the picture counter, as on the phone
+  final int lostOnRadio;
+
+  /// The pictures are paced by a jitter buffer: its target, the wait of the last unit and its 95th percentile
+  final bool? paced;
+  final double? bufferTargetMs;
+  final double? bufferNowMs;
+  final double? bufferP95Ms;
+
+  /// Units that came after their time to go to the decoder, pictures not shown because a newer decoded one was due,
+  /// decoder stalls of 200 ms, and the times the safety net of the queue was reached
+  final int? lateUnits;
+  final int? renderSkips;
+  final int? decoderStalls;
+  final int? safetyFlushes;
+
+  /// Since the safety net was last reached: this device could not keep up with the drone's stream
+  final int? safetyNetAgoMs;
+
+  /// Pictures that stayed over 0.3 s on the screen, the longest, and those that came with a gap in the drone's stream
+  final int? freezes;
+  final double? longestFreezeMs;
+  final int? freezesInSource;
+
+  /// BREAKs (units the phone dropped for this device), key pictures the phone sent ahead, and those used after a BREAK
+  final int? breaks;
+  final int? primers;
+  final int? primersUsed;
+
+  /// This device's network: wifi, ethernet or other; the Wi-Fi band (2.4, 5 or 6), link speed and signal
+  final String? network;
+  final String? wifiBand;
+  final int? wifiLinkMbps;
+  final int? wifiRssi;
+
+  /// The display's refresh rate
+  final double? refreshHz;
+}
+
+/// What "Send to a headset" starts with: the code, the names the welcome and the announcement carry, the notification
+class DjiRelayStart {
+  const DjiRelayStart({
+    required this.code,
+    required this.phoneName,
+    required this.notificationTitle,
+    required this.notificationText,
+    required this.stopLabel,
+    required this.channelName,
+    this.phoneId,
+    this.screenCodes = const [],
+  });
+
+  final String code;
+  final String phoneName;
+  final String? phoneId;
+  final String notificationTitle;
+  final String notificationText;
+  final String stopLabel;
+  final String channelName;
+
+  /// The TVs added on this phone: a proof of one of their codes is welcomed too
+  final List<DjiRelayScreenCode> screenCodes;
 }
 
 /// A capture that can be played: an export of this app, a pair of files in its replay folder, or chosen in the picker
@@ -827,6 +1139,9 @@ class DjiLinkExport {
     this.sha256,
     this.error,
     this.headerOnly = false,
+    this.repeated = false,
+    this.nothing = false,
+    this.controlBinPath,
   });
 
   final bool ok;
@@ -839,6 +1154,172 @@ class DjiLinkExport {
 
   /// Nothing was captured, so only the header with this device and its USB environment was written
   final bool headerOnly;
+
+  /// Nothing new since the last export: no file was written, and the paths are those of the last export
+  final bool repeated;
+
+  /// A reception record with nothing received: no file was written
+  final bool nothing;
+
+  /// Every control frame of the session, beside the bytes of its head and its tail
+  final String? controlBinPath;
+}
+
+/// One arc of the obstacle ring (ObstacleRing on the native side): a translucent glow at the picture's edge on the
+/// obstacle's side, or all around it when [centreDeg] is null
+class DjiObstacleArc {
+  const DjiObstacleArc({
+    this.centreDeg,
+    required this.distanceM,
+    required this.strength,
+    required this.opacity,
+    required this.argb,
+  });
+
+  /// Degrees from the nose, positive to the right; null for the even glow all around the picture
+  final double? centreDeg;
+  final double distanceM;
+
+  /// 0 at "Glow from", 1 at "Strong glow from" and closer
+  final double strength;
+
+  /// 0.15 to 0.70: the picture stays readable under it
+  final double opacity;
+
+  /// Amber to red, or white once the data stopped
+  final int argb;
+}
+
+/// What the obstacle ring decided (ObstacleAlert on the native side, the same on the phone, a TV and the headset).
+/// Information for the pilot, never an action: nothing here reaches the remote or the drone.
+class DjiObstacleDecision {
+  const DjiObstacleDecision({
+    required this.on,
+    required this.stopped,
+    required this.listening,
+    required this.even,
+    required this.arcs,
+    this.nearestM,
+    required this.tickIntervalMs,
+  });
+
+  /// The ring shows: a sector is under "Glow from", or it showed less than a second ago
+  final bool on;
+
+  /// The data stopped while the ring showed: its last arcs, white and fading, for five seconds, with no tick
+  final bool stopped;
+
+  /// The ring is offered and its data is fresh. Nothing draws it: no glow never means the way is clear
+  final bool listening;
+
+  /// One even glow all around the picture, the side not shown
+  final bool even;
+
+  /// Nearest first; empty while nothing shows
+  final List<DjiObstacleArc> arcs;
+  final double? nearestM;
+
+  /// 0 when silent
+  final int tickIntervalMs;
+}
+
+/// The ring as this device draws and sounds it. On a phone, all of it is the pilot's choice in Advanced; on a TV or a
+/// headset, whether the phone offers it, the distances and the side come from the phone's record, and the ring on that
+/// screen, the sound, the number and the shape are this device's own.
+class DjiObstacleRingSettings {
+  const DjiObstacleRingSettings({
+    required this.offered,
+    required this.directional,
+    required this.farM,
+    required this.nearM,
+    required this.sound,
+    required this.haptic,
+    required this.numbers,
+    required this.frame,
+  });
+
+  /// The switch while the data is likely (on by default), always once proven. On a TV or a headset: the ring on that
+  /// screen, shown only when the phone offers it too
+  final bool offered;
+
+  /// The arcs on the obstacle's side; false is one even glow
+  final bool directional;
+
+  /// "Glow from"
+  final double farM;
+
+  /// "Strong glow from"
+  final double nearM;
+  final bool sound;
+
+  /// A light tap with each tick within "Strong glow from", on a phone
+  final bool haptic;
+
+  /// The distance by the glow, in the Quest's flight view
+  final bool numbers;
+
+  /// The indicator as a frame at the picture's edges, in the Quest's flight view; false is the circle around the centre
+  final bool frame;
+}
+
+/// The values a pilot reads, sent ten times a second while a screen with the picture is in front (flightChanged), and
+/// in every snapshot. A value whose group is stale, or never came, is null: nothing draws an old number as current.
+/// Which of them may show, and where, is decided by the gate of dji_live_fields.dart, not here.
+class DjiLiveFrame {
+  const DjiLiveFrame({
+    required this.atMs,
+    required this.alert,
+    this.droneBatteryPercent,
+    this.batteryVolts,
+    this.batteryTemperatureC,
+    this.motorTimeS,
+    this.motorsOn,
+    this.headingDeg,
+    this.heightM,
+    this.verticalSpeedMps,
+    this.speedMps,
+    this.distanceBelowM,
+    this.obstacleM,
+    this.remoteBatteryPercent,
+    this.signal,
+    this.signalBars,
+    this.linkRateMbps,
+    this.satellites,
+    this.landing = false,
+  });
+
+  /// This device's monotonic clock when the frame was built
+  final int atMs;
+  final DjiObstacleDecision alert;
+  final int? droneBatteryPercent;
+  final double? batteryVolts;
+  final double? batteryTemperatureC;
+  final double? motorTimeS;
+  final bool? motorsOn;
+  final double? headingDeg;
+
+  /// Above the take off point, positive up
+  final double? heightM;
+
+  /// Positive climbing
+  final double? verticalSpeedMps;
+
+  /// Over the ground; null while the motors are off, when the drone holds a stale value
+  final double? speedMps;
+
+  /// Only while the motors run; null when the sensor reads nothing
+  final double? distanceBelowM;
+
+  /// The nearest distance of the obstacle ring, only while the motors run; null when no sector reads anything
+  final double? obstacleM;
+  final int? remoteBatteryPercent;
+  final int? signal;
+  final int? signalBars;
+  final double? linkRateMbps;
+  final int? satellites;
+
+  /// Flight mode 12, the automatic landing
+  final bool landing;
 }
 
 class DjiLinkReplayResult {
@@ -912,6 +1393,10 @@ class DjiLinkSnapshot {
     this.lastAccessory,
     this.lastAccessoryAtMs,
     this.boundProfileId,
+    this.relaySending,
+    this.relayReceiving,
+    this.flightViewFailed = false,
+    this.liveFrame,
   });
 
   final DjiLinkState state;
@@ -970,6 +1455,18 @@ class DjiLinkSnapshot {
 
   /// The profile the pilot bound these accessory strings to, if any
   final String? boundProfileId;
+
+  /// "Send to a headset", on a phone
+  final DjiRelaySending? relaySending;
+
+  /// "Receive from a phone"; null until this device tried to receive
+  final DjiRelayReceiving? relayReceiving;
+
+  /// The last flight view could not set its scene up and went back to the window
+  final bool flightViewFailed;
+
+  /// The values a pilot reads, as the ten a second frames give them
+  final DjiLiveFrame? liveFrame;
 }
 
 @HostApi()
@@ -1015,10 +1512,10 @@ abstract class DjiLinkApi {
   @async
   DjiLinkCaptureFile? chooseCaptureFiles();
 
-  /// Plays a capture through the same pipeline as the cable, paced by its index, from [startAtMs]. Null when it
-  /// started; otherwise a code: busy (an accessory is open), unreadable, empty.
+  /// Plays a capture through the same pipeline as the cable, paced by its index, from [startAtMs], again from there
+  /// at each end with [loop]. Null when it started; otherwise a code: busy (an accessory is open), unreadable, empty.
   @async
-  String? playCapture(String binUri, String indexUri, int startAtMs);
+  String? playCapture(String binUri, String indexUri, int startAtMs, bool loop);
 
   void stopPlayback();
 
@@ -1031,9 +1528,84 @@ abstract class DjiLinkApi {
 
   /// The USB accessories the system lists right now, without a permission and without opening anything
   List<DjiLinkPluggedAccessory> pluggedAccessories();
+
+  /// "Send to a headset": the relay listens on the local network (8362, else a free port) and the foreground service
+  /// keeps the phone sending with its screen locked. Returns the port, 0 when it could not start. Nothing a headset
+  /// sends reaches the remote: the relay takes a hello, pings and a bye, and nothing else.
+  @async
+  int startRelay(DjiRelayStart start);
+
+  void stopRelay();
+
+  /// "New code": every headset is told and must prove the new code
+  void setRelayCode(String code);
+
+  /// The TVs added on this phone, each with its own code; a TV removed is told to leave, the others stay
+  void setRelayScreenCodes(List<DjiRelayScreenCode> codes);
+
+  /// The text of the notification, with the number of headsets
+  void updateRelayNotification(String text);
+
+  /// "Receive from a phone": null when it started; otherwise badHost, badCode, busy (a remote is open on this
+  /// device's cable) or sending (this device sends to headsets)
+  String? connectRelay(String host, int port, String code, String? phoneId, String headsetName);
+
+  void disconnectRelay();
+
+  /// The flight view of the Quest, with the texts of its panel; false off Horizon OS or while no picture comes
+  bool openFlightView(Map<String, String> labels);
+
+  /// "Open this screen when the remote is plugged in", kept by the native side, off by default. With it on and the
+  /// setting on, the entry that puts this application in Android's question for a plugged DJI remote stays enabled
+  /// when the link ends. It decides which application Android offers for the cable, and nothing else.
+  void setOpenOnPlug(bool on);
+
+  bool openOnPlug();
+
+  /// Settings, Advanced, "DJI live video (experimental)": with it off, plugging the remote never opens the app
+  void setLiveSettingOn(bool on);
+
+  /// True once after the plug of a remote brought this application forward through its attach entry
+  bool takeAttachLaunch();
+
+  /// A screen with the picture is in front (the live screen, the watch page) or not: while it is, the values come ten
+  /// times a second in flightChanged, and the obstacle sound may play
+  void setFrameStream(bool on);
+
+  /// The obstacle ring as this device draws and sounds it. The ring only reads, decides, draws and ticks on this
+  /// device: it never sends anything to the remote or the drone.
+  void setObstacleRing(DjiObstacleRingSettings settings);
+
+  /// Three ticks of the obstacle sound, to check the volume before take off
+  void playObstacleTest();
+
+  /// A headset's choice in Options: the lowest delay, with less smoothing (no floor under its jitter buffer). Taken at
+  /// once while receiving, and by every reception after.
+  void setLowestDelay(bool on);
+
+  /// Eight seconds of a made up ring on this device only, through the same decision and drawing; false while the
+  /// motors run or no picture screen is in front. Never relayed, never saved.
+  bool showObstacleSample();
+
+  /// This device can vibrate: "Vibrate with the tick" is offered only then
+  bool hasVibrator();
+
+  /// The media volume, which the obstacle sound follows, is at zero
+  bool mediaVolumeOff();
+
+  /// A headset writes what it received from the phone and how it decoded it: the relay records with their times, the
+  /// receiver's and the decoder's counters. Nothing is written when nothing was received.
+  @async
+  DjiLinkExport exportReception();
 }
 
 @FlutterApi()
 abstract class DjiLinkEvents {
   void snapshotChanged(DjiLinkSnapshot snapshot);
+
+  /// Stop in the notification of "Send to a headset": the relay stopped, the announcement must stop too
+  void relayStopRequested();
+
+  /// The values a pilot reads, at most ten times a second and only while setFrameStream is on
+  void flightChanged(DjiLiveFrame frame);
 }

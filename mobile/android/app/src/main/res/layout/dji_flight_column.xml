@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A column of values beside the video of the Meta Quest flight view (DjiFlightViewActivity): the flight values on the
+     left of the video, the state of the drone on its right, each a small label over a large number. The cells are
+     added in code, one per value the gate of Flutter lets over the picture; A shows or hides both columns. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <LinearLayout
+    android:id="@+id/dji_flight_cells"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:background="@drawable/immersive_panel_background"
+    android:orientation="vertical"
+    android:padding="12dp" />
+</FrameLayout>

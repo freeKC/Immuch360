@@ -9,6 +9,7 @@ import android.os.BatteryManager
 import android.os.Build
 import android.provider.Settings
 import app.alextran.immich.BuildConfig
+import app.alextran.immich.tv.isTelevision
 import java.io.File
 
 /**
@@ -42,9 +43,14 @@ data class UsbEnvironmentReport(
   val djiApplicationInstalled: Boolean,
   val chargeCurrentMicroAmps: Int?,
   val accessoriesListed: Int,
+  /** Android TV or Google TV: a receiver of a phone's relay only (p2/design-tv-2026-10-24.md, 4.4 item 3) */
+  val television: Boolean = false,
 ) {
-  /** No accessory feature means no cable path on this device, whatever else is true */
-  val transportPossible: Boolean get() = hasAccessoryFeature || accessoryNodeExists
+  /**
+   * No accessory feature means no cable path on this device, whatever else is true; a TV never takes one, whatever
+   * USB features a box declares: it only watches a phone's relay
+   */
+  val transportPossible: Boolean get() = !television && (hasAccessoryFeature || accessoryNodeExists)
 }
 
 object UsbEnvironment {
@@ -97,6 +103,7 @@ object UsbEnvironment {
       }.getOrDefault(false),
       chargeCurrentMicroAmps = chargeCurrent(context),
       accessoriesListed = runCatching { usb?.accessoryList?.size ?: 0 }.getOrDefault(0),
+      television = runCatching { isTelevision(context) }.getOrDefault(false),
     )
   }
 
