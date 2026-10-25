@@ -240,6 +240,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 200));
       expect(opacity(), closeTo(0.5, 0.01));
       await tester.pump(const Duration(milliseconds: 200));
+      expect(opacity(), 0);
+      // An animation ends just past its duration: then the ring leaves the tree
+      await tester.pump(const Duration(milliseconds: 1));
       await tester.pump();
       expect(ring, findsNothing);
     });

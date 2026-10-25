@@ -917,7 +917,9 @@ void main() {
     expect(ring, findsOneWidget);
     await tester.pump(const Duration(milliseconds: 300));
     expect(ring, findsOneWidget);
+    // An animation ends just past its duration
     await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 1));
     await tester.pump();
     expect(ring, findsNothing);
     semantics.dispose();
