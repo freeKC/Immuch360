@@ -32,7 +32,7 @@ class RelayQueueDropTest {
   private val RelayOutgoing.key: Boolean get() = (flags and RelayWire.UNIT_KEY) != 0
 
   @Test
-  fun aTvKeepsItsBacklogForOneAndAHalfSecondsAndAHeadsetFor800Ms() {
+  fun aTvKeepsItsBacklogForOneAndAHalfSecondsAndAHeadsetFor500Ms() {
     assertEquals(RelayQueue.TV_MAX_AGE_NS, RelayQueue.maxAgeFor("tv"))
     assertEquals(RelayQueue.MAX_AGE_NS, RelayQueue.maxAgeFor(null))
     val tv = RelayQueue(RelayQueue.maxAgeFor("tv"))
@@ -45,10 +45,71 @@ class RelayQueueDropTest {
     assertEquals(84L, tv.unitsDropped)
     val headset = RelayQueue(RelayQueue.maxAgeFor(null))
     headset.offerUnit(p(), 0, false, 0)
-    headset.offerUnit(p(), 0, false, 790 * ms)
+    headset.offerUnit(p(), 0, false, 490 * ms)
     assertEquals(0L, headset.unitsDropped)
-    headset.offerUnit(p(), 0, false, 810 * ms)
+    headset.offerUnit(p(), 0, false, 510 * ms)
     assertEquals(2L, headset.unitsDropped)
+    // Within the hold off a headset waits to twice the bound, 1 s, never more (review M4)
+    headset.drain()
+    headset.offerUnit(p(), 0, false, 600 * ms)
+    headset.offerUnit(p(), 0, false, 1_590 * ms)
+    assertEquals(2L, headset.unitsDropped)
+    headset.offerUnit(p(), 0, false, 1_610 * ms)
+    assertEquals(4L, headset.unitsDropped)
+  }
+
+  /**
+   * A stall right after an encoder start (review M3): the fresh key unit is the oldest queued. It waits to twice the
+   * bound, then the units after it go and it stays, sent as a live key unit (not a primer, this receiver never had it);
+   * the gap shows after it and the next unit carries BREAK.
+   */
+  @Test
+  fun aFreshKeyUnitAtTheHeadWaitsTwiceTheBoundThenStaysAndGoesLive() {
+    val queue = RelayQueue(maxAgeNs = 500 * ms)
+    queue.offerRecord(RelayWire.PARAMETERS, 1, byteArrayOf(7), 0)
+    queue.offerUnit(keyUnit, RelayWire.UNIT_KEY, true, 0, primer = { kept })
+    repeat(20) { queue.offerUnit(p(), 0, false, (it + 1) * 30 * ms, primer = { kept }) }
+    // 600 ms: over the bound, but the key unit is the only picture to start from
+    assertEquals(0L, queue.unitsDropped)
+    queue.offerUnit(p(), 0, false, 1_001 * ms, primer = { kept })
+    assertEquals(20L, queue.unitsDropped)
+    // A second offer does not drop again: the key unit kept at the head is not aged again
+    queue.offerUnit(p(), 0, false, 1_020 * ms, primer = { kept })
+    assertEquals(20L, queue.unitsDropped)
+    val taken = queue.drain()
+    assertEquals(listOf(RelayWire.PARAMETERS, RelayWire.UNIT, RelayWire.UNIT, RelayWire.UNIT), taken.map { it.type })
+    val key = taken[1]
+    assertTrue("the key unit goes live", key.unit === keyUnit && key.key && !key.primer)
+    assertTrue("with the break of its new stream", key.breaks)
+    assertEquals(0L, key.sequence)
+    val after = taken[2]
+    assertTrue("the unit after the gap breaks", after.breaks && !after.primer)
+    assertEquals("the gap after the key unit", 21L, after.sequence)
+    assertFalse(taken[3].breaks)
+    val counters = queue.counters()
+    assertEquals(1L, counters.keyFirstDrops)
+    assertEquals(0L, counters.recoveryPrimers)
+    assertEquals(0L, counters.cleanRestarts)
+    assertEquals(1L, counters.breaksOverload)
+    assertEquals(1L, counters.breaksNewStream)
+  }
+
+  /** A key unit kept at the head goes with the next restart: its gap moves before the new key unit */
+  @Test
+  fun aKeyUnitKeptAtTheHeadGoesWithTheNextRestart() {
+    val queue = RelayQueue(maxAgeNs = 500 * ms)
+    queue.offerUnit(keyUnit, RelayWire.UNIT_KEY, false, 0, primer = { kept })
+    repeat(5) { queue.offerUnit(p(), 0, false, (it + 1) * 100 * ms, primer = { kept }) }
+    queue.offerUnit(p(), 0, false, 1_001 * ms, primer = { kept })
+    assertEquals(5L, queue.unitsDropped)
+    val fresh = HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(type = 19, body = 100))
+    queue.offerUnit(fresh, RelayWire.UNIT_KEY, false, 1_100 * ms, primer = { kept })
+    queue.offerUnit(p(), 0, false, 2_000 * ms, primer = { kept })
+    queue.offerUnit(p(), 0, false, 3_200 * ms, primer = { kept })
+    val taken = queue.drain()
+    val units = taken.filter { it.type == RelayWire.UNIT }
+    assertTrue(units.first().unit === fresh && units.first().breaks && !units.first().primer)
+    assertEquals("the key unit, the five after it and the one after them", 7L, units.first().sequence)
   }
 
   @Test
@@ -116,6 +177,7 @@ class RelayQueueDropTest {
     val queue = RelayQueue(maxAgeNs = 500 * ms)
     repeat(5) { queue.offerUnit(p(), 0, false, it * 100 * ms) }
     queue.offerUnit(p(), 0, false, 600 * ms, primer = { kept })
+    assertEquals("not written yet", 0L, queue.counters().recoveryPrimers)
     val taken = queue.drain()
     assertEquals(2, taken.size)
     val primer = taken[0]
@@ -126,7 +188,7 @@ class RelayQueueDropTest {
     assertTrue("the live unit after it breaks too", live.breaks && !live.primer)
     assertEquals(6L, live.sequence)
     val counters = queue.counters()
-    assertEquals(1L, counters.recoveryPrimers)
+    assertEquals("counted once written", 1L, counters.recoveryPrimers)
     assertEquals(5L, counters.unitsDropped)
     assertEquals("a primer is no unit dropped nor a break of the live stream", 1L, counters.breaksOverload)
     // No kept key unit (another description): the live unit breaks alone

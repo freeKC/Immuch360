@@ -31,8 +31,10 @@ data class RelayQueueCounters(
   val unitsDropped: Long,
   /** Drops that went back to a key unit still queued: no damage */
   val cleanRestarts: Long,
-  /** Drops followed by the kept key unit, flagged KEY, PRIMER and BREAK */
+  /** The kept key units sent after a drop, flagged KEY, PRIMER and BREAK (counted when written, not when queued) */
   val recoveryPrimers: Long,
+  /** Drops that kept the fresh key unit at the head of the queue and took the units after it */
+  val keyFirstDrops: Long = 0,
   val breaksOverload: Long,
   val breaksNewStream: Long,
   val maxRecords: Int,
@@ -50,9 +52,13 @@ data class RelayQueueCounters(
  * 3. Overload: when the oldest queued unit is older than [maxAgeNs] (no more than once every [holdOffNs], unless the
  *    age passes twice the bound), or the units would hold more than [maxBytes], units are dropped and counted, the
  *    sequence skips them (so the receiver sees the gap), and the next unit goes out with BREAK:
- *    a. when a key unit is queued (or comes now), everything before the newest one goes, and the stream starts again
- *       clean from it;
- *    b. otherwise every queued unit goes, and the key unit the phone kept ([RelayPrimer]) is sent first, flagged KEY,
+ *    a. when a key unit newer than the oldest unit is queued (or comes now), everything before the newest one goes,
+ *       and the stream starts again clean from it;
+ *    b. when the newest key unit is the oldest queued (a stall right after an encoder start: the take off, the
+ *       landing, the link start), it is the only picture this receiver can start from: the age may go to twice the
+ *       bound whatever the hold off, then the units after it go and it stays, sent as a live unit; the unit after the
+ *       gap carries BREAK (p2/review-relay-2026-10-25.md M3);
+ *    c. otherwise every queued unit goes, and the key unit the phone kept ([RelayPrimer]) is sent first, flagged KEY,
  *       PRIMER and BREAK: a receiver whose decoder will not go on without a key picture starts from it, another one
  *       keeps predicting from its last picture.
  *
@@ -65,8 +71,11 @@ class RelayQueue(
   private val holdOffNs: Long = HOLD_OFF_NS,
 ) {
   companion object {
-    /** A headset (its window and the flight view): the pilot's eyes, so a backlog goes sooner */
-    const val MAX_AGE_NS = 800_000_000L
+    /**
+     * A headset (its window and the flight view): the pilot's eyes, so a backlog goes at the 500 ms of stage 2b, and
+     * within the hold off at twice that (p2/review-relay-2026-10-25.md M4)
+     */
+    const val MAX_AGE_NS = 500_000_000L
 
     /** A TV: a spectator screen with up to 300 ms of jitter buffer behind it */
     const val TV_MAX_AGE_NS = 1_500_000_000L
@@ -89,6 +98,8 @@ class RelayQueue(
     val breakBefore: Boolean,
     val enqueuedNs: Long,
     val primer: Boolean = false,
+    /** A kept key unit queued by a drop (rule 3c), counted when written */
+    val recovery: Boolean = false,
   )
 
   private val lock = Object()
@@ -103,6 +114,11 @@ class RelayQueue(
   private var overloads = 0L
   private var cleanRestarts = 0L
   private var recoveryPrimers = 0L
+  private var keyFirstDrops = 0L
+
+  /** The key unit rule 3b kept at the head, and the units dropped after it: the gap goes after it in the sequence */
+  private var keptHead: Queued? = null
+  private var skipAfterHead = 0L
   private var breaksOverload = 0L
   private var breaksNewStream = 0L
   private var lastDropNs: Long? = null
@@ -130,6 +146,7 @@ class RelayQueue(
       unitsDropped = dropped,
       cleanRestarts = cleanRestarts,
       recoveryPrimers = recoveryPrimers,
+      keyFirstDrops = keyFirstDrops,
       breaksOverload = breaksOverload,
       breaksNewStream = breaksNewStream,
       maxRecords = maxRecords,
@@ -155,13 +172,20 @@ class RelayQueue(
     if (closed || finishing) {
       return false
     }
-    val oldest = records.firstOrNull { it.unit != null }
-    if (oldest != null) {
-      val age = nowNs - oldest.enqueuedNs
+    records.firstOrNull { it.unit != null }?.let { first ->
+      val age = nowNs - first.enqueuedNs
       maxAge = maxOf(maxAge, age)
       maxAgeSinceSample = maxOf(maxAgeSinceSample, age)
+    }
+    // The key unit kept at the head by an earlier drop is not aged again: the units after it are
+    val oldest = records.firstOrNull { it.unit != null && it !== keptHead }
+    if (oldest != null) {
+      val age = nowNs - oldest.enqueuedNs
       val held = lastDropNs?.let { nowNs - it < holdOffNs } ?: false
-      val overAge = age > maxAgeNs && (!held || age > 2 * maxAgeNs)
+      // A fresh key unit at the head, the newest queued, waits up to twice the bound: dropping it would leave no
+      // picture to start from (a newer key unit queued or coming makes a clean restart instead)
+      val keyFirst = !unit.isKey && records.lastOrNull { it.unit?.isKey == true && !it.primer } === oldest
+      val overAge = age > maxAgeNs && (!(held || keyFirst) || age > 2 * maxAgeNs)
       if (overAge || unitBytes + unit.size > maxBytes) {
         drop(unit, nowNs, primer)
       }
@@ -215,6 +239,8 @@ class RelayQueue(
     records.removeAll { it.type == RelayWire.UNIT || it.type == RelayWire.PARAMETERS }
     unitBytes = 0
     pendingBreak = false
+    keptHead = null
+    skipAfterHead = 0
   }
 
   /** The last record: everything else is dropped, nothing more is taken, the writer ends after writing it */
@@ -224,6 +250,7 @@ class RelayQueue(
     }
     records.clear()
     unitBytes = 0
+    keptHead = null
     records.addLast(Queued(type, 0, body, null, false, nowNs))
     finishing = true
     lock.notifyAll()
@@ -273,6 +300,16 @@ class RelayQueue(
     val sequence = nextSequence + skip
     nextSequence = sequence + 1
     skip = 0
+    if (record.recovery) {
+      recoveryPrimers += 1
+    }
+    if (record === keptHead) {
+      // Rule 3b: the units dropped after the key unit show as a gap after it, and the next unit breaks
+      keptHead = null
+      skip = skipAfterHead
+      skipAfterHead = 0
+      pendingBreak = true
+    }
     RelayOutgoing(RelayWire.UNIT, flags, null, unit, sequence, record.enqueuedNs, primer = record.primer)
   }
 
@@ -282,6 +319,8 @@ class RelayQueue(
     val firstUnit = records.indexOfFirst { it.unit != null }
     // Rule 3a: back to the newest key unit, with the parameter sets queued last before it
     val restart = keyAt > firstUnit
+    // Rule 3b: the newest key unit is the oldest queued; it stays, the units after it go
+    val keyFirst = !restart && keyAt >= 0 && keyAt == firstUnit
     val keepParameters = if (restart) {
       (keyAt - 1 downTo 0).firstOrNull { records[it].type == RelayWire.PARAMETERS }
     } else {
@@ -292,14 +331,24 @@ class RelayQueue(
     val iterator = records.iterator()
     while (iterator.hasNext()) {
       val record = iterator.next()
-      val before = !restart || index < keyAt
-      if (before && record.unit != null) {
-        if (record.breakBefore) {
+      val goes = when {
+        restart -> index < keyAt
+        keyFirst -> index > keyAt
+        else -> true
+      }
+      if (goes && record.unit != null) {
+        if (record.breakBefore && !keyFirst) {
           // The break it carried goes to the next unit with the drop's own
           pendingBreak = true
         }
         if (!record.primer) {
           count += 1
+        }
+        if (record === keptHead) {
+          // A key unit kept by an earlier drop goes now: the gap after it goes before the unit that restarts
+          skip += skipAfterHead
+          skipAfterHead = 0
+          keptHead = null
         }
         unitBytes -= record.unit.size
         iterator.remove()
@@ -314,17 +363,23 @@ class RelayQueue(
     lastDropNs = nowNs
     overloads += 1
     dropped += count
+    if (keyFirst) {
+      // The gap goes after the key unit, which this receiver never had: it goes as a live unit, not as a primer
+      keyFirstDrops += 1
+      keptHead = records[keyAt]
+      skipAfterHead += count
+      return
+    }
     skip += count
     pendingBreak = true
     if (restart) {
       cleanRestarts += 1
       return
     }
-    // Rule 3b: the kept key unit first, flagged by the server with KEY, PRIMER and BREAK
+    // Rule 3c: the kept key unit first, flagged by the server with KEY, PRIMER and BREAK
     primer?.invoke()?.let { kept ->
-      records.addLast(Queued(RelayWire.UNIT, kept.flags, null, kept.unit, false, nowNs, primer = true))
+      records.addLast(Queued(RelayWire.UNIT, kept.flags, null, kept.unit, false, nowNs, primer = true, recovery = true))
       unitBytes += kept.unit.size
-      recoveryPrimers += 1
     }
   }
 }
@@ -686,6 +741,7 @@ class RelayHeadset internal constructor(
       put("unitsDropped", counters.unitsDropped)
       put("cleanRestarts", counters.cleanRestarts)
       put("recoveryPrimers", counters.recoveryPrimers)
+      put("keyFirstDrops", counters.keyFirstDrops)
       put("breaksOverload", counters.breaksOverload)
       put("breaksNewStream", counters.breaksNewStream)
       put("queueMaxRecords", counters.maxRecords)

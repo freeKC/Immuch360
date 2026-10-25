@@ -124,7 +124,7 @@ class RelaySmoothnessWireTest {
       assertNull(server.snapshot().headsets.single().receiver)
       val report = server.report().receivers().single().jsonObject
       assertEquals(32, report["unitHeaderBytes"]!!.jsonPrimitive.int)
-      assertEquals(800, report["dropAgeMs"]!!.jsonPrimitive.int)
+      assertEquals(500, report["dropAgeMs"]!!.jsonPrimitive.int)
       assertFalse(report["sendBufferBytes"]!!.jsonPrimitive.content == "null")
     }
     server.stop()
