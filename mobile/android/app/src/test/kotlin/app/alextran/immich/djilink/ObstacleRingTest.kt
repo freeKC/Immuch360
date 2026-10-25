@@ -66,6 +66,10 @@ class ObstacleRingTest {
     assertEquals(0.15, ObstacleRing.opacity(0.0), 1e-9)
     assertEquals(0.425, ObstacleRing.opacity(0.5), 1e-9)
     assertEquals(0.70, ObstacleRing.opacity(1.0), 1e-9)
+    // The even glow, on four edges and with no side, half as strong at most
+    assertEquals(0.15, ObstacleRing.opacity(0.0, even = true), 1e-9)
+    assertEquals(0.25, ObstacleRing.opacity(0.5, even = true), 1e-9)
+    assertEquals(0.35, ObstacleRing.opacity(1.0, even = true), 1e-9)
     assertEquals(ObstacleRing.AMBER, ObstacleRing.argb(0.0))
     assertEquals(ObstacleRing.RED, ObstacleRing.argb(1.0))
     // FF B3 00 and E5 39 35, mixed per channel, rounded half up
@@ -132,15 +136,21 @@ class ObstacleRingTest {
     assertEquals(1, even.size)
     assertNull(even[0].centreDeg)
     assertEquals(1.2, even[0].distanceM, 1e-9)
+    // Strong, the even glow stays soft; the same obstacle with the side is the full red
+    assertEquals(0.35, arcsOf(ring(18 to 0.8), defaults).single().opacity, 1e-9)
+    assertEquals(0.70, arcsOf(ring(18 to 0.8)).single().opacity, 1e-9)
   }
 
   @Test
   fun theSettingsAreClamped() {
     assertEquals(RingSettings(6.0, 2.5), RingSettings(9.0, 4.0).clamped())
-    assertEquals(RingSettings(1.5, 1.0), RingSettings(1.0, 1.4).clamped())
+    // Down to 1.0 m and 0.25 m for a room, "Strong glow from" 0.5 m under "Glow from"
+    assertEquals(RingSettings(1.0, 0.5), RingSettings(0.5, 1.4).clamped())
+    assertEquals(RingSettings(1.0, 0.25), RingSettings(1.0, 0.25).clamped())
+    assertEquals(RingSettings(1.5, 1.0), RingSettings(1.5, 1.4).clamped())
     assertEquals(RingSettings(3.0, 2.5), RingSettings(3.0, 2.75).clamped())
     assertEquals(RingSettings(2.0, 1.5), RingSettings(2.0, 1.75).clamped())
-    assertEquals(RingSettings(3.0, 0.5), RingSettings(3.0, 0.2).clamped())
+    assertEquals(RingSettings(3.0, 0.25), RingSettings(3.0, 0.1).clamped())
     assertEquals(RingSettings(), RingSettings(Double.NaN, Double.NaN).clamped())
   }
 
@@ -157,6 +167,20 @@ class ObstacleRingTest {
     // With other distances, halfway moves with them
     assertEquals(1_000, ObstacleRing.tickIntervalMs(1.0, RingSettings(1.5, 0.5)))
     assertEquals(0, ObstacleRing.tickIntervalMs(1.1, RingSettings(1.5, 0.5)))
+  }
+
+  @Test
+  fun theEvenGlowTicksOnlyWithinStrongGlowFrom() {
+    assertEquals(0, ObstacleRing.tickIntervalMs(2.0, defaults, even = true))
+    assertEquals(0, ObstacleRing.tickIntervalMs(1.01, defaults, even = true))
+    assertEquals(1_000, ObstacleRing.tickIntervalMs(1.0, defaults, even = true))
+    assertEquals(575, ObstacleRing.tickIntervalMs(0.75, defaults, even = true))
+    assertEquals(150, ObstacleRing.tickIntervalMs(0.5, defaults, even = true))
+    assertEquals(150, ObstacleRing.tickIntervalMs(0.3, defaults, even = true))
+    assertEquals(0, ObstacleRing.tickIntervalMs(null, defaults, even = true))
+    // A room at the lowest distances: a tick only within 0.25 m
+    assertEquals(0, ObstacleRing.tickIntervalMs(0.29, RingSettings(1.0, 0.25), even = true))
+    assertEquals(1_000, ObstacleRing.tickIntervalMs(0.25, RingSettings(1.0, 0.25), even = true))
   }
 
   @Test

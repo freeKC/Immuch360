@@ -26,9 +26,14 @@ data class RingSettings(
   companion object {
     const val DEFAULT_FAR_M = 3.0
     const val DEFAULT_NEAR_M = 1.0
-    const val MIN_FAR_M = 1.5
+
+    /**
+     * Down to 1.0 m and 0.25 m for a room: in the 09:42 indoor hover every reading was 0.29 to 1.44 m, so at 1.5 m the
+     * ring glowed the whole flight (p2/review-obstacle-ring-2026-10-25.md, major 2)
+     */
+    const val MIN_FAR_M = 1.0
     const val MAX_FAR_M = 6.0
-    const val MIN_NEAR_M = 0.5
+    const val MIN_NEAR_M = 0.25
     const val MAX_NEAR_M = 2.5
 
     /** "Strong glow from" stays at least this far under "Glow from" */
@@ -69,10 +74,12 @@ object ObstacleRing {
   const val SECTOR_DEG = 5
 
   /**
-   * The nose at sector 0, the sectors growing clockwise. Likely, not proven: in the 25 October 09:42 capture the ring
-   * turns with the aircraft and its index grows with the heading (91 turn pairs of 91, slope -0.99), and it closes in
-   * within -40 to +21 degrees of index 0 in six forward legs (design-obstacle-ring-2026-10-25.md, 1.4). Clockwise
-   * also assumes the heading grows to the right. Step 5 of the owner flight proves it or gives the right constant.
+   * The nose at sector 0, the sectors growing clockwise. Likely, not proven. From the 25 October 09:42 capture, read
+   * with telemetry_series.py ring (p2/obstacle-ring-2026-10-25.md, 1): the ring turns with the aircraft and its index
+   * grows with the heading (43 turn pairs of 43, slope -1.007, correlation -0.998), and the heading is a compass
+   * heading growing clockwise (the speeds at offsets 18 and 20 are north and east): clockwise is well supported. The
+   * nose at sector 0 is weaker: in six forward legs the ring closes in fastest within 40 degrees of index 0 in four,
+   * and 50 to 70 degrees off in two. Step 5 of the owner flight proves it or gives the right constant.
    */
   val MAPPING = RingMapping(noseSector = 0, clockwise = true)
 
@@ -88,6 +95,12 @@ object ObstacleRing {
   const val FAINT_OPACITY = 0.15
   const val STRONG_OPACITY = 0.70
 
+  /**
+   * The even glow lights all four edges and says no side: half as strong at most, so that a room, whose walls are
+   * always close, is a soft frame rather than a red one (p2/review-obstacle-ring-2026-10-25.md, major 2)
+   */
+  const val EVEN_STRONG_OPACITY = 0.35
+
   /** djiLiveAmber and djiLiveRed, the two colours of the live screen */
   const val AMBER = 0xFFFFB300.toInt()
   const val RED = 0xFFE53935.toInt()
@@ -96,7 +109,10 @@ object ObstacleRing {
   const val WHITE = 0xFFFFFFFF.toInt()
   const val STOPPED_OPACITY = 0.25
 
-  /** The tick: every second halfway between the distances, every 250 ms at "Strong glow from", 150 ms at half of it */
+  /**
+   * The tick with the side: every second halfway between the distances, every 250 ms at "Strong glow from", 150 ms at
+   * half of it. With the even glow: every second at "Strong glow from", 150 ms at half of it.
+   */
   const val TICK_MIDDLE_MS = 1_000
   const val TICK_NEAR_MS = 250
   const val TICK_CLOSEST_MS = 150
@@ -155,7 +171,9 @@ object ObstacleRing {
   fun strength(distanceM: Double, settings: RingSettings): Double =
     ((settings.farM - distanceM) / (settings.farM - settings.nearM)).coerceIn(0.0, 1.0)
 
-  fun opacity(strength: Double): Double = FAINT_OPACITY + (STRONG_OPACITY - FAINT_OPACITY) * strength.coerceIn(0.0, 1.0)
+  /** 0.15 faint to 0.70 strong, or to 0.35 for the even glow: never opaque */
+  fun opacity(strength: Double, even: Boolean = false): Double =
+    FAINT_OPACITY + ((if (even) EVEN_STRONG_OPACITY else STRONG_OPACITY) - FAINT_OPACITY) * strength.coerceIn(0.0, 1.0)
 
   /** Amber at 0 to red at 1, mixed per channel */
   fun argb(strength: Double): Int {
@@ -168,9 +186,10 @@ object ObstacleRing {
     return (0xFF shl 24) or (channel(16) shl 16) or (channel(8) shl 8) or channel(0)
   }
 
+  /** An arc with no bearing is the even glow, and takes its softer opacity */
   fun arc(centreDeg: Double?, distanceM: Double, settings: RingSettings): RingArc {
     val strength = strength(distanceM, settings)
-    return RingArc(centreDeg, distanceM, strength, opacity(strength), argb(strength))
+    return RingArc(centreDeg, distanceM, strength, opacity(strength, even = centreDeg == null), argb(strength))
   }
 
   /** The sectors close enough to glow: one joins at [farM] or closer, and leaves once past [farM] + [HYSTERESIS_M] */
@@ -212,14 +231,24 @@ object ObstacleRing {
   }
 
   /**
-   * How often the tick sounds, 0 for silence: nothing farther than halfway between the two distances, 1000 ms there,
-   * falling in a straight line to 250 ms at "Strong glow from", then to 150 ms at half of it and closer. A 30 ms tick
-   * every 150 ms at most: never more than a fifth of the time sounding.
+   * How often the tick sounds, 0 for silence. With the side: nothing farther than halfway between the two distances,
+   * 1000 ms there, falling in a straight line to 250 ms at "Strong glow from", then to 150 ms at half of it and closer.
+   * With the even glow, which says no side and in a room lasts the whole flight: nothing farther than "Strong glow
+   * from", 1000 ms there, falling in a straight line to 150 ms at half of it. A 30 ms tick every 150 ms at most: never
+   * more than a fifth of the time sounding.
    */
-  fun tickIntervalMs(nearestM: Double?, settings: RingSettings): Int {
+  fun tickIntervalMs(nearestM: Double?, settings: RingSettings, even: Boolean = false): Int {
     val distance = nearestM ?: return 0
     val middle = settings.middleM
     val near = settings.nearM
+    if (even) {
+      return when {
+        distance > near -> 0
+        distance > near / 2 ->
+          (TICK_CLOSEST_MS + (distance - near / 2) / (near / 2) * (TICK_MIDDLE_MS - TICK_CLOSEST_MS)).roundToInt()
+        else -> TICK_CLOSEST_MS
+      }
+    }
     return when {
       distance > middle -> 0
       distance >= near -> (TICK_NEAR_MS + (distance - near) / (middle - near) * (TICK_MIDDLE_MS - TICK_NEAR_MS))

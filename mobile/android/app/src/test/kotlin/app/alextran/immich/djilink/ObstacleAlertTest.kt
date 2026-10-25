@@ -54,7 +54,7 @@ class ObstacleAlertTest {
 
   @Test
   fun onceShownItStaysAtLeastOneSecondWithTheLastArcsAndNoTick() {
-    val first = alert.decide(true, even, at(1.5), 0)
+    val first = alert.decide(true, even, at(0.8), 0)
     assertTrue(first.on)
     assertTrue(first.tickIntervalMs > 0)
     val held = alert.decide(true, even, at(null), 500)
@@ -149,8 +149,8 @@ class ObstacleAlertTest {
   }
 
   @Test
-  fun theTickStartsHalfwayAndTheTapOnlyWithinStrongGlowFrom() {
-    fun decide(metres: Double) = ObstacleAlert().decide(true, even, at(metres), 0)
+  fun theTickStartsHalfwayWithTheSideAtStrongGlowFromEvenlyAndTheTapOnlyWithinStrongGlowFrom() {
+    fun decide(metres: Double, settings: RingSettings = sided) = ObstacleAlert().decide(true, settings, at(metres), 0)
     assertEquals(0, decide(2.1).tickIntervalMs)
     assertEquals(1_000, decide(2.0).tickIntervalMs)
     assertEquals(625, decide(1.5).tickIntervalMs)
@@ -160,8 +160,16 @@ class ObstacleAlertTest {
     assertFalse(decide(1.5).haptic)
     assertTrue(decide(1.0).haptic)
     assertTrue(decide(0.4).haptic)
+    // The even glow, which says no side and lasts a whole flight in a room: silent until "Strong glow from", then once
+    // a second down to 150 ms at half of it
+    assertEquals(0, decide(2.0, even).tickIntervalMs)
+    assertEquals(0, decide(1.5, even).tickIntervalMs)
+    assertEquals(1_000, decide(1.0, even).tickIntervalMs)
+    assertEquals(150, decide(0.5, even).tickIntervalMs)
+    assertFalse(decide(1.5, even).haptic)
+    assertTrue(decide(1.0, even).haptic)
     // The pilot's distances move both
-    val indoor = RingSettings(1.5, 0.5)
+    val indoor = RingSettings(1.5, 0.5, directional = true)
     assertEquals(0, ObstacleAlert().decide(true, indoor, at(1.2), 0).tickIntervalMs)
     assertEquals(1_000, ObstacleAlert().decide(true, indoor, at(1.0), 0).tickIntervalMs)
     assertTrue(ObstacleAlert().decide(true, indoor, at(1.6), 0).arcs.isEmpty())
@@ -172,10 +180,14 @@ class ObstacleAlertTest {
     val faint = ObstacleAlert().decide(true, even, at(3.0), 0).arcs.single()
     assertEquals(0.0, faint.strength, 1e-9)
     assertEquals(ObstacleRing.AMBER, faint.argb)
-    val strong = ObstacleAlert().decide(true, even, at(0.8), 0).arcs.single()
+    val strong = ObstacleAlert().decide(true, sided, at(0.8), 0).arcs.single()
     assertEquals(1.0, strong.strength, 1e-9)
     assertEquals(0.70, strong.opacity, 1e-9)
     assertEquals(ObstacleRing.RED, strong.argb)
+    // The even glow on four edges: as red, half as strong
+    val evenStrong = ObstacleAlert().decide(true, even, at(0.8), 0).arcs.single()
+    assertEquals(0.35, evenStrong.opacity, 1e-9)
+    assertEquals(ObstacleRing.RED, evenStrong.argb)
   }
 
   @Test
@@ -287,19 +299,33 @@ class ObstacleToneTest {
   }
 
   @Test
-  fun theTestIsThreeTicksThreeHundredMillisecondsApart() {
-    assertEquals(3, ObstacleTone.TEST_TICKS)
-    assertEquals(300L, ObstacleTone.TEST_INTERVAL_MS)
+  fun playTheSoundIsThreeTicksThreeHundredMillisecondsApartWithNoTap() {
+    val scheduled = mutableListOf<Pair<Long, () -> Unit>>()
+    tone.playTest { delayMs, tick -> scheduled += delayMs to tick }
+    assertEquals(listOf(0L, 300L, 600L), scheduled.map { it.first })
+    // Nothing sounds before the handler runs them
+    assertTrue(ticks.isEmpty())
+    for ((delayMs, tick) in scheduled) {
+      now = delayMs
+      tick()
+    }
+    assertEquals(listOf(0L, 300L, 600L), ticks)
+    assertTrue(taps.isEmpty())
   }
 
   @Test
-  fun theTickIsThirtyMillisecondsOfASineWithRamps() {
+  fun theTickIsThirtyMillisecondsOfA1600HzSineWithRamps() {
     val samples = TickSound.samples()
     assertEquals(TickSound.SAMPLE_RATE * 30 / 1000, samples.size)
     assertEquals(0, samples.first().toInt())
     assertTrue(kotlin.math.abs(samples.last().toInt()) < 200)
     assertTrue(samples.maxOf { it.toInt() } > 30_000)
-    // Never louder than full scale: the 60 % comes from the track's volume
-    assertTrue(TickSound.VOLUME in 0.5f..0.7f)
+    // 1.6 kHz over 30 ms: 48 periods, 96 sign changes
+    val signs = samples.map { it.toInt() }.filter { it != 0 }.map { it > 0 }
+    val changes = signs.zipWithNext().count { (a, b) -> a != b }
+    assertTrue("$changes sign changes", changes in 95..97)
+    // The ramps: within the first 2.5 ms never more than half of full scale, so the tick does not click
+    val ramp = TickSound.SAMPLE_RATE * TickSound.RAMP_MS / 1000
+    assertTrue(samples.take(ramp / 2).all { kotlin.math.abs(it.toInt()) <= Short.MAX_VALUE / 2 + 1 })
   }
 }

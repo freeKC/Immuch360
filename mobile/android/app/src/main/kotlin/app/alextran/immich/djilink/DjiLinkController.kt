@@ -151,8 +151,8 @@ class DjiLinkController private constructor(private val context: Context) : Link
   private val exports = ExportMemory(REPEAT_HEADER_ONLY_MS)
   private val receptionExports = ExportMemory(REPEAT_HEADER_ONLY_MS)
 
-  /** The obstacle ring: offered by the gate in Flutter, decided here, its tick played here */
-  private val alert = ObstacleAlert()
+  /** The obstacle ring: offered by the gate in Flutter, decided here with its sample, its tick played here */
+  private val ringTicker = ObstacleRingTicker()
   private val beeper = TickBeeper()
   private val tone = ObstacleTone(beeper) { tapWithTick() }
 
@@ -174,9 +174,6 @@ class DjiLinkController private constructor(private val context: Context) : Link
   /** The live screen's activity, whose window taps with the tick; held weakly, the controller outlives it */
   @Volatile
   private var tapActivity: WeakReference<Activity>? = null
-
-  /** When "Show a sample" started on this device, null when none runs; read and set on the main thread */
-  private var sampleStartMs: Long? = null
 
   @Volatile
   private var lastDecision = ObstacleDecision.OFF
@@ -852,8 +849,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       } else {
         tone.update(0, soundOn = false, screenShown = false, nowMs = SystemClock.elapsedRealtime())
         beeper.release()
-        alert.reset()
-        sampleStartMs = null
+        ringTicker.reset()
         lastDecision = ObstacleDecision.OFF
       }
     }
@@ -872,26 +868,20 @@ class DjiLinkController private constructor(private val context: Context) : Link
 
   /** Three ticks, to check the volume before take off */
   fun playObstacleTest() {
-    for (index in 0 until ObstacleTone.TEST_TICKS) {
-      handler.postDelayed({ beeper.beep() }, index * ObstacleTone.TEST_INTERVAL_MS)
-    }
+    tone.playTest { delayMs, tick -> handler.postDelayed({ tick() }, delayMs) }
   }
 
   /**
    * "Show a sample": eight seconds of a made up ring through the same decision and drawing, on this device only (never
-   * relayed, never in a capture). Refused while the motors run, and while no picture screen is in front to draw it.
+   * relayed, never in a capture). Refused while the motors run, and while no picture screen is in front to draw it;
+   * ended as soon as the motors start ([ringTickInputs]).
    */
   fun showObstacleSample(): Boolean {
     if (!frameStreamOn) {
       return false
     }
-    val values = currentSource(SystemClock.elapsedRealtimeNanos()).first
-    if (obstacleInputOf(values).motorsOn == true) {
-      return false
-    }
-    alert.reset()
-    sampleStartMs = SystemClock.elapsedRealtime()
-    return true
+    val nowNs = SystemClock.elapsedRealtimeNanos()
+    return ringTicker.startSample(currentSource(nowNs), nowNs / 1_000_000)
   }
 
   /** A light tap on the live screen's window, which needs no permission; with the tick, within "Strong glow from" */
@@ -912,16 +902,16 @@ class DjiLinkController private constructor(private val context: Context) : Link
   }
 
   /**
-   * The values of the source in use (a phone's relay, a capture being played, or the cable) and, from a phone's relay,
-   * the phone's choices for the ring
+   * The values of the source in use (a phone's relay, a capture being played, or the cable), what the ring reads from
+   * them and, from a phone's relay, the phone's choices for the ring
    */
-  private fun currentSource(nowNs: Long): Pair<TelemetryValues?, RelayObstacleRing?> {
+  private fun currentSource(nowNs: Long): RingSource {
     val received = if (receiver.active) receiver.snapshot(nowNs) else null
     return synchronized(gate) {
       if (received != null) {
-        received.telemetry?.aged(received.telemetryAgeMs ?: 0) to received.telemetry?.obstacleRing
+        RingSource.received(received.telemetry, received.telemetryAgeMs ?: 0)
       } else {
-        (if (player.loaded) player.router else router).telemetryDecoder.values(nowNs / 1_000_000) to null
+        RingSource.local((if (player.loaded) player.router else router).telemetryDecoder.values(nowNs / 1_000_000))
       }
     }
   }
@@ -933,34 +923,20 @@ class DjiLinkController private constructor(private val context: Context) : Link
     }
     val nowNs = SystemClock.elapsedRealtimeNanos()
     val nowMs = nowNs / 1_000_000
-    val receiving = receiver.active
-    val (values, relayed) = currentSource(nowNs)
+    val source = currentSource(nowNs)
     val choices = ring
-    // On a receiver, the phone's record says whether the ring is offered, its distances and its side: it draws what
-    // the phone draws. A phone of an earlier build sends none: no ring.
-    val offered = if (receiving) relayed?.offered ?: false else choices.offered
-    val settings = if (receiving) {
-      relayed?.settings() ?: RingSettings()
-    } else {
-      RingSettings(choices.farM, choices.nearM, choices.directional)
-    }
-    val staleMs = if (receiving) ObstacleAlert.RECEIVER_STALE_MS else ObstacleAlert.PHONE_STALE_MS
-    val sample = sampleStartMs?.let { obstacleSampleInput(nowMs - it) }
-    if (sampleStartMs != null && sample == null) {
-      sampleStartMs = null
-      alert.reset()
-    }
-    val decision = if (sample != null) {
-      alert.decide(true, settings, sample, nowMs, staleMs)
-    } else {
-      alert.decide(offered, settings, obstacleInputOf(values), nowMs, staleMs)
-    }
+    // On a receiver the phone's record decides whether the ring is offered, its distances and its side; the sample
+    // ends as soon as the motors start; the tap is the phone's (ringTickInputs)
+    val tick = ringTicker.tick(
+      source,
+      RingChoices(choices.offered, RingSettings(choices.farM, choices.nearM, choices.directional), choices.haptic),
+      nowMs,
+    )
+    val decision = tick.decision
     lastDecision = decision
-    // The tap is the phone's: a receiver never vibrates
-    val tap = !receiving && choices.haptic && decision.haptic
-    tone.update(decision.tickIntervalMs, choices.sound, screenShown = true, nowMs = nowMs, tapOn = tap)
+    tone.update(decision.tickIntervalMs, choices.sound, screenShown = true, nowMs = nowMs, tapOn = tick.tap)
     // Only a change goes, ten times a second at most: a frame that says the same thing again would redraw nothing
-    val frame = liveFramePigeon(values, decision, nowMs)
+    val frame = liveFramePigeon(source.values, decision, nowMs)
     if (frames.offer(frame, nowMs)) {
       runCatching { events?.flightChanged(frame) { } }
     }

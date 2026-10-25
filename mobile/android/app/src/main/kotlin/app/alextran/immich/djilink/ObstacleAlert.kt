@@ -26,6 +26,12 @@ data class ObstacleInput(
   val motorsOn: Boolean?,
   /** Flight mode 12, the automatic landing: a landing or a palm catch brings a surface or a hand close */
   val landing: Boolean = false,
+  /**
+   * When the ring arrived on the phone that read it from the drone, on that phone's clock: how a ring is told apart
+   * from the next one. Null to take now minus [ageMs], which is exact where the ring was read but moves with the
+   * relay's transit on a receiver ([RingSource.received])
+   */
+  val ringAtMs: Long? = null,
 )
 
 data class ObstacleDecision(
@@ -77,9 +83,6 @@ class ObstacleAlert {
     const val PHONE_STALE_MS = 600L
     const val RECEIVER_STALE_MS = 1_500L
     const val STOPPED_MS = 5_000L
-
-    /** A ring that arrived this soon after the last one is that one again, seen at the next tick */
-    private const val SAME_RING_MS = 30L
   }
 
   private val smoothed = arrayOfNulls<Double>(ObstacleRing.SECTORS)
@@ -128,7 +131,7 @@ class ObstacleAlert {
       return stale(input, nowMs)
     }
     stoppedSinceMs = null
-    smooth(input, nowMs - age)
+    smooth(input, input.ringAtMs ?: (nowMs - age))
     // A landing brings the ground and a hand close: nothing shows while the drone lands or its motors are off
     val active = input.motorsOn != false && !input.landing
     val sectors = input.sectorsMm
@@ -171,7 +174,7 @@ class ObstacleAlert {
     shown = arcs
     shownEven = even
     shownNearest = nearest
-    val tick = ObstacleRing.tickIntervalMs(nearest, ring)
+    val tick = ObstacleRing.tickIntervalMs(nearest, ring, even)
     return ObstacleDecision(
       on = true,
       stopped = false,
@@ -207,10 +210,12 @@ class ObstacleAlert {
     return ObstacleDecision.OFF
   }
 
-  /** Each sector keeps min(new, half new and half its last value) once per ring, not once per tick */
+  /**
+   * Each sector keeps min(new, half new and half its last value) once per ring, not once per tick: a ring is the one
+   * seen at the last tick when it arrived at the same moment on the phone that read it
+   */
   private fun smooth(input: ObstacleInput, arrivalMs: Long) {
-    val last = lastArrivalMs
-    if (last != null && arrivalMs <= last + SAME_RING_MS) {
+    if (arrivalMs == lastArrivalMs) {
       return
     }
     lastArrivalMs = arrivalMs
@@ -253,6 +258,127 @@ fun obstacleSampleInput(tMs: Long, mapping: RingMapping = ObstacleRing.MAPPING):
   )
 }
 
+/**
+ * The source in use at one tick of the controller: its values (aged on a receiver, for the frame), what the ring reads
+ * from them, and on a receiver the phone's choices relayed with them
+ */
+data class RingSource(
+  val values: TelemetryValues?,
+  val input: ObstacleInput,
+  /** A phone's relay, not the cable or a capture being played */
+  val receiving: Boolean,
+  /** The phone's choices for the ring; null on the phone itself, and from a phone of an earlier build */
+  val relayed: RelayObstacleRing?,
+) {
+  companion object {
+    /** The cable or a capture being played: the ring was read here, its age is exact */
+    fun local(values: TelemetryValues?): RingSource = RingSource(values, obstacleInputOf(values), false, null)
+
+    /**
+     * A phone's relay: its last [record] (null before the first) [sinceMs] after it arrived here. The ring is told
+     * apart by when it arrived on the phone (the record's clock minus the ring's age there), which does not move with
+     * the transit of each record as now minus the aged age does (p2/review-obstacle-ring-2026-10-25.md, minor 5)
+     */
+    fun received(record: RelayTelemetryRecord?, sinceMs: Long): RingSource {
+      if (record == null) {
+        return RingSource(null, obstacleInputOf(null), true, null)
+      }
+      val values = record.aged(sinceMs)
+      val ringAtMs = record.values.obstacles?.let { record.phoneNs / 1_000_000 - it.ageMs }
+      return RingSource(values, obstacleInputOf(values).copy(ringAtMs = ringAtMs), true, record.obstacleRing)
+    }
+  }
+}
+
+/** This device's own choices for the ring, as Flutter sent them */
+data class RingChoices(
+  val offered: Boolean = false,
+  val settings: RingSettings = RingSettings(),
+  /** "Vibrate with the tick", on a phone */
+  val haptic: Boolean = false,
+)
+
+/** What one tick feeds the decision with ([ringTickInputs]) */
+data class RingTickInputs(
+  val offered: Boolean,
+  val settings: RingSettings,
+  val input: ObstacleInput,
+  val staleMs: Long,
+  /** When "Show a sample" started, if it still runs after this tick; null when none runs */
+  val sampleStartMs: Long?,
+  /** The sample ended at this tick, its eight seconds over or the motors started: the decision starts afresh */
+  val sampleEnded: Boolean,
+  /** The tick may tap: this phone asked for it. A receiver never vibrates */
+  val tapAllowed: Boolean,
+)
+
+/**
+ * The inputs of [ObstacleAlert.decide] at one tick, from the source in use, this device's choices and the sample
+ * (p2/review-obstacle-ring-2026-10-25.md, major 1 and minor 4). On a receiver the phone's record says whether the ring
+ * is offered, its distances and its side, so that every screen draws what the phone draws (a phone of an earlier build
+ * sends none: no ring), and the stale limit is the relay's. "Show a sample" runs eight seconds, and ends at once when
+ * the motors start: a made up obstacle is never drawn in flight, and the real ring is decided again at that tick.
+ */
+fun ringTickInputs(source: RingSource, choices: RingChoices, sampleStartMs: Long?, nowMs: Long): RingTickInputs {
+  val relayed = source.relayed
+  val offered = if (source.receiving) relayed?.offered ?: false else choices.offered
+  val settings = if (source.receiving) relayed?.settings() ?: RingSettings() else choices.settings
+  val sample = sampleStartMs
+    ?.takeIf { source.input.motorsOn != true }
+    ?.let { obstacleSampleInput(nowMs - it) }
+  return RingTickInputs(
+    offered = sample != null || offered,
+    settings = settings,
+    input = sample ?: source.input,
+    staleMs = if (source.receiving) ObstacleAlert.RECEIVER_STALE_MS else ObstacleAlert.PHONE_STALE_MS,
+    sampleStartMs = if (sample != null) sampleStartMs else null,
+    sampleEnded = sampleStartMs != null && sample == null,
+    tapAllowed = !source.receiving && choices.haptic,
+  )
+}
+
+/** What the ring decided at one tick, and whether the tick taps */
+data class RingTick(val decision: ObstacleDecision, val tap: Boolean)
+
+/**
+ * One device's obstacle ring from tick to tick (the controller's, every 50 ms while a picture screen is in front): the
+ * decision with its memory, "Show a sample", and the tap. Pure apart from that memory, so that the glue between the
+ * source, the phone's relayed choices, this device's own and the sample is tested.
+ */
+class ObstacleRingTicker {
+  private val alert = ObstacleAlert()
+
+  /** When "Show a sample" started on this device, null when none runs */
+  var sampleStartMs: Long? = null
+    private set
+
+  /** "Show a sample": eight seconds of a made up ring, refused while the motors run */
+  fun startSample(source: RingSource, nowMs: Long): Boolean {
+    if (source.input.motorsOn == true) {
+      return false
+    }
+    alert.reset()
+    sampleStartMs = nowMs
+    return true
+  }
+
+  /** No picture screen in front any more: nothing of the ring or of a sample is kept */
+  fun reset() {
+    alert.reset()
+    sampleStartMs = null
+  }
+
+  fun tick(source: RingSource, choices: RingChoices, nowMs: Long): RingTick {
+    val inputs = ringTickInputs(source, choices, sampleStartMs, nowMs)
+    if (inputs.sampleEnded) {
+      alert.reset()
+    }
+    sampleStartMs = inputs.sampleStartMs
+    val decision = alert.decide(inputs.offered, inputs.settings, inputs.input, nowMs, inputs.staleMs)
+    return RingTick(decision, tap = inputs.tapAllowed && decision.haptic)
+  }
+}
+
 /** Plays one short tick */
 fun interface ObstacleBeeper {
   fun beep()
@@ -270,6 +396,16 @@ class ObstacleTone(private val beeper: ObstacleBeeper, private val tap: () -> Un
   }
 
   private var lastTickMs: Long? = null
+
+  /**
+   * "Play the sound": [TEST_TICKS] ticks [TEST_INTERVAL_MS] apart, each handed to [schedule] with its delay (the
+   * controller's handler), whatever the ring and the sound switch say: it is how the pilot checks the volume
+   */
+  fun playTest(schedule: (delayMs: Long, tick: () -> Unit) -> Unit) {
+    for (index in 0 until TEST_TICKS) {
+      schedule(index * TEST_INTERVAL_MS) { beeper.beep() }
+    }
+  }
 
   /** Called every few tens of milliseconds; [intervalMs] 0 is silence */
   fun update(intervalMs: Int, soundOn: Boolean, screenShown: Boolean, nowMs: Long, tapOn: Boolean = false) {
