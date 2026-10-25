@@ -563,7 +563,7 @@ class _PlugInViewState extends ConsumerState<_PlugInView> with WidgetsBindingObs
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         key: const Key('drone_import_open_link'),
-                        onPressed: () => unawaited(context.pushRoute(const DjiLinkRoute())),
+                        onPressed: () => unawaited(context.pushRoute(const DjiLiveRoute())),
                         child: Text(t.dji_import_open_link),
                       ),
                     ),

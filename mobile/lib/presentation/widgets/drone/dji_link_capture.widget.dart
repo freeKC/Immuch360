@@ -12,6 +12,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_counters.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_advanced.panel.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
@@ -123,7 +124,14 @@ class _DjiLinkCaptureSectionState extends ConsumerState<DjiLinkCaptureSection> {
             style: context.textTheme.bodySmall,
           ),
         ],
-        if (export != null && export.ok && !export.headerOnly) ...[
+        if (export != null && export.ok && export.repeated) ...[
+          const SizedBox(height: 6),
+          Text(
+            t.dji_live_capture_same(name: djiExportName(export.binPath ?? export.headerPath ?? '').$2),
+            key: const Key('dji_link_capture_same'),
+            style: context.textTheme.bodySmall,
+          ),
+        ] else if (export != null && export.ok && !export.headerOnly) ...[
           const SizedBox(height: 6),
           Text(
             t.dji_link_capture_exported(path: export.binPath ?? ''),
@@ -175,6 +183,9 @@ class DjiLinkPlaySection extends ConsumerStatefulWidget {
 
 class _DjiLinkPlaySectionState extends ConsumerState<DjiLinkPlaySection> {
   final _startAt = TextEditingController(text: '0');
+
+  /// "Play in a loop": the end starts the playback again at the same second, for a headset receiving it
+  bool _loop = false;
 
   @override
   void dispose() {
@@ -240,7 +251,7 @@ class _DjiLinkPlaySectionState extends ConsumerState<DjiLinkPlaySection> {
               key: Key('dji_link_play_${file.name}'),
               tooltip: t.dji_link_play,
               icon: const Icon(Icons.play_arrow_rounded),
-              onPressed: busy ? null : () => unawaited(_notifier.play(file, startAtMs: _startAtMs)),
+              onPressed: busy ? null : () => unawaited(_notifier.play(file, startAtMs: _startAtMs, loop: _loop)),
             ),
           ),
         SizedBox(
@@ -252,6 +263,15 @@ class _DjiLinkPlaySectionState extends ConsumerState<DjiLinkPlaySection> {
             decoration: InputDecoration(labelText: t.dji_link_play_start_at, isDense: true),
           ),
         ),
+        CheckboxListTile(
+          key: const Key('dji_link_play_loop'),
+          contentPadding: EdgeInsets.zero,
+          controlAffinity: ListTileControlAffinity.leading,
+          dense: true,
+          title: Text(t.dji_link_play_loop, style: context.textTheme.bodySmall),
+          value: _loop,
+          onChanged: (value) => setState(() => _loop = value ?? false),
+        ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -259,7 +279,7 @@ class _DjiLinkPlaySectionState extends ConsumerState<DjiLinkPlaySection> {
           children: [
             OutlinedButton(
               key: const Key('dji_link_play_choose'),
-              onPressed: busy ? null : () => unawaited(_notifier.chooseAndPlay(startAtMs: _startAtMs)),
+              onPressed: busy ? null : () => unawaited(_notifier.chooseAndPlay(startAtMs: _startAtMs, loop: _loop)),
               child: Text(t.dji_link_play_choose),
             ),
             OutlinedButton(
@@ -274,6 +294,61 @@ class _DjiLinkPlaySectionState extends ConsumerState<DjiLinkPlaySection> {
               onPressed: () => unawaited(_notifier.listCaptures()),
             ),
           ],
+        ),
+      ],
+    );
+  }
+}
+
+/// The capture section of Diagnostics on a headset (p2/design-final-2026-10-24.md, 5.3): the remote is on the phone, so
+/// one sentence says to save the capture there, and "Save a reception record" writes what this headset received and how
+/// it decoded it, with a toast and a line under the button that say where it went or why nothing was written
+class DjiReceptionRecordSection extends ConsumerWidget {
+  const DjiReceptionRecordSection({super.key});
+
+  Future<void> _save(BuildContext context, WidgetRef ref) async {
+    final outcome = await ref.read(djiLinkProvider.notifier).exportReception();
+    if (!context.mounted) {
+      return;
+    }
+    showDjiExportToast(context, outcome, ref.read(djiLinkProvider).export, record: true);
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.t;
+    final state = ref.watch(djiLinkProvider);
+    final export = state.export;
+    final small = context.textTheme.bodySmall;
+    final path = export?.binPath ?? export?.headerPath;
+    final (folder, name) = djiExportName(path ?? '');
+    final result = switch (export) {
+      null => null,
+      DjiLinkExport(ok: false) => t.dji_live_capture_failed,
+      DjiLinkExport(nothing: true) => t.dji_live_record_nothing,
+      DjiLinkExport(repeated: true) => t.dji_live_capture_same(name: name),
+      _ => path == null ? null : t.dji_live_record_saved(folder: folder, name: name),
+    };
+    return Column(
+      key: const Key('dji_link_reception_record'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(t.dji_link_capture_headset, key: const Key('dji_link_capture_headset'), style: small),
+        const SizedBox(height: 8),
+        FilledButton.icon(
+          key: const Key('dji_link_save_record'),
+          icon: const Icon(Icons.save_alt_rounded),
+          label: Text(t.dji_live_watch_save_record),
+          onPressed: state.exporting ? null : () => unawaited(_save(context, ref)),
+        ),
+        if (result != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(result, key: const Key('dji_link_record_result'), style: small),
+          ),
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(t.dji_live_record_privacy, style: small),
         ),
       ],
     );

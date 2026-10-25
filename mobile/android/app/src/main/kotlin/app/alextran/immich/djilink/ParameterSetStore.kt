@@ -75,6 +75,12 @@ class ParameterSetStore(
 ) {
   companion object {
     const val KEY_PREFIX = "djilink.streamDescription."
+
+    /** The last key unit of a remote, with the sets it was decoded with ([onKeyUnit]) */
+    const val KEY_UNIT_PREFIX = "djilink.keyUnit."
+
+    /** A key unit larger than this is not kept (the key pictures of the captures are 12 to 19 KB) */
+    const val MAX_KEY_UNIT_BYTES = 256 * 1024
     private const val FORMAT = "h265-v1"
     private const val SEPARATOR = "|"
   }
@@ -88,20 +94,39 @@ class ParameterSetStore(
 
   private var session: StreamDescription? = null
 
+  /**
+   * Where the session description came from on the phone, for a stream relayed by a phone: the phone resolved its
+   * description (from its session, its cache or the seed) and sent it with its source. Null for a description read
+   * from the stream itself.
+   */
+  private var relayedSource: DescriptionSource? = null
+
   /** The descriptor changed: a new accessory, or none for a replay. The session description goes with the old one. */
   fun useAccessory(strings: AccessoryStrings?) {
     accessory = strings
     session = null
+    relayedSource = null
   }
 
   /** A new descriptor of the same accessory: the session description must be read from the stream again */
   fun newSession() {
     session = null
+    relayedSource = null
+  }
+
+  /**
+   * The description a phone relays with its parameter sets, and where the phone had it from. For a relayed stream the
+   * store has no accessory (no cache is read or written) and no seed: the phone resolved those and sent the result.
+   */
+  fun onRelayedDescription(description: StreamDescription, source: DescriptionSource) {
+    session = description
+    relayedSource = source
   }
 
   /** The stream gave its own description: it wins, and it becomes the cache of these accessory strings */
   fun onSessionDescription(description: StreamDescription) {
     session = description
+    relayedSource = null
     val strings = accessory ?: return
     // One line of text: the three sets in hexadecimal, the date and the SPS summary, separated by a character that
     // neither hexadecimal nor the summary holds (no JSON library is needed by the JVM tests this way)
@@ -120,7 +145,7 @@ class ParameterSetStore(
 
   /** The description to configure a decoder with now, or null when there is none to be had */
   fun resolve(showsH265Signature: Boolean): ResolvedDescription? {
-    session?.let { return ResolvedDescription(it, DescriptionSource.SESSION) }
+    session?.let { return ResolvedDescription(it, relayedSource ?: DescriptionSource.SESSION) }
     cached()?.let { return ResolvedDescription(it, DescriptionSource.CACHE) }
     val seeded = seed
     if (seeded != null && showsH265Signature) {
@@ -143,7 +168,47 @@ class ParameterSetStore(
   fun forgetCache() {
     val strings = accessory ?: return
     preferences.write(cacheKey(strings), null)
+    preferences.write(keyUnitKey(strings), null)
+  }
+
+  /**
+   * A key unit of the remote's stream, kept for these accessory strings with the sets it was decoded with, so that a
+   * later session that opens the link while the remote already streams (no key picture comes then; the 23 October
+   * capture waited 1 s for one, from an encoder restart) can still start a decoder that waits for a key picture: the
+   * Quest's, through the relay. It is a picture of the drone's camera, kept in the app's own preferences only, and
+   * replaced by the next key picture. A replay keeps nothing.
+   */
+  fun onKeyUnit(unit: AccessUnit, description: StreamDescription) {
+    val strings = accessory ?: return
+    if (!unit.isKey || unit.size > MAX_KEY_UNIT_BYTES) {
+      return
+    }
+    val record = listOf(
+      FORMAT,
+      StreamDescription.hex(description.vps),
+      StreamDescription.hex(description.sps),
+      StreamDescription.hex(description.pps),
+      StreamDescription.hex(unit.bytes),
+    ).joinToString(SEPARATOR)
+    preferences.write(keyUnitKey(strings), record)
+  }
+
+  /** The key unit kept for the current accessory strings, when it was decoded with the sets of [description] */
+  fun keptKeyUnit(description: StreamDescription): AccessUnit? {
+    val strings = accessory ?: return null
+    val cells = preferences.read(keyUnitKey(strings))?.split(SEPARATOR) ?: return null
+    if (cells.size != 5 || cells[0] != FORMAT) {
+      return null
+    }
+    val sets = StreamDescription.fromHex(cells[1], cells[2], cells[3]) ?: return null
+    if (!sets.sameSetsAs(description)) {
+      return null
+    }
+    val bytes = StreamDescription.hexBytes(cells[4]) ?: return null
+    return RelayWire.annexBUnit(bytes, 0).takeIf { it.isKey }
   }
 
   private fun cacheKey(strings: AccessoryStrings): String = KEY_PREFIX + "h265." + strings.key
+
+  private fun keyUnitKey(strings: AccessoryStrings): String = KEY_UNIT_PREFIX + "h265." + strings.key
 }

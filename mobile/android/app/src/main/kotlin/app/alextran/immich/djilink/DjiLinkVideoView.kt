@@ -16,6 +16,9 @@ import io.flutter.plugin.platform.PlatformView
  * with setOutputSurface).
  */
 object DjiLinkVideoSurfaces {
+  /** The video panel of the flight view on the Quest: a negative id, never one of a Flutter platform view */
+  const val FLIGHT_VIEW_ID = -360
+
   private val surfaces = linkedMapOf<Int, android.view.Surface>()
 
   /** Told whenever the surface that should show the picture changes; null means none is shown */

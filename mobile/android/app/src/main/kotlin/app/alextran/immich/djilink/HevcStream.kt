@@ -361,19 +361,65 @@ object SeiReader {
 object SeiPictureCounter {
   const val PAYLOAD_TYPE = 240
 
+  /**
+   * Where the millisecond content clock sits in the same message: two bytes, little endian. Seen on the 25 October
+   * 2026 capture only (p2/relay-smoothness-2026-10-25.md, 2.5): +16 or +17 per picture at 60 pictures a second, +33 or
+   * +34 at 30, wrapping at 65536, going on across an encoder restart. Read as a clock to pace a display on, nothing
+   * more.
+   */
+  const val CLOCK_OFFSET = 15
+
   /** The counter of the unit, from its first suffix SEI that carries one */
-  fun read(bytes: ByteArray, nals: List<NalRef>): Int? {
+  fun read(bytes: ByteArray, nals: List<NalRef>): Int? = readStamp(bytes, nals)?.get(0)
+
+  /** The counter and the content clock of the unit (-1 when the message is too short for it), or null without one */
+  fun readStamp(bytes: ByteArray, nals: List<NalRef>): IntArray? {
     for (nal in nals) {
       if (nal.size < 3 || HevcNal.type(bytes[nal.offset].toInt() and 0xFF) != HevcNal.SUFFIX_SEI) {
         continue
       }
       for (message in SeiReader.messages(bytes, nal.offset, nal.end)) {
         if (message.payloadType == PAYLOAD_TYPE && message.payloadSize >= 2) {
-          return message.payloadByte(0) or (message.payloadByte(1) shl 8)
+          val counter = message.payloadByte(0) or (message.payloadByte(1) shl 8)
+          val clock = if (message.payloadSize >= CLOCK_OFFSET + 2) {
+            message.payloadByte(CLOCK_OFFSET) or (message.payloadByte(CLOCK_OFFSET + 1) shl 8)
+          } else {
+            -1
+          }
+          return intArrayOf(counter, clock)
         }
       }
     }
     return null
+  }
+}
+
+/**
+ * The 16 bit content clock of a stream unwrapped into a 64 bit one, in milliseconds: a step is taken modulo 65536 and
+ * read as a step back when it is over half of it. A new stream starts again from its first value.
+ */
+class ContentClockUnwrapper {
+  private var last: Int? = null
+  private var value = 0L
+
+  fun offer(raw: Int): Long {
+    val previous = last
+    last = raw and 0xFFFF
+    if (previous == null) {
+      value = (raw and 0xFFFF).toLong()
+      return value
+    }
+    var step = ((raw and 0xFFFF) - previous) and 0xFFFF
+    if (step >= 0x8000) {
+      step -= 0x10000
+    }
+    value += step
+    return value
+  }
+
+  fun reset() {
+    last = null
+    value = 0
   }
 }
 

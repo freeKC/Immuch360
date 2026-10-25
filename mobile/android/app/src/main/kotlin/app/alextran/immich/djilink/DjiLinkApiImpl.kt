@@ -1,11 +1,15 @@
 package app.alextran.immich.djilink
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.usb.UsbManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,9 +17,11 @@ import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * What Flutter asks of the link. Every call is a question about what is there, a capture control, a capture to play
- * or a choice of the page (the decoder, the hardware profile). None of them can move an aircraft: there is no method
- * here that sends anything, and the transport writes nothing but its own one byte liveness probe.
+ * What Flutter asks of the link. Every call is a question about what is there, a capture control, a capture to play,
+ * a choice of the page (the decoder, the hardware profile), the relay to headsets or the reception of a phone's relay.
+ * None of them can move an aircraft: there is no method here that sends anything to the remote, the transport writes
+ * nothing but its own one byte liveness probe, and the relay carries the picture and the values toward the headsets
+ * only.
  */
 class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
   companion object {
@@ -23,8 +29,10 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
 
     /**
      * The entry that puts this application in the Android chooser when a DJI accessory is plugged in. It ships
-     * disabled and is only enabled while the diagnostics switch is on, so a pilot who never asked for it never sees
-     * this application offered for a cable, and it never competes with the DJI application on a phone.
+     * disabled and is enabled while a link runs, or while "Open this screen when the remote is plugged in" and the DJI
+     * live video setting are on ([AttachEntryPolicy]), both on by default on a phone since 25 October. With the DJI
+     * application on the phone too, Android then asks which one opens the remote; the switch in Advanced takes this
+     * application out of that question.
      */
     fun setAttachEntryEnabled(context: Context, enabled: Boolean) {
       val component = ComponentName(context, DjiLinkAttachActivity::class.java)
@@ -43,6 +51,9 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
   // The import page lists the plugged accessories without it.
   private val controller by lazy { DjiLinkController.of(context) }
   private val main = Handler(Looper.getMainLooper())
+
+  /** The answers that keep the attach entry when no link runs; read without making the controller */
+  private val attachPreferences by lazy { AttachEntryPreferences(SharedPreferencesStore(context)) }
   private val pickerRequests = AtomicInteger()
   private val worker by lazy {
     Executors.newSingleThreadExecutor { runnable -> Thread(runnable, "DjiLinkWork").apply { isDaemon = true } }
@@ -59,10 +70,12 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
   }
 
   override fun stop() {
+    // The entry stays on as long as the link runs: the page, or the relay that keeps the cable for a headset. Where
+    // the link really ends, here or later (Stop in the notification, the app swiped away), the controller sets it to
+    // what AttachEntryPolicy gives with no link: on by default on a phone (with DJI Fly installed, Android then asks
+    // which application opens the remote), off once "Open this screen when the remote is plugged in" is turned off in
+    // Advanced.
     controller.stop()
-    // The entry lives as long as the page does. A pilot who left the page is a pilot who is not offered this
-    // application when a cable is plugged in.
-    setAttachEntryEnabled(context, false)
   }
 
   override fun retry() {
@@ -94,22 +107,62 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
           "note" to notes.note,
         )
       )
-      callback(
-        Result.success(
-          DjiLinkExport(
-            ok = result.ok,
-            bytes = result.bytes,
-            binPath = result.binPath,
-            indexPath = result.indexPath,
-            headerPath = result.headerPath,
-            sha256 = result.sha256,
-            error = result.error,
-            headerOnly = result.headerOnly,
-          )
-        )
-      )
+      callback(Result.success(result.toPigeon()))
     }
   }
+
+  /** On the same worker as the capture's export: two taps never write at once, the second answers "already saved" */
+  override fun exportReception(callback: (Result<DjiLinkExport>) -> Unit) {
+    worker.execute {
+      val result = runCatching { controller.exportReception() }.getOrElse {
+        CaptureExport.Result(ok = false, bytes = 0, error = it.message ?: it.javaClass.simpleName)
+      }
+      callback(Result.success(result.toPigeon()))
+    }
+  }
+
+  override fun setFrameStream(on: Boolean) {
+    controller.setFrameStream(on)
+  }
+
+  override fun setObstacleRing(settings: DjiObstacleRingSettings) {
+    // The activity's window taps with the tick on a phone, through performHapticFeedback: no permission
+    controller.setObstacleRing(settings, context as? Activity)
+  }
+
+  override fun setLowestDelay(on: Boolean) {
+    controller.setLowestDelay(on)
+  }
+
+  override fun setRelayQuality(quality: DjiRelayQuality) {
+    controller.setRelayQuality(
+      when (quality) {
+        DjiRelayQuality.AUTOMATIC -> RelayQuality.AUTOMATIC
+        DjiRelayQuality.FULL -> RelayQuality.FULL
+        DjiRelayQuality.STEADY -> RelayQuality.STEADY
+      },
+    )
+  }
+
+  override fun relayQuality(): DjiRelayQuality = controller.relayQuality().toPigeon()
+
+  override fun playObstacleTest() {
+    controller.playObstacleTest()
+  }
+
+  override fun showObstacleSample(): Boolean = controller.showObstacleSample()
+
+  override fun hasVibrator(): Boolean = runCatching {
+    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+      (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager)?.defaultVibrator
+    } else {
+      @Suppress("DEPRECATION")
+      context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+    }
+    vibrator?.hasVibrator() ?: false
+  }.getOrDefault(false)
+
+  override fun mediaVolumeOff(): Boolean = controller.mediaVolumeOff()
 
   override fun replayCapture(
     path: String,
@@ -282,20 +335,96 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
     }
   }
 
-  override fun playCapture(binUri: String, indexUri: String, startAtMs: Long, callback: (Result<String?>) -> Unit) {
+  override fun playCapture(
+    binUri: String,
+    indexUri: String,
+    startAtMs: Long,
+    loop: Boolean,
+    callback: (Result<String?>) -> Unit,
+  ) {
     // The page session of the request, read on the main thread where the page closes: if it closes while the files
     // are read on the worker, the capture is not played
     val session = controller.pageSession
     worker.execute {
-      val outcome = runCatching { controller.playCapture(binUri, indexUri, startAtMs, session = session) }
-        .getOrElse { "unreadable" }
+      val outcome = runCatching {
+        controller.playCapture(binUri, indexUri, startAtMs, session = session, loop = loop)
+      }.getOrElse { "unreadable" }
       callback(Result.success(outcome))
     }
   }
 
+  override fun startRelay(start: DjiRelayStart, callback: (Result<Long>) -> Unit) {
+    val texts = DjiLinkRelayTexts(start.notificationTitle, start.notificationText, start.stopLabel, start.channelName)
+    // The page session of the request, read on the main thread where the page closes: a page that closes while the
+    // socket is being bound on the worker leaves no relay behind it
+    val session = controller.pageSession
+    // The socket is bound on the worker, never on the main thread
+    worker.execute {
+      val port = runCatching {
+        controller.startRelay(
+          start.code,
+          texts,
+          start.phoneName,
+          start.phoneId,
+          session,
+          start.screenCodes.map { RelayScreenCode(it.id, it.code) },
+        )
+      }.getOrElse {
+        Log.w(TAG, "the relay did not start: ${it.javaClass.simpleName}")
+        0
+      }
+      callback(Result.success(port.toLong()))
+    }
+  }
+
+  override fun stopRelay() {
+    controller.stopRelay()
+  }
+
+  override fun setRelayCode(code: String) {
+    controller.setRelayCode(code)
+  }
+
+  override fun setRelayScreenCodes(codes: List<DjiRelayScreenCode>) {
+    controller.setRelayScreenCodes(codes.map { RelayScreenCode(it.id, it.code) })
+  }
+
+  override fun updateRelayNotification(text: String) {
+    controller.updateRelayNotification(text)
+  }
+
+  override fun connectRelay(host: String, port: Long, code: String, phoneId: String?, headsetName: String): String? =
+    controller.connectRelay(host, port.toInt(), code, phoneId, headsetName)
+
+  override fun disconnectRelay() {
+    controller.disconnectRelay()
+  }
+
+  override fun openFlightView(labels: Map<String, String>): Boolean = controller.openFlightView(labels)
+
   override fun stopPlayback() {
     controller.stopPlayback()
   }
+
+  override fun setOpenOnPlug(on: Boolean) {
+    attachPreferences.openOnPlug = on
+    applyAttachEntry()
+  }
+
+  override fun openOnPlug(): Boolean = attachPreferences.openOnPlug
+
+  override fun setLiveSettingOn(on: Boolean) {
+    attachPreferences.settingOn = on
+    applyAttachEntry()
+  }
+
+  /** The entry follows the two answers at once, unless a link runs, which keeps it until it ends */
+  private fun applyAttachEntry() {
+    val linkRunning = DjiLinkController.existing()?.isStarted == true
+    setAttachEntryEnabled(context, attachPreferences.entryEnabled(linkRunning))
+  }
+
+  override fun takeAttachLaunch(): Boolean = AttachLaunch.take()
 
   override fun bindProfile(profileId: String?) {
     controller.bindProfile(profileId)
@@ -318,6 +447,20 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
     }
   }
 }
+
+private fun CaptureExport.Result.toPigeon(): DjiLinkExport = DjiLinkExport(
+  ok = ok,
+  bytes = bytes,
+  binPath = binPath,
+  indexPath = indexPath,
+  headerPath = headerPath,
+  sha256 = sha256,
+  error = error,
+  headerOnly = headerOnly,
+  repeated = repeated,
+  nothing = nothing,
+  controlBinPath = controlBinPath,
+)
 
 private fun CaptureFile.toPigeon(): DjiLinkCaptureFile = DjiLinkCaptureFile(
   name = name,

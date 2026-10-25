@@ -25,6 +25,15 @@ object MessageCatalogue {
       "2026-10-23, DJI RC-N3 and Neo 2 with the Digital Transceiver, Samsung SM-S926B"
 
   /**
+   * The same capture read again on 24 October 2026 with the two others of that week
+   * (p2/telemetry-deep-dive-2026-10-24.md, sections 4 and 5): the pushes that come only while the motors run, in its
+   * first 0.54 s, and the signal bars (p2/telemetry-flight-2026-10-24.md, 3.5)
+   */
+  const val OBSERVATION_20261024 =
+    "dji-link-20261023-102731 read again on 2026-10-24 with dji-link-20261023-205845 and dji-link-20261024-121915, " +
+      "DJI RC-N3 and Neo 2 with the Digital Transceiver, Samsung SM-S926B"
+
+  /**
    * The pairs the 23 October 2026 capture explains (p2/capture-2026-10-23.md, sections 3.8 and 5): named where a public
    * layout of that pair and the capture agree, or where the capture alone shows what the field is.
    */
@@ -38,6 +47,9 @@ object MessageCatalogue {
     CataloguedMessage(35, 178, TelemetryCodes.AIRCRAFT_CLOCK, OBSERVATION_20261023),
     CataloguedMessage(33, 6, TelemetryCodes.MODULE_STATUS, OBSERVATION_20261023),
     CataloguedMessage(33, 8, TelemetryCodes.MODULE_STATUS, OBSERVATION_20261023),
+    CataloguedMessage(9, 117, TelemetryCodes.SIGNAL_BARS, OBSERVATION_20261024),
+    CataloguedMessage(10, 3, TelemetryCodes.RANGE_BELOW, OBSERVATION_20261024),
+    CataloguedMessage(36, 8, TelemetryCodes.OBSTACLES, OBSERVATION_20261024),
   ).associateBy { key(it.commandSet, it.commandId) }
 
   private fun key(set: Int, id: Int): Int = (set shl 8) or id

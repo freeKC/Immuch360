@@ -27,8 +27,11 @@ import 'package:immich_mobile/pages/common/splash_screen.page.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/app_life_cycle.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/share_intent_upload.provider.dart';
+import 'package:immich_mobile/providers/drone/dji_attach_launch.provider.dart';
+import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
@@ -178,6 +181,7 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
         dPrint(() => "[APP STATE] resumed");
         unawaited(ref.read(appStateProvider.notifier).handleAppResume());
         unawaited(ref.read(viewIntentHandlerProvider).onAppResumed());
+        unawaited(ref.read(djiAttachLaunchProvider).check());
       case AppLifecycleState.inactive:
         dPrint(() => "[APP STATE] inactive");
         ref.read(appStateProvider.notifier).handleAppInactivity();
@@ -304,6 +308,10 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
 
     ref.read(viewIntentHandlerProvider).init();
     ref.read(shareIntentUploadProvider.notifier).init();
+    // A DJI remote plugged in with "Open this screen when the remote is plugged in" on (on by default on a phone)
+    unawaited(ref.read(djiAttachLaunchProvider).check());
+    // The DJI settings an earlier build kept under keys no longer read
+    unawaited(djiForgetRetiredSettings(ref.read(storeServiceProvider)));
     // Meta Quest detection, asked once: 360 media open in the immersive viewer there
     unawaited(ref.read(isHorizonOsProvider.future));
   }

@@ -90,6 +90,66 @@ enum StoreKey<T> {
   /// os, at}. Never a token: the sessions are the server's, this list only names them; removed at the sign out
   pairedScreens<String>._(5029),
 
+  /// The DJI live video showed a live picture from a remote once on this install: the plug step may then offer to open
+  /// the live screen when the remote is plugged in
+  djiLivePictureSeen<bool>._(5030),
+
+  /// That offer was answered, yes or not now: it is not made again, and the switch stays in Advanced
+  djiLiveOfferAnswered<bool>._(5031),
+
+  /// No longer read from the build of 25 October, when the ring became on by default ([djiObstacleRingOff]); kept so
+  /// that its number is never given again, its value removed at the start (djiRetiredSettings)
+  djiObstacleAlertOn<bool>._(5032),
+
+  /// The obstacle sound was turned off in Advanced, on a phone, a headset or a TV: it is on by default everywhere
+  djiObstacleSoundOff<bool>._(5033),
+
+  /// No longer read from the build of 25 October ([djiHeadsetLowestDelayOff]); kept so that its number is never given
+  /// again, its value removed at the start (djiRetiredSettings)
+  djiHeadsetLowestDelay<bool>._(5034),
+
+  /// "Glow from" of the obstacle ring, in centimetres: 300 when never set
+  djiObstacleFarCm<int>._(5040),
+
+  /// "Strong glow from" of the obstacle ring, in centimetres: 100 when never set
+  djiObstacleNearCm<int>._(5041),
+
+  /// "Show the side, not confirmed yet": the ring's side while our captures only make it likely, off by default
+  djiObstacleSideTest<bool>._(5042),
+
+  /// "Show the side" was turned off once the side is proven: it is on by default then
+  djiObstacleSideOff<bool>._(5043),
+
+  /// No longer read from the build of 25 October ([djiObstacleHapticOff]); kept so that its number is never given
+  /// again, its value removed at the start (djiRetiredSettings)
+  djiObstacleHapticOn<bool>._(5044),
+
+  /// No longer read from the build of 25 October ([djiObstacleNumbersOff]); kept so that its number is never given
+  /// again, its value removed at the start (djiRetiredSettings)
+  djiObstacleNumbersOn<bool>._(5045),
+
+  /// No longer read from the build of 25 October: a TV's sound is on by default and kept in [djiObstacleSoundOff]; kept
+  /// so that its number is never given again, its value removed at the start (djiRetiredSettings)
+  djiObstacleTvSoundOn<bool>._(5046),
+
+  /// Every experimental switch of the DJI pages is on by default (FreeKC's rule of 25 October): these say the pilot
+  /// turned one off. The obstacle ring, while its data is not proven, on a phone; on a TV or a headset, the ring on that
+  /// screen
+  djiObstacleRingOff<bool>._(5047),
+
+  /// "Vibrate with the tick", on a phone with a vibrator
+  djiObstacleHapticOff<bool>._(5048),
+
+  /// "Show the distance by the glow", on each device
+  djiObstacleNumbersOff<bool>._(5049),
+
+  /// "Lowest delay (less smoothing)", on a headset
+  djiHeadsetLowestDelayOff<bool>._(5050),
+
+  /// The obstacle indicator drawn as a frame at the picture's edges: a circle around the centre by default, on each
+  /// device
+  djiObstacleShapeFrame<bool>._(5051),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

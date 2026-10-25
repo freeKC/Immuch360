@@ -13,6 +13,40 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
+ * The last export and what it covered (p2/design-final-2026-10-24.md, 6.3): a second tap with nothing new writes no
+ * file and answers the last export again, marked repeated. A header only export, which says how the device stood, may
+ * be written again once [headerOnlyRepeatMs] went by.
+ */
+class ExportMemory(private val headerOnlyRepeatMs: Long) {
+  private var key: List<Long>? = null
+  private var result: CaptureExport.Result? = null
+  private var atMs = 0L
+
+  /** The last export again, marked repeated, when [key] is what it covered; null when this one must be written */
+  fun repeated(key: List<Long>, bytes: Long, nowMs: Long): CaptureExport.Result? {
+    val last = result ?: return null
+    if (this.key != key || !last.ok) {
+      return null
+    }
+    if (bytes == 0L && nowMs - atMs >= headerOnlyRepeatMs) {
+      return null
+    }
+    return last.copy(repeated = true)
+  }
+
+  fun remember(key: List<Long>, result: CaptureExport.Result, nowMs: Long) {
+    this.key = key
+    this.result = result
+    atMs = nowMs
+  }
+
+  fun clear() {
+    key = null
+    result = null
+  }
+}
+
+/**
  * Writes a capture where the pilot can reach it, as three files in Download/Immuch360/dji-link/:
  *
  * - `<id>.bin`, the bytes as they were on the wire;
@@ -44,6 +78,12 @@ object CaptureExport {
     val error: String? = null,
     /** True when only the header was written, because nothing was captured */
     val headerOnly: Boolean = false,
+    /** Nothing new since the last export: no file was written, the paths are those of the last export */
+    val repeated: Boolean = false,
+    /** Nothing to save at all: no file was written */
+    val nothing: Boolean = false,
+    /** Every control frame of the session, beside the head and the tail */
+    val controlBinPath: String? = null,
   )
 
   fun write(
@@ -55,10 +95,17 @@ object CaptureExport {
     link: Map<String, Any?>,
     notes: Map<String, String?>,
     extra: Map<String, Any?> = emptyMap(),
+    control: CaptureSnapshot? = null,
     id: String = "dji-link-" + android.text.format.DateFormat.format("yyyyMMdd-HHmmss", System.currentTimeMillis()),
   ): Result {
     val digest = snapshot.sha256()
-    val header = headerJson(id, snapshot, digest, environment, identity, profile, link, notes, extra)
+    val keptControl = control?.takeIf { it.bytes.isNotEmpty() }
+    val withControl = if (keptControl == null) {
+      extra
+    } else {
+      extra + ("control" to controlJson(id, keptControl))
+    }
+    val header = headerJson(id, snapshot, digest, environment, identity, profile, link, notes, withControl)
     if (snapshot.bytes.isEmpty() && snapshot.entries.isEmpty()) {
       return try {
         val json = writeFile(context, "$id.json", "application/json", header.toByteArray())
@@ -70,6 +117,12 @@ object CaptureExport {
     return try {
       val bin = writeFile(context, "$id.bin", "application/octet-stream", snapshot.bytes)
       val index = writeFile(context, "$id.idx.csv", "text/csv", snapshot.indexCsv().toByteArray())
+      // The control frames of the whole session: the proof of a value needs the flight the video pushed out of the tail
+      val controlBin = keptControl?.let {
+        val path = writeFile(context, "$id-control.bin", "application/octet-stream", it.bytes)
+        writeFile(context, "$id-control.idx.csv", "text/csv", it.indexCsv().toByteArray())
+        path
+      }
       val json = writeFile(context, "$id.json", "application/json", header.toByteArray())
       Result(
         ok = true,
@@ -78,10 +131,56 @@ object CaptureExport {
         indexPath = index,
         headerPath = json,
         sha256 = digest,
+        controlBinPath = controlBin,
       )
     } catch (error: Throwable) {
       Result(ok = false, bytes = 0, error = error.message ?: error.javaClass.simpleName)
     }
+  }
+
+  /** What the header says of the control frame file: its name, its digest and how much of the session it holds */
+  private fun controlJson(id: String, control: CaptureSnapshot): JSONObject = JSONObject()
+    .put("file", "$id-control.bin")
+    .put("sha256", control.sha256())
+    .put("bytes", control.bytes.size)
+    .put("totalBytes", control.totalBytes)
+    .put("droppedBytes", control.droppedBytes)
+    .put("records", control.entries.size)
+    .put("format", "control envelopes only, unpadded, one record per envelope, in the order they arrived")
+
+  /**
+   * A headset's reception record ([ReceptionRecord]): `<id>.bin` and `<id>.idx.csv`, the relay records in a head and a
+   * tail; `<id>-telemetry.bin` and its index, every telemetry record of the session; `<id>-units.csv`, the times of
+   * every unit of the session ([UnitTimingRing]); `<id>.json`, the header.
+   */
+  fun writeReception(
+    context: Context,
+    records: CaptureSnapshot,
+    telemetry: CaptureSnapshot,
+    header: String,
+    units: String? = null,
+    id: String = "dji-relay-" + android.text.format.DateFormat.format("yyyyMMdd-HHmmss", System.currentTimeMillis()),
+  ): Result = try {
+    val bin = writeFile(context, "$id.bin", "application/octet-stream", records.bytes)
+    val index = writeFile(context, "$id.idx.csv", "text/csv", records.indexCsv().toByteArray())
+    if (telemetry.bytes.isNotEmpty()) {
+      writeFile(context, "$id-telemetry.bin", "application/octet-stream", telemetry.bytes)
+      writeFile(context, "$id-telemetry.idx.csv", "text/csv", telemetry.indexCsv().toByteArray())
+    }
+    if (units != null) {
+      writeFile(context, "$id-units.csv", "text/csv", units.toByteArray())
+    }
+    val json = writeFile(context, "$id.json", "application/json", header.toByteArray())
+    Result(
+      ok = true,
+      bytes = records.bytes.size.toLong(),
+      binPath = bin,
+      indexPath = index,
+      headerPath = json,
+      sha256 = records.sha256(),
+    )
+  } catch (error: Throwable) {
+    Result(ok = false, bytes = 0, error = error.message ?: error.javaClass.simpleName)
   }
 
   private fun writeFile(context: Context, name: String, mime: String, bytes: ByteArray): String =

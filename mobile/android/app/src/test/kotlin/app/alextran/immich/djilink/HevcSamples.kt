@@ -38,6 +38,19 @@ object HevcSamples {
     0x80.toByte(),
   )
 
+  /**
+   * A suffix SEI with the 25 byte message of payload type 240 as the 25 October 2026 capture has it (its first picture),
+   * with [counter] at bytes 0 and 1 and the millisecond content clock [clockMs] at bytes 15 and 16
+   */
+  fun suffixSeiWithClock(counter: Int, clockMs: Int): ByteArray {
+    val payload = hex("01003c00ce01400053cb27ff20009ff627f00000c0008f9780")
+    payload[0] = (counter and 0xFF).toByte()
+    payload[1] = ((counter shr 8) and 0xFF).toByte()
+    payload[15] = (clockMs and 0xFF).toByte()
+    payload[16] = ((clockMs shr 8) and 0xFF).toByte()
+    return byteArrayOf(0x50, 0x01, 0xF0.toByte(), payload.size.toByte()) + payload + byteArrayOf(0x80.toByte())
+  }
+
   fun annexB(vararg nals: ByteArray): ByteArray = nals.fold(ByteArray(0)) { all, nal -> all + START + nal }
 
   /** An access unit made by hand, typed the H.265 way, without the assembler */

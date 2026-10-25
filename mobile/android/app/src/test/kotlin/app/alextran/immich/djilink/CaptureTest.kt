@@ -347,4 +347,57 @@ class CaptureTest {
     assertEquals(listOf("open", "in"), snapshot.entries.map { it.direction.word })
     assertEquals(10, snapshot.bytes.size)
   }
+
+  @Test
+  fun aStoppedSessionIsKeptUntilANewRemoteOpens() {
+    // The live screen left after a problem, the remote unplugged, the screen opened again: that session can be saved
+    val capture = ringWithHead()
+    capture.start(accessoryOpen = false)
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, ByteArray(100) { 1 })
+    capture.mark(CaptureDirection.CLOSE)
+    capture.stop()
+    capture.start(accessoryOpen = false)
+    assertEquals(100, capture.snapshot().bytes.size)
+    assertEquals(listOf("open", "in", "close"), capture.snapshot().entries.map { it.direction.word })
+
+    // A remote opens: the kept session goes, and the new one starts the head
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, ByteArray(10) { 5 })
+    val snapshot = capture.snapshot()
+    assertEquals(listOf("open", "in"), snapshot.entries.map { it.direction.word })
+    assertEquals(10, snapshot.bytes.size)
+    assertEquals(5.toByte(), snapshot.bytes[0])
+    // A second open in the same capture is an unplug and a plug: nothing is forgotten
+    capture.mark(CaptureDirection.CLOSE)
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, ByteArray(10) { 6 })
+    assertEquals(20, capture.snapshot().bytes.size)
+  }
+
+  @Test
+  fun aStoppedSessionGoesOnWhenItsRemoteIsStillOpen() {
+    // Stop, then Start in Diagnostics with the remote still open: one session, nothing forgotten
+    val capture = ringWithHead()
+    capture.start(accessoryOpen = true)
+    capture.record(CaptureDirection.IN, ByteArray(100) { 1 })
+    capture.stop()
+    capture.start(accessoryOpen = true)
+    capture.record(CaptureDirection.IN, ByteArray(10) { 2 })
+    assertEquals(110, capture.snapshot().bytes.size)
+  }
+
+  @Test
+  fun aClearForgetsAKeptSessionAtOnce() {
+    val capture = ringWithHead()
+    capture.start(accessoryOpen = true)
+    capture.record(CaptureDirection.IN, ByteArray(100) { 1 })
+    capture.stop()
+    capture.start(accessoryOpen = false)
+    capture.clear()
+    assertEquals(0, capture.snapshot().bytes.size)
+    capture.mark(CaptureDirection.OPEN)
+    capture.record(CaptureDirection.IN, ByteArray(10) { 5 })
+    assertEquals(listOf("open", "in"), capture.snapshot().entries.map { it.direction.word })
+  }
 }

@@ -1,6 +1,12 @@
-// The flight and battery section of the DJI link page: the fields the 23 October 2026 capture explains, read from the
-// link with public layouts that fit it, each group with how it is known, greyed with its age when it stopped coming.
-// Not a flight instrument: nothing here has been compared with DJI Fly yet, and the note says so in every state.
+// The flight and battery section of Diagnostics: the fields our captures of 23 to 25 October 2026 explain
+// (p2/telemetry-flight-2026-10-24.md, p2/telemetry-proof-2026-10-25.md), each group with how it is known, greyed with
+// its age when it stopped coming. Each label says the class the telemetry reports give its value: a proven value plain,
+// with what it means where that matters (the height in the air only, the speeds along the heading's axes, offset 41 a
+// smoothed distance below), a likely one "(likely)", a guess "(guess)", the heading with its zero not checked. The
+// values are raw here, on the ground too, so the height's label says it means something in the air only; the live
+// screens show the height and the speeds in the air only, the height after the native HeightHold. Bit 0x04 is only
+// likely "in the air", so that row is not drawn. Not a flight instrument: nothing here has been compared with DJI Fly
+// yet, and the note says so in every state.
 
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -72,7 +78,6 @@ class DjiLinkFlightSection extends StatelessWidget {
                 flight.mode == 12 ? t.dji_link_flight_mode_landing(mode: '${flight.mode}') : '${flight.mode}',
               ),
               (t.dji_link_motors, flight.motorsOn ? t.dji_link_bench_on : t.dji_link_bench_off),
-              (t.dji_link_in_air, flight.inAir ? t.dji_link_yes : t.dji_link_no),
               (t.dji_link_motor_time, '${flight.motorTimeS.toStringAsFixed(1)} s'),
               (t.dji_link_satellites, '${flight.satellites}'),
               (t.dji_link_ground_height, '${flight.groundHeightM.toStringAsFixed(1)} m'),
@@ -105,8 +110,8 @@ class DjiLinkFlightSection extends StatelessWidget {
           _Group(
             key: const Key('dji_link_link_group'),
             title: t.dji_link_link_group,
-            // Signal quality and the live view rate take their meaning from public message names; the capture alone
-            // shows a constant 90 for the signal, so that line stays a candidate (capture-2026-10-23.md, 5.4)
+            // The signal follows each link up of our captures, the top of its scale not known; the rate is a rate of
+            // the video link, 1.0 to 1.35 times the video measured (p2/telemetry-flight-2026-10-24.md, 3.5)
             evidence: t.dji_link_evidence_link,
             stale: link.stale,
             ageMs: link.ageMs,
