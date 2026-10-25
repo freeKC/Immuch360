@@ -837,7 +837,7 @@ void main() {
       );
       expect(find.textContaining('c2.android.hevc.decoder, low latency'), findsOneWidget);
       expect(find.textContaining('Decoding here: '), findsOneWidget);
-      expect(find.text('Phone receive to decoder output here: 24 ms (display not included)'), findsOneWidget);
+      expect(find.text('Phone receive to picture shown here: 24 ms (smoothing buffer included)'), findsOneWidget);
       expect(find.text('Behind the phone screen by about 15 ms'), findsOneWidget);
       expect(
         find.text('Pictures per second: 30 received, 30 decoded, 29 shown; lost on the Wi-Fi 0, on the radio 0'),

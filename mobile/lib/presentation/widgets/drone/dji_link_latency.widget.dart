@@ -1,7 +1,9 @@
 // What a headset shows of the way from the phone (design 9.3): the phone to headset delay split into the phone's part
-// and the network's, this device's own decoding, phone receive to decoder output here (the display after it is not
-// measured), how far behind the phone's own screen the picture is, and the pictures per second. A picture that stopped
-// is never shown as live: the red line says for how long no new picture came.
+// and the network's, this device's own decoding, phone receive to picture shown here (the jitter buffer included), how
+// far behind the phone's own screen the picture is, and the pictures per second. A paced reception adds its jitter
+// buffer, what came late or was not shown, the freezes over 0.3 s and this device's network and display
+// (relay-smoothness 6.2). A picture that stopped is never shown as live: the red line says for how long no new picture
+// came.
 
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -22,6 +24,48 @@ String? djiLinkStaleLine(Translations t, DjiRelayReceiving receiving) {
   return ago == null
       ? t.dji_link_latency_no_picture
       : t.dji_link_latency_stale(seconds: (ago / 1000).toStringAsFixed(1));
+}
+
+/// The lines of a paced reception: the jitter buffer, what came late or was not shown, the freezes, this device's
+/// network and display. Empty for a reception that is not paced (no relayed unit yet).
+List<String> djiLinkSmoothnessLines(Translations t, DjiRelayReceiving receiving) {
+  if (receiving.paced != true) {
+    return const [];
+  }
+  final freezes = receiving.freezes ?? 0;
+  final rate = djiLinkNumber(receiving.refreshHz, 0);
+  return [
+    t.dji_link_latency_buffer(
+      target: djiLinkNumber(receiving.bufferTargetMs, 0),
+      now: djiLinkNumber(receiving.bufferNowMs, 0),
+      high: djiLinkNumber(receiving.bufferP95Ms, 0),
+    ),
+    t.dji_link_latency_smoothness(
+      lateCount: '${receiving.lateUnits ?? 0}',
+      skipped: '${receiving.renderSkips ?? 0}',
+      stalls: '${receiving.decoderStalls ?? 0}',
+      flushes: '${receiving.safetyFlushes ?? 0}',
+      breaks: '${receiving.breaks ?? 0}',
+      primers: '${receiving.primersUsed ?? 0}',
+    ),
+    if (freezes == 0)
+      t.dji_link_latency_freezes_none
+    else
+      t.dji_link_latency_freezes(
+        count: '$freezes',
+        longest: ((receiving.longestFreezeMs ?? 0) / 1000).toStringAsFixed(1),
+        source: '${receiving.freezesInSource ?? 0}',
+      ),
+    if (receiving.network == 'ethernet')
+      t.dji_link_latency_network_ethernet(rate: rate)
+    else if (receiving.network == 'wifi')
+      t.dji_link_latency_network_wifi(
+        band: receiving.wifiBand ?? '-',
+        speed: receiving.wifiLinkMbps?.toString() ?? '-',
+        signal: receiving.wifiRssi?.toString() ?? '-',
+        rate: rate,
+      ),
+  ];
 }
 
 class DjiLinkLatencyBlock extends StatelessWidget {
@@ -97,6 +141,8 @@ class DjiLinkLatencyBlock extends StatelessWidget {
         ),
         if (receiving.lostOnWifi > 0)
           Text(t.dji_link_latency_wifi_slow, key: const Key('dji_link_latency_wifi_slow'), style: small),
+        for (final (index, line) in djiLinkSmoothnessLines(t, receiving).indexed)
+          Text(line, key: Key('dji_link_latency_smoothness_$index'), style: small),
       ],
     );
   }

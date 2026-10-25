@@ -9,6 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_counters.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_relay_tvs.widget.dart';
@@ -20,6 +21,27 @@ String djiRelayDuration(int milliseconds) {
   final seconds = milliseconds ~/ 1000;
   return '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
 }
+
+/// What the phone measured of a receiver's way (its queue here, the drops, the slow writes, the round trip) and, from
+/// the long pings of a receiver of this build, what its screen showed; null lines are left out
+List<String> djiRelayHeadsetFlowLines(Translations t, DjiRelayHeadsetRow headset) => [
+  if (headset.queueMaxAgeMs != null)
+    t.dji_link_relay_headset_queue(
+      queue: djiLinkNumber(headset.queueAgeMs ?? 0, 0),
+      most: djiLinkNumber(headset.queueMaxAgeMs, 0),
+      drops: '${headset.dropEvents ?? 0}',
+      stalls: '${headset.writeStalls ?? 0}',
+      trip: djiLinkNumber(headset.roundTripMs, 0),
+    ),
+  if (headset.receiverBufferMs != null)
+    t.dji_link_relay_headset_screen(
+      buffer: djiLinkNumber(headset.receiverBufferMs, 0),
+      freezes: '${headset.receiverFreezes ?? 0}',
+      longest: ((headset.receiverLongestFreezeMs ?? 0) / 1000).toStringAsFixed(1),
+      skipped: '${headset.receiverSkips ?? 0}',
+      lateCount: '${headset.receiverLate ?? 0}',
+    ),
+];
 
 String djiRelaySendingText(Translations t, String? sending) => switch (sending) {
   'cable' => t.dji_link_relay_sending_cable,
@@ -132,6 +154,8 @@ class DjiLinkSendSection extends ConsumerWidget {
                       ),
                       style: small,
                     ),
+                    for (final (line, text) in djiRelayHeadsetFlowLines(t, headset).indexed)
+                      Text(text, key: Key('dji_link_relay_headset_${index}_flow_$line'), style: small),
                   ],
                 ),
               ),
