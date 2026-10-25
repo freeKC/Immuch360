@@ -79,8 +79,12 @@ class DjiAttachLaunch {
 
   /// Tells the native side whether the entry may be offered for the cable: with the DJI live video on, on a phone or a
   /// tablet. "Open this screen when the remote is plugged in" is on by default there, so a fresh install opens the live
-  /// screen at the first plug once it ran once; a TV and the Quest only watch a phone's relay and never offer it.
+  /// screen at the first plug once it ran once; a TV and the Quest only watch a phone's relay and never offer it. Off
+  /// Android there is no DJI link and nothing to tell: no call at each start and resume on iOS or a computer.
   Future<void> applyEntry() async {
+    if (!_ref.read(djiLinkSupportedProvider)) {
+      return;
+    }
     try {
       await _ref.read(isHorizonOsProvider.future);
     } catch (_) {

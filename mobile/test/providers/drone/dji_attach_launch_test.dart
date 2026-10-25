@@ -38,11 +38,12 @@ void main() {
 
   group('the entry for the cable, told at each start and resume', () {
     /// What the native side is told when the app comes to the front
-    Future<List<bool>> told({required bool enabled, required bool receiverOnly}) async {
+    Future<List<bool>> told({required bool enabled, required bool receiverOnly, bool supported = true}) async {
       final api = FakeDjiLinkApi();
       final container = ProviderContainer(
         overrides: [
           djiLinkApiProvider.overrideWithValue(api),
+          djiLinkSupportedProvider.overrideWithValue(supported),
           djiLinkEnabledProvider.overrideWithValue(enabled),
           djiReceiverOnlyProvider.overrideWithValue(receiverOnly),
           isHorizonOsProvider.overrideWith((ref) async => receiverOnly),
@@ -60,6 +61,10 @@ void main() {
     test('with the DJI live video off, or on a TV or the Quest, which only watch, it is never offered', () async {
       expect(await told(enabled: false, receiverOnly: false), [false]);
       expect(await told(enabled: true, receiverOnly: true), [false]);
+    });
+
+    test('off Android, where there is no DJI link, nothing is told at each start and resume', () async {
+      expect(await told(enabled: false, receiverOnly: false, supported: false), isEmpty);
     });
   });
 }
