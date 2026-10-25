@@ -208,7 +208,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
    * H.265 encoder for the receivers whose Wi-Fi cannot carry the drone's stream. Its own codecs and threads; the units
    * it makes go to the relay.
    */
-  private val transcoder = RelayTranscoder(
+  private val transcoder: RelayTranscoder = RelayTranscoder(
     AndroidRelayCodecs(),
     clockNs = { SystemClock.elapsedRealtimeNanos() },
     emit = { unit, description -> relay.submitSteady(unit, description) },
@@ -216,7 +216,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
   )
 
   /** The relay to the headsets: the second half of the tee, after the phone's own decoder */
-  private val relay = RelayServer(
+  private val relay: RelayServer = RelayServer(
     clockNs = { SystemClock.elapsedRealtimeNanos() },
     telemetry = { sequence -> relayTelemetryBody(sequence) },
     welcomeFacts = { RelayWelcomeFacts(relayPhoneName, relayPhoneId, if (player.loaded) player.name else null) },
@@ -225,7 +225,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
   )
 
   /** The pilot's decoder first, then the relay: the drone's stream to the receivers on it, and the steady stream */
-  private val tee = TeeSink(feed, RelayRouter(relay, transcoder))
+  private val tee: TeeSink = TeeSink(feed, RelayRouter(relay, transcoder))
 
   /** PowerManager's thermal status while the relay runs (Android 10 and later), for the steady stream */
   private var thermalListener: Any? = null
