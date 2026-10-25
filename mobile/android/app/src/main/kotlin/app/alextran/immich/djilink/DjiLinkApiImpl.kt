@@ -70,9 +70,11 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
   }
 
   override fun stop() {
-    // The entry lives as long as the link does: the page, or the relay that keeps the cable for a headset. The
-    // controller disables it where the link really ends, here or later (Stop in the notification, the app swiped
-    // away), so that a pilot who left the page and sends nothing is not offered this application for a cable.
+    // The entry stays on as long as the link runs: the page, or the relay that keeps the cable for a headset. Where
+    // the link really ends, here or later (Stop in the notification, the app swiped away), the controller sets it to
+    // what AttachEntryPolicy gives with no link: on by default on a phone (with DJI Fly installed, Android then asks
+    // which application opens the remote), off once "Open this screen when the remote is plugged in" is turned off in
+    // Advanced.
     controller.stop()
   }
 

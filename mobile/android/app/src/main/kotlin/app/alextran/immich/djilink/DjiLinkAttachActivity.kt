@@ -11,9 +11,10 @@ import app.alextran.immich.MainActivity
  * screen that the permission was just handed over, and marks the launch ([AttachLaunch]) so that Flutter opens the
  * live screen when it is not open yet; the live screen is where anything happens, and the pilot has to be on it.
  *
- * It is declared disabled in the manifest and is enabled only while a link runs or when the pilot said yes to "Open
- * this screen when the remote is plugged in" ([AttachEntryPolicy]), so this application never appears in the chooser
- * of a pilot who did not ask for it, and never competes with the DJI application for a cable on a phone.
+ * It is declared disabled in the manifest and enabled while a link runs, or while "Open this screen when the remote is
+ * plugged in" and the DJI live video setting are on ([AttachEntryPolicy]), both on by default on a phone since 25
+ * October, never on a TV or the Quest. With DJI Fly on the phone too, Android then asks which application opens the
+ * remote; turning the switch off in Advanced takes this application out of that question.
  */
 class DjiLinkAttachActivity : Activity() {
   override fun onCreate(savedInstanceState: Bundle?) {

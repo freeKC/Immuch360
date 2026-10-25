@@ -387,10 +387,11 @@ class DjiLinkController private constructor(private val context: Context) : Link
     }
     relay.source = RelaySource.NONE
     feed.shutdown()
-    // The link really ends here, whoever ended it (the page, Stop in the notification, the app swiped away): a pilot
-    // not using the link is never offered this application when a cable is plugged in, and it never competes with the
-    // DJI application, unless he said yes to "Open this screen when the remote is plugged in" (AttachEntryPolicy).
-    // The package manager keeps that setting across process deaths.
+    // The link really ends here, whoever ended it (the page, Stop in the notification, the app swiped away): the entry
+    // goes back to what AttachEntryPolicy gives with no link, on while "Open this screen when the remote is plugged in"
+    // and the DJI live video setting are on (both by default on a phone), so that with DJI Fly installed Android asks
+    // which application opens the remote, and off once the switch is turned off in Advanced. The package manager keeps
+    // that setting across process deaths.
     DjiLinkApiImpl.setAttachEntryEnabled(context, AttachEntryPreferences(preferences).entryEnabled(linkRunning = false))
     markDirty()
   }
