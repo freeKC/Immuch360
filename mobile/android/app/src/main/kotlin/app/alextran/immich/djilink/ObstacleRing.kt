@@ -74,12 +74,13 @@ object ObstacleRing {
   const val SECTOR_DEG = 5
 
   /**
-   * The nose at sector 0, the sectors growing clockwise. Likely, not proven. From the 25 October 09:42 capture, read
-   * with telemetry_series.py ring (p2/obstacle-ring-2026-10-25.md, 1): the ring turns with the aircraft and its index
-   * grows with the heading (43 turn pairs of 43, slope -1.007, correlation -0.998), and the heading is a compass
-   * heading growing clockwise (the speeds at offsets 18 and 20 are north and east): clockwise is well supported. The
-   * nose at sector 0 is weaker: in six forward legs the ring closes in fastest within 40 degrees of index 0 in four,
-   * and 50 to 70 degrees off in two. Step 5 of the owner flight proves it or gives the right constant.
+   * The nose at sector 0, the sectors growing clockwise: proven by the two flights of 25 October, the 09:42 capture and
+   * the afternoon one, the same in both (p2/telemetry-proof-2026-10-25.md, 4.7 and 4.8). The camera picture shows the
+   * heading grows on a turn to the right; turns of 80 to 100 degrees in place move the ring by -heading change / 5
+   * sectors within 3 sectors in 12 of 13 turns and 4 of 4 (a right turn of +82 degrees: -16 to -19 sectors, what was
+   * ahead ends on the left); the ring predicted from the 50 Hz displacement fits best with the nose at sector 0 and
+   * the sectors growing with the heading; flying forward, the nose sector shrank by the distance flown in 8 of 10 legs
+   * and 5 of 6. Not tested: a wall at a known distance.
    */
   val MAPPING = RingMapping(noseSector = 0, clockwise = true)
 

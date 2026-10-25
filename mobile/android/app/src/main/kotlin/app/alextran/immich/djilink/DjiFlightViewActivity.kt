@@ -174,7 +174,7 @@ internal object FlightViewControls {
    * ("cell.droneBattery.label", "cell.droneBattery.value" = "{value} %") only for the fields its gate lets over the
    * picture; a field without a template has no cell, whatever arrives.
    */
-  val LEFT_FIELDS = listOf("height", "verticalSpeed", "distanceHome", "speed")
+  val LEFT_FIELDS = listOf("height", "verticalSpeed", "distanceHome", "speed", "distanceBelow")
   val RIGHT_FIELDS = listOf(
     "droneBattery",
     "timeLeft",
@@ -188,7 +188,7 @@ internal object FlightViewControls {
 
   /** Every field a template may name, the two columns first */
   val VALUE_FIELDS = LEFT_FIELDS + RIGHT_FIELDS +
-    listOf("motors", "batteryVoltage", "batteryTemperature", "signal", "linkRate", "distanceBelow", "obstacle")
+    listOf("motors", "batteryVoltage", "batteryTemperature", "signal", "linkRate", "obstacle")
 
   /** Under this the drone's battery is drawn in amber, with "low" in its label, as on the phone */
   const val BATTERY_LOW_PERCENT = 20
@@ -227,6 +227,8 @@ internal object FlightViewControls {
   /** The number of [field] when its group is fresh, in the format of the phone (dji_live_fields.dart) */
   private fun freshValue(values: TelemetryValues, field: String, labels: Map<String, String>): String? {
     val flight = values.flight?.takeIf { !it.stale }?.value
+    // The height and the speeds in the air only: before lift off the height drifts, on the ground the speeds are stale
+    val air = flight?.airborne
     val battery = values.battery?.takeIf { !it.stale }?.value
     return when (field) {
       "droneBattery" -> battery?.percent?.toString()
@@ -235,10 +237,9 @@ internal object FlightViewControls {
       "motorTime" -> flight?.let { minutesSeconds(it.motorTimeS) }
       "motors" -> flight?.let { labels[if (it.motorsOn) "on" else "off"] ?: "" }
       "heading" -> flight?.let { decimals(it.headingDeg, 0) }
-      "height" -> flight?.let { height(it.heightM) }
-      "verticalSpeed" -> flight?.let { verticalSpeed(it.verticalSpeedMps) }
-      // On the ground the drone holds the last speed it had: none without the motors
-      "speed" -> flight?.takeIf { it.motorsOn }?.let { decimals(it.horizontalSpeedMps, 1) }
+      "height" -> air?.let { height(it.heightM) }
+      "verticalSpeed" -> air?.let { verticalSpeed(it.verticalSpeedMps) }
+      "speed" -> air?.let { decimals(it.horizontalSpeedMps, 1) }
       "satellites" -> flight?.satellites?.toString()
       // A chip: its template is the word itself
       "landing" -> flight?.takeIf { it.mode == TelemetryFields.MODE_AUTOMATIC_LANDING }?.let { "" }

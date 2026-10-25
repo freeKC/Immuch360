@@ -2009,12 +2009,14 @@ private fun VideoStats.toPigeon(): DjiLinkDecode = DjiLinkDecode(
 
 /**
  * The values a pilot reads, as the gate of dji_live_fields.dart takes them: a group that is stale or never came gives
- * nulls, never an old number. The speed over ground counts only while the motors run: on the ground the drone holds the
- * last speed it had (p2/telemetry-deep-dive-2026-10-24.md, 3.1).
+ * nulls, never an old number. The height, the vertical speed and the speed over ground count only in the air (bit
+ * 0x04): before lift off the height drifts with the motors spinning, and on the ground the drone holds the last speeds
+ * it had (p2/telemetry-proof-2026-10-25.md, 4.1 to 4.3).
  */
 internal fun liveFramePigeon(values: TelemetryValues?, decision: ObstacleDecision, atMs: Long): DjiLiveFrame {
   fun <T> Timed<T>?.fresh(): T? = this?.takeIf { !it.stale }?.value
   val flight = values?.flight.fresh()
+  val air = flight?.airborne
   val battery = values?.battery.fresh()
   return DjiLiveFrame(
     atMs = atMs,
@@ -2025,9 +2027,9 @@ internal fun liveFramePigeon(values: TelemetryValues?, decision: ObstacleDecisio
     motorTimeS = flight?.motorTimeS,
     motorsOn = flight?.motorsOn,
     headingDeg = flight?.headingDeg,
-    heightM = flight?.heightM,
-    verticalSpeedMps = flight?.verticalSpeedMps,
-    speedMps = flight?.takeIf { it.motorsOn }?.horizontalSpeedMps,
+    heightM = air?.heightM,
+    verticalSpeedMps = air?.verticalSpeedMps,
+    speedMps = air?.horizontalSpeedMps,
     distanceBelowM = values?.rangeBelow.fresh()?.distanceM,
     obstacleM = values?.obstacles.fresh()?.nearestM,
     remoteBatteryPercent = values?.remoteBatteryPercent.fresh()?.toLong(),

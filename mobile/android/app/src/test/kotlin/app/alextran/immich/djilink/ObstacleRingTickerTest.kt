@@ -40,7 +40,7 @@ class ObstacleRingTickerTest {
           satellites = 0,
           groundHeightM = 0.0,
           motorTimeS = 10.0,
-          flags = if (motorsOn) TelemetryFields.FLAGS_MOTORS_RUNNING else 0L,
+          flags = if (motorsOn) TelemetryFields.FLAG_IN_AIR or TelemetryFields.FLAG_MOTORS_ON else 0L,
         ),
         40,
         false,

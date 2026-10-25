@@ -68,8 +68,9 @@ class TelemetryDecoderTest {
     assertTrue(flight.inAir)
     assertTrue(flight.motorsOn)
     assertEquals(0, flight.satellites)
-    // Centimetres (p2/telemetry-deep-dive-2026-10-24.md, 4.1): 9 is 0.09 m, not the 0.9 m read before
-    assertEquals(0.09, flight.groundHeightM, 1e-9)
+    // Tenths of a metre (p2/telemetry-proof-2026-10-25.md, 4.4): 9 is 0.9 m; the centimetres of the deep dive were a
+    // hand landing, where offset 41 still showed the floor
+    assertEquals(0.9, flight.groundHeightM, 1e-9)
     assertEquals(38.7, flight.motorTimeS, 1e-9)
     // Offset 22 is positive down on the wire: 0 here, and the two horizontal components give the speed over ground
     assertEquals(0.0, flight.verticalSpeedMps, 1e-9)
@@ -91,9 +92,19 @@ class TelemetryDecoderTest {
   }
 
   @Test
-  fun theMotorsRunOnlyWithBothBitsSet() {
-    // 0x04 and 0x08 never differ in our captures: one of them alone does not say the motors run
-    assertFalse(TelemetryFields.flight(flightBody().u32(32, 0x00805018L))!!.motorsOn)
+  fun theMotorsRunWithBitEightAloneAndTheAirIsBitFour() {
+    // The spin up before lift off (p2/telemetry-proof-2026-10-25.md, 4.9): 0x08 without 0x04, the motors run on the
+    // ground, so the height and the speeds a pilot reads are not given
+    val spinning = TelemetryFields.flight(flightBody().u32(32, 0x0080501AL))!!
+    assertTrue(spinning.motorsOn)
+    assertFalse(spinning.inAir)
+    assertNull(spinning.airborne)
+    // Lift off: both bits
+    val flying = TelemetryFields.flight(flightBody().u32(32, 0x0080501CL))!!
+    assertTrue(flying.motorsOn)
+    assertTrue(flying.inAir)
+    assertEquals(-0.5, flying.airborne!!.heightM, 1e-9)
+    // 0x04 without 0x08 never came in our captures: no motors without bit 0x08
     assertFalse(TelemetryFields.flight(flightBody().u32(32, 0x00805014L))!!.motorsOn)
     // The frame of the 23 October morning landing where 0x10 was clear: both bits set, the motors run
     assertTrue(TelemetryFields.flight(flightBody().u32(32, 0x0080510CL))!!.motorsOn)

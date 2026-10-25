@@ -50,7 +50,7 @@ class TelemetryVectorsTest {
   )
 
   @Test
-  fun theLandingGivesTheHeightTheVerticalSpeedAndCentimetresBelow() {
+  fun theLandingGivesTheHeightTheVerticalSpeedAndTenthsBelow() {
     val flights = group("flightData").map { TelemetryFields.flight(it.body)!! }
     assertEquals(6, flights.size)
     // The five frames with the motors running, then the one where they stopped
@@ -60,7 +60,9 @@ class TelemetryVectorsTest {
     assertEquals(listOf(-0.2, -0.2, -0.2, -0.2, -0.2, -0.1), flights.map { it.verticalSpeedMps })
     // A vertical touch down: no speed over ground while the motors ran
     flights.take(5).forEach { assertEquals(0.0, it.horizontalSpeedMps, 1e-9) }
-    assertEquals(listOf(0.09, 0.08, 0.08, 0.01, 0.0, 0.0), flights.map { it.groundHeightM })
+    // Offset 41 in tenths of a metre (p2/telemetry-proof-2026-10-25.md, 4.4): a smoothed copy of the range below that
+    // still showed the floor under the hand this landing came down on
+    assertEquals(listOf(0.9, 0.8, 0.8, 0.1, 0.0, 0.0), flights.map { it.groundHeightM })
     flights.forEach { assertEquals(TelemetryFields.MODE_AUTOMATIC_LANDING, it.mode) }
     assertEquals(listOf(38.3, 38.4, 38.5, 38.6, 38.7, 38.7), flights.map { it.motorTimeS })
   }
@@ -157,10 +159,12 @@ class TelemetryVectorsTest {
     assertEquals(0.869, flying.obstacleM!!, 1e-9)
     assertTrue(flying.landing)
     assertEquals(true, flying.motorsOn)
-    // The motors stopped: no speed, whatever the drone still holds
+    // The motors stopped: no speed and no height (a reset to 0), whatever the drone still holds
     group("flightData").drop(5).forEach { decoder.offer(frame(3, 67, it.body, senderType = 14), it.atMs) }
     val landed = liveFramePigeon(decoder.values(560), ObstacleDecision.OFF, 560)
     assertNull(landed.speedMps)
+    assertNull(landed.heightM)
+    assertNull(landed.verticalSpeedMps)
     assertEquals(false, landed.motorsOn)
     // Long after: every group stale, every value gone
     val later = liveFramePigeon(decoder.values(60_000), ObstacleDecision.OFF, 60_000)

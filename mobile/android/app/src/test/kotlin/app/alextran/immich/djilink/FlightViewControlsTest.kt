@@ -99,14 +99,14 @@ class FlightViewControlsTest {
     assertEquals(FlightViewControls.StripLine.DELAY_HIGH, line(40, 1_240.0))
   }
 
-  private fun flight(motorTimeS: Double = 41.6, motorsOn: Boolean = false) = FlightReading(
+  private fun flight(motorTimeS: Double = 41.6, motorsOn: Boolean = false, inAir: Boolean = motorsOn) = FlightReading(
     heightM = 12.3,
     speedsMps = listOf(0.0, 0.0, 0.0),
     pitchDeg = 0.0,
     rollDeg = 0.0,
     headingDeg = -175.6,
     mode = 12,
-    inAir = motorsOn,
+    inAir = inAir,
     motorsOn = motorsOn,
     satellites = 0,
     groundHeightM = 0.0,
@@ -133,8 +133,10 @@ class FlightViewControlsTest {
     remote: Int? = 48,
     percent: Int = 34,
     motorsOn: Boolean = false,
+    inAir: Boolean = motorsOn,
+    belowM: Double? = null,
   ) = TelemetryValues(
-    flight = flightStale?.let { Timed(flight(motorsOn = motorsOn), 80, it) },
+    flight = flightStale?.let { Timed(flight(motorsOn = motorsOn, inAir = inAir), 80, it) },
     gimbal = null,
     battery = batteryStale?.let { Timed(battery(percent), 300, it) },
     remoteBatteryPercent = remote?.let { Timed(it, 500, false) },
@@ -148,9 +150,10 @@ class FlightViewControlsTest {
     ),
     layoutMismatches = 0,
     decoded = emptyMap(),
+    rangeBelow = belowM?.let { Timed(RangeBelowReading(it), 40, false) },
   )
 
-  /** The templates Flutter passes for the fields its gate opens: the drone's battery and the motor time */
+  /** The templates of a gate that opens the drone's battery and the motor time only */
   private val gated = mapOf(
     "cell.droneBattery.label" to "Drone battery",
     "cell.droneBattery.value" to "{value} %",
@@ -213,12 +216,38 @@ class FlightViewControlsTest {
       listOf("Drone battery|34 %", "Motor time|0:41", "Remote|48 %", "|-176\u00b0", "|Landing"),
       cells(values(motorsOn = true), more),
     )
-    // On the ground the drone holds a stale speed: no cell for it
-    assertEquals(
-      listOf("Height|12.3 m", "Vertical|\u2191 1.5 m/s"),
-      FlightViewControls.cells(values(motorsOn = false), more, FlightViewControls.LEFT_FIELDS)
-        .map { "${it.label}|${it.value}" },
+    // On the ground the drone holds a stale speed and the height is a reset: no cell for them
+    assertTrue(FlightViewControls.cells(values(motorsOn = false), more, FlightViewControls.LEFT_FIELDS).isEmpty())
+  }
+
+  /**
+   * The gate of the proof flights of 25 October (p2/telemetry-proof-2026-10-25.md): height, vertical speed, speed and
+   * the distance below in the left column, the height and the speeds only in the air (bit 0x04)
+   */
+  @Test
+  fun theProvenFlightValuesShowInTheAirOnly() {
+    val proven = gated + mapOf(
+      "cell.height.label" to "Height",
+      "cell.height.value" to "{value} m",
+      "cell.verticalSpeed.label" to "Vertical",
+      "cell.verticalSpeed.value" to "{value} m/s",
+      "cell.speed.label" to "Speed",
+      "cell.speed.value" to "{value} m/s",
+      "cell.distanceBelow.label" to "Below",
+      "cell.distanceBelow.value" to "{value} m",
     )
+    fun left(values: TelemetryValues) =
+      FlightViewControls.cells(values, proven, FlightViewControls.LEFT_FIELDS).map { "${it.label}|${it.value}" }
+    assertEquals(
+      listOf("Height|12.3 m", "Vertical|\u2191 1.5 m/s", "Speed|4.2 m/s", "Below|1.53 m"),
+      left(values(motorsOn = true, belowM = 1.53)),
+    )
+    // The motors spin up 4 to 5 s before lift off: the height drifts then, so only the distance below shows
+    assertEquals(listOf("Below|0.01 m"), left(values(motorsOn = true, inAir = false, belowM = 0.008)))
+    // Landed: the range push stops with the motors, the height is a reset, the speeds are stale
+    assertTrue(left(values(motorsOn = false)).isEmpty())
+    // The distance below sits at the bottom of the left column, under the speed
+    assertEquals("distanceBelow", FlightViewControls.LEFT_FIELDS.last())
   }
 
   @Test

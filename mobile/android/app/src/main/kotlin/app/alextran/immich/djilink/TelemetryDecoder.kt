@@ -15,13 +15,16 @@ import kotlin.math.max
  * order is verified, and a position on screen would end up in screenshots), offset 40 (a counter, not the battery a
  * public layout puts there), offset 37 and everything past offset 44.
  *
- * Read since the second telemetry reading of 24 October 2026 (p2/telemetry-deep-dive-2026-10-24.md, sections 2 to 4),
- * all likely and none proven, since our captures hold 0.5 s of flight: the height above the take off point (offset
- * 16), the vertical speed (offset 22, positive down on the wire, turned positive up here), the speed over ground from
- * the two horizontal components (offsets 18 and 20), offset 41 in centimetres, the distance below of push 10/3 and the
- * ring of 360 obstacle distances of push 36/8. Since the capture of 25 October 09:42 the ring is likely fixed to the
- * body with its index 0 at the nose and its index growing clockwise (p2/design-obstacle-ring-2026-10-25.md, 1.4): its
- * 72 sectors feed the obstacle ring, whose side shows only behind a test switch until a flight proves it.
+ * Read since the second telemetry reading of 24 October 2026 (p2/telemetry-deep-dive-2026-10-24.md, sections 2 to 4)
+ * and proven by the flights of 25 October (p2/telemetry-proof-2026-10-25.md, section 4: the 09:42 capture and the
+ * afternoon one, two independent pieces of evidence each, the same in both): the height above the lift off point
+ * (offset 16, 0.1 m, positive up), the vertical speed (offset 22, 0.1 m/s, positive down on the wire, turned positive up
+ * here), the speed over ground from the two horizontal components (offsets 18 and 20, 0.1 m/s along the axes the
+ * heading counts from), offset 41 (0.1 m, a smoothed copy of the distance below), the distance below of push 10/3 (mm)
+ * and the ring of 360 obstacle distances of push 36/8 (mm), with its index 0 at the nose and its index growing
+ * clockwise ([ObstacleRing.MAPPING]). The height and the speeds mean something only in the air (bit 0x04): before lift
+ * off the height drifted by -1.2 m and +1.0 m with the motors spinning, and the speeds hold a stale value on the
+ * ground, so a pilot reads them only from [FlightReading.inAir] frames.
  *
  * Nothing here is a flight instrument: no value has been compared with DJI Fly yet (checkpoint HC-09).
  */
@@ -37,7 +40,10 @@ enum class TelemetryEvidence {
 }
 
 data class FlightReading(
-  /** Above the take off point, positive up; back to 0 once the motors stop. Not a height above the ground. */
+  /**
+   * Above the lift off point, positive up, meaningful in the air only; reset to 0 the frame the motors stop, wherever
+   * they stop. Not a height above the ground.
+   */
   val heightM: Double,
   /** Offsets 18, 20 and 22 as they are on the wire, 0.1 m/s each, for Diagnostics */
   val speedsMps: List<Double>,
@@ -45,17 +51,23 @@ data class FlightReading(
   val rollDeg: Double,
   val headingDeg: Double,
   val mode: Int,
+  /** Bit 0x04: set at lift off, cleared at touch down; the height and the speeds a pilot reads come only with it */
   val inAir: Boolean,
+  /** Bit 0x08: the motors run, from the spin up 4 to 5 s before lift off to the frame they stop */
   val motorsOn: Boolean,
   val satellites: Int,
+  /** Offset 41: a smoothed copy of the distance below, 0.1 m; it holds its old value 0.3 to 0.6 s after a change */
   val groundHeightM: Double,
   val motorTimeS: Double,
   val flags: Long,
   /** Offset 22 with its sign turned: climbing reads positive */
   val verticalSpeedMps: Double = 0.0,
-  /** The speed over ground from offsets 18 and 20; it holds a stale value on the ground: read it with the motors */
+  /** The speed over ground from offsets 18 and 20; it holds a stale value on the ground: read it in the air */
   val horizontalSpeedMps: Double = 0.0,
-)
+) {
+  /** The height, the vertical speed and the speed as a pilot reads them: in the air only, else null */
+  val airborne: FlightReading? get() = takeIf { inAir }
+}
 
 /** Push 10/3 from the remote side: the distance below the drone, only while the motors run */
 data class RangeBelowReading(
@@ -77,7 +89,7 @@ data class ObstacleReading(
   val noReading: Int,
   /**
    * The 72 sectors of 5 degrees ([ObstacleRing.sectors]) in millimetres, null for a sector with no reading; null for
-   * a ring whose count is not 360. Which sector is the nose is likely, not proven: [ObstacleRing.MAPPING].
+   * a ring whose count is not 360. Which sector is the nose: [ObstacleRing.MAPPING], proven.
    */
   val sectorsMm: List<Int?>? = null,
 )
@@ -143,13 +155,13 @@ object TelemetryFields {
   /** The flight mode number of the automatic landing, the one value of that byte the capture explains */
   const val MODE_AUTOMATIC_LANDING = 12
   /**
-   * Bits 0x04 and 0x08 of offset 32 are set exactly while the motor time grows and never differ in our captures: the
-   * pair proves the motors running (p2/telemetry-flight-2026-10-24.md, 2.1 and 3.4). Which one alone means in the air
-   * is a guess, so [FlightReading.inAir] keeps bit 0x04 for the record and no screen shows it.
+   * Offset 32 (p2/telemetry-proof-2026-10-25.md, 4.9). Bit 0x08 alone is the motors running: set 0.1 s before the
+   * motor time starts and cleared the frame it stops, in three motor runs over two captures; bits 0x04 and 0x08
+   * together missed the 4 to 5 s of spin before lift off, when the propellers already turn. Bit 0x04 comes at lift off
+   * and goes at touch down: the height and the speeds a pilot reads come only with it.
    */
   const val FLAG_IN_AIR = 0x04L
   const val FLAG_MOTORS_ON = 0x08L
-  const val FLAGS_MOTORS_RUNNING = 0x0CL
 
   fun flight(body: ByteArray): FlightReading? {
     if (body.size != FLIGHT_LENGTH) {
@@ -168,10 +180,11 @@ object TelemetryFields {
       headingDeg = i16(body, 28) / 10.0,
       mode = u8(body, 30),
       inAir = (flags and FLAG_IN_AIR) != 0L,
-      motorsOn = (flags and FLAGS_MOTORS_RUNNING) == FLAGS_MOTORS_RUNNING,
+      motorsOn = (flags and FLAG_MOTORS_ON) != 0L,
       satellites = u8(body, 36),
-      // Centimetres: 9, 8, 8, 1, 0 against 9.5, 8.6, 4.0, 1.6, 0.4 cm from the range push at the landing
-      groundHeightM = u8(body, 41) / 100.0,
+      // Tenths of a metre: round(range / 100) of push 10/3 in 2205 of 2496 frames with the motors on, against 3 read as
+      // centimetres; the centimetres of 24 October were a hand landing, where offset 41 still showed the floor
+      groundHeightM = u8(body, 41) / 10.0,
       motorTimeS = u16(body, 42) / 10.0,
       flags = flags,
     )

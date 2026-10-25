@@ -219,7 +219,7 @@ class ObstacleAlertTest {
           satellites = 0,
           groundHeightM = 0.0,
           motorTimeS = 10.0,
-          flags = TelemetryFields.FLAGS_MOTORS_RUNNING,
+          flags = TelemetryFields.FLAG_IN_AIR or TelemetryFields.FLAG_MOTORS_ON,
         ),
         80,
         false,
