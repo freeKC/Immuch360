@@ -53,6 +53,20 @@ data class RelayPhoneVideo(
   }
 }
 
+/**
+ * The phone's choices for the obstacle ring (p2/design-obstacle-ring-2026-10-25.md, 5.4): whether it is offered,
+ * "Glow from", "Strong glow from" and whether the side is drawn. The pilot sets them once on the phone, and a TV or a
+ * headset draws the ring the phone draws; each keeps its own sound, number and sample.
+ */
+data class RelayObstacleRing(
+  val offered: Boolean,
+  val farM: Double,
+  val nearM: Double,
+  val directional: Boolean,
+) {
+  fun settings(): RingSettings = RingSettings(farM, nearM, directional).clamped()
+}
+
 /** One TELEMETRY record as the headset read it */
 data class RelayTelemetryRecord(
   /** The phone's clock when it was built */
@@ -64,6 +78,8 @@ data class RelayTelemetryRecord(
   val phoneVideo: RelayPhoneVideo?,
   val headsets: Int,
   val unitsDropped: Long,
+  /** Null from a phone of an earlier build: no ring is drawn from its record */
+  val obstacleRing: RelayObstacleRing? = null,
 ) {
   /**
    * The values [sinceMs] after the record arrived: each age grows by that much, and a group the phone no longer
@@ -98,7 +114,8 @@ data class RelayTelemetryRecord(
  * group's age, staleness and evidence. It never carries a position (stage 2 never decodes it), a serial number, a
  * module record or the accessory strings. The fields of the second telemetry reading (the vertical and horizontal
  * speeds, the signal bars, the distance below, the nearest obstacle) are additive: a headset of an earlier build
- * ignores them, and a record of an earlier phone reads as before, without them. Built once per tick on the phone and
+ * ignores them, and a record of an earlier phone reads as before, without them. So are the 72 sectors of the obstacle
+ * ring and the phone's choices for it (p2/design-obstacle-ring-2026-10-25.md, 5.4). Built once per tick on the phone and
  * queued to every headset; read back on the headset into the same [TelemetryValues] the phone's decoder gives, so that
  * the flight section draws it unchanged.
  * Written and read with the JSON element API of kotlinx.serialization, which the JVM unit tests can run.
@@ -116,6 +133,7 @@ object RelayTelemetry {
     phoneVideo: RelayPhoneVideo?,
     headsets: Int,
     unitsDropped: Long,
+    ring: RelayObstacleRing? = null,
   ): JsonObject = buildJsonObject {
     put("t", phoneNs)
     put("seq", sequence)
@@ -227,6 +245,9 @@ object RelayTelemetry {
             put("nearestM", timed.value.nearestM)
             put("nearestIndex", timed.value.nearestIndex)
             put("noReading", timed.value.noReading)
+            timed.value.sectorsMm?.let { sectors ->
+              put("sectorsMm", buildJsonArray { sectors.forEach { add(if (it == null) JsonNull else JsonPrimitive(it)) } })
+            }
             age(timed)
             put("evidence", EVIDENCE_CANDIDATE)
           },
@@ -270,6 +291,17 @@ object RelayTelemetry {
         put("unitsDropped", unitsDropped)
       },
     )
+    if (ring != null) {
+      put(
+        "obstacleRing",
+        buildJsonObject {
+          put("offered", ring.offered)
+          put("farM", ring.farM)
+          put("nearM", ring.nearM)
+          put("directional", ring.directional)
+        },
+      )
+    }
   }
 
   /** A record read back, null when it is not one; unknown keys are ignored, missing groups are absent */
@@ -374,6 +406,7 @@ object RelayTelemetry {
                 nearestM = ring.double("nearestM"),
                 nearestIndex = ring.long("nearestIndex")?.toInt(),
                 noReading = (ring.long("noReading") ?: 0L).toInt(),
+                sectorsMm = ring.sectors("sectorsMm"),
               ),
             )
           },
@@ -392,6 +425,14 @@ object RelayTelemetry {
         },
         headsets = (json.obj("relay")?.long("headsets") ?: 0L).toInt(),
         unitsDropped = json.obj("relay")?.long("unitsDropped") ?: 0L,
+        obstacleRing = json.obj("obstacleRing")?.let { ring ->
+          RelayObstacleRing(
+            offered = ring.bool("offered") ?: false,
+            farM = ring.double("farM") ?: RingSettings.DEFAULT_FAR_M,
+            nearM = ring.double("nearM") ?: RingSettings.DEFAULT_NEAR_M,
+            directional = ring.bool("directional") ?: false,
+          )
+        },
       )
     }.getOrNull()
   }
@@ -441,6 +482,12 @@ object RelayTelemetry {
 
   private fun JsonObject.doubles(name: String): List<Double> =
     element(name)?.jsonArray?.mapNotNull { it.jsonPrimitive.doubleOrNull } ?: emptyList()
+
+  /** The 72 sectors in millimetres, null for one with no reading; null when absent or of another count */
+  private fun JsonObject.sectors(name: String): List<Int?>? =
+    element(name)?.jsonArray
+      ?.map { (it as? JsonPrimitive)?.longOrNull?.toInt() }
+      ?.takeIf { it.size == ObstacleRing.SECTORS }
 }
 
 /** Reads a TELEMETRY body; null when it is not JSON or not a record */

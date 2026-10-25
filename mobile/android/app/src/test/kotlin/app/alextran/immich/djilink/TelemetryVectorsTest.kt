@@ -85,6 +85,28 @@ class TelemetryVectorsTest {
   }
 
   @Test
+  fun theObstacleRingGivesSeventyTwoSectorsWithTheSameNearest() {
+    val rings = group("obstacles").map { TelemetryFields.obstacles(it.body)!! }
+    rings.forEach { ring ->
+      val sectors = ring.sectorsMm!!
+      assertEquals(72, sectors.size)
+      // Index 0 is in sector 0, and the nearest sector is the nearest distance
+      assertEquals(Math.round(ring.nearestM!! * 1000).toInt(), sectors[0])
+      assertEquals(Math.round(ring.nearestM!! * 1000).toInt(), sectors.filterNotNull().min())
+      // Blocks of five: 25 indexes without a reading are 5 sectors without one
+      assertEquals(ring.noReading / 5, sectors.count { it == null })
+    }
+    assertEquals(listOf(507, 683, 772, 871), rings[0].sectorsMm!!.take(4))
+    assertEquals(listOf(6, 7, 8, 10, 11), rings[2].sectorsMm!!.withIndex().filter { it.value == null }.map { it.index })
+    // A ring of another count keeps its nearest distance and gives no sectors
+    val body = group("obstacles").first().body
+    val shorter = body.copyOf(8 + 2 * 359).also { it[6] = (359 and 0xFF).toByte(); it[7] = (359 shr 8).toByte() }
+    val odd = TelemetryFields.obstacles(shorter)!!
+    assertEquals(0.507, odd.nearestM!!, 1e-9)
+    assertNull(odd.sectorsMm)
+  }
+
+  @Test
   fun aRingOfAnotherLengthOrEmptyIsNotRead() {
     val body = group("obstacles").first().body
     assertNull(TelemetryFields.obstacles(body.copyOf(727)))
