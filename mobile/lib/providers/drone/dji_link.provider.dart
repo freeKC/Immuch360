@@ -159,7 +159,7 @@ class DjiLinkPageState {
     this.loadingCaptures = false,
     this.playError,
     this.bench = const DjiLinkBench(),
-    this.openOnPlug = false,
+    this.openOnPlug = true,
   });
 
   /// What this device can do about a USB accessory, read once when the page opens
@@ -195,7 +195,8 @@ class DjiLinkPageState {
   /// What the chips of the capture section say about the bench
   final DjiLinkBench bench;
 
-  /// "Open this screen when the remote is plugged in", as the native side keeps it
+  /// "Open this screen when the remote is plugged in", as the native side keeps it: on until it answers, as its own
+  /// default is, so that the plug step never flashes the old offer and Advanced never reads off meanwhile
   final bool openOnPlug;
 
   /// Whether this device can be the accessory end of the cable at all. False is an answer, not a failure.

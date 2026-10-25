@@ -656,7 +656,6 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
     return true;
   }
 
-  /// "Open this screen when the remote is plugged in", as the native side keeps it
   /// "Open this screen when the remote is plugged in", on by default as on the native side
   bool openOnPlugValue = true;
   final openOnPlugSets = <bool>[];
@@ -671,7 +670,10 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
   }
 
   @override
-  Future<bool> openOnPlug() async => openOnPlugValue;
+  Future<bool> openOnPlug() => openOnPlugAnswer?.future ?? Future.value(openOnPlugValue);
+
+  /// A native answer that comes late, when set: [openOnPlug] waits for it
+  Completer<bool>? openOnPlugAnswer;
 
   @override
   Future<void> setLiveSettingOn(bool on) async => liveSettingSets.add(on);

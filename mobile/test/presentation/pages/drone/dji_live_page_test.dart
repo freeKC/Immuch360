@@ -657,6 +657,20 @@ void main() {
     expect(find.byKey(const Key('dji_live_offer')), findsNothing);
   });
 
+  testWidgets('before the native side answers, the plug step offers nothing: open on the plug is on by default', (
+    tester,
+  ) async {
+    memory.values[StoreKey.djiLivePictureSeen] = true;
+    final api = phone()..openOnPlugAnswer = Completer<bool>();
+    await openLive(tester, api);
+    expect(find.byKey(const Key('dji_live_card_plug')), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_offer')), findsNothing);
+    // An earlier build's off, read late: only then the offer
+    api.openOnPlugAnswer!.complete(false);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_live_offer')), findsOneWidget);
+  });
+
   testWidgets('turned off by an earlier build, the offer to open on the plug comes once after a picture', (
     tester,
   ) async {
