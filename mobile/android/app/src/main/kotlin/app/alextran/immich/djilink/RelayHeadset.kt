@@ -20,6 +20,8 @@ class RelayOutgoing(
   val enqueuedNs: Long,
   /** A key unit kept from earlier, sent ahead of the live ones ([RelayWire.UNIT_PRIMER]) */
   val primer: Boolean = false,
+  /** The steady drop this key unit ends, for the wait from the drop to the key written; null otherwise */
+  val afterDropNs: Long? = null,
 )
 
 /** A key unit kept by the phone, to send with BREAK after a drop that left no key unit in the queue */
@@ -40,6 +42,14 @@ data class RelayQueueCounters(
   val maxRecords: Int,
   val maxUnitBytes: Long,
   val maxAgeNs: Long,
+  /** Steady stream: drops (each then waits for a key unit made for it), and the units skipped while it waited */
+  val steadyDrops: Long = 0,
+  val unitsSkipped: Long = 0,
+  /** Units of the steady stream offered to this queue */
+  val steadyOffered: Long = 0,
+  /** Units of the other stream that went at a switch, not counted as drops */
+  val switchCleared: Long = 0,
+  val breaksSwitch: Long = 0,
 )
 
 /**
@@ -88,7 +98,24 @@ class RelayQueue(
 
     /** The age bound of a receiver that says it is [kind] in its hello */
     fun maxAgeFor(kind: String?): Long = if (kind == "tv") TV_MAX_AGE_NS else MAX_AGE_NS
+
+    /**
+     * The age bound of the steady stream (p2/relay-bandwidth-2026-10-25.md, 7.5 item 2): its drop costs a freeze of at
+     * most this plus a key picture made for it, so it is short
+     */
+    const val STEADY_TV_MAX_AGE_NS = 500_000_000L
+    const val STEADY_HEADSET_MAX_AGE_NS = 250_000_000L
+
+    fun steadyMaxAgeFor(kind: String?): Long = if (kind == "tv") STEADY_TV_MAX_AGE_NS else STEADY_HEADSET_MAX_AGE_NS
   }
+
+  /** What a unit of the steady stream became */
+  class SteadyOffer(
+    /** It was queued */
+    val queued: Boolean,
+    /** The queue dropped its units: a key picture is needed */
+    val dropped: Boolean,
+  )
 
   private class Queued(
     val type: Int,
@@ -100,6 +127,8 @@ class RelayQueue(
     val primer: Boolean = false,
     /** A kept key unit queued by a drop (rule 3c), counted when written */
     val recovery: Boolean = false,
+    /** The key unit that ends a steady drop, and when that drop was */
+    val afterDropNs: Long? = null,
   )
 
   private val lock = Object()
@@ -127,6 +156,24 @@ class RelayQueue(
   private var maxAge = 0L
   private var maxAgeSinceSample = 0L
 
+  // The steady stream (p2/relay-bandwidth-2026-10-25.md, 7.5)
+  private var steady = false
+  private var steadyMaxAgeNs = STEADY_TV_MAX_AGE_NS
+  private var waitingForKey = false
+  private var steadyDropNs: Long? = null
+  private var steadyDrops = 0L
+  private var unitsSkipped = 0L
+  private var steadyOffered = 0L
+  private var switchCleared = 0L
+  private var pendingBreakSwitch = false
+  private var breaksSwitch = 0L
+
+  /** The queue holds the steady stream */
+  val isSteady: Boolean get() = synchronized(lock) { steady }
+
+  /** The steady stream waits for a key unit: after a drop, a switch or a join */
+  val waitsForKey: Boolean get() = synchronized(lock) { waitingForKey }
+
   /** Units dropped for this receiver since it connected */
   val unitsDropped: Long get() = synchronized(lock) { dropped }
 
@@ -152,6 +199,11 @@ class RelayQueue(
       maxRecords = maxRecords,
       maxUnitBytes = maxUnitBytes,
       maxAgeNs = maxAge,
+      steadyDrops = steadyDrops,
+      unitsSkipped = unitsSkipped,
+      steadyOffered = steadyOffered,
+      switchCleared = switchCleared,
+      breaksSwitch = breaksSwitch,
     )
   }
 
@@ -239,8 +291,12 @@ class RelayQueue(
     records.removeAll { it.type == RelayWire.UNIT || it.type == RelayWire.PARAMETERS }
     unitBytes = 0
     pendingBreak = false
+    pendingBreakSwitch = false
     keptHead = null
     skipAfterHead = 0
+    // The steady stream starts again from a key picture of the new source
+    waitingForKey = steady
+    steadyDropNs = null
   }
 
   /** The last record: everything else is dropped, nothing more is taken, the writer ends after writing it */
@@ -292,10 +348,15 @@ class RelayQueue(
     }
     unitBytes -= unit.size
     var flags = record.flags
-    if (!record.primer && (record.breakBefore || pendingBreak)) {
+    if (!record.primer && (record.breakBefore || pendingBreak || pendingBreakSwitch)) {
       flags = flags or RelayWire.UNIT_BREAK
-      if (pendingBreak) breaksOverload += 1 else breaksNewStream += 1
+      when {
+        pendingBreak -> breaksOverload += 1
+        pendingBreakSwitch -> breaksSwitch += 1
+        else -> breaksNewStream += 1
+      }
       pendingBreak = false
+      pendingBreakSwitch = false
     }
     val sequence = nextSequence + skip
     nextSequence = sequence + 1
@@ -310,7 +371,128 @@ class RelayQueue(
       skipAfterHead = 0
       pendingBreak = true
     }
-    RelayOutgoing(RelayWire.UNIT, flags, null, unit, sequence, record.enqueuedNs, primer = record.primer)
+    RelayOutgoing(
+      RelayWire.UNIT,
+      flags,
+      null,
+      unit,
+      sequence,
+      record.enqueuedNs,
+      primer = record.primer,
+      afterDropNs = record.afterDropNs,
+    )
+  }
+
+  /**
+   * The receiver changes stream (p2/relay-bandwidth-2026-10-25.md, 7.5 item 3): the units and parameter sets still
+   * queued belong to the other stream and go, counted as a switch and not as drops, with no gap in the sequence. To the
+   * steady stream ([toSteady]), nothing more goes until a key unit of it; [breakNext] puts BREAK on the next unit that
+   * is not a primer (a receiver that had units before). Returns the units cleared.
+   */
+  fun switchStream(toSteady: Boolean, steadyMaxAgeNs: Long = this.steadyMaxAgeNs, breakNext: Boolean): Int =
+    synchronized(lock) {
+      var cleared = 0
+      val iterator = records.iterator()
+      while (iterator.hasNext()) {
+        val record = iterator.next()
+        val unit = record.unit
+        if (unit != null) {
+          if (!record.primer) {
+            cleared += 1
+          }
+          unitBytes -= unit.size
+          iterator.remove()
+        } else if (record.type == RelayWire.PARAMETERS) {
+          iterator.remove()
+        }
+      }
+      keptHead = null
+      skipAfterHead = 0
+      pendingBreak = false
+      pendingBreakSwitch = breakNext
+      steady = toSteady
+      this.steadyMaxAgeNs = steadyMaxAgeNs
+      waitingForKey = toSteady
+      steadyDropNs = null
+      switchCleared += cleared
+      cleared
+    }
+
+  /**
+   * A unit of the steady stream (p2/relay-bandwidth-2026-10-25.md, 7.5 item 2), with the PARAMETERS body to send before
+   * it when it needs one. When the oldest queued unit is older than the steady bound, every queued unit goes (counted,
+   * the sequence skips them), and units are skipped until a key unit comes: that one goes with BREAK and its parameter
+   * sets. No primer, no hold off: the phone makes the key picture.
+   */
+  fun offerSteadyUnit(
+    unit: AccessUnit,
+    flags: Int,
+    parameters: ByteArray?,
+    parametersFlags: Int,
+    nowNs: Long,
+  ): SteadyOffer = synchronized(lock) {
+    if (closed || finishing || !steady) {
+      return SteadyOffer(queued = false, dropped = false)
+    }
+    steadyOffered += 1
+    val dropped = steadyAgeDrop(nowNs)
+    if (waitingForKey && !unit.isKey) {
+      unitsSkipped += 1
+      skip += 1
+      return SteadyOffer(queued = false, dropped = dropped)
+    }
+    var afterDrop: Long? = null
+    if (waitingForKey) {
+      waitingForKey = false
+      afterDrop = steadyDropNs
+      steadyDropNs = null
+    }
+    if (parameters != null) {
+      records.addLast(Queued(RelayWire.PARAMETERS, parametersFlags, parameters, null, false, nowNs))
+    }
+    records.addLast(Queued(RelayWire.UNIT, flags, null, unit, false, nowNs, afterDropNs = afterDrop))
+    unitBytes += unit.size
+    maxRecords = maxOf(maxRecords, records.size)
+    maxUnitBytes = maxOf(maxUnitBytes, unitBytes)
+    lock.notifyAll()
+    SteadyOffer(queued = true, dropped = dropped)
+  }
+
+  /** The steady bound checked on the tick too, when no unit comes to check it; true when it dropped */
+  fun checkSteadyAge(nowNs: Long): Boolean = synchronized(lock) {
+    if (closed || finishing || !steady) false else steadyAgeDrop(nowNs)
+  }
+
+  /** Under the lock: the steady drop when the oldest unit passed the bound */
+  private fun steadyAgeDrop(nowNs: Long): Boolean {
+    val oldest = records.firstOrNull { it.unit != null } ?: return false
+    val age = nowNs - oldest.enqueuedNs
+    maxAge = maxOf(maxAge, age)
+    maxAgeSinceSample = maxOf(maxAgeSinceSample, age)
+    if (age <= steadyMaxAgeNs && unitBytes <= maxBytes) {
+      return false
+    }
+    var count = 0
+    val iterator = records.iterator()
+    while (iterator.hasNext()) {
+      val record = iterator.next()
+      val unit = record.unit
+      if (unit != null) {
+        count += 1
+        unitBytes -= unit.size
+        iterator.remove()
+      } else if (record.type == RelayWire.PARAMETERS) {
+        iterator.remove()
+      }
+    }
+    dropped += count
+    skip += count
+    steadyDrops += 1
+    lastDropNs = nowNs
+    pendingBreak = true
+    waitingForKey = true
+    steadyDropNs = nowNs
+    return true
   }
 
   /** Rule 3, under the lock, before [incoming] is queued */
@@ -384,6 +566,9 @@ class RelayQueue(
   }
 }
 
+/** A receiver's change of stream: when, from what, to what and why */
+data class RelaySwitch(val atNs: Long, val from: RelayStream, val to: RelayStream, val why: RelaySwitchWhy)
+
 /** What the phone got of a receiver's socket: the send buffer the kernel granted, and the unsent bytes bound if set */
 data class RelaySocketFacts(
   val sendBufferBytes: Int?,
@@ -399,8 +584,8 @@ class RelayReceiverStats(private val connectedAtNs: Long) {
   companion object {
     /** Two hours of seconds */
     const val TIMELINE_SECONDS = 7_200
-    const val TIMELINE_HEADER = "second,units,kB,oldestMs,dropped,roundTripMs,freezes,shownPer10s"
-    private const val COLUMNS = 8
+    const val TIMELINE_HEADER = "second,units,kB,oldestMs,dropped,roundTripMs,freezes,shownPer10s,stream,bitrateKbps"
+    private const val COLUMNS = 10
   }
 
   private val lock = Any()
@@ -424,6 +609,9 @@ class RelayReceiverStats(private val connectedAtNs: Long) {
   private var bytesAtSample = 0L
   private var droppedAtSample = 0L
   private var bytesSecondMax = 0L
+  private var longestWriteSinceTake = 0L
+  private val keyWaits = DurationHistogram()
+  private var network: RelayPingNetwork? = null
 
   /** A record written at [startNs], [bytes] long, that took [writeNs] with its flush and waited [ageNs] in the queue */
   fun onWritten(next: RelayOutgoing, bytes: Int, writeNs: Long, ageNs: Long): Unit = synchronized(lock) {
@@ -438,6 +626,7 @@ class RelayReceiverStats(private val connectedAtNs: Long) {
     }
     writes.add(writeNs)
     ages.add(ageNs)
+    longestWriteSinceTake = maxOf(longestWriteSinceTake, writeNs)
     if (writeNs > 50_000_000L) stalls50 += 1
     if (writeNs > 200_000_000L) stalls200 += 1
     if (writeNs > 1_000_000_000L) stalls1000 += 1
@@ -445,6 +634,7 @@ class RelayReceiverStats(private val connectedAtNs: Long) {
 
   fun onPing(ping: RelayPing): Unit = synchronized(lock) {
     pings += 1
+    ping.network?.let { network = it }
     val said = ping.numbers ?: return
     longPings += 1
     numbers = said
@@ -455,13 +645,49 @@ class RelayReceiverStats(private val connectedAtNs: Long) {
     }
   }
 
+  /** The longest write of a unit since the last call, for the rate of the steady stream */
+  fun takeLongestWrite(): Long = synchronized(lock) { longestWriteSinceTake.also { longestWriteSinceTake = 0 } }
+
+  /** From a steady drop to the key unit that ends it, written */
+  fun onKeyAfterDrop(waitNs: Long) = synchronized(lock) { keyWaits.add(waitNs) }
+
+  /** The receiver's own network, from its 96 byte pings */
+  val receiverNetwork: RelayPingNetwork? get() = synchronized(lock) { network }
+
+  /**
+   * The best second its socket carried in the last [lastSeconds] seconds of the timeline, in bits; with [steadyOnly],
+   * only the seconds it was on the steady stream
+   */
+  fun bestSecondBits(lastSeconds: Int = 120, steadyOnly: Boolean = false): Long = synchronized(lock) {
+    var best = 0L
+    val first = maxOf(0L, seconds - minOf(lastSeconds, TIMELINE_SECONDS))
+    for (index in first until seconds) {
+      val at = ((index % TIMELINE_SECONDS) * COLUMNS).toInt()
+      if (steadyOnly && timeline[at + 8] != 1) {
+        continue
+      }
+      best = maxOf(best, timeline[at + 2] * 1024L * 8)
+    }
+    best
+  }
+
   /** The receiver's last long ping, null when it sends short ones */
   val receiverNumbers: RelayPingNumbers? get() = synchronized(lock) { numbers }
 
   val unitsSent: Long get() = synchronized(lock) { units }
 
-  /** One second of the timeline, at [nowNs], with the queue's counters and the oldest age of that second */
-  fun sample(nowNs: Long, unitsDropped: Long, oldestNs: Long, shownPer10s: Int) = synchronized(lock) {
+  /**
+   * One second of the timeline, at [nowNs], with the queue's counters and the oldest age of that second, the stream it
+   * was on (0 full, 1 steady) and its allowed rate on the steady stream (-1 on the full one)
+   */
+  fun sample(
+    nowNs: Long,
+    unitsDropped: Long,
+    oldestNs: Long,
+    shownPer10s: Int,
+    stream: Int = 0,
+    bitrateKbps: Int = -1,
+  ) = synchronized(lock) {
     val at = ((seconds % TIMELINE_SECONDS) * COLUMNS).toInt()
     val second = bytes - bytesAtSample
     bytesSecondMax = maxOf(bytesSecondMax, second)
@@ -473,6 +699,8 @@ class RelayReceiverStats(private val connectedAtNs: Long) {
     timeline[at + 5] = lastRoundTripNs?.let { (it / 1_000_000).toInt() } ?: -1
     timeline[at + 6] = numbers?.freezes ?: -1
     timeline[at + 7] = shownPer10s
+    timeline[at + 8] = stream
+    timeline[at + 9] = bitrateKbps
     seconds += 1
     unitsAtSample = units
     bytesAtSample = bytes
@@ -521,6 +749,22 @@ class RelayReceiverStats(private val connectedAtNs: Long) {
       put("roundTripMinMs", roundTrips.minMs)
       put("roundTripMedianMs", roundTrips.percentileMs(0.5))
       put("roundTripMaxMs", roundTrips.maxMs)
+      put("keyWaitMedianMs", keyWaits.percentileMs(0.5))
+      put("keyWaitMaxMs", keyWaits.maxMs)
+      put(
+        "receiverNetwork",
+        network?.let { said ->
+          buildJsonObject {
+            put("transport", RelayPingNetwork.transportName(said.transport))
+            put("band", said.band)
+            put("frequencyMhz", said.frequencyMhz.takeIf { it > 0 })
+            put("linkMbps", said.linkMbps.takeIf { it > 0 })
+            put("rssiDbm", said.rssiDbm.takeIf { it in -126..-1 })
+            put("bytesLastSecond", said.bytesLastSecond.takeIf { it >= 0 })
+            put("longestReadGapMs", said.longestReadGapMs.takeIf { it >= 0 })
+          }
+        } ?: JsonNull,
+      )
       put(
         "receiverSays",
         numbers?.let { said ->
@@ -569,7 +813,69 @@ class RelayHeadset internal constructor(
   val socketFacts: RelaySocketFacts = RelaySocketFacts(null, null),
   /** The age of the oldest unit at which its queue drops ([RelayQueue.maxAgeFor]) */
   val maxAgeNs: Long = RelayQueue.MAX_AGE_NS,
+  /** Its hello says it takes the phone's steady stream, and the welcome said the phone has one */
+  val steadyCapable: Boolean = false,
+  /** The longest ping the welcome said the phone takes from it */
+  val pingBytes: Int = RelayWire.PING_LONG_BYTES,
+  /** Sets TCP_NOTSENT_LOWAT on its socket; false when refused */
+  private val lowWaterTuning: (Socket, Int) -> Boolean = { _, _ -> false },
 ) {
+  /** A headset (its window and the flight view) rather than a TV: shorter bounds */
+  val headset: Boolean get() = kind != "tv"
+
+  // The stream it gets (p2/relay-bandwidth-2026-10-25.md, 7.7), guarded by the server's lock
+
+  /** The drone's stream or the phone's steady stream */
+  @Volatile
+  var stream: RelayStream = RelayStream.FULL
+    internal set
+
+  /** Why it waits for the steady stream's next key unit to switch to it, null when it does not */
+  internal var pendingSteady: RelaySwitchWhy? = null
+  internal val policy = RelayStreamPolicy(headset = kind != "tv")
+  internal val rate = RelayRateController(headset = kind != "tv")
+  internal var lastOverloads = 0L
+  internal var lastSteadyDrops = 0L
+  internal var streamSinceNs: Long = 0
+  internal var secondsFull = 0L
+  internal var secondsSteady = 0L
+  private val switches = ArrayDeque<RelaySwitch>()
+
+  /** Its switches of stream, oldest first */
+  fun switchList(): List<RelaySwitch> = synchronized(switches) { switches.toList() }
+
+  /** The steady bound of its queue ([RelayQueue.steadyMaxAgeFor]) */
+  val steadyMaxAgeNs: Long = RelayQueue.steadyMaxAgeFor(kind)
+
+  /**
+   * The unsent bytes bound set on its socket now: the fixed one of the full stream until the steady rate sets its own
+   */
+  @Volatile
+  var lowWaterBytes: Int? = socketFacts.notSentLowWaterBytes
+    private set
+
+  /** Sets the unsent bytes bound to [bytes] when it moves by more than a quarter ([RelayLowWater]) */
+  internal fun followLowWater(bytes: Int) {
+    if (!RelayLowWater.shouldApply(lowWaterBytes, bytes)) {
+      return
+    }
+    if (runCatching { lowWaterTuning(socket, bytes) }.getOrDefault(false)) {
+      lowWaterBytes = bytes
+    }
+  }
+
+  /** A switch of stream, kept for the export (the last 64) */
+  internal fun recordSwitch(nowNs: Long, to: RelayStream, why: RelaySwitchWhy) {
+    synchronized(switches) {
+      switches.addLast(RelaySwitch(nowNs, stream, to, why))
+      while (switches.size > 64) {
+        switches.removeFirst()
+      }
+    }
+    stream = to
+    streamSinceNs = nowNs
+  }
+
   val connectedAtNs: Long = clockNs()
 
   val stats = RelayReceiverStats(connectedAtNs)
@@ -623,9 +929,12 @@ class RelayHeadset internal constructor(
   }
 
   /** Megabits written in the last second */
-  fun megabitsPerSecond(nowNs: Long): Double = synchronized(rateLock) {
+  fun megabitsPerSecond(nowNs: Long): Double = bitsLastSecond(nowNs) / 1_000_000.0
+
+  /** Bits written in the last second: what the path carried while the queue held data */
+  fun bitsLastSecond(nowNs: Long): Long = synchronized(rateLock) {
     trimRate(nowNs)
-    sent.sumOf { it[1] } * 8.0 / 1_000_000.0
+    sent.sumOf { it[1] } * 8
   }
 
   /** A ping read at [nowNs] */
@@ -643,7 +952,16 @@ class RelayHeadset internal constructor(
     }
     // A tick that came late does not make up the seconds it missed: one line, then the next second from now
     nextSampleNs = maxOf(nextSampleNs + 1_000_000_000L, nowNs + 500_000_000L)
-    stats.sample(nowNs, queue.unitsDropped, queue.takeMaxAgeSinceSample(), shownPer10s)
+    val steady = stream == RelayStream.STEADY
+    if (steady) secondsSteady += 1 else secondsFull += 1
+    stats.sample(
+      nowNs,
+      queue.unitsDropped,
+      queue.takeMaxAgeSinceSample(),
+      shownPer10s,
+      stream = if (steady) 1 else 0,
+      bitrateKbps = if (steady) rate.allowedBps / 1000 else -1,
+    )
   }
 
   private fun writeLoop() {
@@ -664,6 +982,7 @@ class RelayHeadset internal constructor(
         output.flush()
         writeStartedNs = 0
         stats.onWritten(next, bytes, clockNs() - now, now - next.enqueuedNs)
+        next.afterDropNs?.let { stats.onKeyAfterDrop(now - it) }
         synchronized(rateLock) {
           sent.addLast(longArrayOf(now, bytes.toLong()))
           trimRate(now)
@@ -689,7 +1008,7 @@ class RelayHeadset internal constructor(
         firstArrivalNs = unit.firstArrivalNs,
         lastArrivalNs = unit.lastArrivalNs,
         sendNs = nowNs,
-        pictureCounter = unit.pictureCounter ?: -1,
+        pictureCounter = unit.headerCounter ?: unit.pictureCounter ?: -1,
         contentMs = unit.contentMs,
       )
       output.write(RelayWire.header(RelayWire.UNIT, next.flags, unitHeaderBytes + unit.size))
@@ -737,6 +1056,43 @@ class RelayHeadset internal constructor(
       put("sendBufferBytes", socketFacts.sendBufferBytes)
       put("notSentLowWaterBytes", socketFacts.notSentLowWaterBytes)
       put("dropAgeMs", maxAgeNs / 1_000_000)
+      put("steadyCapable", steadyCapable)
+      put("pingBytes", pingBytes)
+      put("stream", stream.wire)
+      put("secondsFull", secondsFull)
+      put("secondsSteady", secondsSteady)
+      put(
+        "streamSwitches",
+        buildJsonArray {
+          synchronized(switches) { switches.toList() }.forEach { switch ->
+            add(
+              buildJsonObject {
+                put("atMs", (switch.atNs - connectedAtNs) / 1_000_000)
+                put("from", switch.from.wire)
+                put("to", switch.to.wire)
+                put("why", switch.why.wire)
+              },
+            )
+          }
+        },
+      )
+      put(
+        "steady",
+        buildJsonObject {
+          put("dropAgeMs", steadyMaxAgeNs / 1_000_000)
+          put("cleanDrops", counters.steadyDrops)
+          put("unitsSkipped", counters.unitsSkipped)
+          put("unitsOffered", counters.steadyOffered)
+          put("switchCleared", counters.switchCleared)
+          put("breaksSwitch", counters.breaksSwitch)
+          put("allowedKbpsNow", rate.allowedBps / 1000)
+          put("allowedKbpsMin", rate.minBps / 1000)
+          put("allowedKbpsMax", rate.maxBps / 1000)
+          put("allowedChanges", rate.changes)
+          put("slow", rate.slow)
+          put("notSentLowWaterBytesNow", lowWaterBytes)
+        },
+      )
       put("dropEvents", counters.dropEvents)
       put("unitsDropped", counters.unitsDropped)
       put("cleanRestarts", counters.cleanRestarts)

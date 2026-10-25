@@ -80,6 +80,15 @@ data class RelayReceiveSnapshot(
   val longPings: Boolean = false,
   /** The round trip of the last ping, in milliseconds */
   val roundTripMs: Double? = null,
+  /** The phone said it may send this device its steady stream, and takes the 96 byte pings */
+  val steadyOffered: Boolean = false,
+  val steadyPings: Boolean = false,
+  /** The last unit came from the phone's own encoder (p2/relay-bandwidth-2026-10-25.md, 7.8) */
+  val steady: Boolean = false,
+  /** Changes between the drone's stream and the phone's since the connect */
+  val streamSwitches: Long = 0,
+  /** Since the stream last changed */
+  val streamForMs: Long? = null,
   val telemetry: RelayTelemetryRecord?,
   val telemetryAgeMs: Long?,
   val lastUnitAgoMs: Long?,
@@ -96,10 +105,11 @@ data class RelayReceiveSnapshot(
  *
  * Nothing it sends can reach the remote: its records are the hello, the pings and the bye.
  *
- * Liveness: the phone sends telemetry at least once a second, so 2 s without a record is a lost connection. It connects
- * again after 0.5 s, 1 s and 2 s, then every 2 s, for as long as it is not told to stop; a wrong code, a new code on the
- * phone, another version and a phone that did not prove the code stop the retries; a full phone or a blocked address
- * is tried again every 10 s.
+ * Liveness: the phone sends telemetry at least once a second, so 2 s without a record is a lost connection (4 s on a
+ * TV, p2/relay-bandwidth-2026-10-25.md, 7.8: its reconnection costs an old primer, a stall is worth waiting out). It
+ * connects again after 0.5 s, 1 s and 2 s, then every 2 s, for as long as it is not told to stop; a wrong code, a new
+ * code on the phone, another version and a phone that did not prove the code stop the retries; a full phone or a
+ * blocked address is tried again every 10 s.
  */
 class RelayReceiver(
   private val listener: Listener,
@@ -108,6 +118,7 @@ class RelayReceiver(
   private val connectTimeoutMs: Int = 3_000,
   private val handshakeTimeoutMs: Int = 5_000,
   private val silenceMs: Int = 2_000,
+  private val tvSilenceMs: Int = 4_000,
   private val pingIntervalMs: Long = 500,
   private val retryDelaysMs: List<Long> = listOf(500, 1_000, 2_000),
   private val busyRetryMs: Long = 10_000,
@@ -145,6 +156,9 @@ class RelayReceiver(
 
     /** This device's own numbers for a long ping, null to send a short one; on the ping thread */
     fun pingNumbers(): RelayPingNumbers? = null
+
+    /** This device's network for a 96 byte ping (transport, frequency, link speed, signal); on the ping thread */
+    fun pingNetwork(): RelayPingNetwork? = null
   }
 
   private class Target(
@@ -195,6 +209,18 @@ class RelayReceiver(
 
   @Volatile
   private var longPings = false
+
+  @Volatile
+  private var steadyPings = false
+
+  @Volatile
+  private var steadyOffered = false
+  private var steadyNow = false
+  private var streamSwitches = 0L
+  private var streamSinceNs: Long? = null
+
+  /** The records read in the last second: their arrival and size, for the 96 byte ping */
+  private val flow = ArrayDeque<LongArray>()
   private var lastSequence: Long? = null
   private var lastUnitNs: Long? = null
   private var telemetry: RelayTelemetryRecord? = null
@@ -235,6 +261,10 @@ class RelayReceiver(
       breaks = 0
       primers = 0
       recoveryPrimers = 0
+      steadyNow = false
+      streamSwitches = 0
+      streamSinceNs = null
+      flow.clear()
       lastSequence = null
       lastUnitNs = null
       telemetry = null
@@ -370,6 +400,9 @@ class RelayReceiver(
         target.kind?.let { put("kind", it) }
         // This build reads the unit header with the content clock; a phone of an earlier build ignores it
         put("unitHeader", RelayWire.UNIT_HEADER_LONG_BYTES)
+        // It takes the phone's steady stream and can send the 96 byte ping; a phone of an earlier build ignores both
+        put("steady", 1)
+        put("pingBytes", RelayWire.PING_STEADY_BYTES)
       }
       synchronized(outputLock) {
         RelayWire.write(out, RelayWire.HELLO, 0, RelayWire.helloBody(clientNonce, proof, hello.toString()))
@@ -399,7 +432,10 @@ class RelayReceiver(
       }
       val header = (json?.get("unitHeader") as? JsonPrimitive)?.intOrNull
       unitHeaderBytes = if (header == RelayWire.UNIT_HEADER_LONG_BYTES) header else RelayWire.UNIT_HEADER_BYTES
-      longPings = (json?.get("pingBytes") as? JsonPrimitive)?.intOrNull == RelayWire.PING_LONG_BYTES
+      val pingBytes = (json?.get("pingBytes") as? JsonPrimitive)?.intOrNull
+      longPings = pingBytes == RelayWire.PING_LONG_BYTES || pingBytes == RelayWire.PING_STEADY_BYTES
+      steadyPings = pingBytes == RelayWire.PING_STEADY_BYTES
+      steadyOffered = (json?.get("steady") as? JsonPrimitive)?.intOrNull == 1
       welcome = said
       welcomed = true
       failures = 0
@@ -407,7 +443,7 @@ class RelayReceiver(
       synchronized(countsLock) { lastSequence = null }
       listener.onConnected(said)
       setStateFor(mine, RelayReceiveState.RECEIVING)
-      connection.soTimeout = silenceMs
+      connection.soTimeout = if (target.kind == "tv") tvSilenceMs else silenceMs
       pinger = Thread({ pingLoop(out, mine) }, "DjiRelayPing").apply {
         isDaemon = true
         start()
@@ -415,6 +451,7 @@ class RelayReceiver(
       while (current(mine)) {
         record = RelayWire.read(input, fromPhone = true)
         val arrival = clockNs()
+        onFlow(arrival, RelayWire.HEADER_BYTES + record.body.size)
         listener.onRecord(record, arrival)
         when (record.type) {
           RelayWire.PARAMETERS -> {
@@ -498,12 +535,55 @@ class RelayReceiver(
       lastSequence = header.sequence
       units += 1
       lastUnitNs = arrivalNs
+      // The stream it comes from: the phone's own encoder or the drone, a primer being the drone's
+      val phone = (record.flags and RelayWire.UNIT_PHONE) != 0
+      if (phone != steadyNow || streamSinceNs == null) {
+        if (streamSinceNs != null) {
+          streamSwitches += 1
+        }
+        steadyNow = phone
+        streamSinceNs = arrivalNs
+      }
     }
     // A primer is an old picture: its times would read as a delay of the radio
     if ((record.flags and RelayWire.UNIT_PRIMER) == 0) {
       latency.onUnit(arrivalNs, header)
     }
     listener.onUnit(unit, header, record.flags, arrivalNs)
+  }
+
+  /** One record read at [arrivalNs], [bytes] long with its header */
+  private fun onFlow(arrivalNs: Long, bytes: Int) = synchronized(countsLock) {
+    flow.addLast(longArrayOf(arrivalNs, bytes.toLong()))
+    while (flow.size > 1 && arrivalNs - flow.first()[0] > 1_000_000_000L) {
+      flow.removeFirst()
+    }
+  }
+
+  /**
+   * This device's network for the 96 byte ping: what the listener says of its Wi-Fi, with the bytes read in the last
+   * second and the longest wait between two records read in it (up to now, so that a stall shows while it lasts)
+   */
+  private fun pingNetwork(nowNs: Long): RelayPingNetwork {
+    val said = runCatching { listener.pingNetwork() }.getOrNull() ?: RelayPingNetwork()
+    val (bytes, gapMs) = synchronized(countsLock) {
+      val recent = flow.filter { nowNs - it[0] <= 1_000_000_000L }
+      var longest = 0L
+      var previous: Long? = null
+      for (entry in recent) {
+        previous?.let { longest = maxOf(longest, entry[0] - it) }
+        previous = entry[0]
+      }
+      val last = flow.lastOrNull()?.get(0)
+      if (last != null) {
+        longest = maxOf(longest, nowNs - last)
+      }
+      recent.sumOf { it[1] } to longest / 1_000_000
+    }
+    return said.copy(
+      bytesLastSecond = bytes.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+      longestReadGapMs = gapMs.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+    )
   }
 
   private fun refusal(record: RelayRecord): Outcome = when (RelayWire.parseJson(record.body).text("reason")) {
@@ -525,9 +605,10 @@ class RelayReceiver(
         ?.let { (it * 1000).toLong().coerceIn(0, Int.MAX_VALUE.toLong()).toInt() } ?: -1
       val shown = runCatching { listener.shownPer10s() }.getOrDefault(-1)
       val numbers = if (longPings) runCatching { listener.pingNumbers() }.getOrNull() else null
+      val network = if (steadyPings) pingNetwork(clockNs()) else null
       try {
         synchronized(outputLock) {
-          RelayWire.write(out, RelayWire.PING, 0, RelayWire.pingBody(clockNs(), delayUs, shown, numbers))
+          RelayWire.write(out, RelayWire.PING, 0, RelayWire.pingBody(clockNs(), delayUs, shown, numbers, network))
           out.flush()
         }
       } catch (_: IOException) {
@@ -602,6 +683,11 @@ class RelayReceiver(
         unitHeaderBytes = unitHeaderBytes,
         longPings = longPings,
         roundTripMs = clock.lastRoundTripNs?.let { it / 1e6 },
+        steadyOffered = steadyOffered,
+        steadyPings = steadyPings,
+        steady = steadyNow,
+        streamSwitches = streamSwitches,
+        streamForMs = streamSinceNs?.let { (nowNs - it) / 1_000_000 },
         telemetry = last,
         telemetryAgeMs = telemetryAtNs?.let { (nowNs - it) / 1_000_000 },
         lastUnitAgoMs = lastUnitNs?.let { (nowNs - it) / 1_000_000 },

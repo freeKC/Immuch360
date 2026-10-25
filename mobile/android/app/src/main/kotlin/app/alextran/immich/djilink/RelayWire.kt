@@ -56,6 +56,13 @@ object RelayWire {
    * phone takes it (`"pingBytes": 64`); the phone takes either length
    */
   const val PING_LONG_BYTES = 64
+
+  /**
+   * The long ping with this receiver's own network after the 64 bytes ([RelayPingNetwork]): sent only when the welcome
+   * says the phone takes it (`"pingBytes": 96`, given to a hello that asked for it); the phone takes the three lengths
+   * (p2/relay-bandwidth-2026-10-25.md, 7.8)
+   */
+  const val PING_STEADY_BYTES = 96
   const val PONG_BYTES = 24
   const val LABEL = "immuch360 drone relay 1"
   const val ROLE_HEADSET = 1
@@ -104,6 +111,12 @@ object RelayWire {
    */
   const val UNIT_PRIMER = 0x10
 
+  /**
+   * A unit of the phone's own steady stream (p2/relay-bandwidth-2026-10-25.md, 7.8): encoded again on the phone for a
+   * receiver whose Wi-Fi cannot carry the drone's stream. Sent only to a receiver whose hello says `"steady": 1`.
+   */
+  const val UNIT_PHONE = 0x20
+
   // The reasons of REFUSED and BYE
   const val REFUSED_CODE = "code"
   const val REFUSED_BLOCKED = "blocked"
@@ -125,10 +138,17 @@ object RelayWire {
     DescriptionSource.PROFILE -> 3
   }
 
+  /**
+   * The flag of the PARAMETERS record of the phone's steady stream: its own encoder made them. A receiver of an earlier
+   * build never gets it; one of this build reads it as a session description.
+   */
+  const val PARAMETERS_PHONE_ENCODER = 4
+
   fun sourceOfParametersFlag(flag: Int): DescriptionSource? = when (flag) {
     1 -> DescriptionSource.SESSION
     2 -> DescriptionSource.CACHE
     3 -> DescriptionSource.PROFILE
+    PARAMETERS_PHONE_ENCODER -> DescriptionSource.SESSION
     else -> null
   }
 
@@ -146,7 +166,7 @@ object RelayWire {
   /** The body sizes a record of [type] may have when the headset sends it; null for anything else, which closes */
   fun bodyRangeFromHeadset(type: Int): IntRange? = when (type) {
     HELLO -> HELLO_MIN_BYTES..MAX_HELLO_BYTES
-    PING -> PING_BYTES..PING_LONG_BYTES
+    PING -> PING_BYTES..PING_STEADY_BYTES
     HEADSET_BYE -> 0..0
     else -> null
   }
@@ -158,7 +178,9 @@ object RelayWire {
     if (length < range.first || length > range.last) {
       throw RelayProtocolException("badLength", type)
     }
-    if (!fromPhone && type == PING && length != PING_BYTES.toLong() && length != PING_LONG_BYTES.toLong()) {
+    if (!fromPhone && type == PING && length != PING_BYTES.toLong() && length != PING_LONG_BYTES.toLong() &&
+      length != PING_STEADY_BYTES.toLong()
+    ) {
       throw RelayProtocolException("badLength", type)
     }
   }
@@ -250,26 +272,49 @@ object RelayWire {
     return proof + json.toByteArray(Charsets.UTF_8)
   }
 
-  /** A ping of 16 bytes, or of [PING_LONG_BYTES] with the receiver's [numbers] */
-  fun pingBody(sendNs: Long, relayDelayMedianUs: Int, shownPer10s: Int, numbers: RelayPingNumbers? = null): ByteArray {
-    val out = ByteArray(if (numbers == null) PING_BYTES else PING_LONG_BYTES)
+  /**
+   * A ping of 16 bytes, of [PING_LONG_BYTES] with the receiver's [numbers], or of [PING_STEADY_BYTES] with its
+   * [network] too (its numbers then -1 when not given)
+   */
+  fun pingBody(
+    sendNs: Long,
+    relayDelayMedianUs: Int,
+    shownPer10s: Int,
+    numbers: RelayPingNumbers? = null,
+    network: RelayPingNetwork? = null,
+  ): ByteArray {
+    val size = when {
+      network != null -> PING_STEADY_BYTES
+      numbers != null -> PING_LONG_BYTES
+      else -> PING_BYTES
+    }
+    val out = ByteArray(size)
     putI64(out, 0, sendNs)
     putI32(out, 8, relayDelayMedianUs)
     putI32(out, 12, shownPer10s)
-    numbers?.values()?.forEachIndexed { index, value -> putI32(out, PING_BYTES + 4 * index, value) }
+    if (size >= PING_LONG_BYTES) {
+      val said = numbers ?: RelayPingNumbers()
+      said.values().forEachIndexed { index, value -> putI32(out, PING_BYTES + 4 * index, value) }
+    }
+    network?.values()?.forEachIndexed { index, value -> putI32(out, PING_LONG_BYTES + 4 * index, value) }
     return out
   }
 
   fun parsePing(body: ByteArray): RelayPing {
-    if (body.size != PING_BYTES && body.size != PING_LONG_BYTES) {
+    if (body.size != PING_BYTES && body.size != PING_LONG_BYTES && body.size != PING_STEADY_BYTES) {
       throw RelayProtocolException("badLength", PING)
     }
-    val numbers = if (body.size == PING_LONG_BYTES) {
+    val numbers = if (body.size >= PING_LONG_BYTES) {
       RelayPingNumbers.of(IntArray(RelayPingNumbers.COUNT) { i32(body, PING_BYTES + 4 * it) })
     } else {
       null
     }
-    return RelayPing(i64(body, 0), i32(body, 8), i32(body, 12), numbers)
+    val network = if (body.size == PING_STEADY_BYTES) {
+      RelayPingNetwork.of(IntArray(RelayPingNetwork.COUNT) { i32(body, PING_LONG_BYTES + 4 * it) })
+    } else {
+      null
+    }
+    return RelayPing(i64(body, 0), i32(body, 8), i32(body, 12), numbers, network)
   }
 
   fun pongBody(pingSendNs: Long, receivedNs: Long, sentNs: Long): ByteArray {
@@ -468,6 +513,8 @@ data class RelayPing(
   val shownPer10s: Int,
   /** The receiver's own numbers, in a ping of [RelayWire.PING_LONG_BYTES]; null in a short one */
   val numbers: RelayPingNumbers? = null,
+  /** The receiver's own network, in a ping of [RelayWire.PING_STEADY_BYTES]; null in a shorter one */
+  val network: RelayPingNetwork? = null,
 )
 
 /**
@@ -503,6 +550,56 @@ data class RelayPingNumbers(
     bufferTargetMs, bufferNowMs, freezes, longestFreezeMs, renderSkips, lateUnits,
     decoderStalls, sequenceGaps, primersUsed, roundTripUs, phoneToShownMs, safetyFlushes,
   )
+}
+
+/**
+ * What a receiver says of its own network in a ping of [RelayWire.PING_STEADY_BYTES] (p2/relay-bandwidth-2026-10-25.md,
+ * 7.8 item 4), so that the phone's export says which of the two Wi-Fi hops is weak: eight signed 32 bit numbers after
+ * the 64 bytes, -1 when unknown. A state, never a request: the phone decides what it sends.
+ */
+data class RelayPingNetwork(
+  /** [TRANSPORT_WIFI], [TRANSPORT_ETHERNET], [TRANSPORT_OTHER], or -1 */
+  val transport: Int = -1,
+  val frequencyMhz: Int = -1,
+  val linkMbps: Int = -1,
+  val rssiDbm: Int = -1,
+  /** Bytes of the relay read in the last second */
+  val bytesLastSecond: Int = -1,
+  /** The longest wait between two records read in the last second, in milliseconds */
+  val longestReadGapMs: Int = -1,
+  val spare1: Int = -1,
+  val spare2: Int = -1,
+) {
+  companion object {
+    const val COUNT = 8
+    const val TRANSPORT_WIFI = 1
+    const val TRANSPORT_ETHERNET = 2
+    const val TRANSPORT_OTHER = 3
+
+    fun of(values: IntArray): RelayPingNetwork =
+      RelayPingNetwork(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7])
+
+    /** The transport as [NetworkFacts] names it */
+    fun transportOf(name: String?): Int = when (name) {
+      "wifi" -> TRANSPORT_WIFI
+      "ethernet" -> TRANSPORT_ETHERNET
+      null -> -1
+      else -> TRANSPORT_OTHER
+    }
+
+    fun transportName(value: Int): String? = when (value) {
+      TRANSPORT_WIFI -> "wifi"
+      TRANSPORT_ETHERNET -> "ethernet"
+      TRANSPORT_OTHER -> "other"
+      else -> null
+    }
+  }
+
+  fun values(): IntArray =
+    intArrayOf(transport, frequencyMhz, linkMbps, rssiDbm, bytesLastSecond, longestReadGapMs, spare1, spare2)
+
+  /** 2.4, 5 or 6 (GHz), from the frequency */
+  val band: String? get() = frequencyMhz.takeIf { it > 0 }?.let { NetworkFacts.bandOf(it) }
 }
 
 data class RelayPong(val pingSendNs: Long, val receivedNs: Long, val sentNs: Long)

@@ -1,0 +1,548 @@
+package app.alextran.immich.djilink
+
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+/** Decoder 2 played by the test: the units it is given stay with the core until [pull] takes them */
+class FakeRelayDecoder(private val core: RelayTranscoder) : RelayDecoderPort {
+  override val name = "c2.fake.hevc.decoder"
+  var wakes = 0
+  var released = false
+
+  override fun wake() {
+    wakes += 1
+  }
+
+  override fun release() {
+    released = true
+  }
+
+  /** Every unit waiting, in order, as the decoder's input thread takes them */
+  fun pull(nowNs: Long): List<RelayDecoderInput> {
+    val out = mutableListOf<RelayDecoderInput>()
+    while (true) {
+      out += core.nextInput(nowNs) ?: return out
+    }
+  }
+}
+
+class FakeRelayEncoder(var rateBps: Int, override val setup: RelayEncoderSetup) : RelayEncoderPort {
+  override val name = "c2.fake.hevc.encoder"
+  var keys = 0
+  var released = false
+  val bitrates = mutableListOf<Int>()
+
+  override fun requestKey() {
+    keys += 1
+  }
+
+  override fun setBitrate(bps: Int) {
+    rateBps = bps
+    bitrates += bps
+  }
+
+  override fun release() {
+    released = true
+  }
+}
+
+class FakeRelayCodecs : RelayCodecs {
+  var encoderInfo: RelayEncoderInfo? = RelayEncoderInfo("c2.fake.hevc.encoder", hardware = true, cbr = true)
+  var decoderRefused = false
+  var encoderRefused = false
+  val decoders = mutableListOf<FakeRelayDecoder>()
+  val encoders = mutableListOf<FakeRelayEncoder>()
+  val openedWith = mutableListOf<StreamDescription>()
+
+  override fun findEncoder(): RelayEncoderInfo? = encoderInfo
+
+  override fun openDecoder(description: StreamDescription, core: RelayTranscoder): RelayDecoderPort? {
+    if (decoderRefused) {
+      return null
+    }
+    openedWith += description
+    return FakeRelayDecoder(core).also { decoders += it }
+  }
+
+  override fun openEncoder(
+    info: RelayEncoderInfo,
+    bitrateBps: Int,
+    decoder: RelayDecoderPort,
+    core: RelayTranscoder,
+  ): RelayEncoderPort? {
+    if (encoderRefused) {
+      return null
+    }
+    val setup = RelayEncoderSetup(
+      1920,
+      1080,
+      30,
+      "cbr",
+      latencyAccepted = true,
+      headersOnKeys = true,
+      keyIntervalS = 2,
+      level = 0,
+    )
+    return FakeRelayEncoder(bitrateBps, setup).also { encoders += it }
+  }
+}
+
+/**
+ * The steady stream's rules with fake codecs (p2/relay-bandwidth-2026-10-25.md, 7.2, 7.5 and 7.11): a clean start at
+ * the drone's next key picture and a dirty one, the decimation and the units handed to the server, and every failure:
+ * no encoder, a refused size, no second decoder, decoder 2 or the encoder too slow, a hot phone, the pilot's decoder
+ * affected, codec and GL errors.
+ */
+class RelayTranscoderStateTest {
+  private val ms = 1_000_000L
+  private val second = 1_000_000_000L
+  private var now = 0L
+  private val codecs = FakeRelayCodecs()
+  private val emitted = mutableListOf<Pair<AccessUnit, ResolvedDescription>>()
+  private val core = RelayTranscoder(
+    codecs,
+    clockNs = { now },
+    emit = { unit, description -> emitted += unit to description },
+    worker = { it.run() },
+  )
+  private val drone = ResolvedDescription(ProfileRegistry.seed20261023!!, DescriptionSource.SESSION)
+  private val vectors: JsonObject by lazy {
+    val stream = javaClass.classLoader!!.getResourceAsStream("djilink/relay-encoder-vectors.json")!!
+    val text = stream.bufferedReader().readText()
+    Json.parseToJsonElement(text).jsonObject
+  }
+
+  private fun encoded(name: String, index: Int): ByteArray =
+    StreamDescription.hexBytes(vectors[name]!!.jsonObject["units"]!!.jsonArray[index].jsonPrimitive.content)!!
+
+  /** A drone unit at 60 a second: its content clock and its phone receive time follow [index] */
+  private fun droneUnit(index: Int, key: Boolean = false): AccessUnit = HevcSamples.unitOf(
+    HevcSamples.DELIMITER,
+    HevcSamples.slice(type = if (key) 19 else 1),
+    HevcSamples.suffixSei(index),
+    arrivalNs = now,
+  ).also { it.contentMs = 100_000L + index * 50L / 3 }
+
+  private fun running(): RelayTranscoder {
+    core.start(now)
+    core.setEnabled(true, now)
+    core.setCapableReceivers(true, now)
+    return core
+  }
+
+  /** The drone's stream from a key picture, then the steady stream needed: decoder 2 and the encoder made */
+  private fun steady(): Pair<FakeRelayDecoder, FakeRelayEncoder> {
+    running()
+    core.offer(droneUnit(0, key = true), drone)
+    core.setNeeded(true, now)
+    return codecs.decoders.last() to codecs.encoders.last()
+  }
+
+  /**
+   * One step of the pipeline: a drone unit offered, decoder 2 decodes it 12 ms later, the kept pictures are drawn and
+   * come out of the encoder [encodeMs] after
+   */
+  private fun step(index: Int, decoder: FakeRelayDecoder, encodeMs: Long = 15, key: Boolean = false): Int {
+    core.offer(droneUnit(index, key), drone)
+    var out = 0
+    for (input in decoder.pull(now)) {
+      if (core.onDecoded(input.ptsUs, now + 12 * ms)) {
+        core.onDrawn(input.ptsUs, now + 14 * ms)
+        val bytes = if (out == 0 && emitted.isEmpty()) encoded("a1080", 0) else encoded("a1080", 1)
+        core.onEncoded(bytes, input.ptsUs, config = false, key = bytes.size > 1000, nowNs = now + (14 + encodeMs) * ms)
+        out += 1
+      }
+    }
+    return out
+  }
+
+  @Test
+  fun withoutAnEncoderThereIsNoSteadyStream() {
+    codecs.encoderInfo = null
+    running()
+    assertEquals(TranscoderState.UNAVAILABLE, core.state)
+    assertEquals("noEncoder", core.why)
+    assertFalse(core.available)
+    assertFalse(core.usable)
+    core.offer(droneUnit(0, key = true), drone)
+    core.setNeeded(true, now)
+    assertTrue(codecs.decoders.isEmpty())
+    assertEquals("unavailable", core.line(now)!!.state)
+  }
+
+  @Test
+  fun decoderTwoStartsCleanAtTheDronesNextKeyPictureAndTakesEveryUnitInOrder() {
+    running()
+    assertEquals(TranscoderState.STANDBY, core.state)
+    core.offer(droneUnit(0), drone)
+    assertTrue("no decoder before a key picture", codecs.decoders.isEmpty())
+    core.offer(droneUnit(1, key = true), drone)
+    val decoder = codecs.decoders.single()
+    assertTrue(decoder.wakes > 0)
+    now += 17 * ms
+    core.offer(droneUnit(2), drone)
+    core.offer(droneUnit(3), drone)
+    val inputs = decoder.pull(now)
+    assertEquals(3, inputs.size)
+    assertTrue(inputs.first().unit.isKey)
+    // The content time as presentation time, always increasing
+    assertEquals(inputs.map { it.unit.contentMs * 1000 }, inputs.map { it.ptsUs })
+    assertTrue(inputs.zipWithNext().all { (a, b) -> b.ptsUs > a.ptsUs })
+    // No encoder yet: every picture released unseen
+    inputs.forEach { assertFalse(core.onDecoded(it.ptsUs, now)) }
+    assertTrue(codecs.encoders.isEmpty())
+    val report = core.report(now)!!
+    assertEquals(1, report["cleanStarts"]!!.jsonPrimitive.int)
+    assertEquals(0, report["dirtyStarts"]!!.jsonPrimitive.int)
+    assertEquals("c2.fake.hevc.decoder", report["decoderName"]!!.jsonPrimitive.content)
+  }
+
+  @Test
+  fun newParameterSetsAtADroneKeyMakeDecoderTwoAgainAndTheUnitsAfterItGoToTheNewOne() {
+    val (first, firstEncoder) = steady()
+    first.pull(now)
+    val other = ResolvedDescription(EncodedUnits.descriptionOf(encoded("a1080", 0))!!, DescriptionSource.SESSION)
+    core.offer(droneUnit(10, key = true), other)
+    assertTrue(first.released)
+    assertTrue(firstEncoder.released)
+    assertEquals(2, codecs.decoders.size)
+    assertTrue(codecs.openedWith.last().sameSetsAs(other.description))
+    // Still needed: the encoder is made again on the new decoder's stage
+    assertEquals(2, codecs.encoders.size)
+    core.offer(droneUnit(11), other)
+    val inputs = codecs.decoders.last().pull(now)
+    assertEquals(listOf(true, false), inputs.map { it.unit.isKey })
+    // The same sets again: no new decoder
+    core.offer(droneUnit(12, key = true), other)
+    assertEquals(2, codecs.decoders.size)
+  }
+
+  @Test
+  fun aNewSourceForgetsEverythingAndStartsAgainAtItsFirstKeyPicture() {
+    val (decoder, encoder) = steady()
+    core.reset()
+    assertTrue(decoder.released)
+    assertTrue(encoder.released)
+    core.offer(droneUnit(1), drone)
+    assertEquals(1, codecs.decoders.size)
+    core.offer(droneUnit(2, key = true), drone)
+    assertEquals(2, codecs.decoders.size)
+    assertEquals(2, codecs.encoders.size)
+  }
+
+  @Test
+  fun neededBeforeAnyKeyPictureItStartsDirtyFromTheKeptOne() {
+    running()
+    core.keepKey(droneUnit(0, key = true), drone)
+    core.offer(droneUnit(1), drone)
+    core.setNeeded(true, now)
+    val decoder = codecs.decoders.single()
+    assertEquals(1, codecs.encoders.size)
+    assertEquals(TranscoderState.RUNNING, core.state)
+    core.offer(droneUnit(2), drone)
+    val inputs = decoder.pull(now)
+    assertTrue(inputs.first().unit.isKey)
+    assertEquals(2, inputs.size)
+    assertEquals(1, core.report(now)!!["dirtyStarts"]!!.jsonPrimitive.int)
+  }
+
+  @Test
+  fun theKeptPicturesAreEncodedWithTheirSourcesTimesAndAConsecutiveCounter() {
+    val (decoder, encoder) = steady()
+    assertEquals(RelayTranscoder.START_BPS, encoder.rateBps)
+    var out = 0
+    repeat(60) { index ->
+      now += 50 * ms / 3
+      out += step(index + 1, decoder)
+    }
+    // 60 a second in, 30 out
+    assertTrue("$out kept", out in 30..31)
+    assertEquals(out, emitted.size)
+    assertEquals((0 until out).toList(), emitted.map { it.first.headerCounter })
+    assertTrue(emitted.first().first.isKey)
+    assertTrue(emitted.all { it.first.contentMs >= 100_000L })
+    assertTrue(emitted.all { it.first.pictureCounter == null })
+    // The parameter sets of the steady stream are the encoder's own
+    assertEquals(1080, emitted.first().second.description.info.height)
+    assertTrue(core.producing)
+    val report = core.report(now)!!
+    assertEquals(out, report["encoded"]!!.jsonPrimitive.int)
+    assertEquals(15.0, report["encodeMedianMs"]!!.jsonPrimitive.content.toDouble(), 1.0)
+    assertNotNull(report["receiveToEncodedMedianMs"]!!.jsonPrimitive.content.toDoubleOrNull())
+    // 15 a second when a receiver's link needs it
+    core.setPictureRate(15, now)
+    emitted.clear()
+    repeat(60) { index ->
+      now += 50 * ms / 3
+      step(index + 61, decoder)
+    }
+    assertTrue("${emitted.size} kept", emitted.size in 15..16)
+  }
+
+  @Test
+  fun aKeyPictureWithoutItsSetsGetsThemInBandFromTheConfigurationBuffer() {
+    val (decoder, _) = steady()
+    val config = StreamDescription.hexBytes(vectors["b720"]!!.jsonObject["config"]!!.jsonPrimitive.content)!!
+    core.onEncoded(config, 0, config = true, key = false, nowNs = now)
+    core.offer(droneUnit(1), drone)
+    val input = decoder.pull(now).first()
+    assertTrue(core.onDecoded(input.ptsUs, now))
+    core.onEncoded(encoded("b720", 0), input.ptsUs, config = false, key = true, nowNs = now)
+    val unit = emitted.single().first
+    assertTrue(unit.isKey)
+    assertTrue(unit.hasParameterSets)
+    assertEquals(720, emitted.single().second.description.info.height)
+    assertEquals(1, core.report(now)!!["keySetsAddedInBand"]!!.jsonPrimitive.int)
+  }
+
+  @Test
+  fun anEncoderThatRefusesBothSizesLeavesNoSteadyStream() {
+    codecs.encoderRefused = true
+    running()
+    core.offer(droneUnit(0, key = true), drone)
+    core.setNeeded(true, now)
+    assertTrue(codecs.encoders.isEmpty())
+    assertEquals(TranscoderState.UNAVAILABLE, core.state)
+    assertEquals("refused", core.why)
+    assertFalse(core.usable)
+    assertTrue(codecs.decoders.single().released)
+  }
+
+  @Test
+  fun noSecondDecoderLeavesNoSteadyStream() {
+    codecs.decoderRefused = true
+    running()
+    core.offer(droneUnit(0, key = true), drone)
+    assertEquals(TranscoderState.UNAVAILABLE, core.state)
+    assertEquals("noSecondDecoder", core.why)
+  }
+
+  @Test
+  fun aDecoderTooSlowStopsTheSteadyStream() {
+    val (decoder, encoder) = steady()
+    decoder.pull(now)
+    repeat(70) { index ->
+      now += 50 * ms / 3
+      core.offer(droneUnit(index + 1), drone)
+    }
+    assertEquals(TranscoderState.STOPPED, core.state)
+    assertEquals("decoderTooSlow", core.why)
+    assertTrue(decoder.released)
+    assertTrue(encoder.released)
+    assertFalse(core.usable)
+    assertTrue(core.available)
+  }
+
+  @Test
+  fun aSlowEncoderGoesToFifteenAndStopsFiveSecondsLater() {
+    val (decoder, _) = steady()
+    var index = 1
+    while (core.perSecond == 30 && now < 6 * second) {
+      now += 50 * ms / 3
+      step(index++, decoder, encodeMs = 80)
+      core.tick(now)
+    }
+    // Slow for 3 s: 15 a second
+    assertEquals(15, core.perSecond)
+    assertTrue("15 a second at ${now / ms} ms", now >= 3 * second)
+    assertTrue(core.usable)
+    val fifteenAt = now
+    while (now < fifteenAt + 5 * second + 200 * ms) {
+      now += 50 * ms / 3
+      step(index++, decoder, encodeMs = 80)
+      core.tick(now)
+    }
+    assertEquals(TranscoderState.STOPPED, core.state)
+    assertEquals("tooSlow", core.why)
+  }
+
+  @Test
+  fun aHotPhoneGoesToFifteenUnderSixMegabitsThenStopsAndComesBackOnceCool() {
+    val (_, encoder) = steady()
+    core.setBitrate(10_000_000, now)
+    assertEquals(10_000_000, encoder.rateBps)
+    core.onThermal(RelayTranscoder.THERMAL_MODERATE, now)
+    assertEquals(RelayTranscoder.HOT_CAP_BPS, encoder.rateBps)
+    assertEquals(15, core.perSecond)
+    core.onThermal(RelayTranscoder.THERMAL_SEVERE, now)
+    assertEquals(TranscoderState.STOPPED, core.state)
+    assertEquals("hot", core.why)
+    assertTrue(encoder.released)
+    core.onThermal(RelayTranscoder.THERMAL_LIGHT, now)
+    now += 30 * second
+    core.tick(now)
+    assertFalse(core.usable)
+    now += 31 * second
+    core.tick(now)
+    assertTrue(core.usable)
+    val report = core.report(now)!!
+    assertEquals(RelayTranscoder.THERMAL_SEVERE, report["thermalMax"]!!.jsonPrimitive.int)
+  }
+
+  @Test
+  fun anOverrunOfThePilotsDecoderStopsItAtOnce() {
+    running()
+    core.onPilot(overruns = 4, decodeP95Ms = 20.0, nowNs = now)
+    core.offer(droneUnit(0, key = true), drone)
+    core.onPilot(overruns = 4, decodeP95Ms = 21.0, nowNs = now)
+    assertTrue(core.usable)
+    core.onPilot(overruns = 5, decodeP95Ms = 21.0, nowNs = now)
+    assertEquals(TranscoderState.STOPPED, core.state)
+    assertEquals("pilotFirst", core.why)
+    assertEquals(20.0, core.report(now)!!["pilotDecodeP95BeforeMs"]!!.jsonPrimitive.content.toDouble(), 0.01)
+  }
+
+  @Test
+  fun thePilotsDecodeTimeOverOneAndAHalfTimesItsValueForThreeSecondsStopsIt() {
+    running()
+    core.onPilot(overruns = 0, decodeP95Ms = 20.0, nowNs = now)
+    core.offer(droneUnit(0, key = true), drone)
+    repeat(5) {
+      now += 500 * ms
+      core.onPilot(overruns = 0, decodeP95Ms = 28.0, nowNs = now)
+    }
+    // Under 1.5 times: goes on
+    assertTrue(core.usable)
+    repeat(6) {
+      now += 500 * ms
+      core.onPilot(overruns = 0, decodeP95Ms = 40.0, nowNs = now)
+    }
+    assertTrue("not for 3 s yet", core.usable)
+    now += 500 * ms
+    core.onPilot(overruns = 0, decodeP95Ms = 40.0, nowNs = now)
+    assertEquals("pilotFirst", core.why)
+  }
+
+  @Test
+  fun aRecoverableCodecErrorMakesTheEncoderAgainAndThreeInAMinuteStopIt() {
+    val (_, first) = steady()
+    core.onEncoderError("0x80001001", recoverable = true, nowNs = now)
+    assertTrue(first.released)
+    assertEquals(2, codecs.encoders.size)
+    assertTrue(core.usable)
+    now += 10 * second
+    core.onDecoderError("0x80001002", recoverable = true, nowNs = now)
+    // Decoder 2 made again from the kept key picture, and the encoder with it
+    assertEquals(2, codecs.decoders.size)
+    assertEquals(3, codecs.encoders.size)
+    now += 10 * second
+    core.onEncoderError("0x80001003", recoverable = true, nowNs = now)
+    assertEquals(TranscoderState.STOPPED, core.state)
+    assertEquals("failed", core.why)
+    val failures = core.report(now)!!["failures"]!!.jsonArray
+    assertTrue(failures.size >= 3)
+  }
+
+  @Test
+  fun aFatalCodecErrorStopsItAtOnce() {
+    steady()
+    core.onEncoderError("0x80000000", recoverable = false, nowNs = now)
+    assertEquals("failed", core.why)
+  }
+
+  @Test
+  fun theGlStageIsMadeAgainOnceThenAnotherErrorStopsIt() {
+    steady()
+    core.onGlError("EGL_BAD_SURFACE", now)
+    assertTrue(core.usable)
+    assertEquals(2, codecs.decoders.size)
+    assertEquals(2, codecs.encoders.size)
+    core.onGlError("EGL_BAD_SURFACE", now)
+    assertEquals("failed", core.why)
+  }
+
+  @Test
+  fun keyRequestsGoToTheEncoderCoalescedAndCountedByCause() {
+    val (decoder, encoder) = steady()
+    // The encoder's first output is a key picture
+    now += 20 * ms
+    step(1, decoder)
+    core.requestKey(RelayKeyCause.JOIN, now)
+    assertEquals(0, encoder.keys)
+    now += 400 * ms
+    core.tick(now)
+    assertEquals(1, encoder.keys)
+    core.requestKey(RelayKeyCause.DROP, now)
+    assertEquals(1, encoder.keys)
+    val counts = mapOf(RelayKeyCause.JOIN to 1L, RelayKeyCause.DROP to 1L, RelayKeyCause.SWITCH to 0L)
+    assertEquals(counts, core.keyCounts())
+    val requests = core.report(now)!!["keyRequests"]!!.jsonObject
+    assertEquals(1, requests["drop"]!!.jsonPrimitive.int)
+  }
+
+  @Test
+  fun theEncoderGoesSixtySecondsAfterTheLastNeed() {
+    val (decoder, encoder) = steady()
+    decoder.pull(now)
+    core.setNeeded(false, now)
+    now += 59 * second
+    core.tick(now)
+    assertFalse(encoder.released)
+    now += 2 * second
+    core.tick(now)
+    assertTrue(encoder.released)
+    assertEquals(TranscoderState.STANDBY, core.state)
+    // Needed again: made again
+    core.setNeeded(true, now)
+    assertEquals(2, codecs.encoders.size)
+  }
+
+  @Test
+  fun turnedOffEverythingGoes() {
+    val (decoder, encoder) = steady()
+    core.setEnabled(false, now)
+    assertTrue(decoder.released)
+    assertTrue(encoder.released)
+    assertEquals(TranscoderState.OFF, core.state)
+    assertTrue(core.usable)
+  }
+
+  @Test
+  fun theReportHasItsTimelineAndItsRates() {
+    val (decoder, encoder) = steady()
+    core.setBitrate(4_000_000, now)
+    core.setBitrate(4_000_000, now)
+    core.setBitrate(3_000_000, now)
+    assertEquals(listOf(4_000_000, 3_000_000), encoder.bitrates)
+    var index = 1
+    repeat(3) {
+      repeat(60) {
+        now += 50 * ms / 3
+        step(index++, decoder)
+      }
+      core.tick(now)
+    }
+    val report = core.report(now)!!
+    assertEquals(RelayTranscoder.TIMELINE_HEADER, report["timelineColumns"]!!.jsonPrimitive.content)
+    val lines = report["timeline"]!!.jsonArray
+    assertTrue(lines.size >= 2)
+    val columns = RelayTranscoder.TIMELINE_HEADER.split(',')
+    val line = lines.last().jsonPrimitive.content.split(',')
+    assertEquals(columns.size, line.size)
+    assertEquals("3000", line[columns.indexOf("bitrateKbps")])
+    assertEquals(3_000L, report["bitrateNowKbps"]!!.jsonPrimitive.long)
+    assertEquals(3_000L, report["bitrateMinKbps"]!!.jsonPrimitive.long)
+    assertEquals(8_000L, report["bitrateMaxKbps"]!!.jsonPrimitive.long)
+    assertEquals(2L, report["bitrateChanges"]!!.jsonPrimitive.long)
+    assertEquals("running", report["state"]!!.jsonPrimitive.content)
+    assertEquals("cbr", report["bitrateMode"]!!.jsonPrimitive.content)
+    assertNull(report["why"]!!.jsonPrimitive.contentOrNullSafe())
+    val line2 = core.line(now)!!
+    assertEquals("c2.fake.hevc.encoder", line2.encoderName)
+    assertEquals(3_000_000, line2.bitrateBps)
+    assertEquals(1920, line2.width)
+  }
+
+  private fun kotlinx.serialization.json.JsonPrimitive.contentOrNullSafe(): String? = if (isString) content else null
+}
