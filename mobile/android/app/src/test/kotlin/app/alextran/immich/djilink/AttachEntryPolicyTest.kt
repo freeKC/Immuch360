@@ -2,6 +2,7 @@ package app.alextran.immich.djilink
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -51,6 +52,18 @@ class AttachEntryPolicyTest {
     assertTrue(AttachEntryPreferences(store).entryEnabled(linkRunning = false))
     // Nothing is left in the store for the defaults
     assertEquals(0, store.size)
+  }
+
+  @Test
+  fun theYesOfAnEarlierBuildIsRemovedAndChangesNothing() {
+    val store = MemoryKeyValueStore()
+    store.write(AttachEntryPreferences.RETIRED_OPEN_ON_PLUG, "1")
+    store.write("attach.openOnPlugOff", "1")
+    val preferences = AttachEntryPreferences(store)
+    assertNull(store.read(AttachEntryPreferences.RETIRED_OPEN_ON_PLUG))
+    // The pilot's off of today is kept
+    assertFalse(preferences.openOnPlug)
+    assertEquals(1, store.size)
   }
 
   @Test

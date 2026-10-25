@@ -19,9 +19,18 @@ object AttachEntryPolicy {
  */
 class AttachEntryPreferences(private val store: KeyValueStore) {
   companion object {
-    /** Kept as "turned off": a switch never touched is on. The earlier "attach.openOnPlug" (a yes) is no longer read. */
+    /** Kept as "turned off": a switch never touched is on */
     private const val OPEN_ON_PLUG_OFF = "attach.openOnPlugOff"
     private const val SETTING_OFF = "attach.liveSettingOff"
+
+    /** The yes of the builds before 25 October, no longer read: removed when found */
+    const val RETIRED_OPEN_ON_PLUG = "attach.openOnPlug"
+  }
+
+  init {
+    if (store.read(RETIRED_OPEN_ON_PLUG) != null) {
+      store.write(RETIRED_OPEN_ON_PLUG, null)
+    }
   }
 
   /** On by default, as every experimental switch; Advanced on the live screen turns it off */

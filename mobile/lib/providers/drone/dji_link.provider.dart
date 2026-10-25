@@ -8,6 +8,7 @@ import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
@@ -67,6 +68,31 @@ class DjiLiveMemory {
 int? _noNumber(StoreKey<int> key) => null;
 
 Future<void> _dropNumber(StoreKey<int> key, int value) async {}
+
+/// The DJI settings no longer read since the build of 25 October, when every switch became on by default and kept as
+/// "turned off" under a key of its own: their numbers stay taken in [StoreKey], so that they are never given again,
+/// and what an earlier build stored under them is removed ([djiForgetRetiredSettings])
+const djiRetiredSettings = <StoreKey<bool>>[
+  StoreKey.djiObstacleAlertOn,
+  StoreKey.djiHeadsetLowestDelay,
+  StoreKey.djiObstacleHapticOn,
+  StoreKey.djiObstacleNumbersOn,
+  StoreKey.djiObstacleTvSoundOn,
+];
+
+/// Removes the values of [djiRetiredSettings] an earlier build left in [store], at the app's start; writes nothing when
+/// none is there. A failure is only logged: the values are not read anyway.
+Future<void> djiForgetRetiredSettings(StoreService store) async {
+  try {
+    for (final key in djiRetiredSettings) {
+      if (store.tryGet(key) != null) {
+        await store.delete(key);
+      }
+    }
+  } catch (error) {
+    _log.fine('The retired DJI settings stay for now: $error');
+  }
+}
 
 final djiLiveMemoryProvider = Provider<DjiLiveMemory>((ref) {
   final store = ref.watch(storeServiceProvider);

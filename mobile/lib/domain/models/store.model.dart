@@ -98,14 +98,14 @@ enum StoreKey<T> {
   djiLiveOfferAnswered<bool>._(5031),
 
   /// No longer read from the build of 25 October, when the ring became on by default ([djiObstacleRingOff]); kept so
-  /// that its number is never given again
+  /// that its number is never given again, its value removed at the start (djiRetiredSettings)
   djiObstacleAlertOn<bool>._(5032),
 
   /// The obstacle sound was turned off in Advanced, on a phone, a headset or a TV: it is on by default everywhere
   djiObstacleSoundOff<bool>._(5033),
 
   /// No longer read from the build of 25 October ([djiHeadsetLowestDelayOff]); kept so that its number is never given
-  /// again
+  /// again, its value removed at the start (djiRetiredSettings)
   djiHeadsetLowestDelay<bool>._(5034),
 
   /// "Glow from" of the obstacle ring, in centimetres: 300 when never set
@@ -120,14 +120,16 @@ enum StoreKey<T> {
   /// "Show the side" was turned off once the side is proven: it is on by default then
   djiObstacleSideOff<bool>._(5043),
 
-  /// No longer read from the build of 25 October ([djiObstacleHapticOff]); kept so that its number is never given again
+  /// No longer read from the build of 25 October ([djiObstacleHapticOff]); kept so that its number is never given
+  /// again, its value removed at the start (djiRetiredSettings)
   djiObstacleHapticOn<bool>._(5044),
 
   /// No longer read from the build of 25 October ([djiObstacleNumbersOff]); kept so that its number is never given
-  /// again
+  /// again, its value removed at the start (djiRetiredSettings)
   djiObstacleNumbersOn<bool>._(5045),
 
-  /// No longer read from the build of 25 October: a TV's sound is on by default and kept in [djiObstacleSoundOff]
+  /// No longer read from the build of 25 October: a TV's sound is on by default and kept in [djiObstacleSoundOff]; kept
+  /// so that its number is never given again, its value removed at the start (djiRetiredSettings)
   djiObstacleTvSoundOn<bool>._(5046),
 
   /// Every experimental switch of the DJI pages is on by default (FreeKC's rule of 25 October): these say the pilot
