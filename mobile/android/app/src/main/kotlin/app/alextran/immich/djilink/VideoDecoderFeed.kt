@@ -404,6 +404,12 @@ class VideoDecoderFeed(
   private var startedAtNs: Long? = null
   private var keySinceStart = false
 
+  /**
+   * The parameter sets the running codec last took: its configuration, then the key units fed. A relayed key unit with
+   * other sets at the same size flushes it first ([DecoderPolicy.flushBeforeKey])
+   */
+  private var fedSets: StreamDescription? = null
+
   /** The presentation time of the kept key unit queued to start the running codec, until its picture comes out */
   private var primerPts: Long? = null
   private var primersQueued = 0
@@ -625,6 +631,11 @@ class VideoDecoderFeed(
           return
         }
       }
+      if (DecoderPolicy.flushBeforeKey(stamp != null, unit.isKey, fedSets, resolved.description)) {
+        // A switch between the drone's stream and the phone's steady stream: the decoder starts on this key picture
+        flushForSwitch(resolved.description)
+        continue
+      }
       val index = freeInputs.removeFirstOrNull() ?: return
       // An index announced before a flush or a restart is no longer valid: it is dropped, never the unit
       val buffer = runCatching { current.getInputBuffer(index) }.getOrNull() ?: continue
@@ -633,6 +644,7 @@ class VideoDecoderFeed(
       if (primed != null) {
         // The unit itself waits for the next input buffer
         if (primed) {
+          fedSets = resolved.description
           if (primer.lastWasAfterBreak) {
             smoothing.onPrimerAfterBreak()
           }
@@ -643,6 +655,9 @@ class VideoDecoderFeed(
       }
       queue.remove(next)
       val pts = queueUnit(current, index, buffer, unit)
+      if (pts != null && unit.isKey) {
+        fedSets = resolved.description
+      }
       // Units the phone dropped for this device (BREAK), the safety net, or a picture lost on the radio: no flush, the
       // decoder goes on, and the kept key picture waits
       val gapBefore = gapPending || (stamp != null && (stamp.flags and RelayWire.UNIT_BREAK) != 0)
@@ -833,6 +848,7 @@ class VideoDecoderFeed(
       operatingRate = rate
       configurationLevel = level
       configured = description
+      fedSets = description
       outputSurface = surface
       freeInputs.clear()
       queuedAt.clear()
@@ -871,6 +887,7 @@ class VideoDecoderFeed(
     operatingRate = null
     configurationLevel = null
     configured = null
+    fedSets = null
     freeInputs.clear()
     queuedAt.clear()
     // The indices held belong to the codec that goes
@@ -886,6 +903,36 @@ class VideoDecoderFeed(
     keySinceStart = false
     primerPts = null
   }
+
+  /**
+   * A relayed key picture with other parameter sets at the same size (p2/owner-feedback-2026-10-25.md 2,
+   * p2/review-bandwidth-2026-10-25.md M2): the codec is flushed and starts on it with its sets in band, nothing of the
+   * other stream left in it. Not an overrun, not counted as one.
+   */
+  private fun flushForSwitch(description: StreamDescription) {
+    val current = codec ?: return
+    runCatching { current.flush() }
+    freeInputs.clear()
+    queuedAt.clear()
+    release.clear()
+    rendered.clear()
+    heldOutput = null
+    handler?.removeCallbacks(renderHeld)
+    handler?.removeCallbacks(releaseHeld)
+    pacer.reset()
+    primerPts = null
+    runCatching { current.start() }
+    primer.onCodecStarted()
+    policy.onStarted()
+    fedSets = description
+    switchFlushes += 1
+    Log.i(TAG, "a relayed key picture with other parameter sets: the decoder flushed, it starts on it")
+  }
+
+  /** Flushes before a relayed key picture with other parameter sets, since the page opened */
+  @Volatile
+  var switchFlushes = 0L
+    private set
 
   /** Rule 4 of the policy: the codec and the queue are emptied and decoding goes on with the next unit */
   private fun flushCodec() {

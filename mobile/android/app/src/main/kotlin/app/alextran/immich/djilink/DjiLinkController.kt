@@ -8,6 +8,7 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.PowerManager
 import android.os.SystemClock
 import android.util.Log
 import android.view.HapticFeedbackConstants
@@ -99,6 +100,9 @@ class DjiLinkController private constructor(private val context: Context) : Link
 
     /** A relay with nothing to send and no headset for this long stops by itself, as its notification says */
     const val RELAY_IDLE_STOP_MS = 10L * 60 * 1000
+
+    /** "Relay quality" in Advanced, kept in the app's own preferences: automatic, full or steady */
+    const val RELAY_QUALITY_KEY = "djilink.relayQuality"
 
     @Volatile
     private var instance: DjiLinkController? = null
@@ -199,14 +203,32 @@ class DjiLinkController private constructor(private val context: Context) : Link
   /** Who keeps the link running; read and changed under [gate] */
   private val owners = LinkOwners()
 
+  /**
+   * The phone's steady stream (p2/relay-bandwidth-2026-10-25.md): a second decoder, a GL copy and the phone's hardware
+   * H.265 encoder for the receivers whose Wi-Fi cannot carry the drone's stream. Its own codecs and threads; the units
+   * it makes go to the relay.
+   */
+  private val transcoder: RelayTranscoder = RelayTranscoder(
+    AndroidRelayCodecs(),
+    clockNs = { SystemClock.elapsedRealtimeNanos() },
+    emit = { unit, description -> relay.submitSteady(unit, description) },
+    onChange = { markDirty() },
+  )
+
   /** The relay to the headsets: the second half of the tee, after the phone's own decoder */
-  private val relay = RelayServer(
+  private val relay: RelayServer = RelayServer(
     clockNs = { SystemClock.elapsedRealtimeNanos() },
     telemetry = { sequence -> relayTelemetryBody(sequence) },
     welcomeFacts = { RelayWelcomeFacts(relayPhoneName, relayPhoneId, if (player.loaded) player.name else null) },
     onChange = { markDirty() },
+    steady = transcoder,
   )
-  private val tee = TeeSink(feed, relay)
+
+  /** The pilot's decoder first, then the relay: the drone's stream to the receivers on it, and the steady stream */
+  private val tee: TeeSink = TeeSink(feed, RelayRouter(relay, transcoder))
+
+  /** PowerManager's thermal status while the relay runs (Android 10 and later), for the steady stream */
+  private var thermalListener: Any? = null
   private val video = VideoPipeline(store, tee, videoStatistics)
   private val player = CapturePlayer(gate, clockNs = { SystemClock.elapsedRealtimeNanos() })
 
@@ -268,6 +290,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
     player.router.onVideoUnit = { unit, detector, fresh, nowNs -> video.onUnit(unit, detector, fresh, nowNs) }
     DjiLinkVideoSurfaces.listener = { surface -> feed.setViewSurface(surface) }
     store.seed = ProfileRegistry.seed20261023
+    relay.quality = RelayQuality.of(preferences.read(RELAY_QUALITY_KEY))
     // The phone receive time of a relayed unit on this device's clock, for phone receive to picture shown
     feed.phoneToLocal = { phoneNs -> receiver.clock.offsetNs?.let { phoneNs - it } }
   }
@@ -341,6 +364,8 @@ class DjiLinkController private constructor(private val context: Context) : Link
     synchronized(gate) { owners.clear() }
     if (relay.isRunning) {
       relay.stop(RelayWire.BYE_CLOSING)
+      transcoder.stop()
+      watchThermal(false)
       DjiLinkRelayService.stop(context)
     }
     if (receiver.active) {
@@ -578,11 +603,15 @@ class DjiLinkController private constructor(private val context: Context) : Link
       manager.transport?.isRunning == true -> RelaySource.CABLE
       else -> RelaySource.NONE
     }
+    // The phone's encoder is looked for once per relay session, before the first receiver's welcome
+    transcoder.start()
     val port = runCatching { relay.start(code, screens = screens) }.getOrElse {
       Log.w(TAG, "the relay could not listen: ${it.javaClass.simpleName}")
+      transcoder.stop()
       stop(LinkOwner.RELAY)
       return 0
     }
+    handler.post { watchThermal(true) }
     handler.post {
       relayIdle.reset()
       // A relay that cannot keep running in the foreground would go on listening with no notification and no Stop
@@ -614,8 +643,48 @@ class DjiLinkController private constructor(private val context: Context) : Link
   /** Stops sending: a bye to every headset; the link stops too when nothing else owns it */
   fun stopRelay() {
     relay.stop(RelayWire.BYE_STOPPED)
+    transcoder.stop()
+    watchThermal(false)
     DjiLinkRelayService.stop(context)
     stop(LinkOwner.RELAY)
+  }
+
+  /**
+   * "Relay quality" in Advanced (p2/relay-bandwidth-2026-10-25.md, 7.7 and 7.9): Automatic by default, Full stream is
+   * the off switch, Steady stream forces the phone's stream. Kept here, taken at once by a running relay.
+   */
+  fun setRelayQuality(quality: RelayQuality) {
+    preferences.write(RELAY_QUALITY_KEY, quality.wire)
+    relay.quality = quality
+    markDirty()
+  }
+
+  fun relayQuality(): RelayQuality = relay.quality
+
+  /** The battery's current now, for the steady stream's cost in the export; null where the phone does not say */
+  private fun batteryCurrentMicroAmps(): Int? = runCatching {
+    val battery = context.getSystemService(Context.BATTERY_SERVICE) as? android.os.BatteryManager
+    battery?.getIntProperty(android.os.BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)?.takeIf { it != Int.MIN_VALUE }
+  }.getOrNull()
+
+  /** The thermal status goes to the steady stream while the relay runs; on the main thread */
+  private fun watchThermal(on: Boolean) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+      return
+    }
+    val power = context.getSystemService(Context.POWER_SERVICE) as? PowerManager ?: return
+    if (on && thermalListener == null) {
+      val listener = PowerManager.OnThermalStatusChangedListener { status -> transcoder.onThermal(status) }
+      if (runCatching { power.addThermalStatusListener(listener) }.isSuccess) {
+        thermalListener = listener
+      }
+      runCatching { transcoder.onThermal(power.currentThermalStatus) }
+    } else if (!on) {
+      (thermalListener as? PowerManager.OnThermalStatusChangedListener)?.let { listener ->
+        runCatching { power.removeThermalStatusListener(listener) }
+      }
+      thermalListener = null
+    }
   }
 
   /** "New code": every headset is told and must prove the new one */
@@ -813,6 +882,20 @@ class DjiLinkController private constructor(private val context: Context) : Link
       val nowNs = SystemClock.elapsedRealtimeNanos()
       val received = receiver.snapshot(nowNs)
       return feed.smoothingNumbers(nowNs).pingNumbers(received.lostOnWifi, receiver.clock.lastRoundTripNs)
+    }
+
+    /**
+     * This device's Wi-Fi for the 96 byte ping (the facts read at most every 2 s), so the phone knows which hop is
+     * weak
+     */
+    override fun pingNetwork(): RelayPingNetwork {
+      val facts = currentNetworkFacts()
+      return RelayPingNetwork(
+        transport = RelayPingNetwork.transportOf(facts?.transport),
+        frequencyMhz = facts?.frequencyMhz ?: -1,
+        linkMbps = facts?.linkMbps ?: -1,
+        rssiDbm = facts?.rssiDbm ?: -1,
+      )
     }
 
     override fun shownPer10s(): Int {
@@ -1479,6 +1562,18 @@ class DjiLinkController private constructor(private val context: Context) : Link
     }
     if (active) {
       markDirty()
+    }
+    if (relay.isRunning) {
+      // The phase of the flight, for the drone's rate at a key picture; the pilot's decoder, which the steady stream
+      // gives way to
+      relay.motorsOn = synchronized(gate) {
+        val source = if (player.loaded) player.router else router
+        source.telemetryDecoder.values(nowNs / 1_000_000).flight?.takeIf { !it.stale }?.value?.motorsOn
+      }
+      val pilot = videoStatistics.numbers(nowNs)
+      // Its decode time is kept and judged per phase: the motors, and the drone's rate (60 a second in flight)
+      transcoder.onPilot(pilot.overruns, pilot.decodeP95Ms, nowNs, relay.motorsOn, pilot.picturesPerSecond)
+      transcoder.onBattery(batteryCurrentMicroAmps())
     }
     checkIdleRelay()
     handler.postDelayed(tick, TICK_MS)
@@ -2279,13 +2374,38 @@ private fun RelaySendingSnapshot.toPigeon(wifiLowLatencyHeld: Boolean): DjiRelay
       receiverLongestFreezeMs = said?.longestFreezeMs?.takeIf { ms -> ms >= 0 }?.toLong(),
       receiverSkips = said?.renderSkips?.takeIf { count -> count >= 0 }?.toLong(),
       receiverLate = said?.lateUnits?.takeIf { count -> count >= 0 }?.toLong(),
+      stream = it.stream,
+      steadyCapable = it.steadyCapable,
+      streamForMs = it.streamForMs,
+      bestSecondMegabits = it.bestSecondMegabits,
+      allowedMegabits = it.allowedMegabits,
+      wifiBand = it.network?.band,
+      wifiLinkMbps = it.network?.linkMbps?.takeIf { mbps -> mbps > 0 }?.toLong(),
+      wifiRssi = it.network?.rssiDbm?.takeIf { dbm -> dbm in -126..-1 }?.toLong(),
     )
   },
   refusedProofs = refusedProofs,
   unexpectedRecords = unexpectedRecords,
   wifiLowLatencyHeld = wifiLowLatencyHeld,
   unitsDropped = unitsDropped,
+  quality = quality.toPigeon(),
+  steadyState = steadyLine?.state,
+  steadyWhy = steadyLine?.why,
+  steadyEncoder = steadyLine?.encoderName,
+  steadyWidth = steadyLine?.width?.toLong(),
+  steadyHeight = steadyLine?.height?.toLong(),
+  steadyPerSecond = steadyLine?.perSecond?.toLong(),
+  steadyMegabits = steadyLine?.bitrateBps?.let { it / 1e6 },
+  steadyEncodeMedianMs = steadyLine?.encodeMedianMs,
+  steadyEncodeP95Ms = steadyLine?.encodeP95Ms,
+  droneMegabits = droneMegabitsPerSecond,
 )
+
+internal fun RelayQuality.toPigeon(): DjiRelayQuality = when (this) {
+  RelayQuality.AUTOMATIC -> DjiRelayQuality.AUTOMATIC
+  RelayQuality.FULL -> DjiRelayQuality.FULL
+  RelayQuality.STEADY -> DjiRelayQuality.STEADY
+}
 
 private fun RelayReceiveState.toPigeon(): DjiRelayReceiveState = when (this) {
   RelayReceiveState.IDLE -> DjiRelayReceiveState.IDLE
@@ -2369,6 +2489,8 @@ private fun RelayReceiveSnapshot.toPigeon(
     wifiLinkMbps = network?.linkMbps?.toLong(),
     wifiRssi = network?.rssiDbm?.toLong(),
     refreshHz = refreshHz?.toDouble(),
+    steady = steady,
+    streamSwitches = streamSwitches,
   )
 }
 

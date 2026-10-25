@@ -453,6 +453,29 @@ void main() {
     expect(watchingOnly, findsNothing);
   });
 
+  testWidgets("the phone's steady picture is said for five seconds at each switch, then gone", (tester) async {
+    final (_, _, listener) = await watching(tester);
+    final steady = find.byKey(const Key('dji_watch_tv_strip_steady'));
+    expect(steady, findsNothing);
+    DjiLinkSnapshot from({required bool phone, required int switches}) => fakeSnapshot(
+      decode: fakeDecode(),
+      relayReceiving: fakeReceiving(phoneSource: 'cable', steady: phone, streamSwitches: switches),
+      telemetryValues: fakeTelemetry(percent: 34, motorTimeS: 41.6),
+      liveFrame: fakeFrame(),
+    );
+    await push(tester, listener, from(phone: true, switches: 1));
+    expect(steady, findsOneWidget);
+    expect(find.text('Steady picture from the phone: less detail, no lost pictures'), findsOneWidget);
+    await tester.pump(djiTransientHold + djiTransientFadeOut);
+    await tester.pumpAndSettle();
+    expect(steady, findsNothing);
+    // Back to the drone's picture: nothing to say; steady again: said again
+    await push(tester, listener, from(phone: false, switches: 2));
+    expect(steady, findsNothing);
+    await push(tester, listener, from(phone: true, switches: 3));
+    expect(steady, findsOneWidget);
+  });
+
   testWidgets('the phones view: the rules on top come for five seconds, and any key brings them back', (tester) async {
     final relay = FakeRelayEnvironment();
     await openOnTv(tester, television(), relay: relay);

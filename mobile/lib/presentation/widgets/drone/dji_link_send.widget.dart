@@ -12,6 +12,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_counters.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_relay_quality.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_relay_tvs.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
@@ -160,6 +161,13 @@ class DjiLinkSendSection extends ConsumerWidget {
                 ),
               ),
           if (sending != null) ...[
+            const SizedBox(height: 4),
+            DjiLinkFact(
+              t.dji_link_relay_quality,
+              djiRelayQualityName(t, sending.quality ?? DjiRelayQuality.automatic),
+              key: const Key('dji_link_relay_quality'),
+            ),
+            const DjiRelayStreamLines(prefix: 'dji_link_relay'),
             DjiLinkFact(t.dji_link_relay_refused, '${sending.refusedProofs}'),
             DjiLinkFact(t.dji_link_relay_unexpected, '${sending.unexpectedRecords}'),
             DjiLinkFact(t.dji_link_relay_low_latency, sending.wifiLowLatencyHeld ? t.dji_link_yes : t.dji_link_no),

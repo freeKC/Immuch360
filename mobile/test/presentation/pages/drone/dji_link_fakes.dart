@@ -395,6 +395,8 @@ DjiRelayReceiving fakeReceiving({
   int failures = 0,
   double? receiveToPictureNowMs,
   int? safetyNetAgoMs,
+  bool? steady,
+  int? streamSwitches,
 }) => DjiRelayReceiving(
   state: state,
   phoneName: 'Galaxy S24+',
@@ -427,6 +429,8 @@ DjiRelayReceiving fakeReceiving({
   decodedPerSecond: 30,
   shownPerSecond: 29,
   lostOnRadio: 0,
+  steady: steady,
+  streamSwitches: streamSwitches,
 );
 
 DjiRelaySending fakeSending({String sending = 'none', List<DjiRelayHeadsetRow> headsets = const []}) => DjiRelaySending(
@@ -687,6 +691,10 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
 
   /// setLowestDelay, in order
   final lowestDelays = <bool>[];
+
+  /// "Relay quality" as the native side keeps it, and setRelayQuality in order
+  DjiRelayQuality relayQualityValue = DjiRelayQuality.automatic;
+  final relayQualities = <DjiRelayQuality>[];
   int obstacleTests = 0;
   int obstacleSamples = 0;
 
@@ -715,6 +723,15 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
 
   @override
   Future<void> setLowestDelay(bool on) async => lowestDelays.add(on);
+
+  @override
+  Future<void> setRelayQuality(DjiRelayQuality quality) async {
+    relayQualities.add(quality);
+    relayQualityValue = quality;
+  }
+
+  @override
+  Future<DjiRelayQuality> relayQuality() async => relayQualityValue;
 
   @override
   Future<void> playObstacleTest() async => obstacleTests += 1;

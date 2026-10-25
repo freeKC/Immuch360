@@ -66,6 +66,13 @@ class AccessUnit(
   /** What the relay said of a unit received from a phone; null for a unit of this device's own cable or capture */
   @Volatile
   var relay: RelayStamp? = null
+
+  /**
+   * The picture counter the relay writes in the unit header in place of the SEI's: the consecutive count of the phone's
+   * steady stream (p2/relay-bandwidth-2026-10-25.md, 7.3), which has no SEI; null for a unit of the drone
+   */
+  @Volatile
+  var headerCounter: Int? = null
 }
 
 /**

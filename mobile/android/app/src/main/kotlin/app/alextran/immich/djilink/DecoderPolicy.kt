@@ -75,6 +75,17 @@ class DecoderPolicy(
   private val gaveNoPictureBefore: (String) -> Boolean = { false },
 ) {
   companion object {
+    /**
+     * Whether the running decoder is flushed before a key unit: a relayed one ([relayed]) whose parameter sets are not
+     * the ones it last took ([fed]) at a size that needs no new configuration. A switch between the drone's stream and
+     * the phone's steady stream, or the drone's encoder starting again: the decoder then starts on that key picture
+     * with its sets in band, with nothing of the other stream left in it (p2/owner-feedback-2026-10-25.md 2,
+     * p2/review-bandwidth-2026-10-25.md M2). A size that changes configures it again instead; the units of this
+     * device's own cable never flush it here, so the pilot's decoder is left as it is.
+     */
+    fun flushBeforeKey(relayed: Boolean, isKey: Boolean, fed: StreamDescription?, next: StreamDescription): Boolean =
+      relayed && isKey && fed != null && !next.sameSetsAs(fed) && !next.needsNewConfiguration(fed)
+
     /** 3 s at 30 pictures per second */
     const val JOIN_UNITS = 90
 

@@ -8,7 +8,7 @@
     "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest; DJI live video (feat-dji-ux): the comment of the accessory attached entry, now kept by the open on plug choice"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
-    "blob": "bf08ab021ab06e1f512d3902501108361943ae5d",
+    "blob": "80b06c12896f9f010b625ab626ef81a3766014e0",
     "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only; DJI link (feat-dji-link, 12ccff821): the link page of the headset and of the phone is registered in the app engine only, and a gamepad event is handed to the page that draws the sticks; fix round of 22 October: a gamepad event reaches only a link page that is open and never creates its owner; sign in with your phone (feat-qr-pairing): the QR code scanner registered with this activity; DJI link stage 2 (feat-dji-link-2): the video view of the DJI link page registered with the app engine"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/AppHealth.kt": {
@@ -24,8 +24,8 @@
     "reason": "TV lot (5e7bf8e27): no 360 player for a stream the device cannot decode"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/AccessUnitAssembler.kt": {
-    "blob": "a1a64152ec180521b41a1b97d27c82d29ee09d98",
-    "reason": "DJI link stage 2 (feat-dji-link-2): access units at the NAL level from the video fragments; DJI relay smoothness (feat-dji-relay): the content clock of a unit and what the relay said of it"
+    "blob": "6d0c2a9e52a9bdb40c92d2ad06dce32c18bb5a8c",
+    "reason": "DJI link stage 2 (feat-dji-link-2): access units at the NAL level from the video fragments; DJI relay smoothness (feat-dji-relay): the content clock of a unit and what the relay said of it; DJI relay bandwidth (feat-dji-bandwidth): the picture counter the relay writes for a unit of the steady stream"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/AoaAccessoryManager.kt": {
     "blob": "eace987924dd35c6776eadcb09a2857942524e2e",
@@ -76,7 +76,7 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the two checksums of a control frame, built from a parameter set; fix round of 22 October: the review findings of stage 1"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DecoderPolicy.kt": {
-    "blob": "b4c3329d8011151c69f9354e28343d0517d6e222",
+    "blob": "03fbf63b87a6929788d0c166119619f4b1376cf2",
     "reason": "DJI link stage 2 (feat-dji-link-2): the decisions of the decoder feed that need no decoder, unit tested; DJI decoder fix round (feat-dji-ux): the decoders in their order, the rule of no picture after a key picture, the memory of the device and the start from the last key picture; DJI relay smoothness (feat-dji-relay): the kept key picture goes in after a BREAK only when no picture came; DJI relay fix round (feat-dji-relay): the kept key picture after any gap, ended only by a picture at or after it"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DeviceFacts.kt": {
@@ -92,16 +92,16 @@
     "reason": "DJI link stage 2b (feat-dji-link-3): the flight view of the Quest: video panel, flight panel, controls of the view only; DJI live video (feat-dji-ux): the values line of the gated values and the short delay line; DJI finalisation (feat-dji-final): the values in two columns beside the video and the obstacle alert above it, refreshed ten times a second; DJI relay fix round (feat-dji-relay): the age of the picture shown, the delay of the last 2 s and its warning; DJI obstacle ring (feat-dji-obstacle-ui): the halo panel around the video in place of the red alert panel; DJI obstacle ring fix round (feat-dji-obstacle-ui): the halo 1.5 cm behind the video; DJI integration (feat-dji-30): the circle over the video and the strip's warnings that come and go; DJI proof gates (feat-dji-proof): the distance below in the left column, the height and the speeds in the air only; DJI proof fix round (feat-dji-proof): the height of the left column after the phone's height hold"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkApiImpl.kt": {
-    "blob": "024b6a37dedf09d53aea5e7c4cbf6094a767cfe8",
-    "reason": "DJI link (feat-dji-link, 12ccff821): what Flutter asks of the link, and the switch of the accessory attached entry; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): decoder choice, captures to play, the picker, profile binding and the plugged accessory list; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): the host methods of the relay, the receiver and the flight view; DJI live video (feat-dji-ux): the host methods of the open on plug choice and the attach launch; DJI finalisation (feat-dji-final): the frame stream, the obstacle alert settings and its test sound, the reception record; DJI on Android TV (feat-dji-tv): the host method of the TVs added on the phone; DJI relay fix round (feat-dji-relay): the lowest delay asked by a headset; DJI obstacle ring (feat-dji-obstacle-ui): the ring settings, the sample and whether the phone can vibrate"
+    "blob": "06a0193f6a5ea83648aa629afff030a8e0558d2c",
+    "reason": "DJI link (feat-dji-link, 12ccff821): what Flutter asks of the link, and the switch of the accessory attached entry; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): decoder choice, captures to play, the picker, profile binding and the plugged accessory list; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): the host methods of the relay, the receiver and the flight view; DJI live video (feat-dji-ux): the host methods of the open on plug choice and the attach launch; DJI finalisation (feat-dji-final): the frame stream, the obstacle alert settings and its test sound, the reception record; DJI on Android TV (feat-dji-tv): the host method of the TVs added on the phone; DJI relay fix round (feat-dji-relay): the lowest delay asked by a headset; DJI obstacle ring (feat-dji-obstacle-ui): the ring settings, the sample and whether the phone can vibrate; DJI relay bandwidth (feat-dji-bandwidth): Relay quality kept on the native side"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkAttachActivity.kt": {
     "blob": "d859472903349e7e054283ebad094445575b762b",
     "reason": "DJI link (feat-dji-link, 12ccff821): the accessory attached entry, which only brings the application forward; fix round of 22 October: the review findings of stage 1; DJI live video (feat-dji-ux): the entry marks the launch for the live screen"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkController.kt": {
-    "blob": "2bc79634b033469dd079d0bc1673eafef6d40e67",
-    "reason": "DJI link (feat-dji-link, 12ccff821): the process scoped owner of the link, the codecs, the capture and the safety rules; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the video pipeline, the capture player, the session log and the states that follow the picture; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): owners, the relay, the receiver, the flight view and their snapshot; DJI live video (feat-dji-ux): the link that ends follows the attach entry policy; DJI decoder fix round (feat-dji-ux): the memory of the decoders, the relayed key picture kept for the decoder and the new switch reasons; DJI finalisation (feat-dji-final): the values ten times a second, the obstacle alert and its beep, the control frame ring, the reception record and the export written once; DJI on Android TV (feat-dji-tv): the TVs given to the relay, a TV that says so in its hello, and no volume warning where the volume is fixed; DJI on Android TV fix round (feat-dji-tv): the comment of the hello of a TV, a comment line under 120 columns; DJI relay smoothness (feat-dji-relay): both ends of the relay in the exports, the long pings and the snapshot, and the delay with the jitter buffer; DJI relay fix round (feat-dji-relay): the delay lines from the pictures shown, and the lowest delay of a headset; DJI obstacle ring (feat-dji-obstacle-ui): the ring decided with the phone's relayed choices, the tick and its tap, the sample; DJI obstacle ring fix round (feat-dji-obstacle-ui): the tick of the ring through ObstacleRingTicker, a sample ended when the motors start; DJI integration (feat-dji-30): the shape of the indicator chosen on a headset, to its flight view; DJI proof gates (feat-dji-proof): the height and the speeds of the live frame in the air only; DJI proof fix round (feat-dji-proof): the height of the live frame after the height hold"
+    "blob": "ad6731170b71dddf1af90a3858411439e653a384",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the process scoped owner of the link, the codecs, the capture and the safety rules; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the video pipeline, the capture player, the session log and the states that follow the picture; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): owners, the relay, the receiver, the flight view and their snapshot; DJI live video (feat-dji-ux): the link that ends follows the attach entry policy; DJI decoder fix round (feat-dji-ux): the memory of the decoders, the relayed key picture kept for the decoder and the new switch reasons; DJI finalisation (feat-dji-final): the values ten times a second, the obstacle alert and its beep, the control frame ring, the reception record and the export written once; DJI on Android TV (feat-dji-tv): the TVs given to the relay, a TV that says so in its hello, and no volume warning where the volume is fixed; DJI on Android TV fix round (feat-dji-tv): the comment of the hello of a TV, a comment line under 120 columns; DJI relay smoothness (feat-dji-relay): both ends of the relay in the exports, the long pings and the snapshot, and the delay with the jitter buffer; DJI relay fix round (feat-dji-relay): the delay lines from the pictures shown, and the lowest delay of a headset; DJI obstacle ring (feat-dji-obstacle-ui): the ring decided with the phone's relayed choices, the tick and its tap, the sample; DJI obstacle ring fix round (feat-dji-obstacle-ui): the tick of the ring through ObstacleRingTicker, a sample ended when the motors start; DJI integration (feat-dji-30): the shape of the indicator chosen on a headset, to its flight view; DJI proof gates (feat-dji-proof): the height and the speeds of the live frame in the air only; DJI proof fix round (feat-dji-proof): the height of the live frame after the height hold; DJI relay bandwidth (feat-dji-bandwidth): the steady stream wired between the tee and the relay, Relay quality, the thermal status, the pilot's decoder and the battery watched while sending, the receiver's Wi-Fi in its pings"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkRelayService.kt": {
     "blob": "5d9c39edca4d9bd8d60af2ea3a40f39c484d0505",
@@ -114,6 +114,10 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkVideoViewFactory.kt": {
     "blob": "fc73f5e2b80af60142f66884ea3de5decd298d3c",
     "reason": "DJI link stage 2 (feat-dji-link-2): the factory of the video platform view"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/EncodedUnits.kt": {
+    "blob": "15d11a2972bfdf432fd0a67ee9baace0ab0147ac",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): the encoder's output as access units, the presentation time map, the decimator and the key requests"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/Envelope.kt": {
     "blob": "d4306cab82ac60a5ae3359dfa4f69af13953f4c6",
@@ -184,8 +188,8 @@
     "reason": "DJI finalisation (feat-dji-final): what a headset received from the phone, for a bug report"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayHeadset.kt": {
-    "blob": "93e1294c97760d54c28070841731f749540b70c5",
-    "reason": "DJI link stage 2b (feat-dji-link-3): one headset on the phone: its bounded queue and its writer; DJI on Android TV (feat-dji-tv): the screen code a TV proved and what its hello says it is; DJI relay smoothness (feat-dji-relay): drops that keep the picture decodable, the counters and the timeline of each receiver; DJI relay fix round (feat-dji-relay): a fresh key unit at the head of the queue kept, a headset bound of 500 ms, the kept key units counted once written"
+    "blob": "d6471246d97038abbb26760dc6517e614d907dc3",
+    "reason": "DJI link stage 2b (feat-dji-link-3): one headset on the phone: its bounded queue and its writer; DJI on Android TV (feat-dji-tv): the screen code a TV proved and what its hello says it is; DJI relay smoothness (feat-dji-relay): drops that keep the picture decodable, the counters and the timeline of each receiver; DJI relay fix round (feat-dji-relay): a fresh key unit at the head of the queue kept, a headset bound of 500 ms, the kept key units counted once written; DJI relay bandwidth (feat-dji-bandwidth): the steady queue (a drop asks a key picture, no primer) and each receiver's stream, rate and switches"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayIdleWatch.kt": {
     "blob": "1f44a0902cb45eb3de989eb530bf8828d279d6cd",
@@ -195,25 +199,45 @@
     "blob": "a45438d80dbdc32e739e890827cae2c3f7150939",
     "reason": "DJI link stage 2b (feat-dji-link-3): the latency windows of the headset; DJI relay fix round (feat-dji-relay): the delay shown, measured, estimated apart or none"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayRateControl.kt": {
+    "blob": "b69ac8bf1eb8c58496b70a56c70f977da1952baf",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): the rate each steady receiver's link allows and the encoder's"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayReceiver.kt": {
-    "blob": "b7554e778d742f811502843ee12c537165390735",
-    "reason": "DJI link stage 2b (feat-dji-link-3): the headset side of the relay, with its reconnection; DJI decoder fix round (feat-dji-ux): a relayed key picture kept from earlier is no delay sample; DJI finalisation (feat-dji-final): every record handed to the reception record; DJI on Android TV (feat-dji-tv): a TV says it is a TV in its hello; DJI relay smoothness (feat-dji-relay): the longer unit header, the long pings and the primers counted"
+    "blob": "2cc93aefea3ca487bd274d07da1c7a6f902211bc",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the headset side of the relay, with its reconnection; DJI decoder fix round (feat-dji-ux): a relayed key picture kept from earlier is no delay sample; DJI finalisation (feat-dji-final): every record handed to the reception record; DJI on Android TV (feat-dji-tv): a TV says it is a TV in its hello; DJI relay smoothness (feat-dji-relay): the longer unit header, the long pings and the primers counted; DJI relay bandwidth (feat-dji-bandwidth): the steady stream asked in the hello, the 96 byte ping with this device's Wi-Fi, 4 s of silence on a TV"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayRouter.kt": {
+    "blob": "c01b08879aea8e3a17eb2f67033093af8be92f4c",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): the relay half of the tee: the full stream and the steady stream"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayServer.kt": {
-    "blob": "d16d8f022d81cf4b6e8c8b62f61ef9d61d71d847",
-    "reason": "DJI link stage 2b (feat-dji-link-3): the phone side of the relay: who may connect, the handshake, the headsets, the 10 Hz tick; DJI decoder fix round (feat-dji-ux): the last key picture sent first to a headset that joins; DJI on Android TV (feat-dji-tv): the screen codes of the TVs added on the phone, each connection bound to the code it proved; DJI on Android TV fix round (feat-dji-tv): the KDoc of the screen codes set while the relay is off; DJI relay smoothness (feat-dji-relay): the send buffer tuned by the kernel with TCP_NOTSENT_LOWAT, the age bound of each kind, the relay report"
+    "blob": "19e15eeaa13b952668d8e8555129a964e0e4c3fa",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the phone side of the relay: who may connect, the handshake, the headsets, the 10 Hz tick; DJI decoder fix round (feat-dji-ux): the last key picture sent first to a headset that joins; DJI on Android TV (feat-dji-tv): the screen codes of the TVs added on the phone, each connection bound to the code it proved; DJI on Android TV fix round (feat-dji-tv): the KDoc of the screen codes set while the relay is off; DJI relay smoothness (feat-dji-relay): the send buffer tuned by the kernel with TCP_NOTSENT_LOWAT, the age bound of each kind, the relay report; DJI relay bandwidth (feat-dji-bandwidth): the second stream, Automatic and its switches, key pictures on demand, the unsent bytes that follow the rate"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelaySmoothing.kt": {
     "blob": "91dbeb40c90d1c08968727d09ac6b1446b6e1fb0",
     "reason": "DJI relay smoothness (feat-dji-relay): the jitter buffer, the render rules, the counters and the unit timing ring of a receiver; DJI relay fix round (feat-dji-relay): the release of the decoded pictures, the base taken slowly, the age of the picture shown and the safety net"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayStreamPolicy.kt": {
+    "blob": "195a0b6a5f716c9a2188db491f1a29d000cfc1c2",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): Relay quality, Automatic for each receiver and the memory of a steady flight"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayTelemetry.kt": {
     "blob": "8b92d4aa7750791cd072a1e821be9ba1befdd240",
     "reason": "DJI link stage 2b (feat-dji-link-3): the telemetry record of the relay, built and read with the JSON element API; DJI finalisation (feat-dji-final): the readings of the second telemetry reading as optional fields; DJI obstacle ring (feat-dji-obstacle-ui): the sectors and the phone's ring choices as optional fields; DJI proof fix round (feat-dji-proof): the phone's height hold in the telemetry record, absent from an earlier phone"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayTranscoder.kt": {
+    "blob": "492ae6d2eb87ac79179eb6a915e08520716bc96e",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): the steady stream's rules apart from the codecs: starts, decimation, failures, report"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayTranscoderAndroid.kt": {
+    "blob": "6f74cc609c555998f5df1b839b081b9f05a31d9f",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): the second decoder, the GL copy and the phone's H.265 encoder"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayWire.kt": {
-    "blob": "55db2381a336cbb0ab80f26875c733eb41a0c1c2",
-    "reason": "DJI link stage 2b (feat-dji-link-3): relay protocol 1: records, limits, proofs; DJI decoder fix round (feat-dji-ux): the PRIMER flag of a unit; DJI relay smoothness (feat-dji-relay): the longer unit header and the long ping, each asked for by the other end"
+    "blob": "dd538ab19a0350f88f1548fa5d8f570b8a6e7707",
+    "reason": "DJI link stage 2b (feat-dji-link-3): relay protocol 1: records, limits, proofs; DJI decoder fix round (feat-dji-ux): the PRIMER flag of a unit; DJI relay smoothness (feat-dji-relay): the longer unit header and the long ping, each asked for by the other end; DJI relay bandwidth (feat-dji-bandwidth): the steady stream on the wire: UNIT_PHONE, the phone encoder's parameter sets and the 96 byte ping"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RingCircle.kt": {
     "blob": "cc7c8e06085c5e3e0a39543971b54a0543d8c8ac",
@@ -248,7 +272,7 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): what the device itself says it can do about a USB accessory; DJI on Android TV (feat-dji-tv): a television never takes the cable path"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoDecoderFeed.kt": {
-    "blob": "9ea6db02dcd737baf47d957e68dee9ebf75ccc81",
+    "blob": "b04f9269326f8c06a74e2914370e5a8510c15b5d",
     "reason": "DJI link (feat-dji-link, 12ccff821): the hardware decoder fed by hand, asleep until a later stage wakes it; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the decoder rewritten: selection, configuration chain, software fallback, flush on backlog, surface switching, statistics; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): the operating rate on Qualcomm decoders, pictures shown per second; DJI decoder fix round (feat-dji-ux): the decoder the policy names, started from the last key picture, and the memory of a decoder that showed nothing; DJI relay smoothness (feat-dji-relay): the paced display of a relayed stream and explicit render times on the clock of the surface; DJI relay fix round (feat-dji-relay): every decoded picture shown unless a newer one is due, and a safety net without a flush"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/VideoFragments.kt": {
@@ -395,6 +419,10 @@
     "blob": "11973aa56e39d69188910262346c787558d457bb",
     "reason": "DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/EncodedUnitsTest.kt": {
+    "blob": "b92f6e46f3ea04a1c82cece2f74e3dc62a63dbba",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): tests of the encoder's units on libx265 vectors"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/EnvelopeTest.kt": {
     "blob": "2188d90bb45323abcfa825c7303cf8463da9b342",
     "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the envelope decoder, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job"
@@ -503,6 +531,14 @@
     "blob": "f213c26ba3d5c0819d30c6e9d1c47d7c9bebbc04",
     "reason": "DJI relay smoothness (feat-dji-relay): unit tests of the drops of a receiver's queue, run by the Kotlin unit tests job; DJI relay fix round (feat-dji-relay): unit tests of a key unit at the head and of the headset bound"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayQueueSteadyTest.kt": {
+    "blob": "0b1b8089b5eb2d13cd3de5fd3b996cde86b42aec",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): tests of the steady queue and the key requests"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayRateControlTest.kt": {
+    "blob": "b04feadf2fc1f68c6283f559df4248d0787edad8",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): tests of the rate, with the Wi-Fi of the 25 October flights replayed"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayReceiverStateTest.kt": {
     "blob": "e40d957a671179b18616fa2d5ef14d5e2856cb72",
     "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job"
@@ -519,6 +555,14 @@
     "blob": "45b6b041be644749e21ed1fb37702c71a63a19f9",
     "reason": "DJI relay smoothness (feat-dji-relay): unit tests of the wire of the relay's smoothness, run by the Kotlin unit tests job; DJI relay fix round (feat-dji-relay): the headset bound of 500 ms"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelaySteadyWireTest.kt": {
+    "blob": "484a0877153fcadf32e07946dbfcf3eb3041c978",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): loopback tests of the steady stream on the wire"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayStreamPolicyTest.kt": {
+    "blob": "51f93e9877ee63f6b7fb1cf07742d5ae563fc7af",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): tests of Automatic, Full stream and Steady stream"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayTelemetryTest.kt": {
     "blob": "6169ace75e12f78e9bff988ca8692c6f6bc1d3d8",
     "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job; DJI finalisation (feat-dji-final): unit test of the optional relay fields; DJI obstacle ring (feat-dji-obstacle-ui): unit tests of the relayed sectors and ring choices; DJI proof fix round (feat-dji-proof): unit test of the height hold sent to a receiver"
@@ -526,6 +570,10 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayTestPeers.kt": {
     "blob": "257b636e9d9c8b75d7e8bb60a2edb83270114dbd",
     "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job; DJI on Android TV (feat-dji-tv): the test headset says its kind"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayTranscoderStateTest.kt": {
+    "blob": "cef4673a48216101488d7aa01beddf6d98d67e7a",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): tests of the transcoder with fake codecs"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayWireTest.kt": {
     "blob": "b3a85a2b834768fac1f793912558a9f91a95248c",
@@ -579,6 +627,14 @@
     "blob": "7d5062fb96cb57fd92eb50b09e47368ed84de5bb",
     "reason": "TV lot (f5055f1e2): unit tests of TvDevice, run by the Kotlin unit tests job"
   },
+  "mobile/android/app/src/test/resources/djilink/make_encoder_vectors.py": {
+    "blob": "beefa7a7c88eeff47281ec1e731e5743651df013",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): the maker of the libx265 vectors"
+  },
+  "mobile/android/app/src/test/resources/djilink/make_relay_capacity.py": {
+    "blob": "84d171160a145095df64eb56060cecfe18428f1f",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): the maker of the 25 October capacity fixture"
+  },
   "mobile/android/app/src/test/resources/djilink/make_relay_vectors.py": {
     "blob": "a207ef5f97f9fb60d1ef1666380b3ed65ae07091",
     "reason": "DJI link stage 2b (feat-dji-link-3): the generator of the known answers of the relay proofs"
@@ -586,6 +642,14 @@
   "mobile/android/app/src/test/resources/djilink/proof-vectors.json": {
     "blob": "89a31862510f8eb52091b3ebd38025053097d8cb",
     "reason": "DJI proof gates (feat-dji-proof): bodies cut from the 25 October capture, position bytes zeroed, for ProofVectorsTest"
+  },
+  "mobile/android/app/src/test/resources/djilink/relay-capacity-20261025.csv": {
+    "blob": "3d7906505a493e2737e8476c98f54ad2107b562d",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): the Wi-Fi capacity of the 25 October flights"
+  },
+  "mobile/android/app/src/test/resources/djilink/relay-encoder-vectors.json": {
+    "blob": "2e279e5d7caa79238d8e908bd527317800668bf1",
+    "reason": "DJI relay bandwidth (feat-dji-bandwidth): libx265 access units made on this PC"
   },
   "mobile/android/app/src/test/resources/djilink/relay-vectors.json": {
     "blob": "4969998066e4be13fee1b40f17d983edc8df4e3b",

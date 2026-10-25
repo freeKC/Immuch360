@@ -13,6 +13,7 @@ import java.net.Socket
 import java.net.SocketTimeoutException
 import java.security.SecureRandom
 import java.util.concurrent.atomic.AtomicInteger
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
@@ -66,6 +67,18 @@ data class RelayHeadsetRow(
   val sendBufferBytes: Int? = null,
   /** From its long pings, null from a receiver of an earlier build */
   val receiver: RelayPingNumbers? = null,
+  /** The stream it gets: full or steady (p2/relay-bandwidth-2026-10-25.md, 7.10) */
+  val stream: String = RelayStream.FULL.wire,
+  /** Its hello says it takes the steady stream; false for a receiver of an earlier build */
+  val steadyCapable: Boolean = false,
+  /** Since it is on this stream */
+  val streamForMs: Long? = null,
+  /** The best second its socket carried in the last 2 minutes */
+  val bestSecondMegabits: Double? = null,
+  /** The rate its link allows the steady stream, while it is on it */
+  val allowedMegabits: Double? = null,
+  /** Its own Wi-Fi, from its 96 byte pings */
+  val network: RelayPingNetwork? = null,
 )
 
 data class RelaySendingSnapshot(
@@ -78,6 +91,12 @@ data class RelaySendingSnapshot(
   val unitsDropped: Long,
   /** Key units sent ahead of the live ones: to receivers that joined, and after drops */
   val primersSent: Long = 0,
+  /** "Relay quality" */
+  val quality: RelayQuality = RelayQuality.AUTOMATIC,
+  /** The steady stream's line, null on a phone that has none to describe */
+  val steadyLine: RelaySteadyLine? = null,
+  /** What the drone sent in the last second */
+  val droneMegabitsPerSecond: Double? = null,
 )
 
 /**
@@ -108,6 +127,21 @@ object RelaySocketTuning {
     }
     return RelaySocketFacts(runCatching { socket.sendBufferSize }.getOrNull(), lowWater)
   }
+
+  /**
+   * The unsent bytes bound of a steady receiver, set again as its rate changes (p2/relay-bandwidth-2026-10-25.md, 7.6);
+   * false when refused
+   */
+  fun setLowWater(socket: Socket, bytes: Int): Boolean = runCatching {
+    val duplicate = android.os.ParcelFileDescriptor.fromSocket(socket)
+    try {
+      val tcp = android.system.OsConstants.IPPROTO_TCP
+      android.system.Os.setsockoptInt(duplicate.fileDescriptor, tcp, TCP_NOTSENT_LOWAT, bytes)
+      true
+    } finally {
+      runCatching { duplicate.close() }
+    }
+  }.getOrDefault(false)
 }
 
 /**
@@ -149,6 +183,9 @@ class RelayServer(
   private val queueMaxAgeNs: Long? = null,
   private val queueMaxBytes: Long = RelayQueue.MAX_BYTES,
   private val socketTuning: (Socket) -> RelaySocketFacts = RelaySocketTuning::tune,
+  /** The phone's steady stream (p2/relay-bandwidth-2026-10-25.md, 7); null: the full stream only */
+  private val steady: RelaySteadySource? = null,
+  private val lowWaterTuning: (Socket, Int) -> Boolean = RelaySocketTuning::setLowWater,
 ) : DecoderSink {
   companion object {
     private const val TAG = "DjiRelay"
@@ -179,6 +216,37 @@ class RelayServer(
 
     /** Receivers that left, kept for the export */
     const val LEFT_KEPT = 8
+
+    /**
+     * After a drone key unit, the units read before the way back of the steady receivers is judged: the phase the key
+     * starts is read from their picture rate (p2/review-bandwidth-2026-10-25.md M5); at most [PHASE_WAIT_NS]
+     */
+    const val PHASE_UNITS = 6
+    const val PHASE_WAIT_NS = 400_000_000L
+
+    /**
+     * [unit] with the parameter sets of [description] in band before it when it has none: a key unit a receiver must
+     * decode at once with the sets it brings, whatever sets its decoder had (p2/review-bandwidth-2026-10-25.md M2)
+     */
+    fun withSets(unit: AccessUnit, description: StreamDescription): AccessUnit {
+      if (unit.hasParameterSets) {
+        return unit
+      }
+      val bytes = description.configuration() + unit.bytes
+      val nals = AnnexB.split(bytes)
+      return AccessUnit(
+        bytes = bytes,
+        nalTypes = IntArray(nals.size) { HevcNal.type(bytes[nals[it].offset].toInt() and 0xFF) },
+        nalOffsets = IntArray(nals.size) { nals[it].offset },
+        firstArrivalNs = unit.firstArrivalNs,
+        lastArrivalNs = unit.lastArrivalNs,
+        closedBy = unit.closedBy,
+        channel = unit.channel,
+      ).also {
+        it.contentMs = unit.contentMs
+        it.headerCounter = unit.headerCounter
+      }
+    }
 
     private fun log(message: String) {
       runCatching { android.util.Log.i(TAG, message) }
@@ -228,6 +296,13 @@ class RelayServer(
   @Volatile
   var primersSent = 0L
     private set
+  /**
+   * Kept drone key units sent, decoded at once with their sets in band, to receivers that went back from the steady
+   * stream between two drone key pictures
+   */
+  @Volatile
+  var fallbackKeys = 0L
+    private set
   private var telemetrySequence = 0L
   private var nextTelemetryNs = 0L
   private var droppedOfClosed = 0L
@@ -243,6 +318,36 @@ class RelayServer(
   /** What is being relayed; the units of a received stream are never relayed (the controller sets [RelaySource.NONE]) */
   @Volatile
   var source: RelaySource = RelaySource.NONE
+
+  /** "Relay quality" in Advanced: Automatic by default, Full stream is the off switch */
+  @Volatile
+  var quality: RelayQuality = RelayQuality.AUTOMATIC
+
+  /** Whether the drone's motors run, from the phone's telemetry; null when unknown (the phase of a flight) */
+  @Volatile
+  var motorsOn: Boolean? = null
+
+  // The steady stream, under [lock]
+  private val droneRates = DroneRateMemory()
+  private val steadyMemory = RelaySteadyMemory()
+  private val encoderRate = RelayEncoderRate()
+  private var lastSteady: ResolvedDescription? = null
+  private val droneSent = ArrayDeque<LongArray>()
+  private var nextDroneSecondNs = 0L
+  private var steadyUnits = 0L
+
+  /** The drone's picture rate since its last key picture: the phase of the flight */
+  private val pictureRate = DronePictureRate()
+
+  /** The drone's last key unit and the units after it, until the phase it starts is known */
+  private class KeyWindow(val key: AccessUnit, val description: ResolvedDescription, val atNs: Long) {
+    val after = ArrayList<AccessUnit>()
+  }
+
+  private var keyWindow: KeyWindow? = null
+
+  /** Under [lock]: whether the drone flies, from its picture rate, else from its motors; null when unknown */
+  private fun flyingLocked(): Boolean? = pictureRate.flying() ?: motorsOn
 
   val isRunning: Boolean get() = running
 
@@ -274,6 +379,11 @@ class RelayServer(
     this.code = code
     screenCodes = validScreenCodes(screens)
     serverSocket = socket
+    synchronized(lock) {
+      // A receiver that needed the steady stream in a flight is remembered for this relay session only
+      steadyMemory.clear()
+      encoderRate.reset()
+    }
     running = true
     nextTelemetryNs = clockNs()
     Thread({ acceptLoop(socket) }, "DjiRelayAccept").apply { isDaemon = true }.start()
@@ -379,6 +489,16 @@ class RelayServer(
   // The relay half of the tee
 
   override fun submit(unit: AccessUnit, description: ResolvedDescription) {
+    if (submitDrone(unit, description)) {
+      askSteadySwitch()
+    }
+  }
+
+  /**
+   * A drone unit to the receivers on the full stream; true when a switch to the steady stream is to be asked, which
+   * [RelayRouter] does once the steady stream saw the same unit (p2/review-bandwidth-2026-10-25.md M1)
+   */
+  internal fun submitDrone(unit: AccessUnit, description: ResolvedDescription): Boolean {
     if (unit.isKey) {
       // Kept even before the relay runs: a headset that joins later starts its decoder from it
       synchronized(lock) {
@@ -387,16 +507,32 @@ class RelayServer(
     }
     val relayed = source
     if (!running || relayed == RelaySource.NONE) {
-      return
+      return false
     }
     val now = clockNs()
-    var flags = 0
-    if (unit.isKey) flags = flags or RelayWire.UNIT_KEY
-    if (unit.hasParameterSets) flags = flags or RelayWire.UNIT_IN_BAND
-    if (relayed == RelaySource.REPLAY) flags = flags or RelayWire.UNIT_REPLAY
+    var askSwitch = false
     synchronized(lock) {
       lastResolved = description
+      droneSent.addLast(longArrayOf(now, unit.size.toLong()))
+      trimDroneLocked(now)
+      pictureRate.onUnit(unit.contentMs, unit.isKey)
+      if (unit.isKey) {
+        keyWindow = KeyWindow(unit, description, now)
+      } else {
+        keyWindow?.after?.add(unit)
+      }
+      val window = keyWindow
+      if (window != null && !unit.isKey &&
+        (window.after.size + 1 >= PHASE_UNITS || now - window.atNs >= PHASE_WAIT_NS)
+      ) {
+        keyWindow = null
+        askSwitch = atDroneKeyLocked(window, now)
+      }
       for (headset in headsets) {
+        // A receiver on the phone's steady stream gets none of the drone's units
+        if (headset.stream != RelayStream.FULL) {
+          continue
+        }
         if (unit.isKey || !description.description.sameSetsAs(headset.lastDescription)) {
           headset.queue.offerRecord(
             RelayWire.PARAMETERS,
@@ -406,12 +542,290 @@ class RelayServer(
           )
           headset.lastDescription = description.description
         }
-        headset.queue.offerUnit(unit, flags, headset.breakNext, now) { recoveryPrimer(description, relayed) }
+        // A key unit always brings its sets in band (the drone's do): a receiver's decoder configured for the same
+        // size takes them at it
+        val sent = if (unit.isKey) withSets(unit, description.description) else unit
+        headset.queue.offerUnit(sent, unitFlags(sent, relayed), headset.breakNext, now) {
+          recoveryPrimer(description, relayed)
+        }
         headset.breakNext = false
         headset.unitSinceReset = true
         headset.resetQueued = false
       }
     }
+    return askSwitch
+  }
+
+  /** The steady stream is needed at once, with a key picture to switch at */
+  internal fun askSteadySwitch(nowNs: Long = clockNs()) {
+    steady?.setNeeded(true, nowNs)
+    steady?.requestKey(RelayKeyCause.SWITCH, nowNs)
+  }
+
+  private fun unitFlags(unit: AccessUnit, relayed: RelaySource): Int {
+    var flags = 0
+    if (unit.isKey) flags = flags or RelayWire.UNIT_KEY
+    if (unit.hasParameterSets) flags = flags or RelayWire.UNIT_IN_BAND
+    if (relayed == RelaySource.REPLAY) flags = flags or RelayWire.UNIT_REPLAY
+    return flags
+  }
+
+  /**
+   * Under [lock], a few units after a drone key unit (a take off, a landing, the link start), once the phase it starts
+   * is known from the drone's picture rate (p2/relay-bandwidth-2026-10-25.md, 7.5 item 3 and 7.7;
+   * p2/review-bandwidth-2026-10-25.md M5): under Automatic, a steady receiver goes back to the drone's stream when it
+   * was quiet for 30 s and its path carried 1.5 times the drone's rate in that phase; it gets the key unit with its
+   * sets in band and the units after it, from a clean start. A receiver that needed the steady stream in an earlier
+   * flight of this session starts the flight steady. True when a switch to the steady stream is asked.
+   */
+  private fun atDroneKeyLocked(window: KeyWindow, nowNs: Long): Boolean {
+    val usable = steady?.usable == true
+    val flying = flyingLocked()
+    val expected = droneRates.expected(flying)
+    var ask = false
+    for (headset in headsets) {
+      if (headset.stream == RelayStream.STEADY) {
+        if (quality != RelayQuality.AUTOMATIC) {
+          // Steady stream keeps it; Full stream took it back on the tick already
+          continue
+        }
+        val capacity = headset.capacityBits()
+        val check = headset.policy.backCheck(nowNs, expected, capacity)
+        headset.noteBack(RelayBackRecord(nowNs, check, flying, pictureRate.perSecond(), expected, capacity))
+        if (check == RelayBackCheck.BACK) {
+          backAtKeyLocked(headset, window, nowNs)
+        }
+      } else if (flying == true && headset.pendingSteady == null && headset.steadyCapable && usable &&
+        quality == RelayQuality.AUTOMATIC && headset.policy.stream == RelayStream.FULL &&
+        steadyMemory.knows(steadyMemory.key(headset.name, headset.address))
+      ) {
+        headset.policy.goSteady()
+        headset.pendingSteady = RelaySwitchWhy.MEMORY
+        ask = true
+      }
+    }
+    return ask
+  }
+
+  /**
+   * Under [lock]: [headset] goes back to the drone's stream at the key unit of [window]: its steady units go (a switch,
+   * not a drop), then the drone's parameter sets, the key unit with its sets in band and BREAK, and the units after it
+   * but the one being submitted, which follows as for every receiver on the full stream
+   */
+  private fun backAtKeyLocked(headset: RelayHeadset, window: KeyWindow, nowNs: Long) {
+    val relayed = source
+    headset.queue.switchStream(toSteady = false, breakNext = headset.unitSinceReset)
+    headset.recordSwitch(nowNs, RelayStream.FULL, RelaySwitchWhy.QUIET)
+    headset.followLowWater(RelayWire.NOT_SENT_LOW_WATER_BYTES)
+    val description = window.description
+    headset.queue.offerRecord(
+      RelayWire.PARAMETERS,
+      RelayWire.parametersFlag(description.source),
+      RelayWire.parametersBody(description.description),
+      nowNs,
+    )
+    headset.lastDescription = description.description
+    val key = withSets(window.key, description.description)
+    headset.queue.offerUnit(key, unitFlags(key, relayed), breakBefore = false, nowNs = nowNs)
+    for (unit in window.after.dropLast(1)) {
+      headset.queue.offerUnit(unit, unitFlags(unit, relayed), breakBefore = false, nowNs = nowNs)
+    }
+    headset.breakNext = false
+    headset.unitSinceReset = true
+  }
+
+  /**
+   * A unit of the phone's steady stream (p2/relay-bandwidth-2026-10-25.md, 7.2 DjiRelayEnc), on the encoder's thread:
+   * to every receiver on the steady stream, flagged as the phone's, with the parameter sets of the phone's encoder
+   * before each key unit; a receiver waiting to switch to it switches at its key unit. A drop asks the encoder for a
+   * key picture.
+   */
+  fun submitSteady(unit: AccessUnit, description: ResolvedDescription) {
+    val relayed = source
+    if (!running || relayed == RelaySource.NONE) {
+      return
+    }
+    val now = clockNs()
+    var flags = RelayWire.UNIT_PHONE
+    if (unit.isKey) flags = flags or RelayWire.UNIT_KEY
+    if (unit.hasParameterSets) flags = flags or RelayWire.UNIT_IN_BAND
+    if (relayed == RelaySource.REPLAY) flags = flags or RelayWire.UNIT_REPLAY
+    var dropped = false
+    synchronized(lock) {
+      lastSteady = description
+      steadyUnits += 1
+      for (headset in headsets) {
+        if (headset.stream == RelayStream.FULL) {
+          val why = headset.pendingSteady
+          if (why == null || !unit.isKey) {
+            continue
+          }
+          // Its full backlog goes, counted as a switch; the steady parameter sets and this key unit go with BREAK
+          headset.queue.switchStream(toSteady = true, headset.steadyMaxAgeNs, breakNext = headset.unitSinceReset)
+          headset.recordSwitch(now, RelayStream.STEADY, why)
+          headset.pendingSteady = null
+          headset.lastDescription = null
+          headset.followLowWater(RelayLowWater.bytesFor(headset.rate.allowedBps))
+        }
+        val parameters = if (unit.isKey || !description.description.sameSetsAs(headset.lastDescription)) {
+          RelayWire.parametersBody(description.description)
+        } else {
+          null
+        }
+        val offer = headset.queue.offerSteadyUnit(unit, flags, parameters, RelayWire.PARAMETERS_PHONE_ENCODER, now)
+        if (offer.queued) {
+          if (parameters != null) {
+            headset.lastDescription = description.description
+          }
+          headset.unitSinceReset = true
+          headset.resetQueued = false
+        }
+        if (offer.dropped) {
+          dropped = true
+        }
+      }
+    }
+    if (dropped) {
+      steady?.requestKey(RelayKeyCause.DROP, now)
+    }
+  }
+
+  /**
+   * Under [lock]: back to the drone's stream at once, between two drone key pictures (the setting turned to Full
+   * stream, or the steady stream stopped). The drone's parameter sets, then the kept drone key unit with its sets in
+   * band and BREAK, not as a primer: the receiver decodes it at once, so that its decoder takes the drone's sets again
+   * rather than parse the drone's units with the phone encoder's (p2/review-bandwidth-2026-10-25.md M2). Then the live
+   * units, the first with BREAK too: they predict from pictures the receiver never had, and the picture repairs as the
+   * drone's refresh goes over it.
+   */
+  private fun fallbackToFullLocked(headset: RelayHeadset, why: RelaySwitchWhy, nowNs: Long) {
+    headset.queue.switchStream(toSteady = false, breakNext = true)
+    headset.recordSwitch(nowNs, RelayStream.FULL, why)
+    headset.pendingSteady = null
+    headset.policy.backToFull()
+    headset.lastDescription = null
+    headset.followLowWater(RelayWire.NOT_SENT_LOW_WATER_BYTES)
+    val last = lastResolved ?: return
+    headset.queue.offerRecord(
+      RelayWire.PARAMETERS,
+      RelayWire.parametersFlag(last.source),
+      RelayWire.parametersBody(last.description),
+      nowNs,
+    )
+    headset.lastDescription = last.description
+    lastKey?.takeIf { it.description.sameSetsAs(last.description) }?.let { kept ->
+      val key = withSets(kept.unit, kept.description)
+      if (headset.queue.offerUnit(key, unitFlags(key, source), breakBefore = false, nowNs = nowNs)) {
+        fallbackKeys += 1
+        headset.breakNext = true
+      }
+    }
+  }
+
+  /** Under [lock]: the drone's units of the last second only */
+  private fun trimDroneLocked(nowNs: Long) {
+    while (droneSent.isNotEmpty() && nowNs - droneSent.first()[0] > 1_000_000_000L) {
+      droneSent.removeFirst()
+    }
+  }
+
+  /** What the drone sent in the last second, in bits */
+  private fun droneBitsLocked(nowNs: Long): Long {
+    trimDroneLocked(nowNs)
+    return droneSent.sumOf { it[1] } * 8
+  }
+
+  /**
+   * The steady stream on the tick (p2/relay-bandwidth-2026-10-25.md, 7.5 to 7.7): for each receiver that takes it,
+   * Automatic's rules and the setting; the rate each steady receiver's link allows and the encoder's, its unsent bytes
+   * bound, the drops the tick sees; then the transcoder's own watchdogs. Nothing here waits on a socket.
+   */
+  private fun manageStreams(nowNs: Long) {
+    val source = steady ?: return
+    val usable = source.usable
+    val enabled = running && this.source != RelaySource.NONE && quality != RelayQuality.FULL
+    var capable = false
+    var needed = false
+    var askSwitch = false
+    var askDrop = false
+    var slow = false
+    val allowed = mutableListOf<Int>()
+    synchronized(lock) {
+      if (nowNs >= nextDroneSecondNs) {
+        nextDroneSecondNs = nowNs + 1_000_000_000L
+        droneRates.onSecond(droneBitsLocked(nowNs), flyingLocked())
+      }
+      for (headset in headsets) {
+        if (!headset.steadyCapable) {
+          continue
+        }
+        capable = true
+        val age = headset.queue.oldestUnitAgeNs(nowNs) ?: 0L
+        if (headset.stream == RelayStream.STEADY) {
+          if (!usable || quality == RelayQuality.FULL) {
+            fallbackToFullLocked(
+              headset,
+              if (usable) RelaySwitchWhy.SETTING else RelaySwitchWhy.TRANSCODER,
+              nowNs,
+            )
+            continue
+          }
+          needed = true
+          if (headset.queue.checkSteadyAge(nowNs)) {
+            askDrop = true
+          }
+          val drops = headset.queue.counters().steadyDrops
+          val dropped = drops > headset.lastSteadyDrops
+          headset.lastSteadyDrops = drops
+          headset.policy.onSteadyTick(nowNs, age)
+          headset.rate.onTick(nowNs, age, headset.bitsLastSecond(nowNs), headset.stats.takeLongestWrite(), dropped)
+          headset.followLowWater(RelayLowWater.bytesFor(headset.rate.allowedBps))
+          allowed += headset.rate.allowedBps
+          if (headset.rate.slow) {
+            slow = true
+          }
+        } else {
+          val overloads = headset.queue.overloadCount
+          val dropped = overloads > headset.lastOverloads
+          headset.lastOverloads = overloads
+          headset.stats.takeLongestWrite()
+          if (!usable || !enabled) {
+            headset.pendingSteady = null
+            continue
+          }
+          if (headset.pendingSteady != null) {
+            needed = true
+            continue
+          }
+          val why = if (quality == RelayQuality.AUTOMATIC) headset.policy.onFullTick(nowNs, age, dropped) else null
+          if (relayTargetStream(quality, true, true, headset.policy.stream) == RelayStream.STEADY) {
+            headset.pendingSteady = why ?: RelaySwitchWhy.SETTING
+            if (why == null) {
+              // The setting switches it: Automatic, chosen later, keeps it steady until a way back at a drone key
+              // picture (p2/review-bandwidth-2026-10-25.md m6)
+              headset.policy.goSteady()
+            }
+            if (flyingLocked() == true && quality == RelayQuality.AUTOMATIC) {
+              steadyMemory.remember(steadyMemory.key(headset.name, headset.address))
+            }
+            needed = true
+            askSwitch = true
+          }
+        }
+      }
+    }
+    source.setEnabled(enabled, nowNs)
+    source.setCapableReceivers(capable, nowNs)
+    source.setNeeded(needed, nowNs)
+    if (askSwitch) {
+      source.requestKey(RelayKeyCause.SWITCH, nowNs)
+    }
+    if (askDrop) {
+      source.requestKey(RelayKeyCause.DROP, nowNs)
+    }
+    encoderRate.next(allowed, null, nowNs)?.let { source.setBitrate(it, nowNs) }
+    source.setPictureRate(if (slow) 15 else 30, nowNs)
+    source.tick(nowNs)
   }
 
   /**
@@ -448,6 +862,9 @@ class RelayServer(
     synchronized(lock) {
       lastResolved = null
       lastKey = null
+      lastSteady = null
+      keyWindow = null
+      pictureRate.reset()
       for (headset in headsets) {
         headset.queue.clearForReset()
         headset.lastDescription = null
@@ -509,6 +926,7 @@ class RelayServer(
         headset.close("silent")
       }
     }
+    manageStreams(nowNs)
   }
 
   /**
@@ -645,6 +1063,10 @@ class RelayServer(
       val kind = (hello.json?.get("kind") as? JsonPrimitive)?.contentOrNull?.takeIf { KIND.matches(it) }
       // A receiver of this build reads the unit header with the content clock, and says so
       val longHeader = (hello.json?.get("unitHeader") as? JsonPrimitive)?.intOrNull == RelayWire.UNIT_HEADER_LONG_BYTES
+      // A receiver of the bandwidth build takes the phone's steady stream and sends the 96 byte ping, and says so
+      val steadyAsked = (hello.json?.get("steady") as? JsonPrimitive)?.intOrNull == 1
+      val steadyPings = (hello.json?.get("pingBytes") as? JsonPrimitive)?.intOrNull == RelayWire.PING_STEADY_BYTES
+      val steadyOffered = steadyAsked && steady?.available == true
       val facts = welcomeFacts()
       val resolved = synchronized(lock) { lastResolved }
       val info = resolved?.description?.info
@@ -669,7 +1091,12 @@ class RelayServer(
           put("unitHeader", RelayWire.UNIT_HEADER_LONG_BYTES)
         }
         // Pings with the receiver's own numbers are taken; a receiver of an earlier build ignores this
-        put("pingBytes", RelayWire.PING_LONG_BYTES)
+        put("pingBytes", if (steadyPings) RelayWire.PING_STEADY_BYTES else RelayWire.PING_LONG_BYTES)
+        if (steadyOffered) {
+          // This phone may send it the steady stream: units flagged as the phone's, parameter sets that change at a
+          // BREAK
+          put("steady", 1)
+        }
       }
       // The phone proves the code this connection proved: a TV checks it with its own code
       val phoneProof = RelayWire.proof(proved.code, RelayWire.ROLE_PHONE, serverNonce, hello.clientNonce)
@@ -690,7 +1117,11 @@ class RelayServer(
         unitHeaderBytes = if (longHeader) RelayWire.UNIT_HEADER_LONG_BYTES else RelayWire.UNIT_HEADER_BYTES,
         socketFacts = socketFacts,
         maxAgeNs = queueMaxAgeNs ?: RelayQueue.maxAgeFor(kind),
+        steadyCapable = steadyOffered,
+        pingBytes = if (steadyPings) RelayWire.PING_STEADY_BYTES else RelayWire.PING_LONG_BYTES,
+        lowWaterTuning = lowWaterTuning,
       )
+      var joinKey = false
       synchronized(lock) {
         reserved -= 1
         reservation = false
@@ -708,8 +1139,29 @@ class RelayServer(
           throw IOException("past the deadline of the handshake")
         }
         headsets.add(joined)
+        // A receiver that takes the steady stream joins on it when the setting asks, or when it needed it in an earlier
+        // flight of this session and the drone flies (p2/relay-bandwidth-2026-10-25.md, 7.5 item 1 and 7.7)
+        val memory = quality == RelayQuality.AUTOMATIC && flyingLocked() == true &&
+          steadyMemory.knows(steadyMemory.key(joined.name, joined.address))
+        val wantsSteady = steadyOffered && steady?.usable == true && source != RelaySource.NONE &&
+          (quality == RelayQuality.STEADY || memory)
+        val why = if (quality == RelayQuality.STEADY) RelaySwitchWhy.SETTING else RelaySwitchWhy.MEMORY
+        if (wantsSteady) {
+          joined.policy.goSteady()
+        }
+        if (wantsSteady && steady?.producing == true) {
+          // No kept drone key picture, no primer: a key picture of the steady stream is asked for it
+          joined.queue.switchStream(toSteady = true, joined.steadyMaxAgeNs, breakNext = false)
+          joined.recordSwitch(clockNs(), RelayStream.STEADY, why)
+          joined.followLowWater(RelayLowWater.bytesFor(joined.rate.allowedBps))
+          joinKey = true
+        } else if (wantsSteady) {
+          // The encoder is made at this first need: the full stream until its first key unit
+          joined.pendingSteady = why
+          joinKey = true
+        }
         // The last description the phone resolved goes first, so that a headset joining mid stream starts at once
-        lastResolved?.let { last ->
+        lastResolved?.takeIf { joined.stream == RelayStream.FULL }?.let { last ->
           joined.queue.offerRecord(
             RelayWire.PARAMETERS,
             RelayWire.parametersFlag(last.source),
@@ -731,6 +1183,10 @@ class RelayServer(
       headset = joined
       inHandshake = false
       handshakes.decrementAndGet()
+      if (joinKey) {
+        steady?.setNeeded(true, clockNs())
+        steady?.requestKey(RelayKeyCause.JOIN, clockNs())
+      }
       joined.startWriter()
       val who = if (proved.screenId == null) "headset" else "screen"
       log("$who $number joined from $address" + if (primed) ", the last key picture sent first" else "")
@@ -840,6 +1296,7 @@ class RelayServer(
   fun snapshot(nowNs: Long = clockNs()): RelaySendingSnapshot {
     val rows: List<RelayHeadsetRow>
     val dropped: Long
+    val droneMegabits: Double
     synchronized(lock) {
       rows = headsets.map { headset ->
         RelayHeadsetRow(
@@ -859,9 +1316,16 @@ class RelayServer(
           writeP95Ms = headset.stats.writeP95Ms,
           sendBufferBytes = headset.socketFacts.sendBufferBytes,
           receiver = headset.stats.receiverNumbers,
+          stream = headset.stream.wire,
+          steadyCapable = headset.steadyCapable,
+          streamForMs = headset.streamSinceNs.takeIf { it > 0 }?.let { (nowNs - it) / 1_000_000 },
+          bestSecondMegabits = headset.stats.bestSecondBits(120) / 1e6,
+          allowedMegabits = if (headset.stream == RelayStream.STEADY) headset.rate.allowedBps / 1e6 else null,
+          network = headset.stats.receiverNetwork,
         )
       }
       dropped = droppedOfClosed + headsets.sumOf { it.queue.unitsDropped }
+      droneMegabits = droneBitsLocked(nowNs) / 1e6
     }
     return RelaySendingSnapshot(
       on = running,
@@ -872,6 +1336,9 @@ class RelayServer(
       unexpectedRecords = unexpectedRecords,
       unitsDropped = dropped,
       primersSent = primersSent + headsetsAndLeft().sumOf { it.queue.counters().recoveryPrimers },
+      quality = quality,
+      steadyLine = steady?.line(nowNs),
+      droneMegabitsPerSecond = droneMegabits,
     )
   }
 
@@ -893,6 +1360,23 @@ class RelayServer(
       put("joinPrimersSent", primersSent)
       put("notSentLowWaterAsked", RelayWire.NOT_SENT_LOW_WATER_BYTES)
       put("fallbackSendBufferAsked", RelayWire.FALLBACK_SEND_BUFFER_BYTES)
+      // The steady stream (p2/relay-bandwidth-2026-10-25.md, 7.10)
+      put("quality", quality.wire)
+      put("motorsOn", motorsOn)
+      put("steadyUnits", synchronized(lock) { steadyUnits })
+      put("fallbackKeysSent", fallbackKeys)
+      put("droneMegabitsPerSecondNow", synchronized(lock) { droneBitsLocked(nowNs) } / 1e6)
+      put("dronePerSecond", synchronized(lock) { pictureRate.perSecond() })
+      put("flying", synchronized(lock) { flyingLocked() })
+      // A receiver's decoder is configured again at each switch when the steady stream's coded size is not the drone's
+      put(
+        "switchNeedsNewConfiguration",
+        synchronized(lock) {
+          val drone = lastResolved?.description
+          lastSteady?.description?.let { phone -> drone?.let { phone.needsNewConfiguration(it) } }
+        },
+      )
+      put("transcoder", steady?.report(nowNs) ?: JsonNull)
       put("receivers", buildJsonArray { receivers.forEach { add(it.report(nowNs)) } })
     }
   }
