@@ -204,9 +204,18 @@ void main() {
     final relay = FakeRelayEnvironment();
     final api = television();
     await openOnTv(tester, api, relay: relay);
-    // No phone yet: what to do, in one sentence
-    expect(find.byKey(const Key('dji_watch_none')), findsOneWidget);
+    // No phone yet: this TV's code and its QR code first, whole on the screen, then what to do on the phone (the TV
+    // test of 25 October looked for the QR code on a page that showed only that sentence)
+    final card = find.byKey(const Key('dji_watch_tv_code_card'));
+    final none = find.byKey(const Key('dji_watch_none'));
+    expect(card, findsOneWidget);
+    expect(find.descendant(of: card, matching: find.text('K7M2Q 9XRTH')), findsOneWidget);
+    expect(find.descendant(of: card, matching: find.byKey(const Key('dji_watch_tv_qr'))), findsOneWidget);
+    final qr = tester.getRect(find.byKey(const Key('dji_watch_tv_qr')));
+    expect((Offset.zero & _tv).intersect(qr), qr);
+    expect(none, findsOneWidget);
     expect(find.textContaining('turn on Send. The phone and this TV must be on the same Wi-Fi.'), findsOneWidget);
+    expect(tester.getRect(card).bottom, lessThanOrEqualTo(tester.getRect(none).top));
     // The rules worded for a TV, on top
     expect(
       find.text(
@@ -224,8 +233,9 @@ void main() {
     expect(phoneRow('192.168.1.21'), findsOneWidget);
     // The first phone listed takes the focus from "Phone not listed?"
     expect(focused(tester, phoneRow('192.168.1.21')), isTrue);
-    final card = find.byKey(const Key('dji_watch_tv_code_card'));
+    // It does not know this TV yet: the card stays, the sentence goes
     expect(card, findsOneWidget);
+    expect(none, findsNothing);
     expect(find.descendant(of: card, matching: find.text('K7M2Q 9XRTH')), findsOneWidget);
     expect(find.descendant(of: card, matching: find.text('Let this TV watch')), findsOneWidget);
     expect(

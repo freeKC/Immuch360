@@ -398,7 +398,9 @@ class DjiRelayState {
   );
 
   /// Whether a TV shows its code card: it has a code, and the phone refused it, or a try of it is under way and not
-  /// welcomed yet, or phones are listed and none has a code here. Not while a picture comes, which the page checks.
+  /// welcomed yet, or no phone is listed yet (the phone can add this TV before it sends: the TV test of 25 October
+  /// looked for the QR code on a page that showed only a sentence), or phones are listed and none has a code here. Not
+  /// while a picture comes, which the page checks.
   bool get ownCodeCardShows {
     final own = ownCode;
     if (own == null) {
@@ -410,9 +412,6 @@ class DjiRelayState {
     final target = this.target;
     if (target != null) {
       return usingOwnCode && (target.id == null || rememberedCodes[target.id] != own);
-    }
-    if (phones.isEmpty) {
-      return false;
     }
     return phones.every((phone) => phone.id == null || !rememberedCodes.containsKey(phone.id));
   }

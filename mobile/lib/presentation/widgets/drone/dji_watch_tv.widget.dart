@@ -597,6 +597,7 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     required bool shows,
   }) {
     final card = relay.ownCodeCardShows && !shows;
+    final noPhone = relay.phones.isEmpty && relay.target == null;
     final focusTarget = _phoneToFocus(relay);
     return Focus(
       // Not a stop of its own: it only hears Menu and Info from the row that has the focus
@@ -643,16 +644,20 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          // No phone sends yet: the card with this TV's code and QR code comes first, the phone can
+                          // add the TV before it sends; what to do on the phone under it
                           if (card)
                             _codeCard(t, relay)
-                          else if (relay.phones.isEmpty && relay.target == null)
+                          else if (!noPhone)
+                            AspectRatio(aspectRatio: djiLinkVideoAspect(decode), child: picture),
+                          if (noPhone) ...[
+                            if (card) const SizedBox(height: 12),
                             Text(
                               t.dji_live_tv_none,
                               key: const Key('dji_watch_none'),
                               style: context.textTheme.bodyLarge,
-                            )
-                          else
-                            AspectRatio(aspectRatio: djiLinkVideoAspect(decode), child: picture),
+                            ),
+                          ],
                           const SizedBox(height: 8),
                           ..._stateLines(t, relay, active, decode, shows: shows, card: card),
                         ],
