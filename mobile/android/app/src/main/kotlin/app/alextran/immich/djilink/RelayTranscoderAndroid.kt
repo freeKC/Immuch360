@@ -417,28 +417,37 @@ class DjiRelayGl private constructor(
     return if (compiled[0] != 0) made else null
   }
 
-  /** The encoder's input surface, [width] by [height]: every picture rendered from now on is drawn into it */
-  fun attachEncoder(surface: Surface, width: Int, height: Int): Boolean = runOn {
+  /**
+   * The encoder's input surface, [width] by [height]: every picture rendered from now on is drawn into it. Returns its
+   * EGL surface, which only [detachEncoder] of the same surface takes away; null when none could be made.
+   */
+  fun attachEncoder(surface: Surface, width: Int, height: Int): EGLSurface? = runOn {
     val made = EGL14.eglCreateWindowSurface(display, config, surface, intArrayOf(EGL14.EGL_NONE), 0)
     if (made == EGL14.EGL_NO_SURFACE) {
-      false
+      null
     } else {
       encoderSurface = made
       encoderWidth = width
       encoderHeight = height
-      true
+      made
     }
-  } == true
+  }
 
-  /** Before the encoder goes: its EGL surface goes first, so that no swap reaches a released surface */
-  fun detachEncoder() {
+  /**
+   * Before an encoder goes: the EGL surface it attached goes first, so that no swap reaches a released surface. By
+   * identity (p2/review-bandwidth-2026-10-25.md m3): a detach that comes late, after a new encoder attached its own,
+   * destroys only the old one and leaves the new one drawn into.
+   */
+  fun detachEncoder(target: EGLSurface) {
     runOn {
-      val current = encoderSurface
-      if (current != EGL14.EGL_NO_SURFACE) {
+      if (target == EGL14.EGL_NO_SURFACE) {
+        return@runOn
+      }
+      if (target == encoderSurface) {
         EGL14.eglMakeCurrent(display, pbuffer, pbuffer, context)
-        EGL14.eglDestroySurface(display, current)
         encoderSurface = EGL14.EGL_NO_SURFACE
       }
+      EGL14.eglDestroySurface(display, target)
     }
   }
 
@@ -587,20 +596,20 @@ class DjiRelayEnc private constructor(
           )
           val port = DjiRelayEnc(created, info.name, setup, gl, thread, handler, core, clockNs)
           var surface: Surface? = null
+          var attached: EGLSurface? = null
           try {
             // Asynchronous: the callback before the configuration, as MediaCodec asks
             created.setCallback(port.callback, handler)
             created.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
             surface = created.createInputSurface()
             port.inputSurface = surface
-            if (!gl.attachEncoder(surface, width, height)) {
-              throw IllegalStateException("no EGL surface")
-            }
+            attached = gl.attachEncoder(surface, width, height) ?: throw IllegalStateException("no EGL surface")
+            port.eglSurface = attached
             created.start()
             AndroidRelayCodecs.log("encoder ${info.name} ${width}x$height at level $level, $bitrateBps bit/s")
             return port
           } catch (error: Exception) {
-            gl.detachEncoder()
+            attached?.let { gl.detachEncoder(it) }
             runCatching { surface?.release() }
             runCatching { created.release() }
           }
@@ -617,6 +626,10 @@ class DjiRelayEnc private constructor(
   /** The encoder's input surface, which the GL stage draws into; made after the configuration */
   @Volatile
   private var inputSurface: Surface? = null
+
+  /** The EGL surface the GL stage made on [inputSurface] for this encoder */
+  @Volatile
+  private var eglSurface: EGLSurface? = null
 
   override val setup: RelayEncoderSetup get() = current
 
@@ -660,7 +673,19 @@ class DjiRelayEnc private constructor(
         val taken = runCatching { format.getInteger(MediaFormat.KEY_LATENCY) <= 1 }.getOrNull()
         current = current.copy(latencyAccepted = taken)
       }
-      AndroidRelayCodecs.log("encoder output format $format")
+      // The colours the encoder chose (none is asked: the GL copy goes through RGB), for the export
+      // (p2/review-bandwidth-2026-10-25.md m9)
+      fun colour(key: String): Int? =
+        if (format.containsKey(key)) runCatching { format.getInteger(key) }.getOrNull() else null
+      current = current.copy(
+        colorStandard = colour(MediaFormat.KEY_COLOR_STANDARD),
+        colorRange = colour(MediaFormat.KEY_COLOR_RANGE),
+        colorTransfer = colour(MediaFormat.KEY_COLOR_TRANSFER),
+      )
+      AndroidRelayCodecs.log(
+        "encoder output format $format; colours standard ${current.colorStandard} range ${current.colorRange} " +
+          "transfer ${current.colorTransfer}",
+      )
     }
   }
 
@@ -691,7 +716,7 @@ class DjiRelayEnc private constructor(
     }
     released = true
     Thread({
-      gl.detachEncoder()
+      eglSurface?.let { gl.detachEncoder(it) }
       runCatching { codec.stop() }
       runCatching { codec.release() }
       runCatching { inputSurface?.release() }

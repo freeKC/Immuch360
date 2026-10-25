@@ -1571,7 +1571,8 @@ class DjiLinkController private constructor(private val context: Context) : Link
         source.telemetryDecoder.values(nowNs / 1_000_000).flight?.takeIf { !it.stale }?.value?.motorsOn
       }
       val pilot = videoStatistics.numbers(nowNs)
-      transcoder.onPilot(pilot.overruns, pilot.decodeP95Ms, nowNs)
+      // Its decode time is kept and judged per phase: the motors, and the drone's rate (60 a second in flight)
+      transcoder.onPilot(pilot.overruns, pilot.decodeP95Ms, nowNs, relay.motorsOn, pilot.picturesPerSecond)
       transcoder.onBattery(batteryCurrentMicroAmps())
     }
     checkIdleRelay()
