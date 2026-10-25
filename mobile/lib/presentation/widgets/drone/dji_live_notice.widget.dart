@@ -14,7 +14,7 @@ import 'package:immich_mobile/presentation/widgets/tv/remote_scroll_area.widget.
 final djiLiveNoticeReadProvider = StateProvider<bool>((_) => false);
 
 /// Shows the notice over the current screen; true once "I understand" was tapped, false when Back left it. With
-/// [alert], the obstacle alert is offered: its "information only" line follows the existing ones. On a TV ([tv]) the
+/// [alert], the obstacle ring may show: its "information only" line follows the existing ones. On a TV ([tv]) the
 /// two rules come first worded for a TV.
 Future<bool> showDjiLiveNotice(
   BuildContext context, {
@@ -40,7 +40,7 @@ class DjiLiveNotice extends StatelessWidget {
   /// Those two rules worded for a TV
   final bool tv;
 
-  /// The obstacle alert is offered: it says it never steers or stops the drone
+  /// The obstacle ring may show: it says it never steers or stops the drone
   final bool alert;
 
   @override

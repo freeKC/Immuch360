@@ -19,8 +19,9 @@ import kotlin.math.max
  * all likely and none proven, since our captures hold 0.5 s of flight: the height above the take off point (offset
  * 16), the vertical speed (offset 22, positive down on the wire, turned positive up here), the speed over ground from
  * the two horizontal components (offsets 18 and 20), offset 41 in centimetres, the distance below of push 10/3 and the
- * ring of 360 obstacle distances of push 36/8. Which way the obstacle ring turns, and which of its indexes is the nose,
- * is not known: only its nearest distance is used.
+ * ring of 360 obstacle distances of push 36/8. Since the capture of 25 October 09:42 the ring is likely fixed to the
+ * body with its index 0 at the nose and its index growing clockwise (p2/design-obstacle-ring-2026-10-25.md, 1.4): its
+ * 72 sectors feed the obstacle ring, whose side shows only behind a test switch until a flight proves it.
  *
  * Nothing here is a flight instrument: no value has been compared with DJI Fly yet (checkpoint HC-09).
  */
@@ -70,10 +71,15 @@ data class RangeBelowReading(
 data class ObstacleReading(
   /** The smallest distance of the ring, null when no sector reads anything */
   val nearestM: Double?,
-  /** The index of that distance: which side it is on is not known yet, so nothing draws it */
+  /** The index of that distance */
   val nearestIndex: Int?,
   /** Sectors without a reading */
   val noReading: Int,
+  /**
+   * The 72 sectors of 5 degrees ([ObstacleRing.sectors]) in millimetres, null for a sector with no reading; null for
+   * a ring whose count is not 360. Which sector is the nose is likely, not proven: [ObstacleRing.MAPPING].
+   */
+  val sectorsMm: List<Int?>? = null,
 )
 
 data class GimbalReading(
@@ -233,8 +239,10 @@ object TelemetryFields {
     var nearest = Int.MAX_VALUE
     var nearestIndex = -1
     var empty = 0
+    val values = IntArray(count)
     for (index in 0 until count) {
       val value = u16(body, OBSTACLES_HEADER + 2 * index)
+      values[index] = value
       if (value == OBSTACLE_NO_READING) {
         empty += 1
       } else if (value < nearest) {
@@ -246,6 +254,7 @@ object TelemetryFields {
       nearestM = if (nearestIndex < 0) null else nearest / 1000.0,
       nearestIndex = nearestIndex.takeIf { it >= 0 },
       noReading = empty,
+      sectorsMm = ObstacleRing.sectors(values),
     )
   }
 

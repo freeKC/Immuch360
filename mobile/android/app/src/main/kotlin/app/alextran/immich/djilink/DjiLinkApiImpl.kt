@@ -1,11 +1,15 @@
 package app.alextran.immich.djilink
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.usb.UsbManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
@@ -118,8 +122,9 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
     controller.setFrameStream(on)
   }
 
-  override fun setObstacleAlert(offered: Boolean, sound: Boolean) {
-    controller.setObstacleAlert(offered, sound)
+  override fun setObstacleRing(settings: DjiObstacleRingSettings) {
+    // The activity's window taps with the tick on a phone, through performHapticFeedback: no permission
+    controller.setObstacleRing(settings, context as? Activity)
   }
 
   override fun setLowestDelay(on: Boolean) {
@@ -129,6 +134,18 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
   override fun playObstacleTest() {
     controller.playObstacleTest()
   }
+
+  override fun showObstacleSample(): Boolean = controller.showObstacleSample()
+
+  override fun hasVibrator(): Boolean = runCatching {
+    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+      (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager)?.defaultVibrator
+    } else {
+      @Suppress("DEPRECATION")
+      context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+    }
+    vibrator?.hasVibrator() ?: false
+  }.getOrDefault(false)
 
   override fun mediaVolumeOff(): Boolean = controller.mediaVolumeOff()
 

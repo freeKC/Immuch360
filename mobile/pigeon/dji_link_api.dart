@@ -1165,35 +1165,96 @@ class DjiLinkExport {
   final String? controlBinPath;
 }
 
-/// Where an obstacle is, in a top view with the nose up. No side is known from our captures yet: the alert names one
-/// only once a capture proves which index of the drone's ring is its nose.
-enum DjiObstacleSide { ahead, behind, left, right, above }
+/// One arc of the obstacle ring (ObstacleRing on the native side): a translucent glow at the picture's edge on the
+/// obstacle's side, or all around it when [centreDeg] is null
+class DjiObstacleArc {
+  const DjiObstacleArc({
+    this.centreDeg,
+    required this.distanceM,
+    required this.strength,
+    required this.opacity,
+    required this.argb,
+  });
 
-/// What the obstacle alert decided (ObstacleAlert on the native side, the same on the phone and the headset). It is
-/// information for the pilot, never an action: nothing here reaches the remote or the drone.
+  /// Degrees from the nose, positive to the right; null for the even glow all around the picture
+  final double? centreDeg;
+  final double distanceM;
+
+  /// 0 at "Glow from", 1 at "Strong glow from" and closer
+  final double strength;
+
+  /// 0.15 to 0.70: the picture stays readable under it
+  final double opacity;
+
+  /// Amber to red, or white once the data stopped
+  final int argb;
+}
+
+/// What the obstacle ring decided (ObstacleAlert on the native side, the same on the phone, a TV and the headset).
+/// Information for the pilot, never an action: nothing here reaches the remote or the drone.
 class DjiObstacleDecision {
   const DjiObstacleDecision({
     required this.on,
     required this.stopped,
     required this.listening,
-    required this.beepIntervalMs,
-    this.distanceM,
-    this.side,
+    required this.even,
+    required this.arcs,
+    this.nearestM,
+    required this.tickIntervalMs,
   });
 
-  /// The alert shows: something is close on a side other than below
+  /// The ring shows: a sector is under "Glow from", or it showed less than a second ago
   final bool on;
 
-  /// The obstacle data stopped while the alert was on: for a few seconds the banner says so, with no sound
+  /// The data stopped while the ring showed: its last arcs, white and fading, for five seconds, with no tick
   final bool stopped;
 
-  /// The alert is offered and its data is fresh: the glyph shows, never meaning the way is clear
+  /// The ring is offered and its data is fresh. Nothing draws it: no glow never means the way is clear
   final bool listening;
 
+  /// One even glow all around the picture, the side not shown
+  final bool even;
+
+  /// Nearest first; empty while nothing shows
+  final List<DjiObstacleArc> arcs;
+  final double? nearestM;
+
   /// 0 when silent
-  final int beepIntervalMs;
-  final double? distanceM;
-  final DjiObstacleSide? side;
+  final int tickIntervalMs;
+}
+
+/// The ring as this device draws and sounds it. On a phone, all of it is the pilot's choice in Advanced; on a TV or a
+/// headset, whether it is offered, the distances and the side come from the phone's record, and only the sound and the
+/// number are this device's own.
+class DjiObstacleRingSettings {
+  const DjiObstacleRingSettings({
+    required this.offered,
+    required this.directional,
+    required this.farM,
+    required this.nearM,
+    required this.sound,
+    required this.haptic,
+    required this.numbers,
+  });
+
+  /// The test switch while the data is likely, always once proven
+  final bool offered;
+
+  /// The arcs on the obstacle's side; false is one even glow
+  final bool directional;
+
+  /// "Glow from"
+  final double farM;
+
+  /// "Strong glow from"
+  final double nearM;
+  final bool sound;
+
+  /// A light tap with each tick within "Strong glow from", on a phone
+  final bool haptic;
+
+  /// The distance by the glow, in the Quest's flight view
+  final bool numbers;
 }
 
 /// The values a pilot reads, sent ten times a second while a screen with the picture is in front (flightChanged), and
@@ -1506,16 +1567,23 @@ abstract class DjiLinkApi {
   /// times a second in flightChanged, and the obstacle sound may play
   void setFrameStream(bool on);
 
-  /// Whether the gate offers the obstacle alert, and whether its sound is on. The alert only reads, decides, draws and
-  /// beeps on this device: it never sends anything to the remote or the drone.
-  void setObstacleAlert(bool offered, bool sound);
+  /// The obstacle ring as this device draws and sounds it. The ring only reads, decides, draws and ticks on this
+  /// device: it never sends anything to the remote or the drone.
+  void setObstacleRing(DjiObstacleRingSettings settings);
 
-  /// Three beeps of the obstacle sound, to check the volume before take off
+  /// Three ticks of the obstacle sound, to check the volume before take off
   void playObstacleTest();
 
   /// A headset's choice in Options: the lowest delay, with less smoothing (no floor under its jitter buffer). Taken at
   /// once while receiving, and by every reception after.
   void setLowestDelay(bool on);
+
+  /// Eight seconds of a made up ring on this device only, through the same decision and drawing; false while the
+  /// motors run or no picture screen is in front. Never relayed, never saved.
+  bool showObstacleSample();
+
+  /// This device can vibrate: "Vibrate with the tick" is offered only then
+  bool hasVibrator();
 
   /// The media volume, which the obstacle sound follows, is at zero
   bool mediaVolumeOff();

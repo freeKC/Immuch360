@@ -3,8 +3,9 @@
 // picture on this network, with the picture in its box or the card "Let this TV watch" (this TV's own code in two
 // groups of five and its QR code, for the phone's "Add a TV"). The full screen view shows the picture edge to edge, the
 // values on dark plates at its sides inside the TV's safe area, a strip that always says where the picture comes from,
-// "Watching only" and the observer rule, and the obstacle banner at the top. One picture box under a GlobalKey moves
-// between the two views, so the TV's decoder never changes surface. Nothing here reaches the phone, the remote or the
+// "Watching only" and the observer rule. The obstacle ring glows over the picture in both views, only while something
+// is close (p2/design-obstacle-ring-2026-10-25.md, 5.2). One picture box under a GlobalKey moves between the two views,
+// so the TV's decoder never changes surface. Nothing here reaches the phone, the remote or the
 // drone: OK shows or hides the numbers, Menu, Info or OK held opens Options, Back goes back to the phones.
 
 import 'dart:async';
@@ -187,7 +188,8 @@ class DjiWatchTvView extends ConsumerStatefulWidget {
   /// "Phone not listed? Type its address"
   final VoidCallback onTypeAddress;
 
-  /// A choice of Options the page carries out: obstacle, sound, testSound, safety, diagnostics, record, newCode, stop.
+  /// A choice of Options the page carries out: sound, testSound, ringNumbers, sample, safety, diagnostics, record,
+  /// newCode, stop.
   /// "Type the phone's code instead" goes to [onTypeCode] with the phone watched, else the row focused last.
   final ValueChanged<String> onMenu;
 
@@ -500,7 +502,12 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
         aspectRatio: djiLinkVideoAspect(decode),
         child: Stack(
           fit: StackFit.expand,
-          children: [const ColoredBox(color: Colors.black), if (shows) const DjiLinkVideoSurface()],
+          children: [
+            const ColoredBox(color: Colors.black),
+            if (shows) const DjiLinkVideoSurface(),
+            // The obstacle ring over the picture, in both views: nothing while nothing is close
+            const DjiWatchTvRing(),
+          ],
         ),
       ),
     );
@@ -603,13 +610,7 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
                               style: context.textTheme.bodyLarge,
                             )
                           else
-                            AspectRatio(
-                              aspectRatio: djiLinkVideoAspect(decode),
-                              child: Stack(
-                                fit: StackFit.expand,
-                                children: [picture, const DjiObstacleLayer(glow: false)],
-                              ),
-                            ),
+                            AspectRatio(aspectRatio: djiLinkVideoAspect(decode), child: picture),
                           const SizedBox(height: 8),
                           ..._stateLines(t, relay, active, decode, shows: shows, card: card),
                         ],
@@ -859,8 +860,6 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
                   const Positioned(left: 0, top: 0, child: DjiWatchTvColumn(band: DjiLiveBand.left)),
                   const Positioned(right: 0, top: 0, child: DjiWatchTvColumn(band: DjiLiveBand.right, flyNote: true)),
                 ],
-                // Never hidden by OK
-                const Align(alignment: Alignment.topCenter, child: DjiWatchTvObstacleBanner()),
                 Positioned(
                   left: 0,
                   right: 0,
@@ -1161,76 +1160,14 @@ class DjiWatchTvCell extends ConsumerWidget {
   }
 }
 
-/// The obstacle alert at the top of the TV's safe area: red, the distance in large letters, the side once known or
-/// "Not confirmed yet" while a test; never hidden by OK. The TV decides it from the relayed reading, as the headset.
-class DjiWatchTvObstacleBanner extends ConsumerWidget {
-  const DjiWatchTvObstacleBanner({super.key, this.gates = djiLiveGates});
-
-  final Map<DjiLiveField, DjiLiveGate> gates;
+/// The obstacle ring over the TV's picture, at the TV's depth: OK hides its number with the other numbers, never the
+/// ring itself. Whether it shows, its distances and its side come from the phone's record.
+class DjiWatchTvRing extends ConsumerWidget {
+  const DjiWatchTvRing({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final t = context.t;
-    final decision = ref.watch(djiLiveFrameProvider.select((frame) => frame?.alert));
-    if (decision == null || !(decision.on || decision.stopped)) {
-      return const SizedBox.shrink();
-    }
-    final lines = djiObstacleBannerLines(t, decision, gates: gates);
-    if (lines == null) {
-      return const SizedBox.shrink();
-    }
-    final (first, second) = lines;
-    final soundOff = decision.on && !ref.watch(djiObstacleSettingsProvider.select((settings) => settings.soundOn));
-    return IgnorePointer(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 440),
-        child: Semantics(
-          liveRegion: true,
-          label: [first, ?second, if (soundOff) t.dji_live_obstacle_sound_off].join('. '),
-          excludeSemantics: true,
-          child: DecoratedBox(
-            key: const Key('dji_watch_tv_obstacle'),
-            decoration: const BoxDecoration(color: djiLiveRed, borderRadius: BorderRadius.all(Radius.circular(8))),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          first,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.w700,
-                            fontFeatures: [FontFeature.tabularFigures()],
-                          ),
-                        ),
-                        if (second != null)
-                          Text(
-                            second,
-                            key: const Key('dji_watch_tv_obstacle_second'),
-                            style: const TextStyle(color: Colors.white, fontSize: 18),
-                          ),
-                      ],
-                    ),
-                  ),
-                  if (soundOff) ...[
-                    const SizedBox(width: 12),
-                    const Icon(Icons.volume_off_rounded, key: Key('dji_live_obstacle_muted'), color: Colors.white),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) =>
+      DjiObstacleRing(tv: true, numbersHidden: ref.watch(djiWatchTvNumbersHiddenProvider));
 }
 
 /// Options, from the right: each choice closes the panel with its name, which the page carries out; the picture and
@@ -1280,14 +1217,8 @@ class DjiWatchTvOptions extends ConsumerWidget {
                     title: Text(hidden ? t.dji_live_tv_numbers_show : t.dji_live_tv_numbers_hide),
                     onTap: () => choose('numbers'),
                   ),
-                  if (offer == DjiObstacleOffer.test)
-                    SwitchListTile(
-                      key: const Key('dji_watch_obstacle'),
-                      title: Text(t.dji_live_obstacle_test),
-                      value: obstacle.alertOn,
-                      onChanged: (_) => choose('obstacle'),
-                    ),
-                  if (obstacle.offered(offer)) ...[
+                  // The ring's own items of this TV: whether it shows, its distances and its side come from the phone
+                  if (offer != DjiObstacleOffer.none) ...[
                     SwitchListTile(
                       key: const Key('dji_watch_obstacle_sound'),
                       title: Text(t.dji_live_obstacle_sound),
@@ -1299,6 +1230,19 @@ class DjiWatchTvOptions extends ConsumerWidget {
                       leading: const Icon(Icons.volume_up_rounded),
                       title: Text(t.dji_live_obstacle_sound_test),
                       onTap: () => choose('testSound'),
+                    ),
+                    SwitchListTile(
+                      key: const Key('dji_watch_obstacle_numbers'),
+                      title: Text(t.dji_live_obstacle_numbers),
+                      value: obstacle.numbersOn,
+                      onChanged: (_) => choose('ringNumbers'),
+                    ),
+                    ListTile(
+                      key: const Key('dji_watch_obstacle_sample'),
+                      leading: const Icon(Icons.blur_on_rounded),
+                      title: Text(t.dji_live_obstacle_sample),
+                      subtitle: Text(t.dji_live_obstacle_sample_note),
+                      onTap: () => choose('sample'),
                     ),
                   ],
                   const Divider(),

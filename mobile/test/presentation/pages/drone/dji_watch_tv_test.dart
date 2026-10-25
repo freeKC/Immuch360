@@ -1,6 +1,6 @@
 // The watch page of the DJI live video on Android TV (p2/design-tv-2026-10-24.md, sections 2 to 5 and 8.1): the
 // phones view with the focus on a phone row, this TV's own code with its QR code and its tries every 10 s, the full
-// screen view at the first picture with the values on plates, the strip that never hides and the obstacle banner, the
+// screen view at the first picture with the values on plates, the strip that never hides and the obstacle ring, the
 // keys of the remote, Options, Back, the app going to the background, the screen saver after 10 minutes without a
 // picture, and the one platform view that moves between the two views. Since the review of 24 October
 // (p2/review-tv-2026-10-24.md): a refusal in full screen, the notice and Options read by the arrows alone, a held OK,
@@ -581,35 +581,51 @@ void main() {
     expect(find.text('K7M2Q 9XRTH'), findsOneWidget);
   });
 
-  testWidgets('the obstacle alert: a test switch in Options, its sound once on, the banner never hidden by OK', (
+  testWidgets('the obstacle ring on a TV: its sound off by default, its number and sample, never hidden by OK', (
     tester,
   ) async {
     final (api, _, listener) = await watching(tester);
+    // Off by default on a TV, where people watch and the pilot is elsewhere
+    expect(api.obstacleRings.last.sound, isFalse);
+    expect(api.obstacleRings.last.haptic, isFalse);
     await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('dji_watch_obstacle')), findsOneWidget);
-    expect(find.byKey(const Key('dji_watch_obstacle_sound')), findsNothing);
-    await tester.tap(find.byKey(const Key('dji_watch_obstacle')));
+    // No test switch of its own: whether the ring shows, its distances and its side come from the phone
+    expect(find.byKey(const Key('dji_watch_obstacle')), findsNothing);
+    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_watch_obstacle_sound'))).value, isFalse);
+    await tester.tap(find.byKey(const Key('dji_watch_obstacle_sound')));
     await tester.pumpAndSettle();
-    expect(api.obstacleAlerts.last, (true, true));
-    expect(memory[StoreKey.djiObstacleAlertOn], isTrue);
+    expect(api.obstacleRings.last.sound, isTrue);
+    expect(memory[StoreKey.djiObstacleTvSoundOn], isTrue);
+    expect(memory[StoreKey.djiObstacleSoundOff], isNull);
 
-    await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('dji_watch_obstacle_sound')), findsOneWidget);
-    await showInOptions(tester, const Key('dji_watch_tv_sound_test'));
-    await tester.tap(find.byKey(const Key('dji_watch_tv_sound_test')));
-    await tester.pumpAndSettle();
+    Future<void> choose(Key key) async {
+      await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
+      await tester.pumpAndSettle();
+      await showInOptions(tester, key);
+      await tester.tap(find.byKey(key));
+      await tester.pumpAndSettle();
+    }
+
+    await choose(const Key('dji_watch_tv_sound_test'));
     expect(api.obstacleTests, 1);
+    await choose(const Key('dji_watch_obstacle_numbers'));
+    expect(api.obstacleRings.last.numbers, isTrue);
+    await choose(const Key('dji_watch_obstacle_sample'));
+    expect(api.obstacleSamples, 1);
 
-    await push(tester, listener, picture(frame: fakeFrame(alert: fakeDecision(on: true, distanceM: 1.84))));
-    final banner = find.byKey(const Key('dji_watch_tv_obstacle'));
-    expect(find.descendant(of: banner, matching: find.text('Obstacle close: 1.8 m')), findsOneWidget);
-    expect(find.descendant(of: banner, matching: find.text('Not confirmed yet')), findsOneWidget);
+    await push(tester, listener, picture(frame: fakeFrame(alert: fakeDecision(on: true, arcs: [fakeArc(1.84)]))));
+    final ring = find.byKey(const Key('dji_live_obstacle_ring'));
+    expect(ring, findsOneWidget);
+    expect(find.byKey(const Key('dji_watch_tv_obstacle')), findsNothing);
+    expect(find.text('Obstacle close: 1.8 m'), findsNothing);
+    expect(find.text('1.8 m'), findsOneWidget);
+    // OK hides the numbers, the ring's with them, never the ring
     await tester.sendKeyEvent(LogicalKeyboardKey.select);
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('dji_watch_tv_column_right')), findsNothing);
-    expect(banner, findsOneWidget);
+    expect(ring, findsOneWidget);
+    expect(find.text('1.8 m'), findsNothing);
   });
 
   testWidgets('a value that changes never moves its neighbour, and a column that lost every value says so', (
@@ -704,8 +720,7 @@ void main() {
   testWidgets('the notice on a TV: the arrows read it to its last line, and only then reach I understand', (
     tester,
   ) async {
-    // The obstacle alert on: its line "Information only" comes last
-    memory[StoreKey.djiObstacleAlertOn] = true;
+    // The obstacle ring may show on a TV: the line "Information only" comes last
     await openOnTv(tester, television(), noticeRead: false);
     final text = find.byKey(const Key('dji_live_notice_text'));
     final last = find.byKey(const Key('dji_live_notice_last'));
@@ -743,7 +758,6 @@ void main() {
   testWidgets('Options by the arrows alone: from Hide the numbers down to Stop watching, every value flowing', (
     tester,
   ) async {
-    memory[StoreKey.djiObstacleAlertOn] = true;
     final (api, _, listener) = await watching(tester);
     // Every value of Advanced, so that the read only lines are as long as in flight
     await push(tester, listener, picture(frame: fakeFrame(speedMps: 4.2, distanceBelowM: 3.1, obstacleM: 6.5)));
@@ -751,9 +765,10 @@ void main() {
     await tester.pumpAndSettle();
     const items = [
       Key('dji_watch_tv_numbers'),
-      Key('dji_watch_obstacle'),
       Key('dji_watch_obstacle_sound'),
       Key('dji_watch_tv_sound_test'),
+      Key('dji_watch_obstacle_numbers'),
+      Key('dji_watch_obstacle_sample'),
       Key('dji_watch_tv_safety'),
       Key('dji_watch_tv_diagnostics'),
       Key('dji_watch_save_record'),

@@ -97,14 +97,35 @@ enum StoreKey<T> {
   /// That offer was answered, yes or not now: it is not made again, and the switch stays in Advanced
   djiLiveOfferAnswered<bool>._(5031),
 
-  /// The pilot turned on the obstacle alert in Advanced while our captures do not prove its data yet: off by default
+  /// The pilot turned on the obstacle ring in Advanced while our captures do not prove its data yet: off by default
   djiObstacleAlertOn<bool>._(5032),
 
-  /// The obstacle sound was turned off in Advanced: it is on by default
+  /// The obstacle sound was turned off in Advanced, on a phone or a headset: it is on by default there
   djiObstacleSoundOff<bool>._(5033),
 
   /// A headset watching a phone asked for the lowest delay in Options, with less smoothing: off by default
   djiHeadsetLowestDelay<bool>._(5034),
+
+  /// "Glow from" of the obstacle ring, in centimetres: 300 when never set
+  djiObstacleFarCm<int>._(5040),
+
+  /// "Strong glow from" of the obstacle ring, in centimetres: 100 when never set
+  djiObstacleNearCm<int>._(5041),
+
+  /// "Show the side, not confirmed yet": the ring's side while our captures only make it likely, off by default
+  djiObstacleSideTest<bool>._(5042),
+
+  /// "Show the side" was turned off once the side is proven: it is on by default then
+  djiObstacleSideOff<bool>._(5043),
+
+  /// "Vibrate with the tick", on a phone with a vibrator: off by default
+  djiObstacleHapticOn<bool>._(5044),
+
+  /// "Show the distance by the glow", on each device: off by default
+  djiObstacleNumbersOn<bool>._(5045),
+
+  /// The obstacle sound on a TV, where people watch and the pilot is elsewhere: off by default
+  djiObstacleTvSoundOn<bool>._(5046),
 
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),

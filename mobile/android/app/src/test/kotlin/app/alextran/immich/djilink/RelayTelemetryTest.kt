@@ -184,6 +184,34 @@ class RelayTelemetryTest {
   }
 
   @Test
+  fun theSectorsOfTheRingAndThePhonesChoicesGoToTheReceiverAndAnEarlierPhoneOffersNoRing() {
+    val sectors = List<Int?>(ObstacleRing.SECTORS) { if (it % 9 == 0) null else 600 + it }
+    val sent = values().copy(
+      obstacles = Timed(ObstacleReading(nearestM = 0.601, nearestIndex = 5, noReading = 40, sectorsMm = sectors), 40, false),
+    )
+    val ring = RelayObstacleRing(offered = true, farM = 2.5, nearM = 0.75, directional = true)
+    val json = RelayTelemetry.build(1, 1, link, sent, phoneVideo, 1, 0, ring)
+    // A null stays a null on the wire: no reading is never a distance
+    assertEquals("null", json["obstacles"]!!.jsonObject["sectorsMm"]!!.jsonArray[0].toString())
+    val back = RelayTelemetry.parse(json)!!
+    assertEquals(sent.obstacles, back.values.obstacles)
+    assertEquals(sectors, back.values.obstacles!!.value.sectorsMm)
+    assertEquals(ring, back.obstacleRing)
+    assertEquals(RingSettings(2.5, 0.75, true), back.obstacleRing!!.settings())
+    // The receiver ages the sectors with their ring
+    assertEquals(sectors, back.aged(500).obstacles!!.value.sectorsMm)
+    // A record of an earlier phone: no sectors and no choices, so no ring is offered on the receiver
+    val earlier = RelayTelemetry.parse(
+      RelayTelemetry.build(1, 1, link, sent.copy(obstacles = Timed(ObstacleReading(0.601, 5, 40), 40, false)), null, 0, 0),
+    )!!
+    assertNull(earlier.values.obstacles!!.value.sectorsMm)
+    assertNull(earlier.obstacleRing)
+    // Sectors of another count are not read
+    val odd = json.toString().replace("\"sectorsMm\":[null,", "\"sectorsMm\":[")
+    assertNull(RelayTelemetry.parseBody(odd.toByteArray())!!.values.obstacles!!.value.sectorsMm)
+  }
+
+  @Test
   fun theStateNamesAreThoseOfThePage() {
     assertEquals("videoReady", RelayTelemetry.stateName(LinkState.VIDEO_READY))
     assertEquals("absent", RelayTelemetry.stateName(LinkState.ABSENT))

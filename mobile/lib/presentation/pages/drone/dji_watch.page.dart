@@ -42,7 +42,7 @@ const djiWatchStillTryingFailures = 3;
 
 /// The texts of the flight view, with the placeholders the native side fills ten times a second. Its two columns get a
 /// label and a value template per value the gate lets over the picture, the same values as the phone's bands, and the
-/// banner of the obstacle alert its words, with "Not confirmed yet" while the gate keeps the alert as a test.
+/// obstacle ring the distance it may write by the glow.
 Map<String, String> djiFlightViewLabels(
   Translations t, {
   Map<DjiLiveField, DjiLiveGate> gates = djiLiveGates,
@@ -61,15 +61,7 @@ Map<String, String> djiFlightViewLabels(
   'noValues': t.dji_link_flight_none,
   ...djiLiveFlightViewTemplates(t, gates: gates),
   'batteryLow': t.dji_live_battery_low,
-  'obstacleClose': t.dji_live_obstacle_close(distance: '{distance}'),
-  'obstacleClosePlain': t.dji_live_obstacle_close_plain,
-  'obstacleStopped': t.dji_live_obstacle_stopped,
-  'obstacleAhead': t.dji_live_obstacle_ahead,
-  'obstacleBehind': t.dji_live_obstacle_behind,
-  'obstacleLeft': t.dji_live_obstacle_left,
-  'obstacleRight': t.dji_live_obstacle_right,
-  'obstacleAbove': t.dji_live_obstacle_above,
-  if (djiObstacleOffer(gates: gates) == DjiObstacleOffer.test) 'obstacleUnconfirmed': t.dji_live_obstacle_unconfirmed,
+  'obstacleDistance': t.dji_live_obstacle_distance(distance: '{distance}'),
   'on': t.dji_link_flight_view_on,
   'off': t.dji_link_flight_view_off,
   'valuesStale': t.dji_link_flight_view_values_stale,
@@ -177,8 +169,8 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     }
     // After the first frame, which a change of the providers must not reach
     unawaited(Future.microtask(_notifier.pageShown));
-    // The values ten times a second while this page is in front (and the flight view over it), the obstacle alert as
-    // set here, and the screen kept on
+    // The values ten times a second while this page is in front (and the flight view over it), the obstacle ring's
+    // sound and number as set here (the rest comes from the phone), and the screen kept on
     unawaited(Future.microtask(() => _notifier.setFrameStream(true)));
     unawaited(Future.microtask(() => ref.read(djiObstacleSettingsProvider.notifier).sync()));
     if (!_tv) {
@@ -402,8 +394,8 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     await _watch(listed ?? DjiRelayPhone(name: typed.host, host: typed.host, port: typed.port));
   }
 
-  /// The obstacle alert is offered on this headset: the notice then says it never steers or stops the drone
-  bool _alertOffered() => ref.read(djiObstacleSettingsProvider).offered(djiObstacleOffer());
+  /// The obstacle ring may show here: the phone offers it, and the notice then says it never steers or stops the drone
+  bool _alertOffered() => djiObstacleOffer() != DjiObstacleOffer.none;
 
   Future<void> _saveRecord() async {
     final outcome = await _notifier.exportReception();
@@ -419,13 +411,19 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     switch (choice) {
       case 'record':
         await _saveRecord();
-      case 'obstacle':
-        await obstacle.setAlert(!settings.alertOn);
       case 'sound':
         await obstacle.setSound(!settings.soundOn);
       case 'lowestDelay':
         final delay = ref.read(djiLowestDelayProvider.notifier);
         await delay.set(!ref.read(djiLowestDelayProvider));
+      case 'ringNumbers':
+        await obstacle.setNumbers(!settings.numbersOn);
+      case 'sample':
+        final flying = context.t.dji_live_obstacle_sample_flying;
+        final shown = await obstacle.showSample();
+        if (!shown && mounted) {
+          ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(flying)));
+        }
       case 'play':
         await showModalBottomSheet<void>(
           context: context,
@@ -506,20 +504,31 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
                 value: 'record',
                 child: Text(t.dji_live_watch_save_record),
               ),
-              if (offer == DjiObstacleOffer.test)
-                CheckedPopupMenuItem(
-                  key: const Key('dji_watch_obstacle'),
-                  value: 'obstacle',
-                  checked: obstacle.alertOn,
-                  child: Text(t.dji_live_obstacle_test),
-                ),
-              if (obstacle.offered(offer))
+              // The ring's own items of this headset: whether it shows, its distances and its side come from the phone
+              if (offer != DjiObstacleOffer.none) ...[
                 CheckedPopupMenuItem(
                   key: const Key('dji_watch_obstacle_sound'),
                   value: 'sound',
                   checked: obstacle.soundOn,
                   child: Text(t.dji_live_obstacle_sound),
                 ),
+                PopupMenuItem(
+                  key: const Key('dji_watch_obstacle_sound_test'),
+                  value: 'testSound',
+                  child: Text(t.dji_live_obstacle_sound_test),
+                ),
+                CheckedPopupMenuItem(
+                  key: const Key('dji_watch_obstacle_numbers'),
+                  value: 'ringNumbers',
+                  checked: obstacle.numbersOn,
+                  child: Text(t.dji_live_obstacle_numbers),
+                ),
+                PopupMenuItem(
+                  key: const Key('dji_watch_obstacle_sample'),
+                  value: 'sample',
+                  child: Text(t.dji_live_obstacle_sample),
+                ),
+              ],
               CheckedPopupMenuItem(
                 key: const Key('dji_watch_lowest_delay'),
                 value: 'lowestDelay',
@@ -662,8 +671,8 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
             children: [
               const ColoredBox(color: Colors.black),
               if (shows) const DjiLinkVideoSurface(),
-              // The obstacle alert over the picture, without the glow: the picture is small in the window
-              const DjiObstacleLayer(glow: false),
+              // The obstacle ring over the picture, as the phone's: nothing while nothing is close
+              const DjiObstacleRing(),
               if (active != null)
                 Positioned(
                   left: 8,

@@ -232,31 +232,42 @@ class FlightViewControlsTest {
     assertEquals("0.0", FlightViewControls.verticalSpeed(-0.04))
   }
 
-  private val alertLabels = mapOf(
-    "obstacleClose" to "Obstacle close: {distance} m",
-    "obstacleClosePlain" to "Obstacle close",
-    "obstacleStopped" to "Obstacle data stopped: look at the drone.",
-    "obstacleLeft" to "On the left",
-    "obstacleUnconfirmed" to "Not confirmed yet",
-  )
+  private val ringLabels = mapOf("obstacleDistance" to "{distance} m")
+
+  private fun ring(on: Boolean = true, stopped: Boolean = false, nearest: Double? = 1.44): ObstacleDecision {
+    val arcs = if (nearest == null) emptyList() else listOf(ObstacleRing.arc(30.0, nearest, RingSettings()))
+    return ObstacleDecision.OFF.copy(on = on, stopped = stopped, arcs = arcs, nearestM = nearest, even = false)
+  }
 
   @Test
-  fun theAlertBannerSaysTheDistanceTheSideAndWhenItsDataStopped() {
-    assertNull(FlightViewControls.alertLines(ObstacleDecision.OFF, alertLabels))
-    val on = ObstacleDecision(true, 1.84, null, 400, stopped = false, listening = true)
-    assertEquals("Obstacle close: 1.8 m" to "Not confirmed yet", FlightViewControls.alertLines(on, alertLabels))
-    assertEquals(
-      "Obstacle close: 1.8 m" to "On the left  Not confirmed yet",
-      FlightViewControls.alertLines(on.copy(side = ObstacleSide.LEFT), alertLabels),
-    )
-    assertEquals(
-      "Obstacle close" to null,
-      FlightViewControls.alertLines(on.copy(distanceM = null), alertLabels - "obstacleUnconfirmed"),
-    )
-    assertEquals(
-      "Obstacle data stopped: look at the drone." to null,
-      FlightViewControls.alertLines(ObstacleDecision.OFF.copy(stopped = true), alertLabels),
-    )
+  fun theHaloIsTenCentimetresLargerThanTheVideoAtTheReferenceWidthAndScalesWithIt() {
+    assertEquals(0.10f, FlightViewControls.haloMarginM(2.4f), 1e-6f)
+    val (width, height) = FlightViewControls.haloSizeM(2.4f)
+    assertEquals(2.6f, width, 1e-5f)
+    assertEquals(1.55f, height, 1e-5f)
+    for (videoWidth in FlightViewControls.WIDTHS_M) {
+      val margin = FlightViewControls.haloMarginM(videoWidth)
+      val (w, h) = FlightViewControls.haloSizeM(videoWidth)
+      assertEquals(videoWidth + 2 * margin, w, 1e-5f)
+      assertEquals(videoWidth * 9f / 16f + 2 * margin, h, 1e-5f)
+      // The panel registered at the reference size, scaled as the video is, is exactly this halo
+      val scale = videoWidth / 2.4f
+      assertEquals(2.6f * scale, w, 1e-4f)
+    }
+  }
+
+  @Test
+  fun theRingShowsOnlyWithArcsAndItsNumberOnlyWhenAskedWithTheValues() {
+    assertFalse(FlightViewControls.ringShows(ObstacleDecision.OFF))
+    assertFalse(FlightViewControls.ringShows(ring(nearest = null)))
+    assertTrue(FlightViewControls.ringShows(ring()))
+    assertTrue(FlightViewControls.ringShows(ring(on = false, stopped = true)))
+    assertEquals("1.4 m", FlightViewControls.ringNumber(ring(), ringLabels, numbersOn = true, valuesShown = true))
+    // Off by default, hidden by A with the values, never once the data stopped
+    assertNull(FlightViewControls.ringNumber(ring(), ringLabels, numbersOn = false, valuesShown = true))
+    assertNull(FlightViewControls.ringNumber(ring(), ringLabels, numbersOn = true, valuesShown = false))
+    assertNull(FlightViewControls.ringNumber(ring(on = false, stopped = true), ringLabels, true, true))
+    assertNull(FlightViewControls.ringNumber(ring(), emptyMap(), numbersOn = true, valuesShown = true))
   }
 
   @Test

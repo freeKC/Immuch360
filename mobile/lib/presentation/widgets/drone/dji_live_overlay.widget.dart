@@ -155,8 +155,8 @@ class DjiLiveButtons extends StatelessWidget {
   }
 }
 
-/// The right column: the state of the picture, a capture being played, then the state of the drone, and at its bottom
-/// whatever [footer] holds (the obstacle glyph). A value whose group stopped coming leaves its place empty.
+/// The right column: the state of the picture, a capture being played, then the state of the drone. A value whose
+/// group stopped coming leaves its place empty. The obstacle ring is drawn over the picture, never here.
 class DjiLiveReadout extends StatelessWidget {
   const DjiLiveReadout({
     super.key,
@@ -164,7 +164,6 @@ class DjiLiveReadout extends StatelessWidget {
     this.staleSeconds,
     this.captureName,
     this.onStopCapture,
-    this.footer,
     this.gates = djiLiveGates,
   });
 
@@ -176,7 +175,6 @@ class DjiLiveReadout extends StatelessWidget {
   /// The capture being played in place of the cable, with its stop
   final String? captureName;
   final VoidCallback? onStopCapture;
-  final Widget? footer;
   final Map<DjiLiveField, DjiLiveGate> gates;
 
   @override
@@ -190,7 +188,6 @@ class DjiLiveReadout extends StatelessWidget {
     };
     final small = context.textTheme.labelSmall?.copyWith(color: Colors.white70);
     final captureName = this.captureName;
-    final footer = this.footer;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -222,7 +219,6 @@ class DjiLiveReadout extends StatelessWidget {
         Expanded(
           child: DjiLiveBandCells(band: DjiLiveBand.right, gates: gates, alignment: Alignment.topLeft),
         ),
-        ?footer,
       ],
     );
   }

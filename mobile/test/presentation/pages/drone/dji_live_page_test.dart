@@ -28,9 +28,14 @@ const _large = Size(2000, 1100);
 /// What the live screen keeps on this install, in memory
 class _Memory {
   final values = <StoreKey<bool>, bool>{};
+  final numbers = <StoreKey<int>, int>{};
 
-  DjiLiveMemory build() =>
-      DjiLiveMemory(read: (key) => values[key] ?? false, write: (key, value) async => values[key] = value);
+  DjiLiveMemory build() => DjiLiveMemory(
+    read: (key) => values[key] ?? false,
+    write: (key, value) async => values[key] = value,
+    readInt: (key) => numbers[key],
+    writeInt: (key, value) async => numbers[key] = value,
+  );
 }
 
 void main() {
@@ -734,11 +739,127 @@ void main() {
     expect(find.text('77 %'), findsNothing);
   });
 
-  testWidgets('the obstacle alert is a test the pilot turns on in Advanced, and says it only informs', (tester) async {
+  testWidgets('the obstacle ring is a test the pilot turns on in Advanced, with its distances, side and sound', (
+    tester,
+  ) async {
     final api = phone();
     final listener = await openLive(tester, api, size: _large);
     await push(tester, listener, live());
-    expect(api.obstacleAlerts.last, (false, true));
+    expect(api.obstacleRings.last.offered, isFalse);
+    expect(api.obstacleRings.last.sound, isTrue);
+    await tester.tap(find.byKey(const Key('dji_live_advanced')));
+    await tester.pumpAndSettle();
+    final scrollable = find.descendant(
+      of: find.byKey(const Key('dji_live_advanced_panel')),
+      matching: find.byType(Scrollable),
+    );
+    Future<void> tap(String key) async {
+      await tester.scrollUntilVisible(find.byKey(Key(key)), 100, scrollable: scrollable);
+      // A lazy list builds a little past its end: in the tree is not yet on the screen
+      await tester.ensureVisible(find.byKey(Key(key)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(Key(key)));
+      await tester.pumpAndSettle();
+    }
+
+    String value(String name) => tester.widget<Text>(find.byKey(Key('dji_live_obstacle_${name}_value'))).data!;
+    bool enabled(String key) => tester.widget<IconButton>(find.byKey(Key(key))).onPressed != null;
+
+    await tester.scrollUntilVisible(find.byKey(const Key('dji_live_obstacle_limits')), 100, scrollable: scrollable);
+    expect(find.text('Obstacle ring'), findsOneWidget);
+    expect(find.text('Obstacle ring, not confirmed yet'), findsOneWidget);
+    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_test'))).value, isFalse);
+    // Off: nothing of the ring but the switch, the sample and the two lines
+    expect(find.byKey(const Key('dji_live_obstacle_sound')), findsNothing);
+    expect(find.byKey(const Key('dji_live_obstacle_far')), findsNothing);
+    expect(find.byKey(const Key('dji_live_obstacle_sample')), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_info_only')), findsOneWidget);
+    expect(find.textContaining('No glow does not mean the way is clear.'), findsOneWidget);
+
+    await tap('dji_live_obstacle_test');
+    expect(api.obstacleRings.last.offered, isTrue);
+    expect(memory.values[StoreKey.djiObstacleAlertOn], isTrue);
+    // FreeKC's defaults: a glow from 3.0 m, strong from 1.0 m, the side not shown, no vibration, no number
+    expect(value('far'), '3.0 m');
+    expect(value('near'), '1.0 m');
+    expect(api.obstacleRings.last.farM, 3.0);
+    expect(api.obstacleRings.last.nearM, 1.0);
+    expect(api.obstacleRings.last.directional, isFalse);
+    expect(api.obstacleRings.last.haptic, isFalse);
+    expect(api.obstacleRings.last.numbers, isFalse);
+    expect(
+      find.text('Indoors the walls are close, so it may glow the whole flight: try 1.0 m, or turn the ring off.'),
+      findsOneWidget,
+    );
+
+    // "Glow from" down to 1.5 m: "Strong glow from" stays 0.5 m under it
+    await tap('dji_live_obstacle_far_less');
+    expect(value('far'), '2.5 m');
+    expect(memory.numbers[StoreKey.djiObstacleFarCm], 250);
+    await tap('dji_live_obstacle_far_less');
+    await tap('dji_live_obstacle_far_less');
+    expect(value('far'), '1.5 m');
+    expect(value('near'), '1.0 m');
+    expect(enabled('dji_live_obstacle_near_more'), isFalse);
+    // Down to its end for a room, 1.0 m: "Strong glow from" follows it down to 0.5 m, then goes down to 0.25 m
+    await tap('dji_live_obstacle_far_less');
+    expect(value('far'), '1.0 m');
+    expect(enabled('dji_live_obstacle_far_less'), isFalse);
+    expect(value('near'), '0.5 m');
+    expect(memory.numbers[StoreKey.djiObstacleNearCm], 50);
+    await tap('dji_live_obstacle_near_less');
+    expect(value('near'), '0.25 m');
+    expect(enabled('dji_live_obstacle_near_less'), isFalse);
+    expect(memory.numbers[StoreKey.djiObstacleNearCm], 25);
+    expect(api.obstacleRings.last.farM, 1.0);
+    expect(api.obstacleRings.last.nearM, 0.25);
+    // "Glow from" up again: "Strong glow from" may rise up to 0.5 m under it
+    await tap('dji_live_obstacle_far_more');
+    expect(value('far'), '1.5 m');
+    expect(enabled('dji_live_obstacle_near_more'), isTrue);
+
+    // The side, behind its own test switch while the front is not proven
+    expect(find.byKey(const Key('dji_live_obstacle_side')), findsNothing);
+    expect(find.text('Show the side, not confirmed yet'), findsOneWidget);
+    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_side_test'))).value, isFalse);
+    await tap('dji_live_obstacle_side_test');
+    expect(api.obstacleRings.last.directional, isTrue);
+    expect(memory.values[StoreKey.djiObstacleSideTest], isTrue);
+
+    await tap('dji_live_obstacle_sound_test');
+    expect(api.obstacleTests, 1);
+    expect(find.byKey(const Key('dji_live_media_volume_off')), findsNothing);
+    api.volumeOff = true;
+    await tap('dji_live_obstacle_sound_test');
+    expect(find.text('The media volume is off: the obstacle sound cannot be heard.'), findsOneWidget);
+    await tap('dji_live_obstacle_sound');
+    expect(api.obstacleRings.last.sound, isFalse);
+    expect(memory.values[StoreKey.djiObstacleSoundOff], isTrue);
+
+    // A phone with a vibrator offers the tap; the number by the glow
+    await tap('dji_live_obstacle_haptic');
+    expect(api.obstacleRings.last.haptic, isTrue);
+    expect(memory.values[StoreKey.djiObstacleHapticOn], isTrue);
+    await tap('dji_live_obstacle_numbers');
+    expect(api.obstacleRings.last.numbers, isTrue);
+    expect(memory.values[StoreKey.djiObstacleNumbersOn], isTrue);
+
+    // The sample on the ground; refused while the motors run
+    await tap('dji_live_obstacle_sample');
+    expect(api.obstacleSamples, 1);
+    expect(find.text('Eight seconds of a made up obstacle, on this screen only.'), findsOneWidget);
+    api.sampleRefused = true;
+    await tap('dji_live_obstacle_sample');
+    expect(find.text('Not while the motors run.'), findsOneWidget);
+  });
+
+  testWidgets('the sample is off while the motors run, and a phone without a vibrator has no vibration item', (
+    tester,
+  ) async {
+    memory.values[StoreKey.djiObstacleAlertOn] = true;
+    final api = phone()..vibrator = false;
+    final listener = await openLive(tester, api, size: _large);
+    await push(tester, listener, live(frame: fakeFrame(motorsOn: true)));
     await tester.tap(find.byKey(const Key('dji_live_advanced')));
     await tester.pumpAndSettle();
     final scrollable = find.descendant(
@@ -746,83 +867,92 @@ void main() {
       matching: find.byType(Scrollable),
     );
     await tester.scrollUntilVisible(find.byKey(const Key('dji_live_obstacle_limits')), 100, scrollable: scrollable);
-    expect(find.text('Obstacle alert, not confirmed yet'), findsOneWidget);
-    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_test'))).value, isFalse);
-    expect(find.byKey(const Key('dji_live_obstacle_sound')), findsNothing);
-    expect(find.byKey(const Key('dji_live_obstacle_info_only')), findsOneWidget);
-    expect(find.textContaining('No alert does not mean the way is clear.'), findsOneWidget);
-
-    // A lazy list builds a little past its end: in the tree is not yet on the screen
-    await tester.ensureVisible(find.byKey(const Key('dji_live_obstacle_test')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('dji_live_obstacle_test')));
-    await tester.pumpAndSettle();
-    expect(api.obstacleAlerts.last, (true, true));
-    expect(memory.values[StoreKey.djiObstacleAlertOn], isTrue);
-    await tester.scrollUntilVisible(
-      find.byKey(const Key('dji_live_obstacle_sound_test')),
-      100,
-      scrollable: scrollable,
-    );
-    await tester.ensureVisible(find.byKey(const Key('dji_live_obstacle_sound_test')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('dji_live_obstacle_sound_test')));
-    await tester.pumpAndSettle();
-    expect(api.obstacleTests, 1);
-    expect(find.byKey(const Key('dji_live_media_volume_off')), findsNothing);
-
-    api.volumeOff = true;
-    await tester.ensureVisible(find.byKey(const Key('dji_live_obstacle_sound_test')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('dji_live_obstacle_sound_test')));
-    await tester.pumpAndSettle();
-    expect(find.text('The media volume is off: the obstacle sound cannot be heard.'), findsOneWidget);
-
-    await tester.ensureVisible(find.byKey(const Key('dji_live_obstacle_sound')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('dji_live_obstacle_sound')));
-    await tester.pumpAndSettle();
-    expect(api.obstacleAlerts.last, (true, false));
-    expect(memory.values[StoreKey.djiObstacleSoundOff], isTrue);
+    expect(find.byKey(const Key('dji_live_obstacle_haptic')), findsNothing);
+    expect(find.byKey(const Key('dji_live_obstacle_numbers')), findsOneWidget);
+    expect(tester.widget<ButtonStyleButton>(find.byKey(const Key('dji_live_obstacle_sample'))).onPressed, isNull);
+    expect(find.text('Not while the motors run.'), findsOneWidget);
   });
 
-  testWidgets('the obstacle banner over the picture: the distance, not confirmed yet, and a tap goes through it', (
+  testWidgets('nothing over the picture until something is close, then a glow at its edge that takes no touch', (
     tester,
   ) async {
+    final semantics = tester.ensureSemantics();
     final listener = await openLive(tester, phone());
     await push(tester, listener, live(frame: fakeFrame(alert: fakeDecision(listening: true))));
+    // Listening is not an alert, and none of the old block is left: no banner, no glyph, no ring
+    expect(find.byKey(const Key('dji_live_obstacle_ring')), findsNothing);
     expect(find.byKey(const Key('dji_live_obstacle_banner')), findsNothing);
-    // Listening: the top view of the drone, never a "clear" sign
-    expect(find.byKey(const Key('dji_live_obstacle_glyph')), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_glyph')), findsNothing);
+    expect(find.textContaining('Obstacle'), findsNothing);
 
-    listener!.flightChanged(fakeFrame(atMs: 2000, alert: fakeDecision(on: true, distanceM: 1.84)));
+    listener!.flightChanged(fakeFrame(atMs: 2000, alert: fakeDecision(on: true, arcs: [fakeArc(1.84)])));
     await tester.pump();
-    expect(find.text('Obstacle close: 1.8 m'), findsOneWidget);
-    expect(find.text('Not confirmed yet'), findsOneWidget);
-    expect(find.byKey(const Key('dji_live_obstacle_glyph_on')), findsOneWidget);
-    // No side known yet: no glow on any edge
-    expect(find.byKey(const Key('dji_live_obstacle_glow_left')), findsNothing);
-    // The banner takes no touch: a tap on it reaches nothing
-    await tester.tap(find.byKey(const Key('dji_live_obstacle_banner')), warnIfMissed: false);
-    await tester.pumpAndSettle();
+    final ring = find.byKey(const Key('dji_live_obstacle_ring'));
+    expect(ring, findsOneWidget);
+    FadeTransition fade() =>
+        tester.widget<FadeTransition>(find.descendant(of: ring, matching: find.byType(FadeTransition)));
+    expect(fade().opacity.value, lessThan(1));
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(fade().opacity.value, 1);
+    // Over the picture's box, never over the side bands
+    expect(tester.getRect(ring), tester.getRect(find.byKey(const Key('dji_live_picture_area'))));
+    expect(find.bySemanticsLabel('Obstacle within 1.8 m'), findsOneWidget);
+    // No number on the picture by default
+    expect(find.byKey(const Key('dji_live_obstacle_distance')), findsNothing);
+    // The ring takes no touch: a tap on it reaches nothing
+    await tester.tap(ring, warnIfMissed: false);
+    await tester.pump();
     expect(find.byKey(const Key('dji_live_leave_dialog')), findsNothing);
 
-    // A side, once a capture names one: the glow on that edge and the side under the distance
+    // The side, once shown: the screen reader names it
     listener.flightChanged(
-      fakeFrame(atMs: 3000, alert: fakeDecision(on: true, distanceM: 0.9, side: DjiObstacleSide.left)),
+      fakeFrame(atMs: 3000, alert: fakeDecision(on: true, arcs: [fakeArc(0.9, centreDeg: -90)])),
     );
     await tester.pump();
-    expect(find.byKey(const Key('dji_live_obstacle_glow_left')), findsOneWidget);
-    expect(find.text('On the left  Not confirmed yet'), findsOneWidget);
+    expect(find.bySemanticsLabel('Obstacle within 0.9 m. On the left'), findsOneWidget);
 
-    // The data stopped while it was on
-    listener.flightChanged(fakeFrame(atMs: 4000, alert: fakeDecision(stopped: true)));
+    // The data stopped while it showed: the last arcs, white, and no words over the picture
+    listener.flightChanged(
+      fakeFrame(atMs: 4000, alert: fakeDecision(stopped: true, arcs: [fakeArc(0.9, centreDeg: -90)])),
+    );
     await tester.pump();
-    expect(find.text('Obstacle data stopped: look at the drone.'), findsOneWidget);
-    expect(find.byKey(const Key('dji_live_obstacle_glow_left')), findsNothing);
+    expect(ring, findsOneWidget);
+    expect(find.bySemanticsLabel('Obstacle data stopped: look at the drone.'), findsOneWidget);
+    expect(find.text('Obstacle data stopped: look at the drone.'), findsNothing);
+
+    // Nothing close any more: it fades out over 400 ms, then nothing is left
+    listener.flightChanged(fakeFrame(atMs: 5000, alert: fakeDecision(listening: true)));
+    await tester.pump();
+    expect(ring, findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(ring, findsOneWidget);
+    // An animation ends just past its duration
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 1));
+    await tester.pump();
+    expect(ring, findsNothing);
+    semantics.dispose();
   });
 
-  testWidgets('the obstacle banner shows over "No picture" too', (tester) async {
+  testWidgets('the distance by the glow, once asked in Advanced', (tester) async {
+    memory.values[StoreKey.djiObstacleAlertOn] = true;
+    memory.values[StoreKey.djiObstacleNumbersOn] = true;
+    final listener = await openLive(tester, phone());
+    await push(
+      tester,
+      listener,
+      live(frame: fakeFrame(alert: fakeDecision(on: true, arcs: [fakeArc(1.44, centreDeg: 30)]))),
+    );
+    expect(find.text('1.4 m'), findsOneWidget);
+    // Inside the picture, on its top edge's right half, where the arc is
+    final number = tester.getCenter(find.text('1.4 m'));
+    final picture = tester.getRect(find.byKey(const Key('dji_live_picture_area')));
+    expect(picture.contains(number), isTrue);
+    expect(number.dx, greaterThan(picture.center.dx));
+    expect(number.dy, lessThan(picture.center.dy));
+  });
+
+  testWidgets('the ring shows over "No picture" too', (tester) async {
     final listener = await openLive(tester, phone());
     await push(tester, listener, live());
     await push(
@@ -830,11 +960,11 @@ void main() {
       listener,
       live(
         decode: fakeDecode(lastOutputAgoMs: 2500),
-        frame: fakeFrame(atMs: 2000, alert: fakeDecision(on: true, distanceM: 2.5)),
+        frame: fakeFrame(atMs: 2000, alert: fakeDecision(on: true, arcs: [fakeArc(2.5)])),
       ),
     );
     expect(cardTitle('No picture'), findsOneWidget);
-    expect(find.text('Obstacle close: 2.5 m'), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_ring')), findsOneWidget);
   });
 }
 
