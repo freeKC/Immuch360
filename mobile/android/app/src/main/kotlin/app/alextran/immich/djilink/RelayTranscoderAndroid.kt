@@ -528,7 +528,6 @@ class DjiRelayEnc private constructor(
   override val name: String,
   initial: RelayEncoderSetup,
   private val gl: DjiRelayGl,
-  private val inputSurface: Surface,
   private val thread: HandlerThread,
   private val handler: Handler,
   private val core: RelayTranscoder,
@@ -576,22 +575,24 @@ class DjiRelayEnc private constructor(
             format.removeKey(MediaFormat.KEY_PROFILE)
           }
           val created = runCatching { MediaCodec.createByCodecName(info.name) }.getOrNull() ?: break
+          val setup = RelayEncoderSetup(
+            width = width,
+            height = height,
+            perSecond = AndroidRelayCodecs.PER_SECOND,
+            bitrateMode = if (level == 3) "default" else if (info.cbr) "cbr" else "vbr",
+            latencyAccepted = null,
+            headersOnKeys = headers,
+            keyIntervalS = AndroidRelayCodecs.KEY_INTERVAL_S,
+            level = level,
+          )
+          val port = DjiRelayEnc(created, info.name, setup, gl, thread, handler, core, clockNs)
           var surface: Surface? = null
           try {
+            // Asynchronous: the callback before the configuration, as MediaCodec asks
+            created.setCallback(port.callback, handler)
             created.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
             surface = created.createInputSurface()
-            val setup = RelayEncoderSetup(
-              width = width,
-              height = height,
-              perSecond = AndroidRelayCodecs.PER_SECOND,
-              bitrateMode = if (level == 3) "default" else if (info.cbr) "cbr" else "vbr",
-              latencyAccepted = null,
-              headersOnKeys = headers,
-              keyIntervalS = AndroidRelayCodecs.KEY_INTERVAL_S,
-              level = level,
-            )
-            val port = DjiRelayEnc(created, info.name, setup, gl, surface, thread, handler, core, clockNs)
-            created.setCallback(port.callback, handler)
+            port.inputSurface = surface
             if (!gl.attachEncoder(surface, width, height)) {
               throw IllegalStateException("no EGL surface")
             }
@@ -612,6 +613,10 @@ class DjiRelayEnc private constructor(
 
   @Volatile
   private var current: RelayEncoderSetup = initial
+
+  /** The encoder's input surface, which the GL stage draws into; made after the configuration */
+  @Volatile
+  private var inputSurface: Surface? = null
 
   override val setup: RelayEncoderSetup get() = current
 
@@ -689,7 +694,7 @@ class DjiRelayEnc private constructor(
       gl.detachEncoder()
       runCatching { codec.stop() }
       runCatching { codec.release() }
-      runCatching { inputSurface.release() }
+      runCatching { inputSurface?.release() }
       thread.quitSafely()
     }, "DjiRelayEncClose").apply { isDaemon = true }.start()
   }
