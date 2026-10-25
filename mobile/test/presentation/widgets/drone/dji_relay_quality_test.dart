@@ -93,6 +93,11 @@ void main() {
       'Steady stream: c2.exynos.hevc.encoder, 1920x1080, 30 per second, 4.2 Mbit/s now, encoding 14 ms (95 %: 23 ms)',
     );
     expect(djiRelaySteadyLine(t, steadySending(state: 'standby')), 'Steady stream ready: c2.exynos.hevc.encoder');
+    // Full stream chosen: off, not ready
+    expect(
+      djiRelaySteadyLine(t, steadySending(state: 'off', quality: DjiRelayQuality.full)),
+      'Steady stream off: Full stream chosen in Relay quality',
+    );
     expect(
       djiRelaySteadyLine(t, steadySending(state: 'unavailable', why: 'noEncoder')),
       'No steady stream on this phone: no H.265 encoder',
@@ -175,7 +180,7 @@ void main() {
       streamSwitches: 1,
     );
     expect(djiLinkSmoothnessLines(t, paced).first, "From the phone's encoder, 30 per second");
-    expect(t.dji_watch_steady_switch, 'Steady picture from the phone: the Wi-Fi could not carry the full one');
+    expect(t.dji_watch_steady_switch, 'Steady picture from the phone: less detail, no lost pictures');
   });
 
   testWidgets('Relay quality: three choices, the one the native side keeps, and the host call when one is picked', (

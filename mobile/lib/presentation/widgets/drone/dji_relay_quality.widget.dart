@@ -56,6 +56,10 @@ String? djiRelaySteadyLine(Translations t, DjiRelaySending? sending) {
     return t.dji_link_relay_steady_stopped(why: djiRelaySteadyWhy(t, why));
   }
   final encoder = sending.steadyEncoder ?? '-';
+  if (state == 'off' && sending.quality == DjiRelayQuality.full) {
+    // Full stream is the off switch: nothing is ready to send
+    return t.dji_link_relay_steady_off;
+  }
   if (state != 'running') {
     return t.dji_link_relay_steady_ready(encoder: encoder);
   }
