@@ -56,7 +56,8 @@ const djiObstacleGapCm = 50;
 /// The two distances within their steppers, "Strong glow from" at least [djiObstacleGapCm] under "Glow from"
 (int, int) djiObstacleDistancesCm(int farCm, int nearCm) {
   final far = farCm.clamp(djiObstacleFarMinCm, djiObstacleFarMaxCm);
-  final near = nearCm.clamp(djiObstacleNearMinCm, math.min(djiObstacleNearMaxCm, far - djiObstacleGapCm));
+  final nearMax = math.min(djiObstacleNearMaxCm, far - djiObstacleGapCm);
+  final near = nearCm.clamp(djiObstacleNearMinCm, nearMax);
   return (far, near);
 }
 

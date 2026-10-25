@@ -12,7 +12,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
