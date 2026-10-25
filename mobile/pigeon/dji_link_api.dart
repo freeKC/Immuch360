@@ -758,6 +758,11 @@ enum DjiRelayReceiveState {
   busy,
 }
 
+/// "Relay quality" in Advanced (p2/relay-bandwidth-2026-10-25.md, 7.7): the drone's picture while a receiver's Wi-Fi
+/// keeps up and the phone's steady picture when it cannot (automatic, the default), the drone's picture always (full,
+/// the off switch), or the phone's steady picture always (steady)
+enum DjiRelayQuality { automatic, full, steady }
+
 /// One headset or TV the phone sends to
 class DjiRelayHeadsetRow {
   const DjiRelayHeadsetRow({
@@ -781,6 +786,14 @@ class DjiRelayHeadsetRow {
     this.receiverLongestFreezeMs,
     this.receiverSkips,
     this.receiverLate,
+    this.stream,
+    this.steadyCapable,
+    this.streamForMs,
+    this.bestSecondMegabits,
+    this.allowedMegabits,
+    this.wifiBand,
+    this.wifiLinkMbps,
+    this.wifiRssi,
   });
 
   final String address;
@@ -818,6 +831,21 @@ class DjiRelayHeadsetRow {
   final int? receiverLongestFreezeMs;
   final int? receiverSkips;
   final int? receiverLate;
+
+  /// The stream it gets: full (the drone's) or steady (the phone's encoder); whether it can take the steady one (false
+  /// for a receiver of an earlier build); since when it is on this stream
+  final String? stream;
+  final bool? steadyCapable;
+  final int? streamForMs;
+
+  /// The best second its link carried in the last 2 minutes, and the rate it allows the steady stream while on it
+  final double? bestSecondMegabits;
+  final double? allowedMegabits;
+
+  /// Its own Wi-Fi, from its pings (a receiver of the bandwidth build): band (2.4, 5 or 6), link speed and signal
+  final String? wifiBand;
+  final int? wifiLinkMbps;
+  final int? wifiRssi;
 }
 
 /// A TV added on the phone: the code the TV made and showed, under an opaque id
@@ -839,10 +867,39 @@ class DjiRelaySending {
     required this.wifiLowLatencyHeld,
     required this.unitsDropped,
     this.port,
+    this.quality,
+    this.steadyState,
+    this.steadyWhy,
+    this.steadyEncoder,
+    this.steadyWidth,
+    this.steadyHeight,
+    this.steadyPerSecond,
+    this.steadyMegabits,
+    this.steadyEncodeMedianMs,
+    this.steadyEncodeP95Ms,
+    this.droneMegabits,
   });
 
   final bool on;
   final int? port;
+
+  /// "Relay quality" as chosen; null from a phone that has no such choice
+  final DjiRelayQuality? quality;
+
+  /// The steady stream: off, standby, running, unavailable or stopped, and why there is none (noEncoder, refused,
+  /// noSecondDecoder, tooSlow, decoderTooSlow, hot, failed, pilotFirst); null on a phone that has none to describe
+  final String? steadyState;
+  final String? steadyWhy;
+  final String? steadyEncoder;
+  final int? steadyWidth;
+  final int? steadyHeight;
+  final int? steadyPerSecond;
+  final double? steadyMegabits;
+  final double? steadyEncodeMedianMs;
+  final double? steadyEncodeP95Ms;
+
+  /// What the drone sent in the last second
+  final double? droneMegabits;
 
   /// cable, replay or none
   final String sending;
@@ -907,6 +964,8 @@ class DjiRelayReceiving {
     this.wifiLinkMbps,
     this.wifiRssi,
     this.refreshHz,
+    this.steady,
+    this.streamSwitches,
   });
 
   final DjiRelayReceiveState state;
@@ -1002,6 +1061,11 @@ class DjiRelayReceiving {
 
   /// The display's refresh rate
   final double? refreshHz;
+
+  /// The picture comes from the phone's own encoder (its steady stream) rather than the drone's, and how many times
+  /// that changed since the connect
+  final bool? steady;
+  final int? streamSwitches;
 }
 
 /// What "Send to a headset" starts with: the code, the names the welcome and the announcement carry, the notification
@@ -1582,6 +1646,11 @@ abstract class DjiLinkApi {
   /// A headset's choice in Options: the lowest delay, with less smoothing (no floor under its jitter buffer). Taken at
   /// once while receiving, and by every reception after.
   void setLowestDelay(bool on);
+
+  /// "Relay quality" in Advanced, kept on the native side and taken at once by a running relay
+  void setRelayQuality(DjiRelayQuality quality);
+
+  DjiRelayQuality relayQuality();
 
   /// Eight seconds of a made up ring on this device only, through the same decision and drawing; false while the
   /// motors run or no picture screen is in front. Never relayed, never saved.

@@ -131,6 +131,18 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
     controller.setLowestDelay(on)
   }
 
+  override fun setRelayQuality(quality: DjiRelayQuality) {
+    controller.setRelayQuality(
+      when (quality) {
+        DjiRelayQuality.AUTOMATIC -> RelayQuality.AUTOMATIC
+        DjiRelayQuality.FULL -> RelayQuality.FULL
+        DjiRelayQuality.STEADY -> RelayQuality.STEADY
+      },
+    )
+  }
+
+  override fun relayQuality(): DjiRelayQuality = controller.relayQuality().toPigeon()
+
   override fun playObstacleTest() {
     controller.playObstacleTest()
   }
