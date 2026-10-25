@@ -127,6 +127,26 @@ void main() {
     expect(settings.directional(DjiObstacleSideOffer.none), isFalse);
   });
 
+  test('every switch of the ring is on by default but the side, which waits for its proof (FreeKC, 25 October)', () {
+    const settings = DjiObstacleSettings();
+    // The ring, while its data is likely, is offered on by default
+    expect(settings.alertOn, isTrue);
+    expect(settings.offered(DjiObstacleOffer.test), isTrue);
+    expect(settings.offered(DjiObstacleOffer.proven), isTrue);
+    expect(settings.offered(DjiObstacleOffer.none), isFalse);
+    expect(const DjiObstacleSettings(alertOn: false).offered(DjiObstacleOffer.test), isFalse);
+    // The sound (a TV's too), the tap, the number: on; the circle around the centre, not the frame
+    expect(settings.soundOn, isTrue);
+    expect(settings.hapticOn, isTrue);
+    expect(settings.numbersOn, isTrue);
+    expect(settings.frame, isFalse);
+    // The side: off while its gate row is likely, with its "not confirmed yet" note; on by default once proven
+    expect(djiObstacleSideOffer(), DjiObstacleSideOffer.test);
+    expect(settings.sideTest, isFalse);
+    expect(settings.directional(djiObstacleSideOffer()), isFalse);
+    expect(settings.directional(djiObstacleSideOffer(gates: _proven)), isTrue);
+  });
+
   test('the distances stay in their steppers, "Strong glow from" at least 0.5 m under "Glow from"', () {
     expect(djiObstacleDistancesCm(300, 100), (300, 100));
     expect(djiObstacleDistancesCm(900, 400), (600, 250));

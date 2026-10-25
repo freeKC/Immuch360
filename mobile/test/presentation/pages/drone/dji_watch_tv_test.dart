@@ -17,8 +17,10 @@ import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/drone/dji_link.page.dart';
 import 'package:immich_mobile/presentation/pages/drone/dji_watch.page.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_receive.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_notice.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_transient.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_watch_tv.widget.dart';
 import 'package:immich_mobile/presentation/widgets/pairing/qr_code.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
@@ -324,7 +326,10 @@ void main() {
     expect(find.byKey(const Key('dji_watch_tv_column_left')), findsNothing);
     expect(find.textContaining('Height'), findsNothing);
     // The hint of the keys, for 5 s
-    expect(find.text('OK: show or hide the numbers. Menu, or hold OK: options. Back: the phones.'), findsOneWidget);
+    expect(
+      find.text('OK: show or hide the numbers. Menu, or hold OK: options. Back: the phones. Any key: the notes again.'),
+      findsOneWidget,
+    );
     await tester.pump(djiWatchTvHintFor);
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('dji_watch_tv_hint')), findsNothing);
@@ -385,6 +390,79 @@ void main() {
     expect(api.connects, hasLength(connects));
     expect(api.disconnects, 0);
     expect(api.playbackStops, 0);
+  });
+
+  testWidgets('the warnings of the full screen come for five seconds and fade; a key brings them back', (tester) async {
+    final (_, _, listener) = await watching(tester);
+    final strip = find.byKey(const Key('dji_watch_tv_strip'));
+    final state = find.byKey(const Key('dji_watch_tv_strip_state'));
+    final watchingOnly = find.byKey(const Key('dji_watch_tv_strip_watching'));
+    final observer = find.byKey(const Key('dji_watch_tv_strip_observer'));
+    final delay = find.byKey(const Key('dji_watch_tv_strip_delay'));
+    final flyNote = find.byKey(const Key('dji_watch_tv_fly_note'));
+    for (final finder in [state, watchingOnly, observer, delay, flyNote]) {
+      expect(finder, findsOneWidget);
+    }
+    FadeTransition fade(Finder finder) =>
+        tester.widget<FadeTransition>(find.ancestor(of: finder, matching: find.byType(FadeTransition)).first);
+
+    // Five seconds in all, then out over 0.8 s
+    await tester.pump(djiTransientHold - const Duration(milliseconds: 600));
+    expect(fade(watchingOnly).opacity.value, 1);
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(fade(watchingOnly).opacity.value, closeTo(0.5, 0.05));
+    await tester.pumpAndSettle();
+    // Gone, the plate shrunk to the delay, which stays with the values
+    for (final finder in [state, watchingOnly, observer, flyNote]) {
+      expect(finder, findsNothing);
+    }
+    expect(delay, findsOneWidget);
+    expect(find.byKey(const Key('dji_watch_tv_column_right')), findsOneWidget);
+    expect(tester.getSize(strip).height, lessThan(60));
+
+    // Any key brings them back for five seconds: here an arrow, with the hint
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    for (final finder in [state, watchingOnly, observer, flyNote]) {
+      expect(finder, findsOneWidget);
+    }
+    await tester.pump(djiTransientHold);
+    await tester.pumpAndSettle();
+    expect(watchingOnly, findsNothing);
+
+    // A picture that stops: its red line comes by itself, and stays while the picture is black
+    await push(
+      tester,
+      listener,
+      fakeSnapshot(
+        decode: fakeDecode(lastOutputAgoMs: 2500),
+        relayReceiving: fakeReceiving(phoneSource: 'cable', lastPictureAgoMs: 2500),
+        liveFrame: fakeFrame(),
+      ),
+    );
+    final stale = find.byKey(const Key('dji_watch_tv_strip_stale'));
+    expect(stale, findsOneWidget);
+    await tester.pump(djiTransientHold * 2);
+    await tester.pumpAndSettle();
+    expect(stale, findsOneWidget);
+    expect(watchingOnly, findsNothing);
+  });
+
+  testWidgets('the phones view: the rules on top come for five seconds, and any key brings them back', (tester) async {
+    final relay = FakeRelayEnvironment();
+    await openOnTv(tester, television(), relay: relay);
+    await announce(tester, relay, '192.168.1.21');
+    final rules = find.byKey(const Key('dji_link_observer'));
+    expect(rules, findsOneWidget);
+    await tester.pump(djiTransientHold);
+    await tester.pumpAndSettle();
+    expect(rules, findsNothing);
+    expect(phoneRow('192.168.1.21'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    expect(rules, findsOneWidget);
+    expect(find.text('Watching only: nothing on this TV reaches the drone.'), findsOneWidget);
   });
 
   testWidgets('Menu, Info and OK held open Options; Back closes it and stays in full screen', (tester) async {
@@ -581,23 +659,27 @@ void main() {
     expect(find.text('K7M2Q 9XRTH'), findsOneWidget);
   });
 
-  testWidgets('the obstacle ring on a TV: its sound off by default, its number and sample, never hidden by OK', (
+  testWidgets('the obstacle ring on a TV: on by default with its sound, number and circle, never hidden by OK', (
     tester,
   ) async {
     final (api, _, listener) = await watching(tester);
-    // Off by default on a TV, where people watch and the pilot is elsewhere
-    expect(api.obstacleRings.last.sound, isFalse);
+    // On by default on a TV too (FreeKC's rule of 25 October); a TV never vibrates
+    expect(api.obstacleRings.last.offered, isTrue);
+    expect(api.obstacleRings.last.sound, isTrue);
+    expect(api.obstacleRings.last.numbers, isTrue);
+    expect(api.obstacleRings.last.frame, isFalse);
     expect(api.obstacleRings.last.haptic, isFalse);
     await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
     await tester.pumpAndSettle();
-    // No test switch of its own: whether the ring shows, its distances and its side come from the phone
+    // The old test switch is gone; the ring on this TV's screen, on by default, can only turn it off here
     expect(find.byKey(const Key('dji_watch_obstacle')), findsNothing);
-    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_watch_obstacle_sound'))).value, isFalse);
+    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_watch_obstacle_here'))).value, isTrue);
+    expect(find.text('On by default, when the phone shows it. The phone sets its distances and side.'), findsOneWidget);
+    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_watch_obstacle_sound'))).value, isTrue);
     await tester.tap(find.byKey(const Key('dji_watch_obstacle_sound')));
     await tester.pumpAndSettle();
-    expect(api.obstacleRings.last.sound, isTrue);
-    expect(memory[StoreKey.djiObstacleTvSoundOn], isTrue);
-    expect(memory[StoreKey.djiObstacleSoundOff], isNull);
+    expect(api.obstacleRings.last.sound, isFalse);
+    expect(memory[StoreKey.djiObstacleSoundOff], isTrue);
 
     Future<void> choose(Key key) async {
       await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
@@ -610,13 +692,39 @@ void main() {
     await choose(const Key('dji_watch_tv_sound_test'));
     expect(api.obstacleTests, 1);
     await choose(const Key('dji_watch_obstacle_numbers'));
+    expect(api.obstacleRings.last.numbers, isFalse);
+    expect(memory[StoreKey.djiObstacleNumbersOff], isTrue);
+    await choose(const Key('dji_watch_obstacle_numbers'));
     expect(api.obstacleRings.last.numbers, isTrue);
+    await choose(const Key('dji_watch_obstacle_here'));
+    expect(api.obstacleRings.last.offered, isFalse);
+    expect(memory[StoreKey.djiObstacleRingOff], isTrue);
+    await choose(const Key('dji_watch_obstacle_here'));
+    expect(api.obstacleRings.last.offered, isTrue);
     await choose(const Key('dji_watch_obstacle_sample'));
     expect(api.obstacleSamples, 1);
 
     await push(tester, listener, picture(frame: fakeFrame(alert: fakeDecision(on: true, arcs: [fakeArc(1.84)]))));
     final ring = find.byKey(const Key('dji_live_obstacle_ring'));
     expect(ring, findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_circle')), findsOneWidget);
+    // The frame at the edges, as this TV's choice in Options
+    await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
+    await tester.pumpAndSettle();
+    await showInOptions(tester, const Key('dji_watch_obstacle_shape'));
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('dji_watch_obstacle_shape')),
+        matching: find.text('Circle around the centre'),
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const Key('dji_watch_obstacle_shape')));
+    await tester.pumpAndSettle();
+    expect(api.obstacleRings.last.frame, isTrue);
+    expect(memory[StoreKey.djiObstacleShapeFrame], isTrue);
+    expect(find.byKey(const Key('dji_live_obstacle_frame')), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_circle')), findsNothing);
     expect(find.byKey(const Key('dji_watch_tv_obstacle')), findsNothing);
     expect(find.text('Obstacle close: 1.8 m'), findsNothing);
     expect(find.text('1.8 m'), findsOneWidget);
@@ -765,9 +873,11 @@ void main() {
     await tester.pumpAndSettle();
     const items = [
       Key('dji_watch_tv_numbers'),
+      Key('dji_watch_obstacle_here'),
       Key('dji_watch_obstacle_sound'),
       Key('dji_watch_tv_sound_test'),
       Key('dji_watch_obstacle_numbers'),
+      Key('dji_watch_obstacle_shape'),
       Key('dji_watch_obstacle_sample'),
       Key('dji_watch_tv_safety'),
       Key('dji_watch_tv_diagnostics'),
@@ -1005,6 +1115,59 @@ void main() {
         djiWatchTvPictureLines(t, fakeDecode(), fakeReceiving(receiveToPictureNowMs: 640)),
         contains('Delay from the phone: about 640 ms'),
       );
+    });
+
+    test('the state line comes and goes over the picture, but an error that needs an action stays', () {
+      DjiReceiveLine kind(
+        DjiRelayReceiveState state, {
+        bool flows = true,
+        DjiLinkDecode? decode,
+        bool long = false,
+        int failures = 0,
+        String source = 'cable',
+        String? refusedBy,
+      }) => djiWatchTvLine(
+        fakeReceiving(state: state, phoneSource: source, failures: failures),
+        pictureFlows: flows,
+        decode: decode,
+        longWait: long,
+        refusedBy: refusedBy,
+      );
+      // Where the picture comes from, a wait, a reconnection: they come and go
+      for (final (line, expected) in [
+        (kind(DjiRelayReceiveState.receiving), DjiReceiveLine.live),
+        (kind(DjiRelayReceiveState.receiving, source: 'replay'), DjiReceiveLine.replay),
+        (kind(DjiRelayReceiveState.receiving, flows: false), DjiReceiveLine.waiting),
+        (kind(DjiRelayReceiveState.connecting), DjiReceiveLine.connecting),
+        (kind(DjiRelayReceiveState.checkingCode), DjiReceiveLine.checking),
+        (kind(DjiRelayReceiveState.lost), DjiReceiveLine.lost),
+      ]) {
+        expect(line, expected);
+        expect(line.keeps, isFalse, reason: '$line');
+      }
+      // What needs an action, or says why no picture comes, stays
+      for (final (line, expected) in [
+        (kind(DjiRelayReceiveState.receiving, flows: false, long: true), DjiReceiveLine.stillNoPicture),
+        (kind(DjiRelayReceiveState.receiving, source: 'none'), DjiReceiveLine.noSource),
+        (kind(DjiRelayReceiveState.lost, failures: 3), DjiReceiveLine.stillTrying),
+        (kind(DjiRelayReceiveState.blocked), DjiReceiveLine.blocked),
+        (kind(DjiRelayReceiveState.full), DjiReceiveLine.full),
+        (kind(DjiRelayReceiveState.otherVersion), DjiReceiveLine.otherVersion),
+        (kind(DjiRelayReceiveState.phoneUnproven), DjiReceiveLine.unproven),
+        (kind(DjiRelayReceiveState.wrongCode), DjiReceiveLine.wrongCode),
+        (kind(DjiRelayReceiveState.wrongCode, refusedBy: 'Immuch360 on Galaxy S24+'), DjiReceiveLine.codeRefused),
+        (kind(DjiRelayReceiveState.receiving, decode: fakeDecode(failure: 'no-decoder')), DjiReceiveLine.decoderNone),
+        (
+          kind(DjiRelayReceiveState.receiving, decode: fakeDecode(failure: 'configuration-refused')),
+          DjiReceiveLine.decoderRefused,
+        ),
+      ]) {
+        expect(line, expected);
+        expect(line.keeps, isTrue, reason: '$line');
+      }
+      // The headset's strip reads the same kinds
+      expect(djiRelayReceiveLine(fakeReceiving(phoneSource: 'cable')), DjiReceiveLine.live);
+      expect(djiRelayReceiveLine(fakeReceiving(state: DjiRelayReceiveState.busy)).keeps, isTrue);
     });
 
     test('a value read from the sofa: 32 over 16, on black at 70 %', () {

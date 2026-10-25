@@ -1,7 +1,8 @@
-// The obstacle ring over the picture (p2/design-obstacle-ring-2026-10-25.md, 2.2 to 2.7 and 4), with synthetic
-// decisions: no capture holds an obstacle at a known place and distance yet. Where the glow falls on the picture's
-// border, how strong and how deep, that nothing at all is in the tree while nothing is close, its fades, its words for a
-// screen reader and the distance by the glow. Nothing ran on a phone, a TV or the Quest: these are widget tests.
+// The obstacle indicator over the picture (p2/design-obstacle-ring-2026-10-25.md, 2.2 to 2.7 and 4), with synthetic
+// decisions: no capture holds an obstacle at a known place and distance yet. By default a circle around the centre
+// (FreeKC, 25 October, "comme dans Fortnite"), the frame at the edges as a setting: where the glow falls, how strong and
+// how thick, that nothing at all is in the tree while nothing is close, its fades, its words for a screen reader and the
+// distance by the glow. Nothing ran on a phone, a TV or the Quest: these are widget tests.
 
 import 'dart:math' as math;
 
@@ -173,6 +174,82 @@ void main() {
     });
   });
 
+  group('the circle around the centre', () {
+    const box = Size(640, 360);
+
+    DjiObstacleCirclePiece strongest(List<DjiObstacleCirclePiece> pieces) =>
+        pieces.reduce((a, b) => b.alpha > a.alpha ? b : a);
+    double middle(DjiObstacleCirclePiece piece) => (piece.fromDeg + piece.toDeg) / 2;
+
+    test('a quarter of the picture height, a thin ring, the front at the top of the circle', () {
+      expect(djiObstacleCircleRadius(box), 90);
+      expect(djiObstacleCircleThickness(box), closeTo(16.2, 1e-9));
+      expect(djiObstacleCircleRadius(const Size(1920, 1080)), 270);
+      const centre = Offset(320, 180);
+      expect(djiObstacleCirclePoint(0, centre, 90).dx, closeTo(320, 1e-9));
+      expect(djiObstacleCirclePoint(0, centre, 90).dy, closeTo(90, 1e-9));
+      expect(djiObstacleCirclePoint(90, centre, 90).dx, closeTo(410, 1e-9));
+      expect(djiObstacleCirclePoint(90, centre, 90).dy, closeTo(180, 1e-9));
+      expect(djiObstacleCirclePoint(180, centre, 90).dy, closeTo(270, 1e-9));
+      expect(djiObstacleCirclePoint(-90, centre, 90).dx, closeTo(230, 1e-9));
+    });
+
+    test('an arc ahead is strongest at the top of the circle, about 70 degrees wide, nothing behind', () {
+      final arc = fakeArc(1.0, centreDeg: 0);
+      final pieces = djiObstacleCirclePieces(box, [arc]);
+      expect(middle(strongest(pieces)).abs(), lessThanOrEqualTo(360 / djiObstacleCirclePieceCount));
+      expect(pieces.every((piece) => djiObstacleNormalize(middle(piece)).abs() < 45), isTrue);
+      expect(pieces.every((piece) => piece.alpha <= arc.opacity + 1e-9), isTrue);
+      expect(strongest(pieces).colour, const Color(0xFFE53935));
+      // What shows above a tenth of its strength spans 60 to 90 degrees
+      final span = pieces
+          .where((piece) => piece.alpha >= arc.opacity * 0.1)
+          .fold(0.0, (sum, piece) => sum + piece.toDeg - piece.fromDeg);
+      expect(span, inInclusiveRange(60, 90));
+      expect(djiObstacleCircleWindow(0), 1);
+      expect(djiObstacleCircleWindow(22.5), closeTo(0.5, 1e-9));
+      expect(djiObstacleCircleWindow(45), 0);
+      // On the right: at three o'clock
+      final right = strongest(djiObstacleCirclePieces(box, [fakeArc(1.0, centreDeg: 90)]));
+      expect(middle(right), closeTo(90, 360 / djiObstacleCirclePieceCount));
+    });
+
+    test('where two arcs meet the larger wins, without adding up', () {
+      final ahead = fakeArc(0.8, centreDeg: 0);
+      final side = fakeArc(2.8, centreDeg: 30);
+      for (final piece in djiObstacleCirclePieces(box, [ahead, side])) {
+        final a = ahead.opacity * djiObstacleCircleWindow(djiObstacleNormalize(middle(piece)));
+        final b = side.opacity * djiObstacleCircleWindow(djiObstacleNormalize(middle(piece) - 30));
+        expect(piece.alpha, closeTo(math.max(a, b), 1e-9));
+        expect(piece.colour, Color(a >= b ? ahead.argb : side.argb));
+      }
+    });
+
+    test('the even glow, the side not shown, is the whole circle, faint', () {
+      final even = fakeArc(2.0);
+      final pieces = djiObstacleCirclePieces(box, [even]);
+      expect(pieces, hasLength(djiObstacleCirclePieceCount));
+      expect(pieces.every((piece) => piece.alpha == even.opacity), isTrue);
+      expect(even.opacity, lessThanOrEqualTo(0.35));
+      expect(djiObstacleCirclePieces(box, const []), isEmpty);
+    });
+
+    test('a strong arc is the full thickness, a faint one 60 % of it', () {
+      final full = djiObstacleCircleThickness(box);
+      expect(djiObstacleCirclePieces(box, [fakeArc(0.8)]).first.thickness, closeTo(full, 1e-9));
+      expect(djiObstacleCirclePieces(box, [fakeArc(3.0)]).first.thickness, closeTo(full * 0.6, 1e-9));
+    });
+
+    test('the distance goes outside the circle by the nearest arc, low on the left with the even glow', () {
+      final ahead = djiObstacleCircleNumberPoint(fakeArc(1.4, centreDeg: 0), box, 14);
+      expect(ahead.dx, closeTo(320, 1e-9));
+      expect(ahead.dy, closeTo(180 - (90 + 8.1 + 14), 1e-9));
+      final even = djiObstacleCircleNumberPoint(fakeArc(1.4), box, 14);
+      expect(even.dx, lessThan(320));
+      expect(even.dy, greaterThan(180));
+    });
+  });
+
   group('the ring over a picture', () {
     late Map<StoreKey<bool>, bool> memory;
 
@@ -277,23 +354,54 @@ void main() {
       expect(ring, findsNothing);
     });
 
-    testWidgets('the distance by the glow: off by default, by the nearest arc when asked, hidden by OK on a TV', (
+    testWidgets('a circle around the centre by default; the frame at the edges as this device\'s setting', (
+      tester,
+    ) async {
+      final frame = fakeFrame(alert: fakeDecision(on: true, arcs: [fakeArc(1.44, centreDeg: 0)]));
+      await pumpRing(tester, frame);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('dji_live_obstacle_circle')), findsOneWidget);
+      expect(find.byKey(const Key('dji_live_obstacle_frame')), findsNothing);
+      // Over the whole picture, the circle drawn around its centre
+      expect(
+        tester.getRect(find.byKey(const Key('dji_live_obstacle_circle'))),
+        tester.getRect(find.byKey(const Key('picture'))),
+      );
+
+      memory[StoreKey.djiObstacleShapeFrame] = true;
+      await pumpRing(tester, frame);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('dji_live_obstacle_frame')), findsOneWidget);
+      expect(find.byKey(const Key('dji_live_obstacle_circle')), findsNothing);
+    });
+
+    testWidgets('the distance by the glow: on by default, outside the circle by the arc, hidden by OK on a TV', (
       tester,
     ) async {
       final frame = fakeFrame(alert: fakeDecision(on: true, arcs: [fakeArc(1.44, centreDeg: -90)]));
       await pumpRing(tester, frame);
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('dji_live_obstacle_distance')), findsNothing);
-
-      memory[StoreKey.djiObstacleNumbersOn] = true;
-      await pumpRing(tester, frame);
-      await tester.pumpAndSettle();
       expect(find.text('1.4 m'), findsOneWidget);
-      // On the left edge, where the arc is
+      // Left of the circle, where the arc is, past its edge
       final picture = tester.getRect(find.byKey(const Key('picture')));
       final number = tester.getCenter(find.text('1.4 m'));
-      expect(number.dx, lessThan(picture.left + picture.width / 4));
+      expect(number.dx, lessThan(picture.center.dx - picture.height / 4));
+      expect(number.dy, closeTo(picture.center.dy, picture.height / 8));
       expect(tester.widget<Text>(find.text('1.4 m')).style?.fontSize, 14);
+
+      // With the frame, on the left edge
+      memory[StoreKey.djiObstacleShapeFrame] = true;
+      await pumpRing(tester, frame);
+      await tester.pumpAndSettle();
+      expect(tester.getCenter(find.text('1.4 m')).dx, lessThan(picture.left + picture.width / 4));
+      memory[StoreKey.djiObstacleShapeFrame] = false;
+
+      // Turned off on this device
+      memory[StoreKey.djiObstacleNumbersOff] = true;
+      await pumpRing(tester, frame);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('dji_live_obstacle_distance')), findsNothing);
+      memory[StoreKey.djiObstacleNumbersOff] = false;
 
       await pumpRing(tester, frame, tv: true);
       await tester.pumpAndSettle();
@@ -304,14 +412,20 @@ void main() {
       expect(find.byKey(const Key('dji_live_obstacle_ring')), findsOneWidget);
     });
 
-    testWidgets('with the even glow the distance is in the bottom left corner, not at the top where ahead is', (
+    testWidgets('with the even glow the distance is low on the left, never at the top where ahead is', (
       tester,
     ) async {
-      memory[StoreKey.djiObstacleNumbersOn] = true;
       await pumpRing(tester, fakeFrame(alert: fakeDecision(on: true, arcs: [fakeArc(1.44)])));
       await tester.pumpAndSettle();
       final picture = tester.getRect(find.byKey(const Key('picture')));
-      final number = tester.getCenter(find.text('1.4 m'));
+      var number = tester.getCenter(find.text('1.4 m'));
+      expect(number.dx, lessThan(picture.center.dx));
+      expect(number.dy, greaterThan(picture.center.dy));
+      // With the frame: in the bottom left corner
+      memory[StoreKey.djiObstacleShapeFrame] = true;
+      await pumpRing(tester, fakeFrame(alert: fakeDecision(on: true, arcs: [fakeArc(1.44)])));
+      await tester.pumpAndSettle();
+      number = tester.getCenter(find.text('1.4 m'));
       expect(number.dx, lessThan(picture.left + picture.width / 4));
       expect(number.dy, greaterThan(picture.top + picture.height * 3 / 4));
     });

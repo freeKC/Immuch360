@@ -165,7 +165,10 @@ void main() {
       await tester.scrollUntilVisible(linkSwitch, 100, scrollable: find.byType(Scrollable).first);
       expect(tester.widget<SwitchListTile>(linkSwitch).value, isTrue);
       expect(
-        find.text('The live picture of a DJI drone that a phone sends on this Wi-Fi. Nothing here can move the drone.'),
+        find.text(
+          'The live picture of a DJI drone that a phone sends on this Wi-Fi. Nothing here can move the drone. '
+          'On by default.',
+        ),
         findsOneWidget,
       );
       expect(find.byKey(const Key('advanced_settings_dji_import')), findsNothing);

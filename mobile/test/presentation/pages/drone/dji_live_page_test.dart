@@ -13,6 +13,7 @@ import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/presentation/pages/drone/dji_live.page.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_notice.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_transient.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 
@@ -412,6 +413,47 @@ void main() {
     expect(find.byKey(const Key('dji_live')), findsNothing);
   });
 
+  testWidgets('the warnings over the picture come for five seconds and fade; a tap brings them back', (tester) async {
+    final listener = await openLive(tester, phone());
+    await push(tester, listener, live());
+    final chip = find.byKey(const Key('dji_live_picture_live'));
+    expect(chip, findsOneWidget);
+    await tester.pump(djiTransientHold);
+    await tester.pumpAndSettle();
+    // The state of the picture goes; the values stay
+    expect(chip, findsNothing);
+    expect(find.text('34 %'), findsOneWidget);
+    expect(find.text('0:41'), findsOneWidget);
+    // A tap on the picture brings it back, and reaches nothing else
+    await tester.tapAt(tester.getCenter(find.byKey(const Key('dji_live_picture_area'))));
+    await tester.pumpAndSettle();
+    expect(chip, findsOneWidget);
+    expect(find.byKey(const Key('dji_live_leave_dialog')), findsNothing);
+    // A new state shows by itself
+    await tester.pump(djiTransientHold);
+    await tester.pumpAndSettle();
+    await push(tester, listener, live(decode: fakeDecode(picturesPerSecond: 12)));
+    expect(find.text('Weak picture'), findsOneWidget);
+
+    // The picture lost in flight: "Look at the drone and fly with the remote" for five seconds; the title and what
+    // to do stay until the picture comes back
+    await push(tester, listener, fakeSnapshot(state: DjiLinkState.linkLost, reason: DjiLinkReason.readsFailed));
+    final advice = find.text('Look at the drone and fly with the remote.');
+    expect(advice, findsOneWidget);
+    await tester.pump(djiTransientHold);
+    await tester.pumpAndSettle();
+    expect(advice, findsNothing);
+    expect(cardTitle('This phone lost the cable link'), findsOneWidget);
+    expect(
+      find.text('This phone tries again. Once landed, if it lasts, unplug the remote and plug it in again.'),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('dji_live_retry')), findsOneWidget);
+    await tester.tapAt(tester.getCenter(find.byKey(const Key('dji_live_card_title'))));
+    await tester.pumpAndSettle();
+    expect(advice, findsOneWidget);
+  });
+
   testWidgets('a lost cable link before the drone answered keeps the plain advice', (tester) async {
     final listener = await openLive(tester, phone());
     await push(tester, listener, fakeSnapshot(state: DjiLinkState.controllerIdentified));
@@ -530,12 +572,21 @@ void main() {
     await tester.tap(find.byKey(const Key('dji_live_advanced')));
     await tester.pumpAndSettle();
 
+    // On by default, as every experimental switch; turned off here, the plug step never asks again
     final openOnPlug = find.byKey(const Key('dji_live_open_on_plug'));
-    expect(tester.widget<SwitchListTile>(openOnPlug).value, isFalse);
+    expect(tester.widget<SwitchListTile>(openOnPlug).value, isTrue);
+    expect(
+      find.text('On by default. If DJI Fly is on this phone too, Android asks each time which app opens the remote.'),
+      findsOneWidget,
+    );
     await tester.tap(openOnPlug);
     await tester.pumpAndSettle();
-    expect(api.openOnPlugSets, [true]);
-    expect(tester.widget<SwitchListTile>(openOnPlug).value, isTrue);
+    expect(api.openOnPlugSets, [false]);
+    expect(tester.widget<SwitchListTile>(openOnPlug).value, isFalse);
+    expect(memory.values[StoreKey.djiLiveOfferAnswered], isTrue);
+    await tester.tap(openOnPlug);
+    await tester.pumpAndSettle();
+    expect(api.openOnPlugSets, [false, true]);
 
     await tester.tap(find.byKey(const Key('dji_live_save_capture')));
     await tester.pumpAndSettle();
@@ -579,9 +630,18 @@ void main() {
     expect(find.byKey(const Key('dji_live_to_dji_fly')), findsOneWidget);
   });
 
-  testWidgets('the offer to open on the plug comes once, after a session that showed a picture', (tester) async {
+  testWidgets('on by default, the plug step offers nothing', (tester) async {
     memory.values[StoreKey.djiLivePictureSeen] = true;
-    final api = phone();
+    await openLive(tester, phone());
+    expect(find.byKey(const Key('dji_live_card_plug')), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_offer')), findsNothing);
+  });
+
+  testWidgets('turned off by an earlier build, the offer to open on the plug comes once after a picture', (
+    tester,
+  ) async {
+    memory.values[StoreKey.djiLivePictureSeen] = true;
+    final api = phone()..openOnPlugValue = false;
     await openLive(tester, api);
     expect(find.byKey(const Key('dji_live_offer')), findsOneWidget);
     expect(find.text('Open this screen when you plug in the remote?'), findsOneWidget);
@@ -602,7 +662,7 @@ void main() {
 
   testWidgets('"Not now" answers the offer for good, and the switch stays in Advanced', (tester) async {
     memory.values[StoreKey.djiLivePictureSeen] = true;
-    final api = phone();
+    final api = phone()..openOnPlugValue = false;
     await openLive(tester, api, size: _large);
     await tester.ensureVisible(find.byKey(const Key('dji_live_offer_no')));
     await tester.tap(find.byKey(const Key('dji_live_offer_no')));
@@ -739,14 +799,19 @@ void main() {
     expect(find.text('77 %'), findsNothing);
   });
 
-  testWidgets('the obstacle ring is a test the pilot turns on in Advanced, with its distances, side and sound', (
+  testWidgets('the obstacle ring is on by default, a test turned off in Advanced, with its distances, side and sound', (
     tester,
   ) async {
     final api = phone();
     final listener = await openLive(tester, api, size: _large);
     await push(tester, listener, live());
-    expect(api.obstacleRings.last.offered, isFalse);
+    // Every experimental switch on by default (FreeKC's rule of 25 October), the side off while it is only likely
+    expect(api.obstacleRings.last.offered, isTrue);
     expect(api.obstacleRings.last.sound, isTrue);
+    expect(api.obstacleRings.last.haptic, isTrue);
+    expect(api.obstacleRings.last.numbers, isTrue);
+    expect(api.obstacleRings.last.frame, isFalse);
+    expect(api.obstacleRings.last.directional, isFalse);
     await tester.tap(find.byKey(const Key('dji_live_advanced')));
     await tester.pumpAndSettle();
     final scrollable = find.descendant(
@@ -765,11 +830,17 @@ void main() {
     String value(String name) => tester.widget<Text>(find.byKey(Key('dji_live_obstacle_${name}_value'))).data!;
     bool enabled(String key) => tester.widget<IconButton>(find.byKey(Key(key))).onPressed != null;
 
-    await tester.scrollUntilVisible(find.byKey(const Key('dji_live_obstacle_limits')), 100, scrollable: scrollable);
+    await tester.scrollUntilVisible(find.byKey(const Key('dji_live_obstacle_test')), 100, scrollable: scrollable);
     expect(find.text('Obstacle ring'), findsOneWidget);
     expect(find.text('Obstacle ring, not confirmed yet'), findsOneWidget);
-    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_test'))).value, isFalse);
+    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_test'))).value, isTrue);
+    expect(find.textContaining('On by default. A soft glow around the middle of the picture'), findsOneWidget);
+
     // Off: nothing of the ring but the switch, the sample and the two lines
+    await tap('dji_live_obstacle_test');
+    expect(api.obstacleRings.last.offered, isFalse);
+    expect(memory.values[StoreKey.djiObstacleRingOff], isTrue);
+    await tester.scrollUntilVisible(find.byKey(const Key('dji_live_obstacle_limits')), 100, scrollable: scrollable);
     expect(find.byKey(const Key('dji_live_obstacle_sound')), findsNothing);
     expect(find.byKey(const Key('dji_live_obstacle_far')), findsNothing);
     expect(find.byKey(const Key('dji_live_obstacle_sample')), findsOneWidget);
@@ -778,15 +849,12 @@ void main() {
 
     await tap('dji_live_obstacle_test');
     expect(api.obstacleRings.last.offered, isTrue);
-    expect(memory.values[StoreKey.djiObstacleAlertOn], isTrue);
-    // FreeKC's defaults: a glow from 3.0 m, strong from 1.0 m, the side not shown, no vibration, no number
+    expect(memory.values[StoreKey.djiObstacleRingOff], isFalse);
+    // FreeKC's distances: a glow from 3.0 m, strong from 1.0 m
     expect(value('far'), '3.0 m');
     expect(value('near'), '1.0 m');
     expect(api.obstacleRings.last.farM, 3.0);
     expect(api.obstacleRings.last.nearM, 1.0);
-    expect(api.obstacleRings.last.directional, isFalse);
-    expect(api.obstacleRings.last.haptic, isFalse);
-    expect(api.obstacleRings.last.numbers, isFalse);
     expect(
       find.text('Indoors the walls are close, so it may glow the whole flight: try 1.0 m, or turn the ring off.'),
       findsOneWidget,
@@ -818,10 +886,11 @@ void main() {
     expect(value('far'), '1.5 m');
     expect(enabled('dji_live_obstacle_near_more'), isTrue);
 
-    // The side, behind its own test switch while the front is not proven
+    // The side, behind its own test switch while the front is not proven: the one switch off by default
     expect(find.byKey(const Key('dji_live_obstacle_side')), findsNothing);
     expect(find.text('Show the side, not confirmed yet'), findsOneWidget);
     expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_side_test'))).value, isFalse);
+    expect(find.textContaining('Off until a flight proves which side is the front'), findsOneWidget);
     await tap('dji_live_obstacle_side_test');
     expect(api.obstacleRings.last.directional, isTrue);
     expect(memory.values[StoreKey.djiObstacleSideTest], isTrue);
@@ -832,17 +901,40 @@ void main() {
     api.volumeOff = true;
     await tap('dji_live_obstacle_sound_test');
     expect(find.text('The media volume is off: the obstacle sound cannot be heard.'), findsOneWidget);
+    expect(find.textContaining('On by default. A short tick when the drone gets close'), findsOneWidget);
+    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_sound'))).value, isTrue);
     await tap('dji_live_obstacle_sound');
     expect(api.obstacleRings.last.sound, isFalse);
     expect(memory.values[StoreKey.djiObstacleSoundOff], isTrue);
 
-    // A phone with a vibrator offers the tap; the number by the glow
+    // A phone with a vibrator offers the tap, on by default; the number by the glow, on by default
+    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_haptic'))).value, isTrue);
     await tap('dji_live_obstacle_haptic');
-    expect(api.obstacleRings.last.haptic, isTrue);
-    expect(memory.values[StoreKey.djiObstacleHapticOn], isTrue);
+    expect(api.obstacleRings.last.haptic, isFalse);
+    expect(memory.values[StoreKey.djiObstacleHapticOff], isTrue);
+    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_numbers'))).value, isTrue);
     await tap('dji_live_obstacle_numbers');
-    expect(api.obstacleRings.last.numbers, isTrue);
-    expect(memory.values[StoreKey.djiObstacleNumbersOn], isTrue);
+    expect(api.obstacleRings.last.numbers, isFalse);
+    expect(memory.values[StoreKey.djiObstacleNumbersOff], isTrue);
+
+    // The shape: a circle around the centre by default, the frame at the edges as a choice
+    await tester.scrollUntilVisible(find.byKey(const Key('dji_live_obstacle_shape')), 100, scrollable: scrollable);
+    expect(find.text('Obstacle indicator shape'), findsOneWidget);
+    expect(find.text('A circle by default. The frame leaves the middle of the picture clear.'), findsOneWidget);
+    SegmentedButton<bool> shape() => tester.widget<SegmentedButton<bool>>(
+      find.descendant(
+        of: find.byKey(const Key('dji_live_obstacle_shape')),
+        matching: find.byType(SegmentedButton<bool>),
+      ),
+    );
+    expect(shape().selected, {false});
+    await tap('dji_live_obstacle_shape_frame');
+    expect(shape().selected, {true});
+    expect(api.obstacleRings.last.frame, isTrue);
+    expect(memory.values[StoreKey.djiObstacleShapeFrame], isTrue);
+    await tap('dji_live_obstacle_shape_circle');
+    expect(api.obstacleRings.last.frame, isFalse);
+    expect(memory.values[StoreKey.djiObstacleShapeFrame], isFalse);
 
     // The sample on the ground; refused while the motors run
     await tap('dji_live_obstacle_sample');
@@ -856,7 +948,6 @@ void main() {
   testWidgets('the sample is off while the motors run, and a phone without a vibrator has no vibration item', (
     tester,
   ) async {
-    memory.values[StoreKey.djiObstacleAlertOn] = true;
     final api = phone()..vibrator = false;
     final listener = await openLive(tester, api, size: _large);
     await push(tester, listener, live(frame: fakeFrame(motorsOn: true)));
@@ -897,8 +988,10 @@ void main() {
     // Over the picture's box, never over the side bands
     expect(tester.getRect(ring), tester.getRect(find.byKey(const Key('dji_live_picture_area'))));
     expect(find.bySemanticsLabel('Obstacle within 1.8 m'), findsOneWidget);
-    // No number on the picture by default
-    expect(find.byKey(const Key('dji_live_obstacle_distance')), findsNothing);
+    // A circle around the centre by default, with its number
+    expect(find.byKey(const Key('dji_live_obstacle_circle')), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_frame')), findsNothing);
+    expect(find.byKey(const Key('dji_live_obstacle_distance')), findsOneWidget);
     // The ring takes no touch: a tap on it reaches nothing
     await tester.tap(ring, warnIfMissed: false);
     await tester.pump();
@@ -934,9 +1027,9 @@ void main() {
     semantics.dispose();
   });
 
-  testWidgets('the distance by the glow, once asked in Advanced', (tester) async {
-    memory.values[StoreKey.djiObstacleAlertOn] = true;
-    memory.values[StoreKey.djiObstacleNumbersOn] = true;
+  testWidgets('the distance by the glow, on by default, outside the circle where the arc is; off in Advanced', (
+    tester,
+  ) async {
     final listener = await openLive(tester, phone());
     await push(
       tester,
@@ -944,12 +1037,23 @@ void main() {
       live(frame: fakeFrame(alert: fakeDecision(on: true, arcs: [fakeArc(1.44, centreDeg: 30)]))),
     );
     expect(find.text('1.4 m'), findsOneWidget);
-    // Inside the picture, on its top edge's right half, where the arc is
+    // Inside the picture, up and to the right of the centre, past the circle, where the arc is
     final number = tester.getCenter(find.text('1.4 m'));
     final picture = tester.getRect(find.byKey(const Key('dji_live_picture_area')));
     expect(picture.contains(number), isTrue);
     expect(number.dx, greaterThan(picture.center.dx));
     expect(number.dy, lessThan(picture.center.dy));
+    expect((number - picture.center).distance, greaterThan(picture.height / 4));
+
+    memory.values[StoreKey.djiObstacleNumbersOff] = true;
+    final again = await openLive(tester, phone());
+    await push(
+      tester,
+      again,
+      live(frame: fakeFrame(alert: fakeDecision(on: true, arcs: [fakeArc(1.44, centreDeg: 30)]))),
+    );
+    expect(find.byKey(const Key('dji_live_obstacle_ring')), findsOneWidget);
+    expect(find.text('1.4 m'), findsNothing);
   });
 
   testWidgets('the ring shows over "No picture" too', (tester) async {

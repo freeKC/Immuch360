@@ -10,6 +10,7 @@ import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/presentation/pages/drone/dji_watch.page.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_notice.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_transient.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -284,6 +285,74 @@ void main() {
     );
   });
 
+  testWidgets('the warnings over the window come for five seconds, fade, and come back with a tap', (tester) async {
+    final listener = await openWatch(tester, headset());
+    listener!.snapshotChanged(
+      fakeSnapshot(
+        decode: fakeDecode(),
+        relayReceiving: fakeReceiving(phoneSource: 'cable'),
+        liveFrame: fakeFrame(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final strip = find.byKey(const Key('dji_link_receive_strip'));
+    final state = find.byKey(const Key('dji_link_receive_strip_state'));
+    final watching = find.byKey(const Key('dji_link_receive_strip_watching'));
+    final observer = find.byKey(const Key('dji_link_observer'));
+    expect(state, findsOneWidget);
+    expect(watching, findsOneWidget);
+    expect(observer, findsOneWidget);
+
+    // Five seconds, then a fade of 0.8 s: gone from the window, the plate with them; the values and the delay stay
+    await tester.pump(djiTransientHold);
+    await tester.pumpAndSettle();
+    expect(state, findsNothing);
+    expect(watching, findsNothing);
+    expect(observer, findsNothing);
+    expect(tester.getSize(strip), Size.zero);
+    expect(find.text('Delay from the phone: about 24 ms'), findsOneWidget);
+    expect(find.byKey(const Key('dji_watch_values')), findsOneWidget);
+
+    // A tap anywhere brings them back
+    await tester.tapAt(tester.getCenter(find.byKey(const Key('dji_watch_placeholder'))));
+    await tester.pumpAndSettle();
+    expect(state, findsOneWidget);
+    expect(watching, findsOneWidget);
+    expect(observer, findsOneWidget);
+
+    // The picture stops: its red line comes by itself, and stays while the window shows no picture
+    await tester.pump(djiTransientHold);
+    await tester.pumpAndSettle();
+    listener.snapshotChanged(
+      fakeSnapshot(decode: fakeDecode(lastOutputAgoMs: 900), relayReceiving: fakeReceiving(lastPictureAgoMs: 900)),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_link_receive_strip_stale')), findsOneWidget);
+    await tester.pump(djiTransientHold);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_link_receive_strip_stale')), findsNothing);
+    listener.snapshotChanged(
+      fakeSnapshot(
+        decode: fakeDecode(lastOutputAgoMs: 2500),
+        relayReceiving: fakeReceiving(lastPictureAgoMs: 2500),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.pump(djiTransientHold * 2);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_link_receive_strip_stale')), findsOneWidget);
+
+    // An error that needs an action stays
+    listener.snapshotChanged(fakeSnapshot(relayReceiving: fakeReceiving(state: DjiRelayReceiveState.otherVersion)));
+    await tester.pumpAndSettle();
+    await tester.pump(djiTransientHold * 2);
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(of: strip, matching: find.text('The phone runs another version of Immuch360: update both.')),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('opens the flight view on Horizon OS only, while pictures come, with the same values', (tester) async {
     final api = headset();
     final listener = await openWatch(tester, api);
@@ -372,15 +441,13 @@ void main() {
     expect(find.text('Nothing received yet: nothing to save.'), findsOneWidget);
   });
 
-  testWidgets('the lowest delay is a choice of the headset in its menu, kept and told to the native side', (
+  testWidgets('the lowest delay: on by default, a choice of the headset kept and told to the native side', (
     tester,
   ) async {
     final api = headset();
     await openWatch(tester, api);
-    expect(api.lowestDelays.last, isFalse);
-    await menu(tester, const Key('dji_watch_lowest_delay'));
+    // Every experimental switch on by default (FreeKC's rule of 25 October)
     expect(api.lowestDelays.last, isTrue);
-    expect(memory[StoreKey.djiHeadsetLowestDelay], isTrue);
     await tester.tap(find.byKey(const Key('dji_watch_menu')));
     await tester.pumpAndSettle();
     final item = find.byKey(const Key('dji_watch_lowest_delay'));
@@ -388,32 +455,58 @@ void main() {
     await tester.tap(item);
     await tester.pumpAndSettle();
     expect(api.lowestDelays.last, isFalse);
-    expect(memory[StoreKey.djiHeadsetLowestDelay], isFalse);
+    expect(memory[StoreKey.djiHeadsetLowestDelayOff], isTrue);
+    await menu(tester, const Key('dji_watch_lowest_delay'));
+    expect(api.lowestDelays.last, isTrue);
+    expect(memory[StoreKey.djiHeadsetLowestDelayOff], isFalse);
   });
 
-  testWidgets('the headset keeps its own sound, number and sample; the ring follows the phone over the picture', (
+  testWidgets('the headset keeps its own ring, sound, number, shape and sample; the ring follows the phone', (
     tester,
   ) async {
     final api = headset();
     final listener = await openWatch(tester, api);
-    // On by default on the headset; the ring itself is offered by the phone's record, not here
+    // All on by default on the headset; whether the phone offers the ring comes from its record
+    expect(api.obstacleRings.last.offered, isTrue);
     expect(api.obstacleRings.last.sound, isTrue);
+    expect(api.obstacleRings.last.numbers, isTrue);
+    expect(api.obstacleRings.last.frame, isFalse);
     await tester.tap(find.byKey(const Key('dji_watch_menu')));
     await tester.pumpAndSettle();
-    // No test switch of its own any more: the phone's choice
+    // The old test switch is gone; the ring on this headset's own screens, on by default, can only turn it off here
     expect(find.byKey(const Key('dji_watch_obstacle')), findsNothing);
+    final here = find.byKey(const Key('dji_watch_obstacle_here'));
+    expect(tester.widget<CheckedPopupMenuItem<String>>(here).checked, isTrue);
     expect(find.byKey(const Key('dji_watch_obstacle_sound')), findsOneWidget);
     expect(find.byKey(const Key('dji_watch_obstacle_sound_test')), findsOneWidget);
     expect(find.byKey(const Key('dji_watch_obstacle_numbers')), findsOneWidget);
+    expect(find.text('Obstacle indicator: Circle around the centre'), findsOneWidget);
     await tester.tap(find.byKey(const Key('dji_watch_obstacle_sound')));
     await tester.pumpAndSettle();
     expect(api.obstacleRings.last.sound, isFalse);
     expect(memory[StoreKey.djiObstacleSoundOff], isTrue);
+    await menu(tester, const Key('dji_watch_obstacle_here'));
+    expect(api.obstacleRings.last.offered, isFalse);
+    expect(memory[StoreKey.djiObstacleRingOff], isTrue);
+    await menu(tester, const Key('dji_watch_obstacle_here'));
+    expect(api.obstacleRings.last.offered, isTrue);
+    await menu(tester, const Key('dji_watch_obstacle_shape'));
+    expect(api.obstacleRings.last.frame, isTrue);
+    expect(memory[StoreKey.djiObstacleShapeFrame], isTrue);
+    await tester.tap(find.byKey(const Key('dji_watch_menu')));
+    await tester.pumpAndSettle();
+    expect(find.text('Obstacle indicator: Frame at the edges'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('dji_watch_obstacle_shape')));
+    await tester.pumpAndSettle();
+    expect(api.obstacleRings.last.frame, isFalse);
     await menu(tester, const Key('dji_watch_obstacle_sound_test'));
     expect(api.obstacleTests, 1);
     await menu(tester, const Key('dji_watch_obstacle_numbers'));
+    expect(api.obstacleRings.last.numbers, isFalse);
+    expect(memory[StoreKey.djiObstacleNumbersOff], isTrue);
+    await menu(tester, const Key('dji_watch_obstacle_numbers'));
     expect(api.obstacleRings.last.numbers, isTrue);
-    expect(memory[StoreKey.djiObstacleNumbersOn], isTrue);
+    expect(memory[StoreKey.djiObstacleNumbersOff], isFalse);
     await menu(tester, const Key('dji_watch_obstacle_sample'));
     expect(api.obstacleSamples, 1);
     api.sampleRefused = true;
@@ -432,6 +525,7 @@ void main() {
     final ring = find.byKey(const Key('dji_live_obstacle_ring'));
     expect(ring, findsOneWidget);
     expect(find.descendant(of: find.byKey(const Key('dji_watch_picture')), matching: ring), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_circle')), findsOneWidget);
     expect(find.text('1.8 m'), findsOneWidget);
     expect(find.text('Obstacle close: 1.8 m'), findsNothing);
     expect(find.text('Not confirmed yet'), findsNothing);

@@ -652,7 +652,8 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
   }
 
   /// "Open this screen when the remote is plugged in", as the native side keeps it
-  bool openOnPlugValue = false;
+  /// "Open this screen when the remote is plugged in", on by default as on the native side
+  bool openOnPlugValue = true;
   final openOnPlugSets = <bool>[];
   final liveSettingSets = <bool>[];
   bool attachLaunch = false;
