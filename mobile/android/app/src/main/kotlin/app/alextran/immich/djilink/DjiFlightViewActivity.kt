@@ -33,6 +33,7 @@ import com.meta.spatial.toolkit.Hittable
 import com.meta.spatial.toolkit.LayoutXMLPanelRegistration
 import com.meta.spatial.toolkit.MediaPanelRenderOptions
 import com.meta.spatial.toolkit.MediaPanelSettings
+import com.meta.spatial.toolkit.MediaPanelShapeOptions
 import com.meta.spatial.toolkit.MeshCollision
 import com.meta.spatial.toolkit.Panel
 import com.meta.spatial.toolkit.PanelRegistration
@@ -320,6 +321,40 @@ internal object FlightViewControls {
   const val HALO_Z_INDEX = 0
   const val VIDEO_Z_INDEX = 1
   const val CIRCLE_Z_INDEX = 2
+
+  /** The video's panel: [shape] at 1920 by 1080 pixels, its compositor layer at [VIDEO_Z_INDEX] */
+  fun videoSettings(shape: MediaPanelShapeOptions): MediaPanelSettings =
+    MediaPanelSettings(
+      shape = shape,
+      display = PixelDisplayOptions(width = 1920, height = 1080),
+      rendering = MediaPanelRenderOptions(stereoMode = StereoMode.None, zIndex = VIDEO_Z_INDEX),
+    )
+
+  /** The halo's panel (the frame), [widthDp] by [heightDp]: a blended layer at [HALO_Z_INDEX], under the video */
+  fun haloSettings(shape: UIPanelShapeOptions, widthDp: Float, heightDp: Float, themeResourceId: Int): PanelSettings =
+    layeredAt(HALO_Z_INDEX, blendedLayer(shape, widthDp, heightDp, themeResourceId))
+
+  /** The circle's panel, a square [sideDp] wide: a blended layer at [CIRCLE_Z_INDEX], over the video */
+  fun circleSettings(shape: UIPanelShapeOptions, sideDp: Float, themeResourceId: Int): PanelSettings =
+    layeredAt(CIRCLE_Z_INDEX, blendedLayer(shape, sideDp, sideDp, themeResourceId))
+
+  /** A transparent UI panel shown as a compositor layer, blended over what is behind it */
+  private fun blendedLayer(shape: UIPanelShapeOptions, widthDp: Float, heightDp: Float, themeResourceId: Int) =
+    UIPanelSettings(
+      shape = shape,
+      style = PanelStyleOptions(themeResourceId = themeResourceId),
+      display = DpDisplayOptions(width = widthDp, height = heightDp, dpi = 260),
+      rendering = UIPanelRenderOptions(PanelRenderMode.Layer(PanelShapeLayerBlendType.ALPHA_BLEND)),
+    )
+
+  /**
+   * [settings] with its compositor layer at [zIndex]: the render options of a UI panel give no z index in this SDK
+   * (0.14.0), the layer config they make has one
+   */
+  fun layeredAt(zIndex: Int, settings: UIPanelSettings): PanelSettings = object : PanelSettings {
+    override fun toPanelConfigOptions(): PanelConfigOptions =
+      settings.toPanelConfigOptions().apply { layerConfig?.let { it.zIndex = zIndex } }
+  }
 
   /** The ring shows in the halo: arcs to draw, the ring on or its data stopped */
   fun ringShows(decision: ObstacleDecision): Boolean = decision.arcs.isNotEmpty() && (decision.on || decision.stopped)
@@ -636,14 +671,11 @@ class DjiFlightViewActivity : AppSystemActivity() {
       id,
       layoutIdCreator = { R.layout.dji_flight_ring },
       settingsCreator = {
-        layeredAt(
-          FlightViewControls.HALO_Z_INDEX,
-          UIPanelSettings(
-            shape = shape(width, height),
-            style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
-            display = DpDisplayOptions(width = width * HALO_DP_PER_M, height = height * HALO_DP_PER_M, dpi = 260),
-            rendering = UIPanelRenderOptions(PanelRenderMode.Layer(PanelShapeLayerBlendType.ALPHA_BLEND)),
-          ),
+        FlightViewControls.haloSettings(
+          shape(width, height),
+          width * HALO_DP_PER_M,
+          height * HALO_DP_PER_M,
+          R.style.ImmersivePanelTheme,
         )
       },
       panelSetupWithRootView = { root, _, _ ->
@@ -668,15 +700,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
       id,
       layoutIdCreator = { R.layout.dji_flight_circle },
       settingsCreator = {
-        layeredAt(
-          FlightViewControls.CIRCLE_Z_INDEX,
-          UIPanelSettings(
-            shape = shape(side),
-            style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
-            display = DpDisplayOptions(width = side * HALO_DP_PER_M, height = side * HALO_DP_PER_M, dpi = 260),
-            rendering = UIPanelRenderOptions(PanelRenderMode.Layer(PanelShapeLayerBlendType.ALPHA_BLEND)),
-          ),
-        )
+        FlightViewControls.circleSettings(shape(side), side * HALO_DP_PER_M, R.style.ImmersivePanelTheme)
       },
       panelSetupWithRootView = { root, _, _ ->
         circleView = root.findViewById<ObstacleCircleView>(R.id.dji_flight_circle_view)?.apply {
@@ -687,15 +711,6 @@ class DjiFlightViewActivity : AppSystemActivity() {
         refreshNow()
       },
     )
-  }
-
-  /**
-   * [settings] with its compositor layer at [zIndex]: the render options of a UI panel give no z index in this SDK
-   * (0.14.0), the layer config they make has one
-   */
-  private fun layeredAt(zIndex: Int, settings: UIPanelSettings): PanelSettings = object : PanelSettings {
-    override fun toPanelConfigOptions(): PanelConfigOptions =
-      settings.toPanelConfigOptions().apply { layerConfig?.let { it.zIndex = zIndex } }
   }
 
   /** A column of values beside the video; its cells are made in [fillColumn] */
@@ -719,23 +734,14 @@ class DjiFlightViewActivity : AppSystemActivity() {
     )
 
   /** A compositor layer the decoder renders into with no copy; its surface goes to the window page's decoder */
-  private fun videoRegistration(
-    id: Int,
-    shape: () -> com.meta.spatial.toolkit.MediaPanelShapeOptions,
-  ): VideoSurfacePanelRegistration =
+  private fun videoRegistration(id: Int, shape: () -> MediaPanelShapeOptions): VideoSurfacePanelRegistration =
     VideoSurfacePanelRegistration(
       id,
       surfaceConsumer = { _, surface ->
         Log.i(TAG, "video surface ready")
         DjiLinkVideoSurfaces.created(DjiLinkVideoSurfaces.FLIGHT_VIEW_ID, surface)
       },
-      settingsCreator = {
-        MediaPanelSettings(
-          shape = shape(),
-          display = PixelDisplayOptions(width = 1920, height = 1080),
-          rendering = MediaPanelRenderOptions(stereoMode = StereoMode.None, zIndex = FlightViewControls.VIDEO_Z_INDEX),
-        )
-      },
+      settingsCreator = { FlightViewControls.videoSettings(shape()) },
     )
 
   /** The strip under the video, whose warnings come and go */

@@ -1,6 +1,10 @@
 package app.alextran.immich.djilink
 
 import com.meta.spatial.runtime.ButtonBits
+import com.meta.spatial.toolkit.CylinderShapeOptions
+import com.meta.spatial.toolkit.PanelSettings
+import com.meta.spatial.toolkit.QuadShapeOptions
+import java.lang.reflect.Field
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -10,6 +14,9 @@ import org.junit.Test
 /** The controllers of the flight view change the view only (design 8.3) */
 class FlightViewControlsTest {
   private val actions = FlightViewControls::actionsFor
+
+  /** A theme for the ring panels: no resource is read on the JVM */
+  private val ringTheme = 1
 
   @Test
   fun eachButtonDoesOneThingToTheView() {
@@ -323,12 +330,51 @@ class FlightViewControlsTest {
 
   @Test
   fun theCircleIsLayeredOverTheVideoAndTheHaloUnderIt() {
-    // A higher z index is drawn over a lower one; none under 0, which would put a layer under the scene
-    val halo = FlightViewControls.HALO_Z_INDEX
-    val video = FlightViewControls.VIDEO_Z_INDEX
-    val circle = FlightViewControls.CIRCLE_Z_INDEX
-    assertTrue(halo in 0 until video)
-    assertTrue(circle > video)
+    aHeadsetBoard()
+    val width = FlightViewControls.WIDTHS_M[FlightViewControls.DEFAULT_WIDTH_INDEX]
+    val height = width * 9f / 16f
+    val (haloWidth, haloHeight) = FlightViewControls.haloSizeM(width)
+    val side = FlightViewControls.circleSideM(width)
+    // The settings the activity registers, flat and curved as the video is: the z index the SDK is given
+    val flat = Triple(
+      QuadShapeOptions(width = width, height = height),
+      QuadShapeOptions(width = haloWidth, height = haloHeight),
+      QuadShapeOptions(width = side, height = side),
+    )
+    val curved = Triple(
+      CylinderShapeOptions(radius = 3f, width = width, height = height),
+      CylinderShapeOptions(radius = 3f, width = haloWidth, height = haloHeight),
+      CylinderShapeOptions(radius = 3f, width = side, height = side),
+    )
+    for ((videoShape, haloShape, circleShape) in listOf(flat, curved)) {
+      val halo = zIndexOf(FlightViewControls.haloSettings(haloShape, haloWidth * 250f, haloHeight * 250f, ringTheme))
+      val video = zIndexOf(FlightViewControls.videoSettings(videoShape))
+      val circle = zIndexOf(FlightViewControls.circleSettings(circleShape, side * 250f, ringTheme))
+      // A higher z index is drawn over a lower one; none under 0, which would put a layer under the scene. A UI
+      // panel's layer is at 0 unless layeredAt says otherwise
+      assertEquals(listOf(0, 1, 2), listOf(halo, video, circle))
+    }
+  }
+
+  /** The z index of the compositor layer [settings] give the SDK, null for a panel that is not a layer */
+  private fun zIndexOf(settings: PanelSettings): Int? = settings.toPanelConfigOptions().layerConfig?.zIndex
+
+  /**
+   * The SDK's panel options read the headset's board when their class loads, to fit a panel's pixels to its display;
+   * the android.jar of the unit tests has none (its static blocks are emptied, the board is null), so a Quest 3's is
+   * put there first. It changes the pixel density of a panel, never its layer.
+   */
+  private fun aHeadsetBoard() {
+    val board = android.os.Build::class.java.getDeclaredField("BOARD")
+    if (board.get(null) != null) {
+      return
+    }
+    val unsafeClass = Class.forName("sun.misc.Unsafe")
+    val unsafe = unsafeClass.getDeclaredField("theUnsafe").apply { isAccessible = true }.get(null)
+    val base = unsafeClass.getMethod("staticFieldBase", Field::class.java).invoke(unsafe, board)
+    val offset = unsafeClass.getMethod("staticFieldOffset", Field::class.java).invoke(unsafe, board)
+    unsafeClass.getMethod("putObject", Any::class.java, Long::class.javaPrimitiveType, Any::class.java)
+      .invoke(unsafe, base, offset, "eureka")
   }
 
   @Test
