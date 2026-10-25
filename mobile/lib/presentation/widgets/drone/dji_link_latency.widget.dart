@@ -52,7 +52,7 @@ List<String> djiLinkSmoothnessLines(Translations t, DjiRelayReceiving receiving)
       t.dji_link_latency_freezes_none
     else
       t.dji_link_latency_freezes(
-        count: '$freezes',
+        count: freezes,
         longest: ((receiving.longestFreezeMs ?? 0) / 1000).toStringAsFixed(1),
         source: '${receiving.freezesInSource ?? 0}',
       ),
