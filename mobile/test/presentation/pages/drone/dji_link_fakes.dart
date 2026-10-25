@@ -204,7 +204,7 @@ DjiLinkTelemetry fakeTelemetry({
 );
 
 /// One arc of the obstacle ring at [distanceM] with the default distances (3.0 m and 1.0 m), on the side [centreDeg]
-/// (null for the even glow), as ObstacleRing makes it
+/// (null for the even glow, half as strong at most), as ObstacleRing makes it
 DjiObstacleArc fakeArc(double distanceM, {double? centreDeg}) {
   final strength = ((3.0 - distanceM) / 2.0).clamp(0.0, 1.0);
   final amber = [0xFF, 0xB3, 0x00];
@@ -214,7 +214,7 @@ DjiObstacleArc fakeArc(double distanceM, {double? centreDeg}) {
     centreDeg: centreDeg,
     distanceM: distanceM,
     strength: strength,
-    opacity: 0.15 + 0.55 * strength,
+    opacity: 0.15 + (centreDeg == null ? 0.20 : 0.55) * strength,
     argb: 0xFF000000 | channels[0] << 16 | channels[1] << 8 | channels[2],
   );
 }
@@ -241,10 +241,15 @@ DjiObstacleDecision fakeDecision({
         ]
       : arcs;
   final nearest = arcs.isEmpty ? null : arcs.map((arc) => arc.distanceM).reduce((a, b) => a < b ? a : b);
-  final tick = !on || nearest == null || nearest > 2.0
+  // With the side from halfway (2.0 m); the even glow only within "Strong glow from" (1.0 m)
+  final tick = !on || nearest == null || nearest > (even ? 1.0 : 2.0)
       ? 0
+      : even
+      ? (nearest > 0.5 ? (150 + (nearest - 0.5) * 1700).round() : 150)
       : nearest >= 1.0
       ? (250 + (nearest - 1.0) * 750).round()
+      : nearest > 0.5
+      ? (150 + (nearest - 0.5) * 200).round()
       : 150;
   return DjiObstacleDecision(
     on: on,

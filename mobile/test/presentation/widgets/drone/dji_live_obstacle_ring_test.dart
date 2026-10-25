@@ -143,6 +143,16 @@ void main() {
       expect(djiObstacleWindow(60), 0);
     });
 
+    test('the distance goes by the nearest arc, and in the bottom left corner with the even glow', () {
+      final depth = djiObstacleDepthOf(fakeArc(1.4).strength, 50) * 0.8;
+      final even = djiObstacleNumberPoint(fakeArc(1.4), _box, 50);
+      expect(even.dx, closeTo(depth, 1e-9));
+      expect(even.dy, closeTo(_box.height - depth, 1e-9));
+      final left = djiObstacleNumberPoint(fakeArc(1.4, centreDeg: -90), _box, 50);
+      expect(left.dx, closeTo(depth, 1e-9));
+      expect(left.dy, closeTo(_box.height / 2, 1e-9));
+    });
+
     testWidgets('a screen reader hears the distance, the side by its quarter, and that the data stopped', (
       tester,
     ) async {
@@ -292,6 +302,18 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('1.4 m'), findsNothing);
       expect(find.byKey(const Key('dji_live_obstacle_ring')), findsOneWidget);
+    });
+
+    testWidgets('with the even glow the distance is in the bottom left corner, not at the top where ahead is', (
+      tester,
+    ) async {
+      memory[StoreKey.djiObstacleNumbersOn] = true;
+      await pumpRing(tester, fakeFrame(alert: fakeDecision(on: true, arcs: [fakeArc(1.44)])));
+      await tester.pumpAndSettle();
+      final picture = tester.getRect(find.byKey(const Key('picture')));
+      final number = tester.getCenter(find.text('1.4 m'));
+      expect(number.dx, lessThan(picture.left + picture.width / 4));
+      expect(number.dy, greaterThan(picture.top + picture.height * 3 / 4));
     });
 
     testWidgets('a screen reader hears the side only when it changes, not at every frame', (tester) async {

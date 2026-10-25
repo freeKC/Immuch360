@@ -105,9 +105,10 @@ const djiLiveGates = <DjiLiveField, DjiLiveGate>{
   // 36/8 from 18.4: 360 distances in millimetres around the drone, only while the motors run (deep dive 4.2). Its row
   // also offers the obstacle ring: djiObstacleOffer.
   DjiLiveField.obstacle: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.overlay),
-  // 36/8 turns with the aircraft, its index grows with the heading, index 0 closes in when flying forward: 25 October
-  // 09:42 capture (design-obstacle-ring-2026-10-25.md, 1.4). Not a value: it says whether the ring may show a side,
-  // with ObstacleRing.MAPPING on the native side. Step 5 of the owner flight proves it.
+  // 36/8 turns with the aircraft and its index grows with the heading (25 October 09:42 capture: 43 turn pairs of 43,
+  // slope -1.007); flying forward it closes in fastest within 40 degrees of index 0 in four legs of six, 50 to 70
+  // degrees off in two (obstacle-ring-2026-10-25.md, 1). Not a value: it says whether the ring may show a side, with
+  // ObstacleRing.MAPPING on the native side. Step 5 of the owner flight proves it.
   DjiLiveField.obstacleSide: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.nowhere),
   // 3/67 offset 32, bits 0x04 and 0x08 together: set exactly while the motor time grows (report 1, 3.4)
   DjiLiveField.motors: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.advanced),

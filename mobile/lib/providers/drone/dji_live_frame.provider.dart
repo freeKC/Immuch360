@@ -39,16 +39,17 @@ class DjiLiveFrameNotifier extends Notifier<DjiLiveFrame?> {
 
 final djiLiveFrameProvider = NotifierProvider<DjiLiveFrameNotifier, DjiLiveFrame?>(DjiLiveFrameNotifier.new);
 
-/// "Glow from" and "Strong glow from" when never set, in centimetres: FreeKC's example. Indoors, 1.5 m and 0.5 m.
+/// "Glow from" and "Strong glow from" when never set, in centimetres: FreeKC's example
 const djiObstacleDefaultFarCm = 300;
 const djiObstacleDefaultNearCm = 100;
 
-/// The steppers of Advanced: "Glow from" 1.5 to 6.0 m by 0.5, "Strong glow from" 0.5 to 2.5 m by 0.25, at least 0.5 m
-/// under "Glow from"
-const djiObstacleFarMinCm = 150;
+/// The steppers of Advanced: "Glow from" 1.0 to 6.0 m by 0.5, "Strong glow from" 0.25 to 2.5 m by 0.25, at least 0.5 m
+/// under "Glow from". Down to 1.0 m for a room: in the indoor hover of 25 October every reading was 0.29 to 1.44 m
+/// (p2/review-obstacle-ring-2026-10-25.md, major 2).
+const djiObstacleFarMinCm = 100;
 const djiObstacleFarMaxCm = 600;
 const djiObstacleFarStepCm = 50;
-const djiObstacleNearMinCm = 50;
+const djiObstacleNearMinCm = 25;
 const djiObstacleNearMaxCm = 250;
 const djiObstacleNearStepCm = 25;
 const djiObstacleGapCm = 50;

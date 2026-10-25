@@ -130,9 +130,12 @@ void main() {
   test('the distances stay in their steppers, "Strong glow from" at least 0.5 m under "Glow from"', () {
     expect(djiObstacleDistancesCm(300, 100), (300, 100));
     expect(djiObstacleDistancesCm(900, 400), (600, 250));
-    expect(djiObstacleDistancesCm(100, 140), (150, 100));
+    // Down to 1.0 m and 0.25 m for a room
+    expect(djiObstacleDistancesCm(50, 140), (100, 50));
+    expect(djiObstacleDistancesCm(100, 25), (100, 25));
+    expect(djiObstacleDistancesCm(150, 140), (150, 100));
     expect(djiObstacleDistancesCm(200, 175), (200, 150));
-    expect(djiObstacleDistancesCm(300, 20), (300, 50));
+    expect(djiObstacleDistancesCm(300, 10), (300, 25));
     expect(const DjiObstacleSettings().farM, 3.0);
     expect(const DjiObstacleSettings().nearM, 1.0);
   });

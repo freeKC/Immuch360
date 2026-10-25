@@ -200,13 +200,13 @@ List<DjiObstacleRingStrip> djiObstacleRingStrips(
   return strips;
 }
 
-/// Where the distance goes: by the nearest arc, moved in from the edge by 0.8 of its depth; at the top centre with the
-/// even glow
+/// Where the distance goes: by the nearest arc, moved in from the edge by 0.8 of its depth; with the even glow, which
+/// says no side, in the bottom left corner, away from the top centre where "ahead" is
 Offset djiObstacleNumberPoint(DjiObstacleArc nearest, Size size, double fullDepth) {
   final depth = djiObstacleDepthOf(nearest.strength, math.min(fullDepth, size.shortestSide / 2)) * 0.8;
   final centre = nearest.centreDeg;
   if (centre == null) {
-    return Offset(size.width / 2, depth);
+    return Offset(depth, size.height - depth);
   }
   final point = djiObstacleBorderPoint(centre, size);
   final distances = [point.dy, size.width - point.dx, size.height - point.dy, point.dx];

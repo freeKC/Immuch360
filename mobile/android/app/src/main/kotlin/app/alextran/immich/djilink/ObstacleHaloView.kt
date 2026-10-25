@@ -143,12 +143,15 @@ class ObstacleHaloView @JvmOverloads constructor(
     canvas.drawPath(path, band)
   }
 
-  /** The distance by the nearest arc, in the margin outside the video; with the even glow, at the top centre */
+  /**
+   * The distance by the nearest arc, in the margin outside the video; with the even glow, which says no side, at the
+   * bottom left corner, away from the top centre where "ahead" is
+   */
   private fun drawNumber(canvas: Canvas, mx: Float, my: Float, innerW: Float, innerH: Float) {
     val value = number ?: return
     val centre = arcs.firstOrNull()?.centreDeg
     val (bx, by) = if (centre == null) {
-      innerW / 2.0 to 0.0
+      0.0 to innerH.toDouble()
     } else {
       RingGeometry.borderPoint(centre, innerW.toDouble(), innerH.toDouble())
     }

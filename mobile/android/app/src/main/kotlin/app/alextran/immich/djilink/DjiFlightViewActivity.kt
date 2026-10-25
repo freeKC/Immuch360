@@ -340,6 +340,13 @@ class DjiFlightViewActivity : AppSystemActivity() {
 
     /** The obstacle ring's halo around the video: 250 dp per metre, the glow is soft */
     private const val HALO_DP_PER_M = 250f
+
+    /**
+     * The halo sits this far behind the video: a compositor that sorts by depth keeps the picture on top of it, even
+     * if the halo's clear centre were not blended (p2/review-obstacle-ring-2026-10-25.md, minor 1). Seen from 2.5 m,
+     * its inner edge moves 7 mm under the video's at most.
+     */
+    private const val HALO_BEHIND_M = 0.015f
     private const val HALO_FADE_IN_MS = 150L
     private const val HALO_FADE_OUT_MS = 400L
 
@@ -797,8 +804,8 @@ class DjiFlightViewActivity : AppSystemActivity() {
     panelPosition.y = videoBottom - PANEL_GAP_M - STRIP_HEIGHT_M - PANEL_GAP_M - PANEL_HEIGHT_M / 2f
     panelEntity?.setComponent(Transform(Pose(panelPosition, rotation)))
     panelEntity?.setComponent(Visible(panelShown))
-    // The ring's halo around the video, as the video: same pose, same scale; A never hides it
-    haloEntity?.setComponent(Transform(Pose(position, rotation)))
+    // The ring's halo around the video, as the video: same turn, same scale, a little behind it; A never hides it
+    haloEntity?.setComponent(Transform(Pose(position + (direction * HALO_BEHIND_M), rotation)))
     haloEntity?.setComponent(Scale(Vector3(scale, scale, 1f)))
     placeColumns(position, direction, rotation, width)
   }

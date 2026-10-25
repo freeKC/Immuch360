@@ -787,26 +787,35 @@ void main() {
     expect(api.obstacleRings.last.directional, isFalse);
     expect(api.obstacleRings.last.haptic, isFalse);
     expect(api.obstacleRings.last.numbers, isFalse);
-    expect(find.text('Indoors, walls are close: try 1.5 m.'), findsOneWidget);
+    expect(
+      find.text('Indoors the walls are close, so it may glow the whole flight: try 1.0 m, or turn the ring off.'),
+      findsOneWidget,
+    );
 
-    // "Glow from" down to its end, 1.5 m: "Strong glow from" stays 0.5 m under it
+    // "Glow from" down to 1.5 m: "Strong glow from" stays 0.5 m under it
     await tap('dji_live_obstacle_far_less');
     expect(value('far'), '2.5 m');
     expect(memory.numbers[StoreKey.djiObstacleFarCm], 250);
     await tap('dji_live_obstacle_far_less');
     await tap('dji_live_obstacle_far_less');
     expect(value('far'), '1.5 m');
-    expect(enabled('dji_live_obstacle_far_less'), isFalse);
     expect(value('near'), '1.0 m');
     expect(enabled('dji_live_obstacle_near_more'), isFalse);
+    // Down to its end for a room, 1.0 m: "Strong glow from" follows it down to 0.5 m, then goes down to 0.25 m
+    await tap('dji_live_obstacle_far_less');
+    expect(value('far'), '1.0 m');
+    expect(enabled('dji_live_obstacle_far_less'), isFalse);
+    expect(value('near'), '0.5 m');
+    expect(memory.numbers[StoreKey.djiObstacleNearCm], 50);
     await tap('dji_live_obstacle_near_less');
-    expect(value('near'), '0.75 m');
-    expect(memory.numbers[StoreKey.djiObstacleNearCm], 75);
-    expect(api.obstacleRings.last.farM, 1.5);
-    expect(api.obstacleRings.last.nearM, 0.75);
+    expect(value('near'), '0.25 m');
+    expect(enabled('dji_live_obstacle_near_less'), isFalse);
+    expect(memory.numbers[StoreKey.djiObstacleNearCm], 25);
+    expect(api.obstacleRings.last.farM, 1.0);
+    expect(api.obstacleRings.last.nearM, 0.25);
     // "Glow from" up again: "Strong glow from" may rise up to 0.5 m under it
     await tap('dji_live_obstacle_far_more');
-    expect(value('far'), '2.0 m');
+    expect(value('far'), '1.5 m');
     expect(enabled('dji_live_obstacle_near_more'), isTrue);
 
     // The side, behind its own test switch while the front is not proven
