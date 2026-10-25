@@ -4,8 +4,8 @@
     "reason": "Sign in with your phone (feat-qr-pairing): ZXing Android Embedded, the QR code scanner of Connect a TV or computer, without Google Play services"
   },
   "mobile/android/app/src/main/AndroidManifest.xml": {
-    "blob": "3afda24f265a6bf0d6e0ea5693b5a73a22e52414",
-    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest; DJI live video (feat-dji-ux): the comment of the accessory attached entry, now kept by the open on plug choice"
+    "blob": "13f25557c5d2ca850cc88cfba30426836e3b8d28",
+    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest; DJI live video (feat-dji-ux): the comment of the accessory attached entry, now kept by the open on plug choice; DJI build 30 (build-30): the comment of the attach entry, on by default on a phone"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
     "blob": "80b06c12896f9f010b625ab626ef81a3766014e0",
@@ -36,8 +36,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the reader thread, the bounded writer queue and the one byte liveness probe of the USB link; fix round of 22 October: the review findings of stage 1"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/AttachEntry.kt": {
-    "blob": "851624564c2ace79008aa2d42408b9ba4f59c73b",
-    "reason": "DJI live video (feat-dji-ux): the attach entry policy, its two kept answers and the launch told to Flutter; DJI integration (feat-dji-30): open on the plug of the remote on by default"
+    "blob": "37c07fea67d3fb9aff49b46277080148fd19c5e3",
+    "reason": "DJI live video (feat-dji-ux): the attach entry policy, its two kept answers and the launch told to Flutter; DJI integration (feat-dji-30): open on the plug of the remote on by default; DJI build 30 (build-30): the yes of earlier test builds removed when found"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/CaptureExport.kt": {
     "blob": "ec3481ed1d78f20dbde287d98f5649a2c2899892",
@@ -88,12 +88,12 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the hardware profiles, where a capability cannot claim support without an observation; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the RC-N3 and Neo 2 profile supported for six capabilities with the provenance of the 23 October capture, its stream description seed, and the pilot binding; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiFlightViewActivity.kt": {
-    "blob": "75de539dc037e82f0e3112eddc04eafe2b43d6ad",
-    "reason": "DJI link stage 2b (feat-dji-link-3): the flight view of the Quest: video panel, flight panel, controls of the view only; DJI live video (feat-dji-ux): the values line of the gated values and the short delay line; DJI finalisation (feat-dji-final): the values in two columns beside the video and the obstacle alert above it, refreshed ten times a second; DJI relay fix round (feat-dji-relay): the age of the picture shown, the delay of the last 2 s and its warning; DJI obstacle ring (feat-dji-obstacle-ui): the halo panel around the video in place of the red alert panel; DJI obstacle ring fix round (feat-dji-obstacle-ui): the halo 1.5 cm behind the video; DJI integration (feat-dji-30): the circle over the video and the strip's warnings that come and go; DJI proof gates (feat-dji-proof): the distance below in the left column, the height and the speeds in the air only; DJI proof fix round (feat-dji-proof): the height of the left column after the phone's height hold"
+    "blob": "22998f8e6485aa591b1a9914784e12fae9872e8d",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the flight view of the Quest: video panel, flight panel, controls of the view only; DJI live video (feat-dji-ux): the values line of the gated values and the short delay line; DJI finalisation (feat-dji-final): the values in two columns beside the video and the obstacle alert above it, refreshed ten times a second; DJI relay fix round (feat-dji-relay): the age of the picture shown, the delay of the last 2 s and its warning; DJI obstacle ring (feat-dji-obstacle-ui): the halo panel around the video in place of the red alert panel; DJI obstacle ring fix round (feat-dji-obstacle-ui): the halo 1.5 cm behind the video; DJI integration (feat-dji-30): the circle over the video and the strip's warnings that come and go; DJI proof gates (feat-dji-proof): the distance below in the left column, the height and the speeds in the air only; DJI proof fix round (feat-dji-proof): the height of the left column after the phone's height hold; DJI build 30 (build-30): the halo, the video and the circle ordered by z index, the strip comment"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkApiImpl.kt": {
-    "blob": "06a0193f6a5ea83648aa629afff030a8e0558d2c",
-    "reason": "DJI link (feat-dji-link, 12ccff821): what Flutter asks of the link, and the switch of the accessory attached entry; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): decoder choice, captures to play, the picker, profile binding and the plugged accessory list; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): the host methods of the relay, the receiver and the flight view; DJI live video (feat-dji-ux): the host methods of the open on plug choice and the attach launch; DJI finalisation (feat-dji-final): the frame stream, the obstacle alert settings and its test sound, the reception record; DJI on Android TV (feat-dji-tv): the host method of the TVs added on the phone; DJI relay fix round (feat-dji-relay): the lowest delay asked by a headset; DJI obstacle ring (feat-dji-obstacle-ui): the ring settings, the sample and whether the phone can vibrate; DJI relay bandwidth (feat-dji-bandwidth): Relay quality kept on the native side"
+    "blob": "536b00487ae4f5e98716fd65eeaa3fecff603c56",
+    "reason": "DJI link (feat-dji-link, 12ccff821): what Flutter asks of the link, and the switch of the accessory attached entry; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): decoder choice, captures to play, the picker, profile binding and the plugged accessory list; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): the host methods of the relay, the receiver and the flight view; DJI live video (feat-dji-ux): the host methods of the open on plug choice and the attach launch; DJI finalisation (feat-dji-final): the frame stream, the obstacle alert settings and its test sound, the reception record; DJI on Android TV (feat-dji-tv): the host method of the TVs added on the phone; DJI relay fix round (feat-dji-relay): the lowest delay asked by a headset; DJI obstacle ring (feat-dji-obstacle-ui): the ring settings, the sample and whether the phone can vibrate; DJI relay bandwidth (feat-dji-bandwidth): Relay quality kept on the native side; DJI build 30 (build-30): the comment of the attach entry, on by default on a phone"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkAttachActivity.kt": {
     "blob": "d859472903349e7e054283ebad094445575b762b",
@@ -148,12 +148,12 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the states of the link and what was read of the accessory; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the reason for video ready"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/ObstacleAlert.kt": {
-    "blob": "ba47a089b12bdcf311f287403e1cb74d2af54347",
-    "reason": "DJI finalisation (feat-dji-final): the decision of the obstacle alert and its beep, information only; DJI obstacle ring (feat-dji-obstacle-ui): the decision gives the arcs of the ring, the tick of our own waveform; DJI obstacle ring fix round (feat-dji-obstacle-ui): the ring source, the inputs of a tick and the ticker, a relayed ring told apart by its arrival on the phone; DJI integration (feat-dji-30): a TV or a headset can turn the ring off on its own screen"
+    "blob": "a58d261dad76aa134518369744b7d47b085b8c9e",
+    "reason": "DJI finalisation (feat-dji-final): the decision of the obstacle alert and its beep, information only; DJI obstacle ring (feat-dji-obstacle-ui): the decision gives the arcs of the ring, the tick of our own waveform; DJI obstacle ring fix round (feat-dji-obstacle-ui): the ring source, the inputs of a tick and the ticker, a relayed ring told apart by its arrival on the phone; DJI integration (feat-dji-30): a TV or a headset can turn the ring off on its own screen; DJI build 30 (build-30): two comment lines wrapped again"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/ObstacleCircleView.kt": {
-    "blob": "67ce46bb98526deffc445b3fd2036d907243e619",
-    "reason": "DJI integration (feat-dji-30): the circle drawn over the middle of the video in the flight view of the Quest"
+    "blob": "29d90620dd39e6b5e66d66d956fb952d3f6ec812",
+    "reason": "DJI integration (feat-dji-30): the circle drawn over the middle of the video in the flight view of the Quest; DJI build 30 (build-30): the comment of the circle layer over the video"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/ObstacleHaloView.kt": {
     "blob": "756b509b690fe1e0f2ca643f08bf33d4a1e78cc7",
@@ -368,8 +368,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the transport on a pair of pipes, run by the Kotlin unit tests job; fix round of 22 October: the review findings of stage 1"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/AttachEntryPolicyTest.kt": {
-    "blob": "78b9061962046b9dae1681c17ce4d60b50de5eaa",
-    "reason": "DJI live video (feat-dji-ux): unit tests of the attach entry policy, run by the Kotlin unit tests job; DJI integration (feat-dji-30): unit tests of open on the plug on by default"
+    "blob": "e99facaafc5dd035d98d150d1422d3546fb46c29",
+    "reason": "DJI live video (feat-dji-ux): unit tests of the attach entry policy, run by the Kotlin unit tests job; DJI integration (feat-dji-30): unit tests of open on the plug on by default; DJI build 30 (build-30): the yes of an earlier build removed and changing nothing"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/CaptureJoinTest.kt": {
     "blob": "aba3696722d026b13f4e6544b14c053c36be0545",
@@ -432,8 +432,8 @@
     "reason": "DJI finalisation (feat-dji-final): unit test of the export written once"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/FlightViewControlsTest.kt": {
-    "blob": "4d5a047affb56cd2b279a520e87ff80705bc2d2a",
-    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job; DJI live video (feat-dji-ux): unit tests of the values line of the flight view; DJI finalisation (feat-dji-final): unit tests of the columns and of the alert banner; DJI relay fix round (feat-dji-relay): unit test of the red line of the strip; DJI obstacle ring (feat-dji-obstacle-ui): unit tests of the halo size and of the distance by the glow; DJI integration (feat-dji-30): unit tests of the circle's panel and of the warnings that stay; DJI proof gates (feat-dji-proof): the proven flight values in the air only, the distance below in the left column; DJI proof fix round (feat-dji-proof): unit test of a held height in the left column"
+    "blob": "e1ec2e22519e6fcf4f87a1f2f56a6731afb96c8a",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job; DJI live video (feat-dji-ux): unit tests of the values line of the flight view; DJI finalisation (feat-dji-final): unit tests of the columns and of the alert banner; DJI relay fix round (feat-dji-relay): unit test of the red line of the strip; DJI obstacle ring (feat-dji-obstacle-ui): unit tests of the halo size and of the distance by the glow; DJI integration (feat-dji-30): unit tests of the circle's panel and of the warnings that stay; DJI proof gates (feat-dji-proof): the proven flight values in the air only, the distance below in the left column; DJI proof fix round (feat-dji-proof): unit test of a held height in the left column; DJI build 30 (build-30): the order of the three layers"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/FrameGateTest.kt": {
     "blob": "30ef1ee276a45bb9567e21d92bb6e92c8a01704e",
