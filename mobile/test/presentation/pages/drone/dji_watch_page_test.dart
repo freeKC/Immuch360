@@ -212,6 +212,31 @@ void main() {
     expect(relay.secrets[djiRelayLastPhoneKey], _phoneId);
   });
 
+  testWidgets('opened again, the page forgets the phone of the last opening and connects to it by itself', (
+    tester,
+  ) async {
+    final relay = FakeRelayEnvironment()..secrets['dji_relay_code.$_phoneId'] = 'ABCDEFGHJK';
+    final api = headset();
+    final listener = await openWatch(tester, api, relay: relay);
+    await announce(tester, relay, '192.168.1.21', fakeDroneTxt);
+    await tester.tap(phoneRow('192.168.1.21'));
+    await tester.pumpAndSettle();
+    listener!.snapshotChanged(fakeSnapshot(decode: fakeDecode(), relayReceiving: fakeReceiving()));
+    await tester.pumpAndSettle();
+    expect(api.connects, hasLength(1));
+
+    // Leaving the page stops receiving; opened again, no row is left saying Watching a phone nothing receives from
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(api.stops, 1);
+    await tester.tap(find.byKey(const Key('open_watch')));
+    await tester.pump();
+    await tester.pumpAndSettle();
+    await announce(tester, relay, '192.168.1.21', fakeDroneTxt);
+    expect(api.connects, hasLength(2));
+    expect(api.connects.last, ('192.168.1.21', 8362, 'ABCDEFGHJK', _phoneId, 'Galaxy S24+'));
+  });
+
   testWidgets('a typed address watches a phone that is not listed', (tester) async {
     final api = headset();
     await openWatch(tester, api);

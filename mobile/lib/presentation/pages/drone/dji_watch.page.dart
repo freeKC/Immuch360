@@ -186,9 +186,10 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     unawaited(
       Future.microtask(() async {
         await _relay.setPageVisible(true);
+        // The link stopped with the last opening: no phone is watched any more, and the last one connects by itself
+        // (on a headset too, whose row said "Watching" from the last opening and kept it from connecting)
+        _relay.forgetTarget();
         if (_tv) {
-          // The link stopped with the last opening: no phone is watched any more, and the last one connects by itself
-          _relay.forgetTarget();
           await _relay.loadOwnCode();
           _relay.beginOwnCodeTries();
         }
