@@ -150,13 +150,15 @@ object CaptureExport {
 
   /**
    * A headset's reception record ([ReceptionRecord]): `<id>.bin` and `<id>.idx.csv`, the relay records in a head and a
-   * tail; `<id>-telemetry.bin` and its index, every telemetry record of the session; `<id>.json`, the header.
+   * tail; `<id>-telemetry.bin` and its index, every telemetry record of the session; `<id>-units.csv`, the times of
+   * every unit of the session ([UnitTimingRing]); `<id>.json`, the header.
    */
   fun writeReception(
     context: Context,
     records: CaptureSnapshot,
     telemetry: CaptureSnapshot,
     header: String,
+    units: String? = null,
     id: String = "dji-relay-" + android.text.format.DateFormat.format("yyyyMMdd-HHmmss", System.currentTimeMillis()),
   ): Result = try {
     val bin = writeFile(context, "$id.bin", "application/octet-stream", records.bytes)
@@ -164,6 +166,9 @@ object CaptureExport {
     if (telemetry.bytes.isNotEmpty()) {
       writeFile(context, "$id-telemetry.bin", "application/octet-stream", telemetry.bytes)
       writeFile(context, "$id-telemetry.idx.csv", "text/csv", telemetry.indexCsv().toByteArray())
+    }
+    if (units != null) {
+      writeFile(context, "$id-units.csv", "text/csv", units.toByteArray())
     }
     val json = writeFile(context, "$id.json", "application/json", header.toByteArray())
     Result(

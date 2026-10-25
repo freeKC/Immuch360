@@ -13,6 +13,7 @@ import android.view.InputDevice
 import android.view.MotionEvent
 import io.flutter.plugin.common.BinaryMessenger
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -190,6 +191,14 @@ class DjiLinkController private constructor(private val context: Context) : Link
   /** The receiver of a phone's relay, and the detector of the stream it receives */
   private val receiverDetector = CodecDetector()
   private val receiver = RelayReceiver(ReceiverEvents(), clockNs = { SystemClock.elapsedRealtimeNanos() })
+
+  /** The display of this device and its changes, watched once a reception starts */
+  private val displayWatch = DisplayWatch()
+
+  /** The network facts read at most every 2 s for the page, and when an export is written */
+  @Volatile
+  private var networkFacts: NetworkFacts? = null
+  private var networkFactsAtMs = 0L
   @Volatile
   private var receiverWifiLock: WifiManager.WifiLock? = null
   private val shownHistory = ArrayDeque<LongArray>()
@@ -237,6 +246,8 @@ class DjiLinkController private constructor(private val context: Context) : Link
     player.router.onVideoUnit = { unit, detector, fresh, nowNs -> video.onUnit(unit, detector, fresh, nowNs) }
     DjiLinkVideoSurfaces.listener = { surface -> feed.setViewSurface(surface) }
     store.seed = ProfileRegistry.seed20261023
+    // The phone receive time of a relayed unit on this device's clock, for phone receive to picture shown
+    feed.phoneToLocal = { phoneNs -> receiver.clock.offsetNs?.let { phoneNs - it } }
   }
 
   fun readEnvironment(): UsbEnvironmentReport {
@@ -643,10 +654,14 @@ class DjiLinkController private constructor(private val context: Context) : Link
       if (receptionPageSession != pageSession) {
         reception.clear()
         receptionExports.clear()
+        feed.clearTiming()
         receptionPageSession = pageSession
       }
+      // The counters of the pacing follow the receiver's: from this connect on, across its reconnections
+      feed.clearSmoothing()
     }
     reception.start(ReceptionRecord.Watched(name = null, host = host, port = port))
+    handler.post { displayWatch.start(context) }
     relay.source = RelaySource.NONE
     // A TV says so in its hello, so that the phone's Diagnostics list it as a TV; a headset says nothing, as before
     val kind = if (environment.television) "tv" else null
@@ -699,6 +714,8 @@ class DjiLinkController private constructor(private val context: Context) : Link
     receiverDetector.reset()
     store.useAccessory(null)
     store.seed = null
+    // A TV can afford a deeper jitter buffer than the pilot's headset
+    feed.setPacing(television = environment.television)
     feed.open()
     synchronized(shownHistory) { shownHistory.clear() }
   }
@@ -768,6 +785,12 @@ class DjiLinkController private constructor(private val context: Context) : Link
 
     override fun onEnded(state: RelayReceiveState) {
       handler.post { endReception() }
+    }
+
+    override fun pingNumbers(): RelayPingNumbers {
+      val nowNs = SystemClock.elapsedRealtimeNanos()
+      val received = receiver.snapshot(nowNs)
+      return feed.smoothingNumbers(nowNs).pingNumbers(received.lostOnWifi, receiver.clock.lastRoundTripNs)
     }
 
     override fun shownPer10s(): Int {
@@ -932,11 +955,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
         (if (player.loaded) player.router else router).telemetryDecoder.values(nowNs / 1_000_000)
       }
     }
-    val receiveToPicture = RelayLatencyNumbers.receiveToPicture(
-      received.latency.relayDelayMedianMs,
-      stats.inProcessMedianMs,
-      stats.decodeMedianMs,
-    )
+    val receiveToPicture = receiveToPictureMs(received, stats, nowNs)
     return DjiFlightNumbers(
       receiving = receiving,
       localReplay = player.loaded,
@@ -950,6 +969,28 @@ class DjiLinkController private constructor(private val context: Context) : Link
       values = values,
       alert = lastDecision,
     )
+  }
+
+  /**
+   * Phone receive to picture shown here: measured on the pictures released for display over the last 10 s when the
+   * clocks are aligned (the jitter buffer included), else the relay delay plus this device's in process and decode
+   * medians
+   */
+  private fun receiveToPictureMs(received: RelayReceiveSnapshot, stats: VideoStats, nowNs: Long): Double? =
+    feed.smoothingNumbers(nowNs).phoneToShownMedianMs ?: RelayLatencyNumbers.receiveToPicture(
+      received.latency.relayDelayMedianMs,
+      stats.inProcessMedianMs,
+      stats.decodeMedianMs,
+    )
+
+  /** The network facts, read again when older than 2 s */
+  private fun currentNetworkFacts(): NetworkFacts? {
+    val now = SystemClock.elapsedRealtime()
+    if (networkFacts == null || now - networkFactsAtMs > 2_000) {
+      networkFacts = runCatching { NetworkFacts.read(context) }.getOrNull()
+      networkFactsAtMs = now
+    }
+    return networkFacts
   }
 
   private fun boundProfile(): DeviceProfile? {
@@ -1018,6 +1059,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       records = reception.records(),
       telemetry = reception.telemetryRecords(),
       header = header,
+      units = feed.timing?.csv(),
     )
     synchronized(gate) { receptionExports.remember(listOf(received), result, SystemClock.elapsedRealtime()) }
     Log.i(TAG, "reception record exported: ok=${result.ok} bytes=${result.bytes} records=$received")
@@ -1054,19 +1096,41 @@ class DjiLinkController private constructor(private val context: Context) : Link
           put("units", received.units)
           put("lostOnWifi", received.lostOnWifi)
           put("breaks", received.breaks)
+          put("primers", received.primers)
+          put("recoveryPrimers", received.recoveryPrimers)
+          put("unitHeaderBytes", received.unitHeaderBytes)
+          put("longPings", received.longPings)
+          put("roundTripMs", received.roundTripMs)
           put("relayDelayMedianMs", received.latency.relayDelayMedianMs)
+          put("relayDelayP95Ms", received.latency.relayDelayP95Ms)
+          put("networkMedianMs", received.latency.networkMedianMs)
+          put("networkP95Ms", received.latency.networkP95Ms)
+          put("clockUncertaintyMs", received.latency.clockUncertaintyMs)
           put("telemetryAgeMs", received.telemetryAgeMs)
           put("lastUnitAgoMs", received.lastUnitAgoMs)
-          put(
-            "receiveToPictureMs",
-            RelayLatencyNumbers.receiveToPicture(
-              received.latency.relayDelayMedianMs,
-              stats.inProcessMedianMs,
-              stats.decodeMedianMs,
-            ),
-          )
+          put("receiveToPictureMs", receiveToPictureMs(received, stats, nowNs))
+          put("wifiLockHeld", receiverWifiLock?.isHeld == true)
         },
       )
+      // The jitter buffer and what was shown, late, skipped or frozen (p2/relay-smoothness-2026-10-25.md, 6.2)
+      put("smoothing", feed.smoothingNumbers(nowNs).toJson())
+      put("network", currentNetworkFacts()?.toJson() ?: JsonNull)
+      put("display", displayWatch.toJson())
+      put("stream", synchronized(gate) { video.facts.toJson() })
+      feed.timing?.let { ring ->
+        put(
+          "unitTiming",
+          buildJsonObject {
+            put("lines", minOf(ring.total, ring.capacity.toLong()))
+            put("total", ring.total)
+            put("columns", UnitTimingRing.CSV_HEADER)
+            ring.bases()?.let { (local, phone) ->
+              put("localBaseNs", local)
+              put("phoneBaseNs", phone)
+            }
+          },
+        )
+      }
       put(
         "decoder",
         buildJsonObject {
@@ -1078,6 +1142,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
           put("name", stats.decoder.name)
           put("kind", stats.decoder.kind?.name)
           put("lowLatency", stats.decoder.lowLatency)
+          put("lowLatencyFeature", stats.decoder.lowLatencyFeature)
+          put("operatingRate", stats.decoder.operatingRate)
+          put("configurationLevel", stats.decoder.configurationLevel)
+          put("frameRateAsked", stats.decoder.frameRateAsked)
           put("switches", stats.decoder.switches)
           put("switchReason", stats.decoder.lastSwitchReason?.name)
           put("skippedAtStart", JsonArray(stats.decoder.skippedAtStart.map { JsonPrimitive(it.toString()) }))
@@ -1085,8 +1153,13 @@ class DjiLinkController private constructor(private val context: Context) : Link
           put("queued", stats.queued)
           put("decoded", stats.decoded)
           put("shown", stats.shown)
+          put("droppedAtDisplay", stats.droppedAtDisplay)
+          put("overruns", stats.overruns)
+          put("unitsDropped", stats.decoder.unitsDropped)
+          put("primers", stats.decoder.primers)
           put("errors", stats.errors)
           put("lostPictures", stats.lostPictures)
+          put("encoderRestarts", stats.encoderRestarts)
           put("picturesPerSecond", stats.picturesPerSecond)
           put("decodeMedianMs", stats.decodeMedianMs)
           put("decodeP95Ms", stats.decodeP95Ms)
@@ -1529,8 +1602,18 @@ class DjiLinkController private constructor(private val context: Context) : Link
         },
       )
     val binding = bindings.boundTo(AccessoryStrings.of(identity ?: lastAccessory))
+    // Every receiver of the relay, those that left included, with this phone's Wi-Fi (relay-smoothness, 6.1)
+    val relayJson = JSONObject(
+      buildJsonObject {
+        relay.report(nowNs).forEach { (key, value) -> put(key, value) }
+        put("wifiLowLatencyLockHeld", DjiLinkRelayService.wifiLockHeld)
+        put("network", currentNetworkFacts()?.toJson() ?: JsonNull)
+      }.toString(),
+    )
     return linkedMapOf(
       "lastAccessory" to lastJson,
+      "relay" to relayJson,
+      "stream" to JSONObject(video.facts.toJson().toString()),
       "opens" to openList,
       "video" to videoJson,
       "telemetry" to telemetryJson,
@@ -1568,9 +1651,13 @@ class DjiLinkController private constructor(private val context: Context) : Link
     )
   }
 
-  fun snapshot(): DjiLinkSnapshot = synchronized(gate) { buildSnapshot() }
+  fun snapshot(): DjiLinkSnapshot {
+    // Read outside the page lock: a service call never holds the reader thread
+    val network = if (receiver.active) currentNetworkFacts() else networkFacts
+    return synchronized(gate) { buildSnapshot(network) }
+  }
 
-  private fun buildSnapshot(): DjiLinkSnapshot {
+  private fun buildSnapshot(network: NetworkFacts?): DjiLinkSnapshot {
     val nowNs = SystemClock.elapsedRealtimeNanos()
     val nowMs = nowNs / 1_000_000
     val envelope = decoder.counters
@@ -1708,7 +1795,13 @@ class DjiLinkController private constructor(private val context: Context) : Link
       relayReceiving = if (received.state == RelayReceiveState.IDLE && !receiving) {
         null
       } else {
-        received.toPigeon(stats)
+        received.toPigeon(
+          stats = stats,
+          receiveToPicture = receiveToPictureMs(received, stats, nowNs),
+          smoothing = feed.smoothingNumbers(nowNs),
+          network = network,
+          refreshHz = displayWatch.refreshHz,
+        )
       },
       flightViewFailed = DjiFlightViewActivity.lastFailed,
       liveFrame = liveFramePigeon(
@@ -2082,6 +2175,7 @@ private fun RelaySendingSnapshot.toPigeon(wifiLowLatencyHeld: Boolean): DjiRelay
   port = port?.toLong(),
   sending = source.wire,
   headsets = headsets.map {
+    val said = it.receiver
     DjiRelayHeadsetRow(
       address = it.address,
       name = it.name,
@@ -2092,6 +2186,17 @@ private fun RelaySendingSnapshot.toPigeon(wifiLowLatencyHeld: Boolean): DjiRelay
       megabitsPerSecond = it.megabitsPerSecond,
       screenCodeId = it.screenCodeId,
       kind = it.kind,
+      queueAgeMs = it.queueAgeMs,
+      queueMaxAgeMs = it.queueMaxAgeMs,
+      dropEvents = it.dropEvents,
+      writeStalls = it.writeStalls,
+      writeP95Ms = it.writeP95Ms,
+      roundTripMs = said?.roundTripUs?.takeIf { us -> us >= 0 }?.let { us -> us / 1000.0 },
+      receiverBufferMs = said?.bufferTargetMs?.takeIf { ms -> ms >= 0 }?.toDouble(),
+      receiverFreezes = said?.freezes?.takeIf { count -> count >= 0 }?.toLong(),
+      receiverLongestFreezeMs = said?.longestFreezeMs?.takeIf { ms -> ms >= 0 }?.toLong(),
+      receiverSkips = said?.renderSkips?.takeIf { count -> count >= 0 }?.toLong(),
+      receiverLate = said?.lateUnits?.takeIf { count -> count >= 0 }?.toLong(),
     )
   },
   refusedProofs = refusedProofs,
@@ -2114,14 +2219,18 @@ private fun RelayReceiveState.toPigeon(): DjiRelayReceiveState = when (this) {
   RelayReceiveState.BUSY -> DjiRelayReceiveState.BUSY
 }
 
-/** The receiver with the latency lines of the window page: [stats] are this device's own decoding numbers */
-private fun RelayReceiveSnapshot.toPigeon(stats: VideoStats): DjiRelayReceiving {
+/**
+ * The receiver with the latency lines of the window page: [stats] are this device's own decoding numbers,
+ * [receiveToPicture] the phone receive to picture shown, [smoothing] the jitter buffer's numbers
+ */
+private fun RelayReceiveSnapshot.toPigeon(
+  stats: VideoStats,
+  receiveToPicture: Double?,
+  smoothing: SmoothingNumbers,
+  network: NetworkFacts?,
+  refreshHz: Float?,
+): DjiRelayReceiving {
   val numbers = latency
-  val receiveToPicture = RelayLatencyNumbers.receiveToPicture(
-    numbers.relayDelayMedianMs,
-    stats.inProcessMedianMs,
-    stats.decodeMedianMs,
-  )
   val phone = telemetry?.phoneVideo
   return DjiRelayReceiving(
     state = state.toPigeon(),
@@ -2154,6 +2263,25 @@ private fun RelayReceiveSnapshot.toPigeon(stats: VideoStats): DjiRelayReceiving 
     shownPerSecond = stats.shownPerSecond,
     // What the radio lost, as the phone counts it; this device's own count when no telemetry came yet
     lostOnRadio = phone?.lostPictures ?: stats.lostPictures,
+    paced = smoothing.paced,
+    bufferTargetMs = smoothing.targetMs,
+    bufferNowMs = smoothing.depthNowMs,
+    bufferP95Ms = smoothing.depthP95Ms,
+    lateUnits = smoothing.lateUnits,
+    renderSkips = smoothing.renderSkips,
+    decoderStalls = smoothing.decoderStalls,
+    safetyFlushes = smoothing.safetyFlushes,
+    freezes = smoothing.freezes,
+    longestFreezeMs = smoothing.longestFreezeMs,
+    freezesInSource = smoothing.freezesInSource,
+    breaks = breaks,
+    primers = primers,
+    primersUsed = smoothing.primersAfterBreak,
+    network = network?.transport,
+    wifiBand = network?.band,
+    wifiLinkMbps = network?.linkMbps?.toLong(),
+    wifiRssi = network?.rssiDbm?.toLong(),
+    refreshHz = refreshHz?.toDouble(),
   )
 }
 

@@ -770,6 +770,17 @@ class DjiRelayHeadsetRow {
     this.relayDelayMs,
     this.screenCodeId,
     this.kind,
+    this.queueAgeMs,
+    this.queueMaxAgeMs,
+    this.dropEvents,
+    this.writeStalls,
+    this.writeP95Ms,
+    this.roundTripMs,
+    this.receiverBufferMs,
+    this.receiverFreezes,
+    this.receiverLongestFreezeMs,
+    this.receiverSkips,
+    this.receiverLate,
   });
 
   final String address;
@@ -789,6 +800,24 @@ class DjiRelayHeadsetRow {
 
   /// What it says it is: "tv" from a TV of this build, null from a headset
   final String? kind;
+
+  /// The age of the oldest unit queued for it now, and the most it reached; null when nothing waits
+  final double? queueAgeMs;
+  final double? queueMaxAgeMs;
+
+  /// Times the phone dropped units for it, and its writes of a unit that took over 200 ms
+  final int? dropEvents;
+  final int? writeStalls;
+  final double? writeP95Ms;
+
+  /// From its long pings (a receiver of this build): the round trip, its jitter buffer, freezes over 0.3 s, pictures
+  /// it did not show because a newer one was due, units that came late
+  final double? roundTripMs;
+  final double? receiverBufferMs;
+  final int? receiverFreezes;
+  final int? receiverLongestFreezeMs;
+  final int? receiverSkips;
+  final int? receiverLate;
 }
 
 /// A TV added on the phone: the code the TV made and showed, under an opaque id
@@ -856,6 +885,25 @@ class DjiRelayReceiving {
     this.receiveToPictureMs,
     this.behindPhoneMs,
     this.lastPictureAgoMs,
+    this.paced,
+    this.bufferTargetMs,
+    this.bufferNowMs,
+    this.bufferP95Ms,
+    this.lateUnits,
+    this.renderSkips,
+    this.decoderStalls,
+    this.safetyFlushes,
+    this.freezes,
+    this.longestFreezeMs,
+    this.freezesInSource,
+    this.breaks,
+    this.primers,
+    this.primersUsed,
+    this.network,
+    this.wifiBand,
+    this.wifiLinkMbps,
+    this.wifiRssi,
+    this.refreshHz,
   });
 
   final DjiRelayReceiveState state;
@@ -895,7 +943,8 @@ class DjiRelayReceiving {
   final double? phoneInProcessMedianMs;
   final double? phoneDecodeMedianMs;
 
-  /// Relay delay plus this device's in process and decode medians
+  /// Phone receive to picture shown here, the jitter buffer included (measured; the relay delay plus the in process
+  /// and decode medians until the first pictures are shown)
   final double? receiveToPictureMs;
 
   /// How long after the phone's own screen this device shows a picture
@@ -907,6 +956,38 @@ class DjiRelayReceiving {
 
   /// Pictures lost on the radio, from the picture counter, as on the phone
   final int lostOnRadio;
+
+  /// The pictures are paced by a jitter buffer: its target, the wait of the last unit and its 95th percentile
+  final bool? paced;
+  final double? bufferTargetMs;
+  final double? bufferNowMs;
+  final double? bufferP95Ms;
+
+  /// Units that came after their time to go to the decoder, pictures not shown because a newer one was due, decoder
+  /// stalls of 200 ms, and flushes at the safety net
+  final int? lateUnits;
+  final int? renderSkips;
+  final int? decoderStalls;
+  final int? safetyFlushes;
+
+  /// Pictures that stayed over 0.3 s on the screen, the longest, and those that came with a gap in the drone's stream
+  final int? freezes;
+  final double? longestFreezeMs;
+  final int? freezesInSource;
+
+  /// BREAKs (units the phone dropped for this device), key pictures the phone sent ahead, and those used after a BREAK
+  final int? breaks;
+  final int? primers;
+  final int? primersUsed;
+
+  /// This device's network: wifi, ethernet or other; the Wi-Fi band (2.4, 5 or 6), link speed and signal
+  final String? network;
+  final String? wifiBand;
+  final int? wifiLinkMbps;
+  final int? wifiRssi;
+
+  /// The display's refresh rate
+  final double? refreshHz;
 }
 
 /// What "Send to a headset" starts with: the code, the names the welcome and the announcement carry, the notification
