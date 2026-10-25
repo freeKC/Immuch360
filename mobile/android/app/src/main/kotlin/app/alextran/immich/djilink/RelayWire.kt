@@ -37,6 +37,12 @@ object RelayWire {
   const val NONCE_BYTES = 16
   const val PROOF_BYTES = 32
   const val UNIT_HEADER_BYTES = 32
+
+  /**
+   * The unit header with the content clock after the 32 bytes: sent only to a receiver whose hello says it reads it
+   * (`"unitHeader": 40`), and said so in the welcome; a receiver of an earlier build gets the 32 bytes as before
+   */
+  const val UNIT_HEADER_LONG_BYTES = 40
   const val MAX_UNIT_BYTES = AccessUnitAssembler.MAX_UNIT_BYTES
   const val MAX_JSON_BYTES = 64 * 1024
   const val MAX_HELLO_BYTES = 1024
@@ -44,6 +50,12 @@ object RelayWire {
   const val CHALLENGE_BYTES = 4 + 1 + NONCE_BYTES
   const val HELLO_MIN_BYTES = 4 + 1 + NONCE_BYTES + PROOF_BYTES
   const val PING_BYTES = 16
+
+  /**
+   * A ping with the receiver's own numbers after the 16 bytes ([RelayPingNumbers]): sent only when the welcome says the
+   * phone takes it (`"pingBytes": 64`); the phone takes either length
+   */
+  const val PING_LONG_BYTES = 64
   const val PONG_BYTES = 24
   const val LABEL = "immuch360 drone relay 1"
   const val ROLE_HEADSET = 1
@@ -51,6 +63,17 @@ object RelayWire {
 
   /** DSCP CS5, which Wi-Fi multimedia maps to its video access category (RFC 8325); harmless where it is ignored */
   const val TRAFFIC_CLASS = 0xA0
+
+  /**
+   * The send buffer is no longer pinned: the kernel tunes it, and only the bytes it holds unsent are bounded, to this
+   * (TCP_NOTSENT_LOWAT), so that a backlog waits in the queue of the receiver where it is aged and measured. Where the
+   * option is refused, [FALLBACK_SEND_BUFFER_BYTES] is asked instead: 230 ms of the 17.9 Mbit/s of a flight.
+   */
+  const val NOT_SENT_LOW_WATER_BYTES = 256 * 1024
+  const val FALLBACK_SEND_BUFFER_BYTES = 512 * 1024
+
+  /** The write buffer in front of the socket, and the read buffer of a receiver */
+  const val STREAM_BUFFER_BYTES = 64 * 1024
   const val SEND_BUFFER_BYTES = 64 * 1024
 
   // Records from the phone
@@ -116,7 +139,7 @@ object RelayWire {
     WELCOME -> PROOF_BYTES..(PROOF_BYTES + MAX_JSON_BYTES)
     REFUSED, RESET, BYE, TELEMETRY -> 0..MAX_JSON_BYTES
     PARAMETERS -> 0..MAX_PARAMETERS_BYTES
-    UNIT -> UNIT_HEADER_BYTES..(UNIT_HEADER_BYTES + MAX_UNIT_BYTES)
+    UNIT -> UNIT_HEADER_BYTES..(UNIT_HEADER_LONG_BYTES + MAX_UNIT_BYTES)
     PONG -> PONG_BYTES..PONG_BYTES
     else -> null
   }
@@ -124,7 +147,7 @@ object RelayWire {
   /** The body sizes a record of [type] may have when the headset sends it; null for anything else, which closes */
   fun bodyRangeFromHeadset(type: Int): IntRange? = when (type) {
     HELLO -> HELLO_MIN_BYTES..MAX_HELLO_BYTES
-    PING -> PING_BYTES..PING_BYTES
+    PING -> PING_BYTES..PING_LONG_BYTES
     HEADSET_BYE -> 0..0
     else -> null
   }
@@ -136,6 +159,26 @@ object RelayWire {
     if (length < range.first || length > range.last) {
       throw RelayProtocolException("badLength", type)
     }
+    if (!fromPhone && type == PING && length != PING_BYTES.toLong() && length != PING_LONG_BYTES.toLong()) {
+      throw RelayProtocolException("badLength", type)
+    }
+  }
+
+  /** A short name of a record type, for the exports */
+  fun typeName(type: Int): String = when (type) {
+    CHALLENGE -> "challenge"
+    WELCOME -> "welcome"
+    REFUSED -> "refused"
+    PARAMETERS -> "parameters"
+    UNIT -> "unit"
+    RESET -> "reset"
+    TELEMETRY -> "telemetry"
+    PONG -> "pong"
+    BYE -> "bye"
+    HELLO -> "hello"
+    PING -> "ping"
+    HEADSET_BYE -> "headsetBye"
+    else -> "type$type"
   }
 
   fun header(type: Int, flags: Int, length: Int): ByteArray {
@@ -208,19 +251,26 @@ object RelayWire {
     return proof + json.toByteArray(Charsets.UTF_8)
   }
 
-  fun pingBody(sendNs: Long, relayDelayMedianUs: Int, shownPer10s: Int): ByteArray {
-    val out = ByteArray(PING_BYTES)
+  /** A ping of 16 bytes, or of [PING_LONG_BYTES] with the receiver's [numbers] */
+  fun pingBody(sendNs: Long, relayDelayMedianUs: Int, shownPer10s: Int, numbers: RelayPingNumbers? = null): ByteArray {
+    val out = ByteArray(if (numbers == null) PING_BYTES else PING_LONG_BYTES)
     putI64(out, 0, sendNs)
     putI32(out, 8, relayDelayMedianUs)
     putI32(out, 12, shownPer10s)
+    numbers?.values()?.forEachIndexed { index, value -> putI32(out, PING_BYTES + 4 * index, value) }
     return out
   }
 
   fun parsePing(body: ByteArray): RelayPing {
-    if (body.size != PING_BYTES) {
+    if (body.size != PING_BYTES && body.size != PING_LONG_BYTES) {
       throw RelayProtocolException("badLength", PING)
     }
-    return RelayPing(i64(body, 0), i32(body, 8), i32(body, 12))
+    val numbers = if (body.size == PING_LONG_BYTES) {
+      RelayPingNumbers.of(IntArray(RelayPingNumbers.COUNT) { i32(body, PING_BYTES + 4 * it) })
+    } else {
+      null
+    }
+    return RelayPing(i64(body, 0), i32(body, 8), i32(body, 12), numbers)
   }
 
   fun pongBody(pingSendNs: Long, receivedNs: Long, sentNs: Long): ByteArray {
@@ -238,21 +288,27 @@ object RelayWire {
     return RelayPong(i64(body, 0), i64(body, 8), i64(body, 16))
   }
 
-  fun unitHeader(header: RelayUnitHeader): ByteArray {
-    val out = ByteArray(UNIT_HEADER_BYTES)
+  /** The header of [UNIT_HEADER_BYTES], or of [UNIT_HEADER_LONG_BYTES] with the content clock */
+  fun unitHeader(header: RelayUnitHeader, bytes: Int = UNIT_HEADER_BYTES): ByteArray {
+    require(bytes == UNIT_HEADER_BYTES || bytes == UNIT_HEADER_LONG_BYTES)
+    val out = ByteArray(bytes)
     putU32(out, 0, header.sequence and 0xFFFF_FFFFL)
     putI64(out, 4, header.firstArrivalNs)
     putI64(out, 12, header.lastArrivalNs)
     putI64(out, 20, header.sendNs)
     putI32(out, 28, header.pictureCounter)
+    if (bytes == UNIT_HEADER_LONG_BYTES) {
+      putI64(out, 32, header.contentMs)
+    }
     return out
   }
 
-  fun parseUnitHeader(body: ByteArray): RelayUnitHeader {
-    if (body.size < UNIT_HEADER_BYTES) {
+  fun parseUnitHeader(body: ByteArray, bytes: Int = UNIT_HEADER_BYTES): RelayUnitHeader {
+    if (body.size < bytes) {
       throw RelayProtocolException("badLength", UNIT)
     }
-    return RelayUnitHeader(u32(body, 0), i64(body, 4), i64(body, 12), i64(body, 20), i32(body, 28))
+    val content = if (bytes >= UNIT_HEADER_LONG_BYTES) i64(body, 32) else -1L
+    return RelayUnitHeader(u32(body, 0), i64(body, 4), i64(body, 12), i64(body, 20), i32(body, 28), content)
   }
 
   /** The VPS, SPS and PPS behind their start codes, as a decoder takes them */
@@ -283,8 +339,8 @@ object RelayWire {
    * The access unit of a UNIT body: the bytes as the phone received them, cut into NAL units with the Annex B split.
    * The headset has no assembler: the unit is whole, so nothing waits for the next one.
    */
-  fun accessUnitOf(body: ByteArray, arrivalNs: Long): AccessUnit =
-    annexBUnit(body.copyOfRange(UNIT_HEADER_BYTES, body.size), arrivalNs)
+  fun accessUnitOf(body: ByteArray, arrivalNs: Long, headerBytes: Int = UNIT_HEADER_BYTES): AccessUnit =
+    annexBUnit(body.copyOfRange(headerBytes, body.size), arrivalNs)
 
   /** An access unit of Annex B [bytes], whole, arrived at [arrivalNs] */
   fun annexBUnit(bytes: ByteArray, arrivalNs: Long): AccessUnit {
@@ -407,11 +463,52 @@ class RelayRecord(val type: Int, val flags: Int, val body: ByteArray)
 
 class RelayHello(val version: Int, val clientNonce: ByteArray, val proof: ByteArray, val json: JsonObject?)
 
-data class RelayPing(val sendNs: Long, val relayDelayMedianUs: Int, val shownPer10s: Int)
+data class RelayPing(
+  val sendNs: Long,
+  val relayDelayMedianUs: Int,
+  val shownPer10s: Int,
+  /** The receiver's own numbers, in a ping of [RelayWire.PING_LONG_BYTES]; null in a short one */
+  val numbers: RelayPingNumbers? = null,
+)
+
+/**
+ * What a receiver says of its own picture in a long ping, so that the phone's export holds both ends: twelve signed 32
+ * bit numbers after the 16 bytes of the ping, -1 when unknown. Counts are since the receiver connected.
+ */
+data class RelayPingNumbers(
+  val bufferTargetMs: Int = -1,
+  val bufferNowMs: Int = -1,
+  val freezes: Int = -1,
+  val longestFreezeMs: Int = -1,
+  val renderSkips: Int = -1,
+  val lateUnits: Int = -1,
+  val decoderStalls: Int = -1,
+  val sequenceGaps: Int = -1,
+  val primersUsed: Int = -1,
+  /** The round trip of its last ping, in microseconds */
+  val roundTripUs: Int = -1,
+  /** Phone receive to picture shown there, median of its last 10 s */
+  val phoneToShownMs: Int = -1,
+  val safetyFlushes: Int = -1,
+) {
+  companion object {
+    const val COUNT = 12
+
+    fun of(values: IntArray): RelayPingNumbers = RelayPingNumbers(
+      values[0], values[1], values[2], values[3], values[4], values[5],
+      values[6], values[7], values[8], values[9], values[10], values[11],
+    )
+  }
+
+  fun values(): IntArray = intArrayOf(
+    bufferTargetMs, bufferNowMs, freezes, longestFreezeMs, renderSkips, lateUnits,
+    decoderStalls, sequenceGaps, primersUsed, roundTripUs, phoneToShownMs, safetyFlushes,
+  )
+}
 
 data class RelayPong(val pingSendNs: Long, val receivedNs: Long, val sentNs: Long)
 
-/** The 32 bytes before the bytes of a unit: all times on the phone's clock */
+/** The 32 or 40 bytes before the bytes of a unit: all times on the phone's clock */
 data class RelayUnitHeader(
   /** +1 per unit sent to this headset, 0 for the first after the welcome; a jump means units were dropped for it */
   val sequence: Long,
@@ -423,6 +520,8 @@ data class RelayUnitHeader(
   val sendNs: Long,
   /** The SEI 240 picture counter of the unit, -1 when it has none */
   val pictureCounter: Int,
+  /** The content clock the phone unwrapped, in milliseconds; -1 when it has none or the header is the short one */
+  val contentMs: Long = -1,
 )
 
 /**

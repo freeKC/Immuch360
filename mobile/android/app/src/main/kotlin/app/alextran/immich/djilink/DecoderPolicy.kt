@@ -438,12 +438,20 @@ class KeptKey(val unit: AccessUnit, val description: StreamDescription)
  * S24+) shows a picture before that and never gets it, so it never shows an old picture; one that waits for a key
  * picture starts from the kept one, and the picture builds up from it as the refresh of the stream repairs it.
  *
+ * After a BREAK of a relayed stream (units the phone dropped for this device) the codec is not flushed: a decoder that
+ * conceals goes on predicting from its last picture. If no picture comes out within [BREAK_WAIT_NS] of units after the
+ * BREAK, the decoder will not go on without a key picture, and the kept key unit (the one the phone sent with the
+ * BREAK) goes in once (p2/relay-smoothness-2026-10-25.md, 5.1 item 6).
+ *
  * [keep] and [clear] come from the threads that submit; the rest belongs to the decoder thread.
  */
-class KeyPrimer(private val afterUnits: Int = AFTER_UNITS) {
+class KeyPrimer(private val afterUnits: Int = AFTER_UNITS, private val breakWaitNs: Long = BREAK_WAIT_NS) {
   companion object {
     /** A quarter of a second at 30 pictures per second */
     const val AFTER_UNITS = 8
+
+    /** After a BREAK, this much of the stream without a picture before the kept key unit goes in */
+    const val BREAK_WAIT_NS = 250_000_000L
   }
 
   @Volatile
@@ -453,6 +461,13 @@ class KeyPrimer(private val afterUnits: Int = AFTER_UNITS) {
   private var armed = false
   private var unitsSinceStart = 0
   private var keySinceStart = false
+
+  /** The arrival of the BREAK unit while no picture came after it, null otherwise */
+  private var breakAtNs: Long? = null
+
+  /** Whether the last unit given by [before] was for a BREAK */
+  var lastWasAfterBreak = false
+    private set
 
   /** Whether a key unit is kept */
   val holds: Boolean get() = kept != null
@@ -480,17 +495,33 @@ class KeyPrimer(private val afterUnits: Int = AFTER_UNITS) {
     unitsSinceStart += 1
     if (isKey) {
       keySinceStart = true
+      breakAtNs = null
     }
+  }
+
+  /** A relayed unit with BREAK went into the codec, which arrived at [arrivalNs] */
+  fun onBreak(arrivalNs: Long) {
+    breakAtNs = arrivalNs
   }
 
   /** A picture came out: the codec decodes, nothing is to be added */
   fun onOutput() {
     armed = false
+    breakAtNs = null
   }
 
-  /** Before [unit] goes to a codec: the kept key unit to queue first, or null when none is needed or fits */
-  fun before(unit: AccessUnit, description: StreamDescription): AccessUnit? {
-    if (!armed || unit.isKey || keySinceStart || unitsSinceStart < afterUnits) {
+  /**
+   * Before [unit] goes to a codec: the kept key unit to queue first, or null when none is needed or fits. [unitNs] is
+   * the arrival of the unit, which the wait after a BREAK is counted in.
+   */
+  fun before(unit: AccessUnit, description: StreamDescription, unitNs: Long = unit.lastArrivalNs): AccessUnit? {
+    if (unit.isKey) {
+      return null
+    }
+    val atStart = armed && !keySinceStart && unitsSinceStart >= afterUnits
+    val breakAt = breakAtNs
+    val afterBreak = breakAt != null && unitNs - breakAt >= breakWaitNs
+    if (!atStart && !afterBreak) {
       return null
     }
     val key = kept ?: return null
@@ -498,6 +529,8 @@ class KeyPrimer(private val afterUnits: Int = AFTER_UNITS) {
       return null
     }
     armed = false
+    breakAtNs = null
+    lastWasAfterBreak = !atStart
     return key.unit
   }
 }

@@ -63,6 +63,14 @@ data class DecoderStatus(
   val skippedAtStart: List<String> = emptyList(),
   /** Times a codec started from a key unit kept from earlier ([KeyPrimer]) */
   val primers: Int = 0,
+  /** The decoder reports FEATURE_LowLatency ([lowLatency] says whether it was asked) */
+  val lowLatencyFeature: Boolean = false,
+  /** The operating rate the decoder accepted at its configuration, null when none was asked */
+  val operatingRate: Int? = null,
+  /** The configuration level the decoder accepted: 0 with the Qualcomm keys, 3 plain */
+  val configurationLevel: Int? = null,
+  /** The display rate asked of the view's surface for a paced reception, null when none was asked */
+  val frameRateAsked: Int? = null,
 )
 
 /** The receiving end of the units: the decoder feed, or a test's own */
@@ -356,6 +364,12 @@ class VideoPipeline(
 
   val pictureCounter = PictureCounterTracker()
 
+  /** The millisecond content clock of the stream, unwrapped; it goes on across an encoder restart */
+  private val contentClock = ContentClockUnwrapper()
+
+  /** Key pictures, encoder restarts and picture rates with their times, for the exports */
+  val facts = StreamFacts()
+
   /** The video channel whose units are decoded: the first one that gave a unit */
   var primaryChannel: Int? = null
     private set
@@ -377,7 +391,12 @@ class VideoPipeline(
       return
     }
     statistics.onUnitIn(unit, nowNs)
+    val restarts = pictureCounter.restarts
     unit.pictureCounter?.let { pictureCounter.offer(it) }
+    if (unit.contentMs < 0) {
+      unit.contentClockRaw?.let { unit.contentMs = contentClock.offer(it) }
+    }
+    facts.onUnit(unit, nowNs, pictureCounter.restarts > restarts)
     codec = detector.codec
     evidence = detector.evidence
     if (fresh != null) {
@@ -422,6 +441,8 @@ class VideoPipeline(
   fun newStream() {
     store.newSession()
     pictureCounter.newStream()
+    contentClock.reset()
+    facts.newStream()
     keptKeyOffered = false
     sink.newStream()
   }
@@ -441,6 +462,8 @@ class VideoPipeline(
     sink.reset()
     statistics.reset()
     pictureCounter.reset()
+    contentClock.reset()
+    facts.reset()
     primaryChannel = null
     otherChannelUnits = 0
     codec = VideoCodec.UNKNOWN

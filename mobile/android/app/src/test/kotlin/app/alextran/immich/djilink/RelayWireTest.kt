@@ -119,13 +119,15 @@ class RelayWireTest {
 
   @Test
   fun lengthsOutsideTheirLimitsAreRefusedBeforeTheBodyArrives() {
-    // A ping is exactly 16 bytes, a hello at most 1 KiB, a unit at most 4 MiB plus its header, JSON at most 64 KiB
+    // A ping is 16 or 64 bytes, a hello at most 1 KiB, a unit at most 4 MiB plus its longer header, JSON at most 64 KiB
     expectProtocolError { RelayRecordDecoder(false).offer(RelayWire.header(RelayWire.PING, 0, 15)) }
     expectProtocolError { RelayRecordDecoder(false).offer(RelayWire.header(RelayWire.PING, 0, 17)) }
+    expectProtocolError { RelayRecordDecoder(false).offer(RelayWire.header(RelayWire.PING, 0, 63)) }
+    expectProtocolError { RelayRecordDecoder(false).offer(RelayWire.header(RelayWire.PING, 0, 65)) }
     expectProtocolError { RelayRecordDecoder(false).offer(RelayWire.header(RelayWire.HELLO, 0, 1025)) }
     expectProtocolError { RelayRecordDecoder(false).offer(RelayWire.header(RelayWire.HEADSET_BYE, 0, 1)) }
     expectProtocolError {
-      RelayRecordDecoder(true).offer(RelayWire.header(RelayWire.UNIT, 0, 32 + 4 * 1024 * 1024 + 1))
+      RelayRecordDecoder(true).offer(RelayWire.header(RelayWire.UNIT, 0, 40 + 4 * 1024 * 1024 + 1))
     }
     expectProtocolError { RelayRecordDecoder(true).offer(RelayWire.header(RelayWire.UNIT, 0, 31)) }
     expectProtocolError { RelayRecordDecoder(true).offer(RelayWire.header(RelayWire.TELEMETRY, 0, 64 * 1024 + 1)) }
@@ -134,8 +136,10 @@ class RelayWireTest {
     val huge = RelayWire.header(RelayWire.UNIT, 0, 0)
     RelayWire.putU32(huge, 4, 0xFFFF_FFF0L)
     expectProtocolError { RelayWire.read(DataInputStream(ByteArrayInputStream(huge)), fromPhone = true) }
-    // At its limit, a unit is taken
-    RelayWire.check(RelayWire.UNIT, 32L + 4 * 1024 * 1024, fromPhone = true)
+    // At its limit, a unit is taken, and both lengths of a ping
+    RelayWire.check(RelayWire.UNIT, 40L + 4 * 1024 * 1024, fromPhone = true)
+    RelayWire.check(RelayWire.PING, 16, fromPhone = false)
+    RelayWire.check(RelayWire.PING, 64, fromPhone = false)
   }
 
   @Test

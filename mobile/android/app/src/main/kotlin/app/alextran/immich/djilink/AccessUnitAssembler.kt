@@ -48,8 +48,54 @@ class AccessUnit(
     return (bytes[at].toInt() and 0xFF) to (bytes[at + 1].toInt() and 0xFF)
   }
 
+  private val sei240: IntArray? by lazy { SeiPictureCounter.readStamp(bytes, nals) }
+
   /** The picture counter of the suffix SEI, see [SeiPictureCounter] */
-  val pictureCounter: Int? by lazy { SeiPictureCounter.read(bytes, nals) }
+  val pictureCounter: Int? get() = sei240?.get(0)
+
+  /** The 16 bit millisecond content clock of the same message ([SeiPictureCounter.CLOCK_OFFSET]); null without one */
+  val contentClockRaw: Int? get() = sei240?.get(1)?.takeIf { it >= 0 }
+
+  /**
+   * The content clock unwrapped by the pipeline of the device that first received the unit ([VideoPipeline]), in
+   * milliseconds; -1 when the unit has none. Written once before the unit goes to a sink.
+   */
+  @Volatile
+  var contentMs: Long = -1
+
+  /** What the relay said of a unit received from a phone; null for a unit of this device's own cable or capture */
+  @Volatile
+  var relay: RelayStamp? = null
+}
+
+/**
+ * A unit received from a phone's relay: the header the phone wrote and the arrival here, then what the receiver
+ * decided for it. The times of the phone are on the phone's clock, the others on this device's pipeline clock.
+ */
+class RelayStamp(
+  val sequence: Long,
+  val flags: Int,
+  /** The content clock the phone unwrapped, in milliseconds, or -1 when its header has none */
+  val contentMs: Long,
+  val phoneReceiveNs: Long,
+  val phoneSendNs: Long,
+  val arrivalNs: Long,
+) {
+  /** When the picture should be on the screen, set by the jitter buffer of the decoder feed */
+  @Volatile
+  var displayNs: Long = 0
+
+  /** When the unit should go to the decoder, ahead of [displayNs] by the time decoding takes */
+  @Volatile
+  var feedAtNs: Long = 0
+
+  /** The source time the jitter buffer paced the unit on (its content clock, or the phone receive time), in ns */
+  @Volatile
+  var sourceNs: Long = Long.MIN_VALUE
+
+  /** Its line in the unit timing ring of the reception, or -1 */
+  @Volatile
+  var timingIndex: Long = -1
 }
 
 enum class AccessUnitClose {
