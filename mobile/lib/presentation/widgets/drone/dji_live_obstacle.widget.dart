@@ -1,160 +1,375 @@
-// The obstacle alert of the DJI live video (p2/design-final-2026-10-24.md, 4.6): a red banner at the top of the
-// picture, "Obstacle close: 1.8 m", with the side under it once our captures say which side, or "Not confirmed yet"
-// while the alert is a test; a red glow along the picture's edge on the obstacle's side; a small top view of the drone
-// in the right band while the alert listens, with a red arc on the obstacle's side. Never green, never a sign that the
-// way is clear. The native side decides (ObstacleAlert) and beeps; this only draws what it decided. Information only:
-// nothing here reaches the remote or the drone, and nothing here takes a touch.
+// The obstacle ring of the DJI live video (p2/design-obstacle-ring-2026-10-25.md, 2 and 4): a translucent glow at the
+// picture's edge on the obstacle's side, like a shooter's damage indicator, or evenly all around while the side is not
+// shown. Nothing at all while nothing is close: no block, no label, no glyph. Front on the top edge, right on the right
+// edge, back on the bottom, left on the left, each edge holding 90 degrees; an arc about 90 degrees wide, fading toward
+// the centre, faint amber at "Glow from", strong red at "Strong glow from". The native side decides the arcs
+// (ObstacleAlert, ObstacleRing) and ticks; this only draws them, the same on the phone, a TV and the Quest's window.
+// Information only: nothing here reaches the remote or the drone, and nothing here takes a touch.
 
+import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
-import 'package:immich_mobile/presentation/widgets/drone/dji_live_fields.dart';
 import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 
-/// The red of the obstacle alert: one of the two colours of the live screen, with amber
+/// The red of a strong glow: one of the two colours of the live screen, with amber
 const djiLiveRed = Color(0xFFE53935);
 
-/// The width of the glow along the picture's edge
-const djiObstacleGlowWidth = 16.0;
+/// The ring comes in this fast when the first arc appears, and leaves this slowly when the last goes
+const djiObstacleFadeIn = Duration(milliseconds: 150);
+const djiObstacleFadeOut = Duration(milliseconds: 400);
 
-/// The size of the top view in the right band
-const djiObstacleGlyphSize = 64.0;
+/// An arc weighs nothing this far from its centre: about 90 degrees wide
+const djiObstacleWindowHalfDeg = 60.0;
 
-/// The lines of the banner, null when it does not show: the distance or the plain words, then the side when it is
-/// known, and "Not confirmed yet" while the gate keeps the alert as a test
-(String, String?)? djiObstacleBannerLines(
-  Translations t,
-  DjiObstacleDecision decision, {
-  Map<DjiLiveField, DjiLiveGate> gates = djiLiveGates,
-}) {
-  if (decision.stopped) {
-    return (t.dji_live_obstacle_stopped, null);
+/// Pieces per edge: the glow is soft, 24 are smooth
+const djiObstacleRingPieces = 24;
+
+/// The four edges of the picture, clockwise from the top: the front, the right, the back, the left
+enum DjiObstacleEdge { top, right, bottom, left }
+
+/// The side a screen reader names, by the quarter of the nearest arc: ahead is -45 to 45 degrees
+enum DjiObstacleQuarter { ahead, right, behind, left }
+
+DjiObstacleQuarter djiObstacleQuarter(double bearingDeg) {
+  final bearing = djiObstacleNormalize(bearingDeg);
+  if (bearing.abs() <= 45) {
+    return DjiObstacleQuarter.ahead;
   }
-  if (!decision.on) {
-    return null;
+  if (bearing > 45 && bearing <= 135) {
+    return DjiObstacleQuarter.right;
   }
-  final distance = decision.distanceM;
-  final first = distance == null
-      ? t.dji_live_obstacle_close_plain
-      : t.dji_live_obstacle_close(distance: distance.toStringAsFixed(1));
-  final side = switch (decision.side) {
-    DjiObstacleSide.ahead => t.dji_live_obstacle_ahead,
-    DjiObstacleSide.behind => t.dji_live_obstacle_behind,
-    DjiObstacleSide.left => t.dji_live_obstacle_left,
-    DjiObstacleSide.right => t.dji_live_obstacle_right,
-    DjiObstacleSide.above => t.dji_live_obstacle_above,
-    null => null,
-  };
-  final test = djiObstacleOffer(gates: gates) == DjiObstacleOffer.test;
-  final unconfirmed = test ? t.dji_live_obstacle_unconfirmed : null;
-  final second = [?side, ?unconfirmed].join('  ');
-  return (first, second.isEmpty ? null : second);
+  if (bearing.abs() > 135) {
+    return DjiObstacleQuarter.behind;
+  }
+  return DjiObstacleQuarter.left;
 }
 
-/// The banner and the glow over the picture, from the alert of the last frame; nothing while the alert is off
-class DjiObstacleLayer extends ConsumerWidget {
-  const DjiObstacleLayer({super.key, this.glow = true, this.gates = djiLiveGates});
-
-  /// The window of a headset draws no glow: its picture is small
-  final bool glow;
-  final Map<DjiLiveField, DjiLiveGate> gates;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final decision = ref.watch(djiLiveFrameProvider.select((frame) => frame?.alert));
-    if (decision == null || !(decision.on || decision.stopped)) {
-      return const SizedBox.shrink();
-    }
-    final soundOff = !ref.watch(djiObstacleSettingsProvider.select((settings) => settings.soundOn));
-    final side = decision.on && glow ? decision.side : null;
-    return IgnorePointer(
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          if (side != null && side != DjiObstacleSide.above) DjiObstacleGlow(side: side),
-          Align(
-            alignment: Alignment.topCenter,
-            child: FractionallySizedBox(
-              widthFactor: 0.6,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: DjiObstacleBanner(decision: decision, soundOff: soundOff, gates: gates),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+/// -180 (excluded) to 180
+double djiObstacleNormalize(double degrees) {
+  var value = degrees % 360;
+  if (value > 180) {
+    value -= 360;
   }
+  if (value <= -180) {
+    value += 360;
+  }
+  return value;
 }
 
-/// The red banner: white bold words, the side or "not confirmed yet" under them, the muted icon when the sound is off
-class DjiObstacleBanner extends StatelessWidget {
-  const DjiObstacleBanner({
-    super.key,
-    required this.decision,
-    this.soundOff = false,
-    this.gates = djiLiveGates,
+/// The ring shows: arcs to draw, the ring on or its data stopped
+bool djiObstacleRingShows(DjiObstacleDecision? decision) =>
+    decision != null && decision.arcs.isNotEmpty && (decision.on || decision.stopped);
+
+/// The full depth of the glow: 12 % of the picture's shorter side on a phone or in a window (24 to 56 dp), 10 % of its
+/// height on a TV (at least 48 dp, so that overscan never eats it); never more than half the picture
+double djiObstacleRingDepth(Size size, {bool tv = false}) {
+  final depth = tv ? math.max(48.0, size.height * 0.10) : (size.shortestSide * 0.12).clamp(24.0, 56.0);
+  return math.min(depth, size.shortestSide / 2);
+}
+
+/// The weight of an arc [offsetDeg] from its centre: 1 there, 0.5 at 30 degrees, about 0.15 at 45, 0 from 60
+double djiObstacleWindow(double offsetDeg) {
+  final offset = offsetDeg.abs();
+  return offset >= djiObstacleWindowHalfDeg ? 0 : 0.5 * (1 + math.cos(math.pi * offset / djiObstacleWindowHalfDeg));
+}
+
+/// How deep a glow of [strength] goes: 60 % of the full depth when faint, all of it when strong
+double djiObstacleDepthOf(double strength, double fullDepth) => fullDepth * (0.6 + 0.4 * strength.clamp(0.0, 1.0));
+
+/// The point of the border of a box of [size] that [bearingDeg] points at, the box taken as a square
+Offset djiObstacleBorderPoint(double bearingDeg, Size size) {
+  final radians = bearingDeg * math.pi / 180;
+  final dx = math.sin(radians);
+  final dy = -math.cos(radians);
+  final scale = 1 / math.max(dx.abs(), dy.abs());
+  return Offset(size.width / 2 * (1 + dx * scale), size.height / 2 * (1 + dy * scale));
+}
+
+/// The bearing of a point of the box, through the square: the inverse of [djiObstacleBorderPoint] on the border
+double djiObstacleBearingOf(Offset point, Size size) {
+  final u = (point.dx - size.width / 2) / (size.width / 2);
+  final v = (point.dy - size.height / 2) / (size.height / 2);
+  return math.atan2(u, -v) * 180 / math.pi;
+}
+
+/// One piece of the glow along an edge: a trapezoid from the picture's edge inward, mitred at 45 degrees at the
+/// corners like a picture frame, with a gradient from the edge (at [alpha]) to [depth] inward (nothing)
+class DjiObstacleRingStrip {
+  const DjiObstacleRingStrip({
+    required this.edge,
+    required this.corners,
+    required this.alpha,
+    required this.colour,
+    required this.depth,
+    required this.edgePoint,
+    required this.inward,
   });
 
-  final DjiObstacleDecision decision;
-  final bool soundOff;
-  final Map<DjiLiveField, DjiLiveGate> gates;
+  final DjiObstacleEdge edge;
+
+  /// On the edge from, on the edge to, inside to, inside from
+  final List<Offset> corners;
+  final double alpha;
+  final Color colour;
+  final double depth;
+
+  /// The middle of the piece on the edge, and the direction toward the centre
+  final Offset edgePoint;
+  final Offset inward;
+}
+
+/// The glow of [arcs] over a picture of [size], cut in [pieces] per edge: at the middle of each piece the arc that
+/// weighs most gives the alpha (its opacity times its window), the colour and the depth; where arcs meet the larger
+/// wins, they never add up. An arc with no bearing is the even glow, the same on every piece. Pieces with nothing are
+/// left out. The same rules as RingGeometry.segments on the native side, for the Quest's halo.
+List<DjiObstacleRingStrip> djiObstacleRingStrips(
+  Size size,
+  List<DjiObstacleArc> arcs,
+  double fullDepth, {
+  int pieces = djiObstacleRingPieces,
+}) {
+  if (arcs.isEmpty || size.isEmpty || pieces <= 0) {
+    return const [];
+  }
+  final w = size.width;
+  final h = size.height;
+  final d = math.min(fullDepth, size.shortestSide / 2);
+  final strips = <DjiObstacleRingStrip>[];
+  for (final edge in DjiObstacleEdge.values) {
+    // The ends of the edge clockwise, the matching inner corners, and the way in
+    final (Offset start, Offset end, Offset innerStart, Offset innerEnd, Offset inward) = switch (edge) {
+      DjiObstacleEdge.top => (Offset.zero, Offset(w, 0), Offset(d, d), Offset(w - d, d), const Offset(0, 1)),
+      DjiObstacleEdge.right => (
+        Offset(w, 0),
+        Offset(w, h),
+        Offset(w - d, d),
+        Offset(w - d, h - d),
+        const Offset(-1, 0),
+      ),
+      DjiObstacleEdge.bottom => (
+        Offset(w, h),
+        Offset(0, h),
+        Offset(w - d, h - d),
+        Offset(d, h - d),
+        const Offset(0, -1),
+      ),
+      DjiObstacleEdge.left => (Offset(0, h), Offset.zero, Offset(d, h - d), Offset(d, d), const Offset(1, 0)),
+    };
+    for (var index = 0; index < pieces; index++) {
+      final from = index / pieces;
+      final to = (index + 1) / pieces;
+      final middle = Offset.lerp(start, end, (from + to) / 2)!;
+      final bearing = djiObstacleBearingOf(middle, size);
+      DjiObstacleArc? best;
+      var bestAlpha = 0.0;
+      for (final arc in arcs) {
+        final centre = arc.centreDeg;
+        final weight = centre == null ? 1.0 : djiObstacleWindow(djiObstacleNormalize(bearing - centre));
+        final alpha = arc.opacity * weight;
+        if (alpha > bestAlpha) {
+          bestAlpha = alpha;
+          best = arc;
+        }
+      }
+      if (best == null) {
+        continue;
+      }
+      strips.add(
+        DjiObstacleRingStrip(
+          edge: edge,
+          corners: [
+            Offset.lerp(start, end, from)!,
+            Offset.lerp(start, end, to)!,
+            Offset.lerp(innerStart, innerEnd, to)!,
+            Offset.lerp(innerStart, innerEnd, from)!,
+          ],
+          alpha: bestAlpha,
+          colour: Color(best.argb),
+          depth: djiObstacleDepthOf(best.strength, d),
+          edgePoint: middle,
+          inward: inward,
+        ),
+      );
+    }
+  }
+  return strips;
+}
+
+/// Where the distance goes: by the nearest arc, moved in from the edge by 0.8 of its depth; at the top centre with the
+/// even glow
+Offset djiObstacleNumberPoint(DjiObstacleArc nearest, Size size, double fullDepth) {
+  final depth = djiObstacleDepthOf(nearest.strength, math.min(fullDepth, size.shortestSide / 2)) * 0.8;
+  final centre = nearest.centreDeg;
+  if (centre == null) {
+    return Offset(size.width / 2, depth);
+  }
+  final point = djiObstacleBorderPoint(centre, size);
+  final distances = [point.dy, size.width - point.dx, size.height - point.dy, point.dx];
+  final nearestEdge = distances.indexOf(distances.reduce(math.min));
+  return switch (nearestEdge) {
+    0 => point + Offset(0, depth),
+    1 => point - Offset(depth, 0),
+    2 => point - Offset(0, depth),
+    _ => point + Offset(depth, 0),
+  };
+}
+
+/// What a screen reader hears while the ring shows: the distance, then the side of the nearest arc when the side is
+/// shown; that the data stopped once it did
+String djiObstacleRingLabel(Translations t, DjiObstacleDecision decision) {
+  if (decision.stopped) {
+    return t.dji_live_obstacle_stopped;
+  }
+  final nearest = decision.nearestM ?? (decision.arcs.isEmpty ? null : decision.arcs.first.distanceM);
+  final within = nearest == null ? '' : t.dji_live_obstacle_within(distance: nearest.toStringAsFixed(1));
+  final centre = decision.even || decision.arcs.isEmpty ? null : decision.arcs.first.centreDeg;
+  if (centre == null) {
+    return within;
+  }
+  final side = switch (djiObstacleQuarter(centre)) {
+    DjiObstacleQuarter.ahead => t.dji_live_obstacle_ahead,
+    DjiObstacleQuarter.right => t.dji_live_obstacle_right,
+    DjiObstacleQuarter.behind => t.dji_live_obstacle_behind,
+    DjiObstacleQuarter.left => t.dji_live_obstacle_left,
+  };
+  return within.isEmpty ? side : '$within. $side';
+}
+
+/// The ring over the picture's box, from the decision of the last frame: nothing in the tree while nothing is close.
+/// [tv] takes the TV's depth and number size; [numbersHidden] is OK on a TV, which hides the numbers, never the ring.
+class DjiObstacleRing extends ConsumerStatefulWidget {
+  const DjiObstacleRing({super.key, this.tv = false, this.numbersHidden = false});
+
+  final bool tv;
+  final bool numbersHidden;
+
+  @override
+  ConsumerState<DjiObstacleRing> createState() => _DjiObstacleRingState();
+}
+
+class _DjiObstacleRingState extends ConsumerState<DjiObstacleRing> with SingleTickerProviderStateMixin {
+  late final AnimationController _fade;
+
+  /// The last decision with arcs: drawn while the ring shows, and while it fades out
+  DjiObstacleDecision? _shown;
+  bool _showing = false;
+
+  /// The screen reader's words change only with the side, the zone (faint or strong) or a stop, not at every frame
+  (DjiObstacleQuarter?, bool, bool)? _labelKey;
+  String? _label;
+
+  @override
+  void initState() {
+    super.initState();
+    _fade = AnimationController(vsync: this, duration: djiObstacleFadeIn, reverseDuration: djiObstacleFadeOut)
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.dismissed && !_showing && mounted) {
+          setState(() => _shown = null);
+        }
+      });
+    _follow(ref.read(djiLiveFrameProvider)?.alert);
+  }
+
+  @override
+  void dispose() {
+    _fade.dispose();
+    super.dispose();
+  }
+
+  void _follow(DjiObstacleDecision? decision) {
+    final showing = djiObstacleRingShows(decision);
+    if (showing) {
+      _shown = decision;
+    }
+    if (showing == _showing) {
+      return;
+    }
+    _showing = showing;
+    if (showing) {
+      unawaited(_fade.forward());
+    } else {
+      unawaited(_fade.reverse());
+    }
+  }
+
+  String _labelOf(DjiObstacleDecision decision) {
+    final first = decision.arcs.first;
+    final centre = first.centreDeg;
+    final key = (
+      decision.even || centre == null ? null : djiObstacleQuarter(centre),
+      first.strength >= 1,
+      decision.stopped,
+    );
+    final label = _label;
+    if (key == _labelKey && label != null) {
+      return label;
+    }
+    _labelKey = key;
+    return _label = djiObstacleRingLabel(context.t, decision);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-    final lines = djiObstacleBannerLines(t, decision, gates: gates);
-    if (lines == null) {
+    ref.listen(djiLiveFrameProvider.select((frame) => frame?.alert), (_, next) {
+      _follow(next);
+      setState(() {});
+    });
+    final numbersOn = ref.watch(djiObstacleSettingsProvider.select((settings) => settings.numbersOn));
+    final shown = _shown;
+    if (shown == null) {
+      _labelKey = null;
+      _label = null;
       return const SizedBox.shrink();
     }
-    final (first, second) = lines;
-    final bold = context.textTheme.titleMedium?.copyWith(
-      color: Colors.white,
-      fontWeight: FontWeight.w700,
-      fontFeatures: const [FontFeature.tabularFigures()],
-    );
-    final small = context.textTheme.labelMedium?.copyWith(color: Colors.white);
-    return Semantics(
-      liveRegion: true,
-      label: [first, ?second, if (soundOff && decision.on) t.dji_live_obstacle_sound_off].join('. '),
-      excludeSemantics: true,
-      child: DecoratedBox(
-        key: const Key('dji_live_obstacle_banner'),
-        decoration: const BoxDecoration(color: djiLiveRed, borderRadius: BorderRadius.all(Radius.circular(8))),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    final label = _showing ? _labelOf(shown) : null;
+    final showNumber = numbersOn && !widget.numbersHidden && shown.on && !shown.stopped;
+    return IgnorePointer(
+      child: Semantics(
+        key: const Key('dji_live_obstacle_ring'),
+        liveRegion: label != null,
+        label: label,
+        excludeSemantics: true,
+        child: FadeTransition(
+          opacity: _fade,
+          child: RepaintBoundary(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final size = constraints.biggest;
+                final depth = djiObstacleRingDepth(size, tv: widget.tv);
+                final strips = djiObstacleRingStrips(size, shown.arcs, depth);
+                final nearest = shown.arcs.first;
+                final number = showNumber ? djiObstacleNumberPoint(nearest, size, depth) : null;
+                return Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Text(first, maxLines: 1, overflow: TextOverflow.ellipsis, style: bold),
-                    if (second != null)
-                      Text(
-                        second,
-                        key: const Key('dji_live_obstacle_second'),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: small,
+                    CustomPaint(painter: _DjiObstacleRingPainter(strips)),
+                    if (number != null && size.width > 0 && size.height > 0)
+                      Align(
+                        alignment: Alignment(number.dx / size.width * 2 - 1, number.dy / size.height * 2 - 1),
+                        child: Text(
+                          context.t.dji_live_obstacle_distance(
+                            distance: (shown.nearestM ?? nearest.distanceM).toStringAsFixed(1),
+                          ),
+                          key: const Key('dji_live_obstacle_distance'),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: widget.tv ? 22 : 14,
+                            fontWeight: FontWeight.w600,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                            shadows: const [Shadow(color: Colors.black54, blurRadius: 6, offset: Offset(0, 1))],
+                          ),
+                        ),
                       ),
                   ],
-                ),
-              ),
-              if (soundOff && decision.on)
-                const Icon(
-                  Icons.volume_off_rounded,
-                  key: Key('dji_live_obstacle_muted'),
-                  color: Colors.white,
-                  size: 20,
-                ),
-            ],
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -162,113 +377,30 @@ class DjiObstacleBanner extends StatelessWidget {
   }
 }
 
-/// A red gradient along the picture's edge toward the obstacle, in a top view with the nose up: ahead on the top edge,
-/// behind on the bottom one, left and right on theirs
-class DjiObstacleGlow extends StatelessWidget {
-  const DjiObstacleGlow({super.key, required this.side});
+class _DjiObstacleRingPainter extends CustomPainter {
+  const _DjiObstacleRingPainter(this.strips);
 
-  final DjiObstacleSide side;
+  final List<DjiObstacleRingStrip> strips;
 
-  @override
-  Widget build(BuildContext context) {
-    final (alignment, begin, end, horizontal) = switch (side) {
-      DjiObstacleSide.ahead || DjiObstacleSide.above => (
-        Alignment.topCenter,
-        Alignment.topCenter,
-        Alignment.bottomCenter,
-        true,
-      ),
-      DjiObstacleSide.behind => (Alignment.bottomCenter, Alignment.bottomCenter, Alignment.topCenter, true),
-      DjiObstacleSide.left => (Alignment.centerLeft, Alignment.centerLeft, Alignment.centerRight, false),
-      DjiObstacleSide.right => (Alignment.centerRight, Alignment.centerRight, Alignment.centerLeft, false),
-    };
-    return Align(
-      alignment: alignment,
-      child: SizedBox(
-        key: Key('dji_live_obstacle_glow_${side.name}'),
-        width: horizontal ? double.infinity : djiObstacleGlowWidth,
-        height: horizontal ? djiObstacleGlowWidth : double.infinity,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(begin: begin, end: end, colors: const [djiLiveRed, Color(0x00E53935)]),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// The top view at the bottom of the right band: a thin white drone, nose up, while the alert listens; a red arc on the
-/// obstacle's side while it is on (a red mark above the drone for above). Nothing when the alert is not offered or its
-/// data is not fresh, and never a "clear" sign.
-class DjiObstacleGlyph extends ConsumerWidget {
-  const DjiObstacleGlyph({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final decision = ref.watch(djiLiveFrameProvider.select((frame) => frame?.alert));
-    if (decision == null || !decision.listening) {
-      return const SizedBox.shrink();
-    }
-    final t = context.t;
-    final side = decision.on ? decision.side : null;
-    return Semantics(
-      label: decision.on && side == null ? t.dji_live_obstacle_close_plain : t.dji_live_obstacle_listening,
-      excludeSemantics: true,
-      child: SizedBox.square(
-        key: Key('dji_live_obstacle_glyph${decision.on ? '_on' : ''}'),
-        dimension: djiObstacleGlyphSize,
-        child: CustomPaint(painter: _GlyphPainter(on: decision.on, side: side)),
-      ),
-    );
-  }
-}
-
-class _GlyphPainter extends CustomPainter {
-  const _GlyphPainter({required this.on, required this.side});
-
-  final bool on;
-  final DjiObstacleSide? side;
+  /// The profile (1-x)^2 toward the centre, as gradient stops
+  static const _stops = [0.0, 0.25, 0.5, 0.75, 1.0];
+  static const _fall = [1.0, 0.5625, 0.25, 0.0625, 0.0];
 
   @override
   void paint(Canvas canvas, Size size) {
-    final centre = size.center(Offset.zero);
-    final unit = size.shortestSide / 8;
-    final line = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-    // Four arms and four rotors, the nose up
-    for (final angle in const [-math.pi / 4, math.pi / 4, 3 * math.pi / 4, -3 * math.pi / 4]) {
-      final tip = centre + Offset(math.sin(angle), -math.cos(angle)) * unit * 1.6;
-      canvas.drawLine(centre, tip, line);
-      canvas.drawCircle(tip, unit * 0.7, line);
+    final paint = Paint()..isAntiAlias = true;
+    for (final strip in strips) {
+      final path = Path()..addPolygon(strip.corners, true);
+      paint.shader = ui.Gradient.linear(
+        strip.edgePoint,
+        strip.edgePoint + strip.inward * strip.depth,
+        [for (final fall in _fall) strip.colour.withValues(alpha: strip.alpha * fall)],
+        _stops,
+      );
+      canvas.drawPath(path, paint);
     }
-    canvas.drawLine(centre, centre + Offset(0, -unit * 1.2), line);
-    final ring = Rect.fromCircle(center: centre, radius: unit * 3.4);
-    final arc = Paint()
-      ..color = on ? djiLiveRed : Colors.white24
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = on ? 4 : 1;
-    final side = this.side;
-    if (side == null || side == DjiObstacleSide.above) {
-      // No side known: the whole ring, red while the alert is on
-      canvas.drawCircle(centre, unit * 3.4, arc);
-      if (side == DjiObstacleSide.above) {
-        canvas.drawCircle(centre, unit * 0.6, Paint()..color = djiLiveRed);
-      }
-      return;
-    }
-    final start = switch (side) {
-      DjiObstacleSide.ahead => -math.pi * 3 / 4,
-      DjiObstacleSide.right => -math.pi / 4,
-      DjiObstacleSide.behind => math.pi / 4,
-      DjiObstacleSide.left => math.pi * 3 / 4,
-      DjiObstacleSide.above => 0.0,
-    };
-    canvas.drawArc(ring, start, math.pi / 2, false, arc);
   }
 
   @override
-  bool shouldRepaint(_GlyphPainter oldDelegate) => oldDelegate.on != on || oldDelegate.side != side;
+  bool shouldRepaint(_DjiObstacleRingPainter oldDelegate) => !identical(oldDelegate.strips, strips);
 }

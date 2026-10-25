@@ -38,6 +38,8 @@ enum DjiLiveField {
   // Advanced only
   distanceBelow,
   obstacle,
+  // Not a value: whether the obstacle ring may show the obstacle's side
+  obstacleSide,
   motors,
   batteryVoltage,
   batteryTemperature,
@@ -100,9 +102,13 @@ const djiLiveGates = <DjiLiveField, DjiLiveGate>{
   DjiLiveField.speed: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.overlay, band: DjiLiveBand.left, drop: 2),
   // 10/3 from the remote side, millimetres, only while the motors run (deep dive 4.1)
   DjiLiveField.distanceBelow: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.advanced),
-  // 36/8 from 18.4: 360 distances in millimetres around the drone, only while the motors run; the nearest is used, its
-  // side is not known (deep dive 4.2). Its row also offers the obstacle alert: djiObstacleOffer.
+  // 36/8 from 18.4: 360 distances in millimetres around the drone, only while the motors run (deep dive 4.2). Its row
+  // also offers the obstacle ring: djiObstacleOffer.
   DjiLiveField.obstacle: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.overlay),
+  // 36/8 turns with the aircraft, its index grows with the heading, index 0 closes in when flying forward: 25 October
+  // 09:42 capture (design-obstacle-ring-2026-10-25.md, 1.4). Not a value: it says whether the ring may show a side,
+  // with ObstacleRing.MAPPING on the native side. Step 5 of the owner flight proves it.
+  DjiLiveField.obstacleSide: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.nowhere),
   // 3/67 offset 32, bits 0x04 and 0x08 together: set exactly while the motor time grows (report 1, 3.4)
   DjiLiveField.motors: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.advanced),
   // 13/2 offset 1: equal to 3/85 offset 4 within 10 mV at rest, sags under load (report 1, 3.1)
@@ -210,6 +216,7 @@ String djiLiveFieldLabel(
       DjiLiveField.heading || DjiLiveField.landing || DjiLiveField.timeLeft => '',
       DjiLiveField.distanceBelow ||
       DjiLiveField.obstacle ||
+      DjiLiveField.obstacleSide ||
       DjiLiveField.motors ||
       DjiLiveField.batteryVoltage ||
       DjiLiveField.batteryTemperature ||
@@ -246,7 +253,7 @@ String djiLiveFieldLabel(
     DjiLiveField.verticalSpeed => t.dji_live_value_vertical_speed,
     DjiLiveField.distanceHome => t.dji_live_value_distance_home,
     DjiLiveField.speed => t.dji_live_value_speed,
-    DjiLiveField.timeLeft => '',
+    DjiLiveField.timeLeft || DjiLiveField.obstacleSide => '',
     DjiLiveField.distanceBelow => t.dji_live_value_distance_below,
     DjiLiveField.obstacle => t.dji_live_value_obstacle,
   };
@@ -272,7 +279,8 @@ String djiLiveFieldUnit(DjiLiveField field) => switch (field) {
   DjiLiveField.signal ||
   DjiLiveField.satellites ||
   DjiLiveField.timeLeft ||
-  DjiLiveField.landing => '',
+  DjiLiveField.landing ||
+  DjiLiveField.obstacleSide => '',
 };
 
 /// The number of [field] in [frame], null when its group is stale, never came, or has no source; with its unit
@@ -328,6 +336,9 @@ String? _number(Translations t, DjiLiveFrame frame, DjiLiveField field) {
     case DjiLiveField.distanceHome:
     case DjiLiveField.timeLeft:
       return null;
+    // Not a value: the ring draws the side or not
+    case DjiLiveField.obstacleSide:
+      return null;
   }
 }
 
@@ -368,7 +379,7 @@ bool djiLiveFlightValuesPending({Map<DjiLiveField, DjiLiveGate> gates = djiLiveG
   DjiLiveField.speed,
 ].any((field) => !djiLiveShowsAt(field, DjiLivePlace.overlay, gates: gates));
 
-/// How the obstacle alert is offered: not at all while no field is named, as a test the pilot turns on in Advanced
+/// How the obstacle ring is offered: not at all while no field is named, as a test the pilot turns on in Advanced
 /// while the field is likely, and on by default once proven
 enum DjiObstacleOffer { none, test, proven }
 
@@ -377,6 +388,17 @@ DjiObstacleOffer djiObstacleOffer({Map<DjiLiveField, DjiLiveGate> gates = djiLiv
       DjiLiveEvidence.proven => DjiObstacleOffer.proven,
       DjiLiveEvidence.likely => DjiObstacleOffer.test,
       _ => DjiObstacleOffer.none,
+    };
+
+/// How the ring's side is offered (p2/design-obstacle-ring-2026-10-25.md, 2.6): never while its row is a guess, only
+/// behind "Show the side, not confirmed yet" while likely (else an even glow all around), by default once proven
+enum DjiObstacleSideOffer { none, test, proven }
+
+DjiObstacleSideOffer djiObstacleSideOffer({Map<DjiLiveField, DjiLiveGate> gates = djiLiveGates}) =>
+    switch (gates[DjiLiveField.obstacleSide]?.evidence) {
+      DjiLiveEvidence.proven => DjiObstacleSideOffer.proven,
+      DjiLiveEvidence.likely => DjiObstacleSideOffer.test,
+      _ => DjiObstacleSideOffer.none,
     };
 
 /// The templates of the Quest flight view's two columns, a label and a value per field over the picture

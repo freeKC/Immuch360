@@ -1,10 +1,11 @@
 // Advanced, on the live screen of the phone (p2/design-final-2026-10-24.md, 3.6 and 4): opening the screen when the
 // remote is plugged in, a capture for a bug report with a toast that names it, a saved capture to play, the safety
 // notice again, Diagnostics, the values the gate keeps out of the picture (the proven ones with their labels, the
-// likely ones under "Not confirmed yet" with a question mark), and the obstacle alert as the gate offers it. The
+// likely ones under "Not confirmed yet" with a question mark), and the obstacle ring as the gate offers it. The
 // capture and Diagnostics stay one tap away: they are what a bug report is made of.
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -194,9 +195,15 @@ class DjiLiveAdvancedPanel extends ConsumerWidget {
   }
 }
 
-/// "Obstacle alert" in Advanced (p2/design-final-2026-10-24.md, 4.4 and 4.7): one line while the gate does not offer
-/// it; while its data is likely, a switch off by default that says it is not confirmed; once proven, its sound. The
-/// lines that say it only informs and that no alert is not a clear way are there whenever it is offered.
+/// A distance of the ring as the steppers write it: 3.0 m, 0.75 m
+String djiObstacleDistanceText(Translations t, int cm) =>
+    t.dji_live_obstacle_distance(distance: (cm / 100).toStringAsFixed(cm % 10 == 0 ? 1 : 2));
+
+/// "Obstacle ring" in Advanced (p2/design-obstacle-ring-2026-10-25.md, 6.1): one line while the gate does not offer it;
+/// while its data is likely, a switch off by default that says it is not confirmed; once offered, "Glow from" and
+/// "Strong glow from", the side as its own gate row allows, the sound and its test, the vibration on a phone that has
+/// one, and the distance by the glow. "Show a sample" is always there, refused while the motors run. The lines that say
+/// it only informs and that no glow is not a clear way close the section.
 class DjiObstacleSection extends ConsumerStatefulWidget {
   const DjiObstacleSection({super.key, this.gates = djiLiveGates});
 
@@ -210,10 +217,17 @@ class _DjiObstacleSectionState extends ConsumerState<DjiObstacleSection> {
   /// The media volume was at zero when the section was last shown or the sound last played
   bool _volumeOff = false;
 
+  /// This phone can vibrate: "Vibrate with the tick" shows only then
+  bool _vibrator = false;
+
+  /// The last "Show a sample" was refused: the motors run
+  bool _sampleRefused = false;
+
   @override
   void initState() {
     super.initState();
     unawaited(Future.microtask(_checkVolume));
+    unawaited(Future.microtask(_checkVibrator));
   }
 
   Future<void> _checkVolume() async {
@@ -223,9 +237,23 @@ class _DjiObstacleSectionState extends ConsumerState<DjiObstacleSection> {
     }
   }
 
+  Future<void> _checkVibrator() async {
+    final vibrator = await ref.read(djiObstacleSettingsProvider.notifier).hasVibrator();
+    if (mounted) {
+      setState(() => _vibrator = vibrator);
+    }
+  }
+
   Future<void> _playTest() async {
     await ref.read(djiObstacleSettingsProvider.notifier).playTest();
     await _checkVolume();
+  }
+
+  Future<void> _sample() async {
+    final shown = await ref.read(djiObstacleSettingsProvider.notifier).showSample();
+    if (mounted) {
+      setState(() => _sampleRefused = !shown);
+    }
   }
 
   @override
@@ -233,9 +261,12 @@ class _DjiObstacleSectionState extends ConsumerState<DjiObstacleSection> {
     final t = context.t;
     final small = context.textTheme.bodySmall;
     final offer = djiObstacleOffer(gates: widget.gates);
+    final sideOffer = djiObstacleSideOffer(gates: widget.gates);
     final settings = ref.watch(djiObstacleSettingsProvider);
     final notifier = ref.read(djiObstacleSettingsProvider.notifier);
+    final flying = ref.watch(djiLiveFrameProvider.select((frame) => frame?.motorsOn ?? false));
     final offered = settings.offered(offer);
+    final nearMaxCm = math.min(djiObstacleNearMaxCm, settings.farCm - djiObstacleGapCm);
     return Column(
       key: const Key('dji_live_obstacle_section'),
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,6 +285,47 @@ class _DjiObstacleSectionState extends ConsumerState<DjiObstacleSection> {
               onChanged: (on) => unawaited(notifier.setAlert(on)),
             ),
           if (offered) ...[
+            DjiObstacleStepper(
+              name: 'far',
+              label: t.dji_live_obstacle_far,
+              value: djiObstacleDistanceText(t, settings.farCm),
+              note: t.dji_live_obstacle_far_note,
+              onLess: settings.farCm > djiObstacleFarMinCm
+                  ? () => unawaited(notifier.setFar(settings.farCm - djiObstacleFarStepCm))
+                  : null,
+              onMore: settings.farCm < djiObstacleFarMaxCm
+                  ? () => unawaited(notifier.setFar(settings.farCm + djiObstacleFarStepCm))
+                  : null,
+            ),
+            DjiObstacleStepper(
+              name: 'near',
+              label: t.dji_live_obstacle_near,
+              value: djiObstacleDistanceText(t, settings.nearCm),
+              onLess: settings.nearCm > djiObstacleNearMinCm
+                  ? () => unawaited(notifier.setNear(settings.nearCm - djiObstacleNearStepCm))
+                  : null,
+              onMore: settings.nearCm < nearMaxCm
+                  ? () => unawaited(notifier.setNear(settings.nearCm + djiObstacleNearStepCm))
+                  : null,
+            ),
+            if (sideOffer == DjiObstacleSideOffer.test)
+              SwitchListTile(
+                key: const Key('dji_live_obstacle_side_test'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(t.dji_live_obstacle_side_test),
+                subtitle: Text(t.dji_live_obstacle_side_test_note, style: small),
+                value: settings.sideTest,
+                onChanged: (on) => unawaited(notifier.setSideTest(on)),
+              ),
+            if (sideOffer == DjiObstacleSideOffer.proven)
+              SwitchListTile(
+                key: const Key('dji_live_obstacle_side'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(t.dji_live_obstacle_side),
+                subtitle: Text(t.dji_live_obstacle_side_note, style: small),
+                value: !settings.sideOff,
+                onChanged: (on) => unawaited(notifier.setSideShown(on)),
+              ),
             SwitchListTile(
               key: const Key('dji_live_obstacle_sound'),
               contentPadding: EdgeInsets.zero,
@@ -277,11 +349,102 @@ class _DjiObstacleSectionState extends ConsumerState<DjiObstacleSection> {
                 key: const Key('dji_live_media_volume_off'),
                 style: small?.copyWith(color: context.colorScheme.error),
               ),
+            if (_vibrator)
+              SwitchListTile(
+                key: const Key('dji_live_obstacle_haptic'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(t.dji_live_obstacle_haptic),
+                subtitle: Text(t.dji_live_obstacle_haptic_note, style: small),
+                value: settings.hapticOn,
+                onChanged: (on) => unawaited(notifier.setHaptic(on)),
+              ),
+            SwitchListTile(
+              key: const Key('dji_live_obstacle_numbers'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(t.dji_live_obstacle_numbers),
+              value: settings.numbersOn,
+              onChanged: (on) => unawaited(notifier.setNumbers(on)),
+            ),
           ],
-          Text(t.dji_live_obstacle_info_only, key: const Key('dji_live_obstacle_info_only'), style: small),
-          Text(t.dji_live_obstacle_limits, key: const Key('dji_live_obstacle_limits'), style: small),
         ],
+        const SizedBox(height: 4),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: OutlinedButton.icon(
+            key: const Key('dji_live_obstacle_sample'),
+            icon: const Icon(Icons.blur_on_rounded),
+            label: Text(t.dji_live_obstacle_sample),
+            onPressed: flying ? null : () => unawaited(_sample()),
+          ),
+        ),
+        Text(
+          flying || _sampleRefused ? t.dji_live_obstacle_sample_flying : t.dji_live_obstacle_sample_note,
+          key: const Key('dji_live_obstacle_sample_note'),
+          style: small,
+        ),
+        Text(t.dji_live_obstacle_info_only, key: const Key('dji_live_obstacle_info_only'), style: small),
+        Text(t.dji_live_obstacle_limits, key: const Key('dji_live_obstacle_limits'), style: small),
       ],
+    );
+  }
+}
+
+/// A distance of the ring with its two buttons: less and more, each off at its end
+class DjiObstacleStepper extends StatelessWidget {
+  const DjiObstacleStepper({
+    super.key,
+    required this.name,
+    required this.label,
+    required this.value,
+    this.note,
+    this.onLess,
+    this.onMore,
+  });
+
+  /// far or near, for the keys
+  final String name;
+  final String label;
+  final String value;
+  final String? note;
+  final VoidCallback? onLess;
+  final VoidCallback? onMore;
+
+  @override
+  Widget build(BuildContext context) {
+    final note = this.note;
+    return Padding(
+      key: Key('dji_live_obstacle_$name'),
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: context.textTheme.bodyLarge),
+                if (note != null) Text(note, style: context.textTheme.bodySmall),
+              ],
+            ),
+          ),
+          IconButton(
+            key: Key('dji_live_obstacle_${name}_less'),
+            tooltip: context.t.dji_live_obstacle_closer(name: label),
+            icon: const Icon(Icons.remove_rounded),
+            onPressed: onLess,
+          ),
+          Text(
+            value,
+            key: Key('dji_live_obstacle_${name}_value'),
+            style: context.textTheme.titleMedium?.copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
+          ),
+          IconButton(
+            key: Key('dji_live_obstacle_${name}_more'),
+            tooltip: context.t.dji_live_obstacle_farther(name: label),
+            icon: const Icon(Icons.add_rounded),
+            onPressed: onMore,
+          ),
+        ],
+      ),
     );
   }
 }

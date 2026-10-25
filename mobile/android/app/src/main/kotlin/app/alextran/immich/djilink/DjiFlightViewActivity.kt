@@ -22,22 +22,28 @@ import com.meta.spatial.core.Quaternion
 import com.meta.spatial.core.SpatialFeature
 import com.meta.spatial.core.Vector3
 import com.meta.spatial.runtime.ButtonBits
+import com.meta.spatial.runtime.PanelShapeLayerBlendType
 import com.meta.spatial.runtime.ReferenceSpace
 import com.meta.spatial.runtime.StereoMode
 import com.meta.spatial.toolkit.AppSystemActivity
 import com.meta.spatial.toolkit.CylinderShapeOptions
 import com.meta.spatial.toolkit.DpDisplayOptions
+import com.meta.spatial.toolkit.Hittable
 import com.meta.spatial.toolkit.LayoutXMLPanelRegistration
 import com.meta.spatial.toolkit.MediaPanelRenderOptions
 import com.meta.spatial.toolkit.MediaPanelSettings
+import com.meta.spatial.toolkit.MeshCollision
 import com.meta.spatial.toolkit.Panel
 import com.meta.spatial.toolkit.PanelRegistration
+import com.meta.spatial.toolkit.PanelRenderMode
 import com.meta.spatial.toolkit.PanelStyleOptions
 import com.meta.spatial.toolkit.PixelDisplayOptions
 import com.meta.spatial.toolkit.QuadShapeOptions
 import com.meta.spatial.toolkit.Scale
 import com.meta.spatial.toolkit.Transform
+import com.meta.spatial.toolkit.UIPanelRenderOptions
 import com.meta.spatial.toolkit.UIPanelSettings
+import com.meta.spatial.toolkit.UIPanelShapeOptions
 import com.meta.spatial.toolkit.VideoSurfacePanelRegistration
 import com.meta.spatial.toolkit.Visible
 import com.meta.spatial.toolkit.createPanelEntity
@@ -60,8 +66,10 @@ data class DjiFlightNumbers(
   val picturesPerSecond: Double,
   val receiveToPictureMs: Double?,
   val values: TelemetryValues?,
-  /** What the obstacle alert decided on this device, from the readings the phone relays */
+  /** What the obstacle ring decided on this device, from the readings and the choices the phone relays */
   val alert: ObstacleDecision = ObstacleDecision.OFF,
+  /** "Show the distance by the glow", this headset's own choice */
+  val ringNumbers: Boolean = false,
 )
 
 /**
@@ -231,32 +239,39 @@ internal object FlightViewControls {
   }
 
   /**
-   * The banner of the obstacle alert over the video, null when it does not show: the distance or the plain words, then
-   * the side when it is known, or "not confirmed yet" while the gate keeps the alert as a test
+   * The obstacle ring's halo around the video (p2/design-obstacle-ring-2026-10-25.md, 5.3): a margin of 0.10 m on each
+   * side at the reference width, scaled with the video as its panel is
    */
-  fun alertLines(decision: ObstacleDecision, labels: Map<String, String>): Pair<String, String?>? {
-    if (decision.stopped) {
-      return (labels["obstacleStopped"] ?: "") to null
-    }
-    if (!decision.on) {
+  const val HALO_MARGIN_M = 0.10f
+  const val VIDEO_REFERENCE_WIDTH_M = 2.4f
+
+  fun haloMarginM(videoWidthM: Float): Float = HALO_MARGIN_M * videoWidthM / VIDEO_REFERENCE_WIDTH_M
+
+  /** The halo panel's width and height at [videoWidthM], the video being 16:9 */
+  fun haloSizeM(videoWidthM: Float): Pair<Float, Float> {
+    val margin = haloMarginM(videoWidthM)
+    return videoWidthM + 2 * margin to videoWidthM * 9f / 16f + 2 * margin
+  }
+
+  /** The ring shows in the halo: arcs to draw, the ring on or its data stopped */
+  fun ringShows(decision: ObstacleDecision): Boolean = decision.arcs.isNotEmpty() && (decision.on || decision.stopped)
+
+  /**
+   * The distance by the nearest arc ("1.4 m"), null when it does not show: asked on this headset, the values shown (A
+   * hides it with them), the ring on and its data fresh
+   */
+  fun ringNumber(
+    decision: ObstacleDecision,
+    labels: Map<String, String>,
+    numbersOn: Boolean,
+    valuesShown: Boolean,
+  ): String? {
+    val nearest = decision.nearestM ?: decision.arcs.firstOrNull()?.distanceM
+    if (!numbersOn || !valuesShown || !decision.on || decision.stopped || nearest == null) {
       return null
     }
-    val distance = decision.distanceM
-    val first = if (distance != null) {
-      (labels["obstacleClose"] ?: "").replace("{distance}", decimals(distance, 1))
-    } else {
-      labels["obstacleClosePlain"] ?: ""
-    }
-    val side = when (decision.side) {
-      ObstacleSide.AHEAD -> labels["obstacleAhead"]
-      ObstacleSide.BEHIND -> labels["obstacleBehind"]
-      ObstacleSide.LEFT -> labels["obstacleLeft"]
-      ObstacleSide.RIGHT -> labels["obstacleRight"]
-      ObstacleSide.ABOVE -> labels["obstacleAbove"]
-      null -> null
-    }
-    val second = listOfNotNull(side, labels["obstacleUnconfirmed"]).filter { it.isNotEmpty() }.joinToString("  ")
-    return first to second.ifEmpty { null }
+    val template = labels["obstacleDistance"]?.takeIf { it.isNotEmpty() } ?: return null
+    return template.replace("{distance}", decimals(nearest, 1))
   }
 
   /** The motor time as minutes and seconds, as the phone writes it: 41.6 s is 0:41 */
@@ -306,7 +321,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
 
     private const val VIDEO_DISTANCE_M = 2.5f
     private const val VIDEO_DROP_M = 0.1f
-    private const val VIDEO_REFERENCE_WIDTH_M = 2.4f
+    private const val VIDEO_REFERENCE_WIDTH_M = FlightViewControls.VIDEO_REFERENCE_WIDTH_M
     private const val CURVE_RADIUS_M = 2.5f
     private const val PANEL_WIDTH_M = 1.6f
     private const val PANEL_HEIGHT_M = 0.3f
@@ -323,11 +338,10 @@ class DjiFlightViewActivity : AppSystemActivity() {
     private const val COLUMN_HEIGHT_DP = 500f
     private const val COLUMN_GAP_M = 0.05f
 
-    /** The obstacle alert above the video */
-    private const val ALERT_WIDTH_M = 1.2f
-    private const val ALERT_HEIGHT_M = 0.16f
-    private const val ALERT_WIDTH_DP = 600f
-    private const val ALERT_HEIGHT_DP = 80f
+    /** The obstacle ring's halo around the video: 250 dp per metre, the glow is soft */
+    private const val HALO_DP_PER_M = 250f
+    private const val HALO_FADE_IN_MS = 150L
+    private const val HALO_FADE_OUT_MS = 400L
 
     /** Labels 18 sp, values 40 sp: about 0.08 m tall at 2.5 m, read at a glance */
     private const val CELL_LABEL_SP = 18f
@@ -372,7 +386,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
   private var panelEntity: Entity? = null
   private var leftEntity: Entity? = null
   private var rightEntity: Entity? = null
-  private var alertEntity: Entity? = null
+  private var haloEntity: Entity? = null
   private var curved = false
   private var widthIndex = FlightViewControls.DEFAULT_WIDTH_INDEX
   private var panelShown = true
@@ -393,9 +407,8 @@ class DjiFlightViewActivity : AppSystemActivity() {
   private var rightCells: LinearLayout? = null
   private var leftShown: List<FlightViewControls.Cell> = emptyList()
   private var rightShown: List<FlightViewControls.Cell> = emptyList()
-  private var alertText: TextView? = null
-  private var alertSide: TextView? = null
-  private var alertShown = false
+  private var haloView: ObstacleHaloView? = null
+  private var haloShown = false
   private val handler = Handler(Looper.getMainLooper())
   private val refresh = object : Runnable {
     override fun run() {
@@ -436,7 +449,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
       panelEntity = Entity.createPanelEntity(R.id.dji_flight_panel, Transform(), Visible(false))
       leftEntity = Entity.createPanelEntity(R.id.dji_flight_left_panel, Transform(), Visible(false))
       rightEntity = Entity.createPanelEntity(R.id.dji_flight_right_panel, Transform(), Visible(false))
-      alertEntity = Entity.createPanelEntity(R.id.dji_flight_alert_panel, Transform(), Visible(false))
+      haloEntity = createHalo()
       systemManager.registerSystem(ImmersiveInputSystem(input))
       sceneReady = true
       handler.post(refresh)
@@ -448,6 +461,12 @@ class DjiFlightViewActivity : AppSystemActivity() {
   }
 
   private fun videoPanelId(): Int = if (curved) R.id.dji_flight_video_curved else R.id.dji_flight_video_flat
+
+  private fun haloPanelId(): Int = if (curved) R.id.dji_flight_ring_curved else R.id.dji_flight_ring_flat
+
+  /** The halo, flat or curved as the video is; the controllers' rays go through it */
+  private fun createHalo(): Entity =
+    Entity.createPanelEntity(haloPanelId(), Transform(), Visible(false), Hittable(MeshCollision.NoCollision))
 
   override fun registerPanels(): List<PanelRegistration> =
     listOf(
@@ -487,23 +506,41 @@ class DjiFlightViewActivity : AppSystemActivity() {
       ),
       columnRegistration(R.id.dji_flight_left_panel) { root -> leftCells = root.findViewById(R.id.dji_flight_cells) },
       columnRegistration(R.id.dji_flight_right_panel) { root -> rightCells = root.findViewById(R.id.dji_flight_cells) },
-      LayoutXMLPanelRegistration(
-        R.id.dji_flight_alert_panel,
-        layoutIdCreator = { R.layout.dji_flight_alert },
-        settingsCreator = {
-          UIPanelSettings(
-            shape = QuadShapeOptions(width = ALERT_WIDTH_M, height = ALERT_HEIGHT_M),
-            style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
-            display = DpDisplayOptions(width = ALERT_WIDTH_DP, height = ALERT_HEIGHT_DP, dpi = 260),
-          )
-        },
-        panelSetupWithRootView = { root, _, _ ->
-          alertText = root.findViewById(R.id.dji_flight_alert_text)
-          alertSide = root.findViewById(R.id.dji_flight_alert_side)
-          refreshNow()
-        },
-      ),
+      haloRegistration(R.id.dji_flight_ring_flat) { width, height -> QuadShapeOptions(width = width, height = height) },
+      haloRegistration(R.id.dji_flight_ring_curved) { width, height ->
+        CylinderShapeOptions(radius = CURVE_RADIUS_M, width = width, height = height)
+      },
     )
+
+  /**
+   * The obstacle ring's halo: a transparent layer a margin larger than the video at the reference width, blended over
+   * what is behind it, with the same pose and scale as the video ([applyPlacement])
+   */
+  private fun haloRegistration(id: Int, shape: (Float, Float) -> UIPanelShapeOptions): PanelRegistration {
+    val (width, height) = FlightViewControls.haloSizeM(VIDEO_REFERENCE_WIDTH_M)
+    val margin = FlightViewControls.haloMarginM(VIDEO_REFERENCE_WIDTH_M)
+    return LayoutXMLPanelRegistration(
+      id,
+      layoutIdCreator = { R.layout.dji_flight_ring },
+      settingsCreator = {
+        UIPanelSettings(
+          shape = shape(width, height),
+          style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
+          display = DpDisplayOptions(width = width * HALO_DP_PER_M, height = height * HALO_DP_PER_M, dpi = 260),
+          rendering = UIPanelRenderOptions(PanelRenderMode.Layer(PanelShapeLayerBlendType.ALPHA_BLEND)),
+        )
+      },
+      panelSetupWithRootView = { root, _, _ ->
+        haloView = root.findViewById<ObstacleHaloView>(R.id.dji_flight_ring_halo)?.apply {
+          marginWidthPart = margin / width
+          marginHeightPart = margin / height
+          alpha = 0f
+        }
+        haloShown = false
+        refreshNow()
+      },
+    )
+  }
 
   /** A column of values beside the video; its cells are made in [fillColumn] */
   private fun columnRegistration(id: Int, bind: (View) -> Unit): PanelRegistration =
@@ -587,7 +624,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
   }
 
   /**
-   * Ten times a second, on the main thread: the state line, the two columns, the alert above the video, and the video
+   * Ten times a second, on the main thread: the state line, the two columns, the ring around the video, and the video
    * hidden while no picture comes
    */
   private fun refreshNow() {
@@ -613,15 +650,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
       fillColumn(rightCells, rightShown, FlightViewControls.cells(values, labels, FlightViewControls.RIGHT_FIELDS))
     // The delay from the phone in one short line; the parts of it stay on the Diagnostics page
     latencyText?.show(numbers.receiveToPictureMs?.let { fill("delay", "ms" to number(it, 0)) } ?: "")
-    val alert = FlightViewControls.alertLines(numbers.alert, labels)
-    if (alert != null) {
-      alertText?.show(alert.first)
-      alertSide?.apply {
-        visibility = if (alert.second == null) View.GONE else View.VISIBLE
-        show(alert.second ?: "")
-      }
-    }
-    alertShown = alert != null
+    showRing(numbers)
     val show = !FlightViewControls.hideVideo(ago)
     if (show != videoVisible || !placed) {
       videoVisible = show
@@ -629,10 +658,39 @@ class DjiFlightViewActivity : AppSystemActivity() {
     }
     stripEntity?.setComponent(Visible(placed))
     panelEntity?.setComponent(Visible(panelShown && placed))
-    // A hides the columns with the lower panel; the alert and the strip always show
+    // A hides the columns with the lower panel; the ring and the strip always show
     leftEntity?.setComponent(Visible(panelShown && placed && leftShown.isNotEmpty()))
     rightEntity?.setComponent(Visible(panelShown && placed && rightShown.isNotEmpty()))
-    alertEntity?.setComponent(Visible(alertShown && placed))
+  }
+
+  /**
+   * The ring around the video: nothing at all while nothing is close; it comes in over 150 ms and leaves over 400 ms,
+   * and the halo's panel is hidden once it has faded
+   */
+  private fun showRing(numbers: DjiFlightNumbers) {
+    val view = haloView ?: return
+    val decision = numbers.alert
+    if (FlightViewControls.ringShows(decision)) {
+      view.show(decision.arcs, FlightViewControls.ringNumber(decision, labels, numbers.ringNumbers, panelShown))
+      if (!haloShown) {
+        haloShown = true
+        haloEntity?.setComponent(Visible(placed))
+        view.animate().cancel()
+        view.animate().alpha(1f).setDuration(HALO_FADE_IN_MS).start()
+      }
+    } else if (haloShown) {
+      haloShown = false
+      view.animate().cancel()
+      view.animate().alpha(0f).setDuration(HALO_FADE_OUT_MS).withEndAction {
+        if (!haloShown) {
+          haloEntity?.setComponent(Visible(false))
+          view.show(emptyList(), null)
+        }
+      }.start()
+    }
+    if (haloShown) {
+      haloEntity?.setComponent(Visible(placed))
+    }
   }
 
   /**
@@ -739,10 +797,9 @@ class DjiFlightViewActivity : AppSystemActivity() {
     panelPosition.y = videoBottom - PANEL_GAP_M - STRIP_HEIGHT_M - PANEL_GAP_M - PANEL_HEIGHT_M / 2f
     panelEntity?.setComponent(Transform(Pose(panelPosition, rotation)))
     panelEntity?.setComponent(Visible(panelShown))
-    // The alert above the video's top edge, which A never hides
-    val alertPosition = Vector3(position.x, position.y, position.z)
-    alertPosition.y = position.y + width * 9f / 32f + COLUMN_GAP_M + ALERT_HEIGHT_M / 2f
-    alertEntity?.setComponent(Transform(Pose(alertPosition, rotation)))
+    // The ring's halo around the video, as the video: same pose, same scale; A never hides it
+    haloEntity?.setComponent(Transform(Pose(position, rotation)))
+    haloEntity?.setComponent(Scale(Vector3(scale, scale, 1f)))
     placeColumns(position, direction, rotation, width)
   }
 
@@ -779,7 +836,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
           return
         }
         FlightViewControls.Action.TOGGLE_VALUES -> {
-          // The values only: the strip with the stale line, the observer note and watching only stays, and the alert
+          // The values only: the strip with the stale line, the observer note and watching only stays, and the ring
           panelShown = !panelShown
           panelEntity?.setComponent(Visible(panelShown && placed))
           leftEntity?.setComponent(Visible(panelShown && placed && leftShown.isNotEmpty()))
@@ -803,6 +860,11 @@ class DjiFlightViewActivity : AppSystemActivity() {
     old.destroy()
     curved = !curved
     videoEntity = Entity.create(Panel(videoPanelId()), Transform(), Visible(false))
+    // The halo follows the video's shape: its new panel binds a new view
+    haloEntity?.destroy()
+    haloView = null
+    haloShown = false
+    haloEntity = createHalo()
     applyPlacement()
   }
 

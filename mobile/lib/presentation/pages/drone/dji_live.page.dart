@@ -88,7 +88,7 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
     unawaited(Future.microtask(_relay.loadCode));
     unawaited(Future.microtask(() => _relay.setPageVisible(true)));
     unawaited(Future.microtask(() => _relay.setLiveScreenShown(true)));
-    // The values ten times a second while this screen is in front, and the obstacle alert as the pilot set it
+    // The values ten times a second while this screen is in front, and the obstacle ring as the pilot set it
     unawaited(Future.microtask(() => _notifier.setFrameStream(true)));
     unawaited(Future.microtask(() => ref.read(djiObstacleSettingsProvider.notifier).sync()));
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
@@ -232,7 +232,7 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
     await showDjiLiveNotice(context, headset: false, alert: _alertOffered());
   }
 
-  /// The obstacle alert is offered on this device: the notice then says it never steers or stops the drone
+  /// The obstacle ring is offered on this device: the notice then says it never steers or stops the drone
   bool _alertOffered() => ref.read(djiObstacleSettingsProvider).offered(djiObstacleOffer());
 
   /// Diagnostics turns freely and shows the system bars; the live screen takes landscape again when it comes back
@@ -361,8 +361,9 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
             fit: StackFit.expand,
             children: [
               _pictureOrCard(stage, state, card, showPicture: showPicture, banded: banded),
-              // The obstacle alert over whatever shows, the picture, "No picture" or a step card: it takes no touch
-              const DjiObstacleLayer(),
+              // The obstacle ring over whatever shows, the picture, "No picture" or a step card: nothing while nothing
+              // is close, and it takes no touch
+              const DjiObstacleRing(),
             ],
           ),
         ),
@@ -404,7 +405,6 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
                 staleSeconds: ago == null ? null : (ago / 1000).toStringAsFixed(1),
                 captureName: capture ? source?.name ?? '-' : null,
                 onStopCapture: () => unawaited(_notifier.stopPlayback()),
-                footer: const DjiObstacleGlyph(),
               ),
             ),
           ),

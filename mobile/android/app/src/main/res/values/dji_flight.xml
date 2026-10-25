@@ -7,5 +7,6 @@
   <item type="id" name="dji_flight_strip_panel" />
   <item type="id" name="dji_flight_left_panel" />
   <item type="id" name="dji_flight_right_panel" />
-  <item type="id" name="dji_flight_alert_panel" />
+  <item type="id" name="dji_flight_ring_flat" />
+  <item type="id" name="dji_flight_ring_curved" />
 </resources>

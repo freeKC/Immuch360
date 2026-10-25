@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The obstacle ring around the video of the Meta Quest flight view (DjiFlightViewActivity): a transparent panel a
+     little larger than the video, the glow drawn in its margin, outward from the video's edge, and the video's rectangle
+     left clear. Shown only while something is close, never hidden by A. Information only: nothing here reaches the
+     drone. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@android:color/transparent">
+
+  <app.alextran.immich.djilink.ObstacleHaloView
+    android:id="@+id/dji_flight_ring_halo"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alpha="0" />
+</FrameLayout>

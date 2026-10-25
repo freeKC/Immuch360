@@ -1,5 +1,6 @@
 package app.alextran.immich.djilink
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.media.AudioManager
@@ -9,6 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
+import android.view.HapticFeedbackConstants
 import android.view.InputDevice
 import android.view.MotionEvent
 import io.flutter.plugin.common.BinaryMessenger
@@ -18,6 +20,7 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import org.json.JSONArray
 import org.json.JSONObject
+import java.lang.ref.WeakReference
 
 /** The app's own preferences behind [KeyValueStore], for the stream description cache and the profile bindings */
 class SharedPreferencesStore(context: Context) : KeyValueStore {
@@ -81,7 +84,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
     /** The values a pilot reads go to Flutter at most this often, while a screen with the picture is in front */
     private const val FRAME_INTERVAL_MS = 100L
 
-    /** How often the obstacle alert decides and the beep is looked at: finer than a frame, so the beep keeps pace */
+    /** How often the obstacle ring decides and the tick is looked at: finer than a frame, so the tick keeps pace */
     private const val FRAME_TICK_MS = 50L
 
     /**
@@ -148,21 +151,37 @@ class DjiLinkController private constructor(private val context: Context) : Link
   private val exports = ExportMemory(REPEAT_HEADER_ONLY_MS)
   private val receptionExports = ExportMemory(REPEAT_HEADER_ONLY_MS)
 
-  /** The obstacle alert: offered by the gate in Flutter, decided here, its sound played here */
+  /** The obstacle ring: offered by the gate in Flutter, decided here, its tick played here */
   private val alert = ObstacleAlert()
-  private val beeper = ToneBeeper()
-  private val tone = ObstacleTone(beeper)
+  private val beeper = TickBeeper()
+  private val tone = ObstacleTone(beeper) { tapWithTick() }
 
+  /**
+   * This device's choices for the ring, from Flutter. On a receiver the phone's record says whether it is offered,
+   * its distances and its side; the sound, the tap and the number stay this device's own.
+   */
   @Volatile
-  private var obstacleOffered = false
+  private var ring = DjiObstacleRingSettings(
+    offered = false,
+    directional = false,
+    farM = RingSettings.DEFAULT_FAR_M,
+    nearM = RingSettings.DEFAULT_NEAR_M,
+    sound = true,
+    haptic = false,
+    numbers = false,
+  )
 
+  /** The live screen's activity, whose window taps with the tick; held weakly, the controller outlives it */
   @Volatile
-  private var obstacleSound = true
+  private var tapActivity: WeakReference<Activity>? = null
+
+  /** When "Show a sample" started on this device, null when none runs; read and set on the main thread */
+  private var sampleStartMs: Long? = null
 
   @Volatile
   private var lastDecision = ObstacleDecision.OFF
 
-  /** A screen with the picture is in front: the frames go to Flutter and the beep may play */
+  /** A screen with the picture is in front: the frames go to Flutter and the tick may play */
   private var frameStreamOn = false
   private val frames = FrameGate<DjiLiveFrame>(FRAME_INTERVAL_MS) { a, b -> a.copy(atMs = 0) == b.copy(atMs = 0) }
   private val videoStatistics = VideoStatistics()
@@ -816,12 +835,12 @@ class DjiLinkController private constructor(private val context: Context) : Link
     runCatching { if (lock.isHeld) lock.release() }
   }
 
-  // The values a pilot reads, ten times a second, and the obstacle alert
+  // The values a pilot reads, ten times a second, and the obstacle ring
 
   /**
    * A screen with the picture is in front (the live screen, the watch page, and the flight view over the watch page) or
-   * not. While it is, the values go to Flutter at most ten times a second when they change, the obstacle alert decides,
-   * and its beep may play; when it is not, nothing beeps.
+   * not. While it is, the values go to Flutter at most ten times a second when they change, the obstacle ring decides,
+   * and its tick may play; when it is not, nothing ticks.
    */
   fun setFrameStream(on: Boolean) {
     handler.post {
@@ -834,22 +853,51 @@ class DjiLinkController private constructor(private val context: Context) : Link
         tone.update(0, soundOn = false, screenShown = false, nowMs = SystemClock.elapsedRealtime())
         beeper.release()
         alert.reset()
+        sampleStartMs = null
         lastDecision = ObstacleDecision.OFF
       }
     }
   }
 
-  /** Whether the gate offers the alert, and whether its sound is on; the alert never acts on the drone */
-  fun setObstacleAlert(offered: Boolean, sound: Boolean) {
-    obstacleOffered = offered
-    obstacleSound = sound
+  /**
+   * The ring as this device draws and sounds it, and the activity whose window taps with the tick on a phone. The ring
+   * never acts on the drone.
+   */
+  fun setObstacleRing(settings: DjiObstacleRingSettings, activity: Activity?) {
+    ring = settings
+    if (activity != null) {
+      tapActivity = WeakReference(activity)
+    }
   }
 
-  /** Three beeps, to check the volume before take off */
+  /** Three ticks, to check the volume before take off */
   fun playObstacleTest() {
-    for (index in 0 until ObstacleTone.TEST_BEEPS) {
+    for (index in 0 until ObstacleTone.TEST_TICKS) {
       handler.postDelayed({ beeper.beep() }, index * ObstacleTone.TEST_INTERVAL_MS)
     }
+  }
+
+  /**
+   * "Show a sample": eight seconds of a made up ring through the same decision and drawing, on this device only (never
+   * relayed, never in a capture). Refused while the motors run, and while no picture screen is in front to draw it.
+   */
+  fun showObstacleSample(): Boolean {
+    if (!frameStreamOn) {
+      return false
+    }
+    val values = currentSource(SystemClock.elapsedRealtimeNanos()).first
+    if (obstacleInputOf(values).motorsOn == true) {
+      return false
+    }
+    alert.reset()
+    sampleStartMs = SystemClock.elapsedRealtime()
+    return true
+  }
+
+  /** A light tap on the live screen's window, which needs no permission; with the tick, within "Strong glow from" */
+  private fun tapWithTick() {
+    val activity = tapActivity?.get() ?: return
+    runCatching { activity.window?.decorView?.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK) }
   }
 
   /**
@@ -863,29 +911,54 @@ class DjiLinkController private constructor(private val context: Context) : Link
     }.getOrDefault(false)
   }
 
-  /** The values of the source in use: a phone's relay, a capture being played, or the cable */
-  private fun currentValues(nowNs: Long): TelemetryValues? {
+  /**
+   * The values of the source in use (a phone's relay, a capture being played, or the cable) and, from a phone's relay,
+   * the phone's choices for the ring
+   */
+  private fun currentSource(nowNs: Long): Pair<TelemetryValues?, RelayObstacleRing?> {
     val received = if (receiver.active) receiver.snapshot(nowNs) else null
     return synchronized(gate) {
       if (received != null) {
-        received.telemetry?.aged(received.telemetryAgeMs ?: 0)
+        received.telemetry?.aged(received.telemetryAgeMs ?: 0) to received.telemetry?.obstacleRing
       } else {
-        (if (player.loaded) player.router else router).telemetryDecoder.values(nowNs / 1_000_000)
+        (if (player.loaded) player.router else router).telemetryDecoder.values(nowNs / 1_000_000) to null
       }
     }
   }
 
-  /** On the main thread every 50 ms while a picture screen is in front: the alert, the beep, and the frame */
+  /** On the main thread every 50 ms while a picture screen is in front: the ring, the tick, and the frame */
   private fun onFrameTick() {
     if (!frameStreamOn) {
       return
     }
     val nowNs = SystemClock.elapsedRealtimeNanos()
     val nowMs = nowNs / 1_000_000
-    val values = currentValues(nowNs)
-    val decision = alert.decide(obstacleOffered, obstacleInputOf(values), nowMs)
+    val receiving = receiver.active
+    val (values, relayed) = currentSource(nowNs)
+    val choices = ring
+    // On a receiver, the phone's record says whether the ring is offered, its distances and its side: it draws what
+    // the phone draws. A phone of an earlier build sends none: no ring.
+    val offered = if (receiving) relayed?.offered ?: false else choices.offered
+    val settings = if (receiving) {
+      relayed?.settings() ?: RingSettings()
+    } else {
+      RingSettings(choices.farM, choices.nearM, choices.directional)
+    }
+    val staleMs = if (receiving) ObstacleAlert.RECEIVER_STALE_MS else ObstacleAlert.PHONE_STALE_MS
+    val sample = sampleStartMs?.let { obstacleSampleInput(nowMs - it) }
+    if (sampleStartMs != null && sample == null) {
+      sampleStartMs = null
+      alert.reset()
+    }
+    val decision = if (sample != null) {
+      alert.decide(true, settings, sample, nowMs, staleMs)
+    } else {
+      alert.decide(offered, settings, obstacleInputOf(values), nowMs, staleMs)
+    }
     lastDecision = decision
-    tone.update(if (decision.on) decision.beepIntervalMs else 0, obstacleSound, screenShown = true, nowMs = nowMs)
+    // The tap is the phone's: a receiver never vibrates
+    val tap = !receiving && choices.haptic && decision.haptic
+    tone.update(decision.tickIntervalMs, choices.sound, screenShown = true, nowMs = nowMs, tapOn = tap)
     // Only a change goes, ten times a second at most: a frame that says the same thing again would redraw nothing
     val frame = liveFramePigeon(values, decision, nowMs)
     if (frames.offer(frame, nowMs)) {
@@ -949,6 +1022,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       receiveToPictureMs = receiveToPicture,
       values = values,
       alert = lastDecision,
+      ringNumbers = ring.numbers,
     )
   }
 
@@ -1105,6 +1179,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
             phoneVideo = lastTelemetry.phoneVideo,
             headsets = lastTelemetry.headsets,
             unitsDropped = lastTelemetry.unitsDropped,
+            ring = lastTelemetry.obstacleRing,
           ),
         )
       }
@@ -1380,6 +1455,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
         phoneVideo = RelayPhoneVideo.of(stats),
         headsets = relay.headsetCount,
         unitsDropped = relay.unitsDropped,
+        ring = ring.let { RelayObstacleRing(it.offered, it.farM, it.nearM, it.directional) },
       )
     }
     return RelayWire.jsonBody(json)
@@ -1874,16 +1950,19 @@ internal fun ObstacleDecision.toPigeon(): DjiObstacleDecision = DjiObstacleDecis
   on = on,
   stopped = stopped,
   listening = listening,
-  beepIntervalMs = beepIntervalMs.toLong(),
-  distanceM = distanceM,
-  side = when (side) {
-    ObstacleSide.AHEAD -> DjiObstacleSide.AHEAD
-    ObstacleSide.BEHIND -> DjiObstacleSide.BEHIND
-    ObstacleSide.LEFT -> DjiObstacleSide.LEFT
-    ObstacleSide.RIGHT -> DjiObstacleSide.RIGHT
-    ObstacleSide.ABOVE -> DjiObstacleSide.ABOVE
-    null -> null
+  even = even,
+  arcs = arcs.map { arc ->
+    DjiObstacleArc(
+      centreDeg = arc.centreDeg,
+      distanceM = arc.distanceM,
+      strength = arc.strength,
+      opacity = arc.opacity,
+      // Unsigned, as Flutter's Color takes it
+      argb = arc.argb.toLong() and 0xFFFFFFFFL,
+    )
   },
+  nearestM = nearestM,
+  tickIntervalMs = tickIntervalMs.toLong(),
 )
 
 internal fun telemetryPigeon(

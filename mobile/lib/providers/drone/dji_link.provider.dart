@@ -49,15 +49,33 @@ final djiLiveSettingSyncProvider = Provider<Future<void> Function(bool on)>(
 /// What the live screen keeps on this install, in the app's store: a live picture was seen once, and the offer to open
 /// the screen on the plug of the remote was answered. Tests replace it.
 class DjiLiveMemory {
-  const DjiLiveMemory({required this.read, required this.write});
+  const DjiLiveMemory({
+    required this.read,
+    required this.write,
+    this.readInt = _noNumber,
+    this.writeInt = _dropNumber,
+  });
 
   final bool Function(StoreKey<bool> key) read;
   final Future<void> Function(StoreKey<bool> key, bool value) write;
+
+  /// A number kept, null when never set (the distances of the obstacle ring, in centimetres)
+  final int? Function(StoreKey<int> key) readInt;
+  final Future<void> Function(StoreKey<int> key, int value) writeInt;
 }
+
+int? _noNumber(StoreKey<int> key) => null;
+
+Future<void> _dropNumber(StoreKey<int> key, int value) async {}
 
 final djiLiveMemoryProvider = Provider<DjiLiveMemory>((ref) {
   final store = ref.watch(storeServiceProvider);
-  return DjiLiveMemory(read: (key) => store.tryGet(key) ?? false, write: (key, value) => store.put(key, value));
+  return DjiLiveMemory(
+    read: (key) => store.tryGet(key) ?? false,
+    write: (key, value) => store.put(key, value),
+    readInt: (key) => store.tryGet(key),
+    writeInt: (key, value) => store.put(key, value),
+  );
 });
 
 /// Hands the events of the native side to a listener, null to stop. Tests replace it.
