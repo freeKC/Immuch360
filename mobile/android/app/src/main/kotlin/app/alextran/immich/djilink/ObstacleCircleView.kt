@@ -18,9 +18,10 @@ import kotlin.math.roundToInt
  * The obstacle indicator as a circle around the centre of the video in the Quest's flight view, the default shape
  * ([RingCircle]): drawn in a transparent square panel over the middle of the video, the arcs fading toward the centre
  * as (1-x)^2 across the ring's thickness, the distance outside the circle by the nearest arc. Everything else in the
- * panel is transparent: whether the compositor shows the video through it is not verified on a headset yet (the frame
- * at the edges, drawn outside the video, is the setting to use if it does not). Takes no touch: its panel is not
- * hittable. Information only: nothing here reaches the drone.
+ * panel is transparent, and its layer is ordered over the video's ([FlightViewControls.CIRCLE_Z_INDEX]): whether the
+ * compositor shows the video through it is not verified on a headset yet (the frame at the edges, drawn outside the
+ * video, is the setting to use if it does not). Takes no touch: its panel is not hittable. Information only: nothing
+ * here reaches the drone.
  */
 class ObstacleCircleView @JvmOverloads constructor(
   context: Context,

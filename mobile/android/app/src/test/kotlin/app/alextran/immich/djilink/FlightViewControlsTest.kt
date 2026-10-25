@@ -322,6 +322,16 @@ class FlightViewControlsTest {
   }
 
   @Test
+  fun theCircleIsLayeredOverTheVideoAndTheHaloUnderIt() {
+    // A higher z index is drawn over a lower one; none under 0, which would put a layer under the scene
+    val halo = FlightViewControls.HALO_Z_INDEX
+    val video = FlightViewControls.VIDEO_Z_INDEX
+    val circle = FlightViewControls.CIRCLE_Z_INDEX
+    assertTrue(halo in 0 until video)
+    assertTrue(circle > video)
+  }
+
+  @Test
   fun anyButtonBringsTheWarningsBack() {
     assertTrue(FlightViewControls.recalls(ButtonBits.ButtonTriggerR, 0))
     assertTrue(FlightViewControls.recalls(ButtonBits.ButtonSqueezeL, 0))

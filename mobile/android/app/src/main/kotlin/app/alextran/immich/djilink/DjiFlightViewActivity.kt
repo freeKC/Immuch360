@@ -22,6 +22,7 @@ import com.meta.spatial.core.Quaternion
 import com.meta.spatial.core.SpatialFeature
 import com.meta.spatial.core.Vector3
 import com.meta.spatial.runtime.ButtonBits
+import com.meta.spatial.runtime.PanelConfigOptions
 import com.meta.spatial.runtime.PanelShapeLayerBlendType
 import com.meta.spatial.runtime.ReferenceSpace
 import com.meta.spatial.runtime.StereoMode
@@ -36,6 +37,7 @@ import com.meta.spatial.toolkit.MeshCollision
 import com.meta.spatial.toolkit.Panel
 import com.meta.spatial.toolkit.PanelRegistration
 import com.meta.spatial.toolkit.PanelRenderMode
+import com.meta.spatial.toolkit.PanelSettings
 import com.meta.spatial.toolkit.PanelStyleOptions
 import com.meta.spatial.toolkit.PixelDisplayOptions
 import com.meta.spatial.toolkit.QuadShapeOptions
@@ -309,6 +311,16 @@ internal object FlightViewControls {
   /** The video's height as a part of the circle panel's side, for [ObstacleCircleView.videoHeightPart] */
   fun circleVideoHeightPart(videoWidthM: Float): Float = videoWidthM * 9f / 16f / circleSideM(videoWidthM)
 
+  /**
+   * The compositor's order of the three layers (review of build 30, minor 1): the halo (frame) under the video, the
+   * circle over it. All three are compositor layers, and at the same z index the order is left to their distances;
+   * a higher z index is drawn over a lower one (the immersive viewer's video sphere at -1 is under its panels on the
+   * Quest). None is below 0, which would put it under the scene.
+   */
+  const val HALO_Z_INDEX = 0
+  const val VIDEO_Z_INDEX = 1
+  const val CIRCLE_Z_INDEX = 2
+
   /** The ring shows in the halo: arcs to draw, the ring on or its data stopped */
   fun ringShows(decision: ObstacleDecision): Boolean = decision.arcs.isNotEmpty() && (decision.on || decision.stopped)
 
@@ -398,17 +410,19 @@ class DjiFlightViewActivity : AppSystemActivity() {
     private const val HALO_DP_PER_M = 250f
 
     /**
-     * The halo sits this far behind the video: a compositor that sorts by depth keeps the picture on top of it, even
-     * if the halo's clear centre were not blended (p2/review-obstacle-ring-2026-10-25.md, minor 1). Seen from 2.5 m,
-     * its inner edge moves 7 mm under the video's at most.
+     * The halo sits this far behind the video, and its layer under the video's ([FlightViewControls.HALO_Z_INDEX]): the
+     * picture stays on top of it even if the halo's clear centre were not blended
+     * (p2/review-obstacle-ring-2026-10-25.md, minor 1). Seen from 2.5 m, its inner edge moves 7 mm under the video's
+     * at most.
      */
     private const val HALO_BEHIND_M = 0.015f
     private const val HALO_FADE_IN_MS = 150L
     private const val HALO_FADE_OUT_MS = 400L
 
     /**
-     * The circle's panel sits this far in front of the video, inside its rectangle. Whether the compositor shows the
-     * video through its transparent parts is not verified on a headset: the owner's sample decides, and the frame
+     * The circle's panel sits this far in front of the video, inside its rectangle, and its layer is ordered over the
+     * video's ([FlightViewControls.CIRCLE_Z_INDEX]). Whether the compositor shows the video through its transparent
+     * parts is not verified on a headset: the owner's sample decides (a missing circle is a no go too), and the frame
      * at the edges (behind the video) is the setting to use if the picture does not show through.
      */
     private const val CIRCLE_FRONT_M = 0.015f
@@ -621,11 +635,14 @@ class DjiFlightViewActivity : AppSystemActivity() {
       id,
       layoutIdCreator = { R.layout.dji_flight_ring },
       settingsCreator = {
-        UIPanelSettings(
-          shape = shape(width, height),
-          style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
-          display = DpDisplayOptions(width = width * HALO_DP_PER_M, height = height * HALO_DP_PER_M, dpi = 260),
-          rendering = UIPanelRenderOptions(PanelRenderMode.Layer(PanelShapeLayerBlendType.ALPHA_BLEND)),
+        layeredAt(
+          FlightViewControls.HALO_Z_INDEX,
+          UIPanelSettings(
+            shape = shape(width, height),
+            style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
+            display = DpDisplayOptions(width = width * HALO_DP_PER_M, height = height * HALO_DP_PER_M, dpi = 260),
+            rendering = UIPanelRenderOptions(PanelRenderMode.Layer(PanelShapeLayerBlendType.ALPHA_BLEND)),
+          ),
         )
       },
       panelSetupWithRootView = { root, _, _ ->
@@ -650,11 +667,14 @@ class DjiFlightViewActivity : AppSystemActivity() {
       id,
       layoutIdCreator = { R.layout.dji_flight_circle },
       settingsCreator = {
-        UIPanelSettings(
-          shape = shape(side),
-          style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
-          display = DpDisplayOptions(width = side * HALO_DP_PER_M, height = side * HALO_DP_PER_M, dpi = 260),
-          rendering = UIPanelRenderOptions(PanelRenderMode.Layer(PanelShapeLayerBlendType.ALPHA_BLEND)),
+        layeredAt(
+          FlightViewControls.CIRCLE_Z_INDEX,
+          UIPanelSettings(
+            shape = shape(side),
+            style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
+            display = DpDisplayOptions(width = side * HALO_DP_PER_M, height = side * HALO_DP_PER_M, dpi = 260),
+            rendering = UIPanelRenderOptions(PanelRenderMode.Layer(PanelShapeLayerBlendType.ALPHA_BLEND)),
+          ),
         )
       },
       panelSetupWithRootView = { root, _, _ ->
@@ -666,6 +686,15 @@ class DjiFlightViewActivity : AppSystemActivity() {
         refreshNow()
       },
     )
+  }
+
+  /**
+   * [settings] with its compositor layer at [zIndex]: the render options of a UI panel give no z index in this SDK
+   * (0.14.0), the layer config they make has one
+   */
+  private fun layeredAt(zIndex: Int, settings: UIPanelSettings): PanelSettings = object : PanelSettings {
+    override fun toPanelConfigOptions(): PanelConfigOptions =
+      settings.toPanelConfigOptions().apply { layerConfig?.let { it.zIndex = zIndex } }
   }
 
   /** A column of values beside the video; its cells are made in [fillColumn] */
@@ -703,7 +732,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
         MediaPanelSettings(
           shape = shape(),
           display = PixelDisplayOptions(width = 1920, height = 1080),
-          rendering = MediaPanelRenderOptions(stereoMode = StereoMode.None),
+          rendering = MediaPanelRenderOptions(stereoMode = StereoMode.None, zIndex = FlightViewControls.VIDEO_Z_INDEX),
         )
       },
     )
