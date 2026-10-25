@@ -13,9 +13,12 @@ import java.net.Socket
 import java.net.SocketTimeoutException
 import java.security.SecureRandom
 import java.util.concurrent.atomic.AtomicInteger
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.put
 
 /** What the phone relays: nothing, the remote's live video, or a capture being played */
@@ -53,6 +56,16 @@ data class RelayHeadsetRow(
   val screenCodeId: String? = null,
   /** What its hello says it is: "tv" from a TV of this build, null otherwise */
   val kind: String? = null,
+  /** The age of the oldest unit queued for it now, null when none waits */
+  val queueAgeMs: Double? = null,
+  val queueMaxAgeMs: Double? = null,
+  val dropEvents: Long = 0,
+  /** Writes of a unit that took over 200 ms */
+  val writeStalls: Long = 0,
+  val writeP95Ms: Double? = null,
+  val sendBufferBytes: Int? = null,
+  /** From its long pings, null from a receiver of an earlier build */
+  val receiver: RelayPingNumbers? = null,
 )
 
 data class RelaySendingSnapshot(
@@ -63,7 +76,39 @@ data class RelaySendingSnapshot(
   val refusedProofs: Long,
   val unexpectedRecords: Long,
   val unitsDropped: Long,
+  /** Key units sent ahead of the live ones: to receivers that joined, and after drops */
+  val primersSent: Long = 0,
 )
+
+/**
+ * The send side of a receiver's socket (p2/relay-smoothness-2026-10-25.md, 5.2 item 1): the send buffer is left to the
+ * kernel's tuning, and only the unsent bytes are bounded with TCP_NOTSENT_LOWAT, through android.system.Os on a
+ * duplicate of the socket's descriptor. Where that is refused, a fixed send buffer is asked instead. The send buffer
+ * the kernel granted is read back for the export.
+ */
+object RelaySocketTuning {
+  /** TCP_NOTSENT_LOWAT of Linux (include/uapi/linux/tcp.h), which android.system.OsConstants does not name */
+  private const val TCP_NOTSENT_LOWAT = 25
+
+  fun tune(socket: Socket): RelaySocketFacts {
+    val lowWater = runCatching {
+      val duplicate = android.os.ParcelFileDescriptor.fromSocket(socket)
+      try {
+        val tcp = android.system.OsConstants.IPPROTO_TCP
+        val bytes = RelayWire.NOT_SENT_LOW_WATER_BYTES
+        // No exception: the kernel took it (the getter of an int option is not public, so it is not read back)
+        android.system.Os.setsockoptInt(duplicate.fileDescriptor, tcp, TCP_NOTSENT_LOWAT, bytes)
+        bytes
+      } finally {
+        runCatching { duplicate.close() }
+      }
+    }.getOrNull()?.takeIf { it > 0 }
+    if (lowWater == null) {
+      runCatching { socket.sendBufferSize = RelayWire.FALLBACK_SEND_BUFFER_BYTES }
+    }
+    return RelaySocketFacts(runCatching { socket.sendBufferSize }.getOrNull(), lowWater)
+  }
+}
 
 /**
  * The phone side of relay protocol 1 ([RelayWire]): it listens on the local network, checks that each headset knows
@@ -100,8 +145,10 @@ class RelayServer(
   private val onChange: () -> Unit = {},
   /** False in the tests that drive [tick] themselves */
   private val runTicker: Boolean = true,
-  private val queueMaxAgeNs: Long = RelayQueue.MAX_AGE_NS,
+  /** The age bound of every receiver's queue; null takes the one of its kind ([RelayQueue.maxAgeFor]) */
+  private val queueMaxAgeNs: Long? = null,
   private val queueMaxBytes: Long = RelayQueue.MAX_BYTES,
+  private val socketTuning: (Socket) -> RelaySocketFacts = RelaySocketTuning::tune,
 ) : DecoderSink {
   companion object {
     private const val TAG = "DjiRelay"
@@ -130,6 +177,9 @@ class RelayServer(
     /** What a hello may say it is: a short lower case word, anything else is dropped */
     private val KIND = Regex("[a-z]{1,16}")
 
+    /** Receivers that left, kept for the export */
+    const val LEFT_KEPT = 8
+
     private fun log(message: String) {
       runCatching { android.util.Log.i(TAG, message) }
     }
@@ -140,6 +190,9 @@ class RelayServer(
 
   private val lock = Any()
   private val headsets = mutableListOf<RelayHeadset>()
+
+  /** The receivers that left since the relay started, newest last, for the export */
+  private val left = ArrayDeque<RelayHeadset>()
   private var reserved = 0
   private val handshakes = AtomicInteger()
   private val numbers = AtomicInteger()
@@ -353,12 +406,27 @@ class RelayServer(
           )
           headset.lastDescription = description.description
         }
-        headset.queue.offerUnit(unit, flags, headset.breakNext, now)
+        headset.queue.offerUnit(unit, flags, headset.breakNext, now) { recoveryPrimer(description, relayed) }
         headset.breakNext = false
         headset.unitSinceReset = true
         headset.resetQueued = false
       }
     }
+  }
+
+  /**
+   * Under [lock]: the kept key unit to send after a drop that left no key unit in a receiver's queue, flagged KEY,
+   * PRIMER and BREAK, when it was decoded with the parameter sets of the units now sent
+   */
+  private fun recoveryPrimer(description: ResolvedDescription, relayed: RelaySource): RelayPrimer? {
+    val key = lastKey ?: return null
+    if (!key.description.sameSetsAs(description.description)) {
+      return null
+    }
+    var flags = RelayWire.UNIT_KEY or RelayWire.UNIT_PRIMER or RelayWire.UNIT_BREAK
+    if (key.unit.hasParameterSets) flags = flags or RelayWire.UNIT_IN_BAND
+    if (relayed == RelaySource.REPLAY) flags = flags or RelayWire.UNIT_REPLAY
+    return RelayPrimer(key.unit, flags)
   }
 
   /** A key unit kept from an earlier session of the remote: sent to a joining headset until a live one replaces it */
@@ -432,6 +500,7 @@ class RelayServer(
     }
     val current = synchronized(lock) { headsets.toList() }
     for (headset in current) {
+      headset.sampleSecond(nowNs)
       val writing = headset.writeStartedNs
       if (writing != 0L && nowNs - writing > writerStallNs) {
         log("headset ${headset.number}: no write progress for ${(nowNs - writing) / 1_000_000} ms, closed")
@@ -522,9 +591,9 @@ class RelayServer(
     try {
       socket.tcpNoDelay = true
       runCatching { socket.trafficClass = RelayWire.TRAFFIC_CLASS }
-      runCatching { socket.sendBufferSize = RelayWire.SEND_BUFFER_BYTES }
+      val socketFacts = runCatching { socketTuning(socket) }.getOrDefault(RelaySocketFacts(null, null))
       socket.soTimeout = helloTimeoutMs
-      val output = BufferedOutputStream(socket.getOutputStream(), RelayWire.SEND_BUFFER_BYTES)
+      val output = BufferedOutputStream(socket.getOutputStream(), RelayWire.STREAM_BUFFER_BYTES)
       val input = DataInputStream(BufferedInputStream(socket.getInputStream(), 16 * 1024))
       if (blocked(address, clockNs())) {
         refuse(output, RelayWire.REFUSED_BLOCKED)
@@ -574,6 +643,8 @@ class RelayServer(
       val name = (hello.json?.get("name") as? JsonPrimitive)?.contentOrNull?.filter { !it.isISOControl() }?.take(64)
       val app = (hello.json?.get("app") as? JsonPrimitive)?.contentOrNull?.filter { !it.isISOControl() }?.take(32)
       val kind = (hello.json?.get("kind") as? JsonPrimitive)?.contentOrNull?.takeIf { KIND.matches(it) }
+      // A receiver of this build reads the unit header with the content clock, and says so
+      val longHeader = (hello.json?.get("unitHeader") as? JsonPrimitive)?.intOrNull == RelayWire.UNIT_HEADER_LONG_BYTES
       val facts = welcomeFacts()
       val resolved = synchronized(lock) { lastResolved }
       val info = resolved?.description?.info
@@ -594,6 +665,11 @@ class RelayServer(
         put("descriptionSource", resolved?.source?.name?.lowercase())
         put("telemetryHz", 10)
         put("pingMs", 500)
+        if (longHeader) {
+          put("unitHeader", RelayWire.UNIT_HEADER_LONG_BYTES)
+        }
+        // Pings with the receiver's own numbers are taken; a receiver of an earlier build ignores this
+        put("pingBytes", RelayWire.PING_LONG_BYTES)
       }
       // The phone proves the code this connection proved: a TV checks it with its own code
       val phoneProof = RelayWire.proof(proved.code, RelayWire.ROLE_PHONE, serverNonce, hello.clientNonce)
@@ -608,9 +684,12 @@ class RelayServer(
         app,
         clockNs,
         { gone, why -> forget(gone, why) },
-        RelayQueue(queueMaxAgeNs, queueMaxBytes),
+        RelayQueue(queueMaxAgeNs ?: RelayQueue.maxAgeFor(kind), queueMaxBytes),
         screenCodeId = proved.screenId,
         kind = kind,
+        unitHeaderBytes = if (longHeader) RelayWire.UNIT_HEADER_LONG_BYTES else RelayWire.UNIT_HEADER_BYTES,
+        socketFacts = socketFacts,
+        maxAgeNs = queueMaxAgeNs ?: RelayQueue.maxAgeFor(kind),
       )
       synchronized(lock) {
         reserved -= 1
@@ -689,9 +768,7 @@ class RelayServer(
         RelayWire.PING -> {
           val received = clockNs()
           val ping = RelayWire.parsePing(record.body)
-          headset.lastPingNs = received
-          headset.relayDelayMedianUs = ping.relayDelayMedianUs
-          headset.shownPer10s = ping.shownPer10s
+          headset.onPing(ping, received)
           // The send time is written by the writer when the pong leaves
           headset.queue.offerPong(RelayWire.pongBody(ping.sendNs, received, 0), received)
         }
@@ -722,6 +799,10 @@ class RelayServer(
       val was = headsets.remove(headset)
       if (was) {
         droppedOfClosed += headset.queue.unitsDropped
+        left.addLast(headset)
+        while (left.size > LEFT_KEPT) {
+          left.removeFirst()
+        }
       }
       was
     }
@@ -771,6 +852,13 @@ class RelayServer(
           megabitsPerSecond = headset.megabitsPerSecond(nowNs),
           screenCodeId = headset.screenCodeId,
           kind = headset.kind,
+          queueAgeMs = headset.queue.oldestUnitAgeNs(nowNs)?.let { it / 1e6 },
+          queueMaxAgeMs = headset.queue.counters().maxAgeNs / 1e6,
+          dropEvents = headset.queue.overloadCount,
+          writeStalls = headset.stats.writeStalls200,
+          writeP95Ms = headset.stats.writeP95Ms,
+          sendBufferBytes = headset.socketFacts.sendBufferBytes,
+          receiver = headset.stats.receiverNumbers,
         )
       }
       dropped = droppedOfClosed + headsets.sumOf { it.queue.unitsDropped }
@@ -783,7 +871,30 @@ class RelayServer(
       refusedProofs = refusedProofs,
       unexpectedRecords = unexpectedRecords,
       unitsDropped = dropped,
+      primersSent = primersSent + headsetsAndLeft().sumOf { it.queue.counters().recoveryPrimers },
     )
+  }
+
+  private fun headsetsAndLeft(): List<RelayHeadset> = synchronized(lock) { left.toList() + headsets.toList() }
+
+  /**
+   * The relay section of the phone's export (p2/relay-smoothness-2026-10-25.md, 6.1): the totals, and for every
+   * receiver of this run of the relay, those that left included, what was sent, dropped and measured, with its timeline
+   */
+  fun report(nowNs: Long = clockNs()): JsonObject {
+    val receivers = headsetsAndLeft()
+    return buildJsonObject {
+      put("on", running)
+      put("port", if (running) port else null)
+      put("source", source.wire)
+      put("refusedProofs", refusedProofs)
+      put("unexpectedRecords", unexpectedRecords)
+      put("unitsDropped", unitsDropped)
+      put("joinPrimersSent", primersSent)
+      put("notSentLowWaterAsked", RelayWire.NOT_SENT_LOW_WATER_BYTES)
+      put("fallbackSendBufferAsked", RelayWire.FALLBACK_SEND_BUFFER_BYTES)
+      put("receivers", buildJsonArray { receivers.forEach { add(it.report(nowNs)) } })
+    }
   }
 
   /** Connections in their handshake, for the tests */

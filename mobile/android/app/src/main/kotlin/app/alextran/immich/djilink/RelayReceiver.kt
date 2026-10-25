@@ -13,6 +13,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.put
 
 /** Where the headset stands with the phone it receives from; the page words each one */
@@ -71,6 +72,14 @@ data class RelayReceiveSnapshot(
   val lostOnWifi: Long,
   val breaks: Long,
   val latency: RelayLatencyNumbers,
+  /** Key units the phone sent ahead of the live ones: at the join, and after it dropped units for this device */
+  val primers: Long = 0,
+  val recoveryPrimers: Long = 0,
+  /** The unit header the phone writes for this device, and whether it takes the long pings */
+  val unitHeaderBytes: Int = RelayWire.UNIT_HEADER_BYTES,
+  val longPings: Boolean = false,
+  /** The round trip of the last ping, in milliseconds */
+  val roundTripMs: Double? = null,
   val telemetry: RelayTelemetryRecord?,
   val telemetryAgeMs: Long?,
   val lastUnitAgoMs: Long?,
@@ -133,6 +142,9 @@ class RelayReceiver(
 
     /** Every record after the welcome as it was read, for the reception record of a bug report; on the reader thread */
     fun onRecord(record: RelayRecord, arrivalNs: Long) = Unit
+
+    /** This device's own numbers for a long ping, null to send a short one; on the ping thread */
+    fun pingNumbers(): RelayPingNumbers? = null
   }
 
   private class Target(
@@ -174,6 +186,15 @@ class RelayReceiver(
   private var units = 0L
   private var lostOnWifi = 0L
   private var breaks = 0L
+  private var primers = 0L
+  private var recoveryPrimers = 0L
+
+  /** What the welcome of the current connection said: the unit header and the pings the phone takes */
+  @Volatile
+  private var unitHeaderBytes = RelayWire.UNIT_HEADER_BYTES
+
+  @Volatile
+  private var longPings = false
   private var lastSequence: Long? = null
   private var lastUnitNs: Long? = null
   private var telemetry: RelayTelemetryRecord? = null
@@ -212,6 +233,8 @@ class RelayReceiver(
       units = 0
       lostOnWifi = 0
       breaks = 0
+      primers = 0
+      recoveryPrimers = 0
       lastSequence = null
       lastUnitNs = null
       telemetry = null
@@ -345,6 +368,8 @@ class RelayReceiver(
         put("name", target.headsetName)
         put("app", target.appVersion)
         target.kind?.let { put("kind", it) }
+        // This build reads the unit header with the content clock; a phone of an earlier build ignores it
+        put("unitHeader", RelayWire.UNIT_HEADER_LONG_BYTES)
       }
       synchronized(outputLock) {
         RelayWire.write(out, RelayWire.HELLO, 0, RelayWire.helloBody(clientNonce, proof, hello.toString()))
@@ -372,6 +397,9 @@ class RelayReceiver(
       if (!current(mine)) {
         return Outcome.LOST
       }
+      val header = (json?.get("unitHeader") as? JsonPrimitive)?.intOrNull
+      unitHeaderBytes = if (header == RelayWire.UNIT_HEADER_LONG_BYTES) header else RelayWire.UNIT_HEADER_BYTES
+      longPings = (json?.get("pingBytes") as? JsonPrimitive)?.intOrNull == RelayWire.PING_LONG_BYTES
       welcome = said
       welcomed = true
       failures = 0
@@ -438,8 +466,18 @@ class RelayReceiver(
   }
 
   private fun onUnit(record: RelayRecord, arrivalNs: Long) {
-    val header = RelayWire.parseUnitHeader(record.body)
-    val unit = RelayWire.accessUnitOf(record.body, arrivalNs)
+    val headerBytes = unitHeaderBytes
+    val header = RelayWire.parseUnitHeader(record.body, headerBytes)
+    val unit = RelayWire.accessUnitOf(record.body, arrivalNs, headerBytes)
+    unit.relay = RelayStamp(
+      sequence = header.sequence,
+      flags = record.flags,
+      contentMs = header.contentMs,
+      phoneReceiveNs = header.lastArrivalNs,
+      phoneSendNs = header.sendNs,
+      arrivalNs = arrivalNs,
+    )
+    val primer = (record.flags and RelayWire.UNIT_PRIMER) != 0
     synchronized(countsLock) {
       val previous = lastSequence
       if (previous != null) {
@@ -448,7 +486,13 @@ class RelayReceiver(
           lostOnWifi += gap
         }
       }
-      if ((record.flags and RelayWire.UNIT_BREAK) != 0) {
+      if (primer) {
+        primers += 1
+        if ((record.flags and RelayWire.UNIT_BREAK) != 0) {
+          // A key unit kept by the phone, after it dropped units for this device: the live unit after it breaks too
+          recoveryPrimers += 1
+        }
+      } else if ((record.flags and RelayWire.UNIT_BREAK) != 0) {
         breaks += 1
       }
       lastSequence = header.sequence
@@ -480,9 +524,10 @@ class RelayReceiver(
       val delayUs = latency.numbers(clockNs(), clock).relayDelayMedianMs
         ?.let { (it * 1000).toLong().coerceIn(0, Int.MAX_VALUE.toLong()).toInt() } ?: -1
       val shown = runCatching { listener.shownPer10s() }.getOrDefault(-1)
+      val numbers = if (longPings) runCatching { listener.pingNumbers() }.getOrNull() else null
       try {
         synchronized(outputLock) {
-          RelayWire.write(out, RelayWire.PING, 0, RelayWire.pingBody(clockNs(), delayUs, shown))
+          RelayWire.write(out, RelayWire.PING, 0, RelayWire.pingBody(clockNs(), delayUs, shown, numbers))
           out.flush()
         }
       } catch (_: IOException) {
@@ -552,6 +597,11 @@ class RelayReceiver(
         lostOnWifi = lostOnWifi,
         breaks = breaks,
         latency = latency.numbers(nowNs, clock),
+        primers = primers,
+        recoveryPrimers = recoveryPrimers,
+        unitHeaderBytes = unitHeaderBytes,
+        longPings = longPings,
+        roundTripMs = clock.lastRoundTripNs?.let { it / 1e6 },
         telemetry = last,
         telemetryAgeMs = telemetryAtNs?.let { (nowNs - it) / 1_000_000 },
         lastUnitAgoMs = lastUnitNs?.let { (nowNs - it) / 1_000_000 },

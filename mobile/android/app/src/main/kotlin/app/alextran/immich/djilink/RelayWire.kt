@@ -74,7 +74,6 @@ object RelayWire {
 
   /** The write buffer in front of the socket, and the read buffer of a receiver */
   const val STREAM_BUFFER_BYTES = 64 * 1024
-  const val SEND_BUFFER_BYTES = 64 * 1024
 
   // Records from the phone
   const val CHALLENGE = 0x01

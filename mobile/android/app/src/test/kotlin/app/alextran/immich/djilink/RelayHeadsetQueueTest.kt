@@ -26,7 +26,7 @@ class RelayHeadsetQueueTest {
 
   @Test
   fun noUnitIsDroppedUnder500Ms() {
-    val queue = RelayQueue()
+    val queue = RelayQueue(maxAgeNs = 500 * ms)
     for (index in 0 until 15) {
       assertTrue(queue.offerUnit(unit(), 0, false, index * 33 * ms))
     }
@@ -38,7 +38,7 @@ class RelayHeadsetQueueTest {
 
   @Test
   fun aBacklogOlderThan500MsIsDroppedWholeAndTheNextUnitBreaks() {
-    val queue = RelayQueue()
+    val queue = RelayQueue(maxAgeNs = 500 * ms)
     queue.offerUnit(unit(), 0, false, 0)
     queue.offerUnit(unit(), 0, false, 300 * ms)
     queue.offerTelemetry("{}".toByteArray(), 300 * ms)
@@ -104,7 +104,7 @@ class RelayHeadsetQueueTest {
 
   @Test
   fun aBreakAskedBeforeAUnitStaysWithItAndSurvivesADrop() {
-    val queue = RelayQueue()
+    val queue = RelayQueue(maxAgeNs = 500 * ms)
     queue.offerUnit(unit(), 0, false, 0)
     queue.offerUnit(unit(), 0, true, 10 * ms)
     assertEquals(0, queue.take(0)!!.flags)

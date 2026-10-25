@@ -274,20 +274,26 @@ class RelayLoopbackCaptureTest {
 
       val units = records.filter { it.type == RelayWire.UNIT }
       val headers = units.map { RelayWire.parseUnitHeader(it.body) }
-      val breaks = units.count { (it.flags and RelayWire.UNIT_BREAK) != 0 }
+      // After a drop that left no key unit queued, the phone's kept key unit goes first, flagged KEY, PRIMER and BREAK
+      val live = units.filter { (it.flags and RelayWire.UNIT_PRIMER) == 0 }
+      val primers = units.size - live.size
+      val breaks = live.count { (it.flags and RelayWire.UNIT_BREAK) != 0 }
       var gaps = headers.first().sequence
       headers.zipWithNext().forEach { (a, b) -> gaps += b.sequence - a.sequence - 1 }
       val dropped = phone.server.snapshot().unitsDropped
       assertTrue("units were dropped for the slow headset", dropped > 0)
       assertTrue(breaks >= 1)
+      assertTrue(units.filter { (it.flags and RelayWire.UNIT_PRIMER) != 0 }.all {
+        (it.flags and RelayWire.UNIT_KEY) != 0 && (it.flags and RelayWire.UNIT_BREAK) != 0
+      })
       assertEquals("the drops on the phone are the gaps on the headset", dropped, gaps)
-      assertEquals(307L, units.size + dropped)
+      assertEquals(307L, live.size + dropped)
       // Parsing goes on after each break: every unit after it reads as whole NAL units with a picture counter
       assertTrue(units.all { RelayWire.accessUnitOf(it.body, 0).pictureCounter != null })
       assertEquals(RelayWire.RESET, records.last().type)
       println(
-        "slow headset: ${units.size} units received, $dropped dropped in ${phone.server.snapshot().headsets.size} " +
-          "headset, $breaks breaks, sequence gaps $gaps, ${records.size} records",
+        "slow headset: ${live.size} units received, $dropped dropped in ${phone.server.snapshot().headsets.size} " +
+          "headset, $breaks breaks, $primers primers, sequence gaps $gaps, ${records.size} records",
       )
     } finally {
       socket.close()

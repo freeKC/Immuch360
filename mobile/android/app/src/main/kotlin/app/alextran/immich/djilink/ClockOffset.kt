@@ -15,6 +15,10 @@ class ClockOffset(private val keep: Int = 20, private val readyAfter: Int = 3) {
 
   private val samples = ArrayDeque<Sample>()
   private var pongs = 0
+  private var lastRoundTrip: Long? = null
+
+  /** The round trip of the last pong, whether or not the offset is ready */
+  val lastRoundTripNs: Long? @Synchronized get() = lastRoundTrip
 
   /** One pong: [t0] and [t3] on this device's clock, [p1] and [p2] on the phone's */
   @Synchronized
@@ -25,6 +29,7 @@ class ClockOffset(private val keep: Int = 20, private val readyAfter: Int = 3) {
       return
     }
     pongs += 1
+    lastRoundTrip = roundTrip
     samples.addLast(Sample(t3, ((p1 - t0) + (p2 - t3)) / 2, roundTrip))
     while (samples.size > keep) {
       samples.removeFirst()
@@ -35,6 +40,7 @@ class ClockOffset(private val keep: Int = 20, private val readyAfter: Int = 3) {
   fun reset() {
     samples.clear()
     pongs = 0
+    lastRoundTrip = null
   }
 
   val ready: Boolean @Synchronized get() = pongs >= readyAfter && samples.isNotEmpty()
