@@ -9,4 +9,6 @@
   <item type="id" name="dji_flight_right_panel" />
   <item type="id" name="dji_flight_ring_flat" />
   <item type="id" name="dji_flight_ring_curved" />
+  <item type="id" name="dji_flight_circle_flat" />
+  <item type="id" name="dji_flight_circle_curved" />
 </resources>

@@ -74,6 +74,8 @@ data class DjiFlightNumbers(
   val delayEstimateMs: Double? = null,
   /** "Show the distance by the glow", this headset's own choice */
   val ringNumbers: Boolean = false,
+  /** The indicator as a frame around the video, this headset's own choice; false is the circle around its centre */
+  val ringFrame: Boolean = false,
 )
 
 /**
@@ -81,12 +83,12 @@ data class DjiFlightNumbers(
  * reaches the receiver, the phone or the drone: every action changes the view only.
  *
  * - B or Y goes back to the window, and nothing else happens on that update;
- * - A, or the menu gesture of a hand, shows or hides the values panel; the strip under the video (the state of the
- *   picture, the red stale line, the observer note, watching only) always shows;
+ * - A, or the menu gesture of a hand, shows or hides the values panel;
  * - X makes the video flat or curved;
  * - either thumbstick left or right puts the video in front of the gaze again (yaw only);
  * - either thumbstick up or down makes the video wider or narrower;
- * - the trigger and the grips do nothing.
+ * - any button, the trigger and the grips too, brings the warnings back for five seconds ([TransientText]): the state
+ *   of the picture, the red line, the observer note, watching only, the DJI Fly line and the hint.
  */
 internal object FlightViewControls {
   enum class Action { CLOSE, TOGGLE_VALUES, TOGGLE_CURVE, RECENTER, WIDER, NARROWER }
@@ -118,6 +120,22 @@ internal object FlightViewControls {
     }
     return actions
   }
+
+  /** Any button or gesture brings the warnings back (B or Y also closes the view) */
+  fun recalls(controllerBits: Int, handBits: Int): Boolean = (controllerBits or handBits) != 0
+
+  /**
+   * The state lines that stay (an error that needs an action until it is resolved): the phone lost the remote, a
+   * refused or new code, another version, a phone that did not prove the code, a reception that ended. "Live", "a
+   * capture" and "lost, trying again" come and go.
+   */
+  private val KEPT_STATES = setOf("noSource", "wrongCode", "otherVersion", "unproven", "ended")
+
+  fun stateKeeps(stateKeys: List<String>): Boolean = stateKeys.any { it in KEPT_STATES }
+
+  /** The red line stays while it says why no picture shows: the video is hidden ([hideVideo]) */
+  fun redLineKeeps(line: StripLine, lastPictureAgoMs: Long?): Boolean =
+    (line == StripLine.NO_PICTURE || line == StripLine.STALE) && hideVideo(lastPictureAgoMs)
 
   /** The widths of the video at 2.5 m, about 35 to 77 degrees */
   val WIDTHS_M = floatArrayOf(1.6f, 2.4f, 3.2f, 4.0f)
@@ -273,6 +291,22 @@ internal object FlightViewControls {
     return videoWidthM + 2 * margin to videoWidthM * 9f / 16f + 2 * margin
   }
 
+  /**
+   * The circle's panel (the default shape, [RingCircle]): a square over the middle of the video, the circle's radius a
+   * quarter of the video's height, its thickness, and room for the distance outside it; scaled with the video as its
+   * panel is. At every width it stays inside the video's rectangle.
+   */
+  const val CIRCLE_ROOM_M = 0.12f
+
+  fun circleSideM(videoWidthM: Float): Float {
+    val height = videoWidthM * 9f / 16f
+    val room = CIRCLE_ROOM_M * videoWidthM / VIDEO_REFERENCE_WIDTH_M
+    return 2f * (height * RingCircle.RADIUS_PART.toFloat() + height * RingCircle.THICKNESS_PART.toFloat() + room)
+  }
+
+  /** The video's height as a part of the circle panel's side, for [ObstacleCircleView.videoHeightPart] */
+  fun circleVideoHeightPart(videoWidthM: Float): Float = videoWidthM * 9f / 16f / circleSideM(videoWidthM)
+
   /** The ring shows in the halo: arcs to draw, the ring on or its data stopped */
   fun ringShows(decision: ObstacleDecision): Boolean = decision.arcs.isNotEmpty() && (decision.on || decision.stopped)
 
@@ -370,6 +404,13 @@ class DjiFlightViewActivity : AppSystemActivity() {
     private const val HALO_FADE_IN_MS = 150L
     private const val HALO_FADE_OUT_MS = 400L
 
+    /**
+     * The circle's panel sits this far in front of the video, inside its rectangle. Whether the compositor shows the
+     * video through its transparent parts is not verified on a headset: the owner's sample decides, and the frame
+     * at the edges (behind the video) is the setting to use if the picture does not show through.
+     */
+    private const val CIRCLE_FRONT_M = 0.015f
+
     /** Labels 18 sp, values 40 sp: about 0.08 m tall at 2.5 m, read at a glance */
     private const val CELL_LABEL_SP = 18f
     private const val CELL_VALUE_SP = 40f
@@ -436,6 +477,23 @@ class DjiFlightViewActivity : AppSystemActivity() {
   private var rightShown: List<FlightViewControls.Cell> = emptyList()
   private var haloView: ObstacleHaloView? = null
   private var haloShown = false
+  private var circleEntity: Entity? = null
+  private var circleView: ObstacleCircleView? = null
+  private var circleShown = false
+
+  /** The warnings of the strip and of the panel, which come and go ([TransientText]) */
+  private var stripRoot: View? = null
+  private var observerText: TextView? = null
+  private var watchingText: TextView? = null
+  private var flyNoteText: TextView? = null
+  private var hintText: TextView? = null
+  private val stateClock = TransientClock()
+  private val redClock = TransientClock()
+  private val watchingClock = TransientClock()
+  private val flyNoteClock = TransientClock()
+  private val hintClock = TransientClock()
+  private val faded = mutableMapOf<View, Boolean>()
+  private var stripGone = false
   private val handler = Handler(Looper.getMainLooper())
   private val refresh = object : Runnable {
     override fun run() {
@@ -477,6 +535,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
       leftEntity = Entity.createPanelEntity(R.id.dji_flight_left_panel, Transform(), Visible(false))
       rightEntity = Entity.createPanelEntity(R.id.dji_flight_right_panel, Transform(), Visible(false))
       haloEntity = createHalo()
+      circleEntity = createCircle()
       systemManager.registerSystem(ImmersiveInputSystem(input))
       sceneReady = true
       handler.post(refresh)
@@ -494,6 +553,12 @@ class DjiFlightViewActivity : AppSystemActivity() {
   /** The halo, flat or curved as the video is; the controllers' rays go through it */
   private fun createHalo(): Entity =
     Entity.createPanelEntity(haloPanelId(), Transform(), Visible(false), Hittable(MeshCollision.NoCollision))
+
+  private fun circlePanelId(): Int = if (curved) R.id.dji_flight_circle_curved else R.id.dji_flight_circle_flat
+
+  /** The circle's panel, flat or curved as the video is; the controllers' rays go through it */
+  private fun createCircle(): Entity =
+    Entity.createPanelEntity(circlePanelId(), Transform(), Visible(false), Hittable(MeshCollision.NoCollision))
 
   override fun registerPanels(): List<PanelRegistration> =
     listOf(
@@ -537,6 +602,10 @@ class DjiFlightViewActivity : AppSystemActivity() {
       haloRegistration(R.id.dji_flight_ring_curved) { width, height ->
         CylinderShapeOptions(radius = CURVE_RADIUS_M, width = width, height = height)
       },
+      circleRegistration(R.id.dji_flight_circle_flat) { side -> QuadShapeOptions(width = side, height = side) },
+      circleRegistration(R.id.dji_flight_circle_curved) { side ->
+        CylinderShapeOptions(radius = CURVE_RADIUS_M, width = side, height = side)
+      },
     )
 
   /**
@@ -564,6 +633,34 @@ class DjiFlightViewActivity : AppSystemActivity() {
           alpha = 0f
         }
         haloShown = false
+        refreshNow()
+      },
+    )
+  }
+
+  /**
+   * The circle around the video's centre (the default shape): a transparent layer over the middle of the video at the
+   * reference width, blended over it, with the same pose and scale as the video ([applyPlacement]), a little in front
+   */
+  private fun circleRegistration(id: Int, shape: (Float) -> UIPanelShapeOptions): PanelRegistration {
+    val side = FlightViewControls.circleSideM(VIDEO_REFERENCE_WIDTH_M)
+    return LayoutXMLPanelRegistration(
+      id,
+      layoutIdCreator = { R.layout.dji_flight_circle },
+      settingsCreator = {
+        UIPanelSettings(
+          shape = shape(side),
+          style = PanelStyleOptions(themeResourceId = R.style.ImmersivePanelTheme),
+          display = DpDisplayOptions(width = side * HALO_DP_PER_M, height = side * HALO_DP_PER_M, dpi = 260),
+          rendering = UIPanelRenderOptions(PanelRenderMode.Layer(PanelShapeLayerBlendType.ALPHA_BLEND)),
+        )
+      },
+      panelSetupWithRootView = { root, _, _ ->
+        circleView = root.findViewById<ObstacleCircleView>(R.id.dji_flight_circle_view)?.apply {
+          videoHeightPart = FlightViewControls.circleVideoHeightPart(VIDEO_REFERENCE_WIDTH_M)
+          alpha = 0f
+        }
+        circleShown = false
         refreshNow()
       },
     )
@@ -609,20 +706,23 @@ class DjiFlightViewActivity : AppSystemActivity() {
       },
     )
 
-  /** The strip under the video, which no button hides */
+  /** The strip under the video, whose warnings come and go */
   private fun bindStrip(root: View) {
+    stripRoot = root
     stateText = root.findViewById(R.id.dji_flight_state)
     staleText = root.findViewById(R.id.dji_flight_stale)
-    root.findViewById<TextView>(R.id.dji_flight_observer)?.text = label("observer")
-    root.findViewById<TextView>(R.id.dji_flight_watching)?.text = label("watching")
+    observerText = root.findViewById<TextView>(R.id.dji_flight_observer)?.apply { text = label("observer") }
+    watchingText = root.findViewById<TextView>(R.id.dji_flight_watching)?.apply { text = label("watching") }
+    faded.clear()
+    stripGone = false
     refreshNow()
   }
 
-  /** The values panel under the strip, which A shows or hides */
+  /** The values panel under the strip, which A shows or hides; its DJI Fly line and hint come and go */
   private fun bindPanel(root: View) {
     latencyText = root.findViewById(R.id.dji_flight_latency)
-    root.findViewById<TextView>(R.id.dji_flight_fly_note)?.text = label("flyNote")
-    root.findViewById<TextView>(R.id.dji_flight_hint)?.text = label("hint")
+    flyNoteText = root.findViewById<TextView>(R.id.dji_flight_fly_note)?.apply { text = label("flyNote") }
+    hintText = root.findViewById<TextView>(R.id.dji_flight_hint)?.apply { text = label("hint") }
     root.findViewById<TextView>(R.id.dji_flight_back)?.apply {
       text = label("back")
       setOnClickListener { close() }
@@ -659,14 +759,15 @@ class DjiFlightViewActivity : AppSystemActivity() {
       return
     }
     val numbers = runCatching { DjiLinkController.of(this).flightViewNumbers() }.getOrNull() ?: return
+    val stateKeys = FlightViewControls.stateLabels(numbers)
     stateText?.show(
-      FlightViewControls.stateLabels(numbers).joinToString(" ") { key ->
+      stateKeys.joinToString(" ") { key ->
         if (key == "replay") fill("replay", "name" to (numbers.replayName ?: "-")) else label(key)
       },
     )
     val ago = numbers.lastPictureAgoMs
+    val line = FlightViewControls.stripLine(ago, numbers.receiveToPictureMs)
     staleText?.apply {
-      val line = FlightViewControls.stripLine(ago, numbers.receiveToPictureMs)
       visibility = if (line == FlightViewControls.StripLine.NONE) View.GONE else View.VISIBLE
       show(
         when (line) {
@@ -677,6 +778,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
         },
       )
     }
+    showWarnings(stateKeys, line, ago)
     val values = numbers.values
     leftShown =
       fillColumn(leftCells, leftShown, FlightViewControls.cells(values, labels, FlightViewControls.LEFT_FIELDS))
@@ -695,22 +797,82 @@ class DjiFlightViewActivity : AppSystemActivity() {
       videoVisible = show
       videoEntity?.setComponent(Visible(show && placed))
     }
-    stripEntity?.setComponent(Visible(placed))
+    stripEntity?.setComponent(Visible(placed && !stripGone))
     panelEntity?.setComponent(Visible(panelShown && placed))
-    // A hides the columns with the lower panel; the ring and the strip always show
+    // A hides the columns with the lower panel; the ring always shows, the strip while it holds a warning
     leftEntity?.setComponent(Visible(panelShown && placed && leftShown.isNotEmpty()))
     rightEntity?.setComponent(Visible(panelShown && placed && rightShown.isNotEmpty()))
   }
 
   /**
-   * The ring around the video: nothing at all while nothing is close; it comes in over 150 ms and leaves over 400 ms,
-   * and the halo's panel is hidden once it has faded
+   * The warnings of the strip and of the panel (FreeKC's rule of 25 October, [TransientText]): each shows five seconds
+   * when it comes or changes kind and after any button, then fades; the state line that needs an action and the red
+   * line while the video is hidden stay. The strip goes once nothing is left in it, and comes back with the next one.
+   */
+  private fun showWarnings(stateKeys: List<String>, line: FlightViewControls.StripLine, ago: Long?) {
+    val now = android.os.SystemClock.uptimeMillis()
+    stateClock.follow(stateKeys.joinToString(","), now)
+    redClock.follow(line.takeIf { it != FlightViewControls.StripLine.NONE }, now)
+    watchingClock.follow("watching", now)
+    flyNoteClock.follow("flyNote", now)
+    hintClock.follow("hint", now)
+    val stateShown = stateClock.shown(now, keep = FlightViewControls.stateKeeps(stateKeys))
+    val redShown = redClock.shown(now, keep = FlightViewControls.redLineKeeps(line, ago))
+    val watchingShown = watchingClock.shown(now)
+    fade(stateText, stateShown)
+    fade(staleText, redShown)
+    fade(observerText, watchingShown)
+    fade(watchingText, watchingShown)
+    fade(flyNoteText, flyNoteClock.shown(now))
+    fade(hintText, hintClock.shown(now))
+    // The strip itself, its dark plate included, once nothing is left in it
+    val anything = stateShown || redShown || watchingShown
+    val root = stripRoot ?: return
+    if (anything && stripGone) {
+      stripGone = false
+      stripEntity?.setComponent(Visible(placed))
+    }
+    fade(root, anything) {
+      stripGone = true
+      stripEntity?.setComponent(Visible(false))
+    }
+  }
+
+  /** In over 250 ms, out over 0.8 s, only when it changes; [gone] runs once it faded out */
+  private fun fade(view: View?, shown: Boolean, gone: (() -> Unit)? = null) {
+    if (view == null || faded[view] == shown) {
+      return
+    }
+    faded[view] = shown
+    view.animate().cancel()
+    if (shown) {
+      view.animate().alpha(1f).setDuration(TransientText.FADE_IN_MS).start()
+    } else {
+      view.animate().alpha(0f).setDuration(TransientText.FADE_OUT_MS).withEndAction {
+        if (faded[view] == false) {
+          gone?.invoke()
+        }
+      }.start()
+    }
+  }
+
+  /**
+   * The obstacle indicator: the circle around the video's centre (the default) or the frame around the video, as
+   * chosen on this headset. Nothing at all while nothing is close; it comes in over 150 ms and leaves over 400 ms, and
+   * its panel is hidden once it has faded.
    */
   private fun showRing(numbers: DjiFlightNumbers) {
-    val view = haloView ?: return
     val decision = numbers.alert
-    if (FlightViewControls.ringShows(decision)) {
-      view.show(decision.arcs, FlightViewControls.ringNumber(decision, labels, numbers.ringNumbers, panelShown))
+    val shows = FlightViewControls.ringShows(decision)
+    val number = FlightViewControls.ringNumber(decision, labels, numbers.ringNumbers, panelShown)
+    showHalo(shows && numbers.ringFrame, decision, number)
+    showCircle(shows && !numbers.ringFrame, decision, number)
+  }
+
+  private fun showHalo(shows: Boolean, decision: ObstacleDecision, number: String?) {
+    val view = haloView ?: return
+    if (shows) {
+      view.show(decision.arcs, number)
       if (!haloShown) {
         haloShown = true
         haloEntity?.setComponent(Visible(placed))
@@ -729,6 +891,31 @@ class DjiFlightViewActivity : AppSystemActivity() {
     }
     if (haloShown) {
       haloEntity?.setComponent(Visible(placed))
+    }
+  }
+
+  private fun showCircle(shows: Boolean, decision: ObstacleDecision, number: String?) {
+    val view = circleView ?: return
+    if (shows) {
+      view.show(decision.arcs, number)
+      if (!circleShown) {
+        circleShown = true
+        circleEntity?.setComponent(Visible(placed))
+        view.animate().cancel()
+        view.animate().alpha(1f).setDuration(HALO_FADE_IN_MS).start()
+      }
+    } else if (circleShown) {
+      circleShown = false
+      view.animate().cancel()
+      view.animate().alpha(0f).setDuration(HALO_FADE_OUT_MS).withEndAction {
+        if (!circleShown) {
+          circleEntity?.setComponent(Visible(false))
+          view.show(emptyList(), null)
+        }
+      }.start()
+    }
+    if (circleShown) {
+      circleEntity?.setComponent(Visible(placed))
     }
   }
 
@@ -831,7 +1018,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
     val stripPosition = Vector3(position.x, position.y, position.z)
     stripPosition.y = videoBottom - PANEL_GAP_M - STRIP_HEIGHT_M / 2f
     stripEntity?.setComponent(Transform(Pose(stripPosition, rotation)))
-    stripEntity?.setComponent(Visible(true))
+    stripEntity?.setComponent(Visible(!stripGone))
     val panelPosition = Vector3(position.x, position.y, position.z)
     panelPosition.y = videoBottom - PANEL_GAP_M - STRIP_HEIGHT_M - PANEL_GAP_M - PANEL_HEIGHT_M / 2f
     panelEntity?.setComponent(Transform(Pose(panelPosition, rotation)))
@@ -839,6 +1026,9 @@ class DjiFlightViewActivity : AppSystemActivity() {
     // The ring's halo around the video, as the video: same turn, same scale, a little behind it; A never hides it
     haloEntity?.setComponent(Transform(Pose(position + (direction * HALO_BEHIND_M), rotation)))
     haloEntity?.setComponent(Scale(Vector3(scale, scale, 1f)))
+    // The circle over the middle of the video, the same turn and scale, a little in front of it
+    circleEntity?.setComponent(Transform(Pose(position - (direction * CIRCLE_FRONT_M), rotation)))
+    circleEntity?.setComponent(Scale(Vector3(scale, scale, 1f)))
     placeColumns(position, direction, rotation, width)
   }
 
@@ -868,6 +1058,12 @@ class DjiFlightViewActivity : AppSystemActivity() {
   }
 
   private fun onButtons(controllerBits: Int, handBits: Int) {
+    if (FlightViewControls.recalls(controllerBits, handBits)) {
+      val now = android.os.SystemClock.uptimeMillis()
+      for (clock in listOf(stateClock, redClock, watchingClock, flyNoteClock, hintClock)) {
+        clock.recall(now)
+      }
+    }
     for (action in FlightViewControls.actionsFor(controllerBits, handBits)) {
       when (action) {
         FlightViewControls.Action.CLOSE -> {
@@ -875,7 +1071,7 @@ class DjiFlightViewActivity : AppSystemActivity() {
           return
         }
         FlightViewControls.Action.TOGGLE_VALUES -> {
-          // The values only: the strip with the stale line, the observer note and watching only stays, and the ring
+          // The values only: the strip with its warnings and the ring are not A's
           panelShown = !panelShown
           panelEntity?.setComponent(Visible(panelShown && placed))
           leftEntity?.setComponent(Visible(panelShown && placed && leftShown.isNotEmpty()))
@@ -899,11 +1095,15 @@ class DjiFlightViewActivity : AppSystemActivity() {
     old.destroy()
     curved = !curved
     videoEntity = Entity.create(Panel(videoPanelId()), Transform(), Visible(false))
-    // The halo follows the video's shape: its new panel binds a new view
+    // The halo and the circle follow the video's shape: their new panels bind new views
     haloEntity?.destroy()
     haloView = null
     haloShown = false
     haloEntity = createHalo()
+    circleEntity?.destroy()
+    circleView = null
+    circleShown = false
+    circleEntity = createCircle()
     applyPlacement()
   }
 

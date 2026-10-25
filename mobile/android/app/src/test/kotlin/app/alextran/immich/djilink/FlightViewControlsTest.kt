@@ -263,11 +263,61 @@ class FlightViewControlsTest {
     assertTrue(FlightViewControls.ringShows(ring()))
     assertTrue(FlightViewControls.ringShows(ring(on = false, stopped = true)))
     assertEquals("1.4 m", FlightViewControls.ringNumber(ring(), ringLabels, numbersOn = true, valuesShown = true))
-    // Off by default, hidden by A with the values, never once the data stopped
+    // Asked on this headset (on by default in Flutter), hidden by A with the values, never once the data stopped
     assertNull(FlightViewControls.ringNumber(ring(), ringLabels, numbersOn = false, valuesShown = true))
     assertNull(FlightViewControls.ringNumber(ring(), ringLabels, numbersOn = true, valuesShown = false))
     assertNull(FlightViewControls.ringNumber(ring(on = false, stopped = true), ringLabels, true, true))
     assertNull(FlightViewControls.ringNumber(ring(), emptyMap(), numbersOn = true, valuesShown = true))
+  }
+
+  @Test
+  fun theCirclesPanelStaysInsideTheVideoAndHoldsTheCircleAndItsNumber() {
+    // At the reference width: a video 1.35 m tall, a circle of 0.3375 m, 0.061 m thick, 0.12 m for the number
+    assertEquals(2f * (0.3375f + 0.06075f + 0.12f), FlightViewControls.circleSideM(2.4f), 1e-5f)
+    for (videoWidth in FlightViewControls.WIDTHS_M) {
+      val side = FlightViewControls.circleSideM(videoWidth)
+      val height = videoWidth * 9f / 16f
+      // Inside the video's rectangle at every width, so it never covers the strip or the columns
+      assertTrue(side < height)
+      // Registered at the reference size and scaled as the video is
+      assertEquals(FlightViewControls.circleSideM(2.4f) * videoWidth / 2.4f, side, 1e-4f)
+      // The circle drawn in it has a radius of a quarter of the video's height
+      val part = FlightViewControls.circleVideoHeightPart(videoWidth)
+      assertEquals(height, side * part, 1e-4f)
+      assertEquals(height / 4f, (side * part * RingCircle.RADIUS_PART).toFloat(), 1e-4f)
+    }
+  }
+
+  @Test
+  fun anyButtonBringsTheWarningsBack() {
+    assertTrue(FlightViewControls.recalls(ButtonBits.ButtonTriggerR, 0))
+    assertTrue(FlightViewControls.recalls(ButtonBits.ButtonSqueezeL, 0))
+    assertTrue(FlightViewControls.recalls(ButtonBits.ButtonA, 0))
+    assertTrue(FlightViewControls.recalls(0, ButtonBits.ButtonMenu))
+    assertFalse(FlightViewControls.recalls(0, 0))
+  }
+
+  @Test
+  fun anErrorThatNeedsAnActionStaysAndTheRedLineStaysWhileTheVideoIsHidden() {
+    val keeps = FlightViewControls::stateKeeps
+    assertFalse(keeps(listOf("live")))
+    assertFalse(keeps(listOf("replay")))
+    assertFalse(keeps(listOf("lost")))
+    assertFalse(keeps(listOf("local")))
+    assertTrue(keeps(listOf("noSource")))
+    assertTrue(keeps(listOf("wrongCode", "ended")))
+    assertTrue(keeps(listOf("otherVersion", "ended")))
+    assertTrue(keeps(listOf("unproven", "ended")))
+    assertTrue(keeps(listOf("ended")))
+    val red = FlightViewControls::redLineKeeps
+    // A picture that stopped under 2 s ago still shows: its line comes and goes
+    assertFalse(red(FlightViewControls.StripLine.STALE, 900))
+    // The video is hidden: the one line that says why stays
+    assertTrue(red(FlightViewControls.StripLine.STALE, 2_400))
+    assertTrue(red(FlightViewControls.StripLine.NO_PICTURE, null))
+    // A late picture is a warning over a picture that shows
+    assertFalse(red(FlightViewControls.StripLine.DELAY_HIGH, 40))
+    assertFalse(red(FlightViewControls.StripLine.NONE, null))
   }
 
   @Test

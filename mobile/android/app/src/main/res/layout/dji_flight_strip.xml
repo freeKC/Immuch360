@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The strip of the Meta Quest flight view of DJI link, right under the video, which no button hides: the state of
-     the picture and the red "No new picture" line on the left, the observer note and "Watching only" on the right. Its
-     size in dp is set in DjiFlightViewActivity.registerPanels. Every text comes from Flutter. -->
+<!-- The strip of the Meta Quest flight view of DJI link, right under the video: the state of the picture and the red
+     "No new picture" line on the left, the observer note and "Watching only" on the right. Each comes for five seconds
+     and fades, back with any button (TransientText); an error that needs an action stays, and the strip goes when
+     nothing is left in it. Its size in dp is set in DjiFlightViewActivity.registerPanels. Every text comes from
+     Flutter. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
