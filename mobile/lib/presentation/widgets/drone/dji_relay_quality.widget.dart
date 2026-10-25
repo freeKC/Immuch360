@@ -63,7 +63,7 @@ String? djiRelaySteadyLine(Translations t, DjiRelaySending? sending) {
   final height = sending.steadyHeight;
   return t.dji_link_relay_steady_line(
     encoder: encoder,
-    size: width == null || height == null ? '-' : '${width}x$height',
+    frame: width == null || height == null ? '-' : '${width}x$height',
     rate: '${sending.steadyPerSecond ?? 30}',
     megabits: djiLinkNumber(sending.steadyMegabits),
     median: djiLinkNumber(sending.steadyEncodeMedianMs, 0),

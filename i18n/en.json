@@ -1373,7 +1373,7 @@
   "dji_link_relay_sending_replay": "Sending the capture being played",
   "dji_link_relay_start_failed": "Sending could not start on this phone.",
   "dji_link_relay_steady_hot": "Steady stream paused: the phone is hot",
-  "dji_link_relay_steady_line": "Steady stream: {encoder}, {size}, {rate} per second, {megabits} Mbit/s now, encoding {median} ms (95 %: {p95} ms)",
+  "dji_link_relay_steady_line": "Steady stream: {encoder}, {frame}, {rate} per second, {megabits} Mbit/s now, encoding {median} ms (95 %: {p95} ms)",
   "dji_link_relay_steady_ready": "Steady stream ready: {encoder}",
   "dji_link_relay_steady_stopped": "Steady stream stopped: {why}",
   "dji_link_relay_steady_unavailable": "No steady stream on this phone: {why}",
