@@ -131,7 +131,9 @@ void main() {
     await tester.pump();
     expect(find.text('Height'), findsNothing);
     expect(find.text('Below'), findsNothing);
-    expect(tester.getRect(find.byKey(const Key('dji_live_cell_distanceBelow'))), below);
+    // The places stay, empty: nothing moves when the drone takes off again
+    final empty = tester.getRect(find.byKey(const Key('dji_live_cell_distanceBelow')));
+    expect((empty.top, empty.bottom), (below.top, below.bottom));
   });
 
   testWidgets('a cell keeps its size whatever its number, and a stale one keeps its place', (tester) async {

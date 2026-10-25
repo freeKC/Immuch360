@@ -605,23 +605,14 @@ void main() {
     expect(find.text('Exported to Download/Immuch360/dji-link/dji-link-20261022-120000.bin'), findsOneWidget);
     expect(find.textContaining('Keep the files to yourself.'), findsOneWidget);
 
+    expect(find.byKey(const Key('dji_live_no_dji_warnings')), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_diagnostics')), findsOneWidget);
     expect(find.text('Heading (zero not checked against north)'), findsOneWidget);
     expect(find.text('127°'), findsOneWidget);
-    expect(find.text('Drone battery voltage'), findsOneWidget);
-    expect(find.text('6.18 V'), findsOneWidget);
-    // The values our captures only make likely: under "Not confirmed yet", with a question mark
-    await tester.scrollUntilVisible(
-      find.byKey(const Key('dji_live_values_pending')),
-      100,
-      scrollable: find.descendant(
-        of: find.byKey(const Key('dji_live_advanced_panel')),
-        matching: find.byType(Scrollable),
-      ),
+    final panel = find.descendant(
+      of: find.byKey(const Key('dji_live_advanced_panel')),
+      matching: find.byType(Scrollable),
     );
-    expect(find.byKey(const Key('dji_live_values_unconfirmed')), findsOneWidget);
-    expect(find.text('Remote battery?'), findsOneWidget);
-    expect(find.text('50 %'), findsOneWidget);
-    expect(find.text('Signal bars?'), findsOneWidget);
     // Proven by the flights of 25 October: with the proven values, with their full labels and no question mark
     for (final (field, label, value) in [
       ('height', 'Height above the take off point', '1.2 m'),
@@ -631,16 +622,23 @@ void main() {
       ('obstacle', 'Nearest obstacle', '1.8 m'),
     ]) {
       final row = find.byKey(Key('dji_live_advanced_value_$field'));
+      await tester.scrollUntilVisible(row, 100, scrollable: panel);
       expect(find.descendant(of: row, matching: find.text(label)), findsOneWidget, reason: field);
       expect(find.descendant(of: row, matching: find.text(value)), findsOneWidget, reason: field);
     }
+    await tester.scrollUntilVisible(find.text('Drone battery voltage'), 100, scrollable: panel);
+    expect(find.text('6.18 V'), findsOneWidget);
+    // The values our captures only make likely: under "Not confirmed yet", with a question mark
+    await tester.scrollUntilVisible(find.byKey(const Key('dji_live_values_pending')), 100, scrollable: panel);
+    expect(find.byKey(const Key('dji_live_values_unconfirmed')), findsOneWidget);
+    expect(find.text('Remote battery?'), findsOneWidget);
+    expect(find.text('50 %'), findsOneWidget);
+    expect(find.text('Signal bars?'), findsOneWidget);
     expect(find.text('Height above the take off point?'), findsNothing);
     expect(find.text('Vertical speed?'), findsNothing);
     expect(find.text('Distance below?'), findsNothing);
     expect(find.text('Nearest obstacle?'), findsNothing);
     expect(find.text('The distance from home shows once an outdoor flight proves it.'), findsOneWidget);
-    expect(find.byKey(const Key('dji_live_no_dji_warnings')), findsOneWidget);
-    expect(find.byKey(const Key('dji_live_diagnostics')), findsOneWidget);
     await tester.scrollUntilVisible(
       find.byKey(const Key('dji_live_to_dji_fly')),
       100,
