@@ -9,6 +9,7 @@ import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -84,7 +85,7 @@ class FakeSteadySource : RelaySteadySource {
 }
 
 /** A receiver's listener that keeps every unit's flags and the parameter sets' flags */
-class SteadyRecordingListener : RecordingReceiverListener() {
+open class SteadyRecordingListener : RecordingReceiverListener() {
   val flags = CopyOnWriteArrayList<Int>()
   val network = RelayPingNetwork(
     transport = RelayPingNetwork.TRANSPORT_WIFI,
@@ -134,6 +135,22 @@ class RelaySteadyWireTest {
   private fun steadyUnit(index: Int, counter: Int): AccessUnit =
     EncodedUnits.unitOf(encoded(index), RelaySourceStamp(1, 2, 5_000L + counter * 33, -1), 0, counter)!!
 
+  private lateinit var listenerForSets: RecordingReceiverListener
+
+  private fun sets(): List<Pair<StreamDescription, DescriptionSource>> =
+    synchronized(listenerForSets.parameters) { listenerForSets.parameters.toList() }
+
+  /** A drone unit of [body] bytes at [perSecond] (its content clock steps of 17 or 33 ms) */
+  private fun droneAt(counter: Int, perSecond: Int, key: Boolean = false, body: Int = 40, base: Int = 0): AccessUnit {
+    val step = if (perSecond >= 45) 50.0 / 3 else 100.0 / 3
+    val clock = base + (counter * step).toInt()
+    return HevcSamples.unitOf(
+      HevcSamples.DELIMITER,
+      HevcSamples.slice(type = if (key) 19 else 1, body = body),
+      HevcSamples.suffixSeiWithClock(counter = counter, clockMs = clock and 0xFFFF),
+    ).also { it.contentMs = clock.toLong() }
+  }
+
   @Test
   fun aReceiverOfThisBuildSwitchesToTheSteadyStreamAndBackWithItsNetworkInThePhonesReport() {
     val steady = FakeSteadySource()
@@ -141,6 +158,7 @@ class RelaySteadyWireTest {
     val port = server.start(code, 0, InetAddress.getLoopbackAddress())
     server.source = RelaySource.CABLE
     val listener = SteadyRecordingListener()
+    listenerForSets = listener
     val receiver = RelayReceiver(listener, pingIntervalMs = 50)
     try {
       receiver.connect("127.0.0.1", port, code, null, "Salon 2", "test", kind = "tv")
@@ -181,8 +199,7 @@ class RelaySteadyWireTest {
       assertEquals(0, switchKey and RelayWire.UNIT_PRIMER)
       assertTrue(flags.drop(3).all { (it and RelayWire.UNIT_PHONE) != 0 })
       // The steady stream's own parameter sets came before its key unit, as the phone's encoder's
-      val sets = synchronized(listener.parameters) { listener.parameters.toList() }
-      assertTrue(sets.last().first.sameSetsAs(phoneDescription.description))
+      assertTrue(sets().last().first.sameSetsAs(phoneDescription.description))
       // Its own consecutive counter, in the header, in place of the SEI
       val headers = synchronized(listener.units) { listener.units.map { it.second } }
       assertEquals(listOf(1, 2, 3), headers.drop(3).map { it.pictureCounter })
@@ -230,17 +247,28 @@ class RelaySteadyWireTest {
       assertEquals(columns.size, line.size)
       assertEquals("1", line[columns.indexOf("stream")])
       assertEquals("8000", line[columns.indexOf("bitrateKbps")])
-      // The steady stream stops: back to the drone's stream at once, with today's primer
+      // The steady stream stops: back to the drone's stream at once, its kept key decoded at once with its sets in band
+      // (p2/review-bandwidth-2026-10-25.md M2), not kept as a primer
       steady.isUsable = false
       server.tick(System.nanoTime() + 1_200_000_000L)
       assertNotNull(listener.await("unit 6"))
-      val primer = listener.flags.last()
-      assertTrue((primer and RelayWire.UNIT_PRIMER) != 0)
-      assertTrue((primer and RelayWire.UNIT_BREAK) != 0)
-      assertEquals(0, primer and RelayWire.UNIT_PHONE)
+      val key = listener.flags.last()
+      assertEquals(0, key and RelayWire.UNIT_PRIMER)
+      assertTrue((key and RelayWire.UNIT_KEY) != 0)
+      assertTrue((key and RelayWire.UNIT_BREAK) != 0)
+      assertTrue((key and RelayWire.UNIT_IN_BAND) != 0)
+      assertEquals(0, key and RelayWire.UNIT_PHONE)
+      val keyUnit = synchronized(listener.units) { listener.units.last().first }
+      assertTrue(keyUnit.isKey)
+      assertTrue(EncodedUnits.descriptionOf(keyUnit.bytes)!!.sameSetsAs(drone.description))
+      assertTrue(sets().last().first.sameSetsAs(drone.description))
       server.submit(droneUnit(5), drone)
       assertNotNull(listener.await("unit 7"))
+      // The live unit after it breaks too: it predicts from pictures the TV never had
       assertEquals(0, listener.flags.last() and RelayWire.UNIT_PHONE)
+      assertTrue((listener.flags.last() and RelayWire.UNIT_BREAK) != 0)
+      assertEquals(0L, receiver.snapshot().lostOnWifi)
+      assertEquals(1L, server.report()["fallbackKeysSent"]!!.jsonPrimitive.long)
       assertTrue(eventually { !receiver.snapshot().steady })
       val back = server.report()["receivers"]!!.jsonArray.single().jsonObject["streamSwitches"]!!.jsonArray.last()
       assertEquals("transcoder", back.jsonObject["why"]!!.jsonPrimitive.content)
@@ -347,5 +375,244 @@ class RelaySteadyWireTest {
     // Without its numbers, the longer ping still says -1 for them
     assertEquals(-1, RelayWire.parsePing(RelayWire.pingBody(1, 2, 3, null, network)).numbers!!.freezes)
     assertEquals(DescriptionSource.SESSION, RelayWire.sourceOfParametersFlag(RelayWire.PARAMETERS_PHONE_ENCODER))
+  }
+
+  /**
+   * p2/review-bandwidth-2026-10-25.md M5: Automatic goes back to the drone's stream at the landing key picture, with
+   * the phase read from the picture rate of the units after the key (the motors still read as running), the room from
+   * the best second its path carried on the full stream, and the key unit with the units after it from a clean start.
+   * A key picture before 30 s quiet is refused, and counted.
+   */
+  @Test
+  fun automaticGoesBackAtTheLandingKeyWithTheKeyAndTheUnitsAfterIt() {
+    var now = 1_000_000_000_000L
+    val steady = FakeSteadySource()
+    val server = RelayServer(
+      clockNs = { now },
+      runTicker = false,
+      pingTimeoutMs = 600_000,
+      writerStallNs = Long.MAX_VALUE / 4,
+      steady = steady,
+    )
+    val port = server.start(code, 0, InetAddress.getLoopbackAddress())
+    server.source = RelaySource.CABLE
+    // Read on the controller's 500 ms tick: still running when the landing key comes
+    server.motorsOn = true
+    val listener = SteadyRecordingListener()
+    listenerForSets = listener
+    val receiver = RelayReceiver(listener, pingIntervalMs = 50)
+    try {
+      receiver.connect("127.0.0.1", port, code, null, "Salon 2", "test", kind = "tv")
+      assertNotNull(listener.await("connected"))
+      assertTrue(eventually { server.headsetCount == 1 })
+      // In flight on the full stream: a second that carried 1.2 MB, 9.8 Mbit/s
+      var counter = 0
+      server.submit(droneAt(counter++, 60, key = true, body = 60_000), drone)
+      repeat(19) { server.submit(droneAt(counter++, 60, body = 60_000), drone) }
+      assertTrue(eventually { synchronized(listener.units) { listener.units.size } == 20 })
+      Thread.sleep(100)
+      now += 1_000_000_000L
+      server.tick(now)
+      // Steady stream chosen, then Automatic: it stays steady (p2/review-bandwidth-2026-10-25.md m6)
+      server.quality = RelayQuality.STEADY
+      now += 100_000_000L
+      server.tick(now)
+      server.submitSteady(steadyUnit(0, 0), phoneDescription)
+      assertTrue(eventually { receiver.snapshot().steady })
+      server.quality = RelayQuality.AUTOMATIC
+      now += 100_000_000L
+      server.tick(now)
+      assertEquals("steady", server.snapshot().headsets.single().stream)
+      // A drone key picture 1 s later: not quiet for 30 s yet
+      server.submit(droneAt(counter++, 60, key = true), drone)
+      repeat(5) { server.submit(droneAt(counter++, 60), drone) }
+      assertEquals("steady", server.snapshot().headsets.single().stream)
+      // 31 s quiet
+      repeat(310) {
+        now += 100_000_000L
+        server.tick(now)
+      }
+      val before = synchronized(listener.units) { listener.units.size }
+      // The landing: the drone's encoder starts again at 30 a second
+      counter = 0
+      server.submit(droneAt(counter++, 30, key = true, base = 40_000), drone)
+      repeat(5) { server.submit(droneAt(counter++, 30, base = 40_000), drone) }
+      assertTrue(eventually { synchronized(listener.units) { listener.units.size } == before + 6 })
+      assertTrue(eventually { !receiver.snapshot().steady })
+      val flags = listener.flags.toList().takeLast(6)
+      val first = flags.first()
+      assertTrue((first and RelayWire.UNIT_KEY) != 0)
+      assertTrue((first and RelayWire.UNIT_BREAK) != 0)
+      assertTrue((first and RelayWire.UNIT_IN_BAND) != 0)
+      assertEquals(0, first and (RelayWire.UNIT_PRIMER or RelayWire.UNIT_PHONE))
+      val notAfterTheKey = RelayWire.UNIT_BREAK or RelayWire.UNIT_PHONE or RelayWire.UNIT_KEY
+      assertTrue(flags.drop(1).all { (it and notAfterTheKey) == 0 })
+      val headers = synchronized(listener.units) { listener.units.takeLast(6).map { it.second } }
+      assertEquals((0..5).toList(), headers.map { it.pictureCounter })
+      assertTrue(sets().last().first.sameSetsAs(drone.description))
+      val tv = server.report()["receivers"]!!.jsonArray.single().jsonObject
+      assertEquals("quiet", tv["streamSwitches"]!!.jsonArray.last().jsonObject["why"]!!.jsonPrimitive.content)
+      val said = tv["steady"]!!.jsonObject
+      assertEquals(2, said["backChecks"]!!.jsonPrimitive.int)
+      assertEquals(1, said["backRefusedNotQuiet"]!!.jsonPrimitive.int)
+      val check = said["lastBackCheck"]!!.jsonObject
+      assertEquals("back", check["check"]!!.jsonPrimitive.content)
+      assertEquals("false", check["flying"]!!.jsonPrimitive.content)
+      assertEquals(30, check["perSecond"]!!.jsonPrimitive.int)
+      assertEquals(4_800L, check["expectedKbps"]!!.jsonPrimitive.long)
+      assertTrue(check["capacityKbps"]!!.jsonPrimitive.long >= 7_200L)
+      assertEquals(0L, receiver.snapshot().lostOnWifi)
+    } finally {
+      receiver.disconnect()
+      server.stop()
+    }
+  }
+
+  /**
+   * The receiver's side of a switch and a fall back (p2/review-bandwidth-2026-10-25.md M2): the records a TV of this
+   * build gets go through its own pipeline as the controller wires it, and the decoder's rules then say, for each unit
+   * the decoder takes, which parameter sets it is parsed with. Whether the phone's encoder codes 1080 lines like the
+   * drone (case a: the same configuration, the decoder flushed at each switch) or 1088 (case b: configured again),
+   * every unit is parsed with the sets it was made with.
+   */
+  @Test
+  fun aReceiverDecodesEveryUnitWithItsOwnSetsAcrossASwitchAndAFallBack() {
+    // Case a: the drone's VPS and SPS, a PPS of its own
+    val pps = HevcSamples.PPS + byteArrayOf(0x44)
+    val sameSize = StreamDescription(HevcSamples.VPS, HevcSamples.SPS, pps, drone.description.info)
+    val phoneKeyA = { counter: Int ->
+      EncodedUnits.unitOf(
+        HevcSamples.annexB(HevcSamples.VPS, HevcSamples.SPS, pps, HevcSamples.slice(type = 19)),
+        RelaySourceStamp(1, 2, 5_000L + counter * 33, -1),
+        0,
+        counter,
+      )!!
+    }
+    val phoneP = { counter: Int ->
+      EncodedUnits.unitOf(
+        HevcSamples.annexB(HevcSamples.slice(type = 1)),
+        RelaySourceStamp(1, 2, 5_000L + counter * 33, -1),
+        0,
+        counter,
+      )!!
+    }
+    val a = acrossASwitchAndAFallBack(ResolvedDescription(sameSize, DescriptionSource.SESSION), phoneKeyA, phoneP)
+    assertEquals("case a: configured once", 1, a.configurations)
+    assertEquals("case a: flushed at the switch and at the fall back", 2, a.flushes)
+    // Case b: the libx265 vectors code 1088 lines
+    val b = acrossASwitchAndAFallBack(phoneDescription, { steadyUnit(0, it) }, { steadyUnit(1, it) })
+    assertEquals("case b: configured again at each switch", 3, b.configurations)
+    assertEquals(0, b.flushes)
+  }
+
+  private class Decoded(val configurations: Int, val flushes: Int)
+
+  /** The TV's own pipeline, wired as the controller does it, into a sink that records what its decoder would take */
+  private class TvPipeline : SteadyRecordingListener() {
+    val store = ParameterSetStore(MemoryKeyValueStore())
+    val detector = CodecDetector()
+    val taken = java.util.concurrent.CopyOnWriteArrayList<Pair<AccessUnit, ResolvedDescription>>()
+    val pipeline = VideoPipeline(
+      store,
+      object : DecoderSink {
+        override fun submit(unit: AccessUnit, description: ResolvedDescription) {
+          taken.add(unit to description)
+        }
+
+        override fun reset() = Unit
+
+        override fun status(): DecoderStatus = DecoderStatus()
+      },
+    )
+
+    override fun onParameters(description: StreamDescription, source: DescriptionSource, arrivalNs: Long) {
+      synchronized(this) {
+        detector.offer(RelayWire.annexBUnit(description.configuration(), arrivalNs))
+        store.onRelayedDescription(description, source)
+      }
+      super.onParameters(description, source, arrivalNs)
+    }
+
+    override fun onUnit(unit: AccessUnit, header: RelayUnitHeader, flags: Int, arrivalNs: Long) {
+      synchronized(this) {
+        if ((flags and RelayWire.UNIT_PRIMER) != 0) {
+          pipeline.onPrimer(unit, detector)
+        } else {
+          if ((flags and RelayWire.UNIT_BREAK) != 0) {
+            pipeline.relayBreak()
+          }
+          val fresh = detector.offer(unit)
+          pipeline.onUnit(unit, detector, fresh, arrivalNs)
+        }
+      }
+      super.onUnit(unit, header, flags, arrivalNs)
+    }
+  }
+
+  private fun acrossASwitchAndAFallBack(
+    phone: ResolvedDescription,
+    phoneKey: (Int) -> AccessUnit,
+    phoneP: (Int) -> AccessUnit,
+  ): Decoded {
+    val steady = FakeSteadySource()
+    val server = RelayServer(runTicker = false, steady = steady)
+    val port = server.start(code, 0, InetAddress.getLoopbackAddress())
+    server.source = RelaySource.CABLE
+    val tv = TvPipeline()
+    listenerForSets = tv
+    val receiver = RelayReceiver(tv, pingIntervalMs = 50)
+    try {
+      receiver.connect("127.0.0.1", port, code, null, "Salon 2", "test", kind = "tv")
+      assertNotNull(tv.await("connected"))
+      assertTrue(eventually { server.headsetCount == 1 })
+      server.submit(droneUnit(1, key = true), drone)
+      server.submit(droneUnit(2), drone)
+      server.submit(droneUnit(3), drone)
+      // Written before the switch, which would clear them as the other stream's
+      assertTrue(eventually { tv.taken.size == 3 })
+      // Steady stream: the phone's key picture with its sets, two pictures after it
+      server.quality = RelayQuality.STEADY
+      server.tick(System.nanoTime())
+      server.submitSteady(phoneKey(0), phone)
+      server.submitSteady(phoneP(1), phone)
+      server.submitSteady(phoneP(2), phone)
+      assertTrue(eventually { tv.taken.size == 6 })
+      // The steady stream stops between two drone key pictures: back to the drone's stream
+      steady.isUsable = false
+      server.tick(System.nanoTime() + 1_000_000_000L)
+      server.submit(droneUnit(4), drone)
+      server.submit(droneUnit(5), drone)
+      assertTrue(eventually { tv.taken.size == 9 })
+    } finally {
+      receiver.disconnect()
+      server.stop()
+    }
+    // The decoder's rules over what it takes: a configuration when the size needs one, else a flush before a relayed
+    // key picture with other sets; the sets a key unit brings in band become its sets
+    var configured: StreamDescription? = null
+    var sets: StreamDescription? = null
+    var configurations = 0
+    var flushes = 0
+    for ((index, taken) in tv.taken.withIndex()) {
+      val (unit, resolved) = taken
+      val next = resolved.description
+      if (configured == null || DecoderPolicy().mustReconfigure(configured, next)) {
+        configured = next
+        sets = next
+        configurations += 1
+      } else if (DecoderPolicy.flushBeforeKey(relayed = true, isKey = unit.isKey, fed = sets, next = next)) {
+        sets = next
+        flushes += 1
+      }
+      if (unit.isKey && unit.hasParameterSets) {
+        sets = EncodedUnits.descriptionOf(unit.bytes)
+      }
+      assertTrue("unit $index parsed with the sets it was made with", next.sameSetsAs(sets))
+    }
+    // The units after the switch are the phone's, after the fall back the drone's, starting on a key picture each time
+    assertEquals(listOf(true, false, false, true, false, false, true, false, false), tv.taken.map { it.first.isKey })
+    assertTrue(tv.taken[3].second.description.sameSetsAs(phone.description))
+    assertTrue(tv.taken[6].second.description.sameSetsAs(drone.description))
+    return Decoded(configurations, flushes)
   }
 }

@@ -61,6 +61,15 @@ class FakeRelayCodecs : RelayCodecs {
   var encoderInfo: RelayEncoderInfo? = RelayEncoderInfo("c2.fake.hevc.encoder", hardware = true, cbr = true)
   var decoderRefused = false
   var encoderRefused = false
+
+  /** What the encoder's output format says of a latency of one picture */
+  var latencyAccepted: Boolean? = true
+
+  /** Runs while the encoder is made, as the reader thread may meanwhile */
+  var whileEncoderMade: (() -> Unit)? = null
+
+  /** Runs while decoder 2 is made */
+  var whileDecoderMade: (() -> Unit)? = null
   val decoders = mutableListOf<FakeRelayDecoder>()
   val encoders = mutableListOf<FakeRelayEncoder>()
   val openedWith = mutableListOf<StreamDescription>()
@@ -68,6 +77,7 @@ class FakeRelayCodecs : RelayCodecs {
   override fun findEncoder(): RelayEncoderInfo? = encoderInfo
 
   override fun openDecoder(description: StreamDescription, core: RelayTranscoder): RelayDecoderPort? {
+    whileDecoderMade?.invoke()
     if (decoderRefused) {
       return null
     }
@@ -81,7 +91,12 @@ class FakeRelayCodecs : RelayCodecs {
     decoder: RelayDecoderPort,
     core: RelayTranscoder,
   ): RelayEncoderPort? {
-    if (encoderRefused) {
+    whileEncoderMade?.let { during ->
+      whileEncoderMade = null
+      during()
+    }
+    // The encoder draws from decoder 2's GL stage: none can be made on one released meanwhile
+    if (encoderRefused || (decoder as? FakeRelayDecoder)?.released == true) {
       return null
     }
     val setup = RelayEncoderSetup(
@@ -89,7 +104,7 @@ class FakeRelayCodecs : RelayCodecs {
       1080,
       30,
       "cbr",
-      latencyAccepted = true,
+      latencyAccepted = latencyAccepted,
       headersOnKeys = true,
       keyIntervalS = 2,
       level = 0,
@@ -542,6 +557,246 @@ class RelayTranscoderStateTest {
     assertEquals("c2.fake.hevc.encoder", line2.encoderName)
     assertEquals(3_000_000, line2.bitrateBps)
     assertEquals(1920, line2.width)
+  }
+
+  // The fix round of p2/review-bandwidth-2026-10-25.md, with the clock moving and the codecs made as on a phone
+
+  /** B1: a dirty start a minute after the kept key, decoder 2 made 150 ms later while the units come */
+  @Test
+  fun aDirtyStartFromAKeyAMinuteOldKeepsRunningWithADecoderMade150MillisecondsLater() {
+    running()
+    core.setCapableReceivers(false, now)
+    // The take off key, while no receiver of this build is connected
+    core.offer(droneUnit(0, key = true), drone)
+    now += 60 * second
+    var index = 1
+    codecs.whileDecoderMade = {
+      repeat(9) {
+        now += 17 * ms
+        core.offer(droneUnit(index++), drone)
+      }
+    }
+    // A TV joins in flight; the steady stream is needed before any new drone key picture
+    core.setCapableReceivers(true, now)
+    core.offer(droneUnit(index++), drone)
+    core.setNeeded(true, now)
+    codecs.whileDecoderMade = null
+    assertEquals(TranscoderState.RUNNING, core.state)
+    assertNull(core.why)
+    assertEquals(1, core.report(now)!!["dirtyStarts"]!!.jsonPrimitive.int)
+    // Decoder 2 takes the kept key and the units that waited, then keeps up for 2 s
+    val decoder = codecs.decoders.single()
+    val inputs = decoder.pull(now)
+    assertTrue(inputs.first().unit.isKey)
+    assertEquals(10, inputs.size)
+    repeat(120) {
+      now += 50 * ms / 3
+      step(index++, decoder)
+      core.tick(now)
+    }
+    assertEquals(TranscoderState.RUNNING, core.state)
+    assertTrue(core.report(now)!!["inputQueueMaxMs"]!!.jsonPrimitive.long < 1_000)
+  }
+
+  /** B1: a recoverable decoder error in flight makes decoder 2 again from the kept key, which is old by then */
+  @Test
+  fun aDecoderErrorInFlightStartsAgainFromTheOldKeyAndKeepsRunning() {
+    val (first, _) = steady()
+    first.pull(now)
+    var index = 1
+    repeat(60) {
+      now += second
+      step(index++, first)
+      core.tick(now)
+    }
+    core.onDecoderError("0x80001002", recoverable = true, nowNs = now)
+    val again = codecs.decoders.last()
+    assertTrue(again !== first)
+    repeat(60) {
+      now += 50 * ms / 3
+      step(index++, again)
+      core.tick(now)
+    }
+    assertEquals(TranscoderState.RUNNING, core.state)
+    assertEquals(1, core.report(now)!!["dirtyStarts"]!!.jsonPrimitive.int)
+  }
+
+  /**
+   * M1: the encoder is being made on decoder 2 when the take off key brings new parameter sets and releases it: not a
+   * refusal; the encoder is made again on the new decoder 2
+   */
+  @Test
+  fun aTakeOffKeyWithNewSetsWhileTheEncoderIsMadeLeavesTheSteadyStreamRunning() {
+    val tasks = ArrayDeque<Runnable>()
+    val queued = RelayTranscoder(codecs, clockNs = { now }, worker = { tasks.addLast(it) })
+    queued.start(now)
+    queued.setEnabled(true, now)
+    queued.setCapableReceivers(true, now)
+    queued.offer(droneUnit(0, key = true), drone)
+    while (tasks.isNotEmpty()) tasks.removeFirst().run()
+    val other = ResolvedDescription(EncodedUnits.descriptionOf(encoded("a1080", 0))!!, DescriptionSource.SESSION)
+    queued.setNeeded(true, now)
+    codecs.whileEncoderMade = { queued.offer(droneUnit(1, key = true), other) }
+    while (tasks.isNotEmpty()) tasks.removeFirst().run()
+    assertEquals(TranscoderState.RUNNING, queued.state)
+    assertNull(queued.why)
+    assertTrue(codecs.decoders.first().released)
+    assertEquals(2, codecs.decoders.size)
+    assertTrue(codecs.openedWith.last().sameSetsAs(other.description))
+    assertEquals(1, codecs.encoders.size)
+    assertEquals(0, queued.report(now)!!["creationFailures"]!!.jsonPrimitive.int)
+  }
+
+  /** m5: an encoder refused once is tried again 30 s later, and no more after three refusals in the session */
+  @Test
+  fun aRefusedEncoderIsTriedAgainThirtySecondsLaterThreeTimesASession() {
+    codecs.encoderRefused = true
+    running()
+    core.offer(droneUnit(0, key = true), drone)
+    core.setNeeded(true, now)
+    assertEquals("refused", core.why)
+    // Offered to a receiver that joins meanwhile: the phone has an encoder
+    assertTrue(core.available)
+    assertFalse(core.usable)
+    now += 29 * second
+    core.tick(now)
+    assertEquals("refused", core.why)
+    now += 2 * second
+    core.tick(now)
+    assertNull(core.why)
+    assertTrue(core.usable)
+    // It takes this time: from the kept key, as a dirty start
+    codecs.encoderRefused = false
+    core.setNeeded(true, now)
+    assertEquals(TranscoderState.RUNNING, core.state)
+    assertEquals(1, core.report(now)!!["creationRetries"]!!.jsonPrimitive.int)
+    // Three refusals in a session: no more tries
+    val again = FakeRelayCodecs().apply { encoderRefused = true }
+    val refusing = RelayTranscoder(again, clockNs = { now }, worker = { it.run() })
+    refusing.start(now)
+    refusing.setEnabled(true, now)
+    refusing.setCapableReceivers(true, now)
+    refusing.offer(droneUnit(0, key = true), drone)
+    repeat(3) {
+      refusing.setNeeded(true, now)
+      now += 31 * second
+      refusing.tick(now)
+    }
+    assertEquals("refused", refusing.why)
+    assertFalse(refusing.available)
+    assertEquals(3, refusing.report(now)!!["creationFailures"]!!.jsonPrimitive.int)
+  }
+
+  /**
+   * M3, in the field's order: decoder 2 starts with the link, before the pilot has any decode time, and the flight's
+   * phase (60 a second) was never seen without decoder 2. Two picture periods bound the pilot's p95 then.
+   */
+  @Test
+  fun thePilotGuardHoldsWhenDecoderTwoStartsWithTheLink() {
+    running()
+    core.offer(droneUnit(0, key = true), drone)
+    repeat(20) {
+      now += 500 * ms
+      core.onPilot(overruns = 0, decodeP95Ms = 22.7, nowNs = now, flying = true, picturesPerSecond = 60.0)
+    }
+    assertTrue("22.7 ms at 60 a second is under two periods", core.usable)
+    assertEquals(33.3, core.report(now)!!["pilotBoundMs"]!!.jsonPrimitive.content.toDouble(), 0.1)
+    repeat(6) {
+      now += 500 * ms
+      core.onPilot(overruns = 0, decodeP95Ms = 80.0, nowNs = now, flying = true, picturesPerSecond = 60.0)
+    }
+    assertTrue("not for 3 s yet", core.usable)
+    now += 500 * ms
+    core.onPilot(overruns = 0, decodeP95Ms = 80.0, nowNs = now, flying = true, picturesPerSecond = 60.0)
+    assertEquals("pilotFirst", core.why)
+  }
+
+  /** M3: the ground's decode time is not the flight's bound */
+  @Test
+  fun theGroundsDecodeTimeIsNotComparedWithTheFlights() {
+    running()
+    core.setCapableReceivers(false, now)
+    // On the ground at 30 a second, no TV of this build yet: 14 ms is the ground's
+    repeat(10) {
+      now += 500 * ms
+      core.onPilot(overruns = 0, decodeP95Ms = 14.0, nowNs = now, flying = false, picturesPerSecond = 30.0)
+    }
+    core.setCapableReceivers(true, now)
+    // The take off key starts decoder 2; the flight at 60 a second decodes in 22 ms, with or without it
+    core.offer(droneUnit(0, key = true), drone)
+    repeat(20) {
+      now += 500 * ms
+      core.onPilot(overruns = 0, decodeP95Ms = 22.0, nowNs = now, flying = true, picturesPerSecond = 60.0)
+    }
+    assertTrue(core.usable)
+    val report = core.report(now)!!
+    assertEquals("flying60", report["pilotPhase"]!!.jsonPrimitive.content)
+    val ground = report["pilotDecodeP95BeforeByPhaseMs"]!!.jsonObject["ground30"]!!
+    assertEquals(14.0, ground.jsonPrimitive.content.toDouble(), 0.01)
+    // Back on the ground with decoder 2 running: the ground's own bound, 1.5 times 14 ms but at least a period (33 ms)
+    repeat(8) {
+      now += 500 * ms
+      core.onPilot(overruns = 0, decodeP95Ms = 40.0, nowNs = now, flying = false, picturesPerSecond = 30.0)
+    }
+    assertEquals("pilotFirst", core.why)
+  }
+
+  /** m2: an encoder that did not take a latency of one picture may hold three; it is not slow for that */
+  @Test
+  fun anEncoderHoldingPicturesWithoutALatencyOfOneIsNotSlow() {
+    codecs.latencyAccepted = false
+    val (decoder, _) = steady()
+    var index = 1
+    while (now < 10 * second) {
+      now += 50 * ms / 3
+      step(index++, decoder, encodeMs = 110)
+      core.tick(now)
+    }
+    assertEquals(30, core.perSecond)
+    assertTrue(core.usable)
+  }
+
+  /** m4: a new relay session counts from zero; the pilot's decode times of each phase stay */
+  @Test
+  fun aNewRelaySessionStartsItsCountersAndFailuresAgain() {
+    val (decoder, _) = steady()
+    core.onPilot(overruns = 0, decodeP95Ms = null, nowNs = now)
+    repeat(30) { step(it + 1, decoder) }
+    core.onGlError("EGL_BAD_SURFACE", now)
+    core.stop()
+    core.onPilot(overruns = 0, decodeP95Ms = 15.0, nowNs = now, flying = false, picturesPerSecond = 30.0)
+    now += 10 * second
+    core.start(now)
+    val report = core.report(now)!!
+    assertEquals(0, report["encoded"]!!.jsonPrimitive.int)
+    assertEquals(0, report["failures"]!!.jsonArray.size)
+    assertEquals(0, report["cleanStarts"]!!.jsonPrimitive.int)
+    assertEquals(0, report["timeline"]!!.jsonArray.size)
+    val ground = report["pilotDecodeP95BeforeByPhaseMs"]!!.jsonObject["ground30"]!!
+    assertEquals(15.0, ground.jsonPrimitive.content.toDouble(), 0.01)
+    // One GL error in this session is the first of this session: made again, not stopped
+    core.setEnabled(true, now)
+    core.setCapableReceivers(true, now)
+    core.offer(droneUnit(100, key = true), drone)
+    core.setNeeded(true, now)
+    core.onGlError("EGL_BAD_SURFACE", now)
+    assertTrue(core.usable)
+  }
+
+  /** M2: the export says the steady stream's coded size, and whether the key pictures came with their sets */
+  @Test
+  fun theReportSaysTheCodedSizeAndWhetherTheKeysCameWithTheirSets() {
+    val (decoder, _) = steady()
+    assertNull(core.report(now)!!["headersOnKeysTaken"]!!.jsonPrimitive.contentOrNullSafe())
+    repeat(10) {
+      now += 50 * ms / 3
+      step(it + 1, decoder)
+    }
+    val report = core.report(now)!!
+    // The libx265 vector codes 1080 lines as 1088, as most hardware encoders do
+    assertEquals(1920, report["codedWidth"]!!.jsonPrimitive.int)
+    assertEquals(1088, report["codedHeight"]!!.jsonPrimitive.int)
+    assertEquals("true", report["headersOnKeysTaken"]!!.jsonPrimitive.content)
   }
 
   private fun kotlinx.serialization.json.JsonPrimitive.contentOrNullSafe(): String? = if (isString) content else null

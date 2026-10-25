@@ -163,20 +163,25 @@ class MonotonicPts {
 /**
  * The key pictures asked of the phone's encoder (p2/relay-bandwidth-2026-10-25.md, 7.5 item 5): one encoder serves
  * every steady receiver, so a key asked for one goes to all. A request within [spacingNs] of the last key waits until
- * then; one within [spacingNs] of the next periodic key ([periodNs] after the last) waits for it; one made while an
- * earlier request has not brought its key yet (for up to a second) is served by it. Counted by cause. Pure, with the
- * times given; its user holds the lock.
+ * then; one within [spacingNs] of the next periodic key ([periodNs] after the last) waits for it, and is asked anyway
+ * when that key is [LATE_NS] late (an encoder that keeps its own schedule, or counts its interval in pictures at 15 a
+ * second: p2/review-bandwidth-2026-10-25.md m1); one made while an earlier request has not brought its key yet (for up
+ * to a second) is served by it. Counted by cause. Pure, with the times given; its user holds the lock.
  */
 class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val periodNs: Long = PERIOD_NS) {
   companion object {
     const val SPACING_NS = 300_000_000L
     const val PERIOD_NS = 2_000_000_000L
     const val ANSWER_NS = 1_000_000_000L
+    const val LATE_NS = 100_000_000L
   }
 
   private var lastKeyNs: Long? = null
   private var lastRequestNs: Long? = null
   private var waiting = false
+
+  /** A request left to the periodic key: asked anyway when that key is late */
+  private var waitingPeriodic = false
 
   /** Requests by cause */
   val byCause = linkedMapOf(RelayKeyCause.JOIN to 0L, RelayKeyCause.DROP to 0L, RelayKeyCause.SWITCH to 0L)
@@ -212,6 +217,7 @@ class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val per
       val since = nowNs - key
       if (periodNs - since in 0..spacingNs) {
         coalesced += 1
+        waitingPeriodic = true
         return false
       }
       if (since < spacingNs) {
@@ -227,14 +233,13 @@ class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val per
 
   /** On a tick: true when a request that waited is due now */
   fun due(nowNs: Long): Boolean {
-    if (!waiting) {
-      return false
-    }
     val key = lastKeyNs
-    if (key != null && nowNs - key < spacingNs) {
+    val late = waitingPeriodic && key != null && nowNs - key >= periodNs + LATE_NS
+    if (!late && (!waiting || (key != null && nowNs - key < spacingNs))) {
       return false
     }
     waiting = false
+    waitingPeriodic = false
     lastRequestNs = nowNs
     sent += 1
     return true
@@ -246,6 +251,7 @@ class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val per
     val previous = lastKeyNs
     val wasAsked = asked != null && (previous == null || asked > previous)
     lastKeyNs = nowNs
+    waitingPeriodic = false
     if (wasAsked) keysAsked += 1 else keysPeriodic += 1
     return wasAsked
   }
@@ -253,5 +259,6 @@ class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val per
   /** A new encoder: its first output is a key picture anyway */
   fun onEncoderStarted() {
     waiting = false
+    waitingPeriodic = false
   }
 }

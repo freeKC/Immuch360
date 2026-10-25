@@ -221,6 +221,26 @@ class RelayQueueSteadyTest {
     assertEquals(2L, keys.keysPeriodic)
   }
 
+  /** p2/review-bandwidth-2026-10-25.md m1: an encoder whose periodic key does not come when expected */
+  @Test
+  fun aRequestLeftToThePeriodicKeyIsAskedAnywayWhenThatKeyIsLate() {
+    val keys = RelayKeyRequests()
+    keys.onKey(0)
+    // 1.8 s after the key: left to the periodic one, due at 2 s
+    assertFalse(keys.request(RelayKeyCause.DROP, 1_800 * ms))
+    assertFalse(keys.due(2_000 * ms))
+    // Not there at 2.1 s (an encoder counting its interval in pictures at 15 a second): asked now
+    assertTrue(keys.due(2_100 * ms))
+    assertFalse(keys.due(2_200 * ms))
+    assertEquals(1L, keys.sent)
+    assertTrue(keys.onKey(2_150 * ms))
+    // The periodic key in time: nothing more is asked
+    assertFalse(keys.request(RelayKeyCause.DROP, 3_900 * ms))
+    keys.onKey(4_150 * ms)
+    assertFalse(keys.due(4_300 * ms))
+    assertEquals(1L, keys.sent)
+  }
+
   @Test
   fun aRequestTheEncoderDidNotAnswerWithinASecondIsMadeAgain() {
     val keys = RelayKeyRequests()

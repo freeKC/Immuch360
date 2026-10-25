@@ -45,6 +45,20 @@ enum class RelaySwitchWhy(val wire: String) {
   TRANSCODER("transcoder"),
 }
 
+/** What the way back to the full stream said for a steady receiver at a drone key picture, for the export */
+enum class RelayBackCheck(val wire: String) {
+  BACK("back"),
+
+  /** Its oldest unit was not under 50 ms for the last 30 s */
+  NOT_QUIET("notQuiet"),
+
+  /** What its path carried is under 1.5 times the drone's rate in the phase that starts */
+  NO_ROOM("noRoom"),
+
+  /** It is not on the steady stream by Automatic */
+  NOT_STEADY("notSteady"),
+}
+
 /** Why the phone made a key picture of its steady stream on demand (p2/relay-bandwidth-2026-10-25.md, 7.5) */
 enum class RelayKeyCause(val wire: String) {
   JOIN("join"),
@@ -73,8 +87,9 @@ fun relayTargetStream(quality: RelayQuality, capable: Boolean, usable: Boolean, 
  *    passing counted once, as the age rises past it), or passes [onceNs] once, or a drop happens. A TV: 400 and 800 ms;
  *    a headset: 200 and 400 ms.
  * 2. On the steady stream it goes back to the full stream only at a drone key picture, after [QUIET_NS] with its oldest
- *    unit under [QUIET_AGE_NS], when the best second it carried in the last [BEST_WINDOW_NS] is at least [HEADROOM]
- *    times the drone's new rate.
+ *    unit under [QUIET_AGE_NS], when what its path carried (the server's [RelayHeadset.capacityBits]: its best second
+ *    on the full stream, or on the steady stream in the last [BEST_WINDOW_NS]) is at least [HEADROOM] times the
+ *    drone's rate in the phase the key picture starts.
  *
  * Pure, with the times given; the server calls it on its tick and at each drone key unit.
  */
@@ -150,24 +165,30 @@ class RelayStreamPolicy(headset: Boolean = false) {
   }
 
   /**
-   * A drone key unit came, after which the drone sends at about [droneRateBps]; [bestSecondBps] is the best second this
-   * receiver's socket carried in the last 2 minutes. True when this steady receiver goes back to the full stream at it
-   * (and Automatic says full from now on).
+   * A drone key unit came, after which the drone sends at about [droneRateBps]; [capacityBps] is what this receiver's
+   * path carried. [RelayBackCheck.BACK] when this steady receiver goes back to the full stream at it (and Automatic
+   * says full from now on), else why not.
    */
-  fun backToFullAt(nowNs: Long, droneRateBps: Long, bestSecondBps: Long): Boolean {
+  fun backCheck(nowNs: Long, droneRateBps: Long, capacityBps: Long): RelayBackCheck {
     if (stream != RelayStream.STEADY) {
-      return false
+      return RelayBackCheck.NOT_STEADY
     }
     val quiet = quietSinceNs?.let { nowNs - it >= QUIET_NS } ?: false
-    if (!quiet || bestSecondBps < HEADROOM * droneRateBps) {
-      return false
+    if (!quiet) {
+      return RelayBackCheck.NOT_QUIET
+    }
+    if (capacityBps < HEADROOM * droneRateBps) {
+      return RelayBackCheck.NO_ROOM
     }
     stream = RelayStream.FULL
     above = false
     passings.clear()
     quietSinceNs = null
-    return true
+    return RelayBackCheck.BACK
   }
+
+  fun backToFullAt(nowNs: Long, droneRateBps: Long, bestSecondBps: Long): Boolean =
+    backCheck(nowNs, droneRateBps, bestSecondBps) == RelayBackCheck.BACK
 
   /**
    * The receiver is on the full stream whatever Automatic said (the steady stream stopped): it starts again from there
@@ -181,10 +202,70 @@ class RelayStreamPolicy(headset: Boolean = false) {
 }
 
 /**
+ * The drone's picture rate, from the content times of its units (p2/review-bandwidth-2026-10-25.md M5): 60 a second in
+ * flight and 30 on the ground in our captures of 23 and 25 October, so it tells the phase of a flight at a key picture,
+ * where the motors read on the controller's 500 ms tick may still say the phase before. It starts again at each key
+ * picture (the drone's encoder restarts at the take off and at the landing), and needs [MIN_STEPS] steps. Pure.
+ */
+class DronePictureRate {
+  companion object {
+    const val KEPT = 30
+    const val MIN_STEPS = 3
+
+    /** 45 a second or more is a flight */
+    const val FLYING_FROM = 45
+  }
+
+  private val steps = ArrayDeque<Long>()
+  private var lastMs: Long? = null
+
+  /** A drone unit with its content time in milliseconds (-1 when it has none) */
+  fun onUnit(contentMs: Long, key: Boolean) {
+    if (key) {
+      steps.clear()
+      lastMs = null
+    }
+    if (contentMs < 0) {
+      return
+    }
+    val last = lastMs
+    lastMs = contentMs
+    if (last != null && contentMs - last in 1..200) {
+      steps.addLast(contentMs - last)
+      while (steps.size > KEPT) {
+        steps.removeFirst()
+      }
+    }
+  }
+
+  /**
+   * Pictures a second of the stream since the last key picture, null while too few units came: from the mean step,
+   * the steps over 1.5 times the median left out (a picture lost on the radio)
+   */
+  fun perSecond(): Int? {
+    if (steps.size < MIN_STEPS) {
+      return null
+    }
+    val median = steps.sorted()[steps.size / 2]
+    val usual = steps.filter { it * 2 <= median * 3 }
+    return kotlin.math.round(1000.0 * usual.size / usual.sum()).toInt()
+  }
+
+  /** Whether the drone flies, from its picture rate; null while unknown */
+  fun flying(): Boolean? = perSecond()?.let { it >= FLYING_FROM }
+
+  fun reset() {
+    steps.clear()
+    lastMs = null
+  }
+}
+
+/**
  * The drone's own rate in each phase of a flight (p2/relay-bandwidth-2026-10-25.md, 7.7): at a drone key picture (a
  * take off or a landing) the rate that follows is not measured yet, so the rate of the same phase earlier in the
- * session is taken, or the rate of 25 October (17.9 Mbit/s in flight, 4.8 on the ground). The phase is whether the
- * motors run, as the phone's telemetry says; unknown, the higher of the two.
+ * session is taken, or the rate of 25 October (17.9 Mbit/s in flight, 4.8 on the ground). The phase is the drone's
+ * picture rate ([DronePictureRate]), else whether the motors run as the phone's telemetry says; unknown, the higher of
+ * the two.
  */
 class DroneRateMemory {
   companion object {
@@ -193,26 +274,26 @@ class DroneRateMemory {
     private const val KEPT = 10
   }
 
-  private val flying = ArrayDeque<Long>()
-  private val ground = ArrayDeque<Long>()
+  private val flyingRates = ArrayDeque<Long>()
+  private val groundRates = ArrayDeque<Long>()
 
-  /** One second of the drone's stream at [bps], with the motors [motorsOn] (null: unknown, not kept) */
-  fun onSecond(bps: Long, motorsOn: Boolean?) {
-    if (bps <= 0 || motorsOn == null) {
+  /** One second of the drone's stream at [bps], in flight or not ([flying] null: unknown, not kept) */
+  fun onSecond(bps: Long, flying: Boolean?) {
+    if (bps <= 0 || flying == null) {
       return
     }
-    val list = if (motorsOn) flying else ground
+    val list = if (flying) flyingRates else groundRates
     list.addLast(bps)
     while (list.size > KEPT) {
       list.removeFirst()
     }
   }
 
-  /** The rate to expect in the phase [motorsOn], in bits per second */
-  fun expected(motorsOn: Boolean?): Long = when (motorsOn) {
-    true -> median(flying) ?: FLYING_BPS
-    false -> median(ground) ?: GROUND_BPS
-    null -> maxOf(median(flying) ?: FLYING_BPS, median(ground) ?: GROUND_BPS)
+  /** The rate to expect in the phase [flying], in bits per second */
+  fun expected(flying: Boolean?): Long = when (flying) {
+    true -> median(flyingRates) ?: FLYING_BPS
+    false -> median(groundRates) ?: GROUND_BPS
+    null -> maxOf(median(flyingRates) ?: FLYING_BPS, median(groundRates) ?: GROUND_BPS)
   }
 
   private fun median(values: ArrayDeque<Long>): Long? =

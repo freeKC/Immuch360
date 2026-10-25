@@ -104,12 +104,43 @@ data class RelayEncoderSetup(
   val bitrateMode: String,
   /** A latency of one picture was asked and taken; null when the output format does not say */
   val latencyAccepted: Boolean?,
-  /** VPS, SPS and PPS before every key picture was asked and taken */
+  /** VPS, SPS and PPS before every key picture was asked (whether the encoder did: [RelayTranscoder.report]) */
   val headersOnKeys: Boolean,
   val keyIntervalS: Int,
   /** The fallback level the configuration was taken at: 0 with every key, 3 plain */
   val level: Int,
+  /** The colour keys of the encoder's output format (MediaFormat's numbers), null while it has not said them */
+  val colorStandard: Int? = null,
+  val colorRange: Int? = null,
+  val colorTransfer: Int? = null,
 )
+
+/**
+ * One phase of the pilot's decoder (p2/review-bandwidth-2026-10-25.md M3): the motors running or not, and the drone's
+ * picture rate, 60 or 30 a second (0 when not known). Its decode time before decoder 2 ran is kept for each phase.
+ */
+data class PilotPhase(val flying: Boolean?, val perSecond: Int) {
+  companion object {
+    fun of(flying: Boolean?, picturesPerSecond: Double?): PilotPhase = PilotPhase(
+      flying,
+      when {
+        picturesPerSecond == null || picturesPerSecond <= 0.0 -> 0
+        picturesPerSecond >= 45.0 -> 60
+        else -> 30
+      },
+    )
+  }
+
+  /** One picture at this rate, 60 a second when it is not known */
+  val periodMs: Double get() = 1000.0 / (if (perSecond > 0) perSecond else 60)
+
+  val wire: String
+    get() = (when (flying) {
+      true -> "flying"
+      false -> "ground"
+      null -> "unknown"
+    }) + if (perSecond > 0) perSecond.toString() else ""
+}
 
 /** The Android side of the transcoder behind an interface, so that its rules run in the JVM tests with fake codecs */
 interface RelayCodecs {
@@ -165,10 +196,12 @@ class RelayDecoderInput(val unit: AccessUnit, val ptsUs: Long)
  * copied once into an access unit with its source's times found back by presentation time, and handed to the server.
  *
  * The pilot's picture comes first: nothing here waits on the pilot's path; the units are shared, never copied; a slow
- * decoder 2 (its input over 1 s), a slow encoder (encode p95 over 66 ms for 3 s: 15 a second, then stopped 5 s later),
- * a hot phone (moderate: 15 a second and at most 6 Mbit/s; severe: stopped until 60 s at light or below), the pilot's
- * decoder affected (an overrun, or its decode p95 over 1.5 times its value before for 3 s) and repeated codec errors
- * stop it; the server then sends the drone's stream again.
+ * decoder 2 (a unit waiting over 1 s for it once it runs), a slow encoder (encode p95 over 66 ms, plus the pictures it
+ * holds when it did not take a latency of one, for 3 s: 15 a second, then stopped 5 s later), a hot phone (moderate: 15
+ * a second and at most 6 Mbit/s; severe: stopped until 60 s at light or below), the pilot's decoder affected (an
+ * overrun, or its decode p95 over its bound for 3 s: 1.5 times its value in the same phase before decoder 2 ran, or two
+ * picture periods when there is none) and repeated codec errors stop it; the server then sends the drone's stream
+ * again. A decoder 2 or an encoder that could not be made is tried again 30 s later, three times in a relay session.
  */
 class RelayTranscoder(
   private val codecs: RelayCodecs,
@@ -200,6 +233,19 @@ class RelayTranscoder(
     const val PILOT_FACTOR = 1.5
     const val PILOT_MARGIN_MS = 5.0
     const val PILOT_FOR_NS = 3_000_000_000L
+
+    /** With no decode time of the pilot in this phase before decoder 2 ran: this many picture periods */
+    const val PILOT_PERIODS = 2.0
+
+    /** Decode times kept for each phase while decoder 2 is off: 10 s of the controller's 500 ms tick */
+    const val PILOT_KEPT = 20
+
+    /** An encoder that did not take a latency of one picture may hold this many before its output */
+    const val HELD_PICTURES = 3
+
+    /** A decoder 2 or an encoder that could not be made: tried again after this long, this many times a session */
+    const val RETRY_NS = 30_000_000_000L
+    const val CREATION_TRIES = 3
     const val TIMELINE_SECONDS = 7_200
     const val TIMELINE_HEADER = "second,decoded,kept,encoded,kB,bitrateKbps,encodeP95Ms,inputQueueMs,thermal"
     private const val COLUMNS = 9
@@ -246,9 +292,21 @@ class RelayTranscoder(
   private var decoderName: String? = null
   private var cleanStarts = 0L
   private var dirtyStarts = 0L
-  private val input = ArrayDeque<AccessUnit>()
+
+  /** A unit waiting for decoder 2, with the time it entered the input */
+  private class Waiting(val unit: AccessUnit, val atNs: Long)
+
+  private val input = ArrayDeque<Waiting>()
+
+  /** When the running decoder 2 was handed over: a unit's wait counts from then at the earliest */
+  private var decoderSinceNs: Long? = null
   private var inputMaxUnits = 0
   private var inputMaxNs = 0L
+
+  /** A decoder 2 or an encoder that could not be made: when it is tried again (null: not, or no more) */
+  private var retryAtNs: Long? = null
+  private var creationFailures = 0
+  private var creationRetries = 0
   private var lastKey: KeptKey? = null
   private val pts = MonotonicPts()
   private val ptsMap = RelayPtsMap()
@@ -261,7 +319,12 @@ class RelayTranscoder(
   private var steadyDescription: StreamDescription? = null
   private val drawnAt = HashMap<Long, Long>()
   private var counter = 0
-  private val keys = RelayKeyRequests()
+  private var keys = RelayKeyRequests()
+
+  /** The coded size of the steady stream's last sets: the same as the drone's, or a receiver configures again */
+  private var steadyCodedWidth: Int? = null
+  private var steadyCodedHeight: Int? = null
+  private var keysOut = 0L
   private var bitrateBps = START_BPS
   private var askedBps = START_BPS
   private var askedPerSecond = 30
@@ -278,9 +341,9 @@ class RelayTranscoder(
   private var encodedBytes = 0L
   private var unitsWithoutSets = 0L
   private var setsAdded = 0L
-  private val decodeTimes = DurationHistogram()
-  private val encodeTimes = DurationHistogram()
-  private val receiveToEncoded = DurationHistogram()
+  private var decodeTimes = DurationHistogram()
+  private var encodeTimes = DurationHistogram()
+  private var receiveToEncoded = DurationHistogram()
   private val recentEncodes = ArrayDeque<LongArray>()
   private var glWaits = 0L
   private var slowSinceNs: Long? = null
@@ -294,8 +357,15 @@ class RelayTranscoder(
   private var thermalNow: Int? = null
   private var thermalMax: Int? = null
   private var coolSinceNs: Long? = null
-  private var pilotLastP95: Double? = null
+
+  /**
+   * The pilot's decode p95 in each phase while decoder 2 was off, kept across relay sessions: a fact of this phone,
+   * not of a session (p2/review-bandwidth-2026-10-25.md M3)
+   */
+  private val pilotBaselines = HashMap<PilotPhase, ArrayDeque<Double>>()
   private var pilotBefore: Double? = null
+  private var pilotBoundMs: Double? = null
+  private var pilotPhase: PilotPhase? = null
   private var pilotDuring = DurationHistogram(100_000L)
   private var pilotOverrunsAtStart: Long? = null
   private var pilotHighSinceNs: Long? = null
@@ -329,8 +399,9 @@ class RelayTranscoder(
     else -> TranscoderState.OFF
   }
 
+  /** Also while a failed creation waits to be tried again: a receiver that joins meanwhile is offered it */
   override val available: Boolean
-    get() = synchronized(lock) { started && info != null && unavailable == null }
+    get() = synchronized(lock) { started && info != null && (unavailable == null || retryAtNs != null) }
 
   override val usable: Boolean
     get() = synchronized(lock) { started && info != null && unavailable == null && stopped == null }
@@ -348,7 +419,10 @@ class RelayTranscoder(
 
   // The relay's life
 
-  /** The relay starts: the encoder is looked for once */
+  /**
+   * The relay starts: the encoder is looked for once, and what the last session counted starts again (the pilot's
+   * decode times of each phase stay: they describe this phone)
+   */
   fun start(nowNs: Long = clockNs()) {
     val found = runCatching { codecs.findEncoder() }.getOrNull()
     synchronized(lock) {
@@ -359,6 +433,7 @@ class RelayTranscoder(
       stopped = null
       stoppedAtNs = null
       nextSecondNs = nowNs + 1_000_000_000L
+      resetSessionLocked()
     }
     log(if (found == null) "no hardware H.265 encoder: no steady stream" else "encoder ${found.name}, cbr ${found.cbr}")
     onChange()
@@ -415,9 +490,71 @@ class RelayTranscoder(
     released?.first?.let { runCatching { it.release() } }
   }
 
+  /** Under [lock], at [start]: the counters, the failures, the timeline and the rates of the last session go */
+  private fun resetSessionLocked() {
+    retryAtNs = null
+    creationFailures = 0
+    creationRetries = 0
+    cleanStarts = 0
+    dirtyStarts = 0
+    inputMaxUnits = 0
+    inputMaxNs = 0
+    counter = 0
+    keys = RelayKeyRequests()
+    keysOut = 0
+    bitrateBps = START_BPS
+    askedBps = START_BPS
+    askedPerSecond = 30
+    bitrateChanges = 0
+    bitrateMin = null
+    bitrateMax = null
+    bitrateSeconds.clear()
+    unitsIn = 0
+    decoded = 0
+    kept = 0
+    encoded = 0
+    encodedBytes = 0
+    unitsWithoutSets = 0
+    setsAdded = 0
+    decodeTimes = DurationHistogram()
+    encodeTimes = DurationHistogram()
+    receiveToEncoded = DurationHistogram()
+    recentEncodes.clear()
+    glWaits = 0
+    slowSinceNs = null
+    slowAtFifteenNs = null
+    errors.clear()
+    failures.clear()
+    glErrors = 0
+    thermalAtStart = null
+    thermalMax = thermalNow
+    coolSinceNs = null
+    pilotBefore = null
+    pilotBoundMs = null
+    pilotPhase = null
+    pilotDuring = DurationHistogram(100_000L)
+    pilotOverrunsAtStart = null
+    pilotHighSinceNs = null
+    batteryBefore.clear()
+    batteryWhile.clear()
+    encoderSinceNs = null
+    encoderRunNs = 0
+    timeline.fill(0)
+    seconds = 0
+    decodedAtSample = 0
+    keptAtSample = 0
+    encodedAtSample = 0
+    bytesAtSample = 0
+    setup = null
+    decoderName = null
+    steadyCodedWidth = null
+    steadyCodedHeight = null
+  }
+
   /** Under [lock]: decoder 2 and the encoder forgotten (the caller releases them outside the lock) */
   private fun clearCodecsLocked() {
     decoder = null
+    decoderSinceNs = null
     encoder = null
     decoderDescription = null
     steadyDescription = null
@@ -455,7 +592,7 @@ class RelayTranscoder(
           open = description.description
           opening = true
           input.clear()
-          input.addLast(unit)
+          input.addLast(Waiting(unit, nowNs))
           cleanStarts += 1
         }
         running != null && unit.isKey && !description.description.sameSetsAs(decoderDescription) -> {
@@ -463,6 +600,7 @@ class RelayTranscoder(
           // after it wait for the new one, never the old
           old = running to encoder
           decoder = null
+          decoderSinceNs = null
           decoderDescription = null
           encoder = null
           steadyDescription = null
@@ -470,11 +608,11 @@ class RelayTranscoder(
           open = description.description
           opening = true
           input.clear()
-          input.addLast(unit)
+          input.addLast(Waiting(unit, nowNs))
           cleanStarts += 1
         }
         else -> {
-          input.addLast(unit)
+          input.addLast(Waiting(unit, nowNs))
           wake = running
         }
       }
@@ -524,17 +662,43 @@ class RelayTranscoder(
   private fun runsLocked(): Boolean = started && enabled && capable && info != null && unavailable == null &&
     stopped == null
 
+  /**
+   * Under [lock]: decoder 2 or the encoder could not be made. No steady stream for 30 s, then it is tried again; after
+   * [CREATION_TRIES] failures in a relay session, none until the next one (p2/review-bandwidth-2026-10-25.md m5)
+   */
+  private fun failCreationLocked(why: TranscoderWhy, nowNs: Long, what: String) {
+    creationFailures += 1
+    failures.addLast(nowNs to what)
+    trimFailures()
+    unavailable = why
+    retryAtNs = if (creationFailures < CREATION_TRIES) nowNs + RETRY_NS else null
+  }
+
+  /**
+   * Under [lock]: how long the oldest unit waited for a running decoder 2, from the time it entered the input or the
+   * time decoder 2 started, whichever is later (p2/review-bandwidth-2026-10-25.md B1). The kept key unit of a dirty
+   * start, received tens of seconds before, entered just now; while decoder 2 is being made only the count is bounded.
+   */
+  private fun inputAgeLocked(nowNs: Long): Long {
+    val first = input.firstOrNull() ?: return 0
+    val since = decoderSinceNs
+    if (decoder == null || since == null) {
+      return 0
+    }
+    return (nowNs - maxOf(first.atNs, since)).coerceAtLeast(0)
+  }
+
   private fun checkInputLocked(nowNs: Long): TranscoderWhy? {
-    val first = input.firstOrNull() ?: return null
-    val age = nowNs - first.lastArrivalNs
+    if (input.isEmpty()) {
+      return null
+    }
+    val age = inputAgeLocked(nowNs)
     inputMaxUnits = maxOf(inputMaxUnits, input.size)
     inputMaxNs = maxOf(inputMaxNs, age)
     return if (age > INPUT_MAX_AGE_NS || input.size > INPUT_MAX_UNITS) TranscoderWhy.DECODER_TOO_SLOW else null
   }
 
-  private fun inputAgeMs(nowNs: Long): Long = synchronized(lock) {
-    input.firstOrNull()?.let { (nowNs - it.lastArrivalNs) / 1_000_000 } ?: 0
-  }
+  private fun inputAgeMs(nowNs: Long): Long = synchronized(lock) { inputAgeLocked(nowNs) / 1_000_000 }
 
   /**
    * Decoder 2 for [description], its first units already in [input]. An encoder made before draws from the GL stage
@@ -557,14 +721,14 @@ class RelayTranscoder(
     }
     val port = runCatching { codecs.openDecoder(description, this) }.getOrNull()
     if (port == null) {
-      synchronized(lock) {
+      val retry = synchronized(lock) {
         if (generation == made) {
-          unavailable = TranscoderWhy.NO_SECOND_DECODER
-          failures.addLast(nowNs to "no second decoder")
+          failCreationLocked(TranscoderWhy.NO_SECOND_DECODER, clockNs(), "no second decoder")
           clearCodecsLocked()
         }
+        retryAtNs != null
       }
-      log("no second decoder: no steady stream")
+      log("no second decoder: no steady stream" + if (retry) " for 30 s" else "")
       onChange()
       return
     }
@@ -573,10 +737,10 @@ class RelayTranscoder(
         false
       } else {
         decoder = port
+        decoderSinceNs = clockNs()
         decoderDescription = description
         decoderName = port.name
         opening = false
-        pilotBefore = pilotLastP95
         pilotOverrunsAtStart = null
         pilotHighSinceNs = null
         if (thermalAtStart == null) {
@@ -612,7 +776,8 @@ class RelayTranscoder(
         dirty = key
         opening = true
         input.clear()
-        input.addLast(key.unit)
+        // It entered the input now, whenever the phone received it
+        input.addLast(Waiting(key.unit, clockNs()))
         dirtyStarts += 1
         stamp = generation
         null
@@ -634,15 +799,27 @@ class RelayTranscoder(
       runCatching { codecs.openEncoder(encoderInfo, rate, dec, this) }.getOrNull()
     }
     if (made == null) {
-      synchronized(lock) {
+      var retry = false
+      val (gone, release) = synchronized(lock) {
         makingEncoder = false
-        unavailable = TranscoderWhy.REFUSED
-        failures.addLast(nowNs to "encoder refused")
-        val pair = decoder
-        clearCodecsLocked()
-        pair
-      }?.let { runCatching { it.release() } }
-      log("the encoder refused 1920x1080 and 1280x720: no steady stream")
+        if (decoder !== dec || !runsLocked()) {
+          // Decoder 2 and its GL stage went while the encoder was made (new parameter sets at a take off, a reset):
+          // not a refusal of the encoder; the next decoder 2 makes it again (p2/review-bandwidth-2026-10-25.md M1)
+          true to null
+        } else {
+          failCreationLocked(TranscoderWhy.REFUSED, clockNs(), "encoder refused")
+          retry = retryAtNs != null
+          val pair = decoder
+          clearCodecsLocked()
+          false to pair
+        }
+      }
+      release?.let { runCatching { it.release() } }
+      if (gone) {
+        log("decoder 2 went while the encoder was made: made again with the next one")
+        return
+      }
+      log("the encoder refused 1920x1080 and 1280x720: no steady stream" + if (retry) " for 30 s" else "")
       onChange()
       return
     }
@@ -674,7 +851,7 @@ class RelayTranscoder(
 
   /** The next unit for decoder 2, in order, with its presentation time; null when none waits */
   fun nextInput(nowNs: Long = clockNs()): RelayDecoderInput? = synchronized(lock) {
-    val unit = input.removeFirstOrNull() ?: return null
+    val unit = input.removeFirstOrNull()?.unit ?: return null
     val contentUs = if (unit.contentMs >= 0) unit.contentMs * 1_000 else unit.lastArrivalNs / 1_000
     val ptsUs = pts.of(contentUs)
     val source = RelaySourceStamp(unit.firstArrivalNs, unit.lastArrivalNs, unit.contentMs, unit.pictureCounter ?: -1)
@@ -740,6 +917,9 @@ class RelayTranscoder(
         unitsWithoutSets += 1
         return
       }
+      if (unit.isKey) {
+        keysOut += 1
+      }
       if (unit.isKey && !unit.hasParameterSets) {
         // An encoder that would not put its sets before each key picture: they go in band all the same, so that a
         // receiver switching to this stream finds them with the key picture whatever its decoder does with PARAMETERS
@@ -766,16 +946,22 @@ class RelayTranscoder(
     out?.let { (unit, description) -> runCatching { emit(unit, description) } }
   }
 
-  /** Under [lock]: the steady stream's sets, said in the log when they change (the encoder's SPS for the notes) */
+  /**
+   * Under [lock]: the steady stream's sets, said in the log when they change (the encoder's SPS for the notes), with
+   * the coded size: 1088 lines where the drone codes 1080 means a receiver's decoder is configured again at each switch
+   */
   private fun noteSetsLocked(description: StreamDescription) {
+    val info = description.info
     if (!description.sameSetsAs(steadyDescription)) {
       log(
-        "steady stream sets ${description.info.width}x${description.info.height} ${description.info.profileName} " +
-          "level ${description.info.levelName}: VPS ${StreamDescription.hex(description.vps)} SPS " +
+        "steady stream sets ${info.width}x${info.height} coded ${info.codedWidth}x${info.codedHeight} " +
+          "${info.profileName} level ${info.levelName}: VPS ${StreamDescription.hex(description.vps)} SPS " +
           "${StreamDescription.hex(description.sps)} PPS ${StreamDescription.hex(description.pps)}",
       )
     }
     steadyDescription = description
+    steadyCodedWidth = info.codedWidth
+    steadyCodedHeight = info.codedHeight
   }
 
   // Errors
@@ -827,6 +1013,7 @@ class RelayTranscoder(
       drawnAt.clear()
       if (!encoderOnly) {
         decoder = null
+        decoderSinceNs = null
         decoderDescription = null
         input.clear()
         queuedAt.clear()
@@ -938,12 +1125,32 @@ class RelayTranscoder(
     }
   }
 
-  /** The pilot's decoder: its overruns since the page opened and its decode p95 of the last 2 s */
-  fun onPilot(overruns: Long, decodeP95Ms: Double?, nowNs: Long = clockNs()) {
+  /**
+   * The pilot's decoder: its overruns since the page opened and its decode p95 of the last 2 s, in the phase [flying]
+   * (the motors) at [picturesPerSecond] (the drone's rate). While decoder 2 is off, the p95 is kept for that phase.
+   * While it runs, an overrun stops the steady stream at once, and a p95 over the bound for 3 s too: 1.5 times and 5 ms
+   * over the median kept for the same phase, or two picture periods when none is kept (decoder 2 started with the
+   * link, or the phase is new), never under one period (p2/review-bandwidth-2026-10-25.md M3).
+   */
+  fun onPilot(
+    overruns: Long,
+    decodeP95Ms: Double?,
+    nowNs: Long = clockNs(),
+    flying: Boolean? = null,
+    picturesPerSecond: Double? = null,
+  ) {
+    val phase = PilotPhase.of(flying, picturesPerSecond)
     val why = synchronized(lock) {
       if (decoder == null) {
-        decodeP95Ms?.let { pilotLastP95 = it }
+        decodeP95Ms?.let { value ->
+          val kept = pilotBaselines.getOrPut(phase) { ArrayDeque() }
+          kept.addLast(value)
+          while (kept.size > PILOT_KEPT) {
+            kept.removeFirst()
+          }
+        }
         pilotOverrunsAtStart = null
+        pilotHighSinceNs = null
         return
       }
       val at = pilotOverrunsAtStart
@@ -951,9 +1158,16 @@ class RelayTranscoder(
         pilotOverrunsAtStart = overruns
       }
       decodeP95Ms?.let { pilotDuring.add((it * 1e6).toLong()) }
-      val before = pilotBefore
-      val high = before != null && decodeP95Ms != null && decodeP95Ms > PILOT_FACTOR * before &&
-        decodeP95Ms > before + PILOT_MARGIN_MS
+      if (phase != pilotPhase) {
+        // A new phase (a take off, a landing): its own bound, counted from now
+        pilotPhase = phase
+        pilotHighSinceNs = null
+      }
+      val before = pilotBaselines[phase]?.let { values -> values.sorted()[values.size / 2] }
+      val bound = pilotBound(before, phase)
+      pilotBefore = before
+      pilotBoundMs = bound
+      val high = decodeP95Ms != null && decodeP95Ms > bound
       if (high) {
         if (pilotHighSinceNs == null) pilotHighSinceNs = nowNs
       } else {
@@ -961,13 +1175,20 @@ class RelayTranscoder(
       }
       when {
         at != null && overruns > at -> "overruns ${overruns - at}"
-        pilotHighSinceNs?.let { nowNs - it >= PILOT_FOR_NS } == true -> "decode p95 $decodeP95Ms ms, before $before ms"
+        pilotHighSinceNs?.let { nowNs - it >= PILOT_FOR_NS } == true ->
+          "decode p95 $decodeP95Ms ms over $bound ms (${phase.wire}, before ${before ?: "none"})"
         else -> null
       }
     }
     if (why != null) {
       stopFor(TranscoderWhy.PILOT_FIRST, nowNs, why)
     }
+  }
+
+  /** The pilot's decode p95 bound while decoder 2 runs, in milliseconds */
+  private fun pilotBound(before: Double?, phase: PilotPhase): Double {
+    val rule = before?.let { maxOf(PILOT_FACTOR * it, it + PILOT_MARGIN_MS) } ?: (PILOT_PERIODS * phase.periodMs)
+    return maxOf(rule, phase.periodMs)
   }
 
   /**
@@ -1006,11 +1227,21 @@ class RelayTranscoder(
       } else {
         encoderSinceNs = null
       }
+      val retry = retryAtNs
+      if (unavailable != null && retry != null && nowNs >= retry) {
+        // A creation that failed is tried again at the next need
+        unavailable = null
+        retryAtNs = null
+        creationRetries += 1
+        cooled = true
+      }
       checkInputLocked(nowNs)?.let { stop = it to "input over 1 s" }
-      // The encoder's speed: p95 of the last 3 s of encodes over 66 ms, or the GL stage waiting over 100 ms
-      if (encoder != null && stop == null) {
+      // The encoder's speed: p95 of the last 3 s of encodes over 66 ms (plus the pictures it holds when it did not take
+      // a latency of one, p2/review-bandwidth-2026-10-25.md m2), or the GL stage waiting over 100 ms
+      val running = encoder
+      if (running != null && stop == null) {
         val p95 = percentile(recentEncodes.map { it[1] }, 0.95)
-        val slow = p95 != null && p95 > SLOW_ENCODE_NS && recentEncodes.size >= 10
+        val slow = p95 != null && p95 > slowBoundNsLocked(running) && recentEncodes.size >= 10
         if (slow) {
           if (slowSinceNs == null) slowSinceNs = nowNs
         } else if (slowAtFifteenNs == null) {
@@ -1065,6 +1296,14 @@ class RelayTranscoder(
     }
   }
 
+  /** Under [lock]: the encode time over which [port] is slow, at the picture rate of now */
+  private fun slowBoundNsLocked(port: RelayEncoderPort): Long {
+    if (port.setup.latencyAccepted == true) {
+      return SLOW_ENCODE_NS
+    }
+    return SLOW_ENCODE_NS + HELD_PICTURES * 1_000_000_000L / perSecondLocked()
+  }
+
   private fun sampleLocked(nowNs: Long) {
     val due = nextSecondNs ?: return
     if (nowNs < due) {
@@ -1079,7 +1318,7 @@ class RelayTranscoder(
     timeline[at + 4] = ((encodedBytes - bytesAtSample) / 1024).toInt()
     timeline[at + 5] = if (encoder != null) bitrateBps / 1000 else -1
     timeline[at + 6] = percentile(recentEncodes.map { it[1] }, 0.95)?.let { (it / 1_000_000).toInt() } ?: -1
-    timeline[at + 7] = input.firstOrNull()?.let { ((nowNs - it.lastArrivalNs) / 1_000_000).toInt() } ?: 0
+    timeline[at + 7] = (inputAgeLocked(nowNs) / 1_000_000).toInt()
     timeline[at + 8] = thermalNow ?: -1
     seconds += 1
     decodedAtSample = decoded
@@ -1126,11 +1365,16 @@ class RelayTranscoder(
   }
 
   /** The timeline lines kept, oldest first */
-  fun timelineLines(): List<String> = synchronized(lock) {
-    val first = maxOf(0L, seconds - TIMELINE_SECONDS)
-    (first until seconds).map { index ->
+  fun timelineLines(): List<String> {
+    val (copy, count) = synchronized(lock) { timeline.copyOf() to seconds }
+    return timelineLinesOf(copy, count)
+  }
+
+  private fun timelineLinesOf(copy: IntArray, count: Long): List<String> {
+    val first = maxOf(0L, count - TIMELINE_SECONDS)
+    return (first until count).map { index ->
       val at = ((index % TIMELINE_SECONDS) * COLUMNS).toInt()
-      (0 until COLUMNS).joinToString(",") { timeline[at + it].toString() }
+      (0 until COLUMNS).joinToString(",") { copy[at + it].toString() }
     }
   }
 
@@ -1139,17 +1383,54 @@ class RelayTranscoder(
 
   fun keysSent(): Long = synchronized(lock) { keys.sent }
 
-  override fun report(nowNs: Long): JsonObject? = synchronized(lock) {
-    if (!started && info == null && unavailable == null) {
-      return null
+  /**
+   * The transcoder section of the export. Its numbers are read under the lock and copied; the sorts and the timeline's
+   * lines are made outside it, so that a save during a flight does not hold [offer] (p2/review-bandwidth-2026-10-25.md
+   * m8).
+   */
+  override fun report(nowNs: Long): JsonObject? {
+    val bitrates: IntArray
+    val before: LongArray
+    val whileRunning: LongArray
+    val copy: IntArray
+    val count: Long
+    val head = synchronized(lock) {
+      if (!started && info == null && unavailable == null) {
+        return null
+      }
+      bitrates = bitrateSeconds.toIntArray()
+      before = batteryBefore.toLongArray()
+      whileRunning = batteryWhile.toLongArray()
+      copy = timeline.copyOf()
+      count = seconds
+      headLocked(nowNs)
     }
+    bitrates.sort()
+    before.sort()
+    whileRunning.sort()
+    val lines = timelineLinesOf(copy, count)
+    return JsonObject(
+      head + mapOf(
+        "bitrateMedianKbps" to JsonPrimitive(bitrates.getOrNull(bitrates.size / 2)?.div(1000)),
+        "batteryMicroAmpsBeforeMedian" to JsonPrimitive(before.getOrNull(before.size / 2)),
+        "batteryMicroAmpsWhileMedian" to JsonPrimitive(whileRunning.getOrNull(whileRunning.size / 2)),
+        "timelineColumns" to JsonPrimitive(TIMELINE_HEADER),
+        "timeline" to buildJsonArray { lines.forEach { add(JsonPrimitive(it)) } },
+      ),
+    )
+  }
+
+  /** Under [lock]: every number of the export that needs no sort */
+  private fun headLocked(nowNs: Long): JsonObject {
     val encoderInfo = info
     val made = encoder?.setup ?: setup
-    val bitrates = bitrateSeconds.sorted()
     val spanS = ((nowNs - startedAtNs) / 1e9).coerceAtLeast(1e-3)
-    buildJsonObject {
+    return buildJsonObject {
       put("state", stateLocked().wire)
       put("why", (unavailable ?: stopped)?.wire)
+      put("retryInS", retryAtNs?.let { ((it - nowNs) / 1e9).coerceAtLeast(0.0) })
+      put("creationFailures", creationFailures)
+      put("creationRetries", creationRetries)
       put("decoderName", decoderName)
       put("cleanStarts", cleanStarts)
       put("dirtyStarts", dirtyStarts)
@@ -1158,12 +1439,21 @@ class RelayTranscoder(
       put("encoderCbr", encoderInfo?.cbr)
       put("width", made?.width)
       put("height", made?.height)
+      // The coded size of the steady stream's sets: a receiver's decoder is configured again at each switch when it is
+      // not the drone's (1920x1080 on 23 October)
+      put("codedWidth", steadyCodedWidth)
+      put("codedHeight", steadyCodedHeight)
       put("perSecond", perSecondLocked())
       put("bitrateMode", made?.bitrateMode)
       put("latencyAccepted", made?.latencyAccepted)
       put("headersOnKeys", made?.headersOnKeys)
+      // Whether every key picture came out with its sets in band, null before the first
+      put("headersOnKeysTaken", if (keysOut == 0L) null else setsAdded == 0L)
       put("keyIntervalS", made?.keyIntervalS)
       put("configurationLevel", made?.level)
+      put("colorStandard", made?.colorStandard)
+      put("colorRange", made?.colorRange)
+      put("colorTransfer", made?.colorTransfer)
       put("unitsIn", unitsIn)
       put("decoded", decoded)
       put("kept", kept)
@@ -1174,7 +1464,6 @@ class RelayTranscoder(
       put("megabitsPerSecondMean", encodedBytes * 8.0 / 1e6 / spanS)
       put("bitrateNowKbps", if (encoder != null) bitrateBps / 1000 else null)
       put("bitrateMinKbps", bitrateMin?.div(1000))
-      put("bitrateMedianKbps", bitrates.getOrNull(bitrates.size / 2)?.div(1000))
       put("bitrateMaxKbps", bitrateMax?.div(1000))
       put("bitrateChanges", bitrateChanges)
       put("keysPeriodic", keys.keysPeriodic)
@@ -1198,12 +1487,20 @@ class RelayTranscoder(
       put("thermalAtStart", thermalAtStart)
       put("thermalMax", thermalMax)
       put("thermalNow", thermalNow)
+      put("pilotPhase", pilotPhase?.wire)
       put("pilotDecodeP95BeforeMs", pilotBefore)
+      put("pilotBoundMs", pilotBoundMs)
+      put(
+        "pilotDecodeP95BeforeByPhaseMs",
+        buildJsonObject {
+          pilotBaselines.entries.sortedBy { it.key.wire }.forEach { (phase, values) ->
+            put(phase.wire, values.sorted()[values.size / 2])
+          }
+        },
+      )
       put("pilotDecodeP95WhileMedianMs", pilotDuring.percentileMs(0.5))
       put("pilotDecodeP95WhileMaxMs", pilotDuring.maxMs)
       put("encoderRunningS", encoderRunNs / 1e9)
-      put("batteryMicroAmpsBeforeMedian", batteryBefore.sorted().let { it.getOrNull(it.size / 2) })
-      put("batteryMicroAmpsWhileMedian", batteryWhile.sorted().let { it.getOrNull(it.size / 2) })
       put(
         "failures",
         buildJsonArray {
@@ -1217,8 +1514,6 @@ class RelayTranscoder(
           }
         },
       )
-      put("timelineColumns", TIMELINE_HEADER)
-      put("timeline", buildJsonArray { timelineLines().forEach { add(JsonPrimitive(it)) } })
     }
   }
 }

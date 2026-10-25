@@ -217,6 +217,37 @@ class RelayServer(
     /** Receivers that left, kept for the export */
     const val LEFT_KEPT = 8
 
+    /**
+     * After a drone key unit, the units read before the way back of the steady receivers is judged: the phase the key
+     * starts is read from their picture rate (p2/review-bandwidth-2026-10-25.md M5); at most [PHASE_WAIT_NS]
+     */
+    const val PHASE_UNITS = 6
+    const val PHASE_WAIT_NS = 400_000_000L
+
+    /**
+     * [unit] with the parameter sets of [description] in band before it when it has none: a key unit a receiver must
+     * decode at once with the sets it brings, whatever sets its decoder had (p2/review-bandwidth-2026-10-25.md M2)
+     */
+    fun withSets(unit: AccessUnit, description: StreamDescription): AccessUnit {
+      if (unit.hasParameterSets) {
+        return unit
+      }
+      val bytes = description.configuration() + unit.bytes
+      val nals = AnnexB.split(bytes)
+      return AccessUnit(
+        bytes = bytes,
+        nalTypes = IntArray(nals.size) { HevcNal.type(bytes[nals[it].offset].toInt() and 0xFF) },
+        nalOffsets = IntArray(nals.size) { nals[it].offset },
+        firstArrivalNs = unit.firstArrivalNs,
+        lastArrivalNs = unit.lastArrivalNs,
+        closedBy = unit.closedBy,
+        channel = unit.channel,
+      ).also {
+        it.contentMs = unit.contentMs
+        it.headerCounter = unit.headerCounter
+      }
+    }
+
     private fun log(message: String) {
       runCatching { android.util.Log.i(TAG, message) }
     }
@@ -265,9 +296,12 @@ class RelayServer(
   @Volatile
   var primersSent = 0L
     private set
-  /** Kept key units sent as primers to receivers that fell back from the steady stream */
+  /**
+   * Kept drone key units sent, decoded at once with their sets in band, to receivers that went back from the steady
+   * stream between two drone key pictures
+   */
   @Volatile
-  var switchPrimers = 0L
+  var fallbackKeys = 0L
     private set
   private var telemetrySequence = 0L
   private var nextTelemetryNs = 0L
@@ -301,6 +335,19 @@ class RelayServer(
   private val droneSent = ArrayDeque<LongArray>()
   private var nextDroneSecondNs = 0L
   private var steadyUnits = 0L
+
+  /** The drone's picture rate since its last key picture: the phase of the flight */
+  private val pictureRate = DronePictureRate()
+
+  /** The drone's last key unit and the units after it, until the phase it starts is known */
+  private class KeyWindow(val key: AccessUnit, val description: ResolvedDescription, val atNs: Long) {
+    val after = ArrayList<AccessUnit>()
+  }
+
+  private var keyWindow: KeyWindow? = null
+
+  /** Under [lock]: whether the drone flies, from its picture rate, else from its motors; null when unknown */
+  private fun flyingLocked(): Boolean? = pictureRate.flying() ?: motorsOn
 
   val isRunning: Boolean get() = running
 
@@ -442,6 +489,16 @@ class RelayServer(
   // The relay half of the tee
 
   override fun submit(unit: AccessUnit, description: ResolvedDescription) {
+    if (submitDrone(unit, description)) {
+      askSteadySwitch()
+    }
+  }
+
+  /**
+   * A drone unit to the receivers on the full stream; true when a switch to the steady stream is to be asked, which
+   * [RelayRouter] does once the steady stream saw the same unit (p2/review-bandwidth-2026-10-25.md M1)
+   */
+  internal fun submitDrone(unit: AccessUnit, description: ResolvedDescription): Boolean {
     if (unit.isKey) {
       // Kept even before the relay runs: a headset that joins later starts its decoder from it
       synchronized(lock) {
@@ -450,20 +507,26 @@ class RelayServer(
     }
     val relayed = source
     if (!running || relayed == RelaySource.NONE) {
-      return
+      return false
     }
     val now = clockNs()
-    var flags = 0
-    if (unit.isKey) flags = flags or RelayWire.UNIT_KEY
-    if (unit.hasParameterSets) flags = flags or RelayWire.UNIT_IN_BAND
-    if (relayed == RelaySource.REPLAY) flags = flags or RelayWire.UNIT_REPLAY
     var askSwitch = false
     synchronized(lock) {
       lastResolved = description
       droneSent.addLast(longArrayOf(now, unit.size.toLong()))
       trimDroneLocked(now)
+      pictureRate.onUnit(unit.contentMs, unit.isKey)
       if (unit.isKey) {
-        askSwitch = atDroneKeyLocked(now)
+        keyWindow = KeyWindow(unit, description, now)
+      } else {
+        keyWindow?.after?.add(unit)
+      }
+      val window = keyWindow
+      if (window != null && !unit.isKey &&
+        (window.after.size + 1 >= PHASE_UNITS || now - window.atNs >= PHASE_WAIT_NS)
+      ) {
+        keyWindow = null
+        askSwitch = atDroneKeyLocked(window, now)
       }
       for (headset in headsets) {
         // A receiver on the phone's steady stream gets none of the drone's units
@@ -479,42 +542,60 @@ class RelayServer(
           )
           headset.lastDescription = description.description
         }
-        headset.queue.offerUnit(unit, flags, headset.breakNext, now) { recoveryPrimer(description, relayed) }
+        // A key unit always brings its sets in band (the drone's do): a receiver's decoder configured for the same
+        // size takes them at it
+        val sent = if (unit.isKey) withSets(unit, description.description) else unit
+        headset.queue.offerUnit(sent, unitFlags(sent, relayed), headset.breakNext, now) {
+          recoveryPrimer(description, relayed)
+        }
         headset.breakNext = false
         headset.unitSinceReset = true
         headset.resetQueued = false
       }
     }
-    if (askSwitch) {
-      steady?.setNeeded(true, now)
-      steady?.requestKey(RelayKeyCause.SWITCH, now)
-    }
+    return askSwitch
+  }
+
+  /** The steady stream is needed at once, with a key picture to switch at */
+  internal fun askSteadySwitch(nowNs: Long = clockNs()) {
+    steady?.setNeeded(true, nowNs)
+    steady?.requestKey(RelayKeyCause.SWITCH, nowNs)
+  }
+
+  private fun unitFlags(unit: AccessUnit, relayed: RelaySource): Int {
+    var flags = 0
+    if (unit.isKey) flags = flags or RelayWire.UNIT_KEY
+    if (unit.hasParameterSets) flags = flags or RelayWire.UNIT_IN_BAND
+    if (relayed == RelaySource.REPLAY) flags = flags or RelayWire.UNIT_REPLAY
+    return flags
   }
 
   /**
-   * Under [lock], at a drone key unit (a take off, a landing, the link start; p2/relay-bandwidth-2026-10-25.md, 7.5
-   * item 3 and 7.7): a steady receiver goes back to the drone's stream at it when Automatic says so (30 s quiet, the
-   * best second at least 1.5 times the drone's new rate) or the setting no longer asks for the steady stream; a
-   * receiver that needed the steady stream in an earlier flight of this session starts the one taking off steady. True
-   * when a switch to the steady stream is asked.
+   * Under [lock], a few units after a drone key unit (a take off, a landing, the link start), once the phase it starts
+   * is known from the drone's picture rate (p2/relay-bandwidth-2026-10-25.md, 7.5 item 3 and 7.7;
+   * p2/review-bandwidth-2026-10-25.md M5): under Automatic, a steady receiver goes back to the drone's stream when it
+   * was quiet for 30 s and its path carried 1.5 times the drone's rate in that phase; it gets the key unit with its
+   * sets in band and the units after it, from a clean start. A receiver that needed the steady stream in an earlier
+   * flight of this session starts the flight steady. True when a switch to the steady stream is asked.
    */
-  private fun atDroneKeyLocked(nowNs: Long): Boolean {
+  private fun atDroneKeyLocked(window: KeyWindow, nowNs: Long): Boolean {
     val usable = steady?.usable == true
-    val expected = droneRates.expected(motorsOn)
+    val flying = flyingLocked()
+    val expected = droneRates.expected(flying)
     var ask = false
     for (headset in headsets) {
       if (headset.stream == RelayStream.STEADY) {
-        val target = relayTargetStream(quality, headset.steadyCapable, usable, headset.policy.stream)
-        val back = quality == RelayQuality.AUTOMATIC &&
-          headset.policy.backToFullAt(nowNs, expected, headset.stats.bestSecondBits(120, steadyOnly = true))
-        if (back || target == RelayStream.FULL) {
-          // The drone's parameter sets and this key unit go with BREAK: a new stream, as at every take off
-          headset.queue.switchStream(toSteady = false, breakNext = headset.unitSinceReset)
-          headset.recordSwitch(nowNs, RelayStream.FULL, if (back) RelaySwitchWhy.QUIET else RelaySwitchWhy.SETTING)
-          headset.lastDescription = null
-          headset.followLowWater(RelayWire.NOT_SENT_LOW_WATER_BYTES)
+        if (quality != RelayQuality.AUTOMATIC) {
+          // Steady stream keeps it; Full stream took it back on the tick already
+          continue
         }
-      } else if (motorsOn == true && headset.pendingSteady == null && headset.steadyCapable && usable &&
+        val capacity = headset.capacityBits()
+        val check = headset.policy.backCheck(nowNs, expected, capacity)
+        headset.noteBack(RelayBackRecord(nowNs, check, flying, pictureRate.perSecond(), expected, capacity))
+        if (check == RelayBackCheck.BACK) {
+          backAtKeyLocked(headset, window, nowNs)
+        }
+      } else if (flying == true && headset.pendingSteady == null && headset.steadyCapable && usable &&
         quality == RelayQuality.AUTOMATIC && headset.policy.stream == RelayStream.FULL &&
         steadyMemory.knows(steadyMemory.key(headset.name, headset.address))
       ) {
@@ -524,6 +605,33 @@ class RelayServer(
       }
     }
     return ask
+  }
+
+  /**
+   * Under [lock]: [headset] goes back to the drone's stream at the key unit of [window]: its steady units go (a switch,
+   * not a drop), then the drone's parameter sets, the key unit with its sets in band and BREAK, and the units after it
+   * but the one being submitted, which follows as for every receiver on the full stream
+   */
+  private fun backAtKeyLocked(headset: RelayHeadset, window: KeyWindow, nowNs: Long) {
+    val relayed = source
+    headset.queue.switchStream(toSteady = false, breakNext = headset.unitSinceReset)
+    headset.recordSwitch(nowNs, RelayStream.FULL, RelaySwitchWhy.QUIET)
+    headset.followLowWater(RelayWire.NOT_SENT_LOW_WATER_BYTES)
+    val description = window.description
+    headset.queue.offerRecord(
+      RelayWire.PARAMETERS,
+      RelayWire.parametersFlag(description.source),
+      RelayWire.parametersBody(description.description),
+      nowNs,
+    )
+    headset.lastDescription = description.description
+    val key = withSets(window.key, description.description)
+    headset.queue.offerUnit(key, unitFlags(key, relayed), breakBefore = false, nowNs = nowNs)
+    for (unit in window.after.dropLast(1)) {
+      headset.queue.offerUnit(unit, unitFlags(unit, relayed), breakBefore = false, nowNs = nowNs)
+    }
+    headset.breakNext = false
+    headset.unitSinceReset = true
   }
 
   /**
@@ -583,8 +691,12 @@ class RelayServer(
   }
 
   /**
-   * Under [lock]: back to the drone's stream at once (the setting turned to Full stream, or the steady stream stopped):
-   * the drone's parameter sets and the kept key unit as a primer, then the live units, as today
+   * Under [lock]: back to the drone's stream at once, between two drone key pictures (the setting turned to Full
+   * stream, or the steady stream stopped). The drone's parameter sets, then the kept drone key unit with its sets in
+   * band and BREAK, not as a primer: the receiver decodes it at once, so that its decoder takes the drone's sets again
+   * rather than parse the drone's units with the phone encoder's (p2/review-bandwidth-2026-10-25.md M2). Then the live
+   * units, the first with BREAK too: they predict from pictures the receiver never had, and the picture repairs as the
+   * drone's refresh goes over it.
    */
   private fun fallbackToFullLocked(headset: RelayHeadset, why: RelaySwitchWhy, nowNs: Long) {
     headset.queue.switchStream(toSteady = false, breakNext = true)
@@ -601,12 +713,11 @@ class RelayServer(
       nowNs,
     )
     headset.lastDescription = last.description
-    lastKey?.takeIf { it.description.sameSetsAs(last.description) }?.let { key ->
-      var flags = RelayWire.UNIT_KEY or RelayWire.UNIT_PRIMER or RelayWire.UNIT_BREAK
-      if (key.unit.hasParameterSets) flags = flags or RelayWire.UNIT_IN_BAND
-      if (source == RelaySource.REPLAY) flags = flags or RelayWire.UNIT_REPLAY
-      if (headset.queue.offerUnit(key.unit, flags, breakBefore = false, nowNs = nowNs)) {
-        switchPrimers += 1
+    lastKey?.takeIf { it.description.sameSetsAs(last.description) }?.let { kept ->
+      val key = withSets(kept.unit, kept.description)
+      if (headset.queue.offerUnit(key, unitFlags(key, source), breakBefore = false, nowNs = nowNs)) {
+        fallbackKeys += 1
+        headset.breakNext = true
       }
     }
   }
@@ -642,7 +753,7 @@ class RelayServer(
     synchronized(lock) {
       if (nowNs >= nextDroneSecondNs) {
         nextDroneSecondNs = nowNs + 1_000_000_000L
-        droneRates.onSecond(droneBitsLocked(nowNs), motorsOn)
+        droneRates.onSecond(droneBitsLocked(nowNs), flyingLocked())
       }
       for (headset in headsets) {
         if (!headset.steadyCapable) {
@@ -689,7 +800,12 @@ class RelayServer(
           val why = if (quality == RelayQuality.AUTOMATIC) headset.policy.onFullTick(nowNs, age, dropped) else null
           if (relayTargetStream(quality, true, true, headset.policy.stream) == RelayStream.STEADY) {
             headset.pendingSteady = why ?: RelaySwitchWhy.SETTING
-            if (motorsOn == true && quality == RelayQuality.AUTOMATIC) {
+            if (why == null) {
+              // The setting switches it: Automatic, chosen later, keeps it steady until a way back at a drone key
+              // picture (p2/review-bandwidth-2026-10-25.md m6)
+              headset.policy.goSteady()
+            }
+            if (flyingLocked() == true && quality == RelayQuality.AUTOMATIC) {
               steadyMemory.remember(steadyMemory.key(headset.name, headset.address))
             }
             needed = true
@@ -747,6 +863,8 @@ class RelayServer(
       lastResolved = null
       lastKey = null
       lastSteady = null
+      keyWindow = null
+      pictureRate.reset()
       for (headset in headsets) {
         headset.queue.clearForReset()
         headset.lastDescription = null
@@ -1023,12 +1141,12 @@ class RelayServer(
         headsets.add(joined)
         // A receiver that takes the steady stream joins on it when the setting asks, or when it needed it in an earlier
         // flight of this session and the drone flies (p2/relay-bandwidth-2026-10-25.md, 7.5 item 1 and 7.7)
-        val memory = quality == RelayQuality.AUTOMATIC && motorsOn == true &&
+        val memory = quality == RelayQuality.AUTOMATIC && flyingLocked() == true &&
           steadyMemory.knows(steadyMemory.key(joined.name, joined.address))
         val wantsSteady = steadyOffered && steady?.usable == true && source != RelaySource.NONE &&
           (quality == RelayQuality.STEADY || memory)
         val why = if (quality == RelayQuality.STEADY) RelaySwitchWhy.SETTING else RelaySwitchWhy.MEMORY
-        if (wantsSteady && memory) {
+        if (wantsSteady) {
           joined.policy.goSteady()
         }
         if (wantsSteady && steady?.producing == true) {
@@ -1246,8 +1364,18 @@ class RelayServer(
       put("quality", quality.wire)
       put("motorsOn", motorsOn)
       put("steadyUnits", synchronized(lock) { steadyUnits })
-      put("switchPrimersSent", switchPrimers)
+      put("fallbackKeysSent", fallbackKeys)
       put("droneMegabitsPerSecondNow", synchronized(lock) { droneBitsLocked(nowNs) } / 1e6)
+      put("dronePerSecond", synchronized(lock) { pictureRate.perSecond() })
+      put("flying", synchronized(lock) { flyingLocked() })
+      // A receiver's decoder is configured again at each switch when the steady stream's coded size is not the drone's
+      put(
+        "switchNeedsNewConfiguration",
+        synchronized(lock) {
+          val drone = lastResolved?.description
+          lastSteady?.description?.let { phone -> drone?.let { phone.needsNewConfiguration(it) } }
+        },
+      )
       put("transcoder", steady?.report(nowNs) ?: JsonNull)
       put("receivers", buildJsonArray { receivers.forEach { add(it.report(nowNs)) } })
     }

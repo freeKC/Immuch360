@@ -569,6 +569,20 @@ class RelayQueue(
 /** A receiver's change of stream: when, from what, to what and why */
 data class RelaySwitch(val atNs: Long, val from: RelayStream, val to: RelayStream, val why: RelaySwitchWhy)
 
+/** The full stream seconds a receiver's capacity is read from: 20 minutes, a flight and the ground before it */
+const val BACK_FULL_WINDOW_S = 1_200
+
+/** The last way back to the full stream judged for a steady receiver, at a drone key picture, for the export */
+data class RelayBackRecord(
+  val atNs: Long,
+  val check: RelayBackCheck,
+  /** The phase the key picture starts, from the drone's picture rate (else the motors) */
+  val flying: Boolean?,
+  val perSecond: Int?,
+  val expectedBps: Long,
+  val capacityBps: Long,
+)
+
 /** What the phone got of a receiver's socket: the send buffer the kernel granted, and the unsent bytes bound if set */
 data class RelaySocketFacts(
   val sendBufferBytes: Int?,
@@ -626,7 +640,10 @@ class RelayReceiverStats(private val connectedAtNs: Long) {
     }
     writes.add(writeNs)
     ages.add(ageNs)
-    longestWriteSinceTake = maxOf(longestWriteSinceTake, writeNs)
+    // A key picture's write may block for its bytes over the unsent bound: the rate's clear rule leaves it out
+    if ((next.flags and RelayWire.UNIT_KEY) == 0) {
+      longestWriteSinceTake = maxOf(longestWriteSinceTake, writeNs)
+    }
     if (writeNs > 50_000_000L) stalls50 += 1
     if (writeNs > 200_000_000L) stalls200 += 1
     if (writeNs > 1_000_000_000L) stalls1000 += 1
@@ -645,7 +662,7 @@ class RelayReceiverStats(private val connectedAtNs: Long) {
     }
   }
 
-  /** The longest write of a unit since the last call, for the rate of the steady stream */
+  /** The longest write of a record that is not a key unit since the last call, for the rate of the steady stream */
   fun takeLongestWrite(): Long = synchronized(lock) { longestWriteSinceTake.also { longestWriteSinceTake = 0 } }
 
   /** From a steady drop to the key unit that ends it, written */
@@ -655,15 +672,15 @@ class RelayReceiverStats(private val connectedAtNs: Long) {
   val receiverNetwork: RelayPingNetwork? get() = synchronized(lock) { network }
 
   /**
-   * The best second its socket carried in the last [lastSeconds] seconds of the timeline, in bits; with [steadyOnly],
-   * only the seconds it was on the steady stream
+   * The best second its socket carried in the last [lastSeconds] seconds of the timeline, in bits; with [stream] (0
+   * full, 1 steady), only the seconds it was on that stream
    */
-  fun bestSecondBits(lastSeconds: Int = 120, steadyOnly: Boolean = false): Long = synchronized(lock) {
+  fun bestSecondBits(lastSeconds: Int = 120, stream: Int? = null): Long = synchronized(lock) {
     var best = 0L
     val first = maxOf(0L, seconds - minOf(lastSeconds, TIMELINE_SECONDS))
     for (index in first until seconds) {
       val at = ((index % TIMELINE_SECONDS) * COLUMNS).toInt()
-      if (steadyOnly && timeline[at + 8] != 1) {
+      if (stream != null && timeline[at + 8] != stream) {
         continue
       }
       best = maxOf(best, timeline[at + 2] * 1024L * 8)
@@ -862,6 +879,38 @@ class RelayHeadset internal constructor(
     if (runCatching { lowWaterTuning(socket, bytes) }.getOrDefault(false)) {
       lowWaterBytes = bytes
     }
+  }
+
+  // The way back to the full stream at drone key pictures (p2/review-bandwidth-2026-10-25.md M5), guarded by the
+  // server's lock
+  internal var backChecks = 0L
+  internal var backRefusedNotQuiet = 0L
+  internal var backRefusedNoRoom = 0L
+
+  @Volatile
+  internal var lastBack: RelayBackRecord? = null
+
+  /** A way back judged at a drone key picture, counted */
+  internal fun noteBack(record: RelayBackRecord) {
+    backChecks += 1
+    when (record.check) {
+      RelayBackCheck.NOT_QUIET -> backRefusedNotQuiet += 1
+      RelayBackCheck.NO_ROOM -> backRefusedNoRoom += 1
+      else -> Unit
+    }
+    lastBack = record
+  }
+
+  /**
+   * What this receiver's path carried, for the way back to the full stream: its best second on the full stream in the
+   * last [BACK_FULL_WINDOW_S] seconds or on the steady stream in the last 2 minutes (what the phone's own encoder sent
+   * is far under what the Wi-Fi can carry), and at most half the link speed of its own Wi-Fi when its pings say it (a
+   * burst may pass in a second that the link would not hold)
+   */
+  fun capacityBits(): Long {
+    var best = maxOf(stats.bestSecondBits(BACK_FULL_WINDOW_S, stream = 0), stats.bestSecondBits(120, stream = 1))
+    stats.receiverNetwork?.linkMbps?.takeIf { it > 0 }?.let { mbps -> best = minOf(best, mbps * 1_000_000L / 2) }
+    return best
   }
 
   /** A switch of stream, kept for the export (the last 64) */
@@ -1091,6 +1140,22 @@ class RelayHeadset internal constructor(
           put("allowedChanges", rate.changes)
           put("slow", rate.slow)
           put("notSentLowWaterBytesNow", lowWaterBytes)
+          put("backChecks", backChecks)
+          put("backRefusedNotQuiet", backRefusedNotQuiet)
+          put("backRefusedNoRoom", backRefusedNoRoom)
+          put(
+            "lastBackCheck",
+            lastBack?.let { back ->
+              buildJsonObject {
+                put("atMs", (back.atNs - connectedAtNs) / 1_000_000)
+                put("check", back.check.wire)
+                put("flying", back.flying)
+                put("perSecond", back.perSecond)
+                put("expectedKbps", back.expectedBps / 1000)
+                put("capacityKbps", back.capacityBps / 1000)
+              }
+            } ?: JsonNull,
+          )
         },
       )
       put("dropEvents", counters.dropEvents)

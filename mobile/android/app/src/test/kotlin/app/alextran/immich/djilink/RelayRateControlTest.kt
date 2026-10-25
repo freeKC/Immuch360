@@ -78,18 +78,44 @@ class RelayRateControlTest {
     }
     rate.onTick(now, 10 * ms, 8_000_000, 5 * ms, dropped = false)
     assertEquals(10_000_000, rate.allowedBps)
-    // A write over 50 ms starts the clear time again
-    now += 100 * ms
-    rate.onTick(now, 10 * ms, 8_000_000, 60 * ms, dropped = false)
+    // Three ticks of 20 not clear (a write over 50 ms, an oldest unit at 80 ms): no raise after 2 s
     val after = now
     while (now < after + 2 * second) {
       now += 100 * ms
-      rate.onTick(now, 10 * ms, 8_000_000, 5 * ms, dropped = false)
+      val tick = (now - after) / (100 * ms)
+      when (tick) {
+        3L -> rate.onTick(now, 10 * ms, 8_000_000, 60 * ms, dropped = false)
+        9L, 15L -> rate.onTick(now, 80 * ms, 8_000_000, 5 * ms, dropped = false)
+        else -> rate.onTick(now, 10 * ms, 8_000_000, 5 * ms, dropped = false)
+      }
     }
     assertEquals(10_000_000, rate.allowedBps)
-    now += 100 * ms
-    rate.onTick(now, 10 * ms, 8_000_000, 5 * ms, dropped = false)
+    // Once the last 2 s hold at most two of them, it rises
+    while (rate.allowedBps == 10_000_000 && now < after + 3 * second) {
+      now += 100 * ms
+      rate.onTick(now, 10 * ms, 8_000_000, 5 * ms, dropped = false)
+    }
     assertEquals(12_000_000, rate.allowedBps)
+    assertTrue("raised at ${(now - after) / ms} ms", now - after in (2_000 * ms)..(2_500 * ms))
+  }
+
+  /**
+   * p2/review-bandwidth-2026-10-25.md M4: the key picture the encoder makes every 2 s, whose write blocks for its bytes
+   * over the unsent bound, no longer keeps the rate from rising
+   */
+  @Test
+  fun aKeyPictureWriteOver50MsEvery2SecondsNoLongerKeepsTheRateDown() {
+    val rate = RelayRateController()
+    // Down to 3 Mbit/s once, then a clear link: queue empty, every write short but one every 2 s
+    rate.onTick(0, 300 * ms, 3_750_000, 0, dropped = false)
+    assertEquals(3_000_000, rate.allowedBps)
+    var now = 0L
+    for (tick in 1..300) {
+      now = tick * 100 * ms
+      val write = if (tick % 20 == 0) 60 * ms else 5 * ms
+      rate.onTick(now, 0, 3_000_000, write, dropped = false)
+    }
+    assertEquals(RelayRateController.MAX_BPS, rate.allowedBps)
   }
 
   @Test
@@ -167,7 +193,13 @@ class RelayRateControlTest {
     }
   }
 
-  private class Replay(val drops: Int, val underAtEnd: Double, val underAll: Double, val medianBps: Double)
+  private class Replay(
+    val drops: Int,
+    val underAtEnd: Double,
+    val underAll: Double,
+    val medianBps: Double,
+    val rates: List<Int> = emptyList(),
+  )
 
   /**
    * The flights' capacity in steps of 100 ms (the relay's tick): units at the rate allowed, 30 a second (15 when slow),
@@ -249,5 +281,119 @@ class RelayRateControlTest {
     // The adapted rate does better than a fixed 8 Mbit/s on the same link
     assertTrue(adapted.drops < fixed.drops)
     assertTrue(adapted.underAtEnd > fixed.underAtEnd)
+  }
+
+  /**
+   * The same capacity with what the encoder does (p2/review-bandwidth-2026-10-25.md M4): a key picture [keyTimes] the
+   * size of a P picture every 2 s at the allowed rate, one after each drop with the units skipped until it, and the
+   * write of each unit blocking for its bytes over the unsent bound ([RelayLowWater]) at the path's rate, the key
+   * pictures left out of the rate's write clause as the server leaves them out. [seconds] of capacity, from [startBps].
+   */
+  private fun replayWithKeys(seconds: List<Double>, keyTimes: Double = 8.0, startBps: Int? = null): Replay {
+    val rate = RelayRateController()
+    if (startBps != null) {
+      // A drop at the start brings the rate down to the asked one
+      rate.onTick(0, 0, (startBps / RelayRateController.DROP_FACTOR).toLong() + 1, 0, dropped = true)
+    }
+    val bound = RelayQueue.STEADY_TV_MAX_AGE_NS
+    // A unit: queued at, bytes left, bytes, key
+    val queue = ArrayDeque<DoubleArray>()
+    val carried = ArrayDeque<DoubleArray>()
+    var drops = 0
+    var underEnd = 0
+    var underAll = 0
+    var maxAge = 0L
+    var produce = 0.0
+    var frame = 0
+    var waitKey = false
+    val rates = mutableListOf<Int>()
+    val first = if (startBps != null) 1 else 0
+    for (step in first until seconds.size * 10) {
+      val now = step * 100 * ms
+      val bps = rate.allowedBps
+      val perSecond = if (rate.slow) 15 else 30
+      val group = 2 * perSecond
+      produce += perSecond / 10.0
+      while (produce >= 1 - 1e-9) {
+        produce -= 1
+        val p = bps * 2.0 / 8 / (group - 1 + keyTimes)
+        val key = frame % group == 0 || waitKey
+        if (key) {
+          waitKey = false
+          frame = 0
+        }
+        frame += 1
+        val size = if (key) p * keyTimes else p
+        queue.addLast(doubleArrayOf(now.toDouble(), size, size, if (key) 1.0 else 0.0))
+      }
+      val path = seconds[step / 10]
+      var budget = path / 8 / 10
+      var longest = 0L
+      val low = RelayLowWater.bytesFor(bps).toDouble()
+      while (queue.isNotEmpty() && budget > 0) {
+        val head = queue.first()
+        val take = minOf(budget, head[1])
+        head[1] -= take
+        budget -= take
+        carried.addLast(doubleArrayOf(now.toDouble(), take))
+        if (head[1] <= 1e-9) {
+          queue.removeFirst()
+          if (head[3] == 0.0) {
+            longest = maxOf(longest, (maxOf(0.0, head[2] - low) / (path / 8) * 1e9).toLong())
+          }
+        }
+      }
+      while (carried.isNotEmpty() && now - carried.first()[0] >= second - 1) {
+        carried.removeFirst()
+      }
+      var age = queue.firstOrNull()?.let { now - it[0].toLong() } ?: 0L
+      var dropped = false
+      if (age > bound) {
+        queue.clear()
+        drops += 1
+        dropped = true
+        age = 0
+        waitKey = true
+      }
+      maxAge = maxOf(maxAge, age)
+      if ((step + 1) % 10 == 0) {
+        if (age < 300 * ms) underEnd += 1
+        if (maxAge < 300 * ms) underAll += 1
+        maxAge = 0
+      }
+      rate.onTick(now, age, (carried.sumOf { it[1] } * 8).toLong(), longest, dropped)
+      rates += rate.allowedBps
+    }
+    val sorted = rates.sorted()
+    val count = seconds.size.toDouble()
+    return Replay(drops, underEnd / count, underAll / count, sorted[sorted.size / 2].toDouble(), rates)
+  }
+
+  @Test
+  fun theFlightsOf25OctoberReplayedWithKeyPicturesAndTheirWritesKeepFewDropsAndAShortQueue() {
+    val replayed = replayWithKeys(capacity())
+    println(
+      "25 October flights with key pictures of 8 P pictures and their writes: ${replayed.drops} drops, " +
+        "${"%.1f".format(replayed.underAtEnd * 100)} % of seconds under 0.3 s at their end " +
+        "(${"%.1f".format(replayed.underAll * 100)} % all through), median " +
+        "${"%.1f".format(replayed.medianBps / 1e6)} Mbit/s",
+    )
+    assertTrue("drops ${replayed.drops}", replayed.drops <= 40)
+    assertTrue("under 0.3 s at the end of ${replayed.underAtEnd}", replayed.underAtEnd >= 0.85)
+    assertTrue("under 0.3 s all through ${replayed.underAll}", replayed.underAll >= 0.78)
+  }
+
+  @Test
+  fun fromTheFloorTheRateClimbsToWhatAConstantLinkCarriesWithKeyPictures() {
+    for ((link, reached) in listOf(10e6 to 9_000_000, 15e6 to RelayRateController.MAX_BPS)) {
+      val replayed = replayWithKeys(List(60) { link }, startBps = RelayRateController.MIN_BPS)
+      val at20 = replayed.rates[20 * 10 - 2]
+      val at30 = replayed.rates[30 * 10 - 2]
+      println("constant ${link / 1e6} Mbit/s from 1.5: ${at20 / 1e6} Mbit/s at 20 s, ${at30 / 1e6} at 30 s")
+      assertEquals(0, replayed.drops)
+      // Before this round a 10 Mbit/s link stalled at 3.7 and a 15 Mbit/s one at 5.7 (the review's model)
+      assertTrue("$at20 at 20 s on ${link / 1e6} Mbit/s", at20 >= 9_000_000)
+      assertTrue("$at30 at 30 s on ${link / 1e6} Mbit/s", at30 >= reached)
+    }
   }
 }

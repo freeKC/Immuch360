@@ -87,6 +87,56 @@ class RelayStreamPolicyTest {
   }
 
   @Test
+  fun theWayBackSaysWhyItWasRefused() {
+    val policy = RelayStreamPolicy()
+    assertEquals(RelayBackCheck.NOT_STEADY, policy.backCheck(0, 4_800_000, 50_000_000))
+    policy.onFullTick(0, 0, dropped = true)
+    quiet(policy, 1 * second, 10 * second)
+    assertEquals(RelayBackCheck.NOT_QUIET, policy.backCheck(10 * second, 4_800_000, 50_000_000))
+    quiet(policy, 10 * second + 100 * ms, 32 * second)
+    assertEquals(RelayBackCheck.NO_ROOM, policy.backCheck(32 * second, 17_900_000, 20_000_000))
+    assertEquals(RelayStream.STEADY, policy.stream)
+    // The best full second of 25 October (30.7 Mbit/s) has room for the flight's rate
+    assertEquals(RelayBackCheck.BACK, policy.backCheck(32 * second, 17_900_000, 30_700_000))
+    assertEquals(RelayStream.FULL, policy.stream)
+  }
+
+  /** p2/review-bandwidth-2026-10-25.md M5: the phase a drone key picture starts, from the units after it */
+  @Test
+  fun theDronesPictureRateTellsTheFlightFromTheGroundAfterEachKeyPicture() {
+    val rate = DronePictureRate()
+    assertNull(rate.flying())
+    // In flight: 60 a second (content clock steps of 16 and 17 ms)
+    var clock = 10_000L
+    rate.onUnit(clock, key = true)
+    repeat(2) {
+      clock += 17
+      rate.onUnit(clock, key = false)
+    }
+    assertNull("two steps are not enough", rate.flying())
+    repeat(10) { index ->
+      clock += if (index % 3 == 0) 16 else 17
+      rate.onUnit(clock, key = false)
+    }
+    assertEquals(60, rate.perSecond())
+    assertEquals(true, rate.flying())
+    // The landing: the drone's encoder starts again at 30 a second; known after three steps of the new stream
+    clock += 500
+    rate.onUnit(clock, key = true)
+    assertNull(rate.flying())
+    repeat(3) {
+      clock += 33
+      rate.onUnit(clock, key = false)
+    }
+    assertEquals(30, rate.perSecond())
+    assertEquals(false, rate.flying())
+    // A unit without a content time, or a step back of a capture that loops, adds no step
+    rate.onUnit(-1, key = false)
+    rate.onUnit(clock - 5_000, key = false)
+    assertEquals(30, rate.perSecond())
+  }
+
+  @Test
   fun aLateUnitStartsTheQuietAgain() {
     val policy = RelayStreamPolicy()
     policy.onFullTick(0, 0, dropped = true)
@@ -130,11 +180,11 @@ class RelayStreamPolicyTest {
     assertEquals(DroneRateMemory.FLYING_BPS, memory.expected(true))
     assertEquals(DroneRateMemory.GROUND_BPS, memory.expected(false))
     assertEquals(DroneRateMemory.FLYING_BPS, memory.expected(null))
-    repeat(5) { memory.onSecond(5_000_000, motorsOn = false) }
-    memory.onSecond(17_000_000, motorsOn = false)
-    memory.onSecond(3_000_000, motorsOn = null)
+    repeat(5) { memory.onSecond(5_000_000, flying = false) }
+    memory.onSecond(17_000_000, flying = false)
+    memory.onSecond(3_000_000, flying = null)
     assertEquals(5_000_000L, memory.expected(false))
-    repeat(3) { memory.onSecond(18_200_000, motorsOn = true) }
+    repeat(3) { memory.onSecond(18_200_000, flying = true) }
     assertEquals(18_200_000L, memory.expected(true))
     assertEquals(18_200_000L, memory.expected(null))
   }

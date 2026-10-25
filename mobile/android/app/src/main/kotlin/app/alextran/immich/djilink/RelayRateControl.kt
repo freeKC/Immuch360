@@ -3,19 +3,24 @@ package app.alextran.immich.djilink
 /**
  * The bit rate the link of one steady receiver allows (p2/relay-bandwidth-2026-10-25.md, 7.6), decided on the relay's
  * tick (ten times a second) from what the phone measures of that receiver: the age of the oldest unit queued for it,
- * what its socket carried in the last second, its longest write and its drops.
+ * what its socket carried in the last second, its longest write of a picture that is not a key picture and its drops.
  *
  * 1. It starts at [START_BPS].
  * 2. The oldest unit older than [downAgeNs] (250 ms, a headset 150 ms): 0.8 times what the last second carried, at most
  *    every [DOWN_EVERY_NS].
  * 3. A drop: 0.7 times what the last second carried.
- * 4. The oldest under [CLEAR_AGE_NS] and no write over [CLEAR_WRITE_NS] for [UP_AFTER_NS]: times 1.25.
+ * 4. Clear for [UP_AFTER_NS]: times 1.25. A tick is clear when the oldest is under [CLEAR_AGE_NS] and no write took
+ *    over [CLEAR_WRITE_NS]; [UP_AFTER_NS] is clear when at least [CLEAR_SHARE] of its ticks are, so that the key
+ *    picture the encoder makes every 2 s, whose write and the units behind it may take longer, does not hold the rate
+ *    down for the flight (p2/review-bandwidth-2026-10-25.md M4). A tick of rule 2 or 3 starts the time again.
  * 5. Within [MIN_BPS] and [MAX_BPS]; a rule that lowers it never raises it.
  * 6. At [MIN_BPS] and still over [downAgeNs]: 15 pictures a second ([slow]), back to 30 after [SLOW_BACK_NS] under
  *    [CLEAR_AGE_NS] at [SLOW_BACK_BPS] or more.
  *
- * Replayed on the capacity the Wi-Fi had in the flights of 25 October, this gives about 20 clean drops in 250 s and
- * the queue under 0.3 s at the end of over 95 % of the seconds (RelayRateControlTest). Pure, with the times given.
+ * Replayed on the capacity the Wi-Fi had in the flights of 25 October, with a key picture of eight P pictures every
+ * 2 s, one after each drop and the writes they block, this gives about 20 clean drops in 250 s and the queue under
+ * 0.3 s at the end of about 90 % of the seconds; from 1.5 Mbit/s on a constant 10 Mbit/s link it reaches the link
+ * within 20 s (RelayRateControlTest). Pure, with the times given.
  */
 class RelayRateController(headset: Boolean = false) {
   companion object {
@@ -30,6 +35,7 @@ class RelayRateController(headset: Boolean = false) {
     const val CLEAR_AGE_NS = 50_000_000L
     const val CLEAR_WRITE_NS = 50_000_000L
     const val UP_AFTER_NS = 2_000_000_000L
+    const val CLEAR_SHARE = 0.9
     const val UP_FACTOR = 1.25
     const val SLOW_BACK_NS = 5_000_000_000L
     const val SLOW_BACK_BPS = 3_000_000
@@ -55,7 +61,12 @@ class RelayRateController(headset: Boolean = false) {
     private set
 
   private var lastDownNs: Long? = null
+
+  /** Since when the rate was neither lowered nor raised, null right after a lowering */
   private var clearSinceNs: Long? = null
+
+  /** The ticks of the last [UP_AFTER_NS] since then: their time, and 1 when clear */
+  private val recent = ArrayDeque<LongArray>()
   private var slowClearSinceNs: Long? = null
 
   /**
@@ -71,6 +82,7 @@ class RelayRateController(headset: Boolean = false) {
         lower(DROP_FACTOR * carriedBps)
         lastDownNs = nowNs
         clearSinceNs = null
+        recent.clear()
       }
       oldestAgeNs > downAgeNs -> {
         val last = lastDownNs
@@ -79,20 +91,28 @@ class RelayRateController(headset: Boolean = false) {
           lastDownNs = nowNs
         }
         clearSinceNs = null
+        recent.clear()
         if (allowedBps <= MIN_BPS) {
           slow = true
         }
       }
-      oldestAgeNs < CLEAR_AGE_NS && longestWriteNs <= CLEAR_WRITE_NS -> {
-        val since = clearSinceNs
-        if (since == null) {
-          clearSinceNs = nowNs
-        } else if (nowNs - since >= UP_AFTER_NS) {
+      else -> {
+        val since = clearSinceNs ?: nowNs.also {
+          clearSinceNs = it
+          recent.clear()
+        }
+        val clear = oldestAgeNs < CLEAR_AGE_NS && longestWriteNs <= CLEAR_WRITE_NS
+        recent.addLast(longArrayOf(nowNs, if (clear) 1 else 0))
+        while (recent.isNotEmpty() && nowNs - recent.first()[0] >= UP_AFTER_NS) {
+          recent.removeFirst()
+        }
+        if (nowNs - since >= UP_AFTER_NS && recent.sumOf { it[1] } >= CLEAR_SHARE * recent.size) {
           allowedBps = clamp(allowedBps * UP_FACTOR)
+          // The next raise is judged on the ticks after this one
           clearSinceNs = nowNs
+          recent.clear()
         }
       }
-      else -> clearSinceNs = null
     }
     if (slow && !wasSlow) {
       slowClearSinceNs = null
