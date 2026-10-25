@@ -15,6 +15,9 @@ import org.junit.Test
 class ObstacleRingTickerTest {
   private val phone = RingChoices(offered = true, settings = RingSettings(), haptic = true)
 
+  /** A TV or a headset with the ring on for its screen, as by default */
+  private val screen = RingChoices(offered = true)
+
   /** The values of the source in use: one obstacle at [sector], [metres] away, or no ring at all for null */
   private fun values(
     metres: Double?,
@@ -106,10 +109,10 @@ class ObstacleRingTickerTest {
       sinceMs = 20,
     )
     assertTrue(ticker.startSample(idle, 0))
-    assertTrue(ticker.tick(idle, RingChoices(), 2_000).decision.on)
+    assertTrue(ticker.tick(idle, screen, 2_000).decision.on)
     // The pilot takes off: the TV's sample ends at the next record
     val flying = RingSource.received(record(10_100, 5.0), sinceMs = 20)
-    assertFalse(ticker.tick(flying, RingChoices(), 2_050).decision.on)
+    assertFalse(ticker.tick(flying, screen, 2_050).decision.on)
     assertNull(ticker.sampleStartMs)
   }
 
@@ -134,14 +137,20 @@ class ObstacleRingTickerTest {
   @Test
   fun onAReceiverThePhonesRecordDecidesWhetherItIsOfferedItsDistancesAndItsSide() {
     val sided = RelayObstacleRing(offered = true, farM = 2.0, nearM = 0.75, directional = true)
-    // This TV's own choices say nothing is offered, and it asks for the tap: the phone's record wins, a TV never taps
-    val tv = RingChoices(offered = false, settings = RingSettings(), haptic = true)
+    // This TV's own distances say nothing (the defaults) and it asks for the tap: the phone's record wins on the
+    // distances and the side, and a TV never taps
+    val tv = RingChoices(offered = true, settings = RingSettings(), haptic = true)
     val fromPhone = RingSource.received(record(10_000, 0.7, sector = 18, ring = sided), 20)
     val received = ObstacleRingTicker().tick(fromPhone, tv, 0)
     assertTrue(received.decision.on)
     assertEquals(90.0, received.decision.arcs.single().centreDeg!!, 1e-9)
     assertTrue(received.decision.haptic)
     assertFalse(received.tap)
+    // The TV's own switch can only turn it off on its screen
+    assertEquals(ObstacleDecision.OFF, ObstacleRingTicker().tick(fromPhone, tv.copy(offered = false), 0).decision)
+    // And the phone's switch off turns it off on every screen, whatever the TV says
+    val phoneOff = RingSource.received(record(10_000, 0.7, sector = 18, ring = sided.copy(offered = false)), 20)
+    assertEquals(ObstacleDecision.OFF, ObstacleRingTicker().tick(phoneOff, tv, 0).decision)
     // The same ring on the phone, with its own choices: it taps
     val onPhone = ObstacleRingTicker().tick(RingSource.local(values(0.7, sector = 18)), phone, 0)
     assertTrue(onPhone.decision.on)
@@ -157,8 +166,8 @@ class ObstacleRingTickerTest {
   @Test
   fun aReceiverCallsTheRingStaleAfterOneAndAHalfSecondsThePhoneAfterSixHundredMilliseconds() {
     val tv = ObstacleRingTicker()
-    assertTrue(tv.tick(RingSource.received(record(10_000, 1.2, ringAgeMs = 100), 1_300), RingChoices(), 0).decision.on)
-    val late = tv.tick(RingSource.received(record(10_000, 1.2, ringAgeMs = 100), 1_450), RingChoices(), 150).decision
+    assertTrue(tv.tick(RingSource.received(record(10_000, 1.2, ringAgeMs = 100), 1_300), screen, 0).decision.on)
+    val late = tv.tick(RingSource.received(record(10_000, 1.2, ringAgeMs = 100), 1_450), screen, 150).decision
     assertFalse(late.on)
     assertTrue(late.stopped)
     val onPhone = ObstacleRingTicker()
@@ -170,7 +179,7 @@ class ObstacleRingTickerTest {
   fun onAReceiverARingIsSmoothedOnceWhateverTheTransitOfEachRecord() {
     val tv = ObstacleRingTicker()
     fun nearest(record: RelayTelemetryRecord, sinceMs: Long, nowMs: Long): Double? =
-      tv.tick(RingSource.received(record, sinceMs), RingChoices(), nowMs).decision.nearestM
+      tv.tick(RingSource.received(record, sinceMs), screen, nowMs).decision.nearestM
     // A ring at 1.0 m read by the phone at 9 900 ms of its clock
     assertEquals(1.0, nearest(record(10_000, 1.0, ringAgeMs = 100), 20, 50_000)!!, 1e-9)
     // The next ring, at 2.0 m, read at 10 000 ms: a leaving obstacle is smoothed halfway

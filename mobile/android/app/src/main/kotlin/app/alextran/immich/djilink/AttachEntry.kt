@@ -3,9 +3,9 @@ package app.alextran.immich.djilink
 /**
  * Whether the entry that puts this application in Android's question for a plugged DJI remote is enabled
  * (p2/design-ux-phone-2026-10-24.md, 8.4). While a link runs it always is, so that the pilot on the live screen can
- * answer that question. Otherwise only when the pilot said yes to "Open this screen when the remote is plugged in" and
- * the DJI live video setting is on: a pilot who flies with DJI Fly and never said yes is never offered this application
- * for the cable. Pure, so that it is unit tested.
+ * answer that question. Otherwise when "Open this screen when the remote is plugged in" is on (by default since FreeKC's
+ * rule of 25 October: every experimental switch on) and the DJI live video setting is on. With DJI Fly on the phone
+ * too, Android then asks which application opens the remote. Pure, so that it is unit tested.
  */
 object AttachEntryPolicy {
   fun enabled(linkRunning: Boolean, openOnPlug: Boolean, settingOn: Boolean): Boolean =
@@ -19,14 +19,15 @@ object AttachEntryPolicy {
  */
 class AttachEntryPreferences(private val store: KeyValueStore) {
   companion object {
-    private const val OPEN_ON_PLUG = "attach.openOnPlug"
+    /** Kept as "turned off": a switch never touched is on. The earlier "attach.openOnPlug" (a yes) is no longer read. */
+    private const val OPEN_ON_PLUG_OFF = "attach.openOnPlugOff"
     private const val SETTING_OFF = "attach.liveSettingOff"
   }
 
-  /** Off by default: the pilot says yes once, on the plug step or in Advanced */
+  /** On by default, as every experimental switch; Advanced on the live screen turns it off */
   var openOnPlug: Boolean
-    get() = store.read(OPEN_ON_PLUG) == "1"
-    set(value) = store.write(OPEN_ON_PLUG, if (value) "1" else null)
+    get() = store.read(OPEN_ON_PLUG_OFF) != "1"
+    set(value) = store.write(OPEN_ON_PLUG_OFF, if (value) null else "1")
 
   /** On by default, as the setting is */
   var settingOn: Boolean

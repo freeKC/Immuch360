@@ -290,7 +290,10 @@ data class RingSource(
   }
 }
 
-/** This device's own choices for the ring, as Flutter sent them */
+/**
+ * This device's own choices for the ring, as Flutter sent them. [offered] on a phone is the pilot's switch; on a TV or a
+ * headset it is the ring on that screen, which shows only when the phone offers it too.
+ */
 data class RingChoices(
   val offered: Boolean = false,
   val settings: RingSettings = RingSettings(),
@@ -316,12 +319,12 @@ data class RingTickInputs(
  * The inputs of [ObstacleAlert.decide] at one tick, from the source in use, this device's choices and the sample
  * (p2/review-obstacle-ring-2026-10-25.md, major 1 and minor 4). On a receiver the phone's record says whether the ring
  * is offered, its distances and its side, so that every screen draws what the phone draws (a phone of an earlier build
- * sends none: no ring), and the stale limit is the relay's. "Show a sample" runs eight seconds, and ends at once when
+ * sends none: no ring), and the stale limit is the relay's; the receiver's own switch can only turn it off there. "Show a sample" runs eight seconds, and ends at once when
  * the motors start: a made up obstacle is never drawn in flight, and the real ring is decided again at that tick.
  */
 fun ringTickInputs(source: RingSource, choices: RingChoices, sampleStartMs: Long?, nowMs: Long): RingTickInputs {
   val relayed = source.relayed
-  val offered = if (source.receiving) relayed?.offered ?: false else choices.offered
+  val offered = if (source.receiving) (relayed?.offered ?: false) && choices.offered else choices.offered
   val settings = if (source.receiving) relayed?.settings() ?: RingSettings() else choices.settings
   val sample = sampleStartMs
     ?.takeIf { source.input.motorsOn != true }

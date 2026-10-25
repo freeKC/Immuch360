@@ -25,28 +25,30 @@ class AttachEntryPolicyTest {
   }
 
   @Test
-  fun aFreshInstallOffersNothingForTheCable() {
+  fun aFreshInstallOpensTheLiveScreenOnThePlug() {
+    // Every experimental switch is on by default (FreeKC's rule of 25 October)
     val preferences = AttachEntryPreferences(MemoryKeyValueStore())
-    assertFalse(preferences.openOnPlug)
+    assertTrue(preferences.openOnPlug)
     assertTrue(preferences.settingOn)
-    assertFalse(preferences.entryEnabled(linkRunning = false))
+    assertTrue(preferences.entryEnabled(linkRunning = false))
     assertTrue(preferences.entryEnabled(linkRunning = true))
   }
 
   @Test
   fun theAnswersAreKeptAndTurningEitherOffDropsTheEntry() {
     val store = MemoryKeyValueStore()
-    AttachEntryPreferences(store).openOnPlug = true
+    AttachEntryPreferences(store).openOnPlug = false
     // Read back by another instance, as after a process death
     val preferences = AttachEntryPreferences(store)
-    assertTrue(preferences.openOnPlug)
-    assertTrue(preferences.entryEnabled(linkRunning = false))
+    assertFalse(preferences.openOnPlug)
+    assertFalse(preferences.entryEnabled(linkRunning = false))
+    assertTrue(preferences.entryEnabled(linkRunning = true))
+    preferences.openOnPlug = true
+    assertTrue(AttachEntryPreferences(store).entryEnabled(linkRunning = false))
     preferences.settingOn = false
     assertFalse(AttachEntryPreferences(store).entryEnabled(linkRunning = false))
     preferences.settingOn = true
     assertTrue(AttachEntryPreferences(store).entryEnabled(linkRunning = false))
-    preferences.openOnPlug = false
-    assertFalse(AttachEntryPreferences(store).entryEnabled(linkRunning = false))
     // Nothing is left in the store for the defaults
     assertEquals(0, store.size)
   }
