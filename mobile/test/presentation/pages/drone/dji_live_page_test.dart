@@ -1027,9 +1027,7 @@ void main() {
     semantics.dispose();
   });
 
-  testWidgets('the distance by the glow, on by default, outside the circle where the arc is; off in Advanced', (
-    tester,
-  ) async {
+  testWidgets('the distance by the glow, on by default, outside the circle where the arc is', (tester) async {
     final listener = await openLive(tester, phone());
     await push(
       tester,
@@ -1044,15 +1042,17 @@ void main() {
     expect(number.dx, greaterThan(picture.center.dx));
     expect(number.dy, lessThan(picture.center.dy));
     expect((number - picture.center).distance, greaterThan(picture.height / 4));
+  });
 
+  testWidgets('the distance by the glow, turned off in Advanced, leaves the circle alone', (tester) async {
     memory.values[StoreKey.djiObstacleNumbersOff] = true;
-    final again = await openLive(tester, phone());
+    final listener = await openLive(tester, phone());
     await push(
       tester,
-      again,
+      listener,
       live(frame: fakeFrame(alert: fakeDecision(on: true, arcs: [fakeArc(1.44, centreDeg: 30)]))),
     );
-    expect(find.byKey(const Key('dji_live_obstacle_ring')), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_circle')), findsOneWidget);
     expect(find.text('1.4 m'), findsNothing);
   });
 
