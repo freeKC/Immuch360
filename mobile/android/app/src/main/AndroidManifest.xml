@@ -266,10 +266,11 @@
       </intent-filter>
     </activity>
 
-    <!-- DJI live video: the entry Android offers when a DJI accessory is plugged in. Shipped disabled and enabled
-         only while a link runs or when the user said yes to "Open this screen when the remote is plugged in"
-         (AttachEntryPolicy), so the app never appears in the chooser of a user who did not ask for it and never
-         competes with DJI Fly for a cable. -->
+    <!-- DJI live video: the entry Android offers when a DJI accessory is plugged in. Shipped disabled; enabled while
+         a link runs, or while "Open this screen when the remote is plugged in" and the DJI live video setting are on
+         (AttachEntryPolicy), both on by default on a phone since 25 October, never on a TV or the Quest. With DJI Fly
+         on the phone too, Android then asks which application opens the remote; turning the switch off in Advanced
+         takes this app out of that question. -->
     <activity
       android:name=".djilink.DjiLinkAttachActivity"
       android:enabled="false"

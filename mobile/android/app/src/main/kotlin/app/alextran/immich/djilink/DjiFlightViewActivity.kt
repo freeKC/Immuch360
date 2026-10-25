@@ -371,8 +371,9 @@ internal object FlightViewControls {
 /**
  * The flight view of the Quest (p2/design-stage2b.md, 8.3): the drone's picture relayed by the phone on a flat (or
  * curved) video panel 2.5 m in front, world locked so that the pilot looks around freely, passthrough around it, a
- * strip under it that always shows (the state of the picture, the stale line, the observer note, watching only) and
- * the values panel under the strip, which A shows or hides. The decoder of the window page renders into the video
+ * strip under it whose warnings come and go (the state of the picture, the stale line, the observer note, watching
+ * only; the line that says why no picture shows stays while it does not) and the values panel under the strip, which
+ * A shows or hides. The decoder of the window page renders into the video
  * panel's surface through setOutputSurface ([DjiLinkVideoSurfaces]), so going in and out never restarts it.
  *
  * Watching only: nothing in this activity reaches the receiver, the phone or the drone. The controllers change the

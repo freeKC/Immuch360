@@ -1338,8 +1338,8 @@ class DjiWatchTvOptions extends ConsumerWidget {
                     title: Text(hidden ? t.dji_live_tv_numbers_show : t.dji_live_tv_numbers_hide),
                     onTap: () => choose('numbers'),
                   ),
-                  // The ring's own items of this TV, each on by default: whether the phone offers it, its distances and its
-                  // side come from the phone; this TV can only turn it off on its own screen
+                  // The ring's own items of this TV, each on by default: whether the phone offers it, its distances
+                  // and its side come from the phone; this TV can only turn it off on its own screen
                   if (offer != DjiObstacleOffer.none) ...[
                     SwitchListTile(
                       key: const Key('dji_watch_obstacle_here'),

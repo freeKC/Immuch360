@@ -29,9 +29,10 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
 
     /**
      * The entry that puts this application in the Android chooser when a DJI accessory is plugged in. It ships
-     * disabled and is enabled while a link runs, or when the pilot asked for it ([AttachEntryPolicy]), so a pilot who
-     * never asked for it never sees this application offered for a cable, and it never competes with the DJI
-     * application on a phone.
+     * disabled and is enabled while a link runs, or while "Open this screen when the remote is plugged in" and the DJI
+     * live video setting are on ([AttachEntryPolicy]), both on by default on a phone since 25 October. With the DJI
+     * application on the phone too, Android then asks which one opens the remote; the switch in Advanced takes this
+     * application out of that question.
      */
     fun setAttachEntryEnabled(context: Context, enabled: Boolean) {
       val component = ComponentName(context, DjiLinkAttachActivity::class.java)
