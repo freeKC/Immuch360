@@ -12,6 +12,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -80,9 +81,11 @@ class DjiAttachLaunch {
   /// Tells the native side whether the entry may be offered for the cable: with the DJI live video on, on a phone or a
   /// tablet. "Open this screen when the remote is plugged in" is on by default there, so a fresh install opens the live
   /// screen at the first plug once it ran once; a TV and the Quest only watch a phone's relay and never offer it. Off
-  /// Android there is no DJI link and nothing to tell: no call at each start and resume on iOS or a computer.
+  /// Android there is no DJI link and nothing to tell: no call at each start and resume on iOS or a computer. An
+  /// Android phone or tablet in the TV layout, where the DJI live video is not offered, is still told no, so that an
+  /// entry an earlier session enabled does not stay in Android's question for the remote.
   Future<void> applyEntry() async {
-    if (!_ref.read(djiLinkSupportedProvider)) {
+    if (!CurrentPlatform.isAndroid) {
       return;
     }
     try {

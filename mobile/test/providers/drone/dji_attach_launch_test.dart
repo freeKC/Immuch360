@@ -2,12 +2,16 @@
 // a plug answered while the live screen is open opens nothing more, then or after the pilot leaves it (review of 24
 // October 2026, finding 1).
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_attach_launch.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
 import '../../presentation/pages/drone/dji_link_fakes.dart';
@@ -37,21 +41,34 @@ void main() {
   });
 
   group('the entry for the cable, told at each start and resume', () {
-    /// What the native side is told when the app comes to the front
-    Future<List<bool>> told({required bool enabled, required bool receiverOnly, bool supported = true}) async {
-      final api = FakeDjiLinkApi();
-      final container = ProviderContainer(
-        overrides: [
-          djiLinkApiProvider.overrideWithValue(api),
-          djiLinkSupportedProvider.overrideWithValue(supported),
-          djiLinkEnabledProvider.overrideWithValue(enabled),
-          djiReceiverOnlyProvider.overrideWithValue(receiverOnly),
-          isHorizonOsProvider.overrideWith((ref) async => receiverOnly),
-        ],
-      );
-      addTearDown(container.dispose);
-      await container.read(djiAttachLaunchProvider).check();
-      return api.liveSettingSets;
+    /// What the native side is told when the app comes to the front on [platform], Android unless said otherwise.
+    /// [enabled] stands for the DJI live video as the Drone page offers it; left out, it follows the layout
+    /// ([tvLayout]) with the setting on, as on a device.
+    Future<List<bool>> told({
+      bool? enabled,
+      required bool receiverOnly,
+      bool tvLayout = false,
+      TargetPlatform platform = TargetPlatform.android,
+    }) async {
+      debugDefaultTargetPlatformOverride = platform;
+      try {
+        final api = FakeDjiLinkApi();
+        final container = ProviderContainer(
+          overrides: [
+            djiLinkApiProvider.overrideWithValue(api),
+            appConfigProvider.overrideWithValue(const AppConfig(djiLinkEnabled: true)),
+            tvModeProvider.overrideWithValue(tvLayout),
+            if (enabled != null) djiLinkEnabledProvider.overrideWithValue(enabled),
+            djiReceiverOnlyProvider.overrideWithValue(receiverOnly),
+            isHorizonOsProvider.overrideWith((ref) async => receiverOnly),
+          ],
+        );
+        addTearDown(container.dispose);
+        await container.read(djiAttachLaunchProvider).check();
+        return api.liveSettingSets;
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
     }
 
     test('a phone with the DJI live video on offers it: by default the first plug opens the live screen', () async {
@@ -63,8 +80,15 @@ void main() {
       expect(await told(enabled: true, receiverOnly: true), [false]);
     });
 
+    test('Android, TV layout: a phone in the TV layout is told no, so an entry left on earlier goes', () async {
+      // The DJI live video is not offered in that layout, and the entry an earlier phone layout session enabled would
+      // put this app in Android's question for the remote, beside DJI Fly, for nothing
+      expect(await told(receiverOnly: false, tvLayout: true), [false]);
+    });
+
     test('off Android, where there is no DJI link, nothing is told at each start and resume', () async {
-      expect(await told(enabled: false, receiverOnly: false, supported: false), isEmpty);
+      expect(await told(enabled: false, receiverOnly: false, platform: TargetPlatform.iOS), isEmpty);
+      expect(await told(enabled: false, receiverOnly: false, platform: TargetPlatform.linux), isEmpty);
     });
   });
 }

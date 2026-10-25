@@ -87,6 +87,7 @@ the gate is per desktop and is noted.
 | `lib/providers/app_life_cycle.provider.dart:165` | idem | idem |
 | `lib/providers/asset_viewer/local_panorama.provider.dart:123` | iOS local availability check | right: files are local (placeholders are never published) |
 | `lib/providers/backup/backup.provider.dart:139` | iOS: the foreground backup cancels the background uploads, whose temporary files it cleans up (upstream, October 2026) | right: no background upload on the computers |
+| `lib/providers/drone/dji_attach_launch.provider.dart:88` | the DJI cable entry told to the native side on Android only (October 2026, not in build 20) | right: the computers return before any DjiLinkApi call at each start and resume |
 | `lib/providers/infrastructure/immersive.provider.dart:16` | Quest only | right |
 | `lib/providers/infrastructure/tv.provider.dart:26` | Android TV only | right |
 | `lib/providers/network/phone_share.provider.dart:256` | Android device name | wired (G1): desktopShareDeviceName |
