@@ -1,321 +1,113 @@
 <details><summary>🌐 <b>Taqbaylit</b> · Tutlayin-nniḍen (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
+
 <p align="center">
-  <img src="../.github/readme/hero-2026-10.jpg" width="100%" alt="Immuch360: ayla-inek, ɣef yal agdil, seg yal tamuɣli. Tiwlafin d tividyutin, tizeddigin, tipanuramikin, 360°, 3D d VR180, seg ibenk-ik, seg NAS-ik neɣ seg uqeddac-ik n Immich, ɣef tilifunen, tablitin, TV-yen, ibenkan Meta Quest d yiselkimen">
+  <img src="../.github/readme/hero-2026-10-24.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration at dusk in front of a sea bay: a storage box, a phone, a tablet, a TV, a laptop and a headset, a drone in the sky and a home camera, linked by arcs of light">
 </p>
 
 # Immuch360
 
 **Ayla-k. Yal agdil. Yal tamuɣli.**
 
-Immuch360 d asnas ilelli, s uɣbalu uldi, i wakken a d-tafeḍ, a tinigeḍ, a tesskeneḍ u a tesniremeḍ tiwlafin-ik d tividyutin-ik: tid n yal ass, akked tid tipanuramikin, 360°, 3D d imirsif i d-skanen yisnasen nniḍen tizeddigin, ɛawed neɣ ssedsent. Yeqqar-iten anda i llan, ɣef ibenk s yiman-is, ɣef NAS neɣ ɣef uselkim, ɣef uqeddac Plex neɣ ɣef uqeddac Immich, yerna yesskan-iten ɣef tilifunen, tablitin, TV-yen, ibenkan Meta Quest d yiselkimen. Ulac amiḍan, ulac cloud, ulac aqeddac i ilaqen.
-
-- **D acu i t-ixeddem?** Isskan-d tiwlafin-ik d tividyutin-ik d agraw, yerna yesskan-iten deg umeskan i yemmeslayen i yal afaylu: azeddig, d takuret i deg tettwaliḍ yal tama, s 3D, deg ibenk n uqerru.
-- **Anwa ayla?** Tiwlafin d tividyutin tizeddigin, tipanuramikin, tiwlafin d tividyutin n 360°, VR180, 3D s snat wallen, tiwlafin Apple n wemkan, tikurin n 360° n yidrunen DJI, akked ifuyla raw n tkamirawin n 360° (Insta360, GoPro MAX, DJI Osmo 360), i yesdukkel usnas.
-- **Ɣef anwa ibenkan?** Android tilifunen d tablitin, iPhone d iPad, Android TV d Google TV, tiliẓriyin LG s webOS d tiliẓriyin Samsung s Tizen (asnas n TV weḥd-s, deg builds n tirmit), Meta Quest 2, Pro, 3 d 3S, Windows (version n usenqed), akked Linux d macOS d versions n usenqed n zik.
-- **Eɛni ilaq-iyi aqeddac neɣ amiḍan?** Ala. Immuch360 yexdem weḥd-s s ayla n ibenk-ik. Aqeddac Immich, NAS, aqeddac n yimidyaten neɣ aqeddac Plex, d tifranin i tzemreḍ a tent-trennuḍ ticki tebɣiḍ.
-- **Amek ara tqqneḍ TV, ibenk n uqerru neɣ aselkim?** S tilifun-ik: sleḍ tangalt QR i d-yesskan usebter-is n tuqqna, neɣ aru tangalt-is, sentem, ad yeldi ɣef tmkarḍit-ik Immich deg kra n tsinin, war ma turiḍ kra s tlikumand.
+Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. Immuch360 is a free and open source app that reads your photos and videos where they are and plays each one in the viewer that fits it: flat, as a sphere you look around in, in 3D, or all around you in a headset. It runs on phones, tablets, TVs, Meta Quest headsets and computers.
 
 <p align="center">
   <sub>Afeṛṛeɛ mačči d arasmi n usnas n tilifun n Immich. Ulac assaɣ gar-as d Immich neɣ FUTO. Isem-is yettwaɣra am "I am much 360".</sub>
 </p>
 
+<details>
+<summary><b>Agbur</b></summary>
+
+- [Who it is for](#who-it-is-for)
+- [Which screens](#which-screens), and [what each screen does](#what-each-screen-does)
+- [Ayen i tzemreḍ a t-txedmeḍ](#what-you-can-do)
+- [Get it on your device](#get-it-on-your-device)
+- [How to](#how-to)
+  - [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server)
+  - [Snirem tipanuramikin, 360°, VR180 d 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): [Android TV and Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
+  - [Qqen TV, ibenk n uqerru neɣ aselkim s tilifun-ik](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
+  - [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
+  - [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)
+  - [Keep your Immich library, with more](#keep-your-immich-library-with-more)
+  - [Watch your home cameras on the big screen](#watch-your-home-cameras-on-the-big-screen)
+  - [Your DJI drone (experimental)](#your-dji-drone-experimental): [live video](#see-what-your-drone-sees-on-your-phone), [in a Quest or on Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv), [import](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
+  - [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras)
+  - [Zzi tawlaft s yiwet n tqeffalt](#turn-a-photo-with-one-key)
+  - [Use your computer as the media player](#use-your-computer-as-the-media-player)
+- [Compared with Immich](#compared-with-immich)
+- [Tabaḍnit](#privacy)
+- [Licences and credits](#licences-and-credits)
+- [Abrid n zdat](#roadmap)
+- [Documentation](#documentation)
+
+</details>
+
+<a id="who-it-is-for"></a>
+## Who it is for
+
+- **You shoot 360° or 3D** and want to look around in your shots, not see them flat, doubled or stretched: [360°, VR180 and 3D](#explore-panoramas-360-vr180-and-3d).
+- **Your photos and films sit on a NAS, a computer, Plex or Immich** and you want them on the TV without copying anything: [on the TV](#watch-on-the-tv-with-the-remote), [NAS, shares and Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+- **You have a Meta Quest** and want to step inside your own photos and videos: [in the headset](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **You run Immich** and want its app, plus the immersive viewers and the big screens you sign in from your phone: [your Immich library](#keep-your-immich-library-with-more), [compared with Immich](#compared-with-immich).
+- **You watch your home with Tapo cameras** and want them next to your photos, on the TV too (not yet checked with a real camera): [home cameras](#watch-your-home-cameras-on-the-big-screen).
+- **You fly a DJI drone** and want its live picture on your phone without DJI Fly, and in a Meta Quest or on an Android TV for the people with you (experimental): [your drone](#see-what-your-drone-sees-on-your-phone).
+
+There is no Immuch360 account to create, and nothing goes to us: the app talks only to your devices and to the servers you choose.
+
+<a id="which-screens"></a>
+## Which screens
+
 <div align="center">
 
-| Tagrumma | Anda ara t-id-tafeḍ | Addad ass n 23 Tubeṛ 2026 |
+| Platform | Where to get it | Status on 25 October 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** tilifunen d tablitin | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | ɣef Google Play (build 25; build 28 yettwazen i usenqed n Google), build 29 ɣef GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone d iPad** | App Store | version 3.3.1 (build 27) deg uṛaju n usenqed n Apple, yettwazen tikkelt nniḍen ass n 22 Tubeṛ, sinna version 3.3.2 (build 28), deg TestFlight i tirmit tagensant; ar lawan, [sebded-it s yiman-ik](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV d Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 29 ɣef GitHub: [tuqqna s tilifun-ik](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) s usleḍ n tengalt QR, akked [afeggag n wakud, imesli d iduzwilen](#watch-on-the-tv-and-on-the-computer) i tlikumand deg umeskan n tvidyut; umuɣ n TV deg usenqed n Google |
-| **Tiliẓriyin LG** s webOS 4.0 d wid i d-iteddun | [.ipk build n tirmit](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) | build n tirmit 0.2.0, ad yettwasebded deg [Developer Mode](#lg-tvs-webos): ifuyla n uẓeṭṭa, Plex d tamuɣli srid n Tapo; 0.1.0 yeddi ɣef tiliẓri LG n yiwen umsenqed, 0.2.0 urɛad ɣef TV n tidet; version i LG Content Store tettwaheyya |
-| **Tiliẓriyin Samsung** s Tizen 5.5 d wid i d-iteddun | [.wgt build n tirmit](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.1.0) | build n tirmit 0.1.0 n yiwen usnas n TV-nni, ad t-txetmeḍ s ušhad-ik Samsung sinna ad t-tesbeddeḍ deg [Developer mode](#samsung-tvs-tizen); urɛad yeddi ɣef TV Samsung n tidet |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 d 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | ɣef Horizon Store (build 28), build 29 ɣef GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Asebded neɣ ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) | build 10 n Immuch360 Desktop, version n usenqed yettwaxtamen: tiwlafin, tividyutin tizeddigin d 360°, ifuyla n uẓeṭṭa, Plex, tikamirawin, tuqqna s tilifun, tiwlafin ttezzint s yiwet n tqeffalt, agrudem s 89 n tutlayin |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS d Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) | versions n usenqed: ɣef Linux tiwlafin, tiwlafin n 360° d tividyutin tizeddigin (tividyutin n 360° ttwaurarent d tizeddigin); ɣef macOS kifkif, yettwasenqed kan ɣef Mac n CI n usenfaṛ, ur yettwaxtam ara |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 25; build 29 under Google's review, in place of build 28), build 30 on GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.1 (build 27) waiting for Apple's review since 22 October, then version 3.3.2 (build 28), in TestFlight for internal testing; [build it yourself](../docs/immuch360/build.md) meanwhile |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 30 on GitHub: [sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) by scanning a QR code, a [time bar, audio and subtitles](#on-android-tv-and-google-tv) for the remote in the video player, and a [drone's live video](#watch-it-in-a-meta-quest-or-on-an-android-tv) relayed by a phone (experimental); the TV listing is under Google's review |
+| **LG TVs** with webOS 5.0 and later | [.ipk, version 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (in review) | version 1.0.0, submitted to the LG Content Store on 24 October and waiting for LG's review; until then it installs in [Developer Mode](#lg-tvs-webos). It ran on webOS 25 TVs of LG's Cloud Test Lab |
+| **Samsung TVs** with Tizen 5.5 and later | [.wgt test build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | test build 0.2.0 of the same TV app, to sign with your own Samsung certificate and install in [Developer mode](#samsung-tvs-tizen); 0.1.0 ran on a tester's Samsung TV, and 0.2.0 holds the fixes from that run; not on Samsung's store |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store (build 28, live since 25 October), build 30 on GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer or ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | desktop build 11, a signed preview: photos, flat and 360° videos, shares, Plex, cameras (not yet checked with a real camera), sign in with your phone, photos turned with one key, the interface in 89 languages |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | previews: on Linux photos, 360° photos and flat videos (360° videos play flat); on macOS the same, checked on the project's CI Mac only, unsigned |
 
 *Addaden ttwaleqqmen deg yal lexraj; isallen, build s build, deg [Addad n lexraj](../docs/immuch360/release-status.md).*
 
 </div>
 
 <p align="center">
-  <img src="../.github/readme/platforms-2026-10.jpg" width="100%" alt="Ukuz n tuṭṭfiwin n tidet, rrif ɣer rrif: ameskan n tkuret ɣef tilifun Android, umuɣ n 360° ɣef Google TV, ameskan n tvidyutin n Immuch360 Desktop ɣef Windows, akked twlaft n 360° i k-izzin ɣef yal tama deg Meta Quest 3">
+  <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Seven real captures of Immuch360 in two rows: the sphere viewer on an Android phone, a 360° photo on an iPad, a 360° photo on a Google TV and on an LG TV, then the photo timeline on a Samsung TV, the window of the app in a Meta Quest 3 and the video player on Windows. The LG and Samsung captures were taken in a browser that stands in for the TV">
 </p>
-
-<details>
-<summary><b>Agbur</b></summary>
-
-- [Ayen i tzemreḍ a t-txedmeḍ](#what-you-can-do)
-  - [Wali tiwlafin-ik d tividyutin-ik](#watch-your-photos-and-videos)
-  - [Zzi tawlaft s yiwet n tqeffalt](#turn-a-photo-with-one-key)
-  - [Snirem tipanuramikin, 360°, VR180 d 3D](#explore-panoramas-360-vr180-and-3d)
-  - [Seqdec ifuyla-ik, war amiḍan](#use-your-own-files-without-an-account)
-  - [Aweḍ ɣer uyla n NAS, aselkim neɣ aqeddac n yimidyaten](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
-  - [Af tamkarḍit-ik n Immich](#find-your-immich-library)
-  - [Qqen TV, ibenk n uqerru neɣ aselkim s tilifun-ik](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
-  - [Ddu ɣer tmuɣli imirsif ɣef Meta Quest](#go-immersive-on-meta-quest)
-  - [Wali ɣef TV akked ɣef uselkim](#watch-on-the-tv-and-on-the-computer)
-  - [Immuch360 ɣef tiliẓri LG (webOS)](#immuch360-on-an-lg-tv-webos)
-  - [Tkamirawin, Plex d ifuyla raw n tkamirawin](#cameras-plex-and-raw-camera-files)
-  - [Tiwlafin d tividyutin n udrun-ik DJI ɣef uqeddac-ik Immich](#your-dji-drones-photos-and-videos-on-your-immich-server)
-  - [Tavidyut srid n udrun-ik DJI ɣef tilifun-ik (alugen)](#your-dji-drones-live-video-on-your-phone-experimental)
-- [Ibenkan d iseɣẓanen](#devices-and-systems)
-- [Timahilin tixatarin](#advanced-features)
-- [Tasemlit tusnakt](#technical-documentation)
-- [Sebded](#install)
-- [Tabaḍnit](#privacy)
-- [Asenfaṛ](#the-project)
-- [Abrid n zdat](#roadmap)
-
-</details>
-
-<a id="what-you-can-do"></a>
-## Ayen i tzemreḍ a t-txedmeḍ
-
-Yal aseqdec ddaw-a yeqqar-ed d acu ara tesɛuḍ, sinna amek ara t-txedmeḍ s kra n tawsiyin. Adlis ačaran, s yal taɣtest, izen d talast, yella deg [adlis n useqdac](../docs/immuch360/user-guide.md).
-
-<a id="watch-your-photos-and-videos"></a>
-### Wali tiwlafin-ik d tividyutin-ik
-
-Immuch360, uqbel kra, d agraw akked umeskan n tiwlafin d tividyutin n yal ass. Umuɣ azemani, albumat, ismenyifen, ismektayen d unadi, xeddmen akked uqeddac Immich; tiwlafin d tividyutin n ibenk s yiman-is, akked ikaramen n uselkim, ttwaskanen war aqeddac. Tividyutin skanent-ed deg umeskan anamur s imesli, asikel deg wakud, askan n uṛaju d tefrant n uzrug n imesli, deg imeskanen n 360°, Spatial d uselkim, yerna seg build 29, deg umeskan azeddig n usnas Android, i d-yesskanen daɣen iduzwilen. Ɣef TV, tilikumand i yesewjaden kullec; ɣef uselkim, ajerdiw d klavye i t-ixeddmen.
-
-1. Ldi iccer n Tiwlafin: umuɣ azemani n uqeddac-ik, neɣ n ibenk war aqeddac.
-2. Sit ɣef tawlaft neɣ tividyut i wakken a tt-teldiḍ; zuɣer ɣer uzelmaḍ d uyeffus akken ad tedduḍ ɣer tin i d-iteddun, qbar neɣ sit snat n tikkal akken ad tesemɣreḍ.
-3. Zuɣer ɣer ufella ɣef tvidyut i wakken a d-ẓerreḍ talqayt-is: codec, teɣzi, asget n yiskanen, adebbi, akked ma ibenk-agi yezmer ad tt-idikuder.
-4. Ɣef tilifunen d tiliẓriyin Android, seg build 29, asaru i yesɛan aṭas n tutlayin n imesli neɣ iduzwilen yesɛa taqeffalt n imesli d taqeffalt n iduzwilen deg yiferdisen-is n usefrek: tutlayt n imesli i textireḍ teqqim i yisura i d-iteddun, yerna iduzwilen qqimen nsan alamma tferneḍ-ten, ala wid yettwaḥettmen. Ameskan Android n usnas Immich ur yesɛi ula d yiwen seg-sen.
-
-Ugar: [imeskanen d umeskan n tvidyutin](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [talqayt n tvidyutin d dikudaren](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
-
-<a id="turn-a-photo-with-one-key"></a>
-### Zzi tawlaft s yiwet n tqeffalt
-
-Zzi tawlaft s 90° s yiwen usiti, war ma teldiḍ amaẓrag: taqeffalt, taqeffalt n klavye neɣ taqeffalt s yini n tlikumand n TV, ɣef yal tagrumma. Asnas Immich yettezzi tawlaft deg umaẓrag-is; Immuch360 yexdem-it s yiwet n tqeffalt, yerna i tiwlafin-ik ɣef uqeddac Immich 2.6 neɣ win i d-iteddun, ad iɛeddi s umaẓrag-nni n uqeddac, akken asnas web d yibenkan-ik nniḍen ad ten-sken ttwazzint. Ayen nniḍen n twlafin ttezzint ɣef ibenk-agi kan. Tiwlafin n 360°, 180° d 3D ur ttezzint ara, akken timuɣliwin timirsifin ad qqiment d tusridin.
-
-<p align="center">
-  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
-</p>
-
-1. **Tilifunen, tablitin d ṭṭaq n Meta Quest**: ldi tawlaft sinna sit ɣef Zzi deg yizirig n wadda, uqbel Ẓreg, akken ad tezzi ɣer tama n tsegnatin n temrilt; asiti aɣezfan yettezzi-tt ɣer tama nniḍen. S klavye, R d Shift+R.
-2. **Android TV d Google TV**: taqeffalt tawraɣt n tlikumand tettezzi tawlaft ɣer tama n tsegnatin n temrilt, taqeffalt tanilit mgal-asent, anda yella uskan deg umeskan. Ɣef tlikumand war tiqeffalen s yini, sit ɣef Adda: afeggag ddaw twlaft ad d-iban s Zzi yettwafernen (yiwen Ayeffus ma yella tawlaft tesɛa taqeffalt n uḍris), yerna yal OK yettezzi tawlaft.
-3. **Tiliẓriyin LG (webOS)**: tawraɣt d tanilit am ɣef Android TV, R d Shift+R ɣef klavye, neɣ taqeffalt n tuzzya gar tqeffalin n twlaft.
-4. **Windows, Linux d macOS**: R yettezzi ɣer tama n tsegnatin n temrilt, Shift+R mgal-asent, neɣ taqeffalt n tuzzya deg ufeggag n usawen, uqbel agdil ameqqran.
-5. **Tiwlafin n ufaylu n uẓeṭṭa, Plex neɣ takamirat**: taqeffalt n tuzzya d tamezwarut deg ufeggag n usawen, R d Shift+R, neɣ tiqeffalen tawraɣt d tanilit.
-
-Anda tettwaḥraz tuzzya: tawlaft n umiḍan-ik ɣef Immich 2.6 neɣ win i d-iteddun tettezzi s umaẓrag n twlafin n uqeddac, i yeḥerzen afaylu agejdan yerna ixeddem tugna yettwazzin (afeggag arqaq yettban mi ara yexdem; ukkuẓ n tuzzyiwin, neɣ yiwet n tuzzya ɣer deffir, ad d-rrent agejdan). Tiwlafin n ibenk, n ufaylu n uẓeṭṭa, n umendad neɣ n walbum yettwabḍan, akked yal tawlaft ɣef uqeddac aqbur ttezzint ɣef ibenk-agi kan, i twlaft-nni, yerna afaylu ur yettbeddil ara; asnas ad t-yini tikkelt kan i twlaft n Immich. Deg yisnasen Android, iOS d uselkim, tuzzya yettwaḥerzen ɣef ibenk tettban deg umeskan, maca mačči yakan deg tugniwin timectuḥin, askan n tugniwin d yimektayen. Tividyutin, akaram yettwasekkṛen d yal tawlaft n 360°, 180° neɣ 3D ur sɛint ara Zzi.
-
-<a id="explore-panoramas-360-vr180-and-3d"></a>
-### Snirem tipanuramikin, 360°, VR180 d 3D
-
-Tawlaft n 360° teldi-d d takuret i tezzuɣreḍ s uḍad neɣ s uzuzzer n tlifun; tividyut n 360° teskan-ed deg umeskan n tkuret s imesli; ifuyla VR180 ttwaskanen ɣef azgen n tkuret; ifuyla 3D s snat wallen skanen-d ṭiṭ yiwet ɣef ugdil azeddig, snat wallen deg ibenk n uqerru. Tipanuramikin ur-nkemmel ara ṭṭfent tagzirt-nsent, yerna tawlaft tebdu-d seg tmuɣli i d-ixedmen tkamirat. Afaylu i uqeddac ur-t-yeḥsab ara d 360° yezmer ad ittwawali am 360° s sit yiwet.
-
-<p align="center">
-  <img src="../.github/readme/b19-sphere.jpg" width="260" alt="Tawlaft 360° n yiri n umdun deg umeskan n tsfirt: taqeffalt n umdal d asawen s azelmaḍ, tiqeffalin 360°, asefrek 3D d ujiroskop d asawen s ayeffus">
-  <img src="../.github/readme/b19-video.png" width="420" alt="Tavidyut 360° n ubrid n yiri n yill tettwaɣra deg umeɣri 360° n tiliɣri yettwaṭṭfen s tama: amdal d yisem n ufaylu d asawen s azelmaḍ, 360° d 3D d asawen s ayeffus, uzwir, tuɣalin ɣer deffir, urar, tuɣalin ɣer zdat d uḍfir di tlemmast, afeggag n wakud d akessar">
-</p>
-
-1. Ldi tawlaft neɣ tividyut. Ifuyla n 360° ṭṭfen tacreṭ n 360° ɣef tanfult-nsen, yerna deg iccer n Tmkarḍit yella umuɣ n 360° i ten-id-yesdukklen, s yisizdigen s lawan, aɣbalu, anaw akked tkamirat.
-2. Sit 360° deg ufeggag n ufella. Zuɣer akken a twaliḍ yal tama, qbar akken a tesemɣreḍ, sit taqeffalt n gyroscope akken a twaliḍ yal tama s uzuzzer n tlifun.
-3. Taqeffalt 3D tettbeddal gar "Mono (mačči 3D)", "3D, s ufella d wadda" akked "3D, rrif ɣer rrif"; taqeffalt 360°/180° tesbeddal gar tkuret tačarant d uzgen n tkuret n VR180.
-4. I ufaylu i d-iskanen azeddig ɣas akken d win n 360°: ⋮ ɣef ufella uyeffus, sinna "Wali am 360°".
-
-Ɣef tilifunen d tablitin, tividyut s snat wallen tezmer a d-tban-ed s wudem n 3D ɣas ɣef ugdil azeddig: ameskan Spatial 2.5D yesseqdac takamirat n zdat akken a d-yeḍfer aqerru-k, yesskan-ed tamuɣli i yellan ger snat wallen (d alugen urɛad yemmed). Tiwlafin Apple n wemkan i d-ttwarzen s iPhone ttwassnent u skanent-ed s 3D deg Meta Quest.
-
-Ugar: [tiwlafin d tividyutin n 360°](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D d VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [tiwlafin d tividyutin Apple n wemkan](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [umuɣ n 360°](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
-
-<a id="use-your-own-files-without-an-account"></a>
-### Seqdec ifuyla-ik, war amiḍan
-
-Immuch360 ur-yeḥwaǯ ara amiḍan ne ula d aqeddac. Seg build 24, asnas yeldi-d ɣef usebter n ansuf, anida "Seqdec war aqeddac" i d-iteddun d amezwaru: yeldi asnas ɣef tiwlafin d tividyutin n ibenk, akked yal ameskan, umuɣ n 360° akked yiɣbula n uẓeṭṭa. Ulac ayen yettwaznen ɣer wanda nniḍen. Aqeddac yezmer ad yeqqen ticki, seg Iɣewwaṛen neɣ seg iccer Tamkarḍit, yerna timahilin n uqeddac a d-banent.
-
-<img src="../.github/readme/b19-library-no-server.png" width="260" alt="Iccer Tamkarḍit war aqeddac: aferdis 360° d asawen, syin On this device s snat n tewlafin 360°, akked Ifuyla n uẓeṭṭa s ufaylu yettwabḍan yettusemman NAS">
-
-1. Ldi asnas. Asebter n ansuf yesskan-d "Ayla-k. Yal agdil. Yal tamuɣli." akked tlata n tifranin: sit ɣef tamezwarut, "Seqdec war aqeddac". Ar build 23, asebter n tuqqna i d-iteddun d amezwaru, s "Seqdec war aqeddac" ddaw umuɣ n tuqqna.
-2. Sireg anekcum ɣer tewlafin d tvidyutin-ik. Ma tugiḍ, asnas yenna-d «Asnas ur yezmir ara ad iwali tugniwin n yibenk-a», s «Sireg anekcum» d «Ldi iɣewwaṛen».
-3. Iccer Photos (Tiwlafin) yesskan-d tasnakudt n yibenk. Search (Nadi) d Albums (Ilbumen) qqimen d idelsanen, acku d seg uqeddac i d-ttasen. Iccer Tamkarḍit yesɛa 360° d asawen, syin On this device (Ɣef yibenk-a) (ilbumen n yibenk) d Ifuyla n uẓeṭṭa.
-4. Umuɣ d asawen s ayeffus yenna-d «Ibenk-a kan»: asnas yesskan-d tiwlafin d tvidyutin n yibenk-a, ulac ayen yettwaznen ɣer wanda nniḍen.
-
-Ɣef uselkim, ikaramen i textireḍ i gan tamahilt n ugraw; ɣef TV, i ur-nesɛi ara tiwlafin-is, iɣbula n uẓeṭṭa i t-ixeddmen.
-
-Ugar: [war aqeddac neɣ amiḍan](../docs/immuch360/user-guide.md#without-a-server-or-an-account).
-
-<a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
-### Aweḍ ɣer uyla n NAS, aselkim neɣ aqeddac n yimidyaten
-
-Tividyutin-ik llant ɣef NAS, aselkim neɣ aqeddac n yimidyaten. Immuch360 yettaf iqeddacen n uẓeṭṭa-k s yiman-is, yetnig-iten yerna yesskan tiwlafin-nsen d tividyutin-nsen anida llan, deg yal ameskan n usnas, war ad yenɣel acemma: SMB (Samba, ifuyla n uẓeṭṭa n Windows), WebDAV (Nextcloud, Synology akked wiyaḍ) akked yiqeddacen n yimidyaten DLNA (Jellyfin, Emby, minidlna, NAS, tabwaḍt n TV). Tilifun tezmer daɣen a tesbeṭṭu agraw-is ɣef Wi-Fi i ibenk n uqerru neɣ i yal amsaɣ WebDAV, akken daɣen i yezmer uselkim n Windows.
-
-<p align="center">
-  <img src="../.github/readme/b19-add-share.png" width="260" alt="Asebter Rnu afaylu yettwabḍan: Isem, Isem neɣ tansa n uqeddac, Tawwurt (d afrayan), Afaylu yettwabḍan, Fren afaylu yettwabḍan, Akaram n tazwara (d afrayan), Isem n useqdac, Awal uffir, Sekyed tuqqna, d ugmuḍ Yeqqen, 2 n yiferdisen deg ukaram n tazwara">
-  <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Akaram n ufaylu yettwabḍan n uẓeṭṭa am uẓeṭṭa n tugniwin timecṭuḥin: tiwlafin 360° s tcreḍt 360° akked tvidyut 360° s tcreḍt n urar, taqeffalt Fren d asawen s ayeffus">
-</p>
-
-1. Ldi iccer Tamkarḍit, sinna Ifuyla n uẓeṭṭa, sinna + akked "Afaylu n uẓeṭṭa (NAS, aselkim, aqeddac n yimidyaten)". Seg build 24, "Rnu afaylu n uẓeṭṭa neɣ aqeddac n yimidyaten" ɣef usebter n ansuf yeldi-d srid Ifuyla n uẓeṭṭa, war aqeddac.
-2. Sit ɣef uqeddac ddaw "Yettwaf deg uẓeṭṭa", neɣ ačaṛ isefka s ufus: anaw, isem neɣ tansa n uqeddac, afaylu n uẓeṭṭa neɣ abrid, akaram n ubeddu, isem n useqdac akked wawal uffir.
-3. Sit ɣef "Sekyed tuqqna", sinna Sekles. Sit ɣef ufaylu n uẓeṭṭa i wakken a t-tiniged: ikaramen uqbel, sinna tiwlafin d tividyutin, s tacreṭ n 360° ɣef ifuyla ițwassnen d 360°.
-4. S uqeddac Immich yeqqnen, fren ifuyla deg ukaram, sinna sit ɣef "Sali ɣer Immich" akken a ten-tazneḍ ɣer uqeddac-ik.
-
-Imeskanen qqaren bytes i ten-ilaqen s allal n tuqqna i gensan deg usnas, s izilal n bytes, akken asikel deg wakud ad ixdem u ulac acemma ara yețwaḥrez ɣef ibenk; tividyut SMB teqqar s ɣer sețța n tuqqniwin ɣer yiwet n tikkelt i wakken ad tedduḍ war ɛeṭṭel. Seg build 29, isura yettwaseklsen s M2TS (Blu-ray, tikamirawin AVCHD, imseklas n TV) ttwaurarent deg usnas Android seg yifuyla n uẓeṭṭa SMB d WebDAV akked yiqeddacen DLNA i ten-yesskanen am transport stream, yerna aqeddac DLNA i d-yemmalen tiddi n 0 dayen ur d-yettak ara tavidyut tilemt.
-
-Ugar: [ifuyla n uẓeṭṭa](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [sbeṭṭu tlifun-agi ɣef uẓeṭṭa](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [iqeddacen n yimidyaten DLNA](../docs/immuch360/user-guide.md#dlna-media-servers).
-
-<a id="find-your-immich-library"></a>
-### Af tamkarḍit-ik n Immich
-
-S uqeddac [Immich](https://github.com/immich-app/immich), Immuch360 d asnas n tilifun n Immich, s yiwen uqeddac akked yiwen umiḍan am win n usnas n web: aḥraz, umuɣ azemani, albumat, anadi, imdanen, ismektayen, abeṭṭu, imdukal, kullec yemtawi akked uqeddac-ik. Yețwasebded ɣer tama n usnas arasmi. Nnig-s: tacreṭ d umuɣ n 360°, yal ameskan imirsif, tafrant ger ufaylu agejdan d wafaylu yettwabeddlen n uqeddac i yal tividyut, talqayt tusnakt n tvidyut, akked ifuyla n ufaylu n uẓeṭṭa neɣ n ibenk i d-ttwaznen ɣer uqeddac-ik s ufus.
-
-1. Ɣef usebter n ansuf, sit ɣef "Qqen ɣer uqeddac Immich", sinna qqen s tansa n uqeddac-ik, imayl-ik akked wawal uffir-ik, akken deg usnas Immich; Tuɣalin ad ak-d-terr ɣer usebter n ansuf. Ar build 23 asebter n tuqqna yeldi-d srid. Tamkarḍit, albumat akked yiɣewwaṛen n uḥraz d wid n umiḍan-ik.
-2. Deg Iɣewwaṛen, Ameskan n Ayla, Tividyutin, "Aɣbalu n tvidyut" tettxeṣṣes afaylu agejdan ticki ibenk-agi yezmer a t-idikuder, yal tikkelt afaylu agejdan, neɣ yal tikkelt afaylu yettwabeddlen.
-3. I wakken a d-tesskeneḍ tawlaft n 360° i yiwen ur-nesɛi ara asnas, beṭṭu-tt s yiwen ussaɣ yebḍan n Immich: asnas n web n Immich yesskan-itt-id d takuret deg iminig-nsen.
-
-Build amiran, build 29, yebna ɣef Immich `main` n 10 tubeṛ 2026 (version 3.3.0-rc.0), am build 28, i yețwarmsen akked uqeddac yebnan seg Immich `main` nni s yiman-is; build 27 yețwarmes daɣen akked uqeddac Immich 3.2.4. Ma yella ugur, mmel-it-id deg [Issues](https://github.com/freeKC/Immuch360/issues), mačči i usenfaṛ n Immich.
-
-Ugar: [ayen akk nniḍen d Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [ɣer usnas Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
-
-<a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
-### Qqen TV, ibenk n uqerru neɣ aselkim s tilifun-ik
-
-Tira n tansa n uqeddac, n imayl d wawal uffir s tlikumand n TV, neɣ deg ibenk n uqerru, teṭṭef kra n tesdidin. S Immuch360 ɣef tilifun-ik, yeqqnen ɣer uqeddac-ik Immich, TV, Meta Quest neɣ aselkim ad yeqqen deg kra n tsinin: agdil ameqqran yesskan-d tangalt QR, tilifun ad tt-yesleḍ, ad tsentmeḍ, sinna agdil ad yeldi ɣef tmkarḍit-ik. S usnas n tilifun, awal-ik uffir yeqqim ɣef tilifun. Asnas Immich ur yesɛi ara ayen akka.
-
-<p align="center">
-  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="TV tesskan-d tangalt QR ɣef usebter-is n tuqqna, yerna tilifun yettwaṭṭfen zdat-s yesleḍ tangalt-nni">
-</p>
-
-1. Ɣef ugdil ameqqran (Android TV d Google TV, ṭṭaq n Meta Quest, Windows, Linux neɣ macOS), fren "Qqen ɣer uqeddac Immich": asebter n tuqqna yesskan-d "Qqen s tilifun-ik", tangalt QR d tengalt n 10 n yisekkilen, ɣer tama n tferkit n uqeddac.
-2. Ɣef tilifun yeqqnen ɣer uqeddac-ik: Iɣewwaren, "Qqen TV neɣ aselkim", sinna "Sleḍ tangalt". Deg Meta Quest, anda tilifun ur yezmir ara ad yesleḍ agdil-is, fren "Sekcem tangalt deg wadeg-is" yerna aru tangalt i d-yesskan yibenk n uqerru.
-3. Tilifun ad k-yesteqsi "Ad yeqqen (agdil)?" yerna ad d-yesken amḍan n sḍis n wuṭṭunen: senqed ma yella agdil yesskan-d yiwen-nni, sinna sit ɣef Qqen. Agdil ad yeldi ɣef wumuɣ-ik azemani.
-
-Amek yeqqim d aɣellsan: tilifun d ugdil ilaq ad ilin ɣef yiwen n uẓeṭṭa n uxxam, yerna tangalt tettdum snat n tesdidin ma yella aṭas, tteddu yiwet n tikkelt kan. Tilifun yessuter seg uqeddac-ik tiɣimit tamaynut i ugdil-nni, s yisem-is ("Immuch360 ɣef TV n usalun"), yerna yazen-itt i ugdil d tawgelhant, ihi awal-ik uffir werǧin ad yeffeɣ seg tilifun. "Qqen TV neɣ aselkim" yesskan-d umuɣ n igdilen i yeqqen tilifun-agi, yal yiwen s Ffeɣ, yerna Immich yesskan-iten-id deg Iɣewwaren n umiḍan, Ibenkan yettusirgen, anda i tzemreḍ daɣen ad ten-tekkseḍ. Tuffɣa n tilifun ad ten-tessuffeɣ ula d nutni.
-
-Tama n tilifun tteddu tura ɣef Android, yerna ɣef iPhone d iPad seg lexraj i d-iteddun n iOS. War Immuch360 ɣef tilifun, sleḍ tangalt s tkamirat n tilifun: asebter i d-yefka ugdil ad yeldi deg iminig, i imayl-ik d wawal-ik uffir, yettwawgelhen yerna yettwasseqdac tikkelt kan. Tiliẓriyin LG qqnent s tengalt QR i sent-yettwaxedmen, deg iminig n tilifun; seg build 28 amsleḍ n usnas n tilifun yessen-itt yerna yeldi asebter-nni.
-
-Ugar: [tuqqna s tilifun-ik](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [ayen i ttazznen igdilen d wayen i ḥerrzen](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
-
-<a id="go-immersive-on-meta-quest"></a>
-### Ddu ɣer tmuɣli imirsif ɣef Meta Quest
-
-Ɣef Meta Quest, asnas-nni yeddem-ed am ṭṭaq s tmkarḍit-ik meṛṛa, taqeffalt-is n 360° teldi-d tamuɣli imirsif anida tawlaft neɣ tividyut i k-izzin ɣef yal tama: tetwaliḍ yal tama s uzuzzer n uqerru-k, ifuyla s snat wallen llant s 3D n tidet, tawlaft Apple n wemkan tețɛelliq zdat-ek s 3D, yerna ikontrolaren neɣ ifassen-ik i yesewjaden afeggag n wakud, win uqbel d win i d-iteddun, akked taqeffalt n Tuzzigt i d-yettawin ayen yellan deffir-ek ɣer zdat war ma tzuzzreḍ takursi-k. Ayla-k i d-iteddun seg uqeddac-ik, ibenk s yiman-is, NAS, aqeddac n yimidyaten, tilifun neɣ aqeddac Plex, yettwaskanen anida yella.
-
-<p align="center">
-  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Tawlaft 360° i tama-k akk deg Quest 3, s ugalis n talɣut: tiqeffalin n usefrek, 360° d Uɣal">
-  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Tavidyut 360° n umdun tettwaɣra deg Quest 3, s ugalis n talɣut: tiqeffalin n usefrek, 360°, Asteɛfu d Uɣal">
-  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Tavidyut 360° stiriyu deg Quest 3, agalis n talɣut yeqqar 3D, s ufella d wadda">
-</p>
-
-1. Sebded asnas seg [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), neɣ sebded s ufus APK n build amaynut ugar, wali [Sebded](#meta-quest).
-2. Ɣef usebter n ansuf, sit ɣef "Seqdec war aqeddac" i tiwlafin d tividyutin n ibenk n uqerru s yiman-is, neɣ "Qqen ɣer uqeddac Immich": aru tangalt i d-yesskan yibenk n uqerru deg Immuch360 ɣef tilifun-ik ([tuqqna s tilifun-ik](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), neɣ qqen s tansa n uqeddac-ik, imayl-ik d wawal-ik uffir.
-3. Ldi tawlaft neɣ tividyut n 360°, sinna sit 360°: tamuɣli imirsif teldi-d. B neɣ Y, neɣ taqeffalt n Tuɣalin n ugalis n telɣut, d-yețțarra ṭṭaq-nni.
-4. Deg tmuɣli imirsif, zzuɣer thumbstick ayeffus ɣer uzelmaḍ neɣ ɣer uyeffus akken ad tezzi tmuɣli 30° ɣer tama-nni. Seg build 29 tettezzi ɣer tama ɣer tzuɣreḍ, am deg tuget n yisnasen n ibenk n uqerru; builds 17 ar 28 zzin-tt ɣer tama nniḍen, yerna Iɣewwaren, Ameskan, Tividyutin, "Tti tuzzya n thumbstick" yettarra-d tama-nni.
-
-Ugar: [deg ibenk n Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [ibenk: codecs, lmaɣaza d tsirag](../docs/immuch360/platform-support.md#meta-quest).
-
-<a id="watch-on-the-tv-and-on-the-computer"></a>
-### Wali ɣef TV akked ɣef uselkim
-
-Asnas Android yiwen yeddem-ed ɣef Android TV d Google TV, s usentel ubrik seg usenker amezwaru, s tilikumand kan: iqeffalen n tanila ssikelen askan, OK yeldi, Tuɣalin tezzi ɣer deffir; deg umeskan Azelmaḍ d Ayeffus ddun ɣer twlaft neɣ tvidyut n uqbel neɣ n zdat, ula mi ara teddu tvidyut, yerna deg twlaft neɣ tvidyut n 360° iqeffalen n tanila walin yal tama. TV ur-yesɛi ara tiwlafin-is, daymi yesskan-ed uqeddac-ik n Immich, ifuyla-k n uẓeṭṭa, aqeddac-ik Plex akked tkamirawin-ik; tiliẓriyin LG sɛant [asnas-nsent](#immuch360-on-an-lg-tv-webos), i yettawḍen daɣen ɣer tiliẓriyin Samsung, am build n tirmit tamezwarut. Ɣef uselkim Windows, Immuch360 Desktop yeqqar ikaramen i textireḍ war ula d aqeddac, yesskan tividyutin tizeddigin d 360° deg umeskan-is, yetnig deg yiɣbula d yiqeddacen-nni, yerna yezmer a yesbeṭṭu aselkim akked ibenk n uqerru ɣer uxxam.
-
-<p align="center">
-  <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Ameskan n tkuret ɣef Google TV: tapanuramik n 360° n rrif n yiwen uɣelmam, taqeffalt n umdal ɣef uzelmaḍ n ufella, tiqeffalen Semẓi, Semɣer, 360° d 3D ɣef uyeffus n ufella, ttwazuzzrent s iqeffalen n tanila n tlikumand">
-  <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Ameskan n tvidyutin n Immuch360 Desktop ɣef Windows: tividyut n yiwet n zniqa yettwaskan deg ṭṭaq, s taqeffalt n Usgunfu, afeggag n wakud, Beṭṭu akked Sali ɣer Immich">
-</p>
-
-1. Ɣef TV: sebded APK s adb (wali [Sebded](#android-tv-and-google-tv)); ɣef usebter n ansuf, fren "Rnu afaylu n uẓeṭṭa neɣ aqeddac n yimidyaten" i ufaylu n uẓeṭṭa, aqeddac Plex neɣ takamirat, "Seqdec war aqeddac", neɣ "Qqen ɣer uqeddac Immich", anda asebter-is ad yeqqen TV mi ara tesleḍ tangalt-is QR s tilifun-ik (wali [Qqen s tilifun-ik](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
-2. Ɣef uselkim Windows: sebded version n usenqed neɣ ldi ZIP-nni, sinna ssenker `immuch360.exe` (wali [Sebded](#windows)); seg build 5 n Immuch360 Desktop, "Seqdec war aqeddac" ɣef usebter n ansuf yeldi tafrant n ikaramen-ik, yerna "Qqen ɣer uqeddac Immich" yeldi asebter n tuqqna, s tengalt-is QR i tilifun-ik. Tawlaft, tividyut neɣ akaram yeldin s usnas, neɣ yettwazuɣren ɣer ṭṭaq-is, ad yeldi imiren kan: win n 360° ad yeldi deg tmuɣli-ines n 360°. Aṭas n ifuyla ldin akken ɣef yiwen usebter.
-3. Deg umeskan, tiqeffalen n Urar, Usgunfu, Tuɣalin ɣer deffir, Zuzzer ɣer zdat, win uqbel akked win i d-iteddun n tlikumand xeddment, akked tiqeffalen n klavye ɣef uselkim (Tallunt, J d L, F i ugdil ameqqran). Ɣef TV, OK deg tvidyut yesskan-d tiqeffalen n usefrek s Urar d Usgunfu yettwafernen, yerna OK wis sin yesgunfuy; ad d-ḍefrent tqeffalin -10 s d +10 s, sinna tiqeffalin n imesli d iduzwilen ma yesɛa-tent usaru. Seg build 29, Akessar seg Urar yettawi ɣer ufeggag n wakud: Azelmaḍ d Ayeffus smuttuyen 10 s i yal asiti, s tɣawla ma ttwaṭṭfen, yerna OK yesurar neɣ yesgunfuy. Tiqeffalen n usefrek d uzemz ffrent 5 s seld taqeffalt taneggarut, sinna Azelmaḍ d Ayeffus ddun ɣer ufaylu n uqbel neɣ n zdat; deg ifuyla n uẓeṭṭa, afaylu-nni yettwaldi deg usebter-is, s tqeffalin n usefrek i t-yessewjaden. Tividyutin ur ttɛawadent ara tura ɣef TV, ala ma tremdeḍ Iɣewwaren, Ameskan, Tividyutin, Allus.
-4. Ɣef TV, taqeffalt Menu, taqeffalt Info neɣ OK yettwaṭṭfen ad ldin talqayt n twlaft neɣ n tvidyut, i tɣuri kan: azemz, adig, takamirat, codec, teɣzi d bitrate. Tavidyut ur yezmir ara TV ad tt-yeqqar ad t-tini, s codec-is, teɣzi-ines d talast n idikudaren n TV, deg wadeg n usali war taggara; tavidyut n 360° i iɛeddan talast n idikudaren ad testeqsi uqbel ad teldi ameskan n 360°, yerna ssebba tettwaru deg usebter Iɣmisen n wumuɣ n umaɣnu.
-
-Ugar: [wali ɣef TV-ik](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [ɣef uselkim Windows](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [tallalt n iseɣẓanen](../docs/immuch360/platform-support.md).
-
-<a id="immuch360-on-an-lg-tv-webos"></a>
-### Immuch360 ɣef tiliẓri LG (webOS)
-
-Immuch360 yella daɣen d asnas Immich i tiliẓriyin LG webOS: asnas weḥd-s i tiliẓriyin LG s webOS 4.0 d wid i d-iteddun (seg 2018), yettwasewjed s tlikumand, yesskan-ed aqeddac-ik Immich yerna yesserset tiwlafin-ik n 360° ɣef tkuret i tettezziḍ s yiqeffalen n tanila. Isnasen n Immich s yiman-nsen ur ttwasebdaden ara ɣef tiliẓri LG. Yebna ɣef [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) n Seeky91, i d-yewwin umuɣ azemani, albumat, imdanen, imukan, anadi, askan n tugniwin akked tuqqna s tilifun; tanemmirt i Seeky91. Build n tirmit 0.2.0 yerna-d ifuyla n uẓeṭṭa, Plex d tamuɣli srid n tkamirawin Tapo. Version 0.1.0 yeddi ɣef tiliẓri LG n yiwen umsenqed (webOS 22); 0.2.0 urɛad yeddi ɣef TV n tidet. Yettwasebded deg Developer Mode kan, yerna yal aneqqis deg [Issues](https://github.com/freeKC/Immuch360/issues) yettɛawan.
-
-<p align="center">
-  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
-</p>
-
-1. Sebded-it ɣef TV deg Developer Mode, wali [Sebded](#lg-tvs-webos). Ɣur-s asulay-is n usnas, daymi yettwasebded ɣer tama n Immich TV n Seeky91.
-2. Qqen s tilifun-ik (ḍegger tangalt QR), s imayl-ik d wawal-ik uffir, neɣ s tsarut API.
-3. Inig s yiqeffalen n tanila d OK. Deg umeskan, Azelmaḍ d Ayeffus ddun ɣer twlaft neɣ tvidyut n uqbel neɣ n zdat, ula mi ara teddu tvidyut; tiqeffalen n usefrek ffrent 5 s seld taqeffalt taneggarut; Info yeldi talqayt; tiqeffalen n canawat ssimɣurent; taneqqiḍt d tirect n Magic Remote xeddment.
-4. Tawlaft n 360° teldi ɣef tkuret i tettezziḍ s yiqeffalen n tanila; "Wali am 360°" yettaṭṭaf tawlaft 2:1 ur d-yemmal ara uqeddac; tawlaft VR180 tettban ɣef uzgen n tkuret, tawlaft 3D s yiwet n tiṭ. Tiqeffalen tawraɣt d tanilit ttezzint tawlaft tazeddigt.
-5. Seg 0.2.0, mi ara tqqneḍ, "Ifuyla n uẓeṭṭa" deg ufeggag n tama n usnas: rnu afaylu n uẓeṭṭa SMB, WebDAV neɣ DLNA, aqeddac Plex (yeqqnen s tengalt ɣef plex.tv/link) neɣ takamirat Tapo. Tiwlafin-nsen ldint deg yiwen umeskan, tiwlafin n 360° ɣef tkuret.
-
-Ifuyla n uẓeṭṭa, Plex d tkamirawin sran webOS 5 (tiliẓriyin n 2020) neɣ wid i d-iteddun, yerna SMB yesra webOS 22 (tiliẓriyin n 2022) neɣ wid i d-iteddun. Ttɛeddin s umeẕlu n usnas s yiman-is ɣef TV, i ten-yeqqaren i usnas, yerna ttwasenqden s yiqeddacen n tidet ɣef uqeddac n build n usenfaṛ, urɛad ɣef TV. Tamuɣli srid n tkamirat d tavidyut kan.
-
-Mazal: tuṭṭfiwin n tkamirawin (mačči uqbel Dujembeṛ 2026) d yimesli-nsent, tividyutin n 360° ɣef tkuret (ttwaurarent d tizeddigin, s yizen), asali. Ticki tavidyut ur teddi ara, izen ad d-yini amasal-is d teɣzi-ines deg wadeg n tuzzya war taggara. Ɣef webOS uqbel 25, reverse proxy zdat Immich ilaq ad yazen iqerra CORS; asnas ad ten-id-yessefhem mi ara yemlil d ugur-nni.
-
-Version LG i d-iteddun, yettwaheyyan i LG Content Store, tella deg tengalt taɣbalut yerna urɛad teffeɣ: Tuɣalin ɣef Tiwlafin neɣ ɣef usebter n ansuf teffeɣ seg usnas (ɣer ugdil agejdan ɣef webOS 5 d 23 ar 25), Tuɣalin tmedd uqbel asfaylu udhim yeldin, tuttra ur nwi tiririt deg 15 s tfukk s yizen i d-yeqqaren acimi akked tqeffalt Ɛreḍ tikkelt nniḍen, yal asebter yeqqim daxel n yiṛuda n tɣellist n ugdil, tasertit n tbaḍnit teldi deg usnas s tengalt QR akken ad teɣreḍ [tigezmi-ines ɣef tiliẓriyin LG](../PRIVACY.md#lg-tvs-webos) ɣef tilifun, TV tesseqdac askar-ines n tugna Galerie akken i t-tessutur LG i yisnasen n twlafin, yerna akemmus wis sin yemmezg i tiliẓriyin Full HD i wumi tettak LG isnasen 1280x720. Tettwasenqed deg yiminig i yeṭṭfen amkan n TV, urɛad ɣef TV.
-
-Tiliẓriyin Samsung s Tizen 5.5 d wid i d-iteddun (tiliẓriyin seg 2020) ttawint yiwen usnas-nni am build n tirmit tamezwarut, 0.1.0, ur nelli ara deg tḥanut n Samsung: tuqqna s tira, umuɣ azemani, albumat, ameskan d uskan n tugniwin, tiwlafin n 360° ɣef tkuret d twlaft yettezzin s yiwet n tqeffalt; urɛad tuqqna s tilifun, ifuyla n uẓeṭṭa, Plex neɣ tikamirawin, i iteddun ɣef tiliẓriyin LG deg umeẕlu n ugilal ur nesɛi ara urɛad version Samsung. Yeddi deg yimseddayen web n Tizen 5.5, 6.0 d 7.0 ɣef uselkim, werǧin ɣef TV Samsung: wali [Asebded](#samsung-tvs-tizen), yerna yal aneqqis yettɛawan.
-
-Ugar: [asnas webOS: asebded, tiqeffalen n tlikumand, iqerra CORS](../webos/README.md).
-
-<a id="cameras-plex-and-raw-camera-files"></a>
-### Tkamirawin, Plex d ifuyla raw n tkamirawin
-
-- **Tkamirawin Tapo**: takamirat tettwarna ɣer tama n ifuyla n uẓeṭṭa. Asnas yesskan-itt-id srid (Android, Android TV, Quest, Windows akked, tavidyut kan, tiliẓriyin LG seg webOS 0.2.0; iPhone d iPad seg lexraj i d-iteddun n iOS) yerna yesskan umuɣ n tuṭṭfiwin n tkarṭa n usmekti-ines ass s wass ɣef yal aseɣẓan; tagzirt tettwakkes seg tkamirat, tettwaskan am yal tividyut yerna tezmer ad tettwazen ɣer Immich. Asnas immeslay akked tkamirat ɣef uẓeṭṭa-k kan, werǧin akked yiqeddacen n TP-Link.
-- **Plex Media Server, war plex.tv**: asnas yemyaqqen akked uqeddac-ik srid, s token i tesneqleḍ yiwet n tikkelt, yerna yeqqar ifuyla-nsen agejdanen n tmekarḍiyin-ik srid, akken 360° ad yeqqim d 360°, ɣer uxxam akked, s usnegzem n tebbuct-ik (port forwarding), ɣer beṛṛa n uxxam.
-- **Ifuyla raw n tkamirawin n 360°**: tiwlafin raw .insp akked tividyutin .insv n tkamirawin Insta360 (yiwet neɣ snat n wallen, s yiwen uẓrug, snat n iẓrugen neɣ snat n ifuyla), ifuyla .360 n GoPro MAX akked ifuyla .osv n DJI Osmo 360, yesdukkel-iten usnas ticki ttwaskanen, s calibration yettwarun deg ufaylu, war ayen ara yettwasbed ula d anida. Ɣef Android, sken-iten seg ufaylu n uẓeṭṭa, aselkim neɣ aqeddac-ik, acku ifuyla raw ur d-ițban ara deg ugraw n tilifun; aqeddac Immich yeqbal kan .insp d .insv.
-
-Ugar: [tkamirawin Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [ifuyla raw n tkamirawin n 360°](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
-
-<a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
-### Tiwlafin d tividyutin n udrun-ik DJI ɣef uqeddac-ik Immich
-
-Kter tiwlafin d tividyutin n udrun DJI s USB, srid ɣer uqeddac-ik Immich: qqen adrun neɣ ameɣri n tkarḍiwin ɣer tilifun Android, fren ifuyla imaynuten sinna azen-iten, s tividyutin yettwasersen ɣef tkarḍa n tmurt seg yisefka n wafug n udrun, akked tikurin n 360° n udrun yettbanen d 360°. Asnas Immich yeḥraz kan ayen yellan yakan deg ugraw n tilifun, yerna aqeddac Immich urɛad yezmir ad yeqqar adig n tvidyut n DJI Neo 2. Asebter-agi d alugen, ɣef tilifunen d tablitin Android kan, yerna urɛad yettwarmes s udrun n tidet.
-
-<p align="center">
-  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
-</p>
-
-1. Aferdis "Adrun DJI" yella deg Tamkarḍit, Ifuyla n uẓeṭṭa: "Idrunen DJI (alugen)" yermed s wudem amezwer deg Iɣewwaren, Leqqayen. Sens-it dinna akken ad teffreḍ aferdis.
-2. Qqen adrun (Neo 2 yezmer ad yeqqim yensa) neɣ ameɣri n tkarḍiwin ɣer tilifun s ukabel n yisefka USB-C; tilikumand DJI war agdil (RC-N1, RC-N2, RC-N3) ur teḥriz ara tiwlafin. Deg usebter Adrun DJI, sit ɣef "Fren adrun neɣ takarḍa", fren-it deg wumuɣ n tama n umefran, ldi akaram-is DCIM neɣ eǧǧ aḍebsi meṛṛa, sinna "Seqdec akaram-agi" d Sireg.
-3. Asebter yesskan-d tiwlafin d tividyutin s wass, war ifuyla n tama .LRF, .SRT, .THM d .m4a. Sit ɣef "Fren akk imaynuten", sinna "Sali ɣer Immich"; ifuyla yettwaznen uqbel sɛan tacreḍt n usigna yerna ttwazeglen. "Eǧǧ-it ɣef ibenk" yesneɣlay ifuyla ɣer ugraw n tilifun deg wadeg n waya, deg walbum "Immuch360 import".
-4. Akken ad teqqim tvidyut ɣef tkarḍa n tmurt, rmed iduzwilen n tvidyut (Video Subtitles) deg DJI Fly (askar n tvidyut, Iɣewwaren, Takamirat) uqbel ad tafgeḍ: adrun ad yaru afaylu .SRT ɣer tama n yal tavidyut, asnas ad d-yeqqar seg-s adig sinna ad t-yesbadu ɣef uqeddac-ik seld asali, ma yella Immich ur d-yufi ara adig.
-
-Tikurin n 360° n yidrunen DJI (Mini, Air, Mavic d wiyaḍ, yettwassnen seg tkamirat-nsen) ttbanent d 360° deg Immuch360 ula war tibzimin n 360°. Immich yeḥwaǧ tibzimin-nni: tafrant n usali "Creḍ tikurin n yidrunen d 360° i Immich", tensa s wudem amezwer, tazen tawlaft war abeddel s ufaylu .xmp amecṭuḥ ɣer tama-s, akken Immich ad tt-yesken daɣen d takuret. Neo 2 ur yesɛi ara askar n tkuret neɣ n tpanuramit: tiwlafin d tividyutin-is d tizeddigin. Ticki tilifun yesekles ameslaw n tvidyut n Neo 2, ameslaw-nni yella deg ufaylu .m4a weḥd-s: asebter ad yecreḍ tavidyut-nni, yerna Immich ad tt-yaweḍ war ameslaw (sader-itt s DJI Fly akken ad teḥrezḍ ameslaw). Yal takarḍa n tkamirat s ukaram DCIM txeddem akka kan deg umeɣri n tkarḍiwin. Ulac ayen yettwaznen i DJI.
-
-<a id="your-dji-drones-live-video-on-your-phone-experimental"></a>
-### Tavidyut srid n udrun-ik DJI ɣef tilifun-ik (alugen)
-
-Wali ayen i yettwali udrun-ik DJI ɣef tilifun-ik Android, war DJI Fly yerna war amiḍan: qqen tilikumand DJI RC-N3 ɣer tilifun s ukabel-is, sinna Immuch360 yesskan-d tavidyut srid n udrun, H.265 s 1080p, akked tbatrit n tlikumand d udrun, tamatart, gimbal d yisefka n wafug, yettwaɣran seg ukabel. Tilikumand teṭṭef asefrek meṛṛa n udrun. Yettwarmes ɣef lqaɛa s RC-N3, DJI Neo 2 d Samsung Galaxy S24+; tilikumanden nniḍen d yidrunen nniḍen urɛad ttwarmsen. Imḍanen n wafug d tbatrit urɛad ttwaserwsen akked DJI Fly: ur ttkel ara fell-asen i wafug.
-
-Isell kan. Werǧin ad tettwazen tladna i tlikumand neɣ i udrun: yiwen n ubyte i yettaru usebter yal tasint, seg 20 n tsinin seld mi teldi tlikumand, yeqqar-d kan ma yella tilikumand teqbel isefka, ur yesɛi ara tladna.
-
-1. Iɣewwaren, Leqqayen, "Tasleḍt n useɣwen DJI (alugen)" yermed s wudem amezwer (werǧin ɣef TV); aferdis "Aseɣwen DJI" yella deg Tamkarḍit, Ifuyla n uẓeṭṭa.
-2. Rmed adrun d tlikumand, mdel DJI Fly, sinna ldi aferdis "Aseɣwen DJI" yerna ɣer alɣu n tɣellist.
-3. Sit ɣef "Bdu asekles", sinna qqen tilikumand s ukabel-is. Ma yella Android yesteqsa anwa asnas ara t-yeldin, fren Immuch360 war "Yal tikkelt", ayen ara yekksen tilikumand i DJI Fly; ma yesteqsa-d ɣef uskar USB, fren aɛebbi n tbatrit kan.
-4. Addad yeqqar "Allal yeldi", sinna "Iferdisen n tlikumand ttawḍen", yerna tavidyut ad d-tḍefer deg kra n tsinin. Taqeffalt ɣef tugna tesskan-itt ɣef ugdil ačaran, yerna tigezmi "Afug d tbatrit" tettak-d imḍanen n tlikumand d udrun.
-5. "Sifeḍ asekles" yettaru kraḍ n yifuyla deg `Download/Immuch360/dji-link`; "Urar asekles" yesurar tikkelt nniḍen asifeḍ deg usebter, war tilikumand, akken ad twaliḍ amek ibenk yettdikudi tavidyut n udrun.
-
-Tiwlafin d tividyutin n udrun ur ttwawḍent ara s tlikumand, ur nettldi ara aḥraz n udrun: nɣel-itent seg udrun s yiman-is s USB neɣ seg tkarḍa-ines, am deg [tigezmi i d-yezrin](#your-dji-drones-photos-and-videos-on-your-immich-server). Ɣef Meta Quest asebter yella daɣen, maca tavidyut srid n udrun urɛad tettawḍ ɣer ibenk n uqerru. Ḥrez ifuyla yettwasifḍen i yiman-ik, akken i d-yeqqar usebter, acku deg-sen uṭṭun n umazrar n tlikumand; aneqqis deg [Issues](https://github.com/freeKC/Immuch360/issues) s waddaden d yimsiḍen i d-yesskan usebter yettɛawan, ladɣa s tlikumanden nniḍen n DJI.
 
 <a id="devices-and-systems"></a>
-## Ibenkan d iseɣẓanen
+<a id="what-each-screen-does"></a>
+### What each screen does
 
-Yiwen uɣbalu n tengalt i sețța n yiseɣẓanen, d usnas weḥd-s i tiliẓriyin LG, s build n tirmit tamezwarut i tiliẓriyin Samsung. Ayen yesɛa yal yiwen ass-a:
+One code base for the phones, tablets, Android TV, the Meta Quest and the computers, and a separate TV app for LG TVs, also packaged for Samsung TVs as a test build. What each one has today:
 
-| Tamahilt | Android | iPhone, iPad | Android TV | LG webOS | Quest |
-|---|:---:|:---:|:---:|:---:|:---:|
-| Agraw, albumat, anadi s uqeddac Immich | ✅ | ✅ | ✅ ameskan | ✅ ameskan | ✅ |
-| Tuqqna s tilifun-ik (tangalt QR) | ✅ yesleḍ tangalt | 🔜 lexraj i d-iteddun n iOS | ✅ | ✅ deg iminig n tilifun | ✅ tangalt tettwaru ɣef tilifun |
-| War aqeddac: ayla n ibenk s yiman-is | ✅ | ✅ | ifuyla n uẓeṭṭa kan | ❌ | ✅ |
-| Tiwlafin d tividyutin tizeddigin | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Zzi tawlaft s yiwet n tqeffalt | ✅ | ✅ | ✅ tiqeffalen s yini | ✅ tiqeffalen s yini | ✅ ṭṭaq |
-| Tiwlafin n 360° d takuret | ✅ | ✅ | ✅ | ✅ | ✅ imirsif |
-| Tividyutin n 360° | ✅ | ✅ war afeggag n wakud | ✅ izen ma ur tettwaɣer ara | tizeddigin kan | ✅ imirsif |
-| 3D d VR180 | ✅ ṭiṭ yiwet | ✅ ṭiṭ yiwet | ✅ ṭiṭ yiwet | tiwlafin ṭiṭ yiwet, tividyutin tizeddigin | ✅ 3D n tidet |
-| Spatial 2.5D (aḍfar n uqerru) | ✅ alugen | ✅ alugen | ❌ | ❌ | ❌ |
-| Tiwlafin Apple n wemkan | ✅ ṭiṭ yiwet | ✅ ṭiṭ yiwet | ✅ ṭiṭ yiwet | ❌ | ✅ 3D |
-| Ifuyla raw n Insta360, GoPro d DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
-| Ifuyla n uẓeṭṭa SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ SMB seg webOS 22, WebDAV d DLNA seg webOS 5 | ✅ |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ seg webOS 5 | ✅ |
-| Tkamirawin Tapo: tuṭṭfiwin | ✅ | ✅ | ✅ | 🔜 mačči uqbel Dujembeṛ 2026 | ✅ |
-| Tkamirawin Tapo: tamuɣli srid | ✅ | 🔜 lexraj i d-iteddun n iOS | ✅ | ✅ tavidyut kan, seg webOS 5 | ✅ |
-| Sbeṭṭu ibenk-agi ɣef uẓeṭṭa | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Sali ɣer Immich seg ifuyla n uẓeṭṭa d ibenk | ✅ | ✅ | ❌ | ❌ | ✅ |
-| Aktar seg udrun DJI neɣ seg tkarḍa s USB (alugen) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Aseɣwen DJI: tavidyut srid n udrun (alugen) | ✅ s RC-N3 | ❌ | ❌ | ❌ | tasleḍt; srid 🔜 |
-| Asentel ubrik | am unagraw | am unagraw | ✅ s wudem amezwer | ✅ asentel asuf | am unagraw |
-| Unuddam | asit, gyroscope | asit, gyroscope | tilikumand; Azelmaḍ d Ayeffus ula deg tvidyut d ufeggag-is n wakud, Menu i telqayt | tilikumand, Magic Remote | ikontrolaren, ifassen |
-| Anda ara t-id-tafeḍ | Google Play, APK | App Store (deg usenqed) | APK, Google Play (deg usenqed) | .ipk build n tirmit, Developer Mode | Horizon Store, APK |
+| Capability | Android | iPhone, iPad | Android TV | LG webOS | Samsung Tizen | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ viewer | ✅ |
+| Sign in with your phone (QR code) | ✅ scans the code | 🔜 next iOS release | ✅ | ✅ in the phone's browser | ❌ typed on the TV | ✅ code typed on the phone |
+| Without a server: the device's own media | ✅ | ✅ | shares only | ❌ | ❌ | ✅ |
+| Flat photos and videos | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Rotate a photo with one key | ✅ | ✅ | ✅ colour keys | ✅ colour keys | ✅ | ✅ window |
+| 360° photos as a sphere | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ immersive |
+| 360° videos | ✅ | ✅ no time bar | ✅ message if not decodable | flat only | flat only | ✅ immersive |
+| 3D and VR180 | ✅ one eye | ✅ one eye | ✅ one eye | photos one eye, videos flat | photos one eye, videos flat | ✅ true 3D |
+| Spatial 2.5D (head tracking) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ | ❌ |
+| Apple spatial photos | ✅ one eye | ✅ one eye | ✅ one eye | ❌ | ❌ | ✅ 3D |
+| Raw Insta360, GoPro and DJI files | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ | ✅ SMB from webOS 22 | ❌ | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Tapo cameras: recordings | ✅ | ✅ | ✅ | 🔜 not before December 2026 | ❌ | ✅ |
+| Tapo cameras: live view | ✅ | 🔜 next iOS release | ✅ | ✅ video only | ❌ | ✅ |
+| Share this device on the network | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Upload to Immich from shares and the device | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Import from a DJI drone or a card over USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| The DJI drone's live video (experimental) | ✅ with an RC-N3 | ❌ | ✅ relayed by a phone | ❌ | ❌ | ✅ relayed by a phone |
+| Dark theme | as the system | as the system | ✅ by default | ✅ only theme | ✅ only theme | as the system |
+| Input | touch, gyroscope | touch, gyroscope | remote; Left and Right also during a video and on its time bar, Menu for the details | remote, Magic Remote | remote | controllers, hands |
+| Where to get it | Google Play, APK | App Store (in review) | APK, Google Play (in review) | .ipk, LG Content Store (in review) | .wgt test build, signed by you | Horizon Store, APK |
 
 | Tamahilt | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
@@ -337,54 +129,47 @@ Yiwen uɣbalu n tengalt i sețța n yiseɣẓanen, d usnas weḥd-s i tiliẓriy
 | Sbeṭṭu ibenk-agi ɣef uẓeṭṭa | ✅ | ❌ | ❌ |
 | Sali ɣer Immich seg ifuyla n uẓeṭṭa d ibenk | ✅ | 🔧 CI | 🔧 CI |
 | Aktar seg udrun DJI neɣ seg tkarḍa s USB (alugen) | ❌ | ❌ | ❌ |
-| Aseɣwen DJI: tavidyut srid n udrun (alugen) | ❌ | ❌ | ❌ |
+| The DJI drone's live video (experimental) | ❌ | ❌ | ❌ |
 | Asentel ubrik | am unagraw | am unagraw | am unagraw |
 | Unuddam | ajerdiw, klavye | ajerdiw, klavye | ajerdiw, klavye, trackpad |
 | Anda ara t-id-tafeḍ | asebded neɣ ZIP (version n usenqed yettwaxtamen) | .deb, .rpm (version n usenqed) | DMG neɣ ZIP (version n usenqed ur yettwaxtam ara) |
 
-✅ deg usnas ɣef useɣẓan-nni · ❌ ur-yețțunefk ara dinna · 🔜 yettwasmizwer · 🔧 CI deg yiɣbula, yebna yerna yebda sɣur CI n usenfaṛ ɣef useɣẓan-nni, maca urɛad yețwasenqed dinna s uqeddac, s ifuyla n uẓeṭṭa neɣ s tkamirat n tidet · tizeddigin kan: tavidyut tettwaurar d tazeddigt, s yizen, acku ameskan n tividyutin n 360° n yiselkimen yella kan ɣef Windows, yerna ɣef tiliẓriyin LG mazal ad nektil ma yella webOS yettak tugniwin n tvidyut i tkuret. "Ṭiṭ yiwet" yeqqar-ed belli afaylu 3D yesskan-ed ṭiṭ-is n uzelmaḍ ɣef ugdil azeddig. Tagejdit LG webOS d asnas weḥd-s, build n tirmit 0.2.0: 0.1.0 yeddi ɣef tiliẓri LG n yiwen umsenqed, ma d ifuyla n uẓeṭṭa, Plex d tkamirawin n 0.2.0 ttwasenqden s yiqeddacen n tidet ɣef uqeddac n build n usenfaṛ, urɛad ɣef TV. Mačči yal ✅ yețwasenqed ɣef ibenk n tidet: ayen yețwasenqden anida, akked wayen i d-yeqqimen a t-nesenqed, yella deg [Timahilin](../docs/immuch360/features.md), [Tallalt n iseɣẓanen](../docs/immuch360/platform-support.md) akked [Ammtawi](../docs/immuch360/compatibility.md).
+✅ in the app on that platform · ❌ not offered there · 🔜 planned · 🔧 CI in the sources, built and started by the project's CI on that system, not checked with a real server, share or camera there yet · flat only: the video plays flat, with a message, because the 360° video renderer of the computers is Windows only; on LG TVs, whether webOS hands video frames to the sphere is still to be measured; on a tester's Samsung TV, the browser gave black video frames to the 3D view. "One eye" means a 3D file shows its left eye on a flat screen. The LG and Samsung columns are one separate TV app: LG version 1.0.0, whose shares and Plex were checked against real servers and its cameras against a simulated camera on the project's build host, not on a TV yet, and Samsung test build 0.2.0. Not every ✅ has been checked on a real device yet: what was checked where, and what remains to confirm, is in [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) and [Compatibility](../docs/immuch360/compatibility.md).
 
 - **Tilifunen d tablitin Android**: asnas ačaran, asit d gyroscope, yal aɣbalu.
 - **iPhone d iPad**: asnas ačaran; ameskan n tividyutin n 360° yesɛa kan Urar d Usgunfu, tamuɣli srid n Tapo d tama n tilifun n tuqqna s tilifun ad d-asent s lexraj i d-iteddun n iOS, yerna anadi DLNA yazen tuttriwin unicast alamma Apple yefka tasiregt n multicast.
-- **Android TV d Google TV**: yiwen APK, yețwasewjed s tlikumand, d aberkan s wudem amezwer; d ameskan kan: aḥraz, asali d umaẓrag ttwaffren, talqayt i tɣuri kan, maca tawlaft tettezzi yal tikkelt s yiwet n tqeffalt. Yal amsizdeg n unadi yetteddu s tlikumand: Adig d Takamirat ldin tifranin-nsen deg wumuɣ, amsizdeg n uzemz yesskan-ed akk tifranin-is, yerna tiferkiwin Tibzimin, Adig, Azemz, Anaw n umidya, Aktazal s yitran d Tifranin n uskan sersent Sfeḍ d Snes ɣer tama n tefranin, yiwen Ayeffus, ɣef tugget n teɣzi n ugdil. Tafelwit n twlafin tesseqdac drus n tkatut n tugniwin, yerna taqeffalt n tanila yettwaṭṭfen tesmuttus-itt azal n 10 n yizirigen deg tsint ɣef wugar. Seg build 28 yeqqen seg tilifun, s tengalt-is QR neɣ s tengalt-is tawezlant (yettwarmes gar sin n emulaturen s tengalt yettwarun, urɛad s tkamirat). Seg build 29 tilikumand tezmer ad tawweḍ ɣer ufeggag n wakud n tvidyut, isura ttawin umuɣen n imesli d iduzwilen, yerna afaylu i d-iteddun deg ifuyla n uẓeṭṭa yettwaldi s tqeffalin-is n usefrek. Yettwasenqed ɣef emulatur n Google TV; build 28 yeddi ɣef Android TV n tidet ass n 23 Tubeṛ, yerna uguren n tvidyut i d-yettwafen dinna d iseɣtiyen n build 29, yettwasenqden ɣef emulatur, urɛad ɣef TV-nni.
-- **Tiliẓriyin LG s webOS 4.0 d wid i d-iteddun**: asnas weḥd-s i tlikumand d Magic Remote, yebna ɣef [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): ameskan Immich s tiwlafin n 360° ɣef tkuret, tawlaft tettezzi s yiwet n tqeffalt, asentel ubrik d 89 n tutlayin n usnas (kra n yiḍrisen n usnas n TV s yiman-is s teglizit i tura); seg 0.2.0 ifuyla n uẓeṭṭa, Plex d tamuɣli srid n tkamirawin Tapo, s umeẕlu-ines ɣef TV (webOS 5 d wid i d-iteddun, SMB seg webOS 22); tividyutin n 360° d tizeddigin. Version 0.1.0 yeddi ɣef tiliẓri LG n yiwen umsenqed (webOS 22); 0.2.0 yettwasenqed s tirmiyin-is d yiqeddacen n tidet ɣef uqeddac n build n usenfaṛ, urɛad ɣef TV.
-- **Tiliẓriyin Samsung s Tizen 5.5 d wid i d-iteddun**: asnas n tiliẓri LG yettwakemsen i tiliẓriyin Samsung, build n tirmit 0.1.0, ad t-txetmeḍ yerna ad t-tesbeddeḍ s yiman-ik: ameskan Immich i tlikumand, tuqqna s tira (tansa n uqeddac, sinna imayl d wawal uffir neɣ tasarut API), s uskan n tugniwin, tiwlafin n 360° ɣef tkuret, tawlaft yettezzin s yiwet n tqeffalt d usebter Ɣef i d-yeqqaren ayen i yettqebbil TV; urɛad tuqqna s tilifun, ifuyla n uẓeṭṭa, Plex neɣ tikamirawin; tividyutin n 360° tizeddigin. Yettwasenqed deg Chromium headless 69, 76 d 94, imseddayen n Tizen 5.5, 6.0 d 7.0, akked uqeddac Immich; urɛad yeddi ɣef TV Samsung neɣ ɣef emulatur n Samsung.
-- **Meta Quest 2, Pro, 3 d 3S**: asnas am ṭṭaq, rnu-as tamuɣli imirsif; HEVC d codec ur-nesɛi ara uguren, H.264 yeḥbas ɣef luqat n 4096x2304 ɣef Quest 3; Quest 3 kan i yettwarmen, Quest 2, Quest Pro d Quest 3S mazal ur-ttwarmsen ara.
+- **Android TV and Google TV**: the same APK, driven by the remote, dark by default; a viewer: backup, uploads and the editor are hidden and the details are read only, but a photo still turns with one key. Every search filter works with the remote: Location and Camera open their choices in a list, the date filter shows all its choices, and the Tags, Location, Date, Media Type, Star Rating and Display options sheets put Clear and Apply beside the choices, one Right away, on most of the screen height. The photo grid uses less image memory, and a held arrow moves it at most about 10 rows a second. From build 28 it signs in from a phone, by its QR code or its short code (tried between two emulators with the code typed, not yet with a camera). From build 29 the time bar of a video takes the focus of the remote, films get audio and subtitle menus, and the next file of a share opens with controls of its own. Checked on the Google TV emulator; build 28 ran on a real Android TV on 23 October, and the video problems found there are the fixes of build 29, checked on the emulator, not yet on that TV. From build 30, its Drone card shows the live video of a DJI drone that a phone relays, with the drone's values and obstacle ring (experimental): the pairing and the picture were tried on a TCL Android TV on 25 October, with stutter and a green cast on the earlier relay; the steady stream that answers them is first tested with build 30.
+- **LG TVs with webOS 5.0 and later**: a separate app for the remote and the Magic Remote, built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): an Immich viewer with the 360° photos on a sphere, a photo turned with one key, a dark theme and the 89 languages of the app (the few texts of the TV app itself in English for now); the network shares, Plex and the live view of Tapo cameras, through its own service on the TV (SMB from webOS 22); 360° videos flat. Version 1.0.0, submitted to the LG Content Store on 24 October, ran on webOS 25 TVs of three models in LG's Cloud Test Lab: sign in, the phone sign in page, photos, albums, a video, the 360° view, the slideshow, a search and Back from every page. Version 0.1.0 ran on a tester's LG TV (webOS 22). The shares and Plex were checked against real servers and the cameras against a simulated camera on the project's build host, not on a TV yet.
+- **Samsung TVs with Tizen 5.5 and later**: the LG TV app packaged for Samsung TVs, test build 0.2.0, to sign and install yourself: an Immich viewer for the remote, signed in by typing (the server address, then an email and password or an API key), with the slideshow, the 360° photos on a sphere, a photo turned with one key and an About page that tells what the TV supports; no sign in with a phone, shares, Plex or cameras yet; 360° videos flat, with a notice. Version 0.1.0 ran on a tester's Samsung TV on Tizen 9: photos and videos up to 4K played, nothing above 4K decoded, and the browser of the TV gave black video frames to the 3D view. Version 0.2.0 holds the fixes from that run (a message for a video above the TV's decoders or one that stalls, 360° videos flat with a notice) and has not run on a TV yet.
+- **Meta Quest 2, Pro, 3 and 3S**: the app as a window, plus the immersive view and, from build 30, a Drone card that shows the live video of a DJI drone relayed by a phone (experimental), first tested with build 30; HEVC is the safe codec, H.264 stops around 4096x2304 on the Quest 3; only the Quest 3 is tested, the Quest 2, Quest Pro and Quest 3S are not tested yet.
 - **Windows 10 d 11**: version n usenqed, s ikaramen deg umkan n ugraw, s umeskan-is n tividyutin (libmpv) i tividyutin tizeddigin d 360°, ifuyla raw i d-yegran sɣur chip n ṣura, ifuyla d ikaramen yeldin s usnas neɣ yettwazuɣren ɣer ṭṭaq, akked usebded neɣ ZIP, yettwaxtamen sɣur APROGSYS.
 - **Linux**: .deb d .rpm yebnan sɣur CI n usenfaṛ, ttwasebdden yerna ttwasneqden ɣef Ubuntu 22.04 d 24.04, Debian 12 akked Fedora 40 d 44; tiwlafin, tiwlafin n 360° d tividyutin tizeddigin s libmpv n unagraw (tividyutin n 360°, 3D d raw ttwaurarent d tizeddigin, s yizen), ttwasunent s ubrid n warrum ula deg tɣimiyin X11 seg build 7 n Immuch360 Desktop; ifuyla n uẓeṭṭa SMB seg Ubuntu 22.04 d Debian 12 d asawen; war taɣlaft n tsura (GNOME Keyring neɣ KWallet) asnas ur yettḥebbis ara tura 25 s deg usenker-is amezwaru: yeḥraz awalen uffiren i tɣimit kan yerna yenna-t deg yiɣewwaren-is; urɛad yeddi ɣef PC Linux n tidet, ala ddaw WSLg akked deg yimagbaren.
 - **macOS**: DMG d ZIP yebnan sɣur CI n usenfaṛ, imeɣradanen, ur ttwaxtamen ara (Gatekeeper ad d-isteqsi tikkelt kan); asnas yettbeddu, yeldi ifuyla d ikaramen i as-d-yettunefken, ula seg Finder, yesseklas tibadnin-is deg Keychain n tuqqna, yerna yessurar tividyutin tizeddigin s libmpv-ines, akk aya yettwasenqed kan ɣef Mac n CI n usenfaṛ; urɛad yeddi kra ɣef Mac n tidet.
 
-<a id="advanced-features"></a>
-## Timahilin tixatarin
+<a id="what-you-can-do"></a>
+## Ayen i tzemreḍ a t-txedmeḍ
 
-Ayen i izemren usnas ad t-yeqra yerna ad t-yesken, i umeɣri i yebɣan akk talqayt. Yal izirig yemmel-ed s telqayt deg [adlis n useqdac](../docs/immuch360/user-guide.md) akked [usebter n ammtawi](../docs/immuch360/compatibility.md).
+Each line opens its how to below. The full guide, with every option, message and limit, is in the [user guide](../docs/immuch360/user-guide.md).
 
-- **Udmawen**: tiwlafin d tividyutin tizeddigin (ayen i yezmer ibenk ad t-idikuder: MP4, MOV, MKV akked wiyaḍ); tiwlafin d tividyutin n 360° equirectangular; tipanuramikin ur-nkemmel ara (tagzirt GPano); VR180; 3D s snat wallen, s ufella d wadda neɣ rrif ɣer rrif, yeqqar seg ufaylu (box st3d) neɣ yețwaḥsab seg uskan; tiwlafin Apple n wemkan (sin n tseddarin HEIC) akked tividyutin n wemkan (MV-HEVC, ṭiṭ yiwet); ifuyla raw Insta360 .insp d .insv, GoPro .360, DJI .osv; iɣbula 10 bit HLG d PQ ttwabeddlen ɣef tkuret.
-- **Projection d metadata**: metadata GPano akked tin n tkuret, yețwaqra seg ufaylu, s tuttriwin n izilal ɣef uqeddac neɣ afaylu n uẓeṭṭa; tamuɣli tamezwarut n tkamirat; tikurin n yidrunen DJI yettwassnen seg tkamirat-nsen, s ufaylu amaddu .xmp afrayan akken Immich ad ten-yecreḍ daɣen; "Wali am 360°" yețwaḥerzen ɣef ibenk; VR180 yețwassen seg ufaylu neɣ seg yisem-is; adig n tvidyut n udrun yettwaqra seg uɣmis-is n wafug .SRT; metadata teqqim war ablal axaṭer d afaylu agejdan i yettwaskanen, mačči takuft-is i yettwabeddlen; rbeɛ n tuzzya yettwaḥerzen s umaẓrag n Immich neɣ ɣef ibenk, werǧin ɣef ufaylu imirsif.
-- **Asekne anamur**: Media3 ɣef Android d TV, SceneKit d AVFoundation ɣef iOS, Meta Spatial SDK deg ibenk n uqerru, libmpv ɣef Windows; afaylu agejdan neɣ win yettwabeddlen, yețwafran s wayen i yezmer ibenk ad t-idikuder; umuɣ n dikudaren n tividyutin n ibenk deg Iɣewwaṛen, Timahilin tixatarin; tafrant n uzrug n imesli, iduzwilen deg umeskan Android akked uskan n uṛaju.
-- **Ifuyla raw i yesdukkel usnas deg ibenk**: shader n fragment n Flutter i tiwlafin; effect GPU deg umeskan i tividyutin s yiwen uẓrug; sin dikudaren n warrim ɣer yiwet n tikkelt akked compositor GPU i tividyutin anida yella yiwen wallen i yal aẓrug neɣ afaylu (OpenGL ES 3 ɣef Android akked Quest, Metal ɣef iOS, akked ɣef Windows, seg build 5 n desktop, sin yimeskanen libmpv anda usnas isdukkel uskanen-nsen ɣef chip n ṣura); calibration n tkamirat s yiman-is (talgiwin Mei, V6 akked equidistant) akked usekles n accelerometer; tuɣalin ɣer yiwen wallen, ɣer win yettwabeddlen, ɣer copie LRV n tkamirat neɣ ɣer tvidyut i ur yesdukkel ara usnas, ticki ibenk ur yezmir ara ad iseqdec snat n dikudaren ɣer yiwet n tikkelt.
-- **Iɣbula**: agraw n ibenk; ikaramen n uselkim; adrun neɣ takarḍa n tkamirat s USB, s umefran n ikaramen n unagraw (Android, alugen); tilikumand DJI RC-N3 s ukabel-is i tvidyut srid n udrun (Android, alugen); aqeddac Immich; SMB 2 d 3, WebDAV, DLNA/UPnP; Plex s HTTPS, yețwasenqed ɣer ašhad-is s yiman-is; tkamirawin Tapo ɣef uẓeṭṭa adigan (HTTPS d RTSP); tilifun neɣ aselkim yettwabeṭṭun ɣef Wi-Fi am aqeddac WebDAV; iqeddacen ițwafen s Bonjour/mDNS, asneqḍeḥ n uẓeṭṭa adigan, SSDP, GDM akked tifin n TP-Link, yerna ttwaḍfaṛen ticki beddlen tansa.
-- **Taɣuri s talaba (on demand)**: allal n tuqqna adigan yesseɛdday-d imeskanen s izilal n bytes akked token i yal tiɣimit; iḥricen imeqqranen, taɣuri zwaren akked ɣer sețța n tuqqniwin SMB ɣer yiwet n tikkelt; tinfulin seg uskan n yal tividyut; ulac acemma yettwanɣalen ɣer ibenk.
-- **Warrim**: dikudaren n warrim ttwasseqdacen anida llan, s talast-nsen ițwaḥsaben (talast n H.264 ɣef Quest 3, snat n wallen n 2048x2048 ɣer yiwet n tikkelt i dikudaren n logiciel ɣemaxen); ɣef Windows tamuɣli n 360° tegra-d sɣur chip n ṣura seg yal uskan idikuderen, teɣzi n uskan tețwaḥsab ɣef yal aselkim, chip yedduklen neɣ win yețwaxtaṣen ițwaf.
-- **Ayen yemgaraden ger iseɣẓanen**: gyroscope akked umeskan Spatial 2.5D ɣef tilifunen; tamuɣli imirsif, ikontrolaren d ifassen ɣef Quest; umuɣ ipran i tlikumand, ṭṭaq n klavye akked ubanner n TV ɣef Android TV; ɣef uselkim: ajerdiw d klavye, ugdil ameqqran, yiwen kan n ṭṭaq, ifuyla d ikaramen yeldin s usnas neɣ yettwazuɣren ɣer ṭṭaq-is, țwaɣren am ifuyla n ikaramen-ik, HEIC, AVIF, TIFF akked tiwlafin raw n tkamirat deg ikaramen ticki Windows yesɛa adikuder i yessen-iten, akked allal n Windows i uḥraz n wawalen uffiren d tokens.
-- **Tuffirt s wbna**: ulac amiḍan, ulac cloud, ulac tasleḍt; awalen uffiren d tokens deg uḥraz aɣellsan n ibenk (ɣef tiliẓriyin LG d Samsung, ur nesɛi ara aḥraz-a i usnas, deg uḥraz n usnas s yiman-is, war awgelhen); agdil yeqqnen seg tilifun ad yawi tiɣimit-is, ad tettwazen d tawgelhant ɣef uẓeṭṭa n uxxam, werǧin awal uffir (tiliẓri LG tettawi awal uffir seg usebter deg yiminig n tilifun, war awgelhen ɣef uẓeṭṭa n uxxam, yerna teḥriz kan tiɣimit); takamirat n umeskan Spatial d tin n umsleḍ n tengalt tettwasseqdac ɣef ibenk kan; ifuyla n uẓeṭṭa, Plex d tkamirawin ttwawḍen ɣef uẓeṭṭa-k kan.
-
-<a id="technical-documentation"></a>
-## Tasemlit tusnakt
-
-- [Timahilin: umuɣ ačaran akked tfelwit n temahilin s yal aseɣẓan](../docs/immuch360/features.md)
-- [Adlis n useqdac: yal tamahilt, yiwen yiwen, s tiɣtisin-is d yizenan-is](../docs/immuch360/user-guide.md)
-- [Ammtawi: udmawen, codecs, dikudaren, iqeddacen d ibenkan ițwasenqden, tilasta](../docs/immuch360/compatibility.md)
-- [Tallalt n iseɣẓanen: ayen yesɛa yal aseɣẓan, amek i t-id-ițwasebded, ayen yemgaraden](../docs/immuch360/platform-support.md)
-- [Uguren ițwassnen](../docs/immuch360/known-issues.md) akked [Afran n uguren](../docs/immuch360/troubleshooting.md), s yisekles ara ternuḍ ɣer uneqqis
-- [Talqayt tusnakt: architecture, imrigen n Flutter d yimrigen inamuren, allal n tuqqna n wayla, abrid n udukkel, dikudaren](../docs/immuch360/technical-details.md)
-- [Amesskan n tividyutin n 360° n desktop: libmpv, takkayt n projection akked wayen yețwaḥsaben deffir-s](../docs/immuch360/desktop-360-video-renderer.md)
-- [Addad n lexraj: builds, lmaɣazat akked wayen yesɛa yal lmaɣaza](../docs/immuch360/release-status.md)
-- [Sebded-it s yiman-ik: tilifunen, ibenkan n uqerru, TV-yen d yiselkimen](../docs/immuch360/build.md)
-- [Immuch360 i tiliẓriyin LG webOS: asebded deg Developer Mode, tiqeffalen n tlikumand, iqerra CORS](../webos/README.md)
+1. [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server): a gallery and a player, on the device alone or with your Immich server.
+2. [Look around 360° photos and videos, panoramas, VR180 and 3D](#explore-panoramas-360-vr180-and-3d): a sphere you turn with a finger, the phone or the remote.
+3. [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): Android TV and Google TV, LG TVs, and Samsung TVs as a test build.
+4. [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): scan its QR code, confirm, watch.
+5. [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° all around you, 3D in true 3D.
+6. [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): in place, nothing copied.
+7. [Keep your Immich library, with more](#keep-your-immich-library-with-more): the Immich mobile app, plus the immersive viewers and the big screens.
+8. [Watch your Tapo cameras](#watch-your-home-cameras-on-the-big-screen): live, and the recordings of their memory card; not yet checked with a real camera.
+9. [See your DJI drone's live video on your phone](#see-what-your-drone-sees-on-your-phone), and [in a Meta Quest or on an Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): through a DJI RC-N3 remote, receive only. *Experimental.*
+10. [Bring a drone's or a camera card's photos and videos to Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): over USB, from an Android phone. *Experimental.*
+11. [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX and DJI Osmo 360, stitched by the app.
+12. [Turn a photo with one key](#turn-a-photo-with-one-key): a button, a key of the keyboard or a colour key of the remote.
+13. [Use your computer as the media player](#use-your-computer-as-the-media-player): your folders, Open with, a file dropped on the window. *Preview.*
 
 <a id="install"></a>
-## Sebded
+<a id="get-it-on-your-device"></a>
+## Get it on your device
+
+Take the app from the store of your device where it is published, or from the [Releases](https://github.com/freeKC/Immuch360/releases) page meanwhile.
 
 ### Tilifunen d tablitin Android
 
@@ -407,17 +192,18 @@ Ayen i izemren usnas ad t-yeqra yerna ad t-yesken, i umeɣri i yebɣan akk talqa
 <a id="lg-tvs-webos"></a>
 ### Tiliẓriyin LG (webOS)
 
-1. Tesriḍ tiliẓri LG s webOS 4.0 neɣ win i d-iteddun, aselkim deg uẓeṭṭa-nni akked umiḍan n uneflay LG ilelli. Ɣef tiliẓri, sebded Developer Mode seg LG Content Store, qqen, rmed Dev Mode Status sinna eǧǧ tiliẓri ad tales asenker; aru tansa-s IP d tefyirt tuffirt i d-yesskan usnas.
+1. Version 1.0.0 is waiting for LG's review. Until it is on the LG Content Store, it installs in Developer Mode: you need an LG TV with webOS 5.0 or later, a computer on the same network and a free LG developer account. On the TV, install Developer Mode from the LG Content Store, sign in, turn Dev Mode Status on and let the TV restart; note its IP address and the passphrase the app shows.
 2. Ɣef uselkim, sebded webOS CLI (Node.js 18 neɣ win i d-iteddun): `npm install -g @webos-tools/cli`, sinna sekles tiliẓri s `ares-setup-device` (tansa-s IP, tawwurt 9922, aseqdac `prisoner`) akked `ares-novacom --device <name> --getkey`, ara k-id-isutren tafyirt tuffirt.
-3. Sader `Immuch360-webOS-0.2.0.ipk` seg [lexraj n usenqed n webOS](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0), senqed-it s `SHA256SUMS.txt`, sinna `ares-install --device <name> Immuch360-webOS-0.2.0.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) n webosbrew yexdem ayen-nni war izirig n tladna.
+3. From the [webOS 1.0.0 pre-release](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0), download `Immuch360-webOS-1.0.0.ipk` for a UHD TV, or `Immuch360-webOS-1.0.0-1280x720.ipk` for a Full HD TV, to which LG gives 1280x720 apps. Check it against `SHA256SUMS.txt`, then `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`. The [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) of webosbrew does the same without the command line.
 4. Tiɣimit n Developer Mode tettḍul 1000 n yisragen, yerna taqeffalt EXTEND n usnas Developer Mode tesmaynut-itt; mi ara tfak, tiliẓri ad tekkes isnasen yettwasebdden s wudem-agi. Talqayt tella deg [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
+5. Once the app is on the LG Content Store, remove the Developer Mode copy and install it from the store.
 
 <a id="samsung-tvs-tizen"></a>
 ### Tiliẓriyin Samsung (Tizen)
 
-1. Ilaq-ak TV Samsung s Tizen 5.5 neɣ win i d-iteddun (timudmin n 2020 d wid i d-iteddun), aselkim ɣef yiwen uẓeṭṭa d umiḍan Samsung. Ɣef TV: Apps, App Settings, aru 12345, rmed Developer mode, sekcem tansa IP n uselkim, sinna ales asenker n TV.
-2. Sader `Immuch360-Tizen-0.1.0.wgt` seg [lexraj n usenqed n Tizen](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.1.0) sinna senqed-it s `SHA256SUMS.txt`. TV Samsung tessebded kan asnas yettwaxetmen i yiman-is, daymi akemmus yessefk ad yettwaxtem tikkelt nniḍen s ušhad Samsung i d-yebdren DUID n TV-ik: [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung), d allal n temɣiwent, yeqqar DUID, yettxetim akemmus s umiḍan-ik Samsung yerna yessebdad-it; Tizen Studio s Samsung Certificate Extension yexeddem ayen-nni s ufus.
-3. Ldi asnas sinna qqen s tira n tansa n uqeddac-ik, sinna imayl-ik d wawal-ik uffir neɣ tasarut API. Asebter «Ɣef TV-agi» yesskan-d ayen i yettqebbil TV, d aḍris d tengalt QR: aḍris-nni, yettwasufeɣ deg [Issues](https://github.com/freeKC/Immuch360/issues) akked wayen ur nxeddem ara, d netta i yettɛawanen ugar.
+1. Test build 0.2.0 is not on Samsung's store: you install it yourself. You need a Samsung TV with Tizen 5.5 or later (2020 models and later), a computer on the same network and a Samsung account. On the TV: Apps, App Settings, type 12345, turn Developer mode on, enter the IP address of the computer, then restart the TV.
+2. Download `Immuch360-Tizen-0.2.0.wgt` from the [Tizen pre-release](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) and check it against `SHA256SUMS.txt`. A Samsung TV installs only an app signed for it, so the package must be signed again with a Samsung certificate that lists the DUID of your TV: [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung), a community tool, reads the DUID, signs the package with your Samsung account and installs it; Tizen Studio with the Samsung Certificate Extension does the same by hand.
+3. Open the app and sign in by typing your server address, then your email and password or an API key. About this TV shows what the TV supports, as text and as a QR code: that text, posted in [Issues](https://github.com/freeKC/Immuch360/issues) or [Discussions](https://github.com/freeKC/Immuch360/discussions) with what does not work, helps the most.
 
 <a id="meta-quest"></a>
 ### Meta Quest
@@ -429,45 +215,409 @@ Ayen i izemren usnas ad t-yeqra yerna ad t-yesken, i umeɣri i yebɣan akk talqa
 <a id="windows"></a>
 ### Windows
 
-1. Sader `Immuch360-Desktop-3.3.0-rc.0-desktop.10-windows-x64-setup.exe` seg [lexraj n usenqed n Desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) (s `SHA256SUMS.txt` akken a t-tesenqdeḍ) sinna ldi-t. Asebded d ZIP ttwaxtamen; Windows yesskan-d APROGSYS d amsuffeɣ. Mi ara yili umsuffeɣ mazal d amaynut i SmartScreen, yezmer ad k-yesteqsi yiwet n tikkelt: "More info", sinna "Run anyway".
+1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.11-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) (with `SHA256SUMS.txt` to check it) and open it. The installer and the ZIP are signed; Windows shows APROGSYS as the publisher. While the publisher is new to SmartScreen, it may still ask once: "More info", then "Run anyway".
 2. Fren "Install for me only" (war izerfan n admin) neɣ "Install for all users", sinna tutlayt n usebded, tin n Windows yettwafran yakan.
 3. Ssenker Immuch360 Desktop seg umuɣ n Start. Tiwlafin d tividyutin ad t-afent deg "Ldi s" (sit s telqit tayeffust n ujerdiw ɣef ufaylu, Ldi s); urǥin ur-yețeg ara iman-is d asnas amezwer-nsen. Asenker amezwaru n build amaynut yezmer ad yeṭṭef ar yiwet n tedqiqt, skud Windows ițnadi ɣef ifuyla.
 4. Windows 10 neɣ 11, 64 bit. I uleqqem, ldi asebded n build i d-iteddun: tuqqna-ik, ikaramen akked yiɣewwaṛen ad qqimen. ZIP n yiwen lexraj d asnas-nni s yiman-is s wudem n ukaram, akken a t-id-teldiḍ anida tebɣiḍ, sinna ssenker `immuch360.exe` seg-s. Ɣef uselkim anida builds 4 ar 8 n Desktop ḥebsen deg usenker ɣef "duplicate column name: group_date", build 9 yeldi taffa-nni n yisefka yerna yeḥraz isefka-k.
 
 ### Linux
 
-Ɣef Ubuntu 22.04 neɣ win i d-iteddun akked Debian 12 neɣ win i d-iteddun: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.10-linux-amd64.deb`; ɣef Fedora 40 neɣ win i d-iteddun: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.10-linux-x86_64.rpm`, i sin seg [lexraj n usenqed n Desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10). Sinna ssenker Immuch360 Desktop seg yisnasen-ik. Version n usenqed: ikaramen n uselkim, tiwlafin d tiwlafin n 360° d takuret, akked tividyutin tizeddigin s libmpv n unagraw, i yessebded ukemmus (tividyutin n 360°, 3D d raw ttwaurarent d tizeddigin, s yizen); ifuyla n uẓeṭṭa SMB xeddmen seg Ubuntu 22.04 d Debian 12 d asawen. Ɣef Fedora, tividyutin n tkamirawin ḥwaǧent FFmpeg n RPM Fusion. War GNOME Keyring neɣ KWallet, awalen uffiren ttwaḥerzen i tɣimit kan, yerna iɣewwaren n usnas nnan-t.
+On Ubuntu 22.04 or later and Debian 12 or later: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-amd64.deb`; on Fedora 40 or later: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-x86_64.rpm`, both from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11). Then start Immuch360 Desktop from your applications. A preview: the folders of the computer, photos and 360° photos as a sphere, and flat videos through the system's libmpv, which the package installs (360°, 3D and raw videos play flat, with a message); SMB shares work from Ubuntu 22.04 and Debian 12 on. On Fedora, camera videos need the FFmpeg of RPM Fusion. Without GNOME Keyring or KWallet, the passwords are kept for the session only, and the settings of the app say so.
 
 ### macOS
 
-Ldi `Immuch360-Desktop-3.3.0-rc.0-desktop.10-macos.dmg` seg [lexraj n usenqed n Desktop](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) sinna zuɣer asnas ɣer Applications (Apple silicon d Intel, macOS 12 neɣ win i d-iteddun). Urɛad yețwaxtim yerna Apple urɛad t-iqbil: sit s telqit tayeffust n ujerdiw fell-as sinna fren Open ɣef macOS 14 d wid i t-id-iusan uqbel, neɣ fren "Open Anyway" deg System Settings, Privacy & Security ɣef macOS 15 d wid i d-iteddun. Yiwen seg wid ixeddmen deg usenfaṛ-agi ur-yesɛi ara Mac: asnas yeddi kan ɣef Mac n CI n usenfaṛ, anida yeldi ifuyla d ikaramen yerna yessurar tividyutin tizeddigin s libmpv-ines; tuqqna-ines ɣer uẓeṭṭa ur-tettwarmes ara. Isallen-nwen țwaqeblen s lfeṛḥ.
+Open `Immuch360-Desktop-3.3.0-rc.0-desktop.11-macos.dmg` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) and drag the app to Applications (Apple silicon and Intel, macOS 12 or later). It is not signed nor notarized yet: Control click it and choose Open on macOS 14 and earlier, or choose "Open Anyway" in System Settings, Privacy & Security on macOS 15 and later. Nobody working on the project has a Mac: the app was only run on the project's CI Mac, where it opens files and folders and plays flat videos with its own libmpv; its network access has not been tried. Reports are welcome.
+
+<a id="how-to"></a>
+## How to
+
+Each entry says what you get, then the steps, then the limits. The [user guide](../docs/immuch360/user-guide.md) has every option and message.
+
+<a id="watch-your-photos-and-videos"></a>
+<a id="use-your-own-files-without-an-account"></a>
+<a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
+### Watch your photos and videos, with or without a server
+
+Immuch360 is first a gallery and a player for ordinary photos and videos, and it needs neither an account nor a server. "Use without a server" opens the app on the photos and videos of the device, with every viewer, the 360° list and the network sources, and nothing leaves the device. With an Immich server, the timeline, the albums, the favorites, the memories and the search come from it. Videos play in a native player with sound, seeking, a buffering indicator and a choice of audio tracks, in the 360°, Spatial and computer players and, from build 29, in the flat player of the Android app, which shows subtitles too.
+
+<img src="../.github/readme/b19-library-no-server.png" width="260" alt="Iccer Tamkarḍit war aqeddac: aferdis 360° d asawen, syin On this device s snat n tewlafin 360°, akked Ifuyla n uẓeṭṭa s ufaylu yettwabḍan yettusemman NAS">
+
+1. Open the app. The welcome page shows "Your media. Any screen. Every perspective." and three choices: tap the first one, "Use without a server". A server can be connected later, from Settings or the Library tab.
+2. Sireg anekcum ɣer tewlafin d tvidyutin-ik. Ma tugiḍ, asnas yenna-d «Asnas ur yezmir ara ad iwali tugniwin n yibenk-a», s «Sireg anekcum» d «Ldi iɣewwaṛen».
+3. The Photos tab shows the timeline of the device; Search and Albums stay greyed out, as they come from the server. The Library tab has 360° at the top, then On this device (the albums of the device) and Network shares. The menu at the top right says "This device only": nothing is sent anywhere.
+4. Tap a photo or a video to open it; swipe left and right to go to the next one, pinch or double tap to zoom. Swipe up on a video for its details: codec, size, frame rate, bit rate, and whether this device decodes it.
+5. On Android phones, tablets and TVs, from build 29, a film with several audio languages or with subtitles has an audio button and a subtitles button in its controls: the audio language you pick is kept for the next films, and subtitles stay off until you pick them, except forced ones. The Immich app's Android player has neither.
+
+Ɣef uselkim, ikaramen i textireḍ i gan tamahilt n ugraw; ɣef TV, i ur-nesɛi ara tiwlafin-is, iɣbula n uẓeṭṭa i t-ixeddmen.
+
+More: [without a server or an account](../docs/immuch360/user-guide.md#without-a-server-or-an-account), [the viewers and the video player](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [video details and decoders](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
+
+<a id="explore-panoramas-360-vr180-and-3d"></a>
+### Snirem tipanuramikin, 360°, VR180 d 3D
+
+Immuch360 knows flat photos and videos, panoramas, 360° photos and videos, VR180, stereoscopic 3D, Apple spatial photos and the 360° spheres of DJI drones, and opens each one in the viewer that fits it. A 360° photo opens as a sphere you turn with a finger or by moving the phone; a 360° video plays in a spherical player with sound; VR180 files are drawn on a half sphere; stereoscopic 3D files show one eye on a flat screen and both eyes in a headset. Partial panoramas keep their crop, and the picture starts on the view the camera recorded. A file the server does not flag can be viewed as 360° with one tap.
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.jpg" width="260" alt="Tawlaft 360° n yiri n umdun deg umeskan n tsfirt: taqeffalt n umdal d asawen s azelmaḍ, tiqeffalin 360°, asefrek 3D d ujiroskop d asawen s ayeffus">
+  <img src="../.github/readme/b19-video.png" width="420" alt="Tavidyut 360° n ubrid n yiri n yill tettwaɣra deg umeɣri 360° n tiliɣri yettwaṭṭfen s tama: amdal d yisem n ufaylu d asawen s azelmaḍ, 360° d 3D d asawen s ayeffus, uzwir, tuɣalin ɣer deffir, urar, tuɣalin ɣer zdat d uḍfir di tlemmast, afeggag n wakud d akessar">
+</p>
+
+1. Ldi tawlaft neɣ tividyut. Ifuyla n 360° ṭṭfen tacreṭ n 360° ɣef tanfult-nsen, yerna deg iccer n Tmkarḍit yella umuɣ n 360° i ten-id-yesdukklen, s yisizdigen s lawan, aɣbalu, anaw akked tkamirat.
+2. Sit 360° deg ufeggag n ufella. Zuɣer akken a twaliḍ yal tama, qbar akken a tesemɣreḍ, sit taqeffalt n gyroscope akken a twaliḍ yal tama s uzuzzer n tlifun.
+3. Taqeffalt 3D tettbeddal gar "Mono (mačči 3D)", "3D, s ufella d wadda" akked "3D, rrif ɣer rrif"; taqeffalt 360°/180° tesbeddal gar tkuret tačarant d uzgen n tkuret n VR180.
+4. I ufaylu i d-iskanen azeddig ɣas akken d win n 360°: ⋮ ɣef ufella uyeffus, sinna "Wali am 360°".
+
+Ɣef tilifunen d tablitin, tividyut s snat wallen tezmer a d-tban-ed s wudem n 3D ɣas ɣef ugdil azeddig: ameskan Spatial 2.5D yesseqdac takamirat n zdat akken a d-yeḍfer aqerru-k, yesskan-ed tamuɣli i yellan ger snat wallen (d alugen urɛad yemmed). Tiwlafin Apple n wemkan i d-ttwarzen s iPhone ttwassnent u skanent-ed s 3D deg Meta Quest.
+
+Ugar: [tiwlafin d tividyutin n 360°](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D d VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [tiwlafin d tividyutin Apple n wemkan](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [umuɣ n 360°](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+
+<a id="watch-on-the-tv-and-on-the-computer"></a>
+<a id="watch-on-the-tv-with-the-remote"></a>
+### Watch on the TV with the remote
+
+Your photos on the big screen, with the remote. The TV apps all work the same way: the arrows move the frame, OK opens, Back goes back, and in a 360° photo the arrows look around. A TV has no photos of its own, so it shows your Immich server and, on Android TV and LG TVs, your network shares, your Plex server and your cameras.
+
+- **Android TV and Google TV**: the Android app itself, build 30, from GitHub until Google Play offers it on TVs.
+- **LG TVs with webOS 5.0 and later**: a TV app of its own, version 1.0.0, waiting for LG's review on the LG Content Store.
+- **Samsung TVs with Tizen 5.5 and later**: the same TV app as on LG TVs, test build 0.2.0, which you sign and install yourself.
+
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Illustration, not a capture: a large TV in a living room at dusk shows a grid of landscape photos beside a rail of icons, and a remote lies on the coffee table">
+</p>
+
+<a id="on-android-tv-and-google-tv"></a>
+#### On Android TV and Google TV
+
+The same Android app, in a dark theme from the first start, with the remote as the only input. In the viewer, Left and Right go to the previous or next photo or video, even while a video plays, and in a 360° photo or video the arrows look around.
+
+<p align="center">
+  <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Ameskan n tkuret ɣef Google TV: tapanuramik n 360° n rrif n yiwen uɣelmam, taqeffalt n umdal ɣef uzelmaḍ n ufella, tiqeffalen Semẓi, Semɣer, 360° d 3D ɣef uyeffus n ufella, ttwazuzzrent s iqeffalen n tanila n tlikumand">
+</p>
+
+1. Install the APK with adb, see [Install](#android-tv-and-google-tv). On the welcome page, choose "Add a network share or a media server" for a share, a Plex server or a camera, "Use without a server", or "Connect to an Immich server", whose page signs the TV in when you scan its QR code with your phone (see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
+2. In a viewer, the play and pause, rewind, fast forward, previous and next keys of the remote work. OK during a video shows the controls with play and pause selected, and a second OK pauses; the -10 s and +10 s buttons follow, then the audio and subtitles buttons when the film has them. From build 29, Down from play reaches the time bar: Left and Right move 10 s per press, faster while held, and OK plays or pauses. The controls and the date hide 5 s after the last key, and Left and Right then go to the previous or next file; on a share, that file opens in a page of its own, with controls that drive it. Videos no longer loop on a TV, unless you turn on Settings, Asset Viewer, Videos, Looping.
+3. The Menu key, the Info key or OK held down opens the details of the photo or video, read only: date, place, camera, codec, size and bit rate. A video the TV cannot decode says so, with its codec, its size and the limit of the TV's decoders, instead of loading forever; a 360° video beyond the decoders asks before opening the 360° player, and the reason is written on the Logs page of the profile menu.
+
+Build 28 ran on a real Android TV on 23 October; the video fixes of build 29 came from that run and were checked on the Google TV emulator, not yet on that TV.
+
+<a id="immuch360-on-an-lg-tv-webos"></a>
+<a id="on-an-lg-tv-webos"></a>
+#### On an LG TV (webOS)
+
+Immich's own apps do not install on an LG TV. Immuch360 has a TV app of its own for LG TVs with webOS 5.0 and later (2020 TVs on), driven by the remote and the Magic Remote: it shows your Immich server, your network shares, your Plex server and your Tapo cameras, and puts your 360° photos on a sphere you turn with the arrows. It is built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) by Seeky91, which brought the timeline, the albums, people, places, search, the slideshow and the sign in with a phone; thanks to Seeky91. Version 1.0.0 was submitted to the LG Content Store on 24 October and ran on webOS 25 TVs of LG's Cloud Test Lab; until LG approves it, it installs in Developer Mode, and every report in [Issues](https://github.com/freeKC/Immuch360/issues) helps.
+
+1. Sebded-it ɣef TV deg Developer Mode, wali [Sebded](#lg-tvs-webos). Ɣur-s asulay-is n usnas, daymi yettwasebded ɣer tama n Immich TV n Seeky91.
+2. Qqen s tilifun-ik (ḍegger tangalt QR), s imayl-ik d wawal-ik uffir, neɣ s tsarut API.
+3. Inig s yiqeffalen n tanila d OK. Deg umeskan, Azelmaḍ d Ayeffus ddun ɣer twlaft neɣ tvidyut n uqbel neɣ n zdat, ula mi ara teddu tvidyut; tiqeffalen n usefrek ffrent 5 s seld taqeffalt taneggarut; Info yeldi talqayt; tiqeffalen n canawat ssimɣurent; taneqqiḍt d tirect n Magic Remote xeddment.
+4. A 360° photo opens on a sphere: each press of an arrow turns it by a step, and a held key keeps it turning. "View as 360°" covers a 2:1 photo the server does not flag; a VR180 photo shows on a half sphere and a 3D photo with one eye. The yellow and blue keys turn a flat photo.
+5. Once signed in, "Network shares" in the rail of the app: add an SMB, WebDAV or DLNA share, a Plex server (signed in with a code on plex.tv/link) or a Tapo camera. Their photos open in the same viewer, 360° photos on the sphere.
+
+Version 1.0.0 is made for the LG Content Store: Back leaves the app from Photos or the welcome page the way each webOS version expects, and closes an open popup first; a server that does not answer within 15 s ends with a message that says why and a Retry button; the privacy policy opens in the app, with a QR code to read [its LG TVs section](../PRIVACY.md#lg-tvs-webos) on a phone; the TV uses its Gallery picture mode, as LG asks of photo apps; and a second package suits the Full HD TVs to which LG gives 1280x720 apps.
+
+Limits: SMB needs webOS 22 (2022 TVs) or later. The shares, Plex and the cameras come through the app's own service on the TV, which reads them for the app, and were checked against real servers and a simulated camera on the project's build host, not on a TV yet. The live view of a camera is video only. Not yet: the recordings of the cameras (not before December 2026) and their sound, 360° videos on the sphere (they play flat, with a message), uploads. On webOS before 25, the reverse proxy in front of Immich must send CORS headers; the app explains them when it meets the problem. webOS 26 has not been tried yet.
+
+<a id="on-a-samsung-tv-tizen"></a>
+#### On a Samsung TV (Tizen)
+
+Samsung TVs with Tizen 5.5 and later (2020 TVs on) get the same TV app as test build 0.2.0, which is not on Samsung's store: sign in by typing, the timeline, albums, the viewer and the slideshow, 360° photos on the sphere and a photo turned with one key. Not yet: the sign in with a phone, the shares, Plex and the cameras, which run in a background service on LG TVs that the Samsung version does not have yet.
+
+1. Sign the package for your TV and install it in Developer mode, see [Install](#samsung-tvs-tizen).
+2. Sign in by typing your server address, then your email and password or an API key.
+3. Browse with the arrows and OK. A 360° photo opens on the sphere; a 360° video plays flat, with a notice the first time, because on a tester's TV the browser of the TV gave black video frames to the 3D view.
+4. A video above what the TV's decoders accept says so, with the size the TV can play and the size of the file, instead of loading forever. A video that stalls shows a notice with its bitrate and the way out: let Immich transcode heavy files, or use a faster link. About this TV gives the TV's video ceiling.
+
+Version 0.1.0 ran on a tester's Samsung TV on Tizen 9, and 0.2.0 holds the fixes from that run; 0.2.0 has not run on a TV yet. The text of the About page, posted in [Discussions](https://github.com/freeKC/Immuch360/discussions) or [Issues](https://github.com/freeKC/Immuch360/issues) after a run, helps the most.
+
+More: [watch on your TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [the webOS app: install, remote control keys, CORS headers](../webos/README.md), [platform support](../docs/immuch360/platform-support.md).
+
+<a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
+### Qqen TV, ibenk n uqerru neɣ aselkim s tilifun-ik
+
+**Scan. Sign in. Watch.** Typing a server address, an email and a password with a TV remote, or in a headset, takes minutes. With Immuch360 on your phone, signed in to your Immich server, a TV, a Meta Quest or a computer is signed in within seconds: the big screen shows a QR code, the phone scans it, you confirm, and the screen opens on your library. With the phone app, your password stays on the phone. The Immich app has nothing like it.
+
+<p align="center">
+  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Illustration, not a capture: a TV shows a QR code on its sign-in page, and a phone held in front of it scans the same code">
+</p>
+
+1. Ɣef ugdil ameqqran (Android TV d Google TV, ṭṭaq n Meta Quest, Windows, Linux neɣ macOS), fren "Qqen ɣer uqeddac Immich": asebter n tuqqna yesskan-d "Qqen s tilifun-ik", tangalt QR d tengalt n 10 n yisekkilen, ɣer tama n tferkit n uqeddac.
+2. Ɣef tilifun yeqqnen ɣer uqeddac-ik: Iɣewwaren, "Qqen TV neɣ aselkim", sinna "Sleḍ tangalt". Deg Meta Quest, anda tilifun ur yezmir ara ad yesleḍ agdil-is, fren "Sekcem tangalt deg wadeg-is" yerna aru tangalt i d-yesskan yibenk n uqerru.
+3. Tilifun ad k-yesteqsi "Ad yeqqen (agdil)?" yerna ad d-yesken amḍan n sḍis n wuṭṭunen: senqed ma yella agdil yesskan-d yiwen-nni, sinna sit ɣef Qqen. Agdil ad yeldi ɣef wumuɣ-ik azemani.
+
+Amek yeqqim d aɣellsan: tilifun d ugdil ilaq ad ilin ɣef yiwen n uẓeṭṭa n uxxam, yerna tangalt tettdum snat n tesdidin ma yella aṭas, tteddu yiwet n tikkelt kan. Tilifun yessuter seg uqeddac-ik tiɣimit tamaynut i ugdil-nni, s yisem-is ("Immuch360 ɣef TV n usalun"), yerna yazen-itt i ugdil d tawgelhant, ihi awal-ik uffir werǧin ad yeffeɣ seg tilifun. "Qqen TV neɣ aselkim" yesskan-d umuɣ n igdilen i yeqqen tilifun-agi, yal yiwen s Ffeɣ, yerna Immich yesskan-iten-id deg Iɣewwaren n umiḍan, Ibenkan yettusirgen, anda i tzemreḍ daɣen ad ten-tekkseḍ. Tuffɣa n tilifun ad ten-tessuffeɣ ula d nutni.
+
+The phone side runs on Android now, and on iPhone and iPad from the next iOS release. Without Immuch360 on the phone, scan the code with the camera of the phone: a page served by the screen opens in the browser, for your email and password, encrypted and used once. LG TVs sign in with a QR code of their own, in the browser of the phone; from build 28 the scanner of the phone app recognises it and opens that page. Samsung TVs are signed in by typing for now.
+
+Ugar: [tuqqna s tilifun-ik](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [ayen i ttazznen igdilen d wayen i ḥerrzen](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
+
+<a id="go-immersive-on-meta-quest"></a>
+<a id="step-inside-your-photos-and-videos-with-a-meta-quest"></a>
+### Step inside your photos and videos with a Meta Quest
+
+Ɣef Meta Quest, asnas-nni yeddem-ed am ṭṭaq s tmkarḍit-ik meṛṛa, taqeffalt-is n 360° teldi-d tamuɣli imirsif anida tawlaft neɣ tividyut i k-izzin ɣef yal tama: tetwaliḍ yal tama s uzuzzer n uqerru-k, ifuyla s snat wallen llant s 3D n tidet, tawlaft Apple n wemkan tețɛelliq zdat-ek s 3D, yerna ikontrolaren neɣ ifassen-ik i yesewjaden afeggag n wakud, win uqbel d win i d-iteddun, akked taqeffalt n Tuzzigt i d-yettawin ayen yellan deffir-ek ɣer zdat war ma tzuzzreḍ takursi-k. Ayla-k i d-iteddun seg uqeddac-ik, ibenk s yiman-is, NAS, aqeddac n yimidyaten, tilifun neɣ aqeddac Plex, yettwaskanen anida yella.
+
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Tawlaft 360° i tama-k akk deg Quest 3, s ugalis n talɣut: tiqeffalin n usefrek, 360° d Uɣal">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Tavidyut 360° n umdun tettwaɣra deg Quest 3, s ugalis n talɣut: tiqeffalin n usefrek, 360°, Asteɛfu d Uɣal">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Tavidyut 360° stiriyu deg Quest 3, agalis n talɣut yeqqar 3D, s ufella d wadda">
+</p>
+
+1. Sebded asnas seg [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/), neɣ sebded s ufus APK n build amaynut ugar, wali [Sebded](#meta-quest).
+2. Ɣef usebter n ansuf, sit ɣef "Seqdec war aqeddac" i tiwlafin d tividyutin n ibenk n uqerru s yiman-is, neɣ "Qqen ɣer uqeddac Immich": aru tangalt i d-yesskan yibenk n uqerru deg Immuch360 ɣef tilifun-ik ([tuqqna s tilifun-ik](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), neɣ qqen s tansa n uqeddac-ik, imayl-ik d wawal-ik uffir.
+3. Ldi tawlaft neɣ tividyut n 360°, sinna sit 360°: tamuɣli imirsif teldi-d. B neɣ Y, neɣ taqeffalt n Tuɣalin n ugalis n telɣut, d-yețțarra ṭṭaq-nni.
+4. Deg tmuɣli imirsif, zzuɣer thumbstick ayeffus ɣer uzelmaḍ neɣ ɣer uyeffus akken ad tezzi tmuɣli 30° ɣer tama-nni. Seg build 29 tettezzi ɣer tama ɣer tzuɣreḍ, am deg tuget n yisnasen n ibenk n uqerru; builds 17 ar 28 zzin-tt ɣer tama nniḍen, yerna Iɣewwaren, Ameskan, Tividyutin, "Tti tuzzya n thumbstick" yettarra-d tama-nni.
+
+Ugar: [deg ibenk n Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [ibenk: codecs, lmaɣaza d tsirag](../docs/immuch360/platform-support.md#meta-quest).
+
+<a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
+<a id="play-the-files-of-a-nas-a-computer-a-media-server-or-plex"></a>
+### Play the files of a NAS, a computer, a media server or Plex
+
+Your videos sit on a NAS, a computer, a media server or Plex. Immuch360 finds the servers of your network by itself, browses them and plays their photos and videos in place, in every viewer of the app, without copying anything: SMB (Samba, Windows shares), WebDAV (Nextcloud, Synology and others) and DLNA media servers (Jellyfin, Emby, minidlna, a NAS, a TV box). A phone can also share its own gallery on the Wi-Fi for a headset or any WebDAV client, and so can a Windows computer.
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Asebter Rnu afaylu yettwabḍan: Isem, Isem neɣ tansa n uqeddac, Tawwurt (d afrayan), Afaylu yettwabḍan, Fren afaylu yettwabḍan, Akaram n tazwara (d afrayan), Isem n useqdac, Awal uffir, Sekyed tuqqna, d ugmuḍ Yeqqen, 2 n yiferdisen deg ukaram n tazwara">
+  <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Akaram n ufaylu yettwabḍan n uẓeṭṭa am uẓeṭṭa n tugniwin timecṭuḥin: tiwlafin 360° s tcreḍt 360° akked tvidyut 360° s tcreḍt n urar, taqeffalt Fren d asawen s ayeffus">
+</p>
+
+1. Ldi iccer Tamkarḍit, sinna Ifuyla n uẓeṭṭa, sinna + akked "Afaylu n uẓeṭṭa (NAS, aselkim, aqeddac n yimidyaten)". Seg build 24, "Rnu afaylu n uẓeṭṭa neɣ aqeddac n yimidyaten" ɣef usebter n ansuf yeldi-d srid Ifuyla n uẓeṭṭa, war aqeddac.
+2. Sit ɣef uqeddac ddaw "Yettwaf deg uẓeṭṭa", neɣ ačaṛ isefka s ufus: anaw, isem neɣ tansa n uqeddac, afaylu n uẓeṭṭa neɣ abrid, akaram n ubeddu, isem n useqdac akked wawal uffir.
+3. Sit ɣef "Sekyed tuqqna", sinna Sekles. Sit ɣef ufaylu n uẓeṭṭa i wakken a t-tiniged: ikaramen uqbel, sinna tiwlafin d tividyutin, s tacreṭ n 360° ɣef ifuyla ițwassnen d 360°.
+4. For a Plex server: in Network shares, + and "A Plex Media Server", then tap your server under "Found on the network", paste a token once ("How to get it" on the page says where to find it), then "Test the connection" and Save.
+5. With an Immich server connected, select files in a folder and tap "Upload to Immich" to send them to your server.
+
+Imeskanen qqaren bytes i ten-ilaqen s allal n tuqqna i gensan deg usnas, s izilal n bytes, akken asikel deg wakud ad ixdem u ulac acemma ara yețwaḥrez ɣef ibenk; tividyut SMB teqqar s ɣer sețța n tuqqniwin ɣer yiwet n tikkelt i wakken ad tedduḍ war ɛeṭṭel. Seg build 29, isura yettwaseklsen s M2TS (Blu-ray, tikamirawin AVCHD, imseklas n TV) ttwaurarent deg usnas Android seg yifuyla n uẓeṭṭa SMB d WebDAV akked yiqeddacen DLNA i ten-yesskanen am transport stream, yerna aqeddac DLNA i d-yemmalen tiddi n 0 dayen ur d-yettak ara tavidyut tilemt.
+
+**Plex Media Server, without plex.tv**: the app pairs with your server directly, with a token you paste once, and reads the original files of your libraries live, so 360° stays 360°, at home and, through your port forwarding, away from home. On an LG TV, Plex is signed in with a code on plex.tv/link.
+
+More: [network shares](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [share this phone on the network](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA media servers](../docs/immuch360/user-guide.md#dlna-media-servers), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv).
+
+<a id="find-your-immich-library"></a>
+<a id="keep-your-immich-library-with-more"></a>
+### Keep your Immich library, with more
+
+S uqeddac [Immich](https://github.com/immich-app/immich), Immuch360 d asnas n tilifun n Immich, s yiwen uqeddac akked yiwen umiḍan am win n usnas n web: aḥraz, umuɣ azemani, albumat, anadi, imdanen, ismektayen, abeṭṭu, imdukal, kullec yemtawi akked uqeddac-ik. Yețwasebded ɣer tama n usnas arasmi. Nnig-s: tacreṭ d umuɣ n 360°, yal ameskan imirsif, tafrant ger ufaylu agejdan d wafaylu yettwabeddlen n uqeddac i yal tividyut, talqayt tusnakt n tvidyut, akked ifuyla n ufaylu n uẓeṭṭa neɣ n ibenk i d-ttwaznen ɣer uqeddac-ik s ufus.
+
+1. Ɣef usebter n ansuf, sit ɣef "Qqen ɣer uqeddac Immich", sinna qqen s tansa n uqeddac-ik, imayl-ik akked wawal uffir-ik, akken deg usnas Immich; Tuɣalin ad ak-d-terr ɣer usebter n ansuf. Ar build 23 asebter n tuqqna yeldi-d srid. Tamkarḍit, albumat akked yiɣewwaṛen n uḥraz d wid n umiḍan-ik.
+2. Deg Iɣewwaṛen, Ameskan n Ayla, Tividyutin, "Aɣbalu n tvidyut" tettxeṣṣes afaylu agejdan ticki ibenk-agi yezmer a t-idikuder, yal tikkelt afaylu agejdan, neɣ yal tikkelt afaylu yettwabeddlen.
+3. I wakken a d-tesskeneḍ tawlaft n 360° i yiwen ur-nesɛi ara asnas, beṭṭu-tt s yiwen ussaɣ yebḍan n Immich: asnas n web n Immich yesskan-itt-id d takuret deg iminig-nsen.
+
+The current build, build 30, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), like builds 28 and 29; build 28 was tested against a server built from that same Immich `main`, and build 27 also against an Immich 3.2.4 server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
+
+What is the same and what Immuch360 adds is in [Compared with Immich](#compared-with-immich).
+
+Ugar: [ayen akk nniḍen d Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [ɣer usnas Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+
+<a id="cameras-plex-and-raw-camera-files"></a>
+<a id="watch-your-home-cameras-on-the-big-screen"></a>
+### Watch your home cameras on the big screen
+
+<p align="center">
+  <img src="../.github/readme/home-cameras.png" width="720" alt="Illustration, not a capture: in a living room at dusk, the TV on the wall shows one live view of a garden path from a home camera that stands on the sideboard, and a phone on the table shows the same view.">
+</p>
+<p align="center"><sub>An illustration. The Tapo support has not been checked with a real camera yet.</sub></p>
+
+Your Tapo cameras of TP-Link, next to your photos, without the Tapo app. The app shows a camera live (Android phones and tablets, Android TV, the Meta Quest, Windows and, video only, LG TVs; iPhone and iPad from the next iOS release) and lists the recordings of its memory card day by day (phones, tablets, Android TV, the Quest and computers). A clip is fetched from the camera, plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link, and never changes anything on the camera.
+
+**Not yet checked with a real camera.** The protocol was written from captures of a C510W with firmware 1.3.4, and the app was checked against a simulated camera only. A report with the model and firmware that "Test the camera" shows helps a lot.
+
+1. In the Tapo app first: create the camera account (settings of the camera, Advanced Settings, Camera Account), used for the live view, and turn on Third-Party Compatibility, under Me, then Tapo Lab.
+2. In Immuch360: Library, Network shares, + and "A Tapo camera". Tap your camera under "Found on the network", or type its address.
+3. Type the password of your TP-Link account for the recordings, the camera account for the live view, or both; then "Test the camera", and Save.
+4. Tap the camera: its live view is at the top of its page, with the sound, SD or HD and Full screen; below it come the days with recordings. Tap a clip to fetch it and play it; its ⋮ menu has "Upload to Immich".
+
+More: [Tapo cameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+
+<a id="your-dji-drone-experimental"></a>
+### Your DJI drone (experimental)
+
+A Drone card in the Library, experimental and on by default, gathers what Immuch360 does with a DJI drone: on an Android phone, the drone's live video through its remote controller, and its photos and videos brought to Immich over USB; in a Meta Quest or on an Android TV, that live video relayed by the phone, to watch. Immuch360 is not a DJI product and is not approved by DJI, and nothing is sent to DJI. In this build the drone screens are in English only; their translations come later.
+
+<a id="your-dji-drones-live-video-on-your-phone-experimental"></a>
+<a id="see-what-your-drone-sees-on-your-phone"></a>
+#### See what your drone sees, on your phone
+
+<p align="center">
+  <img src="../.github/readme/drone-live-phone.png" width="720" alt="Illustration, not a capture: two hands hold a drone remote controller with a phone clipped on top, whose screen shows a live aerial view of a coast, while a small drone flies over the bay at dusk">
+</p>
+
+See what your DJI drone sees on your Android phone, without DJI Fly and without any account: plug a DJI RC-N3 remote controller into the phone with its cable, and Immuch360 shows the drone's live video full screen in landscape, H.265 in 1080p, with the flight values read from the cable. The remote keeps full control of the drone. It was tried with an RC-N3, a DJI Neo 2 and a Samsung Galaxy S24+: on the ground with build 29, and in flight with test builds of build 30 on 24 and 25 October. Other remotes and drones have not been tried.
+
+Isell kan. Werǧin ad tettwazen tladna i tlikumand neɣ i udrun: yiwen n ubyte i yettaru usebter yal tasint, seg 20 n tsinin seld mi teldi tlikumand, yeqqar-d kan ma yella tilikumand teqbel isefka, ur yesɛi ara tladna.
+
+On the live screen: the drone's battery and the motor time and, in flight, the height above the take off point, the vertical speed, the speed and the distance below the drone. A value goes there only once our own flight captures prove it: the height, the speeds and the distance below were proven on the captures of two indoor flights on 25 October, up to 1.8 m high and 1.5 m/s, not beyond yet; showing them there is new in build 30 and first tested with it. The height shows about 1.5 s after lift off, once the drone has left the ground or the hand, and stays hidden until the motors stop if it ever jumps in a way no aircraft can. Advanced adds the battery's voltage and temperature, the heading (its zero not checked against north) and the motors, and Diagnostics every number the link gives, the battery current included. No satellites, position or distance from home are shown. The numbers are not compared with DJI Fly yet: do not fly by them.
+
+**Obstacle ring**, on by default: when the drone's sensors see something close, a translucent circle shows around the middle of the picture, with an arc toward the obstacle, amber turning red as it gets closer, its distance beside it and a short tick that speeds up; with nothing close, nothing shows. The circle and the direction of the arc were checked in flight, indoors, on 25 October, on a test build where the direction was an option; shown by default, it is first tested with build 30. In Advanced you set the distances ("Glow from", 3.0 m, and "Strong glow from", 1.0 m), choose a frame at the edges of the picture instead of the circle, or turn off the ring, its sound or its vibration. It shows only what the drone's sensors report: nothing in Sport mode or with obstacle avoidance off, and no glow does not mean the way is clear. Information only: Immuch360 never steers or stops the drone.
+
+1. The Drone card is in the Library, and "DJI live video" on its page: "DJI live video (experimental)", in Settings, Advanced, is on by default.
+2. Turn on the drone and the remote, close DJI Fly, then open "DJI live video" and read the safety notice.
+3. Plug the remote into the phone with its cable. If Android asks which app should open it, choose Immuch360 without "Always", which would take the remote away from DJI Fly; if it asks for a USB mode, choose charging only. Plugging in the remote then opens this screen by itself ("Open this screen when the remote is plugged in", on by default in Advanced).
+4. Remote, Drone and Picture light up in turn, and the picture comes full screen within a few seconds. Three buttons (leave, "Send to a headset or a TV" and Advanced) and the values sit in the black bands beside the picture. The notes, such as "Live", fade after about five seconds; a tap anywhere brings them back, and nothing on the picture acts on the drone. An error that asks you to act stays.
+5. Advanced has "Save a capture for a bug report", which writes the link's capture to `Download/Immuch360/dji-link`, "Play a saved capture", to play one again without the remote, and Diagnostics, with every number the link gives.
+
+The drone's photos and videos cannot be reached through the remote, which does not open the drone's storage: copy them from the drone itself over USB or from its card, as [below](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich). Keep the saved captures to yourself, as the page says: they hold the drone's video and the serial numbers of the remote and the aircraft, and may hold its position; a report in [Issues](https://github.com/freeKC/Immuch360/issues) with what Diagnostics shows helps, above all with other DJI remotes.
+
+<a id="watch-it-in-a-meta-quest-or-on-an-android-tv"></a>
+#### Watch it in a Meta Quest or on an Android TV
+
+The phone plugged into the remote can send the drone's picture and values to Immuch360 in a Meta Quest or on an Android TV or Google TV on the same local network, for the people with you. A headset shows them in a window or, larger, in a flight view in front of you, and a TV full screen, with the same values and obstacle ring as the phone. They only watch: nothing a headset or a TV does reaches the remote or the drone. Their notes, such as "Watching only", fade after a few seconds and come back with a key, a tap or a button. The drone's picture reached a Quest 3 once, on 24 October, over a home Wi-Fi; the headset window and the flight view with the values and the obstacle ring are first tested with build 30, and the Quest 2, Pro and 3S have not been tried. Should the circle hide the middle of the picture in the headset, "Frame at the edges" in its menu keeps the middle clear. On a TCL Android TV, the pairing and the picture were tried on 25 October, with stutter and a green cast on the earlier relay; the steady stream that answers them is first tested with build 30. Flying while you watch the headset or the TV needs an observer next to you who keeps the drone in sight (EU open category); without one, watch the drone.
+
+1. On the phone, on the live screen, tap "Send to a headset or a TV" and turn it on.
+2. **Meta Quest**: open Immuch360, Library, Drone, and pick the phone; type the code the phone shows, once for that phone. The picture opens in the window; "Open the flight view" makes it larger, and B or Y brings the window back.
+3. **Android TV and Google TV**: open Immuch360, Library, Drone. Under "Let this TV watch", the TV shows a code and its QR code: on the phone, in the same panel, tap "Add a TV" and scan it, or type it. Then select the phone on the TV and press OK: the picture comes full screen; OK shows or hides the numbers, and Menu opens the options.
+4. The phone and the screen must be on the same local network. Away from home, turn on the phone's hotspot, in the 5 GHz band if it offers it, and join it from the headset or the TV.
+5. For a bug report, the headset's menu and the TV's Options have Diagnostics and "Save a reception record", which keeps what that screen received.
+
+**Relay quality**, new in build 30, in Advanced on the phone: in flight the drone sends about 18 Mbit/s, and on 25 October a home Wi-Fi path from the phone through the router to the TV carried that full stream only a third of the flight time; the rest of the time the TV's picture stuttered, broke up and took a green cast. With Automatic, the default, a screen whose Wi-Fi cannot keep up gets a steady picture that the phone encodes again for it, up to 1080p at 30 pictures a second and at the rate its Wi-Fi carries, made to stay clean, with less detail, instead of breaking up; it goes back to the drone's own picture at the next landing or take off, once the Wi-Fi has room. Full stream always sends the drone's picture as it comes, Steady stream always the phone's. The steady picture is new: it is first tested with build 30, and had not run on a phone on 25 October. A TV on an Ethernet cable, or a screen joined to the phone's own hotspot, leaves one Wi-Fi hop instead of two.
+
+Not in this build: the drone on iPhone and iPad (not started), the relay to LG and Samsung TVs, and the proof of the values above 1.8 m and 1.5 m/s, then the satellites and the distance from home, which wait for an outdoor flight.
+
+<a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
+<a id="bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich"></a>
+#### Bring a drone's or a camera card's photos and videos to Immich
+
+Kter tiwlafin d tividyutin n udrun DJI s USB, srid ɣer uqeddac-ik Immich: qqen adrun neɣ ameɣri n tkarḍiwin ɣer tilifun Android, fren ifuyla imaynuten sinna azen-iten, s tividyutin yettwasersen ɣef tkarḍa n tmurt seg yisefka n wafug n udrun, akked tikurin n 360° n udrun yettbanen d 360°. Asnas Immich yeḥraz kan ayen yellan yakan deg ugraw n tilifun, yerna aqeddac Immich urɛad yezmir ad yeqqar adig n tvidyut n DJI Neo 2. Asebter-agi d alugen, ɣef tilifunen d tablitin Android kan, yerna urɛad yettwarmes s udrun n tidet.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Illustration, not a capture: a drone on a terrace table, plugged into a phone by a cable, and its photos and videos going in an arc from the drone to the gallery of the phone">
+</p>
+
+1. Open the Drone card in the Library, then "Photos and videos from the drone". Its setting, "DJI drones (experimental)" in Settings, Advanced, is on by default; turn it off there to hide that page.
+2. Qqen adrun (Neo 2 yezmer ad yeqqim yensa) neɣ ameɣri n tkarḍiwin ɣer tilifun s ukabel n yisefka USB-C; tilikumand DJI war agdil (RC-N1, RC-N2, RC-N3) ur teḥriz ara tiwlafin. Deg usebter Adrun DJI, sit ɣef "Fren adrun neɣ takarḍa", fren-it deg wumuɣ n tama n umefran, ldi akaram-is DCIM neɣ eǧǧ aḍebsi meṛṛa, sinna "Seqdec akaram-agi" d Sireg.
+3. Asebter yesskan-d tiwlafin d tividyutin s wass, war ifuyla n tama .LRF, .SRT, .THM d .m4a. Sit ɣef "Fren akk imaynuten", sinna "Sali ɣer Immich"; ifuyla yettwaznen uqbel sɛan tacreḍt n usigna yerna ttwazeglen. "Eǧǧ-it ɣef ibenk" yesneɣlay ifuyla ɣer ugraw n tilifun deg wadeg n waya, deg walbum "Immuch360 import".
+4. Akken ad teqqim tvidyut ɣef tkarḍa n tmurt, rmed iduzwilen n tvidyut (Video Subtitles) deg DJI Fly (askar n tvidyut, Iɣewwaren, Takamirat) uqbel ad tafgeḍ: adrun ad yaru afaylu .SRT ɣer tama n yal tavidyut, asnas ad d-yeqqar seg-s adig sinna ad t-yesbadu ɣef uqeddac-ik seld asali, ma yella Immich ur d-yufi ara adig.
+
+Tikurin n 360° n yidrunen DJI (Mini, Air, Mavic d wiyaḍ, yettwassnen seg tkamirat-nsen) ttbanent d 360° deg Immuch360 ula war tibzimin n 360°. Immich yeḥwaǧ tibzimin-nni: tafrant n usali "Creḍ tikurin n yidrunen d 360° i Immich", tensa s wudem amezwer, tazen tawlaft war abeddel s ufaylu .xmp amecṭuḥ ɣer tama-s, akken Immich ad tt-yesken daɣen d takuret. Neo 2 ur yesɛi ara askar n tkuret neɣ n tpanuramit: tiwlafin d tividyutin-is d tizeddigin. Ticki tilifun yesekles ameslaw n tvidyut n Neo 2, ameslaw-nni yella deg ufaylu .m4a weḥd-s: asebter ad yecreḍ tavidyut-nni, yerna Immich ad tt-yaweḍ war ameslaw (sader-itt s DJI Fly akken ad teḥrezḍ ameslaw). Yal takarḍa n tkamirat s ukaram DCIM txeddem akka kan deg umeɣri n tkarḍiwin. Ulac ayen yettwaznen i DJI.
+
+More: [DJI drones over USB](../docs/immuch360/user-guide.md#dji-drones-photos-and-videos-over-usb-experimental), [DJI link diagnostics](../docs/immuch360/user-guide.md#dji-link-diagnostics-experimental).
+
+<a id="open-the-raw-files-of-360-cameras"></a>
+### Open the raw files of 360° cameras
+
+The raw .insp photos and .insv videos of Insta360 cameras (one or two lenses, in one track, two tracks or two files), the .360 files of the GoPro MAX and the .osv files of the DJI Osmo 360 are stitched by the app as they play, with the calibration written in the file, with nothing to install anywhere.
+
+1. Put the raw files where the app reads them: an SMB or WebDAV share, your Immich server (it takes .insp and .insv only), or the folders of a computer. The gallery of an Android phone does not list raw files, so a raw file copied to the phone shows neither in its gallery nor in the app.
+2. Keep the two files of a recording made of two files together: the app looks for the other one next to the first.
+3. Open the file and tap 360°. A photo shows "Raw 360° file, stitched by the app" with the source of its calibration; a video is stitched as it plays.
+
+Linux and macOS play raw videos flat, and dual fisheye .dng files show flat for now.
+
+More: [raw 360° camera files](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
+
+<a id="turn-a-photo-with-one-key"></a>
+### Zzi tawlaft s yiwet n tqeffalt
+
+Zzi tawlaft s 90° s yiwen usiti, war ma teldiḍ amaẓrag: taqeffalt, taqeffalt n klavye neɣ taqeffalt s yini n tlikumand n TV, ɣef yal tagrumma. Asnas Immich yettezzi tawlaft deg umaẓrag-is; Immuch360 yexdem-it s yiwet n tqeffalt, yerna i tiwlafin-ik ɣef uqeddac Immich 2.6 neɣ win i d-iteddun, ad iɛeddi s umaẓrag-nni n uqeddac, akken asnas web d yibenkan-ik nniḍen ad ten-sken ttwazzint. Ayen nniḍen n twlafin ttezzint ɣef ibenk-agi kan. Tiwlafin n 360°, 180° d 3D ur ttezzint ara, akken timuɣliwin timirsifin ad qqiment d tusridin.
+
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Illustration, not a capture: a phone shows a photo turning a quarter turn clockwise, above a row of round buttons with the rotate button lit">
+</p>
+
+1. **Tilifunen, tablitin d ṭṭaq n Meta Quest**: ldi tawlaft sinna sit ɣef Zzi deg yizirig n wadda, uqbel Ẓreg, akken ad tezzi ɣer tama n tsegnatin n temrilt; asiti aɣezfan yettezzi-tt ɣer tama nniḍen. S klavye, R d Shift+R.
+2. **Android TV d Google TV**: taqeffalt tawraɣt n tlikumand tettezzi tawlaft ɣer tama n tsegnatin n temrilt, taqeffalt tanilit mgal-asent, anda yella uskan deg umeskan. Ɣef tlikumand war tiqeffalen s yini, sit ɣef Adda: afeggag ddaw twlaft ad d-iban s Zzi yettwafernen (yiwen Ayeffus ma yella tawlaft tesɛa taqeffalt n uḍris), yerna yal OK yettezzi tawlaft.
+3. **LG TVs (webOS)**: yellow and blue as on Android TV, R and Shift+R on a keyboard, or the turn button of the photo's controls. Samsung TVs turn a photo with one key too.
+4. **Windows, Linux d macOS**: R yettezzi ɣer tama n tsegnatin n temrilt, Shift+R mgal-asent, neɣ taqeffalt n tuzzya deg ufeggag n usawen, uqbel agdil ameqqran.
+5. **Tiwlafin n ufaylu n uẓeṭṭa, Plex neɣ takamirat**: taqeffalt n tuzzya d tamezwarut deg ufeggag n usawen, R d Shift+R, neɣ tiqeffalen tawraɣt d tanilit.
+
+Anda tettwaḥraz tuzzya: tawlaft n umiḍan-ik ɣef Immich 2.6 neɣ win i d-iteddun tettezzi s umaẓrag n twlafin n uqeddac, i yeḥerzen afaylu agejdan yerna ixeddem tugna yettwazzin (afeggag arqaq yettban mi ara yexdem; ukkuẓ n tuzzyiwin, neɣ yiwet n tuzzya ɣer deffir, ad d-rrent agejdan). Tiwlafin n ibenk, n ufaylu n uẓeṭṭa, n umendad neɣ n walbum yettwabḍan, akked yal tawlaft ɣef uqeddac aqbur ttezzint ɣef ibenk-agi kan, i twlaft-nni, yerna afaylu ur yettbeddil ara; asnas ad t-yini tikkelt kan i twlaft n Immich. Deg yisnasen Android, iOS d uselkim, tuzzya yettwaḥerzen ɣef ibenk tettban deg umeskan, maca mačči yakan deg tugniwin timectuḥin, askan n tugniwin d yimektayen. Tividyutin, akaram yettwasekkṛen d yal tawlaft n 360°, 180° neɣ 3D ur sɛint ara Zzi.
+
+<a id="use-your-computer-as-the-media-player"></a>
+### Use your computer as the media player
+
+On a Windows computer, Immuch360 Desktop reads the folders you choose with no server at all, plays flat and 360° videos in a player of its own, browses the same shares and servers, and can share the computer with a headset at home. Linux and macOS have it as previews, with 360° videos played flat.
+
+<p align="center">
+  <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Ameskan n tvidyutin n Immuch360 Desktop ɣef Windows: tividyut n yiwet n zniqa yettwaskan deg ṭṭaq, s taqeffalt n Usgunfu, afeggag n wakud, Beṭṭu akked Sali ɣer Immich">
+</p>
+
+1. Install the preview, or unzip it and start `immuch360.exe`, see [Install](#windows). On the welcome page, "Use without a server" opens the choice of your folders, and "Connect to an Immich server" the login page, with its QR code for your phone.
+2. A photo, a video or a folder opened with the program, or dropped on its window, opens at once, a 360° one in its 360° view; several files open together on one page. Photos and videos get it in "Open with"; it never makes itself their default program.
+3. In a viewer, the keyboard drives it: Space plays and pauses, J and L go back and forward, F is full screen, and R and Shift+R turn a photo.
+
+More: [on a Windows computer](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [platform support](../docs/immuch360/platform-support.md).
+
+<a id="compared-with-immich"></a>
+## Compared with Immich
+
+Immuch360 keeps the whole Immich mobile app and adds what is around it. In short:
+
+| | Immuch360, compared with the Immich app |
+|---|---|
+| **The same** | your Immich server and account: backup, timeline, albums, search, people, memories, sharing and partners, all synced with your server. It installs next to the official app. |
+| **No server needed** | it also runs without a server or an account, on the photos and videos of the device, the folders of a computer and network shares; Plex and the cameras use their own sign in, never an Immuch360 account. |
+| **360° and immersive** | 360° photos and videos as a sphere, panoramas, VR180 and 3D, an immersive view in a Meta Quest, a 360° badge and a 360° list. 360° viewing in the Immich mobile app has been requested since January 2024 and is not there yet. |
+| **On the TV** | the same app on Android TV and Google TV, and a TV app for LG TVs, also packaged for Samsung TVs as a test build. Immich's own apps do not install on an LG TV. |
+| **Sign in with your phone** | a TV, a headset or a computer is signed in when your phone scans its QR code, and your password stays on the phone. The Immich app has nothing like it. |
+| **Shares and Plex** | SMB, WebDAV and DLNA shares and Plex servers, played in place, and their files sent to your server by hand. |
+| **Tapo cameras** | the live view and the recordings of the memory card, next to your photos; not yet checked with a real camera. |
+| **One key rotation** | the Immich app turns a photo in its editor; Immuch360 turns it with one key, and for your own photos on Immich 2.6 or later it goes through that same server editor, so the web app and your other devices show them turned. |
+| **Videos** | audio and subtitle menus in the Android player, which the Immich app's Android player does not have; the original file or the transcoded stream, chosen per video; the technical details of a video. |
+| **Your drone** | a DJI drone's photos and videos sent over USB, with the videos placed on the map from its flight data, where the Immich app backs up only what is already in the phone's gallery; and the drone's live video through an RC-N3 remote, with its flight values and an obstacle ring, on the phone and relayed to a Meta Quest or an Android TV. Both experimental. |
+| **Where to report** | [Immuch360 Issues](https://github.com/freeKC/Immuch360/issues), not the Immich project. |
+
+The comparison function by function is in [Compared with the Immich app](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
 <a id="privacy"></a>
 ## Tabaḍnit
 
-Ulac acemma i yeteddun ɣer uneflay: ulac amiḍan, ulac tasleḍt, ulac ameẕlu n uneqqis n uɣelluy, ulac ilɣuyen. Asnas immeslay kan akked yiqeddacen i textireḍ (aqeddac-ik Immich, ifuyla-k n uẓeṭṭa, aqeddac-ik Plex, tkamirawin-ik) yerna, war aqeddac, akked wacemma. Awalen uffiren d tokens qqimen deg uḥraz aɣellsan n ibenk; tiliẓriyin LG d Samsung ur sɛint ara aḥraz-a i usnas, daymi dinna qqimen deg uḥraz n usnas s yiman-is, war awgelhen. Takamirat tettwasseqdac ɣef ibenk kan, sɣur umeskan Spatial 2.5D d wakken ad tesleḍ tangalt n ugdil i tqeqqneḍ; tiwlafin-is werǧin ttwaḥerzent u werǧin ttwaznent ɣer wacemma. Agdil yeqqnen seg tilifun-ik ad yawi tiɣimit-is, ad tettwazen d tawgelhant ɣef uẓeṭṭa-k n uxxam, werǧin awal-ik uffir; tiliẓri LG teqqen s usebter deg yiminig n tilifun, i yettazen imayl-ik d wawal-ik uffir ɣer TV war awgelhen ɣef uẓeṭṭa-k n uxxam, yerna TV teḥriz kan tiɣimit. Tasertit ačarant tella deg [PRIVACY.md](../PRIVACY.md), yerna talqayt i yal aɣbalu deg [adlis n useqdac](../docs/immuch360/user-guide.md#privacy).
+Nothing goes to the developer: no account, no analytics, no crash reporting service, no advertising. The app talks only to the servers you choose (your Immich server, your shares, your Plex server, your cameras) and, without a server, to nothing at all. Passwords and tokens stay in the secure storage of the device; LG and Samsung TVs have none for the app, so there they stay in the app's own storage, not encrypted. The camera is used on the device only, by the Spatial 2.5D player and to scan the code of a screen you sign in; its images are never stored and never sent anywhere. A screen signed in from your phone gets a session of its own, sent encrypted on your home network, never your password; an LG TV is signed in by a page in the phone's browser, which sends your email and password to the TV unencrypted on your home network, and the TV keeps only the session. The captures and reception records of the drone pages stay on the device unless you share them: they hold the drone's video and may hold its position, and a capture the serial numbers of the remote and the aircraft. The drone's picture and values go from the phone only to the headsets and TVs you pair, on your local network, not encrypted, as with a phone shared on the Wi-Fi. Nothing is sent to DJI, nor to TP-Link. The full policy is in [PRIVACY.md](../PRIVACY.md), and the details per source in the [user guide](../docs/immuch360/user-guide.md#privacy).
 
 <a id="the-project"></a>
-## Asenfaṛ
+<a id="licences-and-credits"></a>
+## Licences and credits
 
 Immuch360 d afeṛṛeɛ mačči d arasmi n usnas n tilifun [Immich](https://github.com/immich-app/immich), ddaw [GNU AGPL v3](../LICENSE), ulac assaɣ gar-as d win, ne ula d aqbal, seg terbaɛt n Immich neɣ FUTO. Afeṛṛeɛ-agi yella axaṭer tamuɣli n 360° ɣef tilifun tettwassuter deg Immich seg yennayer 2024 yerna urɛad tella deg usnas arasmi; tura yețwazen-d, yesmuger-d tiririyin n ibenkan n tidet, yerna ad d-yefk i Immich, s pull requests imeẕẕyanen, ayen akk bɣan wid i t-yeṭṭfen. Ayen akk ixeddem usnas arasmi yețwaḥerz; ifrax, abrid n usebded akked CI țwaglamen deg [Sebded-it s yiman-ik](../docs/immuch360/build.md).
 
 Ameskan n twlaft n 360° yebna ɣef pull request n uɣbalu agejdan [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) n dmitry-brazhenko, yebna s yiman-is ɣef prototype n bencefr deg [#30192](https://github.com/immich-app/immich/pull/30192); tanemmirt i sin-nsen. Iseɣtiyen n tilikumand i yimsizdagen n unadi d usmizzwer n albumat ɣef TV bdan-d seg uxeddim n mlc70 deg [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1), yerna afeggag n tigawin d tferkiwin n yimsizdagen ɣef 80 deg tmeḍ n teɣzi n ugdil kkan-d seg [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3) n mlc70, s yisem n umeskar-nsen yettwaḥerzen; tanemmirt i mlc70. Asnas LG webOS, yettwakemsen daɣen i tiliẓriyin Samsung, yebna ɣef [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) n Seeky91, ddaw tsiregt MIT, yettwaḥerzen deg ukaram-is; tanemmirt i Seeky91. Tkamirawin Tapo ttwarun seg wayen glamen [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) akked [python-kasa](https://github.com/python-kasa/python-kasa). Tamuɣli n Meta Quest tḥesseb ɣef Meta Spatial SDK, ur-yelli ara s uɣbalu uldi, daymi yeqqim deg ufeṛṛeɛ-agi. Ifuyla n uẓeṭṭa SMB seqdacen libsmb2, ddaw LGPL 2.1 neɣ win i d-iteddun: seg build 27 d build 7 n Immuch360 Desktop, yal build yettawi tamawt-is, iḍrisen n tsiregt-is d uḥraz n yiɣbula-s, `Immuch360-libsmb2-sources.tar.gz`, i yettwaqqnen daɣen ɣer yal lexraj. Builds n Windows d macOS ttawin libmpv (tamkarḍit n [mpv](https://mpv.io), s [FFmpeg](https://ffmpeg.org)) yebnan sɣur usenfaṛ, ddaw LGPL, s tsirag-is d yiɣbula-s, yettwabedren deg usebter n tsirag n usnas (Tisirag, deg taggara n wumuɣ n umaɣnu); talqayt akked yismawen ɣlin d ayla n iseɣẓanen yettwabedren deg usebter-agi llan deg [Tasiregt d yismawen ɣlin d ayla](../docs/immuch360/platform-support.md#license-and-trademarks).
 
-Tuṭṭfiwin n tlifun n usebter-agi ttwarzent ɣef build Android deg yiwen emulatur, tiyaḍ n TV ɣef emulatur n Google TV yerna tin n Windows ɣef yiwen PC Windows 11, akk s tipanuramikin CC0 seg [Poly Haven](https://polyhaven.com); tuṭṭfiwin n ibenk n uqerru ttwarzent ɣef Quest 3.
+The captures of this page are real captures of the app: the phone ones on the Android build in an emulator, the Android TV ones on the Google TV emulator, the LG and Samsung ones in a browser that stands in for the TV, the Windows ones on a Windows 11 PC and the Meta Quest window in a Quest 3, all with CC0 panoramas from [Poly Haven](https://polyhaven.com); the immersive captures of the headset were taken on a Quest 3 with the author's own media, and the iPad one in the iPad simulator, with a CC0 Poly Haven panorama. The opening image and the pictures of the TV, the sign in, the rotation, the cameras and the drone are illustrations made for the project: they show no screen of the app, no logo of another company and no face. Each image, with its source, date and licence, is listed in [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Abrid n zdat
 
 Ayen ur yemmid ara yakan, win yettbanen d amezwaru qbel. Ulac dagi ula d yiwet n lewɛed, u tamuɣli-nwen deg [umfaraz n wuguren](https://github.com/freeKC/Immuch360/issues) tettɛawan i wakken ad nefren ayen ara d-yasen d amezwaru.
 
-- **Lmaɣazat**: Google Play (build 28 deg usenqed; umuɣ n TV deg usenqed), App Store (version 3.3.1 deg usenqed, sinna version 3.3.2 s build 28), Meta Horizon Store s build 29, LG Content Store (tuzna tettwaheyya).
+- **The stores**: Google Play (build 29 in review, then build 30; the TV listing in review), the App Store (version 3.3.1 in review, then version 3.3.2 with build 28), the Meta Horizon Store with build 30 (build 28 there since 25 October), the LG Content Store (version 1.0.0 in LG's review since 24 October), and later the Samsung store.
+- **Drones**: an outdoor flight to prove the height and the speeds above 1.8 m and 1.5 m/s and the obstacle distances against a tape, then to show the satellites and the distance from home; the steady picture of the relay checked with a phone, a TV and a headset; the relay to LG and Samsung TVs; the drone on iPhone and iPad, not started; a test of the import page with a real DJI Neo 2, then the sound recorded by the phone merged into its clip. Nothing that sends a command to a drone is planned before those tests.
+- **TVs**: build 29 on a real Android TV, its video controls and the sign in with your phone included; the shares, Plex and the live view of the LG app on a real LG TV, and webOS 26; Samsung test build 0.2.0 on a real Samsung TV, then the sign in with a phone, the shares, Plex and the cameras on Samsung TVs; then the 360° videos on the sphere of LG TVs, the sound of the cameras and their recordings (not before December 2026).
+- **Cameras**: the Tapo cameras checked with a real camera.
 - **Iselkimen**: armes n yal tamahilt s ufus ɣef PC Windows, ula d tuqqna s tilifun; Spatial 2.5D s takamirat n web ɣef Windows, deg tneflit i Wambeṛ 2026; sinna ameskan n tividyutin n 360° ɣef Linux d macOS, asenqed ɣef Mac n tidet d PC Linux n tidet; sinna ileqqman iwurmanen d usnas macOS yettwaxtamen.
-- **Tiliẓriyin**: build 29 ɣef Android TV n tidet, s tqeffalin-is n usefrek n tvidyut d tuqqna s tilifun; webOS 0.2.0 ɣef tiliẓri LG n tidet, s yifuyla-ines n uẓeṭṭa, Plex d tmuɣli srid, sinna version n LG Content Store; build n tirmit n Samsung ɣef TV Samsung n tidet; sinna tividyutin n 360° ɣef tkuret, imesli n tkamirawin d tuṭṭfiwin-nsent (mačči uqbel Dujembeṛ 2026).
 - **Tilifunen d tablitin**: tamuɣli srid n Tapo d tuqqna n igdilen imeqqranen ɣef iPhone d iPad s lexraj i d-iteddun n iOS; afeggag n wakud deg umeskan n tividyutin n 360° n iOS, win uqbel d win i d-iteddun deg imeskanen n 360° n tilifunen, umuɣen n uzrug n imesli d iduzwilen deg umeskan azeddig n iOS.
 - **Ayla imirsif**: .dng s snat n wallen fisheye, aseɛdel n tividyutin GoPro d DJI seg isefka n uzuzzer-nsen, tividyutin n wemkan s 3D ɣef Quest ma dikudaren-is sirgen-t, win uqbel d win i d-iteddun ger twlafin n wemkan deg ibenk n uqerru.
 - **Iɣbula**: azuɣer ger ifuyla n ukaram n ufaylu n uẓeṭṭa, Digest authentication i WebDAV, tangalt QR akken a d-tawiḍ token n Plex seg uselkim, IPv6 i Plex, tuṭṭfiwin H.265 n Tapo, canawat ɣef ugdil agejdan n TV.
-- **Idrunen**: tirmit n usebter n uktar s DJI Neo 2 n tidet, sinna ameslaw yettwaseklsen sɣur tilifun ad yettwasdukkel ɣer tvidyut-is; tavidyut srid n udrun ad tettwazen seg tilifun ɣer Meta Quest. Ulac ayen ara yazen tladna i udrun yettwasmizwer uqbel tirmiyin-agi.
 - **Upstream**: isuturen n usdukkel (pull requests) imecṭaḥ i Immich i yiḥricen i bɣan yimeẓla, bdu s umeskan n tewlafin 360°.
 
 Umuɣ ačaran, s usenqed n ibenkan i d-yeqqimen i yal tamahilt, yella deg [Addad n lexraj](../docs/immuch360/release-status.md#roadmap).
+
+<a id="technical-documentation"></a>
+<a id="documentation"></a>
+## Documentation
+
+- [Timahilin: umuɣ ačaran akked tfelwit n temahilin s yal aseɣẓan](../docs/immuch360/features.md)
+- [Adlis n useqdac: yal tamahilt, yiwen yiwen, s tiɣtisin-is d yizenan-is](../docs/immuch360/user-guide.md)
+- [Ammtawi: udmawen, codecs, dikudaren, iqeddacen d ibenkan ițwasenqden, tilasta](../docs/immuch360/compatibility.md)
+- [Tallalt n iseɣẓanen: ayen yesɛa yal aseɣẓan, amek i t-id-ițwasebded, ayen yemgaraden](../docs/immuch360/platform-support.md)
+- [Uguren ițwassnen](../docs/immuch360/known-issues.md) akked [Afran n uguren](../docs/immuch360/troubleshooting.md), s yisekles ara ternuḍ ɣer uneqqis
+- [Talqayt tusnakt: architecture, imrigen n Flutter d yimrigen inamuren, allal n tuqqna n wayla, abrid n udukkel, dikudaren](../docs/immuch360/technical-details.md)
+- [Amesskan n tividyutin n 360° n desktop: libmpv, takkayt n projection akked wayen yețwaḥsaben deffir-s](../docs/immuch360/desktop-360-video-renderer.md)
+- [Addad n lexraj: builds, lmaɣazat akked wayen yesɛa yal lmaɣaza](../docs/immuch360/release-status.md)
+- [Sebded-it s yiman-ik: tilifunen, ibenkan n uqerru, TV-yen d yiselkimen](../docs/immuch360/build.md)
+- [Immuch360 i tiliẓriyin LG webOS: asebded deg Developer Mode, tiqeffalen n tlikumand, iqerra CORS](../webos/README.md)
+
+### Advanced features
+
+Ayen i izemren usnas ad t-yeqra yerna ad t-yesken, i umeɣri i yebɣan akk talqayt. Yal izirig yemmel-ed s telqayt deg [adlis n useqdac](../docs/immuch360/user-guide.md) akked [usebter n ammtawi](../docs/immuch360/compatibility.md).
+
+<details>
+<summary><b>Formats, sources, playback and hardware, in detail</b></summary>
+
+- **Udmawen**: tiwlafin d tividyutin tizeddigin (ayen i yezmer ibenk ad t-idikuder: MP4, MOV, MKV akked wiyaḍ); tiwlafin d tividyutin n 360° equirectangular; tipanuramikin ur-nkemmel ara (tagzirt GPano); VR180; 3D s snat wallen, s ufella d wadda neɣ rrif ɣer rrif, yeqqar seg ufaylu (box st3d) neɣ yețwaḥsab seg uskan; tiwlafin Apple n wemkan (sin n tseddarin HEIC) akked tividyutin n wemkan (MV-HEVC, ṭiṭ yiwet); ifuyla raw Insta360 .insp d .insv, GoPro .360, DJI .osv; iɣbula 10 bit HLG d PQ ttwabeddlen ɣef tkuret.
+- **Projection d metadata**: metadata GPano akked tin n tkuret, yețwaqra seg ufaylu, s tuttriwin n izilal ɣef uqeddac neɣ afaylu n uẓeṭṭa; tamuɣli tamezwarut n tkamirat; tikurin n yidrunen DJI yettwassnen seg tkamirat-nsen, s ufaylu amaddu .xmp afrayan akken Immich ad ten-yecreḍ daɣen; "Wali am 360°" yețwaḥerzen ɣef ibenk; VR180 yețwassen seg ufaylu neɣ seg yisem-is; adig n tvidyut n udrun yettwaqra seg uɣmis-is n wafug .SRT; metadata teqqim war ablal axaṭer d afaylu agejdan i yettwaskanen, mačči takuft-is i yettwabeddlen; rbeɛ n tuzzya yettwaḥerzen s umaẓrag n Immich neɣ ɣef ibenk, werǧin ɣef ufaylu imirsif.
+- **Asekne anamur**: Media3 ɣef Android d TV, SceneKit d AVFoundation ɣef iOS, Meta Spatial SDK deg ibenk n uqerru, libmpv ɣef Windows; afaylu agejdan neɣ win yettwabeddlen, yețwafran s wayen i yezmer ibenk ad t-idikuder; umuɣ n dikudaren n tividyutin n ibenk deg Iɣewwaṛen, Timahilin tixatarin; tafrant n uzrug n imesli, iduzwilen deg umeskan Android akked uskan n uṛaju.
+- **Ifuyla raw i yesdukkel usnas deg ibenk**: shader n fragment n Flutter i tiwlafin; effect GPU deg umeskan i tividyutin s yiwen uẓrug; sin dikudaren n warrim ɣer yiwet n tikkelt akked compositor GPU i tividyutin anida yella yiwen wallen i yal aẓrug neɣ afaylu (OpenGL ES 3 ɣef Android akked Quest, Metal ɣef iOS, akked ɣef Windows, seg build 5 n desktop, sin yimeskanen libmpv anda usnas isdukkel uskanen-nsen ɣef chip n ṣura); calibration n tkamirat s yiman-is (talgiwin Mei, V6 akked equidistant) akked usekles n accelerometer; tuɣalin ɣer yiwen wallen, ɣer win yettwabeddlen, ɣer copie LRV n tkamirat neɣ ɣer tvidyut i ur yesdukkel ara usnas, ticki ibenk ur yezmir ara ad iseqdec snat n dikudaren ɣer yiwet n tikkelt.
+- **Sources**: the device's gallery; the folders of a computer; a drone or a camera card over USB, through the system folder picker (Android, experimental); a DJI RC-N3 remote controller over its cable for the drone's live video (Android, experimental), relayed on the local network to a Meta Quest or an Android TV; an Immich server; SMB 2 and 3, WebDAV, DLNA/UPnP; Plex over HTTPS checked against the server's own certificate; Tapo cameras over the local network (HTTPS and RTSP); a phone or a computer shared on the Wi-Fi as a WebDAV server; servers found by Bonjour/mDNS, a local network scan, SSDP, GDM and the TP-Link discovery, and followed when they change address.
+- **Taɣuri s talaba (on demand)**: allal n tuqqna adigan yesseɛdday-d imeskanen s izilal n bytes akked token i yal tiɣimit; iḥricen imeqqranen, taɣuri zwaren akked ɣer sețța n tuqqniwin SMB ɣer yiwet n tikkelt; tinfulin seg uskan n yal tividyut; ulac acemma yettwanɣalen ɣer ibenk.
+- **Warrim**: dikudaren n warrim ttwasseqdacen anida llan, s talast-nsen ițwaḥsaben (talast n H.264 ɣef Quest 3, snat n wallen n 2048x2048 ɣer yiwet n tikkelt i dikudaren n logiciel ɣemaxen); ɣef Windows tamuɣli n 360° tegra-d sɣur chip n ṣura seg yal uskan idikuderen, teɣzi n uskan tețwaḥsab ɣef yal aselkim, chip yedduklen neɣ win yețwaxtaṣen ițwaf.
+- **Ayen yemgaraden ger iseɣẓanen**: gyroscope akked umeskan Spatial 2.5D ɣef tilifunen; tamuɣli imirsif, ikontrolaren d ifassen ɣef Quest; umuɣ ipran i tlikumand, ṭṭaq n klavye akked ubanner n TV ɣef Android TV; ɣef uselkim: ajerdiw d klavye, ugdil ameqqran, yiwen kan n ṭṭaq, ifuyla d ikaramen yeldin s usnas neɣ yettwazuɣren ɣer ṭṭaq-is, țwaɣren am ifuyla n ikaramen-ik, HEIC, AVIF, TIFF akked tiwlafin raw n tkamirat deg ikaramen ticki Windows yesɛa adikuder i yessen-iten, akked allal n Windows i uḥraz n wawalen uffiren d tokens.
+- **Tuffirt s wbna**: ulac amiḍan, ulac cloud, ulac tasleḍt; awalen uffiren d tokens deg uḥraz aɣellsan n ibenk (ɣef tiliẓriyin LG d Samsung, ur nesɛi ara aḥraz-a i usnas, deg uḥraz n usnas s yiman-is, war awgelhen); agdil yeqqnen seg tilifun ad yawi tiɣimit-is, ad tettwazen d tawgelhant ɣef uẓeṭṭa n uxxam, werǧin awal uffir (tiliẓri LG tettawi awal uffir seg usebter deg yiminig n tilifun, war awgelhen ɣef uẓeṭṭa n uxxam, yerna teḥriz kan tiɣimit); takamirat n umeskan Spatial d tin n umsleḍ n tengalt tettwasseqdac ɣef ibenk kan; ifuyla n uẓeṭṭa, Plex d tkamirawin ttwawḍen ɣef uẓeṭṭa-k kan.
+
+</details>

@@ -1,321 +1,113 @@
 <details><summary>🌐 <b>Slovenščina</b> · Drugi jeziki (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
+
 <p align="center">
-  <img src="../.github/readme/hero-2026-10.jpg" width="100%" alt="Immuch360: vaši mediji, katerikoli zaslon, vsak zorni kot. Fotografije in videoposnetki, ravni, panoramski, 360°, 3D in VR180, z vaše naprave, vašega NAS-a ali vašega strežnika Immich, na telefonih, tablicah, televizorjih, slušalkah Meta Quest in računalnikih">
+  <img src="../.github/readme/hero-2026-10-24.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration at dusk in front of a sea bay: a storage box, a phone, a tablet, a TV, a laptop and a headset, a drone in the sky and a home camera, linked by arcs of light">
 </p>
 
 # Immuch360
 
 **Vaši mediji. Vsak zaslon. Vsak zorni kot.**
 
-Immuch360 je brezplačna odprtokodna aplikacija za iskanje, brskanje, predvajanje in raziskovanje vaših fotografij in videoposnetkov: običajnih ter panoramskih, 360°, 3D in poglobljenih, ki jih druge aplikacije prikažejo ravno, podvojeno ali raztegnjeno. Brska jih tam, kjer so, na sami napravi, na NAS-u ali računalniku, na strežniku Plex ali na strežniku Immich, in jih predvaja na telefonih, tablicah, televizorjih, slušalkah Meta Quest in računalnikih. Brez računa, brez oblaka, brez potrebnega strežnika.
-
-- **Kaj naredi?** Vaše fotografije in videoposnetke prikaže kot galerijo in jih predvaja v pregledovalniku, ki ustreza vsaki datoteki: ravno, kot kroglo, po kateri se ogledujete, v 3D, v slušalkah.
-- **Katere medije?** Ravne fotografije in videoposnetke, panorame, fotografije in videoposnetke 360°, VR180, stereoskopski 3D, prostorske fotografije Apple, krogle 360° dronov DJI in izvorne datoteke kamer 360° (Insta360, GoPro MAX, DJI Osmo 360), ki jih aplikacija sešije sama.
-- **Na katerih napravah?** Android telefoni in tablice, iPhone in iPad, Android TV in Google TV, televizorji LG s sistemom webOS in televizorji Samsung s sistemom Tizen (ločena aplikacija za TV, v testnih različicah), Meta Quest 2, Pro, 3 in 3S, Windows (poskusno) ter Linux in macOS kot zgodnji poskusni različici.
-- **Potrebujem strežnik ali račun?** Ne. Immuch360 deluje samostojno z mediji vaše naprave. Strežnik Immich, NAS, predstavnostni strežnik ali strežnik Plex so možnosti, ki jih dodate, ko jih želite.
-- **Kako prijavim televizor, slušalke ali računalnik?** S telefonom: skenirajte kodo QR, ki jo prikaže njihova prijavna stran, ali vtipkajte njeno kodo, potrdite, in v nekaj sekundah se odpre vaša knjižnica Immich, brez tipkanja z daljinskim upravljalnikom.
+Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. Immuch360 is a free and open source app that reads your photos and videos where they are and plays each one in the viewer that fits it: flat, as a sphere you look around in, in 3D, or all around you in a headset. It runs on phones, tablets, TVs, Meta Quest headsets and computers.
 
 <p align="center">
   <sub>Neuradna razvejitev mobilne aplikacije Immich. Ni povezana z Immich ali FUTO. Ime se izgovori kot «I am much 360».</sub>
 </p>
 
+<details>
+<summary><b>Vsebina</b></summary>
+
+- [Who it is for](#who-it-is-for)
+- [Which screens](#which-screens), and [what each screen does](#what-each-screen-does)
+- [Kaj lahko počnete](#what-you-can-do)
+- [Get it on your device](#get-it-on-your-device)
+- [How to](#how-to)
+  - [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server)
+  - [Raziščite panorame, 360°, VR180 in 3D](#explore-panoramas-360-vr180-and-3d)
+  - [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): [Android TV and Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
+  - [Prijavite televizor, slušalke ali računalnik s telefonom](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
+  - [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
+  - [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)
+  - [Keep your Immich library, with more](#keep-your-immich-library-with-more)
+  - [Watch your home cameras on the big screen](#watch-your-home-cameras-on-the-big-screen)
+  - [Your DJI drone (experimental)](#your-dji-drone-experimental): [live video](#see-what-your-drone-sees-on-your-phone), [in a Quest or on Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv), [import](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
+  - [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras)
+  - [Zasukajte fotografijo z eno tipko](#turn-a-photo-with-one-key)
+  - [Use your computer as the media player](#use-your-computer-as-the-media-player)
+- [Compared with Immich](#compared-with-immich)
+- [Zasebnost](#privacy)
+- [Licences and credits](#licences-and-credits)
+- [Načrt](#roadmap)
+- [Documentation](#documentation)
+
+</details>
+
+<a id="who-it-is-for"></a>
+## Who it is for
+
+- **You shoot 360° or 3D** and want to look around in your shots, not see them flat, doubled or stretched: [360°, VR180 and 3D](#explore-panoramas-360-vr180-and-3d).
+- **Your photos and films sit on a NAS, a computer, Plex or Immich** and you want them on the TV without copying anything: [on the TV](#watch-on-the-tv-with-the-remote), [NAS, shares and Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+- **You have a Meta Quest** and want to step inside your own photos and videos: [in the headset](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **You run Immich** and want its app, plus the immersive viewers and the big screens you sign in from your phone: [your Immich library](#keep-your-immich-library-with-more), [compared with Immich](#compared-with-immich).
+- **You watch your home with Tapo cameras** and want them next to your photos, on the TV too (not yet checked with a real camera): [home cameras](#watch-your-home-cameras-on-the-big-screen).
+- **You fly a DJI drone** and want its live picture on your phone without DJI Fly, and in a Meta Quest or on an Android TV for the people with you (experimental): [your drone](#see-what-your-drone-sees-on-your-phone).
+
+There is no Immuch360 account to create, and nothing goes to us: the app talks only to your devices and to the servers you choose.
+
+<a id="which-screens"></a>
+## Which screens
+
 <div align="center">
 
-| Platforma | Kje jo dobite | Stanje 23. oktobra 2026 |
+| Platform | Where to get it | Status on 25 October 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefoni in tablice | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | na Google Play (različica 25; različica 28 poslana v Googlov pregled), različica 29 na GitHubu |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone in iPad** | App Store | različica 3.3.1 (zgradba 27) čaka na pregled Apple, ponovno poslana 22. oktobra, nato različica 3.3.2 (zgradba 28), v TestFlightu za notranje preizkušanje; medtem jo lahko [zgradite sami](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV in Google TV** | [APK](#android-tv-and-google-tv) · Google Play | različica 29 na GitHubu: [prijava s telefonom](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) s skeniranjem kode QR ter [vrstica časa, zvok in podnapisi](#watch-on-the-tv-and-on-the-computer) za daljinski upravljalnik v predvajalniku videoposnetkov; vnos za TV je v pregledu Googla |
-| **Televizorji LG** s sistemom webOS 4.0 in novejšim | [testna različica .ipk](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0) | testna različica 0.2.0, za namestitev v načinu [Developer Mode](#lg-tvs-webos): omrežne skupne rabe, Plex in ogled v živo Tapo; 0.1.0 je tekla na televizorju LG enega od preizkuševalcev, 0.2.0 še ni tekla na resničnem televizorju; različica za LG Content Store je v pripravi |
-| **Televizorji Samsung** s sistemom Tizen 5.5 in novejšim | [testna različica .wgt](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.1.0) | testna različica 0.1.0 iste aplikacije za TV, ki jo podpišete s svojim potrdilom Samsung in namestite v načinu [Developer mode](#samsung-tvs-tizen); še ni tekla na resničnem televizorju Samsung |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 in 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | na Horizon Store (različica 28), različica 29 na GitHubu |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Namestitveni program ali ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) | namizna zgradba 10, podpisana poskusna različica: fotografije, ravni in 360° videoposnetki, skupne rabe, Plex, kamere, prijava s telefonom, sukanje fotografij z eno tipko, vmesnik v 89 jezikih |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS in Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) | poskusni različici: na Linuxu fotografije, fotografije 360° in ravni videoposnetki (videoposnetki 360° se predvajajo ravno); na macOS enako, preverjeno samo na Macu v CI projekta, nepodpisano |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 25; build 29 under Google's review, in place of build 28), build 30 on GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.1 (build 27) waiting for Apple's review since 22 October, then version 3.3.2 (build 28), in TestFlight for internal testing; [build it yourself](../docs/immuch360/build.md) meanwhile |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 30 on GitHub: [sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) by scanning a QR code, a [time bar, audio and subtitles](#on-android-tv-and-google-tv) for the remote in the video player, and a [drone's live video](#watch-it-in-a-meta-quest-or-on-an-android-tv) relayed by a phone (experimental); the TV listing is under Google's review |
+| **LG TVs** with webOS 5.0 and later | [.ipk, version 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (in review) | version 1.0.0, submitted to the LG Content Store on 24 October and waiting for LG's review; until then it installs in [Developer Mode](#lg-tvs-webos). It ran on webOS 25 TVs of LG's Cloud Test Lab |
+| **Samsung TVs** with Tizen 5.5 and later | [.wgt test build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | test build 0.2.0 of the same TV app, to sign with your own Samsung certificate and install in [Developer mode](#samsung-tvs-tizen); 0.1.0 ran on a tester's Samsung TV, and 0.2.0 holds the fixes from that run; not on Samsung's store |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store (build 28, live since 25 October), build 30 on GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer or ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | desktop build 11, a signed preview: photos, flat and 360° videos, shares, Plex, cameras (not yet checked with a real camera), sign in with your phone, photos turned with one key, the interface in 89 languages |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | previews: on Linux photos, 360° photos and flat videos (360° videos play flat); on macOS the same, checked on the project's CI Mac only, unsigned |
 
 *Stanja se posodabljajo ob vsaki izdaji; podrobnosti, po posamezni različici, so v [Stanju izdaje](../docs/immuch360/release-status.md).*
 
 </div>
 
 <p align="center">
-  <img src="../.github/readme/platforms-2026-10.jpg" width="100%" alt="Štirje resnični zajemi zaslona drug ob drugem: sferični pregledovalnik na telefonu Android, seznam 360° na Google TV, predvajalnik videoposnetkov Immuch360 Desktop na Windows in fotografija 360° vse okoli vas v Meta Quest 3">
+  <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Seven real captures of Immuch360 in two rows: the sphere viewer on an Android phone, a 360° photo on an iPad, a 360° photo on a Google TV and on an LG TV, then the photo timeline on a Samsung TV, the window of the app in a Meta Quest 3 and the video player on Windows. The LG and Samsung captures were taken in a browser that stands in for the TV">
 </p>
-
-<details>
-<summary><b>Vsebina</b></summary>
-
-- [Kaj lahko počnete](#what-you-can-do)
-  - [Oglejte si svoje fotografije in videoposnetke](#watch-your-photos-and-videos)
-  - [Zasukajte fotografijo z eno tipko](#turn-a-photo-with-one-key)
-  - [Raziščite panorame, 360°, VR180 in 3D](#explore-panoramas-360-vr180-and-3d)
-  - [Uporabite svoje lastne datoteke brez računa](#use-your-own-files-without-an-account)
-  - [Dostopajte do medijev na NAS-u, računalniku ali predstavnostnem strežniku](#reach-the-media-of-a-nas-a-computer-or-a-media-server)
-  - [Poiščite svojo knjižnico Immich](#find-your-immich-library)
-  - [Prijavite televizor, slušalke ali računalnik s telefonom](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
-  - [Potopite se v Meta Quest](#go-immersive-on-meta-quest)
-  - [Oglejte si na televizorju in računalniku](#watch-on-the-tv-and-on-the-computer)
-  - [Immuch360 na televizorju LG (webOS)](#immuch360-on-an-lg-tv-webos)
-  - [Kamere, Plex in izvorne datoteke kamer](#cameras-plex-and-raw-camera-files)
-  - [Fotografije in videoposnetki vašega drona DJI na vašem strežniku Immich](#your-dji-drones-photos-and-videos-on-your-immich-server)
-  - [Videoposnetek vašega drona DJI v živo na vašem telefonu (poskusno)](#your-dji-drones-live-video-on-your-phone-experimental)
-- [Naprave in sistemi](#devices-and-systems)
-- [Napredne funkcije](#advanced-features)
-- [Tehnična dokumentacija](#technical-documentation)
-- [Namestitev](#install)
-- [Zasebnost](#privacy)
-- [O projektu](#the-project)
-- [Načrt](#roadmap)
-
-</details>
-
-<a id="what-you-can-do"></a>
-## Kaj lahko počnete
-
-Vsaka uporaba spodaj najprej pove, kaj dobite, nato pa, kako to storite v nekaj korakih. Celoten vodnik, z vsemi možnostmi, sporočili in omejitvami, je v [uporabniškem vodniku](../docs/immuch360/user-guide.md).
-
-<a id="watch-your-photos-and-videos"></a>
-### Oglejte si svoje fotografije in videoposnetke
-
-Immuch360 je najprej galerija in predvajalnik za običajne fotografije in videoposnetke. Časovnica, albumi, priljubljene, spomini in iskanje delujejo s strežnikom Immich; lastne fotografije in videoposnetki naprave ter mape računalnika se prikažejo brez kakršnega koli strežnika. Videoposnetki se predvajajo v izvornem predvajalniku z zvokom, pomikanjem, kazalnikom medpomnjenja in izbiro zvočnih sledi, v predvajalnikih 360°, Spatial in računalnika ter od različice 29 tudi v ravnem predvajalniku aplikacije Android, ki prikazuje tudi podnapise. Na televizorju vse upravlja daljinski upravljalnik; na računalniku to počneta miška in tipkovnica.
-
-1. Odprite zavihek Fotografije: časovnico vašega strežnika ali naprave brez strežnika.
-2. Dotaknite se fotografije ali videoposnetka, da ga odprete; podrsajte levo in desno za naslednjega, stisnite prste ali se dvakrat dotaknite za povečavo.
-3. Podrsajte navzgor na videoposnetku za njegove podrobnosti: kodek, velikost, hitrost sličic, hitrost bitov in ali ta naprava ga dekodira.
-4. Na telefonih in televizorjih Android ima od različice 29 film z več jeziki zvoka ali s podnapisi v kontrolnikih gumb za zvok in gumb za podnapise: jezik zvoka, ki ga izberete, se ohrani za naslednje filme, podnapisi pa ostanejo izklopljeni, dokler jih ne izberete, razen vsiljenih. Predvajalnik Android aplikacije Immich nima ne enega ne drugega.
-
-Več: [pregledovalniki in predvajalnik videoposnetkov](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [podrobnosti videoposnetka in dekodirniki](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
-
-<a id="turn-a-photo-with-one-key"></a>
-### Zasukajte fotografijo z eno tipko
-
-Zasukajte fotografijo za 90° z enim pritiskom, brez odpiranja urejevalnika: z gumbom, tipko na tipkovnici ali barvno tipko daljinskega upravljalnika televizorja, na vsaki platformi. Aplikacija Immich fotografijo zasuka v svojem urejevalniku; Immuch360 to naredi z eno tipko, za vaše lastne fotografije na strežniku Immich 2.6 ali novejšem pa gre prek istega urejevalnika strežnika, zato jih spletna aplikacija in vaše druge naprave prikažejo zasukane. Vsaka druga fotografija se zasuka samo na tej napravi. Fotografije 360°, 180° in 3D se nikoli ne zasukajo, zato poglobljeni pogledi ostanejo vodoravni.
-
-<p align="center">
-  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Immuch360 Rotate 90°">
-</p>
-
-1. **Telefoni, tablice in okno Meta Quest**: odprite fotografijo in se dotaknite Zasukaj v spodnji vrstici, pred Uredi, da jo zasukate v smeri urinega kazalca; dolg pritisk jo zasuka v drugo smer. S tipkovnico R in Shift+R.
-2. **Android TV in Google TV**: rumena tipka daljinskega upravljalnika zasuka fotografijo v smeri urinega kazalca, modra pa v nasprotni smeri, kjerkoli je fokus v pregledovalniku. Na daljinskem upravljalniku brez barvnih tipk pritisnite dol: prikaže se vrstica pod fotografijo z izbranim Zasukaj (en pritisk desno dlje, kadar ima fotografija besedilni gumb), in vsak OK zasuka fotografijo.
-3. **Televizorji LG (webOS)**: rumena in modra tipka kot na Android TV, R in Shift+R na tipkovnici ali gumb za sukanje med kontrolniki fotografije.
-4. **Windows, Linux in macOS**: R zasuka v smeri urinega kazalca, Shift+R v nasprotni smeri, ali gumb za sukanje v zgornji vrstici, pred celozaslonskim načinom.
-5. **Fotografije iz skupne rabe, Plexa ali kamere**: gumb za sukanje kot prvi v zgornji vrstici, R in Shift+R ali rumena in modra tipka.
-
-Kje se zasuk shrani: fotografija vašega lastnega računa na Immich 2.6 ali novejšem se zasuka prek urejevalnika fotografij na strežniku, ki ohrani izvirno datoteko in ustvari zasukano sliko (med delom se prikaže tanka vrstica; štirje zasuki ali en zasuk nazaj vrnejo izvirnik). Fotografije naprave, skupne rabe, partnerja ali deljenega albuma ter vse fotografije na starejšem strežniku se zasukajo samo na tej napravi, samo za to fotografijo, datoteka pa se nikoli ne spremeni; za fotografijo Immich aplikacija to enkrat sporoči. V aplikacijah za Android, iOS in računalnik je zasuk, shranjen na napravi, viden v pregledovalniku, še ne pa v sličicah, diaprojekciji in spominih. Videoposnetki, zaklenjena mapa in vse fotografije 360°, 180° ali 3D nimajo možnosti Zasukaj.
-
-<a id="explore-panoramas-360-vr180-and-3d"></a>
-### Raziščite panorame, 360°, VR180 in 3D
-
-Fotografija 360° se odpre kot krogla, ki jo zavrtite s prstom ali s premikanjem telefona; videoposnetek 360° se predvaja v sferičnem predvajalniku z zvokom; datoteke VR180 so narisane na polkrogli; stereoskopske datoteke 3D prikažejo eno oko na ravnem zaslonu in obe očesi v slušalkah. Delne panorame ohranijo svoj izrez, slika pa se začne na pogledu, ki ga je posnela kamera. Datoteko, ki je strežnik ne označi, lahko z enim dotikom prikažete kot 360°.
-
-<p align="center">
-  <img src="../.github/readme/b19-sphere.jpg" width="260" alt="Fotografija 360° jezerske obale v sferičnem pregledovalniku: gumb za zapiranje levo zgoraj, gumbi 360°, Postavitev 3D in Žiroskop desno zgoraj">
-  <img src="../.github/readme/b19-video.png" width="420" alt="Videoposnetek 360° obalne ceste, ki se predvaja v predvajalniku 360° na ležeče obrnjenem telefonu: zapiranje in ime datoteke levo zgoraj, 360° in 3D desno zgoraj, prejšnji, nazaj, predvajaj, naprej in naslednji na sredini, časovni trak spodaj">
-</p>
-
-1. Odprite fotografijo ali videoposnetek. Datoteke 360° imajo na sličici značko 360°, zavihek Knjižnica pa ima seznam 360°, ki jih zbere, s filtri po obdobju, viru, vrsti in kameri.
-2. Dotaknite se 360° v zgornji vrstici. Povlecite za ogled okoli sebe, stisnite prste za povečavo, dotaknite se gumba za žiroskop za ogled okoli sebe z obračanjem telefona.
-3. Gumb 3D kroži med «Mono (ni 3D)», «3D, zgoraj in spodaj» in «3D, drug ob drugem»; gumb 360°/180° preklaplja med polno kroglo in polkroglo VR180.
-4. Za datoteko, ki se prikaže ravno, čeprav je 360°: ⋮ zgoraj desno, nato «Prikaži kot 360°».
-
-Na telefonih in tablicah lahko stereoskopski videoposnetek pridobi globino tudi na ravnem zaslonu: predvajalnik Spatial 2.5D uporablja sprednjo kamero za sledenje vaši glavi in prikaže pogled vmes med očesoma (poskusno). Prostorske fotografije Apple, posnete s iPhonom, so prepoznane in prikazane v 3D v Meta Quest.
-
-Več: [fotografije in videoposnetki 360°](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D in VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [prostorske fotografije in videoposnetki Apple](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [seznam 360°](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
-
-<a id="use-your-own-files-without-an-account"></a>
-### Uporabite svoje lastne datoteke brez računa
-
-Immuch360 ne potrebuje niti računa niti strežnika. Od zgradbe 24 se aplikacija odpre na pozdravni strani, kjer je najprej «Uporabi brez strežnika»: ta odpre aplikacijo na fotografijah in videoposnetkih naprave, z vsakim pregledovalnikom, seznamom 360° in omrežnimi viri. Nič ne zapusti naprave. Strežnik lahko pozneje povežete v Nastavitvah ali zavihku Knjižnica, nato pa se prikažejo funkcije strežnika.
-
-<img src="../.github/readme/b19-library-no-server.png" width="260" alt="Zavihek Knjižnica brez strežnika: vnos 360° na vrhu, nato Na tej napravi z dvema fotografijama 360° in Omrežne skupne rabe s skupno rabo z imenom NAS">
-
-1. Odprite aplikacijo. Pozdravna stran prikaže „Vaši mediji. Vsak zaslon. Vsak zorni kot.“ in tri možnosti: dotaknite se prve, «Uporabi brez strežnika». Do zgradbe 23 je bila najprej prijavna stran, z «Uporabi brez strežnika» pod obrazcem.
-2. Dovolite dostop do fotografij in videoposnetkov. Če ga zavrnete, aplikacija prikaže „Aplikacija ne vidi fotografij v tej napravi“ z gumboma „Dovoli dostop“ in „Odpri nastavitve“.
-3. Zavihek Slike prikazuje časovnico naprave. Iskanje in Albumi ostanejo sivi, ker prihajajo s strežnika. Zavihek Knjižnica ima na vrhu 360°, nato Na tej napravi (albumi naprave) in Omrežne skupne rabe.
-4. Meni desno zgoraj kaže „Samo ta naprava“: aplikacija prikazuje fotografije in videoposnetke te naprave, nič se nikamor ne pošilja.
-
-Na računalniku vlogo galerije opravljajo mape, ki jih izberete; na televizorju, ki nima lastnih fotografij, to vlogo opravljajo omrežni viri.
-
-Več: [brez strežnika ali računa](../docs/immuch360/user-guide.md#without-a-server-or-an-account).
-
-<a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
-### Dostopajte do medijev na NAS-u, računalniku ali predstavnostnem strežniku
-
-Vaši videoposnetki so na NAS-u, računalniku ali predstavnostnem strežniku. Immuch360 sam poišče strežnike v vašem omrežju, jih prebrska in predvaja njihove fotografije in videoposnetke na mestu samem, v vsakem pregledovalniku aplikacije, brez kopiranja česar koli: SMB (Samba, skupne rabe Windows), WebDAV (Nextcloud, Synology in drugi) ter predstavnostni strežniki DLNA (Jellyfin, Emby, minidlna, NAS, televizijski predvajalnik). Telefon lahko svojo galerijo tudi deli po Wi-Ju za slušalke ali kateri koli odjemalec WebDAV, enako pa lahko tudi računalnik z Windows.
-
-<p align="center">
-  <img src="../.github/readme/b19-add-share.png" width="260" alt="Stran Dodaj skupno rabo: Ime, Ime ali naslov strežnika, Vrata (neobvezno), Skupna raba, Izberite skupno rabo, Začetna mapa (neobvezno), Uporabniško ime, Geslo, Preizkusi povezavo in rezultat Povezano, število elementov v začetni mapi: 2">
-  <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Mapa omrežne skupne rabe kot mreža sličic: fotografije 360° z značko 360° in videoposnetek 360° z oznako predvajanja, gumb Izberi desno zgoraj">
-</p>
-
-1. Odprite zavihek Knjižnica, nato Omrežne skupne rabe, nato + in «Omrežna skupna raba (NAS, računalnik, predstavnostni strežnik)». Od zgradbe 24 «Dodaj omrežno skupno rabo ali predstavnostni strežnik» na pozdravni strani odpre Omrežne skupne rabe neposredno, brez strežnika.
-2. Dotaknite se strežnika pod «Najdeno v omrežju» ali izpolnite obrazec ročno: vrsta, ime ali naslov strežnika, skupna raba ali pot, začetna mapa, uporabniško ime in geslo.
-3. Dotaknite se «Preizkusi povezavo», nato Shrani. Dotaknite se skupne rabe za brskanje po njej: najprej mape, nato fotografije in videoposnetke, z značko 360° na datotekah, prepoznanih kot 360°.
-4. Ko je povezan strežnik Immich, izberite datoteke v mapi in se dotaknite «Naloži v Immich», da jih poslete na svoj strežnik.
-
-Predvajalniki berejo bajte, ki jih potrebujejo, prek mostu v aplikaciji, z obsegi bajtov, zato pomikanje deluje in nič se ne shrani na napravo; videoposnetek SMB se bere prek največ šestih vzporednih povezav za tekoče predvajanje. Od različice 29 se filmi, posneti kot M2TS (Blu-ray, videokamere AVCHD, snemalniki TV), predvajajo v aplikaciji Android iz skupnih rab SMB in WebDAV ter s strežnikov DLNA, ki jih navajajo kot transportne tokove, strežnik DLNA, ki navede velikost 0, pa ne daje več praznega videoposnetka.
-
-Več: [omrežne skupne rabe](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [delite ta telefon v omrežju](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [predstavnostni strežniki DLNA](../docs/immuch360/user-guide.md#dlna-media-servers).
-
-<a id="find-your-immich-library"></a>
-### Poiščite svojo knjižnico Immich
-
-S strežnikom [Immich](https://github.com/immich-app/immich) je Immuch360 mobilna aplikacija Immich, z istim strežnikom in istim računom kot spletna aplikacija: varnostno kopiranje, časovnica, albumi, iskanje, osebe, spomini, delitev, partnerji, vse usklajeno z vašim strežnikom. Namesti se poleg uradne aplikacije. Poleg tega: značka in seznam 360°, vsi poglobljeni pregledovalniki, izbira med izvirno datoteko in pretvorjenim pretokom strežnika za vsak videoposnetek, tehnične podrobnosti videoposnetka ter datoteke iz skupne rabe ali naprave, ročno poslane na vaš strežnik.
-
-1. Na pozdravni strani se dotaknite «Poveži se s strežnikom Immich», nato se prijavite z naslovom strežnika, e-poštnim naslovom in geslom, enako kot v aplikaciji Immich; Nazaj se vrne na pozdravno stran. Do zgradbe 23 se prijavna stran odpre neposredno. Vaša knjižnica, albumi in nastavitve varnostnega kopiranja so tisti vašega računa.
-2. V Nastavitvah, Pregledovalnik vsebine, Videoposnetki, «Vir videa» izbere izvirnik, kadar ga ta naprava dekodira, vedno izvirnik ali vedno pretvorjeni pretok.
-3. Da fotografijo 360° pokažete nekomu, ki nima aplikacije, jo delite s skupno povezavo Immich: spletna aplikacija Immich jo prikaže kot kroglo v njegovem brskalniku.
-
-Trenutna različica, različica 29, temelji na veji `main` Immich z 10. oktobra 2026 (različica 3.3.0-rc.0), tako kot različica 28, ki je bila preizkušena s strežnikom, zgrajenim iz iste veje `main` Immich; različica 27 je bila preizkušena tudi s strežnikom Immich 3.2.4. Prosimo, težave sporočite v [Issues](https://github.com/freeKC/Immuch360/issues), ne projektu Immich.
-
-Več: [vse drugo je Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [primerjava z aplikacijo Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
-
-<a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
-### Prijavite televizor, slušalke ali računalnik s telefonom
-
-Tipkanje naslova strežnika, e-pošte in gesla z daljinskim upravljalnikom televizorja ali v slušalkah traja več minut. Z Immuch360 na telefonu, prijavljenim v vaš strežnik Immich, se televizor, Meta Quest ali računalnik prijavi v nekaj sekundah: veliki zaslon prikaže kodo QR, telefon jo skenira, vi potrdite, in zaslon se odpre na vaši knjižnici. Z aplikacijo na telefonu vaše geslo ostane na telefonu. Aplikacija Immich nima ničesar podobnega.
-
-<p align="center">
-  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Televizor na svoji prijavni strani prikazuje kodo QR, telefon pred njim pa skenira isto kodo">
-</p>
-
-1. Na velikem zaslonu (Android TV in Google TV, okno Meta Quest, Windows, Linux ali macOS) izberite «Poveži se s strežnikom Immich»: prijavna stran poleg obrazca za strežnik prikaže «Prijava s telefonom», kodo QR in 10-mestno kodo.
-2. Na telefonu, prijavljenem v vaš strežnik: Nastavitve, «Poveži televizor ali računalnik», nato «Skeniraj kodo». V Meta Quest, katerega zaslona telefon ne more skenirati, izberite «Raje vnesi kodo» in vtipkajte kodo, ki jo prikazujejo slušalke.
-3. Telefon vpraša «Prijavim (zaslon)?» in prikaže šestmestno število: preverite, da zaslon prikazuje isto število, nato se dotaknite Prijava. Zaslon se odpre na vaši časovnici.
-
-Zakaj je to varno: telefon in zaslon morata biti v istem domačem omrežju, koda pa velja največ dve minuti in deluje enkrat. Telefon od vašega strežnika zahteva novo sejo za ta zaslon, poimenovano po njem («Immuch360 na televizorju v dnevni sobi»), in jo zaslonu pošlje šifrirano, zato vaše geslo nikoli ne zapusti telefona. «Poveži televizor ali računalnik» navaja zaslone, ki jih je ta telefon prijavil, vsakega z gumbom Odjava, Immich pa jih navaja v Nastavitvah računa, Pooblaščene naprave, kjer jih lahko tudi prekličete. Odjava telefona odjavi tudi njih.
-
-Telefonski del zdaj deluje na Androidu, na iPhonu in iPadu pa od naslednje izdaje za iOS. Brez Immuch360 na telefonu skenirajte kodo s kamero telefona: v brskalniku se odpre stran, ki jo streže zaslon, za vašo e-pošto in geslo, šifrirana in uporabljena enkrat. Televizorji LG se prijavijo z lastno kodo QR, v brskalniku telefona; od različice 28 jo bralnik kod v aplikaciji na telefonu prepozna in odpre to stran.
-
-Več: [prijava s telefonom](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [kaj zasloni pošiljajo in hranijo](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
-
-<a id="go-immersive-on-meta-quest"></a>
-### Potopite se v Meta Quest
-
-Na Meta Quest ista aplikacija teče kot okno z vašo celotno knjižnico, njen gumb 360° pa odpre poglobljen pogled, kjer je fotografija ali videoposnetek vse okoli vas: ogledujete se z obračanjem glave, stereoskopske datoteke so v resničnem 3D, prostorska fotografija Apple lebdi pred vami v 3D, krmilniki ali vaše roke pa upravljajo vrstico časa, prejšnje in naslednje ter gumb Obrat, ki prinese naprej tisto, kar je za vami, brez obračanja stola. Mediji prihajajo z vašega strežnika, same slušalke, NAS-a, predstavnostnega strežnika, telefona ali strežnika Plex, predvajani na mestu samem.
-
-<p align="center">
-  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Fotografija 360° vsenaokrog v Questu 3 z informacijsko ploščo: gumbi postavitve, 360° in Nazaj">
-  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Videoposnetek 360° jezera, ki se predvaja v Questu 3, z informacijsko ploščo: gumbi postavitve, 360°, Premor in Nazaj">
-  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Stereoskopski videoposnetek 360° v Questu 3, informacijska plošča kaže 3D, zgoraj in spodaj">
-</p>
-
-1. Namestite aplikacijo iz [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) ali ročno namestite APK novejše različice, glejte [Namestitev](#meta-quest).
-2. Na pozdravni strani se dotaknite «Uporabi brez strežnika» za lastne fotografije in videoposnetke slušalk, ali «Poveži se s strežnikom Immich»: kodo, ki jo prikazujejo slušalke, vtipkajte v Immuch360 na telefonu ([prijava s telefonom](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), ali se prijavite z naslovom strežnika, e-pošto in geslom.
-3. Odprite fotografijo ali videoposnetek 360° in pritisnite 360°: poglobljen pogled se odpre. B ali Y, ali gumb Nazaj na informacijski ploščici, vrne okno.
-4. V poglobljenem pogledu potisnite desno igralno paličico levo ali desno, da pogled zasukate za 30° v tisto smer. Od različice 29 se zasuka v smer, v katero jo potisnete, kot v večini aplikacij za slušalke; različice od 17 do 28 so ga sukale v nasprotno smer, nastavitev Nastavitve, Pregledovalnik vsebine, Videoposnetki, «Obrni sukanje s paličico» pa to smer vrne.
-
-Več: [v slušalkah Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [slušalke: kodeki, trgovina in dovoljenja](../docs/immuch360/platform-support.md#meta-quest).
-
-<a id="watch-on-the-tv-and-on-the-computer"></a>
-### Oglejte si na televizorju in računalniku
-
-Ista aplikacija Android teče na Android TV in Google TV, s temno temo od prvega zagona, kjer je daljinski upravljalnik edini vnos: puščice premikajo okvir, OK odpre, Nazaj se vrne; v pregledovalniku levo in desno preideta na prejšnjo ali naslednjo fotografijo ali videoposnetek, tudi med predvajanjem videoposnetka, v fotografiji ali videoposnetku 360° pa se s puščicami ozirate naokoli. Televizor nima lastnih fotografij, zato prikaže vaš strežnik Immich, vaše omrežne skupne rabe, vaš strežnik Plex in vaše kamere; televizorji LG imajo [svojo lastno aplikacijo](#immuch360-on-an-lg-tv-webos), ki jo kot prvo testno različico dobijo tudi televizorji Samsung. Na računalniku z Windows Immuch360 Desktop bere mape, ki jih izberete, popolnoma brez strežnika, predvaja ravne in 360° videoposnetke v lastnem predvajalniku, brska po istih skupnih rabah in strežnikih ter lahko računalnik deli s slušalkami doma.
-
-<p align="center">
-  <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Sferični pregledovalnik na Google TV: panorama 360° jezerske obale, gumb za zapiranje zgoraj levo, gumbi Oddalji, Približaj, 360° in 3D zgoraj desno, upravljanje s puščicami daljinskega upravljalnika">
-  <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Predvajalnik videoposnetkov Immuch360 Desktop na Windows: videoposnetek ulice se predvaja v oknu, s gumbom za premor, vrstico časa, Deli in Naloži v Immich">
-</p>
-
-1. Na televizorju: namestite APK z adb (glejte [Namestitev](#android-tv-and-google-tv)); na pozdravni strani izberite «Dodaj omrežno skupno rabo ali predstavnostni strežnik» za skupno rabo, strežnik Plex ali kamero, «Uporabi brez strežnika», ali «Poveži se s strežnikom Immich», katerega stran prijavi televizor, ko njeno kodo QR skenirate s telefonom (glejte [Prijava s telefonom](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
-2. Na računalniku z Windows: namestite poskusno različico ali jo razpakirajte in zaženite `immuch360.exe` (glejte [Namestitev](#windows)); od namizne zgradbe 5 «Uporabi brez strežnika» na pozdravni strani odpre izbiro vaših map, «Poveži se s strežnikom Immich» pa prijavno stran s kodo QR za vaš telefon. Fotografija, videoposnetek ali mapa, odprta s programom ali spuščena v njegovo okno, se odpre takoj, 360° datoteka pa v svojem pogledu 360°; več datotek pa se skupaj odpre na eni strani.
-3. V pregledovalniku delujejo tipke daljinskega upravljalnika za predvajanje in premor, previjanje nazaj, previjanje naprej, prejšnje in naslednje, enako pa delujejo tudi tipke tipkovnice na računalniku (preslednica, J in L, F za celozaslonski način). Na televizorju OK med videoposnetkom prikaže kontrolnike z izbranim predvajanjem in premorom, drugi OK pa začasno ustavi predvajanje; sledita gumba -10 s in +10 s, nato gumba za zvok in podnapise, če ju film ima. Od različice 29 tipka navzdol s predvajanja pripelje do vrstice časa: levo in desno premakneta za 10 s na pritisk, hitreje ob pridržanju, OK pa predvaja ali začasno ustavi. Kontrolniki in datum se skrijejo 5 s po zadnji tipki, levo in desno pa nato preideta na prejšnjo ali naslednjo datoteko; v skupni rabi se ta datoteka odpre na svoji strani, s kontrolniki, ki jo upravljajo. Videoposnetki se na televizorju ne predvajajo več v zanki, razen če vklopite Nastavitve, Pregledovalnik vsebine, Videoposnetki, Ponavljanje.
-4. Na televizorju tipka Menu, tipka Info ali pridržan OK odpre podrobnosti fotografije ali videoposnetka, samo za branje: datum, kraj, kamera, kodek, velikost in bitna hitrost. Videoposnetek, ki ga televizor ne more dekodirati, to sporoči z navedbo kodeka, velikosti in omejitve dekodirnikov televizorja, namesto da bi se nalagal v nedogled; videoposnetek 360°, ki presega zmožnosti dekodirnikov, pred odpiranjem predvajalnika 360° vpraša za potrditev, razlog pa je zapisan na strani Dnevniki v meniju profila.
-
-Več: [oglejte si na svojem televizorju](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [na računalniku z Windows](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [podpora platform](../docs/immuch360/platform-support.md).
-
-<a id="immuch360-on-an-lg-tv-webos"></a>
-### Immuch360 na televizorju LG (webOS)
-
-Immuch360 je na voljo tudi kot aplikacija Immich za televizorje LG s sistemom webOS: ločena aplikacija za televizorje LG s sistemom webOS 4.0 in novejšim (od leta 2018), upravljana z daljinskim upravljalnikom, ki prikaže vaš strežnik Immich in vaše fotografije 360° postavi na kroglo, ki jo vrtite s puščicami. Lastne aplikacije Immich se na televizor LG ne namestijo. Zgrajena je na [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) uporabnika Seeky91, ki je prinesel časovnico, albume, osebe, kraje, iskanje, diaprojekcijo in prijavo s telefonom; hvala Seeky91. Testna različica 0.2.0 doda omrežne skupne rabe, Plex in ogled kamer Tapo v živo. Različica 0.1.0 je tekla na televizorju LG enega od preizkuševalcev (webOS 22); 0.2.0 na resničnem televizorju še ni tekla. Namesti se samo v načinu Developer Mode, in vsako poročilo v [Issues](https://github.com/freeKC/Immuch360/issues) pomaga.
-
-<p align="center">
-  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Immuch360 on an LG TV">
-</p>
-
-1. Namestite jo na televizor v načinu Developer Mode, glejte [Namestitev](#lg-tvs-webos). Ima svoj lasten ID aplikacije, zato se namesti poleg Immich TV uporabnika Seeky91.
-2. Prijavite se s telefonom (skenirajte kodo QR), z e-poštnim naslovom in geslom ali s ključem API.
-3. Brskajte s puščicami in OK. V pregledovalniku levo in desno preideta na prejšnjo ali naslednjo fotografijo ali videoposnetek, tudi med predvajanjem videoposnetka; kontrolniki se skrijejo 5 s po zadnji tipki; Info odpre podrobnosti; tipke za kanale povečujejo in pomanjšujejo; kazalec in kolesce Magic Remote delujeta.
-4. Fotografija 360° se odpre na krogli, ki jo vrtite s puščicami; «Prikaži kot 360°» pokrije fotografijo 2:1, ki je strežnik ne označi; fotografija VR180 se prikaže na polovični krogli, fotografija 3D pa z enim očesom. Rumena in modra tipka zasukata ravno fotografijo.
-5. Od različice 0.2.0, po prijavi, «Omrežne skupne rabe» v stranski vrstici aplikacije: dodajte skupno rabo SMB, WebDAV ali DLNA, strežnik Plex (prijavljen s kodo na plex.tv/link) ali kamero Tapo. Njihove fotografije se odprejo v istem pregledovalniku, fotografije 360° na krogli.
-
-Skupne rabe, Plex in kamere potrebujejo webOS 5 (televizorji iz leta 2020) ali novejši, SMB pa webOS 22 (televizorji iz leta 2022) ali novejši. Delujejo prek lastne storitve aplikacije na televizorju, ki jih bere za aplikacijo, in so bili preverjeni z resničnimi strežniki na gradbenem računalniku projekta, na televizorju pa še ne. Ogled kamere v živo je samo slika, brez zvoka.
-
-Še ni: posnetkov kamer (ne pred decembrom 2026) in njihovega zvoka, videoposnetkov 360° na krogli (predvajajo se ravno, s sporočilom), nalaganja. Ko se videoposnetek ne predvaja, sporočilo navede njegov format in velikost namesto neskončnega vrtavčka. Na webOS pred različico 25 mora povratni posredovalni strežnik pred Immich pošiljati glave CORS; aplikacija jih razloži, ko naleti na to težavo.
-
-Naslednja različica za LG, narejena za LG Content Store, je v izvorni kodi in še ni objavljena: Nazaj na Fotografijah ali na pozdravni strani zapre aplikacijo (na domači zaslon na webOS 5 ter 23 do 25), Nazaj najprej zapre odprto pojavno okno, zahteva, ki v 15 s ne dobi odgovora, se konča s sporočilom, ki pove zakaj, in gumbom Poskusi znova, vsaka stran ostane znotraj varnih robov zaslona, pravilnik o zasebnosti se odpre v aplikaciji s kodo QR za branje [njegovega razdelka o televizorjih LG](../PRIVACY.md#lg-tvs-webos) na telefonu, televizor uporablja slikovni način Galerija, kot LG zahteva od aplikacij za fotografije, drugi paket pa ustreza televizorjem Full HD, ki jim LG dodeli aplikacije 1280x720. Preverjena je bila v brskalniku, ki nadomešča televizor, na televizorju pa še ne.
-
-Televizorji Samsung s sistemom Tizen 5.5 in novejšim (televizorji od leta 2020) dobijo isto aplikacijo kot prvo testno različico, 0.1.0, ki ni v trgovini Samsung: prijava z vnosom, časovnica, albumi, pregledovalnik in diaprojekcija, fotografije 360° na krogli in sukanje fotografije z eno tipko; še brez prijave s telefonom, skupnih rab, Plexa ali kamer, ki na televizorjih LG tečejo v storitvi v ozadju, ki je različica za Samsung še nima. Tekla je v spletnih pogonih Tizen 5.5, 6.0 in 7.0 na računalniku, nikoli na televizorju Samsung: glejte [Namestitev](#samsung-tvs-tizen), vsako poročilo pa pomaga.
-
-Več: [aplikacija webOS: namestitev, tipke daljinskega upravljalnika, glave CORS](../webos/README.md).
-
-<a id="cameras-plex-and-raw-camera-files"></a>
-### Kamere, Plex in izvorne datoteke kamer
-
-- **Kamere Tapo**: kamera se doda poleg omrežnih skupnih rab. Aplikacija jo prikaže v živo (Android, Android TV, Quest, Windows in, samo slika, televizorji LG od webOS 0.2.0; iPhone in iPad od naslednje izdaje za iOS) in na vsaki platformi po dnevih navede posnetke z njene pomnilniške kartice; posnetek se prenese s kamere, predvaja kot vsak videoposnetek in ga lahko pošljete v Immich. Aplikacija komunicira samo s kamero v vašem omrežju, nikoli s strežniki TP-Link.
-- **Plex Media Server, brez plex.tv**: aplikacija se neposredno poveže z vašim strežnikom, s žetonom, ki ga enkrat vnesete, in v živo bere izvirne datoteke vaših knjižnic, tako da 360° ostane 360°, doma in, prek posredovanja vrat, tudi od doma.
-- **Izvorne datoteke kamer 360°**: Izvorne fotografije .insp in videoposnetke .insv kamer Insta360 (en ali dva objektiva, v eni sledi, dveh sledeh ali dveh datotekah), datoteke .360 kamere GoPro MAX in datoteke .osv kamere DJI Osmo 360 aplikacija sešije med predvajanjem, s kalibracijo, zapisano v datoteki, ne da bi bilo treba kjer koli kaj namestiti. Na Androidu jih predvajajte iz skupne rabe, računalnika ali svojega strežnika, ker galerija telefona ne prikazuje izvornih datotek; strežnik Immich sprejme le .insp in .insv.
-
-Več: [kamere Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv), [izvorne datoteke kamer 360°](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
-
-<a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
-### Fotografije in videoposnetki vašega drona DJI na vašem strežniku Immich
-
-Uvozite fotografije in videoposnetke drona DJI prek USB neposredno na svoj strežnik Immich: priključite dron ali bralnik kartic na telefon Android, izberite nove datoteke in jih pošljite; videoposnetki se postavijo na zemljevid po podatkih o letu drona, krogle 360° drona pa se prikažejo kot 360°. Aplikacija Immich varnostno kopira samo tisto, kar je že v galeriji telefona, strežnik Immich pa še ne zna prebrati kraja videoposnetka DJI Neo 2. Ta stran je poskusna, samo na telefonih in tablicah Android, in še ni bila preizkušena z resničnim dronom.
-
-<p align="center">
-  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Immuch360, a DJI drone and Immich">
-</p>
-
-1. V Knjižnica, Omrežne skupne rabe je ploščica «Dron DJI»: nastavitev «Droni DJI (poskusno)» je v Nastavitvah, Napredno privzeto vklopljena. Če želite ploščico skriti, jo tam izklopite.
-2. Priključite dron (Neo 2 lahko ostane izklopljen) ali bralnik kartic na telefon s podatkovnim kablom USB-C; daljinski upravljalnik DJI brez zaslona (RC-N1, RC-N2, RC-N3) ne hrani fotografij. Na strani drona DJI se dotaknite «Izberi dron ali kartico», izberite ga v stranskem meniju izbirnika, odprite njegovo mapo DCIM ali obdržite celoten pogon, nato «Uporabi to mapo» in Dovoli.
-3. Stran navede fotografije in videoposnetke po dnevih, brez spremnih datotek .LRF, .SRT, .THM in .m4a. Dotaknite se «Izberi vse nove», nato «Naloži v Immich»; datoteke, poslane prej, imajo oznako oblaka in so preskočene. «Obdrži na napravi» namesto tega kopira datoteke v galerijo telefona, v album «Immuch360 import».
-4. Da se videoposnetek znajde na zemljevidu, pred letom vklopite Video Subtitles v DJI Fly (način videa, Settings, Camera): dron nato zapiše datoteko .SRT poleg vsakega videoposnetka, aplikacija iz nje prebere kraj in ga po nalaganju nastavi na vašem strežniku, kadar ga Immich ni našel.
-
-Krogle 360° dronov DJI (Mini, Air, Mavic in drugi, prepoznani po kameri) se v Immuch360 prikažejo kot 360° tudi brez oznak 360°. Immich te oznake potrebuje: možnost nalaganja «Označi krogle dronov kot 360° za Immich», privzeto izklopljena, pošlje fotografijo nespremenjeno z majhno datoteko .xmp poleg nje, da jo tudi Immich prikaže kot kroglo. Neo 2 nima načina krogle ali panorame: njegove fotografije in videoposnetki so ravni. Kadar je zvok posnetka Neo 2 posnel telefon, je ta zvok v ločeni datoteki .m4a: stran posnetek označi, Immich pa ga prejme brez zvoka (prenesite ga z DJI Fly, da obdržite zvok). Vsaka kartica fotoaparata z mapo DCIM v bralniku kartic deluje enako. Nič se ne pošlje podjetju DJI.
-
-<a id="your-dji-drones-live-video-on-your-phone-experimental"></a>
-### Videoposnetek vašega drona DJI v živo na vašem telefonu (poskusno)
-
-Oglejte si, kar vidi vaš dron DJI, na svojem telefonu Android, brez DJI Fly in brez kakršnega koli računa: priključite daljinski upravljalnik DJI RC-N3 na telefon z njegovim kablom in Immuch360 prikaže videoposnetek drona v živo, H.265 v 1080p, z baterijo daljinskega upravljalnika in drona, signalom, gimbalom in podatki o letu, prebranimi prek kabla. Daljinski upravljalnik ohrani popoln nadzor nad dronom. Preizkušeno je bilo na tleh z RC-N3, DJI Neo 2 in Samsung Galaxy S24+; drugi daljinski upravljalniki in droni niso bili preizkušeni. Podatki o letu in bateriji še niso primerjani z DJI Fly: ne letite po njih.
-
-Samo posluša. Daljinskemu upravljalniku ali dronu se nikoli ne pošlje noben ukaz: edini bajt, ki ga stran zapiše vsako sekundo, od 20 sekund po odprtju daljinskega upravljalnika naprej, samo pove, ali daljinski upravljalnik sprejema podatke, in ne nosi nobenega ukaza.
-
-1. Nastavitve, Napredno, «Diagnostika povezave DJI (poskusno)» je privzeto vklopljena (na televizorju nikoli); ploščica «Povezava DJI» je v Knjižnica, Omrežne skupne rabe.
-2. Vklopite dron in daljinski upravljalnik, zaprite DJI Fly, nato odprite ploščico Povezava DJI in preberite varnostno obvestilo.
-3. Dotaknite se «Začni zajem», nato priključite daljinski upravljalnik z njegovim kablom. Če Android vpraša, katera aplikacija naj ga odpre, izberite Immuch360 brez «Vedno», kar bi daljinski upravljalnik odvzelo aplikaciji DJI Fly; če vpraša za način USB, izberite samo polnjenje.
-4. Stanje prikaže «Dodatek odprt», nato «Prihajajo okvirji daljinca», videoposnetek pa sledi v nekaj sekundah. Gumb na sliki ga prikaže čez cel zaslon, razdelek «Let in baterija» pa navede podatke daljinskega upravljalnika in drona.
-5. «Izvozi zajem» zapiše tri datoteke v `Download/Immuch360/dji-link`; «Predvajaj zajem» znova predvaja izvoz na strani, brez daljinskega upravljalnika, da vidite, kako dobro naprava dekodira videoposnetek drona.
-
-Fotografij in videoposnetkov drona ni mogoče doseči prek daljinskega upravljalnika, ki ne odpre shrambe drona: kopirajte jih neposredno z drona prek USB ali z njegove kartice, kot v [razdelku zgoraj](#your-dji-drones-photos-and-videos-on-your-immich-server). Na Meta Quest je stran prav tako na voljo, vendar videoposnetek drona v živo še ne doseže slušalk. Izvožene datoteke obdržite zase, kot pravi stran, saj vsebujejo serijsko številko daljinskega upravljalnika; poročilo v [Issues](https://github.com/freeKC/Immuch360/issues) s stanji in števci, ki jih stran prikaže, pomaga, predvsem z drugimi daljinskimi upravljalniki DJI.
 
 <a id="devices-and-systems"></a>
-## Naprave in sistemi
+<a id="what-each-screen-does"></a>
+### What each screen does
 
-Ena koda, šest okolij in ločena aplikacija za televizorje LG, s prvo testno različico za televizorje Samsung. Kaj ima vsako od njih danes:
+One code base for the phones, tablets, Android TV, the Meta Quest and the computers, and a separate TV app for LG TVs, also packaged for Samsung TVs as a test build. What each one has today:
 
-| Zmožnost | Android | iPhone, iPad | Android TV | LG webOS | Quest |
-|---|:---:|:---:|:---:|:---:|:---:|
-| Galerija, albumi, iskanje s strežnikom Immich | ✅ | ✅ | ✅ pregled | ✅ pregled | ✅ |
-| Prijava s telefonom (koda QR) | ✅ skenira kodo | 🔜 naslednja izdaja za iOS | ✅ | ✅ v brskalniku telefona | ✅ koda, vtipkana na telefonu |
-| Brez strežnika: lastni mediji naprave | ✅ | ✅ | samo skupne rabe | ❌ | ✅ |
-| Ravne fotografije in videoposnetki | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Zasuk fotografije z eno tipko | ✅ | ✅ | ✅ barvne tipke | ✅ barvne tipke | ✅ okno |
-| Fotografije 360° kot krogla | ✅ | ✅ | ✅ | ✅ | ✅ poglobljeno |
-| Videoposnetki 360° | ✅ | ✅ brez vrstice časa | ✅ sporočilo, če ni dekodirljiv | samo ravno | ✅ poglobljeno |
-| 3D in VR180 | ✅ eno oko | ✅ eno oko | ✅ eno oko | fotografije eno oko, videoposnetki ravno | ✅ resnični 3D |
-| Spatial 2.5D (sledenje glave) | ✅ poskusno | ✅ poskusno | ❌ | ❌ | ❌ |
-| Prostorske fotografije Apple | ✅ eno oko | ✅ eno oko | ✅ eno oko | ❌ | ✅ 3D |
-| Izvorne datoteke Insta360, GoPro in DJI | ✅ | ✅ | ✅ | ❌ | ✅ |
-| Skupne rabe SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ SMB od webOS 22, WebDAV in DLNA od webOS 5 | ✅ |
-| Plex Media Server | ✅ | ✅ | ✅ | ✅ od webOS 5 | ✅ |
-| Kamere Tapo: posnetki | ✅ | ✅ | ✅ | 🔜 ne pred decembrom 2026 | ✅ |
-| Kamere Tapo: ogled v živo | ✅ | 🔜 naslednja izdaja za iOS | ✅ | ✅ samo slika, od webOS 5 | ✅ |
-| Delite to napravo v omrežju | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Nalaganje v Immich iz skupnih rab in naprave | ✅ | ✅ | ❌ | ❌ | ✅ |
-| Uvoz z drona DJI ali kartice prek USB (poskusno) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Povezava DJI: videoposnetek drona v živo (poskusno) | ✅ z RC-N3 | ❌ | ❌ | ❌ | diagnostika; v živo 🔜 |
-| Temna tema | kot sistem | kot sistem | ✅ privzeto | ✅ edina tema | kot sistem |
-| Vnos | dotik, žiroskop | dotik, žiroskop | daljinski upravljalnik; levo in desno tudi med videoposnetkom in na njegovi vrstici časa, Menu za podrobnosti | daljinski upravljalnik, Magic Remote | krmilniki, roke |
-| Kje jo dobite | Google Play, APK | App Store (v pregledu) | APK, Google Play (v pregledu) | testna različica .ipk, Developer Mode | Horizon Store, APK |
+| Capability | Android | iPhone, iPad | Android TV | LG webOS | Samsung Tizen | Quest |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ viewer | ✅ |
+| Sign in with your phone (QR code) | ✅ scans the code | 🔜 next iOS release | ✅ | ✅ in the phone's browser | ❌ typed on the TV | ✅ code typed on the phone |
+| Without a server: the device's own media | ✅ | ✅ | shares only | ❌ | ❌ | ✅ |
+| Flat photos and videos | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Rotate a photo with one key | ✅ | ✅ | ✅ colour keys | ✅ colour keys | ✅ | ✅ window |
+| 360° photos as a sphere | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ immersive |
+| 360° videos | ✅ | ✅ no time bar | ✅ message if not decodable | flat only | flat only | ✅ immersive |
+| 3D and VR180 | ✅ one eye | ✅ one eye | ✅ one eye | photos one eye, videos flat | photos one eye, videos flat | ✅ true 3D |
+| Spatial 2.5D (head tracking) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ | ❌ |
+| Apple spatial photos | ✅ one eye | ✅ one eye | ✅ one eye | ❌ | ❌ | ✅ 3D |
+| Raw Insta360, GoPro and DJI files | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ | ✅ SMB from webOS 22 | ❌ | ✅ |
+| Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Tapo cameras: recordings | ✅ | ✅ | ✅ | 🔜 not before December 2026 | ❌ | ✅ |
+| Tapo cameras: live view | ✅ | 🔜 next iOS release | ✅ | ✅ video only | ❌ | ✅ |
+| Share this device on the network | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Upload to Immich from shares and the device | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Import from a DJI drone or a card over USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| The DJI drone's live video (experimental) | ✅ with an RC-N3 | ❌ | ✅ relayed by a phone | ❌ | ❌ | ✅ relayed by a phone |
+| Dark theme | as the system | as the system | ✅ by default | ✅ only theme | ✅ only theme | as the system |
+| Input | touch, gyroscope | touch, gyroscope | remote; Left and Right also during a video and on its time bar, Menu for the details | remote, Magic Remote | remote | controllers, hands |
+| Where to get it | Google Play, APK | App Store (in review) | APK, Google Play (in review) | .ipk, LG Content Store (in review) | .wgt test build, signed by you | Horizon Store, APK |
 
 | Zmožnost | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
@@ -337,54 +129,47 @@ Ena koda, šest okolij in ločena aplikacija za televizorje LG, s prvo testno ra
 | Delite to napravo v omrežju | ✅ | ❌ | ❌ |
 | Nalaganje v Immich iz skupnih rab in naprave | ✅ | 🔧 CI | 🔧 CI |
 | Uvoz z drona DJI ali kartice prek USB (poskusno) | ❌ | ❌ | ❌ |
-| Povezava DJI: videoposnetek drona v živo (poskusno) | ❌ | ❌ | ❌ |
+| The DJI drone's live video (experimental) | ❌ | ❌ | ❌ |
 | Temna tema | kot sistem | kot sistem | kot sistem |
 | Vnos | miška, tipkovnica | miška, tipkovnica | miška, tipkovnica, sledilna ploščica |
 | Kje jo dobite | namestitveni program ali ZIP (podpisano, poskusno) | .deb, .rpm (poskusno) | DMG ali ZIP (poskusno, nepodpisano) |
 
-✅ v aplikaciji na tej platformi · ❌ tam ni na voljo · 🔜 načrtovano · 🔧 CI v izvorni kodi, zgrajeno in zagnano s CI projekta na tem sistemu, tam še ni preverjeno z resničnim strežnikom, skupno rabo ali kamero · samo ravno: videoposnetek se predvaja ravno, s sporočilom, ker je izrisovalnik videoposnetkov 360° za računalnike samo za Windows, na televizorjih LG pa je treba še izmeriti, ali webOS posreduje video okvirje krogli. «Eno oko» pomeni, da datoteka 3D na ravnem zaslonu prikaže svoje levo oko. Stolpec LG webOS je ločena aplikacija, testna različica 0.2.0: 0.1.0 je tekla na televizorju LG enega od preizkuševalcev, skupne rabe, Plex in kamere različice 0.2.0 pa so bili preverjeni z resničnimi strežniki na gradbenem računalniku projekta, na televizorju še ne. Ne vsak ✅ je bil že preverjen na resnični napravi: kaj je bilo preverjeno in kje ter kaj še ostaja potrditi, je v [Funkcijah](../docs/immuch360/features.md), [Podpori platform](../docs/immuch360/platform-support.md) in [Združljivosti](../docs/immuch360/compatibility.md).
+✅ in the app on that platform · ❌ not offered there · 🔜 planned · 🔧 CI in the sources, built and started by the project's CI on that system, not checked with a real server, share or camera there yet · flat only: the video plays flat, with a message, because the 360° video renderer of the computers is Windows only; on LG TVs, whether webOS hands video frames to the sphere is still to be measured; on a tester's Samsung TV, the browser gave black video frames to the 3D view. "One eye" means a 3D file shows its left eye on a flat screen. The LG and Samsung columns are one separate TV app: LG version 1.0.0, whose shares and Plex were checked against real servers and its cameras against a simulated camera on the project's build host, not on a TV yet, and Samsung test build 0.2.0. Not every ✅ has been checked on a real device yet: what was checked where, and what remains to confirm, is in [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) and [Compatibility](../docs/immuch360/compatibility.md).
 
 - **Telefoni in tablice Android**: popolna aplikacija, dotik in žiroskop, vsi viri.
 - **iPhone in iPad**: popolna aplikacija; predvajalnik videoposnetkov 360° ima le predvajanje in premor, ogled v živo Tapo in telefonski del prijave s telefonom prideta z naslednjo izdajo za iOS, iskanje DLNA pa pošilja enojne zahteve (unicast), dokler Apple ne dovoli večsmernega oddajanja (multicast).
-- **Android TV in Google TV**: isti APK, upravljan z daljinskim upravljalnikom, privzeto temen; pregledovalnik: varnostno kopiranje, nalaganje in urejevalnik so skriti in podrobnosti so samo za branje, vendar se fotografija še vedno zasuka z eno tipko. Vsak filter iskanja deluje z daljinskim upravljalnikom: Lokacija in Kamera odpreta svoje izbire na seznamu, filter datuma prikaže vse svoje izbire, plošče Oznake, Lokacija, Datum, Vrsta medija, Ocena z zvezdicami in Možnosti prikaza pa postavijo Počisti in Uporabi poleg izbir, en pritisk desno stran, na večini višine zaslona. Mreža fotografij porabi manj pomnilnika za slike, pridržana puščica pa jo premika največ približno 10 vrstic na sekundo. Od različice 28 se prijavi s telefonom, z njegovo kodo QR ali s kratko kodo (preizkušeno med dvema emulatorjema z vtipkano kodo, s kamero pa še ne). Od različice 29 vrstica časa videoposnetka dobi fokus daljinskega upravljalnika, filmi dobijo menija za zvok in podnapise, naslednja datoteka v skupni rabi pa se odpre s svojimi kontrolniki. Preverjeno na emulatorju Google TV; različica 28 je tekla na resničnem Android TV 23. oktobra, težave z videoposnetki, najdene tam, pa so popravki različice 29, preverjeni na emulatorju, na tem televizorju pa še ne.
-- **Televizorji LG s sistemom webOS 4.0 in novejšim**: ločena aplikacija za daljinski upravljalnik in Magic Remote, zgrajena na [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): pregledovalnik Immich s fotografijami 360° na krogli, sukanjem fotografije z eno tipko, temno temo in 89 jeziki aplikacije (redka besedila same aplikacije za TV so zaenkrat v angleščini); od različice 0.2.0 omrežne skupne rabe, Plex in ogled kamer Tapo v živo, prek lastne storitve na televizorju (webOS 5 in novejši, SMB od webOS 22); videoposnetki 360° ravno. Različica 0.1.0 je tekla na televizorju LG enega od preizkuševalcev (webOS 22); 0.2.0 je bila preverjena s svojimi testi in z resničnimi strežniki na gradbenem računalniku projekta, na televizorju pa še ne.
-- **Televizorji Samsung s sistemom Tizen 5.5 in novejšim**: aplikacija za televizorje LG, zapakirana za televizorje Samsung, testna različica 0.1.0, ki jo podpišete in namestite sami: pregledovalnik Immich za daljinski upravljalnik, s prijavo z vnosom (naslov strežnika, nato e-pošta in geslo ali ključ API), z diaprojekcijo, fotografijami 360° na krogli, sukanjem fotografije z eno tipko in stranjo O aplikaciji, ki pove, kaj televizor podpira; še brez prijave s telefonom, skupnih rab, Plexa ali kamer; videoposnetki 360° ravno. Preverjeno v headless Chromium 69, 76 in 94, pogonih Tizen 5.5, 6.0 in 7.0, s strežnikom Immich; ni še tekla na televizorju Samsung niti na Samsungovem emulatorju.
-- **Meta Quest 2, Pro, 3 in 3S**: aplikacija kot okno, poleg poglobljenega pogleda; HEVC je varen kodek, H.264 se ustavi okoli 4096x2304 na Quest 3; preizkušen je samo Quest 3, Quest 2, Quest Pro in Quest 3S še niso preizkušeni.
+- **Android TV and Google TV**: the same APK, driven by the remote, dark by default; a viewer: backup, uploads and the editor are hidden and the details are read only, but a photo still turns with one key. Every search filter works with the remote: Location and Camera open their choices in a list, the date filter shows all its choices, and the Tags, Location, Date, Media Type, Star Rating and Display options sheets put Clear and Apply beside the choices, one Right away, on most of the screen height. The photo grid uses less image memory, and a held arrow moves it at most about 10 rows a second. From build 28 it signs in from a phone, by its QR code or its short code (tried between two emulators with the code typed, not yet with a camera). From build 29 the time bar of a video takes the focus of the remote, films get audio and subtitle menus, and the next file of a share opens with controls of its own. Checked on the Google TV emulator; build 28 ran on a real Android TV on 23 October, and the video problems found there are the fixes of build 29, checked on the emulator, not yet on that TV. From build 30, its Drone card shows the live video of a DJI drone that a phone relays, with the drone's values and obstacle ring (experimental): the pairing and the picture were tried on a TCL Android TV on 25 October, with stutter and a green cast on the earlier relay; the steady stream that answers them is first tested with build 30.
+- **LG TVs with webOS 5.0 and later**: a separate app for the remote and the Magic Remote, built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): an Immich viewer with the 360° photos on a sphere, a photo turned with one key, a dark theme and the 89 languages of the app (the few texts of the TV app itself in English for now); the network shares, Plex and the live view of Tapo cameras, through its own service on the TV (SMB from webOS 22); 360° videos flat. Version 1.0.0, submitted to the LG Content Store on 24 October, ran on webOS 25 TVs of three models in LG's Cloud Test Lab: sign in, the phone sign in page, photos, albums, a video, the 360° view, the slideshow, a search and Back from every page. Version 0.1.0 ran on a tester's LG TV (webOS 22). The shares and Plex were checked against real servers and the cameras against a simulated camera on the project's build host, not on a TV yet.
+- **Samsung TVs with Tizen 5.5 and later**: the LG TV app packaged for Samsung TVs, test build 0.2.0, to sign and install yourself: an Immich viewer for the remote, signed in by typing (the server address, then an email and password or an API key), with the slideshow, the 360° photos on a sphere, a photo turned with one key and an About page that tells what the TV supports; no sign in with a phone, shares, Plex or cameras yet; 360° videos flat, with a notice. Version 0.1.0 ran on a tester's Samsung TV on Tizen 9: photos and videos up to 4K played, nothing above 4K decoded, and the browser of the TV gave black video frames to the 3D view. Version 0.2.0 holds the fixes from that run (a message for a video above the TV's decoders or one that stalls, 360° videos flat with a notice) and has not run on a TV yet.
+- **Meta Quest 2, Pro, 3 and 3S**: the app as a window, plus the immersive view and, from build 30, a Drone card that shows the live video of a DJI drone relayed by a phone (experimental), first tested with build 30; HEVC is the safe codec, H.264 stops around 4096x2304 on the Quest 3; only the Quest 3 is tested, the Quest 2, Quest Pro and Quest 3S are not tested yet.
 - **Windows 10 in 11**: poskusna različica, z mapami namesto galerije, lastnim predvajalnikom videoposnetkov (libmpv) za ravne in 360° videoposnetke, izvornimi datotekami, sešitimi na grafičnem čipu, datotekami in mapami, odprtimi s programom ali spuščenimi v okno, ter namestitvenim programom ali ZIP-om, ki ju je podpisal APROGSYS.
 - **Linux**: .deb in .rpm, zgrajena s CI projekta, nameščena in preverjena na Ubuntu 22.04 in 24.04, Debian 12 ter Fedora 40 in 44; fotografije, fotografije 360° in ravni videoposnetki prek sistemske libmpv (videoposnetki 360°, 3D in izvorni se predvajajo ravno, s sporočilom), od namizne zgradbe 7 izrisani po strojni poti tudi v sejah X11; skupne rabe SMB od Ubuntu 22.04 in Debian 12 naprej; brez shrambe ključev (GNOME Keyring ali KWallet) aplikacija ob prvem zagonu ne zamrzne več za 25 s: gesla hrani samo za sejo in to navede v svojih nastavitvah; še ni zagnano na resničnem računalniku z Linuxom, samo pod WSLg in v vsebnikih.
 - **macOS**: DMG in ZIP, zgrajena s CI projekta, univerzalna, nepodpisana (Gatekeeper enkrat vpraša); aplikacija se zažene, odpre datoteke in mape, ki jih prejme, tudi iz Finderja, hrani svoje skrivnosti v prijavni verigi ključev in predvaja ravne videoposnetke z lastno libmpv, vse preverjeno samo na Macu v CI projekta; na resničnem Macu se še ni nič izvajalo.
 
-<a id="advanced-features"></a>
-## Napredne funkcije
+<a id="what-you-can-do"></a>
+## Kaj lahko počnete
 
-Kaj aplikacija lahko prebere in predvaja, za bralca, ki želi celoten obseg. Vsaka vrstica je podrobno opisana v [uporabniškem vodniku](../docs/immuch360/user-guide.md) in na [strani združljivosti](../docs/immuch360/compatibility.md).
+Each line opens its how to below. The full guide, with every option, message and limit, is in the [user guide](../docs/immuch360/user-guide.md).
 
-- **Formati**: ravne fotografije in videoposnetki (kar naprava dekodira: MP4, MOV, MKV in drugo); ekvirektangularne fotografije in videoposnetki 360°; delne panorame (izrez GPano); VR180; stereoskopski 3D, zgoraj in spodaj ali drug ob drugem, prebran iz datoteke (polje st3d) ali ugotovljen iz slike; prostorske fotografije Apple (stereo pari HEIC) in prostorski videoposnetki (MV-HEVC, eno oko); izvorne datoteke Insta360 .insp in .insv, GoPro .360, DJI .osv; 10-bitni viri HLG in PQ s preslikavo tonov na krogli.
-- **Projekcija in metapodatki**: metapodatki GPano in sferični metapodatki se preberejo iz datoteke, z zahtevami po razponih na strežniku ali skupni rabi; začetni pogled kamere; krogle dronov DJI, prepoznane po kameri, z neobvezno spremno datoteko .xmp, da jih označi tudi Immich; «Prikaži kot 360°» si naprava zapomni; VR180 se prepozna iz datoteke ali njenega imena; kraj videoposnetka drona se prebere iz njegovega dnevnika leta .SRT; metapodatki ostanejo nedotaknjeni, saj se predvaja izvirna datoteka, nikoli pretvorjena kopija; četrtinski zasuk se shrani prek urejevalnika Immich ali ostane na napravi, nikoli na poglobljeni datoteki.
-- **Izvorno predvajanje**: Media3 na Android in televizorju, SceneKit in AVFoundation na iOS, Meta Spatial SDK v slušalkah, libmpv na Windows; izvirnik ali pretvorjeni pretok se izbere glede na to, kaj naprava dekodira; seznam video dekodirnikov naprave je v Nastavitvah, Napredno; izbira zvočne sledi, podnapisi v predvajalniku Android in kazalnik medpomnjenja.
-- **Izvorne datoteke, sešite na napravi**: Flutter fragment shader za fotografije; GPU učinek v predvajalniku za videoposnetke z eno sledjo; dva strojna dekodirnika hkrati in GPU compositor za videoposnetke z enim objektivom na sled ali datoteko (OpenGL ES 3 na Android in Quest, Metal na iOS, na Windows pa od namizne različice 5 dva predvajalnika libmpv, katerih slike aplikacija poveže na grafičnem čipu); lastna kalibracija kamere (modeli Mei, V6 in equidistant) ter zapis pospeškometra; naprava preide na en objektiv, pretvorjeni pretok, kopijo LRV kamere ali nesešit videoposnetek, kadar ne zmore pognati dveh dekodirnikov.
-- **Viri**: galerija naprave; mape računalnika; dron ali kartica fotoaparata prek USB, prek sistemskega izbirnika map (Android, poskusno); daljinski upravljalnik DJI RC-N3 prek njegovega kabla za videoposnetek drona v živo (Android, poskusno); strežnik Immich; SMB 2 in 3, WebDAV, DLNA/UPnP; Plex prek HTTPS, preverjen z lastnim potrdilom strežnika; kamere Tapo prek lokalnega omrežja (HTTPS in RTSP); telefon ali računalnik, ki se deli po Wi-Fi-ju kot strežnik WebDAV; strežniki, najdeni prek Bonjour/mDNS, pregleda lokalnega omrežja, SSDP, GDM in odkrivanja TP-Link, ter sledeni, ko spremenijo naslov.
-- **Branje na zahtevo**: lokalni most streže predvajalnikom z razponi bajtov in žetonom za vsako sejo; velikimi bloki, vnaprejšnjim branjem in do šestimi vzporednimi povezavami SMB; sličicami iz slike vsakega videoposnetka; nič se ne kopira na napravo.
-- **Strojna oprema**: strojni dekodirniki se uporabljajo, kjer obstajajo, z njihovimi izmerjenimi omejitvami (meja H.264 na Quest 3, največ dva objektiva 2048x2048 za programske dekodirnike); na Windows grafični čip iz vsake dekodirane slike izriše pogled 360°, velikost slike se izmeri na vsakem računalniku, zazna se integriran ali namenski čip.
-- **Posebnosti platform**: žiroskop in predvajalnik Spatial 2.5D na telefonih; poglobljen pogled, krmilniki in roke na Quest; postavitev za daljinski upravljalnik, pogovorno okno s tipkovnico in pasica za Android TV; na računalniku miška in tipkovnica, celoten zaslon, eno okno, datoteke in mape, odprte s programom ali spuščene v njegovo okno, brane kot datoteke vaših map, HEIC, AVIF, TIFF in surove fotografije kamere iz vaših map, kadar ima Windows zanje dekodirnik, ter zaščita podatkov Windows za gesla in žetone.
-- **Zasebnost po zasnovi**: brez računa, brez oblaka, brez analitike; gesla in žetoni v varni shrambi naprave (na televizorjih LG in Samsung, ki za aplikacijo nimajo varne shrambe, v lastni shrambi aplikacije, nešifrirano); zaslon, prijavljen s telefona, dobi lastno sejo, poslano šifrirano po domačem omrežju, nikoli gesla (televizor LG dobi geslo s strani v brskalniku telefona, nešifrirano po domačem omrežju, in obdrži samo sejo); kamera predvajalnika Spatial in bralnika kod se uporablja samo na napravi; skupne rabe, Plex in kamere so dosegljivi samo v vašem omrežju.
-
-<a id="technical-documentation"></a>
-## Tehnična dokumentacija
-
-- [Funkcije: celoten seznam in matrika funkcij po platformah](../docs/immuch360/features.md)
-- [Uporabniški vodnik: vsaka funkcija, korak za korakom, z njenimi možnostmi in sporočili](../docs/immuch360/user-guide.md)
-- [Združljivost: preverjeni formati, kodeki, dekodirniki, strežniki in naprave, omejitve](../docs/immuch360/compatibility.md)
-- [Podpora platform: kaj ima vsak sistem, kako se namesti, kaj se razlikuje](../docs/immuch360/platform-support.md)
-- [Znane težave](../docs/immuch360/known-issues.md) in [Odpravljanje težav](../docs/immuch360/troubleshooting.md), z dnevniki, ki jih je treba dodati k poročilu
-- [Tehnične podrobnosti: arhitektura, moduli Flutter in izvorni moduli, medijski most, cevovod sešivanja, dekodirniki](../docs/immuch360/technical-details.md)
-- [Namizni izrisovalnik videoposnetkov 360°: libmpv, prehod projekcije in meritve, ki stojijo za njim](../docs/immuch360/desktop-360-video-renderer.md)
-- [Stanje izdaje: zgradbe, trgovine in kaj ima vsaka trgovina](../docs/immuch360/release-status.md)
-- [Zgradite sami: telefoni, slušalke, televizorji in računalniki](../docs/immuch360/build.md)
-- [Immuch360 za televizorje LG webOS: namestitev v načinu Developer Mode, tipke daljinskega upravljalnika, glave CORS](../webos/README.md)
+1. [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server): a gallery and a player, on the device alone or with your Immich server.
+2. [Look around 360° photos and videos, panoramas, VR180 and 3D](#explore-panoramas-360-vr180-and-3d): a sphere you turn with a finger, the phone or the remote.
+3. [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): Android TV and Google TV, LG TVs, and Samsung TVs as a test build.
+4. [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): scan its QR code, confirm, watch.
+5. [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° all around you, 3D in true 3D.
+6. [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): in place, nothing copied.
+7. [Keep your Immich library, with more](#keep-your-immich-library-with-more): the Immich mobile app, plus the immersive viewers and the big screens.
+8. [Watch your Tapo cameras](#watch-your-home-cameras-on-the-big-screen): live, and the recordings of their memory card; not yet checked with a real camera.
+9. [See your DJI drone's live video on your phone](#see-what-your-drone-sees-on-your-phone), and [in a Meta Quest or on an Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): through a DJI RC-N3 remote, receive only. *Experimental.*
+10. [Bring a drone's or a camera card's photos and videos to Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): over USB, from an Android phone. *Experimental.*
+11. [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX and DJI Osmo 360, stitched by the app.
+12. [Turn a photo with one key](#turn-a-photo-with-one-key): a button, a key of the keyboard or a colour key of the remote.
+13. [Use your computer as the media player](#use-your-computer-as-the-media-player): your folders, Open with, a file dropped on the window. *Preview.*
 
 <a id="install"></a>
-## Namestitev
+<a id="get-it-on-your-device"></a>
+## Get it on your device
+
+Take the app from the store of your device where it is published, or from the [Releases](https://github.com/freeKC/Immuch360/releases) page meanwhile.
 
 ### Telefoni in tablice Android
 
@@ -407,17 +192,18 @@ Kaj aplikacija lahko prebere in predvaja, za bralca, ki želi celoten obseg. Vsa
 <a id="lg-tvs-webos"></a>
 ### Televizorji LG (webOS)
 
-1. Potrebujete televizor LG s sistemom webOS 4.0 ali novejšim, računalnik v istem omrežju in brezplačen razvijalski račun LG. Na televizor namestite Developer Mode iz LG Content Store, se prijavite, vklopite Dev Mode Status in pustite, da se televizor znova zažene; zapišite si njegov naslov IP in geslo (passphrase), ki ga prikaže aplikacija.
+1. Version 1.0.0 is waiting for LG's review. Until it is on the LG Content Store, it installs in Developer Mode: you need an LG TV with webOS 5.0 or later, a computer on the same network and a free LG developer account. On the TV, install Developer Mode from the LG Content Store, sign in, turn Dev Mode Status on and let the TV restart; note its IP address and the passphrase the app shows.
 2. Na računalnik namestite webOS CLI (Node.js 18 ali novejši): `npm install -g @webos-tools/cli`, nato registrirajte televizor z `ares-setup-device` (njegov naslov IP, vrata 9922, uporabnik `prisoner`) in `ares-novacom --device <name> --getkey`, ki vpraša za geslo.
-3. Prenesite `Immuch360-webOS-0.2.0.ipk` iz [predizdaje webOS](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0), jo preverite z `SHA256SUMS.txt`, nato zaženite `ares-install --device <name> Immuch360-webOS-0.2.0.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) skupnosti webosbrew naredi isto brez ukazne vrstice.
+3. From the [webOS 1.0.0 pre-release](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0), download `Immuch360-webOS-1.0.0.ipk` for a UHD TV, or `Immuch360-webOS-1.0.0-1280x720.ipk` for a Full HD TV, to which LG gives 1280x720 apps. Check it against `SHA256SUMS.txt`, then `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`. The [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) of webosbrew does the same without the command line.
 4. Seja Developer Mode traja 1000 ur, gumb EXTEND v aplikaciji Developer Mode pa jo podaljša; ko poteče, televizor odstrani aplikacije, nameščene na ta način. Podrobnosti so v [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
+5. Once the app is on the LG Content Store, remove the Developer Mode copy and install it from the store.
 
 <a id="samsung-tvs-tizen"></a>
 ### Televizorji Samsung (Tizen)
 
-1. Potrebujete televizor Samsung s sistemom Tizen 5.5 ali novejšim (modeli od leta 2020), računalnik v istem omrežju in račun Samsung. Na televizorju: Aplikacije, Nastavitve aplikacij, vtipkajte 12345, vklopite Developer mode, vnesite naslov IP računalnika in nato znova zaženite televizor.
-2. Prenesite `Immuch360-Tizen-0.1.0.wgt` iz [predizdaje Tizen](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.1.0) in jo preverite z `SHA256SUMS.txt`. Televizor Samsung namesti samo aplikacijo, podpisano zanj, zato je treba paket znova podpisati s potrdilom Samsung, ki navaja DUID vašega televizorja: [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung), orodje skupnosti, prebere DUID, podpiše paket z vašim računom Samsung in ga namesti; Tizen Studio s Samsung Certificate Extension naredi isto ročno.
-3. Odprite aplikacijo in se prijavite tako, da vtipkate naslov strežnika, nato e-pošto in geslo ali ključ API. «O tem televizorju» prikaže, kaj televizor podpira, kot besedilo in kot kodo QR: to besedilo, objavljeno v [Issues](https://github.com/freeKC/Immuch360/issues) skupaj s tem, kar ne deluje, pomaga najbolj.
+1. Test build 0.2.0 is not on Samsung's store: you install it yourself. You need a Samsung TV with Tizen 5.5 or later (2020 models and later), a computer on the same network and a Samsung account. On the TV: Apps, App Settings, type 12345, turn Developer mode on, enter the IP address of the computer, then restart the TV.
+2. Download `Immuch360-Tizen-0.2.0.wgt` from the [Tizen pre-release](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) and check it against `SHA256SUMS.txt`. A Samsung TV installs only an app signed for it, so the package must be signed again with a Samsung certificate that lists the DUID of your TV: [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung), a community tool, reads the DUID, signs the package with your Samsung account and installs it; Tizen Studio with the Samsung Certificate Extension does the same by hand.
+3. Open the app and sign in by typing your server address, then your email and password or an API key. About this TV shows what the TV supports, as text and as a QR code: that text, posted in [Issues](https://github.com/freeKC/Immuch360/issues) or [Discussions](https://github.com/freeKC/Immuch360/discussions) with what does not work, helps the most.
 
 <a id="meta-quest"></a>
 ### Meta Quest
@@ -429,45 +215,409 @@ Kaj aplikacija lahko prebere in predvaja, za bralca, ki želi celoten obseg. Vsa
 <a id="windows"></a>
 ### Windows
 
-1. Prenesite datoteko `Immuch360-Desktop-3.3.0-rc.0-desktop.10-windows-x64-setup.exe` iz [namizne predizdaje](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) (s datoteko `SHA256SUMS.txt`, da jo preverite) in jo odprite. Namestitveni program in ZIP sta podpisana; Windows kot izdajatelja prikaže APROGSYS. Dokler je izdajatelj za SmartScreen nov, lahko še enkrat vpraša: «Dodatne informacije», nato «Vseeno zaženi».
+1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.11-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) (with `SHA256SUMS.txt` to check it) and open it. The installer and the ZIP are signed; Windows shows APROGSYS as the publisher. While the publisher is new to SmartScreen, it may still ask once: "More info", then "Run anyway".
 2. Izberite «Namesti samo zame» (brez skrbniških pravic) ali «Namesti za vse uporabnike», nato jezik namestitvenega programa, ki je privzeto že nastavljen na jezik Windows.
 3. Zaženite Immuch360 Desktop iz menija Start. Fotografije in videoposnetki ga dobijo v meniju «Odpri z» (z desnim klikom na datoteko, Odpri z); nikoli se ne nastavi kot njihov privzeti program. Prvi zagon nove zgradbe lahko traja do minuto, medtem ko Windows pregleduje datoteke.
 4. Windows 10 ali 11, 64-bitni. Za posodobitev odprite namestitveni program naslednje zgradbe: vaša prijava, mape in nastavitve ostanejo. ZIP iste izdaje je isti program kot mapa: razpakirajte ga kjer koli in iz njega zaženite `immuch360.exe`. Na računalniku, kjer so se namizne zgradbe od 4 do 8 ob zagonu ustavile pri «duplicate column name: group_date», zgradba 9 odpre to zbirko podatkov in ohrani vaše podatke.
 
 ### Linux
 
-Na Ubuntu 22.04 ali novejšem in Debian 12 ali novejšem: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.10-linux-amd64.deb`; na Fedora 40 ali novejšem: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.10-linux-x86_64.rpm`, oboje iz [namizne predizdaje](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10). Nato zaženite Immuch360 Desktop iz svojih aplikacij. Poskusna različica: mape računalnika, fotografije in fotografije 360° kot krogla ter ravni videoposnetki prek sistemske libmpv, ki jo namesti paket (videoposnetki 360°, 3D in izvorni se predvajajo ravno, s sporočilom); skupne rabe SMB delujejo od Ubuntu 22.04 in Debian 12 naprej. Na Fedori videoposnetki kamer potrebujejo FFmpeg iz RPM Fusion. Brez GNOME Keyring ali KWallet se gesla hranijo samo za sejo, kar navajajo tudi nastavitve aplikacije.
+On Ubuntu 22.04 or later and Debian 12 or later: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-amd64.deb`; on Fedora 40 or later: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-x86_64.rpm`, both from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11). Then start Immuch360 Desktop from your applications. A preview: the folders of the computer, photos and 360° photos as a sphere, and flat videos through the system's libmpv, which the package installs (360°, 3D and raw videos play flat, with a message); SMB shares work from Ubuntu 22.04 and Debian 12 on. On Fedora, camera videos need the FFmpeg of RPM Fusion. Without GNOME Keyring or KWallet, the passwords are kept for the session only, and the settings of the app say so.
 
 ### macOS
 
-Odprite `Immuch360-Desktop-3.3.0-rc.0-desktop.10-macos.dmg` iz [namizne predizdaje](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-10) in povlecite aplikacijo v Applications (Apple silicon in Intel, macOS 12 ali novejši). Še ni podpisana niti notarizirana: pridržite Control in jo kliknite, nato izberite Odpri na macOS 14 in starejših, ali izberite «Vseeno odpri» v Sistemskih nastavitvah, Zasebnost in varnost na macOS 15 in novejših. Nihče, ki dela na projektu, nima Maca: aplikacija je bila zagnana samo na Macu v CI projekta, kjer odpira datoteke in mape ter predvaja ravne videoposnetke s svojo libmpv; njen dostop do omrežja ni bil preizkušen. Poročila so zaželena.
+Open `Immuch360-Desktop-3.3.0-rc.0-desktop.11-macos.dmg` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) and drag the app to Applications (Apple silicon and Intel, macOS 12 or later). It is not signed nor notarized yet: Control click it and choose Open on macOS 14 and earlier, or choose "Open Anyway" in System Settings, Privacy & Security on macOS 15 and later. Nobody working on the project has a Mac: the app was only run on the project's CI Mac, where it opens files and folders and plays flat videos with its own libmpv; its network access has not been tried. Reports are welcome.
+
+<a id="how-to"></a>
+## How to
+
+Each entry says what you get, then the steps, then the limits. The [user guide](../docs/immuch360/user-guide.md) has every option and message.
+
+<a id="watch-your-photos-and-videos"></a>
+<a id="use-your-own-files-without-an-account"></a>
+<a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
+### Watch your photos and videos, with or without a server
+
+Immuch360 is first a gallery and a player for ordinary photos and videos, and it needs neither an account nor a server. "Use without a server" opens the app on the photos and videos of the device, with every viewer, the 360° list and the network sources, and nothing leaves the device. With an Immich server, the timeline, the albums, the favorites, the memories and the search come from it. Videos play in a native player with sound, seeking, a buffering indicator and a choice of audio tracks, in the 360°, Spatial and computer players and, from build 29, in the flat player of the Android app, which shows subtitles too.
+
+<img src="../.github/readme/b19-library-no-server.png" width="260" alt="Zavihek Knjižnica brez strežnika: vnos 360° na vrhu, nato Na tej napravi z dvema fotografijama 360° in Omrežne skupne rabe s skupno rabo z imenom NAS">
+
+1. Open the app. The welcome page shows "Your media. Any screen. Every perspective." and three choices: tap the first one, "Use without a server". A server can be connected later, from Settings or the Library tab.
+2. Dovolite dostop do fotografij in videoposnetkov. Če ga zavrnete, aplikacija prikaže „Aplikacija ne vidi fotografij v tej napravi“ z gumboma „Dovoli dostop“ in „Odpri nastavitve“.
+3. The Photos tab shows the timeline of the device; Search and Albums stay greyed out, as they come from the server. The Library tab has 360° at the top, then On this device (the albums of the device) and Network shares. The menu at the top right says "This device only": nothing is sent anywhere.
+4. Tap a photo or a video to open it; swipe left and right to go to the next one, pinch or double tap to zoom. Swipe up on a video for its details: codec, size, frame rate, bit rate, and whether this device decodes it.
+5. On Android phones, tablets and TVs, from build 29, a film with several audio languages or with subtitles has an audio button and a subtitles button in its controls: the audio language you pick is kept for the next films, and subtitles stay off until you pick them, except forced ones. The Immich app's Android player has neither.
+
+Na računalniku vlogo galerije opravljajo mape, ki jih izberete; na televizorju, ki nima lastnih fotografij, to vlogo opravljajo omrežni viri.
+
+More: [without a server or an account](../docs/immuch360/user-guide.md#without-a-server-or-an-account), [the viewers and the video player](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [video details and decoders](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
+
+<a id="explore-panoramas-360-vr180-and-3d"></a>
+### Raziščite panorame, 360°, VR180 in 3D
+
+Immuch360 knows flat photos and videos, panoramas, 360° photos and videos, VR180, stereoscopic 3D, Apple spatial photos and the 360° spheres of DJI drones, and opens each one in the viewer that fits it. A 360° photo opens as a sphere you turn with a finger or by moving the phone; a 360° video plays in a spherical player with sound; VR180 files are drawn on a half sphere; stereoscopic 3D files show one eye on a flat screen and both eyes in a headset. Partial panoramas keep their crop, and the picture starts on the view the camera recorded. A file the server does not flag can be viewed as 360° with one tap.
+
+<p align="center">
+  <img src="../.github/readme/b19-sphere.jpg" width="260" alt="Fotografija 360° jezerske obale v sferičnem pregledovalniku: gumb za zapiranje levo zgoraj, gumbi 360°, Postavitev 3D in Žiroskop desno zgoraj">
+  <img src="../.github/readme/b19-video.png" width="420" alt="Videoposnetek 360° obalne ceste, ki se predvaja v predvajalniku 360° na ležeče obrnjenem telefonu: zapiranje in ime datoteke levo zgoraj, 360° in 3D desno zgoraj, prejšnji, nazaj, predvajaj, naprej in naslednji na sredini, časovni trak spodaj">
+</p>
+
+1. Odprite fotografijo ali videoposnetek. Datoteke 360° imajo na sličici značko 360°, zavihek Knjižnica pa ima seznam 360°, ki jih zbere, s filtri po obdobju, viru, vrsti in kameri.
+2. Dotaknite se 360° v zgornji vrstici. Povlecite za ogled okoli sebe, stisnite prste za povečavo, dotaknite se gumba za žiroskop za ogled okoli sebe z obračanjem telefona.
+3. Gumb 3D kroži med «Mono (ni 3D)», «3D, zgoraj in spodaj» in «3D, drug ob drugem»; gumb 360°/180° preklaplja med polno kroglo in polkroglo VR180.
+4. Za datoteko, ki se prikaže ravno, čeprav je 360°: ⋮ zgoraj desno, nato «Prikaži kot 360°».
+
+Na telefonih in tablicah lahko stereoskopski videoposnetek pridobi globino tudi na ravnem zaslonu: predvajalnik Spatial 2.5D uporablja sprednjo kamero za sledenje vaši glavi in prikaže pogled vmes med očesoma (poskusno). Prostorske fotografije Apple, posnete s iPhonom, so prepoznane in prikazane v 3D v Meta Quest.
+
+Več: [fotografije in videoposnetki 360°](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere), [3D in VR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos), [Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental), [prostorske fotografije in videoposnetki Apple](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos), [seznam 360°](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list).
+
+<a id="watch-on-the-tv-and-on-the-computer"></a>
+<a id="watch-on-the-tv-with-the-remote"></a>
+### Watch on the TV with the remote
+
+Your photos on the big screen, with the remote. The TV apps all work the same way: the arrows move the frame, OK opens, Back goes back, and in a 360° photo the arrows look around. A TV has no photos of its own, so it shows your Immich server and, on Android TV and LG TVs, your network shares, your Plex server and your cameras.
+
+- **Android TV and Google TV**: the Android app itself, build 30, from GitHub until Google Play offers it on TVs.
+- **LG TVs with webOS 5.0 and later**: a TV app of its own, version 1.0.0, waiting for LG's review on the LG Content Store.
+- **Samsung TVs with Tizen 5.5 and later**: the same TV app as on LG TVs, test build 0.2.0, which you sign and install yourself.
+
+<p align="center">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Illustration, not a capture: a large TV in a living room at dusk shows a grid of landscape photos beside a rail of icons, and a remote lies on the coffee table">
+</p>
+
+<a id="on-android-tv-and-google-tv"></a>
+#### On Android TV and Google TV
+
+The same Android app, in a dark theme from the first start, with the remote as the only input. In the viewer, Left and Right go to the previous or next photo or video, even while a video plays, and in a 360° photo or video the arrows look around.
+
+<p align="center">
+  <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Sferični pregledovalnik na Google TV: panorama 360° jezerske obale, gumb za zapiranje zgoraj levo, gumbi Oddalji, Približaj, 360° in 3D zgoraj desno, upravljanje s puščicami daljinskega upravljalnika">
+</p>
+
+1. Install the APK with adb, see [Install](#android-tv-and-google-tv). On the welcome page, choose "Add a network share or a media server" for a share, a Plex server or a camera, "Use without a server", or "Connect to an Immich server", whose page signs the TV in when you scan its QR code with your phone (see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
+2. In a viewer, the play and pause, rewind, fast forward, previous and next keys of the remote work. OK during a video shows the controls with play and pause selected, and a second OK pauses; the -10 s and +10 s buttons follow, then the audio and subtitles buttons when the film has them. From build 29, Down from play reaches the time bar: Left and Right move 10 s per press, faster while held, and OK plays or pauses. The controls and the date hide 5 s after the last key, and Left and Right then go to the previous or next file; on a share, that file opens in a page of its own, with controls that drive it. Videos no longer loop on a TV, unless you turn on Settings, Asset Viewer, Videos, Looping.
+3. The Menu key, the Info key or OK held down opens the details of the photo or video, read only: date, place, camera, codec, size and bit rate. A video the TV cannot decode says so, with its codec, its size and the limit of the TV's decoders, instead of loading forever; a 360° video beyond the decoders asks before opening the 360° player, and the reason is written on the Logs page of the profile menu.
+
+Build 28 ran on a real Android TV on 23 October; the video fixes of build 29 came from that run and were checked on the Google TV emulator, not yet on that TV.
+
+<a id="immuch360-on-an-lg-tv-webos"></a>
+<a id="on-an-lg-tv-webos"></a>
+#### On an LG TV (webOS)
+
+Immich's own apps do not install on an LG TV. Immuch360 has a TV app of its own for LG TVs with webOS 5.0 and later (2020 TVs on), driven by the remote and the Magic Remote: it shows your Immich server, your network shares, your Plex server and your Tapo cameras, and puts your 360° photos on a sphere you turn with the arrows. It is built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) by Seeky91, which brought the timeline, the albums, people, places, search, the slideshow and the sign in with a phone; thanks to Seeky91. Version 1.0.0 was submitted to the LG Content Store on 24 October and ran on webOS 25 TVs of LG's Cloud Test Lab; until LG approves it, it installs in Developer Mode, and every report in [Issues](https://github.com/freeKC/Immuch360/issues) helps.
+
+1. Namestite jo na televizor v načinu Developer Mode, glejte [Namestitev](#lg-tvs-webos). Ima svoj lasten ID aplikacije, zato se namesti poleg Immich TV uporabnika Seeky91.
+2. Prijavite se s telefonom (skenirajte kodo QR), z e-poštnim naslovom in geslom ali s ključem API.
+3. Brskajte s puščicami in OK. V pregledovalniku levo in desno preideta na prejšnjo ali naslednjo fotografijo ali videoposnetek, tudi med predvajanjem videoposnetka; kontrolniki se skrijejo 5 s po zadnji tipki; Info odpre podrobnosti; tipke za kanale povečujejo in pomanjšujejo; kazalec in kolesce Magic Remote delujeta.
+4. A 360° photo opens on a sphere: each press of an arrow turns it by a step, and a held key keeps it turning. "View as 360°" covers a 2:1 photo the server does not flag; a VR180 photo shows on a half sphere and a 3D photo with one eye. The yellow and blue keys turn a flat photo.
+5. Once signed in, "Network shares" in the rail of the app: add an SMB, WebDAV or DLNA share, a Plex server (signed in with a code on plex.tv/link) or a Tapo camera. Their photos open in the same viewer, 360° photos on the sphere.
+
+Version 1.0.0 is made for the LG Content Store: Back leaves the app from Photos or the welcome page the way each webOS version expects, and closes an open popup first; a server that does not answer within 15 s ends with a message that says why and a Retry button; the privacy policy opens in the app, with a QR code to read [its LG TVs section](../PRIVACY.md#lg-tvs-webos) on a phone; the TV uses its Gallery picture mode, as LG asks of photo apps; and a second package suits the Full HD TVs to which LG gives 1280x720 apps.
+
+Limits: SMB needs webOS 22 (2022 TVs) or later. The shares, Plex and the cameras come through the app's own service on the TV, which reads them for the app, and were checked against real servers and a simulated camera on the project's build host, not on a TV yet. The live view of a camera is video only. Not yet: the recordings of the cameras (not before December 2026) and their sound, 360° videos on the sphere (they play flat, with a message), uploads. On webOS before 25, the reverse proxy in front of Immich must send CORS headers; the app explains them when it meets the problem. webOS 26 has not been tried yet.
+
+<a id="on-a-samsung-tv-tizen"></a>
+#### On a Samsung TV (Tizen)
+
+Samsung TVs with Tizen 5.5 and later (2020 TVs on) get the same TV app as test build 0.2.0, which is not on Samsung's store: sign in by typing, the timeline, albums, the viewer and the slideshow, 360° photos on the sphere and a photo turned with one key. Not yet: the sign in with a phone, the shares, Plex and the cameras, which run in a background service on LG TVs that the Samsung version does not have yet.
+
+1. Sign the package for your TV and install it in Developer mode, see [Install](#samsung-tvs-tizen).
+2. Sign in by typing your server address, then your email and password or an API key.
+3. Browse with the arrows and OK. A 360° photo opens on the sphere; a 360° video plays flat, with a notice the first time, because on a tester's TV the browser of the TV gave black video frames to the 3D view.
+4. A video above what the TV's decoders accept says so, with the size the TV can play and the size of the file, instead of loading forever. A video that stalls shows a notice with its bitrate and the way out: let Immich transcode heavy files, or use a faster link. About this TV gives the TV's video ceiling.
+
+Version 0.1.0 ran on a tester's Samsung TV on Tizen 9, and 0.2.0 holds the fixes from that run; 0.2.0 has not run on a TV yet. The text of the About page, posted in [Discussions](https://github.com/freeKC/Immuch360/discussions) or [Issues](https://github.com/freeKC/Immuch360/issues) after a run, helps the most.
+
+More: [watch on your TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [the webOS app: install, remote control keys, CORS headers](../webos/README.md), [platform support](../docs/immuch360/platform-support.md).
+
+<a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
+### Prijavite televizor, slušalke ali računalnik s telefonom
+
+**Scan. Sign in. Watch.** Typing a server address, an email and a password with a TV remote, or in a headset, takes minutes. With Immuch360 on your phone, signed in to your Immich server, a TV, a Meta Quest or a computer is signed in within seconds: the big screen shows a QR code, the phone scans it, you confirm, and the screen opens on your library. With the phone app, your password stays on the phone. The Immich app has nothing like it.
+
+<p align="center">
+  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Illustration, not a capture: a TV shows a QR code on its sign-in page, and a phone held in front of it scans the same code">
+</p>
+
+1. Na velikem zaslonu (Android TV in Google TV, okno Meta Quest, Windows, Linux ali macOS) izberite «Poveži se s strežnikom Immich»: prijavna stran poleg obrazca za strežnik prikaže «Prijava s telefonom», kodo QR in 10-mestno kodo.
+2. Na telefonu, prijavljenem v vaš strežnik: Nastavitve, «Poveži televizor ali računalnik», nato «Skeniraj kodo». V Meta Quest, katerega zaslona telefon ne more skenirati, izberite «Raje vnesi kodo» in vtipkajte kodo, ki jo prikazujejo slušalke.
+3. Telefon vpraša «Prijavim (zaslon)?» in prikaže šestmestno število: preverite, da zaslon prikazuje isto število, nato se dotaknite Prijava. Zaslon se odpre na vaši časovnici.
+
+Zakaj je to varno: telefon in zaslon morata biti v istem domačem omrežju, koda pa velja največ dve minuti in deluje enkrat. Telefon od vašega strežnika zahteva novo sejo za ta zaslon, poimenovano po njem («Immuch360 na televizorju v dnevni sobi»), in jo zaslonu pošlje šifrirano, zato vaše geslo nikoli ne zapusti telefona. «Poveži televizor ali računalnik» navaja zaslone, ki jih je ta telefon prijavil, vsakega z gumbom Odjava, Immich pa jih navaja v Nastavitvah računa, Pooblaščene naprave, kjer jih lahko tudi prekličete. Odjava telefona odjavi tudi njih.
+
+The phone side runs on Android now, and on iPhone and iPad from the next iOS release. Without Immuch360 on the phone, scan the code with the camera of the phone: a page served by the screen opens in the browser, for your email and password, encrypted and used once. LG TVs sign in with a QR code of their own, in the browser of the phone; from build 28 the scanner of the phone app recognises it and opens that page. Samsung TVs are signed in by typing for now.
+
+Več: [prijava s telefonom](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [kaj zasloni pošiljajo in hranijo](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
+
+<a id="go-immersive-on-meta-quest"></a>
+<a id="step-inside-your-photos-and-videos-with-a-meta-quest"></a>
+### Step inside your photos and videos with a Meta Quest
+
+Na Meta Quest ista aplikacija teče kot okno z vašo celotno knjižnico, njen gumb 360° pa odpre poglobljen pogled, kjer je fotografija ali videoposnetek vse okoli vas: ogledujete se z obračanjem glave, stereoskopske datoteke so v resničnem 3D, prostorska fotografija Apple lebdi pred vami v 3D, krmilniki ali vaše roke pa upravljajo vrstico časa, prejšnje in naslednje ter gumb Obrat, ki prinese naprej tisto, kar je za vami, brez obračanja stola. Mediji prihajajo z vašega strežnika, same slušalke, NAS-a, predstavnostnega strežnika, telefona ali strežnika Plex, predvajani na mestu samem.
+
+<p align="center">
+  <img src="../.github/readme/quest-immersive-360-photo.jpg" width="230" alt="Fotografija 360° vsenaokrog v Questu 3 z informacijsko ploščo: gumbi postavitve, 360° in Nazaj">
+  <img src="../.github/readme/quest-immersive-360-video.jpg" width="230" alt="Videoposnetek 360° jezera, ki se predvaja v Questu 3, z informacijsko ploščo: gumbi postavitve, 360°, Premor in Nazaj">
+  <img src="../.github/readme/quest-immersive-3d-360-video.jpg" width="230" alt="Stereoskopski videoposnetek 360° v Questu 3, informacijska plošča kaže 3D, zgoraj in spodaj">
+</p>
+
+1. Namestite aplikacijo iz [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) ali ročno namestite APK novejše različice, glejte [Namestitev](#meta-quest).
+2. Na pozdravni strani se dotaknite «Uporabi brez strežnika» za lastne fotografije in videoposnetke slušalk, ali «Poveži se s strežnikom Immich»: kodo, ki jo prikazujejo slušalke, vtipkajte v Immuch360 na telefonu ([prijava s telefonom](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), ali se prijavite z naslovom strežnika, e-pošto in geslom.
+3. Odprite fotografijo ali videoposnetek 360° in pritisnite 360°: poglobljen pogled se odpre. B ali Y, ali gumb Nazaj na informacijski ploščici, vrne okno.
+4. V poglobljenem pogledu potisnite desno igralno paličico levo ali desno, da pogled zasukate za 30° v tisto smer. Od različice 29 se zasuka v smer, v katero jo potisnete, kot v večini aplikacij za slušalke; različice od 17 do 28 so ga sukale v nasprotno smer, nastavitev Nastavitve, Pregledovalnik vsebine, Videoposnetki, «Obrni sukanje s paličico» pa to smer vrne.
+
+Več: [v slušalkah Meta Quest](../docs/immuch360/user-guide.md#in-the-meta-quest-3-headset), [slušalke: kodeki, trgovina in dovoljenja](../docs/immuch360/platform-support.md#meta-quest).
+
+<a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
+<a id="play-the-files-of-a-nas-a-computer-a-media-server-or-plex"></a>
+### Play the files of a NAS, a computer, a media server or Plex
+
+Your videos sit on a NAS, a computer, a media server or Plex. Immuch360 finds the servers of your network by itself, browses them and plays their photos and videos in place, in every viewer of the app, without copying anything: SMB (Samba, Windows shares), WebDAV (Nextcloud, Synology and others) and DLNA media servers (Jellyfin, Emby, minidlna, a NAS, a TV box). A phone can also share its own gallery on the Wi-Fi for a headset or any WebDAV client, and so can a Windows computer.
+
+<p align="center">
+  <img src="../.github/readme/b19-add-share.png" width="260" alt="Stran Dodaj skupno rabo: Ime, Ime ali naslov strežnika, Vrata (neobvezno), Skupna raba, Izberite skupno rabo, Začetna mapa (neobvezno), Uporabniško ime, Geslo, Preizkusi povezavo in rezultat Povezano, število elementov v začetni mapi: 2">
+  <img src="../.github/readme/b19-share-folder.jpg" width="260" alt="Mapa omrežne skupne rabe kot mreža sličic: fotografije 360° z značko 360° in videoposnetek 360° z oznako predvajanja, gumb Izberi desno zgoraj">
+</p>
+
+1. Odprite zavihek Knjižnica, nato Omrežne skupne rabe, nato + in «Omrežna skupna raba (NAS, računalnik, predstavnostni strežnik)». Od zgradbe 24 «Dodaj omrežno skupno rabo ali predstavnostni strežnik» na pozdravni strani odpre Omrežne skupne rabe neposredno, brez strežnika.
+2. Dotaknite se strežnika pod «Najdeno v omrežju» ali izpolnite obrazec ročno: vrsta, ime ali naslov strežnika, skupna raba ali pot, začetna mapa, uporabniško ime in geslo.
+3. Dotaknite se «Preizkusi povezavo», nato Shrani. Dotaknite se skupne rabe za brskanje po njej: najprej mape, nato fotografije in videoposnetke, z značko 360° na datotekah, prepoznanih kot 360°.
+4. For a Plex server: in Network shares, + and "A Plex Media Server", then tap your server under "Found on the network", paste a token once ("How to get it" on the page says where to find it), then "Test the connection" and Save.
+5. With an Immich server connected, select files in a folder and tap "Upload to Immich" to send them to your server.
+
+Predvajalniki berejo bajte, ki jih potrebujejo, prek mostu v aplikaciji, z obsegi bajtov, zato pomikanje deluje in nič se ne shrani na napravo; videoposnetek SMB se bere prek največ šestih vzporednih povezav za tekoče predvajanje. Od različice 29 se filmi, posneti kot M2TS (Blu-ray, videokamere AVCHD, snemalniki TV), predvajajo v aplikaciji Android iz skupnih rab SMB in WebDAV ter s strežnikov DLNA, ki jih navajajo kot transportne tokove, strežnik DLNA, ki navede velikost 0, pa ne daje več praznega videoposnetka.
+
+**Plex Media Server, without plex.tv**: the app pairs with your server directly, with a token you paste once, and reads the original files of your libraries live, so 360° stays 360°, at home and, through your port forwarding, away from home. On an LG TV, Plex is signed in with a code on plex.tv/link.
+
+More: [network shares](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [share this phone on the network](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA media servers](../docs/immuch360/user-guide.md#dlna-media-servers), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv).
+
+<a id="find-your-immich-library"></a>
+<a id="keep-your-immich-library-with-more"></a>
+### Keep your Immich library, with more
+
+S strežnikom [Immich](https://github.com/immich-app/immich) je Immuch360 mobilna aplikacija Immich, z istim strežnikom in istim računom kot spletna aplikacija: varnostno kopiranje, časovnica, albumi, iskanje, osebe, spomini, delitev, partnerji, vse usklajeno z vašim strežnikom. Namesti se poleg uradne aplikacije. Poleg tega: značka in seznam 360°, vsi poglobljeni pregledovalniki, izbira med izvirno datoteko in pretvorjenim pretokom strežnika za vsak videoposnetek, tehnične podrobnosti videoposnetka ter datoteke iz skupne rabe ali naprave, ročno poslane na vaš strežnik.
+
+1. Na pozdravni strani se dotaknite «Poveži se s strežnikom Immich», nato se prijavite z naslovom strežnika, e-poštnim naslovom in geslom, enako kot v aplikaciji Immich; Nazaj se vrne na pozdravno stran. Do zgradbe 23 se prijavna stran odpre neposredno. Vaša knjižnica, albumi in nastavitve varnostnega kopiranja so tisti vašega računa.
+2. V Nastavitvah, Pregledovalnik vsebine, Videoposnetki, «Vir videa» izbere izvirnik, kadar ga ta naprava dekodira, vedno izvirnik ali vedno pretvorjeni pretok.
+3. Da fotografijo 360° pokažete nekomu, ki nima aplikacije, jo delite s skupno povezavo Immich: spletna aplikacija Immich jo prikaže kot kroglo v njegovem brskalniku.
+
+The current build, build 30, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), like builds 28 and 29; build 28 was tested against a server built from that same Immich `main`, and build 27 also against an Immich 3.2.4 server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
+
+What is the same and what Immuch360 adds is in [Compared with Immich](#compared-with-immich).
+
+Več: [vse drugo je Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [primerjava z aplikacijo Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+
+<a id="cameras-plex-and-raw-camera-files"></a>
+<a id="watch-your-home-cameras-on-the-big-screen"></a>
+### Watch your home cameras on the big screen
+
+<p align="center">
+  <img src="../.github/readme/home-cameras.png" width="720" alt="Illustration, not a capture: in a living room at dusk, the TV on the wall shows one live view of a garden path from a home camera that stands on the sideboard, and a phone on the table shows the same view.">
+</p>
+<p align="center"><sub>An illustration. The Tapo support has not been checked with a real camera yet.</sub></p>
+
+Your Tapo cameras of TP-Link, next to your photos, without the Tapo app. The app shows a camera live (Android phones and tablets, Android TV, the Meta Quest, Windows and, video only, LG TVs; iPhone and iPad from the next iOS release) and lists the recordings of its memory card day by day (phones, tablets, Android TV, the Quest and computers). A clip is fetched from the camera, plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link, and never changes anything on the camera.
+
+**Not yet checked with a real camera.** The protocol was written from captures of a C510W with firmware 1.3.4, and the app was checked against a simulated camera only. A report with the model and firmware that "Test the camera" shows helps a lot.
+
+1. In the Tapo app first: create the camera account (settings of the camera, Advanced Settings, Camera Account), used for the live view, and turn on Third-Party Compatibility, under Me, then Tapo Lab.
+2. In Immuch360: Library, Network shares, + and "A Tapo camera". Tap your camera under "Found on the network", or type its address.
+3. Type the password of your TP-Link account for the recordings, the camera account for the live view, or both; then "Test the camera", and Save.
+4. Tap the camera: its live view is at the top of its page, with the sound, SD or HD and Full screen; below it come the days with recordings. Tap a clip to fetch it and play it; its ⋮ menu has "Upload to Immich".
+
+More: [Tapo cameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+
+<a id="your-dji-drone-experimental"></a>
+### Your DJI drone (experimental)
+
+A Drone card in the Library, experimental and on by default, gathers what Immuch360 does with a DJI drone: on an Android phone, the drone's live video through its remote controller, and its photos and videos brought to Immich over USB; in a Meta Quest or on an Android TV, that live video relayed by the phone, to watch. Immuch360 is not a DJI product and is not approved by DJI, and nothing is sent to DJI. In this build the drone screens are in English only; their translations come later.
+
+<a id="your-dji-drones-live-video-on-your-phone-experimental"></a>
+<a id="see-what-your-drone-sees-on-your-phone"></a>
+#### See what your drone sees, on your phone
+
+<p align="center">
+  <img src="../.github/readme/drone-live-phone.png" width="720" alt="Illustration, not a capture: two hands hold a drone remote controller with a phone clipped on top, whose screen shows a live aerial view of a coast, while a small drone flies over the bay at dusk">
+</p>
+
+See what your DJI drone sees on your Android phone, without DJI Fly and without any account: plug a DJI RC-N3 remote controller into the phone with its cable, and Immuch360 shows the drone's live video full screen in landscape, H.265 in 1080p, with the flight values read from the cable. The remote keeps full control of the drone. It was tried with an RC-N3, a DJI Neo 2 and a Samsung Galaxy S24+: on the ground with build 29, and in flight with test builds of build 30 on 24 and 25 October. Other remotes and drones have not been tried.
+
+Samo posluša. Daljinskemu upravljalniku ali dronu se nikoli ne pošlje noben ukaz: edini bajt, ki ga stran zapiše vsako sekundo, od 20 sekund po odprtju daljinskega upravljalnika naprej, samo pove, ali daljinski upravljalnik sprejema podatke, in ne nosi nobenega ukaza.
+
+On the live screen: the drone's battery and the motor time and, in flight, the height above the take off point, the vertical speed, the speed and the distance below the drone. A value goes there only once our own flight captures prove it: the height, the speeds and the distance below were proven on the captures of two indoor flights on 25 October, up to 1.8 m high and 1.5 m/s, not beyond yet; showing them there is new in build 30 and first tested with it. The height shows about 1.5 s after lift off, once the drone has left the ground or the hand, and stays hidden until the motors stop if it ever jumps in a way no aircraft can. Advanced adds the battery's voltage and temperature, the heading (its zero not checked against north) and the motors, and Diagnostics every number the link gives, the battery current included. No satellites, position or distance from home are shown. The numbers are not compared with DJI Fly yet: do not fly by them.
+
+**Obstacle ring**, on by default: when the drone's sensors see something close, a translucent circle shows around the middle of the picture, with an arc toward the obstacle, amber turning red as it gets closer, its distance beside it and a short tick that speeds up; with nothing close, nothing shows. The circle and the direction of the arc were checked in flight, indoors, on 25 October, on a test build where the direction was an option; shown by default, it is first tested with build 30. In Advanced you set the distances ("Glow from", 3.0 m, and "Strong glow from", 1.0 m), choose a frame at the edges of the picture instead of the circle, or turn off the ring, its sound or its vibration. It shows only what the drone's sensors report: nothing in Sport mode or with obstacle avoidance off, and no glow does not mean the way is clear. Information only: Immuch360 never steers or stops the drone.
+
+1. The Drone card is in the Library, and "DJI live video" on its page: "DJI live video (experimental)", in Settings, Advanced, is on by default.
+2. Turn on the drone and the remote, close DJI Fly, then open "DJI live video" and read the safety notice.
+3. Plug the remote into the phone with its cable. If Android asks which app should open it, choose Immuch360 without "Always", which would take the remote away from DJI Fly; if it asks for a USB mode, choose charging only. Plugging in the remote then opens this screen by itself ("Open this screen when the remote is plugged in", on by default in Advanced).
+4. Remote, Drone and Picture light up in turn, and the picture comes full screen within a few seconds. Three buttons (leave, "Send to a headset or a TV" and Advanced) and the values sit in the black bands beside the picture. The notes, such as "Live", fade after about five seconds; a tap anywhere brings them back, and nothing on the picture acts on the drone. An error that asks you to act stays.
+5. Advanced has "Save a capture for a bug report", which writes the link's capture to `Download/Immuch360/dji-link`, "Play a saved capture", to play one again without the remote, and Diagnostics, with every number the link gives.
+
+The drone's photos and videos cannot be reached through the remote, which does not open the drone's storage: copy them from the drone itself over USB or from its card, as [below](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich). Keep the saved captures to yourself, as the page says: they hold the drone's video and the serial numbers of the remote and the aircraft, and may hold its position; a report in [Issues](https://github.com/freeKC/Immuch360/issues) with what Diagnostics shows helps, above all with other DJI remotes.
+
+<a id="watch-it-in-a-meta-quest-or-on-an-android-tv"></a>
+#### Watch it in a Meta Quest or on an Android TV
+
+The phone plugged into the remote can send the drone's picture and values to Immuch360 in a Meta Quest or on an Android TV or Google TV on the same local network, for the people with you. A headset shows them in a window or, larger, in a flight view in front of you, and a TV full screen, with the same values and obstacle ring as the phone. They only watch: nothing a headset or a TV does reaches the remote or the drone. Their notes, such as "Watching only", fade after a few seconds and come back with a key, a tap or a button. The drone's picture reached a Quest 3 once, on 24 October, over a home Wi-Fi; the headset window and the flight view with the values and the obstacle ring are first tested with build 30, and the Quest 2, Pro and 3S have not been tried. Should the circle hide the middle of the picture in the headset, "Frame at the edges" in its menu keeps the middle clear. On a TCL Android TV, the pairing and the picture were tried on 25 October, with stutter and a green cast on the earlier relay; the steady stream that answers them is first tested with build 30. Flying while you watch the headset or the TV needs an observer next to you who keeps the drone in sight (EU open category); without one, watch the drone.
+
+1. On the phone, on the live screen, tap "Send to a headset or a TV" and turn it on.
+2. **Meta Quest**: open Immuch360, Library, Drone, and pick the phone; type the code the phone shows, once for that phone. The picture opens in the window; "Open the flight view" makes it larger, and B or Y brings the window back.
+3. **Android TV and Google TV**: open Immuch360, Library, Drone. Under "Let this TV watch", the TV shows a code and its QR code: on the phone, in the same panel, tap "Add a TV" and scan it, or type it. Then select the phone on the TV and press OK: the picture comes full screen; OK shows or hides the numbers, and Menu opens the options.
+4. The phone and the screen must be on the same local network. Away from home, turn on the phone's hotspot, in the 5 GHz band if it offers it, and join it from the headset or the TV.
+5. For a bug report, the headset's menu and the TV's Options have Diagnostics and "Save a reception record", which keeps what that screen received.
+
+**Relay quality**, new in build 30, in Advanced on the phone: in flight the drone sends about 18 Mbit/s, and on 25 October a home Wi-Fi path from the phone through the router to the TV carried that full stream only a third of the flight time; the rest of the time the TV's picture stuttered, broke up and took a green cast. With Automatic, the default, a screen whose Wi-Fi cannot keep up gets a steady picture that the phone encodes again for it, up to 1080p at 30 pictures a second and at the rate its Wi-Fi carries, made to stay clean, with less detail, instead of breaking up; it goes back to the drone's own picture at the next landing or take off, once the Wi-Fi has room. Full stream always sends the drone's picture as it comes, Steady stream always the phone's. The steady picture is new: it is first tested with build 30, and had not run on a phone on 25 October. A TV on an Ethernet cable, or a screen joined to the phone's own hotspot, leaves one Wi-Fi hop instead of two.
+
+Not in this build: the drone on iPhone and iPad (not started), the relay to LG and Samsung TVs, and the proof of the values above 1.8 m and 1.5 m/s, then the satellites and the distance from home, which wait for an outdoor flight.
+
+<a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
+<a id="bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich"></a>
+#### Bring a drone's or a camera card's photos and videos to Immich
+
+Uvozite fotografije in videoposnetke drona DJI prek USB neposredno na svoj strežnik Immich: priključite dron ali bralnik kartic na telefon Android, izberite nove datoteke in jih pošljite; videoposnetki se postavijo na zemljevid po podatkih o letu drona, krogle 360° drona pa se prikažejo kot 360°. Aplikacija Immich varnostno kopira samo tisto, kar je že v galeriji telefona, strežnik Immich pa še ne zna prebrati kraja videoposnetka DJI Neo 2. Ta stran je poskusna, samo na telefonih in tablicah Android, in še ni bila preizkušena z resničnim dronom.
+
+<p align="center">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Illustration, not a capture: a drone on a terrace table, plugged into a phone by a cable, and its photos and videos going in an arc from the drone to the gallery of the phone">
+</p>
+
+1. Open the Drone card in the Library, then "Photos and videos from the drone". Its setting, "DJI drones (experimental)" in Settings, Advanced, is on by default; turn it off there to hide that page.
+2. Priključite dron (Neo 2 lahko ostane izklopljen) ali bralnik kartic na telefon s podatkovnim kablom USB-C; daljinski upravljalnik DJI brez zaslona (RC-N1, RC-N2, RC-N3) ne hrani fotografij. Na strani drona DJI se dotaknite «Izberi dron ali kartico», izberite ga v stranskem meniju izbirnika, odprite njegovo mapo DCIM ali obdržite celoten pogon, nato «Uporabi to mapo» in Dovoli.
+3. Stran navede fotografije in videoposnetke po dnevih, brez spremnih datotek .LRF, .SRT, .THM in .m4a. Dotaknite se «Izberi vse nove», nato «Naloži v Immich»; datoteke, poslane prej, imajo oznako oblaka in so preskočene. «Obdrži na napravi» namesto tega kopira datoteke v galerijo telefona, v album «Immuch360 import».
+4. Da se videoposnetek znajde na zemljevidu, pred letom vklopite Video Subtitles v DJI Fly (način videa, Settings, Camera): dron nato zapiše datoteko .SRT poleg vsakega videoposnetka, aplikacija iz nje prebere kraj in ga po nalaganju nastavi na vašem strežniku, kadar ga Immich ni našel.
+
+Krogle 360° dronov DJI (Mini, Air, Mavic in drugi, prepoznani po kameri) se v Immuch360 prikažejo kot 360° tudi brez oznak 360°. Immich te oznake potrebuje: možnost nalaganja «Označi krogle dronov kot 360° za Immich», privzeto izklopljena, pošlje fotografijo nespremenjeno z majhno datoteko .xmp poleg nje, da jo tudi Immich prikaže kot kroglo. Neo 2 nima načina krogle ali panorame: njegove fotografije in videoposnetki so ravni. Kadar je zvok posnetka Neo 2 posnel telefon, je ta zvok v ločeni datoteki .m4a: stran posnetek označi, Immich pa ga prejme brez zvoka (prenesite ga z DJI Fly, da obdržite zvok). Vsaka kartica fotoaparata z mapo DCIM v bralniku kartic deluje enako. Nič se ne pošlje podjetju DJI.
+
+More: [DJI drones over USB](../docs/immuch360/user-guide.md#dji-drones-photos-and-videos-over-usb-experimental), [DJI link diagnostics](../docs/immuch360/user-guide.md#dji-link-diagnostics-experimental).
+
+<a id="open-the-raw-files-of-360-cameras"></a>
+### Open the raw files of 360° cameras
+
+The raw .insp photos and .insv videos of Insta360 cameras (one or two lenses, in one track, two tracks or two files), the .360 files of the GoPro MAX and the .osv files of the DJI Osmo 360 are stitched by the app as they play, with the calibration written in the file, with nothing to install anywhere.
+
+1. Put the raw files where the app reads them: an SMB or WebDAV share, your Immich server (it takes .insp and .insv only), or the folders of a computer. The gallery of an Android phone does not list raw files, so a raw file copied to the phone shows neither in its gallery nor in the app.
+2. Keep the two files of a recording made of two files together: the app looks for the other one next to the first.
+3. Open the file and tap 360°. A photo shows "Raw 360° file, stitched by the app" with the source of its calibration; a video is stitched as it plays.
+
+Linux and macOS play raw videos flat, and dual fisheye .dng files show flat for now.
+
+More: [raw 360° camera files](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
+
+<a id="turn-a-photo-with-one-key"></a>
+### Zasukajte fotografijo z eno tipko
+
+Zasukajte fotografijo za 90° z enim pritiskom, brez odpiranja urejevalnika: z gumbom, tipko na tipkovnici ali barvno tipko daljinskega upravljalnika televizorja, na vsaki platformi. Aplikacija Immich fotografijo zasuka v svojem urejevalniku; Immuch360 to naredi z eno tipko, za vaše lastne fotografije na strežniku Immich 2.6 ali novejšem pa gre prek istega urejevalnika strežnika, zato jih spletna aplikacija in vaše druge naprave prikažejo zasukane. Vsaka druga fotografija se zasuka samo na tej napravi. Fotografije 360°, 180° in 3D se nikoli ne zasukajo, zato poglobljeni pogledi ostanejo vodoravni.
+
+<p align="center">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Illustration, not a capture: a phone shows a photo turning a quarter turn clockwise, above a row of round buttons with the rotate button lit">
+</p>
+
+1. **Telefoni, tablice in okno Meta Quest**: odprite fotografijo in se dotaknite Zasukaj v spodnji vrstici, pred Uredi, da jo zasukate v smeri urinega kazalca; dolg pritisk jo zasuka v drugo smer. S tipkovnico R in Shift+R.
+2. **Android TV in Google TV**: rumena tipka daljinskega upravljalnika zasuka fotografijo v smeri urinega kazalca, modra pa v nasprotni smeri, kjerkoli je fokus v pregledovalniku. Na daljinskem upravljalniku brez barvnih tipk pritisnite dol: prikaže se vrstica pod fotografijo z izbranim Zasukaj (en pritisk desno dlje, kadar ima fotografija besedilni gumb), in vsak OK zasuka fotografijo.
+3. **LG TVs (webOS)**: yellow and blue as on Android TV, R and Shift+R on a keyboard, or the turn button of the photo's controls. Samsung TVs turn a photo with one key too.
+4. **Windows, Linux in macOS**: R zasuka v smeri urinega kazalca, Shift+R v nasprotni smeri, ali gumb za sukanje v zgornji vrstici, pred celozaslonskim načinom.
+5. **Fotografije iz skupne rabe, Plexa ali kamere**: gumb za sukanje kot prvi v zgornji vrstici, R in Shift+R ali rumena in modra tipka.
+
+Kje se zasuk shrani: fotografija vašega lastnega računa na Immich 2.6 ali novejšem se zasuka prek urejevalnika fotografij na strežniku, ki ohrani izvirno datoteko in ustvari zasukano sliko (med delom se prikaže tanka vrstica; štirje zasuki ali en zasuk nazaj vrnejo izvirnik). Fotografije naprave, skupne rabe, partnerja ali deljenega albuma ter vse fotografije na starejšem strežniku se zasukajo samo na tej napravi, samo za to fotografijo, datoteka pa se nikoli ne spremeni; za fotografijo Immich aplikacija to enkrat sporoči. V aplikacijah za Android, iOS in računalnik je zasuk, shranjen na napravi, viden v pregledovalniku, še ne pa v sličicah, diaprojekciji in spominih. Videoposnetki, zaklenjena mapa in vse fotografije 360°, 180° ali 3D nimajo možnosti Zasukaj.
+
+<a id="use-your-computer-as-the-media-player"></a>
+### Use your computer as the media player
+
+On a Windows computer, Immuch360 Desktop reads the folders you choose with no server at all, plays flat and 360° videos in a player of its own, browses the same shares and servers, and can share the computer with a headset at home. Linux and macOS have it as previews, with 360° videos played flat.
+
+<p align="center">
+  <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Predvajalnik videoposnetkov Immuch360 Desktop na Windows: videoposnetek ulice se predvaja v oknu, s gumbom za premor, vrstico časa, Deli in Naloži v Immich">
+</p>
+
+1. Install the preview, or unzip it and start `immuch360.exe`, see [Install](#windows). On the welcome page, "Use without a server" opens the choice of your folders, and "Connect to an Immich server" the login page, with its QR code for your phone.
+2. A photo, a video or a folder opened with the program, or dropped on its window, opens at once, a 360° one in its 360° view; several files open together on one page. Photos and videos get it in "Open with"; it never makes itself their default program.
+3. In a viewer, the keyboard drives it: Space plays and pauses, J and L go back and forward, F is full screen, and R and Shift+R turn a photo.
+
+More: [on a Windows computer](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [platform support](../docs/immuch360/platform-support.md).
+
+<a id="compared-with-immich"></a>
+## Compared with Immich
+
+Immuch360 keeps the whole Immich mobile app and adds what is around it. In short:
+
+| | Immuch360, compared with the Immich app |
+|---|---|
+| **The same** | your Immich server and account: backup, timeline, albums, search, people, memories, sharing and partners, all synced with your server. It installs next to the official app. |
+| **No server needed** | it also runs without a server or an account, on the photos and videos of the device, the folders of a computer and network shares; Plex and the cameras use their own sign in, never an Immuch360 account. |
+| **360° and immersive** | 360° photos and videos as a sphere, panoramas, VR180 and 3D, an immersive view in a Meta Quest, a 360° badge and a 360° list. 360° viewing in the Immich mobile app has been requested since January 2024 and is not there yet. |
+| **On the TV** | the same app on Android TV and Google TV, and a TV app for LG TVs, also packaged for Samsung TVs as a test build. Immich's own apps do not install on an LG TV. |
+| **Sign in with your phone** | a TV, a headset or a computer is signed in when your phone scans its QR code, and your password stays on the phone. The Immich app has nothing like it. |
+| **Shares and Plex** | SMB, WebDAV and DLNA shares and Plex servers, played in place, and their files sent to your server by hand. |
+| **Tapo cameras** | the live view and the recordings of the memory card, next to your photos; not yet checked with a real camera. |
+| **One key rotation** | the Immich app turns a photo in its editor; Immuch360 turns it with one key, and for your own photos on Immich 2.6 or later it goes through that same server editor, so the web app and your other devices show them turned. |
+| **Videos** | audio and subtitle menus in the Android player, which the Immich app's Android player does not have; the original file or the transcoded stream, chosen per video; the technical details of a video. |
+| **Your drone** | a DJI drone's photos and videos sent over USB, with the videos placed on the map from its flight data, where the Immich app backs up only what is already in the phone's gallery; and the drone's live video through an RC-N3 remote, with its flight values and an obstacle ring, on the phone and relayed to a Meta Quest or an Android TV. Both experimental. |
+| **Where to report** | [Immuch360 Issues](https://github.com/freeKC/Immuch360/issues), not the Immich project. |
+
+The comparison function by function is in [Compared with the Immich app](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
 <a id="privacy"></a>
 ## Zasebnost
 
-Nič ne gre k razvijalcu: brez računa, brez analitike, brez storitve za poročanje o sesutjih, brez oglaševanja. Aplikacija komunicira samo s strežniki, ki jih izberete (vaš strežnik Immich, vaše skupne rabe, vaš strežnik Plex, vaše kamere), brez strežnika pa z ničimer. Gesla in žetoni ostanejo v varni shrambi naprave; televizorji LG in Samsung je za aplikacijo nimajo, zato tam ostanejo v lastni shrambi aplikacije, nešifrirani. Kamera se uporablja samo na napravi, za predvajalnik Spatial 2.5D in za skeniranje kode zaslona, ki ga prijavljate; njene slike se nikoli ne shranijo in nikoli ne pošljejo kamor koli. Zaslon, prijavljen z vašega telefona, dobi lastno sejo, poslano šifrirano po vašem domačem omrežju, nikoli vašega gesla; televizor LG se prijavi prek strani v brskalniku telefona, ki vašo e-pošto in geslo pošlje televizorju nešifrirano po vašem domačem omrežju, televizor pa obdrži samo sejo. Celotna politika je v [PRIVACY.md](../PRIVACY.md), podrobnosti po virih pa v [uporabniškem vodniku](../docs/immuch360/user-guide.md#privacy).
+Nothing goes to the developer: no account, no analytics, no crash reporting service, no advertising. The app talks only to the servers you choose (your Immich server, your shares, your Plex server, your cameras) and, without a server, to nothing at all. Passwords and tokens stay in the secure storage of the device; LG and Samsung TVs have none for the app, so there they stay in the app's own storage, not encrypted. The camera is used on the device only, by the Spatial 2.5D player and to scan the code of a screen you sign in; its images are never stored and never sent anywhere. A screen signed in from your phone gets a session of its own, sent encrypted on your home network, never your password; an LG TV is signed in by a page in the phone's browser, which sends your email and password to the TV unencrypted on your home network, and the TV keeps only the session. The captures and reception records of the drone pages stay on the device unless you share them: they hold the drone's video and may hold its position, and a capture the serial numbers of the remote and the aircraft. The drone's picture and values go from the phone only to the headsets and TVs you pair, on your local network, not encrypted, as with a phone shared on the Wi-Fi. Nothing is sent to DJI, nor to TP-Link. The full policy is in [PRIVACY.md](../PRIVACY.md), and the details per source in the [user guide](../docs/immuch360/user-guide.md#privacy).
 
 <a id="the-project"></a>
-## O projektu
+<a id="licences-and-credits"></a>
+## Licences and credits
 
 Immuch360 je neuradna razvejitev mobilne aplikacije [Immich](https://github.com/immich-app/immich), pod licenco [GNU AGPL v3](../LICENSE), ni povezana z ekipo Immich ali FUTO in nima njihove podpore. Razvejitev obstaja, ker je bil ogled 360° na mobilnih napravah v Immich zahtevan že od januarja 2024 in še ni v uradni aplikaciji; ponuja ga že zdaj, zbira povratne informacije s resničnih naprav in bo manjše spremembe ponudila nazaj Immich, s majhnimi pull requesti, kar koli si vzdrževalci želijo. Vse, kar počne uradna aplikacija, je ohranjeno; veje, veriga gradnje in CI so opisani v [Zgradite sami](../docs/immuch360/build.md).
 
 Pregledovalnik fotografij 360° temelji na izvornem pull requestu [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) uporabnika dmitry-brazhenko, ki je sam zgrajen na prototipu uporabnika bencefr v [#30192](https://github.com/immich-app/immich/pull/30192); hvala obema. Popravki daljinskega upravljalnika v filtrih iskanja in razvrščanje albumov na televizorjih izhajajo iz dela uporabnika mlc70 v [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1), vrstica dejanj in plošče filtrov na 80 odstotkih višine zaslona pa prihajajo iz [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3) uporabnika mlc70, z ohranjenim avtorstvom; hvala mlc70. Aplikacija LG webOS, zapakirana tudi za televizorje Samsung, je zgrajena na [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) uporabnika Seeky91, pod licenco MIT, in ohranjena v svoji mapi; hvala Seeky91. Kamere Tapo so napisane na podlagi dokumentacije [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) in [python-kasa](https://github.com/python-kasa/python-kasa). Pogled za Meta Quest se zanaša na Meta Spatial SDK, ki ni odprtokoden, zato ostaja v tej razvejitvi. Skupne rabe SMB uporabljajo libsmb2 pod licenco LGPL 2.1 ali novejšo: od različice 27 in namizne zgradbe 7 vsaka zgradba vsebuje njeno obvestilo, besedila licenc in arhiv izvorne kode `Immuch360-libsmb2-sources.tar.gz`, ki je priložen tudi vsaki izdaji. Zgradbe za Windows in macOS prinašajo libmpv (knjižnico [mpv](https://mpv.io) s [FFmpeg](https://ffmpeg.org)), ki jo zgradi projekt, pod licenco LGPL, z njenimi licencami in izvorno kodo, navedeno na strani z licencami v aplikaciji (Licenses, na dnu menija profila); podrobnosti in blagovne znamke platform, omenjenih na tej strani, so v [Licenci in blagovnih znamkah](../docs/immuch360/platform-support.md#license-and-trademarks).
 
-Posnetki telefona na tej strani so bili narejeni na zgradbi Android v emulatorju, posnetki televizorja na emulatorju Google TV, posnetki Windows pa na računalniku z Windows 11, vsi s panoramami CC0 iz [Poly Haven](https://polyhaven.com); posnetki slušalk so bili narejeni na Quest 3.
+The captures of this page are real captures of the app: the phone ones on the Android build in an emulator, the Android TV ones on the Google TV emulator, the LG and Samsung ones in a browser that stands in for the TV, the Windows ones on a Windows 11 PC and the Meta Quest window in a Quest 3, all with CC0 panoramas from [Poly Haven](https://polyhaven.com); the immersive captures of the headset were taken on a Quest 3 with the author's own media, and the iPad one in the iPad simulator, with a CC0 Poly Haven panorama. The opening image and the pictures of the TV, the sign in, the rotation, the cameras and the drone are illustrations made for the project: they show no screen of the app, no logo of another company and no face. Each image, with its source, date and licence, is listed in [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Načrt
 
 Kar še ni narejeno, najprej najverjetnejše. Nič od tega ni obljuba, povratne informacije v [sledilniku težav](https://github.com/freeKC/Immuch360/issues) pa pomagajo odločiti, kaj pride najprej.
 
-- **Trgovine**: Google Play (različica 28 v pregledu; vnos za TV v pregledu), App Store (različica 3.3.1 v pregledu, nato različica 3.3.2 z zgradbo 28), Meta Horizon Store z različico 29, LG Content Store (oddaja je v pripravi).
+- **The stores**: Google Play (build 29 in review, then build 30; the TV listing in review), the App Store (version 3.3.1 in review, then version 3.3.2 with build 28), the Meta Horizon Store with build 30 (build 28 there since 25 October), the LG Content Store (version 1.0.0 in LG's review since 24 October), and later the Samsung store.
+- **Drones**: an outdoor flight to prove the height and the speeds above 1.8 m and 1.5 m/s and the obstacle distances against a tape, then to show the satellites and the distance from home; the steady picture of the relay checked with a phone, a TV and a headset; the relay to LG and Samsung TVs; the drone on iPhone and iPad, not started; a test of the import page with a real DJI Neo 2, then the sound recorded by the phone merged into its clip. Nothing that sends a command to a drone is planned before those tests.
+- **TVs**: build 29 on a real Android TV, its video controls and the sign in with your phone included; the shares, Plex and the live view of the LG app on a real LG TV, and webOS 26; Samsung test build 0.2.0 on a real Samsung TV, then the sign in with a phone, the shares, Plex and the cameras on Samsung TVs; then the 360° videos on the sphere of LG TVs, the sound of the cameras and their recordings (not before December 2026).
+- **Cameras**: the Tapo cameras checked with a real camera.
 - **Računalniki**: ročno preizkušanje vsake funkcije na računalniku z Windows, vključno s prijavo s telefonom; Spatial 2.5D s spletno kamero v sistemu Windows, v razvoju za november 2026; nato izrisovalnik videoposnetkov 360° na Linuxu in macOS, preizkus na resničnem Macu in resničnem računalniku z Linuxom; nato samodejne posodobitve in podpisana aplikacija za macOS.
-- **Televizorji**: različica 29 na resničnem Android TV, vključno s kontrolniki videoposnetkov in prijavo s telefonom; webOS 0.2.0 na resničnem televizorju LG, z njenimi skupnimi rabami, Plexom in ogledom v živo, nato različica za LG Content Store; testna različica za Samsung na resničnem televizorju Samsung; nato videoposnetki 360° na krogli, zvok kamer in njihovi posnetki (ne pred decembrom 2026).
 - **Telefoni in tablice**: ogled v živo Tapo in prijava velikih zaslonov na iPhonu in iPadu z naslednjo izdajo za iOS; vrstica časa v predvajalniku videoposnetkov 360° na iOS, prejšnje in naslednje v predvajalnikih 360° na telefonih, menija za zvočno sled in podnapise v ravnem predvajalniku iOS.
 - **Poglobljeni mediji**: dvojni .dng ribje oko, izravnava videoposnetkov GoPro in DJI iz njihovih lastnih podatkov o gibanju, prostorski videoposnetki v 3D na Quest, če to dovoljujejo njegovi dekodirniki, prejšnje in naslednje med prostorskimi fotografijami v slušalkah.
 - **Viri**: podrsavanje med datotekami v mapi skupne rabe, overjanje Digest za WebDAV, koda QR za prenos žetona Plex z računalnika, IPv6 za Plex, posnetki Tapo v H.265, kanali na domačem zaslonu TV.
-- **Droni**: preizkus strani za uvoz z resničnim DJI Neo 2, nato združitev zvoka, ki ga je posnel telefon, z njegovim posnetkom; videoposnetek drona v živo, posredovan s telefona v Meta Quest. Pred temi preizkusi ni načrtovano nič, kar bi dronu pošiljalo ukaz.
 - **Upstream**: majhni pull requesti v Immich za dele, ki jih želijo vzdrževalci, najprej pregledovalnik fotografij 360°.
 
 Celoten seznam, s preverjanji na napravah, ki za vsako funkcijo še čakajo, je v [Stanju izdaje](../docs/immuch360/release-status.md#roadmap).
+
+<a id="technical-documentation"></a>
+<a id="documentation"></a>
+## Documentation
+
+- [Funkcije: celoten seznam in matrika funkcij po platformah](../docs/immuch360/features.md)
+- [Uporabniški vodnik: vsaka funkcija, korak za korakom, z njenimi možnostmi in sporočili](../docs/immuch360/user-guide.md)
+- [Združljivost: preverjeni formati, kodeki, dekodirniki, strežniki in naprave, omejitve](../docs/immuch360/compatibility.md)
+- [Podpora platform: kaj ima vsak sistem, kako se namesti, kaj se razlikuje](../docs/immuch360/platform-support.md)
+- [Znane težave](../docs/immuch360/known-issues.md) in [Odpravljanje težav](../docs/immuch360/troubleshooting.md), z dnevniki, ki jih je treba dodati k poročilu
+- [Tehnične podrobnosti: arhitektura, moduli Flutter in izvorni moduli, medijski most, cevovod sešivanja, dekodirniki](../docs/immuch360/technical-details.md)
+- [Namizni izrisovalnik videoposnetkov 360°: libmpv, prehod projekcije in meritve, ki stojijo za njim](../docs/immuch360/desktop-360-video-renderer.md)
+- [Stanje izdaje: zgradbe, trgovine in kaj ima vsaka trgovina](../docs/immuch360/release-status.md)
+- [Zgradite sami: telefoni, slušalke, televizorji in računalniki](../docs/immuch360/build.md)
+- [Immuch360 za televizorje LG webOS: namestitev v načinu Developer Mode, tipke daljinskega upravljalnika, glave CORS](../webos/README.md)
+
+### Advanced features
+
+Kaj aplikacija lahko prebere in predvaja, za bralca, ki želi celoten obseg. Vsaka vrstica je podrobno opisana v [uporabniškem vodniku](../docs/immuch360/user-guide.md) in na [strani združljivosti](../docs/immuch360/compatibility.md).
+
+<details>
+<summary><b>Formats, sources, playback and hardware, in detail</b></summary>
+
+- **Formati**: ravne fotografije in videoposnetki (kar naprava dekodira: MP4, MOV, MKV in drugo); ekvirektangularne fotografije in videoposnetki 360°; delne panorame (izrez GPano); VR180; stereoskopski 3D, zgoraj in spodaj ali drug ob drugem, prebran iz datoteke (polje st3d) ali ugotovljen iz slike; prostorske fotografije Apple (stereo pari HEIC) in prostorski videoposnetki (MV-HEVC, eno oko); izvorne datoteke Insta360 .insp in .insv, GoPro .360, DJI .osv; 10-bitni viri HLG in PQ s preslikavo tonov na krogli.
+- **Projekcija in metapodatki**: metapodatki GPano in sferični metapodatki se preberejo iz datoteke, z zahtevami po razponih na strežniku ali skupni rabi; začetni pogled kamere; krogle dronov DJI, prepoznane po kameri, z neobvezno spremno datoteko .xmp, da jih označi tudi Immich; «Prikaži kot 360°» si naprava zapomni; VR180 se prepozna iz datoteke ali njenega imena; kraj videoposnetka drona se prebere iz njegovega dnevnika leta .SRT; metapodatki ostanejo nedotaknjeni, saj se predvaja izvirna datoteka, nikoli pretvorjena kopija; četrtinski zasuk se shrani prek urejevalnika Immich ali ostane na napravi, nikoli na poglobljeni datoteki.
+- **Izvorno predvajanje**: Media3 na Android in televizorju, SceneKit in AVFoundation na iOS, Meta Spatial SDK v slušalkah, libmpv na Windows; izvirnik ali pretvorjeni pretok se izbere glede na to, kaj naprava dekodira; seznam video dekodirnikov naprave je v Nastavitvah, Napredno; izbira zvočne sledi, podnapisi v predvajalniku Android in kazalnik medpomnjenja.
+- **Izvorne datoteke, sešite na napravi**: Flutter fragment shader za fotografije; GPU učinek v predvajalniku za videoposnetke z eno sledjo; dva strojna dekodirnika hkrati in GPU compositor za videoposnetke z enim objektivom na sled ali datoteko (OpenGL ES 3 na Android in Quest, Metal na iOS, na Windows pa od namizne različice 5 dva predvajalnika libmpv, katerih slike aplikacija poveže na grafičnem čipu); lastna kalibracija kamere (modeli Mei, V6 in equidistant) ter zapis pospeškometra; naprava preide na en objektiv, pretvorjeni pretok, kopijo LRV kamere ali nesešit videoposnetek, kadar ne zmore pognati dveh dekodirnikov.
+- **Sources**: the device's gallery; the folders of a computer; a drone or a camera card over USB, through the system folder picker (Android, experimental); a DJI RC-N3 remote controller over its cable for the drone's live video (Android, experimental), relayed on the local network to a Meta Quest or an Android TV; an Immich server; SMB 2 and 3, WebDAV, DLNA/UPnP; Plex over HTTPS checked against the server's own certificate; Tapo cameras over the local network (HTTPS and RTSP); a phone or a computer shared on the Wi-Fi as a WebDAV server; servers found by Bonjour/mDNS, a local network scan, SSDP, GDM and the TP-Link discovery, and followed when they change address.
+- **Branje na zahtevo**: lokalni most streže predvajalnikom z razponi bajtov in žetonom za vsako sejo; velikimi bloki, vnaprejšnjim branjem in do šestimi vzporednimi povezavami SMB; sličicami iz slike vsakega videoposnetka; nič se ne kopira na napravo.
+- **Strojna oprema**: strojni dekodirniki se uporabljajo, kjer obstajajo, z njihovimi izmerjenimi omejitvami (meja H.264 na Quest 3, največ dva objektiva 2048x2048 za programske dekodirnike); na Windows grafični čip iz vsake dekodirane slike izriše pogled 360°, velikost slike se izmeri na vsakem računalniku, zazna se integriran ali namenski čip.
+- **Posebnosti platform**: žiroskop in predvajalnik Spatial 2.5D na telefonih; poglobljen pogled, krmilniki in roke na Quest; postavitev za daljinski upravljalnik, pogovorno okno s tipkovnico in pasica za Android TV; na računalniku miška in tipkovnica, celoten zaslon, eno okno, datoteke in mape, odprte s programom ali spuščene v njegovo okno, brane kot datoteke vaših map, HEIC, AVIF, TIFF in surove fotografije kamere iz vaših map, kadar ima Windows zanje dekodirnik, ter zaščita podatkov Windows za gesla in žetone.
+- **Zasebnost po zasnovi**: brez računa, brez oblaka, brez analitike; gesla in žetoni v varni shrambi naprave (na televizorjih LG in Samsung, ki za aplikacijo nimajo varne shrambe, v lastni shrambi aplikacije, nešifrirano); zaslon, prijavljen s telefona, dobi lastno sejo, poslano šifrirano po domačem omrežju, nikoli gesla (televizor LG dobi geslo s strani v brskalniku telefona, nešifrirano po domačem omrežju, in obdrži samo sejo); kamera predvajalnika Spatial in bralnika kod se uporablja samo na napravi; skupne rabe, Plex in kamere so dosegljivi samo v vašem omrežju.
+
+</details>
