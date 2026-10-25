@@ -12,6 +12,7 @@ import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_relay_quality.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_relay_tvs.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
@@ -81,7 +82,9 @@ class DjiLiveSendPanel extends ConsumerWidget {
             style: relay.startFailed ? small?.copyWith(color: context.colorScheme.error) : small,
           ),
         if (relay.sending) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: 6),
+          const DjiRelayStreamLines(prefix: 'dji_live_send'),
+          const SizedBox(height: 10),
           Text(t.dji_live_send_code, style: context.textTheme.labelMedium),
           Row(
             children: [

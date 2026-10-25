@@ -49,6 +49,8 @@ List<String> djiLinkSmoothnessLines(Translations t, DjiRelayReceiving receiving)
   final freezes = receiving.freezes ?? 0;
   final rate = djiLinkNumber(receiving.refreshHz, 0);
   return [
+    // The picture of the phone's steady stream (p2/relay-bandwidth-2026-10-25.md, 7.9 item 3)
+    if (receiving.steady == true) t.dji_link_receive_steady(rate: djiLinkNumber(receiving.receivedPerSecond, 0)),
     t.dji_link_latency_buffer(
       target: djiLinkNumber(receiving.bufferTargetMs, 0),
       now: djiLinkNumber(receiving.bufferNowMs, 0),

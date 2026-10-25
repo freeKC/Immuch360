@@ -1035,6 +1035,15 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
                 ),
               ),
             ),
+          // The phone sends its steady picture: said for a few seconds at each switch, then gone
+          if (active?.state == DjiRelayReceiveState.receiving && active?.steady == true)
+            DjiTransient(
+              kind: 'steady${active?.streamSwitches ?? 0}',
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 2, 16, 4),
+                child: Text(t.dji_watch_steady_switch, key: const Key('dji_watch_tv_strip_steady'), style: white),
+              ),
+            ),
           if (cannotKeepUp != null)
             DjiTransient(
               kind: 'cannotKeepUp',

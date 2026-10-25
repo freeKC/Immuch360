@@ -16,6 +16,7 @@ import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_capture.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_counters.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_fields.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_relay_quality.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 
@@ -189,6 +190,8 @@ class DjiLiveAdvancedPanel extends ConsumerWidget {
             padding: const EdgeInsets.only(top: 6),
             child: Text(t.dji_live_values_pending, key: const Key('dji_live_values_pending'), style: small),
           ),
+        const SizedBox(height: 12),
+        const DjiRelayQualitySection(),
         const SizedBox(height: 12),
         DjiObstacleSection(gates: gates),
         if (state.environment?.djiApplicationInstalled ?? false) ...[
