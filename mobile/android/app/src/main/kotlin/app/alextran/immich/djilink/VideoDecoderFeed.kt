@@ -101,16 +101,35 @@ object HevcDecoders {
  *   stopped, a capture asked for by a page that has closed since) is dropped instead of making a decoder thread and a
  *   codec that nothing would shut down, until an explicit [open].
  *
+ * A paced reception replaces the bound by a safety net ([net], p2/review-relay-2026-10-25.md M2): past its age or its
+ * bytes, the units before the newest key unit queued go, or when none is queued every unit but the newest; no flush is
+ * asked, the decoder keeps its references, and the decoder thread learns it once from [takeNet].
+ *
  * [W] is the handler of the decoder thread; it is a type parameter so that the rules are unit tested without Android.
+ * [sizeOf], [bornNs] and [isKey] read a unit for the safety net.
  */
-class DecoderQueue<T : Any, W : Any>(bound: Int) {
+class DecoderQueue<T : Any, W : Any>(
+  bound: Int,
+  private val sizeOf: (T) -> Int = { 0 },
+  private val bornNs: (T) -> Long = { 0L },
+  private val isKey: (T) -> Boolean = { false },
+) {
+  /** The safety net of a paced reception: the oldest unit's age, the bytes and the units that reach it */
+  class Net(val maxAgeNs: Long, val maxBytes: Long, val maxUnits: Int)
+
   private val lock = Any()
 
-  /** Units kept at most; a paced reception raises it to a safety net ([VideoDecoderFeed.PACED_MAX_QUEUED_UNITS]) */
+  /** Units kept at most when no [net] is set */
   @Volatile
   var bound: Int = bound
+
+  /** Set for a paced reception, in place of [bound] */
+  @Volatile
+  var net: Net? = null
   private val pending = ArrayDeque<T>()
+  private var bytes = 0L
   private var overflow = false
+  private var netReached = false
   private var closed = false
   private var worker: W? = null
   private var dropped = 0L
@@ -126,22 +145,57 @@ class DecoderQueue<T : Any, W : Any>(bound: Int) {
   val currentWorker: W? get() = synchronized(lock) { worker }
 
   /**
-   * Queues [item] and returns the worker to wake, made by [make] when there is none yet. While closed, returns null:
-   * the item is dropped and no worker is made.
+   * Queues [item] at [nowNs] and returns the worker to wake, made by [make] when there is none yet. While closed,
+   * returns null: the item is dropped and no worker is made.
    */
-  fun offer(item: T, make: () -> W): W? = synchronized(lock) {
+  fun offer(item: T, nowNs: Long, make: () -> W): W? = synchronized(lock) {
     if (closed) {
       return null
     }
     pending.addLast(item)
-    if (pending.size > bound) {
+    bytes += sizeOf(item)
+    val safety = net
+    if (safety != null) {
+      val oldestAgeNs = if (nowNs == Long.MIN_VALUE) 0L else nowNs - bornNs(pending.first())
+      if (bytes > safety.maxBytes || pending.size > safety.maxUnits || oldestAgeNs > safety.maxAgeNs) {
+        dropToNet()
+      }
+    } else if (pending.size > bound) {
       while (pending.size > bound) {
-        pending.removeFirst()
+        bytes -= sizeOf(pending.removeFirst())
         dropped += 1
       }
       overflow = true
     }
     worker ?: make().also { worker = it }
+  }
+
+  /** Queues [item] with no time: the safety net then looks at the bytes and the units only */
+  fun offer(item: T, make: () -> W): W? = offer(item, Long.MIN_VALUE, make)
+
+  /**
+   * Under the lock: the units before the newest key unit queued go; when none is queued, or it is the oldest, the units
+   * between the oldest key unit kept and the newest unit go. The decoder is not flushed.
+   */
+  private fun dropToNet() {
+    val keyAt = pending.indexOfLast(isKey)
+    val from = if (keyAt == 0) 1 else 0
+    val until = if (keyAt > 0) keyAt else pending.size - 1
+    if (until <= from) {
+      return
+    }
+    val kept = ArrayDeque<T>()
+    for ((index, unit) in pending.withIndex()) {
+      if (index in from until until) {
+        bytes -= sizeOf(unit)
+        dropped += 1
+      } else {
+        kept.addLast(unit)
+      }
+    }
+    pending.clear()
+    pending.addAll(kept)
+    netReached = true
   }
 
   /** For the decoder thread: true once after an overflow, with the units still waiting dropped and counted */
@@ -152,8 +206,17 @@ class DecoderQueue<T : Any, W : Any>(bound: Int) {
     overflow = false
     dropped += pending.size
     pending.clear()
+    bytes = 0
     true
   }
+
+  /** For the decoder thread: true once after the safety net dropped units, which it counts and treats as a gap */
+  fun takeNet(): Boolean = synchronized(lock) {
+    netReached.also { netReached = false }
+  }
+
+  /** The bytes of the units waiting */
+  val queuedBytes: Long get() = synchronized(lock) { bytes }
 
   /** The oldest unit, left in the queue until [remove] */
   fun peek(): T? = synchronized(lock) { pending.firstOrNull() }
@@ -162,13 +225,16 @@ class DecoderQueue<T : Any, W : Any>(bound: Int) {
   fun remove(item: T) = synchronized(lock) {
     if (pending.firstOrNull() === item) {
       pending.removeFirst()
+      bytes -= sizeOf(item)
     }
   }
 
   /** A new source: the waiting units go, and the count of drops starts again */
   fun clear() = synchronized(lock) {
     pending.clear()
+    bytes = 0
     overflow = false
+    netReached = false
     dropped = 0
   }
 
@@ -176,7 +242,9 @@ class DecoderQueue<T : Any, W : Any>(bound: Int) {
   fun close(): W? = synchronized(lock) {
     closed = true
     pending.clear()
+    bytes = 0
     overflow = false
+    netReached = false
     worker.also { worker = null }
   }
 
@@ -206,9 +274,10 @@ class DecoderQueue<T : Any, W : Any>(bound: Int) {
  * A unit received from a phone's relay ([AccessUnit.relay]) is paced (p2/relay-smoothness-2026-10-25.md, 5.1): the
  * [JitterBuffer] gives it a display time on arrival, it waits here until that time less the time decoding takes, every
  * unit is decoded in order, and each picture is released with its display time, or without rendering when it is late
- * and a newer one is due ([PacedRender]). The queue is then a safety net of [PACED_MAX_QUEUED_UNITS]: dropping units
- * is the phone's decision, which sees the network. Every picture of any source is released with an explicit time on
- * the System.nanoTime clock, the one the surface reads.
+ * and a newer decoded one is due ([PacedRelease]). The queue is then a safety net of [PACED_NET_AGE_NS] or
+ * [PACED_NET_BYTES]: dropping units is the phone's decision, which sees the network; past the net units go without a
+ * flush, and the kept key picture waits as after a gap ([KeyPrimer]). Every picture of any source is released with an
+ * explicit time on the System.nanoTime clock, the one the surface reads.
  *
  * Receive only: nothing here has a handle on the transport.
  */
@@ -232,8 +301,16 @@ class VideoDecoderFeed(
     private const val PARKING_WIDTH = 1920
     private const val PARKING_HEIGHT = 1080
 
-    /** The safety net of a paced reception: 3 s at 60 pictures a second */
-    const val PACED_MAX_QUEUED_UNITS = 180
+    /**
+     * The safety net of a paced reception (p2/review-relay-2026-10-25.md M2): above twice a TV's bound on the phone
+     * (3 s) with the jitter buffer's ceiling and the decode lead, so that only a device that cannot keep up reaches it
+     */
+    const val PACED_NET_AGE_NS = 5_000_000_000L
+    const val PACED_NET_BYTES = 16L * 1024 * 1024
+
+    /** And a count of units, for the memory only: 10 s at 60 pictures a second */
+    const val PACED_NET_UNITS = 600
+    val PACED_NET = DecoderQueue.Net(PACED_NET_AGE_NS, PACED_NET_BYTES, PACED_NET_UNITS)
 
     /** The operating rate told to every decoder at configuration level 1: the 60 pictures a second of a flight */
     const val OPERATING_RATE = 60
@@ -246,14 +323,19 @@ class VideoDecoderFeed(
   /** A unit queued to the codec: when, and what the relay said of it */
   private class InFlight(val fedNs: Long, val stamp: RelayStamp?)
 
-  /** An output held until its time comes near */
+  /** A decoded picture of a paced reception, until it is released */
   private class Held(val index: Int, val pts: Long, val stamp: RelayStamp)
 
   /**
    * Units waiting for an input buffer, and the handler of the decoder thread they wake: the thread is made by the first
    * unit while the queue is open and ended by [shutdown]
    */
-  private val queue = DecoderQueue<Pair<AccessUnit, ResolvedDescription>, Handler>(DecoderPolicy.MAX_QUEUED_UNITS)
+  private val queue = DecoderQueue<Pair<AccessUnit, ResolvedDescription>, Handler>(
+    DecoderPolicy.MAX_QUEUED_UNITS,
+    sizeOf = { it.first.size },
+    bornNs = { it.first.relay?.arrivalNs ?: it.first.lastArrivalNs },
+    isKey = { it.first.isKey },
+  )
 
   private val handler: Handler? get() = queue.currentWorker
 
@@ -301,7 +383,11 @@ class VideoDecoderFeed(
   private val pacer = DisplayPacer()
   private var heldOutput: Int? = null
   private val queuedAt = LinkedHashMap<Long, InFlight>()
-  private val held = ArrayDeque<Held>()
+  private val release = PacedRelease<Held>()
+  private val releaseSteps = ArrayList<PacedRelease.Step<Held>>()
+
+  /** The safety net dropped units: the next unit fed comes after a gap */
+  private var gapPending = false
   private val rendered = LinkedHashMap<Long, RelayStamp>()
   private var lastOutputNs: Long? = null
   private var nextLeadNs = 0L
@@ -333,25 +419,28 @@ class VideoDecoderFeed(
     }
     // The bound is a constant of the policy; the policy object itself belongs to the decoder thread. A closed feed
     // drops the unit and makes no thread.
-    val target = queue.offer(unit to description, ::makeThread) ?: return
+    val target = queue.offer(unit to description, clockNs(), ::makeThread) ?: return
     smoothing.onQueued(queue.size)
     target.post(drain)
   }
 
-  /** The bounds of the jitter buffer of the next reception: a TV's, or a headset's */
-  fun setPacing(television: Boolean) {
+  /**
+   * The bounds of the jitter buffer of the next reception: a TV's, or a headset's; [lowestDelay] is the headset's
+   * choice in Options, with no floor
+   */
+  fun setPacing(television: Boolean, lowestDelay: Boolean = false) {
     synchronized(jitter) {
-      jitter = if (television) {
-        JitterBuffer(JitterBuffer.TV_FLOOR_NS, JitterBuffer.TV_CEILING_NS)
-      } else {
-        JitterBuffer(JitterBuffer.HEADSET_FLOOR_NS, JitterBuffer.HEADSET_CEILING_NS)
+      jitter = when {
+        television -> JitterBuffer(JitterBuffer.TV_FLOOR_NS, JitterBuffer.TV_CEILING_NS)
+        lowestDelay -> JitterBuffer(JitterBuffer.LOWEST_FLOOR_NS, JitterBuffer.HEADSET_CEILING_NS)
+        else -> JitterBuffer(JitterBuffer.HEADSET_FLOOR_NS, JitterBuffer.HEADSET_CEILING_NS)
       }
     }
   }
 
   /** On the thread that submits: the display time of a relayed unit, and its line in the timing ring */
   private fun place(unit: AccessUnit, stamp: RelayStamp) {
-    queue.bound = PACED_MAX_QUEUED_UNITS
+    queue.net = PACED_NET
     val source: Int
     val clockMs: Long
     when {
@@ -408,7 +497,7 @@ class VideoDecoderFeed(
   override fun reset() {
     primer.clear()
     queue.clear()
-    queue.bound = DecoderPolicy.MAX_QUEUED_UNITS
+    queue.net = null
     // A new stream for the jitter buffer; the counters and the timing ring go on until the controller clears them
     synchronized(jitter) { jitter.reset() }
     smoothing.pause()
@@ -433,6 +522,8 @@ class VideoDecoderFeed(
     choice = next
     handler?.post {
       releaseCodec()
+      // Chosen on the page: the wait for the new decoder is no freeze
+      smoothing.pause()
       policyMade = false
       failure = null
       failedForSession = false
@@ -495,6 +586,12 @@ class VideoDecoderFeed(
         flushCodec()
         continue
       }
+      if (queue.takeNet()) {
+        // The safety net of a paced reception: units went, the codec keeps its references, the next unit follows a gap
+        smoothing.onSafetyNet(clockNs())
+        gapPending = true
+        Log.i(TAG, "this device could not keep up: queued units dropped, the decoder goes on")
+      }
       val next = queue.peek() ?: return
       val (unit, resolved) = next
       if (failedForSession) {
@@ -545,11 +642,15 @@ class VideoDecoderFeed(
         continue
       }
       queue.remove(next)
-      queueUnit(current, index, buffer, unit)
-      primer.onQueued(unit.isKey)
-      if (stamp != null && (stamp.flags and RelayWire.UNIT_BREAK) != 0) {
-        // Units the phone dropped for this device: no flush, the decoder goes on, and the kept key picture waits
-        primer.onBreak(unit.lastArrivalNs)
+      val pts = queueUnit(current, index, buffer, unit)
+      // Units the phone dropped for this device (BREAK), the safety net, or a picture lost on the radio: no flush, the
+      // decoder goes on, and the kept key picture waits
+      val gapBefore = gapPending || (stamp != null && (stamp.flags and RelayWire.UNIT_BREAK) != 0)
+      gapPending = false
+      if (pts != null) {
+        primer.onQueuedUnit(unit, unit.lastArrivalNs, pts, gapBefore)
+      } else {
+        primer.onQueued(unit.isKey)
       }
       afterQueue(policy.afterQueue(unit.isKey, clockNs()), resolved.description)
       publishStatus()
@@ -624,13 +725,14 @@ class VideoDecoderFeed(
     policyMade = true
   }
 
-  private fun queueUnit(current: MediaCodec, index: Int, buffer: ByteBuffer, unit: AccessUnit) {
+  /** Queues [unit] into [buffer]; returns the presentation time given, null when it did not go in */
+  private fun queueUnit(current: MediaCodec, index: Int, buffer: ByteBuffer, unit: AccessUnit): Long? {
     val now = clockNs()
     if (buffer.capacity() < unit.size) {
       // A unit the buffer cannot hold is lost, and said so: the buffer goes back empty
       statistics.onError()
       runCatching { current.queueInputBuffer(index, 0, 0, 0, 0) }
-      return
+      return null
     }
     buffer.clear()
     buffer.put(unit.bytes)
@@ -643,7 +745,7 @@ class VideoDecoderFeed(
     val queued = runCatching { current.queueInputBuffer(index, 0, unit.size, pts, flags) }
     if (queued.isFailure) {
       statistics.onError()
-      return
+      return null
     }
     if (unit.isKey) {
       keySinceStart = true
@@ -655,6 +757,7 @@ class VideoDecoderFeed(
     }
     stamp?.let { timing?.onFed(it.timingIndex, now) }
     statistics.onQueued(now - unit.lastArrivalNs, now)
+    return pts
   }
 
   /** Releases whatever runs and starts the decoder the policy holds, or the next ones; false when none would start */
@@ -733,7 +836,7 @@ class VideoDecoderFeed(
       outputSurface = surface
       freeInputs.clear()
       queuedAt.clear()
-      held.clear()
+      release.clear()
       rendered.clear()
       heldOutput = null
       pacer.reset()
@@ -770,13 +873,15 @@ class VideoDecoderFeed(
     configured = null
     freeInputs.clear()
     queuedAt.clear()
-    held.clear()
+    // The indices held belong to the codec that goes
+    release.clear()
     rendered.clear()
     heldOutput = null
     handler?.removeCallbacks(renderHeld)
     handler?.removeCallbacks(releaseHeld)
     pacer.reset()
-    smoothing.pause()
+    // No pause of the freezes: a restart of the decoder in a stream that goes on leaves the picture as it was, and the
+    // wait until the new decoder shows counts as a freeze (p2/review-relay-2026-10-25.md M2)
     startedAtNs = null
     keySinceStart = false
     primerPts = null
@@ -785,16 +890,12 @@ class VideoDecoderFeed(
   /** Rule 4 of the policy: the codec and the queue are emptied and decoding goes on with the next unit */
   private fun flushCodec() {
     statistics.onOverrun()
-    if (queue.bound == PACED_MAX_QUEUED_UNITS) {
-      // The safety net of a paced reception: the phone kept dropping nothing while this device fell 3 s behind
-      smoothing.onSafetyFlush()
-    }
     val current = codec ?: return
     runCatching { current.flush() }
     freeInputs.clear()
     queuedAt.clear()
     // A flush returns every output buffer to the codec: the indices held are no longer ours
-    held.clear()
+    release.clear()
     rendered.clear()
     heldOutput = null
     handler?.removeCallbacks(renderHeld)
@@ -845,7 +946,8 @@ class VideoDecoderFeed(
     handler?.removeCallbacks(renderHeld)
     dropHeld(current)
     pacer.reset()
-    smoothing.pause()
+    // A freeze under way while the view showed it counts up to now
+    smoothing.closeView(clockNs())
     val switched = runCatching { current.setOutputSurface(target) }.isSuccess
     if (switched) {
       outputSurface = target
@@ -872,49 +974,36 @@ class VideoDecoderFeed(
     }
   }
 
-  /** Outputs held for a paced display, released unseen: a surface switch, a new codec */
+  /** Outputs held for a paced display, released unseen: a surface switch */
   private fun dropHeld(current: MediaCodec) {
-    for (output in held) {
+    for (output in release.clear()) {
       runCatching { current.releaseOutputBuffer(output.index, false) }
       timing?.onResult(output.stamp.timingIndex, UnitTimingRing.PARKED)
     }
-    held.clear()
     handler?.removeCallbacks(releaseHeld)
   }
 
   /** A time of the pipeline clock on the System.nanoTime clock, which the surface reads */
   private fun toSurfaceClock(ns: Long): Long = System.nanoTime() + (ns - clockNs())
 
-  /** The display time of the picture after the one at the head, in decoding order; null when none is known */
-  private fun nextDisplayNs(skipFirstHeld: Boolean): Long? {
-    val afterHeld = if (skipFirstHeld) held.drop(1) else held.toList()
-    afterHeld.firstOrNull()?.let { return it.stamp.displayNs }
-    queuedAt.values.firstOrNull { it.stamp != null }?.stamp?.let { return it.displayNs }
-    return queue.peek()?.first?.relay?.displayNs
-  }
-
-  /** Releases the held outputs whose time came, in order; the first one still early sets the timer */
+  /** Releases the decoded pictures whose time came, as [PacedRelease] says; a picture still early sets the timer */
   private fun releaseHeldNow() {
     val current = codec ?: return
-    while (held.isNotEmpty()) {
-      val head = held.first()
-      val now = clockNs()
-      when (val decision = PacedRender.decide(head.stamp.displayNs, now, nextDisplayNs(skipFirstHeld = true))) {
-        PacedRender.Decision.Skip -> {
-          held.removeFirst()
-          skipOutput(current, head.index, head.stamp)
-        }
-        is PacedRender.Decision.Render -> {
-          held.removeFirst()
-          renderAt(current, head.index, head.pts, head.stamp, decision.atNs)
-        }
-        is PacedRender.Decision.Hold -> {
-          handler?.let {
-            it.removeCallbacks(releaseHeld)
-            it.postDelayed(releaseHeld, ((decision.untilNs - now) / 1_000_000).coerceAtLeast(1))
-          }
-          return
-        }
+    val now = clockNs()
+    val period = synchronized(jitter) { jitter.periodNs }
+    releaseSteps.clear()
+    val wakeNs = release.release(now, period, releaseSteps)
+    for (step in releaseSteps) {
+      when (step) {
+        is PacedRelease.Step.Skip -> skipOutput(current, step.item.index, step.item.stamp)
+        is PacedRelease.Step.Render -> renderAt(current, step.item.index, step.item.pts, step.item.stamp, step.atNs)
+      }
+    }
+    releaseSteps.clear()
+    handler?.let {
+      it.removeCallbacks(releaseHeld)
+      if (wakeNs != null) {
+        it.postDelayed(releaseHeld, ((wakeNs - now + 999_999) / 1_000_000).coerceAtLeast(1))
       }
     }
   }
@@ -955,7 +1044,7 @@ class VideoDecoderFeed(
    * 12 and later): 60 pictures a second in flight, 30 on the ground
    */
   private fun askFrameRate() {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || queue.bound != PACED_MAX_QUEUED_UNITS) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || queue.net == null) {
       return
     }
     val surface = viewSurface ?: return
@@ -1017,7 +1106,7 @@ class VideoDecoderFeed(
         publishStatus()
         return
       }
-      primer.onOutput()
+      primer.onOutput(info.presentationTimeUs)
       val now = clockNs()
       val flight = queuedAt.remove(info.presentationTimeUs)
       val decodeNs = flight?.let { now - it.fedNs }
@@ -1040,15 +1129,15 @@ class VideoDecoderFeed(
       if (parked) {
         runCatching { codec.releaseOutputBuffer(index, false) }
         if (stamp != null) {
-          smoothing.onParked()
+          smoothing.onParked(now)
           timing?.onResult(stamp.timingIndex, UnitTimingRing.PARKED)
         }
         publishStatus()
         return
       }
       if (stamp != null) {
-        held.addLast(Held(index, info.presentationTimeUs, stamp))
-        smoothing.onHeld(held.size)
+        release.add(Held(index, info.presentationTimeUs, stamp), stamp.displayNs)
+        smoothing.onHeld(release.size)
         releaseHeldNow()
         publishStatus()
         return

@@ -166,16 +166,60 @@ class RelaySmoothingTest {
   }
 
   @Test
-  fun aLatePictureIsSkippedOnlyWhenANewerOneIsDue() {
+  fun aLatePictureIsSkippedOnlyWhenANewerDecodedOneIsDue() {
+    val steps = mutableListOf<PacedRelease.Step<String>>()
+    fun PacedRelease<String>.at(nowNs: Long): Long? {
+      steps.clear()
+      return release(nowNs, flight, steps)
+    }
+    val release = PacedRelease<String>()
     // Due within two refreshes: to the surface with its time
-    assertEquals(PacedRender.Decision.Render(110 * ms), PacedRender.decide(110 * ms, 100 * ms, 126 * ms))
+    release.add("a", 110 * ms)
+    assertNull(release.at(100 * ms))
+    assertEquals(listOf<PacedRelease.Step<String>>(PacedRelease.Step.Render("a", 110 * ms)), steps)
     // Early: held until two refreshes before its time
-    assertEquals(PacedRender.Decision.Hold(167 * ms), PacedRender.decide(200 * ms, 100 * ms, null))
-    // Late, and the next one is due too: not shown, but it was decoded
-    assertEquals(PacedRender.Decision.Skip, PacedRender.decide(90 * ms, 100 * ms, 99 * ms))
-    // Late with nothing newer due: shown at once, a late picture rather than none
-    assertEquals(PacedRender.Decision.Render(100 * ms), PacedRender.decide(90 * ms, 100 * ms, 106 * ms))
-    assertEquals(PacedRender.Decision.Render(100 * ms), PacedRender.decide(90 * ms, 100 * ms, null))
+    release.add("b", 200 * ms)
+    assertEquals(167 * ms, release.at(100 * ms))
+    assertTrue(steps.isEmpty())
+    assertEquals(listOf<PacedRelease.Step<String>>(PacedRelease.Step.Render("b", 200 * ms)).size, 1)
+    release.at(167 * ms)
+    assertEquals(listOf<PacedRelease.Step<String>>(PacedRelease.Step.Render("b", 200 * ms)), steps)
+    // Late, and the next decoded one is due too: not shown, but it was decoded
+    release.add("c", 300 * ms)
+    release.add("d", 316 * ms)
+    release.at(330 * ms)
+    assertEquals(
+      listOf<PacedRelease.Step<String>>(PacedRelease.Step.Skip("c"), PacedRelease.Step.Render("d", 330 * ms)),
+      steps,
+    )
+    // Late with the next decoded one not due yet: shown now, the next one at its time
+    release.add("e", 340 * ms)
+    release.add("f", 400 * ms)
+    release.at(350 * ms)
+    assertEquals(listOf<PacedRelease.Step<String>>(PacedRelease.Step.Render("e", 350 * ms)), steps)
+    release.at(370 * ms)
+    assertEquals(listOf<PacedRelease.Step<String>>(PacedRelease.Step.Render("f", 400 * ms)), steps)
+    // Late with nothing newer decoded: shown, whatever is still in the decoder or the queue; but a late picture waits
+    // its turn, one picture after the one before
+    val late = PacedRelease<String>()
+    late.add("g", 500 * ms)
+    late.at(600 * ms)
+    assertEquals(listOf<PacedRelease.Step<String>>(PacedRelease.Step.Render("g", 600 * ms)), steps)
+    late.add("h", 516 * ms)
+    assertEquals(600 * ms + flight, late.at(605 * ms))
+    assertTrue(steps.isEmpty())
+    // A newer decoded picture came meanwhile: it takes the turn, the older one is not shown
+    late.add("i", 533 * ms)
+    late.at(600 * ms + flight)
+    assertEquals(
+      listOf<PacedRelease.Step<String>>(PacedRelease.Step.Skip("h"), PacedRelease.Step.Render("i", 600 * ms + flight)),
+      steps,
+    )
+    // The turn comes every 50 ms at least, whatever the period
+    late.add("j", 540 * ms)
+    steps.clear()
+    assertEquals(600 * ms + flight + 50 * ms, late.release(620 * ms, 200 * ms, steps))
+    assertEquals(listOf("i", "j"), listOf("i") + late.clear())
     // The lead follows the decode time, within its bounds
     assertEquals(PacedRender.DEFAULT_LEAD_NS, PacedRender.lead(null, 0))
     assertEquals(30 * ms + flight / 2, PacedRender.lead(30 * ms, flight))
@@ -183,51 +227,148 @@ class RelaySmoothingTest {
     assertEquals(PacedRender.MAX_LEAD_NS, PacedRender.lead(900 * ms, flight))
   }
 
+  /** What a paced reception showed in [paced]: the unit and its render time for each picture shown, and the skips */
+  private class Shown(val shown: List<Pair<Int, Long>>, val skipped: List<Int>, val display: List<Long>) {
+    /** The longest time between two pictures shown from [fromNs] on */
+    fun longestGapFrom(fromNs: Long): Long =
+      shown.map { it.second }.filter { it >= fromNs }.zipWithNext().maxOfOrNull { (a, b) -> b - a } ?: 0L
+  }
+
   /**
-   * The feed's rules end to end on a Wi-Fi stall in flight: 600 ms with nothing, then the 36 units of it within 30 ms.
-   * Every unit is decoded in order; the late ones are not shown while a newer one is due; the newest due one is shown
-   * at once; from there on every picture is shown, one picture period apart.
+   * A paced reception end to end with a decoder of finite throughput: each unit is placed by the real [JitterBuffer] on
+   * arrival, goes to the decoder at its time to feed (or on arrival), starts once the decoder finished the one before
+   * ([serviceNs] each, its throughput), and comes out [latencyNs] after it started at the earliest, so that several
+   * pictures may be in flight; the real [PacedRelease] takes each output when it comes and wakes when it asks.
+   */
+  private fun paced(
+    arrivals: List<Long>,
+    sources: List<Long>,
+    serviceNs: Long,
+    latencyNs: Long = serviceNs,
+    leadNs: Long = 30 * ms,
+  ): Shown {
+    val jitter = JitterBuffer()
+    val placed = arrivals.indices.map { jitter.place(arrivals[it], sources[it], false, leadNs) }
+    val outputs = LongArray(arrivals.size)
+    var free = Long.MIN_VALUE
+    for (index in arrivals.indices) {
+      val start = maxOf(arrivals[index], placed[index].feedAtNs, free)
+      free = start + serviceNs
+      outputs[index] = maxOf(start + latencyNs, if (index > 0) outputs[index - 1] else Long.MIN_VALUE)
+    }
+    val release = PacedRelease<Int>()
+    val steps = mutableListOf<PacedRelease.Step<Int>>()
+    val shown = mutableListOf<Pair<Int, Long>>()
+    val skipped = mutableListOf<Int>()
+    var next = 0
+    var wake: Long? = null
+    while (next < outputs.size || release.size > 0) {
+      val output = if (next < outputs.size) outputs[next] else Long.MAX_VALUE
+      val now = if (wake != null && wake < output) wake else output
+      while (next < outputs.size && outputs[next] <= now) {
+        release.add(next, placed[next].displayNs)
+        next += 1
+      }
+      steps.clear()
+      wake = release.release(now, jitter.periodNs, steps)
+      for (step in steps) {
+        when (step) {
+          is PacedRelease.Step.Render -> shown += step.item to step.atNs
+          is PacedRelease.Step.Skip -> skipped += step.item
+        }
+      }
+    }
+    shown.zipWithNext().forEach { (a, b) -> assertTrue("shown in order", b.first > a.first && b.second >= a.second) }
+    return Shown(shown, skipped, placed.map { it.displayNs })
+  }
+
+  /**
+   * A decoder of 45 pictures a second on the 60 a second of a flight, 10 s (p2/review-relay-2026-10-25.md B1.1): it
+   * cannot keep up, and every picture it makes is shown, never one picture held for seconds.
+   */
+  @Test
+  fun aDecoderSlowerThanTheStreamShowsEveryPictureItMakes() {
+    val sources = (0 until 600).map { it * flight }
+    val run = paced(arrivals = sources.map { it + 5 * ms }, sources = sources, serviceNs = 1_000 * ms / 45)
+    val inTenSeconds = run.shown.count { it.second <= 10_000 * ms }
+    println("a decoder at 45 a second on a 60 a second stream: ${run.shown.size} shown, ${run.skipped.size} skipped")
+    assertEquals(0, run.skipped.size)
+    assertTrue("about 45 a second shown, $inTenSeconds in 10 s", inTenSeconds >= 430)
+    assertTrue("never a picture held for long", run.longestGapFrom(0) <= 1_000 * ms / 45 + ms)
+  }
+
+  /**
+   * A stall of 1 s in flight, then a decoder at 1.2 times real time (B1.2): it needs about 5 s to catch up, during
+   * which the screen gets a new picture at least every picture period or as fast as the decoder makes them, and then
+   * every picture is on time again.
+   */
+  @Test
+  fun afterAOneSecondStallASlowDecoderCatchesUpWithoutAFreeze() {
+    val sources = (0 until 900).map { it * flight }
+    val arrivals = sources.mapIndexed { index, source ->
+      if (index in 120 until 180) 180 * flight + 5 * ms + (index - 120) * ms / 2 else source + 5 * ms
+    }
+    val run = paced(arrivals, sources, serviceNs = 1_000 * ms / 72)
+    val stallEnds = 180 * flight + 5 * ms
+    val longest = run.longestGapFrom(stallEnds + 200 * ms)
+    println("1 s stall, decoder at 1.2 times real time: longest wait ${longest / ms} ms, ${run.skipped.size} skipped")
+    assertTrue("no freeze while it catches up: ${longest / ms} ms", longest <= flight + ms)
+    // Caught up: the last second is shown on time, each picture at its display time
+    val last = run.shown.filter { it.first >= 840 }
+    assertEquals(60, last.size)
+    last.forEach { (index, at) -> assertEquals(run.display[index], at) }
+  }
+
+  /**
+   * The feed's rules end to end on a Wi-Fi stall in flight: 600 ms with nothing, then the 36 units of it within 30 ms,
+   * on a fast decoder with several pictures in flight. Every unit is decoded in order; the late pictures overtaken by a
+   * newer decoded one are not shown; the screen gets a new picture at least every picture period; from there on every
+   * picture is shown, one picture period apart.
    */
   @Test
   fun aBurstAfterAStallIsDecodedWholeAndOnlyTheNewestDuePictureShown() {
-    val jitter = JitterBuffer()
-    val lead = 30 * ms
-    class Unit(val arrival: Long, val placed: JitterBuffer.Placement)
-    val units = mutableListOf<Unit>()
-    for (index in 0 until 200) {
-      val source = index * flight
-      val arrival = when {
+    val sources = (0 until 200).map { it * flight }
+    val arrivals = sources.mapIndexed { index, source ->
+      when {
         index < 60 -> source
         index < 96 -> 59 * flight + 600 * ms + (index - 60) * ms
         else -> source
       }
-      units += Unit(arrival, jitter.place(arrival, source, false, lead))
     }
-    // The decoder takes each unit at its time to go in (or on arrival) and gives its picture 10 ms later
-    val outputs = units.map { maxOf(it.arrival, it.placed.feedAtNs) + 10 * ms }
-    var decoded = 0
-    val shown = mutableListOf<Pair<Int, Long>>()
-    var skipped = 0
-    for ((index, unit) in units.withIndex()) {
-      decoded += 1
-      val now = outputs[index]
-      // The next picture is known once its unit arrived
-      val next = units.getOrNull(index + 1)?.takeIf { it.arrival <= now }?.placed?.displayNs
-      when (val decision = PacedRender.decide(unit.placed.displayNs, now, next)) {
-        PacedRender.Decision.Skip -> skipped += 1
-        is PacedRender.Decision.Render -> shown += index to decision.atNs
-        is PacedRender.Decision.Hold -> shown += index to unit.placed.displayNs
-      }
-    }
-    println("stall of 600 ms in flight: $decoded decoded, $skipped not shown, target ${jitter.targetNs / ms} ms after")
-    assertEquals(200, decoded)
-    assertTrue("some late pictures were not shown", skipped in 1 until 36)
-    assertEquals(200 - skipped, shown.size)
-    shown.zipWithNext().forEach { (a, b) -> assertTrue("shown in order", b.second >= a.second) }
+    val run = paced(arrivals, sources, serviceNs = 3 * ms, latencyNs = 12 * ms)
+    println("stall of 600 ms in flight: ${run.shown.size} shown, ${run.skipped.size} not shown")
+    assertEquals(200, run.shown.size + run.skipped.size)
+    assertTrue("some late pictures were not shown", run.skipped.size in 1 until 36)
+    assertTrue("a picture at least each period", run.longestGapFrom(59 * flight + 600 * ms) <= flight + ms)
     // Once caught up, every picture is shown one period apart
-    val after = shown.filter { it.first >= 100 }
+    val after = run.shown.filter { it.first >= 100 }
     assertEquals(100, after.size)
     after.zipWithNext().forEach { (a, b) -> assertEquals(flight, b.second - a.second) }
+  }
+
+  /** A decoder with five pictures in flight on a steady stream: every picture shown at its time, none skipped */
+  @Test
+  fun picturesStillInTheDecoderNeverMakeOneSkipped() {
+    val sources = (0 until 300).map { it * flight }
+    val run = paced(sources.map { it + 3 * ms }, sources, serviceNs = 4 * ms, latencyNs = 5 * flight, leadNs = 100 * ms)
+    assertEquals(0, run.skipped.size)
+    run.shown.forEach { (index, at) -> assertEquals(run.display[index], at) }
+  }
+
+  /** A new base, lower or higher, moves the display times by a millisecond a picture at most (review m2) */
+  @Test
+  fun aNewBaseIsTakenAMillisecondAPicture() {
+    val jitter = JitterBuffer()
+    val displays = mutableListOf<Long>()
+    for (index in 0 until 120) {
+      val source = index * flight
+      // Every unit 40 ms of transit but one with none at 60: the least transit drops by 40 ms at once
+      val transit = if (index == 60) 0L else 40 * ms
+      displays += jitter.place(source + transit, source, false, 0).displayNs
+    }
+    displays.zipWithNext().drop(1).forEach { (a, b) ->
+      assertTrue("a step of ${(b - a) / 1e6} ms", b - a in flight - ms..flight + ms)
+    }
   }
 
   @Test
@@ -368,7 +509,7 @@ class RelaySmoothingTest {
   }
 
   @Test
-  fun aBreakArmsTheKeptKeyPictureAfter250MsWithoutAPicture() {
+  fun aGapArmsTheKeptKeyPictureAfter250MsWithoutAPicture() {
     val seed = ProfileRegistry.seed20261023!!
     val key = HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(type = 19))
     fun p(atMs: Long) = HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(), arrivalNs = atMs * ms)
@@ -376,21 +517,138 @@ class RelaySmoothingTest {
     primer.keep(key, seed)
     primer.onCodecStarted()
     primer.onQueued(isKey = true)
-    primer.onOutput()
-    // A refusing decoder: nothing comes out after the BREAK
-    primer.onBreak(1_000 * ms)
+    primer.onOutput(0)
+    // A refusing decoder: nothing comes out after the gap
+    primer.onGap(1_000 * ms, pts = 1_000_000)
     assertNull(primer.before(p(1_100), seed))
     assertTrue(primer.before(p(1_250), seed) === key)
     assertTrue(primer.lastWasAfterBreak)
     assertNull(primer.before(p(1_300), seed))
-    // A concealing decoder shows a picture first: the old key picture never goes in
-    primer.onBreak(2_000 * ms)
-    primer.onOutput()
+    // A concealing decoder shows a picture of the unit after the gap: the old key picture never goes in
+    primer.onGap(2_000 * ms, pts = 2_000_000)
+    primer.onOutput(2_000_000)
     assertNull(primer.before(p(2_400), seed))
-    // A live key picture after the BREAK: nothing to add
-    primer.onBreak(3_000 * ms)
+    // A live key picture after the gap: nothing to add
+    primer.onGap(3_000 * ms, pts = 3_000_000)
     primer.onQueued(isKey = true)
     assertNull(primer.before(p(3_400), seed))
+    // A picture of a unit fed before the gap, out after it, does not end the wait (review m1)
+    primer.onGap(4_000 * ms, pts = 4_000_000)
+    primer.onOutput(3_990_000)
+    assertTrue(primer.before(p(4_300), seed) === key)
+  }
+
+  /**
+   * A picture lost on the radio is forwarded as is: the step of the picture counter arms the kept key picture as a
+   * BREAK does (review M5); a key unit, even with BREAK, arms nothing (review m1)
+   */
+  @Test
+  fun aStepOfThePictureCounterArmsTheKeptKeyPicture() {
+    val seed = ProfileRegistry.seed20261023!!
+    val key = HevcSamples.unitOf(HevcSamples.DELIMITER, HevcSamples.slice(type = 19), HevcSamples.suffixSei(10))
+    fun p(counter: Int, atMs: Long) = HevcSamples.unitOf(
+      HevcSamples.DELIMITER,
+      HevcSamples.slice(),
+      HevcSamples.suffixSei(counter),
+      arrivalNs = atMs * ms,
+    )
+    val primer = KeyPrimer()
+    primer.keep(key, seed)
+    primer.onCodecStarted()
+    primer.onQueuedUnit(key, 0, pts = 0, gapBefore = true)
+    primer.onOutput(0)
+    var pts = 1L
+    for (counter in 11..20) {
+      val unit = p(counter, counter * 17L)
+      assertNull(primer.before(unit, seed))
+      primer.onQueuedUnit(unit, unit.lastArrivalNs, pts++, gapBefore = false)
+      primer.onOutput(pts - 1)
+    }
+    // Pictures 21 and 22 lost on the radio: 23 comes, then nothing out of a refusing decoder
+    val after = p(23, 400)
+    primer.onQueuedUnit(after, after.lastArrivalNs, pts++, gapBefore = false)
+    assertNull(primer.before(p(24, 600), seed))
+    assertTrue(primer.before(p(25, 660), seed) === key)
+    // A key unit with BREAK (a clean restart on the phone) is no gap
+    val other = KeyPrimer()
+    other.keep(key, seed)
+    other.onCodecStarted()
+    other.onQueuedUnit(key, 0, pts = 0, gapBefore = true)
+    assertNull(other.before(p(11, 400), seed))
+  }
+
+  /**
+   * The safety net no longer erases the freeze it ends (review M2): 3 s with nothing shown, the net, then a picture:
+   * one freeze of 3 s and more. The age of the last picture shown says the screen stood still meanwhile (review M1).
+   */
+  @Test
+  fun aFreezeEndedAfterTheSafetyNetCountsWholeAndTheAgeOfThePictureSaysIt() {
+    val stats = SmoothingStats()
+    fun stamp(index: Int) = RelayStamp(index.toLong(), 0, -1, index * flight, index * flight, index * flight + 5 * ms)
+      .also { it.sourceNs = index * flight }
+    for (index in 0 until 30) {
+      stats.onShown(index * flight + 200 * ms, stamp(index), index * flight)
+    }
+    val lastShown = 29 * flight + 200 * ms
+    assertEquals(0.0, stats.numbers(lastShown).lastPictureAgoMs!!, 0.01)
+    stats.onSafetyNet(lastShown + 3_000 * ms)
+    val during = stats.numbers(lastShown + 3_100 * ms)
+    assertEquals(3_100.0, during.lastPictureAgoMs!!, 0.01)
+    assertEquals(100.0, during.safetyNetAgoMs!!, 0.01)
+    assertEquals(1L, during.safetyFlushes)
+    stats.onShown(lastShown + 3_200 * ms, stamp(400), 400 * flight)
+    val after = stats.numbers(lastShown + 3_200 * ms)
+    assertEquals(1L, after.freezes)
+    assertEquals(3_200.0, after.longestFreezeMs!!, 0.01)
+    // Both trackers go to the export, whichever the counts come from (review m6)
+    assertEquals("1", after.freezesAsked!!["count"].toString())
+    assertEquals("0", after.freezesRendered!!["count"].toString())
+    // A picture decoded while no view shows it keeps the age low, and the view going closes a freeze under way
+    stats.onParked(lastShown + 3_300 * ms)
+    assertEquals(0.0, stats.numbers(lastShown + 3_300 * ms).lastPictureAgoMs!!, 0.01)
+    stats.onShown(lastShown + 3_400 * ms, stamp(401), 401 * flight)
+    stats.closeView(lastShown + 4_000 * ms)
+    assertEquals(2L, stats.numbers(lastShown + 4_000 * ms).freezes)
+  }
+
+  /** The delay now is the most of the last 2 s, so that a spike shows; the median stays over 10 s */
+  @Test
+  fun theDelayNowIsTheMostOfTheLastTwoSeconds() {
+    val stats = SmoothingStats()
+    for (index in 0 until 600) {
+      val at = index * flight
+      val stamp = RelayStamp(index.toLong(), 0, -1, at, at, at).also { it.sourceNs = at }
+      // 200 ms behind the phone, but 1 s for a moment 9.5 s in
+      val behind = if (index in 570 until 575) 1_000 * ms else 200 * ms
+      stats.onShown(at, stamp, at - behind)
+    }
+    val numbers = stats.numbers(599 * flight)
+    assertEquals(200.0, numbers.phoneToShownMedianMs!!, 0.01)
+    assertEquals(1_000.0, numbers.phoneToShownNowMs!!, 0.01)
+    assertEquals(200.0, stats.numbers(599 * flight + 2_500 * ms).let { it.phoneToShownMedianMs!! }, 0.01)
+    assertNull(stats.numbers(599 * flight + 2_500 * ms).phoneToShownNowMs)
+  }
+
+  /**
+   * What the delay lines say (review M1): measured when it can be, an estimate apart while the clocks are not aligned,
+   * and no number while no picture was shown for half a second
+   */
+  @Test
+  fun theDelayShownIsMeasuredOrAnEstimateApartOrNothingWhileThePictureStands() {
+    val stats = SmoothingStats()
+    val stamp = RelayStamp(1, 0, -1, 0, 0, 0).also { it.sourceNs = 0 }
+    stats.onPlaced(JitterBuffer().place(0, 0, false, 0), flight, 0, 0)
+    // Clocks not aligned yet: no phone time here, the estimate goes apart
+    stats.onShown(250 * ms, stamp, null)
+    val estimate = ShownDelay.of(stats.numbers(300 * ms), 40.0, 5.0, 12.0)
+    assertEquals(ShownDelay(null, null, 57.0), estimate)
+    // Measured
+    stats.onShown(300 * ms, stamp, 0)
+    assertEquals(ShownDelay(300.0, 300.0, null), ShownDelay.of(stats.numbers(400 * ms), 40.0, 5.0, 12.0))
+    // Nothing shown for 0.6 s: no number at all
+    assertEquals(ShownDelay.NONE, ShownDelay.of(stats.numbers(900 * ms), 40.0, 5.0, 12.0))
+    // A reception not paced yet keeps the estimate
+    assertEquals(ShownDelay(null, null, 57.0), ShownDelay.of(SmoothingStats().numbers(0), 40.0, 5.0, 12.0))
   }
 
   @Test

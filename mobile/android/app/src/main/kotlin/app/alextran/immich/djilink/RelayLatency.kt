@@ -43,6 +43,43 @@ data class RelayLatencyNumbers(
 }
 
 /**
+ * The delay a receiver shows (p2/review-relay-2026-10-25.md M1), in milliseconds: phone receive to picture shown
+ * measured on the pictures shown over 10 s ([medianMs]) and over the last 2 s at most ([nowMs]); when it cannot be
+ * measured yet (the clocks not aligned), an estimate without the jitter buffer, with its own wording ([estimateMs]);
+ * and nothing at all while no picture was shown for [STALE_MS], since a number would then look normal while the screen
+ * stands still.
+ */
+data class ShownDelay(val medianMs: Double?, val nowMs: Double?, val estimateMs: Double?) {
+  companion object {
+    /** The red line of a picture that stopped says so from this age on */
+    const val STALE_MS = 500.0
+
+    val NONE = ShownDelay(null, null, null)
+
+    /**
+     * Since the last picture: shown here for a relayed stream that is paced (render skips leave the decoder busy while
+     * the screen stands still), out of the decoder otherwise
+     */
+    fun pictureAgoMs(receiving: Boolean, smoothing: SmoothingNumbers, lastOutputAgoMs: Long?): Long? =
+      if (receiving && smoothing.paced) smoothing.lastPictureAgoMs?.toLong() else lastOutputAgoMs
+
+    fun of(smoothing: SmoothingNumbers, relayDelayMs: Double?, inProcessMs: Double?, decodeMs: Double?): ShownDelay {
+      if (smoothing.paced) {
+        val ago = smoothing.lastPictureAgoMs
+        if (ago == null || ago > STALE_MS) {
+          return NONE
+        }
+      }
+      val median = smoothing.phoneToShownMedianMs
+      if (median != null) {
+        return ShownDelay(median, smoothing.phoneToShownNowMs ?: median, null)
+      }
+      return ShownDelay(null, null, RelayLatencyNumbers.receiveToPicture(relayDelayMs, inProcessMs, decodeMs))
+    }
+  }
+}
+
+/**
  * The stamps of the units received in the last [windowNs], with their arrival here: the medians and 95th percentiles
  * are computed when asked, with the clock offset known then, so that the units received before the clocks were aligned
  * count too.

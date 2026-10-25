@@ -76,8 +76,10 @@ class DurationHistogram(private val unitNs: Long = 1_000_000L) {
  * decoder needs, never before the unit before it.
  *
  * A BREAK, a step of the source back, or a step forward over [gapNs] (an encoder restart, a new loop of a capture)
- * starts the base again from the unit itself: that gap is not filled with waiting. Pure, with the times given, so that
- * it is unit tested; the decoder feed holds one per reception.
+ * starts the base again from the unit itself: that gap is not filled with waiting. Otherwise a new base (the least
+ * transit left the window, or a lower one came) is taken by [slewNs] a unit at most, so that the display times never
+ * jump by the difference. Pure, with the times given, so that it is unit tested; the decoder feed holds one per
+ * reception.
  */
 class JitterBuffer(
   private val floorNs: Long = TV_FLOOR_NS,
@@ -86,6 +88,7 @@ class JitterBuffer(
   private val fallNs: Long = 10_000_000L,
   private val fallEveryNs: Long = 2_000_000_000L,
   private val gapNs: Long = 300_000_000L,
+  private val slewNs: Long = 1_000_000L,
 ) {
   companion object {
     /** A TV is a spectator screen: it can afford up to 300 ms */
@@ -95,6 +98,12 @@ class JitterBuffer(
     /** A headset's window and flight view are the pilot's view: a lower floor and ceiling */
     const val HEADSET_FLOOR_NS = 100_000_000L
     const val HEADSET_CEILING_NS = 250_000_000L
+
+    /**
+     * A headset set to the lowest delay in Options: no floor, so the target is the 95th percentile of the lateness and
+     * one picture; it still rises at once when a unit comes late
+     */
+    const val LOWEST_FLOOR_NS = 0L
     const val DEFAULT_PERIOD_NS = 33_333_333L
     private const val PERCENTILE_EVERY_NS = 500_000_000L
     private const val STEPS_KEPT = 32
@@ -123,6 +132,7 @@ class JitterBuffer(
   private var lastFallNs = 0L
   private var nextPercentileNs = Long.MIN_VALUE
   private var p95LatenessNs = 0L
+  private var appliedBaseNs: Long? = null
 
   var targetNs: Long = floorNs
     private set
@@ -169,6 +179,9 @@ class JitterBuffer(
     }
     val base = minimums.first()[1]
     val lateness = transit - base
+    val applied = appliedBaseNs
+    val shownBase = if (reanchor || applied == null) base else applied + (base - applied).coerceIn(-slewNs, slewNs)
+    appliedBaseNs = shownBase
     if (arrivalNs >= nextPercentileNs) {
       val sorted = transits.map { it[1] - base }.sorted()
       p95LatenessNs = sorted[((sorted.size - 1) * 0.95).toInt()]
@@ -190,7 +203,7 @@ class JitterBuffer(
         lastFallNs = arrivalNs
       }
     }
-    val display = maxOf(sourceNs + base + targetNs + leadNs, lastDisplayNs)
+    val display = maxOf(sourceNs + shownBase + targetNs + leadNs, lastDisplayNs)
     lastDisplayNs = display
     val feedAt = display - leadNs
     return Placement(
@@ -213,18 +226,14 @@ class JitterBuffer(
     lastFallNs = 0
     nextPercentileNs = Long.MIN_VALUE
     p95LatenessNs = 0
+    appliedBaseNs = null
     targetNs = floorNs
     periodNs = DEFAULT_PERIOD_NS
     reanchors = 0
   }
 }
 
-/**
- * What the decoder feed does with a picture of a paced reception (p2/relay-smoothness-2026-10-25.md, 5.1 items 4 and
- * 5): every unit is decoded; a picture whose time has passed while a newer one is due is released without rendering;
- * one that comes early is held until two refreshes before its time, as the MediaCodec documentation advises; the others
- * go to the surface with their time, which shows each at the refresh at or after it.
- */
+/** The times of a paced display (p2/relay-smoothness-2026-10-25.md, 5.1 items 4 and 5) */
 object PacedRender {
   /** Two refreshes at 60 Hz */
   const val RELEASE_LEAD_NS = 33_000_000L
@@ -237,24 +246,89 @@ object PacedRender {
   /** No picture out of a decoder for this long while a unit waited in it is a stall */
   const val STALL_NS = 200_000_000L
 
-  sealed class Decision {
-    object Skip : Decision()
-
-    data class Hold(val untilNs: Long) : Decision()
-
-    data class Render(val atNs: Long) : Decision()
-  }
-
-  /** [newerDueNs] is the display time of the next picture in decoding order, null when none is known yet */
-  fun decide(displayNs: Long, nowNs: Long, newerDueNs: Long?): Decision = when {
-    displayNs < nowNs && newerDueNs != null && newerDueNs <= nowNs -> Decision.Skip
-    displayNs - nowNs > RELEASE_LEAD_NS -> Decision.Hold(displayNs - RELEASE_LEAD_NS)
-    else -> Decision.Render(maxOf(displayNs, nowNs))
-  }
+  /** Late pictures go to the screen at least this often, whatever the picture period says */
+  const val MAX_SPACING_NS = 50_000_000L
 
   /** The time the decoder needs before the display: the 95th percentile of the decode time and half a picture */
   fun lead(decodeP95Ns: Long?, periodNs: Long): Long =
     ((decodeP95Ns ?: (DEFAULT_LEAD_NS - periodNs / 2)) + periodNs / 2).coerceIn(MIN_LEAD_NS, MAX_LEAD_NS)
+}
+
+/**
+ * Which decoded pictures of a paced reception go to the screen, and when (p2/relay-smoothness-2026-10-25.md, 5.1 item
+ * 5, as p2/review-relay-2026-10-25.md B1 corrected it). Only pictures already out of the decoder count:
+ *
+ * 1. a picture more than two refreshes ahead of its display time is held until then, as the MediaCodec documentation
+ *    advises; one within that goes to the surface with its own display time;
+ * 2. a picture whose time has passed is released unseen only when the next decoded one is due too, never because of a
+ *    unit still in the decoder or in the queue, so a decoder slower than the stream shows every picture it makes;
+ * 3. late pictures go to the screen one picture period apart (50 ms at most): after a stall the newest decoded picture
+ *    replaces those it overtook, and the screen gets a new picture at least that often while the decoder catches up.
+ *
+ * Pure, with the times given, so that it is unit tested with a decoder model; the decoder thread owns one.
+ */
+class PacedRelease<T : Any> {
+  sealed class Step<T> {
+    data class Skip<T>(val item: T) : Step<T>()
+
+    data class Render<T>(val item: T, val atNs: Long) : Step<T>()
+  }
+
+  private class Entry<T>(val item: T, val displayNs: Long)
+
+  private val held = ArrayDeque<Entry<T>>()
+  private var lastRenderNs: Long? = null
+
+  /** Decoded pictures not released yet */
+  val size: Int get() = held.size
+
+  /** A picture out of the decoder, to show at [displayNs] */
+  fun add(item: T, displayNs: Long) {
+    held.addLast(Entry(item, displayNs))
+  }
+
+  /**
+   * What to do at [nowNs] with the pictures held, in decoding order, into [steps]; returns when to look again (a
+   * picture early or waiting for its turn), null when none is held
+   */
+  fun release(nowNs: Long, periodNs: Long, steps: MutableList<Step<T>>): Long? {
+    val spacing = periodNs.coerceIn(1L, PacedRender.MAX_SPACING_NS)
+    while (held.isNotEmpty()) {
+      val head = held.first()
+      if (head.displayNs - nowNs > PacedRender.RELEASE_LEAD_NS) {
+        return head.displayNs - PacedRender.RELEASE_LEAD_NS
+      }
+      if (head.displayNs >= nowNs) {
+        held.removeFirst()
+        steps += Step.Render(head.item, head.displayNs)
+        lastRenderNs = maxOf(lastRenderNs ?: head.displayNs, head.displayNs)
+        continue
+      }
+      val newer = held.getOrNull(1)
+      if (newer != null && newer.displayNs <= nowNs) {
+        // A newer picture is decoded and due: this one is overtaken
+        held.removeFirst()
+        steps += Step.Skip(head.item)
+        continue
+      }
+      val turn = lastRenderNs?.let { it + spacing }
+      if (turn != null && turn > nowNs) {
+        return if (newer == null) turn else minOf(turn, newer.displayNs)
+      }
+      held.removeFirst()
+      steps += Step.Render(head.item, nowNs)
+      lastRenderNs = nowNs
+    }
+    return null
+  }
+
+  /** The pictures held, which the caller releases unseen; what was rendered before is forgotten */
+  fun clear(): List<T> {
+    val items = held.map { it.item }
+    held.clear()
+    lastRenderNs = null
+    return items
+  }
 }
 
 /**
@@ -298,6 +372,28 @@ class FreezeTracker(private val freezeNs: Long = FREEZE_NS) {
   fun pause() {
     lastNs = null
     lastSourceNs = Long.MIN_VALUE
+  }
+
+  /**
+   * The picture stops being watched at [atNs] (the view went): a freeze already under way up to then is counted, then
+   * nothing more until the next picture
+   */
+  fun close(atNs: Long) {
+    val last = lastNs
+    if (last != null && atNs - last > freezeNs) {
+      val gap = atNs - last
+      count += 1
+      totalNs += gap
+      longestNs = maxOf(longestNs, gap)
+    }
+    pause()
+  }
+
+  fun toJson(): JsonObject = buildJsonObject {
+    put("count", count)
+    put("longestMs", if (count == 0L) null else longestNs / 1e6)
+    put("totalMs", if (count == 0L) null else totalNs / 1e6)
+    put("inSource", inSource)
   }
 
   fun reset() {
@@ -347,6 +443,15 @@ data class SmoothingNumbers(
   /** Whether the freezes come from the times the platform reported rendering at */
   val freezesFromRenderTimes: Boolean,
   val renderedReports: Long,
+  /** Since the last picture released to be shown (or decoded with no view to show it); null before the first */
+  val lastPictureAgoMs: Double? = null,
+  /** Phone receive to picture shown, the most of the last 2 s: the delay now, spikes included */
+  val phoneToShownNowMs: Double? = null,
+  /** Since the safety net of the queue was last reached; null when never */
+  val safetyNetAgoMs: Double? = null,
+  /** The freezes from the times asked and from the render times, both, whichever the counts above come from */
+  val freezesAsked: JsonObject? = null,
+  val freezesRendered: JsonObject? = null,
 ) {
   fun toJson(): JsonObject = buildJsonObject {
     put("paced", paced)
@@ -381,6 +486,11 @@ data class SmoothingNumbers(
     put("freezesInSource", freezesInSource)
     put("freezesFromRenderTimes", freezesFromRenderTimes)
     put("renderedReports", renderedReports)
+    put("lastPictureAgoMs", lastPictureAgoMs)
+    put("phoneToShownNowMs", phoneToShownNowMs)
+    put("safetyNetAgoMs", safetyNetAgoMs)
+    freezesAsked?.let { put("freezesAsked", it) }
+    freezesRendered?.let { put("freezesRendered", it) }
   }
 
   /** The numbers of a long ping, -1 where unknown */
@@ -404,7 +514,7 @@ data class SmoothingNumbers(
  * The counters of a paced reception, with their own lock: the reader thread places the units, the decoder thread
  * shows or skips them, the page and the pings read them.
  */
-class SmoothingStats(private val windowNs: Long = 10_000_000_000L) {
+class SmoothingStats(private val windowNs: Long = 10_000_000_000L, private val nowWindowNs: Long = 2_000_000_000L) {
   private val lock = Any()
   private var paced = false
   private var units = 0L
@@ -430,6 +540,8 @@ class SmoothingStats(private val windowNs: Long = 10_000_000_000L) {
   private val rendered = FreezeTracker()
   private var renderedReports = 0L
   private val sourceGaps = ArrayDeque<LongArray>()
+  private var lastPictureNs: Long? = null
+  private var lastNetNs: Long? = null
 
   fun onPlaced(placement: JitterBuffer.Placement, periodNs: Long, leadNs: Long, sourceNs: Long) = synchronized(lock) {
     paced = true
@@ -460,6 +572,7 @@ class SmoothingStats(private val windowNs: Long = 10_000_000_000L) {
   /** A picture released to be shown at [atNs]; [phoneReceiveHereNs] is its phone receive time on this clock if known */
   fun onShown(atNs: Long, stamp: RelayStamp, phoneReceiveHereNs: Long?) = synchronized(lock) {
     shown += 1
+    lastPictureNs = maxOf(lastPictureNs ?: atNs, atNs)
     arrivalToShown.add(atNs - stamp.arrivalNs)
     if (phoneReceiveHereNs != null) {
       val value = atNs - phoneReceiveHereNs
@@ -480,25 +593,35 @@ class SmoothingStats(private val windowNs: Long = 10_000_000_000L) {
 
   fun onSkip() = synchronized(lock) { skips += 1 }
 
-  /** Pictures decoded while no view shows them: not a freeze */
-  fun onParked() = synchronized(lock) {
+  /** A picture decoded at [atNs] while no view shows it: not a freeze, and a picture all the same for its age */
+  fun onParked(atNs: Long) = synchronized(lock) {
     parked += 1
+    lastPictureNs = maxOf(lastPictureNs ?: atNs, atNs)
     asked.pause()
     rendered.pause()
   }
 
-  /** A surface switch or a flush: what comes next is not measured against what came before */
+  /** A new source or a decoder chosen on the page: what comes next is not measured against what came before */
   fun pause() = synchronized(lock) {
     asked.pause()
     rendered.pause()
   }
 
+  /** The view goes at [atNs]: a freeze under way until then counts, then nothing until the next picture */
+  fun closeView(atNs: Long) = synchronized(lock) {
+    asked.close(atNs)
+    rendered.close(atNs)
+  }
+
   fun onStall() = synchronized(lock) { stalls += 1 }
 
-  fun onSafetyFlush() = synchronized(lock) {
+  /**
+   * The safety net of the queue was reached at [atNs] and units went. The freeze under way is not cut: it goes on until
+   * the next picture shown, and counts whole then.
+   */
+  fun onSafetyNet(atNs: Long) = synchronized(lock) {
     safety += 1
-    asked.pause()
-    rendered.pause()
+    lastNetNs = atNs
   }
 
   fun onPrimerAfterBreak() = synchronized(lock) { primers += 1 }
@@ -528,6 +651,8 @@ class SmoothingStats(private val windowNs: Long = 10_000_000_000L) {
     rendered.reset()
     renderedReports = 0
     sourceGaps.clear()
+    lastPictureNs = null
+    lastNetNs = null
   }
 
   private fun gapBetween(fromNs: Long, toNs: Long): Boolean =
@@ -538,6 +663,7 @@ class SmoothingStats(private val windowNs: Long = 10_000_000_000L) {
       phoneWindow.removeFirst()
     }
     val recent = phoneWindow.map { it[1] }.sorted()
+    val lastSeconds = phoneWindow.filter { nowNs - it[0] <= nowWindowNs }.maxOfOrNull { it[1] }
     val fromRender = rendered.count > 0 || renderedReports > 30
     val freezes = if (fromRender) rendered else asked
     SmoothingNumbers(
@@ -573,6 +699,11 @@ class SmoothingStats(private val windowNs: Long = 10_000_000_000L) {
       freezesInSource = freezes.inSource,
       freezesFromRenderTimes = fromRender,
       renderedReports = renderedReports,
+      lastPictureAgoMs = lastPictureNs?.let { (nowNs - it).coerceAtLeast(0) / 1e6 },
+      phoneToShownNowMs = lastSeconds?.let { it / 1e6 },
+      safetyNetAgoMs = lastNetNs?.let { (nowNs - it).coerceAtLeast(0) / 1e6 },
+      freezesAsked = asked.toJson(),
+      freezesRendered = rendered.toJson(),
     )
   }
 }
@@ -687,14 +818,25 @@ class UnitTimingRing(val capacity: Int = CAPACITY) {
 
   /**
    * The lines kept, oldest first: the local times in microseconds after the arrival of the oldest line, the phone's
-   * after its phone receive time ([bases]); empty fields where a time is unknown
+   * after its phone receive time ([bases]); empty fields where a time is unknown. The slots are copied under the lock
+   * and the text is made outside it, so that the decoder thread never waits for an export.
    */
-  @Synchronized
   fun csv(): String {
+    val slots: LongArray
+    val added: Long
+    synchronized(this) {
+      slots = this.slots.copyOf()
+      added = this.added
+    }
     val kept = minOf(added, capacity.toLong()).toInt()
     val out = StringBuilder(CSV_HEADER.length + 1 + kept * 96)
     out.append(CSV_HEADER).append('\n')
-    val (localBase, phoneBase) = bases() ?: return out.toString()
+    if (added == 0L) {
+      return out.toString()
+    }
+    val first = slot(maxOf(0, added - capacity))
+    val localBase = slots[first + 6]
+    val phoneBase = slots[first + 4]
     var index = maxOf(0, added - capacity)
     while (index < added) {
       val at = slot(index)

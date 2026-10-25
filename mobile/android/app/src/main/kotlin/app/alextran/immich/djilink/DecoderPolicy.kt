@@ -438,10 +438,13 @@ class KeptKey(val unit: AccessUnit, val description: StreamDescription)
  * S24+) shows a picture before that and never gets it, so it never shows an old picture; one that waits for a key
  * picture starts from the kept one, and the picture builds up from it as the refresh of the stream repairs it.
  *
- * After a BREAK of a relayed stream (units the phone dropped for this device) the codec is not flushed: a decoder that
- * conceals goes on predicting from its last picture. If no picture comes out within [BREAK_WAIT_NS] of units after the
- * BREAK, the decoder will not go on without a key picture, and the kept key unit (the one the phone sent with the
- * BREAK) goes in once (p2/relay-smoothness-2026-10-25.md, 5.1 item 6).
+ * After a gap in the stream the codec is not flushed: a decoder that conceals goes on predicting from its last
+ * picture. A gap is a BREAK of a relayed stream (units the phone dropped for this device), a step of the picture
+ * counter over one (a picture lost on the radio, p2/review-relay-2026-10-25.md M5), or units the safety net of the
+ * queue dropped. If no picture of the unit after the gap, or of a later one, comes out within [BREAK_WAIT_NS] of units,
+ * the decoder will not go on without a key picture, and the kept key unit (on a relay, the one the phone sent with the
+ * BREAK) goes in once (p2/relay-smoothness-2026-10-25.md, 5.1 item 6). A picture of a unit fed before the gap does not
+ * end the wait.
  *
  * [keep] and [clear] come from the threads that submit; the rest belongs to the decoder thread.
  */
@@ -450,7 +453,7 @@ class KeyPrimer(private val afterUnits: Int = AFTER_UNITS, private val breakWait
     /** A quarter of a second at 30 pictures per second */
     const val AFTER_UNITS = 8
 
-    /** After a BREAK, this much of the stream without a picture before the kept key unit goes in */
+    /** After a gap, this much of the stream without a picture before the kept key unit goes in */
     const val BREAK_WAIT_NS = 250_000_000L
   }
 
@@ -462,10 +465,16 @@ class KeyPrimer(private val afterUnits: Int = AFTER_UNITS, private val breakWait
   private var unitsSinceStart = 0
   private var keySinceStart = false
 
-  /** The arrival of the BREAK unit while no picture came after it, null otherwise */
+  /** The arrival of the first unit after a gap while no picture of it or after came out, null otherwise */
   private var breakAtNs: Long? = null
 
-  /** Whether the last unit given by [before] was for a BREAK */
+  /** The presentation time of the unit after the last gap: only a picture at or after it ends the wait */
+  private var breakPts = Long.MIN_VALUE
+
+  /** The picture counter of the last unit queued, null at a start */
+  private var lastCounter: Int? = null
+
+  /** Whether the last unit given by [before] was for a gap */
   var lastWasAfterBreak = false
     private set
 
@@ -488,6 +497,7 @@ class KeyPrimer(private val afterUnits: Int = AFTER_UNITS, private val breakWait
     armed = true
     unitsSinceStart = 0
     keySinceStart = false
+    lastCounter = null
   }
 
   /** A unit of the stream went into the codec */
@@ -499,15 +509,37 @@ class KeyPrimer(private val afterUnits: Int = AFTER_UNITS, private val breakWait
     }
   }
 
-  /** A relayed unit with BREAK went into the codec, which arrived at [arrivalNs] */
-  fun onBreak(arrivalNs: Long) {
-    breakAtNs = arrivalNs
+  /**
+   * [unit] went into the codec with [pts]; it arrived at [arrivalNs]. [gapBefore] says that units before it went (a
+   * BREAK, the safety net); a step of its picture counter over one says the same of the radio. A key unit is no gap.
+   */
+  fun onQueuedUnit(unit: AccessUnit, arrivalNs: Long, pts: Long, gapBefore: Boolean) {
+    onQueued(unit.isKey)
+    val counter = unit.pictureCounter
+    val previous = lastCounter
+    lastCounter = counter
+    if (unit.isKey) {
+      return
+    }
+    val stepped = counter != null && previous != null && (counter - previous + 65_536) % 65_536 != 1
+    if (gapBefore || stepped) {
+      onGap(arrivalNs, pts)
+    }
   }
 
-  /** A picture came out: the codec decodes, nothing is to be added */
-  fun onOutput() {
+  /** The unit after a gap went into the codec: it arrived at [arrivalNs] and was queued with [pts] */
+  fun onGap(arrivalNs: Long, pts: Long) {
+    // The wait counts from the first gap; only a picture after the last one ends it
+    breakAtNs = breakAtNs ?: arrivalNs
+    breakPts = pts
+  }
+
+  /** A picture of presentation time [pts] came out: the codec decodes; a picture from before a gap does not count */
+  fun onOutput(pts: Long = Long.MAX_VALUE) {
     armed = false
-    breakAtNs = null
+    if (pts >= breakPts) {
+      breakAtNs = null
+    }
   }
 
   /**

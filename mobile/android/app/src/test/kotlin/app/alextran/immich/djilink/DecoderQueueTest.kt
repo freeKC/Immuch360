@@ -101,6 +101,64 @@ class DecoderQueueTest {
     assertTrue("a new source does not close the queue", queue.offer(9, ::make) != null)
   }
 
+  /** A unit for the safety net: its arrival, its size, and whether it is a key unit */
+  private data class Item(val name: String, val bornNs: Long, val size: Int = 1_000, val key: Boolean = false)
+
+  private fun paced() = DecoderQueue<Item, Worker>(
+    bound = 15,
+    sizeOf = { it.size },
+    bornNs = { it.bornNs },
+    isKey = { it.key },
+  ).apply { net = DecoderQueue.Net(maxAgeNs = 5_000_000_000L, maxBytes = 16L * 1024 * 1024, maxUnits = 600) }
+
+  /**
+   * A paced reception (p2/review-relay-2026-10-25.md M2): far past the plain bound nothing goes; past 5 s every unit
+   * but the newest goes, no flush is asked, and the decoder thread learns it once
+   */
+  @Test
+  fun theSafetyNetOfAPacedReceptionDropsWithoutAFlush() {
+    val queue = paced()
+    val second = 1_000_000_000L
+    for (index in 0 until 290) {
+      queue.offer(Item("p$index", index * second / 60), index * second / 60, ::make)
+    }
+    assertEquals("4.8 s queued, far over 15 units: all kept", 290, queue.size)
+    assertFalse(queue.takeNet())
+    queue.offer(Item("late", 5_100_000_000L), 5_100_000_000L, ::make)
+    assertEquals(listOf("late"), generateSequence { queue.peek()?.also { queue.remove(it) } }.map { it.name }.toList())
+    assertEquals(290L, queue.droppedUnits)
+    assertTrue(queue.takeNet())
+    assertFalse("once", queue.takeNet())
+    assertFalse("no flush of the decoder", queue.takeFlush())
+    assertEquals(0L, queue.queuedBytes)
+  }
+
+  /** When a key unit is queued, only the units before it go; when it is the oldest, it stays with the newest unit */
+  @Test
+  fun theSafetyNetGoesBackToAKeyUnitQueued() {
+    val second = 1_000_000_000L
+    val queue = paced()
+    queue.offer(Item("p0", 0), 0, ::make)
+    queue.offer(Item("p1", second), second, ::make)
+    queue.offer(Item("key", 2 * second, key = true), 2 * second, ::make)
+    queue.offer(Item("p3", 3 * second), 3 * second, ::make)
+    queue.offer(Item("p4", 5_500_000_000L), 5_500_000_000L, ::make)
+    assertEquals(listOf("key", "p3", "p4"), names(queue))
+    assertTrue(queue.takeNet())
+    val first = paced()
+    first.offer(Item("key", 0, key = true), 0, ::make)
+    first.offer(Item("p1", second), second, ::make)
+    first.offer(Item("p2", 6 * second), 6 * second, ::make)
+    assertEquals(listOf("key", "p2"), names(first))
+    // By the bytes too: 16 MiB
+    val heavy = paced()
+    repeat(5) { heavy.offer(Item("big$it", 0, size = 4 * 1024 * 1024), 0, ::make) }
+    assertEquals(listOf("big4"), names(heavy))
+  }
+
+  private fun names(queue: DecoderQueue<Item, Worker>): List<String> =
+    generateSequence { queue.peek()?.also { queue.remove(it) } }.map { it.name }.toList()
+
   @Test
   fun noWorkerIsEverMadeAfterTheShutdownWhateverTheThreads() {
     repeat(50) {
