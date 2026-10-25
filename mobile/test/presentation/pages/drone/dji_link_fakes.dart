@@ -203,21 +203,59 @@ DjiLinkTelemetry fakeTelemetry({
   ],
 );
 
-/// What the obstacle alert decided: off unless said otherwise
+/// One arc of the obstacle ring at [distanceM] with the default distances (3.0 m and 1.0 m), on the side [centreDeg]
+/// (null for the even glow), as ObstacleRing makes it
+DjiObstacleArc fakeArc(double distanceM, {double? centreDeg}) {
+  final strength = ((3.0 - distanceM) / 2.0).clamp(0.0, 1.0);
+  final amber = [0xFF, 0xB3, 0x00];
+  final red = [0xE5, 0x39, 0x35];
+  final channels = [for (var i = 0; i < 3; i++) (amber[i] + (red[i] - amber[i]) * strength).round()];
+  return DjiObstacleArc(
+    centreDeg: centreDeg,
+    distanceM: distanceM,
+    strength: strength,
+    opacity: 0.15 + 0.55 * strength,
+    argb: 0xFF000000 | channels[0] << 16 | channels[1] << 8 | channels[2],
+  );
+}
+
+/// What the obstacle ring decided: nothing unless said otherwise. With [arcs], the ring shows; [stopped] turns them
+/// white and faint, as the native side does once the data stopped.
 DjiObstacleDecision fakeDecision({
   bool on = false,
   bool stopped = false,
   bool listening = false,
-  double? distanceM,
-  DjiObstacleSide? side,
-}) => DjiObstacleDecision(
-  on: on,
-  stopped: stopped,
-  listening: listening || on,
-  beepIntervalMs: on ? 400 : 0,
-  distanceM: distanceM,
-  side: side,
-);
+  List<DjiObstacleArc> arcs = const [],
+}) {
+  final even = arcs.isEmpty || arcs.first.centreDeg == null;
+  final shown = stopped
+      ? [
+          for (final arc in arcs)
+            DjiObstacleArc(
+              centreDeg: arc.centreDeg,
+              distanceM: arc.distanceM,
+              strength: arc.strength,
+              opacity: 0.25,
+              argb: 0xFFFFFFFF,
+            ),
+        ]
+      : arcs;
+  final nearest = arcs.isEmpty ? null : arcs.map((arc) => arc.distanceM).reduce((a, b) => a < b ? a : b);
+  final tick = !on || nearest == null || nearest > 2.0
+      ? 0
+      : nearest >= 1.0
+      ? (250 + (nearest - 1.0) * 750).round()
+      : 150;
+  return DjiObstacleDecision(
+    on: on,
+    stopped: stopped,
+    listening: listening || on,
+    even: even,
+    arcs: shown,
+    nearestM: nearest,
+    tickIntervalMs: tick,
+  );
+}
 
 /// The values a pilot reads, as the native side sends them: those of the 24 October flight (34 %, 0:41) and, for the
 /// values our captures only make likely, those of the 23 October landing. A null is a group that is stale.
@@ -633,9 +671,14 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
   /// setFrameStream, in order
   final frameStreams = <bool>[];
 
-  /// setObstacleAlert, in order: offered, sound
-  final obstacleAlerts = <(bool, bool)>[];
+  /// setObstacleRing, in order
+  final obstacleRings = <DjiObstacleRingSettings>[];
   int obstacleTests = 0;
+  int obstacleSamples = 0;
+
+  /// The native side refuses the sample (the motors run)
+  bool sampleRefused = false;
+  bool vibrator = true;
   bool volumeOff = false;
   int receptionExports = 0;
   DjiLinkExport receptionResult = DjiLinkExport(
@@ -654,10 +697,22 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
   Future<void> setFrameStream(bool on) async => frameStreams.add(on);
 
   @override
-  Future<void> setObstacleAlert(bool offered, bool sound) async => obstacleAlerts.add((offered, sound));
+  Future<void> setObstacleRing(DjiObstacleRingSettings settings) async => obstacleRings.add(settings);
 
   @override
   Future<void> playObstacleTest() async => obstacleTests += 1;
+
+  @override
+  Future<bool> showObstacleSample() async {
+    if (sampleRefused) {
+      return false;
+    }
+    obstacleSamples += 1;
+    return true;
+  }
+
+  @override
+  Future<bool> hasVibrator() async => vibrator;
 
   @override
   Future<bool> mediaVolumeOff() async => volumeOff;

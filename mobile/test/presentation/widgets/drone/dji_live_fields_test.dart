@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_fields.dart';
+import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 
 import '../../../unit/presentation/presentation_context.dart';
 import '../../pages/drone/dji_link_fakes.dart';
@@ -94,7 +95,7 @@ void main() {
     expect(djiLiveFlightValuesPending(), isTrue);
   });
 
-  test('the obstacle alert is a test while its data is likely, and proven once its row is', () {
+  test('the obstacle ring is a test while its data is likely, and proven once its row is', () {
     expect(djiObstacleOffer(), DjiObstacleOffer.test);
     expect(djiObstacleOffer(gates: _proven), DjiObstacleOffer.proven);
     final none = {
@@ -102,6 +103,38 @@ void main() {
       DjiLiveField.obstacle: const DjiLiveGate(DjiLiveEvidence.none, DjiLivePlace.overlay),
     };
     expect(djiObstacleOffer(gates: none), DjiObstacleOffer.none);
+  });
+
+  test('the side of the ring is a test while likely, shown by default once proven, never a value', () {
+    // 25 October 09:42 capture: likely, so only behind "Show the side, not confirmed yet"
+    expect(djiLiveGates[DjiLiveField.obstacleSide]!.evidence, DjiLiveEvidence.likely);
+    expect(djiObstacleSideOffer(), DjiObstacleSideOffer.test);
+    expect(djiObstacleSideOffer(gates: _proven), DjiObstacleSideOffer.proven);
+    final guess = {
+      ...djiLiveGates,
+      DjiLiveField.obstacleSide: const DjiLiveGate(DjiLiveEvidence.guess, DjiLivePlace.nowhere),
+    };
+    expect(djiObstacleSideOffer(gates: guess), DjiObstacleSideOffer.none);
+    // Not a value: never over the picture, never in Advanced, no template for the flight view
+    expect(djiLivePlace(DjiLiveField.obstacleSide), DjiLivePlace.nowhere);
+    expect(djiLiveIsLikely(DjiLiveField.obstacleSide), isFalse);
+    // The settings turn the two rows into one boolean for the native side
+    const settings = DjiObstacleSettings(alertOn: true, sideTest: true);
+    expect(settings.directional(DjiObstacleSideOffer.test), isTrue);
+    expect(const DjiObstacleSettings(alertOn: true).directional(DjiObstacleSideOffer.test), isFalse);
+    expect(const DjiObstacleSettings().directional(DjiObstacleSideOffer.proven), isTrue);
+    expect(const DjiObstacleSettings(sideOff: true).directional(DjiObstacleSideOffer.proven), isFalse);
+    expect(settings.directional(DjiObstacleSideOffer.none), isFalse);
+  });
+
+  test('the distances stay in their steppers, "Strong glow from" at least 0.5 m under "Glow from"', () {
+    expect(djiObstacleDistancesCm(300, 100), (300, 100));
+    expect(djiObstacleDistancesCm(900, 400), (600, 250));
+    expect(djiObstacleDistancesCm(100, 140), (150, 100));
+    expect(djiObstacleDistancesCm(200, 175), (200, 150));
+    expect(djiObstacleDistancesCm(300, 20), (300, 50));
+    expect(const DjiObstacleSettings().farM, 3.0);
+    expect(const DjiObstacleSettings().nearM, 1.0);
   });
 
   test('the formats: minutes and seconds, the height, the vertical speed with its arrow', () {

@@ -304,9 +304,11 @@ void main() {
     for (final hidden in ['remoteBattery', 'signal', 'heading', 'height', 'verticalSpeed', 'speed', 'satellites']) {
       expect(labels.containsKey('cell.$hidden.value'), isFalse, reason: hidden);
     }
-    // The banner of the obstacle alert, said as a test while our captures do not prove its data
-    expect(labels['obstacleClose'], 'Obstacle close: {distance} m');
-    expect(labels['obstacleUnconfirmed'], 'Not confirmed yet');
+    // The obstacle ring writes only its distance, by the glow when asked; none of the banner's words is left
+    expect(labels['obstacleDistance'], '{distance} m');
+    for (final gone in ['obstacleClose', 'obstacleClosePlain', 'obstacleStopped', 'obstacleAhead', 'obstacleUnconfirmed']) {
+      expect(labels.containsKey(gone), isFalse, reason: gone);
+    }
     expect(labels['batteryLow'], 'low');
     expect(labels['observer'], contains('an observer standing next to you'));
     expect(labels['watching'], contains('Watching only'));
@@ -367,32 +369,49 @@ void main() {
     expect(find.text('Nothing received yet: nothing to save.'), findsOneWidget);
   });
 
-  testWidgets('the obstacle alert is a test the headset turns on in its menu, then its sound', (tester) async {
+  testWidgets('the headset keeps its own sound, number and sample; the ring follows the phone over the picture', (
+    tester,
+  ) async {
     final api = headset();
     final listener = await openWatch(tester, api);
-    expect(api.obstacleAlerts.last, (false, true));
+    // On by default on the headset; the ring itself is offered by the phone's record, not here
+    expect(api.obstacleRings.last.sound, isTrue);
     await tester.tap(find.byKey(const Key('dji_watch_menu')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('dji_watch_obstacle_sound')), findsNothing);
-    await tester.tap(find.byKey(const Key('dji_watch_obstacle')));
+    // No test switch of its own any more: the phone's choice
+    expect(find.byKey(const Key('dji_watch_obstacle')), findsNothing);
+    expect(find.byKey(const Key('dji_watch_obstacle_sound')), findsOneWidget);
+    expect(find.byKey(const Key('dji_watch_obstacle_sound_test')), findsOneWidget);
+    expect(find.byKey(const Key('dji_watch_obstacle_numbers')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('dji_watch_obstacle_sound')));
     await tester.pumpAndSettle();
-    expect(api.obstacleAlerts.last, (true, true));
-    expect(memory[StoreKey.djiObstacleAlertOn], isTrue);
-    await menu(tester, const Key('dji_watch_obstacle_sound'));
-    expect(api.obstacleAlerts.last, (true, false));
+    expect(api.obstacleRings.last.sound, isFalse);
+    expect(memory[StoreKey.djiObstacleSoundOff], isTrue);
+    await menu(tester, const Key('dji_watch_obstacle_sound_test'));
+    expect(api.obstacleTests, 1);
+    await menu(tester, const Key('dji_watch_obstacle_numbers'));
+    expect(api.obstacleRings.last.numbers, isTrue);
+    expect(memory[StoreKey.djiObstacleNumbersOn], isTrue);
+    await menu(tester, const Key('dji_watch_obstacle_sample'));
+    expect(api.obstacleSamples, 1);
+    api.sampleRefused = true;
+    await menu(tester, const Key('dji_watch_obstacle_sample'));
+    expect(find.text('Not while the motors run.'), findsOneWidget);
 
-    // What the native side decided shows over the picture, without the glow of the phone
+    // What the native side decided shows over the picture: the glow, and the number now asked
     listener!.snapshotChanged(
       fakeSnapshot(
         decode: fakeDecode(),
         relayReceiving: fakeReceiving(phoneSource: 'cable'),
-        liveFrame: fakeFrame(alert: fakeDecision(on: true, distanceM: 1.84)),
+        liveFrame: fakeFrame(alert: fakeDecision(on: true, arcs: [fakeArc(1.84)])),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Obstacle close: 1.8 m'), findsOneWidget);
-    expect(find.text('Not confirmed yet'), findsOneWidget);
-    expect(find.byKey(const Key('dji_live_obstacle_muted')), findsOneWidget);
-    expect(find.byKey(const Key('dji_live_obstacle_glow_ahead')), findsNothing);
+    final ring = find.byKey(const Key('dji_live_obstacle_ring'));
+    expect(ring, findsOneWidget);
+    expect(find.descendant(of: find.byKey(const Key('dji_watch_picture')), matching: ring), findsOneWidget);
+    expect(find.text('1.8 m'), findsOneWidget);
+    expect(find.text('Obstacle close: 1.8 m'), findsNothing);
+    expect(find.text('Not confirmed yet'), findsNothing);
   });
 }
