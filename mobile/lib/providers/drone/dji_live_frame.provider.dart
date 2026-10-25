@@ -1,7 +1,7 @@
-// The values a pilot reads on the DJI live video, ten times a second (p2/design-final-2026-10-24.md, 3.4), and the
-// pilot's choices about the obstacle alert. The frame is kept apart from the link's state, so that a number that moves
-// with the flight redraws its own cell and nothing else: the page and the picture are never rebuilt by a value. The
-// alert is information for the pilot: nothing here reaches the remote or the drone.
+// The values a pilot reads on the DJI live video, ten times a second (p2/design-final-2026-10-24.md, 3.4), the
+// pilot's choices about the obstacle alert, and a headset's choice of delay. The frame is kept apart from the link's
+// state, so that a number that moves with the flight redraws its own cell and nothing else: the page and the picture
+// are never rebuilt by a value. The alert is information for the pilot: nothing here reaches the remote or the drone.
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -106,5 +106,32 @@ class DjiObstacleSettingsNotifier extends Notifier<DjiObstacleSettings> {
 
 final djiObstacleSettingsProvider = NotifierProvider<DjiObstacleSettingsNotifier, DjiObstacleSettings>(
   DjiObstacleSettingsNotifier.new,
+  dependencies: [djiLiveMemoryProvider, djiLinkApiProvider],
+);
+
+/// A headset's choice in Options (review-relay-2026-10-25 M4): the lowest delay behind the phone, with less smoothing
+/// of the Wi-Fi. Off by default; a TV keeps its own buffer whatever it says.
+class DjiLowestDelayNotifier extends Notifier<bool> {
+  @override
+  bool build() => ref.watch(djiLiveMemoryProvider).read(StoreKey.djiHeadsetLowestDelay);
+
+  Future<void> set(bool on) async {
+    state = on;
+    await ref.read(djiLiveMemoryProvider).write(StoreKey.djiHeadsetLowestDelay, on);
+    await sync();
+  }
+
+  /// Tells the native side. An error (no bridge, as in a widget test) is only logged.
+  Future<void> sync() async {
+    try {
+      await ref.read(djiLinkApiProvider).setLowestDelay(state);
+    } catch (error) {
+      _log.fine('The lowest delay did not reach the native side: $error');
+    }
+  }
+}
+
+final djiLowestDelayProvider = NotifierProvider<DjiLowestDelayNotifier, bool>(
+  DjiLowestDelayNotifier.new,
   dependencies: [djiLiveMemoryProvider, djiLinkApiProvider],
 );

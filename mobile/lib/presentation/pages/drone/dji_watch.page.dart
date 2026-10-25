@@ -21,6 +21,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_capture.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_link_latency.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_observer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_receive.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.dart';
@@ -73,6 +74,8 @@ Map<String, String> djiFlightViewLabels(
   'off': t.dji_link_flight_view_off,
   'valuesStale': t.dji_link_flight_view_values_stale,
   'delay': t.dji_live_quest_delay(ms: '{ms}'),
+  'delayEstimate': t.dji_live_quest_delay_estimate(ms: '{ms}'),
+  'delayHigh': t.dji_link_flight_view_delay_high(ms: '{ms}'),
   'flyNote': t.dji_link_flight_view_fly_note,
   'observer': t.dji_link_observer_note,
   'watching': t.dji_link_observer_watching,
@@ -178,6 +181,10 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     // set here, and the screen kept on
     unawaited(Future.microtask(() => _notifier.setFrameStream(true)));
     unawaited(Future.microtask(() => ref.read(djiObstacleSettingsProvider.notifier).sync()));
+    if (!_tv) {
+      // A headset's choice of the lowest delay, taken by the next reception
+      unawaited(Future.microtask(() => ref.read(djiLowestDelayProvider.notifier).sync()));
+    }
     unawaited(Future.microtask(() => _relay.setLiveScreenShown(true)));
     unawaited(
       Future.microtask(() async {
@@ -416,6 +423,9 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
         await obstacle.setAlert(!settings.alertOn);
       case 'sound':
         await obstacle.setSound(!settings.soundOn);
+      case 'lowestDelay':
+        final delay = ref.read(djiLowestDelayProvider.notifier);
+        await delay.set(!ref.read(djiLowestDelayProvider));
       case 'play':
         await showModalBottomSheet<void>(
           context: context,
@@ -475,6 +485,7 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     final snapshot = ref.watch(djiLinkProvider.select((state) => state.snapshot));
     final horizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
     final obstacle = ref.watch(djiObstacleSettingsProvider);
+    final lowestDelay = ref.watch(djiLowestDelayProvider);
     final offer = djiObstacleOffer();
     final phones = _phones(t, relay);
     final picture = _picture(t, relay, snapshot, horizonOs: horizonOs);
@@ -509,6 +520,12 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
                   checked: obstacle.soundOn,
                   child: Text(t.dji_live_obstacle_sound),
                 ),
+              CheckedPopupMenuItem(
+                key: const Key('dji_watch_lowest_delay'),
+                value: 'lowestDelay',
+                checked: lowestDelay,
+                child: Text(t.dji_live_watch_lowest_delay),
+              ),
               PopupMenuItem(value: 'safety', child: Text(t.dji_live_safety_again)),
               PopupMenuItem(value: 'diagnostics', child: Text(t.dji_live_diagnostics)),
             ],
@@ -632,7 +649,7 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     final shows = djiLinkPictureFlows(decode) && !djiLinkRelayPictureStopped(snapshot);
     final flowing =
         receiving != null && receiving.state == DjiRelayReceiveState.receiving && djiLinkPictureFlows(decode);
-    final delay = receiving?.receiveToPictureMs;
+    final delay = djiLinkDelayNowMs(receiving);
     final replay = source?.replay ?? false;
     return Column(
       key: const Key('dji_watch_picture'),

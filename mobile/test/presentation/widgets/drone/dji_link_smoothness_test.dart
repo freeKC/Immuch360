@@ -42,6 +42,10 @@ void main() {
     String? network = 'wifi',
     double? longestFreezeMs,
     int freezesInSource = 0,
+    double? receiveToPictureMs = 212,
+    double? receiveToPictureNowMs,
+    double? receiveToPictureEstimateMs,
+    int? safetyNetAgoMs,
   }) {
     final base = fakeReceiving();
     return DjiRelayReceiving(
@@ -55,7 +59,10 @@ void main() {
       decodedPerSecond: base.decodedPerSecond,
       shownPerSecond: base.shownPerSecond,
       lostOnRadio: base.lostOnRadio,
-      receiveToPictureMs: 212,
+      receiveToPictureMs: receiveToPictureMs,
+      receiveToPictureNowMs: receiveToPictureNowMs,
+      receiveToPictureEstimateMs: receiveToPictureEstimateMs,
+      safetyNetAgoMs: safetyNetAgoMs,
       paced: true,
       bufferTargetMs: 180,
       bufferNowMs: 176.4,
@@ -114,6 +121,40 @@ void main() {
     expect(find.text('Smoothing buffer: 180 ms (now 176 ms, 95 %: 205 ms)'), findsOneWidget);
     expect(find.text("Freezes over 0.3 s: 1, the longest 0.4 s, 0 with a gap in the drone's stream"), findsOneWidget);
     expect(find.text('Phone receive to picture shown here: 212 ms (smoothing buffer included)'), findsOneWidget);
+  });
+
+  testWidgets('the delay now, an estimate said apart, and a device that cannot keep up (review M1, M2)', (
+    tester,
+  ) async {
+    await tester.pumpTestWidget(
+      context,
+      Material(child: DjiLinkLatencyBlock(receiving: paced(receiveToPictureNowMs: 1180, safetyNetAgoMs: 4000))),
+    );
+    expect(find.text('Phone receive to picture shown here: 212 ms (smoothing buffer included)'), findsOneWidget);
+    expect(find.text('The last 2 s: up to 1180 ms'), findsOneWidget);
+    expect(
+      find.text("This device cannot keep up with the drone's stream: it skipped ahead to catch up"),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('dji_link_latency_estimate')), findsNothing);
+    // The strips show the delay now, else the median
+    expect(djiLinkDelayNowMs(paced(receiveToPictureNowMs: 1180)), 1180);
+    expect(djiLinkDelayNowMs(paced()), 212);
+    expect(djiLinkDelayNowMs(null), isNull);
+
+    // Before the clocks are aligned: an estimate with its own words, never the words of a measure
+    await tester.pumpTestWidget(
+      context,
+      Material(
+        child: DjiLinkLatencyBlock(
+          receiving: paced(receiveToPictureMs: null, receiveToPictureEstimateMs: 57, safetyNetAgoMs: 12000),
+        ),
+      ),
+    );
+    expect(find.text('Phone receive to picture, estimated without the smoothing buffer: 57 ms'), findsOneWidget);
+    expect(find.byKey(const Key('dji_link_latency_total')), findsNothing);
+    expect(find.byKey(const Key('dji_link_latency_cannot_keep_up')), findsNothing);
+    expect(djiLinkDelayNowMs(paced(receiveToPictureMs: null, receiveToPictureEstimateMs: 57)), isNull);
   });
 
   testWidgets("a receiver's row on the phone says its queue and, from its long pings, its screen", (tester) async {

@@ -163,6 +163,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
   @Volatile
   private var lastDecision = ObstacleDecision.OFF
 
+  /** A headset asked for the lowest delay in Options: no floor under its jitter buffer */
+  @Volatile
+  private var lowestDelay = false
+
   /** A screen with the picture is in front: the frames go to Flutter and the beep may play */
   private var frameStreamOn = false
   private val frames = FrameGate<DjiLiveFrame>(FRAME_INTERVAL_MS) { a, b -> a.copy(atMs = 0) == b.copy(atMs = 0) }
@@ -714,8 +718,8 @@ class DjiLinkController private constructor(private val context: Context) : Link
     receiverDetector.reset()
     store.useAccessory(null)
     store.seed = null
-    // A TV can afford a deeper jitter buffer than the pilot's headset
-    feed.setPacing(television = environment.television)
+    // A TV can afford a deeper jitter buffer than the pilot's headset, which may ask for the lowest delay
+    feed.setPacing(television = environment.television, lowestDelay = lowestDelay)
     feed.open()
     synchronized(shownHistory) { shownHistory.clear() }
   }
@@ -868,6 +872,19 @@ class DjiLinkController private constructor(private val context: Context) : Link
     obstacleSound = sound
   }
 
+  /**
+   * A headset's choice in Options (p2/review-relay-2026-10-25.md M4): no floor under its jitter buffer, for the lowest
+   * delay. Taken at once while a reception runs: the buffer starts again from the next unit.
+   */
+  fun setLowestDelay(on: Boolean) {
+    lowestDelay = on
+    synchronized(gate) {
+      if (receiver.active) {
+        feed.setPacing(television = environment.television, lowestDelay = on)
+      }
+    }
+  }
+
   /** Three beeps, to check the volume before take off */
   fun playObstacleTest() {
     for (index in 0 until ObstacleTone.TEST_BEEPS) {
@@ -955,7 +972,8 @@ class DjiLinkController private constructor(private val context: Context) : Link
         (if (player.loaded) player.router else router).telemetryDecoder.values(nowNs / 1_000_000)
       }
     }
-    val receiveToPicture = receiveToPictureMs(received, stats, nowNs)
+    val smoothing = feed.smoothingNumbers(nowNs)
+    val delay = shownDelay(received, stats, smoothing)
     return DjiFlightNumbers(
       receiving = receiving,
       localReplay = player.loaded,
@@ -963,25 +981,23 @@ class DjiLinkController private constructor(private val context: Context) : Link
       replay = received.phoneSource == RelaySource.REPLAY.wire,
       phoneHasSource = received.phoneSource != RelaySource.NONE.wire,
       replayName = received.replayName,
-      lastPictureAgoMs = stats.lastOutputAgoMs,
+      lastPictureAgoMs = ShownDelay.pictureAgoMs(receiving, smoothing, stats.lastOutputAgoMs),
       picturesPerSecond = stats.picturesPerSecond,
-      receiveToPictureMs = receiveToPicture,
+      // The pilot sees the delay of the last 2 s, so that a spike shows, and a warning from 500 ms on
+      receiveToPictureMs = delay.nowMs,
       values = values,
       alert = lastDecision,
+      delayEstimateMs = delay.estimateMs,
     )
   }
 
   /**
-   * Phone receive to picture shown here: measured on the pictures released for display over the last 10 s when the
-   * clocks are aligned (the jitter buffer included), else the relay delay plus this device's in process and decode
-   * medians
+   * Phone receive to picture shown here (p2/review-relay-2026-10-25.md M1): measured on the pictures released for
+   * display when the clocks are aligned (the jitter buffer included), else an estimate apart (the relay delay plus this
+   * device's in process and decode medians), and nothing while no picture was shown for half a second
    */
-  private fun receiveToPictureMs(received: RelayReceiveSnapshot, stats: VideoStats, nowNs: Long): Double? =
-    feed.smoothingNumbers(nowNs).phoneToShownMedianMs ?: RelayLatencyNumbers.receiveToPicture(
-      received.latency.relayDelayMedianMs,
-      stats.inProcessMedianMs,
-      stats.decodeMedianMs,
-    )
+  private fun shownDelay(received: RelayReceiveSnapshot, stats: VideoStats, smoothing: SmoothingNumbers): ShownDelay =
+    ShownDelay.of(smoothing, received.latency.relayDelayMedianMs, stats.inProcessMedianMs, stats.decodeMedianMs)
 
   /** The network facts, read again when older than 2 s */
   private fun currentNetworkFacts(): NetworkFacts? {
@@ -1108,7 +1124,10 @@ class DjiLinkController private constructor(private val context: Context) : Link
           put("clockUncertaintyMs", received.latency.clockUncertaintyMs)
           put("telemetryAgeMs", received.telemetryAgeMs)
           put("lastUnitAgoMs", received.lastUnitAgoMs)
-          put("receiveToPictureMs", receiveToPictureMs(received, stats, nowNs))
+          val delay = shownDelay(received, stats, feed.smoothingNumbers(nowNs))
+          put("receiveToPictureMs", delay.medianMs)
+          put("receiveToPictureNowMs", delay.nowMs)
+          put("receiveToPictureEstimateMs", delay.estimateMs)
           put("wifiLockHeld", receiverWifiLock?.isHeld == true)
         },
       )
@@ -1795,10 +1814,12 @@ class DjiLinkController private constructor(private val context: Context) : Link
       relayReceiving = if (received.state == RelayReceiveState.IDLE && !receiving) {
         null
       } else {
+        val smoothing = feed.smoothingNumbers(nowNs)
         received.toPigeon(
           stats = stats,
-          receiveToPicture = receiveToPictureMs(received, stats, nowNs),
-          smoothing = feed.smoothingNumbers(nowNs),
+          delay = shownDelay(received, stats, smoothing),
+          smoothing = smoothing,
+          lastPictureAgoMs = ShownDelay.pictureAgoMs(receiving, smoothing, stats.lastOutputAgoMs),
           network = network,
           refreshHz = displayWatch.refreshHz,
         )
@@ -2220,13 +2241,15 @@ private fun RelayReceiveState.toPigeon(): DjiRelayReceiveState = when (this) {
 }
 
 /**
- * The receiver with the latency lines of the window page: [stats] are this device's own decoding numbers,
- * [receiveToPicture] the phone receive to picture shown, [smoothing] the jitter buffer's numbers
+ * The receiver with the latency lines of the window page: [stats] are this device's own decoding numbers, [delay] the
+ * phone receive to picture shown, [smoothing] the jitter buffer's numbers, [lastPictureAgoMs] the age of the last
+ * picture shown
  */
 private fun RelayReceiveSnapshot.toPigeon(
   stats: VideoStats,
-  receiveToPicture: Double?,
+  delay: ShownDelay,
   smoothing: SmoothingNumbers,
+  lastPictureAgoMs: Long?,
   network: NetworkFacts?,
   refreshHz: Float?,
 ): DjiRelayReceiving {
@@ -2255,9 +2278,11 @@ private fun RelayReceiveSnapshot.toPigeon(
     arrivalSpreadMedianMs = numbers.arrivalSpreadMedianMs,
     phoneInProcessMedianMs = phone?.inProcessMedianMs,
     phoneDecodeMedianMs = phone?.decodeMedianMs,
-    receiveToPictureMs = receiveToPicture,
-    behindPhoneMs = RelayLatencyNumbers.behindPhone(receiveToPicture, phone?.inProcessMedianMs, phone?.decodeMedianMs),
-    lastPictureAgoMs = stats.lastOutputAgoMs,
+    receiveToPictureMs = delay.medianMs,
+    receiveToPictureNowMs = delay.nowMs,
+    receiveToPictureEstimateMs = delay.estimateMs,
+    behindPhoneMs = RelayLatencyNumbers.behindPhone(delay.medianMs, phone?.inProcessMedianMs, phone?.decodeMedianMs),
+    lastPictureAgoMs = lastPictureAgoMs,
     receivedPerSecond = numbers.unitsPerSecond,
     decodedPerSecond = stats.decodedPerSecond,
     shownPerSecond = stats.shownPerSecond,
@@ -2271,6 +2296,7 @@ private fun RelayReceiveSnapshot.toPigeon(
     renderSkips = smoothing.renderSkips,
     decoderStalls = smoothing.decoderStalls,
     safetyFlushes = smoothing.safetyFlushes,
+    safetyNetAgoMs = smoothing.safetyNetAgoMs?.toLong(),
     freezes = smoothing.freezes,
     longestFreezeMs = smoothing.longestFreezeMs,
     freezesInSource = smoothing.freezesInSource,

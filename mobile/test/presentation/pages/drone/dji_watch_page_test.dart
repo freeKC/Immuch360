@@ -301,6 +301,9 @@ void main() {
     expect(labels['cell.motorTime.label'], 'Motor time');
     expect(labels['cell.motorTime.value'], '{value}');
     expect(labels['delay'], 'Delay from the phone: about {ms} ms');
+    // Before the clocks are aligned the delay is an estimate, said apart; a late picture is a warning on the strip
+    expect(labels['delayEstimate'], 'Delay from the phone: about {ms} ms, smoothing buffer not counted');
+    expect(labels['delayHigh'], 'The picture is {ms} ms behind the phone');
     for (final hidden in ['remoteBattery', 'signal', 'heading', 'height', 'verticalSpeed', 'speed', 'satellites']) {
       expect(labels.containsKey('cell.$hidden.value'), isFalse, reason: hidden);
     }
@@ -365,6 +368,25 @@ void main() {
     await tester.pumpAndSettle();
     await menu(tester, const Key('dji_watch_save_record'));
     expect(find.text('Nothing received yet: nothing to save.'), findsOneWidget);
+  });
+
+  testWidgets('the lowest delay is a choice of the headset in its menu, kept and told to the native side', (
+    tester,
+  ) async {
+    final api = headset();
+    await openWatch(tester, api);
+    expect(api.lowestDelays.last, isFalse);
+    await menu(tester, const Key('dji_watch_lowest_delay'));
+    expect(api.lowestDelays.last, isTrue);
+    expect(memory[StoreKey.djiHeadsetLowestDelay], isTrue);
+    await tester.tap(find.byKey(const Key('dji_watch_menu')));
+    await tester.pumpAndSettle();
+    final item = find.byKey(const Key('dji_watch_lowest_delay'));
+    expect(tester.widget<CheckedPopupMenuItem<String>>(item).checked, isTrue);
+    await tester.tap(item);
+    await tester.pumpAndSettle();
+    expect(api.lowestDelays.last, isFalse);
+    expect(memory[StoreKey.djiHeadsetLowestDelay], isFalse);
   });
 
   testWidgets('the obstacle alert is a test the headset turns on in its menu, then its sound', (tester) async {

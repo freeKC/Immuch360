@@ -985,6 +985,11 @@ void main() {
         t.dji_link_video_switch_no_picture,
       ]);
       expect(djiWatchTvPictureLines(t, null, null), ['not started']);
+      // The delay of the last 2 s when measured, so that a spike shows (review M1)
+      expect(
+        djiWatchTvPictureLines(t, fakeDecode(), fakeReceiving(receiveToPictureNowMs: 640)),
+        contains('Delay from the phone: about 640 ms'),
+      );
     });
 
     test('a value read from the sofa: 32 over 16, on black at 70 %', () {

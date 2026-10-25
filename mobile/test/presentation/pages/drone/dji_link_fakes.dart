@@ -349,6 +349,8 @@ DjiRelayReceiving fakeReceiving({
   int? reconnectInMs,
   double? relayDelayMedianMs = 14,
   int failures = 0,
+  double? receiveToPictureNowMs,
+  int? safetyNetAgoMs,
 }) => DjiRelayReceiving(
   state: state,
   phoneName: 'Galaxy S24+',
@@ -373,6 +375,8 @@ DjiRelayReceiving fakeReceiving({
   phoneInProcessMedianMs: 0.4,
   phoneDecodeMedianMs: 9,
   receiveToPictureMs: 24,
+  receiveToPictureNowMs: receiveToPictureNowMs,
+  safetyNetAgoMs: safetyNetAgoMs,
   behindPhoneMs: 15,
   lastPictureAgoMs: lastPictureAgoMs,
   receivedPerSecond: 30,
@@ -635,6 +639,9 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
 
   /// setObstacleAlert, in order: offered, sound
   final obstacleAlerts = <(bool, bool)>[];
+
+  /// setLowestDelay, in order
+  final lowestDelays = <bool>[];
   int obstacleTests = 0;
   bool volumeOff = false;
   int receptionExports = 0;
@@ -655,6 +662,9 @@ class FakeDjiLinkApi extends Fake implements DjiLinkApi {
 
   @override
   Future<void> setObstacleAlert(bool offered, bool sound) async => obstacleAlerts.add((offered, sound));
+
+  @override
+  Future<void> setLowestDelay(bool on) async => lowestDelays.add(on);
 
   @override
   Future<void> playObstacleTest() async => obstacleTests += 1;

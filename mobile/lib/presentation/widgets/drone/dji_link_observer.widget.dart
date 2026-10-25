@@ -67,6 +67,7 @@ class DjiLinkReceiveStrip extends StatelessWidget {
     final t = context.t;
     final small = context.textTheme.bodySmall;
     final stale = djiLinkStaleLine(t, receiving);
+    final cannotKeepUp = djiLinkCannotKeepUpLine(t, receiving);
     return DecoratedBox(
       key: const Key('dji_link_receive_strip'),
       decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.6), borderRadius: BorderRadius.circular(8)),
@@ -84,6 +85,12 @@ class DjiLinkReceiveStrip extends StatelessWidget {
               Text(
                 stale,
                 key: const Key('dji_link_receive_strip_stale'),
+                style: small?.copyWith(color: const Color(0xFFFF6B6B), fontWeight: FontWeight.w700),
+              ),
+            if (cannotKeepUp != null)
+              Text(
+                cannotKeepUp,
+                key: const Key('dji_link_receive_strip_cannot_keep_up'),
                 style: small?.copyWith(color: const Color(0xFFFF6B6B), fontWeight: FontWeight.w700),
               ),
             Text(t.dji_link_observer_watching, style: small?.copyWith(color: Colors.white)),

@@ -87,6 +87,18 @@ class FlightViewControlsTest {
     assertTrue(FlightViewControls.hideVideo(null))
   }
 
+  /** The red line of the strip: no picture, a picture that stopped, or one shown 500 ms or more behind the phone */
+  @Test
+  fun theStripWarnsOfAPictureThatStoppedOrComesLate() {
+    val line = FlightViewControls::stripLine
+    assertEquals(FlightViewControls.StripLine.NO_PICTURE, line(null, null))
+    assertEquals(FlightViewControls.StripLine.STALE, line(900, 180.0))
+    assertEquals(FlightViewControls.StripLine.NONE, line(40, 320.0))
+    assertEquals(FlightViewControls.StripLine.NONE, line(40, null))
+    assertEquals(FlightViewControls.StripLine.DELAY_HIGH, line(40, 500.0))
+    assertEquals(FlightViewControls.StripLine.DELAY_HIGH, line(40, 1_240.0))
+  }
+
   private fun flight(motorTimeS: Double = 41.6, motorsOn: Boolean = false) = FlightReading(
     heightM = 12.3,
     speedsMps = listOf(0.0, 0.0, 0.0),

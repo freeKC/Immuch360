@@ -145,7 +145,7 @@ List<String> djiWatchTvPictureLines(Translations t, DjiLinkDecode? decode, DjiRe
     _ => t.dji_link_video_choice_automatic,
   };
   final median = decode?.decodeMedianMs;
-  final delay = receiving?.receiveToPictureMs;
+  final delay = djiLinkDelayNowMs(receiving);
   final reason = djiLinkSwitchReasonText(t, decode?.switchReason);
   return [
     if (decode == null || name == null)
@@ -799,8 +799,9 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
       // The card says it: the phone does not know this TV yet
       return const [];
     }
-    final delay = active.receiveToPictureMs;
+    final delay = djiLinkDelayNowMs(active);
     final stale = djiLinkStaleLine(t, active);
+    final cannotKeepUp = djiLinkCannotKeepUpLine(t, active);
     return [
       Text(
         djiWatchTvStateLine(
@@ -816,6 +817,12 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
       ),
       if (stale != null)
         Text(stale, key: const Key('dji_watch_tv_stale'), style: style?.copyWith(color: context.colorScheme.error)),
+      if (cannotKeepUp != null)
+        Text(
+          cannotKeepUp,
+          key: const Key('dji_watch_tv_cannot_keep_up'),
+          style: style?.copyWith(color: context.colorScheme.error),
+        ),
       if (active.state == DjiRelayReceiveState.receiving && delay != null)
         Text(t.dji_live_quest_delay(ms: delay.toStringAsFixed(0)), key: const Key('dji_watch_delay'), style: style),
     ];
@@ -910,8 +917,9 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
             longWait: _longWait,
             refusedBy: relay.usingOwnCode ? relay.ownCodeRefusedBy : null,
           );
-    final delay = active?.receiveToPictureMs;
+    final delay = djiLinkDelayNowMs(active);
     final stale = active == null ? null : djiLinkStaleLine(t, active);
+    final cannotKeepUp = djiLinkCannotKeepUpLine(t, active);
     const white = TextStyle(color: Colors.white, fontSize: 15);
     return DecoratedBox(
       key: const Key('dji_watch_tv_strip'),
@@ -946,6 +954,12 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
               Text(
                 stale,
                 key: const Key('dji_watch_tv_strip_stale'),
+                style: const TextStyle(color: _red, fontSize: 16, fontWeight: FontWeight.w700),
+              ),
+            if (cannotKeepUp != null)
+              Text(
+                cannotKeepUp,
+                key: const Key('dji_watch_tv_strip_cannot_keep_up'),
                 style: const TextStyle(color: _red, fontSize: 16, fontWeight: FontWeight.w700),
               ),
             const SizedBox(height: 6),

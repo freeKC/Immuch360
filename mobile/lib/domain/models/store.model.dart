@@ -103,6 +103,9 @@ enum StoreKey<T> {
   /// The obstacle sound was turned off in Advanced: it is on by default
   djiObstacleSoundOff<bool>._(5033),
 
+  /// A headset watching a phone asked for the lowest delay in Options, with less smoothing: off by default
+  djiHeadsetLowestDelay<bool>._(5034),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

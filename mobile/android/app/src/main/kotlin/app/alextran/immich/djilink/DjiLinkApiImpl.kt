@@ -122,6 +122,10 @@ class DjiLinkApiImpl(private val context: Context) : DjiLinkApi {
     controller.setObstacleAlert(offered, sound)
   }
 
+  override fun setLowestDelay(on: Boolean) {
+    controller.setLowestDelay(on)
+  }
+
   override fun playObstacleTest() {
     controller.playObstacleTest()
   }

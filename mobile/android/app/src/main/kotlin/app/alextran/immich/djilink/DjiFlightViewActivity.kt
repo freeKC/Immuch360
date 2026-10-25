@@ -56,12 +56,16 @@ data class DjiFlightNumbers(
   val replay: Boolean,
   val phoneHasSource: Boolean,
   val replayName: String?,
+  /** Since the last picture shown here (for a relayed stream), or out of the decoder */
   val lastPictureAgoMs: Long?,
   val picturesPerSecond: Double,
+  /** Phone receive to picture shown, the most of the last 2 s; null while it cannot be measured or nothing shows */
   val receiveToPictureMs: Double?,
   val values: TelemetryValues?,
   /** What the obstacle alert decided on this device, from the readings the phone relays */
   val alert: ObstacleDecision = ObstacleDecision.OFF,
+  /** Before the clocks are aligned: relay, in process and decode, without the jitter buffer */
+  val delayEstimateMs: Double? = null,
 )
 
 /**
@@ -121,6 +125,22 @@ internal object FlightViewControls {
   fun staleLine(lastPictureAgoMs: Long?): Boolean = lastPictureAgoMs == null || lastPictureAgoMs > 500
 
   fun hideVideo(lastPictureAgoMs: Long?): Boolean = lastPictureAgoMs == null || lastPictureAgoMs > 2_000
+
+  /** From this delay behind the phone on, the red line warns the pilot (the 500 ms of stage 2b) */
+  const val DELAY_WARNING_MS = 500.0
+
+  enum class StripLine { NONE, NO_PICTURE, STALE, DELAY_HIGH }
+
+  /**
+   * The red line of the strip (p2/review-relay-2026-10-25.md M1 and M4): no picture yet, a picture that stopped, or a
+   * picture shown late, from the delay of the last 2 s
+   */
+  fun stripLine(lastPictureAgoMs: Long?, delayNowMs: Double?): StripLine = when {
+    lastPictureAgoMs == null -> StripLine.NO_PICTURE
+    staleLine(lastPictureAgoMs) -> StripLine.STALE
+    delayNowMs != null && delayNowMs >= DELAY_WARNING_MS -> StripLine.DELAY_HIGH
+    else -> StripLine.NONE
+  }
 
   /**
    * The two columns beside the video (p2/design-final-2026-10-24.md, 7.2), in this order: the flight values on its
@@ -602,17 +622,29 @@ class DjiFlightViewActivity : AppSystemActivity() {
     )
     val ago = numbers.lastPictureAgoMs
     staleText?.apply {
-      val stale = FlightViewControls.staleLine(ago)
-      visibility = if (stale) View.VISIBLE else View.GONE
-      show(if (ago == null) label("noPicture") else fill("stale", "seconds" to number(ago / 1000.0)))
+      val line = FlightViewControls.stripLine(ago, numbers.receiveToPictureMs)
+      visibility = if (line == FlightViewControls.StripLine.NONE) View.GONE else View.VISIBLE
+      show(
+        when (line) {
+          FlightViewControls.StripLine.NO_PICTURE -> label("noPicture")
+          FlightViewControls.StripLine.STALE -> fill("stale", "seconds" to number((ago ?: 0) / 1000.0))
+          FlightViewControls.StripLine.DELAY_HIGH -> fill("delayHigh", "ms" to number(numbers.receiveToPictureMs, 0))
+          FlightViewControls.StripLine.NONE -> ""
+        },
+      )
     }
     val values = numbers.values
     leftShown =
       fillColumn(leftCells, leftShown, FlightViewControls.cells(values, labels, FlightViewControls.LEFT_FIELDS))
     rightShown =
       fillColumn(rightCells, rightShown, FlightViewControls.cells(values, labels, FlightViewControls.RIGHT_FIELDS))
-    // The delay from the phone in one short line; the parts of it stay on the Diagnostics page
-    latencyText?.show(numbers.receiveToPictureMs?.let { fill("delay", "ms" to number(it, 0)) } ?: "")
+    // The delay from the phone in one short line, the most of the last 2 s; the parts of it stay on the Diagnostics
+    // page. Before the clocks are aligned, the estimate says what it leaves out.
+    latencyText?.show(
+      numbers.receiveToPictureMs?.let { fill("delay", "ms" to number(it, 0)) }
+        ?: numbers.delayEstimateMs?.let { fill("delayEstimate", "ms" to number(it, 0)) }
+        ?: "",
+    )
     val alert = FlightViewControls.alertLines(numbers.alert, labels)
     if (alert != null) {
       alertText?.show(alert.first)

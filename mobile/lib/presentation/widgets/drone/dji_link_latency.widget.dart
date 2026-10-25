@@ -3,7 +3,8 @@
 // far behind the phone's own screen the picture is, and the pictures per second. A paced reception adds its jitter
 // buffer, what came late or was not shown, the freezes over 0.3 s and this device's network and display
 // (relay-smoothness 6.2). A picture that stopped is never shown as live: the red line says for how long no new picture
-// came.
+// was shown, and no delay is given meanwhile; before the clocks are aligned the delay is an estimate, said apart
+// (review-relay-2026-10-25 M1). A device that reached the safety net of its queue says it cannot keep up.
 
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -13,6 +14,19 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_link_texts.dart';
 
 /// After this long without a new picture, the red line says so
 const djiLinkStaleLineMs = 500;
+
+/// The line of a device that could not keep up with the drone's stream stays this long after it happened
+const djiLinkCannotKeepUpMs = 10000;
+
+/// The delay from the phone the strips show: the most of the last 2 s when measured, else the 10 s median
+double? djiLinkDelayNowMs(DjiRelayReceiving? receiving) =>
+    receiving?.receiveToPictureNowMs ?? receiving?.receiveToPictureMs;
+
+/// The line of a device whose queue reached its safety net in the last 10 s; null otherwise
+String? djiLinkCannotKeepUpLine(Translations t, DjiRelayReceiving? receiving) {
+  final ago = receiving?.safetyNetAgoMs;
+  return ago != null && ago <= djiLinkCannotKeepUpMs ? t.dji_link_latency_cannot_keep_up : null;
+}
 
 /// The red line of a picture that stopped coming while the phone still sends; null while pictures come
 String? djiLinkStaleLine(Translations t, DjiRelayReceiving receiving) {
@@ -82,6 +96,7 @@ class DjiLinkLatencyBlock extends StatelessWidget {
     final small = context.textTheme.bodySmall;
     final relay = receiving.relayDelayMedianMs;
     final stale = djiLinkStaleLine(t, receiving);
+    final cannotKeepUp = djiLinkCannotKeepUpLine(t, receiving);
     final decoderName = decode?.decoderName;
     return Column(
       key: const Key('dji_link_latency'),
@@ -91,6 +106,12 @@ class DjiLinkLatencyBlock extends StatelessWidget {
           Text(
             stale,
             key: const Key('dji_link_latency_stale'),
+            style: small?.copyWith(fontWeight: FontWeight.w700, color: context.colorScheme.error),
+          ),
+        if (cannotKeepUp != null)
+          Text(
+            cannotKeepUp,
+            key: const Key('dji_link_latency_cannot_keep_up'),
             style: small?.copyWith(fontWeight: FontWeight.w700, color: context.colorScheme.error),
           ),
         Text(
@@ -121,6 +142,18 @@ class DjiLinkLatencyBlock extends StatelessWidget {
             t.dji_link_latency_receive_to_picture(ms: djiLinkNumber(total, 0)),
             key: const Key('dji_link_latency_total'),
             style: small?.copyWith(fontWeight: FontWeight.w700),
+          ),
+        if (receiving.receiveToPictureNowMs case final double now)
+          Text(
+            t.dji_link_latency_receive_to_picture_now(ms: djiLinkNumber(now, 0)),
+            key: const Key('dji_link_latency_now'),
+            style: small,
+          ),
+        if (receiving.receiveToPictureEstimateMs case final double estimate)
+          Text(
+            t.dji_link_latency_receive_to_picture_estimate(ms: djiLinkNumber(estimate, 0)),
+            key: const Key('dji_link_latency_estimate'),
+            style: small,
           ),
         if (receiving.behindPhoneMs case final double behind)
           Text(

@@ -883,6 +883,8 @@ class DjiRelayReceiving {
     this.phoneInProcessMedianMs,
     this.phoneDecodeMedianMs,
     this.receiveToPictureMs,
+    this.receiveToPictureNowMs,
+    this.receiveToPictureEstimateMs,
     this.behindPhoneMs,
     this.lastPictureAgoMs,
     this.paced,
@@ -893,6 +895,7 @@ class DjiRelayReceiving {
     this.renderSkips,
     this.decoderStalls,
     this.safetyFlushes,
+    this.safetyNetAgoMs,
     this.freezes,
     this.longestFreezeMs,
     this.freezesInSource,
@@ -943,12 +946,20 @@ class DjiRelayReceiving {
   final double? phoneInProcessMedianMs;
   final double? phoneDecodeMedianMs;
 
-  /// Phone receive to picture shown here, the jitter buffer included (measured; the relay delay plus the in process
-  /// and decode medians until the first pictures are shown)
+  /// Phone receive to picture shown here, the jitter buffer included, measured over 10 s; null while the clocks are
+  /// not aligned or no picture was shown for half a second
   final double? receiveToPictureMs;
+
+  /// The same, the most of the last 2 s: the delay now, spikes included
+  final double? receiveToPictureNowMs;
+
+  /// Before the clocks are aligned: the relay delay plus the in process and decode medians, without the jitter buffer
+  final double? receiveToPictureEstimateMs;
 
   /// How long after the phone's own screen this device shows a picture
   final double? behindPhoneMs;
+
+  /// Since the last picture shown here (a relayed stream), or out of the decoder
   final int? lastPictureAgoMs;
   final double receivedPerSecond;
   final double decodedPerSecond;
@@ -963,12 +974,15 @@ class DjiRelayReceiving {
   final double? bufferNowMs;
   final double? bufferP95Ms;
 
-  /// Units that came after their time to go to the decoder, pictures not shown because a newer one was due, decoder
-  /// stalls of 200 ms, and flushes at the safety net
+  /// Units that came after their time to go to the decoder, pictures not shown because a newer decoded one was due,
+  /// decoder stalls of 200 ms, and the times the safety net of the queue was reached
   final int? lateUnits;
   final int? renderSkips;
   final int? decoderStalls;
   final int? safetyFlushes;
+
+  /// Since the safety net was last reached: this device could not keep up with the drone's stream
+  final int? safetyNetAgoMs;
 
   /// Pictures that stayed over 0.3 s on the screen, the longest, and those that came with a gap in the drone's stream
   final int? freezes;
@@ -1498,6 +1512,10 @@ abstract class DjiLinkApi {
 
   /// Three beeps of the obstacle sound, to check the volume before take off
   void playObstacleTest();
+
+  /// A headset's choice in Options: the lowest delay, with less smoothing (no floor under its jitter buffer). Taken at
+  /// once while receiving, and by every reception after.
+  void setLowestDelay(bool on);
 
   /// The media volume, which the obstacle sound follows, is at zero
   bool mediaVolumeOff();
