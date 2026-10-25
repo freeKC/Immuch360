@@ -461,7 +461,7 @@ void main() {
     );
     await push(tester, listener, from(phone: true, switches: 1));
     expect(steady, findsOneWidget);
-    expect(find.text('Steady picture from the phone: the Wi-Fi could not carry the full one'), findsOneWidget);
+    expect(find.text('Steady picture from the phone: less detail, no lost pictures'), findsOneWidget);
     await tester.pump(djiTransientHold + djiTransientFadeOut);
     await tester.pumpAndSettle();
     expect(steady, findsNothing);
