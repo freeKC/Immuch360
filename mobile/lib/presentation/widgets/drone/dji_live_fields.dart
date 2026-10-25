@@ -30,16 +30,17 @@ enum DjiLiveField {
   satellites,
   heading,
   landing,
-  // The left band, bottom group, top to bottom: the flight
+  // The left band, bottom group, top to bottom: the flight, then what is under the drone
   height,
   verticalSpeed,
   distanceHome,
   speed,
-  // Advanced only
   distanceBelow,
+  // Over the picture as the obstacle ring, never as a cell
   obstacle,
   // Not a value: whether the obstacle ring may show the obstacle's side
   obstacleSide,
+  // Advanced only
   motors,
   batteryVoltage,
   batteryTemperature,
@@ -61,7 +62,9 @@ class DjiLiveGate {
 }
 
 /// The gate: one row per value (p2/design-final-2026-10-24.md, 3.2, with the classes of
-/// p2/telemetry-deep-dive-2026-10-24.md, sections 0 and 8, and p2/telemetry-flight-2026-10-24.md, sections 0 and 2)
+/// p2/telemetry-deep-dive-2026-10-24.md, sections 0 and 8, p2/telemetry-flight-2026-10-24.md, sections 0 and 2, and
+/// p2/telemetry-proof-2026-10-25.md, sections 4 and 6: the 09:42 capture and the afternoon flight of 25 October, two
+/// independent pieces of evidence per proven row, the same in both captures)
 const djiLiveGates = <DjiLiveField, DjiLiveGate>{
   // 13/2 offset 20: equal to 3/85 offset 8 in 47 of 47 samples, and to remaining over full capacity (report 1, 3.1)
   DjiLiveField.droneBattery: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.overlay, band: DjiLiveBand.right),
@@ -90,27 +93,46 @@ const djiLiveGates = <DjiLiveField, DjiLiveGate>{
   DjiLiveField.heading: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.advanced, band: DjiLiveBand.right, drop: 5),
   // 3/67 offset 30 = 12 in the frames of the only landing captured; one landing proves nothing (report 1, 3.3)
   DjiLiveField.landing: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.nowhere, band: DjiLiveBand.right),
-  // 3/67 offset 16: trunc((r - z) / 100) of the 50 Hz push in 732 of 733 frames, the rate it gives matched by the range
-  // below; above the take off point, not the ground. Five flying frames only (deep dive 2).
-  DjiLiveField.height: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.overlay, band: DjiLiveBand.left),
-  // 3/67 offset 22, positive down on the wire: 0.2 m/s in the landing, slope 9.3 and correlation 0.93 against the rate
-  // of the height by hand (deep dive 2.2)
-  DjiLiveField.verticalSpeed: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.overlay, band: DjiLiveBand.left),
+  // 3/67 offset 16, 0.1 m, positive up, above the lift off point: trunc((r - z) / 100) of the 50 Hz push in 4126 of
+  // 4134 frames, and its changes match the range below in still windows (median ratio 0.95 over 41, 0.98 over 22 at
+  // 09:42). In the air only (bit 0x04, the native side gives nothing else): with the motors spinning before lift off it
+  // drifted to -1.2 m and +1.0 m. Tested 0 to 1.8 m, no climb to the limit (proof 4.1)
+  DjiLiveField.height: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.overlay, band: DjiLiveBand.left),
+  // 3/67 offset 22, 0.1 m/s, positive down on the wire, shown climb positive: slope 9.42 and correlation 0.983 against
+  // the rate of the 50 Hz height in 2409 frames in the air (8.59 and 0.916 over 646 at 09:42), that height matching the
+  // range below; 1.5 m/s in a 1.64 m/s climb. In the air only (proof 4.2)
+  DjiLiveField.verticalSpeed: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.overlay, band: DjiLiveBand.left),
   // No field of our captures gives the distance from home: no fix indoors (deep dive 6.2)
   DjiLiveField.distanceHome: DjiLiveGate(DjiLiveEvidence.none, DjiLivePlace.overlay, band: DjiLiveBand.left, drop: 1),
-  // 3/67 offsets 18 and 20, the rates of the 50 Hz positions; stale on the ground: only with the motors (deep dive 3)
-  DjiLiveField.speed: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.overlay, band: DjiLiveBand.left, drop: 2),
-  // 10/3 from the remote side, millimetres, only while the motors run (deep dive 4.1)
-  DjiLiveField.distanceBelow: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.advanced),
-  // 36/8 from 18.4: 360 distances in millimetres around the drone, only while the motors run (deep dive 4.2). Its row
-  // also offers the obstacle ring: djiObstacleOffer.
-  DjiLiveField.obstacle: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.overlay),
-  // 36/8 turns with the aircraft and its index grows with the heading (25 October 09:42 capture: 43 turn pairs of 43,
-  // slope -1.007); flying forward it closes in fastest within 40 degrees of index 0 in four legs of six, 50 to 70
-  // degrees off in two (obstacle-ring-2026-10-25.md, 1). Not a value: it says whether the ring may show a side, with
-  // ObstacleRing.MAPPING on the native side. Step 5 of the owner flight proves it.
-  DjiLiveField.obstacleSide: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.nowhere),
-  // 3/67 offset 32, bits 0x04 and 0x08 together: set exactly while the motor time grows (report 1, 3.4)
+  // 3/67 offsets 18 and 20, 0.1 m/s along the axes the heading counts from: the rates of the 50 Hz positions (slopes
+  // 10.03 and 9.91, correlations 0.975 and 0.990; 0.988 and 0.995 at 09:42), their course is the heading in 332 of 373
+  // frames (162 of 162), and the obstacle ring fits that displacement at scale 1.0 in both captures. In the air only:
+  // stale on the ground. Tested to 1.5 m/s (proof 4.3)
+  DjiLiveField.speed: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.overlay, band: DjiLiveBand.left, drop: 2),
+  // 10/3 from the remote side, millimetres, while the motors run: the distance to whatever is under the drone (floor,
+  // table, hand). It tracks the 50 Hz height over a flat floor (median ratio 0.95 and 0.98), reads 7 to 63 mm on a hand
+  // before lift off, and had a reading in every one of 4637 frames in the air (1244 at 09:42). Tested to 1.77 m, its
+  // reach not reached (proof 4.4). The bottom of the left band, the first to leave it.
+  DjiLiveField.distanceBelow: DjiLiveGate(
+    DjiLiveEvidence.proven,
+    DjiLivePlace.overlay,
+    band: DjiLiveBand.left,
+    drop: 3,
+  ),
+  // 36/8 from 18.4: 360 distances in millimetres around the drone, only while the motors run. The scale is proven by
+  // the 50 Hz displacement (the ring predicted from it fits best at scale 1.0, 127 and 67 ring pairs) and by the nose
+  // sector closing by the distance flown on forward legs (8 of 10, 5 of 6). Over the picture as the obstacle ring and
+  // its number, not as a cell; the distances that make it glow stay the pilot's choice. Not tested: a wall at a known
+  // distance, glass, thin branches, outdoors (proof 4.7). Its row also offers the ring: djiObstacleOffer.
+  DjiLiveField.obstacle: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.overlay),
+  // 36/8 index 0 at the nose, growing clockwise (ObstacleRing.MAPPING, RingMapping(noseSector = 0, clockwise = true)),
+  // the same in both captures: the camera picture shows the heading grows on a turn to the right; turns of 80 to 100
+  // degrees in place move the ring by -heading change / 5 sectors in 12 of 13 and 4 of 4 (a right turn puts what was
+  // ahead on the left); the ring predicted from the displacement fits best with the nose at 0 growing with the
+  // heading; the nose sector shrinks flying forward (proof 4.7). Not a value: it says the ring shows the side.
+  DjiLiveField.obstacleSide: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.nowhere),
+  // 3/67 offset 32, bit 0x08: set 0.1 s before the motor time starts and cleared the frame it stops, the spin up before
+  // lift off included (report 1, 3.4; proof 4.9)
   DjiLiveField.motors: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.advanced),
   // 13/2 offset 1: equal to 3/85 offset 4 within 10 mV at rest, sags under load (report 1, 3.1)
   DjiLiveField.batteryVoltage: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.advanced),
@@ -182,7 +204,7 @@ String djiLiveMinutesSeconds(double seconds) {
   return '${whole ~/ 60}:${(whole % 60).toString().padLeft(2, '0')}';
 }
 
-/// One decimal under 100 m, whole metres from 100 m, the sign kept: -0.5 m is a landing below the take off point
+/// One decimal under 100 m, whole metres from 100 m, the sign kept: -0.5 m is below the take off point
 String djiLiveHeight(double metres) => metres.abs() >= 100 ? metres.toStringAsFixed(0) : metres.toStringAsFixed(1);
 
 /// An arrow up while climbing and down while descending, as the number reads: none at 0.0
@@ -213,9 +235,9 @@ String djiLiveFieldLabel(
       DjiLiveField.verticalSpeed => t.dji_live_value_vertical_speed,
       DjiLiveField.distanceHome => t.dji_live_value_distance_home,
       DjiLiveField.speed => t.dji_live_value_speed,
+      DjiLiveField.distanceBelow => t.dji_live_value_distance_below_short,
       // A chip, a number alone and a line under the battery: no label over them
       DjiLiveField.heading || DjiLiveField.landing || DjiLiveField.timeLeft => '',
-      DjiLiveField.distanceBelow ||
       DjiLiveField.obstacle ||
       DjiLiveField.obstacleSide ||
       DjiLiveField.motors ||
@@ -250,10 +272,11 @@ String djiLiveFieldLabel(
     DjiLiveField.signalBars => t.dji_live_value_signal_bars,
     DjiLiveField.satellites => t.dji_live_value_satellites,
     DjiLiveField.landing => t.dji_live_landing,
-    DjiLiveField.height => t.dji_live_value_height,
-    DjiLiveField.verticalSpeed => t.dji_live_value_vertical_speed,
+    // In Advanced the full words: above the take off point, climb positive, over the ground (proof 4.1 to 4.3)
+    DjiLiveField.height => t.dji_live_value_height_full,
+    DjiLiveField.verticalSpeed => t.dji_live_value_vertical_speed_full,
     DjiLiveField.distanceHome => t.dji_live_value_distance_home,
-    DjiLiveField.speed => t.dji_live_value_speed,
+    DjiLiveField.speed => t.dji_live_value_speed_full,
     DjiLiveField.timeLeft || DjiLiveField.obstacleSide => '',
     DjiLiveField.distanceBelow => t.dji_live_value_distance_below,
     DjiLiveField.obstacle => t.dji_live_value_obstacle,
@@ -372,7 +395,8 @@ List<DjiLiveValue> djiLiveValues(
   ];
 }
 
-/// Whether height, the speeds and the distance from home all show over the picture; until then Advanced says why not
+/// Whether one of height, the speeds and the distance from home does not show over the picture yet; Advanced then says
+/// which waits for what
 bool djiLiveFlightValuesPending({Map<DjiLiveField, DjiLiveGate> gates = djiLiveGates}) => [
   DjiLiveField.height,
   DjiLiveField.verticalSpeed,
@@ -380,8 +404,8 @@ bool djiLiveFlightValuesPending({Map<DjiLiveField, DjiLiveGate> gates = djiLiveG
   DjiLiveField.speed,
 ].any((field) => !djiLiveShowsAt(field, DjiLivePlace.overlay, gates: gates));
 
-/// How the obstacle ring is offered: not at all while no field is named, as a test the pilot turns on in Advanced
-/// while the field is likely, and on by default once proven
+/// How the obstacle ring is offered: not at all while no field is named, behind "Obstacle ring, not confirmed yet"
+/// while the field is likely, behind "Show the obstacle ring" once proven; both switches are on by default
 enum DjiObstacleOffer { none, test, proven }
 
 DjiObstacleOffer djiObstacleOffer({Map<DjiLiveField, DjiLiveGate> gates = djiLiveGates}) =>
@@ -392,7 +416,8 @@ DjiObstacleOffer djiObstacleOffer({Map<DjiLiveField, DjiLiveGate> gates = djiLiv
     };
 
 /// How the ring's side is offered (p2/design-obstacle-ring-2026-10-25.md, 2.6): never while its row is a guess, only
-/// behind "Show the side, not confirmed yet" while likely (else an even glow all around), by default once proven
+/// behind "Show the side, not confirmed yet" while likely (else an even glow all around), by default once proven, as
+/// since the flights of 25 October (proof 4.7), with "Show the side" to turn it off
 enum DjiObstacleSideOffer { none, test, proven }
 
 DjiObstacleSideOffer djiObstacleSideOffer({Map<DjiLiveField, DjiLiveGate> gates = djiLiveGates}) =>
@@ -402,15 +427,15 @@ DjiObstacleSideOffer djiObstacleSideOffer({Map<DjiLiveField, DjiLiveGate> gates 
       _ => DjiObstacleSideOffer.none,
     };
 
-/// The templates of the Quest flight view's two columns, a label and a value per field over the picture
+/// The templates of the Quest flight view's two columns, a label and a value per field of the phone's bands
 /// ("cell.droneBattery.label" "Drone battery", "cell.droneBattery.value" "{value} %"), under the names the native side
-/// reads (FlightViewControls.VALUE_FIELDS): a field without a template has no cell there
+/// reads (FlightViewControls.LEFT_FIELDS and RIGHT_FIELDS): a field without a template has no cell there
 Map<String, String> djiLiveFlightViewTemplates(
   Translations t, {
   Map<DjiLiveField, DjiLiveGate> gates = djiLiveGates,
 }) => {
   for (final field in DjiLiveField.values)
-    if (djiLiveShowsAt(field, DjiLivePlace.overlay, gates: gates)) ...{
+    if (gates[field]?.band != DjiLiveBand.none && djiLiveShowsAt(field, DjiLivePlace.overlay, gates: gates)) ...{
       'cell.${field.name}.label': djiLiveFieldLabel(t, field, place: DjiLivePlace.overlay, gates: gates),
       'cell.${field.name}.value': field == DjiLiveField.landing
           ? t.dji_live_landing

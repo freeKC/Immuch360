@@ -1,9 +1,11 @@
-// The flight and battery section of Diagnostics: the fields our captures of 23 and 24 October 2026 explain
-// (p2/telemetry-flight-2026-10-24.md), each group with how it is known, greyed with its age when it stopped coming.
-// Each label says the class the telemetry report gives its value: a proven value plain, a likely one "(likely)", a
-// guess "(guess)", the heading with its zero not checked. Which of the two motor bits means "in the air" is a guess no
-// capture settles, so that row is not drawn. Not a flight instrument: nothing here has been compared with DJI Fly yet,
-// and the note says so in every state.
+// The flight and battery section of Diagnostics: the fields our captures of 23 to 25 October 2026 explain
+// (p2/telemetry-flight-2026-10-24.md, p2/telemetry-proof-2026-10-25.md), each group with how it is known, greyed with
+// its age when it stopped coming. Each label says the class the telemetry reports give its value: a proven value plain,
+// with what it means where that matters (the height in the air only, the speeds along the heading's axes, offset 41 a
+// smoothed distance below), a likely one "(likely)", a guess "(guess)", the heading with its zero not checked. The
+// values are raw here, on the ground too; the live screens show the height and the speeds in the air only. Bit 0x04 is
+// only likely "in the air", so that row is not drawn. Not a flight instrument: nothing here has been compared with DJI
+// Fly yet, and the note says so in every state.
 
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -77,7 +79,7 @@ class DjiLinkFlightSection extends StatelessWidget {
               (t.dji_link_motors, flight.motorsOn ? t.dji_link_bench_on : t.dji_link_bench_off),
               (t.dji_link_motor_time, '${flight.motorTimeS.toStringAsFixed(1)} s'),
               (t.dji_link_satellites, '${flight.satellites}'),
-              (t.dji_link_ground_height, '${flight.groundHeightM.toStringAsFixed(2)} m'),
+              (t.dji_link_ground_height, '${flight.groundHeightM.toStringAsFixed(1)} m'),
             ],
           ),
         if (battery != null)

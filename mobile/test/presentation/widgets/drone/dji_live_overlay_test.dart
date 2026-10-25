@@ -1,6 +1,6 @@
 // The bands of the live screen (p2/design-final-2026-10-24.md, 3.3 and 3.4): each value in its fixed place with a fixed
 // height, a value that stops coming leaves its place empty, the values that do not fit leave in their order of
-// priority, and a gate opened later puts the flight numbers at the bottom of the left band.
+// priority, and the flight numbers at the bottom of the left band, open since the proof flights of 25 October.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -58,7 +58,8 @@ void main() {
       DjiLiveField.landing,
     ]);
     final left = djiLiveBandFields(DjiLiveBand.left, gates: _proven);
-    // Speed first, then the distance from home (which has no source anyway)
+    expect(djiLiveFieldsThatFit(left, 4 * djiLiveFlightCellHeight, DjiLiveBand.left, gates: _proven), left);
+    // The distance below first, then the speed, then the distance from home (which has no source anyway)
     expect(djiLiveFieldsThatFit(left, 100, DjiLiveBand.left, gates: _proven), [
       DjiLiveField.height,
       DjiLiveField.verticalSpeed,
@@ -101,6 +102,36 @@ void main() {
     expect(find.text('0:41'), findsOneWidget);
     expect(find.text('50 %'), findsNothing);
     expect(find.byKey(const Key('dji_live_cell_heading')), findsNothing);
+  });
+
+  testWidgets('with today\'s gate the left band holds the flight in the air and keeps its places on the ground', (
+    tester,
+  ) async {
+    // The proof flights of 25 October (p2/telemetry-proof-2026-10-25.md): height above the take off point, vertical
+    // speed climb positive, speed over the ground, distance below
+    final container = await pumpBand(
+      tester,
+      DjiLiveBand.left,
+      fakeFrame(motorsOn: true, heightM: 0.8, verticalSpeedMps: 1.5, speedMps: 1.2, distanceBelowM: 1.476),
+    );
+    for (final (label, value) in [
+      ('Height', '0.8 m'),
+      ('Vertical', '↑ 1.5 m/s'),
+      ('Speed', '1.2 m/s'),
+      ('Below', '1.48 m'),
+    ]) {
+      expect(find.text(label), findsOneWidget, reason: label);
+      expect(find.text(value), findsOneWidget, reason: label);
+    }
+    final below = tester.getRect(find.byKey(const Key('dji_live_cell_distanceBelow')));
+    final speed = tester.getRect(find.byKey(const Key('dji_live_cell_speed')));
+    expect(below.top, greaterThanOrEqualTo(speed.bottom));
+    // Landed: the native side gives no height, no speed, and the range below stops with the motors
+    container.read(djiLiveFrameProvider.notifier).offer(fakeFrame(atMs: 5000));
+    await tester.pump();
+    expect(find.text('Height'), findsNothing);
+    expect(find.text('Below'), findsNothing);
+    expect(tester.getRect(find.byKey(const Key('dji_live_cell_distanceBelow'))), below);
   });
 
   testWidgets('a cell keeps its size whatever its number, and a stale one keeps its place', (tester) async {

@@ -316,14 +316,18 @@ void main() {
       findsOneWidget,
     );
     expect(find.descendant(of: strip, matching: find.textContaining('watch the drone, not the TV')), findsOneWidget);
-    // The values of the gate, on the right: the drone's battery and the motor time, and nothing on the left
+    // The values of the gate, on the right: the drone's battery and the motor time; on the left nothing while the drone
+    // is on the ground (the height and the speeds come in the air only)
     final right = find.byKey(const Key('dji_watch_tv_column_right'));
     expect(find.descendant(of: right, matching: find.text('Drone battery')), findsOneWidget);
     expect(find.descendant(of: right, matching: find.text('34 %')), findsOneWidget);
     expect(find.descendant(of: right, matching: find.text('Motor time')), findsOneWidget);
     expect(find.descendant(of: right, matching: find.text('0:41')), findsOneWidget);
     expect(find.text('Not compared with DJI Fly yet: do not fly by these numbers.'), findsOneWidget);
-    expect(find.byKey(const Key('dji_watch_tv_column_left')), findsNothing);
+    expect(
+      find.descendant(of: find.byKey(const Key('dji_watch_tv_column_left')), matching: find.byType(Text)),
+      findsNothing,
+    );
     expect(find.textContaining('Height'), findsNothing);
     // The hint of the keys, for 5 s
     expect(
@@ -754,6 +758,30 @@ void main() {
     expect(find.text('These values are no longer updated'), findsOneWidget);
   });
 
+  testWidgets('the flight column in the air, empty and quiet once landed, stale only when the flight data stops', (
+    tester,
+  ) async {
+    final (_, _, listener) = await watching(tester);
+    // The proof flights of 25 October: height above the take off point, vertical speed climb positive, speed, below
+    listener!.flightChanged(
+      fakeFrame(atMs: 2000, motorsOn: true, heightM: 0.8, verticalSpeedMps: -0.2, speedMps: 0.0, distanceBelowM: 0.519),
+    );
+    await tester.pumpAndSettle();
+    final left = find.byKey(const Key('dji_watch_tv_column_left'));
+    for (final text in ['Height', '0.8 m', 'Vertical', '↓ 0.2 m/s', 'Speed', '0.0 m/s', 'Below', '0.52 m']) {
+      expect(find.descendant(of: left, matching: find.text(text)), findsOneWidget, reason: text);
+    }
+    // Landed on a hand: the flight data still comes, nothing to show on the left and no stale line
+    listener.flightChanged(fakeFrame(atMs: 3000));
+    await tester.pumpAndSettle();
+    expect(find.descendant(of: left, matching: find.byType(Text)), findsNothing);
+    expect(find.byKey(const Key('dji_watch_tv_values_stale_left')), findsNothing);
+    // The flight data stops: the column says so
+    listener.flightChanged(fakeFrame(atMs: 4000, motorsOn: null, percent: null, motorTimeS: null));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dji_watch_tv_values_stale_left')), findsOneWidget);
+  });
+
   testWidgets('the notice on a TV: its two rules first, then every line of the notice word for word', (tester) async {
     await openOnTv(tester, television(), noticeRead: false);
     expect(find.byKey(const Key('dji_live_notice')), findsOneWidget);
@@ -868,7 +896,13 @@ void main() {
   ) async {
     final (api, _, listener) = await watching(tester);
     // Every value of Advanced, so that the read only lines are as long as in flight
-    await push(tester, listener, picture(frame: fakeFrame(speedMps: 4.2, distanceBelowM: 3.1, obstacleM: 6.5)));
+    await push(
+      tester,
+      listener,
+      picture(
+        frame: fakeFrame(heightM: 1.2, verticalSpeedMps: 0.4, speedMps: 4.2, distanceBelowM: 3.1, obstacleM: 6.5),
+      ),
+    );
     await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
     await tester.pumpAndSettle();
     const items = [

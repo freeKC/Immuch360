@@ -417,14 +417,21 @@ void main() {
     expect(find.text('126.8 °'), findsOneWidget);
     expect(find.text('12, landing'), findsOneWidget);
     expect(find.text('38.7 s'), findsOneWidget);
-    // Each label says how sure its value is (p2/telemetry-flight-2026-10-24.md, section 2)
-    expect(find.text('Height above the take off point (likely)'), findsOneWidget);
+    // Each label says how sure its value is (p2/telemetry-flight-2026-10-24.md, section 2), and what a proven one means
+    // (p2/telemetry-proof-2026-10-25.md, section 4)
+    expect(find.text('Height above the take off point (in the air only)'), findsOneWidget);
     expect(find.text('Heading (zero not checked against north)'), findsOneWidget);
     expect(find.text('Flight mode (likely)'), findsOneWidget);
-    expect(find.text('Speeds (likely)'), findsOneWidget);
+    expect(find.text('Speeds toward heading 0, heading 90 and down'), findsOneWidget);
     expect(find.text('Satellites (guess)'), findsOneWidget);
-    expect(find.text('Distance below the drone (likely)'), findsOneWidget);
-    // Which motor bit means in the air is a guess no capture settles: no row
+    // Offset 41 in tenths of a metre, a smoothed copy of the range below
+    expect(find.text('Distance below the drone, smoothed'), findsOneWidget);
+    expect(
+      find.descendant(of: find.byKey(const Key('dji_link_flight_group')), matching: find.text('0.9 m')),
+      findsOneWidget,
+    );
+    expect(find.text('Height above the take off point (likely)'), findsNothing);
+    // Bit 0x04 is only likely "in the air": no row
     expect(find.text('In the air'), findsNothing);
     expect(find.text('38 %'), findsOneWidget);
     expect(find.text('6.180 V'), findsOneWidget);

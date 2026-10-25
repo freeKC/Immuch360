@@ -1080,7 +1080,9 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
 
 /// One column of values over the picture, from the top of the safe area: each value on its own dark plate, a small
 /// label over a large number, in a fixed place; a value whose group stops coming leaves its place empty, and a column
-/// that had values and lost them all says so rather than vanish
+/// that had values and lost them all says so rather than vanish. The flight column is empty on the ground, where the
+/// height and the speeds are not given (in the air only) and the range below stops with the motors: no such line
+/// then while the flight data still comes.
 class DjiWatchTvColumn extends ConsumerStatefulWidget {
   const DjiWatchTvColumn({super.key, required this.band, this.flyNote = false, this.gates = djiLiveGates});
 
@@ -1104,8 +1106,13 @@ class _DjiWatchTvColumnState extends ConsumerState<DjiWatchTvColumn> {
     if (fields.isEmpty) {
       return const SizedBox.shrink();
     }
-    final any = ref.watch(
-      djiLiveFrameProvider.select((frame) => fields.any((field) => djiLiveFieldValue(t, frame, field) != null)),
+    final (any, grounded) = ref.watch(
+      djiLiveFrameProvider.select(
+        (frame) => (
+          fields.any((field) => djiLiveFieldValue(t, frame, field) != null),
+          widget.band == DjiLiveBand.left && frame?.motorsOn != null,
+        ),
+      ),
     );
     final Widget body;
     if (any) {
@@ -1130,7 +1137,7 @@ class _DjiWatchTvColumnState extends ConsumerState<DjiWatchTvColumn> {
             ),
         ],
       );
-    } else if (_hadValues) {
+    } else if (_hadValues && !grounded) {
       body = DjiTransient(
         kind: 'valuesStale',
         child: ConstrainedBox(
@@ -1320,14 +1327,13 @@ class DjiWatchTvOptions extends ConsumerWidget {
                   // The ring's own items of this TV, each on by default: whether the phone offers it, its distances and its
                   // side come from the phone; this TV can only turn it off on its own screen
                   if (offer != DjiObstacleOffer.none) ...[
-                    if (offer == DjiObstacleOffer.test)
-                      SwitchListTile(
-                        key: const Key('dji_watch_obstacle_here'),
-                        title: Text(t.dji_live_obstacle_here),
-                        subtitle: Text(t.dji_live_obstacle_here_note),
-                        value: obstacle.alertOn,
-                        onChanged: (_) => choose('ring'),
-                      ),
+                    SwitchListTile(
+                      key: const Key('dji_watch_obstacle_here'),
+                      title: Text(t.dji_live_obstacle_here),
+                      subtitle: Text(t.dji_live_obstacle_here_note),
+                      value: obstacle.alertOn,
+                      onChanged: (_) => choose('ring'),
+                    ),
                     SwitchListTile(
                       key: const Key('dji_watch_obstacle_sound'),
                       title: Text(t.dji_live_obstacle_sound),

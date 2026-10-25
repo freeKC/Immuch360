@@ -205,12 +205,12 @@ String djiObstacleDistanceText(Translations t, int cm) =>
     t.dji_live_obstacle_distance(distance: (cm / 100).toStringAsFixed(cm % 10 == 0 ? 1 : 2));
 
 /// "Obstacle ring" in Advanced (p2/design-obstacle-ring-2026-10-25.md, 6.1): one line while the gate does not offer it;
-/// while its data is likely, a switch on by default (FreeKC's rule of 25 October) that says it is not confirmed; once
-/// offered, "Glow from" and "Strong glow from", the side as its own gate row allows (off by default while likely), the
-/// sound and its test, the vibration on a phone that has one, the distance by the glow, and the shape (a circle around
-/// the centre by default, or a frame at the edges). Each says what is on by default. "Show a sample" is always there,
-/// refused while the motors run. The lines that say it only informs and that no glow is not a clear way close the
-/// section.
+/// else a switch on by default (FreeKC's rule of 25 October), which says it is not confirmed while its data is likely
+/// and is plain "Show the obstacle ring" once proven; once offered, "Glow from" and "Strong glow from", the side as its
+/// own gate row allows (off by default while likely, on once proven), the sound and its test, the vibration on a phone
+/// that has one, the distance by the glow, and the shape (a circle around the centre by default, or a frame at the
+/// edges). Each says what is on by default. "Show a sample" is always there, refused while the motors run. The lines
+/// that say it only informs and that no glow is not a clear way close the section.
 class DjiObstacleSection extends ConsumerStatefulWidget {
   const DjiObstacleSection({super.key, this.gates = djiLiveGates});
 
@@ -288,6 +288,15 @@ class _DjiObstacleSectionState extends ConsumerState<DjiObstacleSection> {
               contentPadding: EdgeInsets.zero,
               title: Text(t.dji_live_obstacle_test),
               subtitle: Text(t.dji_live_obstacle_test_note, style: small),
+              value: settings.alertOn,
+              onChanged: (on) => unawaited(notifier.setAlert(on)),
+            ),
+          if (offer == DjiObstacleOffer.proven)
+            SwitchListTile(
+              key: const Key('dji_live_obstacle_on'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(t.dji_live_obstacle_on),
+              subtitle: Text(t.dji_live_obstacle_on_note, style: small),
               value: settings.alertOn,
               onChanged: (on) => unawaited(notifier.setAlert(on)),
             ),

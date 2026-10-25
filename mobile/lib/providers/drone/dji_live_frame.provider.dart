@@ -65,8 +65,8 @@ const djiObstacleGapCm = 50;
 /// What the pilot chose for the obstacle ring (p2/design-obstacle-ring-2026-10-25.md, 6). On a phone, all of it in
 /// Advanced. On a TV or a headset, whether the phone offers it, the distances and the side come from the phone's
 /// record; the ring on that screen, the sound, the number, the shape and the sample are their own. Every switch is on
-/// by default (FreeKC's rule of 25 October: the app is a lab), but the side, which stays off while our captures only
-/// make it likely and turns on by default once a flight proves it.
+/// by default (FreeKC's rule of 25 October: the app is a lab). The side stays off while our captures only make it
+/// likely and is on by default once proven, as since the flights of 25 October (p2/telemetry-proof-2026-10-25.md).
 class DjiObstacleSettings {
   const DjiObstacleSettings({
     this.alertOn = true,
@@ -81,7 +81,7 @@ class DjiObstacleSettings {
     this.tv = false,
   });
 
-  /// The ring, while its data is likely: on by default. On a TV or a headset, the ring on that screen
+  /// The ring, likely or proven: on by default. On a TV or a headset, the ring on that screen
   final bool alertOn;
 
   /// This device's tick: on by default, on a TV too
@@ -110,12 +110,11 @@ class DjiObstacleSettings {
   double get farM => farCm / 100;
   double get nearM => nearCm / 100;
 
-  /// Whether the ring is offered on this device: never while no field is named, once the pilot turned it on while it
-  /// is a test, always once proven
+  /// Whether the ring is offered on this device: never while no field is named, else while its switch is on (on by
+  /// default, likely or proven: a proven ring can still be turned off)
   bool offered(DjiObstacleOffer offer) => switch (offer) {
     DjiObstacleOffer.none => false,
-    DjiObstacleOffer.test => alertOn,
-    DjiObstacleOffer.proven => true,
+    DjiObstacleOffer.test || DjiObstacleOffer.proven => alertOn,
   };
 
   /// Whether the ring shows the obstacle's side: behind its own test switch while likely, by default once proven

@@ -262,9 +262,18 @@ void main() {
     expect(find.descendant(of: values, matching: find.text('Motor time')), findsOneWidget);
     expect(find.descendant(of: values, matching: find.text('0:41')), findsOneWidget);
     expect(find.descendant(of: values, matching: find.text('50 %')), findsNothing);
+    // On the ground: no height and no speed (the native side gives them in the air only)
     expect(find.descendant(of: values, matching: find.textContaining('Height')), findsNothing);
     expect(find.text('Delay from the phone: about 24 ms'), findsOneWidget);
     expect(find.byKey(const Key('dji_link_receive_strip_stale')), findsNothing);
+    // In the air: the flight values first, proven by the flights of 25 October
+    listener.flightChanged(
+      fakeFrame(atMs: 2000, motorsOn: true, heightM: 0.8, verticalSpeedMps: 1.5, speedMps: 1.2, distanceBelowM: 1.476),
+    );
+    await tester.pumpAndSettle();
+    for (final text in ['Height', '0.8 m', 'Vertical', '↑ 1.5 m/s', 'Speed', '1.2 m/s', 'Below', '1.48 m']) {
+      expect(find.descendant(of: values, matching: find.text(text)), findsOneWidget, reason: text);
+    }
 
     listener.snapshotChanged(
       fakeSnapshot(decode: fakeDecode(lastOutputAgoMs: 900), relayReceiving: fakeReceiving(lastPictureAgoMs: 900)),
@@ -373,7 +382,16 @@ void main() {
     // Before the clocks are aligned the delay is an estimate, said apart; a late picture is a warning on the strip
     expect(labels['delayEstimate'], 'Delay from the phone: about {ms} ms, smoothing buffer not counted');
     expect(labels['delayHigh'], 'The picture is {ms} ms behind the phone');
-    for (final hidden in ['remoteBattery', 'signal', 'heading', 'height', 'verticalSpeed', 'speed', 'satellites']) {
+    // The flight values of the left column, proven by the flights of 25 October
+    expect(labels['cell.height.label'], 'Height');
+    expect(labels['cell.height.value'], '{value} m');
+    expect(labels['cell.verticalSpeed.label'], 'Vertical');
+    expect(labels['cell.verticalSpeed.value'], '{value} m/s');
+    expect(labels['cell.speed.label'], 'Speed');
+    expect(labels['cell.speed.value'], '{value} m/s');
+    expect(labels['cell.distanceBelow.label'], 'Below');
+    expect(labels['cell.distanceBelow.value'], '{value} m');
+    for (final hidden in ['remoteBattery', 'signal', 'heading', 'satellites', 'distanceHome', 'obstacle']) {
       expect(labels.containsKey('cell.$hidden.value'), isFalse, reason: hidden);
     }
     // The obstacle ring writes only its distance, by the glow when asked; none of the banner's words is left

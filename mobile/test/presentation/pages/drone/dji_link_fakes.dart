@@ -262,16 +262,17 @@ DjiObstacleDecision fakeDecision({
   );
 }
 
-/// The values a pilot reads, as the native side sends them: those of the 24 October flight (34 %, 0:41) and, for the
-/// values our captures only make likely, those of the 23 October landing. A null is a group that is stale.
+/// The values a pilot reads, as the native side sends them: those of the 24 October flight (34 %, 0:41), the drone on
+/// the ground. The native side gives the height and the speeds in the air only (p2/telemetry-proof-2026-10-25.md, 4.1
+/// to 4.3), so a flying frame passes them with motorsOn. A null is a group that is stale.
 DjiLiveFrame fakeFrame({
   int atMs = 1000,
   int? percent = 34,
   double? motorTimeS = 41.6,
   bool? motorsOn = false,
   double? headingDeg = 126.8,
-  double? heightM = -0.5,
-  double? verticalSpeedMps = -0.2,
+  double? heightM,
+  double? verticalSpeedMps,
   double? speedMps,
   double? distanceBelowM,
   double? obstacleM,

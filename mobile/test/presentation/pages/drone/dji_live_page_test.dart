@@ -283,12 +283,13 @@ void main() {
     expect(find.text('34 %'), findsOneWidget);
     expect(find.text('Motor time'), findsOneWidget);
     expect(find.text('0:41'), findsOneWidget);
-    // Behind the gate: the remote's battery, the signal, the heading and the height are not over the picture
+    // Behind the gate: the remote's battery, the signal and the heading are not over the picture; the drone is on the
+    // ground, where the native side gives no height and no speed (in the air only), so the left band is empty
     expect(find.text('50 %'), findsNothing);
     expect(find.text('90'), findsNothing);
     expect(find.textContaining('127'), findsNothing);
     expect(find.textContaining('Height'), findsNothing);
-    expect(find.textContaining('-0.5'), findsNothing);
+    expect(find.textContaining('Below'), findsNothing);
     // The frames come ten times a second while this screen is in front
     expect(api.frameStreams, [true]);
     // A picture was seen on this install: the next sessions may offer to open on the plug
@@ -568,7 +569,16 @@ void main() {
   testWidgets('Advanced: open on the plug, a capture for a bug report, and the values behind the gate', (tester) async {
     final api = phone(djiFly: true);
     final listener = await openLive(tester, api, size: _large);
-    await push(tester, listener, live());
+    // In the air, 1.2 m above the take off point, climbing at 0.4 m/s, 1.53 m above the floor
+    final flying = fakeFrame(
+      motorsOn: true,
+      heightM: 1.2,
+      verticalSpeedMps: 0.4,
+      speedMps: 0.8,
+      distanceBelowM: 1.53,
+      obstacleM: 1.84,
+    );
+    await push(tester, listener, live(frame: flying));
     await tester.tap(find.byKey(const Key('dji_live_advanced')));
     await tester.pumpAndSettle();
 
@@ -611,12 +621,24 @@ void main() {
     expect(find.byKey(const Key('dji_live_values_unconfirmed')), findsOneWidget);
     expect(find.text('Remote battery?'), findsOneWidget);
     expect(find.text('50 %'), findsOneWidget);
-    expect(find.text('Height above the take off point?'), findsOneWidget);
-    expect(find.text('-0.5 m'), findsOneWidget);
-    expect(find.text('Vertical speed?'), findsOneWidget);
-    expect(find.text('↓ 0.2 m/s'), findsOneWidget);
     expect(find.text('Signal bars?'), findsOneWidget);
-    expect(find.text('Height, speeds and distance from home show once our flight captures prove them.'), findsOneWidget);
+    // Proven by the flights of 25 October: with the proven values, with their full labels and no question mark
+    for (final (field, label, value) in [
+      ('height', 'Height above the take off point', '1.2 m'),
+      ('verticalSpeed', 'Vertical speed', '↑ 0.4 m/s'),
+      ('speed', 'Speed over the ground', '0.8 m/s'),
+      ('distanceBelow', 'Distance below', '1.53 m'),
+      ('obstacle', 'Nearest obstacle', '1.8 m'),
+    ]) {
+      final row = find.byKey(Key('dji_live_advanced_value_$field'));
+      expect(find.descendant(of: row, matching: find.text(label)), findsOneWidget, reason: field);
+      expect(find.descendant(of: row, matching: find.text(value)), findsOneWidget, reason: field);
+    }
+    expect(find.text('Height above the take off point?'), findsNothing);
+    expect(find.text('Vertical speed?'), findsNothing);
+    expect(find.text('Distance below?'), findsNothing);
+    expect(find.text('Nearest obstacle?'), findsNothing);
+    expect(find.text('The distance from home shows once an outdoor flight proves it.'), findsOneWidget);
     expect(find.byKey(const Key('dji_live_no_dji_warnings')), findsOneWidget);
     expect(find.byKey(const Key('dji_live_diagnostics')), findsOneWidget);
     await tester.scrollUntilVisible(
@@ -799,19 +821,20 @@ void main() {
     expect(find.text('77 %'), findsNothing);
   });
 
-  testWidgets('the obstacle ring is on by default, a test turned off in Advanced, with its distances, side and sound', (
+  testWidgets('the obstacle ring is on by default, turned off in Advanced, with its distances, side and sound', (
     tester,
   ) async {
     final api = phone();
     final listener = await openLive(tester, api, size: _large);
     await push(tester, listener, live());
-    // Every experimental switch on by default (FreeKC's rule of 25 October), the side off while it is only likely
+    // Every experimental switch on by default (FreeKC's rule of 25 October), the side too since the flights of 25
+    // October proved which side is the front
     expect(api.obstacleRings.last.offered, isTrue);
     expect(api.obstacleRings.last.sound, isTrue);
     expect(api.obstacleRings.last.haptic, isTrue);
     expect(api.obstacleRings.last.numbers, isTrue);
     expect(api.obstacleRings.last.frame, isFalse);
-    expect(api.obstacleRings.last.directional, isFalse);
+    expect(api.obstacleRings.last.directional, isTrue);
     await tester.tap(find.byKey(const Key('dji_live_advanced')));
     await tester.pumpAndSettle();
     final scrollable = find.descendant(
@@ -830,14 +853,22 @@ void main() {
     String value(String name) => tester.widget<Text>(find.byKey(Key('dji_live_obstacle_${name}_value'))).data!;
     bool enabled(String key) => tester.widget<IconButton>(find.byKey(Key(key))).onPressed != null;
 
-    await tester.scrollUntilVisible(find.byKey(const Key('dji_live_obstacle_test')), 100, scrollable: scrollable);
+    await tester.scrollUntilVisible(find.byKey(const Key('dji_live_obstacle_on')), 100, scrollable: scrollable);
     expect(find.text('Obstacle ring'), findsOneWidget);
-    expect(find.text('Obstacle ring, not confirmed yet'), findsOneWidget);
-    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_test'))).value, isTrue);
-    expect(find.textContaining('On by default. A soft glow around the middle of the picture'), findsOneWidget);
+    // Proven: the plain switch, no "not confirmed yet"
+    expect(find.text('Show the obstacle ring'), findsOneWidget);
+    expect(find.byKey(const Key('dji_live_obstacle_test')), findsNothing);
+    expect(find.text('Obstacle ring, not confirmed yet'), findsNothing);
+    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_on'))).value, isTrue);
+    expect(
+      find.text(
+        "On by default. A soft glow around the middle of the picture when the drone's sensors see something close.",
+      ),
+      findsOneWidget,
+    );
 
     // Off: nothing of the ring but the switch, the sample and the two lines
-    await tap('dji_live_obstacle_test');
+    await tap('dji_live_obstacle_on');
     expect(api.obstacleRings.last.offered, isFalse);
     expect(memory.values[StoreKey.djiObstacleRingOff], isTrue);
     await tester.scrollUntilVisible(find.byKey(const Key('dji_live_obstacle_limits')), 100, scrollable: scrollable);
@@ -847,7 +878,7 @@ void main() {
     expect(find.byKey(const Key('dji_live_obstacle_info_only')), findsOneWidget);
     expect(find.textContaining('No glow does not mean the way is clear.'), findsOneWidget);
 
-    await tap('dji_live_obstacle_test');
+    await tap('dji_live_obstacle_on');
     expect(api.obstacleRings.last.offered, isTrue);
     expect(memory.values[StoreKey.djiObstacleRingOff], isFalse);
     // FreeKC's distances: a glow from 3.0 m, strong from 1.0 m
@@ -886,14 +917,18 @@ void main() {
     expect(value('far'), '1.5 m');
     expect(enabled('dji_live_obstacle_near_more'), isTrue);
 
-    // The side, behind its own test switch while the front is not proven: the one switch off by default
-    expect(find.byKey(const Key('dji_live_obstacle_side')), findsNothing);
-    expect(find.text('Show the side, not confirmed yet'), findsOneWidget);
-    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_side_test'))).value, isFalse);
-    expect(find.textContaining('Off until a flight proves which side is the front'), findsOneWidget);
-    await tap('dji_live_obstacle_side_test');
+    // The side, proven: shown by default, its switch turns it off and on again
+    expect(find.byKey(const Key('dji_live_obstacle_side_test')), findsNothing);
+    expect(find.text('Show the side, not confirmed yet'), findsNothing);
+    expect(find.text('Show the side'), findsOneWidget);
+    expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_side'))).value, isTrue);
+    expect(find.text('On by default. Off: the glow goes evenly all around.'), findsOneWidget);
+    await tap('dji_live_obstacle_side');
+    expect(api.obstacleRings.last.directional, isFalse);
+    expect(memory.values[StoreKey.djiObstacleSideOff], isTrue);
+    await tap('dji_live_obstacle_side');
     expect(api.obstacleRings.last.directional, isTrue);
-    expect(memory.values[StoreKey.djiObstacleSideTest], isTrue);
+    expect(memory.values[StoreKey.djiObstacleSideOff], isFalse);
 
     await tap('dji_live_obstacle_sound_test');
     expect(api.obstacleTests, 1);

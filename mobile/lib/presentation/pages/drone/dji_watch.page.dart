@@ -517,13 +517,12 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
               // The ring's own items of this headset, each on by default: whether the phone offers it, its distances and
               // its side come from the phone; this headset can only turn it off in its own window and flight view
               if (offer != DjiObstacleOffer.none) ...[
-                if (offer == DjiObstacleOffer.test)
-                  CheckedPopupMenuItem(
-                    key: const Key('dji_watch_obstacle_here'),
-                    value: 'ring',
-                    checked: obstacle.alertOn,
-                    child: Text(t.dji_live_obstacle_here),
-                  ),
+                CheckedPopupMenuItem(
+                  key: const Key('dji_watch_obstacle_here'),
+                  value: 'ring',
+                  checked: obstacle.alertOn,
+                  child: Text(t.dji_live_obstacle_here),
+                ),
                 CheckedPopupMenuItem(
                   key: const Key('dji_watch_obstacle_sound'),
                   value: 'sound',
