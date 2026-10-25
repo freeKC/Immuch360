@@ -232,7 +232,7 @@
     "reason": "DJI relay bandwidth (feat-dji-bandwidth): the steady stream's rules apart from the codecs: starts, decimation, failures, report"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayTranscoderAndroid.kt": {
-    "blob": "f097c11642d1352f5ee297f822899dddf7bd8deb",
+    "blob": "d4258c2862af0a4bf72e1d31057b3d7b5ba19b8a",
     "reason": "DJI relay bandwidth (feat-dji-bandwidth): the second decoder, the GL copy and the phone's H.265 encoder"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayWire.kt": {
