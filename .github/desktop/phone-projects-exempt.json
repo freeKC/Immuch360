@@ -88,8 +88,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the hardware profiles, where a capability cannot claim support without an observation; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the RC-N3 and Neo 2 profile supported for six capabilities with the provenance of the 23 October capture, its stream description seed, and the pilot binding; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiFlightViewActivity.kt": {
-    "blob": "61c5c693d9bccd31f7faacac5fe0a58f8952fd0a",
-    "reason": "DJI link stage 2b (feat-dji-link-3): the flight view of the Quest: video panel, flight panel, controls of the view only; DJI live video (feat-dji-ux): the values line of the gated values and the short delay line; DJI finalisation (feat-dji-final): the values in two columns beside the video and the obstacle alert above it, refreshed ten times a second; DJI relay fix round (feat-dji-relay): the age of the picture shown, the delay of the last 2 s and its warning; DJI obstacle ring (feat-dji-obstacle-ui): the halo panel around the video in place of the red alert panel; DJI obstacle ring fix round (feat-dji-obstacle-ui): the halo 1.5 cm behind the video; DJI integration (feat-dji-30): the circle over the video and the strip's warnings that come and go; DJI proof gates (feat-dji-proof): the distance below in the left column, the height and the speeds in the air only"
+    "blob": "75de539dc037e82f0e3112eddc04eafe2b43d6ad",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the flight view of the Quest: video panel, flight panel, controls of the view only; DJI live video (feat-dji-ux): the values line of the gated values and the short delay line; DJI finalisation (feat-dji-final): the values in two columns beside the video and the obstacle alert above it, refreshed ten times a second; DJI relay fix round (feat-dji-relay): the age of the picture shown, the delay of the last 2 s and its warning; DJI obstacle ring (feat-dji-obstacle-ui): the halo panel around the video in place of the red alert panel; DJI obstacle ring fix round (feat-dji-obstacle-ui): the halo 1.5 cm behind the video; DJI integration (feat-dji-30): the circle over the video and the strip's warnings that come and go; DJI proof gates (feat-dji-proof): the distance below in the left column, the height and the speeds in the air only; DJI proof fix round (feat-dji-proof): the height of the left column after the phone's height hold"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkApiImpl.kt": {
     "blob": "024b6a37dedf09d53aea5e7c4cbf6094a767cfe8",
@@ -100,8 +100,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the accessory attached entry, which only brings the application forward; fix round of 22 October: the review findings of stage 1; DJI live video (feat-dji-ux): the entry marks the launch for the live screen"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkController.kt": {
-    "blob": "7aef39fd5bb3781dd68210ba6cb29202ba4a0d0d",
-    "reason": "DJI link (feat-dji-link, 12ccff821): the process scoped owner of the link, the codecs, the capture and the safety rules; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the video pipeline, the capture player, the session log and the states that follow the picture; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): owners, the relay, the receiver, the flight view and their snapshot; DJI live video (feat-dji-ux): the link that ends follows the attach entry policy; DJI decoder fix round (feat-dji-ux): the memory of the decoders, the relayed key picture kept for the decoder and the new switch reasons; DJI finalisation (feat-dji-final): the values ten times a second, the obstacle alert and its beep, the control frame ring, the reception record and the export written once; DJI on Android TV (feat-dji-tv): the TVs given to the relay, a TV that says so in its hello, and no volume warning where the volume is fixed; DJI on Android TV fix round (feat-dji-tv): the comment of the hello of a TV, a comment line under 120 columns; DJI relay smoothness (feat-dji-relay): both ends of the relay in the exports, the long pings and the snapshot, and the delay with the jitter buffer; DJI relay fix round (feat-dji-relay): the delay lines from the pictures shown, and the lowest delay of a headset; DJI obstacle ring (feat-dji-obstacle-ui): the ring decided with the phone's relayed choices, the tick and its tap, the sample; DJI obstacle ring fix round (feat-dji-obstacle-ui): the tick of the ring through ObstacleRingTicker, a sample ended when the motors start; DJI integration (feat-dji-30): the shape of the indicator chosen on a headset, to its flight view; DJI proof gates (feat-dji-proof): the height and the speeds of the live frame in the air only"
+    "blob": "2bc79634b033469dd079d0bc1673eafef6d40e67",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the process scoped owner of the link, the codecs, the capture and the safety rules; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the video pipeline, the capture player, the session log and the states that follow the picture; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): owners, the relay, the receiver, the flight view and their snapshot; DJI live video (feat-dji-ux): the link that ends follows the attach entry policy; DJI decoder fix round (feat-dji-ux): the memory of the decoders, the relayed key picture kept for the decoder and the new switch reasons; DJI finalisation (feat-dji-final): the values ten times a second, the obstacle alert and its beep, the control frame ring, the reception record and the export written once; DJI on Android TV (feat-dji-tv): the TVs given to the relay, a TV that says so in its hello, and no volume warning where the volume is fixed; DJI on Android TV fix round (feat-dji-tv): the comment of the hello of a TV, a comment line under 120 columns; DJI relay smoothness (feat-dji-relay): both ends of the relay in the exports, the long pings and the snapshot, and the delay with the jitter buffer; DJI relay fix round (feat-dji-relay): the delay lines from the pictures shown, and the lowest delay of a headset; DJI obstacle ring (feat-dji-obstacle-ui): the ring decided with the phone's relayed choices, the tick and its tap, the sample; DJI obstacle ring fix round (feat-dji-obstacle-ui): the tick of the ring through ObstacleRingTicker, a sample ended when the motors start; DJI integration (feat-dji-30): the shape of the indicator chosen on a headset, to its flight view; DJI proof gates (feat-dji-proof): the height and the speeds of the live frame in the air only; DJI proof fix round (feat-dji-proof): the height of the live frame after the height hold"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkRelayService.kt": {
     "blob": "5d9c39edca4d9bd8d60af2ea3a40f39c484d0505",
@@ -156,8 +156,8 @@
     "reason": "DJI obstacle ring (feat-dji-obstacle-ui): the glow of the ring drawn around the video of the Quest flight view, information only; DJI obstacle ring fix round (feat-dji-obstacle-ui): the distance of the even glow in the bottom left corner"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/ObstacleRing.kt": {
-    "blob": "375ac06d4fea84012b114f70245c921f91460676",
-    "reason": "DJI obstacle ring (feat-dji-obstacle-ui): the 72 sectors, the mapping of the nose and the arcs of the ring, pure; DJI obstacle ring fix round (feat-dji-obstacle-ui): the even glow softer and ticking only when strong, the distances down to 1.0 m and 0.25 m; DJI proof gates (feat-dji-proof): the ring mapping proven, its evidence in the comment"
+    "blob": "027bb53d1c5e27cd987810919eda957ade675b5e",
+    "reason": "DJI obstacle ring (feat-dji-obstacle-ui): the 72 sectors, the mapping of the nose and the arcs of the ring, pure; DJI obstacle ring fix round (feat-dji-obstacle-ui): the even glow softer and ticking only when strong, the distances down to 1.0 m and 0.25 m; DJI proof gates (feat-dji-proof): the ring mapping proven, its evidence in the comment; DJI proof fix round (feat-dji-proof): the comment of the mapping with the legs counted by one rule"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/P3Frame.kt": {
     "blob": "fe7581351813edd4714d81848f008d2d36c73760",
@@ -208,8 +208,8 @@
     "reason": "DJI relay smoothness (feat-dji-relay): the jitter buffer, the render rules, the counters and the unit timing ring of a receiver; DJI relay fix round (feat-dji-relay): the release of the decoded pictures, the base taken slowly, the age of the picture shown and the safety net"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayTelemetry.kt": {
-    "blob": "b21e21f44e2eaa8b866e9cb8a0e7731c3a5952ab",
-    "reason": "DJI link stage 2b (feat-dji-link-3): the telemetry record of the relay, built and read with the JSON element API; DJI finalisation (feat-dji-final): the readings of the second telemetry reading as optional fields; DJI obstacle ring (feat-dji-obstacle-ui): the sectors and the phone's ring choices as optional fields"
+    "blob": "8b92d4aa7750791cd072a1e821be9ba1befdd240",
+    "reason": "DJI link stage 2b (feat-dji-link-3): the telemetry record of the relay, built and read with the JSON element API; DJI finalisation (feat-dji-final): the readings of the second telemetry reading as optional fields; DJI obstacle ring (feat-dji-obstacle-ui): the sectors and the phone's ring choices as optional fields; DJI proof fix round (feat-dji-proof): the phone's height hold in the telemetry record, absent from an earlier phone"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/RelayWire.kt": {
     "blob": "55db2381a336cbb0ab80f26875c733eb41a0c1c2",
@@ -236,8 +236,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the telemetry identifiers, with no field of a body read; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the catalogue names the eight pairs the 23 October capture explains; DJI finalisation (feat-dji-final): the signal bars, the distance below and the obstacle ring named"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/TelemetryDecoder.kt": {
-    "blob": "da7f76c80429dc3b4b96226be6f37dbd7e38b3ff",
-    "reason": "DJI link stage 2 (feat-dji-link-2): the fields of the catalogued pairs, read only from bodies of the observed length; DJI live video (feat-dji-ux): the fine camera heading read as 16 bits; DJI live video fix round (feat-dji-ux): the motors running read from bits 0x04 and 0x08 together; DJI finalisation (feat-dji-final): the height, the speeds, the distance below, the signal bars and the obstacle ring read from our captures; DJI obstacle ring (feat-dji-obstacle-ui): the 72 sectors of the obstacle ring; DJI proof gates (feat-dji-proof): the motors from bit 0x08 alone, offset 41 in tenths of a metre, the flight values in the air only"
+    "blob": "e46fdcff9a0ed7a59bb903f655c55c6a41f574c4",
+    "reason": "DJI link stage 2 (feat-dji-link-2): the fields of the catalogued pairs, read only from bodies of the observed length; DJI live video (feat-dji-ux): the fine camera heading read as 16 bits; DJI live video fix round (feat-dji-ux): the motors running read from bits 0x04 and 0x08 together; DJI finalisation (feat-dji-final): the height, the speeds, the distance below, the signal bars and the obstacle ring read from our captures; DJI obstacle ring (feat-dji-obstacle-ui): the 72 sectors of the obstacle ring; DJI proof gates (feat-dji-proof): the motors from bit 0x08 alone, offset 41 in tenths of a metre, the flight values in the air only; DJI proof fix round (feat-dji-proof): the height held back after a lift off and after a jump no aircraft makes, bit 0x04 likely"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/TransientText.kt": {
     "blob": "5ae30b4bcc74ddf20d90de9d49726759b1e1ab6c",
@@ -404,8 +404,8 @@
     "reason": "DJI finalisation (feat-dji-final): unit test of the export written once"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/FlightViewControlsTest.kt": {
-    "blob": "0ba50b5456bb8dcd549afc67e0df1161d70e7608",
-    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job; DJI live video (feat-dji-ux): unit tests of the values line of the flight view; DJI finalisation (feat-dji-final): unit tests of the columns and of the alert banner; DJI relay fix round (feat-dji-relay): unit test of the red line of the strip; DJI obstacle ring (feat-dji-obstacle-ui): unit tests of the halo size and of the distance by the glow; DJI integration (feat-dji-30): unit tests of the circle's panel and of the warnings that stay; DJI proof gates (feat-dji-proof): the proven flight values in the air only, the distance below in the left column"
+    "blob": "4d5a047affb56cd2b279a520e87ff80705bc2d2a",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job; DJI live video (feat-dji-ux): unit tests of the values line of the flight view; DJI finalisation (feat-dji-final): unit tests of the columns and of the alert banner; DJI relay fix round (feat-dji-relay): unit test of the red line of the strip; DJI obstacle ring (feat-dji-obstacle-ui): unit tests of the halo size and of the distance by the glow; DJI integration (feat-dji-30): unit tests of the circle's panel and of the warnings that stay; DJI proof gates (feat-dji-proof): the proven flight values in the air only, the distance below in the left column; DJI proof fix round (feat-dji-proof): unit test of a held height in the left column"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/FrameGateTest.kt": {
     "blob": "30ef1ee276a45bb9567e21d92bb6e92c8a01704e",
@@ -468,8 +468,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): unit tests of the hardware profiles, run by the Kotlin unit tests job; DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/ProofVectorsTest.kt": {
-    "blob": "9e73a0c4b3ec22ac005be284f651ac1ea05cfa4e",
-    "reason": "DJI proof gates (feat-dji-proof): the gates of the proof flights tested on bodies of the 25 October capture"
+    "blob": "4acf1b04d27d34c6b56994f4461b81d3773d825e",
+    "reason": "DJI proof gates (feat-dji-proof): the gates of the proof flights tested on bodies of the 25 October capture; DJI proof fix round (feat-dji-proof): unit tests of the hand launch on the 25 October lift off, the speed axes named along the heading"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/ReceptionRecordTest.kt": {
     "blob": "ec71f728f1c41550eadf27166d9a62da1bfcd571",
@@ -520,8 +520,8 @@
     "reason": "DJI relay smoothness (feat-dji-relay): unit tests of the wire of the relay's smoothness, run by the Kotlin unit tests job; DJI relay fix round (feat-dji-relay): the headset bound of 500 ms"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayTelemetryTest.kt": {
-    "blob": "2d6767956107def46c436a42986198470e19eaff",
-    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job; DJI finalisation (feat-dji-final): unit test of the optional relay fields; DJI obstacle ring (feat-dji-obstacle-ui): unit tests of the relayed sectors and ring choices"
+    "blob": "6169ace75e12f78e9bff988ca8692c6f6bc1d3d8",
+    "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job; DJI finalisation (feat-dji-final): unit test of the optional relay fields; DJI obstacle ring (feat-dji-obstacle-ui): unit tests of the relayed sectors and ring choices; DJI proof fix round (feat-dji-proof): unit test of the height hold sent to a receiver"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/RelayTestPeers.kt": {
     "blob": "257b636e9d9c8b75d7e8bb60a2edb83270114dbd",
@@ -544,8 +544,8 @@
     "reason": "DJI link stage 2b (feat-dji-link-3): unit tests of the relay, run by the Kotlin unit tests job; DJI decoder fix round (feat-dji-ux): unit test of the kept key picture"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/TelemetryDecoderTest.kt": {
-    "blob": "6d7812b998bc53585fe0cc32a9d8806eaa7f7764",
-    "reason": "DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job; DJI live video (feat-dji-ux): unit test of a negative fine camera heading; DJI live video fix round (feat-dji-ux): unit test of the motors read from both bits; DJI finalisation (feat-dji-final): unit tests of the new fields; DJI proof gates (feat-dji-proof): the motors from bit 0x08, offset 41 in tenths of a metre"
+    "blob": "9066917c1ffcd116c6ae0a496de528a8ad7bca46",
+    "reason": "DJI link stage 2 (feat-dji-link-2): unit tests of the receive path, run by the Kotlin unit tests job; DJI live video (feat-dji-ux): unit test of a negative fine camera heading; DJI live video fix round (feat-dji-ux): unit test of the motors read from both bits; DJI finalisation (feat-dji-final): unit tests of the new fields; DJI proof gates (feat-dji-proof): the motors from bit 0x08, offset 41 in tenths of a metre; DJI proof fix round (feat-dji-proof): unit tests of the height hold on a synthetic wrap, a long gap and a hand launch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/djilink/TelemetryVectorsTest.kt": {
     "blob": "6b02d3b9239b06496d645dcce0544eab8ac921bf",
