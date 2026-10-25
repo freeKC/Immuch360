@@ -1,14 +1,14 @@
 <details><summary>🌐 <b>Lietuvių</b> · Kitos kalbos (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-24.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration at dusk in front of a sea bay: a storage box, a phone, a tablet, a TV, a laptop and a headset, a drone in the sky and a home camera, linked by arcs of light">
+  <img src="../.github/readme/hero-2026-10-24.jpg" width="100%" alt="Immuch360. Jūsų failai. Kiekvienas ekranas. Kiekvienas kampas. Plokščios, 360° ir 3D nuotraukos bei vaizdo įrašai iš jūsų įrenginio, NAS, Immich serverio, kamerų ir drono. Paskyros nereikia. Android, iPhone ir iPad, Android TV, LG ir Samsung televizoriai, Meta Quest, Windows, macOS, Linux. Iliustracija sutemus prie jūros įlankos: duomenų saugykla, telefonas, planšetė, televizorius, nešiojamasis kompiuteris ir akiniai, dronas danguje ir namų kamera, sujungti šviesos lankais">
 </p>
 
 # Immuch360
 
 **Jūsų failai. Kiekvienas ekranas. Kiekvienas kampas.**
 
-Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. Immuch360 is a free and open source app that reads your photos and videos where they are and plays each one in the viewer that fits it: flat, as a sphere you look around in, in 3D, or all around you in a headset. It runs on phones, tablets, TVs, Meta Quest headsets and computers.
+Plokščios, 360° ir 3D nuotraukos bei vaizdo įrašai iš jūsų įrenginio, NAS, Immich serverio, kamerų ir drono. Paskyros nereikia. Immuch360 yra nemokama atvirojo kodo programa, kuri skaito jūsų nuotraukas ir vaizdo įrašus ten, kur jie yra, ir kiekvieną atkuria jam tinkančioje žiūryklėje: plokščiai, kaip sferą, kurioje dairotės aplink, 3D vaizdu arba visur aplink jus akiniuose. Ji veikia telefonuose, planšetėse, televizoriuose, Meta Quest akiniuose ir kompiuteriuose.
 
 <p align="center">
   <sub>Neoficiali Immich mobiliosios programos šaka. Nesusijusi su Immich ar FUTO. Pavadinimas skaitomas kaip "I am much 360".</sub>
@@ -17,97 +17,97 @@ Flat, 360° and 3D photos and videos from your device, your NAS, your Immich ser
 <details>
 <summary><b>Turinys</b></summary>
 
-- [Who it is for](#who-it-is-for)
-- [Which screens](#which-screens), and [what each screen does](#what-each-screen-does)
+- [Kam ji skirta](#who-it-is-for)
+- [Kokie ekranai](#which-screens), ir [ką daro kiekvienas ekranas](#what-each-screen-does)
 - [Ką galite daryti](#what-you-can-do)
-- [Get it on your device](#get-it-on-your-device)
-- [How to](#how-to)
-  - [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server)
+- [Įdiekite į savo įrenginį](#get-it-on-your-device)
+- [Kaip tai padaryti](#how-to)
+  - [Žiūrėkite savo nuotraukas ir vaizdo įrašus su serveriu arba be jo](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Tyrinėkite panoramas, 360°, VR180 ir 3D](#explore-panoramas-360-vr180-and-3d)
-  - [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): [Android TV and Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
+  - [Žiūrėkite televizoriuje su nuotolinio valdymo pultu](#watch-on-the-tv-with-the-remote): [Android TV ir Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Prijunkite televizorių, akinius ar kompiuterį telefonu](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
-  - [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
-  - [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)
-  - [Keep your Immich library, with more](#keep-your-immich-library-with-more)
-  - [Watch your home cameras on the big screen](#watch-your-home-cameras-on-the-big-screen)
-  - [Your DJI drone (experimental)](#your-dji-drone-experimental): [live video](#see-what-your-drone-sees-on-your-phone), [in a Quest or on Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv), [import](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
-  - [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras)
+  - [Įženkite į savo nuotraukas ir vaizdo įrašus su Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
+  - [Atkurkite NAS, kompiuterio, medijos serverio ar Plex failus](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)
+  - [Pasilikite savo Immich biblioteką ir gaukite daugiau](#keep-your-immich-library-with-more)
+  - [Žiūrėkite namų kameras dideliame ekrane](#watch-your-home-cameras-on-the-big-screen)
+  - [Jūsų DJI dronas (eksperimentinis)](#your-dji-drone-experimental): [tiesioginis vaizdas](#see-what-your-drone-sees-on-your-phone), [Quest akiniuose ar Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv), [importas](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
+  - [Atverkite 360° kamerų neapdorotus failus](#open-the-raw-files-of-360-cameras)
   - [Pasukite nuotrauką vienu klavišu](#turn-a-photo-with-one-key)
-  - [Use your computer as the media player](#use-your-computer-as-the-media-player)
-- [Compared with Immich](#compared-with-immich)
+  - [Naudokite kompiuterį kaip medijos grotuvą](#use-your-computer-as-the-media-player)
+- [Palyginimas su Immich](#compared-with-immich)
 - [Privatumas](#privacy)
-- [Licences and credits](#licences-and-credits)
+- [Licencijos ir padėkos](#licences-and-credits)
 - [Planai](#roadmap)
-- [Documentation](#documentation)
+- [Dokumentacija](#documentation)
 
 </details>
 
 <a id="who-it-is-for"></a>
-## Who it is for
+## Kam ji skirta
 
-- **You shoot 360° or 3D** and want to look around in your shots, not see them flat, doubled or stretched: [360°, VR180 and 3D](#explore-panoramas-360-vr180-and-3d).
-- **Your photos and films sit on a NAS, a computer, Plex or Immich** and you want them on the TV without copying anything: [on the TV](#watch-on-the-tv-with-the-remote), [NAS, shares and Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
-- **You have a Meta Quest** and want to step inside your own photos and videos: [in the headset](#step-inside-your-photos-and-videos-with-a-meta-quest).
-- **You run Immich** and want its app, plus the immersive viewers and the big screens you sign in from your phone: [your Immich library](#keep-your-immich-library-with-more), [compared with Immich](#compared-with-immich).
-- **You watch your home with Tapo cameras** and want them next to your photos, on the TV too (not yet checked with a real camera): [home cameras](#watch-your-home-cameras-on-the-big-screen).
-- **You fly a DJI drone** and want its live picture on your phone without DJI Fly, and in a Meta Quest or on an Android TV for the people with you (experimental): [your drone](#see-what-your-drone-sees-on-your-phone).
+- **Fotografuojate 360° arba 3D** ir norite dairytis savo kadruose, o ne matyti juos plokščius, dvigubus ar ištemptus: [360°, VR180 ir 3D](#explore-panoramas-360-vr180-and-3d).
+- **Jūsų nuotraukos ir filmai yra NAS, kompiuteryje, Plex ar Immich** ir norite juos matyti televizoriuje nieko nekopijuodami: [televizoriuje](#watch-on-the-tv-with-the-remote), [NAS, bendrinimai ir Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+- **Turite Meta Quest** ir norite įžengti į savo nuotraukas ir vaizdo įrašus: [akiniuose](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Naudojate Immich** ir norite jo programos, taip pat panardinančių žiūryklių ir didelių ekranų, prie kurių prisijungiate telefonu: [jūsų Immich biblioteka](#keep-your-immich-library-with-more), [palyginimas su Immich](#compared-with-immich).
+- **Namus stebite Tapo kameromis** ir norite jas matyti šalia nuotraukų, taip pat televizoriuje (dar nepatikrinta su tikra kamera): [namų kameros](#watch-your-home-cameras-on-the-big-screen).
+- **Skraidinate DJI droną** ir norite jo tiesioginio vaizdo telefone be DJI Fly, o Meta Quest akiniuose ar Android TV kartu esantiems žmonėms (eksperimentinis): [jūsų dronas](#see-what-your-drone-sees-on-your-phone).
 
-There is no Immuch360 account to create, and nothing goes to us: the app talks only to your devices and to the servers you choose.
+Nereikia kurti Immuch360 paskyros, ir niekas nesiunčiama mums: programa bendrauja tik su jūsų įrenginiais ir jūsų pasirinktais serveriais.
 
 <a id="which-screens"></a>
-## Which screens
+## Kokie ekranai
 
 <div align="center">
 
-| Platform | Where to get it | Status on 25 October 2026 |
+| Platforma | Kur gauti | Būsena 2026 m. spalio 25 d. |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 25; build 29 under Google's review, in place of build 28), build 30 on GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.1 (build 27) waiting for Apple's review since 22 October, then version 3.3.2 (build 28), in TestFlight for internal testing; [build it yourself](../docs/immuch360/build.md) meanwhile |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 30 on GitHub: [sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) by scanning a QR code, a [time bar, audio and subtitles](#on-android-tv-and-google-tv) for the remote in the video player, and a [drone's live video](#watch-it-in-a-meta-quest-or-on-an-android-tv) relayed by a phone (experimental); the TV listing is under Google's review |
-| **LG TVs** with webOS 5.0 and later | [.ipk, version 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (in review) | version 1.0.0, submitted to the LG Content Store on 24 October and waiting for LG's review; until then it installs in [Developer Mode](#lg-tvs-webos). It ran on webOS 25 TVs of LG's Cloud Test Lab |
-| **Samsung TVs** with Tizen 5.5 and later | [.wgt test build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | test build 0.2.0 of the same TV app, to sign with your own Samsung certificate and install in [Developer mode](#samsung-tvs-tizen); 0.1.0 ran on a tester's Samsung TV, and 0.2.0 holds the fixes from that run; not on Samsung's store |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store (build 28, live since 25 October), build 30 on GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer or ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | desktop build 11, a signed preview: photos, flat and 360° videos, shares, Plex, cameras (not yet checked with a real camera), sign in with your phone, photos turned with one key, the interface in 89 languages |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | previews: on Linux photos, 360° photos and flat videos (360° videos play flat); on macOS the same, checked on the project's CI Mac only, unsigned |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** telefonai ir planšetės | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play (build 25; build 29 tikrinamas Google vietoj build 28), build 30 GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone ir iPad** | App Store | versija 3.3.1 (build 27) laukia Apple patikrinimo nuo spalio 22 d., po jos versija 3.3.2 (build 28), TestFlight vidiniam testavimui; kol kas [susikurkite patys](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV ir Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 30 GitHub: [prisijungimas telefonu](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) nuskaitant QR kodą, vaizdo grotuve [laiko juosta, garsas ir subtitrai](#on-android-tv-and-google-tv) nuotolinio valdymo pultui, ir telefono perduodamas [drono tiesioginis vaizdas](#watch-it-in-a-meta-quest-or-on-an-android-tv) (eksperimentinis); TV įrašas tikrinamas Google |
+| **LG televizoriai** su webOS 5.0 ir naujesne | [.ipk, versija 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (tikrinama) | versija 1.0.0, pateikta LG Content Store spalio 24 d. ir laukia LG patikrinimo; iki tol diegiama [Developer Mode](#lg-tvs-webos) režimu. Ji veikė LG Cloud Test Lab webOS 25 televizoriuose |
+| **Samsung televizoriai** su Tizen 5.5 ir naujesne | [.wgt bandomasis build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | tos pačios TV programos bandomasis build 0.2.0, kurį reikia pasirašyti savo Samsung sertifikatu ir įdiegti [Developer mode](#samsung-tvs-tizen) režimu; 0.1.0 veikė testuotojo Samsung televizoriuje, o 0.2.0 turi to bandymo pataisymus; nėra Samsung parduotuvėje |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 ir 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store (build 28, paskelbtas nuo spalio 25 d.), build 30 GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Diegimo programa arba ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | desktop build 11, pasirašyta peržiūra: nuotraukos, plokšti ir 360° vaizdo įrašai, bendrinimai, Plex, kameros (dar nepatikrinta su tikra kamera), prisijungimas telefonu, nuotraukos pasukamos vienu klavišu, sąsaja 89 kalbomis |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS ir Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | peržiūros: Linux sistemoje nuotraukos, 360° nuotraukos ir plokšti vaizdo įrašai (360° vaizdo įrašai rodomi plokšti); macOS sistemoje tas pats, patikrinta tik projekto CI Mac kompiuteryje, nepasirašyta |
 
 *Būsenos atnaujinamos su kiekvienu leidimu; detalės, build po build, yra [Leidimo būsenoje](../docs/immuch360/release-status.md).*
 
 </div>
 
 <p align="center">
-  <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Seven real captures of Immuch360 in two rows: the sphere viewer on an Android phone, a 360° photo on an iPad, a 360° photo on a Google TV and on an LG TV, then the photo timeline on a Samsung TV, the window of the app in a Meta Quest 3 and the video player on Windows. The LG and Samsung captures were taken in a browser that stands in for the TV">
+  <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Septynios tikros Immuch360 ekrano nuotraukos dviem eilėmis: sferos žiūryklė Android telefone, 360° nuotrauka iPad, 360° nuotrauka Google TV ir LG televizoriuje, tada nuotraukų laiko juosta Samsung televizoriuje, programos langas Meta Quest 3 akiniuose ir vaizdo grotuvas Windows. LG ir Samsung nuotraukos padarytos naršyklėje, atstojančioje televizorių">
 </p>
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
-### What each screen does
+### Ką daro kiekvienas ekranas
 
-One code base for the phones, tablets, Android TV, the Meta Quest and the computers, and a separate TV app for LG TVs, also packaged for Samsung TVs as a test build. What each one has today:
+Viena kodo bazė telefonams, planšetėms, Android TV, Meta Quest ir kompiuteriams, ir atskira TV programa LG televizoriams, taip pat supakuota Samsung televizoriams kaip bandomasis build. Kas kiekviename yra šiandien:
 
-| Capability | Android | iPhone, iPad | Android TV | LG webOS | Samsung Tizen | Quest |
+| Galimybė | Android | iPhone, iPad | Android TV | LG webOS | Samsung Tizen | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ viewer | ✅ |
-| Sign in with your phone (QR code) | ✅ scans the code | 🔜 next iOS release | ✅ | ✅ in the phone's browser | ❌ typed on the TV | ✅ code typed on the phone |
-| Without a server: the device's own media | ✅ | ✅ | shares only | ❌ | ❌ | ✅ |
-| Flat photos and videos | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Rotate a photo with one key | ✅ | ✅ | ✅ colour keys | ✅ colour keys | ✅ | ✅ window |
-| 360° photos as a sphere | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ immersive |
-| 360° videos | ✅ | ✅ no time bar | ✅ message if not decodable | flat only | flat only | ✅ immersive |
-| 3D and VR180 | ✅ one eye | ✅ one eye | ✅ one eye | photos one eye, videos flat | photos one eye, videos flat | ✅ true 3D |
-| Spatial 2.5D (head tracking) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ | ❌ |
-| Apple spatial photos | ✅ one eye | ✅ one eye | ✅ one eye | ❌ | ❌ | ✅ 3D |
-| Raw Insta360, GoPro and DJI files | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
-| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ | ✅ SMB from webOS 22 | ❌ | ✅ |
+| Galerija, albumai, paieška su Immich serveriu | ✅ | ✅ | ✅ žiūryklė | ✅ žiūryklė | ✅ žiūryklė | ✅ |
+| Prisijungimas telefonu (QR kodas) | ✅ nuskaito kodą | 🔜 kitas iOS leidimas | ✅ | ✅ telefono naršyklėje | ❌ įvedama televizoriuje | ✅ kodas įvedamas telefone |
+| Be serverio: įrenginio nuosavi failai | ✅ | ✅ | tik bendrinimai | ❌ | ❌ | ✅ |
+| Plokšti nuotraukos ir vaizdo įrašai | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Nuotraukos pasukimas vienu klavišu | ✅ | ✅ | ✅ spalvoti mygtukai | ✅ spalvoti mygtukai | ✅ | ✅ langas |
+| 360° nuotraukos kaip sfera | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ panardinantis |
+| 360° vaizdo įrašai | ✅ | ✅ be laiko juostos | ✅ pranešimas, jei nedekoduojama | tik plokšti | tik plokšti | ✅ panardinantis |
+| 3D ir VR180 | ✅ viena akis | ✅ viena akis | ✅ viena akis | nuotraukos viena akimi, vaizdo įrašai plokšti | nuotraukos viena akimi, vaizdo įrašai plokšti | ✅ tikras 3D |
+| Spatial 2.5D (galvos sekimas) | ✅ eksperimentinis | ✅ eksperimentinis | ❌ | ❌ | ❌ | ❌ |
+| Apple erdvinės nuotraukos | ✅ viena akis | ✅ viena akis | ✅ viena akis | ❌ | ❌ | ✅ 3D |
+| Neapdoroti Insta360, GoPro ir DJI failai | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| SMB, WebDAV, DLNA bendrinimai | ✅ | ✅ | ✅ | ✅ SMB nuo webOS 22 | ❌ | ✅ |
 | Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| Tapo cameras: recordings | ✅ | ✅ | ✅ | 🔜 not before December 2026 | ❌ | ✅ |
-| Tapo cameras: live view | ✅ | 🔜 next iOS release | ✅ | ✅ video only | ❌ | ✅ |
-| Share this device on the network | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Upload to Immich from shares and the device | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
-| Import from a DJI drone or a card over USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| The DJI drone's live video (experimental) | ✅ with an RC-N3 | ❌ | ✅ relayed by a phone | ❌ | ❌ | ✅ relayed by a phone |
-| Dark theme | as the system | as the system | ✅ by default | ✅ only theme | ✅ only theme | as the system |
-| Input | touch, gyroscope | touch, gyroscope | remote; Left and Right also during a video and on its time bar, Menu for the details | remote, Magic Remote | remote | controllers, hands |
-| Where to get it | Google Play, APK | App Store (in review) | APK, Google Play (in review) | .ipk, LG Content Store (in review) | .wgt test build, signed by you | Horizon Store, APK |
+| Tapo kameros: įrašai | ✅ | ✅ | ✅ | 🔜 ne anksčiau nei 2026 m. gruodį | ❌ | ✅ |
+| Tapo kameros: tiesioginis vaizdas | ✅ | 🔜 kitas iOS leidimas | ✅ | ✅ tik vaizdas | ❌ | ✅ |
+| Bendrinti šį įrenginį tinkle | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Įkėlimas į Immich iš bendrinimų ir įrenginio | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Importas iš DJI drono ar kortelės per USB (eksperimentinis) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| DJI drono tiesioginis vaizdas (eksperimentinis) | ✅ su RC-N3 | ❌ | ✅ perduoda telefonas | ❌ | ❌ | ✅ perduoda telefonas |
+| Tamsi tema | kaip sistemoje | kaip sistemoje | ✅ pagal numatymą | ✅ vienintelė tema | ✅ vienintelė tema | kaip sistemoje |
+| Įvestis | prisilietimas, giroskopas | prisilietimas, giroskopas | nuotolinis valdymo pultas; kairė ir dešinė rodyklės ir vaizdo įrašo metu bei jo laiko juostoje, Menu detalėms | nuotolinis valdymo pultas, Magic Remote | nuotolinis valdymo pultas | valdikliai, rankos |
+| Kur gauti | Google Play, APK | App Store (tikrinama) | APK, Google Play (tikrinama) | .ipk, LG Content Store (tikrinama) | .wgt bandomasis build, pasirašomas jūsų | Horizon Store, APK |
 
 | Galimybė | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
@@ -129,19 +129,19 @@ One code base for the phones, tablets, Android TV, the Meta Quest and the comput
 | Bendrinti šį įrenginį tinkle | ✅ | ❌ | ❌ |
 | Įkėlimas į Immich iš bendrinimų ir įrenginio | ✅ | 🔧 CI | 🔧 CI |
 | Importas iš DJI drono ar kortelės per USB (eksperimentinis) | ❌ | ❌ | ❌ |
-| The DJI drone's live video (experimental) | ❌ | ❌ | ❌ |
+| DJI drono tiesioginis vaizdas (eksperimentinis) | ❌ | ❌ | ❌ |
 | Tamsi tema | kaip sistemoje | kaip sistemoje | kaip sistemoje |
 | Įvestis | pelė, klaviatūra | pelė, klaviatūra | pelė, klaviatūra, jutiklinis kilimėlis |
 | Kur gauti | diegimo programa arba ZIP (pasirašyta peržiūra) | .deb, .rpm (peržiūra) | DMG arba ZIP (nepasirašyta peržiūra) |
 
-✅ in the app on that platform · ❌ not offered there · 🔜 planned · 🔧 CI in the sources, built and started by the project's CI on that system, not checked with a real server, share or camera there yet · flat only: the video plays flat, with a message, because the 360° video renderer of the computers is Windows only; on LG TVs, whether webOS hands video frames to the sphere is still to be measured; on a tester's Samsung TV, the browser gave black video frames to the 3D view. "One eye" means a 3D file shows its left eye on a flat screen. The LG and Samsung columns are one separate TV app: LG version 1.0.0, whose shares and Plex were checked against real servers and its cameras against a simulated camera on the project's build host, not on a TV yet, and Samsung test build 0.2.0. Not every ✅ has been checked on a real device yet: what was checked where, and what remains to confirm, is in [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) and [Compatibility](../docs/immuch360/compatibility.md).
+✅ programoje toje platformoje · ❌ nesiūloma joje · 🔜 planuojama · 🔧 CI šaltinio kode, sukurta ir paleista projekto CI toje sistemoje, ten dar nepatikrinta su realiu serveriu, bendrinimu ar kamera · tik plokšti: vaizdo įrašas rodomas plokščias, su pranešimu, nes kompiuterių 360° vaizdo atvaizdavimo variklis veikia tik Windows; LG televizoriuose dar reikia išmatuoti, ar webOS perduoda vaizdo kadrus sferai; testuotojo Samsung televizoriuje naršyklė 3D vaizdui perdavė juodus vaizdo kadrus. „Viena akis“ reiškia, kad 3D failas rodo savo kairę akį plokščiame ekrane. LG ir Samsung stulpeliai yra viena atskira TV programa: LG versija 1.0.0, kurios bendrinimai ir Plex patikrinti su realiais serveriais, o kameros su imituota kamera projekto build kompiuteryje, dar ne televizoriuje, ir Samsung bandomasis build 0.2.0. Ne kiekvienas ✅ jau patikrintas realiame įrenginyje: kas patikrinta ir kur, ir kas liko patvirtinti, yra [Funkcijose](../docs/immuch360/features.md), [Platformų palaikyme](../docs/immuch360/platform-support.md) ir [Suderinamume](../docs/immuch360/compatibility.md).
 
 - **Android telefonai ir planšetės**: pilna programa, prisilietimas ir giroskopas, visi šaltiniai.
 - **iPhone ir iPad**: pilna programa; 360° vaizdo grotuvas turi tik paleidimą ir pauzę, Tapo tiesioginis vaizdas ir prisijungimo telefonu telefono dalis atsiras su kitu iOS leidimu, o DLNA paieška siunčia unicast užklausas, kol Apple suteiks multicast leidimą.
-- **Android TV and Google TV**: the same APK, driven by the remote, dark by default; a viewer: backup, uploads and the editor are hidden and the details are read only, but a photo still turns with one key. Every search filter works with the remote: Location and Camera open their choices in a list, the date filter shows all its choices, and the Tags, Location, Date, Media Type, Star Rating and Display options sheets put Clear and Apply beside the choices, one Right away, on most of the screen height. The photo grid uses less image memory, and a held arrow moves it at most about 10 rows a second. From build 28 it signs in from a phone, by its QR code or its short code (tried between two emulators with the code typed, not yet with a camera). From build 29 the time bar of a video takes the focus of the remote, films get audio and subtitle menus, and the next file of a share opens with controls of its own. Checked on the Google TV emulator; build 28 ran on a real Android TV on 23 October, and the video problems found there are the fixes of build 29, checked on the emulator, not yet on that TV. From build 30, its Drone card shows the live video of a DJI drone that a phone relays, with the drone's values and obstacle ring (experimental): the pairing and the picture were tried on a TCL Android TV on 25 October, with stutter and a green cast on the earlier relay; the steady stream that answers them is first tested with build 30.
-- **LG TVs with webOS 5.0 and later**: a separate app for the remote and the Magic Remote, built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): an Immich viewer with the 360° photos on a sphere, a photo turned with one key, a dark theme and the 89 languages of the app (the few texts of the TV app itself in English for now); the network shares, Plex and the live view of Tapo cameras, through its own service on the TV (SMB from webOS 22); 360° videos flat. Version 1.0.0, submitted to the LG Content Store on 24 October, ran on webOS 25 TVs of three models in LG's Cloud Test Lab: sign in, the phone sign in page, photos, albums, a video, the 360° view, the slideshow, a search and Back from every page. Version 0.1.0 ran on a tester's LG TV (webOS 22). The shares and Plex were checked against real servers and the cameras against a simulated camera on the project's build host, not on a TV yet.
-- **Samsung TVs with Tizen 5.5 and later**: the LG TV app packaged for Samsung TVs, test build 0.2.0, to sign and install yourself: an Immich viewer for the remote, signed in by typing (the server address, then an email and password or an API key), with the slideshow, the 360° photos on a sphere, a photo turned with one key and an About page that tells what the TV supports; no sign in with a phone, shares, Plex or cameras yet; 360° videos flat, with a notice. Version 0.1.0 ran on a tester's Samsung TV on Tizen 9: photos and videos up to 4K played, nothing above 4K decoded, and the browser of the TV gave black video frames to the 3D view. Version 0.2.0 holds the fixes from that run (a message for a video above the TV's decoders or one that stalls, 360° videos flat with a notice) and has not run on a TV yet.
-- **Meta Quest 2, Pro, 3 and 3S**: the app as a window, plus the immersive view and, from build 30, a Drone card that shows the live video of a DJI drone relayed by a phone (experimental), first tested with build 30; HEVC is the safe codec, H.264 stops around 4096x2304 on the Quest 3; only the Quest 3 is tested, the Quest 2, Quest Pro and Quest 3S are not tested yet.
+- **Android TV ir Google TV**: tas pats APK, valdomas nuotolinio valdymo pultu, pagal numatymą tamsus; žiūryklė: atsarginė kopija, įkėlimai ir redaktorius paslėpti, o detalės tik skaitymui, bet nuotrauka vis tiek pasukama vienu klavišu. Kiekvienas paieškos filtras veikia su nuotolinio valdymo pultu: Vieta ir Kamera atveria savo pasirinkimus sąraše, datos filtras rodo visus savo pasirinkimus, o Žymų, Vietos, Datos, Medijos tipo, Įvertinimo ir Rodymo parinkčių lapai pateikia Išvalyti ir Taikyti šalia pasirinkimų, už vieno paspaudimo dešinėn, didžiojoje ekrano aukščio dalyje. Nuotraukų tinklelis naudoja mažiau vaizdų atminties, o laikoma rodyklė jį perkelia daugiausia maždaug 10 eilučių per sekundę. Nuo build 28 jis prisijungia telefonu, savo QR kodu arba trumpuoju kodu (išbandyta tarp dviejų emuliatorių įvedant kodą, dar ne su kamera). Nuo build 29 vaizdo įrašo laiko juosta gauna nuotolinio valdymo pulto fokusą, filmai turi garso ir subtitrų meniu, o kitas bendrinimo failas atsidaro su savo valdikliais. Patikrinta Google TV emuliatoriuje; build 28 veikė realiame Android TV spalio 23 d., o ten rastos vaizdo įrašų problemos yra build 29 pataisymai, patikrinti emuliatoriuje, dar ne tame televizoriuje. Nuo build 30 jo kortelė Drone rodo telefono perduodamą DJI drono tiesioginį vaizdą su drono reikšmėmis ir kliūčių žiedu (eksperimentinis): susiejimas ir vaizdas išbandyti TCL Android TV spalio 25 d., su trūkčiojimu ir žalsvu atspalviu ankstesniame perdavime; stabilus srautas, kuris į tai atsako, pirmą kartą bandomas su build 30.
+- **LG televizoriai su webOS 5.0 ir naujesne**: atskira programa nuotolinio valdymo pultui ir Magic Remote, sukurta remiantis [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): Immich žiūryklė su 360° nuotraukomis ant sferos, nuotraukos pasukimas vienu klavišu, tamsi tema ir 89 programos kalbos (keli pačios TV programos tekstai kol kas angliškai); tinklo bendrinimai, Plex ir Tapo kamerų tiesioginis vaizdas per savo paslaugą televizoriuje (SMB nuo webOS 22); 360° vaizdo įrašai plokšti. Versija 1.0.0, pateikta LG Content Store spalio 24 d., veikė trijų modelių webOS 25 televizoriuose LG Cloud Test Lab: prisijungimas, telefono prisijungimo puslapis, nuotraukos, albumai, vaizdo įrašas, 360° vaizdas, skaidrių peržiūra, paieška ir Atgal iš kiekvieno puslapio. Versija 0.1.0 veikė testuotojo LG televizoriuje (webOS 22). Bendrinimai ir Plex patikrinti su realiais serveriais, o kameros su imituota kamera projekto build kompiuteryje, dar ne televizoriuje.
+- **Samsung televizoriai su Tizen 5.5 ir naujesne**: LG TV programa, supakuota Samsung televizoriams, bandomasis build 0.2.0, kurį pasirašote ir įdiegiate patys: Immich žiūryklė nuotolinio valdymo pultui, prisijungimas įvedant duomenis (serverio adresas, tada el. paštas ir slaptažodis arba API raktas), su skaidrių peržiūra, 360° nuotraukomis ant sferos, nuotraukos pasukimu vienu klavišu ir puslapiu Apie, kuris nurodo, ką televizorius palaiko; dar nėra prisijungimo telefonu, bendrinimų, Plex ir kamerų; 360° vaizdo įrašai plokšti, su pranešimu. Versija 0.1.0 veikė testuotojo Samsung televizoriuje su Tizen 9: nuotraukos ir vaizdo įrašai iki 4K buvo atkurti, niekas virš 4K nebuvo dekoduota, o televizoriaus naršyklė 3D vaizdui perdavė juodus vaizdo kadrus. Versija 0.2.0 turi to bandymo pataisymus (pranešimas apie vaizdo įrašą, viršijantį televizoriaus dekoderius, arba strigusį vaizdo įrašą, 360° vaizdo įrašai plokšti su pranešimu) ir dar nebuvo paleista televizoriuje.
+- **Meta Quest 2, Pro, 3 ir 3S**: programa kaip langas, taip pat panardinantis vaizdas ir, nuo build 30, kortelė Drone, rodanti telefono perduodamą DJI drono tiesioginį vaizdą (eksperimentinis), pirmą kartą bandoma su build 30; HEVC yra patikimas kodekas, o H.264 Quest 3 įrenginyje veikia iki maždaug 4096x2304; išbandytas tik Quest 3, o Quest 2, Quest Pro ir Quest 3S dar neišbandyti.
 - **Windows 10 ir 11**: peržiūra su aplankais vietoj galerijos, savo vaizdo grotuvas (libmpv) plokštiems ir 360° vaizdo įrašams, neapdoroti failai, sujungti grafikos luste, failai ir aplankai, atverti programa arba numesti ant lango, diegimo programa arba ZIP, pasirašyti APROGSYS.
 - **Linux**: .deb ir .rpm paketai, sukurti projekto CI, įdiegti ir patikrinti Ubuntu 22.04 ir 24.04, Debian 12 bei Fedora 40 ir 44; nuotraukos, 360° nuotraukos ir plokšti vaizdo įrašai per sistemos libmpv (360°, 3D ir neapdoroti vaizdo įrašai rodomi plokšti su pranešimu), nuo desktop build 7 piešiami aparatiniu keliu ir X11 sesijose; SMB bendrinimai nuo Ubuntu 22.04 ir Debian 12; be raktinės (GNOME Keyring ar KWallet) programa nebeužstringa 25 s pirmo paleidimo metu: ji saugo slaptažodžius tik sesijai ir tai nurodo savo nustatymuose; dar nepaleista realiame Linux kompiuteryje, tik WSLg ir konteineriuose.
 - **macOS**: DMG ir ZIP, sukurti projekto CI, universalūs, nepasirašyti (Gatekeeper paklausia vieną kartą); programa pasileidžia, atveria jai perduotus failus ir aplankus, taip pat iš Finder, saugo savo slaptus duomenis prisijungimo raktinėje (login keychain) ir atkuria plokščius vaizdo įrašus su savo libmpv, visa tai patikrinta tik projekto CI Mac kompiuteryje; realiame Mac kol kas niekas nepaleista.
@@ -149,27 +149,27 @@ One code base for the phones, tablets, Android TV, the Meta Quest and the comput
 <a id="what-you-can-do"></a>
 ## Ką galite daryti
 
-Each line opens its how to below. The full guide, with every option, message and limit, is in the [user guide](../docs/immuch360/user-guide.md).
+Kiekviena eilutė atveria savo instrukciją žemiau. Pilnas vadovas, su visomis parinktimis, pranešimais ir ribomis, yra [naudotojo vadove](../docs/immuch360/user-guide.md).
 
-1. [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server): a gallery and a player, on the device alone or with your Immich server.
-2. [Look around 360° photos and videos, panoramas, VR180 and 3D](#explore-panoramas-360-vr180-and-3d): a sphere you turn with a finger, the phone or the remote.
-3. [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): Android TV and Google TV, LG TVs, and Samsung TVs as a test build.
-4. [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): scan its QR code, confirm, watch.
-5. [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° all around you, 3D in true 3D.
-6. [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): in place, nothing copied.
-7. [Keep your Immich library, with more](#keep-your-immich-library-with-more): the Immich mobile app, plus the immersive viewers and the big screens.
-8. [Watch your Tapo cameras](#watch-your-home-cameras-on-the-big-screen): live, and the recordings of their memory card; not yet checked with a real camera.
-9. [See your DJI drone's live video on your phone](#see-what-your-drone-sees-on-your-phone), and [in a Meta Quest or on an Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): through a DJI RC-N3 remote, receive only. *Experimental.*
-10. [Bring a drone's or a camera card's photos and videos to Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): over USB, from an Android phone. *Experimental.*
-11. [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX and DJI Osmo 360, stitched by the app.
-12. [Turn a photo with one key](#turn-a-photo-with-one-key): a button, a key of the keyboard or a colour key of the remote.
-13. [Use your computer as the media player](#use-your-computer-as-the-media-player): your folders, Open with, a file dropped on the window. *Preview.*
+1. [Žiūrėkite savo nuotraukas ir vaizdo įrašus su serveriu arba be jo](#watch-your-photos-and-videos-with-or-without-a-server): galerija ir grotuvas, vien įrenginyje arba su jūsų Immich serveriu.
+2. [Dairykitės 360° nuotraukose ir vaizdo įrašuose, panoramose, VR180 ir 3D](#explore-panoramas-360-vr180-and-3d): sfera, kurią sukate pirštu, telefonu ar nuotolinio valdymo pultu.
+3. [Žiūrėkite televizoriuje su nuotolinio valdymo pultu](#watch-on-the-tv-with-the-remote): Android TV ir Google TV, LG televizoriai, o Samsung televizoriai kaip bandomasis build.
+4. [Prijunkite televizorių, akinius ar kompiuterį telefonu](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): nuskaitykite jo QR kodą, patvirtinkite, žiūrėkite.
+5. [Įženkite į savo nuotraukas ir vaizdo įrašus su Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° visur aplink jus, 3D tikru 3D.
+6. [Atkurkite NAS, kompiuterio, medijos serverio ar Plex failus](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): vietoje, nieko nekopijuojant.
+7. [Pasilikite savo Immich biblioteką ir gaukite daugiau](#keep-your-immich-library-with-more): Immich mobilioji programa, taip pat panardinančios žiūryklės ir dideli ekranai.
+8. [Žiūrėkite savo Tapo kameras](#watch-your-home-cameras-on-the-big-screen): tiesiogiai ir jų atminties kortelės įrašus; dar nepatikrinta su tikra kamera.
+9. [Matykite savo DJI drono tiesioginį vaizdą telefone](#see-what-your-drone-sees-on-your-phone), ir [Meta Quest akiniuose ar Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): per DJI RC-N3 nuotolinį valdiklį, tik priėmimas. *Eksperimentinis.*
+10. [Perkelkite drono ar kameros kortelės nuotraukas ir vaizdo įrašus į Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): per USB, iš Android telefono. *Eksperimentinis.*
+11. [Atverkite 360° kamerų neapdorotus failus](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX ir DJI Osmo 360, sujungiami programos.
+12. [Pasukite nuotrauką vienu klavišu](#turn-a-photo-with-one-key): mygtuku, klaviatūros klavišu ar nuotolinio valdymo pulto spalvotu mygtuku.
+13. [Naudokite kompiuterį kaip medijos grotuvą](#use-your-computer-as-the-media-player): jūsų aplankai, Open with, ant lango numestas failas. *Peržiūra.*
 
 <a id="install"></a>
 <a id="get-it-on-your-device"></a>
-## Get it on your device
+## Įdiekite į savo įrenginį
 
-Take the app from the store of your device where it is published, or from the [Releases](https://github.com/freeKC/Immuch360/releases) page meanwhile.
+Gaukite programą iš savo įrenginio parduotuvės, kur ji paskelbta, arba kol kas iš puslapio [Releases](https://github.com/freeKC/Immuch360/releases).
 
 ### Android telefonai ir planšetės
 
@@ -192,18 +192,18 @@ Take the app from the store of your device where it is published, or from the [R
 <a id="lg-tvs-webos"></a>
 ### LG televizoriai (webOS)
 
-1. Version 1.0.0 is waiting for LG's review. Until it is on the LG Content Store, it installs in Developer Mode: you need an LG TV with webOS 5.0 or later, a computer on the same network and a free LG developer account. On the TV, install Developer Mode from the LG Content Store, sign in, turn Dev Mode Status on and let the TV restart; note its IP address and the passphrase the app shows.
+1. Versija 1.0.0 laukia LG patikrinimo. Kol jos nėra LG Content Store, ji diegiama Developer Mode režimu: jums reikia LG televizoriaus su webOS 5.0 ar naujesne, kompiuterio tame pačiame tinkle ir nemokamos LG kūrėjo paskyros. Televizoriuje įdiekite Developer Mode iš LG Content Store, prisijunkite, įjunkite Dev Mode Status ir leiskite televizoriui persikrauti; užsirašykite jo IP adresą ir slaptafrazę, kurią rodo programa.
 2. Kompiuteryje įdiekite webOS CLI (Node.js 18 ar naujesnė): `npm install -g @webos-tools/cli`, tada užregistruokite televizorių su `ares-setup-device` (jo IP adresas, prievadas 9922, naudotojas `prisoner`) ir `ares-novacom --device <name> --getkey`, kuri paprašys slaptafrazės.
-3. From the [webOS 1.0.0 pre-release](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0), download `Immuch360-webOS-1.0.0.ipk` for a UHD TV, or `Immuch360-webOS-1.0.0-1280x720.ipk` for a Full HD TV, to which LG gives 1280x720 apps. Check it against `SHA256SUMS.txt`, then `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`. The [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) of webosbrew does the same without the command line.
+3. Iš [webOS 1.0.0 pre-release](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) atsisiųskite `Immuch360-webOS-1.0.0.ipk` UHD televizoriui arba `Immuch360-webOS-1.0.0-1280x720.ipk` Full HD televizoriui, kuriam LG teikia 1280x720 programas. Patikrinkite jį pagal `SHA256SUMS.txt`, tada `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`. webosbrew [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) daro tą patį be komandinės eilutės.
 4. Developer Mode sesija trunka 1000 valandų, o Developer Mode programos mygtukas EXTEND ją pratęsia; kai ji baigiasi, televizorius pašalina taip įdiegtas programas. Detalės yra [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
-5. Once the app is on the LG Content Store, remove the Developer Mode copy and install it from the store.
+5. Kai programa bus LG Content Store, pašalinkite Developer Mode kopiją ir įdiekite ją iš parduotuvės.
 
 <a id="samsung-tvs-tizen"></a>
 ### Samsung televizoriai (Tizen)
 
-1. Test build 0.2.0 is not on Samsung's store: you install it yourself. You need a Samsung TV with Tizen 5.5 or later (2020 models and later), a computer on the same network and a Samsung account. On the TV: Apps, App Settings, type 12345, turn Developer mode on, enter the IP address of the computer, then restart the TV.
-2. Download `Immuch360-Tizen-0.2.0.wgt` from the [Tizen pre-release](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) and check it against `SHA256SUMS.txt`. A Samsung TV installs only an app signed for it, so the package must be signed again with a Samsung certificate that lists the DUID of your TV: [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung), a community tool, reads the DUID, signs the package with your Samsung account and installs it; Tizen Studio with the Samsung Certificate Extension does the same by hand.
-3. Open the app and sign in by typing your server address, then your email and password or an API key. About this TV shows what the TV supports, as text and as a QR code: that text, posted in [Issues](https://github.com/freeKC/Immuch360/issues) or [Discussions](https://github.com/freeKC/Immuch360/discussions) with what does not work, helps the most.
+1. Bandomojo build 0.2.0 nėra Samsung parduotuvėje: jį įdiegiate patys. Jums reikia Samsung televizoriaus su Tizen 5.5 ar naujesne (2020 m. ir naujesni modeliai), kompiuterio tame pačiame tinkle ir Samsung paskyros. Televizoriuje: Apps, App Settings, įveskite 12345, įjunkite Developer mode, įveskite kompiuterio IP adresą, tada paleiskite televizorių iš naujo.
+2. Atsisiųskite `Immuch360-Tizen-0.2.0.wgt` iš [Tizen pre-release](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) ir patikrinkite jį pagal `SHA256SUMS.txt`. Samsung televizorius įdiegia tik jam pasirašytą programą, todėl paketą reikia pasirašyti iš naujo Samsung sertifikatu, kuriame nurodytas jūsų televizoriaus DUID: bendruomenės įrankis [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung) nuskaito DUID, pasirašo paketą su jūsų Samsung paskyra ir jį įdiegia; Tizen Studio su Samsung Certificate Extension daro tą patį rankiniu būdu.
+3. Atverkite programą ir prisijunkite įvesdami serverio adresą, tada el. paštą ir slaptažodį arba API raktą. „Apie šį televizorių“ rodo, ką televizorius palaiko, tekstu ir QR kodu: tas tekstas, paskelbtas [Issues](https://github.com/freeKC/Immuch360/issues) arba [Discussions](https://github.com/freeKC/Immuch360/discussions) kartu su tuo, kas neveikia, padeda labiausiai.
 
 <a id="meta-quest"></a>
 ### Meta Quest
@@ -215,47 +215,47 @@ Take the app from the store of your device where it is published, or from the [R
 <a id="windows"></a>
 ### Windows
 
-1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.11-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) (with `SHA256SUMS.txt` to check it) and open it. The installer and the ZIP are signed; Windows shows APROGSYS as the publisher. While the publisher is new to SmartScreen, it may still ask once: "More info", then "Run anyway".
+1. Atsisiųskite `Immuch360-Desktop-3.3.0-rc.0-desktop.11-windows-x64-setup.exe` iš [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) (su `SHA256SUMS.txt`, kad jį patikrintumėte) ir atverkite jį. Diegimo programa ir ZIP yra pasirašyti; Windows rodo APROGSYS kaip leidėją. Kol leidėjas SmartScreen dar naujas, jis gali vieną kartą paklausti: „Daugiau informacijos“, tada „Vis tiek paleisti“.
 2. Pasirinkite „Diegti tik man" (be administratoriaus teisių) arba „Diegti visiems naudotojams", tada diegimo programos kalbą, tą pačią, kurią jau pasirinko Windows.
 3. Paleiskite Immuch360 Desktop iš Pradžios meniu. Nuotraukose ir vaizdo įrašuose ją rasite „Atidaryti su" (paspauskite dešinį pelės klavišą ant failo, Atidaryti su); ji niekada netampa jų numatytąja programa. Pirmasis naujo build paleidimas gali užtrukti iki minutės, kol Windows nuskaito failus.
 4. Windows 10 arba 11, 64 bitų. Norėdami atnaujinti, atverkite kito build diegimo programą: jūsų prisijungimas, aplankai ir nustatymai išlieka. To pačio leidimo ZIP yra ta pati programa aplanko pavidalu, kurią galite išskleisti bet kur ir paleisti `immuch360.exe` iš jos. Kompiuteryje, kuriame desktop build nuo 4 iki 8 sustodavo paleidžiant su klaida „duplicate column name: group_date“, build 9 atveria tą duomenų bazę ir išsaugo jūsų duomenis.
 
 ### Linux
 
-On Ubuntu 22.04 or later and Debian 12 or later: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-amd64.deb`; on Fedora 40 or later: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-x86_64.rpm`, both from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11). Then start Immuch360 Desktop from your applications. A preview: the folders of the computer, photos and 360° photos as a sphere, and flat videos through the system's libmpv, which the package installs (360°, 3D and raw videos play flat, with a message); SMB shares work from Ubuntu 22.04 and Debian 12 on. On Fedora, camera videos need the FFmpeg of RPM Fusion. Without GNOME Keyring or KWallet, the passwords are kept for the session only, and the settings of the app say so.
+Ubuntu 22.04 ar naujesnėje ir Debian 12 ar naujesnėje: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-amd64.deb`; Fedora 40 ar naujesnėje: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-x86_64.rpm`, abu iš [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11). Tada paleiskite Immuch360 Desktop iš savo programų. Peržiūra: kompiuterio aplankai, nuotraukos ir 360° nuotraukos kaip sfera, ir plokšti vaizdo įrašai per sistemos libmpv, kurią įdiegia paketas (360°, 3D ir neapdoroti vaizdo įrašai rodomi plokšti, su pranešimu); SMB bendrinimai veikia nuo Ubuntu 22.04 ir Debian 12. Fedora sistemoje kamerų vaizdo įrašams reikia RPM Fusion FFmpeg. Be GNOME Keyring ar KWallet slaptažodžiai saugomi tik sesijai, ir programos nustatymai tai nurodo.
 
 ### macOS
 
-Open `Immuch360-Desktop-3.3.0-rc.0-desktop.11-macos.dmg` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) and drag the app to Applications (Apple silicon and Intel, macOS 12 or later). It is not signed nor notarized yet: Control click it and choose Open on macOS 14 and earlier, or choose "Open Anyway" in System Settings, Privacy & Security on macOS 15 and later. Nobody working on the project has a Mac: the app was only run on the project's CI Mac, where it opens files and folders and plays flat videos with its own libmpv; its network access has not been tried. Reports are welcome.
+Atverkite `Immuch360-Desktop-3.3.0-rc.0-desktop.11-macos.dmg` iš [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) ir nutempkite programą į Applications (Apple silicon ir Intel, macOS 12 ar naujesnė). Ji kol kas nei pasirašyta, nei notarizuota: paspauskite ją su Control ir pasirinkite „Atverti“ macOS 14 ir senesnėse, arba pasirinkite „Vis tiek atverti“ skiltyje „Sistemos nuostatos, Privatumas ir sauga“ macOS 15 ir naujesnėse. Niekas projekte neturi Mac: programa buvo paleista tik projekto CI Mac kompiuteryje, kur ji atveria failus ir aplankus ir atkuria plokščius vaizdo įrašus su savo libmpv; jos tinklo prieiga neišbandyta. Pranešimai laukiami.
 
 <a id="how-to"></a>
-## How to
+## Kaip tai padaryti
 
-Each entry says what you get, then the steps, then the limits. The [user guide](../docs/immuch360/user-guide.md) has every option and message.
+Kiekvienas skyrius nurodo, ką gausite, tada žingsnius, tada ribas. [Naudotojo vadove](../docs/immuch360/user-guide.md) yra visos parinktys ir pranešimai.
 
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
-### Watch your photos and videos, with or without a server
+### Žiūrėkite savo nuotraukas ir vaizdo įrašus su serveriu arba be jo
 
-Immuch360 is first a gallery and a player for ordinary photos and videos, and it needs neither an account nor a server. "Use without a server" opens the app on the photos and videos of the device, with every viewer, the 360° list and the network sources, and nothing leaves the device. With an Immich server, the timeline, the albums, the favorites, the memories and the search come from it. Videos play in a native player with sound, seeking, a buffering indicator and a choice of audio tracks, in the 360°, Spatial and computer players and, from build 29, in the flat player of the Android app, which shows subtitles too.
+Immuch360 pirmiausia yra galerija ir grotuvas paprastoms nuotraukoms ir vaizdo įrašams, ir jai nereikia nei paskyros, nei serverio. „Naudoti be serverio“ atveria programą su įrenginio nuotraukomis ir vaizdo įrašais, su visomis žiūryklėmis, 360° sąrašu ir tinklo šaltiniais, ir niekas nepalieka įrenginio. Su Immich serveriu laiko juosta, albumai, mėgstami, prisiminimai ir paieška ateina iš jo. Vaizdo įrašai atkuriami vietiniame grotuve su garsu, slinkimu, buferizavimo indikatoriumi ir garso takelių pasirinkimu 360°, Spatial ir kompiuterio grotuvuose, o nuo build 29 ir Android programos plokščiame grotuve, kuris rodo ir subtitrus.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Skirtukas Biblioteka be serverio: viršuje punktas 360°, tada Šiame įrenginyje su dviem 360° nuotraukomis ir Tinklo bendrinimai su bendrinimu, pavadintu NAS">
 
-1. Open the app. The welcome page shows "Your media. Any screen. Every perspective." and three choices: tap the first one, "Use without a server". A server can be connected later, from Settings or the Library tab.
+1. Atverkite programą. Pasveikinimo puslapis rodo „Jūsų failai. Kiekvienas ekranas. Kiekvienas kampas.“ ir tris pasirinkimus: bakstelėkite pirmąjį, „Naudoti be serverio“. Serverį galima prijungti vėliau, iš Nustatymų arba skirtuko „Biblioteka“.
 2. Leiskite pasiekti nuotraukas ir vaizdo įrašus. Jei atsisakysite, programa parašys „Programa nemato šio įrenginio nuotraukų“, su mygtukais „Leisti prieigą“ ir „Atverti nustatymus“.
-3. The Photos tab shows the timeline of the device; Search and Albums stay greyed out, as they come from the server. The Library tab has 360° at the top, then On this device (the albums of the device) and Network shares. The menu at the top right says "This device only": nothing is sent anywhere.
-4. Tap a photo or a video to open it; swipe left and right to go to the next one, pinch or double tap to zoom. Swipe up on a video for its details: codec, size, frame rate, bit rate, and whether this device decodes it.
-5. On Android phones, tablets and TVs, from build 29, a film with several audio languages or with subtitles has an audio button and a subtitles button in its controls: the audio language you pick is kept for the next films, and subtitles stay off until you pick them, except forced ones. The Immich app's Android player has neither.
+3. Skirtukas „Nuotraukos“ rodo įrenginio laiko juostą; „Ieškoti“ ir „Albumai“ lieka pilki, nes jie ateina iš serverio. Skirtuke „Biblioteka“ viršuje yra 360°, tada „Šiame įrenginyje“ (įrenginio albumai) ir „Tinklo bendrinimai“. Meniu viršuje dešinėje rodo „Tik šis įrenginys“: niekas niekur nesiunčiama.
+4. Bakstelėkite nuotrauką ar vaizdo įrašą, kad jį atvertumėte; braukite kairėn ir dešinėn, kad pereitumėte prie kito, suspauskite arba bakstelėkite dukart, kad pritrauktumėte. Braukite aukštyn ant vaizdo įrašo, kad pamatytumėte jo detales: kodekas, dydis, kadrų dažnis, bitų sparta ir ar šis įrenginys jį dekoduoja.
+5. Android telefonuose, planšetėse ir televizoriuose nuo build 29 filmas su keliomis garso kalbomis arba su subtitrais savo valdikliuose turi garso mygtuką ir subtitrų mygtuką: pasirinkta garso kalba išlaikoma kitiems filmams, o subtitrai lieka išjungti, kol jų nepasirenkate, išskyrus priverstinius. Immich programos Android grotuvas neturi nei vieno, nei kito.
 
 Kompiuteryje jūsų pasirinkti aplankai atlieka galerijos vaidmenį; televizoriuje, kuris neturi savo nuotraukų, tai daro tinklo šaltiniai.
 
-More: [without a server or an account](../docs/immuch360/user-guide.md#without-a-server-or-an-account), [the viewers and the video player](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [video details and decoders](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
+Daugiau: [be serverio ar paskyros](../docs/immuch360/user-guide.md#without-a-server-or-an-account), [žiūryklės ir vaizdo grotuvas](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [vaizdo detalės ir dekoderiai](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
 
 <a id="explore-panoramas-360-vr180-and-3d"></a>
 ### Tyrinėkite panoramas, 360°, VR180 ir 3D
 
-Immuch360 knows flat photos and videos, panoramas, 360° photos and videos, VR180, stereoscopic 3D, Apple spatial photos and the 360° spheres of DJI drones, and opens each one in the viewer that fits it. A 360° photo opens as a sphere you turn with a finger or by moving the phone; a 360° video plays in a spherical player with sound; VR180 files are drawn on a half sphere; stereoscopic 3D files show one eye on a flat screen and both eyes in a headset. Partial panoramas keep their crop, and the picture starts on the view the camera recorded. A file the server does not flag can be viewed as 360° with one tap.
+Immuch360 atpažįsta plokščias nuotraukas ir vaizdo įrašus, panoramas, 360° nuotraukas ir vaizdo įrašus, VR180, stereoskopinį 3D, Apple erdvines nuotraukas ir DJI dronų 360° sferas, ir kiekvieną atveria jam tinkančioje žiūryklėje. 360° nuotrauka atveriama kaip sfera, kurią sukate pirštu arba judindami telefoną; 360° vaizdo įrašas atkuriamas sferiniame grotuve su garsu; VR180 failai rodomi pusės sferos pavidalu; stereoskopiniai 3D failai rodo viena akimi plokščiame ekrane ir abiem akimis akiniuose. Dalinės panoramos išlaiko savo apkarpymą, o vaizdas prasideda nuo kameros užfiksuoto vaizdo. Failą, kurio serveris nepažymi, galima peržiūrėti kaip 360° vienu bakstelėjimu.
 
 <p align="center">
   <img src="../.github/readme/b19-sphere.jpg" width="260" alt="Ežero kranto 360° nuotrauka sferos peržiūroje: uždarymo mygtukas viršuje kairėje, 360°, 3D išdėstymo ir giroskopo mygtukai viršuje dešinėje">
@@ -273,70 +273,70 @@ Daugiau: [360° nuotraukos ir vaizdo įrašai](../docs/immuch360/user-guide.md#3
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>
-### Watch on the TV with the remote
+### Žiūrėkite televizoriuje su nuotolinio valdymo pultu
 
-Your photos on the big screen, with the remote. The TV apps all work the same way: the arrows move the frame, OK opens, Back goes back, and in a 360° photo the arrows look around. A TV has no photos of its own, so it shows your Immich server and, on Android TV and LG TVs, your network shares, your Plex server and your cameras.
+Jūsų nuotraukos dideliame ekrane, su nuotolinio valdymo pultu. Visos TV programos veikia vienodai: rodyklės perkelia rėmelį, OK atveria, Atgal grįžta, o 360° nuotraukoje rodyklėmis dairotės aplink. Televizorius neturi savo nuotraukų, todėl jis rodo jūsų Immich serverį, o Android TV ir LG televizoriuose taip pat tinklo bendrinimus, Plex serverį ir kameras.
 
-- **Android TV and Google TV**: the Android app itself, build 30, from GitHub until Google Play offers it on TVs.
-- **LG TVs with webOS 5.0 and later**: a TV app of its own, version 1.0.0, waiting for LG's review on the LG Content Store.
-- **Samsung TVs with Tizen 5.5 and later**: the same TV app as on LG TVs, test build 0.2.0, which you sign and install yourself.
+- **Android TV ir Google TV**: pati Android programa, build 30, iš GitHub, kol Google Play nepasiūlys jos televizoriams.
+- **LG televizoriai su webOS 5.0 ir naujesne**: atskira TV programa, versija 1.0.0, laukianti LG patikrinimo LG Content Store.
+- **Samsung televizoriai su Tizen 5.5 ir naujesne**: ta pati TV programa kaip LG televizoriuose, bandomasis build 0.2.0, kurį pasirašote ir įdiegiate patys.
 
 <p align="center">
-  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Illustration, not a capture: a large TV in a living room at dusk shows a grid of landscape photos beside a rail of icons, and a remote lies on the coffee table">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Iliustracija, ne ekrano nuotrauka: didelis televizorius svetainėje sutemus rodo peizažo nuotraukų tinklelį šalia piktogramų juostos, o ant kavos staliuko guli nuotolinio valdymo pultas">
 </p>
 
 <a id="on-android-tv-and-google-tv"></a>
-#### On Android TV and Google TV
+#### Android TV ir Google TV
 
-The same Android app, in a dark theme from the first start, with the remote as the only input. In the viewer, Left and Right go to the previous or next photo or video, even while a video plays, and in a 360° photo or video the arrows look around.
+Ta pati Android programa, tamsia tema nuo pirmo paleidimo, su nuotolinio valdymo pultu kaip vienintele įvestimi. Žiūryklėje kairė ir dešinė rodyklės pereina prie ankstesnės ar kitos nuotraukos ar vaizdo įrašo, net kol vaizdo įrašas groja, o 360° nuotraukoje ar vaizdo įraše rodyklėmis dairotės aplink.
 
 <p align="center">
   <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Sferos žiūryklė Google TV: ežero kranto 360° panorama, uždarymo mygtukas viršuje kairėje, mygtukai Mažinti, Didinti, 360° ir 3D viršuje dešinėje, sukami nuotolinio valdymo pulto rodyklėmis">
 </p>
 
-1. Install the APK with adb, see [Install](#android-tv-and-google-tv). On the welcome page, choose "Add a network share or a media server" for a share, a Plex server or a camera, "Use without a server", or "Connect to an Immich server", whose page signs the TV in when you scan its QR code with your phone (see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
-2. In a viewer, the play and pause, rewind, fast forward, previous and next keys of the remote work. OK during a video shows the controls with play and pause selected, and a second OK pauses; the -10 s and +10 s buttons follow, then the audio and subtitles buttons when the film has them. From build 29, Down from play reaches the time bar: Left and Right move 10 s per press, faster while held, and OK plays or pauses. The controls and the date hide 5 s after the last key, and Left and Right then go to the previous or next file; on a share, that file opens in a page of its own, with controls that drive it. Videos no longer loop on a TV, unless you turn on Settings, Asset Viewer, Videos, Looping.
-3. The Menu key, the Info key or OK held down opens the details of the photo or video, read only: date, place, camera, codec, size and bit rate. A video the TV cannot decode says so, with its codec, its size and the limit of the TV's decoders, instead of loading forever; a 360° video beyond the decoders asks before opening the 360° player, and the reason is written on the Logs page of the profile menu.
+1. Įdiekite APK su adb, žr. [Įdiegimas](#android-tv-and-google-tv). Pasveikinimo puslapyje pasirinkite „Pridėti tinklo bendrinimą arba medijos serverį“ bendrinimui, Plex serveriui ar kamerai, „Naudoti be serverio“, arba „Prisijungti prie Immich serverio“, kurio puslapis prijungia televizorių, kai telefonu nuskaitote jo QR kodą (žr. [Prisijungimas telefonu](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
+2. Žiūryklėje veikia nuotolinio valdymo pulto paleidimo ir pauzės, sukimo atgal, sukimo pirmyn, ankstesnio ir kito mygtukai. OK vaizdo įrašo metu parodo valdiklius su pažymėtu paleidimo ir pauzės mygtuku, o antras OK pristabdo; toliau eina mygtukai -10 s ir +10 s, tada garso ir subtitrų mygtukai, jei filmas juos turi. Nuo build 29 rodyklė žemyn nuo paleidimo mygtuko pasiekia laiko juostą: kairė ir dešinė rodyklės perkelia po 10 s per paspaudimą, greičiau jas laikant, o OK paleidžia arba pristabdo. Valdikliai ir data pasislepia praėjus 5 s po paskutinio paspaudimo, ir tada kairė ir dešinė rodyklės pereina prie ankstesnio ar kito failo; bendrinime tas failas atsidaro atskirame puslapyje, su jį valdančiais valdikliais. Televizoriuje vaizdo įrašai nebekartojami, nebent įjungsite Nustatymai, Turinio žiūryklė, Vaizdo įrašai, Kartojimas.
+3. Menu mygtukas, Info mygtukas arba nuspaustas ir palaikytas OK atveria nuotraukos ar vaizdo įrašo detales, tik skaitymui: data, vieta, kamera, kodekas, dydis ir bitų sparta. Vaizdo įrašas, kurio televizorius negali dekoduoti, tai praneša, nurodydamas savo kodeką, dydį ir televizoriaus dekoderių ribą, užuot kraunamas be galo; 360° vaizdo įrašas, viršijantis dekoderių galimybes, prieš atverdamas 360° grotuvą paklausia, o priežastis įrašoma profilio meniu puslapyje Žurnalai.
 
-Build 28 ran on a real Android TV on 23 October; the video fixes of build 29 came from that run and were checked on the Google TV emulator, not yet on that TV.
+Build 28 veikė realiame Android TV spalio 23 d.; build 29 vaizdo pataisymai kilo iš to bandymo ir buvo patikrinti Google TV emuliatoriuje, dar ne tame televizoriuje.
 
 <a id="immuch360-on-an-lg-tv-webos"></a>
 <a id="on-an-lg-tv-webos"></a>
-#### On an LG TV (webOS)
+#### LG televizoriuje (webOS)
 
-Immich's own apps do not install on an LG TV. Immuch360 has a TV app of its own for LG TVs with webOS 5.0 and later (2020 TVs on), driven by the remote and the Magic Remote: it shows your Immich server, your network shares, your Plex server and your Tapo cameras, and puts your 360° photos on a sphere you turn with the arrows. It is built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) by Seeky91, which brought the timeline, the albums, people, places, search, the slideshow and the sign in with a phone; thanks to Seeky91. Version 1.0.0 was submitted to the LG Content Store on 24 October and ran on webOS 25 TVs of LG's Cloud Test Lab; until LG approves it, it installs in Developer Mode, and every report in [Issues](https://github.com/freeKC/Immuch360/issues) helps.
+Pačios Immich programos LG televizoriuje neįdiegiamos. Immuch360 turi atskirą TV programą LG televizoriams su webOS 5.0 ir naujesne (nuo 2020 m. televizorių), valdomą nuotolinio valdymo pultu ir Magic Remote: ji rodo jūsų Immich serverį, tinklo bendrinimus, Plex serverį ir Tapo kameras, o jūsų 360° nuotraukas pateikia ant sferos, kurią sukate rodyklėmis. Ji sukurta remiantis Seeky91 projektu [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos), kuris atnešė laiko juostą, albumus, žmones, vietas, paiešką, skaidrių peržiūrą ir prisijungimą telefonu; ačiū Seeky91. Versija 1.0.0 pateikta LG Content Store spalio 24 d. ir veikė LG Cloud Test Lab webOS 25 televizoriuose; kol LG jos nepatvirtins, ji diegiama Developer Mode režimu, ir kiekvienas pranešimas [Issues](https://github.com/freeKC/Immuch360/issues) padeda.
 
 1. Įdiekite ją televizoriuje Developer Mode režimu, žr. [Įdiegimas](#lg-tvs-webos). Ji turi savo programos ID, todėl diegiama šalia Seeky91 Immich TV.
 2. Prisijunkite telefonu (nuskaitykite QR kodą), el. paštu ir slaptažodžiu arba API raktu.
 3. Naršykite rodyklėmis ir OK. Žiūryklėje kairė ir dešinė rodyklės pereina prie ankstesnės ar kitos nuotraukos ar vaizdo įrašo, taip pat ir vaizdo įrašo metu; valdikliai pasislepia praėjus 5 s po paskutinio paspaudimo; Info atveria detales; kanalų mygtukai keičia mastelį; veikia Magic Remote žymeklis ir ratukas.
-4. A 360° photo opens on a sphere: each press of an arrow turns it by a step, and a held key keeps it turning. "View as 360°" covers a 2:1 photo the server does not flag; a VR180 photo shows on a half sphere and a 3D photo with one eye. The yellow and blue keys turn a flat photo.
-5. Once signed in, "Network shares" in the rail of the app: add an SMB, WebDAV or DLNA share, a Plex server (signed in with a code on plex.tv/link) or a Tapo camera. Their photos open in the same viewer, 360° photos on the sphere.
+4. 360° nuotrauka atsidaro ant sferos: kiekvienas rodyklės paspaudimas ją pasuka žingsniu, o laikomas klavišas ją suka toliau. „Žiūrėti kaip 360°“ tinka 2:1 nuotraukai, kurios serveris nepažymi; VR180 nuotrauka rodoma ant pusės sferos, o 3D nuotrauka viena akimi. Geltonas ir mėlynas mygtukai pasuka plokščią nuotrauką.
+5. Prisijungus, „Tinklo bendrinimai“ programos šoninėje juostoje: pridėkite SMB, WebDAV ar DLNA bendrinimą, Plex serverį (prijungiamą kodu svetainėje plex.tv/link) arba Tapo kamerą. Jų nuotraukos atsidaro toje pačioje žiūryklėje, 360° nuotraukos ant sferos.
 
-Version 1.0.0 is made for the LG Content Store: Back leaves the app from Photos or the welcome page the way each webOS version expects, and closes an open popup first; a server that does not answer within 15 s ends with a message that says why and a Retry button; the privacy policy opens in the app, with a QR code to read [its LG TVs section](../PRIVACY.md#lg-tvs-webos) on a phone; the TV uses its Gallery picture mode, as LG asks of photo apps; and a second package suits the Full HD TVs to which LG gives 1280x720 apps.
+Versija 1.0.0 sukurta LG Content Store: Atgal išeina iš programos iš puslapio Nuotraukos arba pasveikinimo puslapio taip, kaip tikisi kiekviena webOS versija, ir pirmiausia uždaro atvertą iššokantį langą; serveris, neatsakantis per 15 s, baigiasi pranešimu, paaiškinančiu priežastį, ir mygtuku Bandyti iš naujo; privatumo politika atsidaro programoje, su QR kodu, kad telefone galėtumėte perskaityti [jos skyrių apie LG televizorius](../PRIVACY.md#lg-tvs-webos); televizorius naudoja savo vaizdo režimą Gallery, kaip LG reikalauja iš nuotraukų programų; o antrasis paketas tinka Full HD televizoriams, kuriems LG teikia 1280x720 programas.
 
-Limits: SMB needs webOS 22 (2022 TVs) or later. The shares, Plex and the cameras come through the app's own service on the TV, which reads them for the app, and were checked against real servers and a simulated camera on the project's build host, not on a TV yet. The live view of a camera is video only. Not yet: the recordings of the cameras (not before December 2026) and their sound, 360° videos on the sphere (they play flat, with a message), uploads. On webOS before 25, the reverse proxy in front of Immich must send CORS headers; the app explains them when it meets the problem. webOS 26 has not been tried yet.
+Ribos: SMB reikia webOS 22 (2022 m. televizorių) ar naujesnės. Bendrinimai, Plex ir kameros ateina per pačios programos paslaugą televizoriuje, kuri juos skaito programai, ir buvo patikrinti su realiais serveriais ir imituota kamera projekto build kompiuteryje, dar ne televizoriuje. Kameros tiesioginis vaizdas yra tik vaizdas be garso. Kol kas nėra: kamerų įrašų (ne anksčiau nei 2026 m. gruodį) ir jų garso, 360° vaizdo įrašų ant sferos (jie rodomi plokšti, su pranešimu), įkėlimų. webOS iki 25 versijos atvirkštinis tarpinis serveris prieš Immich turi siųsti CORS antraštes; programa jas paaiškina, kai susiduria su šia problema. webOS 26 dar neišbandyta.
 
 <a id="on-a-samsung-tv-tizen"></a>
-#### On a Samsung TV (Tizen)
+#### Samsung televizoriuje (Tizen)
 
-Samsung TVs with Tizen 5.5 and later (2020 TVs on) get the same TV app as test build 0.2.0, which is not on Samsung's store: sign in by typing, the timeline, albums, the viewer and the slideshow, 360° photos on the sphere and a photo turned with one key. Not yet: the sign in with a phone, the shares, Plex and the cameras, which run in a background service on LG TVs that the Samsung version does not have yet.
+Samsung televizoriai su Tizen 5.5 ir naujesne (nuo 2020 m. televizorių) gauna tą pačią TV programą kaip bandomąjį build 0.2.0, kurio nėra Samsung parduotuvėje: prisijungimas įvedant duomenis, laiko juosta, albumai, žiūryklė ir skaidrių peržiūra, 360° nuotraukos ant sferos ir nuotraukos pasukimas vienu klavišu. Kol kas nėra: prisijungimo telefonu, bendrinimų, Plex ir kamerų, kurie LG televizoriuose veikia per foninę paslaugą, kurios Samsung versija dar neturi.
 
-1. Sign the package for your TV and install it in Developer mode, see [Install](#samsung-tvs-tizen).
-2. Sign in by typing your server address, then your email and password or an API key.
-3. Browse with the arrows and OK. A 360° photo opens on the sphere; a 360° video plays flat, with a notice the first time, because on a tester's TV the browser of the TV gave black video frames to the 3D view.
-4. A video above what the TV's decoders accept says so, with the size the TV can play and the size of the file, instead of loading forever. A video that stalls shows a notice with its bitrate and the way out: let Immich transcode heavy files, or use a faster link. About this TV gives the TV's video ceiling.
+1. Pasirašykite paketą savo televizoriui ir įdiekite jį Developer mode režimu, žr. [Įdiegimas](#samsung-tvs-tizen).
+2. Prisijunkite įvesdami serverio adresą, tada el. paštą ir slaptažodį arba API raktą.
+3. Naršykite rodyklėmis ir OK. 360° nuotrauka atsidaro ant sferos; 360° vaizdo įrašas rodomas plokščias, pirmą kartą su pranešimu, nes testuotojo televizoriuje televizoriaus naršyklė 3D vaizdui perdavė juodus vaizdo kadrus.
+4. Vaizdo įrašas, viršijantis tai, ką priima televizoriaus dekoderiai, tai praneša, nurodydamas dydį, kurį televizorius gali atkurti, ir failo dydį, užuot kraunamas be galo. Strigantis vaizdo įrašas rodo pranešimą su savo bitų sparta ir išeitimi: leiskite Immich perkoduoti sunkius failus arba naudokite greitesnį ryšį. „Apie šį televizorių“ nurodo televizoriaus vaizdo ribą.
 
-Version 0.1.0 ran on a tester's Samsung TV on Tizen 9, and 0.2.0 holds the fixes from that run; 0.2.0 has not run on a TV yet. The text of the About page, posted in [Discussions](https://github.com/freeKC/Immuch360/discussions) or [Issues](https://github.com/freeKC/Immuch360/issues) after a run, helps the most.
+Versija 0.1.0 veikė testuotojo Samsung televizoriuje su Tizen 9, o 0.2.0 turi to bandymo pataisymus; 0.2.0 dar nebuvo paleista televizoriuje. Puslapio Apie tekstas, paskelbtas [Discussions](https://github.com/freeKC/Immuch360/discussions) arba [Issues](https://github.com/freeKC/Immuch360/issues) po bandymo, padeda labiausiai.
 
-More: [watch on your TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [the webOS app: install, remote control keys, CORS headers](../webos/README.md), [platform support](../docs/immuch360/platform-support.md).
+Daugiau: [žiūrėkite savo televizoriuje](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [webOS programa: įdiegimas, nuotolinio valdymo pulto mygtukai, CORS antraštės](../webos/README.md), [platformų palaikymas](../docs/immuch360/platform-support.md).
 
 <a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
 ### Prijunkite televizorių, akinius ar kompiuterį telefonu
 
-**Scan. Sign in. Watch.** Typing a server address, an email and a password with a TV remote, or in a headset, takes minutes. With Immuch360 on your phone, signed in to your Immich server, a TV, a Meta Quest or a computer is signed in within seconds: the big screen shows a QR code, the phone scans it, you confirm, and the screen opens on your library. With the phone app, your password stays on the phone. The Immich app has nothing like it.
+**Nuskaitykite. Prisijunkite. Žiūrėkite.** Serverio adreso, el. pašto ir slaptažodžio rinkimas televizoriaus nuotolinio valdymo pultu ar akiniuose užtrunka kelias minutes. Kai jūsų telefone yra Immuch360, prisijungusi prie jūsų Immich serverio, televizorius, Meta Quest ar kompiuteris prijungiamas per kelias sekundes: didysis ekranas rodo QR kodą, telefonas jį nuskaito, jūs patvirtinate, ir ekranas atsidaro jūsų bibliotekoje. Su telefono programa jūsų slaptažodis lieka telefone. Immich programa nieko panašaus neturi.
 
 <p align="center">
-  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Illustration, not a capture: a TV shows a QR code on its sign-in page, and a phone held in front of it scans the same code">
+  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Iliustracija, ne ekrano nuotrauka: televizorius prisijungimo puslapyje rodo QR kodą, o priešais jį laikomas telefonas nuskaito tą patį kodą">
 </p>
 
 1. Didžiajame ekrane (Android TV ir Google TV, Meta Quest langas, Windows, Linux ar macOS) pasirinkite „Prisijungti prie Immich serverio“: prisijungimo puslapis šalia serverio formos rodo „Prisijungti telefonu“, QR kodą ir 10 simbolių kodą.
@@ -345,13 +345,13 @@ More: [watch on your TV](../docs/immuch360/user-guide.md#watch-on-your-tv-androi
 
 Kaip tai išlieka saugu: telefonas ir ekranas turi būti tame pačiame namų tinkle, o kodas galioja daugiausia dvi minutes ir veikia vieną kartą. Telefonas paprašo jūsų serverio naujos sesijos tam ekranui, pavadintos jo vardu („Immuch360 on Living room TV“), ir nusiunčia ją ekranui užšifruotą, todėl jūsų slaptažodis niekada nepalieka telefono. „Prijungti televizorių ar kompiuterį“ išvardija ekranus, kuriuos prijungė šis telefonas, kiekvieną su mygtuku Atsijungti, o Immich juos rodo skiltyje Paskyros nustatymai, Įgalioti įrenginiai, kur juos taip pat galite atšaukti. Atjungus telefoną, atjungiami ir jie.
 
-The phone side runs on Android now, and on iPhone and iPad from the next iOS release. Without Immuch360 on the phone, scan the code with the camera of the phone: a page served by the screen opens in the browser, for your email and password, encrypted and used once. LG TVs sign in with a QR code of their own, in the browser of the phone; from build 28 the scanner of the phone app recognises it and opens that page. Samsung TVs are signed in by typing for now.
+Telefono dalis dabar veikia Android, o iPhone ir iPad veiks nuo kito iOS leidimo. Jei telefone nėra Immuch360, nuskaitykite kodą telefono kamera: naršyklėje atsidaro ekrano pateikiamas puslapis jūsų el. paštui ir slaptažodžiui, kurie užšifruojami ir panaudojami vieną kartą. LG televizoriai prisijungia savo QR kodu, telefono naršyklėje; nuo build 28 telefono programos skaitytuvas jį atpažįsta ir atveria tą puslapį. Samsung televizoriai kol kas prijungiami įvedant duomenis.
 
 Daugiau: [prisijungimas telefonu](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [ką ekranai siunčia ir saugo](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
 
 <a id="go-immersive-on-meta-quest"></a>
 <a id="step-inside-your-photos-and-videos-with-a-meta-quest"></a>
-### Step inside your photos and videos with a Meta Quest
+### Įženkite į savo nuotraukas ir vaizdo įrašus su Meta Quest
 
 Meta Quest akiniuose ta pati programa veikia kaip langas su visa jūsų biblioteka, o jos 360° mygtukas atveria panardinantį vaizdą, kuriame nuotrauka ar vaizdo įrašas jus apgaubia iš visų pusių: apžiūrite sukdami galvą, stereoskopiniai failai yra tikrame 3D, Apple erdvinė nuotrauka sklando prieš jus 3D formatu, o valdikliai ar jūsų rankos valdo laiko juostą, ankstesnį ir kitą, bei mygtuką "Pasukti", kuris perkelia į priekį tai, kas yra už jūsų, nesukant kėdės. Failai gaunami iš jūsų serverio, patys akiniai, NAS, medijos serveris, telefonas ar Plex serveris, atkuriami vietoje.
 
@@ -370,9 +370,9 @@ Daugiau: [Meta Quest akiniuose](../docs/immuch360/user-guide.md#in-the-meta-ques
 
 <a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
 <a id="play-the-files-of-a-nas-a-computer-a-media-server-or-plex"></a>
-### Play the files of a NAS, a computer, a media server or Plex
+### Atkurkite NAS, kompiuterio, medijos serverio ar Plex failus
 
-Your videos sit on a NAS, a computer, a media server or Plex. Immuch360 finds the servers of your network by itself, browses them and plays their photos and videos in place, in every viewer of the app, without copying anything: SMB (Samba, Windows shares), WebDAV (Nextcloud, Synology and others) and DLNA media servers (Jellyfin, Emby, minidlna, a NAS, a TV box). A phone can also share its own gallery on the Wi-Fi for a headset or any WebDAV client, and so can a Windows computer.
+Jūsų vaizdo įrašai yra NAS, kompiuteryje, medijos serveryje ar Plex. Immuch360 pati randa jūsų tinklo serverius, naršo juos ir atkuria jų nuotraukas ir vaizdo įrašus vietoje, visose programos žiūryklėse, nekopijuodama nieko: SMB (Samba, Windows bendrinami ištekliai), WebDAV (Nextcloud, Synology ir kiti) ir DLNA medijos serveriai (Jellyfin, Emby, minidlna, NAS, TV dėžutė). Telefonas gali taip pat bendrinti savo galeriją Wi-Fi tinkle akiniams ar bet kuriam WebDAV klientui, tą pat gali ir Windows kompiuteris.
 
 <p align="center">
   <img src="../.github/readme/b19-add-share.png" width="260" alt="Puslapis Pridėti bendrinimą: Pavadinimas, Serverio pavadinimas arba adresas, Prievadas (neprivaloma), Bendrinimas, Pasirinkite bendrinimą, Pradinis aplankas (neprivaloma), Naudotojo vardas, Slaptažodis, Išbandyti ryšį ir rezultatas Prisijungta, pradiniame aplanke įrašų: 2">
@@ -382,18 +382,18 @@ Your videos sit on a NAS, a computer, a media server or Plex. Immuch360 finds th
 1. Atverkite skirtuką Biblioteka, tada Tinklo bendrinimai, tada + ir „Tinklo bendrinimas (NAS, kompiuteris, medijos serveris)". Nuo build 24 pasveikinimo puslapyje „Pridėti tinklo bendrinimą arba medijos serverį" tiesiogiai atveria Tinklo bendrinimai, be serverio.
 2. Bakstelėkite serverį po "Rasta tinkle", arba užpildykite formą ranka: tipas, serverio pavadinimas ar adresas, bendrinimas ar kelias, pradinis aplankas, naudotojo vardas ir slaptažodis.
 3. Bakstelėkite "Išbandyti ryšį", tada Išsaugoti. Bakstelėkite bendrinimą, kad jį naršytumėte: pirma aplankus, tada nuotraukas ir vaizdo įrašus, su 360° ženkleliu failuose, atpažintuose kaip 360°.
-4. For a Plex server: in Network shares, + and "A Plex Media Server", then tap your server under "Found on the network", paste a token once ("How to get it" on the page says where to find it), then "Test the connection" and Save.
-5. With an Immich server connected, select files in a folder and tap "Upload to Immich" to send them to your server.
+4. Plex serveriui: „Tinklo bendrinimai“, + ir „Plex Media Server“, tada bakstelėkite savo serverį skiltyje „Rasta tinkle“, vieną kartą įklijuokite žetoną („Kaip jį gauti“ puslapyje nurodo, kur jį rasti), tada „Išbandyti ryšį“ ir „Išsaugoti“.
+5. Prijungę Immich serverį, pasirinkite failus aplanke ir bakstelėkite „Įkelti į Immich“, kad juos nusiųstumėte į savo serverį.
 
 Grotuvai skaito reikiamus baitus per vidinį tiltą programoje, su baitų intervalais, todėl slinkimas veikia ir nieko nesaugoma įrenginyje; SMB vaizdo įrašas skaitomas per iki šešių lygiagrečių ryšių sklandžiam atkūrimui. Nuo build 29 filmai, įrašyti M2TS formatu (Blu-ray, AVCHD vaizdo kameros, TV įrašymo įrenginiai), atkuriami Android programoje iš SMB ir WebDAV bendrinimų bei iš DLNA serverių, kurie juos pateikia kaip transporto srautus, o DLNA serveris, nurodantis dydį 0, nebeduoda tuščio vaizdo įrašo.
 
-**Plex Media Server, without plex.tv**: the app pairs with your server directly, with a token you paste once, and reads the original files of your libraries live, so 360° stays 360°, at home and, through your port forwarding, away from home. On an LG TV, Plex is signed in with a code on plex.tv/link.
+**Plex Media Server, be plex.tv**: programa jungiasi tiesiai su jūsų serveriu, naudojant žetoną, kurį įklijuojate vieną kartą, ir skaito jūsų bibliotekų originalius failus tiesiogiai, todėl 360° lieka 360°, namuose ir, per jūsų prievadų persiuntimą, toli nuo namų. LG televizoriuje Plex prijungiamas kodu svetainėje plex.tv/link.
 
-More: [network shares](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [share this phone on the network](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA media servers](../docs/immuch360/user-guide.md#dlna-media-servers), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv).
+Daugiau: [tinklo bendrinimai](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [bendrinkite šį telefoną tinkle](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA medijos serveriai](../docs/immuch360/user-guide.md#dlna-media-servers), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv).
 
 <a id="find-your-immich-library"></a>
 <a id="keep-your-immich-library-with-more"></a>
-### Keep your Immich library, with more
+### Pasilikite savo Immich biblioteką ir gaukite daugiau
 
 Su [Immich](https://github.com/immich-app/immich) serveriu Immuch360 yra Immich mobilioji programa, su tuo pačiu serveriu ir ta pačia paskyra kaip ir žiniatinklio programa: atsarginė kopija, laiko juosta, albumai, paieška, žmonės, prisiminimai, bendrinimas, partneriai, visa tai sinchronizuota su jūsų serveriu. Ji diegiama šalia oficialios programos. Virš to: 360° ženklelis ir sąrašas, kiekviena įtraukianti žiūryklė, pasirinkimas tarp originalaus failo ir serverio perkoduoto srauto kiekvienam vaizdo įrašui, vaizdo įrašo techninės detalės ir bendrinimo ar įrenginio failai, ranka nusiųsti į jūsų serverį.
 
@@ -401,107 +401,107 @@ Su [Immich](https://github.com/immich-app/immich) serveriu Immuch360 yra Immich 
 2. Nustatymuose, Failų žiūryklė, Vaizdo įrašai, "Vaizdo šaltinis" pasirenka originalą, kai šis įrenginys jį dekoduoja, visada originalą, arba visada perkoduotą srautą.
 3. Norėdami parodyti 360° nuotrauką kažkam, kas neturi programos, bendrinkite ją su Immich bendrinimo nuoroda: Immich žiniatinklio programa parodo ją kaip sferą jo naršyklėje.
 
-The current build, build 30, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), like builds 28 and 29; build 28 was tested against a server built from that same Immich `main`, and build 27 also against an Immich 3.2.4 server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
+Dabartinis build, build 30, paremtas 2026 m. spalio 10 d. Immich `main` (versija 3.3.0-rc.0), kaip ir build 28 bei 29; build 28 buvo išbandytas su serveriu, sukurtu iš to paties Immich `main`, o build 27 taip pat su Immich 3.2.4 serveriu. Apie problemas praneškite [Issues](https://github.com/freeKC/Immuch360/issues), o ne Immich projektui.
 
-What is the same and what Immuch360 adds is in [Compared with Immich](#compared-with-immich).
+Kas yra tas pats ir ką prideda Immuch360, rasite skyriuje [Palyginimas su Immich](#compared-with-immich).
 
 Daugiau: [visa kita yra Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [palyginimas su Immich programa](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 <a id="watch-your-home-cameras-on-the-big-screen"></a>
-### Watch your home cameras on the big screen
+### Žiūrėkite namų kameras dideliame ekrane
 
 <p align="center">
-  <img src="../.github/readme/home-cameras.png" width="720" alt="Illustration, not a capture: in a living room at dusk, the TV on the wall shows one live view of a garden path from a home camera that stands on the sideboard, and a phone on the table shows the same view.">
+  <img src="../.github/readme/home-cameras.png" width="720" alt="Iliustracija, ne ekrano nuotrauka: svetainėje sutemus televizorius ant sienos rodo vieną tiesioginį sodo tako vaizdą iš ant komodos stovinčios namų kameros, o telefonas ant stalo rodo tą patį vaizdą.">
 </p>
-<p align="center"><sub>An illustration. The Tapo support has not been checked with a real camera yet.</sub></p>
+<p align="center"><sub>Iliustracija. Tapo palaikymas dar nepatikrintas su tikra kamera.</sub></p>
 
-Your Tapo cameras of TP-Link, next to your photos, without the Tapo app. The app shows a camera live (Android phones and tablets, Android TV, the Meta Quest, Windows and, video only, LG TVs; iPhone and iPad from the next iOS release) and lists the recordings of its memory card day by day (phones, tablets, Android TV, the Quest and computers). A clip is fetched from the camera, plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link, and never changes anything on the camera.
+Jūsų TP-Link Tapo kameros šalia jūsų nuotraukų, be Tapo programos. Programa rodo kamerą tiesiogiai (Android telefonai ir planšetės, Android TV, Meta Quest, Windows ir, tik vaizdą be garso, LG televizoriai; iPhone ir iPad nuo kito iOS leidimo) ir rodo jos atminties kortelės įrašus diena po dienos (telefonai, planšetės, Android TV, Quest ir kompiuteriai). Klipas atsiunčiamas iš kameros, atkuriamas kaip bet kuris vaizdo įrašas ir gali būti nusiųstas į Immich. Programa bendrauja su kamera tik jūsų tinkle, niekada su TP-Link serveriais, ir niekada nieko nekeičia kameroje.
 
-**Not yet checked with a real camera.** The protocol was written from captures of a C510W with firmware 1.3.4, and the app was checked against a simulated camera only. A report with the model and firmware that "Test the camera" shows helps a lot.
+**Dar nepatikrinta su tikra kamera.** Protokolas parašytas pagal C510W su programine įranga 1.3.4 įrašus, o programa patikrinta tik su imituota kamera. Pranešimas su modeliu ir programine įranga, kuriuos rodo „Išbandyti kamerą“, labai padeda.
 
-1. In the Tapo app first: create the camera account (settings of the camera, Advanced Settings, Camera Account), used for the live view, and turn on Third-Party Compatibility, under Me, then Tapo Lab.
-2. In Immuch360: Library, Network shares, + and "A Tapo camera". Tap your camera under "Found on the network", or type its address.
-3. Type the password of your TP-Link account for the recordings, the camera account for the live view, or both; then "Test the camera", and Save.
-4. Tap the camera: its live view is at the top of its page, with the sound, SD or HD and Full screen; below it come the days with recordings. Tap a clip to fetch it and play it; its ⋮ menu has "Upload to Immich".
+1. Pirmiausia Tapo programoje: sukurkite kameros paskyrą (kameros nustatymai, Advanced Settings, Camera Account), naudojamą tiesioginiam vaizdui, ir įjunkite Third-Party Compatibility skiltyje Me, tada Tapo Lab.
+2. Immuch360: Biblioteka, Tinklo bendrinimai, + ir „Tapo kamera“. Bakstelėkite savo kamerą skiltyje „Rasta tinkle“ arba įveskite jos adresą.
+3. Įveskite TP-Link paskyros slaptažodį įrašams, kameros paskyrą tiesioginiam vaizdui arba abu; tada „Išbandyti kamerą“ ir „Išsaugoti“.
+4. Bakstelėkite kamerą: jos tiesioginis vaizdas yra puslapio viršuje, su garsu, SD arba HD ir viso ekrano režimu; žemiau eina dienos su įrašais. Bakstelėkite klipą, kad jį atsisiųstumėte ir atkurtumėte; jo ⋮ meniu turi „Įkelti į Immich“.
 
-More: [Tapo cameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Daugiau: [Tapo kameros](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="your-dji-drone-experimental"></a>
-### Your DJI drone (experimental)
+### Jūsų DJI dronas (eksperimentinis)
 
-A Drone card in the Library, experimental and on by default, gathers what Immuch360 does with a DJI drone: on an Android phone, the drone's live video through its remote controller, and its photos and videos brought to Immich over USB; in a Meta Quest or on an Android TV, that live video relayed by the phone, to watch. Immuch360 is not a DJI product and is not approved by DJI, and nothing is sent to DJI. In this build the drone screens are in English only; their translations come later.
+Kortelė Drone skiltyje Biblioteka, eksperimentinė ir įjungta pagal numatymą, surenka viską, ką Immuch360 daro su DJI dronu: Android telefone drono tiesioginį vaizdą per jo nuotolinį valdiklį ir jo nuotraukas bei vaizdo įrašus, perkeltus į Immich per USB; Meta Quest akiniuose ar Android TV tą tiesioginį vaizdą, perduodamą telefono, žiūrėjimui. Immuch360 nėra DJI produktas ir nėra patvirtinta DJI, ir niekas nesiunčiama DJI. Šiame build drono ekranai yra tik anglų kalba; jų vertimai bus vėliau.
 
 <a id="your-dji-drones-live-video-on-your-phone-experimental"></a>
 <a id="see-what-your-drone-sees-on-your-phone"></a>
-#### See what your drone sees, on your phone
+#### Matykite, ką mato jūsų dronas, savo telefone
 
 <p align="center">
-  <img src="../.github/readme/drone-live-phone.png" width="720" alt="Illustration, not a capture: two hands hold a drone remote controller with a phone clipped on top, whose screen shows a live aerial view of a coast, while a small drone flies over the bay at dusk">
+  <img src="../.github/readme/drone-live-phone.png" width="720" alt="Iliustracija, ne ekrano nuotrauka: dvi rankos laiko drono nuotolinį valdiklį su prisegtu telefonu viršuje, kurio ekranas rodo tiesioginį pakrantės vaizdą iš oro, o mažas dronas sutemus skrenda virš įlankos">
 </p>
 
-See what your DJI drone sees on your Android phone, without DJI Fly and without any account: plug a DJI RC-N3 remote controller into the phone with its cable, and Immuch360 shows the drone's live video full screen in landscape, H.265 in 1080p, with the flight values read from the cable. The remote keeps full control of the drone. It was tried with an RC-N3, a DJI Neo 2 and a Samsung Galaxy S24+: on the ground with build 29, and in flight with test builds of build 30 on 24 and 25 October. Other remotes and drones have not been tried.
+Matykite tai, ką mato jūsų DJI dronas, savo Android telefone, be DJI Fly ir be jokios paskyros: prijunkite DJI RC-N3 nuotolinį valdiklį prie telefono jo kabeliu, ir Immuch360 rodo drono tiesioginį vaizdą per visą ekraną gulsčiai, H.265 1080p raiška, su skrydžio reikšmėmis, nuskaitytomis per kabelį. Valdiklis visiškai išlaiko drono valdymą. Jis išbandytas su RC-N3, DJI Neo 2 ir Samsung Galaxy S24+: ant žemės su build 29, o skrydžio metu su build 30 bandomaisiais build spalio 24 ir 25 d. Kiti valdikliai ir dronai neišbandyti.
 
 Jis tik klausosi. Valdikliui ar dronui niekada nesiunčiama jokia komanda: vienas baitas, kurį puslapis rašo kas sekundę, praėjus 20 sekundžių po valdiklio atvėrimo, tik parodo, ar valdiklis priima duomenis, ir neneša jokios komandos.
 
-On the live screen: the drone's battery and the motor time and, in flight, the height above the take off point, the vertical speed, the speed and the distance below the drone. A value goes there only once our own flight captures prove it: the height, the speeds and the distance below were proven on the captures of two indoor flights on 25 October, up to 1.8 m high and 1.5 m/s, not beyond yet; showing them there is new in build 30 and first tested with it. The height shows about 1.5 s after lift off, once the drone has left the ground or the hand, and stays hidden until the motors stop if it ever jumps in a way no aircraft can. Advanced adds the battery's voltage and temperature, the heading (its zero not checked against north) and the motors, and Diagnostics every number the link gives, the battery current included. No satellites, position or distance from home are shown. The numbers are not compared with DJI Fly yet: do not fly by them.
+Tiesioginiame ekrane: drono baterija ir variklių laikas, o skrydžio metu aukštis virš kilimo taško, vertikalusis greitis, greitis ir atstumas po dronu. Reikšmė ten atsiranda tik tada, kai ją įrodo mūsų pačių skrydžių įrašai: aukštis, greičiai ir atstumas žemyn įrodyti dviejų skrydžių patalpoje įrašais spalio 25 d., iki 1.8 m aukščio ir 1.5 m/s, dar ne daugiau; jų rodymas ten yra naujiena build 30 ir pirmą kartą bandomas su juo. Aukštis pasirodo maždaug 1.5 s po pakilimo, kai dronas palieka žemę ar ranką, ir lieka paslėptas, kol varikliai sustoja, jei jis kada nors šokteli taip, kaip negali joks orlaivis. Advanced prideda baterijos įtampą ir temperatūrą, kryptį (jos nulis nepatikrintas pagal šiaurę) ir variklius, o Diagnostics kiekvieną ryšio pateikiamą skaičių, įskaitant baterijos srovę. Palydovai, padėtis ar atstumas nuo namų nerodomi. Skaičiai dar nepalyginti su DJI Fly: neskraidykite pagal juos.
 
-**Obstacle ring**, on by default: when the drone's sensors see something close, a translucent circle shows around the middle of the picture, with an arc toward the obstacle, amber turning red as it gets closer, its distance beside it and a short tick that speeds up; with nothing close, nothing shows. The circle and the direction of the arc were checked in flight, indoors, on 25 October, on a test build where the direction was an option; shown by default, it is first tested with build 30. In Advanced you set the distances ("Glow from", 3.0 m, and "Strong glow from", 1.0 m), choose a frame at the edges of the picture instead of the circle, or turn off the ring, its sound or its vibration. It shows only what the drone's sensors report: nothing in Sport mode or with obstacle avoidance off, and no glow does not mean the way is clear. Information only: Immuch360 never steers or stops the drone.
+**Kliūčių žiedas**, įjungtas pagal numatymą: kai drono jutikliai mato ką nors arti, aplink vaizdo vidurį pasirodo permatomas apskritimas su lanku kliūties link, gintarinis, kuris raudonuoja artėjant, šalia jo atstumas ir trumpas tiksėjimas, kuris greitėja; kai nieko arti nėra, nieko nerodoma. Apskritimas ir lanko kryptis patikrinti skrydžio metu, patalpoje, spalio 25 d., bandomajame build, kuriame kryptis buvo parinktis; rodomas pagal numatymą, jis pirmą kartą bandomas su build 30. Skiltyje Advanced nustatote atstumus („Glow from“, 3.0 m, ir „Strong glow from“, 1.0 m), vietoj apskritimo pasirenkate rėmelį vaizdo kraštuose arba išjungiate žiedą, jo garsą ar vibraciją. Jis rodo tik tai, ką praneša drono jutikliai: nieko Sport režimu ar išjungus kliūčių vengimą, ir švytėjimo nebuvimas nereiškia, kad kelias laisvas. Tik informacija: Immuch360 niekada nevairuoja ir nestabdo drono.
 
-1. The Drone card is in the Library, and "DJI live video" on its page: "DJI live video (experimental)", in Settings, Advanced, is on by default.
-2. Turn on the drone and the remote, close DJI Fly, then open "DJI live video" and read the safety notice.
-3. Plug the remote into the phone with its cable. If Android asks which app should open it, choose Immuch360 without "Always", which would take the remote away from DJI Fly; if it asks for a USB mode, choose charging only. Plugging in the remote then opens this screen by itself ("Open this screen when the remote is plugged in", on by default in Advanced).
-4. Remote, Drone and Picture light up in turn, and the picture comes full screen within a few seconds. Three buttons (leave, "Send to a headset or a TV" and Advanced) and the values sit in the black bands beside the picture. The notes, such as "Live", fade after about five seconds; a tap anywhere brings them back, and nothing on the picture acts on the drone. An error that asks you to act stays.
-5. Advanced has "Save a capture for a bug report", which writes the link's capture to `Download/Immuch360/dji-link`, "Play a saved capture", to play one again without the remote, and Diagnostics, with every number the link gives.
+1. Kortelė Drone yra skiltyje Biblioteka, o „DJI live video“ jos puslapyje: „DJI live video (experimental)“ skiltyje Nustatymai, Papildomai įjungtas pagal numatymą.
+2. Įjunkite droną ir valdiklį, uždarykite DJI Fly, tada atverkite „DJI live video“ ir perskaitykite saugos pranešimą.
+3. Prijunkite valdiklį prie telefono jo kabeliu. Jei Android klausia, kuri programa turėtų jį atverti, pasirinkite Immuch360 be „Visada“, nes tai atimtų valdiklį iš DJI Fly; jei klausia USB režimo, pasirinkite tik įkrovimą. Vėliau prijungus valdiklį šis ekranas atsidaro pats („Open this screen when the remote is plugged in“, įjungta pagal numatymą skiltyje Advanced).
+4. Remote, Drone ir Picture užsidega paeiliui, ir vaizdas per kelias sekundes pasirodo per visą ekraną. Trys mygtukai (išeiti, „Send to a headset or a TV“ ir Advanced) bei reikšmės yra juodose juostose šalia vaizdo. Pastabos, tokios kaip „Live“, išnyksta po maždaug penkių sekundžių; bakstelėjimas bet kur jas grąžina, ir niekas ant vaizdo neveikia drono. Klaida, prašanti jūsų veiksmo, lieka.
+5. Skiltyje Advanced yra „Save a capture for a bug report“, kuris įrašo ryšio įrašą į `Download/Immuch360/dji-link`, „Play a saved capture“, kad jį vėl atkurtumėte be valdiklio, ir Diagnostics su kiekvienu ryšio pateikiamu skaičiumi.
 
-The drone's photos and videos cannot be reached through the remote, which does not open the drone's storage: copy them from the drone itself over USB or from its card, as [below](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich). Keep the saved captures to yourself, as the page says: they hold the drone's video and the serial numbers of the remote and the aircraft, and may hold its position; a report in [Issues](https://github.com/freeKC/Immuch360/issues) with what Diagnostics shows helps, above all with other DJI remotes.
+Drono nuotraukų ir vaizdo įrašų negalima pasiekti per valdiklį, nes jis neatveria drono saugyklos: nukopijuokite juos iš paties drono per USB arba iš jo kortelės, kaip [žemiau](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich). Išsaugotus įrašus pasilikite sau, kaip nurodo puslapis: juose yra drono vaizdas ir valdiklio bei orlaivio serijos numeriai, ir gali būti jo padėtis; pranešimas [Issues](https://github.com/freeKC/Immuch360/issues) su tuo, ką rodo Diagnostics, padeda, ypač su kitais DJI valdikliais.
 
 <a id="watch-it-in-a-meta-quest-or-on-an-android-tv"></a>
-#### Watch it in a Meta Quest or on an Android TV
+#### Žiūrėkite tai Meta Quest akiniuose ar Android TV
 
-The phone plugged into the remote can send the drone's picture and values to Immuch360 in a Meta Quest or on an Android TV or Google TV on the same local network, for the people with you. A headset shows them in a window or, larger, in a flight view in front of you, and a TV full screen, with the same values and obstacle ring as the phone. They only watch: nothing a headset or a TV does reaches the remote or the drone. Their notes, such as "Watching only", fade after a few seconds and come back with a key, a tap or a button. The drone's picture reached a Quest 3 once, on 24 October, over a home Wi-Fi; the headset window and the flight view with the values and the obstacle ring are first tested with build 30, and the Quest 2, Pro and 3S have not been tried. Should the circle hide the middle of the picture in the headset, "Frame at the edges" in its menu keeps the middle clear. On a TCL Android TV, the pairing and the picture were tried on 25 October, with stutter and a green cast on the earlier relay; the steady stream that answers them is first tested with build 30. Flying while you watch the headset or the TV needs an observer next to you who keeps the drone in sight (EU open category); without one, watch the drone.
+Prie valdiklio prijungtas telefonas gali siųsti drono vaizdą ir reikšmes į Immuch360 Meta Quest akiniuose arba Android TV ar Google TV tame pačiame vietiniame tinkle, kartu esantiems žmonėms. Akiniai juos rodo lange arba, didesnius, skrydžio vaizde priešais jus, o televizorius per visą ekraną, su tomis pačiomis reikšmėmis ir kliūčių žiedu kaip telefone. Jie tik žiūri: niekas, ką daro akiniai ar televizorius, nepasiekia valdiklio ar drono. Jų pastabos, tokios kaip „Watching only“, išnyksta po kelių sekundžių ir grįžta paspaudus klavišą, bakstelėjus ar paspaudus mygtuką. Drono vaizdas vieną kartą, spalio 24 d., pasiekė Quest 3 per namų Wi-Fi; akinių langas ir skrydžio vaizdas su reikšmėmis ir kliūčių žiedu pirmą kartą bandomi su build 30, o Quest 2, Pro ir 3S neišbandyti. Jei apskritimas akiniuose uždengtų vaizdo vidurį, „Frame at the edges“ jo meniu palieka vidurį laisvą. TCL Android TV susiejimas ir vaizdas išbandyti spalio 25 d., su trūkčiojimu ir žalsvu atspalviu ankstesniame perdavime; stabilus srautas, kuris į tai atsako, pirmą kartą bandomas su build 30. Skrendant ir žiūrint į akinius ar televizorių, šalia jūsų reikia stebėtojo, kuris mato droną (ES atviroji kategorija); be jo žiūrėkite į droną.
 
-1. On the phone, on the live screen, tap "Send to a headset or a TV" and turn it on.
-2. **Meta Quest**: open Immuch360, Library, Drone, and pick the phone; type the code the phone shows, once for that phone. The picture opens in the window; "Open the flight view" makes it larger, and B or Y brings the window back.
-3. **Android TV and Google TV**: open Immuch360, Library, Drone. Under "Let this TV watch", the TV shows a code and its QR code: on the phone, in the same panel, tap "Add a TV" and scan it, or type it. Then select the phone on the TV and press OK: the picture comes full screen; OK shows or hides the numbers, and Menu opens the options.
-4. The phone and the screen must be on the same local network. Away from home, turn on the phone's hotspot, in the 5 GHz band if it offers it, and join it from the headset or the TV.
-5. For a bug report, the headset's menu and the TV's Options have Diagnostics and "Save a reception record", which keeps what that screen received.
+1. Telefone, tiesioginiame ekrane, bakstelėkite „Send to a headset or a TV“ ir įjunkite.
+2. **Meta Quest**: atverkite Immuch360, Biblioteka, Drone ir pasirinkite telefoną; įveskite telefono rodomą kodą, vieną kartą tam telefonui. Vaizdas atsidaro lange; „Open the flight view“ jį padidina, o B arba Y grąžina langą.
+3. **Android TV ir Google TV**: atverkite Immuch360, Biblioteka, Drone. Skiltyje „Let this TV watch“ televizorius rodo kodą ir jo QR kodą: telefone, tame pačiame skydelyje, bakstelėkite „Add a TV“ ir nuskaitykite jį arba įveskite. Tada televizoriuje pasirinkite telefoną ir paspauskite OK: vaizdas pasirodo per visą ekraną; OK rodo arba slepia skaičius, o Menu atveria parinktis.
+4. Telefonas ir ekranas turi būti tame pačiame vietiniame tinkle. Toli nuo namų įjunkite telefono viešosios prieigos tašką, 5 GHz dažnių juostoje, jei jis ją siūlo, ir prijunkite prie jo akinius ar televizorių.
+5. Klaidos pranešimui akinių meniu ir televizoriaus Options turi Diagnostics ir „Save a reception record“, kuris išsaugo, ką tas ekranas gavo.
 
-**Relay quality**, new in build 30, in Advanced on the phone: in flight the drone sends about 18 Mbit/s, and on 25 October a home Wi-Fi path from the phone through the router to the TV carried that full stream only a third of the flight time; the rest of the time the TV's picture stuttered, broke up and took a green cast. With Automatic, the default, a screen whose Wi-Fi cannot keep up gets a steady picture that the phone encodes again for it, up to 1080p at 30 pictures a second and at the rate its Wi-Fi carries, made to stay clean, with less detail, instead of breaking up; it goes back to the drone's own picture at the next landing or take off, once the Wi-Fi has room. Full stream always sends the drone's picture as it comes, Steady stream always the phone's. The steady picture is new: it is first tested with build 30, and had not run on a phone on 25 October. A TV on an Ethernet cable, or a screen joined to the phone's own hotspot, leaves one Wi-Fi hop instead of two.
+**Perdavimo kokybė** (Relay quality), nauja build 30, telefono skiltyje Advanced: skrydžio metu dronas siunčia apie 18 Mbit/s, o spalio 25 d. namų Wi-Fi kelias nuo telefono per maršrutizatorių iki televizoriaus perdavė tą pilną srautą tik trečdalį skrydžio laiko; likusį laiką televizoriaus vaizdas trūkčiojo, byrėjo ir įgavo žalsvą atspalvį. Su Automatic, numatytuoju, ekranas, kurio Wi-Fi nespėja, gauna stabilų vaizdą, kurį telefonas jam perkoduoja, iki 1080p 30 kadrų per sekundę ir tokia sparta, kokią perneša jo Wi-Fi, sukurtą likti švariu, su mažiau detalių, užuot byrėjus; per kitą nusileidimą ar pakilimą jis grįžta prie paties drono vaizdo, kai Wi-Fi turi vietos. Full stream visada siunčia drono vaizdą tokį, koks ateina, Steady stream visada telefono. Stabilus vaizdas yra naujas: jis pirmą kartą bandomas su build 30, o spalio 25 d. dar nebuvo paleistas telefone. Televizorius su Ethernet kabeliu arba ekranas, prijungtas prie paties telefono viešosios prieigos taško, palieka vieną Wi-Fi šuolį vietoj dviejų.
 
-Not in this build: the drone on iPhone and iPad (not started), the relay to LG and Samsung TVs, and the proof of the values above 1.8 m and 1.5 m/s, then the satellites and the distance from home, which wait for an outdoor flight.
+Šiame build nėra: drono iPhone ir iPad (nepradėta), perdavimo į LG ir Samsung televizorius ir reikšmių virš 1.8 m ir 1.5 m/s įrodymo, tada palydovų ir atstumo nuo namų, kurie laukia skrydžio lauke.
 
 <a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
 <a id="bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich"></a>
-#### Bring a drone's or a camera card's photos and videos to Immich
+#### Perkelkite drono ar kameros kortelės nuotraukas ir vaizdo įrašus į Immich
 
 Importuokite DJI drono nuotraukas ir vaizdo įrašus per USB tiesiai į savo Immich serverį: prijunkite droną arba kortelių skaitytuvą prie Android telefono, pasirinkite naujus failus ir išsiųskite juos; vaizdo įrašai padedami žemėlapyje pagal drono skrydžio duomenis, o drono 360° sferos rodomos kaip 360°. Immich programa sukuria atsarginę kopiją tik to, kas jau yra telefono galerijoje, o Immich serveris kol kas negali nuskaityti DJI Neo 2 vaizdo įrašo vietos. Šis puslapis yra eksperimentinis, veikia tik Android telefonuose ir planšetėse ir dar nebuvo išbandytas su realiu dronu.
 
 <p align="center">
-  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Illustration, not a capture: a drone on a terrace table, plugged into a phone by a cable, and its photos and videos going in an arc from the drone to the gallery of the phone">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Iliustracija, ne ekrano nuotrauka: dronas ant terasos stalo, kabeliu prijungtas prie telefono, ir jo nuotraukos bei vaizdo įrašai lanku keliauja iš drono į telefono galeriją">
 </p>
 
-1. Open the Drone card in the Library, then "Photos and videos from the drone". Its setting, "DJI drones (experimental)" in Settings, Advanced, is on by default; turn it off there to hide that page.
+1. Atverkite kortelę Drone skiltyje Biblioteka, tada „Photos and videos from the drone“. Jos nustatymas, „DJI drones (experimental)“ skiltyje Nustatymai, Papildomai, įjungtas pagal numatymą; išjunkite jį ten, kad paslėptumėte tą puslapį.
 2. Prijunkite droną (Neo 2 gali likti išjungtas) arba kortelių skaitytuvą prie telefono USB-C duomenų kabeliu; DJI valdiklyje be ekrano (RC-N1, RC-N2, RC-N3) nuotraukų nėra. DJI drono puslapyje bakstelėkite „Pasirinkti droną arba kortelę“, pasirinkite jį parinkiklio šoniniame meniu, atverkite jo DCIM aplanką arba palikite visą diską, tada „Naudoti šį aplanką“ ir Leisti.
 3. Puslapis išvardija nuotraukas ir vaizdo įrašus pagal dieną, be pagalbinių .LRF, .SRT, .THM ir .m4a failų. Bakstelėkite „Pasirinkti visus naujus“, tada „Įkelti į Immich“; anksčiau išsiųsti failai pažymėti debesies ženklu ir praleidžiami. „Laikyti įrenginyje“ vietoj to nukopijuoja failus į telefono galeriją, albume „Immuch360 import“.
 4. Kad vaizdo įrašas atsidurtų žemėlapyje, prieš skrisdami įjunkite Video Subtitles programoje DJI Fly (vaizdo režimas, Settings, Camera): tada dronas šalia kiekvieno vaizdo įrašo įrašo .SRT failą, programa iš jo nuskaito vietą ir po įkėlimo nustato ją jūsų serveryje, jei Immich jos nerado.
 
 DJI dronų 360° sferos (Mini, Air, Mavic ir kiti, atpažįstami pagal jų kamerą) Immuch360 rodomos kaip 360° net be 360° žymų. Immich reikia tų žymų: įkėlimo parinktis „Žymėti drono sferas kaip 360° Immich“, pagal numatymą išjungta, siunčia nuotrauką nepakeistą su mažu .xmp failu šalia, kad Immich ją taip pat rodytų kaip sferą. Neo 2 neturi sferos ar panoramos režimo: jo nuotraukos ir vaizdo įrašai yra plokšti. Kai Neo 2 klipo garsą įrašė telefonas, tas garsas yra atskirame .m4a faile: puslapis pažymi klipą, o Immich jį gauna be garso (atsisiųskite jį su DJI Fly, kad išsaugotumėte garsą). Bet kuri kameros kortelė su DCIM aplanku kortelių skaitytuve veikia taip pat. Niekas nesiunčiama DJI.
 
-More: [DJI drones over USB](../docs/immuch360/user-guide.md#dji-drones-photos-and-videos-over-usb-experimental), [DJI link diagnostics](../docs/immuch360/user-guide.md#dji-link-diagnostics-experimental).
+Daugiau: [DJI dronai per USB](../docs/immuch360/user-guide.md#dji-drones-photos-and-videos-over-usb-experimental), [DJI ryšio diagnostika](../docs/immuch360/user-guide.md#dji-link-diagnostics-experimental).
 
 <a id="open-the-raw-files-of-360-cameras"></a>
-### Open the raw files of 360° cameras
+### Atverkite 360° kamerų neapdorotus failus
 
-The raw .insp photos and .insv videos of Insta360 cameras (one or two lenses, in one track, two tracks or two files), the .360 files of the GoPro MAX and the .osv files of the DJI Osmo 360 are stitched by the app as they play, with the calibration written in the file, with nothing to install anywhere.
+Neapdoroti Insta360 kamerų .insp nuotraukos ir .insv vaizdo įrašai (vienas arba du objektyvai, viename takelyje, dviejuose takeliuose arba dviejuose failuose), GoPro MAX .360 failai ir DJI Osmo 360 .osv failai programos sujungiami jų atkūrimo metu, naudojant faile įrašytą kalibravimą, ir nereikia nieko niekur įdiegti.
 
-1. Put the raw files where the app reads them: an SMB or WebDAV share, your Immich server (it takes .insp and .insv only), or the folders of a computer. The gallery of an Android phone does not list raw files, so a raw file copied to the phone shows neither in its gallery nor in the app.
-2. Keep the two files of a recording made of two files together: the app looks for the other one next to the first.
-3. Open the file and tap 360°. A photo shows "Raw 360° file, stitched by the app" with the source of its calibration; a video is stitched as it plays.
+1. Padėkite neapdorotus failus ten, kur programa juos skaito: SMB ar WebDAV bendrinime, jūsų Immich serveryje (jis priima tik .insp ir .insv) arba kompiuterio aplankuose. Android telefono galerija neapdorotų failų nerodo, todėl į telefoną nukopijuotas neapdorotas failas nerodomas nei jo galerijoje, nei programoje.
+2. Laikykite kartu du įrašo, sudaryto iš dviejų failų, failus: programa ieško kito failo šalia pirmojo.
+3. Atverkite failą ir bakstelėkite 360°. Nuotrauka rodo „Neapdorotas 360° failas, sujungtas programos“ su savo kalibravimo šaltiniu; vaizdo įrašas sujungiamas jo atkūrimo metu.
 
-Linux and macOS play raw videos flat, and dual fisheye .dng files show flat for now.
+Linux ir macOS neapdorotus vaizdo įrašus rodo plokščius, o dvigubo žuvies akies .dng failai kol kas rodomi plokšti.
 
-More: [raw 360° camera files](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
+Daugiau: [neapdoroti 360° kamerų failai](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
 <a id="turn-a-photo-with-one-key"></a>
 ### Pasukite nuotrauką vienu klavišu
@@ -509,77 +509,77 @@ More: [raw 360° camera files](../docs/immuch360/user-guide.md#raw-360-camera-fi
 Pasukite nuotrauką 90° vienu paspaudimu, neatverdami redaktoriaus: mygtuku, klaviatūros klavišu arba televizoriaus nuotolinio valdymo pulto spalvotu mygtuku, visose platformose. Immich programa nuotrauką pasuka savo redaktoriuje; Immuch360 tai daro vienu klavišu, o jūsų pačių nuotraukos Immich 2.6 ar naujesniame serveryje pasukamos per tą patį serverio redaktorių, todėl žiniatinklio programa ir kiti jūsų įrenginiai jas rodo pasuktas. Bet kuri kita nuotrauka pasukama tik šiame įrenginyje. 360°, 180° ir 3D nuotraukos niekada nepasukamos, kad įtraukiantys vaizdai liktų lygūs.
 
 <p align="center">
-  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Illustration, not a capture: a phone shows a photo turning a quarter turn clockwise, above a row of round buttons with the rotate button lit">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Iliustracija, ne ekrano nuotrauka: telefonas rodo nuotrauką, pasisukančią ketvirtį apsisukimo pagal laikrodžio rodyklę, virš apvalių mygtukų eilės su šviečiančiu pasukimo mygtuku">
 </p>
 
 1. **Telefonai, planšetės ir Meta Quest langas**: atverkite nuotrauką ir apatinėje eilutėje, prieš Redaguoti, bakstelėkite Pasukti, kad ją pasuktumėte pagal laikrodžio rodyklę; ilgas paspaudimas pasuka į kitą pusę. Su klaviatūra: R ir Shift+R.
 2. **Android TV ir Google TV**: geltonas pulto mygtukas pasuka nuotrauką pagal laikrodžio rodyklę, o mėlynas prieš laikrodžio rodyklę, kad ir kur žiūryklėje būtų židinys. Pulte be spalvotų mygtukų spauskite žemyn: po nuotrauka pasirodo juosta su pažymėtu Pasukti (iki jo lieka vienas paspaudimas dešinėn, kai nuotrauka turi teksto mygtuką), ir kiekvienas OK pasuka nuotrauką.
-3. **LG TVs (webOS)**: yellow and blue as on Android TV, R and Shift+R on a keyboard, or the turn button of the photo's controls. Samsung TVs turn a photo with one key too.
+3. **LG televizoriai (webOS)**: geltonas ir mėlynas mygtukai kaip Android TV, R ir Shift+R klaviatūroje arba nuotraukos valdiklių pasukimo mygtukas. Samsung televizoriai taip pat pasuka nuotrauką vienu klavišu.
 4. **Windows, Linux ir macOS**: R pasuka pagal laikrodžio rodyklę, Shift+R prieš laikrodžio rodyklę, arba pasukimo mygtukas viršutinėje juostoje, prieš viso ekrano mygtuką.
 5. **Tinklo bendrinimo, Plex ar kameros nuotraukos**: pasukimo mygtukas pirmas viršutinėje juostoje, R ir Shift+R, arba geltonas ir mėlynas mygtukai.
 
 Kur išsaugomas pasukimas: jūsų pačių paskyros nuotrauka Immich 2.6 ar naujesniame serveryje pasukama per serverio nuotraukų redaktorių, kuris išlaiko originalų failą ir sukuria pasuktą vaizdą (kol jis dirba, rodoma plona juosta; keturi pasukimai arba vienas pasukimas atgal grąžina originalą). Įrenginio nuotraukos, bendrinimo, partnerio ar bendrinamo albumo nuotraukos ir visos nuotraukos senesniame serveryje pasukamos tik šiame įrenginyje, tik tai nuotraukai, o failas niekada nekeičiamas; Immich nuotraukai programa tai praneša vieną kartą. Android, iOS ir kompiuterių programose įrenginyje išsaugotas pasukimas matomas žiūryklėje, bet kol kas ne miniatiūrose, skaidrių peržiūroje ir prisiminimuose. Vaizdo įrašai, užrakintas aplankas ir visos 360°, 180° ar 3D nuotraukos neturi mygtuko Pasukti.
 
 <a id="use-your-computer-as-the-media-player"></a>
-### Use your computer as the media player
+### Naudokite kompiuterį kaip medijos grotuvą
 
-On a Windows computer, Immuch360 Desktop reads the folders you choose with no server at all, plays flat and 360° videos in a player of its own, browses the same shares and servers, and can share the computer with a headset at home. Linux and macOS have it as previews, with 360° videos played flat.
+Windows kompiuteryje Immuch360 Desktop skaito jūsų pasirinktus aplankus visai be serverio, atkuria plokščius ir 360° vaizdo įrašus savo grotuve, naršo tuos pačius bendrinimus ir serverius ir gali bendrinti kompiuterį su akiniais namuose. Linux ir macOS jį turi kaip peržiūras, o 360° vaizdo įrašai rodomi plokšti.
 
 <p align="center">
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Immuch360 Desktop vaizdo grotuvas Windows: gatvės vaizdo įrašas, atkuriamas lange, su pauzės mygtuku, laiko juosta, Bendrinti ir Įkelti į Immich">
 </p>
 
-1. Install the preview, or unzip it and start `immuch360.exe`, see [Install](#windows). On the welcome page, "Use without a server" opens the choice of your folders, and "Connect to an Immich server" the login page, with its QR code for your phone.
-2. A photo, a video or a folder opened with the program, or dropped on its window, opens at once, a 360° one in its 360° view; several files open together on one page. Photos and videos get it in "Open with"; it never makes itself their default program.
-3. In a viewer, the keyboard drives it: Space plays and pauses, J and L go back and forward, F is full screen, and R and Shift+R turn a photo.
+1. Įdiekite peržiūrą arba išskleiskite ją ir paleiskite `immuch360.exe`, žr. [Įdiegimas](#windows). Pasveikinimo puslapyje „Naudoti be serverio“ atveria jūsų aplankų pasirinkimą, o „Prisijungti prie Immich serverio“ prisijungimo puslapį su QR kodu jūsų telefonui.
+2. Nuotrauka, vaizdo įrašas ar aplankas, atverti programa arba numesti ant jos lango, atsidaro iškart, 360° failas savo 360° vaizde; keli failai atsidaro kartu viename puslapyje. Nuotraukos ir vaizdo įrašai ją gauna meniu „Open with“; ji niekada nepasidaro jų numatytąja programa.
+3. Žiūryklėje ją valdo klaviatūra: tarpas paleidžia ir pristabdo, J ir L grįžta atgal ir peršoka pirmyn, F įjungia visą ekraną, o R ir Shift+R pasuka nuotrauką.
 
-More: [on a Windows computer](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [platform support](../docs/immuch360/platform-support.md).
+Daugiau: [Windows kompiuteryje](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [platformų palaikymas](../docs/immuch360/platform-support.md).
 
 <a id="compared-with-immich"></a>
-## Compared with Immich
+## Palyginimas su Immich
 
-Immuch360 keeps the whole Immich mobile app and adds what is around it. In short:
+Immuch360 išlaiko visą Immich mobiliąją programą ir prideda tai, kas aplink ją. Trumpai:
 
-| | Immuch360, compared with the Immich app |
+| | Immuch360, palyginti su Immich programa |
 |---|---|
-| **The same** | your Immich server and account: backup, timeline, albums, search, people, memories, sharing and partners, all synced with your server. It installs next to the official app. |
-| **No server needed** | it also runs without a server or an account, on the photos and videos of the device, the folders of a computer and network shares; Plex and the cameras use their own sign in, never an Immuch360 account. |
-| **360° and immersive** | 360° photos and videos as a sphere, panoramas, VR180 and 3D, an immersive view in a Meta Quest, a 360° badge and a 360° list. 360° viewing in the Immich mobile app has been requested since January 2024 and is not there yet. |
-| **On the TV** | the same app on Android TV and Google TV, and a TV app for LG TVs, also packaged for Samsung TVs as a test build. Immich's own apps do not install on an LG TV. |
-| **Sign in with your phone** | a TV, a headset or a computer is signed in when your phone scans its QR code, and your password stays on the phone. The Immich app has nothing like it. |
-| **Shares and Plex** | SMB, WebDAV and DLNA shares and Plex servers, played in place, and their files sent to your server by hand. |
-| **Tapo cameras** | the live view and the recordings of the memory card, next to your photos; not yet checked with a real camera. |
-| **One key rotation** | the Immich app turns a photo in its editor; Immuch360 turns it with one key, and for your own photos on Immich 2.6 or later it goes through that same server editor, so the web app and your other devices show them turned. |
-| **Videos** | audio and subtitle menus in the Android player, which the Immich app's Android player does not have; the original file or the transcoded stream, chosen per video; the technical details of a video. |
-| **Your drone** | a DJI drone's photos and videos sent over USB, with the videos placed on the map from its flight data, where the Immich app backs up only what is already in the phone's gallery; and the drone's live video through an RC-N3 remote, with its flight values and an obstacle ring, on the phone and relayed to a Meta Quest or an Android TV. Both experimental. |
-| **Where to report** | [Immuch360 Issues](https://github.com/freeKC/Immuch360/issues), not the Immich project. |
+| **Tas pats** | jūsų Immich serveris ir paskyra: atsarginė kopija, laiko juosta, albumai, paieška, žmonės, prisiminimai, bendrinimas ir partneriai, viskas sinchronizuojama su jūsų serveriu. Ji įdiegiama šalia oficialios programos. |
+| **Serverio nereikia** | ji veikia ir be serverio ar paskyros, su įrenginio nuotraukomis ir vaizdo įrašais, kompiuterio aplankais ir tinklo bendrinimais; Plex ir kameros naudoja savo prisijungimą, niekada ne Immuch360 paskyrą. |
+| **360° ir panardinimas** | 360° nuotraukos ir vaizdo įrašai kaip sfera, panoramos, VR180 ir 3D, panardinantis vaizdas Meta Quest akiniuose, 360° ženklelis ir 360° sąrašas. 360° peržiūros Immich mobiliojoje programoje prašoma nuo 2024 m. sausio, ir jos vis dar nėra. |
+| **Televizoriuje** | ta pati programa Android TV ir Google TV, ir TV programa LG televizoriams, taip pat supakuota Samsung televizoriams kaip bandomasis build. Pačios Immich programos LG televizoriuje neįdiegiamos. |
+| **Prisijungimas telefonu** | televizorius, akiniai ar kompiuteris prijungiami, kai jūsų telefonas nuskaito jų QR kodą, o jūsų slaptažodis lieka telefone. Immich programa nieko panašaus neturi. |
+| **Bendrinimai ir Plex** | SMB, WebDAV ir DLNA bendrinimai ir Plex serveriai, atkuriami vietoje, o jų failai siunčiami į jūsų serverį rankiniu būdu. |
+| **Tapo kameros** | tiesioginis vaizdas ir atminties kortelės įrašai šalia jūsų nuotraukų; dar nepatikrinta su tikra kamera. |
+| **Pasukimas vienu klavišu** | Immich programa nuotrauką pasuka savo redaktoriuje; Immuch360 ją pasuka vienu klavišu, o jūsų pačių nuotraukos Immich 2.6 ar naujesniame serveryje pasukamos per tą patį serverio redaktorių, todėl žiniatinklio programa ir kiti jūsų įrenginiai jas rodo pasuktas. |
+| **Vaizdo įrašai** | garso ir subtitrų meniu Android grotuve, kurių Immich programos Android grotuvas neturi; originalus failas arba perkoduotas srautas, pasirenkamas kiekvienam vaizdo įrašui; vaizdo įrašo techninės detalės. |
+| **Jūsų dronas** | DJI drono nuotraukos ir vaizdo įrašai, siunčiami per USB, su vaizdo įrašais, padėtais žemėlapyje pagal skrydžio duomenis, kai Immich programa sukuria atsarginę kopiją tik to, kas jau yra telefono galerijoje; ir drono tiesioginis vaizdas per RC-N3 nuotolinį valdiklį, su skrydžio reikšmėmis ir kliūčių žiedu, telefone ir perduodamas į Meta Quest ar Android TV. Abu eksperimentiniai. |
+| **Kur pranešti** | [Immuch360 Issues](https://github.com/freeKC/Immuch360/issues), ne Immich projektui. |
 
-The comparison function by function is in [Compared with the Immich app](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+Palyginimas funkcija po funkcijos yra skyriuje [Palyginimas su Immich programa](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
 <a id="privacy"></a>
 ## Privatumas
 
-Nothing goes to the developer: no account, no analytics, no crash reporting service, no advertising. The app talks only to the servers you choose (your Immich server, your shares, your Plex server, your cameras) and, without a server, to nothing at all. Passwords and tokens stay in the secure storage of the device; LG and Samsung TVs have none for the app, so there they stay in the app's own storage, not encrypted. The camera is used on the device only, by the Spatial 2.5D player and to scan the code of a screen you sign in; its images are never stored and never sent anywhere. A screen signed in from your phone gets a session of its own, sent encrypted on your home network, never your password; an LG TV is signed in by a page in the phone's browser, which sends your email and password to the TV unencrypted on your home network, and the TV keeps only the session. The captures and reception records of the drone pages stay on the device unless you share them: they hold the drone's video and may hold its position, and a capture the serial numbers of the remote and the aircraft. The drone's picture and values go from the phone only to the headsets and TVs you pair, on your local network, not encrypted, as with a phone shared on the Wi-Fi. Nothing is sent to DJI, nor to TP-Link. The full policy is in [PRIVACY.md](../PRIVACY.md), and the details per source in the [user guide](../docs/immuch360/user-guide.md#privacy).
+Nieko nesiunčiama kūrėjui: be paskyros, be analizės, be klaidų pranešimų paslaugos, be reklamos. Programa bendrauja tik su serveriais, kuriuos pasirenkate (jūsų Immich serveris, bendrinimai, Plex serveris, kameros), ir, be serverio, su visiškai niekuo. Slaptažodžiai ir žetonai lieka saugioje įrenginio saugykloje; LG ir Samsung televizoriai tokios programai neturi, todėl ten jie lieka pačios programos saugykloje, nešifruoti. Kamera naudojama tik įrenginyje: Spatial 2.5D grotuvo ir norint nuskaityti ekrano, kurį prijungiate, kodą; jos vaizdai niekada nesaugomi ir niekur nesiunčiami. Jūsų telefonu prijungtas ekranas gauna savo sesiją, nusiųstą užšifruotą jūsų namų tinkle, niekada ne jūsų slaptažodį; LG televizorius prijungiamas per puslapį telefono naršyklėje, kuris jūsų el. paštą ir slaptažodį siunčia televizoriui nešifruotus jūsų namų tinkle, o televizorius išsaugo tik sesiją. Drono puslapių įrašai ir priėmimo įrašai lieka įrenginyje, nebent juos bendrinate: juose yra drono vaizdas ir gali būti jo padėtis, o įraše ir valdiklio bei orlaivio serijos numeriai. Drono vaizdas ir reikšmės iš telefono keliauja tik į jūsų susietus akinius ir televizorius, jūsų vietiniame tinkle, nešifruoti, kaip ir Wi-Fi tinkle bendrinamo telefono atveju. Niekas nesiunčiama nei DJI, nei TP-Link. Pilna politika yra [PRIVACY.md](../PRIVACY.md), o detalės pagal šaltinį [naudotojo vadove](../docs/immuch360/user-guide.md#privacy).
 
 <a id="the-project"></a>
 <a id="licences-and-credits"></a>
-## Licences and credits
+## Licencijos ir padėkos
 
 Immuch360 yra neoficiali [Immich](https://github.com/immich-app/immich) mobiliosios programos šaka, pagal [GNU AGPL v3](../LICENSE), nesusijusi su Immich komanda ar FUTO ir neturinti jų palaikymo. Šaka egzistuoja, nes 360° žiūrėjimas mobiliuosiuose įrenginiuose prašomas Immich nuo 2024 m. sausio ir dar nėra oficialioje programoje; ji pateikia tai dabar, renka atsiliepimus iš realių įrenginių ir pasiūlys atgal Immich, mažais pull requests, viską, ko panorės prižiūrėtojai. Visa, ką daro oficiali programa, yra išsaugota; šakos, kūrimo grandinė ir CI aprašyti [Susikurkite patys](../docs/immuch360/build.md).
 
 360° nuotraukų žiūryklė paremta dmitry-brazhenko upstream pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169), kuris pats sukurtas pagal bencefr prototipą [#30192](https://github.com/immich-app/immich/pull/30192); ačiū abiem. Paieškos filtrų valdymo nuotolinio valdymo pultu pataisymai ir albumų rūšiavimas televizoriuose pradėti nuo mlc70 darbo [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1), o veiksmų juosta ir filtrų lapai per 80 procentų ekrano aukščio kilę iš mlc70 [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3), išsaugant jų autorystę; ačiū mlc70. LG webOS programa, taip pat supakuota Samsung televizoriams, sukurta remiantis Seeky91 projektu [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos), išleistu pagal MIT licenciją ir laikomu savo aplanke; ačiū Seeky91. Tapo kamerų palaikymas parašytas pagal tai, ką dokumentuoja [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) ir [python-kasa](https://github.com/python-kasa/python-kasa). Meta Quest vaizdas remiasi Meta Spatial SDK, kuris nėra atvirojo kodo, todėl jis lieka šioje šakoje. SMB bendrinimai naudoja libsmb2, pagal LGPL 2.1 ar vėlesnę: nuo build 27 ir desktop build 7 kiekviename build yra jos pranešimas, licencijų tekstai ir šaltinių archyvas `Immuch360-libsmb2-sources.tar.gz`, kuris taip pat pridedamas prie kiekvieno leidimo. Windows ir macOS build pateikiama projekto sukurta libmpv ([mpv](https://mpv.io) biblioteka, su [FFmpeg](https://ffmpeg.org)), pagal LGPL, su jos licencijomis ir šaltiniais, išvardytais programos licencijų puslapyje (Licencijos, profilio meniu apačioje); detalės ir šiame puslapyje minimų platformų prekių ženklai yra skiltyje [Licencija ir prekių ženklai](../docs/immuch360/platform-support.md#license-and-trademarks).
 
-The captures of this page are real captures of the app: the phone ones on the Android build in an emulator, the Android TV ones on the Google TV emulator, the LG and Samsung ones in a browser that stands in for the TV, the Windows ones on a Windows 11 PC and the Meta Quest window in a Quest 3, all with CC0 panoramas from [Poly Haven](https://polyhaven.com); the immersive captures of the headset were taken on a Quest 3 with the author's own media, and the iPad one in the iPad simulator, with a CC0 Poly Haven panorama. The opening image and the pictures of the TV, the sign in, the rotation, the cameras and the drone are illustrations made for the project: they show no screen of the app, no logo of another company and no face. Each image, with its source, date and licence, is listed in [CAPTURES.md](../.github/readme/CAPTURES.md).
+Šio puslapio ekrano nuotraukos yra tikros programos ekrano nuotraukos: telefono nuotraukos iš Android build emuliatoriuje, Android TV nuotraukos iš Google TV emuliatoriaus, LG ir Samsung nuotraukos naršyklėje, atstojančioje televizorių, Windows nuotraukos iš Windows 11 kompiuterio, o Meta Quest langas iš Quest 3, visos su CC0 panoramomis iš [Poly Haven](https://polyhaven.com); panardinančios akinių nuotraukos padarytos Quest 3 su autoriaus nuosavais failais, o iPad nuotrauka iPad simuliatoriuje, su CC0 Poly Haven panorama. Pradinis vaizdas ir televizoriaus, prisijungimo, pasukimo, kamerų ir drono paveikslėliai yra projektui sukurtos iliustracijos: juose nėra programos ekrano, kitos įmonės logotipo ir veido. Kiekvienas vaizdas su šaltiniu, data ir licencija išvardytas [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Planai
 
 Kas dar nepadaryta, labiausiai tikėtina pirma. Niekas čia nėra pažadas, o atsiliepimai [pranešimų sekiklyje](https://github.com/freeKC/Immuch360/issues) padeda nuspręsti, kas bus pirma.
 
-- **The stores**: Google Play (build 29 in review, then build 30; the TV listing in review), the App Store (version 3.3.1 in review, then version 3.3.2 with build 28), the Meta Horizon Store with build 30 (build 28 there since 25 October), the LG Content Store (version 1.0.0 in LG's review since 24 October), and later the Samsung store.
-- **Drones**: an outdoor flight to prove the height and the speeds above 1.8 m and 1.5 m/s and the obstacle distances against a tape, then to show the satellites and the distance from home; the steady picture of the relay checked with a phone, a TV and a headset; the relay to LG and Samsung TVs; the drone on iPhone and iPad, not started; a test of the import page with a real DJI Neo 2, then the sound recorded by the phone merged into its clip. Nothing that sends a command to a drone is planned before those tests.
-- **TVs**: build 29 on a real Android TV, its video controls and the sign in with your phone included; the shares, Plex and the live view of the LG app on a real LG TV, and webOS 26; Samsung test build 0.2.0 on a real Samsung TV, then the sign in with a phone, the shares, Plex and the cameras on Samsung TVs; then the 360° videos on the sphere of LG TVs, the sound of the cameras and their recordings (not before December 2026).
-- **Cameras**: the Tapo cameras checked with a real camera.
+- **Parduotuvės**: Google Play (build 29 tikrinamas, tada build 30; TV įrašas tikrinamas), App Store (versija 3.3.1 tikrinama, tada versija 3.3.2 su build 28), Meta Horizon Store su build 30 (build 28 ten nuo spalio 25 d.), LG Content Store (versija 1.0.0 LG tikrinama nuo spalio 24 d.), o vėliau Samsung parduotuvė.
+- **Dronai**: skrydis lauke, kad būtų įrodyti aukštis ir greičiai virš 1.8 m ir 1.5 m/s bei kliūčių atstumai pagal ruletę, tada rodyti palydovus ir atstumą nuo namų; perdavimo stabilus vaizdas, patikrintas su telefonu, televizoriumi ir akiniais; perdavimas į LG ir Samsung televizorius; dronas iPhone ir iPad, nepradėta; importo puslapio bandymas su tikru DJI Neo 2, tada telefono įrašyto garso sujungimas su jo klipu. Iki tų bandymų neplanuojama nieko, kas siunčia komandą dronui.
+- **Televizoriai**: build 29 realiame Android TV, įskaitant jo vaizdo valdiklius ir prisijungimą telefonu; LG programos bendrinimai, Plex ir tiesioginis vaizdas realiame LG televizoriuje, ir webOS 26; Samsung bandomasis build 0.2.0 realiame Samsung televizoriuje, tada prisijungimas telefonu, bendrinimai, Plex ir kameros Samsung televizoriuose; tada 360° vaizdo įrašai ant LG televizorių sferos, kamerų garsas ir jų įrašai (ne anksčiau nei 2026 m. gruodį).
+- **Kameros**: Tapo kameros, patikrintos su tikra kamera.
 - **Kompiuteriai**: kiekvienos funkcijos rankinis testavimas Windows kompiuteryje, įskaitant prisijungimą telefonu; Spatial 2.5D su internetine kamera Windows, kuriama 2026 m. lapkričiui; tada 360° vaizdo įrašų atvaizdavimo variklis Linux ir macOS, testas realiame Mac ir realiame Linux kompiuteryje; tada automatiniai atnaujinimai ir pasirašyta macOS programa.
 - **Telefonai ir planšetės**: Tapo tiesioginis vaizdas ir didžiųjų ekranų prijungimas iPhone ir iPad su kitu iOS leidimu; laiko juosta iOS 360° vaizdo grotuve, ankstesnis ir kitas telefonų 360° grotuvuose, garso takelio ir subtitrų meniu iOS plokščiame grotuve.
 - **Įtraukiantys failai**: dvigubas fisheye .dng, GoPro ir DJI vaizdo įrašų išlyginimas pagal jų pačių judesio duomenis, erdviniai vaizdo įrašai 3D formatu Quest, jei jo dekoderiai tai leidžia, ankstesnis ir kitas tarp erdvinių nuotraukų akiniuose.
@@ -590,7 +590,7 @@ Pilnas sąrašas, su kiekvienai funkcijai dar laukiančiais įrenginių patikrin
 
 <a id="technical-documentation"></a>
 <a id="documentation"></a>
-## Documentation
+## Dokumentacija
 
 - [Funkcijos: pilna inventorizacija ir funkcijų pagal platformą matrica](../docs/immuch360/features.md)
 - [Naudotojo vadovas: kiekviena funkcija, žingsnis po žingsnio, su jos parinktimis ir pranešimais](../docs/immuch360/user-guide.md)
@@ -603,18 +603,18 @@ Pilnas sąrašas, su kiekvienai funkcijai dar laukiančiais įrenginių patikrin
 - [Susikurkite patys: telefonai, akiniai, televizoriai ir kompiuteriai](../docs/immuch360/build.md)
 - [Immuch360 LG webOS televizoriams: įdiegimas Developer Mode režimu, nuotolinio valdymo pulto mygtukai, CORS antraštės](../webos/README.md)
 
-### Advanced features
+### Papildomos funkcijos
 
 Ką programa gali skaityti ir atkurti, skaitytojui, kuris norėtų visos apimties. Kiekviena eilutė detaliai aprašyta [naudotojo vadove](../docs/immuch360/user-guide.md) ir [suderinamumo puslapyje](../docs/immuch360/compatibility.md).
 
 <details>
-<summary><b>Formats, sources, playback and hardware, in detail</b></summary>
+<summary><b>Formatai, šaltiniai, atkūrimas ir aparatinė įranga išsamiai</b></summary>
 
 - **Formatai**: plokšti nuotraukos ir vaizdo įrašai (tai, ką įrenginys dekoduoja: MP4, MOV, MKV ir daugiau); ekvirektangulinės 360° nuotraukos ir vaizdo įrašai; dalinės panoramos (GPano apkarpymas); VR180; stereoskopinis 3D, viršuje ir apačioje arba vienas šalia kito, skaitomas iš failo (st3d blokas) arba atspėjamas iš kadro; Apple erdvinės nuotraukos (HEIC stereo poros) ir erdviniai vaizdo įrašai (MV-HEVC, viena akis); neapdoroti Insta360 .insp ir .insv, GoPro .360, DJI .osv; 10 bitų HLG ir PQ šaltiniai, tonu susieti ant sferos.
 - **Projekcija ir metaduomenys**: GPano ir sferiniai metaduomenys, skaitomi iš failo, su intervalų užklausomis serveryje ar bendrinime; kameros pradinis vaizdas; DJI dronų sferos, atpažįstamos pagal jų kamerą, su pasirenkamu .xmp šoniniu failu, kad Immich jas taip pat pažymėtų; „Žiūrėti kaip 360°“ prisimenama įrenginyje; VR180 atpažįstama iš failo ar jo pavadinimo; drono vaizdo įrašo vieta, nuskaityta iš jo .SRT skrydžio žurnalo; metaduomenys išlieka nepakitę, nes atkuriamas originalus failas, niekada konvertuota kopija; pasukimas 90°, išsaugotas per Immich redaktorių arba laikomas įrenginyje, niekada ne įtraukiančiame faile.
 - **Vietinis atkūrimas**: Media3 Android ir televizoriuje, SceneKit ir AVFoundation iOS, Meta Spatial SDK akiniuose, libmpv Windows; originalas ar perkoduotas srautas pasirenkamas pagal tai, ką įrenginys dekoduoja; įrenginio vaizdo dekoderių sąrašas Nustatymuose, Papildomai; garso takelio pasirinkimas, subtitrai Android grotuve ir buferizavimo indikatorius.
 - **Neapdoroti failai, sujungti įrenginyje**: Flutter fragmentų šeideris nuotraukoms; GPU efektas grotuve vaizdo įrašams su vienu takeliu; du techniniai dekoderiai vienu metu ir GPU compositor vaizdo įrašams su vienu objektyvu kiekvienam takeliui ar failui (OpenGL ES 3 Android ir Quest, Metal iOS, o Windows, nuo desktop build 5, du libmpv grotuvai, kurių kadrus programa sujungia grafikos luste); kameros pačios kalibravimas (Mei, V6 ir equidistant modeliai) ir akselerometro įrašas; grįžtama prie vieno objektyvo, perkoduoto srauto, kameros LRV kopijos arba nesujungto vaizdo įrašo, kai įrenginys negali paleisti dviejų dekoderių.
-- **Sources**: the device's gallery; the folders of a computer; a drone or a camera card over USB, through the system folder picker (Android, experimental); a DJI RC-N3 remote controller over its cable for the drone's live video (Android, experimental), relayed on the local network to a Meta Quest or an Android TV; an Immich server; SMB 2 and 3, WebDAV, DLNA/UPnP; Plex over HTTPS checked against the server's own certificate; Tapo cameras over the local network (HTTPS and RTSP); a phone or a computer shared on the Wi-Fi as a WebDAV server; servers found by Bonjour/mDNS, a local network scan, SSDP, GDM and the TP-Link discovery, and followed when they change address.
+- **Šaltiniai**: įrenginio galerija; kompiuterio aplankai; dronas ar kameros kortelė per USB, per sistemos aplankų parinkiklį (Android, eksperimentinis); DJI RC-N3 nuotolinis valdiklis per jo kabelį drono tiesioginiam vaizdui (Android, eksperimentinis), perduodamas vietiniame tinkle į Meta Quest ar Android TV; Immich serveris; SMB 2 ir 3, WebDAV, DLNA/UPnP; Plex per HTTPS, patikrintas pagal paties serverio sertifikatą; Tapo kameros vietiniame tinkle (HTTPS ir RTSP); telefonas ar kompiuteris, bendrinamas Wi-Fi tinkle kaip WebDAV serveris; serveriai, randami per Bonjour/mDNS, vietinio tinklo skenavimą, SSDP, GDM ir TP-Link aptikimą, ir sekami, kai jie pakeičia adresą.
 - **Skaitymas pagal poreikį**: vietinis tiltas aptarnauja grotuvus su baitų intervalais ir sesijos žetonu; dideli blokai, skaitymas iš anksto ir iki šešių SMB ryšių lygiagrečiai; miniatiūros iš kiekvieno vaizdo įrašo kadro; nieko nekopijuojama į įrenginį.
 - **Aparatinė įranga**: techniniai dekoderiai naudojami visur, kur jie egzistuoja, su jų matuojamomis ribomis (Quest 3 H.264 riba, daugiausia du 2048x2048 objektyvai programinės įrangos dekoderiams); Windows 360° vaizdas nubraižomas grafikos lusto iš kiekvieno dekoduoto kadro, kadro dydis matuojamas kiekviename kompiuteryje, aptinkamas integruotas ar atskiras lustas.
 - **Platformų specifika**: giroskopas ir Spatial 2.5D grotuvas telefonuose; panardinantis vaizdas, valdikliai ir rankos Quest; nuotolinio valdymo pulto išdėstymas, klaviatūros dialogas ir TV skydelis Android TV; kompiuteryje, pelė ir klaviatūra, visas ekranas, vienas langas, failai ir aplankai, atverti programos arba numesti ant jo lango, skaitomi kaip jūsų aplankų failai, HEIC, AVIF, TIFF ir neapdorotos kamerų nuotraukos iš aplankų, kai Windows turi joms dekoderį, ir Windows duomenų apsauga slaptažodžiams ir žetonams.

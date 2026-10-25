@@ -1,14 +1,14 @@
 <details><summary>🌐 <b>Kurmancî</b> · Zimanên din (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bi.md">Bislama</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-24.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration at dusk in front of a sea bay: a storage box, a phone, a tablet, a TV, a laptop and a headset, a drone in the sky and a home camera, linked by arcs of light">
+  <img src="../.github/readme/hero-2026-10-24.jpg" width="100%" alt="Immuch360. Medyaya te. Her ekran. Her dîmen. Wêne û vîdyoyên sade, 360° û 3D ji cîhaza te, NAS-a te, servera te ya Immich, kameraên te û drona te. Hesab ne pêwîst e. Android, iPhone û iPad, Android TV, televizyonên LG û Samsung, Meta Quest, Windows, macOS, Linux. Wêneyek di êvarê de li ber kendaveke deryayê: qutiyeke embarê, têlefonek, tabletek, televizyonek, laptopek û kaskek, dronek li ezmên û kameraya malê, bi kevanên ronahiyê bi hev ve girêdayî">
 </p>
 
 # Immuch360
 
 **Medyaya te. Her ekran. Her dîmen.**
 
-Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. Immuch360 is a free and open source app that reads your photos and videos where they are and plays each one in the viewer that fits it: flat, as a sphere you look around in, in 3D, or all around you in a headset. It runs on phones, tablets, TVs, Meta Quest headsets and computers.
+Wêne û vîdyoyên sade, 360° û 3D ji cîhaza te, NAS-a te, servera te ya Immich, kameraên te û drona te. Hesab ne pêwîst e. Immuch360 sepaneke belaş û çavkaniya vekirî ye ku wêne û vîdyoyên te li cihê ku lê ne dixwîne û her yekê di dîtinvanê guncaw de dilîze: sade, wekî gogeke ku tu tê de li dora xwe dinêrî, bi 3D, an jî di kaskekê de li dora te. Ew li ser têlefon, tablet, televizyon, kaskên Meta Quest û komputeran dixebite.
 
 <p align="center">
   <sub>Şaxeke ne-fermî ya sepana mobîl a Immich. Bi Immich an FUTO re têkildar nîne. Nav wekî «I am much 360» tê xwendin.</sub>
@@ -17,97 +17,97 @@ Flat, 360° and 3D photos and videos from your device, your NAS, your Immich ser
 <details>
 <summary><b>Naverok</b></summary>
 
-- [Who it is for](#who-it-is-for)
-- [Which screens](#which-screens), and [what each screen does](#what-each-screen-does)
+- [Ji bo kê ye](#who-it-is-for)
+- [Kîjan ekran](#which-screens), û [her ekran çi dike](#what-each-screen-does)
 - [Tu çi dikarî bikî](#what-you-can-do)
-- [Get it on your device](#get-it-on-your-device)
-- [How to](#how-to)
-  - [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server)
+- [Li ser cîhaza xwe saz bike](#get-it-on-your-device)
+- [Çawa](#how-to)
+  - [Li wêne û vîdyoyên xwe binêre, bi server an bêyî server](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Panorama, 360°, VR180 û 3D keşf bike](#explore-panoramas-360-vr180-and-3d)
-  - [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): [Android TV and Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
+  - [Li ser televizyonê bi telekomandayê temaşe bike](#watch-on-the-tv-with-the-remote): [Android TV û Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Bi têlefona xwe li ser televizyonek, kaskek an komputerekê têkeve](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
-  - [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
-  - [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)
-  - [Keep your Immich library, with more](#keep-your-immich-library-with-more)
-  - [Watch your home cameras on the big screen](#watch-your-home-cameras-on-the-big-screen)
-  - [Your DJI drone (experimental)](#your-dji-drone-experimental): [live video](#see-what-your-drone-sees-on-your-phone), [in a Quest or on Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv), [import](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
-  - [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras)
+  - [Bi Meta Questê têkeve nav wêne û vîdyoyên xwe](#step-inside-your-photos-and-videos-with-a-meta-quest)
+  - [Pelên NAS, komputer, serverê medyayê an Plex bilîze](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)
+  - [Kitêbxaneya xwe ya Immich biparêze, bi zêdetir](#keep-your-immich-library-with-more)
+  - [Li ser ekrana mezin li kameraên malê binêre](#watch-your-home-cameras-on-the-big-screen)
+  - [Drona te ya DJI (ceribandinî)](#your-dji-drone-experimental): [vîdyoya zindî](#see-what-your-drone-sees-on-your-phone), [di Meta Questê de an li ser Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv), [anîn](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
+  - [Pelên xav ên kameraên 360° veke](#open-the-raw-files-of-360-cameras)
   - [Wêneyekê bi yek bişkokê bizivirîne](#turn-a-photo-with-one-key)
-  - [Use your computer as the media player](#use-your-computer-as-the-media-player)
-- [Compared with Immich](#compared-with-immich)
+  - [Komputera xwe wekî lîstikvanê medyayê bi kar bîne](#use-your-computer-as-the-media-player)
+- [Li gorî Immich](#compared-with-immich)
 - [Nepenî](#privacy)
-- [Licences and credits](#licences-and-credits)
+- [Lîsans û spas](#licences-and-credits)
 - [Nexşeya rê](#roadmap)
-- [Documentation](#documentation)
+- [Belgekirin](#documentation)
 
 </details>
 
 <a id="who-it-is-for"></a>
-## Who it is for
+## Ji bo kê ye
 
-- **You shoot 360° or 3D** and want to look around in your shots, not see them flat, doubled or stretched: [360°, VR180 and 3D](#explore-panoramas-360-vr180-and-3d).
-- **Your photos and films sit on a NAS, a computer, Plex or Immich** and you want them on the TV without copying anything: [on the TV](#watch-on-the-tv-with-the-remote), [NAS, shares and Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
-- **You have a Meta Quest** and want to step inside your own photos and videos: [in the headset](#step-inside-your-photos-and-videos-with-a-meta-quest).
-- **You run Immich** and want its app, plus the immersive viewers and the big screens you sign in from your phone: [your Immich library](#keep-your-immich-library-with-more), [compared with Immich](#compared-with-immich).
-- **You watch your home with Tapo cameras** and want them next to your photos, on the TV too (not yet checked with a real camera): [home cameras](#watch-your-home-cameras-on-the-big-screen).
-- **You fly a DJI drone** and want its live picture on your phone without DJI Fly, and in a Meta Quest or on an Android TV for the people with you (experimental): [your drone](#see-what-your-drone-sees-on-your-phone).
+- **Tu bi 360° an 3D dikişînî** û dixwazî di wêneyên xwe de li dora xwe binêrî, ne ku wan sade, ducarî an kişandî bibînî: [360°, VR180 û 3D](#explore-panoramas-360-vr180-and-3d).
+- **Wêne û fîlmên te li ser NAS, komputer, Plex an Immich in** û tu dixwazî wan li ser televizyonê bibînî bêyî ku tiştekî kopî bikî: [li ser televizyonê](#watch-on-the-tv-with-the-remote), [NAS, parvekirin û Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+- **Meta Questeke te heye** û tu dixwazî têkevî nav wêne û vîdyoyên xwe: [di kaskê de](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Tu Immich bi rê ve dibî** û sepana wê dixwazî, ligel dîtinvanên dorhêlî û ekranên mezin ên ku tu ji têlefonê dixî hundir: [kitêbxaneya te ya Immich](#keep-your-immich-library-with-more), [li gorî Immich](#compared-with-immich).
+- **Tu bi kameraên Tapo çavdêriya mala xwe dikî** û dixwazî wan li kêleka wêneyên xwe, li ser televizyonê jî bibînî (hê bi kamerayeke rastîn nehatiye kontrolkirin): [kameraên malê](#watch-your-home-cameras-on-the-big-screen).
+- **Tu droneke DJI difirînî** û dixwazî wêneya wê ya zindî bêyî DJI Fly li ser têlefona xwe bibînî, û di Meta Questê de an li ser Android TV ji bo kesên ku bi te re ne (ceribandinî): [drona te](#see-what-your-drone-sees-on-your-phone).
 
-There is no Immuch360 account to create, and nothing goes to us: the app talks only to your devices and to the servers you choose.
+Hesabekî Immuch360 tune ku were çêkirin, û tiştek nagihîje me: sepan tenê bi cîhazên te û serverên ku tu hilbijêrî re diaxive.
 
 <a id="which-screens"></a>
-## Which screens
+## Kîjan ekran
 
 <div align="center">
 
-| Platform | Where to get it | Status on 25 October 2026 |
+| Platform | Ji ku derê bistînî | Rewş di 25ê Cotmeha 2026an de |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 25; build 29 under Google's review, in place of build 28), build 30 on GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.1 (build 27) waiting for Apple's review since 22 October, then version 3.3.2 (build 28), in TestFlight for internal testing; [build it yourself](../docs/immuch360/build.md) meanwhile |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 30 on GitHub: [sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) by scanning a QR code, a [time bar, audio and subtitles](#on-android-tv-and-google-tv) for the remote in the video player, and a [drone's live video](#watch-it-in-a-meta-quest-or-on-an-android-tv) relayed by a phone (experimental); the TV listing is under Google's review |
-| **LG TVs** with webOS 5.0 and later | [.ipk, version 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (in review) | version 1.0.0, submitted to the LG Content Store on 24 October and waiting for LG's review; until then it installs in [Developer Mode](#lg-tvs-webos). It ran on webOS 25 TVs of LG's Cloud Test Lab |
-| **Samsung TVs** with Tizen 5.5 and later | [.wgt test build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | test build 0.2.0 of the same TV app, to sign with your own Samsung certificate and install in [Developer mode](#samsung-tvs-tizen); 0.1.0 ran on a tester's Samsung TV, and 0.2.0 holds the fixes from that run; not on Samsung's store |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store (build 28, live since 25 October), build 30 on GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer or ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | desktop build 11, a signed preview: photos, flat and 360° videos, shares, Plex, cameras (not yet checked with a real camera), sign in with your phone, photos turned with one key, the interface in 89 languages |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | previews: on Linux photos, 360° photos and flat videos (360° videos play flat); on macOS the same, checked on the project's CI Mac only, unsigned |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** têlefon û tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | li ser Google Play (çêkirina 25; çêkirina 29 di nirxandina Google de, li şûna çêkirina 28), çêkirina 30 li ser GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone û iPad** | App Store | guhertoya 3.3.1 (çêkirina 27) ji 22ê Cotmehê ve li benda nirxandina Apple ye, paşê guhertoya 3.3.2 (çêkirina 28), di TestFlight de ji bo ceribandina navxweyî; heta wê demê [bi xwe çêke](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV û Google TV** | [APK](#android-tv-and-google-tv) · Google Play | çêkirina 30 li ser GitHub: [bi têlefona xwe têkeve](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) bi skankirina koda QR, [xeta demê, deng û binnivîs](#on-android-tv-and-google-tv) ji bo telekomandayê di lîstikvanê vîdyoyê de, û [vîdyoya zindî ya dronekê](#watch-it-in-a-meta-quest-or-on-an-android-tv) ku têlefonek dişîne (ceribandinî); lîsteya TV di nirxandina Google de ye |
+| **Televizyonên LG** bi webOS 5.0 û paşîtir | [.ipk, guhertoya 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (di nirxandinê de) | guhertoya 1.0.0, di 24ê Cotmehê de ji LG Content Store re hat şandin û li benda nirxandina LG ye; heta wê demê di [Developer Mode](#lg-tvs-webos) de tê sazkirin. Ew li ser televizyonên webOS 25 ên Cloud Test Lab a LG xebitî |
+| **Televizyonên Samsung** bi Tizen 5.5 û paşîtir | [Çêkirina ceribandinê ya .wgt](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | çêkirina ceribandinê 0.2.0 ya heman sepana TV, ji bo îmzekirinê bi sertîfîkaya xwe ya Samsung û sazkirinê di [Developer mode](#samsung-tvs-tizen) de; 0.1.0 li ser televizyoneke Samsung a ceribandinkerekî xebitî, û 0.2.0 sererastkirinên wê ceribandinê dihewîne; ne li ser firoşgeha Samsung e |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 û 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | li ser Horizon Store (çêkirina 28, ji 25ê Cotmehê ve berdest e), çêkirina 30 li ser GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Sazker an ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | çêkirina 11 a sermaseyê, pêşdîtineke îmzekirî: wêne, vîdyoyên sade û 360°, parvekirin, Plex, kamera (hê bi kamerayeke rastîn nehatiye kontrolkirin), têketin bi têlefonê, wêneyên ku bi yek bişkokê têne zivirandin, navrû bi 89 zimanan |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS û Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | pêşdîtin: li ser Linux wêne, wêneyên 360° û vîdyoyên sade (vîdyoyên 360° sade tên lîstin); li ser macOS heman tişt, tenê li ser Mac-a CI ya projeyê hatiye kontrolkirin, bê îmze |
 
 *Rewş di her weşanê de tê rojane kirin; hûragahiyên, çêkirin bi çêkirin, di [Rewşa weşanê](../docs/immuch360/release-status.md) de ne.*
 
 </div>
 
 <p align="center">
-  <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Seven real captures of Immuch360 in two rows: the sphere viewer on an Android phone, a 360° photo on an iPad, a 360° photo on a Google TV and on an LG TV, then the photo timeline on a Samsung TV, the window of the app in a Meta Quest 3 and the video player on Windows. The LG and Samsung captures were taken in a browser that stands in for the TV">
+  <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Heft dîmenên rastîn ên Immuch360 di du rêzan de: dîtinvanê gogê li ser têlefoneke Android, wêneyeke 360° li ser iPad, wêneyeke 360° li ser Google TV û li ser televizyoneke LG, paşê xeta demê ya wêneyan li ser televizyoneke Samsung, pencereya sepanê di Meta Quest 3 de û lîstikvanê vîdyoyê li ser Windows. Dîmenên LG û Samsung di gerokeke ku şûna televizyonê digire de hatine kişandin">
 </p>
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
-### What each screen does
+### Her ekran çi dike
 
-One code base for the phones, tablets, Android TV, the Meta Quest and the computers, and a separate TV app for LG TVs, also packaged for Samsung TVs as a test build. What each one has today:
+Yek bingeha kodê ji bo têlefon, tablet, Android TV, Meta Quest û komputeran, û sepaneke TV ya cuda ji bo televizyonên LG, ku ji bo televizyonên Samsung jî wekî çêkirina ceribandinê hatiye pakêtkirin. Her yek îro çi heye:
 
-| Capability | Android | iPhone, iPad | Android TV | LG webOS | Samsung Tizen | Quest |
+| Jêhatîbûn | Android | iPhone, iPad | Android TV | LG webOS | Samsung Tizen | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ viewer | ✅ |
-| Sign in with your phone (QR code) | ✅ scans the code | 🔜 next iOS release | ✅ | ✅ in the phone's browser | ❌ typed on the TV | ✅ code typed on the phone |
-| Without a server: the device's own media | ✅ | ✅ | shares only | ❌ | ❌ | ✅ |
-| Flat photos and videos | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Rotate a photo with one key | ✅ | ✅ | ✅ colour keys | ✅ colour keys | ✅ | ✅ window |
-| 360° photos as a sphere | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ immersive |
-| 360° videos | ✅ | ✅ no time bar | ✅ message if not decodable | flat only | flat only | ✅ immersive |
-| 3D and VR180 | ✅ one eye | ✅ one eye | ✅ one eye | photos one eye, videos flat | photos one eye, videos flat | ✅ true 3D |
-| Spatial 2.5D (head tracking) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ | ❌ |
-| Apple spatial photos | ✅ one eye | ✅ one eye | ✅ one eye | ❌ | ❌ | ✅ 3D |
-| Raw Insta360, GoPro and DJI files | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
-| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ | ✅ SMB from webOS 22 | ❌ | ✅ |
+| Galerî, albûm, lêgerîn bi servereke Immich | ✅ | ✅ | ✅ dîtinvan | ✅ dîtinvan | ✅ dîtinvan | ✅ |
+| Têketin bi têlefonê (koda QR) | ✅ kodê skan dike | 🔜 weşana iOS ya din | ✅ | ✅ di geroka têlefonê de | ❌ li ser televizyonê tê nivîsandin | ✅ kod li ser têlefonê tê nivîsandin |
+| Bêyî server: medyaya cîhazê bi xwe | ✅ | ✅ | tenê parvekirin | ❌ | ❌ | ✅ |
+| Wêne û vîdyoyên sade | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Wêneyekê bi yek bişkokê bizivirîne | ✅ | ✅ | ✅ bişkokên rengîn | ✅ bişkokên rengîn | ✅ | ✅ pencere |
+| Wêneyên 360° wekî gog | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ dorhêlî |
+| Vîdyoyên 360° | ✅ | ✅ bêyî xeta demê | ✅ peyam heke nikare kod veke | tenê sade | tenê sade | ✅ dorhêlî |
+| 3D û VR180 | ✅ yek çav | ✅ yek çav | ✅ yek çav | wêne yek çav, vîdyo sade | wêne yek çav, vîdyo sade | ✅ 3D rastîn |
+| Spatial 2.5D (şopandina serî) | ✅ ceribandinî | ✅ ceribandinî | ❌ | ❌ | ❌ | ❌ |
+| Wêneyên Apple Spatial | ✅ yek çav | ✅ yek çav | ✅ yek çav | ❌ | ❌ | ✅ 3D |
+| Pelên xav ên Insta360, GoPro û DJI | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Parvekirinên SMB, WebDAV, DLNA | ✅ | ✅ | ✅ | ✅ SMB ji webOS 22 | ❌ | ✅ |
 | Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| Tapo cameras: recordings | ✅ | ✅ | ✅ | 🔜 not before December 2026 | ❌ | ✅ |
-| Tapo cameras: live view | ✅ | 🔜 next iOS release | ✅ | ✅ video only | ❌ | ✅ |
-| Share this device on the network | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Upload to Immich from shares and the device | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
-| Import from a DJI drone or a card over USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| The DJI drone's live video (experimental) | ✅ with an RC-N3 | ❌ | ✅ relayed by a phone | ❌ | ❌ | ✅ relayed by a phone |
-| Dark theme | as the system | as the system | ✅ by default | ✅ only theme | ✅ only theme | as the system |
-| Input | touch, gyroscope | touch, gyroscope | remote; Left and Right also during a video and on its time bar, Menu for the details | remote, Magic Remote | remote | controllers, hands |
-| Where to get it | Google Play, APK | App Store (in review) | APK, Google Play (in review) | .ipk, LG Content Store (in review) | .wgt test build, signed by you | Horizon Store, APK |
+| Kameraên Tapo: tomar | ✅ | ✅ | ✅ | 🔜 ne berî Kanûna 2026an | ❌ | ✅ |
+| Kameraên Tapo: dîtina zindî | ✅ | 🔜 weşana iOS ya din | ✅ | ✅ tenê vîdyo | ❌ | ✅ |
+| Vê cîhazê li ser torê parve bike | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Ji parvekirin û cîhazê ber bi Immich ve bar bike | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Anîn ji droneke DJI an kartekê bi USB (ceribandinî) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Vîdyoya zindî ya drona DJI (ceribandinî) | ✅ bi RC-N3 | ❌ | ✅ têlefonek dişîne | ❌ | ❌ | ✅ têlefonek dişîne |
+| Tema tarî | wekî pergalê | wekî pergalê | ✅ bi awayê pêşbijartî | ✅ tema yekane | ✅ tema yekane | wekî pergalê |
+| Têketin | pêlêdan, jîroskop | pêlêdan, jîroskop | telekomanda; Çep û Rast di dema vîdyoyekê de jî û li ser xeta wê ya demê, Menu ji bo hûragahiyan | telekomanda, Magic Remote | telekomanda | kontrolker, dest |
+| Ji ku tê wergirtin | Google Play, APK | App Store (di nirxandinê de) | APK, Google Play (di nirxandinê de) | .ipk, LG Content Store (di nirxandinê de) | çêkirina ceribandinê ya .wgt, ji hêla te ve îmzekirî | Horizon Store, APK |
 
 | Jêhatîbûn | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
@@ -129,19 +129,19 @@ One code base for the phones, tablets, Android TV, the Meta Quest and the comput
 | Vê cîhazê li ser torê parve bike | ✅ | ❌ | ❌ |
 | Ji parvekirin û cîhazê ber bi Immich ve bar bike | ✅ | 🔧 CI | 🔧 CI |
 | Anîn ji droneke DJI an kartekê bi USB (ceribandinî) | ❌ | ❌ | ❌ |
-| The DJI drone's live video (experimental) | ❌ | ❌ | ❌ |
+| Vîdyoya zindî ya drona DJI (ceribandinî) | ❌ | ❌ | ❌ |
 | Tema tarî | wekî pergalê | wekî pergalê | wekî pergalê |
 | Têketin | mişk, klavye | mişk, klavye | mişk, klavye, trackpad |
 | Ji ku tê wergirtin | sazker an ZIP (pêşdîtina îmzekirî) | .deb, .rpm (pêşdîtin) | DMG an ZIP (pêşdîtina bê îmze) |
 
-✅ in the app on that platform · ❌ not offered there · 🔜 planned · 🔧 CI in the sources, built and started by the project's CI on that system, not checked with a real server, share or camera there yet · flat only: the video plays flat, with a message, because the 360° video renderer of the computers is Windows only; on LG TVs, whether webOS hands video frames to the sphere is still to be measured; on a tester's Samsung TV, the browser gave black video frames to the 3D view. "One eye" means a 3D file shows its left eye on a flat screen. The LG and Samsung columns are one separate TV app: LG version 1.0.0, whose shares and Plex were checked against real servers and its cameras against a simulated camera on the project's build host, not on a TV yet, and Samsung test build 0.2.0. Not every ✅ has been checked on a real device yet: what was checked where, and what remains to confirm, is in [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) and [Compatibility](../docs/immuch360/compatibility.md).
+✅ li ser wê platformê di sepanê de · ❌ li wir nayê pêşkêşkirin · 🔜 plankirî · 🔧 CI di çavkaniyê de ye, ji hêla CI ya projeyê ve li ser wê pergalê hatiye çêkirin û destpêkirin, hê li wir bi serverek, parvekirinek an kamerayeke rastîn nehatiye kontrolkirin · tenê sade: vîdyo bi peyamekê sade tê lîstin, ji ber ku nîşandêra vîdyoyên 360° ya komputeran tenê li ser Windows heye; li ser televizyonên LG hê divê were pîvandin ka webOS kareyên vîdyoyê dide gogê an na; li ser televizyoneke Samsung a ceribandinkerekî, gerokê kareyên vîdyoyê yên reş dan dîmena 3D. "Yek çav" tê wateya ku pelek 3D çavê xwe yê çepê li ser ekraneke sade nîşan dide. Stûnên LG û Samsung yek sepaneke TV ya cuda ne: LG guhertoya 1.0.0, ku parvekirin û Plex-a wê li hember serverên rastîn û kameraên wê li hember kamerayeke simulekirî li ser makîneya çêkirinê ya projeyê hatine kontrolkirin, hê ne li ser televizyonekê, û çêkirina ceribandinê ya Samsung 0.2.0. Ne her ✅ hê li ser cîhazeke rastîn hatiye kontrolkirin: çi li ku hatiye kontrolkirin û çi hê maye ku were piştrastkirin, di [Taybetmendî](../docs/immuch360/features.md), [Piştgiriya platformê](../docs/immuch360/platform-support.md) û [Lihevhatî](../docs/immuch360/compatibility.md) de ye.
 
 - **Telefon û tabletên Android**: sepana tam, pêlêdan û jîroskop, her çavkanî.
 - **iPhone û iPad**: sepana tam; lîstikvanê vîdyoyê yê 360° tenê lîstin û rawestandin heye, dîtina zindî ya Tapo û aliyê têlefonê yê têketina bi têlefonê bi weşana iOS ya din tên, û lêgerîna DLNA heta ku Apple destûra multicast bide daxwazên unicast dişîne.
-- **Android TV and Google TV**: the same APK, driven by the remote, dark by default; a viewer: backup, uploads and the editor are hidden and the details are read only, but a photo still turns with one key. Every search filter works with the remote: Location and Camera open their choices in a list, the date filter shows all its choices, and the Tags, Location, Date, Media Type, Star Rating and Display options sheets put Clear and Apply beside the choices, one Right away, on most of the screen height. The photo grid uses less image memory, and a held arrow moves it at most about 10 rows a second. From build 28 it signs in from a phone, by its QR code or its short code (tried between two emulators with the code typed, not yet with a camera). From build 29 the time bar of a video takes the focus of the remote, films get audio and subtitle menus, and the next file of a share opens with controls of its own. Checked on the Google TV emulator; build 28 ran on a real Android TV on 23 October, and the video problems found there are the fixes of build 29, checked on the emulator, not yet on that TV. From build 30, its Drone card shows the live video of a DJI drone that a phone relays, with the drone's values and obstacle ring (experimental): the pairing and the picture were tried on a TCL Android TV on 25 October, with stutter and a green cast on the earlier relay; the steady stream that answers them is first tested with build 30.
-- **LG TVs with webOS 5.0 and later**: a separate app for the remote and the Magic Remote, built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): an Immich viewer with the 360° photos on a sphere, a photo turned with one key, a dark theme and the 89 languages of the app (the few texts of the TV app itself in English for now); the network shares, Plex and the live view of Tapo cameras, through its own service on the TV (SMB from webOS 22); 360° videos flat. Version 1.0.0, submitted to the LG Content Store on 24 October, ran on webOS 25 TVs of three models in LG's Cloud Test Lab: sign in, the phone sign in page, photos, albums, a video, the 360° view, the slideshow, a search and Back from every page. Version 0.1.0 ran on a tester's LG TV (webOS 22). The shares and Plex were checked against real servers and the cameras against a simulated camera on the project's build host, not on a TV yet.
-- **Samsung TVs with Tizen 5.5 and later**: the LG TV app packaged for Samsung TVs, test build 0.2.0, to sign and install yourself: an Immich viewer for the remote, signed in by typing (the server address, then an email and password or an API key), with the slideshow, the 360° photos on a sphere, a photo turned with one key and an About page that tells what the TV supports; no sign in with a phone, shares, Plex or cameras yet; 360° videos flat, with a notice. Version 0.1.0 ran on a tester's Samsung TV on Tizen 9: photos and videos up to 4K played, nothing above 4K decoded, and the browser of the TV gave black video frames to the 3D view. Version 0.2.0 holds the fixes from that run (a message for a video above the TV's decoders or one that stalls, 360° videos flat with a notice) and has not run on a TV yet.
-- **Meta Quest 2, Pro, 3 and 3S**: the app as a window, plus the immersive view and, from build 30, a Drone card that shows the live video of a DJI drone relayed by a phone (experimental), first tested with build 30; HEVC is the safe codec, H.264 stops around 4096x2304 on the Quest 3; only the Quest 3 is tested, the Quest 2, Quest Pro and Quest 3S are not tested yet.
+- **Android TV û Google TV**: heman APK, bi telekomandayê tê rêvebirin, bi awayê pêşbijartî tarî; dîtinvanek: backup, barkirin û sererastker hatine veşartin û hûragahî tenê ji bo xwendinê ne, lê wêneyek hîn jî bi yek bişkokê dizivire. Her parzûna lêgerînê bi telekomandayê dixebite: Cih û Kamera bijartinên xwe di lîsteyekê de vedikin, parzûna dîrokê hemû bijartinên xwe nîşan dide, û panelên vebijarkan ên Etîket, Cih, Dîrok, Cureyê Medyayê, Nirxandina Stêrkan û Nîşandanê Paqij bike û Bicîh bîne li kêleka bijartinan datînin, yek Rast dûrtir, li ser piraniya bilindahiya ekranê. Tora wêneyan kêmtir bîra wêneyan bi kar tîne, û tîreke pêlêkirî wê herî zêde nêzîkî 10 rêzan di saniyeyê de dilivîne. Ji çêkirina 28 pê ve ew ji têlefonekê têdikeve, bi koda xwe ya QR an koda xwe ya kurt (di navbera du emulatoran de bi koda nivîsandî hatiye ceribandin, hê ne bi kamerayê). Ji çêkirina 29 pê ve xeta demê ya vîdyoyekê fokusa telekomandayê digire, fîlm menûyên deng û binnivîsan distînin, û pela din a parvekirinekê bi kontrolên xwe yên taybet vedibe. Li ser emulatorê Google TV hatiye kontrolkirin; çêkirina 28 di 23ê Cotmehê de li ser Android TV-yeke rastîn xebitî, û pirsgirêkên vîdyoyê yên ku li wir hatin dîtin di çêkirina 29 de hatine sererastkirin, li ser emulatorê hatine kontrolkirin, hê ne li ser wê televizyonê. Ji çêkirina 30 pê ve, karta wê ya Drone vîdyoya zindî ya droneke DJI nîşan dide ku têlefonek dişîne, bi nirxên dronê û xeleka astengiyan (ceribandinî): cotkirin û wêne di 25ê Cotmehê de li ser Android TV-yeke TCL hatin ceribandin, bi rawestan û rengekî kesk li ser şandina berê; herikîna domdar a ku bersiva wan dide cara yekem bi çêkirina 30 tê ceribandin.
+- **Televizyonên LG bi webOS 5.0 û paşîtir**: sepaneke cuda ji bo telekomanda û Magic Remote, li ser [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) hatiye avakirin: dîtinvanekî Immich bi wêneyên 360° li ser gogekê, wêneyek ku bi yek bişkokê dizivire, temayeke tarî û 89 zimanên sepanê (çend nivîsên sepana TV bi xwe heta niha bi îngilîzî ne); parvekirinên torê, Plex û dîtina zindî ya kameraên Tapo, bi riya karûbarê wê yê taybet li ser televizyonê (SMB ji webOS 22); vîdyoyên 360° sade. Guhertoya 1.0.0, ku di 24ê Cotmehê de ji LG Content Store re hat şandin, li ser televizyonên webOS 25 ên sê modelan di Cloud Test Lab a LG de xebitî: têketin, rûpela têketina bi têlefonê, wêne, albûm, vîdyoyek, dîmena 360°, pêşandana slaytan, lêgerînek û Vegere ji her rûpelê. Guhertoya 0.1.0 li ser televizyoneke LG ya ceribandinkerekî (webOS 22) xebitî. Parvekirin û Plex li hember serverên rastîn û kamera li hember kamerayeke simulekirî li ser makîneya çêkirinê ya projeyê hatine kontrolkirin, hê ne li ser televizyonekê.
+- **Televizyonên Samsung bi Tizen 5.5 û paşîtir**: sepana TV ya LG ku ji bo televizyonên Samsung hatiye pakêtkirin, çêkirina ceribandinê 0.2.0, ku tu bi xwe îmze dikî û saz dikî: dîtinvanekî Immich ji bo telekomandayê, têketin bi nivîsandinê (navnîşana serverê, paşê îmêl û şîfre an mifteyeke API), bi pêşandana slaytan, wêneyên 360° li ser gogekê, wêneyek ku bi yek bişkokê dizivire û rûpeleke Derbarê ku dibêje televizyon çi piştgirî dike; hê ne têketina bi têlefonê, ne parvekirin, Plex an kamera; vîdyoyên 360° sade, bi agahdariyekê. Guhertoya 0.1.0 li ser televizyoneke Samsung a ceribandinkerekî bi Tizen 9 xebitî: wêne û vîdyo heta 4K hatin lîstin, tiştek ji 4K mezintir nehat dekodkirin, û geroka televizyonê kareyên vîdyoyê yên reş dan dîmena 3D. Guhertoya 0.2.0 sererastkirinên wê ceribandinê dihewîne (peyamek ji bo vîdyoyeke ku ji kodxwînerên televizyonê derbas dibe an disekine, vîdyoyên 360° sade bi agahdariyekê) û hê li ser televizyonekê nexebitiye.
+- **Meta Quest 2, Pro, 3 û 3S**: sepan wekî pencereyekê, ligel dîmena dorhêlî û, ji çêkirina 30 pê ve, karteke Drone ku vîdyoya zindî ya droneke DJI nîşan dide ku têlefonek dişîne (ceribandinî), cara yekem bi çêkirina 30 tê ceribandin; HEVC kodeka ewle ye, H.264 li ser Quest 3 li dora 4096x2304 disekine; tenê Quest 3 hatiye ceribandin, Quest 2, Quest Pro û Quest 3S hê nehatine ceribandin.
 - **Windows 10 û 11**: pêşdîtinek, bi peldankan li şûna galerîyekê, lîstikvanekî vîdyoyê yê xwe (libmpv) ji bo vîdyoyên sade û 360°, pelên xav ên ku li ser çîpa grafîkê hatine dirûtin, pel û peldankên ku bi bernameyê hatine vekirin an li ser pencereyê hatine avêtin, sazkerek an ZIP-ek, ji hêla APROGSYS ve îmzekirî.
 - **Linux**: .deb û .rpm ku ji hêla CI ya projeyê ve hatine çêkirin, li ser Ubuntu 22.04 û 24.04, Debian 12 û Fedora 40 û 44 hatine sazkirin û kontrolkirin; wêne, wêneyên 360° û vîdyoyên sade bi libmpv ya pergalê (vîdyoyên 360°, 3D û xav bi peyamekê sade tên lîstin), ji çêkirina 7 a sermaseyê pê ve li ser danişînên X11 jî bi riya hardware tên xêzkirin; parvekirinên SMB ji Ubuntu 22.04 û Debian 12 û pê ve; bêyî keyring (GNOME Keyring an KWallet) sepan êdî di destpêka xwe ya yekem de 25 s naqefile: ew şîfreyan tenê ji bo danişînê diparêze û di mîhengên xwe de vê yekê dibêje; hê li ser komputereke Linux a rastîn nehatiye xebitandin, tenê di bin WSLg de û di konteyneran de.
 - **macOS**: DMG û ZIP ku ji hêla CI ya projeyê ve hatine çêkirin, gerdûnî, bê îmze (Gatekeeper carekê dipirse); ew dest pê dike, pel û peldankên ku jê re têne dayîn vedike, yên ji Finder jî, nihêniyên xwe di login keychain de diparêze û vîdyoyên sade bi libmpv ya xwe dilîze, hemû tenê li ser Mac-a CI ya projeyê hatine kontrolkirin; hê tiştek li ser Mac-eke rastîn nehatiye xebitandin.
@@ -149,27 +149,27 @@ One code base for the phones, tablets, Android TV, the Meta Quest and the comput
 <a id="what-you-can-do"></a>
 ## Tu çi dikarî bikî
 
-Each line opens its how to below. The full guide, with every option, message and limit, is in the [user guide](../docs/immuch360/user-guide.md).
+Her rêz rêbera xwe ya li jêr vedike. Rêbera tam, bi her vebijark, peyam û sînor, di [rêbera bikarhêner](../docs/immuch360/user-guide.md) de ye.
 
-1. [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server): a gallery and a player, on the device alone or with your Immich server.
-2. [Look around 360° photos and videos, panoramas, VR180 and 3D](#explore-panoramas-360-vr180-and-3d): a sphere you turn with a finger, the phone or the remote.
-3. [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): Android TV and Google TV, LG TVs, and Samsung TVs as a test build.
-4. [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): scan its QR code, confirm, watch.
-5. [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° all around you, 3D in true 3D.
-6. [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): in place, nothing copied.
-7. [Keep your Immich library, with more](#keep-your-immich-library-with-more): the Immich mobile app, plus the immersive viewers and the big screens.
-8. [Watch your Tapo cameras](#watch-your-home-cameras-on-the-big-screen): live, and the recordings of their memory card; not yet checked with a real camera.
-9. [See your DJI drone's live video on your phone](#see-what-your-drone-sees-on-your-phone), and [in a Meta Quest or on an Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): through a DJI RC-N3 remote, receive only. *Experimental.*
-10. [Bring a drone's or a camera card's photos and videos to Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): over USB, from an Android phone. *Experimental.*
-11. [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX and DJI Osmo 360, stitched by the app.
-12. [Turn a photo with one key](#turn-a-photo-with-one-key): a button, a key of the keyboard or a colour key of the remote.
-13. [Use your computer as the media player](#use-your-computer-as-the-media-player): your folders, Open with, a file dropped on the window. *Preview.*
+1. [Li wêne û vîdyoyên xwe binêre, bi server an bêyî server](#watch-your-photos-and-videos-with-or-without-a-server): galerîyek û lîstikvanek, tenê li ser cîhazê an bi servera te ya Immich.
+2. [Di wêne û vîdyoyên 360°, panorama, VR180 û 3D de li dora xwe binêre](#explore-panoramas-360-vr180-and-3d): gogeke ku tu bi tiliyekê, bi têlefonê an bi telekomandayê dizivirînî.
+3. [Li ser televizyonê bi telekomandayê temaşe bike](#watch-on-the-tv-with-the-remote): Android TV û Google TV, televizyonên LG, û televizyonên Samsung wekî çêkirina ceribandinê.
+4. [Bi têlefona xwe li ser televizyonek, kaskek an komputerekê têkeve](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): koda wê ya QR skan bike, piştrast bike, temaşe bike.
+5. [Bi Meta Questê têkeve nav wêne û vîdyoyên xwe](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° li dora te, 3D bi 3D-ya rastîn.
+6. [Pelên NAS, komputer, serverê medyayê an Plex bilîze](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): li cihê xwe, tiştek nayê kopîkirin.
+7. [Kitêbxaneya xwe ya Immich biparêze, bi zêdetir](#keep-your-immich-library-with-more): sepana mobîl a Immich, ligel dîtinvanên dorhêlî û ekranên mezin.
+8. [Li kameraên xwe yên Tapo binêre](#watch-your-home-cameras-on-the-big-screen): zindî, û tomarên karta bîrê ya wan; hê bi kamerayeke rastîn nehatiye kontrolkirin.
+9. [Vîdyoya zindî ya drona xwe ya DJI li ser têlefona xwe bibîne](#see-what-your-drone-sees-on-your-phone), û [di Meta Questê de an li ser Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): bi riya kontrolkereke DJI RC-N3, tenê wergirtin. *Ceribandinî.*
+10. [Wêne û vîdyoyên dronekê an karta kamerayekê bîne Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): bi USB, ji têlefoneke Android. *Ceribandinî.*
+11. [Pelên xav ên kameraên 360° veke](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX û DJI Osmo 360, ji hêla sepanê ve tên dirûtin.
+12. [Wêneyekê bi yek bişkokê bizivirîne](#turn-a-photo-with-one-key): bişkokek, bişkokeke klavyeyê an bişkokeke rengîn a telekomandayê.
+13. [Komputera xwe wekî lîstikvanê medyayê bi kar bîne](#use-your-computer-as-the-media-player): peldankên te, Open with, pelek ku li ser pencereyê tê berdan. *Pêşdîtin.*
 
 <a id="install"></a>
 <a id="get-it-on-your-device"></a>
-## Get it on your device
+## Li ser cîhaza xwe saz bike
 
-Take the app from the store of your device where it is published, or from the [Releases](https://github.com/freeKC/Immuch360/releases) page meanwhile.
+Sepanê ji firoşgeha cîhaza xwe bistîne ku li wir hatiye weşandin, an heta wê demê ji rûpela [Weşan](https://github.com/freeKC/Immuch360/releases).
 
 ### Telefon û tabletên Android
 
@@ -192,18 +192,18 @@ Take the app from the store of your device where it is published, or from the [R
 <a id="lg-tvs-webos"></a>
 ### Televizyonên LG (webOS)
 
-1. Version 1.0.0 is waiting for LG's review. Until it is on the LG Content Store, it installs in Developer Mode: you need an LG TV with webOS 5.0 or later, a computer on the same network and a free LG developer account. On the TV, install Developer Mode from the LG Content Store, sign in, turn Dev Mode Status on and let the TV restart; note its IP address and the passphrase the app shows.
+1. Guhertoya 1.0.0 li benda nirxandina LG ye. Heta ku li ser LG Content Store be, di Developer Mode de tê sazkirin: pêdiviya te bi televizyoneke LG bi webOS 5.0 an paşîtir, komputerek li ser heman torê û hesabekî pêşdebirê LG yê belaş heye. Li ser televizyonê, Developer Mode ji LG Content Store saz bike, têkeve, Dev Mode Status vêxe û bihêle televizyon ji nû ve dest pê bike; navnîşana wê ya IP û hevoka şîfreyê (passphrase) ya ku sepan nîşan dide binivîse.
 2. Li ser komputerê, webOS CLI saz bike (Node.js 18 an paşîtir): `npm install -g @webos-tools/cli`, paşê televizyonê bi `ares-setup-device` tomar bike (navnîşana wê ya IP, port 9922, bikarhêner `prisoner`) û `ares-novacom --device <name> --getkey`, ku hevoka şîfreyê dipirse.
-3. From the [webOS 1.0.0 pre-release](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0), download `Immuch360-webOS-1.0.0.ipk` for a UHD TV, or `Immuch360-webOS-1.0.0-1280x720.ipk` for a Full HD TV, to which LG gives 1280x720 apps. Check it against `SHA256SUMS.txt`, then `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`. The [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) of webosbrew does the same without the command line.
+3. Ji [pêş-weşana webOS 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0), ji bo televizyoneke UHD `Immuch360-webOS-1.0.0.ipk` daxe, an ji bo televizyoneke Full HD, ku LG sepanên 1280x720 didiyê, `Immuch360-webOS-1.0.0-1280x720.ipk`. Wê li hember `SHA256SUMS.txt` kontrol bike, paşê `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) ya webosbrew heman tiştî bêyî rêza fermanan dike.
 4. Danişîneke Developer Mode 1000 saetan didome û bişkoka EXTEND ya sepana Developer Mode wê nû dike; dema ku diqede, televizyon sepanên bi vî awayî sazkirî radike. Hûragahî di [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode) de ne.
-5. Once the app is on the LG Content Store, remove the Developer Mode copy and install it from the store.
+5. Dema ku sepan li ser LG Content Store be, kopiya Developer Mode rake û wê ji firoşgehê saz bike.
 
 <a id="samsung-tvs-tizen"></a>
 ### Televizyonên Samsung (Tizen)
 
-1. Test build 0.2.0 is not on Samsung's store: you install it yourself. You need a Samsung TV with Tizen 5.5 or later (2020 models and later), a computer on the same network and a Samsung account. On the TV: Apps, App Settings, type 12345, turn Developer mode on, enter the IP address of the computer, then restart the TV.
-2. Download `Immuch360-Tizen-0.2.0.wgt` from the [Tizen pre-release](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) and check it against `SHA256SUMS.txt`. A Samsung TV installs only an app signed for it, so the package must be signed again with a Samsung certificate that lists the DUID of your TV: [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung), a community tool, reads the DUID, signs the package with your Samsung account and installs it; Tizen Studio with the Samsung Certificate Extension does the same by hand.
-3. Open the app and sign in by typing your server address, then your email and password or an API key. About this TV shows what the TV supports, as text and as a QR code: that text, posted in [Issues](https://github.com/freeKC/Immuch360/issues) or [Discussions](https://github.com/freeKC/Immuch360/discussions) with what does not work, helps the most.
+1. Çêkirina ceribandinê 0.2.0 ne li ser firoşgeha Samsung e: tu wê bi xwe saz dikî. Pêdiviya te bi televizyoneke Samsung bi Tizen 5.5 an paşîtir (modelên 2020an û paşîtir), komputerek li ser heman torê û hesabekî Samsung heye. Li ser televizyonê: Apps, App Settings, 12345 binivîse, Developer mode vêxe, navnîşana IP ya komputerê binivîse, paşê televizyonê ji nû ve dest pê bike.
+2. `Immuch360-Tizen-0.2.0.wgt` ji [pêş-weşana Tizen](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) daxe û wê li hember `SHA256SUMS.txt` kontrol bike. Televizyoneke Samsung tenê sepaneke ku ji bo wê hatiye îmzekirin saz dike, ji ber vê yekê divê pakêt dîsa bi sertîfîkayeke Samsung ku DUID-a televizyona te tê de ye were îmzekirin: [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung), amûreke civakê, DUID-ê dixwîne, pakêtê bi hesabê te yê Samsung îmze dike û saz dike; Tizen Studio bi Samsung Certificate Extension heman tiştî bi destan dike.
+3. Sepanê veke û bi nivîsandina navnîşana servera xwe têkeve, paşê îmêl û şîfreya xwe an mifteyeke API. "Derbarê vê televizyonê" nîşan dide ka televizyon çi piştgirî dike, wekî nivîs û wekî koda QR: ew nivîs, ku di [Pirsgirêk](https://github.com/freeKC/Immuch360/issues) an [Gotûbêj](https://github.com/freeKC/Immuch360/discussions) de bi tiştên ku naxebitin re were şandin, herî zêde alîkariyê dike.
 
 <a id="meta-quest"></a>
 ### Meta Quest
@@ -215,47 +215,47 @@ Take the app from the store of your device where it is published, or from the [R
 <a id="windows"></a>
 ### Windows
 
-1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.11-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) (with `SHA256SUMS.txt` to check it) and open it. The installer and the ZIP are signed; Windows shows APROGSYS as the publisher. While the publisher is new to SmartScreen, it may still ask once: "More info", then "Run anyway".
+1. `Immuch360-Desktop-3.3.0-rc.0-desktop.11-windows-x64-setup.exe` ji [pêş-weşana sermaseyê](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) bistîne (bi `SHA256SUMS.txt` ji bo rastandina wê) û wê veke. Sazker û ZIP îmzekirî ne; Windows APROGSYS wekî weşanger nîşan dide. Heta ku weşanger ji bo SmartScreen nû be, dibe ku ew hê carekê bipirse: "More info", paşê "Run anyway".
 2. "Install for me only" (bêyî mafên rêvebir) an "Install for all users" hilbijêre, paşê zimanê sazkerê, ku berê wekî yê Windows hatiye hilbijartin.
 3. Immuch360 Desktop ji menûya Start dest pê bike. Wêne û vîdyo wê di "Open with" de digirin (pelekî bi rastê bitikîne, Open with); ew çu carî nabe bernameya pêşbijartî ya wan. Destpêka yekem a çêkirineke nû dikare heta deqeyekê bidomîne, dema ku Windows pelan skan dike.
 4. Windows 10 an 11, 64 bit. Ji bo nûvekirinê, sazkerê çêkirina paşîn veke: têketina te, peldank û mîhengên te dimînin. ZIP-a heman weşanê heman sepan e, wekî peldankek, ji bo li her derê jê were derxistin û `immuch360.exe` jê dest pê bike. Li ser komputereke ku çêkirinên sermaseyê 4 heta 8 di destpêkê de li ser "duplicate column name: group_date" rawestiyan, çêkirina 9 wê databasê vedike û daneyên te diparêze.
 
 ### Linux
 
-On Ubuntu 22.04 or later and Debian 12 or later: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-amd64.deb`; on Fedora 40 or later: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-x86_64.rpm`, both from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11). Then start Immuch360 Desktop from your applications. A preview: the folders of the computer, photos and 360° photos as a sphere, and flat videos through the system's libmpv, which the package installs (360°, 3D and raw videos play flat, with a message); SMB shares work from Ubuntu 22.04 and Debian 12 on. On Fedora, camera videos need the FFmpeg of RPM Fusion. Without GNOME Keyring or KWallet, the passwords are kept for the session only, and the settings of the app say so.
+Li ser Ubuntu 22.04 an paşîtir û Debian 12 an paşîtir: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-amd64.deb`; li ser Fedora 40 an paşîtir: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-x86_64.rpm`, herdu jî ji [pêş-weşana sermaseyê](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11). Paşê Immuch360 Desktop ji sepanên xwe dest pê bike. Pêşdîtinek: peldankên komputerê, wêne û wêneyên 360° wekî gog, û vîdyoyên sade bi libmpv ya pergalê, ku pakêt wê saz dike (vîdyoyên 360°, 3D û xav sade tên lîstin, bi peyamekê); parvekirinên SMB ji Ubuntu 22.04 û Debian 12 û pê ve dixebitin. Li ser Fedora, vîdyoyên kamerayê hewceyê FFmpeg ya RPM Fusion in. Bêyî GNOME Keyring an KWallet, şîfre tenê ji bo danişînê têne parastin, û mîhengên sepanê vê yekê dibêjin.
 
 ### macOS
 
-Open `Immuch360-Desktop-3.3.0-rc.0-desktop.11-macos.dmg` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) and drag the app to Applications (Apple silicon and Intel, macOS 12 or later). It is not signed nor notarized yet: Control click it and choose Open on macOS 14 and earlier, or choose "Open Anyway" in System Settings, Privacy & Security on macOS 15 and later. Nobody working on the project has a Mac: the app was only run on the project's CI Mac, where it opens files and folders and plays flat videos with its own libmpv; its network access has not been tried. Reports are welcome.
+`Immuch360-Desktop-3.3.0-rc.0-desktop.11-macos.dmg` ji [pêş-weşana sermaseyê](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) veke û sepanê berbi Applications ve bikişîne (Apple silicon û Intel, macOS 12 an paşîtir). Ew hê ne îmzekirî ye ne jî notarized e: li ser macOS 14 û berê wê Control bitikîne û Open hilbijêre, an li ser macOS 15 û paşîtir di System Settings, Privacy & Security de "Open Anyway" hilbijêre. Kesek ji yên li ser projeyê dixebitin Mac-ek nîne: sepan tenê li ser Mac-a CI ya projeyê hatiye xebitandin, li wir pel û peldankan vedike û vîdyoyên sade bi libmpv ya xwe dilîze; gihîştina wê ya torê hê nehatiye ceribandin. Ragihandin bi xêr in.
 
 <a id="how-to"></a>
-## How to
+## Çawa
 
-Each entry says what you get, then the steps, then the limits. The [user guide](../docs/immuch360/user-guide.md) has every option and message.
+Her xal dibêje tu çi distînî, paşê gavan, paşê sînoran. [Rêbera bikarhêner](../docs/immuch360/user-guide.md) her vebijark û peyamê dihewîne.
 
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
-### Watch your photos and videos, with or without a server
+### Li wêne û vîdyoyên xwe binêre, bi server an bêyî server
 
-Immuch360 is first a gallery and a player for ordinary photos and videos, and it needs neither an account nor a server. "Use without a server" opens the app on the photos and videos of the device, with every viewer, the 360° list and the network sources, and nothing leaves the device. With an Immich server, the timeline, the albums, the favorites, the memories and the search come from it. Videos play in a native player with sound, seeking, a buffering indicator and a choice of audio tracks, in the 360°, Spatial and computer players and, from build 29, in the flat player of the Android app, which shows subtitles too.
+Immuch360 berî her tiştî galerîyek û lîstikvanek e ji bo wêne û vîdyoyên asayî, û ne hesab ne jî server jê re pêwîst e. "Bêyî server bi kar bîne" sepanê li ser wêne û vîdyoyên cîhazê vedike, bi her dîtinvanî, lîsteya 360° û çavkaniyên torê, û tiştek ji cîhazê dernakeve. Bi servereke Immich, xeta demê, albûm, bijare, bîranîn û lêgerîn ji wê tên. Vîdyo di lîstikvanekî xwecihî de bi deng, gerîna demê, nîşandêreke barkirinê û hilbijartina rêça dengî tên lîstin, di lîstikvanên 360°, Spatial û komputerê de û, ji çêkirina 29 pê ve, di lîstikvanê sade yê sepana Android de, ku binnivîsan jî nîşan dide.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Tabloya Kitêbxane bêyî server: hêmana 360° li jor, paşê On this device bi du wêneyên 360°, û Parvekirinên torê bi parvekirineke bi navê NAS">
 
-1. Open the app. The welcome page shows "Your media. Any screen. Every perspective." and three choices: tap the first one, "Use without a server". A server can be connected later, from Settings or the Library tab.
+1. Sepanê veke. Rûpela bixêrhatinê "Medyaya te. Her ekran. Her dîmen." û sê bijartinan nîşan dide: li ya yekem, "Bêyî server bi kar bîne", bixe. Server dikare paşê, ji Mîhengan an ji tabloya Kitêbxane, were girêdan.
 2. Destûra gihîştina wêne û vîdyoyên xwe bide. Heke tu red bikî, sepan dibêje "Sepan nikare wêneyên vê cîhazê bibîne", bi "Destûra gihîştinê bide" û "Eyaran veke".
-3. The Photos tab shows the timeline of the device; Search and Albums stay greyed out, as they come from the server. The Library tab has 360° at the top, then On this device (the albums of the device) and Network shares. The menu at the top right says "This device only": nothing is sent anywhere.
-4. Tap a photo or a video to open it; swipe left and right to go to the next one, pinch or double tap to zoom. Swipe up on a video for its details: codec, size, frame rate, bit rate, and whether this device decodes it.
-5. On Android phones, tablets and TVs, from build 29, a film with several audio languages or with subtitles has an audio button and a subtitles button in its controls: the audio language you pick is kept for the next films, and subtitles stay off until you pick them, except forced ones. The Immich app's Android player has neither.
+3. Tabloya Sûret demjimêra cîhazê nîşan dide; Lê bigere û Albûm gewr dimînin, ji ber ku ew ji serverê tên. Tabloya Kitêbxane li jor 360° heye, paşê On this device (Li ser vê cîhazê, albûmên cîhazê) û Parvekirinên torê. Menûya li jor rastê dibêje "Tenê ev cîhaz": tiştek li tu derê nayê şandin.
+4. Ji bo vekirina wêneyekê an vîdyoyekê li ser wê bixe; ji bo çûna ya din ber bi çep û rast ve bikişîne, ji bo mezinkirinê bi du tiliyan bigire an du caran bixe. Li ser vîdyoyekê ber bi jor ve bikişîne ji bo hûragahiyên wê: kod, mezinahî, rêjeya kareyan, rêjeya bit, û ka ev cîhaz wê dekod dike an na.
+5. Li ser têlefon, tablet û televizyonên Android, ji çêkirina 29 pê ve, fîlmeke bi çend zimanên dengî an bi binnivîsan di kontrolên xwe de bişkokeke deng û bişkokeke binnivîsan heye: zimanê dengî yê ku tu hildibijêrî ji bo fîlmên din tê parastin, û binnivîs girtî dimînin heta ku tu wan hilbijêrî, ji bilî yên ferzkirî. Lîstikvanê Android ê sepana Immich ne ev heye ne ew.
 
 Li ser komputerekê, peldankên ku tu hilbijêrî rola galerîyê dileyizin; li ser televizyonekê, ku wêneyên xwe tune, çavkaniyên torê wiha dikin.
 
-More: [without a server or an account](../docs/immuch360/user-guide.md#without-a-server-or-an-account), [the viewers and the video player](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [video details and decoders](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
+Zêdetir: [bêyî server an hesab](../docs/immuch360/user-guide.md#without-a-server-or-an-account), [dîtinvan û lîstikvanê vîdyoyê](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [hûragahiyên vîdyoyê û kodxwîner](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
 
 <a id="explore-panoramas-360-vr180-and-3d"></a>
 ### Panorama, 360°, VR180 û 3D keşf bike
 
-Immuch360 knows flat photos and videos, panoramas, 360° photos and videos, VR180, stereoscopic 3D, Apple spatial photos and the 360° spheres of DJI drones, and opens each one in the viewer that fits it. A 360° photo opens as a sphere you turn with a finger or by moving the phone; a 360° video plays in a spherical player with sound; VR180 files are drawn on a half sphere; stereoscopic 3D files show one eye on a flat screen and both eyes in a headset. Partial panoramas keep their crop, and the picture starts on the view the camera recorded. A file the server does not flag can be viewed as 360° with one tap.
+Immuch360 wêne û vîdyoyên sade, panorama, wêne û vîdyoyên 360°, VR180, 3D-ya stereoskopîk, wêneyên Apple Spatial û gogên 360° yên dronên DJI nas dike, û her yekê di dîtinvanê guncaw de vedike. Wêneyeke 360° wekî gogeke ku tu bi tiliyek an bi livandina telefonê dizivirînî vedibe; vîdyoyeke 360° di lîstikvanek goyî de bi deng dilîze; pelên VR180 li ser nîv gogekê têne xêzkirin; pelên 3D yên stereoskopîk li ser ekraneke sade çavek û di kaskê de herdu çav nîşan didin. Panoramayên qismî birînê xwe diparêzin, û wêne ji dîmena ku kamerayê tomar kiriye dest pê dike. Pelek ku server wê nîşan nekiriye dikare bi tikandinek wekî 360° were dîtin.
 
 <p align="center">
   <img src="../.github/readme/b19-sphere.jpg" width="260" alt="Wêneyekî 360° yê qeraxa golê di dîtinvanê gogê de: bişkoka girtinê li jor çepê, bişkokên 360°, rêzkirina 3D û jîroskopê li jor rastê">
@@ -273,70 +273,70 @@ Zêdetir: [wêne û vîdyoyên 360°](../docs/immuch360/user-guide.md#360-photos
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>
-### Watch on the TV with the remote
+### Li ser televizyonê bi telekomandayê temaşe bike
 
-Your photos on the big screen, with the remote. The TV apps all work the same way: the arrows move the frame, OK opens, Back goes back, and in a 360° photo the arrows look around. A TV has no photos of its own, so it shows your Immich server and, on Android TV and LG TVs, your network shares, your Plex server and your cameras.
+Wêneyên te li ser ekrana mezin, bi telekomandayê. Sepanên TV hemû bi heman awayî dixebitin: tîr çarçoveyê dilivînin, OK vedike, Vegere vedigere, û di wêneyeke 360° de tîr li dora xwe dinêrin. Wêneyên televizyonekê yên xwe tune ne, ji ber vê yekê ew servera te ya Immich nîşan dide û, li ser Android TV û televizyonên LG, parvekirinên te yên torê, servera te ya Plex û kameraên te.
 
-- **Android TV and Google TV**: the Android app itself, build 30, from GitHub until Google Play offers it on TVs.
-- **LG TVs with webOS 5.0 and later**: a TV app of its own, version 1.0.0, waiting for LG's review on the LG Content Store.
-- **Samsung TVs with Tizen 5.5 and later**: the same TV app as on LG TVs, test build 0.2.0, which you sign and install yourself.
+- **Android TV û Google TV**: sepana Android bi xwe, çêkirina 30, ji GitHub heta ku Google Play wê li ser televizyonan pêşkêş bike.
+- **Televizyonên LG bi webOS 5.0 û paşîtir**: sepaneke TV ya taybet, guhertoya 1.0.0, li benda nirxandina LG li ser LG Content Store.
+- **Televizyonên Samsung bi Tizen 5.5 û paşîtir**: heman sepana TV ya li ser televizyonên LG, çêkirina ceribandinê 0.2.0, ku tu bi xwe îmze dikî û saz dikî.
 
 <p align="center">
-  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Illustration, not a capture: a large TV in a living room at dusk shows a grid of landscape photos beside a rail of icons, and a remote lies on the coffee table">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Wêneyek, ne dîmenek: televizyoneke mezin di odeya rûniştinê de di êvarê de torek ji wêneyên dîmenên xwezayê li kêleka rêzeke îkonan nîşan dide, û telekomandayek li ser maseya qehweyê ye">
 </p>
 
 <a id="on-android-tv-and-google-tv"></a>
-#### On Android TV and Google TV
+#### Li ser Android TV û Google TV
 
-The same Android app, in a dark theme from the first start, with the remote as the only input. In the viewer, Left and Right go to the previous or next photo or video, even while a video plays, and in a 360° photo or video the arrows look around.
+Heman sepana Android, ji destpêka yekem ve bi temayeke tarî, bi telekomandayê wekî têketina yekane. Di dîtinvanê de, Çep û Rast diçin wêne an vîdyoya berê an ya din, heta dema ku vîdyoyek dilîze jî, û di wêne an vîdyoyeke 360° de tîr li dora xwe dinêrin.
 
 <p align="center">
   <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Dîtinvanê gogê li ser Google TV-yek: panoramayeke 360° ya qeraxa golê, bişkoka girtinê li jor çepê, bişkokên Piçûkbike, Mezinbike, 360° û 3D li jor rastê, bi tîrên kontrolkerê hatine zivirandin">
 </p>
 
-1. Install the APK with adb, see [Install](#android-tv-and-google-tv). On the welcome page, choose "Add a network share or a media server" for a share, a Plex server or a camera, "Use without a server", or "Connect to an Immich server", whose page signs the TV in when you scan its QR code with your phone (see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
-2. In a viewer, the play and pause, rewind, fast forward, previous and next keys of the remote work. OK during a video shows the controls with play and pause selected, and a second OK pauses; the -10 s and +10 s buttons follow, then the audio and subtitles buttons when the film has them. From build 29, Down from play reaches the time bar: Left and Right move 10 s per press, faster while held, and OK plays or pauses. The controls and the date hide 5 s after the last key, and Left and Right then go to the previous or next file; on a share, that file opens in a page of its own, with controls that drive it. Videos no longer loop on a TV, unless you turn on Settings, Asset Viewer, Videos, Looping.
-3. The Menu key, the Info key or OK held down opens the details of the photo or video, read only: date, place, camera, codec, size and bit rate. A video the TV cannot decode says so, with its codec, its size and the limit of the TV's decoders, instead of loading forever; a 360° video beyond the decoders asks before opening the 360° player, and the reason is written on the Logs page of the profile menu.
+1. APK-yê bi adb saz bike, li [Saz bike](#android-tv-and-google-tv) binêre. Li ser rûpela bixêrhatinê, ji bo parvekirinekê, serverekî Plex an kamerayekê "Parvekirineke torê an serverekî medyayê lê zêde bike" hilbijêre, "Bêyî server bi kar bîne", an "Bi servera Immich ve girê bide", ku rûpela wê televizyonê dixe hundir dema ku tu koda wê ya QR bi têlefona xwe skan dikî (li [Bi têlefona xwe têkeve](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) binêre).
+2. Di dîtinvanekê de, bişkokên lîstin û rawestandin, paşverû, pêşverû, ya berê û ya din ên telekomandayê dixebitin. OK di dema vîdyoyekê de kontrolan bi lîstin û rawestandinê hilbijartî nîşan dide, û OK-ya duyem radiwestîne; li pey wan bişkokên -10 s û +10 s tên, paşê bişkokên deng û binnivîsan dema ku fîlm wan hebe. Ji çêkirina 29 pê ve, Jêr ji lîstinê digihîje xeta demê: Çep û Rast bi her pêlêkirinê 10 s dilivînin, dema ku tê girtin bileztir, û OK dilîze an radiwestîne. Kontrol û dîrok 5 s piştî bişkoka dawîn winda dibin, û paşê Çep û Rast diçin pela berê an ya din; li ser parvekirinekê, ew pel di rûpeleke xwe ya taybet de vedibe, bi kontrolên ku wê rê dikin. Vîdyo êdî li ser televizyonekê dubare nabin, heya ku tu Mîheng, Asset Viewer, Vîdyo, Looping venekî.
+3. Bişkoka Menu, bişkoka Info an OK-ya ku pêlêkirî tê girtin hûragahiyên wêne an vîdyoyê vedike, tenê ji bo xwendinê: dîrok, cih, kamera, kod, mezinahî û rêjeya bit. Vîdyoyek ku televizyon nikare kod veke vê yekê dibêje, bi koda xwe, mezinahiya xwe û sînorê kodxwînerên televizyonê, li şûna ku her û her bar bibe; vîdyoyeke 360° ya ji kodxwîneran wêdetir berî vekirina lîstikvanê 360° dipirse, û sedem li ser rûpela Logs a menûya profîlê tê nivîsandin.
 
-Build 28 ran on a real Android TV on 23 October; the video fixes of build 29 came from that run and were checked on the Google TV emulator, not yet on that TV.
+Çêkirina 28 di 23ê Cotmehê de li ser Android TV-yeke rastîn xebitî; sererastkirinên vîdyoyê yên çêkirina 29 ji wê ceribandinê hatin û li ser emulatorê Google TV hatin kontrolkirin, hê ne li ser wê televizyonê.
 
 <a id="immuch360-on-an-lg-tv-webos"></a>
 <a id="on-an-lg-tv-webos"></a>
-#### On an LG TV (webOS)
+#### Li ser televizyoneke LG (webOS)
 
-Immich's own apps do not install on an LG TV. Immuch360 has a TV app of its own for LG TVs with webOS 5.0 and later (2020 TVs on), driven by the remote and the Magic Remote: it shows your Immich server, your network shares, your Plex server and your Tapo cameras, and puts your 360° photos on a sphere you turn with the arrows. It is built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) by Seeky91, which brought the timeline, the albums, people, places, search, the slideshow and the sign in with a phone; thanks to Seeky91. Version 1.0.0 was submitted to the LG Content Store on 24 October and ran on webOS 25 TVs of LG's Cloud Test Lab; until LG approves it, it installs in Developer Mode, and every report in [Issues](https://github.com/freeKC/Immuch360/issues) helps.
+Sepanên Immich bi xwe li ser televizyoneke LG saz nabin. Immuch360 sepaneke TV ya taybet ji bo televizyonên LG bi webOS 5.0 û paşîtir (ji televizyonên 2020an pê ve) heye, bi telekomanda û Magic Remote tê rêvebirin: ew servera te ya Immich, parvekirinên te yên torê, servera te ya Plex û kameraên te yên Tapo nîşan dide, û wêneyên te yên 360° datîne ser gogeke ku tu bi tîran dizivirînî. Ew li ser [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) ya Seeky91 hatiye avakirin, ku xeta demê, albûm, kes, cih, lêgerîn, pêşandana slaytan û têketina bi têlefonê anî; spas ji Seeky91 re. Guhertoya 1.0.0 di 24ê Cotmehê de ji LG Content Store re hat şandin û li ser televizyonên webOS 25 ên Cloud Test Lab a LG xebitî; heta ku LG wê pejirîne, di Developer Mode de tê sazkirin, û her rapor di [Pirsgirêk](https://github.com/freeKC/Immuch360/issues) de alîkariyê dike.
 
 1. Wê li ser televizyonekê di Developer Mode de saz bike, li [Saz bike](#lg-tvs-webos) binêre. Nasnameya wê ya sepanê ya taybet heye, ji ber vê yekê ew li kêleka Immich TV ya Seeky91 saz dibe.
 2. Bi têlefona xwe têkeve (koda QR skan bike), bi îmêl û şîfreya xwe, an bi mifteyeke API.
 3. Bi tîran û OK bigere. Di dîtinvanê de, Çep û Rast diçin wêne an vîdyoya berê an ya din, her wiha dema ku vîdyoyek dilîze; kontrol 5 s piştî bişkoka dawîn winda dibin; Info hûragahiyan vedike; bişkokên kanalê mezin dikin; nîşanker û çerxa Magic Remote dixebitin.
-4. A 360° photo opens on a sphere: each press of an arrow turns it by a step, and a held key keeps it turning. "View as 360°" covers a 2:1 photo the server does not flag; a VR180 photo shows on a half sphere and a 3D photo with one eye. The yellow and blue keys turn a flat photo.
-5. Once signed in, "Network shares" in the rail of the app: add an SMB, WebDAV or DLNA share, a Plex server (signed in with a code on plex.tv/link) or a Tapo camera. Their photos open in the same viewer, 360° photos on the sphere.
+4. Wêneyeke 360° li ser gogekê vedibe: her pêlêkirina tîrekê wê gavekê dizivirîne, û bişkokeke girtî zivirandinê didomîne. «Wek 360° bibîne» ji bo wêneyeke 2:1 ku server nîşan nekiriye jî heye; wêneyeke VR180 li ser nîv gogekê û wêneyeke 3D bi yek çav xuya dibe. Bişkokên zer û şîn wêneyeke sade dizivirînin.
+5. Piştî têketinê, "Parvekirinên torê" di darika sepanê de: parvekirineke SMB, WebDAV an DLNA, serverekî Plex (bi kodekê li ser plex.tv/link têketî) an kamerayeke Tapo lê zêde bike. Wêneyên wan di heman dîtinvanê de vedibin, wêneyên 360° li ser gogê.
 
-Version 1.0.0 is made for the LG Content Store: Back leaves the app from Photos or the welcome page the way each webOS version expects, and closes an open popup first; a server that does not answer within 15 s ends with a message that says why and a Retry button; the privacy policy opens in the app, with a QR code to read [its LG TVs section](../PRIVACY.md#lg-tvs-webos) on a phone; the TV uses its Gallery picture mode, as LG asks of photo apps; and a second package suits the Full HD TVs to which LG gives 1280x720 apps.
+Guhertoya 1.0.0 ji bo LG Content Store hatiye çêkirin: Vegere ji Wêneyan an ji rûpela bixêrhatinê ji sepanê derdikeve bi wî awayê ku her guhertoya webOS hêvî dike, û pêşî pencereyeke vekirî digire; serverek ku di nav 15 s de bersiv nade bi peyameke ku sedemê dibêje û bişkokeke Dîsa biceribîne diqede; polîtîkaya nepeniyê di sepanê de vedibe, bi koda QR ji bo xwendina [beşa wê ya televizyonên LG](../PRIVACY.md#lg-tvs-webos) li ser têlefonekê; televizyon moda wêneyê ya Gallery bi kar tîne, wekî ku LG ji sepanên wêneyan dixwaze; û pakêteke duyem li televizyonên Full HD tê ku LG sepanên 1280x720 didiyê.
 
-Limits: SMB needs webOS 22 (2022 TVs) or later. The shares, Plex and the cameras come through the app's own service on the TV, which reads them for the app, and were checked against real servers and a simulated camera on the project's build host, not on a TV yet. The live view of a camera is video only. Not yet: the recordings of the cameras (not before December 2026) and their sound, 360° videos on the sphere (they play flat, with a message), uploads. On webOS before 25, the reverse proxy in front of Immich must send CORS headers; the app explains them when it meets the problem. webOS 26 has not been tried yet.
+Sînor: SMB pêdivî bi webOS 22 (televizyonên 2022an) an paşîtir heye. Parvekirin, Plex û kamera bi riya karûbarê sepanê yê taybet li ser televizyonê tên, ku wan ji bo sepanê dixwîne, û li hember serverên rastîn û kamerayeke simulekirî li ser makîneya çêkirinê ya projeyê hatine kontrolkirin, hê ne li ser televizyonekê. Dîtina zindî ya kamerayekê tenê vîdyo ye. Hê na: tomarên kameraan (ne berî Kanûna 2026an) û dengê wan, vîdyoyên 360° li ser gogê (ew sade tên lîstin, bi peyamekê), barkirin. Li ser webOS berî 25, reverse proxy-ya li ber Immich divê sernivîsên CORS bişîne; sepan wan rave dike dema ku rastî pirsgirêkê tê. webOS 26 hê nehatiye ceribandin.
 
 <a id="on-a-samsung-tv-tizen"></a>
-#### On a Samsung TV (Tizen)
+#### Li ser televizyoneke Samsung (Tizen)
 
-Samsung TVs with Tizen 5.5 and later (2020 TVs on) get the same TV app as test build 0.2.0, which is not on Samsung's store: sign in by typing, the timeline, albums, the viewer and the slideshow, 360° photos on the sphere and a photo turned with one key. Not yet: the sign in with a phone, the shares, Plex and the cameras, which run in a background service on LG TVs that the Samsung version does not have yet.
+Televizyonên Samsung bi Tizen 5.5 û paşîtir (ji televizyonên 2020an pê ve) heman sepana TV wekî çêkirina ceribandinê 0.2.0 distînin, ku ne li ser firoşgeha Samsung e: têketin bi nivîsandinê, xeta demê, albûm, dîtinvan û pêşandana slaytan, wêneyên 360° li ser gogê û wêneyek ku bi yek bişkokê dizivire. Hê na: têketina bi têlefonê, parvekirin, Plex û kamera, ku li ser televizyonên LG di karûbarekî paşperdeyê de dixebitin ku guhertoya Samsung hê tune ye.
 
-1. Sign the package for your TV and install it in Developer mode, see [Install](#samsung-tvs-tizen).
-2. Sign in by typing your server address, then your email and password or an API key.
-3. Browse with the arrows and OK. A 360° photo opens on the sphere; a 360° video plays flat, with a notice the first time, because on a tester's TV the browser of the TV gave black video frames to the 3D view.
-4. A video above what the TV's decoders accept says so, with the size the TV can play and the size of the file, instead of loading forever. A video that stalls shows a notice with its bitrate and the way out: let Immich transcode heavy files, or use a faster link. About this TV gives the TV's video ceiling.
+1. Pakêtê ji bo televizyona xwe îmze bike û wê di Developer mode de saz bike, li [Saz bike](#samsung-tvs-tizen) binêre.
+2. Bi nivîsandina navnîşana servera xwe têkeve, paşê îmêl û şîfreya xwe an mifteyeke API.
+3. Bi tîran û OK bigere. Wêneyeke 360° li ser gogê vedibe; vîdyoyeke 360° sade tê lîstin, cara yekem bi agahdariyekê, ji ber ku li ser televizyona ceribandinkerekî geroka televizyonê kareyên vîdyoyê yên reş dan dîmena 3D.
+4. Vîdyoyeke ku ji tiştê ku kodxwînerên televizyonê qebûl dikin derbas dibe vê yekê dibêje, bi mezinahiya ku televizyon dikare bilîze û mezinahiya pelê, li şûna ku her û her bar bibe. Vîdyoyeke ku disekine agahdariyekê bi rêjeya bit û riya derketinê nîşan dide: bihêle Immich pelên giran transkod bike, an girêdaneke bileztir bi kar bîne. Derbarê vê televizyonê sînorê vîdyoyê yê televizyonê dide.
 
-Version 0.1.0 ran on a tester's Samsung TV on Tizen 9, and 0.2.0 holds the fixes from that run; 0.2.0 has not run on a TV yet. The text of the About page, posted in [Discussions](https://github.com/freeKC/Immuch360/discussions) or [Issues](https://github.com/freeKC/Immuch360/issues) after a run, helps the most.
+Guhertoya 0.1.0 li ser televizyoneke Samsung a ceribandinkerekî bi Tizen 9 xebitî, û 0.2.0 sererastkirinên wê ceribandinê dihewîne; 0.2.0 hê li ser televizyonekê nexebitiye. Nivîsa rûpela Derbarê, ku piştî ceribandinekê di [Gotûbêj](https://github.com/freeKC/Immuch360/discussions) an [Pirsgirêk](https://github.com/freeKC/Immuch360/issues) de were şandin, herî zêde alîkariyê dike.
 
-More: [watch on your TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [the webOS app: install, remote control keys, CORS headers](../webos/README.md), [platform support](../docs/immuch360/platform-support.md).
+Zêdetir: [li ser televizyona xwe temaşe bike](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [sepana webOS: sazkirin, bişkokên telekomandayê, sernivîsên CORS](../webos/README.md), [piştgiriya platformê](../docs/immuch360/platform-support.md).
 
 <a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
 ### Bi têlefona xwe li ser televizyonek, kaskek an komputerekê têkeve
 
-**Scan. Sign in. Watch.** Typing a server address, an email and a password with a TV remote, or in a headset, takes minutes. With Immuch360 on your phone, signed in to your Immich server, a TV, a Meta Quest or a computer is signed in within seconds: the big screen shows a QR code, the phone scans it, you confirm, and the screen opens on your library. With the phone app, your password stays on the phone. The Immich app has nothing like it.
+**Skan bike. Têkeve. Temaşe bike.** Nivîsandina navnîşana serverekê, îmêlek û şîfreyekê bi telekomandaya televizyonê, an di kaskekê de, çend deqeyan digire. Bi Immuch360 li ser têlefona te, ku li servera te ya Immich ketiye, televizyonek, Meta Questek an komputerek di nav çend saniyeyan de têdikeve: ekrana mezin koda QR nîşan dide, têlefon wê skan dike, tu piştrast dikî, û ekran li ser kitêbxaneya te vedibe. Bi sepana têlefonê, şîfreya te li ser têlefonê dimîne. Di sepana Immich de tiştekî wisa tune.
 
 <p align="center">
-  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Illustration, not a capture: a TV shows a QR code on its sign-in page, and a phone held in front of it scans the same code">
+  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Wêneyek, ne dîmenek: televizyonek li ser rûpela xwe ya têketinê koda QR nîşan dide, û têlefonek ku li ber wê tê girtin heman kodê skan dike">
 </p>
 
 1. Li ser ekrana mezin (Android TV û Google TV, pencereya Meta Quest, Windows, Linux an macOS), "Bi servera Immich ve girê bide" hilbijêre: rûpela têketinê "Bi têlefona xwe têkeve", koda QR û kodeke 10 tîpî, li kêleka forma serverê, nîşan dide.
@@ -345,13 +345,13 @@ More: [watch on your TV](../docs/immuch360/user-guide.md#watch-on-your-tv-androi
 
 Çawa ewle dimîne: têlefon û ekran divê li ser heman tora malê bin, û kod herî zêde du deqeyan didome û tenê carekê dixebite. Têlefon ji servera te danişîneke nû ji bo wê ekranê dixwaze, bi navê wê ("Immuch360 li ser TV ya odeya rûniştinê"), û wê bi şîfrekirî ji ekranê re dişîne, ji ber vê yekê şîfreya te çu carî ji têlefonê dernakeve. "Televizyonek an komputerek girê bide" ekranên ku vê têlefonê xistine hundir rêz dike, her yek bi Derkeve, û Immich wan di Mîhengên hesabê, Cîhazên destûrdayî de rêz dike, ku tu dikarî wan li wir jî betal bikî. Derketina têlefonê wan jî derdixe.
 
-The phone side runs on Android now, and on iPhone and iPad from the next iOS release. Without Immuch360 on the phone, scan the code with the camera of the phone: a page served by the screen opens in the browser, for your email and password, encrypted and used once. LG TVs sign in with a QR code of their own, in the browser of the phone; from build 28 the scanner of the phone app recognises it and opens that page. Samsung TVs are signed in by typing for now.
+Aliyê têlefonê niha li ser Android dixebite, û li ser iPhone û iPad ji weşana iOS ya din pê ve. Bêyî Immuch360 li ser têlefonê, kodê bi kameraya têlefonê skan bike: rûpeleke ku ji hêla ekranê ve tê pêşkêşkirin di gerokê de vedibe, ji bo îmêl û şîfreya te, şîfrekirî û tenê carekê tê bikaranîn. Televizyonên LG bi koda QR ya xwe têdikevin, di geroka têlefonê de; ji çêkirina 28 pê ve skankera sepana têlefonê wê nas dike û wê rûpelê vedike. Televizyonên Samsung heta niha bi nivîsandinê têdikevin.
 
 Zêdetir: [bi têlefona xwe têkeve](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [ekran çi dişînin û diparêzin](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
 
 <a id="go-immersive-on-meta-quest"></a>
 <a id="step-inside-your-photos-and-videos-with-a-meta-quest"></a>
-### Step inside your photos and videos with a Meta Quest
+### Bi Meta Questê têkeve nav wêne û vîdyoyên xwe
 
 Li ser Meta Questê heman sepan wekî pencereyeke bi tevahiya kitêbxaneya te dixebite, û bişkoka wê ya 360° dîmenekî dorhêlî vedike ku wêne an vîdyo li dora te ye: tu bi zivirandina serê xwe dora xwe dibînî, pelên stereoskopîk bi 3D ya rastîn in, wêneyeke Apple Spatial bi 3D li pêş te difire, û kontrolker an destên te xeta demê, ya berê û ya din, û bişkoka Vegerê ku tiştê li pişt te ye bêyî ku tu kursiya xwe bizivirînî ber bi pêş ve tîne, rê dikin. Medya ji servera te, kaskê bi xwe, NAS-ek, servereke medyayê, telefonek an servereke Plex tên, li cihê xwe têne lîstin.
 
@@ -370,9 +370,9 @@ Zêdetir: [di kaska Meta Quest de](../docs/immuch360/user-guide.md#in-the-meta-q
 
 <a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
 <a id="play-the-files-of-a-nas-a-computer-a-media-server-or-plex"></a>
-### Play the files of a NAS, a computer, a media server or Plex
+### Pelên NAS, komputer, serverê medyayê an Plex bilîze
 
-Your videos sit on a NAS, a computer, a media server or Plex. Immuch360 finds the servers of your network by itself, browses them and plays their photos and videos in place, in every viewer of the app, without copying anything: SMB (Samba, Windows shares), WebDAV (Nextcloud, Synology and others) and DLNA media servers (Jellyfin, Emby, minidlna, a NAS, a TV box). A phone can also share its own gallery on the Wi-Fi for a headset or any WebDAV client, and so can a Windows computer.
+Vîdyoyên te li ser NAS-ek, komputerek, servereke medyayê an Plex in. Immuch360 bi xwe serverên torê te dibîne, nav wan digere û wêne û vîdyoyên wan li cihê xwe, di her dîtinvanê sepanê de, bêyî tiştek jê kopî bike, dilîze: SMB (Samba, parvekirinên Windows), WebDAV (Nextcloud, Synology û yên din) û serverên medyayê yên DLNA (Jellyfin, Emby, minidlna, NAS-ek, qutiyeke TV). Telefonek dikare galerîya xwe jî li ser Wi-Fi ji bo kaskek an her daxwazkarek WebDAV parve bike, û komputereke Windows jî dikare wiha bike.
 
 <p align="center">
   <img src="../.github/readme/b19-add-share.png" width="260" alt="Rûpela Parvekirinekê lê zêde bike: Nav, Nav an navnîşana serverê, Port (bijarte), Parvekirin, Parvekirinekê hilbijêre, Peldanka destpêkê (bijarte), Navê bikarhêner, Şîfre, Girêdanê biceribîne, û encam Girêdayî ye, 2 hêman di peldanka destpêkê de">
@@ -382,18 +382,18 @@ Your videos sit on a NAS, a computer, a media server or Plex. Immuch360 finds th
 1. Tabloya Kitêbxane veke, paşê Parvekirinên torê, paşê + û "Parvekirina torê (NAS, komputer, serverê medyayê)". Ji çêkirina 24ê pê ve, "Parvekirineke torê an serverekî medyayê lê zêde bike" li ser rûpela bixêrhatinê rasterast Parvekirinên torê vedike, bêyî server.
 2. Li ser serverek di bin «Li ser torê hat dîtin» de bixe, an form bi destan tijî bike: cûre, nav an navnîşana serverê, parvekirin an rê, peldanka destpêkê, navê bikarhêner û şîfre.
 3. Li «Girêdanê biceribîne» bixe, paşê Tomar bike. Li parvekirinê bixe da ku lê bigerî: pêşî peldank, paşê wêne û vîdyo, bi nîşaneya 360° li ser pelên ku wekî 360° hatine nasîn.
-4. For a Plex server: in Network shares, + and "A Plex Media Server", then tap your server under "Found on the network", paste a token once ("How to get it" on the page says where to find it), then "Test the connection" and Save.
-5. With an Immich server connected, select files in a folder and tap "Upload to Immich" to send them to your server.
+4. Ji bo serverekî Plex: di Parvekirinên torê de, + û "Plex Media Server", paşê li servera xwe di bin «Li ser torê hat dîtin» de bixe, carekê tokenek bipêçe («Çawa wê bistînî» li ser rûpelê dibêje ka li ku derê tê dîtin), paşê «Girêdanê biceribîne» û Tomar bike.
+5. Bi servereke Immich a girêdayî, pelan di peldankekê de hilbijêre û li «Li Immich bar bike» bixe da ku wan bişînî serverê xwe.
 
 Lîstikvan bytên ku hewce dikin bi pûlek di hundirê sepanê re, bi rêzên bytê, dixwînin, ji ber vê yekê gerîna demê dixebite û tiştek li ser cîhazê nayê tomar kirin; vîdyoyeke SMB ji bo lîstina rewan di navbera heta şeş girêdanan de bi hev re tê xwendin. Ji çêkirina 29 pê ve, fîlmên ku wekî M2TS hatine tomarkirin (Blu-ray, kamerayên AVCHD, tomarkerên TV) di sepana Android de ji parvekirinên SMB û WebDAV û ji serverên DLNA yên ku wan wekî transport stream rêz dikin dilîzin, û serverek DLNA ya ku mezinahiya 0 nîşan dide êdî vîdyoyeke vala nade.
 
-**Plex Media Server, without plex.tv**: the app pairs with your server directly, with a token you paste once, and reads the original files of your libraries live, so 360° stays 360°, at home and, through your port forwarding, away from home. On an LG TV, Plex is signed in with a code on plex.tv/link.
+**Plex Media Server, bêyî plex.tv**: sepan rasterast bi servera te re cot dibe, bi tokenek ku tu carek dipêçî, û pelên orîjînal ên kitêbxaneyên te bi zindî dixwîne, ji ber vê yekê 360° dimîne 360°, li malê û, bi riya rêberkirina porta te, dûrî malê jî. Li ser televizyoneke LG, têketina Plex bi kodekê li ser plex.tv/link tê kirin.
 
-More: [network shares](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [share this phone on the network](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA media servers](../docs/immuch360/user-guide.md#dlna-media-servers), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv).
+Zêdetir: [parvekirinên torê](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [vê telefonê li ser torê parve bike](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [serverên medyayê yên DLNA](../docs/immuch360/user-guide.md#dlna-media-servers), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv).
 
 <a id="find-your-immich-library"></a>
 <a id="keep-your-immich-library-with-more"></a>
-### Keep your Immich library, with more
+### Kitêbxaneya xwe ya Immich biparêze, bi zêdetir
 
 Bi servereke [Immich](https://github.com/immich-app/immich), Immuch360 sepana mobîl a Immich e, bi heman server û heman hesabê wekî sepana web: tomarkirin, xeta demê, albûm, lêgerîn, kes, bîranîn, parvekirin, hevkar, her tişt bi servera te re li hev hatiye. Ew li kêleka sepana fermî saz dibe. Li ser vê de: nîşan û lîsteya 360°, her dîtinvanê dorhêlî, hilbijartin di navbera pela orîjînal û rewa transkod kirî ya serverê ji bo her vîdyoyê, hûragahiyên teknîkî yên vîdyoyekê, û pelên parvekirinek an cîhazê ku bi destan ber bi serverê te ve hatine şandin.
 
@@ -401,107 +401,107 @@ Bi servereke [Immich](https://github.com/immich-app/immich), Immuch360 sepana mo
 2. Di Mîhengan de, Asset Viewer, Vîdyo, «Çavkaniya vîdyoyê» orîjînal hilbijêre dema ku ev cîhaz wê dixwîne, her dem orîjînal, an her dem rewa transkod kirî.
 3. Ji bo nîşandana wêneyeke 360° ji kesê ku sepanê nîne re, wê bi lînkeke parvekirî ya Immich parve bike: sepana web a Immich wê wekî gogê di gerokê wî/wê de nîşan dide.
 
-The current build, build 30, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), like builds 28 and 29; build 28 was tested against a server built from that same Immich `main`, and build 27 also against an Immich 3.2.4 server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
+Çêkirina heyî, çêkirina 30, li ser `main` ya Immich ya 10ê Cotmeha 2026an (guhertoya 3.3.0-rc.0) hatiye avakirin, wekî çêkirinên 28 û 29; çêkirina 28 li hember servereke ku ji heman `main` ya Immich hatiye çêkirin hatiye ceribandin, û çêkirina 27 jî li hember servereke Immich 3.2.4. Ji kerema xwe pirsgirêkan di [Pirsgirêk](https://github.com/freeKC/Immuch360/issues) de ragihîne, ne ji projeya Immich re.
 
-What is the same and what Immuch360 adds is in [Compared with Immich](#compared-with-immich).
+Çi wekî hev e û Immuch360 çi lê zêde dike, di [Li gorî Immich](#compared-with-immich) de ye.
 
 Zêdetir: [her tiştê din Immich e](../docs/immuch360/user-guide.md#everything-else-is-immich), [li gorî sepana Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 <a id="watch-your-home-cameras-on-the-big-screen"></a>
-### Watch your home cameras on the big screen
+### Li ser ekrana mezin li kameraên malê binêre
 
 <p align="center">
-  <img src="../.github/readme/home-cameras.png" width="720" alt="Illustration, not a capture: in a living room at dusk, the TV on the wall shows one live view of a garden path from a home camera that stands on the sideboard, and a phone on the table shows the same view.">
+  <img src="../.github/readme/home-cameras.png" width="720" alt="Wêneyek, ne dîmenek: di odeya rûniştinê de di êvarê de, televizyona li ser dîwêr dîmenekî zindî yê rêyeke baxçeyê ji kameraya malê ya li ser dolabê nîşan dide, û têlefonek li ser maseyê heman dîmenî nîşan dide.">
 </p>
-<p align="center"><sub>An illustration. The Tapo support has not been checked with a real camera yet.</sub></p>
+<p align="center"><sub>Wêneyek. Piştgiriya Tapo hê bi kamerayeke rastîn nehatiye kontrolkirin.</sub></p>
 
-Your Tapo cameras of TP-Link, next to your photos, without the Tapo app. The app shows a camera live (Android phones and tablets, Android TV, the Meta Quest, Windows and, video only, LG TVs; iPhone and iPad from the next iOS release) and lists the recordings of its memory card day by day (phones, tablets, Android TV, the Quest and computers). A clip is fetched from the camera, plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link, and never changes anything on the camera.
+Kameraên te yên Tapo yên TP-Link, li kêleka wêneyên te, bêyî sepana Tapo. Sepan kamerayekê zindî nîşan dide (têlefon û tabletên Android, Android TV, Meta Quest, Windows û, tenê vîdyo, televizyonên LG; iPhone û iPad ji weşana iOS ya din pê ve) û tomarên karta bîrê ya wê roj bi roj rêz dike (têlefon, tablet, Android TV, Quest û komputer). Klîpek ji kamerayê tê anîn, wekî her vîdyoyekê dilîze û dikare ji Immich re were şandin. Sepan tenê li ser tora te bi kamerayê re diaxive, çu carî bi serverên TP-Link re, û çu carî tiştekî li ser kamerayê naguherîne.
 
-**Not yet checked with a real camera.** The protocol was written from captures of a C510W with firmware 1.3.4, and the app was checked against a simulated camera only. A report with the model and firmware that "Test the camera" shows helps a lot.
+**Hê bi kamerayeke rastîn nehatiye kontrolkirin.** Protokol ji tomarên daneyan ên C510W bi firmware 1.3.4 hatiye nivîsandin, û sepan tenê li hember kamerayeke simulekirî hatiye kontrolkirin. Raporek bi model û firmware ku «Kamerayê biceribîne» nîşan dide gelek alîkariyê dike.
 
-1. In the Tapo app first: create the camera account (settings of the camera, Advanced Settings, Camera Account), used for the live view, and turn on Third-Party Compatibility, under Me, then Tapo Lab.
-2. In Immuch360: Library, Network shares, + and "A Tapo camera". Tap your camera under "Found on the network", or type its address.
-3. Type the password of your TP-Link account for the recordings, the camera account for the live view, or both; then "Test the camera", and Save.
-4. Tap the camera: its live view is at the top of its page, with the sound, SD or HD and Full screen; below it come the days with recordings. Tap a clip to fetch it and play it; its ⋮ menu has "Upload to Immich".
+1. Pêşî di sepana Tapo de: hesabê kamerayê çêke (mîhengên kamerayê, Advanced Settings, Camera Account), ku ji bo dîtina zindî tê bikaranîn, û Third-Party Compatibility vêxe, di bin Me de, paşê Tapo Lab.
+2. Di Immuch360 de: Kitêbxane, Parvekirinên torê, + û "Kamerayeke Tapo". Li kameraya xwe di bin «Li ser torê hat dîtin» de bixe, an navnîşana wê binivîse.
+3. Şîfreya hesabê xwe yê TP-Link ji bo tomaran, hesabê kamerayê ji bo dîtina zindî, an herduyan binivîse; paşê «Kamerayê biceribîne», û Tomar bike.
+4. Li kamerayê bixe: dîtina wê ya zindî li jora rûpela wê ye, bi deng, SD an HD û Ekrana tam; li jêr wê rojên bi tomaran tên. Li klîpekê bixe da ku wê bîne û bilîze; menûya wê ya ⋮ «Li Immich bar bike» heye.
 
-More: [Tapo cameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Zêdetir: [kameraên Tapo](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="your-dji-drone-experimental"></a>
-### Your DJI drone (experimental)
+### Drona te ya DJI (ceribandinî)
 
-A Drone card in the Library, experimental and on by default, gathers what Immuch360 does with a DJI drone: on an Android phone, the drone's live video through its remote controller, and its photos and videos brought to Immich over USB; in a Meta Quest or on an Android TV, that live video relayed by the phone, to watch. Immuch360 is not a DJI product and is not approved by DJI, and nothing is sent to DJI. In this build the drone screens are in English only; their translations come later.
+Karteke Drone di Kitêbxaneyê de, ceribandinî û bi awayê pêşbijartî vêxistî, tiştên ku Immuch360 bi droneke DJI dike kom dike: li ser têlefoneke Android, vîdyoya zindî ya dronê bi riya kontrolkera wê, û wêne û vîdyoyên wê ku bi USB tên anîn Immich; di Meta Questê de an li ser Android TV, ew vîdyoya zindî ku têlefon dişîne, ji bo temaşekirinê. Immuch360 ne berhemeke DJI ye û ji hêla DJI ve nehatiye pejirandin, û tiştek ji DJI re nayê şandin. Di vê çêkirinê de ekranên dronê tenê bi îngilîzî ne; wergerên wan paşê tên.
 
 <a id="your-dji-drones-live-video-on-your-phone-experimental"></a>
 <a id="see-what-your-drone-sees-on-your-phone"></a>
-#### See what your drone sees, on your phone
+#### Bibîne ka drona te çi dibîne, li ser têlefona xwe
 
 <p align="center">
-  <img src="../.github/readme/drone-live-phone.png" width="720" alt="Illustration, not a capture: two hands hold a drone remote controller with a phone clipped on top, whose screen shows a live aerial view of a coast, while a small drone flies over the bay at dusk">
+  <img src="../.github/readme/drone-live-phone.png" width="720" alt="Wêneyek, ne dîmenek: du dest kontrolkereke dronê bi têlefonekê li ser wê girtine, ekrana wê dîmenekî zindî yê ji hewayê yê peravekê nîşan dide, dema ku droneke biçûk di êvarê de li ser kendavê difire">
 </p>
 
-See what your DJI drone sees on your Android phone, without DJI Fly and without any account: plug a DJI RC-N3 remote controller into the phone with its cable, and Immuch360 shows the drone's live video full screen in landscape, H.265 in 1080p, with the flight values read from the cable. The remote keeps full control of the drone. It was tried with an RC-N3, a DJI Neo 2 and a Samsung Galaxy S24+: on the ground with build 29, and in flight with test builds of build 30 on 24 and 25 October. Other remotes and drones have not been tried.
+Tiştê ku drona te ya DJI dibîne li ser têlefona xwe ya Android bibîne, bêyî DJI Fly û bêyî tu hesab: kontrolkereke DJI RC-N3 bi kabloya wê bi têlefonê ve girê bide, û Immuch360 vîdyoya zindî ya dronê li ser tevahiya ekranê bi awayê berfireh nîşan dide, H.265 di 1080p de, bi nirxên firînê yên ku ji kabloyê têne xwendin. Kontrolker kontrola tevahî ya dronê diparêze. Ew bi RC-N3, DJI Neo 2 û Samsung Galaxy S24+ hatiye ceribandin: li ser erdê bi çêkirina 29, û di firînê de bi çêkirinên ceribandinê yên çêkirina 30 di 24 û 25ê Cotmehê de. Kontrolker û dronên din nehatine ceribandin.
 
 Ew tenê guhdarî dike. Tu ferman çu carî ji kontrolker an dronê re nayê şandin: yek byta ku rûpel her saniyeyê dinivîse, ji 20 saniyeyan piştî vebûna kontrolkerê, tenê nîşan dide ka kontrolker daneyan digire an na, û tu fermanê hilnagire.
 
-On the live screen: the drone's battery and the motor time and, in flight, the height above the take off point, the vertical speed, the speed and the distance below the drone. A value goes there only once our own flight captures prove it: the height, the speeds and the distance below were proven on the captures of two indoor flights on 25 October, up to 1.8 m high and 1.5 m/s, not beyond yet; showing them there is new in build 30 and first tested with it. The height shows about 1.5 s after lift off, once the drone has left the ground or the hand, and stays hidden until the motors stop if it ever jumps in a way no aircraft can. Advanced adds the battery's voltage and temperature, the heading (its zero not checked against north) and the motors, and Diagnostics every number the link gives, the battery current included. No satellites, position or distance from home are shown. The numbers are not compared with DJI Fly yet: do not fly by them.
+Li ser ekrana zindî: bataryaya dronê û dema motoran û, di firînê de, bilindahiya li ser cihê rabûnê, leza tîk, lez û dûrahiya li jêr dronê. Nirxek tenê dema ku tomarên me yên firînê wê îsbat dikin li wir xuya dibe: bilindahî, lez û dûrahiya li jêr dronê li ser tomarên du firînên di hundir de di 25ê Cotmehê de hatin îsbatkirin, heta bilindahiya 1.8 m û 1.5 m/s, hê ne zêdetir; nîşandana wan li wir di çêkirina 30 de nû ye û cara yekem bi wê tê ceribandin. Bilindahî nêzîkî 1.5 s piştî rabûnê xuya dibe, dema ku dron ji erdê an ji destan veqetiyaye, û heke çu carî bi awayekî ku tu balafir nikare bike baz bide, heta ku motor rawestin veşartî dimîne. Advanced voltaj û germahiya bataryayê, rêgeh (sifra wê li hember bakur nehatiye kontrolkirin) û motoran lê zêde dike, û Diagnostics her hejmara ku girêdan dide, herika bataryayê jî tê de. Ne satelaît, ne cih û ne jî dûrahiya ji malê tên nîşandan. Hejmar hê bi DJI Fly re nehatine berhevkirin: li gorî wan nefire.
 
-**Obstacle ring**, on by default: when the drone's sensors see something close, a translucent circle shows around the middle of the picture, with an arc toward the obstacle, amber turning red as it gets closer, its distance beside it and a short tick that speeds up; with nothing close, nothing shows. The circle and the direction of the arc were checked in flight, indoors, on 25 October, on a test build where the direction was an option; shown by default, it is first tested with build 30. In Advanced you set the distances ("Glow from", 3.0 m, and "Strong glow from", 1.0 m), choose a frame at the edges of the picture instead of the circle, or turn off the ring, its sound or its vibration. It shows only what the drone's sensors report: nothing in Sport mode or with obstacle avoidance off, and no glow does not mean the way is clear. Information only: Immuch360 never steers or stops the drone.
+**Xeleka astengiyan**, bi awayê pêşbijartî vêxistî: dema ku sensorên dronê tiştekî nêzîk dibînin, xelekeke nîvzelal li dora navenda wêneyê xuya dibe, bi kevanekê ber bi astengiyê ve, zer ku her ku nêzîk dibe sor dibe, dûrahiya wê li kêlekê û tiktikeke kurt ku bileztir dibe; dema ku tiştek nêzîk nîne, tiştek xuya nabe. Xelek û aliyê kevanê di firînê de, di hundir de, di 25ê Cotmehê de hatin kontrolkirin, li ser çêkirineke ceribandinê ku tê de alî vebijarkek bû; wekî ku bi awayê pêşbijartî tê nîşandan, cara yekem bi çêkirina 30 tê ceribandin. Di Advanced de tu dûrahiyan saz dikî («Glow from», 3.0 m, û «Strong glow from», 1.0 m), li şûna xelekê çarçoveyekê li keviyên wêneyê hildibijêrî, an xelekê, dengê wê an lerizîna wê vedimirînî. Ew tenê tiştê ku sensorên dronê ragihînin nîşan dide: di moda Sport de an dema ku dûrketina ji astengiyan girtî ye tiştek nîne, û nebûna ronahiyê nayê wê wateyê ku rê vala ye. Tenê agahî: Immuch360 çu carî dronê bi rê ve nabe û ranawestîne.
 
-1. The Drone card is in the Library, and "DJI live video" on its page: "DJI live video (experimental)", in Settings, Advanced, is on by default.
-2. Turn on the drone and the remote, close DJI Fly, then open "DJI live video" and read the safety notice.
-3. Plug the remote into the phone with its cable. If Android asks which app should open it, choose Immuch360 without "Always", which would take the remote away from DJI Fly; if it asks for a USB mode, choose charging only. Plugging in the remote then opens this screen by itself ("Open this screen when the remote is plugged in", on by default in Advanced).
-4. Remote, Drone and Picture light up in turn, and the picture comes full screen within a few seconds. Three buttons (leave, "Send to a headset or a TV" and Advanced) and the values sit in the black bands beside the picture. The notes, such as "Live", fade after about five seconds; a tap anywhere brings them back, and nothing on the picture acts on the drone. An error that asks you to act stays.
-5. Advanced has "Save a capture for a bug report", which writes the link's capture to `Download/Immuch360/dji-link`, "Play a saved capture", to play one again without the remote, and Diagnostics, with every number the link gives.
+1. Karta Drone di Kitêbxaneyê de ye, û «DJI live video» li ser rûpela wê: «DJI live video (experimental)», di Mîhengan, Pêşketî de, bi awayê pêşbijartî vêxistî ye.
+2. Dron û kontrolkerê vêxe, DJI Fly bigire, paşê «DJI live video» veke û agahdariya ewlehiyê bixwîne.
+3. Kontrolkerê bi kabloya wê bi têlefonê ve girê bide. Heke Android bipirse ka kîjan sepan divê wê veke, Immuch360 bêyî "Her tim" hilbijêre, ku dê kontrolkerê ji DJI Fly bigire; heke modeke USB bipirse, tenê şarjkirinê hilbijêre. Piştî wê, girêdana kontrolkerê vê ekranê bi xwe vedike («Open this screen when the remote is plugged in», di Advanced de bi awayê pêşbijartî vêxistî).
+4. Remote, Drone û Picture yek li dû yekê ronî dibin, û wêne di nav çend saniyeyan de li ser tevahiya ekranê tê. Sê bişkok (derketin, «Send to a headset or a TV» û Advanced) û nirx di bendên reş ên li kêleka wêneyê de ne. Nîşe, wekî «Live», piştî nêzîkî pênc saniyeyan winda dibin; tikandinek li her derê wan vedigerîne, û tiştek li ser wêneyê bandorê li dronê nake. Çewtiyeke ku ji te dixwaze tiştekî bikî dimîne.
+5. Advanced «Save a capture for a bug report» heye, ku tomara girêdanê di `Download/Immuch360/dji-link` de dinivîse, «Play a saved capture», ji bo dîsa lîstina wê bêyî kontrolkerê, û Diagnostics, bi her hejmara ku girêdan dide.
 
-The drone's photos and videos cannot be reached through the remote, which does not open the drone's storage: copy them from the drone itself over USB or from its card, as [below](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich). Keep the saved captures to yourself, as the page says: they hold the drone's video and the serial numbers of the remote and the aircraft, and may hold its position; a report in [Issues](https://github.com/freeKC/Immuch360/issues) with what Diagnostics shows helps, above all with other DJI remotes.
+Wêne û vîdyoyên dronê bi riya kontrolkerê nayên gihîştin, ji ber ku ew embara dronê venake: wan ji dronê bi xwe bi USB an ji karta wê kopî bike, wekî [li jêr](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich). Tomarên tomarkirî ji xwe re bihêle, wekî ku rûpel dibêje: vîdyoya dronê û jimarên rêzê yên kontrolker û balafirê di wan de ne, û dibe ku cihê wê jî tê de be; raporek di [Pirsgirêk](https://github.com/freeKC/Immuch360/issues) de bi tiştê ku Diagnostics nîşan dide alîkariyê dike, bi taybetî bi kontrolkerên din ên DJI.
 
 <a id="watch-it-in-a-meta-quest-or-on-an-android-tv"></a>
-#### Watch it in a Meta Quest or on an Android TV
+#### Di Meta Questê de an li ser Android TV temaşe bike
 
-The phone plugged into the remote can send the drone's picture and values to Immuch360 in a Meta Quest or on an Android TV or Google TV on the same local network, for the people with you. A headset shows them in a window or, larger, in a flight view in front of you, and a TV full screen, with the same values and obstacle ring as the phone. They only watch: nothing a headset or a TV does reaches the remote or the drone. Their notes, such as "Watching only", fade after a few seconds and come back with a key, a tap or a button. The drone's picture reached a Quest 3 once, on 24 October, over a home Wi-Fi; the headset window and the flight view with the values and the obstacle ring are first tested with build 30, and the Quest 2, Pro and 3S have not been tried. Should the circle hide the middle of the picture in the headset, "Frame at the edges" in its menu keeps the middle clear. On a TCL Android TV, the pairing and the picture were tried on 25 October, with stutter and a green cast on the earlier relay; the steady stream that answers them is first tested with build 30. Flying while you watch the headset or the TV needs an observer next to you who keeps the drone in sight (EU open category); without one, watch the drone.
+Têlefona ku bi kontrolkerê ve girêdayî ye dikare wêne û nirxên dronê ji Immuch360 re di Meta Questê de an li ser Android TV an Google TV li ser heman tora herêmî bişîne, ji bo kesên ku bi te re ne. Kaskek wan di pencereyekê de an, mezintir, di dîmeneke firînê ya li ber te de nîşan dide, û televizyonek li ser tevahiya ekranê, bi heman nirx û xeleka astengiyan wekî têlefonê. Ew tenê temaşe dikin: tiştek ku kaskek an televizyonek dike nagihîje kontrolker an dronê. Nîşeyên wan, wekî «Watching only», piştî çend saniyeyan winda dibin û bi bişkokek, tikandinek an bişkokeke kontrolê vedigerin. Wêneya dronê carekê, di 24ê Cotmehê de, bi Wi-Fi-ya malê gihîşt Quest 3; pencereya kaskê û dîmena firînê bi nirx û xeleka astengiyan cara yekem bi çêkirina 30 tên ceribandin, û Quest 2, Pro û 3S nehatine ceribandin. Heke xelek di kaskê de navenda wêneyê veşêre, «Frame at the edges» di menûya wê de navendê vala dihêle. Li ser Android TV-yeke TCL, cotkirin û wêne di 25ê Cotmehê de hatin ceribandin, bi rawestan û rengekî kesk li ser şandina berê; herikîna domdar a ku bersiva wan dide cara yekem bi çêkirina 30 tê ceribandin. Firîn dema ku tu li kaskê an televizyonê dinêrî çavdêrekî li kêleka te dixwaze ku dronê di ber çavan de bihêle (kategoriya vekirî ya YE); bêyî wî, li dronê binêre.
 
-1. On the phone, on the live screen, tap "Send to a headset or a TV" and turn it on.
-2. **Meta Quest**: open Immuch360, Library, Drone, and pick the phone; type the code the phone shows, once for that phone. The picture opens in the window; "Open the flight view" makes it larger, and B or Y brings the window back.
-3. **Android TV and Google TV**: open Immuch360, Library, Drone. Under "Let this TV watch", the TV shows a code and its QR code: on the phone, in the same panel, tap "Add a TV" and scan it, or type it. Then select the phone on the TV and press OK: the picture comes full screen; OK shows or hides the numbers, and Menu opens the options.
-4. The phone and the screen must be on the same local network. Away from home, turn on the phone's hotspot, in the 5 GHz band if it offers it, and join it from the headset or the TV.
-5. For a bug report, the headset's menu and the TV's Options have Diagnostics and "Save a reception record", which keeps what that screen received.
+1. Li ser têlefonê, li ser ekrana zindî, li «Send to a headset or a TV» bixe û wê vêxe.
+2. **Meta Quest**: Immuch360 veke, Kitêbxane, Drone, û têlefonê hilbijêre; koda ku têlefon nîşan dide binivîse, carekê ji bo wê têlefonê. Wêne di pencereyê de vedibe; «Open the flight view» wê mezintir dike, û B an Y pencereyê vedigerîne.
+3. **Android TV û Google TV**: Immuch360 veke, Kitêbxane, Drone. Di bin «Let this TV watch» de, televizyon kodek û koda wê ya QR nîşan dide: li ser têlefonê, di heman panelê de, li «Add a TV» bixe û wê skan bike, an binivîse. Paşê li ser televizyonê têlefonê hilbijêre û OK bitikîne: wêne li ser tevahiya ekranê tê; OK hejmaran nîşan dide an vedişêre, û Menu vebijarkan vedike.
+4. Têlefon û ekran divê li ser heman tora herêmî bin. Dûrî malê, hotspota têlefonê vêxe, di banda 5 GHz de heke pêşkêş bike, û kaskê an televizyonê pê ve girê bide.
+5. Ji bo raporeke çewtiyê, menûya kaskê û Options a televizyonê Diagnostics û «Save a reception record» hene, ku tiştê ku wê ekranê wergirtiye diparêze.
 
-**Relay quality**, new in build 30, in Advanced on the phone: in flight the drone sends about 18 Mbit/s, and on 25 October a home Wi-Fi path from the phone through the router to the TV carried that full stream only a third of the flight time; the rest of the time the TV's picture stuttered, broke up and took a green cast. With Automatic, the default, a screen whose Wi-Fi cannot keep up gets a steady picture that the phone encodes again for it, up to 1080p at 30 pictures a second and at the rate its Wi-Fi carries, made to stay clean, with less detail, instead of breaking up; it goes back to the drone's own picture at the next landing or take off, once the Wi-Fi has room. Full stream always sends the drone's picture as it comes, Steady stream always the phone's. The steady picture is new: it is first tested with build 30, and had not run on a phone on 25 October. A TV on an Ethernet cable, or a screen joined to the phone's own hotspot, leaves one Wi-Fi hop instead of two.
+**Kalîteya şandinê**, nû di çêkirina 30 de, di Advanced de li ser têlefonê: di firînê de dron nêzîkî 18 Mbit/s dişîne, û di 25ê Cotmehê de rêyeke Wi-Fi ya malê ji têlefonê bi riya routerê heta televizyonê ew herikîna tevahî tenê sêyeka dema firînê hilgirt; di dema mayî de wêneya televizyonê rawestiya, şikest û rengekî kesk girt. Bi Automatic, ya pêşbijartî, ekraneke ku Wi-Fi-ya wê nikare bişopîne wêneyeke domdar distîne ku têlefon ji nû ve ji bo wê kod dike, heta 1080p bi 30 wêneyan di saniyeyê de û bi wê rêjeyê ku Wi-Fi-ya wê hildigire, hatiye çêkirin ku paqij bimîne, bi hûragahiyên kêmtir, li şûna ku bişkê; ew di daketin an rabûna din de vedigere wêneya dronê bi xwe, dema ku Wi-Fi cih hebe. Full stream her tim wêneya dronê wekî ku tê dişîne, Steady stream her tim ya têlefonê. Wêneya domdar nû ye: cara yekem bi çêkirina 30 tê ceribandin, û di 25ê Cotmehê de hê li ser têlefonekê nexebitîbû. Televizyonek bi kabloya Ethernet, an ekraneke ku bi hotspota têlefonê bi xwe ve girêdayî ye, li şûna du gavên Wi-Fi yek gav dihêle.
 
-Not in this build: the drone on iPhone and iPad (not started), the relay to LG and Samsung TVs, and the proof of the values above 1.8 m and 1.5 m/s, then the satellites and the distance from home, which wait for an outdoor flight.
+Ne di vê çêkirinê de: dron li ser iPhone û iPad (dest pê nekiriye), şandin ji televizyonên LG û Samsung re, û îsbatkirina nirxên ji 1.8 m û 1.5 m/s zêdetir, paşê satelaît û dûrahiya ji malê, ku li benda firîneke li derve ne.
 
 <a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
 <a id="bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich"></a>
-#### Bring a drone's or a camera card's photos and videos to Immich
+#### Wêne û vîdyoyên dronekê an karta kamerayekê bîne Immich
 
 Wêne û vîdyoyên droneke DJI bi USB rasterast bo servera xwe ya Immich bîne: dronê an xwînerek kartê bi têlefoneke Android ve girê bide, pelên nû hilbijêre û wan bişîne; vîdyo ji daneyên firînê yên dronê li ser nexşeyê têne danîn û gogên 360° yên dronê wekî 360° xuya dibin. Sepana Immich tenê tiştê ku berê di galerîya têlefonê de ye backup dike, û servera Immich hê nikare cihê vîdyoyeke DJI Neo 2 bixwîne. Ev rûpel ceribandinî ye, tenê li ser têlefon û tabletên Android, û hê bi droneke rastîn nehatiye ceribandin.
 
 <p align="center">
-  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Illustration, not a capture: a drone on a terrace table, plugged into a phone by a cable, and its photos and videos going in an arc from the drone to the gallery of the phone">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Wêneyek, ne dîmenek: dronek li ser maseya terasê, bi kabloyekê bi têlefonekê ve girêdayî, û wêne û vîdyoyên wê bi kevanekê ji dronê ber bi galerîya têlefonê ve diçin">
 </p>
 
-1. Open the Drone card in the Library, then "Photos and videos from the drone". Its setting, "DJI drones (experimental)" in Settings, Advanced, is on by default; turn it off there to hide that page.
+1. Karta Drone di Kitêbxaneyê de veke, paşê «Photos and videos from the drone». Mîhenga wê, «DJI drones (experimental)» di Mîhengan, Pêşketî de, bi awayê pêşbijartî vêxistî ye; ji bo veşartina wê rûpelê li wir wê bigire.
 2. Dronê (Neo 2 dikare girtî bimîne) an xwînerek kartê bi kabloyeke daneyê ya USB-C bi têlefonê ve girê bide; kontrolkereke DJI ya bê ekran (RC-N1, RC-N2, RC-N3) wêneyan nahewîne. Li ser rûpela Drona DJI, li «Dronê an kartê hilbijêre» bixe, wê di menûya alî ya hilbijêrê de hilbijêre, peldanka wê ya DCIM veke an tevahiya ajokerê bihêle, paşê «Vê peldankê bi kar bîne» û Destûr bide.
 3. Rûpel wêne û vîdyoyan rojê bi roj rêz dike, bêyî pelên alîkar ên .LRF, .SRT, .THM û .m4a. Li «Hemû yên nû hilbijêre» bixe, paşê «Li Immich bar bike»; pelên ku berê hatine şandin nîşaneyeke ewr hildigirin û têne derbaskirin. «Li ser cîhazê bihêle» li şûna wê pelan di galerîya têlefonê de kopî dike, di albûma «Immuch360 import» de.
 4. Ji bo ku vîdyoyek li ser nexşeyê cih bigire, berî firînê di DJI Fly de Video Subtitles vêxe (moda vîdyoyê, Settings, Camera): wê demê dron li kêleka her vîdyoyê pelek .SRT dinivîse, sepan cih jê dixwîne û piştî barkirinê li ser servera te datîne, dema ku Immich tu cih nedîtibe.
 
 Gogên 360° yên dronên DJI (Mini, Air, Mavic û yên din, ku ji kameraya wan têne nasîn) di Immuch360 de bêyî etîketên 360° jî wekî 360° xuya dibin. Immich hewceyê wan etîketan e: vebijarka barkirinê «Gogên dronê ji bo Immich wekî 360° nîşan bike», ku bi awayê pêşbijartî girtî ye, wêneyê bêyî guhertin bi pelekî .xmp yê biçûk li kêleka wê dişîne, da ku Immich jî wê wekî gog nîşan bide. Moda gog an panoramayê ya Neo 2 tune ye: wêne û vîdyoyên wê sade ne. Dema ku têlefonê dengê klîpeke Neo 2 tomar kiribe, ew deng di pelekî .m4a yê cuda de ye: rûpel klîpê nîşan dike, û Immich wê bêyî deng distîne (wê bi DJI Fly daxe da ku deng bimîne). Her karta kamerayê ya bi peldankeke DCIM di xwînerek kartê de bi heman awayî dixebite. Tiştek ji DJI re nayê şandin.
 
-More: [DJI drones over USB](../docs/immuch360/user-guide.md#dji-drones-photos-and-videos-over-usb-experimental), [DJI link diagnostics](../docs/immuch360/user-guide.md#dji-link-diagnostics-experimental).
+Zêdetir: [dronên DJI bi USB](../docs/immuch360/user-guide.md#dji-drones-photos-and-videos-over-usb-experimental), [teşhîsa girêdana DJI](../docs/immuch360/user-guide.md#dji-link-diagnostics-experimental).
 
 <a id="open-the-raw-files-of-360-cameras"></a>
-### Open the raw files of 360° cameras
+### Pelên xav ên kameraên 360° veke
 
-The raw .insp photos and .insv videos of Insta360 cameras (one or two lenses, in one track, two tracks or two files), the .360 files of the GoPro MAX and the .osv files of the DJI Osmo 360 are stitched by the app as they play, with the calibration written in the file, with nothing to install anywhere.
+Wêneyên .insp û vîdyoyên .insv yên xav ên kameraên Insta360 (yek an du lens, di yek rêçê de, du rêçan an du pelan de), pelên .360 yên GoPro MAX û pelên .osv yên DJI Osmo 360 ji hêla sepanê ve dema ku dilîzin tên dirûtin, bi kalibrasyona ku di pelê de hatiye nivîsandin, bêyî ku tiştek li tu derê were sazkirin.
 
-1. Put the raw files where the app reads them: an SMB or WebDAV share, your Immich server (it takes .insp and .insv only), or the folders of a computer. The gallery of an Android phone does not list raw files, so a raw file copied to the phone shows neither in its gallery nor in the app.
-2. Keep the two files of a recording made of two files together: the app looks for the other one next to the first.
-3. Open the file and tap 360°. A photo shows "Raw 360° file, stitched by the app" with the source of its calibration; a video is stitched as it plays.
+1. Pelên xav li cihê ku sepan wan dixwîne deyne: parvekirineke SMB an WebDAV, servera te ya Immich (ew tenê .insp û .insv qebûl dike), an peldankên komputerekê. Galerîya têlefoneke Android pelên xav rêz nake, ji ber vê yekê pelek xav ku li têlefonê hatiye kopîkirin ne di galerîya wê de û ne jî di sepanê de xuya dibe.
+2. Herdu pelên tomarkirineke ku ji du pelan pêk tê bi hev re bihêle: sepan li kêleka ya yekem li ya din digere.
+3. Pelê veke û li 360° bixe. Wêneyek «Pela 360° ya xav, ji hêla sepanê ve hatiye dirûtin» bi çavkaniya kalibrasyona xwe nîşan dide; vîdyoyek dema ku dilîze tê dirûtin.
 
-Linux and macOS play raw videos flat, and dual fisheye .dng files show flat for now.
+Linux û macOS vîdyoyên xav sade dilîzin, û pelên .dng yên cot fisheye heta niha sade xuya dibin.
 
-More: [raw 360° camera files](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
+Zêdetir: [pelên xav ên kameraên 360°](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
 <a id="turn-a-photo-with-one-key"></a>
 ### Wêneyekê bi yek bişkokê bizivirîne
@@ -509,77 +509,77 @@ More: [raw 360° camera files](../docs/immuch360/user-guide.md#raw-360-camera-fi
 Wêneyekê bi yek pêlêkirinê 90° bizivirîne, bêyî ku sererastkerekê vekî: bişkokek, bişkokeke klavyeyê an bişkokeke rengîn a telekomandaya TV, li ser her platformê. Sepana Immich wêneyekê di sererastkera xwe de dizivirîne; Immuch360 vê bi yek bişkokê dike, û ji bo wêneyên te yên li ser servereke Immich 2.6 an paşîtir ew di heman sererastkera serverê re derbas dibe, ji ber vê yekê sepana web û cîhazên te yên din wan zivirandî nîşan didin. Her wêneyeke din tenê li ser vê cîhazê tê zivirandin. Wêneyên 360°, 180° û 3D qet nazivirin, da ku dîmenên dorhêlî rast bimînin.
 
 <p align="center">
-  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Illustration, not a capture: a phone shows a photo turning a quarter turn clockwise, above a row of round buttons with the rotate button lit">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Wêneyek, ne dîmenek: têlefonek wêneyekê nîşan dide ku çaryeka dorê bi aliyê saetê dizivire, li ser rêzeke bişkokên girover ku bişkoka zivirandinê ronî ye">
 </p>
 
 1. **Têlefon, tablet û pencereya Meta Quest**: wêneyê veke û di rêza jêrîn de, berî Sererast bike, li Bizivirîne bixe da ku wê bi aliyê saetê bizivirînî; pêlêkirineke dirêj wê bi aliyê din dizivirîne. Bi klavyeyekê, R û Shift+R.
 2. **Android TV û Google TV**: bişkoka zer a telekomandayê wêneyê bi aliyê saetê dizivirîne û bişkoka şîn berevajî aliyê saetê, li her derê ku fokûs di dîtinvanê de be. Li ser telekomandayeke bêyî bişkokên rengîn, Jêr bixe: darika di bin wêneyê de bi Bizivirîne hilbijartî xuya dibe (dema ku wêne bişkokeke nivîsê hebe, yek Rast dûrtir), û her OK wêneyê dizivirîne.
-3. **LG TVs (webOS)**: yellow and blue as on Android TV, R and Shift+R on a keyboard, or the turn button of the photo's controls. Samsung TVs turn a photo with one key too.
+3. **Televizyonên LG (webOS)**: zer û şîn wekî li ser Android TV, R û Shift+R li ser klavyeyê, an bişkoka zivirandinê ya kontrolên wêneyê. Televizyonên Samsung jî wêneyekê bi yek bişkokê dizivirînin.
 4. **Windows, Linux û macOS**: R bi aliyê saetê dizivirîne, Shift+R berevajî aliyê saetê, an bişkoka zivirandinê di darika jorîn de, berî ekrana tam.
 5. **Wêneyên parvekirineke torê, Plex an kamerayekê**: bişkoka zivirandinê ya yekem di darika jorîn de, R û Shift+R, an bişkokên zer û şîn.
 
 Zivirandin li ku tê tomarkirin: wêneyeke hesabê te bi xwe li ser Immich 2.6 an paşîtir bi sererastkera wêneyan a serverê tê zivirandin, ku pela orîjînal diparêze û wêneyeke zivirandî çêdike (dema ku dixebite darikeke zirav xuya dibe; çar zivirandin, an zivirandinek paşve, vedigerin orîjînalê). Wêneyên cîhazê, yên parvekirinekê, yên hevkarekî an albûmeke parvekirî, û her wêneyeke li ser serverekê kevntir tenê li ser vê cîhazê têne zivirandin, ji bo wê wêneyê, û pel qet nayê guhertin; sepan vê yekê ji bo wêneyeke Immich carekê dibêje. Di sepanên Android, iOS û komputerê de, zivirandineke ku li ser cîhazê hatiye parastin di dîtinvanê de xuya dibe, hê ne di wêneyên biçûk, pêşandana slaytan û bîranînan de. Ji bo vîdyoyan, peldanka kilîtkirî û her wêneyeke 360°, 180° an 3D, Bizivirîne tune ye.
 
 <a id="use-your-computer-as-the-media-player"></a>
-### Use your computer as the media player
+### Komputera xwe wekî lîstikvanê medyayê bi kar bîne
 
-On a Windows computer, Immuch360 Desktop reads the folders you choose with no server at all, plays flat and 360° videos in a player of its own, browses the same shares and servers, and can share the computer with a headset at home. Linux and macOS have it as previews, with 360° videos played flat.
+Li ser komputereke Windows, Immuch360 Desktop peldankên ku tu hilbijêrî bêyî tu serverî dixwîne, vîdyoyên sade û 360° di lîstikvanekî xwe de dilîze, li heman parvekirin û serveran digere, û dikare komputerê li malê bi kaskekê re parve bike. Linux û macOS wê wekî pêşdîtinan hene, bi vîdyoyên 360° ku sade tên lîstin.
 
 <p align="center">
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Lîstikvanê vîdyoyê yê Immuch360 Desktop li ser Windows: vîdyoyeke kolanê ya ku di pencereyê de dilîze, bi bişkoka rawestandinê, xeta demê, Parve bike û «Li Immich bar bike»">
 </p>
 
-1. Install the preview, or unzip it and start `immuch360.exe`, see [Install](#windows). On the welcome page, "Use without a server" opens the choice of your folders, and "Connect to an Immich server" the login page, with its QR code for your phone.
-2. A photo, a video or a folder opened with the program, or dropped on its window, opens at once, a 360° one in its 360° view; several files open together on one page. Photos and videos get it in "Open with"; it never makes itself their default program.
-3. In a viewer, the keyboard drives it: Space plays and pauses, J and L go back and forward, F is full screen, and R and Shift+R turn a photo.
+1. Pêşdîtinê saz bike, an wê veke û `immuch360.exe` dest pê bike, li [Saz bike](#windows) binêre. Li ser rûpela bixêrhatinê, "Bêyî server bi kar bîne" hilbijartina peldankên te vedike, û "Bi servera Immich ve girê bide" rûpela têketinê, bi koda wê ya QR ji bo têlefona te.
+2. Wêneyek, vîdyoyek an peldankek ku bi bernameyê tê vekirin, an li ser pencereya wê tê berdan, yekser vedibe, ya 360° di dîmena xwe ya 360° de; çend pel bi hev re di yek rûpelê de vedibin. Wêne û vîdyo wê di "Open with" de digirin; ew çu carî xwe nake bernameya wan a pêşbijartî.
+3. Di dîtinvanekê de, klavye wê bi rê ve dibe: Valahî dilîze û radiwestîne, J û L paş û pêş ve diçin, F ekrana tam e, û R û Shift+R wêneyekê dizivirînin.
 
-More: [on a Windows computer](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [platform support](../docs/immuch360/platform-support.md).
+Zêdetir: [li ser komputereke Windows](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [piştgiriya platformê](../docs/immuch360/platform-support.md).
 
 <a id="compared-with-immich"></a>
-## Compared with Immich
+## Li gorî Immich
 
-Immuch360 keeps the whole Immich mobile app and adds what is around it. In short:
+Immuch360 tevahiya sepana mobîl a Immich diparêze û tiştê ku li dora wê ye lê zêde dike. Bi kurtî:
 
-| | Immuch360, compared with the Immich app |
+| | Immuch360, li gorî sepana Immich |
 |---|---|
-| **The same** | your Immich server and account: backup, timeline, albums, search, people, memories, sharing and partners, all synced with your server. It installs next to the official app. |
-| **No server needed** | it also runs without a server or an account, on the photos and videos of the device, the folders of a computer and network shares; Plex and the cameras use their own sign in, never an Immuch360 account. |
-| **360° and immersive** | 360° photos and videos as a sphere, panoramas, VR180 and 3D, an immersive view in a Meta Quest, a 360° badge and a 360° list. 360° viewing in the Immich mobile app has been requested since January 2024 and is not there yet. |
-| **On the TV** | the same app on Android TV and Google TV, and a TV app for LG TVs, also packaged for Samsung TVs as a test build. Immich's own apps do not install on an LG TV. |
-| **Sign in with your phone** | a TV, a headset or a computer is signed in when your phone scans its QR code, and your password stays on the phone. The Immich app has nothing like it. |
-| **Shares and Plex** | SMB, WebDAV and DLNA shares and Plex servers, played in place, and their files sent to your server by hand. |
-| **Tapo cameras** | the live view and the recordings of the memory card, next to your photos; not yet checked with a real camera. |
-| **One key rotation** | the Immich app turns a photo in its editor; Immuch360 turns it with one key, and for your own photos on Immich 2.6 or later it goes through that same server editor, so the web app and your other devices show them turned. |
-| **Videos** | audio and subtitle menus in the Android player, which the Immich app's Android player does not have; the original file or the transcoded stream, chosen per video; the technical details of a video. |
-| **Your drone** | a DJI drone's photos and videos sent over USB, with the videos placed on the map from its flight data, where the Immich app backs up only what is already in the phone's gallery; and the drone's live video through an RC-N3 remote, with its flight values and an obstacle ring, on the phone and relayed to a Meta Quest or an Android TV. Both experimental. |
-| **Where to report** | [Immuch360 Issues](https://github.com/freeKC/Immuch360/issues), not the Immich project. |
+| **Heman** | servera te û hesabê te yê Immich: tomarkirin, xeta demê, albûm, lêgerîn, kes, bîranîn, parvekirin û hevkar, hemû bi servera te re hevdemkirî. Ew li kêleka sepana fermî saz dibe. |
+| **Server ne pêwîst e** | ew bêyî server an hesab jî dixebite, li ser wêne û vîdyoyên cîhazê, peldankên komputerekê û parvekirinên torê; Plex û kamera têketina xwe bi kar tînin, çu carî hesabekî Immuch360. |
+| **360° û dorhêlî** | wêne û vîdyoyên 360° wekî gog, panorama, VR180 û 3D, dîmeneke dorhêlî di Meta Questê de, nîşaneyeke 360° û lîsteyeke 360°. Dîtina 360° di sepana mobîl a Immich de ji Çileya 2024an ve tê xwestin û hê tune ye. |
+| **Li ser televizyonê** | heman sepan li ser Android TV û Google TV, û sepaneke TV ji bo televizyonên LG, ku ji bo televizyonên Samsung jî wekî çêkirina ceribandinê hatiye pakêtkirin. Sepanên Immich bi xwe li ser televizyoneke LG saz nabin. |
+| **Bi têlefona xwe têkeve** | televizyonek, kaskek an komputerek têdikeve dema ku têlefona te koda wê ya QR skan dike, û şîfreya te li ser têlefonê dimîne. Di sepana Immich de tiştekî wisa tune. |
+| **Parvekirin û Plex** | parvekirinên SMB, WebDAV û DLNA û serverên Plex, li cihê xwe tên lîstin, û pelên wan bi destan ji servera te re tên şandin. |
+| **Kameraên Tapo** | dîtina zindî û tomarên karta bîrê, li kêleka wêneyên te; hê bi kamerayeke rastîn nehatiye kontrolkirin. |
+| **Zivirandin bi yek bişkokê** | sepana Immich wêneyekê di sererastkera xwe de dizivirîne; Immuch360 wê bi yek bişkokê dizivirîne, û ji bo wêneyên te bi xwe li ser Immich 2.6 an paşîtir ew di heman sererastkera serverê re derbas dibe, ji ber vê yekê sepana web û cîhazên te yên din wan zivirandî nîşan didin. |
+| **Vîdyo** | menûyên deng û binnivîsan di lîstikvanê Android de, ku lîstikvanê Android ê sepana Immich tune ne; pela orîjînal an herikîna transkodkirî, ji bo her vîdyoyê tê hilbijartin; hûragahiyên teknîkî yên vîdyoyekê. |
+| **Drona te** | wêne û vîdyoyên droneke DJI bi USB tên şandin, bi vîdyoyên ku ji daneyên firîna wê li ser nexşeyê tên danîn, dema ku sepana Immich tenê tiştê ku jixwe di galerîya têlefonê de ye tomar dike; û vîdyoya zindî ya dronê bi riya kontrolkereke RC-N3, bi nirxên wê yên firînê û xeleka astengiyan, li ser têlefonê û ji Meta Quest an Android TV re tê şandin. Herdu jî ceribandinî ne. |
+| **Li ku ragihînî** | [Pirsgirêkên Immuch360](https://github.com/freeKC/Immuch360/issues), ne projeya Immich. |
 
-The comparison function by function is in [Compared with the Immich app](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+Berhevdana fonksiyon bi fonksiyon di [Li gorî sepana Immich](../docs/immuch360/compatibility.md#compared-with-the-immich-app) de ye.
 
 <a id="privacy"></a>
 ## Nepenî
 
-Nothing goes to the developer: no account, no analytics, no crash reporting service, no advertising. The app talks only to the servers you choose (your Immich server, your shares, your Plex server, your cameras) and, without a server, to nothing at all. Passwords and tokens stay in the secure storage of the device; LG and Samsung TVs have none for the app, so there they stay in the app's own storage, not encrypted. The camera is used on the device only, by the Spatial 2.5D player and to scan the code of a screen you sign in; its images are never stored and never sent anywhere. A screen signed in from your phone gets a session of its own, sent encrypted on your home network, never your password; an LG TV is signed in by a page in the phone's browser, which sends your email and password to the TV unencrypted on your home network, and the TV keeps only the session. The captures and reception records of the drone pages stay on the device unless you share them: they hold the drone's video and may hold its position, and a capture the serial numbers of the remote and the aircraft. The drone's picture and values go from the phone only to the headsets and TVs you pair, on your local network, not encrypted, as with a phone shared on the Wi-Fi. Nothing is sent to DJI, nor to TP-Link. The full policy is in [PRIVACY.md](../PRIVACY.md), and the details per source in the [user guide](../docs/immuch360/user-guide.md#privacy).
+Tiştek ji pêşdebir re naçe: ne hesab, ne analîtîk, ne karûbarekî ragihandina çewtiyan, ne reklam. Sepan tenê bi serverên ku tu hilbijêrî (servera te ya Immich, parvekirinên te, servera te ya Plex, kameraên te) diaxive û, bêyî server, bi tu tiştî re naaxive. Şîfre û token di embareke ewle ya cîhazê de dimînin; televizyonên LG û Samsung ji bo sepanê embareke wiha tune ne, ji ber vê yekê li wir ew di embara sepanê bi xwe de dimînin, ne şîfrekirî. Kamera tenê li ser cîhazê tê bikaranîn, ji hêla lîstikvanê Spatial 2.5D ve û ji bo skankirina koda ekraneke ku tu dixî hundir; wêneyên wê çu carî nayên tomarkirin û çu carî li tu derê nayên şandin. Ekraneke ku ji têlefona te ketiye danişîneke xwe ya taybet distîne, bi şîfrekirî li ser tora te ya malê tê şandin, çu carî ne şîfreya te; televizyoneke LG bi rûpelekê di geroka têlefonê de têdikeve, ku îmêl û şîfreya te bê şîfrekirin li ser tora te ya malê ji televizyonê re dişîne, û televizyon tenê danişînê diparêze. Tomar û tomarên wergirtinê yên rûpelên dronê li ser cîhazê dimînin heta ku tu wan parve bikî: vîdyoya dronê di wan de ye û dibe ku cihê wê jî tê de be, û di tomarekê de jimarên rêzê yên kontrolker û balafirê. Wêne û nirxên dronê ji têlefonê tenê diçin kask û televizyonên ku tu cot dikî, li ser tora te ya herêmî, ne şîfrekirî, wekî têlefoneke ku li ser Wi-Fi tê parvekirin. Tiştek ji DJI re nayê şandin, ne jî ji TP-Link re. Polîtîkaya tam di [PRIVACY.md](../PRIVACY.md) de ye, û hûragahî li gorî çavkaniyê di [rêbera bikarhêner](../docs/immuch360/user-guide.md#privacy) de ne.
 
 <a id="the-project"></a>
 <a id="licences-and-credits"></a>
-## Licences and credits
+## Lîsans û spas
 
 Immuch360 şaxeke ne-fermî ya sepana mobîl a [Immich](https://github.com/immich-app/immich) e, di bin [GNU AGPL v3](../LICENSE) de, ne bi tîma Immich an FUTO re têkildar e û ne jî ji hêla wan ve tê piştgirîkirin. Şax heye ji ber ku dîtina 360° li ser mobîlê ji Çileya 2024an ve li Immich hatiye xwestin û hê di sepana fermî de nîne; ew niha wê pêşkêş dike, raya cîhazên rastîn kom dike, û dê di pull requestên biçûk de, tiştê ku parêzvan bixwazin, ber bi Immich ve pêşkêş bike. Her tiştê ku sepana fermî dike tê parastin; şax, zincîra çêkirinê û CI di [Bi xwe çêke](../docs/immuch360/build.md) de hatine rave kirin.
 
 Dîtinvanê wêneyê 360° li ser pull requesta serekanî [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) ya dmitry-brazhenko hatiye avakirin, ya bi xwe li ser prototîpa bencefr di [#30192](https://github.com/immich-app/immich/pull/30192) de hatiye çêkirin; spas ji her duyan re. Sererastkirinên telekomandayê di parzûnên lêgerînê de û rêzkirina albûman li ser TV-yan ji xebata mlc70 di [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) de dest pê kirin, û rêza çalakiyan û panelên parzûnan li ser 80 ji sedî yê bilindahiya ekranê ji [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3) ya mlc70 tên, bi nivîskariya wan a parastî; spas ji mlc70 re. Sepana LG webOS, ku ji bo televizyonên Samsung jî hatiye pakêtkirin, li ser [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) ya Seeky91 hatiye avakirin, di bin lîsansa MIT de, di peldanka xwe de hatiye parastin; spas ji Seeky91 re. Kameraên Tapo ji tiştê ku [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) û [python-kasa](https://github.com/python-kasa/python-kasa) belge dikin hatine nivîsandin. Dîmena Meta Quest xwe dispêre Meta Spatial SDK, ku ne çavkanî-vekirî ye, ji ber vê yekê ew di vê şaxê de dimîne. Parvekirinên SMB libsmb2 bi kar tînin, di bin LGPL 2.1 an paşîtir de: ji çêkirina 27 û çêkirina 7 a sermaseyê pê ve, her çêkirin agahdariya wê, nivîsên lîsansa wê û arşîva çavkaniya wê, `Immuch360-libsmb2-sources.tar.gz`, ku bi her weşanê ve jî hatiye girêdan, digire. Çêkirinên Windows û macOS libmpv (pirtûkxaneya [mpv](https://mpv.io), bi [FFmpeg](https://ffmpeg.org)) ya ji hêla projeyê ve hatiye çêkirin, di bin LGPL de, bi lîsans û çavkaniyên wê digirin, ku li ser rûpela lîsansê ya sepanê hatine rêzkirin (Lîsans, li binê menûya profîlê); hûragahî û nîşaneyên bazirganiyê yên platformên ku li ser vê rûpelê hatine binavkirin di [Lîsans û nîşaneyên bazirganiyê](../docs/immuch360/platform-support.md#license-and-trademarks) de ne.
 
-The captures of this page are real captures of the app: the phone ones on the Android build in an emulator, the Android TV ones on the Google TV emulator, the LG and Samsung ones in a browser that stands in for the TV, the Windows ones on a Windows 11 PC and the Meta Quest window in a Quest 3, all with CC0 panoramas from [Poly Haven](https://polyhaven.com); the immersive captures of the headset were taken on a Quest 3 with the author's own media, and the iPad one in the iPad simulator, with a CC0 Poly Haven panorama. The opening image and the pictures of the TV, the sign in, the rotation, the cameras and the drone are illustrations made for the project: they show no screen of the app, no logo of another company and no face. Each image, with its source, date and licence, is listed in [CAPTURES.md](../.github/readme/CAPTURES.md).
+Dîmenên vê rûpelê dîmenên rastîn ên sepanê ne: yên têlefonê li ser çêkirina Android di emulatorekê de, yên Android TV li ser emulatorê Google TV, yên LG û Samsung di gerokeke ku şûna televizyonê digire de, yên Windows li ser komputereke Windows 11 û pencereya Meta Quest di Quest 3 de, hemû bi panoramayên CC0 ji [Poly Haven](https://polyhaven.com); dîmenên dorhêlî yên kaskê li ser Quest 3 bi medyaya nivîskar bi xwe hatine kişandin, û ya iPad di simulatora iPad de, bi panoramayeke CC0 ya Poly Haven. Wêneya destpêkê û wêneyên televizyonê, têketinê, zivirandinê, kameraan û dronê wêneyên ku ji bo projeyê hatine çêkirin in: ew tu ekrana sepanê, tu logoya şirketeke din û tu rû nîşan nadin. Her wêne, bi çavkanî, dîrok û lîsansa xwe, di [CAPTURES.md](../.github/readme/CAPTURES.md) de hatiye rêzkirin.
 
 <a id="roadmap"></a>
 ## Nexşeya rê
 
 Tiştên ku hîn nehatine kirin, yên herî muhtemel pêşî. Tiştek li vir ne soz e, û nerînên li ser [issue tracker](https://github.com/freeKC/Immuch360/issues) alîkariyê dikin ku were biryardan ka çi pêşî tê.
 
-- **The stores**: Google Play (build 29 in review, then build 30; the TV listing in review), the App Store (version 3.3.1 in review, then version 3.3.2 with build 28), the Meta Horizon Store with build 30 (build 28 there since 25 October), the LG Content Store (version 1.0.0 in LG's review since 24 October), and later the Samsung store.
-- **Drones**: an outdoor flight to prove the height and the speeds above 1.8 m and 1.5 m/s and the obstacle distances against a tape, then to show the satellites and the distance from home; the steady picture of the relay checked with a phone, a TV and a headset; the relay to LG and Samsung TVs; the drone on iPhone and iPad, not started; a test of the import page with a real DJI Neo 2, then the sound recorded by the phone merged into its clip. Nothing that sends a command to a drone is planned before those tests.
-- **TVs**: build 29 on a real Android TV, its video controls and the sign in with your phone included; the shares, Plex and the live view of the LG app on a real LG TV, and webOS 26; Samsung test build 0.2.0 on a real Samsung TV, then the sign in with a phone, the shares, Plex and the cameras on Samsung TVs; then the 360° videos on the sphere of LG TVs, the sound of the cameras and their recordings (not before December 2026).
-- **Cameras**: the Tapo cameras checked with a real camera.
+- **Firoşgeh**: Google Play (çêkirina 29 di nirxandinê de, paşê çêkirina 30; lîsteya TV di nirxandinê de), App Store (guhertoya 3.3.1 di nirxandinê de, paşê guhertoya 3.3.2 bi çêkirina 28), Meta Horizon Store bi çêkirina 30 (çêkirina 28 ji 25ê Cotmehê ve li wir e), LG Content Store (guhertoya 1.0.0 ji 24ê Cotmehê ve di nirxandina LG de), û paşê firoşgeha Samsung.
+- **Dron**: firîneke li derve ji bo îsbatkirina bilindahî û lezên ji 1.8 m û 1.5 m/s zêdetir û dûrahiyên astengiyan li hember metreyekê, paşê ji bo nîşandana satelaît û dûrahiya ji malê; wêneya domdar a şandinê bi têlefon, televizyon û kaskekê tê kontrolkirin; şandin ji televizyonên LG û Samsung re; dron li ser iPhone û iPad, dest pê nekiriye; ceribandina rûpela anînê bi DJI Neo 2-yeke rastîn, paşê dengê ku têlefonê tomar kiriye bi klîpa wê re tê yekkirin. Tiştek ku fermanekê ji dronê re bişîne berî van ceribandinan nayê plankirin.
+- **Televizyon**: çêkirina 29 li ser Android TV-yeke rastîn, kontrolên wê yên vîdyoyê û têketina bi têlefonê jî tê de; parvekirin, Plex û dîtina zindî ya sepana LG li ser televizyoneke LG ya rastîn, û webOS 26; çêkirina ceribandinê ya Samsung 0.2.0 li ser televizyoneke Samsung a rastîn, paşê têketina bi têlefonê, parvekirin, Plex û kamera li ser televizyonên Samsung; paşê vîdyoyên 360° li ser goga televizyonên LG, dengê kameraan û tomarên wan (ne berî Kanûna 2026an).
+- **Kamera**: kameraên Tapo bi kamerayeke rastîn tên kontrolkirin.
 - **Komputer**: ceribandina her fonksiyonê bi destan li ser komputereke Windows, têketina bi têlefonê jî tê de; Spatial 2.5D bi webcamê li ser Windows, di pêşxistinê de ji bo Mijdara 2026an; paşê nîşandêra vîdyoyên 360° li ser Linux û macOS, ceribandinek li ser Mac-eke rastîn û komputereke Linux a rastîn; paşê nûvekirinên otomatîk û sepaneke macOS a îmzekirî.
 - **Telefon û tablet**: dîtina zindî ya Tapo û têketina ekranên mezin li ser iPhone û iPad bi weşana iOS ya din; xeteke demê di lîstikvanê vîdyoyê yê 360° yê iOS de, ya berê û ya din di lîstikvanên 360° yên telefonan de, menûyên rêça dengî û binnivîsan di lîstikvanê sade yê iOS de.
 - **Medyaya dorhêlî**: .dng ya cot fisheye, ravekirina vîdyoyên GoPro û DJI ji daneyên tevgera wan bi xwe, vîdyoyên Spatial bi 3D li ser Quest heke kodxwînerên wê destûrê bidin, ya berê û ya din di navbera wêneyên Spatial de di kaskê de.
@@ -590,7 +590,7 @@ Lîsteya tam, bi kontrolên cîhazê yên ku hê ji bo her taybetmendiyê li ben
 
 <a id="technical-documentation"></a>
 <a id="documentation"></a>
-## Documentation
+## Belgekirin
 
 - [Taybetmendî: lîsteya tam û nexşeya taybetmendiyê li gorî platformê](../docs/immuch360/features.md)
 - [Rêbera bikarhêner: her fonksiyon, gav bi gav, bi vebijark û peyamên wê](../docs/immuch360/user-guide.md)
@@ -603,18 +603,18 @@ Lîsteya tam, bi kontrolên cîhazê yên ku hê ji bo her taybetmendiyê li ben
 - [Bi xwe çêke: telefon, kask, televizyon û komputer](../docs/immuch360/build.md)
 - [Immuch360 ji bo televizyonên LG webOS: sazkirin di Developer Mode de, bişkokên telekomandayê, sernivîsên CORS](../webos/README.md)
 
-### Advanced features
+### Taybetmendiyên pêşketî
 
 Tiştê ku sepan dikare bixwîne û lê bide, ji bo xwendevanê ku dixwaze tevahiya berfirehiyê bibîne. Her rêz di [rêbera bikarhêner](../docs/immuch360/user-guide.md) û [rûpela lihevhatinê](../docs/immuch360/compatibility.md) de bi hûrgilî hatiye vegotin.
 
 <details>
-<summary><b>Formats, sources, playback and hardware, in detail</b></summary>
+<summary><b>Format, çavkanî, lîstin û hardware, bi hûragahî</b></summary>
 
 - **Format**: wêne û vîdyoyên sade (tiştê ku cîhaz dixwîne: MP4, MOV, MKV û hin din); wêne û vîdyoyên 360° yên equirectangular; panoramayên qismî (birîna GPano); VR180; 3D ya stereoskopîk, jor û jêr an li kêleka hev, ji pelê hatiye xwendin (qutiya st3d) an ji kareyê hatiye texmînkirin; wêneyên Apple Spatial (cot stereo yên HEIC) û vîdyoyên Spatial (MV-HEVC, yek çav); .insp û .insv yên xerîm ên Insta360, .360 ya GoPro, .osv ya DJI; çavkaniyên 10 bit HLG û PQ li ser gogê bi tone hatine nexşandin.
 - **Projeksiyon û metadata**: metadataya GPano û goyî ji pelê, bi daxwazên rêzê li ser serverek an parvekirinek hatiye xwendin; dîmena destpêkê ya kamerayê; gogên dronên DJI ku ji kameraya wan têne nasîn, bi pelekî alîkar ê .xmp yê vebijarkî da ku Immich jî wan nîşan bike; «Wek 360° bibîne» li ser cîhazê tê bîranîn; VR180 ji pelê an navê wê tê nasîn; cihê vîdyoyeke dronê ji tomara firînê ya wê ya .SRT tê xwendin; metadata tam dimîne ji ber ku pela orîjînal tê lîstin, çu carî ne kopiyeke hatiye guhertin; zivirandineke çaryekî bi sererastkera Immich tê tomarkirin an li ser cîhazê tê parastin, çu carî li ser pelekî dorhêlî.
 - **Lîstina xwemalî**: Media3 li ser Android û televizyonê, SceneKit û AVFoundation li ser iOS, Meta Spatial SDK di kaskê de, libmpv li ser Windows; orîjînal an rewa transkod kirî li gorî tiştê ku cîhaz dixwîne tê hilbijartin; lîsteyeke kodxwînerên vîdyoyê yên cîhazê di Mîhengan, Pêşketî de; hilbijartina rêça dengî, binnivîs di lîstikvanê Android de û nîşaneke barkirinê.
 - **Pelên xerîm ên li ser cîhazê hatine tikandin**: shadereke fragment a Flutter ji bo wêneyan; bandoreke GPU di lîstikvanê de ji bo vîdyoyên yek-rêçî; du kodxwînerên hardware bi hev re û compositoreke GPU ji bo vîdyoyên ku di her rêçê an pelê de yek lens heye (li ser Android û Quest OpenGL ES 3, li ser iOS Metal, û li ser Windows, ji build 5 a sermasê pê ve, du lîstikvanên libmpv yên ku sepan kareyên wan li ser çîpa grafîkê cot dike); kalîbrasyona kameraya bixwe (modelên Mei, V6 û modela dûrahiya wekhev) û tomara akselerometreyê; gava cîhaz nikare du kodxwîneran bi hev re bixebitîne, vegera bo yek lens, rewaya transkod kirî, kopiya LRV ya kamerayê an vîdyoya ku nehatiye tikandin.
-- **Sources**: the device's gallery; the folders of a computer; a drone or a camera card over USB, through the system folder picker (Android, experimental); a DJI RC-N3 remote controller over its cable for the drone's live video (Android, experimental), relayed on the local network to a Meta Quest or an Android TV; an Immich server; SMB 2 and 3, WebDAV, DLNA/UPnP; Plex over HTTPS checked against the server's own certificate; Tapo cameras over the local network (HTTPS and RTSP); a phone or a computer shared on the Wi-Fi as a WebDAV server; servers found by Bonjour/mDNS, a local network scan, SSDP, GDM and the TP-Link discovery, and followed when they change address.
+- **Çavkanî**: galerîya cîhazê; peldankên komputerekê; dronek an karteke kamerayê bi USB, bi riya hilbijêra peldankê ya pergalê (Android, ceribandinî); kontrolkereke DJI RC-N3 bi kabloya wê ji bo vîdyoya zindî ya dronê (Android, ceribandinî), li ser tora herêmî ji Meta Quest an Android TV re tê şandin; servereke Immich; SMB 2 û 3, WebDAV, DLNA/UPnP; Plex bi riya HTTPS li hember sertîfîkaya servera bi xwe hatiye kontrolkirin; kameraên Tapo li ser torê herêmî (HTTPS û RTSP); telefonek an komputerek li ser Wi-Fi wekî servereke WebDAV hatiye parvekirin; serverên ku bi Bonjour/mDNS, lêgerîna torê ya herêmî, SSDP, GDM û vedîtina TP-Link hatine dîtin, û dema navnîşana xwe biguherin têne şopandin.
 - **Xwendina li ser daxwazê**: pûleke herêmî lîstikvanan bi rêzên bytê û tokenek ji bo her danişînê peyda dike; blokên mezin, pêşxwendin û heta şeş girêdanên SMB bi hev re; wêneyên biçûk ji kareyeke her vîdyoyê; tiştek li ser cîhazê nayê kopîkirin.
 - **Hardware**: kodxwînerên hardware li her derê ku hene têne bikaranîn, bi sînorên wan ên pîvankirî (sînorê H.264 ya Quest 3, herî zêde du lensên 2048x2048 ji bo kodxwînerên software); li ser Windows dîmena 360° ji hêla çîpa grafîkê ve ji her kareya xwendî hatiye xêzkirin, mezinahiya kareyê li ser her komputerê hatiye pîvankirin, çîpa yekgirtî an taybet hatiye nasîn.
 - **Taybetmendiyên li gorî platformê**: jîroskop û lîstikvanê Spatial 2.5D li ser têlefonan; dîmena dorhêlî, kontrolker û dest li ser Quest; rêzkirina kontrolkerê, diyaloga klavyeyê û darika TV li ser Android TV; li ser komputerê, mişk û klavye, ekrana tam, tenê pencereyek, pel û peldankên ku bi sepanê hatine vekirin an li ser pencereya wê hatine avêtin, wekî pelên peldankên te tên xwendin, HEIC, AVIF, TIFF û wêneyên xav ên kamerayê yên peldankan gava Windows kodxwînerekî ji bo wan hebe, û parastina daneyê ya Windows ji bo şîfre û tokenan.

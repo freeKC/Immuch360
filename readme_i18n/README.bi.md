@@ -1,14 +1,14 @@
 <details><summary>🌐 <b>Bislama</b> · Ol narafala lanwis (88)</summary><a href="../README.md">English</a> · <a href="README.af.md">Afrikaans</a> · <a href="README.ar.md">العربية</a> · <a href="README.az.md">Azərbaycanca</a> · <a href="README.be.md">Беларуская</a> · <a href="README.bg.md">Български</a> · <a href="README.bn.md">বাংলা</a> · <a href="README.br.md">Brezhoneg</a> · <a href="README.bs.md">Bosanski</a> · <a href="README.ca.md">Català</a> · <a href="README.cs.md">Čeština</a> · <a href="README.cv.md">Чӑвашла</a> · <a href="README.da.md">Dansk</a> · <a href="README.de.md">Deutsch</a> · <a href="README.de_CH.md">Deutsch (Schweiz)</a> · <a href="README.el.md">Ελληνικά</a> · <a href="README.en_GB.md">English (UK)</a> · <a href="README.eo.md">Esperanto</a> · <a href="README.es.md">Español</a> · <a href="README.et.md">Eesti</a> · <a href="README.eu.md">Euskara</a> · <a href="README.fa.md">فارسی</a> · <a href="README.fi.md">Suomi</a> · <a href="README.fil.md">Filipino</a> · <a href="README.fr.md">Français</a> · <a href="README.ga.md">Gaeilge</a> · <a href="README.gl.md">Galego</a> · <a href="README.gsw.md">Alemannisch</a> · <a href="README.gu.md">ગુજરાતી</a> · <a href="README.he.md">עברית</a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.hr.md">Hrvatski</a> · <a href="README.hu.md">Magyar</a> · <a href="README.hy.md">Հայերեն</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.is.md">Íslenska</a> · <a href="README.it.md">Italiano</a> · <a href="README.ja.md">日本語</a> · <a href="README.ka.md">ქართული</a> · <a href="README.kab.md">Taqbaylit</a> · <a href="README.kk.md">Қазақша</a> · <a href="README.km.md">ខ្មែរ</a> · <a href="README.kmr.md">Kurmancî</a> · <a href="README.kn.md">ಕನ್ನಡ</a> · <a href="README.ko.md">한국어</a> · <a href="README.kxm.md">ภาษาเขมรถิ่นไทย</a> · <a href="README.lb.md">Lëtzebuergesch</a> · <a href="README.lmo.md">Lombard</a> · <a href="README.lt.md">Lietuvių</a> · <a href="README.lv.md">Latviešu</a> · <a href="README.mfa.md">Bahasa Melayu Kelantan</a> · <a href="README.mi.md">Te reo Māori</a> · <a href="README.mk.md">Македонски</a> · <a href="README.ml.md">മലയാളം</a> · <a href="README.mn.md">Монгол</a> · <a href="README.mr.md">मराठी</a> · <a href="README.ms.md">Bahasa Melayu</a> · <a href="README.nb_NO.md">Norsk bokmål</a> · <a href="README.ne.md">नेपाली</a> · <a href="README.nl.md">Nederlands</a> · <a href="README.nn.md">Norsk nynorsk</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a> · <a href="README.pl.md">Polski</a> · <a href="README.pt.md">Português</a> · <a href="README.pt_BR.md">Português (Brasil)</a> · <a href="README.ro.md">Română</a> · <a href="README.ru.md">Русский</a> · <a href="README.si.md">සිංහල</a> · <a href="README.sk.md">Slovenčina</a> · <a href="README.sl.md">Slovenščina</a> · <a href="README.sq.md">Shqip</a> · <a href="README.sr_Cyrl.md">Српски</a> · <a href="README.sr_Latn.md">Srpski</a> · <a href="README.sv.md">Svenska</a> · <a href="README.sw.md">Kiswahili</a> · <a href="README.swg.md">Schwäbisch</a> · <a href="README.ta.md">தமிழ்</a> · <a href="README.te.md">తెలుగు</a> · <a href="README.th.md">ไทย</a> · <a href="README.tl.md">Tagalog</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.uk.md">Українська</a> · <a href="README.ur.md">اردو</a> · <a href="README.uz.md">Oʻzbekcha</a> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.yue_Hant.md">粵語</a> · <a href="README.zh_Hans.md">简体中文</a> · <a href="README.zh_Hant.md">繁體中文</a></details>
 
 <p align="center">
-  <img src="../.github/readme/hero-2026-10-24.jpg" width="100%" alt="Immuch360. Your media. Any screen. Every perspective. Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. Android, iPhone and iPad, Android TV, LG and Samsung TVs, Meta Quest, Windows, macOS, Linux. An illustration at dusk in front of a sea bay: a storage box, a phone, a tablet, a TV, a laptop and a headset, a drone in the sky and a home camera, linked by arcs of light">
+  <img src="../.github/readme/hero-2026-10-24.jpg" width="100%" alt="Immuch360. Media blong yu. Eni skrin. Evri saed blong lukluk. Flat, 360° mo 3D foto mo video from divaes blong yu, NAS blong yu, Immich server blong yu, ol kamera blong yu mo dron blong yu. I no nidim akaon. Android, iPhone mo iPad, Android TV, LG mo Samsung TV, Meta Quest, Windows, macOS, Linux. Wan pikja long sanset fored long wan baj blong solwota: wan bokis blong stoream, wan fon, wan tablet, wan TV, wan laptop mo wan hedset, wan dron long skae mo wan kamera blong haos, we ol laen blong laet oli joenem olgeta">
 </p>
 
 # Immuch360
 
 **Media blong yu. Eni skrin. Evri saed blong lukluk.**
 
-Flat, 360° and 3D photos and videos from your device, your NAS, your Immich server, your cameras and your drone. No account needed. Immuch360 is a free and open source app that reads your photos and videos where they are and plays each one in the viewer that fits it: flat, as a sphere you look around in, in 3D, or all around you in a headset. It runs on phones, tablets, TVs, Meta Quest headsets and computers.
+Flat, 360° mo 3D foto mo video from divaes blong yu, NAS blong yu, Immich server blong yu, ol kamera blong yu mo dron blong yu. I no nidim akaon. Immuch360 i wan fri mo open sos app we i ridim ol foto mo video blong yu long ples we oli stap mo i pleiem evriwan long vyua we i fitim hem: flat, olsem wan sfia we yu lukluk raonabaot insaed, long 3D, o raonabaot long yu long wan hedset. Hem i ron long fon, tablet, TV, Meta Quest hedset mo kompiuta.
 
 <p align="center">
   <sub>Hem i wan fork we i no ofisol blong Immich mobile app. Hem i no join wetem Immich o FUTO. Nem ia i ridim olsem "I am much 360".</sub>
@@ -17,97 +17,97 @@ Flat, 360° and 3D photos and videos from your device, your NAS, your Immich ser
 <details>
 <summary><b>Ol samting insaed</b></summary>
 
-- [Who it is for](#who-it-is-for)
-- [Which screens](#which-screens), and [what each screen does](#what-each-screen-does)
+- [Hem i blong hu](#who-it-is-for)
+- [Wanem skrin](#which-screens), mo [wanem evri skrin i mekem](#what-each-screen-does)
 - [Wanem yu save mekem](#what-you-can-do)
-- [Get it on your device](#get-it-on-your-device)
-- [How to](#how-to)
-  - [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server)
+- [Kasem long divaes blong yu](#get-it-on-your-device)
+- [Olsem wanem blong mekem](#how-to)
+  - [Lukluk ol foto mo video blong yu, wetem o wetaot wan server](#watch-your-photos-and-videos-with-or-without-a-server)
   - [Eksploerem ol panorama, 360°, VR180 mo 3D](#explore-panoramas-360-vr180-and-3d)
-  - [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): [Android TV and Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
+  - [Lukluk long TV wetem rimot](#watch-on-the-tv-with-the-remote): [Android TV mo Google TV](#on-android-tv-and-google-tv), [LG](#on-an-lg-tv-webos), [Samsung](#on-a-samsung-tv-tizen)
   - [Log in long wan TV, wan hedset o wan kompiuta wetem fon blong yu](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
-  - [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
-  - [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)
-  - [Keep your Immich library, with more](#keep-your-immich-library-with-more)
-  - [Watch your home cameras on the big screen](#watch-your-home-cameras-on-the-big-screen)
-  - [Your DJI drone (experimental)](#your-dji-drone-experimental): [live video](#see-what-your-drone-sees-on-your-phone), [in a Quest or on Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv), [import](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
-  - [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras)
+  - [Go insaed long ol foto mo video blong yu wetem wan Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest)
+  - [Pleiem ol fael blong wan NAS, wan kompiuta, wan media server o Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)
+  - [Kipim Immich laebri blong yu, wetem moa samting](#keep-your-immich-library-with-more)
+  - [Lukluk ol kamera blong haos long big skrin](#watch-your-home-cameras-on-the-big-screen)
+  - [DJI dron blong yu (eksperimentol)](#your-dji-drone-experimental): [laef video](#see-what-your-drone-sees-on-your-phone), [long wan Quest o long Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv), [tekem i kam](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
+  - [Openem ol rao fael blong 360° kamera](#open-the-raw-files-of-360-cameras)
   - [Tanem wan foto wetem wan ki](#turn-a-photo-with-one-key)
-  - [Use your computer as the media player](#use-your-computer-as-the-media-player)
-- [Compared with Immich](#compared-with-immich)
+  - [Yusum kompiuta blong yu olsem media pleia](#use-your-computer-as-the-media-player)
+- [Bitwin wetem Immich](#compared-with-immich)
 - [Praevesi](#privacy)
-- [Licences and credits](#licences-and-credits)
+- [Laesens mo tankiu](#licences-and-credits)
 - [Plan blong fiuja](#roadmap)
-- [Documentation](#documentation)
+- [Dokumen](#documentation)
 
 </details>
 
 <a id="who-it-is-for"></a>
-## Who it is for
+## Hem i blong hu
 
-- **You shoot 360° or 3D** and want to look around in your shots, not see them flat, doubled or stretched: [360°, VR180 and 3D](#explore-panoramas-360-vr180-and-3d).
-- **Your photos and films sit on a NAS, a computer, Plex or Immich** and you want them on the TV without copying anything: [on the TV](#watch-on-the-tv-with-the-remote), [NAS, shares and Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
-- **You have a Meta Quest** and want to step inside your own photos and videos: [in the headset](#step-inside-your-photos-and-videos-with-a-meta-quest).
-- **You run Immich** and want its app, plus the immersive viewers and the big screens you sign in from your phone: [your Immich library](#keep-your-immich-library-with-more), [compared with Immich](#compared-with-immich).
-- **You watch your home with Tapo cameras** and want them next to your photos, on the TV too (not yet checked with a real camera): [home cameras](#watch-your-home-cameras-on-the-big-screen).
-- **You fly a DJI drone** and want its live picture on your phone without DJI Fly, and in a Meta Quest or on an Android TV for the people with you (experimental): [your drone](#see-what-your-drone-sees-on-your-phone).
+- **Yu tekem foto 360° o 3D** mo yu wantem lukluk raonabaot insaed long ol foto blong yu, i no luk olgeta flat, dabol o longfala: [360°, VR180 mo 3D](#explore-panoramas-360-vr180-and-3d).
+- **Ol foto mo fim blong yu oli stap long wan NAS, wan kompiuta, Plex o Immich** mo yu wantem luk olgeta long TV wetaot kopiem eni samting: [long TV](#watch-on-the-tv-with-the-remote), [NAS, sea mo Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
+- **Yu gat wan Meta Quest** mo yu wantem go insaed long ol foto mo video blong yu wan: [long hedset](#step-inside-your-photos-and-videos-with-a-meta-quest).
+- **Yu ronem Immich** mo yu wantem app blong hem, wetem ol imesiv vyua mo ol big skrin we yu log in from fon blong yu: [Immich laebri blong yu](#keep-your-immich-library-with-more), [bitwin wetem Immich](#compared-with-immich).
+- **Yu lukaot long haos blong yu wetem Tapo kamera** mo yu wantem olgeta klosap long ol foto blong yu, long TV tu (oli no jekem yet wetem wan trufala kamera): [kamera blong haos](#watch-your-home-cameras-on-the-big-screen).
+- **Yu flaem wan DJI dron** mo yu wantem laef pikja blong hem long fon blong yu wetaot DJI Fly, mo long wan Meta Quest o long wan Android TV blong ol man we oli stap wetem yu (eksperimentol): [dron blong yu](#see-what-your-drone-sees-on-your-phone).
 
-There is no Immuch360 account to create, and nothing goes to us: the app talks only to your devices and to the servers you choose.
+I no gat Immuch360 akaon blong mekem, mo i no gat samting i kam long mifala: app i tok nomo wetem ol divaes blong yu mo ol server we yu jusum.
 
 <a id="which-screens"></a>
-## Which screens
+## Wanem skrin
 
 <div align="center">
 
-| Platform | Where to get it | Status on 25 October 2026 |
+| Platfom | Wea blong kasem | Stejes long 25 Oktoba 2026 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** phones and tablets | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | on Google Play (build 25; build 29 under Google's review, in place of build 28), build 30 on GitHub |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone and iPad** | App Store | version 3.3.1 (build 27) waiting for Apple's review since 22 October, then version 3.3.2 (build 28), in TestFlight for internal testing; [build it yourself](../docs/immuch360/build.md) meanwhile |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV and Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 30 on GitHub: [sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) by scanning a QR code, a [time bar, audio and subtitles](#on-android-tv-and-google-tv) for the remote in the video player, and a [drone's live video](#watch-it-in-a-meta-quest-or-on-an-android-tv) relayed by a phone (experimental); the TV listing is under Google's review |
-| **LG TVs** with webOS 5.0 and later | [.ipk, version 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (in review) | version 1.0.0, submitted to the LG Content Store on 24 October and waiting for LG's review; until then it installs in [Developer Mode](#lg-tvs-webos). It ran on webOS 25 TVs of LG's Cloud Test Lab |
-| **Samsung TVs** with Tizen 5.5 and later | [.wgt test build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | test build 0.2.0 of the same TV app, to sign with your own Samsung certificate and install in [Developer mode](#samsung-tvs-tizen); 0.1.0 ran on a tester's Samsung TV, and 0.2.0 holds the fixes from that run; not on Samsung's store |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 and 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | on the Horizon Store (build 28, live since 25 October), build 30 on GitHub |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer or ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | desktop build 11, a signed preview: photos, flat and 360° videos, shares, Plex, cameras (not yet checked with a real camera), sign in with your phone, photos turned with one key, the interface in 89 languages |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS and Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | previews: on Linux photos, 360° photos and flat videos (360° videos play flat); on macOS the same, checked on the project's CI Mac only, unsigned |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** fon mo tablet | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | long Google Play (build 25; build 29 i stap long rivyu blong Google, long ples blong build 28), build 30 long GitHub |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone mo iPad** | App Store | version 3.3.1 (build 27) i wet blong Apple i rivyu stat long 22 Oktoba, afta version 3.3.2 (build 28), long TestFlight blong insaed test; [buildim hem yu wan](../docs/immuch360/build.md) long miantaem |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV mo Google TV** | [APK](#android-tv-and-google-tv) · Google Play | build 30 long GitHub: [log in wetem fon blong yu](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone) taem yu skanem wan QR kod, wan [ba blong taem, odio mo sabtaetol](#on-android-tv-and-google-tv) blong rimot insaed long video pleia, mo [laef video blong wan dron](#watch-it-in-a-meta-quest-or-on-an-android-tv) we wan fon i pasem (eksperimentol); lising blong TV i stap long rivyu blong Google |
+| **LG TV** wetem webOS 5.0 mo niufala | [.ipk, version 1.0.0](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0) · LG Content Store (stap long rivyu) | version 1.0.0, oli sendem i go long LG Content Store long 24 Oktoba mo i wet blong LG i rivyu; kasem taem ia, hem i instol long [Developer Mode](#lg-tvs-webos). Hem i ron long ol webOS 25 TV blong Cloud Test Lab blong LG |
+| **Samsung TV** wetem Tizen 5.5 mo niufala | [.wgt test build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | test build 0.2.0 blong sem TV app, blong saenem wetem Samsung setifiket blong yu mo instolem long [Developer mode](#samsung-tvs-tizen); 0.1.0 i ron long Samsung TV blong wan testa, mo 0.2.0 i holem ol fiks from test ia; i no stap long stoa blong Samsung |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3 mo 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | long Horizon Store (build 28, i laef stat long 25 Oktoba), build 30 long GitHub |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [Installer o ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | desktop build 11, wan privyu we oli saenem: foto, flat mo 360° video, sea, Plex, kamera (oli no jekem yet wetem wan trufala kamera), log in wetem fon blong yu, foto we oli tanem wetem wan ki, intefes long 89 lanwis |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS mo Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) | privyu: long Linux, foto, 360° foto mo flat video (360° video i plei flat); long macOS sem samting, oli jekem nomo long CI Mac blong projek, i no saenem |
 
 *Oli apdetem ol stejes long evri release; ol ditel, build wetem build, oli stap long [Release status](../docs/immuch360/release-status.md).*
 
 </div>
 
 <p align="center">
-  <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Seven real captures of Immuch360 in two rows: the sphere viewer on an Android phone, a 360° photo on an iPad, a 360° photo on a Google TV and on an LG TV, then the photo timeline on a Samsung TV, the window of the app in a Meta Quest 3 and the video player on Windows. The LG and Samsung captures were taken in a browser that stands in for the TV">
+  <img src="../.github/readme/platforms-2026-10-24.jpg" width="100%" alt="Seven trufala skrinsot blong Immuch360 long tu laen: sfia vyua long wan Android fon, wan 360° foto long wan iPad, wan 360° foto long wan Google TV mo long wan LG TV, afta foto taemlaen long wan Samsung TV, window blong app long wan Meta Quest 3 mo video pleia long Windows. Oli tekem ol skrinsot blong LG mo Samsung long wan braosa we i tekem ples blong TV">
 </p>
 
 <a id="devices-and-systems"></a>
 <a id="what-each-screen-does"></a>
-### What each screen does
+### Wanem evri skrin i mekem
 
-One code base for the phones, tablets, Android TV, the Meta Quest and the computers, and a separate TV app for LG TVs, also packaged for Samsung TVs as a test build. What each one has today:
+Wan kod bes blong ol fon, tablet, Android TV, Meta Quest mo ol kompiuta, mo wan narafala TV app blong ol LG TV, we oli pakejem tu blong ol Samsung TV olsem wan test build. Wanem evriwan i gat tedei:
 
-| Capability | Android | iPhone, iPad | Android TV | LG webOS | Samsung Tizen | Quest |
+| Fija | Android | iPhone, iPad | Android TV | LG webOS | Samsung Tizen | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Gallery, albums, search with an Immich server | ✅ | ✅ | ✅ viewer | ✅ viewer | ✅ viewer | ✅ |
-| Sign in with your phone (QR code) | ✅ scans the code | 🔜 next iOS release | ✅ | ✅ in the phone's browser | ❌ typed on the TV | ✅ code typed on the phone |
-| Without a server: the device's own media | ✅ | ✅ | shares only | ❌ | ❌ | ✅ |
-| Flat photos and videos | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Rotate a photo with one key | ✅ | ✅ | ✅ colour keys | ✅ colour keys | ✅ | ✅ window |
-| 360° photos as a sphere | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ immersive |
-| 360° videos | ✅ | ✅ no time bar | ✅ message if not decodable | flat only | flat only | ✅ immersive |
-| 3D and VR180 | ✅ one eye | ✅ one eye | ✅ one eye | photos one eye, videos flat | photos one eye, videos flat | ✅ true 3D |
-| Spatial 2.5D (head tracking) | ✅ experimental | ✅ experimental | ❌ | ❌ | ❌ | ❌ |
-| Apple spatial photos | ✅ one eye | ✅ one eye | ✅ one eye | ❌ | ❌ | ✅ 3D |
-| Raw Insta360, GoPro and DJI files | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
-| SMB, WebDAV, DLNA shares | ✅ | ✅ | ✅ | ✅ SMB from webOS 22 | ❌ | ✅ |
+| Laebri, albam, sij wetem wan Immich server | ✅ | ✅ | ✅ vyua | ✅ vyua | ✅ vyua | ✅ |
+| Log in wetem fon blong yu (QR kod) | ✅ i skanem kod | 🔜 nekis iOS rilis | ✅ | ✅ long browsa blong fon | ❌ yu taepem long TV | ✅ kod we yu raetem long fon |
+| Wetaot wan server: media blong divaes hem wan | ✅ | ✅ | sea nomo | ❌ | ❌ | ✅ |
+| Flat foto mo video | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Tanem wan foto wetem wan ki | ✅ | ✅ | ✅ kala ki | ✅ kala ki | ✅ | ✅ windo |
+| 360° foto olsem wan sfia | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ imesiv |
+| 360° video | ✅ | ✅ no gat ba blong taem | ✅ mesej sapos i no save dikodem | flat nomo | flat nomo | ✅ imesiv |
+| 3D mo VR180 | ✅ wan lek | ✅ wan lek | ✅ wan lek | foto wan lek, video flat | foto wan lek, video flat | ✅ trufala 3D |
+| Spatial 2.5D (trakim hed) | ✅ eksperimentol | ✅ eksperimentol | ❌ | ❌ | ❌ | ❌ |
+| Apple spatial foto | ✅ wan lek | ✅ wan lek | ✅ wan lek | ❌ | ❌ | ✅ 3D |
+| Rao fael blong Insta360, GoPro mo DJI | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| SMB, WebDAV, DLNA sea | ✅ | ✅ | ✅ | ✅ SMB stat long webOS 22 | ❌ | ✅ |
 | Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
-| Tapo cameras: recordings | ✅ | ✅ | ✅ | 🔜 not before December 2026 | ❌ | ✅ |
-| Tapo cameras: live view | ✅ | 🔜 next iOS release | ✅ | ✅ video only | ❌ | ✅ |
-| Share this device on the network | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Upload to Immich from shares and the device | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
-| Import from a DJI drone or a card over USB (experimental) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| The DJI drone's live video (experimental) | ✅ with an RC-N3 | ❌ | ✅ relayed by a phone | ❌ | ❌ | ✅ relayed by a phone |
-| Dark theme | as the system | as the system | ✅ by default | ✅ only theme | ✅ only theme | as the system |
-| Input | touch, gyroscope | touch, gyroscope | remote; Left and Right also during a video and on its time bar, Menu for the details | remote, Magic Remote | remote | controllers, hands |
-| Where to get it | Google Play, APK | App Store (in review) | APK, Google Play (in review) | .ipk, LG Content Store (in review) | .wgt test build, signed by you | Horizon Store, APK |
+| Tapo kamera: rikoding | ✅ | ✅ | ✅ | 🔜 i no bifo Disemba 2026 | ❌ | ✅ |
+| Tapo kamera: laef vyu | ✅ | 🔜 nekis iOS rilis | ✅ | ✅ video nomo | ❌ | ✅ |
+| Seaem divaes ia long netwok | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Aplod i go long Immich from sea mo divaes | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Tekem from wan DJI dron o wan kad tru USB (eksperimentol) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Laef video blong DJI dron (eksperimentol) | ✅ wetem wan RC-N3 | ❌ | ✅ wan fon i pasem | ❌ | ❌ | ✅ wan fon i pasem |
+| Dak tim | olsem sistem | olsem sistem | ✅ stret long stat | ✅ tim ia nomo | ✅ tim ia nomo | olsem sistem |
+| Input | tajim, gyroscope | tajim, gyroscope | rimot; Left mo Right tu taem wan video i plei mo long ba blong taem blong hem, Menu blong ol ditel | rimot, Magic Remote | rimot | kontrola, han |
+| Wea blong kasem hem | Google Play, APK | App Store (stap long rivyu) | APK, Google Play (stap long rivyu) | .ipk, LG Content Store (stap long rivyu) | .wgt test build, yu nao i saenem | Horizon Store, APK |
 
 | Fija | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
@@ -129,19 +129,19 @@ One code base for the phones, tablets, Android TV, the Meta Quest and the comput
 | Seaem divaes ia long netwok | ✅ | ❌ | ❌ |
 | Aplod i go long Immich from sea mo divaes | ✅ | 🔧 CI | 🔧 CI |
 | Tekem from wan DJI dron o wan kad tru USB (eksperimentol) | ❌ | ❌ | ❌ |
-| The DJI drone's live video (experimental) | ❌ | ❌ | ❌ |
+| Laef video blong DJI dron (eksperimentol) | ❌ | ❌ | ❌ |
 | Dak tim | olsem sistem | olsem sistem | olsem sistem |
 | Input | maos, kiboad | maos, kiboad | maos, kiboad, trakpad |
 | Wea blong kasem hem | Installer o ZIP (privyu we oli saenem) | .deb, .rpm (privyu) | DMG o ZIP (privyu we i no saenem) |
 
-✅ in the app on that platform · ❌ not offered there · 🔜 planned · 🔧 CI in the sources, built and started by the project's CI on that system, not checked with a real server, share or camera there yet · flat only: the video plays flat, with a message, because the 360° video renderer of the computers is Windows only; on LG TVs, whether webOS hands video frames to the sphere is still to be measured; on a tester's Samsung TV, the browser gave black video frames to the 3D view. "One eye" means a 3D file shows its left eye on a flat screen. The LG and Samsung columns are one separate TV app: LG version 1.0.0, whose shares and Plex were checked against real servers and its cameras against a simulated camera on the project's build host, not on a TV yet, and Samsung test build 0.2.0. Not every ✅ has been checked on a real device yet: what was checked where, and what remains to confirm, is in [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) and [Compatibility](../docs/immuch360/compatibility.md).
+✅ i stap long app long platform ia · ❌ i no stap ofa long hem · 🔜 oli plan blong mekem · 🔧 CI i stap long sos, CI blong projek i buildim mo statem long sistem ia, be oli no jekem yet long ples ia wetem wan trufala server, sea o kamera · flat nomo: video i plei flat, wetem wan mesej, from we enjin blong 360° video long ol kompiuta i blong Windows nomo; long ol LG TV oli mas mesarem yet sapos webOS i givim ol frem blong video i go long sfia; long Samsung TV blong wan testa, braosa i givim ol blak frem blong video long 3D vyu. "Wan lek" i minim wan 3D fael i soem lef ae blong hem nomo long wan flat skrin. Kolum blong LG mo Samsung oli wan narafala TV app: LG version 1.0.0, we oli jekem ol sea mo Plex blong hem agensem trufala server mo ol kamera blong hem agensem wan simuletem kamera long build host blong projek, be i no long wan TV yet, mo Samsung test build 0.2.0. I no evri ✅ we oli jekem yet long wan trufala divaes: wanem we oli jekem wea, mo wanem i stap yet blong konfem, i stap long [Features](../docs/immuch360/features.md), [Platform support](../docs/immuch360/platform-support.md) mo [Compatibility](../docs/immuch360/compatibility.md).
 
 - **Android fon mo tablet**: fulwan app, tajim mo gyroscope, evri sos.
 - **iPhone mo iPad**: fulwan app; 360° video pleia i gat plei mo stop smol nomo, Tapo laef vyu mo pat blong fon blong log in wetem fon oli kam wetem nekis iOS rilis, mo DLNA sij i sendem unicast rikwes kasem taem Apple i givim multicast intaetelmen.
-- **Android TV and Google TV**: the same APK, driven by the remote, dark by default; a viewer: backup, uploads and the editor are hidden and the details are read only, but a photo still turns with one key. Every search filter works with the remote: Location and Camera open their choices in a list, the date filter shows all its choices, and the Tags, Location, Date, Media Type, Star Rating and Display options sheets put Clear and Apply beside the choices, one Right away, on most of the screen height. The photo grid uses less image memory, and a held arrow moves it at most about 10 rows a second. From build 28 it signs in from a phone, by its QR code or its short code (tried between two emulators with the code typed, not yet with a camera). From build 29 the time bar of a video takes the focus of the remote, films get audio and subtitle menus, and the next file of a share opens with controls of its own. Checked on the Google TV emulator; build 28 ran on a real Android TV on 23 October, and the video problems found there are the fixes of build 29, checked on the emulator, not yet on that TV. From build 30, its Drone card shows the live video of a DJI drone that a phone relays, with the drone's values and obstacle ring (experimental): the pairing and the picture were tried on a TCL Android TV on 25 October, with stutter and a green cast on the earlier relay; the steady stream that answers them is first tested with build 30.
-- **LG TVs with webOS 5.0 and later**: a separate app for the remote and the Magic Remote, built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): an Immich viewer with the 360° photos on a sphere, a photo turned with one key, a dark theme and the 89 languages of the app (the few texts of the TV app itself in English for now); the network shares, Plex and the live view of Tapo cameras, through its own service on the TV (SMB from webOS 22); 360° videos flat. Version 1.0.0, submitted to the LG Content Store on 24 October, ran on webOS 25 TVs of three models in LG's Cloud Test Lab: sign in, the phone sign in page, photos, albums, a video, the 360° view, the slideshow, a search and Back from every page. Version 0.1.0 ran on a tester's LG TV (webOS 22). The shares and Plex were checked against real servers and the cameras against a simulated camera on the project's build host, not on a TV yet.
-- **Samsung TVs with Tizen 5.5 and later**: the LG TV app packaged for Samsung TVs, test build 0.2.0, to sign and install yourself: an Immich viewer for the remote, signed in by typing (the server address, then an email and password or an API key), with the slideshow, the 360° photos on a sphere, a photo turned with one key and an About page that tells what the TV supports; no sign in with a phone, shares, Plex or cameras yet; 360° videos flat, with a notice. Version 0.1.0 ran on a tester's Samsung TV on Tizen 9: photos and videos up to 4K played, nothing above 4K decoded, and the browser of the TV gave black video frames to the 3D view. Version 0.2.0 holds the fixes from that run (a message for a video above the TV's decoders or one that stalls, 360° videos flat with a notice) and has not run on a TV yet.
-- **Meta Quest 2, Pro, 3 and 3S**: the app as a window, plus the immersive view and, from build 30, a Drone card that shows the live video of a DJI drone relayed by a phone (experimental), first tested with build 30; HEVC is the safe codec, H.264 stops around 4096x2304 on the Quest 3; only the Quest 3 is tested, the Quest 2, Quest Pro and Quest 3S are not tested yet.
+- **Android TV mo Google TV**: sem APK, rimot i draevem, dak stret long stat; wan vyua: bakap, aplod mo edita oli haed mo ol ditel oli blong ridim nomo, be wan foto i save tanem yet wetem wan ki. Evri sij filta i wok wetem rimot: Ples mo Kamera oli openem ol jus blong olgeta long wan lis, deit filta i soem evri jus blong hem, mo ol opsen pej blong Tag, Ples, Deit, Kaen Media, Sta Reting mo Soem oli putum Klia mo Aplae saed long ol jus, wan Right nomo, long bigfala pat blong haet blong skrin. Foto grid i yusum smol memori blong pikja, mo wan ero we yu holem i mufum hem kasem 10 ro long wan seken nomo. Stat long build 28 hem i log in from wan fon, wetem QR kod blong hem o sot kod blong hem (oli traem bitwin tu emiuleta wetem kod we oli raetem, be i no wetem wan kamera yet). Stat long build 29, ba blong taem blong wan video i tekem fokus blong rimot, ol fim oli kasem menu blong odio mo sabtaetol, mo nekis fael blong wan sea i open wetem ol kontrol blong hem wan. Oli jekem long Google TV emiuleta; build 28 i ron long wan trufala Android TV long 23 Oktoba, mo ol video problem we oli faenem long hem oli ol fiks blong build 29, we oli jekem long emiuleta, i no long TV ia yet. Stat long build 30, Drone kad blong hem i soem laef video blong wan DJI dron we wan fon i pasem, wetem ol namba blong dron mo ring blong ol samting we i blokem rod (eksperimentol): oli traem pea mo pikja long wan TCL Android TV long 25 Oktoba, wetem pikja we i stap stop mo wan grin kala long fasin blong pasem we i olfala; stedi strim we i stretem samting ia, oli testem fastaem wetem build 30.
+- **LG TV wetem webOS 5.0 mo niufala**: wan narafala app blong rimot mo Magic Remote, we oli bildim long [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos): wan Immich vyua wetem ol 360° foto long wan sfia, wan foto we i tanem wetem wan ki, wan dak tim mo 89 lanwis blong app (ol smol tekis blong TV app hem wan oli stap long Inglis blong naoia); ol netwok sea, Plex mo laef vyu blong ol Tapo kamera, tru long savis blong hem wan long TV (SMB stat long webOS 22); 360° video flat. Version 1.0.0, we oli sendem i go long LG Content Store long 24 Oktoba, i ron long ol webOS 25 TV blong tri model long Cloud Test Lab blong LG: log in, pej blong log in wetem fon, ol foto, ol albam, wan video, 360° vyu, slaedsoe, wan sij mo Back from evri pej. Version 0.1.0 i ron long LG TV blong wan testa (webOS 22). Oli jekem ol sea mo Plex agensem trufala server mo ol kamera agensem wan simuletem kamera long build host blong projek, be i no long wan TV yet.
+- **Samsung TV wetem Tizen 5.5 mo niufala**: LG TV app we oli pakejem blong Samsung TV, test build 0.2.0, blong saenem mo instolem yu wan: wan Immich vyua blong rimot, log in taem yu taepem (adres blong server, afta wan imel mo pasword o wan API ki), wetem slaedsoe, ol 360° foto long wan sfia, wan foto we i tanem wetem wan ki mo wan pej Abaot we i talem wanem TV i sapotem; i no gat yet log in wetem wan fon, sea, Plex o kamera; 360° video i flat, wetem wan notis. Version 0.1.0 i ron long Samsung TV blong wan testa long Tizen 9: ol foto mo video kasem 4K oli plei, i no gat samting antap long 4K we i dikod, mo braosa blong TV i givim ol blak frem blong video long 3D vyu. Version 0.2.0 i holem ol fiks from test ia (wan mesej blong wan video we i bigwan tumas blong ol dikoda blong TV o wan video we i stap stop, 360° video flat wetem wan notis) mo hem i no ron yet long wan TV.
+- **Meta Quest 2, Pro, 3 mo 3S**: app olsem wan window, plas imesiv vyu mo, stat long build 30, wan Drone kad we i soem laef video blong wan DJI dron we wan fon i pasem (eksperimentol), we oli testem fastaem wetem build 30; HEVC hem seif kodek, H.264 i stop raonabaot 4096x2304 long Quest 3; oli testem Quest 3 nomo, Quest 2, Quest Pro mo Quest 3S, oli no testem yet.
 - **Windows 10 mo 11**: wan privyu, wetem ol folda we oli mekem wok blong wan laebri, wan video pleia blong hem wan (libmpv) blong flat mo 360° video, rao fael we oli joenem long grafiks jip, fael mo folda we oli openem wetem program o draptem long window, wan installer o wan ZIP, we APROGSYS i saenem.
 - **Linux**: wan .deb mo wan .rpm we CI blong projek i buildim, oli instolem mo jekem long Ubuntu 22.04 mo 24.04, Debian 12 mo Fedora 40 mo 44; foto, 360° foto mo flat video tru long libmpv blong sistem (360°, 3D mo rao video i plei flat wetem wan mesej), we hadwea i droem long X11 seson tu stat long desktop build 7; SMB sea stat long Ubuntu 22.04 mo Debian 12 i go antap; wetaot wan kiring (GNOME Keyring o KWallet) app i no moa fris 25 s long faswan stat blong hem: i kipim ol paswod blong seson nomo mo i talem olsem long ol seting blong hem; i no ron yet long wan trufala Linux PC, nomo aninit long WSLg mo insaed long ol kontena.
 - **macOS**: wan DMG mo wan ZIP we CI blong projek i buildim, yunivesol, oli no saenem (Gatekeeper i askem wan taem nomo); app i stat, i openem ol fael mo folda we oli givim long hem, wetem Finder tu, i kipim ol sikret blong hem long login keychain mo i pleiem flat video wetem libmpv blong hem wan, oli jekem evri samting ia nomo long CI Mac blong projek; i no gat samting i ron yet long wan trufala Mac.
@@ -149,27 +149,27 @@ One code base for the phones, tablets, Android TV, the Meta Quest and the comput
 <a id="what-you-can-do"></a>
 ## Wanem yu save mekem
 
-Each line opens its how to below. The full guide, with every option, message and limit, is in the [user guide](../docs/immuch360/user-guide.md).
+Evri laen i openem eksplenesen blong hem aninit. Fulfala gaed, wetem evri opsen, mesej mo limit, i stap long [user guide](../docs/immuch360/user-guide.md).
 
-1. [Watch your photos and videos, with or without a server](#watch-your-photos-and-videos-with-or-without-a-server): a gallery and a player, on the device alone or with your Immich server.
-2. [Look around 360° photos and videos, panoramas, VR180 and 3D](#explore-panoramas-360-vr180-and-3d): a sphere you turn with a finger, the phone or the remote.
-3. [Watch on the TV with the remote](#watch-on-the-tv-with-the-remote): Android TV and Google TV, LG TVs, and Samsung TVs as a test build.
-4. [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): scan its QR code, confirm, watch.
-5. [Step inside your photos and videos with a Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° all around you, 3D in true 3D.
-6. [Play the files of a NAS, a computer, a media server or Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): in place, nothing copied.
-7. [Keep your Immich library, with more](#keep-your-immich-library-with-more): the Immich mobile app, plus the immersive viewers and the big screens.
-8. [Watch your Tapo cameras](#watch-your-home-cameras-on-the-big-screen): live, and the recordings of their memory card; not yet checked with a real camera.
-9. [See your DJI drone's live video on your phone](#see-what-your-drone-sees-on-your-phone), and [in a Meta Quest or on an Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): through a DJI RC-N3 remote, receive only. *Experimental.*
-10. [Bring a drone's or a camera card's photos and videos to Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): over USB, from an Android phone. *Experimental.*
-11. [Open the raw files of 360° cameras](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX and DJI Osmo 360, stitched by the app.
-12. [Turn a photo with one key](#turn-a-photo-with-one-key): a button, a key of the keyboard or a colour key of the remote.
-13. [Use your computer as the media player](#use-your-computer-as-the-media-player): your folders, Open with, a file dropped on the window. *Preview.*
+1. [Lukluk ol foto mo video blong yu, wetem o wetaot wan server](#watch-your-photos-and-videos-with-or-without-a-server): wan laebri mo wan pleia, long divaes nomo o wetem Immich server blong yu.
+2. [Lukluk raonabaot long 360° foto mo video, panorama, VR180 mo 3D](#explore-panoramas-360-vr180-and-3d): wan sfia we yu tanem wetem fingga, fon o rimot.
+3. [Lukluk long TV wetem rimot](#watch-on-the-tv-with-the-remote): Android TV mo Google TV, LG TV, mo Samsung TV olsem wan test build.
+4. [Log in long wan TV, wan hedset o wan kompiuta wetem fon blong yu](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): skanem QR kod blong hem, konfemem, lukluk.
+5. [Go insaed long ol foto mo video blong yu wetem wan Meta Quest](#step-inside-your-photos-and-videos-with-a-meta-quest): 360° raonabaot long yu, 3D long trufala 3D.
+6. [Pleiem ol fael blong wan NAS, wan kompiuta, wan media server o Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): long ples blong olgeta, i no kopiem eni samting.
+7. [Kipim Immich laebri blong yu, wetem moa samting](#keep-your-immich-library-with-more): Immich mobael app, wetem ol imesiv vyua mo ol big skrin.
+8. [Lukluk ol Tapo kamera blong yu](#watch-your-home-cameras-on-the-big-screen): laef, mo ol rikoding blong memori kad blong olgeta; oli no jekem yet wetem wan trufala kamera.
+9. [Lukluk laef video blong DJI dron blong yu long fon blong yu](#see-what-your-drone-sees-on-your-phone), mo [long wan Meta Quest o long wan Android TV](#watch-it-in-a-meta-quest-or-on-an-android-tv): tru wan DJI RC-N3 rimot, i kasem nomo. *Eksperimentol.*
+10. [Tekem ol foto mo video blong wan dron o wan kad blong kamera i go long Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): tru USB, from wan Android fon. *Eksperimentol.*
+11. [Openem ol rao fael blong 360° kamera](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX mo DJI Osmo 360, we app i joenem.
+12. [Tanem wan foto wetem wan ki](#turn-a-photo-with-one-key): wan baten, wan ki blong kiboad o wan kala ki blong rimot.
+13. [Yusum kompiuta blong yu olsem media pleia](#use-your-computer-as-the-media-player): ol folda blong yu, Open with, wan fael we yu draptem long window. *Privyu.*
 
 <a id="install"></a>
 <a id="get-it-on-your-device"></a>
-## Get it on your device
+## Kasem long divaes blong yu
 
-Take the app from the store of your device where it is published, or from the [Releases](https://github.com/freeKC/Immuch360/releases) page meanwhile.
+Tekem app from stoa blong divaes blong yu, long ples we oli pablisim hem, o from pej [Releases](https://github.com/freeKC/Immuch360/releases) long miantaem.
 
 ### Android fon mo tablet
 
@@ -192,18 +192,18 @@ Take the app from the store of your device where it is published, or from the [R
 <a id="lg-tvs-webos"></a>
 ### LG TV (webOS)
 
-1. Version 1.0.0 is waiting for LG's review. Until it is on the LG Content Store, it installs in Developer Mode: you need an LG TV with webOS 5.0 or later, a computer on the same network and a free LG developer account. On the TV, install Developer Mode from the LG Content Store, sign in, turn Dev Mode Status on and let the TV restart; note its IP address and the passphrase the app shows.
+1. Version 1.0.0 i wet blong LG i rivyu. Kasem taem hem i stap long LG Content Store, hem i instol long Developer Mode: yu nidim wan LG TV wetem webOS 5.0 o niufala, wan kompiuta long sem netwok mo wan fri LG developer akaon. Long TV, instolem Developer Mode from LG Content Store, login, tanem on Dev Mode Status mo letem TV i stat bakegen; raetem IP adres blong hem mo paspres we app i soem.
 2. Long kompiuta, instolem webOS CLI (Node.js 18 o niufala): `npm install -g @webos-tools/cli`, afta rejistarem TV wetem `ares-setup-device` (IP adres blong hem, pot 9922, yusa `prisoner`) mo `ares-novacom --device <name> --getkey`, we i askem paspres.
-3. From the [webOS 1.0.0 pre-release](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0), download `Immuch360-webOS-1.0.0.ipk` for a UHD TV, or `Immuch360-webOS-1.0.0-1280x720.ipk` for a Full HD TV, to which LG gives 1280x720 apps. Check it against `SHA256SUMS.txt`, then `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`. The [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) of webosbrew does the same without the command line.
+3. From [webOS 1.0.0 pre-release](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.0), daonlodem `Immuch360-webOS-1.0.0.ipk` blong wan UHD TV, o `Immuch360-webOS-1.0.0-1280x720.ipk` blong wan Full HD TV, we LG i givim ol app blong 1280x720 long hem. Jekem hem agensem `SHA256SUMS.txt`, afta `ares-install --device <name> Immuch360-webOS-1.0.0.ipk`. [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) blong webosbrew i mekem sem samting wetaot komand laen.
 4. Wan Developer Mode seson i stap 1000 aoa mo EXTEND baten blong Developer Mode app i mekem i niu bakegen; taem i finis, TV i tekemaot ol app we oli instolem long fasin ia. Ol ditel oli stap long [webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode).
-5. Once the app is on the LG Content Store, remove the Developer Mode copy and install it from the store.
+5. Taem app i stap long LG Content Store, tekemaot kopi blong Developer Mode mo instolem from stoa.
 
 <a id="samsung-tvs-tizen"></a>
 ### Samsung TV (Tizen)
 
-1. Test build 0.2.0 is not on Samsung's store: you install it yourself. You need a Samsung TV with Tizen 5.5 or later (2020 models and later), a computer on the same network and a Samsung account. On the TV: Apps, App Settings, type 12345, turn Developer mode on, enter the IP address of the computer, then restart the TV.
-2. Download `Immuch360-Tizen-0.2.0.wgt` from the [Tizen pre-release](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) and check it against `SHA256SUMS.txt`. A Samsung TV installs only an app signed for it, so the package must be signed again with a Samsung certificate that lists the DUID of your TV: [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung), a community tool, reads the DUID, signs the package with your Samsung account and installs it; Tizen Studio with the Samsung Certificate Extension does the same by hand.
-3. Open the app and sign in by typing your server address, then your email and password or an API key. About this TV shows what the TV supports, as text and as a QR code: that text, posted in [Issues](https://github.com/freeKC/Immuch360/issues) or [Discussions](https://github.com/freeKC/Immuch360/discussions) with what does not work, helps the most.
+1. Test build 0.2.0 i no stap long stoa blong Samsung: yu instolem yu wan. Yu nidim wan Samsung TV wetem Tizen 5.5 o niufala (ol model blong 2020 mo niufala), wan kompiuta long sem netwok mo wan Samsung akaon. Long TV: Apps, App Settings, taepem 12345, tanem on Developer mode, putum IP adres blong kompiuta, afta statem bakegen TV.
+2. Daonlodem `Immuch360-Tizen-0.2.0.wgt` from [Tizen pre-release](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) mo jekem hem agensem `SHA256SUMS.txt`. Wan Samsung TV i instolem nomo wan app we oli saenem blong hem, taswe pakej i mas saen bakegen wetem wan Samsung setifiket we i listem DUID blong TV blong yu: [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung), wan tul blong komuniti, i ridim DUID, i saenem pakej wetem Samsung akaon blong yu mo i instolem hem; Tizen Studio wetem Samsung Certificate Extension i mekem sem samting wetem han.
+3. Openem app mo log in taem yu taepem adres blong server blong yu, afta imel mo pasword blong yu o wan API ki. Pej Abaot TV ia i soem wanem TV i sapotem, olsem tekis mo olsem wan QR kod: tekis ia, we yu postem long [Issues](https://github.com/freeKC/Immuch360/issues) o [Discussions](https://github.com/freeKC/Immuch360/discussions) wetem wanem we i no wok, i givhan moa.
 
 <a id="meta-quest"></a>
 ### Meta Quest
@@ -215,47 +215,47 @@ Take the app from the store of your device where it is published, or from the [R
 <a id="windows"></a>
 ### Windows
 
-1. Download `Immuch360-Desktop-3.3.0-rc.0-desktop.11-windows-x64-setup.exe` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) (with `SHA256SUMS.txt` to check it) and open it. The installer and the ZIP are signed; Windows shows APROGSYS as the publisher. While the publisher is new to SmartScreen, it may still ask once: "More info", then "Run anyway".
+1. Daonlodem `Immuch360-Desktop-3.3.0-rc.0-desktop.11-windows-x64-setup.exe` from [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) (wetem `SHA256SUMS.txt` blong jekem hem) mo openem hem. Installer mo ZIP oli saen finis; Windows i soem APROGSYS olsem pablisa. Taem pablisa i niu yet long SmartScreen, hem i save askem wan taem: "More info", afta "Run anyway".
 2. Jusum "Install for me only" (no gat raet blong administrator) o "Install for all users", afta lanwis blong installer, wan we Windows i jusum finis.
 3. Statem Immuch360 Desktop from Start menu. Foto mo video oli kasem hem long "Open with" (raet klik long wan fael, Open with); hem i neva kam program default blong olgeta. Fas taem blong statem wan niufala build i save kasem wan minit taem Windows i skan ol fael.
 4. Windows 10 o 11, 64 bit. Blong apdetem, openem installer blong nekis build: login, folda mo seting blong yu i stap olsem. ZIP blong sem release hem sem progam olsem wan folda, blong anzipem eniwea mo statem `immuch360.exe` from hem. Long wan kompiuta we desktop build 4 kasem 8 oli stop long stat wetem "duplicate column name: group_date", build 9 i openem database ia mo i kipim data blong yu.
 
 ### Linux
 
-On Ubuntu 22.04 or later and Debian 12 or later: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-amd64.deb`; on Fedora 40 or later: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-x86_64.rpm`, both from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11). Then start Immuch360 Desktop from your applications. A preview: the folders of the computer, photos and 360° photos as a sphere, and flat videos through the system's libmpv, which the package installs (360°, 3D and raw videos play flat, with a message); SMB shares work from Ubuntu 22.04 and Debian 12 on. On Fedora, camera videos need the FFmpeg of RPM Fusion. Without GNOME Keyring or KWallet, the passwords are kept for the session only, and the settings of the app say so.
+Long Ubuntu 22.04 o niufala mo Debian 12 o niufala: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-amd64.deb`; long Fedora 40 o niufala: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.11-linux-x86_64.rpm`, tufala from [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11). Afta statem Immuch360 Desktop from ol app blong yu. Wan privyu: ol folda blong kompiuta, foto mo 360° foto olsem wan sfia, mo flat video tru long libmpv blong sistem, we pakej i instolem (360°, 3D mo rao video i plei flat, wetem wan mesej); SMB sea i wok stat long Ubuntu 22.04 mo Debian 12 i go antap. Long Fedora, ol kamera video oli nidim FFmpeg blong RPM Fusion. Wetaot GNOME Keyring o KWallet, ol paswod oli stap blong seson nomo, mo ol seting blong app i talem olsem.
 
 ### macOS
 
-Open `Immuch360-Desktop-3.3.0-rc.0-desktop.11-macos.dmg` from the [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) and drag the app to Applications (Apple silicon and Intel, macOS 12 or later). It is not signed nor notarized yet: Control click it and choose Open on macOS 14 and earlier, or choose "Open Anyway" in System Settings, Privacy & Security on macOS 15 and later. Nobody working on the project has a Mac: the app was only run on the project's CI Mac, where it opens files and folders and plays flat videos with its own libmpv; its network access has not been tried. Reports are welcome.
+Openem `Immuch360-Desktop-3.3.0-rc.0-desktop.11-macos.dmg` from [desktop pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-11) mo draptem app i go long Applications (Apple silicon mo Intel, macOS 12 o niufala). Hem i no saen mo i no notarize yet: Control click long hem mo jusum Open long macOS 14 mo bifo, o jusum "Open Anyway" long System Settings, Privacy & Security long macOS 15 mo niufala. No wan man long projek i gat wan Mac: app i ron nomo long CI Mac blong projek, we hem i openem ol fael mo folda mo i plei flat video wetem libmpv blong hem wan; netwok akses blong hem i no testem yet. Ol ripot oli velkam.
 
 <a id="how-to"></a>
-## How to
+## Olsem wanem blong mekem
 
-Each entry says what you get, then the steps, then the limits. The [user guide](../docs/immuch360/user-guide.md) has every option and message.
+Evri pat i talem wanem yu kasem, afta ol step, afta ol limit. [User guide](../docs/immuch360/user-guide.md) i gat evri opsen mo mesej.
 
 <a id="watch-your-photos-and-videos"></a>
 <a id="use-your-own-files-without-an-account"></a>
 <a id="watch-your-photos-and-videos-with-or-without-a-server"></a>
-### Watch your photos and videos, with or without a server
+### Lukluk ol foto mo video blong yu, wetem o wetaot wan server
 
-Immuch360 is first a gallery and a player for ordinary photos and videos, and it needs neither an account nor a server. "Use without a server" opens the app on the photos and videos of the device, with every viewer, the 360° list and the network sources, and nothing leaves the device. With an Immich server, the timeline, the albums, the favorites, the memories and the search come from it. Videos play in a native player with sound, seeking, a buffering indicator and a choice of audio tracks, in the 360°, Spatial and computer players and, from build 29, in the flat player of the Android app, which shows subtitles too.
+Immuch360 fastaem hem wan laebri mo wan pleia blong ol stret foto mo video, mo hem i no nidim akaon o server. "Yusum wetaot wan server" i openem app long ol foto mo video blong divaes, wetem evri vyua, 360° lis mo ol netwok sos, mo i no gat samting i aot long divaes. Wetem wan Immich server, taemlaen, ol albam, ol fevorit, ol memori mo sij oli kam from hem. Video oli plei long wan netif pleia wetem saon, sijing, wan baferin saen mo wan jusum blong odio trak, long 360°, Spatial mo kompiuta pleia mo, stat long build 29, long flat pleia blong Android app, we i soem sabtaetol tu.
 
 <img src="../.github/readme/b19-library-no-server.png" width="260" alt="Laebri tab wetaot seva: 360° antap, afta On this device wetem tu 360° foto, mo Ol netwok sea wetem wan sea we nem blong hem NAS">
 
-1. Open the app. The welcome page shows "Your media. Any screen. Every perspective." and three choices: tap the first one, "Use without a server". A server can be connected later, from Settings or the Library tab.
+1. Openem app. Velkam pej i soem "Media blong yu. Eni skrin. Evri saed blong lukluk." mo tri opsen: tajem fas wan, "Yusum wetaot wan server". Yu save konekem wan server bambae, from Seting o Laebri tab.
 2. Letem akses long ol foto mo video blong yu. Sapos yu talem no, app i talem "App ia i no save luk ol foto blong divaes ia", wetem "Letem akses" mo "Openem ol seting".
-3. The Photos tab shows the timeline of the device; Search and Albums stay greyed out, as they come from the server. The Library tab has 360° at the top, then On this device (the albums of the device) and Network shares. The menu at the top right says "This device only": nothing is sent anywhere.
-4. Tap a photo or a video to open it; swipe left and right to go to the next one, pinch or double tap to zoom. Swipe up on a video for its details: codec, size, frame rate, bit rate, and whether this device decodes it.
-5. On Android phones, tablets and TVs, from build 29, a film with several audio languages or with subtitles has an audio button and a subtitles button in its controls: the audio language you pick is kept for the next films, and subtitles stay off until you pick them, except forced ones. The Immich app's Android player has neither.
+3. Photos (Ol foto) tab i soem taemlaen blong divaes; Search (Lukaotem) mo Albums (Ol album) oli stap gri, from we oli kam long seva. Laebri tab i gat 360° antap, afta On this device (Long divaes ia: ol album blong divaes) mo Ol netwok sea. Menu antap long raet i talem "Divaes ia nomo": i no gat samting i go eniwea.
+4. Tajem wan foto o wan video blong openem; swaep lef mo raet blong go long nekis wan, pinj o dabol tap blong zum. Swaep i go antap long wan video blong luk ol ditel blong hem: kodek, saes, frem reit, bit reit, mo sapos divaes ia i save dikodem.
+5. Long Android fon, tablet mo TV, stat long build 29, wan fim we i gat plante odio lanwis o sabtaetol i gat wan odio baten mo wan sabtaetol baten long ol kontrol blong hem: odio lanwis we yu jusum i stap blong ol nekis fim, mo sabtaetol i stap of kasem we yu jusum olgeta, be i no ol sabtaetol we fim i fosem. Android pleia blong Immich app i no gat wan long tufala ia.
 
 Long wan kompiuta, ol folda we yu jusum oli mekem wok blong laebri; long wan TV, we i no gat foto blong hem wan, ol netwok sos oli mekem wok ia.
 
-More: [without a server or an account](../docs/immuch360/user-guide.md#without-a-server-or-an-account), [the viewers and the video player](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [video details and decoders](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
+Mo moa: [wetaot server o akaon](../docs/immuch360/user-guide.md#without-a-server-or-an-account), [ol vyua mo video pleia](../docs/immuch360/user-guide.md#watch-your-photos-and-videos), [ditel blong video mo ol dikoda](../docs/immuch360/user-guide.md#video-details-decoders-and-why-a-video-stutters).
 
 <a id="explore-panoramas-360-vr180-and-3d"></a>
 ### Eksploerem ol panorama, 360°, VR180 mo 3D
 
-Immuch360 knows flat photos and videos, panoramas, 360° photos and videos, VR180, stereoscopic 3D, Apple spatial photos and the 360° spheres of DJI drones, and opens each one in the viewer that fits it. A 360° photo opens as a sphere you turn with a finger or by moving the phone; a 360° video plays in a spherical player with sound; VR180 files are drawn on a half sphere; stereoscopic 3D files show one eye on a flat screen and both eyes in a headset. Partial panoramas keep their crop, and the picture starts on the view the camera recorded. A file the server does not flag can be viewed as 360° with one tap.
+Immuch360 i save flat foto mo video, panorama, 360° foto mo video, VR180, stereoskopik 3D, Apple spatial foto mo ol 360° sfia blong DJI dron, mo i openem evriwan long vyua we i fitim hem. Wan 360° foto i open olsem wan sfia we yu tanem wetem fingga o taem yu mufum fon; wan 360° video i plei long wan sfirikol pleia wetem saon; ol VR180 fael oli dro long haf sfia; ol stereoskopik 3D fael oli soem wan lek long wan flat skrin mo tu lek long wan hedset. Ol haf panorama oli kipim krop blong olgeta, mo pikja i stat long vyu we kamera i rikodem. Wan fael we server i no flagem i save soem olsem 360° wetem wan tap nomo.
 
 <p align="center">
   <img src="../.github/readme/b19-sphere.jpg" width="260" alt="Wan 360° foto blong saed blong wan lek long sfia vyua: baten blong klosem i stap antap long lef, ol baten blong 360°, 3D leaot mo gyroscope oli stap antap long raet">
@@ -273,70 +273,70 @@ Mo moa: [360° foto mo video](../docs/immuch360/user-guide.md#360-photos-and-vid
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>
-### Watch on the TV with the remote
+### Lukluk long TV wetem rimot
 
-Your photos on the big screen, with the remote. The TV apps all work the same way: the arrows move the frame, OK opens, Back goes back, and in a 360° photo the arrows look around. A TV has no photos of its own, so it shows your Immich server and, on Android TV and LG TVs, your network shares, your Plex server and your cameras.
+Ol foto blong yu long big skrin, wetem rimot. Ol TV app oli wok long sem fasin: ol ero oli mufum frem, OK i open, Back i go bak, mo long wan 360° foto ol ero oli lukluk raonabaot. Wan TV i no gat foto blong hem wan, taswe hem i soem Immich server blong yu mo, long Android TV mo LG TV, ol netwok sea, Plex server mo ol kamera blong yu.
 
-- **Android TV and Google TV**: the Android app itself, build 30, from GitHub until Google Play offers it on TVs.
-- **LG TVs with webOS 5.0 and later**: a TV app of its own, version 1.0.0, waiting for LG's review on the LG Content Store.
-- **Samsung TVs with Tizen 5.5 and later**: the same TV app as on LG TVs, test build 0.2.0, which you sign and install yourself.
+- **Android TV mo Google TV**: Android app hem wan, build 30, from GitHub kasem taem Google Play i ofarem long TV.
+- **LG TV wetem webOS 5.0 mo niufala**: wan TV app blong hem wan, version 1.0.0, we i wet blong LG i rivyu long LG Content Store.
+- **Samsung TV wetem Tizen 5.5 mo niufala**: sem TV app olsem long LG TV, test build 0.2.0, we yu saenem mo instolem yu wan.
 
 <p align="center">
-  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Illustration, not a capture: a large TV in a living room at dusk shows a grid of landscape photos beside a rail of icons, and a remote lies on the coffee table">
+  <img src="../.github/readme/lg-tv-webos.png" width="720" alt="Pikja we oli droem, i no wan skrinsot: wan big TV long wan rum long sanset i soem wan grid blong ol foto blong graon saed long wan laen blong ol aekon, mo wan rimot i stap long tebol">
 </p>
 
 <a id="on-android-tv-and-google-tv"></a>
-#### On Android TV and Google TV
+#### Long Android TV mo Google TV
 
-The same Android app, in a dark theme from the first start, with the remote as the only input. In the viewer, Left and Right go to the previous or next photo or video, even while a video plays, and in a 360° photo or video the arrows look around.
+Sem Android app, long wan dak tim stat long faswan taem, wetem rimot nomo olsem input. Long vyua, Left mo Right i go long foto o video bifo o nekis, nomata wan video i stap plei, mo long wan 360° foto o video ol ero oli mekem lukluk raonabaot.
 
 <p align="center">
   <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Sfia vyua long wan Google TV: wan 360° panorama blong saed blong wan lek, baten blong klosem long antap long lef, baten Zum aot, Zum in, 360° mo 3D long antap long raet, tanem wetem ol ero blong rimot">
 </p>
 
-1. Install the APK with adb, see [Install](#android-tv-and-google-tv). On the welcome page, choose "Add a network share or a media server" for a share, a Plex server or a camera, "Use without a server", or "Connect to an Immich server", whose page signs the TV in when you scan its QR code with your phone (see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
-2. In a viewer, the play and pause, rewind, fast forward, previous and next keys of the remote work. OK during a video shows the controls with play and pause selected, and a second OK pauses; the -10 s and +10 s buttons follow, then the audio and subtitles buttons when the film has them. From build 29, Down from play reaches the time bar: Left and Right move 10 s per press, faster while held, and OK plays or pauses. The controls and the date hide 5 s after the last key, and Left and Right then go to the previous or next file; on a share, that file opens in a page of its own, with controls that drive it. Videos no longer loop on a TV, unless you turn on Settings, Asset Viewer, Videos, Looping.
-3. The Menu key, the Info key or OK held down opens the details of the photo or video, read only: date, place, camera, codec, size and bit rate. A video the TV cannot decode says so, with its codec, its size and the limit of the TV's decoders, instead of loading forever; a 360° video beyond the decoders asks before opening the 360° player, and the reason is written on the Logs page of the profile menu.
+1. Instolem APK wetem adb, luk [Instolem](#android-tv-and-google-tv). Long velkam pej, jusum "Ademap wan netwok sea o wan seva blong media" blong wan sea, wan Plex server o wan kamera, "Yusum wetaot wan server", o "Konek long wan Immich server", we pej blong hem i log in TV taem yu skanem QR kod blong hem wetem fon blong yu (luk [Log in wetem fon blong yu](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)).
+2. Insaed long wan vyua, baten blong plei mo stop smol, go bak, go fored, bifo mo nekis blong rimot oli wok. OK taem wan video i plei i soem ol kontrol wetem plei mo stop smol we i jusum finis, mo seken OK i stopem smol; afta i gat ol baten -10 s mo +10 s, afta odio mo sabtaetol baten sapos fim i gat olgeta. Stat long build 29, Down from plei i kasem ba blong taem: Left mo Right i mufum 10 s long evri presem, i go kwik moa taem yu holem, mo OK i plei o i stopem smol. Ol kontrol mo deit oli haed 5 s afta las ki, mo afta Left mo Right i go long fael bifo o nekis; long wan sea, fael ia i open long wan pej blong hem wan, wetem ol kontrol we oli draevem hem. Ol video oli no plei bakegen oltaem long wan TV, sapos yu no tanem on Settings, Asset Viewer, Videos, Looping.
+3. Menu ki, Info ki o OK we yu holem i openem ol ditel blong foto o video, blong ridim nomo: deit, ples, kamera, kodek, saes mo bit reit. Wan video we TV i no save dikodem i talem olsem, wetem kodek blong hem, saes blong hem mo limit blong ol dikoda blong TV, i no lodim oltaem nomo; wan 360° video we i bigwan tumas blong ol dikoda i askem fastaem bifo i openem 360° pleia, mo risen i stap raet long Logs pej blong profael menu.
 
-Build 28 ran on a real Android TV on 23 October; the video fixes of build 29 came from that run and were checked on the Google TV emulator, not yet on that TV.
+Build 28 i ron long wan trufala Android TV long 23 Oktoba; ol video fiks blong build 29 oli kam from test ia mo oli jekem olgeta long Google TV emiuleta, i no long TV ia yet.
 
 <a id="immuch360-on-an-lg-tv-webos"></a>
 <a id="on-an-lg-tv-webos"></a>
-#### On an LG TV (webOS)
+#### Long wan LG TV (webOS)
 
-Immich's own apps do not install on an LG TV. Immuch360 has a TV app of its own for LG TVs with webOS 5.0 and later (2020 TVs on), driven by the remote and the Magic Remote: it shows your Immich server, your network shares, your Plex server and your Tapo cameras, and puts your 360° photos on a sphere you turn with the arrows. It is built on [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) by Seeky91, which brought the timeline, the albums, people, places, search, the slideshow and the sign in with a phone; thanks to Seeky91. Version 1.0.0 was submitted to the LG Content Store on 24 October and ran on webOS 25 TVs of LG's Cloud Test Lab; until LG approves it, it installs in Developer Mode, and every report in [Issues](https://github.com/freeKC/Immuch360/issues) helps.
+Ol app blong Immich hem wan oli no save instol long wan LG TV. Immuch360 i gat wan TV app blong hem wan blong ol LG TV wetem webOS 5.0 mo niufala (ol TV stat long 2020), we rimot mo Magic Remote i draevem: hem i soem Immich server blong yu, ol netwok sea, Plex server mo ol Tapo kamera blong yu, mo i putum ol 360° foto blong yu long wan sfia we yu tanem wetem ol ero. Oli bildim app ia long [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) blong Seeky91, we i karem taemlaen, ol albam, ol man, ol ples, sij, slaedsoe mo login wetem wan fon; tankiu long Seeky91. Oli sendem version 1.0.0 i go long LG Content Store long 24 Oktoba mo hem i ron long ol webOS 25 TV blong Cloud Test Lab blong LG; kasem taem LG i agri long hem, hem i instol long Developer Mode, mo evri ripot long [Issues](https://github.com/freeKC/Immuch360/issues) i halpem.
 
 1. Instolem long wan TV long Developer Mode, luk [Instolem](#lg-tvs-webos). Hem i gat app id blong hem wan, taswe i instol saed long Immich TV blong Seeky91.
 2. Login wetem fon blong yu (skanem QR kod), wetem imel mo paswod blong yu, o wetem wan API ki.
 3. Braos wetem ol ero mo OK. Long vyua, Lef mo Raet i go long foto o video bifo o nekis, tu taem wan video i plei; ol kontrol oli haed 5 s afta las ki; Info i openem ol ditel; ol ki blong janel oli zum; poenta mo wil blong Magic Remote oli wok.
-4. A 360° photo opens on a sphere: each press of an arrow turns it by a step, and a held key keeps it turning. "View as 360°" covers a 2:1 photo the server does not flag; a VR180 photo shows on a half sphere and a 3D photo with one eye. The yellow and blue keys turn a flat photo.
-5. Once signed in, "Network shares" in the rail of the app: add an SMB, WebDAV or DLNA share, a Plex server (signed in with a code on plex.tv/link) or a Tapo camera. Their photos open in the same viewer, 360° photos on the sphere.
+4. Wan 360° foto i open long wan sfia: evri taem yu presem wan ero i tanem hem smol, mo wan ki we yu holem i kipim hem i tanem. "Lukum olsem 360°" i kavremap wan 2:1 foto we server i no makem; wan VR180 foto i soem long haf sfia mo wan 3D foto wetem wan lek. Yelo mo blu ki oli tanem wan flat foto.
+5. Taem yu log in finis, "Ol netwok sea" long saed ba blong app: adem wan SMB, WebDAV o DLNA sea, wan Plex server (log in wetem wan kod long plex.tv/link) o wan Tapo kamera. Ol foto blong olgeta oli open long sem vyua, ol 360° foto long sfia.
 
-Version 1.0.0 is made for the LG Content Store: Back leaves the app from Photos or the welcome page the way each webOS version expects, and closes an open popup first; a server that does not answer within 15 s ends with a message that says why and a Retry button; the privacy policy opens in the app, with a QR code to read [its LG TVs section](../PRIVACY.md#lg-tvs-webos) on a phone; the TV uses its Gallery picture mode, as LG asks of photo apps; and a second package suits the Full HD TVs to which LG gives 1280x720 apps.
+Oli mekem version 1.0.0 blong LG Content Store: Back i lego app from Foto o velkam pej long fasin we evri webOS version i wantem, mo i satem fastaem wan popap we i open; wan server we i no ansa insaed long 15 s i finis wetem wan mesej we i talem from wanem mo wan baten blong Traem bakegen; praevesi polisi i open insaed long app, wetem wan QR kod blong ridim [seksen blong hem long LG TV](../PRIVACY.md#lg-tvs-webos) long wan fon; TV i yusum Gallery pikja mod blong hem, olsem LG i askem long ol foto app; mo wan seken pakej i fitim ol Full HD TV we LG i givim ol app blong 1280x720 long olgeta.
 
-Limits: SMB needs webOS 22 (2022 TVs) or later. The shares, Plex and the cameras come through the app's own service on the TV, which reads them for the app, and were checked against real servers and a simulated camera on the project's build host, not on a TV yet. The live view of a camera is video only. Not yet: the recordings of the cameras (not before December 2026) and their sound, 360° videos on the sphere (they play flat, with a message), uploads. On webOS before 25, the reverse proxy in front of Immich must send CORS headers; the app explains them when it meets the problem. webOS 26 has not been tried yet.
+Ol limit: SMB i nidim webOS 22 (ol TV blong 2022) o niufala. Ol sea, Plex mo kamera oli kam tru savis blong app hem wan long TV, we i ridim olgeta blong app, mo oli jekem olgeta agensem trufala server mo wan simuletem kamera long build host blong projek, be i no long wan TV yet. Laef vyu blong wan kamera i video nomo. I no gat yet: ol rikoding blong kamera (i no bifo Disemba 2026) mo saon blong olgeta, 360° video long sfia (oli plei flat, wetem wan mesej), aplod. Long webOS bifo 25, rives proksi fored long Immich i mas sendem CORS heda; app i eksplenem olgeta taem hem i kasem problem ia. Oli no traem webOS 26 yet.
 
 <a id="on-a-samsung-tv-tizen"></a>
-#### On a Samsung TV (Tizen)
+#### Long wan Samsung TV (Tizen)
 
-Samsung TVs with Tizen 5.5 and later (2020 TVs on) get the same TV app as test build 0.2.0, which is not on Samsung's store: sign in by typing, the timeline, albums, the viewer and the slideshow, 360° photos on the sphere and a photo turned with one key. Not yet: the sign in with a phone, the shares, Plex and the cameras, which run in a background service on LG TVs that the Samsung version does not have yet.
+Ol Samsung TV wetem Tizen 5.5 mo niufala (ol TV stat long 2020) oli kasem sem TV app olsem test build 0.2.0, we i no stap long stoa blong Samsung: log in taem yu taepem, taemlaen, ol albam, vyua mo slaedsoe, 360° foto long sfia mo wan foto we i tanem wetem wan ki. I no gat yet: log in wetem wan fon, sea, Plex mo kamera, we oli ron long wan bakgraon savis long LG TV we Samsung version i no gat yet.
 
-1. Sign the package for your TV and install it in Developer mode, see [Install](#samsung-tvs-tizen).
-2. Sign in by typing your server address, then your email and password or an API key.
-3. Browse with the arrows and OK. A 360° photo opens on the sphere; a 360° video plays flat, with a notice the first time, because on a tester's TV the browser of the TV gave black video frames to the 3D view.
-4. A video above what the TV's decoders accept says so, with the size the TV can play and the size of the file, instead of loading forever. A video that stalls shows a notice with its bitrate and the way out: let Immich transcode heavy files, or use a faster link. About this TV gives the TV's video ceiling.
+1. Saenem pakej blong TV blong yu mo instolem long Developer mode, luk [Instolem](#samsung-tvs-tizen).
+2. Log in taem yu taepem adres blong server blong yu, afta imel mo pasword blong yu o wan API ki.
+3. Braos wetem ol ero mo OK. Wan 360° foto i open long sfia; wan 360° video i plei flat, wetem wan notis long faswan taem, from we long TV blong wan testa braosa blong TV i givim ol blak frem blong video long 3D vyu.
+4. Wan video we i bigwan tumas long ol dikoda blong TV i talem olsem, wetem saes we TV i save pleiem mo saes blong fael, i no lodim oltaem nomo. Wan video we i stap stop i soem wan notis wetem bit reit blong hem mo rod blong aot: letem Immich i transkodem ol hevi fael, o yusum wan konekson we i kwik moa. Abaot TV ia i givim antap limit blong video blong TV.
 
-Version 0.1.0 ran on a tester's Samsung TV on Tizen 9, and 0.2.0 holds the fixes from that run; 0.2.0 has not run on a TV yet. The text of the About page, posted in [Discussions](https://github.com/freeKC/Immuch360/discussions) or [Issues](https://github.com/freeKC/Immuch360/issues) after a run, helps the most.
+Version 0.1.0 i ron long Samsung TV blong wan testa long Tizen 9, mo 0.2.0 i holem ol fiks from test ia; 0.2.0 i no ron yet long wan TV. Tekis blong pej Abaot, we yu postem long [Discussions](https://github.com/freeKC/Immuch360/discussions) o [Issues](https://github.com/freeKC/Immuch360/issues) afta wan test, i givhan moa.
 
-More: [watch on your TV](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [the webOS app: install, remote control keys, CORS headers](../webos/README.md), [platform support](../docs/immuch360/platform-support.md).
+Mo moa: [lukluk long TV blong yu](../docs/immuch360/user-guide.md#watch-on-your-tv-android-tv-and-google-tv), [webOS app: instolem, ol ki blong rimot, CORS heda](../webos/README.md), [sapot blong platform](../docs/immuch360/platform-support.md).
 
 <a id="sign-in-a-tv-a-headset-or-a-computer-with-your-phone"></a>
 ### Log in long wan TV, wan hedset o wan kompiuta wetem fon blong yu
 
-**Scan. Sign in. Watch.** Typing a server address, an email and a password with a TV remote, or in a headset, takes minutes. With Immuch360 on your phone, signed in to your Immich server, a TV, a Meta Quest or a computer is signed in within seconds: the big screen shows a QR code, the phone scans it, you confirm, and the screen opens on your library. With the phone app, your password stays on the phone. The Immich app has nothing like it.
+**Skanem. Log in. Lukluk.** Blong raetem adres blong server, wan imel mo wan pasword wetem rimot blong TV, o insaed long wan hedset, i tekem sam minit. Wetem Immuch360 long fon blong yu, we i log in finis long Immich server blong yu, wan TV, wan Meta Quest o wan kompiuta i log in insaed long sam seken: big skrin i soem wan QR kod, fon i skanem, yu konfemem, mo skrin i open long laebri blong yu. Wetem fon app, pasword blong yu i stap long fon nomo. Immich app i no gat samting olsem.
 
 <p align="center">
-  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Illustration, not a capture: a TV shows a QR code on its sign-in page, and a phone held in front of it scans the same code">
+  <img src="../.github/readme/sign-in-with-your-phone.png" width="720" alt="Pikja we oli droem, i no wan skrinsot: wan TV i soem wan QR kod long login pej blong hem, mo wan fon we man i holem fored long hem i skanem sem kod">
 </p>
 
 1. Long big skrin (Android TV mo Google TV, window blong Meta Quest, Windows, Linux o macOS), jusum "Konek long wan Immich server": login pej i soem "Log in wetem fon blong yu", wan QR kod mo wan kod blong 10 karakta, saed long fom blong server.
@@ -345,13 +345,13 @@ More: [watch on your TV](../docs/immuch360/user-guide.md#watch-on-your-tv-androi
 
 Olsem wanem i stap sef: fon mo skrin i mas stap long sem netwok blong haos, mo kod i stap tu minit nomo mo i wok wan taem nomo. Fon i askem server blong yu blong wan niufala seson blong skrin ia, we i karem nem blong hem ("Immuch360 long TV blong saloon"), mo i sendem i go long skrin we i enkriptem, taswe pasword blong yu i neva lego fon. "Konektem wan TV o kompiuta" i lisim ol skrin we fon ia i log in, evriwan wetem Log aot, mo Immich i lisim olgeta long Seting blo Akaont, Ol divaes we oli gat raet, we yu save tekemaot raet blong olgeta tu. Taem yu log aot long fon, olgeta tu oli log aot.
 
-The phone side runs on Android now, and on iPhone and iPad from the next iOS release. Without Immuch360 on the phone, scan the code with the camera of the phone: a page served by the screen opens in the browser, for your email and password, encrypted and used once. LG TVs sign in with a QR code of their own, in the browser of the phone; from build 28 the scanner of the phone app recognises it and opens that page. Samsung TVs are signed in by typing for now.
+Pat blong fon i ron long Android naoia, mo long iPhone mo iPad stat long nekis iOS rilis. Sapos i no gat Immuch360 long fon, skanem kod wetem kamera blong fon: wan pej we skrin i soem i open long browsa, blong imel mo pasword blong yu, we i enkriptem mo i yusum wan taem nomo. Ol LG TV oli log in wetem QR kod blong olgeta wan, long browsa blong fon; stat long build 28, skana blong fon app i save luksave mo i openem pej ia. Ol Samsung TV oli log in taem yu taepem blong naoia.
 
 Mo moa: [log in wetem fon blong yu](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [wanem ol skrin oli sendem mo kipim](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
 
 <a id="go-immersive-on-meta-quest"></a>
 <a id="step-inside-your-photos-and-videos-with-a-meta-quest"></a>
-### Step inside your photos and videos with a Meta Quest
+### Go insaed long ol foto mo video blong yu wetem wan Meta Quest
 
 Long wan Meta Quest sem app i ron olsem wan window wetem fulwan laebri blong yu, mo baten blong 360° blong hem i openem wan imesiv vyu we foto o video i stap raonabaot yu: yu lukluk raonabaot taem yu tanem hed blong yu, ol stereoskopik fael oli long trufala 3D, wan Apple spatial foto i flot long fored blong yu long 3D, mo ol kontrola o han blong yu oli draevem ba blong taem, bifo mo nekis, mo baten blong Tan we i bringim wanem i stap bihaenem yu i kam long fored wetaot yu tanem jea blong yu. Media i kamaot long server blong yu, hedset hem wan, wan NAS, wan media server, wan fon o wan Plex server, mo i plei stret long ples.
 
@@ -370,9 +370,9 @@ Mo moa: [insaed long Meta Quest hedset](../docs/immuch360/user-guide.md#in-the-m
 
 <a id="reach-the-media-of-a-nas-a-computer-or-a-media-server"></a>
 <a id="play-the-files-of-a-nas-a-computer-a-media-server-or-plex"></a>
-### Play the files of a NAS, a computer, a media server or Plex
+### Pleiem ol fael blong wan NAS, wan kompiuta, wan media server o Plex
 
-Your videos sit on a NAS, a computer, a media server or Plex. Immuch360 finds the servers of your network by itself, browses them and plays their photos and videos in place, in every viewer of the app, without copying anything: SMB (Samba, Windows shares), WebDAV (Nextcloud, Synology and others) and DLNA media servers (Jellyfin, Emby, minidlna, a NAS, a TV box). A phone can also share its own gallery on the Wi-Fi for a headset or any WebDAV client, and so can a Windows computer.
+Ol video blong yu i stap long wan NAS, wan kompiuta, wan media server o Plex. Immuch360 i faenem ol server blong netwok blong yu hem wan, braosem olgeta mo plei ol foto mo video blong olgeta stret long ples, long evri vyua blong app, wetaot kopiem eni samting: SMB (Samba, Windows sea), WebDAV (Nextcloud, Synology mo sam moa) mo DLNA media server (Jellyfin, Emby, minidlna, wan NAS, wan TV bokis). Wan fon i save sea tu laebri blong hem wan long Wi-Fi blong wan hedset o eni WebDAV klaent, mo wan Windows kompiuta i save mekem sem samting.
 
 <p align="center">
   <img src="../.github/readme/b19-add-share.png" width="260" alt="Pej Ademap wan sea: Nem, Nem o adres blong seva, Pot (sapos yu wantem), Sea, Jusum wan sea, Fasfala folda (sapos yu wantem), Nem blong yusa, Pasword, Testem konekson, mo risal I konek finis, 2 samting long fasfala folda">
@@ -382,18 +382,18 @@ Your videos sit on a NAS, a computer, a media server or Plex. Immuch360 finds th
 1. Openem Laebri tab, afta Netwok sea, afta + mo "Wan netwok sea (NAS, kompiuta, seva blong media)". From build 24, "Ademap wan netwok sea o wan seva blong media" long velkam pej i openem Netwok sea stret, wetaot wan server.
 2. Tajem wan server aninit long "I faenem long netwok", o fulumap fom wetem hand: kaen, nem o adres blong server, sea o pat, folda blong stat, nem blong yusa mo pasword.
 3. Tajem "Testem konekson", afta Save. Tajem sea blong braosem hem: folda fastaem, afta ol foto mo video, wetem 360° baj long ol fael we oli luksave olsem 360°.
-4. For a Plex server: in Network shares, + and "A Plex Media Server", then tap your server under "Found on the network", paste a token once ("How to get it" on the page says where to find it), then "Test the connection" and Save.
-5. With an Immich server connected, select files in a folder and tap "Upload to Immich" to send them to your server.
+4. Blong wan Plex server: long Ol netwok sea, + mo "Wan Plex Media Server", afta tajem server blong yu aninit long "I faenem long netwok", pestem wan token wan taem nomo ("Olsem wanem blong kasem" long pej i talem wea blong faenem), afta "Testem konekson" mo Seftem.
+5. Taem wan Immich server i konekem, jusum ol fael long wan folda mo tajem "Aplodem i go long Immich" blong sendem olgeta i go long server blong yu.
 
 Ol pleia oli ridim ol bytes we oli nidim tru wan brij insaed long app, wetem byte renj, mekem se sijing i save wok mo i no gat samting i sev long divaes; wan SMB video oli ridim tru hamas olsem sikis konekson wantaem blong mekem playbak i smut. Stat long build 29, ol fim we oli rekodem olsem M2TS (Blu-ray, AVCHD kamkoda, TV rekoda) oli plei long Android app from SMB mo WebDAV sea mo from ol DLNA server we oli listem olgeta olsem transpot strim, mo wan DLNA server we i listem saes 0 i no moa givim wan emti video.
 
-**Plex Media Server, without plex.tv**: the app pairs with your server directly, with a token you paste once, and reads the original files of your libraries live, so 360° stays 360°, at home and, through your port forwarding, away from home. On an LG TV, Plex is signed in with a code on plex.tv/link.
+**Plex Media Server, wetaot plex.tv**: app i pea stret wetem server blong yu, wetem wan token we yu pest wan taem, mo i ridim ol orijinol fael blong laebri blong yu laef, mekem se 360° i stap 360°, long haos mo, tru port forwarding blong yu, farawe long haos. Long wan LG TV, Plex i log in wetem wan kod long plex.tv/link.
 
-More: [network shares](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [share this phone on the network](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA media servers](../docs/immuch360/user-guide.md#dlna-media-servers), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv).
+Mo moa: [netwok sea](../docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [seaem fon ia long netwok](../docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA media server](../docs/immuch360/user-guide.md#dlna-media-servers), [Plex Media Server](../docs/immuch360/user-guide.md#plex-media-server-without-plextv).
 
 <a id="find-your-immich-library"></a>
 <a id="keep-your-immich-library-with-more"></a>
-### Keep your Immich library, with more
+### Kipim Immich laebri blong yu, wetem moa samting
 
 Wetem wan [Immich](https://github.com/immich-app/immich) server, Immuch360 hem wan Immich mobile app, wetem sem server mo sem akaon olsem web app: bakap, taemlaen, albam, sij, pipol, memori, seaing, patna, evri samting sinkem wetem server blong yu. Hem i instol klosap long ofisol app. Antap long hem: 360° baj mo lis, evri imesiv vyua, jusum bitwin orijinol fael mo transkod strim blong server blong evri video, teknikol ditel blong wan video, mo ol fael blong wan sea o blong divaes we yu sendem long server blong yu wetem hand.
 
@@ -401,107 +401,107 @@ Wetem wan [Immich](https://github.com/immich-app/immich) server, Immuch360 hem w
 2. Long Settings, Asset Viewer, Videos, "Sos blong video" i jusum orijinol taem divaes ia i save dikodem, oltaem orijinol, o oltaem transkod strim.
 3. Blong soem wan 360° foto long wan man we i no gat app, seaem hem wetem wan Immich sea link: Immich web app i soem hem olsem wan sfia long browsa blong hem.
 
-The current build, build 30, is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), like builds 28 and 29; build 28 was tested against a server built from that same Immich `main`, and build 27 also against an Immich 3.2.4 server. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project.
+Build we i stap naoia, build 30, i aotem long Immich `main` blong 10 Oktoba 2026 (version 3.3.0-rc.0), olsem build 28 mo 29; oli testem build 28 agensem wan server we oli buildim from sem Immich `main`, mo build 27 tu agensem wan Immich 3.2.4 server. Plis ripotem ol problem long [Issues](https://github.com/freeKC/Immuch360/issues), no long projek blong Immich.
 
-What is the same and what Immuch360 adds is in [Compared with Immich](#compared-with-immich).
+Wanem i sem mo wanem Immuch360 i adem i stap long [Bitwin wetem Immich](#compared-with-immich).
 
 Mo moa: [evri narafala samting hem Immich](../docs/immuch360/user-guide.md#everything-else-is-immich), [bitwin wetem Immich app](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
 <a id="cameras-plex-and-raw-camera-files"></a>
 <a id="watch-your-home-cameras-on-the-big-screen"></a>
-### Watch your home cameras on the big screen
+### Lukluk ol kamera blong haos long big skrin
 
 <p align="center">
-  <img src="../.github/readme/home-cameras.png" width="720" alt="Illustration, not a capture: in a living room at dusk, the TV on the wall shows one live view of a garden path from a home camera that stands on the sideboard, and a phone on the table shows the same view.">
+  <img src="../.github/readme/home-cameras.png" width="720" alt="Pikja we oli droem, i no wan skrinsot: long wan rum long sanset, TV long wol i soem wan laef vyu blong wan rod long garen from wan kamera blong haos we i stanap long wan kabod, mo wan fon long tebol i soem sem vyu.">
 </p>
-<p align="center"><sub>An illustration. The Tapo support has not been checked with a real camera yet.</sub></p>
+<p align="center"><sub>Wan pikja we oli droem. Oli no jekem yet Tapo sapot wetem wan trufala kamera.</sub></p>
 
-Your Tapo cameras of TP-Link, next to your photos, without the Tapo app. The app shows a camera live (Android phones and tablets, Android TV, the Meta Quest, Windows and, video only, LG TVs; iPhone and iPad from the next iOS release) and lists the recordings of its memory card day by day (phones, tablets, Android TV, the Quest and computers). A clip is fetched from the camera, plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link, and never changes anything on the camera.
+Ol Tapo kamera blong yu from TP-Link, klosap long ol foto blong yu, wetaot Tapo app. App i soem wan kamera laef (Android fon mo tablet, Android TV, Meta Quest, Windows mo, video nomo, LG TV; iPhone mo iPad stat long nekis iOS rilis) mo lisim ol rikoding blong memori kad blong hem dei long dei (fon, tablet, Android TV, Quest mo kompiuta). Wan klip i kam from kamera, i plei olsem eni video mo i save sendem i go long Immich. App i tok nomo wetem kamera long netwok blong yu, neva wetem ol server blong TP-Link, mo i neva jenisim eni samting long kamera.
 
-**Not yet checked with a real camera.** The protocol was written from captures of a C510W with firmware 1.3.4, and the app was checked against a simulated camera only. A report with the model and firmware that "Test the camera" shows helps a lot.
+**Oli no jekem yet wetem wan trufala kamera.** Oli raetem protokol from ol rikod blong wan C510W wetem firmwea 1.3.4, mo oli jekem app agensem wan simuletem kamera nomo. Wan ripot wetem model mo firmwea we "Testem kamera" i soem i givhan bigwan.
 
-1. In the Tapo app first: create the camera account (settings of the camera, Advanced Settings, Camera Account), used for the live view, and turn on Third-Party Compatibility, under Me, then Tapo Lab.
-2. In Immuch360: Library, Network shares, + and "A Tapo camera". Tap your camera under "Found on the network", or type its address.
-3. Type the password of your TP-Link account for the recordings, the camera account for the live view, or both; then "Test the camera", and Save.
-4. Tap the camera: its live view is at the top of its page, with the sound, SD or HD and Full screen; below it come the days with recordings. Tap a clip to fetch it and play it; its ⋮ menu has "Upload to Immich".
+1. Fastaem long Tapo app: mekem akaon blong kamera (seting blong kamera, Advanced Settings, Camera Account), we yu yusum blong laef vyu, mo tanem on Third-Party Compatibility, aninit long Me, afta Tapo Lab.
+2. Long Immuch360: Laebri, Ol netwok sea, + mo "Wan Tapo kamera". Tajem kamera blong yu aninit long "I faenem long netwok", o taepem adres blong hem.
+3. Taepem pasword blong TP-Link akaon blong yu blong ol rikoding, akaon blong kamera blong laef vyu, o tufala; afta "Testem kamera", mo Seftem.
+4. Tajem kamera: laef vyu blong hem i stap antap long pej blong hem, wetem saon, SD o HD mo Ful skrin; aninit i gat ol dei we i gat rikoding. Tajem wan klip blong tekem mo pleiem; ⋮ menu blong hem i gat "Aplodem i go long Immich".
 
-More: [Tapo cameras](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+Mo moa: [Tapo kamera](../docs/immuch360/user-guide.md#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 
 <a id="your-dji-drone-experimental"></a>
-### Your DJI drone (experimental)
+### DJI dron blong yu (eksperimentol)
 
-A Drone card in the Library, experimental and on by default, gathers what Immuch360 does with a DJI drone: on an Android phone, the drone's live video through its remote controller, and its photos and videos brought to Immich over USB; in a Meta Quest or on an Android TV, that live video relayed by the phone, to watch. Immuch360 is not a DJI product and is not approved by DJI, and nothing is sent to DJI. In this build the drone screens are in English only; their translations come later.
+Wan Drone kad long Laebri, eksperimentol mo i on finis, i karem tugeta wanem Immuch360 i mekem wetem wan DJI dron: long wan Android fon, laef video blong dron tru rimot kontrola blong hem, mo ol foto mo video blong hem we i go long Immich tru USB; long wan Meta Quest o long wan Android TV, sem laef video ia we fon i pasem, blong lukluk. Immuch360 i no wan prodak blong DJI mo DJI i no agri long hem, mo i no gat samting i go long DJI. Long build ia, ol skrin blong dron oli long Inglis nomo; ol transleisen blong olgeta bambae oli kam.
 
 <a id="your-dji-drones-live-video-on-your-phone-experimental"></a>
 <a id="see-what-your-drone-sees-on-your-phone"></a>
-#### See what your drone sees, on your phone
+#### Luk wanem dron blong yu i luk, long fon blong yu
 
 <p align="center">
-  <img src="../.github/readme/drone-live-phone.png" width="720" alt="Illustration, not a capture: two hands hold a drone remote controller with a phone clipped on top, whose screen shows a live aerial view of a coast, while a small drone flies over the bay at dusk">
+  <img src="../.github/readme/drone-live-phone.png" width="720" alt="Pikja we oli droem, i no wan skrinsot: tu han i holem wan rimot kontrola blong dron wetem wan fon we i klip antap, we skrin blong hem i soem wan laef vyu from skae blong wan saed solwota, mo wan smol dron i flae antap long baj long sanset">
 </p>
 
-See what your DJI drone sees on your Android phone, without DJI Fly and without any account: plug a DJI RC-N3 remote controller into the phone with its cable, and Immuch360 shows the drone's live video full screen in landscape, H.265 in 1080p, with the flight values read from the cable. The remote keeps full control of the drone. It was tried with an RC-N3, a DJI Neo 2 and a Samsung Galaxy S24+: on the ground with build 29, and in flight with test builds of build 30 on 24 and 25 October. Other remotes and drones have not been tried.
+Luk wanem DJI dron blong yu i luk long Android fon blong yu, wetaot DJI Fly mo wetaot eni akaon: plagem wan DJI RC-N3 rimot kontrola long fon wetem kebol blong hem, mo Immuch360 i soem laef video blong dron long ful skrin long saed fasin, H.265 long 1080p, wetem ol namba blong flaet we i ridim from kebol. Rimot i kipim ful kontrol blong dron. Oli traem hem wetem wan RC-N3, wan DJI Neo 2 mo wan Samsung Galaxy S24+: long graon wetem build 29, mo taem i flae wetem ol test build blong build 30 long 24 mo 25 Oktoba. Oli no traem ol narafala rimot mo dron.
 
 Hem i lisin nomo. Neva wan oda i go long rimot o dron: wan baet we pej i raetem evri seken, stat long 20 seken afta rimot i open, i talem nomo sapos rimot i tekem data, mo i no karem eni oda.
 
-On the live screen: the drone's battery and the motor time and, in flight, the height above the take off point, the vertical speed, the speed and the distance below the drone. A value goes there only once our own flight captures prove it: the height, the speeds and the distance below were proven on the captures of two indoor flights on 25 October, up to 1.8 m high and 1.5 m/s, not beyond yet; showing them there is new in build 30 and first tested with it. The height shows about 1.5 s after lift off, once the drone has left the ground or the hand, and stays hidden until the motors stop if it ever jumps in a way no aircraft can. Advanced adds the battery's voltage and temperature, the heading (its zero not checked against north) and the motors, and Diagnostics every number the link gives, the battery current included. No satellites, position or distance from home are shown. The numbers are not compared with DJI Fly yet: do not fly by them.
+Long laef skrin: bateri blong dron mo taem blong ol mota mo, taem i flae, haet antap long ples we i flae aot, spid i go antap o daon, spid mo distens aninit long dron. Wan namba i kam long ples ia nomo taem ol flaet rikod blong mifala oli pruvum: haet, ol spid mo distens aninit oli pruv long ol rikod blong tu flaet insaed long haos long 25 Oktoba, kasem 1.8 m haet mo 1.5 m/s, i no moa yet; blong soem olgeta long ples ia i niu long build 30 mo oli testem fastaem wetem hem. Haet i soem raonabaot 1.5 s afta dron i flae aot, taem dron i lego graon o han, mo i stap haed kasem ol mota oli stop sapos hem i jam long wan fasin we i no gat eroplen i save mekem. Advanced i adem volt mo hot blong bateri, direksen (zero blong hem oli no jekem agensem not) mo ol mota, mo Diagnostics i adem evri namba we link i givim, wetem karen blong bateri tu. I no soem satelaet, posisen o distens from hom. Oli no konparem yet ol namba wetem DJI Fly: yu no flae folem olgeta.
 
-**Obstacle ring**, on by default: when the drone's sensors see something close, a translucent circle shows around the middle of the picture, with an arc toward the obstacle, amber turning red as it gets closer, its distance beside it and a short tick that speeds up; with nothing close, nothing shows. The circle and the direction of the arc were checked in flight, indoors, on 25 October, on a test build where the direction was an option; shown by default, it is first tested with build 30. In Advanced you set the distances ("Glow from", 3.0 m, and "Strong glow from", 1.0 m), choose a frame at the edges of the picture instead of the circle, or turn off the ring, its sound or its vibration. It shows only what the drone's sensors report: nothing in Sport mode or with obstacle avoidance off, and no glow does not mean the way is clear. Information only: Immuch360 never steers or stops the drone.
+**Ring blong ol samting we i blokem rod**, i on finis: taem ol sensa blong dron oli luk samting we i klosap, wan sekol we yu save luk tru i soem raonabaot long medel blong pikja, wetem wan pat blong sekol i poen i go long samting ia, yelo we i kam red taem i kam klosap, distens blong hem saed long hem mo wan sot saon we i go kwik moa; taem i no gat samting klosap, i no soem eni samting. Oli jekem sekol mo direksen blong pat blong sekol taem dron i flae, insaed long haos, long 25 Oktoba, long wan test build we direksen i wan opsen; blong soem hem olsem stret fasin, oli testem fastaem wetem build 30. Long Advanced yu setem ol distens ("Glow from", 3.0 m, mo "Strong glow from", 1.0 m), jusum wan frem long ol saed blong pikja i no sekol, o tanem of ring, saon blong hem o seksek blong hem. Hem i soem nomo wanem ol sensa blong dron oli ripotem: i no gat samting long Sport mod o taem obstacle avoidance i of, mo sapos i no gat laet, i no minim se rod i klia. Infomesen nomo: Immuch360 i neva stiarem o stopem dron.
 
-1. The Drone card is in the Library, and "DJI live video" on its page: "DJI live video (experimental)", in Settings, Advanced, is on by default.
-2. Turn on the drone and the remote, close DJI Fly, then open "DJI live video" and read the safety notice.
-3. Plug the remote into the phone with its cable. If Android asks which app should open it, choose Immuch360 without "Always", which would take the remote away from DJI Fly; if it asks for a USB mode, choose charging only. Plugging in the remote then opens this screen by itself ("Open this screen when the remote is plugged in", on by default in Advanced).
-4. Remote, Drone and Picture light up in turn, and the picture comes full screen within a few seconds. Three buttons (leave, "Send to a headset or a TV" and Advanced) and the values sit in the black bands beside the picture. The notes, such as "Live", fade after about five seconds; a tap anywhere brings them back, and nothing on the picture acts on the drone. An error that asks you to act stays.
-5. Advanced has "Save a capture for a bug report", which writes the link's capture to `Download/Immuch360/dji-link`, "Play a saved capture", to play one again without the remote, and Diagnostics, with every number the link gives.
+1. Drone kad i stap long Laebri, mo "DJI live video" i stap long pej blong hem: "DJI live video (experimental)", long Seting, Advans, i on finis.
+2. Tanem on dron mo rimot, satem DJI Fly, afta openem "DJI live video" mo ridim notis blong sefti.
+3. Plagem rimot long fon wetem kebol blong hem. Sapos Android i askem wanem app i mas openem, jusum Immuch360 wetaot "Oltaem", from we hemia bambae i tekemaot rimot from DJI Fly; sapos i askem wan USB mod, jusum jaj nomo. Afta, taem yu plagem rimot, skrin ia i open hem wan ("Open this screen when the remote is plugged in", i on finis long Advanced).
+4. Remote, Drone mo Picture oli laet wan afta narawan, mo pikja i kam long ful skrin insaed long sam seken. Tri baten (aot, "Send to a headset or a TV" mo Advanced) mo ol namba oli stap long ol blak ba saed long pikja. Ol not, olsem "Live", oli lus afta faef seken samting; wan taj eniples i karem olgeta i kam bak, mo i no gat samting long pikja we i jenisim dron. Wan ero we i askem yu blong mekem samting i stap.
+5. Advanced i gat "Save a capture for a bug report", we i raetem rikod blong link long `Download/Immuch360/dji-link`, "Play a saved capture", blong pleiem bakegen wetaot rimot, mo Diagnostics, wetem evri namba we link i givim.
 
-The drone's photos and videos cannot be reached through the remote, which does not open the drone's storage: copy them from the drone itself over USB or from its card, as [below](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich). Keep the saved captures to yourself, as the page says: they hold the drone's video and the serial numbers of the remote and the aircraft, and may hold its position; a report in [Issues](https://github.com/freeKC/Immuch360/issues) with what Diagnostics shows helps, above all with other DJI remotes.
+Yu no save kasem ol foto mo video blong dron tru rimot, from we rimot i no openem stored blong dron: kopiem olgeta from dron hem wan tru USB o from kad blong hem, olsem [aninit](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich). Kipim ol rikod we yu seftem blong yu nomo, olsem pej i talem: oli holem video blong dron mo siriol namba blong rimot mo blong dron, mo oli save holem posisen blong hem; wan ripot long [Issues](https://github.com/freeKC/Immuch360/issues) wetem wanem Diagnostics i soem i givhan, moa long ol narafala DJI rimot.
 
 <a id="watch-it-in-a-meta-quest-or-on-an-android-tv"></a>
-#### Watch it in a Meta Quest or on an Android TV
+#### Lukluk long wan Meta Quest o long wan Android TV
 
-The phone plugged into the remote can send the drone's picture and values to Immuch360 in a Meta Quest or on an Android TV or Google TV on the same local network, for the people with you. A headset shows them in a window or, larger, in a flight view in front of you, and a TV full screen, with the same values and obstacle ring as the phone. They only watch: nothing a headset or a TV does reaches the remote or the drone. Their notes, such as "Watching only", fade after a few seconds and come back with a key, a tap or a button. The drone's picture reached a Quest 3 once, on 24 October, over a home Wi-Fi; the headset window and the flight view with the values and the obstacle ring are first tested with build 30, and the Quest 2, Pro and 3S have not been tried. Should the circle hide the middle of the picture in the headset, "Frame at the edges" in its menu keeps the middle clear. On a TCL Android TV, the pairing and the picture were tried on 25 October, with stutter and a green cast on the earlier relay; the steady stream that answers them is first tested with build 30. Flying while you watch the headset or the TV needs an observer next to you who keeps the drone in sight (EU open category); without one, watch the drone.
+Fon we i plag long rimot i save sendem pikja mo ol namba blong dron i go long Immuch360 long wan Meta Quest o long wan Android TV o Google TV long sem lokol netwok, blong ol man we oli stap wetem yu. Wan hedset i soem olgeta long wan window o, bigwan moa, long wan flaet vyu fored long yu, mo wan TV long ful skrin, wetem sem namba mo ring blong ol samting we i blokem rod olsem fon. Oli lukluk nomo: i no gat samting we wan hedset o wan TV i mekem we i kasem rimot o dron. Ol not blong olgeta, olsem "Watching only", oli lus afta sam seken mo oli kam bak wetem wan ki, wan taj o wan baten. Pikja blong dron i kasem wan Quest 3 wan taem, long 24 Oktoba, tru wan Wi-Fi blong haos; window blong hedset mo flaet vyu wetem ol namba mo ring, oli testem fastaem wetem build 30, mo oli no traem Quest 2, Pro mo 3S. Sapos sekol i haedem medel blong pikja long hedset, "Frame at the edges" long menu blong hem i kipim medel i klia. Long wan TCL Android TV, oli traem pea mo pikja long 25 Oktoba, wetem pikja we i stap stop mo wan grin kala long fasin blong pasem we i olfala; stedi strim we i stretem samting ia, oli testem fastaem wetem build 30. Blong flae taem yu lukluk long hedset o TV, yu nidim wan man klosap long yu we i kipim ae blong hem long dron (EU open kategori); sapos i no gat wan, lukluk long dron.
 
-1. On the phone, on the live screen, tap "Send to a headset or a TV" and turn it on.
-2. **Meta Quest**: open Immuch360, Library, Drone, and pick the phone; type the code the phone shows, once for that phone. The picture opens in the window; "Open the flight view" makes it larger, and B or Y brings the window back.
-3. **Android TV and Google TV**: open Immuch360, Library, Drone. Under "Let this TV watch", the TV shows a code and its QR code: on the phone, in the same panel, tap "Add a TV" and scan it, or type it. Then select the phone on the TV and press OK: the picture comes full screen; OK shows or hides the numbers, and Menu opens the options.
-4. The phone and the screen must be on the same local network. Away from home, turn on the phone's hotspot, in the 5 GHz band if it offers it, and join it from the headset or the TV.
-5. For a bug report, the headset's menu and the TV's Options have Diagnostics and "Save a reception record", which keeps what that screen received.
+1. Long fon, long laef skrin, tajem "Send to a headset or a TV" mo tanem on.
+2. **Meta Quest**: openem Immuch360, Laebri, Drone, mo jusum fon; taepem kod we fon i soem, wan taem nomo blong fon ia. Pikja i open long window; "Open the flight view" i mekem hem i kam bigwan, mo B o Y i karem window i kam bak.
+3. **Android TV mo Google TV**: openem Immuch360, Laebri, Drone. Aninit long "Let this TV watch", TV i soem wan kod mo QR kod blong hem: long fon, long sem panel, tajem "Add a TV" mo skanem, o taepem. Afta jusum fon long TV mo presem OK: pikja i kam long ful skrin; OK i soem o i haedem ol namba, mo Menu i openem ol opsen.
+4. Fon mo skrin oli mas stap long sem lokol netwok. Farawe long haos, tanem on hotspot blong fon, long 5 GHz ban sapos hem i gat, mo joen long hem from hedset o TV.
+5. Blong wan ripot blong problem, menu blong hedset mo Options blong TV oli gat Diagnostics mo "Save a reception record", we i kipim wanem skrin ia i kasem.
 
-**Relay quality**, new in build 30, in Advanced on the phone: in flight the drone sends about 18 Mbit/s, and on 25 October a home Wi-Fi path from the phone through the router to the TV carried that full stream only a third of the flight time; the rest of the time the TV's picture stuttered, broke up and took a green cast. With Automatic, the default, a screen whose Wi-Fi cannot keep up gets a steady picture that the phone encodes again for it, up to 1080p at 30 pictures a second and at the rate its Wi-Fi carries, made to stay clean, with less detail, instead of breaking up; it goes back to the drone's own picture at the next landing or take off, once the Wi-Fi has room. Full stream always sends the drone's picture as it comes, Steady stream always the phone's. The steady picture is new: it is first tested with build 30, and had not run on a phone on 25 October. A TV on an Ethernet cable, or a screen joined to the phone's own hotspot, leaves one Wi-Fi hop instead of two.
+**Kwaliti blong pasem** (Relay quality), niu long build 30, long Advanced long fon: taem i flae, dron i sendem raonabaot 18 Mbit/s, mo long 25 Oktoba wan rod blong Wi-Fi long haos from fon tru rauta i go long TV i karem ful strim ia long wan pat long tri blong taem blong flaet nomo; long narafala taem pikja blong TV i stap stop, i brok mo i kasem wan grin kala. Wetem Automatic, we i stret fasin, wan skrin we Wi-Fi blong hem i no save folem i kasem wan stedi pikja we fon i enkodem bakegen blong hem, kasem 1080p long 30 pikja long wan seken mo long spid we Wi-Fi blong hem i save karem, we oli mekem blong i stap klin, wetem smol ditel, i no brok; hem i go bak long pikja blong dron hem wan long nekis taem dron i lan o i flae aot, taem Wi-Fi i gat ples. Full stream i sendem oltaem pikja blong dron olsem we i kam, Steady stream oltaem pikja blong fon. Stedi pikja i niu: oli testem fastaem wetem build 30, mo long 25 Oktoba hem i no ron yet long wan fon. Wan TV long wan Ethernet kebol, o wan skrin we i joen long hotspot blong fon hem wan, i livim wan Wi-Fi jam nomo i no tu.
 
-Not in this build: the drone on iPhone and iPad (not started), the relay to LG and Samsung TVs, and the proof of the values above 1.8 m and 1.5 m/s, then the satellites and the distance from home, which wait for an outdoor flight.
+I no stap long build ia: dron long iPhone mo iPad (oli no stat yet), pasem i go long LG mo Samsung TV, mo pruf blong ol namba antap long 1.8 m mo 1.5 m/s, afta ol satelaet mo distens from hom, we oli wet blong wan flaet aotsaed.
 
 <a id="your-dji-drones-photos-and-videos-on-your-immich-server"></a>
 <a id="bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich"></a>
-#### Bring a drone's or a camera card's photos and videos to Immich
+#### Tekem ol foto mo video blong wan dron o wan kad blong kamera i go long Immich
 
 Tekem ol foto mo video blong wan DJI dron tru USB, stret i go long Immich server blong yu: plagem dron o wan kad rida long wan Android fon, jusum ol niu fael mo sendem olgeta, wetem ol video we app i putum long map from flaet data blong dron, mo ol 360° sfia blong dron oli soem olsem 360°. Immich app i bakap nomo wanem we i stap finis long laebri blong fon, mo Immich server i no save ridim yet ples blong wan DJI Neo 2 video. Pej ia i eksperimentol, long Android fon mo tablet nomo, mo oli no traem yet wetem wan trufala dron.
 
 <p align="center">
-  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Illustration, not a capture: a drone on a terrace table, plugged into a phone by a cable, and its photos and videos going in an arc from the drone to the gallery of the phone">
+  <img src="../.github/readme/dji-drone-import.png" width="720" alt="Pikja we oli droem, i no wan skrinsot: wan dron long wan tebol aotsaed, we wan kebol i plagem long wan fon, mo ol foto mo video blong hem oli go olsem wan bo from dron i go long laebri blong fon">
 </p>
 
-1. Open the Drone card in the Library, then "Photos and videos from the drone". Its setting, "DJI drones (experimental)" in Settings, Advanced, is on by default; turn it off there to hide that page.
+1. Openem Drone kad long Laebri, afta "Photos and videos from the drone". Seting blong hem, "DJI drones (experimental)" long Seting, Advans, i on finis; tanem i of long ples ia blong haedem pej ia.
 2. Plagem dron (wan Neo 2 i save stap of) o wan kad rida long fon wetem wan USB-C data kebol; wan DJI rimot we i no gat skrin (RC-N1, RC-N2, RC-N3) i no holem eni foto. Long DJI dron pej, tajem "Jusum dron o kad", jusum hem long saed menu blong pika, openem DCIM folda blong hem o kipim ful draev, afta "Yusum folda ia" mo Alaodem.
 3. Pej i soem ol foto mo video long evri dei, wetaot ol saed fael .LRF, .SRT, .THM mo .m4a. Tajem "Jusum evri niu", afta "Aplod long Immich"; ol fael we oli sendem bifo oli gat wan klaod mak mo app i livim olgeta. "Kipim long divaes" i kopi ol fael i go long laebri blong fon, long albam "Immuch360 import".
 4. Blong wan video i go long map, tanem on Video Subtitles long DJI Fly (video mod, Settings, Camera) bifo yu flae: dron bambae i raetem wan .SRT fael saed long evri video, app i ridim ples from hem mo i putum long server blong yu afta aplod, sapos Immich i no faenem wan ples.
 
 Ol 360° sfia blong DJI dron (Mini, Air, Mavic mo ol narafala, we app i luksave from kamera blong olgeta) oli soem olsem 360° long Immuch360 nomata oli no gat 360° tag. Immich i nidim ol tag ia: aplod opsen "Makem dron sfia olsem 360° blong Immich", we i of stret long stat, i sendem foto we i no jenis wetem wan smol .xmp fael saed long hem, blong Immich i soem hem olsem wan sfia tu. Neo 2 i no gat sfia o panorama mod: ol foto mo video blong hem oli flat. Taem fon i rekodem saon blong wan Neo 2 klip, saon ia i stap long wan narafala .m4a fael: pej i makem klip, mo Immich i kasem wetaot saon (daonlodem wetem DJI Fly blong kipim saon). Eni kamera kad wetem wan DCIM folda i wok long sem fasin long wan kad rida. Nating i no go long DJI.
 
-More: [DJI drones over USB](../docs/immuch360/user-guide.md#dji-drones-photos-and-videos-over-usb-experimental), [DJI link diagnostics](../docs/immuch360/user-guide.md#dji-link-diagnostics-experimental).
+Mo moa: [DJI dron tru USB](../docs/immuch360/user-guide.md#dji-drones-photos-and-videos-over-usb-experimental), [daegnostik blong DJI konek](../docs/immuch360/user-guide.md#dji-link-diagnostics-experimental).
 
 <a id="open-the-raw-files-of-360-cameras"></a>
-### Open the raw files of 360° cameras
+### Openem ol rao fael blong 360° kamera
 
-The raw .insp photos and .insv videos of Insta360 cameras (one or two lenses, in one track, two tracks or two files), the .360 files of the GoPro MAX and the .osv files of the DJI Osmo 360 are stitched by the app as they play, with the calibration written in the file, with nothing to install anywhere.
+Ol rao foto .insp mo video .insv blong Insta360 kamera (wan o tu lens, insaed wan trak, tu trak o tu fael), ol fael .360 blong GoPro MAX mo ol fael .osv blong DJI Osmo 360, app i joenem olgeta taem oli plei, wetem kalibresen we i raetem insaed fael, mo i no gat samting blong instolem eniwea.
 
-1. Put the raw files where the app reads them: an SMB or WebDAV share, your Immich server (it takes .insp and .insv only), or the folders of a computer. The gallery of an Android phone does not list raw files, so a raw file copied to the phone shows neither in its gallery nor in the app.
-2. Keep the two files of a recording made of two files together: the app looks for the other one next to the first.
-3. Open the file and tap 360°. A photo shows "Raw 360° file, stitched by the app" with the source of its calibration; a video is stitched as it plays.
+1. Putum ol rao fael long ples we app i ridim olgeta: wan SMB o WebDAV sea, Immich server blong yu (hem i tekem .insp mo .insv nomo), o ol folda blong wan kompiuta. Laebri blong wan Android fon i no soem rao fael, taswe wan rao fael we yu kopiem i go long fon i no soem long laebri blong hem mo i no soem long app tu.
+2. Kipim tufala fael blong wan rikoding we i gat tu fael tugeta: app i lukaotem narawan klosap long faswan.
+3. Openem fael mo tajem 360°. Wan foto i soem "Raw 360° file, stitched by the app" wetem ples we kalibresen blong hem i kam from; wan video i joen taem i plei.
 
-Linux and macOS play raw videos flat, and dual fisheye .dng files show flat for now.
+Linux mo macOS i plei rao video flat, mo ol dual fisheye .dng fael oli soem flat blong naoia.
 
-More: [raw 360° camera files](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
+Mo moa: [rao fael blong 360° kamera](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
 
 <a id="turn-a-photo-with-one-key"></a>
 ### Tanem wan foto wetem wan ki
@@ -509,77 +509,77 @@ More: [raw 360° camera files](../docs/immuch360/user-guide.md#raw-360-camera-fi
 Tanem wan foto 90° wetem wan pres nomo, wetaot blong openem wan edita: wan baten, wan ki blong kiboad o wan kala ki blong rimot blong TV, long evri platfom. Immich app i tanem wan foto insaed long edita blong hem; Immuch360 i mekem wetem wan ki, mo blong ol foto blong yu wan long wan Immich server 2.6 o niufala, hem i pas tru long sem edita blong server ia, taswe web app mo ol narafala divaes blong yu oli soem olgeta we oli tanem finis. Eni narafala foto i tanem long divaes ia nomo. Ol 360°, 180° mo 3D foto oli neva tanem, blong ol imesiv vyu oli stap stret.
 
 <p align="center">
-  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Illustration, not a capture: a phone shows a photo turning a quarter turn clockwise, above a row of round buttons with the rotate button lit">
+  <img src="../.github/readme/rotate-one-key.png" width="720" alt="Pikja we oli droem, i no wan skrinsot: wan fon i soem wan foto we i tanem kwota raon olsem klok, antap long wan laen blong ol raon baten we baten blong tanem i laet">
 </p>
 
 1. **Fon, tablet mo windo blong Meta Quest**: openem foto mo tajem Tanem long ro long botom, bifo Edit, blong tanem i go olsem klok; sapos yu presem longtaem, i tanem i go long narasaed. Wetem wan kiboad, R mo Shift+R.
 2. **Android TV mo Google TV**: yelo ki blong rimot i tanem foto olsem klok mo blu ki i tanem agensem klok, nomata wea fokas i stap long vyua. Long wan rimot we i no gat kala ki, presem Daon: ba aninit long foto i soem wetem Tanem we i jusum finis (wan Raet moa sapos foto i gat wan baten wetem tekis), mo evri OK i tanem foto.
-3. **LG TVs (webOS)**: yellow and blue as on Android TV, R and Shift+R on a keyboard, or the turn button of the photo's controls. Samsung TVs turn a photo with one key too.
+3. **LG TV (webOS)**: yelo mo blu olsem long Android TV, R mo Shift+R long wan kiboad, o baten blong tanem long ol kontrol blong foto. Ol Samsung TV oli tanem wan foto wetem wan ki tu.
 4. **Windows, Linux mo macOS**: R i tanem olsem klok, Shift+R agensem klok, o baten blong tanem long ba antap, bifo ful skrin.
 5. **Foto blong wan netwok sea, Plex o wan kamera**: baten blong tanem i fas long ba antap, R mo Shift+R, o yelo mo blu ki.
 
 Wea oli seivem tanem: wan foto blong akaon blong yu wan long Immich 2.6 o niufala i tanem tru long foto edita blong server, we i kipim orijinol fael mo i mekem wan pikja we i tanem (wan smol ba i soem taem i wok; foa tanem, o wan tanem i go bak, i kasem orijinol bakegen). Ol foto blong divaes, blong wan sea, blong wan patna o wan albam we oli seaem, mo evri foto long wan olfala server oli tanem long divaes ia nomo, blong foto ia nomo, mo fael i neva jenis; app i talem wan taem nomo blong wan Immich foto. Long Android, iOS mo kompiuta app, wan tanem we i stap long divaes i soem long vyua, be i no yet long ol smol pikja, slaedsoh mo ol memori. Ol video, lok folda mo evri 360°, 180° o 3D foto i no gat Tanem.
 
 <a id="use-your-computer-as-the-media-player"></a>
-### Use your computer as the media player
+### Yusum kompiuta blong yu olsem media pleia
 
-On a Windows computer, Immuch360 Desktop reads the folders you choose with no server at all, plays flat and 360° videos in a player of its own, browses the same shares and servers, and can share the computer with a headset at home. Linux and macOS have it as previews, with 360° videos played flat.
+Long wan Windows kompiuta, Immuch360 Desktop i ridim ol folda we yu jusum wetaot eni server, i plei flat mo 360° video long pleia blong hem wan, braosem sem sea mo server, mo i save seaem kompiuta wetem wan hedset long haos. Linux mo macOS oli gat hem olsem privyu, wetem 360° video we i plei flat.
 
 <p align="center">
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="Video pleia blong Immuch360 Desktop long Windows: wan video blong wan rod i plei insaed long window, wetem baten blong stop smol, ba blong taem, Sea mo Aplodem i go long Immich">
 </p>
 
-1. Install the preview, or unzip it and start `immuch360.exe`, see [Install](#windows). On the welcome page, "Use without a server" opens the choice of your folders, and "Connect to an Immich server" the login page, with its QR code for your phone.
-2. A photo, a video or a folder opened with the program, or dropped on its window, opens at once, a 360° one in its 360° view; several files open together on one page. Photos and videos get it in "Open with"; it never makes itself their default program.
-3. In a viewer, the keyboard drives it: Space plays and pauses, J and L go back and forward, F is full screen, and R and Shift+R turn a photo.
+1. Instolem privyu, o anzipem hem mo statem `immuch360.exe`, luk [Instolem](#windows). Long velkam pej, "Yusum wetaot wan server" i openem jusum blong ol folda blong yu, mo "Konek long wan Immich server" i openem login pej, wetem QR kod blong hem blong fon blong yu.
+2. Wan foto, wan video o wan folda we oli openem wetem program, o draptem long window blong hem, i open wantaem, wan 360° wan i open long 360° vyu blong hem; sam fael oli open wantaem long wan pej. Ol foto mo video oli kasem hem long "Open with"; hem i neva mekem hem wan i stap program blong olgeta oltaem.
+3. Long wan vyua, kiboad i draevem: Spes i plei mo i stopem smol, J mo L i go bak mo fored, F i ful skrin, mo R mo Shift+R i tanem wan foto.
 
-More: [on a Windows computer](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [platform support](../docs/immuch360/platform-support.md).
+Mo moa: [long wan Windows kompiuta](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview), [sapot blong platform](../docs/immuch360/platform-support.md).
 
 <a id="compared-with-immich"></a>
-## Compared with Immich
+## Bitwin wetem Immich
 
-Immuch360 keeps the whole Immich mobile app and adds what is around it. In short:
+Immuch360 i kipim ful Immich mobael app mo i adem samting raonabaot long hem. Sotwan:
 
-| | Immuch360, compared with the Immich app |
+| | Immuch360, bitwin wetem Immich app |
 |---|---|
-| **The same** | your Immich server and account: backup, timeline, albums, search, people, memories, sharing and partners, all synced with your server. It installs next to the official app. |
-| **No server needed** | it also runs without a server or an account, on the photos and videos of the device, the folders of a computer and network shares; Plex and the cameras use their own sign in, never an Immuch360 account. |
-| **360° and immersive** | 360° photos and videos as a sphere, panoramas, VR180 and 3D, an immersive view in a Meta Quest, a 360° badge and a 360° list. 360° viewing in the Immich mobile app has been requested since January 2024 and is not there yet. |
-| **On the TV** | the same app on Android TV and Google TV, and a TV app for LG TVs, also packaged for Samsung TVs as a test build. Immich's own apps do not install on an LG TV. |
-| **Sign in with your phone** | a TV, a headset or a computer is signed in when your phone scans its QR code, and your password stays on the phone. The Immich app has nothing like it. |
-| **Shares and Plex** | SMB, WebDAV and DLNA shares and Plex servers, played in place, and their files sent to your server by hand. |
-| **Tapo cameras** | the live view and the recordings of the memory card, next to your photos; not yet checked with a real camera. |
-| **One key rotation** | the Immich app turns a photo in its editor; Immuch360 turns it with one key, and for your own photos on Immich 2.6 or later it goes through that same server editor, so the web app and your other devices show them turned. |
-| **Videos** | audio and subtitle menus in the Android player, which the Immich app's Android player does not have; the original file or the transcoded stream, chosen per video; the technical details of a video. |
-| **Your drone** | a DJI drone's photos and videos sent over USB, with the videos placed on the map from its flight data, where the Immich app backs up only what is already in the phone's gallery; and the drone's live video through an RC-N3 remote, with its flight values and an obstacle ring, on the phone and relayed to a Meta Quest or an Android TV. Both experimental. |
-| **Where to report** | [Immuch360 Issues](https://github.com/freeKC/Immuch360/issues), not the Immich project. |
+| **Sem samting** | Immich server mo akaon blong yu: bakap, taemlaen, albam, sij, ol man, memori, sea mo patna, evriwan i sink wetem server blong yu. Hem i instol klosap long ofisol app. |
+| **I no nidim server** | hem i ron tu wetaot server o akaon, long ol foto mo video blong divaes, ol folda blong wan kompiuta mo ol netwok sea; Plex mo ol kamera oli yusum log in blong olgeta wan, neva wan Immuch360 akaon. |
+| **360° mo imesiv** | 360° foto mo video olsem wan sfia, panorama, VR180 mo 3D, wan imesiv vyu long wan Meta Quest, wan 360° saen mo wan 360° lis. Ol man oli askem 360° vyu long Immich mobael app stat long Janewari 2024 mo i no stap yet. |
+| **Long TV** | sem app long Android TV mo Google TV, mo wan TV app blong ol LG TV, we oli pakejem tu blong ol Samsung TV olsem wan test build. Ol app blong Immich hem wan oli no save instol long wan LG TV. |
+| **Log in wetem fon blong yu** | wan TV, wan hedset o wan kompiuta i log in taem fon blong yu i skanem QR kod blong hem, mo pasword blong yu i stap long fon. Immich app i no gat samting olsem. |
+| **Sea mo Plex** | SMB, WebDAV mo DLNA sea mo Plex server, we i plei long ples blong olgeta, mo ol fael blong olgeta yu sendem wetem han i go long server blong yu. |
+| **Tapo kamera** | laef vyu mo ol rikoding blong memori kad, klosap long ol foto blong yu; oli no jekem yet wetem wan trufala kamera. |
+| **Tanem wetem wan ki** | Immich app i tanem wan foto insaed long edita blong hem; Immuch360 i tanem wetem wan ki, mo blong ol foto blong yu wan long Immich 2.6 o niufala, hem i pas tru long sem edita blong server ia, taswe web app mo ol narafala divaes blong yu oli soem olgeta we oli tanem finis. |
+| **Video** | odio mo sabtaetol menu long Android pleia, we Android pleia blong Immich app i no gat; orijinol fael o transkod strim, we yu jusum blong evri video; ol teknikol ditel blong wan video. |
+| **Dron blong yu** | ol foto mo video blong wan DJI dron we i go tru USB, wetem ol video we app i putum long map from flaet data blong hem, be Immich app i bakap nomo wanem we i stap finis long laebri blong fon; mo laef video blong dron tru wan RC-N3 rimot, wetem ol flaet namba mo wan ring blong ol samting we i blokem rod, long fon mo we fon i pasem i go long wan Meta Quest o wan Android TV. Tufala i eksperimentol. |
+| **Wea blong ripot** | [Immuch360 Issues](https://github.com/freeKC/Immuch360/issues), i no projek blong Immich. |
 
-The comparison function by function is in [Compared with the Immich app](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
+Fasin blong bitwin, fija long fija, i stap long [Compared with the Immich app](../docs/immuch360/compatibility.md#compared-with-the-immich-app).
 
 <a id="privacy"></a>
 ## Praevesi
 
-Nothing goes to the developer: no account, no analytics, no crash reporting service, no advertising. The app talks only to the servers you choose (your Immich server, your shares, your Plex server, your cameras) and, without a server, to nothing at all. Passwords and tokens stay in the secure storage of the device; LG and Samsung TVs have none for the app, so there they stay in the app's own storage, not encrypted. The camera is used on the device only, by the Spatial 2.5D player and to scan the code of a screen you sign in; its images are never stored and never sent anywhere. A screen signed in from your phone gets a session of its own, sent encrypted on your home network, never your password; an LG TV is signed in by a page in the phone's browser, which sends your email and password to the TV unencrypted on your home network, and the TV keeps only the session. The captures and reception records of the drone pages stay on the device unless you share them: they hold the drone's video and may hold its position, and a capture the serial numbers of the remote and the aircraft. The drone's picture and values go from the phone only to the headsets and TVs you pair, on your local network, not encrypted, as with a phone shared on the Wi-Fi. Nothing is sent to DJI, nor to TP-Link. The full policy is in [PRIVACY.md](../PRIVACY.md), and the details per source in the [user guide](../docs/immuch360/user-guide.md#privacy).
+I no gat samting i go long developa: no akaon, no analitiks, no savis blong ripotem kras, no advataesmen. App i tok nomo wetem ol server we yu jusum (Immich server, sea, Plex server, kamera blong yu) mo, taem i no gat server, i no tok wetem eni samting. Pasword mo token oli stap long sekiua stored blong divaes; ol LG mo Samsung TV oli no gat wan blong app, taswe long olgeta oli stap long stored blong app hem wan, we i no enkriptem. App i yusum kamera long divaes nomo, long Spatial 2.5D pleia mo blong skanem kod blong wan skrin we yu log in; ol pikja blong hem, oli neva sev mo neva sendem i go eniwea. Wan skrin we i log in from fon blong yu i kasem seson blong hem wan, we oli sendem i enkriptem long netwok blong haos blong yu, neva pasword blong yu; wan LG TV i log in tru wan pej long braosa blong fon, we i sendem imel mo pasword blong yu i go long TV we i no enkriptem long netwok blong haos blong yu, mo TV i kipim seson nomo. Ol rikod mo ol risepsen rikod blong ol pej blong dron oli stap long divaes sapos yu no seaem olgeta: oli holem video blong dron mo oli save holem posisen blong hem, mo wan rikod i holem siriol namba blong rimot mo blong dron. Pikja mo ol namba blong dron i go from fon nomo long ol hedset mo TV we yu pearem, long lokol netwok blong yu, we i no enkriptem, olsem wetem wan fon we yu seaem long Wi-Fi. I no gat samting i go long DJI, o long TP-Link. Fulwan policy i stap long [PRIVACY.md](../PRIVACY.md), mo ol ditel blong evri sos long [user guide](../docs/immuch360/user-guide.md#privacy).
 
 <a id="the-project"></a>
 <a id="licences-and-credits"></a>
-## Licences and credits
+## Laesens mo tankiu
 
 Immuch360 hem wan fork we i no ofisol blong [Immich](https://github.com/immich-app/immich) mobile app, aninit long [GNU AGPL v3](../LICENSE), hem i no join wetem, mo tim blong Immich o FUTO i no sapotem hem. Fork ia i exist from we pipol oli askem blong lukluk 360° long mobael insaed long Immich stat long Jenuari 2024 mo i no stap yet long ofisol app; naoia fork ia i sipim finis, hipimap fidbak from trufala divaes, mo bambae i ofa i go bak long Immich, long smol pull request, wanem mentena oli wantem. Evri samting we ofisol app i mekem, i stap kip; ol branj, jen blong build mo CI, oli eksplenem long [Buildim hem yu wan](../docs/immuch360/build.md).
 
 360° foto vyua i aotem long apstrim pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169) blong dmitry-brazhenko, we hem wan i bildim long prototaep blong bencefr long [#30192](https://github.com/immich-app/immich/pull/30192); tankiu long tufala. Ol fiks blong rimot long ol sij filta mo long fasin blong sotem albam long TV oli stat long wok blong mlc70 long [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1), mo aksen ba mo ol filta pej long 80 pesen blong haet blong skrin oli kam from [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3) blong mlc70, wetem nem blong ota we oli kipim; tankiu long mlc70. LG webOS app, we oli pakejem tu blong ol Samsung TV, oli bildim long [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) blong Seeky91, aninit long MIT laesens, we i stap long folda blong hem; tankiu long Seeky91. Tapo kamera, oli raetem olgeta from wanem [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) mo [python-kasa](https://github.com/python-kasa/python-kasa) oli dokumenem. Meta Quest vyu i rilae long Meta Spatial SDK, we i no open source, taswe i stap insaed long fork ia nomo. SMB sea i yusum libsmb2, aninit long LGPL 2.1 o niufala: stat long build 27 mo desktop build 7, evri build i karem notis blong hem, ol laesens tekis blong hem mo sos akaev blong hem, `Immuch360-libsmb2-sources.tar.gz`, we i stap tu wetem evri release. Windows mo macOS build i karem libmpv (laebri blong [mpv](https://mpv.io), wetem [FFmpeg](https://ffmpeg.org)) we projek i buildim, aninit long LGPL, wetem ol laesens mo sos blong hem, we oli stap long laesens pej blong app (Licenses, long botom blong profael menu); ol ditel mo ol tredmak blong ol platform we oli nemem long pej ia, oli stap long [Laesens mo ol tredmak](../docs/immuch360/platform-support.md#license-and-trademarks).
 
-The captures of this page are real captures of the app: the phone ones on the Android build in an emulator, the Android TV ones on the Google TV emulator, the LG and Samsung ones in a browser that stands in for the TV, the Windows ones on a Windows 11 PC and the Meta Quest window in a Quest 3, all with CC0 panoramas from [Poly Haven](https://polyhaven.com); the immersive captures of the headset were taken on a Quest 3 with the author's own media, and the iPad one in the iPad simulator, with a CC0 Poly Haven panorama. The opening image and the pictures of the TV, the sign in, the rotation, the cameras and the drone are illustrations made for the project: they show no screen of the app, no logo of another company and no face. Each image, with its source, date and licence, is listed in [CAPTURES.md](../.github/readme/CAPTURES.md).
+Ol skrinsot blong pej ia oli trufala skrinsot blong app: olgeta blong fon long Android build long wan emiuleta, olgeta blong Android TV long Google TV emiuleta, olgeta blong LG mo Samsung long wan braosa we i tekem ples blong TV, olgeta blong Windows long wan Windows 11 PC mo Meta Quest window long wan Quest 3, evriwan wetem CC0 panorama from [Poly Haven](https://polyhaven.com); ol imesiv skrinsot blong hedset oli tekem long wan Quest 3 wetem media blong man we i raetem, mo hemia blong iPad long iPad simuleta, wetem wan CC0 panorama blong Poly Haven. Fas pikja mo ol pikja blong TV, log in, tanem, kamera mo dron oli pikja we oli droem blong projek: oli no soem eni skrin blong app, eni logo blong narafala kampani mo eni fes. Evri pikja, wetem sos, deit mo laesens blong hem, i stap long lis long [CAPTURES.md](../.github/readme/CAPTURES.md).
 
 <a id="roadmap"></a>
 ## Plan blong fiuja
 
 Ol samting we oli no finis yet, olgeta we bambae i kam fastaem i stap antap. I no gat wan samting long ples ia we i wan promis, mo toktok long [lis blong ol problem](https://github.com/freeKC/Immuch360/issues) i halpem blong jusum wanem i kam fastaem.
 
-- **The stores**: Google Play (build 29 in review, then build 30; the TV listing in review), the App Store (version 3.3.1 in review, then version 3.3.2 with build 28), the Meta Horizon Store with build 30 (build 28 there since 25 October), the LG Content Store (version 1.0.0 in LG's review since 24 October), and later the Samsung store.
-- **Drones**: an outdoor flight to prove the height and the speeds above 1.8 m and 1.5 m/s and the obstacle distances against a tape, then to show the satellites and the distance from home; the steady picture of the relay checked with a phone, a TV and a headset; the relay to LG and Samsung TVs; the drone on iPhone and iPad, not started; a test of the import page with a real DJI Neo 2, then the sound recorded by the phone merged into its clip. Nothing that sends a command to a drone is planned before those tests.
-- **TVs**: build 29 on a real Android TV, its video controls and the sign in with your phone included; the shares, Plex and the live view of the LG app on a real LG TV, and webOS 26; Samsung test build 0.2.0 on a real Samsung TV, then the sign in with a phone, the shares, Plex and the cameras on Samsung TVs; then the 360° videos on the sphere of LG TVs, the sound of the cameras and their recordings (not before December 2026).
-- **Cameras**: the Tapo cameras checked with a real camera.
+- **Ol stoa**: Google Play (build 29 long rivyu, afta build 30; lising blong TV long rivyu), App Store (version 3.3.1 long rivyu, afta version 3.3.2 wetem build 28), Meta Horizon Store wetem build 30 (build 28 i stap long hem stat long 25 Oktoba), LG Content Store (version 1.0.0 long rivyu blong LG stat long 24 Oktoba), mo bambae stoa blong Samsung.
+- **Dron**: wan flaet aotsaed blong pruvum haet mo ol spid antap long 1.8 m mo 1.5 m/s mo ol distens blong ol samting we i blokem rod agensem wan teip blong mesarem, afta blong soem ol satelaet mo distens from hom; stedi pikja blong pasem we oli jekem wetem wan fon, wan TV mo wan hedset; pasem i go long LG mo Samsung TV; dron long iPhone mo iPad, oli no stat yet; wan test blong impot pej wetem wan trufala DJI Neo 2, afta saon we fon i rekodem i joen long klip blong hem. I no gat plan blong eni samting we i sendem oda i go long wan dron bifo ol test ia.
+- **TV**: build 29 long wan trufala Android TV, wetem ol video kontrol blong hem mo log in wetem fon tu; ol sea, Plex mo laef vyu blong LG app long wan trufala LG TV, mo webOS 26; Samsung test build 0.2.0 long wan trufala Samsung TV, afta log in wetem wan fon, ol sea, Plex mo kamera long ol Samsung TV; afta ol 360° video long sfia blong ol LG TV, saon blong ol kamera mo ol rikoding blong olgeta (i no bifo Disemba 2026).
+- **Kamera**: ol Tapo kamera we oli jekem wetem wan trufala kamera.
 - **Kompiuta**: test blong evri fonksen wetem hand long wan Windows PC, wetem log in wetem fon tu; Spatial 2.5D wetem webkam long Windows, oli stap mekem blong Novemba 2026; afta enjin blong 360° video long Linux mo macOS, wan test long wan trufala Mac mo wan trufala Linux PC; afta apdet otomatik mo wan macOS app we oli saenem.
 - **Fon mo tablet**: Tapo laef vyu mo log in blong ol big skrin long iPhone mo iPad wetem nekis iOS rilis; wan ba blong taem insaed long iOS 360° video pleia, bifo mo nekis long 360° pleia blong fon, menu blong odio trak mo sabtaetol insaed long iOS flat pleia.
 - **Imesiv media**: dual fisheye .dng, levelim GoPro mo DJI video from data blong mufmen blong olgeta, spatial video long 3D long Quest sapos dikoda i letem, bifo mo nekis bitwin spatial foto insaed long hedset.
@@ -590,7 +590,7 @@ Fulwan lis, wetem ol jek blong divaes we i stap wet yet blong evri fija, i stap 
 
 <a id="technical-documentation"></a>
 <a id="documentation"></a>
-## Documentation
+## Dokumen
 
 - [Features: fulwan lis mo tebol blong fija long evri platform](../docs/immuch360/features.md)
 - [User guide: evri fonksen, step by step, wetem ol opsen mo mesej blong hem](../docs/immuch360/user-guide.md)
@@ -603,18 +603,18 @@ Fulwan lis, wetem ol jek blong divaes we i stap wet yet blong evri fija, i stap 
 - [Buildim hem yu wan: fon, hedset, TV mo kompiuta](../docs/immuch360/build.md)
 - [Immuch360 blong LG webOS TV: instolem long Developer Mode, ol ki blong rimot, ol CORS heda](../webos/README.md)
 
-### Advanced features
+### Ol advans fija
 
 Wanem app i save ridim mo plei, blong rida we i wantem fulwan ekstent. Evri laen oli eksplenem moa long [user guide](../docs/immuch360/user-guide.md) mo [compatibility pej](../docs/immuch360/compatibility.md).
 
 <details>
-<summary><b>Formats, sources, playback and hardware, in detail</b></summary>
+<summary><b>Fomat, sos, plei mo hadwea, long ditel</b></summary>
 
 - **Fomat**: flat foto mo video (wanem divaes i save dikodem: MP4, MOV, MKV mo moa); ekwirektangiula 360° foto mo video; haf panorama (GPano krop); VR180; stereoskopik 3D, antap mo andanit o saed long saed, oli ridim from fael (st3d boks) o gesim from frem; Apple spatial foto (HEIC stereo pea) mo spatial video (MV-HEVC, wan lek); rao Insta360 .insp mo .insv, GoPro .360, DJI .osv; 10 bit HLG mo PQ sos we oli ton-mapem long sfia.
 - **Projeksen mo metadata**: GPano mo sfirikol metadata, oli ridim from fael, wetem renj rikwes long wan server o wan sea; vyu we kamera i stat long hem; ol sfia blong DJI dron we app i luksave from kamera blong olgeta, wetem wan .xmp saed fael we yu save jusum blong Immich i makem olgeta tu; "Lukum olsem 360°" i rimemba long divaes; VR180 oli luksave from fael o nem blong hem; ples blong wan dron video we app i ridim from .SRT flaet log blong hem; metadata i stap intek from we orijinol fael i plei, neva wan fael we oli jenisim; wan kwota tanem we oli seivem tru Immich edita o kipim long divaes, neva long wan imesiv fael.
 - **Netif pleibak**: Media3 long Android mo TV, SceneKit mo AVFoundation long iOS, Meta Spatial SDK insaed hedset, libmpv long Windows; oli jusum orijinol o transkod strim from wanem divaes i save dikodem; wan lis blong ol dikoda blong video blong divaes i stap long Settings, Advanced; jusum odio trak, sabtaetol long Android pleia mo wan baferin saen.
 - **Rao fael we oli joenem long divaes**: wan fragment shader blong Flutter blong ol foto; wan GPU efek insaed pleia blong video wetem wan trak nomo; tu hadwea dikoda long sem taem mo wan GPU compositor blong video wetem wan lens long wan trak o long wan fael (OpenGL ES 3 long Android mo Quest, Metal long iOS, mo long Windows, stat long desktop build 5, tu libmpv pleia we app i pairim frem blong olgeta long grafiks jip); kalibresen blong kamera blong hem wan (Mei, V6 mo ikwidistant model) mo rekod blong aksilerometa; taem divaes i no save ron tu dikoda, hem i yusum wan lens nomo, transkod strim, kopi LRV blong kamera, o video we i no joen yet.
-- **Sources**: the device's gallery; the folders of a computer; a drone or a camera card over USB, through the system folder picker (Android, experimental); a DJI RC-N3 remote controller over its cable for the drone's live video (Android, experimental), relayed on the local network to a Meta Quest or an Android TV; an Immich server; SMB 2 and 3, WebDAV, DLNA/UPnP; Plex over HTTPS checked against the server's own certificate; Tapo cameras over the local network (HTTPS and RTSP); a phone or a computer shared on the Wi-Fi as a WebDAV server; servers found by Bonjour/mDNS, a local network scan, SSDP, GDM and the TP-Link discovery, and followed when they change address.
+- **Sos**: laebri blong divaes; ol folda blong wan kompiuta; wan dron o wan kamera kad tru USB, tru folda pika blong sistem (Android, eksperimentol); wan DJI RC-N3 rimot kontrola tru kebol blong hem blong laef video blong dron (Android, eksperimentol), we fon i pasem long lokol netwok i go long wan Meta Quest o wan Android TV; wan Immich server; SMB 2 mo 3, WebDAV, DLNA/UPnP; Plex tru HTTPS we oli jekem agensem sem setifiket blong server; Tapo kamera tru lokol netwok (HTTPS mo RTSP); wan fon o wan kompiuta we oli seaem long Wi-Fi olsem wan WebDAV server; ol server we oli faenem wetem Bonjour/mDNS, wan skan blong lokol netwok, SSDP, GDM mo TP-Link diskaveri, mo app i folom taem olgeta jenisim adres.
 - **Ridim taem i nid**: wan lokol brij i sevem ol pleia wetem byte renj mo wan token blong evri sesen; bigfala blok, ridim fastaem mo hamas olsem sikis SMB konekson wantaem; tambnael from wan frem blong evri video; i no gat samting i kopi i go long divaes.
 - **Hadwea**: hadwea dikoda, app i yusum eniwea we oli stap, wetem limit we oli mijaim (Quest 3 H.264 i gat siling, tu lens 2048x2048 nomo blong softwea dikoda); long Windows 360° vyu i dro wetem grafiks jip from evri frem we oli dikodem, saes blong frem oli mijaim long evri kompiuta, oli luksave intigretem o dediketed jip.
 - **Ditel blong evri platform**: gyroscope mo Spatial 2.5D pleia long fon; imesiv vyu, kontrola mo han long Quest; leaot blong rimot, dialog blong kiboad mo banner blong TV long Android TV; long kompiuta, maos mo kiboad, fulwan skrin, wan window nomo, fael mo folda we oli openem wetem program o draptem long window blong hem, we oli ridim olsem fael blong ol folda blong yu, foto HEIC, AVIF, TIFF mo rao foto blong kamera blong ol folda taem Windows i gat wan dikoda blong olgeta, mo sekiua stored blong Windows blong pasword mo token.
