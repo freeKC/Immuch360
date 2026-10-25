@@ -79,8 +79,8 @@ object ObstacleRing {
    * heading grows on a turn to the right; turns of 80 to 100 degrees in place move the ring by -heading change / 5
    * sectors within 3 sectors in 12 of 13 turns and 4 of 4 (a right turn of +82 degrees: -16 to -19 sectors, what was
    * ahead ends on the left); the ring predicted from the 50 Hz displacement fits best with the nose at sector 0 and
-   * the sectors growing with the heading; flying forward, the nose sector shrank by the distance flown in 8 of 10 legs
-   * and 5 of 6. Not tested: a wall at a known distance.
+   * the sectors growing with the heading; flying forward with 12 degrees of turn or less, the nose sector shrank in all
+   * 6 legs of the afternoon and in 3 of 4 at 09:42. Not tested: a wall at a known distance.
    */
   val MAPPING = RingMapping(noseSector = 0, clockwise = true)
 

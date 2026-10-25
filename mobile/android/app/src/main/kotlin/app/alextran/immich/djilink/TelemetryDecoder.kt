@@ -1,5 +1,6 @@
 package app.alextran.immich.djilink
 
+import kotlin.math.abs
 import kotlin.math.max
 
 /**
@@ -22,9 +23,11 @@ import kotlin.math.max
  * here), the speed over ground from the two horizontal components (offsets 18 and 20, 0.1 m/s along the axes the
  * heading counts from), offset 41 (0.1 m, a smoothed copy of the distance below), the distance below of push 10/3 (mm)
  * and the ring of 360 obstacle distances of push 36/8 (mm), with its index 0 at the nose and its index growing
- * clockwise ([ObstacleRing.MAPPING]). The height and the speeds mean something only in the air (bit 0x04): before lift
- * off the height drifted by -1.2 m and +1.0 m with the motors spinning, and the speeds hold a stale value on the
- * ground, so a pilot reads them only from [FlightReading.inAir] frames.
+ * clockwise ([ObstacleRing.MAPPING]). The height and the speeds mean something only in the air (bit 0x04, likely "in
+ * the air"): before lift off the height drifted by -1.2 m and +1.0 m with the motors spinning, and the speeds hold a
+ * stale value on the ground, so a pilot reads them only from [FlightReading.inAir] frames, and the height only once
+ * [HeightHold] lets it through. Tested from 0 to 1.8 m above the lift off point and to 1.5 m/s, indoors; the absolute
+ * scale rests on plausibility, not on a tape (proof 4.1, 4.3, 4.7).
  *
  * Nothing here is a flight instrument: no value has been compared with DJI Fly yet (checkpoint HC-09).
  */
@@ -51,7 +54,10 @@ data class FlightReading(
   val rollDeg: Double,
   val headingDeg: Double,
   val mode: Int,
-  /** Bit 0x04: set at lift off, cleared at touch down; the height and the speeds a pilot reads come only with it */
+  /**
+   * Bit 0x04, likely "in the air": it came at lift off and went at touch down in our flights, but once 1.7 s before the
+   * drone left a hand (p2/telemetry-proof-2026-10-25.md, 4.9). The height and the speeds a pilot reads need it.
+   */
   val inAir: Boolean,
   /** Bit 0x08: the motors run, from the spin up 4 to 5 s before lift off to the frame they stop */
   val motorsOn: Boolean,
@@ -64,9 +70,93 @@ data class FlightReading(
   val verticalSpeedMps: Double = 0.0,
   /** The speed over ground from offsets 18 and 20; it holds a stale value on the ground: read it in the air */
   val horizontalSpeedMps: Double = 0.0,
+  /** Set by the decoder while [HeightHold] keeps the height from a pilot though the drone says it is in the air */
+  val heightHeld: Boolean = false,
 ) {
-  /** The height, the vertical speed and the speed as a pilot reads them: in the air only, else null */
+  /** The vertical speed and the speed as a pilot reads them: in the air only, else null */
   val airborne: FlightReading? get() = takeIf { inAir }
+
+  /** The height as a pilot reads it: in the air, and not held back ([HeightHold]), else null */
+  val pilotHeightM: Double? get() = if (inAir && !heightHeld) heightM else null
+}
+
+/**
+ * When the height stays off the pilot's screens though bit 0x04 says the drone is in the air
+ * (p2/review-proof-2026-10-25.md, major 1 and minor 1). Fed in the order the frames arrive.
+ *
+ * 1. Right after lift off, until [LAUNCH_MS] have passed and the range below has read more than [CLEAR_M] once (or
+ *    [LAUNCH_LIMIT_MS] have passed without it): after a hand launch the height read -1.1 to -0.2 m in the first second,
+ *    the spin up drift unwinding (66.66 to 67.66 s of the afternoon flight), and at 09:42 bit 0x04 came 1.7 s before
+ *    the drone left the hand, the height reading 0.3 then 0.2 m and the range below 0.006 to 0.063 m there. A decoder
+ *    that starts with the drone already in the air saw no lift off and holds nothing.
+ * 2. Once two flight frames in a row with the motors running differ by more than [JUMP_M] plus [JUMP_PER_S] for each
+ *    second between them, until the motors stop: no aircraft moves that fast, and the height is trunc((r - z) / 100) of
+ *    two 16 bit values of the 50 Hz push in 4126 of 4134 frames, so it may wrap by about 65.5 m near 32.7 m, which no
+ *    flight has tested (proof 4.1, item 5). Keep it until an outdoor flight has climbed past 33 m (protocol step 2).
+ */
+class HeightHold {
+  companion object {
+    const val LAUNCH_MS = 1_500L
+    const val LAUNCH_LIMIT_MS = 5_000L
+    const val CLEAR_M = 0.15
+    const val JUMP_M = 10.0
+    const val JUMP_PER_S = 10.0
+  }
+
+  private var wasInAir: Boolean? = null
+  private var launchAtMs: Long? = null
+  private var leftSurface = false
+  private var jumped = false
+  private var lastHeightM: Double? = null
+  private var lastAtMs = 0L
+
+  /** A reading of the range below, push 10/3 */
+  fun onRange(reading: RangeBelowReading, atMs: Long) {
+    val launch = launchAtMs ?: return
+    val distance = reading.distanceM ?: return
+    if (atMs >= launch && distance > CLEAR_M) {
+      leftSurface = true
+    }
+  }
+
+  /** A flight data frame: whether its height is held back */
+  fun onFlight(reading: FlightReading, atMs: Long): Boolean {
+    if (!reading.motorsOn) {
+      jumped = false
+      lastHeightM = null
+    } else {
+      val last = lastHeightM
+      val seconds = (atMs - lastAtMs).coerceAtLeast(0L) / 1000.0
+      if (last != null && abs(reading.heightM - last) > JUMP_M + JUMP_PER_S * seconds) {
+        jumped = true
+      }
+      lastHeightM = reading.heightM
+      lastAtMs = atMs
+    }
+    if (!reading.inAir) {
+      launchAtMs = null
+      leftSurface = false
+    } else if (wasInAir == false && launchAtMs == null) {
+      launchAtMs = atMs
+      leftSurface = false
+    }
+    wasInAir = reading.inAir
+    val launch = launchAtMs
+    val launching = launch != null && (atMs - launch < LAUNCH_MS || (!leftSurface && atMs - launch < LAUNCH_LIMIT_MS))
+    if (launch != null && !launching) {
+      launchAtMs = null
+    }
+    return reading.inAir && (jumped || launching)
+  }
+
+  fun clear() {
+    wasInAir = null
+    launchAtMs = null
+    leftSurface = false
+    jumped = false
+    lastHeightM = null
+    lastAtMs = 0L
+  }
 }
 
 /** Push 10/3 from the remote side: the distance below the drone, only while the motors run */
@@ -157,8 +247,9 @@ object TelemetryFields {
   /**
    * Offset 32 (p2/telemetry-proof-2026-10-25.md, 4.9). Bit 0x08 alone is the motors running: set 0.1 s before the
    * motor time starts and cleared the frame it stops, in three motor runs over two captures; bits 0x04 and 0x08
-   * together missed the 4 to 5 s of spin before lift off, when the propellers already turn. Bit 0x04 comes at lift off
-   * and goes at touch down: the height and the speeds a pilot reads come only with it.
+   * together missed the 4 to 5 s of spin before lift off, when the propellers already turn. Bit 0x04 is likely "in the
+   * air": it came at lift off and went at touch down in both flights, but at 09:42 it came 1.7 s before the drone left
+   * a hand. The height and the speeds a pilot reads come only with it ([HeightHold] for the height).
    */
   const val FLAG_IN_AIR = 0x04L
   const val FLAG_MOTORS_ON = 0x08L
@@ -416,6 +507,7 @@ class TelemetryDecoder {
   private val signalBars = Group<Int>()
   private val rangeBelow = Group<RangeBelowReading>()
   private val obstacles = Group<ObstacleReading>()
+  private val heightHold = HeightHold()
   private val decoded = linkedMapOf<String, Long>()
   private val moduleSeconds = linkedMapOf<Int, Int>()
 
@@ -435,7 +527,9 @@ class TelemetryDecoder {
     }
     val body = frame.body
     when (key(frame.commandSet, frame.commandId)) {
-      FLIGHT -> read(TelemetryCodes.FLIGHT_DATA, TelemetryFields.flight(body)) { flight.put(it, nowMs) }
+      FLIGHT -> read(TelemetryCodes.FLIGHT_DATA, TelemetryFields.flight(body)) {
+        flight.put(it.copy(heightHeld = heightHold.onFlight(it, nowMs)), nowMs)
+      }
       GIMBAL -> read(TelemetryCodes.GIMBAL, TelemetryFields.gimbal(body)) { gimbal.put(it, nowMs) }
       BATTERY -> read(TelemetryCodes.BATTERY, TelemetryFields.battery(body)) { battery.put(it, nowMs) }
       REMOTE_BATTERY ->
@@ -457,7 +551,10 @@ class TelemetryDecoder {
         read(TelemetryCodes.SIGNAL_BARS, TelemetryFields.signalBars(body)) { signalBars.put(it, nowMs) }
       }
       RANGE_BELOW -> if (frame.senderType == SIGNAL_REMOTE_SIDE) {
-        read(TelemetryCodes.RANGE_BELOW, TelemetryFields.rangeBelow(body)) { rangeBelow.put(it, nowMs) }
+        read(TelemetryCodes.RANGE_BELOW, TelemetryFields.rangeBelow(body)) {
+          heightHold.onRange(it, nowMs)
+          rangeBelow.put(it, nowMs)
+        }
       }
       OBSTACLES -> if (frame.senderType == SENSING_SENDER) {
         read(TelemetryCodes.OBSTACLES, TelemetryFields.obstacles(body)) { obstacles.put(it, nowMs) }
@@ -547,6 +644,7 @@ class TelemetryDecoder {
       rangeBelow,
       obstacles,
     ).forEach { it.clear() }
+    heightHold.clear()
     decoded.clear()
     moduleSeconds.clear()
     offsets.clear()

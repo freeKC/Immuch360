@@ -3,9 +3,10 @@
 // its age when it stopped coming. Each label says the class the telemetry reports give its value: a proven value plain,
 // with what it means where that matters (the height in the air only, the speeds along the heading's axes, offset 41 a
 // smoothed distance below), a likely one "(likely)", a guess "(guess)", the heading with its zero not checked. The
-// values are raw here, on the ground too; the live screens show the height and the speeds in the air only. Bit 0x04 is
-// only likely "in the air", so that row is not drawn. Not a flight instrument: nothing here has been compared with DJI
-// Fly yet, and the note says so in every state.
+// values are raw here, on the ground too, so the height's label says it means something in the air only; the live
+// screens show the height and the speeds in the air only, the height after the native HeightHold. Bit 0x04 is only
+// likely "in the air", so that row is not drawn. Not a flight instrument: nothing here has been compared with DJI Fly
+// yet, and the note says so in every state.
 
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';

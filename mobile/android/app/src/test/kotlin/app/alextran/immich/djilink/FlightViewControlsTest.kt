@@ -244,6 +244,10 @@ class FlightViewControlsTest {
     )
     // The motors spin up 4 to 5 s before lift off: the height drifts then, so only the distance below shows
     assertEquals(listOf("Below|0.01 m"), left(values(motorsOn = true, inAir = false, belowM = 0.008)))
+    // In the air with the phone's height hold on (just after lift off, or after a jump): no height, the rest stays
+    val air = values(motorsOn = true, belowM = 1.53)
+    val held = air.copy(flight = air.flight!!.copy(value = air.flight!!.value.copy(heightHeld = true)))
+    assertEquals(listOf("Vertical|\u2191 1.5 m/s", "Speed|4.2 m/s", "Below|1.53 m"), left(held))
     // Landed: the range push stops with the motors, the height is a reset, the speeds are stale
     assertTrue(left(values(motorsOn = false)).isEmpty())
     // The distance below sits at the bottom of the left column, under the speed

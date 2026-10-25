@@ -110,6 +110,94 @@ class TelemetryDecoderTest {
     assertTrue(TelemetryFields.flight(flightBody().u32(32, 0x0080510CL))!!.motorsOn)
   }
 
+  /** A flight frame at [atMs] with the height in tenths of a metre and the flags of offset 32 */
+  private fun TelemetryDecoder.flightAt(atMs: Long, decimetres: Int, flags: Long = 0x0080501CL) =
+    offer(frame(3, 67, flightBody().i16(16, decimetres).u32(32, flags)), atMs)
+
+  /** A range below reading at [atMs], in millimetres, with its reading flag */
+  private fun TelemetryDecoder.rangeAt(atMs: Long, millimetres: Int) =
+    offer(frame(10, 3, ByteArray(4).i16(0, millimetres).apply { this[2] = 1 }), atMs)
+
+  private fun TelemetryDecoder.pilotHeight(atMs: Long): Double? = values(atMs).flight!!.value.pilotHeightM
+
+  @Test
+  fun aJumpNoAircraftMakesHoldsTheHeightBackUntilTheMotorsStop() {
+    // A climb at 3 m/s seen at 10 Hz, already in the air when the decoder starts: nothing held
+    var atMs = 0L
+    for (decimetres in listOf(318, 321, 324, 327)) {
+      decoder.flightAt(atMs, decimetres)
+      assertEquals(decimetres / 10.0, decoder.pilotHeight(atMs)!!, 1e-9)
+      atMs += 100
+    }
+    // A 16 bit wrap of the 50 Hz values near 32.7 m would turn 32.7 m into -32.8 m (proof 4.1, item 5): held back
+    // from that frame on, and the next ones read like a descent from there, held too
+    for (decimetres in listOf(-328, -325, -322, -319)) {
+      decoder.flightAt(atMs, decimetres)
+      val flight = decoder.values(atMs).flight!!.value
+      assertTrue(flight.heightHeld)
+      assertNull(flight.pilotHeightM)
+      // The speeds still come
+      assertNotNull(flight.airborne)
+      atMs += 100
+    }
+    // Landed: the motors stop, the hold ends with them
+    decoder.flightAt(atMs, 0, flags = 0x00805110L)
+    assertFalse(decoder.values(atMs).flight!!.value.heightHeld)
+    atMs += 100
+    // The next flight: the spin up, the lift off, the range below at 0.4 m, 1.5 s later the height comes again
+    decoder.flightAt(atMs, 0, flags = 0x0080501AL)
+    atMs += 100
+    val liftOff = atMs
+    while (atMs <= liftOff + 1_600) {
+      decoder.rangeAt(atMs, 400)
+      decoder.flightAt(atMs, 3)
+      if (atMs - liftOff < HeightHold.LAUNCH_MS) {
+        assertNull("$atMs", decoder.pilotHeight(atMs))
+      } else {
+        assertEquals(0.3, decoder.pilotHeight(atMs)!!, 1e-9)
+      }
+      atMs += 100
+    }
+  }
+
+  @Test
+  fun aLongGapAllowsTheDistanceFlownMeanwhileButNotAWrap() {
+    decoder.flightAt(0, 50)
+    // 15 m in 5 s without a frame between: 3 m/s, an aircraft can, the height stays
+    decoder.flightAt(5_000, 200)
+    assertEquals(20.0, decoder.pilotHeight(5_000)!!, 1e-9)
+    decoder.flightAt(9_000, 320)
+    assertEquals(32.0, decoder.pilotHeight(9_000)!!, 1e-9)
+    // A wrap across 2 s without a frame: 65 m, more than 10 m plus 10 m per second, held
+    decoder.flightAt(11_000, -330)
+    assertNull(decoder.pilotHeight(11_000))
+  }
+
+  @Test
+  fun aHandLaunchShowsNoHeightUntilTheDroneHasLeftTheHand() {
+    // The 09:42 launch: bit 0x04 while the drone is still on the hand, the range below at 3 cm, the height 0.3 m
+    decoder.flightAt(0, 4, flags = 0x0080501AL)
+    var atMs = 100L
+    while (atMs <= 2_000) {
+      decoder.rangeAt(atMs, 30)
+      decoder.flightAt(atMs, 3)
+      assertNull("$atMs", decoder.pilotHeight(atMs))
+      atMs += 100
+    }
+    // It leaves the hand: the range below reads more than 0.15 m, the height comes at the next frame
+    decoder.rangeAt(atMs, 180)
+    decoder.flightAt(atMs, 3)
+    assertEquals(0.3, decoder.pilotHeight(atMs)!!, 1e-9)
+    // Without any reading of the range below, the height comes 5 s after the lift off
+    val other = TelemetryDecoder()
+    other.flightAt(0, 0, flags = 0x0080501AL)
+    other.flightAt(100, 5)
+    other.flightAt(5_000, 20)
+    assertNull(other.pilotHeight(5_000))
+    other.flightAt(5_100, 21)
+    assertEquals(2.1, other.pilotHeight(5_100)!!, 1e-9)
+  }
+
   @Test
   fun offsetFortyIsNeverReadAsABattery() {
     decoder.offer(frame(3, 67, flightBody()), 1000)

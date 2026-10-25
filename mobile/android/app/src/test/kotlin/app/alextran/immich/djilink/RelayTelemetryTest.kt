@@ -99,6 +99,21 @@ class RelayTelemetryTest {
   }
 
   @Test
+  fun thePhonesHeightHoldGoesToTheReceiverAndAnEarlierPhoneHoldsNothing() {
+    val sent = values()
+    val held = sent.copy(flight = sent.flight!!.copy(value = sent.flight!!.value.copy(inAir = true, heightHeld = true)))
+    val back = RelayTelemetry.parse(RelayTelemetry.build(1, 1, link, held, phoneVideo, 1, 0))!!.values.flight!!.value
+    assertTrue(back.heightHeld)
+    assertTrue(back.inAir)
+    assertNull(back.pilotHeightM)
+    // A record without the key, from a phone of an earlier build
+    val text = """{"t":3,"seq":9,"flight":{"ageMs":10,"stale":false,"heightM":1.5,"inAir":true,"motorsOn":true}}"""
+    val earlier = RelayTelemetry.parseBody(text.toByteArray())!!.values.flight!!.value
+    assertFalse(earlier.heightHeld)
+    assertEquals(1.5, earlier.pilotHeightM!!, 1e-9)
+  }
+
+  @Test
   fun thereIsNoPositionNoSerialAndNoAccessoryStringAnywhere() {
     val text = RelayTelemetry.build(1, 1, link, values(), phoneVideo, 1, 0).toString()
     val keys = mutableSetOf<String>()

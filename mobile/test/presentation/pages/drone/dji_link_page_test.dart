@@ -419,7 +419,7 @@ void main() {
     expect(find.text('38.7 s'), findsOneWidget);
     // Each label says how sure its value is (p2/telemetry-flight-2026-10-24.md, section 2), and what a proven one means
     // (p2/telemetry-proof-2026-10-25.md, section 4)
-    expect(find.text('Height above the take off point (in the air only)'), findsOneWidget);
+    expect(find.text('Height above the take off point (meaningful in the air only)'), findsOneWidget);
     expect(find.text('Heading (zero not checked against north)'), findsOneWidget);
     expect(find.text('Flight mode (likely)'), findsOneWidget);
     expect(find.text('Speeds toward heading 0, heading 90 and down'), findsOneWidget);

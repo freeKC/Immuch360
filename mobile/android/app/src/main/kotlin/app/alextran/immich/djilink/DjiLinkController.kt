@@ -2011,7 +2011,8 @@ private fun VideoStats.toPigeon(): DjiLinkDecode = DjiLinkDecode(
  * The values a pilot reads, as the gate of dji_live_fields.dart takes them: a group that is stale or never came gives
  * nulls, never an old number. The height, the vertical speed and the speed over ground count only in the air (bit
  * 0x04): before lift off the height drifts with the motors spinning, and on the ground the drone holds the last speeds
- * it had (p2/telemetry-proof-2026-10-25.md, 4.1 to 4.3).
+ * it had (p2/telemetry-proof-2026-10-25.md, 4.1 to 4.3). The height also waits out [HeightHold]: the first moments
+ * after lift off and, until the motors stop, a jump no aircraft makes. A receiver applies the phone's hold.
  */
 internal fun liveFramePigeon(values: TelemetryValues?, decision: ObstacleDecision, atMs: Long): DjiLiveFrame {
   fun <T> Timed<T>?.fresh(): T? = this?.takeIf { !it.stale }?.value
@@ -2027,7 +2028,7 @@ internal fun liveFramePigeon(values: TelemetryValues?, decision: ObstacleDecisio
     motorTimeS = flight?.motorTimeS,
     motorsOn = flight?.motorsOn,
     headingDeg = flight?.headingDeg,
-    heightM = air?.heightM,
+    heightM = flight?.pilotHeightM,
     verticalSpeedMps = air?.verticalSpeedMps,
     speedMps = air?.horizontalSpeedMps,
     distanceBelowM = values?.rangeBelow.fresh()?.distanceM,

@@ -21,8 +21,8 @@ import kotlin.math.ln
  * The gates opened by the proof flights of 25 October 2026 (p2/telemetry-proof-2026-10-25.md), on bodies cut from the
  * afternoon capture (dji-link-20261025-154528, tools/proof_vectors.py): the motors from the spin up, the air from lift
  * off, the height against the range below, offset 41 in tenths of a metre, the speed along the heading, the nose sector
- * closing by the distance flown, and a turn to the right moving the ring to the left. Bytes 0 to 15 of the flight data
- * are zero; no 35/178 body is kept.
+ * closing by the distance flown, a turn to the right moving the ring to the left, and the height held back after a
+ * hand launch. Bytes 0 to 15 of the flight data are zero; no 35/178 body is kept.
  */
 class ProofVectorsTest {
   private class Vector(val atMs: Long, val body: ByteArray)
@@ -75,6 +75,57 @@ class ProofVectorsTest {
     }
     // In the air: every frame from lift off on
     assertTrue(flights.filter { it.first >= air }.all { it.second.airborne != null })
+  }
+
+  /** The frames of [window] through a decoder in the order they came, flight data and range below interleaved */
+  private fun decoded(window: String): List<Pair<Long, FlightReading>> {
+    val decoder = TelemetryDecoder()
+    val flights = group(window, "flightData").map { Triple(it.atMs, 0, it.body) }
+    val ranges = group(window, "rangeBelow").map { Triple(it.atMs, 1, it.body) }
+    val out = mutableListOf<Pair<Long, FlightReading>>()
+    (flights + ranges).sortedWith(compareBy({ it.first }, { it.second })).forEach { (atMs, kind, body) ->
+      if (kind == 0) {
+        decoder.offer(proofFrame(body, 3, 67), atMs)
+        out += atMs to decoder.values(atMs).flight!!.value
+      } else {
+        decoder.offer(proofFrame(body, 10, 3), atMs)
+      }
+    }
+    return out
+  }
+
+  private fun proofFrame(body: ByteArray, set: Int, id: Int) = P3Frame(
+    version = 1,
+    senderType = 14,
+    senderIndex = 0,
+    receiverType = DeviceTypes.APPLICATION,
+    receiverIndex = 0,
+    sequence = 1,
+    isAcknowledgement = false,
+    ackPolicy = 0,
+    encryption = 0,
+    commandSet = set,
+    commandId = id,
+    body = body,
+  )
+
+  @Test
+  fun aHandLaunchShowsNoHeightUntilTheDroneHasLeftTheHand() {
+    // Flight 1: bit 0x04 at 66.66 s, the height still -1.1 m from the spin up drift, back to 0.0 at 67.77 s; the range
+    // below passes 0.15 m at 67.18 s. Held for 1.5 s: the first height a pilot reads is 0.3 m at 68.16 s
+    val frames = decoded("liftOff").filter { it.second.inAir }
+    assertTrue("${frames.first().first}", frames.first().first in 66_650L..66_670L)
+    val launch = frames.first().first
+    val held = frames.filter { it.first - launch < HeightHold.LAUNCH_MS }
+    assertTrue(held.size >= 14)
+    assertTrue(held.all { it.second.pilotHeightM == null })
+    assertEquals(-1.1, held.minOf { it.second.heightM }, 1e-9)
+    val shown = frames.filter { it.first - launch >= HeightHold.LAUNCH_MS }
+    assertTrue(shown.isNotEmpty())
+    assertEquals(0.3, shown.first().second.pilotHeightM!!, 1e-9)
+    assertTrue(shown.all { it.second.pilotHeightM!! >= 0.0 })
+    // The speeds are not held: the climb reads from the first frames
+    assertTrue(held.all { it.second.airborne != null })
   }
 
   @Test
@@ -151,8 +202,9 @@ class ProofVectorsTest {
     val moving = flights.map { it.second }.filter { it.horizontalSpeedMps >= 0.3 }
     assertTrue(moving.size >= 50)
     moving.forEach { flight ->
-      val (north, east) = flight.speedsMps
-      val course = Math.toDegrees(atan2(east, north))
+      // Along the axes heading 0 and heading 90 count from; north and east only if heading 0 is north, not checked
+      val (alongZero, alongNinety) = flight.speedsMps
+      val course = Math.toDegrees(atan2(alongNinety, alongZero))
       assertTrue("${flight.headingDeg} $course", ObstacleRing.separation(course, flight.headingDeg) <= 15.0)
     }
   }
@@ -219,11 +271,14 @@ class ProofVectorsTest {
       commandId = id,
       body = body,
     )
-    val flights = group("liftOff", "flightData")
-    val ranges = group("liftOff", "rangeBelow")
+    // In the order they came: the height hold reads the range below between the flight frames
+    val flights = group("liftOff", "flightData").map { Triple(it.atMs, 67, it.body) }
+    val ranges = group("liftOff", "rangeBelow").map { Triple(it.atMs, 3, it.body) }
+    val frames = (flights + ranges).sortedBy { it.first }
     fun feedUntil(atMs: Long) {
-      flights.filter { it.atMs <= atMs }.forEach { decoder.offer(frame(it.body, 3, 67, 14), it.atMs) }
-      ranges.filter { it.atMs <= atMs }.forEach { decoder.offer(frame(it.body, 10, 3, 14), it.atMs) }
+      frames.filter { it.first <= atMs }.forEach { (at, id, body) ->
+        decoder.offer(if (id == 67) frame(body, 3, 67, 14) else frame(body, 10, 3, 14), at)
+      }
     }
     // 66.06 s: the motors spin on a hand, the height reads -1.2 m: no height, no speeds, the distance below given
     feedUntil(66_060L)
@@ -233,6 +288,12 @@ class ProofVectorsTest {
     assertNull(spinning.verticalSpeedMps)
     assertNull(spinning.speedMps)
     assertNotNull(spinning.distanceBelowM)
+    // 67.06 s, 0.4 s after the lift off from the hand: the height reads -0.9 m and is held back, the climb shows
+    decoder.reset()
+    feedUntil(67_100L)
+    val launching = liveFramePigeon(decoder.values(67_100L), ObstacleDecision.OFF, 67_100L)
+    assertNull(launching.heightM)
+    assertNotNull(launching.verticalSpeedMps)
     // 69.96 s, in the air: 0.7 m above the lift off point, 1.77 m above the floor
     decoder.reset()
     feedUntil(70_000L)

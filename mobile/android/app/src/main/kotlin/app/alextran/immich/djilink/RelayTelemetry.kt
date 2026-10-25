@@ -170,6 +170,8 @@ object RelayTelemetry {
             put("groundHeightM", reading.groundHeightM)
             put("verticalSpeedMps", reading.verticalSpeedMps)
             put("horizontalSpeedMps", reading.horizontalSpeedMps)
+            // The phone's HeightHold, so that a TV and a headset hold the height back when the phone does
+            put("heightHeld", reading.heightHeld)
             put("evidence", EVIDENCE_PUBLIC_AND_CAPTURE)
           },
         )
@@ -345,6 +347,8 @@ object RelayTelemetry {
                 flags = 0L,
                 verticalSpeedMps = flight.double("verticalSpeedMps") ?: 0.0,
                 horizontalSpeedMps = flight.double("horizontalSpeedMps") ?: 0.0,
+                // A phone of an earlier build holds nothing back
+                heightHeld = flight.bool("heightHeld") ?: false,
               ),
             )
           },

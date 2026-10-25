@@ -227,7 +227,8 @@ internal object FlightViewControls {
   /** The number of [field] when its group is fresh, in the format of the phone (dji_live_fields.dart) */
   private fun freshValue(values: TelemetryValues, field: String, labels: Map<String, String>): String? {
     val flight = values.flight?.takeIf { !it.stale }?.value
-    // The height and the speeds in the air only: before lift off the height drifts, on the ground the speeds are stale
+    // The height and the speeds in the air only: before lift off the height drifts, on the ground the speeds are stale;
+    // the height also waits out the phone's HeightHold (after lift off, after a jump no aircraft makes)
     val air = flight?.airborne
     val battery = values.battery?.takeIf { !it.stale }?.value
     return when (field) {
@@ -237,7 +238,7 @@ internal object FlightViewControls {
       "motorTime" -> flight?.let { minutesSeconds(it.motorTimeS) }
       "motors" -> flight?.let { labels[if (it.motorsOn) "on" else "off"] ?: "" }
       "heading" -> flight?.let { decimals(it.headingDeg, 0) }
-      "height" -> air?.let { height(it.heightM) }
+      "height" -> flight?.pilotHeightM?.let { height(it) }
       "verticalSpeed" -> air?.let { verticalSpeed(it.verticalSpeedMps) }
       "speed" -> air?.let { decimals(it.horizontalSpeedMps, 1) }
       "satellites" -> flight?.satellites?.toString()

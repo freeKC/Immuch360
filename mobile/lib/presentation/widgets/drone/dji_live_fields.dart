@@ -94,9 +94,12 @@ const djiLiveGates = <DjiLiveField, DjiLiveGate>{
   // 3/67 offset 30 = 12 in the frames of the only landing captured; one landing proves nothing (report 1, 3.3)
   DjiLiveField.landing: DjiLiveGate(DjiLiveEvidence.likely, DjiLivePlace.nowhere, band: DjiLiveBand.right),
   // 3/67 offset 16, 0.1 m, positive up, above the lift off point: trunc((r - z) / 100) of the 50 Hz push in 4126 of
-  // 4134 frames, and its changes match the range below in still windows (median ratio 0.95 over 41, 0.98 over 22 at
-  // 09:42). In the air only (bit 0x04, the native side gives nothing else): with the motors spinning before lift off it
-  // drifted to -1.2 m and +1.0 m. Tested 0 to 1.8 m, no climb to the limit (proof 4.1)
+  // 4134 frames, and its changes match the range below over the floor (4 clean events of the afternoon, ratios 0.87 to
+  // 1.28, and a slow climb at 09:42, 0.72 to 1.15). In the air only (bit 0x04, likely "in the air"): with the motors
+  // spinning before lift off it drifted to -1.2 m and +1.0 m. The native HeightHold also keeps it back after lift off
+  // and, until the motors stop, after a jump of more than 10 m between two frames (a 16 bit wrap near 32.7 m is not
+  // tested). Tested 0 to 1.8 m indoors, no climb to the limit, the scale from plausibility, not a tape (proof 4.1).
+  // Keep the hold until a flight has climbed past 33 m (protocol step 2).
   DjiLiveField.height: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.overlay, band: DjiLiveBand.left),
   // 3/67 offset 22, 0.1 m/s, positive down on the wire, shown climb positive: slope 9.42 and correlation 0.983 against
   // the rate of the 50 Hz height in 2409 frames in the air (8.59 and 0.916 over 646 at 09:42), that height matching the
@@ -106,13 +109,13 @@ const djiLiveGates = <DjiLiveField, DjiLiveGate>{
   DjiLiveField.distanceHome: DjiLiveGate(DjiLiveEvidence.none, DjiLivePlace.overlay, band: DjiLiveBand.left, drop: 1),
   // 3/67 offsets 18 and 20, 0.1 m/s along the axes the heading counts from: the rates of the 50 Hz positions (slopes
   // 10.03 and 9.91, correlations 0.975 and 0.990; 0.988 and 0.995 at 09:42), their course is the heading in 332 of 373
-  // frames (162 of 162), and the obstacle ring fits that displacement at scale 1.0 in both captures. In the air only:
-  // stale on the ground. Tested to 1.5 m/s (proof 4.3)
+  // frames (162 of 162), and the obstacle ring fits that displacement best at scale 1.0 in both captures (a shallow
+  // fit, no tape). In the air only: stale on the ground. Tested to 1.5 m/s (proof 4.3)
   DjiLiveField.speed: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.overlay, band: DjiLiveBand.left, drop: 2),
   // 10/3 from the remote side, millimetres, while the motors run: the distance to whatever is under the drone (floor,
-  // table, hand). It tracks the 50 Hz height over a flat floor (median ratio 0.95 and 0.98), reads 7 to 63 mm on a hand
-  // before lift off, and had a reading in every one of 4637 frames in the air (1244 at 09:42). Tested to 1.77 m, its
-  // reach not reached (proof 4.4). The bottom of the left band, the first to leave it.
+  // table, hand). It tracks the 50 Hz height over the floor (4 clean events, ratios 0.87 to 1.28, and a slow climb at
+  // 09:42), reads 7 to 63 mm on a hand before lift off, and had a reading in every one of 4637 frames in the air (1244
+  // at 09:42). Tested to 1.77 m, its reach not reached (proof 4.4). The bottom of the left band, the first to leave it.
   DjiLiveField.distanceBelow: DjiLiveGate(
     DjiLiveEvidence.proven,
     DjiLivePlace.overlay,
@@ -121,15 +124,17 @@ const djiLiveGates = <DjiLiveField, DjiLiveGate>{
   ),
   // 36/8 from 18.4: 360 distances in millimetres around the drone, only while the motors run. The scale is proven by
   // the 50 Hz displacement (the ring predicted from it fits best at scale 1.0, 127 and 67 ring pairs) and by the nose
-  // sector closing by the distance flown on forward legs (8 of 10, 5 of 6). Over the picture as the obstacle ring and
-  // its number, not as a cell; the distances that make it glow stay the pilot's choice. Not tested: a wall at a known
-  // distance, glass, thin branches, outdoors (proof 4.7). Its row also offers the ring: djiObstacleOffer.
+  // sector shrinking on forward legs with 12 degrees of turn or less (6 of 6, 3 of 4 at 09:42); sensors against each
+  // other, no tape. Over the picture as the obstacle ring and its number, not as a cell; the distances that make it
+  // glow stay the pilot's choice. Not tested: a wall at a known distance, glass, thin branches, outdoors (proof 4.7).
+  // Its row also offers the ring: djiObstacleOffer.
   DjiLiveField.obstacle: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.overlay),
   // 36/8 index 0 at the nose, growing clockwise (ObstacleRing.MAPPING, RingMapping(noseSector = 0, clockwise = true)),
   // the same in both captures: the camera picture shows the heading grows on a turn to the right; turns of 80 to 100
   // degrees in place move the ring by -heading change / 5 sectors in 12 of 13 and 4 of 4 (a right turn puts what was
   // ahead on the left); the ring predicted from the displacement fits best with the nose at 0 growing with the
-  // heading; the nose sector shrinks flying forward (proof 4.7). Not a value: it says the ring shows the side.
+  // heading; the nose sector shrinks flying forward (6 of 6 legs with 12 degrees of turn or less, 3 of 4 at 09:42;
+  // proof 4.7). Not a value: it says the ring shows the side.
   DjiLiveField.obstacleSide: DjiLiveGate(DjiLiveEvidence.proven, DjiLivePlace.nowhere),
   // 3/67 offset 32, bit 0x08: set 0.1 s before the motor time starts and cleared the frame it stops, the spin up before
   // lift off included (report 1, 3.4; proof 4.9)

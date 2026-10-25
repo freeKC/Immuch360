@@ -1216,7 +1216,7 @@
   "dji_link_hardware_none": "Not chosen",
   "dji_link_hardware_note": "Kept for these accessory strings. It names your hardware and changes nothing in what the link does.",
   "dji_link_heading": "Heading (zero not checked against north)",
-  "dji_link_height": "Height above the take off point (in the air only)",
+  "dji_link_height": "Height above the take off point (meaningful in the air only)",
   "dji_link_largest": "Largest payload",
   "dji_link_last_accessory": "Last accessory seen",
   "dji_link_latency": "Delay from the phone",
