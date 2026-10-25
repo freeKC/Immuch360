@@ -341,7 +341,9 @@ void main() {
     expect(find.textContaining('Height'), findsNothing);
     // The hint of the keys, for 5 s
     expect(
-      find.text('OK: show or hide the numbers. Menu, or hold OK: options. Back: the phones. Any key: the notes again.'),
+      find.text(
+        'OK: show or hide the numbers. Menu, or hold OK: options. Back: the phones. Any other key: the notes again.',
+      ),
       findsOneWidget,
     );
     await tester.pump(djiWatchTvHintFor);

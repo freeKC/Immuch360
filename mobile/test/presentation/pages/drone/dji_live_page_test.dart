@@ -873,9 +873,7 @@ void main() {
     expect(find.text('Obstacle ring, not confirmed yet'), findsNothing);
     expect(tester.widget<SwitchListTile>(find.byKey(const Key('dji_live_obstacle_on'))).value, isTrue);
     expect(
-      find.text(
-        "On by default. A soft glow around the middle of the picture when the drone's sensors see something close.",
-      ),
+      find.text("On by default. A soft glow over the picture when the drone's sensors see something close."),
       findsOneWidget,
     );
 
