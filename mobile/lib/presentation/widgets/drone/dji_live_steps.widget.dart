@@ -2,12 +2,15 @@
 // the screen is one card under three dots, Remote, Drone, Picture: a title, one line, at most one button, and after a
 // while a "Nothing yet?" hint. The offer to open the screen when the remote is plugged in sits on the plug step only.
 // Once the drone was seen in a session it may be in the air: a lost cable link or an unplug then says first to look at
-// the drone and fly with the remote, and touching the cable waits for the landing.
+// the drone and fly with the remote, and touching the cable waits for the landing. That advice comes for five seconds
+// and fades, back with a tap (FreeKC's rule of 25 October, dji_live_transient.dart); the card's title and the action it
+// asks stay until the picture comes back.
 
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_stage.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_transient.dart';
 
 /// The three dots, filled up to [filled]
 class DjiLiveDots extends StatelessWidget {
@@ -47,11 +50,14 @@ class DjiLiveDots extends StatelessWidget {
 
 /// What the card of a stage says: a title, one line, the extra lines under it
 class DjiLiveCardText {
-  const DjiLiveCardText(this.title, this.line, [this.extra = const []]);
+  const DjiLiveCardText(this.title, this.line, [this.extra = const [], this.lineFades = false]);
 
   final String title;
   final String line;
   final List<String> extra;
+
+  /// The line is "Look at the drone and fly with the remote.": safety advice, which comes and goes
+  final bool lineFades;
 }
 
 /// The words of the card of [stage]; null for the stages without a card (the picture, a capture, the first check).
@@ -88,17 +94,17 @@ DjiLiveCardText? djiLiveCardText(
       ...untriedLine,
       if (slow) ...[t.dji_live_slow_title, t.dji_live_slow_picture],
     ]),
-    DjiLiveStage.noPicture => DjiLiveCardText(
-      t.dji_live_no_picture_title,
-      aircraftPresent ? t.dji_live_no_picture : t.dji_live_drone_silent,
-    ),
+    DjiLiveStage.noPicture =>
+      aircraftPresent
+          ? DjiLiveCardText(t.dji_live_no_picture_title, t.dji_live_no_picture, const [], true)
+          : DjiLiveCardText(t.dji_live_no_picture_title, t.dji_live_drone_silent),
     DjiLiveStage.unplugged =>
       droneSeen
-          ? DjiLiveCardText(t.dji_live_unplugged_title, t.dji_live_no_picture, [t.dji_live_unplugged])
+          ? DjiLiveCardText(t.dji_live_unplugged_title, t.dji_live_no_picture, [t.dji_live_unplugged], true)
           : DjiLiveCardText(t.dji_live_unplugged_title, t.dji_live_unplugged),
     DjiLiveStage.lost =>
       droneSeen
-          ? DjiLiveCardText(t.dji_live_lost_title, t.dji_live_no_picture, [t.dji_live_lost_flying])
+          ? DjiLiveCardText(t.dji_live_lost_title, t.dji_live_no_picture, [t.dji_live_lost_flying], true)
           : DjiLiveCardText(t.dji_live_lost_title, t.dji_live_lost),
     DjiLiveStage.unread => DjiLiveCardText(t.dji_live_unread, t.dji_live_untried),
   };
@@ -155,7 +161,13 @@ class DjiLiveStepCard extends StatelessWidget {
               style: context.textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 6),
-            Text(text.line, key: const Key('dji_live_card_line'), style: white),
+            if (text.lineFades)
+              DjiTransient(
+                kind: stage,
+                child: Text(text.line, key: const Key('dji_live_card_line'), style: white),
+              )
+            else
+              Text(text.line, key: const Key('dji_live_card_line'), style: white),
             for (final extra in text.extra)
               Padding(
                 padding: const EdgeInsets.only(top: 8),

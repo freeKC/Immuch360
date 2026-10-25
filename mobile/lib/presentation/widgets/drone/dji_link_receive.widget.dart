@@ -33,6 +33,57 @@ String djiRelayReceiveStateText(Translations t, DjiRelayReceiving receiving) {
   };
 }
 
+/// What a line of the reception says, in kind, for the warnings that come and go over the picture (FreeKC's rule of 25
+/// October, dji_live_transient.dart): a new kind shows the line again, and the kinds that need an action, or that say
+/// why no picture comes, keep it until they are resolved
+enum DjiReceiveLine {
+  idle,
+  connecting,
+  checking,
+  live,
+  replay,
+  noSource(keeps: true),
+  lost,
+  wrongCode(keeps: true),
+  full(keeps: true),
+  blocked(keeps: true),
+  otherVersion(keeps: true),
+  unproven(keeps: true),
+  busy(keeps: true),
+
+  /// A TV's own lines ([djiWatchTvStateLine]): connected and no picture yet, then "Still no picture"
+  waiting,
+  stillNoPicture(keeps: true),
+  stillTrying(keeps: true),
+  decoderNone(keeps: true),
+  decoderRefused(keeps: true),
+  codeRefused(keeps: true);
+
+  const DjiReceiveLine({this.keeps = false});
+
+  /// The line stays: an error that needs an action until it is resolved
+  final bool keeps;
+}
+
+/// The kind of [djiRelayReceiveStateText]
+DjiReceiveLine djiRelayReceiveLine(DjiRelayReceiving receiving) => switch (receiving.state) {
+  DjiRelayReceiveState.idle => DjiReceiveLine.idle,
+  DjiRelayReceiveState.connecting => DjiReceiveLine.connecting,
+  DjiRelayReceiveState.checkingCode => DjiReceiveLine.checking,
+  DjiRelayReceiveState.receiving => switch (receiving.phoneSource) {
+    'cable' => DjiReceiveLine.live,
+    'replay' => DjiReceiveLine.replay,
+    _ => DjiReceiveLine.noSource,
+  },
+  DjiRelayReceiveState.lost => DjiReceiveLine.lost,
+  DjiRelayReceiveState.wrongCode => DjiReceiveLine.wrongCode,
+  DjiRelayReceiveState.full => DjiReceiveLine.full,
+  DjiRelayReceiveState.blocked => DjiReceiveLine.blocked,
+  DjiRelayReceiveState.otherVersion => DjiReceiveLine.otherVersion,
+  DjiRelayReceiveState.phoneUnproven => DjiReceiveLine.unproven,
+  DjiRelayReceiveState.busy => DjiReceiveLine.busy,
+};
+
 /// Why a connect was refused before it started
 String djiRelayConnectErrorText(Translations t, String error) => switch (error) {
   'badCode' => t.dji_link_receive_code_invalid,

@@ -97,13 +97,15 @@ enum StoreKey<T> {
   /// That offer was answered, yes or not now: it is not made again, and the switch stays in Advanced
   djiLiveOfferAnswered<bool>._(5031),
 
-  /// The pilot turned on the obstacle ring in Advanced while our captures do not prove its data yet: off by default
+  /// No longer read from the build of 25 October, when the ring became on by default ([djiObstacleRingOff]); kept so
+  /// that its number is never given again
   djiObstacleAlertOn<bool>._(5032),
 
-  /// The obstacle sound was turned off in Advanced, on a phone or a headset: it is on by default there
+  /// The obstacle sound was turned off in Advanced, on a phone, a headset or a TV: it is on by default everywhere
   djiObstacleSoundOff<bool>._(5033),
 
-  /// A headset watching a phone asked for the lowest delay in Options, with less smoothing: off by default
+  /// No longer read from the build of 25 October ([djiHeadsetLowestDelayOff]); kept so that its number is never given
+  /// again
   djiHeadsetLowestDelay<bool>._(5034),
 
   /// "Glow from" of the obstacle ring, in centimetres: 300 when never set
@@ -118,14 +120,33 @@ enum StoreKey<T> {
   /// "Show the side" was turned off once the side is proven: it is on by default then
   djiObstacleSideOff<bool>._(5043),
 
-  /// "Vibrate with the tick", on a phone with a vibrator: off by default
+  /// No longer read from the build of 25 October ([djiObstacleHapticOff]); kept so that its number is never given again
   djiObstacleHapticOn<bool>._(5044),
 
-  /// "Show the distance by the glow", on each device: off by default
+  /// No longer read from the build of 25 October ([djiObstacleNumbersOff]); kept so that its number is never given
+  /// again
   djiObstacleNumbersOn<bool>._(5045),
 
-  /// The obstacle sound on a TV, where people watch and the pilot is elsewhere: off by default
+  /// No longer read from the build of 25 October: a TV's sound is on by default and kept in [djiObstacleSoundOff]
   djiObstacleTvSoundOn<bool>._(5046),
+
+  /// Every experimental switch of the DJI pages is on by default (FreeKC's rule of 25 October): these say the pilot
+  /// turned one off. The obstacle ring, while its data is not proven, on a phone; on a TV or a headset, the ring on that
+  /// screen
+  djiObstacleRingOff<bool>._(5047),
+
+  /// "Vibrate with the tick", on a phone with a vibrator
+  djiObstacleHapticOff<bool>._(5048),
+
+  /// "Show the distance by the glow", on each device
+  djiObstacleNumbersOff<bool>._(5049),
+
+  /// "Lowest delay (less smoothing)", on a headset
+  djiHeadsetLowestDelayOff<bool>._(5050),
+
+  /// The obstacle indicator drawn as a frame at the picture's edges: a circle around the centre by default, on each
+  /// device
+  djiObstacleShapeFrame<bool>._(5051),
 
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),

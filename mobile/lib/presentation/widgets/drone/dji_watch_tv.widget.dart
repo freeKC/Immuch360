@@ -2,9 +2,11 @@
 // spectator screen driven by the remote. Two views of one page. The phones view lists the phones that send the drone's
 // picture on this network, with the picture in its box or the card "Let this TV watch" (this TV's own code in two
 // groups of five and its QR code, for the phone's "Add a TV"). The full screen view shows the picture edge to edge, the
-// values on dark plates at its sides inside the TV's safe area, a strip that always says where the picture comes from,
-// "Watching only" and the observer rule. The obstacle ring glows over the picture in both views, only while something
-// is close (p2/design-obstacle-ring-2026-10-25.md, 5.2). One picture box under a GlobalKey moves between the two views,
+// values on dark plates at its sides inside the TV's safe area, and a strip with the delay from the phone. Where the
+// picture comes from, "Watching only" and the observer rule show for five seconds when the view opens, when they
+// change and after any key, then fade (dji_live_transient.dart); an error that needs an action stays. The obstacle
+// indicator shows over the picture in both views, only while something is close (p2/design-obstacle-ring-2026-10-25.md,
+// 5.2). One picture box under a GlobalKey moves between the two views,
 // so the TV's decoder never changes surface. Nothing here reaches the phone, the remote or the
 // drone: OK shows or hides the numbers, Menu, Info or OK held opens Options, Back goes back to the phones.
 
@@ -27,6 +29,7 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_link_video.widget.d
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_fields.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_obstacle.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_overlay.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_transient.dart';
 import 'package:immich_mobile/presentation/widgets/pairing/qr_code.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
@@ -125,6 +128,32 @@ String djiWatchTvStateLine(
   }
 }
 
+/// The kind of [djiWatchTvStateLine], in the same order: whether the line comes and goes over the picture or stays
+DjiReceiveLine djiWatchTvLine(
+  DjiRelayReceiving receiving, {
+  required bool pictureFlows,
+  DjiLinkDecode? decode,
+  bool longWait = false,
+  String? refusedBy,
+}) {
+  final failure = decode?.failure;
+  if (failure == 'no-decoder') {
+    return DjiReceiveLine.decoderNone;
+  }
+  if (failure == 'configuration-refused' || decode?.switchReason == 'noPictureNothingLeft') {
+    return DjiReceiveLine.decoderRefused;
+  }
+  if (receiving.state == DjiRelayReceiveState.wrongCode && refusedBy != null) {
+    return DjiReceiveLine.codeRefused;
+  }
+  return switch (receiving.state) {
+    DjiRelayReceiveState.receiving when !pictureFlows && receiving.phoneSource != 'none' =>
+      longWait ? DjiReceiveLine.stillNoPicture : DjiReceiveLine.waiting,
+    DjiRelayReceiveState.lost when receiving.failures >= djiWatchTvStillTryingFailures => DjiReceiveLine.stillTrying,
+    _ => djiRelayReceiveLine(receiving),
+  };
+}
+
 /// After this many failed attempts in a row, the state line says what to check (as the headset's page)
 const djiWatchTvStillTryingFailures = 3;
 
@@ -188,8 +217,8 @@ class DjiWatchTvView extends ConsumerStatefulWidget {
   /// "Phone not listed? Type its address"
   final VoidCallback onTypeAddress;
 
-  /// A choice of Options the page carries out: sound, testSound, ringNumbers, sample, safety, diagnostics, record,
-  /// newCode, stop.
+  /// A choice of Options the page carries out: ring, sound, testSound, ringNumbers, shape, sample, safety, diagnostics,
+  /// record, newCode, stop.
   /// "Type the phone's code instead" goes to [onTypeCode] with the phone watched, else the row focused last.
   final ValueChanged<String> onMenu;
 
@@ -213,6 +242,9 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
   bool _fullScreen = false;
   bool _hint = false;
   Timer? _hintTimer;
+
+  /// Any key brings the warnings back for five seconds
+  final _recall = DjiTransientRecall();
 
   /// OK down in full screen: held [remoteOkHoldForDetails], it opens Options; released before, it shows or hides the
   /// numbers. What is left of a held OK (its repeats, its release) is dropped once Options opened.
@@ -241,6 +273,7 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     _hintTimer?.cancel();
     _okHold?.cancel();
     _longWaitTimer?.cancel();
+    _recall.dispose();
     _fullFocus.dispose();
     _rowFocus.dispose();
     _addressFocus.dispose();
@@ -319,6 +352,9 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
 
   KeyEventResult _onFullKey(FocusNode node, KeyEvent event) {
     final key = event.logicalKey;
+    if (event is KeyDownEvent) {
+      _recall.recall();
+    }
     if (remoteOkKeys.contains(key)) {
       if (event is KeyDownEvent) {
         _okHold?.cancel();
@@ -361,6 +397,9 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
   /// Menu and Info on the phones view, from whatever row has the focus. A held OK chooses once: its repeats would
   /// start the connection again at the repeat rate, each a wrong proof on a phone that does not know this TV.
   KeyEventResult _onPhonesKey(FocusNode node, KeyEvent event) {
+    if (event is KeyDownEvent) {
+      _recall.recall();
+    }
     if (event is KeyRepeatEvent && remoteOkKeys.contains(event.logicalKey)) {
       return KeyEventResult.handled;
     }
@@ -511,20 +550,23 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
         ),
       ),
     );
-    return PopScope(
-      // Back in full screen goes to the phones view, still receiving; on the phones view it leaves the page
-      canPop: !_fullScreen,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop && _fullScreen) {
-          _leaveFullScreen();
-        }
-      },
-      child: Scaffold(
-        key: const Key('dji_watch'),
-        backgroundColor: _fullScreen ? Colors.black : null,
-        body: _fullScreen
-            ? _fullScreenView(t, relay, active, decode, picture, shows: shows)
-            : _phonesView(t, relay, active, decode, picture, shows: shows),
+    return DjiTransientScope(
+      recall: _recall,
+      child: PopScope(
+        // Back in full screen goes to the phones view, still receiving; on the phones view it leaves the page
+        canPop: !_fullScreen,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop && _fullScreen) {
+            _leaveFullScreen();
+          }
+        },
+        child: Scaffold(
+          key: const Key('dji_watch'),
+          backgroundColor: _fullScreen ? Colors.black : null,
+          body: _fullScreen
+              ? _fullScreenView(t, relay, active, decode, picture, shows: shows)
+              : _phonesView(t, relay, active, decode, picture, shows: shows),
+        ),
       ),
     );
   }
@@ -585,7 +627,7 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
                 ),
               ],
             ),
-            const DjiLinkObserverNote(tv: true),
+            const DjiLinkObserverNote(tv: true, transient: true),
             const SizedBox(height: 8),
             Expanded(
               child: Row(
@@ -803,6 +845,8 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     final delay = djiLinkDelayNowMs(active);
     final stale = djiLinkStaleLine(t, active);
     final cannotKeepUp = djiLinkCannotKeepUpLine(t, active);
+    // Under the picture box, the state line is the page's own and stays; the red lines come and go as over the
+    // picture, the line of a picture that stopped staying while it does not show
     return [
       Text(
         djiWatchTvStateLine(
@@ -817,12 +861,23 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
         style: style?.copyWith(fontWeight: FontWeight.w700),
       ),
       if (stale != null)
-        Text(stale, key: const Key('dji_watch_tv_stale'), style: style?.copyWith(color: context.colorScheme.error)),
+        DjiTransient(
+          kind: 'stale',
+          keep: !shows,
+          child: Text(
+            stale,
+            key: const Key('dji_watch_tv_stale'),
+            style: style?.copyWith(color: context.colorScheme.error),
+          ),
+        ),
       if (cannotKeepUp != null)
-        Text(
-          cannotKeepUp,
-          key: const Key('dji_watch_tv_cannot_keep_up'),
-          style: style?.copyWith(color: context.colorScheme.error),
+        DjiTransient(
+          kind: 'cannotKeepUp',
+          child: Text(
+            cannotKeepUp,
+            key: const Key('dji_watch_tv_cannot_keep_up'),
+            style: style?.copyWith(color: context.colorScheme.error),
+          ),
         ),
       if (active.state == DjiRelayReceiveState.receiving && delay != null)
         Text(t.dji_live_quest_delay(ms: delay.toStringAsFixed(0)), key: const Key('dji_watch_delay'), style: style),
@@ -897,8 +952,12 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     child: Padding(padding: const EdgeInsets.all(12), child: child),
   );
 
-  /// Where the picture comes from with the delay, the red line of a picture that stopped, then "Watching only" and the
-  /// observer rule beside a red bar: always there, whatever key is pressed
+  /// The strip at the bottom of the full screen view: the delay from the phone, which stays, and the warnings, which
+  /// come and go (dji_live_transient.dart): where the picture comes from, the red line of a picture that stopped, "This
+  /// device cannot keep up", then "Watching only" and the observer rule beside a red bar. Each shows five seconds when
+  /// it appears or changes kind and after any key, then fades; the plate under them shrinks with them, down to the
+  /// delay alone or to nothing. An error that needs an action stays, and so does the one line that says no picture
+  /// shows while the picture is missing.
   Widget _strip(
     Translations t,
     DjiRelayState relay,
@@ -906,6 +965,7 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
     DjiLinkDecode? decode, {
     required bool shows,
   }) {
+    final refusedBy = relay.usingOwnCode ? relay.ownCodeRefusedBy : null;
     final line = active == null
         ? t.dji_link_receive_state_idle
         : djiWatchTvStateLine(
@@ -914,32 +974,39 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
             pictureFlows: shows,
             decode: decode,
             longWait: _longWait,
-            refusedBy: relay.usingOwnCode ? relay.ownCodeRefusedBy : null,
+            refusedBy: refusedBy,
           );
+    final kind = active == null
+        ? DjiReceiveLine.idle
+        : djiWatchTvLine(active, pictureFlows: shows, decode: decode, longWait: _longWait, refusedBy: refusedBy);
     final delay = djiLinkDelayNowMs(active);
     final stale = active == null ? null : djiLinkStaleLine(t, active);
     final cannotKeepUp = djiLinkCannotKeepUpLine(t, active);
+    // While no picture shows, one line says so and stays: the red line when there is one, else the state line
+    final keepLine = kind.keeps || (!shows && stale == null && active != null);
     const white = TextStyle(color: Colors.white, fontSize: 15);
+    final state = Text(
+      line,
+      key: const Key('dji_watch_tv_strip_state'),
+      style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
+    );
     return DecoratedBox(
       key: const Key('dji_watch_tv_strip'),
       decoration: const BoxDecoration(color: djiWatchTvPlate, borderRadius: BorderRadius.all(Radius.circular(8))),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    line,
-                    key: const Key('dji_watch_tv_strip_state'),
-                    style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
+      // No padding of the plate's own: each line brings its own, so that the plate is gone when they all are
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (active?.state == DjiRelayReceiveState.receiving && delay != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: DjiTransient(kind: kind, keep: keepLine, child: state),
                   ),
-                ),
-                if (active?.state == DjiRelayReceiveState.receiving && delay != null) ...[
                   const SizedBox(width: 16),
                   Text(
                     t.dji_live_quest_delay(ms: delay.toStringAsFixed(0)),
@@ -947,42 +1014,65 @@ class _DjiWatchTvViewState extends ConsumerState<DjiWatchTvView> {
                     style: const TextStyle(color: Colors.white70, fontSize: 16),
                   ),
                 ],
-              ],
+              ),
+            )
+          else
+            DjiTransient(
+              kind: kind,
+              keep: keepLine,
+              child: Padding(padding: const EdgeInsets.fromLTRB(16, 10, 16, 4), child: state),
             ),
-            if (stale != null)
-              Text(
-                stale,
-                key: const Key('dji_watch_tv_strip_stale'),
-                style: const TextStyle(color: _red, fontSize: 16, fontWeight: FontWeight.w700),
-              ),
-            if (cannotKeepUp != null)
-              Text(
-                cannotKeepUp,
-                key: const Key('dji_watch_tv_strip_cannot_keep_up'),
-                style: const TextStyle(color: _red, fontSize: 16, fontWeight: FontWeight.w700),
-              ),
-            const SizedBox(height: 6),
-            DecoratedBox(
-              decoration: const BoxDecoration(
-                border: Border(left: BorderSide(color: _red, width: 6)),
-              ),
+          if (stale != null)
+            DjiTransient(
+              kind: 'stale',
+              keep: !shows,
               child: Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      t.dji_live_tv_watching,
-                      key: const Key('dji_watch_tv_strip_watching'),
-                      style: white.copyWith(fontWeight: FontWeight.w700),
-                    ),
-                    Text(t.dji_live_tv_observer, key: const Key('dji_watch_tv_strip_observer'), style: white),
-                  ],
+                padding: const EdgeInsets.fromLTRB(16, 2, 16, 4),
+                child: Text(
+                  stale,
+                  key: const Key('dji_watch_tv_strip_stale'),
+                  style: const TextStyle(color: _red, fontSize: 16, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
-          ],
-        ),
+          if (cannotKeepUp != null)
+            DjiTransient(
+              kind: 'cannotKeepUp',
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 2, 16, 4),
+                child: Text(
+                  cannotKeepUp,
+                  key: const Key('dji_watch_tv_strip_cannot_keep_up'),
+                  style: const TextStyle(color: _red, fontSize: 16, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          DjiTransient(
+            kind: 'watching',
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 12),
+              child: DecoratedBox(
+                decoration: const BoxDecoration(
+                  border: Border(left: BorderSide(color: _red, width: 6)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        t.dji_live_tv_watching,
+                        key: const Key('dji_watch_tv_strip_watching'),
+                        style: white.copyWith(fontWeight: FontWeight.w700),
+                      ),
+                      Text(t.dji_live_tv_observer, key: const Key('dji_watch_tv_strip_observer'), style: white),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1025,28 +1115,38 @@ class _DjiWatchTvColumnState extends ConsumerState<DjiWatchTvColumn> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (final field in fields) DjiWatchTvCell(field: field, gates: widget.gates),
+          // A warning: it comes and goes with the others (dji_live_transient.dart)
           if (widget.flyNote)
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: djiWatchTvColumnWidth),
-              child: Text(
-                t.dji_link_flight_view_fly_note,
-                key: const Key('dji_watch_tv_fly_note'),
-                style: const TextStyle(color: Colors.white, fontSize: 14, backgroundColor: djiWatchTvPlate),
+            DjiTransient(
+              kind: 'flyNote',
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: djiWatchTvColumnWidth),
+                child: Text(
+                  t.dji_link_flight_view_fly_note,
+                  key: const Key('dji_watch_tv_fly_note'),
+                  style: const TextStyle(color: Colors.white, fontSize: 14, backgroundColor: djiWatchTvPlate),
+                ),
               ),
             ),
         ],
       );
     } else if (_hadValues) {
-      body = ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: djiWatchTvColumnWidth),
-        child: DecoratedBox(
-          decoration: const BoxDecoration(color: djiWatchTvPlate, borderRadius: BorderRadius.all(Radius.circular(8))),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Text(
-              t.dji_link_flight_view_values_stale,
-              key: Key('dji_watch_tv_values_stale_${widget.band.name}'),
-              style: const TextStyle(color: Colors.white, fontSize: djiWatchTvLabelSize),
+      body = DjiTransient(
+        kind: 'valuesStale',
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: djiWatchTvColumnWidth),
+          child: DecoratedBox(
+            decoration: const BoxDecoration(
+              color: djiWatchTvPlate,
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                t.dji_link_flight_view_values_stale,
+                key: Key('dji_watch_tv_values_stale_${widget.band.name}'),
+                style: const TextStyle(color: Colors.white, fontSize: djiWatchTvLabelSize),
+              ),
             ),
           ),
         ),
@@ -1217,11 +1317,21 @@ class DjiWatchTvOptions extends ConsumerWidget {
                     title: Text(hidden ? t.dji_live_tv_numbers_show : t.dji_live_tv_numbers_hide),
                     onTap: () => choose('numbers'),
                   ),
-                  // The ring's own items of this TV: whether it shows, its distances and its side come from the phone
+                  // The ring's own items of this TV, each on by default: whether the phone offers it, its distances and its
+                  // side come from the phone; this TV can only turn it off on its own screen
                   if (offer != DjiObstacleOffer.none) ...[
+                    if (offer == DjiObstacleOffer.test)
+                      SwitchListTile(
+                        key: const Key('dji_watch_obstacle_here'),
+                        title: Text(t.dji_live_obstacle_here),
+                        subtitle: Text(t.dji_live_obstacle_here_note),
+                        value: obstacle.alertOn,
+                        onChanged: (_) => choose('ring'),
+                      ),
                     SwitchListTile(
                       key: const Key('dji_watch_obstacle_sound'),
                       title: Text(t.dji_live_obstacle_sound),
+                      subtitle: Text(t.dji_live_obstacle_sound_note),
                       value: obstacle.soundOn,
                       onChanged: (_) => choose('sound'),
                     ),
@@ -1234,8 +1344,18 @@ class DjiWatchTvOptions extends ConsumerWidget {
                     SwitchListTile(
                       key: const Key('dji_watch_obstacle_numbers'),
                       title: Text(t.dji_live_obstacle_numbers),
+                      subtitle: Text(t.dji_live_obstacle_numbers_note),
                       value: obstacle.numbersOn,
                       onChanged: (_) => choose('ringNumbers'),
+                    ),
+                    ListTile(
+                      key: const Key('dji_watch_obstacle_shape'),
+                      leading: Icon(obstacle.frame ? Icons.crop_free_rounded : Icons.radio_button_unchecked_rounded),
+                      title: Text(t.dji_live_obstacle_shape),
+                      subtitle: Text(
+                        obstacle.frame ? t.dji_live_obstacle_shape_frame : t.dji_live_obstacle_shape_circle,
+                      ),
+                      onTap: () => choose('shape'),
                     ),
                     ListTile(
                       key: const Key('dji_watch_obstacle_sample'),

@@ -1,7 +1,8 @@
-// The plug of a DJI remote that brought the app forward through its attach entry, after the pilot said yes to "Open
-// this screen when the remote is plugged in" (p2/design-ux-phone-2026-10-24.md, 8.4). The live screen opens once the
-// app is past its start (the splash, a sign in), and not a second time when it is already in the stack. Android's own
-// question and the USB permission that comes with its answer are the native side's; nothing here reaches the remote.
+// The plug of a DJI remote that brought the app forward through its attach entry, with "Open this screen when the
+// remote is plugged in" on (p2/design-ux-phone-2026-10-24.md, 8.4; on by default since FreeKC's rule of 25 October).
+// The live screen opens once the app is past its start (the splash, a sign in), and not a second time when it is
+// already in the stack. Android's own question and the USB permission that comes with its answer are the native
+// side's; nothing here reaches the remote.
 //
 // The decision reads the whole stack of the root router, not the visible route: with the live screen on top, the tab
 // shell under it is not "active" for the router, and a plug answered while the screen was open must not push a second
@@ -13,6 +14,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_link_tile.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:logging/logging.dart';
 
@@ -53,8 +55,10 @@ class DjiAttachLaunch {
   /// The router listened to while the app is still on its start
   StackRouter? _waiting;
 
-  /// The app came to the front, at its start or on a resume: a plug that brought it opens the live screen
+  /// The app came to the front, at its start or on a resume: the entry follows the settings, and a plug that brought
+  /// it opens the live screen
   Future<void> check() async {
+    await applyEntry();
     if (!_ref.read(djiLinkEnabledProvider)) {
       return;
     }
@@ -71,6 +75,19 @@ class DjiAttachLaunch {
     _log.info('A DJI remote was plugged in: the live screen opens');
     _pending = true;
     _open();
+  }
+
+  /// Tells the native side whether the entry may be offered for the cable: with the DJI live video on, on a phone or a
+  /// tablet. "Open this screen when the remote is plugged in" is on by default there, so a fresh install opens the live
+  /// screen at the first plug once it ran once; a TV and the Quest only watch a phone's relay and never offer it.
+  Future<void> applyEntry() async {
+    try {
+      await _ref.read(isHorizonOsProvider.future);
+    } catch (_) {
+      // Not known: the Quest is told again at the next resume
+    }
+    final offered = _ref.read(djiLinkEnabledProvider) && !_ref.read(djiReceiverOnlyProvider);
+    await _ref.read(djiLiveSettingSyncProvider)(offered);
   }
 
   void _open() {

@@ -1,8 +1,9 @@
 // The DJI live video on a phone (p2/design-ux-phone-2026-10-24.md, section 3): one full screen, landscape, that is
 // the connect screen until the picture comes and the flight screen after. While no picture shows, its middle is one
 // step card; then the drone's picture fills the screen, with Back, Send to a headset and Advanced in the band on its
-// left and the state of the picture and the gated values in the band on its right. Nothing in the picture takes a
-// touch, and the screen stays on for as long as it is in front.
+// left and the state of the picture and the gated values in the band on its right. Nothing in the picture is a control:
+// a tap anywhere only brings the warnings back for five seconds (FreeKC's rule of 25 October: they come and fade,
+// dji_live_transient.dart), and the screen stays on for as long as it is in front.
 //
 // Receive only: the phone never replaces the remote's sticks. The link writes nothing but the one byte probe of the USB
 // transport, and nothing on this screen can move the drone. The safety notice shows once per run of the app, and
@@ -26,6 +27,7 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_live_overlay.widget
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_send.panel.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_stage.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_steps.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_transient.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
@@ -74,6 +76,9 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
   bool _offerable = false;
   bool _pictureKept = false;
 
+  /// A tap on the picture brings the warnings back for five seconds
+  final _recall = DjiTransientRecall();
+
   @override
   void initState() {
     super.initState();
@@ -98,6 +103,7 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
   @override
   void dispose() {
     _ticker?.cancel();
+    _recall.dispose();
     // The relay keeps sending without the screen; only the screen is no longer kept on for it, and nothing beeps
     unawaited(_notifier.setFrameStream(false));
     unawaited(_relay.setLiveScreenShown(false));
@@ -269,39 +275,47 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
       child: Scaffold(
         key: const Key('dji_live'),
         backgroundColor: Colors.black,
-        body: LayoutBuilder(
-          builder: (context, constraints) => Stack(
-            children: [
-              ..._frame(t, constraints.biggest, state, stage, sends, relay),
-              if (panel != null) ...[
-                Positioned.fill(
-                  child: GestureDetector(
-                    key: const Key('dji_live_scrim'),
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => setState(() => _panel = null),
-                    child: const ColoredBox(color: Color(0x66000000)),
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  bottom: 0,
-                  right: 0,
-                  width: constraints.maxWidth < djiLivePanelWidth ? constraints.maxWidth : djiLivePanelWidth,
-                  child: Material(
-                    child: SafeArea(
-                      left: false,
-                      child: switch (panel) {
-                        DjiLivePanel.send => const DjiLiveSendPanel(),
-                        DjiLivePanel.advanced => DjiLiveAdvancedPanel(
-                          onSafety: () => unawaited(_safetyAgain()),
-                          onDiagnostics: () => unawaited(_openDiagnostics()),
-                        ),
-                      },
+        body: DjiTransientScope(
+          recall: _recall,
+          // A tap anywhere brings the warnings back; it goes on to what is under it (a button, a step card's button)
+          child: Listener(
+            behavior: HitTestBehavior.translucent,
+            onPointerDown: (_) => _recall.recall(),
+            child: LayoutBuilder(
+              builder: (context, constraints) => Stack(
+                children: [
+                  ..._frame(t, constraints.biggest, state, stage, sends, relay),
+                  if (panel != null) ...[
+                    Positioned.fill(
+                      child: GestureDetector(
+                        key: const Key('dji_live_scrim'),
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => setState(() => _panel = null),
+                        child: const ColoredBox(color: Color(0x66000000)),
+                      ),
                     ),
-                  ),
-                ),
-              ],
-            ],
+                    Positioned(
+                      top: 0,
+                      bottom: 0,
+                      right: 0,
+                      width: constraints.maxWidth < djiLivePanelWidth ? constraints.maxWidth : djiLivePanelWidth,
+                      child: Material(
+                        child: SafeArea(
+                          left: false,
+                          child: switch (panel) {
+                            DjiLivePanel.send => const DjiLiveSendPanel(),
+                            DjiLivePanel.advanced => DjiLiveAdvancedPanel(
+                              onSafety: () => unawaited(_safetyAgain()),
+                              onDiagnostics: () => unawaited(_openDiagnostics()),
+                            ),
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -361,8 +375,8 @@ class _DjiLivePageState extends ConsumerState<DjiLivePage> {
             fit: StackFit.expand,
             children: [
               _pictureOrCard(stage, state, card, showPicture: showPicture, banded: banded),
-              // The obstacle ring over whatever shows, the picture, "No picture" or a step card: nothing while nothing
-              // is close, and it takes no touch
+              // The obstacle indicator over whatever shows, the picture, "No picture" or a step card: nothing while
+              // nothing is close, and it takes no touch
               const DjiObstacleRing(),
             ],
           ),

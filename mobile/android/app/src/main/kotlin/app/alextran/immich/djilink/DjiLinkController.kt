@@ -159,7 +159,8 @@ class DjiLinkController private constructor(private val context: Context) : Link
 
   /**
    * This device's choices for the ring, from Flutter. On a receiver the phone's record says whether it is offered,
-   * its distances and its side; the sound, the tap and the number stay this device's own.
+   * its distances and its side; the ring on this screen, the sound, the tap, the number and the shape stay this
+   * device's own. Nothing shows until Flutter sent them, when a picture screen opens; Flutter's defaults are on.
    */
   @Volatile
   private var ring = DjiObstacleRingSettings(
@@ -170,6 +171,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
     sound = true,
     haptic = false,
     numbers = false,
+    frame = false,
   )
 
   /** The live screen's activity, whose window taps with the tick; held weakly, the controller outlives it */
@@ -1038,6 +1040,7 @@ class DjiLinkController private constructor(private val context: Context) : Link
       alert = lastDecision,
       delayEstimateMs = delay.estimateMs,
       ringNumbers = ring.numbers,
+      ringFrame = ring.frame,
     )
   }
 

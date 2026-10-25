@@ -1224,8 +1224,8 @@ class DjiObstacleDecision {
 }
 
 /// The ring as this device draws and sounds it. On a phone, all of it is the pilot's choice in Advanced; on a TV or a
-/// headset, whether it is offered, the distances and the side come from the phone's record, and only the sound and the
-/// number are this device's own.
+/// headset, whether the phone offers it, the distances and the side come from the phone's record, and the ring on that
+/// screen, the sound, the number and the shape are this device's own.
 class DjiObstacleRingSettings {
   const DjiObstacleRingSettings({
     required this.offered,
@@ -1235,9 +1235,11 @@ class DjiObstacleRingSettings {
     required this.sound,
     required this.haptic,
     required this.numbers,
+    required this.frame,
   });
 
-  /// The test switch while the data is likely, always once proven
+  /// The switch while the data is likely (on by default), always once proven. On a TV or a headset: the ring on that
+  /// screen, shown only when the phone offers it too
   final bool offered;
 
   /// The arcs on the obstacle's side; false is one even glow
@@ -1255,6 +1257,9 @@ class DjiObstacleRingSettings {
 
   /// The distance by the glow, in the Quest's flight view
   final bool numbers;
+
+  /// The indicator as a frame at the picture's edges, in the Quest's flight view; false is the circle around the centre
+  final bool frame;
 }
 
 /// The values a pilot reads, sent ten times a second while a screen with the picture is in front (flightChanged), and

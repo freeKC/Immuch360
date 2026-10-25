@@ -13,6 +13,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_fields.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_stage.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_transient.dart';
 import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
 
 /// The width of a column drawn over the picture on a screen with no band beside it
@@ -156,7 +157,10 @@ class DjiLiveButtons extends StatelessWidget {
 }
 
 /// The right column: the state of the picture, a capture being played, then the state of the drone. A value whose
-/// group stopped coming leaves its place empty. The obstacle ring is drawn over the picture, never here.
+/// group stopped coming leaves its place empty. The state of the picture ("Live", "Weak picture", "No new picture")
+/// comes for five seconds when it changes and after a tap on the picture, then fades (dji_live_transient.dart): a
+/// picture that stops for good becomes the "No picture" card. The obstacle indicator is drawn over the picture, never
+/// here.
 class DjiLiveReadout extends StatelessWidget {
   const DjiLiveReadout({
     super.key,
@@ -192,18 +196,21 @@ class DjiLiveReadout extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (chip != null)
-          Row(
-            key: Key('dji_live_picture_${picture.name}'),
-            children: [
-              Icon(Icons.circle, size: 10, color: picture == DjiLivePicture.live ? Colors.white : Colors.white54),
-              const SizedBox(width: 6),
-              Flexible(
-                child: Text(
-                  chip,
-                  style: context.textTheme.labelMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+          DjiTransient(
+            kind: picture,
+            child: Row(
+              key: Key('dji_live_picture_${picture.name}'),
+              children: [
+                Icon(Icons.circle, size: 10, color: picture == DjiLivePicture.live ? Colors.white : Colors.white54),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    chip,
+                    style: context.textTheme.labelMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         if (captureName != null) ...[
           const SizedBox(height: 8),

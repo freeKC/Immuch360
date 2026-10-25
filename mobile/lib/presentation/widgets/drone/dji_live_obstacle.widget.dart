@@ -1,10 +1,15 @@
-// The obstacle ring of the DJI live video (p2/design-obstacle-ring-2026-10-25.md, 2 and 4): a translucent glow at the
-// picture's edge on the obstacle's side, like a shooter's damage indicator, or evenly all around while the side is not
-// shown. Nothing at all while nothing is close: no block, no label, no glyph. Front on the top edge, right on the right
-// edge, back on the bottom, left on the left, each edge holding 90 degrees; an arc about 90 degrees wide, fading toward
-// the centre, faint amber at "Glow from", strong red at "Strong glow from". The native side decides the arcs
-// (ObstacleAlert, ObstacleRing) and ticks; this only draws them, the same on the phone, a TV and the Quest's window.
-// Information only: nothing here reaches the remote or the drone, and nothing here takes a touch.
+// The obstacle indicator of the DJI live video (p2/design-obstacle-ring-2026-10-25.md, 2 and 4), in two shapes. By
+// default a circle around the picture's centre, as FreeKC asked on 25 October ("comme dans Fortnite quand on se fait
+// tirer dessus": a shooter's hit indicator is a translucent arc on a circle around the crosshair, pointing toward the
+// shot): a thin ring of radius a quarter of the picture's height, an arc about 70 degrees wide toward the obstacle,
+// front at the top of the circle, right on its right; the even glow (the side not shown) is the whole circle, faint.
+// As a setting, the frame at the picture's edges of the ring lot: front on the top edge, right on the right edge, back
+// on the bottom, left on the left, each edge holding 90 degrees, an arc about 90 degrees wide. Both fade toward the
+// centre, faint amber at "Glow from", strong red at "Strong glow from", with the same fades. Nothing at all while
+// nothing is close: no block, no label, no glyph. The native side decides the arcs (ObstacleAlert, ObstacleRing) and
+// ticks; this only draws them, the same on the phone, a TV and the Quest's window (RingCircle and RingGeometry draw
+// them in the Quest's flight view). Information only: nothing here reaches the remote or the drone, and nothing here
+// takes a touch.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -31,6 +36,109 @@ const djiObstacleRingPieces = 24;
 
 /// The four edges of the picture, clockwise from the top: the front, the right, the back, the left
 enum DjiObstacleEdge { top, right, bottom, left }
+
+/// The circle's radius and its full thickness (a strong arc; a faint one is 60 % of it), parts of the picture's height
+const djiObstacleCircleRadiusPart = 0.25;
+const djiObstacleCircleThicknessPart = 0.045;
+
+/// An arc on the circle weighs nothing this far from its centre, half at half of it: about 70 degrees wide
+const djiObstacleCircleWindowHalfDeg = 45.0;
+
+/// Pieces around the circle, 5 degrees each
+const djiObstacleCirclePieceCount = 72;
+
+/// Where the distance goes with the even glow on the circle, which says no side: low on the left, away from "ahead"
+const djiObstacleCircleEvenNumberDeg = -135.0;
+
+/// The circle's radius in a picture of [size]: a quarter of its height
+double djiObstacleCircleRadius(Size size) => size.height * djiObstacleCircleRadiusPart;
+
+/// The circle's full thickness in a picture of [size], at least 4
+double djiObstacleCircleThickness(Size size) => math.max(4.0, size.height * djiObstacleCircleThicknessPart);
+
+/// The weight of an arc on the circle [offsetDeg] from its centre: 1 there, 0.5 at 22.5 degrees, 0 from 45
+double djiObstacleCircleWindow(double offsetDeg) {
+  final offset = offsetDeg.abs();
+  return offset >= djiObstacleCircleWindowHalfDeg
+      ? 0
+      : 0.5 * (1 + math.cos(math.pi * offset / djiObstacleCircleWindowHalfDeg));
+}
+
+/// The point at [bearingDeg] on a circle of [radius] around [centre]: 0 at the top, 90 on the right
+Offset djiObstacleCirclePoint(double bearingDeg, Offset centre, double radius) {
+  final radians = bearingDeg * math.pi / 180;
+  return centre + Offset(radius * math.sin(radians), -radius * math.cos(radians));
+}
+
+/// One piece of the circle, from [fromDeg] to [toDeg] (bearings, clockwise from the top), and its glow
+class DjiObstacleCirclePiece {
+  const DjiObstacleCirclePiece({
+    required this.fromDeg,
+    required this.toDeg,
+    required this.alpha,
+    required this.colour,
+    required this.thickness,
+  });
+
+  final double fromDeg;
+  final double toDeg;
+  final double alpha;
+  final Color colour;
+  final double thickness;
+}
+
+/// The glow of [arcs] on the circle of a picture of [size], cut in [pieces] pieces: at the middle of each piece the arc
+/// that weighs most gives the alpha (its opacity times its window), the colour and the thickness; where arcs meet the
+/// larger wins, they never add up. An arc with no bearing is the even glow, the whole circle. Pieces with nothing are
+/// left out. The same rules as RingCircle.pieces on the native side, for the Quest's flight view.
+List<DjiObstacleCirclePiece> djiObstacleCirclePieces(
+  Size size,
+  List<DjiObstacleArc> arcs, {
+  int pieces = djiObstacleCirclePieceCount,
+}) {
+  if (arcs.isEmpty || size.isEmpty || pieces <= 0) {
+    return const [];
+  }
+  final full = djiObstacleCircleThickness(size);
+  final step = 360 / pieces;
+  final result = <DjiObstacleCirclePiece>[];
+  for (var index = 0; index < pieces; index++) {
+    final from = -180 + index * step;
+    final middle = from + step / 2;
+    DjiObstacleArc? best;
+    var bestAlpha = 0.0;
+    for (final arc in arcs) {
+      final centre = arc.centreDeg;
+      final weight = centre == null ? 1.0 : djiObstacleCircleWindow(djiObstacleNormalize(middle - centre));
+      final alpha = arc.opacity * weight;
+      if (alpha > bestAlpha) {
+        bestAlpha = alpha;
+        best = arc;
+      }
+    }
+    if (best == null) {
+      continue;
+    }
+    result.add(
+      DjiObstacleCirclePiece(
+        fromDeg: from,
+        toDeg: from + step,
+        alpha: bestAlpha,
+        colour: Color(best.argb),
+        thickness: djiObstacleDepthOf(best.strength, full),
+      ),
+    );
+  }
+  return result;
+}
+
+/// Where the distance goes on the circle: outside it by the nearest arc, past its full thickness by [gap]; with the
+/// even glow, low on the left
+Offset djiObstacleCircleNumberPoint(DjiObstacleArc nearest, Size size, double gap) {
+  final centre = Offset(size.width / 2, size.height / 2);
+  final radius = djiObstacleCircleRadius(size) + djiObstacleCircleThickness(size) / 2 + gap;
+  return djiObstacleCirclePoint(nearest.centreDeg ?? djiObstacleCircleEvenNumberDeg, centre, radius);
+}
 
 /// The side a screen reader names, by the quarter of the nearest arc: ahead is -45 to 45 degrees
 enum DjiObstacleQuarter { ahead, right, behind, left }
@@ -240,8 +348,9 @@ String djiObstacleRingLabel(Translations t, DjiObstacleDecision decision) {
   return within.isEmpty ? side : '$within. $side';
 }
 
-/// The ring over the picture's box, from the decision of the last frame: nothing in the tree while nothing is close.
-/// [tv] takes the TV's depth and number size; [numbersHidden] is OK on a TV, which hides the numbers, never the ring.
+/// The obstacle indicator over the picture's box, from the decision of the last frame: nothing in the tree while
+/// nothing is close. The circle around the centre, or the frame at the edges as this device's setting. [tv] takes the
+/// TV's depth and number size; [numbersHidden] is OK on a TV, which hides the numbers, never the indicator.
 class DjiObstacleRing extends ConsumerStatefulWidget {
   const DjiObstacleRing({super.key, this.tv = false, this.numbersHidden = false});
 
@@ -320,6 +429,8 @@ class _DjiObstacleRingState extends ConsumerState<DjiObstacleRing> with SingleTi
       setState(() {});
     });
     final numbersOn = ref.watch(djiObstacleSettingsProvider.select((settings) => settings.numbersOn));
+    // The circle around the centre by default, the frame at the edges as this device's setting
+    final frame = ref.watch(djiObstacleSettingsProvider.select((settings) => settings.frame));
     final shown = _shown;
     if (shown == null) {
       _labelKey = null;
@@ -340,14 +451,30 @@ class _DjiObstacleRingState extends ConsumerState<DjiObstacleRing> with SingleTi
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final size = constraints.biggest;
-                final depth = djiObstacleRingDepth(size, tv: widget.tv);
-                final strips = djiObstacleRingStrips(size, shown.arcs, depth);
+                final fontSize = widget.tv ? 22.0 : 14.0;
                 final nearest = shown.arcs.first;
-                final number = showNumber ? djiObstacleNumberPoint(nearest, size, depth) : null;
+                final Widget paint;
+                final Offset? number;
+                if (frame) {
+                  final depth = djiObstacleRingDepth(size, tv: widget.tv);
+                  final strips = djiObstacleRingStrips(size, shown.arcs, depth);
+                  paint = CustomPaint(
+                    key: const Key('dji_live_obstacle_frame'),
+                    painter: _DjiObstacleRingPainter(strips),
+                  );
+                  number = showNumber ? djiObstacleNumberPoint(nearest, size, depth) : null;
+                } else {
+                  final pieces = djiObstacleCirclePieces(size, shown.arcs);
+                  paint = CustomPaint(
+                    key: const Key('dji_live_obstacle_circle'),
+                    painter: _DjiObstacleCirclePainter(pieces, djiObstacleCircleRadius(size)),
+                  );
+                  number = showNumber ? djiObstacleCircleNumberPoint(nearest, size, fontSize) : null;
+                }
                 return Stack(
                   fit: StackFit.expand,
                   children: [
-                    CustomPaint(painter: _DjiObstacleRingPainter(strips)),
+                    paint,
                     if (number != null && size.width > 0 && size.height > 0)
                       Align(
                         alignment: Alignment(number.dx / size.width * 2 - 1, number.dy / size.height * 2 - 1),
@@ -358,7 +485,7 @@ class _DjiObstacleRingState extends ConsumerState<DjiObstacleRing> with SingleTi
                           key: const Key('dji_live_obstacle_distance'),
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: widget.tv ? 22 : 14,
+                            fontSize: fontSize,
                             fontWeight: FontWeight.w600,
                             fontFeatures: const [FontFeature.tabularFigures()],
                             shadows: const [Shadow(color: Colors.black54, blurRadius: 6, offset: Offset(0, 1))],
@@ -374,6 +501,51 @@ class _DjiObstacleRingState extends ConsumerState<DjiObstacleRing> with SingleTi
       ),
     );
   }
+}
+
+/// The circle: each piece an annular sector centred on the circle, its glow fading from the outer edge inward as
+/// (1-x)^2, as the frame fades toward the centre
+class _DjiObstacleCirclePainter extends CustomPainter {
+  const _DjiObstacleCirclePainter(this.pieces, this.radius);
+
+  final List<DjiObstacleCirclePiece> pieces;
+  final double radius;
+
+  /// The profile from the inner edge out, as gradient stops
+  static const _fallFromInner = [0.0, 0.0625, 0.25, 0.5625, 1.0];
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final centre = Offset(size.width / 2, size.height / 2);
+    final paint = Paint()..isAntiAlias = true;
+    for (final piece in pieces) {
+      final outer = radius + piece.thickness / 2;
+      final inner = math.max(0.0, radius - piece.thickness / 2);
+      if (outer <= 0) {
+        continue;
+      }
+      // Bearings count from the top, Flutter's angles from the right
+      final start = (piece.fromDeg - 90) * math.pi / 180;
+      final sweep = (piece.toDeg - piece.fromDeg) * math.pi / 180;
+      final path = Path()
+        ..arcTo(Rect.fromCircle(center: centre, radius: outer), start, sweep, true)
+        ..arcTo(Rect.fromCircle(center: centre, radius: inner), start + sweep, -sweep, false)
+        ..close();
+      final first = inner / outer;
+      final last = _fallFromInner.length - 1;
+      paint.shader = ui.Gradient.radial(
+        centre,
+        outer,
+        [for (final fall in _fallFromInner) piece.colour.withValues(alpha: piece.alpha * fall)],
+        [for (var index = 0; index <= last; index++) first + (1 - first) * index / last],
+      );
+      canvas.drawPath(path, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DjiObstacleCirclePainter oldDelegate) =>
+      !identical(oldDelegate.pieces, pieces) || oldDelegate.radius != radius;
 }
 
 class _DjiObstacleRingPainter extends CustomPainter {

@@ -9,6 +9,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
@@ -103,7 +104,11 @@ class DjiLiveAdvancedPanel extends ConsumerWidget {
             title: Text(t.dji_live_open_on_plug),
             subtitle: Text(t.dji_live_open_on_plug_note, style: small),
             value: state.openOnPlug,
-            onChanged: (on) => unawaited(notifier.setOpenOnPlug(on)),
+            onChanged: (on) {
+              unawaited(notifier.setOpenOnPlug(on));
+              // Answered here: the plug step never asks again
+              unawaited(ref.read(djiLiveMemoryProvider).write(StoreKey.djiLiveOfferAnswered, true));
+            },
           ),
         ListTile(
           key: const Key('dji_live_save_capture'),
@@ -200,10 +205,12 @@ String djiObstacleDistanceText(Translations t, int cm) =>
     t.dji_live_obstacle_distance(distance: (cm / 100).toStringAsFixed(cm % 10 == 0 ? 1 : 2));
 
 /// "Obstacle ring" in Advanced (p2/design-obstacle-ring-2026-10-25.md, 6.1): one line while the gate does not offer it;
-/// while its data is likely, a switch off by default that says it is not confirmed; once offered, "Glow from" and
-/// "Strong glow from", the side as its own gate row allows, the sound and its test, the vibration on a phone that has
-/// one, and the distance by the glow. "Show a sample" is always there, refused while the motors run. The lines that say
-/// it only informs and that no glow is not a clear way close the section.
+/// while its data is likely, a switch on by default (FreeKC's rule of 25 October) that says it is not confirmed; once
+/// offered, "Glow from" and "Strong glow from", the side as its own gate row allows (off by default while likely), the
+/// sound and its test, the vibration on a phone that has one, the distance by the glow, and the shape (a circle around
+/// the centre by default, or a frame at the edges). Each says what is on by default. "Show a sample" is always there,
+/// refused while the motors run. The lines that say it only informs and that no glow is not a clear way close the
+/// section.
 class DjiObstacleSection extends ConsumerStatefulWidget {
   const DjiObstacleSection({super.key, this.gates = djiLiveGates});
 
@@ -362,9 +369,11 @@ class _DjiObstacleSectionState extends ConsumerState<DjiObstacleSection> {
               key: const Key('dji_live_obstacle_numbers'),
               contentPadding: EdgeInsets.zero,
               title: Text(t.dji_live_obstacle_numbers),
+              subtitle: Text(t.dji_live_obstacle_numbers_note, style: small),
               value: settings.numbersOn,
               onChanged: (on) => unawaited(notifier.setNumbers(on)),
             ),
+            DjiObstacleShapeChoice(frame: settings.frame, onFrame: (frame) => unawaited(notifier.setFrame(frame))),
           ],
         ],
         const SizedBox(height: 4),
@@ -385,6 +394,46 @@ class _DjiObstacleSectionState extends ConsumerState<DjiObstacleSection> {
         Text(t.dji_live_obstacle_info_only, key: const Key('dji_live_obstacle_info_only'), style: small),
         Text(t.dji_live_obstacle_limits, key: const Key('dji_live_obstacle_limits'), style: small),
       ],
+    );
+  }
+}
+
+/// "Obstacle indicator shape": the circle around the centre (the default) or the frame at the edges
+class DjiObstacleShapeChoice extends StatelessWidget {
+  const DjiObstacleShapeChoice({super.key, required this.frame, required this.onFrame});
+
+  final bool frame;
+  final ValueChanged<bool> onFrame;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    return Padding(
+      key: const Key('dji_live_obstacle_shape'),
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(t.dji_live_obstacle_shape, style: context.textTheme.bodyLarge),
+          Text(t.dji_live_obstacle_shape_note, style: context.textTheme.bodySmall),
+          const SizedBox(height: 6),
+          SegmentedButton<bool>(
+            showSelectedIcon: false,
+            segments: [
+              ButtonSegment(
+                value: false,
+                label: Text(t.dji_live_obstacle_shape_circle, key: const Key('dji_live_obstacle_shape_circle')),
+              ),
+              ButtonSegment(
+                value: true,
+                label: Text(t.dji_live_obstacle_shape_frame, key: const Key('dji_live_obstacle_shape_frame')),
+              ),
+            ],
+            selected: {frame},
+            onSelectionChanged: (selected) => onFrame(selected.first),
+          ),
+        ],
+      ),
     );
   }
 }

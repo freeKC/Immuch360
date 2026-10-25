@@ -63,42 +63,48 @@ const djiObstacleGapCm = 50;
 }
 
 /// What the pilot chose for the obstacle ring (p2/design-obstacle-ring-2026-10-25.md, 6). On a phone, all of it in
-/// Advanced. On a TV or a headset, whether it is offered, the distances and the side come from the phone's record; only
-/// the sound, the number and the sample are their own.
+/// Advanced. On a TV or a headset, whether the phone offers it, the distances and the side come from the phone's
+/// record; the ring on that screen, the sound, the number, the shape and the sample are their own. Every switch is on
+/// by default (FreeKC's rule of 25 October: the app is a lab), but the side, which stays off while our captures only
+/// make it likely and turns on by default once a flight proves it.
 class DjiObstacleSettings {
   const DjiObstacleSettings({
-    this.alertOn = false,
+    this.alertOn = true,
     this.soundOn = true,
     this.farCm = djiObstacleDefaultFarCm,
     this.nearCm = djiObstacleDefaultNearCm,
     this.sideTest = false,
     this.sideOff = false,
-    this.hapticOn = false,
-    this.numbersOn = false,
+    this.hapticOn = true,
+    this.numbersOn = true,
+    this.frame = false,
     this.tv = false,
   });
 
-  /// The test switch, while the ring's data is likely: off by default
+  /// The ring, while its data is likely: on by default. On a TV or a headset, the ring on that screen
   final bool alertOn;
 
-  /// This device's tick: on by default on a phone and a headset, off on a TV
+  /// This device's tick: on by default, on a TV too
   final bool soundOn;
   final int farCm;
   final int nearCm;
 
-  /// "Show the side, not confirmed yet": off by default
+  /// "Show the side, not confirmed yet": off by default while the side is likely
   final bool sideTest;
 
   /// "Show the side" turned off once the side is proven
   final bool sideOff;
 
-  /// "Vibrate with the tick", on a phone: off by default
+  /// "Vibrate with the tick", on a phone: on by default
   final bool hapticOn;
 
-  /// "Show the distance by the glow": off by default
+  /// "Show the distance by the glow": on by default
   final bool numbersOn;
 
-  /// This device is a TV: its sound is kept apart, off by default
+  /// The indicator as a frame at the picture's edges; a circle around the centre by default
+  final bool frame;
+
+  /// This device is a TV: it never vibrates
   final bool tv;
 
   double get farM => farCm / 100;
@@ -128,6 +134,7 @@ class DjiObstacleSettings {
     bool? sideOff,
     bool? hapticOn,
     bool? numbersOn,
+    bool? frame,
   }) => DjiObstacleSettings(
     alertOn: alertOn ?? this.alertOn,
     soundOn: soundOn ?? this.soundOn,
@@ -137,6 +144,7 @@ class DjiObstacleSettings {
     sideOff: sideOff ?? this.sideOff,
     hapticOn: hapticOn ?? this.hapticOn,
     numbersOn: numbersOn ?? this.numbersOn,
+    frame: frame ?? this.frame,
     tv: tv,
   );
 }
@@ -150,15 +158,17 @@ class DjiObstacleSettingsNotifier extends Notifier<DjiObstacleSettings> {
       memory.readInt(StoreKey.djiObstacleFarCm) ?? djiObstacleDefaultFarCm,
       memory.readInt(StoreKey.djiObstacleNearCm) ?? djiObstacleDefaultNearCm,
     );
+    // Each switch is kept as "turned off", so that a switch never touched is on
     return DjiObstacleSettings(
-      alertOn: memory.read(StoreKey.djiObstacleAlertOn),
-      soundOn: tv ? memory.read(StoreKey.djiObstacleTvSoundOn) : !memory.read(StoreKey.djiObstacleSoundOff),
+      alertOn: !memory.read(StoreKey.djiObstacleRingOff),
+      soundOn: !memory.read(StoreKey.djiObstacleSoundOff),
       farCm: far,
       nearCm: near,
       sideTest: memory.read(StoreKey.djiObstacleSideTest),
       sideOff: memory.read(StoreKey.djiObstacleSideOff),
-      hapticOn: memory.read(StoreKey.djiObstacleHapticOn),
-      numbersOn: memory.read(StoreKey.djiObstacleNumbersOn),
+      hapticOn: !memory.read(StoreKey.djiObstacleHapticOff),
+      numbersOn: !memory.read(StoreKey.djiObstacleNumbersOff),
+      frame: memory.read(StoreKey.djiObstacleShapeFrame),
       tv: tv,
     );
   }
@@ -167,17 +177,13 @@ class DjiObstacleSettingsNotifier extends Notifier<DjiObstacleSettings> {
 
   Future<void> setAlert(bool on) async {
     state = state.copyWith(alertOn: on);
-    await _memory.write(StoreKey.djiObstacleAlertOn, on);
+    await _memory.write(StoreKey.djiObstacleRingOff, !on);
     await sync();
   }
 
   Future<void> setSound(bool on) async {
     state = state.copyWith(soundOn: on);
-    if (state.tv) {
-      await _memory.write(StoreKey.djiObstacleTvSoundOn, on);
-    } else {
-      await _memory.write(StoreKey.djiObstacleSoundOff, !on);
-    }
+    await _memory.write(StoreKey.djiObstacleSoundOff, !on);
     await sync();
   }
 
@@ -214,13 +220,20 @@ class DjiObstacleSettingsNotifier extends Notifier<DjiObstacleSettings> {
 
   Future<void> setHaptic(bool on) async {
     state = state.copyWith(hapticOn: on);
-    await _memory.write(StoreKey.djiObstacleHapticOn, on);
+    await _memory.write(StoreKey.djiObstacleHapticOff, !on);
     await sync();
   }
 
   Future<void> setNumbers(bool on) async {
     state = state.copyWith(numbersOn: on);
-    await _memory.write(StoreKey.djiObstacleNumbersOn, on);
+    await _memory.write(StoreKey.djiObstacleNumbersOff, !on);
+    await sync();
+  }
+
+  /// "Obstacle indicator shape": a frame at the picture's edges, or the circle around the centre (the default)
+  Future<void> setFrame(bool frame) async {
+    state = state.copyWith(frame: frame);
+    await _memory.write(StoreKey.djiObstacleShapeFrame, frame);
     await sync();
   }
 
@@ -240,6 +253,7 @@ class DjiObstacleSettingsNotifier extends Notifier<DjiObstacleSettings> {
               sound: settings.soundOn,
               haptic: settings.hapticOn && !settings.tv,
               numbers: settings.numbersOn,
+              frame: settings.frame,
             ),
           );
     } catch (error) {
@@ -293,14 +307,15 @@ final djiObstacleSettingsProvider = NotifierProvider<DjiObstacleSettingsNotifier
 );
 
 /// A headset's choice in Options (review-relay-2026-10-25 M4): the lowest delay behind the phone, with less smoothing
-/// of the Wi-Fi. Off by default; a TV keeps its own buffer whatever it says.
+/// of the Wi-Fi. On by default, as every experimental switch (FreeKC's rule of 25 October); a TV keeps its own buffer
+/// whatever it says.
 class DjiLowestDelayNotifier extends Notifier<bool> {
   @override
-  bool build() => ref.watch(djiLiveMemoryProvider).read(StoreKey.djiHeadsetLowestDelay);
+  bool build() => !ref.watch(djiLiveMemoryProvider).read(StoreKey.djiHeadsetLowestDelayOff);
 
   Future<void> set(bool on) async {
     state = on;
-    await ref.read(djiLiveMemoryProvider).write(StoreKey.djiHeadsetLowestDelay, on);
+    await ref.read(djiLiveMemoryProvider).write(StoreKey.djiHeadsetLowestDelayOff, !on);
     await sync();
   }
 

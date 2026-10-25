@@ -52,13 +52,13 @@ class AdvancedSettings extends HookConsumerWidget {
     );
     // The DJI live video: a DJI remote controller plugged in as a USB accessory, on Android phones, and a phone's
     // relay watched in the headset and on a TV. The native side is told too: with the setting off, plugging the remote
-    // never opens the app.
+    // never opens the app; a TV and the Quest only watch, and never open it either.
     final djiLinkSupported = ref.watch(djiLinkSupportedProvider);
     final television = ref.watch(tvDeviceProvider).isTelevision;
     final djiLink = useState(ref.watch(appConfigProvider).djiLinkEnabled);
     useValueChanged<bool, void>(djiLink.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.djiLinkEnabled, djiLink.value));
-      unawaited(ref.read(djiLiveSettingSyncProvider)(djiLink.value));
+      unawaited(ref.read(djiLiveSettingSyncProvider)(djiLink.value && !ref.read(djiReceiverOnlyProvider)));
     });
 
     final logLevel = Level.LEVELS[levelId.value].name;

@@ -1,7 +1,8 @@
 // The DJI live video on a headset (p2/design-ux-phone-2026-10-24.md, section 6): the phones that send the drone's
 // picture on this network, one tap to watch one, its code asked once in a dialog, then the picture in the window and
 // the flight view of stage 2b. The page connects by itself to the last phone it received from, once per opening. The
-// observer rule and "Watching only" are on top at all times and on the picture; nothing on the headset reaches the
+// observer rule and "Watching only" show on top and on the picture for five seconds, then fade, and come back with a
+// tap anywhere on the page (FreeKC's rule of 25 October, dji_live_transient.dart); nothing on the headset reaches the
 // remote or the drone.
 //
 // On Android TV and Google TV (p2/design-tv-2026-10-24.md) the same page, with the same session logic, is drawn for the
@@ -29,6 +30,7 @@ import 'package:immich_mobile/presentation/widgets/drone/dji_live_advanced.panel
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_fields.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_notice.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_obstacle.widget.dart';
+import 'package:immich_mobile/presentation/widgets/drone/dji_live_transient.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_watch_tv.widget.dart';
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_live_frame.provider.dart';
@@ -146,6 +148,9 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
   /// The code dialog is open: a refused code does not open a second one
   bool _asking = false;
 
+  /// A tap anywhere on the page brings the warnings back for five seconds
+  final _recall = DjiTransientRecall();
+
   /// A TV, or the remote control layout: the TV's own code, its tries, the app going to the background and the screen
   /// saver. A television keeps it with the layout turned off, as its Drone card, its setting and its hello do.
   late final bool _tv;
@@ -212,6 +217,7 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     // Receiving stops with the page, as the link does
     unawaited(_notifier.pageHidden());
     _address.dispose();
+    _recall.dispose();
     super.dispose();
   }
 
@@ -411,8 +417,12 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     switch (choice) {
       case 'record':
         await _saveRecord();
+      case 'ring':
+        await obstacle.setAlert(!settings.alertOn);
       case 'sound':
         await obstacle.setSound(!settings.soundOn);
+      case 'shape':
+        await obstacle.setFrame(!settings.frame);
       case 'lowestDelay':
         final delay = ref.read(djiLowestDelayProvider.notifier);
         await delay.set(!ref.read(djiLowestDelayProvider));
@@ -487,7 +497,7 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
     final offer = djiObstacleOffer();
     final phones = _phones(t, relay);
     final picture = _picture(t, relay, snapshot, horizonOs: horizonOs);
-    return Scaffold(
+    final page = Scaffold(
       key: const Key('dji_watch'),
       appBar: AppBar(
         title: Text(t.dji_live_title),
@@ -504,8 +514,16 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
                 value: 'record',
                 child: Text(t.dji_live_watch_save_record),
               ),
-              // The ring's own items of this headset: whether it shows, its distances and its side come from the phone
+              // The ring's own items of this headset, each on by default: whether the phone offers it, its distances and
+              // its side come from the phone; this headset can only turn it off in its own window and flight view
               if (offer != DjiObstacleOffer.none) ...[
+                if (offer == DjiObstacleOffer.test)
+                  CheckedPopupMenuItem(
+                    key: const Key('dji_watch_obstacle_here'),
+                    value: 'ring',
+                    checked: obstacle.alertOn,
+                    child: Text(t.dji_live_obstacle_here),
+                  ),
                 CheckedPopupMenuItem(
                   key: const Key('dji_watch_obstacle_sound'),
                   value: 'sound',
@@ -522,6 +540,15 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
                   value: 'ringNumbers',
                   checked: obstacle.numbersOn,
                   child: Text(t.dji_live_obstacle_numbers),
+                ),
+                PopupMenuItem(
+                  key: const Key('dji_watch_obstacle_shape'),
+                  value: 'shape',
+                  child: Text(
+                    t.dji_live_obstacle_shape_now(
+                      shape: obstacle.frame ? t.dji_live_obstacle_shape_frame : t.dji_live_obstacle_shape_circle,
+                    ),
+                  ),
                 ),
                 PopupMenuItem(
                   key: const Key('dji_watch_obstacle_sample'),
@@ -547,7 +574,7 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
           if (wide) {
             return Column(
               children: [
-                const DjiLinkObserverNote(),
+                const DjiLinkObserverNote(transient: true),
                 Expanded(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -562,13 +589,18 @@ class _DjiWatchPageState extends ConsumerState<DjiWatchPage> with WidgetsBinding
           }
           return ListView(
             children: [
-              const DjiLinkObserverNote(),
+              const DjiLinkObserverNote(transient: true),
               Padding(padding: const EdgeInsets.all(16), child: picture),
               Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: phones),
             ],
           );
         },
       ),
+    );
+    // A tap anywhere brings the warnings back; the tap itself goes on to what is under it
+    return DjiTransientScope(
+      recall: _recall,
+      child: Listener(behavior: HitTestBehavior.translucent, onPointerDown: (_) => _recall.recall(), child: page),
     );
   }
 
