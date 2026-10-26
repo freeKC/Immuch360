@@ -710,6 +710,26 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
       await dialog.close();
     });
 
+    test('a folder that failed otherwise: the chosen folder, and the words of the system kept', () async {
+      final photos = folder('Photos');
+      files.failures[photos.path] = OSError('Input/output error', Platform.isWindows ? 1117 : 5);
+      final dialog = session([DestinationJob(id: 'j1', original: local(photos, 'a.jpg'))]);
+
+      await dialog.open();
+
+      final plan = dialog.destinations['j1']!;
+      expect(plan.folder, downloads);
+      expect(plan.reason, DestinationReason.writeFailed);
+      expect(plan.message, 'Write refused: Input/output error');
+      expect(
+        destinationReasonText(StaticTranslations.instance, plan.reason, message: plan.message),
+        'The 3D photo could not be written: Write refused: Input/output error',
+      );
+      expect(dialog.checkOf('j1')!.status, ProbeStatus.ready);
+      expect((await store().read()).rootFallbacks, isEmpty);
+      await dialog.close();
+    });
+
     test('a full disk next to the original: the chosen folder with "Disk full", not kept for the root', () async {
       final photos = folder('Photos');
       files.failures[photos.path] = OSError('No space left', Platform.isWindows ? 112 : 28);

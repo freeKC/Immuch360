@@ -280,6 +280,7 @@ class PlannedDestination {
     required this.folder,
     required this.isNetwork,
     this.reason,
+    this.message,
     this.consentKey,
     this.consentFolder,
     this.rootKey,
@@ -298,6 +299,10 @@ class PlannedDestination {
 
   /// Why the 3D photo does not go next to its original; null when it does, or when the settings say a chosen folder
   final DestinationReason? reason;
+
+  /// The words of the system when the folder of the original failed its check, for destinationReasonText: the check
+  /// of [folder] is then that of the chosen folder
+  final String? message;
 
   /// The root or volume a "Yes, for this network folder" covers, while that yes is not given
   final String? consentKey;
@@ -420,6 +425,7 @@ class DestinationPlanner {
   PlannedDestination chosen({
     String? folder,
     DestinationReason? reason,
+    String? message,
     String? rootKey,
     bool cloudDownload = false,
     bool shareHint = false,
@@ -430,18 +436,21 @@ class DestinationPlanner {
       folder: target,
       isNetwork: _isNetworkFolder(target),
       reason: reason,
+      message: message,
       rootKey: rootKey,
       cloudDownload: cloudDownload,
       shareHint: shareHint,
     );
   }
 
-  /// [planned], which cannot go next to its original for [reason], in the chosen folder
-  PlannedDestination fallBack(PlannedDestination planned, DestinationReason reason) {
+  /// [planned], which cannot go next to its original for [reason] (with the [message] of the system), in the chosen
+  /// folder
+  PlannedDestination fallBack(PlannedDestination planned, DestinationReason reason, {String? message}) {
     final key = planned.rootKey;
     return chosen(
       folder: key == null ? null : keptFallbackFor(settings.rootFallbacks, key),
       reason: reason,
+      message: message,
       rootKey: key,
       cloudDownload: planned.cloudDownload,
       shareHint: planned.shareHint,
@@ -600,7 +609,7 @@ class DestinationSession {
     if (plan.kind == DestinationKind.nextToOriginal) {
       final result = _probe.resultOf(plan.folder);
       if (result != null && !result.accepted) {
-        return planner.fallBack(plan, _reasonOf(result.status));
+        return planner.fallBack(plan, _reasonOf(result.status), message: result.message);
       }
     }
     return plan;
