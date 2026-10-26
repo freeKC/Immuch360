@@ -318,12 +318,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       if (job.existing != ExistingVersionChoice.newVersion) {
         // Skip looks wherever the index knows a version; Replace only in the destination folder, where the new 3D
         // photo goes and was checked: a version elsewhere stays, and the new one is written beside the others
-        same = await tools.finder.withSettings(
-          DerivedRuleOriginal(name: source.name, size: source.size, folder: job.source.folder, sha1: source.sha1),
-          versionSettingsKey(depthModelSha256: tools.depthModelSha256, quarterTurns: job.quarterTurns),
-          folder: target.folder,
-          onlyInFolder: job.existing == ExistingVersionChoice.replace,
-        );
+        same = await _sameSettings(tools, job, source, target);
         if (same != null && job.existing == ExistingVersionChoice.skip) {
           final path = same.path;
           _set(
@@ -429,6 +424,27 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       }
       _flags.remove(id);
       cancel.free();
+    }
+  }
+
+  /// The version of the original of [job] with its settings, null when there is none. A search that fails (the index
+  /// closed, a drive gone to sleep) finds none: the original is fine, so the photo is converted, never failed for it.
+  Future<ExistingVersion?> _sameSettings(
+    ConversionTools tools,
+    ConversionJob job,
+    ImmersiveSource source,
+    ConversionTarget target,
+  ) async {
+    try {
+      return await tools.finder.withSettings(
+        DerivedRuleOriginal(name: source.name, size: source.size, folder: job.source.folder, sha1: source.sha1),
+        versionSettingsKey(depthModelSha256: tools.depthModelSha256, quarterTurns: job.quarterTurns),
+        folder: target.folder,
+        onlyInFolder: job.existing == ExistingVersionChoice.replace,
+      );
+    } catch (error, stack) {
+      _log.warning('The versions of ${job.source.name} could not be looked up', error, stack);
+      return null;
     }
   }
 

@@ -18,14 +18,21 @@ const _size = 4182311;
 
 /// The index of the library as lot A6a fills it: the paths of the files whose XMP names an original, by its sum
 class _Index implements DerivedVersionIndex {
-  _Index(this.paths);
+  _Index(this.paths, {this.error});
 
   final Map<String, List<String>> paths;
+
+  /// Thrown by each question: the database closed
+  final Error? error;
   final asked = <String>[];
 
   @override
   Future<List<String>> versionPathsOf(String sourceSha1) async {
     asked.add(sourceSha1);
+    final failure = error;
+    if (failure != null) {
+      throw failure;
+    }
     return paths[sourceSha1] ?? const [];
   }
 }
@@ -146,6 +153,16 @@ void main() {
         here,
       );
       expect((await finder(index: index).withSettings(original, sameSettings, folder: photos))?.path, moved);
+    });
+
+    test('an index that fails is passed over: the neighbours still tell', () async {
+      final neighbour = version(photos, 'salon_3D_LRF_Full_SBS.jpg');
+      final index = _Index(const {}, error: StateError('The database is closed'));
+
+      final found = await finder(index: index).versionsOf(original, folder: photos).toList();
+
+      expect(found.map((version) => version.path), [neighbour]);
+      expect(index.asked, [_sum]);
     });
 
     test('a file the index still lists but that is gone, changed or made from another photo is no version', () async {

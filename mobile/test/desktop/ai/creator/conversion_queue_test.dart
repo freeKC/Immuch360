@@ -126,8 +126,17 @@ class _Output implements ConversionOutput {
 class _Index implements DerivedVersionIndex {
   final paths = <String, List<String>>{};
 
+  /// Thrown by each question: the database closed
+  Error? error;
+
   @override
-  Future<List<String>> versionPathsOf(String sourceSha1) async => paths[sourceSha1] ?? const [];
+  Future<List<String>> versionPathsOf(String sourceSha1) async {
+    final failure = error;
+    if (failure != null) {
+      throw failure;
+    }
+    return paths[sourceSha1] ?? const [];
+  }
 }
 
 String _sumOf(List<int> bytes) => base64.encode(crypto.sha1.convert(bytes).bytes);
@@ -141,6 +150,7 @@ void main() {
   late _Engines engines;
   late _Output output;
   late _Index index;
+  late Future<List<String>> Function(String folder) listFolder;
   late ProviderContainer container;
   late int derivatives;
 
@@ -151,6 +161,7 @@ void main() {
     engines = _Engines();
     output = _Output();
     index = _Index();
+    listFolder = listFileNames;
     derivatives = 0;
     container = ProviderContainer(
       overrides: [
@@ -158,7 +169,7 @@ void main() {
           ConversionTools(
             engine: engines,
             output: output,
-            finder: ExistingVersionFinder(index: index),
+            finder: ExistingVersionFinder(index: index, listFolder: (folder) => listFolder(folder)),
             creatorTool: 'Immuch360 Desktop 3.3.0 (linux)',
             software: 'Immuch360 Desktop 3.3.0',
             now: () => DateTime(2026, 10, 27, 10, 12),
@@ -491,6 +502,25 @@ void main() {
       expect(job(id).state, ConversionState.skipped);
       expect(job(id).existingVersionPath, moved);
       expect(engines.ran, isEmpty);
+    });
+
+    test('an index that fails leaves the neighbours to tell, and a search that fails never fails the photo', () async {
+      index.error = StateError('The database is closed');
+      final first = photo('salon.jpg');
+      final existing = version(p.join(photos, 'salon.jpg'), 'salon_3D_LRF_Full_SBS.jpg');
+      final skipped = queue().add([first]).single;
+      await allEnded();
+
+      expect(job(skipped).state, ConversionState.skipped);
+      expect(job(skipped).existingVersionPath, existing);
+
+      listFolder = (folder) async => throw StateError('The drive went to sleep');
+      final converted = queue().add([photo('plage.jpg')]).single;
+      await allEnded();
+
+      expect(job(converted).state, ConversionState.done);
+      expect(job(converted).error, isNull);
+      expect(engines.ran, ['plage.jpg']);
     });
 
     test(

@@ -11,7 +11,10 @@ import 'dart:typed_data';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
+
+final _log = Logger('ExistingVersionFinder');
 
 /// The head of a file read to find its XMP, as the readers of GPano do
 const versionHeadBytes = 128 * 1024;
@@ -94,7 +97,14 @@ class ExistingVersionFinder {
     final known = index;
     final inFolder = folder == null ? null : p.canonicalize(folder);
     if (known != null && sum != null && sum.isNotEmpty) {
-      for (final path in await known.versionPathsOf(sum)) {
+      var paths = const <String>[];
+      try {
+        paths = await known.versionPathsOf(sum);
+      } catch (error, stack) {
+        // The index closed or busy: the neighbours still tell
+        _log.warning('The library index could not give the versions of ${original.name}', error, stack);
+      }
+      for (final path in paths) {
         if (onlyInFolder && p.canonicalize(p.dirname(path)) != inFolder) {
           continue;
         }
