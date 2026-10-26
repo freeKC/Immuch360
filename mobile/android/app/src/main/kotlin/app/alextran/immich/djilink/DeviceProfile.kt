@@ -196,33 +196,20 @@ class ProfileRegistry(seed: List<DeviceProfile> = starting) {
         Capability.TELEMETRY_RECEIVE to observed20261023("21,860 control frames, every checksum verified"),
       )
 
-    /** Accessory model strings the format notes list (p2/protocol.md, section 2.2), as identity strings only */
-    val KNOWN_MODELS = listOf("com.dji.logiclink", "WM160", "com.dji.link")
+    /** The accessory model string our own RC-N3 presented in our capture of 23 October 2026, an identity string only */
+    val KNOWN_MODELS = listOf("com.dji.logiclink")
     const val MANUFACTURER = "DJI"
     const val RC_N3_NEO2 = "rc-n3-neo2"
 
     val starting: List<DeviceProfile> = listOf(
-      // The three accessory identity strings the format notes list. They are identity strings and nothing maps one of
-      // them to a product, so each is its own profile with its label saying exactly that.
+      // The accessory identity string our own RC-N3 presented in our capture of 23 October 2026. It is an identity
+      // string and nothing maps it to a product, so it is its own profile with its label saying exactly that. Any other
+      // model string becomes a profile of its own when it is read.
       DeviceProfile(
         id = "model-logiclink",
         label = "DJI accessory with the model string com.dji.logiclink",
         accessoryManufacturer = MANUFACTURER,
         accessoryModel = "com.dji.logiclink",
-        note = "an identity string, not a product name; no product is claimed for it",
-      ),
-      DeviceProfile(
-        id = "model-wm160",
-        label = "DJI accessory with the model string WM160",
-        accessoryManufacturer = MANUFACTURER,
-        accessoryModel = "WM160",
-        note = "an identity string, not a product name; no product is claimed for it",
-      ),
-      DeviceProfile(
-        id = "model-link",
-        label = "DJI accessory with the model string com.dji.link",
-        accessoryManufacturer = MANUFACTURER,
-        accessoryModel = "com.dji.link",
         note = "an identity string, not a product name; no product is claimed for it",
       ),
       DeviceProfile(
