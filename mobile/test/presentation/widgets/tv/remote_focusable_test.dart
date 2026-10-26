@@ -128,5 +128,46 @@ void main() {
 
       expect(FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<ListTile>(), isNull);
     });
+
+    testWidgets('under a dialog it waits, and focuses the top item once its page is on top again', (tester) async {
+      await tester.pumpWidget(const MaterialApp(home: Scaffold(body: Text('home'))));
+      final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+      // The page and, before its first frame, a dialog over it
+      navigator
+          .push(
+            MaterialPageRoute<void>(
+              builder: (_) => Scaffold(
+                body: RemoteInitialFocus(
+                  child: TextButton(onPressed: () {}, child: const Text('first item')),
+                ),
+              ),
+            ),
+          )
+          .ignore();
+      navigator
+          .push(
+            DialogRoute<void>(
+              context: navigator.context,
+              builder: (_) => AlertDialog(
+                content: TextButton(onPressed: navigator.pop, child: const Text('close')),
+              ),
+            ),
+          )
+          .ignore();
+      await tester.pumpAndSettle();
+
+      final dialog = tester.element(find.byType(AlertDialog));
+      final focused = FocusManager.instance.primaryFocus!;
+      expect(
+        focused.ancestors.contains(FocusScope.of(dialog)) || identical(focused, FocusScope.of(dialog)),
+        isTrue,
+        reason: 'the dialog keeps the focus',
+      );
+
+      navigator.pop();
+      await tester.pumpAndSettle();
+
+      expect(Focus.of(tester.element(find.text('first item'))).hasPrimaryFocus, isTrue);
+    });
   });
 }
