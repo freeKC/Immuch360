@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
+import 'package:immich_mobile/domain/services/local_panorama.service.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 
 import '../../desktop/ai/fakes/fake_immersive_engine.dart';
 import '../../test_utils/heif_builder.dart';
@@ -118,6 +120,25 @@ void main() {
 
       expect(found?.isOurs, isTrue);
       expect(found?.eyes, StereoEyes.full);
+    });
+
+    test('nor does the 360° scan of the device make it a sphere: no GPano, no camera in its EXIF', () async {
+      final file = jpegFile(
+        width: 8000,
+        height: 4000,
+        xmp: ourXmp(eyeWidth: 4000, eyeHeight: 4000, sourceName: 'DJI_0001.JPG'),
+      );
+      const name = 'DJI_0001_3D_LRF_Full_SBS.jpg';
+      expect(isEquirectCameraPhoto(name: name, width: 8000, height: 4000), isFalse);
+
+      final scanned = await probeLocalPanoramaPhoto(
+        RecordingReader(file).call,
+        file.length,
+        name: name,
+        width: 8000,
+        height: 4000,
+      );
+      expect(scanned.isPanorama, isFalse);
     });
 
     test('a FormatVersion 2 file is shown flat, made by a newer version', () async {
