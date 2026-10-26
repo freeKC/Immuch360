@@ -666,7 +666,9 @@ class _Scan {
       origin: switch (xmp?.origin) {
         ImmersiveOrigin.estimatedDepth => IndexedOrigin.estimated,
         ImmersiveOrigin.generatedContent => IndexedOrigin.generated,
-        ImmersiveOrigin.unknown || null => null,
+        // An Origin this build does not know (a later format): the id of the file still says the app made it
+        _ when xmp?.derivativeId?.isNotEmpty ?? false => IndexedOrigin.other,
+        _ => null,
       },
       sourceSha1: xmp?.sourceSha1,
       derivativeId: xmp?.derivativeId,

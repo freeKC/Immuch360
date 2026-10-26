@@ -114,6 +114,36 @@ void main() {
       expect(index.file(fixture.ids.file(rootId, 'half.jpg'))!.stereo, IndexedStereo.sbsHalf);
     });
 
+    test('a file the app made is in the album whatever its Origin says, as long as it has our id', () async {
+      String withOrigin(String origin) =>
+          versionXmp(original).toXml().replaceFirst('Immuch360:Origin="EstimatedDepth"', 'Immuch360:Origin="$origin"');
+      // A later format, the "two views" variant of a newer computer for example
+      final later = withOrigin('TwoViews');
+      fixture
+        ..write('Photos/generated.jpg', jpegBytes(width: 16, height: 6, xmp: withOrigin('GeneratedContent')))
+        ..write('Photos/later.jpg', jpegBytes(width: 16, height: 6, xmp: later))
+        ..write(
+          'Photos/no_id.jpg',
+          jpegBytes(width: 16, height: 6, xmp: later.replaceFirst(RegExp('Immuch360:DerivativeId="[^"]*"'), '')),
+        );
+      await fixture.scan();
+      final index = fixture.index();
+      IndexedFile file(String name) => index.file(fixture.ids.file(rootId, name))!;
+
+      expect((file('generated.jpg').origin, file('generated.jpg').isGenerated), (IndexedOrigin.generated, true));
+      expect(
+        (file('later.jpg').origin, file('later.jpg').isGenerated, file('later.jpg').sourceSha1),
+        (IndexedOrigin.other, true, sha1Base64(original)),
+      );
+      expect((file('no_id.jpg').origin, file('no_id.jpg').isGenerated), (null, false));
+      expect(
+        index.generatedFileIds(),
+        unorderedEquals([
+          for (final name in ['salon_3D_LRF_Full_SBS.jpg', 'generated.jpg', 'later.jpg']) file(name).id,
+        ]),
+      );
+    });
+
     test('a version rewritten without its XMP becomes a plain photo, in the next delta', () async {
       await fixture.scan();
       final index = fixture.index();

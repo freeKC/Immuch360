@@ -51,6 +51,10 @@ enum IndexedOrigin {
 
   /// Reserved, as Immuch360:Origin "GeneratedContent" is: a panorama that was invented
   generated,
+
+  /// Our XMP with an Origin this build does not know, from a later format, and the id of a file the app made: a
+  /// version all the same, linked and kept out of the backup
+  other,
 }
 
 T? _byName<T extends Enum>(List<T> values, Object? name) => values.where((value) => value.name == name).firstOrNull;
