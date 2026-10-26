@@ -1474,6 +1474,8 @@ class RelayTranscoder(
       put("bitrateMaxKbps", bitrateMax?.div(1000))
       put("bitrateChanges", bitrateChanges)
       put("keysPeriodic", keys.keysPeriodic)
+      // The first key of each encoder no request waited for, apart from its periodic ones
+      put("keysFirst", keys.keysFirst)
       put("keysAsked", keys.keysAsked)
       put("keyRequests", buildJsonObject { keys.byCause.forEach { (cause, count) -> put(cause.wire, count) } })
       put("keyRequestsSent", keys.sent)

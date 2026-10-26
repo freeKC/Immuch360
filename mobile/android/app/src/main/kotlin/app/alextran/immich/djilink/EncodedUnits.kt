@@ -204,8 +204,14 @@ class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val per
   var sent = 0L
     private set
 
-  /** Key pictures out of the encoder that were asked, and the others (its own period, its first) */
+  /**
+   * Key pictures out of the encoder: those asked, the first of each encoder that no request waited for (an encoder made
+   * again at a drone key with new sets or after an error: p2/noon-test-check-2026-10-26.md R4), and the others, its own
+   * period
+   */
   var keysAsked = 0L
+    private set
+  var keysFirst = 0L
     private set
   var keysPeriodic = 0L
     private set
@@ -281,8 +287,12 @@ class RelayKeyRequests(private val spacingNs: Long = SPACING_NS, private val per
     val wasAsked = asked != null && (previous == null || asked > previous)
     lastKeyNs = nowNs
     waitingPeriodic = false
+    when {
+      wasAsked -> keysAsked += 1
+      firstPending -> keysFirst += 1
+      else -> keysPeriodic += 1
+    }
     firstPending = false
-    if (wasAsked) keysAsked += 1 else keysPeriodic += 1
     return wasAsked
   }
 

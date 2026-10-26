@@ -880,6 +880,8 @@ class RelayTranscoderStateTest {
     // Asked for the period with its own cause, and answered: every key but the encoder's first
     assertEquals(keyTimes.size - 1L, asked)
     assertEquals(keyTimes.size - 1L, report["keysAsked"]!!.jsonPrimitive.long)
+    assertEquals(1L, report["keysFirst"]!!.jsonPrimitive.long)
+    assertEquals(0L, report["keysPeriodic"]!!.jsonPrimitive.long)
   }
 
   /** At 30 a second the encoder's own period is 2 s: nothing is asked, no key twice */
@@ -891,6 +893,38 @@ class RelayTranscoderStateTest {
     val report = core.report(now)!!
     assertEquals(0L, report["keyRequests"]!!.jsonObject["period"]!!.jsonPrimitive.long)
     assertEquals(0L, report["keysAsked"]!!.jsonPrimitive.long)
+    assertEquals(1L, report["keysFirst"]!!.jsonPrimitive.long)
+    assertEquals(keyTimes.size - 1L, report["keysPeriodic"]!!.jsonPrimitive.long)
+  }
+
+  /**
+   * p2/noon-test-check-2026-10-26.md R4 (item 7): the first key of an encoder made again at a drone key with new sets
+   * is counted apart, not as one of the encoder's periodic keys
+   */
+  @Test
+  fun theFirstKeyOfEachEncoderIsCountedApartFromItsPeriodicOnes() {
+    val (decoder, _) = steady()
+    now += 20 * ms
+    step(1, decoder)
+    repeat(5) {
+      now += 50 * ms / 3
+      step(2 + it, decoder)
+    }
+    // The drone's encoder restarts with new sets: decoder 2 and the encoder are made again, its first output a key
+    val other = ResolvedDescription(EncodedUnits.descriptionOf(encoded("a1080", 0))!!, DescriptionSource.SESSION)
+    now += 50 * ms / 3
+    core.offer(droneUnit(10, key = true), other)
+    assertEquals(2, codecs.encoders.size)
+    for (input in codecs.decoders.last().pull(now)) {
+      if (core.onDecoded(input.ptsUs, now)) {
+        core.onDrawn(input.ptsUs, now)
+        core.onEncoded(encoded("a1080", 0), input.ptsUs, config = false, key = true, nowNs = now + 15 * ms)
+      }
+    }
+    val report = core.report(now)!!
+    assertEquals(0L, report["keysPeriodic"]!!.jsonPrimitive.long)
+    assertEquals(0L, report["keysAsked"]!!.jsonPrimitive.long)
+    assertEquals(2L, report["keysFirst"]!!.jsonPrimitive.long)
   }
 
   private fun kotlinx.serialization.json.JsonPrimitive.contentOrNullSafe(): String? = if (isString) content else null
