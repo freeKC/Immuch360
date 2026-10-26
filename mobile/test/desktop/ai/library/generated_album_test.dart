@@ -1,0 +1,345 @@
+// The album of the 3D photos the app makes, with the folder library behind the sync services of the phones, the real
+// local tables in memory and the real query of the backup (backup.repository.dart): a version never leaves for Immich
+// on its own, even from a folder chosen for the backup, until the user chooses so.
+
+import 'dart:io';
+
+import 'package:drift/drift.dart' as drift;
+import 'package:drift/native.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
+import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/library/folder_library_sync_api.dart';
+import 'package:immich_mobile/domain/models/album/local_album.model.dart';
+import 'package:immich_mobile/domain/services/hash.service.dart';
+import 'package:immich_mobile/domain/services/local_album.service.dart';
+import 'package:immich_mobile/domain/services/local_sync.service.dart';
+import 'package:immich_mobile/infrastructure/repositories/backup.repository.dart';
+import 'package:immich_mobile/infrastructure/repositories/local_album.repository.dart';
+import 'package:immich_mobile/infrastructure/repositories/local_asset.repository.dart';
+import 'package:immich_mobile/infrastructure/repositories/trashed_local_asset.repository.dart';
+import 'package:immich_mobile/providers/backup/backup_album.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/db.provider.dart';
+import 'package:immich_mobile/providers/sync_status.provider.dart';
+import 'package:path/path.dart' as p;
+
+import '../../../repository.mocks.dart';
+import '../../library/library_fixtures.dart';
+import '../../library/library_test_support.dart';
+import '../fakes/fake_immersive_engine.dart';
+import 'version_fixtures.dart';
+
+const _userId = 'user-1';
+
+void main() {
+  // Two databases at once in one test, each in memory with its own executor: the case the warning is not about
+  drift.driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
+
+  late Drift db;
+  late TestLibrary fixture;
+  late FolderLibrarySyncApi api;
+  late Directory support;
+  late DesktopAiSettingsStore settings;
+  late GeneratedAlbumKeeper keeper;
+  late List<int> original;
+  var selectionChanges = 0;
+
+  Drift memoryDatabase() => Drift(drift.DatabaseConnection(NativeDatabase.memory(), closeStreamsSynchronously: true));
+
+  setUp(() {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    db = memoryDatabase();
+    fixture = TestLibrary();
+    fixture.probe.mounts[fixture.files.path] = 'win-0000beef';
+    original = jpegBytes(width: 40, height: 30);
+    fixture
+      ..write('Pictures/Salon/salon.jpg', original)
+      ..write('Pictures/Trips/beach.jpg', jpegBytes(width: 20, height: 10));
+    fixture.library().addRoot(p.join(fixture.files.path, 'Pictures'));
+    api = fixture.syncApi();
+    support = Directory.systemTemp.createTempSync('generated_album_test_');
+    settings = DesktopAiSettingsStore(settingsDirectory: () async => support);
+    selectionChanges = 0;
+    keeper = GeneratedAlbumKeeper(
+      album: GeneratedAlbumRow(db),
+      settings: settings,
+      onSelectionChanged: () => selectionChanges++,
+    );
+  });
+
+  tearDown(() async {
+    debugDefaultTargetPlatformOverride = null;
+    fixture.dispose();
+    await db.close();
+    support.deleteSync(recursive: true);
+  });
+
+  LocalSyncService syncService([Drift? on]) => LocalSyncService(
+    localAlbumRepository: LocalAlbumRepository(on ?? db),
+    nativeSyncApi: api,
+    trashedLocalAssetRepository: TrashedLocalAssetRepository(on ?? db),
+    assetMediaRepository: MockAssetMediaRepository(),
+    permissionRepository: MockPermissionRepository(),
+  );
+
+  Future<void> hash() => HashService(
+    localAlbumRepository: LocalAlbumRepository(db),
+    localAssetRepository: LocalAssetRepository(db),
+    trashedLocalAssetRepository: TrashedLocalAssetRepository(db),
+    nativeSyncApi: api,
+  ).hashAssets();
+
+  Future<LocalAlbum?> albumNamed(String name) async =>
+      (await LocalAlbumRepository(db).getAll()).where((album) => album.name == name).firstOrNull;
+
+  Future<BackupSelection?> generatedSelection() => GeneratedAlbumRow(db).selection();
+
+  Future<void> chooseForBackup(String folder) async {
+    final album = (await albumNamed(folder))!;
+    await LocalAlbumRepository(db).upsert(album.copyWith(backupSelection: BackupSelection.selected));
+  }
+
+  Future<List<String>> candidates() async =>
+      [for (final asset in await BackupRepository(db).getCandidates(_userId)) asset.name]..sort();
+
+  void writeVersion([String name = 'salon_3D_LRF_Full_SBS.jpg']) =>
+      fixture.write('Pictures/Salon/$name', fakeSbsJpeg(xmp: versionXmp(original)));
+
+  test('the album reaches the local tables empty with the first sync, and is excluded once', () async {
+    expect(await keeper.ensureExcluded(), AiGeneratedAlbumState.pending);
+    expect(await generatedSelection(), isNull);
+
+    await syncService().sync();
+    final album = (await albumNamed(generatedAlbumName))!;
+    expect((album.id, album.assetCount, album.backupSelection), (generatedAlbumId, 0, BackupSelection.none));
+    expect((await settings.read()).generatedAlbumState, AiGeneratedAlbumState.pending);
+
+    expect(await keeper.ensureExcluded(), AiGeneratedAlbumState.excluded);
+    expect(await generatedSelection(), BackupSelection.excluded);
+    expect((await settings.read()).generatedAlbumState, AiGeneratedAlbumState.excluded);
+    expect(selectionChanges, 1);
+
+    // Once only: the next ones change nothing
+    await syncService().sync(full: true);
+    expect(await keeper.ensureExcluded(), AiGeneratedAlbumState.excluded);
+    expect(await generatedSelection(), BackupSelection.excluded);
+    expect(selectionChanges, 1);
+  });
+
+  test('versions never reach the backup candidates, even from a folder chosen for the backup', () async {
+    writeVersion();
+    await syncService().sync();
+    await keeper.ensureExcluded();
+    await chooseForBackup('Salon');
+    await hash();
+
+    expect(await candidates(), ['salon.jpg']);
+    expect((await BackupRepository(db).getAllCounts(_userId)).total, 1);
+
+    // A version made later reaches the local tables by a delta: left out as well
+    writeVersion('salon_3D_LRF_Full_SBS (1).jpg');
+    await fixture.scan();
+    await syncService().sync();
+    await hash();
+
+    expect(await candidates(), ['salon.jpg']);
+    final inAlbum = await LocalAlbumRepository(db).getAssetIds(generatedAlbumId);
+    expect(inAlbum, hasLength(2));
+    final inFolder = await LocalAlbumRepository(db).getAssetIds((await albumNamed('Salon'))!.id);
+    expect(inFolder, containsAll(inAlbum));
+  });
+
+  test('without the exclusion the folder would send its version: the album is what keeps it out', () async {
+    writeVersion();
+    await syncService().sync();
+    await chooseForBackup('Salon');
+    await hash();
+
+    expect(await candidates(), ['salon.jpg', 'salon_3D_LRF_Full_SBS.jpg']);
+  });
+
+  test('Select all selects the album too and the switch shows on; turned off, the album is excluded again', () async {
+    writeVersion();
+    await syncService().sync();
+    await keeper.ensureExcluded();
+    expect(await keeper.backsUpGenerated(), isFalse);
+
+    // What "Select all" of the backup albums does (backup_album_selection.page.dart, _SelectAllButton)
+    final backupAlbums = BackupAlbumNotifier(LocalAlbumService(LocalAlbumRepository(db)));
+    addTearDown(backupAlbums.dispose);
+    await backupAlbums.getAll();
+    for (final album in backupAlbums.state) {
+      if (album.backupSelection != BackupSelection.selected) {
+        await backupAlbums.selectAlbum(album);
+      }
+    }
+    expect(await generatedSelection(), BackupSelection.selected);
+    expect(await keeper.backsUpGenerated(), isTrue);
+    // A sync after it keeps the user's gesture
+    await syncService().sync(full: true);
+    expect(await keeper.ensureExcluded(), AiGeneratedAlbumState.excluded);
+    expect(await generatedSelection(), BackupSelection.selected);
+    await hash();
+    expect(await candidates(), ['beach.jpg', 'salon.jpg', 'salon_3D_LRF_Full_SBS.jpg']);
+
+    expect(await keeper.setBacksUpGenerated(false), isTrue);
+    expect(await generatedSelection(), BackupSelection.excluded);
+    expect(await keeper.backsUpGenerated(), isFalse);
+    expect(await candidates(), ['beach.jpg', 'salon.jpg']);
+
+    // On again: no choice, so the versions follow their folders
+    expect(await keeper.setBacksUpGenerated(true), isTrue);
+    expect(await generatedSelection(), BackupSelection.none);
+    expect(await candidates(), ['beach.jpg', 'salon.jpg', 'salon_3D_LRF_Full_SBS.jpg']);
+    // Turning on a switch already on leaves a selected album selected
+    await backupAlbums.getAll();
+    await backupAlbums.selectAlbum(backupAlbums.state.firstWhere((album) => album.id == generatedAlbumId));
+    expect(await keeper.setBacksUpGenerated(true), isTrue);
+    expect(await generatedSelection(), BackupSelection.selected);
+  });
+
+  test('the switch cannot be turned before the album is in the local tables', () async {
+    expect(await keeper.backsUpGenerated(), isNull);
+    expect(await keeper.setBacksUpGenerated(true), isFalse);
+    expect((await settings.read()).generatedAlbumState, AiGeneratedAlbumState.pending);
+  });
+
+  test('a choice of the user survives the next syncs and checks', () async {
+    await syncService().sync();
+    await keeper.ensureExcluded();
+    await keeper.setBacksUpGenerated(true);
+
+    writeVersion();
+    await fixture.scan();
+    await syncService().sync();
+    await syncService().sync(full: true);
+    await keeper.ensureExcluded();
+
+    expect(await generatedSelection(), BackupSelection.none);
+    expect((await albumNamed(generatedAlbumName))!.assetCount, 1);
+  });
+
+  test('the guard refuses a folder of the library until the album is excluded, never a folder outside it', () async {
+    final elsewhere = Directory(p.join(fixture.dir.path, 'elsewhere'))..createSync();
+    fixture.probe.mounts[elsewhere.path] = 'win-0000cafe';
+    final guard = GeneratedAlbumGuard(
+      keeper: keeper,
+      inLibrary: (folder) async => fixture.library().holdsFolder(folder),
+    );
+    final salon = p.join(fixture.files.path, 'Pictures', 'Salon');
+
+    expect(await guard.mayWriteInto(salon), isFalse);
+    expect(await guard.mayWriteInto(p.join(fixture.files.path, 'Pictures')), isFalse);
+    // A folder of the library not scanned yet, and one whose volume cannot be read: in the library as far as it knows
+    expect(await guard.mayWriteInto(p.join(salon, 'new')), isFalse);
+    expect(await guard.mayWriteInto(p.join(fixture.dir.path, 'unknown')), isFalse);
+    expect(await guard.mayWriteInto(elsewhere.path), isTrue);
+    // Beside the library, on its drive
+    expect(await guard.mayWriteInto(fixture.files.path), isTrue);
+
+    await syncService().sync();
+    // The album has come: the guard excludes it itself before it lets the write go
+    expect(await guard.mayWriteInto(salon), isTrue);
+    expect(await generatedSelection(), BackupSelection.excluded);
+    expect((await settings.read()).generatedAlbumState, AiGeneratedAlbumState.excluded);
+  });
+
+  test('a database made anew brings the exclusion back with the album', () async {
+    await syncService().sync();
+    await keeper.ensureExcluded();
+
+    final fresh = memoryDatabase();
+    addTearDown(fresh.close);
+    final freshKeeper = GeneratedAlbumKeeper(album: GeneratedAlbumRow(fresh), settings: settings);
+    expect(await freshKeeper.ensureExcluded(), AiGeneratedAlbumState.pending);
+    expect((await settings.read()).generatedAlbumState, AiGeneratedAlbumState.pending);
+
+    await syncService(fresh).sync(full: true);
+    expect(await freshKeeper.ensureExcluded(), AiGeneratedAlbumState.excluded);
+    expect(await GeneratedAlbumRow(fresh).selection(), BackupSelection.excluded);
+  });
+
+  group('the providers of the app', () {
+    late ProviderContainer container;
+
+    setUp(() {
+      container = ProviderContainer(
+        overrides: [driftProvider.overrideWithValue(db), generatedAlbumSettingsProvider.overrideWithValue(settings)],
+      );
+    });
+    tearDown(() => container.dispose());
+
+    test('a local sync that ends excludes the album, whoever started it', () async {
+      // Its look at the start done first (one check at a time): nothing to exclude yet
+      expect(await container.read(generatedAlbumKeeperProvider).ensureExcluded(), AiGeneratedAlbumState.pending);
+      await syncService().sync();
+      expect(await generatedSelection(), BackupSelection.none);
+
+      // What the sync manager reports when it is done (background_sync.provider.dart)
+      container.read(syncStatusProvider.notifier).completeLocalSync();
+      // The album first, then desktop_ai.json: a crash between the two leaves the album excluded
+      await _until(() async => (await settings.read()).generatedAlbumState == AiGeneratedAlbumState.excluded);
+
+      expect(await generatedSelection(), BackupSelection.excluded);
+      // The backup pages read the albums again
+      await _until(() async => container.read(backupAlbumProvider).any((album) => album.id == generatedAlbumId));
+      expect(
+        container.read(backupAlbumProvider).firstWhere((album) => album.id == generatedAlbumId).backupSelection,
+        BackupSelection.excluded,
+      );
+    });
+
+    test('as the app starts on local tables made anew, the album is seen gone before the first sync', () async {
+      await syncService().sync();
+      await keeper.ensureExcluded();
+      final fresh = memoryDatabase();
+      addTearDown(fresh.close);
+      final restarted = ProviderContainer(
+        overrides: [driftProvider.overrideWithValue(fresh), generatedAlbumSettingsProvider.overrideWithValue(settings)],
+      );
+      addTearDown(restarted.dispose);
+
+      restarted.read(generatedAlbumKeeperProvider);
+      await _until(() async => (await settings.read()).generatedAlbumState == AiGeneratedAlbumState.pending);
+
+      await syncService(fresh).sync(full: true);
+      restarted.read(syncStatusProvider.notifier).completeLocalSync();
+      await _until(() async => (await settings.read()).generatedAlbumState == AiGeneratedAlbumState.excluded);
+      expect(await GeneratedAlbumRow(fresh).selection(), BackupSelection.excluded);
+    });
+
+    test('the switch of the settings follows the album', () async {
+      final values = <bool?>[];
+      // Each change of the table may be heard more than once: the values in turn
+      container.listen(generatedAlbumBackupProvider, (_, next) {
+        if (next case AsyncData(:final value) when values.isEmpty || values.last != value) {
+          values.add(value);
+        }
+      }, fireImmediately: true);
+      await _until(() async => values.isNotEmpty);
+      expect(values.last, isNull);
+
+      await syncService().sync();
+      await _until(() async => values.last == true);
+      await keeper.ensureExcluded();
+      await _until(() async => values.last == false);
+      await keeper.setBacksUpGenerated(true);
+      await _until(() async => values.last == true);
+      expect(values, [null, true, false, true]);
+    });
+  });
+}
+
+/// Waits until [done] holds, a few seconds at most
+Future<void> _until(Future<bool> Function() done) async {
+  for (var i = 0; i < 200; i++) {
+    if (await done()) {
+      return;
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+  }
+  fail('Not reached in time');
+}

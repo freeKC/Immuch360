@@ -1,5 +1,6 @@
 // The sync services of the phones, unchanged, with the folder library behind NativeSyncApi and the real local tables:
-// what the timeline, the backup and the computer share read on a computer.
+// what the timeline, the backup and the computer share read on a computer. Besides the folders, the album of the 3D
+// photos the app makes is there from the first sync, empty (generated_album.dart).
 
 import 'dart:convert';
 import 'dart:io';
@@ -10,6 +11,7 @@ import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/library/folder_library_sync_api.dart';
 import 'package:immich_mobile/domain/models/album/local_album.model.dart';
 import 'package:immich_mobile/domain/services/hash.service.dart';
@@ -77,7 +79,11 @@ void main() {
     await syncService().sync();
 
     final local = await albums.getAll(sortBy: {SortLocalAlbumsBy.name});
-    expect(local.map((album) => (album.name, album.assetCount)), [('2024', 2), ('Screens', 1)]);
+    expect(local.map((album) => (album.name, album.assetCount)), [
+      ('2024', 2),
+      (generatedAlbumName, 0),
+      ('Screens', 1),
+    ]);
     final photo = await assets.getById(fixture.ids.file(rootId, '2024/IMG_1.jpg'));
     expect(photo, isNotNull);
     expect((photo!.name, photo.width, photo.height, photo.checksum), ('IMG_1.jpg', 40, 30, null));
@@ -116,7 +122,7 @@ void main() {
     expect(await assets.getById(fixture.ids.file(rootId, '2024/IMG_4.jpg')), isNotNull);
     expect(await assets.getById(fixture.ids.file(rootId, 'Screens/S_3.png')), isNull);
     final local = await albums.getAll(sortBy: {SortLocalAlbumsBy.name});
-    expect(local.map((album) => (album.name, album.assetCount)), [('2024', 3)]);
+    expect(local.map((album) => (album.name, album.assetCount)), [('2024', 3), (generatedAlbumName, 0)]);
   });
 
   test('a folder taken out of the library leaves the local tables at the next sync', () async {
@@ -143,6 +149,6 @@ void main() {
     final after = await assets.getById(fixture.ids.file(rootId, '2024/VID_2.mp4'));
     expect(after, isNotNull);
     expect(after!.updatedAt, before!.updatedAt);
-    expect((await albums.getAll()).length, 2);
+    expect((await albums.getAll()).length, 3);
   });
 }

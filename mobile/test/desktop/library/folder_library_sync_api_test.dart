@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/library/folder_library_sync_api.dart';
 import 'package:immich_mobile/desktop/library/library_hasher.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
@@ -12,6 +13,8 @@ import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:immich_mobile/platform/native_sync_api.g.dart';
 import 'package:path/path.dart' as p;
 
+import '../ai/fakes/fake_immersive_engine.dart';
+import '../ai/library/version_fixtures.dart';
 import 'library_fixtures.dart';
 import 'library_test_support.dart';
 
@@ -49,11 +52,12 @@ void main() {
 
       expect(albums.map((album) => album.id).toList(), [...albums.map((album) => album.id)]..sort());
       final byName = {for (final album in albums) album.name: album};
-      // Two folders named 2024: their parents tell them apart
-      expect(byName.keys, unorderedEquals(['Photos/2024', 'Trips/2024', 'Photos']));
+      // Two folders named 2024: their parents tell them apart; and the album of the generated 3D photos, empty
+      expect(byName.keys, unorderedEquals(['Photos/2024', 'Trips/2024', 'Photos', generatedAlbumName]));
       expect(byName['Photos/2024']!.assetCount, 2);
       expect(byName['Photos']!.assetCount, 1);
-      expect(albums.every((album) => !album.isCloud && album.updatedAt! > 0), isTrue);
+      final folders = albums.where((album) => album.id != generatedAlbumId);
+      expect(folders.every((album) => !album.isCloud && album.updatedAt! > 0), isTrue);
     });
 
     test('assets the way Android gives them: the size as shown, orientation 0, seconds', () async {
@@ -92,6 +96,65 @@ void main() {
       expect(await api.getAssetsCountSince(album, now + 3600), 0);
       expect(await api.getAssetsForAlbum(album, updatedTimeCond: now + 3600), isEmpty);
       expect(await api.getAssetsForAlbum(album, updatedTimeCond: now - 3600), hasLength(2));
+    });
+  });
+
+  group('the album of the generated 3D photos', () {
+    test('declared with the first folder, empty, at a date that stays the same', () async {
+      final api = fixture.syncApi();
+      final album = (await api.getAlbums()).singleWhere((album) => album.id == generatedAlbumId);
+
+      expect((album.name, album.assetCount, album.updatedAt, album.isCloud), (generatedAlbumName, 0, 0, false));
+      expect(await api.getAssetIdsForAlbum(generatedAlbumId), isEmpty);
+      expect(await api.getAssetsForAlbum(generatedAlbumId), isEmpty);
+      expect(await api.getAssetsCountSince(generatedAlbumId, 0), 0);
+    });
+
+    test('not declared without a folder', () async {
+      fixture.library().removeRoot(rootId);
+      expect(await fixture.syncApi().getAlbums(), isEmpty);
+    });
+
+    test('holds every version, each one in its folder too', () async {
+      final original = File(p.join(fixture.files.path, 'Photos', '2024', 'IMG_1.jpg')).readAsBytesSync();
+      fixture
+        ..write('Photos/2024/IMG_1_3D_LRF_Full_SBS.jpg', fakeSbsJpeg(xmp: versionXmp(original, name: 'IMG_1.jpg')))
+        ..write('Photos/Trips/2024/IMG_3_3D_LRF_Full_SBS.jpg', fakeSbsJpeg(xmp: versionXmp([1, 2, 3])));
+      final api = fixture.syncApi();
+      final albums = {for (final album in await api.getAlbums()) album.id: album};
+      final versions = [
+        fixture.ids.file(rootId, '2024/IMG_1_3D_LRF_Full_SBS.jpg'),
+        fixture.ids.file(rootId, 'Trips/2024/IMG_3_3D_LRF_Full_SBS.jpg'),
+      ];
+
+      expect(albums[generatedAlbumId]!.assetCount, 2);
+      expect(albums[generatedAlbumId]!.updatedAt, greaterThan(0));
+      expect(albums[fixture.ids.album(rootId, '2024')]!.assetCount, 3);
+      expect(await api.getAssetIdsForAlbum(generatedAlbumId), unorderedEquals(versions));
+      final assets = await api.getAssetsForAlbum(generatedAlbumId);
+      expect(assets.map((asset) => asset.id), unorderedEquals(versions));
+      expect(assets.map((asset) => (asset.width, asset.height)).toSet(), {(16, 6)});
+      final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      expect(await api.getAssetsCountSince(generatedAlbumId, now - 3600), 2);
+      expect(await api.getAssetsForAlbum(generatedAlbumId, updatedTimeCond: now + 3600), isEmpty);
+    });
+
+    test('a delta gives a new version both albums, a plain photo its folder only', () async {
+      final api = fixture.syncApi();
+      await api.getAlbums();
+      await api.checkpointSync();
+
+      fixture
+        ..write('Photos/2024/new_3D_LRF_Full_SBS.jpg', fakeSbsJpeg(xmp: versionXmp([4, 5, 6], name: 'new.jpg')))
+        ..write('Photos/2024/new.jpg', jpegBytes(width: 2, height: 2));
+      await fixture.scan();
+      final delta = await api.getMediaChanges();
+
+      final folder = fixture.ids.album(rootId, '2024');
+      expect(delta.assetAlbums, {
+        fixture.ids.file(rootId, '2024/new_3D_LRF_Full_SBS.jpg'): [folder, generatedAlbumId],
+        fixture.ids.file(rootId, '2024/new.jpg'): [folder],
+      });
     });
   });
 
