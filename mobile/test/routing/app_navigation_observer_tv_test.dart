@@ -1,15 +1,18 @@
 // In the remote control layout an item always has the focus: a page that focuses nothing by itself gets its first
 // item, an item of the page rather than the Back button of its app bar, and a page that focused one keeps it. A list
-// that comes after loading takes the focus from the Back button the page had meanwhile, unless the user moved it.
+// that comes after loading takes the focus from the Back button the page had meanwhile, unless the user moved it. The
+// keys that move or press wait while a route opens: before its first frame they would reach the page under it.
 
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/routing/app_navigation_observer.dart';
+import 'package:immich_mobile/routing/route_opening_key_gate.dart';
 
 /// The app with the real navigation observer, in the remote control layout, and a button that pushes [page]
 class _ObservedApp extends ConsumerStatefulWidget {
@@ -87,6 +90,81 @@ class _BarelessLoadingPage extends StatelessWidget {
           : const Center(child: CircularProgressIndicator()),
     ),
   );
+}
+
+/// The app with the real navigation observer: "open" has the focus and pushes [page], "below" is under it. Each tap is
+/// noted in [taps], and each key that reaches the first page in [keys].
+class _OpenerApp extends ConsumerStatefulWidget {
+  const _OpenerApp({required this.page, required this.taps, required this.keys});
+
+  final Widget page;
+  final List<String> taps;
+  final List<KeyEvent> keys;
+
+  @override
+  ConsumerState<_OpenerApp> createState() => _OpenerAppState();
+}
+
+class _OpenerAppState extends ConsumerState<_OpenerApp> {
+  late final _observer = AppNavigationObserver(ref: ref);
+
+  @override
+  Widget build(BuildContext context) => MaterialApp(
+    navigatorObservers: [_observer],
+    home: Builder(
+      builder: (context) => Scaffold(
+        body: Focus(
+          onKeyEvent: (_, event) {
+            widget.keys.add(event);
+            return KeyEventResult.ignored;
+          },
+          child: Column(
+            children: [
+              TextButton(
+                autofocus: true,
+                onPressed: () {
+                  widget.taps.add('open');
+                  Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => widget.page)).ignore();
+                },
+                child: const Text('open'),
+              ),
+              TextButton(onPressed: () => widget.taps.add('below'), child: const Text('below')),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+/// A page with two items, the first one focused by itself; each key that reaches it is noted in [keys]
+class _OpenedPage extends StatelessWidget {
+  const _OpenedPage({required this.taps, required this.keys});
+
+  final List<String> taps;
+  final List<KeyEvent> keys;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: Focus(
+      onKeyEvent: (_, event) {
+        keys.add(event);
+        return KeyEventResult.ignored;
+      },
+      child: Column(
+        children: [
+          TextButton(autofocus: true, onPressed: () => taps.add('first'), child: const Text('first')),
+          TextButton(onPressed: () => taps.add('second'), child: const Text('second')),
+        ],
+      ),
+    ),
+  );
+}
+
+/// A guard that lets the page through after an await, as the app's duplicate guard does
+class _AsyncGuard extends AutoRouteGuard {
+  @override
+  Future<void> onNavigation(NavigationResolver resolver, StackRouter router) async => resolver.next(true);
 }
 
 void main() {
@@ -249,6 +327,197 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(hasFocus(tester, find.text('first folder')), isTrue);
+    });
+  });
+
+  group('the keys while a route opens', () {
+    late List<String> taps;
+    late List<KeyEvent> firstPageKeys;
+    late List<KeyEvent> openedPageKeys;
+
+    setUp(() {
+      taps = [];
+      firstPageKeys = [];
+      openedPageKeys = [];
+    });
+
+    tearDown(RouteOpeningKeyGate.instance.reset);
+
+    bool hasFocus(WidgetTester tester, String text) => Focus.of(tester.element(find.text(text))).hasPrimaryFocus;
+
+    List<LogicalKeyboardKey> downs(List<KeyEvent> keys) => [
+      for (final event in keys)
+        if (event is KeyDownEvent) event.logicalKey,
+    ];
+
+    Future<void> pumpOpener(WidgetTester tester, {bool tvMode = true}) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [tvModeProvider.overrideWithValue(tvMode)],
+          child: _OpenerApp(
+            page: _OpenedPage(taps: taps, keys: openedPageKeys),
+            taps: taps,
+            keys: firstPageKeys,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(hasFocus(tester, 'open'), isTrue);
+    }
+
+    testWidgets('OK then Down and OK at once: nothing reaches the page left behind, the new page has the focus', (
+      tester,
+    ) async {
+      await pumpOpener(tester);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.pumpAndSettle();
+
+      expect(taps, ['open'], reason: 'the second OK opened nothing, below was never reached');
+      expect(downs(firstPageKeys), [LogicalKeyboardKey.select]);
+      expect(hasFocus(tester, 'first'), isTrue);
+
+      // Once the page showed, the keys go to it
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      expect(hasFocus(tester, 'second'), isTrue);
+    });
+
+    testWidgets('Back and the media keys go through while a route opens', (tester) async {
+      await pumpOpener(tester);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      for (final key in [
+        LogicalKeyboardKey.arrowUp,
+        LogicalKeyboardKey.channelDown,
+        LogicalKeyboardKey.contextMenu,
+        LogicalKeyboardKey.info,
+        // Back of a keyboard; the remote's (goBack) is no held key either, but the test cannot send it
+        LogicalKeyboardKey.escape,
+        LogicalKeyboardKey.mediaPlayPause,
+      ]) {
+        await tester.sendKeyEvent(key);
+      }
+      await tester.pumpAndSettle();
+
+      expect(downs(firstPageKeys), [
+        LogicalKeyboardKey.select,
+        LogicalKeyboardKey.escape,
+        LogicalKeyboardKey.mediaPlayPause,
+      ]);
+    });
+
+    testWidgets('a press dropped is dropped whole; the release of the OK that opened the page reaches it', (
+      tester,
+    ) async {
+      await pumpOpener(tester);
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      expect(hasFocus(tester, 'first'), isTrue);
+      await tester.sendKeyRepeatEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+      await tester.pump();
+
+      expect(hasFocus(tester, 'first'), isTrue, reason: 'the repeat of a dropped Down moves nothing');
+      expect(
+        [for (final event in openedPageKeys) (event.runtimeType, event.logicalKey)],
+        [(KeyUpEvent, LogicalKeyboardKey.select)],
+      );
+      expect(firstPageKeys.whereType<KeyDownEvent>().map((event) => event.logicalKey), [LogicalKeyboardKey.select]);
+    });
+
+    testWidgets('never longer than half a second, should the first frame not come', (tester) async {
+      await pumpOpener(tester);
+      final route = ModalRoute.of(tester.element(find.text('open')))!;
+      RouteOpeningKeyGate.instance.opening(route);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      expect(hasFocus(tester, 'open'), isTrue);
+
+      await tester.runAsync(() => Future<void>.delayed(RouteOpeningKeyGate.cap + const Duration(milliseconds: 100)));
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      expect(hasFocus(tester, 'below'), isTrue);
+    });
+
+    testWidgets('out of the remote control layout nothing is held', (tester) async {
+      await pumpOpener(tester, tvMode: false);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+
+      expect(downs(firstPageKeys), [LogicalKeyboardKey.select, LogicalKeyboardKey.arrowDown]);
+    });
+
+    testWidgets('a page of the router, shown a frame after it was asked for: OK then Down and OK at once', (
+      tester,
+    ) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            initial: true,
+            page: PageInfo(
+              'FirstRoute',
+              builder: (_) => Scaffold(
+                body: Builder(
+                  builder: (context) => Column(
+                    children: [
+                      TextButton(
+                        autofocus: true,
+                        onPressed: () {
+                          taps.add('open');
+                          unawaited(context.router.pushPath('/opened'));
+                        },
+                        child: const Text('open'),
+                      ),
+                      TextButton(onPressed: () => taps.add('below'), child: const Text('below')),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          AutoRoute(
+            path: '/opened',
+            guards: [_AsyncGuard()],
+            page: PageInfo(
+              'OpenedRoute',
+              builder: (_) => _OpenedPage(taps: taps, keys: openedPageKeys),
+            ),
+          ),
+        ],
+      );
+      final stop = holdKeysOnNewPages(router, () => true);
+      addTearDown(stop);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [tvModeProvider.overrideWithValue(true)],
+          child: Consumer(
+            builder: (context, ref, _) => MaterialApp.router(
+              routerConfig: router.config(navigatorObservers: () => [AppNavigationObserver(ref: ref)]),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(hasFocus(tester, 'open'), isTrue);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.pumpAndSettle();
+
+      expect(taps, ['open']);
+      expect(router.stack.length, 2);
+      expect(hasFocus(tester, 'first'), isTrue);
     });
   });
 }

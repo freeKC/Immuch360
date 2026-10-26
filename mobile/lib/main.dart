@@ -40,6 +40,7 @@ import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/theme.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
 import 'package:immich_mobile/routing/app_navigation_observer.dart';
+import 'package:immich_mobile/routing/route_opening_key_gate.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/deep_link.service.dart';
 import 'package:immich_mobile/theme/dynamic_theme.dart';
@@ -174,6 +175,9 @@ class ImmichApp extends ConsumerStatefulWidget {
 }
 
 class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserver {
+  /// Stops holding the remote's keys while the router's new pages open
+  VoidCallback? _stopHoldingKeys;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
@@ -291,6 +295,11 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
   void initState() {
     super.initState();
     unawaited(initApp().then((_) => dPrint(() => "App Init Completed")));
+    // In the remote control layout, the keys pressed while a page opens do not reach the page under it
+    ref.listenManual(appRouterProvider, (_, router) {
+      _stopHoldingKeys?.call();
+      _stopHoldingKeys = holdKeysOnNewPages(router, () => mounted && ref.read(tvModeProvider));
+    }, fireImmediately: true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // needs to be delayed so that EasyLocalization is working
       unawaited(ref.read(backgroundWorkerFgServiceProvider).enable());
@@ -319,6 +328,7 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _stopHoldingKeys?.call();
     super.dispose();
   }
 

@@ -5,11 +5,14 @@
 // the page. These tests send the remote's keys and check where they go. Nothing here ran on a TV: these are widget
 // tests.
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/drone/dji_watch.page.dart';
@@ -19,6 +22,8 @@ import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/drone/dji_relay.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/routing/app_navigation_observer.dart';
+import 'package:immich_mobile/routing/route_opening_key_gate.dart';
 
 import '../../../unit/presentation/presentation_context.dart';
 import 'dji_link_fakes.dart';
@@ -31,6 +36,30 @@ class _FakeTvApi extends Fake implements TvApi {
   Future<String?> editText(TvTextRequest request) async => null;
 }
 
+/// The test app with the app's navigation observer, which holds the keys while a route opens
+class _ObservedApp extends ConsumerStatefulWidget {
+  const _ObservedApp({required this.home});
+
+  final Widget home;
+
+  @override
+  ConsumerState<_ObservedApp> createState() => _ObservedAppState();
+}
+
+class _ObservedAppState extends ConsumerState<_ObservedApp> {
+  late final _observer = AppNavigationObserver(ref: ref);
+
+  @override
+  Widget build(BuildContext context) => MaterialApp(
+    debugShowCheckedModeBanner: false,
+    localizationsDelegates: context.localizationDelegates,
+    supportedLocales: context.supportedLocales,
+    locale: context.locale,
+    navigatorObservers: [_observer],
+    home: Scaffold(body: widget.home),
+  );
+}
+
 void main() {
   late PresentationContext context;
   late Map<StoreKey<bool>, bool> memory;
@@ -41,6 +70,7 @@ void main() {
   });
 
   tearDown(() async {
+    RouteOpeningKeyGate.instance.reset();
     await context.dispose();
   });
 
@@ -304,5 +334,85 @@ void main() {
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(fullScreenFocused(), isTrue);
+  });
+
+  group('the keys while the watch page and its notice open', () {
+    /// The app with its navigation observer, a first page whose "open" button has the focus and "below" under it
+    Future<void> pumpObserved(WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(_tv);
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      final api = television();
+      final relay = FakeRelayEnvironment();
+      await tester.pumpWidget(
+        EasyLocalization(
+          supportedLocales: locales.values.toList(),
+          path: translationsPath,
+          startLocale: locales.values.first,
+          fallbackLocale: locales.values.first,
+          saveLocale: false,
+          useFallbackTranslations: true,
+          assetLoader: const CodegenLoader(),
+          child: ProviderScope(
+            overrides: [...context.overrides, ...overrides(api, relay, (_) {})],
+            child: _ObservedApp(
+              home: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Builder(
+                    builder: (context) => TextButton(
+                      key: const Key('open_watch'),
+                      autofocus: true,
+                      onPressed: () =>
+                          Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DjiWatchPage())),
+                      child: const Text('open'),
+                    ),
+                  ),
+                  TextButton(key: const Key('below'), onPressed: () {}, child: const Text('below')),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(focusIn(tester, find.byKey(const Key('open_watch'))), isTrue);
+    }
+
+    testWidgets('Down at once after OK goes nowhere; the notice then has the focus and Back returns to open', (
+      tester,
+    ) async {
+      await pumpObserved(tester);
+
+      // OK opens the page; Down and OK come before its first frame, as a slow TV or a quick hand sends them
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      // The watch page's first frame: the notice is pushed after it, and a Down in that gap
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+
+      expect(notice(), findsOneWidget);
+      expect(focusIn(tester, text()), isTrue);
+      expect(noticeOffset(tester), 0, reason: 'the early Downs did not scroll it either');
+      expect(find.byType(DjiWatchPage, skipOffstage: false), findsOneWidget, reason: 'the second OK opened nothing');
+
+      // Later, the keys read the notice
+      await readAndAccept(tester);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(focusIn(tester, find.byKey(const Key('open_watch'))), isTrue, reason: 'build 30 left it on below');
+    });
+
+    testWidgets('slow keys: each Down after the notice showed scrolls it, then OK validates', (tester) async {
+      await pumpObserved(tester);
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 2));
+
+      await readAndAccept(tester);
+      expect(focusIn(tester, find.byKey(const Key('dji_watch_address'))), isTrue);
+    });
   });
 }
