@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/domain/models/config/ai_immersive_config.dart';
 import 'package:immich_mobile/domain/models/config/album_config.dart';
 import 'package:immich_mobile/domain/models/config/backup_config.dart';
 import 'package:immich_mobile/domain/models/config/cleanup_config.dart';
@@ -52,6 +53,8 @@ abstract class AppConfig with _$AppConfig {
     // The DJI link diagnostics page, experimental and on by default like the other experimental switches: Settings,
     // Advanced turns it off. Nothing on that page sends anything to an aircraft.
     @Default(true) bool djiLinkEnabled,
+    // The AI features, see AiImmersiveConfig: on by default like the other experimental switches
+    @Default(AiImmersiveConfig()) AiImmersiveConfig aiImmersive,
   }) = _AppConfig;
 
   T read<T>(SettingsKey<T> key) =>
@@ -110,6 +113,8 @@ abstract class AppConfig with _$AppConfig {
             .uploadTagSpheres => uploadTagSpheres,
             .djiImportEnabled => djiImportEnabled,
             .djiLinkEnabled => djiLinkEnabled,
+            .aiImmersiveEnabled => aiImmersive.enabled,
+            .aiImmersiveOlderHeadsets => aiImmersive.olderHeadsets,
           })
           as T;
 
@@ -174,6 +179,8 @@ abstract class AppConfig with _$AppConfig {
       .uploadTagSpheres => copyWith(uploadTagSpheres: value as bool),
       .djiImportEnabled => copyWith(djiImportEnabled: value as bool),
       .djiLinkEnabled => copyWith(djiLinkEnabled: value as bool),
+      .aiImmersiveEnabled => copyWith(aiImmersive: aiImmersive.copyWith(enabled: value as bool)),
+      .aiImmersiveOlderHeadsets => copyWith(aiImmersive: aiImmersive.copyWith(olderHeadsets: value as bool)),
     };
   }
 }
