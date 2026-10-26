@@ -9,7 +9,9 @@
 // The writer only ever creates, renames and deletes its own files: the original of a job is never opened here, and a
 // file of the user is replaced only when it is a 3D photo of ours (collisions.dart). Every call on the folders of the
 // user goes through CreatorFileSystem, so that a test sees each one: nothing is written nor tried in a network folder
-// before the user said yes (destination.dart).
+// before the user said yes (destination.dart). Those calls are all asynchronous, on the threads of dart:io: a share
+// out of reach (\\nas\photos away from home, an NFS mount whose server is off) keeps a call waiting, never the
+// window.
 
 import 'dart:async';
 import 'dart:convert';
@@ -156,8 +158,10 @@ abstract interface class CreatorFileSystem {
 class IoCreatorFileSystem implements CreatorFileSystem {
   const IoCreatorFileSystem();
 
+  // Asynchronous on purpose: a share out of reach must keep a thread of dart:io waiting, not the window
   @override
-  Future<bool> isFolder(String path) async => FileSystemEntity.isDirectorySync(path);
+  // ignore: avoid_slow_async_io
+  Future<bool> isFolder(String path) => FileSystemEntity.isDirectory(path);
 
   @override
   Future<void> createFolder(String path) async {
@@ -174,7 +178,8 @@ class IoCreatorFileSystem implements CreatorFileSystem {
 
   @override
   Future<bool> exists(String path) async =>
-      FileSystemEntity.typeSync(path, followLinks: false) != FileSystemEntityType.notFound;
+      // ignore: avoid_slow_async_io
+      await FileSystemEntity.type(path, followLinks: false) != FileSystemEntityType.notFound;
 
   @override
   Future<Uint8List> readHead(String path, int length) async {
@@ -201,9 +206,9 @@ class IoCreatorFileSystem implements CreatorFileSystem {
   }
 }
 
-/// desktop_ai_inflight.json in the support folder: the partial files being written, so that the next start deletes
-/// those a crash left. Written as a whole new file renamed over the old one, one change after the other; removed when
-/// nothing is in flight.
+/// desktop_ai_inflight.json in the support folder: the partial files being written, each with the time it was noted,
+/// so that the next start deletes those a crash left. Written as a whole new file renamed over the old one, one change
+/// after the other; removed when nothing is in flight.
 class InflightJournal {
   InflightJournal({Future<Directory> Function()? settingsDirectory})
     : _settingsDirectory = settingsDirectory ?? getApplicationSupportDirectory;
@@ -212,22 +217,27 @@ class InflightJournal {
   static const fileName = 'desktop_ai_inflight.json';
 
   final Future<Directory> Function() _settingsDirectory;
-  Set<String>? _paths;
+  Map<String, DateTime>? _entries;
   Future<void> _writing = Future.value();
 
   /// The partial files noted now
-  Future<List<String>> paths() => _run(() async => List.of(await _load()));
+  Future<List<String>> paths() => _run(() async => List.of((await _load()).keys));
+
+  /// The partial files noted now, and when each one was noted
+  Future<Map<String, DateTime>> entries() => _run(() async => Map.of(await _load()));
 
   /// Notes [path], before the file exists
   Future<void> add(String path) => _run(() async {
-    if ((await _load()).add(path)) {
+    final entries = await _load();
+    if (!entries.containsKey(path)) {
+      entries[path] = DateTime.now().toUtc();
       await _save();
     }
   });
 
   /// Forgets [path], once the file is gone or renamed
   Future<void> remove(String path) => _run(() async {
-    if ((await _load()).remove(path)) {
+    if ((await _load()).remove(path) != null) {
       await _save();
     }
   });
@@ -240,29 +250,38 @@ class InflightJournal {
 
   Future<File> _file() async => File(p.join((await _settingsDirectory()).path, fileName));
 
-  Future<Set<String>> _load() async {
-    final loaded = _paths;
+  Future<Map<String, DateTime>> _load() async {
+    final loaded = _entries;
     if (loaded != null) {
       return loaded;
     }
-    final paths = <String>{};
+    final entries = <String, DateTime>{};
     try {
       final decoded = jsonDecode(await (await _file()).readAsString());
       if (decoded is Map && decoded['parts'] is List) {
-        paths.addAll((decoded['parts'] as List).whereType<String>());
+        final now = DateTime.now().toUtc();
+        for (final part in decoded['parts'] as List) {
+          switch (part) {
+            // A path without its time: taken as noted now
+            case final String path:
+              entries[path] = now;
+            case {'path': final String path}:
+              entries[path] = DateTime.tryParse('${part['noted']}')?.toUtc() ?? now;
+          }
+        }
       }
     } on PathNotFoundException {
       // Nothing in flight
     } on FormatException catch (error) {
       _log.warning('The journal of the partial files cannot be read: ${error.message}');
     }
-    return _paths = paths;
+    return _entries = entries;
   }
 
   Future<void> _save() async {
     final file = await _file();
-    final paths = _paths ?? const <String>{};
-    if (paths.isEmpty) {
+    final entries = _entries ?? const <String, DateTime>{};
+    if (entries.isEmpty) {
       try {
         await file.delete();
       } on PathNotFoundException {
@@ -273,7 +292,15 @@ class InflightJournal {
     await file.parent.create(recursive: true);
     // A whole new file renamed over the old one: a crash while writing never loses the paths noted before
     final temporary = File('${file.path}.tmp');
-    await temporary.writeAsString(const JsonEncoder.withIndent('  ').convert({'parts': paths.toList()}), flush: true);
+    await temporary.writeAsString(
+      const JsonEncoder.withIndent('  ').convert({
+        'parts': [
+          for (final MapEntry(key: path, value: noted) in entries.entries)
+            {'path': path, 'noted': noted.toIso8601String()},
+        ],
+      }),
+      flush: true,
+    );
     await temporary.rename(file.path);
   }
 }
@@ -329,6 +356,9 @@ class SafeWriter {
   final InflightJournal _journal;
   final int _processId;
   static var _sequence = 0;
+
+  /// How long a partial file whose folder stays out of reach is looked for at each start
+  static const forgetUnreachableAfter = Duration(days: 30);
 
   /// The empty partial file of the 3D photo to be named [finalName] in [folder], noted in the journal before it exists.
   /// This is also how a folder is found read only: no test file is ever written (see WriteProbe). Throws a
@@ -408,11 +438,13 @@ class SafeWriter {
   }
 
   /// At the start of the app: deletes the partial files an earlier session noted and left (a crash, a power cut). A
-  /// file whose folder cannot be reached now (a drive unplugged, a share gone) stays noted for the next start; a path
-  /// that is not a partial file of the creator is only forgotten, never deleted. How many files were deleted.
+  /// file whose folder cannot be reached now (a drive unplugged, a share gone) stays noted for the next start, for
+  /// [forgetUnreachableAfter] at most; a path that is not a partial file of the creator is only forgotten, never
+  /// deleted. How many files were deleted.
   Future<int> cleanUpAtStart() async {
     var deleted = 0;
-    for (final path in await _journal.paths()) {
+    final now = DateTime.now().toUtc();
+    for (final MapEntry(key: path, value: noted) in (await _journal.entries()).entries) {
       final name = p.basename(path);
       final process = partFileProcess(name);
       if (process == _processId) {
@@ -425,6 +457,11 @@ class SafeWriter {
       }
       try {
         if (!await files.isFolder(p.dirname(path))) {
+          if (now.difference(noted) > forgetUnreachableAfter) {
+            // A drive or a share gone for a month: no longer looked for at each start
+            _log.info('A partial file of a folder out of reach since ${noted.toIso8601String()} is forgotten');
+            await _journal.remove(path);
+          }
           continue;
         }
         if (await files.exists(path)) {

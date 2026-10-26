@@ -44,7 +44,10 @@ void main() {
 
   File journalFile() => File(p.join(support.path, InflightJournal.fileName));
   List<String> noted() => journalFile().existsSync()
-      ? ((jsonDecode(journalFile().readAsStringSync()) as Map)['parts'] as List).cast<String>()
+      ? [
+          for (final part in (jsonDecode(journalFile().readAsStringSync()) as Map)['parts'] as List)
+            (part as Map)['path'] as String,
+        ]
       : const [];
   List<String> namesIn(Directory directory) =>
       directory.listSync().map((entity) => p.basename(entity.path)).toList()..sort();
@@ -321,6 +324,29 @@ void main() {
       expect(ofThisSession.existsSync(), isTrue);
       expect(noted(), unorderedEquals([unplugged, ofThisSession.path]));
       expect(files.calls.where((call) => call.startsWith('delete')), ['delete ${leftover.path}']);
+    });
+
+    test('a folder out of reach for more than a month is no longer looked for', () async {
+      String unplugged(String name, int process) =>
+          p.join(root.path, 'Unplugged', partFileName('${name}_3D_LRF_Full_SBS.jpg', processId: process, sequence: 1));
+      String daysAgo(int days) => DateTime.now().toUtc().subtract(Duration(days: days)).toIso8601String();
+      final recent = unplugged('a', 97);
+      final old = unplugged('b', 96);
+      final undated = unplugged('c', 95);
+      journalFile().writeAsStringSync(
+        jsonEncode({
+          'parts': [
+            {'path': recent, 'noted': daysAgo(29)},
+            {'path': old, 'noted': daysAgo(31)},
+            undated,
+          ],
+        }),
+      );
+
+      expect(await writer.cleanUpAtStart(), 0);
+
+      expect(noted(), unorderedEquals([recent, undated]));
+      expect(files.calls.where((call) => call.startsWith('delete')), isEmpty);
     });
 
     test('with no journal: nothing to do', () async {
