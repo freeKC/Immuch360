@@ -802,5 +802,33 @@ class RelayTranscoderStateTest {
     assertEquals("true", report["headersOnKeysTaken"]!!.jsonPrimitive.content)
   }
 
+  /**
+   * p2/noon-test-check-2026-10-26.md 3.4 (item 4 of its section 4): a rate the tick asks while the encoder is being made
+   * reaches the encoder once it is made, and is counted; so does the thermal cap that comes meanwhile
+   */
+  @Test
+  fun aRateAskedWhileTheEncoderIsMadeReachesItAndIsCounted() {
+    running()
+    core.offer(droneUnit(0, key = true), drone)
+    codecs.whileEncoderMade = { core.setBitrate(3_000_000, now) }
+    core.setNeeded(true, now)
+    val encoder = codecs.encoders.single()
+    assertEquals(8_000_000, encoder.madeAtBps)
+    assertEquals(3_000_000, encoder.rateBps)
+    val report = core.report(now)!!
+    assertEquals(3_000L, report["bitrateNowKbps"]!!.jsonPrimitive.long)
+    assertEquals(1L, report["bitrateChanges"]!!.jsonPrimitive.long)
+    assertEquals(3_000L, report["bitrateMinKbps"]!!.jsonPrimitive.long)
+    assertEquals(8_000L, report["bitrateMaxKbps"]!!.jsonPrimitive.long)
+    // Made again (a recoverable encoder error) while the phone gets hot: the cap reaches the new one
+    core.setBitrate(8_000_000, now)
+    codecs.whileEncoderMade = { core.onThermal(RelayTranscoder.THERMAL_MODERATE, now) }
+    core.onEncoderError("reset", recoverable = true, nowNs = now)
+    val again = codecs.encoders.last()
+    assertEquals(2, codecs.encoders.size)
+    assertEquals(RelayTranscoder.HOT_CAP_BPS, again.rateBps)
+    assertEquals(6_000L, core.report(now)!!["bitrateNowKbps"]!!.jsonPrimitive.long)
+  }
+
   private fun kotlinx.serialization.json.JsonPrimitive.contentOrNullSafe(): String? = if (isString) content else null
 }

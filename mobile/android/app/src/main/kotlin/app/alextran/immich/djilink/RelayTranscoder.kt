@@ -831,17 +831,21 @@ class RelayTranscoder(
       runCatching { made.release() }
       return
     }
-    synchronized(lock) {
+    val correction = synchronized(lock) {
       encoder = made
       setup = made.setup
-      bitrateBps = minOf(askedBps, capLocked() ?: askedBps)
-      noteBitrateLocked(bitrateBps)
+      // It runs at the rate it was made with; a rate asked or a thermal cap that came while it was made goes to it now,
+      // counted (p2/noon-test-check-2026-10-26.md 3.4)
+      bitrateBps = rate
+      noteBitrateLocked(rate)
       keys.onEncoderStarted()
       decimator.reset()
       decimator.perSecond = perSecondLocked()
       slowSinceNs = null
       slowAtFifteenNs = null
+      applyBitrateLocked()
     }
+    correction?.let { (port, target) -> runCatching { port.setBitrate(target) } }
     val setupMade = made.setup
     log("encoder ${made.name} ${setupMade.width}x${setupMade.height} ${setupMade.bitrateMode} level ${setupMade.level}")
     onChange()
