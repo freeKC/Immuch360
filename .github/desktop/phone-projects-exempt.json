@@ -295,6 +295,18 @@
     "blob": "4160d9b38ad4d34bee69d961b8977a0183762914",
     "reason": "Sign in with your phone (feat-qr-pairing): the Pigeon QrScanApi of the phones, ZXing with the camera permission asked first"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefCache.kt": {
+    "blob": "fe38be500004d1d0a61c17b6443a8904046a1545",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the 16 bit depth maps of the relief cache of the Quest, 200 MB at most"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefPreprocess.kt": {
+    "blob": "f311e83f4d81261935b86b484b81ba2b1051fa8a",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the 686 x 518 input of the depth model made from a photo, and its output cut back to the photo"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/relief/ReliefSynthesizer.kt": {
+    "blob": "39d20266fa9bf7478c112e01ef8e284461ed888e",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the right eye the Quest makes from a flat photo and its estimated depth, held to the golden fixture of the computers"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/PlaybackReport.kt": {
     "blob": "98bf447a264a700196aa94270c45916032417769",
     "reason": "TV lot (e66574872): a 360 video the phone app cannot play is written to the Logs page"
@@ -622,6 +634,22 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/pairing/QrScanApiImplTest.kt": {
     "blob": "f13cc58645385059ee7207014b069f28729db001",
     "reason": "Sign in with your phone (feat-qr-pairing): unit tests of the scanner result mapping, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefCacheTest.kt": {
+    "blob": "c7f70724384217e65f0929c220b2affa7708d539",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): unit tests of the relief cache on a real folder, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefFixtures.kt": {
+    "blob": "270cf18708f9e1d2c6ef3ee1570217c249b7ca71",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the reader of the shared fixtures of mobile/test/fixtures/ai_immersive for the Kotlin unit tests"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefPreprocessTest.kt": {
+    "blob": "9f92c2b6f89bdd37cc520aeffbb1b9fc3b78fd3c",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): unit tests of the input of the depth model, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefSynthesizerTest.kt": {
+    "blob": "657d0470e616568467d5d5adc3027807aad001f9",
+    "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): unit tests of relief-v1 against relief_golden_v1.json, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/PlaybackReportTest.kt": {
     "blob": "29ccb659b150adfc6305a4fc930eda5e266bec43",
