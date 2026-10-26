@@ -1,6 +1,9 @@
 // The start of Immuch360 Desktop, run by lib/main_desktop.dart once the Flutter binding exists and before the start
 // the phones share (runImmich in main.dart).
 
+import 'dart:async';
+
+import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
@@ -18,6 +21,8 @@ Future<void> startDesktop(List<String> args) async {
     LinuxSecretStorage.install();
   }
   listenForLaterStarts();
+  // The partial 3D photos a crash or a power cut left in the folders of the user, deleted while the app starts
+  unawaited(cleanUpPartFilesAtStart());
   setUpDesktopVideo();
   // The video player's native libraries on the licence page, from the texts the app carries (Windows and macOS)
   registerVideoLicenses();
