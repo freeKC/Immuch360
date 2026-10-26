@@ -1,5 +1,6 @@
 // A local HTTPS server for the tests of the AI components: it serves files with Range, cuts a connection in the
-// middle, answers 404, redirects (also to http://), sends slowly, and records the headers of every request. Its
+// middle, answers 404, redirects (also to http://), sends slowly, keeps silent, and records the headers of every
+// request. Its
 // certificates are made by openssl at test time in a temporary folder, so that no key is kept in the repository, as in
 // tls_contract_test.dart; the tests that need it are skipped when openssl is not there.
 
@@ -143,7 +144,8 @@ class ServedFile {
 }
 
 /// The server. Paths: `/files/NAME` (the file, with Range), `/redirect/NAME` (302 to `/files/NAME`, relative),
-/// `/to-http/NAME` (302 to the plain http server), anything else 404.
+/// `/to-http/NAME` (302 to the plain http server), `/silent/NAME` (the request taken, never answered), anything else
+/// 404.
 class ComponentTestServer {
   ComponentTestServer._(this._server, this.plain) {
     _server.listen(_answer, onError: (Object _) {});
@@ -170,7 +172,7 @@ class ComponentTestServer {
   String get base => 'https://127.0.0.1:${_server.port}';
   String get plainBase => 'http://127.0.0.1:${plain.port}';
 
-  /// The address of [name] under [folder] ("files", "redirect", "to-http", "missing")
+  /// The address of [name] under [folder] ("files", "redirect", "to-http", "silent", "missing")
   String url(String folder, String name) => '$base/$folder/$name';
 
   Future<void> _answer(HttpRequest request) async {
@@ -195,6 +197,9 @@ class ComponentTestServer {
         response.statusCode = HttpStatus.found;
         response.headers.set(HttpHeaders.locationHeader, '$plainBase/files/$name');
         await response.close();
+        return;
+      case 'silent':
+        // Held until the server closes
         return;
       case 'files':
         final file = files[name];

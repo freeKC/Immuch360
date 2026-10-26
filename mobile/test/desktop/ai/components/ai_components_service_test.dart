@@ -5,6 +5,7 @@
 // installed.json that cannot be written. Shared with the Quest; kept under test/desktop so that the Windows job runs it
 // on a real Windows.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
@@ -51,6 +52,27 @@ final _runtimeComponent = AiComponent(
   licenceUrl: 'https://github.com/microsoft/onnxruntime/blob/v1.31.0/LICENSE',
 );
 
+/// A sink whose first write waits for [gate]: a download held in the middle
+class _HeldSink implements AiFileSink {
+  _HeldSink(this._inner, this._reached, this._gate);
+
+  final AiFileSink _inner;
+  final Completer<void> _reached;
+  final Future<void> _gate;
+
+  @override
+  Future<void> add(List<int> bytes) async {
+    if (!_reached.isCompleted) {
+      _reached.complete();
+    }
+    await _gate;
+    await _inner.add(bytes);
+  }
+
+  @override
+  Future<void> close() => _inner.close();
+}
+
 void main() {
   late Directory temp;
   late Directory root;
@@ -76,9 +98,11 @@ void main() {
     bool Function()? inUse,
     Future<void> Function(FileSystemEntity entity)? delete,
     List<AiComponent>? catalogue,
+    Future<Directory> Function()? folder,
+    AiFileSinkOpener? openSink,
   }) => AiComponentsService(
-    folder: () async => root,
-    downloader: AiComponentDownloader(mirror: () => Uri.directory(mirror.path).toString()),
+    folder: folder ?? () async => root,
+    downloader: AiComponentDownloader(mirror: () => Uri.directory(mirror.path).toString(), openSink: openSink),
     catalogue: catalogue ?? [_runtimeComponent, _modelComponent],
     inUse: inUse,
     delete: delete,
@@ -184,6 +208,21 @@ void main() {
       expect((installedJson()['components'] as Map)['test-model'], containsPair('source', 'already on disk'));
     });
 
+    test('a file in place with the right size but another sum is downloaded again', () async {
+      installedFile(_modelComponent)
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(_model.reversed.toList());
+      final components = service();
+
+      await components.install(_modelComponent);
+
+      expect(installedFile(_modelComponent).readAsBytesSync(), _model);
+      expect(
+        (installedJson()['components'] as Map)['test-model'],
+        containsPair('source', Uri.file(p.join(mirror.path, 'test_model.onnx')).toString()),
+      );
+    });
+
     test('an incomplete component of the catalogue is refused', () async {
       final components = service(catalogue: aiComponents);
 
@@ -239,6 +278,25 @@ void main() {
       expect((installedJson()['components'] as Map).keys, ['future-model']);
     });
 
+    test('a load that failed is tried again at the next call', () async {
+      await service().install(_modelComponent);
+      var calls = 0;
+      final components = service(
+        folder: () async {
+          if (calls++ == 0) {
+            throw const FileSystemException('not there yet');
+          }
+          return root;
+        },
+      );
+
+      await expectLater(components.load(), throwsA(isA<FileSystemException>()));
+      await components.load();
+
+      expect(components.statusOf(_modelComponent).state, AiComponentState.installed);
+      expect(calls, 2);
+    });
+
     test('a broken installed.json is read as empty', () async {
       root.createSync(recursive: true);
       File(p.join(root.path, 'installed.json')).writeAsStringSync('{not json');
@@ -272,6 +330,21 @@ void main() {
       expect((await components.licenceOf(_modelComponent)).existsSync(), isFalse);
       expect(File(p.join(root.path, 'installed.json')).existsSync(), isFalse);
       expect(components.statusOf(_modelComponent).state, AiComponentState.notInstalled);
+    });
+
+    test('removing a component deletes what a stopped download left of it', () async {
+      final components = service();
+      await components.load();
+      final part = File(p.join(root.path, 'tmp', 'test-runtime.so.gz.part'))
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(_runtimePacked.sublist(0, 100));
+      final unpacked = File('${part.path}.unpack')..writeAsBytesSync(_runtime.sublist(0, 300));
+
+      expect(await components.remove(_runtimeComponent), AiRemoveOutcome.removed);
+
+      expect(part.existsSync(), isFalse);
+      expect(unpacked.existsSync(), isFalse);
+      expect(await components.spaceUsed(), 0);
     });
 
     test('is refused while a conversion runs', () async {
@@ -384,6 +457,52 @@ void main() {
 
       expect(installedJson()['pendingDeletes'], ['runtime/test-runtime-1.31.0/libtest.so']);
       expect(components.statusOf(_runtimeComponent).state, AiComponentState.removedNextStart);
+    });
+
+    test('remove all forgets what installed.json says of a newer version too', () async {
+      await service().install(_modelComponent);
+      final json = installedJson()..['newerKey'] = {'kept': 'by a newer version'};
+      (json['components'] as Map<String, dynamic>)['future-model'] = {
+        'version': '9',
+        'path': 'models/future/future.bin',
+        'size': 3,
+        'sha256': 'e' * 64,
+      };
+      File(p.join(root.path, 'installed.json')).writeAsStringSync(jsonEncode(json));
+      File(p.join(root.path, 'models', 'future', 'future.bin'))
+        ..createSync(recursive: true)
+        ..writeAsBytesSync([1, 2, 3]);
+      final components = service();
+
+      expect(await components.removeAll(), AiRemoveOutcome.removed);
+
+      expect(File(p.join(root.path, 'installed.json')).existsSync(), isFalse);
+      expect(root.listSync(recursive: true).whereType<File>(), isEmpty);
+    });
+
+    test('remove all stops a download under way first', () async {
+      final reached = Completer<void>();
+      final gate = Completer<void>();
+      final components = service(
+        openSink: (file, {required append}) async =>
+            _HeldSink(await AiFileSink.open(file, append: append), reached, gate.future),
+      );
+      final install = components.install(_modelComponent);
+      final failure = expectLater(
+        install,
+        throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.cancelled)),
+      );
+      await reached.future;
+
+      final all = components.removeAll();
+      await Future<void>.delayed(Duration.zero);
+      gate.complete();
+
+      await failure;
+      expect(await all, AiRemoveOutcome.removed);
+      expect(root.listSync(recursive: true).whereType<File>(), isEmpty);
+      expect(installedFile(_modelComponent).existsSync(), isFalse);
+      expect(components.statusOf(_modelComponent).state, AiComponentState.notInstalled);
     });
 
     test('remove all deletes a link as a link, and nothing out of the folders of the app', () async {

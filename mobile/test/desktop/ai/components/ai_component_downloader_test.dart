@@ -89,14 +89,19 @@ void main() {
   File part() => File(p.join(temp.path, 'tmp', 'test.bin.part'));
 
   /// A downloader of the tests: the test authority, no mirror unless given, the release at [release] of the server
-  AiComponentDownloader downloader({String? mirror, String folder = 'files', AiFileSinkOpener? openSink}) =>
-      AiComponentDownloader(
-        createClient: certificates!.bareClient,
-        mirror: () => mirror,
-        release: server.url(folder, ''),
-        retryDelay: Duration.zero,
-        openSink: openSink,
-      );
+  AiComponentDownloader downloader({
+    String? mirror,
+    String folder = 'files',
+    AiFileSinkOpener? openSink,
+    Duration idleTimeout = const Duration(seconds: 60),
+  }) => AiComponentDownloader(
+    createClient: certificates!.bareClient,
+    mirror: () => mirror,
+    release: server.url(folder, ''),
+    retryDelay: Duration.zero,
+    idleTimeout: idleTimeout,
+    openSink: openSink,
+  );
 
   /// A test against the HTTPS server, skipped with its reason when openssl could not make the certificates
   void httpsTest(String description, Future<void> Function() body) => test(description, () async {
@@ -198,6 +203,40 @@ void main() {
       expect(source.toString(), server.url('files', 'test.bin'));
       expect(server.requests.map((request) => request.path), ['/missing/test.bin', '/files/test.bin']);
       expect(target().readAsBytesSync(), bytes);
+    });
+
+    httpsTest('a damaged file at the release, then the official source', () async {
+      final bytes = _bytes(60 * 1024, 30);
+      server.files['test.bin'] = ServedFile(_bytes(60 * 1024, 31));
+      server.files['official.bin'] = ServedFile(bytes);
+      final component = testComponent(
+        'test.bin',
+        bytes,
+        sha256: _sha(bytes),
+        officialUrls: [server.url('files', 'official.bin')],
+      );
+
+      final source = await downloader().download(component, target: target(), part: part());
+
+      expect(source.toString(), server.url('files', 'official.bin'));
+      expect(server.requests.map((request) => request.path), ['/files/test.bin', '/files/official.bin']);
+      expect(server.requests.last.range, isNull, reason: 'the damaged bytes are not resumed');
+      expect(target().readAsBytesSync(), bytes);
+      expect(Directory(p.join(temp.path, 'tmp')).listSync(), isEmpty);
+    });
+
+    httpsTest('a server that takes the request and never answers is left after the silence allowed', () async {
+      final bytes = _bytes(1024, 32);
+      final component = testComponent('test.bin', bytes, sha256: _sha(bytes));
+
+      await expectLater(
+        downloader(
+          folder: 'silent',
+          idleTimeout: const Duration(milliseconds: 300),
+        ).download(component, target: target(), part: part()),
+        _fails(AiDownloadFailure.network),
+      );
+      expect(server.requests.map((request) => request.path), ['/silent/test.bin']);
     });
 
     httpsTest('404 everywhere says not found', () async {
