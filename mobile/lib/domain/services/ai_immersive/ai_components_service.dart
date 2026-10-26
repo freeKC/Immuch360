@@ -8,6 +8,11 @@
 // a DLL that is loaded: removing ONNX Runtime after a conversion notes the file, and the pass of the next start
 // (freePendingAtStart, run by the desktop start before anything loads a component) deletes it. A removal is refused
 // while a conversion runs (inUse).
+//
+// installed.json and the memory of the service say the same thing: an entry is kept only once written, and a removal
+// is written before any file goes (the file noted for the next start meanwhile), so that a removal that cannot be
+// written changes nothing and installed.json never gives as installed a file that is gone. A write that failed does
+// not stop the next one.
 
 import 'dart:async';
 import 'dart:convert';
@@ -60,6 +65,9 @@ enum AiRemoveOutcome {
 
   /// A conversion runs: nothing was removed
   busy,
+
+  /// installed.json could not be written (full disk, a file held by another program): nothing was removed
+  writeFailed,
 }
 
 /// See the top of this file
@@ -217,8 +225,9 @@ class AiComponentsService extends ChangeNotifier {
         changed = true;
       }
     }
-    if (changed) {
-      await _save();
+    if (changed && !await _trySave()) {
+      // The files it no longer names are gone: the next write carries the change, else the next load does it again
+      _log.warning('the cleaned installed.json waits for the next write');
     }
     await _cleanTmp(root);
     for (final component in catalogue) {
@@ -348,7 +357,7 @@ class AiComponentsService extends ChangeNotifier {
       _set(component, AiComponentStatus(AiComponentState.downloading, total: component.bytesToDownload));
       // A file waiting for its deletion is wanted again: it stays if its sum is right
       if (_installed.pendingDeletes.remove(component.installPath)) {
-        await _save();
+        await _save(undo: () => _installed.pendingDeletes.add(component.installPath));
       }
       final target = _fileOf(component);
       String source;
@@ -374,6 +383,7 @@ class AiComponentsService extends ChangeNotifier {
       }
       final installedAt = _now();
       await _writeLicence(component, source: Uri.parse(source), installedAt: installedAt);
+      final before = _installed.components[component.id];
       _installed.components[component.id] = {
         'version': component.version,
         'path': component.installPath,
@@ -382,7 +392,16 @@ class AiComponentsService extends ChangeNotifier {
         'installedAt': installedAt.toUtc().toIso8601String(),
         'source': source,
       };
-      await _save();
+      // Not written: not installed, and the next call writes it (the file in place is kept when its sum is right)
+      await _save(
+        undo: () {
+          if (before == null) {
+            _installed.components.remove(component.id);
+          } else {
+            _installed.components[component.id] = before;
+          }
+        },
+      );
       _set(component, const AiComponentStatus(AiComponentState.installed));
     } on AiDownloadException catch (error) {
       _set(component, AiComponentStatus(await _stateAfterFailure(component), failure: error));
@@ -427,16 +446,36 @@ class AiComponentsService extends ChangeNotifier {
     }
     await _stop(component);
     final root = _root!;
-    var deferred = false;
-    if (!await _tryDelete(_fileOf(component), _delete)) {
-      _installed.pendingDeletes.add(component.installPath);
-      deferred = true;
+    final path = component.installPath;
+    // Written first: the entry goes and the file is noted for the next start, then the file goes
+    final entry = _installed.components.remove(component.id);
+    final noted = _fileOf(component).existsSync() && !_installed.pendingDeletes.contains(path);
+    if (noted) {
+      _installed.pendingDeletes.add(path);
     }
+    if (entry != null || noted) {
+      final written = await _trySave(
+        undo: () {
+          if (entry != null) {
+            _installed.components[component.id] = entry;
+          }
+          if (noted) {
+            _installed.pendingDeletes.remove(path);
+          }
+        },
+      );
+      if (!written) {
+        return AiRemoveOutcome.writeFailed;
+      }
+    }
+    final deferred = !await _tryDelete(_fileOf(component), _delete);
     for (final other in [_licenceIn(root, component), _partOf(component), File('${_partOf(component).path}.unpack')]) {
       await _tryDelete(other, _delete);
     }
-    _installed.components.remove(component.id);
-    await _save();
+    if (!deferred && _installed.pendingDeletes.remove(path) && !await _trySave()) {
+      // The file is gone: the start pass finds nothing to delete at the path still noted
+      _log.warning('$path stays noted in installed.json until the next write');
+    }
     _set(component, AiComponentStatus(deferred ? AiComponentState.removedNextStart : AiComponentState.notInstalled));
     return deferred ? AiRemoveOutcome.nextStart : AiRemoveOutcome.removed;
   }
@@ -458,6 +497,12 @@ class AiComponentsService extends ChangeNotifier {
         if (FileSystemEntity.typeSync(p.join(root.path, name), followLinks: false) != FileSystemEntityType.notFound)
           name,
     ];
+    // Written first: everything is forgotten and the folders are noted for the next start, then they go
+    final before = _installed;
+    _installed = _Installed(pendingDeletes: [...folders]);
+    if (!await _trySave(undo: () => _installed = before)) {
+      return AiRemoveOutcome.writeFailed;
+    }
     final kept = <String>[];
     for (final name in folders) {
       kept.addAll(await _empty(root, name));
@@ -466,11 +511,11 @@ class AiComponentsService extends ChangeNotifier {
     if (FileSystemEntity.typeSync(leftover.path, followLinks: false) == FileSystemEntityType.file) {
       await _tryDelete(leftover, _delete);
     }
-    _installed
-      ..components.clear()
-      ..rest.clear()
-      ..pendingDeletes = kept;
-    await _save();
+    _installed.pendingDeletes = kept;
+    if (!await _trySave()) {
+      // The folders stay noted: the start pass deletes what is left of them
+      _log.warning('the folders of the components stay noted in installed.json until the next start');
+    }
     for (final component in catalogue) {
       _statuses[component.id] = AiComponentStatus(
         kept.contains(component.installPath) ? AiComponentState.removedNextStart : AiComponentState.notInstalled,
@@ -542,11 +587,29 @@ class AiComponentsService extends ChangeNotifier {
     return total;
   }
 
-  /// Writes installed.json, one write after the other
-  Future<void> _save() {
+  /// Writes installed.json, one write after the other; a write that failed does not stop the next one. When this one
+  /// fails, [undo] puts the memory back as the disk still has it, then the error is thrown.
+  Future<void> _save({void Function()? undo}) async {
     final root = _root!;
     final installed = _installed;
-    return _saving = _saving.then((_) => installed.write(root));
+    final write = _saving = _saving.catchError((Object _) {}).then((_) => installed.write(root));
+    try {
+      await write;
+    } on FileSystemException {
+      undo?.call();
+      rethrow;
+    }
+  }
+
+  /// [_save], false when installed.json could not be written
+  Future<bool> _trySave({void Function()? undo}) async {
+    try {
+      await _save(undo: undo);
+      return true;
+    } on FileSystemException catch (error, stack) {
+      _log.warning('$installedFileName could not be written', error, stack);
+      return false;
+    }
   }
 }
 

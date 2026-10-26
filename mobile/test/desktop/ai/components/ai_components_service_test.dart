@@ -1,8 +1,9 @@
 // The AI components on a device: installation (through a local mirror folder, the downloader being tested against a
 // server in ai_component_downloader_test.dart), installed.json, the copied licence, the size checked at each load,
 // removal, removal refused during a conversion, the deferred deletion of a locked file (simulated everywhere, and a
-// real loaded DLL on Windows), and remove all. Shared with the Quest; kept under test/desktop so that the Windows job
-// runs it on a real Windows.
+// real loaded DLL on Windows), remove all (a link is deleted as a link, only the folders of the app), and an
+// installed.json that cannot be written. Shared with the Quest; kept under test/desktop so that the Windows job runs it
+// on a real Windows.
 
 import 'dart:convert';
 import 'dart:ffi';
@@ -430,6 +431,97 @@ void main() {
         throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.cancelled)),
       );
       expect(components.statusOf(_modelComponent).state, AiComponentState.notInstalled);
+    });
+  });
+
+  group('an installed.json that cannot be written', () {
+    /// A folder in the way of the new installed.json: its writes fail, as on a full disk or while a scanner holds the
+    /// file
+    Directory block() => Directory(p.join(root.path, 'installed.json.tmp'))..createSync(recursive: true);
+
+    Matcher failsToWrite() =>
+        throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.writeFailed));
+
+    test('the install fails and is not installed; once the cause is gone, install and remove work again', () async {
+      final components = service();
+      final blocker = block();
+
+      await expectLater(components.install(_modelComponent), failsToWrite());
+
+      expect(components.statusOf(_modelComponent).state, AiComponentState.notInstalled);
+      expect(components.statusOf(_modelComponent).failure?.failure, AiDownloadFailure.writeFailed);
+      expect(await components.verifiedFile(_modelComponent), isNull);
+      // Asked again while the cause is still there: it fails again, never "installed" without a write
+      await expectLater(components.install(_modelComponent), failsToWrite());
+
+      blocker.deleteSync();
+      await components.install(_modelComponent);
+      await components.install(_runtimeComponent);
+
+      expect(components.statusOf(_modelComponent).state, AiComponentState.installed);
+      expect((installedJson()['components'] as Map).keys, unorderedEquals(['test-model', 'test-runtime']));
+      expect(await components.remove(_modelComponent), AiRemoveOutcome.removed);
+      expect(installedFile(_modelComponent).existsSync(), isFalse);
+      expect((installedJson()['components'] as Map).keys, ['test-runtime']);
+      expect(components.statusOf(_modelComponent).state, AiComponentState.notInstalled);
+
+      // The next start agrees
+      final next = service();
+      await next.load();
+      expect(next.statusOf(_runtimeComponent).state, AiComponentState.installed);
+      expect(next.statusOf(_modelComponent).state, AiComponentState.notInstalled);
+    });
+
+    test('a removal that cannot be written removes nothing and says so', () async {
+      final components = service();
+      await components.install(_modelComponent);
+      final blocker = block();
+
+      expect(await components.remove(_modelComponent), AiRemoveOutcome.writeFailed);
+
+      expect(installedFile(_modelComponent).existsSync(), isTrue);
+      expect((await components.licenceOf(_modelComponent)).existsSync(), isTrue);
+      expect(components.statusOf(_modelComponent).state, AiComponentState.installed);
+      expect(await components.verifiedFile(_modelComponent), isNotNull);
+
+      expect(await components.removeAll(), AiRemoveOutcome.writeFailed);
+
+      expect(installedFile(_modelComponent).existsSync(), isTrue);
+      expect(components.statusOf(_modelComponent).state, AiComponentState.installed);
+
+      blocker.deleteSync();
+      expect(await components.remove(_modelComponent), AiRemoveOutcome.removed);
+      expect(installedFile(_modelComponent).existsSync(), isFalse);
+      expect(File(p.join(root.path, 'installed.json')).existsSync(), isFalse);
+      await components.install(_modelComponent);
+      expect(await components.removeAll(), AiRemoveOutcome.removed);
+      expect(root.listSync(recursive: true).whereType<File>(), isEmpty);
+    });
+
+    test('a load that cannot write what it cleaned still gives the installed components', () async {
+      await service().install(_modelComponent);
+      final json = installedJson();
+      (json['components'] as Map<String, dynamic>)['test-runtime'] = {
+        'version': '1.30.0',
+        'path': 'runtime/test-runtime-1.30.0/libtest.so',
+        'size': 3,
+        'sha256': 'f' * 64,
+      };
+      File(p.join(root.path, 'installed.json')).writeAsStringSync(jsonEncode(json));
+      final blocker = block();
+      final components = service();
+
+      await components.load();
+
+      expect(components.statusOf(_modelComponent).state, AiComponentState.installed);
+      expect(await components.verifiedFile(_modelComponent), isNotNull);
+      expect(components.statusOf(_runtimeComponent).state, AiComponentState.notInstalled);
+
+      blocker.deleteSync();
+      await components.install(_runtimeComponent);
+      final entries = installedJson()['components'] as Map;
+      expect((entries['test-runtime'] as Map)['version'], '1.31.0');
+      expect(entries.keys, unorderedEquals(['test-model', 'test-runtime']));
     });
   });
 
