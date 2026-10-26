@@ -2,6 +2,7 @@ package app.alextran.immich.djilink
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.double
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -925,6 +926,37 @@ class RelayTranscoderStateTest {
     assertEquals(0L, report["keysPeriodic"]!!.jsonPrimitive.long)
     assertEquals(0L, report["keysAsked"]!!.jsonPrimitive.long)
     assertEquals(2L, report["keysFirst"]!!.jsonPrimitive.long)
+  }
+
+  /**
+   * p2/noon-test-check-2026-10-26.md C13 (item 8): megabitsPerSecondMean divides by the relay's time, which pins the
+   * relay's start; the export says that time and the rate over the encoder's own time beside it
+   */
+  @Test
+  fun theReportSaysTheRelaysTimeAndTheRateWhileTheEncoderRan() {
+    running()
+    // 10 s of relay with no steady receiver, then 4 s of steady stream
+    now += 10 * second
+    core.tick(now)
+    core.offer(droneUnit(0, key = true), drone)
+    core.setNeeded(true, now)
+    val decoder = codecs.decoders.last()
+    core.tick(now)
+    repeat(4 * 60) {
+      now += 50 * ms / 3
+      step(it + 1, decoder)
+      if (it % 6 == 5) core.tick(now)
+    }
+    core.tick(now)
+    val report = core.report(now)!!
+    val bytes = report["encodedBytes"]!!.jsonPrimitive.long
+    assertTrue(bytes > 0)
+    val relayS = report["relayRunningS"]!!.jsonPrimitive.double
+    val encoderS = report["encoderRunningS"]!!.jsonPrimitive.double
+    assertEquals(14.0, relayS, 0.01)
+    assertEquals(4.0, encoderS, 0.01)
+    assertEquals(bytes * 8 / 1e6 / relayS, report["megabitsPerSecondMean"]!!.jsonPrimitive.double, 1e-9)
+    assertEquals(bytes * 8 / 1e6 / encoderS, report["megabitsPerSecondWhileRunning"]!!.jsonPrimitive.double, 1e-9)
   }
 
   private fun kotlinx.serialization.json.JsonPrimitive.contentOrNullSafe(): String? = if (isString) content else null

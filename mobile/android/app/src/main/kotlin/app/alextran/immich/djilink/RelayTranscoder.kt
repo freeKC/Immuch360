@@ -1468,7 +1468,14 @@ class RelayTranscoder(
       put("encodedBytes", encodedBytes)
       put("encodedWithoutSets", unitsWithoutSets)
       put("keySetsAddedInBand", setsAdded)
+      // Over the relay's time since it started, which pins that start; over the encoder's own time beside it
+      // (p2/noon-test-check-2026-10-26.md C13)
+      put("relayRunningS", spanS)
       put("megabitsPerSecondMean", encodedBytes * 8.0 / 1e6 / spanS)
+      put(
+        "megabitsPerSecondWhileRunning",
+        if (encoderRunNs > 0) encodedBytes * 8.0 / 1e6 / (encoderRunNs / 1e9) else null,
+      )
       put("bitrateNowKbps", if (encoder != null) bitrateBps / 1000 else null)
       put("bitrateMinKbps", bitrateMin?.div(1000))
       put("bitrateMaxKbps", bitrateMax?.div(1000))
