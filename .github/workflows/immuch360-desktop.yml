@@ -210,7 +210,15 @@ jobs:
         working-directory: mobile
         run: |
           mise exec -- dart format --output=none --set-exit-if-changed lib/desktop lib/main_desktop.dart \
-            test/desktop integration_test/desktop_smoke_test.dart packages/flutter_secure_storage_windows
+            test/desktop integration_test/desktop_smoke_test.dart packages/flutter_secure_storage_windows \
+            packages/immuch_sbs_codec
+
+      # The Rust JPEG codec of the AI features (mobile/packages/immuch_sbs_codec), in release as its build hook makes
+      # it: round trip, ICC profile, quality, subsampling, segments, a panic turned into a status, the C functions.
+      # Its Dart side is tested through dart:ffi in the suite below, on the library the hook builds
+      - name: Tests of the JPEG codec of the AI features (cargo)
+        working-directory: mobile/packages/immuch_sbs_codec/rust
+        run: mise exec -- cargo test --release
 
       # The whole suite: the phone regression gate, test/desktop included
       - name: Tests
@@ -364,6 +372,24 @@ jobs:
           cpio -i --quiet --to-stdout "*$assets/Immuch360-libsmb2-sources.tar.gz" < "$RUNNER_TEMP/rpm.cpio" \
             | cmp - "$SOURCES" || { echo "::error::the libsmb2 sources in the .rpm are not the release file"; exit 1; }
           echo "the .rpm holds libsmb2.so, its notice and licence texts, and the sources"
+
+      # The Rust JPEG codec of the AI features, built by the hook of mobile/packages/immuch_sbs_codec, in lib/ of the
+      # bundle and of both packages (the file lists of the two steps above); check_package.sh then finds every library
+      # it needs in the five distributions
+      - name: The JPEG codec of the AI features in the bundle and the packages
+        run: |
+          codec=mobile/build/linux/x64/release/bundle/lib/libimmuch_sbs_codec.so
+          if [ ! -f "$codec" ]; then
+            echo "::error::no libimmuch_sbs_codec.so in the bundle"
+            ls "$(dirname "$codec")"
+            exit 1
+          fi
+          objdump -p "$codec" | awk '/NEEDED|RUNPATH/'
+          grep -qxF ./opt/immuch360/lib/libimmuch_sbs_codec.so "$RUNNER_TEMP/deb.txt" \
+            || { echo "::error::no libimmuch_sbs_codec.so in the .deb"; exit 1; }
+          grep -qxF /opt/immuch360/lib/libimmuch_sbs_codec.so "$RUNNER_TEMP/rpm.txt" \
+            || { echo "::error::no libimmuch_sbs_codec.so in the .rpm"; exit 1; }
+          echo "libimmuch_sbs_codec.so: $(stat -c %s "$codec") bytes, in the bundle, the .deb and the .rpm"
 
       - name: Upload the .deb
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -551,6 +577,12 @@ jobs:
           rustup toolchain install "$channel" --profile minimal --target x86_64-pc-windows-msvc
           echo "RUSTUP_TOOLCHAIN=$channel" >> "$GITHUB_ENV"
 
+      # The Rust JPEG codec of the AI features (mobile/packages/immuch_sbs_codec) on the MSVC target the app ships,
+      # in release as its build hook makes it; its Dart side runs in the desktop tests below, through dart:ffi
+      - name: Tests of the JPEG codec of the AI features (cargo)
+        working-directory: mobile/packages/immuch_sbs_codec/rust
+        run: cargo test --release
+
       - name: Flutter dependencies
         working-directory: mobile
         run: |
@@ -608,6 +640,20 @@ jobs:
               sys.exit('::error::the libsmb2 sources in the ZIP are not the archive packed')
           print('the ZIP holds libsmb2.dll, its notice and licence texts, and the sources')
           print(hashlib.sha256(packed).hexdigest())
+          PY
+
+      # The Rust JPEG codec of the AI features next to the executable, whose imports windows_bundle.py has checked
+      - name: The JPEG codec of the AI features in the ZIP
+        env:
+          ZIP: ${{ steps.bundle.outputs.zip }}
+        run: |
+          python - "$ZIP" <<'PY'
+          import sys, zipfile
+          with zipfile.ZipFile(sys.argv[1]) as bundle:
+              info = next((i for i in bundle.infolist() if i.filename == 'Immuch360 Desktop/immuch_sbs_codec.dll'), None)
+          if info is None:
+              sys.exit('::error::no immuch_sbs_codec.dll next to immuch360.exe in the ZIP')
+          print(f'immuch_sbs_codec.dll: {info.file_size} bytes in the ZIP')
           PY
 
       # The installer of the same folder as the ZIP (Inno Setup 6 of the runner image): for one user or for every
@@ -755,6 +801,12 @@ jobs:
           channel=$(sed -n 's/^channel = "\([^"]*\)".*/\1/p' ../native/crates/native_core_ffi/rust-toolchain.toml)
           mise exec -- rustup target add --toolchain "$channel" aarch64-apple-darwin x86_64-apple-darwin
 
+      # The Rust JPEG codec of the AI features (mobile/packages/immuch_sbs_codec) on this arm64 runner, the NEON paths
+      # of its decoder included, in release as its build hook makes it
+      - name: Tests of the JPEG codec of the AI features (cargo)
+        working-directory: mobile/packages/immuch_sbs_codec/rust
+        run: mise exec -- cargo test --release
+
       - name: Build without signing
         working-directory: mobile
         env:
@@ -827,6 +879,26 @@ jobs:
           [ -n "$notices" ] || { echo "::error::no NOTICES.md of the video libraries in the app"; exit 1; }
           echo "notices: ${notices#"$app/"}"
           ls "$(dirname "$notices")"
+
+      # The Rust JPEG codec of the AI features, a framework of both slices made from what the hook of
+      # mobile/packages/immuch_sbs_codec built; the otool check above covers it with the other frameworks
+      - name: The JPEG codec of the AI features in the app
+        run: |
+          app="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
+          framework=$(find "$app/Contents/Frameworks" -maxdepth 1 -name '*immuch_sbs_codec*.framework' | head -n 1)
+          if [ -z "$framework" ]; then
+            echo "::error::no framework of immuch_sbs_codec in the app"
+            ls "$app/Contents/Frameworks"
+            exit 1
+          fi
+          binary="$framework/$(basename "$framework" .framework)"
+          archs=$(lipo -archs "$binary")
+          echo "${framework#"$app/"}: $archs, $(stat -f %z "$binary") bytes"
+          otool -L "$binary"
+          case " $archs " in
+            *" x86_64 "*" arm64 "*|*" arm64 "*" x86_64 "*) ;;
+            *) echo "::error::the codec is not built for both slices: $archs"; exit 1 ;;
+          esac
 
       # libsmb2 (dart_smb2, LGPL-2.1-or-later) in the app with its notice and licence texts and the archive of its
       # sources, assets of the package (mobile/packages/dart_smb2/libsmb2) that the licence page of the app shows. The
