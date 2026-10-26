@@ -137,15 +137,6 @@ class ExistingVersionFinder {
     return null;
   }
 
-  /// The XMP of [path], read now, when it is still a 3D photo of ours with its DerivativeId: the only kind of file
-  /// Replace may take the place of. Null for any other file, or one that is gone.
-  Future<StereoPhotoXmp?> readOurs(String path) async {
-    final head = await _readHead(path);
-    final xmp = head == null ? null : StereoPhotoXmp.findIn(head);
-    final id = xmp?.derivativeId;
-    return xmp != null && xmp.kind != null && id != null && id.isNotEmpty ? xmp : null;
-  }
-
   Future<ExistingVersion?> _versionAt(String path, String folder, DerivedRuleOriginal original) async {
     final head = await _readHead(path);
     if (head == null) {

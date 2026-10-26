@@ -17,6 +17,7 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
@@ -53,21 +54,15 @@ class _Engines implements ImmersiveEngine {
   Future<void> dispose() async {}
 }
 
-/// The writer of the 3D photos, reduced to what the queue relies on: SafeWriter.commit of lot A5b, a version replaced
-/// only in the folder of the .part and only when it still carries our XMP with a DerivativeId
+/// The writer of the 3D photos, reduced to what the queue relies on: SafeWriter.commit of lot A5b, which replaces a
+/// file of the folder of the .part only, and only when it still carries our XMP with a DerivativeId
 class _Output implements ConversionOutput {
   final begun = <String>[];
   final discarded = <String>[];
 
-  /// The replaceName of each finish
-  final replaceNames = <String?>[];
+  /// What each finish was asked
+  final finished = <(AiWhenExists, String?)>[];
   ImmersiveErrorCode? failFinish;
-
-  /// The name is taken and the user chose Skip for such files
-  bool skipTaken = false;
-
-  /// Runs at the start of each finish: another tool writing meanwhile
-  void Function()? beforeFinish;
 
   @override
   Future<String> begin(ConversionJob job) async {
@@ -79,29 +74,35 @@ class _Output implements ConversionOutput {
   }
 
   @override
-  Future<ConversionSaved> finish(ConversionJob job, String partPath, {String? replaceName}) async {
-    replaceNames.add(replaceName);
-    beforeFinish?.call();
+  Future<ConversionSaved> finish(
+    ConversionJob job,
+    String partPath, {
+    required AiWhenExists whenExists,
+    String? replaceName,
+  }) async {
+    finished.add((whenExists, replaceName));
     final code = failFinish;
     if (code != null) {
       throw ConversionException(code, 'Scripted failure of the rename');
     }
     final target = job.target!;
-    if (replaceName != null) {
-      final replacing = p.join(p.dirname(partPath), replaceName);
-      final file = File(replacing);
-      final id = file.existsSync() ? StereoPhotoXmp.findIn(file.readAsBytesSync())?.derivativeId : null;
-      if (id != null && id.trim().isNotEmpty) {
-        File(partPath).renameSync(replacing);
-        return ConversionSaved(path: replacing, outcome: ConversionSaveOutcome.replaced);
+    final named = p.join(
+      p.dirname(partPath),
+      whenExists == AiWhenExists.replace ? replaceName ?? target.fileName : target.fileName,
+    );
+    if (File(named).existsSync()) {
+      if (whenExists == AiWhenExists.skip) {
+        File(partPath).deleteSync();
+        return ConversionSaved(path: named, outcome: ConversionSaveOutcome.skipped);
+      }
+      final id = StereoPhotoXmp.findIn(File(named).readAsBytesSync())?.derivativeId;
+      if (whenExists == AiWhenExists.replace && id != null && id.trim().isNotEmpty) {
+        File(partPath).renameSync(named);
+        return ConversionSaved(path: named, outcome: ConversionSaveOutcome.replaced);
       }
     }
     var path = target.path;
     for (var n = 1; File(path).existsSync(); n++) {
-      if (skipTaken) {
-        File(partPath).deleteSync();
-        return ConversionSaved(path: target.path, outcome: ConversionSaveOutcome.skipped);
-      }
       path = p.join(
         target.folder,
         '${p.basenameWithoutExtension(target.fileName)} ($n)${p.extension(target.fileName)}',
@@ -469,7 +470,7 @@ void main() {
       expect(job(id).replaced, isTrue);
       expect(job(id).writtenPath, existing);
       expect(job(id).existingVersionPath, existing);
-      expect(output.replaceNames, ['salon_3D_LRF_Full_SBS.jpg']);
+      expect(output.finished, [(AiWhenExists.replace, 'salon_3D_LRF_Full_SBS.jpg')]);
       expect(
         StereoPhotoXmp.findIn(File(existing).readAsBytesSync())!.derivativeId,
         'urn:uuid:00000000-0000-4000-8000-000000000001',
@@ -509,28 +510,11 @@ void main() {
         expect(job(id).writtenPath, p.join(photos, 'salon_3D_LRF_Full_SBS.jpg'));
         expect(job(id).replaced, isFalse);
         expect(job(id).existingVersionPath, isNull);
-        expect(output.replaceNames, [null]);
+        expect(output.finished, [(AiWhenExists.keepBoth, null)]);
         expect(File(moved).readAsBytesSync(), old);
         expect(Directory(other).listSync().map((entry) => p.basename(entry.path)), ['salon_3D_LRF_Full_SBS.jpg']);
       },
     );
-
-    test('the job says replaced only when the writer did: a file no longer ours at the rename is kept', () async {
-      final request = photo('salon.jpg');
-      final existing = version(p.join(photos, 'salon.jpg'), 'salon_3D_LRF_Full_SBS.jpg');
-      // Another tool writes over it after the queue looked, just before the rename
-      output.beforeFinish = () => File(existing).writeAsBytesSync([0xff, 0xd8, 0xff, 0xd9]);
-
-      final id = queue().add([request], existing: ExistingVersionChoice.replace).single;
-      await allEnded();
-
-      expect(output.replaceNames, ['salon_3D_LRF_Full_SBS.jpg']);
-      expect(job(id).state, ConversionState.done);
-      expect(job(id).replaced, isFalse);
-      expect(job(id).existingVersionPath, isNull);
-      expect(job(id).writtenPath, p.join(photos, 'salon_3D_LRF_Full_SBS (1).jpg'));
-      expect(File(existing).readAsBytesSync(), [0xff, 0xd8, 0xff, 0xd9]);
-    });
 
     test('Replace never takes the place of a file that is no longer ours: both are kept', () async {
       engines.fallback = FakeImmersiveEngine(holdStage: ImmersiveStage.encoding);
@@ -545,23 +529,56 @@ void main() {
       engines.fallback.release();
       await allEnded();
 
+      // The writer read it again at the rename and kept both: the job says so
+      expect(output.finished, [(AiWhenExists.replace, 'salon_3D_LRF_Full_SBS.jpg')]);
       expect(job(id).state, ConversionState.done);
       expect(job(id).replaced, isFalse);
+      expect(job(id).existingVersionPath, isNull);
       expect(job(id).writtenPath, p.join(photos, 'salon_3D_LRF_Full_SBS (1).jpg'));
       expect(File(existing).readAsBytesSync(), [0xff, 0xd8, 0xff, 0xd9]);
     });
 
     test('a name taken with Skip chosen for such files: skipped, nothing left', () async {
-      output.skipTaken = true;
       final request = photo('salon.jpg');
       File(p.join(photos, 'salon_3D_LRF_Full_SBS.jpg')).writeAsBytesSync([1, 2, 3]);
 
-      final id = queue().add([request], existing: ExistingVersionChoice.newVersion).single;
+      final id = queue().add([request], whenExists: AiWhenExists.skip).single;
       await allEnded();
 
+      expect(output.finished, [(AiWhenExists.skip, null)]);
       expect(job(id).state, ConversionState.skipped);
       expect(job(id).skipReason, ConversionSkipReason.nameTaken);
       expect(leftInFolder({'salon.jpg'}), ['salon_3D_LRF_Full_SBS.jpg']);
+      expect(File(p.join(photos, 'salon_3D_LRF_Full_SBS.jpg')).readAsBytesSync(), [1, 2, 3]);
+    });
+
+    test('a name taken by another version of ours is replaced when Replace is chosen for such files', () async {
+      final request = photo('salon.jpg');
+      final turned = version(p.join(photos, 'salon.jpg'), 'salon_3D_LRF_Full_SBS.jpg', turns: 1);
+
+      final id = queue().add([request], whenExists: AiWhenExists.replace).single;
+      await allEnded();
+
+      expect(output.finished, [(AiWhenExists.replace, null)]);
+      expect(job(id).replaced, isTrue);
+      expect(job(id).writtenPath, turned);
+      expect(leftInFolder({'salon.jpg'}), ['salon_3D_LRF_Full_SBS.jpg']);
+    });
+
+    test('Make a new version never replaces, even with Replace chosen for a name taken', () async {
+      final request = photo('salon.jpg');
+      final existing = version(p.join(photos, 'salon.jpg'), 'salon_3D_LRF_Full_SBS.jpg');
+      final old = File(existing).readAsBytesSync();
+
+      final id = queue()
+          .add([request], existing: ExistingVersionChoice.newVersion, whenExists: AiWhenExists.replace)
+          .single;
+      await allEnded();
+
+      expect(output.finished, [(AiWhenExists.keepBoth, null)]);
+      expect(job(id).replaced, isFalse);
+      expect(job(id).writtenPath, p.join(photos, 'salon_3D_LRF_Full_SBS (1).jpg'));
+      expect(File(existing).readAsBytesSync(), old);
     });
   });
 

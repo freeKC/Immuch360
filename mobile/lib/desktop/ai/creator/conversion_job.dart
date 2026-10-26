@@ -11,6 +11,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -84,15 +85,18 @@ enum ConversionSkipReason {
   nameTaken,
 }
 
-/// What a batch does with a photo that already has a version with the same settings
+/// What a batch does with a photo that already has a version with the same settings. A name taken by another file is
+/// the other choice of the batch, AiWhenExists, which this one goes before.
 enum ExistingVersionChoice {
   /// The default, see DesktopAiSettings.skipExisting
   skip,
 
-  /// Another version beside it, with its own DerivativeId
+  /// Another version beside it, with its own DerivativeId: nothing is replaced then, whatever the choice for a name
+  /// taken says
   newVersion,
 
-  /// The new 3D photo takes the place of that version, when it is still ours with its DerivativeId
+  /// The new 3D photo takes the place of that version when it is in the destination folder and still ours with its
+  /// DerivativeId
   replace,
 }
 
@@ -222,6 +226,7 @@ class ConversionJob {
     this.kind = ConversionKind.sbsFromPhoto,
     this.quarterTurns = 0,
     this.existing = ExistingVersionChoice.skip,
+    this.whenExists = AiWhenExists.keepBoth,
     this.state = ConversionState.waiting,
     this.perMille = 0,
     this.writtenPath,
@@ -248,6 +253,9 @@ class ConversionJob {
   final ConversionTarget? target;
   final int quarterTurns;
   final ExistingVersionChoice existing;
+
+  /// What the writer does when the name of the 3D photo is taken (desktop_ai.json, spec 6.4)
+  final AiWhenExists whenExists;
   final ConversionState state;
 
   /// How far the job is, in thousandths of the whole job
@@ -300,6 +308,7 @@ class ConversionJob {
     kind: kind,
     quarterTurns: quarterTurns,
     existing: existing,
+    whenExists: whenExists,
     state: state ?? this.state,
     perMille: perMille ?? this.perMille,
     writtenPath: writtenPath ?? this.writtenPath,
@@ -324,6 +333,7 @@ class ConversionJob {
     kind: kind,
     quarterTurns: quarterTurns,
     existing: existing,
+    whenExists: whenExists,
   );
 
   @override

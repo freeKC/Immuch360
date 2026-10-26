@@ -6,9 +6,10 @@
 //
 // A disk full fails its job (its .part deleted) and pauses the queue: the user frees some space, then Resume runs that
 // photo again and goes on. A photo that already has a 3D version with the same settings is skipped by default; the
-// batch may make a new version instead, or replace that version, which is only done to a file that still carries our
-// XMP and its DerivativeId when it is read again just before. The original is never opened for writing: the engine
-// writes a .part, and the writer of the 3D photos renames it at the end (lot A5b).
+// batch may make a new version instead, or replace that version when it is in the destination folder. The original is
+// never opened for writing: the engine writes a .part, and the writer of the 3D photos renames it at the end (lot
+// A5b). The writer alone decides whether a file may be replaced, by reading it again just before the rename: the queue
+// has no rule of its own for that.
 //
 // The queue does not survive the window: closing it asks first (close_guard.dart, reason "conversions"), and the
 // journal of the .part files cleans up what a quit left.
@@ -19,6 +20,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -56,12 +58,22 @@ abstract interface class ConversionOutput {
   /// [ConversionException]: readOnly, diskFull or writeFailed.
   Future<String> begin(ConversionJob job);
 
-  /// Puts [partPath] under the final name of [job], in the folder of its target and nowhere else, and tells what it
-  /// did: the name may differ from the target ("name (1)"). [replaceName] is a file of that folder, a version with the
-  /// same settings, that the new one takes the place of only when it is still a 3D photo of ours with its
-  /// DerivativeId, read again just before; otherwise both are kept. Throws a [ConversionException] as [begin], and the
-  /// queue discards the .part then.
-  Future<ConversionSaved> finish(ConversionJob job, String partPath, {String? replaceName});
+  /// Puts [partPath] under the final name of [job], in the folder of its target and nowhere else, as [whenExists] says
+  /// when that name is taken, and tells what it did: keepBoth takes the first free "name (n)"; replace takes the place
+  /// of [replaceName] (a file of that folder, the final name when null) only when it is a 3D photo of ours with its
+  /// DerivativeId, read again just before, and keeps both otherwise; skip leaves the file there and deletes the .part.
+  /// The original of [job] is never replaced. This is SafeWriter.commit of lot A5b, with the same rule for a file that
+  /// may be replaced.
+  ///
+  /// Throws a [ConversionException] as [begin], and the queue discards the .part then. The writer of A5b throws
+  /// CreatorWriteException: its adapter gives failure.errorCode in a ConversionException, or a disk full at the rename
+  /// would end as writeFailed and no longer pause the queue.
+  Future<ConversionSaved> finish(
+    ConversionJob job,
+    String partPath, {
+    required AiWhenExists whenExists,
+    String? replaceName,
+  });
 
   /// Deletes [partPath] and forgets it; nothing when it is gone already
   Future<void> discard(String partPath);
@@ -149,9 +161,14 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     return const ConversionQueueState();
   }
 
-  /// Adds a batch, "1 of n" to "n of n", each photo with what to do when a version with the same settings exists;
-  /// a request with a reason to skip is added skipped. Gives the ids of the jobs.
-  List<String> add(List<ConversionRequest> requests, {ExistingVersionChoice existing = ExistingVersionChoice.skip}) {
+  /// Adds a batch, "1 of n" to "n of n", each photo with what to do when a version with the same settings exists and
+  /// when the name of its 3D photo is taken; a request with a reason to skip is added skipped. Gives the ids of the
+  /// jobs.
+  List<String> add(
+    List<ConversionRequest> requests, {
+    ExistingVersionChoice existing = ExistingVersionChoice.skip,
+    AiWhenExists whenExists = AiWhenExists.keepBoth,
+  }) {
     if (requests.isEmpty) {
       return const [];
     }
@@ -165,6 +182,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           target: request.target,
           quarterTurns: request.quarterTurns & 3,
           existing: existing,
+          whenExists: whenExists,
           state: request.skip == null ? ConversionState.waiting : ConversionState.skipped,
           skipReason: request.skip,
         ),
@@ -354,11 +372,20 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
 
       failure = ImmersiveErrorCode.writeFailed;
       _set(id, (job) => job.copyWith(state: ConversionState.writing));
-      // Read again just before: a file that is no longer ours is never replaced, the new one goes beside it
-      final replaceName = same != null && job.existing == ExistingVersionChoice.replace && await _stillOurs(tools, same)
-          ? p.basename(same.path)
-          : null;
-      final saved = await tools.output.finish(state.byId(id) ?? job, part, replaceName: replaceName);
+      // The version of the destination folder with the same settings for Replace; never a replace for a new version,
+      // whatever the choice for a name taken says; otherwise that choice. Whether the file may be replaced is read by
+      // the writer just before the rename.
+      final (AiWhenExists whenExists, String? replaceName) = switch (job.existing) {
+        ExistingVersionChoice.replace when same != null => (AiWhenExists.replace, p.basename(same.path)),
+        ExistingVersionChoice.newVersion => (AiWhenExists.keepBoth, null),
+        _ => (job.whenExists, null),
+      };
+      final saved = await tools.output.finish(
+        state.byId(id) ?? job,
+        part,
+        whenExists: whenExists,
+        replaceName: replaceName,
+      );
       // Renamed, or deleted for a name taken: the writer took it
       part = null;
       if (saved.outcome == ConversionSaveOutcome.skipped) {
@@ -404,9 +431,6 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       cancel.free();
     }
   }
-
-  Future<bool> _stillOurs(ConversionTools tools, ExistingVersion version) async =>
-      await tools.finder.readOurs(version.path) != null;
 
   /// Ends a job that made no file: cancelled, or failed with [code]; a disk full pauses the queue
   void _end(String id, ImmersiveErrorCode code, [String? message]) {

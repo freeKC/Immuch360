@@ -4,7 +4,6 @@
 // a file is only taken for a version once its own XMP says so.
 
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
@@ -243,24 +242,6 @@ void main() {
       version(photos, 'salon_3D_LRF_Full_SBS (1).jpg', parallax: 0.04);
 
       expect(await finder().withSettings(original, sameSettings, folder: photos), isNull);
-    });
-  });
-
-  group('readOurs', () {
-    test('a 3D photo of ours with its DerivativeId, read now', () async {
-      final ours = version(photos, 'salon_3D_LRF_Full_SBS.jpg');
-
-      expect((await finder().readOurs(ours))?.derivativeId, 'urn:uuid:11111111-0000-4000-8000-000000000000');
-    });
-
-    test('nothing for a file without DerivativeId, a file of another tool or a file gone', () async {
-      final noId = version(photos, 'salon_3D_LRF_Full_SBS.jpg', derivativeId: null);
-      final other = p.join(photos, 'iw3_LRF_Full_SBS.jpg');
-      File(other).writeAsBytesSync(Uint8List.fromList([0xff, 0xd8, 0xff, 0xd9]));
-
-      expect(await finder().readOurs(noId), isNull);
-      expect(await finder().readOurs(other), isNull);
-      expect(await finder().readOurs(p.join(photos, 'gone.jpg')), isNull);
     });
   });
 
