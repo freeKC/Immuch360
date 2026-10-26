@@ -31,6 +31,7 @@ import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/desktop/library/library_metadata.dart';
 import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:immich_mobile/desktop/library/volume_id.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:path/path.dart' as p;
 
 /// One entry of a folder
@@ -624,6 +625,7 @@ class _Scan {
       LibraryMediaKind.image when metadata.animated => 3,
       LibraryMediaKind.image => 1,
     };
+    final xmp = metadata.immersive;
     return IndexedFile(
       id: id,
       rootId: root.id,
@@ -643,6 +645,22 @@ class _Scan {
       projection: metadata.projection,
       cloudOnly: cloudOnly,
       readFailed: metadata.readFailed,
+      // A file of a newer format keeps its link and its place out of the backup, but is not shown in 3D
+      stereo: xmp != null && xmp.isReadableStereoPhoto
+          ? switch (xmp.eyes) {
+              StereoEyes.full => IndexedStereo.sbsFull,
+              StereoEyes.half => IndexedStereo.sbsHalf,
+              null => null,
+            }
+          : null,
+      origin: switch (xmp?.origin) {
+        ImmersiveOrigin.estimatedDepth => IndexedOrigin.estimated,
+        ImmersiveOrigin.generatedContent => IndexedOrigin.generated,
+        ImmersiveOrigin.unknown || null => null,
+      },
+      sourceSha1: xmp?.sourceSha1,
+      derivativeId: xmp?.derivativeId,
+      derivedSettings: xmp?.settingsKey,
     );
   }
 }
