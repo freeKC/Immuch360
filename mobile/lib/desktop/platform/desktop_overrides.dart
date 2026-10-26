@@ -3,6 +3,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/desktop/library/desktop_asset_media_repository.dart';
@@ -13,6 +14,7 @@ import 'package:immich_mobile/desktop/platform/desktop_permission_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_spherical_video_api.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/desktop/window/self_check.dart';
+import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
@@ -49,6 +51,8 @@ List<Override> desktopOverrides() => [
   viewIntentHandlerProvider.overrideWith((ref) => DesktopOpenFilesHandler(ref)),
   // The other file of an X3 pair opened with the program is next to it on the disk, not in the local tables
   openedFileSiblingProvider.overrideWithValue(OpenedFiles.sibling),
+  // The AI components in a folder that does not roam with a Windows profile
+  aiComponentsFolderProvider.overrideWithValue(desktopAiComponentsFolder),
 ];
 
 /// What wraps the app on a computer, inside MaterialApp (main.dart): the desktop keys and the window's close guard,
