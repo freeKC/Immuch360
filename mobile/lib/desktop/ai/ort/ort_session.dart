@@ -215,7 +215,6 @@ final class OrtSession {
     }
     final calls = runtime._calls;
     return using((arena) {
-      // Zeroed by the arena's calloc, so that the finally below sees null for a value never made
       final data = arena<Float>(values.isEmpty ? 1 : values.length);
       data.asTypedList(values.length).setAll(0, values);
       final dimensions = arena<Int64>(shape.isEmpty ? 1 : shape.length);
@@ -232,6 +231,7 @@ final class OrtSession {
         'CreateCpuMemoryInfo',
       );
       final memoryInfo = memoryInfoOut.value;
+      // Zeroed by the arena (calloc), so that the finally below sees null for a value never made
       final inputOut = arena<Pointer<ort.OrtValue>>();
       final outputOut = arena<Pointer<ort.OrtValue>>();
       try {
