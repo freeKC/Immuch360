@@ -1,12 +1,13 @@
 // The Rust codec of mobile/packages/immuch_sbs_codec through dart:ffi, as the AI job will call it: a pair written with
 // its segments in the order of SbsCodec and read back by package:image and the XMP reader of the app, the ICC
 // profile kept byte for byte, the subsampling and the quality written as asked, transparency laid on black, CMYK and
-// RGB stored originals in their colours, a broken file refused with SbsCodecException. The library is built by the
-// package's build hook on Windows, Linux and macOS; elsewhere, or without Rust, these tests are skipped with the
-// reason. IMMUCH360_SBS_MEASURE (a JPEG) adds the measure of the plan, a photo decoded and laid twice side by side,
-// then encoded, with the time of each step printed.
+// RGB stored originals in their colours, a broken file refused with SbsCodecException, a copy that finds no memory
+// refused as outOfMemory. The library is built by the package's build hook on Windows, Linux and macOS; elsewhere, or
+// without Rust, these tests are skipped with the reason. IMMUCH360_SBS_MEASURE (a JPEG) adds the measure of the plan,
+// a photo decoded and laid twice side by side, then encoded, with the time of each step printed.
 
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -19,6 +20,7 @@ import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec_licenses.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
+import 'package:immuch_sbs_codec/immuch_sbs_codec.dart' as native;
 
 /// A smooth pair, the right eye moved by two pixels, opaque
 SbsPicture pair(int eyeWidth, int height) {
@@ -73,6 +75,18 @@ double meanError(Uint8List a, Uint8List b) {
     }
   }
   return sum / (a.length / 4 * 3);
+}
+
+/// An allocator with no memory left: it refuses as malloc does through package:ffi
+class NoMemory implements Allocator {
+  const NoMemory();
+
+  @override
+  Pointer<T> allocate<T extends NativeType>(int byteCount, {int? alignment}) =>
+      throw ArgumentError('Could not allocate $byteCount bytes.');
+
+  @override
+  void free(Pointer<NativeType> pointer) {}
 }
 
 /// The JPEGs of packages/immuch_sbs_codec/rust/fixtures (Pillow and libjpeg-turbo), eight 8 x 8 blocks of one colour
@@ -213,6 +227,25 @@ void main() {
       }
       expect(decoded.iccProfile, isNull, reason: name);
     }
+  }, skip: skip);
+
+  test('a copy that finds no memory is refused as outOfMemory, not an ArgumentError', () {
+    final picture = pair(8, 8);
+    final jpeg = codec.encodeSbs(picture, const SbsEncodeOptions(quality: 90));
+    final outOfMemory = throwsA(
+      isA<native.NativeCodecException>().having((e) => e.status, 'status', native.NativeCodecStatus.outOfMemory),
+    );
+    expect(() => native.decodeJpeg(jpeg, allocator: const NoMemory()), outOfMemory);
+    expect(
+      () => native.encodeJpeg(
+        picture.rgba,
+        width: picture.width,
+        height: picture.height,
+        quality: 90,
+        allocator: const NoMemory(),
+      ),
+      outOfMemory,
+    );
   }, skip: skip);
 
   test('a broken file and a refused segment become SbsCodecException', () {

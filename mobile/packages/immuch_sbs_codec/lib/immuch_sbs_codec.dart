@@ -91,8 +91,9 @@ void _ensureAvailable() {
   }
 }
 
-/// The pixels of the JPEG [jpeg]. Throws [NativeCodecException].
-NativeJpeg decodeJpeg(Uint8List jpeg) {
+/// The pixels of the JPEG [jpeg]. [allocator] holds the native copies of the call: malloc, another one in tests.
+/// Throws [NativeCodecException], with [NativeCodecStatus.outOfMemory] when the copy of [jpeg] finds no memory.
+NativeJpeg decodeJpeg(Uint8List jpeg, {Allocator allocator = malloc}) {
   _ensureAvailable();
   if (jpeg.isEmpty) {
     throw const NativeCodecException(NativeCodecStatus.decodeFailed, 'no bytes');
@@ -130,12 +131,13 @@ NativeJpeg decodeJpeg(Uint8List jpeg) {
       iscFree(rgba.value, rgbaLength.value);
       iscFree(icc.value, iccLength.value);
     }
-  }, malloc);
+  }, allocator);
 }
 
 /// The JPEG of [width] x [height] RGBA pixels: SOI, the EXIF APP1 payload [exif] ("Exif\0\0" and its TIFF
 /// structure), the XMP packet [xmp] (UTF-8) in its APP1, the ICC profile [icc] in APP2 chunks, then the image. A pixel
-/// that is not opaque is laid on black. Throws [NativeCodecException].
+/// that is not opaque is laid on black. [allocator] holds the native copies of the call: malloc, another one in tests.
+/// Throws [NativeCodecException], with [NativeCodecStatus.outOfMemory] when a copy finds no memory.
 Uint8List encodeJpeg(
   Uint8List rgba, {
   required int width,
@@ -145,6 +147,7 @@ Uint8List encodeJpeg(
   Uint8List? exif,
   Uint8List? xmp,
   Uint8List? icc,
+  Allocator allocator = malloc,
 }) {
   _ensureAvailable();
   if (rgba.isEmpty || width <= 0 || height <= 0) {
@@ -182,7 +185,7 @@ Uint8List encodeJpeg(
     } finally {
       iscFree(jpeg.value, jpegLength.value);
     }
-  }, malloc);
+  }, allocator);
 }
 
 /// The licence texts of the crates built into the library (with the sentence the IJG terms ask for), or null when
@@ -202,7 +205,16 @@ Pointer<Uint8> _copyIn(Arena arena, Uint8List? bytes) {
   if (bytes == null || bytes.isEmpty) {
     return nullptr;
   }
-  final native = arena<Uint8>(bytes.length);
+  final Pointer<Uint8> native;
+  try {
+    native = arena<Uint8>(bytes.length);
+  } on ArgumentError catch (error) {
+    // What package:ffi throws when malloc refuses ("Could not allocate n bytes."): a pair of 48 Mpx is 192 MB here
+    throw NativeCodecException(
+      NativeCodecStatus.outOfMemory,
+      'no memory for a copy of ${bytes.length} bytes: ${error.message}',
+    );
+  }
   native.asTypedList(bytes.length).setAll(0, bytes);
   return native;
 }
