@@ -730,6 +730,21 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
       await dialog.close();
     });
 
+    test('a journal that cannot be written is never kept against the folder of the original', () async {
+      final photos = folder('Photos');
+      writer = SafeWriter(files: files, journal: _FailingJournal(support));
+      final dialog = session([DestinationJob(id: 'j1', original: local(photos, 'a.jpg'))]);
+
+      await dialog.open();
+
+      final plan = dialog.destinations['j1']!;
+      expect(plan.reason, DestinationReason.writeFailed);
+      expect(plan.message, contains('partial files'));
+      expect((await store().read()).rootFallbacks, isEmpty);
+      expect(files.calls.where((call) => call.startsWith('createNew')), isEmpty);
+      await dialog.close();
+    });
+
     test('a full disk next to the original: the chosen folder with "Disk full", not kept for the root', () async {
       final photos = folder('Photos');
       files.failures[photos.path] = OSError('No space left', Platform.isWindows ? 112 : 28);
@@ -763,4 +778,16 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
       'The 3D photo could not be written: I/O error',
     );
   });
+}
+
+/// A journal whose support folder is full
+class _FailingJournal extends InflightJournal {
+  _FailingJournal(Directory support) : super(settingsDirectory: () async => support);
+
+  @override
+  Future<void> add(String path) async => throw FileSystemException(
+    'Cannot write the journal',
+    p.join('support', InflightJournal.fileName),
+    OSError('No space left on device', Platform.isWindows ? 112 : 28),
+  );
 }

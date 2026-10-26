@@ -362,15 +362,25 @@ class SafeWriter {
 
   /// The empty partial file of the 3D photo to be named [finalName] in [folder], noted in the journal before it exists.
   /// This is also how a folder is found read only: no test file is ever written (see WriteProbe). Throws a
-  /// [CreatorWriteException] when the folder refuses it.
+  /// [CreatorWriteException] when the folder refuses it, or with [WriteFailure.other] when the journal in the support
+  /// folder cannot be written: that is no refusal of [folder], and nothing is tried there then.
   Future<PartFile> createPart(String folder, String finalName) async {
     final name = partFileName(finalName, processId: _processId, sequence: ++_sequence);
     final part = PartFile(folder: folder, finalName: finalName, path: p.join(folder, name));
-    await _journal.add(part.path);
+    try {
+      await _journal.add(part.path);
+    } on Exception catch (error) {
+      final cause = CreatorWriteException.of(error);
+      throw CreatorWriteException(
+        WriteFailure.other,
+        'The list of the partial files cannot be written: ${cause.message}',
+        path: error is FileSystemException ? error.path : null,
+      );
+    }
     try {
       await files.createNew(part.path);
     } on FileSystemException catch (error) {
-      await _journal.remove(part.path);
+      await _forget(part.path);
       throw CreatorWriteException.of(error, path: part.path);
     }
     return part;

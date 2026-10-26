@@ -353,6 +353,21 @@ void main() {
       expect(namesIn(folder), isEmpty);
       expect(noted(), isEmpty);
     });
+
+    test('a journal that cannot be written is no refusal of the folder, and nothing is tried there', () async {
+      writer = SafeWriter(files: files, journal: _FailingJournal(support), processId: 4242);
+
+      await expectLater(
+        writer.createPart(folder.path, 'salon_3D_LRF_Full_SBS.jpg'),
+        throwsA(
+          isA<CreatorWriteException>()
+              .having((error) => error.failure, 'failure', WriteFailure.other)
+              .having((error) => error.message, 'message', contains('partial files')),
+        ),
+      );
+      expect(files.calls, isEmpty);
+      expect(namesIn(folder), isEmpty);
+    });
   });
 
   group('the original of a job', () {
@@ -523,4 +538,16 @@ class _OnCreate extends RecordingCreatorFiles {
     onCreate();
     return super.createNew(path);
   }
+}
+
+/// A journal whose support folder is full
+class _FailingJournal extends InflightJournal {
+  _FailingJournal(Directory support) : super(settingsDirectory: () async => support);
+
+  @override
+  Future<void> add(String path) async => throw FileSystemException(
+    'Cannot write the journal',
+    p.join('support', InflightJournal.fileName),
+    diskFullError(),
+  );
 }
