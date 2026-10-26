@@ -120,9 +120,11 @@ class _RandomAccessSink implements AiFileSink {
   }
 }
 
-/// No space left: ENOSPC (28 on Linux, macOS and Android), ERROR_DISK_FULL (112) and ERROR_HANDLE_DISK_FULL (39) on
-/// Windows
-bool isDiskFull(FileSystemException error) => const {28, 112, 39}.contains(error.osError?.errorCode);
+/// No space left: ENOSPC (28) on Linux, macOS and Android, ERROR_DISK_FULL (112) and ERROR_HANDLE_DISK_FULL (39) on
+/// Windows. [windows] tells how to read the code (28 is "out of paper" on Windows, 39 and 112 other errors elsewhere);
+/// this system by default.
+bool isDiskFull(FileSystemException error, {bool? windows}) =>
+    ((windows ?? Platform.isWindows) ? const {112, 39} : const {28}).contains(error.osError?.errorCode);
 
 /// The bare HTTP client: the default one, outside any HttpOverrides of the app. [context] only in the tests (their
 /// own certificate authority).

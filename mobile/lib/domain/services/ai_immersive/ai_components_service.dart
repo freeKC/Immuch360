@@ -382,7 +382,7 @@ class AiComponentsService extends ChangeNotifier {
         source = uri.toString();
       }
       final installedAt = _now();
-      await _writeLicence(component, source: Uri.parse(source), installedAt: installedAt);
+      await _writeLicence(component, source: source, installedAt: installedAt);
       final before = _installed.components[component.id];
       _installed.components[component.id] = {
         'version': component.version,
@@ -427,7 +427,7 @@ class AiComponentsService extends ChangeNotifier {
     return (await sha256.bind(file.openRead()).first).toString() == component.sha256;
   }
 
-  Future<void> _writeLicence(AiComponent component, {required Uri source, required DateTime installedAt}) async {
+  Future<void> _writeLicence(AiComponent component, {required String source, required DateTime installedAt}) async {
     final licence = _licenceIn(_root!, component);
     await licence.parent.create(recursive: true);
     final temporary = File('${licence.path}.tmp');

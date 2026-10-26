@@ -6,8 +6,9 @@
 
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 
-/// The text of the licence file of [component] (licenses/ID.txt), installed from [source] at [installedAt]
-String aiComponentLicenceNotice(AiComponent component, {required Uri source, required DateTime installedAt}) {
+/// The text of the licence file of [component] (licenses/ID.txt), installed from [source] (its address, or the words
+/// of a file found in place) at [installedAt]
+String aiComponentLicenceNotice(AiComponent component, {required String source, required DateTime installedAt}) {
   final lines = [
     'Immuch360 AI component: ${component.id}, version ${component.version}',
     'File: ${component.installPath}',

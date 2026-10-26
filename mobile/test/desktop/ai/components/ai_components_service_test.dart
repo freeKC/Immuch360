@@ -206,6 +206,8 @@ void main() {
 
       expect(components.statusOf(_modelComponent).state, AiComponentState.installed);
       expect((installedJson()['components'] as Map)['test-model'], containsPair('source', 'already on disk'));
+      final text = (await components.licenceOf(_modelComponent)).readAsStringSync();
+      expect(text, contains('\nDownloaded from: already on disk\n'));
     });
 
     test('a file in place with the right size but another sum is downloaded again', () async {

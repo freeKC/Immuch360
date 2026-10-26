@@ -46,7 +46,12 @@ class _FullDisk implements AiFileSink {
   @override
   Future<void> add(List<int> bytes) async {
     if (bytes.length > room) {
-      throw const FileSystemException('write failed', 'test', OSError('No space left on device', 28));
+      // ERROR_DISK_FULL on Windows, ENOSPC elsewhere
+      throw FileSystemException(
+        'write failed',
+        'test',
+        OSError('No space left on device', Platform.isWindows ? 112 : 28),
+      );
     }
     room -= bytes.length;
     await _inner.add(bytes);
@@ -489,11 +494,16 @@ void main() {
       }
     });
 
-    test('a full disk is told apart from the other write errors', () {
-      for (final code in [28, 112, 39]) {
-        expect(isDiskFull(FileSystemException('x', 'y', OSError('full', code))), isTrue, reason: '$code');
+    test('a full disk is told apart from the other write errors, with the codes of each system', () {
+      FileSystemException error(int code) => FileSystemException('x', 'y', OSError('error', code));
+      for (final code in [112, 39]) {
+        expect(isDiskFull(error(code), windows: true), isTrue, reason: 'Windows $code');
+        expect(isDiskFull(error(code), windows: false), isFalse, reason: 'EHOSTDOWN and ENOTEMPTY elsewhere: $code');
       }
-      expect(isDiskFull(const FileSystemException('x', 'y', OSError('denied', 13))), isFalse);
+      expect(isDiskFull(error(28), windows: false), isTrue);
+      expect(isDiskFull(error(28), windows: true), isFalse, reason: 'ERROR_OUT_OF_PAPER on Windows');
+      expect(isDiskFull(error(13), windows: false), isFalse);
+      expect(isDiskFull(error(Platform.isWindows ? 112 : 28)), isTrue, reason: 'this system by default');
       expect(isDiskFull(const FileSystemException('x')), isFalse);
     });
   });
