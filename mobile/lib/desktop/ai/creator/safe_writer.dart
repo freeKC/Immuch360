@@ -7,11 +7,11 @@
 // and the partial file is renamed over it.
 //
 // The writer only ever creates, renames and deletes its own files: the original of a job is never opened here, and a
-// file of the user is replaced only when it is a 3D photo of ours (collisions.dart). Every call on the folders of the
-// user goes through CreatorFileSystem, so that a test sees each one: nothing is written nor tried in a network folder
-// before the user said yes (destination.dart). Those calls are all asynchronous, on the threads of dart:io: a share
-// out of reach (\\nas\photos away from home, an NFS mount whose server is off) keeps a call waiting, never the
-// window.
+// file of the user is replaced only when it is a 3D photo of ours made from the same original (collisions.dart). Every
+// call on the folders of the user goes through CreatorFileSystem, so that a test sees each one: nothing is written nor
+// tried in a network folder before the user said yes (destination.dart). Those calls are all asynchronous, on the
+// threads of dart:io: a share out of reach (\\nas\photos away from home, an NFS mount whose server is off) keeps a
+// call waiting, never the window.
 
 import 'dart:async';
 import 'dart:convert';
@@ -376,29 +376,32 @@ class SafeWriter {
     return part;
   }
 
-  /// The 3D photo written in [part] put under its final name, as [whenExists] says when that name is taken: keepBoth
-  /// reserves the first free "name (n)", at this moment only; replace takes the place of [replaceName] (the final name
-  /// by default, another version of the same folder when the queue found one) only when it is a 3D photo of ours, read
-  /// again just before, else both are kept; skip leaves the existing file and deletes the partial one. The file at
-  /// [originalPath] is never replaced. Throws a [CreatorWriteException], the partial file then deleted.
+  /// The 3D photo of [original] written in [part] put under its final name, as [whenExists] says when that name is
+  /// taken: keepBoth reserves the first free "name (n)", at this moment only; replace takes the place of the file there
+  /// only when it is a 3D photo of ours made from [original], read again just before, else both are kept; skip leaves
+  /// the existing file and deletes the partial one. [replacing] is another version the queue found, its name or its
+  /// path: it is replaced only in the folder of [part], a version elsewhere stays where it is (the final name is
+  /// looked at instead). The file of [original] is never replaced. Throws a [CreatorWriteException], the partial file
+  /// then deleted.
   Future<SavedVersion> commit(
     PartFile part, {
+    required OriginalIdentity original,
     AiWhenExists whenExists = AiWhenExists.keepBoth,
-    String? replaceName,
-    String? originalPath,
+    String? replacing,
   }) async {
     try {
-      final target = p.join(
-        part.folder,
-        whenExists == AiWhenExists.replace ? replaceName ?? part.finalName : part.finalName,
-      );
+      final target = whenExists == AiWhenExists.replace
+          ? _replaceTarget(part, replacing)
+          : p.join(part.folder, part.finalName);
       final taken = await files.exists(target);
+      final originalPath = original.path;
       final isOriginal = originalPath != null && _samePath(originalPath, target);
       final action = collisionAction(
         whenExists: whenExists,
         taken: taken,
         // The original is not even read: it is never replaced
         head: taken && !isOriginal && whenExists == AiWhenExists.replace ? await _headOf(target) : null,
+        original: original,
         isOriginal: isOriginal,
       );
       if (action == CollisionAction.skip) {
@@ -423,6 +426,18 @@ class SafeWriter {
       await discard(part);
       throw CreatorWriteException.of(error, path: part.path);
     }
+  }
+
+  /// The file a replace may take: [replacing] when it is a name, or a path in the folder of [part]; else the final name
+  String _replaceTarget(PartFile part, String? replacing) {
+    if (replacing != null) {
+      final name = p.basename(replacing);
+      final inFolder = name == replacing || _samePath(p.dirname(replacing), part.folder);
+      if (inFolder && name.isNotEmpty && name != '.' && name != '..') {
+        return p.join(part.folder, name);
+      }
+    }
+    return p.join(part.folder, part.finalName);
   }
 
   /// Deletes [part] and forgets it: a job failed or was cancelled, a dialog closed without launching. A partial file

@@ -16,13 +16,23 @@ import 'package:path/path.dart' as p;
 import '../fakes/fake_immersive_engine.dart';
 import '../fakes/recording_creator_files.dart';
 
-/// A 3D photo of ours, with or without its DerivativeId
-Uint8List ourVersion({String? derivativeId = 'urn:uuid:11111111-2222-4333-8444-555555555555'}) => fakeSbsJpeg(
+/// The original of the jobs of these tests
+const salon = OriginalIdentity(name: 'salon.jpg', size: 1234, sha1: 'c2Fsb24uanBn');
+
+/// A 3D photo of ours, with or without its DerivativeId, made from salon.jpg unless told otherwise
+Uint8List ourVersion({
+  String? derivativeId = 'urn:uuid:11111111-2222-4333-8444-555555555555',
+  String? sourceName = 'salon.jpg',
+  int? sourceSize = 1234,
+  String? sourceSha1 = 'c2Fsb24uanBn',
+}) => fakeSbsJpeg(
   xmp: StereoPhotoXmp(
     eyes: StereoEyes.full,
     eyeOrder: EyeOrder.leftRight,
     origin: ImmersiveOrigin.estimatedDepth,
-    sourceName: 'salon.jpg',
+    sourceName: sourceName,
+    sourceSize: sourceSize,
+    sourceSha1: sourceSha1,
     derivativeId: derivativeId,
   ),
 );
@@ -133,7 +143,7 @@ void main() {
       final part = await written(ourVersion());
       expect(File(p.join(folder.path, 'salon_3D_LRF_Full_SBS.jpg')).existsSync(), isFalse);
 
-      final saved = await writer.commit(part);
+      final saved = await writer.commit(part, original: salon);
 
       expect(saved.outcome, SaveOutcome.saved);
       expect(saved.path, p.join(folder.path, 'salon_3D_LRF_Full_SBS.jpg'));
@@ -146,7 +156,7 @@ void main() {
       final existing = File(p.join(folder.path, 'salon_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(ourVersion());
       final part = await written(userPhoto());
 
-      final saved = await writer.commit(part);
+      final saved = await writer.commit(part, original: salon);
 
       expect(saved.outcome, SaveOutcome.saved);
       expect(p.basename(saved.path), 'salon_3D_LRF_Full_SBS (1).jpg');
@@ -158,7 +168,7 @@ void main() {
       final existing = File(p.join(folder.path, 'salon_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(ourVersion());
       final part = await written(userPhoto());
 
-      final saved = await writer.commit(part, whenExists: AiWhenExists.replace);
+      final saved = await writer.commit(part, original: salon, whenExists: AiWhenExists.replace);
 
       expect(saved.outcome, SaveOutcome.replaced);
       expect(saved.path, existing.path);
@@ -172,7 +182,7 @@ void main() {
       final existing = File(p.join(folder.path, 'salon_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(userPhoto());
       final part = await written(ourVersion());
 
-      final saved = await writer.commit(part, whenExists: AiWhenExists.replace);
+      final saved = await writer.commit(part, original: salon, whenExists: AiWhenExists.replace);
 
       expect(saved.outcome, SaveOutcome.saved);
       expect(p.basename(saved.path), 'salon_3D_LRF_Full_SBS (1).jpg');
@@ -184,7 +194,7 @@ void main() {
         ..writeAsBytesSync(ourVersion(derivativeId: null));
       final part = await written(ourVersion());
 
-      final saved = await writer.commit(part, whenExists: AiWhenExists.replace);
+      final saved = await writer.commit(part, original: salon, whenExists: AiWhenExists.replace);
 
       expect(saved.outcome, SaveOutcome.saved);
       expect(p.basename(saved.path), 'salon_3D_LRF_Full_SBS (1).jpg');
@@ -197,8 +207,9 @@ void main() {
 
       final saved = await writer.commit(
         part,
+        original: salon,
         whenExists: AiWhenExists.replace,
-        replaceName: 'salon_3D_LRF_Full_SBS (1).jpg',
+        replacing: 'salon_3D_LRF_Full_SBS (1).jpg',
       );
 
       expect(saved.outcome, SaveOutcome.replaced);
@@ -213,9 +224,9 @@ void main() {
 
       final saved = await writer.commit(
         part,
+        original: OriginalIdentity(name: 'salon.jpg', size: 1234, sha1: salon.sha1, path: original.path),
         whenExists: AiWhenExists.replace,
-        replaceName: 'salon.jpg',
-        originalPath: original.path,
+        replacing: 'salon.jpg',
       );
 
       expect(saved.outcome, SaveOutcome.saved);
@@ -223,11 +234,83 @@ void main() {
       expect(original.readAsBytesSync(), ourVersion());
     });
 
+    test('replace: the 3D photo of salon.jpg is never taken by that of salon.heic, both are kept', () async {
+      final ofTheJpeg = File(p.join(folder.path, 'salon_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(ourVersion());
+      final part = await written(userPhoto());
+
+      final saved = await writer.commit(
+        part,
+        original: const OriginalIdentity(name: 'salon.heic', size: 4321, sha1: 'c2Fsb24uaGVpYw=='),
+        whenExists: AiWhenExists.replace,
+      );
+
+      expect(saved.outcome, SaveOutcome.saved);
+      expect(p.basename(saved.path), 'salon_3D_LRF_Full_SBS (1).jpg');
+      expect(ofTheJpeg.readAsBytesSync(), ourVersion());
+      expect(namesIn(folder), ['salon_3D_LRF_Full_SBS (1).jpg', 'salon_3D_LRF_Full_SBS.jpg']);
+    });
+
+    test('replace: without a SourceSha1, the same SourceName and SourceSize tell the same original', () async {
+      final existing = File(p.join(folder.path, 'salon_3D_LRF_Full_SBS.jpg'))
+        ..writeAsBytesSync(ourVersion(sourceSha1: null));
+      final part = await written(userPhoto());
+
+      final replaced = await writer.commit(part, original: salon, whenExists: AiWhenExists.replace);
+
+      expect(replaced.outcome, SaveOutcome.replaced);
+      expect(existing.readAsBytesSync(), userPhoto());
+
+      existing.writeAsBytesSync(ourVersion(sourceSha1: null, sourceSize: 999));
+      final kept = await writer.commit(await written(userPhoto()), original: salon, whenExists: AiWhenExists.replace);
+
+      expect(kept.outcome, SaveOutcome.saved);
+      expect(existing.readAsBytesSync(), ourVersion(sourceSha1: null, sourceSize: 999));
+    });
+
+    test('replace: a version the queue found is replaced in the folder of the new one only', () async {
+      final elsewhere = Directory(p.join(root.path, 'Moved'))..createSync();
+      final moved = File(p.join(elsewhere.path, 'salon_3D_LRF_Full_SBS (3).jpg'))..writeAsBytesSync(ourVersion());
+      // The same name in the folder of the new one, which the queue did not name
+      final sameName = File(p.join(folder.path, 'salon_3D_LRF_Full_SBS (3).jpg'))..writeAsBytesSync(ourVersion());
+      final above = File(p.join(root.path, 'salon_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(ourVersion());
+      final here = File(p.join(folder.path, 'salon_3D_LRF_Full_SBS (2).jpg'))..writeAsBytesSync(ourVersion());
+
+      final notMoved = await writer.commit(
+        await written(userPhoto()),
+        original: salon,
+        whenExists: AiWhenExists.replace,
+        replacing: moved.path,
+      );
+      final upward = await writer.commit(
+        await written(userPhoto()),
+        original: salon,
+        whenExists: AiWhenExists.replace,
+        replacing: p.join('..', 'salon_3D_LRF_Full_SBS.jpg'),
+      );
+      final byPath = await writer.commit(
+        await written(userPhoto()),
+        original: salon,
+        whenExists: AiWhenExists.replace,
+        replacing: here.path,
+      );
+
+      expect(moved.readAsBytesSync(), ourVersion());
+      expect(sameName.readAsBytesSync(), ourVersion());
+      expect(above.readAsBytesSync(), ourVersion());
+      expect(notMoved.outcome, SaveOutcome.saved);
+      expect(notMoved.path, p.join(folder.path, 'salon_3D_LRF_Full_SBS.jpg'));
+      expect(upward.outcome, SaveOutcome.saved);
+      expect(upward.path, p.join(folder.path, 'salon_3D_LRF_Full_SBS (1).jpg'));
+      expect(byPath.outcome, SaveOutcome.replaced);
+      expect(byPath.path, here.path);
+      expect(here.readAsBytesSync(), userPhoto());
+    });
+
     test('taken, skip: the existing file stays, the partial one goes', () async {
       final existing = File(p.join(folder.path, 'salon_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync(userPhoto());
       final part = await written(ourVersion());
 
-      final saved = await writer.commit(part, whenExists: AiWhenExists.skip);
+      final saved = await writer.commit(part, original: salon, whenExists: AiWhenExists.skip);
 
       expect(saved.outcome, SaveOutcome.skipped);
       expect(saved.path, existing.path);
@@ -239,7 +322,7 @@ void main() {
     test('free, skip: written as usual', () async {
       final part = await written(ourVersion());
 
-      final saved = await writer.commit(part, whenExists: AiWhenExists.skip);
+      final saved = await writer.commit(part, original: salon, whenExists: AiWhenExists.skip);
 
       expect(saved.outcome, SaveOutcome.saved);
       expect(namesIn(folder), ['salon_3D_LRF_Full_SBS.jpg']);
@@ -250,7 +333,7 @@ void main() {
       files.failures[folder.path] = diskFullError();
 
       await expectLater(
-        writer.commit(part),
+        writer.commit(part, original: salon),
         throwsA(isA<CreatorWriteException>().having((error) => error.failure, 'failure', WriteFailure.diskFull)),
       );
       expect(namesIn(folder), isEmpty);
@@ -272,10 +355,11 @@ void main() {
         addTearDown(cancel.free);
 
         final part = await writer.createPart(folder.path, sbsTargetName('salon.jpg'));
+        final source = ImmersiveSource(name: 'salon.jpg', size: bytes.length, sha1: salon.sha1!, path: original.path);
         final result = await engine.run(
           ImmersiveJob(
             id: 'job-1',
-            source: ImmersiveSource(name: 'salon.jpg', size: bytes.length, sha1: 'c2hhMQ==', path: original.path),
+            source: source,
             partPath: part.path,
             derivativeId: StereoPhotoXmp.newDerivativeId(),
             creatorTool: 'Immuch360 Desktop (test)',
@@ -284,7 +368,12 @@ void main() {
           cancel: cancel,
         );
         expect(result.isDone, isTrue);
-        await writer.commit(part, whenExists: whenExists, replaceName: 'salon.jpg', originalPath: original.path);
+        await writer.commit(
+          part,
+          original: OriginalIdentity.of(source),
+          whenExists: whenExists,
+          replacing: 'salon.jpg',
+        );
 
         expect(original.readAsBytesSync(), bytes);
         expect(original.lastModifiedSync(), modified);

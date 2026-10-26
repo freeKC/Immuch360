@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_probe.dart';
@@ -464,10 +465,11 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
       final engine = FakeImmersiveEngine();
       final cancel = NativeCancelFlag();
       addTearDown(cancel.free);
+      final source = ImmersiveSource(name: 'salon.jpg', size: bytes.length, sha1: 'c2hhMQ==', path: original.path);
       final result = await engine.run(
         ImmersiveJob(
           id: 'j1',
-          source: ImmersiveSource(name: 'salon.jpg', size: bytes.length, sha1: 'c2hhMQ==', path: original.path),
+          source: source,
           partPath: part.path,
           derivativeId: StereoPhotoXmp.newDerivativeId(),
           creatorTool: 'Immuch360 Desktop (test)',
@@ -476,7 +478,7 @@ nas:/export/videos on /Volumes/My Videos (nfs, nodev, nosuid, mounted by me)
         cancel: cancel,
       );
       expect(result.isDone, isTrue);
-      final saved = await writer.commit(part, originalPath: original.path);
+      final saved = await writer.commit(part, original: OriginalIdentity.of(source));
       await engine.dispose();
 
       expect(saved.path, p.join(photos.path, 'salon_3D_LRF_Full_SBS.jpg'));
