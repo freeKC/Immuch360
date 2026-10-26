@@ -2,7 +2,7 @@
 // the new route gave it the focus, the focus is still on the page under it: OK on a tile then Down at once moved the
 // focus on the page left behind, and a second OK opened another page there, under the new one (the Drone tile of the
 // Library on the emulator, 26 October). So the keys that move or press are dropped from the moment a route is asked
-// for until its first frame: Back goes through, and so do the media and volume keys.
+// for until its first frame: Back goes through, and so do the volume keys and the media keys of a player.
 
 import 'dart:async';
 
@@ -12,18 +12,28 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 
-/// The keys held while a route opens: the arrows, OK, the channel keys and Menu (Info too, which opens Options as Menu
-/// does on the watch page of the drone)
+/// The keys held while a route opens: the arrows, OK, Menu (Info too, which opens Options as Menu does on the watch page
+/// of the drone), and the keys a page reads to zoom, scroll or move to the next item: the channel, zoom and page keys,
+/// the shoulders of a game pad, and next and previous (a second Next while a viewer replaces its page went to the page
+/// being replaced)
 final _heldKeys = {
   LogicalKeyboardKey.arrowUp,
   LogicalKeyboardKey.arrowDown,
   LogicalKeyboardKey.arrowLeft,
   LogicalKeyboardKey.arrowRight,
   ...remoteOkKeys,
-  LogicalKeyboardKey.channelUp,
-  LogicalKeyboardKey.channelDown,
   LogicalKeyboardKey.contextMenu,
   LogicalKeyboardKey.info,
+  LogicalKeyboardKey.channelUp,
+  LogicalKeyboardKey.channelDown,
+  LogicalKeyboardKey.zoomIn,
+  LogicalKeyboardKey.zoomOut,
+  LogicalKeyboardKey.pageUp,
+  LogicalKeyboardKey.pageDown,
+  LogicalKeyboardKey.gameButtonLeft1,
+  LogicalKeyboardKey.gameButtonRight1,
+  ...remoteNextItemKeys,
+  ...remotePreviousItemKeys,
 };
 
 /// Drops the keys of [_heldKeys] while a route opens. A route holds them from its push ([AppNavigationObserver]) until
@@ -32,7 +42,10 @@ final _heldKeys = {
 /// ([holdKeysOnNewPages]). Never longer than [cap] after the last hold, should a frame never come.
 ///
 /// A press dropped is dropped whole: its repeats and its release too, whenever they come. The release of a key
-/// pressed before goes through, so that a page that saw it go down (OK held) also sees it go up.
+/// pressed before goes through, so that a page that saw it go down (OK held) also sees it go up. An OK already down
+/// when a route starts opening (the OK that opened it, held) has its repeats dropped until its release, after the
+/// opening too: on the new page they would press its first item at the repeat rate. The arrows held keep repeating
+/// once the page shows, to go on through a list or from photo to photo.
 class RouteOpeningKeyGate {
   RouteOpeningKeyGate._();
 
@@ -47,6 +60,9 @@ class RouteOpeningKeyGate {
 
   /// The presses dropped whose release has not come yet
   final _dropped = <PhysicalKeyboardKey>{};
+
+  /// The OK keys down when a hold started, whose repeats are dropped until their release
+  final _okHeldAcross = <PhysicalKeyboardKey>{};
 
   /// The focus manager the handler was added to, while there is something to hold or a release to drop
   FocusManager? _manager;
@@ -85,6 +101,12 @@ class RouteOpeningKeyGate {
   }
 
   void _hold(Object reason) {
+    final keyboard = HardwareKeyboard.instance;
+    for (final key in keyboard.physicalKeysPressed) {
+      if (remoteOkKeys.contains(keyboard.lookUpLayout(key)) && !_dropped.contains(key)) {
+        _okHeldAcross.add(key);
+      }
+    }
     _holds.add(reason);
     _sinceLastHold
       ..reset()
@@ -97,9 +119,9 @@ class RouteOpeningKeyGate {
     }
   }
 
-  /// Nothing held and no release to drop: the handler goes until the next route
+  /// Nothing held, no release to drop and no OK repeat to drop: the handler goes until the next route
   void _stopIfIdle() {
-    if (_holds.isNotEmpty || _dropped.isNotEmpty) {
+    if (_holds.isNotEmpty || _dropped.isNotEmpty || _okHeldAcross.isNotEmpty) {
       return;
     }
     _manager?.removeEarlyKeyEventHandler(_onKey);
@@ -116,14 +138,18 @@ class RouteOpeningKeyGate {
         _stopIfIdle();
         return KeyEventResult.handled;
       }
+      if (_okHeldAcross.remove(key)) {
+        _stopIfIdle();
+      }
       return KeyEventResult.ignored;
     }
-    if (event is KeyRepeatEvent && _dropped.contains(key)) {
+    if (event is KeyRepeatEvent && (_dropped.contains(key) || _okHeldAcross.contains(key))) {
       return KeyEventResult.handled;
     }
     if (event is KeyDownEvent) {
       // A new press: the release of the last one never came
       _dropped.remove(key);
+      _okHeldAcross.remove(key);
     }
     if (_holds.isNotEmpty && _sinceLastHold.elapsed >= cap) {
       // No frame came in time: the keys go through again
@@ -144,6 +170,7 @@ class RouteOpeningKeyGate {
   void reset() {
     _holds.clear();
     _dropped.clear();
+    _okHeldAcross.clear();
     _stopIfIdle();
   }
 }

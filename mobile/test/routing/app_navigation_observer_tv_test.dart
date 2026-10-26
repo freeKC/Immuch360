@@ -419,6 +419,56 @@ void main() {
       ]);
     });
 
+    testWidgets('the page, shoulder, next and previous keys wait too; the volume keys go through', (tester) async {
+      await pumpOpener(tester);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      // The zoom keys are held too, but the key maps of flutter_test cannot send them
+      for (final key in [
+        LogicalKeyboardKey.pageUp,
+        LogicalKeyboardKey.pageDown,
+        LogicalKeyboardKey.gameButtonLeft1,
+        LogicalKeyboardKey.gameButtonRight1,
+        LogicalKeyboardKey.mediaTrackNext,
+        LogicalKeyboardKey.mediaTrackPrevious,
+        LogicalKeyboardKey.audioVolumeUp,
+      ]) {
+        await tester.sendKeyEvent(key);
+      }
+      await tester.pumpAndSettle();
+
+      expect(downs(firstPageKeys), [LogicalKeyboardKey.select, LogicalKeyboardKey.audioVolumeUp]);
+      expect(openedPageKeys.whereType<KeyDownEvent>(), isEmpty);
+    });
+
+    testWidgets(
+      'OK held on the item that opened a page: its repeats never press the new page, its release reaches it',
+      (tester) async {
+        await pumpOpener(tester);
+
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.select);
+        await tester.pumpAndSettle();
+        expect(hasFocus(tester, 'first'), isTrue);
+        expect(RouteOpeningKeyGate.instance.holds, isFalse, reason: 'the page showed: nothing is held any more');
+        for (var i = 0; i < 5; i++) {
+          await tester.sendKeyRepeatEvent(LogicalKeyboardKey.select);
+          await tester.pump(const Duration(milliseconds: 50));
+        }
+        expect(taps, ['open'], reason: 'build 30 pressed first at the repeat rate');
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.select);
+        await tester.pump();
+        expect(
+          [for (final event in openedPageKeys) (event.runtimeType, event.logicalKey)],
+          [(KeyUpEvent, LogicalKeyboardKey.select)],
+        );
+
+        // The next press is a press on the new page
+        await tester.sendKeyEvent(LogicalKeyboardKey.select);
+        await tester.pump();
+        expect(taps, ['open', 'first']);
+      },
+    );
+
     testWidgets('a press dropped is dropped whole; the release of the OK that opened the page reaches it', (
       tester,
     ) async {
