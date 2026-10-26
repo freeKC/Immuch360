@@ -152,6 +152,17 @@ class ReliefSynthesizerTest {
   }
 
   @Test
+  fun `a flat map read back from the 16 bit cache still gives the left eye`() {
+    val width = 64
+    val height = 9
+    val left = photo(width, height)
+    val map = ReliefMap.quantize(9, 5, DoubleArray(9 * 5) { 0.5 })
+    val out = IntArray(width * height)
+    ReliefSynthesizer.rightEye(left, width, height, map.toNormalized(), map.width, map.height, out)
+    assertArrayEquals(left, out)
+  }
+
+  @Test
   fun `no hole is left once filled, and only the right eye is written`() {
     val width = 48
     val height = 12
