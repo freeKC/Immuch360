@@ -933,6 +933,11 @@ class RelayHeadset internal constructor(
   var lastPingNs: Long = connectedAtNs
     internal set
 
+  /** A ping came: [lastPingNs] and [shownPer10s] are the receiver's */
+  @Volatile
+  var pinged: Boolean = false
+    private set
+
   /** The headset's median of the phone receive to its receive time, in microseconds, or -1 */
   @Volatile
   var relayDelayMedianUs: Int = -1
@@ -994,6 +999,7 @@ class RelayHeadset internal constructor(
   /** A ping read at [nowNs] */
   internal fun onPing(ping: RelayPing, nowNs: Long) {
     lastPingNs = nowNs
+    pinged = true
     relayDelayMedianUs = ping.relayDelayMedianUs
     shownPer10s = ping.shownPer10s
     stats.onPing(ping)
@@ -1107,6 +1113,10 @@ class RelayHeadset internal constructor(
       put("connectedForMs", (end - connectedAtNs) / 1_000_000)
       put("leftAgoMs", leftAtNs?.let { (nowNs - it) / 1_000_000 })
       put("leftWhy", leftWhy)
+      // Its last ping, which may come after its last line of the timeline: how long before its departure (or the
+      // export) and the pictures it said it showed in its last 10 s (p2/noon-test-check-2026-10-26.md R1)
+      put("lastPingAgoMs", if (pinged) (end - lastPingNs) / 1_000_000 else null)
+      put("lastPingShownPer10s", if (pinged) shownPer10s else null)
       put("unitHeaderBytes", unitHeaderBytes)
       put("sendBufferBytes", socketFacts.sendBufferBytes)
       put("notSentLowWaterBytes", socketFacts.notSentLowWaterBytes)
