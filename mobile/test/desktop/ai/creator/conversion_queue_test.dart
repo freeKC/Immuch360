@@ -727,6 +727,15 @@ void main() {
     });
   });
 
+  test('the name planned for a 3D photo is one Windows accepts, whatever the name of the original', () {
+    expect(ConversionTarget.nextTo(p.join(photos, 'salon.jpg')).path, p.join(photos, 'salon_3D_LRF_Full_SBS.jpg'));
+    // A name from a server or a share, saved in a folder of this computer
+    final shared = ConversionTarget.inFolder(photos, 'plage: 14h?.jpg');
+    expect(shared.folder, photos);
+    expect(shared.fileName, 'plage_ 14h__3D_LRF_Full_SBS.jpg');
+    expect(ConversionTarget.nextTo(p.join(photos, 'a|b.jpeg')).fileName, 'a_b_3D_LRF_Full_SBS.jpg');
+  });
+
   test('without the tools of the screens, a photo fails and says why', () async {
     final bare = ProviderContainer();
     addTearDown(bare.dispose);

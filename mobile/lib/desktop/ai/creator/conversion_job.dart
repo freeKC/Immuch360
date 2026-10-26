@@ -12,6 +12,7 @@ import 'dart:isolate';
 
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -188,9 +189,15 @@ Future<String> sha1InIsolate(String path, NativeCancelFlag cancel) {
 class ConversionTarget {
   const ConversionTarget({required this.folder, required this.fileName});
 
-  /// Next to the original: [folder] of the original and the name of [sbsFileNameFor]
+  /// The 3D photo of the original named [originalName] in [folder]: the name of [sbsFileNameFor] made safe for
+  /// Windows (design 4.1), as sbsTargetName of lot A5b gives it. A name from a server or a share may hold a character
+  /// Windows refuses.
+  factory ConversionTarget.inFolder(String folder, String originalName) =>
+      ConversionTarget(folder: folder, fileName: safeFileName(sbsFileNameFor(originalName)));
+
+  /// Next to the original, in its folder
   factory ConversionTarget.nextTo(String originalPath) =>
-      ConversionTarget(folder: p.dirname(originalPath), fileName: sbsFileNameFor(p.basename(originalPath)));
+      ConversionTarget.inFolder(p.dirname(originalPath), p.basename(originalPath));
 
   final String folder;
   final String fileName;
