@@ -3,10 +3,15 @@ package app.alextran.immich.djilink
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.net.InetAddress
 import java.util.concurrent.atomic.AtomicLong
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 /** The handshake and the rules of who may connect, on real sockets of 127.0.0.1 (design 4.5, 4.11, 6) */
 class RelayHandshakeTest {
@@ -229,6 +234,53 @@ class RelayHandshakeTest {
       headset.send(RelayWire.HEADSET_BYE, ByteArray(0))
       assertTrue(eventually { server.headsetCount == 0 })
       assertEquals(0L, server.unexpectedRecords)
+    }
+  }
+
+  /** Why the last receiver to leave left, as the export says it */
+  private fun leftWhy(): String? =
+    server.report()["receivers"]!!.jsonArray.last().jsonObject["leftWhy"]!!.jsonPrimitive.contentOrNull
+
+  /**
+   * p2/noon-test-check-2026-10-26.md C3 (item 9): "reader ended" said the same of a bye, a socket closed and a read
+   * timeout; the five TV connections of 26 October that ended so were its watch page closing, which says bye
+   */
+  @Test
+  fun aReceiverThatDisconnectsLeavesWithABye() {
+    val port = start()
+    val listener = RecordingReceiverListener()
+    val receiver = RelayReceiver(listener, pingIntervalMs = 50)
+    try {
+      receiver.connect("127.0.0.1", port, code, null, "Salon 2", "test", kind = "tv")
+      assertNotNull(listener.await("connected"))
+      assertTrue(eventually { server.headsetCount == 1 })
+      receiver.disconnect()
+      assertTrue(eventually { server.headsetCount == 0 })
+      assertEquals("bye", leftWhy())
+    } finally {
+      receiver.disconnect()
+    }
+  }
+
+  @Test
+  fun aSocketClosedWithoutAByeAndASilentOneAreToldApart() {
+    val port = start()
+    TestHeadset(port).use { headset ->
+      assertEquals(RelayWire.WELCOME, headset.join(code).type)
+      assertTrue(eventually { server.headsetCount == 1 })
+      headset.close()
+      assertTrue(eventually { server.headsetCount == 0 })
+      assertEquals("closed", leftWhy())
+    }
+    // No ping for the read timeout, with no tick to say "silent" first
+    server.stop()
+    server = RelayServer(clockNs = { now.get() }, runTicker = false, pingTimeoutMs = 300)
+    val again = start()
+    TestHeadset(again).use { headset ->
+      assertEquals(RelayWire.WELCOME, headset.join(code).type)
+      assertTrue(eventually { server.headsetCount == 1 })
+      assertTrue(eventually { server.headsetCount == 0 })
+      assertEquals("timeout", leftWhy())
     }
   }
 

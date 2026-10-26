@@ -952,7 +952,12 @@ class RelayHeadset internal constructor(
   var closed = false
     private set
 
-  /** Why it left, once it did */
+  /**
+   * Why it left, once it did: "bye" (its bye), "closed" (its socket closed without one), "timeout" (nothing read for
+   * the ping timeout), "unexpected" (a record it may not send), or the phone's own reason when the phone closed it
+   * first: "silent", "stalled", "write failed", "stopped", "phone bye" (the phone's bye written: the relay stopped or
+   * a new code), "finished"
+   */
   @Volatile
   var leftWhy: String? = null
     private set
@@ -1037,7 +1042,8 @@ class RelayHeadset internal constructor(
           trimRate(now)
         }
         if (next.type == RelayWire.BYE) {
-          why = "bye"
+          // The phone's bye, apart from the receiver's own ("bye", read by the server)
+          why = "phone bye"
           break
         }
       }
